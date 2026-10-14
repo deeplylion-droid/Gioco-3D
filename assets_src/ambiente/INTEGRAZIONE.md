@@ -15,6 +15,7 @@ Tutti i numeri vengono da `glb/sala/sala_dati.json`, scritto dallo stesso script
 | `sala_area_bimbi.glb` | struttura di gioco, **secchio gigante** e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi | 6 mila | 30 (pedane, scala, ponte: si sale) |
 | `sala_torre_scivoli.glb` | torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d'arrivo | 79 mila | 145 (rampe, piani, tratti dei tubi) |
 | `sala_oggetti.glb` | 39 oggetti di scena Meshy (12 modelli, istanze condivise) | 393 mila | 39 (una scatola ciascuno) |
+| `sala_interattivi.glb` | elementi degli enigmi come nodi separati con il perno giusto (vedi sotto) | 7 mila | 11 |
 | `sala_acqua.glb` | **segnaposto** piatti dell'acqua (da sostituire con l'acqua vera) | - | - |
 | `sala_luci.glb` | 49 luci puntiformi già al loro posto (Omni, Spot, una Directional) | - | - |
 | `sala_dati.json` | posizioni di luci, acqua, piedistallo, spawn, camere | | |
@@ -34,6 +35,9 @@ serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, 
    Verificato su Godot 4.7.2 (import, nodi, collisioni, materiali).
 3. Le collisioni si creano da sole (nodi `-colonly`/`-convcolonly` diventano StaticBody3D +
    CollisionShape3D). I LOD li genera l'importer (`meshes/generate_lods`, attivo di serie).
+   Le collisioni dei pezzi uniti hanno i vertici già in coordinate della sala (nodo in identità):
+   lo script controlla prima dell'export che ognuna tocchi la geometria visibile, e lo stesso
+   controllo è stato rifatto in Godot (0 collisioni fuori posto su 578).
 4. Se usate LightmapGI: Import > Meshes > Light Baking = **Static Lightmaps** (genera la UV2).
 
 ## Montaggio
@@ -50,6 +54,24 @@ serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, 
 - **Secchio gigante**: nodo `sala_secchio_gigante`, perno sui suoi perni; si ribalta ruotando intorno all'asse **X**.
 - **Ruota a pale**: nodo `sala_ruota_pale`, perno sull'asse, gira intorno all'asse **X**.
 - La galleria non ha ancora scale per salirci (si vede, non si usa); la torre si sale dalle rampe sul lato sud.
+
+## Elementi interattivi (`sala_interattivi.glb`)
+
+Ogni nodo ha l'origine sul suo perno (cerniera o asse): basta ruotarlo o spostarlo.
+Anche `sala_secchio_gigante` e `sala_ruota_pale` (in `sala_area_bimbi.glb`) sono nodi separati.
+
+| Nodo | Perno in Godot | Cosa fa |
+|---|---|---|
+| `sala_portello_scarico` | (0, -2.25, 1.36) | portello sul fondo, sotto la pozza: cerniera sul lato nord, si apre ruotando sull'asse X |
+| `sala_pulsante_portello` | (1.9, -1.15, 4.99) | pulsante sulla parete sud della vasca: apre il portello |
+| `sala_turbina_scarico` | (4.6, -0.62, 4.84) | turbina dello scarico in alto sulla parete sud della vasca, gira sull'asse Z di Godot (Y di Blender); ci va incastrato un gonfiabile |
+| `sala_turbina_carter` | (0, 0, -0) | carter fisso della turbina (non si muove) |
+| `sala_recinto_spiaggia` | (0, 0, -0) | recinzione bassa sulla spiaggia della piscina (fissa) |
+| `sala_cancello_spiaggia` | (-1, 0, -13.6) | cancello della piscina a onde: cerniera a sinistra (x = -1), ruota sull'asse Y di Godot |
+| `sala_ruota_cancello` | (-9.2, 1.45, -13.8) | grande ruota che apre il cancello (la fa girare l'ondata del secchio), asse X |
+| `sala_trasmissione_cancello` | (0, 0, -0) | albero di trasmissione ruota -> cancello (fisso) |
+| `sala_quadro_elettrico` | (-9, 1.1, -21.15) | quadro elettrico vicino alla struttura di gioco: l'acqua del secchio lo bagna (scintille, sigla) |
+| `sala_pulsante_piedistallo` | (0, 0.47, 8.02) | pulsante dei bambini sul piedistallo: fa partire la sigla |
 
 ## Acqua (da fare con l'acqua vera; in `sala_acqua.glb` ci sono i segnaposto)
 

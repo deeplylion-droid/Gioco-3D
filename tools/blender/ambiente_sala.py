@@ -65,17 +65,18 @@ def metti(ob, pos, rot_z_gradi=0.0):
 
 
 def unisci(oggetti, nome):
-    """Unisce più oggetti (stessa scena) in uno solo; le collisioni figlie restano figlie."""
+    """Unisce più oggetti in uno solo, con trasformazioni applicate (nodo in identità).
+    Le collisioni figlie restano figlie, ma con la posizione 'cotta' nei vertici: così nel GLB
+    non dipendono da nessuna matrice (bug delle collisioni ammucchiate intorno all'origine)."""
     oggetti = [o for o in oggetti if o is not None]
     if not oggetti:
         return None
+    bpy.context.view_layer.update()          # matrix_world aggiornate dopo metti()
     figli = []
     for o in oggetti:
         for ch in list(o.children):
-            mw = ch.matrix_world.copy()
+            figli.append((ch, ch.matrix_world.copy()))
             ch.parent = None
-            ch.matrix_world = mw
-            figli.append(ch)
     bpy.ops.object.select_all(action='DESELECT')
     for o in oggetti:
         o.select_set(True)
@@ -83,14 +84,62 @@ def unisci(oggetti, nome):
     if len(oggetti) > 1:
         bpy.ops.object.join()
     ob = bpy.context.view_layer.objects.active
+    bpy.ops.object.select_all(action='DESELECT')
+    ob.select_set(True)
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     ob.name = nome
     ob.data.name = nome
-    for ch in figli:
-        mw = ch.matrix_world.copy()
+    for ch, mw in figli:
+        if ch.data.users > 1:
+            ch.data = ch.data.copy()
+        ch.data.transform(mw)                 # vertici in coordinate della sala
+        ch.matrix_parent_inverse = Matrix.Identity(4)
         ch.parent = ob
-        ch.matrix_parent_inverse = ob.matrix_world.inverted()
+        ch.matrix_basis = Matrix.Identity(4)
         ch.hide_render = True
     return ob
+
+
+def controlla_collisioni(oggetti):
+    """Ogni collisione deve toccare geometria visibile: si costruisce una griglia di celle da 0,5 m
+    occupate dai vertici delle mesh visibili e si verifica che il riquadro di ogni collisione ne
+    contenga almeno una. Restituisce l'elenco delle collisioni sospette."""
+    import numpy as np
+    bpy.context.view_layer.update()
+    celle = set()
+    vis = [o for o in oggetti if o.type == 'MESH' and '-col' not in o.name and '-convcol' not in o.name]
+    for o in vis:
+        mw = np.array(o.matrix_world)
+        co = np.empty(len(o.data.vertices) * 3)
+        o.data.vertices.foreach_get('co', co)
+        co = co.reshape(-1, 3) @ mw[:3, :3].T + mw[:3, 3]
+        for c in np.unique(np.floor(co / 0.5).astype(np.int64), axis=0):
+            celle.add(tuple(c))
+    sospette = []
+    for o in oggetti:
+        for ch in o.children_recursive:
+            if '-colonly' not in ch.name and '-convcolonly' not in ch.name:
+                continue
+            mw = np.array(ch.matrix_world)
+            co = np.empty(len(ch.data.vertices) * 3)
+            ch.data.vertices.foreach_get('co', co)
+            co = co.reshape(-1, 3) @ mw[:3, :3].T + mw[:3, 3]
+            lo = np.floor(co.min(axis=0) / 0.5).astype(int) - 1
+            hi = np.floor(co.max(axis=0) / 0.5).astype(int) + 1
+            trovata = False
+            for x in range(lo[0], hi[0] + 1):
+                for y in range(lo[1], hi[1] + 1):
+                    for z in range(lo[2], hi[2] + 1):
+                        if (x, y, z) in celle:
+                            trovata = True
+                            break
+                    if trovata:
+                        break
+                if trovata:
+                    break
+            if not trovata:
+                sospette.append(ch.name)
+    return sospette
 
 
 def rumore(x, y, s=1.0):
@@ -359,6 +408,172 @@ def scala_galleria(mats):
     return [ob, gr]
 
 
+def pulsante(mats, nome, pos, verso, colore='gioco_rosso'):
+    """Fungo da premere (nodo a parte, perno alla base; si preme muovendolo lungo -verso)."""
+    c = K.Costruttore(mats)
+    c.cilindro((0, 0, 0), (0, -0.05, 0), 0.07, 'inox', seg=16)
+    c.cilindro((0, -0.05, 0), (0, -0.09, 0), 0.11, colore, seg=24)
+    ob = c.crea(nome)
+    ob.location = pos
+    ob.rotation_euler = Euler((0, 0, math.atan2(-verso[0], verso[1]) + math.pi))
+    return ob
+
+
+def interattivi(mats, zf):
+    """Elementi degli enigmi come nodi separati, ognuno con il perno dove ruota o si muove.
+    Le posizioni sono in sala_dati.json; si possono spostare senza toccare il resto."""
+    obs = []
+    P = PISCINA
+    sx, sy = P['scarico']
+    zp = zf(sx, sy)
+    # portello dello scarico (cerniera sul lato nord): sotto la pozza, si apre dopo averla svuotata
+    c = K.Costruttore(mats)
+    c.anello((0, -0.64, -0.0), (0, 0, 1), 0.0, 0.64, 0.05, 'torre', seg=40)
+    c.toro((0, -0.64, 0.06), (0, 0, 1), 0.5, 0.025, 'torre', seg=40, seg_r=6)
+    for k in range(10):
+        t = 2 * math.pi * k / 10
+        c.cilindro((math.cos(t) * 0.56, -0.64 + math.sin(t) * 0.56, 0.04), (math.cos(t) * 0.56, -0.64 + math.sin(t) * 0.56, 0.07), 0.02, 'inox', seg=6)
+    c.cilindro((-0.25, -0.64, 0.07), (0.25, -0.64, 0.07), 0.025, 'inox', seg=8)       # maniglia
+    for x in (-0.3, 0.3):
+        c.cilindro((x - 0.08, 0.0, 0.03), (x + 0.08, 0.0, 0.03), 0.035, 'inox', seg=8)  # cerniere
+    port = c.crea('sala_portello_scarico')
+    port.location = (sx, sy + 0.64, zp - 0.01)
+    K.collisione_scatola('portello', (-0.64, -1.28, 0.0), (0.64, 0.0, 0.06), padre=port)
+    obs.append(port)
+    # pulsante del portello, sulla parete sud della vasca
+    obs.append(pulsante(mats, 'sala_pulsante_portello', (1.9, P['y0'] + 0.01, -1.15), (0, 1)))
+    # turbina dello scarico, in alto sulla parete sud (asse lungo y), con il gonfiabile incastrato
+    c = K.Costruttore(mats)
+    c.toro((0, 0, 0), (0, 1, 0), 0.42, 0.05, 'torre', seg=40, seg_r=6)
+    c.cilindro((0, -0.02, 0), (0, 0.12, 0), 0.09, 'inox', seg=12)
+    for k in range(7):
+        a = 2 * math.pi * k / 7
+        d = Vector((math.cos(a), 0, math.sin(a)))
+        t_ = Vector((-math.sin(a), 0, math.cos(a)))
+        q = [d * 0.08 + Vector((0, 0.02, 0)), d * 0.38 + t_ * 0.06 + Vector((0, 0.06, 0)), d * 0.38 - t_ * 0.06 + Vector((0, 0.1, 0)), d * 0.08 + Vector((0, 0.1, 0))]
+        c.faccia([tuple(v) for v in q], 'gioco_giallo'); c.faccia([tuple(v) for v in q[::-1]], 'gioco_giallo')
+    turb = c.crea('sala_turbina_scarico')
+    turb.location = (4.6, P['y0'] + 0.16, -0.62)
+    obs.append(turb)
+    f = K.Costruttore(mats)   # carter fisso intorno alla turbina
+    f.anello((4.6, P['y0'] + 0.01, -0.62), (0, 1, 0), 0.46, 0.56, 0.22, 'torre', seg=40)
+    for k in range(6):
+        x = 4.6 - 0.45 + k * 0.18
+        f.cilindro((x, P['y0'] + 0.23, -1.06), (x, P['y0'] + 0.23, -0.18), 0.012, 'torre', seg=5, tappi=False)
+    carter = f.crea('sala_turbina_carter')
+    obs.append(carter)
+    # cancello della spiaggia: recinzione bassa lungo la spiaggia (y = 13,6) con cancello al centro
+    rec = []
+    for x0 in (-7.5, -5.5, -3.5):
+        rec.append(metti(K.ringhiera(mats, 2.0 if x0 > -7.5 else 2.0, nome=un('recinto')), (x0, P['y1'] + 0.6, 0)))
+    rec.append(metti(K.ringhiera(mats, 0.0001 + 0.5, nome=un('recinto'), paletto_fine=True), (-1.5, P['y1'] + 0.6, 0)))
+    for x0 in (1.0, 3.0, 5.0):
+        rec.append(metti(K.ringhiera(mats, 2.0 if x0 < 5.0 else 2.5, nome=un('recinto'), paletto_fine=(x0 == 5.0)), (x0, P['y1'] + 0.6, 0)))
+    recinto = unisci(rec, 'sala_recinto_spiaggia')
+    obs.append(recinto)
+    c = K.Costruttore(mats)   # anta del cancello: 2 m, cerniera in x = -1
+    for zz in (0.12, 0.55, 1.0):
+        c.cilindro((0.03, 0, zz), (1.97, 0, zz), 0.02, 'metallo', seg=8, tappi=False)
+    for k in range(0, 19):
+        x = 0.05 + k * 0.105
+        c.cilindro((x, 0, 0.12), (x, 0, 1.0), 0.008, 'metallo', seg=6, tappi=False)
+    c.cilindro((0.0, 0, 0.05), (0.0, 0, 1.08), 0.025, 'metallo', seg=10)
+    c.cilindro((2.0, 0, 0.05), (2.0, 0, 1.08), 0.025, 'metallo', seg=10)
+    canc = c.crea('sala_cancello_spiaggia')
+    canc.location = (-1.0, P['y1'] + 0.6, 0.0)
+    K.collisione_scatola('cancello', (0, -0.04, 0), (2.0, 0.04, 1.1), padre=canc)
+    obs.append(canc)
+    # grande ruota che apre il cancello (la fa girare l'ondata del secchio), con l'albero fino al cancello
+    c = K.Costruttore(mats)
+    R_ = 1.3
+    for xx in (-0.2, 0.2):
+        c.toro((xx, 0, 0), (1, 0, 0), R_, 0.05, 'gioco_blu', seg=40, seg_r=6)
+    c.cilindro((-0.35, 0, 0), (0.35, 0, 0), 0.1, 'inox', seg=12)
+    for k in range(12):
+        a = 2 * math.pi * k / 12
+        dy, dz = math.cos(a), math.sin(a)
+        c.cilindro((0, dy * 0.1, dz * 0.1), (0, dy * R_, dz * R_), 0.03, 'gioco_blu', seg=6, tappi=False)
+        q = [(-0.22, dy * 0.7, dz * 0.7), (0.22, dy * 0.7, dz * 0.7), (0.22, dy * 1.34, dz * 1.34), (-0.22, dy * 1.34, dz * 1.34)]
+        n_ = (0, -dz * 0.02, dy * 0.02)
+        q = [(a_[0], a_[1] + n_[1], a_[2] + n_[2]) for a_ in q]
+        c.faccia(q, 'gioco_giallo'); c.faccia(q[::-1], 'gioco_giallo')
+    ruota = c.crea('sala_ruota_cancello')
+    ruota.location = (-9.2, 13.8, 1.45)
+    K.collisione_scatola('ruota_cancello', (-0.4, -1.4, -1.4), (0.4, 1.4, 1.4), padre=ruota)
+    obs.append(ruota)
+    c = K.Costruttore(mats)   # supporti della ruota e albero di trasmissione (fissi)
+    for xx in (-9.6, -8.8):
+        c.tubo([(xx, 13.1, 0.0), (xx, 13.8, 1.45), (xx, 14.5, 0.0)], 0.06, 'torre', seg=8)
+    c.cilindro((-8.8, 13.8, 1.45), (-8.2, 13.8, 1.45), 0.05, 'inox', seg=8)
+    c.tubo([(-8.2, 13.8, 1.45), (-7.9, 13.8, 0.25), (-7.4, 13.95, 0.25)], 0.05, 'inox', seg=8)
+    c.cilindro((-7.4, 13.95, 0.25), (-1.05, 13.95, 0.25), 0.04, 'inox', seg=8)
+    for x in range(-7, 0, 2):
+        c.scatola((x - 0.05, 13.88, 0.0), (x + 0.05, 14.02, 0.22), 'torre')
+    trasm = c.crea('sala_trasmissione_cancello')
+    obs.append(trasm)
+    # quadro elettrico vicino alla struttura (l'acqua del secchio lo bagna: scintille)
+    c = K.Costruttore(mats)
+    c.scatola((-0.35, -0.12, 0.0), (0.35, 0.12, 0.9), 'metallo')
+    c.scatola((-0.32, -0.125, 0.04), (0.32, -0.12, 0.86), 'gioco_giallo')
+    for k in range(3):
+        c.cilindro((-0.2 + k * 0.2, -0.13, 0.7), (-0.2 + k * 0.2, -0.16, 0.7), 0.03, 'luce_rossa' if k == 1 else 'inox', seg=10)
+    c.tubo([(0.0, 0.0, 0.9), (0.0, 0.0, 2.6)], 0.03, 'inox', seg=6)
+    quadro = c.crea('sala_quadro_elettrico')
+    quadro.location = (-9.0, Y1 - PROF_GAL + 0.15, 1.1)
+    K.collisione_scatola('quadro', (-0.35, -0.12, 0.0), (0.35, 0.12, 0.9), padre=quadro)
+    obs.append(quadro)
+    # pulsante dei bambini sul piedistallo (il fungo rosso; la scatola gialla è nel piedistallo)
+    PD = PIEDISTALLO
+    obs.append(pulsante(mats, 'sala_pulsante_piedistallo', (PD['cx'], PD['cy'] - PD['r_tamburo'] - 0.12, 0.47), (0, -1)))
+    for o in obs:
+        for ch in o.children:
+            ch.hide_render = True
+    return obs
+
+
+def altoparlanti(mats):
+    """Altoparlanti a tromba sulle colonne della galleria (da qui parte la sigla)."""
+    c = K.Costruttore(mats)
+    posti = [(-9.0, Y0 + PROF_GAL - 0.35 + 0.22, 3.3, 1), (9.0, Y0 + PROF_GAL - 0.35 + 0.22, 3.3, 1),
+             (-9.0, Y1 - PROF_GAL + 0.35 - 0.22, 3.3, -1), (9.0, Y1 - PROF_GAL + 0.35 - 0.22, 3.3, -1)]
+    for (x, y, z, v) in posti:
+        b = Vector((x, y, z))
+        d = Vector((0, v, -0.25)).normalized()
+        c.scatola((x - 0.1, y - 0.06 * v, z - 0.1), (x + 0.1, y + 0.02 * v, z + 0.1), 'metallo')
+        pts = [b + d * 0.05, b + d * 0.45]
+        seg = 16
+        u = Vector((1, 0, 0)); w = d.cross(u).normalized()
+        for k in range(seg):
+            a0, a1 = 2 * math.pi * k / seg, 2 * math.pi * (k + 1) / seg
+            q = [pts[0] + (u * math.cos(a0) + w * math.sin(a0)) * 0.06, pts[0] + (u * math.cos(a1) + w * math.sin(a1)) * 0.06,
+                 pts[1] + (u * math.cos(a1) + w * math.sin(a1)) * 0.24, pts[1] + (u * math.cos(a0) + w * math.sin(a0)) * 0.24]
+            c.faccia([tuple(p_) for p_ in q], 'metallo', liscia=True)
+            c.faccia([tuple(p_) for p_ in q[::-1]], 'nero', liscia=True)
+    return c.crea('sala_altoparlanti')
+
+
+def corridoio_spogliatoi(mats):
+    """Primo tratto del corridoio degli spogliatoi dietro la porta (3 m), perché dalla sala non si
+    veda il vuoto. Il resto degli spogliatoi è un'altra zona."""
+    c = K.Costruttore(mats)
+    x0, x1 = -1.2, 1.2
+    y0, y1 = Y0 - 0.2 - 3.0, Y0 - 0.2
+    h = 2.6
+    c.faccia([(x0, y0, 0), (x1, y0, 0), (x1, y1, 0), (x0, y1, 0)], 'pavimento')
+    c.faccia([(x0, y0, h), (x0, y1, h), (x1, y1, h), (x1, y0, h)], 'intonaco')
+    for (xa, sgn) in ((x0, 1), (x1, -1)):
+        for z0, z1, mat in ((0, 0.25, 'zoccolo'), (0.25, 2.0, 'parete'), (2.0, h, 'intonaco')):
+            q = [(xa, y1, z0), (xa, y0, z0), (xa, y0, z1), (xa, y1, z1)]
+            c.faccia(q if sgn > 0 else q[::-1], mat)
+    c.faccia([(x1, y0, 0), (x0, y0, 0), (x0, y0, h), (x1, y0, h)][::-1], 'nero')
+    ob = c.crea('sala_corridoio_spogliatoi', sporco=K.sporco_basso())
+    K.collisione_scatola('corridoio_pav', (x0, y0, -0.1), (x1, y1, 0), padre=ob)
+    K.collisione_scatola('corridoio_sx', (x0 - 0.2, y0, 0), (x0, y1, h), padre=ob)
+    K.collisione_scatola('corridoio_dx', (x1, y0, 0), (x1 + 0.2, y1, h), padre=ob)
+    K.collisione_scatola('corridoio_fondo', (x0, y0 - 0.2, 0), (x1, y0, h), padre=ob)
+    return ob
+
+
 # ----------------------------------------------------------------------------- cupola e cielo
 
 def cupola(mats):
@@ -579,12 +794,7 @@ def piscina_onde(mats):
             g.cilindro((xx, y0 + 0.04, zb), (xx, y0 + 0.04, zb + h), 0.014, 'torre', seg=6, tappi=False)
         g.cilindro((bx - w / 2, y0 + 0.04, zb + h / 2), (bx + w / 2, y0 + 0.04, zb + h / 2), 0.02, 'torre', seg=6, tappi=False)
     zp = zf(sx, sy)
-    g.anello((sx, sy, zp - 0.01), (0, 0, 1), 0.0, 0.62, 0.05, 'torre', seg=40)
-    g.toro((sx, sy, zp + 0.05), (0, 0, 1), 0.5, 0.025, 'torre', seg=40, seg_r=6)
-    for k in range(10):
-        t = 2 * math.pi * k / 10
-        g.cilindro((sx + math.cos(t) * 0.56, sy + math.sin(t) * 0.56, zp + 0.03), (sx + math.cos(t) * 0.56, sy + math.sin(t) * 0.56, zp + 0.06), 0.02, 'inox', seg=6)
-    g.cilindro((sx - 0.25, sy, zp + 0.06), (sx + 0.25, sy, zp + 0.06), 0.025, 'inox', seg=8)
+    g.anello((sx, sy, zp - 0.012), (0, 0, 1), 0.66, 0.78, 0.03, 'torre', seg=40)   # battuta fissa del portello
     dett = g.crea('sala_piscina_bocchette')
     # rosa dei venti a mosaico sul fondo (parte profonda): piano RGBA appena sopra il fondo
     rc = (0.0, 3.6)
@@ -734,10 +944,9 @@ def piedistallo(mats):
     cil(P['r_base'], 0.0, 0.14, 'bordo')
     cil(P['r_tamburo'], 0.14, P['h'] - 0.12, 'piedistallo', tappo=False)
     cil(P['r_piano'], P['h'] - 0.12, P['h'], 'bordo')
-    # pulsante: scatola gialla con fungo rosso, verso l'ingresso
+    # pulsante: scatola gialla fissa; il fungo rosso è un nodo a parte (sala_pulsante_piedistallo)
     by = cy - P['r_tamburo']
     c.scatola((cx - 0.18, by - 0.12, 0.32), (cx + 0.18, by + 0.05, 0.62), 'gioco_giallo')
-    c.cilindro((cx, by - 0.12, 0.47), (cx, by - 0.2, 0.47), 0.11, 'gioco_rosso', seg=20)
     ob = c.crea('amb_piedistallo', sporco=lambda co: 0.75 + 0.25 * min(1.0, co.z / 0.5))
     col = K.collisione_scatola('amb_piedistallo', (cx - P['r_base'], cy - P['r_base'], 0), (cx + P['r_base'], cy + P['r_base'], P['h']), padre=ob)
     return ob
@@ -1577,6 +1786,9 @@ def costruisci(con_oggetti=True, per_render=True):
     arch.append(gruppo('architettura', soffitto_struttura(mats)))
     arch.append(gruppo('architettura', colature(mats)))
     arch += gruppo('architettura', scala_galleria(mats))
+    arch.append(gruppo('architettura', altoparlanti(mats)))
+    arch.append(gruppo('architettura', corridoio_spogliatoi(mats)))
+    arch += gruppo('interattivi', interattivi(mats, zf))
     copie, modelli = ([], [])
     if con_oggetti:
         copie, modelli = disponi_oggetti(zf)
@@ -1635,6 +1847,8 @@ def dati_integrazione(sorgenti, lampadina):
         torre=dict(centro=[TORRE['cx'], TORRE['cy']], lato=TORRE['lato'], piani=list(TORRE['piani'])),
         secchio=dict(nodo='sala_secchio_gigante', perno_blender=[STRUTTURA['cx'] + 0.2, STRUTTURA['cy'] + 1.6, 7.1], asse='x'),
         ruota_pale=dict(nodo='sala_ruota_pale', perno_blender=[STRUTTURA['cx'] - 4.2, STRUTTURA['cy'] - 1.2, 1.3], asse='x'),
+        interattivi={o.name: dict(perno_blender=[round(v, 3) for v in o.location], perno_godot=a_godot(tuple(o.location)))
+                     for o in GRUPPI.get('interattivi', []) if o.name in bpy.data.objects},
         luci=luci, acqua=acqua,
         camere={k: dict(pos_blender=list(v[0]), guarda_blender=list(v[1]), lente_mm=v[2]) for k, v in CAMERE.items()})
 
@@ -1683,6 +1897,9 @@ def esporta_glb(cartella):
         if not obs:
             continue
         p = os.path.join(cartella, f'sala_{nome}.glb')
+        sosp = controlla_collisioni(obs)
+        if sosp:
+            print(f'ATTENZIONE {nome}: {len(sosp)} collisioni lontane dalla geometria: {sosp[:8]}')
         K.esporta(obs, p)
         tri = sum(sum(len(pp.vertices) - 2 for pp in o.data.polygons) for o in obs if o.type == 'MESH')
         print(f'GLB {os.path.basename(p)}: {len(obs)} oggetti, {tri} triangoli, {os.path.getsize(p) / 1e6:.1f} MB')
