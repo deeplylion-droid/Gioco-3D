@@ -10,6 +10,8 @@ import bpy
 from mathutils import Matrix, Quaternion, Vector
 
 DITA = ['pollice', 'indice', 'medio', 'anulare', 'mignolo']
+DITA_STATUA = 28        # gradi di piega delle dita nella posa statua (= posa di riposo del GLB)
+POLLICE_STATUA = 12
 
 
 def aggiorna():
@@ -93,9 +95,6 @@ def posa_statua(arm):
         dir_mano = Vector((-s * 0.42, -0.18, 0.89))      # in su e verso il centro
         dorso = Vector((s * 1.0, -0.15, 0.25))           # dorso verso l'esterno: palmi uno contro l'altro
         posa_braccio(arm, suf, polso, polo, dir_mano, dorso)
-        piega_dita(arm, suf, 28, pollice=12)
-    # testa appena china, come la statua
-    pb = arm.pose.bones['testa']
-    pb.rotation_mode = 'XYZ'
-    pb.rotation_euler = (math.radians(6), 0, 0)
+        piega_dita(arm, suf, DITA_STATUA, pollice=POLLICE_STATUA)
+    # la testa resta dritta: la posa statua diventa la posa di riposo e la mascella non deve cambiare
     aggiorna()

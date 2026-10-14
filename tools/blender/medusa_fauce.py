@@ -253,12 +253,12 @@ def dente(base, asse, larghezza, lunghezza, lato, rng):
     spess = asse.cross(lato).normalized()
     curva = rng.uniform(0.05, 0.18)
     pts = []
-    n_seg = 5
+    n_seg = 3
     for s in range(n_seg + 1):
         t = s / n_seg
         w = larghezza * 0.5 * (1 - t) ** 0.9
         if 0 < s < n_seg and s % 2 == 1:
-            w *= 1.12                                 # seghettatura
+            w *= 1.15                                 # seghettatura
         c = base + asse * lunghezza * t + spess * curva * lunghezza * t * t
         pts.append((c + lato * w, c - lato * w, c + spess * larghezza * 0.18 * (1 - t), c - spess * larghezza * 0.18 * (1 - t)))
     verts, facce = [], []
@@ -327,7 +327,7 @@ def crea_denti(arm, verts_aperti, pesi, K, J, M):
             vg_t.add([i], 1 - w, 'REPLACE')
     denti.parent = arm
     mod = denti.modifiers.new('Scheletro', 'ARMATURE'); mod.object = arm
-    log(f'fauce: {len(tutte_f) // 21} denti in {N_FILE} file per arcata')
+    log(f'fauce: {len(tutte_f) // 13} denti in {N_FILE} file per arcata')
     return denti
 
 
