@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="WaterStyle" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://water/scripts/water_style.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+absorption = Vector3(1.1, 0.55, 1.05)
+turbidity = 1.4
+scatter_color = Color(0.16, 0.2, 0.08, 1)
+scatter_ambient = 0.015
+roughness = 0.06
+wave_strength_a = 0.04
+wave_strength_b = 0.035
+wave_speed = 0.02
+refraction_strength = 0.12
+reflection_strength = 0.9
+foam_color = Color(0.6, 0.6, 0.48, 1)
+foam_shore_amount = 0.8
+foam_ripple_amount = 1.3
+scum_amount = 0.4
+scum_color = Color(0.12, 0.13, 0.05, 1)
+caustics_strength = 0.55
+caustics_scale = 1.4
+underwater_fog_color = Color(0.012, 0.018, 0.006, 1)
+underwater_distortion = 0.008
+underwater_density = 1.0
+glow_scatter = 1.0
