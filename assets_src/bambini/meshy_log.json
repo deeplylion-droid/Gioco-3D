@@ -1,0 +1,606 @@
+{
+ "cubo_calmo_spugna_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c61-7b23-70f3-baaf-4e2a72346776",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. In the scene stands a small, stocky, chubby shadow creature the size of a small child (about 1.2 metres tall), with a round soft belly, short stubby legs with rounded feet, short stubby arms ending in small rounded mitten-like hands with no visible fingers. Its whole body is a seamless dark shadow of glossy, wet black skin, like an old black neoprene diving wetsuit that covers it completely, with no anatomical details at all, only water droplets, a dull wet sheen and a few thin strands of dark green seaweed stuck to it. Instead of a head it has a big white cube, a bit wider than its shoulders (the cube is about one third of its total height, like a chibi figure). The cube is an old white foam flotation block from a ship, like a buoyancy block or a swimming float: dense white plastic foam, deeply cracked and crumbling at the corners, wet, with white sea-salt stains, small patches of green algae, a few tiny barnacles on the edges and orange rust streaks from an old metal ring. On the front face of the cube a cute, simple childlike face is drawn with black marker: two short vertical dashes for eyes, two round soft pink blush cheeks and a small curved smile. Its arms hang at its sides; it is perfectly still, facing the viewer, cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "cubo_calmo_piastrelle_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c61-85b4-74e5-bd86-7a1d9f0334de",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. In the scene stands a small, stocky, chubby shadow creature the size of a small child (about 1.2 metres tall), with a round soft belly, short stubby legs with rounded feet, short stubby arms ending in small rounded mitten-like hands with no visible fingers. Its whole body is a seamless dark shadow of glossy, wet black skin, like an old black neoprene diving wetsuit that covers it completely, with no anatomical details at all, only water droplets, a dull wet sheen and a few thin strands of dark green seaweed stuck to it. Instead of a head it has a big white cube, a bit wider than its shoulders (the cube is about one third of its total height, like a chibi figure). The cube is made of small square white ceramic swimming-pool tiles with grey grout lines, like a piece of the pool wall: cracked, chipped, a few tiles missing, wet, with white sea-salt stains, small patches of green algae, a few tiny barnacles on the edges and orange rust streaks running down. On the front face of the cube a cute, simple childlike face is drawn with black marker: two short vertical dashes for eyes, two round soft pink blush cheeks and a small curved smile. Its arms hang at its sides; it is perfectly still, facing the viewer, cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "cubo_calmo_spugna_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c61-8b81-712c-a78c-d6da8e16177f",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. In the scene stands a small, stocky, chubby shadow creature the size of a small child (about 1.2 metres tall), with a round soft belly, short stubby legs with rounded feet, short stubby arms ending in small rounded mitten-like hands with no visible fingers. Its whole body is a seamless dark shadow of glossy, wet black skin, like an old black neoprene diving wetsuit that covers it completely, with no anatomical details at all, only water droplets, a dull wet sheen and a few thin strands of dark green seaweed stuck to it. Instead of a head it has a big white cube, a bit wider than its shoulders (the cube is about one third of its total height, like a chibi figure). The cube is an old white foam flotation block from a ship, like a buoyancy block or a swimming float: dense white plastic foam, deeply cracked and crumbling at the corners, wet, with white sea-salt stains, small patches of green algae, a few tiny barnacles on the edges and orange rust streaks from an old metal ring. On the front face of the cube a cute, simple childlike face is drawn with black marker: two short vertical dashes for eyes, two round soft pink blush cheeks and a small curved smile. Its arms hang at its sides; it is perfectly still, facing the viewer, cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "cubo_calmo_piastrelle_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c61-7526-7771-80f5-05117d2d6a91",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. In the scene stands a small, stocky, chubby shadow creature the size of a small child (about 1.2 metres tall), with a round soft belly, short stubby legs with rounded feet, short stubby arms ending in small rounded mitten-like hands with no visible fingers. Its whole body is a seamless dark shadow of glossy, wet black skin, like an old black neoprene diving wetsuit that covers it completely, with no anatomical details at all, only water droplets, a dull wet sheen and a few thin strands of dark green seaweed stuck to it. Instead of a head it has a big white cube, a bit wider than its shoulders (the cube is about one third of its total height, like a chibi figure). The cube is made of small square white ceramic swimming-pool tiles with grey grout lines, like a piece of the pool wall: cracked, chipped, a few tiles missing, wet, with white sea-salt stains, small patches of green algae, a few tiny barnacles on the edges and orange rust streaks running down. On the front face of the cube a cute, simple childlike face is drawn with black marker: two short vertical dashes for eyes, two round soft pink blush cheeks and a small curved smile. Its arms hang at its sides; it is perfectly still, facing the viewer, cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "agnello_calmo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c61-9168-73ce-a6f3-b3fa0c0714f7",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. In the scene stands a small, chubby plush lamb the size of a small child (about 1.2 metres tall), standing upright on two legs: it looks like a child completely covered by an old handmade plush lamb costume, no skin visible anywhere. Big round head with cream-white curly fleece on top, small droopy ears, two curled brown ram horns on the sides, soft pink blush cheeks and a small stitched smile. Its eyes are two round old brass buttons from a ship officer uniform, tarnished, with a tiny embossed anchor, sewn on with dark thread in a cross. A red sailor-style ribbon bow is tied at the neck, with a tiny brass anchor charm hanging from the knot. The body is a sewn plush with big visible cross-stitched seams down the belly, puffs of curly fleece, short arms slightly open, dark rounded hooves at the ends of arms and legs, a small fluffy tail. The plush is soaking wet and matted, stained with sea salt and grey-green algae, with brown water marks, re-sewn in several places with transparent nylon fishing line and patched with a piece of faded blue-and-white striped towel. It is perfectly still, head slightly tilted, facing the viewer, cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "agnello_calmo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c61-805f-74e2-aec9-bc92a9d666fd",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. In the scene stands a small, chubby plush lamb the size of a small child (about 1.2 metres tall), standing upright on two legs: it looks like a child completely covered by an old handmade plush lamb costume, no skin visible anywhere. Big round head with cream-white curly fleece on top, small droopy ears, two curled brown ram horns on the sides, soft pink blush cheeks and a small stitched smile. Its eyes are two round old brass buttons from a ship officer uniform, tarnished, with a tiny embossed anchor, sewn on with dark thread in a cross. A red sailor-style ribbon bow is tied at the neck, with a tiny brass anchor charm hanging from the knot. The body is a sewn plush with big visible cross-stitched seams down the belly, puffs of curly fleece, short arms slightly open, dark rounded hooves at the ends of arms and legs, a small fluffy tail. The plush is soaking wet and matted, stained with sea salt and grey-green algae, with brown water marks, re-sewn in several places with transparent nylon fishing line and patched with a piece of faded blue-and-white striped towel. It is perfectly still, head slightly tilted, facing the viewer, cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "cubo_risata_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-c592-7771-8755-54504ed49ad5",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the first reference image: same chubby glossy black wet body with seaweed, same white cube of cracked pool tiles with algae, barnacles and rust, same place, same camera framing, same lighting. Now it raises both stubby arms and holds the sides of its cube head with its mitten hands, as if laughing, and the face drawn on the cube is different: On the front face of the cube a cute, simple childlike face is drawn with black marker: eyes squeezed shut, drawn as two small sideways V shapes, two round soft pink blush cheeks and a big open laughing mouth drawn as a dark half-circle. Cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "cubo_rivelato_giallo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-b9d7-7720-80d2-dd0795b0f599",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the first reference image: same chubby glossy black wet body with seaweed, same white cube of cracked pool tiles with algae, barnacles and rust, same place, same camera framing, same lighting. The white cube head is breaking apart: its front face has cracked open and big jagged chunks have fallen away (on the remaining fragments you can still see one marker eye dash and one pink blush cheek of the cute drawn face). From inside bursts a mass of soft, translucent pink and magenta tentacles made of the same living tissue as the jellyfish bell of the mascot in the reference image: glossy, gelatinous, semi-transparent, with glowing luminous radial channels inside, softly lighting the cube from within. Many round eyeballs of different sizes stare out from the tentacle mass, glossy white with bright yellow irises and small dark pupils, all looking at the viewer. A few tentacles curl out over the broken edges of the cube and droop down. Organic and deeply unsettling, but clean and wet: no blood, no flesh wounds. The body stands still, arms hanging. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/medusa_sbircia.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "agnello_occhio_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-dd22-757d-b09c-0a2f7aa7bed5",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same plush lamb as in the first reference image: same soaked, stained, stitched plush body, same red sailor bow with the brass anchor, same place, same camera framing, same lighting. The cute lamb face has split open vertically down the middle along a stitched seam, from the top of the head to the chin: the soaked fabric parts like two lips with frayed edges and small white stuffing tufts, and the two brass button eyes are pushed apart to the sides. From inside, a single huge round eye stares at the viewer: it is exactly like the single eye of the jellyfish mascot in the reference image, with a pink iris with a radial pattern, a dark pupil and a wet glossy surface, surrounded by translucent pink and magenta membrane. The rest of the lamb (curly fleece, horns, red sailor bow, stitched body) is unchanged. Unsettling, no blood, no gore.  Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt",
+   "docs/concept/medusa_sbircia.jpg",
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "cubo_risata_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-cb4c-7768-809d-58bbeba1f827",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the first reference image: same chubby glossy black wet body with seaweed, same white cube of cracked pool tiles with algae, barnacles and rust, same place, same camera framing, same lighting. Now it raises both stubby arms and holds the sides of its cube head with its mitten hands, as if laughing, and the face drawn on the cube is different: On the front face of the cube a cute, simple childlike face is drawn with black marker: eyes squeezed shut, drawn as two small sideways V shapes, two round soft pink blush cheeks and a big open laughing mouth drawn as a dark half-circle. Cute and wrong at the same time. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "cubo_rivelato_rosa_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-b4fc-74f9-94fb-544908cb7551",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the first reference image: same chubby glossy black wet body with seaweed, same white cube of cracked pool tiles with algae, barnacles and rust, same place, same camera framing, same lighting. The white cube head is breaking apart: its front face has cracked open and big jagged chunks have fallen away (on the remaining fragments you can still see one marker eye dash and one pink blush cheek of the cute drawn face). From inside bursts a mass of soft, translucent pink and magenta tentacles made of the same living tissue as the jellyfish bell of the mascot in the reference image: glossy, gelatinous, semi-transparent, with glowing luminous radial channels inside, softly lighting the cube from within. Many round eyeballs of different sizes stare out from the tentacle mass, each one like the single eye of the jellyfish mascot in the reference image: glossy, with a pink iris with a radial pattern and a dark pupil, all looking at the viewer. A few tentacles curl out over the broken edges of the cube and droop down. Organic and deeply unsettling, but clean and wet: no blood, no flesh wounds. The body stands still, arms hanging. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/medusa_sbircia.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "agnello_lupo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-d17a-749d-93a3-fb7e81a298a7",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same plush lamb as in the first reference image: same soaked, stained, stitched plush body, same red sailor bow with the brass anchor, same place, same camera framing, same lighting. The cute lamb head has split open along its seams and flopped backwards like a hood, hanging behind the shoulders (still showing its brass button eyes and curly fleece), and out of the neck rises a big black predator head with the silhouette of a wolf: long snout, tall pointed ears, but with deep-sea fish traits. Its skin is smooth, glossy, wet black like an abyssal fish, with gill slits along the sides of the neck and a few small pale bioluminescent dots. The jaws are wide open showing several rows of white triangular shark teeth, a dark wet mouth and a long pink tongue; one pale yellow eye with a small red pupil glares at the viewer. Under it, the lamb body with the red sailor bow and the stitched seams is unchanged. Unsettling, no blood, no gore.  Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "agnello_lupo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-d724-773d-8731-7d8e8277a6f6",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same plush lamb as in the first reference image: same soaked, stained, stitched plush body, same red sailor bow with the brass anchor, same place, same camera framing, same lighting. The cute lamb head has split open along its seams and flopped backwards like a hood, hanging behind the shoulders (still showing its brass button eyes and curly fleece), and out of the neck rises a big black predator head with the silhouette of a wolf: long snout, tall pointed ears, but with deep-sea fish traits. Its skin is smooth, glossy, wet black like an abyssal fish, with gill slits along the sides of the neck and a few small pale bioluminescent dots. The jaws are wide open showing several rows of white triangular shark teeth, a dark wet mouth and a long pink tongue; one pale yellow eye with a small red pupil glares at the viewer. Under it, the lamb body with the red sailor bow and the stitched seams is unchanged. Unsettling, no blood, no gore.  Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "cubo_rivelato_giallo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-bf8c-7391-a9da-731acae8287f",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the first reference image: same chubby glossy black wet body with seaweed, same white cube of cracked pool tiles with algae, barnacles and rust, same place, same camera framing, same lighting. The white cube head is breaking apart: its front face has cracked open and big jagged chunks have fallen away (on the remaining fragments you can still see one marker eye dash and one pink blush cheek of the cute drawn face). From inside bursts a mass of soft, translucent pink and magenta tentacles made of the same living tissue as the jellyfish bell of the mascot in the reference image: glossy, gelatinous, semi-transparent, with glowing luminous radial channels inside, softly lighting the cube from within. Many round eyeballs of different sizes stare out from the tentacle mass, glossy white with bright yellow irises and small dark pupils, all looking at the viewer. A few tentacles curl out over the broken edges of the cube and droop down. Organic and deeply unsettling, but clean and wet: no blood, no flesh wounds. The body stands still, arms hanging. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/medusa_sbircia.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "agnello_occhio_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-e2d2-707d-b5e6-28befa10f9bb",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same plush lamb as in the first reference image: same soaked, stained, stitched plush body, same red sailor bow with the brass anchor, same place, same camera framing, same lighting. The cute lamb face has split open vertically down the middle along a stitched seam, from the top of the head to the chin: the soaked fabric parts like two lips with frayed edges and small white stuffing tufts, and the two brass button eyes are pushed apart to the sides. From inside, a single huge round eye stares at the viewer: it is exactly like the single eye of the jellyfish mascot in the reference image, with a pink iris with a radial pattern, a dark pupil and a wet glossy surface, surrounded by translucent pink and magenta membrane. The rest of the lamb (curly fleece, horns, red sailor bow, stitched body) is unchanged. Unsettling, no blood, no gore.  Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt",
+   "docs/concept/medusa_sbircia.jpg",
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "cubo_rivelato_rosa_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c63-ae1a-7548-9c66-3ebbf95052b0",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the first reference image: same chubby glossy black wet body with seaweed, same white cube of cracked pool tiles with algae, barnacles and rust, same place, same camera framing, same lighting. The white cube head is breaking apart: its front face has cracked open and big jagged chunks have fallen away (on the remaining fragments you can still see one marker eye dash and one pink blush cheek of the cute drawn face). From inside bursts a mass of soft, translucent pink and magenta tentacles made of the same living tissue as the jellyfish bell of the mascot in the reference image: glossy, gelatinous, semi-transparent, with glowing luminous radial channels inside, softly lighting the cube from within. Many round eyeballs of different sizes stare out from the tentacle mass, each one like the single eye of the jellyfish mascot in the reference image: glossy, with a pink iris with a radial pattern and a dark pupil, all looking at the viewer. A few tentacles curl out over the broken edges of the cube and droop down. Organic and deeply unsettling, but clean and wet: no blood, no flesh wounds. The body stands still, arms hanging. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/medusa_sbircia.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "scena_cubo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-5a4f-73c6-b129-d26e1ed983f2",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "First-person view from the eyes of a grown-up player standing in the abandoned indoor water park of the reference images, at night: wide-angle lens, eye height 1.65 metres, like a horror video game screenshot without any interface. Red emergency lights, low drifting fog, wet reflective tiles in the foreground, rust, peeling paint, colorful plastic toys scattered around. Far away, about fifteen metres ahead, at the end of the wet tiled walkway beside the empty wave pool, the small shadow creature with the white tiled cube head from the first reference image peeks out from behind a tiled pillar: only its cube head and one small black arm are visible, its cute drawn smile catching the red emergency light. It is small in the frame, half lost in the fog and the darkness, seen just for a moment, slightly motion-blurred, easy to miss. In the foreground a deflated swim ring and a rubber duck lie on the wet tiles. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/ambiente_A_realistico.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "aspect": "16:9",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_cubo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-75d5-71fe-9433-8b6c214c0f60",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby shadow creature with glossy wet black skin like a wetsuit and a big white cube head of cracked pool tiles with algae, barnacles and rust, with a cute face drawn in marker on the front (two vertical dash eyes, pink blush cheeks, small smile). Plain back view without face on the back of the cube. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_agnello_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-7bd5-749c-bda6-3f6625041e69",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby plush lamb standing upright, soaked and stained, stitched seams, brass button eyes, red sailor bow with a brass anchor charm, curled brown horns, dark hooves, small tail. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "scena_agnello_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-645a-736b-826c-4e8d5ec61515",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "First-person view from the eyes of a grown-up player standing in the abandoned indoor water park of the reference images, at night: wide-angle lens, eye height 1.65 metres, like a horror video game screenshot without any interface. Red emergency lights, low drifting fog, wet reflective tiles in the foreground, rust, peeling paint, colorful plastic toys scattered around. In the kids area, a few metres ahead and to the side, a heap of abandoned soaked plush toys (a big teddy bear, a blue whale, a yellow duck) and deflated swim rings lies against a tiled wall under a red emergency light. The plush lamb from the first reference image sits slumped among them like one of the toys, legs stretched out, arms limp, but its head is turned straight toward the viewer and its brass button eyes catch the light. It is easy to mistake for a toy at first glance. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt",
+   "docs/concept/ambiente_A_realistico.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "aspect": "16:9",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_cubo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-701a-77fd-a8cb-492602b63757",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby shadow creature with glossy wet black skin like a wetsuit and a big white cube head of cracked pool tiles with algae, barnacles and rust, with a cute face drawn in marker on the front (two vertical dash eyes, pink blush cheeks, small smile). Plain back view without face on the back of the cube. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_agnello_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-8192-75dc-a877-fcf10a0cdebe",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby plush lamb standing upright, soaked and stained, stitched seams, brass button eyes, red sailor bow with a brass anchor charm, curled brown horns, dark hooves, small tail. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "scena_agnello_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-6a59-72d4-add2-0758ca2c7ca6",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "First-person view from the eyes of a grown-up player standing in the abandoned indoor water park of the reference images, at night: wide-angle lens, eye height 1.65 metres, like a horror video game screenshot without any interface. Red emergency lights, low drifting fog, wet reflective tiles in the foreground, rust, peeling paint, colorful plastic toys scattered around. In the kids area, a few metres ahead and to the side, a heap of abandoned soaked plush toys (a big teddy bear, a blue whale, a yellow duck) and deflated swim rings lies against a tiled wall under a red emergency light. The plush lamb from the first reference image sits slumped among them like one of the toys, legs stretched out, arms limp, but its head is turned straight toward the viewer and its brass button eyes catch the light. It is easy to mistake for a toy at first glance. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_calmo_gpt",
+   "docs/concept/ambiente_A_realistico.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "aspect": "16:9",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "scena_cubo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c67-5f64-7728-bb68-5f7a267a68ef",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "First-person view from the eyes of a grown-up player standing in the abandoned indoor water park of the reference images, at night: wide-angle lens, eye height 1.65 metres, like a horror video game screenshot without any interface. Red emergency lights, low drifting fog, wet reflective tiles in the foreground, rust, peeling paint, colorful plastic toys scattered around. Far away, about fifteen metres ahead, at the end of the wet tiled walkway beside the empty wave pool, the small shadow creature with the white tiled cube head from the first reference image peeks out from behind a tiled pillar: only its cube head and one small black arm are visible, its cute drawn smile catching the red emergency light. It is small in the frame, half lost in the fog and the darkness, seen just for a moment, slightly motion-blurred, easy to miss. In the foreground a deflated swim ring and a rubber duck lie on the wet tiles. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/ambiente_A_realistico.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "aspect": "16:9",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_cubo_rivelato_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c68-a6c5-74c1-8b63-28265acd7dab",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby shadow creature with glossy wet black skin like a wetsuit, with seaweed. Its head is a big white cube of cracked pool tiles with algae, barnacles and rust, whose front face is broken open: from inside bursts a mass of glossy translucent pink and magenta tentacles with glowing channels and many round eyeballs with yellow irises; a few tentacles curl out over the broken edges and droop down. The back of the cube is intact. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_rivelato_giallo_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_agnello_lupo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c68-b24b-737a-814f-d4f8888a31c1",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby soaked plush lamb body standing upright (stitched seams, striped patch, red sailor bow with a brass anchor charm, dark hooves), whose lamb head has split open and hangs behind its shoulders like a hood; out of the neck rises a big glossy black wolf-like head with deep-sea fish traits: tall pointed ears, gill slits, small pale glowing dots, wide open jaws with rows of white shark teeth and a pink tongue, pale yellow eyes. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_lupo_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_cubo_rivelato_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c68-a0e5-70eb-b161-fcdb06e6f9a9",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby shadow creature with glossy wet black skin like a wetsuit, with seaweed. Its head is a big white cube of cracked pool tiles with algae, barnacles and rust, whose front face is broken open: from inside bursts a mass of glossy translucent pink and magenta tentacles with glowing channels and many round eyeballs with yellow irises; a few tentacles curl out over the broken edges and droop down. The back of the cube is intact. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo_rivelato_giallo_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_agnello_lupo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c68-ac71-73f4-bd3e-eaf6889389e5",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby soaked plush lamb body standing upright (stitched seams, striped patch, red sailor bow with a brass anchor charm, dark hooves), whose lamb head has split open and hangs behind its shoulders like a hood; out of the neck rises a big glossy black wolf-like head with deep-sea fish traits: tall pointed ears, gill slits, small pale glowing dots, wide open jaws with rows of white shark teeth and a pink tongue, pale yellow eyes. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_lupo_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "3d_cubo_calmo": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a13c68-9507-7167-9c19-8ea29ffc7f60",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": "mv_cubo_nbp",
+  "body": {
+   "input_task_id": "01a13c67-701a-77fd-a8cb-492602b63757",
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "2k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true
+  },
+  "credits": 30
+ },
+ "3d_agnello_calmo": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a13c68-9ae6-724a-b30e-ef43e805bbe1",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": "mv_agnello_nbp",
+  "body": {
+   "input_task_id": "01a13c67-7bd5-749c-bda6-3f6625041e69",
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "2k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true
+  },
+  "credits": 30
+ },
+ "3d_cubo_rivelato": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a13c6b-031e-70b6-a751-1e8f45ba4807",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": "mv_cubo_rivelato_nbp",
+  "body": {
+   "input_task_id": "01a13c68-a0e5-70eb-b161-fcdb06e6f9a9",
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "2k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true
+  },
+  "credits": 30
+ },
+ "3d_agnello_lupo": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a13c6b-0a50-7276-a198-8d3713be5743",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": "mv_agnello_lupo_gpt",
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "2k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true
+  },
+  "credits": 30
+ },
+ "mv_agnello_occhio_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13c76-4113-7549-bbce-81d96ccf98f4",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby soaked plush lamb standing upright (stitched seams, striped patch, red sailor bow with a brass anchor charm, curled brown horns, dark hooves, small tail), whose cute face has split open vertically along a seam: the fabric parts like two lips with white stuffing tufts, the two brass button eyes are pushed to the sides, and from inside a single huge glossy eye with a pink radial iris stares out. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_occhio_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_agnello_occhio_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13c76-39d5-778e-a068-123173590433",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions, full body from head to feet, standing upright in a neutral relaxed pose with the arms slightly away from the body, on a plain flat light grey background with soft even studio lighting and no environment, no fog, no floor details, no cast shadows. A small chubby soaked plush lamb standing upright (stitched seams, striped patch, red sailor bow with a brass anchor charm, curled brown horns, dark hooves, small tail), whose cute face has split open vertically along a seam: the fabric parts like two lips with white stuffing tufts, the two brass button eyes are pushed to the sides, and from inside a single huge glossy eye with a pink radial iris stares out. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@agnello_occhio_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "3d_agnello_occhio": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a13c7b-97cd-7435-9c97-4a01f961f144",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": "mv_agnello_occhio_gpt",
+  "body": {
+   "input_task_id": "01a13c76-4113-7549-bbce-81d96ccf98f4",
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "2k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true
+  },
+  "credits": 30
+ }
+}
