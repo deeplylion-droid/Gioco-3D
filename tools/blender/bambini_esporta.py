@@ -6,7 +6,10 @@ Uso:
 
 <nome> è una chiave di MODELLI in bambini_comune.py (dà file e altezza). Il modello esce in
 assets_src/bambini/<file>, con le texture di Meshy (2K, colore, metallo/rugosità, normali) in JPEG.
-I grezzi di Meshy (circa 1-1,6 milioni di facce, 40-56 MB) non vanno nel repo.
+I grezzi di Meshy (circa 1-1,9 milioni di facce, 40-56 MB) non vanno nel repo.
+
+Versioni leggere per il gioco (circa 25 mila triangoli, stesse texture 2K), dai GLB del repo:
+    ... bambini_esporta.py assets_src/bambini/<file> <nome> --facce 25000 --cartella game
 """
 import argparse, os, sys
 import bpy
@@ -17,6 +20,7 @@ import bambini_comune as B  # noqa: E402
 ap = argparse.ArgumentParser()
 ap.add_argument('grezzo'); ap.add_argument('nome')
 ap.add_argument('--facce', type=int, default=150000)
+ap.add_argument('--cartella', default='', help="sottocartella di assets_src/bambini (es. 'game')")
 a = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 
 file, altezza = B.MODELLI[a.nome]
@@ -31,9 +35,7 @@ for o in mesh:
         mod.use_collapse_triangulate = True
         bpy.context.view_layer.objects.active = o
         bpy.ops.object.modifier_apply(modifier=mod.name)
-    B.log(a.nome, o.name, n, '->', len(o.data.polygons), 'facce')
-    o.name = a.nome
-    o.data.name = a.nome
+    B.log(a.nome, n, '->', len(o.data.polygons), 'facce')
 # applica scala e posizione del perno alle mesh, poi toglie il perno
 bpy.ops.object.select_all(action='DESELECT')
 for o in mesh:
@@ -42,12 +44,16 @@ for o in mesh:
 bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
 bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 bpy.data.objects.remove(perno, do_unlink=True)
+for o in mesh:  # i nomi solo ora: prima il perno aveva già il nome del modello
+    o.name = a.nome
+    o.data.name = a.nome
 for m in bpy.data.materials:
     m.name = a.nome
 lo, hi = B.limiti(list(bpy.context.scene.objects))
 B.log('misure (m)', tuple(round(v, 3) for v in hi - lo), 'min z', round(lo.z, 4))
-out = os.path.join(B.ASSET, file)
-os.makedirs(B.ASSET, exist_ok=True)
+cartella = os.path.join(B.ASSET, a.cartella) if a.cartella else B.ASSET
+out = os.path.join(cartella, file)
+os.makedirs(cartella, exist_ok=True)
 bpy.ops.export_scene.gltf(filepath=out, export_format='GLB', use_selection=False,
                           export_image_format='JPEG', export_jpeg_quality=90,
                           export_apply=True, export_yup=True)
