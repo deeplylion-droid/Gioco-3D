@@ -17,14 +17,14 @@ var _cursore: HSlider
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_gamma = float(Grafica.valore("luminosita"))
 	var nero := ColorRect.new()
 	nero.color = Color.BLACK
-	nero.set_anchors_preset(Control.PRESET_FULL_RECT)
+	nero.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(nero)
 	var col := VBoxContainer.new()
-	col.set_anchors_preset(Control.PRESET_FULL_RECT)
+	col.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	col.offset_left = 80
 	col.offset_right = -80
 	col.offset_top = 50
@@ -101,7 +101,11 @@ func imposta_gamma(g: float) -> void:
 
 func _chiudi() -> void:
 	chiusa.emit()
-	queue_free()
+	# Se è la scena .tscn (CanvasLayer + Control), si chiude tutta.
+	if owner is CanvasLayer:
+		owner.queue_free()
+	else:
+		queue_free()
 
 
 func _disegna() -> void:

@@ -93,10 +93,10 @@ func _colore(c: Color, rugosita := 0.5, metallo := 0.0) -> StandardMaterial3D:
 
 func _crea_materiali() -> void:
 	# Pavimento bagnato: rugosità bassa, così SSR e sonde riflettono le luci.
-	_mat["pavimento"] = _pbr("dirty_tiles", 0.9, 0.3, Color(0.8, 0.82, 0.82))
-	_mat["muro"] = _pbr("peeling_painted_wall", 0.28, 1.0, Color(0.75, 0.8, 0.8))
+	_mat["pavimento"] = _pbr("anti_skid_tiles", 0.5, 0.35, Color(0.62, 0.66, 0.68))
+	_mat["muro"] = _pbr("peeling_painted_wall", 0.28, 1.0, Color(0.55, 0.78, 0.76))
 	_mat["soffitto"] = _pbr("concrete_floor_painted", 0.2, 1.0, Color(0.55, 0.57, 0.58))
-	_mat["vasca"] = _pbr("blue_floor_tiles_01", 0.5, 0.6)
+	_mat["vasca"] = _pbr("long_white_tiles", 0.6, 0.5, Color(0.62, 0.8, 0.88))
 	_mat["ruggine"] = _pbr("green_metal_rust", 0.6, 1.0)
 	_mat["bordo"] = _pbr("concrete_floor_painted", 0.5, 0.7, Color(0.85, 0.85, 0.8))
 	_mat["cromo"] = _colore(Color(0.8, 0.8, 0.82), 0.18, 1.0)
@@ -168,13 +168,13 @@ func _crea_ambiente() -> void:
 	env.set("glow_levels/3", 1.0)
 	env.set("glow_levels/5", 0.6)
 	env.volumetric_fog_enabled = true
-	env.volumetric_fog_density = 0.024
+	env.volumetric_fog_density = 0.02
 	env.volumetric_fog_albedo = Color(0.72, 0.76, 0.8)
 	env.volumetric_fog_anisotropy = 0.55
 	env.volumetric_fog_length = 48.0
 	env.volumetric_fog_detail_spread = 1.6
-	env.volumetric_fog_gi_inject = 0.5
-	env.volumetric_fog_ambient_inject = 0.12
+	env.volumetric_fog_gi_inject = 0.25
+	env.volumetric_fog_ambient_inject = 0.02
 	env.volumetric_fog_sky_affect = 0.0
 	env.volumetric_fog_temporal_reprojection_enabled = true
 	env.volumetric_fog_temporal_reprojection_amount = 0.85
@@ -525,7 +525,7 @@ func _crea_luci() -> void:
 	luna.light_energy = 0.7
 	luna.shadow_enabled = true
 	luna.light_angular_distance = 0.5
-	luna.light_volumetric_fog_energy = 2.0
+	luna.light_volumetric_fog_energy = 1.0
 	luna.rotation = Vector3(deg_to_rad(-76), deg_to_rad(25), 0)
 	add_child(luna)
 	tempesta = Tempesta.new()

@@ -19,19 +19,19 @@ var _tabs: TabContainer
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	theme = _crea_tema()
 	var sfondo := ColorRect.new()
 	sfondo.color = Color(0, 0, 0, 0.55)
-	sfondo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	sfondo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(sfondo)
 
+	var centro := CenterContainer.new()
+	centro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(centro)
 	var pannello := PanelContainer.new()
-	pannello.set_anchors_preset(Control.PRESET_CENTER)
-	pannello.custom_minimum_size = Vector2(760, 560)
-	pannello.position = -pannello.custom_minimum_size / 2
-	pannello.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_KEEP_SIZE)
-	add_child(pannello)
+	pannello.custom_minimum_size = Vector2(780, 580)
+	centro.add_child(pannello)
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 12)
 	pannello.add_child(col)
@@ -135,7 +135,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func chiudi_menu() -> void:
 	chiuso.emit()
-	queue_free()
+	# Se è la scena .tscn (CanvasLayer + Control), si chiude tutta.
+	if owner is CanvasLayer:
+		owner.queue_free()
+	else:
+		queue_free()
 
 
 func apri_calibrazione() -> void:
