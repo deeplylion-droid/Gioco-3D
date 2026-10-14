@@ -2,18 +2,19 @@ extends Node
 ## Regia per screenshot e video senza schermo. Si attiva con argomenti dopo "--":
 ##   --preset=ultra  --inq=sala  --torcia=0  --buio=1  --lampo=40  --frames=60
 ##   --out=../../docs/report/render_grafica/x.jpg  --menu=2  --calibrazione=1
-##   --set=ombre:0,gi:2  --seme=3  --tempesta=0  --video=1
+##   --set=ombre:0,gi:2  --seme=3  --tempesta=0  --video=1  --lampi=10,80,150  --azimut=170
 ## Con --video=1 non salva niente: si usa con --write-movie e chiude dopo --frames.
 
 const INQUADRATURE := {
 	# posizione occhi, yaw, pitch (gradi)
-	"sala": [Vector3(9.5, 1.65, 11.0), 38.0, 10.0],
+	"sala": [Vector3(9.5, 1.65, 11.0), 38.0, 3.0],
 	"piscina": [Vector3(-8.5, 1.65, 6.5), -62.0, -8.0],
 	"cupola": [Vector3(-2.0, 1.65, 9.0), 10.0, 48.0],
 	"piedistallo": [Vector3(4.2, 1.65, -3.0), 32.0, 12.0],
 	"corridoio": [Vector3(18.8, 1.65, 0.6), -90.0, 1.0],
 	"buio": [Vector3(-11.0, 1.65, 6.0), -150.0, -4.0],
 	"buio_statua": [Vector3(1.6, 1.65, -5.0), 10.0, 14.0],
+	"pavimento": [Vector3(9.5, 1.65, 11.0), 38.0, -35.0],
 	"nebbia": [Vector3(12.0, 1.65, 9.0), 55.0, 6.0],
 }
 
@@ -31,6 +32,7 @@ func _ready() -> void:
 	_scena = get_parent()
 	seed(int(_arg.get("seme", "7")))
 	_frames = int(_arg.get("frames", "60"))
+	Grafica.salva_su_disco = false
 	if _arg.has("preset"):
 		Grafica.applica_preset(_arg["preset"])
 	if _arg.has("set"):
@@ -51,6 +53,9 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_frame += 1
+	if _arg.has("lampi") and str(_frame) in String(_arg["lampi"]).split(","):
+		_scena.tempesta.lampo_ora(float(_arg.get("forza_lampo", "1.3")), 1.0,
+			deg_to_rad(float(_arg["azimut"])) if _arg.has("azimut") else NAN)
 	if _arg.has("lampo") and _frame == int(_arg["lampo"]):
 		_scena.tempesta.lampo_ora(float(_arg.get("forza_lampo", "1.3")), 1.0,
 			deg_to_rad(float(_arg["azimut"])) if _arg.has("azimut") else NAN)

@@ -88,6 +88,8 @@ const OMBRE := [
 const GRADING: Array[String] = ["Neutro", "Notte fredda", "Anni '90 sbiadito", "Bleach bypass"]
 
 var valori := {}
+## Se false le modifiche non vengono scritte su disco (usato dalle catture automatiche).
+var salva_su_disco := true
 var _env_base := {}            # valori originali dell'Environment della scena
 var _env: Environment
 var _post_layer: CanvasLayer
@@ -170,6 +172,8 @@ func carica() -> void:
 
 func salva() -> void:
 	_salvataggio_pendente = false
+	if not salva_su_disco:
+		return
 	var cfg := ConfigFile.new()
 	cfg.load(PERCORSO)  # mantiene le altre sezioni (audio, comandi...)
 	for k in valori:
@@ -409,7 +413,7 @@ func _crea_post_processing() -> void:
 	_post_layer.name = "PostProcessing"
 	_post_layer.layer = 50  # sopra il gioco e l'HUD, sotto i menu (layer 100)
 	_post_rect = ColorRect.new()
-	_post_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_post_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_post_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var m := ShaderMaterial.new()
 	m.shader = POST_SHADER
