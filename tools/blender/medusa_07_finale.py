@@ -6,8 +6,10 @@
   - 12 tentacoli lunghi e spezzati come nel concept della statua, con catene di ossa per la fisica;
   - occhio di vetro lucido con l'iride approvata;
   - fauce nascosta sotto l'occhio (medusa_fauce.py);
-  - azioni per Godot: "statua" (mani giunte sul petto), "fluttua" (ciclo: corpo che ondeggia, campana che
-    pulsa, tentacoli che ondeggiano), "fauce_apre" (mascella + blend shape), "insegue" (braccia protese).
+  - la posa statua (mani giunte sul petto) e' la posa di RIPOSO del modello: in Godot, senza animazioni,
+    la medusa e' gia' la statua;
+  - azioni per Godot: "statua" (= riposo), "fluttua" (ciclo: corpo che ondeggia, campana che pulsa,
+    tentacoli che ondeggiano), "fauce_apre" (mascella + blend shape), "insegue" (braccia protese).
 Scrive build/medusa_finale.blend.
 
 Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_07_finale.py
@@ -27,7 +29,8 @@ FPS = 24
 
 TENTACOLI_FINALI = dict(TENT.PRESET['spezzati'], n_grossi=12, lunghezza=1.6, apertura=0.7, ampiezza=0.08,
                         passo=0.17, angolo_pieghe=34, raggio_base=0.032, raggio_punta=0.005, n_sottili=14,
-                        lunghezza_sottili=1.25, n_ossa=10, seme=7)
+                        lunghezza_sottili=1.25, n_ossa=10, seme=7,
+                        lati=8, passo_anelli=0.03, lati_sottili=5, passo_anelli_sottili=0.04)
 
 # colori dei canali (gradiente dall'alto della campana al bordo), come Halitrephes maasi
 CANALI_GRADIENTE = [(0.0, (1.0, 0.72, 0.08)), (0.45, (1.0, 0.36, 0.22)), (1.0, (1.0, 0.12, 0.55))]
@@ -217,12 +220,63 @@ def _nuova_azione(arm, nome):
 
 
 def azione_statua(arm):
+    """La statua e' la posa di riposo: l'azione tiene semplicemente tutte le ossa a riposo."""
     act = _nuova_azione(arm, 'statua')
-    POSE.posa_statua(arm)
+    POSE.azzera(arm)
     _chiave_posa(arm, 1)
     _chiave_posa(arm, 2)
     _nla(arm, 'statua', act)
-    POSE.azzera(arm)
+
+
+def posa_come_riposo(arm):
+    """La posa statua (mani giunte) diventa la posa di riposo del modello: in Godot, senza animazioni,
+    la medusa e' gia' la statua. Le mesh si deformano nella posa (shape key comprese) e le ossa si rimettono a
+    riposo in quella posa."""
+    attiva(arm)
+    bpy.ops.object.mode_set(mode='POSE')
+    POSE.posa_statua(arm)
+    bpy.ops.object.mode_set(mode='OBJECT')
+    mesh = [o for o in bpy.data.objects if o.type == 'MESH' and any(m.type == 'ARMATURE' for m in o.modifiers)]
+
+    def valutata(ob):
+        bpy.context.view_layer.update()
+        dg = bpy.context.evaluated_depsgraph_get()
+        ev = ob.evaluated_get(dg)
+        co = coords(ev.to_mesh())
+        ev.to_mesh_clear()
+        return co
+
+    deformate = {}
+    for ob in mesh:
+        keys = list(ob.data.shape_keys.key_blocks) if ob.data.shape_keys else []
+        for k in keys:
+            k.value = 0.0
+        base = valutata(ob)
+        chiavi = {}
+        for k in keys[1:]:
+            k.value = 1.0
+            chiavi[k.name] = valutata(ob)
+            k.value = 0.0
+        deformate[ob.name] = (base, chiavi)
+    for ob in mesh:
+        base, chiavi = deformate[ob.name]
+        for m in [m for m in ob.modifiers if m.type == 'ARMATURE']:
+            ob.modifiers.remove(m)
+        set_coords(ob.data, base)
+        if ob.data.shape_keys:
+            kb = ob.data.shape_keys.key_blocks
+            kb[0].data.foreach_set('co', base.ravel())
+            for nome, co in chiavi.items():
+                kb[nome].data.foreach_set('co', co.ravel())
+        ob.data.update()
+    attiva(arm)
+    bpy.ops.object.mode_set(mode='POSE')
+    bpy.ops.pose.armature_apply(selected=False)
+    bpy.ops.object.mode_set(mode='OBJECT')
+    for ob in mesh:
+        mod = ob.modifiers.new('Scheletro', 'ARMATURE')
+        mod.object = arm
+    log(f'posa statua applicata come posa di riposo ({len(mesh)} mesh)')
 
 
 def posa_insegue(arm, f=1.0):
@@ -234,7 +288,7 @@ def posa_insegue(arm, f=1.0):
         dir_mano = Vector((s * 0.08, -1.0, 0.12))
         dorso = Vector((s * 0.15, 0.1, 1.0))
         POSE.posa_braccio(arm, suf, polso, polo, dir_mano, dorso)
-        POSE.piega_dita(arm, suf, 38 * f, pollice=18 * f)
+        POSE.piega_dita(arm, suf, 38 * f - POSE.DITA_STATUA, pollice=18 * f - POSE.POLLICE_STATUA)
     for nome, gradi in (('colonna_1', 10), ('colonna_2', 9), ('petto', 6)):
         pb = arm.pose.bones[nome]; pb.rotation_mode = 'XYZ'
         pb.rotation_euler = (math.radians(-gradi * f), 0, 0)
@@ -301,7 +355,7 @@ def posa_attacco(arm, f=1.0):
         dir_mano = Vector((s * 0.35, -0.9, 0.25))
         dorso = Vector((s * 0.2, 0.15, 1.0))
         POSE.posa_braccio(arm, suf, polso, polo, dir_mano, dorso)
-        POSE.piega_dita(arm, suf, 45 * f, pollice=20 * f)
+        POSE.piega_dita(arm, suf, 45 * f - POSE.DITA_STATUA, pollice=20 * f - POSE.POLLICE_STATUA)
     for nome, gradi in (('colonna_1', 8), ('colonna_2', 8), ('petto', 5)):
         pb = arm.pose.bones[nome]; pb.rotation_mode = 'XYZ'
         pb.rotation_euler = (math.radians(-gradi * f), 0, 0)
@@ -346,6 +400,7 @@ def main():
     materiale_campana()
     materiale_tentacoli()
     materiale_occhio()
+    posa_come_riposo(arm)
     attiva(arm)
     bpy.ops.object.mode_set(mode='POSE')
     azione_statua(arm)

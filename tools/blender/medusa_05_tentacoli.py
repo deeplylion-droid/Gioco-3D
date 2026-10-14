@@ -41,6 +41,9 @@ BASE = dict(
     raggio_sottili=0.006,
     anello_sottili=0.30,    # raggio dell'anello d'attacco dei filamenti (m)
     lati=12,                # vertici per anello (tentacoli grossi)
+    passo_anelli=0.015,     # distanza tra gli anelli lungo il tentacolo (m)
+    lati_sottili=6,
+    passo_anelli_sottili=0.015,
     colore=(0.75, 0.08, 0.32),
     seme=7,
 )
@@ -160,15 +163,15 @@ def base_perpendicolare(t):
     return u, np.cross(t, u)
 
 
-def curva(radice, par, rng, lunghezza, ampiezza, forma=None):
-    """Linea centrale del tentacolo (punti ogni ~1,5 cm), che scende allargandosi dalla campana."""
+def curva(radice, par, rng, lunghezza, ampiezza, forma=None, ds=None):
+    """Linea centrale del tentacolo (punti ogni ds, di default 1,5 cm), che scende allargandosi dalla campana."""
     forma = forma or par['forma']
     radice = np.asarray(radice, float)
     fuori = np.array([radice[0], radice[1], 0.0])
     fuori = fuori / (np.linalg.norm(fuori) + 1e-9) if np.linalg.norm(fuori) > 0.02 else rng.normal(size=3) * [1, 1, 0]
     fuori /= np.linalg.norm(fuori)
     giu = np.array([0, 0, -1.0])
-    ds = 0.015
+    ds = ds or par.get('passo_anelli', 0.015)
     n = max(int(lunghezza / ds), 8)
     pts = [radice.copy()]
     if forma == 'spezzata':
@@ -336,10 +339,10 @@ def crea_tentacoli(arm, par, togli=True):
         rad = np.array([rr * math.cos(a), rr * math.sin(a), Z_SOTTOMBRELLA - 0.01 + 0.02])
         L = par['lunghezza_sottili'] * rng.uniform(0.75, 1.1)
         p2 = dict(par, apertura=par['apertura'] * 0.7, passo=0.35)
-        pts = curva(rad, p2, rng, L, 0.03, forma='ondulata')
+        pts = curva(rad, p2, rng, L, 0.03, forma='ondulata', ds=par.get('passo_anelli_sottili', 0.015))
         Ls = np.r_[0, np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))]
         rag = par['raggio_punta'] * 0.4 + (par['raggio_sottili'] - par['raggio_punta'] * 0.4) * (1 - Ls / Ls[-1])
-        v, f, uv, _ = tubo(pts, rag, 6)
+        v, f, uv, _ = tubo(pts, rag, par.get('lati_sottili', 6))
         off = sum(len(x) for x in fv)
         fv.append(v); ff += [tuple(k + off for k in x) for x in f]; fuv += uv
     sottili = oggetto_mesh('Medusa_Filamenti', np.vstack(fv), ff, fuv, mat_f) if n_s else None

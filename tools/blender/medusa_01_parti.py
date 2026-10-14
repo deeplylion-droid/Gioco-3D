@@ -29,6 +29,10 @@ from scipy.sparse.csgraph import connected_components, maximum_flow, breadth_fir
 PARTI = ['pelle', 'capelli', 'campana', 'moncherini', 'occhio_dipinto']
 PELLE, CAPELLI, CAMPANA, MONCHERINI, OCCHIO = range(5)
 
+# Modello da gioco: il guscio di Meshy (160k triangoli) si riduce subito dopo la saldatura, cosi' tutti i
+# passi successivi (orbita, scheletro, fauce) lavorano gia' sulla mesh leggera. 1.0 = nessuna riduzione.
+RIDUZIONE = float(os.environ.get('MEDUSA_RIDUZIONE_PASSO1', '1.0'))  # la riduzione vera e' nel passo 2b
+
 Z_VITA = -0.155          # taglio orizzontale tra busto (vinile) e campana: meta' del passaggio di colore
 R_CAMPANA = 0.5          # raggio massimo della campana (le braccia sotto la vita sono oltre 0.55)
 Z_SOTTO = -0.53          # sotto questa quota ci sono solo bordo, sottombrella e moncherini
@@ -105,6 +109,32 @@ def pulisci_isole(lab, adj, min_facce=40, giri=3):
 
 # ---------------------------------------------------------------- passi
 
+def riduci(ob, ratio):
+    """Decimazione (collapse) che conserva di piu' il viso (orbita e futura fauce) e le mani."""
+    me = ob.data
+    co = coords(me)
+    d_viso = np.hypot(co[:, 0], co[:, 2] - 0.58)
+    peso = np.full(len(co), 0.15)
+    peso[(d_viso < 0.17) & (co[:, 1] < -0.08)] = 1.0          # viso: orbita e bocca
+    peso[np.abs(co[:, 0]) > 0.6] = 0.8                          # mani e dita
+    vg = ob.vertex_groups.new(name='proteggi')
+    for w in np.unique(peso):
+        vg.add(np.nonzero(peso == w)[0].tolist(), float(w), 'REPLACE')
+    mod = ob.modifiers.new('riduci', 'DECIMATE')
+    mod.decimate_type = 'COLLAPSE'
+    mod.ratio = ratio
+    mod.use_collapse_triangulate = True
+    mod.vertex_group = 'proteggi'
+    mod.vertex_group_factor = 6.0
+    attiva(ob)
+    n0 = len(me.polygons)
+    bpy.ops.object.modifier_apply(modifier='riduci')
+    g = ob.vertex_groups.get('proteggi')
+    if g:
+        ob.vertex_groups.remove(g)
+    log(f'riduzione: {n0} -> {len(me.polygons)} facce')
+
+
 def importa_e_salda():
     reset()
     bpy.ops.import_scene.gltf(filepath=BASE_GLB)
@@ -115,6 +145,10 @@ def importa_e_salda():
     nv = len(bm.verts)
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-5)
     log('saldatura:', nv, '->', len(bm.verts), 'vertici')
+    if RIDUZIONE < 1.0:
+        bm.to_mesh(me); bm.free()
+        riduci(ob, RIDUZIONE)
+        bm = bmesh.new(); bm.from_mesh(me)
     # taglio pulito della vita (solo busto/campana, non le braccia)
     geom = [f for f in bm.faces if abs(f.calc_center_median().z - Z_VITA) < 0.06
             and math.hypot(*f.calc_center_median().xy) < 0.45]

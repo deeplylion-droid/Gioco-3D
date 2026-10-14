@@ -577,11 +577,30 @@ def pose_prova(arm):
     tavola(celle, os.path.join(ant, 'pose_prova.jpg'), colonne=3)
 
 
+def mesh_alta():
+    """La mesh ad alta risoluzione del passo 2 (stesse coordinate): le articolazioni si misurano li',
+    anche quando lo scheletro si costruisce sulla mesh da gioco ridotta."""
+    path = os.path.join(BUILD, 'medusa_02_texture.blend')
+    if not os.path.exists(path):
+        return None
+    with bpy.data.libraries.load(path, link=False) as (src, dst):
+        dst.meshes = ['Medusa']
+    return dst.meshes[0]
+
+
 def main():
     t0 = time.time()
     apri(os.path.join(BUILD, 'medusa_03_occhio.blend'))
     ob = bpy.data.objects['Medusa']
-    M, g = misure(ob.data)
+    alta = mesh_alta()
+    M, _ = misure(alta if alta is not None else ob.data)
+    g = Grafo(ob.data)
+    if alta is not None:
+        mats = [m for m in alta.materials if m]
+        bpy.data.meshes.remove(alta)
+        for m in mats:
+            if m.users == 0:
+                bpy.data.materials.remove(m)
     arm = crea_armatura(M)
     collega_scheletro(arm, M)
     pulisci_pesi(ob, g, M)
