@@ -1,6 +1,7 @@
 extends Node
 ## Autoload "Game": pausa con Esc e cattura del mouse.
-## Esc mette in pausa e libera il mouse; Esc o un clic riprendono il gioco.
+## Esc mette in pausa e libera il mouse: dal menu di pausa si riprende, si aprono le opzioni
+## grafiche (addon grafica) o si esce. Al primo avvio: preset Ultra e calibrazione della luminosità.
 
 signal paused_changed(is_paused: bool)
 
@@ -12,14 +13,54 @@ signal paused_changed(is_paused: bool)
 const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
 
+## Al primo avvio (nessun user://settings.cfg) parte con il preset Ultra e la GI SDFGI.
+@export var first_run_preset := "ultra"
+
 var _overlay: CanvasLayer
 var _had_focus := false
+var _menu_layer: CanvasLayer
+var _resume_button: Button
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_overlay()
 	capture_mouse()
+	var first_run := not FileAccess.file_exists("user://settings.cfg")
+	if first_run and not is_automated():
+		Grafica.applica_preset(first_run_preset)
+		Grafica.imposta("gi", 2)
+	if not is_automated() and not bool(Grafica.valore("calibrato")):
+		_show_calibration.call_deferred()
+
+
+## Vero nelle prove automatiche (test e screenshot lanciati con --script).
+static func is_automated() -> bool:
+	return OS.get_cmdline_args().has("--script")
+
+
+func _show_calibration() -> void:
+	var cal: CanvasLayer = load("res://addons/grafica/calibrazione_luminosita.tscn").instantiate()
+	add_child(cal)
+	get_tree().paused = true
+	release_mouse()
+	cal.tree_exited.connect(func():
+		get_tree().paused = false
+		capture_mouse())
+
+
+func open_options() -> void:
+	if is_instance_valid(_menu_layer):
+		return
+	_overlay.visible = false
+	_menu_layer = load("res://addons/grafica/menu_opzioni.tscn").instantiate()
+	add_child(_menu_layer)
+	var menu := _menu_layer.get_node(^"Menu")
+	menu.chiuso.connect(func():
+		_menu_layer = null
+		if get_tree().paused:
+			_overlay.visible = true
+			_resume_button.grab_focus.call_deferred())
 
 
 func capture_mouse() -> void:
@@ -43,7 +84,11 @@ func set_paused(value: bool) -> void:
 	_overlay.visible = value
 	if value:
 		release_mouse()
+		_resume_button.grab_focus.call_deferred()
 	else:
+		if is_instance_valid(_menu_layer):
+			_menu_layer.queue_free()
+			_menu_layer = null
 		capture_mouse()
 	paused_changed.emit(value)
 
@@ -55,14 +100,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_tree().change_scene_to_file(SCENE_DEMO if key.keycode == KEY_F1 else SCENE_TEST)
 		get_viewport().set_input_as_handled()
 		return
+	if is_instance_valid(_menu_layer):
+		return  # il menu delle opzioni gestisce da solo Esc
 	if event.is_action_pressed("pause"):
+		if get_tree().paused and not _overlay.visible:
+			return  # in pausa per altro (Polaroid, calibrazione)
 		set_paused(not get_tree().paused)
 		get_viewport().set_input_as_handled()
-	elif event is InputEventMouseButton and event.pressed:
-		if get_tree().paused:
-			set_paused(false)
-			get_viewport().set_input_as_handled()
-		elif Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+	elif event is InputEventMouseButton and event.pressed and not get_tree().paused:
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 			capture_mouse()
 			get_viewport().set_input_as_handled()
 
@@ -84,12 +130,28 @@ func _build_overlay() -> void:
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0.6)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_overlay.add_child(dim)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.add_child(center)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 14)
+	center.add_child(col)
 	var label := Label.new()
-	label.text = "PAUSA\n\nEsc o clic per continuare"
+	label.text = "PAUSA"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	label.add_theme_font_size_override("font_size", 28)
-	_overlay.add_child(label)
+	label.add_theme_font_size_override("font_size", 34)
+	col.add_child(label)
+	_resume_button = _menu_button(col, "Riprendi", func(): set_paused(false))
+	_menu_button(col, "Opzioni grafiche", open_options)
+	_menu_button(col, "Esci dal gioco", func(): get_tree().quit())
+
+
+func _menu_button(parent: Control, text: String, action: Callable) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.custom_minimum_size = Vector2(280, 46)
+	b.add_theme_font_size_override("font_size", 20)
+	b.pressed.connect(action)
+	parent.add_child(b)
+	return b

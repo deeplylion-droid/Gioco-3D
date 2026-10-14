@@ -1,28 +1,10 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/interaction/collectible.gd" id="1_s"]
+[ext_resource type="Script" path="res://scripts/interaction/polaroid_photo.gd" id="1_s"]
+[ext_resource type="PackedScene" path="res://assets/models/polaroid/polaroid.glb" id="2_m"]
 
 [sub_resource type="BoxShape3D" id="shape"]
 size = Vector3(0.4, 0.3, 0.4)
-
-[sub_resource type="StandardMaterial3D" id="card_mat"]
-albedo_color = Color(0.92, 0.9, 0.84, 1)
-roughness = 0.7
-emission_enabled = true
-emission = Color(0.92, 0.9, 0.84, 1)
-emission_energy_multiplier = 0.15
-
-[sub_resource type="BoxMesh" id="card"]
-material = SubResource("card_mat")
-size = Vector3(0.09, 0.004, 0.108)
-
-[sub_resource type="StandardMaterial3D" id="photo_mat"]
-albedo_color = Color(0.08, 0.1, 0.12, 1)
-roughness = 0.3
-
-[sub_resource type="BoxMesh" id="photo"]
-material = SubResource("photo_mat")
-size = Vector3(0.078, 0.002, 0.078)
 
 [node name="Polaroid" type="Area3D"]
 script = ExtResource("1_s")
@@ -31,11 +13,4 @@ script = ExtResource("1_s")
 position = Vector3(0, 0.15, 0)
 shape = SubResource("shape")
 
-[node name="Cartoncino" type="MeshInstance3D" parent="."]
-position = Vector3(0, 0.002, 0)
-rotation = Vector3(0, 0.35, 0)
-mesh = SubResource("card")
-
-[node name="Foto" type="MeshInstance3D" parent="Cartoncino"]
-position = Vector3(0, 0.003, -0.008)
-mesh = SubResource("photo")
+[node name="Modello" parent="." instance=ExtResource("2_m")]

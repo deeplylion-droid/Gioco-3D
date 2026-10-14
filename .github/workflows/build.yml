@@ -57,7 +57,11 @@ jobs:
 
       - name: Importa il progetto
         if: steps.progetto.outputs.presente == 'si'
-        run: godot --headless --path godot --import
+        run: |
+          godot --headless --path godot --import
+          # Le texture estratte dai GLB vanno in compressione VRAM (meno memoria), poi si reimporta.
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
 
       - name: Controllo degli script
         if: steps.progetto.outputs.presente == 'si'

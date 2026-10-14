@@ -13,7 +13,7 @@ func _initialize() -> void:
 
 func _scan(dir_path: String) -> void:
 	var dir := DirAccess.open(dir_path)
-	if dir == null:
+	if dir == null or FileAccess.file_exists(dir_path.path_join(".gdignore")):
 		return
 	for sub in dir.get_directories():
 		if sub.begins_with("."):

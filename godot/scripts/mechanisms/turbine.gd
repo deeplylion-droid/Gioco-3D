@@ -30,6 +30,14 @@ signal energy_changed(energy: float)
 
 ## Se vero la turbina è bloccata (per esempio da un gonfiabile incastrato) e non gira.
 @export var jammed := false
+## Se falso non disegna la turbina provvisoria: resta il bersaglio del getto e si fa girare
+## [member external_rotor] (per esempio la girante del modello dell'ambiente).
+@export var show_model := true:
+	set(value):
+		show_model = value
+		_rebuild()
+## Rotore esterno da far girare intorno al suo asse Z locale.
+@export var external_rotor: NodePath
 
 var angular_speed := 0.0
 var energy := 0.0
@@ -45,6 +53,10 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	_hitbox.water_hit.connect(_on_water_hit)
+	if not external_rotor.is_empty():
+		var r := get_node_or_null(external_rotor) as Node3D
+		if r:
+			_rotor = r
 
 
 func _on_water_hit(amount: float, _point: Vector3, _direction: Vector3) -> void:
@@ -62,7 +74,8 @@ func _physics_process(delta: float) -> void:
 	if absf(e - energy) > 0.0005:
 		energy = e
 		energy_changed.emit(energy)
-		_lamp_mat.emission_energy_multiplier = 0.2 + 3.0 * energy
+		if _lamp_mat:
+			_lamp_mat.emission_energy_multiplier = 0.2 + 3.0 * energy
 	if not powered and energy >= power_on_threshold:
 		powered = true
 	elif powered and energy <= power_off_threshold:
@@ -77,6 +90,13 @@ func _rebuild() -> void:
 	_vis = Node3D.new()
 	_vis.name = "Graybox"
 	add_child(_vis, false, Node.INTERNAL_MODE_FRONT)
+	_lamp_mat = null
+	if not show_model:
+		_rotor = Node3D.new()
+		_rotor.name = "Rotore"
+		_vis.add_child(_rotor)
+		_add_hitbox()
+		return
 	# Struttura fissa: piastra sul muro e mozzo (collisione nel livello "mondo").
 	var body := StaticBody3D.new()
 	body.name = "Struttura"
@@ -102,7 +122,11 @@ func _rebuild() -> void:
 	# Spia: si illumina con l'energia.
 	_lamp_mat = Graybox.lamp_material(Color(1.0, 0.75, 0.25), 0.2)
 	Graybox.box(_vis, Vector3(0.16, 0.16, 0.1), Vector3(0, radius * 1.1 + 0.18, 0.02), _lamp_mat, "Spia")
-	# Bersaglio del getto: il disco delle pale.
+	_add_hitbox()
+
+
+## Bersaglio del getto: il disco delle pale.
+func _add_hitbox() -> void:
 	_hitbox = WaterHitbox.new()
 	_hitbox.name = "Bersaglio"
 	_vis.add_child(_hitbox)

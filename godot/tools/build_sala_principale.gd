@@ -1,27 +1,22 @@
 extends SceneTree
-## Genera la demo giocabile della sala principale: res://scenes/sala_principale.tscn
-## (più i materiali in assets/materials/sala/ e l'ambiente assets/env/sala_environment.tres).
+## Costruisce res://scenes/sala_principale.tscn, la demo giocabile della sala principale:
+## l'architettura vera dell'acquapark (i GLB di assets/ambiente/sala, tutti in 0,0,0), la medusa
+## sul piedistallo, le luci della sala e l'atmosfera (addon grafica), le meccaniche della demo
+## (zaino sulla rastrelliera dei bagnini, pozza, turbina dello scarico, portello, vasche, ruota
+## a pale e secchio gigante) e le 10 Polaroid.
+## Le coordinate vengono da assets/ambiente/sala/sala_dati.json (vedi INTEGRAZIONE.md).
 ## Uso: godot --headless --path godot --script res://tools/build_sala_principale.gd
-## Dopo averla generata si può modificare a mano nell'editor; rilanciando questo script
-## le modifiche fatte a mano si perdono.
-##
-## Pianta (docs/livello/mappa_capitolo1.png, misure in metri, -Z = nord):
-##  - sala 48 x 35 m, alta 10 m, cupola di 26 m sopra la piscina;
-##  - piscina a onde vuota al centro (13 x 23 m): spiaggia a nord, parte profonda a sud con la pozza;
-##  - statua sul bordo sud, davanti all'ingresso dagli spogliatoi (muro sud);
-##  - area bimbi a ovest (nord-ovest) con il secchio gigante, vasca d'arrivo a sud-ovest;
-##  - torre degli scivoli a est (nord-est).
-## Ogni parte grafica sta in un AssetSlot: i GLB veri sostituiscono il figlio "Graybox".
 
 const OUT := "res://scenes/sala_principale.tscn"
+const SALA := "res://assets/ambiente/sala/"
 const MAT_DIR := "res://assets/materials/sala/"
-const UNION := CSGShape3D.OPERATION_UNION
-const SUB := CSGShape3D.OPERATION_SUBTRACTION
 
-const POOL_CENTER := Vector3(1.0, 0.0, -2.5)
-const POOL_WIDTH := 13.0
-const POOL_PROFILE := [Vector2(-11.5, 0.0), Vector2(-3.5, 1.2), Vector2(4.0, 2.4), Vector2(11.5, 2.4)]
-const DEEP_Y := -2.4
+## Quota del piano del piedistallo e centro (dalla guida dell'ambiente).
+const PEDESTAL := Vector3(0.0, 0.9, 6.9)
+const SPAWN := Vector3(0.0, 0.0, 11.2)
+## Pozza torbida sul fondo della piscina a onde: fondo a conca intorno allo scarico.
+const DRAIN := Vector3(0.0, -2.24, 2.0)
+const PUDDLE_LEVEL := -2.07
 
 var level: Node3D
 var M := {}
@@ -32,7 +27,6 @@ var _n := 0
 func _initialize() -> void:
 	S.player = load("res://scenes/player/player.tscn")
 	S.turbine = load("res://scenes/props/turbine.tscn")
-	S.door = load("res://scenes/props/powered_door.tscn")
 	S.button = load("res://scenes/props/water_button.tscn")
 	S.tank = load("res://scenes/props/water_tank.tscn")
 	S.ladder = load("res://scenes/props/ladder.tscn")
@@ -44,13 +38,12 @@ func _initialize() -> void:
 	level.set_script(load("res://scripts/game/sala_principale.gd"))
 	_environment()
 	_hall()
-	_pool()
 	_statue()
-	_kids_area()
-	_arrival_pool()
-	_slide_tower()
-	_lifeguard_room()
-	_lights()
+	_pack_station()
+	_pool()
+	_pools()
+	_kids_toys()
+	_polaroids()
 	_gameplay()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
@@ -63,28 +56,11 @@ func _initialize() -> void:
 
 # --- Materiali e ambiente ---------------------------------------------------------------
 
-func _grid_mat(file: String, base: Color, line: Color, rough: float, grid := 1.0, sub := 0.35, spec := 0.5) -> ShaderMaterial:
-	var m := ShaderMaterial.new()
-	m.shader = load("res://shaders/graybox.gdshader")
-	m.set_shader_parameter(&"base_color", base)
-	m.set_shader_parameter(&"line_color", line)
-	m.set_shader_parameter(&"grid_size", grid)
-	m.set_shader_parameter(&"sub_lines", sub)
-	m.set_shader_parameter(&"roughness_value", rough)
-	m.set_shader_parameter(&"specular_value", spec)
-	return _save(m, file)
-
-
-func _std_mat(file: String, color: Color, rough: float, emission := Color.BLACK, energy := 0.0, alpha := 1.0) -> StandardMaterial3D:
+func _std(file: String, color: Color, rough: float, metal := 0.0) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(color, alpha)
+	m.albedo_color = color
 	m.roughness = rough
-	if alpha < 1.0:
-		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	if energy > 0.0:
-		m.emission_enabled = true
-		m.emission = emission
-		m.emission_energy_multiplier = energy
+	m.metallic = metal
 	return _save(m, file)
 
 
@@ -97,63 +73,52 @@ func _save(m: Material, file: String) -> Material:
 
 
 func _materials() -> void:
-	M.floor = _grid_mat("pavimento", Color(0.19, 0.21, 0.22), Color(0.12, 0.13, 0.14), 0.2, 1.0, 0.6, 0.65)
-	M.wall = _grid_mat("muro", Color(0.31, 0.34, 0.35), Color(0.24, 0.26, 0.27), 0.8, 1.0, 0.25)
-	M.ceiling = _grid_mat("soffitto", Color(0.16, 0.17, 0.18), Color(0.12, 0.13, 0.14), 0.9)
-	M.metal = _grid_mat("metallo", Color(0.13, 0.13, 0.14), Color(0.1, 0.1, 0.11), 0.45, 1.0, 0.0, 0.6)
-	M.rust = _grid_mat("ruggine", Color(0.32, 0.17, 0.1), Color(0.24, 0.12, 0.07), 0.8, 1.0, 0.0)
-	M.pool = _grid_mat("piastrelle_piscina", Color(0.24, 0.42, 0.44), Color(0.15, 0.27, 0.29), 0.3, 1.0, 0.85, 0.6)
-	M.pool_wall = _grid_mat("piastrelle_parete", Color(0.27, 0.45, 0.48), Color(0.17, 0.3, 0.32), 0.35, 1.0, 0.85, 0.6)
-	M.coping = _grid_mat("bordo_piscina", Color(0.55, 0.56, 0.52), Color(0.4, 0.4, 0.38), 0.45, 0.5, 0.0)
-	M.red = _grid_mat("gioco_rosso", Color(0.75, 0.12, 0.1), Color(0.55, 0.08, 0.06), 0.45, 1.0, 0.0)
-	M.yellow = _grid_mat("gioco_giallo", Color(0.9, 0.7, 0.1), Color(0.65, 0.5, 0.05), 0.45, 1.0, 0.0)
-	M.blue = _grid_mat("gioco_blu", Color(0.12, 0.35, 0.8), Color(0.08, 0.24, 0.55), 0.45, 1.0, 0.0)
-	M.green = _grid_mat("gioco_verde", Color(0.2, 0.62, 0.3), Color(0.12, 0.42, 0.2), 0.45, 1.0, 0.0)
-	M.orange = _grid_mat("gioco_arancio", Color(0.92, 0.42, 0.1), Color(0.65, 0.28, 0.06), 0.45, 1.0, 0.0)
-	M.purple = _grid_mat("gioco_viola", Color(0.48, 0.25, 0.7), Color(0.33, 0.16, 0.5), 0.45, 1.0, 0.0)
-	M.soft = _grid_mat("tappeto_morbido", Color(0.2, 0.4, 0.55), Color(0.14, 0.3, 0.42), 0.8, 1.0, 0.0)
-	M.locker = _grid_mat("armadietti", Color(0.45, 0.6, 0.62), Color(0.3, 0.42, 0.44), 0.5, 0.5, 0.0)
-	M.glass = _std_mat("vetro_cupola", Color(0.06, 0.09, 0.14), 0.05, Color(0.25, 0.35, 0.55), 0.15, 0.3)
-	(M.glass as StandardMaterial3D).cull_mode = BaseMaterial3D.CULL_DISABLED
-	(M.glass as StandardMaterial3D).metallic = 0.3
-	ResourceSaver.save(M.glass, M.glass.resource_path)
-	M.neon = _std_mat("neon", Color(0.8, 0.95, 1.0), 0.3, Color(0.75, 0.92, 1.0), 3.0)
-	M.emergency = _std_mat("luce_emergenza", Color(0.5, 0.05, 0.03), 0.4, Color(1.0, 0.08, 0.04), 4.0)
-	M.lamp = _std_mat("lampada_calda", Color(0.6, 0.5, 0.35), 0.4, Color(1.0, 0.78, 0.5), 4.0)
-	M.porthole = _std_mat("oblo_vetro", Color(0.03, 0.05, 0.08), 0.05, Color(0.12, 0.18, 0.3), 0.6)
-	M.hole = _std_mat("buio", Color(0.0, 0.0, 0.0), 1.0)
-	(M.hole as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	ResourceSaver.save(M.hole, M.hole.resource_path)
-	var murky := (load("res://assets/materials/water_placeholder.tres") as ShaderMaterial).duplicate() as ShaderMaterial
-	murky.set_shader_parameter(&"shallow_color", Color(0.16, 0.22, 0.16))
-	murky.set_shader_parameter(&"deep_color", Color(0.03, 0.06, 0.05))
-	murky.set_shader_parameter(&"alpha", 0.86)
+	M.metal = _std("metallo_verniciato", Color(0.16, 0.19, 0.2), 0.55, 0.6)
+	M.red = _std("gonfiabile_rosso", Color(0.78, 0.07, 0.06), 0.22)
+	(M.red as StandardMaterial3D).clearcoat_enabled = true
+	ResourceSaver.save(M.red, M.red.resource_path)
+	M.hatch = _std("portello", Color(0.42, 0.45, 0.43), 0.5, 0.8)
+	var hole := StandardMaterial3D.new()
+	hole.albedo_color = Color.BLACK
+	hole.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	M.hole = _save(hole, "buio")
+	var water: ShaderMaterial = load("res://assets/materials/water_placeholder.tres")
+	var murky := water.duplicate() as ShaderMaterial
+	murky.set_shader_parameter(&"shallow_color", Color(0.2, 0.25, 0.17))
+	murky.set_shader_parameter(&"deep_color", Color(0.035, 0.05, 0.035))
 	M.murky = _save(murky, "acqua_torbida")
+	var clean := water.duplicate() as ShaderMaterial
+	clean.set_shader_parameter(&"shallow_color", Color(0.18, 0.45, 0.5))
+	clean.set_shader_parameter(&"deep_color", Color(0.02, 0.12, 0.16))
+	M.clean = _save(clean, "acqua_vasche")
+	# Vetro della cupola con i rivoli di pioggia che si accende coi lampi (addon grafica).
+	var glass := ShaderMaterial.new()
+	glass.shader = load("res://addons/grafica/vetro_cupola.gdshader")
+	glass.set_shader_parameter(&"opacita", 0.16)
+	M.dome_glass = _save(glass, "vetro_cupola")
 
 
 func _environment() -> void:
-	var e := Environment.new()
-	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color(0.012, 0.016, 0.028)
-	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	e.ambient_light_color = Color(0.4, 0.5, 0.66)
-	e.ambient_light_energy = 0.32
-	e.tonemap_mode = Environment.TONE_MAPPER_AGX
-	e.tonemap_exposure = 1.25
-	e.ssao_enabled = true
-	e.ssao_intensity = 1.6
-	e.ssr_enabled = true
-	e.ssr_max_steps = 48
-	e.glow_enabled = true
-	e.glow_intensity = 0.75
-	e.glow_bloom = 0.06
-	e.glow_hdr_threshold = 0.9
-	e.volumetric_fog_enabled = true
-	e.volumetric_fog_density = 0.022
-	e.volumetric_fog_albedo = Color(0.65, 0.7, 0.78)
-	e.volumetric_fog_anisotropy = 0.35
-	e.volumetric_fog_length = 48.0
-	e.volumetric_fog_ambient_inject = 0.15
+	# L'ambiente notturno dell'addon grafica (cielo in tempesta visto dalla cupola, AgX,
+	# nebbia volumetrica, SSR/SSAO/SSIL, glow), regolato per la sala vera.
+	var e: Environment = load("res://addons/grafica/ambiente_horror.gd").crea(true)
+	e.ambient_light_color = Color(0.3, 0.38, 0.5)
+	e.ambient_light_energy = 0.22
+	e.tonemap_exposure = 1.35
+	e.volumetric_fog_density = 0.016
+	e.volumetric_fog_albedo = Color(0.62, 0.68, 0.76)
+	e.volumetric_fog_gi_inject = 0.4
+	e.volumetric_fog_ambient_inject = 0.06
+	e.sdfgi_use_occlusion = true
+	e.sdfgi_read_sky_light = false
+	e.sdfgi_cascades = 4
+	e.sdfgi_min_cell_size = 0.2
+	e.sdfgi_energy = 1.1
+	e.ssr_max_steps = 64
+	e.ssr_fade_in = 0.15
+	e.ssr_fade_out = 2.0
+	e.glow_intensity = 0.7
+	e.glow_bloom = 0.05
 	ResourceSaver.save(e, "res://assets/env/sala_environment.tres")
 	e.take_over_path("res://assets/env/sala_environment.tres")
 	var we := WorldEnvironment.new()
@@ -161,173 +126,184 @@ func _environment() -> void:
 	we.environment = e
 	own(we)
 	M.env = e
+	# Lampi della tempesta (addon grafica): luce che si muove, cielo e vetro della cupola.
+	var storm: Node3D = load("res://addons/grafica/tempesta.gd").new()
+	storm.name = "Tempesta"
+	storm.set(&"intervallo_min", 9.0)
+	storm.set(&"intervallo_max", 20.0)
+	storm.set(&"energia_lampo", 7.0)
+	var mats: Array[ShaderMaterial] = [M.dome_glass]
+	storm.set(&"materiali", mats)
+	own(storm)
 
 
-# --- Sala: muri, pavimento, soffitto, cupola, ballatoi, oblò, ingresso ---------------------
+# --- Sala: i GLB dell'ambiente, le luci e la toppa delle collisioni ------------------------
 
 func _hall() -> void:
-	var slot := slot_node(level, "Sala")
-	var gb := group(slot, "Graybox")
-	var csg := csg_root(gb, "Struttura")
-	box(csg, "Esterno", Vector3(49.2, 11.0, 36.2), Vector3(0, 5.1, 0), UNION, M.wall)
-	box(csg, "Interno", Vector3(48, 10.05, 35), Vector3(0, 4.975, 0), SUB, M.wall)
-	box(csg, "Pavimento", Vector3(48.4, 0.05, 35.4), Vector3(0, -0.025, 0), UNION, M.floor)
-	box(csg, "Soffitto", Vector3(48.4, 0.05, 35.4), Vector3(0, 9.975, 0), UNION, M.ceiling)
-	# Spogliatoi: l'uscita da cui si entra nella sala.
-	box(csg, "SpogliatoiEsterno", Vector3(5.2, 3.9, 6.0), Vector3(0, 1.55, 20.9), UNION, M.wall)
-	box(csg, "SpogliatoiInterno", Vector3(4, 3.05, 5.4), Vector3(0, 1.475, 21.0), SUB, M.wall)
-	box(csg, "SpogliatoiPavimento", Vector3(4.2, 0.05, 5.6), Vector3(0, -0.025, 21.0), UNION, M.floor)
-	# Ballatoi lungo i muri nord, ovest ed est (non raggiungibili), con le colonne.
-	box(csg, "BallatoioNord", Vector3(48, 0.3, 2.0), Vector3(0, 5.15, -16.5), UNION, M.metal)
-	box(csg, "BallatoioOvest", Vector3(2.0, 0.3, 33), Vector3(-23, 5.15, 1.0), UNION, M.metal)
-	box(csg, "BallatoioEst", Vector3(2.0, 0.3, 33), Vector3(23, 5.15, 1.0), UNION, M.metal)
-	for x in [-16.0, -8.0, 8.0, 16.0]:
-		cyl(csg, "ColonnaN", 0.28, 5.0, Vector3(x, 2.5, -15.6), UNION, M.metal)
-	for z in [-8.0, 0.0, 8.0, 15.0]:
-		cyl(csg, "ColonnaO", 0.28, 5.0, Vector3(-22.1, 2.5, z), UNION, M.metal)
-		cyl(csg, "ColonnaE", 0.28, 5.0, Vector3(22.1, 2.5, z), UNION, M.metal)
-	# Buchi: cupola, piscina, vasca d'arrivo, porta degli spogliatoi.
-	cyl(csg, "BucoCupola", 13.0, 1.4, Vector3(POOL_CENTER.x, 10.3, POOL_CENTER.z), SUB, M.ceiling)
-	box(csg, "BucoPiscina", Vector3(POOL_WIDTH + 0.04, 3.1, 23.04), Vector3(POOL_CENTER.x, -1.45, POOL_CENTER.z), SUB, M.pool_wall)
-	box(csg, "BucoVascaArrivo", Vector3(11.0, 1.5, 8.0), Vector3(-15, -0.6, 7.0), SUB, M.wall)
-	box(csg, "PortaSpogliatoi", Vector3(2.4, 2.8, 1.8), Vector3(0, 1.401, 17.6), SUB, M.wall)
-	box(csg, "PortaStanzino", Vector3(1.4, 2.4, 1.6), Vector3(2.3, 1.201, 20.8), SUB, M.wall)
-	# Ringhiere dei ballatoi (solo grafica).
-	var rail := group(gb, "Ringhiere")
-	mesh_box(rail, Vector3(48, 0.06, 0.06), Vector3(0, 6.3, -15.5), M.metal)
-	mesh_box(rail, Vector3(0.06, 0.06, 33), Vector3(-22.0, 6.3, 1.0), M.metal)
-	mesh_box(rail, Vector3(0.06, 0.06, 33), Vector3(22.0, 6.3, 1.0), M.metal)
-	# Cartelloni colorati sui ballatoi (stile B): solo forme, niente scritte.
-	var signs := group(gb, "Cartelloni")
-	for s in [[Vector3(-10, 5.9, -15.45), M.blue, M.yellow], [Vector3(10, 5.9, -15.45), M.purple, M.orange], [Vector3(-1, 5.9, -15.45), M.green, M.red]]:
-		mesh_box(signs, Vector3(6.0, 1.3, 0.08), s[0], s[1])
-		var wave := mesh_box(signs, Vector3(4.6, 0.35, 0.1), s[0] + Vector3(0, -0.15, 0.02), s[2])
-		wave.rotation = Vector3(0, 0, 0.08)
-	# Oblò sui muri (fuori c'è la tempesta).
-	var ports := group(gb, "Oblo")
-	for z in [-12.0, -6.0, 6.0, 12.0]:
-		porthole(ports, Vector3(-23.95, 2.4, z), PI * 0.5)
-		porthole(ports, Vector3(23.95, 2.4, z), -PI * 0.5)
-		porthole(ports, Vector3(-23.95, 7.6, z), PI * 0.5)
-		porthole(ports, Vector3(23.95, 7.6, z), -PI * 0.5)
-	for x in [-14.0, -7.0, 7.0, 14.0]:
-		porthole(ports, Vector3(x, 2.4, 17.45), PI)
-	# Armadietti negli spogliatoi.
-	var lockers := csg_root(gb, "Armadietti")
-	for z in [19.0, 19.6, 20.2, 20.8, 21.4, 22.0, 22.6]:
-		# A ovest lascia posto alla vasca lava-piedi, a est alla porta dello stanzino.
-		if z > 19.7:
-			box(lockers, "ArmadiettoO", Vector3(0.5, 1.9, 0.56), Vector3(-1.72, 0.95, z), UNION, M.locker)
-		if z < 19.7 or z > 21.7:
-			box(lockers, "ArmadiettoE", Vector3(0.5, 1.9, 0.56), Vector3(1.72, 0.95, z), UNION, M.locker)
-	# Cupola di vetro con la struttura.
-	var dome: Node3D = load("res://scripts/environment/dome.gd").new()
-	dome.name = "Cupola"
-	dome.set(&"radius", 13.0)
-	dome.set(&"height", 7.0)
-	dome.set(&"glass_material", M.glass)
-	dome.set(&"frame_material", M.metal)
-	dome.position = Vector3(POOL_CENTER.x, 10.0, POOL_CENTER.z)
-	own(dome, gb)
+	var sala := Node3D.new()
+	sala.name = "Sala"
+	# Lo script dell'ambiente regola le luci di sala_luci.glb e fa sfarfallare i neon.
+	sala.set_script(load("res://assets/ambiente/sala_luci_ambiente.gd"))
+	sala.set(&"crea_ambiente", false)
+	own(sala)
+	for part in [["Architettura", "sala_architettura"], ["Cupola", "sala_cupola"], ["Piscina", "sala_piscina"],
+			["AreaBimbi", "sala_area_bimbi"], ["TorreScivoli", "sala_torre_scivoli"], ["Oggetti", "sala_oggetti"],
+			["Interattivi", "sala_interattivi"], ["Luci", "sala_luci"]]:
+		var inst: Node3D = (load(SALA + part[1] + ".glb") as PackedScene).instantiate()
+		inst.name = part[0]
+		own(inst, sala)
+	level.set(&"dome_glass", M.dome_glass)
 
 
-# --- Piscina a onde vuota con la pozza e l'enigma dello scarico ---------------------------
+# --- La medusa sul piedistallo, la lampada e il pulsante della sigla ---------------------------
+
+func _statue() -> void:
+	var statue := group(level, "Statua")
+	statue.position = Vector3(PEDESTAL.x, 0.0, PEDESTAL.z)
+	# La medusa vera (GLB in posa statua): l'origine è alla vita, le punte dei tentacoli
+	# 2,2 m più in basso, appoggiate sul piano del piedistallo. Guarda verso +Z (l'ingresso).
+	var medusa: Node3D = load("res://scripts/environment/medusa_statue.gd").new()
+	medusa.name = "Medusa"
+	medusa.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
+	medusa.set(&"model", load("res://assets/models/medusa/medusa.glb"))
+	medusa.position = Vector3(0, PEDESTAL.y + 2.2, 0)
+	own(medusa, statue)
+	level.set(&"statue", medusa)
+	# Il pulsante per i bambini sul davanti del piedistallo (è già nel modello: qui c'è solo
+	# il bersaglio per il getto).
+	var jingle: WaterButton = S.button.instantiate()
+	jingle.name = "PulsanteSigla"
+	jingle.mode = WaterButton.Mode.MOMENTARY
+	jingle.radius = 0.14
+	jingle.show_model = false
+	jingle.position = Vector3(0, 0.47, 1.14)
+	own(jingle, statue)
+	level.set(&"jingle_button", jingle)
+	level.set(&"jingle_button_mesh", NodePath("Sala/Interattivi/sala_pulsante_piedistallo"))
+	# La lampada sul palo è nel modello e la sua luce in sala_luci.glb ("luce_lampione"):
+	# qui si orienta verso il viso e parte spenta, poi si accende quando ti avvicini.
+	var flicker: Node = load("res://scripts/environment/flicker_light.gd").new()
+	flicker.name = "Sfarfallio"
+	flicker.set(&"base_energy", 16.0)
+	flicker.set(&"base_emission", 6.0)
+	flicker.set(&"flicker_rate", 0.05)
+	flicker.set(&"min_level", 0.35)
+	flicker.set(&"start_off", true)
+	own(flicker, statue)
+	level.set(&"statue_lamp", flicker)
+	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
+	level.set(&"statue_lamp_aim", Vector3(PEDESTAL.x, 3.55, PEDESTAL.z))
+
+
+# --- La postazione dei bagnini all'ingresso: rastrelliera con lo zaino-pompa ---------------------
+
+func _pack_station() -> void:
+	# Gli spogliatoi e lo stanzino dei bagnini non sono ancora modellati: per la demo lo zaino
+	# sta su una rastrelliera dei bagnini contro il muro dell'ingresso, sotto la luce rossa.
+	var st := group(level, "PostazioneBagnini")
+	st.position = Vector3(4.3, 0.0, 11.55)
+	st.rotation = Vector3(0, PI, 0)
+	var rack := csg_root(st, "Rastrelliera")
+	for x in [-0.9, 0.9]:
+		box(rack, "Montante", Vector3(0.05, 1.9, 0.05), Vector3(x, 0.95, 0.2), UNION, M.metal)
+	for y in [0.82, 1.45, 1.85]:
+		box(rack, "Traversa", Vector3(1.85, 0.04, 0.04), Vector3(0, y, 0.2), UNION, M.metal)
+	box(rack, "Ripiano", Vector3(1.85, 0.04, 0.5), Vector3(0, 0.8, 0.0), UNION, M.metal)
+	var holder := group(st, "Zaino")
+	holder.position = Vector3(-0.25, 0.82, 0.0)
+	var model: Node3D = S.pack_model.instantiate()
+	model.name = "Modello"
+	own(model, holder)
+	var pick: Area3D = load("res://scripts/interaction/pack_pickup.gd").new()
+	pick.name = "Prendi"
+	pick.set(&"remove_node", holder)
+	own(pick, holder)
+	shape_box(pick, Vector3(0.8, 0.8, 0.6), Vector3(0, 0.35, 0))
+	var spot := SpotLight3D.new()
+	spot.name = "LuceZaino"
+	spot.position = Vector3(0.0, 2.7, -1.1)
+	own(spot, st)
+	spot.look_at_from_position(spot.position, Vector3(-0.25, 0.9, 0.0), Vector3.UP)
+	spot.light_color = Color(1.0, 0.9, 0.75)
+	spot.light_energy = 2.5
+	spot.spot_range = 4.5
+	spot.spot_angle = 26.0
+	spot.shadow_enabled = true
+	spot.set_meta(&"grafica_priorita_ombra", 1)
+
+
+# --- Piscina a onde vuota: la pozza, la turbina dello scarico e il portello ----------------------
 
 func _pool() -> void:
 	var pool := group(level, "Piscina")
-	var slot := slot_node(pool, "Vasca")
-	var gb := group(slot, "Graybox")
-	var basin: StaticBody3D = load("res://scripts/environment/pool_basin.gd").new()
-	basin.name = "FondoPiscina"
-	basin.position = POOL_CENTER
-	basin.set(&"width", POOL_WIDTH)
-	basin.set(&"profile", PackedVector2Array(POOL_PROFILE))
-	basin.set(&"floor_material", M.pool)
-	basin.set(&"wall_material", M.pool_wall)
-	own(basin, gb)
-	# Bordo della piscina (a nord la spiaggia entra in acqua senza gradino).
-	var coping := csg_root(gb, "Bordo")
-	var x0 := POOL_CENTER.x - POOL_WIDTH * 0.5
-	var x1 := POOL_CENTER.x + POOL_WIDTH * 0.5
-	box(coping, "BordoOvest", Vector3(0.5, 0.06, 23.5), Vector3(x0 - 0.25, 0.03, -2.25), UNION, M.coping)
-	box(coping, "BordoEst", Vector3(0.5, 0.06, 23.5), Vector3(x1 + 0.25, 0.03, -2.25), UNION, M.coping)
-	box(coping, "BordoSud", Vector3(POOL_WIDTH + 1.0, 0.06, 0.5), Vector3(POOL_CENTER.x, 0.03, 9.25), UNION, M.coping)
-	mesh_box(gb, Vector3(POOL_WIDTH + 1.0, 0.02, 0.35), Vector3(POOL_CENTER.x, 0.065, 9.25), M.metal, "Griglia")
-	# Giocattoli rimasti sul fondo (ricompaiono quando la pozza si svuota).
-	var toys := group(gb, "Giocattoli")
-	for t in [[Vector3(0.0, DEEP_Y + 0.22, 6.0), 0.22, M.red], [Vector3(3.2, DEEP_Y + 0.18, 4.4), 0.18, M.yellow],
-			[Vector3(5.5, DEEP_Y + 0.25, 7.2), 0.25, M.blue], [Vector3(-3.6, DEEP_Y + 0.2, 7.8), 0.2, M.green]]:
-		var ball := MeshInstance3D.new()
-		var sm := SphereMesh.new()
-		sm.radius = t[1]
-		sm.height = t[1] * 2.0
-		ball.mesh = sm
-		ball.material_override = t[2]
-		ball.position = t[0]
-		own(ball, toys)
-	var ring := MeshInstance3D.new()
-	var tm := TorusMesh.new()
-	tm.inner_radius = 0.22
-	tm.outer_radius = 0.42
-	ring.mesh = tm
-	ring.material_override = M.orange
-	ring.position = Vector3(2.0, DEEP_Y + 0.1, 6.8)
-	own(ring, toys)
-	# La pozza: si aspira, e lo scarico la svuota quando gira la turbina.
+	# La pozza torbida: il fondo è a conca intorno allo scarico, quindi il piano dell'acqua
+	# si vede come un cerchio; svuotandola scende sotto il fondo e sparisce.
 	var puddle: WaterTank = S.tank.instantiate()
 	puddle.name = "Pozza"
 	puddle.build_walls = false
-	puddle.inner_size = Vector3(POOL_WIDTH, 0.6, 9.6)
+	puddle.inner_size = Vector3(7.6, 0.3, 7.6)
 	puddle.capacity_liters = 150.0
-	puddle.max_fill = 0.7
-	puddle.fill = 0.7
+	puddle.max_fill = (PUDDLE_LEVEL - (DRAIN.y - 0.02)) / 0.3
+	puddle.fill = puddle.max_fill
 	puddle.drain_time = 24.0
 	puddle.water_material = M.murky
-	puddle.position = Vector3(POOL_CENTER.x, DEEP_Y, 4.2)
+	puddle.position = Vector3(DRAIN.x, DRAIN.y - 0.02, DRAIN.z)
 	own(puddle, pool)
-	mesh_box(pool, Vector3(0.9, 0.02, 0.9), Vector3(POOL_CENTER.x, DEEP_Y + 0.01, 7.6), M.metal, "Scarico")
 	var vortex: MeshInstance3D = load("res://scripts/environment/drain_vortex.gd").new()
 	vortex.name = "Gorgo"
 	vortex.set(&"tank", puddle)
-	vortex.position = Vector3(POOL_CENTER.x, DEEP_Y + 0.4, 7.6)
+	vortex.position = Vector3(DRAIN.x, DRAIN.y + 0.3, DRAIN.z + 1.25)
 	own(vortex, pool)
-	# Turbina dello scarico, in alto sul muro della parte profonda, bloccata da un gonfiabile.
+	# Turbina dello scarico in alto sulla parete sud (nel modello: qui si fa girare la sua
+	# girante), bloccata da un gonfiabile.
 	var turbine: Turbine = S.turbine.instantiate()
 	turbine.name = "TurbinaScarico"
-	turbine.radius = 0.6
-	turbine.position = Vector3(4.5, -0.9, 9.0)
+	turbine.radius = 0.47
+	turbine.show_model = false
+	turbine.position = Vector3(4.6, -0.62, 4.84)
 	turbine.rotation = Vector3(0, PI, 0)
+	turbine.external_rotor = NodePath("../../Sala/Interattivi/sala_turbina_scarico")
 	own(turbine, pool)
 	var drains: Array[PowerSource] = [turbine]
 	puddle.drain_sources = drains
 	_inflatable(pool, turbine)
-	# Portello della camera delle onde sul fondo e il suo pulsante (sott'acqua finché c'è la pozza).
-	mesh_box(pool, Vector3(1.5, 0.004, 1.5), Vector3(-2.5, DEEP_Y + 0.003, 5.0), M.hole, "Buio")
+	# Portello della camera delle onde sul fondo, sotto la pozza (cerniera sul lato nord), e il
+	# suo pulsante sulla parete sud. Sotto il portello: il buio del tunnel.
+	var hole := MeshInstance3D.new()
+	hole.name = "Buio"
+	var hm := BoxMesh.new()
+	hm.size = Vector3(1.2, 0.004, 1.2)
+	hole.mesh = hm
+	hole.material_override = M.hole
+	hole.position = Vector3(0.0, -2.256, 2.0)
+	own(hole, pool)
 	var hatch_button: WaterButton = S.button.instantiate()
 	hatch_button.name = "PulsantePortello"
 	hatch_button.mode = WaterButton.Mode.LATCH
-	hatch_button.radius = 0.18
-	hatch_button.position = Vector3(x0, DEEP_Y + 0.28, 5.0)
-	hatch_button.rotation = Vector3(0, PI * 0.5, 0)
+	hatch_button.radius = 0.14
+	hatch_button.show_model = false
+	hatch_button.position = Vector3(1.9, -1.15, 4.95)
+	hatch_button.rotation = Vector3(0, PI, 0)
 	own(hatch_button, pool)
-	var hatch: PoweredDoor = S.door.instantiate()
+	var hatch: Node3D = load("res://scripts/mechanisms/hinged_hatch.gd").new()
 	hatch.name = "Portello"
-	hatch.size = Vector3(1.6, 1.6, 0.06)
-	hatch.open_offset = Vector3(1.7, 0, 0)
-	hatch.position = Vector3(-2.5, DEEP_Y + 0.02, 4.2)
-	hatch.rotation = Vector3(PI * 0.5, 0, 0)
+	hatch.set(&"target_path", NodePath("../../Sala/Interattivi/sala_portello_scarico"))
+	hatch.set(&"axis", Vector3.RIGHT)
+	hatch.set(&"open_angle", -105.0)
 	var hatch_sources: Array[PowerSource] = [hatch_button]
-	hatch.sources = hatch_sources
+	hatch.set(&"sources", hatch_sources)
 	own(hatch, pool)
-	# Scaletta per uscire dalla parte profonda.
-	var ladder: Node3D = S.ladder.instantiate()
-	ladder.name = "Scaletta"
-	ladder.set(&"height", 2.4)
-	ladder.position = Vector3(x1, DEEP_Y, 3.0)
-	ladder.rotation = Vector3(0, -PI * 0.5, 0)
-	own(ladder, pool)
-	polaroid(pool, "Polaroid05", Vector3(-0.8, DEEP_Y, 6.6))
 	level.set(&"hatch", hatch)
+	level.set(&"hatch_button_mesh", NodePath("Sala/Interattivi/sala_pulsante_portello"))
+	# Le scalette sono nel modello: qui solo le aree per arrampicarsi.
+	for l in [["ScalettaEst", Vector3(6.95, -1.95, 3.2), -PI * 0.5], ["ScalettaOvest", Vector3(-6.95, -1.95, 2.2), PI * 0.5]]:
+		var ladder: Node3D = S.ladder.instantiate()
+		ladder.name = l[0]
+		ladder.set(&"height", 1.95)
+		ladder.set(&"show_model", false)
+		ladder.position = l[1]
+		ladder.rotation = Vector3(0, l[2], 0)
+		own(ladder, pool)
 
 
 func _inflatable(parent: Node, turbine: Turbine) -> void:
@@ -352,6 +328,8 @@ func _inflatable(parent: Node, turbine: Turbine) -> void:
 	var tm := TorusMesh.new()
 	tm.inner_radius = 0.24
 	tm.outer_radius = 0.46
+	tm.rings = 48
+	tm.ring_segments = 24
 	mi.mesh = tm
 	mi.material_override = M.red
 	own(mi, body)
@@ -367,343 +345,66 @@ func _inflatable(parent: Node, turbine: Turbine) -> void:
 	own(hs, hit)
 
 
-# --- Statua sul piedistallo, lampione e pulsante della sigla -------------------------------
+# --- Le altre vasche: si può aspirare anche da lì -----------------------------------------------
 
-func _statue() -> void:
-	var statue := group(level, "Statua")
-	statue.position = Vector3(0, 0, 11.6)
-	var ped := csg_root(statue, "Piedistallo")
-	cyl(ped, "Base", 1.25, 1.0, Vector3(0, 0.5, 0), UNION, M.wall)
-	cyl(ped, "Fascia", 1.27, 0.25, Vector3(0, 0.55, 0), UNION, M.blue)
-	cyl(ped, "Cappello", 1.32, 0.08, Vector3(0, 1.0, 0), UNION, M.coping)
-	var slot := slot_node(statue, "Medusa")
-	slot.position = Vector3(0, 1.04, 0)
-	var placeholder: Node3D = load("res://scripts/environment/medusa_placeholder.gd").new()
-	placeholder.name = "Graybox"
-	own(placeholder, slot)
-	level.set(&"statue", placeholder)
-	var jingle: WaterButton = S.button.instantiate()
-	jingle.name = "PulsanteSigla"
-	jingle.mode = WaterButton.Mode.MOMENTARY
-	jingle.radius = 0.16
-	jingle.position = Vector3(0, 0.58, 1.27)
-	own(jingle, statue)
-	level.set(&"jingle_button", jingle)
-	# Lampione: si accende quando entri nella sala (FlickerLight parte spenta).
-	var post := csg_root(statue, "Lampione")
-	cyl(post, "Palo", 0.07, 5.2, Vector3(2.2, 2.6, 1.0), UNION, M.rust)
-	var arm := box(post, "Braccio", Vector3(0.08, 0.08, 1.75), Vector3(1.55, 5.12, 0.6), UNION, M.rust)
-	arm.rotation = Vector3(0, atan2(1.3, 0.8), 0)
-	var head := MeshInstance3D.new()
-	head.name = "Lampada"
-	var cm := CylinderMesh.new()
-	cm.top_radius = 0.12
-	cm.bottom_radius = 0.32
-	cm.height = 0.32
-	head.mesh = cm
-	head.material_override = M.lamp
-	head.position = Vector3(0.9, 4.98, 0.2)
-	own(head, statue)
-	var spot := SpotLight3D.new()
-	spot.name = "LuceStatua"
-	spot.position = Vector3(0.9, 4.8, 0.2)
-	spot.rotation = Vector3(-PI * 0.5, 0, 0)
-	spot.light_color = Color(1.0, 0.78, 0.52)
-	spot.light_energy = 12.0
-	spot.spot_range = 9.0
-	spot.spot_angle = 36.0
-	spot.shadow_enabled = true
-	spot.light_volumetric_fog_energy = 1.6
-	own(spot, statue)
-	var flicker: Node = load("res://scripts/environment/flicker_light.gd").new()
-	flicker.name = "Sfarfallio"
-	flicker.set(&"light", spot)
-	flicker.set(&"mesh", head)
-	flicker.set(&"base_energy", 12.0)
-	flicker.set(&"base_emission", 4.0)
-	flicker.set(&"flicker_rate", 0.05)
-	flicker.set(&"min_level", 0.3)
-	flicker.set(&"start_off", true)
-	own(flicker, statue)
-	level.set(&"statue_lamp", flicker)
+func _pools() -> void:
+	var pools := group(level, "Vasche")
+	# [nome, centro xz, fondo, livello, bordo, litri, materiale]
+	for v in [["VascaArrivo", Vector2(-12.5, 2.0), Vector2(7.0, 10.0), -1.1, -0.22, -0.05, 400.0],
+			["VascaBimbi1", Vector2(-12.6, -9.6), Vector2(4.4, 3.2), 0.02, 0.30, 0.45, 120.0],
+			["VascaBimbi2", Vector2(-15.3, -12.4), Vector2(2.8, 2.8), 0.02, 0.22, 0.45, 60.0]]:
+		var tank: WaterTank = S.tank.instantiate()
+		tank.name = v[0]
+		tank.build_walls = false
+		var h: float = v[5] - v[3]
+		tank.inner_size = Vector3(v[2].x, h, v[2].y)
+		tank.capacity_liters = v[6]
+		tank.max_fill = 1.0
+		tank.fill = (v[4] - v[3]) / h
+		tank.water_material = M.clean
+		tank.position = Vector3(v[1].x, v[3], v[1].y)
+		own(tank, pools)
 
 
-# --- Area bimbi (ovest) con il secchio gigante ---------------------------------------------
+# --- Area bimbi: la ruota a pale gira col getto e riempie il secchio gigante, che si ribalta -------
 
-func _kids_area() -> void:
-	var slot := slot_node(level, "AreaBimbi")
-	var gb := group(slot, "Graybox")
-	var csg := csg_root(gb, "Struttura")
-	box(csg, "TappetoMorbido", Vector3(13, 0.02, 13), Vector3(-14.5, 0.01, -7.5), UNION, M.soft)
-	for p in [Vector2(-19, -13), Vector2(-14, -13), Vector2(-19, -8), Vector2(-14, -8)]:
-		cyl(csg, "Palo", 0.16, 5.6, Vector3(p.x, 2.8, p.y), UNION, M.red)
-	box(csg, "Piano1", Vector3(5.2, 0.2, 5.2), Vector3(-16.5, 1.5, -10.5), UNION, M.yellow)
-	box(csg, "Piano2", Vector3(5.2, 0.2, 2.6), Vector3(-16.5, 3.5, -11.8), UNION, M.green)
-	box(csg, "Tettoia", Vector3(5.8, 0.15, 5.8), Vector3(-16.5, 5.65, -10.5), UNION, M.red)
-	# Scala crollata: mancano gli ultimi gradini.
-	for i in 4:
-		box(csg, "Gradino", Vector3(1.2, 0.3, 0.45), Vector3(-12.2, 0.15 + i * 0.3, -6.6 - i * 0.45), UNION, M.blue)
-	# Scivolo dal primo piano.
-	var slide := box(csg, "Scivolo", Vector3(1.0, 0.1, 4.2), Vector3(-17.0, 0.85, -6.1), UNION, M.orange)
-	slide.rotation = Vector3(0.37, 0, 0)
-	# Funghi-fontana e cannoncini ad acqua.
-	for f in [Vector3(-11.0, 0, -3.6), Vector3(-12.8, 0, -1.8), Vector3(-9.6, 0, -6.4)]:
-		cyl(csg, "GamboFungo", 0.16, 1.7, f + Vector3(0, 0.85, 0), UNION, M.yellow)
-		var cap := MeshInstance3D.new()
-		var sm := SphereMesh.new()
-		sm.radius = 0.95
-		sm.height = 0.95
-		sm.is_hemisphere = true
-		cap.mesh = sm
-		cap.scale = Vector3(1, 0.45, 1)
-		cap.material_override = M.red
-		cap.position = f + Vector3(0, 1.65, 0)
-		own(cap, gb)
-	for c in [Vector3(-9.2, 0, -10.0), Vector3(-13.5, 0, -2.0)]:
-		cyl(csg, "PaloCannone", 0.12, 1.1, c + Vector3(0, 0.55, 0), UNION, M.blue)
-		var barrel := cyl(csg, "Cannone", 0.12, 0.8, c + Vector3(0, 1.2, 0.25), UNION, M.yellow)
-		barrel.rotation = Vector3(PI * 0.4, 0, 0)
-	# Il secchio gigante in cima, sui suoi sostegni.
-	var bucket_frame := csg_root(gb, "SostegnoSecchio")
-	cyl(bucket_frame, "Montante1", 0.14, 7.8, Vector3(-20.3, 3.9, -12.5), UNION, M.rust)
-	cyl(bucket_frame, "Montante2", 0.14, 7.8, Vector3(-16.7, 3.9, -12.5), UNION, M.rust)
-	var pivot := cyl(bucket_frame, "Perno", 0.09, 3.8, Vector3(-18.5, 7.6, -12.5), UNION, M.rust)
-	pivot.rotation = Vector3(0, 0, PI * 0.5)
-	var bucket := CSGCombiner3D.new()
-	bucket.name = "SecchioGigante"
-	bucket.position = Vector3(-18.5, 7.2, -12.5)
-	bucket.rotation = Vector3(0.12, 0, 0.06)
-	own(bucket, gb)
-	var outer := CSGCylinder3D.new()
-	outer.name = "Esterno"
-	outer.radius = 1.4
-	outer.height = 1.9
-	outer.sides = 32
-	outer.cone = false
-	outer.material = M.orange
-	own(outer, bucket)
-	var inner := CSGCylinder3D.new()
-	inner.name = "Interno"
-	inner.radius = 1.28
-	inner.height = 1.9
-	inner.sides = 32
-	inner.position = Vector3(0, 0.12, 0)
-	inner.operation = SUB
-	inner.material = M.orange
-	own(inner, bucket)
-	# Vasche basse: una piena (si aspira), una vuota.
-	var full: WaterTank = S.tank.instantiate()
-	full.name = "VascaBassaPiena"
-	full.inner_size = Vector3(3.5, 0.45, 3.0)
-	full.wall_thickness = 0.2
-	full.capacity_liters = 30.0
-	full.max_fill = 0.85
-	full.fill = 0.8
-	full.position = Vector3(-10.8, 0, -12.0)
-	own(full, gb)
-	var empty: WaterTank = S.tank.instantiate()
-	empty.name = "VascaBassaVuota"
-	empty.inner_size = Vector3(3.0, 0.45, 2.6)
-	empty.wall_thickness = 0.2
-	empty.capacity_liters = 25.0
-	empty.max_fill = 0.85
-	empty.position = Vector3(-19.5, 0, -3.6)
-	own(empty, gb)
-	polaroid(gb, "Polaroid04", Vector3(-15.0, 1.6, -9.0))
+func _kids_toys() -> void:
+	var toy: Node3D = load("res://scripts/mechanisms/bucket_wheel.gd").new()
+	toy.name = "RuotaESecchio"
+	toy.set(&"wheel_path", NodePath("../Sala/AreaBimbi/sala_ruota_pale"))
+	toy.set(&"bucket_path", NodePath("../Sala/AreaBimbi/sala_secchio_gigante"))
+	toy.set(&"gate_wheel_path", NodePath("../Sala/Interattivi/sala_ruota_cancello"))
+	toy.set(&"gate_path", NodePath("../Sala/Interattivi/sala_cancello_spiaggia"))
+	toy.set(&"panel_path", NodePath("../Sala/Interattivi/sala_quadro_elettrico"))
+	own(toy)
 
 
-# --- Vasca d'arrivo degli scivoli (sud-ovest) --------------------------------------------
+# --- Le 10 Polaroid -----------------------------------------------------------------------------
 
-func _arrival_pool() -> void:
-	var tank: WaterTank = S.tank.instantiate()
-	tank.name = "VascaArrivo"
-	tank.inner_size = Vector3(10.4, 1.4, 7.4)
-	tank.wall_thickness = 0.3
-	tank.capacity_liters = 200.0
-	tank.max_fill = 0.85
-	tank.fill = 0.75
-	tank.position = Vector3(-15, -1.0, 7.0)
-	own(tank, level)
-
-
-# --- Torre degli scivoli (est) e tubi -------------------------------------------------------
-
-func _slide_tower() -> void:
-	var slot := slot_node(level, "TorreScivoli")
-	var gb := group(slot, "Graybox")
-	var csg := csg_root(gb, "Impalcatura")
-	for x in [11.0, 16.5, 22.0]:
-		for z in [-13.5, -8.5, -3.5]:
-			cyl(csg, "Montante", 0.2, 14.0, Vector3(x, 7.0, z), UNION, M.rust)
-	box(csg, "Piano1", Vector3(11.4, 0.25, 10.4), Vector3(16.5, 4.0, -8.5), UNION, M.metal)
-	box(csg, "Piano2", Vector3(11.4, 0.25, 5.4), Vector3(16.5, 8.0, -11.0), UNION, M.metal)
-	box(csg, "Piano3", Vector3(5.9, 0.25, 5.4), Vector3(19.25, 12.0, -11.0), UNION, M.metal)
-	box(csg, "BucoScala", Vector3(2.0, 0.6, 3.0), Vector3(12.2, 4.0, -4.6), SUB, M.metal)
-	# Scala fino al primo piano.
-	for i in 13:
-		box(csg, "Gradino", Vector3(1.8, 0.3, 0.42), Vector3(12.2, 0.15 + i * 0.3, -0.2 - i * 0.36), UNION, M.metal)
-	# Partenze degli scivoli in cima.
-	box(csg, "Partenza1", Vector3(1.8, 1.6, 1.8), Vector3(17.5, 13.0, -13.0), UNION, M.green)
-	box(csg, "Partenza2", Vector3(1.8, 1.6, 1.8), Vector3(20.5, 13.0, -13.0), UNION, M.blue)
-	# Tubi: dalla torre lungo il muro nord e poi giù lungo il muro ovest fino alla vasca d'arrivo.
-	var tubes := group(gb, "Tubi")
-	var path := [Vector3(17.5, 12.2, -14.0), Vector3(6.0, 11.0, -16.4), Vector3(-8.0, 9.6, -16.4),
-		Vector3(-20.6, 8.2, -15.2), Vector3(-21.0, 5.6, -6.0), Vector3(-21.0, 3.4, 1.0), Vector3(-19.2, 1.3, 4.2)]
-	var colors := [M.green, M.green, M.blue, M.blue, M.red, M.yellow]
-	for i in path.size() - 1:
-		tube(tubes, path[i], path[i + 1], 0.75, colors[i])
-	var path2 := [Vector3(20.5, 12.2, -14.0), Vector3(23.0, 10.0, -9.0), Vector3(20.0, 8.6, -1.8), Vector3(14.5, 6.6, -1.2),
-		Vector3(11.0, 4.6, -4.5), Vector3(13.0, 2.4, 1.0), Vector3(16.0, 0.9, 1.6)]
-	var colors2 := [M.purple, M.purple, M.orange, M.orange, M.red, M.red]
-	for i in path2.size() - 1:
-		tube(tubes, path2[i], path2[i + 1], 0.7, colors2[i])
-
-
-# --- Stanzino dei bagnini (a est dell'uscita degli spogliatoi) con lo zaino sulla rastrelliera ---
-
-func _lifeguard_room() -> void:
-	var room := group(level, "StanzinoBagnini")
-	var slot := slot_node(room, "Stanza")
-	var gb := group(slot, "Graybox")
-	var csg := csg_root(gb, "Muri")
-	box(csg, "Esterno", Vector3(5.2, 3.6, 5.6), Vector3(4.8, 1.4, 21.0), UNION, M.wall)
-	box(csg, "Interno", Vector3(4.4, 2.85, 4.8), Vector3(4.8, 1.375, 21.0), SUB, M.wall)
-	box(csg, "Pavimento", Vector3(4.6, 0.05, 5.0), Vector3(4.8, -0.025, 21.0), UNION, M.floor)
-	box(csg, "Porta", Vector3(1.4, 2.4, 1.6), Vector3(2.3, 1.201, 20.8), SUB, M.wall)
-	# Rastrelliera di metallo contro il muro est, con il ripiano.
-	var rack := csg_root(gb, "Rastrelliera")
-	for z in [20.1, 21.9]:
-		box(rack, "Montante", Vector3(0.05, 1.9, 0.05), Vector3(6.75, 0.95, z), UNION, M.metal)
-	for y in [0.82, 1.45, 1.85]:
-		box(rack, "Traversa", Vector3(0.04, 0.04, 1.85), Vector3(6.75, y, 21.0), UNION, M.metal)
-	box(rack, "Ripiano", Vector3(0.5, 0.04, 1.85), Vector3(6.55, 0.8, 21.0), UNION, M.metal)
-	box(rack, "Panca", Vector3(1.6, 0.45, 0.4), Vector3(4.6, 0.225, 23.0), UNION, M.locker)
-	# Salvagente e cartello colorato alle pareti (solo grafica).
-	var buoy := MeshInstance3D.new()
-	buoy.name = "Salvagente"
-	var tm := TorusMesh.new()
-	tm.inner_radius = 0.2
-	tm.outer_radius = 0.34
-	buoy.mesh = tm
-	buoy.material_override = M.red
-	buoy.position = Vector3(4.2, 1.7, 18.65)
-	buoy.rotation = Vector3(PI * 0.5, 0, 0)
-	own(buoy, gb)
-	mesh_box(gb, Vector3(1.2, 0.8, 0.04), Vector3(5.6, 1.6, 23.37), M.yellow, "Cartello")
-	# Lo zaino-pompa da prendere.
-	var holder := group(room, "Zaino")
-	holder.position = Vector3(6.55, 0.82, 21.0)
-	holder.rotation = Vector3(0, -PI * 0.5, 0)
-	var model: Node3D = S.pack_model.instantiate()
-	model.name = "Modello"
-	own(model, holder)
-	var pick: Area3D = load("res://scripts/interaction/pack_pickup.gd").new()
-	pick.name = "Prendi"
-	pick.set(&"remove_node", holder)
-	own(pick, holder)
-	shape_box(pick, Vector3(0.8, 0.8, 0.6), Vector3(0, 0.35, 0))
-	var spot := SpotLight3D.new()
-	spot.name = "LuceZaino"
-	spot.position = Vector3(5.4, 2.6, 21.0)
-	spot.rotation = Vector3(deg_to_rad(-62.0), deg_to_rad(-90.0), 0)
-	spot.light_color = Color(1.0, 0.9, 0.75)
-	spot.light_energy = 3.0
-	spot.spot_range = 4.0
-	spot.spot_angle = 30.0
-	spot.shadow_enabled = true
-	own(spot, room)
-	var neon := mesh_box(room, Vector3(1.6, 0.06, 0.12), Vector3(4.8, 2.76, 21.0), M.neon, "NeonStanzino")
-	var nl := omni(room, "LuceNeonStanzino", Vector3(4.8, 2.4, 21.0), Color(0.8, 0.95, 1.0), 0.9, 6.0, false)
-	var fl: Node = load("res://scripts/environment/flicker_light.gd").new()
-	fl.name = "Sfarfallio"
-	fl.set(&"light", nl)
-	fl.set(&"mesh", neon)
-	fl.set(&"base_energy", 0.9)
-	fl.set(&"flicker_rate", 0.25)
-	own(fl, room)
-	# Vasca lava-piedi negli spogliatoi: la prima acqua da aspirare.
-	var bath: WaterTank = S.tank.instantiate()
-	bath.name = "VascaLavapiedi"
-	bath.inner_size = Vector3(0.9, 0.28, 0.75)
-	bath.wall_thickness = 0.1
-	bath.capacity_liters = 14.0
-	bath.max_fill = 0.85
-	bath.fill = 0.8
-	bath.position = Vector3(-1.35, 0.0, 19.2)
-	own(bath, room)
-
-
-# --- Luci, nebbia bassa, lampi ----------------------------------------------------------------
-
-func _lights() -> void:
-	var lights := group(level, "Luci")
-	var storm := DirectionalLight3D.new()
-	storm.name = "LuceTempesta"
-	storm.rotation = Vector3(deg_to_rad(-64.0), deg_to_rad(25.0), 0)
-	storm.light_color = Color(0.55, 0.65, 0.95)
-	storm.light_energy = 0.35
-	storm.shadow_enabled = true
-	storm.light_volumetric_fog_energy = 2.5
-	own(storm, lights)
-	var lightning: Node = load("res://scripts/environment/lightning.gd").new()
-	lightning.name = "Lampi"
-	lightning.set(&"light", storm)
-	lightning.set(&"glass_material", M.glass)
-	lightning.set(&"base_energy", 0.35)
-	lightning.set(&"environment", M.env)
-	own(lightning, lights)
-	# Luci rosse d'emergenza.
-	var red := [Vector3(-23.6, 6.8, -9.0), Vector3(-23.6, 6.8, 9.0), Vector3(23.6, 6.8, -9.0), Vector3(23.6, 6.8, 9.0),
-		Vector3(-9.0, 6.8, -17.2), Vector3(9.0, 6.8, -17.2), Vector3(-6.0, 4.0, 17.2), Vector3(6.0, 4.0, 17.2)]
-	for i in red.size():
-		var p: Vector3 = red[i]
-		var o := omni(lights, "Emergenza%d" % (i + 1), p + _inward(p) * 0.6, Color(1.0, 0.09, 0.05), 1.7, 8.5, i < 3)
-		o.light_volumetric_fog_energy = 1.5
-		mesh_box(lights, Vector3(0.36, 0.2, 0.36), p, M.emergency, "LampadaEmergenza%d" % (i + 1))
-	# Neon sotto i ballatoi: alcuni sfarfallano.
-	var neons := [[Vector3(-21.9, 4.75, -6.0), 0.0, 0.12], [Vector3(-21.9, 4.75, 9.0), 0.0, 0.0],
-		[Vector3(21.9, 4.75, -1.0), 0.0, 0.3], [Vector3(-2.0, 4.75, -15.4), PI * 0.5, 0.0], [Vector3(0.0, 2.95, 21.0), PI * 0.5, 0.5]]
-	for i in neons.size():
-		var n: Array = neons[i]
-		var tube_mesh := mesh_box(lights, Vector3(0.12, 0.07, 2.2), n[0], M.neon, "Neon%d" % (i + 1))
-		tube_mesh.rotation = Vector3(0, n[1], 0)
-		var o := omni(lights, "LuceNeon%d" % (i + 1), n[0] + Vector3(0, -0.25, 0) + _inward(n[0]) * 0.3, Color(0.75, 0.92, 1.0), 1.3, 9.0, false)
-		var fl: Node = load("res://scripts/environment/flicker_light.gd").new()
-		fl.name = "Sfarfallio%d" % (i + 1)
-		fl.set(&"light", o)
-		fl.set(&"mesh", tube_mesh)
-		fl.set(&"base_energy", 1.3)
-		fl.set(&"base_emission", 3.0)
-		fl.set(&"flicker_rate", n[2])
-		own(fl, lights)
-	omni(lights, "LuceAreaBimbi", Vector3(-15.0, 6.8, -7.5), Color(0.95, 0.45, 0.85), 1.4, 12.0, true)
-	omni(lights, "LuceSecchio", Vector3(-18.5, 9.2, -10.5), Color(1.0, 0.75, 0.4), 0.9, 6.0, false)
-	omni(lights, "LuceTorre", Vector3(16.5, 9.5, -7.0), Color(0.4, 0.85, 1.0), 1.2, 13.0, false)
-	omni(lights, "LuceVascaArrivo", Vector3(-15.0, 3.0, 7.0), Color(0.35, 0.7, 0.9), 0.9, 9.0, false)
-	omni(lights, "LucePozza", Vector3(1.5, -0.6, 5.0), Color(0.45, 0.75, 0.75), 0.7, 9.0, false)
-	# Nebbia bassa sul pavimento.
-	var fog := FogVolume.new()
-	fog.name = "NebbiaBassa"
-	fog.size = Vector3(48, 2.2, 35)
-	fog.position = Vector3(0, 0.4, 0)
-	var fm := FogMaterial.new()
-	fm.density = 0.07
-	fm.albedo = Color(0.7, 0.75, 0.8)
-	fm.height_falloff = 1.2
-	fog.material = fm
-	own(fog, lights)
-	var fog_pool := FogVolume.new()
-	fog_pool.name = "NebbiaPiscina"
-	fog_pool.size = Vector3(13, 2.0, 23)
-	fog_pool.position = Vector3(POOL_CENTER.x, -1.6, POOL_CENTER.z)
-	fog_pool.material = fm
-	own(fog_pool, lights)
-
-
-func _inward(p: Vector3) -> Vector3:
-	if absf(p.x) > 23.0:
-		return Vector3(-signf(p.x), 0, 0)
-	return Vector3(0, 0, -signf(p.z))
+func _polaroids() -> void:
+	var g := group(level, "Polaroid")
+	# Le zone del documento del livello che non sono ancora modellate (corridoio, spogliatoi,
+	# stanzino, camera delle onde, sala pompe, ponte inferiore) hanno un posto provvisorio in sala.
+	var spots := [
+		[1, Vector3(-1.6, 0.0, 10.4), 0.4],     # vicino a dove si entra
+		[2, Vector3(-6.0, 0.6, 8.0), 1.2],      # su un lettino
+		[3, Vector3(4.6, 0.85, 11.35), 2.9],    # sulla rastrelliera dei bagnini, accanto allo zaino
+		[4, Vector3(-11.3, 6.4, -17.4), 0.2],   # in cima alla struttura di gioco, accanto al secchio
+		[5, Vector3(1.2, -2.0, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
+		[6, Vector3(-4.6, -1.9, 4.2), 0.9],     # vicino alle bocchette della camera delle onde
+		[7, Vector3(8.2, 1.2, -2.4), 1.6],      # sulla sedia del bagnino
+		[8, Vector3(-8.5, 0.0, 6.6), 0.7],      # sul bordo della vasca d'arrivo
+		[9, Vector3(-9.9, 0.0, -9.4), 2.4],     # accanto alle vasche basse
+		[10, Vector3(13.5, 9.0, -17.5), 0.6],   # in cima alla torre degli scivoli
+	]
+	for s in spots:
+		var p: Node3D = S.polaroid.instantiate()
+		p.name = "Polaroid%02d" % s[0]
+		p.position = s[1]
+		p.rotation = Vector3(0, s[2], 0)
+		p.set(&"photo", s[0])
+		p.set(&"entry_id", StringName("p%02d" % s[0]))
+		own(p, g)
 
 
 # --- Giocatore, checkpoint, trigger -----------------------------------------------------------
@@ -712,20 +413,20 @@ func _gameplay() -> void:
 	var gp := group(level, "Gioco")
 	var player: Node3D = S.player.instantiate()
 	player.name = "Player"
-	player.position = Vector3(0, 0, 22.4)
+	player.position = SPAWN
 	own(player, level)
-	checkpoint(gp, "CheckpointIngresso", 0, Vector3(0, 1.5, 21.5), Vector3(3.5, 3, 3), Vector3(0, -1.5, 0.9), 0.0)
-	checkpoint(gp, "CheckpointStatua", 1, Vector3(0, 1.5, 15.0), Vector3(6, 3, 2), Vector3(0, -1.5, 0), 0.0)
-	checkpoint(gp, "CheckpointSpiaggia", 2, Vector3(POOL_CENTER.x, 1.5, -12.5), Vector3(13, 3, 2), Vector3(0, -1.5, 0), PI)
-	checkpoint(gp, "CheckpointFondo", 3, Vector3(POOL_CENTER.x, DEEP_Y + 1.5, 2.0), Vector3(13, 3, 2), Vector3(0, -1.5, 0), PI)
+	checkpoint(gp, "CheckpointIngresso", 0, SPAWN + Vector3(0, 1.5, 0), Vector3(4, 3, 1.4), Vector3(0, -1.5, 0), 0.0)
+	checkpoint(gp, "CheckpointStatua", 1, Vector3(0, 1.5, 4.6), Vector3(8, 3, 1.5), Vector3(0, -1.5, 0), 0.0)
+	checkpoint(gp, "CheckpointSpiaggia", 2, Vector3(0, 1.5, -14.2), Vector3(14, 3, 1.5), Vector3(0, -1.5, 0), PI)
+	checkpoint(gp, "CheckpointFondo", 3, Vector3(0, -0.6, -1.0), Vector3(12, 3, 1.5), Vector3(0, -1.5, 0), PI)
 	var trig := Area3D.new()
 	trig.name = "AccendiLampione"
 	trig.collision_layer = 0
 	trig.collision_mask = Layers.PLAYER
 	trig.monitorable = false
-	trig.position = Vector3(0, 1.5, 16.2)
+	trig.position = Vector3(0, 1.5, 9.0)
 	own(trig, gp)
-	shape_box(trig, Vector3(4, 3, 1.2))
+	shape_box(trig, Vector3(7, 3, 1.0))
 	level.set(&"lamp_trigger", trig)
 
 
@@ -744,13 +445,6 @@ func group(parent: Node, node_name: String) -> Node3D:
 	return g
 
 
-func slot_node(parent: Node, node_name: String) -> Node3D:
-	var s: Node3D = load("res://scripts/game/asset_slot.gd").new()
-	s.name = node_name
-	own(s, parent)
-	return s
-
-
 func csg_root(parent: Node, node_name: String) -> CSGCombiner3D:
 	var c := CSGCombiner3D.new()
 	c.name = node_name
@@ -759,6 +453,9 @@ func csg_root(parent: Node, node_name: String) -> CSGCombiner3D:
 	c.collision_mask = 0
 	own(c, parent)
 	return c
+
+
+const UNION := CSGShape3D.OPERATION_UNION
 
 
 func box(parent: Node, node_name: String, size: Vector3, pos: Vector3, op: int, mat: Material) -> CSGBox3D:
@@ -773,74 +470,6 @@ func box(parent: Node, node_name: String, size: Vector3, pos: Vector3, op: int, 
 	return b
 
 
-func cyl(parent: Node, node_name: String, radius: float, height: float, pos: Vector3, op: int, mat: Material) -> CSGCylinder3D:
-	var c := CSGCylinder3D.new()
-	_n += 1
-	c.name = "%s%d" % [node_name, _n]
-	c.radius = radius
-	c.height = height
-	c.sides = 24 if radius < 2.0 else 64
-	c.position = pos
-	c.operation = op
-	c.material = mat
-	own(c, parent)
-	return c
-
-
-func mesh_box(parent: Node, size: Vector3, pos: Vector3, mat: Material, node_name := "") -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	_n += 1
-	mi.name = (node_name if node_name != "" else "Pannello") + ("" if node_name != "" else str(_n))
-	var m := BoxMesh.new()
-	m.size = size
-	mi.mesh = m
-	mi.material_override = mat
-	mi.position = pos
-	own(mi, parent)
-	return mi
-
-
-func tube(parent: Node, a: Vector3, b: Vector3, radius: float, mat: Material) -> void:
-	var mi := MeshInstance3D.new()
-	_n += 1
-	mi.name = "Tubo%d" % _n
-	var m := CylinderMesh.new()
-	m.top_radius = radius
-	m.bottom_radius = radius
-	m.height = a.distance_to(b) + radius * 0.6
-	m.radial_segments = 20
-	mi.mesh = m
-	mi.material_override = mat
-	var d := (b - a).normalized()
-	var x := d.cross(Vector3.UP if absf(d.y) < 0.95 else Vector3.RIGHT).normalized()
-	mi.basis = Basis(x, d, x.cross(d))
-	mi.position = (a + b) * 0.5
-	own(mi, parent)
-
-
-func porthole(parent: Node, pos: Vector3, yaw: float) -> void:
-	var ring := MeshInstance3D.new()
-	_n += 1
-	ring.name = "Oblo%d" % _n
-	var tm := TorusMesh.new()
-	tm.inner_radius = 0.38
-	tm.outer_radius = 0.52
-	ring.mesh = tm
-	ring.material_override = M.rust
-	ring.position = pos
-	ring.rotation = Vector3(PI * 0.5, yaw, 0)
-	own(ring, parent)
-	var glass := MeshInstance3D.new()
-	glass.name = "Vetro"
-	var cm := CylinderMesh.new()
-	cm.top_radius = 0.4
-	cm.bottom_radius = 0.4
-	cm.height = 0.04
-	glass.mesh = cm
-	glass.material_override = M.porthole
-	own(glass, ring)
-
-
 func shape_box(parent: Node, size: Vector3, pos := Vector3.ZERO) -> CollisionShape3D:
 	var cs := CollisionShape3D.new()
 	cs.name = "CollisionShape3D"
@@ -850,15 +479,6 @@ func shape_box(parent: Node, size: Vector3, pos := Vector3.ZERO) -> CollisionSha
 	cs.position = pos
 	own(cs, parent)
 	return cs
-
-
-func polaroid(parent: Node, node_name: String, pos: Vector3) -> Node3D:
-	var p: Node3D = S.polaroid.instantiate()
-	p.name = node_name
-	p.position = pos
-	p.set(&"entry_id", StringName(node_name.to_lower()))
-	own(p, parent)
-	return p
 
 
 func checkpoint(parent: Node, node_name: String, order: int, pos: Vector3, size: Vector3, spawn_offset: Vector3, spawn_yaw: float) -> Area3D:
@@ -875,15 +495,3 @@ func checkpoint(parent: Node, node_name: String, order: int, pos: Vector3, size:
 	own(spawn, cp)
 	cp.set(&"spawn_point", spawn)
 	return cp
-
-
-func omni(parent: Node, node_name: String, pos: Vector3, color: Color, energy: float, light_range: float, shadow := true) -> OmniLight3D:
-	var o := OmniLight3D.new()
-	o.name = node_name
-	o.position = pos
-	o.light_color = color
-	o.light_energy = energy
-	o.omni_range = light_range
-	o.shadow_enabled = shadow
-	own(o, parent)
-	return o

@@ -146,6 +146,13 @@ var _equip_t := 1.0
 var lance_rig: Node3D
 ## Vero quando il giocatore ha lo zaino addosso.
 var equipped := true
+## Il getto continuo (nastro d'acqua) e il filo d'acqua dell'aspirazione.
+var stream: WaterStream
+var suction_stream: SuctionStream
+var _last_impact_time := -1.0
+var _last_impact_point := Vector3.ZERO
+var _last_impact_normal := Vector3.UP
+var _clock := 0.0
 
 
 func setup(p: Player) -> void:
@@ -171,8 +178,42 @@ func setup(p: Player) -> void:
 			particles.emitting = false
 	if suction_particles:
 		_suction_material = suction_particles.process_material as ShaderMaterial
+	# Le particelle restano come goccioline fini intorno al getto continuo.
+	if _jet_material:
+		_jet_material.set_shader_parameter(&"base_size", 0.011)
+		_jet_material.set_shader_parameter(&"size_growth", 0.028)
+		_jet_material.set_shader_parameter(&"stretch", 0.018)
+		_jet_material.set_shader_parameter(&"spread_degrees", 2.2)
+		_jet_material.set_shader_parameter(&"color", Color(0.82, 0.92, 1.0, 0.55))
+	if jet_particles:
+		jet_particles.amount = 220
+	stream = WaterStream.new()
+	stream.name = "Getto"
+	stream.gravity = jet_gravity
+	stream.max_age = jet_max_time
+	stream.collision_mask = jet_collision_mask
+	stream.exclude = [p.get_rid()]
+	add_child(stream)
+	stream.impact.connect(_on_stream_impact)
+	suction_stream = SuctionStream.new()
+	suction_stream.name = "Aspirazione"
+	add_child(suction_stream)
+	_update_stream_muzzle()
 	_apply_jet_parameters()
 	set_equipped(start_equipped, false)
+
+
+func _update_stream_muzzle() -> void:
+	if stream:
+		stream.muzzle = muzzle
+	if suction_stream:
+		suction_stream.muzzle = muzzle
+
+
+func _on_stream_impact(point: Vector3, normal: Vector3) -> void:
+	_last_impact_time = _clock
+	_last_impact_point = point
+	_last_impact_normal = normal
 
 
 ## Mette o toglie lo zaino. Con [param animate] la pistola sale dal basso.
@@ -201,6 +242,7 @@ func set_lance(scene: PackedScene) -> void:
 		view_model.basis = Basis.looking_at(Vector3(0.0, 0.0, -converge_distance) - view_model.position, Vector3.UP)
 		_vm_basis = view_model.basis
 		_muzzle_local = player.camera.global_transform.affine_inverse() * muzzle.global_transform
+	_update_stream_muzzle()
 
 
 func _use_lance_scene() -> void:
@@ -314,6 +356,10 @@ func _physics_process(delta: float) -> void:
 		hit_collider = null
 	_update_suction(want_suck, delta)
 	_refill_from_flowing_water(delta)
+	_clock += delta
+	if stream and muzzle:
+		var inherit := player.velocity * inherit_player_velocity
+		stream.physics_step(delta, is_spraying and flow > 0.05, muzzle.global_position, _v0 * maxf(flow, 0.6) + inherit)
 	_update_visuals()
 
 
@@ -520,10 +566,15 @@ func _update_visuals() -> void:
 			_jet_material.set_shader_parameter(&"max_age", hit_time if has_hit else jet_max_time)
 			_jet_material.set_shader_parameter(&"inherit_velocity", player.velocity * inherit_player_velocity)
 	if splash_particles:
-		var show := is_spraying and has_hit and _front_time >= hit_time
+		# Lo schizzo sta dove arriva davvero il getto continuo.
+		var show := _last_impact_time >= 0.0 and _clock - _last_impact_time < 0.08
 		splash_particles.emitting = show
 		if show:
-			splash_particles.global_transform = Transform3D(_basis_from_normal(hit_normal), hit_point + hit_normal * 0.03)
+			splash_particles.global_transform = Transform3D(_basis_from_normal(_last_impact_normal), _last_impact_point + _last_impact_normal * 0.03)
+	if suction_stream:
+		suction_stream.active = is_sucking
+		if is_sucking:
+			suction_stream.source_point = suck_point
 	if suction_particles:
 		suction_particles.emitting = is_sucking
 		if is_sucking:

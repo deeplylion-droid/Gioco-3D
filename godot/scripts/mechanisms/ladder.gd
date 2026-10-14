@@ -18,6 +18,11 @@ extends Area3D
 	set(value):
 		rung_spacing = value
 		_rebuild()
+## Se falso non disegna la scala (quando la scala vera fa parte del modello dell'ambiente).
+@export var show_model := true:
+	set(value):
+		show_model = value
+		_rebuild()
 
 var _vis: Node3D
 var _shape_node: CollisionShape3D
@@ -55,10 +60,10 @@ func _rebuild() -> void:
 	_vis = Node3D.new()
 	_vis.name = "Graybox"
 	add_child(_vis, false, Node.INTERNAL_MODE_FRONT)
-	for side in [-1.0, 1.0]:
+	for side in ([-1.0, 1.0] if show_model else []):
 		Graybox.box(_vis, Vector3(0.06, height + 0.4, 0.06), Vector3(side * width * 0.5, (height + 0.4) * 0.5, 0.1), Graybox.DARK)
 	var y := 0.3
-	while y < height + 0.05:
+	while show_model and y < height + 0.05:
 		var rung := Graybox.cylinder(_vis, 0.022, width, Vector3(0, y, 0.1), Graybox.TARGET)
 		rung.rotation = Vector3(0, 0, PI * 0.5)
 		y += rung_spacing

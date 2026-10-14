@@ -22,6 +22,11 @@ enum Mode { MOMENTARY, TOGGLE, LATCH }
 	set(value):
 		radius = value
 		_rebuild()
+## Se falso non disegna il pulsante (quando è già nel modello dell'ambiente): resta il bersaglio.
+@export var show_model := true:
+	set(value):
+		show_model = value
+		_rebuild()
 
 var pressure := 0.0
 var is_pressed := false
@@ -84,7 +89,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_powered_changed(on: bool) -> void:
-	_cap_mesh.material_override = _cap_mat_on if on else _cap_mat_off
+	if _cap_mesh:
+		_cap_mesh.material_override = _cap_mat_on if on else _cap_mat_off
 
 
 func _rebuild() -> void:
@@ -95,20 +101,30 @@ func _rebuild() -> void:
 	_vis = Node3D.new()
 	_vis.name = "Graybox"
 	add_child(_vis, false, Node.INTERNAL_MODE_FRONT)
-	var body := StaticBody3D.new()
-	body.collision_layer = Layers.WORLD
-	body.collision_mask = 0
-	_vis.add_child(body)
-	var plate := Vector3(radius * 3.0, radius * 3.0, 0.08)
-	Graybox.box(body, plate, Vector3(0, 0, 0.04), Graybox.DARK)
-	Graybox.box_shape(body, plate, Vector3(0, 0, 0.04))
 	_cap = Node3D.new()
 	_cap.position = Vector3(0, 0, 0.12)
 	_vis.add_child(_cap)
-	_cap_mat_off = Graybox.TARGET
-	_cap_mat_on = Graybox.lamp_material(Color(1.0, 0.9, 0.45), 2.5)
-	_cap_mesh = Graybox.cylinder(_cap, radius, 0.1, Vector3.ZERO, _cap_mat_on if powered else _cap_mat_off)
-	_cap_mesh.rotation = Vector3(PI * 0.5, 0, 0)
+	_cap_mesh = null
+	if show_model:
+		var body := StaticBody3D.new()
+		body.collision_layer = Layers.WORLD
+		body.collision_mask = 0
+		_vis.add_child(body)
+		# Pulsantone da giocattolo: cornice gialla e tappo rosso, che si accende di giallo.
+		var plate := Vector3(radius * 3.0, radius * 3.0, 0.08)
+		var frame := StandardMaterial3D.new()
+		frame.albedo_color = Color(0.95, 0.72, 0.12)
+		frame.roughness = 0.45
+		Graybox.box(body, plate, Vector3(0, 0, 0.04), frame)
+		Graybox.box_shape(body, plate, Vector3(0, 0, 0.04))
+		var red := StandardMaterial3D.new()
+		red.albedo_color = Color(0.8, 0.08, 0.06)
+		red.roughness = 0.25
+		red.clearcoat_enabled = true
+		_cap_mat_off = red
+		_cap_mat_on = Graybox.lamp_material(Color(1.0, 0.9, 0.45), 2.5)
+		_cap_mesh = Graybox.cylinder(_cap, radius, 0.1, Vector3.ZERO, _cap_mat_on if powered else _cap_mat_off)
+		_cap_mesh.rotation = Vector3(PI * 0.5, 0, 0)
 	_hitbox = WaterHitbox.new()
 	_hitbox.name = "Bersaglio"
 	_vis.add_child(_hitbox)

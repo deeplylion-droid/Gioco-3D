@@ -1,119 +1,93 @@
 extends Node
 ## Screenshot della demo della sala principale (serve un vero renderer).
 ## Uso (con --fixed-fps il tempo di gioco avanza di 1/60 s per frame):
-##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
-##        --resolution 1280x720 --script res://tests/run.gd -- res://tests/screenshots_sala.gd <cartella> [solo]
+##   xvfb-run -a -s "-screen 0 1920x1080x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
+##        --resolution 1920x1080 --script res://tests/run.gd -- res://tests/screenshots_sala.gd <cartella> \
+##        [inquadrature separate da virgole] [preset] [frame di attesa]
+## Il preset (predefinito "ultra") è quello dell'addon grafica; "ultra" usa la GI SDFGI.
+## I frame di attesa servono all'antialiasing temporale, alla GI e alla nebbia per assestarsi.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
 var out_dir := "user://screenshots_sala"
-var only := ""
+var only := PackedStringArray()
+var preset := "ultra"
+var settle := 50
 var level: Node
 var p: Player
-var cam: Camera3D
 
 
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() > 1:
 		out_dir = args[1]
-	if args.size() > 2:
-		only = args[2]
+	if args.size() > 2 and args[2] != "" and args[2] != "tutte":
+		only = args[2].split(",")
+	if args.size() > 3:
+		preset = args[3]
+	if args.size() > 4:
+		settle = int(args[4])
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	_run.call_deferred()
 
 
+func _want(shot: String) -> bool:
+	return only.is_empty() or only.has(shot)
+
+
 func _run() -> void:
 	Game.pause_on_focus_loss = false
+	Grafica.salva_su_disco = false
+	if preset == "ultra" or preset == "ultra_sdfgi":
+		Grafica.applica_preset("ultra")
+		Grafica.imposta("gi", 2)
+	else:
+		Grafica.applica_preset(preset)
 	get_tree().change_scene_to_file(LEVEL)
-	await _frames(15)
+	await _frames(10)
 	get_tree().paused = false
 	level = get_tree().current_scene
 	p = GameState.player
-	cam = Camera3D.new()
-	cam.fov = 70.0
-	level.add_child(cam)
-	var lightning: Lightning = level.get_node("Luci/Lampi")
-	lightning.min_interval = 999.0
-	lightning.first_delay = 999.0
-	# 1) Ingresso: dalla porta degli spogliatoi, la statua sotto il lampione.
-	p.teleport(Vector3(0, 0, 18.6), 0.0, deg_to_rad(4.0))
-	Input.action_press("move_forward")
-	await _frames(40)
-	Input.action_release("move_forward")
-	await _frames(60)
-	await _player_shot("01_ingresso_statua", Vector3(0, 0, 17.2), 0.0, deg_to_rad(9.0))
-	# 2) La statua da vicino, col lampo.
-	p.teleport(Vector3(1.6, 0, 15.2), deg_to_rad(15.0), deg_to_rad(14.0))
-	await _frames(20)
-	lightning.strike(1.0)
-	await _frames(4)
-	await _capture("02_statua_lampo")
-	await _frames(30)
-	# 3) Panoramica della sala dall'alto (camera libera).
-	await _cam_shot("03_panoramica", Vector3(19.0, 8.5, 15.0), Vector3(-6.0, 0.0, -6.0))
-	await _cam_shot("04_panoramica_ovest", Vector3(-19.0, 7.5, 15.5), Vector3(4.0, 0.0, -8.0))
-	# 5) Dalla spiaggia verso la parte profonda: la pozza, la turbina incastrata, la statua sul bordo.
-	cam.current = false
-	p.camera.current = true
-	await _player_shot("05_piscina_pozza", Vector3(1.0, -1.25, -5.0), PI, deg_to_rad(-6.0))
-	# 6) Aspirare la pozza.
-	p.water_pack.set_tank_amount(2.0)
-	p.teleport(Vector3(-1.5, -2.1, 0.0), PI, 0.0)
-	p.look_at_point(Vector3(-1.0, -2.1, 3.2))
-	Input.action_press("suck")
-	await _frames(50)
-	await _capture("06_aspira_pozza")
-	Input.action_release("suck")
-	# 7) Il gonfiabile cade, poi il getto fa girare la turbina e lo scarico fa il gorgo.
-	var turbine: Turbine = level.get_node("Piscina/TurbinaScarico")
-	p.water_pack.set_tank_amount(20.0)
-	p.teleport(Vector3(2.4, -2.38, 3.4), PI, 0.0)
-	p.look_at_point(turbine.global_position + Vector3(0, 0.25, 0))
-	Input.action_press("spray")
-	await _frames(150)
-	await _capture("07_getto_turbina_gorgo")
-	Input.action_release("spray")
-	# 8) Area bimbi e torre degli scivoli.
-	cam.current = true
-	await _cam_shot("08_area_bimbi", Vector3(-4.5, 3.0, 3.0), Vector3(-17.0, 3.5, -10.0))
-	await _cam_shot("09_torre_scivoli", Vector3(5.0, 2.5, 4.0), Vector3(17.0, 6.0, -9.0))
+	var hud := p.get_node_or_null(^"HUD")
+	if hud:
+		hud.visible = false
+	var storm: Tempesta = level.get_node("Tempesta")
+	storm.automatica = false
+	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
+	lamp.turn_on()
+	if _want("ingresso_statua"):
+		# Dall'uscita degli spogliatoi: la medusa sul piedistallo sotto la lampada.
+		await _shot("ingresso_statua", Vector3(0.0, 0.0, 11.2), Vector3(0.0, 3.0, 6.9))
+	if _want("statua_vicino"):
+		await _shot("statua_vicino", Vector3(1.7, 0.0, 9.2), Vector3(0.0, 3.6, 6.9))
+	if _want("statua_lampo"):
+		await _shot("statua_lampo", Vector3(-2.2, 0.0, 9.6), Vector3(0.0, 3.4, 6.9), func(): storm.lampo_ora(1.3, 0.6, PI * 0.8), 5)
+	if _want("piscina"):
+		# Dal bordo della parte profonda verso la spiaggia e l'area bimbi, sotto la cupola.
+		await _shot("piscina", Vector3(5.6, 0.0, 6.6), Vector3(-2.0, -1.0, -6.0))
+	if _want("torcia"):
+		# La torcia sul pavimento bagnato, verso la torre degli scivoli.
+		await _shot("torcia", Vector3(9.0, 0.0, 9.0), Vector3(13.0, 0.8, -4.0))
+	if _want("area_bimbi"):
+		await _shot("area_bimbi", Vector3(-6.5, 0.0, -6.0), Vector3(-13.0, 2.5, -15.0))
 	print("screenshot salvati in ", ProjectSettings.globalize_path(out_dir))
 	get_tree().quit()
 
 
-func _wanted(file: String) -> bool:
-	if only == "":
-		return true
-	for prefix in only.split(","):
-		if file.begins_with(prefix):
-			return true
-	return false
-
-
-func _player_shot(file: String, pos: Vector3, yaw: float, pitch: float) -> void:
-	if not _wanted(file):
-		return
-	p.teleport(pos, yaw, pitch)
-	await _frames(20)
-	await _capture(file)
-
-
-func _cam_shot(file: String, pos: Vector3, target: Vector3) -> void:
-	if not _wanted(file):
-		return
-	cam.current = true
-	cam.global_position = pos
-	cam.look_at(target)
-	await _frames(12)
+func _shot(file: String, pos: Vector3, look: Vector3, before := Callable(), after_frames := -1) -> void:
+	p.teleport(pos, 0.0, 0.0)
+	p.look_at_point(look)
+	await _frames(settle)
+	if before.is_valid():
+		before.call()
+		await _frames(after_frames if after_frames >= 0 else 4)
 	await _capture(file)
 
 
 func _capture(file: String) -> void:
-	if not _wanted(file):
-		return
 	await RenderingServer.frame_post_draw
-	get_viewport().get_texture().get_image().save_png(out_dir.path_join(file + ".png"))
+	var img := get_viewport().get_texture().get_image()
+	img.save_jpg(out_dir.path_join(file + ".jpg"), 0.92)
 	print("salvato ", file)
 
 

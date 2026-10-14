@@ -30,6 +30,14 @@ func _ready() -> void:
 	_set_level(1.0 if is_on else 0.0)
 
 
+## Cambia la luce e il materiale emissivo comandati (per esempio quelli di un modello importato).
+func set_targets(new_light: Light3D, emissive: StandardMaterial3D = null) -> void:
+	light = new_light
+	if emissive:
+		_material = emissive
+	_set_level(_level if is_on else 0.0)
+
+
 func turn_on() -> void:
 	if is_on:
 		return

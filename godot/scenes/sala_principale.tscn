@@ -1,2083 +1,523 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/game/sala_principale.gd" id="1_fdkcw"]
-[ext_resource type="Environment" path="res://assets/env/sala_environment.tres" id="2_8x03u"]
-[ext_resource type="Script" path="res://scripts/game/asset_slot.gd" id="3_hr5ev"]
-[ext_resource type="Material" path="res://assets/materials/sala/muro.tres" id="4_kx446"]
-[ext_resource type="Material" path="res://assets/materials/sala/pavimento.tres" id="5_3dtp4"]
-[ext_resource type="Material" path="res://assets/materials/sala/soffitto.tres" id="6_xsya6"]
-[ext_resource type="Material" path="res://assets/materials/sala/metallo.tres" id="7_m875x"]
-[ext_resource type="Material" path="res://assets/materials/sala/piastrelle_parete.tres" id="8_28q7e"]
-[ext_resource type="Material" path="res://assets/materials/sala/gioco_blu.tres" id="9_1ipxk"]
-[ext_resource type="Material" path="res://assets/materials/sala/gioco_giallo.tres" id="10_xsvsr"]
-[ext_resource type="Material" path="res://assets/materials/sala/gioco_viola.tres" id="11_obofj"]
-[ext_resource type="Material" path="res://assets/materials/sala/gioco_arancio.tres" id="12_letqv"]
-[ext_resource type="Material" path="res://assets/materials/sala/gioco_verde.tres" id="13_1c7qx"]
-[ext_resource type="Material" path="res://assets/materials/sala/gioco_rosso.tres" id="14_lum6b"]
-[ext_resource type="Material" path="res://assets/materials/sala/ruggine.tres" id="15_dp5pl"]
-[ext_resource type="Material" path="res://assets/materials/sala/oblo_vetro.tres" id="16_y3lwm"]
-[ext_resource type="Material" path="res://assets/materials/sala/armadietti.tres" id="17_23p8a"]
-[ext_resource type="Script" path="res://scripts/environment/dome.gd" id="18_rpag0"]
-[ext_resource type="Material" path="res://assets/materials/sala/vetro_cupola.tres" id="19_bko5w"]
-[ext_resource type="Script" path="res://scripts/environment/pool_basin.gd" id="20_yuaxn"]
-[ext_resource type="Material" path="res://assets/materials/sala/piastrelle_piscina.tres" id="21_453jb"]
-[ext_resource type="Material" path="res://assets/materials/sala/bordo_piscina.tres" id="22_sbb23"]
-[ext_resource type="PackedScene" path="res://scenes/props/water_tank.tscn" id="23_fiiv4"]
-[ext_resource type="Script" path="res://scripts/mechanisms/water_tank.gd" id="24_17xgy"]
-[ext_resource type="Material" path="res://assets/materials/sala/acqua_torbida.tres" id="25_12y24"]
-[ext_resource type="Script" path="res://scripts/environment/drain_vortex.gd" id="26_i3cyo"]
-[ext_resource type="PackedScene" path="res://scenes/props/turbine.tscn" id="27_2qh5t"]
-[ext_resource type="Script" path="res://scripts/mechanisms/turbine.gd" id="28_joe0d"]
-[ext_resource type="Script" path="res://scripts/mechanisms/stuck_inflatable.gd" id="29_g4t5s"]
-[ext_resource type="Script" path="res://scripts/water/water_hitbox.gd" id="30_bbnp1"]
-[ext_resource type="Material" path="res://assets/materials/sala/buio.tres" id="31_wxdfh"]
-[ext_resource type="PackedScene" path="res://scenes/props/water_button.tscn" id="32_ftbmh"]
-[ext_resource type="Script" path="res://scripts/mechanisms/water_button.gd" id="33_b14rd"]
-[ext_resource type="PackedScene" path="res://scenes/props/powered_door.tscn" id="34_yvw0s"]
-[ext_resource type="Script" path="res://scripts/mechanisms/powered_door.gd" id="35_5f2mw"]
-[ext_resource type="PackedScene" path="res://scenes/props/ladder.tscn" id="36_8h62n"]
-[ext_resource type="Script" path="res://scripts/mechanisms/ladder.gd" id="37_5x6fq"]
-[ext_resource type="PackedScene" path="res://scenes/props/polaroid.tscn" id="38_mx14v"]
-[ext_resource type="Script" path="res://scripts/interaction/collectible.gd" id="39_e1t3c"]
-[ext_resource type="Script" path="res://scripts/environment/medusa_placeholder.gd" id="40_3c0cd"]
-[ext_resource type="Material" path="res://assets/materials/sala/lampada_calda.tres" id="41_1e1va"]
-[ext_resource type="Script" path="res://scripts/environment/flicker_light.gd" id="42_7dqmh"]
-[ext_resource type="Material" path="res://assets/materials/sala/tappeto_morbido.tres" id="43_g01iu"]
-[ext_resource type="PackedScene" path="res://assets/models/zaino/zaino_opzione2/zaino_opzione2.gltf" id="44_e6s0g"]
-[ext_resource type="Script" path="res://scripts/interaction/pack_pickup.gd" id="45_kgodc"]
-[ext_resource type="Material" path="res://assets/materials/sala/neon.tres" id="46_02rmv"]
-[ext_resource type="Script" path="res://scripts/environment/lightning.gd" id="47_2ubhj"]
-[ext_resource type="Material" path="res://assets/materials/sala/luce_emergenza.tres" id="48_uqleb"]
-[ext_resource type="Script" path="res://scripts/game/checkpoint.gd" id="49_k1ys3"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="50_vu82c"]
-[ext_resource type="Script" path="res://scripts/player/player.gd" id="51_x8lna"]
+[ext_resource type="Script" path="res://scripts/game/sala_principale.gd" id="1_facmi"]
+[ext_resource type="Material" path="res://assets/materials/sala/vetro_cupola.tres" id="2_ugu2v"]
+[ext_resource type="Environment" path="res://assets/env/sala_environment.tres" id="3_oxlel"]
+[ext_resource type="Script" path="res://addons/grafica/tempesta.gd" id="4_bwdti"]
+[ext_resource type="Script" path="res://assets/ambiente/sala_luci_ambiente.gd" id="5_ls7lm"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_architettura.glb" id="6_vjohq"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_cupola.glb" id="7_5opey"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_piscina.glb" id="8_673ix"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_area_bimbi.glb" id="9_aags6"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_torre_scivoli.glb" id="10_fdkcw"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_oggetti.glb" id="11_8x03u"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_interattivi.glb" id="12_hr5ev"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_luci.glb" id="13_kx446"]
+[ext_resource type="Script" path="res://scripts/environment/medusa_statue.gd" id="14_3dtp4"]
+[ext_resource type="PackedScene" path="res://assets/models/medusa/medusa.glb" id="15_xsya6"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_campana.tres" id="16_m875x"]
+[ext_resource type="PackedScene" path="res://scenes/props/water_button.tscn" id="17_28q7e"]
+[ext_resource type="Script" path="res://scripts/mechanisms/water_button.gd" id="18_1ipxk"]
+[ext_resource type="Script" path="res://scripts/environment/flicker_light.gd" id="19_xsvsr"]
+[ext_resource type="Material" path="res://assets/materials/sala/metallo_verniciato.tres" id="20_obofj"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/zaino_opzione2/zaino_opzione2.gltf" id="21_letqv"]
+[ext_resource type="Script" path="res://scripts/interaction/pack_pickup.gd" id="22_1c7qx"]
+[ext_resource type="PackedScene" path="res://scenes/props/water_tank.tscn" id="23_lum6b"]
+[ext_resource type="Script" path="res://scripts/mechanisms/water_tank.gd" id="24_dp5pl"]
+[ext_resource type="Material" path="res://assets/materials/sala/acqua_torbida.tres" id="25_y3lwm"]
+[ext_resource type="Script" path="res://scripts/environment/drain_vortex.gd" id="26_23p8a"]
+[ext_resource type="PackedScene" path="res://scenes/props/turbine.tscn" id="27_rpag0"]
+[ext_resource type="Script" path="res://scripts/mechanisms/turbine.gd" id="28_bko5w"]
+[ext_resource type="Script" path="res://scripts/mechanisms/stuck_inflatable.gd" id="29_yuaxn"]
+[ext_resource type="Material" path="res://assets/materials/sala/gonfiabile_rosso.tres" id="30_453jb"]
+[ext_resource type="Script" path="res://scripts/water/water_hitbox.gd" id="31_sbb23"]
+[ext_resource type="Material" path="res://assets/materials/sala/buio.tres" id="32_fiiv4"]
+[ext_resource type="Script" path="res://scripts/mechanisms/hinged_hatch.gd" id="33_17xgy"]
+[ext_resource type="PackedScene" path="res://scenes/props/ladder.tscn" id="34_12y24"]
+[ext_resource type="Script" path="res://scripts/mechanisms/ladder.gd" id="35_i3cyo"]
+[ext_resource type="Material" path="res://assets/materials/sala/acqua_vasche.tres" id="36_2qh5t"]
+[ext_resource type="Script" path="res://scripts/mechanisms/bucket_wheel.gd" id="37_joe0d"]
+[ext_resource type="PackedScene" path="res://scenes/props/polaroid.tscn" id="38_g4t5s"]
+[ext_resource type="Script" path="res://scripts/interaction/polaroid_photo.gd" id="39_bbnp1"]
+[ext_resource type="Script" path="res://scripts/game/checkpoint.gd" id="40_wxdfh"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="41_ftbmh"]
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="42_b14rd"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_pwxkc"]
-size = Vector3(48, 0.06, 0.06)
+[sub_resource type="BoxShape3D" id="BoxShape3D_yvw0s"]
+size = Vector3(0.8, 0.8, 0.6)
 
-[sub_resource type="BoxMesh" id="BoxMesh_h5cer"]
-size = Vector3(0.06, 0.06, 33)
-
-[sub_resource type="BoxMesh" id="BoxMesh_t1jif"]
-size = Vector3(0.06, 0.06, 33)
-
-[sub_resource type="BoxMesh" id="BoxMesh_igq28"]
-size = Vector3(6, 1.3, 0.08)
-
-[sub_resource type="BoxMesh" id="BoxMesh_6tq5p"]
-size = Vector3(4.6, 0.35, 0.1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_epmkm"]
-size = Vector3(6, 1.3, 0.08)
-
-[sub_resource type="BoxMesh" id="BoxMesh_1n2lq"]
-size = Vector3(4.6, 0.35, 0.1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ngknc"]
-size = Vector3(6, 1.3, 0.08)
-
-[sub_resource type="BoxMesh" id="BoxMesh_5ve0e"]
-size = Vector3(4.6, 0.35, 0.1)
-
-[sub_resource type="TorusMesh" id="TorusMesh_07w60"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_ytqni"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_wixp4"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_7fca5"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_kat1n"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_nfgmp"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_ul7s7"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_omjo8"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_fgyri"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_xq6tq"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_48fcl"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_b3kvv"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_1nc22"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_rnawd"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_ky4ma"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_c3e7s"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_7mpop"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_u1omd"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_g3qam"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_hmt0i"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_al75a"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_w0die"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_de2an"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_677qg"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_qmycu"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_g4bos"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_cwoim"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_ulpvy"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_ajx04"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_retvq"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_ewr3r"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_0352v"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_upq7w"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_bhk57"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_7pn8q"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_egwbi"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_uawr5"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_vat3c"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="TorusMesh" id="TorusMesh_075dv"]
-inner_radius = 0.38
-outer_radius = 0.52
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_w0r2q"]
-top_radius = 0.4
-bottom_radius = 0.4
-height = 0.04
-
-[sub_resource type="BoxMesh" id="BoxMesh_m3sf7"]
-size = Vector3(14, 0.02, 0.35)
-
-[sub_resource type="SphereMesh" id="SphereMesh_tu061"]
-radius = 0.22
-height = 0.44
-
-[sub_resource type="SphereMesh" id="SphereMesh_cfwyg"]
-radius = 0.18
-height = 0.36
-
-[sub_resource type="SphereMesh" id="SphereMesh_784jf"]
-radius = 0.25
-height = 0.5
-
-[sub_resource type="SphereMesh" id="SphereMesh_im13x"]
-radius = 0.2
-height = 0.4
-
-[sub_resource type="TorusMesh" id="TorusMesh_jb408"]
-inner_radius = 0.22
-outer_radius = 0.42
-
-[sub_resource type="BoxMesh" id="BoxMesh_f5x3r"]
-size = Vector3(0.9, 0.02, 0.9)
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_6mn7q"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_5f2mw"]
 height = 0.2
 radius = 0.45
 
-[sub_resource type="TorusMesh" id="TorusMesh_dfeuc"]
+[sub_resource type="TorusMesh" id="TorusMesh_8h62n"]
 inner_radius = 0.24
 outer_radius = 0.46
+rings = 48
+ring_segments = 24
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_pj552"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_5x6fq"]
 height = 0.4
 
-[sub_resource type="BoxMesh" id="BoxMesh_nnhtx"]
-size = Vector3(1.5, 0.004, 1.5)
+[sub_resource type="BoxMesh" id="BoxMesh_mx14v"]
+size = Vector3(1.2, 0.004, 1.2)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_0qhem"]
-top_radius = 0.12
-bottom_radius = 0.32
-height = 0.32
+[sub_resource type="BoxShape3D" id="BoxShape3D_e1t3c"]
+size = Vector3(4, 3, 1.4)
 
-[sub_resource type="SphereMesh" id="SphereMesh_6jcqw"]
-radius = 0.95
-height = 0.95
-is_hemisphere = true
+[sub_resource type="BoxShape3D" id="BoxShape3D_3c0cd"]
+size = Vector3(8, 3, 1.5)
 
-[sub_resource type="SphereMesh" id="SphereMesh_luv17"]
-radius = 0.95
-height = 0.95
-is_hemisphere = true
+[sub_resource type="BoxShape3D" id="BoxShape3D_1e1va"]
+size = Vector3(14, 3, 1.5)
 
-[sub_resource type="SphereMesh" id="SphereMesh_6nbis"]
-radius = 0.95
-height = 0.95
-is_hemisphere = true
+[sub_resource type="BoxShape3D" id="BoxShape3D_7dqmh"]
+size = Vector3(12, 3, 1.5)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_ihpvw"]
-top_radius = 0.75
-bottom_radius = 0.75
-height = 12.258895
-radial_segments = 20
+[sub_resource type="BoxShape3D" id="BoxShape3D_g01iu"]
+size = Vector3(7, 3, 1)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_47ww8"]
-top_radius = 0.75
-bottom_radius = 0.75
-height = 14.519825
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_3i5nf"]
-top_radius = 0.75
-bottom_radius = 0.75
-height = 13.184206
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_iu7eu"]
-top_radius = 0.75
-bottom_radius = 0.75
-height = 10.018699
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_nbfp7"]
-top_radius = 0.75
-bottom_radius = 0.75
-height = 7.7875743
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_2v53u"]
-top_radius = 0.75
-bottom_radius = 0.75
-height = 4.6796565
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_uedio"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 6.4274955
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_jqn34"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 8.344645
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_aife6"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 6.3030267
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_amvg6"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 5.6296067
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_lf1x3"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 6.6721997
-radial_segments = 20
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_tah6c"]
-top_radius = 0.7
-bottom_radius = 0.7
-height = 3.8273451
-radial_segments = 20
-
-[sub_resource type="TorusMesh" id="TorusMesh_an7ei"]
-inner_radius = 0.2
-outer_radius = 0.34
-
-[sub_resource type="BoxMesh" id="BoxMesh_eiblg"]
-size = Vector3(1.2, 0.8, 0.04)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_dut6h"]
-size = Vector3(0.8, 0.8, 0.6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_6goy6"]
-size = Vector3(1.6, 0.06, 0.12)
-
-[sub_resource type="BoxMesh" id="BoxMesh_1bxn2"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_hddxm"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_vo4jh"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_rxajx"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_pyxnm"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ay2jc"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_l26yt"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_mc0tt"]
-size = Vector3(0.36, 0.2, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_qjlst"]
-size = Vector3(0.12, 0.07, 2.2)
-
-[sub_resource type="BoxMesh" id="BoxMesh_366ax"]
-size = Vector3(0.12, 0.07, 2.2)
-
-[sub_resource type="BoxMesh" id="BoxMesh_fb7k1"]
-size = Vector3(0.12, 0.07, 2.2)
-
-[sub_resource type="BoxMesh" id="BoxMesh_bipd5"]
-size = Vector3(0.12, 0.07, 2.2)
-
-[sub_resource type="BoxMesh" id="BoxMesh_v8ob2"]
-size = Vector3(0.12, 0.07, 2.2)
-
-[sub_resource type="FogMaterial" id="FogMaterial_jie5x"]
-density = 0.07
-albedo = Color(0.7, 0.75, 0.8, 1)
-height_falloff = 1.2
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_5r17y"]
-size = Vector3(3.5, 3, 3)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_min7r"]
-size = Vector3(6, 3, 2)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_trtoi"]
-size = Vector3(13, 3, 2)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_xu7wo"]
-size = Vector3(13, 3, 2)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_p7kv6"]
-size = Vector3(4, 3, 1.2)
-
-[node name="SalaPrincipale" type="Node3D" unique_id=1897805576 node_paths=PackedStringArray("statue_lamp", "lamp_trigger", "statue", "jingle_button", "hatch")]
-script = ExtResource("1_fdkcw")
+[node name="SalaPrincipale" type="Node3D" unique_id=1603947642 node_paths=PackedStringArray("statue_lamp", "lamp_trigger", "statue", "jingle_button", "hatch")]
+script = ExtResource("1_facmi")
 statue_lamp = NodePath("Statua/Sfarfallio")
+statue_lamp_light = NodePath("Sala/Luci/luce_lampione")
+statue_lamp_aim = Vector3(0, 3.55, 6.9)
 lamp_trigger = NodePath("Gioco/AccendiLampione")
-statue = NodePath("Statua/Medusa/Graybox")
+statue = NodePath("Statua/Medusa")
 jingle_button = NodePath("Statua/PulsanteSigla")
+jingle_button_mesh = NodePath("Sala/Interattivi/sala_pulsante_piedistallo")
 hatch = NodePath("Piscina/Portello")
+hatch_button_mesh = NodePath("Sala/Interattivi/sala_pulsante_portello")
+dome_glass = ExtResource("2_ugu2v")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1813110398]
-environment = ExtResource("2_8x03u")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=174209367]
+environment = ExtResource("3_oxlel")
 
-[node name="Sala" type="Node3D" parent="." unique_id=1083655638]
-script = ExtResource("3_hr5ev")
+[node name="Tempesta" type="Node3D" parent="." unique_id=972414904]
+script = ExtResource("4_bwdti")
+intervallo_min = 9.0
+intervallo_max = 20.0
+energia_lampo = 7.0
+materiali = Array[ShaderMaterial]([ExtResource("2_ugu2v")])
 
-[node name="Graybox" type="Node3D" parent="Sala" unique_id=1280787477]
+[node name="Sala" type="Node3D" parent="." unique_id=1431353893]
+script = ExtResource("5_ls7lm")
+crea_ambiente = false
 
-[node name="Struttura" type="CSGCombiner3D" parent="Sala/Graybox" unique_id=788774108]
-use_collision = true
-collision_mask = 0
+[node name="Architettura" type="Node3D" parent="Sala" unique_id=963494902 instance=ExtResource("6_vjohq")]
 
-[node name="Esterno1" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=1598726290]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.1, 0)
-size = Vector3(49.2, 11, 36.2)
-material = ExtResource("4_kx446")
+[node name="Cupola" type="Node3D" parent="Sala" unique_id=716429545 instance=ExtResource("7_5opey")]
 
-[node name="Interno2" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=1852633570]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.975, 0)
-operation = 2
-size = Vector3(48, 10.05, 35)
-material = ExtResource("4_kx446")
+[node name="Piscina" type="Node3D" parent="Sala" unique_id=217776832 instance=ExtResource("8_673ix")]
 
-[node name="Pavimento3" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=431885308]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0)
-size = Vector3(48.4, 0.05, 35.4)
-material = ExtResource("5_3dtp4")
+[node name="AreaBimbi" type="Node3D" parent="Sala" unique_id=1861133570 instance=ExtResource("9_aags6")]
 
-[node name="Soffitto4" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=1807210593]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.975, 0)
-size = Vector3(48.4, 0.05, 35.4)
-material = ExtResource("6_xsya6")
+[node name="TorreScivoli" type="Node3D" parent="Sala" unique_id=1725874692 instance=ExtResource("10_fdkcw")]
 
-[node name="SpogliatoiEsterno5" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=1529786736]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55, 20.9)
-size = Vector3(5.2, 3.9, 6)
-material = ExtResource("4_kx446")
+[node name="Oggetti" type="Node3D" parent="Sala" unique_id=265831378 instance=ExtResource("11_8x03u")]
 
-[node name="SpogliatoiInterno6" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=478413422]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.475, 21)
-operation = 2
-size = Vector3(4, 3.05, 5.4)
-material = ExtResource("4_kx446")
+[node name="Interattivi" type="Node3D" parent="Sala" unique_id=862207878 instance=ExtResource("12_hr5ev")]
 
-[node name="SpogliatoiPavimento7" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=1584448448]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 21)
-size = Vector3(4.2, 0.05, 5.6)
-material = ExtResource("5_3dtp4")
+[node name="Luci" type="Node3D" parent="Sala" unique_id=1492642081 instance=ExtResource("13_kx446")]
 
-[node name="BallatoioNord8" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=752680129]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.15, -16.5)
-size = Vector3(48, 0.3, 2)
-material = ExtResource("7_m875x")
+[node name="Statua" type="Node3D" parent="." unique_id=1564510389]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.9)
 
-[node name="BallatoioOvest9" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=977518459]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 5.15, 1)
-size = Vector3(2, 0.3, 33)
-material = ExtResource("7_m875x")
+[node name="Medusa" type="Node3D" parent="Statua" unique_id=1197201066]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
+script = ExtResource("14_3dtp4")
+model = ExtResource("15_xsya6")
+bell_material = ExtResource("16_m875x")
 
-[node name="BallatoioEst10" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=44330456]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 5.15, 1)
-size = Vector3(2, 0.3, 33)
-material = ExtResource("7_m875x")
-
-[node name="ColonnaN11" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=466013884]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 2.5, -15.6)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaN12" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=1082533438]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2.5, -15.6)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaN13" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=1735721645]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2.5, -15.6)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaN14" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=901301587]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2.5, -15.6)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaO15" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=1843595599]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.1, 2.5, -8)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaE16" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=836084699]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.1, 2.5, -8)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaO17" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=1666515891]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.1, 2.5, 0)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaE18" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=929622828]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.1, 2.5, 0)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaO19" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=240331730]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.1, 2.5, 8)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaE20" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=365731753]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.1, 2.5, 8)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaO21" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=1090804670]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.1, 2.5, 15)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="ColonnaE22" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=1757013087]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.1, 2.5, 15)
-radius = 0.28
-height = 5.0
-sides = 24
-material = ExtResource("7_m875x")
-
-[node name="BucoCupola23" type="CSGCylinder3D" parent="Sala/Graybox/Struttura" unique_id=816969875]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 10.3, -2.5)
-operation = 2
-radius = 13.0
-height = 1.4
-sides = 64
-material = ExtResource("6_xsya6")
-
-[node name="BucoPiscina24" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=440675107]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -1.45, -2.5)
-operation = 2
-size = Vector3(13.04, 3.1, 23.04)
-material = ExtResource("8_28q7e")
-
-[node name="BucoVascaArrivo25" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=836104502]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, -0.6, 7)
-operation = 2
-size = Vector3(11, 1.5, 8)
-material = ExtResource("4_kx446")
-
-[node name="PortaSpogliatoi26" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=1496894247]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.401, 17.6)
-operation = 2
-size = Vector3(2.4, 2.8, 1.8)
-material = ExtResource("4_kx446")
-
-[node name="PortaStanzino27" type="CSGBox3D" parent="Sala/Graybox/Struttura" unique_id=826088218]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 1.201, 20.8)
-operation = 2
-size = Vector3(1.4, 2.4, 1.6)
-material = ExtResource("4_kx446")
-
-[node name="Ringhiere" type="Node3D" parent="Sala/Graybox" unique_id=1903407771]
-
-[node name="Pannello28" type="MeshInstance3D" parent="Sala/Graybox/Ringhiere" unique_id=1628547625]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.3, -15.5)
-material_override = ExtResource("7_m875x")
-mesh = SubResource("BoxMesh_pwxkc")
-
-[node name="Pannello29" type="MeshInstance3D" parent="Sala/Graybox/Ringhiere" unique_id=1565576183]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 6.3, 1)
-material_override = ExtResource("7_m875x")
-mesh = SubResource("BoxMesh_h5cer")
-
-[node name="Pannello30" type="MeshInstance3D" parent="Sala/Graybox/Ringhiere" unique_id=311061805]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 6.3, 1)
-material_override = ExtResource("7_m875x")
-mesh = SubResource("BoxMesh_t1jif")
-
-[node name="Cartelloni" type="Node3D" parent="Sala/Graybox" unique_id=873350711]
-
-[node name="Pannello31" type="MeshInstance3D" parent="Sala/Graybox/Cartelloni" unique_id=234714641]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 5.9, -15.45)
-material_override = ExtResource("9_1ipxk")
-mesh = SubResource("BoxMesh_igq28")
-
-[node name="Pannello32" type="MeshInstance3D" parent="Sala/Graybox/Cartelloni" unique_id=1033877888]
-transform = Transform3D(0.99680173, -0.07991469, 0, 0.07991469, 0.99680173, 0, 0, 0, 1, -10, 5.75, -15.429999)
-material_override = ExtResource("10_xsvsr")
-mesh = SubResource("BoxMesh_6tq5p")
-
-[node name="Pannello33" type="MeshInstance3D" parent="Sala/Graybox/Cartelloni" unique_id=904902313]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 5.9, -15.45)
-material_override = ExtResource("11_obofj")
-mesh = SubResource("BoxMesh_epmkm")
-
-[node name="Pannello34" type="MeshInstance3D" parent="Sala/Graybox/Cartelloni" unique_id=1459367124]
-transform = Transform3D(0.99680173, -0.07991469, 0, 0.07991469, 0.99680173, 0, 0, 0, 1, 10, 5.75, -15.429999)
-material_override = ExtResource("12_letqv")
-mesh = SubResource("BoxMesh_1n2lq")
-
-[node name="Pannello35" type="MeshInstance3D" parent="Sala/Graybox/Cartelloni" unique_id=1571797339]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 5.9, -15.45)
-material_override = ExtResource("13_1c7qx")
-mesh = SubResource("BoxMesh_ngknc")
-
-[node name="Pannello36" type="MeshInstance3D" parent="Sala/Graybox/Cartelloni" unique_id=1161151679]
-transform = Transform3D(0.99680173, -0.07991469, 0, 0.07991469, 0.99680173, 0, 0, 0, 1, -1, 5.75, -15.429999)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("BoxMesh_5ve0e")
-
-[node name="Oblo" type="Node3D" parent="Sala/Graybox" unique_id=289920698]
-
-[node name="Oblo37" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=177781577]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 2.4, -12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_07w60")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo37" unique_id=1490570963]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_ytqni")
-
-[node name="Oblo38" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=679646342]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 2.4, -12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_wixp4")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo38" unique_id=1192757828]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_7fca5")
-
-[node name="Oblo39" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1309414899]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 7.6, -12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_kat1n")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo39" unique_id=774522775]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_nfgmp")
-
-[node name="Oblo40" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1184629200]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 7.6, -12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_ul7s7")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo40" unique_id=408119269]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_omjo8")
-
-[node name="Oblo41" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1577702577]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 2.4, -6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_fgyri")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo41" unique_id=650187298]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_xq6tq")
-
-[node name="Oblo42" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1277351507]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 2.4, -6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_48fcl")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo42" unique_id=1007942189]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_b3kvv")
-
-[node name="Oblo43" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1861979606]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 7.6, -6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_1nc22")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo43" unique_id=2057201980]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_rnawd")
-
-[node name="Oblo44" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=977811220]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 7.6, -6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_ky4ma")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo44" unique_id=474180697]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_c3e7s")
-
-[node name="Oblo45" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=890274923]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 2.4, 6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_7mpop")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo45" unique_id=616334260]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_u1omd")
-
-[node name="Oblo46" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1640118785]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 2.4, 6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_g3qam")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo46" unique_id=696212733]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_hmt0i")
-
-[node name="Oblo47" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=276463096]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 7.6, 6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_al75a")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo47" unique_id=1129897338]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_w0die")
-
-[node name="Oblo48" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1959529264]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 7.6, 6)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_de2an")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo48" unique_id=973444281]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_677qg")
-
-[node name="Oblo49" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1146524001]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 2.4, 12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_qmycu")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo49" unique_id=202452846]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_g4bos")
-
-[node name="Oblo50" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=2054544809]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 2.4, 12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_cwoim")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo50" unique_id=354918515]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_ulpvy")
-
-[node name="Oblo51" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1166618514]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -23.95, 7.6, 12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_ajx04")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo51" unique_id=798176666]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_retvq")
-
-[node name="Oblo52" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=256507622]
-transform = Transform3D(-4.371139e-08, -1, 4.371139e-08, 0, -4.371139e-08, -1, 1, -4.371139e-08, 1.9106855e-15, 23.95, 7.6, 12)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_ewr3r")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo52" unique_id=1793398729]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_0352v")
-
-[node name="Oblo53" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=271815625]
-transform = Transform3D(-1, -8.742278e-08, 3.821371e-15, 0, -4.371139e-08, -1, 8.742278e-08, -1, 4.371139e-08, -14, 2.4, 17.45)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_upq7w")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo53" unique_id=285384834]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_bhk57")
-
-[node name="Oblo54" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1117100592]
-transform = Transform3D(-1, -8.742278e-08, 3.821371e-15, 0, -4.371139e-08, -1, 8.742278e-08, -1, 4.371139e-08, -7, 2.4, 17.45)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_7pn8q")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo54" unique_id=1221684578]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_egwbi")
-
-[node name="Oblo55" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=1936592808]
-transform = Transform3D(-1, -8.742278e-08, 3.821371e-15, 0, -4.371139e-08, -1, 8.742278e-08, -1, 4.371139e-08, 7, 2.4, 17.45)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_uawr5")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo55" unique_id=590289087]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_vat3c")
-
-[node name="Oblo56" type="MeshInstance3D" parent="Sala/Graybox/Oblo" unique_id=2129676985]
-transform = Transform3D(-1, -8.742278e-08, 3.821371e-15, 0, -4.371139e-08, -1, 8.742278e-08, -1, 4.371139e-08, 14, 2.4, 17.45)
-material_override = ExtResource("15_dp5pl")
-mesh = SubResource("TorusMesh_075dv")
-
-[node name="Vetro" type="MeshInstance3D" parent="Sala/Graybox/Oblo/Oblo56" unique_id=2049710788]
-material_override = ExtResource("16_y3lwm")
-mesh = SubResource("CylinderMesh_w0r2q")
-
-[node name="Armadietti" type="CSGCombiner3D" parent="Sala/Graybox" unique_id=1885405681]
-use_collision = true
-collision_mask = 0
-
-[node name="ArmadiettoE57" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=216074493]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.72, 0.95, 19)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoE58" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=2124383474]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.72, 0.95, 19.6)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoO59" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=413169005]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.72, 0.95, 20.2)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoO60" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=128569193]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.72, 0.95, 20.8)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoO61" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=1464722951]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.72, 0.95, 21.4)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoO62" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=871659424]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.72, 0.95, 22)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoE63" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=840918800]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.72, 0.95, 22)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoO64" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=2068729692]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.72, 0.95, 22.6)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="ArmadiettoE65" type="CSGBox3D" parent="Sala/Graybox/Armadietti" unique_id=1614940717]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.72, 0.95, 22.6)
-size = Vector3(0.5, 1.9, 0.56)
-material = ExtResource("17_23p8a")
-
-[node name="Cupola" type="Node3D" parent="Sala/Graybox" unique_id=804669946]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 10, -2.5)
-script = ExtResource("18_rpag0")
-glass_material = ExtResource("19_bko5w")
-frame_material = ExtResource("7_m875x")
-
-[node name="Piscina" type="Node3D" parent="." unique_id=635403878]
-
-[node name="Vasca" type="Node3D" parent="Piscina" unique_id=768699579]
-script = ExtResource("3_hr5ev")
-
-[node name="Graybox" type="Node3D" parent="Piscina/Vasca" unique_id=537866701]
-
-[node name="FondoPiscina" type="StaticBody3D" parent="Piscina/Vasca/Graybox" unique_id=1650526997]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -2.5)
-script = ExtResource("20_yuaxn")
-profile = PackedVector2Array(-11.5, 0, -3.5, 1.2, 4, 2.4, 11.5, 2.4)
-floor_material = ExtResource("21_453jb")
-wall_material = ExtResource("8_28q7e")
-
-[node name="Bordo" type="CSGCombiner3D" parent="Piscina/Vasca/Graybox" unique_id=1898830054]
-use_collision = true
-collision_mask = 0
-
-[node name="BordoOvest66" type="CSGBox3D" parent="Piscina/Vasca/Graybox/Bordo" unique_id=637379397]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.75, 0.03, -2.25)
-size = Vector3(0.5, 0.06, 23.5)
-material = ExtResource("22_sbb23")
-
-[node name="BordoEst67" type="CSGBox3D" parent="Piscina/Vasca/Graybox/Bordo" unique_id=1259296517]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 0.03, -2.25)
-size = Vector3(0.5, 0.06, 23.5)
-material = ExtResource("22_sbb23")
-
-[node name="BordoSud68" type="CSGBox3D" parent="Piscina/Vasca/Graybox/Bordo" unique_id=585083909]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.03, 9.25)
-size = Vector3(14, 0.06, 0.5)
-material = ExtResource("22_sbb23")
-
-[node name="Griglia" type="MeshInstance3D" parent="Piscina/Vasca/Graybox" unique_id=1482562341]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.065, 9.25)
-material_override = ExtResource("7_m875x")
-mesh = SubResource("BoxMesh_m3sf7")
-
-[node name="Giocattoli" type="Node3D" parent="Piscina/Vasca/Graybox" unique_id=1544738082]
-
-[node name="@MeshInstance3D@2" type="MeshInstance3D" parent="Piscina/Vasca/Graybox/Giocattoli" unique_id=1313167802]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.18, 6)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("SphereMesh_tu061")
-
-[node name="@MeshInstance3D@3" type="MeshInstance3D" parent="Piscina/Vasca/Graybox/Giocattoli" unique_id=442778936]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, -2.22, 4.4)
-material_override = ExtResource("10_xsvsr")
-mesh = SubResource("SphereMesh_cfwyg")
-
-[node name="@MeshInstance3D@4" type="MeshInstance3D" parent="Piscina/Vasca/Graybox/Giocattoli" unique_id=1152253347]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, -2.15, 7.2)
-material_override = ExtResource("9_1ipxk")
-mesh = SubResource("SphereMesh_784jf")
-
-[node name="@MeshInstance3D@5" type="MeshInstance3D" parent="Piscina/Vasca/Graybox/Giocattoli" unique_id=1124607974]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, -2.2, 7.8)
-material_override = ExtResource("13_1c7qx")
-mesh = SubResource("SphereMesh_im13x")
-
-[node name="@MeshInstance3D@6" type="MeshInstance3D" parent="Piscina/Vasca/Graybox/Giocattoli" unique_id=1751003535]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -2.3, 6.8)
-material_override = ExtResource("12_letqv")
-mesh = SubResource("TorusMesh_jb408")
-
-[node name="Pozza" type="Node3D" parent="Piscina" unique_id=1089490058 node_paths=PackedStringArray("drain_sources") instance=ExtResource("23_fiiv4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -2.4, 4.2)
-script = ExtResource("24_17xgy")
-inner_size = Vector3(13, 0.6, 9.6)
-build_walls = false
-water_material = ExtResource("25_12y24")
-fill = 0.7
-max_fill = 0.7
-capacity_liters = 150.0
-drain_time = 24.0
-drain_sources = [NodePath("../TurbinaScarico")]
-
-[node name="Scarico" type="MeshInstance3D" parent="Piscina" unique_id=1749427860]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -2.39, 7.6)
-material_override = ExtResource("7_m875x")
-mesh = SubResource("BoxMesh_f5x3r")
-
-[node name="Gorgo" type="MeshInstance3D" parent="Piscina" unique_id=13180646 node_paths=PackedStringArray("tank")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -2, 7.6)
-script = ExtResource("26_i3cyo")
-tank = NodePath("../Pozza")
-
-[node name="TurbinaScarico" type="Node3D" parent="Piscina" unique_id=620152101 instance=ExtResource("27_2qh5t")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 4.5, -0.9, 9)
-script = ExtResource("28_joe0d")
-radius = 0.6
-
-[node name="GonfiabileIncastrato" type="RigidBody3D" parent="Piscina" unique_id=1847969182 node_paths=PackedStringArray("jams")]
-transform = Transform3D(0.9553365, -0.29552022, 0, -1.29175985e-08, -4.1759087e-08, -1, 0.29552022, 0.9553365, -4.371139e-08, 4.6, -0.84999996, 8.58)
-collision_layer = 8
-collision_mask = 11
-mass = 0.6
-script = ExtResource("29_g4t5s")
-jams = NodePath("../TurbinaScarico")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato" unique_id=2088422243]
-shape = SubResource("CylinderShape3D_6mn7q")
-
-[node name="Ciambella" type="MeshInstance3D" parent="Piscina/GonfiabileIncastrato" unique_id=663714283]
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("TorusMesh_dfeuc")
-
-[node name="Bersaglio" type="Area3D" parent="Piscina/GonfiabileIncastrato" unique_id=1713222678]
-collision_layer = 32
-collision_mask = 0
-monitoring = false
-script = ExtResource("30_bbnp1")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato/Bersaglio" unique_id=2043941388]
-shape = SubResource("CylinderShape3D_pj552")
-
-[node name="Buio" type="MeshInstance3D" parent="Piscina" unique_id=1708622891]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, -2.397, 5)
-material_override = ExtResource("31_wxdfh")
-mesh = SubResource("BoxMesh_nnhtx")
-
-[node name="PulsantePortello" type="Node3D" parent="Piscina" unique_id=767524614 instance=ExtResource("32_ftbmh")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -5.5, -2.12, 5)
-script = ExtResource("33_b14rd")
-mode = 2
-radius = 0.18
-
-[node name="Portello" type="Node3D" parent="Piscina" unique_id=299870930 node_paths=PackedStringArray("sources") instance=ExtResource("34_yvw0s")]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -2.5, -2.38, 4.2)
-script = ExtResource("35_5f2mw")
-sources = [NodePath("../PulsantePortello")]
-size = Vector3(1.6, 1.6, 0.06)
-open_offset = Vector3(1.7, 0, 0)
-
-[node name="Scaletta" type="Area3D" parent="Piscina" unique_id=488199065 instance=ExtResource("36_8h62n")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.5, -2.4, 3)
-collision_layer = 128
-collision_mask = 0
-monitoring = false
-script = ExtResource("37_5x6fq")
-height = 2.4
-
-[node name="Polaroid05" type="Area3D" parent="Piscina" unique_id=1037315781 instance=ExtResource("38_mx14v")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -2.4, 6.6)
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("39_e1t3c")
-entry_id = &"polaroid05"
-prompt = "Raccogli"
-one_shot = true
-
-[node name="Statua" type="Node3D" parent="." unique_id=156669257]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11.6)
-
-[node name="Piedistallo" type="CSGCombiner3D" parent="Statua" unique_id=2008741035]
-use_collision = true
-collision_mask = 0
-
-[node name="Base72" type="CSGCylinder3D" parent="Statua/Piedistallo" unique_id=1363493642]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-radius = 1.25
-height = 1.0
-sides = 24
-material = ExtResource("4_kx446")
-
-[node name="Fascia73" type="CSGCylinder3D" parent="Statua/Piedistallo" unique_id=1840249528]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
-radius = 1.27
-height = 0.25
-sides = 24
-material = ExtResource("9_1ipxk")
-
-[node name="Cappello74" type="CSGCylinder3D" parent="Statua/Piedistallo" unique_id=763039663]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-radius = 1.32
-height = 0.08
-sides = 24
-material = ExtResource("22_sbb23")
-
-[node name="Medusa" type="Node3D" parent="Statua" unique_id=174930997]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04, 0)
-script = ExtResource("3_hr5ev")
-
-[node name="Graybox" type="Node3D" parent="Statua/Medusa" unique_id=267685000]
-script = ExtResource("40_3c0cd")
-
-[node name="PulsanteSigla" type="Node3D" parent="Statua" unique_id=58996156 instance=ExtResource("32_ftbmh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58, 1.27)
-script = ExtResource("33_b14rd")
+[node name="PulsanteSigla" type="Node3D" parent="Statua" unique_id=617863960 instance=ExtResource("17_28q7e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, 1.14)
+script = ExtResource("18_1ipxk")
 mode = 0
-radius = 0.16
+radius = 0.14
+show_model = false
 
-[node name="Lampione" type="CSGCombiner3D" parent="Statua" unique_id=1497935873]
-use_collision = true
-collision_mask = 0
-
-[node name="Palo75" type="CSGCylinder3D" parent="Statua/Lampione" unique_id=1003505265]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 2.6, 1)
-radius = 0.07
-height = 5.2
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Braccio76" type="CSGBox3D" parent="Statua/Lampione" unique_id=648761462]
-transform = Transform3D(0.52409744, 0, 0.8516583, 0, 1, 0, -0.8516583, 0, 0.52409744, 1.55, 5.12, 0.6)
-size = Vector3(0.08, 0.08, 1.75)
-material = ExtResource("15_dp5pl")
-
-[node name="Lampada" type="MeshInstance3D" parent="Statua" unique_id=10593082]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 4.98, 0.2)
-material_override = ExtResource("41_1e1va")
-mesh = SubResource("CylinderMesh_0qhem")
-
-[node name="LuceStatua" type="SpotLight3D" parent="Statua" unique_id=1839026800]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.9, 4.8, 0.2)
-light_color = Color(1, 0.78, 0.52, 1)
-light_energy = 12.0
-light_volumetric_fog_energy = 1.6
-shadow_enabled = true
-spot_range = 9.0
-spot_angle = 36.0
-
-[node name="Sfarfallio" type="Node" parent="Statua" unique_id=1103150110 node_paths=PackedStringArray("light", "mesh")]
-script = ExtResource("42_7dqmh")
-light = NodePath("../LuceStatua")
-mesh = NodePath("../Lampada")
-base_energy = 12.0
-base_emission = 4.0
+[node name="Sfarfallio" type="Node" parent="Statua" unique_id=146063208]
+script = ExtResource("19_xsvsr")
+base_energy = 16.0
+base_emission = 6.0
 flicker_rate = 0.05
-min_level = 0.3
+min_level = 0.35
 start_off = true
 
-[node name="AreaBimbi" type="Node3D" parent="." unique_id=1890717144]
-script = ExtResource("3_hr5ev")
+[node name="PostazioneBagnini" type="Node3D" parent="." unique_id=752897817]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 4.3, 0, 11.55)
 
-[node name="Graybox" type="Node3D" parent="AreaBimbi" unique_id=2116151559]
-
-[node name="Struttura" type="CSGCombiner3D" parent="AreaBimbi/Graybox" unique_id=352060430]
+[node name="Rastrelliera" type="CSGCombiner3D" parent="PostazioneBagnini" unique_id=78091429]
 use_collision = true
 collision_mask = 0
 
-[node name="TappetoMorbido77" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1854513027]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0.01, -7.5)
-size = Vector3(13, 0.02, 13)
-material = ExtResource("43_g01iu")
+[node name="Montante1" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=2011007212]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.95, 0.2)
+size = Vector3(0.05, 1.9, 0.05)
+material = ExtResource("20_obofj")
 
-[node name="Palo78" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1737671592]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 2.8, -13)
-radius = 0.16
-height = 5.6
-sides = 24
-material = ExtResource("14_lum6b")
+[node name="Montante2" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=154713682]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.95, 0.2)
+size = Vector3(0.05, 1.9, 0.05)
+material = ExtResource("20_obofj")
 
-[node name="Palo79" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1757002909]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 2.8, -13)
-radius = 0.16
-height = 5.6
-sides = 24
-material = ExtResource("14_lum6b")
+[node name="Traversa3" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1928420213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.82, 0.2)
+size = Vector3(1.85, 0.04, 0.04)
+material = ExtResource("20_obofj")
 
-[node name="Palo80" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=554609886]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 2.8, -8)
-radius = 0.16
-height = 5.6
-sides = 24
-material = ExtResource("14_lum6b")
+[node name="Traversa4" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1682996370]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.2)
+size = Vector3(1.85, 0.04, 0.04)
+material = ExtResource("20_obofj")
 
-[node name="Palo81" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1791735481]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 2.8, -8)
-radius = 0.16
-height = 5.6
-sides = 24
-material = ExtResource("14_lum6b")
+[node name="Traversa5" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1498378594]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0.2)
+size = Vector3(1.85, 0.04, 0.04)
+material = ExtResource("20_obofj")
 
-[node name="Piano182" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=881835569]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 1.5, -10.5)
-size = Vector3(5.2, 0.2, 5.2)
-material = ExtResource("10_xsvsr")
+[node name="Ripiano6" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1325185718]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+size = Vector3(1.85, 0.04, 0.5)
+material = ExtResource("20_obofj")
 
-[node name="Piano283" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=294203294]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 3.5, -11.8)
-size = Vector3(5.2, 0.2, 2.6)
-material = ExtResource("13_1c7qx")
+[node name="Zaino" type="Node3D" parent="PostazioneBagnini" unique_id=831407869]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.82, 0)
 
-[node name="Tettoia84" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=258584709]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 5.65, -10.5)
-size = Vector3(5.8, 0.15, 5.8)
-material = ExtResource("14_lum6b")
+[node name="Modello" type="Node3D" parent="PostazioneBagnini/Zaino" unique_id=307537181 instance=ExtResource("21_letqv")]
 
-[node name="Gradino85" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1017535908]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.2, 0.15, -6.6)
-size = Vector3(1.2, 0.3, 0.45)
-material = ExtResource("9_1ipxk")
-
-[node name="Gradino86" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1472457704]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.2, 0.45, -7.05)
-size = Vector3(1.2, 0.3, 0.45)
-material = ExtResource("9_1ipxk")
-
-[node name="Gradino87" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1271765206]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.2, 0.75, -7.5)
-size = Vector3(1.2, 0.3, 0.45)
-material = ExtResource("9_1ipxk")
-
-[node name="Gradino88" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1750208265]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.2, 1.05, -7.95)
-size = Vector3(1.2, 0.3, 0.45)
-material = ExtResource("9_1ipxk")
-
-[node name="Scivolo89" type="CSGBox3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1634348557]
-transform = Transform3D(1, 0, 0, 0, 0.93232733, -0.36161545, 0, 0.36161545, 0.93232733, -17, 0.85, -6.1)
-size = Vector3(1, 0.1, 4.2)
-material = ExtResource("12_letqv")
-
-[node name="GamboFungo90" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1915934433]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.85, -3.6)
-radius = 0.16
-height = 1.7
-sides = 24
-material = ExtResource("10_xsvsr")
-
-[node name="GamboFungo91" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1627431920]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.8, 0.85, -1.8)
-radius = 0.16
-height = 1.7
-sides = 24
-material = ExtResource("10_xsvsr")
-
-[node name="GamboFungo92" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=430170803]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.6, 0.85, -6.4)
-radius = 0.16
-height = 1.7
-sides = 24
-material = ExtResource("10_xsvsr")
-
-[node name="PaloCannone93" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1060402409]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.2, 0.55, -10)
-radius = 0.12
-height = 1.1
-sides = 24
-material = ExtResource("9_1ipxk")
-
-[node name="Cannone94" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1033281492]
-transform = Transform3D(1, 0, 0, 0, 0.30901697, -0.95105654, 0, 0.95105654, 0.30901697, -9.2, 1.2, -9.75)
-radius = 0.12
-height = 0.8
-sides = 24
-material = ExtResource("10_xsvsr")
-
-[node name="PaloCannone95" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1951361598]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0.55, -2)
-radius = 0.12
-height = 1.1
-sides = 24
-material = ExtResource("9_1ipxk")
-
-[node name="Cannone96" type="CSGCylinder3D" parent="AreaBimbi/Graybox/Struttura" unique_id=1709222565]
-transform = Transform3D(1, 0, 0, 0, 0.30901697, -0.95105654, 0, 0.95105654, 0.30901697, -13.5, 1.2, -1.75)
-radius = 0.12
-height = 0.8
-sides = 24
-material = ExtResource("10_xsvsr")
-
-[node name="@MeshInstance3D@7" type="MeshInstance3D" parent="AreaBimbi/Graybox" unique_id=13989920]
-transform = Transform3D(1, 0, 0, 0, 0.45, 0, 0, 0, 1, -11, 1.65, -3.6)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("SphereMesh_6jcqw")
-
-[node name="@MeshInstance3D@8" type="MeshInstance3D" parent="AreaBimbi/Graybox" unique_id=210791482]
-transform = Transform3D(1, 0, 0, 0, 0.45, 0, 0, 0, 1, -12.8, 1.65, -1.8)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("SphereMesh_luv17")
-
-[node name="@MeshInstance3D@9" type="MeshInstance3D" parent="AreaBimbi/Graybox" unique_id=1539072224]
-transform = Transform3D(1, 0, 0, 0, 0.45, 0, 0, 0, 1, -9.6, 1.65, -6.4)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("SphereMesh_6nbis")
-
-[node name="SostegnoSecchio" type="CSGCombiner3D" parent="AreaBimbi/Graybox" unique_id=274141866]
-use_collision = true
-collision_mask = 0
-
-[node name="Montante197" type="CSGCylinder3D" parent="AreaBimbi/Graybox/SostegnoSecchio" unique_id=183445197]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.3, 3.9, -12.5)
-radius = 0.14
-height = 7.8
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante298" type="CSGCylinder3D" parent="AreaBimbi/Graybox/SostegnoSecchio" unique_id=1498686095]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.7, 3.9, -12.5)
-radius = 0.14
-height = 7.8
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Perno99" type="CSGCylinder3D" parent="AreaBimbi/Graybox/SostegnoSecchio" unique_id=1001771770]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -18.5, 7.6, -12.5)
-radius = 0.09
-height = 3.8
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="SecchioGigante" type="CSGCombiner3D" parent="AreaBimbi/Graybox" unique_id=1538478945]
-transform = Transform3D(0.99820054, -0.059964005, 0, 0.059532784, 0.9910221, -0.119712204, 0.007178423, 0.119496785, 0.99280864, -18.5, 7.2, -12.5)
-
-[node name="Esterno" type="CSGCylinder3D" parent="AreaBimbi/Graybox/SecchioGigante" unique_id=1575054264]
-radius = 1.4
-height = 1.9
-sides = 32
-material = ExtResource("12_letqv")
-
-[node name="Interno" type="CSGCylinder3D" parent="AreaBimbi/Graybox/SecchioGigante" unique_id=1823912441]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
-operation = 2
-radius = 1.28
-height = 1.9
-sides = 32
-material = ExtResource("12_letqv")
-
-[node name="VascaBassaPiena" type="Node3D" parent="AreaBimbi/Graybox" unique_id=618404450 instance=ExtResource("23_fiiv4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.8, 0, -12)
-script = ExtResource("24_17xgy")
-inner_size = Vector3(3.5, 0.45, 3)
-wall_thickness = 0.2
-fill = 0.8
-max_fill = 0.85
-capacity_liters = 30.0
-
-[node name="VascaBassaVuota" type="Node3D" parent="AreaBimbi/Graybox" unique_id=442511500 instance=ExtResource("23_fiiv4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0, -3.6)
-script = ExtResource("24_17xgy")
-inner_size = Vector3(3, 0.45, 2.6)
-wall_thickness = 0.2
-max_fill = 0.85
-capacity_liters = 25.0
-
-[node name="Polaroid04" type="Area3D" parent="AreaBimbi/Graybox" unique_id=174840783 instance=ExtResource("38_mx14v")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 1.6, -9)
+[node name="Prendi" type="Area3D" parent="PostazioneBagnini/Zaino" unique_id=66717242 node_paths=PackedStringArray("remove_node")]
 collision_layer = 16
 collision_mask = 0
 monitoring = false
-script = ExtResource("39_e1t3c")
-entry_id = &"polaroid04"
-prompt = "Raccogli"
-one_shot = true
-
-[node name="VascaArrivo" type="Node3D" parent="." unique_id=1184317766 instance=ExtResource("23_fiiv4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, -1, 7)
-script = ExtResource("24_17xgy")
-inner_size = Vector3(10.4, 1.4, 7.4)
-wall_thickness = 0.3
-fill = 0.75
-max_fill = 0.85
-capacity_liters = 200.0
-
-[node name="TorreScivoli" type="Node3D" parent="." unique_id=359057956]
-script = ExtResource("3_hr5ev")
-
-[node name="Graybox" type="Node3D" parent="TorreScivoli" unique_id=1295411509]
-
-[node name="Impalcatura" type="CSGCombiner3D" parent="TorreScivoli/Graybox" unique_id=1804229852]
-use_collision = true
-collision_mask = 0
-
-[node name="Montante100" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=81986187]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 7, -13.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante101" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1743826092]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 7, -8.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante102" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1054726422]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 7, -3.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante103" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=953189184]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 7, -13.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante104" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1121942831]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 7, -8.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante105" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1567464912]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 7, -3.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante106" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1054953629]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 7, -13.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante107" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1625610002]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 7, -8.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Montante108" type="CSGCylinder3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=912149665]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 7, -3.5)
-radius = 0.2
-height = 14.0
-sides = 24
-material = ExtResource("15_dp5pl")
-
-[node name="Piano1109" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=2075143841]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 4, -8.5)
-size = Vector3(11.4, 0.25, 10.4)
-material = ExtResource("7_m875x")
-
-[node name="Piano2110" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=2052097341]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 8, -11)
-size = Vector3(11.4, 0.25, 5.4)
-material = ExtResource("7_m875x")
-
-[node name="Piano3111" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=2022732608]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.25, 12, -11)
-size = Vector3(5.9, 0.25, 5.4)
-material = ExtResource("7_m875x")
-
-[node name="BucoScala112" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1165655770]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 4, -4.6)
-operation = 2
-size = Vector3(2, 0.6, 3)
-material = ExtResource("7_m875x")
-
-[node name="Gradino113" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1432322334]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 0.15, -0.2)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino114" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1843655252]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 0.45, -0.56)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino115" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=572609036]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 0.75, -0.92)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino116" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=839991366]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 1.05, -1.28)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino117" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=467325692]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 1.35, -1.64)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino118" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1990164898]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 1.65, -2)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino119" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1801419163]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 1.95, -2.36)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino120" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1859817614]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 2.25, -2.72)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino121" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=40280475]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 2.55, -3.08)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino122" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1752360762]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 2.85, -3.44)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino123" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1515554048]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 3.15, -3.8)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino124" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1291682048]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 3.45, -4.16)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Gradino125" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1241246095]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2, 3.75, -4.52)
-size = Vector3(1.8, 0.3, 0.42)
-material = ExtResource("7_m875x")
-
-[node name="Partenza1126" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1123703910]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 13, -13)
-size = Vector3(1.8, 1.6, 1.8)
-material = ExtResource("13_1c7qx")
-
-[node name="Partenza2127" type="CSGBox3D" parent="TorreScivoli/Graybox/Impalcatura" unique_id=1427616894]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 13, -13)
-size = Vector3(1.8, 1.6, 1.8)
-material = ExtResource("9_1ipxk")
-
-[node name="Tubi" type="Node3D" parent="TorreScivoli/Graybox" unique_id=725447831]
-
-[node name="Tubo128" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=485918945]
-transform = Transform3D(0.20429413, -0.97384214, -0.099475116, 0, -0.1016183, 0.9948234, -0.9789095, -0.2032366, -0.020760022, 11.75, 11.6, -15.2)
-material_override = ExtResource("13_1c7qx")
-mesh = SubResource("CylinderMesh_ihpvw")
-
-[node name="Tubo129" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=1226566662]
-transform = Transform3D(0, -0.99503726, -0.099503696, 0, -0.099503696, 0.99503726, -1, 0, 0, -1, 10.3, -16.4)
-material_override = ExtResource("13_1c7qx")
-mesh = SubResource("CylinderMesh_47ww8")
-
-[node name="Tubo130" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=1048473461]
-transform = Transform3D(-0.09480908, -0.989461, -0.10944492, 0, -0.10994015, 0.9939382, -0.9954955, 0.09423436, 0.010423324, -14.3, 8.9, -15.799999)
-material_override = ExtResource("9_1ipxk")
-mesh = SubResource("CylinderMesh_3i5nf")
-
-[node name="Tubo131" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=839045655]
-transform = Transform3D(-0.99905616, -0.041802928, -0.011802721, 0, -0.27171928, 0.96237653, -0.043437187, 0.9614682, 0.27146283, -20.8, 6.8999996, -10.6)
-material_override = ExtResource("9_1ipxk")
-mesh = SubResource("CylinderMesh_iu7eu")
-
-[node name="Tubo132" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=1543885672]
-transform = Transform3D(-1, 0, 0, 0, -0.29982656, 0.95399374, 0, 0.95399374, 0.29982656, -21, 4.5, -2.5)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("CylinderMesh_nbfp7")
-
-[node name="Tubo133" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=389176011]
-transform = Transform3D(-0.8715756, 0.4255663, 0.24341181, 0, -0.49649423, 0.86804, 0.4902611, 0.75656253, 0.43273225, -20.1, 2.35, 2.6)
-material_override = ExtResource("10_xsvsr")
-mesh = SubResource("CylinderMesh_2v53u")
-
-[node name="Tubo134" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=1212426415]
-transform = Transform3D(-0.8944272, 0.4161468, 0.16377372, 0, -0.36620915, 0.9305326, 0.4472136, 0.8322936, 0.32754743, 21.75, 11.1, -11.5)
-material_override = ExtResource("11_obofj")
-mesh = SubResource("CylinderMesh_uedio")
-
-[node name="Tubo135" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=576126455]
-transform = Transform3D(-0.9230769, -0.37856585, -0.0679477, 0, -0.17666402, 0.98427117, -0.3846154, 0.908558, 0.16307448, 21.5, 9.3, -5.4)
-material_override = ExtResource("11_obofj")
-mesh = SubResource("CylinderMesh_jqn34")
-
-[node name="Tubo136" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=993825449]
-transform = Transform3D(-0.10844749, -0.93489295, -0.33795613, 0, -0.33996114, 0.9404395, -0.99410224, 0.1019883, 0.03686793, 17.25, 7.6000004, -1.5)
-material_override = ExtResource("12_letqv")
-mesh = SubResource("CylinderMesh_aife6")
-
-[node name="Tubo137" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=595664064]
-transform = Transform3D(0.6860128, -0.6718358, -0.27932605, 0, -0.38390616, 0.92337203, -0.72758937, -0.63344514, -0.26336455, 12.75, 5.6, -2.85)
-material_override = ExtResource("12_letqv")
-mesh = SubResource("CylinderMesh_amvg6")
-
-[node name="Tubo138" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=1371952873]
-transform = Transform3D(-0.93979347, 0.31988743, 0.12025124, 0, -0.35187614, 0.9360466, 0.34174308, 0.8796904, 0.3306909, 12, 3.5, -1.75)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("CylinderMesh_lf1x3")
-
-[node name="Tubo139" type="MeshInstance3D" parent="TorreScivoli/Graybox/Tubi" unique_id=643520983]
-transform = Transform3D(-0.19611613, 0.8804509, 0.43167657, 0, -0.44022548, 0.89788723, 0.9805806, 0.17609018, 0.08633532, 14.5, 1.6500001, 1.3)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("CylinderMesh_tah6c")
-
-[node name="StanzinoBagnini" type="Node3D" parent="." unique_id=1945673174]
-
-[node name="Stanza" type="Node3D" parent="StanzinoBagnini" unique_id=891094847]
-script = ExtResource("3_hr5ev")
-
-[node name="Graybox" type="Node3D" parent="StanzinoBagnini/Stanza" unique_id=1379346949]
-
-[node name="Muri" type="CSGCombiner3D" parent="StanzinoBagnini/Stanza/Graybox" unique_id=1145804182]
-use_collision = true
-collision_mask = 0
-
-[node name="Esterno140" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Muri" unique_id=682669217]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.4, 21)
-size = Vector3(5.2, 3.6, 5.6)
-material = ExtResource("4_kx446")
-
-[node name="Interno141" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Muri" unique_id=915443325]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.375, 21)
-operation = 2
-size = Vector3(4.4, 2.85, 4.8)
-material = ExtResource("4_kx446")
-
-[node name="Pavimento142" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Muri" unique_id=1880317861]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, -0.025, 21)
-size = Vector3(4.6, 0.05, 5)
-material = ExtResource("5_3dtp4")
-
-[node name="Porta143" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Muri" unique_id=1555681190]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 1.201, 20.8)
-operation = 2
-size = Vector3(1.4, 2.4, 1.6)
-material = ExtResource("4_kx446")
-
-[node name="Rastrelliera" type="CSGCombiner3D" parent="StanzinoBagnini/Stanza/Graybox" unique_id=1843142874]
-use_collision = true
-collision_mask = 0
-
-[node name="Montante144" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Rastrelliera" unique_id=1947130248]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 0.95, 20.1)
-size = Vector3(0.05, 1.9, 0.05)
-material = ExtResource("7_m875x")
-
-[node name="Montante145" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Rastrelliera" unique_id=1926338912]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 0.95, 21.9)
-size = Vector3(0.05, 1.9, 0.05)
-material = ExtResource("7_m875x")
-
-[node name="Traversa146" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Rastrelliera" unique_id=40813835]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 0.82, 21)
-size = Vector3(0.04, 0.04, 1.85)
-material = ExtResource("7_m875x")
-
-[node name="Traversa147" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Rastrelliera" unique_id=1539673781]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 1.45, 21)
-size = Vector3(0.04, 0.04, 1.85)
-material = ExtResource("7_m875x")
-
-[node name="Traversa148" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Rastrelliera" unique_id=1844814959]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 1.85, 21)
-size = Vector3(0.04, 0.04, 1.85)
-material = ExtResource("7_m875x")
-
-[node name="Ripiano149" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Rastrelliera" unique_id=73688194]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.55, 0.8, 21)
-size = Vector3(0.5, 0.04, 1.85)
-material = ExtResource("7_m875x")
-
-[node name="Panca150" type="CSGBox3D" parent="StanzinoBagnini/Stanza/Graybox/Rastrelliera" unique_id=1498602184]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6, 0.225, 23)
-size = Vector3(1.6, 0.45, 0.4)
-material = ExtResource("17_23p8a")
-
-[node name="Salvagente" type="MeshInstance3D" parent="StanzinoBagnini/Stanza/Graybox" unique_id=1395014933]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 4.2, 1.7, 18.65)
-material_override = ExtResource("14_lum6b")
-mesh = SubResource("TorusMesh_an7ei")
-
-[node name="Cartello" type="MeshInstance3D" parent="StanzinoBagnini/Stanza/Graybox" unique_id=440500187]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.6, 23.37)
-material_override = ExtResource("10_xsvsr")
-mesh = SubResource("BoxMesh_eiblg")
-
-[node name="Zaino" type="Node3D" parent="StanzinoBagnini" unique_id=1042271350]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 6.55, 0.82, 21)
-
-[node name="Modello" type="Node3D" parent="StanzinoBagnini/Zaino" unique_id=307537181 instance=ExtResource("44_e6s0g")]
-
-[node name="Prendi" type="Area3D" parent="StanzinoBagnini/Zaino" unique_id=2035462461 node_paths=PackedStringArray("remove_node")]
-collision_layer = 16
-collision_mask = 0
-monitoring = false
-script = ExtResource("45_kgodc")
+script = ExtResource("22_1c7qx")
 remove_node = NodePath("..")
 prompt = "Prendi lo zaino-pompa"
 one_shot = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StanzinoBagnini/Zaino/Prendi" unique_id=1717120188]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PostazioneBagnini/Zaino/Prendi" unique_id=1554931634]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
-shape = SubResource("BoxShape3D_dut6h")
+shape = SubResource("BoxShape3D_yvw0s")
 
-[node name="LuceZaino" type="SpotLight3D" parent="StanzinoBagnini" unique_id=407066048]
-transform = Transform3D(-4.371139e-08, 0.88294756, -0.4694716, 0, 0.4694716, 0.88294756, 1, 3.8594862e-08, -2.0521256e-08, 5.4, 2.6, 21)
+[node name="LuceZaino" type="SpotLight3D" parent="PostazioneBagnini" unique_id=967522203]
+transform = Transform3D(-0.9751329, -0.18779108, 0.11768776, 0, 0.5310315, 0.8473521, -0.22162107, 0.8262809, -0.51782626, 0, 2.7, -1.1)
 light_color = Color(1, 0.9, 0.75, 1)
-light_energy = 3.0
+light_energy = 2.5
 shadow_enabled = true
-spot_range = 4.0
-spot_angle = 30.0
+spot_range = 4.5
+spot_angle = 26.0
+metadata/grafica_priorita_ombra = 1
 
-[node name="NeonStanzino" type="MeshInstance3D" parent="StanzinoBagnini" unique_id=263084449]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 2.76, 21)
-material_override = ExtResource("46_02rmv")
-mesh = SubResource("BoxMesh_6goy6")
+[node name="Piscina" type="Node3D" parent="." unique_id=1233065065]
 
-[node name="LuceNeonStanzino" type="OmniLight3D" parent="StanzinoBagnini" unique_id=1339084943]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 2.4, 21)
-light_color = Color(0.8, 0.95, 1, 1)
-light_energy = 0.9
-omni_range = 6.0
+[node name="Pozza" type="Node3D" parent="Piscina" unique_id=429375802 node_paths=PackedStringArray("drain_sources") instance=ExtResource("23_lum6b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.26, 2)
+script = ExtResource("24_dp5pl")
+inner_size = Vector3(7.6, 0.3, 7.6)
+build_walls = false
+water_material = ExtResource("25_y3lwm")
+fill = 0.6333333651224778
+max_fill = 0.6333333651224778
+capacity_liters = 150.0
+drain_time = 24.0
+drain_sources = [NodePath("../TurbinaScarico")]
 
-[node name="Sfarfallio" type="Node" parent="StanzinoBagnini" unique_id=865262335 node_paths=PackedStringArray("light", "mesh")]
-script = ExtResource("42_7dqmh")
-light = NodePath("../LuceNeonStanzino")
-mesh = NodePath("../NeonStanzino")
-base_energy = 0.9
-flicker_rate = 0.25
+[node name="Gorgo" type="MeshInstance3D" parent="Piscina" unique_id=1782862483 node_paths=PackedStringArray("tank")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.94, 3.25)
+script = ExtResource("26_23p8a")
+tank = NodePath("../Pozza")
 
-[node name="VascaLavapiedi" type="Node3D" parent="StanzinoBagnini" unique_id=315635279 instance=ExtResource("23_fiiv4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.35, 0, 19.2)
-script = ExtResource("24_17xgy")
-inner_size = Vector3(0.9, 0.28, 0.75)
-wall_thickness = 0.1
-fill = 0.8
-max_fill = 0.85
-capacity_liters = 14.0
+[node name="TurbinaScarico" type="Node3D" parent="Piscina" unique_id=957577360 instance=ExtResource("27_rpag0")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 4.6, -0.62, 4.84)
+script = ExtResource("28_bko5w")
+radius = 0.47
+show_model = false
+external_rotor = NodePath("../../Sala/Interattivi/sala_turbina_scarico")
 
-[node name="Luci" type="Node3D" parent="." unique_id=917556140]
+[node name="GonfiabileIncastrato" type="RigidBody3D" parent="Piscina" unique_id=1374605745 node_paths=PackedStringArray("jams")]
+transform = Transform3D(0.9553365, -0.29552022, 0, -1.29175985e-08, -4.1759087e-08, -1, 0.29552022, 0.9553365, -4.371139e-08, 4.7, -0.57, 4.42)
+collision_layer = 8
+collision_mask = 11
+mass = 0.6
+script = ExtResource("29_yuaxn")
+jams = NodePath("../TurbinaScarico")
 
-[node name="LuceTempesta" type="DirectionalLight3D" parent="Luci" unique_id=1712233226]
-transform = Transform3D(0.90630776, -0.37984678, 0.18526366, 0, 0.43837115, 0.89879405, -0.42261827, -0.814584, 0.39729917, 0, 0, 0)
-light_color = Color(0.55, 0.65, 0.95, 1)
-light_energy = 0.35
-light_volumetric_fog_energy = 2.5
-shadow_enabled = true
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato" unique_id=1055444019]
+shape = SubResource("CylinderShape3D_5f2mw")
 
-[node name="Lampi" type="Node" parent="Luci" unique_id=2528722 node_paths=PackedStringArray("light")]
-script = ExtResource("47_2ubhj")
-light = NodePath("../LuceTempesta")
-base_energy = 0.35
-glass_material = ExtResource("19_bko5w")
-environment = ExtResource("2_8x03u")
+[node name="Ciambella" type="MeshInstance3D" parent="Piscina/GonfiabileIncastrato" unique_id=937492959]
+material_override = ExtResource("30_453jb")
+mesh = SubResource("TorusMesh_8h62n")
 
-[node name="Emergenza1" type="OmniLight3D" parent="Luci" unique_id=1490006304]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 6.8, -9)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-shadow_enabled = true
-omni_range = 8.5
+[node name="Bersaglio" type="Area3D" parent="Piscina/GonfiabileIncastrato" unique_id=776358028]
+collision_layer = 32
+collision_mask = 0
+monitoring = false
+script = ExtResource("31_sbb23")
 
-[node name="LampadaEmergenza1" type="MeshInstance3D" parent="Luci" unique_id=1269879711]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.6, 6.8, -9)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_1bxn2")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato/Bersaglio" unique_id=2134349381]
+shape = SubResource("CylinderShape3D_5x6fq")
 
-[node name="Emergenza2" type="OmniLight3D" parent="Luci" unique_id=1592018694]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 6.8, 9)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-shadow_enabled = true
-omni_range = 8.5
+[node name="Buio" type="MeshInstance3D" parent="Piscina" unique_id=566967728]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.256, 2)
+material_override = ExtResource("32_fiiv4")
+mesh = SubResource("BoxMesh_mx14v")
 
-[node name="LampadaEmergenza2" type="MeshInstance3D" parent="Luci" unique_id=1971790527]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.6, 6.8, 9)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_hddxm")
+[node name="PulsantePortello" type="Node3D" parent="Piscina" unique_id=911983357 instance=ExtResource("17_28q7e")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 1.9, -1.15, 4.95)
+script = ExtResource("18_1ipxk")
+mode = 2
+radius = 0.14
+show_model = false
 
-[node name="Emergenza3" type="OmniLight3D" parent="Luci" unique_id=1842767816]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 6.8, -9)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-shadow_enabled = true
-omni_range = 8.5
+[node name="Portello" type="Node3D" parent="Piscina" unique_id=1447977940 node_paths=PackedStringArray("sources")]
+script = ExtResource("33_17xgy")
+sources = [NodePath("../PulsantePortello")]
+target_path = NodePath("../../Sala/Interattivi/sala_portello_scarico")
+open_angle = -105.0
 
-[node name="LampadaEmergenza3" type="MeshInstance3D" parent="Luci" unique_id=714699307]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.6, 6.8, -9)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_vo4jh")
+[node name="ScalettaEst" type="Area3D" parent="Piscina" unique_id=475344794 instance=ExtResource("34_12y24")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 6.95, -1.95, 3.2)
+collision_layer = 128
+collision_mask = 0
+monitoring = false
+script = ExtResource("35_i3cyo")
+height = 1.95
+show_model = false
 
-[node name="Emergenza4" type="OmniLight3D" parent="Luci" unique_id=520882309]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 6.8, 9)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-omni_range = 8.5
+[node name="ScalettaOvest" type="Area3D" parent="Piscina" unique_id=604400895 instance=ExtResource("34_12y24")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6.95, -1.95, 2.2)
+collision_layer = 128
+collision_mask = 0
+monitoring = false
+script = ExtResource("35_i3cyo")
+height = 1.95
+show_model = false
 
-[node name="LampadaEmergenza4" type="MeshInstance3D" parent="Luci" unique_id=2146475840]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.6, 6.8, 9)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_rxajx")
+[node name="Vasche" type="Node3D" parent="." unique_id=2081520419]
 
-[node name="Emergenza5" type="OmniLight3D" parent="Luci" unique_id=47629159]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 6.8, -16.6)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-omni_range = 8.5
+[node name="VascaArrivo" type="Node3D" parent="Vasche" unique_id=505666441 instance=ExtResource("23_lum6b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5, -1.1, 2)
+script = ExtResource("24_dp5pl")
+inner_size = Vector3(7, 1.05, 10)
+build_walls = false
+water_material = ExtResource("36_2qh5t")
+fill = 0.8380952380952381
+max_fill = 1.0
+capacity_liters = 400.0
 
-[node name="LampadaEmergenza5" type="MeshInstance3D" parent="Luci" unique_id=1407883190]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 6.8, -17.2)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_pyxnm")
+[node name="VascaBimbi1" type="Node3D" parent="Vasche" unique_id=985749561 instance=ExtResource("23_lum6b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.6, 0.02, -9.6)
+script = ExtResource("24_dp5pl")
+inner_size = Vector3(4.4, 0.43, 3.2)
+build_walls = false
+water_material = ExtResource("36_2qh5t")
+fill = 0.6511627906976744
+max_fill = 1.0
+capacity_liters = 120.0
 
-[node name="Emergenza6" type="OmniLight3D" parent="Luci" unique_id=1867942631]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 6.8, -16.6)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-omni_range = 8.5
+[node name="VascaBimbi2" type="Node3D" parent="Vasche" unique_id=433822171 instance=ExtResource("23_lum6b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.3, 0.02, -12.4)
+script = ExtResource("24_dp5pl")
+inner_size = Vector3(2.8, 0.43, 2.8)
+build_walls = false
+water_material = ExtResource("36_2qh5t")
+fill = 0.4651162790697675
+max_fill = 1.0
+capacity_liters = 60.0
 
-[node name="LampadaEmergenza6" type="MeshInstance3D" parent="Luci" unique_id=799102591]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 6.8, -17.2)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_ay2jc")
+[node name="RuotaESecchio" type="Node3D" parent="." unique_id=1445453217]
+script = ExtResource("37_joe0d")
+wheel_path = NodePath("../Sala/AreaBimbi/sala_ruota_pale")
+bucket_path = NodePath("../Sala/AreaBimbi/sala_secchio_gigante")
+gate_wheel_path = NodePath("../Sala/Interattivi/sala_ruota_cancello")
+gate_path = NodePath("../Sala/Interattivi/sala_cancello_spiaggia")
+panel_path = NodePath("../Sala/Interattivi/sala_quadro_elettrico")
 
-[node name="Emergenza7" type="OmniLight3D" parent="Luci" unique_id=146663363]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 4, 16.6)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-omni_range = 8.5
+[node name="Polaroid" type="Node3D" parent="." unique_id=1941709142]
 
-[node name="LampadaEmergenza7" type="MeshInstance3D" parent="Luci" unique_id=165953496]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 4, 17.2)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_l26yt")
+[node name="Polaroid01" type="Area3D" parent="Polaroid" unique_id=429196997 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, -1.6, 0, 10.4)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+entry_id = &"p01"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="Emergenza8" type="OmniLight3D" parent="Luci" unique_id=182749181]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, 16.6)
-light_color = Color(1, 0.09, 0.05, 1)
-light_energy = 1.7
-light_volumetric_fog_energy = 1.5
-omni_range = 8.5
+[node name="Polaroid02" type="Area3D" parent="Polaroid" unique_id=343750797 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(0.3623577, 0, 0.9320391, 0, 1, 0, -0.9320391, 0, 0.3623577, -6, 0.6, 8)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 2
+entry_id = &"p02"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="LampadaEmergenza8" type="MeshInstance3D" parent="Luci" unique_id=1287076312]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, 17.2)
-material_override = ExtResource("48_uqleb")
-mesh = SubResource("BoxMesh_mc0tt")
+[node name="Polaroid03" type="Area3D" parent="Polaroid" unique_id=1209093524 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(-0.9709582, 0, 0.23924924, 0, 1, 0, -0.23924924, 0, -0.9709582, 4.6, 0.85, 11.35)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 3
+entry_id = &"p03"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="Neon1" type="MeshInstance3D" parent="Luci" unique_id=212227130]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.9, 4.75, -6)
-material_override = ExtResource("46_02rmv")
-mesh = SubResource("BoxMesh_qjlst")
+[node name="Polaroid04" type="Area3D" parent="Polaroid" unique_id=545017987 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -11.3, 6.4, -17.4)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 4
+entry_id = &"p04"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="LuceNeon1" type="OmniLight3D" parent="Luci" unique_id=413501711]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.9, 4.5, -5.7)
-light_color = Color(0.75, 0.92, 1, 1)
-light_energy = 1.3
-omni_range = 9.0
+[node name="Polaroid05" type="Area3D" parent="Polaroid" unique_id=1814185533 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(-0.41614684, 0, 0.9092974, 0, 1, 0, -0.9092974, 0, -0.41614684, 1.2, -2, 2.9)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 5
+entry_id = &"p05"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="Sfarfallio1" type="Node" parent="Luci" unique_id=1982041907 node_paths=PackedStringArray("light", "mesh")]
-script = ExtResource("42_7dqmh")
-light = NodePath("../LuceNeon1")
-mesh = NodePath("../Neon1")
-base_energy = 1.3
-flicker_rate = 0.12
+[node name="Polaroid06" type="Area3D" parent="Polaroid" unique_id=1973564528 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(0.62161, 0, 0.7833269, 0, 1, 0, -0.7833269, 0, 0.62161, -4.6, -1.9, 4.2)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 6
+entry_id = &"p06"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="Neon2" type="MeshInstance3D" parent="Luci" unique_id=1281683844]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.9, 4.75, 9)
-material_override = ExtResource("46_02rmv")
-mesh = SubResource("BoxMesh_366ax")
+[node name="Polaroid07" type="Area3D" parent="Polaroid" unique_id=609075410 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(-0.029199546, 0, 0.9995736, 0, 1, 0, -0.9995736, 0, -0.029199546, 8.2, 1.2, -2.4)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 7
+entry_id = &"p07"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="LuceNeon2" type="OmniLight3D" parent="Luci" unique_id=602408847]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.9, 4.5, 8.7)
-light_color = Color(0.75, 0.92, 1, 1)
-light_energy = 1.3
-omni_range = 9.0
+[node name="Polaroid08" type="Area3D" parent="Polaroid" unique_id=490408919 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(0.7648422, 0, 0.64421767, 0, 1, 0, -0.64421767, 0, 0.7648422, -8.5, 0, 6.6)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 8
+entry_id = &"p08"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="Sfarfallio2" type="Node" parent="Luci" unique_id=974593333 node_paths=PackedStringArray("light", "mesh")]
-script = ExtResource("42_7dqmh")
-light = NodePath("../LuceNeon2")
-mesh = NodePath("../Neon2")
-base_energy = 1.3
-flicker_rate = 0.0
+[node name="Polaroid09" type="Area3D" parent="Polaroid" unique_id=793563987 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(-0.7373938, 0, 0.67546314, 0, 1, 0, -0.67546314, 0, -0.7373938, -9.9, 0, -9.4)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 9
+entry_id = &"p09"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="Neon3" type="MeshInstance3D" parent="Luci" unique_id=1311798576]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.9, 4.75, -1)
-material_override = ExtResource("46_02rmv")
-mesh = SubResource("BoxMesh_fb7k1")
+[node name="Polaroid10" type="Area3D" parent="Polaroid" unique_id=1583261248 instance=ExtResource("38_g4t5s")]
+transform = Transform3D(0.8253356, 0, 0.5646425, 0, 1, 0, -0.5646425, 0, 0.8253356, 13.5, 9, -17.5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("39_bbnp1")
+photo = 10
+entry_id = &"p10"
+prompt = "Raccogli"
+one_shot = true
 
-[node name="LuceNeon3" type="OmniLight3D" parent="Luci" unique_id=1636816216]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.9, 4.5, -0.7)
-light_color = Color(0.75, 0.92, 1, 1)
-light_energy = 1.3
-omni_range = 9.0
+[node name="Gioco" type="Node3D" parent="." unique_id=2046006906]
 
-[node name="Sfarfallio3" type="Node" parent="Luci" unique_id=409989831 node_paths=PackedStringArray("light", "mesh")]
-script = ExtResource("42_7dqmh")
-light = NodePath("../LuceNeon3")
-mesh = NodePath("../Neon3")
-base_energy = 1.3
-flicker_rate = 0.3
-
-[node name="Neon4" type="MeshInstance3D" parent="Luci" unique_id=1076604435]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -2, 4.75, -15.4)
-material_override = ExtResource("46_02rmv")
-mesh = SubResource("BoxMesh_bipd5")
-
-[node name="LuceNeon4" type="OmniLight3D" parent="Luci" unique_id=1319457341]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 4.5, -15.099999)
-light_color = Color(0.75, 0.92, 1, 1)
-light_energy = 1.3
-omni_range = 9.0
-
-[node name="Sfarfallio4" type="Node" parent="Luci" unique_id=516393263 node_paths=PackedStringArray("light", "mesh")]
-script = ExtResource("42_7dqmh")
-light = NodePath("../LuceNeon4")
-mesh = NodePath("../Neon4")
-base_energy = 1.3
-flicker_rate = 0.0
-
-[node name="Neon5" type="MeshInstance3D" parent="Luci" unique_id=2132289445]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 2.95, 21)
-material_override = ExtResource("46_02rmv")
-mesh = SubResource("BoxMesh_v8ob2")
-
-[node name="LuceNeon5" type="OmniLight3D" parent="Luci" unique_id=1645206682]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, 20.7)
-light_color = Color(0.75, 0.92, 1, 1)
-light_energy = 1.3
-omni_range = 9.0
-
-[node name="Sfarfallio5" type="Node" parent="Luci" unique_id=1675772111 node_paths=PackedStringArray("light", "mesh")]
-script = ExtResource("42_7dqmh")
-light = NodePath("../LuceNeon5")
-mesh = NodePath("../Neon5")
-base_energy = 1.3
-flicker_rate = 0.5
-
-[node name="LuceAreaBimbi" type="OmniLight3D" parent="Luci" unique_id=2143540309]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 6.8, -7.5)
-light_color = Color(0.95, 0.45, 0.85, 1)
-light_energy = 1.4
-shadow_enabled = true
-omni_range = 12.0
-
-[node name="LuceSecchio" type="OmniLight3D" parent="Luci" unique_id=259721870]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 9.2, -10.5)
-light_color = Color(1, 0.75, 0.4, 1)
-light_energy = 0.9
-omni_range = 6.0
-
-[node name="LuceTorre" type="OmniLight3D" parent="Luci" unique_id=1765872304]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 9.5, -7)
-light_color = Color(0.4, 0.85, 1, 1)
-light_energy = 1.2
-omni_range = 13.0
-
-[node name="LuceVascaArrivo" type="OmniLight3D" parent="Luci" unique_id=1809214050]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 3, 7)
-light_color = Color(0.35, 0.7, 0.9, 1)
-light_energy = 0.9
-omni_range = 9.0
-
-[node name="LucePozza" type="OmniLight3D" parent="Luci" unique_id=232775003]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -0.6, 5)
-light_color = Color(0.45, 0.75, 0.75, 1)
-light_energy = 0.7
-omni_range = 9.0
-
-[node name="NebbiaBassa" type="FogVolume" parent="Luci" unique_id=499690391]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
-size = Vector3(48, 2.2, 35)
-material = SubResource("FogMaterial_jie5x")
-
-[node name="NebbiaPiscina" type="FogVolume" parent="Luci" unique_id=733243715]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -1.6, -2.5)
-size = Vector3(13, 2, 23)
-material = SubResource("FogMaterial_jie5x")
-
-[node name="Gioco" type="Node3D" parent="." unique_id=1944639278]
-
-[node name="CheckpointIngresso" type="Area3D" parent="Gioco" unique_id=1263451779 node_paths=PackedStringArray("spawn_point")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 21.5)
+[node name="CheckpointIngresso" type="Area3D" parent="Gioco" unique_id=1754480191 node_paths=PackedStringArray("spawn_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 11.2)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
-script = ExtResource("49_k1ys3")
+script = ExtResource("40_wxdfh")
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointIngresso" unique_id=1734623399]
-shape = SubResource("BoxShape3D_5r17y")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointIngresso" unique_id=1494877338]
+shape = SubResource("BoxShape3D_e1t3c")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointIngresso" unique_id=39053191]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0.9)
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointIngresso" unique_id=490423568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 
-[node name="CheckpointStatua" type="Area3D" parent="Gioco" unique_id=1127560507 node_paths=PackedStringArray("spawn_point")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 15)
+[node name="CheckpointStatua" type="Area3D" parent="Gioco" unique_id=1720027273 node_paths=PackedStringArray("spawn_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 4.6)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
-script = ExtResource("49_k1ys3")
+script = ExtResource("40_wxdfh")
 order = 1
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointStatua" unique_id=63101920]
-shape = SubResource("BoxShape3D_min7r")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointStatua" unique_id=1796461447]
+shape = SubResource("BoxShape3D_3c0cd")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointStatua" unique_id=1215319962]
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointStatua" unique_id=403148308]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 
-[node name="CheckpointSpiaggia" type="Area3D" parent="Gioco" unique_id=871234518 node_paths=PackedStringArray("spawn_point")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.5, -12.5)
+[node name="CheckpointSpiaggia" type="Area3D" parent="Gioco" unique_id=470191204 node_paths=PackedStringArray("spawn_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -14.2)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
-script = ExtResource("49_k1ys3")
+script = ExtResource("40_wxdfh")
 order = 2
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointSpiaggia" unique_id=171360659]
-shape = SubResource("BoxShape3D_trtoi")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointSpiaggia" unique_id=1869570507]
+shape = SubResource("BoxShape3D_1e1va")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointSpiaggia" unique_id=668960196]
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointSpiaggia" unique_id=1401519096]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -1.5, 0)
 
-[node name="CheckpointFondo" type="Area3D" parent="Gioco" unique_id=1777322504 node_paths=PackedStringArray("spawn_point")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.9, 2)
+[node name="CheckpointFondo" type="Area3D" parent="Gioco" unique_id=1753520132 node_paths=PackedStringArray("spawn_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, -1)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
-script = ExtResource("49_k1ys3")
+script = ExtResource("40_wxdfh")
 order = 3
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointFondo" unique_id=1447874168]
-shape = SubResource("BoxShape3D_xu7wo")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointFondo" unique_id=2011674142]
+shape = SubResource("BoxShape3D_7dqmh")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointFondo" unique_id=231940325]
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointFondo" unique_id=1303294853]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -1.5, 0)
 
-[node name="AccendiLampione" type="Area3D" parent="Gioco" unique_id=396982004]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 16.2)
+[node name="AccendiLampione" type="Area3D" parent="Gioco" unique_id=781164899]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 9)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/AccendiLampione" unique_id=37694473]
-shape = SubResource("BoxShape3D_p7kv6")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/AccendiLampione" unique_id=1846144220]
+shape = SubResource("BoxShape3D_g01iu")
 
-[node name="Player" type="CharacterBody3D" parent="." unique_id=1229701804 instance=ExtResource("50_vu82c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 22.4)
+[node name="Player" type="CharacterBody3D" parent="." unique_id=655014469 instance=ExtResource("41_ftbmh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11.2)
 collision_layer = 2
 collision_mask = 13
 floor_snap_length = 0.3
-script = ExtResource("51_x8lna")
+script = ExtResource("42_b14rd")
