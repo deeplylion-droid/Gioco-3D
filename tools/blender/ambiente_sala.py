@@ -223,12 +223,140 @@ def galleria(mats):
             continue
         ring.append(metti(K.ringhiera(mats, w, nome=un('ring_s'), paletto_fine=(x + w >= xi - 0.01)), (x, ys - 0.06, z)))
         ring.append(metti(K.ringhiera(mats, w, nome=un('ring_n'), paletto_fine=(x + w >= xi - 0.01)), (x, yi + 0.06, z)))
-    for i in range(15):     # est e ovest, da y -9 a 21
+    for i in range(15):     # est e ovest, da y -9 a 21 (a est si apre dove arriva la scala, y 1..3)
         y = ys + 2 * i
-        ring.append(metti(K.ringhiera(mats, 2.0, nome=un('ring_e')), (xi + 0.06, y, z), 90))
+        if abs(y - 1.0) > 0.01:
+            ring.append(metti(K.ringhiera(mats, 2.0, nome=un('ring_e'), paletto_fine=abs(y + 2 - 1.0) < 0.01), (xi + 0.06, y, z), 90))
         ring.append(metti(K.ringhiera(mats, 2.0, nome=un('ring_o')), (-xi - 0.06, y, z), 90))
     ringhiere = unisci(ring, 'sala_ringhiere')
     return [gal, colonne, ringhiere]
+
+
+def soffitto_struttura(mats):
+    """Travi a doppia T sotto il soffitto (interrotte dal foro della cupola) e due condotte di
+    ventilazione lungo i fianchi, con staffe: il soffitto di una nave non è liscio."""
+    c = K.Costruttore(mats)
+    cx, cy, R = CUPOLA['cx'], CUPOLA['cy'], CUPOLA['r'] + 0.3
+    zt = Z_SOFF
+    def trave(x0, x1, y):
+        if x1 - x0 < 0.3:
+            return
+        c.scatola((x0, y - 0.13, zt - 0.06), (x1, y + 0.13, zt), 'ferro_cupola', senza=('+z',))          # ala alta
+        c.scatola((x0, y - 0.025, zt - 0.5), (x1, y + 0.025, zt - 0.06), 'ferro_cupola', senza=('+z',))  # anima
+        c.scatola((x0, y - 0.13, zt - 0.56), (x1, y + 0.13, zt - 0.5), 'ferro_cupola')                   # ala bassa
+    for k in range(int(Y0) + 2, int(Y1) - 1, 3):
+        y = float(k)
+        dy = abs(y - cy)
+        if dy < R:
+            dx = math.sqrt(R * R - dy * dy)
+            trave(X0, cx - dx, y)
+            trave(cx + dx, X1, y)
+        else:
+            trave(X0, X1, y)
+    # condotte di ventilazione (tonde) lungo i muri est e ovest, con staffe ogni 3 m
+    for x in (X0 + 1.2, X1 - 1.2):
+        c.cilindro((x, Y0 + 0.3, zt - 1.05), (x, Y1 - 0.3, zt - 1.05), 0.32, 'metallo', seg=16, tappi=False)
+        for k in range(int(Y0) + 1, int(Y1), 3):
+            c.toro((x, k + 0.0, zt - 1.05), (0, 1, 0), 0.34, 0.025, 'metallo', seg=20, seg_r=4)
+            c.scatola((x - 0.03, k - 0.03, zt - 0.72), (x + 0.03, k + 0.03, zt - 0.56), 'metallo')
+    return c.crea('sala_soffitto_travi', sporco=lambda co: 0.8)
+
+
+def colature(mats):
+    """Colature di ruggine e calcare sotto gli oblò alti e lungo il fronte della galleria (piani con
+    alfa a 1 cm dal muro: in Godot si possono sostituire con nodi Decal)."""
+    m = bpy.data.materials.get('M_amb_decal_colatura')
+    if m is None:
+        m = bpy.data.materials.new('M_amb_decal_colatura')
+        m.use_nodes = True
+        nt = m.node_tree
+        b = nt.nodes['Principled BSDF']
+        t = nt.nodes.new('ShaderNodeTexImage')
+        t.image = bpy.data.images.load(os.path.join(K.TEX, 'decal', 'colatura_col.png'), check_existing=True)
+        uv = nt.nodes.new('ShaderNodeUVMap'); uv.uv_map = 'UVMap'
+        nt.links.new(uv.outputs['UV'], t.inputs['Vector'])
+        nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
+        nt.links.new(t.outputs['Alpha'], b.inputs['Alpha'])
+        b.inputs['Roughness'].default_value = 0.7
+        if hasattr(m, 'surface_render_method'):
+            m.surface_render_method = 'BLENDED'
+    class _M:
+        def lato(self, n): return 1.0
+        def get(self, n): return m
+    c = K.Costruttore(_M())
+    import random
+    rnd = random.Random(21)
+    def colatura(centro, normale, w, h):
+        cx_, cy_, zc = centro
+        nx, ny = normale
+        tx, ty = -ny, nx          # direzione orizzontale lungo il muro
+        p = lambda a, b: (cx_ + nx * 0.012 + tx * a, cy_ + ny * 0.012 + ty * a, zc + b)
+        q = [p(-w / 2, -h), p(w / 2, -h), p(w / 2, 0), p(-w / 2, 0)]
+        uv = [(0, 0), (1, 0), (1, 1), (0, 1)]
+        c.faccia(q, 'decal', uv=uv)
+    # sotto gli oblò alti (est e ovest, z = 6,2)
+    for i in range(18):
+        yb = Y0 + 2 * i + 1
+        if i % 2 == 0 and rnd.random() < 0.75:
+            colatura((X1, yb, Z_GAL + 2.2 - 0.38), (-1, 0), rnd.uniform(0.7, 1.1), rnd.uniform(1.0, 1.8))
+        if i % 2 == 0 and rnd.random() < 0.75:
+            colatura((X0, yb, Z_GAL + 2.2 - 0.38), (1, 0), rnd.uniform(0.7, 1.1), rnd.uniform(1.0, 1.8))
+    # sotto il bordo della galleria (fronte), qua e là
+    for i in range(14):
+        x = rnd.uniform(-16, 16)
+        colatura((x, Y1 - PROF_GAL, Z_GAL - 0.12), (0, -1), rnd.uniform(1.0, 2.2), rnd.uniform(0.8, 1.6))
+        x = rnd.uniform(-16, 16)
+        colatura((x, Y0 + PROF_GAL, Z_GAL - 0.12), (0, 1), rnd.uniform(1.0, 2.2), rnd.uniform(0.8, 1.6))
+    # muri bassi sotto la galleria, sopra le piastrelle
+    for i in range(16):
+        y = rnd.uniform(Y0 + 1, Y1 - 1)
+        colatura((X1, y, Z_GAL - 0.05), (-1, 0), rnd.uniform(0.8, 1.6), rnd.uniform(1.2, 2.0))
+        y = rnd.uniform(Y0 + 1, Y1 - 1)
+        colatura((X0, y, Z_GAL - 0.05), (1, 0), rnd.uniform(0.8, 1.6), rnd.uniform(1.2, 2.0))
+    ob = c.crea('sala_colature')
+    ob.visible_shadow = False
+    return ob
+
+
+def scala_galleria(mats):
+    """Scala in acciaio per salire sulla galleria est: parte a terra in y = 9,6 e arriva in y = 3,0 a
+    4,3 m, con pianerottolo che entra nella galleria (lì la ringhiera è aperta)."""
+    c = K.Costruttore(mats)
+    g = K.Costruttore(mats)
+    x0, x1 = 15.7, 16.9
+    yb, yt = 9.6, 3.0
+    zt = Z_GAL + SP_GAL
+    n = 24
+    alzata, pedata = zt / n, (yb - yt) / (n - 1)
+    for k in range(n - 1):
+        z = alzata * (k + 1)
+        y = yb - pedata * k
+        q = [(x0, y, z), (x1, y, z), (x1, y - pedata, z), (x0, y - pedata, z)]
+        g.faccia(q[::-1], 'alfa_grata'); g.faccia(q, 'alfa_grata')
+        c.scatola((x0, y - pedata, z - 0.03), (x1, y - pedata + 0.03, z), 'torre')
+    # pianerottolo che si appoggia alla galleria
+    q = [(x0, yt, zt), (17.0, yt, zt), (17.0, yt - 2.0, zt), (x0, yt - 2.0, zt)]
+    g.faccia(q, 'alfa_grata'); g.faccia(q[::-1], 'alfa_grata')
+    c.scatola((x0, yt - 2.0, zt - 0.2), (x0 + 0.08, yt, zt), 'torre')
+    # cosciali, corrimano e montanti
+    for x in (x0, x1):
+        c.tubo([(x, yb + 0.2, 0.0), (x, yt, zt)], 0.06, 'torre', seg=6)
+    for x in (x0 - 0.02, x1 + 0.02):
+        c.tubo([(x, yb + 0.2, 1.0), (x, yt, zt + 1.0)], 0.03, 'torre', seg=8)
+        for k in range(0, n, 4):
+            y = yb - pedata * k
+            z = alzata * (k + 1)
+            c.cilindro((x, y, z), (x, y, z + 1.0), 0.022, 'torre', seg=6)
+    c.tubo([(x0 - 0.02, yt, zt + 1.0), (x0 - 0.02, yt - 2.0, zt + 1.0), (17.0, yt - 2.0, zt + 1.0)], 0.03, 'torre', seg=8)
+    c.cilindro((x0 - 0.02, yt - 2.0, zt), (x0 - 0.02, yt - 2.0, zt + 1.0), 0.022, 'torre', seg=6)
+    c.cilindro((x0, yt - 1.0, 0.0), (x0, yt - 1.0, zt - 0.2), 0.08, 'torre', seg=10)
+    ob = c.crea('sala_scala_galleria', sporco=lambda co: 0.8)
+    gr = g.crea('sala_scala_galleria_grigliato')
+    K.collisione_punti('scala_galleria', [(x0, yb + 0.3, 0.0), (x1, yb + 0.3, 0.0), (x0, yt, zt), (x1, yt, zt),
+                                          (x0, yb + 0.3, -0.1), (x1, yb + 0.3, -0.1), (x0, yt, zt - 0.15), (x1, yt, zt - 0.15)], padre=ob)
+    K.collisione_scatola('scala_pianerottolo', (x0, yt - 2.0, zt - 0.15), (17.0, yt, zt), padre=ob)
+    K.collisione_scatola('scala_corrimano_o', (x0 - 0.06, yt - 2.0, 0.0), (x0, yb, zt + 1.05), padre=ob)
+    return [ob, gr]
 
 
 # ----------------------------------------------------------------------------- cupola e cielo
@@ -999,7 +1127,7 @@ def cartelloni(mats):
     for i, (x, chiave) in enumerate(((-9.0, 'p1'), (-1.5, 'p2'), (6.0, 'p3'))):
         ob = K.cartellone(mats, 3.2, 1.8, nome=f'sala_cartellone_n{i}')
         obs.append(metti(ob, (x, Y1 - PROF_GAL - 0.06, zr)))
-    for i, (y, chiave) in enumerate(((0.0, 'p2'), (10.0, 'p1'))):
+    for i, (y, chiave) in enumerate(((-4.0, 'p2'), (10.0, 'p1'))):   # non davanti alla scala (y 1..3)
         ob = K.cartellone(mats, 3.2, 1.8, nome=f'sala_cartellone_e{i}')
         obs.append(metti(ob, (X1 - PROF_GAL - 0.06, y, zr), -90))
     ob = K.cartellone(mats, 3.2, 1.8, nome='sala_cartellone_s0')
@@ -1221,6 +1349,26 @@ def disponi_oggetti(zf_piscina):
     metti_ogg('pallone_spiaggia', (-13.1, 8.9, 0.30), 0, 0.85)
     metti_ogg('paperella_gigante', (-9.0, 13.6, 0.0), 160, 1.0)
     metti_ogg('orsacchiotto_grande', (-17.3, 18.8, 0.0), 60, 0.8, (0, -10))
+    # --- altri giocattoli sparsi (la sala è grande: nel concept è piena di roba lasciata lì)
+    import random
+    rnd = random.Random(31)
+    sparsi = [('pallone_spiaggia', 1.0), ('ciambella_gonfiabile', 0.95), ('paperella_gigante', 0.4),
+              ('tubi_galleggianti', 1.0), ('pallone_spiaggia', 0.8), ('paperella_gigante', 0.3)]
+    zone = [(-6.5, 6.5, -4.6, 12.6, None), (8.6, 16.6, -8.0, 12.0, 0.0), (-8.4, -7.8, -8.0, 6.0, 0.0),
+            (-16.5, -9.5, 4.5, 6.0, 0.0), (-6.0, 6.0, -11.5, -9.6, 0.0), (-6.0, 6.0, 14.0, 20.5, 0.0)]
+    vietati = [(PIEDISTALLO['cx'] - 1.6, PIEDISTALLO['cy'] - 1.6, PIEDISTALLO['cx'] + 1.6, PIEDISTALLO['cy'] + 1.6),
+               (SPIRALE['cx'] - 0.6, SPIRALE['cy'] - 0.6, SPIRALE['cx'] + 0.6, SPIRALE['cy'] + 0.6),
+               (15.5, 2.8, 17.1, 9.8)]
+    for i in range(30):
+        n_, sc_ = sparsi[i % len(sparsi)]
+        x0_, x1_, y0_, y1_, z_ = zone[i % len(zone)]
+        for _ in range(20):
+            x, y = rnd.uniform(x0_, x1_), rnd.uniform(y0_, y1_)
+            if not any(a < x < c_ and b < y < d for a, b, c_, d in vietati):
+                break
+        metti_ogg(n_, (x, y, z_), rnd.uniform(0, 360), sc_ * rnd.uniform(0.85, 1.1), (rnd.uniform(-8, 8), rnd.uniform(-8, 8)))
+    for (x, y, r_) in ((-6.0, -10.3, 100), (6.0, -10.4, 80), (-11.0, 19.0, 190)):
+        metti_ogg('lettino_plastica', (x, y, 0.0), r_)
     # --- vasca d'arrivo: galleggianti
     metti_ogg('ciambella_gonfiabile', (-12.4, -3.0, VASCA_ARRIVO['acqua'] - 0.05), 40, 1.0)
     metti_ogg('tubi_galleggianti', (-14.2, -0.8, VASCA_ARRIVO['acqua'] - 0.02), 15)
@@ -1426,6 +1574,9 @@ def costruisci(con_oggetti=True, per_render=True):
     arch.append(gruppo('architettura', unisci(lamp_obs, 'sala_lampade')))
     arch.append(gruppo('architettura', insegna_neon()))
     arch.append(gruppo('architettura', pozzanghere(mats)))
+    arch.append(gruppo('architettura', soffitto_struttura(mats)))
+    arch.append(gruppo('architettura', colature(mats)))
+    arch += gruppo('architettura', scala_galleria(mats))
     copie, modelli = ([], [])
     if con_oggetti:
         copie, modelli = disponi_oggetti(zf)
