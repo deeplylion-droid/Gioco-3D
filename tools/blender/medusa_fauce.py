@@ -24,7 +24,7 @@ from medusa_comune import log, collega, coords, set_coords, materiale_pbr
 CENTRO_TAGLIO = Vector((0.0, -0.19, 0.488))
 ANGOLO_X = 0.095
 CERNIERA = Vector((0.0, -0.10, 0.49))       # testa dell'osso mascella
-APERTURA = {'rotazione_x_gradi': 38.0, 'spostamento': (0.0, -0.03, -0.075)}
+APERTURA = {'rotazione_x_gradi': 15.0, 'spostamento': (0.0, -0.01, -0.095)}
 N_FILE = 3                                    # file di denti per arcata
 
 
@@ -115,7 +115,8 @@ def pesi_mascella(corpo, bordo_sotto):
     sotto[np.array(bordo_sotto)] = True
     x, y, z = co.T
     w = (1 - _smooth(0.055, ANGOLO_X + 0.004, np.abs(x))) ** 0.6
-    w *= 1 - _smooth(-0.135, -0.07, y)
+    # il mento resta rigido fino all'attaccatura del collo: niente pelle stirata dentro la bocca aperta
+    w *= 1 - _smooth(-0.075, -0.045, y)
     w *= _smooth(0.412, 0.442, z)
     w *= sotto & (z < 0.53) & (np.abs(x) < 0.13)
     vg_m = corpo.vertex_groups.get('mascella') or corpo.vertex_groups.new(name='mascella')
@@ -149,10 +150,11 @@ def _profilo_aperto(P_sopra, P_sotto, k_frac):
     pavimento = [P_sotto,
                  Vector((P_sotto[0] * 0.95, P_sotto[1] + 0.02 * larg, P_sotto[2] + 0.006 * larg)),
                  Vector((P_sotto[0] * 0.85, P_sotto[1] + 0.045 * larg, P_sotto[2] + 0.012 * larg)),
-                 Vector((P_sotto[0] * 0.65, (P_sotto[1] + fondo[1]) / 2 + 0.01, (P_sotto[2] + fondo[2]) / 2 - 0.004 * larg)),
+                 Vector((P_sotto[0] * 0.65, (P_sotto[1] + fondo[1]) / 2 + 0.01, (P_sotto[2] + fondo[2]) / 2 + 0.004)),
                  fondo]
     # verso gli angoli il pavimento si richiude sul tetto: la gola e' chiusa ai lati (niente buchi)
-    b = math.sqrt(max(1 - (2 * k_frac - 1) ** 2, 0))
+    b = min(min(k_frac, 1 - k_frac) / 0.05, 1.0)          # solo gli ultimi vertici verso l'angolo
+    b = b * b * (3 - 2 * b)
     pavimento = [pavimento[0]] + [t + (p - t) * b for t, p in zip(tetto[1:], pavimento[1:])]
     return tetto, pavimento
 

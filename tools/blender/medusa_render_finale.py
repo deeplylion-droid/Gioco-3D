@@ -18,7 +18,7 @@ from medusa_comune import *  # noqa: E402,F401
 
 PROVA = '--prova' in sys.argv
 RES = (480, 270) if PROVA else (1600, 900)
-CAMPIONI = 12 if PROVA else 48
+CAMPIONI = 12 if PROVA else 40
 OUT_PNG = os.path.join(BUILD, 'render')
 OUT_JPG = os.path.join(PROPOSTE, 'finale')
 os.makedirs(OUT_PNG, exist_ok=True)
@@ -100,7 +100,7 @@ def piedistallo(z_cima, raggio=0.95, altezza=0.6):
     # scrostature: rumore che scopre il cemento grigio
     noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 9; noise.inputs['Detail'].default_value = 8
     cr = nt.nodes.new('ShaderNodeMapRange')
-    cr.inputs['From Min'].default_value = 0.62; cr.inputs['From Max'].default_value = 0.66
+    cr.inputs['From Min'].default_value = 0.68; cr.inputs['From Max'].default_value = 0.71
     nt.links.new(noise.outputs['Fac'], cr.inputs['Value'])
     mixc = nt.nodes.new('ShaderNodeMix'); mixc.data_type = 'RGBA'
     mixc.inputs['B'].default_value = (0.32, 0.3, 0.28, 1)
@@ -117,8 +117,8 @@ def pavimento_piastrelle(z):
     pav = bpy.context.active_object; pav.name = 'pavimento_bagnato'
     m, nt, b = mat_semplice('piastrelle_bagnate', (0.02, 0.04, 0.07), 0.05)
     br = nt.nodes.new('ShaderNodeTexBrick')
-    br.inputs['Scale'].default_value = 8.0
-    br.inputs['Mortar Size'].default_value = 0.012
+    br.inputs['Scale'].default_value = 140.0          # piastrelle da piscina, circa 25 cm
+    br.inputs['Mortar Size'].default_value = 0.008
     br.inputs['Color1'].default_value = (0.03, 0.06, 0.11, 1)
     br.inputs['Color2'].default_value = (0.05, 0.08, 0.12, 1)
     br.inputs['Mortar'].default_value = (0.01, 0.012, 0.015, 1)
@@ -172,9 +172,13 @@ def luci_notte(centro, H, nebbia=0.006):
 
 
 def imposta(res=RES, campioni=CAMPIONI, esposizione=0.0):
-    sc = imposta_render(samples=campioni, res=res, esposizione=esposizione, bounces=10)
-    sc.cycles.transmission_bounces = 10
-    sc.cycles.glossy_bounces = 6
+    sc = imposta_render(samples=campioni, res=res, esposizione=esposizione, bounces=8)
+    sc.cycles.transmission_bounces = 8
+    sc.cycles.glossy_bounces = 4
+    sc.cycles.diffuse_bounces = 2
+    sc.cycles.volume_bounces = 0
+    sc.cycles.adaptive_threshold = 0.03
+    sc.cycles.sample_clamp_indirect = 8.0
     sc.cycles.caustics_reflective = False
     sc.cycles.caustics_refractive = False
     sc.view_settings.look = 'AgX - Medium High Contrast'
