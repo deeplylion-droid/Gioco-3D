@@ -34,6 +34,10 @@ func _sistema(m: StandardMaterial3D) -> void:
 	if nome.begins_with("M_amb_alfa_"):
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 		m.alpha_scissor_threshold = 0.5
+		m.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	elif nome.begins_with("M_amb_decal_"):
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	elif nome.begins_with("M_amb_vetro"):
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
