@@ -53,9 +53,9 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Finale**: inseguimento dentro gli scivoli.
 ### Livello: scelte dell'utente (14 ottobre 2026)
 
-Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione decisa sarà in `docs/livello/`. Queste sono le scelte:
+Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione decisa è in `docs/livello/capitolo1.md`. Queste sono le scelte:
 
-- **Percorso A, lineare** (circa 40 minuti): risveglio, spogliatoi (zaino), statua, area bimbi (secchio gigante), piscina a onde vuota, sala pompe (lei si sveglia), ritorno al buio con il piedistallo vuoto, torre degli scivoli, inseguimento, fine.
+- **Percorso A, lineare** (circa 42 minuti, vedi `docs/livello/capitolo1.md`): risveglio, spogliatoi (zaino), statua, area bimbi (secchio gigante), piscina a onde vuota, sala pompe (lei si sveglia), ritorno al buio con il piedistallo vuoto, torre degli scivoli, inseguimento, fine.
 - **Statua S1, "il benvenuto"**: vicina e immobile, il giocatore le gira intorno quanto vuole e non succede niente.
 - **Piedistallo vuoto V1, "silenzio"**: una pozza d'acqua sul piedistallo e una scia di gocce che si allontana nel buio, senza musica.
 - **Inseguimento I1**: scivolata veloce negli scivoli con l'acqua che scorre. Ai bivi si colpisce la paratia giusta; ci si gira e la si respinge col getto. Alla fine una grata di sicurezza cala davanti a lei.
