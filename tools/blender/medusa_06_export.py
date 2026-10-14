@@ -33,6 +33,7 @@ TEX_CAMPANA_BASE = os.path.join(TEX, 'campana_base_alfa.png')
 TEX_CAMPANA_EMIS = os.path.join(TEX, 'campana_emissione.png')
 TEX_GOLA = os.path.join(TEX, 'gola_gradiente.png')
 TEX_NORMAL_2K = os.path.join(TEX, 'medusa_normal_pulita_2k.png')
+TEX_BASE_2K = os.path.join(TEX, 'medusa_basecolor_pulita_2k.jpg')
 
 
 def argomento(nome, default):
@@ -64,7 +65,7 @@ def materiali_per_godot():
     if mc:
         b = mc.node_tree.nodes['BSDF']
         b.inputs['Transmission Weight'].default_value = 0.0
-        b.inputs['Alpha'].default_value = 0.12
+        b.inputs['Alpha'].default_value = 0.06    # velo leggero: in Godot la cornea da' solo i riflessi
         b.inputs['Roughness'].default_value = 0.03
         try:
             mc.surface_render_method = 'BLENDED'
@@ -128,7 +129,9 @@ def texture_campana(ob, size=2048):
     emis_srgb = np.where(emis <= 0.0031308, emis * 12.92, 1.055 * np.power(np.clip(emis, 0, 1), 1 / 2.4) - 0.055)
     cv2.imwrite(TEX_CAMPANA_EMIS, (np.clip(emis_srgb, 0, 1) * 255).astype(np.uint8)[..., ::-1])
     # base color: atlante pulito schiarito verso il lilla; alfa: opaca alla vita, trasparente sotto
-    base = cv2.imread(os.path.join(TEX, 'medusa_basecolor_pulita.jpg'))[..., ::-1].astype(np.float32) / 255
+    # colore della campana dalla stessa texture del materiale (atlante pulito o texture cotta del passo 2b)
+    img_base = bpy.data.materials['M_campana'].node_tree.nodes['base'].image
+    base = cv2.imread(bpy.path.abspath(img_base.filepath))[..., ::-1].astype(np.float32) / 255
     base = cv2.resize(base, (size, size), interpolation=cv2.INTER_AREA)
     lil = np.array([0.80, 0.62, 0.98])                     # (0.62, 0.36, 0.95) lineare, in sRGB circa
     base = base * 0.5 + lil * 0.5
@@ -160,18 +163,35 @@ def normal_2k():
     return TEX_NORMAL_2K
 
 
+def base_2k():
+    from PIL import Image
+    if not os.path.exists(TEX_BASE_2K):
+        Image.open(os.path.join(TEX, 'medusa_basecolor_pulita.jpg')).resize((2048, 2048), Image.LANCZOS).save(
+            TEX_BASE_2K, quality=93, subsampling=0)
+    return TEX_BASE_2K
+
+
 def materiali_finale_godot():
-    """Materiali leggibili dall'import glTF di Godot (StandardMaterial3D)."""
-    # vinile: niente coat (Godot non lo legge dal glTF), normal map a 2K
+    """Materiali leggibili dall'import glTF di Godot (StandardMaterial3D), texture a 2K."""
+    # vinile: niente coat (Godot non lo legge dal glTF), metallic 0 costante (niente texture MR)
     n2 = immagine(normal_2k(), non_color=True)
+    b2 = immagine(base_2k())
     for n in ('M_pelle', 'M_capelli', 'M_orbita'):
         m = bpy.data.materials.get(n)
         if not m:
             continue
-        b = m.node_tree.nodes['BSDF']
+        nt = m.node_tree
+        b = nt.nodes['BSDF']
         b.inputs['Coat Weight'].default_value = 0.0
         b.inputs['Subsurface Weight'].default_value = 0.0
-        m.node_tree.nodes['normal'].image = n2
+        if nt.nodes['base'].image.name.startswith('medusa_basecolor_pulita'):   # atlante 4K di Meshy
+            nt.nodes['normal'].image = n2
+            nt.nodes['base'].image = b2
+        for l in list(b.inputs['Metallic'].links):
+            nt.links.remove(l)
+        b.inputs['Metallic'].default_value = 0.0
+        if 'mr' in nt.nodes:
+            nt.nodes.remove(nt.nodes['mr'])
     # campana: RGBA + emissione cotte
     m = bpy.data.materials['M_campana']
     nt = m.node_tree
@@ -186,7 +206,8 @@ def materiali_finale_godot():
     nt.links.new(te.outputs['Color'], b.inputs['Emission Color'])
     b.inputs['Emission Strength'].default_value = 2.5
     b.inputs['Roughness'].default_value = 0.1
-    tn = nodo(nt, 'ShaderNodeTexImage', (-300, -500)); tn.image = n2
+    tn = nodo(nt, 'ShaderNodeTexImage', (-300, -500))
+    tn.image = bpy.data.materials['M_pelle'].node_tree.nodes['normal'].image   # stessa normal map della pelle
     nm = nodo(nt, 'ShaderNodeNormalMap', (0, -500))
     nt.links.new(tn.outputs['Color'], nm.inputs['Color']); nt.links.new(nm.outputs['Normal'], b.inputs['Normal'])
     try:
@@ -206,6 +227,9 @@ def materiali_finale_godot():
         nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
         b.inputs['Coat Weight'].default_value = 0.0
         b.inputs['Subsurface Weight'].default_value = 0.0
+    mb = bpy.data.materials.get('M_occhio_bulbo')
+    if mb:
+        mb.node_tree.nodes['BSDF'].inputs['Emission Strength'].default_value = 0.22
     for n in ('M_tentacoli', 'M_filamenti', 'M_denti'):
         m = bpy.data.materials.get(n)
         if m:
@@ -217,6 +241,11 @@ def materiali_finale_godot():
 def prepara_finale():
     corpo = bpy.data.objects['Medusa']
     texture_campana(corpo)
+    # le stesse texture servono allo shader Godot della campana (assets_src/medusa/godot/)
+    gd = os.path.join(ASSET, 'godot')
+    os.makedirs(gd, exist_ok=True)
+    for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS):
+        shutil.copy(t, os.path.join(gd, os.path.basename(t)))
     togli_slot_vuoti(corpo)
     materiali_per_godot()
     materiali_finale_godot()
@@ -310,8 +339,9 @@ def controlla_godot(out):
         return
     prj = os.path.join(BUILD, 'godot_prova')
     os.makedirs(prj, exist_ok=True)
-    with open(os.path.join(prj, 'project.godot'), 'w') as f:
-        f.write('config_version=5\n\n[application]\nconfig/name="prova medusa"\n')
+    if not os.path.exists(os.path.join(prj, 'project.godot')):
+        with open(os.path.join(prj, 'project.godot'), 'w') as f:
+            f.write('config_version=5\n\n[application]\nconfig/name="prova medusa"\n')
     for f in os.listdir(prj):
         if f.startswith('medusa'):
             os.remove(os.path.join(prj, f))

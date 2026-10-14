@@ -214,7 +214,7 @@ def apri_orbita(ob, C, Rb, asse, ang_orbita):
         if any(f.material_index == 1 for f in v.link_faces):      # bordo lungo la frangia: resta com'e'
             continue
         a, p = angoli(v.co)
-        if abs(a - ang_orbita) > math.radians(5):
+        if abs(a - ang_orbita) > math.radians(9):
             continue
         q = sulla_pelle(ang_orbita, p)
         if q is not None:
@@ -383,7 +383,8 @@ def main():
     t0 = time.time()
     occ = leggi_json('occhio.json')
     texture_iride(occ)
-    apri(os.path.join(BUILD, 'medusa_02_texture.blend'))
+    ridotta = os.path.join(BUILD, 'medusa_02b_ridotta.blend')       # versione da gioco (passo 2b), se c'e'
+    apri(ridotta if os.path.exists(ridotta) else os.path.join(BUILD, 'medusa_02_texture.blend'))
     ob = bpy.data.objects['Medusa']
     me = ob.data
     C, Rf = sfera_viso(me, occ)
@@ -400,7 +401,7 @@ def main():
     def uv_frontale(co):
         return np.stack([0.5 + (co[:, 0] - ex) / (2 * S_TEX), 0.5 + (co[:, 2] - ez) / (2 * S_TEX)], 1)
 
-    bulbo = calotta('Medusa_Occhio', C, Rb, asse, ang_cal, uv_fun=uv_frontale)
+    bulbo = calotta('Medusa_Occhio', C, Rb, asse, ang_cal, n_seg=48, n_anelli=20, uv_fun=uv_frontale)
     # cornea: calotta bombata che tocca il bulbo sul bordo esterno dell'anello
     phi = math.asin(min(occ['raggio_anello_esterno'] / Rb, 0.99)) + math.radians(1.5)
     a = Rb * math.sin(phi); t = Rb * math.cos(phi)
@@ -409,7 +410,7 @@ def main():
     dc = Rb + ALTEZZA_CORNEA - Rc
     Cc = C + asse * dc
     ang_c = math.asin(min(a / Rc, 0.999))
-    cornea = calotta('Medusa_Cornea', Cc, Rc, asse, ang_c, n_seg=96, n_anelli=24)
+    cornea = calotta('Medusa_Cornea', Cc, Rc, asse, ang_c, n_seg=48, n_anelli=12)
     materiali_occhio(bulbo, cornea)
     dati = {
         'centro_rotazione': [round(v, 5) for v in C], 'raggio_bulbo': round(Rb, 5), 'raggio_viso': round(Rf, 5),

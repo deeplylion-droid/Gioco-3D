@@ -1,14 +1,12 @@
-"""Proposte di design della medusa (fase 2): render e tavole JPG in docs/proposte/medusa/.
+"""Proposte alternative di design della medusa: render del modello 3D e tavole JPG in docs/proposte/medusa/.
 
   A  finitura del vinile (3 opzioni x luce da studio / acquapark di notte)
-  B  campana organica: trasparenza, colore e luce dei canali radiali (3 opzioni)
-  C  tentacoli dal generatore procedurale (3 preset di medusa_05_tentacoli.py)
-  D  occhio di vetro: da bambola o umido e organico (2 opzioni, primo piano)
 
-Le scelte le fa l'utente: qui si preparano solo le immagini. I materiali delle opzioni sono
-costruiti qui (nodi di Blender) e restano descritti nelle funzioni, per rifarli dopo la scelta.
+Le altre scelte (campana, tentacoli, occhio) sono state fatte nella versione finita
+(medusa_07_finale.py) seguendo i concept approvati; i tentacoli alternativi si ottengono con i preset
+di medusa_05_tentacoli.py ("nastri", "filamenti").
 
-Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_proposte.py A [B C D] [--prova]
+Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_proposte.py A [--prova]
 """
 import os
 import sys
