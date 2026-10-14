@@ -39,6 +39,10 @@ serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, 
 ## Montaggio
 
 - Un `Node3D` "SalaPrincipale" con dentro le istanze dei GLB, tutte in (0, 0, 0).
+- Attacca a "SalaPrincipale" lo script `assets_src/ambiente/godot/sala_luci_ambiente.gd`: regola le
+  luci di `sala_luci.glb` (intensità, raggi, ombre solo su luna e lampione), fa sfarfallare alcuni neon
+  e, se nella scena non c'è, crea un WorldEnvironment notturno (nebbia volumetrica, SSR, SSAO, glow).
+  Provato in Godot 4.7.2: vedi `docs/proposte/ambiente/sala/sala_godot_*.jpg`.
 - **Spawn del giocatore** (uscita dagli spogliatoi): (0, 0, 11.2), guarda verso **-Z** (il piedistallo).
 - **Piedistallo (vuoto, per la medusa)**: centro della base (0, 0, 6.9); piano superiore a **y = 0.9 m**,
   diametro del piano **2.2 m** (tamburo 2.0 m, zoccolo 2.3 m).
