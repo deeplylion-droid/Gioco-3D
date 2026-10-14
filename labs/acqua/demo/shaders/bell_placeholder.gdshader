@@ -3,7 +3,7 @@
 shader_type spatial;
 render_mode cull_disabled;
 
-#include "res://water/shaders/water_common.gdshaderinc"
+#include "res://addons/acqua/shaders/water_common.gdshaderinc"
 
 uniform vec3 glow_color : source_color = vec3(1.0, 0.35, 0.75);
 uniform float glow_energy = 4.0;

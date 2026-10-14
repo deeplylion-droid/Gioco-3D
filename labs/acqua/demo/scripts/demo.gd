@@ -17,12 +17,12 @@ extends Node3D
 ##   --kids=<livello>  --puddle=<livello>  --land=<livello>   livelli iniziali dell'acqua
 
 const STYLES := [
-	"res://water/presets/stile_1_limpida.tres",
-	"res://water/presets/stile_2_torbida.tres",
-	"res://water/presets/stile_3_scura.tres",
+	"res://addons/acqua/presets/stile_1_limpida.tres",
+	"res://addons/acqua/presets/stile_2_torbida.tres",
+	"res://addons/acqua/presets/stile_3_scura.tres",
 ]
-const DEFAULT_DEEP := "res://water/presets/stile_3_scura.tres"
-const DEFAULT_PUDDLE := "res://water/presets/stile_2_torbida.tres"
+const DEFAULT_DEEP := "res://addons/acqua/presets/stile_3_scura.tres"
+const DEFAULT_PUDDLE := "res://addons/acqua/presets/stile_2_torbida.tres"
 
 # inquadrature: posizione, punto guardato
 const SHOTS := {
@@ -82,6 +82,8 @@ func _ready() -> void:
 		env.ssr_enabled = false
 	if args.has("novolfog"):
 		$WorldEnvironment.environment.volumetric_fog_enabled = false
+	if args.has("noprobe"):
+		$ReflectionProbe.queue_free()
 	if args.has("noripples"):
 		for b in [land, puddle, kids]:
 			b.simulate_ripples = false

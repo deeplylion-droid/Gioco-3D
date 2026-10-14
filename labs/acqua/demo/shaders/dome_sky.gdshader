@@ -3,7 +3,7 @@
 shader_type spatial;
 render_mode unshaded, cull_front, fog_disabled;
 
-#include "res://water/shaders/water_common.gdshaderinc"
+#include "res://addons/acqua/shaders/water_common.gdshaderinc"
 
 uniform float flash = 0.0;
 uniform vec3 sky_color : source_color = vec3(0.012, 0.018, 0.03);

@@ -27,7 +27,7 @@ def patch(path, params, importer=None, type_=None):
             s = s.rstrip("\n") + f"\n{k}={v}\n"
     open(imp, "w").write(s)
 
-wt = os.path.join(ROOT, "water", "textures")
+wt = os.path.join(ROOT, "addons", "acqua", "textures")
 for name in ("water_normal_a.png", "water_normal_b.png", "foam.png", "noise_rgba.png"):
     patch(os.path.join(wt, name), {"compress/mode": 0, "mipmaps/generate": "true", "detect_3d/compress_to": 0})
 patch(os.path.join(wt, "caustics_3d.png"), {
@@ -38,7 +38,8 @@ patch(os.path.join(wt, "caustics_3d.png"), {
 }, importer="3d_texture", type_="CompressedTexture3D")
 
 dt = os.path.join(ROOT, "demo", "textures")
-for f in sorted(glob.glob(os.path.join(dt, "*.jpg"))):
+st = os.path.join(ROOT, "addons", "acqua", "textures", "superfici")
+for f in sorted(glob.glob(os.path.join(dt, "*.jpg")) + glob.glob(os.path.join(st, "*.jpg"))):
     p = {"compress/mode": 2, "mipmaps/generate": "true", "detect_3d/compress_to": 0, "compress/high_quality": "false"}
     if f.endswith("_normal.jpg"):
         p["compress/normal_map"] = 1
