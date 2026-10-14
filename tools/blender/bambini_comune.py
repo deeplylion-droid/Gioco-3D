@@ -102,21 +102,27 @@ def ritocca_materiali(materiali, bagnato=1.0, bagliore=0.0, occhi_rosa=False):
             continue
         col = bsdf.inputs['Base Color'].links[0].from_socket
         if occhi_rosa and nt.get('bambini_occhi') is None:
-            # giallo (tinta 0,08-0,20, saturo) -> rosa (tinta 0,93), stessa luminosità
+            # giallo delle iridi (tinta ~0,12, s ~0,57, v ~0,78) -> rosa (tinta 0,935), stessa luminosità
             sep = nt.new('ShaderNodeSeparateColor'); sep.mode = 'HSV'; sep.name = 'bambini_occhi'
             ln.new(col, sep.inputs['Color'])
+            # solo gialli chiari e saturi (le iridi): non le alghe verde oliva né la ruggine
             a = nt.new('ShaderNodeMapRange'); a.interpolation_type = 'SMOOTHSTEP'
-            a.inputs['From Min'].default_value = 0.06; a.inputs['From Max'].default_value = 0.10
+            a.inputs['From Min'].default_value = 0.09; a.inputs['From Max'].default_value = 0.105
             b = nt.new('ShaderNodeMapRange'); b.interpolation_type = 'SMOOTHSTEP'
-            b.inputs['From Min'].default_value = 0.22; b.inputs['From Max'].default_value = 0.17
+            b.inputs['From Min'].default_value = 0.15; b.inputs['From Max'].default_value = 0.135
             ln.new(sep.outputs[0], a.inputs['Value']); ln.new(sep.outputs[0], b.inputs['Value'])
             s = nt.new('ShaderNodeMapRange'); s.interpolation_type = 'SMOOTHSTEP'
-            s.inputs['From Min'].default_value = 0.35; s.inputs['From Max'].default_value = 0.6
+            s.inputs['From Min'].default_value = 0.38; s.inputs['From Max'].default_value = 0.5
             ln.new(sep.outputs[1], s.inputs['Value'])
+            v = nt.new('ShaderNodeMapRange'); v.interpolation_type = 'SMOOTHSTEP'
+            v.inputs['From Min'].default_value = 0.6; v.inputs['From Max'].default_value = 0.7
+            ln.new(sep.outputs[2], v.inputs['Value'])
             m1 = nt.new('ShaderNodeMath'); m1.operation = 'MULTIPLY'
             ln.new(a.outputs[0], m1.inputs[0]); ln.new(b.outputs[0], m1.inputs[1])
+            m15 = nt.new('ShaderNodeMath'); m15.operation = 'MULTIPLY'
+            ln.new(m1.outputs[0], m15.inputs[0]); ln.new(v.outputs[0], m15.inputs[1])
             m2 = nt.new('ShaderNodeMath'); m2.operation = 'MULTIPLY'
-            ln.new(m1.outputs[0], m2.inputs[0]); ln.new(s.outputs[0], m2.inputs[1])
+            ln.new(m15.outputs[0], m2.inputs[0]); ln.new(s.outputs[0], m2.inputs[1])
             comb = nt.new('ShaderNodeCombineColor'); comb.mode = 'HSV'
             comb.inputs[0].default_value = 0.935
             ln.new(sep.outputs[1], comb.inputs[1]); ln.new(sep.outputs[2], comb.inputs[2])
