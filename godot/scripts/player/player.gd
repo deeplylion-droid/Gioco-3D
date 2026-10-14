@@ -1,0 +1,473 @@
+class_name Player
+extends CharacterBody3D
+## Controller in prima persona.
+## Sguardo col mouse, camminata/corsa/accovacciato (con controllo del soffitto), salto,
+## accelerazioni morbide, head bob leggero, segnali dei passi con la superficie, scale a pioli.
+## Tutti i valori di "feeling" sono esportati: si tarano con l'utente.
+##
+## La camera (Head) non è interpolata dalla fisica: ogni frame segue la posizione interpolata
+## del corpo e ruota subito col mouse, così il movimento è fluido anche oltre i 60 Hz.
+
+## Un passo. [param surface]: materiale del pavimento (meta "superficie" del collider, per
+## esempio &"metallo"; &"acqua" se si cammina nell'acqua, &"scala" sulle scale a pioli).
+## [param wet]: pavimento bagnato. [param intensity]: circa 0,3 accovacciato, 1 camminando, 1,5 correndo.
+signal footstep(surface: StringName, wet: bool, intensity: float)
+## Atterraggio dopo una caduta; [param fall_speed] in m/s.
+signal landed(surface: StringName, wet: bool, fall_speed: float)
+signal jumped
+signal crouch_changed(is_crouching: bool)
+signal ladder_changed(is_on_ladder: bool)
+signal item_added(item_id: StringName, item_name: String, total: int)
+## L'oggetto interattivo guardato è cambiato (null = nessuno).
+signal interaction_target_changed(target: Interactable)
+
+const SURFACE_DEFAULT := &"generico"
+const SURFACE_WATER := &"acqua"
+const SURFACE_LADDER := &"scala"
+
+@export_group("Sguardo")
+## Gradi di rotazione per pixel di movimento del mouse.
+@export_range(0.01, 0.6, 0.005) var mouse_sensitivity := 0.12
+@export var invert_y := false
+@export_range(45.0, 89.9) var max_pitch_degrees := 88.0
+
+@export_group("Movimento")
+@export var walk_speed := 3.4
+@export var run_speed := 5.8
+@export var crouch_speed := 1.7
+## Quanto in fretta raggiunge la velocità voluta a terra (1/s): più alto = più scattante.
+@export var ground_acceleration := 9.0
+## Quanto in fretta si ferma a terra (1/s).
+@export var ground_deceleration := 11.0
+## Controllo in aria (1/s).
+@export var air_control := 1.8
+@export var gravity_multiplier := 1.0
+## Altezza del salto (m).
+@export var jump_height := 1.0
+## Si può ancora saltare per questi secondi dopo aver lasciato un bordo.
+@export var coyote_time := 0.12
+## Un salto premuto poco prima di toccare terra parte all'atterraggio.
+@export var jump_buffer_time := 0.12
+@export var can_jump_while_crouched := false
+## Forza con cui si spingono gli oggetti fisici camminandoci contro (N).
+@export var push_force := 40.0
+## Sotto questa quota si muore (caduto fuori dal livello).
+@export var fall_death_height := -60.0
+
+@export_group("Accovacciato")
+## Vero: Ctrl accende/spegne. Falso: bisogna tenerlo premuto.
+@export var crouch_toggle := false
+@export var stand_height := 1.75
+@export var crouch_height := 1.05
+@export var stand_eye_height := 1.6
+@export var crouch_eye_height := 0.92
+## Velocità con cui la camera sale e scende (1/s).
+@export var crouch_camera_speed := 9.0
+
+@export_group("Head bob e passi")
+@export var head_bob_enabled := true
+## Oscillazione verticale massima (m).
+@export var head_bob_vertical := 0.035
+## Oscillazione laterale massima (m).
+@export var head_bob_horizontal := 0.022
+@export var step_length_walk := 0.75
+@export var step_length_run := 1.05
+@export var step_length_crouch := 0.55
+## Abbassamento massimo della camera all'atterraggio (m).
+@export var land_dip_max := 0.08
+
+@export_group("Scale a pioli")
+@export var ladder_climb_speed := 2.4
+## Distanza tra un "passo" e l'altro sulla scala (m).
+@export var ladder_step_distance := 0.45
+
+## Rotazione orizzontale e verticale dello sguardo (radianti).
+var yaw := 0.0
+var pitch := 0.0
+var is_crouching := false
+var ladder: Ladder = null
+## item_id -> quantità.
+var inventory: Dictionary = {}
+## Falso durante pause, filmati, test...
+var input_enabled := true
+
+var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
+var _eye_height := 1.6
+var _eye_prev := 1.6
+var _step_phase := 0.0
+var _phase_prev := 0.0
+var _bob_weight := 0.0
+var _bob_prev := 0.0
+var _land_offset := 0.0
+var _land_prev := 0.0
+var _land_vel := 0.0
+var _coyote := 0.0
+var _jump_buffer := 0.0
+var _was_on_floor := true
+var _ladder_travel := 0.0
+var _crouch_toggled := false
+var _ladder_cooldown := 0.0
+
+@onready var collision_shape: CollisionShape3D = $CollisionShape3D
+@onready var head: Node3D = $Head
+@onready var camera: Camera3D = $Head/Camera3D
+@onready var sensor: Area3D = $Sensor
+@onready var water_pack: WaterPack = get_node_or_null("WaterPack")
+@onready var interactor: Interactor = get_node_or_null("Interactor")
+
+
+func _ready() -> void:
+	add_to_group(&"player")
+	collision_shape.shape = collision_shape.shape.duplicate()
+	_apply_height(stand_height)
+	yaw = rotation.y
+	rotation = Vector3(0.0, yaw, 0.0)
+	_eye_height = stand_eye_height
+	_eye_prev = _eye_height
+	head.top_level = true
+	head.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	if water_pack:
+		water_pack.setup(self)
+	if interactor:
+		interactor.setup(self)
+	_update_head(1.0)
+	GameState.register_player(self)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not input_enabled:
+		return
+	var motion := event as InputEventMouseMotion
+	if motion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		var d := motion.screen_relative * deg_to_rad(mouse_sensitivity)
+		yaw = wrapf(yaw - d.x, -PI, PI)
+		pitch += d.y if invert_y else -d.y
+		pitch = clampf(pitch, -deg_to_rad(max_pitch_degrees), deg_to_rad(max_pitch_degrees))
+
+
+# --- Sguardo e camera -------------------------------------------------------------------
+
+## Posizione degli occhi (senza head bob), per raggi e getto.
+func get_eye_position() -> Vector3:
+	return global_position + Vector3.UP * _eye_height
+
+
+func get_aim_basis() -> Basis:
+	return Basis.from_euler(Vector3(pitch, yaw, 0.0))
+
+
+## Trasformazione dello sguardo "logico" (stato fisico attuale, senza head bob).
+func get_aim_transform() -> Transform3D:
+	return Transform3D(get_aim_basis(), get_eye_position())
+
+
+func get_aim_direction() -> Vector3:
+	return -get_aim_basis().z
+
+
+func set_look(new_yaw: float, new_pitch: float) -> void:
+	yaw = wrapf(new_yaw, -PI, PI)
+	pitch = clampf(new_pitch, -deg_to_rad(max_pitch_degrees), deg_to_rad(max_pitch_degrees))
+
+
+## Gira lo sguardo verso un punto del mondo (test, filmati).
+func look_at_point(target: Vector3) -> void:
+	var d := target - get_eye_position()
+	set_look(atan2(-d.x, -d.z), atan2(d.y, Vector2(d.x, d.z).length()))
+
+
+## Sposta il giocatore senza interpolazione (respawn, test).
+func teleport(pos: Vector3, new_yaw := yaw, new_pitch := 0.0) -> void:
+	global_position = pos
+	velocity = Vector3.ZERO
+	set_look(new_yaw, new_pitch)
+	rotation = Vector3(0.0, yaw, 0.0)
+	_leave_ladder()
+	reset_physics_interpolation()
+	_update_head(1.0)
+
+
+func _process(_delta: float) -> void:
+	_update_head(Engine.get_physics_interpolation_fraction())
+
+
+func _update_head(fraction: float) -> void:
+	var origin := get_global_transform_interpolated().origin if is_inside_tree() else global_position
+	var eye := lerpf(_eye_prev, _eye_height, fraction)
+	var land := lerpf(_land_prev, _land_offset, fraction)
+	var phase := lerpf(_phase_prev, _step_phase, fraction)
+	var w := lerpf(_bob_prev, _bob_weight, fraction) if head_bob_enabled else 0.0
+	var bob_v := -head_bob_vertical * w * (0.5 + 0.5 * cos(TAU * phase))
+	var bob_h := head_bob_horizontal * w * sin(PI * phase)
+	var side := Basis(Vector3.UP, yaw) * Vector3.RIGHT
+	var pos := origin + Vector3.UP * (eye + land + bob_v) + side * bob_h
+	head.global_transform = Transform3D(get_aim_basis(), pos)
+
+
+# --- Movimento ------------------------------------------------------------------------------
+
+func _physics_process(delta: float) -> void:
+	_eye_prev = _eye_height
+	_phase_prev = _step_phase
+	_bob_prev = _bob_weight
+	_land_prev = _land_offset
+	rotation = Vector3(0.0, yaw, 0.0)
+	_update_crouch(delta)
+	_update_ladder()
+	var pre_vy := velocity.y
+	if ladder:
+		_move_on_ladder(delta)
+	else:
+		_move_on_ground(delta)
+	move_and_slide()
+	_push_rigid_bodies(delta)
+	_after_move(delta, pre_vy)
+	if global_position.y < fall_death_height:
+		GameState.kill_player(&"caduta")
+
+
+func _move_input() -> Vector2:
+	if not input_enabled:
+		return Vector2.ZERO
+	return Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+
+
+func _move_on_ground(delta: float) -> void:
+	var on_floor := is_on_floor()
+	var g := _gravity * gravity_multiplier
+	if not on_floor:
+		velocity.y -= g * delta
+	# Salto con coyote time e buffer.
+	_coyote = coyote_time if on_floor else _coyote - delta
+	if input_enabled and Input.is_action_just_pressed("jump"):
+		_jump_buffer = jump_buffer_time
+	else:
+		_jump_buffer -= delta
+	if _jump_buffer > 0.0 and _coyote > 0.0 and (can_jump_while_crouched or not is_crouching):
+		velocity.y = sqrt(2.0 * g * jump_height)
+		_jump_buffer = 0.0
+		_coyote = 0.0
+		jumped.emit()
+	# Movimento orizzontale con accelerazioni morbide (esponenziali).
+	var input := _move_input()
+	var wish := Basis(Vector3.UP, yaw) * Vector3(input.x, 0.0, input.y)
+	var target := wish * _max_speed(input)
+	var hv := Vector3(velocity.x, 0.0, velocity.z)
+	var rate: float
+	if on_floor:
+		rate = ground_acceleration if target.length_squared() >= hv.length_squared() - 0.01 else ground_deceleration
+	else:
+		rate = air_control if input != Vector2.ZERO else 0.1
+	hv = hv.lerp(target, 1.0 - exp(-rate * delta))
+	velocity.x = hv.x
+	velocity.z = hv.z
+
+
+func _max_speed(input: Vector2) -> float:
+	if is_crouching:
+		return crouch_speed
+	if input_enabled and Input.is_action_pressed("sprint") and input.y <= 0.0 and input.length() > 0.1:
+		return run_speed
+	return walk_speed
+
+
+func is_running() -> bool:
+	return not is_crouching and Vector2(velocity.x, velocity.z).length() > walk_speed * 1.15
+
+
+func _push_rigid_bodies(delta: float) -> void:
+	for i in get_slide_collision_count():
+		var c := get_slide_collision(i)
+		var body := c.get_collider() as RigidBody3D
+		if body == null:
+			continue
+		var dir := -c.get_normal()
+		dir.y = 0.0
+		if dir.length_squared() < 0.0001:
+			continue
+		body.apply_impulse(dir.normalized() * push_force * delta, c.get_position() - body.global_position)
+
+
+func _after_move(delta: float, pre_vy: float) -> void:
+	var on_floor := is_on_floor()
+	# Atterraggio: segnale e piccola molla sulla camera.
+	if on_floor and not _was_on_floor and ladder == null:
+		var fall := -pre_vy
+		if fall > 1.0:
+			var s := get_surface_under_feet()
+			landed.emit(s[0], s[1], fall)
+			_land_vel -= minf((fall - 1.0) * 0.25, land_dip_max * 29.8)
+	_was_on_floor = on_floor
+	var k := 120.0
+	_land_vel += (-k * _land_offset - 2.0 * sqrt(k) * _land_vel) * delta
+	_land_offset += _land_vel * delta
+	# Passi e head bob in base alla distanza percorsa.
+	var hs := Vector2(get_real_velocity().x, get_real_velocity().z).length()
+	if on_floor and ladder == null and hs > 0.2:
+		var step_len := step_length_walk
+		if is_crouching:
+			step_len = step_length_crouch
+		elif is_running():
+			step_len = step_length_run
+		var before := _step_phase
+		_step_phase += hs * delta / step_len
+		if floori(_step_phase) != floori(before):
+			var s := get_surface_under_feet()
+			footstep.emit(s[0], s[1], clampf(hs / walk_speed, 0.2, 1.6))
+		_bob_weight = move_toward(_bob_weight, clampf(hs / walk_speed, 0.0, 1.4), delta * 4.0)
+	else:
+		_bob_weight = move_toward(_bob_weight, 0.0, delta * 4.0)
+
+
+## Superficie sotto i piedi: [nome, bagnata].
+func get_surface_under_feet() -> Array:
+	var wet := false
+	for area in sensor.get_overlapping_areas():
+		if area is WaterVolume and (area as WaterVolume).get_surface_height() > global_position.y + 0.05:
+			return [SURFACE_WATER, true]
+		if area.is_in_group(&"zona_bagnata"):
+			wet = true
+	var surface := SURFACE_DEFAULT
+	var q := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.25,
+			global_position + Vector3.DOWN * 0.35, Layers.WORLD | Layers.PROPS, [get_rid()])
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if not hit.is_empty() and hit.collider:
+		var c: Object = hit.collider
+		surface = c.get_meta(&"superficie", SURFACE_DEFAULT)
+		if bool(c.get_meta(&"bagnato", false)) or (c is Node and (c as Node).is_in_group(&"bagnato")):
+			wet = true
+	return [surface, wet]
+
+
+## Vero se il giocatore è nell'acqua almeno fino a [param depth] metri.
+func is_in_water(depth := 0.2) -> bool:
+	for area in sensor.get_overlapping_areas():
+		if area is WaterVolume and (area as WaterVolume).get_surface_height() > global_position.y + depth:
+			return true
+	return false
+
+
+# --- Accovacciato ---------------------------------------------------------------------------
+
+func _update_crouch(delta: float) -> void:
+	var wants := false
+	if input_enabled:
+		if crouch_toggle:
+			if Input.is_action_just_pressed("crouch"):
+				_crouch_toggled = not _crouch_toggled
+			wants = _crouch_toggled
+		else:
+			wants = Input.is_action_pressed("crouch")
+	if ladder:
+		wants = false
+	if wants and not is_crouching:
+		_set_crouching(true)
+	elif not wants and is_crouching and can_stand_up():
+		_set_crouching(false)
+	var target := crouch_eye_height if is_crouching else stand_eye_height
+	_eye_height = lerpf(_eye_height, target, 1.0 - exp(-crouch_camera_speed * delta))
+
+
+## Vero se sopra la testa c'è spazio per alzarsi.
+func can_stand_up() -> bool:
+	var h := (collision_shape.shape as CapsuleShape3D).height
+	return not test_move(global_transform, Vector3.UP * (stand_height - h + 0.02))
+
+
+func _set_crouching(value: bool) -> void:
+	is_crouching = value
+	_apply_height(crouch_height if value else stand_height)
+	if not value:
+		_crouch_toggled = false
+	crouch_changed.emit(value)
+
+
+func _apply_height(h: float) -> void:
+	var capsule := collision_shape.shape as CapsuleShape3D
+	capsule.height = h
+	collision_shape.position = Vector3(0.0, h * 0.5, 0.0)
+
+
+# --- Scale a pioli --------------------------------------------------------------------------
+
+func is_on_ladder() -> bool:
+	return ladder != null
+
+
+func _update_ladder() -> void:
+	var found: Ladder = null
+	for area in sensor.get_overlapping_areas():
+		if area is Ladder:
+			found = area
+			break
+	if ladder and found != ladder:
+		_leave_ladder()
+	_ladder_cooldown = maxf(0.0, _ladder_cooldown - get_physics_process_delta_time())
+	if ladder or found == null or is_crouching or _ladder_cooldown > 0.0:
+		return
+	var input := _move_input()
+	var wish := Basis(Vector3.UP, yaw) * Vector3(input.x, 0.0, input.y)
+	var toward := wish.dot(-found.get_climb_normal()) > 0.5
+	var falling_onto := not is_on_floor() and velocity.y < -0.5 and global_position.y < found.get_top_y() - 0.3
+	if toward or falling_onto:
+		ladder = found
+		velocity = Vector3.ZERO
+		_ladder_travel = 0.0
+		ladder_changed.emit(true)
+
+
+func _leave_ladder() -> void:
+	if ladder == null:
+		return
+	ladder = null
+	_ladder_cooldown = 0.35
+	ladder_changed.emit(false)
+
+
+func _move_on_ladder(delta: float) -> void:
+	var input := _move_input()
+	var n := ladder.get_climb_normal()
+	if input_enabled and Input.is_action_just_pressed("jump"):
+		velocity = n * 3.0 + Vector3.UP * 2.0
+		_leave_ladder()
+		jumped.emit()
+		return
+	var climb := -input.y
+	if pitch < deg_to_rad(-40.0):
+		climb = -climb
+	if is_on_floor() and climb < 0.0:
+		# In fondo alla scala: torna a camminare.
+		_leave_ladder()
+		_move_on_ground(delta)
+		return
+	if climb > 0.0 and global_position.y >= ladder.get_top_y() - 0.08:
+		# In cima: scavalca il bordo.
+		velocity = -n * 2.4 + Vector3.UP * 1.6
+		_leave_ladder()
+		return
+	var side := n.cross(Vector3.UP)
+	velocity = Vector3.UP * climb * ladder_climb_speed + side * (-input.x) * 1.0 - n * 0.4
+	_ladder_travel += absf(climb) * ladder_climb_speed * delta
+	if _ladder_travel >= ladder_step_distance:
+		_ladder_travel = 0.0
+		footstep.emit(SURFACE_LADDER, false, 0.6)
+
+
+# --- Inventario -----------------------------------------------------------------------------
+
+func add_item(item_id: StringName, amount := 1, item_name := "") -> void:
+	inventory[item_id] = int(inventory.get(item_id, 0)) + amount
+	item_added.emit(item_id, item_name if item_name != "" else String(item_id), inventory[item_id])
+
+
+func has_item(item_id: StringName, amount := 1) -> bool:
+	return int(inventory.get(item_id, 0)) >= amount
+
+
+func remove_item(item_id: StringName, amount := 1) -> bool:
+	if not has_item(item_id, amount):
+		return false
+	inventory[item_id] = int(inventory[item_id]) - amount
+	if inventory[item_id] <= 0:
+		inventory.erase(item_id)
+	return true
