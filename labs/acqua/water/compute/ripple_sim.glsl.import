@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://duib6lhp08btb"
+path="res://.godot/imported/ripple_sim.glsl-7f92c45b4dfbca5aae0aa6e418367d5e.res"
+
+[deps]
+
+source_file="res://water/compute/ripple_sim.glsl"
+dest_files=["res://.godot/imported/ripple_sim.glsl-7f92c45b4dfbca5aae0aa6e418367d5e.res"]
+
+[params]
+
