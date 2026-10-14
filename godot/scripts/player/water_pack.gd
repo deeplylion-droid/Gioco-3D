@@ -34,6 +34,13 @@ signal tank_full
 @export var jet_particles: GPUParticles3D
 @export var splash_particles: GPUParticles3D
 @export var suction_particles: GPUParticles3D
+## Lancia 3D con le mani (una scena LanceRig con un nodo "Muzzle" sulla punta). Se c'è,
+## sostituisce la lancia grigia di prova. L'aspetto dello zaino lo sceglie l'utente.
+@export var lance_scene: PackedScene
+## Dove sta la punta della lancia 3D rispetto alla camera.
+@export var lance_offset := Vector3(0.16, -0.25, -0.92)
+## Distanza sotto cui la lancia si ritrae (per non entrare nei muri).
+@export var lance_pullback_distance := 1.05
 
 @export_group("Getto")
 ## Litri al secondo che escono dalla lancia.
@@ -110,13 +117,19 @@ var _muzzle_local := Transform3D.IDENTITY
 var _jet_material: ShaderMaterial
 var _suction_material: ShaderMaterial
 var _full_notified := false
+var _vm_base := Vector3.ZERO
+var _pullback := 0.0
+var lance_rig: Node3D
 
 
 func setup(p: Player) -> void:
 	player = p
 	tank_amount = clampf(tank_start_amount, 0.0, tank_capacity)
 	boost_left = boost_air_time
+	if view_model and lance_scene:
+		_use_lance_scene()
 	if view_model:
+		_vm_base = view_model.position
 		view_model.basis = Basis.looking_at(Vector3(0.0, 0.0, -converge_distance) - view_model.position, Vector3.UP)
 	if muzzle:
 		_muzzle_local = p.camera.global_transform.affine_inverse() * muzzle.global_transform
@@ -132,6 +145,24 @@ func setup(p: Player) -> void:
 	if suction_particles:
 		_suction_material = suction_particles.process_material as ShaderMaterial
 	_apply_jet_parameters()
+
+
+func _use_lance_scene() -> void:
+	lance_rig = lance_scene.instantiate() as Node3D
+	var new_muzzle := lance_rig.get_node_or_null(^"Muzzle") as Node3D
+	if new_muzzle == null:
+		push_warning("La scena della lancia non ha un nodo Muzzle")
+		lance_rig.free()
+		lance_rig = null
+		return
+	for c in view_model.get_children():
+		if c is GeometryInstance3D:
+			(c as GeometryInstance3D).visible = false
+	view_model.add_child(lance_rig)
+	view_model.position = lance_offset
+	if jet_particles:
+		jet_particles.reparent(new_muzzle, false)
+	muzzle = new_muzzle
 
 
 ## Aggiorna le particelle dopo aver cambiato velocità, gravità o gittata del getto.
@@ -151,6 +182,21 @@ func get_muzzle_transform() -> Transform3D:
 
 func has_water() -> bool:
 	return not tank_enabled or tank_amount > 0.0
+
+
+func _process(delta: float) -> void:
+	if player == null or view_model == null:
+		return
+	# La lancia si ritrae se davanti c'è un muro troppo vicino.
+	var aim := player.get_aim_transform()
+	var q := PhysicsRayQueryParameters3D.create(aim.origin, aim.origin - aim.basis.z * lance_pullback_distance,
+			Layers.WORLD | Layers.PROPS | Layers.ENEMIES, [player.get_rid()])
+	var hit := player.get_world_3d().direct_space_state.intersect_ray(q)
+	var target := 0.0
+	if not hit.is_empty():
+		target = lance_pullback_distance - aim.origin.distance_to(hit.position)
+	_pullback = lerpf(_pullback, target, 1.0 - exp(-12.0 * delta))
+	view_model.position = _vm_base + Vector3(0.0, -0.25 * _pullback, _pullback)
 
 
 func _physics_process(delta: float) -> void:

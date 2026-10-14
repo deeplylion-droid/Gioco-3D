@@ -9,6 +9,7 @@
 [ext_resource type="Material" path="res://assets/materials/graybox_dark.tres" id="7_dark"]
 [ext_resource type="Material" path="res://assets/materials/graybox_target.tres" id="8_acc"]
 [ext_resource type="Shader" path="res://shaders/water_suction_particles.gdshader" id="9_suck"]
+[ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_opzione1.tscn" id="10_lance"]
 
 [sub_resource type="CapsuleShape3D" id="body_shape"]
 resource_local_to_scene = true
@@ -148,6 +149,7 @@ muzzle = NodePath("../Head/Camera3D/ViewModel/Muzzle")
 jet_particles = NodePath("../Head/Camera3D/ViewModel/Muzzle/JetParticles")
 splash_particles = NodePath("SplashParticles")
 suction_particles = NodePath("SuctionParticles")
+lance_scene = ExtResource("10_lance")
 
 [node name="SplashParticles" type="GPUParticles3D" parent="WaterPack"]
 cast_shadow = 0

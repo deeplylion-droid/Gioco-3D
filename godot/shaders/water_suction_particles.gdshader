@@ -41,22 +41,21 @@ void process() {
 	vec3 pos = TRANSFORM[3].xyz;
 	vec3 d = target - pos;
 	float dist = length(d);
-	if (dist < 0.12) {
+	// Vicino alla lancia la goccia sparisce (niente gocce enormi davanti alla camera).
+	if (dist < 0.45) {
 		ACTIVE = false;
 	}
-	VELOCITY += normalize(d) * pull * DELTA;
+	// Va verso la lancia senza girarle intorno: la velocità si avvicina a quella voluta.
+	vec3 desired = normalize(d) * min(max_speed, 1.5 + dist * 3.0);
+	VELOCITY = mix(VELOCITY, desired, clamp(DELTA * pull * 0.3, 0.0, 1.0));
 	float sp = length(VELOCITY);
-	if (sp > max_speed) {
-		VELOCITY = VELOCITY / sp * max_speed;
-		sp = max_speed;
-	}
 	vec3 fwd = sp > 0.001 ? VELOCITY / sp : vec3(0.0, 1.0, 0.0);
 	vec3 ref = abs(fwd.y) < 0.95 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
 	vec3 side = normalize(cross(fwd, ref));
 	vec3 up = cross(side, fwd);
-	float size = base_size * (0.7 + 0.6 * CUSTOM.z);
+	float size = base_size * (0.7 + 0.6 * CUSTOM.z) * smoothstep(0.45, 1.2, dist);
 	TRANSFORM[0].xyz = side * size;
 	TRANSFORM[1].xyz = up * size;
-	TRANSFORM[2].xyz = fwd * max(size, sp * 0.015);
-	COLOR.a = color.a * smoothstep(0.0, 0.15, CUSTOM.y);
+	TRANSFORM[2].xyz = fwd * max(size, sp * 0.015 * smoothstep(0.45, 1.2, dist));
+	COLOR.a = color.a * smoothstep(0.0, 0.15, CUSTOM.y) * smoothstep(0.45, 1.0, dist);
 }
