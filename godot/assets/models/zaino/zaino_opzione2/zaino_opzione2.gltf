@@ -86,61 +86,61 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":25578,
+			"count":12590,
 			"max":[
-				0.30664578080177307,
+				0.3064810037612915,
 				0.6200000047683716,
-				0.11730364710092545
+				0.11814618855714798
 			],
 			"min":[
-				-0.30664578080177307,
+				-0.3064810037612915,
 				0,
-				-0.11730364710092545
+				-0.11902680993080139
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":25578,
+			"count":12590,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":25578,
+			"count":12590,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":72597,
+			"count":27000,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":306936,
+			"byteLength":151080,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":306936,
-			"byteOffset":306936,
+			"byteLength":151080,
+			"byteOffset":151080,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":204624,
-			"byteOffset":613872,
+			"byteLength":100720,
+			"byteOffset":302160,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":145194,
-			"byteOffset":818496,
+			"byteLength":54000,
+			"byteOffset":402880,
 			"target":34963
 		}
 	],
@@ -152,7 +152,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":963692,
+			"byteLength":456880,
 			"uri":"zaino_opzione2.bin"
 		}
 	]

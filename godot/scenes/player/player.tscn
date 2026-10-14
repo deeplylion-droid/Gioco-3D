@@ -9,7 +9,8 @@
 [ext_resource type="Material" path="res://assets/materials/graybox_dark.tres" id="7_dark"]
 [ext_resource type="Material" path="res://assets/materials/graybox_target.tres" id="8_acc"]
 [ext_resource type="Shader" path="res://shaders/water_suction_particles.gdshader" id="9_suck"]
-[ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_opzione1.tscn" id="10_lance"]
+[ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_opzione2.tscn" id="10_lance"]
+[ext_resource type="Script" path="res://scripts/player/flashlight.gd" id="11_torch"]
 
 [sub_resource type="CapsuleShape3D" id="body_shape"]
 resource_local_to_scene = true
@@ -150,6 +151,7 @@ jet_particles = NodePath("../Head/Camera3D/ViewModel/Muzzle/JetParticles")
 splash_particles = NodePath("SplashParticles")
 suction_particles = NodePath("SuctionParticles")
 lance_scene = ExtResource("10_lance")
+tank_indicator = 1
 
 [node name="SplashParticles" type="GPUParticles3D" parent="WaterPack"]
 cast_shadow = 0
@@ -170,6 +172,16 @@ fixed_fps = 60
 visibility_aabb = AABB(-6, -6, -6, 12, 12, 12)
 process_material = SubResource("suction_process")
 draw_pass_1 = SubResource("splash_mesh")
+
+[node name="Torcia" type="SpotLight3D" parent="."]
+light_color = Color(1, 0.95, 0.86, 1)
+light_energy = 3.2
+light_volumetric_fog_energy = 0.8
+shadow_enabled = true
+spot_range = 22.0
+spot_angle = 27.0
+spot_angle_attenuation = 1.3
+script = ExtResource("11_torch")
 
 [node name="Interactor" type="Node" parent="."]
 script = ExtResource("3_in")

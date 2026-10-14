@@ -152,7 +152,9 @@ func _apply_snapshot(s: Dictionary) -> void:
 		for k in inv:
 			player.inventory[StringName(k)] = int(inv[k])
 		if player.water_pack:
-			player.water_pack.set_tank_amount(float(ps.get("water", player.water_pack.tank_amount)))
+			var pack := player.water_pack
+			pack.set_equipped(pack.start_equipped or player.has_item(&"zaino_pompa"), false)
+			pack.set_tank_amount(float(ps.get("water", pack.tank_amount)))
 		player.input_enabled = true
 
 

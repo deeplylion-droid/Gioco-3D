@@ -67,7 +67,8 @@ func _process(delta: float) -> void:
 		_banner_left -= delta
 		_banner.modulate.a = clampf(_banner_left / 1.5, 0.0, 1.0)
 	if player and player.water_pack:
-		_tank_bar.visible = player.water_pack.tank_enabled
+		var pack := player.water_pack
+		_tank_bar.visible = pack.equipped and pack.tank_enabled and pack.tank_indicator == WaterPack.TankIndicator.HUD_BAR
 
 
 func _on_target_changed(target: Interactable) -> void:

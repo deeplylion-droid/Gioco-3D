@@ -6,14 +6,14 @@ Comandi:
       Mani in guanti da lavoro (grafica neutra): mano_impugnatura.glb (su un'impugnatura
       verticale) e mano_tubo.glb (su un tubo orizzontale). Fatte con forme semplici fuse da
       un remesh a voxel, poi lisciate e alleggerite.
-  zaino <in.glb> <out.glb> <altezza_m> [texture_px]
+  zaino <in.glb> <out.glb> <altezza_m> [texture_px] [facce]
       Sistema un GLB di Meshy: scala all'altezza voluta, base a terra, centrato; texture
-      ridotte (default 1024 px).
+      ridotte (default 1024 px) e poligoni ridotti (0 = come sono).
   lancia <in.glb> <out.glb> <lunghezza_m> <asse> <punta>
       Come sopra, ma allinea la lancia lungo -Z con la punta (l'uscita dell'acqua) in avanti
       e mette l'origine sulla punta. <asse> = x|y|z|auto: asse lungo del modello (in Blender);
       <punta> = + | - | auto: verso della punta su quell'asse (auto: il retro è dove sta il
-      punto più basso, cioè l'impugnatura o il tubo che pende).
+      punto più basso, cioè l'impugnatura o il tubo che pende). Poi [texture_px] [facce].
   anteprima <in.glb> <out.png>
       Render veloce (Workbench) per controllare un modello.
 
@@ -69,7 +69,8 @@ def fuse(parts, name, voxel, mat, target_faces):
     bpy.ops.object.join()
     obj = bpy.context.active_object
     obj.name = name
-    bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+    # Anche la posizione: l'oggetto finisce nell'origine e i vertici in coordinate assolute.
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     rm = obj.modifiers.new('remesh', 'REMESH')
     rm.mode = 'VOXEL'
     rm.voxel_size = voxel
@@ -195,9 +196,23 @@ def shrink_textures(size):
             img.scale(size, size)
 
 
-def cmd_zaino(src, out, height, tex_size='1024'):
+def decimate(obj, faces):
+    """Riduce i poligoni a misura di gioco (collapse, mantiene UV e forma)."""
+    faces = int(faces)
+    if faces <= 0 or len(obj.data.polygons) <= faces:
+        return
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    dec = obj.modifiers.new('decimate', 'DECIMATE')
+    dec.ratio = faces / len(obj.data.polygons)
+    dec.use_collapse_triangulate = True
+    bpy.ops.object.modifier_apply(modifier='decimate')
+
+
+def cmd_zaino(src, out, height, tex_size='1024', faces='0'):
     obj = import_glb(src)
     shrink_textures(int(tex_size))
+    decimate(obj, faces)
     lo, hi = bounds(obj)
     s = float(height) / (hi.z - lo.z)  # in Blender l'alto è Z
     center = (lo + hi) / 2
@@ -209,8 +224,10 @@ def cmd_zaino(src, out, height, tex_size='1024'):
     print('zaino:', len(obj.data.polygons), 'facce, misure', tuple(round(v, 3) for v in (hi - lo)))
 
 
-def cmd_lancia(src, out, length, axis, tip):
+def cmd_lancia(src, out, length, axis, tip, tex_size='2048', faces='0'):
     obj = import_glb(src)
+    shrink_textures(int(tex_size))
+    decimate(obj, faces)
     lo, hi = bounds(obj)
     size = hi - lo
     idx = max(range(3), key=lambda i: size[i]) if axis == 'auto' else 'xyz'.index(axis)

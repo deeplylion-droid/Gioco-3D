@@ -13,8 +13,10 @@ extends Node3D
 @export var jingle_button: WaterButton
 @export var hatch: PoweredDoor
 @export var show_controls_hint := true
-## Litri nello zaino all'inizio della demo.
+## Litri nello zaino all'inizio della demo (se si parte già con lo zaino).
 @export var start_water := 10.0
+## Se falso si parte senza zaino: è sulla rastrelliera nello stanzino dei bagnini.
+@export var start_with_pack := false
 
 var demo_finished := false
 
@@ -31,6 +33,8 @@ func _ready() -> void:
 	var p := GameState.player
 	if p and p.water_pack:
 		p.water_pack.set_tank_amount(start_water)
+		if not start_with_pack and not p.has_item(&"zaino_pompa"):
+			p.water_pack.set_equipped(false, false)
 
 
 func _hud() -> Hud:
@@ -41,8 +45,14 @@ func _hud() -> Hud:
 func _show_hint() -> void:
 	var hud := _hud()
 	if hud:
-		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta\n" +
-			"Tasto sinistro spruzza · Tasto destro aspira · E usa · Esc pausa", 12.0)
+		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · F torcia · Esc pausa", 10.0)
+
+
+## Chiamato quando il giocatore prende lo zaino.
+func on_pack_taken() -> void:
+	var hud := _hud()
+	if hud:
+		hud.show_hint("Tasto destro: aspira l'acqua · Tasto sinistro: spruzza", 9.0)
 
 
 func _on_lamp_trigger(body: Node3D) -> void:

@@ -191,6 +191,14 @@ func _process(_delta: float) -> void:
 	_update_head(Engine.get_physics_interpolation_fraction())
 
 
+## Ondeggiamento del passo attuale (x laterale, y verticale), per l'oggetto in mano.
+func get_step_bob() -> Vector2:
+	if not head_bob_enabled:
+		return Vector2.ZERO
+	var w := _bob_weight
+	return Vector2(sin(PI * _step_phase) * w, -(0.5 + 0.5 * cos(TAU * _step_phase)) * w)
+
+
 func _update_head(fraction: float) -> void:
 	var origin := get_global_transform_interpolated().origin if is_inside_tree() else global_position
 	var eye := lerpf(_eye_prev, _eye_height, fraction)

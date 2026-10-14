@@ -86,15 +86,15 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":10836,
+			"count":8942,
 			"max":[
-				0.04803140088915825,
-				0.12063627690076828,
+				0.048025332391262054,
+				0.12069810926914215,
 				0.5600000023841858
 			],
 			"min":[
-				-0.04803140088915825,
-				-0.12063627690076828,
+				-0.048025332391262054,
+				-0.12069810926914215,
 				0
 			],
 			"type":"VEC3"
@@ -102,45 +102,45 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":10836,
+			"count":8942,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":10836,
+			"count":8942,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":30069,
+			"count":21000,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":130032,
+			"byteLength":107304,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":130032,
-			"byteOffset":130032,
+			"byteLength":107304,
+			"byteOffset":107304,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":86688,
-			"byteOffset":260064,
+			"byteLength":71536,
+			"byteOffset":214608,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":60138,
-			"byteOffset":346752,
+			"byteLength":42000,
+			"byteOffset":286144,
 			"target":34963
 		}
 	],
@@ -152,7 +152,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":406892,
+			"byteLength":328144,
 			"uri":"lancia_opzione2.bin"
 		}
 	]

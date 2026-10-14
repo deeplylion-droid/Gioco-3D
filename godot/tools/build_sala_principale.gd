@@ -37,6 +37,7 @@ func _initialize() -> void:
 	S.tank = load("res://scenes/props/water_tank.tscn")
 	S.ladder = load("res://scenes/props/ladder.tscn")
 	S.polaroid = load("res://scenes/props/polaroid.tscn")
+	S.pack_model = load("res://assets/models/zaino/zaino_opzione2/zaino_opzione2.gltf")
 	_materials()
 	level = Node3D.new()
 	level.name = "SalaPrincipale"
@@ -48,6 +49,7 @@ func _initialize() -> void:
 	_kids_area()
 	_arrival_pool()
 	_slide_tower()
+	_lifeguard_room()
 	_lights()
 	_gameplay()
 	var packed := PackedScene.new()
@@ -189,6 +191,7 @@ func _hall() -> void:
 	box(csg, "BucoPiscina", Vector3(POOL_WIDTH + 0.04, 3.1, 23.04), Vector3(POOL_CENTER.x, -1.45, POOL_CENTER.z), SUB, M.pool_wall)
 	box(csg, "BucoVascaArrivo", Vector3(11.0, 1.5, 8.0), Vector3(-15, -0.6, 7.0), SUB, M.wall)
 	box(csg, "PortaSpogliatoi", Vector3(2.4, 2.8, 1.8), Vector3(0, 1.401, 17.6), SUB, M.wall)
+	box(csg, "PortaStanzino", Vector3(1.4, 2.4, 1.6), Vector3(2.3, 1.201, 20.8), SUB, M.wall)
 	# Ringhiere dei ballatoi (solo grafica).
 	var rail := group(gb, "Ringhiere")
 	mesh_box(rail, Vector3(48, 0.06, 0.06), Vector3(0, 6.3, -15.5), M.metal)
@@ -212,8 +215,11 @@ func _hall() -> void:
 	# Armadietti negli spogliatoi.
 	var lockers := csg_root(gb, "Armadietti")
 	for z in [19.0, 19.6, 20.2, 20.8, 21.4, 22.0, 22.6]:
-		box(lockers, "ArmadiettoO", Vector3(0.5, 1.9, 0.56), Vector3(-1.72, 0.95, z), UNION, M.locker)
-		box(lockers, "ArmadiettoE", Vector3(0.5, 1.9, 0.56), Vector3(1.72, 0.95, z), UNION, M.locker)
+		# A ovest lascia posto alla vasca lava-piedi, a est alla porta dello stanzino.
+		if z > 19.7:
+			box(lockers, "ArmadiettoO", Vector3(0.5, 1.9, 0.56), Vector3(-1.72, 0.95, z), UNION, M.locker)
+		if z < 19.7 or z > 21.7:
+			box(lockers, "ArmadiettoE", Vector3(0.5, 1.9, 0.56), Vector3(1.72, 0.95, z), UNION, M.locker)
 	# Cupola di vetro con la struttura.
 	var dome: Node3D = load("res://scripts/environment/dome.gd").new()
 	dome.name = "Cupola"
@@ -551,6 +557,80 @@ func _slide_tower() -> void:
 	var colors2 := [M.purple, M.purple, M.orange, M.orange, M.red, M.red]
 	for i in path2.size() - 1:
 		tube(tubes, path2[i], path2[i + 1], 0.7, colors2[i])
+
+
+# --- Stanzino dei bagnini (a est dell'uscita degli spogliatoi) con lo zaino sulla rastrelliera ---
+
+func _lifeguard_room() -> void:
+	var room := group(level, "StanzinoBagnini")
+	var slot := slot_node(room, "Stanza")
+	var gb := group(slot, "Graybox")
+	var csg := csg_root(gb, "Muri")
+	box(csg, "Esterno", Vector3(5.2, 3.6, 5.6), Vector3(4.8, 1.4, 21.0), UNION, M.wall)
+	box(csg, "Interno", Vector3(4.4, 2.85, 4.8), Vector3(4.8, 1.375, 21.0), SUB, M.wall)
+	box(csg, "Pavimento", Vector3(4.6, 0.05, 5.0), Vector3(4.8, -0.025, 21.0), UNION, M.floor)
+	box(csg, "Porta", Vector3(1.4, 2.4, 1.6), Vector3(2.3, 1.201, 20.8), SUB, M.wall)
+	# Rastrelliera di metallo contro il muro est, con il ripiano.
+	var rack := csg_root(gb, "Rastrelliera")
+	for z in [20.1, 21.9]:
+		box(rack, "Montante", Vector3(0.05, 1.9, 0.05), Vector3(6.75, 0.95, z), UNION, M.metal)
+	for y in [0.82, 1.45, 1.85]:
+		box(rack, "Traversa", Vector3(0.04, 0.04, 1.85), Vector3(6.75, y, 21.0), UNION, M.metal)
+	box(rack, "Ripiano", Vector3(0.5, 0.04, 1.85), Vector3(6.55, 0.8, 21.0), UNION, M.metal)
+	box(rack, "Panca", Vector3(1.6, 0.45, 0.4), Vector3(4.6, 0.225, 23.0), UNION, M.locker)
+	# Salvagente e cartello colorato alle pareti (solo grafica).
+	var buoy := MeshInstance3D.new()
+	buoy.name = "Salvagente"
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.2
+	tm.outer_radius = 0.34
+	buoy.mesh = tm
+	buoy.material_override = M.red
+	buoy.position = Vector3(4.2, 1.7, 18.65)
+	buoy.rotation = Vector3(PI * 0.5, 0, 0)
+	own(buoy, gb)
+	mesh_box(gb, Vector3(1.2, 0.8, 0.04), Vector3(5.6, 1.6, 23.37), M.yellow, "Cartello")
+	# Lo zaino-pompa da prendere.
+	var holder := group(room, "Zaino")
+	holder.position = Vector3(6.55, 0.82, 21.0)
+	holder.rotation = Vector3(0, -PI * 0.5, 0)
+	var model: Node3D = S.pack_model.instantiate()
+	model.name = "Modello"
+	own(model, holder)
+	var pick: Area3D = load("res://scripts/interaction/pack_pickup.gd").new()
+	pick.name = "Prendi"
+	pick.set(&"remove_node", holder)
+	own(pick, holder)
+	shape_box(pick, Vector3(0.8, 0.8, 0.6), Vector3(0, 0.35, 0))
+	var spot := SpotLight3D.new()
+	spot.name = "LuceZaino"
+	spot.position = Vector3(5.4, 2.6, 21.0)
+	spot.rotation = Vector3(deg_to_rad(-62.0), deg_to_rad(-90.0), 0)
+	spot.light_color = Color(1.0, 0.9, 0.75)
+	spot.light_energy = 3.0
+	spot.spot_range = 4.0
+	spot.spot_angle = 30.0
+	spot.shadow_enabled = true
+	own(spot, room)
+	var neon := mesh_box(room, Vector3(1.6, 0.06, 0.12), Vector3(4.8, 2.76, 21.0), M.neon, "NeonStanzino")
+	var nl := omni(room, "LuceNeonStanzino", Vector3(4.8, 2.4, 21.0), Color(0.8, 0.95, 1.0), 0.9, 6.0, false)
+	var fl: Node = load("res://scripts/environment/flicker_light.gd").new()
+	fl.name = "Sfarfallio"
+	fl.set(&"light", nl)
+	fl.set(&"mesh", neon)
+	fl.set(&"base_energy", 0.9)
+	fl.set(&"flicker_rate", 0.25)
+	own(fl, room)
+	# Vasca lava-piedi negli spogliatoi: la prima acqua da aspirare.
+	var bath: WaterTank = S.tank.instantiate()
+	bath.name = "VascaLavapiedi"
+	bath.inner_size = Vector3(0.9, 0.28, 0.75)
+	bath.wall_thickness = 0.1
+	bath.capacity_liters = 14.0
+	bath.max_fill = 0.85
+	bath.fill = 0.8
+	bath.position = Vector3(-1.35, 0.0, 19.2)
+	own(bath, room)
 
 
 # --- Luci, nebbia bassa, lampi ----------------------------------------------------------------

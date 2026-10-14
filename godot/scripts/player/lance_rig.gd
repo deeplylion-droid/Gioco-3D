@@ -16,6 +16,8 @@ extends Node3D
 	set(value):
 		tip_point = value
 		_rebuild()
+## Dove sta la punta rispetto alla camera in prima persona (x a destra, y in alto, -z avanti).
+@export var view_offset := Vector3(0.16, -0.22, -0.9)
 ## Un punto più indietro sullo stesso tubo, sempre nelle coordinate del modello.
 @export var tube_point := Vector3(0, 0, 0.3):
 	set(value):

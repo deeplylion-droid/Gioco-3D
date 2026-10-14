@@ -42,6 +42,21 @@ signal tank_full
 ## Distanza sotto cui la lancia si ritrae (per non entrare nei muri).
 @export var lance_pullback_distance := 1.05
 
+@export_group("Movimento dell'oggetto in mano")
+## Ondeggiamento col passo (m).
+@export var hold_bob := Vector2(0.012, 0.01)
+## Quanto l'oggetto resta indietro quando giri lo sguardo.
+@export var hold_sway := 0.35
+## Rinculo quando spruzzi (m all'indietro) e vibrazione (m).
+@export var spray_kick := 0.014
+@export var spray_shake := 0.0022
+## Vibrazione quando aspiri (m).
+@export var suck_shake := 0.0016
+
+## Se falso il giocatore parte senza zaino: niente getto né aspirazione, niente pistola in mano
+## finché non lo raccoglie (PackPickup).
+@export var start_equipped := true
+
 @export_group("Getto")
 ## Litri al secondo che escono dalla lancia.
 @export var flow_rate := 6.0
@@ -84,8 +99,12 @@ signal tank_full
 @export var boost_air_time := 0.35
 
 @export_group("Serbatoio")
+enum TankIndicator { HUD_BAR, LANCE, NONE }
 ## Se falso l'acqua non finisce mai (utile per provare le meccaniche).
 @export var tank_enabled := true
+## Come si vede quanta acqua c'è (scelta di design, da decidere con l'utente):
+## barra nell'HUD, tubetto di vetro sulla lancia, oppure niente.
+@export var tank_indicator := TankIndicator.HUD_BAR
 ## Capienza del serbatoio (litri).
 @export var tank_capacity := 20.0
 ## Acqua all'inizio del livello (litri).
@@ -118,8 +137,15 @@ var _jet_material: ShaderMaterial
 var _suction_material: ShaderMaterial
 var _full_notified := false
 var _vm_base := Vector3.ZERO
+var _vm_basis := Basis.IDENTITY
 var _pullback := 0.0
+var _sway := Vector2.ZERO
+var _last_look := Vector2.ZERO
+var _kick := 0.0
+var _equip_t := 1.0
 var lance_rig: Node3D
+## Vero quando il giocatore ha lo zaino addosso.
+var equipped := true
 
 
 func setup(p: Player) -> void:
@@ -131,6 +157,7 @@ func setup(p: Player) -> void:
 	if view_model:
 		_vm_base = view_model.position
 		view_model.basis = Basis.looking_at(Vector3(0.0, 0.0, -converge_distance) - view_model.position, Vector3.UP)
+		_vm_basis = view_model.basis
 	if muzzle:
 		_muzzle_local = p.camera.global_transform.affine_inverse() * muzzle.global_transform
 	if jet_particles:
@@ -145,6 +172,35 @@ func setup(p: Player) -> void:
 	if suction_particles:
 		_suction_material = suction_particles.process_material as ShaderMaterial
 	_apply_jet_parameters()
+	set_equipped(start_equipped, false)
+
+
+## Mette o toglie lo zaino. Con [param animate] la pistola sale dal basso.
+func set_equipped(on: bool, animate := true) -> void:
+	equipped = on
+	if view_model:
+		view_model.visible = on
+	if on and animate:
+		_equip_t = 0.0
+	if not on:
+		_update_spray_state(false)
+		is_sucking = false
+
+
+## Cambia la lancia 3D (per esempio per provare le opzioni di design).
+func set_lance(scene: PackedScene) -> void:
+	if jet_particles and lance_rig:
+		jet_particles.reparent(view_model, false)
+	if lance_rig:
+		lance_rig.queue_free()
+		lance_rig = null
+	lance_scene = scene
+	if scene:
+		_use_lance_scene()
+		_vm_base = view_model.position
+		view_model.basis = Basis.looking_at(Vector3(0.0, 0.0, -converge_distance) - view_model.position, Vector3.UP)
+		_vm_basis = view_model.basis
+		_muzzle_local = player.camera.global_transform.affine_inverse() * muzzle.global_transform
 
 
 func _use_lance_scene() -> void:
@@ -159,7 +215,8 @@ func _use_lance_scene() -> void:
 		if c is GeometryInstance3D:
 			(c as GeometryInstance3D).visible = false
 	view_model.add_child(lance_rig)
-	view_model.position = lance_offset
+	var off = lance_rig.get(&"view_offset")
+	view_model.position = off if off is Vector3 else lance_offset
 	if jet_particles:
 		jet_particles.reparent(new_muzzle, false)
 	muzzle = new_muzzle
@@ -196,13 +253,35 @@ func _process(delta: float) -> void:
 	if not hit.is_empty():
 		target = lance_pullback_distance - aim.origin.distance_to(hit.position)
 	_pullback = lerpf(_pullback, target, 1.0 - exp(-12.0 * delta))
-	view_model.position = _vm_base + Vector3(0.0, -0.25 * _pullback, _pullback)
+	# Resta un po' indietro quando giri lo sguardo, poi torna al centro.
+	var look := Vector2(player.yaw, player.pitch)
+	var d := Vector2(wrapf(look.x - _last_look.x, -PI, PI), look.y - _last_look.y)
+	_last_look = look
+	_sway = (_sway + d * hold_sway).limit_length(0.06)
+	_sway = _sway.lerp(Vector2.ZERO, 1.0 - exp(-9.0 * delta))
+	# Rinculo e vibrazione quando spruzza o aspira.
+	_kick = lerpf(_kick, 1.0 if is_spraying else 0.0, 1.0 - exp(-(18.0 if is_spraying else 7.0) * delta))
+	var shake := spray_shake * flow if is_spraying else (suck_shake if is_sucking else 0.0)
+	var jitter := Vector3(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0), 0.0) * shake
+	var bob := player.get_step_bob()
+	# Comparsa quando si prende lo zaino: sale dal basso.
+	_equip_t = minf(1.0, _equip_t + delta / 0.6)
+	var raise := 1.0 - _ease_out(_equip_t)
+	var offset := Vector3(bob.x * hold_bob.x - _sway.x * 0.25, bob.y * hold_bob.y + _sway.y * 0.25 - raise * 0.35, 0.0)
+	offset += Vector3(0.0, -0.25 * _pullback, _pullback + _kick * spray_kick) + jitter
+	view_model.position = _vm_base + offset
+	var tilt := Basis.from_euler(Vector3(_kick * 0.02 - raise * 0.6 + _sway.y * 0.6, _sway.x * 0.8, -_sway.x * 0.5))
+	view_model.basis = _vm_basis * tilt
+
+
+static func _ease_out(t: float) -> float:
+	return 1.0 - pow(1.0 - clampf(t, 0.0, 1.0), 3.0)
 
 
 func _physics_process(delta: float) -> void:
 	if player == null:
 		return
-	var can_act := player.input_enabled and not player.is_on_ladder()
+	var can_act := equipped and player.input_enabled and not player.is_on_ladder()
 	var want_suck := suck_enabled and can_act and Input.is_action_pressed("suck")
 	var want_spray := can_act and Input.is_action_pressed("spray") and not want_suck
 	if want_spray and not has_water():
