@@ -53,7 +53,8 @@ func _sistema(n: Node) -> void:
 	if n is MeshInstance3D and n.name.begins_with("acqua"):
 		# acqua: superficie scura e lucida (in attesa dello shader dell'acqua)
 		var m := StandardMaterial3D.new()
-		m.albedo_color = Color(0.07, 0.08, 0.08)
+		m.albedo_color = Color(0.05, 0.06, 0.06, 0.45)
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		m.roughness = 0.02
 		m.metallic = 0.3
 		m.metallic_specular = 0.6

@@ -42,7 +42,7 @@ if __name__ == '__main__':
     prova = '--prova' in sys.argv
     nomi = [a for a in sys.argv[1:] if not a.startswith('--')] or list(INQ)
     prepara()
-    L.imposta_render(campioni=16 if prova else 112)
+    L.imposta_render(campioni=16 if prova else 64)
     if prova:
         bpy.context.scene.render.resolution_percentage = 40
     out = os.path.join(L.ROOT, 'docs/report/render_ambienti1' + ('/prove' if prova else ''))

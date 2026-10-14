@@ -185,7 +185,13 @@ def corridoio(M):
     # pianerottolo e scala che scende verso la sala pompe (si collega al piano sotto)
     pian = L.stanza('scala_pompe', 16.2, -3.9, 18.8, -0.2, 2.7, dict(pav=M['cemento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio']),
                     {'N': [(17.0, 18.0, 0, 2.05)]}, pavimento=False)
+    L.raccogli(True)
     pian.append(L.scatola('scala_pompe_pian', (16.0, -1.4, -0.2), (19.0, 0.0, 0), M['cemento']))
+    L.raccogli(False)
+    # collisione della scala: una rampa (36 gradi) invece dei gradini
+    rampa = L.scatola('scala_pompe_rampa-colonly', (16.4, -1.25, -0.1), (18.6, 1.25, 0.0), None, uv=False)
+    rampa.data.transform(Matrix.Rotation(math.atan2(1.8, 2.5), 4, 'X'))
+    rampa.location = (0, -2.65, -0.9); rampa.hide_render = True; rampa.display_type = 'WIRE'
     for i in range(10):
         y = -1.4 - i * 0.25; z = -0.18 * (i + 1)
         pian.append(L.scatola('gradino', (16.4, y - 0.25, z - 0.2), (18.6, y, z), M['lamiera_grata']))
@@ -196,6 +202,7 @@ def corridoio(M):
     ps.append(L.scatola('ps_oblo', (0.06, 1.1, 1.35), (0.075, 1.5, 1.8), M['metallo_grezzo']))
     ps.append(L.cilindro('ps_maniglia', (0.06, 1.65, 1.0), (0.13, 1.65, 1.0), 0.02, M['cromo']))
     porta_s = L.unisci('porta_servizio', ps); L.ammacca(porta_s, 0.005, 2.0, 9.0, 3)
+    L.col_scatola((0.0, 0.8, 0.0), (0.08, 1.8, 2.05))
     statico.append(L.scatola('porta_servizio_vetro', (0.074, 1.13, 1.38), (0.078, 1.47, 1.77), M['vetro_sporco'], uv=False))
 
     # ---- cartellone della mascotte (accanto alla porta della sala pompe, lato sud)
@@ -239,6 +246,7 @@ def corridoio(M):
     L.vuoto('marker_polaroid_P1', (20.9, 0.55, 0.005), (0, 0, R(20)), 'CUBE', 0.05)
     L.vuoto('marker_porta_tagliafuoco_cardine', (21.965, 0.72, 0), dim=0.3)
     L.unisci('corridoio_statico', statico)
+    L.crea_collisione('corridoio', 'corridoio')
 
 
 # =====================================================================================
@@ -352,6 +360,9 @@ def spogliatoi(M):
     ce, ae, se = fila_armadietti('armadietti_est', X1, 3.3, 11, -1, M,
                                  {1: ('aperto', 70), 4: ('speciale', 4), 7: ('aperto', 30), 9: ('aperto', 100)}, seme=5)
     ce2, ae2, _ = fila_armadietti('armadietti_est2', X1, 9.3, 4, -1, M, {2: ('aperto', 45)}, seme=21)
+    L.col_scatola((X0, 3.3, 0), (X0 + 0.52, 3.3 + 18 * 0.4, 1.94))
+    L.col_scatola((X1 - 0.52, 3.3, 0), (X1, 3.3 + 11 * 0.4, 1.94))
+    L.col_scatola((X1 - 0.52, 9.3, 0), (X1, 9.3 + 4 * 0.4, 1.94))
     # l'armadietto che sbatte (anta separata, cardine come origine; dentro un salvagente colorato)
     anta_sb = se[4]; anta_sb.name = 'armadietto_sbatte_anta'
     anta_sb.rotation_euler = (0, 0, R(180 + 4))
@@ -363,6 +374,7 @@ def spogliatoi(M):
     # ---- panche
     statico.append(panca('panca_ovest', 4.45, 4.0, 4.85, 9.8, M))
     statico.append(panca('panca_est', 9.15, 4.0, 9.55, 7.4, M, rotta=True))
+    L.col_scatola((4.45, 4.0, 0), (4.85, 9.8, 0.45)); L.col_scatola((9.15, 4.0, 0), (9.55, 7.4, 0.45))
     # cartello con i pittogrammi vicino all'ingresso
     statico.append(L.piano('cartello_regole_spogliatoi', (8.6, 3.012, 1.65), 0.45, 0.6, M['cartello_regole'], rot=(R(90), 0, 0)))
     statico.append(L.tubo_percorso('tubi_spogliatoi', [(3.0, 10.75, 2.6), (11.0, 10.75, 2.6)], 0.07, M['ruggine']))
@@ -378,6 +390,7 @@ def spogliatoi(M):
         tubi_d.append(doccia(i + 1, x, DY1, M))
         statico.append(L.scatola('scarico_doccia', (x - 0.1, DY1 - 0.7, 0.0), (x + 0.1, DY1 - 0.5, 0.004), M['lamiera_grata']))
     for x in [4.175, 5.125, 6.075, 7.025]:
+        L.col_scatola((x - 0.04, DY1 - 0.95, 0.0), (x + 0.04, DY1, 2.0))
         statico.append(L.scatola('divisorio_doccia', (x - 0.04, DY1 - 0.95, 0.15), (x + 0.04, DY1, 2.0), M['piastrelle_verdi']))
     statico.append(L.tubo_percorso('tubo_docce', [(3.0, DY1 - 0.05, 2.15), (8.2, DY1 - 0.05, 2.15)], 0.022, M['cromo'], flange=False))
     statico += tubi_d
@@ -402,15 +415,18 @@ def spogliatoi(M):
 
     # ---- corridoio con la vasca lava-piedi   x 8.6..10.8, y 11.2..20.5, h 2.7
     CX0, CX1, CY0, CY1, CH = 8.6, 10.8, 11.2, 20.5, 2.7
+    UX0, UX1, UH = 9.1, 10.3, 2.2    # uscita verso la sala principale: 1,2 x 2,2 m
     mc = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['piastrelle_doccia'], muro_basso=M['piastrelle_verdi'])
     statico += L.stanza('corridoio_lavapiedi', CX0, CY0, CX1, CY1, CH, mc,
-                        {'S': [(CX0 - 0.2, CX1 + 0.2, 0, CH)], 'E': [(15.2, 16.8, 0.95, 2.0)], 'N': [(CX0, CX1, 0, 2.3)]}, pavimento=False, zoccolo=1.2)
+                        {'S': [(CX0 - 0.2, CX1 + 0.2, 0, CH)], 'E': [(15.2, 16.8, 0.95, 2.0)], 'N': [(UX0, UX1, 0, UH)]}, pavimento=False, zoccolo=1.2)
     VY0, VY1, VZ = 12.4, 14.4, -0.2
+    L.raccogli(True)
     statico.append(L.scatola('pav_lavapiedi_a', (CX0 - 0.2, CY0, -0.2), (CX1 + 0.2, VY0, 0), M['piastrelle_pavimento']))
     statico.append(L.scatola('pav_lavapiedi_b', (CX0 - 0.2, VY1, -0.2), (CX1 + 0.2, CY1 + 0.2, 0), M['piastrelle_pavimento']))
     statico.append(L.scatola('vasca_lavapiedi_fondo', (CX0, VY0, VZ - 0.2), (CX1, VY1, VZ), M['piastrelle_verdi']))
     statico.append(L.scatola('vasca_lavapiedi_bordo', (CX0, VY0 - 0.06, -0.03), (CX1, VY0, 0.02), M['piastrelle_doccia']))
     statico.append(L.scatola('vasca_lavapiedi_bordo', (CX0, VY1, -0.03), (CX1, VY1 + 0.06, 0.02), M['piastrelle_doccia']))
+    L.raccogli(False)
     acqua_lp = L.scatola('acqua_lavapiedi', (CX0, VY0, VZ), (CX1, VY1, -0.05), M['acqua'], uv=False)
     L.uv_scatola(acqua_lp, 1.0); acqua_lp.visible_shadow = False
     L.vuoto('marker_acqua_lavapiedi_livello', (9.7, 13.4, -0.05), dim=0.3)
@@ -431,6 +447,8 @@ def spogliatoi(M):
         for z in [0.25 + 0.16 * j for j in range(12)]:
             rot.append(L.cilindro('tornello_rotore', (TX, TY, z), (TX + TR * math.cos(a), TY + TR * math.sin(a), z), 0.018, M['cromo'], seg=8))
     rotore = L.unisci('tornello_rotore', rot); L.origine(rotore, (TX, TY, 0))
+    L.col_scatola((CX0, TY - 0.05, 0), (CX0 + 0.3, TY + 0.05, 2.7)); L.col_scatola((CX1 - 0.68, TY - 0.05, 0), (CX1, TY + 0.05, 2.7))
+    L.col_scatola((CX0, TY - 0.05, 2.25), (CX1, TY + 0.05, 2.7))
     fisso = [L.scatola('tornello_fisso', (CX0, TY - 0.05, 2.25), (CX1, TY + 0.05, 2.35), M['metallo_grezzo']),
              L.scatola('tornello_fisso', (CX0, TY - 0.05, 0.0), (CX0 + 0.3, TY + 0.05, 2.25), M['metallo_grezzo']),
              L.scatola('tornello_fisso', (CX1 - 0.68, TY - 0.05, 0.0), (CX1, TY + 0.05, 0.08), M['metallo_grezzo'])]
@@ -443,6 +461,9 @@ def spogliatoi(M):
     GX0, GX1, GY0, GY1 = 11.0, 13.2, 14.6, 17.4
     statico += L.stanza('gabbiotto', GX0, GY0, GX1, GY1, CH, dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio']),
                         {'W': [(GY0 - 0.2, GY1 + 0.2, 0, CH)]})
+    # il vano del vetro rotto: blocca il giocatore ma non il getto (vedi INTEGRAZIONE.md)
+    vb = L.scatola('vetro_rotto_blocco-colonly', (10.85, 15.2, 0.95), (10.95, 16.8, 2.0), None, uv=False)
+    vb.hide_render = True; vb.display_type = 'WIRE'
     statico.append(L.scatola('davanzale_gabbiotto', (10.7, 15.15, 0.9), (11.25, 16.85, 0.95), M['metallo_grezzo']))
     # vetro con un buco frastagliato al centro (anello tra il telaio e il bordo del buco)
     import bmesh
@@ -471,6 +492,7 @@ def spogliatoi(M):
         sch.append(o)
     L.unisci('schegge_vetro', sch)
     statico.append(L.scatola('banco_gabbiotto', (12.4, 14.7, 0), (13.2, 17.3, 0.8), M['porta_lamiera']))
+    L.col_scatola((12.4, 14.7, 0), (13.2, 17.3, 0.8))
     statico.append(L.scatola('quadro_pulsante', (13.17, 15.75, 1.05), (13.2, 16.25, 1.55), M['vernice_gialla']))
     pul = [L.cilindro('pulsante_tornello', (13.17, 16.0, 1.3), (13.08, 16.0, 1.3), 0.06, M['pulsante'], seg=20),
            L.cilindro('pulsante_tornello', (13.17, 16.0, 1.3), (13.13, 16.0, 1.3), 0.085, M['metallo_grezzo'], seg=20)]
@@ -479,21 +501,22 @@ def spogliatoi(M):
     statico.append(L.scatola('spia_tornello', (13.17, 16.15, 1.45), (13.15, 16.2, 1.5), M['pulsante_verde']))
     prop('radio_gabbiotto', 'radio', (12.8, 15.2, 0.8), 100, 0.3)
 
-    # saracinesca (si alza) con la turbina sulla parete ovest
+    # saracinesca (si alza) nell'uscita verso la sala principale, con la turbina sulla parete ovest
     SY = CY1 + 0.1
     sar = []
     z = 0.0
-    while z < 2.3:
-        sar.append(L.scatola('saracinesca', (CX0, SY - 0.03, z), (CX1, SY + 0.03, z + 0.075), M['porta_lamiera']))
-        sar.append(L.scatola('saracinesca', (CX0, SY - 0.04, z + 0.03), (CX1, SY - 0.03, z + 0.045), M['nero'], uv=False))
+    while z < UH - 0.01:
+        sar.append(L.scatola('saracinesca', (UX0, SY - 0.03, z), (UX1, SY + 0.03, min(z + 0.075, UH)), M['porta_lamiera']))
+        sar.append(L.scatola('saracinesca', (UX0, SY - 0.04, z + 0.03), (UX1, SY - 0.03, z + 0.045), M['nero'], uv=False))
         z += 0.08
-    sar.append(L.scatola('saracinesca', (CX0, SY - 0.05, 0), (CX1, SY + 0.05, 0.08), M['vernice_gialla']))
+    sar.append(L.scatola('saracinesca', (UX0, SY - 0.05, 0), (UX1, SY + 0.05, 0.08), M['vernice_gialla']))
     saracinesca = L.unisci('saracinesca', sar); L.ammacca(saracinesca, 0.008, 1.5, 2.0, 2)
-    L.origine(saracinesca, ((CX0 + CX1) / 2, SY, 2.3))
-    statico.append(L.scatola('cassonetto_saracinesca', (CX0, SY - 0.35, 2.3), (CX1, SY + 0.05, 2.7), M['metallo_grezzo']))
-    for x in (CX0, CX1 - 0.06):
-        statico.append(L.scatola('guida_saracinesca', (x, SY - 0.06, 0), (x + 0.06, SY + 0.06, 2.3), M['metallo_grezzo']))
-    statico += L.stanza('oltre_saracinesca', CX0, SY + 0.1, CX1, SY + 1.5, 2.7, mc, {'S': [(CX0 - 0.2, CX1 + 0.2, 0, 2.7)]})
+    L.origine(saracinesca, ((UX0 + UX1) / 2, SY, 0))     # come PoweredDoor: in basso al centro del vano
+    statico.append(L.scatola('cassonetto_saracinesca', (UX0 - 0.1, SY - 0.35, UH), (UX1 + 0.1, SY + 0.05, UH + 0.4), M['metallo_grezzo']))
+    for x in (UX0 - 0.06, UX1):
+        statico.append(L.scatola('guida_saracinesca', (x, SY - 0.06, 0), (x + 0.06, SY + 0.06, UH), M['metallo_grezzo']))
+    statico.append(cornice_porta('telaio_uscita', 'N', UX0, UX1, UH, CY1, M, M['vernice_gialla'], entrambi=True))
+    L.vuoto('marker_uscita_sala_principale', ((UX0 + UX1) / 2, CY1 + 0.2, 0), (0, 0, 0), 'SINGLE_ARROW', 0.5)
     # turbina: carcassa sulla parete, ruota a pale separata (asse lungo x), ingranaggio e catena verso il cassonetto
     TBy, TBz = 19.4, 2.05
     statico.append(L.cilindro('turbina_carcassa', (CX0, TBy, TBz), (CX0 + 0.08, TBy, TBz), 0.3, M['metallo_grezzo'], seg=28))
@@ -507,7 +530,7 @@ def spogliatoi(M):
         pale.append(p)
     turb = L.unisci('turbina_saracinesca', pale); L.uv_scatola(turb, 0.5)
     L.origine(turb, (CX0 + 0.19, TBy, TBz))
-    statico.append(L.tubo_percorso('catena_turbina', [(CX0 + 0.05, TBy, TBz + 0.3), (CX0 + 0.05, TBy, 2.45), (CX0 + 0.05, SY - 0.2, 2.45)], 0.03, M['metallo_grezzo'], flange=False))
+    statico.append(L.tubo_percorso('catena_turbina', [(CX0 + 0.05, TBy, TBz + 0.3), (CX0 + 0.05, TBy, 2.45), (CX0 + 0.05, SY - 0.2, 2.45), (UX0 - 0.1, SY - 0.2, 2.45)], 0.03, M['metallo_grezzo'], flange=False))
 
     # ---- luci
     for i, (p, n) in enumerate([((6.8, 3.02, 2.45), (0, 1, 0)), ((3.02, 7.0, 2.4), (1, 0, 0)), ((5.6, 14.58, 2.55), (0, -1, 0)),
@@ -533,6 +556,7 @@ def spogliatoi(M):
           pozza('pozza_spogliatoi_3', (7.4, 5.4, 0), 0.6, 0.4, M, 13), pozza('pozza_spogliatoi_4', (9.7, 15.8, 0), 0.8, 0.6, M, 14)]
     L.unisci('acqua_pozze_spogliatoi', pz)
     L.unisci('spogliatoi_statico', statico)
+    L.crea_collisione('spogliatoi', 'spogliatoi')
 
 
 # =====================================================================================
@@ -586,6 +610,7 @@ def stanzino(M):
     for y in (7.4, 8.1, 8.75, 9.4):
         ras.append(L.tubo_percorso('rastrelliera_gancio', [(RX - 0.05, y, 1.25), (RX - 0.22, y, 1.25), (RX - 0.22, y, 1.32)], 0.012, M['metallo_grezzo'], flange=False))
     statico.append(L.unisci('rastrelliera_zaino', ras))
+    L.col_scatola((RX - 0.45, 6.95, 0), (RX, 9.85, 2.0))
     # posto dello zaino: due ganci centrali (y 8.1 e 8.75) liberi; lo zaino va appeso qui, schiena verso il muro
     L.vuoto('marker_zaino_pompa', (RX - 0.22, 8.425, 1.25), (0, 0, R(90)), 'ARROWS', 0.4)
     for k, y in enumerate((7.4, 9.4)):
@@ -613,6 +638,7 @@ def stanzino(M):
         statico.append(L.unisci('bacheca_foglietti', fog))
     L.vuoto('marker_polaroid_P3', (12.65, BY + 0.01, 1.3), (R(90), 0, 0), 'CUBE', 0.05)
     statico.append(L.scatola('scrivania', (11.8, Y0, 0.74), (13.2, Y0 + 0.6, 0.78), M['legno_panca']))
+    L.col_scatola((11.8, Y0, 0), (13.2, Y0 + 0.6, 0.78))
     for (x, y) in [(11.85, Y0 + 0.05), (13.15, Y0 + 0.05), (11.85, Y0 + 0.55), (13.15, Y0 + 0.55)]:
         statico.append(L.scatola('scrivania', (x - 0.025, y - 0.025, 0), (x + 0.025, y + 0.025, 0.74), M['metallo_grezzo']))
     prop('radio', 'radio', (12.95, Y0 + 0.3, 0.78), 190, 0.32)
@@ -628,6 +654,7 @@ def stanzino(M):
     L.neon_soffitto('neon_stanzino', (13.2, 8.4, 0), 1.2, M, H, 'sfarfalla', watt=60, rot_z=R(90))
     pozza('acqua_pozza_stanzino', (12.0, 8.6, 0), 0.6, 0.45, M, 21)
     L.unisci('stanzino_statico', statico)
+    L.crea_collisione('stanzino', 'stanzino')
 
 
 def costruisci():

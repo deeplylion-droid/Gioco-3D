@@ -124,6 +124,30 @@ def materiali_base():
         carta=mat_colore('carta_ingiallita', (0.75, 0.7, 0.58), rough=0.9),
     )
 
+# ---------------------------------------------------------------- collisioni
+# Scatole di collisione semplificate, raccolte per collezione e unite alla fine in un oggetto
+# '<zona>_collisione-colonly' (Godot lo importa come StaticBody3D con forma trimesh, invisibile).
+COL = {}
+_RACCOGLI = [False]
+
+def raccogli(attivo):
+    _RACCOGLI[0] = attivo
+
+def col_scatola(lo, hi):
+    k = _COLL[0].name if _COLL[0] else 'scena'
+    COL.setdefault(k, []).append((tuple(lo), tuple(hi)))
+
+def crea_collisione(nome, zona):
+    import bmesh as _bm
+    bm = _bm.new()
+    for lo, hi in COL.get(zona, []):
+        r = _bm.ops.create_cube(bm, size=1.0)
+        for v in r['verts']:
+            v.co = Vector((lo[0] + (v.co.x + .5) * (hi[0] - lo[0]), lo[1] + (v.co.y + .5) * (hi[1] - lo[1]), lo[2] + (v.co.z + .5) * (hi[2] - lo[2])))
+    ob = _ob_da_bm(nome + '_collisione-colonly', bm, None)
+    ob.hide_render = True; ob.display_type = 'WIRE'
+    return ob
+
 # ---------------------------------------------------------------- geometria
 
 def uv_scatola(ob, scala=None):
@@ -157,6 +181,8 @@ def _ob_da_bm(nome, bm, mat):
 def scatola(nome, lo, hi, mat=None, uv=True, smussa=0.0):
     """Parallelepipedo tra gli angoli lo e hi (coordinate di mondo)."""
     lo = Vector(lo); hi = Vector(hi)
+    if _RACCOGLI[0]:
+        col_scatola(lo, hi)
     bm = bmesh.new()
     bmesh.ops.create_cube(bm, size=1.0)
     for v in bm.verts:
@@ -289,6 +315,13 @@ def stanza(nome, x0, y0, x1, y1, h, mats, aperture=None, t=0.2, soffitto=True, p
     mats: dict con 'pav', 'sof', 'muro', 'muro_basso' (zoccolo)."""
     aperture = aperture or {}
     parti = []
+    prima = _RACCOGLI[0]; raccogli(True)
+    try:
+        return _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti)
+    finally:
+        raccogli(prima)
+
+def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti):
     if pavimento:
         parti.append(scatola(nome + '_pav', (x0 - t, y0 - t, -0.2), (x1 + t, y1 + t, 0), mats['pav']))
     if soffitto:
