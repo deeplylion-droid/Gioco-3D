@@ -38,7 +38,29 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Tra il 5° e il 7° minuto** il giocatore vede la mascotte **immobile come una statua**, come Huggy Wuggy nel primo capitolo di Poppy Playtime. Più tardi ripassa di lì e non c'è più.
 - Nella sala pompe il giocatore **riattiva le pompe** e la mascotte si sveglia.
 - **Finale**: inseguimento dentro gli scivoli.
-- Ordine delle zone, enigmi, tempi e percorso sono **da decidere**: vanno proposti all'utente.
+### Livello: scelte dell'utente (14 ottobre 2026)
+
+Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione decisa sarà in `docs/livello/`. Queste sono le scelte:
+
+- **Percorso A, lineare** (circa 40 minuti): risveglio, spogliatoi (zaino), statua, area bimbi (secchio gigante), piscina a onde vuota, sala pompe (lei si sveglia), ritorno al buio con il piedistallo vuoto, torre degli scivoli, inseguimento, fine.
+- **Statua S1, "il benvenuto"**: vicina e immobile, il giocatore le gira intorno quanto vuole e non succede niente.
+- **Piedistallo vuoto V1, "silenzio"**: una pozza d'acqua sul piedistallo e una scia di gocce che si allontana nel buio, senza musica.
+- **Inseguimento I1**: scivolata veloce negli scivoli con l'acqua che scorre. Ai bivi si colpisce la paratia giusta; ci si gira e la si respinge col getto. Alla fine una grata di sicurezza cala davanti a lei.
+- **Zaino Z1**: è una vera pompa. Aspira l'acqua da una vasca e la spara in un'altra, con un serbatoio; nell'acqua che scorre si ricarica.
+- **La scena in cui sbuca dal bordo va messa due volte**: a metà capitolo (SB2) e come ultima immagine del capitolo (SB1).
+- Il giocatore **si sveglia per terra nel corridoio**.
+- **Lo zaino si trova nello stanzino dei bagnini.**
+- **Oggetti da collezione: Polaroid.** Non spiegano niente.
+- **Checkpoint invisibili ma frequenti.**
+- **Morte**: la scena intera si può saltare.
+- **Prima dell'inseguimento lei può prenderti solo se te la vai a cercare** (per esempio se le arrivi troppo vicino). Non ti dà la caccia.
+
+**Da confermare con l'utente:**
+- Dove mettere la scena a metà capitolo nel percorso A, visto che era pensata per il percorso C.
+- La pianta comune: una sola sala con la piscina al centro, l'area bimbi a sinistra e la torre a destra.
+- Il ritorno al buio passando dagli spogliatoi.
+- Se, nella scena della statua, i canali della campana pulsano a tempo con la sigla.
+- Quante Polaroid ci sono e se danno un premio.
 
 ## Strumento: lo zaino-pompa (approvato)
 
@@ -46,6 +68,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Il getto attiva turbine e pulsanti a distanza.
 - Riempie e svuota le vasche per raggiungere posti nuovi.
 - Respinge i mostri per un attimo e dà una spinta per saltare.
+- **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
 - L'aspetto dello zaino è **da decidere**.
 
 ## La mascotte del capitolo 1: la medusa
