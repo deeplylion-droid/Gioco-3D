@@ -404,6 +404,7 @@ def camera(pos, guarda, lente):
     cam.location = pos
     cam.rotation_euler = (Vector(guarda) - Vector(pos)).to_track_quat('-Z', 'Y').to_euler()
     scene.camera = cam
+    bpy.context.view_layer.update()
     return cam
 
 
@@ -416,11 +417,12 @@ def base():
 
 def scena():
     base()
-    # tre Polaroid: due sulla panca, una caduta per terra nella pozza
-    polaroid('P07', (-0.985, -1.27, 0), math.radians(-78), appoggio=SEDUTA)
-    polaroid('P02', (-1.0, -1.02, 0), math.radians(-104), appoggio=SEDUTA)
-    polaroid('P09', (-0.62, -1.33, 0), math.radians(-62), appoggio=0.0009)
-    camera((-0.38, -1.5, 0.98), (-0.9, -1.16, 0.36), 34)
+    # tre Polaroid buttate sulla panca bagnata, con la parte alta della foto lontano dal giocatore
+    camera((-0.52, -1.55, 0.9), (-1.0, -1.17, 0.45), 30)
+    su = math.radians(52)       # così la foto si legge dritta da questa camera
+    polaroid('P07', (-1.02, -1.32, 0), su - math.radians(6), appoggio=SEDUTA)
+    polaroid('P02', (-0.95, -1.17, 0), su + math.radians(12), appoggio=SEDUTA)
+    polaroid('P09', (-1.04, -1.02, 0), su - math.radians(2), appoggio=SEDUTA)
     impostazioni(16 if PROVA else 64)
     bpy.context.scene.render.filepath = os.path.join(CACHE, 'prova_scena.jpg') if PROVA else os.path.join(OUT, 'render_in_gioco.jpg')
     bpy.ops.render.render(write_still=True)
