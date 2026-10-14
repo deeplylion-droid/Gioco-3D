@@ -29,8 +29,8 @@ TAVOLE = {
         ('cubo_rivelato_eroe_occhi_rosa.png', 'cubo_rivelato_occhi_rosa_acquapark', 'RIVELATO · occhi rosa'),
         ('cubo_calmo_giro.png', 'cubo_travestito_giro', 'TRAVESTITO · davanti, 3/4, dietro'),
         ('cubo_rivelato_giro.png', 'cubo_rivelato_giro', 'RIVELATO · davanti, 3/4, dietro'),
-        ('@studio:cubo_calmo', 'cubo_travestito_studio', 'TRAVESTITO · luce da studio'),
-        ('@studio:cubo_rivelato', 'cubo_rivelato_studio', 'RIVELATO · luce da studio'),
+        ('@studio:cubo_calmo', 'cubo_travestito_studio', 'TRAVESTITO · studio: davanti, 3/4, dietro'),
+        ('@studio:cubo_rivelato', 'cubo_rivelato_studio', 'RIVELATO · studio: davanti, 3/4, dietro'),
     ]),
     'agnello': ('AGNELLINO', 'modello 3D in Blender, alto 1,2 m', [
         ('agnello_calmo_eroe.png', 'agnello_travestito_acquapark', 'TRAVESTITO'),
@@ -39,9 +39,9 @@ TAVOLE = {
         ('agnello_calmo_giro.png', 'agnello_travestito_giro', 'TRAVESTITO · davanti, 3/4, dietro'),
         ('agnello_lupo_giro.png', 'agnello_lupo_giro', 'LUPO · davanti, 3/4, dietro'),
         ('agnello_occhio_giro.png', 'agnello_occhio_giro', 'OCCHIO · davanti, 3/4, dietro'),
-        ('@studio:agnello_calmo', 'agnello_travestito_studio', 'TRAVESTITO · luce da studio'),
-        ('@studio:agnello_lupo', 'agnello_lupo_studio', 'LUPO · luce da studio'),
-        ('@studio:agnello_occhio', 'agnello_occhio_studio', 'OCCHIO · luce da studio'),
+        ('@studio:agnello_calmo', 'agnello_travestito_studio', 'TRAVESTITO · studio: davanti, 3/4, dietro'),
+        ('@studio:agnello_lupo', 'agnello_lupo_studio', 'RIVELATO · studio: davanti, 3/4, dietro'),
+        ('@studio:agnello_occhio', 'agnello_occhio_studio', 'OCCHIO · studio: davanti, 3/4, dietro'),
     ]),
 }
 
