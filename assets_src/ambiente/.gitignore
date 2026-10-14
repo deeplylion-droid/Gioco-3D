@@ -1,0 +1,7 @@
+# texture derivate delle palette di prova: si rigenerano con ambiente_texture.py deriva
+textures/derivate/p1_bianco_turchese/
+textures/derivate/p2_blu_giallo/
+textures/derivate/p3_pastelli_90/
+# export di prova dei pezzi del kit
+kit_glb/
+oggetti/*/riferimento.png
