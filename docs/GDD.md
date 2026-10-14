@@ -82,7 +82,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Riempie e svuota le vasche per raggiungere posti nuovi.
 - Respinge i mostri per un attimo e dà una spinta per saltare.
 - **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
-- L'aspetto dello zaino è **da decidere**.
+- **Aspetto scelto dall'utente il 14 ottobre**: lo zaino-giocattolo anni '90, colorato (turchese, giallo e arancione, con adesivi di delfini), con un serbatoio trasparente e una pistola ad acqua tipo Super Soaker. È un modello 3D di Meshy, l'opzione 2 in `godot/assets/models/zaino/`.
 
 ## La mascotte del capitolo 1: la medusa
 
