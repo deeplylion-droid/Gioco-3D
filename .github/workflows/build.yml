@@ -67,6 +67,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_mechanics.gd
 
+      - name: Test della demo (sala principale)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
+
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'
         run: |
@@ -106,5 +110,5 @@ jobs:
             gh release create "$TAG" build/*.zip \
               --target "$GITHUB_SHA" \
               --title "Splash Lagoon $TAG" \
-              --notes "Build automatica del commit $GITHUB_SHA. Windows: scompatta lo zip e avvia SplashLagoon.exe (tieni SplashLagoon.pck nella stessa cartella)."
+              --notes "Demo giocabile della sala principale (build automatica del commit $GITHUB_SHA). Windows: scompatta lo zip e avvia SplashLagoon.exe (tieni SplashLagoon.pck nella stessa cartella). F1 = demo, F2 = scena di prova delle meccaniche."
           fi

@@ -28,6 +28,9 @@ signal energy_changed(energy: float)
 @export_range(0.0, 1.0) var power_on_threshold := 0.55
 @export_range(0.0, 1.0) var power_off_threshold := 0.3
 
+## Se vero la turbina è bloccata (per esempio da un gonfiabile incastrato) e non gira.
+@export var jammed := false
+
 var angular_speed := 0.0
 var energy := 0.0
 
@@ -45,6 +48,8 @@ func _ready() -> void:
 
 
 func _on_water_hit(amount: float, _point: Vector3, _direction: Vector3) -> void:
+	if jammed:
+		return
 	angular_speed = minf(angular_speed + amount * spin_per_liter, max_angular_speed)
 
 

@@ -22,6 +22,18 @@ signal emptied
 	set(value):
 		wall_thickness = value
 		_rebuild()
+## Se falso non costruisce muri e fondo: serve quando la vasca c'è già nella scena
+## (per esempio la pozza sul fondo della piscina).
+@export var build_walls := true:
+	set(value):
+		build_walls = value
+		_rebuild()
+## Materiale dell'acqua (vuoto = segnaposto). Qui va lo shader del laboratorio labs/acqua.
+@export var water_material: Material:
+	set(value):
+		water_material = value
+		if _surface:
+			_surface.material_override = value if value else Graybox.WATER
 ## Riempimento attuale: 0 = vuota, 1 = piena fino al bordo.
 @export_range(0.0, 1.0) var fill := 0.0:
 	set(value):
@@ -41,7 +53,8 @@ signal emptied
 @export var fill_time := 8.0
 ## Secondi per svuotarla tutta con lo scarico aperto.
 @export var drain_time := 6.0
-## Se una di queste sorgenti è accesa lo scarico è aperto.
+## Se una di queste sorgenti è accesa lo scarico è aperto. Se la sorgente ha un'energia
+## (turbina), lo scarico va più o meno forte in proporzione.
 @export var drain_sources: Array[PowerSource] = []
 ## Se una di queste sorgenti è accesa entra acqua da sola (tubo di carico).
 @export var fill_sources: Array[PowerSource] = []
@@ -93,7 +106,20 @@ func get_floor_global_y() -> float:
 
 
 func is_draining() -> bool:
-	return PowerSource.any_powered(drain_sources)
+	return get_drain_strength() > 0.0
+
+
+## Quanto è aperto lo scarico (0..1).
+func get_drain_strength() -> float:
+	var k := 0.0
+	for s in drain_sources:
+		if not is_instance_valid(s):
+			continue
+		if &"energy" in s:
+			k = maxf(k, float(s.get(&"energy")) if s.powered else 0.0)
+		elif s.powered:
+			k = 1.0
+	return k
 
 
 ## Il getto chiede se un punto d'impatto cade dentro la vasca.
@@ -190,8 +216,9 @@ func _physics_process(delta: float) -> void:
 	_pending_liters = 0.0
 	if PowerSource.any_powered(fill_sources):
 		df += delta / maxf(fill_time, 0.001)
-	if PowerSource.any_powered(drain_sources):
-		df -= delta / maxf(drain_time, 0.001)
+	var drain := get_drain_strength()
+	if drain > 0.0:
+		df -= drain * delta / maxf(drain_time, 0.001)
 	df -= leak_rate * delta
 	if df != 0.0:
 		fill = clampf(fill + df, 0.0, max_fill)
@@ -242,6 +269,9 @@ func _rebuild() -> void:
 	add_child(_vis, false, Node.INTERNAL_MODE_FRONT)
 	var t := wall_thickness
 	var s := inner_size
+	if not build_walls:
+		_build_water(s)
+		return
 	var body := StaticBody3D.new()
 	body.name = "Muri"
 	body.collision_layer = Layers.WORLD
@@ -257,6 +287,10 @@ func _rebuild() -> void:
 	for p in parts:
 		Graybox.box(body, p[0], p[1], p[2])
 		Graybox.box_shape(body, p[0], p[1])
+	_build_water(s)
+
+
+func _build_water(s: Vector3) -> void:
 	# Superficie dell'acqua.
 	_surface = MeshInstance3D.new()
 	_surface.name = "Superficie"
@@ -265,7 +299,7 @@ func _rebuild() -> void:
 	plane.subdivide_width = 8
 	plane.subdivide_depth = 8
 	_surface.mesh = plane
-	_surface.material_override = Graybox.WATER
+	_surface.material_override = water_material if water_material else Graybox.WATER
 	_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_vis.add_child(_surface)
 	# Volume d'acqua per il giocatore (passi nell'acqua, ricarica del serbatoio).

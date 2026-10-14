@@ -11,8 +11,12 @@ extends CanvasLayer
 
 var _prompt: Label
 var _message: Label
+var _hint: Label
+var _banner: Label
 var _tank_bar: ProgressBar
 var _msg_left := 0.0
+var _hint_left := 0.0
+var _banner_left := 0.0
 
 
 func _ready() -> void:
@@ -32,6 +36,20 @@ func _ready() -> void:
 	GameState.collectible_collected.connect(_on_collectible)
 
 
+## Suggerimento su più righe in basso a sinistra (comandi, aiuti).
+func show_hint(text: String, seconds := 8.0) -> void:
+	_hint.text = text
+	_hint.modulate.a = 1.0
+	_hint_left = seconds
+
+
+## Scritta grande al centro (per esempio "Fine della demo").
+func show_banner(title: String, subtitle := "", seconds := 6.0) -> void:
+	_banner.text = title + ("\n" + subtitle if subtitle != "" else "")
+	_banner.modulate.a = 1.0
+	_banner_left = seconds
+
+
 func show_message(text: String) -> void:
 	_message.text = text
 	_message.modulate.a = 1.0
@@ -42,6 +60,12 @@ func _process(delta: float) -> void:
 	if _msg_left > 0.0:
 		_msg_left -= delta
 		_message.modulate.a = clampf(_msg_left / 0.5, 0.0, 1.0)
+	if _hint_left > 0.0:
+		_hint_left -= delta
+		_hint.modulate.a = clampf(_hint_left / 1.0, 0.0, 1.0)
+	if _banner_left > 0.0:
+		_banner_left -= delta
+		_banner.modulate.a = clampf(_banner_left / 1.5, 0.0, 1.0)
 	if player and player.water_pack:
 		_tank_bar.visible = player.water_pack.tank_enabled
 
@@ -89,6 +113,24 @@ func _build() -> void:
 	_prompt = _label(root, 0.56, 20)
 	_message = _label(root, 0.82, 22)
 	_message.modulate.a = 0.0
+	_banner = _label(root, 0.3, 40)
+	_banner.offset_top = -60
+	_banner.offset_bottom = 60
+	_banner.modulate.a = 0.0
+	_hint = Label.new()
+	_hint.anchor_top = 1.0
+	_hint.anchor_bottom = 1.0
+	_hint.offset_left = 24
+	_hint.offset_right = 900
+	_hint.offset_top = -80
+	_hint.offset_bottom = -24
+	_hint.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	_hint.add_theme_font_size_override("font_size", 16)
+	_hint.add_theme_constant_override("outline_size", 5)
+	_hint.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	_hint.modulate.a = 0.0
+	_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_hint)
 	_tank_bar = ProgressBar.new()
 	_tank_bar.show_percentage = false
 	_tank_bar.custom_minimum_size = Vector2(180, 10)
@@ -102,6 +144,15 @@ func _build() -> void:
 	_tank_bar.offset_bottom = -24
 	_tank_bar.value = 100
 	_tank_bar.visible = false
+	# Indicatore provvisorio del serbatoio: l'aspetto vero è una scelta di design.
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color(0.05, 0.07, 0.09, 0.65)
+	bg.set_corner_radius_all(3)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.35, 0.75, 0.95, 0.9)
+	fill.set_corner_radius_all(3)
+	_tank_bar.add_theme_stylebox_override("background", bg)
+	_tank_bar.add_theme_stylebox_override("fill", fill)
 	root.add_child(_tank_bar)
 
 

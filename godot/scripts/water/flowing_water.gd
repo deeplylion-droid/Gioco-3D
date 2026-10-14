@@ -13,6 +13,8 @@ extends WaterVolume
 @export var refill_rate := 8.0
 ## Corrente (m/s, spazio locale x/z): per ora muove solo la grafica.
 @export var flow := Vector2(0.0, -1.2)
+## Materiale dell'acqua (vuoto = segnaposto). Qui va lo shader del laboratorio labs/acqua.
+@export var water_material: Material
 
 var _vis: Node3D
 var _shape_node: CollisionShape3D
@@ -43,10 +45,13 @@ func _rebuild() -> void:
 	var plane := PlaneMesh.new()
 	plane.size = Vector2(size.x, size.z)
 	surface.mesh = plane
-	var mat := Graybox.WATER.duplicate() as ShaderMaterial
-	var world_flow := global_transform.basis * Vector3(flow.x, 0.0, flow.y) if is_inside_tree() else Vector3(flow.x, 0.0, flow.y)
-	mat.set_shader_parameter(&"flow", Vector2(world_flow.x, world_flow.z))
-	surface.material_override = mat
+	if water_material:
+		surface.material_override = water_material
+	else:
+		var mat := Graybox.WATER.duplicate() as ShaderMaterial
+		var world_flow := global_transform.basis * Vector3(flow.x, 0.0, flow.y)
+		mat.set_shader_parameter(&"flow", Vector2(world_flow.x, world_flow.z))
+		surface.material_override = mat
 	surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	surface.position = Vector3(0, size.y, 0)
 	_vis.add_child(surface)

@@ -6,6 +6,11 @@ signal paused_changed(is_paused: bool)
 
 ## Mette in pausa da solo quando la finestra perde il fuoco.
 @export var pause_on_focus_loss := true
+## Tasti di prova: F1 = demo della sala principale, F2 = scena di prova delle meccaniche.
+@export var debug_scene_keys := true
+
+const SCENE_DEMO := "res://scenes/sala_principale.tscn"
+const SCENE_TEST := "res://scenes/test/test_level.tscn"
 
 var _overlay: CanvasLayer
 var _had_focus := false
@@ -44,6 +49,12 @@ func set_paused(value: bool) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	var key := event as InputEventKey
+	if debug_scene_keys and key and key.pressed and not key.echo and (key.keycode == KEY_F1 or key.keycode == KEY_F2):
+		set_paused(false)
+		get_tree().change_scene_to_file(SCENE_DEMO if key.keycode == KEY_F1 else SCENE_TEST)
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("pause"):
 		set_paused(not get_tree().paused)
 		get_viewport().set_input_as_handled()
