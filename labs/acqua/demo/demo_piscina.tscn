@@ -3,12 +3,12 @@
 [ext_resource type="Script" path="res://demo/scripts/demo.gd" id="1_demo"]
 [ext_resource type="Environment" path="res://demo/ambiente_notte.tres" id="2_env"]
 [ext_resource type="Script" path="res://demo/scripts/main_hall.gd" id="3_hall"]
-[ext_resource type="Script" path="res://water/scripts/water_body.gd" id="4_body"]
-[ext_resource type="Resource" path="res://water/presets/stile_3_scura.tres" id="5_dark"]
-[ext_resource type="Resource" path="res://water/presets/stile_2_torbida.tres" id="6_murky"]
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_body.gd" id="4_body"]
+[ext_resource type="Resource" path="res://addons/acqua/presets/stile_3_scura.tres" id="5_dark"]
+[ext_resource type="Resource" path="res://addons/acqua/presets/stile_2_torbida.tres" id="6_murky"]
 [ext_resource type="Script" path="res://demo/scripts/free_camera.gd" id="7_cam"]
-[ext_resource type="Script" path="res://water/scripts/underwater_effect.gd" id="8_under"]
-[ext_resource type="Script" path="res://water/scripts/water_inlet.gd" id="9_inlet"]
+[ext_resource type="Script" path="res://addons/acqua/scripts/underwater_effect.gd" id="8_under"]
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_inlet.gd" id="9_inlet"]
 [ext_resource type="Script" path="res://demo/scripts/medusa_glow_placeholder.gd" id="10_glow"]
 [ext_resource type="Script" path="res://demo/scripts/hall_props.gd" id="11_props"]
 
@@ -84,14 +84,6 @@ script = ExtResource("10_glow")
 
 [node name="Props" type="Node3D" parent="."]
 script = ExtResource("11_props")
-
-[node name="ReflectionProbe" type="ReflectionProbe" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
-size = Vector3(36.2, 11.4, 24.2)
-origin_offset = Vector3(0, -1, 0)
-box_projection = true
-interior = true
-ambient_mode = 0
 
 [node name="LowFog" type="FogVolume" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)

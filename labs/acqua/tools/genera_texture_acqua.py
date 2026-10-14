@@ -21,7 +21,7 @@ import time
 import numpy as np
 from PIL import Image
 
-OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "water", "textures"))
+OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "addons", "acqua", "textures"))
 os.makedirs(OUT, exist_ok=True)
 
 

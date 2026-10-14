@@ -12,7 +12,7 @@ func _ready() -> void:
 	we.environment = env
 	add_child(we)
 	var m := ShaderMaterial.new()
-	m.shader = load("res://water/shaders/wet_surface.gdshader")
+	m.shader = load("res://addons/acqua/shaders/wet_surface.gdshader")
 	m.set_shader_parameter("albedo_tex", load("res://demo/textures/intonaco_albedo.jpg"))
 	m.set_shader_parameter("normal_tex", load("res://demo/textures/intonaco_normal.jpg"))
 	m.set_shader_parameter("orh_tex", load("res://demo/textures/intonaco_orh.jpg"))

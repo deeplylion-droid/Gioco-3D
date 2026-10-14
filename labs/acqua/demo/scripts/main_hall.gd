@@ -7,7 +7,7 @@ extends Node3D
 ## temporale, nebbia. La geometria e' generata da codice (anche nell'editor) e non viene salvata
 ## nella scena: e' solo un banco di prova, la sala vera la costruisce il livello.
 
-const WET_SHADER := preload("res://water/shaders/wet_surface.gdshader")
+const WET_SHADER := preload("res://addons/acqua/shaders/wet_surface.gdshader")
 const SKY_SHADER := preload("res://demo/shaders/dome_sky.gdshader")
 
 @export var hall_half := Vector2(18.0, 12.0)
