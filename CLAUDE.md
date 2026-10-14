@@ -4,7 +4,9 @@ Gioco horror 3D in prima persona fatto con Claude per deeplylion-droid. L'utente
 
 ## Regole
 
-- **Stile, trama e design li decide l'utente.** Soprattutto all'inizio, non andare avanti su queste scelte senza un suo riscontro. Prepara 2-3 proposte con immagini o render, poi fermati e chiedi. Il lavoro tecnico (pipeline, codice, ottimizzazione, strumenti) si può fare liberamente.
+- **Stile, trama e design li decide l'utente.** Soprattutto all'inizio, non andare avanti su queste scelte senza un suo riscontro. Il lavoro tecnico (pipeline, codice, ottimizzazione, strumenti) si può fare liberamente.
+- **All'utente si mostrano solo asset del gioco finiti**: render di modelli 3D veri e screenshot presi dal motore. Non vuole più vedere immagini generate dall'IA (concept o storyboard): non lo aiutano a immaginare il gioco. Le immagini generate si possono usare solo internamente, come input per i modelli 3D o come texture. Anche le proposte vanno fatte su asset veri: per esempio lo stesso modello renderizzato con due materiali diversi.
+- L'utente vuole vedere risultati concreti e finiti. Meglio prendere una scelta ragionevole, coerente con i concept approvati, e mostrargliela finita, che chiedergli di decidere a parole.
 - **Non cancellare niente** di quello che l'utente ha approvato: concept, modelli, Release, tag. Per le cose scartate, spostale in una cartella a parte senza eliminarle.
 - Il repository è **pubblico**, e l'utente è d'accordo. Non metterci mai chiavi o segreti: la chiave di Meshy sta nella variabile d'ambiente `MESHY_API_KEY`.
 - Nessun file sopra i 50 MB. Per le immagini concept usa JPG di buona qualità.

@@ -29,7 +29,20 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 ## Trama (decisa)
 
 - Il giocatore **si sveglia a bordo**, senza spiegazioni e senza prologhi lunghi. Il mistero resta.
-- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises*, l'anno 1997 e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises* e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+
+### Lore nascosta (decisa dall'utente)
+
+- La crociera **è naufragata**.
+- **Un gruppo di bambini** a bordo è sopravvissuto, cavandosela da solo.
+- **Un mostro marino ha preso possesso della bambola-mascotte** (la nostra medusa) e negli anni **li ha cresciuti e allevati**.
+- Il gioco non la racconta in modo esplicito. Si scopre **solo in parte** con le Polaroid da collezione: nel capitolo 1 ce ne sono 10, e insieme non rivelano tutto.
+
+### Creature minori: i bambini (decise dall'utente, aspetto da decidere)
+
+- Sono i bambini cresciuti dal mostro, e compaiono **già nel capitolo 1**, magari solo **viste di sfuggita**.
+- **Da decidere**, con proposte all'utente: aspetto, quanti sono, che età hanno ora, cosa fanno, dove e come si vedono nel capitolo 1.
+- Vincoli fissi: sempre vestiti, niente nudità, niente gore e niente violenza esplicita sui bambini. Fanno paura con la postura, le maschere, gli occhi e il modo di muoversi.
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -38,7 +51,29 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Tra il 5° e il 7° minuto** il giocatore vede la mascotte **immobile come una statua**, come Huggy Wuggy nel primo capitolo di Poppy Playtime. Più tardi ripassa di lì e non c'è più.
 - Nella sala pompe il giocatore **riattiva le pompe** e la mascotte si sveglia.
 - **Finale**: inseguimento dentro gli scivoli.
-- Ordine delle zone, enigmi, tempi e percorso sono **da decidere**: vanno proposti all'utente.
+### Livello: scelte dell'utente (14 ottobre 2026)
+
+Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione decisa è in `docs/livello/capitolo1.md`. Queste sono le scelte:
+
+- **Percorso A, lineare** (circa 42 minuti, vedi `docs/livello/capitolo1.md`): risveglio, spogliatoi (zaino), statua, area bimbi (secchio gigante), piscina a onde vuota, sala pompe (lei si sveglia), ritorno al buio con il piedistallo vuoto, torre degli scivoli, inseguimento, fine.
+- **Statua S1, "il benvenuto"**: vicina e immobile, il giocatore le gira intorno quanto vuole e non succede niente.
+- **Piedistallo vuoto V1, "silenzio"**: una pozza d'acqua sul piedistallo e una scia di gocce che si allontana nel buio, senza musica.
+- **Inseguimento I1**: scivolata veloce negli scivoli con l'acqua che scorre. Ai bivi si colpisce la paratia giusta; ci si gira e la si respinge col getto. Alla fine una grata di sicurezza cala davanti a lei.
+- **Zaino Z1**: è una vera pompa. Aspira l'acqua da una vasca e la spara in un'altra, con un serbatoio; nell'acqua che scorre si ricarica.
+- **La scena in cui sbuca dal bordo va messa due volte**: a metà capitolo (SB2) e come ultima immagine del capitolo (SB1).
+- Il giocatore **si sveglia per terra nel corridoio**.
+- **Lo zaino si trova nello stanzino dei bagnini.**
+- **Oggetti da collezione: 10 Polaroid**, che rivelano una parte della lore nascosta.
+- **Checkpoint invisibili ma frequenti.**
+- **Morte**: la scena intera si può saltare.
+- **Prima dell'inseguimento lei può prenderti solo se te la vai a cercare** (per esempio se le arrivi troppo vicino). Non ti dà la caccia.
+
+**Confermato dall'utente il 14 ottobre:**
+- La scena dal bordo a metà capitolo va al ritorno al buio dopo le pompe: le vasche basse dell'area bimbi si stanno riempiendo e lei sbuca dal bordo a pochi metri. Poi scivola sotto e la sua luce si allontana sott'acqua.
+- La pianta comune: una sola sala sotto la cupola, con la piscina a onde al centro, l'area bimbi a sinistra e la torre degli scivoli a destra.
+- Il ritorno al buio passando dagli spogliatoi.
+- Nella scena della statua, quando parte la sigla, i canali della campana pulsano a tempo per un attimo.
+- 10 Polaroid, che rivelano la lore nascosta ma non per intero (vedi sopra).
 
 ## Strumento: lo zaino-pompa (approvato)
 
@@ -46,7 +81,8 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Il getto attiva turbine e pulsanti a distanza.
 - Riempie e svuota le vasche per raggiungere posti nuovi.
 - Respinge i mostri per un attimo e dà una spinta per saltare.
-- L'aspetto dello zaino è **da decidere**.
+- **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
+- **Aspetto scelto dall'utente il 14 ottobre**: lo zaino-giocattolo anni '90, colorato (turchese, giallo e arancione, con adesivi di delfini), con un serbatoio trasparente e una pistola ad acqua tipo Super Soaker. È un modello 3D di Meshy, l'opzione 2 in `godot/assets/models/zaino/`.
 
 ## La mascotte del capitolo 1: la medusa
 
