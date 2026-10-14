@@ -29,7 +29,20 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 ## Trama (decisa)
 
 - Il giocatore **si sveglia a bordo**, senza spiegazioni e senza prologhi lunghi. Il mistero resta.
-- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises*, l'anno 1997 e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises* e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+
+### Lore nascosta (decisa dall'utente)
+
+- La crociera **è naufragata**.
+- **Un gruppo di bambini** a bordo è sopravvissuto, cavandosela da solo.
+- **Un mostro marino ha preso possesso della bambola-mascotte** (la nostra medusa) e negli anni **li ha cresciuti e allevati**.
+- Il gioco non la racconta in modo esplicito. Si scopre **solo in parte** con le Polaroid da collezione: nel capitolo 1 ce ne sono 10, e insieme non rivelano tutto.
+
+### Creature minori: i bambini (decise dall'utente, aspetto da decidere)
+
+- Sono i bambini cresciuti dal mostro, e compaiono **già nel capitolo 1**, magari solo **viste di sfuggita**.
+- **Da decidere**, con proposte all'utente: aspetto, quanti sono, che età hanno ora, cosa fanno, dove e come si vedono nel capitolo 1.
+- Vincoli fissi: sempre vestiti, niente nudità, niente gore e niente violenza esplicita sui bambini. Fanno paura con la postura, le maschere, gli occhi e il modo di muoversi.
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -50,17 +63,17 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **La scena in cui sbuca dal bordo va messa due volte**: a metà capitolo (SB2) e come ultima immagine del capitolo (SB1).
 - Il giocatore **si sveglia per terra nel corridoio**.
 - **Lo zaino si trova nello stanzino dei bagnini.**
-- **Oggetti da collezione: Polaroid.** Non spiegano niente.
+- **Oggetti da collezione: 10 Polaroid**, che rivelano una parte della lore nascosta.
 - **Checkpoint invisibili ma frequenti.**
 - **Morte**: la scena intera si può saltare.
 - **Prima dell'inseguimento lei può prenderti solo se te la vai a cercare** (per esempio se le arrivi troppo vicino). Non ti dà la caccia.
 
-**Da confermare con l'utente:**
-- Dove mettere la scena a metà capitolo nel percorso A, visto che era pensata per il percorso C.
-- La pianta comune: una sola sala con la piscina al centro, l'area bimbi a sinistra e la torre a destra.
+**Confermato dall'utente il 14 ottobre:**
+- La scena dal bordo a metà capitolo va al ritorno al buio dopo le pompe: le vasche basse dell'area bimbi si stanno riempiendo e lei sbuca dal bordo a pochi metri. Poi scivola sotto e la sua luce si allontana sott'acqua.
+- La pianta comune: una sola sala sotto la cupola, con la piscina a onde al centro, l'area bimbi a sinistra e la torre degli scivoli a destra.
 - Il ritorno al buio passando dagli spogliatoi.
-- Se, nella scena della statua, i canali della campana pulsano a tempo con la sigla.
-- Quante Polaroid ci sono e se danno un premio.
+- Nella scena della statua, quando parte la sigla, i canali della campana pulsano a tempo per un attimo.
+- 10 Polaroid, che rivelano la lore nascosta ma non per intero (vedi sopra).
 
 ## Strumento: lo zaino-pompa (approvato)
 
