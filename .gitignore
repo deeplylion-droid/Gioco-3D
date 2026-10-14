@@ -1,0 +1,15 @@
+# Godot
+.godot/
+*.translation
+export_presets.cfg.bak
+/build/
+# Blender
+*.blend1
+*.blend2
+# Python
+__pycache__/
+*.pyc
+.venv/
+# temporanei
+*.tmp
+/tmp/

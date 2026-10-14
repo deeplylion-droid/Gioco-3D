@@ -1,0 +1,12 @@
+*.glb binary
+*.gltf -diff
+*.blend binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.exr binary
+*.hdr binary
+*.ogg binary
+*.wav binary
+*.fbx binary
