@@ -445,6 +445,12 @@ def tavola(celle, path, titolo=None, colonne=None, etichetta_h=None, sottotitolo
     if sottotitolo:
         d.text((W // 2, y + int(eh * 0.3)), sottotitolo, fill=(200, 200, 210), font=fs, anchor='mm')
         y += int(eh * 0.7)
+    # stessa dimensione del testo in tutte le etichette: la piu' grande che ci sta in ogni cella
+    size = int(eh * 0.58)
+    font_celle = fb
+    while size > 14 and max(d.textlength(t, font=font_celle) for _, t in ims) > w0 - 16:
+        size -= 2
+        font_celle = ImageFont.truetype(FONT_BOLD, size)
     for i, (im, t) in enumerate(ims):
         r, cidx = divmod(i, colonne)
         x0 = gap + cidx * (w0 + gap)
@@ -455,13 +461,7 @@ def tavola(celle, path, titolo=None, colonne=None, etichetta_h=None, sottotitolo
             im = im.resize((w0, h0), Image.LANCZOS)
         out.paste(im, (x0, y0 + eh))
         d.rectangle((x0, y0, x0 + w0, y0 + eh - 2), fill=(250, 250, 250))
-        # testo su una o due righe, rimpicciolito se serve
-        size = int(eh * 0.58)
-        font = fb
-        while d.textlength(t, font=font) > w0 - 16 and size > 14:
-            size -= 2
-            font = ImageFont.truetype(FONT_BOLD, size)
-        d.text((x0 + w0 // 2, y0 + eh // 2), t, fill=(15, 15, 20), font=font, anchor='mm')
+        d.text((x0 + w0 // 2, y0 + eh // 2), t, fill=(15, 15, 20), font=font_celle, anchor='mm')
     if larghezza and out.size[0] > larghezza:
         out = out.resize((larghezza, int(out.size[1] * larghezza / out.size[0])), Image.LANCZOS)
     os.makedirs(os.path.dirname(path), exist_ok=True)
