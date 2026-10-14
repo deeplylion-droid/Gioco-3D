@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ck67oxygg2ph6"
-path="res://.godot/imported/blue_floor_tiles_01_rough.jpg-f1cd72c80d7db61088380e372154de30.ctex"
+uid="uid://dft06ayxw0p4f"
+path="res://.godot/imported/anti_skid_tiles_nor_gl.jpg-11884c1571887b315de29ed1166c9577.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scena/texture/blue_floor_tiles_01_rough.jpg"
-dest_files=["res://.godot/imported/blue_floor_tiles_01_rough.jpg-f1cd72c80d7db61088380e372154de30.ctex"]
+source_file="res://scena/texture/anti_skid_tiles_nor_gl.jpg"
+dest_files=["res://.godot/imported/anti_skid_tiles_nor_gl.jpg-11884c1571887b315de29ed1166c9577.ctex"]
 
 [params]
 

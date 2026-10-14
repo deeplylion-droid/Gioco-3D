@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cqkh58p0fffdo"
-path="res://.godot/imported/blue_floor_tiles_01_nor_gl.jpg-2c1f8a384cb028abe7ed5b9cd0e7f8f9.ctex"
+uid="uid://d0oe5q631dqx0"
+path="res://.godot/imported/long_white_tiles_nor_gl.jpg-59760c716dd4e67ed01a6439569927af.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scena/texture/blue_floor_tiles_01_nor_gl.jpg"
-dest_files=["res://.godot/imported/blue_floor_tiles_01_nor_gl.jpg-2c1f8a384cb028abe7ed5b9cd0e7f8f9.ctex"]
+source_file="res://scena/texture/long_white_tiles_nor_gl.jpg"
+dest_files=["res://.godot/imported/long_white_tiles_nor_gl.jpg-59760c716dd4e67ed01a6439569927af.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d8ubarhrpqmf"
-path="res://.godot/imported/dirty_tiles_diff.jpg-b2cd6e4cb01448e063bb48a2bfb09c97.ctex"
+uid="uid://cjte6g0mdgr82"
+path="res://.godot/imported/anti_skid_tiles_rough.jpg-5c2aa1dd17cc467366dfd14ac30f478b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scena/texture/dirty_tiles_diff.jpg"
-dest_files=["res://.godot/imported/dirty_tiles_diff.jpg-b2cd6e4cb01448e063bb48a2bfb09c97.ctex"]
+source_file="res://scena/texture/anti_skid_tiles_rough.jpg"
+dest_files=["res://.godot/imported/anti_skid_tiles_rough.jpg-5c2aa1dd17cc467366dfd14ac30f478b.ctex"]
 
 [params]
 

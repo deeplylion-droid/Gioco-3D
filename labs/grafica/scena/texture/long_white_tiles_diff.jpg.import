@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddg20j813rlmu"
-path="res://.godot/imported/dirty_tiles_nor_gl.jpg-bf2a9713140ef9a1878a76cd5f8f31fe.ctex"
+uid="uid://sbayapq88n3l"
+path="res://.godot/imported/long_white_tiles_diff.jpg-cf04c61cd87243af29e5515baf318139.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scena/texture/dirty_tiles_nor_gl.jpg"
-dest_files=["res://.godot/imported/dirty_tiles_nor_gl.jpg-bf2a9713140ef9a1878a76cd5f8f31fe.ctex"]
+source_file="res://scena/texture/long_white_tiles_diff.jpg"
+dest_files=["res://.godot/imported/long_white_tiles_diff.jpg-cf04c61cd87243af29e5515baf318139.ctex"]
 
 [params]
 
