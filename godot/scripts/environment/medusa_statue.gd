@@ -21,7 +21,7 @@ extends Node3D
 @export var feet_depth := 2.2
 @export_group("Campana")
 ## Luce dei canali da ferma: appena accesi.
-@export var idle_channel_light := 0.9
+@export var idle_channel_light := 0.55
 ## Luce dei canali al massimo della sigla.
 @export var pulse_channel_light := 6.0
 ## Pulsazioni al secondo durante la sigla.

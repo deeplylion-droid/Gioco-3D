@@ -44,6 +44,7 @@ func _initialize() -> void:
 	_pools()
 	_kids_toys()
 	_polaroids()
+	_atmosphere()
 	_gameplay()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
@@ -83,9 +84,11 @@ func _materials() -> void:
 	hole.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	M.hole = _save(hole, "buio")
 	var water: ShaderMaterial = load("res://assets/materials/water_placeholder.tres")
-	var murky := water.duplicate() as ShaderMaterial
-	murky.set_shader_parameter(&"shallow_color", Color(0.2, 0.25, 0.17))
-	murky.set_shader_parameter(&"deep_color", Color(0.035, 0.05, 0.035))
+	# La pozza torbida è opaca e lucida: prende i riflessi (SSR) delle luci della sala.
+	var murky := ShaderMaterial.new()
+	murky.shader = load("res://shaders/water_murky.gdshader")
+	murky.set_shader_parameter(&"shallow_color", Color(0.17, 0.22, 0.15))
+	murky.set_shader_parameter(&"deep_color", Color(0.03, 0.045, 0.03))
 	M.murky = _save(murky, "acqua_torbida")
 	var clean := water.duplicate() as ShaderMaterial
 	clean.set_shader_parameter(&"shallow_color", Color(0.18, 0.45, 0.5))
@@ -161,12 +164,14 @@ func _statue() -> void:
 	var statue := group(level, "Statua")
 	statue.position = Vector3(PEDESTAL.x, 0.0, PEDESTAL.z)
 	# La medusa vera (GLB in posa statua): l'origine è alla vita, le punte dei tentacoli
-	# 2,2 m più in basso, appoggiate sul piano del piedistallo. Guarda verso +Z (l'ingresso).
+	# (misurate sul modello) 1,95 m più in basso, appoggiate sul piano del piedistallo.
+	# Guarda verso +Z (l'ingresso).
 	var medusa: Node3D = load("res://scripts/environment/medusa_statue.gd").new()
 	medusa.name = "Medusa"
 	medusa.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
 	medusa.set(&"model", load("res://assets/models/medusa/medusa.glb"))
-	medusa.position = Vector3(0, PEDESTAL.y + 2.2, 0)
+	medusa.set(&"feet_depth", 1.95)
+	medusa.position = Vector3(0, PEDESTAL.y + 1.95, 0)
 	own(medusa, statue)
 	level.set(&"statue", medusa)
 	# Il pulsante per i bambini sul davanti del piedistallo (è già nel modello: qui c'è solo
@@ -184,7 +189,7 @@ func _statue() -> void:
 	# qui si orienta verso il viso e parte spenta, poi si accende quando ti avvicini.
 	var flicker: Node = load("res://scripts/environment/flicker_light.gd").new()
 	flicker.name = "Sfarfallio"
-	flicker.set(&"base_energy", 16.0)
+	flicker.set(&"base_energy", 7.0)
 	flicker.set(&"base_emission", 6.0)
 	flicker.set(&"flicker_rate", 0.05)
 	flicker.set(&"min_level", 0.35)
@@ -192,7 +197,7 @@ func _statue() -> void:
 	own(flicker, statue)
 	level.set(&"statue_lamp", flicker)
 	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
-	level.set(&"statue_lamp_aim", Vector3(PEDESTAL.x, 3.55, PEDESTAL.z))
+	level.set(&"statue_lamp_aim", Vector3(PEDESTAL.x, 3.2, PEDESTAL.z))
 
 
 # --- La postazione dei bagnini all'ingresso: rastrelliera con lo zaino-pompa ---------------------
@@ -405,6 +410,49 @@ func _polaroids() -> void:
 		p.set(&"photo", s[0])
 		p.set(&"entry_id", StringName("p%02d" % s[0]))
 		own(p, g)
+
+
+# --- Atmosfera: riflessi della sala, nebbia bassa, polvere nella luce, gocce dal soffitto --------
+
+func _atmosphere() -> void:
+	var fx := group(level, "Atmosfera")
+	# Una sonda dei riflessi per tutta la sala (interno, proiezione a scatola): i pavimenti
+	# bagnati e l'acqua riflettono la sala anche fuori dallo schermo (dove SSR non arriva).
+	var probe := ReflectionProbe.new()
+	probe.name = "RiflessiSala"
+	probe.position = Vector3(0.0, 4.0, -6.0)
+	probe.size = Vector3(40.0, 15.0, 36.0)
+	probe.origin_offset = Vector3(0.0, -2.4, 6.0)
+	probe.box_projection = true
+	probe.interior = true
+	probe.update_mode = ReflectionProbe.UPDATE_ONCE
+	probe.ambient_mode = ReflectionProbe.AMBIENT_DISABLED
+	probe.mesh_lod_threshold = 4.0
+	own(probe, fx)
+	# Nebbia bassa che striscia sul pavimento e riempie la piscina vuota.
+	var fm := FogMaterial.new()
+	fm.density = 0.06
+	fm.albedo = Color(0.7, 0.75, 0.8)
+	fm.height_falloff = 1.6
+	for f in [["NebbiaBassa", Vector3(40, 2.0, 36), Vector3(0, 0.3, -6)], ["NebbiaPiscina", Vector3(14, 2.4, 18), Vector3(0, -1.3, -4)]]:
+		var fog := FogVolume.new()
+		fog.name = f[0]
+		fog.size = f[1]
+		fog.position = f[2]
+		fog.material = fm
+		own(fog, fx)
+	# Polvere che si vede nella luce della lampada sopra la statua e nella torcia.
+	var dust: Node3D = load("res://addons/grafica/pulviscolo.gd").new()
+	dust.name = "PolvereStatua"
+	dust.set(&"volume", Vector3(6, 4, 6))
+	dust.position = Vector3(PEDESTAL.x, 2.4, PEDESTAL.z + 0.6)
+	own(dust, fx)
+	# Gocce dal soffitto (con lo schizzo) vicino all'ingresso e sul bordo della piscina.
+	for g in [Vector3(-3.4, 4.0, 9.8), Vector3(6.2, 4.0, 5.6), Vector3(-7.6, 4.0, -3.0)]:
+		var drops: Node3D = load("res://addons/grafica/gocce.gd").new()
+		drops.name = "Gocce"
+		drops.position = g
+		own(drops, fx)
 
 
 # --- Giocatore, checkpoint, trigger -----------------------------------------------------------

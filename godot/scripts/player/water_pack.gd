@@ -153,6 +153,8 @@ var _last_impact_time := -1.0
 var _last_impact_point := Vector3.ZERO
 var _last_impact_normal := Vector3.UP
 var _clock := 0.0
+## Materiale dell'acqua da cui si sta aspirando (per gli anelli sulla superficie).
+var _suck_mat: ShaderMaterial
 
 
 func setup(p: Player) -> void:
@@ -575,6 +577,15 @@ func _update_visuals() -> void:
 		suction_stream.active = is_sucking
 		if is_sucking:
 			suction_stream.source_point = suck_point
+	# Anelli sulla superficie da cui si aspira (se il suo shader li sa fare).
+	var mat: ShaderMaterial = null
+	if is_sucking and suck_source and &"water_material" in suck_source:
+		mat = suck_source.get(&"water_material") as ShaderMaterial
+	if _suck_mat and _suck_mat != mat:
+		_suck_mat.set_shader_parameter(&"suck_point", Vector4(0.0, -1000.0, 0.0, 0.0))
+	_suck_mat = mat
+	if _suck_mat:
+		_suck_mat.set_shader_parameter(&"suck_point", Vector4(suck_point.x, suck_point.y, suck_point.z, 1.0))
 	if suction_particles:
 		suction_particles.emitting = is_sucking
 		if is_sucking:

@@ -59,7 +59,7 @@ func _setup_hall() -> void:
 		lamp.spot_angle = 38.0
 		lamp.spot_range = 10.0
 		lamp.spot_angle_attenuation = 0.8
-		lamp.light_volumetric_fog_energy = 1.6
+		lamp.light_volumetric_fog_energy = 0.7
 		lamp.shadow_enabled = true
 		lamp.light_size = 0.08
 		lamp.set_meta(&"grafica_priorita_ombra", 0)
