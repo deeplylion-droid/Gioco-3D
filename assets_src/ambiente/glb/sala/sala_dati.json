@@ -101,6 +101,128 @@
   ],
   "asse": "x"
  },
+ "interattivi": {
+  "sala_portello_scarico": {
+   "perno_blender": [
+    0.0,
+    -1.36,
+    -2.25
+   ],
+   "perno_godot": [
+    0.0,
+    -2.25,
+    1.36
+   ]
+  },
+  "sala_pulsante_portello": {
+   "perno_blender": [
+    1.9,
+    -4.99,
+    -1.15
+   ],
+   "perno_godot": [
+    1.9,
+    -1.15,
+    4.99
+   ]
+  },
+  "sala_turbina_scarico": {
+   "perno_blender": [
+    4.6,
+    -4.84,
+    -0.62
+   ],
+   "perno_godot": [
+    4.6,
+    -0.62,
+    4.84
+   ]
+  },
+  "sala_turbina_carter": {
+   "perno_blender": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "perno_godot": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "sala_recinto_spiaggia": {
+   "perno_blender": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "perno_godot": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "sala_cancello_spiaggia": {
+   "perno_blender": [
+    -1.0,
+    13.6,
+    0.0
+   ],
+   "perno_godot": [
+    -1.0,
+    0.0,
+    -13.6
+   ]
+  },
+  "sala_ruota_cancello": {
+   "perno_blender": [
+    -9.2,
+    13.8,
+    1.45
+   ],
+   "perno_godot": [
+    -9.2,
+    1.45,
+    -13.8
+   ]
+  },
+  "sala_trasmissione_cancello": {
+   "perno_blender": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "perno_godot": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "sala_quadro_elettrico": {
+   "perno_blender": [
+    -9.0,
+    21.15,
+    1.1
+   ],
+   "perno_godot": [
+    -9.0,
+    1.1,
+    -21.15
+   ]
+  },
+  "sala_pulsante_piedistallo": {
+   "perno_blender": [
+    0.0,
+    -8.02,
+    0.47
+   ],
+   "perno_godot": [
+    0.0,
+    0.47,
+    8.02
+   ]
+  }
+ },
  "luci": [
   {
    "nome": "luce_neon_00",
