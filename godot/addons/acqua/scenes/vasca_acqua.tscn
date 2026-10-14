@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_body.gd" id="1"]
+[ext_resource type="Resource" path="res://addons/acqua/presets/stile_3_scura.tres" id="2"]
+
+[node name="VascaAcqua" type="Node3D"]
+script = ExtResource("1")
+size = Vector2(6, 10)
+level = -0.22
+bottom = -1.1
+max_level = -0.05
+style = ExtResource("2")

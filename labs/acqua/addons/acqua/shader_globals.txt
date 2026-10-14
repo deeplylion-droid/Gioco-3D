@@ -1,0 +1,51 @@
+; Blocco da copiare in fondo a project.godot (facoltativo: serve all'editor).
+[shader_globals]
+
+water_time={
+"type": "float",
+"value": 0.0
+}
+water_body_count={
+"type": "int",
+"value": 0
+}
+water_bodies_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_caustics_tex={
+"type": "sampler3D",
+"value": "res://addons/acqua/textures/caustics_3d.png"
+}
+water_noise_tex={
+"type": "sampler2D",
+"value": "res://addons/acqua/textures/noise_rgba.png"
+}
+water_ripple_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_ripple_rect={
+"type": "vec4",
+"value": Vector4(0, 0, 0, 0)
+}
+water_drops_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_drop_count={
+"type": "int",
+"value": 0
+}
+water_quality={
+"type": "int",
+"value": 2
+}
+water_glow_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_glow_count={
+"type": "int",
+"value": 0
+}

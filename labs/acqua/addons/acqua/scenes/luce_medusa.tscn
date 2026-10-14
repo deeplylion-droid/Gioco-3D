@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_glow_light.gd" id="1"]
+
+[node name="LuceMedusa" type="OmniLight3D"]
+light_color = Color(1, 0.36, 0.78, 1)
+light_energy = 2.2
+light_volumetric_fog_energy = 0.0
+omni_range = 6.0
+omni_attenuation = 1.4
+script = ExtResource("1")
+glow_strength = 4.0
+glow_radius = 5.0
