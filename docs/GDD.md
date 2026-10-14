@@ -43,6 +43,9 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Sono i bambini cresciuti dal mostro, e compaiono **già nel capitolo 1**, magari solo **viste di sfuggita**.
 - **Da decidere**, con proposte all'utente: aspetto, quanti sono, che età hanno ora, cosa fanno, dove e come si vedono nel capitolo 1.
 - Vincoli fissi: sempre vestiti, niente nudità, niente gore e niente violenza esplicita sui bambini. Fanno paura con la postura, le maschere, gli occhi e il modo di muoversi.
+- **Primi due bambini (decisi dall'utente, 14 ottobre)**, ispirati ai disegni di Maniani (l'utente dichiara di avere i diritti) ma nel nostro stile marittimo. Modelli in `assets_src/bambini/`.
+  - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il corpo è da rifare (era "troppo pacioccone"): un bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata.
+  - **L'agnellino**: un peluche cucito, zuppo e macchiato di sale, con bottoni d'ottone al posto degli occhi e un fiocco alla marinara. Quando si rivela, il muso si spacca e mostra **un unico grande occhio**, scelto dall'utente. La testa di lupo resta solo come alternativa.
 
 ## Capitolo 1: scaletta (approvata)
 
