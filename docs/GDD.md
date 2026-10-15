@@ -47,6 +47,14 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
   - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il primo corpo era "troppo pacioccone". Rifatto il 15 ottobre: bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata (render inviato all'utente, in attesa di riscontro; il primo corpo è in `scartati/`).
   - **L'agnellino**: un peluche cucito, zuppo e macchiato di sale, con bottoni d'ottone al posto degli occhi e un fiocco alla marinara. Quando si rivela, il muso si spacca e mostra **un unico grande occhio**, scelto dall'utente. La testa di lupo resta solo come alternativa.
 
+## Qualità grafica: prima di tutto (deciso dall'utente, 15 ottobre, dopo aver giocato la v0.2.0)
+
+- **Non si fanno altri ambienti finché la qualità non è quella giusta.** Si lavora su un pezzo campione (corridoio del risveglio, zona davanti allo stanzino dei bagnini con il tornello) finché l'utente non lo approva; poi si porta tutto allo stesso livello.
+- Bocciato nella v0.2.0: forme troppo squadrate, texture che si ripetono troppo (soprattutto nel corridoio), tornello in bassissima definizione. I modelli devono essere di qualità vera: per oggetti e arredi si usa Meshy ad alta risoluzione, come deciso all'inizio.
+- Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
+- La luce della torcia è troppo forte e brutta: va studiata diversamente.
+- I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
