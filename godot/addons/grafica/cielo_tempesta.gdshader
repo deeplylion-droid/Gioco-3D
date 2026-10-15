@@ -4,8 +4,8 @@
 shader_type sky;
 render_mode use_quarter_res_pass;
 
-uniform vec3 colore_alto : source_color = vec3(0.075, 0.095, 0.15);
-uniform vec3 colore_orizzonte : source_color = vec3(0.15, 0.17, 0.23);
+uniform vec3 colore_alto : source_color = vec3(0.11, 0.14, 0.21);
+uniform vec3 colore_orizzonte : source_color = vec3(0.2, 0.23, 0.3);
 uniform vec3 colore_lampo : source_color = vec3(0.72, 0.80, 1.0);
 uniform float velocita_nuvole = 0.02;
 uniform float lampo = 0.0;            // intensità del lampo in corso
@@ -32,7 +32,7 @@ void sky() {
 	float n = fbm(p);
 	float nuvole = smoothstep(0.25, 0.85, n);
 	vec3 col = mix(colore_orizzonte, colore_alto, pow(h, 0.6));
-	col *= 0.35 + 1.3 * nuvole;
+	col *= 0.3 + 1.6 * nuvole;
 	// Il lampo illumina le nuvole, di più vicino al punto del fulmine.
 	float vicino = pow(max(dot(d, normalize(lampo_dir)), 0.0), 5.0);
 	col += colore_lampo * lampo * (0.05 + 1.0 * vicino) * (0.25 + 1.2 * nuvole);

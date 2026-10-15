@@ -14,7 +14,7 @@ signal batteria_esaurita
 
 @export var accesa := true
 @export_group("Luce")
-@export var energia := 28.0
+@export var energia := 11.0
 @export var colore := Color(1.0, 0.93, 0.82)  # LED un po' caldo
 @export var angolo := 30.0
 @export var portata := 26.0
@@ -25,6 +25,12 @@ signal batteria_esaurita
 ## Posizione della luce rispetto alla camera (a destra e in basso, come in mano):
 ## lo scarto fa vedere le ombre degli oggetti vicini.
 @export var offset_mano := Vector3(0.2, -0.2, -0.15)
+## Vicino ai muri la luce si abbassa (come l'occhio che si adatta): senza, entro
+## 3 m bruciava tutto. Fattore = clamp(distanza / distanza_piena, minimo, 1).
+@export var attenua_vicino := true
+@export var distanza_piena := 2.5
+@export var minimo_vicino := 0.4
+@export var portata_controllo := 3.0
 @export_group("Movimento")
 ## Più è alto, più la luce segue lo sguardo in fretta.
 @export var rapidita := 11.0
@@ -45,6 +51,8 @@ var _sfarfallio_tempo := 0.0
 var _sfarfallio_forza := 0.0
 var _rumore := FastNoiseLite.new()
 var _livello := 1.0
+var _vicino := 1.0
+var _esclusi: Array[RID] = []   # il corpo del giocatore, da non colpire col raggio
 
 
 func _ready() -> void:
@@ -66,6 +74,11 @@ func _ready() -> void:
 	luce.shadow_blur = 1.0
 	luce.set_meta("grafica_priorita_ombra", 0)  # l'ombra della torcia resta anche al minimo
 	add_child(luce)
+	var p := get_parent()
+	while p:
+		if p is CollisionObject3D:
+			_esclusi.append((p as CollisionObject3D).get_rid())
+		p = p.get_parent()
 	_rumore.frequency = 0.9
 	_rumore.seed = 31
 	_rot = global_basis.get_rotation_quaternion()
@@ -111,6 +124,18 @@ func _process(delta: float) -> void:
 	luce.global_position = global_transform * (offset_mano + mano)
 	luce.global_basis = Basis(_rot)
 
+	if attenua_vicino:
+		var obiettivo := 1.0
+		var spazio := get_world_3d().direct_space_state
+		if spazio:
+			var da := luce.global_position
+			var q := PhysicsRayQueryParameters3D.create(da, da - luce.global_basis.z * portata_controllo)
+			q.exclude = _esclusi
+			var r := spazio.intersect_ray(q)
+			if r:
+				obiettivo = clampf(da.distance_to(r.position) / distanza_piena, minimo_vicino, 1.0)
+		_vicino = lerpf(_vicino, obiettivo, 1.0 - exp(-8.0 * delta))
+
 	if batteria_attiva and accesa:
 		var prima := carica
 		carica = maxf(carica - delta / durata_batteria, 0.0)
@@ -142,5 +167,5 @@ func _aggiorna_luce(delta: float) -> void:
 		var n := _rumore.get_noise_1d(_t * 40.0) * 0.5 + 0.5
 		var buco := 1.0 if _rumore.get_noise_1d(_t * 13.0 + 200.0) > 0.45 - 0.25 * forza else 0.0
 		f *= clampf(1.0 - forza * (n * 0.9 + buco), 0.0, 1.0)
-	luce.light_energy = energia * f
+	luce.light_energy = energia * f * _vicino
 	luce.visible = f > 0.001

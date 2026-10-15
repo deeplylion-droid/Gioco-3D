@@ -62,6 +62,17 @@ GI per la sala vera:
 - **SDFGI** (immagine apposta): funziona ma con muri e gallerie sottili fa filtrare luce e costa di più.
 - **LightmapGI**: la UV2 si genera già all'import (`meshes/light_baking = Static Lightmaps` nello script di preparazione), ma il bake si fa solo dall'editor con la GPU: nel sandbox (rendering software, senza editor interattivo) non è stato possibile cuocerlo. Resta comunque sconsigliato come GI principale, perché il capitolo spegne e riaccende le luci della sala.
 
+### Revisione di qualità (15 ottobre, notte)
+
+Correzioni chieste dalla revisione sugli scatti Ultra, controllate con `sala_reale/dopo_ingresso_revisione.jpg`:
+- **Campo visivo** di serie 62° verticali (circa 92° orizzontali); cursore da 50 a 90 che mostra anche i gradi orizzontali.
+- **Torcia**: energia 11 (prima 28) e attenuazione vicino ai muri: un raggio di 3 m davanti e luce × clamp(distanza / 2,5; 0,4; 1).
+- **Luna** più debole (0,3) e morbida (1,3°, opacità dell'ombra 0,75): la "ragnatela" netta dei costoloni compare solo durante il lampo.
+- **Esposizione**: luce ambiente 0,7, contrasto AgX 1,15, vignetta 0,3, nebbia volumetrica 0,015 con anisotropia 0,3 (fasci visibili anche di lato), nebbia bassa 0,04.
+- **Cielo** della cupola più chiaro, nuvole più contrastate. L'orizzonte del mare non c'è: dalla sala si vede solo il cielo sopra la cupola.
+- **Scheda Controlli** nel menu: sensibilità del mouse, inverti Y, oscillazione della camera (in `settings.cfg`, chiavi `sensibilita_mouse`, `inverti_y`, `oscillazione_camera`: le legge il controller del giocatore).
+- FPS: sul rendering software del sandbox non sono misurabili. La nebbia più densa non cambia il costo (dipende dalla dimensione del volume, non dalla densità).
+
 ## Scelte prese (e perché)
 
 ### Illuminazione globale: VoxelGI

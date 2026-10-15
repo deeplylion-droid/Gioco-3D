@@ -17,12 +17,12 @@ func _init() -> void:
 	# Luce ambiente minima, fredda: le ombre tendono al blu-verde come nel concept A.
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.06, 0.1, 0.11)
-	env.ambient_light_energy = 0.3
+	env.ambient_light_energy = 0.7
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
 	# AgX: rossi saturi senza bruciarli, neon che sfumano bene nel bianco.
 	env.tonemap_mode = Environment.TONE_MAPPER_AGX
 	env.tonemap_exposure = 1.0
-	env.tonemap_agx_contrast = 1.3
+	env.tonemap_agx_contrast = 1.15
 	# Riflessi sul pavimento bagnato e nelle pozzanghere.
 	env.ssr_enabled = true
 	env.ssr_max_steps = 64
@@ -56,9 +56,9 @@ func _init() -> void:
 	env.set("glow_levels/5", 0.5)
 	# Nebbia volumetrica: i fasci di luce si vedono, il fondo della sala si perde.
 	env.volumetric_fog_enabled = true
-	env.volumetric_fog_density = 0.011
+	env.volumetric_fog_density = 0.015
 	env.volumetric_fog_albedo = Color(0.7, 0.78, 0.8)
-	env.volumetric_fog_anisotropy = 0.6
+	env.volumetric_fog_anisotropy = 0.3
 	env.volumetric_fog_length = 56.0
 	env.volumetric_fog_detail_spread = 1.6
 	env.volumetric_fog_gi_inject = 0.08
