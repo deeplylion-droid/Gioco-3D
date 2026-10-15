@@ -62,7 +62,7 @@ Se il progetto ha già bus con questi nomi (un `default_bus_layout.tres`), usa q
 | `KidSighting` | stinger dei bambini sulla balconata | `seen` |
 | `PackPickup` | zaino preso (cinghie, fibbia, pompate) | `interacted` |
 | `PolaroidPhoto`, `Collectible` | foto raccolta (suona anche col gioco in pausa); visore che si chiude | `interacted` |
-| `GameState` (autoload) | stinger di morte, mondo che si abbassa, ritorno alla ripartenza | `player_died`, `player_respawned` |
+| `GameState` (autoload) | stinger di morte, mondo che si abbassa, ritorno alla ripartenza; se ti prende lei (causa `&"medusa"`) il morso subito e lo stinger quando la fauce si chiude | `player_died`, `player_respawned` |
 | `DeathSequence` | lo stinger sfuma se la scena viene saltata | `finished` |
 | `Game` (autoload) | clic di pausa e ripresa | `paused_changed` |
 | `MenuOpzioni` (grafica) | aggiunge la scheda **Audio** con i cursori | - |
@@ -70,6 +70,7 @@ Se il progetto ha già bus con questi nomi (un `default_bus_layout.tres`), usa q
 | luci del GLB della sala `luce_neon_*`, `luce_emergenza_*` | ronzio sulle 4 (neon) e 3 (emergenza) più vicine, clic e qualche scintilla quando sfarfallano | visibilità della luce |
 | `MonitorCrt` (tappa 6) | fruscio della neve dal tubo, sullo schermo | `mostra_neve_attiva()` |
 | `Paratia` (tappa 6) | motore e catene mentre scende (sul pannello), colpo sordo in fondo | `in_movimento`, `chiusa` |
+| `LeiSbuca` (tappa 8) | la fossa che ribolle mentre l'acqua risale nelle vasche basse; tace quando lei va sotto | `fill` delle `vasche`, `fase`, `abilitata` |
 
 Intorno al giocatore, a caso: gemiti e scricchiolii metallici della nave, ticchettii delle
 lamiere, colpi lontani di porte stagne e, di rado, l'allarme generale lontano. I fondi (pioggia
@@ -113,6 +114,21 @@ resto lo suona `scripts/tecnici/risveglio_sala_pompe.gd` con l'API, con questi n
 I due suoni lontani hanno già dentro la distanza (passa-basso e riverbero): in 3D danno solo la
 direzione (`unit_size` 40), così si sentono anche dalla sala pompe, sotto il ruggito.
 
+## Tappa 8: lei nell'area bimbi
+
+Suoni in `res://audio/lei/`. Niente versi: lei non parla. La fossa e il morso li suona l'addon da
+solo; lei che sbuca e che scivola sotto li chiama `scripts/game/lei_sbuca.gd` (`_suona()`).
+
+| Suono | Cosa | Come |
+|---|---|---|
+| `fossa_ribolle_loop` | gorgoglio profondo dal condotto, bolle grosse: l'acqua che risale e riempie le vasche basse | da solo (`LeiSbuca`) |
+| `lei_sbuca` | una massa grande che emerge lenta, l'acqua che le cola di dosso, le dita e i palmi bagnati sulle piastrelle, poi gocce (6,5 s) | `_sbuca()`: `_suona(&"lei_sbuca")` |
+| `lei_scivola_sotto` | le mani che scivolano dal bordo, il corpo che torna giù, il risucchio, poche bolle, poi silenzio (4,5 s) | `_scivola()`: `_suona(&"lei_scivola_sotto")` |
+| `morso` | lo scatto fuori dall'acqua, la pelle che si strappa sotto l'occhio, la fauce che si chiude a 1,0 s (stereo, 1,8 s) | da solo, alla morte con causa `&"medusa"` |
+
+Il morso suona sul bus Interfaccia (da vicino, niente riverbero, non si abbassa con la morte); la
+fauce si chiude a `MORSO_COLPO` = 1,0 s, il lampo rosso di `DeathSequence`, e lì parte lo stinger.
+
 ## API
 
 ```gdscript
@@ -148,7 +164,8 @@ Lasciando un cursore parte un suono di prova sul suo bus (anche col gioco in pau
 
 `tests/test_audio.gd` (anche nella CI): bus ed effetti, tutti gli stream del catalogo, volumi su
 disco, collegamenti con la sala principale e suoni che partono davvero (tuono, passi, getto,
-aspirazione, pulsante, sigla, faro), monitor e paratie della sala pompe, pausa, menu, morte e
+aspirazione, pulsante, sigla, faro), monitor e paratie della sala pompe, la fossa e il morso della
+tappa 8, i nomi dei suoni chiesti dagli script (devono esistere nel catalogo), pausa, menu, morte e
 ripartenza, nessun errore.
 
 ```
@@ -166,7 +183,7 @@ riproduzioni appese; lo stato resta giusto. Il test forza la riproduzione vera c
 ```
 
 Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e le anteprime
-`res://audio/anteprima/anteprima_audio.ogg` e `anteprima_tecnici.ogg` (cartella con `.gdignore`:
-non entra nel gioco).
+`res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg` e `anteprima_lei.ogg` (cartella
+con `.gdignore`: non entra nel gioco).
 `assets_src/audio/verifica.py file.ogg --png cartella` stampa loudness e picchi e disegna lo
 spettrogramma.

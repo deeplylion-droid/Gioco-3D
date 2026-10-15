@@ -14,7 +14,8 @@ extends Node
 ##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
 ##    portelli, ruota e secchio, vasche, Polaroid, statua della medusa, bambini, morte,
-##    monitor a tubo e paratie della sala pompe;
+##    monitor a tubo e paratie della sala pompe, la fossa dell'area bimbi (tappa 8) e il
+##    morso quando ti prende lei;
 ##    le luci al neon e d'emergenza della sala (dal GLB) ronzano;
 ##  - aggiunge la scheda "Audio" al menu delle opzioni dell'addon grafica.
 ## API: suona(), suona_sigla(), musica_titolo(), ferma_musica(), imposta_volume(), volume().
@@ -45,6 +46,7 @@ const PER_CARTELLA := {
 	"musica": [BUS_MUSICA, 0.0, 0.0, 0.0, 0.0],
 	"interfaccia": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.3],
 	"tecnici": [BUS_EFFETTI, 0.0, 6.0, 60.0, 0.2],
+	"lei": [BUS_EFFETTI, 0.0, 6.0, 50.0, 0.0],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -93,6 +95,8 @@ const TARATURA := {
 	&"tonfo_acqua_lontano": [BUS_EFFETTI, 0.0, 40.0, 220.0, 0.0],
 	&"maniglione_bloccato": [BUS_EFFETTI, 0.0, 3.0, 35.0, 0.6],
 	&"porta_ponte_apre": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
+	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
+	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 }
 ## Loop sulle sorgenti: [volume dB, unit_size, max_distance].
 const LOOP_3D := {
@@ -113,7 +117,11 @@ const LOOP_3D := {
 	&"pompe_ruggito_loop": [0.0, 6.0, 60.0],
 	&"paratia_scende_loop": [0.0, 12.0, 80.0],
 	&"crt_neve_loop": [0.0, 2.0, 16.0],
+	&"fossa_ribolle_loop": [0.0, 5.0, 45.0],
 }
+## Quando lei ti prende (morte con causa &"medusa"): secondi dall'inizio del morso a quando la
+## fauce si chiude, che è il lampo rosso di DeathSequence. Lo stinger di morte parte lì.
+const MORSO_COLPO := 1.0
 ## Volume (dB) dei fondi.
 const FONDI := {
 	&"pioggia_cupola_loop": 0.0,
@@ -160,6 +168,7 @@ var _bagnato_scena := false
 var _sigla: AudioStreamPlayer3D
 var _musica: AudioStreamPlayer
 var _stinger: AudioStreamPlayer
+var _morso: Node
 var _limite_tempo := {}          # chiave -> tempo dell'ultimo suono (per non ripeterli troppo)
 var _orologio := 0.0
 var _prossimo_evento := {}
@@ -852,6 +861,7 @@ func _esamina(n: Node) -> void:
 		"MenuOpzioni": _inietta_menu(n)
 		"MonitorCrt": _attivi.append(AudioMonitor.new(self, n))
 		"Paratia": _attivi.append(AudioParatia.new(self, n))
+		"LeiSbuca": _attivi.append(AudioLei.new(self, n))
 		_:
 			fatto = _esamina_senza_classe(n)
 	if fatto:
@@ -1063,12 +1073,23 @@ func _collega_collezionabile(n: Node) -> void:
 
 # --- morte, pausa, menu ----------------------------------------------------------------------
 
-func _su_morte(_causa: StringName) -> void:
+func _su_morte(causa: StringName) -> void:
 	_morte = true
 	if is_instance_valid(_sigla) and _sigla.playing:
 		var tw := create_tween()
 		tw.tween_property(_sigla, ^"volume_db", -60.0, 0.8)
 		tw.tween_callback(_sigla.stop)
+	if causa == &"medusa":
+		# Ti prende lei: lo scatto, la pelle che si strappa, e lo stinger quando la fauce si chiude.
+		_morso = suona(&"morso")
+		get_tree().create_timer(MORSO_COLPO, false).timeout.connect(func():
+			if _morte:
+				_suona_stinger())
+	else:
+		_suona_stinger()
+
+
+func _suona_stinger() -> void:
 	_stinger.stream = stream_di(&"stinger_morte")
 	_stinger.volume_db = 0.0
 	_avvia(_stinger)
@@ -1085,7 +1106,9 @@ func _collega_sequenza_morte(n: Node) -> void:
 		if saltata and _stinger.playing:
 			var tw := create_tween()
 			tw.tween_property(_stinger, ^"volume_db", -50.0, 0.35)
-			tw.tween_callback(_stinger.stop))
+			tw.tween_callback(_stinger.stop)
+		if saltata and is_instance_valid(_morso) and _morso.get(&"stream") == stream_di(&"morso"):
+			_morso.call(&"stop"))
 
 
 func _su_pausa(in_pausa: bool) -> void:
@@ -1687,4 +1710,52 @@ class AudioParatia:
 			return true
 		if l:
 			l.volume = 1.0 if bool(n.get(&"in_movimento")) else 0.0
+		return true
+
+
+## La tappa 8 (LeiSbuca): la fossa che ribolle mentre l'acqua risale nelle vasche basse; tace
+## quando lei scivola sotto. Lei che sbuca e che scivola sotto li suona lo script della scena.
+class AudioLei:
+	var n: Node
+	var l: AudioLoop
+	var prima := -1.0
+	var sale_t := 0.0
+	var sotto: Array = []
+
+	func _init(a, nodo: Node) -> void:
+		n = nodo
+		var punto := nodo.get(&"punto_sbuca") as Node3D
+		var holder := Node3D.new()
+		holder.name = "AudioFossa"
+		if punto:
+			# la fossa è davanti al punto in cui sbuca (+Z locale): lì risalgono le bolle
+			holder.position = Vector3(0.0, 0.0, 1.0)
+			punto.add_child(holder)
+		else:
+			nodo.add_child(holder)
+		l = a.crea_loop(&"fossa_ribolle_loop", holder)
+		if l:
+			l.rapidita_volume = 1.5
+		var s: Script = nodo.get_script()
+		var fasi: Dictionary = s.get_script_constant_map().get("Fase", {}) if s else {}
+		for k in ["SCIVOLA", "FUGA", "FINITA", "PRESA"]:
+			if fasi.has(k):
+				sotto.append(fasi[k])
+
+	func aggiorna(_a, delta: float) -> bool:
+		if not is_instance_valid(n):
+			return false
+		if not n.is_inside_tree():
+			return true
+		var tot := 0.0
+		var vasche = n.get(&"vasche")
+		if vasche is Array:
+			for v in vasche:
+				if is_instance_valid(v):
+					tot += float(v.get(&"fill"))
+		sale_t = 0.4 if prima >= 0.0 and tot > prima + 1e-7 else maxf(0.0, sale_t - delta)
+		prima = tot
+		if l:
+			var acceso: bool = sale_t > 0.0 and bool(n.get(&"abilitata")) and not (n.get(&"fase") in sotto)
+			l.volume = 1.0 if acceso else 0.0
 		return true

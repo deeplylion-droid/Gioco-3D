@@ -182,7 +182,7 @@ func _sbuca() -> void:
 	medusa.process_mode = Node.PROCESS_MODE_INHERIT
 	_metti_a(1.0)
 	_schizzo(1.4)
-	_suona(&"riemersione", 0.0, 0.8)
+	_suona(&"lei_sbuca")
 	sbucata.emit()
 
 
@@ -190,7 +190,7 @@ func _scivola() -> void:
 	fase = Fase.SCIVOLA
 	_t = 0.0
 	_schizzo(0.8)
-	_suona(&"tonfo_acqua_lontano", 2.0, 1.2)
+	_suona(&"lei_scivola_sotto")
 
 
 ## Sotto: la medusa sparisce e resta la sua luce, che si allontana lungo il condotto.

@@ -1339,6 +1339,46 @@
   "lufs": null,
   "lufs_max": -23.0
  },
+ "lei/fossa_ribolle_loop": {
+  "file": "res://audio/lei/fossa_ribolle_loop.ogg",
+  "canali": 1,
+  "durata": 5.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse",
+  "lufs": -19.0,
+  "lufs_max": -14.8
+ },
+ "lei/lei_sbuca": {
+  "file": "res://audio/lei/lei_sbuca.ogg",
+  "canali": 1,
+  "durata": 6.5,
+  "loop": false,
+  "fonte": "sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0)",
+  "nota": "impactSoft_medium, slime_000",
+  "lufs": -22.7,
+  "lufs_max": -14.0
+ },
+ "lei/lei_scivola_sotto": {
+  "file": "res://audio/lei/lei_scivola_sotto.ogg",
+  "canali": 1,
+  "durata": 4.5,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.4,
+  "lufs_max": -16.0
+ },
+ "lei/morso": {
+  "file": "res://audio/lei/morso.ogg",
+  "canali": 2,
+  "durata": 1.8,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "slime_000, slime_001; la fauce si chiude a 1,0 s",
+  "lufs": -20.5,
+  "lufs_max": -12.0
+ },
  "musica/polaroid_chiudi": {
   "file": "res://audio/musica/polaroid_chiudi.ogg",
   "canali": 1,
