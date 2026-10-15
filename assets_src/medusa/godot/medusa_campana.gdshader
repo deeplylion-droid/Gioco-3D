@@ -7,7 +7,8 @@ render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_sc
 
 // campana_base_alfa.png: RGB = colore della campana, A = 1 vicino alla vita (si fonde con la pelle), ~0.4 sotto
 uniform sampler2D tex_colore : source_color, filter_linear_mipmap;
-// campana_emissione.png: colore e intensita' dei canali luminosi
+// campana_emissione.png: da qui si prende solo la TINTA dei canali (giallo in alto, rosa sul bordo), sfocata;
+// dove sono i canali lo dice la texture colore (i canali sono le righe chiare), che e' pulita
 uniform sampler2D tex_canali : source_color, filter_linear_mipmap;
 uniform sampler2D tex_dietro : hint_screen_texture, repeat_disable, filter_linear_mipmap;
 uniform vec3 tinta : source_color = vec3(0.80, 0.62, 0.98);
@@ -17,7 +18,9 @@ uniform float opacita_bordo : hint_range(0.0, 1.0) = 0.85;    // dove si guarda 
 uniform float fresnel_esponente : hint_range(0.5, 8.0) = 2.5;
 uniform float rifrazione : hint_range(0.0, 0.15) = 0.035;     // 0 = niente deformazione di quello che sta dietro
 uniform vec3 tinta_dentro : source_color = vec3(0.78, 0.62, 1.0); // colore della gelatina vista in trasparenza
-uniform float luce_canali : hint_range(0.0, 20.0) = 3.0;
+uniform float luce_canali : hint_range(0.0, 20.0) = 1.2;
+uniform vec2 soglia_canali = vec2(0.74, 0.82);               // luminosita' del colore che diventa canale
+uniform vec3 tinta_canali_base : source_color = vec3(1.0, 0.35, 0.55);
 uniform float bagliore_dentro : hint_range(0.0, 2.0) = 0.25;  // la luce dei canali che si sparge nella gelatina
 uniform float pulsazione_al_secondo = 0.4;                    // 0 = canali fissi (statua spenta)
 uniform float pulsazione_ampiezza : hint_range(0.0, 1.0) = 0.3;
@@ -34,8 +37,12 @@ void fragment() {
 	vec2 off = NORMAL.xy * rifrazione * (1.0 - fres * 0.5);
 	vec3 dietro = textureLod(tex_dietro, SCREEN_UV - off, 1.5).rgb * tinta_dentro;
 	float pulsa = 1.0 + pulsazione_ampiezza * sin(TIME * pulsazione_al_secondo * 6.2831853);
-	vec3 canali = texture(tex_canali, UV).rgb * luce_canali * pulsa;
-	vec3 sparsa = textureLod(tex_canali, UV, 4.0).rgb * bagliore_dentro * luce_canali * pulsa;
+	float canale = smoothstep(soglia_canali.x, soglia_canali.y, dot(c.rgb, vec3(0.3, 0.3, 0.4)));
+	vec3 tinta_c = textureLod(tex_canali, UV, 3.0).rgb;
+	float mx = max(max(tinta_c.r, tinta_c.g), tinta_c.b);
+	tinta_c = mx > 0.02 ? tinta_c / mx : tinta_canali_base;
+	vec3 canali = canale * tinta_c * luce_canali * pulsa;
+	vec3 sparsa = textureLod(tex_canali, UV, 5.0).rgb * bagliore_dentro * luce_canali * pulsa;
 	ALBEDO = colore * op;
 	ROUGHNESS = rugosita;
 	SPECULAR = 0.6;
