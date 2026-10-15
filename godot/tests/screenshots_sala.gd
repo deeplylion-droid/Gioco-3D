@@ -128,6 +128,30 @@ func _run() -> void:
 	if _want("scia_buio"):
 		# Tappa 7: dal cordone della vasca, la scia di gocce che va verso il fondo della sala.
 		await _shot("scia_buio", Vector3(-7.9, 0.0, 10.6), Vector3(-14.5, -0.6, 7.8))
+	if _want("lei_sbuca") or _want("lei_sottacqua"):
+		# Tappa 8 (con SCATTI_FASE=blackout): lei che sbuca dal bordo della fossa, vista dalla scia
+		# a 5 m, e la sua luce sott'acqua quando se ne va. Ferma: niente presa, niente attesa.
+		var lei := level.get(&"lei_sbuca") as LeiSbuca
+		if lei:
+			lei.abilitata = true
+			lei.attesa = 999.0
+			lei.distanza_presa = 0.0
+			var testa := lei._testa_prevista()
+			var verso := lei.punto_sbuca.global_basis.z
+			verso.y = 0.0
+			verso = verso.normalized()
+			p.teleport(Vector3(0.0, 0.0, 21.0), 0.0, 0.0)
+			lei._sbuca()
+			await _frames(int(lei.durata_sbuca * 60.0) + 10)
+			if _want("lei_sbuca"):
+				var da := testa + verso * 5.0
+				await _shot("lei_sbuca", Vector3(da.x, 0.0, da.z), testa + Vector3(0.0, -0.25, 0.0))
+			if _want("lei_sottacqua"):
+				lei.durata_fuga = 60.0
+				lei._fuga()
+				await _frames(90)
+				var bordo := testa + verso * 1.6
+				await _shot("lei_sottacqua", Vector3(bordo.x, 0.0, bordo.z), lei.punto_sbuca.global_position + Vector3(0.0, -0.6, 0.0))
 	if _want("telecamera_monitor"):
 		# La telecamera di sorveglianza della sala, per il monitor della sala pompe: in alto sopra
 		# l'ingresso, verso la medusa nella vasca (si ritaglia in 4:3).
