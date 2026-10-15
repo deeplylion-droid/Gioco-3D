@@ -82,6 +82,7 @@ extends Node3D
 var tempesta: Tempesta
 var _sfarfallanti: Array = []   # [luce, energia, modalità, attesa, raffica]
 var _sala: Node3D
+var _emissioni: Array = []      # [materiale, emissione piena] delle lampade che il blackout spegne
 var _flash_salvate: Array = []   # [luce, visibile, energia] durante il flash
 var _flash_resta := 0.0
 
@@ -115,6 +116,7 @@ func _prepara() -> void:
 		_crea_controluce()
 	if crea_area_bimbi:
 		_crea_area_bimbi()
+	_collega_risveglio()
 
 
 func _crea_area_bimbi() -> void:
@@ -256,6 +258,59 @@ func _crea_area_bimbi() -> void:
 	spot.set_meta("grafica_priorita_ombra", 1)
 	plaf.add_child(spot)
 	spot.position = Vector3(0, 0, -0.25)
+
+
+## Segue GameState.luci (tappa 6): nel BLACKOUT si spengono anche le parti emissive (tubi
+## neon, plafoniere, festone, insegne), che il ripiego LuciRisveglio non tocca perché spegne solo
+## le luci; restano le lampade rosse d'emergenza. Prima del risveglio e nel FLASH sono accese.
+func _collega_risveglio() -> void:
+	var gs := get_node_or_null(^"/root/GameState")
+	if gs == null or not &"luci" in gs:
+		return
+	gs.connect(&"luci_cambiate", _su_luci)
+	if int(gs.get(&"luci")) != 0:
+		_su_luci(gs.get(&"luci"))
+
+
+func _su_luci(fase) -> void:
+	if _emissioni.is_empty():
+		_raccogli_emissioni()
+	var acceso := int(fase) != 2   # 2 = BLACKOUT
+	for e in _emissioni:
+		(e[0] as BaseMaterial3D).emission_energy_multiplier = e[1] if acceso else 0.0
+
+
+func _raccogli_emissioni() -> void:
+	var fatti := {}
+	var meshes: Array[Node] = _sala.find_children("*", "MeshInstance3D", true, false)
+	if _sala != self:
+		meshes.append_array(find_children("*", "MeshInstance3D", true, false))
+	for n in meshes:
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		if mi.material_override is BaseMaterial3D:
+			var m := mi.material_override as BaseMaterial3D
+			if m.emission_enabled and not _emissione_rossa(m):
+				if not fatti.has(m):
+					fatti[m] = m.duplicate()
+					_emissioni.append([fatti[m], m.emission_energy_multiplier])
+				mi.material_override = fatti[m]
+			continue
+		for i in mi.mesh.get_surface_count():
+			var m := mi.get_active_material(i) as BaseMaterial3D
+			if m == null or not m.emission_enabled or _emissione_rossa(m):
+				continue
+			if not fatti.has(m):
+				fatti[m] = m.duplicate()
+				_emissioni.append([fatti[m], m.emission_energy_multiplier])
+			mi.set_surface_override_material(i, fatti[m])
+
+
+## Le lampade d'emergenza (rosse) restano accese nel blackout.
+static func _emissione_rossa(m: BaseMaterial3D) -> bool:
+	var c := m.emission
+	return c.r > 0.6 and c.g < 0.3 and c.b < 0.3
 
 
 ## Per [param durata] secondi si accende tutto (lo chiama LookTecnici nel suo FLASH): tutte le
