@@ -2,14 +2,17 @@ extends Node3D
 ## Demo giocabile della sala principale (vertical slice) sull'architettura vera dell'acquapark.
 ## Si entra dagli spogliatoi, si prende lo zaino-pompa dalla rastrelliera dei bagnini, si
 ## incontra la medusa affacciata alla vasca (la lampada si accende quando ti avvicini).
-## Nell'area bimbi la ruota a pale riempie il secchio gigante. Tappa 5: fai cadere il gonfiabile
-## incastrato nella turbina dello scarico, tieni il getto sulla turbina (ricaricando lo zaino
-## dalla pozza stessa) finché la pozza si svuota, colpisci il pulsante del portello e scendi
-## dalla scala del pozzo. Tappa 6, sotto la sala (ambienti tecnici): la sala pompe e il risveglio
-## (RisveglioSalaPompe); la demo finisce in cima al raccordo verso gli interni.
+## Tappa 5 (PiscinaOnde): svuoti la piscina a onde con lo zaino, aspirando l'acqua della parte
+## profonda e sparandola fuori dalla vasca; a piscina vuota il pulsante della botola si attiva, lo
+## colpisci e scendi dalla scala del pozzo. Tappa 6, sotto la sala (ambienti tecnici): la sala
+## pompe e il risveglio (RisveglioSalaPompe). Poi il ritorno al buio (tappa 7) e lei che sbuca dal
+## bordo (tappa 8); la demo finisce ai piedi della torre degli scivoli.
 
 ## Materiale delle pozzanghere della sala (addon acqua) al posto di M_amb_pozzanghera del GLB.
 @export var puddle_material: Material
+## Il cancello del recinto della spiaggia è aperto fin dall'inizio (gradi intorno a Y, come lo
+## apriva la ruota grande nella v0.3.0).
+@export var cancello_aperto := -95.0
 
 ## La lampada sul palo vicino alla vasca: si accende quando ti avvicini.
 @export var statue_lamp: FlickerLight
@@ -88,6 +91,7 @@ func _ready() -> void:
 
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
+	_tappa5_rifatta()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D
@@ -139,6 +143,20 @@ func _setup_hall() -> void:
 					var m := mi.mesh.surface_get_material(i)
 					if m and m.resource_name == "M_amb_pozzanghera":
 						mi.set_surface_override_material(i, puddle_material)
+
+
+## La tappa 5 rifatta (decisa dall'utente il 15 ottobre): niente ruota a pale né secchio da
+## riempire, niente recinto, niente turbina dello scarico. Finché l'ambiente non manda i modelli
+## nuovi, il cancello del recinto resta spalancato (con la sua collisione) e la turbina dello
+## scarico, che non serve più, non si vede.
+func _tappa5_rifatta() -> void:
+	var cancello := get_node_or_null(^"Sala/Interattivi/sala_cancello_spiaggia") as Node3D
+	if cancello:
+		cancello.basis = Basis(Vector3.UP, deg_to_rad(cancello_aperto)) * cancello.basis
+	for nome in [^"Sala/Interattivi/sala_turbina_scarico", ^"Sala/Interattivi/sala_turbina_carter"]:
+		var n := get_node_or_null(nome) as Node3D
+		if n:
+			n.visible = false
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override
@@ -196,11 +214,6 @@ func _on_player_respawned() -> void:
 	var p := GameState.player
 	if statue_lamp and not statue_lamp.is_on and p and p.global_position.z < lamp_trigger.global_position.z:
 		statue_lamp.turn_on(true)
-	# I salvataggi di prima (v0.2.x) non hanno lo stato del cancello della piscina: dal fondo
-	# della piscina in poi (checkpoint 3) era per forza già aperto.
-	var giochi := get_node_or_null(^"RuotaESecchio")
-	if giochi and int(GameState.snapshot.get("order", -1)) >= 3 and not bool(giochi.get(&"gate_open")):
-		giochi.call(&"load_state", {"gate_open": true})
 
 
 func _on_jingle() -> void:

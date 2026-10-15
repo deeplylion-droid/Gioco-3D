@@ -1,8 +1,10 @@
 extends Node
 ## Test automatico delle tappe 5 e 6 (docs/livello/capitolo1.md), tutto il percorso dalla pozza
 ## della piscina a onde fino al raccordo verso gli interni, simulando gli input:
-## - tappa 5: il gonfiabile cade col getto, la turbina dello scarico svuota la pozza (si ricarica
-##   dalla pozza stessa), il pulsante apre il portello e si scende davvero dalla scala del pozzo;
+## - tappa 5 (rifatta il 15 ottobre): la piscina a onde si svuota con lo zaino, aspirando
+##   l'acqua dal bordo e sparandola fuori dalla vasca (taratura da circa 1 minuto: si contano i
+##   pieni di zaino e il tempo); a piscina vuota il pulsante della botola si attiva, il getto apre
+##   il portello e si scende davvero dalla scala del pozzo;
 ## - camera delle onde e tunnel fino alla sala pompe;
 ## - tappa 6: acqua dalla vasca di raccolta, turbine nell'ordine sbagliato (si ricomincia) e in
 ##   quello dello schema (blu, giallo, rosso), la leva bloccata e poi tirata col getto, il
@@ -60,34 +62,23 @@ func _run() -> void:
 	await _frames(3)
 	check(p.water_pack.equipped, "lo zaino è in spalla")
 
-	print("Tappa 5: la pozza, la turbina dello scarico e il portello")
+	print("Tappa 5: la piscina a onde si svuota con lo zaino")
 	var puddle: WaterTank = level.get_node("Piscina/Pozza")
-	var turbine: Turbine = level.get_node("Piscina/TurbinaScarico")
-	var inflatable: StuckInflatable = level.get_node("Piscina/GonfiabileIncastrato")
+	var svuota: PiscinaOnde = level.get_node("Piscina/SvuotaPiscina")
 	var hatch_button: WaterButton = level.get_node("Piscina/PulsantePortello")
 	var hatch: Node = level.get_node("Piscina/Portello")
-	p.water_pack.set_tank_amount(20.0)
-	p.teleport(Vector3(3.4, -1.95, 1.2), PI, 0.0)
-	await _frames(10)
-	p.look_at_point(turbine.global_position + Vector3(0, 0.3, 0))
+	check(svuota.taratura == PiscinaOnde.Taratura.UN_MINUTO and is_equal_approx(puddle.get_liters(), svuota.litri_da_togliere()),
+		"di serie la taratura da circa 1 minuto (%.0f litri)" % puddle.get_liters())
+	check(not hatch_button.enabled, "finché c'è acqua il pulsante della botola è spento")
+	p.water_pack.set_tank_amount(0.0)
+	var esito: Array = await _svuota_piscina(puddle, Vector3(7.35, 0.0, 2.0), Vector3(6.5, -1.5, 2.0), Vector3(13.0, 0.5, 2.0))
+	print("  (taratura da 1 minuto: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
+	check(puddle.fill <= 0.001, "aspirando dal bordo e sparando fuori la piscina si svuota (fill %.3f)" % puddle.fill)
+	check(int(esito[0]) == svuota.pieni_un_minuto, "servono %d pieni di zaino (%d)" % [svuota.pieni_un_minuto, int(esito[0])])
+	check(float(esito[1]) > 45.0 and float(esito[1]) < 75.0, "circa 1 minuto di lavoro (%.0f s)" % float(esito[1]))
 	await _frames(3)
-	await _hold(&"spray", 60)
-	check(not inflatable.is_stuck(), "il getto fa cadere il gonfiabile dalla turbina")
-	await _frames(40)
-	for round in 14:
-		if puddle.fill <= 0.001:
-			break
-		p.look_at_point(turbine.global_position + Vector3(0.0, 0.3, 0.0))
-		await _hold(&"spray", 150)
-		if puddle.fill > 0.001:
-			p.look_at_point(Vector3(1.2, -2.07, 2.4))
-			await _hold(&"suck", 60)
-	for i in 900:
-		if puddle.fill <= 0.001:
-			break
-		await get_tree().physics_frame
-	check(puddle.fill <= 0.001, "tenendo il getto sulla turbina la pozza si svuota (fill %.3f)" % puddle.fill)
-	check(_checkpoint() == "Piscina/CheckpointPozzaVuota", "checkpoint: pozza vuota (%s)" % _checkpoint())
+	check(hatch_button.enabled and svuota.attivo, "a piscina vuota il pulsante si attiva")
+	check(_checkpoint() == "Piscina/CheckpointPozzaVuota", "checkpoint: piscina vuota (%s)" % _checkpoint())
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	await _frames(10)
@@ -308,6 +299,39 @@ func _run() -> void:
 	check(GameState.luci == GameState.Luci.BLACKOUT, "ripartendo, le luci sono di nuovo al blackout")
 
 	_fine()
+
+
+## Svuota la piscina come farebbe un giocatore dal bordo: si gira verso l'acqua (mezzo secondo),
+## aspira finché lo zaino è pieno, si gira (mezzo secondo) e spara fuori dalla vasca finché lo zaino
+## è vuoto. Ritorna [pieni di zaino, secondi].
+func _svuota_piscina(vasca: WaterTank, dove: Vector3, acqua: Vector3, fuori: Vector3, max_pieni := 40) -> Array:
+	p.teleport(dove, 0.0, 0.0)
+	await _frames(10)
+	var fotogrammi := 0
+	var pieni := 0
+	while vasca.fill > 0.001 and pieni < max_pieni:
+		p.look_at_point(acqua)
+		await _frames(30)
+		fotogrammi += 30
+		Input.action_press(&"suck")
+		var k := 0
+		while p.water_pack.tank_amount < p.water_pack.tank_capacity - 0.01 and vasca.fill > 0.001 and k < 600:
+			await get_tree().physics_frame
+			k += 1
+		Input.action_release(&"suck")
+		fotogrammi += k
+		pieni += 1
+		p.look_at_point(fuori)
+		await _frames(30)
+		fotogrammi += 30
+		Input.action_press(&"spray")
+		k = 0
+		while p.water_pack.tank_amount > 0.01 and k < 900:
+			await get_tree().physics_frame
+			k += 1
+		Input.action_release(&"spray")
+		fotogrammi += k
+	return [pieni, fotogrammi / 60.0]
 
 
 func _physics_process(_delta: float) -> void:

@@ -2,8 +2,8 @@ extends SceneTree
 ## Costruisce res://scenes/sala_principale.tscn, la demo giocabile della sala principale:
 ## l'architettura vera dell'acquapark (i GLB di assets/ambiente/sala, tutti in 0,0,0), la medusa
 ## sul piedistallo, le luci della sala e l'atmosfera (addon grafica), le meccaniche della demo
-## (zaino sulla rastrelliera dei bagnini, pozza, turbina dello scarico, portello, vasche, ruota
-## a pale e secchio gigante) e le 10 Polaroid.
+## (zaino sulla rastrelliera dei bagnini, la piscina a onde da svuotare con lo zaino, il pulsante
+## della botola, vasche) e le 10 Polaroid.
 ## Le coordinate vengono da assets/ambiente/sala/sala_dati.json (vedi INTEGRAZIONE.md).
 ## Uso: godot --headless --path godot --script res://tools/build_sala_principale.gd
 
@@ -14,9 +14,15 @@ const DETTAGLI := "res://assets/ambiente/dettagli/"
 const MAT_DIR := "res://assets/materials/sala/"
 
 const SPAWN := Vector3(0.0, 0.0, 19.2)
-## Pozza torbida sul fondo della piscina a onde: fondo a conca intorno allo scarico.
+## Lo scarico sul fondo della piscina a onde: fondo a conca intorno allo scarico.
 const DRAIN := Vector3(0.0, -2.24, 2.0)
-const PUDDLE_LEVEL := -2.07
+## L'acqua della piscina a onde (tappa 5, deciso dall'utente il 15 ottobre): copre la parte profonda
+## fino a questa quota (0,5 m sopra il fondo piatto, 0,76 sulla conca dello scarico).
+const POOL_LEVEL := -1.5
+## La sua pianta: tutta la larghezza della vasca (x da -7 a 7), dalla parete sud (z 5) a dove la
+## spiaggia esce dall'acqua (z -4 a quota -1,5), con un po' di margine. La superficie è un piano:
+## dove la spiaggia è più alta del pelo la copre la spiaggia, quindi si ritira da sola scendendo.
+const POOL_RECT := Rect2(-7.0, -4.3, 14.0, 9.3)
 ## La vasca sollevata al centro della sala (sala_vasca_centrale.glb, INTEGRAZIONE.md dell'ambiente):
 ## centro, interno del muro (x, z), pelo dell'acqua e cima del bordo.
 const VASCA := Vector3(0.0, 0.0, 10.0)
@@ -59,7 +65,6 @@ func _initialize() -> void:
 		_pack_station()
 	_pool()
 	_pools()
-	_kids_toys()
 	var tecnici := _tecnici()
 	_polaroids(has_interiors or OS.get_environment("SALA_SENZA_ZAINO") == "1", tecnici)
 	_atmosphere()
@@ -112,9 +117,6 @@ func _materials() -> void:
 	rust.uv1_scale = Vector3.ONE * 1.6
 	rust.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	M.metal = _save(rust, "metallo_verniciato")
-	M.red = _std("gonfiabile_rosso", Color(0.78, 0.07, 0.06), 0.22)
-	(M.red as StandardMaterial3D).clearcoat_enabled = true
-	ResourceSaver.save(M.red, M.red.resource_path)
 	M.hatch = _std("portello", Color(0.42, 0.45, 0.43), 0.5, 0.8)
 	var hole := StandardMaterial3D.new()
 	hole.albedo_color = Color.BLACK
@@ -322,40 +324,26 @@ func _pack_station() -> void:
 	spot.shadow_enabled = false
 
 
-# --- Piscina a onde vuota: la pozza, la turbina dello scarico e il portello ----------------------
+# --- Piscina a onde: l'acqua da togliere con lo zaino, il pulsante e la botola --------------------
 
 func _pool() -> void:
 	var pool := group(level, "Piscina")
-	# La pozza torbida: il fondo è a conca intorno allo scarico, quindi il piano dell'acqua
-	# si vede come un cerchio; svuotandola scende sotto il fondo e sparisce.
+	# L'acqua della piscina a onde: il fondo è la conca dello scarico; svuotandola il pelo scende
+	# sotto la spiaggia e poi sotto il fondo piatto, e sparisce nella conca.
 	var puddle: WaterTank = S.tank.instantiate()
 	puddle.name = "Pozza"
 	puddle.build_walls = false
-	puddle.inner_size = Vector3(7.6, 0.3, 7.6)
-	puddle.capacity_liters = 150.0
-	puddle.max_fill = (PUDDLE_LEVEL - (DRAIN.y - 0.02)) / 0.3
-	puddle.fill = puddle.max_fill
-	puddle.drain_time = 24.0
+	var fondo := DRAIN.y - 0.02
+	puddle.inner_size = Vector3(POOL_RECT.size.x, POOL_LEVEL - fondo, POOL_RECT.size.y)
+	# I litri li decide la taratura di SvuotaPiscina (circa 1 o 2 minuti di lavoro).
+	puddle.capacity_liters = 180.0
+	puddle.max_fill = 1.0
+	puddle.fill = 1.0
 	puddle.water_material = M.murky
-	puddle.position = Vector3(DRAIN.x, DRAIN.y - 0.02, DRAIN.z)
+	puddle.position = Vector3(POOL_RECT.get_center().x, fondo, POOL_RECT.get_center().y)
 	own(puddle, pool)
-	# L'acqua vera (addon acqua): superficie torbida con riflessi, gorgo sullo scarico.
+	# L'acqua vera (addon acqua): superficie torbida con riflessi.
 	_water_link(pool, "AcquaPozza", puddle, "res://addons/acqua/presets/stile_2_torbida.tres", false)
-	# Il gorgo sullo scarico lo disegna l'acqua dell'addon (WaterTankLink) quando lo scarico è
-	# aperto: lo scarico è al centro della pozza, quindi drain_offset resta zero.
-	# Turbina dello scarico in alto sulla parete sud (nel modello: qui si fa girare la sua
-	# girante), bloccata da un gonfiabile.
-	var turbine: Turbine = S.turbine.instantiate()
-	turbine.name = "TurbinaScarico"
-	turbine.radius = 0.47
-	turbine.show_model = false
-	turbine.position = Vector3(4.6, -0.62, 4.84)
-	turbine.rotation = Vector3(0, PI, 0)
-	turbine.external_rotor = NodePath("../../Sala/Interattivi/sala_turbina_scarico")
-	own(turbine, pool)
-	var drains: Array[PowerSource] = [turbine]
-	puddle.drain_sources = drains
-	_inflatable(pool, turbine)
 	# Portello della camera delle onde sul fondo, sotto la pozza (cerniera sul lato nord), e il
 	# suo pulsante sulla parete sud. Sotto il portello c'è il pozzo vero (scena degli ambienti
 	# tecnici): il buco nel fondo lo apre il GLB della sala.
@@ -366,7 +354,16 @@ func _pool() -> void:
 	hatch_button.show_model = false
 	hatch_button.position = Vector3(1.9, -1.15, 4.95)
 	hatch_button.rotation = Vector3(0, PI, 0)
+	# Si attiva solo a piscina vuota (lo accende SvuotaPiscina).
+	hatch_button.enabled = false
 	own(hatch_button, pool)
+	# Lo svuotamento con lo zaino: taratura dei litri, l'acqua sparata dentro la vasca che ci
+	# ritorna, il pulsante che si attiva a piscina vuota con il suo segnale provvisorio.
+	var svuota: Node3D = load("res://scripts/game/piscina_onde.gd").new()
+	svuota.name = "SvuotaPiscina"
+	svuota.set(&"vasca", puddle)
+	svuota.set(&"pulsante", hatch_button)
+	own(svuota, pool)
 	var hatch: Node3D = load("res://scripts/mechanisms/hinged_hatch.gd").new()
 	hatch.name = "Portello"
 	hatch.set(&"target_path", NodePath("../../Sala/Interattivi/sala_portello_scarico"))
@@ -378,7 +375,7 @@ func _pool() -> void:
 	hatch.set(&"sources", hatch_sources)
 	own(hatch, pool)
 	level.set(&"hatch", hatch)
-	# Checkpoint di quando la pozza è vuota (un passo dell'enigma): lo raggiunge lo script della
+	# Checkpoint di quando la piscina è vuota (un passo dell'enigma): lo raggiunge lo script della
 	# sala; si riparte sul fondo, davanti al portello.
 	var cp: Area3D = load("res://scripts/game/checkpoint.gd").new()
 	cp.name = "CheckpointPozzaVuota"
@@ -401,45 +398,6 @@ func _pool() -> void:
 		ladder.position = l[1]
 		ladder.rotation = Vector3(0, l[2], 0)
 		own(ladder, pool)
-
-
-func _inflatable(parent: Node, turbine: Turbine) -> void:
-	var body: RigidBody3D = load("res://scripts/mechanisms/stuck_inflatable.gd").new()
-	body.name = "GonfiabileIncastrato"
-	body.mass = 0.6
-	body.collision_layer = Layers.PROPS
-	body.collision_mask = Layers.WORLD | Layers.PLAYER | Layers.PROPS
-	body.position = turbine.position + Vector3(0.1, 0.05, -0.42)
-	body.rotation = Vector3(PI * 0.5, 0, 0.3)
-	body.set(&"jams", turbine)
-	own(body, parent)
-	var cs := CollisionShape3D.new()
-	cs.name = "CollisionShape3D"
-	var shape := CylinderShape3D.new()
-	shape.radius = 0.45
-	shape.height = 0.2
-	cs.shape = shape
-	own(cs, body)
-	var mi := MeshInstance3D.new()
-	mi.name = "Ciambella"
-	var tm := TorusMesh.new()
-	tm.inner_radius = 0.24
-	tm.outer_radius = 0.46
-	tm.rings = 48
-	tm.ring_segments = 24
-	mi.mesh = tm
-	mi.material_override = M.red
-	own(mi, body)
-	var hit := WaterHitbox.new()
-	hit.name = "Bersaglio"
-	own(hit, body)
-	var hs := CollisionShape3D.new()
-	hs.name = "CollisionShape3D"
-	var hshape := CylinderShape3D.new()
-	hshape.radius = 0.5
-	hshape.height = 0.4
-	hs.shape = hshape
-	own(hs, hit)
 
 
 # --- Le altre vasche: si può aspirare anche da lì -----------------------------------------------
@@ -477,19 +435,6 @@ func _water_link(parent: Node, node_name: String, tank: Node3D, style_path: Stri
 	link.set(&"env_box_min", Vector3(-20, -2.5, -24))
 	link.set(&"env_box_max", Vector3(20, 11.5, 20))
 	own(link, parent)
-
-
-# --- Area bimbi: la ruota a pale gira col getto e riempie il secchio gigante, che si ribalta -------
-
-func _kids_toys() -> void:
-	var toy: Node3D = load("res://scripts/mechanisms/bucket_wheel.gd").new()
-	toy.name = "RuotaESecchio"
-	toy.set(&"wheel_path", NodePath("../Sala/AreaBimbi/sala_ruota_pale"))
-	toy.set(&"bucket_path", NodePath("../Sala/AreaBimbi/sala_secchio_gigante"))
-	toy.set(&"gate_wheel_path", NodePath("../Sala/Interattivi/sala_ruota_cancello"))
-	toy.set(&"gate_path", NodePath("../Sala/Interattivi/sala_cancello_spiaggia"))
-	toy.set(&"panel_path", NodePath("../Sala/Interattivi/sala_quadro_elettrico"))
-	own(toy)
 
 
 # --- Tappe 5-6: pozzo, camera delle onde, sala pompe e raccordo (scenes/tecnici/LEGGIMI.md) ------

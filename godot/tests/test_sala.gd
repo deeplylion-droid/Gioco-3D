@@ -1,8 +1,10 @@
 extends Node
 ## Test automatico della demo della sala principale (architettura vera), simulando gli input:
-## zaino sulla rastrelliera, aspirare dalla vasca d'arrivo, lampada della statua, sigla,
-## pozza, gonfiabile, turbina dello scarico, pozza vuota, portello, e il gioco dell'area bimbi
-## (ruota a pale, secchio, cancello). Il pozzo e la sala pompe sono in test_tappe56.gd.
+## zaino sulla rastrelliera, aspirare dalla vasca d'arrivo, lampada della statua, sigla, la
+## piscina a onde da svuotare con lo zaino (tappa 5 decisa dall'utente il 15 ottobre: l'acqua
+## sparata dentro la vasca ci ritorna, la taratura da circa 2 minuti, il pulsante della botola che
+## si attiva a piscina vuota), il portello e il recinto aperto. Il pozzo e la sala pompe sono in
+## test_tappe56.gd (con la taratura da circa 1 minuto).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -32,8 +34,7 @@ func _run() -> void:
 			break
 		await get_tree().process_frame
 	var puddle: WaterTank = level.get_node("Piscina/Pozza")
-	var turbine: Turbine = level.get_node("Piscina/TurbinaScarico")
-	var inflatable: StuckInflatable = level.get_node("Piscina/GonfiabileIncastrato")
+	var svuota: PiscinaOnde = level.get_node("Piscina/SvuotaPiscina")
 	var hatch_button: WaterButton = level.get_node("Piscina/PulsantePortello")
 	var hatch: HingedHatch = level.get_node("Piscina/Portello")
 	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
@@ -146,7 +147,7 @@ func _run() -> void:
 	await _hold(&"spray", 40)
 	check(jingle.powered, "il getto fa partire la sigla dal pulsante del piedistallo")
 
-	print("Aspirare la pozza")
+	print("Aspirare l'acqua della piscina a onde")
 	p.water_pack.set_tank_amount(0.0)
 	p.teleport(Vector3(-2.6, -1.95, -0.6), PI, 0.0)
 	await _frames(10)
@@ -155,38 +156,57 @@ func _run() -> void:
 	var before := puddle.get_liters()
 	await _hold(&"suck", 90)
 	var gained := p.water_pack.tank_amount
-	check(gained > 12.0, "il serbatoio si riempie dalla pozza (%.1f l)" % gained)
-	check(absf((before - puddle.get_liters()) - gained) < 0.05, "il livello della pozza scende davvero")
+	check(gained > 12.0, "il serbatoio si riempie dalla piscina (%.1f l)" % gained)
+	check(absf((before - puddle.get_liters()) - gained) < 0.05, "il livello della piscina scende davvero")
 
-	print("Gonfiabile, turbina e scarico")
+	print("La piscina a onde: si svuota con lo zaino")
+	check(level.get_node_or_null("Piscina/TurbinaScarico") == null and level.get_node_or_null("Piscina/GonfiabileIncastrato") == null,
+		"niente più turbina dello scarico né gonfiabile")
+	var rotore := level.get_node_or_null("Sala/Interattivi/sala_turbina_scarico") as Node3D
+	check(rotore == null or not rotore.visible, "la turbina dello scarico non si vede più")
+	check(puddle.get_surface_global_y() > -1.6 and puddle.inner_size.x >= 13.0,
+		"c'è l'acqua nella parte profonda (pelo a %.2f)" % puddle.get_surface_global_y())
+	check(not hatch_button.enabled and not svuota.attivo, "con l'acqua il pulsante della botola è spento")
+	var segnale := svuota.get_node_or_null("SegnalePulsante") as Light3D
+	check(segnale != null and not segnale.visible, "e la sua luce è spenta")
+	# Il getto sul pulsante con l'acqua ancora dentro non fa niente.
 	p.water_pack.set_tank_amount(20.0)
-	p.teleport(Vector3(3.4, -1.95, 1.2), PI, 0.0)
+	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	await _frames(10)
-	# Il getto scende per la gravità: si punta un po' sopra.
-	p.look_at_point(turbine.global_position + Vector3(0, 0.3, 0))
-	await _frames(3)
-	check(turbine.jammed and inflatable.is_stuck(), "la turbina parte bloccata dal gonfiabile")
-	await _hold(&"spray", 60)
-	check(not inflatable.is_stuck() and not turbine.jammed, "il getto fa cadere il gonfiabile")
-	await _frames(40)
+	p.look_at_point(hatch_button.global_position + Vector3(0, 0.4, 0))
+	await _hold(&"spray", 50)
+	check(not hatch_button.powered, "il getto sul pulsante spento non apre niente")
+	# Dal bordo est della vasca: l'acqua sparata dentro la vasca (sulla spiaggia) ci ritorna.
+	p.teleport(Vector3(7.35, 0.0, 2.0), -PI * 0.5, 0.0)
+	await _frames(10)
+	check(p.is_on_floor() and absf(p.global_position.y) < 0.1, "si sta sul bordo est della piscina (%s)" % p.global_position)
 	p.water_pack.set_tank_amount(20.0)
-	p.look_at_point(turbine.global_position + Vector3(0.0, 0.3, 0.0))
-	await _hold(&"spray", 120)
-	check(turbine.powered, "la turbina gira (energia %.2f)" % turbine.energy)
-	check(puddle.is_draining(), "lo scarico è aperto: la pozza si svuota")
-	# Si alterna: aspira dalla pozza, spruzza sulla turbina, finché la pozza è vuota.
-	for round in 12:
-		if puddle.fill <= 0.001:
-			break
-		p.look_at_point(Vector3(1.2, -2.07, 2.4))
-		await _hold(&"suck", 60)
-		p.look_at_point(turbine.global_position + Vector3(0.0, 0.3, 0.0))
-		await _hold(&"spray", 150)
-	for i in 900:
-		if puddle.fill <= 0.001:
-			break
-		await get_tree().physics_frame
-	check(puddle.fill <= 0.001, "la pozza è vuota (fill %.3f)" % puddle.fill)
+	var prima_spiaggia := puddle.get_liters()
+	p.look_at_point(Vector3(2.0, 1.0, -9.0))
+	await _hold(&"spray", 60)
+	var dove_spiaggia := p.water_pack.hit_point
+	await _frames(40)
+	check(puddle.get_liters() > prima_spiaggia + 4.0, "l'acqua sparata dentro la vasca (in %s) ci ricola (+%.1f l)" % [dove_spiaggia, puddle.get_liters() - prima_spiaggia])
+	var prima_fuori := puddle.get_liters()
+	p.look_at_point(Vector3(13.0, 0.5, 2.0))
+	await _hold(&"spray", 60)
+	var dove_fuori := p.water_pack.hit_point
+	await _frames(40)
+	check(absf(puddle.get_liters() - prima_fuori) < 0.05, "l'acqua sparata fuori dalla vasca (in %s) non torna" % dove_fuori)
+	# La taratura da circa 2 minuti: si riempie e si svuota tutta, come un giocatore.
+	svuota.taratura = PiscinaOnde.Taratura.DUE_MINUTI
+	puddle.fill = 1.0
+	p.water_pack.set_tank_amount(0.0)
+	await _frames(2)
+	check(is_equal_approx(puddle.get_liters(), svuota.litri_da_togliere()), "taratura da 2 minuti: %.0f litri" % puddle.get_liters())
+	var esito: Array = await _svuota_piscina(puddle, Vector3(7.35, 0.0, 2.0), Vector3(6.5, -1.5, 2.0), Vector3(13.0, 0.5, 2.0))
+	print("  (taratura da 2 minuti: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
+	check(puddle.fill <= 0.001, "la piscina si svuota tutta (fill %.3f)" % puddle.fill)
+	check(int(esito[0]) == svuota.pieni_due_minuti, "servono %d pieni di zaino (%d)" % [svuota.pieni_due_minuti, int(esito[0])])
+	check(float(esito[1]) > 100.0 and float(esito[1]) < 140.0, "circa 2 minuti di lavoro (%.0f s)" % float(esito[1]))
+	await _frames(3)
+	check(hatch_button.enabled and svuota.attivo and segnale.visible, "a piscina vuota il pulsante si attiva e la sua luce si accende")
+	check(String(GameState.snapshot.get("checkpoint", "")).ends_with("CheckpointPozzaVuota"), "checkpoint: piscina vuota")
 
 	print("Portello")
 	p.water_pack.set_tank_amount(20.0)
@@ -206,27 +226,15 @@ func _run() -> void:
 	# Sotto c'è il pozzo della camera delle onde (tappe 5-6, test_tappe56.gd): la demo va avanti.
 	check(not bool(level.get(&"demo_finished")), "la demo non finisce al portello: sotto c'è il pozzo")
 
-	print("Area bimbi: ruota a pale, secchio e cancello")
-	var toy: BucketWheel = level.get_node("RuotaESecchio")
-	var wheel: Node3D = level.get_node("Sala/AreaBimbi/sala_ruota_pale")
-	p.teleport(Vector3(-17.4, 0, -10.8), PI, 0.0)
-	await _frames(10)
-	var tipped := [false]
-	toy.bucket_tipped.connect(func(): tipped[0] = true)
-	for round in 10:
-		if tipped[0]:
-			break
-		p.water_pack.set_tank_amount(20.0)
-		p.look_at_point(wheel.global_position + Vector3(0, 0.45, 0))
-		await _hold(&"spray", 150)
-	check(toy.angular_speed > 0.5 or tipped[0], "il getto fa girare la ruota a pale")
-	check(tipped[0], "il secchio si riempie e si ribalta")
-	for i in 600:
-		if toy.gate_open:
-			break
-		await get_tree().physics_frame
-	check(toy.gate_open, "l'ondata apre il cancello della piscina")
-	check(bool(toy.save_state().get("gate_open", false)), "e resta aperto ai checkpoint (si salva)")
+	print("Area bimbi e recinto (tappa 5 rifatta)")
+	check(level.get_node_or_null("RuotaESecchio") == null, "il secchio gigante è solo scenografia: niente ruota a pale da far girare")
+	var cancello := level.get_node_or_null("Sala/Interattivi/sala_cancello_spiaggia") as Node3D
+	if cancello:
+		var space2 := p.get_world_3d().direct_space_state
+		var varco := PhysicsRayQueryParameters3D.create(Vector3(-0.6, 1.0, -15.0), Vector3(-0.6, 1.0, -12.0))
+		varco.exclude = [p.get_rid()]
+		var colpo := space2.intersect_ray(varco)
+		check(colpo.is_empty(), "il cancello del recinto è aperto: si passa (%s)" % (str(colpo.get("collider")) if not colpo.is_empty() else "libero"))
 
 	if interni:
 		print("Dagli spogliatoi alla sala")
@@ -300,3 +308,36 @@ func _hold(action: StringName, frames: int) -> void:
 	Input.action_press(action)
 	await _frames(frames)
 	Input.action_release(action)
+
+
+## Svuota la piscina come farebbe un giocatore dal bordo: si gira verso l'acqua (mezzo secondo),
+## aspira finché lo zaino è pieno, si gira (mezzo secondo) e spara fuori dalla vasca finché lo zaino
+## è vuoto. Ritorna [pieni di zaino, secondi].
+func _svuota_piscina(vasca: WaterTank, dove: Vector3, acqua: Vector3, fuori: Vector3, max_pieni := 40) -> Array:
+	p.teleport(dove, 0.0, 0.0)
+	await _frames(10)
+	var fotogrammi := 0
+	var pieni := 0
+	while vasca.fill > 0.001 and pieni < max_pieni:
+		p.look_at_point(acqua)
+		await _frames(30)
+		fotogrammi += 30
+		Input.action_press(&"suck")
+		var k := 0
+		while p.water_pack.tank_amount < p.water_pack.tank_capacity - 0.01 and vasca.fill > 0.001 and k < 600:
+			await get_tree().physics_frame
+			k += 1
+		Input.action_release(&"suck")
+		fotogrammi += k
+		pieni += 1
+		p.look_at_point(fuori)
+		await _frames(30)
+		fotogrammi += 30
+		Input.action_press(&"spray")
+		k = 0
+		while p.water_pack.tank_amount > 0.01 and k < 900:
+			await get_tree().physics_frame
+			k += 1
+		Input.action_release(&"spray")
+		fotogrammi += k
+	return [pieni, fotogrammi / 60.0]

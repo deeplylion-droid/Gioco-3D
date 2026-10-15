@@ -9,8 +9,8 @@ extends Node
 ## 3. Quando l'hai vista bene (nell'inquadratura, vicino al centro, senza niente in mezzo, per due
 ##    secondi di fila) ti fissa ancora un po', poi scivola sotto e la sua luce si allontana lungo il
 ##    condotto.
-## 4. Poi la strada verso la torre: lungo il muro nord, dal cancello del recinto (aperto nella
-##    tappa 4) giù nella spiaggia della piscina vuota, lungo la spiaggia e fuori dal lato est, ai
+## 4. Poi la strada verso la torre: lungo il muro nord, dal cancello del recinto (aperto fin
+##    dall'inizio, finché l'ambiente non toglie il recinto) giù nella spiaggia della piscina vuota, lungo la spiaggia e fuori dal lato est, ai
 ##    piedi della torre, con i checkpoint.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
 ## è spenta: il test la accende sulla fossa provvisoria e spegne la fine della demo sulla scia.
@@ -42,15 +42,11 @@ func _run() -> void:
 	print("  (fossa dell'ambiente: %s)" % ("sì" if fossa_vera else "non ancora, uso quella provvisoria"))
 	check(not lei.medusa.visible, "prima non si vede")
 
-	print("Un salvataggio di prima, senza lo stato del cancello, oltre il fondo della piscina")
-	var giochi := level.get_node("RuotaESecchio")
-	check(not bool(giochi.get(&"gate_open")), "in una partita nuova il cancello della piscina è chiuso")
-	GameState.capture_snapshot("Gioco/CheckpointFondo", 3, Transform3D(Basis(), Vector3(0.0, -0.6, -1.0)))
-	(GameState.snapshot["objects"] as Dictionary).erase(GameState.persist_key(giochi))
-	GameState._restore_pending = true
-	GameState._on_level_ready()
-	await _frames(2)
-	check(bool(giochi.get(&"gate_open")), "ripartendo da lì il cancello è aperto")
+	print("Il recinto della piscina è aperto (tappa 5 rifatta, niente ruota né secchio)")
+	check(level.get_node_or_null("RuotaESecchio") == null, "niente più ruota a pale e secchio da riempire")
+	var cancello := level.get_node_or_null(^"Sala/Interattivi/sala_cancello_spiaggia") as Node3D
+	if cancello:
+		check(absf(cancello.basis.get_euler().y) > deg_to_rad(80.0), "il cancello del recinto è spalancato fin dall'inizio")
 
 	print("Prima del risveglio non succede niente")
 	_prepara()
@@ -223,10 +219,6 @@ func _aspetta_livello() -> void:
 
 
 func _prepara() -> void:
-	# La tappa 4 è già fatta: il cancello del recinto della piscina è aperto.
-	var giochi := level.get_node_or_null(^"RuotaESecchio")
-	if giochi:
-		giochi.call(&"load_state", {"gate_open": true})
 	if lei and not lei.abilitata:
 		lei.abilitata = true
 		var fine := level.get(&"fine_demo_trigger") as Area3D

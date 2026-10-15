@@ -13,6 +13,8 @@ extends Node
 ## (VmHWM di /proc/self/status).
 ## Se la memoria non basta: SCATTI_TOGLI="Sala/Dettagli,Statua/Medusa" (percorsi di nodi della scena,
 ## separati da virgole) toglie anche quei nodi prima del primo frame. Va usato uguale nei prima e nei dopo.
+## SCATTI_PISCINA=<0..1>: quanta acqua c'è nella piscina a onde (tappa 5; 1 = piena, 0 = vuota, con il
+## pulsante della botola acceso).
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -29,6 +31,8 @@ const SCATTI := {
 ## Camere in più, solo se chiamate per nome (non sono nei confronti prima/dopo).
 const EXTRA := {
 	"g_fossa_bimbi": [Vector3(-16.2, 0.0, -5.6), Vector3(-13.6, -1.0, -7.3)],  # tappa 8: la fossa della VascaBimbi1 da dove arriva il giocatore
+	"h_piscina_bordo": [Vector3(7.35, 0.0, 2.0), Vector3(2.0, -1.8, 2.6)],     # tappa 5: dal bordo est, dove si aspira l'acqua della piscina
+	"i_pulsante_botola": [Vector3(-1.2, -2.0, -0.6), Vector3(1.9, -1.35, 4.95)],  # tappa 5: il pulsante della botola sulla parete sud, dal fondo
 }
 
 var out_dir := "user://scatti_sala"
@@ -100,6 +104,10 @@ func _run() -> void:
 	if lamp and lamp.has_method("turn_on"):
 		lamp.turn_on()
 	p.stand_eye_height = 1.7
+	var piscina := OS.get_environment("SCATTI_PISCINA")
+	var vasca := level.get_node_or_null(^"Piscina/Pozza") as WaterTank
+	if piscina != "" and vasca:
+		vasca.fill = clampf(float(piscina), 0.0, 1.0)
 	var camere := SCATTI.duplicate()
 	for nome in EXTRA:
 		if only.has(nome):
