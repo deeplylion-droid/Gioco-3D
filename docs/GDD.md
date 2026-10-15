@@ -50,6 +50,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 ## Qualità grafica: prima di tutto (deciso dall'utente, 15 ottobre, dopo aver giocato la v0.2.0)
 
 - **Non si fanno altri ambienti finché la qualità non è quella giusta.** Si lavora su un pezzo campione (corridoio del risveglio, zona davanti allo stanzino dei bagnini con il tornello) finché l'utente non lo approva; poi si porta tutto allo stesso livello.
+- **Pezzo campione approvato dall'utente (15 ottobre)**: il "dopo" del confronto (modelli Meshy di ambienti-1 più la luce nuova di grafica, `docs/report/render_grafica/campione/combinato_*.jpg`). "Belle le luci e anche le grafiche". Lo giudicherà meglio in gioco. Questo è il livello minimo per tutto il resto: ora si porta la sala principale allo stesso livello, poi si va avanti con gli ambienti nuovi.
 - Bocciato nella v0.2.0: forme troppo squadrate, texture che si ripetono troppo (soprattutto nel corridoio), tornello in bassissima definizione. I modelli devono essere di qualità vera: per oggetti e arredi si usa Meshy ad alta risoluzione, come deciso all'inizio.
 - Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
 - La luce della torcia è troppo forte e brutta: va studiata diversamente.
@@ -122,7 +123,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 
 - La statua che poi si anima è "troppo Poppy Playtime". **La statua si tiene per più avanti** (modello e monumento restano negli asset).
 - Al suo posto, al centro della sala, c'è la **vasca sollevata** del concept `docs/concept/medusa_sbircia.jpg`: bordo piastrellato rialzato, acqua quasi al bordo. Dentro c'è **la medusa vera, affacciata e immobile**: mani sul bordo, campana in acqua, tentacoli che ricadono fuori, l'occhio che guarda chi entra.
-- **Poi sparisce.** Proposta: quando il giocatore torna nella sala dopo la sala pompe, con la stessa inquadratura, la vasca è vuota e l'acqua si muove ancora (da confermare con l'utente).
+- **Poi sparisce**, nel punto della scaletta approvata in cui il piedistallo restava vuoto (tappa 7, ritorno al buio dopo la sala pompe). Con la stessa inquadratura, la vasca è vuota, l'acqua si muove ancora e una scia di gocce scende dal bordo e si allontana nel buio, verso l'area bimbi.
 - Vale la regola sulla qualità: vasca e posa della medusa devono essere al livello del pezzo campione.
 
 ### La statua: il simbolo del gioco (deciso dall'utente, 15 ottobre)
