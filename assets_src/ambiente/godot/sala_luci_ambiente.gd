@@ -57,6 +57,12 @@ func _regola(n: Node) -> void:
 			s.spot_angle = 15.0
 			s.spot_angle_attenuation = 0.7
 			s.shadow_enabled = true
+		elif s.name.begins_with("luce_cartellone"):
+			# faretti caldi dei teli con la mascotte
+			s.light_energy = 2.5
+			s.spot_range = 6.0
+			s.spot_angle = 30.0
+			s.shadow_enabled = false
 		elif s.name.begins_with("luce_monumento_basso"):
 			# faretti incassati nel gradino: la statua dal basso
 			s.light_energy = energia_faretti_bassi
