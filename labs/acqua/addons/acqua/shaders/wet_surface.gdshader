@@ -119,10 +119,11 @@ void fragment() {
 		wet = 1.0;
 		puddle = 0.0;
 	}
-	// i materiali porosi si scuriscono di piu'
+	// i materiali porosi si scuriscono di piu'; anche le piastrelle lucide, bagnate, si scuriscono
+	// un po' (velo d'acqua) e diventano molto piu' lucide
 	float porosity = clamp(rough * 1.2, 0.2, 1.0);
-	albedo *= 1.0 - wet * wet_darkening * porosity;
-	rough = mix(rough, mix(0.1, 0.25, rough), wet);
+	albedo *= 1.0 - wet * wet_darkening * mix(0.5, 1.0, porosity);
+	rough = mix(rough, mix(0.06, 0.2, rough), wet);
 	// bordo dell'acqua: velo d'acqua appena sopra il pelo, piu' scuro e lucido (si legge la riva)
 	if (wb.found && !submerged && shoreline_height > 0.0) {
 		float film = 1.0 - smoothstep(0.0, shoreline_height, wp.y - wb.level);

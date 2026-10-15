@@ -47,8 +47,11 @@ func _ready() -> void:
 	# superfici bagnabili: pavimento con pozzanghere, vasche con caustiche
 	var c1 := WetSurfaceConverter.new()
 	c1.name_filter = PackedStringArray(["M_amb_pavimento", "M_amb_zoccolo"])
-	c1.puddle_amount = 0.35
-	c1.base_wetness = 0.3
+	# valori consigliati dalla revisione di qualita' (README dell'addon)
+	c1.puddle_amount = 0.6
+	c1.puddle_scale = 0.18
+	c1.base_wetness = 0.65
+	c1.wet_darkening = 0.5
 	c1.convert_on_ready = false
 	add_child(c1)
 	c1.convert_root(sala)
@@ -134,6 +137,13 @@ func _material_samples() -> void:
 		mi.material_override = load(mats[i])
 		mi.position = Vector3(10.8 + i * 1.2, 0.012, 9.2)
 		add_child(mi)
+	# pozzanghere generate (WaterPuddle), appoggiate sul pavimento
+	for k in 2:
+		var pd = load("res://addons/acqua/scripts/water_puddle.gd").new()   # (classe nuova: niente cache)
+		pd.size = Vector2(2.2, 1.4) if k == 0 else Vector2(1.4, 1.0)
+		pd.shape_seed = 3 + k
+		pd.position = Vector3(10.6 + k * 2.6, 0.3, 10.9)
+		add_child(pd)
 
 
 ## Costo dell'acqua: stessa inquadratura senza acqua e con le tre qualita'.
