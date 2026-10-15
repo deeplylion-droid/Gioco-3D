@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetto_sottacqua.tscn" id="12_under"]
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetti_zaino.tscn" id="13_fx"]
 
-[sub_resource type="CapsuleShape3D" id="body_shape"]
+[sub_resource type="CylinderShape3D" id="body_shape"]
 resource_local_to_scene = true
 radius = 0.35
 height = 1.75

@@ -1,7 +1,9 @@
 extends Node
 ## Test dell'audio: autoload "Audio", bus ed effetti, stream del catalogo (si caricano, i loop
 ## si ripetono), volumi salvati in settings.cfg, collegamenti automatici con la sala principale
-## (segnali e suoni che partono davvero), scheda nel menu delle opzioni, morte e ripartenza.
+## (segnali e suoni che partono davvero), monitor e paratie delle tappe 5-6, la fossa e il morso
+## della tappa 8, i nomi dei suoni chiesti dagli script, scheda nel menu delle opzioni, morte e
+## ripartenza.
 ## Alla fine controlla che l'audio non abbia prodotto errori (un Logger li raccoglie tutti).
 ## In headless il driver audio è "Dummy": i player suonano senza uscire dalle casse.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
@@ -247,6 +249,94 @@ func _run() -> void:
 	effetto.entered_water.emit()
 	check(_conta(&"tuffo") > tuffi, "entrando in acqua: il tuffo")
 
+	print("Sala pompe e camera delle onde (tappe 5-6)")
+	var tecnici := [&"pompe_ruggito_loop", &"pompa_avvio", &"corrente_salta", &"crt_neve_loop",
+		&"plastica_piega_lontano", &"tonfo_acqua_lontano", &"paratia_scende_loop", &"maniglione_bloccato",
+		&"porta_ponte_apre"]
+	check(tecnici.all(func(n): return audio.call(&"stream_di", n) != null), "ci sono i 9 suoni delle tappe 5-6")
+	var monitor: Node = _primo("MonitorCrt")
+	var paratie := level.find_children("*", "Paratia", true, false)
+	check(monitor != null and int(c.get("MonitorCrt", 0)) >= 1, "collegato: MonitorCrt")
+	check(paratie.size() >= 2 and int(c.get("Paratia", 0)) >= paratie.size(),
+		"collegate le paratie (%d)" % int(c.get("Paratia", 0)))
+	if monitor:
+		var neve := _loop_su(monitor.get_node_or_null(monitor.get(&"schermo_path")), &"crt_neve_loop")
+		check(neve != null and not neve.is_suonando(), "prima del blackout il monitor non fruscia")
+		monitor.call(&"mostra_neve")
+		await _frames(20)
+		check(neve != null and neve.is_suonando(), "con la neve il monitor fruscia")
+	if not paratie.is_empty():
+		var par: Node = paratie[0]
+		var catena := _loop_su(par.get_node_or_null(par.get(&"pannello_path")), &"paratia_scende_loop")
+		check(catena != null and not catena.is_suonando(), "la paratia alzata tace")
+		var tonfi := _conta(&"porta_chiusa")
+		par.call(&"chiudi")
+		await _frames(30)
+		check(catena != null and catena.is_suonando(), "la paratia scende con motore e catene")
+		for i in 600:
+			if bool(par.get(&"is_chiusa")):
+				break
+			await get_tree().physics_frame
+		await _frames(60)
+		check(_conta(&"porta_chiusa") > tonfi, "in fondo la paratia sbatte")
+		check(catena != null and not catena.is_suonando(), "chiusa, la paratia tace")
+	# Come li chiamerà il risveglio: tre motori sulle pompe e i suoni lontani in 3D.
+	var pompe := level.find_children("*", "Pompa", true, false)
+	if not pompe.is_empty():
+		var motore: AudioLoop = audio.call(&"crea_loop", &"pompe_ruggito_loop", pompe[0])
+		motore.volume = 1.0
+		await _frames(10)
+		check(motore.is_suonando() and (motore.player.stream as AudioStreamOggVorbis).loop,
+			"il ruggito delle pompe gira in loop")
+		motore.volume = 0.0
+		var lontano: Node = audio.call(&"suona", &"plastica_piega_lontano", Vector3(0, 0.6, 10))
+		check(lontano is AudioStreamPlayer3D and (lontano as AudioStreamPlayer3D).unit_size >= 30.0,
+			"la plastica lontana arriva dalla vasca e si sente anche dalla sala pompe")
+		lontano.call(&"stop")
+
+	print("Area bimbi: lei (tappa 8)")
+	var suoni_lei := [&"fossa_ribolle_loop", &"lei_sbuca", &"lei_scivola_sotto", &"morso"]
+	check(suoni_lei.all(func(n): return audio.call(&"stream_di", n) != null), "ci sono i 4 suoni della tappa 8")
+	var lei: Node = _primo("LeiSbuca")
+	check(lei != null and int(c.get("LeiSbuca", 0)) >= 1, "collegato: LeiSbuca")
+	if lei:
+		var punto: Node = lei.get(&"punto_sbuca")
+		var fossa: AudioLoop = null
+		if punto:
+			for h in punto.get_children():
+				fossa = _loop_su(h, &"fossa_ribolle_loop") if fossa == null else fossa
+		var vasca_bimbi: Node = (lei.get(&"vasche") as Array)[0] if not (lei.get(&"vasche") as Array).is_empty() else null
+		check(fossa != null and fossa.volume == 0.0, "la fossa tace finché l'acqua non risale")
+		if fossa and vasca_bimbi:
+			# Come fa la scena al buio: l'acqua risale nelle vasche basse (qui a mano, luci di prima).
+			var era: bool = lei.get(&"abilitata")
+			var fill0 := float(vasca_bimbi.get(&"fill"))
+			lei.set(&"abilitata", true)
+			for i in 30:
+				vasca_bimbi.set(&"fill", fill0 + 0.002 * (i + 1))
+				await get_tree().process_frame
+			check(fossa.volume > 0.5 and fossa.is_suonando(), "mentre l'acqua risale la fossa ribolle")
+			await _frames(40)
+			check(fossa.volume == 0.0, "quando smette di salire, la fossa si calma")
+			vasca_bimbi.set(&"fill", fill0)
+			lei.set(&"abilitata", era)
+	# Quando ti prende lei: il morso subito, lo stinger quando la fauce si chiude (lampo rosso).
+	var morsi := _conta(&"morso")
+	var stinger := _conta(&"stinger_morte")
+	audio.call(&"_su_morte", &"medusa")
+	await _frames(5)
+	check(_conta(&"morso") == morsi + 1 and _conta(&"stinger_morte") == stinger,
+		"ti prende lei: il morso parte subito, lo stinger aspetta")
+	var colpo: float = (audio.get_script() as Script).get_script_constant_map().get("MORSO_COLPO", 1.0)
+	await _frames(int(colpo * 60.0) + 5)
+	check(_conta(&"stinger_morte") == stinger + 1, "lo stinger arriva quando la fauce si chiude")
+	audio.call(&"_su_ripartenza")
+	(audio.get(&"_stinger") as AudioStreamPlayer).stop()
+
+	print("Nomi dei suoni negli script del gioco")
+	var mancanti := _suoni_mancanti("res://scripts") + _suoni_mancanti("res://addons/audio")
+	check(mancanti.is_empty(), "tutti i suoni chiesti dagli script esistono %s" % str(mancanti))
+
 	print("Menu delle opzioni")
 	var menu: CanvasLayer = load("res://addons/grafica/menu_opzioni.tscn").instantiate()
 	get_tree().root.add_child(menu)
@@ -313,6 +403,54 @@ func _zaino() -> Object:
 	for a in audio.get(&"_attivi"):
 		if a.get(&"pack") == p.water_pack:
 			return a
+	return null
+
+
+## I nomi di suono scritti negli script (suona, crea_loop, ...) che non sono nel catalogo.
+func _suoni_mancanti(cartella: String) -> Array:
+	var modi := [
+		# suona(&"x"), _suona(&"x"), a.crea_loop(&"x", ...)
+		RegEx.create_from_string("(?:^|[^a-z0-9_])_?(?:suona|crea_loop|crea_loop_2d)\\(\\s*&\"([a-z0-9_]+)\""),
+		# audio.call(&"suona", &"x", ...)
+		RegEx.create_from_string("call\\(\\s*&\"(?:suona|crea_loop|crea_loop_2d)\"\\s*,\\s*&\"([a-z0-9_]+)\""),
+		# suona_limitato(chiave, intervallo, &"x", ...)
+		RegEx.create_from_string("suona_limitato\\([^,]*,[^,]*,\\s*&\"([a-z0-9_]+)\""),
+	]
+	var mancanti := []
+	for f in _file_gd(cartella):
+		for riga in FileAccess.get_file_as_string(f).split("\n"):
+			for re in modi:
+				for m in (re as RegEx).search_all(riga):
+					var nome := m.get_string(1)
+					if not Catalogo.SUONI.has(StringName(nome)):
+						mancanti.append("%s: %s" % [f.get_file(), nome])
+	return mancanti
+
+
+func _file_gd(cartella: String) -> Array:
+	var out := []
+	for f in DirAccess.get_files_at(cartella):
+		if f.ends_with(".gd"):
+			out.append(cartella.path_join(f))
+	for d in DirAccess.get_directories_at(cartella):
+		out.append_array(_file_gd(cartella.path_join(d)))
+	return out
+
+
+## Il primo nodo della sala con questa classe (class_name), o null.
+func _primo(classe: String) -> Node:
+	var trovati := level.find_children("*", classe, true, false)
+	return trovati[0] if not trovati.is_empty() else null
+
+
+## Il loop dell'audio con questo suono tra i figli di [param n], o null.
+func _loop_su(n: Node, nome: StringName) -> AudioLoop:
+	if n == null:
+		return null
+	var s: AudioStream = audio.call(&"stream_di", nome)
+	for l in n.find_children("*", "AudioLoop", false, false):
+		if (l as AudioLoop).player and (l as AudioLoop).player.stream == s:
+			return l
 	return null
 
 

@@ -123,9 +123,10 @@ def togli_moncherini(ob):
             f.material_index = idx_c
             f.smooth = True
             if uv:
-                f.loops[0][uv].uv = uvs[(i + 1) % len(anello)]
-                f.loops[1][uv].uv = uvs[i]
-                f.loops[2][uv].uv = uv_c
+                # toppa nascosta sotto la campana: UV ridotte a un punto (i vertici dell'anello possono stare in
+                # isole diverse dell'atlante: un triangolo UV enorme sporcherebbe le texture cotte)
+                for lp in f.loops:
+                    lp[uv].uv = uvs[0]
             nuove.append(f)
     bmesh.ops.recalc_face_normals(bm, faces=nuove)
     # normali delle toppe verso il basso (fuori dalla campana)
@@ -820,9 +821,11 @@ def texture_tentacoli(lato=2048):
 
 
 def materiale_tentacoli_statua(nome='M_tentacoli'):
-    """Carne traslucida e laccata: texture (colore, emissione, normal), subsurface, coat."""
+    """Carne traslucida e laccata: texture (colore, emissione, normal), subsurface, coat.
+    Lucido morbido: con luci grandi (studio) una superficie piu' liscia e increspata rompeva il riflesso in chiazze
+    bianche; cosi' i nastri restano uniformi e il riflesso e' rosato."""
     texture_tentacoli()
-    m = materiale_pbr(nome, base=TEX_TENT_BASE, normal=TEX_TENT_NORMAL, roughness=0.26, normal_strength=0.8)
+    m = materiale_pbr(nome, base=TEX_TENT_BASE, normal=TEX_TENT_NORMAL, roughness=0.38, normal_strength=0.5)
     nt = m.node_tree
     b = nt.nodes['BSDF']
     te = nodo(nt, 'ShaderNodeTexImage', (-400, -650))
@@ -833,8 +836,9 @@ def materiale_tentacoli_statua(nome='M_tentacoli'):
     b.inputs['Subsurface Weight'].default_value = 0.45
     b.inputs['Subsurface Radius'].default_value = (1.0, 0.12, 0.55)
     b.inputs['Subsurface Scale'].default_value = 0.035
-    b.inputs['Coat Weight'].default_value = 0.35
-    b.inputs['Coat Roughness'].default_value = 0.06
+    b.inputs['Coat Weight'].default_value = 0.2
+    b.inputs['Coat Roughness'].default_value = 0.15
+    b.inputs['Specular Tint'].default_value = (1.0, 0.6, 0.8, 1.0)
     b.inputs['Transmission Weight'].default_value = 0.05
     b.inputs['IOR'].default_value = 1.4
     return m

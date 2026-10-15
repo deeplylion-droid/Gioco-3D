@@ -17,6 +17,9 @@ signal applicate
 
 const PERCORSO := "user://settings.cfg"
 const SEZIONE := "grafica"
+## Sale quando cambiano i valori di serie che vanno imposti anche a chi ha già salvato.
+## 2: glow e grana spenti di serie (riscontro dell'utente sulla v0.2.1).
+const VERSIONE := 2
 const POST_SHADER := preload("res://grafica/post_processing.gdshader")
 
 const RISOLUZIONI: Array[Vector2i] = [
@@ -52,7 +55,7 @@ const PREDEFINITI := {
 	"contrasto": 1.0,
 	"saturazione": 1.0,
 	"color_grading": 1,         # indice in GRADING
-	"glow": true,
+	"glow": false,              # di serie spento (v0.2.1: l'utente preferisce senza); dal menu si riaccende
 	"grana": false,             # di serie spenta: sporcava l'immagine (revisione dell'utente)
 	"vignetta": true,
 	"aberrazione": false,
@@ -182,6 +185,10 @@ func carica() -> void:
 		var v: Variant = cfg.get_value(SEZIONE, k, PREDEFINITI[k])
 		if typeof(v) == typeof(PREDEFINITI[k]) or (typeof(v) in [TYPE_INT, TYPE_FLOAT] and typeof(PREDEFINITI[k]) in [TYPE_INT, TYPE_FLOAT]):
 			valori[k] = v
+	# Impostazioni salvate da una versione vecchia: glow e grana tornano ai nuovi valori di serie.
+	if int(cfg.get_value(SEZIONE, "versione", 1)) < 2:
+		valori["glow"] = false
+		valori["grana"] = false
 
 
 func salva() -> void:
@@ -192,6 +199,7 @@ func salva() -> void:
 	cfg.load(PERCORSO)  # mantiene le altre sezioni (audio, comandi...)
 	for k in valori:
 		cfg.set_value(SEZIONE, k, valori[k])
+	cfg.set_value(SEZIONE, "versione", VERSIONE)
 	cfg.save(PERCORSO)
 
 
@@ -316,6 +324,11 @@ func _trova_environment() -> Environment:
 func _base(env: Environment) -> Dictionary:
 	if env != _env:
 		_env = env
+		# I valori originali si leggono una volta sola per Environment: se si torna in una
+		# stanza già vista, il suo glow è già spento dall'impostazione e non va preso come base.
+		if env.has_meta(&"grafica_base"):
+			_env_base = env.get_meta(&"grafica_base")
+			return _env_base
 		_env_base = {
 			"fog_enabled": env.fog_enabled, "fog_density": env.fog_density,
 			"volumetric_fog_enabled": env.volumetric_fog_enabled,
@@ -324,6 +337,7 @@ func _base(env: Environment) -> Dictionary:
 			"ssr_enabled": env.ssr_enabled, "ssao_enabled": env.ssao_enabled,
 			"ssil_enabled": env.ssil_enabled,
 		}
+		env.set_meta(&"grafica_base", _env_base)
 	return _env_base
 
 

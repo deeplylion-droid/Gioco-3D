@@ -16776,8 +16776,8 @@
    "gruppo": "mucchio_282",
    "posizione": [
     -12.06,
-    0.001,
-    -5.688
+    0.0,
+    -4.9
    ],
    "rotazione_y_gradi": -87.9,
    "basis": [
@@ -17152,9 +17152,9 @@
    "zona": "sala",
    "gruppo": "mucchio_290",
    "posizione": [
-    -13.052,
-    0.001,
-    -7.118
+    -13.05,
+    0.0,
+    -5.15
    ],
    "rotazione_y_gradi": 13.0,
    "basis": [
@@ -17733,8 +17733,8 @@
    "gruppo": "mucchio_308",
    "posizione": [
     -13.63,
-    0.001,
-    -7.003
+    0.0,
+    -4.75
    ],
    "rotazione_y_gradi": 36.3,
    "basis": [
@@ -17761,9 +17761,9 @@
    "zona": "sala",
    "gruppo": "mucchio_308",
    "posizione": [
-    -14.817,
-    0.001,
-    -6.469
+    -14.4,
+    0.0,
+    -5.0
    ],
    "rotazione_y_gradi": 33.4,
    "basis": [
@@ -17790,9 +17790,9 @@
    "zona": "sala",
    "gruppo": "mucchio_308",
    "posizione": [
-    -13.421,
-    0.001,
-    -5.845
+    -13.42,
+    0.0,
+    -5.35
    ],
    "rotazione_y_gradi": 42.6,
    "basis": [
@@ -21908,9 +21908,9 @@
    "zona": "fondo piscina",
    "gruppo": "fondo_piscina_413",
    "posizione": [
-    0.436,
-    -2.199,
-    2.307
+    -1.9,
+    -2.149,
+    2.2
    ],
    "rotazione_y_gradi": -98.9,
    "basis": [

@@ -8,12 +8,28 @@ from mathutils import Vector, Matrix, Euler
 import ambienti1_lib as L
 
 HQ = os.path.join(L.AI, 'meshy_hq')
+# cartelle dove cercare i GLB (interni e ambienti tecnici)
+CARTELLE = [HQ, os.path.join(L.ROOT, 'assets_src', 'ambienti_tecnici', 'meshy_hq')]
+# funzione che mette un oggetto nuovo nella collezione giusta (gli script dei tecnici la cambiano)
+LINK = [None]
+
+
+def _percorso(file):
+    for d in CARTELLE:
+        p = os.path.join(d, file + '.glb')
+        if os.path.exists(p):
+            return p
+    return os.path.join(HQ, file + '.glb')
+
+
+def _metti_in_scena(ob):
+    return (LINK[0] or L._link)(ob)
 _base = {}   # nome file -> oggetto sorgente (nascosto, non esportato)
 _dim = {}    # nome file -> dimensioni originali
 
 
 def disponibile(file):
-    return os.path.exists(os.path.join(HQ, file + '.glb'))
+    return os.path.exists(_percorso(file))
 
 
 def _carica(file, tex=2048):
@@ -22,7 +38,7 @@ def _carica(file, tex=2048):
     if file in _base:
         return _base[file]
     prima = set(bpy.data.objects)
-    bpy.ops.import_scene.gltf(filepath=os.path.join(HQ, file + '.glb'))
+    bpy.ops.import_scene.gltf(filepath=_percorso(file))
     nuovi = [o for o in bpy.data.objects if o not in prima]
     ms = [o for o in nuovi if o.type == 'MESH']
     for o in ms:
@@ -71,7 +87,7 @@ def metti(nome, file, loc, dim, rot_z=0.0, perno=None, rot=(0, 0, 0), parte=None
     su = dim[2] / d.z if dim[2] else dim[0] / d.x
     s = [dim[i] / d[i] if dim[i] else su for i in range(3)]
     ob = bpy.data.objects.new(nome, src.data)
-    L._link(ob)
+    _metti_in_scena(ob)
     S = Matrix.Diagonal((s[0], s[1], s[2], 1.0))
     off = Matrix.Translation(-Vector(perno)) if perno else Matrix.Identity(4)
     ob.matrix_world = Matrix.Translation(loc) @ Euler((rot[0], rot[1], rot_z)).to_matrix().to_4x4() @ off @ S

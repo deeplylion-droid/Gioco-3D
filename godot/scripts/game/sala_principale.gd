@@ -1,10 +1,12 @@
 extends Node3D
 ## Demo giocabile della sala principale (vertical slice) sull'architettura vera dell'acquapark.
 ## Si entra dagli spogliatoi, si prende lo zaino-pompa dalla rastrelliera dei bagnini, si
-## incontra la medusa immobile sul piedistallo (la lampada si accende quando ti avvicini).
-## Enigma della demo: fai cadere il gonfiabile incastrato nella turbina dello scarico, tieni il
-## getto sulla turbina (ricaricando lo zaino dalla pozza stessa) finché la pozza si svuota, poi
-## colpisci il pulsante del portello. Nell'area bimbi la ruota a pale riempie il secchio gigante.
+## incontra la medusa affacciata alla vasca (la lampada si accende quando ti avvicini).
+## Nell'area bimbi la ruota a pale riempie il secchio gigante. Tappa 5: fai cadere il gonfiabile
+## incastrato nella turbina dello scarico, tieni il getto sulla turbina (ricaricando lo zaino
+## dalla pozza stessa) finché la pozza si svuota, colpisci il pulsante del portello e scendi
+## dalla scala del pozzo. Tappa 6, sotto la sala (ambienti tecnici): la sala pompe e il risveglio
+## (RisveglioSalaPompe); la demo finisce in cima al raccordo verso gli interni.
 
 ## Materiale delle pozzanghere della sala (addon acqua) al posto di M_amb_pozzanghera del GLB.
 @export var puddle_material: Material
@@ -21,6 +23,21 @@ extends Node3D
 @export var jingle_button_mesh: NodePath
 @export var hatch: Node
 @export var hatch_button_mesh: NodePath
+## Il checkpoint di quando la pozza della piscina a onde è vuota (lo raggiunge questo script).
+@export var checkpoint_pozza: Checkpoint
+## Gli ambienti tecnici sotto la sala (pozzo, camera delle onde, sala pompe, raccordo).
+@export var tecnici: Node3D
+## La sala pompe: ordine delle pompe, leva e risveglio (RisveglioSalaPompe).
+@export var risveglio: Node
+## Dove finisce la demo: in fondo alla scia di gocce della tappa 7 o, con la tappa 8, ai piedi
+## della torre degli scivoli.
+@export var fine_demo_trigger: Area3D
+## Il testo sotto "FINE DELLA DEMO".
+@export_multiline var fine_demo_testo := "La scia continua nel buio.\nGrazie per aver giocato!"
+## La tappa 7, il ritorno al buio (RitornoAlBuio).
+@export var ritorno: Node
+## La tappa 8, lei che sbuca dal bordo della fossa nell'area bimbi (LeiSbuca).
+@export var lei_sbuca: Node
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
 @export var show_controls_hint := true
@@ -49,6 +66,12 @@ func _ready() -> void:
 		_press_with(hatch_button, hatch_button_mesh)
 	if hatch and hatch.has_signal(&"opened"):
 		hatch.connect(&"opened", _on_hatch_opened)
+	var puddle := get_node_or_null(^"Piscina/Pozza") as WaterTank
+	if puddle and checkpoint_pozza:
+		puddle.emptied.connect(func(): GameState.reach_checkpoint(checkpoint_pozza))
+	if fine_demo_trigger:
+		fine_demo_trigger.body_entered.connect(_on_fine_demo)
+	_setup_tecnici()
 	if show_controls_hint:
 		_show_hint.call_deferred()
 	var p := GameState.player
@@ -173,6 +196,11 @@ func _on_player_respawned() -> void:
 	var p := GameState.player
 	if statue_lamp and not statue_lamp.is_on and p and p.global_position.z < lamp_trigger.global_position.z:
 		statue_lamp.turn_on(true)
+	# I salvataggi di prima (v0.2.x) non hanno lo stato del cancello della piscina: dal fondo
+	# della piscina in poi (checkpoint 3) era per forza già aperto.
+	var giochi := get_node_or_null(^"RuotaESecchio")
+	if giochi and int(GameState.snapshot.get("order", -1)) >= 3 and not bool(giochi.get(&"gate_open")):
+		giochi.call(&"load_state", {"gate_open": true})
 
 
 func _on_jingle() -> void:
@@ -182,9 +210,28 @@ func _on_jingle() -> void:
 
 
 func _on_hatch_opened() -> void:
-	if demo_finished:
+	# Sotto c'è il pozzo con la scala: si scende nella camera delle onde.
+	pass
+
+
+## Ritocchi agli ambienti tecnici montati sotto la sala.
+func _setup_tecnici() -> void:
+	if tecnici == null:
+		return
+	# Il coperchio in cima al pozzo nel modello della camera è un doppione del portello della
+	# sala (LEGGIMI degli ambienti tecnici): via, collisione compresa.
+	var doppione := tecnici.get_node_or_null(^"Ambienti/CameraOnde/PORTELLO") as Node3D
+	if doppione:
+		doppione.visible = false
+		for c in doppione.find_children("*", "CollisionObject3D", true, false):
+			(c as CollisionObject3D).collision_layer = 0
+			(c as CollisionObject3D).collision_mask = 0
+
+
+func _on_fine_demo(body: Node3D) -> void:
+	if demo_finished or not body is Player:
 		return
 	demo_finished = true
 	var hud := _hud()
 	if hud:
-		hud.show_banner("FINE DELLA DEMO", "Il portello porta alla camera delle onde.\nGrazie per aver giocato!", 9.0)
+		hud.show_banner("FINE DELLA DEMO", fine_demo_testo, 9.0)

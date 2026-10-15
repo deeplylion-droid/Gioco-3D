@@ -24,7 +24,7 @@ const VASCA_INTERNO := Vector2(5.4, 3.9)
 const VASCA_PELO := 0.88
 const VASCA_BORDO := 1.0
 ## La medusa affacciata (LEGGIMI della medusa): origine al livello del pavimento, guarda verso +Z.
-const MEDUSA_DIR := "res://assets/models/medusa_affacciata/"
+const MEDUSA_DIR := "res://assets/models/medusa/"
 const MEDUSA_AFFACCIATA := Vector3(0.0, 0.0, 10.15)
 ## Dove sta il suo occhio (per la luce del lampione).
 const OCCHIO_MEDUSA := Vector3(0.0, 1.63, 11.95)
@@ -60,9 +60,12 @@ func _initialize() -> void:
 	_pool()
 	_pools()
 	_kids_toys()
-	_polaroids(has_interiors or OS.get_environment("SALA_SENZA_ZAINO") == "1")
+	var tecnici := _tecnici()
+	_polaroids(has_interiors or OS.get_environment("SALA_SENZA_ZAINO") == "1", tecnici)
 	_atmosphere()
 	_gameplay(has_interiors)
+	_tappa7(has_interiors)
+	_tappa8()
 	_kid_sighting()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
@@ -222,23 +225,7 @@ func _vasca_centrale() -> void:
 	own(tank, g)
 	_water_link(g, "AcquaVascaCentrale", tank, "res://addons/acqua/presets/stile_1_limpida.tres", false)
 	# La medusa vera affacciata al bordo (animazione "affacciata" in ciclo, aspetto bagnato).
-	var medusa: Node3D = load("res://scripts/environment/medusa_affacciata.gd").new()
-	medusa.name = "Medusa"
-	medusa.set(&"bell_material", load(MEDUSA_DIR + "medusa_campana.tres"))
-	medusa.set(&"model", load(MEDUSA_DIR + "medusa.glb"))
-	var bagnata := {}
-	for coppia in [["M_pelle", "medusa_pelle_bagnata"], ["M_capelli", "medusa_capelli_bagnata"],
-			["M_orbita", "medusa_orbita_bagnata"], ["M_mani", "medusa_mani_bagnata"],
-			["M_ciocche", "medusa_ciocche_bagnata"], ["M_tentacoli", "medusa_tentacoli_bagnata"],
-			["M_occhio_bulbo", "medusa_occhio"]]:
-		bagnata[coppia[0]] = load(MEDUSA_DIR + coppia[1] + ".tres")
-	medusa.set(&"material_map", bagnata)
-	# Gocce da dita, mento, punte dei capelli e tentacoli sul bordo (coordinate della medusa).
-	var o := MEDUSA_AFFACCIATA
-	medusa.set(&"punti_gocce", PackedVector3Array([
-		Vector3(-0.6, 0.91, 12.31) - o, Vector3(0.6, 0.91, 12.31) - o, Vector3(0.0, 1.42, 12.02) - o,
-		Vector3(-0.35, 1.30, 11.98) - o, Vector3(0.38, 1.28, 11.98) - o,
-		Vector3(-1.48, 1.0, 12.3) - o, Vector3(1.48, 1.0, 12.3) - o]))
+	var medusa := _medusa_bagnata("Medusa")
 	medusa.position = MEDUSA_AFFACCIATA
 	own(medusa, g)
 	level.set(&"statue", medusa)
@@ -370,15 +357,8 @@ func _pool() -> void:
 	puddle.drain_sources = drains
 	_inflatable(pool, turbine)
 	# Portello della camera delle onde sul fondo, sotto la pozza (cerniera sul lato nord), e il
-	# suo pulsante sulla parete sud. Sotto il portello: il buio del tunnel.
-	var hole := MeshInstance3D.new()
-	hole.name = "Buio"
-	var hm := BoxMesh.new()
-	hm.size = Vector3(1.2, 0.004, 1.2)
-	hole.mesh = hm
-	hole.material_override = M.hole
-	hole.position = Vector3(0.0, -2.256, 2.0)
-	own(hole, pool)
+	# suo pulsante sulla parete sud. Sotto il portello c'è il pozzo vero (scena degli ambienti
+	# tecnici): il buco nel fondo lo apre il GLB della sala.
 	var hatch_button: WaterButton = S.button.instantiate()
 	hatch_button.name = "PulsantePortello"
 	hatch_button.mode = WaterButton.Mode.LATCH
@@ -391,11 +371,26 @@ func _pool() -> void:
 	hatch.name = "Portello"
 	hatch.set(&"target_path", NodePath("../../Sala/Interattivi/sala_portello_scarico"))
 	hatch.set(&"axis", Vector3.RIGHT)
-	hatch.set(&"open_angle", -105.0)
+	# Si apre fino a terra, verso nord: la scala del pozzo è sul lato della cerniera e salendo si
+	# esce da quella parte, sopra il portello (in piedi lo si avrebbe davanti alla faccia).
+	hatch.set(&"open_angle", -170.0)
 	var hatch_sources: Array[PowerSource] = [hatch_button]
 	hatch.set(&"sources", hatch_sources)
 	own(hatch, pool)
 	level.set(&"hatch", hatch)
+	# Checkpoint di quando la pozza è vuota (un passo dell'enigma): lo raggiunge lo script della
+	# sala; si riparte sul fondo, davanti al portello.
+	var cp: Area3D = load("res://scripts/game/checkpoint.gd").new()
+	cp.name = "CheckpointPozzaVuota"
+	cp.set(&"order", 4)
+	cp.position = Vector3(1.4, -2.2, 0.4)
+	own(cp, pool)
+	var spawn := Marker3D.new()
+	spawn.name = "Ripartenza"
+	spawn.rotation = Vector3(0.0, PI * 0.8, 0.0)
+	own(spawn, cp)
+	cp.set(&"spawn_point", spawn)
+	level.set(&"checkpoint_pozza", cp)
 	level.set(&"hatch_button_mesh", NodePath("Sala/Interattivi/sala_pulsante_portello"))
 	# Le scalette sono nel modello: qui solo le aree per arrampicarsi.
 	for l in [["ScalettaEst", Vector3(6.95, -1.95, 3.2), -PI * 0.5], ["ScalettaOvest", Vector3(-6.95, -1.95, 2.2), PI * 0.5]]:
@@ -497,9 +492,165 @@ func _kids_toys() -> void:
 	own(toy)
 
 
+# --- Tappe 5-6: pozzo, camera delle onde, sala pompe e raccordo (scenes/tecnici/LEGGIMI.md) ------
+
+const TECNICI := "res://scenes/tecnici/tecnici.tscn"
+## La scena degli ambienti tecnici girata di -90° su Y: il pozzo sotto il portello sul fondo della
+## piscina a onde, il raccordo ai piedi della scala degli interni (LEGGIMI).
+const TECNICI_XF := Transform3D(Basis(Vector3.UP, -PI * 0.5), Vector3(0.0, -9.05, 1.36))
+## L'immagine della telecamera della sala sul monitor della sala pompe (uno scatto vero).
+const MONITOR_IMMAGINE := "res://assets/tecnici/monitor_sala.jpg"
+
+
+func _tecnici() -> Node3D:
+	# SALA_SENZA_TECNICI=1: variante senza (screenshot della sala sul renderer software).
+	if not ResourceLoader.exists(TECNICI) or OS.get_environment("SALA_SENZA_TECNICI") == "1":
+		return null
+	var tec: Node3D = (load(TECNICI) as PackedScene).instantiate()
+	tec.name = "Tecnici"
+	tec.transform = TECNICI_XF
+	tec.set(&"giocatore_proprio", false)
+	own(tec)
+	level.set(&"tecnici", tec)
+	var lg := group(tec, "Logica")
+	_sala_pompe(tec, lg)
+	_checkpoint_tecnici(tec, lg)
+	return tec
+
+
+func _marker(tec: Node3D, nome: String) -> Vector3:
+	return (tec.get_node("Marker/" + nome) as Node3D).position
+
+
+## L'AABB di una mesh del modello nelle coordinate della scena degli ambienti tecnici.
+func _aabb_tecnici(tec: Node3D, mi: MeshInstance3D) -> AABB:
+	var xf := Transform3D.IDENTITY
+	var n: Node = mi
+	while n and n != tec:
+		if n is Node3D:
+			xf = (n as Node3D).transform * xf
+		n = n.get_parent()
+	return xf * mi.get_aabb()
+
+
+func _sala_pompe(tec: Node3D, lg: Node3D) -> void:
+	# (Gli script della logica si caricano con load(): nominarne le classi qui le compilerebbe
+	# prima degli autoload, che usano.)
+	var sp := "Ambienti/SalaPompe/"
+	var T := "res://scripts/tecnici/"
+	var g := group(lg, "SalaPompe")
+	var ris: Node = load(T + "risveglio_sala_pompe.gd").new()
+	ris.name = "Risveglio"
+	# Turbine e pompe nell'ordine dello schema a colori sul muro: blu, giallo, rosso
+	# (TURBINA_3, TURBINA_1, TURBINA_2; ogni pompa sta dietro la sua turbina).
+	for n in [3, 1, 2]:
+		var t: Turbine = S.turbine.instantiate()
+		t.name = "Turbina%d" % n
+		t.radius = 0.75
+		t.show_model = false
+		t.position = _marker(tec, "marker_turbina_%d" % n)
+		own(t, g)
+		(ris.get(&"turbine") as Array).append(t)
+		# La girante del modello ha l'origine sul bordo basso: la fa girare GiranteTurbina.
+		var gir: Node = load(T + "girante_turbina.gd").new()
+		gir.name = "Girante%d" % n
+		gir.set(&"turbina", t)
+		own(gir, g)
+		gir.set(&"girante_path", gir.get_path_to(tec.get_node(sp + "TURBINA_%d" % n)))
+		var pm: Node3D = load(T + "pompa.gd").new()
+		pm.name = "Pompa%d" % n
+		pm.position = _marker(tec, "marker_pompa_%d" % n)
+		own(pm, g)
+		var corpi := pm.get(&"corpi") as Array
+		corpi.append(pm.get_path_to(tec.get_node(sp + "POMPA_%d" % n)))
+		var hq := tec.get_node_or_null(sp + "POMPA_%d_modello" % n)
+		if hq:
+			corpi.append(pm.get_path_to(hq))
+		pm.set(&"vapore_path", pm.get_path_to(tec.get_node(sp + "VAPORE_pompa_%d" % n)))
+		(ris.get(&"pompe") as Array).append(pm)
+	# La leva grande in alto dietro la grata.
+	var leva: Node3D = load(T + "leva_grande.gd").new()
+	leva.name = "Leva"
+	leva.position = _marker(tec, "marker_leva")
+	own(leva, g)
+	leva.set(&"leva_path", leva.get_path_to(tec.get_node(sp + "LEVA")))
+	var reti := leva.get(&"reti") as Array
+	reti.append(leva.get_path_to(tec.get_node(sp + "GRATA_leva")))
+	reti.append(leva.get_path_to(tec.get_node(sp + "gabbia_leva")))
+	ris.set(&"leva", leva)
+	# Le paratie della camera delle onde.
+	for d in [["PARATIA_1", 2.65], ["PARATIA_2", 2.2]]:
+		var pa: Node = load(T + "paratia.gd").new()
+		pa.name = String(d[0]).capitalize().replace(" ", "")
+		pa.set(&"discesa", float(d[1]))
+		own(pa, g)
+		pa.set(&"pannello_path", pa.get_path_to(tec.get_node("Ambienti/CameraOnde/" + String(d[0]))))
+		(ris.get(&"paratie") as Array).append(pa)
+	# La porta del ponte inferiore: cardine sul bordo sud (l'origine del modello è al centro),
+	# maniglione dal lato della sala.
+	var porta_mi := tec.get_node(sp + "PORTA_ponte") as MeshInstance3D
+	var bb := _aabb_tecnici(tec, porta_mi)
+	var cardine := Marker3D.new()
+	cardine.name = "CardinePorta"
+	cardine.position = Vector3(bb.get_center().x, 0.0, bb.end.z)
+	own(cardine, g)
+	var man := _aabb_tecnici(tec, tec.get_node(sp + "PORTA_ponte/PORTA_ponte_maniglione") as MeshInstance3D)
+	var porta: Area3D = load(T + "porta_maniglione.gd").new()
+	porta.name = "Maniglione"
+	porta.position = man.get_center()
+	own(porta, g)
+	shape_box(porta, Vector3(0.45, 0.45, man.size.z + 0.1))
+	porta.set(&"porta_path", porta.get_path_to(porta_mi))
+	porta.set(&"cardine_path", porta.get_path_to(cardine))
+	ris.set(&"porta", porta)
+	# Il monitor a tubo sulla scrivania.
+	var mon: Node = load(T + "monitor_crt.gd").new()
+	mon.name = "Monitor"
+	own(mon, g)
+	mon.set(&"schermo_path", mon.get_path_to(tec.get_node(sp + "SCHERMO_CRT")))
+	mon.set(&"luce_path", mon.get_path_to(tec.get_node(sp + "LUCE_crt")))
+	if ResourceLoader.exists(MONITOR_IMMAGINE):
+		mon.set(&"immagine", load(MONITOR_IMMAGINE))
+	ris.set(&"monitor", mon)
+	# Chi tiene insieme tutto: ordine delle pompe, leva, risveglio, paratie, porta.
+	own(ris, g)
+	var vapori := ris.get(&"vapori") as Array
+	vapori.append(ris.get_path_to(tec.get_node(sp + "VAPORE_collettore")))
+	vapori.append(ris.get_path_to(tec.get_node(sp + "VAPORE_perdita_ovest")))
+	# La plastica che si piega e il tonfo arrivano da lontano, dalla vasca della medusa.
+	ris.set(&"punto_lontano", VASCA + Vector3(0.0, 0.6, 0.0))
+	level.set(&"risveglio", ris)
+
+
+## Checkpoint invisibili delle tappe 5-6 (ordine dopo CheckpointFondo, 3): in fondo al pozzo,
+## all'ingresso della sala pompe, dopo il risveglio (da codice) e in cima al raccordo.
+func _checkpoint_tecnici(tec: Node3D, lg: Node3D) -> void:
+	var g := group(lg, "Checkpoint")
+	var arrivo := _marker(tec, "marker_arrivo_scala")
+	# Si riparte in fondo alla scala, guardando lungo la camera (+X della scena: yaw -90°).
+	# (L'area comprende il piede della scala: ci si arriva scendendo.)
+	checkpoint(g, "CheckpointPozzo", 5, arrivo + Vector3(-0.3, 1.5, 0.0), Vector3(2.6, 3.0, 3.0), Vector3(0.3, -1.5, 0.0), -PI * 0.5)
+	checkpoint(g, "CheckpointSalaPompe", 6, Vector3(29.8, 1.5, 0.0), Vector3(1.2, 3.0, 2.8), Vector3(0.6, -1.5, 0.0), -PI * 0.5)
+	# Dopo il risveglio: davanti alla porta del ponte inferiore (lo raggiunge il codice).
+	var cp: Area3D = load("res://scripts/game/checkpoint.gd").new()
+	cp.name = "CheckpointRisveglio"
+	cp.set(&"order", 7)
+	cp.position = _marker(tec, "marker_porta_ponte") + Vector3(-0.6, 0.0, 0.0)
+	own(cp, g)
+	var spawn := Marker3D.new()
+	spawn.name = "Ripartenza"
+	spawn.rotation = Vector3(0.0, -PI * 0.5, 0.0)
+	own(spawn, cp)
+	cp.set(&"spawn_point", spawn)
+	(level.get(&"risveglio") as Node).set(&"checkpoint", cp)
+	# In cima al raccordo, ai piedi della scala degli interni: si guarda verso la scala (-X).
+	var cima := _marker(tec, "marker_raccordo_interni")
+	checkpoint(g, "CheckpointRaccordo", 8, cima + Vector3(0.0, 1.5, 0.0), Vector3(1.6, 3.0, 1.6), Vector3(0.0, -1.5, 0.0), PI * 0.5)
+
+
 # --- Le 10 Polaroid -----------------------------------------------------------------------------
 
-func _polaroids(has_interiors := false) -> void:
+func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 	var g := group(level, "Polaroid")
 	# P3 sta sulla rastrelliera dello zaino, sul ripiano accanto a lui.
 	var rack_yaw := atan2(SPAWN.x - PACK_STATION.x, SPAWN.z - PACK_STATION.z)
@@ -518,6 +669,12 @@ func _polaroids(has_interiors := false) -> void:
 		[9, Vector3(-9.9, 0.0, -9.4), 2.4],     # accanto alle vasche basse
 		[10, Vector3(13.5, 9.0, -17.5), 0.6],   # in cima alla torre degli scivoli
 	]
+	if tecnici:
+		# Negli ambienti tecnici (coordinate della loro scena, LEGGIMI): P6 nella camera delle
+		# onde, a terra contro il muro sud tra le bocchette; P7 sulla scrivania accanto al monitor.
+		for t in [[6, Vector3(9.2, 0.01, 1.75), 0.4], [7, Vector3(41.15, 0.79, 3.25), 2.6]]:
+			var i := spots.find_custom(func(x): return int(x[0]) == int(t[0]))
+			spots[i] = [t[0], TECNICI_XF * (t[1] as Vector3), float(t[2]) - PI * 0.5]
 	for s in spots:
 		# Con gli interni montati, P1-P3 stanno nel corridoio, negli spogliatoi e nello stanzino.
 		if has_interiors and int(s[0]) <= 3:
@@ -571,6 +728,198 @@ func _gameplay(has_interiors := false) -> void:
 	own(trig, gp)
 	shape_box(trig, Vector3(8, 3, 1.0))
 	level.set(&"lamp_trigger", trig)
+	# Le luci di tutto il livello seguono GameState.luci (risveglio della tappa 6) finché la
+	# grafica non ha le sue (LuciRisveglio.attivo).
+	var luci: Node = load("res://scripts/tecnici/luci_risveglio.gd").new()
+	luci.name = "LuciRisveglio"
+	own(luci, gp)
+
+
+# --- Tappa 7: il ritorno al buio (scripts/game/ritorno_al_buio.gd) -----------------------------
+
+## La scia di gocce dalla vasca della medusa verso l'area bimbi: dal bordo ovest sotto il cordone,
+## lungo il fondo della sala a sud della vasca d'arrivo e su per il muro ovest (dove non ci sono
+## scivoli né vasche: lì si cammina), fino al buio accanto alle vasche basse.
+const SCIA := [Vector3(-3.5, 0.0, 9.6), Vector3(-5.5, 0.0, 9.1), Vector3(-7.3, 0.0, 8.7), Vector3(-8.5, 0.0, 8.3),
+	Vector3(-10.3, 0.0, 8.3), Vector3(-11.9, 0.0, 8.3), Vector3(-13.7, 0.0, 8.3), Vector3(-15.3, 0.0, 8.3),
+	Vector3(-16.7, 0.0, 7.5), Vector3(-16.9, 0.0, 5.9), Vector3(-17.5, 0.0, 4.3), Vector3(-18.3, 0.0, 2.9),
+	Vector3(-18.3, 0.0, 1.3), Vector3(-18.3, 0.0, -0.5), Vector3(-18.3, 0.0, -2.3), Vector3(-18.3, 0.0, -4.1),
+	Vector3(-17.3, 0.0, -4.9), Vector3(-16.3, 0.0, -5.5), Vector3(-15.3, 0.0, -5.95), Vector3(-14.7, 0.0, -6.1)]
+
+
+func _tappa7(has_interiors: bool) -> void:
+	var gp := level.get_node("Gioco")
+	var r: Node = load("res://scripts/game/ritorno_al_buio.gd").new()
+	r.name = "RitornoAlBuio"
+	r.set(&"medusa", level.get_node("Vasca/Medusa"))
+	r.set(&"acqua_vasca", level.get_node("Vasca/AcquaVascaCentrale"))
+	r.set(&"centro_increspature", Vector3(VASCA.x, VASCA_PELO, VASCA.z + 1.0))
+	r.set(&"pulsante_sigla", level.get_node("Vasca/PulsanteSigla"))
+	r.set(&"scia", PackedVector3Array(SCIA))
+	# Gocciola ancora dal bordo, dalla parte da cui è uscita (ovest, verso l'area bimbi).
+	var bordo_x := VASCA.x - VASCA_INTERNO.x * 0.5 - 0.42
+	r.set(&"gocciolatoi", PackedVector3Array([Vector3(bordo_x, VASCA_BORDO - 0.02, 9.4), Vector3(bordo_x, VASCA_BORDO - 0.02, 10.6)]))
+	own(r, gp)
+	level.set(&"ritorno", r)
+	if has_interiors:
+		var interni := level.get_node("Interni")
+		r.set(&"interni", interni)
+		# La porta "sala pompe" del corridoio degli interni: chiusa (con la sua collisione) finché
+		# non si torna su dal raccordo; si apre dalla parte della scala, verso il corridoio.
+		var porta_mi := interni.get_node("Ambienti/Corridoio/porta_sala_pompe") as MeshInstance3D
+		var bb := porta_mi.transform * porta_mi.get_aabb()
+		var cardine := Marker3D.new()
+		cardine.name = "CardinePortaSalaPompe"
+		cardine.position = INTERNI_OFFSET + Vector3(bb.end.x, 0.0, bb.get_center().z)
+		own(cardine, gp)
+		var porta: Area3D = load("res://scripts/tecnici/porta_maniglione.gd").new()
+		porta.name = "PortaSalaPompeInterni"
+		porta.position = INTERNI_OFFSET + Vector3(bb.get_center().x, 1.0, bb.end.z + 0.35)
+		porta.set(&"angolo_apertura", -95.0)
+		porta.set(&"collisione_propria", true)
+		own(porta, gp)
+		shape_box(porta, Vector3(1.0, 1.6, 0.5))
+		porta.set(&"porta_path", porta.get_path_to(porta_mi))
+		porta.set(&"cardine_path", porta.get_path_to(cardine))
+		r.set(&"porta_interni", porta)
+		# Checkpoint del ritorno: in cima alla scala nel corridoio (si va a ovest), davanti alle
+		# docce, e appena rientrati nella sala dalla stessa porta (si guarda la vasca).
+		checkpoint(gp, "CheckpointCorridoioBuio", 9, INTERNI_OFFSET + Vector3(17.5, 1.5, -1.4), Vector3(2.0, 3.0, 2.2), Vector3(0.0, -1.5, 0.0), PI * 0.5)
+		checkpoint(gp, "CheckpointDocceBuio", 10, INTERNI_OFFSET + Vector3(5.6, 1.5, -12.4), Vector3(4.6, 3.0, 2.0), Vector3(0.0, -1.5, 0.0), PI * 0.7)
+	checkpoint(gp, "CheckpointRitornoSala", 11, Vector3(0.0, 1.5, 18.7), Vector3(4.0, 3.0, 1.0), Vector3(0.0, -1.5, 0.0), 0.0)
+	# Fine della demo dove finisce la scia, davanti all'area bimbi (la tappa 8 viene dopo).
+	var fine := Area3D.new()
+	fine.name = "FineDemo"
+	fine.collision_layer = 0
+	fine.collision_mask = Layers.PLAYER
+	fine.monitorable = false
+	fine.position = SCIA[SCIA.size() - 1] + Vector3(0.0, 1.5, 0.0)
+	own(fine, gp)
+	shape_box(fine, Vector3(2.4, 3.0, 2.4))
+	level.set(&"fine_demo_trigger", fine)
+
+
+## Un vettore da una lista [x, y, z] di sala_dati.json.
+static func _v3(a: Array) -> Vector3:
+	return Vector3(float(a[0]), float(a[1]), float(a[2]))
+
+
+## La medusa vera nella posa "affacciata" (in ciclo), con l'aspetto bagnato e le gocce che cadono
+## da dita, mento, capelli e tentacoli sul bordo (LEGGIMI della medusa).
+func _medusa_bagnata(nome: String) -> Node3D:
+	var medusa: Node3D = load("res://scripts/environment/medusa_affacciata.gd").new()
+	medusa.name = nome
+	medusa.set(&"bell_material", load(MEDUSA_DIR + "medusa_campana.tres"))
+	medusa.set(&"model", load(MEDUSA_DIR + "medusa.glb"))
+	var bagnata := {}
+	for coppia in [["M_pelle", "medusa_pelle_bagnata"], ["M_capelli", "medusa_capelli_bagnata"],
+			["M_orbita", "medusa_orbita_bagnata"], ["M_mani", "medusa_mani_bagnata"],
+			["M_ciocche", "medusa_ciocche_bagnata"], ["M_tentacoli", "medusa_tentacoli_bagnata"],
+			["M_occhio_bulbo", "medusa_occhio"]]:
+		bagnata[coppia[0]] = load(MEDUSA_DIR + coppia[1] + ".tres")
+	medusa.set(&"material_map", bagnata)
+	# Gocce (coordinate della medusa, misurate sulla vasca centrale).
+	var o := MEDUSA_AFFACCIATA
+	medusa.set(&"punti_gocce", PackedVector3Array([
+		Vector3(-0.6, 0.91, 12.31) - o, Vector3(0.6, 0.91, 12.31) - o, Vector3(0.0, 1.42, 12.02) - o,
+		Vector3(-0.35, 1.30, 11.98) - o, Vector3(0.38, 1.28, 11.98) - o,
+		Vector3(-1.48, 1.0, 12.3) - o, Vector3(1.48, 1.0, 12.3) - o]))
+	return medusa
+
+
+# --- Tappa 8: lei sbuca dal bordo nell'area bimbi, poi la spiaggia fino alla torre ----------------
+
+## Fossa provvisoria (proposta mandata all'ambiente) finché non arrivano i suoi marker: lato sud
+## della VascaBimbi1, metà ovest. Origine della posa "affacciata" e direzione in cui guarda (verso
+## il giocatore che arriva dal muro ovest), fondo del condotto.
+const FOSSA_PROVVISORIA := Vector3(-13.0, -0.45, -7.6)
+const FOSSA_SGUARDO := Vector3(-0.7071, 0.0, 0.7071)
+const FOSSA_FUGA_PROVVISORIA := Vector3(-11.0, -2.6, -6.9)
+## La torre degli scivoli: piede della prima scala (sala_dati.json, "torre").
+const PIEDE_TORRE := Vector3(10.6, 0.0, -14.3)
+
+
+func _tappa8() -> void:
+	var gp := level.get_node("Gioco")
+	var sala := level.get_node("Sala")
+	var lei: Node3D = load("res://scripts/game/lei_sbuca.gd").new()
+	lei.name = "LeiSbuca"
+	own(lei, gp)
+	level.set(&"lei_sbuca", lei)
+	# La fossa dell'ambiente (sala_dati.json, "fossa_bimbi": marker medusa_sbuca, medusa_fuga e
+	# livello_acqua_pieno). Se non c'è ancora la scena resta spenta, su una fossa provvisoria
+	# (per i test).
+	var dati = JSON.parse_string(FileAccess.get_file_as_string(SALA + "sala_dati.json"))
+	var fossa: Dictionary = dati.get("fossa_bimbi", {}) if dati is Dictionary else {}
+	var pronta := fossa.has("medusa_sbuca") and fossa.has("medusa_fuga")
+	lei.set(&"abilitata", pronta)
+	var sbuca := Marker3D.new()
+	var fuga := Marker3D.new()
+	if pronta:
+		sbuca.name = "MedusaSbuca"
+		var ms: Dictionary = fossa["medusa_sbuca"]
+		sbuca.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(float(ms["rotazione_gradi_godot"][1]))), _v3(ms["posizione_godot"]))
+		fuga.name = "MedusaFuga"
+		fuga.position = _v3(fossa["medusa_fuga"]["posizione_godot"])
+		lei.set(&"livello_pieno", float(fossa.get("livello_acqua_pieno", {}).get("y", 0.42)))
+	else:
+		sbuca.name = "SbucaProvvisorio"
+		sbuca.transform = Transform3D(Basis.looking_at(-FOSSA_SGUARDO, Vector3.UP), FOSSA_PROVVISORIA)
+		fuga.name = "FugaProvvisoria"
+		fuga.position = FOSSA_FUGA_PROVVISORIA
+	own(sbuca, lei)
+	own(fuga, lei)
+	lei.set(&"punto_sbuca", sbuca)
+	lei.set(&"punto_fuga", fuga)
+	# Il coperchio di collisione della fossa (sala_area_bimbi.glb): acceso, non ci si cade dentro.
+	for c in sala.find_children("coperchio_fossa*", "CollisionObject3D", true, false):
+		lei.set(&"coperchio", c)
+		break
+	var medusa := _medusa_bagnata("MedusaFossa")
+	medusa.transform = sbuca.transform
+	medusa.visible = false
+	own(medusa, lei)
+	lei.set(&"medusa", medusa)
+	var vasche: Array[Node3D] = []
+	var acque: Array[Node3D] = []
+	if pronta:
+		lei.set(&"superficie_fossa", _superficie_fossa())
+	for n in ["VascaBimbi1", "VascaBimbi2"]:
+		vasche.append(level.get_node("Vasche/" + n) as Node3D)
+		acque.append(level.get_node("Vasche/Acqua" + n) as Node3D)
+	lei.set(&"vasche", vasche)
+	lei.set(&"acque", acque)
+	# Checkpoint prima della scena (sulla scia, lungo il muro ovest, a 7 m da dove sbuca), poi
+	# la strada verso la torre: dal cancello del recinto (aperto nella tappa 4) giù nella spiaggia
+	# della piscina vuota, lungo la spiaggia verso est, fuori dal lato est e ai piedi della torre.
+	checkpoint(gp, "CheckpointAreaBimbi", 12, Vector3(-18.3, 1.5, -0.5), Vector3(2.6, 3.0, 1.6), Vector3(0.0, -1.5, 0.0), 0.0)
+	checkpoint(gp, "CheckpointSpiaggiaBuio", 13, Vector3(2.0, 1.4, -12.6), Vector3(2.6, 3.0, 2.6), Vector3(0.0, -1.5, 0.0), -PI * 0.5)
+	checkpoint(gp, "CheckpointTorre", 14, PIEDE_TORRE + Vector3(-1.2, 1.5, 0.0), Vector3(1.6, 3.0, 2.6), Vector3(0.0, -1.5, 0.0), -PI * 0.5)
+	# Con la fossa pronta la demo finisce ai piedi della torre (la tappa 9 viene dopo).
+	if pronta:
+		var fine := level.get(&"fine_demo_trigger") as Node3D
+		fine.position = PIEDE_TORRE + Vector3(0.4, 1.5, 0.0)
+		level.set(&"fine_demo_testo", "La torre degli scivoli ti aspetta.\nGrazie per aver giocato!")
+
+
+## L'acqua della fossa (la parte profonda della VascaBimbi1, sala_dati.json "fossa_bimbi"): è la
+## stessa acqua della vasca, ma la pianta ha l'angolo sud-ovest tagliato e l'acqua dell'addon è
+## rettangolare (e al massimo 8 masse d'acqua nel livello). Così la superficie è il segnaposto
+## dell'ambiente (sala_acqua.glb, il poligono giusto) col materiale dell'acqua della VascaBimbi1:
+## LeiSbuca la tiene alla quota della vasca.
+func _superficie_fossa() -> MeshInstance3D:
+	var glb := (load(SALA + "sala_acqua.glb") as PackedScene).instantiate()
+	var segnaposto := glb.find_child("sala_fossa_bimbi_acqua", true, false) as MeshInstance3D
+	var mi: MeshInstance3D = null
+	if segnaposto:
+		mi = MeshInstance3D.new()
+		mi.name = "AcquaFossaBimbi"
+		mi.mesh = segnaposto.mesh
+		mi.transform = segnaposto.transform
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		own(mi, level.get_node("Vasche"))
+	glb.free()
+	return mi
 
 
 # --- B5: i bambini sulla balconata, visti in un lampo mentre sali sulla torre -------------------

@@ -23,6 +23,7 @@ func _ready() -> void:
 func _run() -> void:
 	await _load_level()
 	await test_movement()
+	await test_steps()
 	await test_jump()
 	await test_crouch_ceiling()
 	await test_ladder()
@@ -124,6 +125,109 @@ func test_movement() -> void:
 	await _frames(10)
 	var s := p.get_surface_under_feet()
 	check(s[0] == &"metallo", "superficie dal meta \"superficie\" (%s)" % s[0])
+
+
+## Gradini (step-up nel controller): si sale da soli fino a ~0,3 m, senza saltare e con la camera
+## che segue morbida; da 0,4 m no. Sul bordo, con mezzo piede fuori, non si scivola giù; e si
+## scende dal gradino restando a terra. Il percorso è costruito qui, lontano dal resto.
+func test_steps() -> void:
+	print("Gradini")
+	_release_all()
+	var base := Vector3(40.0, 0.0, 0.0)
+	var corso := Node3D.new()
+	corso.name = "PercorsoGradini"
+	level.add_child(corso)
+	_box(corso, base + Vector3(8.0, -0.5, -4.0), Vector3(22.0, 1.0, 16.0))
+	var alti := [0.1, 0.2, 0.3, 0.4]
+	for i in alti.size():
+		var h: float = alti[i]
+		_box(corso, base + Vector3(i * 3.5, h * 0.5, -6.0), Vector3(2.4, h, 6.0))
+	await _frames(2)
+	for i in alti.size():
+		var h: float = alti[i]
+		var x := base.x + i * 3.5
+		p.teleport(Vector3(x, 0.0, 0.0), 0.0)
+		await _frames(5)
+		var max_y := 0.0
+		var in_aria := 0
+		var max_scatto := 0.0
+		var cam_prima := p.head.global_position.y
+		Input.action_press(&"move_forward")
+		for f in 100:
+			await get_tree().physics_frame
+			await get_tree().process_frame
+			max_y = maxf(max_y, p.global_position.y)
+			if not p.is_on_floor():
+				in_aria += 1
+			var cam := p.head.global_position.y
+			max_scatto = maxf(max_scatto, absf(cam - cam_prima))
+			cam_prima = cam
+		Input.action_release(&"move_forward")
+		await _frames(20)
+		var y := p.global_position.y
+		if h <= 0.3 + 0.001:
+			check(absf(y - h) < 0.03 and p.global_position.z < -4.0,
+					"sale da solo sul gradino da %.1f m (y %.2f, z %.2f)" % [h, y, p.global_position.z])
+			check(max_y < h + 0.04 and in_aria <= 2,
+					"  senza saltare (y massima %.2f, %d tick in aria)" % [max_y, in_aria])
+			check(max_scatto < 0.09, "  la camera sale morbida (al massimo %.3f m per frame)" % max_scatto)
+		else:
+			check(y < 0.03 and p.global_position.z > -3.0,
+					"il gradino da %.1f m non si sale (y %.2f, z %.2f)" % [h, y, p.global_position.z])
+	# Anche di sbieco strisciando lungo un muro (il passo spinge un po' contro il muro).
+	var x5 := base.x + 4 * 3.5
+	_box(corso, Vector3(x5 - 1.1, 1.0, -4.0), Vector3(0.2, 2.0, 10.0))
+	_box(corso, Vector3(x5, 0.1, -6.0), Vector3(2.4, 0.2, 6.0))
+	await _frames(2)
+	p.teleport(Vector3(x5 - 0.6, 0.0, 0.0), deg_to_rad(25.0))
+	await _hold(&"move_forward", 100)
+	await _frames(20)
+	check(absf(p.global_position.y - 0.2) < 0.03 and p.global_position.z < -4.0,
+			"sale anche di sbieco strisciando lungo un muro (y %.2f, z %.2f)" % [p.global_position.y, p.global_position.z])
+	# Scendere dal gradino da 0,3 m: si resta a terra, la camera scende morbida.
+	var x3 := base.x + 2 * 3.5
+	p.teleport(Vector3(x3, 0.3, -5.0), PI)
+	await _frames(10)
+	var in_aria := 0
+	var max_scatto := 0.0
+	var cam_prima := p.head.global_position.y
+	Input.action_press(&"move_forward")
+	for f in 70:
+		await get_tree().physics_frame
+		await get_tree().process_frame
+		if not p.is_on_floor():
+			in_aria += 1
+		var cam := p.head.global_position.y
+		max_scatto = maxf(max_scatto, absf(cam - cam_prima))
+		cam_prima = cam
+	Input.action_release(&"move_forward")
+	await _frames(20)
+	check(p.global_position.y < 0.03 and p.global_position.z > -2.0 and in_aria <= 2,
+			"si scende dal gradino da 0,3 m restando a terra (%d tick in aria)" % in_aria)
+	check(max_scatto < 0.09, "  e la camera scende morbida (al massimo %.3f m per frame)" % max_scatto)
+	# Sul bordo con mezzo piede fuori (il centro 25 cm oltre lo spigolo del gradino da 0,4 m): ci si
+	# appoggia (lo smusso del corpo sullo spigolo) e si resta lì, senza scivolare giù.
+	var x4 := base.x + 3 * 3.5
+	p.teleport(Vector3(x4, 0.42, -2.75), 0.0)
+	await _frames(20)
+	var pos := p.global_position
+	await _frames(120)
+	check(pos.y > 0.25 and p.global_position.distance_to(pos) < 0.01 and p.is_on_floor(),
+			"fermo sul bordo con mezzo piede fuori, non scivola giù (%s, poi %s)" % [str(pos), str(p.global_position)])
+	corso.queue_free()
+	await _frames(2)
+
+
+func _box(parent: Node, center: Vector3, size: Vector3) -> void:
+	var body := StaticBody3D.new()
+	body.collision_layer = Layers.WORLD
+	var cs := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = size
+	cs.shape = shape
+	body.add_child(cs)
+	parent.add_child(body)
+	body.global_position = center
 
 
 func test_jump() -> void:

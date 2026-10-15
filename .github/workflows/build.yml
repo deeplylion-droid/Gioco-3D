@@ -91,6 +91,22 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd
 
+      - name: Test degli ambienti tecnici (camera delle onde, sala pompe)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tecnici.gd
+
+      - name: Test delle tappe 5-6 (dalla pozza al raccordo, il risveglio)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappe56.gd
+
+      - name: Test della tappa 7 (il ritorno al buio)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa7.gd
+
+      - name: Test della tappa 8 (lei sbuca dal bordo, la strada verso la torre)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa8.gd
+
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'
         run: |

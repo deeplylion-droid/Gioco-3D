@@ -82,9 +82,13 @@ extends Node3D
 var tempesta: Tempesta
 var _sfarfallanti: Array = []   # [luce, energia, modalità, attesa, raffica]
 var _sala: Node3D
+var _emissioni: Array = []      # [materiale, emissione piena] delle lampade che il blackout spegne
+var _flash_salvate: Array = []   # [luce, visibile, energia] durante il flash
+var _flash_resta := 0.0
 
 
 func _ready() -> void:
+	add_to_group(&"look_sala")
 	# La tempesta subito: altri nodi della sala la cercano nel loro _ready (es. i bambini
 	# che compaiono con i lampi).
 	if crea_tempesta:
@@ -112,6 +116,7 @@ func _prepara() -> void:
 		_crea_controluce()
 	if crea_area_bimbi:
 		_crea_area_bimbi()
+	_collega_risveglio()
 
 
 func _crea_area_bimbi() -> void:
@@ -255,6 +260,73 @@ func _crea_area_bimbi() -> void:
 	spot.position = Vector3(0, 0, -0.25)
 
 
+## Segue GameState.luci (tappa 6): nel BLACKOUT si spengono anche le parti emissive (tubi
+## neon, plafoniere, festone, insegne), che il ripiego LuciRisveglio non tocca perché spegne solo
+## le luci; restano le lampade rosse d'emergenza. Prima del risveglio e nel FLASH sono accese.
+func _collega_risveglio() -> void:
+	var gs := get_node_or_null(^"/root/GameState")
+	if gs == null or not &"luci" in gs:
+		return
+	gs.connect(&"luci_cambiate", _su_luci)
+	if int(gs.get(&"luci")) != 0:
+		_su_luci(gs.get(&"luci"))
+
+
+func _su_luci(fase) -> void:
+	if _emissioni.is_empty():
+		_raccogli_emissioni()
+	var acceso := int(fase) != 2   # 2 = BLACKOUT
+	for e in _emissioni:
+		(e[0] as BaseMaterial3D).emission_energy_multiplier = e[1] if acceso else 0.0
+
+
+func _raccogli_emissioni() -> void:
+	var fatti := {}
+	var meshes: Array[Node] = _sala.find_children("*", "MeshInstance3D", true, false)
+	if _sala != self:
+		meshes.append_array(find_children("*", "MeshInstance3D", true, false))
+	for n in meshes:
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		if mi.material_override is BaseMaterial3D:
+			var m := mi.material_override as BaseMaterial3D
+			if m.emission_enabled and not _emissione_rossa(m):
+				if not fatti.has(m):
+					fatti[m] = m.duplicate()
+					_emissioni.append([fatti[m], m.emission_energy_multiplier])
+				mi.material_override = fatti[m]
+			continue
+		for i in mi.mesh.get_surface_count():
+			var m := mi.get_active_material(i) as BaseMaterial3D
+			if m == null or not m.emission_enabled or _emissione_rossa(m):
+				continue
+			if not fatti.has(m):
+				fatti[m] = m.duplicate()
+				_emissioni.append([fatti[m], m.emission_energy_multiplier])
+			mi.set_surface_override_material(i, fatti[m])
+
+
+## Le lampade d'emergenza (rosse) restano accese nel blackout.
+static func _emissione_rossa(m: BaseMaterial3D) -> bool:
+	var c := m.emission
+	return c.r > 0.6 and c.g < 0.3 and c.b < 0.3
+
+
+## Per [param durata] secondi si accende tutto (lo chiama LookTecnici nel suo FLASH): tutte le
+## luci della sala visibili e più forti, sfarfallii fermi. Poi torna com'era.
+func flash(durata := 1.0) -> void:
+	if _flash_salvate.is_empty():
+		for l in _sala.find_children("*", "Light3D", true, false):
+			var luce := l as Light3D
+			if luce is DirectionalLight3D:
+				continue
+			_flash_salvate.append([luce, luce.visible, luce.light_energy])
+			luce.visible = true
+			luce.light_energy = maxf(luce.light_energy, 1.0) * 2.5
+	_flash_resta = maxf(_flash_resta, durata)
+
+
 func _crea_tempesta() -> void:
 	tempesta = Tempesta.new()
 	tempesta.name = "Tempesta"
@@ -287,9 +359,8 @@ func _prepara_ritratto() -> void:
 		for n in get_tree().root.find_children("*", "Node", true, false):
 			if n.get("light") == lamp and n.get("base_energy") != null:
 				n.set("base_energy", energia_ritratto)
-				# Spenta finché la FlickerLight non la accende (_regola_luci le ha appena dato
-				# l'energia del lampione anche se la sala parte con la lampada spenta).
-				lamp.light_energy = energia_ritratto if n.get("is_on") else 0.0
+				if n.get("is_on"):
+					lamp.light_energy = energia_ritratto
 	var trigger := get_node_or_null(percorso_trigger) as Node3D
 	if trigger:
 		trigger.global_position = punto_accensione
@@ -412,7 +483,7 @@ func _regola_luci(n: Node) -> void:
 			# Accensione e sfarfallio li fa la FlickerLight della sala (vedi _prepara_ritratto).
 		elif nome.begins_with("luce_vasca"):
 			# Sott'acqua nella vasca sollevata: fanno brillare la campana sotto la superficie.
-			# Nel GLB della vasca sono faretti (SpotLight3D) puntati sulla medusa.
+			# (Nel GLB nuovo possono essere anche faretti: si regola quello che c'è.)
 			l.light_color = Color(0.45, 0.85, 1.0)
 			l.light_energy = 2.2
 			l.shadow_enabled = false
@@ -421,7 +492,7 @@ func _regola_luci(n: Node) -> void:
 				(l as OmniLight3D).omni_range = 3.5
 				(l as OmniLight3D).omni_attenuation = 1.6
 			elif l is SpotLight3D:
-				(l as SpotLight3D).spot_range = 3.5
+				(l as SpotLight3D).spot_range = maxf((l as SpotLight3D).spot_range, 4.0)
 				(l as SpotLight3D).spot_attenuation = 1.6
 		elif nome.begins_with("luce_subacquea"):
 			var o := l as OmniLight3D
@@ -466,6 +537,14 @@ func _regola_luci(n: Node) -> void:
 
 
 func _process(delta: float) -> void:
+	if _flash_resta > 0.0:
+		_flash_resta -= delta
+		if _flash_resta > 0.0:
+			return
+		for f in _flash_salvate:
+			(f[0] as Light3D).visible = f[1]
+			(f[0] as Light3D).light_energy = f[2]
+		_flash_salvate.clear()
 	for s in _sfarfallanti:
 		var l: Light3D = s[0]
 		var base: float = s[1]
@@ -505,10 +584,8 @@ func _crea_voxel_gi() -> void:
 	gi.set_meta("grafica_bake_automatico", _sala == self)
 	add_child(gi)
 	gi.global_position = (_sala.global_transform * sala_centro) if _sala != self else to_global(sala_centro)
-	# Senza dati cotti il GI resta spento: calcolarlo durante il gioco blocca l'avvio e, sul
-	# renderer software, porta la sala oltre la memoria della macchina (tools/bake_voxel_gi.gd).
-	if gi.data == null and _sala != self:
-		push_warning("LookSala: GI della sala non cotto (%s): resta spento" % dati_gi)
+	if gi.data == null and _sala != self and is_instance_valid(Grafica) and int(Grafica.valore("gi")) == 1:
+		gi.bake(_sala)   # senza dati cotti: calcolo all'avvio (lento, solo per le prove)
 
 
 ## Cuoce il VoxelGI della sala senza le emissioni delle lampade (la loro luce la fanno le

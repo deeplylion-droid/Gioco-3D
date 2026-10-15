@@ -3,6 +3,10 @@ extends CharacterBody3D
 ## Controller in prima persona.
 ## Sguardo col mouse, camminata/corsa/accovacciato (con controllo del soffitto), salto,
 ## accelerazioni morbide, head bob leggero, segnali dei passi con la superficie, scale a pioli.
+## Gradini: si sale (e si scende) da soli su quelli bassi, fino a [member step_height], con la
+## camera che segue morbida. Il corpo è un cilindro smussato sopra e sotto (vedi [method
+## _body_points]): sul bordo di una vasca o di un gradino resta fermo anche con mezzo piede fuori,
+## invece di scivolare giù come una capsula, e sulle rampe e sotto gli architravi passa come lei.
 ## Tutti i valori di "feeling" sono esportati: si tarano con l'utente.
 ##
 ## La camera (Head) non è interpolata dalla fisica: ogni frame segue la posizione interpolata
@@ -24,6 +28,14 @@ signal interaction_target_changed(target: Interactable)
 const SURFACE_DEFAULT := &"generico"
 const SURFACE_WATER := &"acqua"
 const SURFACE_LADDER := &"scala"
+## Quanto avanzare ancora se, appena salito, il corpo è in bilico sullo spigolo del gradino (m).
+const STEP_FOOTING := 0.05
+## Il corpo: raggio, raggio del fondo (e della cima) piatto, pendenza degli smussi in gradi
+## (meno di floor_max_angle: appoggiati allo spigolo di un bordo si sta in piedi) e lati.
+const BODY_RADIUS := 0.35
+const BODY_FLAT_RADIUS := 0.12
+const BODY_BEVEL_DEG := 38.0
+const BODY_SIDES := 16
 
 @export_group("Sguardo")
 ## Gradi di rotazione per pixel di movimento del mouse.
@@ -53,6 +65,10 @@ const SURFACE_LADDER := &"scala"
 @export var push_force := 40.0
 ## Sotto questa quota si muore (caduto fuori dal livello).
 @export var fall_death_height := -60.0
+## Gradini: quelli alti fino a tanto (m) si salgono da soli camminando, senza saltare.
+@export var step_height := 0.32
+## Quanto in fretta la camera recupera il dislivello di un gradino (più alto = più secco).
+@export var step_camera_speed := 13.0
 
 @export_group("Accovacciato")
 ## Vero: Ctrl accende/spegne. Falso: bisogna tenerlo premuto.
@@ -80,6 +96,9 @@ const SURFACE_LADDER := &"scala"
 @export var ladder_climb_speed := 2.4
 ## Distanza tra un "passo" e l'altro sulla scala (m).
 @export var ladder_step_distance := 0.45
+## Distanza a cui si sta dalla scala (dal suo piano) mentre ci si arrampica: tiene il giocatore
+## davanti ai pioli anche quando dietro la scala non c'è un muro (la scala del pozzo nella camera).
+@export var ladder_hold_distance := 0.42
 
 ## Rotazione orizzontale e verticale dello sguardo (radianti).
 var yaw := 0.0
@@ -103,12 +122,19 @@ var _bob_prev := 0.0
 var _land_offset := 0.0
 var _land_prev := 0.0
 var _land_vel := 0.0
+# Gradini: la camera resta indietro del dislivello appena fatto e lo recupera piano piano.
+var _step_offset := 0.0
+var _step_prev := 0.0
 var _coyote := 0.0
 var _jump_buffer := 0.0
 var _was_on_floor := true
 var _ladder_travel := 0.0
 var _crouch_toggled := false
 var _ladder_cooldown := 0.0
+# Presa la scala dall'alto (camminando verso di lei dal bordo): finché si tiene il tasto, avanti
+# vuol dire giù (se no si scavalcherebbe subito di nuovo il bordo).
+var _ladder_from_top := false
+var _body_height := 1.75
 
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var head: Node3D = $Head
@@ -120,8 +146,10 @@ var _ladder_cooldown := 0.0
 
 func _ready() -> void:
 	add_to_group(&"player")
-	collision_shape.shape = collision_shape.shape.duplicate()
+	collision_shape.shape = ConvexPolygonShape3D.new()
 	_apply_height(stand_height)
+	# Si scende dai gradini restando attaccati a terra (fino alla stessa altezza di quelli in salita).
+	floor_snap_length = maxf(floor_snap_length, step_height + 0.02)
 	yaw = rotation.y
 	rotation = Vector3(0.0, yaw, 0.0)
 	_eye_height = stand_eye_height
@@ -210,6 +238,8 @@ func teleport(pos: Vector3, new_yaw := yaw, new_pitch := 0.0) -> void:
 	set_look(new_yaw, new_pitch)
 	rotation = Vector3(0.0, yaw, 0.0)
 	_leave_ladder()
+	_step_offset = 0.0
+	_step_prev = 0.0
 	reset_physics_interpolation()
 	_update_head(1.0)
 
@@ -229,7 +259,7 @@ func get_step_bob() -> Vector2:
 func _update_head(fraction: float) -> void:
 	var origin := get_global_transform_interpolated().origin if is_inside_tree() else global_position
 	var eye := lerpf(_eye_prev, _eye_height, fraction)
-	var land := lerpf(_land_prev, _land_offset, fraction)
+	var land := lerpf(_land_prev, _land_offset, fraction) + lerpf(_step_prev, _step_offset, fraction)
 	var phase := lerpf(_phase_prev, _step_phase, fraction)
 	var w := lerpf(_bob_prev, _bob_weight, fraction) if head_bob_enabled else 0.0
 	var bob_v := -head_bob_vertical * w * (0.5 + 0.5 * cos(TAU * phase))
@@ -246,16 +276,23 @@ func _physics_process(delta: float) -> void:
 	_phase_prev = _step_phase
 	_bob_prev = _bob_weight
 	_land_prev = _land_offset
+	_step_prev = _step_offset
 	rotation = Vector3(0.0, yaw, 0.0)
 	_update_crouch(delta)
 	_update_ladder()
 	var pre_vy := velocity.y
+	var pre_floor := is_on_floor() and ladder == null
+	var pre_transform := global_transform
 	if ladder:
 		_move_on_ladder(delta)
 	else:
 		_move_on_ground(delta)
+	var wish_velocity := velocity
 	move_and_slide()
+	if pre_floor and ladder == null and wish_velocity.y <= 0.01:
+		_step_up_after_move(pre_transform, wish_velocity, delta)
 	_push_rigid_bodies(delta)
+	_follow_step_down(pre_floor, pre_transform.origin)
 	_after_move(delta, pre_vy)
 	if global_position.y < fall_death_height:
 		GameState.kill_player(&"caduta")
@@ -306,6 +343,103 @@ func _max_speed(input: Vector2) -> float:
 	return walk_speed
 
 
+## Gradini. Dopo il passo normale, se si è sbattuto contro qualcosa di basso (camminando a
+## terra), si riprova il passo come farebbe il corpo un gradino più su: su, avanti strisciando
+## sui muri, giù. Se così si va più avanti e sotto c'è un pavimento alto al massimo
+## [member step_height], si tiene quello: il corpo sale sul gradino e la camera lo segue morbida.
+## Se appena salito il corpo è in bilico sullo spigolo, avanza ancora un poco verso il gradino.
+## Niente gradini su oggetti che si muovono (palloni, casse): quelli si spingono.
+func _step_up_after_move(from: Transform3D, wish_velocity: Vector3, delta: float) -> void:
+	# Il gradino: la cosa ripida contro cui si è sbattuto più in basso, sotto step_height.
+	var into := Vector3.ZERO
+	var lowest := INF
+	for i in get_slide_collision_count():
+		var c := get_slide_collision(i)
+		var n := c.get_normal()
+		var y := (c.get_position() - from.origin).dot(up_direction)
+		if n.angle_to(up_direction) <= floor_max_angle or c.get_collider() is RigidBody3D:
+			continue
+		if y > step_height + 0.02 or y >= lowest:
+			continue
+		var flat := n - up_direction * n.dot(up_direction)
+		if flat.length() < 0.1:
+			continue
+		lowest = y
+		into = -flat.normalized()
+	if into == Vector3.ZERO:
+		return
+	var motion := Vector3(wish_velocity.x, 0.0, wish_velocity.z) * delta
+	if motion.length() < 0.0005:
+		return
+	var hit := KinematicCollision3D.new()
+	var t := from
+	var up := up_direction * (step_height + 0.03)
+	if test_move(t, up, hit, safe_margin):
+		up = hit.get_travel()
+	t.origin += up
+	# Avanti come move_and_slide(): al massimo due strisciate contro i muri.
+	var m := motion
+	for k in 2:
+		if not test_move(t, m, hit, safe_margin):
+			t.origin += m
+			break
+		t.origin += hit.get_travel()
+		m = hit.get_remainder().slide(hit.get_normal())
+		m -= up_direction * m.dot(up_direction)
+		if m.length() < 0.0005:
+			break
+	var moved := t.origin - from.origin
+	moved -= up_direction * moved.dot(up_direction)
+	var normal_move := global_position - from.origin
+	normal_move -= up_direction * normal_move.dot(up_direction)
+	if moved.length() <= normal_move.length() + 0.002:
+		return  # anche più su non si passa: è un muro
+	var depth := up.length()
+	var down := _step_floor(t, depth, from)
+	if down < 0.0:
+		# In bilico sullo spigolo: un poco più avanti verso il gradino.
+		var nudge := into * STEP_FOOTING
+		if test_move(t, nudge, hit, safe_margin):
+			nudge = hit.get_travel()
+		t.origin += nudge
+		down = _step_floor(t, depth, from)
+		if down < 0.0:
+			return
+	var rise := depth - down
+	if rise < 0.004 or rise > step_height:
+		return
+	global_position = t.origin - up_direction * down
+	# Il passo non è finito contro il gradino: niente velocità persa.
+	velocity = Vector3(wish_velocity.x, velocity.y, wish_velocity.z)
+	_step_offset -= rise
+
+
+## Quanto si scende da [param t] prima di appoggiare su un pavimento vero (in piano, non un
+## oggetto mobile, non più alto di step_height sopra i piedi in [param from]), entro
+## [param depth]; -1 se non c'è.
+func _step_floor(t: Transform3D, depth: float, from: Transform3D) -> float:
+	var hit := KinematicCollision3D.new()
+	if not test_move(t, -up_direction * (depth + 0.02), hit, safe_margin):
+		return -1.0
+	if hit.get_normal().angle_to(up_direction) > floor_max_angle or hit.get_collider() is RigidBody3D:
+		return -1.0
+	if (hit.get_position() - from.origin).dot(up_direction) > step_height + 0.01:
+		return -1.0
+	return -hit.get_travel().dot(up_direction)
+
+
+## Scendendo da un gradino il pavimento (floor snap) tira giù il corpo di colpo: la camera ci
+## arriva piano. Una rampa (al massimo floor_max_angle) non conta.
+func _follow_step_down(pre_floor: bool, pre_pos: Vector3) -> void:
+	if not pre_floor or not is_on_floor() or ladder:
+		return
+	var d := global_position - pre_pos
+	var drop := -d.dot(up_direction)
+	var flat := (d + up_direction * drop).length()
+	if drop > flat * tan(floor_max_angle) + 0.03:
+		_step_offset += drop
+
+
 func is_running() -> bool:
 	return not is_crouching and Vector2(velocity.x, velocity.z).length() > walk_speed * 1.15
 
@@ -336,6 +470,9 @@ func _after_move(delta: float, pre_vy: float) -> void:
 	var k := 120.0
 	_land_vel += (-k * _land_offset - 2.0 * sqrt(k) * _land_vel) * delta
 	_land_offset += _land_vel * delta
+	# La camera recupera il gradino: esponenziale, più un minimo perché arrivi davvero a zero.
+	_step_offset *= exp(-step_camera_speed * delta)
+	_step_offset = clampf(move_toward(_step_offset, 0.0, 0.15 * delta), -step_height * 1.5, step_height * 1.5)
 	# Passi e head bob in base alla distanza percorsa.
 	var hs := Vector2(get_real_velocity().x, get_real_velocity().z).length()
 	if on_floor and ladder == null and hs > 0.2:
@@ -405,8 +542,7 @@ func _update_crouch(delta: float) -> void:
 
 ## Vero se sopra la testa c'è spazio per alzarsi.
 func can_stand_up() -> bool:
-	var h := (collision_shape.shape as CapsuleShape3D).height
-	return not test_move(global_transform, Vector3.UP * (stand_height - h + 0.02))
+	return not test_move(global_transform, Vector3.UP * (stand_height - _body_height + 0.02))
 
 
 func _set_crouching(value: bool) -> void:
@@ -418,9 +554,26 @@ func _set_crouching(value: bool) -> void:
 
 
 func _apply_height(h: float) -> void:
-	var capsule := collision_shape.shape as CapsuleShape3D
-	capsule.height = h
+	_body_height = h
+	(collision_shape.shape as ConvexPolygonShape3D).points = _body_points(h)
 	collision_shape.position = Vector3(0.0, h * 0.5, 0.0)
+
+
+## Il corpo alto [param h], centrato: un cilindro con il fondo e la cima piatti al centro e smussati
+## intorno. Il fondo piatto appoggia sui gradini e sui bordi; lo smusso, appoggiato a uno spigolo,
+## è ancora "pavimento" (così sul bordo non si scivola) e sulle rampe tiene il corpo basso come
+## una capsula; lo smusso in cima passa sotto gli architravi delle rampe.
+static func _body_points(h: float) -> PackedVector3Array:
+	var bevel := minf((BODY_RADIUS - BODY_FLAT_RADIUS) * tan(deg_to_rad(BODY_BEVEL_DEG)), h * 0.25)
+	var pts := PackedVector3Array()
+	for i in BODY_SIDES:
+		var a := TAU * i / BODY_SIDES
+		var d := Vector3(cos(a), 0.0, sin(a))
+		pts.append(d * BODY_FLAT_RADIUS + Vector3(0.0, -h * 0.5, 0.0))
+		pts.append(d * BODY_RADIUS + Vector3(0.0, -h * 0.5 + bevel, 0.0))
+		pts.append(d * BODY_RADIUS + Vector3(0.0, h * 0.5 - bevel, 0.0))
+		pts.append(d * BODY_FLAT_RADIUS + Vector3(0.0, h * 0.5, 0.0))
+	return pts
 
 
 # --- Scale a pioli --------------------------------------------------------------------------
@@ -448,6 +601,7 @@ func _update_ladder() -> void:
 		ladder = found
 		velocity = Vector3.ZERO
 		_ladder_travel = 0.0
+		_ladder_from_top = global_position.y >= found.get_top_y() - 0.35
 		ladder_changed.emit(true)
 
 
@@ -456,6 +610,7 @@ func _leave_ladder() -> void:
 		return
 	ladder = null
 	_ladder_cooldown = 0.35
+	_ladder_from_top = false
 	ladder_changed.emit(false)
 
 
@@ -470,6 +625,11 @@ func _move_on_ladder(delta: float) -> void:
 	var climb := -input.y
 	if pitch < deg_to_rad(-40.0):
 		climb = -climb
+	if _ladder_from_top:
+		if is_zero_approx(input.y):
+			_ladder_from_top = false
+		elif climb > 0.0:
+			climb = -climb
 	if is_on_floor() and climb < 0.0:
 		# In fondo alla scala: torna a camminare.
 		_leave_ladder()
@@ -481,7 +641,9 @@ func _move_on_ladder(delta: float) -> void:
 		_leave_ladder()
 		return
 	var side := n.cross(Vector3.UP)
-	velocity = Vector3.UP * climb * ladder_climb_speed + side * (-input.x) * 1.0 - n * 0.4
+	var dist := (global_position - ladder.global_position).dot(n)
+	var toward_hold := clampf((ladder_hold_distance - dist) * 6.0, -1.0, 1.0)
+	velocity = Vector3.UP * climb * ladder_climb_speed + side * (-input.x) * 1.0 + n * toward_hold
 	_ladder_travel += absf(climb) * ladder_climb_speed * delta
 	if _ladder_travel >= ladder_step_distance:
 		_ladder_travel = 0.0

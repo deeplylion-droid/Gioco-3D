@@ -65,7 +65,7 @@ Collegamento con gli script di `lavoro/godot` (`godot/scripts/mechanisms/`):
 Nei file ci sono le **luci rosse d'emergenza** come `OmniLight3D` (`luce_emergenza_*_luce`, già con colore rosso); le luci ad area dei neon invece non vengono esportate. Consiglio di sostituirle con i nodi dell'addon `grafica`:
 
 - `LuceEmergenza` (rossa, FISSA; una o due PULSANTI) al posto di ogni `luce_emergenza_*_luce`. Corridoio: (3,00; 2,20; -2,38), (10,80; 2,20; -2,38), (19,20; 2,20; -2,38), (17,50; 2,35; -0,22) sopra la porta della sala pompe, (17,50; 2,25; -2,38) di fronte, (21,78; 2,40; -1,30) sopra la porta tagliafuoco, (0,22; 2,35; -1,30) in fondo, (7,50; 2,20; -0,22). Spogliatoi: (6,80; 2,45; -3,22), (3,22; 2,40; -7,00), (5,60; 2,55; -14,38) docce, (9,70; 2,50; -11,42), (10,58; 2,30; -18,20), (12,98; 2,30; -16,00) gabbiotto. Stanzino: (11,42; 2,30; -9,60), (14,98; 2,30; -7,60).
-- `Neon` ai nodi `neon_*`: quelli con `_tubo_sfarfalla` sono accesi (modalità SFARFALLA, fanno da tubo emissivo): `neon_corridoio_2` (10,00; 2,59; -1,30), `neon_spogliatoi_1` (7,00; 2,79; -5,00), `neon_stanzino` (13,20; 2,49; -8,40). Gli altri (`_tubi`) sono spenti; `neon_corridoio_3` pende storto da un cavo.
+- `Neon` ai nodi `neon_*`: quelli con `_tubo_sfarfalla` sono accesi (modalità SFARFALLA, fanno da tubo emissivo): `neon_corridoio_2` (10,00; 2,43; -1,30), `neon_spogliatoi_1` (7,00; 2,80; -5,00), `neon_stanzino` (13,20; 2,34; -8,40). Gli altri (`_tubi`) sono spenti; `neon_corridoio_3` pende storto da un cavo.
 - `luce_pulsante_tornello`: piccola luce rossa sul pulsante, per farlo vedere attraverso il vetro.
 - Il vetro delle lampade (`*_vetro`) e i tubi dei neon hanno un materiale emissivo: per lo sfarfallio basta cambiare `emission_energy` insieme alla luce.
 

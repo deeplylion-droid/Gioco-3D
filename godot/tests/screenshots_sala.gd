@@ -89,15 +89,21 @@ func _run() -> void:
 	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
 	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
-	# Negli scatti la lampada è già accesa e ferma (niente accensione a colpi nella nebbia).
-	lamp.turn_on(true)
+	# SCATTI_FASE=blackout: la sala dopo il risveglio (tappa 7), con la torcia accesa.
+	var buio := OS.get_environment("SCATTI_FASE") == "blackout"
+	if buio:
+		GameState.imposta_luci(GameState.Luci.BLACKOUT)
+		await _frames(5)
+	else:
+		# Negli scatti la lampada è già accesa e ferma (niente accensione a colpi nella nebbia).
+		lamp.turn_on(true)
 	# Davanti alla statua la torcia è spenta: la illuminano solo le sue luci da monumento.
 	var torch := p.find_child("Torcia", true, false) as Torcia
 	var statue_only := not only.is_empty()
 	for o in only:
-		if not String(o).begins_with("statua") and not String(o).begins_with("vasca") and not o in ["ingresso_statua", "ingresso_vasca"]:
+		if not String(o).begins_with("statua") and not String(o).begins_with("vasca") and not o in ["ingresso_statua", "ingresso_vasca", "telecamera_monitor"]:
 			statue_only = false
-	if torch and statue_only:
+	if torch and statue_only and not buio:
 		torch.imposta_accesa(false)
 	if _want("ingresso_vasca"):
 		# Entrando nella sala: la medusa affacciata alla vasca, il viso nel cono del lampione.
@@ -116,6 +122,40 @@ func _run() -> void:
 						lamp.base_energy = e
 			await _frames(maxi(settle, 12))
 			await _capture("ingresso_vasca_" + v.replace("=", "").replace(",", "_"))
+	if _want("scia_vasca"):
+		# Tappa 7: dal cordone, la vasca vuota e le gocce che dal bordo vanno verso il buio.
+		await _shot("scia_vasca", Vector3(-8.0, 0.0, 10.9), Vector3(-4.2, 0.0, 9.3))
+	if _want("scia_buio"):
+		# Tappa 7: dal cordone della vasca, la scia di gocce che va verso il fondo della sala.
+		await _shot("scia_buio", Vector3(-7.9, 0.0, 10.6), Vector3(-14.5, -0.6, 7.8))
+	if _want("lei_sbuca") or _want("lei_sottacqua"):
+		# Tappa 8 (con SCATTI_FASE=blackout): lei che sbuca dal bordo della fossa, vista dalla scia
+		# a 5 m, e la sua luce sott'acqua quando se ne va. Ferma: niente presa, niente attesa.
+		var lei := level.get(&"lei_sbuca") as LeiSbuca
+		if lei:
+			lei.abilitata = true
+			lei.attesa = 999.0
+			lei.distanza_presa = 0.0
+			var testa := lei._testa_prevista()
+			var verso := lei.punto_sbuca.global_basis.z
+			verso.y = 0.0
+			verso = verso.normalized()
+			p.teleport(Vector3(0.0, 0.0, 21.0), 0.0, 0.0)
+			lei._sbuca()
+			await _frames(int(lei.durata_sbuca * 60.0) + 10)
+			if _want("lei_sbuca"):
+				var da := testa + verso * 5.0
+				await _shot("lei_sbuca", Vector3(da.x, 0.0, da.z), testa + Vector3(0.0, -0.25, 0.0))
+			if _want("lei_sottacqua"):
+				lei.durata_fuga = 60.0
+				lei._fuga()
+				await _frames(90)
+				var bordo := testa + verso * 1.6
+				await _shot("lei_sottacqua", Vector3(bordo.x, 0.0, bordo.z), lei.punto_sbuca.global_position + Vector3(0.0, -0.6, 0.0))
+	if _want("telecamera_monitor"):
+		# La telecamera di sorveglianza della sala, per il monitor della sala pompe: in alto sopra
+		# l'ingresso, verso la medusa nella vasca (si ritaglia in 4:3).
+		await _shot_camera("telecamera_monitor", Vector3(-5.0, 5.3, 16.4), Vector3(0.0, 1.1, 11.0), 60.0)
 	if _want("vasca_primo_piano"):
 		# Dal bordo, oltre il cordone: occhio negli occhi.
 		await _shot("vasca_primo_piano", Vector3(0.35, 0.0, 13.25), Vector3(0.0, 1.5, 11.9))
@@ -154,6 +194,22 @@ func _shot(file: String, pos: Vector3, look: Vector3, before := Callable(), afte
 		before.call()
 		await _frames(after_frames if after_frames >= 0 else 4)
 	await _capture(file)
+
+
+## Uno scatto da una telecamera libera (non dagli occhi del giocatore), per esempio dall'alto.
+func _shot_camera(file: String, pos: Vector3, look: Vector3, fov := 70.0) -> void:
+	var cam := Camera3D.new()
+	cam.fov = fov
+	level.add_child(cam)
+	cam.global_position = pos
+	cam.look_at(look, Vector3.UP)
+	cam.current = true
+	# Il giocatore lontano dall'inquadratura (e con la torcia spenta).
+	p.teleport(Vector3(0.0, 0.0, 21.0), 0.0, 0.0)
+	await _frames(settle)
+	await _capture(file)
+	cam.queue_free()
+	p.camera.current = true
 
 
 func _capture(file: String) -> void:

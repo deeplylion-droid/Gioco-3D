@@ -158,11 +158,24 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `interfaccia/ui_cursore.ogg` | 0.0 s | Kenney Interface Sounds (CC0) | tick_002 |
 | `interfaccia/ui_pausa.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | switch_002 |
 | `interfaccia/ui_scatto.ogg` | 0.1 s | Kenney Interface Sounds (CC0) | toggle_002 |
+| `lei/fossa_ribolle_loop.ogg` | 5.0 s | sintesi (originale) | gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse |
+| `lei/lei_sbuca.ogg` | 6.5 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | impactSoft_medium, slime_000 |
+| `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) |  |
+| `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | slime_000, slime_001; la fauce si chiude a 1,0 s |
 | `musica/polaroid_chiudi.ogg` | 0.3 s | sintesi (originale) |  |
 | `musica/polaroid_raccolta.ogg` | 2.6 s | sintesi (originale) |  |
 | `musica/sigla_pulita.ogg` | 37.6 s | sintesi (originale) | melodia e arrangiamento originali; carillon, organetto, percussioni giocattolo |
 | `musica/sigla_rovinata.ogg` | 31.0 s | sintesi (originale) | 96 BPM, primo battito a 0.05 s |
 | `musica/stinger_bambini.ogg` | 6.0 s | sintesi (originale) |  |
 | `musica/stinger_morte.ogg` | 7.5 s | sintesi (originale) |  |
+| `tecnici/corrente_salta.ogg` | 5.5 s | sintesi (originale) |  |
+| `tecnici/crt_neve_loop.ogg` | 3.0 s | sintesi (originale) | la neve di un televisore senza segnale: si sente anche col ruggito delle pompe |
+| `tecnici/maniglione_bloccato.ogg` | 0.9 s | Kenney RPG Audio + Impact Sounds (CC0) + sintesi | metalLatch, impactMetal_heavy |
+| `tecnici/paratia_scende_loop.ogg` | 3.0 s | sintesi (originale) |  |
+| `tecnici/plastica_piega_lontano.ogg` | 12.0 s | sintesi (originale) | si deve sentire sotto il ruggito delle pompe (che lascia liberi i medi) |
+| `tecnici/pompa_avvio.ogg` | 3.4 s | sintesi (originale) |  |
+| `tecnici/pompe_ruggito_loop.ogg` | 4.0 s | sintesi (originale) | una pompa a pieno regime, ruggito basso; tre pompe = tre loop |
+| `tecnici/porta_ponte_apre.ogg` | 3.4 s | Kenney RPG Audio (CC0) + sintesi | metalLatch, creak, doorClose |
+| `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
 
-Totale: 140 file, 5.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 153 file, 6.1 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

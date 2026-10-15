@@ -65,6 +65,10 @@ func _dopo_rebuild() -> void:
 		var bone := sk.find_bone(osso_occhio)
 		_pos_occhio = _occhio_globale(sk)
 		sk.skeleton_updated.connect(func():
+			# Mentre il livello si ricarica (morte, ripartenza) lo scheletro può aggiornarsi già
+			# fuori dall'albero: lì non ha una posizione nel mondo.
+			if not sk.is_inside_tree():
+				return
 			var pose := sk.get_bone_global_pose(bone)
 			_pos_occhio = sk.global_transform * pose.origin
 			_dir_occhio = (sk.global_basis * pose.basis).y.normalized())

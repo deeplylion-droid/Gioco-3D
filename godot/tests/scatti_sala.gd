@@ -26,6 +26,11 @@ const SCATTI := {
 	"f_galleria": [Vector3(18.4, 4.3, -0.5), Vector3(0.0, 0.6, 1.5)],      # dalla galleria est verso la sala
 }
 
+## Camere in più, solo se chiamate per nome (non sono nei confronti prima/dopo).
+const EXTRA := {
+	"g_fossa_bimbi": [Vector3(-16.2, 0.0, -5.6), Vector3(-13.6, -1.0, -7.3)],  # tappa 8: la fossa della VascaBimbi1 da dove arriva il giocatore
+}
+
 var out_dir := "user://scatti_sala"
 var prefisso := "scatto"
 var only := PackedStringArray()
@@ -95,9 +100,13 @@ func _run() -> void:
 	if lamp and lamp.has_method("turn_on"):
 		lamp.turn_on()
 	p.stand_eye_height = 1.7
-	for nome in SCATTI:
+	var camere := SCATTI.duplicate()
+	for nome in EXTRA:
+		if only.has(nome):
+			camere[nome] = EXTRA[nome]
+	for nome in camere:
 		if only.is_empty() or only.has(nome):
-			var s: Array = SCATTI[nome]
+			var s: Array = camere[nome]
 			p.teleport(s[0], 0.0, 0.0)
 			p.look_at_point(s[1])
 			await _frames(settle)

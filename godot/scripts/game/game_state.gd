@@ -15,6 +15,15 @@ signal checkpoint_reached(checkpoint_id: String)
 signal player_died(cause: StringName)
 signal player_respawned
 signal collectible_collected(collection: StringName, entry: StringName, count: int, total: int)
+## Le luci dell'acquapark sono cambiate (vedi [member luci]).
+signal luci_cambiate(fase: Luci)
+
+## Le luci di tutto l'acquapark (tappa 6, il risveglio): prima del risveglio; il flash, un
+## secondo con tutte le luci accese quando ripartono le pompe; il blackout, con le sole luci
+## rosse d'emergenza. È il punto unico a cui si agganciano le luci (LookSala, LookTecnici,
+## LookInterni dell'addon grafica, LuciRisveglio): leggono [member luci] e ascoltano
+## [signal luci_cambiate]. Si salva con i checkpoint.
+enum Luci { PRIMA_DEL_RISVEGLIO, FLASH, BLACKOUT }
 
 const SAVE_PATH := "user://salvataggio.json"
 const SAVE_VERSION := 1
@@ -32,6 +41,8 @@ var is_dying := false
 var snapshot: Dictionary = {}
 ## Causa dell'ultima morte.
 var last_death_cause: StringName = &""
+## Le luci dell'acquapark adesso (vedi [enum Luci]).
+var luci: Luci = Luci.PRIMA_DEL_RISVEGLIO
 
 var _removed: Dictionary = {}       # chiave persist -> true
 var _collected: Dictionary = {}     # collezione -> { voce: true }
@@ -62,7 +73,16 @@ func _on_level_ready() -> void:
 	elif snapshot.get("scene", "") != scene:
 		# Livello nuovo: il primo checkpoint è il punto di partenza.
 		_removed.clear()
+		imposta_luci(Luci.PRIMA_DEL_RISVEGLIO)
 		capture_snapshot("inizio", -1, player.global_transform)
+
+
+## Cambia le luci dell'acquapark (vedi [enum Luci]) e lo dice a chi ascolta.
+func imposta_luci(fase: Luci) -> void:
+	if fase == luci:
+		return
+	luci = fase
+	luci_cambiate.emit(fase)
 
 
 ## Vero mentre il livello si sta caricando per ripartire da un checkpoint o da un salvataggio.
@@ -131,6 +151,8 @@ func capture_snapshot(checkpoint_id: String, order: int, spawn: Transform3D) -> 
 		"objects": objects,
 		"removed": _removed.keys(),
 		"collectibles": _collected_to_lists(),
+		# Il flash dura un secondo: chi riparte da lì lo ritrova già finito.
+		"luci": int(Luci.BLACKOUT if luci == Luci.FLASH else luci),
 		"time": Time.get_unix_time_from_system(),
 	}
 	if save_to_disk:
@@ -138,6 +160,7 @@ func capture_snapshot(checkpoint_id: String, order: int, spawn: Transform3D) -> 
 
 
 func _apply_snapshot(s: Dictionary) -> void:
+	imposta_luci(clampi(int(s.get("luci", 0)), 0, Luci.BLACKOUT) as Luci)
 	_removed.clear()
 	for k in s.get("removed", []):
 		_removed[String(k)] = true
@@ -296,3 +319,4 @@ func reset_progress() -> void:
 	_collected.clear()
 	_restore_pending = false
 	is_dying = false
+	imposta_luci(Luci.PRIMA_DEL_RISVEGLIO)

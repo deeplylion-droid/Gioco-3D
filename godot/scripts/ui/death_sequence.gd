@@ -1,9 +1,12 @@
 class_name DeathSequence
 extends CanvasLayer
-## Sequenza di morte PROVVISORIA (la scena vera, con la mascotte, è da fare).
-## La camera cade, lampo rosso, poi nero. Si salta tenendo premuto "skip" (Spazio, E o Invio)
-## per [member hold_to_skip] secondi. Alla fine emette [signal finished]: GameState ricarica
-## il livello dall'ultimo checkpoint e poi chiama fade_in().
+## Sequenza di morte. Si salta tenendo premuto "skip" (Spazio, E o Invio) per
+## [member hold_to_skip] secondi. Alla fine emette [signal finished]: GameState ricarica il
+## livello dall'ultimo checkpoint e poi chiama fade_in().
+## - Se ti prende lei (causa &"medusa", con la medusa nel gruppo "medusa_che_prende"): la camera
+##   viene tirata verso il suo viso mentre la fauce si apre e l'occhio si riempie di vene (lo fa
+##   la medusa, MedusaStatue.attacca()), lampo rosso al morso, poi nero.
+## - Le altre cause (PROVVISORIO): la camera cade, lampo rosso, poi nero.
 
 signal finished(skipped: bool)
 
@@ -26,6 +29,9 @@ var _black: ColorRect
 var _title: Label
 var _hint: Label
 var _bar: ProgressBar
+# Lei che ti prende, e da dove partiva la camera.
+var _lei: Node3D
+var _camera_da := Transform3D.IDENTITY
 
 
 func _ready() -> void:
@@ -35,6 +41,12 @@ func _ready() -> void:
 	_black = _rect(Color(0, 0, 0, 0))
 	_title = _label("[scena di morte provvisoria]", 0.45, 30)
 	_title.modulate.a = 0.0
+	if cause == &"medusa":
+		_lei = get_tree().get_first_node_in_group(&"medusa_che_prende") as Node3D
+		_title.visible = false
+		var p := GameState.player
+		if p and is_instance_valid(p):
+			_camera_da = p.camera.global_transform
 	_hint = _label("Tieni premuto Spazio per saltare", 0.88, 18)
 	_bar = ProgressBar.new()
 	_bar.show_percentage = false
@@ -56,10 +68,16 @@ func _process(delta: float) -> void:
 	if _done:
 		return
 	elapsed += delta
-	_flash.color.a = clampf(1.0 - elapsed / 0.8, 0.0, 1.0) * 0.55
-	_black.color.a = smoothstep(0.7, 2.0, elapsed)
-	_title.modulate.a = smoothstep(1.6, 2.4, elapsed)
-	_animate_camera()
+	if _lei and is_instance_valid(_lei):
+		# Il morso dopo un attimo: lampo, poi nero.
+		_flash.color.a = clampf(1.0 - absf(elapsed - 1.0) / 0.35, 0.0, 1.0) * 0.6
+		_black.color.a = smoothstep(1.1, 2.0, elapsed)
+		_camera_medusa()
+	else:
+		_flash.color.a = clampf(1.0 - elapsed / 0.8, 0.0, 1.0) * 0.55
+		_black.color.a = smoothstep(0.7, 2.0, elapsed)
+		_title.modulate.a = smoothstep(1.6, 2.4, elapsed)
+		_animate_camera()
 	if Input.is_action_pressed(&"skip"):
 		hold += delta
 	else:
@@ -95,6 +113,26 @@ func _finish(skipped: bool) -> void:
 	_hint.visible = false
 	_bar.visible = false
 	finished.emit(skipped)
+
+
+## Lei ti tira verso di sé: la camera va davanti al suo viso, guardando la fauce che si apre,
+## con un tremito che cresce.
+func _camera_medusa() -> void:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p):
+		return
+	var viso: Vector3 = _lei.call(&"get_eye_position") if _lei.has_method(&"get_eye_position") else _lei.global_position + Vector3.UP * 1.6
+	var bocca := viso + Vector3.DOWN * 0.22
+	var verso := _camera_da.origin - bocca
+	verso.y = maxf(verso.y, 0.0)
+	var arrivo := bocca + verso.normalized() * 0.6
+	var t := smoothstep(0.0, 0.95, elapsed)
+	var pos := _camera_da.origin.lerp(arrivo, t)
+	var tremito := Vector3(sin(elapsed * 53.0), sin(elapsed * 47.0 + 1.3), 0.0) * 0.012 * t
+	var dove := (bocca - pos).normalized()
+	if dove.length_squared() < 0.5 or absf(dove.y) > 0.99:
+		return
+	p.camera.global_transform = Transform3D(Basis.looking_at(dove, Vector3.UP), pos + tremito)
 
 
 ## Placeholder: la camera crolla a terra di lato.

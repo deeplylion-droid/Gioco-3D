@@ -1339,6 +1339,46 @@
   "lufs": null,
   "lufs_max": -23.0
  },
+ "lei/fossa_ribolle_loop": {
+  "file": "res://audio/lei/fossa_ribolle_loop.ogg",
+  "canali": 1,
+  "durata": 5.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse",
+  "lufs": -19.0,
+  "lufs_max": -14.8
+ },
+ "lei/lei_sbuca": {
+  "file": "res://audio/lei/lei_sbuca.ogg",
+  "canali": 1,
+  "durata": 6.5,
+  "loop": false,
+  "fonte": "sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0)",
+  "nota": "impactSoft_medium, slime_000",
+  "lufs": -22.7,
+  "lufs_max": -14.0
+ },
+ "lei/lei_scivola_sotto": {
+  "file": "res://audio/lei/lei_scivola_sotto.ogg",
+  "canali": 1,
+  "durata": 4.5,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.4,
+  "lufs_max": -16.0
+ },
+ "lei/morso": {
+  "file": "res://audio/lei/morso.ogg",
+  "canali": 2,
+  "durata": 1.8,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "slime_000, slime_001; la fauce si chiude a 1,0 s",
+  "lufs": -20.5,
+  "lufs_max": -12.0
+ },
  "musica/polaroid_chiudi": {
   "file": "res://audio/musica/polaroid_chiudi.ogg",
   "canali": 1,
@@ -1398,5 +1438,95 @@
   "nota": "",
   "lufs": -14.0,
   "lufs_max": -9.0
+ },
+ "tecnici/corrente_salta": {
+  "file": "res://audio/tecnici/corrente_salta.ogg",
+  "canali": 2,
+  "durata": 5.5,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -19.5,
+  "lufs_max": -15.0
+ },
+ "tecnici/crt_neve_loop": {
+  "file": "res://audio/tecnici/crt_neve_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "la neve di un televisore senza segnale: si sente anche col ruggito delle pompe",
+  "lufs": -22.0,
+  "lufs_max": -20.8
+ },
+ "tecnici/maniglione_bloccato": {
+  "file": "res://audio/tecnici/maniglione_bloccato.ogg",
+  "canali": 1,
+  "durata": 0.9,
+  "loop": false,
+  "fonte": "Kenney RPG Audio + Impact Sounds (CC0) + sintesi",
+  "nota": "metalLatch, impactMetal_heavy",
+  "lufs": -24.2,
+  "lufs_max": -17.4
+ },
+ "tecnici/paratia_scende_loop": {
+  "file": "res://audio/tecnici/paratia_scende_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -19.0,
+  "lufs_max": -17.2
+ },
+ "tecnici/plastica_piega_lontano": {
+  "file": "res://audio/tecnici/plastica_piega_lontano.ogg",
+  "canali": 2,
+  "durata": 12.0,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "si deve sentire sotto il ruggito delle pompe (che lascia liberi i medi)",
+  "lufs": -18.0,
+  "lufs_max": -14.7
+ },
+ "tecnici/pompa_avvio": {
+  "file": "res://audio/tecnici/pompa_avvio.ogg",
+  "canali": 1,
+  "durata": 3.4,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.1,
+  "lufs_max": -16.0
+ },
+ "tecnici/pompe_ruggito_loop": {
+  "file": "res://audio/tecnici/pompe_ruggito_loop.ogg",
+  "canali": 1,
+  "durata": 4.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "una pompa a pieno regime, ruggito basso; tre pompe = tre loop",
+  "lufs": -18.0,
+  "lufs_max": -15.7
+ },
+ "tecnici/porta_ponte_apre": {
+  "file": "res://audio/tecnici/porta_ponte_apre.ogg",
+  "canali": 1,
+  "durata": 3.4,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0) + sintesi",
+  "nota": "metalLatch, creak, doorClose",
+  "lufs": -24.6,
+  "lufs_max": -16.0
+ },
+ "tecnici/tonfo_acqua_lontano": {
+  "file": "res://audio/tecnici/tonfo_acqua_lontano.ogg",
+  "canali": 2,
+  "durata": 6.0,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -22.8,
+  "lufs_max": -16.0
  }
 }
