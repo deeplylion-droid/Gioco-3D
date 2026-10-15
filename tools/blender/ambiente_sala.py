@@ -1620,21 +1620,23 @@ def lampione_hq(mats, b, lamp, nome):
     sbraccio = math.hypot(sx - bx, sy - by)
     ang = math.atan2(sy - by, sx - bx)
     voluto = Vector((lamp.x - b.x, lamp.y - b.y, 0))
-    k_xy = voluto.length / sbraccio
-    k_z = (lamp.z - b.z) / zb
+    k = (lamp.z - b.z) / zb                               # scala uniforme: la lampadina all'altezza della luce
     me.transform(Matrix.Translation((-bx, -by, 0)))
     me.transform(Matrix.Rotation(math.atan2(voluto.y, voluto.x) - ang, 4, 'Z'))
-    me.transform(Matrix.Diagonal((k_xy, k_xy, k_z, 1.0)))
+    me.transform(Matrix.Scale(k, 4))
     me.transform(Matrix.Translation(b))
     ob = bpy.data.objects.new(nome + '_hq', me)
     bpy.context.scene.collection.objects.link(ob)
+    # la lampadina che sfarfalla, dentro quella del modello (la luce del gioco resta in lamp, a pochi cm)
+    lb = b + voluto.normalized() * (sbraccio * k) + Vector((0, 0, lamp.z - b.z))
     c = K.Costruttore(mats)
-    c.cilindro(lamp + Vector((0, 0, -0.06)), lamp + Vector((0, 0, 0.05)), 0.055, 'lampadina', seg=16)
-    c.disco(lamp + Vector((0, 0, -0.06)), (0, 0, -1), 0.055, 'lampadina', seg=16)
+    c.cilindro(lb + Vector((0, 0, -0.07)), lb + Vector((0, 0, 0.06)), 0.065, 'lampadina', seg=16)
+    c.disco(lb + Vector((0, 0, -0.07)), (0, 0, -1), 0.065, 'lampadina', seg=16)
     bulbo = c.crea(nome + '_bulbo')
     ob = unisci([ob, bulbo], nome)
     senza_colori(ob)
-    print(f'lampione HQ: sbraccio x{k_xy:.2f}, altezza x{k_z:.2f}, cima {max(v.co.z for v in ob.data.vertices):.2f} m')
+    print(f'lampione HQ: scala x{k:.2f}, sbraccio {sbraccio * k:.2f} m (luce a {voluto.length:.2f}), '
+          f'cima {max(v.co.z for v in ob.data.vertices):.2f} m')
     K.collisione_scatola(nome, tuple(b - Vector((0.14, 0.14, 0))), tuple(b + Vector((0.14, 0.14, 4.3))), padre=ob)
     return ob, lamp
 
