@@ -8,20 +8,18 @@ extends Node
 ## lo shader del tubo (shaders/tecnici/crt.gdshader) mostra sullo schermo del modello.
 ## Lo schermo del glTF (SCHERMO_CRT) è un rettangolo piatto qualche centimetro davanti al vetro
 ## bombato del tubo: da vicino sembrava un foglio nero attaccato sul televisore (riscontro E5
-## dell'utente). All'avvio lo si sostituisce con una griglia appoggiata sul vetro del modello.
+## dell'utente). Al suo posto va [member schermo_sul_vetro], una griglia appoggiata sul vetro che
+## prepara il costruttore della sala con [method costruisci_schermo_sul_vetro]. Non la si calcola al
+## caricamento: leggere le mesh dalla scheda video mentre la scena entra può bloccare il gioco
+## (succedeva sul renderer Vulkan).
 
 ## La mesh dello schermo (SCHERMO_CRT del modello).
 @export var schermo_path: NodePath
 ## Dove mettere la sua luce (empty LUCE_crt del modello).
 @export var luce_path: NodePath
-## Il televisore (MONITOR_CRT del modello): lo schermo si appoggia sul suo vetro. Vuoto = lo si
-## cerca accanto allo schermo.
-@export var modello_path: NodePath
-## Falso: resta il rettangolo piatto del modello (per i confronti).
-@export var appoggia_sul_vetro := true
-## Quanto lo schermo sta davanti al vetro (m) e in quanti quadretti è diviso.
-@export var stacco_dal_vetro := 0.002
-@export var suddivisioni := Vector2i(16, 12)
+## Lo schermo appoggiato sul vetro bombato del televisore (costruisci_schermo_sul_vetro), nelle
+## coordinate di SCHERMO_CRT. Vuoto = resta il rettangolo piatto del modello.
+@export var schermo_sul_vetro: Mesh
 ## L'immagine della telecamera (uno scatto vero della sala, in 4:3).
 @export var immagine: Texture2D
 ## Sovrimpressione: nome della telecamera, data e ora d'inizio (l'ora poi corre).
@@ -50,8 +48,9 @@ func _ready() -> void:
 	_componi()
 	var schermo := get_node_or_null(schermo_path) as MeshInstance3D
 	if schermo:
-		if appoggia_sul_vetro:
-			vertici_sul_vetro = _appoggia_sul_vetro(schermo)
+		if schermo_sul_vetro:
+			schermo.mesh = schermo_sul_vetro
+			vertici_sul_vetro = int(schermo_sul_vetro.get_meta(&"vertici_sul_vetro", 0))
 		_materiale = ShaderMaterial.new()
 		_materiale.shader = preload("res://shaders/tecnici/crt.gdshader")
 		_materiale.set_shader_parameter(&"immagine", _vista.get_texture())
@@ -75,23 +74,22 @@ func _ready() -> void:
 	_applica(GameState.luci)
 
 
-## Sostituisce la mesh dello schermo con una griglia sullo stesso rettangolo (stesse UV), con ogni
-## vertice spinto indietro fin sul vetro del televisore (un raggio contro la sua mesh). Ritorna
-## quanti vertici hanno trovato il vetro.
-func _appoggia_sul_vetro(schermo: MeshInstance3D) -> int:
-	if schermo.mesh == null or schermo.mesh.get_surface_count() == 0:
-		return 0
-	var modello := get_node_or_null(modello_path) as MeshInstance3D
-	if modello == null and schermo.get_parent():
-		modello = schermo.get_parent().get_node_or_null(^"MONITOR_CRT") as MeshInstance3D
-	if modello == null or modello.mesh == null:
-		return 0
-	var arr := schermo.mesh.surface_get_arrays(0)
+## Una griglia sul rettangolo dello schermo [param schermo] (stesse UV), con ogni vertice spinto
+## indietro fin sul vetro del televisore [param modello] (un raggio contro la sua mesh), [param stacco]
+## metri davanti. [param schermo_a_modello] porta le coordinate dello schermo in quelle del
+## televisore. Legge le mesh: va chiamata dove si leggono senza la scheda video (il costruttore
+## della sala, senza schermo). Null se meno di metà dei vertici trova il vetro. Nei metadati,
+## "vertici_sul_vetro".
+static func costruisci_schermo_sul_vetro(schermo: Mesh, modello: Mesh, schermo_a_modello: Transform3D,
+		suddivisioni := Vector2i(16, 12), stacco := 0.002) -> ArrayMesh:
+	if schermo == null or modello == null or schermo.get_surface_count() == 0:
+		return null
+	var arr := schermo.surface_get_arrays(0)
 	var vv: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 	var uv: PackedVector2Array = arr[Mesh.ARRAY_TEX_UV] if arr[Mesh.ARRAY_TEX_UV] != null else PackedVector2Array()
 	if vv.size() < 3 or uv.size() != vv.size():
-		return 0
-	# Gli angoli del rettangolo, dalle UV (coordinate locali dello schermo).
+		return null
+	# Gli angoli del rettangolo, dalle UV.
 	var angoli: Array[Vector3] = []
 	for a in [Vector2(0, 0), Vector2(1, 0), Vector2(0, 1), Vector2(1, 1)]:
 		var best := 0
@@ -103,12 +101,10 @@ func _appoggia_sul_vetro(schermo: MeshInstance3D) -> int:
 	var nn: Variant = arr[Mesh.ARRAY_NORMAL]
 	if nn is PackedVector3Array and (nn as PackedVector3Array).size() > 0 and n.dot((nn as PackedVector3Array)[0]) < 0.0:
 		n = -n
-	# I raggi si fanno nelle coordinate del televisore (la sua mesh in un TriangleMesh).
-	var tri: TriangleMesh = modello.mesh.generate_triangle_mesh()
+	var tri: TriangleMesh = modello.generate_triangle_mesh()
 	if tri == null:
-		return 0
-	var da_schermo := modello.global_transform.affine_inverse() * schermo.global_transform
-	var a_schermo := da_schermo.affine_inverse()
+		return null
+	var a_schermo := schermo_a_modello.affine_inverse()
 	var punti := PackedVector3Array()
 	var uvs := PackedVector2Array()
 	var normali := PackedVector3Array()
@@ -121,15 +117,15 @@ func _appoggia_sul_vetro(schermo: MeshInstance3D) -> int:
 			var t := float(j) / ny
 			var p := angoli[0].lerp(angoli[1], s).lerp(angoli[2].lerp(angoli[3], s), t)
 			# Dal davanti del rettangolo fino a 15 cm dietro: il primo punto del televisore è il vetro.
-			var colpo: Dictionary = tri.intersect_segment(da_schermo * (p + n * 0.05), da_schermo * (p - n * 0.15))
+			var colpo: Dictionary = tri.intersect_segment(schermo_a_modello * (p + n * 0.05), schermo_a_modello * (p - n * 0.15))
 			if not colpo.is_empty():
-				p = a_schermo * (colpo.position as Vector3) + n * stacco_dal_vetro
+				p = a_schermo * (colpo.position as Vector3) + n * stacco
 				trovati += 1
 			punti.append(p)
 			uvs.append(Vector2(s, t))
 			normali.append(n)
 	if trovati < (nx + 1) * (ny + 1) / 2:
-		return 0
+		return null
 	var indici := PackedInt32Array()
 	for j in ny:
 		for i in nx:
@@ -137,7 +133,7 @@ func _appoggia_sul_vetro(schermo: MeshInstance3D) -> int:
 			var b := a + 1
 			var c := a + nx + 1
 			var d := c + 1
-			# Facce verso chi guarda (l'ordine dei vertici come nel rettangolo originale).
+			# Facce in senso orario viste da davanti (come vuole Godot).
 			if (punti[b] - punti[a]).cross(punti[c] - punti[a]).dot(n) > 0.0:
 				indici.append_array([a, c, b, b, c, d])
 			else:
@@ -150,8 +146,9 @@ func _appoggia_sul_vetro(schermo: MeshInstance3D) -> int:
 	nuovo[Mesh.ARRAY_INDEX] = indici
 	var mesh := ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, nuovo)
-	schermo.mesh = mesh
-	return trovati
+	mesh.resource_name = "SCHERMO_CRT_sul_vetro"
+	mesh.set_meta(&"vertici_sul_vetro", trovati)
+	return mesh
 
 
 ## L'immagine della telecamera con la sovrimpressione, in un SubViewport 2D piccolo.
@@ -175,10 +172,11 @@ func _componi() -> void:
 		img.stretch_mode = TextureRect.STRETCH_SCALE
 		img.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		_vista.add_child(img)
-	var cam := _scritta(telecamera, Vector2(10, 6))
+	# Un po' dentro dai bordi: gli angoli del tubo sono scuri (crt.gdshader) e coprivano la data.
+	var cam := _scritta(telecamera, Vector2(34, 20))
 	cam.name = "Nome"
-	_rec = _scritta("● REC", Vector2(LATO.x - 70, 6))
-	_ora = _scritta("", Vector2(10, LATO.y - 26))
+	_rec = _scritta("● REC", Vector2(LATO.x - 96, 20))
+	_ora = _scritta("", Vector2(34, LATO.y - 42))
 
 
 func _scritta(testo: String, dove: Vector2) -> Label:

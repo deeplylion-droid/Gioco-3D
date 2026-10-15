@@ -196,7 +196,7 @@ func _run() -> void:
 	check(schermo != null and schermo.material_override is ShaderMaterial
 			and (schermo.material_override as ShaderMaterial).shader.resource_path.ends_with("crt.gdshader"),
 		"E5: sullo schermo c'è l'immagine del tubo (non il materiale del modello)")
-	check(mon.vertici_sul_vetro >= (mon.suddivisioni.x + 1) * (mon.suddivisioni.y + 1) - 4,
+	check(mon.schermo_sul_vetro != null and schermo.mesh == mon.schermo_sul_vetro and mon.vertici_sul_vetro >= 200,
 		"E5: lo schermo è appoggiato sul vetro bombato, non un foglio piatto davanti (%d vertici)" % mon.vertici_sul_vetro)
 	var ora := mon.sovrimpressione()
 	await _frames(70)

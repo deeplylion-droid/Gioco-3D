@@ -66,7 +66,8 @@ func _run() -> void:
 			mon.luce_path = NodePath("../Ambienti/SalaPompe/LUCE_crt")
 			mon.immagine = load("res://assets/tecnici/monitor_sala.jpg")
 			# SCATTI_MONITOR_PIATTO=1: com'era nella v0.3.0, il rettangolo piatto del modello.
-			mon.appoggia_sul_vetro = OS.get_environment("SCATTI_MONITOR_PIATTO") != "1"
+			if OS.get_environment("SCATTI_MONITOR_PIATTO") != "1":
+				mon.schermo_sul_vetro = load("res://assets/tecnici/schermo_crt_sul_vetro.res")
 			level.add_child(mon)
 		if _want("tecnici_monitor"):
 			await _shot("tecnici_monitor", Vector3(41.15, 0.0, 1.75), Vector3(41.57, 1.0, 2.96))

@@ -445,6 +445,8 @@ const TECNICI := "res://scenes/tecnici/tecnici.tscn"
 const TECNICI_XF := Transform3D(Basis(Vector3.UP, -PI * 0.5), Vector3(0.0, -9.05, 1.36))
 ## L'immagine della telecamera della sala sul monitor della sala pompe (uno scatto vero).
 const MONITOR_IMMAGINE := "res://assets/tecnici/monitor_sala.jpg"
+## Lo schermo del monitor appoggiato sul vetro bombato del tubo (lo calcola questo costruttore).
+const SCHERMO_SUL_VETRO := "res://assets/tecnici/schermo_crt_sul_vetro.res"
 
 
 func _tecnici() -> Node3D:
@@ -461,6 +463,17 @@ func _tecnici() -> Node3D:
 	_sala_pompe(tec, lg)
 	_checkpoint_tecnici(tec, lg)
 	return tec
+
+
+## La trasformazione di [param n] nelle coordinate di [param radice] (anche fuori dall'albero).
+func _relativa(n: Node3D, radice: Node) -> Transform3D:
+	var t := Transform3D.IDENTITY
+	var x: Node = n
+	while x and x != radice:
+		if x is Node3D:
+			t = (x as Node3D).transform * t
+		x = x.get_parent()
+	return t
 
 
 func _marker(tec: Node3D, nome: String) -> Vector3:
@@ -556,6 +569,20 @@ func _sala_pompe(tec: Node3D, lg: Node3D) -> void:
 	mon.set(&"luce_path", mon.get_path_to(tec.get_node(sp + "LUCE_crt")))
 	if ResourceLoader.exists(MONITOR_IMMAGINE):
 		mon.set(&"immagine", load(MONITOR_IMMAGINE))
+	# Lo schermo appoggiato sul vetro bombato del tubo (riscontro E5: il rettangolo piatto del modello
+	# sembrava un foglio attaccato sul televisore). Si calcola qui, senza scheda video, e si salva:
+	# nel gioco leggere le mesh mentre la scena entra bloccava il renderer Vulkan.
+	var schermo := tec.get_node_or_null(sp + "SCHERMO_CRT") as MeshInstance3D
+	var tv := tec.get_node_or_null(sp + "MONITOR_CRT") as MeshInstance3D
+	if schermo and tv:
+		var sul_vetro: ArrayMesh = load(T + "monitor_crt.gd").costruisci_schermo_sul_vetro(schermo.mesh, tv.mesh,
+				_relativa(tv, tec).affine_inverse() * _relativa(schermo, tec))
+		if sul_vetro:
+			ResourceSaver.save(sul_vetro, SCHERMO_SUL_VETRO)
+			sul_vetro.take_over_path(SCHERMO_SUL_VETRO)
+			mon.set(&"schermo_sul_vetro", sul_vetro)
+		else:
+			push_warning("build_sala_principale: lo schermo del monitor non trova il vetro del televisore")
 	ris.set(&"monitor", mon)
 	# Chi tiene insieme tutto: ordine delle pompe, leva, risveglio, paratie, porta.
 	own(ris, g)
