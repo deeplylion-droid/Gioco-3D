@@ -164,6 +164,24 @@ func _run() -> void:
 			break
 		await get_tree().physics_frame
 	check(toy.gate_open, "l'ondata apre il cancello della piscina")
+
+	print("B5: i bambini sulla balconata, in un lampo")
+	var kids: KidSighting = level.get_node("BambiniBalconata")
+	var storm: Tempesta = level.get_node("Tempesta")
+	var flashes := [0]
+	storm.lampo.connect(func(_i): flashes[0] += 1)
+	p.teleport(Vector3(13.5, 4.5, -16.5), PI, 0.0)
+	await _frames(5)
+	check(kids.get_child_count() >= 5, "sulla torre compaiono i bambini sulla balconata")
+	check(flashes[0] >= 1, "e un lampo li illumina")
+	await _frames(150)
+	storm.lampo_ora(1.0, 1.0)
+	await _frames(5)
+	var left := 0
+	for c in kids.get_children():
+		if not c.is_queued_for_deletion():
+			left += 1
+	check(left == 0, "al lampo dopo non c'è più nessuno")
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)

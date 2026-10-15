@@ -48,6 +48,7 @@ func _initialize() -> void:
 	_polaroids()
 	_atmosphere()
 	_gameplay()
+	_kid_sighting()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
 	if err == OK:
@@ -596,6 +597,29 @@ func _gameplay() -> void:
 	own(trig, gp)
 	shape_box(trig, Vector3(7, 3, 1.0))
 	level.set(&"lamp_trigger", trig)
+
+
+# --- B5: i bambini sulla balconata, visti in un lampo mentre sali sulla torre -------------------
+
+func _kid_sighting() -> void:
+	var trig := Area3D.new()
+	trig.name = "SalitaTorre"
+	trig.collision_layer = 0
+	trig.collision_mask = Layers.PLAYER
+	trig.monitorable = false
+	trig.position = Vector3(13.5, 5.0, -16.5)
+	own(trig, level.get_node("Gioco"))
+	shape_box(trig, Vector3(7.0, 4.0, 9.0))
+	var ks: Node3D = load("res://scripts/environment/kid_sighting.gd").new()
+	ks.name = "BambiniBalconata"
+	var models: Array[PackedScene] = [load("res://assets/models/bambini/cubo_calmo.glb"), load("res://assets/models/bambini/agnello_calmo.glb")]
+	ks.set(&"models", models)
+	# Sulla balconata ovest, dall'altra parte della sala rispetto alla torre.
+	ks.set(&"spots", PackedVector3Array([Vector3(-18.4, 4.3, -11.2), Vector3(-18.6, 4.3, -9.7),
+		Vector3(-18.3, 4.3, -8.1), Vector3(-18.5, 4.3, -6.6), Vector3(-18.4, 4.3, -5.0)]))
+	ks.set(&"trigger", trig)
+	ks.set(&"storm", level.get_node("Tempesta"))
+	own(ks)
 
 
 # --- Aiuti ---------------------------------------------------------------------------------

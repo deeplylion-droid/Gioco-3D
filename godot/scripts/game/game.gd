@@ -32,6 +32,17 @@ func _ready() -> void:
 		Grafica.imposta("gi", 2)
 	if not is_automated() and not bool(Grafica.valore("calibrato")):
 		_show_calibration.call_deferred()
+	# La qualità dell'acqua segue il preset grafico.
+	Grafica.impostazione_cambiata.connect(func(_k, _v): _sync_water_quality())
+	_sync_water_quality()
+
+
+func _sync_water_quality() -> void:
+	var wm := get_node_or_null(^"/root/WaterManager")
+	if wm == null:
+		return
+	var preset: String = str(Grafica.valore("preset"))
+	wm.set(&"quality", {"basso": 0, "medio": 1}.get(preset, 2))
 
 
 ## Vero nelle prove automatiche (test e screenshot lanciati con --script).
