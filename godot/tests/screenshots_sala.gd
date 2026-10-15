@@ -128,7 +128,7 @@ func _run() -> void:
 	if _want("scia_buio"):
 		# Tappa 7: dal cordone della vasca, la scia di gocce che va verso il fondo della sala.
 		await _shot("scia_buio", Vector3(-7.9, 0.0, 10.6), Vector3(-14.5, -0.6, 7.8))
-	if _want("lei_sbuca") or _want("lei_sottacqua"):
+	if _want("lei_sbuca") or _want("lei_sottacqua") or _want("lei_dall_alto"):
 		# Tappa 8 (con SCATTI_FASE=blackout): lei che sbuca dal bordo della fossa, vista dalla scia
 		# a 5 m, e la sua luce sott'acqua quando se ne va. Ferma: niente presa, niente attesa.
 		var lei := level.get(&"lei_sbuca") as LeiSbuca
@@ -141,11 +141,19 @@ func _run() -> void:
 			verso.y = 0.0
 			verso = verso.normalized()
 			p.teleport(Vector3(0.0, 0.0, 21.0), 0.0, 0.0)
+			# Quando arrivi l'acqua è già quasi al pelo pieno (sale da quando ripartono le pompe).
+			for v in lei.vasche:
+				var t := v as WaterTank
+				t.fill = clampf((lei.livello_pieno - t.get_floor_global_y()) / t.inner_size.y, 0.0, t.max_fill)
 			lei._sbuca()
 			await _frames(int(lei.durata_sbuca * 60.0) + 10)
 			if _want("lei_sbuca"):
 				var da := testa + verso * 5.0
 				await _shot("lei_sbuca", Vector3(da.x, 0.0, da.z), testa + Vector3(0.0, -0.25, 0.0))
+			if _want("lei_dall_alto"):
+				# Controllo: dall'alto, che campana e tentacoli restino dentro la fossa.
+				await _shot_camera("lei_dall_alto", lei.punto_sbuca.global_position + Vector3(-0.4, 4.6, 1.6),
+						lei.punto_sbuca.global_position + Vector3(-0.4, 0.3, 0.2), 60.0)
 			if _want("lei_sottacqua"):
 				lei.durata_fuga = 60.0
 				lei._fuga()
