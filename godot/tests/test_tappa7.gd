@@ -16,7 +16,6 @@ var level: Node
 var p: Player
 var _passed := 0
 var _failed := 0
-var salti := 0
 
 
 func _ready() -> void:
@@ -100,7 +99,7 @@ func _run() -> void:
 	for loc in [Vector3(7.4, 0, -10.2), Vector3(9.7, 0, -10.2), Vector3(9.7, 0, -12.6), Vector3(9.7, 0, -15.0), Vector3(9.7, 0, -17.8),
 			Vector3(9.7, 0, -20.0), Vector3(9.7, 0, -21.6)]:
 		ok = ok and await _cammina_verso(INTERNI + loc, 900)
-	check(ok, "lava-piedi, tornello e saracinesca fino alla porta della sala (salti: %d)" % salti)
+	check(ok, "lava-piedi (il gradino si sale da soli), tornello e saracinesca fino alla porta della sala")
 
 	print("Nella sala, dalla stessa porta")
 	ok = await _cammina_verso(Vector3(0.0, 0.0, 18.4), 600)
@@ -134,13 +133,11 @@ func _checkpoint() -> String:
 	return String(GameState.snapshot.get("checkpoint", ""))
 
 
-## Cammina in avanti verso t finché non ci arriva (in pianta). Falso se si blocca. Come farebbe
-## un giocatore, se resta fermo contro un gradino (per esempio uscendo dal lava-piedi) salta.
+## Cammina in avanti verso t finché non ci arriva (in pianta), senza mai saltare: i gradini
+## bassi (per esempio uscendo dal lava-piedi) si salgono da soli. Falso se si blocca.
 func _cammina_verso(t: Vector3, max_frames: int) -> bool:
 	Input.action_press(&"move_forward")
 	var arrivato := false
-	var prima := p.global_position
-	var fermo := 0
 	for i in max_frames:
 		var d := t - p.global_position
 		if Vector2(d.x, d.z).length() < 0.35:
@@ -148,13 +145,6 @@ func _cammina_verso(t: Vector3, max_frames: int) -> bool:
 			break
 		p.set_look(atan2(-d.x, -d.z), 0.0)
 		await get_tree().physics_frame
-		fermo = fermo + 1 if p.global_position.distance_to(prima) < 0.004 else 0
-		prima = p.global_position
-		if fermo == 20 and p.is_on_floor():
-			salti += 1
-			Input.action_press(&"jump")
-			await get_tree().physics_frame
-			Input.action_release(&"jump")
 	Input.action_release(&"move_forward")
 	if not arrivato:
 		printerr("  bloccato in ", p.global_position, " andando verso ", t)
