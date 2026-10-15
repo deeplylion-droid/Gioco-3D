@@ -15,7 +15,7 @@ CONTENUTO = {
     'sala_architettura': 'pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d\'emergenza, insegna a pesce, altoparlanti',
     'sala_vasca_centrale': '**vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell\'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d\'ottone HQ; lampione HQ; 2 fari sulla ringhiera della galleria; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella)',
     'sala_cupola': 'cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro)',
-    'sala_piscina': 'piscina a onde vuota: fondo con pendenza e conca dello scarico, linea dell\'ultimo livello dell\'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette',
+    'sala_piscina': 'piscina a onde vuota: fondo con pendenza e conca dello scarico, buco del pozzo sotto il portello (bordo smussato, collare piastrellato), linea dell\'ultimo livello dell\'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette',
     'sala_area_bimbi': 'struttura di gioco (pali tondi, bordi smussati), **secchio gigante** HQ e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi',
     'sala_torre_scivoli': 'torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d\'arrivo',
     'sala_oggetti': 'oggetti di scena Meshy HQ (istanze condivise): giocattoli e gonfiabili, lettini, sedia del bagnino, funghi-fontana, cannoncini, panche, cestini, cartelli. Uguale con la vasca e con il monumento: le offerte dei bambini stanno nel GLB del centro',
@@ -99,6 +99,12 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 
 ## Novità (15 ottobre)
 
+- **Buco del pozzo sotto il portello** (tappa 5): nel fondo della piscina a onde c'è il buco verso il pozzo
+  della camera delle onde, **x da -0,64 a 0,64 e z da 1,36 a 2,64** (Godot), aperto sia nella mesh sia nella
+  collisione. Il bordo è smussato (3 cm a 45 gradi) e il collare è piastrellato come il fondo, fino a
+  y -2,48. Il portello ora è quadrato (1,42 x 1,37 m): copre il buco e appoggia sulle piastrelle intorno.
+  Stesso nodo, stessa cerniera, stessa collisione. Sotto va il pozzo di ambienti-1, centrato in
+  (0; -2,25; 2,0); il "Buio" nero a y -2,256 della scena va tolto quando c'è il pozzo.
 - **Passata HQ** (al livello del pezzo campione degli interni): oggetti di scena rifatti con Meshy HQ
   (stessi nomi, posizioni e misure; ora anche ruotati come previsto: prima l'importatore lasciava tutti
   gli oggetti dritti), lampione, colonnine del cordone e secchio gigante HQ, panche, cestini e cartelli

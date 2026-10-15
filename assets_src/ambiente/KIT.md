@@ -116,6 +116,14 @@ Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagl
   dipendono dal centro (zone libere calcolate sempre sull'ingombro della vasca col cordone, che copre
   anche il monumento).
 
+### Buco del pozzo (tappa 5)
+
+Nel fondo della piscina a onde, sotto il portello, c'è il buco verso il pozzo della camera delle onde:
+`BUCO_POZZO` in `ambiente_sala.py`, cioè x ±0,64 e y da -2,64 a -1,36 in Blender (Godot z da 1,36 a
+2,64). La griglia del fondo ha le linee anche sul bordo del buco, quindi lo smusso e il collare
+piastrellato (fino a 24 cm sotto lo scarico) condividono i vertici del fondo, senza fessure. La
+collisione è la copia della mesh, quindi segue il buco. Il portello è quadrato e copre il buco.
+
 ## Convenzioni dei nomi
 
 - Pezzi del kit: `amb_<pezzo>_<misure>[_variante]`, per esempio `amb_parete_2x3_oblo`, `amb_bordo_vasca_2`.
