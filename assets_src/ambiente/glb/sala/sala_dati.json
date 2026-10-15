@@ -13,10 +13,10 @@
    10.0
   ],
   "quota_piano": 1.15,
-  "diametro_piano": 2.78,
-  "diametro_tamburo": 2.6,
-  "diametro_gradino_basso": 4.0,
-  "diametro_gradino_alto": 3.24,
+  "diametro_piano": 3.7,
+  "diametro_tamburo": 3.5,
+  "diametro_gradino_basso": 5.2,
+  "diametro_gradino_alto": 4.4,
   "quote_gradini": [
    0.28,
    0.56
@@ -34,13 +34,13 @@
   "pulsante_bimbi": {
    "blender": [
     0.0,
-    -11.43,
+    -11.88,
     0.8
    ],
    "godot": [
     0.0,
     0.8,
-    11.43
+    11.88
    ],
    "verso_godot": [
     0,
@@ -267,13 +267,13 @@
   "sala_pulsante_piedistallo": {
    "perno_blender": [
     0.0,
-    -11.43,
+    -11.88,
     0.8
    ],
    "perno_godot": [
     0.0,
     0.8,
-    11.43
+    11.88
    ]
   }
  },
@@ -1433,24 +1433,24 @@
    "nome": "luce_monumento_basso_0",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    1.252,
-    -8.748,
-    0.451
+    1.663,
+    -8.337,
+    0.446
    ],
    "godot": [
-    1.252,
-    0.451,
-    8.748
+    1.663,
+    0.446,
+    8.337
    ],
    "direzione_blender": [
-    -0.306,
-    -0.306,
-    0.901
+    -0.38,
+    -0.38,
+    0.844
    ],
    "direzione_godot": [
-    -0.306,
-    0.901,
-    0.306
+    -0.38,
+    0.844,
+    0.38
    ],
    "colore": [
     1.0,
@@ -1462,24 +1462,24 @@
    "nome": "luce_monumento_basso_1",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    -1.252,
-    -8.748,
-    0.451
+    -1.663,
+    -8.337,
+    0.446
    ],
    "godot": [
-    -1.252,
-    0.451,
-    8.748
+    -1.663,
+    0.446,
+    8.337
    ],
    "direzione_blender": [
-    0.306,
-    -0.306,
-    0.901
+    0.38,
+    -0.38,
+    0.844
    ],
    "direzione_godot": [
-    0.306,
-    0.901,
-    0.306
+    0.38,
+    0.844,
+    0.38
    ],
    "colore": [
     1.0,
@@ -1491,24 +1491,24 @@
    "nome": "luce_monumento_basso_2",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    -1.252,
-    -11.252,
-    0.451
+    -1.663,
+    -11.663,
+    0.446
    ],
    "godot": [
-    -1.252,
-    0.451,
-    11.252
+    -1.663,
+    0.446,
+    11.663
    ],
    "direzione_blender": [
-    0.306,
-    0.306,
-    0.901
+    0.38,
+    0.38,
+    0.844
    ],
    "direzione_godot": [
-    0.306,
-    0.901,
-    -0.306
+    0.38,
+    0.844,
+    -0.38
    ],
    "colore": [
     1.0,
@@ -1520,24 +1520,24 @@
    "nome": "luce_monumento_basso_3",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    1.252,
-    -11.252,
-    0.451
+    1.663,
+    -11.663,
+    0.446
    ],
    "godot": [
-    1.252,
-    0.451,
-    11.252
+    1.663,
+    0.446,
+    11.663
    ],
    "direzione_blender": [
-    -0.306,
-    0.306,
-    0.901
+    -0.38,
+    0.38,
+    0.844
    ],
    "direzione_godot": [
-    -0.306,
-    0.901,
-    -0.306
+    -0.38,
+    0.844,
+    -0.38
    ],
    "colore": [
     1.0,
