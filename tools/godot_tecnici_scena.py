@@ -25,6 +25,7 @@ EXT = [
     ('PackedScene', 'res://addons/acqua/scenes/acqua_per_vasca.tscn', 'p_link'),
     ('Script', 'res://addons/acqua/scripts/water_tank_link.gd', 's_link'),
     ('Resource', 'res://addons/acqua/presets/stile_3_scura.tres', 'r_stile'),
+    ('Script', 'res://scripts/mechanisms/ladder.gd', 's_ladder'),
 ]
 
 
@@ -119,9 +120,16 @@ node('VascaRaccolta', 'Node3D', 'Acqua', inst='p_tank', props={
 node('AcquaVascaRaccolta', 'Node3D', 'Acqua', inst='p_link', np=['tank'], props={
     'script': 'ExtResource("s_link")', 'tank': 'NodePath("../VascaRaccolta")', 'style': 'ExtResource("r_stile")'})
 
+# scala alla marinara del pozzo: dal pavimento della camera al fondo della piscina, contro la parete -X del pozzo
+pp, _ = CAMERA['PUNTO_portello']
+node('Gioco', 'Node3D', '.')
+node('ScalaPozzo', 'Area3D', 'Gioco', props={'position': V(pp[0] - 0.65 + 0.18, 0, pp[2]), 'rotation': V(0, H, 0),
+                                            'script': 'ExtResource("s_ladder")', 'height': f'{pp[1]:.3f}', 'width': '0.6',
+                                            'show_model': 'false'})
+
 node('Marker', 'Node3D', '.')
 # percorso
-marker('marker_portello', CAMERA, 'PUNTO_portello', nota='portello sul fondo della piscina a onde (sopra la scala del pozzo)')
+marker('marker_portello', CAMERA, 'PUNTO_portello', nota='centro del portello sul fondo della piscina a onde, in cima al pozzo (la cerniera del portello della sala è 0,64 m verso -X)')
 marker('marker_arrivo_scala', CAMERA, 'PUNTO_arrivo_scala', yaw=-H, nota='in fondo alla scala, guarda verso est (+X), lungo la camera')
 marker('marker_tunnel_sala_pompe', CAMERA, 'PUNTO_verso_sala_pompe', nota='vano 2,6 x 2,8 m nel muro est della camera: tunnel verso la sala pompe')
 for n in (1, 2):

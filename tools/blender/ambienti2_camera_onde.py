@@ -60,7 +60,8 @@ usa_collezione('struttura')
 NICCHIE = [6.0, 10.0, 14.0]   # centri X delle nicchie delle pale
 NW = 3.0                      # larghezza nicchia
 ND = 2.6                      # profondita' nicchia (oltre il muro nord)
-POZZO = (0.0, 0.0)            # centro del pozzo del portello
+POZZO = (0.64, 0.0)           # centro del pozzo, sotto il centro del portello della piscina (la cerniera
+                              # del portello della sala è 0,64 m più a nord, cioè a X = 0 qui)
 PZ = 1.3                      # lato del pozzo
 
 S('struttura', box('pavimento', ((XA + XB) / 2, 0, -0.15), (XB - XA, W, 0.3), M['cemento_bagnato'], uv=3.0))
@@ -98,6 +99,12 @@ empty('PUNTO_verso_sala_pompe', (XB, 0, 0))
 
 # costole d'acciaio ogni 2 m (profilo a U intorno alla sezione)
 for k, x in enumerate([x for x in range(-1, 24, 2)]):
+    sopra_pozzo = abs(x - POZZO[0]) < PZ / 2 + 0.2
+    if sopra_pozzo:
+        # la trave del soffitto non deve passare sotto il buco del pozzo: solo le due colonne
+        S('costole', box(f'costola{k}_s', (x, YS + 0.1, H / 2), (0.25, 0.2, H), M['ferro'], uv=1.0))
+        S('costole', box(f'costola{k}_n', (x, YN - 0.1, H / 2), (0.25, 0.2, H), M['ferro'], uv=1.0))
+        continue
     if any(abs(x - xc) < NW / 2 + 0.1 for xc in NICCHIE):
         # sopra le nicchie solo la parte alta
         S('costole', box(f'costola{k}_s', (x, YS + 0.1, H / 2), (0.25, 0.2, H), M['ferro'], uv=1.0))
