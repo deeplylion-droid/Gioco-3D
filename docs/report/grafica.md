@@ -1,11 +1,11 @@
 # Report grafica (branch `lavoro/grafica`)
 
-Ultimo aggiornamento: 14 ottobre 2026. Progetto di prova: `labs/grafica/` (Godot 4.7.2, Forward+). Come integrarlo nel gioco: `labs/grafica/README.md`.
+Ultimo aggiornamento: 15 ottobre 2026. Progetto di prova: `labs/grafica/` (Godot 4.7.2, Forward+). Come integrarlo nel gioco: `labs/grafica/README.md`.
 
 ## Cosa è finito
 
 - **Consegna nel gioco**: `godot/addons/grafica/` (README con i passi esatti). Si rigenera dal laboratorio con `labs/grafica/strumenti/esporta_addon.sh`.
-- **Look della sala principale vera** (`LookSala` + `sala/ambiente_sala.tres` + `sala/attributi_camera_sala.tres`): in corso i render prima/dopo a 1920×1080.
+- **Look della sala principale vera** (`LookSala` + `sala/ambiente_sala.tres` + `sala/attributi_camera_sala.tres`): luci, GI, riflessi, nebbia, lampi e color grading sui GLB veri. Vedi la sezione "Sala principale" qui sotto.
 
 - **Scena di prova notturna**: sala rotonda con cupola di vetro e costoloni, piscina vuota con pozza, 12 colonne, balconata con ringhiera, corridoio laterale, piedistallo con la base Meshy della medusa (ridotta) e lampione. Geometria semplice, luci e materiali veri (texture CC0 Poly Haven).
 - **Opzioni grafiche** (autoload `Grafica`): preset Basso/Medio/Alto/Ultra, salvataggio in `user://settings.cfg`, applicazione immediata.
@@ -30,6 +30,34 @@ Tutti in `docs/report/render_grafica/` (presi dal motore, 1280×720, Vulkan soft
 | `menu_resa.jpg` / `menu_luci.jpg` / `calibrazione.jpg` | Il menu delle opzioni e la calibrazione della luminosità |
 | `lampi_cupola.mp4` (+ `.gif`) | 7 secondi di temporale visto dalla sala |
 | `neon_corridoio.mp4` (+ `.gif`) | 6 secondi di neon che sfarfallano e lampeggiante rotante |
+
+## Sala principale vera: prima e dopo
+
+Scena di prova: `labs/grafica/sala_reale/` con i GLB veri (`strumenti/prepara_sala_reale.sh` li copia e li importa con lo script di post-import). Consegna: `godot/addons/grafica/look_sala.gd` + `godot/addons/grafica/sala/*.tres` (passi nel README dell'addon).
+
+Screenshot 1920×1080 in `docs/report/render_grafica/sala_reale/` (prima = `sala_luci_ambiente.gd`, dopo = `LookSala`, preset Ultra):
+
+| Inquadratura | Prima | Dopo |
+|---|---|---|
+| Ingresso con il piedistallo | `prima_ingresso.jpg` | `dopo_ingresso.jpg` |
+| Piscina | `prima_piscina.jpg` | `dopo_piscina.jpg` |
+| Area bimbi | `prima_area_bimbi.jpg` | `dopo_area_bimbi.jpg` |
+| Cima della torre | `prima_torre.jpg` | `dopo_torre.jpg` |
+
+In più: `dopo_lampo_ingresso.jpg` (un lampo), `dopo_sdfgi_piscina.jpg` e `dopo_senza_gi_piscina.jpg` (confronto della GI). La statua sul piedistallo è la base Meshy ridotta, solo per l'inquadratura.
+
+Cosa cambia nel "dopo":
+- **Colore come il concept A**: emergenze rosse più profonde e più forti (alcune pulsano), neon freddi verso il verde, ambiente e ombre verso il blu-verde (color grading "Notte fredda"), luce calda solo dal lampione e dall'area bimbi per il contrasto.
+- **AgX** con contrasto 1,3 ed esposizione fissa (niente esposizione automatica: la sala deve restare buia).
+- **VoxelGI** su tutta la sala (rimbalzo del rosso su pavimento e muri, cambia col blackout), **due ReflectionProbe** (sala e piscina, modalità interno) a intensità ridotta, **SSR** sulle pozzanghere, SSAO e SSIL.
+- **Nebbia volumetrica** leggera che prende i coni delle luci, più una nebbia bassa con rumore sul pavimento e nella piscina.
+- **Luna senza penombra**: con il diametro angolare realistico (0,6°) le ombre dei costoloni sottili sparivano dal pavimento; a 0° tornano le strisce sul pavimento e nella piscina.
+- Lampi dalla cupola, pulviscolo, gocce; neon "a metà" che sfarfallano, sono guasti o morenti.
+
+GI per la sala vera:
+- **VoxelGI** resta la scelta: costo moderato, segue le luci che cambiano.
+- **SDFGI** (immagine apposta): funziona ma con muri e gallerie sottili fa filtrare luce e costa di più.
+- **LightmapGI**: la UV2 si genera già all'import (`meshes/light_baking = Static Lightmaps` nello script di preparazione), ma il bake si fa solo dall'editor con la GPU: nel sandbox (rendering software, senza editor interattivo) non è stato possibile cuocerlo. Resta comunque sconsigliato come GI principale, perché il capitolo spegne e riaccende le luci della sala.
 
 ## Scelte prese (e perché)
 
@@ -87,6 +115,8 @@ Il capitolo 1 si basa su luci che cambiano: le pompe accendono tutto e poi fanno
 - `environment_set_ssr_roughness_quality` in 4.7 non fa più niente (deprecato): la qualità degli SSR si regola solo con il numero di passi.
 - **Qualità delle texture**: Godot non riduce la risoluzione delle texture a runtime. L'opzione usa bias dei mipmap e filtro anisotropico; per risparmiare davvero memoria servirebbero texture importate in due versioni.
 - **VoxelGI**: massimo 8 visibili insieme; il bake va fatto nell'editor (a runtime funziona ma blocca 1-2 s).
+- **TAA e FSR 2 con particelle minuscole molto luminose**: diventano puntini neri. Il pulviscolo è su uno strato che la luce del lampo non illumina (`Tempesta.STRATO_NO_LAMPO`).
+- **Ombre direzionali morbide (PCSS)**: con il diametro angolare del sole/luna > 0 le ombre di oggetti sottili e alti (costoloni della cupola) spariscono.
 - Sul rendering software del sandbox ogni immagine 1280×720 richiede 1-3 minuti: i tempi non dicono niente sulle prestazioni vere.
 
 ## Prossimi passi per l'integrazione
