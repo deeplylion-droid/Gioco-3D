@@ -69,9 +69,8 @@ serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, 
 ## Montaggio
 
 - Un `Node3D` "SalaPrincipale" con dentro le istanze dei GLB, tutte in (0, 0, 0).
-- Attacca a "SalaPrincipale" lo script `assets_src/ambiente/godot/sala_luci_ambiente.gd`: regola le
-  luci di `sala_luci.glb` (intensità, raggi, ombre su luna, lampione e fari), fa sfarfallare alcuni
-  neon e, se nella scena non c'è, crea un WorldEnvironment notturno.
+- Le luci di `sala_luci.glb` le regola `LookSala` (addon grafica) con i valori consigliati più sotto.
+  `assets_src/ambiente/godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente.
 - **Spawn del giocatore** (appena passato il vano): (0, 0, 19.2), guarda verso **-Z** (la statua).
 - **Monumento (piedistallo vuoto, per la medusa)**: centro (0, 0, 10).
   - **Piano superiore a y = 1.15 m**, diametro del piano 2.78 m (con il toro del bordo
@@ -125,8 +124,14 @@ sono pozzanghere a specchio (con SSR riflettono le luci rosse).
 
 ## Luci (in `sala_luci.glb`)
 
-Le posizioni sono giuste; le intensità le regola `sala_luci_ambiente.gd` (glTF e Godot usano unità
-diverse). In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 4 faretti del monumento,
+Le posizioni e le direzioni sono giuste; le intensità **nel gioco le decide `LookSala` dell'addon
+grafica** (con `LookSalaLunga` dell'integratore): glTF e Godot usano unità diverse. Valori consigliati
+(`light_energy`, raggio): emergenza rosse 3 (raggio 8); neon 2,5 (spot, raggio 7, angolo 70); fari del
+monumento `luce_faro_*` **9,5** (spot, angolo 15, raggio 16, ombre), faretti `luce_monumento_basso_*`
+**0,6** (spot, angolo 24, raggio 7); lampione 10 (spot 55 gradi, ombre); plafoniere calde `luce_calda_*`
+1,8 (raggio 7,5, colore 1,0/0,68/0,38); insegne `luce_insegna_*` 1,3 (raggio 5,5); subacquee 3 (raggio 5);
+luna 0,35 con ombre. `godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente e usa gli
+stessi valori. In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 4 faretti del monumento,
 5 plafoniere calde, 3 insegne, 2 subacquee, area bimbi, luna.
 
 | Nome | Tipo | Posizione Godot | Colore | Note |
