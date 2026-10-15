@@ -21,7 +21,7 @@ const SCATTI := {
 	"a_ingresso": [Vector3(0.0, 0.0, 19.2), Vector3(0.0, 1.9, 10.0)],      # dalla porta degli spogliatoi verso la vasca sollevata
 	"b_vasca_3m": [Vector3(1.6, 0.0, 15.4), Vector3(0.0, 1.0, 10.8)],      # la vasca sollevata da 3 m
 	"c_piscina_spiaggia": [Vector3(2.0, -0.15, -11.0), Vector3(-1.0, -1.6, 1.5)],  # la piscina a onde dalla spiaggia
-	"d_area_bimbi": [Vector3(-6.5, 0.0, -6.0), Vector3(-13.0, 2.0, -15.0)],
+	"d_area_bimbi": [Vector3(-7.8, 0.0, -5.0), Vector3(-13.0, 2.0, -15.0)],    # sul pavimento tra le due vasche (prima era sopra la piscina e si cadeva dentro)
 	"e_base_torre": [Vector3(7.6, 0.0, -8.6), Vector3(13.5, 3.2, -17.5)],  # la base della torre degli scivoli
 	"f_galleria": [Vector3(18.4, 4.3, -0.5), Vector3(0.0, 0.6, 1.5)],      # dalla galleria est verso la sala
 }

@@ -2426,7 +2426,7 @@ def arredi(metti_ogg):
     metti_ogg('cestino_pesce', (-4.5, Y0 + 0.5, 0.0), 180 + 8)
     metti_ogg('cestino_pesce', (7.6, Y0 + 0.5, 0.0), 180 - 12)
     metti_ogg('cestino_pesce', (13.2, 10.6, 0.0), -90 + 15)
-    metti_ogg('cestino_pesce', (-7.8, 7.0, 0.0), 90 - 10)
+    metti_ogg('cestino_pesce', (-8.6, 18.4, 0.0), 90 - 10)       # vicino alla struttura di gioco (fuori dalla camera d)
     metti_ogg('cestino_pesce', (X0 + 0.7, -9.0, 0.0), 90 + 6, 1.0, (0, -4))
     # (fuori dai punti dove il giocatore si ferma: il test della sala parte da (2,5; 18) Godot verso il
     # lampione e aspira dalla vasca d'arrivo da (-8,3; 2))
