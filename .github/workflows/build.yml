@@ -75,6 +75,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
 
+      - name: Test degli interni (corridoio, spogliatoi, stanzino)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd
+
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'
         run: |

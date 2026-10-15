@@ -1,0 +1,357 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interni/interni.gd" id="s_interni"]
+[ext_resource type="PackedScene" path="res://assets/ambienti_interni/corridoio.gltf" id="m_corr"]
+[ext_resource type="PackedScene" path="res://assets/ambienti_interni/spogliatoi.gltf" id="m_spog"]
+[ext_resource type="PackedScene" path="res://assets/ambienti_interni/stanzino.gltf" id="m_stan"]
+[ext_resource type="PackedScene" path="res://scenes/props/water_tank.tscn" id="p_tank"]
+[ext_resource type="Script" path="res://scripts/mechanisms/water_tank.gd" id="s_tank"]
+[ext_resource type="PackedScene" path="res://addons/acqua/scenes/acqua_per_vasca.tscn" id="p_link"]
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_tank_link.gd" id="s_link"]
+[ext_resource type="Resource" path="res://addons/acqua/presets/stile_1_limpida.tres" id="r_stile"]
+[ext_resource type="PackedScene" path="res://scenes/props/water_button.tscn" id="p_button"]
+[ext_resource type="Script" path="res://scripts/mechanisms/water_button.gd" id="s_button"]
+[ext_resource type="PackedScene" path="res://scenes/props/turbine.tscn" id="p_turb"]
+[ext_resource type="Script" path="res://scripts/mechanisms/turbine.gd" id="s_turb"]
+[ext_resource type="Script" path="res://scripts/interni/saracinesca.gd" id="s_sar"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/zaino_opzione2/zaino_opzione2.gltf" id="m_zaino"]
+[ext_resource type="Script" path="res://scripts/interaction/pack_pickup.gd" id="s_pack"]
+[ext_resource type="PackedScene" path="res://scenes/props/polaroid.tscn" id="p_pol"]
+[ext_resource type="Script" path="res://scripts/interaction/polaroid_photo.gd" id="s_pol"]
+[ext_resource type="Script" path="res://scripts/game/checkpoint.gd" id="s_cp"]
+
+[sub_resource type="BoxShape3D" id="blocco_tornello"]
+size = Vector3(1.25, 2.25, 0.3)
+
+[sub_resource type="BoxShape3D" id="a_PassaggioTornello"]
+size = Vector3(1.2, 2, 1.4)
+
+[sub_resource type="BoxShape3D" id="zaino"]
+size = Vector3(0.55, 0.75, 0.5)
+
+[sub_resource type="BoxShape3D" id="a_CheckpointRisveglio"]
+size = Vector3(1.6, 3, 2.6)
+
+[sub_resource type="BoxShape3D" id="a_CheckpointIngressoSpogliatoi"]
+size = Vector3(1.6, 3, 0.8)
+
+[sub_resource type="BoxShape3D" id="a_CheckpointStanzino"]
+size = Vector3(1, 3, 1)
+
+[sub_resource type="BoxShape3D" id="a_CheckpointLavapiedi"]
+size = Vector3(2.2, 3, 0.8)
+
+[sub_resource type="BoxShape3D" id="a_CheckpointTornello"]
+size = Vector3(2.2, 3, 0.8)
+
+[sub_resource type="BoxShape3D" id="a_CheckpointSaracinesca"]
+size = Vector3(2.2, 3, 0.8)
+
+[sub_resource type="BoxShape3D" id="a_DocceDaSole"]
+size = Vector3(3, 3, 1)
+
+[sub_resource type="BoxShape3D" id="a_ArmadiettoSbatte"]
+size = Vector3(1.6, 3, 1.2)
+
+[node name="Interni" type="Node3D"]
+script = ExtResource("s_interni")
+
+[node name="Ambienti" type="Node3D" parent="."]
+
+[node name="Corridoio" parent="Ambienti" instance=ExtResource("m_corr")]
+
+[node name="Spogliatoi" parent="Ambienti" instance=ExtResource("m_spog")]
+
+[node name="Stanzino" parent="Ambienti" instance=ExtResource("m_stan")]
+
+[node name="Acqua" type="Node3D" parent="."]
+
+[node name="VascaLavapiedi" type="Node3D" parent="Acqua" instance=ExtResource("p_tank")]
+position = Vector3(9.7, -0.2, -13.4)
+script = ExtResource("s_tank")
+inner_size = Vector3(2.2, 0.2, 2)
+build_walls = false
+fill = 0.75
+max_fill = 0.9
+capacity_liters = 30.0
+
+[node name="AcquaLavapiedi" type="Node3D" parent="Acqua" node_paths=PackedStringArray("tank") instance=ExtResource("p_link")]
+script = ExtResource("s_link")
+tank = NodePath("../VascaLavapiedi")
+style = ExtResource("r_stile")
+env_box_min = Vector3(8.4, -0.5, -21)
+env_box_max = Vector3(11, 3, -11)
+
+[node name="Meccanismi" type="Node3D" parent="."]
+
+[node name="PulsanteTornello" type="Node3D" parent="Meccanismi" instance=ExtResource("p_button")]
+position = Vector3(13.15, 1.3, -16)
+rotation = Vector3(0, -1.5708, 0)
+script = ExtResource("s_button")
+mode = 2
+radius = 0.14
+show_model = false
+
+[node name="BloccoTornello" type="StaticBody3D" parent="Meccanismi"]
+position = Vector3(9.5, 1.125, -16.4)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Meccanismi/BloccoTornello"]
+shape = SubResource("blocco_tornello")
+
+[node name="PassaggioTornello" type="Area3D" parent="Meccanismi"]
+position = Vector3(9.5, 1, -16.4)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Meccanismi/PassaggioTornello"]
+shape = SubResource("a_PassaggioTornello")
+
+[node name="PernoTurbina" type="Node3D" parent="Meccanismi"]
+position = Vector3(8.79, 2.05, -19.4)
+rotation = Vector3(0, 1.5708, 0)
+
+[node name="TurbinaSaracinesca" type="Node3D" parent="Meccanismi" instance=ExtResource("p_turb")]
+position = Vector3(8.79, 2.05, -19.4)
+rotation = Vector3(0, 1.5708, 0)
+script = ExtResource("s_turb")
+radius = 0.26
+show_model = false
+external_rotor = NodePath("../PernoTurbina")
+spin_per_liter = 14.0
+
+[node name="Saracinesca" type="Node3D" parent="Meccanismi" node_paths=PackedStringArray("sources")]
+position = Vector3(9.7, 0, -20.6)
+script = ExtResource("s_sar")
+sources = [NodePath("../TurbinaSaracinesca")]
+stay_open = true
+size = Vector3(1.2, 2.2, 0.1)
+open_offset = Vector3(0, 2.15, 0)
+open_speed = 0.12
+modello = NodePath("../../Ambienti/Spogliatoi/saracinesca")
+
+[node name="Zaino" type="Node3D" parent="."]
+position = Vector3(14.92, 0.72, -8.43)
+rotation = Vector3(0, -1.5708, 0)
+
+[node name="Modello" parent="Zaino" instance=ExtResource("m_zaino")]
+
+[node name="Prendi" type="Area3D" parent="Zaino" node_paths=PackedStringArray("remove_node")]
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("s_pack")
+remove_node = NodePath("..")
+prompt = "Prendi lo zaino-pompa"
+one_shot = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Zaino/Prendi"]
+position = Vector3(0, 0.35, 0)
+shape = SubResource("zaino")
+
+[node name="LuceZaino" type="SpotLight3D" parent="."]
+position = Vector3(13.6, 2.45, -8.43)
+rotation = Vector3(-0.75, -1.5708, 0)
+light_color = Color(1, 0.88, 0.72, 1)
+light_energy = 0.8
+shadow_enabled = true
+spot_range = 3.5
+spot_angle = 28.0
+
+[node name="Polaroid" type="Node3D" parent="."]
+
+[node name="Polaroid01" parent="Polaroid" instance=ExtResource("p_pol")]
+position = Vector3(20.9, 0.02, -0.55)
+rotation = Vector3(0, 0.35, 0)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("s_pol")
+photo = 1
+entry_id = &"p01"
+prompt = "Raccogli"
+one_shot = true
+
+[node name="Polaroid02" parent="Polaroid" instance=ExtResource("p_pol")]
+position = Vector3(3.38, 1.6, -7.9)
+rotation = Vector3(0, 1.5708, 0)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("s_pol")
+photo = 2
+entry_id = &"p02"
+prompt = "Raccogli"
+one_shot = true
+snap_to_surface = false
+
+[node name="Polaroid03" parent="Polaroid" instance=ExtResource("p_pol")]
+position = Vector3(12.65, 1.3, -6.245)
+rotation = Vector3(-1.5708, 0, 0.05)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("s_pol")
+photo = 3
+entry_id = &"p03"
+prompt = "Raccogli"
+one_shot = true
+snap_to_surface = false
+
+[node name="Gioco" type="Node3D" parent="."]
+
+[node name="Risveglio" type="Marker3D" parent="Gioco"]
+position = Vector3(20.4, 0, -1.25)
+rotation = Vector3(0, 1.5708, 0)
+gizmo_extents = 0.6
+
+[node name="CheckpointRisveglio" type="Area3D" parent="Gioco" node_paths=PackedStringArray("spawn_point")]
+position = Vector3(19.6, 1.5, -1.3)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("s_cp")
+order = -10
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointRisveglio"]
+shape = SubResource("a_CheckpointRisveglio")
+
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointRisveglio"]
+position = Vector3(0, -1.5, 0)
+rotation = Vector3(0, 1.5708, 0)
+
+[node name="CheckpointIngressoSpogliatoi" type="Area3D" parent="Gioco" node_paths=PackedStringArray("spawn_point")]
+position = Vector3(6.8, 1.5, -3.5)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("s_cp")
+order = -9
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointIngressoSpogliatoi"]
+shape = SubResource("a_CheckpointIngressoSpogliatoi")
+
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointIngressoSpogliatoi"]
+position = Vector3(0, -1.5, 0)
+rotation = Vector3(0, 0, 0)
+
+[node name="CheckpointStanzino" type="Area3D" parent="Gioco" node_paths=PackedStringArray("spawn_point")]
+position = Vector3(12.2, 1.5, -8.45)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("s_cp")
+order = -8
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointStanzino"]
+shape = SubResource("a_CheckpointStanzino")
+
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointStanzino"]
+position = Vector3(0, -1.5, 0)
+rotation = Vector3(0, -1.5708, 0)
+
+[node name="CheckpointLavapiedi" type="Area3D" parent="Gioco" node_paths=PackedStringArray("spawn_point")]
+position = Vector3(9.7, 1.5, -11.7)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("s_cp")
+order = -7
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointLavapiedi"]
+shape = SubResource("a_CheckpointLavapiedi")
+
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointLavapiedi"]
+position = Vector3(0, -1.5, 0)
+rotation = Vector3(0, 0, 0)
+
+[node name="CheckpointTornello" type="Area3D" parent="Gioco" node_paths=PackedStringArray("spawn_point")]
+position = Vector3(9.7, 1.5, -15.3)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("s_cp")
+order = -6
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointTornello"]
+shape = SubResource("a_CheckpointTornello")
+
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointTornello"]
+position = Vector3(0, -1.5, 0)
+rotation = Vector3(0, 0, 0)
+
+[node name="CheckpointSaracinesca" type="Area3D" parent="Gioco" node_paths=PackedStringArray("spawn_point")]
+position = Vector3(9.7, 1.5, -18.2)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("s_cp")
+order = -5
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointSaracinesca"]
+shape = SubResource("a_CheckpointSaracinesca")
+
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointSaracinesca"]
+position = Vector3(0, -1.5, 0)
+rotation = Vector3(0, 0, 0)
+
+[node name="DocceDaSole" type="Area3D" parent="Gioco"]
+position = Vector3(6, 1.5, -10.2)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/DocceDaSole"]
+shape = SubResource("a_DocceDaSole")
+
+[node name="ArmadiettoSbatte" type="Area3D" parent="Gioco"]
+position = Vector3(9.6, 1.5, -5.3)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/ArmadiettoSbatte"]
+shape = SubResource("a_ArmadiettoSbatte")
+
+[node name="Atmosfera" type="Node3D" parent="."]
+
+[node name="RiflessiCorridoio" type="ReflectionProbe" parent="Atmosfera"]
+position = Vector3(11, 1.35, -1.3)
+size = Vector3(22.4, 2.8, 2.8)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RiflessiSpogliatoi" type="ReflectionProbe" parent="Atmosfera"]
+position = Vector3(7, 1.45, -7)
+size = Vector3(8.4, 3, 8.4)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RiflessiDocce" type="ReflectionProbe" parent="Atmosfera"]
+position = Vector3(5.6, 1.45, -12.9)
+size = Vector3(5.4, 3, 3.6)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RiflessiLavapiedi" type="ReflectionProbe" parent="Atmosfera"]
+position = Vector3(9.7, 1.35, -15.85)
+size = Vector3(2.4, 2.8, 9.6)
+box_projection = true
+interior = true
+ambient_mode = 0
+
+[node name="RiflessiStanzino" type="ReflectionProbe" parent="Atmosfera"]
+position = Vector3(13.2, 1.3, -8.4)
+size = Vector3(4.2, 2.7, 4.6)
+box_projection = true
+interior = true
+ambient_mode = 0

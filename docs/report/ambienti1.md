@@ -57,3 +57,19 @@ Screenshot dal motore (Godot 4.7.2, scena di prova `labs/ambienti1`, senza l'add
 ## Licenze
 
 Texture di base CC0 di ambientCG (PaintedMetal004/006/009/011/013, Tiles032/036/040, MetalPlates006/013, Metal063, Rust007, Wood051, Concrete034). Oggetti e cartelloni generati con Meshy per questo progetto.
+
+## Tappa 2: gli interni montati nel gioco (Godot)
+
+Su richiesta del coordinatore ho montato gli ambienti nel progetto del gioco. Lavoro sul mio branch `lavoro/ambienti-1`, in cui ho unito `lavoro/godot`: non ho creato `lavoro/interni`, perché posso pubblicare solo su questo branch.
+
+- `godot/scenes/interni/interni.tscn`: scena autonoma (si genera con `tools/godot_interni_scena.py`) con i tre glTF nelle coordinate comuni, collisioni, gameplay e luci. Istruzioni e righe esatte per metterla nella sala in `godot/scenes/interni/README.md` (traslazione (-9,7; 0; 40,9), `giocatore_proprio = false`, Player della sala in (10,7; 0; 39,65) girato verso ovest).
+- `godot/scripts/interni/interni.gd`: risveglio a terra (la camera si rialza), giocatore senza zaino, neon del modello trasformati in `Neon` (sfarfallano), luci rosse in `LuceEmergenza` (alcune pulsano), docce che si aprono da sole (getti dell'addon acqua e vapore), armadietto che sbatte, tornello che si sblocca col pulsante dietro il vetro.
+- `godot/scripts/interni/saracinesca.gd`: `PoweredDoor` che alza il modello vero, comandata dalla turbina.
+- Zaino-pompa (`PackPickup`) sulla rastrelliera dello stanzino; vasca lava-piedi come prima fonte d'acqua (`WaterTank` + acqua dell'addon); Polaroid P1, P2 (nell'armadietto aperto) e P3 (bacheca); 6 checkpoint invisibili con `order` da -10 a -5.
+- Texture importate in compressione VRAM (con le normal map marcate), `.import` versionati.
+- Test `godot/tests/test_interni.gd` (24 controlli, aggiunto alla CI): la scena si carica con le collisioni, il giocatore parte dal marker, lo zaino si prende, la vasca lava-piedi riempie il serbatoio e il livello scende, il getto preme il pulsante del tornello attraverso il vetro rotto, la turbina alza la saracinesca e l'uscita è libera, la Polaroid P2 si raggiunge. `check_scripts` 0 errori, `test_mechanics` 58/58, `test_sala` 33/33.
+- Screenshot dal motore (1600×900): `docs/report/render_ambienti1/interni_corridoio.jpg`, `interni_spogliatoi.jpg`, `interni_lavapiedi.jpg`, `interni_stanzino.jpg` (lo zaino sulla rastrelliera), `interni_docce.jpg` (docce aperte).
+
+Ritocchi alla sorgente per il gameplay: la collisione degli armadietti copre solo la parte posteriore (la Polaroid P2 è raggiungibile) e il buco del vetro rotto è libero (il getto deve arrivare al pulsante).
+
+Da fare nella sala principale (non toccata): togliere `PostazioneBagnini` (lo zaino ora è nello stanzino) e le Polaroid 01-03 (sono negli interni).

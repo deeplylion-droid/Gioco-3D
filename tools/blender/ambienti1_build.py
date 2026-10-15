@@ -360,16 +360,17 @@ def spogliatoi(M):
     ce, ae, se = fila_armadietti('armadietti_est', X1, 3.3, 11, -1, M,
                                  {1: ('aperto', 70), 4: ('speciale', 4), 7: ('aperto', 30), 9: ('aperto', 100)}, seme=5)
     ce2, ae2, _ = fila_armadietti('armadietti_est2', X1, 9.3, 4, -1, M, {2: ('aperto', 45)}, seme=21)
-    L.col_scatola((X0, 3.3, 0), (X0 + 0.52, 3.3 + 18 * 0.4, 1.94))
-    L.col_scatola((X1 - 0.52, 3.3, 0), (X1, 3.3 + 11 * 0.4, 1.94))
-    L.col_scatola((X1 - 0.52, 9.3, 0), (X1, 9.3 + 4 * 0.4, 1.94))
+    # collisione solo nella parte posteriore: gli armadietti aperti restano raggiungibili (Polaroid P2)
+    L.col_scatola((X0, 3.3, 0), (X0 + 0.3, 3.3 + 18 * 0.4, 1.94))
+    L.col_scatola((X1 - 0.3, 3.3, 0), (X1, 3.3 + 11 * 0.4, 1.94))
+    L.col_scatola((X1 - 0.3, 9.3, 0), (X1, 9.3 + 4 * 0.4, 1.94))
     # l'armadietto che sbatte (anta separata, cardine come origine; dentro un salvagente colorato)
     anta_sb = se[4]; anta_sb.name = 'armadietto_sbatte_anta'
     anta_sb.rotation_euler = (0, 0, R(180 + 4))
     L.vuoto('marker_armadietto_sbatte', (X1 - 0.25, 3.3 + 4 * 0.4 + 0.2, 1.0), dim=0.2)
     sg = prop('salvagente_giocattolo', 'salvagente_giocattolo', (X1 - 0.26, 3.3 + 4 * 0.4 + 0.2, 0.15), 90, 0.36)
     sg.rotation_euler = (R(75), 0, R(90))
-    L.vuoto('marker_polaroid_P2', (X0 + 0.25, 3.3 + 11 * 0.4 + 0.2, 1.6), dim=0.05)   # sul ripiano dell'armadietto aperto
+    L.vuoto('marker_polaroid_P2', (X0 + 0.38, 3.3 + 11 * 0.4 + 0.2, 1.595), dim=0.05)   # sul ripiano dell'armadietto aperto
 
     # ---- panche
     statico.append(panca('panca_ovest', 4.45, 4.0, 4.85, 9.8, M))
@@ -461,9 +462,7 @@ def spogliatoi(M):
     GX0, GX1, GY0, GY1 = 11.0, 13.2, 14.6, 17.4
     statico += L.stanza('gabbiotto', GX0, GY0, GX1, GY1, CH, dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio']),
                         {'W': [(GY0 - 0.2, GY1 + 0.2, 0, CH)]})
-    # il vano del vetro rotto: blocca il giocatore ma non il getto (vedi INTEGRAZIONE.md)
-    vb = L.scatola('vetro_rotto_blocco-colonly', (10.85, 15.2, 0.95), (10.95, 16.8, 2.0), None, uv=False)
-    vb.hide_render = True; vb.display_type = 'WIRE'
+    # il buco del vetro rotto resta libero: il getto deve passare per colpire il pulsante
     statico.append(L.scatola('davanzale_gabbiotto', (10.7, 15.15, 0.9), (11.25, 16.85, 0.95), M['metallo_grezzo']))
     # vetro con un buco frastagliato al centro (anello tra il telaio e il bordo del buco)
     import bmesh
