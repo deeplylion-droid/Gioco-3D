@@ -18,6 +18,7 @@ import sys
 TEXTURE_3D = {
     os.path.join("assets", "ambiente", "dettagli"): 1024,
     os.path.join("assets", "models", "medusa"): 0,
+    os.path.join("assets", "models", "medusa_affacciata"): 0,
 }
 
 

@@ -29,6 +29,12 @@ extends Node3D
 	set(value):
 		surface_materials = value
 		_rebuild()
+## Materiali per nome del materiale del modello (per esempio "M_pelle" -> la pelle bagnata): hanno
+## la precedenza sugli altri override.
+@export var material_map: Dictionary = {}:
+	set(value):
+		material_map = value
+		_rebuild()
 ## Altezza della statua (m) dal piano d'appoggio alla cima della testa: se è più di 0 il modello
 ## si scala per arrivarci, misurato dall'AABB delle sue mesh (0: il modello resta com'è).
 @export var target_height := 0.0:
@@ -47,6 +53,9 @@ extends Node3D
 ## Moltiplica l'emissione delle vene luminose dei tentacoli (1 = come nel modello; il
 ## materiale deve avere emission_operator = Multiply, se no la texture si somma al bianco).
 @export var tentacle_glow := 1.0
+
+## Le mesh dentro la bocca: si vedono solo quando la fauce si apre.
+const BOCCA := ["Medusa_Gola", "Medusa_Denti"]
 
 var _instance: Node3D
 var _bell: ShaderMaterial
@@ -95,6 +104,7 @@ static func _aabb_of(root: Node3D) -> AABB:
 
 ## La statua si sveglia: si stacca dal piedistallo e sale (animazione "sveglia").
 func wake_up() -> void:
+	_mostra_bocca(true)
 	var ap := _instance.find_child("AnimationPlayer", true, false) as AnimationPlayer if _instance else null
 	if ap and ap.has_animation(&"sveglia"):
 		ap.play(&"sveglia")
@@ -130,6 +140,9 @@ func _rebuild() -> void:
 		return
 	_instance.name = "Modello"
 	add_child(_instance, false, Node.INTERNAL_MODE_FRONT)
+	# Da statua la bocca è chiusa: gola e denti stanno dentro la testa e non si vedono. Spenti
+	# finché non si sveglia, così non costano niente (sul renderer software, centinaia di MB).
+	_mostra_bocca(false)
 	if target_height > 0.0:
 		var top := _aabb_of(_instance).end.y
 		if top > 0.01:
@@ -162,3 +175,21 @@ func _rebuild() -> void:
 				(mi as MeshInstance3D).set_surface_override_material(s, tm)
 			elif by_name.has(mat.resource_name):
 				(mi as MeshInstance3D).set_surface_override_material(s, by_name[mat.resource_name])
+			if material_map.has(mat.resource_name) and material_map[mat.resource_name] is Material:
+				(mi as MeshInstance3D).set_surface_override_material(s, material_map[mat.resource_name])
+	_dopo_rebuild()
+
+
+## Per le sottoclassi: il modello è appena stato creato (animazioni, ossa, effetti).
+func _dopo_rebuild() -> void:
+	pass
+
+
+## Gola e denti (dentro la bocca chiusa) visibili o no.
+func _mostra_bocca(on: bool) -> void:
+	if _instance == null:
+		return
+	for nome in BOCCA:
+		var n := _instance.find_child(nome, true, false) as Node3D
+		if n:
+			n.visible = on

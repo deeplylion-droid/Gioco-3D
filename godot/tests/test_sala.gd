@@ -36,14 +36,18 @@ func _run() -> void:
 	var inflatable: StuckInflatable = level.get_node("Piscina/GonfiabileIncastrato")
 	var hatch_button: WaterButton = level.get_node("Piscina/PulsantePortello")
 	var hatch: HingedHatch = level.get_node("Piscina/Portello")
-	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
+	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
-	var medusa := level.get_node("Statua/Medusa") as MedusaStatue
-	check(medusa.get_model_instance() != null, "la medusa è sul piedistallo")
-	var top := (medusa.global_transform * medusa.get_model_aabb()).end.y
-	check(top > 5.55 and top < 5.75, "la statua arriva a %.2f m (4,5 m sopra il piano a 1,15)" % top)
+	var medusa := level.get_node("Vasca/Medusa") as MedusaAffacciata
+	check(medusa != null and medusa.get_model_instance() != null, "la medusa è affacciata alla vasca")
+	var ap := medusa.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
+	check(ap != null and ap.is_playing() and ap.current_animation == "affacciata", "con l'animazione affacciata in ciclo")
+	var eye := medusa.get_eye_position()
+	check(absf(eye.y - 1.63) < 0.1 and absf(eye.x) < 0.15 and eye.z > 11.5 and eye.z < 12.1, "l'occhio è sopra il bordo, all'altezza dei tuoi occhi (%s)" % eye)
+	var pool: WaterTank = level.get_node("Vasca/VascaCentrale")
+	check(absf(pool.get_surface_global_y() - 0.88) < 0.03 and not pool.suckable, "l'acqua della vasca è quasi al bordo e non si aspira")
 	var det := level.get_node_or_null("Sala/Dettagli")
 	if det:
 		check(det.get_child_count() >= 100, "i dettagli della sala sono montati (%d nodi)" % det.get_child_count())
@@ -60,10 +64,10 @@ func _run() -> void:
 	check(ghost.is_empty(), "niente muri invisibili in mezzo alla piscina")
 	var floor_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0, 1, 2), Vector3(0, -4, 2)))
 	check(not floor_hit.is_empty() and floor_hit.position.y < -2.0, "il fondo della piscina ha la collisione")
-	var statue_q := PhysicsRayQueryParameters3D.create(Vector3(0, 1.6, 14.0), Vector3(0, 1.6, 10.0))
-	statue_q.exclude = [p.get_rid()]
-	var statue_hit := space.intersect_ray(statue_q)
-	check(not statue_hit.is_empty() and statue_hit.position.z > 11.7, "la statua è solida: non si sale sul piano del monumento")
+	var pool_q := PhysicsRayQueryParameters3D.create(Vector3(0, 0.5, 14.0), Vector3(0, 0.5, 10.0))
+	pool_q.exclude = [p.get_rid()]
+	var pool_hit := space.intersect_ray(pool_q)
+	check(not pool_hit.is_empty() and pool_hit.position.z > 12.1 and pool_hit.position.z < 12.5, "la vasca è solida: il muro davanti ferma (z %.2f)" % (pool_hit.position.z if not pool_hit.is_empty() else 0.0))
 
 	print("Lo zaino sulla rastrelliera dei bagnini")
 	check(not p.water_pack.equipped, "si parte senza zaino")
@@ -115,7 +119,7 @@ func _run() -> void:
 	check(p.water_pack.tank_amount > 6.0, "aspira dalla vasca d'arrivo (%.1f l)" % p.water_pack.tank_amount)
 	check(arrival.get_liters() < arrival_before - 5.0, "il livello della vasca d'arrivo scende")
 
-	var jingle: WaterButton = level.get_node("Statua/PulsanteSigla")
+	var jingle: WaterButton = level.get_node("Vasca/PulsanteSigla")
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.0, 0, 14.6), 0.0, 0.0)
 	p.look_at_point(jingle.global_position + Vector3(0, 0.12, 0))
@@ -219,6 +223,19 @@ func _run() -> void:
 			await _frames(150)
 			Input.action_release(&"move_forward")
 			check(p.global_position.z < 19.4, "dagli spogliatoi si entra nella sala (z %.2f)" % p.global_position.z)
+
+	print("La medusa ti segue con l'occhio")
+	p.teleport(Vector3(0.0, 0.0, 16.0), 0.0, 0.0)
+	p.look_at_point(medusa.get_eye_position())
+	await _frames(90)
+	var to_cam := (p.camera.global_position - medusa.get_eye_position()).normalized()
+	var dir_front := medusa.get_eye_direction()
+	check(rad_to_deg(dir_front.angle_to(to_cam)) < 20.0, "di fronte, l'occhio ti guarda (%.1f gradi)" % rad_to_deg(dir_front.angle_to(to_cam)))
+	p.teleport(Vector3(5.5, 0.0, 13.0), 0.0, 0.0)
+	await _frames(90)
+	var dir_side := medusa.get_eye_direction()
+	var turn := rad_to_deg(dir_side.angle_to(dir_front))
+	check(turn > 3.0 and turn < 17.0, "di lato, l'occhio si gira ma al massimo di 15 gradi (%.1f)" % turn)
 
 	print("B5: i bambini sulla balconata, in un lampo")
 	var kids: KidSighting = level.get_node("BambiniBalconata")

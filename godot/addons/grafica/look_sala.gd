@@ -1,18 +1,26 @@
 class_name LookSala
 extends Node3D
 ## Look della sala principale (capitolo 1): luci, illuminazione globale, sonde di
-## riflessione, nebbia, lampi e particelle. Si attacca al Node3D che contiene le
-## istanze dei GLB della sala (tutte in 0,0,0), AL POSTO di sala_luci_ambiente.gd.
+## riflessione, nebbia, lampi e particelle. Due modi d'uso:
+## - scena separata (consigliato, scenes/sala/luci_sala.tscn): [member percorso_sala] punta
+##   al Node3D con i GLB della sala; tutto si fa in differita, dopo il _ready della scena,
+##   così chi tocca i modelli e lo script della sala non tocca le luci;
+## - attaccato direttamente al Node3D con i GLB (com'era prima), AL POSTO di sala_luci_ambiente.gd.
 ## Le luci arrivano da sala_luci.glb e vengono riconosciute dal nome.
 ## L'Environment e gli attributi della camera sono risorse .tres riutilizzabili
 ## (grafica/sala/), ritoccabili nell'editor.
 
+## Il Node3D con i GLB della sala. Vuoto: questo nodo stesso.
+@export var percorso_sala := NodePath()
+## Dati del VoxelGI già cotti (vedi [method cuoci_gi]). Se mancano e il GI è attivo,
+## si calcola all'avvio (lento, solo per le prove).
+@export_file("*.res") var dati_gi := ""
 @export var ambiente: Environment = preload("res://addons/grafica/sala/ambiente_sala.tres")
 @export var attributi_camera: CameraAttributesPractical = preload("res://addons/grafica/sala/attributi_camera_sala.tres")
 @export_group("Luci")
-@export var energia_emergenza := 7.0
-@export var portata_emergenza := 9.0
-@export var energia_neon := 2.6
+@export var energia_emergenza := 5.5
+@export var portata_emergenza := 7.0
+@export var energia_neon := 3.0
 @export var energia_lampione := 3.5
 @export var energia_luna := 0.3
 ## Luci del monumento: faretti bassi (0,6) come provato dall'integratore; fari a 5,5 e lampione
@@ -29,6 +37,7 @@ extends Node3D
 @export var crea_sonde := true
 @export var crea_tempesta := true
 @export var crea_effetti := true
+@export var crea_area_bimbi := true
 ## Neon che nel GLB sono "a metà": sfarfallano o sono guasti.
 @export var neon_difettosi: PackedInt32Array = [1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25]
 
@@ -38,6 +47,29 @@ extends Node3D
 ## sonde di riflessione, nebbia bassa e pulviscolo.
 @export var sala_centro := Vector3(0, 7.5, -2.0)
 @export var sala_dimensioni := Vector3(41, 21, 45)
+@export_group("Ritratto della medusa affacciata")
+## Dove punta la lampada sul palo (luce_lampione): il viso della medusa affacciata sulla
+## vasca sollevata (marker medusa_affacciata in sala_dati.json: origine (0, 0,88, 11,75)).
+@export var ritratto_mira := Vector3(0, 1.75, 11.8)
+@export var energia_ritratto := 6.0
+## Il trigger che accende la lampada (Area3D della scena della sala) e dove metterlo:
+## appena passata la porta degli spogliatoi, così la lampada si accende uscendo.
+@export var percorso_trigger := NodePath()
+@export var punto_accensione := Vector3(0, 1.5, 18.6)
+@export_group("Area bimbi")
+## Struttura di gioco (sala_area_bimbi.glb, x -17..-8, z -19,2..-11,1, alta 8,3): un festone
+## di lampadine da festa colorate, rotte a tratti, sul fronte e sul fianco est, e una
+## plafoniera appesa al soffitto che illumina il fronte e il secchio gigante.
+@export var festone_punti: PackedVector3Array = [Vector3(-16.9, 3.7, -10.95), Vector3(-8.0, 3.7, -10.95), Vector3(-7.85, 3.7, -18.8)]
+@export var festone_cala := 0.55          # quanto scende il filo a metà campata
+@export var festone_passo := 0.42
+@export var energia_festone := 1.1
+## Lampadine spente (rotte) e lampadine che sfarfallano, contate lungo il festone.
+@export var festone_rotte: PackedInt32Array = [5, 6, 7, 13, 22, 29, 30]
+@export var festone_sfarfallano: PackedInt32Array = [3, 17, 26]
+@export var plafoniera_bimbi := Vector3(-9.2, 9.2, -7.6)
+@export var mira_plafoniera_bimbi := Vector3(-12.6, 4.6, -14.8)
+@export var energia_plafoniera_bimbi := 7.0
 @export_group("Statua sul monumento")
 ## Centro del monumento e altezza della statua (per il controluce).
 @export var monumento := Vector3(0, 0, 10)
@@ -49,27 +81,218 @@ extends Node3D
 
 var tempesta: Tempesta
 var _sfarfallanti: Array = []   # [luce, energia, modalità, attesa, raffica]
+var _sala: Node3D
 
 
 func _ready() -> void:
+	# La tempesta subito: altri nodi della sala la cercano nel loro _ready (es. i bambini
+	# che compaiono con i lampi).
+	if crea_tempesta:
+		_crea_tempesta()
+	if percorso_sala.is_empty():
+		_sala = self
+		_prepara()
+	else:
+		_sala = get_node(percorso_sala) as Node3D
+		# Dopo il _ready della scena della sala (che regola anche lei alcune luci).
+		_prepara.call_deferred()
+
+
+func _prepara() -> void:
 	_imposta_ambiente()
-	_regola_luci(self)
+	_regola_luci(_sala)
+	_prepara_ritratto()
 	if crea_gi:
 		_crea_voxel_gi()
 	if crea_sonde:
 		_crea_sonde()
-	if crea_tempesta:
-		tempesta = Tempesta.new()
-		tempesta.name = "Tempesta"
-		tempesta.energia_lampo = 7.0
-		if vetro_cupola:
-			tempesta.materiali = [vetro_cupola]
-		add_child(tempesta)
-		tempesta.luce.light_angular_distance = 0.2  # ombre dei costoloni nitide anche col lampo
 	if crea_effetti:
 		_crea_effetti()
 	if crea_controluce:
 		_crea_controluce()
+	if crea_area_bimbi:
+		_crea_area_bimbi()
+
+
+func _crea_area_bimbi() -> void:
+	var radice := Node3D.new()
+	radice.name = "LuciAreaBimbi"
+	add_child(radice)
+	# Filo nero e lampadine: colori pastello saturi anni '90.
+	var colori := [Color(1.0, 0.25, 0.3), Color(1.0, 0.8, 0.2), Color(0.25, 0.6, 1.0),
+			Color(0.35, 1.0, 0.45), Color(1.0, 0.45, 0.85), Color(1.0, 0.55, 0.15)]
+	var filo := StandardMaterial3D.new()
+	filo.albedo_color = Color(0.03, 0.03, 0.03)
+	filo.roughness = 0.6
+	var vetro_spento := StandardMaterial3D.new()
+	vetro_spento.albedo_color = Color(0.25, 0.25, 0.25)
+	vetro_spento.roughness = 0.2
+	var sfera := SphereMesh.new()
+	sfera.radius = 0.045
+	sfera.height = 0.11
+	sfera.radial_segments = 12
+	sfera.rings = 6
+	var tubo := CylinderMesh.new()
+	tubo.top_radius = 0.006
+	tubo.bottom_radius = 0.006
+	tubo.height = 1.0
+	tubo.radial_segments = 5
+	tubo.rings = 1
+	var materiali := {}
+	var n := 0
+	for c in festone_punti.size() - 1:
+		var a := festone_punti[c]
+		var b := festone_punti[c + 1]
+		var passi := maxi(int(a.distance_to(b) / festone_passo), 2)
+		var prec := a
+		for i in passi + 1:
+			var t := float(i) / passi
+			var p := a.lerp(b, t) - Vector3.UP * festone_cala * 4.0 * t * (1.0 - t)
+			if i > 0:
+				var pezzo := MeshInstance3D.new()
+				pezzo.mesh = tubo
+				pezzo.material_override = filo
+				pezzo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				radice.add_child(pezzo)
+				var dir := p - prec
+				pezzo.global_position = (p + prec) * 0.5
+				pezzo.global_basis = Basis(Quaternion(Vector3.UP, dir.normalized())) * Basis.from_scale(Vector3(1, dir.length(), 1))
+			prec = p
+			if i == 0 and c > 0:
+				continue   # l'angolo ha già la sua lampadina
+			var colore: Color = colori[n % colori.size()]
+			var rotta := n in festone_rotte
+			var lamp := MeshInstance3D.new()
+			lamp.mesh = sfera
+			lamp.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			if rotta:
+				lamp.material_override = vetro_spento
+			else:
+				if not materiali.has(colore):
+					var m := StandardMaterial3D.new()
+					m.albedo_color = colore
+					m.emission_enabled = true
+					m.emission = colore
+					m.emission_energy_multiplier = 4.0
+					materiali[colore] = m
+				lamp.material_override = materiali[colore]
+			radice.add_child(lamp)
+			lamp.global_position = p + Vector3.DOWN * 0.06
+			# Una luce vera ogni tre lampadine accese (le altre sono solo emissive).
+			if not rotta and n % 3 == 1:
+				var o := OmniLight3D.new()
+				o.light_color = colore
+				o.light_energy = energia_festone
+				o.omni_range = 3.2
+				o.omni_attenuation = 1.4
+				o.light_volumetric_fog_energy = 1.2
+				o.light_specular = 0.6
+				o.shadow_enabled = false
+				radice.add_child(o)
+				o.global_position = p + Vector3.DOWN * 0.15
+				if n in festone_sfarfallano or (n + 1) in festone_sfarfallano or (n - 1) in festone_sfarfallano:
+					_sfarfallanti.append([o, o.light_energy, "guasto", randf_range(0.5, 4.0), 0.0])
+			n += 1
+	# Plafoniera navale appesa al soffitto con un'asta, puntata sul fronte della struttura.
+	var plaf := Node3D.new()
+	plaf.name = "PlafonieraBimbi"
+	radice.add_child(plaf)
+	plaf.global_position = plafoniera_bimbi
+	plaf.look_at(mira_plafoniera_bimbi, Vector3.UP)
+	var metallo := StandardMaterial3D.new()
+	metallo.albedo_color = Color(0.16, 0.18, 0.17)
+	metallo.metallic = 0.7
+	metallo.roughness = 0.45
+	var paralume := MeshInstance3D.new()
+	var cil := CylinderMesh.new()
+	cil.top_radius = 0.12
+	cil.bottom_radius = 0.3
+	cil.height = 0.32
+	paralume.mesh = cil
+	paralume.material_override = metallo
+	paralume.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	plaf.add_child(paralume)
+	paralume.rotation_degrees = Vector3(-90, 0, 0)   # l'asse del cilindro lungo -Z (la mira)
+	paralume.position = Vector3(0, 0, -0.05)
+	var disco := MeshInstance3D.new()
+	var dm := CylinderMesh.new()
+	dm.top_radius = 0.27
+	dm.bottom_radius = 0.27
+	dm.height = 0.02
+	disco.mesh = dm
+	var acceso := StandardMaterial3D.new()
+	acceso.albedo_color = Color(1.0, 0.9, 0.75)
+	acceso.emission_enabled = true
+	acceso.emission = Color(1.0, 0.86, 0.68)
+	acceso.emission_energy_multiplier = 6.0
+	disco.material_override = acceso
+	disco.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	plaf.add_child(disco)
+	disco.rotation_degrees = Vector3(-90, 0, 0)
+	disco.position = Vector3(0, 0, -0.21)
+	var asta := MeshInstance3D.new()
+	var am := CylinderMesh.new()
+	am.top_radius = 0.02
+	am.bottom_radius = 0.02
+	am.height = maxf(11.5 - plafoniera_bimbi.y, 0.3)
+	asta.mesh = am
+	asta.material_override = metallo
+	radice.add_child(asta)
+	asta.global_position = plafoniera_bimbi + Vector3.UP * am.height * 0.5
+	var spot := SpotLight3D.new()
+	spot.light_color = Color(1.0, 0.86, 0.68)
+	spot.light_energy = energia_plafoniera_bimbi
+	spot.spot_range = 16.0
+	spot.spot_angle = 34.0
+	spot.spot_angle_attenuation = 1.1
+	spot.spot_attenuation = 0.7
+	spot.shadow_enabled = true
+	spot.light_size = 0.15
+	spot.light_specular = 0.5
+	spot.light_volumetric_fog_energy = 1.5
+	spot.set_meta("grafica_priorita_ombra", 1)
+	plaf.add_child(spot)
+	spot.position = Vector3(0, 0, -0.25)
+
+
+func _crea_tempesta() -> void:
+	tempesta = Tempesta.new()
+	tempesta.name = "Tempesta"
+	tempesta.energia_lampo = 7.0
+	if vetro_cupola:
+		tempesta.materiali = [vetro_cupola]
+	add_child(tempesta)
+	tempesta.luce.light_angular_distance = 0.2  # ombre dei costoloni nitide anche col lampo
+
+
+## La lampada sul palo accanto alla vasca sollevata: luce da ritratto sul viso della medusa
+## affacciata. La accende lo script della sala (FlickerLight) quando si esce dagli spogliatoi;
+## qui si regolano colore, cono, ombre e l'intensità a cui arriva.
+func _prepara_ritratto() -> void:
+	var lamp := _sala.find_child("luce_lampione", true, false) as SpotLight3D
+	if lamp:
+		lamp.look_at(ritratto_mira, Vector3.UP)
+		lamp.light_color = colore_lampione
+		lamp.spot_angle = 26.0              # stretto: il ritratto, non la sala
+		lamp.spot_angle_attenuation = 1.3   # bordo morbido
+		lamp.spot_range = 8.0
+		lamp.spot_attenuation = 0.9
+		lamp.light_size = 0.06              # ombre morbide del viso e delle mani sul bordo
+		lamp.shadow_enabled = true
+		lamp.shadow_blur = 1.2
+		lamp.light_specular = 0.4
+		lamp.light_volumetric_fog_energy = 1.6   # il cono si vede nella nebbia
+		lamp.set_meta("grafica_priorita_ombra", 0)
+		# L'intensità la comanda la FlickerLight della sala (base_energy * livello).
+		for n in get_tree().root.find_children("*", "Node", true, false):
+			if n.get("light") == lamp and n.get("base_energy") != null:
+				n.set("base_energy", energia_ritratto)
+				# Spenta finché la FlickerLight non la accende (_regola_luci le ha appena dato
+				# l'energia del lampione anche se la sala parte con la lampada spenta).
+				lamp.light_energy = energia_ritratto if n.get("is_on") else 0.0
+	var trigger := get_node_or_null(percorso_trigger) as Node3D
+	if trigger:
+		trigger.global_position = punto_accensione
 
 
 ## Controluce freddo dall'alto, dietro la statua: stacca la sagoma dal fondo buio
@@ -112,7 +335,7 @@ func _regola_luci(n: Node) -> void:
 			o.light_color = colore_emergenza
 			o.light_energy = energia_emergenza
 			o.omni_range = portata_emergenza
-			o.omni_attenuation = 1.3
+			o.omni_attenuation = 1.8   # pozze raccolte: il rosso non tinge pareti intere
 			o.light_volumetric_fog_energy = 2.5
 			o.light_specular = 0.7
 			# Ombre solo su alcune (costano: sono omnidirezionali).
@@ -125,14 +348,19 @@ func _regola_luci(n: Node) -> void:
 		elif nome.begins_with("luce_neon"):
 			l.light_color = colore_neon
 			l.light_energy = energia_neon
-			l.light_volumetric_fog_energy = 0.8
-			l.shadow_enabled = false
+			l.light_volumetric_fog_energy = 0.6
+			# Pozze di luce fredda con ombre morbide (una sì e una no: costano), il buio in mezzo.
+			var kn := nome.get_slice("_", 2).to_int()
+			l.shadow_enabled = kn % 2 == 0
+			l.shadow_blur = 1.5
+			l.set_meta("grafica_priorita_ombra", 2)
 			if l is SpotLight3D:
 				var s := l as SpotLight3D
-				s.spot_range = 10.0
-				s.spot_angle = 75.0
-				s.spot_angle_attenuation = 0.5
-				s.spot_attenuation = 0.9
+				s.spot_range = 8.0
+				s.spot_angle = 62.0
+				s.spot_angle_attenuation = 1.2
+				s.spot_attenuation = 1.3
+				s.light_size = 0.15
 			elif l is OmniLight3D:
 				(l as OmniLight3D).omni_range = 9.0
 			var k := nome.get_slice("_", 2).to_int()
@@ -181,7 +409,20 @@ func _regola_luci(n: Node) -> void:
 			s.light_size = 0.12
 			s.light_volumetric_fog_energy = 3.0   # il cono si vede nella nebbia
 			s.set_meta("grafica_priorita_ombra", 1)
-			_sfarfallanti.append([s, s.light_energy, "guasto", 3.0, 0.0])
+			# Accensione e sfarfallio li fa la FlickerLight della sala (vedi _prepara_ritratto).
+		elif nome.begins_with("luce_vasca"):
+			# Sott'acqua nella vasca sollevata: fanno brillare la campana sotto la superficie.
+			# Nel GLB della vasca sono faretti (SpotLight3D) puntati sulla medusa.
+			l.light_color = Color(0.45, 0.85, 1.0)
+			l.light_energy = 2.2
+			l.shadow_enabled = false
+			l.light_volumetric_fog_energy = 0.4
+			if l is OmniLight3D:
+				(l as OmniLight3D).omni_range = 3.5
+				(l as OmniLight3D).omni_attenuation = 1.6
+			elif l is SpotLight3D:
+				(l as SpotLight3D).spot_range = 3.5
+				(l as SpotLight3D).spot_attenuation = 1.6
 		elif nome.begins_with("luce_subacquea"):
 			var o := l as OmniLight3D
 			o.light_energy = 3.0
@@ -257,9 +498,30 @@ func _crea_voxel_gi() -> void:
 	var gi := VoxelGI.new()
 	gi.name = "VoxelGI_Sala"
 	gi.size = sala_dimensioni
-	gi.position = sala_centro
 	gi.subdiv = VoxelGI.SUBDIV_256
+	if dati_gi != "" and ResourceLoader.exists(dati_gi):
+		gi.data = load(dati_gi)
+	# Il bake generico di Grafica cercherebbe la geometria tra i figli di questo nodo.
+	gi.set_meta("grafica_bake_automatico", _sala == self)
 	add_child(gi)
+	gi.global_position = (_sala.global_transform * sala_centro) if _sala != self else to_global(sala_centro)
+	# Senza dati cotti il GI resta spento: calcolarlo durante il gioco blocca l'avvio e, sul
+	# renderer software, porta la sala oltre la memoria della macchina (tools/bake_voxel_gi.gd).
+	if gi.data == null and _sala != self:
+		push_warning("LookSala: GI della sala non cotto (%s): resta spento" % dati_gi)
+
+
+## Cuoce il VoxelGI della sala senza le emissioni delle lampade (la loro luce la fanno le
+## Light3D, che il GI segue in tempo reale) e lo salva in [member dati_gi].
+func cuoci_gi() -> void:
+	var gi := get_node_or_null(^"VoxelGI_Sala") as VoxelGI
+	if gi == null or dati_gi == "":
+		return
+	var spente := LookInterni.spegni_emissioni(_sala)
+	gi.bake(_sala)
+	DirAccess.make_dir_recursive_absolute(dati_gi.get_base_dir())
+	print("GI sala -> ", dati_gi, " ", ResourceSaver.save(gi.data, dati_gi))
+	LookInterni.ripristina_emissioni(spente)
 
 
 func _crea_sonde() -> void:

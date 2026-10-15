@@ -68,9 +68,30 @@ Per non intralciare chi rifà modelli e texture degli stessi interni, le luci so
 
 Il "disco azzurro" che si vedeva nel tornello era la cornice della finestra del gabbiotto, che sporgeva nel corridoio: ambienti-1 l'ha corretta (4bd815c); `combinato_tornello.jpg` è rifatto con la cornice a filo del muro e il VoxelGI ricotto.
 
-**In attesa del riscontro dell'utente** prima di estendere lo stesso lavoro al resto del gioco.
+**Approvato dall'utente** ("belle le luci e anche le grafiche").
+
+**Secondo giro** (`giro2_corridoio.jpg`, `giro2_tornello.jpg`, `giro2_stanzino.jpg`, `giro2_torcia.jpg`), con soffitti da nave e usura delle pareti di ambienti-1:
+- riflessi delle pozze netti: erano trasparenti e non ricevevano gli SSR (riflettevano solo il VoxelGI, sfocato: le "forme fantasma"); ora sono opache e lucide;
+- torcia al buio davvero: GI cotto senza le emissioni delle lampade, scatto con tutte le luci spente;
+- neon non più doppi (interni.gd);
+- neon a 4,5 e luce ambiente 0,85: con i soffitti nuovi lo stanzino era quasi nero e l'usura delle pareti non si leggeva.
+
+**Terzo giro** (`giro3_*.jpg`): il secondo giro era troppo scuro (corridoio −31%, tornello −26%, stanzino −70%, torcia −37%). Cause trovate e corrette, senza alzare la luce ambiente:
+- le plafoniere facevano ombra alla loro stessa luce (nella versione approvata c'era una seconda luce senza ombre): ora le plafoniere non proiettano ombre;
+- i neon finivano sopra i soffitti nuovi (corridoio: plafoniera a 2,6-2,7 m, soffitto a 2,53): `LookInterni` li abbassa sotto il soffitto e ci mette la luce appena sotto;
+- GI cotto di nuovo, con le emissioni delle lampade;
+- negli scatti i neon sfarfallavano a caso (lo stanzino −70% era un neon spento in quel frame): ora nel test sono fissi accesi;
+- pozze dentro lo shader del pavimento (maschera con le stesse forme, piastrelle un po' più scure, rugosità 0,05, normali appiattite); i piani delle pozze sono nascosti.
+Valori: neon 6, stanzino 4,8 (soffitto basso e chiaro), emergenza 2,8.
+
+Luminosità media rispetto a `combinato_`: corridoio −10%, tornello −6%, stanzino +8%, torcia −20%. La torcia è più scura perché ora è un buio vero (tutte le luci spente, come chiesto nel secondo giro); nel combinato approvato le lampade d'emergenza erano accese.
 
 ## Sala principale vera: prima e dopo
+
+**DOPO per la v0.2.1** (`docs/report/qualita_sala/dopo_*.jpg`, le 6 camere di `tests/scatti_sala.gd`). Sono fatti su `lavoro/ambiente` 474a772 unito a questo branch, in un worktree locale. Il GI (`scenes/sala/gi/sala.res`) è cotto sulla stessa geometria. Per stare nella memoria del sandbox, le texture estratte dai GLB della sala sono in VRAM compressa (come le comprime la CI con `tools/godot_vram_textures.py`). In Lossless la sala da sola supera i 13,6 GB su llvmpipe.
+Luminosità media: a_ingresso 28 (prima 48), b_vasca_3m 27 (prima 33), c 17, d 28,5, e 24, f 16.
+Area bimbi: LookSala crea un festone di lampadine colorate (alcune rotte, alcune che sfarfallano) sul fronte e sul fianco est della struttura di gioco, più una plafoniera appesa al soffitto che illumina il fronte e il secchio. La camera d era coperta dallo scivolo grande: ora sta in (-12,5; 0; -4,5) e guarda verso (-12,3; 3,4; -15), davanti alla vaschetta. Luminosità media da 10 a 28,5.
+
 
 Scena di prova: `labs/grafica/sala_reale/` con i GLB veri (`strumenti/prepara_sala_reale.sh` li copia e li importa con lo script di post-import). Consegna: `godot/addons/grafica/look_sala.gd` + `godot/addons/grafica/sala/*.tres` (passi nel README dell'addon).
 

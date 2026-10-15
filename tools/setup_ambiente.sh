@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Prepara una sessione cloud nuova: Vulkan software, Xvfb, Godot 4.7.2 e venv di Blender (bpy).
 set -euo pipefail
+RADICE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 GODOT_VER=4.7.2
 if ! dpkg -s mesa-vulkan-drivers >/dev/null 2>&1 || ! command -v xvfb-run >/dev/null; then
   apt-get install -y -q mesa-vulkan-drivers vulkan-tools xvfb >/dev/null 2>&1 || {
@@ -19,3 +20,9 @@ if [ ! -x /home/user/tools/blender-venv/bin/python ]; then
 fi
 godot --version
 /home/user/tools/blender-venv/bin/python -c "import bpy; print('Blender', bpy.app.version_string)"
+# Il progetto Godot si importa come in CI: le texture estratte dai GLB vanno in VRAM compressa,
+# se no restano Lossless e sul renderer software la sala non entra in memoria (~5 GB in più).
+# Va rifatto dopo ogni merge che porta GLB nuovi (in ogni worktree: bash tools/godot_importa.sh).
+if [ -d "$RADICE/godot" ] && [ -f "$RADICE/tools/godot_importa.sh" ]; then
+  bash "$RADICE/tools/godot_importa.sh" godot
+fi

@@ -23,3 +23,12 @@
 !/assets/models/medusa/medusa_colore_4k.jpg.import
 !/assets/models/medusa/medusa_normal_4k.jpg
 !/assets/models/medusa/medusa_normal_4k.jpg.import
+# Medusa affacciata: texture estratte dal GLB (si rigenerano), non quelle dei materiali.
+/assets/models/medusa_affacciata/medusa_*.png
+/assets/models/medusa_affacciata/medusa_*.png.import
+/assets/models/medusa_affacciata/medusa_*.jpg
+/assets/models/medusa_affacciata/medusa_*.jpg.import
+!/assets/models/medusa_affacciata/medusa_colore_4k.jpg
+!/assets/models/medusa_affacciata/medusa_colore_4k.jpg.import
+!/assets/models/medusa_affacciata/medusa_normal_4k.jpg
+!/assets/models/medusa_affacciata/medusa_normal_4k.jpg.import

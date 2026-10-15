@@ -6,21 +6,17 @@ extends Node3D
 ## getto sulla turbina (ricaricando lo zaino dalla pozza stessa) finché la pozza si svuota, poi
 ## colpisci il pulsante del portello. Nell'area bimbi la ruota a pale riempie il secchio gigante.
 
-## Illuminazione globale VoxelGI della sala già calcolata (tools/bake_voxel_gi.gd).
-const BAKED_GI := "res://assets/ambiente/sala/voxel_gi_sala.res"
-
 ## Materiale delle pozzanghere della sala (addon acqua) al posto di M_amb_pozzanghera del GLB.
 @export var puddle_material: Material
 
-## La lampada sul palo vicino alla statua: si accende quando ti avvicini.
+## La lampada sul palo vicino alla vasca: si accende quando ti avvicini.
 @export var statue_lamp: FlickerLight
-## La luce della lampada (in sala_luci.glb) e il punto verso cui puntarla.
+## La luce della lampada (in sala_luci.glb): la mira la regola LuciSala.
 @export var statue_lamp_light: NodePath
-@export var statue_lamp_aim := Vector3(0, 3.5, 6.9)
 @export var lamp_trigger: Area3D
-## La statua (con un metodo pulse() per la sigla).
+## La medusa al centro della sala (con un metodo pulse() per la sigla).
 @export var statue: Node
-## Il pulsante per i bambini sul piedistallo: fa partire la sigla.
+## Il pulsante per i bambini sul muro della vasca: fa partire la sigla.
 @export var jingle_button: WaterButton
 @export var jingle_button_mesh: NodePath
 @export var hatch: Node
@@ -37,6 +33,8 @@ var demo_finished := false
 
 
 func _ready() -> void:
+	# Prima del primo frame: meno varianti di shader, a parità di aspetto (UnificaMateriali).
+	UnificaMateriali.unifica(self)
 	_setup_hall()
 	if lamp_trigger:
 		lamp_trigger.body_entered.connect(_on_lamp_trigger)
@@ -64,20 +62,11 @@ func _ready() -> void:
 
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
+	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
+	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D
 	if lamp:
-		# Se c'è un punto da guardare (non infinito) la lampada si orienta lì.
-		if statue_lamp_aim.is_finite():
-			lamp.look_at(statue_lamp_aim, Vector3.UP)
-		lamp.spot_angle = 42.0
-		lamp.spot_range = 10.0
-		lamp.spot_angle_attenuation = 0.8
-		lamp.light_volumetric_fog_energy = 0.9
-		lamp.shadow_enabled = true
-		lamp.light_size = 0.08
-		lamp.set_meta(&"grafica_priorita_ombra", 0)
-		# La lampada sul palo (amb_lampione*): la si cerca in tutta la sala, perché è passata
-		# dall'architettura al GLB del monumento.
+		# La lampadina (amb_lampione*): la si cerca in tutta la sala, il palo sta nel GLB del centro.
 		var bulb: StandardMaterial3D = null
 		var sala := get_node_or_null(^"Sala")
 		if sala:
@@ -124,13 +113,6 @@ func _setup_hall() -> void:
 					var m := mi.mesh.surface_get_material(i)
 					if m and m.resource_name == "M_amb_pozzanghera":
 						mi.set_surface_override_material(i, puddle_material)
-	# Senza i dati la GI resta spenta: calcolarla durante il gioco blocca tutto per secondi.
-	var gi := get_node_or_null(^"Sala/VoxelGI_Sala") as VoxelGI
-	if gi and gi.data == null:
-		if ResourceLoader.exists(BAKED_GI):
-			gi.data = load(BAKED_GI) as VoxelGIData
-		else:
-			gi.set_meta(&"grafica_bake_automatico", false)
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override

@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/grafica/look_sala.gd" id="1_look"]
+
+[node name="LuciSala" type="Node3D"]
+script = ExtResource("1_look")
+percorso_sala = NodePath("../Sala")
+dati_gi = "res://scenes/sala/gi/sala.res"
+percorso_trigger = NodePath("../Gioco/AccendiLampione")

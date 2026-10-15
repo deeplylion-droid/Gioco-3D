@@ -50,6 +50,9 @@ func _ready() -> void:
 			if ps == null:
 				ps = load(cartella.path_join(glb)) as PackedScene
 			scene[glb] = ps.instantiate() if ps else null
+			if scene[glb]:
+				# I materiali del kit sullo stesso shader dove si può (stesso aspetto, meno pipeline).
+				UnificaMateriali.unifica(scene[glb])
 		if scene[glb] == null:
 			continue
 		var src := (scene[glb] as Node).get_node_or_null(NodePath(nome)) as MeshInstance3D

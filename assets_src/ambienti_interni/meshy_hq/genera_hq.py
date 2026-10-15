@@ -43,6 +43,10 @@ OGGETTI = {
     'rastrelliera': ('A wall-mounted equipment rack made of yellow painted round steel tubes: three uprights, two horizontal rails '
                      'with four hooks, and a top mesh shelf.', 25000),
     'scrivania': ('An old small metal office desk with a drawer, grey-green paint, rounded corners, worn top.', 20000),
+    'sprinkler': ('A ceiling fire sprinkler head pointing down: brass body with a red glass bulb, a round deflector plate '
+                  'and a short threaded pipe stub with a hexagonal fitting.', 6000),
+    'condotto_aria': ('A short straight section of rectangular galvanized sheet metal air duct with rounded edges, raised '
+                      'flange joints at both ends with bolts, and a small louvered vent grille on one side.', 20000),
     'bacheca': ('An empty cork bulletin board with a rounded wooden frame, a few push pins, landscape format.', 10000),
 }
 

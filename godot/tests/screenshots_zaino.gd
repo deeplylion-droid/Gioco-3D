@@ -73,7 +73,7 @@ func _run() -> void:
 		hud.visible = false
 	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
-	(level.get_node("Statua/Sfarfallio") as FlickerLight).turn_on()
+	(level.get_node("Vasca/Sfarfallio") as FlickerLight).turn_on()
 	# 1) Lo zaino sulla rastrelliera dei bagnini, all'ingresso.
 	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
 	if only == "" or only == "rastrelliera":
