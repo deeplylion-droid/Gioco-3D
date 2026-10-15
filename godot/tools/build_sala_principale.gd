@@ -174,11 +174,13 @@ func _hall() -> void:
 	# tempesta coi lampi, nebbia bassa, polvere, controluce e luce da ritratto della statua.
 	var luci: Node3D = (load("res://scenes/sala/luci_sala.tscn") as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	luci.name = "LuciSala"
-	# La statua è la cosa più luminosa della sala: i fari della ringhiera un po' più forti.
-	luci.set(&"energia_fari", 7.0)
+	# I due fari della ringhiera sud puntano dritti sul viso della medusa affacciata (a 6 m): a 7
+	# erano quasi tre quarti della luce sulla testa e con il lampione bruciavano testa e capelli.
+	# A 2 la luce principale sul viso è il lampione, e la medusa resta la cosa più chiara.
+	luci.set(&"energia_fari", 2.0)
 	luci.set(&"vetro_cupola", M.dome_glass)
-	# Il lampione illumina il viso della medusa affacciata: punta sul suo occhio vero, e a 2-3 m
-	# basta metà dell'energia di serie (a 6 testa e capelli si bruciano).
+	# Il lampione illumina il viso della medusa affacciata: punta sul suo occhio vero, e a 3 m
+	# basta metà dell'energia di serie (a 6, con i fari, testa e capelli si bruciano).
 	luci.set(&"ritratto_mira", OCCHIO_MEDUSA)
 	luci.set(&"energia_ritratto", 3.0)
 	own(luci)

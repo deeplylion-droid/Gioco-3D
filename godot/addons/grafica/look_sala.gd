@@ -129,8 +129,9 @@ func _prepara_ritratto() -> void:
 		for n in get_tree().root.find_children("*", "Node", true, false):
 			if n.get("light") == lamp and n.get("base_energy") != null:
 				n.set("base_energy", energia_ritratto)
-				if n.get("is_on"):
-					lamp.light_energy = energia_ritratto
+				# Spenta finché la FlickerLight non la accende (_regola_luci le ha appena dato
+				# l'energia del lampione anche se la sala parte con la lampada spenta).
+				lamp.light_energy = energia_ritratto if n.get("is_on") else 0.0
 	var trigger := get_node_or_null(percorso_trigger) as Node3D
 	if trigger:
 		trigger.global_position = punto_accensione

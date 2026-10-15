@@ -90,6 +90,8 @@ func _run() -> void:
 	storm.automatica = false
 	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
 	lamp.turn_on()
+	# Negli scatti la lampada è già accesa e ferma (niente accensione a colpi nella nebbia).
+	lamp.set(&"_startup", -1.0)
 	# Davanti alla statua la torcia è spenta: la illuminano solo le sue luci da monumento.
 	var torch := p.find_child("Torcia", true, false) as Torcia
 	var statue_only := not only.is_empty()
@@ -101,12 +103,20 @@ func _run() -> void:
 	if _want("ingresso_vasca"):
 		# Entrando nella sala: la medusa affacciata alla vasca, il viso nel cono del lampione.
 		await _shot("ingresso_vasca", Vector3(0.0, 0.0, 19.2), Vector3(0.0, 1.9, 11.0))
-		# SCATTI_LAMPIONE: la stessa inquadratura con altre energie del lampione, per esempio
-		# "2.5,2" (per sceglierla senza ricaricare la sala: i file finiscono con _<energia>).
-		for e in OS.get_environment("SCATTI_LAMPIONE").split(",", false):
-			lamp.base_energy = float(e)
-			await _frames(maxi(settle * 2 / 3, 12))
-			await _capture("ingresso_vasca_" + e)
+		# SCATTI_LUCI: la stessa inquadratura con altre energie delle luci sulla medusa, per
+		# sceglierle senza ricaricare la sala. Varianti separate da ";", ognuna per esempio
+		# "fari=3,lampione=2.5" (i file finiscono con la variante).
+		for v in OS.get_environment("SCATTI_LUCI").split(";", false):
+			for kv in v.split(",", false):
+				var e := float(kv.get_slice("=", 1))
+				match kv.get_slice("=", 0):
+					"fari":
+						for f in level.find_children("luce_faro*", "SpotLight3D", true, false):
+							(f as SpotLight3D).light_energy = e
+					"lampione":
+						lamp.base_energy = e
+			await _frames(maxi(settle, 12))
+			await _capture("ingresso_vasca_" + v.replace("=", "").replace(",", "_"))
 	if _want("vasca_primo_piano"):
 		# Dal bordo, oltre il cordone: occhio negli occhi.
 		await _shot("vasca_primo_piano", Vector3(0.35, 0.0, 13.25), Vector3(0.0, 1.5, 11.9))
