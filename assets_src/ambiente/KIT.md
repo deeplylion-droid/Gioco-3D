@@ -16,8 +16,8 @@ sala principale in Godot leggi `INTEGRAZIONE.md`.
 - **Metri**, scala reale. In Blender Z in alto; il GLB esce con Y in alto (glTF), come Godot.
   Conversione: `(x, y, z)_Blender -> (x, z, -y)_Godot`.
 - **Griglia di posa 0,5 m**; moduli principali **2 m**; pezzi di riempimento da 0,5 m e 1 m.
-- Altezza di un ponte (modulo di parete del kit): **3 m**. Nella sala: 4 m sotto la galleria,
-  soffitto a 11,5 m, cupola fino a 18 m.
+- Altezza di un ponte (modulo di parete del kit): **3 m**. Nella sala (40 x 44 m, x da -20 a 20,
+  y da -20 a 24 in Blender): 4 m sotto la galleria, soffitto a 11,5 m, cupola fino a 18 m.
 
 ## Misure reali usate
 
@@ -31,25 +31,58 @@ sala principale in Godot leggi `INTEGRAZIONE.md`.
 | Bordo a sfioro | canale con griglia 25 cm (listelli ogni 3 cm) + copertina in ceramica 25 cm con toro |
 | Scaletta della vasca | tubo inox Ø 43 mm, corrimano a 50 cm, alto 0,92 m sul ponte, gradini ogni 30 cm |
 | Ringhiera | corrimano Ø 50 mm a 1,05 m (SOLAS chiede almeno 1,0 m), sbarre Ø 16 mm ogni 11 cm |
-| Porta degli spogliatoi | doppia anta, luce 1,8 x 2,4 m, telaio metallico |
+| Porta degli spogliatoi (kit) | doppia anta, luce 1,8 x 2,4 m, telaio metallico |
+| Vano della sala verso gli spogliatoi | luce 1,2 x 2,2 m, porta stagna aperta (anta 1,4 x 2,3 m, 6 leve, volantino) |
 | Porta stagna (da fare) | luce 0,8 x 1,9 m, soglia 0,3 m, angoli arrotondati, 8 tiranti |
 | Oblò | luce Ø 60 cm, flangia Ø 84 cm con 12 bulloni, manicotto nello spessore (20 cm), centro a 1,5 m |
 | Galleria | profonda 3 m, soletta 0,3 m, a 4,0 m (sala) / 3,0 m (kit) |
-| Scivoli | tubo chiuso Ø interno 1,0 m, vetroresina 12 mm, flange imbullonate ogni 2 m |
+| Scivoli | tubo chiuso Ø interno 1,0 m, vetroresina 12 mm, flange imbullonate ogni 2 m; quello dell'inseguimento Ø 1,6 m, parete 6 cm |
 | Plafoniera al neon | 2 tubi T8 da 120 cm (Ø 26 mm) |
 | Luce d'emergenza | plafoniera stagna Ø 18 cm con gabbia e vetro rosso |
 | Cartelloni | 2,4 x 1,35 m (kit) e 3,2 x 1,8 m (sala), solo disegni, nessuna scritta |
 | Torre degli scivoli | 6 x 6 m, piani a 3,0 / 6,0 / 8,6 m, pozzo centrale 2,2 m, gradini da 18 cm |
 
-## Piedistallo della statua (per il gruppo "medusa")
+## Monumento della statua (per il gruppo "medusa")
 
-Nella sala il piedistallo è **vuoto** (nodo `amb_piedistallo` in `sala_architettura.glb`).
+La statua della medusa è il simbolo del gioco: il suo piedistallo è un **monumento** al centro del
+piazzale sud, sull'asse della porta degli spogliatoi. Il piedistallo è **vuoto** (nodo `amb_piedistallo`
+in `sala_monumento.glb`); la medusa la mette il gruppo "medusa".
 
-- Centro della base: Blender **(0, -6,9, 0)** = Godot **(0, 0, 6,9)**; sul bordo sud della piscina, sopra la parte profonda.
-- **Piano superiore a 0,90 m**; diametro del piano **2,2 m** (tamburo 2,0 m, zoccolo 2,3 m).
-- La medusa va appoggiata in Godot a **(0, 0,90, 6,9)**, rivolta verso lo spawn (+Z Godot, cioè verso sud).
-- Davanti (verso l'ingresso) c'è il grosso pulsante rosso per i bambini, a 0,47 m.
-- Il lampione accanto (base in Blender (1,9, -7,9)) illumina la statua dall'alto a sinistra.
+- Centro: Blender **(0, -10, 0)** = Godot **(0, 0, 10)**. La porta (vano 1,2 x 2,2 m) è a 10 m, sullo
+  stesso asse: entrando la statua si vede subito, intera e centrata, con la cupola sopra.
+- **Piano superiore a 1,15 m**, Ø 2,8 m. La medusa va appoggiata in Godot a **(0, 1,15, 10)**,
+  rivolta verso la porta (+Z Godot). Prevista alta circa 4,5 m: la cima arriva a 5,65 m.
+- Gradoni: Ø 4,0 m (alto 0,28) e Ø 3,24 m (fino a 0,56), piastrellati; tamburo Ø 2,6 m con il fregio
+  a mosaico marino; cornice in ceramica con il toro d'ottone; conchiglie d'ottone sul secondo gradino.
+- Davanti (verso la porta) la scatola gialla con il fungo rosso dei bambini (nodo a parte), a 0,8 m.
+- Luci: 4 faretti nel primo gradino (dal basso), 2 fari sulla ringhiera della galleria sud, il lampione
+  accanto (base in Blender (2,8, -13,2)) con la lampada sopra il davanti della statua.
+- Cordone di velluto su colonnine d'ottone a raggio 3 m, con un varco di 3 m sul davanti.
+- Alla base le offerte dei bambini: disegni a pastello (senza scritte), conchiglie, stelle marine,
+  secchiello, salvagente, orsetto, paperelle, pallone, ciambella.
+
+## Passata di qualità della sala (ottobre)
+
+Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagli.py`:
+
+- **Pavimento** a piastrelle da 25 cm con tre materiali (asciutto, umido, bagnato) scelti piastrella
+  per piastrella da un campo in spazio mondo; pozzanghere a specchio con la texture del pavimento.
+- **Sporco nei colori dei vertici** calcolato in spazio mondo (pareti, pavimento, galleria, piscina,
+  scivoli, torre, giochi): niente ripetizioni. Pareti e pavimento hanno vertici ogni 25 cm.
+- **Profili**: battiscopa a sguscio (raggio 8 cm) tra pavimento e piastrelle, listelli ai bordi della
+  fascia rossa, toro bianco a 2 m dove finiscono le piastrelle; gocciolatoio e rivetti sul fronte della
+  galleria; rivetti e irrigidimenti sulle travi del soffitto; piastre imbullonate e capitelli sulle
+  colonne; spigoli smussati su torre e struttura di gioco.
+- **Piastrelle mancanti** a gruppi (colla a righe di spatola, `M_amb_malta`) sulle pareti e in piscina.
+- **Oblò** con vetro scuro e aloni di sale (`M_amb_vetro_oblo`, opaco: riflette con SSR).
+- **Cupola**: costoloni e anelli a T, piastre imbullonate negli incroci, lesene sul tamburo; lastre da un
+  atlante a 4 varianti (sporca con rivoli di pioggia, molto sporca con alghe, incrinata, velata);
+  8 lastre rotte con le schegge nel telaio e i vetri caduti sotto (lì il pavimento è bagnato).
+- **Luci**: plafoniere navali calde accese (`luce_calda_*`) tra le rosse, insegne al neon disegnate
+  (onda azzurra sopra il vano, stella-sole gialla sopra l'area bimbi; un tratto spento).
+- **Tubo dell'inseguimento** (lo scivolo rosso a spirale): Ø interno 1,6 m, parete 6 cm, flange ogni
+  2 m con 12 bulloni, come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. La bocca
+  sputa nella vasca d'arrivo da est, 16 cm sopra l'acqua. Gli altri due tubi restano da 1,0 m.
 
 ## Convenzioni dei nomi
 
@@ -88,8 +121,14 @@ Nella sala il piedistallo è **vuoto** (nodo `amb_piedistallo` in `sala_architet
   Fonti e licenze: `textures/LICENZE.md`.
 - Le palette ricolorano le CC0 (ogni piastrella prende il suo colore, sporco e fughe conservati):
   `textures/derivate/<palette>/`. Ricette in `tools/blender/ambiente_palette.py`.
-- Bagnato: il pavimento ha una rugosità più bassa a chiazze (texture `pavimento_orm`); le
-  pozzanghere vere sono mesh a parte, lucidissime (`M_amb_pozzanghera`), così con SSR riflettono.
+- Bagnato: ogni piastrella del pavimento (25 cm) prende uno di tre materiali con la stessa texture di
+  colore e rugosità diverse (`pavimento_asciutto`, `pavimento`, `pavimento_bagnato`), scelti da un
+  campo in spazio mondo (più bagnato vicino alle vasche, sotto le lastre rotte della cupola e lungo il
+  bordo della galleria). Le pozzanghere sono mesh a parte con la texture del pavimento (le fughe
+  combaciano), lisce come specchi (`M_amb_pozzanghera`): con SSR riflettono.
+- Sporco: colori dei vertici calcolati in spazio mondo (`tools/blender/ambiente_dettagli.py`): umidità
+  che risale con la linea della marea, colature dall'alto, angoli più sporchi, linea dell'ultimo livello
+  dell'acqua nella piscina. Le fughe delle piastrelle hanno la normal map più forte (`normale` 1,6).
 - Grigliati e rosa dei venti: PNG con alfa (alpha scissor in Godot).
 - Oggetti Meshy: GLB grezzi in `oggetti/<nome>/<nome>_meshy.glb` (texture ricompresse in JPG, la
   geometria è quella di Meshy); in sala hanno texture 1K se piccoli, 2K se grandi.
@@ -97,8 +136,8 @@ Nella sala il piedistallo è **vuoto** (nodo `amb_piedistallo` in `sala_architet
 ## LOD e poligoni
 
 - I LOD li genera Godot all'import (`meshes/generate_lods`, attivo di serie): i pezzi sono già leggeri.
-- Sala: architettura 108 mila triangoli, piscina 30 mila, torre e scivoli 79 mila, cupola 25 mila,
-  area bimbi 6 mila, oggetti 393 mila (39 istanze di 12 modelli da 4-20 mila triangoli).
+- Sala: i numeri aggiornati di ogni GLB sono in `INTEGRAZIONE.md` (architettura circa 210 mila
+  triangoli con pavimento e pareti più fitti per lo sporco nei colori dei vertici).
 - Se servono più prestazioni: `visibility_range_end` sugli oggetti piccoli (palloni, paperelle) a 25-30 m.
 
 ## Collisioni
@@ -128,7 +167,8 @@ $PY assets_src/ambiente/oggetti/meshy_oggetti.py immagini   # Meshy: immagini di
 $PY assets_src/ambiente/oggetti/meshy_oggetti.py modelli    # Meshy: modelli 3D (crediti!)
 $PY tools/blender/ambiente_oggetti.py ricomprimi --copia <cartella fuori dal repo>
 $PY tools/blender/ambiente_sala.py --glb assets_src/ambiente/glb/sala          # GLB della sala
-nice -n 10 $PY tools/blender/ambiente_sala.py --render S04_statua --uscita <cartella>   # render Cycles
+$PY tools/blender/ambiente_integrazione.py                                      # INTEGRAZIONE.md dai GLB
+flock /home/user/tools/render.lock nice -n 10 $PY tools/blender/ambiente_sala.py --render S04_statua --uscita <cartella>   # render Cycles (max 1600x900)
 $PY tools/blender/ambiente_kit.py --palette sala_a --uscita <cartella>          # pezzi del kit
 nice -n 10 $PY tools/blender/ambiente_anteprima.py --palette p1_bianco_turchese --uscita <cartella>  # angolo di prova
 $PY tools/blender/ambiente_proposte.py angolo <cartella render>                 # JPG con le etichette

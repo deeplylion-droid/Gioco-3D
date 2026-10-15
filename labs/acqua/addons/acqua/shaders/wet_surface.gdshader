@@ -143,6 +143,9 @@ void fragment() {
 	AO_LIGHT_AFFECT = 0.25;
 	SPECULAR = spec;
 	METALLIC = metal * (1.0 - puddle);
+	if (any(isnan(n_world)) || any(isinf(n_world))) {
+		n_world = ng;
+	}
 	NORMAL = normalize((VIEW_MATRIX * vec4(n_world, 0.0)).xyz);
 
 	// --- dati per la funzione di luce ---
@@ -187,5 +190,12 @@ void light() {
 			vec3 fr = f0c + (vec3(f90) - f0c) * pow(1.0 - ldh, 5.0);
 			SPECULAR_LIGHT += lc * ndl * wr_d_ggx(ndh, a) * wr_v_ggx(ndl, ndv, a) * fr * SPECULAR_AMOUNT;
 		}
+	}
+	// mai valori non validi nei buffer: si spargerebbero con riflessi e bagliore
+	if (any(isnan(DIFFUSE_LIGHT)) || any(isinf(DIFFUSE_LIGHT))) {
+		DIFFUSE_LIGHT = vec3(0.0);
+	}
+	if (any(isnan(SPECULAR_LIGHT)) || any(isinf(SPECULAR_LIGHT))) {
+		SPECULAR_LIGHT = vec3(0.0);
 	}
 }

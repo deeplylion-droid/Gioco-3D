@@ -189,6 +189,21 @@ func unregister_glow(light: Node) -> void:
 	_glows.erase(light)
 
 
+## Registra una luce gia' esistente (per esempio le luci subacquee dei GLB) come luce immersa:
+## il volume d'acqua intorno brilla e le superfici non le applicano le caustiche.
+func register_underwater_light(light: Light3D, glow_strength := 2.0, glow_radius := 5.0) -> void:
+	light.set_meta("water_glow_strength", glow_strength)
+	light.set_meta("water_glow_radius", glow_radius)
+	register_glow(light)
+
+
+func _glow_rows_for_light(l: Light3D) -> Array:
+	var p := l.global_position
+	var c := l.light_color * l.light_energy * float(l.get_meta("water_glow_strength", 2.0))
+	var r: float = l.get("omni_range") if "omni_range" in l else 5.0
+	return [Color(p.x, p.y, p.z, float(l.get_meta("water_glow_radius", 5.0))), Color(c.r, c.g, c.b, r)]
+
+
 func _update_glow_table() -> void:
 	var count := 0
 	for g in _glows:
@@ -196,7 +211,7 @@ func _update_glow_table() -> void:
 			break
 		if not is_instance_valid(g) or not g.is_visible_in_tree():
 			continue
-		var rows: Array = g.get_glow_rows()
+		var rows: Array = g.get_glow_rows() if g.has_method("get_glow_rows") else _glow_rows_for_light(g)
 		_glow_img.set_pixel(count * 2, 0, rows[0])
 		_glow_img.set_pixel(count * 2 + 1, 0, rows[1])
 		count += 1
