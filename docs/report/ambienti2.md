@@ -2,15 +2,17 @@
 
 Agente degli ambienti tecnici del capitolo 1. Ultimo aggiornamento: 15 ottobre 2026.
 
-## Kit di dettagli per la sala principale (nuovo compito del coordinatore, 15 ottobre)
+## Kit di dettagli per la sala principale (compito del coordinatore, 15 ottobre)
 
-**Stato: primo giro finito.** In `assets_src/ambiente_dettagli/` (istruzioni in `README.md`):
+**Stato: posizionamento rifatto sulla sala lunga (con il monumento).** In `assets_src/ambiente_dettagli/` (istruzioni in `README.md`):
 
-- **96 dettagli in 8 GLB** (detriti, cavi, tubi e condotte con bocchette, cassette elettriche e quadro, corpi lampada, cartelli con soli disegni, alghe secche e incrostazioni, catene e corde), con più varianti. Usano i materiali e la palette `sala_a` del kit della sala; le texture nuove sono CC0 2K di ambientCG. 8 piccoli oggetti (giocattoli, ciabatta, maschera da sub) fatti con Meshy.
-- **`posizionamento.json`: 479 posti suggeriti nella sala**, in coordinate Godot, trovati con dei raggi sulla geometria vera dei GLB della sala: pavimento libero, muri piatti senza oblò e porte, soffitto della galleria, bordi e fondo della piscina. Il percorso dallo spawn al piedistallo resta pulito. Provato in Godot 4.7.2: tutte le istanze si caricano; c'è lo snippet GDScript nel README.
-- **Render da mostrare**: `docs/report/render_ambienti2/dettagli_vetrina.jpg` (render Cycles della vetrina) e lo screenshot dal motore, prima e dopo: `dettagli_godot_muro_prima.jpg` / `dettagli_godot_muro_dopo.jpg` (Godot 4.7.2, con lo script delle luci della sala).
-- Scelte: niente collisioni (sono decorativi); niente luci dentro i dettagli (accesi/spenti si cambia il materiale); cartelli solo con pittogrammi; ho tolto un cartello con la mascotte disegnata, perché l'aspetto della mascotte lo decide l'utente.
-
+- **100 dettagli in 8 GLB**: detriti, pannelli caduti, cavi, tubi, condotte e bocchette, cassette elettriche e quadro, corpi lampada, cartelli con soli disegni, alghe secche e incrostazioni, catene e corde. Usano i materiali e la palette `sala_a` del kit della sala; texture nuove CC0 2K. 8 piccoli oggetti fatti con Meshy.
+- **`posizionamento.json`: 1219 posti in 457 gruppi**, trovati con dei raggi sui GLB nuovi della sala. Percorso spawn→monumento libero, niente dentro il cordone, cono di vista sulla statua libero.
+- **`godot/dettagli_sala.gd`**: monta tutto con MultiMeshInstance3D (66 MultiMesh per 1153 istanze, 66 copie singole). In tutto **573,630 triangoli**. Draw call misurati in Godot: dallo spawn da 158 a 324, verso un muro laterale da 54 a 201.
+- **Da mostrare** (screenshot dal motore, Godot 4.7.2): `dettagli_godot_spawn_prima.jpg` / `dettagli_godot_spawn_dopo.jpg` (dallo spawn) e `dettagli_godot_lato_prima.jpg` / `dettagli_godot_lato_dopo.jpg` (muro est). Render Cycles della vetrina: `dettagli_vetrina.jpg`.
+- Scelte: niente collisioni e niente luci nei dettagli (acceso/spento si cambia il materiale); cartelli solo con pittogrammi (ho tolto quello con la mascotte disegnata: l'aspetto della mascotte lo decide l'utente).
+- Problema: il muro sud nuovo è a pannelli inclinati, quindi lì ci sono pochi dettagli a muro; il lato sud è riempito con gruppi per terra e cose appese sotto la galleria.
+- **Le mie stanze anche in 2K**: `assets_src/ambienti_tecnici/gltf_2k/` (.gltf con le texture 2K condivise), provate in Godot. In `glb/` restano i GLB a 1K.
 
 ## Cosa è finito
 

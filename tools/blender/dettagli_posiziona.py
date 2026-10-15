@@ -4,8 +4,10 @@ Importa i GLB della sala (assets_src/ambiente/glb/sala/) e trova i posti con dei
 vera: pavimento libero, muri piatti senza oblò e porte, soffitto della galleria, bordi delle vasche, fondo
 della piscina. Scrive assets_src/ambiente_dettagli/posizionamento.json con le trasformazioni in coordinate Godot.
 
-Uso: /home/user/tools/blender-venv/bin/python tools/blender/dettagli_posiziona.py [--render] [--anteprima]
-Con --render fa anche un render di controllo della sala con i dettagli (docs/report/render_ambienti2/dettagli_sala*.jpg).
+Uso: /home/user/tools/blender-venv/bin/python tools/blender/dettagli_posiziona.py
+I dettagli sono messi a GRUPPI (mucchi negli angoli e alla base dei muri, corse di tubi e di cavi lungo muri e galleria,
+incrostazioni lungo la base delle pareti e i bordi della piscina, lampade e cavi che pendono sotto la galleria).
+Il percorso dallo spawn al monumento e il cono di vista sulla statua restano liberi.
 """
 import json, math, os, random, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +25,7 @@ random.seed(2026)
 reset()
 
 # ------------------------------------------------------------------ geometria della sala
-for f in ('sala_architettura', 'sala_piscina', 'sala_area_bimbi', 'sala_torre_scivoli', 'sala_oggetti', 'sala_interattivi'):
+for f in ('sala_architettura', 'sala_piscina', 'sala_area_bimbi', 'sala_torre_scivoli', 'sala_oggetti', 'sala_interattivi', 'sala_monumento'):
     bpy.ops.import_scene.gltf(filepath=os.path.join(SALA, f + '.glb'))
 dg = bpy.context.evaluated_depsgraph_get()
 bm = bmesh.new()
@@ -47,25 +49,39 @@ def raggio(o, d, dist=50.0):
     return hit if hit[0] is not None else None
 
 
-# zone vietate (Blender): passaggi principali e posti di scena
-VIETATE = [((-1.5, 1.5), (-12.0, -5.5)),           # dallo spawn al piedistallo: la scena della statua resta pulita
-           ((-1.2, 1.2), (-9.5, -4.4))]
-PIEDISTALLO = Vector(DATI['piedistallo']['centro_blender'][:2])
-occupati = []   # (centro, raggio)
+# ------------------------------------------------------------------ zone libere
+MON = Vector(DATI['piedistallo']['centro_blender'][:2]); R_MON = DATI['piedistallo']['raggio_cordone'] + 0.4
+SPAWN = Vector(DATI['spawn_ingresso']['blender'][:2])
+LAMP = Vector(DATI['lampione']['base_blender'][:2])
 
 
-def libero(p, r):
-    p = Vector(p[:2])
-    if (p - PIEDISTALLO).length < 2.2:
+def nel_corridoio(p, largo=1.9):
+    """Percorso spawn -> monumento (per terra)."""
+    return abs(p.x) < largo and SPAWN.y - 1 <= p.y <= MON.y
+
+
+def nel_cono(p):
+    """Cono di vista dallo spawn alla statua (per le cose appese): si allarga verso la statua."""
+    if not (SPAWN.y - 1 <= p.y <= MON.y + 1.5):
         return False
-    for (a, b), (c, d) in VIETATE:
-        if a <= p.x <= b and c <= p.y <= d:
-            return False
-    return all((p - q).length > r + rq for q, rq in occupati)
+    t = (p.y - SPAWN.y) / (MON.y - SPAWN.y)
+    return abs(p.x) < 2.0 + 2.2 * max(t, 0)
+
+
+occupati = []      # per terra (centro 2D, raggio)
+occupati_muro = []  # muri e soffitto (centro 3D, raggio)
+
+
+def libero(p, r, appeso=False):
+    q = Vector(p[:2])
+    if (q - MON).length < R_MON + r or (q - LAMP).length < 0.8 + r:
+        return False
+    if nel_corridoio(q) or (appeso and nel_cono(q)):
+        return False
+    return all((q - c).length > r + rc for c, rc in occupati)
 
 
 def spazio_intorno(p, r, h=0.25):
-    """Nessun ostacolo entro r a quota h (raggi orizzontali)."""
     for k in range(8):
         a = k * math.pi / 4
         if raggio(Vector(p) + Vector((0, 0, h)), (math.cos(a), math.sin(a), 0), r):
@@ -76,269 +92,326 @@ def spazio_intorno(p, r, h=0.25):
 POSTI = []
 
 
-def aggiungi(nodo, M, zona):
-    info = CAT[nodo]
-    POSTI.append({'nodo': nodo, 'glb': info['glb'], 'zona': zona, 'matrice_blender': M})
+def aggiungi(nodo, M, zona, gruppo):
+    POSTI.append({'nodo': nodo, 'glb': CAT[nodo]['glb'], 'zona': zona, 'gruppo': gruppo, 'matrice_blender': M})
 
 
-def sul_pavimento(nodo, x, y, zona, r=0.4, z_atteso=(-0.06, 0.08), vicino_muro=False):
+def sul_pavimento(nodo, x, y, zona, gruppo, r=0.3, z_atteso=(-0.06, 0.08), controlla_intorno=False, yaw=None):
     hit = raggio((x, y, 3.0), (0, 0, -1), 8)
     if not hit:
         return False
     p, n = hit[0], hit[1]
     if n.z < 0.95 or not (z_atteso[0] <= p.z <= z_atteso[1]):
         return False
-    if not libero(p, r) or (not vicino_muro and not spazio_intorno(p, r)):
+    if not libero(p, r) or (controlla_intorno and not spazio_intorno(p, r)):
         return False
-    M = Matrix.Translation(p + Vector((0, 0, 0.001))) @ Matrix.Rotation(random.uniform(0, 2 * math.pi), 4, 'Z')
-    aggiungi(nodo, M, zona); occupati.append((Vector(p[:2]), r))
+    M = Matrix.Translation(p + Vector((0, 0, 0.001))) @ Matrix.Rotation(random.uniform(0, 2 * math.pi) if yaw is None else yaw, 4, 'Z')
+    aggiungi(nodo, M, zona, gruppo); occupati.append((Vector(p[:2]), r))
     return True
 
 
-def sul_muro(nodo, p_interno, direzione, z, zona, w=None, h=None, r=None, base=False):
-    """Raggio orizzontale da un punto interno verso il muro: il dettaglio guarda la sala."""
+LUNGHI = {k for k, v in CAT.items() if v['ingombro_m'][0] > 1.5 or 'incrostazione' in k or 'festone' in k or 'fascio' in k}
+
+
+def sul_muro(nodo, p_interno, direzione, z, zona, gruppo, r=None, base=False):
     info = CAT[nodo]
-    w = w or max(info['ingombro_m'][0], 0.2); h = h or max(info['ingombro_m'][2], 0.2)
-    o = Vector((p_interno[0], p_interno[1], z))
-    hit = raggio(o, direzione, 12)
+    w = max(info['ingombro_m'][0], 0.2); h = max(info['ingombro_m'][2], 0.2)
+    hit = raggio(Vector((p_interno[0], p_interno[1], z)), direzione, 12)
     if not hit:
         return False
     p, n = hit[0], hit[1]
     if abs(n.z) > 0.1:
         return False
     t = Vector((-n.y, n.x, 0)).normalized()
-    # il muro dev'essere piatto su tutta la sagoma (niente oblò, porte, colonne)
+    t = Matrix.Rotation(math.atan2(n.x, -n.y), 3, 'Z') @ Vector((1, 0, 0))   # +X locale del dettaglio
+    xo = 0.5 if nodo in LUNGHI else 0.0
     for sx, sz in ((-0.5, -0.5), (0.5, -0.5), (-0.5, 0.5), (0.5, 0.5), (0, 0)):
         if base:
             sz = (sz + 0.5) * 0.9 + 0.05
-        q = p + n * 0.3 + t * (sx * w) + Vector((0, 0, sz * h))
+        q = p + n * 0.3 + t * ((sx + xo) * w) + Vector((0, 0, sz * h))
         hh = raggio(q, -n, 0.6)
-        if not hh or abs((hh[0] - q).length - 0.3) > 0.03 or hh[1].dot(n) < 0.98:
+        if not hh or abs((hh[0] - q).length - 0.3) > (0.08 if base else 0.03) or hh[1].dot(n) < 0.95:
             return False
-    rr = r or max(w, h) / 2
-    if not all((Vector(p) - q).length > rr + rq for q, rq in occupati_muro):
+    c = p + t * (xo * w)
+    if not libero(c, 0.0, appeso=True) and z > 2.0:
         return False
-    yaw = math.atan2(n.x, -n.y)
-    M = Matrix.Translation(p) @ Matrix.Rotation(yaw, 4, 'Z')
-    aggiungi(nodo, M, zona); occupati_muro.append((Vector(p), rr))
+    if (Vector(c[:2]) - MON).length < R_MON or nel_corridoio(Vector(c[:2]), 1.2):
+        return False
+    rr = r if r is not None else max(w, h) / 2
+    if not all((c - q2).length > rr + rq for q2, rq in occupati_muro):
+        return False
+    M = Matrix.Translation(p) @ Matrix.Rotation(math.atan2(n.x, -n.y), 4, 'Z')
+    aggiungi(nodo, M, zona, gruppo); occupati_muro.append((c, rr))
     return M
 
 
-occupati_muro = []
-
-
-def al_soffitto(nodo, x, y, zona, z_min=3.4, z_max=4.6, yaw=None, libero_sotto=None):
+def al_soffitto(nodo, x, y, zona, gruppo, yaw=None, libero_sotto=None, z_min=3.4, z_max=4.6, r=0.5):
     hit = raggio((x, y, 2.2), (0, 0, 1), 4)
     if not hit:
         return False
     p, n = hit[0], hit[1]
-    if n.z > -0.95 or not (z_min <= p.z <= z_max) or not libero(p, 0.0):
+    if n.z > -0.95 or not (z_min <= p.z <= z_max) or not libero(p, 0.0, appeso=True):
         return False
     L = libero_sotto if libero_sotto is not None else CAT[nodo]['ingombro_m'][2]
     if raggio(p - Vector((0, 0, 0.02)), (0, 0, -1), L + 0.3):
         return False
-    if not all((Vector(p) - q).length > 0.8 + rq for q, rq in occupati_muro):
-        return False
     yaw = random.uniform(0, 2 * math.pi) if yaw is None else yaw
-    if CAT[nodo]['ingombro_m'][0] > 1.5:
-        # festoni e plafoniere lunghe: l'altro capo deve toccare lo stesso soffitto
-        e = p + Vector((math.cos(yaw), math.sin(yaw), 0)) * CAT[nodo]['ingombro_m'][0]
+    d = Vector((math.cos(yaw), math.sin(yaw), 0))
+    if nodo in LUNGHI:
+        e = p + d * CAT[nodo]['ingombro_m'][0]
         h2 = raggio(e - Vector((0, 0, 0.3)), (0, 0, 1), 1)
-        if not h2 or abs(h2[0].z - p.z) > 0.05:
+        if not h2 or abs(h2[0].z - p.z) > 0.05 or not libero(e, 0.0, appeso=True):
             return False
+    c = p + d * (CAT[nodo]['ingombro_m'][0] / 2 if nodo in LUNGHI else 0)
+    if not all((c - q).length > r + rq for q, rq in occupati_muro):
+        return False
     M = Matrix.Translation(p) @ Matrix.Rotation(yaw, 4, 'Z')
-    aggiungi(nodo, M, zona); occupati_muro.append((Vector(p), 0.6))
-    return True
-
-
-def tenta(n, fn, *a, **k):
-    """Prova fino a n volte una funzione che pesca posti a caso; restituisce quanti ne ha messi."""
-    return sum(1 for _ in range(n) if fn(*a, **k))
+    aggiungi(nodo, M, zona, gruppo); occupati_muro.append((c, r))
+    return M
 
 
 def nodi(prefisso):
     return [k for k in CAT if k.startswith(prefisso)]
 
 
-# ------------------------------------------------------------------ 1) per terra: detriti sparsi, giocattoli, asciugamani
-def a_caso_pav(lista, zona, r, n, area=(X0 + 0.5, X1 - 0.5, Y0 + 0.5, Y1 - 0.5)):
-    def f():
-        return sul_pavimento(random.choice(lista), random.uniform(area[0], area[1]), random.uniform(area[2], area[3]), zona, r)
-    return tenta(n, f)
-
-
 GIOCATTOLI = ['det_paperella', 'det_secchiello', 'det_paletta', 'det_barchetta', 'det_pistola_acqua', 'det_pesce_gomma', 'det_maschera_sub', 'det_ciabatta']
-print('fogli', a_caso_pav(nodi('det_foglio') + nodi('det_carta_accartocciata'), 'pavimento', 0.3, 80))
-print('giocattoli', a_caso_pav(GIOCATTOLI, 'pavimento', 0.3, 50))
-print('asciugamani', a_caso_pav(nodi('det_asciugamano'), 'pavimento', 0.6, 40))
-print('piastrelle', a_caso_pav(nodi('det_piastrella_rotta'), 'pavimento', 0.15, 80))
-print('vetri', a_caso_pav(nodi('det_vetri_rotti'), 'pavimento', 0.5, 25))
-print('catena a terra', a_caso_pav(['det_catena_a_terra', 'det_corda_rotolo'], 'pavimento', 0.4, 12))
-print('macchie pav', a_caso_pav(['det_macchia_calcare_pavimento', 'det_macchia_alghe_secche_pavimento'], 'pavimento', 0.7, 40))
-
-# lungo il piede dei muri: mucchi di piastrelle cadute, alghe secche
-def piede_muri(lista, zona, n, dist=(0.35, 0.7), r=0.45):
-    def f():
-        lato = random.choice('nseo')
-        if lato in 'ns':
-            x = random.uniform(X0 + 1, X1 - 1); y = (Y1 - random.uniform(*dist)) if lato == 'n' else (Y0 + random.uniform(*dist))
-        else:
-            y = random.uniform(Y0 + 1, Y1 - 1); x = (X1 - random.uniform(*dist)) if lato == 'e' else (X0 + random.uniform(*dist))
-        return sul_pavimento(random.choice(lista), x, y, zona, r, vicino_muro=True)
-    return tenta(n, f)
+PICCOLI = nodi('det_piastrella_rotta') + nodi('det_foglio') + nodi('det_carta_accartocciata')
+PANNELLI = nodi('det_pannello') + ['det_griglia_caduta']
+LATI = {'n': ((0, 1, 0), lambda u, d: (u, Y1 - d)), 's': ((0, -1, 0), lambda u, d: (u, Y0 + d)),
+        'e': ((1, 0, 0), lambda u, d: (X1 - d, u)), 'o': ((-1, 0, 0), lambda u, d: (X0 + d, u))}
+LUNGH = {'n': (X0, X1), 's': (X0, X1), 'e': (Y0, Y1), 'o': (Y0, Y1)}
 
 
-print('mucchi piastrelle', piede_muri(nodi('det_mucchio_piastrelle'), 'piede dei muri', 40))
-print('alghe al muro', piede_muri(nodi('det_alghe_secche_mucchio'), 'piede dei muri', 20))
-
-# bordi delle vasche e della piscina: alghe secche e calcare dove l'acqua e' arrivata
-def bordo_piscina(lista, zona, n):
-    px0, px1 = PISC['x']; py0, py1 = PISC['y']
-    def f():
-        lato = random.choice('nseo'); m = random.uniform(0.5, 1.2)
-        if lato in 'ns':
-            x = random.uniform(px0, px1); y = py1 + m if lato == 'n' else py0 - m
-        else:
-            y = random.uniform(py0, py1); x = px1 + m if lato == 'e' else px0 - m
-        return sul_pavimento(random.choice(lista), x, y, zona, 0.5, vicino_muro=True)
-    return tenta(n, f)
+def punto_lato(lato, d, u=None):
+    a, b = LUNGH[lato]
+    u = random.uniform(a + 0.8, b - 0.8) if u is None else u
+    return LATI[lato][1](u, d), u
 
 
-print('bordo piscina', bordo_piscina(nodi('det_alghe_secche_mucchio') + ['det_macchia_alghe_verdi_pavimento', 'det_macchia_calcare_pavimento'], 'bordo piscina', 40))
-
-# fondo della piscina vuota: giocattoli e alghe tra i giocattoli che riaffiorano (sotto -1,5 m)
-def fondo_piscina(lista, zona, n):
-    px0, px1 = PISC['x']; py0, py1 = PISC['y']
-    def f():
-        return sul_pavimento(random.choice(lista), random.uniform(px0 + 0.5, px1 - 0.5), random.uniform(py0 + 0.5, py1 - 0.5), zona, 0.4, z_atteso=(-2.4, -0.3))
-    return tenta(n, f)
+# ================================================================== GRUPPI PER TERRA
+gid = [0]
 
 
-print('fondo piscina', fondo_piscina(GIOCATTOLI + nodi('det_alghe_secche_mucchio') + ['det_macchia_alghe_verdi_pavimento', 'det_macchia_calcare_pavimento'] + nodi('det_mucchio_piastrelle'), 'fondo piscina', 60))
-
-# ------------------------------------------------------------------ 2) muri perimetrali
-DIREZIONI = {'n': (0, 1, 0), 's': (0, -1, 0), 'e': (1, 0, 0), 'o': (-1, 0, 0)}
-
-
-def punto_interno(lato, d=3.5):
-    if lato == 'n':
-        return (random.uniform(X0 + 1, X1 - 1), Y1 - d)
-    if lato == 's':
-        return (random.uniform(X0 + 1, X1 - 1), Y0 + d)
-    if lato == 'e':
-        return (X1 - d, random.uniform(Y0 + 1, Y1 - 1))
-    return (X0 + d, random.uniform(Y0 + 1, Y1 - 1))
+def nuovo_gruppo(nome):
+    gid[0] += 1
+    return f'{nome}_{gid[0]:03d}'
 
 
-def sui_muri(lista, zona, n, z, d=1.0, base=False):
-    def f():
-        lato = random.choice('nseo')
-        zz = random.uniform(*z) if isinstance(z, tuple) else z
-        # il raggio parte un po' piu' in alto quando l'oggetto parte dal pavimento
-        return bool(sul_muro(random.choice(lista), punto_interno(lato, d), DIREZIONI[lato], zz, zona, base=base))
-    return tenta(n, f)
+def mucchio(cx, cy, zona, ricco=True):
+    """Mucchio di detriti: un pezzo grosso al centro, tanti piccoli intorno."""
+    g = nuovo_gruppo('mucchio')
+    grosso = random.choice(nodi('det_mucchio_piastrelle') * 3 + PANNELLI + nodi('det_alghe_secche_mucchio'))
+    if not sul_pavimento(grosso, cx, cy, zona, g, r=0.45):
+        return 0
+    k = 1
+    for _ in range(random.randint(5, 11) if ricco else random.randint(2, 5)):
+        a = random.uniform(0, 6.28); d = random.uniform(0.5, 1.6)
+        nodo = random.choice(PICCOLI * 3 + nodi('det_vetri_rotti') + GIOCATTOLI + PANNELLI + ['det_macchia_calcare_pavimento', 'det_macchia_alghe_secche_pavimento'])
+        r = 0.6 if 'macchia' in nodo or 'pannello' in nodo else 0.12
+        k += sul_pavimento(nodo, cx + d * math.cos(a), cy + d * math.sin(a), zona, g, r=r)
+    return k
 
 
-# tubi e condotte alti, sotto la galleria (fino a 3,8 m); sotto i tubi una colatura di ruggine
-def tubi_con_colature(n):
+conta = {}
+
+
+def conteggia(nome, n):
+    conta[nome] = conta.get(nome, 0) + n
+
+
+# 1) angoli della sala e base dei muri (dentro di 0,5-1,2 m)
+for (cx, cy) in ((X0 + 0.9, Y0 + 0.9), (X1 - 0.9, Y0 + 0.9), (X0 + 0.9, Y1 - 0.9), (X1 - 0.9, Y1 - 0.9)):
+    conteggia('angoli', mucchio(cx, cy, 'angolo'))
+for _ in range(140):
+    lato = random.choice('nseoss')        # piu' gruppi sul lato sud, quello del primo colpo d'occhio
+    (x, y), _u = punto_lato(lato, random.uniform(0.6, 1.3))
+    conteggia('base dei muri', mucchio(x, y, 'base dei muri'))
+# 1b) gli 8 m nuovi vicino al vano sud: il primo colpo d'occhio, ai lati del percorso verso la statua
+for _ in range(70):
+    lato = random.choice((-1, 1))
+    x = lato * random.uniform(2.4, 15.0); y = random.uniform(Y0 + 0.8, MON.y - 1.0)
+    conteggia('ingresso (lato sud)', mucchio(x, y, 'ingresso'))
+for _ in range(25):
+    g = nuovo_gruppo('ingresso_asciugamani')
+    x = random.choice((-1, 1)) * random.uniform(2.5, 12); y = random.uniform(Y0 + 1, MON.y - 1)
+    if sul_pavimento(random.choice(nodi('det_asciugamano') + PANNELLI), x, y, 'ingresso', g, r=0.6):
+        conteggia('ingresso (lato sud)', 1)
+        for _ in range(random.randint(1, 3)):
+            a = random.uniform(0, 6.28)
+            conteggia('ingresso (lato sud)', sul_pavimento(random.choice(GIOCATTOLI + PICCOLI), x + 0.9 * math.cos(a), y + 0.9 * math.sin(a), 'ingresso', g, r=0.15))
+# 2) sparsi in sala, ma sempre a gruppetti
+for _ in range(95):
+    conteggia('gruppetti in sala', mucchio(random.uniform(X0 + 2, X1 - 2), random.uniform(Y0 + 2, Y1 - 2), 'sala', ricco=False))
+# 3) asciugamani e giocattoli vicino alle vasche e alle sdraio
+for _ in range(60):
+    g = nuovo_gruppo('spiaggia')
+    x, y = random.uniform(X0 + 2, X1 - 2), random.uniform(Y0 + 2, Y1 - 2)
+    if sul_pavimento(random.choice(nodi('det_asciugamano')), x, y, 'sala', g, r=0.6):
+        conteggia('asciugamani e giocattoli', 1)
+        for _ in range(random.randint(1, 3)):
+            a = random.uniform(0, 6.28)
+            conteggia('asciugamani e giocattoli', sul_pavimento(random.choice(GIOCATTOLI), x + 0.8 * math.cos(a), y + 0.8 * math.sin(a), 'sala', g, r=0.15))
+# 4) bordo della piscina: alghe secche e calcare dove e' arrivata l'acqua, a tratti continui
+px0, px1 = PISC['x']; py0, py1 = PISC['y']
+for lato in 'nseo':
+    a, b = (px0, px1) if lato in 'ns' else (py0, py1)
+    u = a
+    while u < b:
+        lungo = random.uniform(2, 5); g = nuovo_gruppo('bordo_piscina')
+        for k in range(int(lungo / 0.7)):
+            uu = u + k * 0.7; m = random.uniform(0.45, 0.9)
+            x, y = {'n': (uu, py1 + m), 's': (uu, py0 - m), 'e': (px1 + m, uu), 'o': (px0 - m, uu)}[lato]
+            nodo = random.choice(['det_macchia_alghe_verdi_pavimento', 'det_macchia_calcare_pavimento', 'det_macchia_alghe_secche_pavimento'] + nodi('det_alghe_secche_mucchio') + nodi('det_piastrella_rotta'))
+            conteggia('bordo piscina', sul_pavimento(nodo, x, y, 'bordo piscina', g, r=0.3 if 'piastrella' not in nodo else 0.1))
+        u += lungo + random.uniform(1, 3)
+# 5) fondo della piscina vuota
+for _ in range(30):
+    g = nuovo_gruppo('fondo_piscina')
+    x, y = random.uniform(px0 + 1, px1 - 1), random.uniform(py0 + 1, py1 - 1)
+    for k in range(random.randint(2, 5)):
+        a = random.uniform(0, 6.28); d = random.uniform(0, 1.2)
+        nodo = random.choice(GIOCATTOLI + nodi('det_alghe_secche_mucchio') + ['det_macchia_alghe_verdi_pavimento', 'det_macchia_calcare_pavimento'] + nodi('det_mucchio_piastrelle') + nodi('det_foglio'))
+        conteggia('fondo piscina', sul_pavimento(nodo, x + d * math.cos(a), y + d * math.sin(a), 'fondo piscina', g, r=0.25, z_atteso=(-2.4, -0.3)))
+
+# ================================================================== GRUPPI SUI MURI
+
+
+def corsa_muro(lista, lato, z, n_max, zona, colature=False, base=False, u=None):
+    """Pezzi lunghi (tubi, condotte, incrostazioni) uno dopo l'altro lungo il muro."""
+    g = nuovo_gruppo('corsa')
+    (x, y), u = punto_lato(lato, 1.0, u)
+    nodo = random.choice(lista); L = CAT[nodo]['ingombro_m'][0]
     messi = 0
-    for _ in range(n):
-        lato = random.choice('nseo')
-        nodo = random.choice(nodi('det_tubo_muro') + ['det_tubi_paralleli_2m', 'det_condotta_aria_2m', 'det_condotta_aria_4m'])
-        M = sul_muro(nodo, punto_interno(lato, 1.0), DIREZIONI[lato], random.uniform(3.0, 3.6), 'muri, sotto la galleria')
-        if M:
-            messi += 1
-            L = CAT[nodo]['ingombro_m'][0]
-            for k in range(random.randint(0, 2)):
+    for k in range(n_max):
+        M = sul_muro(nodo, (x, y), LATI[lato][0], z, zona, g, r=0.45 * L, base=base)
+        if not M:
+            break
+        messi += 1
+        if colature:
+            for _ in range(random.randint(0, 2)):
                 q = M @ Vector((random.uniform(0.2, L - 0.2), 0.0, -0.15))
-                Mc = Matrix.Translation(q) @ M.to_3x3().to_4x4()
-                aggiungi('det_macchia_ruggine_colata_muro', Mc, 'colatura sotto un tubo')
+                aggiungi('det_macchia_ruggine_colata_muro', Matrix.Translation(q) @ M.to_3x3().to_4x4(), 'colatura sotto un tubo', g)
+                messi += 1
+        t = M.to_3x3() @ Vector((1, 0, 0))
+        x, y = x + t.x * L, y + t.y * L
     return messi
 
 
-print('tubi', tubi_con_colature(70))
-print('tubi verticali', sui_muri(['det_tubo_verticale_3m'], 'muri', 20, 0.02, base=True))
-print('valvole', sui_muri(['det_tubo_valvola_T'], 'muri', 10, (1.1, 1.5)))
-print('bocchette', sui_muri(nodi('det_bocchetta'), 'muri', 24, (2.2, 3.2)))
-print('bocchette basse', sui_muri(nodi('det_bocchetta_rettangolare'), 'muri', 10, (0.35, 0.5)))
-print('elettrico', sui_muri(['det_cassetta_piccola', 'det_cassetta_aperta', 'det_interruttore_stagno'], 'muri', 30, (1.3, 2.2)))
-print('quadri', sui_muri(['det_quadro_elettrico'], 'muri', 4, 1.4))
-print('cartelli', sui_muri(nodi('det_cartello'), 'muri', 40, (1.6, 1.9)))
-print('applique', sui_muri(['det_applique_emergenza_spenta', 'det_applique_emergenza_rotta'], 'muri', 14, (2.6, 3.0)))
-print('fari', sui_muri(nodi('det_faro'), 'muri', 8, (3.3, 3.7)))
-print('macchie muro', sui_muri(['det_macchia_calcare_muro', 'det_macchia_muffa_muro'], 'muri', 50, (0.35, 1.2)))
-print('incrostazioni', sui_muri(nodi('det_incrostazione_spigolo'), 'base dei muri', 40, 0.03, base=True))
-
-# ------------------------------------------------------------------ 3) soffitto della galleria (fascia di 3 m lungo i muri, a ~4 m)
-def sotto_galleria(lista, zona, n, **k):
-    def f():
-        lato = random.choice('nseo')
-        x, y = punto_interno(lato, random.uniform(0.6, 2.6))
-        yaw = {'n': 0, 's': 0, 'e': math.pi / 2, 'o': math.pi / 2}[lato] + random.choice((0, math.pi))
-        return al_soffitto(random.choice(lista), x, y, zona, yaw=yaw if CAT[lista[0]]['ingombro_m'][0] > 1.5 else None, **k)
-    return tenta(n, f)
+for _ in range(26):
+    conteggia('corse di tubi', corsa_muro(nodi('det_tubo_muro') + ['det_tubi_paralleli_2m'], random.choice('nseos'), random.uniform(2.9, 3.6), random.randint(2, 6), 'muri, sotto la galleria', colature=True))
+for _ in range(10):
+    conteggia('condotte', corsa_muro(['det_condotta_aria_4m', 'det_condotta_aria_2m'], random.choice('nseo'), 3.7, random.randint(1, 3), 'muri, sotto la galleria'))
+for _ in range(30):
+    conteggia('incrostazioni alla base', corsa_muro(nodi('det_incrostazione_spigolo'), random.choice('nseo'), 0.1, random.randint(2, 7), 'base dei muri', base=True))
 
 
-print('cavi pendenti', sotto_galleria(nodi('det_cavo_pendente'), 'sotto la galleria', 50))
-print('festoni', sotto_galleria(nodi('det_cavo_festone') + ['det_fascio_cavi_4m'], 'sotto la galleria', 40, libero_sotto=1.1))
-print('catene', sotto_galleria(nodi('det_catena_pendente') + nodi('det_corda_pendente'), 'sotto la galleria', 30))
-print('neon', sotto_galleria(['det_neon_soffitto_spento', 'det_neon_senza_diffusore', 'det_neon_penzolante'], 'sotto la galleria', 30, libero_sotto=0.6))
+def gruppo_impianto(lato):
+    """Quadro o cassetta, interruttore, tubo che sale, cartello, macchie: un angolo tecnico sul muro."""
+    g = nuovo_gruppo('impianto')
+    (x, y), u = punto_lato(lato, 1.0)
+    M = sul_muro(random.choice(['det_quadro_elettrico', 'det_cassetta_aperta', 'det_cassetta_aperta', 'det_cassetta_piccola']), (x, y), LATI[lato][0], random.uniform(1.4, 1.7), 'muri', g)
+    if not M:
+        return 0
+    n = 1
+    t = M.to_3x3() @ Vector((1, 0, 0))
+    for nodo, du, z in (('det_interruttore_stagno', 0.8, 1.3), ('det_cassetta_piccola', -0.9, 2.2), (random.choice(nodi('det_cartello')), 1.6, 1.75),
+                        ('det_tubo_verticale_3m', -1.4, 0.02), ('det_macchia_muffa_muro', 0.3, 0.5), ('det_macchia_calcare_muro', -0.6, 0.45)):
+        if random.random() < 0.75:
+            n += bool(sul_muro(nodo, (x + t.x * du, y + t.y * du), LATI[lato][0], z, 'muri', g, base=nodo.startswith('det_tubo_verticale')))
+    return n
 
-# ------------------------------------------------------------------ scrittura (coordinate Godot)
+
+for _ in range(60):
+    conteggia('impianti', gruppo_impianto(random.choice('nseos')))
+for _ in range(140):
+    lato = random.choice('nseo'); (x, y), u = punto_lato(lato, 1.0); g = nuovo_gruppo('cartelli')
+    conteggia('cartelli', bool(sul_muro(random.choice(nodi('det_cartello')), (x, y), LATI[lato][0], random.uniform(1.6, 1.9), 'muri', g)))
+for _ in range(40):
+    lato = random.choice('nseo'); (x, y), u = punto_lato(lato, 1.0); g = nuovo_gruppo('bocchette')
+    conteggia('bocchette', bool(sul_muro(random.choice(nodi('det_bocchetta')), (x, y), LATI[lato][0], random.choice((random.uniform(2.3, 3.2), 0.42)), 'muri', g)))
+for _ in range(25):
+    lato = random.choice('nseo'); (x, y), u = punto_lato(lato, 1.0); g = nuovo_gruppo('luci_muro')
+    conteggia('applique e fari', bool(sul_muro(random.choice(['det_applique_emergenza_spenta', 'det_applique_emergenza_rotta', 'det_faro', 'det_faro_spento']), (x, y), LATI[lato][0], random.uniform(2.7, 3.5), 'muri', g)))
+for _ in range(120):
+    lato = random.choice('nseo'); (x, y), u = punto_lato(lato, 1.0); g = nuovo_gruppo('macchie')
+    conteggia('macchie sui muri', bool(sul_muro(random.choice(['det_macchia_calcare_muro', 'det_macchia_muffa_muro']), (x, y), LATI[lato][0], random.uniform(0.35, 1.0), 'muri', g, r=0.3)))
+
+# ================================================================== SOTTO LA GALLERIA
+
+
+def fascio_lungo_muro(lato):
+    """Festoni di cavi uno dopo l'altro, a 0,4-0,9 m dal muro, sotto la galleria."""
+    g = nuovo_gruppo('fascio_cavi')
+    d = random.uniform(0.4, 0.9)
+    (x, y), u = punto_lato(lato, d)
+    yaw = {'n': 0, 's': 0, 'e': math.pi / 2, 'o': math.pi / 2}[lato] + random.choice((0, math.pi))
+    nodo = random.choice(nodi('det_cavo_festone') + ['det_fascio_cavi_4m', 'det_fascio_cavi_4m'])
+    L = CAT[nodo]['ingombro_m'][0]
+    messi = 0
+    for k in range(random.randint(2, 6)):
+        if not al_soffitto(nodo, x, y, 'sotto la galleria', g, yaw=yaw, libero_sotto=1.1, r=0.3):
+            break
+        messi += 1
+        x, y = x + math.cos(yaw) * L, y + math.sin(yaw) * L
+    return messi
+
+
+def lampada_che_pende(lato):
+    """Una plafoniera (spenta, rotta o penzolante) con cavi e catene intorno."""
+    g = nuovo_gruppo('lampada_pendente')
+    (x, y), u = punto_lato(lato, random.uniform(1.0, 2.4))
+    yaw = {'n': 0, 's': 0, 'e': math.pi / 2, 'o': math.pi / 2}[lato]
+    if not al_soffitto(random.choice(['det_neon_soffitto_spento', 'det_neon_senza_diffusore', 'det_neon_penzolante', 'det_neon_penzolante']), x, y, 'sotto la galleria', g, yaw=yaw, libero_sotto=0.7, r=0.8):
+        return 0
+    n = 1
+    for _ in range(random.randint(1, 3)):
+        a = random.uniform(0, 6.28); dd = random.uniform(0.5, 1.2)
+        n += bool(al_soffitto(random.choice(nodi('det_cavo_pendente') * 2 + nodi('det_catena_pendente') + nodi('det_corda_pendente')),
+                              x + dd * math.cos(a), y + dd * math.sin(a), 'sotto la galleria', g, r=0.25))
+    # sotto: vetri della plafoniera
+    if random.random() < 0.6:
+        n += sul_pavimento(random.choice(nodi('det_vetri_rotti')), x, y, 'sotto le lampade', g, r=0.4)
+    return n
+
+
+for _ in range(40):
+    # sotto la galleria sud e lungo i lati vicino all'ingresso: lampade e cavi che pendono (fuori dal cono della statua)
+    x = random.choice((-1, 1)) * random.uniform(3.0, 18.5); y = random.uniform(Y0 + 0.5, Y0 + 9)
+    g = nuovo_gruppo('ingresso_appesi')
+    conteggia('ingresso appesi', bool(al_soffitto(random.choice(nodi('det_cavo_pendente') * 3 + nodi('det_catena_pendente') + ['det_neon_penzolante', 'det_neon_senza_diffusore']),
+                                                x, y, 'sotto la galleria', g, r=0.4, libero_sotto=1.0)))
+for _ in range(100):
+    conteggia('fasci di cavi', fascio_lungo_muro(random.choice('nseos')))
+for _ in range(60):
+    conteggia('lampade che pendono', lampada_che_pende(random.choice('nseos')))
+for _ in range(50):
+    lato = random.choice('nseo'); (x, y), u = punto_lato(lato, random.uniform(0.7, 2.6)); g = nuovo_gruppo('appesi')
+    conteggia('cavi e catene', bool(al_soffitto(random.choice(nodi('det_cavo_pendente') + nodi('det_catena_pendente')), x, y, 'sotto la galleria', g, r=0.3)))
+
+# ------------------------------------------------------------------ scrittura (coordinate Godot) e riepilogo
 C = Matrix(((1, 0, 0, 0), (0, 0, 1, 0), (0, -1, 0, 0), (0, 0, 0, 1)))    # Blender -> Godot
 uscita = []
 for p in POSTI:
     G = C @ p['matrice_blender'] @ C.inverted()
     b = G.to_3x3(); o = G.translation
     yaw = math.degrees(math.atan2(-b[2][0], b[0][0])) if abs(b[1][1] - 1) < 1e-4 else None
-    uscita.append({'nodo': p['nodo'], 'glb': p['glb'], 'zona': p['zona'],
-                   'posizione': [round(v, 3) for v in o],
-                   'rotazione_y_gradi': round(yaw, 1) if yaw is not None else None,
+    uscita.append({'nodo': p['nodo'], 'glb': p['glb'], 'zona': p['zona'], 'gruppo': p['gruppo'],
+                   'posizione': [round(v, 3) for v in o], 'rotazione_y_gradi': round(yaw, 1) if yaw is not None else None,
                    'basis': [[round(b[r][c], 4) for r in range(3)] for c in range(3)]})
-conta = {}
+per_nodo = {}
 for u in uscita:
-    conta[u['zona']] = conta.get(u['zona'], 0) + 1
+    per_nodo[u['nodo']] = per_nodo.get(u['nodo'], 0) + 1
+tri = sum(CAT[n]['triangoli'] * k for n, k in per_nodo.items())
+SOGLIA_MM = 6
+riepilogo = {'posti': len(uscita), 'gruppi': len({u['gruppo'] for u in uscita}), 'nodi_diversi': len(per_nodo),
+             'triangoli_totali': tri,
+             'multimesh': {'soglia_istanze': SOGLIA_MM, 'nodi_in_multimesh': sum(1 for k in per_nodo.values() if k >= SOGLIA_MM),
+                           'istanze_in_multimesh': sum(k for k in per_nodo.values() if k >= SOGLIA_MM),
+                           'istanze_singole': sum(k for k in per_nodo.values() if k < SOGLIA_MM)},
+             'per_gruppo': conta, 'per_nodo': dict(sorted(per_nodo.items(), key=lambda kv: -kv[1]))}
 with open(os.path.join(DET, 'posizionamento.json'), 'w') as f:
-    json.dump({'nota': "Posti suggeriti per i dettagli nella sala principale, trovati con raycast sui GLB della sala. "
+    json.dump({'nota': "Posti per i dettagli nella sala principale (sala lunga, con il monumento), trovati con raycast sui GLB della sala. "
                        "Coordinate Godot (Y in alto), stessa origine della sala. 'basis' = colonne x, y, z della Basis. "
-                       "Per ogni voce: istanziare il GLB, prendere il nodo 'nodo', e dargli Transform3D(basis, posizione).",
-               'quanti': len(uscita), 'per_zona': conta, 'posti': uscita}, f, indent=1, ensure_ascii=False)
-print('posti scritti:', len(uscita), conta)
-
-# ------------------------------------------------------------------ render di controllo
-if '--render' in ARGS or '--anteprima' in ARGS:
-    for f in ('sala_cupola', 'sala_acqua'):
-        bpy.ops.import_scene.gltf(filepath=os.path.join(SALA, f + '.glb'))
-    for o in list(bpy.data.objects):
-        if 'colonly' in o.name:
-            o.hide_render = True
-    prima = set(bpy.data.objects)
-    for f in sorted(os.listdir(os.path.join(DET, 'glb'))):
-        bpy.ops.import_scene.gltf(filepath=os.path.join(DET, 'glb', f))
-    KIT = {o.name: o for o in bpy.data.objects if o not in prima and o.name.startswith('det_')}
-    for o in KIT.values():
-        o.hide_render = True
-    for p in POSTI:
-        src = KIT[p['nodo']]
-        o = src.copy(); o.data = src.data; bpy.context.scene.collection.objects.link(o)
-        o.hide_render = False; o.matrix_basis = p['matrice_blender']
-    # luci della sala (posizioni da sala_dati.json)
-    for l in DATI['luci']:
-        if 'blender' not in l:
-            continue
-        pos = Vector(l['blender']); col = l['colore']
-        if 'neon' in l['nome']:
-            luce(l['nome'], 'AREA', pos, 40 if 'piena' in l.get('intensita', '') else 15, col, size=1.2)
-        elif 'emergenza' in l['nome']:
-            luce(l['nome'], 'POINT', pos, 35, col, raggio=0.1)
-        elif 'luna' in l['nome']:
-            s = luce(l['nome'], 'SUN', (0, 0, 30), 0.25, col, rot=(math.radians(15), math.radians(10), 0))
-        elif 'blender' in l:
-            luce(l['nome'], 'POINT', pos, 60, col, raggio=0.15)
-    mondo((0.003, 0.004, 0.007))
-    volume('nebbia', (0, 6, 5), (42, 38, 12), 0.008, (0.85, 0.88, 0.92), 0.4)
-    ant = '--anteprima' in ARGS
-    imposta_render(campioni=16 if ant else 160, w=800 if ant else 1600, h=450 if ant else 900, esposizione=0.6)
-    for nome, cam in (('panoramica', DATI['camere']['panoramica']), ('S04_statua', DATI['camere']['S04_statua'])):
-        camera(cam['pos_blender'], cam['guarda_blender'], lente=cam['lente_mm'], nome=nome)
-        renderizza(f'dettagli_sala_{nome}' + ('_anteprima' if ant else '') + '.jpg')
+                       "Per montarli: godot/dettagli_sala.gd (MultiMeshInstance3D per i nodi ripetuti).",
+               'riepilogo': riepilogo, 'posti': uscita}, f, indent=1, ensure_ascii=False)
+print('RIEPILOGO', json.dumps({k: v for k, v in riepilogo.items() if k != 'per_nodo'}, ensure_ascii=False))
