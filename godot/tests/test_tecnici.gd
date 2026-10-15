@@ -71,6 +71,25 @@ func _run() -> void:
 	Input.action_release(&"move_forward")
 	check(p.global_position.x > 31.0 and p.global_position.y > -0.2, "dal tunnel si entra nella sala pompe (x = %.1f)" % p.global_position.x)
 
+	print("Il pozzo del portello")
+	var portello: Node3D = level.get_node("Marker/marker_portello")
+	check(level.get_node_or_null("Gioco/ScalaPozzo") is Ladder, "il pozzo ha la scala a pioli (Ladder)")
+	var su := _ray(p.get_world_3d().direct_space_state, portello.global_position + Vector3(0, -1.0, 0), portello.global_position + Vector3(0, 1.0, 0))
+	check(su.is_empty(), "il buco del pozzo è libero sotto il portello")
+	p.teleport(portello.global_position * Vector3(1, 0, 1) + Vector3(0.1, 0, 0), PI / 2.0, 0.0)   # guarda verso -X, la scala
+	await _frames(5)
+	Input.action_press(&"move_forward")
+	var quota := 0.0
+	for i in 600:
+		await get_tree().physics_frame
+		quota = maxf(quota, p.global_position.y)
+		if quota > portello.global_position.y - 0.05:
+			break
+	Input.action_release(&"move_forward")
+	check(quota > portello.global_position.y - 0.05, "dal fondo del pozzo si sale fino al fondo della piscina (%.2f di %.2f)" % [quota, portello.global_position.y])
+	p.teleport(start.global_position, start.global_rotation.y, 0.0)
+	await _frames(30)
+
 	print("La vasca di raccolta")
 	var tank: WaterTank = level.get_node("Acqua/VascaRaccolta")
 	var pelo := tank.global_position.y + tank.inner_size.y * tank.fill
@@ -85,6 +104,8 @@ func _run() -> void:
 	(level as Node3D).position = Vector3(0, -9.05, 1.36)
 	(level as Node3D).rotation.y = -PI / 2.0
 	level.get_node("Ambienti/SalaPompe/PORTA_ponte").queue_free()   # porta aperta
+	check(portello.global_position.distance_to(Vector3(0, -2.25, 2.0)) < 0.02,
+			"il centro del pozzo è sotto il centro del portello della piscina (%s)" % str(portello.global_position))
 	await _frames(5)
 	var da: Node3D = level.get_node("Marker/marker_raccordo_sala")
 	p.teleport(da.global_position + Vector3(0, 0.05, 0), p.yaw, 0.0)

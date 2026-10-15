@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/acqua_per_vasca.tscn" id="p_link"]
 [ext_resource type="Script" path="res://addons/acqua/scripts/water_tank_link.gd" id="s_link"]
 [ext_resource type="Resource" path="res://addons/acqua/presets/stile_3_scura.tres" id="r_stile"]
+[ext_resource type="Script" path="res://scripts/mechanisms/ladder.gd" id="s_ladder"]
 
 [node name="Tecnici" type="Node3D"]
 script = ExtResource("s_tecnici")
@@ -38,15 +39,25 @@ script = ExtResource("s_link")
 tank = NodePath("../VascaRaccolta")
 style = ExtResource("r_stile")
 
+[node name="Gioco" type="Node3D" parent="."]
+
+[node name="ScalaPozzo" type="Area3D" parent="Gioco"]
+position = Vector3(0.17, 0, 0)
+rotation = Vector3(0, 1.5708, 0)
+script = ExtResource("s_ladder")
+height = 6.800
+width = 0.6
+show_model = false
+
 [node name="Marker" type="Node3D" parent="."]
 
 [node name="marker_portello" type="Marker3D" parent="Marker"]
-position = Vector3(0, 6.8, 0)
+position = Vector3(0.64, 6.8, 0)
 gizmo_extents = 0.5
-editor_description = "portello sul fondo della piscina a onde (sopra la scala del pozzo)"
+editor_description = "centro del portello sul fondo della piscina a onde, in cima al pozzo (la cerniera del portello della sala è 0,64 m verso -X)"
 
 [node name="marker_arrivo_scala" type="Marker3D" parent="Marker"]
-position = Vector3(0.6, 0, 0)
+position = Vector3(1.24, 0, 0)
 gizmo_extents = 0.5
 rotation = Vector3(0, -1.5708, 0)
 editor_description = "in fondo alla scala, guarda verso est (+X), lungo la camera"

@@ -13,7 +13,7 @@ Screenshot: `tests/screenshots_tecnici.gd` (istruzioni in cima al file).
 
 ## Collisioni
 
-Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pavimenti, muri, soffitti, scala del pozzo, rampe lisce a 36° sotto i gradini del raccordo, pale, pompe, turbine, filtri, vasca, ringhiera, scrivania, sedia, gabbia della leva, paratie, porta.
+Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pavimenti, muri, soffitti, pareti del pozzo, rampe lisce a 36° sotto i gradini del raccordo, pale, pompe, turbine, filtri, vasca, ringhiera, scrivania, sedia, gabbia della leva, paratie, porta.
 
 **Attenzione**: le collisioni delle parti che si muovono sono **figlie** del loro modello (`PARATIA_n`, `PORTA_ponte_anta-convcolonly` sotto `PORTA_ponte`, `GRATA_leva_anta` sotto `GRATA_leva`, `LEVA_braccio` sotto `LEVA`, `TURBINA_n_disco` sotto `TURBINA_n`): muovendo il nodo si muove anche la collisione. Le paratie e la porta sono **StaticBody3D**: se servono come porte vere conviene farle `AnimatableBody3D`.
 
@@ -21,8 +21,8 @@ Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pa
 
 | Marker | Posizione | A cosa serve |
 |---|---|---|
-| `marker_portello` | (0; 6,8; 0) | il portello sul fondo della piscina a onde, in cima al pozzo |
-| `marker_arrivo_scala` | (0,6; 0; 0) | in fondo alla scala, guarda verso +X. Spawn e checkpoint |
+| `marker_portello` | (0,64; 6,8; 0) | centro del pozzo (vano 1,3 × 1,3) in cima, cioè il centro del portello sul fondo della piscina a onde |
+| `marker_arrivo_scala` | (1,24; 0; 0) | in fondo alla scala del pozzo, guarda verso +X. Spawn e checkpoint |
 | `marker_paratia_1`, `_2` | (17,5; 2,65; 0), (21; 2,2; 0) | bordo basso delle paratie, alzate. Per chiudere scendono lungo -Y di 2,65 e 2,2 m (nodi `PARATIA_1`, `PARATIA_2`, origine sul bordo basso) |
 | `marker_tunnel_sala_pompe` | (24; 0; 0) | vano 2,6 × 2,8 m nel muro est della camera: inizio del tunnel |
 | `marker_pompa_1..3` | (31,5 / 36,0 / 40,5; 1,0; -5,25) | corpi delle pompe (muro nord) |
@@ -63,7 +63,7 @@ giocatore_proprio = false
 
 cioè `position = (0, -9.05, 1.36)` e `rotation_degrees.y = -90`. Così:
 
-- `marker_portello` cade sul portello dello scarico della piscina a onde (`sala_portello_scarico`, (0; -2,25; 1,36)) e il pozzo sale fino al fondo della piscina; la camera delle onde corre verso sud (+Z globale), sotto la sala, e la sala pompe finisce sotto il retro degli interni (y da -9,05 a -3,55: non tocca niente);
+- `marker_portello` cade in (0; -2,25; 2,0), al centro del portello dello scarico della piscina a onde (`sala_portello_scarico` ha la cerniera a nord, in z 1,36, e va fino a 2,64): il pozzo sale fino al fondo della piscina, dove il buco lo apre il GLB della sala. Si sale e si scende con `Gioco/ScalaPozzo`, un `Ladder` alto 6,8 m contro la parete del pozzo verso la camera (-X locale, nord globale). Il coperchio `PORTELLO` in cima al pozzo nel glTF della camera è un segnaposto: con il portello della sala va nascosto; la camera delle onde corre verso sud (+Z globale), sotto la sala, e la sala pompe finisce sotto il retro degli interni (y da -9,05 a -3,55: non tocca niente);
 - `marker_raccordo_interni` cade in (7,8; -1,8; 45,4) globali, proprio ai piedi della scala che scende dalla porta "sala pompe" del corridoio degli interni. Il raccordo chiude anche i fianchi e il fondo di quella scala;
 - il soffitto del pianerottolo in cima al raccordo arriva a +0,8 globale, appena a sud del muro degli interni (z da 44,8 a 47): lì non deve esserci altro.
 
