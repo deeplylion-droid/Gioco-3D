@@ -3,12 +3,20 @@
 Inquadrature (1600x900 o piu'):
   statua_intera  - ferma come una statua, mani giunte, in piedi sui tentacoli su un piedistallo semplice
   tentacoli      - primo piano dei tentacoli appoggiati sul piedistallo
+  viso_capelli   - primo piano di viso e capelli (di tre quarti)
   viso           - primo piano del viso (occhio di vetro, fauce chiusa: non si vede)
   fauce_chiusa / fauce_aperta - stessa inquadratura, prima e dopo: lo strappo sotto l'occhio
   fluttua        - sveglia, staccata dal piedistallo, tentacoli che pendono (azione "fluttua")
-Scrive i PNG in build/render/ e i JPG da mostrare in docs/proposte/medusa/finale/.
+  giocatore_lontano / giocatore_piedi - la statua alta 4,5 m vista dal giocatore (occhi a 1,7 m dal
+                   pavimento), a 9 m e poi ai suoi piedi guardando in su, con luce da monumento
+                   (un faro dall'alto, luci dal basso, nebbia)
+Le inquadrature sono scritte nelle coordinate del modello (prima della scala vera): M() le porta nella scena,
+cosi' la stessa inquadratura vale per la statua vecchia (build/medusa_finale_prima.blend, opzione --prima) e
+per quella a grandezza vera (scala in Medusa_Scheletro['scala'], piano dei tentacoli a z = 0).
+Scrive i PNG in build/render/ e i JPG in docs/proposte/medusa/finale/ (nomi dati con --nome X).
 
-Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_render_finale.py [nomi...] [--prova|--media]
+Uso: flock /home/user/tools/render.lock nice -n 10 /home/user/tools/blender-venv/bin/python \
+     tools/blender/medusa_render_finale.py [nomi...] [--prova|--media] [--prima] [--nome X]
 """
 import os
 import sys
@@ -23,7 +31,10 @@ PROVA = '--prova' in sys.argv
 MEDIA = '--media' in sys.argv
 RES = (480, 270) if PROVA else (960, 540) if MEDIA else (1600, 900)
 CAMPIONI = 12 if PROVA else 24 if MEDIA else 40
-ZP = TENT.STATUA['z_pavimento']          # piano del piedistallo (dove poggiano i tentacoli)
+ZP = TENT.STATUA['z_pavimento']          # piano del piedistallo (dove poggiano i tentacoli), unita' del modello
+PRIMA = '--prima' in sys.argv            # rende la versione di prima (per i confronti prima/dopo)
+K = 1.0                                  # scala della scena rispetto al modello (dalla blend)
+DZ = 0.0                                 # spostamento verticale (piano dei tentacoli a z = 0 nella statua vera)
 OUT_PNG = os.path.join(BUILD, 'render')
 OUT_JPG = os.path.join(PROPOSTE, 'finale')
 os.makedirs(OUT_PNG, exist_ok=True)
@@ -32,13 +43,23 @@ os.makedirs(OUT_JPG, exist_ok=True)
 
 # ---------------------------------------------------------------- scena
 
+def M(x, y=None, z=None):
+    """Coordinate del modello -> scena (statua vera: x K, piano dei tentacoli a z = 0)."""
+    if y is None:
+        x, y, z = x
+    return Vector((x * K, y * K, z * K + DZ))
+
+
 def prepara():
-    apri(os.path.join(BUILD, 'medusa_finale.blend'))
+    global K, DZ
+    apri(os.path.join(BUILD, 'medusa_finale_prima.blend' if PRIMA else 'medusa_finale.blend'))
     for o in list(bpy.data.objects):
         if o.type in ('CAMERA', 'LIGHT'):
             bpy.data.objects.remove(o)
     arm = bpy.data.objects['Medusa_Scheletro']
     arm.hide_render = True
+    K = float(arm.get('scala', 1.0))
+    DZ = arm.location.z
     for o in bpy.data.objects:
         if o.type == 'EMPTY':
             o.hide_render = True
@@ -215,71 +236,162 @@ def tentacoli_punto_piu_basso():
 
 # ---------------------------------------------------------------- inquadrature
 
+def nome_jpg(base):
+    """Nome del JPG: --nome X lo sostituisce; --prima aggiunge _prima."""
+    if '--nome' in sys.argv:
+        base = sys.argv[sys.argv.index('--nome') + 1]
+    return base + ('_prima' if PRIMA and '--nome' not in sys.argv else '')
+
+
+def scena_notte(centro, H, pedistallo=True, pavimento=True):
+    """Piedistallo, pavimento e luci notte, tutto nella scala della scena."""
+    if pedistallo:
+        piedistallo(M(0, 0, ZP).z, raggio=1.05 * K, altezza=0.6 * K)
+    if pavimento:
+        pavimento_piastrelle(M(0, 0, ZP - 0.6).z)
+    c = M(centro)
+    luci_notte(tuple(c), H * K, nebbia=0.006 / K)
+
+
 def statua_intera():
     prepara()
     usa_azione('statua', 1)
-    piedistallo(ZP)
-    pavimento_piastrelle(ZP - 0.6)
-    luci_notte((0, 0, -0.5), 2.4)
+    scena_notte((0, 0, -0.5), 2.4)
     imposta()
-    camera((2.0, -4.75, -0.55), (0.0, 0, -0.72), lens=28)
-    png = render(os.path.join(OUT_PNG, 'statua_intera.png'))
-    return salva_jpg(png, '1_statua_intera')
+    camera(M(2.0, -4.75, -0.55), M(0.0, 0, -0.72), lens=28)
+    png = render(os.path.join(OUT_PNG, nome_jpg('statua_intera') + '.png'))
+    return salva_jpg(png, nome_jpg('1_statua_intera'))
 
 
 def tentacoli():
     """Primo piano dei tentacoli appoggiati sul piedistallo (zampe davanti, piedi e riccioli)."""
     prepara()
     usa_azione('statua', 1)
-    piedistallo(ZP)
-    pavimento_piastrelle(ZP - 0.6)
-    luci_notte((0, -0.3, ZP + 0.4), 1.4)
+    scena_notte((0, -0.3, ZP + 0.4), 1.4)
     imposta()
-    camera((0.75, -2.05, ZP + 0.5), (0.05, -0.3, ZP + 0.22), lens=38)
-    png = render(os.path.join(OUT_PNG, 'tentacoli.png'))
-    return salva_jpg(png, '1b_tentacoli_piedistallo')
+    camera(M(0.75, -2.05, ZP + 0.5), M(0.05, -0.3, ZP + 0.22), lens=38)
+    png = render(os.path.join(OUT_PNG, nome_jpg('tentacoli') + '.png'))
+    return salva_jpg(png, nome_jpg('1b_tentacoli_piedistallo'))
+
+
+def viso_capelli():
+    """Viso e capelli di tre quarti (per il prima/dopo dei capelli)."""
+    prepara()
+    usa_azione('statua', 1)
+    scena_notte((0, 0, 0.5), 1.0, pavimento=False)
+    imposta()
+    camera(M(0.62, -1.3, 0.8), M(0.02, -0.02, 0.64), lens=50)
+    png = render(os.path.join(OUT_PNG, nome_jpg('viso_capelli') + '.png'))
+    return salva_jpg(png, nome_jpg('3_viso_capelli'))
 
 
 def viso():
     prepara()
     usa_azione('statua', 1)
-    piedistallo(ZP)
-    luci_notte((0, 0, 0.4), 1.0)
+    scena_notte((0, 0, 0.4), 1.0, pavimento=False)
     imposta()
-    camera((0.35, -1.55, 0.62), (0.0, -0.1, 0.5), lens=55)
-    png = render(os.path.join(OUT_PNG, 'viso.png'))
-    return salva_jpg(png, '2_viso')
+    camera(M(0.35, -1.55, 0.62), M(0.0, -0.1, 0.5), lens=55)
+    png = render(os.path.join(OUT_PNG, nome_jpg('viso') + '.png'))
+    return salva_jpg(png, nome_jpg('2_viso'))
 
 
 def fauce(aperta):
     prepara()
     usa_azione('fauce_apre', 12 if aperta else 1)
-    h = FIN.SOLLEVA                      # da sveglia il corpo e' sollevato
-    luci_notte((0, -0.3, 0.3 + h), 1.2)
-    pavimento_piastrelle(ZP)
+    h = FIN.SOLLEVA                      # da sveglia il corpo e' sollevato (unita' del modello)
+    scena_notte((0, -0.3, 0.3 + h), 1.2, pedistallo=False)
     imposta()
-    camera((0.32, -1.5, 0.52 + h), (0.0, -0.12, 0.47 + h), lens=50)
+    camera(M(0.32, -1.5, 0.52 + h), M(0.0, -0.12, 0.47 + h), lens=50)
     nome = 'fauce_aperta' if aperta else 'fauce_chiusa'
-    png = render(os.path.join(OUT_PNG, nome + '.png'))
-    return salva_jpg(png, ('4_' if aperta else '3_') + nome)
+    png = render(os.path.join(OUT_PNG, nome_jpg(nome) + '.png'))
+    return salva_jpg(png, nome_jpg(('4_' if aperta else '3_') + nome))
 
 
 def fluttua():
     prepara()
     usa_azione('fluttua', 9)
     h = FIN.SOLLEVA
-    piedistallo(ZP)
-    pavimento_piastrelle(ZP - 0.6)
-    luci_notte((0, 0, -0.5 + h), 2.4)
+    scena_notte((0, 0, -0.5 + h), 2.4)
     imposta()
-    camera((2.4, -5.2, -0.45 + h * 0.5), (0.0, -0.1, -0.6 + h * 0.6), lens=28)
-    png = render(os.path.join(OUT_PNG, 'fluttua.png'))
-    return salva_jpg(png, '5_fluttua')
+    camera(M(2.4, -5.2, -0.45 + h * 0.5), M(0.0, -0.1, -0.6 + h * 0.6), lens=28)
+    png = render(os.path.join(OUT_PNG, nome_jpg('fluttua') + '.png'))
+    return salva_jpg(png, nome_jpg('5_fluttua'))
+
+
+# ---------------------------------------------------------------- dal punto di vista del giocatore
+
+def luci_monumento(h_ped):
+    """Luce da monumento nella hall buia: un faro dall'alto, luci colorate dal basso intorno al piedistallo,
+    lampade d'emergenza rosse sul fondo e nebbia (si vedono i fasci)."""
+    luce_spot('faro', (2.0, -3.2, 10.5), (0, 0, 2.6), 9000, (0.92, 0.95, 1.0), angolo=26, raggio=0.25, blend=0.35)
+    r = 2.6
+    for i, (az, col, z_t) in enumerate(((-115, (0.15, 0.65, 1.0), 2.8), (-65, (1.0, 0.25, 0.62), 3.2),
+                                        (40, (0.15, 0.65, 1.0), 2.4), (140, (1.0, 0.08, 0.05), 2.6))):
+        a = math.radians(az)
+        luce_spot(f'dal_basso_{i}', (r * math.cos(a), r * math.sin(a), -h_ped + 0.15), (0, 0, z_t), 1400, col,
+                  angolo=34, raggio=0.08, blend=0.5)
+    luce_area('riempimento_freddo', (-4.0, -6.0, 2.0), (0, 0, 2.0), 300, (0.45, 0.55, 1.0), 4.0, 'DISK')
+    mondo((0.002, 0.003, 0.006), 1.0)
+    m = bpy.data.materials.new('lampada_emergenza'); m.use_nodes = True
+    nt = m.node_tree; nt.nodes.clear()
+    o = nt.nodes.new('ShaderNodeOutputMaterial'); e = nt.nodes.new('ShaderNodeEmission')
+    e.inputs['Color'].default_value = (1.0, 0.04, 0.02, 1); e.inputs['Strength'].default_value = 80
+    nt.links.new(e.outputs['Emission'], o.inputs['Surface'])
+    for x, y, z in ((-7.0, 12.0, 4.0), (5.5, 14.0, 5.0), (11.0, 8.0, 3.5), (-12.0, 6.0, 5.5), (0.5, 18.0, 6.0)):
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.15, location=(x, y, z))
+        lamp = bpy.context.active_object; lamp.name = 'lampada_fondo'
+        lamp.data.materials.append(m)
+        lamp.visible_shadow = False
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 4, 4))
+    vol = bpy.context.active_object; vol.name = 'nebbia'
+    vol.scale = (40, 40, 14)
+    m = bpy.data.materials.new('nebbia'); m.use_nodes = True
+    nt = m.node_tree; nt.nodes.clear()
+    o = nt.nodes.new('ShaderNodeOutputMaterial'); v = nt.nodes.new('ShaderNodeVolumePrincipled')
+    v.inputs['Density'].default_value = 0.012
+    v.inputs['Color'].default_value = (0.8, 0.82, 0.9, 1)
+    nt.links.new(v.outputs['Volume'], o.inputs['Volume'])
+    vol.data.materials.append(m)
+    vol.visible_shadow = False
+    sc = bpy.context.scene
+    sc.cycles.volume_step_rate = 4.0
+    sc.cycles.volume_max_steps = 128
+
+
+def scena_giocatore():
+    """Statua a grandezza vera sul piedistallo (alto 1 m) in una hall buia: ritorna l'altezza degli occhi."""
+    prepara()
+    usa_azione('statua', 1)
+    h_ped = 1.0
+    piedistallo(0.0, raggio=1.05 * K, altezza=h_ped)
+    pavimento_piastrelle(-h_ped)
+    luci_monumento(h_ped)
+    imposta(esposizione=0.0)
+    bpy.context.scene.cycles.volume_bounces = 1
+    return -h_ped + 1.7
+
+
+def giocatore_lontano():
+    occhi = scena_giocatore()
+    a = math.radians(18)                 # un po' di lato rispetto al davanti (-Y)
+    camera((9.0 * math.sin(a), -9.0 * math.cos(a), occhi), (0.0, 0.0, 2.1), lens=24)
+    png = render(os.path.join(OUT_PNG, nome_jpg('giocatore_lontano') + '.png'))
+    return salva_jpg(png, nome_jpg('5_giocatore_9m'))
+
+
+def giocatore_piedi():
+    occhi = scena_giocatore()
+    camera((0.9, -2.9, occhi), (0.0, 0.0, 3.4), lens=16)
+    png = render(os.path.join(OUT_PNG, nome_jpg('giocatore_piedi') + '.png'))
+    return salva_jpg(png, nome_jpg('5b_giocatore_ai_piedi'))
 
 
 INQUADRATURE = {
     'statua_intera': statua_intera,
     'tentacoli': tentacoli,
+    'viso_capelli': viso_capelli,
+    'giocatore_lontano': giocatore_lontano,
+    'giocatore_piedi': giocatore_piedi,
     'viso': viso,
     'fauce_chiusa': lambda: fauce(False),
     'fauce_aperta': lambda: fauce(True),
@@ -288,7 +400,8 @@ INQUADRATURE = {
 
 
 if __name__ == '__main__':
-    nomi = [a for a in sys.argv[1:] if not a.startswith('--')] or list(INQUADRATURE)
+    argv = [a for i, a in enumerate(sys.argv[1:], 1) if not (sys.argv[i - 1] == '--nome')]
+    nomi = [a for a in argv if not a.startswith('--')] or list(INQUADRATURE)
     for n in nomi:
         t0 = time.time()
         INQUADRATURE[n]()

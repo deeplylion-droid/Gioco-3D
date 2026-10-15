@@ -83,7 +83,8 @@ def collega(ob, coll=None):
 def attiva(ob, solo=True):
     if solo:
         for o in bpy.context.view_layer.objects:
-            o.select_set(False)
+            if o:
+                o.select_set(False)
     ob.select_set(True)
     bpy.context.view_layer.objects.active = ob
 

@@ -1,4 +1,4 @@
-"""Passo 2b: versione da gioco del corpo (circa 30-40 mila triangoli) con texture 2K cotte.
+"""Passo 2b: versione da gioco del corpo (circa 60 mila triangoli) con texture 4K cotte.
 
 La mesh di Meshy (160k triangoli) si riduce con la decimazione "collapse", conservando di piu' il viso
 (orbita e fauce) e le mani. La decimazione rovina le UV originali (le isole si spezzano), quindi la mesh
@@ -8,7 +8,9 @@ ridotta riceve UV nuove (Smart UV Project) e le texture si "cuociono" dalla mesh
 Le parti (materiali) restano quelle del passo 1. Le misure dell'occhio restano quelle del passo 1 (fatte sulla
 mesh alta: dati/occhio.json e build/viso_piatto.png).
 
-Scrive tex/medusa_base_2k.png, tex/medusa_normal_2k.png e build/medusa_02b_ridotta.blend.
+La statua e' alta 4,5 m e si vede da vicino: la riduzione e' leggera (viso intatto, mani x0.8) e le texture
+sono a 4K. Scrive build/medusa_base_4k.png, build/medusa_normal_4k.png (intermedie: le texture finali, con
+usura, ciocche e giunture, le fa il passo 8) e build/medusa_02b_ridotta.blend.
 Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_02b_riduci.py
 """
 import os
@@ -18,32 +20,41 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
 
-RIDUZIONE = float(os.environ.get('MEDUSA_RIDUZIONE', '0.25'))
-LATO = 2048
-BASE_2K = os.path.join(TEX, 'medusa_base_2k.png')
-NORMAL_2K = os.path.join(TEX, 'medusa_normal_2k.png')
+RIDUZIONE = float(os.environ.get('MEDUSA_RIDUZIONE', '0.38'))
+LATO = 4096
+BASE_2K = os.path.join(BUILD, 'medusa_base_4k.png')
+NORMAL_2K = os.path.join(BUILD, 'medusa_normal_4k.png')
 
 
 def riduci(ob, ratio):
     """Decimazione per zone (in modalita' modifica, solo sulla selezione): il viso (orbita e futura fauce)
-    resta intatto, le mani si riducono poco, il resto tanto. Le zone quasi piatte (come il disco dell'occhio)
-    con la decimazione normale sparirebbero in pochi triangoli."""
+    resta intatto, le mani si riducono poco, i capelli di piu' (nella versione finita sono coperti dalle ciocche,
+    medusa_capelli.py), il resto quanto serve per arrivare a 'ratio'. Le zone quasi piatte (come il disco
+    dell'occhio) con la decimazione normale sparirebbero in pochi triangoli."""
     me = ob.data
     n0 = len(me.polygons)
-    cen, _ = facce(me)
-    viso = (np.hypot(cen[:, 0], cen[:, 2] - 0.58) < 0.17) & (cen[:, 1] < -0.08)
-    mani = np.abs(cen[:, 0]) > 0.6
-    resto = ~(viso | mani)
-    obiettivo = ratio * n0
-    r_mani = 0.5
-    r_resto = max(min((obiettivo - viso.sum() - r_mani * mani.sum()) / max(resto.sum(), 1), 1.0), 0.05)
-    attiva(ob)
-    for zona, r in ((resto, r_resto), (mani, r_mani)):
-        bpy.ops.object.mode_set(mode='OBJECT')
+
+    def zone():
         cen, _ = facce(me)
+        mi = np.empty(len(me.polygons), dtype=np.int32)
+        me.polygons.foreach_get('material_index', mi)
         v = (np.hypot(cen[:, 0], cen[:, 2] - 0.58) < 0.17) & (cen[:, 1] < -0.08)
-        m = np.abs(cen[:, 0]) > 0.6
-        sel = ~(v | m) if zona is resto else m
+        m = (np.abs(cen[:, 0]) > 0.6) & ~v
+        c = (mi == 1) & ~v & ~m                     # capelli (parte 1 del passo 1)
+        return v, m, c, ~(v | m | c)
+
+    viso, mani, capelli, resto = zone()
+    obiettivo = ratio * n0
+    r_mani = 0.8
+    k_cap = 0.5                                     # i capelli si riducono la meta' del resto
+    r_resto = (obiettivo - viso.sum() - r_mani * mani.sum()) / max(resto.sum() + k_cap * capelli.sum(), 1)
+    r_resto = max(min(r_resto, 1.0), 0.05)
+    r_cap = max(r_resto * k_cap, 0.05)
+    attiva(ob)
+    for nome, r in (('resto', r_resto), ('capelli', r_cap), ('mani', r_mani)):
+        bpy.ops.object.mode_set(mode='OBJECT')
+        v, m, c, rs = zone()
+        sel = {'resto': rs, 'capelli': c, 'mani': m}[nome]
         me.polygons.foreach_set('select', sel)
         me.vertices.foreach_set('select', np.zeros(len(me.vertices), bool))
         me.edges.foreach_set('select', np.zeros(len(me.edges), bool))
@@ -55,7 +66,8 @@ def riduci(ob, ratio):
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.mesh.quads_convert_to_tris()
     bpy.ops.object.mode_set(mode='OBJECT')
-    log(f'riduzione: {n0} -> {len(me.polygons)} triangoli (viso intatto, mani x{r_mani}, resto x{r_resto:.2f})')
+    log(f'riduzione: {n0} -> {len(me.polygons)} triangoli (viso intatto, mani x{r_mani}, capelli x{r_cap:.2f}, '
+        f'resto x{r_resto:.2f})')
 
 
 def uv_nuove(ob):
@@ -66,7 +78,7 @@ def uv_nuove(ob):
     attiva(ob)
     bpy.ops.object.mode_set(mode='EDIT')
     bpy.ops.mesh.select_all(action='SELECT')
-    bpy.ops.uv.smart_project(angle_limit=math.radians(60), island_margin=0.003, area_weight=0.0,
+    bpy.ops.uv.smart_project(angle_limit=math.radians(60), island_margin=0.002, area_weight=0.0,
                              scale_to_bounds=True)
     bpy.ops.object.mode_set(mode='OBJECT')
 
@@ -79,8 +91,8 @@ def cuoci(alto, basso):
     sc.cycles.samples = 1
     sc.render.threads_mode = 'FIXED'
     sc.render.threads = 4
-    img_b = bpy.data.images.new('medusa_base_2k', LATO, LATO, alpha=False)
-    img_n = bpy.data.images.new('medusa_normal_2k', LATO, LATO, alpha=False)
+    img_b = bpy.data.images.new('medusa_base_4k', LATO, LATO, alpha=False)
+    img_n = bpy.data.images.new('medusa_normal_4k', LATO, LATO, alpha=False)
     img_n.colorspace_settings.name = 'Non-Color'
     # materiali propri della mesh ridotta, con un nodo immagine attivo dove scrivere
     nuovi = []
@@ -109,13 +121,13 @@ def cuoci(alto, basso):
     t = time.time()
     bersaglio(img_b)
     bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True,
-                        cage_extrusion=0.015, max_ray_distance=0.05, margin=12, target='IMAGE_TEXTURES')
+                        cage_extrusion=0.015, max_ray_distance=0.05, margin=16, target='IMAGE_TEXTURES')
     img_b.filepath_raw = BASE_2K; img_b.file_format = 'PNG'; img_b.save()
     log(f'bake colore in {time.time() - t:.0f} s')
     t = time.time()
     bersaglio(img_n)
     bpy.ops.object.bake(type='NORMAL', normal_space='TANGENT', use_selected_to_active=True,
-                        cage_extrusion=0.015, max_ray_distance=0.05, margin=12, target='IMAGE_TEXTURES')
+                        cage_extrusion=0.015, max_ray_distance=0.05, margin=16, target='IMAGE_TEXTURES')
     img_n.filepath_raw = NORMAL_2K; img_n.file_format = 'PNG'; img_n.save()
     log(f'bake normal map in {time.time() - t:.0f} s')
     return nuovi
