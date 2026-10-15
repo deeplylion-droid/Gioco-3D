@@ -39,6 +39,16 @@ func _run() -> void:
 	print("  (fossa dell'ambiente: %s)" % ("sì" if fossa_vera else "non ancora, uso quella provvisoria"))
 	check(not lei.medusa.visible, "prima non si vede")
 
+	print("Un salvataggio di prima, senza lo stato del cancello, oltre il fondo della piscina")
+	var giochi := level.get_node("RuotaESecchio")
+	check(not bool(giochi.get(&"gate_open")), "in una partita nuova il cancello della piscina è chiuso")
+	GameState.capture_snapshot("Gioco/CheckpointFondo", 3, Transform3D(Basis(), Vector3(0.0, -0.6, -1.0)))
+	(GameState.snapshot["objects"] as Dictionary).erase(GameState.persist_key(giochi))
+	GameState._restore_pending = true
+	GameState._on_level_ready()
+	await _frames(2)
+	check(bool(giochi.get(&"gate_open")), "ripartendo da lì il cancello è aperto")
+
 	print("Prima del risveglio non succede niente")
 	_prepara()
 	p.teleport(Vector3(-18.3, 0.0, -3.0), 0.0, 0.0)

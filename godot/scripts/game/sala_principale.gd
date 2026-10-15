@@ -193,6 +193,11 @@ func _on_player_respawned() -> void:
 	var p := GameState.player
 	if statue_lamp and not statue_lamp.is_on and p and p.global_position.z < lamp_trigger.global_position.z:
 		statue_lamp.turn_on(true)
+	# I salvataggi di prima (v0.2.x) non hanno lo stato del cancello della piscina: dal fondo
+	# della piscina in poi (checkpoint 3) era per forza già aperto.
+	var giochi := get_node_or_null(^"RuotaESecchio")
+	if giochi and int(GameState.snapshot.get("order", -1)) >= 3 and not bool(giochi.get(&"gate_open")):
+		giochi.call(&"load_state", {"gate_open": true})
 
 
 func _on_jingle() -> void:
