@@ -108,6 +108,22 @@ func _run() -> void:
 	await _frames(50)
 	Input.action_release(&"move_forward")
 	check(lamp.is_on, "avvicinandosi la lampada si accende")
+	# Ripartendo da un checkpoint oltre il lampione, o con "Continua" da un salvataggio (anche
+	# della v0.2.0), la lampada è già accesa: lo stesso percorso di GameState al caricamento.
+	lamp.turn_off()
+	GameState.capture_snapshot("Gioco/CheckpointStatua", 1, Transform3D(Basis(), Vector3(0, 0, 14.4)))
+	GameState._restore_pending = true
+	GameState._on_level_ready()
+	await _frames(2)
+	check(lamp.is_on and lamp.light.light_energy > 1.0, "ripartendo oltre il lampione la lampada è già accesa")
+	lamp.turn_off()
+	# (Prima del trigger, che LuciSala mette appena dopo la porta: z 18,1-19,1 per x -4..4.)
+	GameState.capture_snapshot("inizio", -1, Transform3D(Basis(), Vector3(5.0, 0, 19.2)))
+	GameState._restore_pending = true
+	GameState._on_level_ready()
+	await _frames(2)
+	check(not lamp.is_on, "ripartendo dall'ingresso la lampada è spenta (si accende entrando)")
+	lamp.turn_on(true)
 
 	print("Aspirare dalla vasca d'arrivo")
 	var arrival: WaterTank = level.get_node("Vasche/VascaArrivo")
