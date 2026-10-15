@@ -148,6 +148,8 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Da chiusa **non si vede**.
 - Quando attacca, la pelle del viso **si strappa sotto l'occhio** e si apre una **fauce enorme con file di denti da squalo**.
 - Va costruita nel modello 3D: geometria nascosta, osso o shape key per aprirla, bordi strappati.
+- **Versione malvagia (richiesta dell'utente, 15 ottobre)**: con la fauce aperta l'**occhio diventa più venato**, con capillari rossi dal bordo verso l'iride, così fa paura. Nel materiale è un parametro, così in gioco le vene compaiono quando attacca.
+- **Approvazione definitiva del modello**: l'utente vuole una scheda con il giro completo, i dettagli in viste separate e la versione malvagia (`docs/proposte/medusa/scheda/`).
 
 ### Movimento (deciso)
 
