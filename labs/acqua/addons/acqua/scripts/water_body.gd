@@ -115,7 +115,11 @@ func _ready() -> void:
 		wm.register_body(self)
 	if Engine.is_editor_hint() or wm == null:
 		return
+	# subito (prima del primo aggiornamento delle sonde) e di nuovo dopo, per quelle create dopo
+	_exclude_from_probes()
 	_exclude_from_probes.call_deferred()
+	if not get_tree().node_added.is_connected(_on_node_added):
+		get_tree().node_added.connect(_on_node_added)
 	wm.quality_changed.connect(_on_quality_changed)
 	_on_quality_changed(wm.quality)
 	_was_empty = is_empty()
@@ -429,6 +433,12 @@ func _start_env_capture() -> void:
 	_env_capture.name = "EnvCapture"
 	add_child(_env_capture, false, Node.INTERNAL_MODE_BACK)
 	_env_capture.capture(self)
+
+
+func _on_node_added(n: Node) -> void:
+	if n is ReflectionProbe:
+		n.reflection_mask &= ~WATER_LAYER
+		n.cull_mask &= ~WATER_LAYER
 
 
 ## Le ReflectionProbe non devono ne' riflettersi sull'acqua (i riflessi li calcola lo shader) ne'
