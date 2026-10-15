@@ -128,8 +128,12 @@ PALETTE['sala_a']['materiali'].update({
                                bagnato=0.2, normale=1.15),
     'intonaco': dict(ricetta='vernice', sorgente='intonaco_scrostato', colore='#a7b3a6'),
     'intonaco_alto': dict(ricetta='vernice', sorgente='intonaco_scrostato', colore='#7d8b84'),
-    'metallo': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#d9dbd4'),
+    'metallo': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#5f6d69'),   # vernice navale grigio-verde
     'cornice_oblo': dict(ricetta='originale', sorgente='ottone'),
+    # piano del piedistallo: piastrelle avorio lucide con un velo d'acqua (i tentacoli si stagliano e si riflettono)
+    'piano_statua': dict(ricetta='piastrelle', sorgente='piastrelle_bianche', normale=1.0,
+                         colori=[('#d8cfb9', 5), ('#d0c7b0', 3), ('#ddd5c2', 2)], fuga='#a29d90', sporco=0.5,
+                         bagnato=1.0, extra=0.45),
     'ferro_cupola': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#3d4846'),
     'torre': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#8a3a26'),
     'scivolo': dict(ricetta='tinta', sorgente='vetroresina', colore='#a8452f', sporco=1.0),

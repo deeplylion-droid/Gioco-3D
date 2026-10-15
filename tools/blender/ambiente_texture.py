@@ -777,6 +777,27 @@ def malta(cartella, lato=512, seme=13):
     print('malta ->', cartella)
 
 
+def cartelloni_mascotte(cartella):
+    """Cartelloni con la mascotte (grafiche di assets_src/ambienti_interni/poster, già invecchiate,
+    copiate in assets_src/ambiente/cartelloni/mascotte_*_vecchio.jpg): taglio 2:3 per i teli da
+    2 x 3 m appesi ai lati della statua. -> cartellone_medusa_col.jpg, cartellone_bagnino_col.jpg"""
+    src = os.path.join(RADICE, 'assets_src', 'ambiente', 'cartelloni')
+    for chiave in ('medusa', 'bagnino'):
+        f = os.path.join(src, f'mascotte_{chiave}_vecchio.jpg')
+        if not os.path.exists(f):
+            continue
+        im = Image.open(f).convert('RGB')
+        w, h = im.size
+        nw = int(round(h * 2 / 3))
+        if nw <= w:
+            im = im.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
+        else:
+            nh = int(round(w * 3 / 2))
+            im = im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+        _salva_jpg(im.resize((1024, 1536), Image.LANCZOS), os.path.join(cartella, f'cartellone_{chiave}_col.jpg'))
+        print('cartellone con la mascotte', chiave)
+
+
 def deriva(nomi=None):
     from ambiente_palette import PALETTE
     nomi = nomi or list(PALETTE)
@@ -812,6 +833,7 @@ def deriva(nomi=None):
             vetro_cupola_atlante(cart)
             vetro_oblo(cart)
             malta(cart)
+            cartelloni_mascotte(cart)
     dec = os.path.join(TEX, 'decal')
     os.makedirs(dec, exist_ok=True)
     colatura_png(os.path.join(dec, 'colatura_col.png'))

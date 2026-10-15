@@ -1158,7 +1158,7 @@ def piedistallo(mats):
     corona(P['r_tamburo'] - 0.01, P['r_piano'], z3, 'bordo', giu=True)
     parete_cil(P['r_piano'], z3, h - 0.03, 'bordo')
     c.toro((cx, cy, h - 0.03), (0, 0, 1), P['r_piano'] - 0.03, 0.03, 'bordo', seg=120, seg_r=8)
-    c.disco((cx, cy, h), (0, 0, 1), P['r_piano'] - 0.03, 'bordo', seg=seg)
+    c.disco((cx, cy, h), (0, 0, 1), P['r_piano'] - 0.03, 'piano_statua', seg=seg)
     c.toro((cx, cy, z3 + 0.005), (0, 0, 1), P['r_piano'] + 0.012, 0.028, 'cornice_oblo', seg=120, seg_r=8)
     # conchiglie d'ottone sul secondo gradino (non sul davanti, dove c'è il pulsante)
     for a in (-30, 30, 90, 150, 210):
@@ -1712,18 +1712,53 @@ def cartelloni(mats):
     for i, (x, chiave) in enumerate(((-9.0, 'p1'), (-1.5, 'p2'), (6.0, 'p3'))):
         ob = K.cartellone(mats, 3.2, 1.8, nome=f'sala_cartellone_n{i}')
         obs.append(metti(ob, (x, Y1 - PROF_GAL - 0.06, zr)))
-    for i, (y, chiave) in enumerate(((-4.0, 'p2'), (10.0, 'p1'))):   # non davanti alla scala (y 1..3)
-        ob = K.cartellone(mats, 3.2, 1.8, nome=f'sala_cartellone_e{i}')
-        obs.append(metti(ob, (X1 - PROF_GAL - 0.06, y, zr), -90))
+    # (i due cartelloni sul lato est sono stati sostituiti dai teli con la mascotte, vedi cartelloni_mascotte)
     ob = K.cartellone(mats, 3.2, 1.8, nome='sala_cartellone_s0')
     obs.append(metti(ob, (-8.0, Y0 + PROF_GAL + 0.06, zr), 180))
     # ogni cartellone con la sua grafica
-    grafiche = ['p1', 'p2', 'p3', 'p2', 'p1', 'p3']
+    grafiche = ['p1', 'p2', 'p3', 'p3']
     for ob, g in zip(obs, grafiche):
         for i, m in enumerate(ob.data.materials):
             if m and m.name.startswith('M_amb_cartellone'):
                 ob.data.materials[i] = mats.get('cartellone_' + g)
     return obs
+
+
+def cartelloni_mascotte(mats):
+    """Due teli da 2 x 3 m con la mascotte (la medusa e il bagnino), appesi con i cavi alla trave del
+    soffitto ai lati della statua: entrando la incorniciano. Ognuno ha un faretto caldo su un braccio.
+    Restituisce (oggetti, luci)."""
+    P = PIEDISTALLO
+    obs, luci = [], []
+    ytrave = -9.0                       # trave del soffitto (ogni 3 m da Y0 + 2)
+    zb, W, H = 3.7, 2.0, 3.0
+    for i, (sx, chiave) in enumerate(((-1, 'medusa'), (1, 'bagnino'))):
+        x, y = sx * 5.6, P['cy'] + 0.2
+        rot = -sx * 28.0                # girati verso l'ingresso
+        ob = K.cartellone(mats, W, H, nome=f'sala_cartellone_mascotte_{i}')
+        for k, m in enumerate(ob.data.materials):
+            if m and m.name.startswith('M_amb_cartellone'):
+                ob.data.materials[k] = mats.get('cartellone_' + chiave)
+        metti(ob, (x, y, zb), rot)
+        obs.append(ob)
+        c = K.Costruttore(mats)
+        R = Matrix.Rotation(math.radians(rot), 4, 'Z')
+        def mondo(lx, ly, lz):
+            return Vector((x, y, zb)) + (R @ Vector((lx, ly, lz)))
+        for lx in (-W / 2 + 0.15, W / 2 - 0.15):   # cavi fino alla trave
+            a = mondo(lx, -0.015, H + 0.035)
+            c.tubo([tuple(a), (a.x, ytrave, Z_SOFF - 0.56)], 0.006, 'inox', seg=5)
+        # faretto caldo su un braccio sopra il telo
+        base = mondo(0.0, -0.03, H + 0.04)
+        testa = mondo(0.0, -0.75, H + 0.25)
+        c.tubo([tuple(base), tuple(mondo(0.0, -0.4, H + 0.3)), tuple(testa)], 0.015, 'nero', seg=6)
+        bersaglio = mondo(0.0, 0.0, H * 0.45)
+        d = (bersaglio - testa).normalized()
+        c.cilindro(tuple(testa - d * 0.08), tuple(testa + d * 0.1), 0.07, 'nero', seg=12)
+        c.disco(tuple(testa + d * 0.101), tuple(d), 0.055, 'lampadina', seg=12)
+        obs.append(c.crea(f'sala_cartellone_mascotte_{i}_luce'))
+        luci.append(dict(nome=f'luce_cartellone_{i}', pos=tuple(testa + d * 0.15), dir=tuple(d), colore=(1.0, 0.78, 0.5)))
+    return obs, luci
 
 
 def lampade(mats):
@@ -2025,6 +2060,9 @@ def illumina(sorgenti, lampadina_lampione, lampo=False):
         ob = luce(L['nome'], 'SPOT', L['pos'], 2600 if faro else 260, L['colore'],
                   spot_size=math.radians(24 if faro else 46), spot_blend=0.35 if faro else 0.6, shadow_soft_size=0.04)
         ob.rotation_euler = Vector(L['dir']).to_track_quat('-Z', 'Y').to_euler()
+    for L in LUCI_CARTELLONI:   # faretti dei teli con la mascotte
+        ob = luce(L['nome'], 'SPOT', L['pos'], 380, L['colore'], spot_size=math.radians(60), spot_blend=0.5, shadow_soft_size=0.05)
+        ob.rotation_euler = Vector(L['dir']).to_track_quat('-Z', 'Y').to_euler()
     for L in LUCI_EXTRA:   # plafoniere calde e insegne
         luce(L['nome'], 'POINT', L['pos'], 70 if 'calda' in L['nome'] else 45, L['colore'], shadow_soft_size=0.08)
     # luci subacquee della vasca d'arrivo (verde acqua)
@@ -2142,6 +2180,7 @@ def impostazioni(campioni, larghezza, altezza, fili):
 GRUPPI = {}
 LUCI_MONUMENTO = []          # faretti dal basso e fari dalla galleria (riempita da costruisci)
 LUCI_EXTRA = []              # plafoniere calde e insegne al neon (riempita da costruisci)
+LUCI_CARTELLONI = []         # faretti caldi dei teli con la mascotte (riempita da costruisci)
 LAMPIONE = (2.8, -13.2, 0.0)  # lampione accanto al monumento: il braccio porta la lampada verso la statua
 
 
@@ -2189,6 +2228,9 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     arch += gruppo('torre_scivoli', torre_scivoli(mats))
     arch += gruppo('torre_scivoli', scivoli(mats, zf))
     arch += gruppo('architettura', cartelloni(mats))
+    teli, luci_teli = cartelloni_mascotte(mats)
+    arch += gruppo('architettura', teli)
+    LUCI_CARTELLONI[:] = luci_teli
     lamp_obs, sorgenti = lampade(mats)
     arch.append(gruppo('architettura', unisci(lamp_obs, 'sala_lampade')))
     arch.append(gruppo('architettura', insegna_neon()))
@@ -2248,6 +2290,10 @@ def dati_integrazione(sorgenti, lampadina):
         luci.append(dict(nome=L['nome'], tipo=('OmniLight3D calda (plafoniera navale accesa)' if 'calda' in L['nome'] else
                                                "OmniLight3D davanti all'insegna al neon"),
                          blender=[round(v, 3) for v in L['pos']], godot=a_godot(L['pos']), colore=list(L['colore'])))
+    for L in LUCI_CARTELLONI:
+        luci.append(dict(nome=L['nome'], tipo='SpotLight3D: faretto caldo sul telo con la mascotte',
+                         blender=[round(v, 3) for v in L['pos']], godot=a_godot(L['pos']),
+                         direzione_blender=[round(v, 3) for v in L['dir']], direzione_godot=a_godot(L['dir']), colore=list(L['colore'])))
     for L in LUCI_MONUMENTO:
         faro = L['nome'].startswith('luce_faro')
         luci.append(dict(nome=L['nome'], tipo=('SpotLight3D: faro sulla ringhiera della galleria, punta la statua' if faro else
@@ -2313,9 +2359,9 @@ def esporta_luci(cartella, sorgenti, lampadina):
         elif L['nome'].startswith('luce_neon') or L['nome'] == 'luce_lampione':
             ld = bpy.data.lights.new(L['nome'], 'SPOT'); ld.energy = 60 if 'neon' in L['nome'] else 300
             ld.spot_size = math.radians(150 if 'neon' in L['nome'] else 110)
-        elif L['nome'].startswith(('luce_faro', 'luce_monumento')):
+        elif L['nome'].startswith(('luce_faro', 'luce_monumento', 'luce_cartellone')):
             ld = bpy.data.lights.new(L['nome'], 'SPOT'); ld.energy = 400 if 'faro' in L['nome'] else 80
-            ld.spot_size = math.radians(24 if 'faro' in L['nome'] else 46)
+            ld.spot_size = math.radians(24 if 'faro' in L['nome'] else (60 if 'cartellone' in L['nome'] else 46))
         else:
             ld = bpy.data.lights.new(L['nome'], 'POINT'); ld.energy = 26
         ld.color = L['colore']

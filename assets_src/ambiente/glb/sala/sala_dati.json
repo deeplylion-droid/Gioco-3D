@@ -1430,6 +1430,64 @@
    ]
   },
   {
+   "nome": "luce_cartellone_0",
+   "tipo": "SpotLight3D: faretto caldo sul telo con la mascotte",
+   "blender": [
+    -5.274,
+    -10.414,
+    6.81
+   ],
+   "godot": [
+    -5.274,
+    6.81,
+    10.414
+   ],
+   "direzione_blender": [
+    -0.172,
+    0.324,
+    -0.93
+   ],
+   "direzione_godot": [
+    -0.172,
+    -0.93,
+    -0.324
+   ],
+   "colore": [
+    1.0,
+    0.78,
+    0.5
+   ]
+  },
+  {
+   "nome": "luce_cartellone_1",
+   "tipo": "SpotLight3D: faretto caldo sul telo con la mascotte",
+   "blender": [
+    5.274,
+    -10.414,
+    6.81
+   ],
+   "godot": [
+    5.274,
+    6.81,
+    10.414
+   ],
+   "direzione_blender": [
+    0.172,
+    0.324,
+    -0.93
+   ],
+   "direzione_godot": [
+    0.172,
+    -0.93,
+    -0.324
+   ],
+   "colore": [
+    1.0,
+    0.78,
+    0.5
+   ]
+  },
+  {
    "nome": "luce_monumento_basso_0",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
