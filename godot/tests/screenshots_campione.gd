@@ -55,6 +55,11 @@ func _run() -> void:
 			(s as ReflectionProbe).visible = false
 	if OS.get_environment("CAMPIONE_NO_SSR") != "":
 		Grafica.imposta("ssr", 0)
+	# Neon fissi accesi: con lo sfarfallio lo scatto dipende dal caso (stanzino −70% se il
+	# suo neon capita spento) e il confronto con le versioni precedenti non regge.
+	for n in level.find_children("*", "Node3D", true, false):
+		if n.get_script() and String(n.get_script().get_global_name()) == "Neon":
+			n.set(&"modalita", 0)
 	var torcia := p.find_child("Torcia", true, false)
 	if torcia:
 		torcia.set(&"accesa", true)

@@ -16,6 +16,10 @@ uniform float variazione_piastrelle : hint_range(0.0, 0.5) = 0.12;
 uniform float profondita_fughe : hint_range(0.0, 0.05) = 0.012;
 uniform float bagnato : hint_range(0.0, 1.0) = 0.45;
 uniform float sporco : hint_range(0.0, 1.0) = 0.4;
+// Pozze d'acqua: maschera vista dall'alto in spazio mondo (1 = acqua), disegnata a runtime
+// da LookInterni con le forme delle pozze; rettangolo = (x min, z min, larghezza x, larghezza z).
+uniform sampler2D maschera_pozze : hint_default_black, filter_linear, repeat_disable;
+uniform vec4 rettangolo_pozze = vec4(0.0, 0.0, 0.0, 0.0);
 
 varying vec3 pos_mondo;
 varying vec3 norm_mondo;
@@ -37,7 +41,13 @@ void fragment() {
 	// parallasse semplice: le fughe affondano
 	vec3 v = normalize(vec3(dot(VIEW, TANGENT), dot(VIEW, -BINORMAL), dot(VIEW, NORMAL)));
 	float h = texture(altezza_tex, UV).r;
-	vec2 uv = UV - v.xy / max(v.z, 0.25) * (1.0 - h) * profondita_fughe;
+	// pozza d'acqua sotto questo punto (0 se non c'è la maschera): l'acqua riempie le fughe
+	float pozza = 0.0;
+	if (rettangolo_pozze.z > 0.0) {
+		vec2 muv = (pos_mondo.xz - rettangolo_pozze.xy) / rettangolo_pozze.zw;
+		pozza = texture(maschera_pozze, muv).r * smoothstep(0.7, 0.95, norm_mondo.y);
+	}
+	vec2 uv = UV - v.xy / max(v.z, 0.25) * (1.0 - h) * profondita_fughe * (1.0 - pozza);
 	vec3 alb = texture(albedo_tex, uv).rgb * tinta;
 	float rgh = texture(rough_tex, uv).g;
 	vec3 p = pos_mondo;
@@ -59,11 +69,17 @@ void fragment() {
 	float orizz = smoothstep(0.7, 0.95, norm_mondo.y);
 	float w = smoothstep(0.52, 0.6, rum3(p * 0.22 + 4.0) + (bagnato - 0.5) * 0.4) * orizz;
 	float umido = smoothstep(0.42, 0.6, rum3(p * 0.22 + 4.0) + (bagnato - 0.5) * 0.4) * orizz;
+	// pozze: l'acqua riempie le fughe (normali piatte), scurisce un poco e riflette (SSR)
+	if (pozza > 0.0) {
+		w = max(w, pozza);
+		umido = max(umido, smoothstep(0.0, 0.4, pozza));
+		alb *= 1.0 - pozza * 0.12;
+	}
 	alb *= 1.0 - umido * 0.3;
 	rgh = mix(rgh, 0.25, umido);
-	rgh = mix(rgh, 0.03, w);
+	rgh = mix(rgh, 0.05, w);
 	ALBEDO = alb;
 	ROUGHNESS = clamp(rgh, 0.02, 1.0);
 	SPECULAR = 0.5;
-	NORMAL_MAP = mix(texture(normal_tex, uv).rgb, vec3(0.5, 0.5, 1.0), w * 0.9);
+	NORMAL_MAP = mix(texture(normal_tex, uv).rgb, vec3(0.5, 0.5, 1.0), w * 0.95);
 }

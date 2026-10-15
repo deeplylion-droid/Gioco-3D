@@ -76,6 +76,16 @@ Il "disco azzurro" che si vedeva nel tornello era la cornice della finestra del 
 - neon non più doppi (interni.gd);
 - neon a 4,5 e luce ambiente 0,85: con i soffitti nuovi lo stanzino era quasi nero e l'usura delle pareti non si leggeva.
 
+**Terzo giro** (`giro3_*.jpg`): il secondo giro era troppo scuro (corridoio −31%, tornello −26%, stanzino −70%, torcia −37%). Cause trovate e corrette, senza alzare la luce ambiente:
+- le plafoniere facevano ombra alla loro stessa luce (nella versione approvata c'era una seconda luce senza ombre): ora le plafoniere non proiettano ombre;
+- i neon finivano sopra i soffitti nuovi (corridoio: plafoniera a 2,6-2,7 m, soffitto a 2,53): `LookInterni` li abbassa sotto il soffitto e ci mette la luce appena sotto;
+- GI cotto di nuovo, con le emissioni delle lampade;
+- negli scatti i neon sfarfallavano a caso (lo stanzino −70% era un neon spento in quel frame): ora nel test sono fissi accesi;
+- pozze dentro lo shader del pavimento (maschera con le stesse forme, piastrelle un po' più scure, rugosità 0,05, normali appiattite); i piani delle pozze sono nascosti.
+Valori: neon 6, stanzino 4,8 (soffitto basso e chiaro), emergenza 2,8.
+
+Luminosità media rispetto a `combinato_`: corridoio −10%, tornello −6%, stanzino +8%, torcia −20%. La torcia è più scura perché ora è un buio vero (tutte le luci spente, come chiesto nel secondo giro); nel combinato approvato le lampade d'emergenza erano accese.
+
 ## Sala principale vera: prima e dopo
 
 Scena di prova: `labs/grafica/sala_reale/` con i GLB veri (`strumenti/prepara_sala_reale.sh` li copia e li importa con lo script di post-import). Consegna: `godot/addons/grafica/look_sala.gd` + `godot/addons/grafica/sala/*.tres` (passi nel README dell'addon).
