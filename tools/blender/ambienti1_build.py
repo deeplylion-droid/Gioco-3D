@@ -645,7 +645,6 @@ def stanzino(M):
     prop('sedia', 'sedia', (12.4, Y0 + 1.05, 0), 160, 0.88, 'z')
     prop('estintore_stanzino', 'estintore', (14.6, Y0 + 0.12, 0.85), 0, 0.55, 'z')
     prop('ciabatta_stanzino', 'ciabatta', (14.2, 9.5, 0), 250, 0.27)
-    statico.append(L.piano('poster_bagnino_parete', (14.4, Y0 + 0.012, 1.55), 0.75, 1.0, M['poster_bagnino'], rot=(R(90), 0, 0)))
 
     # ---- luci
     L.lampada_emergenza('luce_emergenza_stanzino_01', (11.22, 9.6, 2.3), (1, 0, 0), M, watt=30)

@@ -77,6 +77,19 @@ func _prepara_ambienti() -> void:
 	var lp := spogliatoi.find_child("acqua_lavapiedi", true, false)
 	if lp:
 		lp.visible = false
+	# Vetri sporchi trasparenti: dietro il vetro rotto si deve vedere il pulsante del tornello.
+	var vetro := StandardMaterial3D.new()
+	vetro.albedo_color = Color(0.55, 0.62, 0.6, 0.18)
+	vetro.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	vetro.roughness = 0.1
+	vetro.metallic_specular = 0.7
+	vetro.cull_mode = BaseMaterial3D.CULL_DISABLED
+	for n in ambienti.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for i in mi.mesh.get_surface_count() if mi.mesh else 0:
+			var m := mi.mesh.surface_get_material(i)
+			if m and m.resource_name.begins_with("vetro_sporco"):
+				mi.set_surface_override_material(i, vetro)
 	# Vetri: niente ombre (altrimenti le luci rosse non passano dagli oblò).
 	for n in ambienti.find_children("*vetro*", "MeshInstance3D", true, false):
 		(n as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -120,7 +133,7 @@ func _prepara_luci() -> void:
 		# Una ogni quattro pulsa piano; quella sopra la porta della sala pompe pure.
 		var pulsa := i % 4 == 3 or String(l.name) == "luce_emergenza_04_luce"
 		le.set(&"modalita", 1 if pulsa else 0)
-		le.set(&"energia", 0.8)
+		le.set(&"energia", 2.0)
 		le.set(&"portata", 6.0)
 		le.set(&"energia_nebbia", 0.4)
 		le.set(&"ombre", i % 2 == 0)

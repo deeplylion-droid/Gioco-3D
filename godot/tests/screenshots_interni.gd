@@ -52,6 +52,9 @@ func _run() -> void:
 		await _shot("interni_spogliatoi", Vector3(6.8, 0.0, -3.25), Vector3(6.3, 1.15, -12.0))
 	if _want("interni_lavapiedi"):
 		await _shot("interni_lavapiedi", Vector3(9.7, 0.0, -11.4), Vector3(9.8, 1.2, -18.0))
+	if _want("interni_vetro"):
+		# Il pulsante del tornello dietro il vetro rotto del gabbiotto.
+		await _shot("interni_vetro", Vector3(9.9, 0.0, -15.0), Vector3(13.1, 1.3, -16.0))
 	if _want("interni_stanzino"):
 		# Lo zaino-pompa sulla rastrelliera.
 		await _shot("interni_stanzino", Vector3(11.5, 0.0, -8.55), Vector3(15.2, 1.0, -8.3))

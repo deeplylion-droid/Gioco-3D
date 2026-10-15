@@ -73,3 +73,11 @@ Su richiesta del coordinatore ho montato gli ambienti nel progetto del gioco. La
 Ritocchi alla sorgente per il gameplay: la collisione degli armadietti copre solo la parte posteriore (la Polaroid P2 è raggiungibile) e il buco del vetro rotto è libero (il getto deve arrivare al pulsante).
 
 Da fare nella sala principale (non toccata): togliere `PostazioneBagnini` (lo zaino ora è nello stanzino) e le Polaroid 01-03 (sono negli interni).
+
+### Correzioni dalla revisione di qualità
+
+- Vetro sporco trasparente in Godot (alfa 0,18, rugosità 0,1, senza culling): dal corridoio lava-piedi si vede il pulsante del tornello nel gabbiotto (`interni_vetro.jpg`).
+- Tolto il poster doppio nello stanzino: resta quello sulla bacheca.
+- Luci: Environment `AmbienteHorror` (AgX), una ReflectionProbe d'interno per zona, `LuceEmergenza` a energia 2, solo i neon `_tubo_sfarfalla` accesi (nodo `Neon`). La lucina del pulsante del tornello illuminava tutto il corridoio: ora ha portata 1,2 m.
+- La vasca lava-piedi è un `WaterTank` (già nel gruppo `water_sources`) con `acqua_per_vasca.tscn` stile limpido.
+- Non fatto (per la 0.2.1): convertitore dei pavimenti bagnati e vernice scrostata meno uniforme, con texture propria per gli armadietti.
