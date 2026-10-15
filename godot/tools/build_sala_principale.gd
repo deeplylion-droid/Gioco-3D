@@ -17,6 +17,8 @@ const SPAWN := Vector3(0.0, 0.0, 11.2)
 ## Pozza torbida sul fondo della piscina a onde: fondo a conca intorno allo scarico.
 const DRAIN := Vector3(0.0, -2.24, 2.0)
 const PUDDLE_LEVEL := -2.07
+## La medusa scalata a circa 4,5 m di altezza (dalle punte dei tentacoli alla testa).
+const MEDUSA_SCALE := 1.54
 
 var level: Node3D
 var M := {}
@@ -120,8 +122,9 @@ func _environment() -> void:
 	e.ssr_max_steps = 64
 	e.ssr_fade_in = 0.15
 	e.ssr_fade_out = 2.0
-	e.glow_intensity = 0.7
-	e.glow_bloom = 0.05
+	e.glow_intensity = 0.55
+	e.glow_bloom = 0.025
+	e.glow_hdr_threshold = 1.15
 	ResourceSaver.save(e, "res://assets/env/sala_environment.tres")
 	e.take_over_path("res://assets/env/sala_environment.tres")
 	var we := WorldEnvironment.new()
@@ -156,6 +159,22 @@ func _hall() -> void:
 		inst.name = part[0]
 		own(inst, sala)
 	level.set(&"dome_glass", M.dome_glass)
+	# Superfici bagnabili (addon acqua): pavimenti con pozzanghere e cerchi delle gocce, pareti
+	# e vasche con la banda bagnata e le caustiche vicino all'acqua.
+	var roots: Array[NodePath] = [NodePath("../Architettura"), NodePath("../Piscina"), NodePath("../AreaBimbi"), NodePath("../TorreScivoli")]
+	var floors: Node = (load("res://addons/acqua/scenes/convertitore_bagnato.tscn") as PackedScene).instantiate()
+	floors.name = "PavimentiBagnati"
+	floors.set(&"roots", roots)
+	floors.set(&"name_filter", PackedStringArray(["pavimento"]))
+	floors.set(&"puddle_amount", 0.45)
+	floors.set(&"base_wetness", 0.35)
+	own(floors, sala)
+	var walls: Node = (load("res://addons/acqua/scenes/convertitore_bagnato.tscn") as PackedScene).instantiate()
+	walls.name = "SuperficiBagnate"
+	walls.set(&"roots", roots)
+	walls.set(&"exclude_filter", PackedStringArray(["pavimento", "pozzanghere", "vetro", "glass", "griglia", "grata", "neon", "luce", "insegna", "lampad", "cartellone", "colature"]))
+	walls.set(&"base_wetness", 0.2)
+	own(walls, sala)
 
 
 # --- La medusa sul piedistallo, la lampada e il pulsante della sigla ---------------------------
@@ -170,10 +189,21 @@ func _statue() -> void:
 	medusa.name = "Medusa"
 	medusa.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
 	medusa.set(&"model", load("res://assets/models/medusa/medusa.glb"))
-	medusa.set(&"feet_depth", 1.95)
-	medusa.position = Vector3(0, PEDESTAL.y + 1.95, 0)
+	# Statua imponente (indicazione dell'utente): circa 4,5 m dalle punte dei tentacoli alla
+	# testa. Il modello è alto 2,92 m: per ora si scala (arriverà il modello da eroe).
+	medusa.set(&"feet_depth", 1.97 * MEDUSA_SCALE)
+	medusa.scale = Vector3.ONE * MEDUSA_SCALE
+	medusa.position = Vector3(0, PEDESTAL.y + 1.97 * MEDUSA_SCALE - 0.02, 0)
 	own(medusa, statue)
 	level.set(&"statue", medusa)
+	# Luce rosa della campana (addon acqua): si vede anche riflessa nell'acqua.
+	var glow: Node3D = (load("res://addons/acqua/scenes/luce_medusa.tscn") as PackedScene).instantiate()
+	glow.name = "LuceCampana"
+	glow.position = Vector3(0, -0.2, 0)
+	glow.set(&"light_energy", 0.35)
+	glow.set(&"omni_range", 3.5)
+	own(glow, medusa)
+	_monument_lights(statue)
 	# Il pulsante per i bambini sul davanti del piedistallo (è già nel modello: qui c'è solo
 	# il bersaglio per il getto).
 	var jingle: WaterButton = S.button.instantiate()
@@ -189,7 +219,7 @@ func _statue() -> void:
 	# qui si orienta verso il viso e parte spenta, poi si accende quando ti avvicini.
 	var flicker: Node = load("res://scripts/environment/flicker_light.gd").new()
 	flicker.name = "Sfarfallio"
-	flicker.set(&"base_energy", 7.0)
+	flicker.set(&"base_energy", 5.0)
 	flicker.set(&"base_emission", 6.0)
 	flicker.set(&"flicker_rate", 0.05)
 	flicker.set(&"min_level", 0.35)
@@ -197,7 +227,75 @@ func _statue() -> void:
 	own(flicker, statue)
 	level.set(&"statue_lamp", flicker)
 	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
-	level.set(&"statue_lamp_aim", Vector3(PEDESTAL.x, 3.2, PEDESTAL.z))
+	level.set(&"statue_lamp_aim", Vector3(PEDESTAL.x, 4.4, PEDESTAL.z))
+
+
+## Luci da monumento: un faro dall'alto e tre fari a terra intorno al piedistallo, con i fasci
+## che si vedono nella nebbia. Coordinate locali al gruppo della statua (centro del piedistallo).
+func _monument_lights(statue: Node3D) -> void:
+	var top := PEDESTAL.y + 1.97 * MEDUSA_SCALE * 1.48
+	var chest := Vector3(0, PEDESTAL.y + 1.97 * MEDUSA_SCALE + 0.35, 0)
+	var key := SpotLight3D.new()
+	key.name = "FaroDallAlto"
+	key.position = Vector3(0.0, 9.8, 2.8)
+	own(key, statue)
+	key.look_at_from_position(key.position, chest, Vector3.UP)
+	key.light_color = Color(1.0, 0.93, 0.84)
+	key.light_energy = 4.5
+	key.spot_range = 16.0
+	key.spot_angle = 15.0
+	key.spot_angle_attenuation = 1.6
+	key.shadow_enabled = true
+	key.light_size = 0.05
+	key.light_volumetric_fog_energy = 1.4
+	key.set_meta(&"grafica_priorita_ombra", 0)
+	var housing := StandardMaterial3D.new()
+	housing.albedo_color = Color(0.08, 0.08, 0.09)
+	housing.roughness = 0.5
+	housing.metallic = 0.7
+	var lens := StandardMaterial3D.new()
+	lens.albedo_color = Color(0.9, 0.95, 1.0)
+	lens.emission_enabled = true
+	lens.emission = Color(0.9, 0.95, 1.0)
+	lens.emission_energy_multiplier = 6.0
+	# [posizione a terra, colore, energia]
+	for u in [[Vector3(-1.45, 0.0, 1.35), Color(0.72, 0.88, 1.0), 1.5], [Vector3(1.45, 0.0, 1.35), Color(0.72, 0.88, 1.0), 1.5],
+			[Vector3(0.0, 0.0, -1.7), Color(1.0, 0.45, 0.78), 1.0]]:
+		var base := MeshInstance3D.new()
+		base.name = "FaroATerra"
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.13
+		cm.bottom_radius = 0.16
+		cm.height = 0.16
+		base.mesh = cm
+		base.material_override = housing
+		base.position = u[0] + Vector3(0, 0.08, 0)
+		own(base, statue)
+		var glass := MeshInstance3D.new()
+		glass.name = "Vetro"
+		var gm := CylinderMesh.new()
+		gm.top_radius = 0.11
+		gm.bottom_radius = 0.11
+		gm.height = 0.01
+		glass.mesh = gm
+		var lm := lens.duplicate() as StandardMaterial3D
+		lm.emission = u[1]
+		glass.material_override = lm
+		glass.position = Vector3(0, 0.085, 0)
+		own(glass, base)
+		var up := SpotLight3D.new()
+		up.name = "FaroDalBasso"
+		up.position = u[0] + Vector3(0, 0.2, 0)
+		own(up, statue)
+		up.look_at_from_position(up.position, Vector3(0, top * 0.62, 0), Vector3.FORWARD)
+		up.light_color = u[1]
+		up.light_energy = u[2]
+		up.spot_range = 9.0
+		up.spot_angle = 24.0
+		up.spot_angle_attenuation = 1.2
+		up.shadow_enabled = true
+		up.light_volumetric_fog_energy = 0.7
+		up.set_meta(&"grafica_priorita_ombra", 1)
 
 
 # --- La postazione dei bagnini all'ingresso: rastrelliera con lo zaino-pompa ---------------------
@@ -254,6 +352,8 @@ func _pool() -> void:
 	puddle.water_material = M.murky
 	puddle.position = Vector3(DRAIN.x, DRAIN.y - 0.02, DRAIN.z)
 	own(puddle, pool)
+	# L'acqua vera (addon acqua): superficie torbida con riflessi, gorgo sullo scarico.
+	_water_link(pool, "AcquaPozza", puddle, "res://addons/acqua/presets/stile_2_torbida.tres", true)
 	var vortex: MeshInstance3D = load("res://scripts/environment/drain_vortex.gd").new()
 	vortex.name = "Gorgo"
 	vortex.set(&"tank", puddle)
@@ -369,6 +469,21 @@ func _pools() -> void:
 		tank.water_material = M.clean
 		tank.position = Vector3(v[1].x, v[3], v[1].y)
 		own(tank, pools)
+		_water_link(pools, "Acqua" + String(v[0]), tank, "res://addons/acqua/presets/stile_3_scura.tres", false)
+
+
+## Superficie d'acqua dell'addon acqua che segue una vasca del gioco (livello, scarico).
+func _water_link(parent: Node, node_name: String, tank: Node3D, style_path: String, planar: bool) -> void:
+	var link: Node3D = (load("res://addons/acqua/scenes/acqua_per_vasca.tscn") as PackedScene).instantiate()
+	link.name = node_name
+	link.set(&"tank", tank)
+	link.set(&"style", load(style_path))
+	# Il riflesso planare rende di nuovo la scena: solo sulla pozza, che si guarda di più.
+	link.set(&"planar_reflection_on_high", planar)
+	# Scatola della sala (coordinate del mondo) per i riflessi di riserva.
+	link.set(&"env_box_min", Vector3(-20, -2.5, -24))
+	link.set(&"env_box_max", Vector3(20, 11.5, 12))
+	own(link, parent)
 
 
 # --- Area bimbi: la ruota a pale gira col getto e riempie il secchio gigante, che si ribalta -------
@@ -447,6 +562,11 @@ func _atmosphere() -> void:
 	dust.set(&"volume", Vector3(6, 4, 6))
 	dust.position = Vector3(PEDESTAL.x, 2.4, PEDESTAL.z + 0.6)
 	own(dust, fx)
+	# Gocce che cadono nella pozza e fanno cerchi (addon acqua).
+	var drip: Node3D = (load("res://addons/acqua/scenes/gocciolatoio.tscn") as PackedScene).instantiate()
+	drip.name = "GocceNellaPozza"
+	drip.position = Vector3(DRAIN.x + 0.9, 4.5, DRAIN.z + 0.6)
+	own(drip, fx)
 	# Gocce dal soffitto (con lo schizzo) vicino all'ingresso e sul bordo della piscina.
 	for g in [Vector3(-3.4, 4.0, 9.8), Vector3(6.2, 4.0, 5.6), Vector3(-7.6, 4.0, -3.0)]:
 		var drops: Node3D = load("res://addons/grafica/gocce.gd").new()

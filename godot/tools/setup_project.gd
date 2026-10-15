@@ -30,9 +30,30 @@ func _init() -> void:
 	for a in ["Grafica", "Game", "GameState"]:
 		if s.has_setting("autoload/" + a):
 			s.clear("autoload/" + a)
+	if s.has_setting("autoload/WaterManager"):
+		s.clear("autoload/WaterManager")
 	s.set_setting("autoload/Grafica", "*res://addons/grafica/impostazioni_grafiche.gd")
+	s.set_setting("autoload/WaterManager", "*res://addons/acqua/scripts/water_manager.gd")
 	s.set_setting("autoload/Game", "*res://scripts/game/game.gd")
 	s.set_setting("autoload/GameState", "*res://scripts/game/game_state.gd")
+	# Variabili globali degli shader dell'acqua (le registra anche l'autoload: qui servono
+	# all'editor, vedi addons/acqua/shader_globals.txt).
+	var globali := {
+		"water_time": {"type": "float", "value": 0.0},
+		"water_body_count": {"type": "int", "value": 0},
+		"water_bodies_tex": {"type": "sampler2D", "value": ""},
+		"water_caustics_tex": {"type": "sampler3D", "value": "res://addons/acqua/textures/caustics_3d.png"},
+		"water_noise_tex": {"type": "sampler2D", "value": "res://addons/acqua/textures/noise_rgba.png"},
+		"water_ripple_tex": {"type": "sampler2D", "value": ""},
+		"water_ripple_rect": {"type": "vec4", "value": Vector4(0, 0, 0, 0)},
+		"water_drops_tex": {"type": "sampler2D", "value": ""},
+		"water_drop_count": {"type": "int", "value": 0},
+		"water_quality": {"type": "int", "value": 2},
+		"water_glow_tex": {"type": "sampler2D", "value": ""},
+		"water_glow_count": {"type": "int", "value": 0},
+	}
+	for k in globali:
+		s.set_setting("shader_globals/" + k, globali[k])
 
 	# Finestra: 1280x720 di base, l'interfaccia scala con la finestra.
 	s.set_setting("display/window/size/viewport_width", 1280)

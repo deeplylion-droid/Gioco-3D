@@ -11,6 +11,8 @@
 [ext_resource type="Shader" path="res://shaders/water_suction_particles.gdshader" id="9_suck"]
 [ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_opzione2.tscn" id="10_lance"]
 [ext_resource type="PackedScene" path="res://addons/grafica/torcia.tscn" id="11_torch"]
+[ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetto_sottacqua.tscn" id="12_under"]
+[ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetti_zaino.tscn" id="13_fx"]
 
 [sub_resource type="CapsuleShape3D" id="body_shape"]
 resource_local_to_scene = true
@@ -110,6 +112,8 @@ near = 0.03
 dimensione_sorgente = 0.012
 energia = 32.0
 
+[node name="EffettoSottacqua" parent="Head/Camera3D" instance=ExtResource("12_under")]
+
 [node name="ViewModel" type="Node3D" parent="Head/Camera3D"]
 position = Vector3(0.21, -0.2, -0.36)
 
@@ -176,6 +180,8 @@ fixed_fps = 60
 visibility_aabb = AABB(-6, -6, -6, 12, 12, 12)
 process_material = SubResource("suction_process")
 draw_pass_1 = SubResource("splash_mesh")
+
+[node name="EffettiZaino" parent="." instance=ExtResource("13_fx")]
 
 [node name="Interactor" type="Node" parent="."]
 script = ExtResource("3_in")

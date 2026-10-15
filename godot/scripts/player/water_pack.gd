@@ -41,6 +41,9 @@ signal tank_full
 @export var lance_offset := Vector3(0.16, -0.25, -0.92)
 ## Distanza sotto cui la lancia si ritrae (per non entrare nei muri).
 @export var lance_pullback_distance := 1.05
+## Schizzi e gocce aspirate fatti da questo script. Con l'addon acqua (EffettiZaino) li fa
+## l'addon, quindi qui restano spenti.
+@export var legacy_fx := false
 
 @export_group("Movimento dell'oggetto in mano")
 ## Ondeggiamento col passo (m).
@@ -569,7 +572,7 @@ func _update_visuals() -> void:
 			_jet_material.set_shader_parameter(&"inherit_velocity", player.velocity * inherit_player_velocity)
 	if splash_particles:
 		# Lo schizzo sta dove arriva davvero il getto continuo.
-		var show := _last_impact_time >= 0.0 and _clock - _last_impact_time < 0.08
+		var show := legacy_fx and _last_impact_time >= 0.0 and _clock - _last_impact_time < 0.08
 		splash_particles.emitting = show
 		if show:
 			splash_particles.global_transform = Transform3D(_basis_from_normal(_last_impact_normal), _last_impact_point + _last_impact_normal * 0.03)
@@ -587,7 +590,7 @@ func _update_visuals() -> void:
 	if _suck_mat:
 		_suck_mat.set_shader_parameter(&"suck_point", Vector4(suck_point.x, suck_point.y, suck_point.z, 1.0))
 	if suction_particles:
-		suction_particles.emitting = is_sucking
+		suction_particles.emitting = is_sucking and legacy_fx
 		if is_sucking:
 			suction_particles.global_position = suck_point
 			if _suction_material and muzzle:

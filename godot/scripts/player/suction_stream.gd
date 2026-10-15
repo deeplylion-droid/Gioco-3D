@@ -15,6 +15,8 @@ var active := false
 @export var radius_top := 0.011
 ## Velocità delle striature verso l'ugello (m/s).
 @export var flow_speed := 4.5
+## Gorgo disegnato sulla superficie (spento quando l'acqua vera fa già il suo gorgo).
+@export var show_swirl := false
 
 var _mesh := ArrayMesh.new()
 var _strength := 0.0
@@ -55,7 +57,7 @@ func _process(delta: float) -> void:
 	_t += delta
 	_strength = move_toward(_strength, 1.0 if active else 0.0, delta * (3.5 if active else 2.5))
 	_mesh.clear_surfaces()
-	_swirl.visible = _strength > 0.01
+	_swirl.visible = show_swirl and _strength > 0.01
 	if _strength <= 0.01 or muzzle == null:
 		return
 	var cam := get_viewport().get_camera_3d()

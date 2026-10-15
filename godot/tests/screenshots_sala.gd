@@ -56,8 +56,16 @@ func _run() -> void:
 	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
 	lamp.turn_on()
 	if _want("ingresso_statua"):
-		# Dall'uscita degli spogliatoi: la medusa sul piedistallo sotto la lampada.
-		await _shot("ingresso_statua", Vector3(0.0, 0.0, 11.2), Vector3(0.0, 3.0, 6.9))
+		# Dall'uscita degli spogliatoi: la medusa intera sul piedistallo, la cupola dietro.
+		await _shot("ingresso_statua", Vector3(0.0, 0.0, 11.2), Vector3(0.0, 3.2, 6.9))
+	if _want("statua_lampo_ingresso"):
+		await _shot("statua_lampo_ingresso", Vector3(0.0, 0.0, 11.2), Vector3(0.0, 3.2, 6.9), func(): storm.lampo_ora(1.4, 0.5, PI * 0.95), 4)
+	if _want("statua_meta"):
+		# A metà strada.
+		await _shot("statua_meta", Vector3(-0.5, 0.0, 9.6), Vector3(0.0, 3.7, 6.9))
+	if _want("statua_piedi"):
+		# Ai suoi piedi, guardando in su: deve incombere.
+		await _shot("statua_piedi", Vector3(-0.75, 0.0, 9.1), Vector3(0.0, 4.9, 6.9))
 	if _want("statua_vicino"):
 		await _shot("statua_vicino", Vector3(1.7, 0.0, 9.2), Vector3(0.0, 3.6, 6.9))
 	if _want("statua_lampo"):

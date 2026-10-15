@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Grafica="*res://addons/grafica/impostazioni_grafiche.gd"
+WaterManager="*res://addons/acqua/scripts/water_manager.gd"
 Game="*res://scripts/game/game.gd"
 GameState="*res://scripts/game/game_state.gd"
 
@@ -133,3 +134,58 @@ anti_aliasing/quality/msaa_3d=2
 anti_aliasing/quality/use_debanding=true
 environment/defaults/default_clear_color=Color(0.02, 0.02, 0.025, 1)
 anti_aliasing/quality/screen_space_aa=2
+
+[shader_globals]
+
+water_time={
+"type": "float",
+"value": 0.0
+}
+water_body_count={
+"type": "int",
+"value": 0
+}
+water_bodies_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_caustics_tex={
+"type": "sampler3D",
+"value": "res://addons/acqua/textures/caustics_3d.png"
+}
+water_noise_tex={
+"type": "sampler2D",
+"value": "res://addons/acqua/textures/noise_rgba.png"
+}
+water_ripple_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_ripple_rect={
+"type": "vec4",
+"value": Vector4(0, 0, 0, 0)
+}
+water_drops_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_drop_count={
+"type": "int",
+"value": 0
+}
+water_quality={
+"type": "int",
+"value": 2
+}
+water_glow_tex={
+"type": "sampler2D",
+"value": ""
+}
+water_glow_count={
+"type": "int",
+"value": 0
+}
+
+[threading]
+
+worker_pool/max_threads=2
