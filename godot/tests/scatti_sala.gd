@@ -11,6 +11,8 @@ extends Node
 ## Il preset di serie è "alto_smaa" (Alto con la GI, SMAA al posto del TAA). Gli scatti si salvano
 ## come <cartella>/<prefisso>_<nome>.jpg. Alla fine stampa la memoria massima del processo
 ## (VmHWM di /proc/self/status).
+## Se la memoria non basta: SCATTI_TOGLI="Sala/Dettagli,Statua/Medusa" (percorsi di nodi della scena,
+## separati da virgole) toglie anche quei nodi prima del primo frame. Va usato uguale nei prima e nei dopo.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -65,10 +67,14 @@ func _run() -> void:
 		wm.set(&"quality", 1)
 	# La scena si istanzia a mano per togliere gli interni prima che entrino nell'albero.
 	level = (load(LEVEL) as PackedScene).instantiate()
-	var interni := level.get_node_or_null(^"Interni")
-	if interni:
-		level.remove_child(interni)
-		interni.free()
+	var togli := PackedStringArray(["Interni"])
+	togli.append_array(OS.get_environment("SCATTI_TOGLI").split(",", false))
+	for percorso in togli:
+		var n := level.get_node_or_null(NodePath(percorso))
+		if n:
+			n.get_parent().remove_child(n)
+			n.free()
+			print("tolto ", percorso)
 	get_tree().root.add_child(level)
 	get_tree().current_scene = level
 	await _frames(10)
