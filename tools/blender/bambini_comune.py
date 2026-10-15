@@ -19,11 +19,16 @@ FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 # I modelli: file GLB in assets_src/bambini/ e altezza reale (metri).
 # Le altezze dei rivelati sono scelte perché il corpo resti grande come da travestito.
 MODELLI = {
+    # testa a cubo, corpo versione 2 (bambino magro in muta da sub), scelto dall'utente
     'cubo_calmo': ('cubo_calmo.glb', 1.20),
     'cubo_rivelato': ('cubo_rivelato.glb', 1.25),
     'agnello_calmo': ('agnello_calmo.glb', 1.20),
-    'agnello_lupo': ('agnello_lupo.glb', 1.36),
+    # stato rivelato ufficiale dell'agnellino: l'occhio unico (scelta dell'utente)
     'agnello_occhio': ('agnello_occhio.glb', 1.20),
+    # alternative e versioni scartate (non si cancellano)
+    'agnello_lupo': ('alternative/agnello_lupo.glb', 1.36),
+    'cubo_calmo_v1': ('scartati/cubo_corpo_v1/cubo_calmo.glb', 1.20),
+    'cubo_rivelato_v1': ('scartati/cubo_corpo_v1/cubo_rivelato.glb', 1.25),
 }
 
 
@@ -157,3 +162,30 @@ def ritocca_materiali(materiali, bagnato=1.0, bagliore=0.0, occhi_rosa=False):
             ln.new(m3.outputs[0], bsdf.inputs['Emission Strength'])
         if nt.get('bambini_bagliore') is not None:
             nt['bambini_bagliore'].inputs[1].default_value = bagliore
+
+
+def muta_opaca(materiali, minimo):
+    """Nella texture metallo/rugosità (G = rugosità) alza la rugosità dove il colore di base è
+    scuro, cioè sulla muta: neoprene satinato invece di vinile lucido. Il resto non cambia."""
+    import numpy as np
+    for m in materiali:
+        nt = m.node_tree.nodes
+        bsdf = next((n for n in nt if n.type == 'BSDF_PRINCIPLED'), None)
+        if bsdf is None or not bsdf.inputs['Base Color'].is_linked or not bsdf.inputs['Roughness'].is_linked:
+            continue
+        col = bsdf.inputs['Base Color'].links[0].from_node.image
+        sep = bsdf.inputs['Roughness'].links[0].from_node
+        mr = sep.inputs[0].links[0].from_node.image if sep.type == 'SEPARATE_COLOR' else sep.image
+        if col.size[:] != mr.size[:]:
+            log('muta opaca: texture di misure diverse, salto'); continue
+        c = np.empty(col.size[0] * col.size[1] * 4, np.float32); col.pixels.foreach_get(c)
+        r = np.empty(mr.size[0] * mr.size[1] * 4, np.float32); mr.pixels.foreach_get(r)
+        c = c.reshape(-1, 4); r = r.reshape(-1, 4)
+        v = c[:, :3].max(1)
+        t = np.clip((0.22 - v) / (0.22 - 0.10), 0, 1)
+        scuro = t * t * (3 - 2 * t)
+        g = r[:, 1]
+        r[:, 1] = g + (np.maximum(g, minimo) - g) * scuro
+        mr.pixels.foreach_set(r.ravel())
+        mr.update()
+        log(f'muta opaca: {100 * (scuro > 0.5).mean():.0f}% dei pixel, rugosità minima {minimo}')

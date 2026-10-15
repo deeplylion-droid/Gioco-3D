@@ -1,40 +1,94 @@
 {
  "nota": "Coordinate in metri. Blender: Z in alto. Godot/glTF: Y in alto, (x, y, z)_blender -> (x, z, -y)_godot.",
  "piedistallo": {
+  "nota": "monumento della statua: piano superiore libero per la medusa, rivolta verso la porta (+z Godot)",
   "centro_blender": [
    0.0,
-   -6.9,
+   -10.0,
    0.0
   ],
   "centro_godot": [
    0.0,
    0.0,
-   6.9
+   10.0
   ],
-  "quota_piano": 0.9,
-  "diametro_piano": 2.2,
-  "diametro_tamburo": 2.0,
-  "diametro_base": 2.3,
+  "quota_piano": 1.15,
+  "diametro_piano": 2.78,
+  "diametro_tamburo": 2.6,
+  "diametro_gradino_basso": 4.0,
+  "diametro_gradino_alto": 3.24,
+  "quote_gradini": [
+   0.28,
+   0.56
+  ],
+  "raggio_cordone": 3.0,
+  "statua": {
+   "appoggio_godot": [
+    0.0,
+    1.15,
+    10.0
+   ],
+   "altezza_prevista": 4.5,
+   "cima_godot": 5.65
+  },
   "pulsante_bimbi": {
    "blender": [
     0.0,
-    -8.1,
-    0.47
+    -11.43,
+    0.8
+   ],
+   "godot": [
+    0.0,
+    0.8,
+    11.43
+   ],
+   "verso_godot": [
+    0,
+    0,
+    1
    ]
   }
+ },
+ "lampione": {
+  "base_blender": [
+   2.8,
+   -13.2,
+   0.0
+  ],
+  "base_godot": [
+   2.8,
+   0.0,
+   13.2
+  ]
  },
  "spawn_ingresso": {
   "blender": [
    0.0,
-   -11.2,
+   -19.2,
    0.0
   ],
   "godot": [
    0.0,
    0.0,
-   11.2
+   19.2
   ],
-  "guarda_verso": "nord (+y Blender, -z Godot), verso il piedistallo"
+  "guarda_verso": "nord (+y Blender, -z Godot), verso la statua"
+ },
+ "vano_spogliatoi": {
+  "nota": "vano libero nel muro sud (spessore 0,2 m), con la porta stagna aperta verso la sala",
+  "x": [
+   -0.6,
+   0.6
+  ],
+  "altezza": 2.2,
+  "faccia_sala_godot_z": 20.0,
+  "faccia_retro_godot_z": 20.2,
+  "attacco_spogliatoi_godot": [
+   0.0,
+   0.0,
+   20.2
+  ],
+  "nota_attacco": "il marker_uscita_sala_principale degli spogliatoi (9,7; 0; -20,7) va sul retro del muro, in (0; 0; 20,2): traslare i tre glTF di (-9,7; 0; 40,9)"
  },
  "sala": {
   "x": [
@@ -42,7 +96,7 @@
    20.0
   ],
   "y": [
-   -12.0,
+   -20.0,
    24.0
   ],
   "soffitto": 11.5,
@@ -213,19 +267,79 @@
   "sala_pulsante_piedistallo": {
    "perno_blender": [
     0.0,
-    -8.02,
-    0.47
+    -11.43,
+    0.8
    ],
    "perno_godot": [
     0.0,
-    0.47,
-    8.02
+    0.8,
+    11.43
    ]
   }
  },
  "luci": [
   {
    "nome": "luce_neon_00",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    18.5,
+    -16.0,
+    3.88
+   ],
+   "godot": [
+    18.5,
+    3.88,
+    16.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_01",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    -18.5,
+    -16.0,
+    3.88
+   ],
+   "godot": [
+    -18.5,
+    3.88,
+    16.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "metà (un tubo spento: sfarfallio)"
+  },
+  {
+   "nome": "luce_neon_02",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    -18.5,
+    -12.0,
+    3.88
+   ],
+   "godot": [
+    -18.5,
+    3.88,
+    12.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_03",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     18.5,
@@ -242,10 +356,10 @@
     1.0,
     0.93
    ],
-   "intensita": "piena"
+   "intensita": "metà (un tubo spento: sfarfallio)"
   },
   {
-   "nome": "luce_neon_01",
+   "nome": "luce_neon_04",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     -18.5,
@@ -265,7 +379,27 @@
    "intensita": "metà (un tubo spento: sfarfallio)"
   },
   {
-   "nome": "luce_neon_02",
+   "nome": "luce_neon_05",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    18.5,
+    -4.0,
+    3.88
+   ],
+   "godot": [
+    18.5,
+    3.88,
+    4.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_06",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     -18.5,
@@ -282,90 +416,70 @@
     1.0,
     0.93
    ],
-   "intensita": "piena"
-  },
-  {
-   "nome": "luce_neon_03",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    18.5,
-    0.0,
-    3.88
-   ],
-   "godot": [
-    18.5,
-    3.88,
-    -0.0
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
-   "intensita": "metà (un tubo spento: sfarfallio)"
-  },
-  {
-   "nome": "luce_neon_04",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    -18.5,
-    0.0,
-    3.88
-   ],
-   "godot": [
-    -18.5,
-    3.88,
-    -0.0
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
-   "intensita": "metà (un tubo spento: sfarfallio)"
-  },
-  {
-   "nome": "luce_neon_05",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    18.5,
-    4.0,
-    3.88
-   ],
-   "godot": [
-    18.5,
-    3.88,
-    -4.0
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
-   "intensita": "piena"
-  },
-  {
-   "nome": "luce_neon_06",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    -18.5,
-    4.0,
-    3.88
-   ],
-   "godot": [
-    -18.5,
-    3.88,
-    -4.0
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
    "intensita": "metà (un tubo spento: sfarfallio)"
   },
   {
    "nome": "luce_neon_07",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    18.5,
+    0.0,
+    3.88
+   ],
+   "godot": [
+    18.5,
+    3.88,
+    -0.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "metà (un tubo spento: sfarfallio)"
+  },
+  {
+   "nome": "luce_neon_08",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    18.5,
+    4.0,
+    3.88
+   ],
+   "godot": [
+    18.5,
+    3.88,
+    -4.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_09",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    -18.5,
+    4.0,
+    3.88
+   ],
+   "godot": [
+    -18.5,
+    3.88,
+    -4.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_10",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     18.5,
@@ -382,66 +496,6 @@
     1.0,
     0.93
    ],
-   "intensita": "metà (un tubo spento: sfarfallio)"
-  },
-  {
-   "nome": "luce_neon_08",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    18.5,
-    12.0,
-    3.88
-   ],
-   "godot": [
-    18.5,
-    3.88,
-    -12.0
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
-   "intensita": "piena"
-  },
-  {
-   "nome": "luce_neon_09",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    -18.5,
-    12.0,
-    3.88
-   ],
-   "godot": [
-    -18.5,
-    3.88,
-    -12.0
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
-   "intensita": "piena"
-  },
-  {
-   "nome": "luce_neon_10",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    18.5,
-    16.0,
-    3.88
-   ],
-   "godot": [
-    18.5,
-    3.88,
-    -16.0
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
    "intensita": "piena"
   },
   {
@@ -449,13 +503,13 @@
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     18.5,
-    20.0,
+    12.0,
     3.88
    ],
    "godot": [
     18.5,
     3.88,
-    -20.0
+    -12.0
    ],
    "colore": [
     0.8,
@@ -469,6 +523,46 @@
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     -18.5,
+    12.0,
+    3.88
+   ],
+   "godot": [
+    -18.5,
+    3.88,
+    -12.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_13",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    18.5,
+    20.0,
+    3.88
+   ],
+   "godot": [
+    18.5,
+    3.88,
+    -20.0
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "metà (un tubo spento: sfarfallio)"
+  },
+  {
+   "nome": "luce_neon_14",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    -18.5,
     20.0,
     3.88
    ],
@@ -482,60 +576,20 @@
     1.0,
     0.93
    ],
-   "intensita": "piena"
-  },
-  {
-   "nome": "luce_neon_13",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    -12.0,
-    -10.5,
-    3.88
-   ],
-   "godot": [
-    -12.0,
-    3.88,
-    10.5
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
-   "intensita": "metà (un tubo spento: sfarfallio)"
-  },
-  {
-   "nome": "luce_neon_14",
-   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
-   "blender": [
-    -12.0,
-    22.5,
-    3.88
-   ],
-   "godot": [
-    -12.0,
-    3.88,
-    -22.5
-   ],
-   "colore": [
-    0.8,
-    1.0,
-    0.93
-   ],
    "intensita": "metà (un tubo spento: sfarfallio)"
   },
   {
    "nome": "luce_neon_15",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    -8.0,
-    -10.5,
+    -16.0,
+    -18.5,
     3.88
    ],
    "godot": [
-    -8.0,
+    -16.0,
     3.88,
-    10.5
+    18.5
    ],
    "colore": [
     0.8,
@@ -548,12 +602,12 @@
    "nome": "luce_neon_16",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    -8.0,
+    -16.0,
     22.5,
     3.88
    ],
    "godot": [
-    -8.0,
+    -16.0,
     3.88,
     -22.5
    ],
@@ -568,14 +622,14 @@
    "nome": "luce_neon_17",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    -4.0,
-    -10.5,
+    -12.0,
+    -18.5,
     3.88
    ],
    "godot": [
-    -4.0,
+    -12.0,
     3.88,
-    10.5
+    18.5
    ],
    "colore": [
     0.8,
@@ -588,12 +642,12 @@
    "nome": "luce_neon_18",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    -4.0,
+    -12.0,
     22.5,
     3.88
    ],
    "godot": [
-    -4.0,
+    -12.0,
     3.88,
     -22.5
    ],
@@ -608,14 +662,14 @@
    "nome": "luce_neon_19",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    4.0,
-    -10.5,
+    -8.0,
+    -18.5,
     3.88
    ],
    "godot": [
-    4.0,
+    -8.0,
     3.88,
-    10.5
+    18.5
    ],
    "colore": [
     0.8,
@@ -628,12 +682,12 @@
    "nome": "luce_neon_20",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    4.0,
+    -8.0,
     22.5,
     3.88
    ],
    "godot": [
-    4.0,
+    -8.0,
     3.88,
     -22.5
    ],
@@ -648,14 +702,14 @@
    "nome": "luce_neon_21",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    8.0,
-    -10.5,
+    -4.0,
+    -18.5,
     3.88
    ],
    "godot": [
-    8.0,
+    -4.0,
     3.88,
-    10.5
+    18.5
    ],
    "colore": [
     0.8,
@@ -668,12 +722,12 @@
    "nome": "luce_neon_22",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    8.0,
+    -4.0,
     22.5,
     3.88
    ],
    "godot": [
-    8.0,
+    -4.0,
     3.88,
     -22.5
    ],
@@ -688,14 +742,14 @@
    "nome": "luce_neon_23",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    12.0,
-    -10.5,
+    4.0,
+    -18.5,
     3.88
    ],
    "godot": [
-    12.0,
+    4.0,
     3.88,
-    10.5
+    18.5
    ],
    "colore": [
     0.8,
@@ -708,14 +762,14 @@
    "nome": "luce_neon_24",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
-    16.0,
-    -10.5,
+    8.0,
+    -18.5,
     3.88
    ],
    "godot": [
-    16.0,
+    8.0,
     3.88,
-    10.5
+    18.5
    ],
    "colore": [
     0.8,
@@ -726,6 +780,86 @@
   },
   {
    "nome": "luce_neon_25",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    8.0,
+    22.5,
+    3.88
+   ],
+   "godot": [
+    8.0,
+    3.88,
+    -22.5
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "metà (un tubo spento: sfarfallio)"
+  },
+  {
+   "nome": "luce_neon_26",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    12.0,
+    -18.5,
+    3.88
+   ],
+   "godot": [
+    12.0,
+    3.88,
+    18.5
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_27",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    12.0,
+    22.5,
+    3.88
+   ],
+   "godot": [
+    12.0,
+    3.88,
+    -22.5
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "metà (un tubo spento: sfarfallio)"
+  },
+  {
+   "nome": "luce_neon_28",
+   "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
+   "blender": [
+    16.0,
+    -18.5,
+    3.88
+   ],
+   "godot": [
+    16.0,
+    3.88,
+    18.5
+   ],
+   "colore": [
+    0.8,
+    1.0,
+    0.93
+   ],
+   "intensita": "piena"
+  },
+  {
+   "nome": "luce_neon_29",
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     16.0,
@@ -742,10 +876,10 @@
     1.0,
     0.93
    ],
-   "intensita": "metà (un tubo spento: sfarfallio)"
+   "intensita": "piena"
   },
   {
-   "nome": "luce_emergenza_26",
+   "nome": "luce_emergenza_30",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     19.8799991607666,
@@ -764,7 +898,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_27",
+   "nome": "luce_emergenza_31",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     19.8799991607666,
@@ -783,7 +917,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_28",
+   "nome": "luce_emergenza_32",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     19.8799991607666,
@@ -802,7 +936,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_29",
+   "nome": "luce_emergenza_33",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     -19.8799991607666,
@@ -821,7 +955,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_30",
+   "nome": "luce_emergenza_34",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     -19.8799991607666,
@@ -840,7 +974,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_31",
+   "nome": "luce_emergenza_35",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     -19.8799991607666,
@@ -859,83 +993,83 @@
    ]
   },
   {
-   "nome": "luce_emergenza_32",
-   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
-   "blender": [
-    -6.0,
-    23.8799991607666,
-    2.9000000953674316
-   ],
-   "godot": [
-    -6.0,
-    2.9,
-    -23.88
-   ],
-   "colore": [
-    1.0,
-    0.035,
-    0.02
-   ]
-  },
-  {
-   "nome": "luce_emergenza_33",
-   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
-   "blender": [
-    8.0,
-    23.8799991607666,
-    2.9000000953674316
-   ],
-   "godot": [
-    8.0,
-    2.9,
-    -23.88
-   ],
-   "colore": [
-    1.0,
-    0.035,
-    0.02
-   ]
-  },
-  {
-   "nome": "luce_emergenza_34",
-   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
-   "blender": [
-    -5.0,
-    -11.880000114440918,
-    2.9000000953674316
-   ],
-   "godot": [
-    -5.0,
-    2.9,
-    11.88
-   ],
-   "colore": [
-    1.0,
-    0.035,
-    0.02
-   ]
-  },
-  {
-   "nome": "luce_emergenza_35",
-   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
-   "blender": [
-    5.0,
-    -11.880000114440918,
-    2.9000000953674316
-   ],
-   "godot": [
-    5.0,
-    2.9,
-    11.88
-   ],
-   "colore": [
-    1.0,
-    0.035,
-    0.02
-   ]
-  },
-  {
    "nome": "luce_emergenza_36",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    -6.0,
+    23.8799991607666,
+    2.9000000953674316
+   ],
+   "godot": [
+    -6.0,
+    2.9,
+    -23.88
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
+   "nome": "luce_emergenza_37",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    8.0,
+    23.8799991607666,
+    2.9000000953674316
+   ],
+   "godot": [
+    8.0,
+    2.9,
+    -23.88
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
+   "nome": "luce_emergenza_38",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    -5.0,
+    -19.8799991607666,
+    2.9000000953674316
+   ],
+   "godot": [
+    -5.0,
+    2.9,
+    19.88
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
+   "nome": "luce_emergenza_39",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    5.0,
+    -19.8799991607666,
+    2.9000000953674316
+   ],
+   "godot": [
+    5.0,
+    2.9,
+    19.88
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
+   "nome": "luce_emergenza_40",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     19.8799991607666,
@@ -954,7 +1088,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_37",
+   "nome": "luce_emergenza_41",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     -19.8799991607666,
@@ -973,7 +1107,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_38",
+   "nome": "luce_emergenza_42",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     -12.0,
@@ -992,17 +1126,17 @@
    ]
   },
   {
-   "nome": "luce_emergenza_39",
+   "nome": "luce_emergenza_43",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     12.0,
-    -11.880000114440918,
+    -19.8799991607666,
     8.600000381469727
    ],
    "godot": [
     12.0,
     8.6,
-    11.88
+    19.88
    ],
    "colore": [
     1.0,
@@ -1011,7 +1145,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_40",
+   "nome": "luce_emergenza_44",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     2.0,
@@ -1030,7 +1164,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_41",
+   "nome": "luce_emergenza_45",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     19.8799991607666,
@@ -1049,7 +1183,7 @@
    ]
   },
   {
-   "nome": "luce_emergenza_42",
+   "nome": "luce_emergenza_46",
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     -19.8799991607666,
@@ -1068,22 +1202,272 @@
    ]
   },
   {
+   "nome": "luce_emergenza_47",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    19.8799991607666,
+    -14.0,
+    2.9000000953674316
+   ],
+   "godot": [
+    19.88,
+    2.9,
+    14.0
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
+   "nome": "luce_emergenza_48",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    -19.8799991607666,
+    -16.0,
+    2.9000000953674316
+   ],
+   "godot": [
+    -19.88,
+    2.9,
+    16.0
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
+   "nome": "luce_emergenza_49",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    19.8799991607666,
+    -12.0,
+    8.600000381469727
+   ],
+   "godot": [
+    19.88,
+    8.6,
+    12.0
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
+   "nome": "luce_emergenza_50",
+   "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
+   "blender": [
+    -14.0,
+    -19.8799991607666,
+    8.600000381469727
+   ],
+   "godot": [
+    -14.0,
+    8.6,
+    19.88
+   ],
+   "colore": [
+    1.0,
+    0.035,
+    0.02
+   ]
+  },
+  {
    "nome": "luce_lampione",
    "tipo": "SpotLight3D verso il basso, angolo 60 gradi, calda, ronza",
    "blender": [
-    0.75,
-    -7.900000095367432,
+    1.649999976158142,
+    -13.199999809265137,
     4.420000076293945
    ],
    "godot": [
-    0.75,
+    1.65,
     4.42,
-    7.9
+    13.2
    ],
    "colore": [
     1.0,
     0.72,
     0.42
+   ]
+  },
+  {
+   "nome": "luce_monumento_basso_0",
+   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
+   "blender": [
+    1.248,
+    -8.752,
+    0.448
+   ],
+   "godot": [
+    1.248,
+    0.448,
+    8.752
+   ],
+   "direzione_blender": [
+    -0.351,
+    -0.351,
+    0.868
+   ],
+   "direzione_godot": [
+    -0.351,
+    0.868,
+    0.351
+   ],
+   "colore": [
+    1.0,
+    0.82,
+    0.58
+   ]
+  },
+  {
+   "nome": "luce_monumento_basso_1",
+   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
+   "blender": [
+    -1.248,
+    -8.752,
+    0.448
+   ],
+   "godot": [
+    -1.248,
+    0.448,
+    8.752
+   ],
+   "direzione_blender": [
+    0.351,
+    -0.351,
+    0.868
+   ],
+   "direzione_godot": [
+    0.351,
+    0.868,
+    0.351
+   ],
+   "colore": [
+    1.0,
+    0.82,
+    0.58
+   ]
+  },
+  {
+   "nome": "luce_monumento_basso_2",
+   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
+   "blender": [
+    -1.248,
+    -11.248,
+    0.448
+   ],
+   "godot": [
+    -1.248,
+    0.448,
+    11.248
+   ],
+   "direzione_blender": [
+    0.351,
+    0.351,
+    0.868
+   ],
+   "direzione_godot": [
+    0.351,
+    0.868,
+    -0.351
+   ],
+   "colore": [
+    1.0,
+    0.82,
+    0.58
+   ]
+  },
+  {
+   "nome": "luce_monumento_basso_3",
+   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
+   "blender": [
+    1.248,
+    -11.248,
+    0.448
+   ],
+   "godot": [
+    1.248,
+    0.448,
+    11.248
+   ],
+   "direzione_blender": [
+    -0.351,
+    0.351,
+    0.868
+   ],
+   "direzione_godot": [
+    -0.351,
+    0.868,
+    -0.351
+   ],
+   "colore": [
+    1.0,
+    0.82,
+    0.58
+   ]
+  },
+  {
+   "nome": "luce_faro_0",
+   "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua",
+   "blender": [
+    -2.015,
+    -16.622,
+    5.516
+   ],
+   "godot": [
+    -2.015,
+    5.516,
+    16.622
+   ],
+   "direzione_blender": [
+    0.282,
+    0.927,
+    -0.247
+   ],
+   "direzione_godot": [
+    0.282,
+    -0.247,
+    -0.927
+   ],
+   "colore": [
+    1.0,
+    0.9,
+    0.76
+   ]
+  },
+  {
+   "nome": "luce_faro_1",
+   "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua",
+   "blender": [
+    2.015,
+    -16.622,
+    5.516
+   ],
+   "godot": [
+    2.015,
+    5.516,
+    16.622
+   ],
+   "direzione_blender": [
+    -0.282,
+    0.927,
+    -0.247
+   ],
+   "direzione_godot": [
+    -0.282,
+    -0.247,
+    -0.927
+   ],
+   "colore": [
+    1.0,
+    0.9,
+    0.76
    ]
   },
   {
@@ -1246,13 +1630,13 @@
   "S04_statua": {
    "pos_blender": [
     0.35,
-    -11.4,
+    -19.2,
     1.65
    ],
    "guarda_blender": [
     0.0,
-    -3.0,
-    2.55
+    -10.0,
+    3.1
    ],
    "lente_mm": 18.0
   },
@@ -1271,16 +1655,16 @@
   },
   "S08_piedistallo": {
    "pos_blender": [
-    2.3,
-    -9.7,
-    1.35
+    3.6,
+    -14.9,
+    1.55
    ],
    "guarda_blender": [
-    -0.2,
-    -6.4,
-    1.0
+    0.0,
+    -10.0,
+    1.3
    ],
-   "lente_mm": 26.0
+   "lente_mm": 24.0
   },
   "S09_vasca_bimbi": {
    "pos_blender": [

@@ -45,38 +45,52 @@ func _run() -> void:
 		# (atlante 4096 invece di 8192) e nebbia volumetrica normale. A 1080p non si vede la differenza.
 		Grafica.imposta("ombre", 3)
 		Grafica.imposta("nebbia", 1)
+		Grafica.imposta("ssil", 2)
+		Grafica.imposta("ssao", 3)
 	else:
 		Grafica.applica_preset(preset)
+	# Acqua con SSR nello shader invece del riflesso planare (che rende di nuovo la scena).
 	var wm := get_node_or_null(^"/root/WaterManager")
-	if wm and only.size() > 0 and not (only.has("piscina") or only.has("torcia")):
-		wm.set(&"quality", 1)  # l'acqua non si vede: niente riflesso planare
+	if wm:
+		wm.set(&"quality", 1)
 	get_tree().change_scene_to_file(LEVEL)
 	await _frames(10)
 	get_tree().paused = false
 	level = get_tree().current_scene
 	p = GameState.player
+	for we in level.find_children("*", "WorldEnvironment", true, false):
+		if (we as WorldEnvironment).environment:
+			(we as WorldEnvironment).environment.sdfgi_cascades = 3
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
-	var storm: Tempesta = level.get_node("Tempesta")
+	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
 	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
 	lamp.turn_on()
+	# Davanti alla statua la torcia è spenta: la illuminano solo le sue luci da monumento.
+	var torch := p.find_child("Torcia", true, false) as Torcia
+	var statue_only := not only.is_empty()
+	for o in only:
+		if not String(o).begins_with("statua") and o != "ingresso_statua":
+			statue_only = false
+	if torch and statue_only:
+		torch.imposta_accesa(false)
 	if _want("ingresso_statua"):
 		# Dall'uscita degli spogliatoi: la medusa intera sul piedistallo, la cupola dietro.
-		await _shot("ingresso_statua", Vector3(0.0, 0.0, 11.2), Vector3(0.0, 3.2, 6.9))
+		await _shot("ingresso_statua", Vector3(0.0, 0.0, 19.2), Vector3(0.0, 3.4, 10.0))
 	if _want("statua_lampo_ingresso"):
-		await _shot("statua_lampo_ingresso", Vector3(0.0, 0.0, 11.2), Vector3(0.0, 3.2, 6.9), func(): storm.lampo_ora(1.4, 0.5, PI * 0.95), 4)
+		await _shot("statua_lampo_ingresso", Vector3(0.0, 0.0, 19.2), Vector3(0.0, 3.4, 10.0), func(): storm.lampo_ora(1.4, 0.5, PI * 0.95), 4)
 	if _want("statua_meta"):
 		# A metà strada.
-		await _shot("statua_meta", Vector3(-0.5, 0.0, 9.6), Vector3(0.0, 3.7, 6.9))
+		await _shot("statua_meta", Vector3(-0.6, 0.0, 15.3), Vector3(0.0, 3.8, 10.0))
 	if _want("statua_piedi"):
 		# Ai suoi piedi, guardando in su: deve incombere.
-		await _shot("statua_piedi", Vector3(-0.75, 0.0, 9.1), Vector3(0.0, 4.9, 6.9))
+		await _shot("statua_piedi", Vector3(-0.9, 0.0, 13.3), Vector3(0.0, 5.0, 10.0))
 	if _want("statua_vicino"):
-		await _shot("statua_vicino", Vector3(1.7, 0.0, 9.2), Vector3(0.0, 3.6, 6.9))
+		await _shot("statua_vicino", Vector3(1.9, 0.0, 13.6), Vector3(0.0, 3.8, 10.0))
 	if _want("statua_lampo"):
-		await _shot("statua_lampo", Vector3(-2.2, 0.0, 9.6), Vector3(0.0, 3.4, 6.9), func(): storm.lampo_ora(1.3, 0.6, PI * 0.8), 5)
+		await _shot("statua_lampo", Vector3(-2.4, 0.0, 14.0), Vector3(0.0, 3.6, 10.0), func(): storm.lampo_ora(1.3, 0.6, PI * 0.8), 5)
 	if _want("piscina"):
 		# Dal bordo della parte profonda verso la spiaggia e l'area bimbi, sotto la cupola.
 		await _shot("piscina", Vector3(5.6, 0.0, 6.6), Vector3(-2.0, -1.0, -6.0))

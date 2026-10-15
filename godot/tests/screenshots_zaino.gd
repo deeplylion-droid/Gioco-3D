@@ -29,21 +29,33 @@ func _run() -> void:
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("ultra" if preset == "ultra" else preset)
 	if preset == "ultra":
+		# Come screenshots_sala.gd: Ultra con SDFGI, qualche effetto un livello sotto per la
+		# memoria del renderer software.
 		Grafica.imposta("gi", 2)
+		Grafica.imposta("ombre", 3)
+		Grafica.imposta("nebbia", 1)
+		Grafica.imposta("ssil", 2)
+		Grafica.imposta("ssao", 3)
+	var wm := get_node_or_null(^"/root/WaterManager")
+	if wm:
+		wm.set(&"quality", 1)
 	get_tree().change_scene_to_file(LEVEL)
 	await _frames(10)
 	get_tree().paused = false
 	var level := get_tree().current_scene
 	var p: Player = GameState.player
+	for we in level.find_children("*", "WorldEnvironment", true, false):
+		if (we as WorldEnvironment).environment:
+			(we as WorldEnvironment).environment.sdfgi_cascades = 3
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
-	var storm: Tempesta = level.get_node("Tempesta")
+	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
 	(level.get_node("Statua/Sfarfallio") as FlickerLight).turn_on()
 	# 1) Lo zaino sulla rastrelliera dei bagnini, all'ingresso.
 	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
-	p.teleport(Vector3(3.7, 0, 9.9), 0.0, 0.0)
+	p.teleport(Vector3(3.7, 0, 17.9), 0.0, 0.0)
 	p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
 	await _frames(settle)
 	await _capture("zaino_sulla_rastrelliera")

@@ -12,8 +12,8 @@ const SALA := "res://assets/ambiente/sala/"
 const MAT_DIR := "res://assets/materials/sala/"
 
 ## Quota del piano del piedistallo e centro (dalla guida dell'ambiente).
-const PEDESTAL := Vector3(0.0, 0.9, 6.9)
-const SPAWN := Vector3(0.0, 0.0, 11.2)
+const PEDESTAL := Vector3(0.0, 1.15, 10.0)
+const SPAWN := Vector3(0.0, 0.0, 19.2)
 ## Pozza torbida sul fondo della piscina a onde: fondo a conca intorno allo scarico.
 const DRAIN := Vector3(0.0, -2.24, 2.0)
 const PUDDLE_LEVEL := -2.07
@@ -41,7 +41,6 @@ func _initialize() -> void:
 	level = Node3D.new()
 	level.name = "SalaPrincipale"
 	level.set_script(load("res://scripts/game/sala_principale.gd"))
-	_environment()
 	_hall()
 	_statue()
 	_pack_station()
@@ -80,7 +79,21 @@ func _save(m: Material, file: String) -> Material:
 
 
 func _materials() -> void:
-	M.metal = _std("metallo_verniciato", Color(0.16, 0.19, 0.2), 0.55, 0.6)
+	# Metallo verniciato e arrugginito (texture CC0 di Poly Haven, in triplanare).
+	var rust := StandardMaterial3D.new()
+	var tex := "res://assets/textures/metallo_ruggine/green_metal_rust_"
+	rust.albedo_texture = load(tex + "diff.jpg")
+	rust.albedo_color = Color(0.85, 0.9, 0.9)
+	rust.normal_enabled = true
+	rust.normal_texture = load(tex + "nor_gl.jpg")
+	rust.roughness_texture = load(tex + "rough.jpg")
+	rust.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
+	rust.metallic = 0.45
+	rust.uv1_triplanar = true
+	rust.uv1_world_triplanar = true
+	rust.uv1_scale = Vector3.ONE * 1.6
+	rust.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	M.metal = _save(rust, "metallo_verniciato")
 	M.red = _std("gonfiabile_rosso", Color(0.78, 0.07, 0.06), 0.22)
 	(M.red as StandardMaterial3D).clearcoat_enabled = true
 	ResourceSaver.save(M.red, M.red.resource_path)
@@ -107,58 +120,20 @@ func _materials() -> void:
 	M.dome_glass = _save(glass, "vetro_cupola")
 
 
-func _environment() -> void:
-	# L'ambiente notturno dell'addon grafica (cielo in tempesta visto dalla cupola, AgX,
-	# nebbia volumetrica, SSR/SSAO/SSIL, glow), regolato per la sala vera.
-	var e: Environment = load("res://addons/grafica/ambiente_horror.gd").crea(true)
-	e.ambient_light_color = Color(0.3, 0.38, 0.5)
-	e.ambient_light_energy = 0.22
-	e.tonemap_exposure = 1.35
-	e.volumetric_fog_density = 0.016
-	e.volumetric_fog_albedo = Color(0.62, 0.68, 0.76)
-	e.volumetric_fog_gi_inject = 0.4
-	e.volumetric_fog_ambient_inject = 0.06
-	e.sdfgi_use_occlusion = true
-	e.sdfgi_read_sky_light = false
-	e.sdfgi_cascades = 4
-	e.sdfgi_min_cell_size = 0.2
-	e.sdfgi_energy = 1.1
-	e.ssr_max_steps = 64
-	e.ssr_fade_in = 0.15
-	e.ssr_fade_out = 2.0
-	e.glow_intensity = 0.55
-	e.glow_bloom = 0.025
-	e.glow_hdr_threshold = 1.15
-	ResourceSaver.save(e, "res://assets/env/sala_environment.tres")
-	e.take_over_path("res://assets/env/sala_environment.tres")
-	var we := WorldEnvironment.new()
-	we.name = "WorldEnvironment"
-	we.environment = e
-	own(we)
-	M.env = e
-	# Lampi della tempesta (addon grafica): luce che si muove, cielo e vetro della cupola.
-	var storm: Node3D = load("res://addons/grafica/tempesta.gd").new()
-	storm.name = "Tempesta"
-	storm.set(&"intervallo_min", 9.0)
-	storm.set(&"intervallo_max", 20.0)
-	storm.set(&"energia_lampo", 7.0)
-	var mats: Array[ShaderMaterial] = [M.dome_glass]
-	storm.set(&"materiali", mats)
-	own(storm)
-
-
 # --- Sala: i GLB dell'ambiente, le luci e la toppa delle collisioni ------------------------
 
 func _hall() -> void:
 	var sala := Node3D.new()
 	sala.name = "Sala"
-	# Lo script dell'ambiente regola le luci di sala_luci.glb e fa sfarfallare i neon.
-	sala.set_script(load("res://assets/ambiente/sala_luci_ambiente.gd"))
-	sala.set(&"crea_ambiente", false)
+	# Il look della sala (addon grafica): luci di sala_luci.glb riconosciute per nome, ambiente
+	# notturno, GI, sonde dei riflessi, tempesta coi lampi, nebbia bassa, polvere, gocce.
+	sala.set_script(load("res://scripts/environment/look_sala_lunga.gd"))
+	var flash_mats: Array[ShaderMaterial] = [M.dome_glass]
+	sala.set(&"materiali_lampo", flash_mats)
 	own(sala)
 	for part in [["Architettura", "sala_architettura"], ["Cupola", "sala_cupola"], ["Piscina", "sala_piscina"],
 			["AreaBimbi", "sala_area_bimbi"], ["TorreScivoli", "sala_torre_scivoli"], ["Oggetti", "sala_oggetti"],
-			["Interattivi", "sala_interattivi"], ["Luci", "sala_luci"]]:
+			["Interattivi", "sala_interattivi"], ["Monumento", "sala_monumento"], ["Luci", "sala_luci"]]:
 		var inst: Node3D = (load(SALA + part[1] + ".glb") as PackedScene).instantiate()
 		inst.name = part[0]
 		own(inst, sala)
@@ -206,7 +181,21 @@ func _statue() -> void:
 	glow.set(&"light_energy", 0.35)
 	glow.set(&"omni_range", 3.5)
 	own(glow, medusa)
-	_monument_lights(statue)
+	# Controluce: dall'alto, da dietro, stacca la statua dalla sala (la luce principale sono i
+	# due fari sulla ringhiera della galleria, in sala_luci.glb).
+	var rim := SpotLight3D.new()
+	rim.name = "Controluce"
+	rim.position = Vector3(0.0, 9.6, -4.2)
+	own(rim, statue)
+	rim.look_at_from_position(rim.position, Vector3(0, PEDESTAL.y + 3.4, 0), Vector3.UP)
+	rim.light_color = Color(0.68, 0.82, 1.0)
+	rim.light_energy = 5.0
+	rim.spot_range = 14.0
+	rim.spot_angle = 14.0
+	rim.spot_angle_attenuation = 1.2
+	rim.shadow_enabled = true
+	rim.light_volumetric_fog_energy = 1.2
+	rim.set_meta(&"grafica_priorita_ombra", 1)
 	# Il pulsante per i bambini sul davanti del piedistallo (è già nel modello: qui c'è solo
 	# il bersaglio per il getto).
 	var jingle: WaterButton = S.button.instantiate()
@@ -214,7 +203,7 @@ func _statue() -> void:
 	jingle.mode = WaterButton.Mode.MOMENTARY
 	jingle.radius = 0.14
 	jingle.show_model = false
-	jingle.position = Vector3(0, 0.47, 1.14)
+	jingle.position = Vector3(0, 0.8, 1.47)
 	own(jingle, statue)
 	level.set(&"jingle_button", jingle)
 	level.set(&"jingle_button_mesh", NodePath("Sala/Interattivi/sala_pulsante_piedistallo"))
@@ -230,75 +219,7 @@ func _statue() -> void:
 	own(flicker, statue)
 	level.set(&"statue_lamp", flicker)
 	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
-	level.set(&"statue_lamp_aim", Vector3(PEDESTAL.x, 4.4, PEDESTAL.z))
-
-
-## Luci da monumento: un faro dall'alto e tre fari a terra intorno al piedistallo, con i fasci
-## che si vedono nella nebbia. Coordinate locali al gruppo della statua (centro del piedistallo).
-func _monument_lights(statue: Node3D) -> void:
-	var top := PEDESTAL.y + MEDUSA_TOP_Y * MEDUSA_SCALE
-	var chest := Vector3(0, PEDESTAL.y + (MEDUSA_BELL_Y + 0.75) * MEDUSA_SCALE, 0)
-	var key := SpotLight3D.new()
-	key.name = "FaroDallAlto"
-	key.position = Vector3(0.0, 9.8, 2.8)
-	own(key, statue)
-	key.look_at_from_position(key.position, chest, Vector3.UP)
-	key.light_color = Color(1.0, 0.93, 0.84)
-	key.light_energy = 4.5
-	key.spot_range = 16.0
-	key.spot_angle = 15.0
-	key.spot_angle_attenuation = 1.6
-	key.shadow_enabled = true
-	key.light_size = 0.05
-	key.light_volumetric_fog_energy = 1.4
-	key.set_meta(&"grafica_priorita_ombra", 0)
-	var housing := StandardMaterial3D.new()
-	housing.albedo_color = Color(0.08, 0.08, 0.09)
-	housing.roughness = 0.5
-	housing.metallic = 0.7
-	var lens := StandardMaterial3D.new()
-	lens.albedo_color = Color(0.9, 0.95, 1.0)
-	lens.emission_enabled = true
-	lens.emission = Color(0.9, 0.95, 1.0)
-	lens.emission_energy_multiplier = 6.0
-	# [posizione a terra, colore, energia]
-	for u in [[Vector3(-1.45, 0.0, 1.35), Color(0.72, 0.88, 1.0), 1.5], [Vector3(1.45, 0.0, 1.35), Color(0.72, 0.88, 1.0), 1.5],
-			[Vector3(0.0, 0.0, -1.7), Color(1.0, 0.45, 0.78), 1.0]]:
-		var base := MeshInstance3D.new()
-		base.name = "FaroATerra"
-		var cm := CylinderMesh.new()
-		cm.top_radius = 0.13
-		cm.bottom_radius = 0.16
-		cm.height = 0.16
-		base.mesh = cm
-		base.material_override = housing
-		base.position = u[0] + Vector3(0, 0.08, 0)
-		own(base, statue)
-		var glass := MeshInstance3D.new()
-		glass.name = "Vetro"
-		var gm := CylinderMesh.new()
-		gm.top_radius = 0.11
-		gm.bottom_radius = 0.11
-		gm.height = 0.01
-		glass.mesh = gm
-		var lm := lens.duplicate() as StandardMaterial3D
-		lm.emission = u[1]
-		glass.material_override = lm
-		glass.position = Vector3(0, 0.085, 0)
-		own(glass, base)
-		var up := SpotLight3D.new()
-		up.name = "FaroDalBasso"
-		up.position = u[0] + Vector3(0, 0.2, 0)
-		own(up, statue)
-		up.look_at_from_position(up.position, Vector3(0, top * 0.62, 0), Vector3.FORWARD)
-		up.light_color = u[1]
-		up.light_energy = u[2]
-		up.spot_range = 9.0
-		up.spot_angle = 24.0
-		up.spot_angle_attenuation = 1.2
-		up.shadow_enabled = true
-		up.light_volumetric_fog_energy = 0.7
-		up.set_meta(&"grafica_priorita_ombra", 1)
+	level.set(&"statue_lamp_aim", Vector3.INF)
 
 
 # --- La postazione dei bagnini all'ingresso: rastrelliera con lo zaino-pompa ---------------------
@@ -307,7 +228,7 @@ func _pack_station() -> void:
 	# Gli spogliatoi e lo stanzino dei bagnini non sono ancora modellati: per la demo lo zaino
 	# sta su una rastrelliera dei bagnini contro il muro dell'ingresso, sotto la luce rossa.
 	var st := group(level, "PostazioneBagnini")
-	st.position = Vector3(4.3, 0.0, 11.55)
+	st.position = Vector3(4.3, 0.0, 19.55)
 	st.rotation = Vector3(0, PI, 0)
 	var rack := csg_root(st, "Rastrelliera")
 	for x in [-0.9, 0.9]:
@@ -325,17 +246,18 @@ func _pack_station() -> void:
 	pick.set(&"remove_node", holder)
 	own(pick, holder)
 	shape_box(pick, Vector3(0.8, 0.8, 0.6), Vector3(0, 0.35, 0))
+	# Una luce calda e debole davanti alla rastrelliera, giusto per far notare lo zaino.
 	var spot := SpotLight3D.new()
 	spot.name = "LuceZaino"
-	spot.position = Vector3(0.0, 2.7, -1.1)
+	spot.position = Vector3(-0.1, 1.55, 1.05)
 	own(spot, st)
-	spot.look_at_from_position(spot.position, Vector3(-0.25, 0.9, 0.0), Vector3.UP)
-	spot.light_color = Color(1.0, 0.9, 0.75)
-	spot.light_energy = 2.5
-	spot.spot_range = 4.5
-	spot.spot_angle = 26.0
-	spot.shadow_enabled = true
-	spot.set_meta(&"grafica_priorita_ombra", 1)
+	spot.look_at_from_position(spot.position, Vector3(-0.25, 1.0, 0.0), Vector3.UP)
+	spot.light_color = Color(1.0, 0.8, 0.58)
+	spot.light_energy = 0.45
+	spot.spot_range = 1.8
+	spot.spot_angle = 32.0
+	spot.light_volumetric_fog_energy = 0.0
+	spot.shadow_enabled = false
 
 
 # --- Piscina a onde vuota: la pozza, la turbina dello scarico e il portello ----------------------
@@ -509,9 +431,9 @@ func _polaroids() -> void:
 	# Le zone del documento del livello che non sono ancora modellate (corridoio, spogliatoi,
 	# stanzino, camera delle onde, sala pompe, ponte inferiore) hanno un posto provvisorio in sala.
 	var spots := [
-		[1, Vector3(-1.6, 0.0, 10.4), 0.4],     # vicino a dove si entra
+		[1, Vector3(-1.6, 0.0, 18.4), 0.4],     # vicino a dove si entra
 		[2, Vector3(-6.0, 0.6, 8.0), 1.2],      # su un lettino
-		[3, Vector3(4.6, 0.85, 11.35), 2.9],    # sulla rastrelliera dei bagnini, accanto allo zaino
+		[3, Vector3(4.6, 0.85, 19.35), 2.9],    # sulla rastrelliera dei bagnini, accanto allo zaino
 		[4, Vector3(-11.3, 6.4, -17.4), 0.2],   # in cima alla struttura di gioco, accanto al secchio
 		[5, Vector3(1.2, -2.0, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
 		[6, Vector3(-4.6, -1.9, 4.2), 0.9],     # vicino alle bocchette della camera delle onde
@@ -534,48 +456,12 @@ func _polaroids() -> void:
 
 func _atmosphere() -> void:
 	var fx := group(level, "Atmosfera")
-	# Una sonda dei riflessi per tutta la sala (interno, proiezione a scatola): i pavimenti
-	# bagnati e l'acqua riflettono la sala anche fuori dallo schermo (dove SSR non arriva).
-	var probe := ReflectionProbe.new()
-	probe.name = "RiflessiSala"
-	probe.position = Vector3(0.0, 4.0, -6.0)
-	probe.size = Vector3(40.0, 15.0, 36.0)
-	probe.origin_offset = Vector3(0.0, -2.4, 6.0)
-	probe.box_projection = true
-	probe.interior = true
-	probe.update_mode = ReflectionProbe.UPDATE_ONCE
-	probe.ambient_mode = ReflectionProbe.AMBIENT_DISABLED
-	probe.mesh_lod_threshold = 4.0
-	own(probe, fx)
-	# Nebbia bassa che striscia sul pavimento e riempie la piscina vuota.
-	var fm := FogMaterial.new()
-	fm.density = 0.06
-	fm.albedo = Color(0.7, 0.75, 0.8)
-	fm.height_falloff = 1.6
-	for f in [["NebbiaBassa", Vector3(40, 2.0, 36), Vector3(0, 0.3, -6)], ["NebbiaPiscina", Vector3(14, 2.4, 18), Vector3(0, -1.3, -4)]]:
-		var fog := FogVolume.new()
-		fog.name = f[0]
-		fog.size = f[1]
-		fog.position = f[2]
-		fog.material = fm
-		own(fog, fx)
-	# Polvere che si vede nella luce della lampada sopra la statua e nella torcia.
-	var dust: Node3D = load("res://addons/grafica/pulviscolo.gd").new()
-	dust.name = "PolvereStatua"
-	dust.set(&"volume", Vector3(6, 4, 6))
-	dust.position = Vector3(PEDESTAL.x, 2.4, PEDESTAL.z + 0.6)
-	own(dust, fx)
-	# Gocce che cadono nella pozza e fanno cerchi (addon acqua).
+	# Gocce che cadono nella pozza e fanno cerchi (addon acqua). Il resto dell'atmosfera
+	# (sonde, nebbia bassa, polvere, gocce dal soffitto) lo crea il look della sala.
 	var drip: Node3D = (load("res://addons/acqua/scenes/gocciolatoio.tscn") as PackedScene).instantiate()
 	drip.name = "GocceNellaPozza"
 	drip.position = Vector3(DRAIN.x + 0.9, 4.5, DRAIN.z + 0.6)
 	own(drip, fx)
-	# Gocce dal soffitto (con lo schizzo) vicino all'ingresso e sul bordo della piscina.
-	for g in [Vector3(-3.4, 4.0, 9.8), Vector3(6.2, 4.0, 5.6), Vector3(-7.6, 4.0, -3.0)]:
-		var drops: Node3D = load("res://addons/grafica/gocce.gd").new()
-		drops.name = "Gocce"
-		drops.position = g
-		own(drops, fx)
 
 
 # --- Giocatore, checkpoint, trigger -----------------------------------------------------------
@@ -587,7 +473,7 @@ func _gameplay() -> void:
 	player.position = SPAWN
 	own(player, level)
 	checkpoint(gp, "CheckpointIngresso", 0, SPAWN + Vector3(0, 1.5, 0), Vector3(4, 3, 1.4), Vector3(0, -1.5, 0), 0.0)
-	checkpoint(gp, "CheckpointStatua", 1, Vector3(0, 1.5, 4.6), Vector3(8, 3, 1.5), Vector3(0, -1.5, 0), 0.0)
+	checkpoint(gp, "CheckpointStatua", 1, Vector3(0, 1.5, 14.4), Vector3(8, 3, 1.5), Vector3(0, -1.5, 0), 0.0)
 	checkpoint(gp, "CheckpointSpiaggia", 2, Vector3(0, 1.5, -14.2), Vector3(14, 3, 1.5), Vector3(0, -1.5, 0), PI)
 	checkpoint(gp, "CheckpointFondo", 3, Vector3(0, -0.6, -1.0), Vector3(12, 3, 1.5), Vector3(0, -1.5, 0), PI)
 	var trig := Area3D.new()
@@ -595,9 +481,9 @@ func _gameplay() -> void:
 	trig.collision_layer = 0
 	trig.collision_mask = Layers.PLAYER
 	trig.monitorable = false
-	trig.position = Vector3(0, 1.5, 9.0)
+	trig.position = Vector3(0, 1.5, 15.8)
 	own(trig, gp)
-	shape_box(trig, Vector3(7, 3, 1.0))
+	shape_box(trig, Vector3(8, 3, 1.0))
 	level.set(&"lamp_trigger", trig)
 
 
@@ -620,7 +506,6 @@ func _kid_sighting() -> void:
 	ks.set(&"spots", PackedVector3Array([Vector3(-18.4, 4.3, -11.2), Vector3(-18.6, 4.3, -9.7),
 		Vector3(-18.3, 4.3, -8.1), Vector3(-18.5, 4.3, -6.6), Vector3(-18.4, 4.3, -5.0)]))
 	ks.set(&"trigger", trig)
-	ks.set(&"storm", level.get_node("Tempesta"))
 	own(ks)
 
 
