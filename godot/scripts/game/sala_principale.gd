@@ -55,11 +55,13 @@ func _ready() -> void:
 func _setup_hall() -> void:
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D
 	if lamp:
-		lamp.look_at(statue_lamp_aim, Vector3.UP)
-		lamp.spot_angle = 38.0
+		# Se c'è un punto da guardare (non infinito) la lampada si orienta lì.
+		if statue_lamp_aim.is_finite():
+			lamp.look_at(statue_lamp_aim, Vector3.UP)
+		lamp.spot_angle = 42.0
 		lamp.spot_range = 10.0
 		lamp.spot_angle_attenuation = 0.8
-		lamp.light_volumetric_fog_energy = 0.7
+		lamp.light_volumetric_fog_energy = 0.9
 		lamp.shadow_enabled = true
 		lamp.light_size = 0.08
 		lamp.set_meta(&"grafica_priorita_ombra", 0)

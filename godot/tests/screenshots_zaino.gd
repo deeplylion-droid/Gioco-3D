@@ -44,18 +44,18 @@ func _run() -> void:
 	get_tree().paused = false
 	var level := get_tree().current_scene
 	var p: Player = GameState.player
-	var we := level.get_node_or_null(^"WorldEnvironment") as WorldEnvironment
-	if we and we.environment:
-		we.environment.sdfgi_cascades = 3
+	for we in level.find_children("*", "WorldEnvironment", true, false):
+		if (we as WorldEnvironment).environment:
+			(we as WorldEnvironment).environment.sdfgi_cascades = 3
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
-	var storm: Tempesta = level.get_node("Tempesta")
+	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
 	(level.get_node("Statua/Sfarfallio") as FlickerLight).turn_on()
 	# 1) Lo zaino sulla rastrelliera dei bagnini, all'ingresso.
 	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
-	p.teleport(Vector3(3.7, 0, 9.9), 0.0, 0.0)
+	p.teleport(Vector3(3.7, 0, 17.9), 0.0, 0.0)
 	p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
 	await _frames(settle)
 	await _capture("zaino_sulla_rastrelliera")

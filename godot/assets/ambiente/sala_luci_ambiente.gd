@@ -8,6 +8,8 @@ extends Node3D
 @export var energia_neon := 2.5
 @export var energia_lampione := 10.0
 @export var energia_luna := 0.35
+@export var energia_fari := 9.0
+@export var energia_faretti_bassi := 2.5
 @export var crea_ambiente := true
 @export var neon_che_sfarfallano := 4
 
@@ -37,7 +39,20 @@ func _regola(n: Node) -> void:
 			o.omni_range = 9.0
 	elif n is SpotLight3D:
 		var s := n as SpotLight3D
-		if s.name == "luce_lampione":
+		if s.name.begins_with("luce_faro"):
+			# fari sulla ringhiera della galleria sud: illuminano la statua come un monumento
+			s.light_energy = energia_fari
+			s.spot_range = 16.0
+			s.spot_angle = 13.0
+			s.spot_angle_attenuation = 0.6
+			s.shadow_enabled = true
+		elif s.name.begins_with("luce_monumento_basso"):
+			# faretti incassati nel gradino: la statua dal basso
+			s.light_energy = energia_faretti_bassi
+			s.spot_range = 6.5
+			s.spot_angle = 26.0
+			s.shadow_enabled = false
+		elif s.name == "luce_lampione":
 			s.light_energy = energia_lampione
 			s.spot_range = 9.0
 			s.spot_angle = 55.0
