@@ -89,9 +89,8 @@ func _run() -> void:
 	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
 	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
-	lamp.turn_on()
 	# Negli scatti la lampada è già accesa e ferma (niente accensione a colpi nella nebbia).
-	lamp.set(&"_startup", -1.0)
+	lamp.turn_on(true)
 	# Davanti alla statua la torcia è spenta: la illuminano solo le sue luci da monumento.
 	var torch := p.find_child("Torcia", true, false) as Torcia
 	var statue_only := not only.is_empty()

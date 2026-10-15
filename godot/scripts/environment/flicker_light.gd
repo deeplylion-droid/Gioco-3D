@@ -38,11 +38,16 @@ func set_targets(new_light: Light3D, emissive: StandardMaterial3D = null) -> voi
 	_set_level(_level if is_on else 0.0)
 
 
-func turn_on() -> void:
+## Accende la luce: con [param instant] subito al massimo, senza i colpi dell'accensione (per
+## esempio ripartendo da un checkpoint con la luce già accesa).
+func turn_on(instant := false) -> void:
 	if is_on:
 		return
 	is_on = true
-	_startup = 0.0
+	_startup = -1.0 if instant else 0.0
+	if instant:
+		_level = 1.0
+		_set_level(1.0)
 
 
 func turn_off() -> void:

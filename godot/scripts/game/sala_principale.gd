@@ -38,6 +38,9 @@ func _ready() -> void:
 	_setup_hall()
 	if lamp_trigger:
 		lamp_trigger.body_entered.connect(_on_lamp_trigger)
+		# Ripartendo da un checkpoint già oltre il lampione la lampada è accesa: il trigger è
+		# all'ingresso e non lo si ripassa.
+		GameState.player_respawned.connect(_on_player_respawned)
 	if jingle_button:
 		jingle_button.pressed.connect(_on_jingle)
 		_press_with(jingle_button, jingle_button_mesh)
@@ -164,6 +167,12 @@ func on_pack_taken() -> void:
 func _on_lamp_trigger(body: Node3D) -> void:
 	if body is Player and statue_lamp and not statue_lamp.is_on:
 		statue_lamp.turn_on()
+
+
+func _on_player_respawned() -> void:
+	var p := GameState.player
+	if statue_lamp and not statue_lamp.is_on and p and p.global_position.z < lamp_trigger.global_position.z:
+		statue_lamp.turn_on(true)
 
 
 func _on_jingle() -> void:
