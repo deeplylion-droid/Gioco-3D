@@ -154,16 +154,22 @@ func _prepara_luci() -> void:
 		neon.name = String(tubo.name).replace("_tubo_sfarfalla", "_neon")
 		neon.set(&"modalita", 1)
 		neon.set(&"colore", Color(0.6, 0.95, 1.0))
-		tubo.get_parent().add_child(neon)
-		neon.global_transform = tubo.global_transform
-		tubo.reparent(neon, true)
+		# Il Neon va montato completo (tubo del modello + luce) PRIMA di entrare nella scena,
+		# come negli interni: se entra vuoto si costruisce da solo un'altra plafoniera con
+		# un'altra luce (neon doppi) e non vede la luce aggiunta dopo.
+		var genitore := tubo.get_parent()
+		neon.transform = (tubo as Node3D).transform
+		genitore.remove_child(tubo)
+		neon.add_child(tubo)
+		(tubo as Node3D).transform = Transform3D.IDENTITY
 		var luce := OmniLight3D.new()
 		luce.light_color = Color(0.6, 0.95, 1.0)
 		luce.light_energy = 1.2
 		luce.omni_range = 7.0
 		luce.shadow_enabled = true
-		neon.add_child(luce)
 		luce.position = Vector3(0, -0.2, 0)
+		neon.add_child(luce)
+		genitore.add_child(neon)
 	var i := 0
 	for l in ambienti.find_children("LUCE_rossa_*", "Light3D", true, false):
 		var le: Node3D = LUCE_EMERGENZA_SCRIPT.new()

@@ -21,7 +21,7 @@ func _init() -> void:
 	var s := ProjectSettings
 	s.set_setting("application/config/name", "Splash Lagoon")
 	s.set_setting("application/config/description", "Horror in prima persona (mascot horror) sull'acquapark di una nave da crociera abbandonata. Titolo provvisorio.")
-	s.set_setting("application/config/version", "0.2.1")
+	s.set_setting("application/config/version", "0.3.0")
 	s.set_setting("application/run/main_scene", "res://scenes/ui/menu_principale.tscn")
 	s.set_setting("application/config/icon", "res://icon.svg")
 	s.set_setting("application/boot_splash/bg_color", Color(0, 0, 0, 1))

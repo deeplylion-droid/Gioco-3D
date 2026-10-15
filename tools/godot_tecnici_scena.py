@@ -26,6 +26,7 @@ EXT = [
     ('Script', 'res://addons/acqua/scripts/water_tank_link.gd', 's_link'),
     ('Resource', 'res://addons/acqua/presets/stile_3_scura.tres', 'r_stile'),
     ('Script', 'res://scripts/mechanisms/ladder.gd', 's_ladder'),
+    ('PackedScene', 'res://scenes/tecnici/luci_tecnici.tscn', 'p_luci'),
 ]
 
 
@@ -164,6 +165,9 @@ for nome, pos, size in [('RiflessiCamera', (12, 2.1, 0), (24.4, 4.4, 4.6)),
                         ('RiflessiRampa', (47.0, 6.7, -7.8), (7.2, 6.4, 2.6))]:
     node(nome, 'ReflectionProbe', 'Atmosfera', props={'position': V(*pos), 'size': V(*size), 'box_projection': 'true',
                                                       'interior': 'true', 'ambient_mode': '0'})
+
+# le luci finali (addon grafica, LookTecnici): seguono da sole GameState.luci (prima, flash, blackout)
+node('LuciTecnici', parent='.', inst='p_luci')
 
 testo = ['[gd_scene format=3]', ''] + [f'[ext_resource type="{t}" path="{p}" id="{i}"]' for t, p, i in EXT] + [''] + subs + nodes
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
