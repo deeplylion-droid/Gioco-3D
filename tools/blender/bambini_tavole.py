@@ -25,23 +25,15 @@ FONDO = (14, 15, 18)
 TAVOLE = {
     'cubo': ('TESTA A CUBO', 'modello 3D in Blender, alto 1,2 m', [
         ('cubo_calmo_eroe.png', 'cubo_travestito_acquapark', 'TRAVESTITO'),
-        ('cubo_rivelato_eroe.png', 'cubo_rivelato_acquapark', 'RIVELATO · occhi gialli'),
-        ('cubo_rivelato_eroe_occhi_rosa.png', 'cubo_rivelato_occhi_rosa_acquapark', 'RIVELATO · occhi rosa'),
-        ('cubo_calmo_giro.png', 'cubo_travestito_giro', 'TRAVESTITO · davanti, 3/4, dietro'),
-        ('cubo_rivelato_giro.png', 'cubo_rivelato_giro', 'RIVELATO · davanti, 3/4, dietro'),
+        ('cubo_rivelato_eroe.png', 'cubo_rivelato_acquapark', 'RIVELATO'),
         ('@studio:cubo_calmo', 'cubo_travestito_studio', 'TRAVESTITO · studio: davanti, 3/4, dietro'),
         ('@studio:cubo_rivelato', 'cubo_rivelato_studio', 'RIVELATO · studio: davanti, 3/4, dietro'),
     ]),
     'agnello': ('AGNELLINO', 'modello 3D in Blender, alto 1,2 m', [
         ('agnello_calmo_eroe.png', 'agnello_travestito_acquapark', 'TRAVESTITO'),
-        ('agnello_lupo_eroe.png', 'agnello_lupo_acquapark', 'RIVELATO · testa di lupo'),
-        ('agnello_occhio_eroe.png', 'agnello_occhio_acquapark', 'VARIANTE · occhio unico'),
-        ('agnello_calmo_giro.png', 'agnello_travestito_giro', 'TRAVESTITO · davanti, 3/4, dietro'),
-        ('agnello_lupo_giro.png', 'agnello_lupo_giro', 'LUPO · davanti, 3/4, dietro'),
-        ('agnello_occhio_giro.png', 'agnello_occhio_giro', 'OCCHIO · davanti, 3/4, dietro'),
+        ('agnello_occhio_eroe.png', 'agnello_occhio_acquapark', 'RIVELATO · occhio unico'),
         ('@studio:agnello_calmo', 'agnello_travestito_studio', 'TRAVESTITO · studio: davanti, 3/4, dietro'),
-        ('@studio:agnello_lupo', 'agnello_lupo_studio', 'RIVELATO · studio: davanti, 3/4, dietro'),
-        ('@studio:agnello_occhio', 'agnello_occhio_studio', 'OCCHIO · studio: davanti, 3/4, dietro'),
+        ('@studio:agnello_occhio', 'agnello_occhio_studio', 'RIVELATO · studio: davanti, 3/4, dietro'),
     ]),
 }
 
@@ -78,6 +70,18 @@ def etichetta(im, testo, dim=58):
     return im
 
 
+def con_banda(im, testo, dim=52, alto=96):
+    """Etichetta in una fascia scura sopra l'immagine (per le viste da studio, dove le teste
+    arrivano in cima e un'etichetta sopra le coprirebbe)."""
+    tela = Image.new('RGB', (im.width, im.height + alto), FONDO)
+    tela.paste(im, (0, alto))
+    d = ImageDraw.Draw(tela)
+    f = font(dim)
+    x0, y0, x1, y1 = d.textbbox((0, 0), testo, font=f)
+    d.text((28 - x0, (alto - (y1 - y0)) // 2 - y0), testo, font=f, fill=(255, 255, 255))
+    return tela
+
+
 def tavola(chiave, cartella):
     titolo, sotto, pannelli = TAVOLE[chiave]
     os.makedirs(os.path.join(OUT, 'render'), exist_ok=True)
@@ -89,7 +93,7 @@ def tavola(chiave, cartella):
             continue
         im.save(os.path.join(OUT, 'render', nome + '.jpg'), quality=90, optimize=True)
         im = im.resize((W, round(im.height * W / im.width)), Image.LANCZOS)
-        blocchi.append(etichetta(im, testo))
+        blocchi.append(con_banda(im, testo) if f.startswith('@studio:') else etichetta(im, testo))
     if not blocchi:
         return None
     th = 190
