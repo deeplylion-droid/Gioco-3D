@@ -144,8 +144,8 @@ Subsurface scattering e refrazione funzionano con il renderer Forward+.
 
 ## Triangoli, texture e LOD
 
-Circa 140 mila triangoli in tutto (corpo circa 60 mila, ciocche circa 33 mila, tentacoli circa 31 mila, campana
-interna e bordo circa 15 mila, occhio e fauce il resto). Texture: corpo e capelli a 4K (colore, normal,
+Circa 160 mila triangoli in tutto (corpo circa 42 mila, ciocche circa 36 mila, tentacoli circa 31 mila, mani
+24 mila, campana interna e bordo circa 18 mila, occhio e fauce il resto). Texture: corpo e capelli a 4K (colore, normal,
 ruvidita'), campana a 2K, tentacoli e ciocche 1024 x 2048 e 512 x 1024.
 
 LOD: Godot crea da solo i livelli di dettaglio all'import (Advanced Import Settings > Meshes > Generate LODs,
@@ -155,11 +155,15 @@ attivo di default): da lontano ogni mesh scende a pochi mila triangoli.
 
 - `occhio`: ruota il bulbo dell'occhio (asse Y dell'osso = direzione dello sguardo). Rotazione massima
   prevista: 15 gradi, oltre il bulbo scopre l'orbita.
-- `mascella` + blend shape `fauce_strappo` (mesh `Medusa`) e `fauce_aperta` (mesh `Medusa_Gola` e
-  `Medusa_Denti`): la fauce. Da chiusa non si vede nulla (il viso resta liscio); l'animazione `fauce_apre`
-  muove tutto insieme (osso e blend shape da 0 a 1). Denti da squalo in tre file per arcata: la prima fila
-  scende dall'arcata di sopra e sale da quella di sotto, una di fronte all'altra e sfalsate di mezzo dente
-  (si incastrano), tutte inclinate verso l'interno della bocca; le file dietro sono piu' piccole e coricate.
+- `mascella` + blend shape `fauce_strappo` (mesh `Medusa`) e `fauce_aperta` (mesh `Medusa_Gola`,
+  `Medusa_Denti` e `Medusa_Strappo`): la fauce. Da chiusa non si vede nulla (il viso resta liscio); l'animazione
+  `fauce_apre` muove tutto insieme (osso e blend shape da 0 a 1). `Medusa_Strappo` e' lo spessore della pelle
+  strappata, un bordino arrotolato lungo i due bordi: colore dai colori dei vertici (pelle fuori, rosa e carne
+  dentro), materiale `M_strappo`; con `medusa_pelle.tres` sul viso conviene dargli la stessa tinta
+  (`albedo_color` 0,74; 0,8; 1 con `vertex_color_use_as_albedo`).
+  Denti da squalo in tre file per arcata: la prima fila scende dall'arcata di sopra e sale da quella di sotto,
+  una di fronte all'altra e sfalsate di mezzo dente (si incastrano), tutte inclinate verso l'interno della bocca;
+  le file dietro sono piu' piccole e coricate.
 - `campana_contrai` (mesh `Medusa`, `Medusa_Interno`, `Medusa_Bordo`): la campana si stringe, per la pulsazione.
 - `radice`: tutto il corpo (in `sveglia` sale di 0,83 m).
 - Catene dei tentacoli, figlie di `campana`, per la fisica (per esempio SpringBoneSimulator3D, una catena

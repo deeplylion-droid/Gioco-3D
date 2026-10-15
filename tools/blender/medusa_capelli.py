@@ -7,7 +7,8 @@ separate e stratificate che seguono le ciocche scolpite, con un po' di volume e 
     "giu' dalla cima";
   - semi sparsi sulla parte esterna dei capelli (distanza minima fissa), linee di flusso tracciate sulla
     superficie a passi di 6 mm proiettati con un BVH: indietro per la radice, che resta sotto le altre ciocche,
-    e avanti fino in fondo; poi la punta continua un poco e si assottiglia;
+    e avanti fino in fondo; poi la punta continua un poco, si arriccia sotto verso la testa e si assottiglia
+    (resta tonda: niente aghi);
   - ogni ciocca e' un nastro a cupola (piatto sotto, tondo sopra), largo 2-4 cm, appoggiato sulla superficie a
     strati di altezza diversa, con UV (u attraverso, v lungo: 0 alla radice, 1 in punta) per le fibre e la punta
     traslucida rosa (come la campana).
@@ -31,7 +32,8 @@ CIOCCHE = dict(
     radice=(0.03, 0.12),        # quanto risale la radice dal seme
     passo=0.006,                # passo del tracciamento
     anelli=0.02,                # distanza tra gli anelli della mesh
-    punta=(0.015, 0.04),        # punta che esce oltre la fine della ciocca scolpita
+    punta=(0.012, 0.028),       # punta che esce oltre la fine della ciocca scolpita
+    arriccio=1.1,               # di quanto si arriccia la punta verso la testa (radianti, alla fine)
     cima=(0.0, 0.03, 0.915),    # cima della testa (da qui scendono)
     centro_testa=(0.0, 0.014, 0.6),
     z_max_semi=0.895,           # niente semi sul ciuffo ad anello in cima
@@ -292,7 +294,9 @@ def ciocca(sup, seme, par, rng):
     k = 4
     for i in range(1, k + 1):
         t = i / k
-        dd = d - N[-1] * 0.12 * t                 # la punta si chiude un poco verso la testa
+        # la punta si arriccia sotto, verso la testa: niente punte dritte che sporgono come aghi
+        a = par['arriccio'] * t
+        dd = d * math.cos(a) - N[-1] * math.sin(a)
         dd /= np.linalg.norm(dd)
         P = np.vstack([P, P[-1] + dd * lp / k])
         N = np.vstack([N, N[-1]])
@@ -313,7 +317,7 @@ def mesh_ciocca(P, N, s, par, rng, u0=0.0):
     W = rng.uniform(*par['larghezza'])
     # profilo: cresce dalla radice, massimo a un terzo, si assottiglia fino alla punta sottile
     prof = np.clip(t / 0.25, 0, 1) ** 0.6 * (1 - 0.88 * np.clip((t - 0.35) / 0.65, 0, 1) ** 1.3)
-    prof = np.maximum(prof, 0.06)
+    prof = np.maximum(prof, 0.13)                    # punta sottile ma tonda, non un ago
     w = W * prof * (1 + 0.1 * np.sin(2 * math.pi * s / 0.09 + rng.uniform(0, 6)))
     h = w * par['spessore']
     alza = rng.uniform(*par['strato'])
@@ -331,7 +335,7 @@ def mesh_ciocca(P, N, s, par, rng, u0=0.0):
             uvf.append([(u0 + j / lati, t[i]), (u0 + (j + 1) / lati, t[i]), (u0 + (j + 1) / lati, t[i + 1]),
                         (u0 + j / lati, t[i + 1])])
     c0, c1 = len(verts), len(verts) + 1
-    verts = np.vstack([verts, centro[0] - T[0] * 0.002, centro[-1] + T[-1] * 0.004])
+    verts = np.vstack([verts, centro[0] - T[0] * 0.002, centro[-1] + T[-1] * 0.002])
     for j in range(lati):
         jn = (j + 1) % lati
         facce.append((jn, j, c0)); uvf.append([(u0 + jn / lati, 0.0), (u0 + j / lati, 0.0), (u0 + 0.5, 0.0)])

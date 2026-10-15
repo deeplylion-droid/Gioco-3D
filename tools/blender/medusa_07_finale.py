@@ -555,7 +555,8 @@ def azione_fauce(arm):
         FAUCE.apri_fauce(arm, v)
         _chiave_posa(arm, f)
     _nla(arm, 'fauce_apre', act)
-    for nome, kname in (('Medusa', 'fauce_strappo'), ('Medusa_Gola', 'fauce_aperta'), ('Medusa_Denti', 'fauce_aperta')):
+    for nome, kname in (('Medusa', 'fauce_strappo'), ('Medusa_Gola', 'fauce_aperta'), ('Medusa_Denti', 'fauce_aperta'),
+                        ('Medusa_Strappo', 'fauce_aperta')):
         ob = bpy.data.objects[nome]
         key = ob.data.shape_keys
         kb = key.key_blocks[kname]
