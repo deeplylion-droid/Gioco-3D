@@ -5,8 +5,11 @@ extends Node
 ## bordo quando ti avvicini.
 ## 1. Se le vai incontro ti prende: fauce aperta, vene nell'occhio, sequenza di morte (saltata) e
 ##    si riparte dal checkpoint con la scena di nuovo in attesa.
-## 2. Se resti lontano ti guarda, scivola sotto e la sua luce si allontana lungo il condotto.
-## 3. Poi la strada verso la torre: lungo il muro nord, dal cancello del recinto (aperto nella
+## 2. Se non la guardi resta affacciata, anche oltre l'attesa e anche se ti allontani.
+## 3. Quando l'hai vista bene (nell'inquadratura, vicino al centro, senza niente in mezzo, per due
+##    secondi di fila) ti fissa ancora un po', poi scivola sotto e la sua luce si allontana lungo il
+##    condotto.
+## 4. Poi la strada verso la torre: lungo il muro nord, dal cancello del recinto (aperto nella
 ##    tappa 4) giù nella spiaggia della piscina vuota, lungo la spiaggia e fuori dal lato est, ai
 ##    piedi della torre, con i checkpoint.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
@@ -112,17 +115,56 @@ func _run() -> void:
 	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.macchie_scia() >= 15 and not lampione.is_on,
 			"e la sala è ancora al buio: vasca vuota, scia di gocce, lampione spento")
 
-	print("2. Resti lontano: lei ti guarda e se ne va")
+	print("2. Non la guardi: lei resta affacciata")
 	check(await _cammina_verso(Vector3(-18.3, 0.0, -1.9), 300), "qualche passo avanti")
 	await _frames(10)
 	check(lei.fase == LeiSbuca.Fase.SBUCA or lei.fase == LeiSbuca.Fase.GUARDA, "lei sbuca a pochi metri (fase %d)" % lei.fase)
-	await _frames(150)
+	# Ti giri dall'altra parte (a sud, da dove sei venuto) e ti allontani di qualche passo, senza
+	# guardarla: lei resta lì ben oltre l'attesa.
+	p.set_look(PI, 0.0)
+	await _frames(30)
+	check(await _cammina_verso(Vector3(-18.3, 0.0, 1.6), 300), "ti allontani senza guardarla")
+	p.set_look(PI, 0.0)
+	await _frames(int((lei.attesa + lei.tempo_vista + 2.0) * 60.0))
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible and not lei.vista_bene,
+			"dopo %.0f s è ancora affacciata: non l'hai vista (fase %d)" % [lei.attesa + lei.tempo_vista + 2.0, lei.fase])
 	var occhio_lei: Vector3 = lei.medusa.call(&"get_eye_position")
+	# Oltre la distanza massima non conta, anche guardandola dritta.
+	p.look_at_point(occhio_lei)
+	await _frames(2)
+	var dv := lei.distanza_vista
+	lei.distanza_vista = p.camera.global_position.distance_to(occhio_lei) - 0.5
+	check(not lei.la_stai_guardando(p), "più lontano della distanza massima non conta come vista")
+	lei.distanza_vista = dv
+	p.set_look(PI, 0.0)
+	await _frames(30)
+
+	# Da qui lo scivolo grande è in mezzo: anche guardando verso di lei non la vedi.
+	p.look_at_point(occhio_lei)
+	await _frames(3)
+	check(not lei.la_stai_guardando(p), "con lo scivolo in mezzo non conta come vista")
+	p.set_look(PI, 0.0)
+	await _frames(30)
+
+	print("3. La guardi bene: ti fissa, poi scivola sotto e se ne va")
+	# Torni sulla scia, un po' più avanti, dove né lo scivolo né le colonne la coprono, e la guardi.
+	check(await _cammina_verso(Vector3(-18.3, 0.0, -3.0), 400), "torni sulla scia, dove si vede bene")
+	check(not lei.vista_bene and lei.fase == LeiSbuca.Fase.GUARDA, "camminando senza guardarla non conta")
+	p.look_at_point(occhio_lei)
+	await _frames(3)
+	check(lei.la_stai_guardando(p), "lei è nell'inquadratura, vicino al centro, senza niente in mezzo")
+	await _frames(int(lei.tempo_vista * 60.0 * 0.5))
+	check(not lei.vista_bene and lei.fase == LeiSbuca.Fase.GUARDA, "dopo un secondo non basta ancora (%.1f s)" % lei.vista_t)
+	await _frames(int(lei.tempo_vista * 60.0 * 0.5) + 10)
+	check(lei.vista_bene, "dopo %.0f secondi di fila l'hai vista bene" % lei.tempo_vista)
+	occhio_lei = lei.medusa.call(&"get_eye_position")
 	var sguardo: Vector3 = lei.medusa.call(&"get_eye_direction")
 	var verso_te := (p.get_eye_position() - occhio_lei).normalized()
 	check(lei.fase == LeiSbuca.Fase.GUARDA and sguardo.dot(verso_te) > 0.85,
 			"le mani sul bordo, l'occhio fisso su di te (%.2f)" % sguardo.dot(verso_te))
 	check(LeiSbuca._in_pianta(p.global_position, occhio_lei) > lei.distanza_presa + 1.0, "e tu sei lontano (%.1f m)" % LeiSbuca._in_pianta(p.global_position, occhio_lei))
+	await _frames(int(lei.attesa * 60.0 * 0.5))
+	check(lei.fase == LeiSbuca.Fase.GUARDA, "ti fissa ancora per un po'")
 	var fuga_vista := false
 	var luce_lontana := 0.0
 	for i in 900:
@@ -136,7 +178,7 @@ func _run() -> void:
 	check(fuga_vista and luce_lontana > 1.5, "scivola sotto e la sua luce si allontana sott'acqua (%.1f m)" % luce_lontana)
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
 
-	print("3. Verso la torre, dalla spiaggia della piscina vuota")
+	print("4. Verso la torre, dalla spiaggia della piscina vuota")
 	var ok := true
 	for t in [Vector3(-18.3, 0, -9.7), Vector3(-18.3, 0, -15.1), Vector3(-17.5, 0, -16.5), Vector3(-15.9, 0, -16.9),
 			Vector3(-10.5, 0, -16.9), Vector3(-5.5, 0, -17.1), Vector3(-0.7, 0, -16.3), Vector3(0.0, 0, -15.0)]:

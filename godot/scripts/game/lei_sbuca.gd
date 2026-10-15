@@ -4,8 +4,11 @@ extends Node3D
 ## il risveglio (GameState.luci = BLACKOUT) la scia di gocce porta all'area bimbi: le vasche basse
 ## si stanno riempiendo dalla fossa (lo scarico di compensazione rotto, attaccato alla VascaBimbi1)
 ## e, quando ti avvicini, lei sbuca dal bordo: le mani sulle piastrelle, l'occhio fisso su di te.
-## - Se resti lontano, dopo [member attesa] secondi scivola sotto e la sua luce si allontana
-##   sott'acqua lungo il condotto in fondo alla fossa (concept medusa_sottacqua.jpg).
+## - Resta affacciata finché non l'hai vista bene: nell'inquadratura, vicino al centro, senza niente
+##   in mezzo ed entro [member distanza_vista], per [member tempo_vista] secondi di fila (riscontro
+##   dell'utente sulla v0.3.0: "non l'ho vista, forse mi sono allontanato ed è sparita?").
+## - Solo dopo, se resti lontano, passati [member attesa] secondi scivola sotto e la sua luce si
+##   allontana sott'acqua lungo il condotto in fondo alla fossa (concept medusa_sottacqua.jpg).
 ## - Se le arrivi troppo vicino ([member distanza_presa]) o la tocchi, ti prende: la fauce si apre,
 ##   l'occhio si riempie di vene e parte la sequenza di morte (GameState.kill_player(&"medusa")).
 ##   Si riparte dal checkpoint prima della scena e la scena si ripete.
@@ -14,6 +17,8 @@ extends Node3D
 ## medusa: per ora la posa è "affacciata" e il resto lo fa il codice (sale, scende, la luce).
 
 signal sbucata
+## Il giocatore l'ha vista bene (da qui parte l'attesa prima che scivoli sotto).
+signal vista
 signal andata_via
 signal presa
 
@@ -48,8 +53,18 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var distanza_inizio := 6.5
 ## Più vicino di così al suo occhio (in pianta) ti prende.
 @export var distanza_presa := 2.4
-## Secondi che ti guarda prima di scivolare sotto (se resti lontano).
+## Secondi che ti guarda, dopo che l'hai vista bene, prima di scivolare sotto (se resti lontano).
 @export var attesa := 6.0
+@export_group("Vederla bene")
+## Secondi di fila in cui la devi avere nell'inquadratura perché conti come vista.
+@export var tempo_vista := 2.0
+## Angolo massimo (gradi) tra il centro dello schermo e il suo occhio.
+@export var angolo_vista := 18.0
+## Distanza massima (m) dai tuoi occhi al suo.
+@export var distanza_vista := 14.0
+## Uno sguardo interrotto per meno di così (s) non fa ripartire il conto.
+@export var tolleranza_vista := 0.3
+@export_group("")
 @export var durata_sbuca := 1.8
 @export var durata_scivola := 1.6
 @export var durata_fuga := 4.5
@@ -60,6 +75,11 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 
 var fase := Fase.ATTESA
 var _t := 0.0
+## Secondi di fila in cui la stai guardando (fino a [member tempo_vista]).
+var vista_t := 0.0
+## Vero quando l'hai vista bene: parte l'attesa prima che scivoli sotto.
+var vista_bene := false
+var _non_vista_t := 0.0
 var _luce: OmniLight3D
 var _tocco: Area3D
 var _prossima_bolla := 0.0
@@ -123,12 +143,19 @@ func _physics_process(delta: float) -> void:
 			var k := clampf(_t / durata_sbuca, 0.0, 1.0)
 			_metti_a(1.0 - _ease_out(k))
 			_controlla_presa(p)
+			_conta_vista(p, delta)
 			if k >= 1.0:
 				fase = Fase.GUARDA
 				_t = 0.0
 		Fase.GUARDA:
 			_controlla_presa(p)
-			if _t >= attesa:
+			if fase != Fase.GUARDA:
+				return
+			# Resta lì finché non l'hai vista bene: solo dopo parte l'attesa.
+			if not vista_bene:
+				_conta_vista(p, delta)
+				_t = 0.0
+			elif _t >= attesa:
 				_scivola()
 		Fase.SCIVOLA:
 			var k := clampf(_t / durata_scivola, 0.0, 1.0)
@@ -175,9 +202,54 @@ func _riempi(delta: float, p: Player) -> void:
 			a.call(&"splash", c, _rng.randf_range(0.08, 0.2))
 
 
+## Conta i secondi di fila in cui la stai guardando bene; arrivato a [member tempo_vista] è vista.
+func _conta_vista(p: Player, delta: float) -> void:
+	if vista_bene:
+		return
+	if la_stai_guardando(p):
+		vista_t += delta
+		_non_vista_t = 0.0
+	else:
+		_non_vista_t += delta
+		if _non_vista_t > tolleranza_vista:
+			vista_t = 0.0
+	if vista_t >= tempo_vista:
+		vista_bene = true
+		vista.emit()
+
+
+## Vero se in questo momento lei è nell'inquadratura del giocatore, vicino al centro, entro
+## [member distanza_vista] e senza muri od oggetti in mezzo.
+func la_stai_guardando(p: Player) -> bool:
+	if medusa == null or not medusa.visible or p.camera == null:
+		return false
+	var occhio: Vector3 = medusa.call(&"get_eye_position") if medusa.has_method(&"get_eye_position") else medusa.global_position
+	var da := p.camera.global_position
+	var verso := occhio - da
+	var dist := verso.length()
+	if dist > distanza_vista or dist < 0.05:
+		return false
+	if rad_to_deg((-p.camera.global_basis.z).angle_to(verso)) > angolo_vista:
+		return false
+	# Niente in mezzo: raggi dagli occhi fin quasi al suo viso (lei non ha collisioni). Ne basta
+	# uno libero su tre (occhio e 12 cm ai lati), così un cavo o una sbarra sottile non contano,
+	# ma una colonna o un muro davanti al viso sì.
+	var space := p.get_world_3d().direct_space_state
+	var lato := verso.cross(Vector3.UP).normalized() * 0.12
+	for dx in [Vector3.ZERO, lato, -lato]:
+		var punto: Vector3 = occhio + dx
+		var q := PhysicsRayQueryParameters3D.create(da, punto - (punto - da).normalized() * 0.15, Layers.WORLD | Layers.PROPS, [p.get_rid()])
+		if space.intersect_ray(q).is_empty():
+			return true
+	return false
+
+
 func _sbuca() -> void:
 	fase = Fase.SBUCA
 	_t = 0.0
+	vista_t = 0.0
+	vista_bene = false
+	_non_vista_t = 0.0
 	medusa.visible = true
 	medusa.process_mode = Node.PROCESS_MODE_INHERIT
 	_metti_a(1.0)
@@ -264,6 +336,9 @@ func _nascondi() -> void:
 func _ricomincia() -> void:
 	fase = Fase.ATTESA
 	_t = 0.0
+	vista_t = 0.0
+	vista_bene = false
+	_non_vista_t = 0.0
 	_nascondi()
 	if is_instance_valid(_luce):
 		_luce.queue_free()
