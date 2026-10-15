@@ -1,7 +1,8 @@
 extends Node3D
-## Schermata del titolo, il "manifesto" del gioco: solo la statua della medusa sul piedistallo,
-## nella nebbia, con il faro dall'alto e i lampi lontani; la camera sale piano dal piedistallo
-## fino al viso. Voci: Nuova partita (porta alla schermata di caricamento della sala), Opzioni
+## Schermata del titolo, il "manifesto" del gioco: solo la statua della medusa sul monumento,
+## nella nebbia, con i fari della galleria e i lampi lontani; la camera sale piano dal piedistallo
+## fino al viso. Il nome del gioco è provvisorio (GDD), quindi non è scritto: sopra il menu c'è
+## solo, in piccolo, "Capitolo 1 · demo <versione>". Voci: Nuova partita (porta alla schermata di caricamento della sala), Opzioni
 ## (menu dell'addon grafica), Comandi, Esci. Mouse, tastiera e joypad (azioni ui_*).
 ## La calibrazione della luminosità del primo avvio la mostra Game, sopra il titolo.
 
@@ -33,11 +34,9 @@ var _lampo_finale := false
 var _avviato := false
 var _menu: VBoxContainer
 var _voci: Array[Button] = []
-var _titolo: Label
 var _testata: Control
 var _sottomenu: CanvasLayer
 var _pausa_fuoco := true
-var _prossimo_sfarfallio := 7.0
 
 
 func _ready() -> void:
@@ -67,7 +66,6 @@ func _process(delta: float) -> void:
 		# Quando la camera arriva al viso, un lampo vicino.
 		_lampo_finale = true
 		tempesta.lampo_ora(1.35, 0.7, PI * 0.8)
-	_sfarfallio_titolo(delta)
 	if _avviato:
 		return
 	# Il mouse resta libero anche se qualcuno lo cattura (per esempio Game alla fine della
@@ -165,26 +163,10 @@ func _aggiorna_camera(_delta: float) -> void:
 	camera.look_at_from_position(pos, guarda, Vector3.UP)
 
 
-## Ogni tanto il titolo sfarfalla, come un'insegna al neon che si sta guastando.
-func _sfarfallio_titolo(delta: float) -> void:
-	if _titolo == null:
-		return
-	_prossimo_sfarfallio -= delta
-	if _prossimo_sfarfallio > 0.0:
-		return
-	_prossimo_sfarfallio = randf_range(6.0, 15.0)
-	if Grafica.valore("riduci_lampi"):
-		return
-	var tw := create_tween()
-	for i in randi_range(2, 4):
-		tw.tween_property(_titolo, ^"modulate:a", randf_range(0.25, 0.6), 0.04)
-		tw.tween_property(_titolo, ^"modulate:a", 1.0, randf_range(0.04, 0.12))
-
-
 # --- Interfaccia --------------------------------------------------------------------------
 
 func _costruisci_interfaccia() -> void:
-	# Titolo e versione sotto il post-processing (livello 40): hanno la grana della pellicola.
+	# La scritta piccola sotto il post-processing (livello 40): ha la grana della pellicola.
 	var manifesto := CanvasLayer.new()
 	manifesto.name = "Manifesto"
 	manifesto.layer = 40
@@ -193,7 +175,7 @@ func _costruisci_interfaccia() -> void:
 	fondo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	manifesto.add_child(fondo)
-	# Ombra a sinistra, per leggere titolo e voci sopra la scena.
+	# Ombra a sinistra, per leggere le voci sopra la scena.
 	var ombra := TextureRect.new()
 	ombra.texture = StileMenu.sfumatura(
 		PackedColorArray([Color(0, 0, 0, 0.82), Color(0, 0, 0, 0.55), Color(0, 0, 0, 0.0)]),
@@ -205,31 +187,23 @@ func _costruisci_interfaccia() -> void:
 	ombra.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fondo.add_child(ombra)
 
-	var testata := VBoxContainer.new()
+	# Capitolo e versione, in piccolo, appena sopra le voci (allineati al loro testo).
+	var testata := HBoxContainer.new()
 	testata.name = "Testata"
-	testata.position = Vector2(84, 74)
-	testata.add_theme_constant_override("separation", 2)
+	testata.position = Vector2(84, 270)
+	testata.add_theme_constant_override("separation", 14)
 	fondo.add_child(testata)
 	_testata = testata
-	_titolo = StileMenu.etichetta("SPLASH LAGOON", StileMenu.oswald(700, 8), 72, Color(0.9, 0.96, 0.98))
-	_titolo.name = "Titolo"
-	_titolo.add_theme_color_override("font_shadow_color", Color(StileMenu.CIANO, 0.18))
-	_titolo.add_theme_constant_override("shadow_outline_size", 14)
-	_titolo.add_theme_constant_override("shadow_offset_x", 0)
-	_titolo.add_theme_constant_override("shadow_offset_y", 0)
-	testata.add_child(_titolo)
-	var riga := HBoxContainer.new()
-	riga.add_theme_constant_override("separation", 14)
 	var linea := ColorRect.new()
 	linea.color = StileMenu.ROSSO
 	linea.custom_minimum_size = Vector2(72, 3)
 	linea.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	riga.add_child(linea)
-	var versione := StileMenu.etichetta("Demo %s" % ProjectSettings.get_setting("application/config/version", ""),
-		StileMenu.barlow(), 17, StileMenu.TESTO_SPENTO)
+	testata.add_child(linea)
+	var versione := StileMenu.etichetta(
+		"Capitolo 1 · demo %s" % ProjectSettings.get_setting("application/config/version", ""),
+		StileMenu.barlow(), 18, StileMenu.TESTO_SPENTO)
 	versione.name = "Versione"
-	riga.add_child(versione)
-	testata.add_child(riga)
+	testata.add_child(versione)
 
 	# Voci del menu sopra il post-processing (livello 100), nitide.
 	var livello := CanvasLayer.new()

@@ -164,7 +164,8 @@ func _costruisci() -> void:
 
 	var testata := HBoxContainer.new()
 	testata.add_theme_constant_override("separation", 14)
-	testata.add_child(StileMenu.etichetta("SPLASH LAGOON", StileMenu.oswald(600, 6), 26, StileMenu.TESTO_SPENTO))
+	# Il nome del gioco è provvisorio (GDD): nella testata solo il capitolo.
+	testata.add_child(StileMenu.etichetta("CAPITOLO 1", StileMenu.oswald(600, 6), 26, StileMenu.TESTO_SPENTO))
 	col.add_child(testata)
 	var spazio := Control.new()
 	spazio.custom_minimum_size.y = 48

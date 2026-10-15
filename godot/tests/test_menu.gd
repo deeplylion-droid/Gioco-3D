@@ -39,13 +39,11 @@ func _run() -> void:
 	check(piedistallo != null and piedistallo.find_child("amb_piedistallo", true, false) is MeshInstance3D,
 		"c'è il piedistallo della sala")
 	check(menu.get_node_or_null("Tempesta") is Tempesta, "ci sono i lampi della tempesta")
-	var titolo := menu.get_node_or_null("Manifesto/Control/Testata/Titolo") as Label
-	if titolo == null:
-		titolo = menu.find_child("Titolo", true, false) as Label
-	check(titolo != null and titolo.text == "SPLASH LAGOON", "il titolo è SPLASH LAGOON")
+	check(not _scrive_il_nome(menu), "il nome provvisorio del gioco non è scritto sul titolo")
 	var versione := menu.find_child("Versione", true, false) as Label
-	check(versione != null and versione.text == "Demo " + str(ProjectSettings.get_setting("application/config/version")),
-		"c'è la versione (%s)" % (versione.text if versione else "-"))
+	var attesa := "Capitolo 1 · demo %s" % ProjectSettings.get_setting("application/config/version")
+	check(versione != null and versione.text == attesa,
+		"in piccolo capitolo e versione (%s)" % (versione.text if versione else "-"))
 	var voci: Array = menu.call(&"voci")
 	var nomi := []
 	for v in voci:
@@ -146,6 +144,7 @@ func _run() -> void:
 	var consiglio := car.find_child("Consiglio", true, false) as Label
 	check(consiglio != null and consiglio.text != "" and not consiglio.text.contains("{"), "c'è un consiglio: %s" % (consiglio.text if consiglio else "-"))
 	check(car.find_child("Elenco", true, false) is GridContainer, "ci sono i comandi")
+	check(not _scrive_il_nome(car), "il nome provvisorio non è scritto nel caricamento")
 	await _premi(&"pause")
 	check(not get_tree().paused, "Esc durante il caricamento non apre la pausa")
 	var t0 := Time.get_ticks_msec()
@@ -220,6 +219,14 @@ func check(cond: bool, what: String) -> void:
 	else:
 		_failed += 1
 		printerr("  FALLITO ", what)
+
+
+## Vero se un'etichetta della scena scrive il nome provvisorio del gioco (GDD).
+func _scrive_il_nome(radice: Node) -> bool:
+	for l in radice.find_children("*", "Label", true, false):
+		if (l as Label).text.to_lower().contains("lagoon"):
+			return true
+	return false
 
 
 func _focus() -> Control:
