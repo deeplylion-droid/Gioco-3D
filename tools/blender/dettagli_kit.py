@@ -279,10 +279,11 @@ def asciugamano(nome, mat, w=1.0, h=0.5, seme=0):
     for c in (pav, rilievo):
         c.modifiers.new('col', 'COLLISION'); c.collision.thickness_outer = 0.004
     cl = ob.modifiers.new('stoffa', 'CLOTH')
-    cl.settings.quality = 6; cl.settings.mass = 0.6; cl.settings.tension_stiffness = 8; cl.settings.bending_stiffness = 0.05
+    cl.settings.quality = 6; cl.settings.mass = 1.5; cl.settings.tension_stiffness = 8; cl.settings.bending_stiffness = 0.01
+    cl.settings.air_damping = 0.2
     cl.collision_settings.use_self_collision = True; cl.collision_settings.distance_min = 0.004
-    cl.point_cache.frame_start = 1; cl.point_cache.frame_end = 70
-    for f in range(1, 71):
+    cl.point_cache.frame_start = 1; cl.point_cache.frame_end = 160
+    for f in range(1, 161):
         sc.frame_set(f)
     dg = bpy.context.evaluated_depsgraph_get()
     me = bpy.data.meshes.new_from_object(ob.evaluated_get(dg))
@@ -292,6 +293,10 @@ def asciugamano(nome, mat, w=1.0, h=0.5, seme=0):
     bpy.data.objects.remove(pav); bpy.data.objects.remove(rilievo)
     sc.frame_set(1)
     # UV: la griglia di partenza aveva gia' UV 0..1 (le righe vanno lungo il lato lungo)
+    # la spugna bagnata si affloscia: abbasso le parti rimaste sollevate
+    zmin = min(v.co.z for v in ob.data.vertices)
+    for v in ob.data.vertices:
+        v.co.z = zmin + (v.co.z - zmin) * 0.35
     sm = ob.modifiers.new('liscia', 'SMOOTH'); sm.factor = 0.8; sm.iterations = 6
     sd = ob.modifiers.new('s', 'SOLIDIFY'); sd.thickness = 0.006
     applica_modificatori_ob(ob)
@@ -742,7 +747,7 @@ for ci, cat in enumerate(ORDINE):
         x += max(L, 0.25) + 0.25
     for o in obs:
         CATALOGO[o.name]['glb'] = f'glb/{cat}.glb'
-    esporta_glb(T(GLB, f'{cat}.glb'), obs, luci=False)
+    esporta_glb(T(GLB, f'{cat}.glb'), obs, luci=False, max_tex=None)   # kit dei dettagli: texture 2K
 with open(T(DET, 'catalogo.json'), 'w') as f:
     json.dump({'nota': "Nodi dei GLB del kit di dettagli. 'appoggio': pavimento (origine alla base), muro (origine sul filo del muro, "
                        "il dettaglio sporge verso +Z Godot), soffitto (origine nel punto d'attacco, pende verso -Y Godot). "

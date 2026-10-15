@@ -25,6 +25,7 @@ Grafica="*res://addons/grafica/impostazioni_grafiche.gd"
 WaterManager="*res://addons/acqua/scripts/water_manager.gd"
 Game="*res://scripts/game/game.gd"
 GameState="*res://scripts/game/game_state.gd"
+Audio="*res://addons/audio/audio.gd"
 
 [display]
 

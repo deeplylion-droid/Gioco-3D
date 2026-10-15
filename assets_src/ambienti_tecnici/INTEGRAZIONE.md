@@ -6,10 +6,11 @@ Da Blender: `(x, y, z) -> (x, z, -y)`. Ogni GLB ha la sua origine: si istanzia d
 
 ## Import
 
-1. Copia i GLB di `assets_src/ambienti_tecnici/glb/` nel progetto.
+1. **Versione consigliata, texture 2K**: `assets_src/ambienti_tecnici/gltf_2k/`: un `.gltf` + `.bin` per stanza e le texture **2K condivise** in `gltf_2k/texture/` (una sola copia per tutte le stanze). Copiare la cartella intera nel progetto, mantenendo `texture/` accanto ai `.gltf`. Stessi nodi, collisioni e nomi dei GLB.
+   In `glb/` restano i GLB autonomi con texture 1K (stessi contenuti), comodi per prove veloci.
 2. **Collisioni**: già nei GLB, con i suffissi dell'importer. `-convcolonly` (scatole convesse: muri, pavimenti, pompe, filtri, ringhiere) e `-colonly` (trimesh: interno dei tubi). Diventano da sole StaticBody3D + CollisionShape3D, invisibili.
    Le collisioni degli oggetti che si muovono (turbine, leva, porta, grate, paratie, pale, pulsante) sono **figlie dell'oggetto**: si muovono con lui. Se servono come AnimatableBody3D, basta cambiare il tipo del nodo.
-3. **Materiali**: PBR (colore, normal, rugosità/metallo). Le texture sono **1K** (2K solo le piastrelle della sala pompe e quelle prese dal kit della sala): con 2K i GLB supererebbero i 50 MB. Si possono rifare a 2K esportando le texture fuori dal GLB, se serve.
+3. **Materiali**: PBR (colore, normal, rugosità/metallo), texture 2K in `gltf_2k/` e 1K nei GLB di `glb/`.
 4. Le grate (`rete_grata`) hanno l'alfa: in Godot mettere **alpha scissor**. `SCIVOLO_trasparente`: trasparenza alpha.
 5. **Luci**: le puntiformi e gli spot arrivano come OmniLight3D e SpotLight3D, al loro posto; l'intensità va regolata (rosse d'emergenza `light_energy` 2-3, `omni_range` 6). I **neon** e lo **schermo del CRT** sono luci ad area, che il glTF non porta: in Godot aggiungere una luce sui tubi `neon_*` accesi (sono emissivi) e davanti a `SCHERMO_CRT`.
 6. **Acqua**: tutti i nodi `ACQUA_*` sono segnaposto piatti col livello giusto, da sostituire con l'acqua vera.

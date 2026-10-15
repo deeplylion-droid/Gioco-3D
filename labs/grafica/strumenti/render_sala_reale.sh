@@ -14,7 +14,7 @@ shot() {
     --resolution 1920x1080 --fixed-fps 30 res://sala_reale/sala_reale.tscn -- "$@" --out="$OUT/$nome.jpg" 2>&1 \
     | grep -E "salvato|SCRIPT ERROR" || true
 }
-for v in ingresso piscina area_bimbi torre; do
+for v in ingresso monumento piscina area_bimbi torre; do
   shot "dopo_$v" --look=dopo --vista=$v --frames=30
   shot "prima_$v" --look=prima --vista=$v --frames=30
 done

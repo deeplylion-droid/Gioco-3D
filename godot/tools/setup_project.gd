@@ -27,7 +27,7 @@ func _init() -> void:
 	s.set_setting("application/boot_splash/bg_color", Color(0, 0, 0, 1))
 	s.set_setting("application/boot_splash/show_image", false)
 	# Autoload: prima la grafica (impostazioni, preset, post-processing), poi il gioco.
-	for a in ["Grafica", "Game", "GameState"]:
+	for a in ["Grafica", "Game", "GameState", "Audio"]:
 		if s.has_setting("autoload/" + a):
 			s.clear("autoload/" + a)
 	if s.has_setting("autoload/WaterManager"):
@@ -36,6 +36,7 @@ func _init() -> void:
 	s.set_setting("autoload/WaterManager", "*res://addons/acqua/scripts/water_manager.gd")
 	s.set_setting("autoload/Game", "*res://scripts/game/game.gd")
 	s.set_setting("autoload/GameState", "*res://scripts/game/game_state.gd")
+	s.set_setting("autoload/Audio", "*res://addons/audio/audio.gd")
 	# Variabili globali degli shader dell'acqua (le registra anche l'autoload: qui servono
 	# all'editor, vedi addons/acqua/shader_globals.txt).
 	var globali := {

@@ -6,12 +6,13 @@ extends Node3D
 ## Altri argomenti dopo "--": --vista=ingresso|piscina|area_bimbi|torre|panoramica
 ##   --preset=ultra --frames=40 --out=percorso.jpg --lampo=FOTOGRAMMA --set=gi:2
 
-const GLB := ["sala_architettura", "sala_cupola", "sala_piscina", "sala_area_bimbi",
-	"sala_torre_scivoli", "sala_oggetti", "sala_acqua", "sala_luci"]
+const GLB := ["sala_architettura", "sala_monumento", "sala_cupola", "sala_piscina", "sala_area_bimbi",
+	"sala_torre_scivoli", "sala_oggetti", "sala_interattivi", "sala_acqua", "sala_luci"]
 
 ## Inquadrature da sala_dati.json (coordinate Blender: posizione, punto guardato, lente in mm).
 const VISTE := {
-	"ingresso": [Vector3(0.35, -11.4, 1.65), Vector3(0.0, -3.0, 2.55), 18.0],
+	"ingresso": [Vector3(0.35, -19.2, 1.65), Vector3(0.0, -10.0, 3.1), 18.0],
+	"monumento": [Vector3(3.6, -14.9, 1.55), Vector3(0.0, -10.0, 1.9), 24.0],
 	"piscina": [Vector3(5.6, -6.9, 1.9), Vector3(-0.6, -0.4, -1.1), 18.0],
 	"area_bimbi": [Vector3(-12.2, 5.4, 0.95), Vector3(-12.9, 12.5, 1.9), 20.0],
 	"torre": [Vector3(12.3, 16.6, 10.25), Vector3(-4.0, 6.0, -3.0), 17.0],
@@ -48,18 +49,40 @@ func _ready() -> void:
 		look.set_script(load("res://sala_reale/glb/sala_luci_ambiente.gd"))
 	else:
 		look.set_script(LookSala)
+		# Per le prove: --param=energia_fari:5,crea_controluce:false
+		if _arg.has("param"):
+			for coppia in String(_arg["param"]).split(","):
+				var kv := coppia.split(":")
+				look.set(kv[0], str_to_var(kv[1]))
 	add_child(look)
-	# La statua (provvisoria) sul piedistallo, come alla prima visita.
-	var statua: Node3D = load("res://scena/modelli/statua_provvisoria.glb").instantiate()
-	statua.scale = Vector3.ONE * 1.3
-	add_child(statua)
-	var box := AABB()
-	for mi in statua.find_children("*", "MeshInstance3D", true, false):
-		var m := mi as MeshInstance3D
-		var b := m.global_transform * m.get_aabb()
-		box = b if box.size == Vector3.ZERO else box.merge(b)
-	statua.global_position = Vector3(0, 0.9, 6.9) - Vector3(box.get_center().x, box.position.y, box.get_center().z)
-	statua.rotation.y = 0.0
+	# La medusa del gioco sul monumento, alta 4,5 m, rivolta verso la porta (+Z).
+	var medusa: Node3D = load("res://sala_reale/glb/medusa/medusa.glb").instantiate()
+	medusa.scale = Vector3.ONE * (4.5 / 2.7)
+	medusa.position = Vector3(0, 1.15, 10)
+	add_child(medusa)
+	for mi in medusa.find_children("*", "MeshInstance3D", true, false):
+		if mi.name == "Medusa":
+			mi.set_surface_override_material(2, load("res://sala_reale/glb/medusa/medusa_campana.tres"))
+		elif mi.name == "Medusa_Tentacoli":
+			# Vene dei tentacoli al 22%: piene, con i faretti dal basso, bruciavano (prova dell'integratore).
+			var t: StandardMaterial3D = load("res://sala_reale/glb/medusa/medusa_tentacoli.tres").duplicate()
+			# Il .tres non ha emission_operator = Multiply (il GLB sì): con "Add" il bianco
+			# dell'emissione si somma alla texture e i tentacoli escono bianchi.
+			t.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+			t.emission_energy_multiplier *= float(_arg.get("vene", "1.0"))
+			if _arg.has("tent_glb"):  # per le prove: il materiale del GLB invece del .tres
+				t = mi.mesh.surface_get_material(0).duplicate()
+				t.emission_energy_multiplier *= float(_arg.get("vene", "0.22"))
+				print("GLB tentacoli: emissione ", t.emission, " tex ", t.emission_texture, " x", t.emission_energy_multiplier, " op ", t.emission_operator)
+			if _arg.has("tent_semplice"):  # per le prove
+				t = StandardMaterial3D.new()
+				t.albedo_color = Color(0.8, 0.1, 0.5)
+			if _arg.has("spegni"):  # per le prove: --spegni=clearcoat_enabled,rim_enabled
+				for k in String(_arg["spegni"]).split("+"):
+					t.set(k, false)
+			if _arg.has("no_sss"):  # per le prove
+				t.subsurf_scatter_enabled = false
+			mi.set_surface_override_material(0, t)
 	camera = Camera3D.new()
 	camera.keep_aspect = Camera3D.KEEP_WIDTH
 	camera.set_meta("grafica_fov_fisso", true)

@@ -560,8 +560,15 @@ def renderizza(nome_file):
 
 # ---------------------------------------------------------------- export
 
-def esporta_glb(path, obs=None, luci=True):
+# Con AMBIENTI2_GLTF=1 l'export scrive .gltf + .bin in assets_src/ambienti_tecnici/gltf_2k/ con le texture
+# 2K condivise in gltf_2k/texture/ (una sola copia per tutte le stanze). Senza, scrive i GLB autonomi in glb/.
+GLTF_2K = os.environ.get('AMBIENTI2_GLTF') == '1'
+
+
+def esporta_glb(path, obs=None, luci=True, max_tex=1024):
     """Esporta in GLB gli oggetti (default: tutti tranne volumi e camera)."""
+    if GLTF_2K and os.sep + 'ambienti_tecnici' + os.sep in path:
+        return _esporta_gltf(os.path.join(SRC, 'gltf_2k', os.path.basename(path).replace('.glb', '.gltf')), obs, luci)
     if obs is None:
         obs = [o for o in bpy.context.scene.objects if not o.get('solo_render')]
     for o in bpy.context.scene.objects:
@@ -569,9 +576,15 @@ def esporta_glb(path, obs=None, luci=True):
     for o in obs:
         o.select_set(True)
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    # nei GLB autonomi le texture vanno a 1K (a 2K supererebbero i 50 MB): le riduco solo per l'export
+    ridotte = [im for im in bpy.data.images if max_tex and im.size[0] > max_tex and im.filepath]
+    for im in ridotte:
+        im.scale(max_tex, max_tex)
     bpy.ops.export_scene.gltf(filepath=path, export_format='GLB', use_selection=True,
                               export_apply=True, export_lights=luci, export_cameras=False,
                               export_extras=True, export_yup=True, export_image_format='JPEG', export_jpeg_quality=88)
+    for im in ridotte:
+        im.reload()
     mb = os.path.getsize(path) / 1e6
     print(f'GLB {path}: {mb:.1f} MB', flush=True)
     assert mb < 50, 'GLB oltre i 50 MB'
@@ -617,3 +630,22 @@ def collisione_copia(ob, convessa=True, nome=None):
     c.matrix_basis = ob.matrix_basis.copy()
     _link(c)
     return _segna_collisione(c)
+
+
+def _esporta_gltf(path, obs, luci):
+    if obs is None:
+        obs = [o for o in bpy.context.scene.objects if not o.get('solo_render')]
+    for o in bpy.context.scene.objects:
+        o.select_set(False)
+    for o in obs:
+        o.select_set(True)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    bpy.ops.export_scene.gltf(filepath=path, export_format='GLTF_SEPARATE', export_texture_dir='texture', use_selection=True,
+                              export_apply=True, export_lights=luci, export_cameras=False, export_extras=True,
+                              export_yup=True, export_image_format='JPEG', export_jpeg_quality=90)
+    bin_ = path.replace('.gltf', '.bin')
+    for f in (path, bin_):
+        mb = os.path.getsize(f) / 1e6
+        print(f'GLTF {f}: {mb:.1f} MB', flush=True)
+        assert mb < 50
+    return path

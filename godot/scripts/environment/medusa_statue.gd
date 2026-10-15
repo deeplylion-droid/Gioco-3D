@@ -31,9 +31,9 @@ extends Node3D
 @export var pulse_channel_light := 6.0
 ## Pulsazioni al secondo durante la sigla.
 @export var pulse_rate := 1.6
-## Da statua (ferma, spenta) le vene luminose dei tentacoli brillano poco: si moltiplica
-## l'emissione del loro materiale (1 = come nel modello).
-@export var tentacle_glow := 0.22
+## Moltiplica l'emissione delle vene luminose dei tentacoli (1 = come nel modello; il
+## materiale deve avere emission_operator = Multiply, se no la texture si somma al bianco).
+@export var tentacle_glow := 1.0
 
 var _instance: Node3D
 var _bell: ShaderMaterial
@@ -98,6 +98,9 @@ func _rebuild() -> void:
 		_bell.set_shader_parameter(&"pulsazione_al_secondo", 0.0)
 		_bell.set_shader_parameter(&"luce_canali", idle_channel_light)
 	for mi in _instance.find_children("*", "MeshInstance3D", true, false):
+		# La statua riceve l'illuminazione globale ma non entra nel VoxelGI calcolato in
+		# anticipo: così il calcolo non dipende dal modello della medusa.
+		(mi as GeometryInstance3D).gi_mode = GeometryInstance3D.GI_MODE_DISABLED
 		var m := (mi as MeshInstance3D).mesh
 		if m == null:
 			continue

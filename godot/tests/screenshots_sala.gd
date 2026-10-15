@@ -18,8 +18,9 @@ var p: Player
 
 
 func _ready() -> void:
-	# Interruttore per fermare in fretta una serie di screenshot già in coda.
-	if FileAccess.file_exists("/tmp/claude-0/-home-user/07654ebb-af35-5717-9d4e-86afbe1a6c7d/scratchpad/godot_agent/SALTA_SCREENSHOT"):
+	# Interruttore per fermare in fretta una serie di screenshot già in coda: basta creare il
+	# file user://salta_screenshot.
+	if FileAccess.file_exists("user://salta_screenshot"):
 		get_tree().quit()
 		return
 	var args := OS.get_cmdline_user_args()
@@ -51,6 +52,11 @@ func _run() -> void:
 		Grafica.imposta("nebbia", 1)
 		Grafica.imposta("ssil", 2)
 		Grafica.imposta("ssao", 3)
+	elif preset == "alto_senza_gi":
+		# Alto senza illuminazione globale: sta nella memoria del renderer software anche a
+		# 1600x900 (la GI VoxelGI calcolata la usa il gioco vero).
+		Grafica.applica_preset("alto")
+		Grafica.imposta("gi", 0)
 	else:
 		Grafica.applica_preset(preset)
 	# Acqua con SSR nello shader invece del riflesso planare (che rende di nuovo la scena).

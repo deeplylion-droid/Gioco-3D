@@ -57,7 +57,7 @@ def rumore(size, scala, ottave=4, seed=0):
 
 def scivoli():
     """Plastica colorata consumata. U = lungo il tubo, V = intorno (V=0.5 e' il fondo del tubo)."""
-    S = 1024
+    S = 2048
     grana = arr(carica('Plastic006', 'Color', S, 'L'))
     grana = 0.85 + 0.3 * (grana - grana.mean())
     sporco = 0.35 + 0.5 * rumore(S, 3, 5, seed=17)
@@ -167,7 +167,7 @@ def schema_pompe():
 
 def pavimento_bagnato():
     """Roughness del pavimento con pozzanghere (per le piastrelle Tiles107 sporche)."""
-    S = 1024
+    S = 2048
     r = arr(carica('Tiles107', 'Roughness', S, 'L'))
     poz = np.clip((rumore(S, 1, 5, seed=9) - 0.55) * 5, 0, 1)
     rough = r * (1 - poz) * 0.9 + 0.06 * poz

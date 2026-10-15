@@ -16,8 +16,9 @@ var only := ""
 
 
 func _ready() -> void:
-	# Interruttore per fermare in fretta una serie di screenshot già in coda.
-	if FileAccess.file_exists("/tmp/claude-0/-home-user/07654ebb-af35-5717-9d4e-86afbe1a6c7d/scratchpad/godot_agent/SALTA_SCREENSHOT"):
+	# Interruttore per fermare in fretta una serie di screenshot già in coda: basta creare il
+	# file user://salta_screenshot.
+	if FileAccess.file_exists("user://salta_screenshot"):
 		get_tree().quit()
 		return
 	var args := OS.get_cmdline_user_args()
@@ -36,7 +37,9 @@ func _ready() -> void:
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
-	Grafica.applica_preset("ultra" if preset == "ultra" else preset)
+	Grafica.applica_preset("ultra" if preset == "ultra" else ("alto" if preset == "alto_senza_gi" else preset))
+	if preset == "alto_senza_gi":
+		Grafica.imposta("gi", 0)
 	if preset == "ultra":
 		# Come screenshots_sala.gd: Ultra con SDFGI, qualche effetto un livello sotto per la
 		# memoria del renderer software.
