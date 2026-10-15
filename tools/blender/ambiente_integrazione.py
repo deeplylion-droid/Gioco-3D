@@ -110,6 +110,15 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 - **Monumento della statua** (`sala_monumento.glb`): entrando dal vano la medusa si vede subito, intera
   e centrata, a 10 m, con la cupola e la tempesta sopra la testa (provato in Godot con la medusa del
   gioco portata a 4,5 m).
+- **Tubo dell'inseguimento**: è lo scivolo rosso a spirale (`sala_scivolo_spirale`), ora Ø interno
+  **1,6 m** (parete 6 cm), come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. Parte dal
+  piano in cima alla torre (y 8,6), esce dalla faccia ovest, gira intorno al pennone, attraversa la sala
+  sopra la piscina e sputa nella vasca d'arrivo da est (bocca 16 cm sopra l'acqua). Gli altri due tubi
+  restano da 1,0 m (decorativi).
+- **Passata di qualità**: pavimento a piastrelle asciutte/umide/bagnate e pozzanghere a specchio, sporco
+  nei colori dei vertici, battiscopa a sguscio e listelli, rivetti su travi e galleria, piastrelle
+  mancanti, oblò con vetro scuro, cupola con costoloni a T e lastre sporche/incrinate/rotte, plafoniere
+  calde (`luce_calda_*`) e insegne al neon (`luce_insegna_*`). Dettagli in `KIT.md`.
 
 ## File (cartella `assets_src/ambiente/glb/sala/`)
 
@@ -188,7 +197,7 @@ sono pozzanghere a specchio (con SSR riflettono le luci rosse).
 
 Le posizioni sono giuste; le intensità le regola `sala_luci_ambiente.gd` (glTF e Godot usano unità
 diverse). In tutto {n_neon} neon accesi, {n_em} luci d'emergenza, lampione, 2 fari e 4 faretti del monumento,
-2 subacquee, insegna, area bimbi, luna.
+5 plafoniere calde, 3 insegne, 2 subacquee, area bimbi, luna.
 
 | Nome | Tipo | Posizione Godot | Colore | Note |
 |---|---|---|---|---|
@@ -204,8 +213,8 @@ diverse). In tutto {n_neon} neon accesi, {n_em} luci d'emergenza, lampione, 2 fa
 ## Cosa manca
 
 Kit di dettagli della sessione ambienti-2 (detriti, cavi, tubi a muro, bocchette, corpi lampada):
-quando arriva lo si posiziona con il suo JSON. Altre porte stagne, interno della camera delle onde e
-sala pompe, tubo grande dell'inseguimento (Ø interno 1,6 m, compatibile con il kit di scivoli).
+quando arriva in main lo si posiziona con il suo JSON. L'interno del tubo dell'inseguimento per il
+gioco è nel kit degli scivoli di ambienti_tecnici (qui il tubo ha solo le collisioni esterne).
 """
     with open(OUT, 'w') as f:
         f.write(testo)
