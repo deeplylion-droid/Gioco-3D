@@ -17,7 +17,7 @@ Copiare **tutta** la cartella `assets_src/ambienti_interni/gltf/` in `godot/` (p
 
 **I tre file vanno messi tutti sotto uno stesso nodo**, ciascuno a `Transform3D.IDENTITY`: fra loro combaciano già.
 
-**Attacco con la sala principale** (vedi `assets_src/ambiente/INTEGRAZIONE.md`, sala allungata verso sud): il nodo comune va messo in **`position = (-9.7, 0, 40.9)`**, senza rotazione. Così il `marker_uscita_sala_principale` cade in (0; 0; 20,2), sul retro del vano 1,2 × 2,2 m nel muro sud della sala, e la saracinesca sta subito dietro la porta stagna della sala. **Tutte le coordinate qui sotto sono locali a quel nodo** (per quelle globali: x - 9,7 e z + 40,9; per esempio lo zaino è in (5,24; 1,25; 32,47) globali). Scala in metri, pavimento a y = 0.
+**Attacco con la sala principale** (vedi `assets_src/ambiente/INTEGRAZIONE.md`, sala allungata verso sud): il nodo comune va messo in **`position = (-9.7, 0, 40.9)`**, senza rotazione. Così il `marker_uscita_sala_principale` cade in (0; 0; 20,2), sul retro del vano 1,2 × 2,2 m nel muro sud della sala, e la saracinesca sta subito dietro la porta stagna della sala. **Tutte le coordinate qui sotto sono locali a quel nodo** (per quelle globali: x - 9,7 e z + 40,9; per esempio lo zaino è in (4,80; 1,25; 32,47) globali). Scala in metri, pavimento a y = 0.
 
 Sotto, tutte le coordinate sono **in Godot** (x, y, z), con y in alto. Il nord della pianta è -Z.
 
@@ -57,7 +57,7 @@ Collegamento con gli script di `lavoro/godot` (`godot/scripts/mechanisms/`):
 - `Turbine` nel punto di `turbina_saracinesca`, con `rotation_degrees.y = 90` (lo script guarda verso +Z, la turbina guarda verso +X, cioè verso il corridoio). Il modello della ruota va come figlio e ruota con lei.
 - `WaterButton` nel punto di `pulsante_tornello`, con `rotation_degrees.y = -90` (guarda verso -X, verso il vetro rotto), modalità `LATCH`: sblocca il `tornello_rotore`.
 - `PoweredDoor` sulla `saracinesca` con `sources = [Turbine]`, `open_offset = (0, 2.2, 0)`.
-- `PackPickup`: lo zaino sul `marker_zaino_pompa` in **(14,94; 1,25; -8,43)**, appeso ai due ganci centrali della rastrelliera, schiena verso il muro (+X). La rastrelliera ha il posto libero apposta.
+- `PackPickup`: lo zaino sul `marker_zaino_pompa` in **(14,50; 1,25; -8,43)**, appeso ai due ganci centrali della rastrelliera, schiena verso il muro (+X). La rastrelliera ha il posto libero apposta.
 - Acqua da aspirare: `acqua_lavapiedi` (vasca x 8,6…10,8, z -12,4…-14,4; superficie a y -0,05, fondo a -0,20). Un `WaterTank`/`WaterVolume` con quella forma; quando lo zaino aspira, il livello scende fino a -0,2 (la mesh si può scalare in Y o spostare).
 
 ## 5. Luci
@@ -85,7 +85,7 @@ Nei file ci sono le **luci rosse d'emergenza** come `OmniLight3D` (`luce_emergen
 | `marker_polaroid_P2` | (3,25; 1,60; -7,90) | sul ripiano di un armadietto aperto |
 | `marker_polaroid_P3` | (12,65; 1,30; -6,24) | sulla bacheca dello stanzino |
 | `marker_armadietto_sbatte` | (10,75; 1,00; -5,10) | trigger dell'armadietto che sbatte |
-| `marker_zaino_pompa` | (14,94; 1,25; -8,43) | lo zaino-pompa |
+| `marker_zaino_pompa` | (14,50; 1,25; -8,43) | lo zaino-pompa |
 | `marker_uscita_sala_principale` | (9,70; 0; -20,70) | attacco con la sala principale |
 
 Checkpoint consigliati: al risveglio, all'ingresso degli spogliatoi (6,80; 0; -3,40), dopo aver preso lo zaino, davanti al tornello (9,70; 0; -15,50).
