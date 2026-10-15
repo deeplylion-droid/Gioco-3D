@@ -19,11 +19,18 @@ extends Node3D
 ## Dove stanno i dati del VoxelGI cotti (uno per stanza: <nome stanza>.res).
 @export_dir var cartella_gi := ""
 @export var crea_gi := true
+## Se vero il GI si cuoce anche con la luce delle superfici emissive (lampade, neon): più
+## luce rimbalzata, come nella versione approvata. Se falso le lampade spente al buio non
+## lasciano luce cotta (serve una seconda cottura per i blackout).
+@export var gi_con_emissioni := true
 @export_group("Luci")
-@export var energia_emergenza := 1.7
+@export var energia_emergenza := 2.8
 @export var portata_emergenza := 4.2
 @export var colore_emergenza := Color(1.0, 0.05, 0.03)
-@export var energia_neon := 3.0
+@export var energia_neon := 6.0   # circa la luce di prima (luce del neon + luce ad area doppia)
+## Eccezioni per singolo neon (nome del nodo -> energia). Lo stanzino ha il soffitto basso
+## e chiaro, vicino al tubo: con l'energia piena era il 18% più chiaro della versione approvata.
+@export var energia_neon_per_nome := {&"neon_stanzino_neon": 4.8}
 @export var portata_neon := 7.5
 @export var colore_neon := Color(0.76, 0.98, 0.9)
 @export var energia_zaino := 2.6
@@ -46,7 +53,8 @@ func _prepara() -> void:
 		push_warning("LookInterni: non trovo %s" % percorso_ambienti)
 		return
 	_regola_luci()
-	_pozze_opache()
+	_libera_luci_dalle_plafoniere()
+	_pozze_nello_shader()
 	for stanza in _ambienti.get_children():
 		if stanza is Node3D:
 			var box := _aabb(stanza)
@@ -79,7 +87,7 @@ func _regola_luci() -> void:
 			for l in n.find_children("*", "Light3D", true, false):
 				var luce := l as Light3D
 				luce.light_color = colore_neon
-				luce.light_energy = energia_neon
+				luce.light_energy = energia_neon_per_nome.get(n.name, energia_neon)
 				luce.light_volumetric_fog_energy = 0.25
 				luce.shadow_enabled = true
 				luce.shadow_blur = 1.5
@@ -101,20 +109,127 @@ func _regola_luci() -> void:
 			s.light_volumetric_fog_energy = 0.6
 
 
-## Pozze d'acqua opache e lucidissime, appena sopra il pavimento. Erano trasparenti: in
-## Godot i trasparenti non ricevono gli SSR e riflettevano solo il VoxelGI, sfocato e con
-## i bordi del poligono ("forme fantasma" sul pavimento). Opache, riflettono netto.
-func _pozze_opache() -> void:
-	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.04, 0.045, 0.045)
-	m.roughness = 0.05
-	m.metallic = 0.0
-	m.metallic_specular = 0.6
-	for n in _ambienti.find_children("acqua_pozz*", "MeshInstance3D", true, false):
+## Le plafoniere dei modelli (cassa del neon, gabbia delle luci rosse) racchiudono la loro
+## luce: se fanno ombra la spengono (stanzino quasi nero). Non fanno ombra alla loro luce e
+## la luce del neon scende appena sotto la cassa.
+func _libera_luci_dalle_plafoniere() -> void:
+	var meshes := _ambienti.find_children("*", "MeshInstance3D", true, false)
+	for l in get_parent().find_children("*", "Light3D", true, false):
+		var luce := l as Light3D
+		if not luce.visible or luce is DirectionalLight3D:
+			continue
+		var p := luce.global_position
+		var fondo := INF
+		for m in meshes:
+			var mi := m as MeshInstance3D
+			if mi.mesh == null:
+				continue
+			var b := mi.global_transform * mi.get_aabb()
+			if b.size.length() < 4.0 and b.grow(0.12).has_point(p):
+				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				fondo = minf(fondo, b.position.y)
+		var neon := luce.get_parent()
+		if fondo < INF and neon and neon.get_script() and String(neon.get_script().get_global_name()) == "Neon":
+			luce.global_position.y = minf(p.y, fondo - 0.06)
+			_sotto_il_soffitto(neon as Node3D, luce, fondo, meshes)
+
+
+## Se il soffitto (mesh grande della stanza) passa sotto la plafoniera del neon, la luce
+## resta chiusa sopra il controsoffitto: plafoniera e neon scendono finché la cima della
+## plafoniera tocca il soffitto da sotto.
+func _sotto_il_soffitto(neon: Node3D, luce: Light3D, _fondo: float, meshes: Array) -> void:
+	var p := luce.global_position
+	var plafoniere: Array[Node3D] = []
+	var cima := -INF
+	var grandi: Array[MeshInstance3D] = []
+	for m in meshes:
+		var mi := m as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var b := mi.global_transform * mi.get_aabb()
+		if b.size.length() < 4.0:
+			# I pezzi della plafoniera: sopra la luce, a meno di 30 cm.
+			if b.grow(0.05).has_point(Vector3(p.x, b.get_center().y, p.z)) and b.position.y > p.y - 0.05 and b.position.y < p.y + 0.3:
+				if not neon.is_ancestor_of(mi):
+					plafoniere.append(mi)
+				cima = maxf(cima, b.end.y)
+		elif b.position.x <= p.x and p.x <= b.end.x and b.position.z <= p.z and p.z <= b.end.z:
+			grandi.append(mi)
+	if cima == -INF:
+		return
+	# Primo soffitto sopra un punto 30 cm sotto la luce (raggio verso l'alto).
+	var soffitto := INF
+	var da := Vector3(p.x, p.y - 0.3, p.z)
+	for mi in grandi:
+		var f := mi.mesh.get_faces()
+		var xf := mi.global_transform
+		for i in range(0, f.size(), 3):
+			var hit: Variant = Geometry3D.ray_intersects_triangle(da, Vector3.UP, xf * f[i], xf * f[i + 1], xf * f[i + 2])
+			if hit != null and (hit as Vector3).y < soffitto:
+				soffitto = (hit as Vector3).y
+	if soffitto == INF or soffitto >= cima:
+		return   # la plafoniera è già sotto il soffitto
+	var giu := cima - soffitto + 0.005
+	neon.global_position.y -= giu
+	for pl in plafoniere:
+		pl.global_position.y -= giu
+	print_verbose("LookInterni: %s abbassato di %.2f m sotto il soffitto" % [neon.name, giu])
+
+
+## Le pozze d'acqua diventano parte dello shader del pavimento (piastrelle.gdshader): una
+## maschera vista dall'alto con le forme dei piani delle pozze. Nell'acqua le piastrelle si
+## vedono, le fughe si riempiono e gli SSR riflettono la scena; i piani si nascondono.
+func _pozze_nello_shader() -> void:
+	var pozze := _ambienti.find_children("acqua_pozz*", "MeshInstance3D", true, false)
+	if pozze.is_empty():
+		return
+	var area := AABB()
+	for p in pozze:
+		var b := (p as MeshInstance3D).global_transform * (p as MeshInstance3D).get_aabb()
+		area = b if area.size == Vector3.ZERO else area.merge(b)
+	area = area.grow(0.5)
+	const PASSO := 0.05   # 5 cm per pixel
+	var w := int(ceil(area.size.x / PASSO))
+	var h := int(ceil(area.size.z / PASSO))
+	var img := Image.create_empty(w, h, false, Image.FORMAT_L8)
+	for p in pozze:
+		var mi := p as MeshInstance3D
+		var xf := mi.global_transform
+		var f := mi.mesh.get_faces()
+		for i in range(0, f.size(), 3):
+			var a := _px(xf * f[i], area, PASSO)
+			var b := _px(xf * f[i + 1], area, PASSO)
+			var c := _px(xf * f[i + 2], area, PASSO)
+			_triangolo(img, a, b, c)
+		mi.visible = false
+	# Bordi morbidi: rimpicciolire e ingrandire fa da sfocatura.
+	img.resize(maxi(w / 4, 1), maxi(h / 4, 1), Image.INTERPOLATE_BILINEAR)
+	img.resize(w, h, Image.INTERPOLATE_CUBIC)
+	var tex := ImageTexture.create_from_image(img)
+	var rett := Vector4(area.position.x, area.position.z, area.size.x, area.size.z)
+	for n in _ambienti.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
-		mi.material_override = m
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.position.y += 0.003   # niente z-fighting con il pavimento
+		for s in mi.mesh.get_surface_count() if mi.mesh else 0:
+			var m := mi.get_active_material(s)
+			if m is ShaderMaterial and (m as ShaderMaterial).shader and \
+					(m as ShaderMaterial).shader.resource_path.ends_with("piastrelle.gdshader"):
+				(m as ShaderMaterial).set_shader_parameter("maschera_pozze", tex)
+				(m as ShaderMaterial).set_shader_parameter("rettangolo_pozze", rett)
+
+
+static func _px(v: Vector3, area: AABB, passo: float) -> Vector2:
+	return Vector2((v.x - area.position.x) / passo, (v.z - area.position.z) / passo)
+
+
+static func _triangolo(img: Image, a: Vector2, b: Vector2, c: Vector2) -> void:
+	var minx := maxi(int(floor(minf(a.x, minf(b.x, c.x)))), 0)
+	var maxx := mini(int(ceil(maxf(a.x, maxf(b.x, c.x)))), img.get_width() - 1)
+	var miny := maxi(int(floor(minf(a.y, minf(b.y, c.y)))), 0)
+	var maxy := mini(int(ceil(maxf(a.y, maxf(b.y, c.y)))), img.get_height() - 1)
+	for y in range(miny, maxy + 1):
+		for x in range(minx, maxx + 1):
+			if Geometry2D.point_is_inside_triangle(Vector2(x + 0.5, y + 0.5), a, b, c):
+				img.set_pixel(x, y, Color.WHITE)
 
 
 func _crea_gi(stanza: Node3D, box: AABB) -> void:
@@ -141,7 +256,7 @@ func cuoci_gi() -> void:
 	DirAccess.make_dir_recursive_absolute(cartella_gi)
 	# Le lampade emissive non vanno "cotte" nel GI: la loro luce la fanno le Light3D, che
 	# il VoxelGI segue in tempo reale. Cotte, resterebbero accese anche al buio.
-	var spente := LookInterni.spegni_emissioni(get_parent())
+	var spente := [] if gi_con_emissioni else LookInterni.spegni_emissioni(get_parent())
 	for gi in find_children("GI_*", "VoxelGI", false, false):
 		var v := gi as VoxelGI
 		v.bake(v.get_meta("stanza"))   # la geometria sta nella stanza, non tra i figli di LookInterni
