@@ -153,10 +153,18 @@ vec3 water_caustics(vec2 surf_xz, float depth, float scale, float lod) {
 	surf_xz -= rs.xy * depth * 0.25;
 	float rip = clamp(1.0 - depth * 0.25 * rs.z * 0.35, 0.25, 3.0);
 
-	vec2 p1 = surf_xz / scale;
-	vec2 p2 = mat2(vec2(0.8, -0.6), vec2(0.6, 0.8)) * surf_xz / (scale * 1.37) + vec2(0.31, 0.77);
+	// distorsione larga e lenta: il motivo (periodico) non si legge piu' come una rete regolare
+	vec2 wq = surf_xz / scale;
+	// (textureLod: questa funzione gira anche dentro light(), senza derivate affidabili)
+	vec2 warp = vec2(textureLod(water_noise_tex, wq * 0.21 + vec2(t * 0.11, 0.0), 0.0).r,
+			textureLod(water_noise_tex, wq * 0.21 + vec2(0.43, 0.71) - vec2(0.0, t * 0.09), 0.0).r) - 0.5;
+	vec2 p1 = wq + warp * 0.9;
+	vec2 p2 = mat2(vec2(0.8, -0.6), vec2(0.6, 0.8)) * (wq / 1.37 - warp * 0.7) + vec2(0.31, 0.77);
 	float blur = lod + clamp(depth - 2.0, 0.0, 6.0) * 0.45;
-	float focus = smoothstep(0.02, 0.7, depth);
+	// sul bagnasciuga le onde non hanno spazio per concentrare la luce: le caustiche nascono
+	// con la profondita'; a chiazze piu' e meno intense
+	float focus = smoothstep(0.03, 0.6, depth);
+	focus *= 0.55 + 0.9 * textureLod(water_noise_tex, wq * 0.13 + vec2(0.2, t * 0.05), 0.0).r;
 	vec3 c;
 	if (water_quality >= 2) {
 		// dispersione: i tre colori arrivano in punti appena diversi (piu' separati in profondita')
@@ -165,11 +173,11 @@ vec3 water_caustics(vec2 surf_xz, float depth, float scale, float lod) {
 		float g1 = water_caustics_raw(p1, t, blur);
 		float b1 = water_caustics_raw(p1 + k, t, blur);
 		float l2 = water_caustics_raw(p2, t * 0.83 + 0.5, blur + 0.5);
-		c = vec3(r1, g1, b1) * mix(1.0, l2, 0.4);
+		c = vec3(r1, g1, b1) * mix(1.0, l2, 0.5);
 	} else if (water_quality == 1) {
 		float l1 = water_caustics_raw(p1, t, blur);
 		float l2 = water_caustics_raw(p2, t * 0.83 + 0.5, blur + 0.5);
-		c = vec3(l1 * mix(1.0, l2, 0.4));
+		c = vec3(l1 * mix(1.0, l2, 0.5));
 	} else {
 		c = vec3(water_caustics_raw(p1, t, blur + 0.5));
 	}
@@ -247,7 +255,8 @@ vec3 water_glow_inscatter(vec3 o, vec3 d, float len, vec3 sigma_t, float sigma_s
 		vec4 c = texelFetch(water_glow_tex, ivec2(i * 2 + 1, 0), 0);
 		vec3 ol = a.xyz - o;
 		float t0 = dot(ol, d);
-		float h = max(length(ol - d * t0), 0.04);
+		// la sorgente non e' un punto (campana della medusa): niente picco infinito vicino alla luce
+		float h = max(length(ol - d * t0), max(0.04, a.w * 0.05));
 		float ang = atan((len - t0) / h) + atan(t0 / h);
 		float tc = clamp(t0, 0.0, len);
 		float dc = length(o + d * tc - a.xyz);

@@ -35,7 +35,7 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 | File | Cosa contiene | Triangoli | Collisioni | Peso |
 |---|---|---|---|---|
 | `sala_architettura.glb` | pavimento (piastrelle asciutte, umide e bagnate; pozzanghere a specchio), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d'emergenza, insegna a pesce, altoparlanti | 246 mila | 275 | 42.7 MB |
-| `sala_monumento.glb` | **monumento della statua (vuoto)**: piedistallo a gradoni con fregio a mosaico marino, conchiglie d'ottone, scatola del pulsante, 4 faretti dal basso; cordone di velluto su colonnine; lampione; 2 fari sulla ringhiera della galleria; offerte dei bambini (disegni, conchiglie, stelle marine, secchiello) | 18 mila | 14 | 20.7 MB |
+| `sala_monumento.glb` | **monumento della statua (vuoto)**: piedistallo a gradoni con fregio a mosaico marino, conchiglie d'ottone, scatola del pulsante, 4 faretti dal basso; cordone di velluto su colonnine; lampione; 2 fari sulla ringhiera della galleria; offerte dei bambini (disegni, conchiglie, stelle marine, secchiello) | 19 mila | 14 | 20.7 MB |
 | `sala_cupola.glb` | cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro) | 35 mila | - | 9.6 MB |
 | `sala_piscina.glb` | piscina a onde vuota: fondo con pendenza e conca dello scarico, linea dell'ultimo livello dell'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette | 31 mila | 71 | 19.2 MB |
 | `sala_area_bimbi.glb` | struttura di gioco, **secchio gigante** e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi | 6 mila | 30 | 16.8 MB |
@@ -73,13 +73,14 @@ serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, 
   `assets_src/ambiente/godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente.
 - **Spawn del giocatore** (appena passato il vano): (0, 0, 19.2), guarda verso **-Z** (la statua).
 - **Monumento (piedistallo vuoto, per la medusa)**: centro (0, 0, 10).
-  - **Piano superiore a y = 1.15 m**, diametro del piano 2.78 m (con il toro del bordo
-    2,84 m). La statua va appoggiata in **(0, 1.15, 10)**, rivolta verso **+Z** (la porta).
+  - **Piano superiore a y = 1.15 m**, diametro del piano 3.7 m (raggio 1.85; con il toro del
+    bordo 3.76 m): i tentacoli della medusa (raggio 1,55 m) restano tutti appoggiati.
+    La statua va appoggiata con l'origine in **(0, 1.15, 10)**, rivolta verso **+Z** (la porta).
     Con 4,5 m di statua la cima arriva a y = 5.65 (la galleria è a 4,0-4,3; il soffitto a 11,5).
-  - Gradoni: il primo Ø 4 m alto 0.28, il secondo Ø 3.24 m fino a 0.56;
-    tamburo Ø 2.6 m con il fregio a mosaico (onde, pesci, stella marina, medusa).
+  - Gradoni: il primo Ø 5.2 m alto 0.28, il secondo Ø 4.4 m fino a 0.56;
+    tamburo Ø 3.5 m con il fregio a mosaico (onde, pesci, stella marina, medusa).
   - **Pulsante dei bambini (sigla, scena S1)**: il fungo rosso è il nodo `sala_pulsante_piedistallo`
-    in (0, 0.8, 11.43), sul davanti del tamburo, rivolto verso +Z; si preme verso -Z.
+    in (0, 0.8, 11.88), sul davanti del tamburo, rivolto verso +Z; si preme verso -Z.
   - Cordone di velluto su colonnine a raggio 3 m, aperto sul davanti (varco di 3 m verso
     la porta); collisioni sulle campate.
   - Luci del monumento (in `sala_luci.glb`): `luce_faro_0/1` (fari sulla ringhiera della galleria sud,
@@ -107,7 +108,7 @@ Non sono cambiati, tranne il pulsante del piedistallo (nuova posizione).
 | `sala_ruota_cancello` | (-9.2, 1.45, -13.8) |
 | `sala_trasmissione_cancello` | (0, 0, -0) |
 | `sala_quadro_elettrico` | (-9, 1.1, -21.15) |
-| `sala_pulsante_piedistallo` | (0, 0.8, 11.43) |
+| `sala_pulsante_piedistallo` | (0, 0.8, 11.88) |
 
 ## Acqua (da fare con l'acqua vera; in `sala_acqua.glb` ci sono i segnaposto)
 
@@ -195,10 +196,10 @@ stessi valori. In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 
 | `luce_calda_2` | OmniLight3D calda (plafoniera navale accesa) | (-19.75, 2.7, 1) | (1, 0.68, 0.38) |  |
 | `luce_calda_3` | OmniLight3D calda (plafoniera navale accesa) | (10.5, 2.6, -14.13) | (1, 0.68, 0.38) |  |
 | `luce_calda_4` | OmniLight3D calda (plafoniera navale accesa) | (-3, 3, -20.9) | (1, 0.68, 0.38) |  |
-| `luce_monumento_basso_0` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.252, 0.451, 8.748) | (1, 0.82, 0.58) | punta verso (-0.306, 0.901, 0.306) |
-| `luce_monumento_basso_1` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.252, 0.451, 8.748) | (1, 0.82, 0.58) | punta verso (0.306, 0.901, 0.306) |
-| `luce_monumento_basso_2` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.252, 0.451, 11.252) | (1, 0.82, 0.58) | punta verso (0.306, 0.901, -0.306) |
-| `luce_monumento_basso_3` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.252, 0.451, 11.252) | (1, 0.82, 0.58) | punta verso (-0.306, 0.901, -0.306) |
+| `luce_monumento_basso_0` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.663, 0.446, 8.337) | (1, 0.82, 0.58) | punta verso (-0.38, 0.844, 0.38) |
+| `luce_monumento_basso_1` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.663, 0.446, 8.337) | (1, 0.82, 0.58) | punta verso (0.38, 0.844, 0.38) |
+| `luce_monumento_basso_2` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.663, 0.446, 11.663) | (1, 0.82, 0.58) | punta verso (0.38, 0.844, -0.38) |
+| `luce_monumento_basso_3` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.663, 0.446, 11.663) | (1, 0.82, 0.58) | punta verso (-0.38, 0.844, -0.38) |
 | `luce_faro_0` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (-2.014, 5.547, 16.616) | (1, 0.9, 0.76) | punta verso (0.288, -0.143, -0.947) |
 | `luce_faro_1` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (2.014, 5.547, 16.616) | (1, 0.9, 0.76) | punta verso (-0.288, -0.143, -0.947) |
 | `luce_subacquea_0` | OmniLight3D sott'acqua, vasca d'arrivo | (-12.5, -0.7, 6.85) | (0.25, 0.95, 0.75) |  |

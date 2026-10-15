@@ -16,6 +16,16 @@ func _ready() -> void:
 			Vector3(-0.8, -1.5, -4.8), Vector3(2.4, -1.5, -3.4), Vector3(-2.6, -1.5, -4.0)]
 	for i in toys.size():
 		_toy(toys[i], TOY_COLORS[i % TOY_COLORS.size()], i)
+	# acqua che scorre nel tubo dello scivolo e si tuffa nella vasca d'arrivo
+	var hall: Node = get_parent().get_node_or_null("MainHall")
+	var curve: Curve3D = hall.get("slide_curve") if hall else null
+	if curve:
+		var sw := SlideWater.new()
+		sw.name = "AcquaScivolo"
+		sw.tube_radius = 0.62
+		sw.flow_speed = 3.2
+		sw.curve = curve
+		add_child(sw)
 	# gocce dal soffitto: sulle pozzanghere del pavimento, sulle vasche e sulla pozza
 	for p in [Vector3(7.4, 7.9, 4.2), Vector3(-4.5, 7.9, 8.0), Vector3(16.0, 7.9, -1.0), Vector3(-16.2, 7.9, 5.0),
 			Vector3(12.6, 7.9, -3.5), Vector3(-11.0, 7.9, 1.2), Vector3(-0.8, 7.9, -3.0), Vector3(1.6, 7.9, -4.6),

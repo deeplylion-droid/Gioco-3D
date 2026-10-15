@@ -4,7 +4,8 @@ extends Node3D
 ##
 ## Tasti: 0 aspetto predefinito (scura + pozza torbida), 1/2/3 stessa acqua ovunque (opzioni),
 ## R riempi / F svuota la vasca d'arrivo, V svuota la pozza (gorgo), B riempie la vasca bimbi,
-## L lampo, T qualita' (bassa/media/alta), Spazio lancia una palla, C cambia inquadratura,
+## L lampo, T qualita' (bassa/media/alta), Spazio lancia una palla, E (tenuto) aspira,
+## J (tenuto) spara il getto (usa l'acqua aspirata), C cambia inquadratura,
 ## P screenshot in user://, H aiuto. Tasto destro + WASD/QE per muoversi.
 ##
 ## Da riga di comando (dopo "--"):
@@ -45,6 +46,8 @@ const SHOTS := {
 @onready var hall: Node3D = $MainHall
 
 var args := {}
+var suction: WaterSuction
+var jet: WaterJet
 var style_index := -1
 var shot_names: Array = SHOTS.keys()
 var shot_index := 0
@@ -58,6 +61,16 @@ var _next_flash := 9.0
 func _ready() -> void:
 	args = _parse_args()
 	_build_help()
+	# lancia dello zaino-pompa davanti alla camera: E aspira, J spara
+	var lance := Node3D.new()
+	lance.name = "Lancia"
+	lance.position = Vector3(0.22, -0.22, -0.55)
+	cam.add_child(lance)
+	suction = WaterSuction.new()
+	lance.add_child(suction)
+	jet = WaterJet.new()
+	jet.suction = suction
+	lance.add_child(jet)
 	if args.has("quality"):
 		WaterManager.quality = int(args["quality"])
 	set_style(int(args.get("style", "0")))
@@ -216,6 +229,11 @@ func flash() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and not event.echo:
+		if event.keycode == KEY_E:
+			suction.active = event.pressed
+		elif event.keycode == KEY_J:
+			jet.active = event.pressed
 	if not (event is InputEventKey and event.pressed and not event.echo):
 		return
 	match event.keycode:
@@ -293,5 +311,5 @@ func _update_help() -> void:
 	if _help == null:
 		return
 	var sname := "predefinito (scura + pozza torbida)" if style_index == 0 else "opzione %d" % style_index
-	_help.text = "Aspetto: %s (0/1/2/3)   Qualita' %s (T)\nR riempi / F svuota vasca d'arrivo   V svuota pozza (gorgo)   B riempi vasca bimbi   L lampo\nSpazio palla   C inquadratura   P screenshot   H aiuto   Tasto destro + WASD/QE per muoversi" % [
+	_help.text = "Aspetto: %s (0/1/2/3)   Qualita' %s (T)\nR riempi / F svuota vasca d'arrivo   V svuota pozza (gorgo)   B riempi vasca bimbi   L lampo\nSpazio palla   E aspira   J getto   C inquadratura   P screenshot   H aiuto   Tasto destro + WASD/QE per muoversi" % [
 		sname, ["bassa", "media", "alta"][WaterManager.quality]]

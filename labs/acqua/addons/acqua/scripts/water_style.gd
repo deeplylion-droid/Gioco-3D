@@ -22,10 +22,15 @@ extends Resource
 @export_range(0.0, 1.0, 0.001) var wave_speed := 0.05
 @export_range(0.0, 1.0, 0.01) var refraction_strength := 0.18
 @export_range(0.0, 2.0, 0.01) var reflection_strength := 1.0
+## Riflessi allungati in verticale (scie delle luci sull'acqua increspata), in frazione
+## dell'altezza dello schermo. 0 = riflesso netto.
+@export_range(0.0, 0.2, 0.001) var reflection_stretch := 0.0
 
 @export_group("Schiuma e sporco")
 @export_color_no_alpha var foam_color := Color(0.82, 0.85, 0.84)
 @export_range(0.0, 2.0, 0.01) var foam_shore_amount := 0.6
+## Larghezza della schiuma sulla riva (m d'acqua attraversata dallo sguardo).
+@export_range(0.0, 1.0, 0.01) var foam_shore_width := 0.22
 @export_range(0.0, 4.0, 0.01) var foam_ripple_amount := 1.0
 ## Patina galleggiante (alghe, polvere).
 @export_range(0.0, 1.0, 0.01) var scum_amount := 0.0

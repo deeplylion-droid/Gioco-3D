@@ -45,7 +45,8 @@ func _process(delta: float) -> void:
 	if cam == null:
 		return
 	var p := cam.global_position
-	var wb = WaterManager.get_body_at(p)
+	var wm := get_node_or_null("/root/WaterManager")
+	var wb = wm.get_body_at(p) if wm else null
 	var under := false
 	var near_surface := false
 	if wb and not wb.is_empty():

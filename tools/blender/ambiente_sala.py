@@ -42,7 +42,8 @@ PISCINA = dict(x0=-7.0, x1=7.0, y0=-5.0, y1=13.0, prof=2.0, y_pendenza=1.0, scar
 VASCA_ARRIVO = dict(x0=-16.0, x1=-9.0, y0=-7.0, y1=3.0, prof=1.1, acqua=-0.22)
 # piedistallo della statua (vuoto: la medusa la mette il gruppo "medusa")
 # monumento: gradoni (z1, z2), tamburo col fregio fino a z3, cornice e piano a h; cordone a r_cordone
-PIEDISTALLO = dict(cx=0.0, cy=-10.0, r_base=2.0, r_gradino=1.62, r_tamburo=1.3, r_piano=1.42,
+# piano: raggio 1,85 (la medusa appoggia i tentacoli fino a 1,55 m, vedi assets_src/medusa/godot/LEGGIMI.md)
+PIEDISTALLO = dict(cx=0.0, cy=-10.0, r_base=2.6, r_gradino=2.2, r_tamburo=1.75, r_piano=1.88,
                    z1=0.28, z2=0.56, z3=1.03, h=1.15, z_pulsante=0.8, r_cordone=3.0)
 RINGHIERA_H_SALA = 1.05
 STRUTTURA = dict(cx=-13.0, cy=16.0)
@@ -1124,7 +1125,7 @@ def piedistallo(mats):
     c = K.Costruttore(mats)
     cx, cy = P['cx'], P['cy']
     z1, z2, z3, h = P['z1'], P['z2'], P['z3'], P['h']
-    seg = 72
+    seg = 96
     def parete_cil(r, za, zb, mat, lato_u=None, alto_v=None):
         lt = mats.lato(mat)
         for k in range(seg):
@@ -1149,9 +1150,9 @@ def piedistallo(mats):
     parete_cil(P['r_gradino'], z1, z2, 'piedistallo')
     corona(P['r_tamburo'], P['r_gradino'], z2, 'bordo')
     c.toro((cx, cy, z2 - 0.012), (0, 0, 1), P['r_gradino'] - 0.004, 0.016, 'bordo', seg=120, seg_r=6)
-    # tamburo con il fregio (4 ripetizioni intorno)
+    # tamburo con il fregio (una ripetizione ogni 2 m circa)
     giro = 2 * math.pi * P['r_tamburo']
-    parete_cil(P['r_tamburo'], z2, z3, 'fregio', lato_u=giro / 4)
+    parete_cil(P['r_tamburo'], z2, z3, 'fregio', lato_u=giro / max(1, round(giro / 2.04)))
     c.toro((cx, cy, z2 + 0.02), (0, 0, 1), P['r_tamburo'] + 0.008, 0.02, 'cornice_oblo', seg=120, seg_r=8)
     # cornice e piano
     corona(P['r_tamburo'] - 0.01, P['r_piano'], z3, 'bordo', giu=True)
@@ -1284,7 +1285,10 @@ def offerte_monumento(mats):
         n = Vector((math.cos(t), math.sin(t), 0))
         cen = Vector((cx, cy, 0)) + n * (P['r_tamburo'] + 0.012) + Vector((0, 0, P['z2'] + 0.24))
         foglio(i, cen, Vector((-math.sin(t), math.cos(t), 0)), Vector((0, 0.0, 1)), curva=-0.006)
-    for i, (a, r, z) in enumerate(((228, 1.83, P['z1']), (312, 1.86, P['z1']), (262, 1.45, P['z2']), (200, 2.35, 0.0))):
+    r1 = (P['r_gradino'] + P['r_base']) / 2          # metà della pedata bassa
+    r2 = (P['r_tamburo'] + P['r_gradino']) / 2        # metà della pedata alta
+    rt = (P['r_base'] + P['r_cordone']) / 2           # a terra, tra il gradone e il cordone
+    for i, (a, r, z) in enumerate(((228, r1, P['z1']), (312, r1 + 0.02, P['z1']), (262, r2, P['z2']), (200, rt, 0.0))):
         t = math.radians(a)
         cen = Vector((cx + math.cos(t) * r, cy + math.sin(t) * r, z + 0.006))
         rot = t + rnd.uniform(-0.5, 0.5)
@@ -1293,9 +1297,9 @@ def offerte_monumento(mats):
     for k in range(9):
         a = math.radians(rnd.choice([rnd.uniform(195, 345), rnd.uniform(0, 360)]))
         if rnd.random() < 0.6:
-            r, z = rnd.uniform(1.68, 1.95), P['z1']
+            r, z = rnd.uniform(P['r_gradino'] + 0.06, P['r_base'] - 0.06), P['z1']
         else:
-            r, z = rnd.uniform(1.35, 1.58), P['z2']
+            r, z = rnd.uniform(P['r_tamburo'] + 0.06, P['r_gradino'] - 0.06), P['z2']
         p = (cx + math.cos(a) * r, cy + math.sin(a) * r, z + 0.004)
         if k % 3 == 2:
             stella_marina(c, p, rnd.uniform(0.06, 0.09), 'gioco_arancio', rot=rnd.uniform(0, 6.28))
@@ -1304,7 +1308,7 @@ def offerte_monumento(mats):
             conchiglia(c, p, (0, 0, 1), rnd.uniform(0.045, 0.07), 'conchiglia', su=(math.cos(d), math.sin(d), 0))
     # secchiello con paletta, a terra davanti a sinistra
     a = math.radians(222)
-    b = Vector((cx + math.cos(a) * 2.3, cy + math.sin(a) * 2.3, 0.0))
+    b = Vector((cx + math.cos(a) * rt, cy + math.sin(a) * rt, 0.0))
     seg = 16
     for k in range(seg):
         t0, t1 = 2 * math.pi * k / seg, 2 * math.pi * (k + 1) / seg
@@ -1936,13 +1940,16 @@ def disponi_oggetti(zf_piscina):
     def sul_gradino(a, r, z):
         t = math.radians(a)
         return (PD['cx'] + math.cos(t) * r, PD['cy'] + math.sin(t) * r, z)
+    r1 = (PD['r_gradino'] + PD['r_base']) / 2      # pedata bassa
+    r2 = (PD['r_tamburo'] + PD['r_gradino']) / 2    # pedata alta
+    rt = (PD['r_base'] + PD['r_cordone']) / 2       # a terra, dentro il cordone
     metti_ogg('salvagente_nave', sul_gradino(238, PD['r_gradino'] + 0.1, PD['z1']), 238 + 90, 1.0, (75, 0))
-    metti_ogg('orsacchiotto_grande', sul_gradino(300, 1.81, PD['z1']), 300 + 90, 0.38)
-    metti_ogg('paperella_gigante', sul_gradino(276, 1.47, PD['z2']), 276 + 90, 0.22)
-    metti_ogg('paperella_gigante', sul_gradino(205, 1.8, PD['z1']), 160, 0.2)
-    metti_ogg('paperella_gigante', sul_gradino(330, 1.44, PD['z2']), 20, 0.18)
-    metti_ogg('pallone_spiaggia', sul_gradino(196, 2.32, 0.0), 0, 0.8)
-    metti_ogg('ciambella_gonfiabile', sul_gradino(322, 2.42, 0.0), 40, 0.55, (4, 0))
+    metti_ogg('orsacchiotto_grande', sul_gradino(300, r1, PD['z1']), 300 + 90, 0.38)
+    metti_ogg('paperella_gigante', sul_gradino(276, r2, PD['z2']), 276 + 90, 0.22)
+    metti_ogg('paperella_gigante', sul_gradino(205, r1, PD['z1']), 160, 0.2)
+    metti_ogg('paperella_gigante', sul_gradino(330, r2, PD['z2']), 20, 0.18)
+    metti_ogg('pallone_spiaggia', sul_gradino(196, rt, 0.0), 0, 0.75)
+    metti_ogg('ciambella_gonfiabile', sul_gradino(322, r1, PD['z1']), 40, 0.45, (4, 0))
     # --- altri giocattoli sparsi (la sala è grande: nel concept è piena di roba lasciata lì)
     import random
     rnd = random.Random(31)

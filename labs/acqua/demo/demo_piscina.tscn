@@ -35,6 +35,7 @@ level = -0.28
 bottom = -2.6
 max_level = -0.08
 style = ExtResource("5_dark")
+planar_reflection_on_high = true
 env_box_min = Vector3(-18, -2.6, -12)
 env_box_max = Vector3(18, 8, 12)
 
