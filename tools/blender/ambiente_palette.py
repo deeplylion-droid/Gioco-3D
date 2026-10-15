@@ -129,6 +129,9 @@ PALETTE['sala_a']['materiali'].update({
     'intonaco': dict(ricetta='vernice', sorgente='intonaco_scrostato', colore='#a7b3a6'),
     'intonaco_alto': dict(ricetta='vernice', sorgente='intonaco_scrostato', colore='#7d8b84'),
     'metallo': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#5f6d69'),   # vernice navale grigio-verde
+    # grigio più neutro per i dettagli (cassette, condotte, pannelli caduti): al posto del bianco della CC0, su cui
+    # le macchie di ruggine sembravano sangue
+    'metallo_grigio': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#7a807d'),
     'cornice_oblo': dict(ricetta='originale', sorgente='ottone'),
     # vasca sollevata al centro della sala (concept medusa_sbircia): piastrelle da 25 cm a scacchi blu notte e
     # crema, fughe scure in rilievo; il bordo (coping) è lo stesso colore ma bagnato e lucido

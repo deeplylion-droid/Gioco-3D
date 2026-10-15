@@ -53,7 +53,9 @@ def acg(nome, aid, col=None, **kw):
 
 M = {}
 M['metallo'] = kit('M_det_metallo_verniciato', 'metallo_verniciato', col=T(KT, 'derivate', 'sala_a', 'metallo_col.jpg'))
-M['metallo_grigio'] = kit('M_det_metallo_grigio', 'metallo_verniciato')
+# grigio derivato dal kit della sala (sala_a/metallo_grigio): la CC0 così com'è è bianca con la ruggine rossa,
+# e a terra i pannelli caduti sembravano lenzuola insanguinate
+M['metallo_grigio'] = kit('M_det_metallo_grigio', 'metallo_verniciato', col=T(KT, 'derivate', 'sala_a', 'metallo_grigio_col.jpg'))
 M['inox'] = kit('M_det_acciaio', 'acciaio_inox')
 M['plastica'] = kit('M_det_plastica', 'plastica_bianca')
 M['piastrella'] = kit('M_det_piastrella', 'piastrelle_bianche', col=T(KT, 'derivate', 'sala_a', 'parete_col.jpg'))
