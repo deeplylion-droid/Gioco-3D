@@ -226,7 +226,8 @@
 				130,
 				131,
 				132,
-				133
+				133,
+				134
 			]
 		}
 	],
@@ -1970,7 +1971,7 @@
 			],
 			"translation":[
 				9.699999809265137,
-				2.524925708770752,
+				2.436000108718872,
 				-17.5
 			]
 		},
@@ -1990,7 +1991,7 @@
 			],
 			"translation":[
 				9.699999809265137,
-				2.524925708770752,
+				2.436000108718872,
 				-17.5
 			]
 		},
@@ -2262,6 +2263,10 @@
 		{
 			"mesh":44,
 			"name":"vetro_rotto"
+		},
+		{
+			"mesh":45,
+			"name":"vetro_rotto_bordo"
 		}
 	],
 	"materials":[
@@ -2944,6 +2949,20 @@
 				"metallicRoughnessTexture":{
 					"index":108
 				}
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"vetro_bordo",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.8600000143051147,
+					0.9200000166893005,
+					0.8999999761581421,
+					1
+				],
+				"metallicFactor":0,
+				"roughnessFactor":0.18000000715255737
 			}
 		}
 	],
@@ -3789,6 +3808,19 @@
 					},
 					"indices":261,
 					"material":27
+				}
+			]
+		},
+		{
+			"name":"vetro_rotto_bordo",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":262,
+						"NORMAL":263
+					},
+					"indices":264,
+					"material":44
 				}
 			]
 		}
@@ -6138,14 +6170,14 @@
 			"componentType":5126,
 			"count":72,
 			"max":[
-				12.17432975769043,
+				12.042695045471191,
 				0.003000000026077032,
-				-15.230993270874023
+				-15.229730606079102
 			],
 			"min":[
-				9.889443397521973,
+				9.971016883850098,
 				0.003000000026077032,
-				-16.791038513183594
+				-16.8023738861084
 			],
 			"type":"VEC3"
 		},
@@ -7009,6 +7041,34 @@
 			"bufferView":261,
 			"componentType":5123,
 			"count":336,
+			"type":"SCALAR"
+		},
+		{
+			"bufferView":262,
+			"componentType":5126,
+			"count":316,
+			"max":[
+				10.89799976348877,
+				2.0340182781219482,
+				-15.484375
+			],
+			"min":[
+				10.89799976348877,
+				0.9163184762001038,
+				-16.351470947265625
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":263,
+			"componentType":5126,
+			"count":316,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":264,
+			"componentType":5123,
+			"count":474,
 			"type":"SCALAR"
 		}
 	],
@@ -8584,6 +8644,24 @@
 			"byteLength":672,
 			"byteOffset":13942212,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":3792,
+			"byteOffset":13942884,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3792,
+			"byteOffset":13946676,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":948,
+			"byteOffset":13950468,
+			"target":34963
 		}
 	],
 	"samplers":[
@@ -8594,7 +8672,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":13942884,
+			"byteLength":13951416,
 			"uri":"spogliatoi.bin"
 		}
 	]

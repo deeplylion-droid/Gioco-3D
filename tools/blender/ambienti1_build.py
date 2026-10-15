@@ -16,6 +16,8 @@ AI = L.AI
 MESHY = os.path.join(AI, 'meshy')
 POSTER = os.path.join(AI, 'poster')
 R = math.radians
+# turbina della saracinesca rifatta con Meshy: entra nel gioco solo dopo l'ok dell'utente (TURBINA_CANCELLO=nuova)
+TURBINA_NUOVA = os.environ.get('TURBINA_CANCELLO') == 'nuova'
 # finestra del gabbiotto nella parete est del corridoio lava-piedi (y0, y1, z0, z1)
 FINESTRA = (15.45, 16.55, 0.85, 2.25)
 
@@ -174,9 +176,9 @@ def sprinkler(nome, x, y, z_tubo, z_testa, M):
     return L.unisci(nome + '_stacco', parti)
 
 
-def pannello_ammaccato(nome, lo, hi, M, seme):
-    """Lamiera ammaccata riportata sulla parete (sporge 1 cm)."""
-    p = L.scatola(nome, lo, hi, M['lamiera_crema'], smussa=0.006)
+def pannello_ammaccato(nome, lo, hi, M, seme, mat='lamiera_crema'):
+    """Lamiera ammaccata riportata sulla parete (sporge 1 cm), dello stesso colore della fascia su cui sta."""
+    p = L.scatola(nome, lo, hi, M[mat], smussa=0.006)
     L.ammacca(p, 0.02, 2.2, seme, 10)
     L.uv_scatola(p)
     return p
@@ -351,9 +353,20 @@ def corridoio(M):
     prop('paperella', 'paperella', (13.9, 1.2, 0.0), 140, 0.09)
     prop('pallone', 'pallone', (2.2, 0.6, 0), 0, 0.42)
     if HQ.disponibile('valvola_volantino'):
-        for k, x in enumerate((6.6, 15.9)):
-            HQ.metti(f'valvola_corridoio_{k + 1}', 'valvola_volantino', (x, 2.22, 1.75), (None, None, 0.42), rot_z=R(180))
-            statico.append(L.tubo_percorso(f'stacco_valvola_{k + 1}', [(x, 2.32, 2.3), (x, 2.32, 1.95)], 0.045, M['ruggine'], flange=False))
+        # valvola in linea su un bypass del tubo grande: scende, passa dalle flange della valvola e risale
+        # (prima pendeva da un tubicino con le flange libere: "valvole appese al nulla")
+        for k, x in enumerate((4.9, 15.9)):   # la prima non più sopra il passaggio degli spogliatoi (x 6..7,6)
+            v = HQ.metti(f'valvola_corridoio_{k + 1}', 'valvola_volantino', (x, 2.32, 1.58), (None, None, 0.42), rot_z=R(180))
+            bpy.context.view_layer.update()
+            ws = [v.matrix_world @ p.co for p in v.data.vertices]
+            x0, x1 = min(p.x for p in ws), max(p.x for p in ws)
+            fl = [p for p in ws if p.x > x1 - 0.03 or p.x < x0 + 0.03]          # le facce delle due flange
+            zf = (min(p.z for p in fl) + max(p.z for p in fl)) / 2
+            yf = (min(p.y for p in fl) + max(p.y for p in fl)) / 2
+            for lato, xa in ((-1, x0 + 0.01), (1, x1 - 0.01)):
+                xb = x + lato * 0.5
+                statico.append(L.tubo_percorso(f'bypass_valvola_{k + 1}_{lato + 1}', [(xa, yf, zf), (xb, yf, zf), (xb, yf, 2.3), (xb, 2.32, 2.36)],
+                                               0.045, M['ruggine'], flange=False))
     if HQ.disponibile('cartello_pericolo'):
         HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60))
     prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.7, 0), 75, 0.8)
@@ -370,8 +383,10 @@ def corridoio(M):
     for k, x in enumerate([1.8, 5.2, 8.6, 12.1, 15.6, 19.0]):
         statico.append(sprinkler(f'sprinkler_corridoio_{k + 1}', x, 2.12, 2.43, 2.3, M))
     # due lamiere ammaccate (lontano dal cartellone, che sta tra x 13,85 e 15,35 sul lato sud)
-    statico.append(pannello_ammaccato('lamiera_ammaccata_1', (3.3, 2.58, 0.25), (4.4, 2.6, 1.05), M, 21.0))
-    statico.append(pannello_ammaccato('lamiera_ammaccata_2', (9.6, 0.0, 0.3), (10.6, 0.02, 1.0), M, 33.0))
+    # stanno nello zoccolo (fino a 1,1 m): color petrolio come lui. Crema sembravano tavole di legno, e la
+    # seconda stava proprio dietro l'estintore (questionario del 15 ottobre)
+    statico.append(pannello_ammaccato('lamiera_ammaccata_1', (3.3, 2.58, 0.25), (4.4, 2.6, 1.05), M, 21.0, 'lamiera_petrolio'))
+    statico.append(pannello_ammaccato('lamiera_ammaccata_2', (10.9, 0.0, 0.3), (11.9, 0.02, 1.0), M, 33.0, 'lamiera_petrolio'))
     L.unisci('corridoio_statico', statico)
     L.crea_collisione('corridoio', 'corridoio')
 
@@ -652,7 +667,35 @@ def spogliatoi(M):
     for i in range(NB):
         j = (i + 1) % NB
         bm.faces.new((est[i], est[j], inn[j], inn[i]))
+    pi_ = [v.co.copy() for v in inn]   # bordo del buco (prima che la bmesh diventi un oggetto)
     vetro = L._ob_da_bm('vetro_rotto', bm, M['vetro_sporco']); L.uv_scatola(vetro, 1.0)
+    # bordo chiaro e frastagliato del buco e qualche crepa che parte da lì: senza, il vetro quasi
+    # trasparente non si vedeva e la finestra sembrava vuota (questionario del 15 ottobre)
+    mb = L.mat_colore('vetro_bordo', (0.86, 0.92, 0.9), rough=0.18)
+    bm = bmesh.new()
+    xb = xg - 0.002
+    for i in range(NB):
+        j = (i + 1) % NB
+        a, b = pi_[i], pi_[j]
+        da = Vector((0, a.y - cen[0], a.z - cen[1])).normalized() * 0.014
+        db = Vector((0, b.y - cen[0], b.z - cen[1])).normalized() * 0.014
+        q = [bm.verts.new((xb, a.y, a.z)), bm.verts.new((xb, b.y, b.z)), bm.verts.new((xb, b.y + db.y, b.z + db.z)), bm.verts.new((xb, a.y + da.y, a.z + da.z))]
+        bm.faces.new(q)
+    for k in range(9):
+        i = rnd.randrange(NB)
+        a = pi_[i]
+        d = Vector((0, a.y - cen[0], a.z - cen[1])).normalized()
+        lung = rnd.uniform(0.12, 0.34)
+        pts = [Vector((xb, a.y, a.z))]
+        for t in range(3):   # crepa a zig-zag
+            d = (d + Vector((0, rnd.uniform(-0.35, 0.35), rnd.uniform(-0.35, 0.35)))).normalized()
+            pts.append(pts[-1] + d * lung / 3)
+        for p0, p1 in zip(pts, pts[1:]):
+            n = Vector((0, -(p1 - p0).z, (p1 - p0).y)).normalized() * 0.0025
+            if not (cy - hy + 0.02 < p1.y < cy + hy - 0.02 and cz - hz + 0.02 < p1.z < cz + hz - 0.02):
+                break   # la crepa si ferma al telaio
+            bm.faces.new([bm.verts.new(p0 - n), bm.verts.new(p1 - n), bm.verts.new(p1 + n), bm.verts.new(p0 + n)])
+    L._ob_da_bm('vetro_rotto_bordo', bm, mb)
     sch = []
     for k in range(18):
         x = rnd.uniform(9.9, 10.6) if k < 10 else rnd.uniform(11.1, 12.2); y = rnd.uniform(15.2, 16.8)
@@ -696,6 +739,12 @@ def spogliatoi(M):
         pale.append(p)
     turb = L.unisci('turbina_saracinesca', pale); L.uv_scatola(turb, 0.5)
     L.origine(turb, (CX0 + 0.19, TBy, TBz))
+    if TURBINA_NUOVA and HQ.disponibile('turbina_cancello'):
+        # ruota Meshy (questionario del 15 ottobre: "la turbina è orribile"): stesso nome, stesso perno, asse X
+        bpy.data.objects.remove(turb)
+        dt = HQ.dimensioni('turbina_cancello'); kt = 0.6 / max(dt.x, dt.z)
+        turb = HQ.metti('turbina_saracinesca', 'turbina_cancello', (CX0 + 0.19, TBy, TBz), tuple(dt * kt), rot_z=R(90),
+                        perno=(0, 0, dt.z * kt / 2))
     statico.append(L.tubo_percorso('catena_turbina', [(CX0 + 0.05, TBy, TBz + 0.3), (CX0 + 0.05, TBy, 2.45), (CX0 + 0.05, SY - 0.2, 2.45), (UX0 - 0.1, SY - 0.2, 2.45)], 0.03, M['metallo_grezzo'], flange=False))
 
     # ---- luci
@@ -842,8 +891,11 @@ def neon_sotto_il_soffitto(margine=0.004):
         y0, y1 = min(v.y for v in bb), max(v.y for v in bb)
         z0, z1 = min(v.z for v in bb), max(v.z for v in bb)
         cielo = None
-        for fx in (0.1, 0.5, 0.9):
-            for fy in (0.15, 0.5, 0.85):
+        # griglia fitta: una trave larga 10 cm non deve passare fra due campioni
+        lungo_x = (x1 - x0) > (y1 - y0)
+        fitti, radi = [k / 24 for k in range(1, 24)], (0.1, 0.5, 0.9)
+        for fx in (fitti if lungo_x else radi):
+            for fy in (radi if lungo_x else fitti):
                 o = Vector((x0 + (x1 - x0) * fx, y0 + (y1 - y0) * fy, z0 - 0.3))   # da sotto: anche le travi che la attraversano
                 for _ in range(8):
                     hit, loc, _n, _i, ob, _m = sc.ray_cast(dg, o, Vector((0, 0, 1)), distance=1.0)
