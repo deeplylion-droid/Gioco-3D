@@ -774,7 +774,6 @@ func _tappa7(has_interiors: bool) -> void:
 	# Gocciola ancora dal bordo, dalla parte da cui è uscita (ovest, verso l'area bimbi).
 	var bordo_x := VASCA.x - VASCA_INTERNO.x * 0.5 - 0.42
 	r.set(&"gocciolatoi", PackedVector3Array([Vector3(bordo_x, VASCA_BORDO - 0.02, 9.4), Vector3(bordo_x, VASCA_BORDO - 0.02, 10.6)]))
-	r.set(&"materiale_bagnato", level.get(&"puddle_material"))
 	own(r, gp)
 	level.set(&"ritorno", r)
 	if has_interiors:

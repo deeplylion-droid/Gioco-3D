@@ -109,6 +109,7 @@ func _scia() -> void:
 	_nodi.append(radice)
 	var quad := PlaneMesh.new()
 	quad.size = Vector2.ONE
+	var mat := materiale_bagnato if materiale_bagnato else _materiale_goccia()
 	var fatta := 0.0
 	var lunghezza := 0.0
 	for i in range(1, scia.size()):
@@ -125,13 +126,14 @@ func _scia() -> void:
 			p += lato * _rng.randf_range(-0.18, 0.18)
 			var m := MeshInstance3D.new()
 			m.mesh = quad
-			m.material_override = materiale_bagnato
+			m.material_override = mat
 			m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			var grande := lerpf(0.42, 0.14, k) * _rng.randf_range(0.7, 1.2)
+			var grande := lerpf(0.36, 0.12, k) * _rng.randf_range(0.7, 1.25)
 			radice.add_child(m)
 			m.global_position = p + Vector3(0.0, 0.006, 0.0)
-			m.rotation = Vector3(0.0, _rng.randf_range(0.0, TAU), 0.0)
-			m.scale = Vector3(grande, 1.0, grande * _rng.randf_range(0.6, 1.0))
+			# Allungate nel verso in cui si è trascinata.
+			m.rotation = Vector3(0.0, atan2((b - a).x, (b - a).z) + _rng.randf_range(-0.4, 0.4), 0.0)
+			m.scale = Vector3(grande * _rng.randf_range(0.55, 0.9), 1.0, grande * _rng.randf_range(1.0, 1.7))
 			d += passo_scia * lerpf(1.0, 1.8, k) * _rng.randf_range(0.8, 1.25)
 		fatta += tratto
 	for g in gocciolatoi:
@@ -141,6 +143,28 @@ func _scia() -> void:
 		e.interval_max = 3.8
 		radice.add_child(e)
 		e.global_position = g
+
+
+## Macchia bagnata tonda: scura, lucida, che sfuma ai bordi (una goccia schiacciata a terra).
+static func _materiale_goccia() -> StandardMaterial3D:
+	var g := Gradient.new()
+	g.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
+	g.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 0.85), Color(1, 1, 1, 0)])
+	var t := GradientTexture2D.new()
+	t.gradient = g
+	t.fill = GradientTexture2D.FILL_RADIAL
+	t.fill_from = Vector2(0.5, 0.5)
+	t.fill_to = Vector2(1.0, 0.5)
+	t.width = 64
+	t.height = 64
+	var m := StandardMaterial3D.new()
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.albedo_color = Color(0.03, 0.035, 0.04, 0.8)
+	m.albedo_texture = t
+	m.roughness = 0.04
+	m.metallic_specular = 0.9
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return m
 
 
 ## Quante macchie ha la scia (per i test).

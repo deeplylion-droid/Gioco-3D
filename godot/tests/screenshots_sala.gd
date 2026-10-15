@@ -89,15 +89,21 @@ func _run() -> void:
 	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
 	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
-	# Negli scatti la lampada è già accesa e ferma (niente accensione a colpi nella nebbia).
-	lamp.turn_on(true)
+	# SCATTI_FASE=blackout: la sala dopo il risveglio (tappa 7), con la torcia accesa.
+	var buio := OS.get_environment("SCATTI_FASE") == "blackout"
+	if buio:
+		GameState.imposta_luci(GameState.Luci.BLACKOUT)
+		await _frames(5)
+	else:
+		# Negli scatti la lampada è già accesa e ferma (niente accensione a colpi nella nebbia).
+		lamp.turn_on(true)
 	# Davanti alla statua la torcia è spenta: la illuminano solo le sue luci da monumento.
 	var torch := p.find_child("Torcia", true, false) as Torcia
 	var statue_only := not only.is_empty()
 	for o in only:
 		if not String(o).begins_with("statua") and not String(o).begins_with("vasca") and not o in ["ingresso_statua", "ingresso_vasca", "telecamera_monitor"]:
 			statue_only = false
-	if torch and statue_only:
+	if torch and statue_only and not buio:
 		torch.imposta_accesa(false)
 	if _want("ingresso_vasca"):
 		# Entrando nella sala: la medusa affacciata alla vasca, il viso nel cono del lampione.
@@ -116,6 +122,12 @@ func _run() -> void:
 						lamp.base_energy = e
 			await _frames(maxi(settle, 12))
 			await _capture("ingresso_vasca_" + v.replace("=", "").replace(",", "_"))
+	if _want("scia_vasca"):
+		# Tappa 7: dal cordone, la vasca vuota e le gocce che dal bordo vanno verso il buio.
+		await _shot("scia_vasca", Vector3(-8.0, 0.0, 10.9), Vector3(-4.2, 0.0, 9.3))
+	if _want("scia_buio"):
+		# Tappa 7: dal cordone della vasca, la scia di gocce che va verso il fondo della sala.
+		await _shot("scia_buio", Vector3(-7.9, 0.0, 10.6), Vector3(-14.5, -0.6, 7.8))
 	if _want("telecamera_monitor"):
 		# La telecamera di sorveglianza della sala, per il monitor della sala pompe: in alto sopra
 		# l'ingresso, verso la medusa nella vasca (si ritaglia in 4:3).
