@@ -64,6 +64,10 @@ Torcia rifatta:
 
 Per non intralciare chi rifà modelli e texture degli stessi interni, le luci sono in una scena separata: `godot/scenes/interni/luci_interni.tscn` (istanziata in `interni.tscn`), con lo script `addons/grafica/look_interni.gd`.
 
+**Risultato combinato** con i modelli e le texture nuovi di ambienti-1 (oggetti Meshy, pareti senza "mimetica", piastrelle con le fughe), VoxelGI ricotto sulla geometria nuova: `combinato_corridoio.jpg`, `combinato_tornello.jpg`, `combinato_stanzino.jpg`, `combinato_torcia.jpg`.
+
+Da correggere (non è della grafica): nel tornello il "disco azzurro" a destra è il modello `finestra_gabbiotto` (Meshy): è profondo 0,76 m e centrato a x = 10,58, mentre il muro con il vetro rotto è a x = 10,9, quindi sporge circa 0,7 m nel corridoio del lava-piedi, come una cornice girata, invece di stare a filo del muro.
+
 **In attesa del riscontro dell'utente** prima di estendere lo stesso lavoro al resto del gioco.
 
 ## Sala principale vera: prima e dopo
