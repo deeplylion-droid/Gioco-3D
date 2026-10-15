@@ -1,8 +1,8 @@
 extends Node
 ## Test automatico della demo della sala principale (architettura vera), simulando gli input:
 ## zaino sulla rastrelliera, aspirare dalla vasca d'arrivo, lampada della statua, sigla,
-## pozza, gonfiabile, turbina dello scarico, pozza vuota, portello (fine della demo), e il
-## gioco dell'area bimbi (ruota a pale, secchio, cancello).
+## pozza, gonfiabile, turbina dello scarico, pozza vuota, portello, e il gioco dell'area bimbi
+## (ruota a pale, secchio, cancello). Il pozzo e la sala pompe sono in test_tappe56.gd.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -188,7 +188,7 @@ func _run() -> void:
 		await get_tree().physics_frame
 	check(puddle.fill <= 0.001, "la pozza è vuota (fill %.3f)" % puddle.fill)
 
-	print("Portello e fine della demo")
+	print("Portello")
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	await _frames(10)
@@ -203,7 +203,8 @@ func _run() -> void:
 		if hatch.is_open:
 			break
 	check(hatch.is_open, "il portello si apre")
-	check(bool(level.get(&"demo_finished")), "fine della demo")
+	# Sotto c'è il pozzo della camera delle onde (tappe 5-6, test_tappe56.gd): la demo va avanti.
+	check(not bool(level.get(&"demo_finished")), "la demo non finisce al portello: sotto c'è il pozzo")
 
 	print("Area bimbi: ruota a pale, secchio e cancello")
 	var toy: BucketWheel = level.get_node("RuotaESecchio")

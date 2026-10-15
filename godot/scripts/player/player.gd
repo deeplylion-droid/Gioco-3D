@@ -80,6 +80,9 @@ const SURFACE_LADDER := &"scala"
 @export var ladder_climb_speed := 2.4
 ## Distanza tra un "passo" e l'altro sulla scala (m).
 @export var ladder_step_distance := 0.45
+## Distanza a cui si sta dalla scala (dal suo piano) mentre ci si arrampica: tiene il giocatore
+## davanti ai pioli anche quando dietro la scala non c'è un muro (la scala del pozzo nella camera).
+@export var ladder_hold_distance := 0.42
 
 ## Rotazione orizzontale e verticale dello sguardo (radianti).
 var yaw := 0.0
@@ -109,6 +112,9 @@ var _was_on_floor := true
 var _ladder_travel := 0.0
 var _crouch_toggled := false
 var _ladder_cooldown := 0.0
+# Presa la scala dall'alto (camminando verso di lei dal bordo): finché si tiene il tasto, avanti
+# vuol dire giù (se no si scavalcherebbe subito di nuovo il bordo).
+var _ladder_from_top := false
 
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var head: Node3D = $Head
@@ -448,6 +454,7 @@ func _update_ladder() -> void:
 		ladder = found
 		velocity = Vector3.ZERO
 		_ladder_travel = 0.0
+		_ladder_from_top = global_position.y >= found.get_top_y() - 0.35
 		ladder_changed.emit(true)
 
 
@@ -456,6 +463,7 @@ func _leave_ladder() -> void:
 		return
 	ladder = null
 	_ladder_cooldown = 0.35
+	_ladder_from_top = false
 	ladder_changed.emit(false)
 
 
@@ -470,6 +478,11 @@ func _move_on_ladder(delta: float) -> void:
 	var climb := -input.y
 	if pitch < deg_to_rad(-40.0):
 		climb = -climb
+	if _ladder_from_top:
+		if is_zero_approx(input.y):
+			_ladder_from_top = false
+		elif climb > 0.0:
+			climb = -climb
 	if is_on_floor() and climb < 0.0:
 		# In fondo alla scala: torna a camminare.
 		_leave_ladder()
@@ -481,7 +494,9 @@ func _move_on_ladder(delta: float) -> void:
 		_leave_ladder()
 		return
 	var side := n.cross(Vector3.UP)
-	velocity = Vector3.UP * climb * ladder_climb_speed + side * (-input.x) * 1.0 - n * 0.4
+	var dist := (global_position - ladder.global_position).dot(n)
+	var toward_hold := clampf((ladder_hold_distance - dist) * 6.0, -1.0, 1.0)
+	velocity = Vector3.UP * climb * ladder_climb_speed + side * (-input.x) * 1.0 + n * toward_hold
 	_ladder_travel += absf(climb) * ladder_climb_speed * delta
 	if _ladder_travel >= ladder_step_distance:
 		_ladder_travel = 0.0
