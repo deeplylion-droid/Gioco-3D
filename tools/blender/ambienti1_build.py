@@ -333,7 +333,7 @@ def corridoio(M):
                                 ((7.5, 0.02, 2.2), (0, 1, 0)), ((17.5, 2.58, 2.25), (0, -1, 0))]):
         c, v, l = L.lampada_emergenza(f'luce_emergenza_{i + 1:02d}', p, n, M, watt=32 if i != 4 else 22)
         luci += [c, v]
-    for i, (x, stato, app) in enumerate([(4.5, 'spento', 0), (10.0, 'sfarfalla', 0), (15.5, 'spento', 0.35), (20.0, 'spento', 0)]):
+    for i, (x, stato, app) in enumerate([(4.2, 'spento', 0), (10.0, 'sfarfalla', 0), (15.5, 'spento', 0.35), (20.0, 'spento', 0)]):
         c, t, l = L.neon_soffitto(f'neon_corridoio_{i + 1}', (x, 1.3, 0), 1.2, M, H, stato, watt=90, appeso=app, rot_z=0)
         luci += [c, t]
 
@@ -825,12 +825,53 @@ def stanzino(M):
     L.crea_collisione('stanzino', 'stanzino')
 
 
+def neon_sotto_il_soffitto(margine=0.004):
+    """Le plafoniere stanno appoggiate sotto il soffitto vero (pannelli, travi, condotti), non sotto la quota
+    della stanza: misura il soffitto sopra ogni plafoniera e la abbassa, con tubi, luce e cavo."""
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    sc = bpy.context.scene
+    plafoniere = [o for o in sc.objects if o.type == 'MESH' and o.name.startswith('neon_')
+                  and not any(o.name.endswith(s) for s in ('_tubi', '_tubi_accesi', '_tubo_sfarfalla', '_cavo'))]
+    for corpo in plafoniere:
+        nome = corpo.name
+        if nome + '_cavo' in sc.objects:
+            continue   # appesa a un cavo: è già più in basso
+        bb = [corpo.matrix_world @ Vector(c) for c in corpo.bound_box]
+        x0, x1 = min(v.x for v in bb), max(v.x for v in bb)
+        y0, y1 = min(v.y for v in bb), max(v.y for v in bb)
+        z0, z1 = min(v.z for v in bb), max(v.z for v in bb)
+        cielo = None
+        for fx in (0.1, 0.5, 0.9):
+            for fy in (0.15, 0.5, 0.85):
+                o = Vector((x0 + (x1 - x0) * fx, y0 + (y1 - y0) * fy, z0 - 0.3))   # da sotto: anche le travi che la attraversano
+                for _ in range(8):
+                    hit, loc, _n, _i, ob, _m = sc.ray_cast(dg, o, Vector((0, 0, 1)), distance=1.0)
+                    if not hit:
+                        break
+                    if ob.name.startswith(nome) or ob.hide_render or 'colonly' in ob.name:
+                        o = loc + Vector((0, 0, 0.001))
+                        continue
+                    if cielo is None or loc.z < cielo:
+                        cosa = (ob.name, round(o.x, 2), round(o.y, 2))
+                    cielo = loc.z if cielo is None else min(cielo, loc.z)
+                    break
+        if cielo is None or z1 <= cielo - margine:
+            continue
+        giu = z1 - (cielo - margine)
+        for o in sc.objects:
+            if o.name == nome or o.name.startswith(nome + '_'):
+                o.location.z -= giu
+        print(f'{nome}: abbassata di {giu * 100:.1f} cm (soffitto a {cielo:.3f}: {cosa})')
+
+
 def costruisci():
     L.reset()
     M = materiali()
     corridoio(M)
     spogliatoi(M)
     stanzino(M)
+    neon_sotto_il_soffitto()
     return M
 
 
