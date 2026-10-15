@@ -179,8 +179,7 @@
 				83,
 				84,
 				85,
-				86,
-				87
+				86
 			]
 		}
 	],
@@ -904,8 +903,8 @@
 		{
 			"name":"marker_polaroid_P2",
 			"translation":[
-				3.25,
-				1.600000023841858,
+				3.380000114440918,
+				1.5950000286102295,
 				-7.900000095367432
 			]
 		},
@@ -1143,10 +1142,6 @@
 		{
 			"mesh":58,
 			"name":"vetro_rotto"
-		},
-		{
-			"mesh":59,
-			"name":"vetro_rotto_blocco-colonly"
 		}
 	],
 	"materials":[
@@ -2955,18 +2950,6 @@
 					},
 					"indices":377,
 					"material":24
-				}
-			]
-		},
-		{
-			"name":"vetro_rotto_blocco-colonly",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":378,
-						"NORMAL":379
-					},
-					"indices":3
 				}
 			]
 		}
@@ -6940,28 +6923,6 @@
 			"componentType":5123,
 			"count":288,
 			"type":"SCALAR"
-		},
-		{
-			"bufferView":378,
-			"componentType":5126,
-			"count":24,
-			"max":[
-				10.949999809265137,
-				2,
-				-15.199999809265137
-			],
-			"min":[
-				10.850000381469727,
-				0.949999988079071,
-				-16.799999237060547
-			],
-			"type":"VEC3"
-		},
-		{
-			"bufferView":379,
-			"componentType":5126,
-			"count":24,
-			"type":"VEC3"
 		}
 	],
 	"bufferViews":[
@@ -9232,18 +9193,6 @@
 			"byteLength":576,
 			"byteOffset":10237888,
 			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":288,
-			"byteOffset":10238464,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":288,
-			"byteOffset":10238752,
-			"target":34962
 		}
 	],
 	"samplers":[
@@ -9254,7 +9203,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":10239040,
+			"byteLength":10238464,
 			"uri":"spogliatoi.bin"
 		}
 	]
