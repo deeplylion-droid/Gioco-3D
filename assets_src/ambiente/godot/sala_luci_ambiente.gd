@@ -1,15 +1,17 @@
 extends Node3D
-## Da attaccare al Node3D che contiene le istanze dei GLB della sala (tutte in 0,0,0).
-## Regola le luci importate da sala_luci.glb (le unità glTF non coincidono con Godot),
-## fa sfarfallare i neon a metà e, se manca, crea un WorldEnvironment notturno con nebbia.
-## Valori provati in Godot 4.7.2 (Forward+). Si possono cambiare dall'ispettore.
+## SOLO PER LE PROVE DELL'AMBIENTE (scene di test e screenshot di lavoro/ambiente).
+## Nel gioco le luci della sala le regola LookSala dell'addon grafica (con LookSalaLunga
+## dell'integratore): i valori consigliati sono in assets_src/ambiente/INTEGRAZIONE.md e qui sono
+## allineati a quelli del gioco, così le prove somigliano al gioco.
+## Da attaccare al Node3D che contiene le istanze dei GLB della sala (tutte in 0,0,0): regola le luci
+## importate da sala_luci.glb, fa sfarfallare qualche neon e, se manca, crea un WorldEnvironment.
 
 @export var energia_emergenza := 3.0
 @export var energia_neon := 2.5
 @export var energia_lampione := 10.0
 @export var energia_luna := 0.35
-@export var energia_fari := 12.0
-@export var energia_faretti_bassi := 3.2
+@export var energia_fari := 9.5
+@export var energia_faretti_bassi := 0.6
 @export var crea_ambiente := true
 @export var neon_che_sfarfallano := 4
 
