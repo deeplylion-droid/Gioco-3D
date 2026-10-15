@@ -17,17 +17,17 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
   stagna aperta verso la sala, con la sua collisione. Prima il vano non c'era: il muro era pieno.
 - **Spogliatoi** (`assets_src/ambienti_interni`): il marker_uscita_sala_principale degli spogliatoi (9,7; 0; -20,7) va sul retro del muro, in (0; 0; 20,2): traslare i tre glTF di (-9,7; 0; 40,9).
   Così il loro muro (con la saracinesca) sta subito dietro il nostro, senza sovrapporsi.
-- **Monumento della statua** (`sala_monumento.glb`): entrando dal vano la medusa si vede subito, intera
-  e centrata, a 10 m, con la cupola e la tempesta sopra la testa (provato in Godot con la medusa del
-  gioco portata a 4,5 m).
+- **Al centro della sala ora c'è la VASCA SOLLEVATA** (`sala_vasca_centrale.glb`, decisione dell'utente del
+  15 ottobre): dentro la medusa affacciata, immobile, con le mani sul bordo verso l'ingresso. Il monumento
+  con la statua resta per più avanti: `glb/per_dopo/sala_monumento.glb` (si rifà con
+  `ambiente_sala.py --monumento`). **Togliere `sala_monumento.glb` dalla scena e mettere `sala_vasca_centrale.glb`.**
 - **Tubo dell'inseguimento**: è lo scivolo rosso a spirale (`sala_scivolo_spirale`), ora Ø interno
   **1,6 m** (parete 6 cm), come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. Parte dal
   piano in cima alla torre (y 8,6), esce dalla faccia ovest, gira intorno al pennone, attraversa la sala
   sopra la piscina e sputa nella vasca d'arrivo da est (bocca 16 cm sopra l'acqua). Gli altri due tubi
   restano da 1,0 m (decorativi).
-- **Revisione di qualità**: metallo grigio-verde (colonne, sostegni, galleria), piano del piedistallo
-  chiaro e lucido con un velo d'acqua, due teli con la mascotte ai lati della statua (faretti
-  `luce_cartellone_*`); tolti i due cartelloni del lato est.
+- **Revisione di qualità**: metallo grigio-verde (colonne, sostegni, galleria), due teli con la mascotte
+  ai lati del centro della sala (faretti `luce_cartellone_*`); tolti i due cartelloni del lato est.
 - **Passata di qualità**: pavimento a piastrelle asciutte/umide/bagnate e pozzanghere a specchio, sporco
   nei colori dei vertici, battiscopa a sguscio e listelli, rivetti su travi e galleria, piastrelle
   mancanti, oblò con vetro scuro, cupola con costoloni a T e lastre sporche/incrinate/rotte, plafoniere
@@ -38,20 +38,21 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 | File | Cosa contiene | Triangoli | Collisioni | Peso |
 |---|---|---|---|---|
 | `sala_architettura.glb` | pavimento (piastrelle asciutte, umide e bagnate; pozzanghere a specchio), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d'emergenza, insegna a pesce, altoparlanti | 246 mila | 275 | 43.2 MB |
-| `sala_monumento.glb` | **monumento della statua (vuoto)**: piedistallo a gradoni con fregio a mosaico marino, conchiglie d'ottone, scatola del pulsante, 4 faretti dal basso; cordone di velluto su colonnine; lampione; 2 fari sulla ringhiera della galleria; offerte dei bambini (disegni, conchiglie, stelle marine, secchiello) | 19 mila | 14 | 21.7 MB |
+| `sala_vasca_centrale.glb` | **vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell'acqua, scatola del pulsante della sigla; cordone di velluto; lampione; 2 fari sulla ringhiera della galleria; offerte dei bambini | 18 mila | 27 | 19.0 MB |
 | `sala_cupola.glb` | cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro) | 35 mila | - | 9.6 MB |
 | `sala_piscina.glb` | piscina a onde vuota: fondo con pendenza e conca dello scarico, linea dell'ultimo livello dell'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette | 31 mila | 71 | 19.2 MB |
 | `sala_area_bimbi.glb` | struttura di gioco, **secchio gigante** e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi | 6 mila | 30 | 16.8 MB |
 | `sala_torre_scivoli.glb` | torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d'arrivo | 92 mila | 147 | 29.0 MB |
 | `sala_oggetti.glb` | oggetti di scena Meshy (istanze condivise), comprese le offerte alla base del monumento (salvagente, orsetto, paperelle, pallone, ciambella) | 747 mila | 79 | 25.0 MB |
 | `sala_interattivi.glb` | elementi degli enigmi come nodi separati con il perno giusto (vedi sotto) | 6 mila | 11 | 10.2 MB |
-| `sala_acqua.glb` | **segnaposto** piatti dell'acqua (da sostituire con l'acqua vera) | 8 | - | 0.0 MB |
-| `sala_luci.glb` | 72 luci già al loro posto (Omni, Spot, una Directional) | - | - | |
+| `sala_acqua.glb` | **segnaposto** piatti dell'acqua (da sostituire con l'acqua vera) | 122 | - | 0.0 MB |
+| `sala_luci.glb` | 70 luci già al loro posto (Omni, Spot, una Directional) | - | - | |
 | `sala_dati.json` | posizioni di luci, acqua, piedistallo, vano, spawn, camere | | | |
 
 Texture: 2K JPG incorporate (colore, normal OpenGL, ORM = occlusione/rugosità/metallo). PNG solo dove
 serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, i grandi 2K.
-**Nuovo GLB da aggiungere alla scena: `sala_monumento.glb`** (con lo stesso import script degli altri).
+**GLB nuovo da aggiungere alla scena: `sala_vasca_centrale.glb`** (con lo stesso import script degli altri),
+al posto di `sala_monumento.glb`, che è in `glb/per_dopo/`.
 
 ## Import (una volta sola)
 
@@ -74,23 +75,21 @@ serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, 
 - Un `Node3D` "SalaPrincipale" con dentro le istanze dei GLB, tutte in (0, 0, 0).
 - Le luci di `sala_luci.glb` le regola `LookSala` (addon grafica) con i valori consigliati più sotto.
   `assets_src/ambiente/godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente.
-- **Spawn del giocatore** (appena passato il vano): (0, 0, 19.2), guarda verso **-Z** (la statua).
-- **Monumento (piedistallo vuoto, per la medusa)**: centro (0, 0, 10).
-  - **Piano superiore a y = 1.15 m**, diametro del piano 3.7 m (raggio 1.85; con il toro del
-    bordo 3.76 m): i tentacoli della medusa (raggio 1,55 m) restano tutti appoggiati.
-    La statua va appoggiata con l'origine in **(0, 1.15, 10)**, rivolta verso **+Z** (la porta).
-    Con 4,5 m di statua la cima arriva a y = 5.65 (la galleria è a 4,0-4,3; il soffitto a 11,5).
-  - Gradoni: il primo Ø 5.2 m alto 0.28, il secondo Ø 4.4 m fino a 0.56;
-    tamburo Ø 3.5 m con il fregio a mosaico (onde, pesci, stella marina, medusa).
-  - **Pulsante dei bambini (sigla, scena S1)**: il fungo rosso è il nodo `sala_pulsante_piedistallo`
-    in (0, 0.8, 11.88), sul davanti del tamburo, rivolto verso +Z; si preme verso -Z.
-  - Cordone di velluto su colonnine a raggio 3 m, aperto sul davanti (varco di 3 m verso
-    la porta); collisioni sulle campate.
-  - Luci del monumento (in `sala_luci.glb`): `luce_faro_0/1` (fari sulla ringhiera della galleria sud,
-    ombre accese), `luce_monumento_basso_0..3` (faretti nel primo gradino, dal basso), `luce_lampione`
-    (lampione accanto, base (2.8, 0, 13.2), la lampada è sopra il davanti della statua).
-  - Offerte dei bambini alla base (disegni a pastello senza scritte, conchiglie, stelle marine,
-    secchiello; salvagente, orsetto, paperelle, pallone e ciambella in `sala_oggetti.glb`).
+- **Spawn del giocatore** (appena passato il vano): (0, 0, 19.2), guarda verso **-Z** (la vasca).
+- **Vasca sollevata (per la medusa affacciata)**: centro (0, 0, 10), pianta esterna 6 x 4.5 m
+  (x per z) con gli angoli arrotondati r 0.5; **cima del bordo a y 1**, coping largo 0.3 m con il toro;
+  **pelo dell'acqua a y 0.88**, fondo interno a y 0. Lato verso l'ingresso: filo esterno a z 12.25,
+  filo interno a z 11.95.
+  - **Marker `medusa_affacciata`** (in `sala_dati.json`): origine consigliata (0, 0.88, 11.75), rotazione (0, 0, 0),
+    guarda verso +Z; mani sul coping in (-0.45, 1, 12.1) e (0.45, 1, 12.1).
+  - **Pulsante della sigla (scena S1)**: il nodo `sala_pulsante_piedistallo` (stesso nome di prima) è sul
+    muro davanti della vasca, in (0, 0.62, 12.35), rivolto verso +Z; si preme verso -Z.
+  - Collisioni: muro e bordo (4 tratti dritti e 4 angoli), cordone di velluto a 1.3 m dal bordo con il
+    varco davanti. L'acqua è il segnaposto `sala_vasca_centrale_acqua` in `sala_acqua.glb`.
+  - Luci: `luce_faro_0/1` (fari sulla ringhiera della galleria sud, puntati sul davanti della vasca),
+    `luce_vasca_0/1` (sott'acqua, verso la medusa), `luce_lampione` (base (2.8, 0, 13.2)).
+  - Offerte dei bambini intorno alla vasca: disegni a pastello senza scritte, conchiglie, stelle marine,
+    secchiello; salvagente, orsetto, paperelle (una galleggia), ciambella in acqua e pallone in `sala_oggetti.glb`.
 - **Secchio gigante**: nodo `sala_secchio_gigante`, perno sui suoi perni; si ribalta ruotando intorno all'asse **X**.
 - **Ruota a pale**: nodo `sala_ruota_pale`, perno sull'asse, gira intorno all'asse **X**.
 - La galleria si sale dalla scala sul lato est; la torre dalle rampe sul lato sud.
@@ -111,7 +110,7 @@ Non sono cambiati, tranne il pulsante del piedistallo (nuova posizione).
 | `sala_ruota_cancello` | (-9.2, 1.45, -13.8) |
 | `sala_trasmissione_cancello` | (0, 0, -0) |
 | `sala_quadro_elettrico` | (-9, 1.1, -21.15) |
-| `sala_pulsante_piedistallo` | (0, 0.8, 11.88) |
+| `sala_pulsante_piedistallo` | (0, 0.62, 12.35) |
 
 ## Acqua (da fare con l'acqua vera; in `sala_acqua.glb` ci sono i segnaposto)
 
@@ -130,13 +129,14 @@ sono pozzanghere a specchio (con SSR riflettono le luci rosse).
 
 Le posizioni e le direzioni sono giuste; le intensità **nel gioco le decide `LookSala` dell'addon
 grafica** (con `LookSalaLunga` dell'integratore): glTF e Godot usano unità diverse. Valori consigliati
-(`light_energy`, raggio): emergenza rosse 3 (raggio 8); neon 2,5 (spot, raggio 7, angolo 70); fari del
-monumento `luce_faro_*` **9,5** (spot, angolo 15, raggio 16, ombre), faretti `luce_monumento_basso_*`
-**0,6** (spot, angolo 24, raggio 7); lampione 10 (spot 55 gradi, ombre); plafoniere calde `luce_calda_*`
+(`light_energy`, raggio): emergenza rosse 3 (raggio 8); neon 2,5 (spot, raggio 7, angolo 70); fari
+`luce_faro_*` **9,5** (spot, angolo 15, raggio 16, ombre: puntano il davanti della vasca, dove si affaccia
+la medusa); sott'acqua `luce_vasca_*` 1,5 (spot, angolo 35, raggio 4, turchese); lampione 10 (spot 55 gradi,
+ombre); plafoniere calde `luce_calda_*`
 1,8 (raggio 7,5, colore 1,0/0,68/0,38); insegne `luce_insegna_*` 1,3 (raggio 5,5); subacquee 3 (raggio 5);
 faretti dei teli con la mascotte `luce_cartellone_*` 2,5 (spot, angolo 30, raggio 6, caldi); luna 0,35 con ombre. `godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente e usa gli
-stessi valori. In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 4 faretti del monumento,
-5 plafoniere calde, 3 insegne, 2 subacquee, area bimbi, luna.
+stessi valori. In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari, 2 luci sott'acqua nella
+vasca sollevata, 2 faretti dei teli, 5 plafoniere calde, 3 insegne, 2 subacquee della vasca d'arrivo, area bimbi, luna.
 
 | Nome | Tipo | Posizione Godot | Colore | Note |
 |---|---|---|---|---|
@@ -201,12 +201,10 @@ stessi valori. In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 
 | `luce_calda_4` | OmniLight3D calda (plafoniera navale accesa) | (-3, 3, -20.9) | (1, 0.68, 0.38) |  |
 | `luce_cartellone_0` | SpotLight3D: faretto caldo sul telo con la mascotte | (-5.274, 6.81, 10.414) | (1, 0.78, 0.5) | punta verso (-0.172, -0.93, -0.324) |
 | `luce_cartellone_1` | SpotLight3D: faretto caldo sul telo con la mascotte | (5.274, 6.81, 10.414) | (1, 0.78, 0.5) | punta verso (0.172, -0.93, -0.324) |
-| `luce_monumento_basso_0` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.663, 0.446, 8.337) | (1, 0.82, 0.58) | punta verso (-0.38, 0.844, 0.38) |
-| `luce_monumento_basso_1` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.663, 0.446, 8.337) | (1, 0.82, 0.58) | punta verso (0.38, 0.844, 0.38) |
-| `luce_monumento_basso_2` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.663, 0.446, 11.663) | (1, 0.82, 0.58) | punta verso (0.38, 0.844, -0.38) |
-| `luce_monumento_basso_3` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.663, 0.446, 11.663) | (1, 0.82, 0.58) | punta verso (-0.38, 0.844, -0.38) |
-| `luce_faro_0` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (-2.014, 5.547, 16.616) | (1, 0.9, 0.76) | punta verso (0.288, -0.143, -0.947) |
-| `luce_faro_1` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (2.014, 5.547, 16.616) | (1, 0.9, 0.76) | punta verso (-0.288, -0.143, -0.947) |
+| `luce_vasca_0` | SpotLight3D sott'acqua nella vasca sollevata, verso la medusa | (-1.4, 0.25, 10.2) | (0.35, 0.9, 0.85) | punta verso (0.646, 0.323, 0.692) |
+| `luce_vasca_1` | SpotLight3D sott'acqua nella vasca sollevata, verso la medusa | (1.4, 0.25, 10.2) | (0.35, 0.9, 0.85) | punta verso (-0.646, 0.323, 0.692) |
+| `luce_faro_0` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata | (-2.007, 5.421, 16.67) | (1, 0.9, 0.76) | punta verso (0.309, -0.565, -0.765) |
+| `luce_faro_1` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata | (2.007, 5.421, 16.67) | (1, 0.9, 0.76) | punta verso (-0.309, -0.565, -0.765) |
 | `luce_subacquea_0` | OmniLight3D sott'acqua, vasca d'arrivo | (-12.5, -0.7, 6.85) | (0.25, 0.95, 0.75) |  |
 | `luce_subacquea_1` | OmniLight3D sott'acqua, vasca d'arrivo | (-12.5, -0.7, -2.85) | (0.25, 0.95, 0.75) |  |
 | `luce_insegna_rosa` | OmniLight3D davanti all insegna a pesce | (-3, 7.4, -23.5) | (1, 0.22, 0.6) |  |

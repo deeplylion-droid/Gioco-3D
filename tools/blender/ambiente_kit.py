@@ -95,7 +95,7 @@ class Materiali:
         orm = os.path.join(der, f'{nome}_orm.jpg')
         if not os.path.exists(orm):
             orm = os.path.join(cc0, f'{src}_orm.jpg')
-        return col, os.path.join(cc0, f'{src}_nrm.jpg'), orm, lato(src)
+        return col, os.path.join(cc0, f'{src}_nrm.jpg'), orm, r.get('lato', lato(src))   # 'lato': scala diversa (piastrelle più grandi)
 
     def _ricetta(self, nome):
         ricette = dict(COMUNI)
@@ -117,6 +117,7 @@ class Materiali:
                     'pozzanghera': self._pozzanghera,
                     'fregio': lambda: self._tex('fregio', 'fregio', 0.5, normale=True),
                     'malta': lambda: self._tex('malta', 'malta', 0.9, normale=True),
+                    'decal_calcare': self._decal_calcare,
                     'vetro_oblo': self._vetro_oblo,
                     'disegni': lambda: self._tex('disegni', 'disegni', 0.85),
                     'velluto': lambda: self._semplice('velluto', (0.30, 0.012, 0.02), 0.92),
@@ -286,6 +287,22 @@ class Materiali:
             m.surface_render_method = 'BLENDED'
 
         self.lati['vetro'] = 1.0
+        return m
+
+    def _decal_calcare(self):
+        """Fascia di alghe e calcare sulla linea dell'acqua (RGBA in trasparenza: M_amb_decal_*)."""
+        m, nt, bsdf = self._base('decal_calcare')
+        L = nt.links
+        uv = nt.nodes.new('ShaderNodeUVMap'); uv.uv_map = 'UVMap'
+        t = nt.nodes.new('ShaderNodeTexImage')
+        t.image = self._img(os.path.join(TEX, 'derivate', self.palette, 'linea_calcare_col.png'), True)
+        L.new(uv.outputs['UV'], t.inputs['Vector'])
+        L.new(t.outputs['Color'], bsdf.inputs['Base Color'])
+        L.new(t.outputs['Alpha'], bsdf.inputs['Alpha'])
+        bsdf.inputs['Roughness'].default_value = 0.75
+        if hasattr(m, 'surface_render_method'):
+            m.surface_render_method = 'BLENDED'
+        self.lati['decal_calcare'] = 1.0
         return m
 
     def _vetro_oblo(self):
