@@ -1,7 +1,8 @@
 class_name LookTecnici
 extends Node3D
 ## Luci degli ambienti tecnici (camera delle onde, sala pompe, raccordo: scenes/tecnici/tecnici.tscn)
-## in tre stati, richiamati da un punto solo con [method imposta_stato]:
+## in tre stati. Il punto unico è GameState.luci (segnale luci_cambiate): questo nodo lo segue
+## da solo; [method imposta_stato] e [method flash] servono per le prove e gli scatti.
 ## - PRIMA_DEL_RISVEGLIO: luci di servizio fioche e fredde (neon bassi, qualcuno che sfarfalla),
 ##   faretti sui quadri e sui manometri, lampade d'emergenza spente, la vasca di raccolta nera;
 ## - FLASH: per un attimo si accende tutto (anche la sala grande, se c'è una LookSala), poi si
@@ -19,6 +20,8 @@ const NEON_SCRIPT := preload("res://addons/grafica/neon.gd")
 
 ## La radice di tecnici.tscn (con Ambienti/ dentro). Vuoto: il genitore.
 @export var percorso_tecnici := NodePath()
+## Segue GameState.luci (se c'è). Falso: resta su [member stato_iniziale].
+@export var segui_game_state := true
 @export var stato_iniziale := Stato.PRIMA_DEL_RISVEGLIO
 @export var durata_flash := 1.0
 @export_group("Illuminazione globale")
@@ -86,13 +89,26 @@ func _prepara() -> void:
 		for stanza in ambienti.get_children():
 			if stanza is Node3D and _aabb(stanza).size != Vector3.ZERO:
 				_crea_gi(stanza)
-	imposta_stato(stato_iniziale)
+	# LuciRisveglio (il ripiego generico del livello) non tocca le luci di qui.
+	for l in find_children("*", "Light3D", true, false) + ambienti.find_children("*", "Light3D", true, false):
+		l.set_meta(&"risveglio_ignora", true)
+	var gs := _game_state()
+	if segui_game_state and gs:
+		gs.connect(&"luci_cambiate", func(fase): imposta_stato(int(fase)))
+		imposta_stato(int(gs.get(&"luci")))
+	else:
+		imposta_stato(stato_iniziale)
 
 
-## Il punto unico da cui si cambia lo stato delle luci.
+func _game_state() -> Node:
+	var gs := get_node_or_null(^"/root/GameState")
+	return gs if gs and &"luci" in gs else null
+
+
+## Mette le luci in uno stato. Il FLASH resta acceso finché non arriva un altro stato.
 func imposta_stato(nuovo: Stato) -> void:
 	if nuovo == Stato.FLASH:
-		flash()
+		_accendi_tutto()
 		return
 	stato = nuovo
 	_flash_resta = 0.0
@@ -125,12 +141,20 @@ func imposta_stato(nuovo: Stato) -> void:
 	stato_cambiato.emit(stato)
 
 
-## Un attimo in cui si accende tutto, poi [param poi]. Se nella scena c'è una LookSala,
-## si accende anche la sala grande.
+## Un attimo in cui si accende tutto, poi [param poi]. Con GameState passa da lì (così
+## seguono anche le altre luci del livello).
 func flash(durata := durata_flash, poi := Stato.BLACKOUT) -> void:
-	stato = Stato.FLASH
+	var gs := _game_state()
+	if segui_game_state and gs:
+		gs.call(&"imposta_luci", Stato.FLASH)
+	else:
+		_accendi_tutto()
 	_flash_resta = durata
 	_dopo_flash = poi
+
+
+func _accendi_tutto() -> void:
+	stato = Stato.FLASH
 	for n in _neon:
 		_energia_neon(n, energia_flash, colore_flash, 1.0)
 		n.call(&"accendi", 0)
@@ -150,9 +174,12 @@ func flash(durata := durata_flash, poi := Stato.BLACKOUT) -> void:
 		(e[0] as BaseMaterial3D).emission_energy_multiplier = e[1]
 	_monitor(false)
 	ambiente.ambient_light_energy = ambiente_flash
-	for s in get_tree().get_nodes_in_group(&"look_sala"):
-		if s.has_method(&"flash"):
-			s.call(&"flash", durata)
+	# La sala grande: se il ripiego LuciRisveglio è spento, il flash lo fa la LookSala.
+	var ripiego := get_tree().current_scene.find_child("LuciRisveglio", true, false) if get_tree().current_scene else null
+	if ripiego == null or not bool(ripiego.get(&"attivo")):
+		for s in get_tree().get_nodes_in_group(&"look_sala"):
+			if s.has_method(&"flash"):
+				s.call(&"flash", maxf(_flash_resta, durata_flash))
 	stato_cambiato.emit(stato)
 
 
@@ -160,7 +187,11 @@ func _process(delta: float) -> void:
 	if _flash_resta > 0.0:
 		_flash_resta -= delta
 		if _flash_resta <= 0.0:
-			imposta_stato(_dopo_flash)
+			var gs := _game_state()
+			if segui_game_state and gs:
+				gs.call(&"imposta_luci", _dopo_flash)
+			else:
+				imposta_stato(_dopo_flash)
 	if _luce_monitor and _luce_monitor.visible:
 		_luce_monitor.light_energy = energia_monitor * randf_range(0.6, 1.0)
 	_aggiorna_zona()
@@ -195,6 +226,7 @@ func _prepara_neon(ambienti: Node3D) -> void:
 		genitore.add_child(neon)
 		_neon.append(neon)
 	for n in _neon:
+		_rifai_neon(n)
 		for l in n.find_children("*", "Light3D", true, false):
 			var luce := l as Light3D
 			luce.shadow_enabled = true
@@ -207,6 +239,51 @@ func _prepara_neon(ambienti: Node3D) -> void:
 		# Le plafoniere non fanno ombra alla loro stessa luce (vedi LookInterni).
 		for m in n.find_children("*", "MeshInstance3D", true, false):
 			(m as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+
+## Il Neon fatto da tecnici.gd entra nella scena vuoto, si costruisce una sua plafoniera con la sua
+## luce e solo dopo riceve il tubo del modello (neon doppi, come negli interni prima del fix).
+## Qui si tiene solo il tubo del modello e l'ultima luce, e si rifanno le liste interne del Neon
+## (anche per i tubi con material_override, che il Neon non vede).
+func _rifai_neon(n: Node3D) -> void:
+	var modello: Node = null
+	var luce: Light3D = null
+	for c in n.get_children():
+		if c is MeshInstance3D and ("_tubo" in String(c.name) or "_tubi" in String(c.name)):
+			modello = c
+		elif c is Light3D:
+			luce = c
+	if modello:
+		for c in n.get_children():
+			if c != modello and c != luce:
+				n.remove_child(c)
+				c.queue_free()
+	var luci: Array[Light3D] = []
+	var energie: Array[float] = []
+	for l in n.find_children("*", "Light3D", true, false):
+		luci.append(l)
+		energie.append((l as Light3D).light_energy)
+	var materiali: Array[BaseMaterial3D] = []
+	var emissioni: Array[float] = []
+	for m in n.find_children("*", "MeshInstance3D", true, false):
+		var mi := m as MeshInstance3D
+		if mi.material_override is BaseMaterial3D and (mi.material_override as BaseMaterial3D).emission_enabled:
+			var copia := mi.material_override.duplicate() as BaseMaterial3D
+			mi.material_override = copia
+			materiali.append(copia)
+			emissioni.append(copia.emission_energy_multiplier)
+			continue
+		for i in mi.mesh.get_surface_count() if mi.mesh else 0:
+			var mat := mi.get_active_material(i) as BaseMaterial3D
+			if mat and mat.emission_enabled:
+				var copia := mat.duplicate() as BaseMaterial3D
+				mi.set_surface_override_material(i, copia)
+				materiali.append(copia)
+				emissioni.append(copia.emission_energy_multiplier)
+	n.set(&"_luci", luci)
+	n.set(&"_energie", energie)
+	n.set(&"_materiali", materiali)
+	n.set(&"_emissioni", emissioni)
 
 
 func _energia_neon(n: Node3D, energia: float, colore: Color, emissione: float) -> void:
@@ -300,6 +377,13 @@ func _prepara_quadri(ambienti: Node3D) -> void:
 
 
 func _prepara_monitor(ambienti: Node3D) -> void:
+	# Nel livello il monitor lo fa MonitorCrt (scripts/tecnici/): qui solo la neve di riserva,
+	# per la scena dei tecnici da sola.
+	var scena := get_tree().current_scene
+	if scena:
+		for n in scena.find_children("*", "Node", true, false):
+			if n.get_script() and String(n.get_script().get_global_name()) == "MonitorCrt":
+				return
 	_schermo = ambienti.find_child("SCHERMO_CRT", true, false) as MeshInstance3D
 	if _schermo == null:
 		return
