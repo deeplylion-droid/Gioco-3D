@@ -110,6 +110,14 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - La versione con due occhi.
 - Il costume a fascia.
 
+### La statua: il simbolo del gioco (deciso dall'utente, 15 ottobre)
+
+- La medusa è **il simbolo del gioco**. La sua statua deve essere **imponente** e messa in scena come Huggy Wuggy nella hall di Poppy Playtime.
+- Alta circa **4,5 m** in tutto, testa più tentacoli appoggiati. La creatura ha la stessa taglia.
+- La statua **poggia sui tentacoli**, che si appoggiano al piedistallo e si piegano, e non galleggia. I tentacoli devono essere di alta qualità: nastri carnosi e trasparenti, non tubicini.
+- Sta su un **piedistallo monumentale**: entrando nella sala il giocatore la vede subito, intera e centrata, illuminata come un monumento, e poi le gira intorno. Da vicino incombe.
+- Alla base ci sono offerte lasciate dai bambini: un indizio silenzioso della lore.
+
 ### Natura: fuori bambola, dentro viva (deciso)
 
 - Il corpo è quello di una **bambola-mascotte in vinile**: liscio come un manichino, con un aspetto "plasticoso" voluto.
