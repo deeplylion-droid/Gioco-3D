@@ -1,0 +1,101 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://demo/scripts/demo.gd" id="1_demo"]
+[ext_resource type="Environment" path="res://demo/ambiente_notte.tres" id="2_env"]
+[ext_resource type="Script" path="res://demo/scripts/main_hall.gd" id="3_hall"]
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_body.gd" id="4_body"]
+[ext_resource type="Resource" path="res://addons/acqua/presets/stile_3_scura.tres" id="5_dark"]
+[ext_resource type="Resource" path="res://addons/acqua/presets/stile_2_torbida.tres" id="6_murky"]
+[ext_resource type="Script" path="res://demo/scripts/free_camera.gd" id="7_cam"]
+[ext_resource type="Script" path="res://addons/acqua/scripts/underwater_effect.gd" id="8_under"]
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_inlet.gd" id="9_inlet"]
+[ext_resource type="Script" path="res://demo/scripts/medusa_glow_placeholder.gd" id="10_glow"]
+[ext_resource type="Script" path="res://demo/scripts/hall_props.gd" id="11_props"]
+
+[sub_resource type="FogMaterial" id="FogMaterial_low"]
+density = 0.035
+albedo = Color(0.85, 0.88, 0.9, 1)
+height_falloff = 0.7
+edge_fade = 0.3
+
+[node name="DemoSala" type="Node3D"]
+script = ExtResource("1_demo")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_env")
+
+[node name="MainHall" type="Node3D" parent="."]
+script = ExtResource("3_hall")
+
+[node name="LandingPool" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -2)
+script = ExtResource("4_body")
+size = Vector2(6, 10)
+level = -0.28
+bottom = -2.6
+max_level = -0.08
+style = ExtResource("5_dark")
+env_box_min = Vector3(-18, -2.6, -12)
+env_box_max = Vector3(18, 8, 12)
+
+[node name="WavePuddle" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.75)
+script = ExtResource("4_body")
+size = Vector2(12, 6.5)
+level = -1.5
+bottom = -1.9
+max_level = -1.3
+style = ExtResource("6_murky")
+fill_speed = 0.02
+vortex_on_drain = true
+drain_position = Vector3(0, 0, -0.85)
+drain_vortex_radius = 2.2
+drain_funnel_depth = 0.14
+planar_reflection_on_high = false
+env_box_min = Vector3(-18, -2, -12)
+env_box_max = Vector3(18, 8, 12)
+
+[node name="KidsPool" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 0)
+script = ExtResource("4_body")
+size = Vector2(5.4, 6.4)
+level = 0.3
+bottom = -0.6
+max_level = 0.42
+style = ExtResource("5_dark")
+fill_speed = 0.035
+planar_reflection_on_high = false
+env_box_min = Vector3(-18, -0.6, -12)
+env_box_max = Vector3(18, 8, 12)
+
+[node name="InletA" type="Node3D" parent="KidsPool"]
+position = Vector3(-2.38, 0.3, -1.6)
+rotation = Vector3(0, -1.5708, 0)
+script = ExtResource("9_inlet")
+
+[node name="InletB" type="Node3D" parent="KidsPool"]
+position = Vector3(-2.38, 0.3, 1.6)
+rotation = Vector3(0, -1.5708, 0)
+script = ExtResource("9_inlet")
+
+[node name="MedusaGlow" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.1, -0.12, 0.5)
+script = ExtResource("10_glow")
+
+[node name="Props" type="Node3D" parent="."]
+script = ExtResource("11_props")
+
+[node name="LowFog" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+size = Vector3(36, 3.4, 24)
+material = SubResource("FogMaterial_low")
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 1.7, 6)
+fov = 70.0
+near = 0.03
+far = 150.0
+script = ExtResource("7_cam")
+
+[node name="UnderwaterEffect" type="Node3D" parent="Camera"]
+script = ExtResource("8_under")

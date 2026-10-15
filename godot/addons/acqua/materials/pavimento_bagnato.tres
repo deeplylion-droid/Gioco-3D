@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://addons/acqua/shaders/wet_surface.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://addons/acqua/textures/superfici/piastrelle_pavimento_albedo.jpg" id="2"]
+[ext_resource type="Texture2D" path="res://addons/acqua/textures/superfici/piastrelle_pavimento_normal.jpg" id="3"]
+[ext_resource type="Texture2D" path="res://addons/acqua/textures/superfici/piastrelle_pavimento_orh.jpg" id="4"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/albedo_tex = ExtResource("2")
+shader_parameter/normal_tex = ExtResource("3")
+shader_parameter/orh_tex = ExtResource("4")
+shader_parameter/uv_scale = 0.5556
+shader_parameter/albedo_tint = Color(0.62, 0.62, 0.6, 1)
+shader_parameter/base_wetness = 0.35
+shader_parameter/puddle_amount = 0.5
+shader_parameter/puddle_scale = 0.06
+shader_parameter/wet_darkening = 0.55

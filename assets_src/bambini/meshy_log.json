@@ -602,5 +602,183 @@
    "remove_lighting": true
   },
   "credits": 30
+ },
+ "cubo2_calmo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb2-2ac3-74bd-972a-abf0d6ec8144",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. The first reference image shows the head to keep: a white cube made of cracked swimming-pool tiles with grey grout, green algae, small barnacles, orange rust streaks and a cute face drawn in black marker (two short vertical dash eyes, round pink blush cheeks, small smile). Keep this cube head exactly the same, same size relative to the body as a big box on the shoulders. Replace the body completely with the realistic, thin body of a 7 to 9 year old child, about 1.2 metres tall including the cube: narrow shoulders, thin arms and thin legs that are slightly too long for its size, small hands in black neoprene diving gloves, feet in black neoprene diving booties. No round belly, no chubby toy-like limbs. The whole body is covered by an old, worn black diving wetsuit for children: matte, slightly satin neoprene with visible stitched seams and panel lines, knee pads, faded and scuffed areas, a few small tears with the lighter grey inner lining showing, a high collar that covers the neck completely under the cube. The wetsuit is wet, with soft reflections only in the folds and creases, and a few thin strands of dark green seaweed stuck to it. No skin visible anywhere. Posture: it stands perfectly still, slightly hunched forward with drooping shoulders, thin arms hanging limp at its sides, the cube head tilted a little to one side. Silent, motionless and unsettling. Place it in the scene of the second reference image: the same abandoned indoor water park at night, same spot on the wet tiled floor, same camera and lighting. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@ref_testa_cubo",
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "cubo2_calmo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb2-253a-76d2-8d0f-471ebc2984f2",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "Photorealistic cinematic 3D render in exactly the same style, lighting and world as the reference images: an abandoned 1990s indoor water park aboard a shipwrecked family cruise ship, at night. Red emergency lights, a few cold flickering fluorescent tubes, low drifting fog, wet reflective pool tiles, rust, peeling paint, sea salt crust, scattered colorful plastic toys (swim rings, beach balls, rubber ducks). Dark, moody horror atmosphere, highly detailed realistic materials, Unreal Engine 5 quality. The first reference image shows the head to keep: a white cube made of cracked swimming-pool tiles with grey grout, green algae, small barnacles, orange rust streaks and a cute face drawn in black marker (two short vertical dash eyes, round pink blush cheeks, small smile). Keep this cube head exactly the same, same size relative to the body as a big box on the shoulders. Replace the body completely with the realistic, thin body of a 7 to 9 year old child, about 1.2 metres tall including the cube: narrow shoulders, thin arms and thin legs that are slightly too long for its size, small hands in black neoprene diving gloves, feet in black neoprene diving booties. No round belly, no chubby toy-like limbs. The whole body is covered by an old, worn black diving wetsuit for children: matte, slightly satin neoprene with visible stitched seams and panel lines, knee pads, faded and scuffed areas, a few small tears with the lighter grey inner lining showing, a high collar that covers the neck completely under the cube. The wetsuit is wet, with soft reflections only in the folds and creases, and a few thin strands of dark green seaweed stuck to it. No skin visible anywhere. Posture: it stands perfectly still, slightly hunched forward with drooping shoulders, thin arms hanging limp at its sides, the cube head tilted a little to one side. Silent, motionless and unsettling. Place it in the scene of the second reference image: the same abandoned indoor water park at night, same spot on the wet tiled floor, same camera and lighting. Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@ref_testa_cubo",
+   "@cubo_calmo_piastrelle_gpt",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_cubo2_calmo_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb3-7b82-7783-a102-211d2ba4188c",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions: a thin child-sized figure in an old worn black neoprene wetsuit with stitched seams, knee pads, small tears showing the light grey lining, black diving gloves and booties and a few seaweed strands, with a big white cube head of cracked pool tiles with algae, barnacles and rust. Same pose: standing still, slightly hunched, thin arms hanging, cube head tilted a little to one side. Full body from head to feet, on a plain flat light grey background with soft even studio lighting, no environment, no fog. The back view shows a long zipper with a pull strap running down the back of the wetsuit. The front of the cube has a cute face drawn in black marker (two vertical dash eyes, pink blush cheeks, small smile); no face on the back of the cube. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo2_calmo_nbp"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_cubo2_calmo_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb3-8169-7169-9f6b-26dcf521f2d7",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions: a thin child-sized figure in an old worn black neoprene wetsuit with stitched seams, knee pads, small tears showing the light grey lining, black diving gloves and booties and a few seaweed strands, with a big white cube head of cracked pool tiles with algae, barnacles and rust. Same pose: standing still, slightly hunched, thin arms hanging, cube head tilted a little to one side. Full body from head to feet, on a plain flat light grey background with soft even studio lighting, no environment, no fog. The back view shows a long zipper with a pull strap running down the back of the wetsuit. The front of the cube has a cute face drawn in black marker (two vertical dash eyes, pink blush cheeks, small smile); no face on the back of the cube. Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo2_calmo_nbp"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "cubo2_rivelato_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb3-8c3d-7048-8b37-7c563ac2a341",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same thin child character in the worn wetsuit as in the first reference image: same body, same pose with the cube head tilted, same place, same camera framing, same lighting. But its cube head is now broken open like the cube in the second reference image. The white cube head is breaking apart: its front face has cracked open and big jagged chunks have fallen away (on the remaining fragments you can still see one marker eye dash and one pink blush cheek of the cute drawn face). From inside bursts a mass of soft, translucent pink and magenta tentacles made of the same living tissue as the jellyfish bell of the mascot in the reference image: glossy, gelatinous, semi-transparent, with glowing luminous radial channels inside, softly lighting the cube from within. Many round eyeballs of different sizes stare out from the tentacle mass, glossy white with bright yellow irises and small dark pupils, all looking at the viewer. A few tentacles curl out over the broken edges of the cube and droop down. Organic and deeply unsettling, but clean and wet: no blood, no flesh wounds.  Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo2_calmo_nbp",
+   "@cubo_rivelato_giallo_gpt",
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "cubo2_rivelato_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb3-8644-72c7-ac0a-863630366512",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same thin child character in the worn wetsuit as in the first reference image: same body, same pose with the cube head tilted, same place, same camera framing, same lighting. But its cube head is now broken open like the cube in the second reference image. The white cube head is breaking apart: its front face has cracked open and big jagged chunks have fallen away (on the remaining fragments you can still see one marker eye dash and one pink blush cheek of the cute drawn face). From inside bursts a mass of soft, translucent pink and magenta tentacles made of the same living tissue as the jellyfish bell of the mascot in the reference image: glossy, gelatinous, semi-transparent, with glowing luminous radial channels inside, softly lighting the cube from within. Many round eyeballs of different sizes stare out from the tentacle mass, glossy white with bright yellow irises and small dark pupils, all looking at the viewer. A few tentacles curl out over the broken edges of the cube and droop down. Organic and deeply unsettling, but clean and wet: no blood, no flesh wounds.  Full body visible from head to feet, centered, seen from a slightly low three-quarter front view, standing still on the wet tiled floor near the camera, with the water park behind it out of focus.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo2_calmo_nbp",
+   "@cubo_rivelato_giallo_gpt",
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "aspect": "3:4",
+  "multi_view": false,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_cubo2_rivelato_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb4-a63b-7702-90ac-bf3410ee5675",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions: a thin child-sized figure in an old worn black neoprene wetsuit with stitched seams, knee pads, small tears showing the light grey lining, black diving gloves and booties and a few seaweed strands, with a big white cube head of cracked pool tiles with algae, barnacles and rust whose front face is broken open: from inside bursts a mass of glossy translucent pink and magenta tentacles with glowing channels and many round eyeballs with yellow irises; a few tentacles curl out over the broken edges and droop down; the back of the cube is intact. Same pose: standing still, slightly hunched, thin arms hanging, cube head tilted a little to one side. Full body from head to feet, on a plain flat light grey background with soft even studio lighting, no environment, no fog. The back view shows a long zipper with a pull strap running down the back of the wetsuit.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo2_rivelato_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_cubo2_rivelato_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a13cb4-a0ad-71cd-866a-d986bf96b9d4",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same character as in the reference image, exactly the same design, materials, colors and proportions: a thin child-sized figure in an old worn black neoprene wetsuit with stitched seams, knee pads, small tears showing the light grey lining, black diving gloves and booties and a few seaweed strands, with a big white cube head of cracked pool tiles with algae, barnacles and rust whose front face is broken open: from inside bursts a mass of glossy translucent pink and magenta tentacles with glowing channels and many round eyeballs with yellow irises; a few tentacles curl out over the broken edges and droop down; the back of the cube is intact. Same pose: standing still, slightly hunched, thin arms hanging, cube head tilted a little to one side. Full body from head to feet, on a plain flat light grey background with soft even studio lighting, no environment, no fog. The back view shows a long zipper with a pull strap running down the back of the wetsuit.  Absolutely no text, no letters, no numbers, no logos, no writing on signs, no watermark. No blood, no gore.",
+  "refs": [
+   "@cubo2_rivelato_gpt"
+  ],
+  "aspect": "3:4",
+  "multi_view": true,
+  "from_job": null,
+  "body": null,
+  "credits": 9
+ },
+ "3d_cubo2_calmo": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a13cb4-a04b-7255-9dda-b2de31e15224",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": "mv_cubo2_calmo_gpt",
+  "body": {
+   "input_task_id": "01a13cb3-8169-7169-9f6b-26dcf521f2d7",
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "2k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true
+  },
+  "credits": 30
+ },
+ "3d_cubo2_rivelato": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a13cb5-a77e-7410-bfdc-72b9ea69d182",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": "mv_cubo2_rivelato_gpt",
+  "body": {
+   "input_task_id": "01a13cb4-a63b-7702-90ac-bf3410ee5675",
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "2k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true
+  },
+  "credits": 30
  }
 }
