@@ -200,3 +200,12 @@ Il capitolo 1 si basa su luci che cambiano: le pompe accendono tutto e poi fanno
 3. Mettere la `Torcia` sulla camera del giocatore e collegare i segnali all'audio (tuono, neon, gocce, clic della torcia).
 4. Collegare il menu delle opzioni al menu di pausa e mostrare la calibrazione al primo avvio.
 5. Da decidere con l'utente: lo stile del menu, la batteria della torcia, il color grading definitivo.
+
+## Ambienti tecnici: luci in tre stati (15 ottobre)
+
+`LookTecnici` (`addons/grafica/look_tecnici.gd`, scena `scenes/tecnici/luci_tecnici.tscn`, da mettere come figlia della radice di `tecnici.tscn`) segue `GameState.luci`:
+- **prima del risveglio**: neon di servizio freddi e bassi (uno su tre sfarfalla), faretti sui quadri, luce del portello, lampade rosse spente, la vasca nera;
+- **flash**: tutto acceso, neon bianchi forti;
+- **blackout**: solo le rosse d'emergenza e il monitor (neve); i tubi dei neon diventano grigi.
+Il VoxelGI (`scenes/tecnici/gi/`) è cotto senza emissioni e le luci sono dinamiche: nel blackout il rimbalzo si spegne con le luci, non resta rosso cotto nei muri. Le luci dei tecnici hanno il meta `risveglio_ignora`, quindi `LuciRisveglio` non le tocca. I neon fatti da `tecnici.gd` erano doppi (entravano vuoti nella scena): `LookTecnici` li rimette a posto.
+Scatti in `docs/report/tecnici_luci/` (`<stato>_<punto>.jpg`, dagli stessi punti di `docs/report/tecnici/`). La rampa prima del risveglio è nera: lì ci sono solo lampade rosse, e ci si passa al ritorno, nel blackout.
