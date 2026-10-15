@@ -332,25 +332,59 @@ def crea_denti(arm, verts_aperti, pesi, K, J, M):
 
 
 def strappo_bordi(corpo, sopra, sotto):
-    """Shape key 'fauce_strappo': bordi frastagliati e un po' arrovesciati quando la bocca si apre."""
+    """Shape key 'fauce_strappo': quando la bocca si apre i bordi diventano uno strappo vero, a lembi di pelle
+    irregolari (2-4 vertici l'uno, alcuni ritirati e altri che pendono nella bocca), un po' arrovesciati in fuori;
+    la pelle intorno segue un poco (due anelli di vertici). A bocca chiusa non cambia nulla."""
+    from medusa_comune import adiacenza_vertici
     me = corpo.data
     if me.shape_keys is None:
         corpo.shape_key_add(name='Basis', from_mix=False)
     sk = corpo.shape_key_add(name='fauce_strappo', from_mix=False)
     co = coords(me)
     rng = np.random.default_rng(11)
-    nuovo = co.copy()
+    delta = np.zeros_like(co)
     c, n = piano_taglio()
     n = np.array(n)
+    bordo = set()
     for catena, segno in ((sopra, 1), (sotto, -1)):
-        for t, i in enumerate(catena):
-            frac = t / max(len(catena) - 1, 1)
+        nc = len(catena)
+        prof = np.zeros(nc)
+        t = 0
+        while t < nc:
+            w = int(rng.integers(2, 5))
+            alto = rng.uniform(0.004, 0.017) * (1.0 if rng.random() < 0.55 else -0.4)
+            for j in range(w):
+                if t + j < nc:
+                    forma = 1 - abs((j + 0.5) / w * 2 - 1)            # lembo a punta
+                    prof[t + j] = alto * (0.3 + 0.7 * forma) + rng.normal(scale=0.0012)
+            t += w
+        for idx, i in enumerate(catena):
+            frac = idx / max(nc - 1, 1)
             centro = 1 - (2 * frac - 1) ** 2
-            # dente di sega irregolare: lo strappo della pelle
-            dente_s = (0.008 if t % 2 else -0.002) * rng.uniform(0.5, 1.3) + rng.normal(scale=0.0015)
-            nuovo[i] += n * segno * dente_s * (0.4 + 0.6 * centro) + np.array([0, -0.004, 0]) * centro
-    # i vertici vicini ai bordi seguono un poco (pelle che si arriccia)
-    sk.data.foreach_set('co', nuovo.ravel())
+            delta[i] += n * segno * prof[idx] * (0.25 + 0.75 * centro)
+            delta[i] += np.array([0.0, -0.007, 0.0]) * centro         # labbra arrovesciate in fuori
+            bordo.add(i)
+    # la pelle vicina segue un poco (pelle che si arriccia)
+    ev = adiacenza_vertici(me)
+    vicini = {}
+    for a, b in ev:
+        vicini.setdefault(a, []).append(b)
+        vicini.setdefault(b, []).append(a)
+    anello, visti = set(bordo), set(bordo)
+    for peso in (0.45, 0.33):              # primo anello 45% del bordo, secondo un terzo del primo
+        nuovo_anello = set()
+        add = {}
+        for i in anello:
+            for j in vicini.get(i, []):
+                if j in visti:
+                    continue
+                add.setdefault(j, []).append(delta[i])
+                nuovo_anello.add(j)
+        for j, ds in add.items():
+            delta[j] += np.mean(ds, axis=0) * peso
+        visti |= nuovo_anello
+        anello = nuovo_anello
+    sk.data.foreach_set('co', (co + delta).ravel())
     sk.value = 0.0
     return sk
 

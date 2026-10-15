@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="medusa_colore_4k.jpg" id="1_colore"]
+[ext_resource type="Texture2D" path="medusa_normal_4k.jpg" id="2_normal"]
+
+[resource]
+resource_name = "M_capelli_bagnata"
+albedo_color = Color(0.62, 0.62, 0.68, 1)
+albedo_texture = ExtResource("1_colore")
+roughness = 0.16
+metallic_specular = 0.6
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource("2_normal")
+clearcoat_enabled = true
+clearcoat = 0.7
+clearcoat_roughness = 0.05

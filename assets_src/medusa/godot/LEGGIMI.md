@@ -41,7 +41,7 @@ e' a circa 1,77 m, il busto tra 2,7 e 3,3 m, la cima della testa a 4,5 m.
 - `insegue` (ciclo di 1 s): braccia protese, busto in avanti, tentacoli trascinati indietro.
 - `fauce_apre` (1 s): attacco con la fauce che si apre.
 - `affacciata` (ciclo di 4 s): la medusa vera affacciata alla vasca della sala centrale, immobile, con un
-  respiro appena visibile. Vedi sotto.
+  respiro appena visibile (campana schiacciata sott'acqua). Vedi sotto.
 
 Le animazioni da sveglia (`sveglia` alla fine, `fluttua`, `insegue`, `fauce_apre`) hanno il corpo alla stessa
 altezza, quindi si possono fondere tra loro. Lo spostamento nel livello lo fa il gioco.
@@ -49,26 +49,52 @@ altezza, quindi si possono fondere tra loro. Lo spostamento nel livello lo fa il
 ## Sala centrale: la medusa affacciata alla vasca (`affacciata`)
 
 La medusa vera (stesso GLB, stessa scala) dentro la vasca sollevata al centro della sala, come nel concept
-`docs/concept/medusa_sbircia.jpg`: mani sul bordo con le dita aggrappate oltre lo spigolo, busto e testa fuori
-dall'acqua, campana a pelo d'acqua, tentacoli che passano il bordo e ricadono lungo il muro, gli altri
-sott'acqua; testa appena inclinata, occhio fisso su chi entra.
+`docs/concept/medusa_sbircia.jpg`: immersa con il pelo dell'acqua appena sopra il seno (regola del GDD: il seno
+resta coperto), busto inclinato in avanti, spalle alzate, testa sporta sopra lo spigolo interno e appena
+inclinata; sbircia dal basso chi entra, con l'occhio all'altezza dei suoi occhi. Mani larghe aggrappate al
+coping, gomiti in fuori; la campana brilla sott'acqua, schiacciata e allargata.
 
-- Marker `medusa_affacciata`: **posizione (0, 0, 10,15), rotazione (0, 0, 0)**, con la vasca
+- Marker `medusa_affacciata`: **posizione (0, 0, 10,15), rotazione (0, 0, 0)** (come prima), con la vasca
   `sala_vasca_centrale.glb` centrata in (0, 0, 10). L'origine del GLB va al livello del pavimento della sala,
   2,1 m dietro il filo esterno del muro davanti (z 12,25); la medusa guarda verso +Z.
 - Animazione `affacciata` (96 fotogrammi, 4 s) da mettere in ciclo (Loop Mode Linear) e far partire subito:
-  tiene tutta la posa, il solo movimento e' il respiro sul petto e sulle spalle.
-- Dove tocca la vasca (coordinate della sala): mani sul coping in x +-0,45, dita oltre lo spigolo esterno fino a
-  z 12,32; vita in (0; 1,2; 11,0); cima della campana a y 1,06 (18 cm sopra l'acqua), bordo della campana
-  sott'acqua a y 0,24-0,34; occhio in (0; 2,37; 11,8), cima della testa a y 2,94.
-- Tentacoli fuori dal bordo: escono dall'acqua lungo il muro interno, si appoggiano sul coping e ricadono lungo
-  il muro davanti. 4 zampe in x -1,62, -1,42, +1,48, +1,68 arrivano al pavimento e ci si allargano (fino a
-  circa 0,3 m davanti al muro); 4 medi in x -0,88, -0,68, +0,66, +0,86 pendono fino a circa 0,45 m da terra,
-  con la punta arricciata. Restano liberi il pulsante (x -0,2..0,2) e i disegni appesi al muro. Gli altri 17
-  tentacoli stanno sott'acqua, dentro la vasca.
+  tiene tutta la posa, il solo movimento e' il respiro sul petto e sulle spalle. Mette anche a 1 la blend shape
+  `campana_schiaccia` (mesh `Medusa`, `Medusa_Interno`, `Medusa_Bordo`): la campana si abbassa (x0,38) e si
+  allarga sott'acqua. Le altre animazioni non la toccano: se dopo l'affacciata se ne usa un'altra, rimetterla a 0.
+- Dove tocca la vasca (coordinate della sala): occhio in (0; 1,63; 11,95), cima della testa a y 2,18; vita in
+  (0; 0,43; 11,19); campana tra y 0,07 e 0,45 (tutta sott'acqua); seno sotto il pelo dell'acqua (0,88).
+  Mani sul coping in x +-0,6: polso sullo spigolo interno (z 11,95), palmo sul coping, dita piegate oltre lo
+  spigolo esterno con i polpastrelli sul fronte (fino a z 12,31, y 0,91), pollice sul coping verso l'interno.
+- Tentacoli fuori dal bordo (escono dall'acqua lungo il muro interno, si appoggiano sul coping e ricadono lungo
+  il muro davanti): 4 zampe in x -1,62, -1,42, +1,48, +1,68 che arrivano al pavimento e ci si allargano (fino a
+  circa 0,4 m davanti al muro); 4 medi tra le mani e accanto (x -0,9, -0,34, +0,34, +0,9) che pendono lungo il
+  muro. Restano liberi il pulsante (x -0,2..0,2) e i disegni appesi al muro. Gli altri 17 tentacoli stanno
+  sott'acqua, dentro la vasca.
+- **Aspetto bagnato** (solo questa scena): materiali alternativi da applicare in override al posto di quelli
+  normali, senza cambiare le texture: `medusa_pelle_bagnata.tres` (superficie 0 di `Medusa`),
+  `medusa_capelli_bagnata.tres` (superficie 1), `medusa_orbita_bagnata.tres` (superficie 3),
+  `medusa_mani_bagnata.tres` (`Medusa_Mani`), `medusa_ciocche_bagnata.tres` (`Medusa_Ciocche`: punte piu' scure
+  e lucide) e `medusa_tentacoli_bagnata.tres` (`Medusa_Tentacoli` e superficie 0 di `Medusa_Bordo`).
 - Le gocce (punte dei capelli, mento, dita, tentacoli sul bordo) sono particelle del motore. La fisica dei
   tentacoli resta spenta in questa posa.
 - Per far seguire il giocatore all'occhio si ruota l'osso `occhio` da codice, al massimo 15 gradi.
+
+## Mani
+
+Le mani sono un oggetto a parte, `Medusa_Mani` (materiale `M_mani`): mani da bambola in vinile rifatte da zero,
+cinque dita separate con tre falangi, nocche e unghie appena accennate, pollice opponibile; la giuntura e' il
+solco del polso, come nelle bambole. Ogni vertice dipende al massimo da due ossa (niente influenze da un dito
+all'altro), quindi in Godot si deformano come in Blender. Le ossa hanno gli stessi nomi di prima (`mano`,
+`pollice_1..3`, `indice_1..3`, `medio_1..3`, `anulare_1..3`, `mignolo_1..3`, con `.L` e `.R`); asse Z sul dorso,
+la piega delle dita e' la rotazione intorno all'asse X. Il colore viene dal colore dei vertici (unghie appena piu'
+chiare, pieghe un po' piu' scure): per la tinta del gioco usa `medusa_mani.tres` su `Medusa_Mani`.
+
+## Occhio: versione malvagia (`venatura`)
+
+`medusa_occhio.tres` (shader `medusa_occhio.gdshader`) su `Medusa_Occhio` mescola l'occhio calmo e quello venato
+(capillari rossi dal bordo della sclera verso l'iride, sclera ingiallita, iride piu' accesa) con il parametro
+`venatura` da 0 (calma, come nel glTF) a 1. In gioco si puo' animare quando attacca:
+`$Medusa_Occhio.get_surface_override_material(0).set_shader_parameter("venatura", v)`.
 
 ## Campana: gelatina trasparente, canali luminosi, struttura interna, bordo
 

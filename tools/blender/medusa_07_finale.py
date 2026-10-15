@@ -36,6 +36,9 @@ import medusa_05_tentacoli as TENT  # noqa: E402
 import medusa_campana_interna as INTERNO  # noqa: E402
 import medusa_capelli as CAPELLI  # noqa: E402
 import medusa_affacciata as AFF  # noqa: E402
+import medusa_mani as MANI  # noqa: E402
+import medusa_occhio_venato as VENE  # noqa: E402
+import medusa_attacco as ATT  # noqa: E402
 import medusa_fauce as FAUCE  # noqa: E402
 import medusa_pose as POSE  # noqa: E402
 
@@ -294,6 +297,7 @@ def materiale_occhio():
     # l'iride resta rosa anche al buio (come nei concept): un filo di luce propria
     nt.links.new(nt.nodes['base'].outputs['Color'], b.inputs['Emission Color'])
     b.inputs['Emission Strength'].default_value = 0.35
+    VENE.materiale_venatura()           # versione malvagia: 'venatura' da 0 (calma) a 1 (vene rosse)
     mc = bpy.data.materials['M_occhio_cornea']
     b = mc.node_tree.nodes['BSDF']
     b.inputs['Transmission Weight'].default_value = 1.0
@@ -462,6 +466,8 @@ def posa_tentacoli_pendenti(arm, tempo=0.0, scia=0.0, ampiezza=1.0):
         for k in range(1, n):
             POSE.orienta(arm, nomi[k], p, dirs[k - 1])
             p = p + dirs[k - 1] * lungh[k]
+    # da sveglia le braccia si aprono: due zampe incrociate coprono il petto (regola del GDD)
+    ATT.zampe_sul_petto(arm, bpy.data.objects['Medusa'])
 
 
 def posa_sveglia(arm, tempo=0.0, scia=0.0, braccia=0.35):
@@ -633,7 +639,12 @@ def main():
             bpy.data.objects.remove(e)
         bpy.data.collections.remove(coll)
         bpy.context.view_layer.update()
+    # mani nuove da bambola (quelle di Meshy erano irrecuperabili): scheletro della mano rifatto, mani vecchie tolte
+    # dal corpo (taglio netto al polso), oggetto Medusa_Mani al loro posto
+    MANI.rifai_ossa_mano(arm)
     mani_eleganti(arm, corpo)
+    raggi_polso = MANI.togli_mani_vecchie(arm, corpo)
+    MANI.crea_mani(arm, corpo, raggi_polso)
     TENT.crea_tentacoli_statua(arm, TENT.STATUA)
     FAUCE.costruisci_fauce(arm)
     maschera_canali(corpo)
@@ -646,6 +657,7 @@ def main():
     materiale_occhio()
     posa_come_riposo(arm)
     normali_cucitura(corpo)
+    AFF.schiaccia_campana(arm)          # solo per la posa affacciata (campana sott'acqua)
     # mentre si scrivono le azioni le mesh non serve deformarle (molto piu' veloce)
     mods = [m for o in bpy.data.objects if o.type == 'MESH' for m in o.modifiers if m.type == 'ARMATURE']
     for m in mods:
@@ -667,10 +679,15 @@ def main():
         if i.animation_data:
             for tr in i.animation_data.nla_tracks:
                 tr.mute = False
+                for st in tr.strips:
+                    st.extrapolation = 'NOTHING'      # fuori dalle strisce: riposo (la statua)
+    for k in bpy.data.shape_keys:
+        for kb in k.key_blocks[1:]:
+            kb.value = 0.0
     POSE.azzera(arm)
     scala_reale(arm)
     bpy.context.scene.render.fps = FPS
-    salva(os.path.join(BUILD, 'medusa_finale.blend'))
+    salva(os.environ.get('MEDUSA_FINALE', os.path.join(BUILD, 'medusa_finale.blend')))
     log(f'fatto in {time.time() - t0:.0f} s')
 
 

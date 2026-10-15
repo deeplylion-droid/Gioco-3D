@@ -13,6 +13,8 @@ Scrive tex/medusa_colore_4k.jpg, tex/medusa_normal_4k.jpg, tex/medusa_ruvidezza_
 B = metallo) e aggiorna build/medusa_finale.blend (materiali del corpo con le nuove texture).
 
 Uso: flock /home/user/tools/render.lock nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_08_dettagli.py
+     con --solo-materiali non cuoce: ricollega ai materiali le texture gia' fatte (dopo un passo 7 che ha
+     cambiato solo pose e animazioni).
 """
 import os
 import sys
@@ -534,7 +536,18 @@ def aggiorna_materiali():
 
 def main():
     t0 = time.time()
-    apri(os.path.join(BUILD, 'medusa_finale.blend'))
+    finale = os.environ.get('MEDUSA_FINALE', os.path.join(BUILD, 'medusa_finale.blend'))
+    apri(finale)
+    if '--solo-materiali' in sys.argv:
+        # le texture finali ci sono gia' (la cottura dipende solo dalla posa statua): dopo un passo 7 che ha
+        # cambiato solo le animazioni basta ricollegarle ai materiali
+        for t in (TEX_COLORE, TEX_NORMAL, TEX_RUVIDO):
+            if not os.path.exists(t):
+                raise SystemExit(f'manca {t}: serve la cottura completa')
+        aggiorna_materiali()
+        salva(finale)
+        log(f'materiali aggiornati senza cottura in {time.time() - t0:.0f} s')
+        return
     arm = bpy.data.objects['Medusa_Scheletro']
     ob = bpy.data.objects['Medusa']
     k = float(arm.get('scala', 1.0))

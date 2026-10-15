@@ -260,7 +260,14 @@ def materiali_finale_godot():
         b.inputs['Subsurface Weight'].default_value = 0.0
     mb = bpy.data.materials.get('M_occhio_bulbo')
     if mb:
-        mb.node_tree.nodes['BSDF'].inputs['Emission Strength'].default_value = 0.22
+        nt = mb.node_tree
+        nt.nodes['BSDF'].inputs['Emission Strength'].default_value = 0.22
+        # nel glTF l'occhio calmo (texture collegata direttamente); la venatura e' nello shader Godot
+        for nome in ('mix_venatura', 'base_venata', 'venatura'):
+            if nome in nt.nodes:
+                nt.nodes.remove(nt.nodes[nome])
+        nt.links.new(nt.nodes['base'].outputs['Color'], nt.nodes['BSDF'].inputs['Base Color'])
+        nt.links.new(nt.nodes['base'].outputs['Color'], nt.nodes['BSDF'].inputs['Emission Color'])
     for n in ('M_tentacoli', 'M_filamenti', 'M_denti', 'M_ciocche'):
         m = bpy.data.materials.get(n)
         if m:
@@ -281,7 +288,8 @@ def prepara_finale():
     # (piu' colore e normal 4K del corpo, usate da medusa_pelle.tres e medusa_orbita.tres)
     for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS, TENT.TEX_TENT_BASE, TENT.TEX_TENT_EMIS, TENT.TEX_TENT_NORMAL,
               CAP.TEX_CIOCCHE, CAP.TEX_CIOCCHE_N, CAP.TEX_CIOCCHE_E,
-              os.path.join(TEX, 'medusa_colore_4k.jpg'), os.path.join(TEX, 'medusa_normal_4k.jpg')):
+              os.path.join(TEX, 'medusa_colore_4k.jpg'), os.path.join(TEX, 'medusa_normal_4k.jpg'),
+              os.path.join(TEX, 'occhio_bulbo_basecolor.png'), os.path.join(TEX, 'occhio_bulbo_venato.png')):
         if os.path.exists(t):
             shutil.copy(t, os.path.join(gd, os.path.basename(t)))
     togli_slot_vuoti(corpo)
@@ -320,6 +328,22 @@ def esporta(out, origine_a_terra=False):
         log(f'origine sul piano del piedistallo: scheletro alzato di {arm.location.z:.2f} m')
     elif 'scala' in arm:
         log(f"statua a grandezza vera (scala x{arm['scala']:.3f}), piano dei tentacoli a y = 0")
+    # stato di riposo pulito per l'export: fuori dalle strisce NLA (nessuna estrapolazione) le ossa sono a riposo
+    # (la statua) e tutte le blend shape a 0; altrimenti i valori di default nel glTF sarebbero quelli scritti
+    # dall'ultima traccia valutata (per esempio la campana schiacciata dell'affacciata)
+    for i in list(bpy.data.objects) + list(bpy.data.shape_keys):
+        ad = i.animation_data
+        if ad:
+            ad.action = None
+            for tr in ad.nla_tracks:
+                for st in tr.strips:
+                    st.extrapolation = 'NOTHING'
+    bpy.context.scene.frame_set(0)
+    for k in bpy.data.shape_keys:
+        for kb in k.key_blocks[1:]:
+            kb.value = 0.0
+    for pb in arm.pose.bones:
+        pb.matrix_basis = Matrix()
     bpy.context.view_layer.update()
     for o in bpy.context.view_layer.objects:
         if o:

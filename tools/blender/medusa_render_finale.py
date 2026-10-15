@@ -71,7 +71,8 @@ def prepara():
 
 
 def usa_azione(nome, frame):
-    """Attiva solo le tracce NLA con questo nome (scheletro e shape key) e va al fotogramma."""
+    """Attiva solo le tracce NLA con questo nome (scheletro e shape key) e va al fotogramma. Le shape key si
+    rimettono a 0 prima: una traccia muta lascia nel valore l'ultimo numero che ha scritto."""
     ids = [o for o in bpy.data.objects] + [k for k in bpy.data.shape_keys]
     for i in ids:
         ad = i.animation_data
@@ -79,6 +80,9 @@ def usa_azione(nome, frame):
             continue
         for tr in ad.nla_tracks:
             tr.mute = tr.name != nome
+    for k in bpy.data.shape_keys:
+        for kb in k.key_blocks[1:]:
+            kb.value = 0.0
     bpy.context.scene.frame_set(frame)
 
 
@@ -455,9 +459,10 @@ VASCA_SALA = os.path.join(BUILD, 'rif', 'sala_vasca_centrale.glb')   # copia del
 SPOSTA_VASCA = 10.15        # la vasca della sala ha il centro in z 10 Godot; il marker della medusa e' in z 10,15
 
 
-def vasca_sala():
+def vasca_sala(acqua=True):
     """La vasca vera della sala (GLB dell'agente ambiente), spostata nel riferimento della medusa; via le mesh di
-    collisione. Acqua a 0,88 dentro il bordo interno."""
+    collisione. Acqua: un blocco dal fondo al pelo (0,88), vetro con un velo verde-azzurro che assorbe la luce e
+    piccole onde in superficie; non fa ombra, cosi' la luce arriva anche sott'acqua."""
     prima = set(bpy.data.objects)
     bpy.ops.import_scene.gltf(filepath=VASCA_SALA)
     nuovi = [o for o in bpy.data.objects if o not in prima]
@@ -466,18 +471,98 @@ def vasca_sala():
             o.location.y += SPOSTA_VASCA
         if 'colonly' in o.name or 'convcol' in o.name:
             o.hide_render = True
-    bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 0.15, 0.88))
+    if not acqua:
+        return
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0.15, 0.4425))
     w = bpy.context.active_object
     w.name = 'acqua'
-    w.scale = (5.4, 3.9, 1)
+    w.scale = (5.38, 3.88, 0.875)
     bpy.ops.object.transform_apply(scale=True)
-    mw, nt, b = mat_semplice('acqua', (0.55, 0.75, 0.8), 0.03)
+    mw, nt, b = mat_semplice('acqua', (0.82, 0.95, 0.95), 0.02)
     b.inputs['Transmission Weight'].default_value = 1.0
     b.inputs['IOR'].default_value = 1.33
-    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 6.0
-    bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.08
+    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 7.0
+    noise.inputs['Detail'].default_value = 3.0
+    bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.06
     nt.links.new(noise.outputs['Fac'], bump.inputs['Height']); nt.links.new(bump.outputs['Normal'], b.inputs['Normal'])
+    vol = nt.nodes.new('ShaderNodeVolumeAbsorption')
+    vol.inputs['Color'].default_value = (0.3, 0.62, 0.66, 1)
+    vol.inputs['Density'].default_value = 0.9
+    nt.links.new(vol.outputs['Volume'], nt.nodes['Material Output'].inputs['Volume'])
     w.data.materials.append(mw)
+    w.visible_shadow = False
+
+
+def materiali_bagnati():
+    """Aspetto bagnato solo per la scena della vasca (in Godot: i materiali *_bagnata.tres): pelle e mani piu'
+    lucide, capelli piu' scuri e lucidi in punta, tentacoli lucidi."""
+    def _ruvido_per(m, f):
+        nt = m.node_tree
+        b = nt.nodes['BSDF']
+        ls = b.inputs['Roughness'].links
+        if ls:
+            src = ls[0].from_socket
+            mul = nt.nodes.new('ShaderNodeMath'); mul.operation = 'MULTIPLY'
+            mul.inputs[1].default_value = f
+            nt.links.new(src, mul.inputs[0]); nt.links.new(mul.outputs[0], b.inputs['Roughness'])
+        else:
+            b.inputs['Roughness'].default_value *= f
+        return b
+
+    def _scurisci(m, f):
+        nt = m.node_tree
+        b = nt.nodes['BSDF']
+        ls = b.inputs['Base Color'].links
+        mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'
+        mix.inputs['Factor'].default_value = 1.0
+        mix.inputs['B'].default_value = (f, f, f * 1.03, 1)
+        if ls:
+            nt.links.new(ls[0].from_socket, mix.inputs['A'])
+        else:
+            mix.inputs['A'].default_value = b.inputs['Base Color'].default_value
+        nt.links.new(mix.outputs['Result'], b.inputs['Base Color'])
+        return mix
+
+    for n in ('M_pelle', 'M_orbita', 'M_mani'):
+        m = bpy.data.materials.get(n)
+        if m:
+            b = _ruvido_per(m, 0.5)
+            b.inputs['Coat Weight'].default_value = 1.0
+            b.inputs['Coat Roughness'].default_value = 0.02
+            _scurisci(m, 0.93)
+    m = bpy.data.materials.get('M_capelli')
+    if m:
+        b = _ruvido_per(m, 0.6)
+        b.inputs['Coat Weight'].default_value = 0.8
+        b.inputs['Coat Roughness'].default_value = 0.03
+        _scurisci(m, 0.7)
+    m = bpy.data.materials.get('M_ciocche')
+    if m:
+        nt = m.node_tree
+        b = nt.nodes['BSDF']
+        uv = nt.nodes.new('ShaderNodeUVMap')
+        sep = nt.nodes.new('ShaderNodeSeparateXYZ')
+        nt.links.new(uv.outputs['UV'], sep.inputs['Vector'])
+        mr = nt.nodes.new('ShaderNodeMapRange'); mr.interpolation_type = 'SMOOTHSTEP'
+        mr.inputs['From Min'].default_value = 0.35; mr.inputs['From Max'].default_value = 1.0
+        nt.links.new(sep.outputs['Y'], mr.inputs['Value'])          # v: 0 alla radice, 1 in punta
+        mix = _scurisci(m, 0.52)
+        nt.links.new(mr.outputs['Result'], mix.inputs['Factor'])
+        rr = nt.nodes.new('ShaderNodeMapRange')
+        rr.inputs['To Min'].default_value = 0.16; rr.inputs['To Max'].default_value = 0.07
+        nt.links.new(mr.outputs['Result'], rr.inputs['Value'])
+        nt.links.new(rr.outputs['Result'], b.inputs['Roughness'])
+        b.inputs['Coat Weight'].default_value = 0.9
+        b.inputs['Coat Roughness'].default_value = 0.02
+    for n in ('M_tentacoli',):
+        m = bpy.data.materials.get(n)
+        if m:
+            b = m.node_tree.nodes['BSDF']
+            for l in list(b.inputs['Roughness'].links):
+                m.node_tree.links.remove(l)
+            b.inputs['Roughness'].default_value = 0.1
+            b.inputs['Coat Weight'].default_value = 1.0
+            b.inputs['Coat Roughness'].default_value = 0.03
 
 
 def scena_vasca():
@@ -487,28 +572,29 @@ def scena_vasca():
         vasca_sala()
     else:
         vasca_segnaposto()
+    materiali_bagnati()
     pavimento_piastrelle(0.0)
     luci_notte((0, -1.0, 1.4), 2.6, nebbia=0.004)
-    # un po' di luce fredda dall'acqua sulla medusa (la campana e' accesa sotto il pelo)
-    luce_area('riflesso_acqua', (0, -2.6, 0.95), (0, -1.0, 2.0), 120, (0.3, 0.7, 1.0), 1.5, 'DISK')
+    # il bagliore della campana sotto il pelo dell'acqua sale sul viso e sul petto (appena sopra l'acqua)
+    luce_area('bagliore_campana', (0, -1.45, 0.92), (0, -1.75, 1.7), 45, (1.0, 0.45, 0.72), 0.7, 'DISK')
     imposta()
 
 
 def affacciata_giocatore():
     """Dal punto di vista del giocatore all'ingresso: a circa 9 m, occhi a 1,7 m."""
     scena_vasca()
-    camera((0.6, -10.0, 1.7), (0.0, -1.3, 1.6), lens=24)
+    camera((0.6, -10.0, 1.7), (0.0, -1.6, 1.3), lens=24)
     png = render(os.path.join(OUT_PNG, nome_jpg('affacciata_giocatore') + '.png'))
     return salva_jpg(png, nome_jpg('6_affacciata_9m'))
 
 
 def affacciata_vicino():
-    """Da vicino, basso sul bordo, come il concept medusa_sbircia.jpg."""
+    """Primo piano basso come il concept medusa_sbircia.jpg: camera a 1,2 m di altezza e 1,3 m davanti al bordo,
+    che guarda un po' in su."""
     scena_vasca()
-    # luce morbida sul viso (riflesso freddo dall'acqua e dalle lampade della sala), come nel concept
-    luce_area('viso_freddo', (0.6, -3.6, 2.4), (0, -1.3, 2.1), 110, (0.55, 0.65, 1.0), 1.8, 'DISK')
-    # bassa, appena sopra il bordo: viso, mani aggrappate e tentacoli che passano il bordo e pendono dal muro
-    camera((0.3, -4.4, 1.08), (0.0, -1.5, 1.8), lens=20)
+    # luce morbida e fredda sul viso (le lampade della sala)
+    luce_area('viso_freddo', (0.6, -3.2, 2.0), (0, -1.8, 1.6), 70, (0.55, 0.65, 1.0), 1.4, 'DISK')
+    camera((0.1, -3.4, 1.2), (0.0, -1.8, 1.45), lens=22)
     png = render(os.path.join(OUT_PNG, nome_jpg('affacciata_vicino') + '.png'))
     return salva_jpg(png, nome_jpg('6b_affacciata_vicino'))
 
