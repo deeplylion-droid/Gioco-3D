@@ -31,7 +31,7 @@ Screenshot dal motore (Godot 4.7.2, scena di prova `labs/ambienti1`, senza l'add
 ## Punti chiave per chi integra
 
 - **Uscita verso la sala principale**: vano 1,2 × 2,2 m chiuso dalla saracinesca, `marker_uscita_sala_principale` in Godot (9,70; 0; -20,70), la sala continua verso -Z. Il branch `lavoro/ambiente` non esisteva ancora quando ho lavorato: le misure seguono la richiesta del coordinatore.
-- **Zaino-pompa**: `marker_zaino_pompa` in Godot (14,94; 1,25; -8,43), sui due ganci centrali liberi della rastrelliera, schiena verso il muro est.
+- **Zaino-pompa**: `marker_zaino_pompa` in Godot (14,50; 1,25; -8,43), sui due ganci centrali liberi della rastrelliera, schiena verso il muro est.
 - **Risveglio**: `marker_risveglio` in (20,40; 0; -1,25), a terra, guarda verso ovest.
 - Oggetti che si muovono con l'origine sul perno: porta tagliafuoco, porta della sala pompe (maniglione antipanico dal lato della sala pompe), porta dello stanzino, anta dell'armadietto che sbatte (dentro un salvagente a forma di papera), grata d'aerazione bassa, rotore del tornello, pulsante dietro il vetro rotto, saracinesca (origine come `PoweredDoor`), turbina, soffioni e rubinetti delle 5 docce con i punti d'emissione.
 
@@ -81,3 +81,24 @@ Da fare nella sala principale (non toccata): togliere `PostazioneBagnini` (lo za
 - Luci: Environment `AmbienteHorror` (AgX), una ReflectionProbe d'interno per zona, `LuceEmergenza` a energia 2, solo i neon `_tubo_sfarfalla` accesi (nodo `Neon`). La lucina del pulsante del tornello illuminava tutto il corridoio: ora ha portata 1,2 m.
 - La vasca lava-piedi è un `WaterTank` (già nel gruppo `water_sources`) con `acqua_per_vasca.tscn` stile limpido.
 - Non fatto (per la 0.2.1): convertitore dei pavimenti bagnati e vernice scrostata meno uniforme, con texture propria per gli armadietti.
+
+## Pezzo campione di qualità (15 ottobre, da approvare dall'utente)
+
+Richiesta: l'utente ha bocciato la qualità della v0.2.0 (forme squadrate, texture ripetute, tornello in bassa definizione). Ho rifatto un pezzo campione: corridoio del risveglio, zona del tornello con la vasca lava-piedi, interno dello stanzino. **Mi fermo qui finché l'utente non dà un riscontro.**
+
+**Da mostrare all'utente** (screenshot da Godot 1600×900, stessi punti prima e dopo):
+
+| Prima | Dopo |
+|---|---|
+| `docs/report/qualita_interni/prima_corridoio.jpg` | `docs/report/qualita_interni/dopo_corridoio.jpg` |
+| `docs/report/qualita_interni/prima_lavapiedi.jpg` | `docs/report/qualita_interni/dopo_lavapiedi.jpg` |
+| `docs/report/qualita_interni/prima_stanzino.jpg` | `docs/report/qualita_interni/dopo_stanzino.jpg` |
+
+Cosa è cambiato:
+- **Oggetti Meshy di qualità alta** (meshy-7.1, geometria 4k, texture PBR 4K ridotte a 2K, remesh a 8-60 mila triangoli): tornello a tutta altezza (telaio e rotore separati), finestra del gabbiotto, quadro con il pulsante, porta tagliafuoco, porte di servizio (sala pompe, stanzino, fondo), armadietti (chiusi interi; quelli aperti con l'anta ricavata dal modello), panche, lampade d'emergenza a gabbia, plafoniere dei neon, valvole a volantino, cartello del pavimento bagnato, rastrelliera, scrivania, bacheca. Script: `assets_src/ambienti_interni/meshy_hq/genera_hq.py` (le immagini di riferimento in `rif/` sono solo un input interno). Integrazione: `tools/blender/ambienti1_hq.py`.
+- **Architettura meno a scatole**: battiscopa e listello tra zoccolo e parete, costole e travi smussate, telai delle porte smussati, bordi della vasca a toro, tubi più rotondi.
+- **Texture senza ripetizioni** (shader in `godot/shaders/interni/`, applicati da `scripts/interni/materiali_interni.gd`): pareti con vernice intera, macro-variazione in spazio mondo, giunti dei pannelli con rivetti, colature scure dall'alto, sporco in basso, scrostature solo in basso, vicino ai tubi e in poche chiazze; piastrelle con tinta diversa per ogni piastrella, fughe in rilievo (parallasse) e chiazze bagnate a specchio. Decal di colature di ruggine, crepe e macchie d'acqua.
+- Nessun poster nuovo. Luci, ombre e post-processing non toccati (li fa la sessione grafica), salvo i materiali emissivi delle lampade.
+- Stesse coordinate e stesso gameplay: `test_interni` 24/24, `test_sala` 43/43, `check_scripts` 0 errori. Lo zaino è appeso davanti alla nuova rastrelliera (`marker_zaino_pompa` ora in (14,50; 1,25; -8,43)).
+
+Crediti Meshy usati per il campione: circa 750.

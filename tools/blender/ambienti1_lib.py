@@ -350,6 +350,22 @@ def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoc
 def _muro(nome, lato, rett, z0, z1, mats, zoccolo):
     (ax, ay), (bx, by) = rett
     out = []
+    # battiscopa e listello sul lato interno della parete (lato = dove guarda la stanza)
+    if 'battiscopa' in mats:
+        def fascia(za, zb, sp, mat, sm):
+            if lato == 'S':
+                return scatola(f'{nome}_fascia', (ax, by, za), (bx, by + sp, zb), mat, smussa=sm)
+            if lato == 'N':
+                return scatola(f'{nome}_fascia', (ax, ay - sp, za), (bx, ay, zb), mat, smussa=sm)
+            if lato == 'W':
+                return scatola(f'{nome}_fascia', (bx, ay, za), (bx + sp, by, zb), mat, smussa=sm)
+            return scatola(f'{nome}_fascia', (ax - sp, ay, za), (ax, by, zb), mat, smussa=sm)
+        lung = max(abs(bx - ax), abs(by - ay))
+        if lung > 0.05:
+            if z0 <= 0.0:
+                out.append(fascia(0.0, 0.13, 0.025, mats['battiscopa'], 0.008))
+            if z0 < zoccolo < z1 and 'muro_basso' in mats:
+                out.append(fascia(zoccolo - 0.02, zoccolo + 0.02, 0.018, mats['battiscopa'], 0.008))
     if z0 < zoccolo and 'muro_basso' in mats:
         out.append(scatola(f'{nome}_muro{lato}', (ax, ay, z0), (bx, by, min(z1, zoccolo)), mats['muro_basso']))
         if z1 > zoccolo:
@@ -363,16 +379,16 @@ def tubo_percorso(nome, punti, r, mat, flange=True, passo_flange=2.0):
     parti = []
     for i in range(len(punti) - 1):
         p0, p1 = Vector(punti[i]), Vector(punti[i + 1])
-        parti.append(cilindro(f'{nome}_{i}', p0, p1, r, mat, seg=14, tappi=False))
+        parti.append(cilindro(f'{nome}_{i}', p0, p1, r, mat, seg=28, tappi=False))
         if flange:
             L = (p1 - p0).length; d = (p1 - p0).normalized()
             k = 1
             while k * passo_flange < L - 0.2:
                 c = p0 + d * k * passo_flange
-                parti.append(cilindro(f'{nome}_fl', c - d * 0.03, c + d * 0.03, r * 1.35, mat, seg=14))
+                parti.append(cilindro(f'{nome}_fl', c - d * 0.03, c + d * 0.03, r * 1.35, mat, seg=28))
                 k += 1
     for p in punti[1:-1]:
-        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=14, v_segments=8, radius=r * 1.02)
+        bm = bmesh.new(); bmesh.ops.create_uvsphere(bm, u_segments=28, v_segments=14, radius=r * 1.02)
         bmesh.ops.translate(bm, vec=Vector(p), verts=bm.verts)
         o = _ob_da_bm(f'{nome}_gomito', bm, mat); uv_scatola(o, 1.0); parti.append(o)
     ob = unisci(nome, parti)
@@ -405,8 +421,20 @@ NEON = (0.78, 1.0, 0.9)
 
 def lampada_emergenza(nome, loc, normale, M, watt=40, accesa=True):
     """Plafoniera stagna con gabbia (come S01/S03): corpo, vetro emissivo, gabbia, luce rossa.
-    normale: direzione in cui guarda la parete ((1,0,0), (0,-1,0), (0,0,-1) ...)."""
+    normale: direzione in cui guarda la parete ((1,0,0), (0,-1,0), (0,0,-1) ...).
+    Con il modello Meshy di qualità alta (meshy_hq/lampada_muro.glb) usa quello."""
+    import ambienti1_hq as HQ
     n = Vector(normale).normalized(); p = Vector(loc)
+    if HQ.disponibile('lampada_muro'):
+        rosso = lambda c, nrm: c[0] > 0.25 and c[0] > c[1] * 2.2 and c[0] > c[2] * 2.0
+        HQ.dividi('lampada_muro', 'lampada_muro_vetro', rosso, (1, 0.05, 0.02), 14.0)
+        R = n.to_track_quat('Z', 'Y').to_matrix().to_4x4()
+        corpo = HQ.metti(nome, 'lampada_muro', (0, 0, 0), (0.3, None, None))
+        vetro = HQ.metti(nome + '_vetro', 'lampada_muro', (0, 0, 0), (0.3, None, None), parte='lampada_muro_vetro')
+        for o in (corpo, vetro):
+            o.matrix_world = Matrix.Translation(p) @ R @ o.matrix_world
+        luce = luce_punto(nome + '_luce', p + n * 0.22, ROSSO, watt, 0.06) if accesa else None
+        return corpo, vetro, luce
     q = n.to_track_quat('Z', 'Y'); R = q.to_matrix().to_4x4()
     parti = []
     base = scatola(nome + '_base', (-0.14, -0.08, 0), (0.14, 0.08, 0.04), M['metallo_grezzo'], uv=False)
@@ -427,7 +455,24 @@ def lampada_emergenza(nome, loc, normale, M, watt=40, accesa=True):
 
 def neon_soffitto(nome, centro, lung, M, h_soffitto, stato='acceso', watt=60, appeso=0.0, rot_z=0.0):
     """Plafoniera a due tubi. stato: acceso | spento | sfarfalla (tubo separato da animare in Godot)."""
+    import ambienti1_hq as HQ
     x, y, _ = centro; z = h_soffitto - 0.06 - appeso
+    if HQ.disponibile('plafoniera_neon'):
+        giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
+        HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
+        T = Matrix.Translation((x, y, h_soffitto - 0.1 - appeso)) @ Matrix.Rotation(rot_z, 4, 'Z')
+        if appeso:
+            T = T @ Matrix.Rotation(math.radians(18), 4, 'X')
+            cilindro(nome + '_cavo', (x, y, h_soffitto), (x, y, z + 0.05), 0.004, M['gomma'], seg=6)
+        corpo = HQ.metti(nome, 'plafoniera_neon', (0, 0, 0), (lung, 0.3, 0.1))
+        suff = '_tubo_sfarfalla' if stato == 'sfarfalla' else ('_tubi_accesi' if stato == 'acceso' else '_tubi')
+        tubo = HQ.metti(nome + suff, 'plafoniera_neon', (0, 0, 0), (lung, 0.3, 0.1), parte='plafoniera_neon_diffusore')
+        if stato == 'spento':
+            tubo.data = tubo.data  # stessa mesh: il materiale spento lo mette Godot (vedi interni.gd)
+        for o in (corpo, tubo):
+            o.matrix_world = T @ o.matrix_world
+        luce = luce_area(nome + '_luce', (x, y, z - 0.05), NEON, watt, lung, 0.12, (0, 0, rot_z)) if stato != 'spento' else None
+        return corpo, tubo, luce
     parti = [scatola(nome + '_corpo', (-lung / 2, -0.09, 0.0), (lung / 2, 0.09, 0.06), M['metallo_grezzo'], uv=False)]
     tubi = []
     for dy in (-0.045, 0.045):
