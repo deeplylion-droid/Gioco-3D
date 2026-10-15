@@ -39,12 +39,13 @@ Screenshot 1920×1080 in `docs/report/render_grafica/sala_reale/` (prima = `sala
 
 | Inquadratura | Prima | Dopo |
 |---|---|---|
-| Ingresso con il piedistallo | `prima_ingresso.jpg` | `dopo_ingresso.jpg` |
+| Ingresso dal vano sud, statua sul monumento | `prima_ingresso.jpg` | `dopo_ingresso.jpg` |
+| Monumento da vicino | `prima_monumento.jpg` | `dopo_monumento.jpg` |
 | Piscina | `prima_piscina.jpg` | `dopo_piscina.jpg` |
 | Area bimbi | `prima_area_bimbi.jpg` | `dopo_area_bimbi.jpg` |
 | Cima della torre | `prima_torre.jpg` | `dopo_torre.jpg` |
 
-In più: `dopo_lampo_ingresso.jpg` (un lampo), `dopo_sdfgi_piscina.jpg` e `dopo_senza_gi_piscina.jpg` (confronto della GI). La statua sul piedistallo è la base Meshy ridotta, solo per l'inquadratura.
+In più: `dopo_lampo_ingresso.jpg` (un lampo). `dopo_sdfgi_piscina.jpg` e `dopo_senza_gi_piscina.jpg` (confronto della GI) sono ancora della sala prima dell'allungamento. Sala allungata (muro sud a z = 20) con il monumento; la statua è la medusa vera del gioco, alta 4,5 m.
 
 Cosa cambia nel "dopo":
 - **Colore come il concept A**: emergenze rosse più profonde e più forti (alcune pulsano), neon freddi verso il verde, ambiente e ombre verso il blu-verde (color grading "Notte fredda"), luce calda solo dal lampione e dall'area bimbi per il contrasto.
@@ -53,11 +54,24 @@ Cosa cambia nel "dopo":
 - **Nebbia volumetrica** leggera che prende i coni delle luci, più una nebbia bassa con rumore sul pavimento e nella piscina.
 - **Luna senza penombra**: con il diametro angolare realistico (0,6°) le ombre dei costoloni sottili sparivano dal pavimento; a 0° tornano le strisce sul pavimento e nella piscina.
 - Lampi dalla cupola, pulviscolo, gocce; neon "a metà" che sfarfallano, sono guasti o morenti.
+- **Statua**: fari dall'alto e davanti (5,5), faretti caldi dal basso (0,6), controluce freddo da dietro, lampione abbassato (3,5): entrando dal vano è la cosa più leggibile della sala, senza bruciare il vinile.
+- **Difetto trovato nella medusa**: `medusa_tentacoli.tres` non ha `emission_operator = Multiply` (il GLB sì). Con "Add" i tentacoli escono bianchi: era questo il "bruciato" visto dall'integratore. Segnalato al coordinatore.
 
 GI per la sala vera:
 - **VoxelGI** resta la scelta: costo moderato, segue le luci che cambiano.
 - **SDFGI** (immagine apposta): funziona ma con muri e gallerie sottili fa filtrare luce e costa di più.
 - **LightmapGI**: la UV2 si genera già all'import (`meshes/light_baking = Static Lightmaps` nello script di preparazione), ma il bake si fa solo dall'editor con la GPU: nel sandbox (rendering software, senza editor interattivo) non è stato possibile cuocerlo. Resta comunque sconsigliato come GI principale, perché il capitolo spegne e riaccende le luci della sala.
+
+### Revisione di qualità (15 ottobre, notte)
+
+Correzioni chieste dalla revisione sugli scatti Ultra, controllate con `sala_reale/dopo_ingresso_revisione.jpg`:
+- **Campo visivo** di serie 62° verticali (circa 92° orizzontali); cursore da 50 a 90 che mostra anche i gradi orizzontali.
+- **Torcia**: energia 11 (prima 28) e attenuazione vicino ai muri: un raggio di 3 m davanti e luce × clamp(distanza / 2,5; 0,4; 1).
+- **Luna** più debole (0,3) e morbida (1,3°, opacità dell'ombra 0,75): la "ragnatela" netta dei costoloni compare solo durante il lampo.
+- **Esposizione**: luce ambiente 0,7, contrasto AgX 1,15, vignetta 0,3, nebbia volumetrica 0,015 con anisotropia 0,3 (fasci visibili anche di lato), nebbia bassa 0,04.
+- **Cielo** della cupola più chiaro, nuvole più contrastate. L'orizzonte del mare non c'è: dalla sala si vede solo il cielo sopra la cupola.
+- **Scheda Controlli** nel menu: sensibilità del mouse, inverti Y, oscillazione della camera (in `settings.cfg`, chiavi `sensibilita_mouse`, `inverti_y`, `oscillazione_camera`: le legge il controller del giocatore).
+- FPS: sul rendering software del sandbox non sono misurabili. La nebbia più densa non cambia il costo (dipende dalla dimensione del volume, non dalla densità).
 
 ## Scelte prese (e perché)
 

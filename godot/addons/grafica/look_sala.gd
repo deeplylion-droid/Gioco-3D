@@ -14,7 +14,7 @@ extends Node3D
 @export var portata_emergenza := 9.0
 @export var energia_neon := 2.6
 @export var energia_lampione := 3.5
-@export var energia_luna := 0.6
+@export var energia_luna := 0.3
 ## Luci del monumento: faretti bassi (0,6) come provato dall'integratore; fari a 5,5 e lampione
 ## a 3,5 perché il busto in vinile lucido resti leggibile senza bruciarsi.
 @export var energia_fari := 5.5
@@ -214,7 +214,10 @@ func _regola_luci(n: Node) -> void:
 			d.light_color = Color(0.55, 0.66, 1.0)
 			d.light_energy = energia_luna
 			d.shadow_enabled = true
-			d.light_angular_distance = 0.0  # con 0,6° i costoloni sottili spariscono dal pavimento
+			# Ombre morbide: la ragnatela netta dei costoloni compare solo col lampo
+			# (LuceLampo ha diametro 0,2°): la gabbia che appare col tuono fa più paura.
+			d.light_angular_distance = 1.3
+			d.shadow_opacity = 0.75
 			d.light_volumetric_fog_energy = 0.35
 			d.shadow_bias = 0.05
 	for c in n.get_children():
@@ -290,7 +293,7 @@ func _crea_effetti() -> void:
 	nebbia.size = Vector3(sala_dimensioni.x - 1.0, 2.6, sala_dimensioni.z - 1.0)
 	nebbia.position = Vector3(sala_centro.x, -1.0, sala_centro.z)
 	var fm := FogMaterial.new()
-	fm.density = 0.018
+	fm.density = 0.04
 	fm.height_falloff = 2.5
 	fm.edge_fade = 0.15
 	fm.albedo = Color(0.78, 0.84, 0.86)
