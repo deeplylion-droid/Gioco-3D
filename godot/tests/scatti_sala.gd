@@ -1,0 +1,118 @@
+extends Node
+## Sei scatti fissi della sala principale (confronto di qualità prima/dopo; li può usare anche
+## grafica). Carica sala_principale.tscn ma toglie gli interni (corridoio, spogliatoi, stanzino)
+## prima del primo frame: dalle camere della sala non si vedono e, con loro, la scena intera sul
+## renderer software supera i 15 GB della macchina. Occhio a 1,7 m.
+##
+## Uso, sempre sotto il render.lock (meglio un processo per scatto: tools/scatti_sala.sh):
+##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
+##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_sala.gd \
+##        <cartella> <prefisso> [scatti separati da virgole | tutti] [preset] [frame di attesa]
+## Il preset di serie è "alto_smaa" (Alto con la GI, SMAA al posto del TAA). Gli scatti si salvano
+## come <cartella>/<prefisso>_<nome>.jpg. Alla fine stampa la memoria massima del processo
+## (VmHWM di /proc/self/status).
+
+const LEVEL := "res://scenes/sala_principale.tscn"
+
+## nome: [posizione dei piedi, punto guardato] (coordinate di Godot)
+const SCATTI := {
+	"a_ingresso": [Vector3(0.0, 0.0, 19.2), Vector3(0.0, 1.9, 10.0)],      # dalla porta degli spogliatoi verso la vasca sollevata
+	"b_vasca_3m": [Vector3(1.6, 0.0, 15.4), Vector3(0.0, 1.0, 10.8)],      # la vasca sollevata da 3 m
+	"c_piscina_spiaggia": [Vector3(2.0, -0.15, -11.0), Vector3(-1.0, -1.6, 1.5)],  # la piscina a onde dalla spiaggia
+	"d_area_bimbi": [Vector3(-6.5, 0.0, -6.0), Vector3(-13.0, 2.0, -15.0)],
+	"e_base_torre": [Vector3(7.6, 0.0, -8.6), Vector3(13.5, 3.2, -17.5)],  # la base della torre degli scivoli
+	"f_galleria": [Vector3(18.4, 4.3, -0.5), Vector3(0.0, 0.6, 1.5)],      # dalla galleria est verso la sala
+}
+
+var out_dir := "user://scatti_sala"
+var prefisso := "scatto"
+var only := PackedStringArray()
+var preset := "alto_smaa"
+var settle := 50
+var level: Node
+var p: Player
+
+
+func _ready() -> void:
+	if FileAccess.file_exists("user://salta_screenshot"):
+		get_tree().quit()
+		return
+	var args := OS.get_cmdline_user_args()
+	if args.size() > 1:
+		out_dir = args[1]
+	if args.size() > 2:
+		prefisso = args[2]
+	if args.size() > 3 and args[3] != "" and args[3] != "tutti":
+		only = args[3].split(",")
+	if args.size() > 4:
+		preset = args[4]
+	if args.size() > 5:
+		settle = int(args[5])
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	_run.call_deferred()
+
+
+func _run() -> void:
+	Game.pause_on_focus_loss = false
+	Grafica.salva_su_disco = false
+	if preset == "alto_smaa":
+		Grafica.applica_preset("alto")
+		Grafica.imposta("antialiasing", 2)
+	else:
+		Grafica.applica_preset(preset)
+	var wm := get_node_or_null(^"/root/WaterManager")
+	if wm:
+		wm.set(&"quality", 1)
+	# La scena si istanzia a mano per togliere gli interni prima che entrino nell'albero.
+	level = (load(LEVEL) as PackedScene).instantiate()
+	var interni := level.get_node_or_null(^"Interni")
+	if interni:
+		level.remove_child(interni)
+		interni.free()
+	get_tree().root.add_child(level)
+	get_tree().current_scene = level
+	await _frames(10)
+	get_tree().paused = false
+	p = GameState.player
+	for i in 400:
+		if p.input_enabled:
+			break
+		await get_tree().process_frame
+	var hud := p.get_node_or_null(^"HUD")
+	if hud:
+		hud.visible = false
+	for t in level.find_children("*", "Tempesta", true, false):
+		(t as Tempesta).automatica = false
+	var lamp := level.get_node_or_null("Statua/Sfarfallio")
+	if lamp and lamp.has_method("turn_on"):
+		lamp.turn_on()
+	p.stand_eye_height = 1.7
+	for nome in SCATTI:
+		if only.is_empty() or only.has(nome):
+			var s: Array = SCATTI[nome]
+			p.teleport(s[0], 0.0, 0.0)
+			p.look_at_point(s[1])
+			await _frames(settle)
+			p.look_at_point(s[1])
+			await _frames(2)
+			await RenderingServer.frame_post_draw
+			var img := get_viewport().get_texture().get_image()
+			img.save_jpg(out_dir.path_join("%s_%s.jpg" % [prefisso, nome]), 0.92)
+			print("salvato ", prefisso, "_", nome)
+	print("scatti salvati in ", ProjectSettings.globalize_path(out_dir))
+	print("memoria massima del processo: ", _picco_memoria())
+	get_tree().quit()
+
+
+## Memoria residente massima del processo (Linux), per esempio "9876 MB".
+func _picco_memoria() -> String:
+	var st := FileAccess.get_file_as_string("/proc/self/status")
+	for riga in st.split("\n"):
+		if riga.begins_with("VmHWM:"):
+			return "%d MB" % int(int(riga.split(":")[1].strip_edges().split(" ")[0]) / 1024)
+	return "?"
+
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame
