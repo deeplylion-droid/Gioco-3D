@@ -115,6 +115,9 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
   piano in cima alla torre (y 8,6), esce dalla faccia ovest, gira intorno al pennone, attraversa la sala
   sopra la piscina e sputa nella vasca d'arrivo da est (bocca 16 cm sopra l'acqua). Gli altri due tubi
   restano da 1,0 m (decorativi).
+- **Revisione di qualità**: metallo grigio-verde (colonne, sostegni, galleria), piano del piedistallo
+  chiaro e lucido con un velo d'acqua, due teli con la mascotte ai lati della statua (faretti
+  `luce_cartellone_*`); tolti i due cartelloni del lato est.
 - **Passata di qualità**: pavimento a piastrelle asciutte/umide/bagnate e pozzanghere a specchio, sporco
   nei colori dei vertici, battiscopa a sguscio e listelli, rivetti su travi e galleria, piastrelle
   mancanti, oblò con vetro scuro, cupola con costoloni a T e lastre sporche/incrinate/rotte, plafoniere
@@ -201,7 +204,7 @@ grafica** (con `LookSalaLunga` dell'integratore): glTF e Godot usano unità dive
 monumento `luce_faro_*` **9,5** (spot, angolo 15, raggio 16, ombre), faretti `luce_monumento_basso_*`
 **0,6** (spot, angolo 24, raggio 7); lampione 10 (spot 55 gradi, ombre); plafoniere calde `luce_calda_*`
 1,8 (raggio 7,5, colore 1,0/0,68/0,38); insegne `luce_insegna_*` 1,3 (raggio 5,5); subacquee 3 (raggio 5);
-luna 0,35 con ombre. `godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente e usa gli
+faretti dei teli con la mascotte `luce_cartellone_*` 2,5 (spot, angolo 30, raggio 6, caldi); luna 0,35 con ombre. `godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente e usa gli
 stessi valori. In tutto {n_neon} neon accesi, {n_em} luci d'emergenza, lampione, 2 fari e 4 faretti del monumento,
 5 plafoniere calde, 3 insegne, 2 subacquee, area bimbi, luna.
 
