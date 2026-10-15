@@ -110,3 +110,17 @@ Crediti Meshy usati per il campione: circa 750.
 - **Usura delle pareti** (shader `parete.gdshader`, tutto in spazio mondo): tinta diversa per ogni pannello, colature di ruggine sotto alcuni rivetti, aloni d'acqua scesi dal soffitto con il bordo scuro, strisciate in basso, sporco più scuro verso il pavimento, rivetti con l'anello; due lamiere ammaccate nel corridoio, lontano dal cartellone.
 - Scatti di controllo da Godot: `docs/report/qualita_interni/giro2_corridoio.jpg`, `giro2_lavapiedi.jpg`, `giro2_stanzino.jpg` (la luce è ancora quella vecchia: la rifà la sessione grafica).
 - Test: `test_interni` 24/24, `test_sala` 43/43, `check_scripts` 0 errori.
+
+## Ambienti tecnici: camera delle onde e sala pompe (tappe 5-6)
+
+Scena `godot/scenes/tecnici/tecnici.tscn` (si rigenera con `python3 tools/godot_tecnici_scena.py`), istruzioni per l'integratore in `godot/scenes/tecnici/LEGGIMI.md`. Percorso: fondo della scala del pozzo sotto il portello → camera delle onde (24 m, pale, bocchette, due paratie) → tunnel → sala pompe.
+
+- **Modelli Meshy nuovi** (`assets_src/ambienti_tecnici/meshy_hq/`, generati con `genera_hq.py`, stessa pipeline degli interni): tre pompe (gialla, rossa, blu), turbina d'avviamento, filtro tondo, manometro, quadro elettrico, quadro strumenti, monitor a tubo, leva, paratia. Scrivania, sedia, porta e lampade sono quelle degli interni.
+- **Shader senza ripetizioni**: cemento, lamiere e piastrelle usano gli shader degli interni (`parete.gdshader` ha la nuova modalità `usa_base`, che prende le texture del glTF e ci aggiunge variazione, colature e sporco in coordinate mondo). Decal di ruggine, macchie e crepe in punti scelti.
+- **Tubi** con flange e bulloni, raccordi curvi; gli spigoli delle scatole sono smussati.
+- **Collisioni** nei glTF; le parti mobili (paratie, porta, grata, leva, turbine) hanno la collisione come figlia. Test: `tests/test_tecnici.gd` (45 controlli, anche in CI).
+- **Marker** per la logica in `Marker/` (pompe, turbine, leva, grata, schema, vasca, monitor, porta, paratie, portello, arrivo scala).
+- **Texture** in `godot/assets/ambienti_tecnici/texture/` (25 MB): dopo ogni export da Blender vanno alleggerite con `tools/comprimi_texture.py`. Se cambia solo il `.bin` Godot non reimporta da solo: cancellare `.godot/imported/<nome>.gltf-*`.
+- **Aperto**: la porta del ponte inferiore della sala pompe non combacia ancora con la porta della sala pompe del corridoio degli interni (vedi LEGGIMI).
+
+Screenshot Godot, preset Alto, 1600 × 900: `docs/report/tecnici/`.

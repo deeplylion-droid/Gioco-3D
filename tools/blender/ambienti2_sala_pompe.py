@@ -17,6 +17,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy
 from mathutils import Vector, Matrix, Euler
 from ambienti2_comune import *
+import ambienti2_comune as C
+import ambienti1_hq as HQ
+HQ.LINK[0] = C._link
+R_ = math.radians
+# rotazione (gradi attorno a Z) che porta il fronte dei modelli Meshy dove serve: tarata guardando i modelli
+ROT_POMPA = float(os.environ.get('ROT_POMPA', '90'))
 
 ARGS = argomenti()
 X0, X1, Y0, Y1, H = -9.0, 9.0, -6.0, 6.0, 5.5
@@ -58,6 +64,7 @@ _crt.links.new([n for n in _crt.nodes if n.type == 'TEX_IMAGE'][0].outputs['Colo
                _crt.nodes['Principled BSDF'].inputs['Emission Color'])
 
 statici = []      # pezzi fissi da unire per gruppo
+C.SMUSSO[0] = 0.012   # spigoli smussati per tutte le scatole (pareti, travi, cordoli, telai)
 def S(gruppo, ob):
     statici.append((gruppo, ob)); return ob
 
@@ -137,7 +144,7 @@ for k, x in enumerate((-6, -3, 0, 3, 6)):
 for k, (c, d) in enumerate((((X0 - 2.0, TUN_Y, -0.15), (4.0, TUN_W, 0.3)), ((X0 - 2.0, TUN_Y, TUN_H + 0.15), (4.0, TUN_W, 0.3)),
                             ((X0 - 2.0, TUN_Y - TUN_W / 2 - 0.15, TUN_H / 2), (4.0, 0.3, TUN_H)), ((X0 - 2.0, TUN_Y + TUN_W / 2 + 0.15, TUN_H / 2), (4.0, 0.3, TUN_H)))):
     S('struttura', box(f'tunnel_{k}', c, d, M['cemento'] if k != 0 else M['ferro'], uv=2.0))
-S('struttura', box('tunnel_fondo', (X0 - 4.1, TUN_Y, TUN_H / 2), (0.2, TUN_W, TUN_H), M['ferro'], uv=1.5))
+# niente parete in fondo: il tunnel prosegue nella camera delle onde (TECNICI: si attacca in x = X0 - 4)
 # telaio dell'apertura, con strisce di pericolo
 for k, (c, d) in enumerate((((X0 + 0.02, TUN_Y, TUN_H + 0.12), (0.12, TUN_W + 0.5, 0.24)),
                             ((X0 + 0.02, TUN_Y - TUN_W / 2 - 0.12, TUN_H / 2), (0.12, 0.24, TUN_H)),
@@ -165,6 +172,11 @@ def volantino(nome, centro, asse, r, mat):
 
 def manometro(nome, centro, normale, r=0.11):
     n = Vector(normale).normalized()
+    if HQ.disponibile('manometro'):
+        d = HQ.dimensioni('manometro'); k = 2.3 * r / max(d.x, d.z)
+        ob = HQ.metti(nome, 'manometro', Vector(centro), (d.x * k, d.y * k, d.z * k), rot_z=math.atan2(n.x, -n.y),
+                      perno=(0, 0, d.z * k * 0.62))
+        return []
     obs = [cilindro(f'{nome}_cassa', Vector(centro) - n * 0.03, r, 0.06, M['ferro'], asse=n, seg=20)]
     obs.append(toro(f'{nome}_ghiera', Vector(centro) + n * 0.002, r, 0.012, M['tubi'], asse=n, seg=20, seg2=6))
     quad_ = disco(f'{nome}_quadrante', Vector(centro) + n * 0.001, r * 0.93, n, M['manometro'])
@@ -182,25 +194,30 @@ for i, (px, col, _) in enumerate(POMPE):
     # corpo della pompa (chiocciola) con asse lungo Y, faccia verso il giocatore
     CZ = 1.2
     cas = c + Vector((0, -0.45, CZ))
-    S(g, cilindro(f'{g}_chiocciola', cas, 0.78, 0.55, M['ferro'], asse=(0, 1, 0), seg=40, uv=1.0))
-    S(g, cilindro(f'{g}_chiocciola_bordo', cas + Vector((0.12, 0, 0.1)), 0.86, 0.38, M['ferro'], asse=(0, 1, 0), seg=40, uv=1.0))
-    S(g, box(f'{g}_bocca', cas + Vector((0.45, 0, 0.55)), (0.5, 0.42, 0.5), M['ferro'], uv=1.0))
-    for o in flangia(f'{g}_coperchio', cas + Vector((0, -0.3, 0)), (0, 1, 0), 0.62, M['ferro'], 0.06, 12, M['ruggine']):
-        S(g, o)
-    S(g, box(f'{g}_piede', cas + Vector((0, 0, -0.6)), (1.0, 0.5, 0.5), M['ferro'], uv=1.0))
-    # supporto con cuscinetto e albero verso la turbina
-    S(g, box(f'{g}_supporto', c + Vector((0, -1.05, 0.62)), (0.36, 0.3, 0.65), M['ferro'], uv=1.0))
-    S(g, cilindro(f'{g}_cuscinetto', c + Vector((0, -1.05, CZ)), 0.16, 0.3, vern, asse=(0, 1, 0), seg=20, uv=0.8))
-    S(g, cilindro(f'{g}_albero', c + Vector((0, -1.1, CZ)), 0.055, 0.7, M['tubi'], asse=(0, 1, 0), seg=12))
-    # motore dietro, verniciato col colore della pompa, con alette
-    mot = c + Vector((0, 0.85, CZ))
-    S(g, cilindro(f'{g}_giunto', c + Vector((0, 0.05, CZ)), 0.2, 0.45, M['ferro'], asse=(0, 1, 0), seg=16))
-    S(g, cilindro(f'{g}_motore', mot, 0.5, 1.2, vern, asse=(0, 1, 0), seg=32, uv=1.0))
-    for k in range(9):
-        S(g, cilindro(f'{g}_aletta{k}', mot + Vector((0, -0.48 + k * 0.12, 0)), 0.56, 0.04, vern, asse=(0, 1, 0), seg=32, uv=1.0))
-    S(g, cilindro(f'{g}_motore_retro', mot + Vector((0, 0.65, 0)), 0.44, 0.12, M['ferro'], asse=(0, 1, 0), seg=24))
-    S(g, box(f'{g}_scatola_morsetti', mot + Vector((0.42, 0, 0.42)), (0.3, 0.4, 0.25), M['ferro'], uv=0.8))
-    S(g, box(f'{g}_piedi_motore', mot + Vector((0, 0, -0.62)), (0.9, 1.0, 0.3), vern, uv=1.0))
+    pompa_hq = HQ.disponibile(f'pompa_{col}')
+    if pompa_hq:
+        # pompa Meshy intera (chiocciola, giunto, motore colorato) sul basamento, lunga 3,2 m lungo Y
+        HQ.metti(f'{g}_modello', f'pompa_{col}', c + Vector((0, 0.25, 0.3)), (3.2, None, None), rot_z=R_(ROT_POMPA))
+    if not pompa_hq:
+        S(g, cilindro(f'{g}_chiocciola', cas, 0.78, 0.55, M['ferro'], asse=(0, 1, 0), seg=40, uv=1.0))
+        S(g, cilindro(f'{g}_chiocciola_bordo', cas + Vector((0.12, 0, 0.1)), 0.86, 0.38, M['ferro'], asse=(0, 1, 0), seg=40, uv=1.0))
+        S(g, box(f'{g}_bocca', cas + Vector((0.45, 0, 0.55)), (0.5, 0.42, 0.5), M['ferro'], uv=1.0))
+        for o in flangia(f'{g}_coperchio', cas + Vector((0, -0.3, 0)), (0, 1, 0), 0.62, M['ferro'], 0.06, 12, M['ruggine']):
+            S(g, o)
+        S(g, box(f'{g}_piede', cas + Vector((0, 0, -0.6)), (1.0, 0.5, 0.5), M['ferro'], uv=1.0))
+        # supporto con cuscinetto e albero verso la turbina
+        S(g, box(f'{g}_supporto', c + Vector((0, -1.05, 0.62)), (0.36, 0.3, 0.65), M['ferro'], uv=1.0))
+        S(g, cilindro(f'{g}_cuscinetto', c + Vector((0, -1.05, CZ)), 0.16, 0.3, vern, asse=(0, 1, 0), seg=20, uv=0.8))
+        S(g, cilindro(f'{g}_albero', c + Vector((0, -1.1, CZ)), 0.055, 0.7, M['tubi'], asse=(0, 1, 0), seg=12))
+        # motore dietro, verniciato col colore della pompa, con alette
+        mot = c + Vector((0, 0.85, CZ))
+        S(g, cilindro(f'{g}_giunto', c + Vector((0, 0.05, CZ)), 0.2, 0.45, M['ferro'], asse=(0, 1, 0), seg=16))
+        S(g, cilindro(f'{g}_motore', mot, 0.5, 1.2, vern, asse=(0, 1, 0), seg=32, uv=1.0))
+        for k in range(9):
+            S(g, cilindro(f'{g}_aletta{k}', mot + Vector((0, -0.48 + k * 0.12, 0)), 0.56, 0.04, vern, asse=(0, 1, 0), seg=32, uv=1.0))
+        S(g, cilindro(f'{g}_motore_retro', mot + Vector((0, 0.65, 0)), 0.44, 0.12, M['ferro'], asse=(0, 1, 0), seg=24))
+        S(g, box(f'{g}_scatola_morsetti', mot + Vector((0.42, 0, 0.42)), (0.3, 0.4, 0.25), M['ferro'], uv=0.8))
+        S(g, box(f'{g}_piedi_motore', mot + Vector((0, 0, -0.62)), (0.9, 1.0, 0.3), vern, uv=1.0))
     # mandata: sale dalla bocca, valvola, manometro, curva verso il collettore
     m0 = cas + Vector((0.45, 0, 0.8))
     S(g, tubo(f'{g}_mandata', [m0, Vector((m0.x, m0.y, HEADER_Z)), Vector((m0.x, HEADER_Y, HEADER_Z))], 0.21, M['tubi'], rc=0.55, seg=20, uv=1.2))
@@ -239,6 +256,11 @@ for i, (px, col, _) in enumerate(POMPE):
         applica_trasf(p); uv_box(p, 0.8)
     tb = unisci(f'TURBINA_{n}', parti)
     imposta_origine(tb, T)
+    if HQ.disponibile('turbina_avviamento'):
+        # girante Meshy: stesso nome e perno (asse lungo Y); la tinta del colore la mette Godot
+        bpy.data.objects.remove(tb)
+        dt = HQ.dimensioni('turbina_avviamento'); k = 1.5 / max(dt.x, dt.z)
+        tb = HQ.metti(f'TURBINA_{n}', 'turbina_avviamento', T, (dt.x * k, dt.y * k, dt.z * k), perno=(0, 0, dt.z * k / 2))
     tb['colore'] = col; tb['ordine'] = ORDINE[col]; tb['asse_rotazione'] = 'Y Blender = -Z Godot'
     turbine.append(tb)
     # carter fisso dietro la turbina (anello di protezione con due bracci)
@@ -249,7 +271,7 @@ for i, (px, col, _) in enumerate(POMPE):
 
 # collettore sul soffitto e tubi di servizio
 usa_collezione('tubi')
-S('tubi', tubo('collettore', [(X0, HEADER_Y, HEADER_Z), (X1, HEADER_Y, HEADER_Z)], 0.36, M['tubi'], seg=24, uv=1.5))
+S('tubi', tubo('collettore', [(X0, HEADER_Y, HEADER_Z), (X1, HEADER_Y, HEADER_Z)], 0.36, M['tubi'], seg=36, uv=1.5))
 for k, x in enumerate((-7.5, -3.2, 1.2, 5.6, 8.0)):
     for o in flangia(f'coll_fl{k}', (x, HEADER_Y, HEADER_Z), (1, 0, 0), 0.46, M['ferro'], 0.08, 12, M['ruggine']):
         S('tubi', o)
@@ -259,11 +281,11 @@ corse = [
     ([(X0, 5.75, 2.9), (-2.0, 5.75, 2.9), (-2.0, 5.75, 0.0)], 0.08, M['tubi']),
     ([(X1, -5.7, 4.0), (-6.0, -5.7, 4.0), (-6.0, -5.7, 5.3)], 0.15, M['tubi']),
     ([(X0, -5.6, 4.7), (X1, -5.6, 4.7)], 0.1, M['ferro']),
-    ([(X1 - 0.25, -1.0, H), (X1 - 0.25, -1.0, 4.3), (X1 - 0.25, 5.2, 4.3)], 0.14, M['tubi']),
+    ([(X1 - 0.25, -1.0, H), (X1 - 0.25, -1.0, 5.0), (X1 - 0.25, 5.2, 5.0)], 0.14, M['tubi']),
     ([(X0 + 0.25, 5.8, 3.9), (X0 + 0.25, -0.5, 3.9), (X0 + 0.25, -0.5, 0.0)], 0.12, M['tubi']),
 ]
 for k, (pts, r, mat) in enumerate(corse):
-    S('tubi', tubo(f'servizio_{k}', pts, r, mat, rc=3 * r, seg=16, uv=1.2))
+    S('tubi', tubo(f'servizio_{k}', pts, r, mat, rc=3 * r, seg=28, uv=1.2))
     p0 = Vector(pts[0]); p1 = Vector(pts[1]); d = (p1 - p0).normalized()
     L = (p1 - p0).length
     for j in range(1, int(L / 2.5)):
@@ -278,6 +300,10 @@ usa_collezione('filtri')
 for i, (fx, fy) in enumerate(((-7.6, 4.4), (-7.6, 1.8))):
     g = f'FILTRO_{i + 1}'
     c = Vector((fx, fy, 0))
+    if HQ.disponibile('filtro_tondo'):
+        HQ.metti(f'{g}_modello', 'filtro_tondo', c, (None, None, 3.45), rot_z=R_(-45 + 90 * i))
+        S(g, tubo(f'{g}_uscita', [c + Vector((0, 0, 3.4)), Vector((fx, fy, 4.0)), Vector((fx, HEADER_Y, 4.0)), Vector((fx, HEADER_Y, HEADER_Z - 0.3))], 0.16, M['tubi'], rc=0.4, uv=1.2, seg=28))
+        continue
     for k in range(4):
         a = math.pi / 4 + k * math.pi / 2
         S(g, cilindro(f'{g}_gamba{k}', c + Vector((math.cos(a) * 0.75, math.sin(a) * 0.75, 0.3)), 0.06, 0.6, M['ferro'], seg=8))
@@ -310,6 +336,14 @@ for p in porta:
     applica_trasf(p)
 pt = unisci('PORTA_ponte', porta)
 imposta_origine(pt, (XE - 0.05, PORTA_Y - PORTA_W / 2, 0))
+if HQ.disponibile('porta_servizio'):
+    # anta Meshy (come la porta della sala pompe vista dal corridoio) e maniglione dal lato della sala
+    bpy.data.objects.remove(pt)
+    pt = HQ.metti('PORTA_ponte', 'porta_servizio', (XE - 0.05, PORTA_Y - PORTA_W / 2 + 0.02, 0.01), (PORTA_W - 0.04, None, PORTA_H - 0.03),
+                  rot_z=R_(-90), perno=((PORTA_W - 0.04) / 2, 0, 0))
+    man = tubo('PORTA_ponte_maniglione', [(XE - 0.12, PORTA_Y - 0.4, 1.0), (XE - 0.24, PORTA_Y - 0.35, 1.0), (XE - 0.24, PORTA_Y + 0.35, 1.0), (XE - 0.12, PORTA_Y + 0.4, 1.0)], 0.025, M['pericolo'], rc=0.05, seg=16)
+    applica_trasf(man)
+    mw = man.matrix_world.copy(); man.parent = pt; man.matrix_world = mw
 pt['cardine'] = 'asse Z Blender (Y Godot), si apre verso l esterno'
 for k, (c, d) in enumerate((((XE - 0.02, PORTA_Y, PORTA_H + 0.1), (0.14, PORTA_W + 0.3, 0.2)),
                             ((XE - 0.02, PORTA_Y - PORTA_W / 2 - 0.08, PORTA_H / 2), (0.14, 0.16, PORTA_H)),
@@ -331,15 +365,25 @@ for k, dz in enumerate((-1, 1)):
 
 # leva grande in alto, dietro una grata (gabbia)
 LV = Vector((XE - 0.05, 2.9, 3.9))
-S('parete_est', box('leva_piastra', LV + Vector((-0.04, 0, 0)), (0.06, 0.5, 0.7), M['ferro'], uv=1.0))
-S('parete_est', cilindro('leva_perno_base', LV + Vector((-0.12, 0, 0)), 0.1, 0.5, M['ruggine'], asse=(0, 1, 0), seg=16))
+MOZZO = LV + Vector((0, -0.4, -0.2))   # il mozzo della leva Meshy: piastra e perno a muro dietro di lui
+S('parete_est', box('leva_piastra', MOZZO + Vector((-0.02, 0, 0)), (0.04, 0.42, 0.42), M['ferro'], uv=1.0))
+S('parete_est', cilindro('leva_perno_base', MOZZO + Vector((-0.08, 0, 0)), 0.07, 0.1, M['ruggine'], asse=(1, 0, 0), seg=16))
 leva = [tubo('LEVA_braccio', [LV + Vector((-0.12, 0, 0)), LV + Vector((-0.55, 0, 0.55))], 0.045, M['pericolo'], seg=10),
         cilindro('LEVA_pomello', LV + Vector((-0.6, 0, 0.62)), 0.07, 0.3, M['leva_pomello'], asse=(1, 0, 1.0), seg=16)]
 for p in leva:
     applica_trasf(p)
 lv = unisci('LEVA', leva)
 imposta_origine(lv, LV + Vector((-0.12, 0, 0)))
-lv['asse_rotazione'] = 'Y Blender = -Z Godot; abbassata = -70 gradi'
+if HQ.disponibile('leva_braccio'):
+    # braccio Meshy: perno sull'estremità col mozzo, braccio inclinato verso la stanza e in alto
+    bpy.data.objects.remove(lv)
+    dl = HQ.dimensioni('leva_braccio')
+    # nel GLB il braccio è già inclinato di 30 gradi, mozzo (asse Y) in basso sul lato -X. Girato di 90 gradi
+    # il mozzo guarda la stanza e il braccio corre lungo il muro, verso nord e in alto: si legge da lontano
+    kl = 1.0 / max(dl)
+    lv = HQ.metti('LEVA', 'leva_braccio', MOZZO + Vector((-0.14, 0, 0)), tuple(dl * kl), rot_z=math.pi / 2,
+                  perno=(-0.41 * dl.x * kl, 0, 0.17 * dl.z * kl))
+lv['asse_rotazione'] = 'X (Blender e Godot), perpendicolare al muro; abbassata = -70 gradi'
 # gabbia con rete metallica (la grata davanti si puo' aprire: oggetto separato)
 GC = LV + Vector((-0.45, 0, 0.1)); GW, GH, GD = 1.1, 1.3, 0.9
 for k, (c, d) in enumerate(((GC + Vector((0, -GW / 2, 0)), (GD, 0.02, GH)), (GC + Vector((0, GW / 2, 0)), (GD, 0.02, GH)),
@@ -358,6 +402,12 @@ grata = unisci('GRATA_leva', [gr] + gr_tel)
 imposta_origine(grata, GC + Vector((-GD / 2, -GW / 2, 0)))
 # strisce di pericolo sotto la leva
 S('parete_est', quad('pericolo_leva', (XE - 0.02, 2.9, 3.05), 1.3, 0.2, (-1, 0, 0), M['pericolo']))
+
+# quadro elettrico e pannello con gli strumenti sul muro sud
+for nome, file, x, z, w in (('QUADRO_elettrico', 'quadro_elettrico', -6.2, 0.9, 1.1), ('QUADRO_strumenti', 'quadro_strumenti', -1.6, 1.3, 1.2)):
+    if HQ.disponibile(file):
+        d = HQ.dimensioni(file); k = w / d.x
+        HQ.metti(nome, file, (x, Y0 + d.y * k / 2 + 0.01, z), (w, d.y * k, d.z * k), rot_z=R_(180))
 
 # ------------------------------------------------------------------ scrivania, CRT, sedia (Meshy)
 usa_collezione('arredo')
@@ -394,8 +444,14 @@ def importa_meshy(nome, lato_max, pos, rot_z, asse_lato=None):
     return ob, dim * s
 
 DESK = Vector((4.6, Y0 + 0.55, 0))
-scr, sdim = importa_meshy('scrivania', 1.5, DESK, 180, asse_lato=0)
-mon, mdim = importa_meshy('monitor_crt', 0.5, DESK + Vector((-0.25, 0.08, sdim.z)), 200, asse_lato=0)
+if HQ.disponibile('scrivania') and HQ.disponibile('monitor_crt'):
+    sdim = Vector((1.5, 0.7, 0.78))
+    scr = HQ.metti('SCRIVANIA', 'scrivania', DESK, tuple(sdim), rot_z=R_(180))
+    dm = HQ.dimensioni('monitor_crt'); km = 0.5 / dm.x; mdim = dm * km
+    mon = HQ.metti('MONITOR_CRT', 'monitor_crt', DESK + Vector((-0.25, 0.08, sdim.z)), tuple(mdim), rot_z=R_(200))
+else:
+    scr, sdim = importa_meshy('scrivania', 1.5, DESK, 180, asse_lato=0)
+    mon, mdim = importa_meshy('monitor_crt', 0.5, DESK + Vector((-0.25, 0.08, sdim.z)), 200, asse_lato=0)
 sed, _ = importa_meshy('sedia', 0.95, DESK + Vector((0.1, 1.1, 0)), 160, asse_lato=2)
 # schermo: quadrato davanti al vetro del CRT (in Godot ci va la ViewportTexture della telecamera)
 ang = math.radians(200)
@@ -425,6 +481,16 @@ usa_collezione('luci')
 
 def lampada_rossa(nome, pos, normale, accesa=True):
     n = Vector(normale).normalized(); pos = Vector(pos)
+    if HQ.disponibile('lampada_muro'):
+        rosso = lambda c, nrm: c[0] > 0.25 and c[0] > c[1] * 2.2 and c[0] > c[2] * 2.0
+        HQ.dividi('lampada_muro', 'lampada_muro_vetro', rosso, (1, 0.05, 0.02), 14.0)
+        Rm = n.to_track_quat('Z', 'Y').to_matrix().to_4x4()
+        for o in (HQ.metti(f'lampada_{nome}', 'lampada_muro', (0, 0, 0), (0.34, None, None)),
+                  HQ.metti(f'lampada_{nome}_vetro' if accesa else f'lampada_{nome}_vetro_spento', 'lampada_muro', (0, 0, 0), (0.34, None, None), parte='lampada_muro_vetro')):
+            o.matrix_world = Matrix.Translation(pos) @ Rm @ o.matrix_world
+        if accesa:
+            luce(f'LUCE_rossa_{nome}', 'POINT', pos + n * 0.25, 60, (1.0, 0.08, 0.04), raggio=0.08)
+        return
     obs = [cilindro(f'{nome}_base', pos, 0.12, 0.06, M['ferro'], asse=n, seg=16)]
     obs.append(sfera(f'{nome}_vetro', pos + n * 0.03, 0.1, M['rosso_luce'] if accesa else M['neon_spento'], scala=(1, 1, 1), seg=16, uv=None))
     t1 = n.orthogonal().normalized(); t2 = n.cross(t1)
@@ -444,8 +510,17 @@ lampada_rossa('l6', (X0 + 0.02, -4.8, 3.0), (1, 0, 0), accesa=False)
 lampada_rossa('l7', (XE - 0.02, 4.0, 4.7), (-1, 0, 0))   # sopra la leva
 # neon sul soffitto: uno solo funziona (azzurro freddo), gli altri spenti
 for k, (x, y, acceso) in enumerate(((-4.5, -1.0, False), (0.5, -1.0, True), (5.0, -1.0, False), (0.5, 3.5, False))):
-    S('lampade', box(f'plafoniera_{k}', (x, y, H - 0.62), (1.5, 0.22, 0.08), M['ferro'], uv=None))
-    S('lampade', cilindro(f'neon_{k}', (x, y, H - 0.69), 0.025, 1.35, M['neon'] if acceso else M['neon_spento'], asse=(1, 0, 0), seg=10, uv=None))
+    if HQ.disponibile('plafoniera_neon'):
+        giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
+        HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
+        HQ.metti(f'plafoniera_{k}', 'plafoniera_neon', (x, y, H - 0.72), (1.4, 0.32, 0.1))
+        HQ.metti(f'neon_{k}_tubo_sfarfalla' if acceso else f'neon_{k}_tubi', 'plafoniera_neon', (x, y, H - 0.72), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
+        # catenelle che la reggono
+        for dx in (-0.6, 0.6):
+            S('lampade', cilindro(f'catena_{k}{dx}', (x + dx, y, (H - 0.62 + H) / 2), 0.008, 0.62, M['ferro'], seg=6, uv=None))
+    else:
+        S('lampade', box(f'plafoniera_{k}', (x, y, H - 0.62), (1.5, 0.22, 0.08), M['ferro'], uv=None))
+        S('lampade', cilindro(f'neon_{k}', (x, y, H - 0.69), 0.025, 1.35, M['neon'] if acceso else M['neon_spento'], asse=(1, 0, 0), seg=10, uv=None))
     if acceso:
         luce(f'LUCE_neon_{k}', 'AREA', (x, y, H - 0.73), 90, (0.45, 0.9, 1.0), size=1.3, rot=(0, 0, 0))
 luce('LUCE_neon_porta', 'AREA', (XE - 0.15, PORTA_Y, PORTA_H + 0.45), 25, (0.3, 0.95, 1.0), size=1.2, rot=(0, math.radians(-90), 0))
@@ -453,8 +528,8 @@ luce('LUCE_neon_porta', 'AREA', (XE - 0.15, PORTA_Y, PORTA_H + 0.45), 25, (0.3, 
 # ------------------------------------------------------------------ collisioni per Godot
 usa_collezione('collisioni')
 for g, ob in statici:
-    if g in ('struttura', 'vasca') and ob.name in bpy.data.objects and len(ob.data.vertices) == 8:
-        collisione_copia(ob)
+    if g in ('struttura', 'vasca') and ob.name in bpy.data.objects:
+        collisione_struttura(ob)
 for i, (px, col, _) in enumerate(POMPE):
     c = Vector((px, PY, 0))
     collisione_box(f'POMPA_{i + 1}_corpo', c + Vector((-1.1, -1.25, 0)), c + Vector((1.1, 1.9, 2.1)))
@@ -471,7 +546,7 @@ vx0, vx1, vy0, vy1 = VASCA
 collisione_box('ringhiera_nord', (vx0 - 0.2, vy1 + 0.1, 0), (vx1 + 0.2, vy1 + 0.2, 1.1))
 collisione_box('ringhiera_est', (vx1 + 0.1, vy0 - 0.2, 0), (vx1 + 0.2, vy1 + 0.2, 1.1))
 collisione_box('gabbia_leva', GC - Vector((GD / 2 - 0.05, GW / 2, GH / 2)), GC + Vector((GD / 2, GW / 2, GH / 2)))
-collisione_box('LEVA_braccio', LV + Vector((-0.7, -0.08, -0.05)), LV + Vector((-0.1, 0.08, 0.75)), padre=lv)
+collisione_box('LEVA_braccio', LV + Vector((-0.3, -0.55, -0.35)), LV + Vector((-0.06, 0.55, 0.4)), padre=lv)
 collisione_box('GRATA_leva_anta', GC + Vector((-GD / 2 - 0.03, -GW / 2, -GH / 2)), GC + Vector((-GD / 2 + 0.03, GW / 2, GH / 2)), padre=grata)
 collisione_box('PORTA_ponte_anta', (XE - 0.1, PORTA_Y - PORTA_W / 2, 0), (XE, PORTA_Y + PORTA_W / 2, PORTA_H), padre=pt)
 
