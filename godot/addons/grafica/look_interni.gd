@@ -23,7 +23,7 @@ extends Node3D
 @export var energia_emergenza := 1.7
 @export var portata_emergenza := 4.2
 @export var colore_emergenza := Color(1.0, 0.05, 0.03)
-@export var energia_neon := 3.0   # una sola luce per neon (prima erano due)
+@export var energia_neon := 3.0
 @export var portata_neon := 7.5
 @export var colore_neon := Color(0.76, 0.98, 0.9)
 @export var energia_zaino := 2.6
@@ -75,19 +75,8 @@ func _regola_luci() -> void:
 				o.omni_attenuation = 1.8
 				o.light_specular = 0.5
 		elif cls == "Neon":
-			# interni.gd crea il Neon prima di spostargli dentro il tubo del modello: il Neon,
-			# nato senza figli, si costruisce da solo plafoniera, tubo e luce ad area. Così ogni
-			# neon era doppio (due lampade, luce doppia): spegniamo e nascondiamo i suoi pezzi.
-			for m in n.get_children():
-				if m is MeshInstance3D and ((m as MeshInstance3D).mesh is BoxMesh or (m as MeshInstance3D).mesh is CylinderMesh):
-					(m as MeshInstance3D).visible = false
-				elif m is AreaLight3D:
-					(m as AreaLight3D).light_energy = 0.0
-					(m as AreaLight3D).shadow_enabled = false
 			# I neon fanno la luce "di lavoro": freddi, morbidi, con ombre.
 			for l in n.find_children("*", "Light3D", true, false):
-				if l is AreaLight3D:
-					continue
 				var luce := l as Light3D
 				luce.light_color = colore_neon
 				luce.light_energy = energia_neon
