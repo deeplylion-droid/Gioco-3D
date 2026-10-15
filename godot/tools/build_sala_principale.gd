@@ -64,6 +64,7 @@ func _initialize() -> void:
 	_polaroids(has_interiors or OS.get_environment("SALA_SENZA_ZAINO") == "1", tecnici)
 	_atmosphere()
 	_gameplay(has_interiors)
+	_tappa7(has_interiors)
 	_kid_sighting()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
@@ -660,16 +661,6 @@ func _checkpoint_tecnici(tec: Node3D, lg: Node3D) -> void:
 	# In cima al raccordo, ai piedi della scala degli interni: si guarda verso la scala (-X).
 	var cima := _marker(tec, "marker_raccordo_interni")
 	checkpoint(g, "CheckpointRaccordo", 8, cima + Vector3(0.0, 1.5, 0.0), Vector3(1.6, 3.0, 1.6), Vector3(0.0, -1.5, 0.0), PI * 0.5)
-	# E la fine della demo (la tappa 7, il ritorno al buio, viene dopo).
-	var fine := Area3D.new()
-	fine.name = "FineDemo"
-	fine.collision_layer = 0
-	fine.collision_mask = Layers.PLAYER
-	fine.monitorable = false
-	fine.position = cima + Vector3(-0.8, 1.5, 0.0)
-	own(fine, g)
-	shape_box(fine, Vector3(1.0, 3.0, 2.2))
-	level.set(&"fine_demo_trigger", fine)
 
 
 # --- Le 10 Polaroid -----------------------------------------------------------------------------
@@ -757,6 +748,71 @@ func _gameplay(has_interiors := false) -> void:
 	var luci: Node = load("res://scripts/tecnici/luci_risveglio.gd").new()
 	luci.name = "LuciRisveglio"
 	own(luci, gp)
+
+
+# --- Tappa 7: il ritorno al buio (scripts/game/ritorno_al_buio.gd) -----------------------------
+
+## La scia di gocce dalla vasca della medusa verso l'area bimbi: dal bordo ovest sotto il cordone,
+## lungo il fondo della sala a sud della vasca d'arrivo e su per il muro ovest (dove non ci sono
+## scivoli né vasche: lì si cammina), fino al buio accanto alle vasche basse.
+const SCIA := [Vector3(-3.5, 0.0, 9.6), Vector3(-5.5, 0.0, 9.1), Vector3(-7.3, 0.0, 8.7), Vector3(-8.5, 0.0, 8.3),
+	Vector3(-10.3, 0.0, 8.3), Vector3(-11.9, 0.0, 8.3), Vector3(-13.7, 0.0, 8.3), Vector3(-15.3, 0.0, 8.3),
+	Vector3(-16.7, 0.0, 7.5), Vector3(-16.9, 0.0, 5.9), Vector3(-17.5, 0.0, 4.3), Vector3(-18.3, 0.0, 2.9),
+	Vector3(-18.3, 0.0, 1.3), Vector3(-18.3, 0.0, -0.5), Vector3(-18.3, 0.0, -2.3), Vector3(-18.3, 0.0, -4.1),
+	Vector3(-18.3, 0.0, -5.7), Vector3(-17.1, 0.0, -7.1), Vector3(-16.3, 0.0, -7.7)]
+
+
+func _tappa7(has_interiors: bool) -> void:
+	var gp := level.get_node("Gioco")
+	var r: Node = load("res://scripts/game/ritorno_al_buio.gd").new()
+	r.name = "RitornoAlBuio"
+	r.set(&"medusa", level.get_node("Vasca/Medusa"))
+	r.set(&"acqua_vasca", level.get_node("Vasca/AcquaVascaCentrale"))
+	r.set(&"centro_increspature", Vector3(VASCA.x, VASCA_PELO, VASCA.z + 1.0))
+	r.set(&"pulsante_sigla", level.get_node("Vasca/PulsanteSigla"))
+	r.set(&"scia", PackedVector3Array(SCIA))
+	# Gocciola ancora dal bordo, dalla parte da cui è uscita (ovest, verso l'area bimbi).
+	var bordo_x := VASCA.x - VASCA_INTERNO.x * 0.5 - 0.42
+	r.set(&"gocciolatoi", PackedVector3Array([Vector3(bordo_x, VASCA_BORDO - 0.02, 9.4), Vector3(bordo_x, VASCA_BORDO - 0.02, 10.6)]))
+	r.set(&"materiale_bagnato", level.get(&"puddle_material"))
+	own(r, gp)
+	level.set(&"ritorno", r)
+	if has_interiors:
+		var interni := level.get_node("Interni")
+		r.set(&"interni", interni)
+		# La porta "sala pompe" del corridoio degli interni: chiusa (con la sua collisione) finché
+		# non si torna su dal raccordo; si apre dalla parte della scala, verso il corridoio.
+		var porta_mi := interni.get_node("Ambienti/Corridoio/porta_sala_pompe") as MeshInstance3D
+		var bb := porta_mi.transform * porta_mi.get_aabb()
+		var cardine := Marker3D.new()
+		cardine.name = "CardinePortaSalaPompe"
+		cardine.position = INTERNI_OFFSET + Vector3(bb.end.x, 0.0, bb.get_center().z)
+		own(cardine, gp)
+		var porta: Area3D = load("res://scripts/tecnici/porta_maniglione.gd").new()
+		porta.name = "PortaSalaPompeInterni"
+		porta.position = INTERNI_OFFSET + Vector3(bb.get_center().x, 1.0, bb.end.z + 0.35)
+		porta.set(&"angolo_apertura", -95.0)
+		porta.set(&"collisione_propria", true)
+		own(porta, gp)
+		shape_box(porta, Vector3(1.0, 1.6, 0.5))
+		porta.set(&"porta_path", porta.get_path_to(porta_mi))
+		porta.set(&"cardine_path", porta.get_path_to(cardine))
+		r.set(&"porta_interni", porta)
+		# Checkpoint del ritorno: in cima alla scala nel corridoio (si va a ovest), davanti alle
+		# docce, e appena rientrati nella sala dalla stessa porta (si guarda la vasca).
+		checkpoint(gp, "CheckpointCorridoioBuio", 9, INTERNI_OFFSET + Vector3(17.5, 1.5, -1.4), Vector3(2.0, 3.0, 2.2), Vector3(0.0, -1.5, 0.0), PI * 0.5)
+		checkpoint(gp, "CheckpointDocceBuio", 10, INTERNI_OFFSET + Vector3(5.6, 1.5, -12.4), Vector3(4.6, 3.0, 2.0), Vector3(0.0, -1.5, 0.0), PI * 0.7)
+	checkpoint(gp, "CheckpointRitornoSala", 11, Vector3(0.0, 1.5, 18.7), Vector3(4.0, 3.0, 1.0), Vector3(0.0, -1.5, 0.0), 0.0)
+	# Fine della demo dove finisce la scia, davanti all'area bimbi (la tappa 8 viene dopo).
+	var fine := Area3D.new()
+	fine.name = "FineDemo"
+	fine.collision_layer = 0
+	fine.collision_mask = Layers.PLAYER
+	fine.monitorable = false
+	fine.position = SCIA[SCIA.size() - 1] + Vector3(0.0, 1.5, 0.0)
+	own(fine, gp)
+	shape_box(fine, Vector3(2.4, 3.0, 2.4))
+	level.set(&"fine_demo_trigger", fine)
 
 
 # --- B5: i bambini sulla balconata, visti in un lampo mentre sali sulla torre -------------------

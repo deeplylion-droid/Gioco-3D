@@ -95,7 +95,7 @@ func _run() -> void:
 	var torch := p.find_child("Torcia", true, false) as Torcia
 	var statue_only := not only.is_empty()
 	for o in only:
-		if not String(o).begins_with("statua") and not String(o).begins_with("vasca") and not o in ["ingresso_statua", "ingresso_vasca"]:
+		if not String(o).begins_with("statua") and not String(o).begins_with("vasca") and not o in ["ingresso_statua", "ingresso_vasca", "telecamera_monitor"]:
 			statue_only = false
 	if torch and statue_only:
 		torch.imposta_accesa(false)
@@ -116,6 +116,10 @@ func _run() -> void:
 						lamp.base_energy = e
 			await _frames(maxi(settle, 12))
 			await _capture("ingresso_vasca_" + v.replace("=", "").replace(",", "_"))
+	if _want("telecamera_monitor"):
+		# La telecamera di sorveglianza della sala, per il monitor della sala pompe: in alto sopra
+		# l'ingresso, verso la medusa nella vasca (si ritaglia in 4:3).
+		await _shot_camera("telecamera_monitor", Vector3(-5.0, 5.3, 16.4), Vector3(0.0, 1.1, 11.0), 60.0)
 	if _want("vasca_primo_piano"):
 		# Dal bordo, oltre il cordone: occhio negli occhi.
 		await _shot("vasca_primo_piano", Vector3(0.35, 0.0, 13.25), Vector3(0.0, 1.5, 11.9))
@@ -154,6 +158,22 @@ func _shot(file: String, pos: Vector3, look: Vector3, before := Callable(), afte
 		before.call()
 		await _frames(after_frames if after_frames >= 0 else 4)
 	await _capture(file)
+
+
+## Uno scatto da una telecamera libera (non dagli occhi del giocatore), per esempio dall'alto.
+func _shot_camera(file: String, pos: Vector3, look: Vector3, fov := 70.0) -> void:
+	var cam := Camera3D.new()
+	cam.fov = fov
+	level.add_child(cam)
+	cam.global_position = pos
+	cam.look_at(look, Vector3.UP)
+	cam.current = true
+	# Il giocatore lontano dall'inquadratura (e con la torcia spenta).
+	p.teleport(Vector3(0.0, 0.0, 21.0), 0.0, 0.0)
+	await _frames(settle)
+	await _capture(file)
+	cam.queue_free()
+	p.camera.current = true
 
 
 func _capture(file: String) -> void:
