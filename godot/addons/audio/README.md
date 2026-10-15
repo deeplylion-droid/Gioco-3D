@@ -68,6 +68,8 @@ Se il progetto ha già bus con questi nomi (un `default_bus_layout.tres`), usa q
 | `MenuOpzioni` (grafica) | aggiunge la scheda **Audio** con i cursori | - |
 | pulsanti, scelte e cursori dei menu | clic | `pressed`, `item_selected`, `value_changed` |
 | luci del GLB della sala `luce_neon_*`, `luce_emergenza_*` | ronzio sulle 4 (neon) e 3 (emergenza) più vicine, clic e qualche scintilla quando sfarfallano | visibilità della luce |
+| `MonitorCrt` (tappa 6) | fruscio della neve dal tubo, sullo schermo | `mostra_neve_attiva()` |
+| `Paratia` (tappa 6) | motore e catene mentre scende (sul pannello), colpo sordo in fondo | `in_movimento`, `chiusa` |
 
 Intorno al giocatore, a caso: gemiti e scricchiolii metallici della nave, ticchettii delle
 lamiere, colpi lontani di porte stagne e, di rado, l'allarme generale lontano. I fondi (pioggia
@@ -90,6 +92,26 @@ getto preme il pulsante del piedistallo, la sigla parte dall'altoparlante (suono
 aspettando il picco della pulsazione della campana: battiti e luce coincidono. È la stessa musica
 della `sigla_pulita` (120 BPM, per il titolo) passata su un nastro rallentato con wow e flutter,
 denti del carillon storti, accordi che scivolano nel minore e il meccanismo che alla fine si scarica.
+
+## Tappe 5-6: sala pompe e risveglio
+
+Suoni in `res://audio/tecnici/`. Il monitor e le paratie si collegano da soli (tabella sopra); il
+resto lo suona `scripts/tecnici/risveglio_sala_pompe.gd` con l'API, con questi nomi:
+
+| Suono | Cosa | Come |
+|---|---|---|
+| `pompe_ruggito_loop` | una pompa industriale a regime, ruggito basso (tre pompe = tre loop) | `crea_loop(&"pompe_ruggito_loop", pompa)`; `tono` 0,65 = appena partita, 0,95 = ruggisce |
+| `pompa_avvio` | teleruttore che scatta e la pompa che prende giri (3,4 s) | `suona(&"pompa_avvio", pompa.global_position)` |
+| `corrente_salta` | gli interruttori che saltano, arco, il ronzio di tutta la nave che muore (stereo) | `suona(&"corrente_salta")` |
+| `crt_neve_loop` | neve del vecchio monitor a tubo | da solo (`MonitorCrt`) |
+| `plastica_piega_lontano` | plastica grande che si piega a lungo, lontano e riverberato: è lei (12 s, stereo) | `suona(&"plastica_piega_lontano", punto_lontano)` |
+| `tonfo_acqua_lontano` | un tonfo pesante in acqua, lontano (6 s, stereo) | `suona(&"tonfo_acqua_lontano", punto_lontano)` |
+| `paratia_scende_loop` | paratia d'acciaio che scende: motore, catene, guide | da sola (`Paratia`) |
+| `maniglione_bloccato` | maniglione antipanico spinto, ma la porta non si apre | `suona(&"maniglione_bloccato", porta.global_position)` |
+| `porta_ponte_apre` | lo stesso maniglione che si sblocca, porta pesante che si apre | `suona(&"porta_ponte_apre", porta.global_position)` |
+
+I due suoni lontani hanno già dentro la distanza (passa-basso e riverbero): in 3D danno solo la
+direzione (`unit_size` 40), così si sentono anche dalla sala pompe, sotto il ruggito.
 
 ## API
 
@@ -126,7 +148,8 @@ Lasciando un cursore parte un suono di prova sul suo bus (anche col gioco in pau
 
 `tests/test_audio.gd` (anche nella CI): bus ed effetti, tutti gli stream del catalogo, volumi su
 disco, collegamenti con la sala principale e suoni che partono davvero (tuono, passi, getto,
-aspirazione, pulsante, sigla, faro), pausa, menu, morte e ripartenza, nessun errore.
+aspirazione, pulsante, sigla, faro), monitor e paratie della sala pompe, pausa, menu, morte e
+ripartenza, nessun errore.
 
 ```
 godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
@@ -142,7 +165,8 @@ riproduzioni appese; lo stato resta giusto. Il test forza la riproduzione vera c
 /home/user/tools/blender-venv/bin/python assets_src/audio/genera_tutto.py
 ```
 
-Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e l'anteprima
-`res://audio/anteprima/anteprima_audio.ogg` (cartella con `.gdignore`: non entra nel gioco).
+Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e le anteprime
+`res://audio/anteprima/anteprima_audio.ogg` e `anteprima_tecnici.ogg` (cartella con `.gdignore`:
+non entra nel gioco).
 `assets_src/audio/verifica.py file.ogg --png cartella` stampa loudness e picchi e disegna lo
 spettrogramma.

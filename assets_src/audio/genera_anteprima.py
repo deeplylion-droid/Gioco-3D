@@ -1,17 +1,23 @@
-"""Anteprima per il coordinatore (circa 55 s): qualche secondo di sigla pulita (titolo), poi la
-sala di notte con pioggia sulla cupola, vento e nave, passi sulle piastrelle bagnate e
-nell'acqua, un neon che sfarfalla, un tuono vicino, lo zaino che aspira e spruzza, il pulsante
-del piedistallo e la sigla rovinata che parte dalla statua e scivola nel minore.
-Usa i file già generati in godot/audio/. Uscita: godot/audio/anteprima/anteprima_audio.ogg
-(la cartella ha un .gdignore: Godot non la importa e non finisce nel gioco esportato).
+"""Anteprime per il coordinatore, fatte con i file già generati in godot/audio/.
+
+- anteprima_audio.ogg (circa 55 s): qualche secondo di sigla pulita (titolo), poi la sala di
+  notte con pioggia sulla cupola, vento e nave, passi sulle piastrelle bagnate e nell'acqua, un
+  neon che sfarfalla, un tuono vicino, lo zaino che aspira e spruzza, il pulsante del piedistallo
+  e la sigla rovinata che parte dalla statua e scivola nel minore.
+- anteprima_tecnici.ogg (circa 40 s): la sala pompe delle tappe 5-6 sentita da chi gioca, con i
+  tempi di scripts/tecnici/risveglio_sala_pompe.gd e le distanze vere della scena.
+
+Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
+nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici] (senza argomenti, tutte e due).
 """
 import os
+import sys
 
 import numpy as np
 
 from comune import AUDIO, ir_sala
-from lib_audio import (SR, db, fade, limiter, lp, lufs, mix_into, n_of, pan, read_audio, reverb,
-                       stereo, write_ogg)
+from lib_audio import (SR, biquad, db, fade, hp, limiter, lp, lufs, mix_into, n_of, pan, read_audio,
+                       reverb, stereo, varispeed, write_ogg)
 
 DUR = 56.0
 
@@ -24,7 +30,7 @@ def leggi(rel, canali=2):
     return read_audio(f(rel), canali)
 
 
-def main():
+def anteprima_sala():
     rng = np.random.default_rng(7)
     n = n_of(DUR)
     amb = np.zeros((n, 2), dtype=np.float32)    # fondi (già riverberati)
@@ -114,6 +120,147 @@ def main():
     print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
 
 
+# --- sala pompe (tappe 5-6) -------------------------------------------------------------------
+
+def tile(x, dur, offset=0.0):
+    """Un loop letto per dur secondi a partire da offset (AudioLoop parte da un punto a caso)."""
+    k = n_of(dur)
+    a = n_of(offset) % len(x)
+    reps = (a + k) // len(x) + 2
+    return np.concatenate([x] * reps, axis=0)[a:a + k]
+
+
+def curva_loop(eventi, dur, fps=60):
+    """Volume e tono di un AudioLoop nel tempo, fotogramma per fotogramma come nel gioco
+    (audio_loop.gd). eventi: [(t, volume, tono)]. Restituisce due curve per campione."""
+    nf = int(dur * fps) + 2
+    att, ton, vol, tono, suona = 0.0, 1.0, 0.0, 1.0, False
+    va, ta = np.zeros(nf), np.zeros(nf)
+    ev = sorted(eventi)
+    j = 0
+    d = 1.0 / fps
+    for f in range(nf):
+        while j < len(ev) and ev[j][0] <= f * d:
+            _, vol, tono = ev[j]
+            j += 1
+        if att <= 0.0005 and not suona:
+            ton = tono
+        else:
+            ton += (tono - ton) * (1.0 - np.exp(-4.0 * d))
+        passo = d * 6.0 * max(abs(vol - att), 0.05)
+        att = min(att + passo, vol) if vol > att else max(att - passo, vol)
+        suona = att > 0.0005
+        va[f], ta[f] = att, ton
+    ts = np.arange(n_of(dur)) / SR
+    tf = np.arange(nf) * d
+    return np.interp(ts, tf, va), np.interp(ts, tf, ta)
+
+
+def distanza_db(d, unit):
+    """Attenuazione di AudioStreamPlayer3D (inverse distance, max_db 0)."""
+    return min(0.0, 20 * np.log10(unit / max(d, 0.01)))
+
+
+def anteprima_tecnici():
+    """Chi gioca sta alla leva della sala pompe. Distanze dalla scena (sala_principale.tscn):
+    pompe a 4, 9 e 13 m, maniglione a 6 m, monitor a 8 m, paratie a 24 e 27 m, vasca della
+    medusa a 37 m. Tempi del risveglio come in risveglio_sala_pompe.gd."""
+    rng = np.random.default_rng(56)
+    DURT = 41.0
+    n = n_of(DURT)
+    eff = np.zeros((n, 2), dtype=np.float32)    # bus Effetti (riverbero della sala)
+    mus = np.zeros((n, 2), dtype=np.float32)
+    amb = np.zeros((n, 2), dtype=np.float32)
+
+    def mono(rel):
+        return leggi(rel, 1)
+
+    def metti(x, t, g_db=0.0, p=0.0, dest=None):
+        dest = eff if dest is None else dest
+        mix_into(dest, pan(x * db(g_db), p) if x.ndim == 1 else x * db(g_db), n_of(t))
+
+    # fondo: la nave, bassa (la sala pompe è sotto, lontano dalla cupola)
+    nave = tile(leggi('ambiente/nave_loop.ogg'), DURT, 3.0)
+    mix_into(amb, fade(nave, 1.5, 3.0) * db(-11), 0)
+    for tc in [2.8, 9.4, 13.1]:
+        metti(mono('ambiente/goccia_acqua_0%d.ogg' % rng.integers(1, 7)), tc, -17, rng.uniform(-0.5, 0.5))
+
+    # 1) la porta del ponte inferiore: il maniglione non si apre (due spinte)
+    metti(mono('tecnici/maniglione_bloccato.ogg'), 0.6, -1.0, 0.45)
+    metti(varispeed(mono('tecnici/maniglione_bloccato.ogg'), 2 ** (0.4 / 12)), 1.75, -1.5, 0.45)
+
+    # 2) le tre pompe nell'ordine dello schema, poi la leva: ruggiscono
+    T_LEVA = 14.6
+    T_VIA = 31.6             # chi gioca esce dalla porta: le pompe restano indietro
+    pompe = [(3.6, 13.2, -0.55, 0.3), (7.2, 8.7, -0.35, 1.7), (10.8, 4.3, -0.15, 2.9)]
+    roar = mono('tecnici/pompe_ruggito_loop.ogg')
+    motori = np.zeros((n, 2), dtype=np.float32)
+    for t0, dist, p, off in pompe:
+        g = distanza_db(dist, 6.0)
+        metti(mono('tecnici/pompa_avvio.ogg'), t0, g, p)
+        vol, ton = curva_loop([(t0, 0.45, 0.65), (T_LEVA, 1.0, 0.95)], DURT)
+        src = tile(roar, DURT + 1.0, off)
+        x = varispeed(src, ton)[:n]
+        x = np.pad(x, (0, n - len(x))) * vol[:n]
+        mix_into(motori, pan(x * db(g), p), 0)
+
+    # 3) la leva: il flash con la sigla a tutto volume per un secondo, poi salta la corrente
+    metti(varispeed(mono('effetti/cancello_fine.ogg'), 0.8), T_LEVA, 0.0, 0.1)
+    metti(varispeed(mono('ambiente/nave_gemito_01.ogg'), 0.6), T_LEVA + 0.1, -1.0, -0.35)
+    metti(stereo(varispeed(mono('effetti/faro_acceso.ogg'), 0.8)), T_LEVA, 4.0)
+    sig = leggi('musica/sigla_pulita.ogg')[:n_of(1.0)]
+    mix_into(mus, fade(sig, 0.0, 0.03) * db(4.0), n_of(T_LEVA))
+    T_BLACK = T_LEVA + 1.0
+    metti(leggi('tecnici/corrente_salta.ogg'), T_BLACK, 0.0)
+
+    # 4) lontano, dalla vasca della medusa (dietro, a sinistra): la plastica, poi il tonfo
+    T_PLAST = T_BLACK + 1.4
+    lontano = np.array([1.0, 0.8])          # un po' a sinistra
+    metti(leggi('tecnici/plastica_piega_lontano.ogg') * lontano, T_PLAST, distanza_db(37, 40.0))
+    T_TONFO = T_PLAST + 2.6
+    metti(leggi('tecnici/tonfo_acqua_lontano.ogg') * lontano, T_TONFO, distanza_db(37, 40.0))
+
+    # 5) le paratie della camera delle onde si abbassano (4,5 s) e sbattono in fondo
+    T_PAR = T_TONFO + 1.2
+    par = mono('tecnici/paratia_scende_loop.ogg')
+    for dist, p, off in [(24.0, -0.5, 0.4), (27.4, -0.65, 1.9)]:
+        g = distanza_db(dist, 12.0)
+        vol, _ = curva_loop([(T_PAR, 1.0, 1.0), (T_PAR + 4.5, 0.0, 1.0)], DURT)
+        x = tile(par, DURT, off) * vol
+        x = biquad(x, 'highshelf', 6000, 0.7, -20 * (1 - db(g)))
+        mix_into(eff, pan(x * db(g), p), 0)
+        colpo = biquad(varispeed(mono('effetti/porta_chiusa.ogg'), 0.7), 'highshelf', 6000, 0.7, -17)
+        metti(colpo, T_PAR + 4.5 + rng.uniform(0.0, 0.05), 6.0 + distanza_db(dist, 4.0), p)
+
+    # 6) finito il risveglio ci si avvicina al monitor: solo neve
+    neve = tile(mono('tecnici/crt_neve_loop.ogg'), 5.0, 1.1)
+    k = len(neve)
+    avv = np.interp(np.arange(k) / SR, [0, 1.8, 3.2, 5.0], [distanza_db(8, 2), 0.0, 0.0, distanza_db(6, 2)])
+    metti(neve * 10.0 ** (avv / 20.0), 26.4, 0.0, 0.15)
+
+    # 7) il maniglione si sblocca e la porta pesante si apre; si esce
+    T_PORTA = 31.4
+    metti(mono('tecnici/porta_ponte_apre.ogg'), T_PORTA, -0.5, 0.35)
+    # chi esce si lascia dietro le pompe: si allontanano e restano dietro la porta
+    via = np.clip((np.arange(n) / SR - T_VIA - 1.2) / 5.0, 0, 1)[:, None]
+    eff += motori * (1 - 0.85 * via) + lp(motori, 500) * 0.35 * via
+    # riverbero della sala sugli effetti (come il bus Effetti del gioco)
+    eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+    out = hp(amb + eff + mus, 20, 2)
+    out = fade(out, 0.3, 2.5)
+    g = db(-16.0 - lufs(out))
+    out = limiter(out * g, -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'anteprima_tecnici.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
+
+
+def main(quali=('sala', 'tecnici')):
+    if 'sala' in quali:
+        anteprima_sala()
+    if 'tecnici' in quali:
+        anteprima_tecnici()
+
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:] or ('sala', 'tecnici'))
