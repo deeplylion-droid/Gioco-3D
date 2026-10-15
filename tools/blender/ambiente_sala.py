@@ -46,6 +46,9 @@ Z_GAL, SP_GAL, PROF_GAL = 4.0, 0.3, 3.0
 Z_SOFF = 11.5
 CUPOLA = dict(cx=0.0, cy=5.0, r=13.0, tamburo=1.0, freccia=5.5)
 PISCINA = dict(x0=-7.0, x1=7.0, y0=-5.0, y1=13.0, prof=2.0, y_pendenza=1.0, scarico=(0.0, -2.0))
+# buco nel fondo della piscina sotto il portello, verso il pozzo della camera delle onde (x0, y0, x1, y1):
+# in Godot x +-0,64 e z da 1,36 a 2,64; il pozzo di ambienti-1 sta sotto, centrato in (0; -2,25; 2,0) Godot
+BUCO_POZZO = (-0.64, -2.64, 0.64, -1.36)
 VASCA_ARRIVO = dict(x0=-16.0, x1=-9.0, y0=-7.0, y1=3.0, prof=1.1, acqua=-0.22)
 # piedistallo della statua (vuoto: la medusa la mette il gruppo "medusa")
 # monumento: gradoni (z1, z2), tamburo col fregio fino a z3, cornice e piano a h; cordone a r_cordone
@@ -481,14 +484,27 @@ def interattivi(mats, zf):
     zp = zf(sx, sy)
     # portello dello scarico (cerniera sul lato nord): sotto la pozza, si apre dopo averla svuotata
     c = K.Costruttore(mats)
-    c.anello((0, -0.64, -0.0), (0, 0, 1), 0.0, 0.64, 0.05, 'torre', seg=40)
-    c.toro((0, -0.64, 0.06), (0, 0, 1), 0.5, 0.025, 'torre', seg=40, seg_r=6)
-    for k in range(10):
-        t = 2 * math.pi * k / 10
-        c.cilindro((math.cos(t) * 0.56, -0.64 + math.sin(t) * 0.56, 0.04), (math.cos(t) * 0.56, -0.64 + math.sin(t) * 0.56, 0.07), 0.02, 'inox', seg=6)
-    c.cilindro((-0.25, -0.64, 0.07), (0.25, -0.64, 0.07), 0.025, 'inox', seg=8)       # maniglia
-    for x in (-0.3, 0.3):
-        c.cilindro((x - 0.08, 0.0, 0.03), (x + 0.08, 0.0, 0.03), 0.035, 'inox', seg=8)  # cerniere
+    # portello quadrato: copre il buco del pozzo (1,28 m) e appoggia sulle piastrelle intorno (7 cm per
+    # lato; 2 cm oltre la cerniera a nord). Lamiera con il bordo rialzato, due costole e i bulloni.
+    W, S_, N_ = 0.71, -1.35, 0.02
+    c.scatola_smussata((-W, S_, 0.0), (W, N_, 0.04), 'torre', s=0.012)
+    for (a0, b0, a1, b1) in ((-W, S_, W, S_ + 0.06), (-W, N_ - 0.06, W, N_), (-W, S_, -W + 0.06, N_), (W - 0.06, S_, W, N_)):
+        c.scatola_smussata((a0, b0, 0.04), (a1, b1, 0.065), 'torre', s=0.008)            # bordo rialzato
+    for yy in (-0.9, -0.45):
+        c.scatola_smussata((-W + 0.06, yy - 0.025, 0.04), (W - 0.06, yy + 0.025, 0.058), 'torre', s=0.006)   # costole
+    for k in range(7):
+        t = -W + 0.09 + k * (2 * W - 0.18) / 6
+        for (bx, by) in ((t, S_ + 0.03), (t, N_ - 0.03)):
+            c.cilindro((bx, by, 0.065), (bx, by, 0.078), 0.012, 'inox', seg=6)
+    for k in range(1, 6):
+        t = S_ + 0.03 + k * (N_ - S_ - 0.06) / 6
+        for bx in (-W + 0.03, W - 0.03):
+            c.cilindro((bx, t, 0.065), (bx, t, 0.078), 0.012, 'inox', seg=6)
+    c.cilindro((-0.25, -0.68, 0.10), (0.25, -0.68, 0.10), 0.022, 'inox', seg=8)        # maniglia
+    for x in (-0.25, 0.25):
+        c.cilindro((x, -0.68, 0.04), (x, -0.68, 0.10), 0.018, 'inox', seg=8)
+    for x in (-0.4, 0.4):
+        c.cilindro((x - 0.1, 0.0, 0.03), (x + 0.1, 0.0, 0.03), 0.035, 'inox', seg=10)  # cerniere
     port = c.crea('sala_portello_scarico')
     port.location = (sx, sy + 0.64, zp - 0.01)
     K.collisione_scatola('portello', (-0.64, -1.28, 0.0), (0.64, 0.0, 0.06), padre=port)
@@ -913,11 +929,36 @@ def piscina_onde(mats):
     c = K.Costruttore(mats)
     passo = 0.5
     nx, ny = int((x1 - x0) / passo), int((y1 - y0) / passo)
-    for i in range(nx):
-        for j in range(ny):
-            a, b = x0 + i * passo, y0 + j * passo
-            q = [(a, b), (a + passo, b), (a + passo, b + passo), (a, b + passo)]
+    # buco del pozzo della camera delle onde sotto il portello (1,28 x 1,28 m, centrato sullo scarico:
+    # Godot x +-0,64, z da 1,36 a 2,64), con il bordo smussato a 45 gradi (SM) e il collare piastrellato
+    bx0, by0, bx1, by1 = BUCO_POZZO
+    SM = 0.03
+    xs = sorted(set([round(x0 + i * passo, 4) for i in range(nx + 1)] + [round(bx0 - SM, 4), round(bx1 + SM, 4)]))
+    ys = sorted(set([round(y0 + j * passo, 4) for j in range(ny + 1)] + [round(by0 - SM, 4), round(by1 + SM, 4)]))
+    for i in range(len(xs) - 1):
+        for j in range(len(ys) - 1):
+            a, b, a2, b2 = xs[i], ys[j], xs[i + 1], ys[j + 1]
+            if bx0 - SM < (a + a2) / 2 < bx1 + SM and by0 - SM < (b + b2) / 2 < by1 + SM:
+                continue
+            q = [(a, b), (a2, b), (a2, b2), (a, b2)]
             c.faccia([(x, y, zf(x, y)) for x, y in q], 'vasca', liscia=True)
+    # anello esterno (sul fondo, sugli stessi vertici della griglia) e interno (in fondo allo smusso)
+    ex0, ey0, ex1, ey1 = round(bx0 - SM, 4), round(by0 - SM, 4), round(bx1 + SM, 4), round(by1 + SM, 4)
+    fuori = ([(x, ey0) for x in xs if ex0 <= x < ex1] + [(ex1, y) for y in ys if ey0 <= y < ey1] +
+             [(x, ey1) for x in xs[::-1] if ex0 < x <= ex1] + [(ex0, y) for y in ys[::-1] if ey0 < y <= ey1])
+    dentro = [(min(max(x, bx0), bx1), min(max(y, by0), by1)) for x, y in fuori]
+    z_coll = zf(sx, sy) - 0.24          # fondo del collare: lo spessore della soletta, poi c'è il pozzo
+    cx_b, cy_b = (bx0 + bx1) / 2, (by0 + by1) / 2
+    n_b = len(fuori)
+    for k in range(n_b):
+        (xa, ya), (xb, yb) = fuori[k], fuori[(k + 1) % n_b]
+        (ia, ja), (ib, jb) = dentro[k], dentro[(k + 1) % n_b]
+        za, zb_ = zf(xa, ya), zf(xb, yb)
+        verso_dentro = Vector((cx_b - (ia + ib) / 2, cy_b - (ja + jb) / 2, 0)).normalized()
+        c.faccia_verso([(xa, ya, za), (xb, yb, zb_), (ib, jb, zb_ - SM), (ia, ja, za - SM)], 'vasca',
+                       verso_dentro + Vector((0, 0, 1)), liscia=True)
+        if (ia, ja) != (ib, jb):
+            c.faccia_verso([(ia, ja, za - SM), (ib, jb, zb_ - SM), (ib, jb, z_coll), (ia, ja, z_coll)], 'vasca', verso_dentro)
     # pareti (seguono il fondo): sud (normale +y), est (-x), ovest (+x). A fasce orizzontali, fitte
     # intorno alla linea dell'ultimo livello dell'acqua (z -0,36), per lo sporco nei colori dei vertici
     livelli = [-0.2, -0.3, -0.345, -0.36, -0.375, -0.42, -0.6, -0.9, -1.25, -1.6, -1.95, -2.4]
@@ -960,8 +1001,6 @@ def piscina_onde(mats):
             xx = bx - w / 2 + k * w / 12
             g.cilindro((xx, y0 + 0.04, zb), (xx, y0 + 0.04, zb + h), 0.014, 'torre', seg=6, tappi=False)
         g.cilindro((bx - w / 2, y0 + 0.04, zb + h / 2), (bx + w / 2, y0 + 0.04, zb + h / 2), 0.02, 'torre', seg=6, tappi=False)
-    zp = zf(sx, sy)
-    g.anello((sx, sy, zp - 0.012), (0, 0, 1), 0.66, 0.78, 0.03, 'torre', seg=40)   # battuta fissa del portello
     dett = g.crea('sala_piscina_bocchette')
     # rosa dei venti a mosaico sul fondo (parte profonda): piano RGBA appena sopra il fondo
     rc = (0.0, 3.6)
