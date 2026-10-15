@@ -10,6 +10,9 @@ extends Node3D
 signal lampo(intensita: float)                       # inizio di un lampo
 signal tuono(intensita: float, distanza_km: float)   # da suonare ora
 
+## Strato di rendering escluso dalla luce del lampo (usato dal pulviscolo).
+const STRATO_NO_LAMPO := 1 << 19
+
 @export var automatica := true
 @export var intervallo_min := 7.0
 @export var intervallo_max := 18.0
@@ -41,6 +44,7 @@ func _ready() -> void:
 		luce.light_volumetric_fog_energy = 1.2
 		add_child(luce)
 	luce.light_color = colore_lampo
+	luce.light_cull_mask &= ~STRATO_NO_LAMPO
 	luce.light_energy = 0.0
 	luce.visible = false
 	_attesa = randf_range(2.0, intervallo_min)

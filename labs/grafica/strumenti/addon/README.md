@@ -79,3 +79,17 @@ Tutti creano da soli la loro geometria e le luci; si posizionano e si regolano d
 - Priorità delle ombre di una luce: `luce.set_meta("grafica_priorita_ombra", 0)` sempre, `1` importante (predefinito), `2` secondaria. I preset bassi tolgono prima le secondarie.
 - Particelle sotto l'opzione "Particelle": gruppo `grafica_particelle`.
 - `Grafica.imposta("chiave", valore)`, `Grafica.applica_preset("ultra")`, segnale `Grafica.impostazione_cambiata`.
+
+## Sala principale: il look (LookSala)
+
+Preset di illuminazione e post-processing per la sala vera (`assets_src/ambiente/glb/sala/`). Confronto prima/dopo: `docs/report/render_grafica/sala_reale/`.
+
+1. Monta la sala come in `assets_src/ambiente/INTEGRAZIONE.md` (GLB in 0,0,0 sotto un Node3D "SalaPrincipale", con l'Import Script).
+2. Su "SalaPrincipale" usa **`res://addons/grafica/look_sala.gd`** al posto di `sala_luci_ambiente.gd` (non vanno usati insieme).
+3. Fa tutto da solo all'avvio:
+   - mette nel `WorldEnvironment` (lo crea se manca) `sala/ambiente_sala.tres` e `sala/attributi_camera_sala.tres`;
+   - regola le 49 luci di `sala_luci.glb` per nome: emergenze rosse profonde (ombre su 1 ogni 3, alcune pulsano), neon freddi verso il verde (quelli "a metà" sfarfallano, sono guasti o morenti), lampione caldo al sodio con ombre e cono visibile nella nebbia, area bimbi calda, luna blu con le ombre dei costoloni;
+   - crea `VoxelGI_Sala` (41×19×37 m), due `ReflectionProbe` (sala e piscina, modalità interno), la `Tempesta` (lampi dalla cupola), nebbia bassa (`FogVolume`), pulviscolo e gocce dal soffitto.
+4. **VoxelGI**: senza dati l'autoload lo calcola all'avvio (qualche secondo, bloccante). Per la build: aprire la scena nell'editor, selezionare `VoxelGI_Sala` (dopo aver avviato una volta, oppure aggiungerlo a mano con le stesse misure: posizione (0, 6, -6), dimensioni (41, 19, 37), subdiv 256) e premere **Bake**; poi mettere `crea_gi = false` su LookSala.
+5. Le opzioni grafiche dell'utente (Grafica) restano attive: spengono VoxelGI, SSR, SSAO, SSIL, nebbia volumetrica secondo il preset; il color grading è quello dell'opzione "Color grading" (predefinito "Notte fredda": ombre verso il blu-verde).
+6. Tutti i valori sono `@export` su LookSala (energie, colori) e le due `.tres` si possono ritoccare nell'Inspector.
