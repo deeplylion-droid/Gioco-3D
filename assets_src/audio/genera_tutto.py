@@ -15,6 +15,7 @@ import genera_effetti
 import genera_giocatore
 import genera_interfaccia
 import genera_musica
+import genera_tecnici
 import licenze
 from comune import REGISTRO
 
@@ -22,7 +23,8 @@ if __name__ == '__main__':
     t0 = time.time()
     if os.path.exists(REGISTRO):
         os.remove(REGISTRO)
-    for m in (genera_ambiente, genera_giocatore, genera_effetti, genera_musica, genera_interfaccia):
+    for m in (genera_ambiente, genera_giocatore, genera_effetti, genera_musica, genera_interfaccia,
+              genera_tecnici):
         m.main()
     catalogo.main()
     licenze.main()

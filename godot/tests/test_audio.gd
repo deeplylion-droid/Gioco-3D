@@ -1,7 +1,8 @@
 extends Node
 ## Test dell'audio: autoload "Audio", bus ed effetti, stream del catalogo (si caricano, i loop
 ## si ripetono), volumi salvati in settings.cfg, collegamenti automatici con la sala principale
-## (segnali e suoni che partono davvero), scheda nel menu delle opzioni, morte e ripartenza.
+## (segnali e suoni che partono davvero), monitor e paratie delle tappe 5-6, scheda nel menu delle
+## opzioni, morte e ripartenza.
 ## Alla fine controlla che l'audio non abbia prodotto errori (un Logger li raccoglie tutti).
 ## In headless il driver audio è "Dummy": i player suonano senza uscire dalle casse.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
@@ -247,6 +248,51 @@ func _run() -> void:
 	effetto.entered_water.emit()
 	check(_conta(&"tuffo") > tuffi, "entrando in acqua: il tuffo")
 
+	print("Sala pompe e camera delle onde (tappe 5-6)")
+	var tecnici := [&"pompe_ruggito_loop", &"pompa_avvio", &"corrente_salta", &"crt_neve_loop",
+		&"plastica_piega_lontano", &"tonfo_acqua_lontano", &"paratia_scende_loop", &"maniglione_bloccato",
+		&"porta_ponte_apre"]
+	check(tecnici.all(func(n): return audio.call(&"stream_di", n) != null), "ci sono i 9 suoni delle tappe 5-6")
+	var monitor: Node = _primo("MonitorCrt")
+	var paratie := level.find_children("*", "Paratia", true, false)
+	check(monitor != null and int(c.get("MonitorCrt", 0)) >= 1, "collegato: MonitorCrt")
+	check(paratie.size() >= 2 and int(c.get("Paratia", 0)) >= paratie.size(),
+		"collegate le paratie (%d)" % int(c.get("Paratia", 0)))
+	if monitor:
+		var neve := _loop_su(monitor.get_node_or_null(monitor.get(&"schermo_path")), &"crt_neve_loop")
+		check(neve != null and not neve.is_suonando(), "prima del blackout il monitor non fruscia")
+		monitor.call(&"mostra_neve")
+		await _frames(20)
+		check(neve != null and neve.is_suonando(), "con la neve il monitor fruscia")
+	if not paratie.is_empty():
+		var par: Node = paratie[0]
+		var catena := _loop_su(par.get_node_or_null(par.get(&"pannello_path")), &"paratia_scende_loop")
+		check(catena != null and not catena.is_suonando(), "la paratia alzata tace")
+		var tonfi := _conta(&"porta_chiusa")
+		par.call(&"chiudi")
+		await _frames(30)
+		check(catena != null and catena.is_suonando(), "la paratia scende con motore e catene")
+		for i in 600:
+			if bool(par.get(&"is_chiusa")):
+				break
+			await get_tree().physics_frame
+		await _frames(60)
+		check(_conta(&"porta_chiusa") > tonfi, "in fondo la paratia sbatte")
+		check(catena != null and not catena.is_suonando(), "chiusa, la paratia tace")
+	# Come li chiamerà il risveglio: tre motori sulle pompe e i suoni lontani in 3D.
+	var pompe := level.find_children("*", "Pompa", true, false)
+	if not pompe.is_empty():
+		var motore: AudioLoop = audio.call(&"crea_loop", &"pompe_ruggito_loop", pompe[0])
+		motore.volume = 1.0
+		await _frames(10)
+		check(motore.is_suonando() and (motore.player.stream as AudioStreamOggVorbis).loop,
+			"il ruggito delle pompe gira in loop")
+		motore.volume = 0.0
+		var lontano: Node = audio.call(&"suona", &"plastica_piega_lontano", Vector3(0, 0.6, 10))
+		check(lontano is AudioStreamPlayer3D and (lontano as AudioStreamPlayer3D).unit_size >= 30.0,
+			"la plastica lontana arriva dalla vasca e si sente anche dalla sala pompe")
+		lontano.call(&"stop")
+
 	print("Menu delle opzioni")
 	var menu: CanvasLayer = load("res://addons/grafica/menu_opzioni.tscn").instantiate()
 	get_tree().root.add_child(menu)
@@ -313,6 +359,23 @@ func _zaino() -> Object:
 	for a in audio.get(&"_attivi"):
 		if a.get(&"pack") == p.water_pack:
 			return a
+	return null
+
+
+## Il primo nodo della sala con questa classe (class_name), o null.
+func _primo(classe: String) -> Node:
+	var trovati := level.find_children("*", classe, true, false)
+	return trovati[0] if not trovati.is_empty() else null
+
+
+## Il loop dell'audio con questo suono tra i figli di [param n], o null.
+func _loop_su(n: Node, nome: StringName) -> AudioLoop:
+	if n == null:
+		return null
+	var s: AudioStream = audio.call(&"stream_di", nome)
+	for l in n.find_children("*", "AudioLoop", false, false):
+		if (l as AudioLoop).player and (l as AudioLoop).player.stream == s:
+			return l
 	return null
 
 

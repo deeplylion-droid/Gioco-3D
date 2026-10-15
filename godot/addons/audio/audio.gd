@@ -13,7 +13,8 @@ extends Node
 ##  - a ogni cambio di scena cerca i nodi che conosce e si collega ai loro segnali (o ne
 ##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
-##    portelli, ruota e secchio, vasche, Polaroid, statua della medusa, bambini, morte;
+##    portelli, ruota e secchio, vasche, Polaroid, statua della medusa, bambini, morte,
+##    monitor a tubo e paratie della sala pompe;
 ##    le luci al neon e d'emergenza della sala (dal GLB) ronzano;
 ##  - aggiunge la scheda "Audio" al menu delle opzioni dell'addon grafica.
 ## API: suona(), suona_sigla(), musica_titolo(), ferma_musica(), imposta_volume(), volume().
@@ -43,6 +44,7 @@ const PER_CARTELLA := {
 	"ambiente": [BUS_AMBIENTE, 0.0, 10.0, 80.0, 0.6],
 	"musica": [BUS_MUSICA, 0.0, 0.0, 0.0, 0.0],
 	"interfaccia": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.3],
+	"tecnici": [BUS_EFFETTI, 0.0, 6.0, 60.0, 0.2],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -83,6 +85,14 @@ const TARATURA := {
 	&"polaroid_chiudi": [BUS_INTERFACCIA, -6.0, 0.0, 0.0, 0.5],
 	&"stinger_bambini": [BUS_MUSICA, -2.0, 0.0, 0.0, 0.0],
 	&"stinger_morte": [BUS_MUSICA, 0.0, 0.0, 0.0, 0.0],
+	# ambienti tecnici (tappe 5-6)
+	&"pompa_avvio": [BUS_EFFETTI, 0.0, 6.0, 60.0, 0.3],
+	&"corrente_salta": [BUS_EFFETTI, 0.0, 0.0, 0.0, 0.0],
+	# lontani: la distanza è già nel suono (riverbero, passa-basso); qui solo la direzione
+	&"plastica_piega_lontano": [BUS_EFFETTI, 0.0, 40.0, 220.0, 0.0],
+	&"tonfo_acqua_lontano": [BUS_EFFETTI, 0.0, 40.0, 220.0, 0.0],
+	&"maniglione_bloccato": [BUS_EFFETTI, 0.0, 3.0, 35.0, 0.6],
+	&"porta_ponte_apre": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 }
 ## Loop sulle sorgenti: [volume dB, unit_size, max_distance].
 const LOOP_3D := {
@@ -100,6 +110,9 @@ const LOOP_3D := {
 	&"medusa_presenza_loop": [-2.0, 1.4, 8.0],
 	&"zaino_impatto_loop": [-2.0, 2.5, 30.0],
 	&"zaino_impatto_acqua_loop": [-2.0, 2.5, 30.0],
+	&"pompe_ruggito_loop": [0.0, 6.0, 60.0],
+	&"paratia_scende_loop": [0.0, 12.0, 80.0],
+	&"crt_neve_loop": [0.0, 2.0, 16.0],
 }
 ## Volume (dB) dei fondi.
 const FONDI := {
@@ -837,6 +850,8 @@ func _esamina(n: Node) -> void:
 		"PolaroidPhoto", "Collectible": _collega_collezionabile(n)
 		"DeathSequence": _collega_sequenza_morte(n)
 		"MenuOpzioni": _inietta_menu(n)
+		"MonitorCrt": _attivi.append(AudioMonitor.new(self, n))
+		"Paratia": _attivi.append(AudioParatia.new(self, n))
 		_:
 			fatto = _esamina_senza_classe(n)
 	if fatto:
@@ -1616,4 +1631,60 @@ class Scivolo:
 		if curva is Curve3D and (curva as Curve3D).point_count > 1:
 			var locale := n.to_local(a.ascoltatore())
 			l.get_parent().global_position = n.to_global((curva as Curve3D).get_closest_point(locale))
+		return true
+
+
+## Il monitor a tubo della sala pompe (MonitorCrt): la neve frusciante quando non c'è più segnale.
+class AudioMonitor:
+	var n: Node
+	var l: AudioLoop
+
+	func _init(a, nodo: Node) -> void:
+		n = nodo
+		var dove: Node = null
+		for prop in [&"schermo_path", &"luce_path"]:
+			var path = nodo.get(prop)
+			if path is NodePath and not (path as NodePath).is_empty():
+				dove = nodo.get_node_or_null(path)
+				if dove is Node3D:
+					break
+		if dove is Node3D and nodo.has_method(&"mostra_neve_attiva"):
+			l = a.crea_loop(&"crt_neve_loop", dove)
+
+	func aggiorna(_a, _d: float) -> bool:
+		if not is_instance_valid(n):
+			return false
+		if not n.is_inside_tree():
+			return true
+		if l:
+			l.volume = 1.0 if bool(n.call(&"mostra_neve_attiva")) else 0.0
+		return true
+
+
+## Le paratie della camera delle onde (Paratia): motore e catene mentre scende, colpo in fondo.
+class AudioParatia:
+	var n: Node
+	var l: AudioLoop
+	var pannello: Node3D
+
+	func _init(a, nodo: Node) -> void:
+		n = nodo
+		var path = nodo.get(&"pannello_path")
+		if path is NodePath and not (path as NodePath).is_empty():
+			pannello = nodo.get_node_or_null(path) as Node3D
+		if pannello:
+			l = a.crea_loop(&"paratia_scende_loop", pannello)
+		if nodo.has_signal(&"chiusa"):
+			nodo.connect(&"chiusa", func():
+				if is_instance_valid(pannello) and pannello.is_inside_tree():
+					# il colpo in fondo: più grave e forte di una porta (si sente fino alla sala pompe)
+					a.suona(&"porta_chiusa", pannello.global_position, 6.0, 0.7))
+
+	func aggiorna(_a, _d: float) -> bool:
+		if not is_instance_valid(n):
+			return false
+		if not n.is_inside_tree():
+			return true
+		if l:
+			l.volume = 1.0 if bool(n.get(&"in_movimento")) else 0.0
 		return true

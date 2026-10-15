@@ -89,8 +89,12 @@ func ferma() -> void:
 func _process(delta: float) -> void:
 	if player == null:
 		return
+	if _attuale <= 0.0005 and not is_suonando():
+		# da spento il tono non scivola: quando riparte è già quello voluto
+		_tono_attuale = tono
+	else:
+		_tono_attuale = lerpf(_tono_attuale, tono, 1.0 - exp(-rapidita_tono * delta))
 	_attuale = move_toward(_attuale, clampf(volume, 0.0, 2.0), delta * rapidita_volume * maxf(absf(volume - _attuale), 0.05))
-	_tono_attuale = lerpf(_tono_attuale, tono, 1.0 - exp(-rapidita_tono * delta))
 	_applica()
 
 

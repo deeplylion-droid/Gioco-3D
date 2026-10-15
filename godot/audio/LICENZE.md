@@ -164,5 +164,14 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `musica/sigla_rovinata.ogg` | 31.0 s | sintesi (originale) | 96 BPM, primo battito a 0.05 s |
 | `musica/stinger_bambini.ogg` | 6.0 s | sintesi (originale) |  |
 | `musica/stinger_morte.ogg` | 7.5 s | sintesi (originale) |  |
+| `tecnici/corrente_salta.ogg` | 5.5 s | sintesi (originale) |  |
+| `tecnici/crt_neve_loop.ogg` | 3.0 s | sintesi (originale) | la neve di un televisore senza segnale: si sente anche col ruggito delle pompe |
+| `tecnici/maniglione_bloccato.ogg` | 0.9 s | Kenney RPG Audio + Impact Sounds (CC0) + sintesi | metalLatch, impactMetal_heavy |
+| `tecnici/paratia_scende_loop.ogg` | 3.0 s | sintesi (originale) |  |
+| `tecnici/plastica_piega_lontano.ogg` | 12.0 s | sintesi (originale) | si deve sentire sotto il ruggito delle pompe (che lascia liberi i medi) |
+| `tecnici/pompa_avvio.ogg` | 3.4 s | sintesi (originale) |  |
+| `tecnici/pompe_ruggito_loop.ogg` | 4.0 s | sintesi (originale) | una pompa a pieno regime, ruggito basso; tre pompe = tre loop |
+| `tecnici/porta_ponte_apre.ogg` | 3.4 s | Kenney RPG Audio (CC0) + sintesi | metalLatch, creak, doorClose |
+| `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
 
-Totale: 140 file, 5.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 149 file, 6.0 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
