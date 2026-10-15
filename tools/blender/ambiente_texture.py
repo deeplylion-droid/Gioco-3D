@@ -85,6 +85,8 @@ def _apri(dati_o_percorso, modo):
 
 
 def _salva_jpg(im, percorso, qualita=90, colore=True):
+    from PIL import ImageFile
+    ImageFile.MAXBLOCK = max(ImageFile.MAXBLOCK, 1 << 24)   # 'optimize' su immagini grandi
     os.makedirs(os.path.dirname(percorso), exist_ok=True)
     # colore: 4:2:0 va bene; dati (normal, ORM, altezza): niente sottocampionamento
     im.save(percorso, quality=qualita, subsampling=2 if colore else 0, optimize=True)
@@ -315,7 +317,7 @@ def ricetta_vernice(r, seme):
     return nuova * vern[..., None] + col * (1 - vern[..., None])
 
 
-def orm_bagnato(sorgente, quanto):
+def orm_bagnato(sorgente, quanto, extra=1.0):
     """ORM con un velo d'acqua irregolare: la rugosità scende a chiazze.
     Le pozzanghere vere NON vanno qui (si ripeterebbero a ogni texture): in Godot si fanno con
     decal o con una maschera in spazio mondo nello shader del pavimento."""
@@ -323,7 +325,7 @@ def orm_bagnato(sorgente, quanto):
     m = _macchie(1.0)
     film = _smooth(0.2, 0.55, m)
     # bagnato: tutto un po' più lucido, le chiazze molto di più (in Godot si vede con SSR)
-    orm[..., 1] = orm[..., 1] * (1 - 0.35 * quanto) * (1 - 0.55 * film * quanto)
+    orm[..., 1] = orm[..., 1] * (1 - 0.35 * quanto) * (1 - 0.55 * film * quanto) * extra
     return orm
 
 
@@ -449,6 +451,195 @@ def colatura_png(percorso, seme=3):
     Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8), 'RGBA').save(percorso, optimize=True)
 
 
+def _normali_da_altezza(alt, forza=2.0):
+    """Normal map OpenGL (Y+) da una mappa d'altezza 0..1 (array HxW)."""
+    gx = (np.roll(alt, -1, 1) - np.roll(alt, 1, 1)) * 0.5
+    gy = (np.roll(alt, -1, 0) - np.roll(alt, 1, 0)) * 0.5
+    n = np.dstack([-gx * forza, gy * forza, np.ones_like(alt)])
+    n /= np.linalg.norm(n, axis=2, keepdims=True)
+    return ((n * 0.5 + 0.5) * 255 + 0.5).astype(np.uint8)
+
+
+def fregio_marino(cartella, W=2048, H=512, tessera=16, seme=11):
+    """Fregio a mosaico per il tamburo del piedistallo della statua: onde 'a ricciolo' in basso,
+    pesci, stelle marine, bolle e una medusa stilizzata su fondo blu profondo; filo d'oro in alto.
+    Ogni tessera (1,6 cm) prende il colore del disegno al suo centro. Una ripetizione = 2,04 m x 0,51 m.
+    Scrive fregio_col.jpg, fregio_nrm.jpg, fregio_orm.jpg (nessuna scritta)."""
+    from PIL import ImageDraw
+    rng = np.random.default_rng(seme)
+    im = Image.new('RGB', (W, H), (18, 58, 122))
+    d = ImageDraw.Draw(im)
+    BIANCO, TURCH, ORO, ARANCIO, ROSA, BLU2 = (230, 232, 225), (40, 170, 175), (214, 168, 52), (226, 120, 40), (226, 130, 170), (30, 84, 160)
+    # fasce: oro in alto e in basso
+    d.rectangle([0, 0, W, 2 * tessera], fill=ORO)
+    d.rectangle([0, 3 * tessera, W, 4 * tessera], fill=BLU2)
+    d.rectangle([0, H - 2 * tessera, W, H], fill=ORO)
+    # onde a ricciolo (motivo vitruviano) nella fascia bassa
+    P = W / 12
+    base = H - 2 * tessera
+    for k in range(13):
+        x0 = k * P
+        pts = [(x0, base)]
+        for t in np.linspace(0, 1, 24):
+            pts.append((x0 + t * P * 0.75, base - (np.sin(t * np.pi / 2) ** 1.5) * 150))
+        pts.append((x0 + P * 0.75, base))
+        d.polygon(pts, fill=TURCH)
+        cx, cy, r = x0 + P * 0.72, base - 118, 52
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=TURCH)
+        d.ellipse([cx - r * 0.55, cy - r * 0.55 + 6, cx + r * 0.55, cy + r * 0.55 + 6], fill=(18, 58, 122))
+        d.line([(x0, base - 4), (x0 + P * 0.6, base - 112)], fill=BIANCO, width=tessera)
+    # figure: due pesci, una stella marina, una medusa, bolle
+    def pesce(cx, cy, s, col, verso=1):
+        d.ellipse([cx - 70 * s, cy - 32 * s, cx + 70 * s, cy + 32 * s], fill=col)
+        d.polygon([(cx - verso * 60 * s, cy), (cx - verso * 120 * s, cy - 40 * s), (cx - verso * 120 * s, cy + 40 * s)], fill=col)
+        d.ellipse([cx + verso * 34 * s - 9, cy - 12 * s - 9, cx + verso * 34 * s + 9, cy - 12 * s + 9], fill=BIANCO)
+    def stella(cx, cy, r, col):
+        pts = []
+        for i in range(10):
+            a = -np.pi / 2 + i * np.pi / 5
+            rr = r if i % 2 == 0 else r * 0.42
+            pts.append((cx + np.cos(a) * rr, cy + np.sin(a) * rr))
+        d.polygon(pts, fill=col)
+    def medusa(cx, cy, s):
+        d.pieslice([cx - 80 * s, cy - 70 * s, cx + 80 * s, cy + 70 * s], 180, 360, fill=ROSA)
+        for i in range(5):
+            x = cx - 56 * s + i * 28 * s
+            pts = [(x + np.sin(t * 6 + i) * 10 * s, cy + t * 120 * s) for t in np.linspace(0, 1, 12)]
+            d.line(pts, fill=ROSA, width=int(tessera * 0.9))
+        d.ellipse([cx - 30 * s, cy - 40 * s, cx - 10 * s, cy - 20 * s], fill=BIANCO)
+        d.ellipse([cx + 10 * s, cy - 40 * s, cx + 30 * s, cy - 20 * s], fill=BIANCO)
+    pesce(300, 200, 1.25, ARANCIO, 1)
+    pesce(1380, 185, 1.1, ORO, -1)
+    stella(860, 205, 85, ARANCIO)
+    medusa(1700, 172, 1.35)
+    for (bx, by, br) in ((470, 120, 14), (500, 95, 10), (1180, 130, 16), (1210, 100, 11), (1560, 110, 12), (640, 260, 12)):
+        d.ellipse([bx - br, by - br, bx + br, by + br], fill=BIANCO)
+    a = np.asarray(im, np.float32)
+    # mosaico: ogni tessera prende il colore al suo centro, con una piccola variazione
+    n_x, n_y = W // tessera, H // tessera
+    cen = a[tessera // 2::tessera, tessera // 2::tessera][:n_y, :n_x]
+    var = rng.normal(1.0, 0.07, (n_y, n_x, 1)) * rng.normal(1.0, 0.025, (n_y, n_x, 3))
+    tess = np.clip(cen * var, 0, 255)
+    out = np.repeat(np.repeat(tess, tessera, 0), tessera, 1)[:H, :W]
+    # fughe (3 px) e bordo smussato delle tessere per la normal map
+    yy, xx = np.mgrid[0:H, 0:W]
+    fx = (xx % tessera); fy = (yy % tessera)
+    fuga = (fx < 2) | (fx >= tessera - 1) | (fy < 2) | (fy >= tessera - 1)
+    out[fuga] = np.array([150, 150, 142])
+    dist = np.minimum(np.minimum(fx, tessera - 1 - fx), np.minimum(fy, tessera - 1 - fy)).astype(np.float32)
+    alt = np.clip(dist / 4.0, 0, 1)
+    alt = alt * (0.85 + 0.15 * rng.random((n_y, n_x)).repeat(tessera, 0).repeat(tessera, 1)[:H, :W])
+    os.makedirs(cartella, exist_ok=True)
+    _salva_jpg(Image.fromarray(out.astype(np.uint8)), os.path.join(cartella, 'fregio_col.jpg'))
+    _salva_jpg(Image.fromarray(_normali_da_altezza(alt, 3.0)), os.path.join(cartella, 'fregio_nrm.jpg'), 92, colore=False)
+    rough = np.where(fuga, 0.85, 0.22 + 0.08 * rng.random((n_y, n_x)).repeat(tessera, 0).repeat(tessera, 1)[:H, :W])
+    ao = np.where(fuga, 0.75, 1.0)
+    orm = np.dstack([ao, rough, np.zeros_like(rough)])
+    _salva_jpg(Image.fromarray((orm * 255 + 0.5).astype(np.uint8)), os.path.join(cartella, 'fregio_orm.jpg'), 92, colore=False)
+    print('fregio marino ->', cartella)
+
+
+def disegni_bambini(cartella, seme=5):
+    """Quattro disegni a pastello dei bambini (fogli A4, nessuna scritta): la medusa con i bambini,
+    il mare, la sala con la statua, un bambino che dà la mano a un tentacolo. Carta un po' rovinata.
+    Atlante 2 x 2 (celle 724 x 1024) -> disegni_col.jpg."""
+    from PIL import ImageDraw, ImageFilter
+    rng = np.random.default_rng(seme)
+    CW, CH = 724, 1024
+    atl = Image.new('RGB', (CW * 2, CH * 2))
+    def carta():
+        base = np.ones((CH, CW, 3), np.float32) * np.array([238, 232, 214], np.float32)
+        g = rng.normal(0, 4, (CH, CW, 1))
+        pieghe = np.asarray(Image.fromarray((rng.random((8, 6)) * 255).astype(np.uint8)).resize((CW, CH), Image.BICUBIC), np.float32)[..., None] / 255
+        base = base * (0.9 + 0.1 * pieghe) + g
+        return Image.fromarray(np.clip(base, 0, 255).astype(np.uint8))
+    def pastello(d, pts, col, w=9):
+        pts = [(x + rng.normal(0, 1.2), y + rng.normal(0, 1.2)) for x, y in pts]
+        for k in range(3):
+            q = [(x + rng.normal(0, w * 0.25), y + rng.normal(0, w * 0.25)) for x, y in pts]
+            d.line(q, fill=tuple(int(c * rng.uniform(0.85, 1.05)) for c in col), width=max(2, int(w * rng.uniform(0.5, 0.9))), joint='curve')
+    def campitura(d, box, col, fitto=14):
+        x0, y0, x1, y1 = box
+        y = y0
+        while y < y1:
+            pastello(d, [(x0, y + rng.normal(0, 3)), (x1, y + rng.normal(0, 3))], col, 7)
+            y += fitto
+    def omino(d, x, y, s, col):
+        d.ellipse([x - 22 * s, y - 70 * s, x + 22 * s, y - 26 * s], outline=col, width=6)
+        pastello(d, [(x, y - 26 * s), (x, y + 40 * s)], col)
+        pastello(d, [(x - 40 * s, y - 5 * s), (x + 40 * s, y - 5 * s)], col)
+        pastello(d, [(x, y + 40 * s), (x - 26 * s, y + 95 * s)], col)
+        pastello(d, [(x, y + 40 * s), (x + 26 * s, y + 95 * s)], col)
+        d.arc([x - 12 * s, y - 56 * s, x + 12 * s, y - 36 * s], 20, 160, fill=col, width=4)
+    def medusa(d, cx, cy, s, col, faccia=True):
+        pts = [(cx + np.cos(t) * 150 * s, cy - np.sin(t) * 120 * s) for t in np.linspace(0, np.pi, 30)]
+        pastello(d, pts + [pts[0]], col, 11)
+        campitura(d, (cx - 120 * s, cy - 90 * s, cx + 120 * s, cy - 5 * s), tuple(min(255, c + 40) for c in col), 16)
+        for i in range(6):
+            x = cx - 120 * s + i * 48 * s
+            pastello(d, [(x + np.sin(t * 5 + i) * 18 * s, cy + t * 260 * s) for t in np.linspace(0, 1, 14)], col, 8)
+        if faccia:
+            d.ellipse([cx - 55 * s, cy - 70 * s, cx - 25 * s, cy - 40 * s], fill=(30, 30, 40))
+            d.ellipse([cx + 25 * s, cy - 70 * s, cx + 55 * s, cy - 40 * s], fill=(30, 30, 40))
+            d.arc([cx - 50 * s, cy - 50 * s, cx + 50 * s, cy - 5 * s], 20, 160, fill=(200, 40, 60), width=7)
+    def sole(d, x, y):
+        d.ellipse([x - 60, y - 60, x + 60, y + 60], outline=(240, 190, 30), width=10)
+        campitura(d, (x - 45, y - 45, x + 45, y + 45), (245, 205, 60), 12)
+        for k in range(10):
+            a = k * np.pi / 5
+            pastello(d, [(x + np.cos(a) * 80, y + np.sin(a) * 80), (x + np.cos(a) * 120, y + np.sin(a) * 120)], (240, 180, 30), 7)
+    def onde(d, y, col):
+        for r in range(3):
+            pastello(d, [(x, y + r * 34 + np.sin(x / 45) * 16) for x in range(-10, CW + 20, 12)], col, 9)
+    disegni = []
+    # 1: medusa grande con bambini per mano
+    im = carta(); d = ImageDraw.Draw(im)
+    sole(d, 600, 130); medusa(d, 362, 420, 1.2, (235, 110, 170)); onde(d, 860, (40, 110, 220))
+    for i, x in enumerate((110, 230, 500, 620)):
+        omino(d, x, 760, 0.9, [(220, 60, 50), (40, 140, 60), (60, 80, 200), (230, 140, 30)][i])
+    disegni.append(im)
+    # 2: mare con medusa, pesci, cuore
+    im = carta(); d = ImageDraw.Draw(im)
+    campitura(d, (0, 300, CW, CH), (90, 170, 235), 18)
+    medusa(d, 380, 470, 0.9, (150, 80, 200))
+    for (x, y, c) in ((150, 760, (240, 140, 40)), (560, 820, (250, 200, 40))):
+        d.ellipse([x - 60, y - 30, x + 60, y + 30], outline=c, width=8)
+        pastello(d, [(x - 60, y), (x - 110, y - 35), (x - 110, y + 35), (x - 60, y)], c)
+    pastello(d, [(560, 160), (530, 120), (500, 160), (560, 230), (620, 160), (590, 120), (560, 160)], (220, 30, 50), 10)
+    disegni.append(im)
+    # 3: la sala con la cupola e la statua sul piedistallo
+    im = carta(); d = ImageDraw.Draw(im)
+    pastello(d, [(362 + np.cos(t) * 330, 420 - np.sin(t) * 300) for t in np.linspace(0, np.pi, 40)], (70, 70, 90), 10)
+    for k in range(1, 8):
+        a = k * np.pi / 8
+        pastello(d, [(362, 420), (362 + np.cos(a) * 330, 420 - np.sin(a) * 300)], (110, 110, 130), 5)
+    d.rectangle([230, 800, 494, 880], outline=(60, 90, 200), width=9)
+    campitura(d, (236, 806, 488, 874), (80, 120, 220), 12)
+    medusa(d, 362, 610, 0.75, (235, 110, 170))
+    onde(d, 930, (40, 150, 200))
+    omino(d, 110, 800, 0.8, (220, 60, 50)); omino(d, 620, 800, 0.8, (40, 140, 60))
+    disegni.append(im)
+    # 4: bambino che dà la mano a un tentacolo, arcobaleno
+    im = carta(); d = ImageDraw.Draw(im)
+    for i, c in enumerate(((230, 50, 50), (240, 150, 30), (240, 220, 50), (60, 170, 70), (60, 110, 220), (140, 70, 190))):
+        pastello(d, [(362 + np.cos(t) * (320 - i * 22), 400 - np.sin(t) * (300 - i * 22)) for t in np.linspace(0, np.pi, 40)], c, 12)
+    medusa(d, 470, 520, 0.8, (235, 110, 170))
+    omino(d, 200, 760, 1.1, (60, 80, 200))
+    pastello(d, [(244, 750), (300, 740), (360, 735), (390, 720)], (235, 110, 170), 8)
+    disegni.append(im)
+    for i, im in enumerate(disegni):
+        im = im.filter(ImageFilter.GaussianBlur(0.6))
+        a = np.asarray(im, np.float32)
+        # sbiadito, aloni d'acqua e bordi rovinati
+        a = a * 0.86 + np.array([238, 232, 214]) * 0.14
+        m = np.asarray(Image.fromarray((rng.random((5, 4)) * 255).astype(np.uint8)).resize((CW, CH), Image.BICUBIC), np.float32) / 255
+        a *= (1 - 0.18 * np.clip(m * 1.6 - 0.8, 0, 1))[..., None]
+        atl.paste(Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)), ((i % 2) * CW, (i // 2) * CH))
+    os.makedirs(cartella, exist_ok=True)
+    _salva_jpg(atl, os.path.join(cartella, 'disegni_col.jpg'))
+    print('disegni dei bambini ->', cartella)
+
+
 def deriva(nomi=None):
     from ambiente_palette import PALETTE
     nomi = nomi or list(PALETTE)
@@ -461,11 +652,14 @@ def deriva(nomi=None):
             if ric == 'originale':
                 continue
             seme = (sum(map(ord, pn + mn)) * 7919) % (2 ** 31)  # deterministico
-            out = {'piastrelle': ricetta_piastrelle, 'tinta': ricetta_tinta, 'vernice': ricetta_vernice}[ric](r, seme)
-            if mn == 'pavimento':  # pavimento bagnato: velo d'acqua a chiazze
-                orm = orm_bagnato(r['sorgente'], 0.9)
+            if 'bagnato' in r or mn == 'pavimento':  # pavimento bagnato: velo d'acqua a chiazze
+                orm = orm_bagnato(r['sorgente'], r.get('bagnato', 0.9), r.get('extra', 1.0))
                 _salva_jpg(Image.fromarray((np.clip(orm, 0, 1) * 255 + 0.5).astype(np.uint8)),
                            os.path.join(cart, f'{mn}_orm.jpg'), 92, colore=False)
+            if r.get('col_da'):    # usa il colore di un altro materiale: niente texture di colore nuova
+                print(pn, mn, 'orm')
+                continue
+            out = {'piastrelle': ricetta_piastrelle, 'tinta': ricetta_tinta, 'vernice': ricetta_vernice}[ric](r, seme)
             img = Image.fromarray((lin_srgb(out) * 255 + 0.5).astype(np.uint8))
             _salva_jpg(img, os.path.join(cart, f'{mn}_col.jpg'))
             print(pn, mn, ric)
@@ -475,6 +669,9 @@ def deriva(nomi=None):
             invecchia_cartellone(pn, k, f'cartellone_{k}_col.jpg')
         if 'torre' in pal['materiali']:
             grata_png(pn)
+        if pn == 'sala_a':   # monumento della statua: fregio a mosaico e disegni dei bambini
+            fregio_marino(cart)
+            disegni_bambini(cart)
     dec = os.path.join(TEX, 'decal')
     os.makedirs(dec, exist_ok=True)
     colatura_png(os.path.join(dec, 'colatura_col.png'))

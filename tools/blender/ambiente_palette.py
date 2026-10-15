@@ -10,6 +10,8 @@ Ricette:
   tinta:      tutta la texture prende il colore, conservando la luminosità (sporco, graffi).
   vernice:    ricolora solo la vernice ('colore'); ruggine o intonaco scoperto restano com'erano.
   originale:  la texture CC0 così com'è.
+Opzioni comuni: 'normale' = forza della normal map (fughe più profonde); 'col_da' = usa la texture di
+colore di un altro materiale; 'bagnato' (0..1) ed 'extra' = rugosità del velo d'acqua (ORM a parte).
 """
 
 PALETTE = {
@@ -104,21 +106,26 @@ PALETTE['sala_a'] = {
     'cartelloni': ['p1', 'p2', 'p3'],
 }
 PALETTE['sala_a']['materiali'].update({
-    'parete': dict(ricetta='piastrelle', sorgente='piastrelle_bianche',
+    'parete': dict(ricetta='piastrelle', normale=1.6, sorgente='piastrelle_bianche',
                    colori=[('#d9ddd5', 6), ('#e2e3dc', 3), ('#cdd4cf', 2)], fuga='#7f827a', sporco=1.7),
-    'fascia': dict(ricetta='piastrelle', sorgente='piastrelle_bianche',
+    'fascia': dict(ricetta='piastrelle', normale=1.6, sorgente='piastrelle_bianche',
                    colori=[('#8e2a22', 6), ('#7f241e', 3), ('#9c3326', 2)], fuga='#7f827a', sporco=1.6),
-    'zoccolo': dict(ricetta='piastrelle', sorgente='piastrelle_bianche',
+    'zoccolo': dict(ricetta='piastrelle', normale=1.6, sorgente='piastrelle_bianche',
                     colori=[('#1f6f73', 6), ('#1a6469', 3), ('#277a7c', 2)], fuga='#6f7570', sporco=1.9),
-    'vasca': dict(ricetta='piastrelle', sorgente='piastrelle_turchesi',
+    'vasca': dict(ricetta='piastrelle', normale=1.6, sorgente='piastrelle_turchesi',
                   colori=[('#2a9ea5', 5), ('#228f98', 3), ('#3fb0b2', 2)], fuga='#aeb5b0', sporco=1.9),
-    'vasca_bimbi': dict(ricetta='piastrelle', sorgente='piastrelle_turchesi',
+    'vasca_bimbi': dict(ricetta='piastrelle', normale=1.6, sorgente='piastrelle_turchesi',
                         colori=[('#4fb8c0', 5), ('#62c3c6', 3), ('#3aa7b0', 2)], fuga='#b8bdb8', sporco=1.7),
-    'scacchi': dict(ricetta='piastrelle', sorgente='piastrelle_bianche', schema='scacchi',
+    'scacchi': dict(ricetta='piastrelle', normale=1.6, sorgente='piastrelle_bianche', schema='scacchi',
                     colori=[('#1d4f9a', 1), ('#e4e4dc', 1)], fuga='#8a8d86', sporco=1.6),
-    'bordo': dict(ricetta='piastrelle', sorgente='piastrelle_bianche',
+    'bordo': dict(ricetta='piastrelle', normale=1.6, sorgente='piastrelle_bianche',
                   colori=[('#dedcd2', 6), ('#d2d0c4', 3)], fuga='#85877f', sporco=2.0),
-    'pavimento': dict(ricetta='tinta', sorgente='antiscivolo', colore='#6f7773', sporco=0.8),
+    'pavimento': dict(ricetta='tinta', sorgente='antiscivolo', colore='#6f7773', sporco=0.8, bagnato=0.9),
+    # stesse piastrelle, più o meno bagnate (assegnate piastrella per piastrella dalla sala)
+    'pavimento_bagnato': dict(ricetta='tinta', sorgente='antiscivolo', colore='#6f7773', col_da='pavimento',
+                              bagnato=1.0, extra=0.42, normale=0.45),
+    'pavimento_asciutto': dict(ricetta='tinta', sorgente='antiscivolo', colore='#6f7773', col_da='pavimento',
+                               bagnato=0.2, normale=1.15),
     'intonaco': dict(ricetta='vernice', sorgente='intonaco_scrostato', colore='#a7b3a6'),
     'intonaco_alto': dict(ricetta='vernice', sorgente='intonaco_scrostato', colore='#7d8b84'),
     'metallo': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#d9dbd4'),
@@ -134,7 +141,7 @@ PALETTE['sala_a']['materiali'].update({
     'gioco_giallo': dict(ricetta='tinta', sorgente='vetroresina', colore='#e0ae2e'),
     'gioco_verde': dict(ricetta='tinta', sorgente='vetroresina', colore='#3f9a8c'),
     'gioco_arancio': dict(ricetta='tinta', sorgente='vetroresina', colore='#d8702a'),
-    'piedistallo': dict(ricetta='piastrelle', sorgente='mosaico_blu', uniforma=0.6,
+    'piedistallo': dict(ricetta='piastrelle', sorgente='mosaico_blu', uniforma=0.6, normale=1.4,
                         colori=[('#16478f', 4), ('#1d5aa8', 3), ('#0f3a78', 2), ('#d9c48a', 1)], fuga='#7b8794', sporco=1.4),
 })
 
