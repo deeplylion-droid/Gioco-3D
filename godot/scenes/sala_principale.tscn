@@ -146,7 +146,7 @@ size = Vector3(8, 3, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_cfwyg"]
 size = Vector3(7, 4, 9)
 
-[node name="SalaPrincipale" type="Node3D" unique_id=1881879422 node_paths=PackedStringArray("statue_lamp", "lamp_trigger", "statue", "jingle_button", "hatch")]
+[node name="SalaPrincipale" type="Node3D" unique_id=1091969976 node_paths=PackedStringArray("statue_lamp", "lamp_trigger", "statue", "jingle_button", "hatch")]
 script = ExtResource("1_rpag0")
 puddle_material = ExtResource("2_bko5w")
 statue_lamp = NodePath("Statua/Sfarfallio")
@@ -160,7 +160,7 @@ hatch = NodePath("Piscina/Portello")
 hatch_button_mesh = NodePath("Sala/Interattivi/sala_pulsante_portello")
 dome_glass = ExtResource("3_yuaxn")
 
-[node name="Sala" type="Node3D" parent="." unique_id=2039076075]
+[node name="Sala" type="Node3D" parent="." unique_id=919473712]
 script = ExtResource("4_453jb")
 neon_difettosi = PackedInt32Array(1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25)
 vetro_cupola = ExtResource("3_yuaxn")
@@ -183,11 +183,11 @@ vetro_cupola = ExtResource("3_yuaxn")
 
 [node name="Luci" type="Node3D" parent="Sala" unique_id=266427066 instance=ExtResource("13_bbnp1")]
 
-[node name="Dettagli" type="Node3D" parent="Sala" unique_id=1078370545]
+[node name="Dettagli" type="Node3D" parent="Sala" unique_id=269550243]
 script = ExtResource("14_wxdfh")
 modelli = Array[PackedScene]([ExtResource("15_ftbmh"), ExtResource("16_b14rd"), ExtResource("17_yvw0s"), ExtResource("18_5f2mw"), ExtResource("19_8h62n"), ExtResource("20_5x6fq"), ExtResource("21_mx14v"), ExtResource("22_e1t3c")])
 
-[node name="PavimentiBagnati" type="Node" parent="Sala" unique_id=317693910 instance=ExtResource("23_3c0cd")]
+[node name="PavimentiBagnati" type="Node" parent="Sala" unique_id=2020315582 instance=ExtResource("23_3c0cd")]
 script = ExtResource("24_1e1va")
 roots = Array[NodePath]([NodePath("../Architettura"), NodePath("../Piscina"), NodePath("../AreaBimbi"), NodePath("../TorreScivoli")])
 name_filter = PackedStringArray("pavimento")
@@ -197,17 +197,17 @@ puddle_amount = 0.6
 puddle_scale = 0.18
 wet_darkening = 0.5
 
-[node name="SuperficiBagnate" type="Node" parent="Sala" unique_id=350434029 instance=ExtResource("23_3c0cd")]
+[node name="SuperficiBagnate" type="Node" parent="Sala" unique_id=828857659 instance=ExtResource("23_3c0cd")]
 script = ExtResource("24_1e1va")
 roots = Array[NodePath]([NodePath("../Architettura"), NodePath("../Piscina"), NodePath("../AreaBimbi"), NodePath("../TorreScivoli")])
 name_filter = PackedStringArray()
 exclude_filter = PackedStringArray("pavimento", "pozzanghere", "vetro", "glass", "griglia", "grata", "neon", "luce", "insegna", "lampad", "cartellone", "colature")
 base_wetness = 0.2
 
-[node name="Statua" type="Node3D" parent="." unique_id=1859361866]
+[node name="Statua" type="Node3D" parent="." unique_id=1179381334]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 
-[node name="Medusa" type="Node3D" parent="Statua" unique_id=2073982662]
+[node name="Medusa" type="Node3D" parent="Statua" unique_id=893938919]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
 script = ExtResource("25_7dqmh")
 model = ExtResource("26_g01iu")
@@ -216,7 +216,7 @@ tentacle_material = ExtResource("28_kgodc")
 surface_materials = Array[Material]([ExtResource("29_02rmv"), ExtResource("30_2ubhj"), ExtResource("31_uqleb")])
 target_height = 4.5
 
-[node name="LuceCampana" type="OmniLight3D" parent="Statua/Medusa" unique_id=1788617747 instance=ExtResource("32_k1ys3")]
+[node name="LuceCampana" type="OmniLight3D" parent="Statua/Medusa" unique_id=266127087 instance=ExtResource("32_k1ys3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.05, 0)
 light_color = Color(1, 0.36, 0.78, 1)
 light_energy = 0.35
@@ -227,7 +227,7 @@ script = ExtResource("33_vu82c")
 glow_strength = 2.5
 glow_radius = 5.0
 
-[node name="LuceViso" type="SpotLight3D" parent="Statua" unique_id=2078251326]
+[node name="LuceViso" type="SpotLight3D" parent="Statua" unique_id=650868676]
 transform = Transform3D(1, 0, 0, 0, 0.9378378, 0.34707385, 0, -0.34707385, 0.9378378, 0, 7.4, 6.6)
 light_color = Color(1, 0.95, 0.88, 1)
 light_energy = 3.2
@@ -236,14 +236,14 @@ spot_range = 12.0
 spot_angle = 4.5
 spot_angle_attenuation = 1.8
 
-[node name="PulsanteSigla" type="Node3D" parent="Statua" unique_id=1266056138 instance=ExtResource("34_x8lna")]
+[node name="PulsanteSigla" type="Node3D" parent="Statua" unique_id=73039172 instance=ExtResource("34_x8lna")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 1.9100001)
 script = ExtResource("35_pwxkc")
 mode = 0
 radius = 0.14
 show_model = false
 
-[node name="Sfarfallio" type="Node" parent="Statua" unique_id=1502386500]
+[node name="Sfarfallio" type="Node" parent="Statua" unique_id=1512537643]
 script = ExtResource("36_h5cer")
 base_energy = 3.5
 base_emission = 6.0
@@ -251,55 +251,60 @@ flicker_rate = 0.05
 min_level = 0.35
 start_off = true
 
-[node name="CollisioneStatua" type="StaticBody3D" parent="Statua" unique_id=1254646443]
+[node name="SondaMonumento" type="ReflectionProbe" parent="Statua" unique_id=1412413300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.15, 0)
+size = Vector3(8, 9, 8)
+box_projection = true
 
-[node name="Cilindro" type="CollisionShape3D" parent="Statua/CollisioneStatua" unique_id=199265885]
+[node name="CollisioneStatua" type="StaticBody3D" parent="Statua" unique_id=602120889]
+
+[node name="Cilindro" type="CollisionShape3D" parent="Statua/CollisioneStatua" unique_id=1780109423]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3999999, 0)
 shape = SubResource("CylinderShape3D_g4bos")
 
-[node name="PostazioneBagnini" type="Node3D" parent="." unique_id=1271976349]
+[node name="PostazioneBagnini" type="Node3D" parent="." unique_id=233241960]
 transform = Transform3D(0.77395743, 0, 0.63323766, 0, 1, 0, -0.63323766, 0, 0.77395743, -1.8, 0, 17)
 
-[node name="Rastrelliera" type="CSGCombiner3D" parent="PostazioneBagnini" unique_id=1305710282]
+[node name="Rastrelliera" type="CSGCombiner3D" parent="PostazioneBagnini" unique_id=1837149466]
 use_collision = true
 collision_mask = 0
 
-[node name="Montante1" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1291717901]
+[node name="Montante1" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1710072213]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.95, 0.2)
 size = Vector3(0.05, 1.9, 0.05)
 material = ExtResource("37_t1jif")
 
-[node name="Montante2" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1639242307]
+[node name="Montante2" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1701477817]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.95, 0.2)
 size = Vector3(0.05, 1.9, 0.05)
 material = ExtResource("37_t1jif")
 
-[node name="Traversa3" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=313631677]
+[node name="Traversa3" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1787375763]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.82, 0.2)
 size = Vector3(1.85, 0.04, 0.04)
 material = ExtResource("37_t1jif")
 
-[node name="Traversa4" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1681473390]
+[node name="Traversa4" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1352054886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.2)
 size = Vector3(1.85, 0.04, 0.04)
 material = ExtResource("37_t1jif")
 
-[node name="Traversa5" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=339460349]
+[node name="Traversa5" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1565981438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0.2)
 size = Vector3(1.85, 0.04, 0.04)
 material = ExtResource("37_t1jif")
 
-[node name="Ripiano6" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=839374916]
+[node name="Ripiano6" type="CSGBox3D" parent="PostazioneBagnini/Rastrelliera" unique_id=1442624033]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 size = Vector3(1.85, 0.04, 0.5)
 material = ExtResource("37_t1jif")
 
-[node name="Zaino" type="Node3D" parent="PostazioneBagnini" unique_id=181460740]
+[node name="Zaino" type="Node3D" parent="PostazioneBagnini" unique_id=1268386750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.82, 0)
 
 [node name="Modello" type="Node3D" parent="PostazioneBagnini/Zaino" unique_id=307537181 instance=ExtResource("38_igq28")]
 
-[node name="Prendi" type="Area3D" parent="PostazioneBagnini/Zaino" unique_id=981093020 node_paths=PackedStringArray("remove_node")]
+[node name="Prendi" type="Area3D" parent="PostazioneBagnini/Zaino" unique_id=548787665 node_paths=PackedStringArray("remove_node")]
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -308,11 +313,11 @@ remove_node = NodePath("..")
 prompt = "Prendi lo zaino-pompa"
 one_shot = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="PostazioneBagnini/Zaino/Prendi" unique_id=1530182450]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PostazioneBagnini/Zaino/Prendi" unique_id=1370656895]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
 shape = SubResource("BoxShape3D_cwoim")
 
-[node name="LuceZaino" type="SpotLight3D" parent="PostazioneBagnini" unique_id=1972243509]
+[node name="LuceZaino" type="SpotLight3D" parent="PostazioneBagnini" unique_id=2087901324]
 transform = Transform3D(0.98994946, -0.0651013, 0.12554611, 0, 0.8877449, 0.46033567, -0.14142138, -0.45570904, 0.87882257, -0.1, 1.55, 1.05)
 light_color = Color(1, 0.8, 0.58, 1)
 light_energy = 0.45
@@ -320,9 +325,9 @@ light_volumetric_fog_energy = 0.0
 spot_range = 1.8
 spot_angle = 32.0
 
-[node name="Piscina" type="Node3D" parent="." unique_id=597198079]
+[node name="Piscina" type="Node3D" parent="." unique_id=1052493081]
 
-[node name="Pozza" type="Node3D" parent="Piscina" unique_id=1559595932 node_paths=PackedStringArray("drain_sources") instance=ExtResource("40_epmkm")]
+[node name="Pozza" type="Node3D" parent="Piscina" unique_id=1302699191 node_paths=PackedStringArray("drain_sources") instance=ExtResource("40_epmkm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.26, 2)
 script = ExtResource("41_1n2lq")
 inner_size = Vector3(7.6, 0.3, 7.6)
@@ -334,21 +339,21 @@ capacity_liters = 150.0
 drain_time = 24.0
 drain_sources = [NodePath("../TurbinaScarico")]
 
-[node name="AcquaPozza" type="Node3D" parent="Piscina" unique_id=1596587049 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
+[node name="AcquaPozza" type="Node3D" parent="Piscina" unique_id=619770389 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
 script = ExtResource("44_07w60")
 tank = NodePath("../Pozza")
 style = ExtResource("45_ytqni")
 env_box_min = Vector3(-20, -2.5, -24)
 env_box_max = Vector3(20, 11.5, 20)
 
-[node name="TurbinaScarico" type="Node3D" parent="Piscina" unique_id=1205360944 instance=ExtResource("46_wixp4")]
+[node name="TurbinaScarico" type="Node3D" parent="Piscina" unique_id=1829848595 instance=ExtResource("46_wixp4")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 4.6, -0.62, 4.84)
 script = ExtResource("47_7fca5")
 radius = 0.47
 show_model = false
 external_rotor = NodePath("../../Sala/Interattivi/sala_turbina_scarico")
 
-[node name="GonfiabileIncastrato" type="RigidBody3D" parent="Piscina" unique_id=396948673 node_paths=PackedStringArray("jams")]
+[node name="GonfiabileIncastrato" type="RigidBody3D" parent="Piscina" unique_id=1012991549 node_paths=PackedStringArray("jams")]
 transform = Transform3D(0.9553365, -0.29552022, 0, -1.29175985e-08, -4.1759087e-08, -1, 0.29552022, 0.9553365, -4.371139e-08, 4.7, -0.57, 4.42)
 collision_layer = 8
 collision_mask = 11
@@ -356,41 +361,41 @@ mass = 0.6
 script = ExtResource("48_kat1n")
 jams = NodePath("../TurbinaScarico")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato" unique_id=475159059]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato" unique_id=1643791506]
 shape = SubResource("CylinderShape3D_ulpvy")
 
-[node name="Ciambella" type="MeshInstance3D" parent="Piscina/GonfiabileIncastrato" unique_id=22750003]
+[node name="Ciambella" type="MeshInstance3D" parent="Piscina/GonfiabileIncastrato" unique_id=99338062]
 material_override = ExtResource("49_nfgmp")
 mesh = SubResource("TorusMesh_ajx04")
 
-[node name="Bersaglio" type="Area3D" parent="Piscina/GonfiabileIncastrato" unique_id=1464332158]
+[node name="Bersaglio" type="Area3D" parent="Piscina/GonfiabileIncastrato" unique_id=1780608780]
 collision_layer = 32
 collision_mask = 0
 monitoring = false
 script = ExtResource("50_ul7s7")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato/Bersaglio" unique_id=1135179590]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Piscina/GonfiabileIncastrato/Bersaglio" unique_id=1953755483]
 shape = SubResource("CylinderShape3D_retvq")
 
-[node name="Buio" type="MeshInstance3D" parent="Piscina" unique_id=168285842]
+[node name="Buio" type="MeshInstance3D" parent="Piscina" unique_id=879900190]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.256, 2)
 material_override = ExtResource("51_omjo8")
 mesh = SubResource("BoxMesh_ewr3r")
 
-[node name="PulsantePortello" type="Node3D" parent="Piscina" unique_id=1635415915 instance=ExtResource("34_x8lna")]
+[node name="PulsantePortello" type="Node3D" parent="Piscina" unique_id=1687836390 instance=ExtResource("34_x8lna")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 1.9, -1.15, 4.95)
 script = ExtResource("35_pwxkc")
 mode = 2
 radius = 0.14
 show_model = false
 
-[node name="Portello" type="Node3D" parent="Piscina" unique_id=794835197 node_paths=PackedStringArray("sources")]
+[node name="Portello" type="Node3D" parent="Piscina" unique_id=177245108 node_paths=PackedStringArray("sources")]
 script = ExtResource("52_fgyri")
 sources = [NodePath("../PulsantePortello")]
 target_path = NodePath("../../Sala/Interattivi/sala_portello_scarico")
 open_angle = -105.0
 
-[node name="ScalettaEst" type="Area3D" parent="Piscina" unique_id=1086818145 instance=ExtResource("53_xq6tq")]
+[node name="ScalettaEst" type="Area3D" parent="Piscina" unique_id=2031673850 instance=ExtResource("53_xq6tq")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 6.95, -1.95, 3.2)
 collision_layer = 128
 collision_mask = 0
@@ -399,7 +404,7 @@ script = ExtResource("54_48fcl")
 height = 1.95
 show_model = false
 
-[node name="ScalettaOvest" type="Area3D" parent="Piscina" unique_id=231331525 instance=ExtResource("53_xq6tq")]
+[node name="ScalettaOvest" type="Area3D" parent="Piscina" unique_id=1465461383 instance=ExtResource("53_xq6tq")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6.95, -1.95, 2.2)
 collision_layer = 128
 collision_mask = 0
@@ -408,9 +413,9 @@ script = ExtResource("54_48fcl")
 height = 1.95
 show_model = false
 
-[node name="Vasche" type="Node3D" parent="." unique_id=187054855]
+[node name="Vasche" type="Node3D" parent="." unique_id=1602016285]
 
-[node name="VascaArrivo" type="Node3D" parent="Vasche" unique_id=609854856 instance=ExtResource("40_epmkm")]
+[node name="VascaArrivo" type="Node3D" parent="Vasche" unique_id=481941772 instance=ExtResource("40_epmkm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5, -1.1, 2)
 script = ExtResource("41_1n2lq")
 inner_size = Vector3(7, 1.05, 10)
@@ -420,14 +425,14 @@ fill = 0.8380952380952381
 max_fill = 1.0
 capacity_liters = 400.0
 
-[node name="AcquaVascaArrivo" type="Node3D" parent="Vasche" unique_id=1329426892 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
+[node name="AcquaVascaArrivo" type="Node3D" parent="Vasche" unique_id=1121058633 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
 script = ExtResource("44_07w60")
 tank = NodePath("../VascaArrivo")
 style = ExtResource("56_1nc22")
 env_box_min = Vector3(-20, -2.5, -24)
 env_box_max = Vector3(20, 11.5, 20)
 
-[node name="VascaBimbi1" type="Node3D" parent="Vasche" unique_id=2100477383 instance=ExtResource("40_epmkm")]
+[node name="VascaBimbi1" type="Node3D" parent="Vasche" unique_id=1815748168 instance=ExtResource("40_epmkm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.6, 0.02, -9.6)
 script = ExtResource("41_1n2lq")
 inner_size = Vector3(4.4, 0.43, 3.2)
@@ -437,14 +442,14 @@ fill = 0.6511627906976744
 max_fill = 1.0
 capacity_liters = 120.0
 
-[node name="AcquaVascaBimbi1" type="Node3D" parent="Vasche" unique_id=2054859831 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
+[node name="AcquaVascaBimbi1" type="Node3D" parent="Vasche" unique_id=1568401910 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
 script = ExtResource("44_07w60")
 tank = NodePath("../VascaBimbi1")
 style = ExtResource("56_1nc22")
 env_box_min = Vector3(-20, -2.5, -24)
 env_box_max = Vector3(20, 11.5, 20)
 
-[node name="VascaBimbi2" type="Node3D" parent="Vasche" unique_id=1381527338 instance=ExtResource("40_epmkm")]
+[node name="VascaBimbi2" type="Node3D" parent="Vasche" unique_id=1116647308 instance=ExtResource("40_epmkm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.3, 0.02, -12.4)
 script = ExtResource("41_1n2lq")
 inner_size = Vector3(2.8, 0.43, 2.8)
@@ -454,14 +459,14 @@ fill = 0.4651162790697675
 max_fill = 1.0
 capacity_liters = 60.0
 
-[node name="AcquaVascaBimbi2" type="Node3D" parent="Vasche" unique_id=1242321509 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
+[node name="AcquaVascaBimbi2" type="Node3D" parent="Vasche" unique_id=176181115 node_paths=PackedStringArray("tank") instance=ExtResource("43_5ve0e")]
 script = ExtResource("44_07w60")
 tank = NodePath("../VascaBimbi2")
 style = ExtResource("56_1nc22")
 env_box_min = Vector3(-20, -2.5, -24)
 env_box_max = Vector3(20, 11.5, 20)
 
-[node name="RuotaESecchio" type="Node3D" parent="." unique_id=1255369844]
+[node name="RuotaESecchio" type="Node3D" parent="." unique_id=17655644]
 script = ExtResource("57_rnawd")
 wheel_path = NodePath("../Sala/AreaBimbi/sala_ruota_pale")
 bucket_path = NodePath("../Sala/AreaBimbi/sala_secchio_gigante")
@@ -469,9 +474,9 @@ gate_wheel_path = NodePath("../Sala/Interattivi/sala_ruota_cancello")
 gate_path = NodePath("../Sala/Interattivi/sala_cancello_spiaggia")
 panel_path = NodePath("../Sala/Interattivi/sala_quadro_elettrico")
 
-[node name="Polaroid" type="Node3D" parent="." unique_id=463574432]
+[node name="Polaroid" type="Node3D" parent="." unique_id=1063534192]
 
-[node name="Polaroid01" type="Area3D" parent="Polaroid" unique_id=2050161541 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid01" type="Area3D" parent="Polaroid" unique_id=1561479313 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, -1.6, 0, 18.4)
 collision_layer = 16
 collision_mask = 0
@@ -481,7 +486,7 @@ entry_id = &"p01"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid02" type="Area3D" parent="Polaroid" unique_id=1306963079 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid02" type="Area3D" parent="Polaroid" unique_id=476028034 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(0.3623577, 0, 0.9320391, 0, 1, 0, -0.9320391, 0, 0.3623577, -6, 0.6, 8)
 collision_layer = 16
 collision_mask = 0
@@ -492,7 +497,7 @@ entry_id = &"p02"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid03" type="Area3D" parent="Polaroid" unique_id=1539416182 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid03" type="Area3D" parent="Polaroid" unique_id=330862178 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(0.5098987, 0, 0.86023444, 0, 1, 0, -0.86023444, 0, 0.5098987, -1.4003565, 0.83, 16.69886)
 collision_layer = 16
 collision_mask = 0
@@ -503,7 +508,7 @@ entry_id = &"p03"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid04" type="Area3D" parent="Polaroid" unique_id=549659799 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid04" type="Area3D" parent="Polaroid" unique_id=162809067 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -11.3, 6.4, -17.4)
 collision_layer = 16
 collision_mask = 0
@@ -514,7 +519,7 @@ entry_id = &"p04"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid05" type="Area3D" parent="Polaroid" unique_id=306828873 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid05" type="Area3D" parent="Polaroid" unique_id=404167764 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(-0.41614684, 0, 0.9092974, 0, 1, 0, -0.9092974, 0, -0.41614684, 1.2, -2, 2.9)
 collision_layer = 16
 collision_mask = 0
@@ -525,7 +530,7 @@ entry_id = &"p05"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid06" type="Area3D" parent="Polaroid" unique_id=1486474177 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid06" type="Area3D" parent="Polaroid" unique_id=1158361079 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(0.62161, 0, 0.7833269, 0, 1, 0, -0.7833269, 0, 0.62161, -4.6, -1.9, 4.2)
 collision_layer = 16
 collision_mask = 0
@@ -536,7 +541,7 @@ entry_id = &"p06"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid07" type="Area3D" parent="Polaroid" unique_id=489951361 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid07" type="Area3D" parent="Polaroid" unique_id=421296760 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(-0.029199546, 0, 0.9995736, 0, 1, 0, -0.9995736, 0, -0.029199546, 8.2, 1.2, -2.4)
 collision_layer = 16
 collision_mask = 0
@@ -547,7 +552,7 @@ entry_id = &"p07"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid08" type="Area3D" parent="Polaroid" unique_id=926079744 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid08" type="Area3D" parent="Polaroid" unique_id=337673874 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(0.7648422, 0, 0.64421767, 0, 1, 0, -0.64421767, 0, 0.7648422, -8.5, 0, 6.6)
 collision_layer = 16
 collision_mask = 0
@@ -558,7 +563,7 @@ entry_id = &"p08"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid09" type="Area3D" parent="Polaroid" unique_id=181967937 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid09" type="Area3D" parent="Polaroid" unique_id=215056012 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(-0.7373938, 0, 0.67546314, 0, 1, 0, -0.67546314, 0, -0.7373938, -9.9, 0, -9.4)
 collision_layer = 16
 collision_mask = 0
@@ -569,7 +574,7 @@ entry_id = &"p09"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Polaroid10" type="Area3D" parent="Polaroid" unique_id=2039606234 instance=ExtResource("58_ky4ma")]
+[node name="Polaroid10" type="Area3D" parent="Polaroid" unique_id=1404539276 instance=ExtResource("58_ky4ma")]
 transform = Transform3D(0.8253356, 0, 0.5646425, 0, 1, 0, -0.5646425, 0, 0.8253356, 13.5, 9, -17.5)
 collision_layer = 16
 collision_mask = 0
@@ -580,33 +585,33 @@ entry_id = &"p10"
 prompt = "Raccogli"
 one_shot = true
 
-[node name="Atmosfera" type="Node3D" parent="." unique_id=223564586]
+[node name="Atmosfera" type="Node3D" parent="." unique_id=392692033]
 
-[node name="Pozzanghera" type="MeshInstance3D" parent="Atmosfera" unique_id=1149685146]
+[node name="Pozzanghera" type="MeshInstance3D" parent="Atmosfera" unique_id=1084221276]
 transform = Transform3D(0.9553365, 0, 0.29552022, 0, 1, 0, -0.29552022, 0, 0.9553365, 0.25, 0.004, 16.4)
 material_override = SubResource("ShaderMaterial_0352v")
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_upq7w")
 
-[node name="@MeshInstance3D@2" type="MeshInstance3D" parent="Atmosfera" unique_id=1769593074]
+[node name="@MeshInstance3D@2" type="MeshInstance3D" parent="Atmosfera" unique_id=297077293]
 transform = Transform3D(0.4535961, 0, 0.8912074, 0, 1, 0, -0.8912074, 0, 0.4535961, -2, 0.004, 13.9)
 material_override = SubResource("ShaderMaterial_bhk57")
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_7pn8q")
 
-[node name="@MeshInstance3D@3" type="MeshInstance3D" parent="Atmosfera" unique_id=1343426138]
+[node name="@MeshInstance3D@3" type="MeshInstance3D" parent="Atmosfera" unique_id=283877487]
 transform = Transform3D(0.921061, 0, 0.38941833, 0, 1, 0, -0.38941833, 0, 0.921061, 2.4, 0.004, 18.1)
 material_override = SubResource("ShaderMaterial_egwbi")
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_uawr5")
 
-[node name="GocceNellaPozza" type="Node3D" parent="Atmosfera" unique_id=1119615720 instance=ExtResource("61_u1omd")]
+[node name="GocceNellaPozza" type="Node3D" parent="Atmosfera" unique_id=228693196 instance=ExtResource("61_u1omd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 4.5, 2.6)
 script = ExtResource("62_g3qam")
 
-[node name="Gioco" type="Node3D" parent="." unique_id=1115063607]
+[node name="Gioco" type="Node3D" parent="." unique_id=610603053]
 
-[node name="CheckpointIngresso" type="Area3D" parent="Gioco" unique_id=480779188 node_paths=PackedStringArray("spawn_point")]
+[node name="CheckpointIngresso" type="Area3D" parent="Gioco" unique_id=2029518610 node_paths=PackedStringArray("spawn_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 19.2)
 collision_layer = 0
 collision_mask = 2
@@ -614,13 +619,13 @@ monitorable = false
 script = ExtResource("63_hmt0i")
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointIngresso" unique_id=499636239]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointIngresso" unique_id=1306357816]
 shape = SubResource("BoxShape3D_vat3c")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointIngresso" unique_id=1097933684]
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointIngresso" unique_id=775329622]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 
-[node name="CheckpointStatua" type="Area3D" parent="Gioco" unique_id=1580289999 node_paths=PackedStringArray("spawn_point")]
+[node name="CheckpointStatua" type="Area3D" parent="Gioco" unique_id=756347460 node_paths=PackedStringArray("spawn_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 14.4)
 collision_layer = 0
 collision_mask = 2
@@ -629,13 +634,13 @@ script = ExtResource("63_hmt0i")
 order = 1
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointStatua" unique_id=1794350558]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointStatua" unique_id=1495703136]
 shape = SubResource("BoxShape3D_075dv")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointStatua" unique_id=1894516159]
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointStatua" unique_id=1861435964]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
 
-[node name="CheckpointSpiaggia" type="Area3D" parent="Gioco" unique_id=1665717077 node_paths=PackedStringArray("spawn_point")]
+[node name="CheckpointSpiaggia" type="Area3D" parent="Gioco" unique_id=2004622195 node_paths=PackedStringArray("spawn_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -14.2)
 collision_layer = 0
 collision_mask = 2
@@ -644,13 +649,13 @@ script = ExtResource("63_hmt0i")
 order = 2
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointSpiaggia" unique_id=1151615081]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointSpiaggia" unique_id=766852249]
 shape = SubResource("BoxShape3D_w0r2q")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointSpiaggia" unique_id=409636108]
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointSpiaggia" unique_id=1543215236]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -1.5, 0)
 
-[node name="CheckpointFondo" type="Area3D" parent="Gioco" unique_id=1556230230 node_paths=PackedStringArray("spawn_point")]
+[node name="CheckpointFondo" type="Area3D" parent="Gioco" unique_id=680466488 node_paths=PackedStringArray("spawn_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, -1)
 collision_layer = 0
 collision_mask = 2
@@ -659,38 +664,38 @@ script = ExtResource("63_hmt0i")
 order = 3
 spawn_point = NodePath("Ripartenza")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointFondo" unique_id=282532195]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/CheckpointFondo" unique_id=913829590]
 shape = SubResource("BoxShape3D_m3sf7")
 
-[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointFondo" unique_id=1201592885]
+[node name="Ripartenza" type="Marker3D" parent="Gioco/CheckpointFondo" unique_id=384606101]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -1.5, 0)
 
-[node name="AccendiLampione" type="Area3D" parent="Gioco" unique_id=434594515]
+[node name="AccendiLampione" type="Area3D" parent="Gioco" unique_id=1673259642]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 15.8)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/AccendiLampione" unique_id=185701605]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/AccendiLampione" unique_id=1008349937]
 shape = SubResource("BoxShape3D_tu061")
 
-[node name="SalitaTorre" type="Area3D" parent="Gioco" unique_id=1720751994]
+[node name="SalitaTorre" type="Area3D" parent="Gioco" unique_id=405279225]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 5, -16.5)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/SalitaTorre" unique_id=1468412984]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/SalitaTorre" unique_id=545929484]
 shape = SubResource("BoxShape3D_cfwyg")
 
-[node name="Player" type="CharacterBody3D" parent="." unique_id=841906868 instance=ExtResource("64_al75a")]
+[node name="Player" type="CharacterBody3D" parent="." unique_id=1828144457 instance=ExtResource("64_al75a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 19.2)
 collision_layer = 2
 collision_mask = 13
 floor_snap_length = 0.3
 script = ExtResource("65_w0die")
 
-[node name="BambiniBalconata" type="Node3D" parent="." unique_id=1677904567 node_paths=PackedStringArray("trigger")]
+[node name="BambiniBalconata" type="Node3D" parent="." unique_id=1499207708 node_paths=PackedStringArray("trigger")]
 script = ExtResource("66_de2an")
 models = Array[PackedScene]([ExtResource("67_677qg"), ExtResource("68_qmycu")])
 spots = PackedVector3Array(-18.4, 4.3, -11.2, -18.6, 4.3, -9.7, -18.3, 4.3, -8.1, -18.5, 4.3, -6.6, -18.4, 4.3, -5)

@@ -260,6 +260,16 @@ func _statue() -> void:
 	own(flicker, statue)
 	level.set(&"statue_lamp", flicker)
 	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
+	# Una sonda dei riflessi tutta per la statua: il riflesso bagnato dell'occhio di vetro e il
+	# lucido delle ciocche (si cattura una volta sola, all'avvio).
+	var probe := ReflectionProbe.new()
+	probe.name = "SondaMonumento"
+	probe.size = Vector3(8.0, 9.0, 8.0)
+	probe.position = Vector3(0.0, PEDESTAL.y + 3.0, 0.0)
+	probe.update_mode = ReflectionProbe.UPDATE_ONCE
+	probe.interior = false
+	probe.box_projection = true
+	own(probe, statue)
 	# Puntata su campana, tentacoli e davanti del piedistallo.
 	level.set(&"statue_lamp_aim", Vector3(0.0, 2.0, PEDESTAL.z + 0.6))
 	# La statua è solida: un cilindro grande quanto il piano del monumento, così non si sale sul
