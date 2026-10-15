@@ -82,9 +82,12 @@ extends Node3D
 var tempesta: Tempesta
 var _sfarfallanti: Array = []   # [luce, energia, modalità, attesa, raffica]
 var _sala: Node3D
+var _flash_salvate: Array = []   # [luce, visibile, energia] durante il flash
+var _flash_resta := 0.0
 
 
 func _ready() -> void:
+	add_to_group(&"look_sala")
 	# La tempesta subito: altri nodi della sala la cercano nel loro _ready (es. i bambini
 	# che compaiono con i lampi).
 	if crea_tempesta:
@@ -253,6 +256,20 @@ func _crea_area_bimbi() -> void:
 	spot.set_meta("grafica_priorita_ombra", 1)
 	plaf.add_child(spot)
 	spot.position = Vector3(0, 0, -0.25)
+
+
+## Per [param durata] secondi si accende tutto (lo chiama LookTecnici nel suo FLASH): tutte le
+## luci della sala visibili e più forti, sfarfallii fermi. Poi torna com'era.
+func flash(durata := 1.0) -> void:
+	if _flash_salvate.is_empty():
+		for l in _sala.find_children("*", "Light3D", true, false):
+			var luce := l as Light3D
+			if luce is DirectionalLight3D:
+				continue
+			_flash_salvate.append([luce, luce.visible, luce.light_energy])
+			luce.visible = true
+			luce.light_energy = maxf(luce.light_energy, 1.0) * 2.5
+	_flash_resta = maxf(_flash_resta, durata)
 
 
 func _crea_tempesta() -> void:
@@ -461,6 +478,14 @@ func _regola_luci(n: Node) -> void:
 
 
 func _process(delta: float) -> void:
+	if _flash_resta > 0.0:
+		_flash_resta -= delta
+		if _flash_resta > 0.0:
+			return
+		for f in _flash_salvate:
+			(f[0] as Light3D).visible = f[1]
+			(f[0] as Light3D).light_energy = f[2]
+		_flash_salvate.clear()
 	for s in _sfarfallanti:
 		var l: Light3D = s[0]
 		var base: float = s[1]

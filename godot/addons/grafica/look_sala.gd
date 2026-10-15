@@ -82,9 +82,12 @@ extends Node3D
 var tempesta: Tempesta
 var _sfarfallanti: Array = []   # [luce, energia, modalità, attesa, raffica]
 var _sala: Node3D
+var _flash_salvate: Array = []   # [luce, visibile, energia] durante il flash
+var _flash_resta := 0.0
 
 
 func _ready() -> void:
+	add_to_group(&"look_sala")
 	# La tempesta subito: altri nodi della sala la cercano nel loro _ready (es. i bambini
 	# che compaiono con i lampi).
 	if crea_tempesta:
@@ -255,6 +258,20 @@ func _crea_area_bimbi() -> void:
 	spot.position = Vector3(0, 0, -0.25)
 
 
+## Per [param durata] secondi si accende tutto (lo chiama LookTecnici nel suo FLASH): tutte le
+## luci della sala visibili e più forti, sfarfallii fermi. Poi torna com'era.
+func flash(durata := 1.0) -> void:
+	if _flash_salvate.is_empty():
+		for l in _sala.find_children("*", "Light3D", true, false):
+			var luce := l as Light3D
+			if luce is DirectionalLight3D:
+				continue
+			_flash_salvate.append([luce, luce.visible, luce.light_energy])
+			luce.visible = true
+			luce.light_energy = maxf(luce.light_energy, 1.0) * 2.5
+	_flash_resta = maxf(_flash_resta, durata)
+
+
 func _crea_tempesta() -> void:
 	tempesta = Tempesta.new()
 	tempesta.name = "Tempesta"
@@ -287,9 +304,8 @@ func _prepara_ritratto() -> void:
 		for n in get_tree().root.find_children("*", "Node", true, false):
 			if n.get("light") == lamp and n.get("base_energy") != null:
 				n.set("base_energy", energia_ritratto)
-				# Spenta finché la FlickerLight non la accende (_regola_luci le ha appena dato
-				# l'energia del lampione anche se la sala parte con la lampada spenta).
-				lamp.light_energy = energia_ritratto if n.get("is_on") else 0.0
+				if n.get("is_on"):
+					lamp.light_energy = energia_ritratto
 	var trigger := get_node_or_null(percorso_trigger) as Node3D
 	if trigger:
 		trigger.global_position = punto_accensione
@@ -412,17 +428,13 @@ func _regola_luci(n: Node) -> void:
 			# Accensione e sfarfallio li fa la FlickerLight della sala (vedi _prepara_ritratto).
 		elif nome.begins_with("luce_vasca"):
 			# Sott'acqua nella vasca sollevata: fanno brillare la campana sotto la superficie.
-			# Nel GLB della vasca sono faretti (SpotLight3D) puntati sulla medusa.
-			l.light_color = Color(0.45, 0.85, 1.0)
-			l.light_energy = 2.2
-			l.shadow_enabled = false
-			l.light_volumetric_fog_energy = 0.4
-			if l is OmniLight3D:
-				(l as OmniLight3D).omni_range = 3.5
-				(l as OmniLight3D).omni_attenuation = 1.6
-			elif l is SpotLight3D:
-				(l as SpotLight3D).spot_range = 3.5
-				(l as SpotLight3D).spot_attenuation = 1.6
+			var o := l as OmniLight3D
+			o.light_color = Color(0.45, 0.85, 1.0)
+			o.light_energy = 2.2
+			o.omni_range = 3.5
+			o.omni_attenuation = 1.6
+			o.shadow_enabled = false
+			o.light_volumetric_fog_energy = 0.4
 		elif nome.begins_with("luce_subacquea"):
 			var o := l as OmniLight3D
 			o.light_energy = 3.0
@@ -466,6 +478,14 @@ func _regola_luci(n: Node) -> void:
 
 
 func _process(delta: float) -> void:
+	if _flash_resta > 0.0:
+		_flash_resta -= delta
+		if _flash_resta > 0.0:
+			return
+		for f in _flash_salvate:
+			(f[0] as Light3D).visible = f[1]
+			(f[0] as Light3D).light_energy = f[2]
+		_flash_salvate.clear()
 	for s in _sfarfallanti:
 		var l: Light3D = s[0]
 		var base: float = s[1]
@@ -505,10 +525,8 @@ func _crea_voxel_gi() -> void:
 	gi.set_meta("grafica_bake_automatico", _sala == self)
 	add_child(gi)
 	gi.global_position = (_sala.global_transform * sala_centro) if _sala != self else to_global(sala_centro)
-	# Senza dati cotti il GI resta spento: calcolarlo durante il gioco blocca l'avvio e, sul
-	# renderer software, porta la sala oltre la memoria della macchina (tools/bake_voxel_gi.gd).
-	if gi.data == null and _sala != self:
-		push_warning("LookSala: GI della sala non cotto (%s): resta spento" % dati_gi)
+	if gi.data == null and _sala != self and is_instance_valid(Grafica) and int(Grafica.valore("gi")) == 1:
+		gi.bake(_sala)   # senza dati cotti: calcolo all'avvio (lento, solo per le prove)
 
 
 ## Cuoce il VoxelGI della sala senza le emissioni delle lampade (la loro luce la fanno le
