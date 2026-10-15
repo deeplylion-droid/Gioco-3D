@@ -6,9 +6,11 @@
   e la sigla rovinata che parte dalla statua e scivola nel minore.
 - anteprima_tecnici.ogg (circa 40 s): la sala pompe delle tappe 5-6 sentita da chi gioca, con i
   tempi di scripts/tecnici/risveglio_sala_pompe.gd e le distanze vere della scena.
+- anteprima_lei.ogg (circa 27 s): la tappa 8 nell'area bimbi, la fossa che ribolle, lei che sbuca,
+  guarda e scivola sotto; poi l'altro finale, il morso.
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
-nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici] (senza argomenti, tutte e due).
+nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei] (senza argomenti, tutte).
 """
 import os
 import sys
@@ -255,12 +257,84 @@ def anteprima_tecnici():
     print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
 
 
-def main(quali=('sala', 'tecnici')):
+# --- area bimbi: lei (tappa 8) ----------------------------------------------------------------
+
+def anteprima_lei():
+    """Al buio nell'area bimbi, sotto la pioggia sulla cupola: si segue la scia, la fossa ribolle
+    sempre più vicina, lei sbuca dal bordo a 6,5 m, guarda, scivola sotto e torna il silenzio.
+    Poi, dopo una pausa, l'altro finale: se le vai incontro ti prende (morso, stinger al lampo
+    rosso, il mondo che si abbassa). Livelli e distanze come nel gioco (audio.gd, lei_sbuca.gd)."""
+    rng = np.random.default_rng(88)
+    DURT = 27.0
+    n = n_of(DURT)
+    eff = np.zeros((n, 2), dtype=np.float32)    # bus Effetti (riverbero della sala)
+    amb = np.zeros((n, 2), dtype=np.float32)    # bus Ambiente (i fondi)
+    mus = np.zeros((n, 2), dtype=np.float32)    # bus Musica (lo stinger)
+    ui = np.zeros((n, 2), dtype=np.float32)     # bus Interfaccia (il morso: niente riverbero)
+
+    def mono(rel):
+        return leggi(rel, 1)
+
+    def metti(dest, x, t, g_db=0.0, p=0.0):
+        mix_into(dest, pan(x * db(g_db), p) if x.ndim == 1 else x * db(g_db), n_of(t))
+
+    # i fondi della sala con la tempesta: pioggia sulla cupola, vento, nave
+    for rel, g, off in [('ambiente/pioggia_cupola_loop.ogg', 0.0, 5.0), ('ambiente/vento_loop.ogg', -2.0, 9.0),
+                        ('ambiente/nave_loop.ogg', 0.0, 2.0)]:
+        mix_into(amb, fade(tile(leggi(rel), DURT, off), 1.5, 0.0) * db(g), 0)
+    mix_into(amb, leggi('ambiente/tuono_lontano_01.ogg') * db(-4), n_of(9.0))
+
+    # si cammina sulla scia bagnata verso la fossa (da 16 a 7 m)
+    t = 0.8
+    for k in range(10):
+        metti(eff, mono('giocatore/passo_bagnato_%02d.ogg' % (k % 6 + 1)), t, -2 + rng.uniform(-1, 1),
+              -0.06 if k % 2 else 0.06)
+        t += 0.5 + rng.uniform(-0.03, 0.03)
+    T_SBUCA = 6.4
+    T_SCIVOLA = T_SBUCA + 1.8 + 6.0          # durata_sbuca + attesa (lei_sbuca.gd)
+    # la fossa: ribolle mentre l'acqua risale; si avvicina, poi tace quando lei va sotto
+    vol, _ = curva_loop([(0.6, 1.0, 1.0), (T_SCIVOLA, 0.0, 1.0)], DURT)
+    k = np.arange(n) / SR
+    dist = np.interp(k, [0.6, 5.8], [16.0, 7.0])
+    g = 20 * np.log10(np.minimum(1.0, 5.0 / dist))
+    fossa = tile(mono('lei/fossa_ribolle_loop.ogg'), DURT, 1.3)
+    # in audio.gd la fossa sfuma più piano (rapidita_volume 1,5): qui la coda dopo T_SCIVOLA
+    coda = np.clip(1.0 - (k - T_SCIVOLA) / 2.5, 0.0, 1.0)
+    vol = np.where(k < T_SCIVOLA, vol, coda * vol[n_of(T_SCIVOLA) - 1])
+    mix_into(eff, pan(fossa * vol * 10 ** (g / 20), 0.15), 0)
+    # lei sbuca dal bordo (a 6,5 m, un po' a destra), guarda, poi scivola sotto
+    metti(eff, mono('lei/lei_sbuca.ogg'), T_SBUCA, distanza_db(6.5, 6.0), 0.2)
+    metti(eff, mono('lei/lei_scivola_sotto.ogg'), T_SCIVOLA, distanza_db(6.5, 6.0), 0.2)
+
+    # l'altro finale: le vai incontro e ti prende
+    T_MORSO = 22.4
+    for k2 in range(3):
+        metti(eff, mono('giocatore/passo_bagnato_%02d.ogg' % (k2 + 2)), T_MORSO - 1.1 + k2 * 0.36, -2, 0.0)
+    metti(ui, leggi('lei/morso.ogg'), T_MORSO)
+    metti(mus, leggi('musica/stinger_morte.ogg'), T_MORSO + 1.0)
+    # durante la morte il mondo si abbassa (Ambiente -12 dB, Effetti -14 dB, in 0,25 s circa)
+    giu = np.clip((k - T_MORSO) / 0.4, 0.0, 1.0)[:, None]
+    amb *= 10 ** (-12 * giu / 20)
+    eff *= 10 ** (-14 * giu / 20)
+
+    eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+    out = hp(amb + eff + mus + ui, 20, 2)
+    out = fade(out, 0.3, 2.5)
+    g = db(-16.0 - lufs(out))
+    out = limiter(out * g, -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'anteprima_lei.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
+
+
+def main(quali=('sala', 'tecnici', 'lei')):
     if 'sala' in quali:
         anteprima_sala()
     if 'tecnici' in quali:
         anteprima_tecnici()
+    if 'lei' in quali:
+        anteprima_lei()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:] or ('sala', 'tecnici'))
+    main(sys.argv[1:] or ('sala', 'tecnici', 'lei'))
