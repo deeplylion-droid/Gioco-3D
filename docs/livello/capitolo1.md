@@ -114,7 +114,13 @@
 
 ### 5. Piscina a onde vuota · 15-21 min
 
-> **Enigma rifatto su richiesta dell'utente (15 ottobre, dopo la v0.3.0).** Quello della v0.3.0 (gonfiabile nella turbina, portello) non si capiva. Ora: in fondo alla piscina a onde, sott'acqua, c'è il **cancello** che porta giù alla camera delle onde. La piscina va **svuotata con lo zaino**: aspiri l'acqua e la spari fuori dalla vasca finché il livello arriva a zero, e allora **il cancello si apre da solo**. L'obiettivo deve essere chiaro: il cancello ha una **luce gialla che lampeggia** (verde quando si apre), la **cornice a strisce gialle e nere** e un **cartello con un disegno, senza scritte**. Prima di costruirlo l'utente sceglie tra due versioni: cancello a griglia nel pavimento, o cancello nel muro in fondo alla vasca. Il testo qui sotto è il piano vecchio.
+> **Enigma rifatto su richiesta dell'utente (15 ottobre, dopo la v0.3.0).** Quello della v0.3.0 non si capiva. Dopo averlo giocato l'utente ha deciso:
+> - **niente più ruota a pale né secchio da riempire**: il secchio resta solo come scenografia;
+> - **niente recinto**: la spiaggia della piscina a onde è aperta;
+> - **resta la botola** nel fondo della parte profonda, sopra il pozzo della camera delle onde;
+> - la piscina si **svuota con lo zaino**: aspiri l'acqua e la spari fuori dalla vasca finché non ne resta;
+> - a piscina vuota si **preme il pulsante** della botola, che va reso **molto più evidente**. Come renderlo evidente lo sceglie l'utente da due versioni con le immagini.
+> Il testo qui sotto è il piano vecchio.
 
 
 - La grande vasca sotto la cupola, vuota: piastrelle scrostate, giocattoli sul fondo, una rosa dei venti a mosaico. Sopra, la tempesta e i lampi.
