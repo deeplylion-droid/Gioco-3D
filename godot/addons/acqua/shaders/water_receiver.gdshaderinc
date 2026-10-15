@@ -112,7 +112,9 @@ vec3 water_light_modulation(vec3 light_world, vec3 wpos, float depth_below, vec3
 	vec2 surf = wpos.xz - lw.xz * up_len;
 	vec3 caus = water_caustics(surf, depth_below, caustics_scale, lod);
 	vec3 tr = water_transmittance(absorption, turbidity * 0.35, up_len);
-	return max(mix(vec3(1.0), caus, caustics_amount), vec3(0.0)) * tr;
+	// l'acqua torbida sparpaglia la luce: caustiche meno nette
+	float sharp = exp(-turbidity * up_len * 0.6);
+	return max(mix(vec3(1.0), caus, caustics_amount * sharp), vec3(0.0)) * tr;
 }
 
 #endif

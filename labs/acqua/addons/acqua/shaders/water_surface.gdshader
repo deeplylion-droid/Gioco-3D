@@ -288,7 +288,10 @@ void fragment() {
 	float flow_len = length(flow_v);
 	vec2 s;
 	float fpat;
-	vec2 fuv = wp.xz * foam_scale;
+	// le celle della schiuma, deformate da un rumore largo, diventano chiazze e filamenti
+	vec2 fwarp = vec2(texture(water_noise_tex, wp.xz * 0.37 + vec2(tt * 0.05, 0.0)).r,
+			texture(water_noise_tex, wp.xz * 0.37 + vec2(0.57, 0.19) - vec2(0.0, tt * 0.04)).r) - 0.5;
+	vec2 fuv = wp.xz * foam_scale + fwarp * 0.7;
 	if (flow_len > 0.002) {
 		// flow map a due fasi: le onde e la schiuma scorrono lungo il flusso senza stirarsi
 		float cyc = 1.6;
@@ -299,11 +302,11 @@ void fragment() {
 		vec2 o1 = flow_v * ph1 * cyc;
 		s = wave_slope(wp.xz - o0, tt) * w0 + wave_slope(wp.xz - o1, tt) * (1.0 - w0);
 		s *= 1.0 + min(flow_len, 1.5) * 2.0;
-		fpat = texture(foam_tex, fuv - o0 * foam_scale).r * w0 + texture(foam_tex, fuv - o1 * foam_scale + 0.37).r * (1.0 - w0);
+		fpat = texture(foam_tex, fuv - o0 * foam_scale, 0.6).r * w0 + texture(foam_tex, fuv - o1 * foam_scale + 0.37, 0.6).r * (1.0 - w0);
 	} else {
 		s = wave_slope(wp.xz, tt);
-		float ftex = texture(foam_tex, fuv + vec2(tt * 0.3, tt * 0.17)).r;
-		float ftex2 = texture(foam_tex, fuv * 0.53 - vec2(tt * 0.21, -tt * 0.12)).r;
+		float ftex = texture(foam_tex, fuv + vec2(tt * 0.3, tt * 0.17), 0.6).r;
+		float ftex2 = texture(foam_tex, fuv * 0.53 - vec2(tt * 0.21, -tt * 0.12), 0.6).r;
 		fpat = max(ftex, ftex2 * 0.9);
 	}
 	float e = 0.03;
@@ -398,8 +401,10 @@ void fragment() {
 
 		// --- schiuma e sporco ---
 		float noise_lo = texture(water_noise_tex, wp.xz * 0.11 + vec2(tt * 0.02)).r;
-		float shore = 1.0 - smoothstep(0.0, foam_shore_width * (0.6 + noise_lo), path0);
-		float foam = smoothstep(0.25, 0.75, shore * (0.35 + fpat * 1.1)) * foam_shore_amount;
+		float shore = 1.0 - smoothstep(0.0, foam_shore_width * (0.5 + noise_lo), path0);
+		// a chiazze lungo la riva, non un anello uniforme
+		float patchy = smoothstep(0.35, 0.7, texture(water_noise_tex, wp.xz * 0.19 + vec2(0.71, 0.23) - vec2(tt * 0.03, 0.0)).r);
+		float foam = smoothstep(0.3, 0.8, shore * (0.25 + 0.75 * patchy) * (0.3 + fpat * 1.1)) * foam_shore_amount;
 		foam += smoothstep(0.08, 0.6, rip.w * foam_ripple_amount * (0.4 + fpat));
 		foam += flow_foam_one(wp.xz, flow_point_0, flow_shape_0, water_time, fpat);
 		foam += flow_foam_one(wp.xz, flow_point_1, flow_shape_1, water_time, fpat);
@@ -409,7 +414,7 @@ void fragment() {
 			float sn = texture(water_noise_tex, wp.xz / scum_scale + vec2(tt * 0.01) - flow_v * 0.3).r;
 			float sn2 = texture(water_noise_tex, wp.xz / (scum_scale * 0.31) - vec2(0.0, tt * 0.015)).g;
 			scum = smoothstep(1.0 - scum_amount, 1.0 - scum_amount + 0.35, sn * 0.7 + sn2 * 0.45) * (0.5 + 0.5 * scum_amount);
-			scum = max(scum, shore * scum_amount * 0.8);
+			scum = max(scum, shore * patchy * scum_amount * 0.8);
 		}
 		float cover = clamp(foam + scum, 0.0, 1.0);
 

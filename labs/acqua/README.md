@@ -17,8 +17,12 @@ Lagoon. Il codice riutilizzabile sta in `addons/acqua/` ed e' copiato cosi' com'
   (usa `flock /home/user/tools/render.lock`: un solo render pesante alla volta sulla macchina).
 - Sequenza animata: `godot --path labs/acqua --write-movie /tmp/f/frame.png --fixed-fps 24
   --quit-after 432 -- --sequence=main`, poi ffmpeg.
-- Prova nella sala vera: `sala_main/` (non versionata) contiene i GLB di main
-  (`assets_src/ambiente/glb/sala/`) e `test_sala_vera.tscn`; vedi la testa di `test_sala_vera.gd`.
+- Prova nella sala vera: `bash labs/acqua/tools/prepara_sala_vera.sh` copia da main i GLB della
+  sala (`assets_src/ambiente/glb/sala/`) in `sala_main/` (non versionata); poi la scena e'
+  `tests/sala_vera/test_sala_vera.tscn` (acqua con le quote di `assets_src/ambiente/INTEGRAZIONE.md`).
+  Argomenti dopo `--`: `--out=file.jpg --shots=pozza,bimbi,medusa,arrivo_scie,sotto` (screenshot),
+  `--sequence` (sequenza di 20 s per Movie Maker), `--measure` (costo dell'acqua alle tre qualita'),
+  `--style=1|2|3`, `--quality=0|1|2`, `--drain`.
 
 ## Struttura
 

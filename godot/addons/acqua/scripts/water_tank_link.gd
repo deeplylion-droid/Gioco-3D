@@ -26,6 +26,10 @@ const INVISIBLE_SHADER := preload("res://addons/acqua/shaders/invisible.gdshader
 ## Nasconde la superficie segnaposto della vasca originale.
 @export var hide_placeholder := true
 
+var _rising := 0.0
+var _falling := 0.0
+var _synced := false
+
 
 func _ready() -> void:
 	_sync_shape()
@@ -39,10 +43,22 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_rising = maxf(_rising - delta, 0.0)
+	_falling = maxf(_falling - delta, 0.0)
 	if tank and is_instance_valid(tank) and not Engine.is_editor_hint():
 		_sync_level()
 		_sync_drain(delta)
 	super._process(delta)
+
+
+## Vero mentre la vasca del gioco si sta riempiendo (accende le bocchette WaterInlet).
+func is_filling() -> bool:
+	return _rising > 0.0 or super.is_filling()
+
+
+## Vero mentre la vasca del gioco si sta svuotando (scarico o aspirazione).
+func is_draining() -> bool:
+	return _falling > 0.0 or super.is_draining()
 
 
 ## Imposta il livello dell'acqua (quota y nel mondo), per i nodi senza un'interfaccia nota.
@@ -81,9 +97,15 @@ func _sync_level() -> void:
 		y = tank.get_surface_global_y() if f > 0.001 else bottom
 	elif tank.has_method("get_surface_height"):
 		y = tank.get_surface_height()
-	if absf(y - level) > 1e-5:
+	if absf(y - level) > 1e-6:
+		if _synced:
+			if y > level:
+				_rising = 0.35
+			else:
+				_falling = 0.35
 		level = y
 		target_level = y
+	_synced = true
 
 
 func _sync_drain(delta: float) -> void:

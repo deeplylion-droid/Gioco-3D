@@ -376,6 +376,7 @@ func _apply_style() -> void:
 	material.set_shader_parameter("reflection_stretch", st.reflection_stretch)
 	material.set_shader_parameter("foam_color", st.foam_color)
 	material.set_shader_parameter("foam_shore_amount", st.foam_shore_amount)
+	material.set_shader_parameter("foam_shore_width", st.foam_shore_width)
 	material.set_shader_parameter("foam_ripple_amount", st.foam_ripple_amount)
 	material.set_shader_parameter("scum_amount", st.scum_amount)
 	material.set_shader_parameter("scum_color", st.scum_color)

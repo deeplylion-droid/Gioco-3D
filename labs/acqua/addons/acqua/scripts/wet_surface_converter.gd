@@ -28,6 +28,9 @@ const WET_SHADER := preload("res://addons/acqua/shaders/wet_surface.gdshader")
 @export var puddle_scale := 0.07
 @export_range(0.0, 1.0) var wet_darkening := 0.45
 @export_range(0.0, 3.0) var drop_ring_strength := 1.0
+## Bordo bagnato piu' scuro e lucido subito sopra il pelo dell'acqua delle vasche (m).
+@export_range(0.0, 0.3) var shoreline_height := 0.04
+@export_range(0.0, 1.0) var shoreline_darkening := 0.45
 @export_group("Acqua")
 @export var receive_caustics := true
 @export_range(0.0, 3.0) var caustics_strength := 1.0
@@ -137,6 +140,8 @@ func _wet_material_for(sm: BaseMaterial3D) -> ShaderMaterial:
 	m.set_shader_parameter("puddle_scale", puddle_scale)
 	m.set_shader_parameter("wet_darkening", wet_darkening)
 	m.set_shader_parameter("drop_ring_strength", drop_ring_strength)
+	m.set_shader_parameter("shoreline_height", shoreline_height)
+	m.set_shader_parameter("shoreline_darkening", shoreline_darkening)
 	m.set_shader_parameter("receive_caustics", receive_caustics)
 	m.set_shader_parameter("caustics_strength", caustics_strength)
 	m.resource_name = sm.resource_name + "_bagnato"

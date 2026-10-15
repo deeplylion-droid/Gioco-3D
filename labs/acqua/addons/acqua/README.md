@@ -32,12 +32,12 @@ acqua che scorre negli scivoli. Sviluppato nel laboratorio `labs/acqua/` (scena 
 |---|---|---|
 | `scenes/acqua_per_vasca.tscn` (WaterTankLink) | uno per ogni `WaterTank` o `WaterVolume` | imposta `tank`; prende da li' dimensioni e livello a ogni fotogramma e nasconde il segnaposto grigio. Scegli lo `style` (vedi sotto). Per la pozza: `drain_offset` = posizione dello scarico rispetto al centro della vasca, il gorgo parte quando lo scarico e' aperto (`get_drain_strength()`). |
 | `scenes/pozza_torbida.tscn`, `vasca_acqua.tscn`, `vasca_bimbi.tscn` (WaterBody) | in alternativa, se una vasca non ha un WaterTank | nodo al centro dell'area d'acqua; `size` = rettangolo in pianta, `level` = quota del pelo dell'acqua, `bottom` = quota del fondo piu' basso, `max_level` = bordo. Livello: `set_target_level(y, velocita')`, `fill()`, `drain()`, oppure `level = y` (subito). Segnali: `level_changed(level)`, `emptied`, `filled`. Aspirazione: `remove_volume(m3)`. |
-| `scenes/convertitore_bagnato.tscn` (WetSurfaceConverter) | uno per gruppo di superfici | `roots` = le istanze dei GLB (sala_architettura, sala_piscina, sala_area_bimbi, sala_torre_scivoli). Rimpiazza i materiali con quello bagnabile tenendo le stesse texture: caustiche sott'acqua, banda bagnata sopra il pelo, pozzanghere (`puddle_amount`, per i pavimenti 0.4-0.6) con i cerchi delle gocce. `name_filter`/`exclude_filter` scelgono le mesh. |
+| `scenes/convertitore_bagnato.tscn` (WetSurfaceConverter) | uno per gruppo di superfici | `roots` = le istanze dei GLB (sala_architettura, sala_piscina, sala_area_bimbi, sala_torre_scivoli). Rimpiazza i materiali con quello bagnabile tenendo le stesse texture: caustiche sott'acqua, banda bagnata e bordo scuro sopra il pelo, pozzanghere (`puddle_amount`, per i pavimenti 0.4-0.6) con i cerchi delle gocce. `name_filter`/`exclude_filter` scelgono le mesh. |
 | `scenes/gocciolatoio.tscn` (WaterDripEmitter) | sul soffitto, sopra pozzanghere e vasche | gocce che cadono e fanno cerchi nel punto esatto in cui cadono (serve una collisione sotto). |
 | `scenes/effetto_sottacqua.tscn` (UnderwaterEffect) | figlio della Camera3D del giocatore | nebbia, distorsione e bollicine sott'acqua, gocce sull'obiettivo quando si riemerge. |
 | `scenes/effetti_zaino.tscn` (WaterPackFX) | nella scena del giocatore | trova da solo il WaterPack (o imposta `pack`): gorgo e gocce risucchiate dove si aspira, spruzzi e increspature dove colpisce il getto. |
 | `scenes/luce_medusa.tscn` (WaterGlowLight) | dentro la campana della medusa | luce rosa che si diffonde nell'acqua (vista da sopra e da sotto). Massimo 4 insieme. |
-| `scenes/bocchetta.tscn` (WaterInlet) | sul bordo delle vasche che si riempiono | getto che cade nella vasca quando si riempie (asse -Z), con schiuma e increspature. |
+| `scenes/bocchetta.tscn` (WaterInlet) | sul bordo delle vasche che si riempiono (per esempio le vasche bimbi) | getto che cade nella vasca mentre il livello sale (asse -Z), con schiuma e increspature; funziona anche con `acqua_per_vasca.tscn` quando la WaterTank del gioco si riempie. |
 | `scenes/scivolo_acqua.tscn` (SlideWater) | lungo ogni tubo degli scivoli | assegna `curve` (la Curve3D del tubo, coordinate locali) e `tube_radius`: nastro d'acqua che scorre, sale sulla parete nelle curve, schiuma e spruzzi, getto all'uscita. |
 | `materials/pavimento_bagnato.tres`, `materials/piastrelle_vasca.tres` | su mesh senza UV (triplanare) | materiali pronti con texture CC0 (ambientCG). |
 | `materials/acqua_scivolo_kit.tres` | `material_override` delle strisce `ACQUA_scorre_*` del kit degli scivoli (`scivoli_kit.glb`, `vasca_arrivo.glb`) | acqua che scorre a 6 m/s lungo le UV del kit (UV.x lungo il tubo, 1 = 5 m), schiuma sui bordi. `ACQUA_scorre_bivio_camera` non ha UV: usa `acqua_che_scorre_piano.tres` con `local_flow_dir` = (1, 0). |
@@ -63,7 +63,11 @@ x -16..-9, z -3..7); vasca bimbi 1 0,30 (fondo 0,02, x -14,8..-10,4, z -11,2..-8
 `presets/stile_3_scura.tres` (predefinito per vasche e vasche bimbi: scura e profonda, riflessi
 rossi), `presets/stile_2_torbida.tres` (pozza verdastra), `presets/stile_1_limpida.tres`
 (alternativa). Si cambia con la proprieta' `style` di WaterBody; i parametri sono in
-`scripts/water_style.gd`. La scelta finale dell'aspetto e' dell'utente.
+`scripts/water_style.gd` (tra gli altri: `reflection_strength` e `reflection_stretch` per i riflessi
+e le scie verticali delle luci, `turbidity` e `scatter_color` per quanto l'acqua e' torbida e di che
+colore, `foam_shore_*` e `scum_amount` per schiuma e patina, `caustics_*`). Il bordo bagnato scuro
+sopra il pelo dell'acqua sta nel convertitore (`shoreline_height`, `shoreline_darkening`).
+La scelta finale dell'aspetto e' dell'utente.
 
 ## Qualita'
 
