@@ -150,6 +150,8 @@
 - Quando sono ripartite le pompe, tra il piedistallo e la torre è scoppiato un tubo: un getto d'acqua violento chiude la strada diretta (**da confermare**).
 - Segui la scia di gocce fino all'area bimbi. Le vasche basse si stanno riempiendo: il livello sale davanti a te.
 - A pochi metri lei sbuca dal bordo di una vasca: le mani sulle piastrelle, l'occhio fisso su di te.
+  - **Come è fatto (15 ottobre).** Le vasche basse hanno solo 28 cm d'acqua e lei è alta 4,5 m. Per questo lungo il bordo della prima vasca a scacchi c'è lo scarico di compensazione rotto: una fossa profonda circa 3 m, con la griglia divelta.
+  - Da lì risale l'acqua che riempie le vasche, ed è da lì che sbuca lei. Quando scivola sotto, la sua luce se ne va lungo il condotto in fondo alla fossa.
 - Se resti lontano, dopo un po' scivola sotto e la sua luce si allontana sott'acqua, come in [medusa_sottacqua.jpg](../concept/medusa_sottacqua.jpg).
 - Se le arrivi troppo vicino, o la tocchi, ti prende.
 - Poi attraversi la spiaggia della piscina vuota, fino alla torre. Niente ripari.

@@ -51,6 +51,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 
 - **Non si fanno altri ambienti finché la qualità non è quella giusta.** Si lavora su un pezzo campione (corridoio del risveglio, zona davanti allo stanzino dei bagnini con il tornello) finché l'utente non lo approva; poi si porta tutto allo stesso livello.
 - **Pezzo campione approvato dall'utente (15 ottobre)**: il "dopo" del confronto (modelli Meshy di ambienti-1 più la luce nuova di grafica, `docs/report/render_grafica/campione/combinato_*.jpg`). "Belle le luci e anche le grafiche". Lo giudicherà meglio in gioco. Questo è il livello minimo per tutto il resto: ora si porta la sala principale allo stesso livello, poi si va avanti con gli ambienti nuovi.
+- **Grana della pellicola e glow spenti di serie** (deciso dall'utente giocando la v0.2.1, 15 ottobre): li ha spenti e gli piace di più. Restano attivabili dalle opzioni.
 - Bocciato nella v0.2.0: forme troppo squadrate, texture che si ripetono troppo (soprattutto nel corridoio), tornello in bassissima definizione. I modelli devono essere di qualità vera: per oggetti e arredi si usa Meshy ad alta risoluzione, come deciso all'inizio.
 - Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
 - La luce della torcia è troppo forte e brutta: va studiata diversamente.
