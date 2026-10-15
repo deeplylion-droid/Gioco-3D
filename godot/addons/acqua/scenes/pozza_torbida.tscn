@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_body.gd" id="1"]
+[ext_resource type="Resource" path="res://addons/acqua/presets/stile_2_torbida.tres" id="2"]
+
+[node name="PozzaTorbida" type="Node3D"]
+script = ExtResource("1")
+size = Vector2(8, 8)
+level = -2.07
+bottom = -2.24
+max_level = -1.9
+style = ExtResource("2")
+fill_speed = 0.015
+vortex_on_drain = true
+drain_vortex_radius = 2.2
+drain_funnel_depth = 0.12
+planar_reflection_on_high = false

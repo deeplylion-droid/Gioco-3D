@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/death_sequence.gd" id="1_s"]
+
+[node name="DeathSequence" type="CanvasLayer"]
+script = ExtResource("1_s")

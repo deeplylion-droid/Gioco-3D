@@ -43,6 +43,9 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Sono i bambini cresciuti dal mostro, e compaiono **già nel capitolo 1**, magari solo **viste di sfuggita**.
 - **Da decidere**, con proposte all'utente: aspetto, quanti sono, che età hanno ora, cosa fanno, dove e come si vedono nel capitolo 1.
 - Vincoli fissi: sempre vestiti, niente nudità, niente gore e niente violenza esplicita sui bambini. Fanno paura con la postura, le maschere, gli occhi e il modo di muoversi.
+- **Primi due bambini (decisi dall'utente, 14 ottobre)**, ispirati ai disegni di Maniani (l'utente dichiara di avere i diritti) ma nel nostro stile marittimo. Modelli in `assets_src/bambini/`.
+  - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il corpo è da rifare (era "troppo pacioccone"): un bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata.
+  - **L'agnellino**: un peluche cucito, zuppo e macchiato di sale, con bottoni d'ottone al posto degli occhi e un fiocco alla marinara. Quando si rivela, il muso si spacca e mostra **un unico grande occhio**, scelto dall'utente. La testa di lupo resta solo come alternativa.
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -82,7 +85,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Riempie e svuota le vasche per raggiungere posti nuovi.
 - Respinge i mostri per un attimo e dà una spinta per saltare.
 - **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
-- L'aspetto dello zaino è **da decidere**.
+- **Aspetto scelto dall'utente il 14 ottobre**: lo zaino-giocattolo anni '90, colorato (turchese, giallo e arancione, con adesivi di delfini), con un serbatoio trasparente e una pistola ad acqua tipo Super Soaker. È un modello 3D di Meshy, l'opzione 2 in `godot/assets/models/zaino/`.
 
 ## La mascotte del capitolo 1: la medusa
 
@@ -106,6 +109,14 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - La croce sulla fronte.
 - La versione con due occhi.
 - Il costume a fascia.
+
+### La statua: il simbolo del gioco (deciso dall'utente, 15 ottobre)
+
+- La medusa è **il simbolo del gioco**. La sua statua deve essere **imponente** e messa in scena come Huggy Wuggy nella hall di Poppy Playtime.
+- Alta circa **4,5 m** in tutto, testa più tentacoli appoggiati. La creatura ha la stessa taglia.
+- La statua **poggia sui tentacoli**, che si appoggiano al piedistallo e si piegano, e non galleggia. I tentacoli devono essere di alta qualità: nastri carnosi e trasparenti, non tubicini.
+- Sta su un **piedistallo monumentale**: entrando nella sala il giocatore la vede subito, intera e centrata, illuminata come un monumento, e poi le gira intorno. Da vicino incombe.
+- Alla base ci sono offerte lasciate dai bambini: un indizio silenzioso della lore.
 
 ### Natura: fuori bambola, dentro viva (deciso)
 

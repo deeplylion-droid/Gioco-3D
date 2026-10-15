@@ -1,0 +1,15 @@
+# Texture estratte dai GLB quando Godot li importa: si rigenerano da sole all'importazione
+# (i GLB sono nel repository), così non si tengono due copie delle stesse immagini.
+/assets/ambiente/sala/*.jpg
+/assets/ambiente/sala/*.jpg.import
+/assets/ambiente/sala/*.png
+/assets/ambiente/sala/*.png.import
+/assets/models/medusa/medusa_*.png
+/assets/models/medusa/medusa_*.png.import
+/override.cfg
+/assets/models/bambini/*.jpg
+/assets/models/bambini/*.jpg.import
+/assets/models/bambini/*.png
+/assets/models/bambini/*.png.import
+/assets/models/medusa/medusa_*.jpg
+/assets/models/medusa/medusa_*.jpg.import

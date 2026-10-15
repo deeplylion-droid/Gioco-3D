@@ -1,0 +1,37 @@
+{
+ "centro_rotazione": [
+  -0.00356,
+  -0.06813,
+  0.60621
+ ],
+ "raggio_bulbo": 0.16047,
+ "raggio_viso": 0.16297,
+ "asse_riposo": [
+  0.01107,
+  -0.99889,
+  -0.04585
+ ],
+ "angolo_orbita_gradi": 38.19,
+ "angolo_calotta_gradi": 61.0,
+ "rotazione_max_gradi": 15.0,
+ "cornea": {
+  "centro": [
+   -0.00335,
+   -0.0863,
+   0.60537
+  ],
+  "raggio": 0.14529,
+  "altezza_mm": 3.0,
+  "angolo_gradi": 35.31
+ },
+ "texture": {
+  "mezzo_lato_m": 0.11,
+  "centro_x": -0.00178,
+  "centro_z": 0.59885,
+  "sclera": [
+   0.8,
+   0.82,
+   0.95
+  ]
+ }
+}

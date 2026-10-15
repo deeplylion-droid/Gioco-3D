@@ -1,0 +1,118 @@
+# Compila il gioco Godot (cartella godot/) a ogni push, su tutti i branch:
+# controlla gli script, esegue il test delle meccaniche ed esporta Windows e Linux.
+# Solo su main crea la Release "v<config/version>" se non esiste già (non cancella mai nulla).
+name: Build del gioco
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: C'è il progetto Godot?
+        id: progetto
+        run: |
+          if [ -f godot/project.godot ]; then echo "presente=si" >> "$GITHUB_OUTPUT"; else echo "presente=no" >> "$GITHUB_OUTPUT"; echo "Nessun godot/project.godot su questo branch: salto la build."; fi
+
+      - name: Cache di Godot e dei template
+        if: steps.progetto.outputs.presente == 'si'
+        uses: actions/cache@v4
+        with:
+          path: |
+            /home/runner/godot-bin
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+
+      - name: Scarica Godot e i template
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Versione del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        id: versione
+        run: |
+          VER=$(sed -n 's/^config\/version="\([^"]*\)"/\1/p' godot/project.godot)
+          if [ -z "$VER" ]; then echo "config/version mancante in project.godot"; exit 1; fi
+          echo "versione=$VER" >> "$GITHUB_OUTPUT"
+          echo "Versione: $VER"
+
+      - name: Importa il progetto
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --import
+          # Le texture estratte dai GLB vanno in compressione VRAM (meno memoria), poi si reimporta.
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Controllo degli script
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/check_scripts.gd
+
+      - name: Test delle meccaniche
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_mechanics.gd
+
+      - name: Test della demo (sala principale)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
+
+      - name: Esporta Windows e Linux
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          mkdir -p build/windows build/linux
+          godot --headless --path godot --export-release "Windows Desktop" ../build/windows/SplashLagoon.exe
+          godot --headless --path godot --export-release "Linux" ../build/linux/SplashLagoon.x86_64
+          test -f build/windows/SplashLagoon.exe -a -f build/windows/SplashLagoon.pck
+          test -f build/linux/SplashLagoon.x86_64 -a -f build/linux/SplashLagoon.pck
+          V="${{ steps.versione.outputs.versione }}"
+          (cd build/windows && zip -9 -q "../SplashLagoon-windows-v$V.zip" SplashLagoon.exe SplashLagoon.pck)
+          (cd build/linux && zip -9 -q "../SplashLagoon-linux-v$V.zip" SplashLagoon.x86_64 SplashLagoon.pck)
+          ls -la build
+
+      - name: Carica la build Windows
+        if: steps.progetto.outputs.presente == 'si'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SplashLagoon-windows-v${{ steps.versione.outputs.versione }}
+          path: build/windows/
+
+      - name: Carica la build Linux
+        if: steps.progetto.outputs.presente == 'si'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SplashLagoon-linux-v${{ steps.versione.outputs.versione }}
+          path: build/linux/
+
+      - name: Release (solo su main, solo se la versione è nuova)
+        if: steps.progetto.outputs.presente == 'si' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.versione.outputs.versione }}"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "La Release $TAG esiste già: non la tocco. Per pubblicarne una nuova alza config/version."
+          else
+            gh release create "$TAG" build/*.zip \
+              --target "$GITHUB_SHA" \
+              --title "Splash Lagoon $TAG" \
+              --notes "Demo giocabile della sala principale (build automatica del commit $GITHUB_SHA). Windows: scompatta lo zip e avvia SplashLagoon.exe (tieni SplashLagoon.pck nella stessa cartella). F1 = demo, F2 = scena di prova delle meccaniche."
+          fi

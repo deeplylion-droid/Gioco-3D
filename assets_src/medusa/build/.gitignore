@@ -1,0 +1,3 @@
+# file rigenerati dagli script tools/blender/medusa_*.py
+*
+!.gitignore

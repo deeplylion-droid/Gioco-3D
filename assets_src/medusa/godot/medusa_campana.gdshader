@@ -1,0 +1,31 @@
+// Campana della medusa: gelatina traslucida con i canali radiali luminosi (giallo in alto, rosa sul bordo)
+// che pulsano piano. Si applica alla superficie "M_campana" della mesh Medusa (vedi LEGGIMI.md).
+shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
+
+// campana_base_alfa.png: RGB = colore della campana, A = 1 vicino alla vita (si fonde con la pelle), ~0.4 sotto
+uniform sampler2D tex_colore : source_color, filter_linear_mipmap;
+// campana_emissione.png: colore e intensita' dei canali luminosi
+uniform sampler2D tex_canali : source_color, filter_linear_mipmap;
+uniform vec3 tinta : source_color = vec3(0.80, 0.62, 0.98);
+uniform float tinta_forza : hint_range(0.0, 1.0) = 0.25;
+uniform float opacita_centro : hint_range(0.0, 1.0) = 0.35;   // dove la campana si guarda di fronte
+uniform float opacita_bordo : hint_range(0.0, 1.0) = 0.85;    // dove si guarda di taglio (silhouette)
+uniform float fresnel_esponente : hint_range(0.5, 8.0) = 2.5;
+uniform float luce_canali : hint_range(0.0, 20.0) = 3.0;
+uniform float pulsazione_al_secondo = 0.4;                    // 0 = canali fissi (statua spenta)
+uniform float pulsazione_ampiezza : hint_range(0.0, 1.0) = 0.3;
+uniform float rugosita : hint_range(0.0, 1.0) = 0.08;
+
+void fragment() {
+	vec4 c = texture(tex_colore, UV);
+	ALBEDO = mix(c.rgb, tinta, tinta_forza);
+	float fres = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), fresnel_esponente);
+	float gelatina = mix(opacita_centro, opacita_bordo, fres);
+	// vicino alla vita la campana diventa opaca come la pelle di vinile
+	ALPHA = clamp(mix(gelatina, 1.0, smoothstep(0.75, 1.0, c.a)), 0.0, 1.0);
+	ROUGHNESS = rugosita;
+	SPECULAR = 0.6;
+	float pulsa = 1.0 + pulsazione_ampiezza * sin(TIME * pulsazione_al_secondo * 6.2831853);
+	EMISSION = texture(tex_canali, UV).rgb * luce_canali * pulsa;
+}

@@ -1,0 +1,74 @@
+{
+ "paperella_gigante": {
+  "immagine_task": "01a13c35-da7c-7316-8e71-1eedfae6d874",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c38-1cc4-776d-9a45-48ff77df493c",
+  "crediti_modello": 30
+ },
+ "delfino_gonfiabile_sgonfio": {
+  "immagine_task": "01a13c35-dbe0-752f-a725-2716814610a1",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c38-2141-7681-a93b-ff61ccfa6e5f",
+  "crediti_modello": 30
+ },
+ "lettino_plastica": {
+  "immagine_task": "01a13c35-dd5e-7073-95c4-f14cdbe604e9",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c38-25d8-7540-8158-6d9dd35f38f1",
+  "crediti_modello": 30
+ },
+ "salvagente_nave": {
+  "immagine_task": "01a13c6b-ab8e-70b4-9347-4670bf7bccd2",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-5795-7279-bbee-fbabbcfc1372",
+  "crediti_modello": 30
+ },
+ "ciambella_gonfiabile": {
+  "immagine_task": "01a13c6b-acee-74f3-b720-e7d808fa8c59",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-5b5d-7156-8530-61f80126baca",
+  "crediti_modello": 30
+ },
+ "pallone_spiaggia": {
+  "immagine_task": "01a13c6b-ae5a-764f-8b97-05848047979c",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-5ee1-7606-97a0-8265f19d9972",
+  "crediti_modello": 30
+ },
+ "orsacchiotto_grande": {
+  "immagine_task": "01a13c6b-afc0-776f-a44b-5c880bbf1f31",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-626f-77ed-811c-31cb46dfd36f",
+  "crediti_modello": 30
+ },
+ "tubi_galleggianti": {
+  "immagine_task": "01a13c6b-b123-7430-b9c9-22b9cb3b671d",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-6613-72c0-bd9c-7480c28e1305",
+  "crediti_modello": 30
+ },
+ "sedia_bagnino": {
+  "immagine_task": "01a13c6b-b280-777b-b07e-7aad8aea8b35",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-6989-729d-897a-76abfa05869b",
+  "crediti_modello": 30
+ },
+ "balena_gonfiabile_sgonfia": {
+  "immagine_task": "01a13c6b-b43c-765e-ae3a-183509fd18e3",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-6cee-7327-99eb-c8193210bfcc",
+  "crediti_modello": 30
+ },
+ "fungo_fontana": {
+  "immagine_task": "01a13c6b-b58b-731d-9a32-049ec0da5a75",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-7055-7019-8938-77687327c27b",
+  "crediti_modello": 30
+ },
+ "cannoncino_acqua": {
+  "immagine_task": "01a13c6b-b6ee-75a8-8f5f-bbf0c6214975",
+  "crediti_immagine": 6,
+  "modello_task": "01a13c6c-73cc-76ba-b103-044f85df5d49",
+  "crediti_modello": 30
+ }
+}

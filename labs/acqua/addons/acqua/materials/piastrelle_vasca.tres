@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://addons/acqua/shaders/wet_surface.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://addons/acqua/textures/superfici/piastrelle_vasca_albedo.jpg" id="2"]
+[ext_resource type="Texture2D" path="res://addons/acqua/textures/superfici/piastrelle_vasca_normal.jpg" id="3"]
+[ext_resource type="Texture2D" path="res://addons/acqua/textures/superfici/piastrelle_vasca_orh.jpg" id="4"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/albedo_tex = ExtResource("2")
+shader_parameter/normal_tex = ExtResource("3")
+shader_parameter/orh_tex = ExtResource("4")
+shader_parameter/uv_scale = 0.8333
+shader_parameter/roughness_scale = 0.8
+shader_parameter/albedo_tint = Color(0.5, 0.6, 0.66, 1)

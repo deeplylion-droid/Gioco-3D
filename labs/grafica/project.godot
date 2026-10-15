@@ -1,0 +1,26 @@
+; Laboratorio grafica: luci, torcia, effetti ambientali, opzioni grafiche.
+; Il codice riutilizzabile sta in res://grafica/ (vedi README.md).
+
+config_version=5
+
+[application]
+
+config/name="Laboratorio grafica"
+run/main_scene="res://scena/sala_prova.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+
+[autoload]
+
+Grafica="*res://grafica/impostazioni_grafiche.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+
+[rendering]
+
+lights_and_shadows/directional_shadow/size=4096
+lights_and_shadows/positional_shadow/atlas_size=4096
+anti_aliasing/quality/use_debanding=true
+environment/volumetric_fog/use_filter=1

@@ -1,0 +1,29 @@
+{
+ "centro_x": -0.00178,
+ "centro_z": 0.59885,
+ "raggio_anello_interno": 0.06879,
+ "raggio_anello_esterno": 0.08036,
+ "raggio_punte": 0.09321,
+ "raggio_pupilla": 0.0315,
+ "raggio_orbita": 0.09921,
+ "pixel": {
+  "cx": 693.07928,
+  "cy": 937.82387,
+  "scala_m_per_px": 0.00025714285714285715,
+  "immagine": "build/viso_piatto.png",
+  "zc": 0.66,
+  "lato_px": 1400,
+  "r_anello_in": 267.5,
+  "r_anello_out": 312.5,
+  "r_punte": 362.5,
+  "r_pupilla": 122.5
+ },
+ "sfera_viso": {
+  "centro": [
+   -0.00334,
+   -0.08868,
+   0.61319
+  ],
+  "raggio": 0.14269
+ }
+}
