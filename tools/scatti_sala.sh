@@ -6,7 +6,8 @@
 #
 # Uso: tools/scatti_sala.sh <cartella> <prefisso> [scatti separati da virgole | tutti] [preset] [frame]
 #   per esempio: tools/scatti_sala.sh docs/report/qualita_sala dopo tutti alto_smaa 50
-# Variabili: LIMITE_MB (13000), LOCK (/home/user/tools/render.lock), RISOLUZIONE (1600x900).
+# Variabili: LIMITE_MB (13000), LOCK (/home/user/tools/render.lock), RISOLUZIONE (1600x900),
+# LOGDIR (/tmp: il log di Godot di ogni scatto).
 set -u
 RADICE=$(cd "$(dirname "$0")/.." && pwd)
 LIMITE_MB=${LIMITE_MB:-13000}
@@ -15,7 +16,7 @@ RIS=${RISOLUZIONE:-1600x900}
 
 if [ "${1:-}" = "--uno" ]; then
 	CARTELLA=$2; PREFISSO=$3; S=$4; PRESET=$5; FRAME=$6
-	LOG="$CARTELLA/.log_${PREFISSO}_$S.txt"
+	LOG="${LOGDIR:-/tmp}/scatti_sala_${PREFISSO}_$S.log"
 	cd "$RADICE/godot" || exit 1
 	xvfb-run -a -s "-screen 0 ${RIS}x24" nice -n 8 godot --rendering-driver vulkan --fixed-fps 60 \
 		--resolution "$RIS" --path . --script res://tests/run.gd -- res://tests/scatti_sala.gd \

@@ -12,13 +12,13 @@ SALA = os.path.join(RADICE, 'assets_src', 'ambiente', 'glb', 'sala')
 OUT = os.path.join(RADICE, 'assets_src', 'ambiente', 'INTEGRAZIONE.md')
 
 CONTENUTO = {
-    'sala_architettura': 'pavimento (piastrelle asciutte, umide e bagnate; pozzanghere a specchio), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d\'emergenza, insegna a pesce, altoparlanti',
-    'sala_vasca_centrale': '**vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell\'acqua, scatola del pulsante della sigla; cordone di velluto; lampione; 2 fari sulla ringhiera della galleria; offerte dei bambini',
+    'sala_architettura': 'pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d\'emergenza, insegna a pesce, altoparlanti',
+    'sala_vasca_centrale': '**vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell\'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d\'ottone HQ; lampione HQ; 2 fari sulla ringhiera della galleria; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella)',
     'sala_cupola': 'cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro)',
     'sala_piscina': 'piscina a onde vuota: fondo con pendenza e conca dello scarico, linea dell\'ultimo livello dell\'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette',
-    'sala_area_bimbi': 'struttura di gioco, **secchio gigante** e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi',
+    'sala_area_bimbi': 'struttura di gioco (pali tondi, bordi smussati), **secchio gigante** HQ e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi',
     'sala_torre_scivoli': 'torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d\'arrivo',
-    'sala_oggetti': 'oggetti di scena Meshy (istanze condivise), comprese le offerte alla base del monumento (salvagente, orsetto, paperelle, pallone, ciambella)',
+    'sala_oggetti': 'oggetti di scena Meshy HQ (istanze condivise): giocattoli e gonfiabili, lettini, sedia del bagnino, funghi-fontana, cannoncini, panche, cestini, cartelli. Uguale con la vasca e con il monumento: le offerte dei bambini stanno nel GLB del centro',
     'sala_interattivi': 'elementi degli enigmi come nodi separati con il perno giusto (vedi sotto)',
     'sala_acqua': '**segnaposto** piatti dell\'acqua (da sostituire con l\'acqua vera)',
 }
@@ -99,6 +99,16 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 
 ## Novità (15 ottobre)
 
+- **Passata HQ** (al livello del pezzo campione degli interni): oggetti di scena rifatti con Meshy HQ
+  (stessi nomi, posizioni e misure; ora anche ruotati come previsto: prima l'importatore lasciava tutti
+  gli oggetti dritti), lampione, colonnine del cordone e secchio gigante HQ, panche, cestini e cartelli
+  nuovi lungo i muri, struttura di gioco smussata, pavimento con **un solo materiale** (niente più
+  chiazze a quadretti) e pozzanghere 3 mm sopra il pavimento. Il lampione tiene la lampadina dove c'è
+  `luce_lampione` (la luce non si sposta) e il secchio tiene nodo, perno e collisione.
+  **I GLB del gioco vanno bene sia con la vasca sia con il monumento**: le offerte dei bambini sono nel
+  GLB del centro; in `godot/assets/ambiente/sala/` per ora c'è ancora `sala_monumento.glb` (rifatto con
+  gli stessi pezzi HQ) e i vecchi `sala_interattivi.glb`, `sala_luci.glb` e `sala_acqua.glb`, che
+  dipendono dal centro: quelli della vasca si mettono quando si monta la vasca.
 - **La sala è più lunga di 8 m verso sud**: il muro sud ora è a **z = 20** (prima 12). Tutto il resto
   (piscina, pozza, portello, turbina, cancello, vasche, torre, area bimbi) è **rimasto dov'era**:
   cambiano solo l'ingresso, lo spawn e la statua.
@@ -172,7 +182,7 @@ al posto di `sala_monumento.glb`, che è in `glb/per_dopo/`.
   - Luci: `luce_faro_0/1` (fari sulla ringhiera della galleria sud, puntati sul davanti della vasca),
     `luce_vasca_0/1` (sott'acqua, verso la medusa), `luce_lampione` (base {g3(d['lampione']['base_godot'])}).
   - Offerte dei bambini intorno alla vasca: disegni a pastello senza scritte, conchiglie, stelle marine,
-    secchiello; salvagente, orsetto, paperelle (una galleggia), ciambella in acqua e pallone in `sala_oggetti.glb`.
+    secchiello; salvagente, orsetto, paperelle (una galleggia), ciambella in acqua e pallone (sono nello stesso GLB della vasca).
 - **Secchio gigante**: nodo `sala_secchio_gigante`, perno sui suoi perni; si ribalta ruotando intorno all'asse **X**.
 - **Ruota a pale**: nodo `sala_ruota_pale`, perno sull'asse, gira intorno all'asse **X**.
 - La galleria si sale dalla scala sul lato est; la torre dalle rampe sul lato sud.

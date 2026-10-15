@@ -66,8 +66,9 @@ le mani sul bordo verso l'ingresso. Nodo `sala_vasca_centrale` in `sala_vasca_ce
 
 Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagli.py`:
 
-- **Pavimento** a piastrelle da 25 cm con tre materiali (asciutto, umido, bagnato) scelti piastrella
-  per piastrella da un campo in spazio mondo; pozzanghere a specchio con la texture del pavimento.
+- **Pavimento** a piastrelle da 25 cm con **un solo materiale**: umidità e sporco sfumati nei colori dei
+  vertici (i tre materiali asciutto/umido/bagnato scelti piastrella per piastrella facevano chiazze a
+  quadretti, tolti nella passata HQ); pozzanghere a specchio opache, 3 mm sopra il pavimento.
 - **Sporco nei colori dei vertici** calcolato in spazio mondo (pareti, pavimento, galleria, piscina,
   scivoli, torre, giochi): niente ripetizioni. Pareti e pavimento hanno vertici ogni 25 cm.
 - **Profili**: battiscopa a sguscio (raggio 8 cm) tra pavimento e piastrelle, listelli ai bordi della
@@ -90,6 +91,30 @@ Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagl
 - **Tubo dell'inseguimento** (lo scivolo rosso a spirale): Ø interno 1,6 m, parete 6 cm, flange ogni
   2 m con 12 bulloni, come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. La bocca
   sputa nella vasca d'arrivo da est, 16 cm sopra l'acqua. Gli altri due tubi restano da 1,0 m.
+
+## Passata HQ della sala (al livello del pezzo campione)
+
+- **Oggetti di scena rifatti con Meshy** come gli interni di ambienti-1 (`assets_src/ambiente/oggetti_hq/genera_hq.py`):
+  immagine di riferimento nano-banana-pro nello stile del campione (bordi morbidi smussati, usura leggera)
+  -> image-to-3d meshy-7.1, geometria 4k, PBR, remesh a triangoli. Nel repository i GLB hanno le texture
+  già ridotte a 2K JPG (le 4K si riscaricano dal task in `<nome>.json`). Stessi nomi e stesse misure dei
+  vecchi (lettino, salvagente, sedia del bagnino, paperella, pallone, ciambella, tubi, delfino, balena,
+  orsacchiotto, fungo-fontana, cannoncino) più quelli nuovi: colonnina d'ottone del cordone, lampione
+  col braccio, cestino a pesce, cartello giallo del pavimento bagnato, secchio gigante; la panca è quella
+  HQ degli spogliatoi. In sala le texture sono 2K per gli oggetti grandi, 1K per i piccoli.
+- **Lampione**: il modello HQ si gira e si scala da solo perché la lampadina cada dove c'è `luce_lampione`
+  (la luce non si sposta); la lampadina che sfarfalla resta `M_amb_lampadina`, nel nodo `amb_lampione`.
+- **Secchio gigante**: modello HQ nello stesso nodo `sala_secchio_gigante`, con i mozzi sul perno (asse x)
+  e la stessa collisione; il gioco lo fa ribaltare come prima.
+- **Cordone**: colonnine HQ (istanze), il velluto e le collisioni delle campate restano quelli di prima.
+- **Arredi nuovi** (`arredi()` in `ambiente_sala.py`): 5 panche lungo i muri, 5 cestini, 4 cartelli
+  (uno caduto), fuori dai percorsi.
+- **Struttura di gioco** ancora fatta a mano (pedane e collisioni del gioco), con pali tondi a cappuccio,
+  piastre di base, smussi più larghi e tubi più fitti.
+- **GLB uguali col monumento e con la vasca**: le offerte dei bambini stanno nel GLB del centro
+  (`sala_vasca_centrale.glb` o `sala_monumento.glb`), `sala_oggetti.glb` e `sala_architettura.glb` non
+  dipendono dal centro (zone libere calcolate sempre sull'ingombro della vasca col cordone, che copre
+  anche il monumento).
 
 ## Convenzioni dei nomi
 
@@ -138,7 +163,8 @@ Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagl
   dell'acqua nella piscina. Le fughe delle piastrelle hanno la normal map più forte (`normale` 1,6).
 - Grigliati e rosa dei venti: PNG con alfa (alpha scissor in Godot).
 - Oggetti Meshy: GLB grezzi in `oggetti/<nome>/<nome>_meshy.glb` (texture ricompresse in JPG, la
-  geometria è quella di Meshy); in sala hanno texture 1K se piccoli, 2K se grandi.
+  geometria è quella di Meshy); in sala hanno texture 1K se piccoli, 2K se grandi. Se esiste la versione
+  HQ in `oggetti_hq/<nome>.glb` la sala usa quella.
 
 ## LOD e poligoni
 
@@ -172,6 +198,7 @@ $PY tools/blender/ambiente_texture.py scarica              # texture CC0 (2K) + 
 $PY tools/blender/ambiente_texture.py deriva sala_a        # texture della palette (anche p1_..., p2_..., p3_...)
 $PY assets_src/ambiente/oggetti/meshy_oggetti.py immagini   # Meshy: immagini di riferimento (crediti!)
 $PY assets_src/ambiente/oggetti/meshy_oggetti.py modelli    # Meshy: modelli 3D (crediti!)
+python3 assets_src/ambiente/oggetti_hq/genera_hq.py [--immagini] [nomi]   # Meshy HQ (crediti!): solo quelli che mancano
 $PY tools/blender/ambiente_oggetti.py ricomprimi --copia <cartella fuori dal repo>
 $PY tools/blender/ambiente_sala.py --glb assets_src/ambiente/glb/sala          # GLB della sala
 $PY tools/blender/ambiente_integrazione.py                                      # INTEGRAZIONE.md dai GLB

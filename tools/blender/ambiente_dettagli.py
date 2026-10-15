@@ -2,8 +2,9 @@
 
 - sporco in spazio mondo nei colori dei vertici (niente ripetizioni: macchie grandi, umidità che
   risale, colature dall'alto, angoli più sporchi, linea dell'acqua nella piscina);
-- pavimento bagnato a chiazze (tre materiali con rugosità diverse, assegnati piastrella per
-  piastrella) e pozzanghere a specchio che seguono le zone bagnate;
+- pavimento con un solo materiale (l'umidità sfumata è nei colori dei vertici; i materiali diversi
+  piastrella per piastrella facevano chiazze a quadretti) e pozzanghere a specchio opache, 3 mm sopra
+  il pavimento, che seguono le zone bagnate;
 - funzioni di rumore (numpy) usate anche dalle texture.
 
 Lo usa tools/blender/ambiente_sala.py (che va lanciato come script: importa questo modulo).
@@ -153,12 +154,6 @@ def bagnato_punto(x, y):
     return float(W[min(i, W.shape[0] - 1), min(j, W.shape[1] - 1)])
 
 
-def materiali_pavimento(cx, cy):
-    """Materiale di ogni piastrella (25 cm) di centro (cx, cy): asciutto, umido o bagnato."""
-    w = bagnato(np.asarray(cx, np.float64), np.asarray(cy, np.float64))
-    return np.where(w > 0.6, 'pavimento_bagnato', np.where(w < 0.3, 'pavimento_asciutto', 'pavimento'))
-
-
 def sporco_pavimento(P, N):
     x, y = P[:, 0], P[:, 1]
     n1 = fbm3(P, 0.12, 3, seme=3)
@@ -292,7 +287,7 @@ def posti_pozzanghere(n=48, seme=8):
     P, V, PD, ST, T = S.PISCINA, S.VASCA_ARRIVO, S.PIEDISTALLO, S.STRUTTURA, S.TORRE
     vietati = [(P['x0'] - 0.75, P['y0'] - 0.75, P['x1'] + 0.75, P['y1'] + 0.75),
                (V['x0'] - 0.75, V['y0'] - 0.75, V['x1'] + 0.75, V['y1'] + 0.75),
-               tuple(v + d for v, d in zip(S.ingombro_centro(), (-0.2, -0.2, 0.2, 0.2))),
+               tuple(v + d for v, d in zip(S.ingombro_centro('vasca'), (-0.2, -0.2, 0.2, 0.2))),
                (S.LAMPIONE[0] - 0.4, S.LAMPIONE[1] - 0.4, S.LAMPIONE[0] + 0.4, S.LAMPIONE[1] + 0.4),
                (-1.2, S.Y0, 1.2, S.Y0 + 1.6),
                (ST['cx'] - 4.6, ST['cy'] - 5.6, ST['cx'] + 2.0, ST['cy'] + 3.4),
@@ -321,7 +316,7 @@ def posti_pozzanghere(n=48, seme=8):
 
 
 def pozzanghere(mats, n=48, seme=8):
-    """Pozzanghere a specchio: poligoni irregolari 4 mm sopra il pavimento, con la stessa texture
+    """Pozzanghere a specchio: poligoni irregolari 3 mm sopra il pavimento, con la stessa texture
     del pavimento (UV in scala reale: le fughe combaciano) ma lisci e scuri (M_amb_pozzanghera:
     opaco, così in Godot riflettono con SSR)."""
     c = K.Costruttore(mats)
@@ -337,7 +332,7 @@ def pozzanghere(mats, n=48, seme=8):
             rr = r0 * (1 + 0.22 * math.sin(2 * t + fase[0]) + 0.12 * math.sin(3 * t + fase[1]) +
                        0.07 * math.sin(5 * t + fase[2]) + 0.04 * math.sin(9 * t + fase[3]))
             px, py = math.cos(t) * rr * sx, math.sin(t) * rr * sy
-            pts.append((x + px * math.cos(a) - py * math.sin(a), y + px * math.sin(a) + py * math.cos(a), 0.004))
+            pts.append((x + px * math.cos(a) - py * math.sin(a), y + px * math.sin(a) + py * math.cos(a), 0.003))
         c.faccia(pts, 'pozzanghera')
     ob = c.crea('sala_pozzanghere')
     colora(ob, lambda P, N: 0.62 + 0.1 * fbm3(P, 0.8, 2, seme=71))
