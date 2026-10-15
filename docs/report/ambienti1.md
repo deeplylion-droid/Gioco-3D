@@ -102,3 +102,11 @@ Cosa è cambiato:
 - Stesse coordinate e stesso gameplay: `test_interni` 24/24, `test_sala` 43/43, `check_scripts` 0 errori. Lo zaino è appeso davanti alla nuova rastrelliera (`marker_zaino_pompa` ora in (14,50; 1,25; -8,43)).
 
 Crediti Meshy usati per il campione: circa 750.
+
+### Secondo giro sul campione (soffitti e usura)
+
+- **Soffitti da nave** nel corridoio, nel corridoio lava-piedi, nel gabbiotto e nello stanzino: pannelli di lamiera smussati con i giunti aperti, ordinate, un pannello mancante (si vede il buio sopra) e uno staccato che pende (corridoio e stanzino); condotto dell'aria con flange e bocchette, canalina con i cavi (uno pende), sprinkler sul tubo rosso (testina Meshy). Funzioni in `tools/blender/ambienti1_build.py`: `soffitto_nave`, `condotto_aria`, `canalina_cavi`, `sprinkler`.
+- **Macchie d'acqua sul soffitto** fatte nello shader con il rumore in spazio mondo: chiazze con l'alone, mai uguali.
+- **Usura delle pareti** (shader `parete.gdshader`, tutto in spazio mondo): tinta diversa per ogni pannello, colature di ruggine sotto alcuni rivetti, aloni d'acqua scesi dal soffitto con il bordo scuro, strisciate in basso, sporco più scuro verso il pavimento, rivetti con l'anello; due lamiere ammaccate nel corridoio, lontano dal cartellone.
+- Scatti di controllo da Godot: `docs/report/qualita_interni/giro2_corridoio.jpg`, `giro2_lavapiedi.jpg`, `giro2_stanzino.jpg` (la luce è ancora quella vecchia: la rifà la sessione grafica).
+- Test: `test_interni` 24/24, `test_sala` 43/43, `check_scripts` 0 errori.
