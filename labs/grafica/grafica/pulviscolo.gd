@@ -52,6 +52,14 @@ func _ready() -> void:
 	mat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	mat.backlight_enabled = true      # brilla anche controluce, come la polvere vera
 	mat.backlight = Color(0.6, 0.6, 0.6)
+	# Additiva: la polvere può solo aggiungere la luce che riflette. Con la fusione
+	# normale, contro la nebbia illuminata (es. un lampo) sembrava fatta di puntini neri.
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.disable_receive_shadows = true
+	mat.disable_fog = true
 	q.material = mat
 	draw_pass_1 = q
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Strato 20: la luce del lampo non lo illumina. Granelli minuscoli e molto luminosi
+	# mandano in crisi il TAA/FSR 2 di Godot (diventano puntini neri).
+	layers = Tempesta.STRATO_NO_LAMPO

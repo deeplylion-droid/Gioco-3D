@@ -4,6 +4,9 @@ Ultimo aggiornamento: 14 ottobre 2026. Progetto di prova: `labs/grafica/` (Godot
 
 ## Cosa è finito
 
+- **Consegna nel gioco**: `godot/addons/grafica/` (README con i passi esatti). Si rigenera dal laboratorio con `labs/grafica/strumenti/esporta_addon.sh`.
+- **Look della sala principale vera** (`LookSala` + `sala/ambiente_sala.tres` + `sala/attributi_camera_sala.tres`): in corso i render prima/dopo a 1920×1080.
+
 - **Scena di prova notturna**: sala rotonda con cupola di vetro e costoloni, piscina vuota con pozza, 12 colonne, balconata con ringhiera, corridoio laterale, piedistallo con la base Meshy della medusa (ridotta) e lampione. Geometria semplice, luci e materiali veri (texture CC0 Poly Haven).
 - **Opzioni grafiche** (autoload `Grafica`): preset Basso/Medio/Alto/Ultra, salvataggio in `user://settings.cfg`, applicazione immediata.
 - **Menu delle opzioni** a 5 schede (Schermo, Resa, Luci e ombre, Immagine, Luminosità) e **calibrazione della luminosità**.
@@ -24,7 +27,6 @@ Tutti in `docs/report/render_grafica/` (presi dal motore, 1280×720, Vulkan soft
 | `torcia_corridoio.jpg` | La torcia nel corridoio al buio (fascio nella nebbia, ombre) |
 | `lampo_cupola.jpg` / `lampo_sala.jpg` | Un lampo visto attraverso la cupola e la sala illuminata dal lampo |
 | `nebbia_luci.jpg` / `nebbia_corridoio.jpg` | Nebbia volumetrica con le luci d'emergenza e i neon |
-| `gi_nessuna.jpg` / `gi_voxelgi.jpg` / `gi_sdfgi.jpg` | Confronto dell'illuminazione globale |
 | `menu_resa.jpg` / `menu_luci.jpg` / `calibrazione.jpg` | Il menu delle opzioni e la calibrazione della luminosità |
 | `lampi_cupola.mp4` (+ `.gif`) | 7 secondi di temporale visto dalla sala |
 | `neon_corridoio.mp4` (+ `.gif`) | 6 secondi di neon che sfarfallano e lampeggiante rotante |

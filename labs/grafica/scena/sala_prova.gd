@@ -651,6 +651,7 @@ func _crea_effetti() -> void:
 	var mq := StandardMaterial3D.new()
 	mq.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mq.albedo_color = Color(0.7, 0.75, 0.85, 0.25)
+	mq.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	mq.albedo_texture = PunteggioMorbido.texture()
 	mq.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
 	mq.backlight_enabled = true
