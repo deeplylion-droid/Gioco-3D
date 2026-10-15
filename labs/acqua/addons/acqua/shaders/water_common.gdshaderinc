@@ -94,7 +94,8 @@ float water_ripple_height_tex(sampler2D tex, vec4 rect, vec2 xz) {
 	if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) {
 		return 0.0;
 	}
-	return textureLod(tex, uv, 0.0).r;
+	float h = textureLod(tex, uv, 0.0).r;
+	return (isnan(h) || isinf(h)) ? 0.0 : h;
 }
 
 // Pendenza (dh/dx, dh/dz), curvatura (laplaciano, 1/m) e schiuma della simulazione.
@@ -108,6 +109,9 @@ vec4 water_ripple_sample_tex(sampler2D tex, vec4 rect, vec2 xz) {
 		return vec4(0.0);
 	}
 	vec2 tsize = vec2(textureSize(tex, 0));
+	if (tsize.x < 2.0 || tsize.y < 2.0) {
+		return vec4(0.0); // simulazione non ancora pronta (texture segnaposto)
+	}
 	vec2 texel = 1.0 / tsize;
 	vec2 cell = rect.zw * texel; // metri per texel
 	vec4 c = textureLod(tex, uv, 0.0);
@@ -119,7 +123,8 @@ vec4 water_ripple_sample_tex(sampler2D tex, vec4 rect, vec2 xz) {
 	float lap = (hl + hr - 2.0 * c.r) / (cell.x * cell.x) + (hu + hd - 2.0 * c.r) / (cell.y * cell.y);
 	// i bordi della simulazione sfumano a zero
 	float edge = smoothstep(0.0, 0.02, min(min(uv.x, uv.y), min(1.0 - uv.x, 1.0 - uv.y)));
-	return vec4(slope, lap, c.b) * edge;
+	vec4 r = vec4(slope, lap, c.b) * edge;
+	return (any(isnan(r)) || any(isinf(r))) ? vec4(0.0) : r;
 }
 
 // Versioni che usano la simulazione "attiva" (quella della vasca piu' vicina alla camera),
@@ -154,11 +159,11 @@ vec3 water_caustics(vec2 surf_xz, float depth, float scale, float lod) {
 	float focus = smoothstep(0.02, 0.7, depth);
 	vec3 c;
 	if (water_quality >= 2) {
-		// dispersione: il blu si mette a fuoco un po' prima del rosso
-		float k = 0.006 * depth;
-		float r1 = water_caustics_raw(p1 * (1.0 - k), t, blur);
+		// dispersione: i tre colori arrivano in punti appena diversi (piu' separati in profondita')
+		vec2 k = vec2(0.0035, 0.0022) * min(depth, 3.0);
+		float r1 = water_caustics_raw(p1 - k, t, blur);
 		float g1 = water_caustics_raw(p1, t, blur);
-		float b1 = water_caustics_raw(p1 * (1.0 + k), t, blur);
+		float b1 = water_caustics_raw(p1 + k, t, blur);
 		float l2 = water_caustics_raw(p2, t * 0.83 + 0.5, blur + 0.5);
 		c = vec3(r1, g1, b1) * mix(1.0, l2, 0.4);
 	} else if (water_quality == 1) {

@@ -52,6 +52,11 @@ func convert_now() -> void:
 	print_verbose("WetSurfaceConverter: %d superfici convertite" % converted)
 
 
+## Converte le mesh sotto un nodo qualsiasi (in alternativa a `roots`).
+func convert_root(root: Node) -> void:
+	_walk(root)
+
+
 func _walk(n: Node) -> void:
 	var mi := n as MeshInstance3D
 	if mi and mi.mesh:

@@ -2,6 +2,16 @@
 
 Agente degli ambienti tecnici del capitolo 1. Ultimo aggiornamento: 15 ottobre 2026.
 
+## Kit di dettagli per la sala principale (nuovo compito del coordinatore, 15 ottobre)
+
+**Stato: primo giro finito.** In `assets_src/ambiente_dettagli/` (istruzioni in `README.md`):
+
+- **96 dettagli in 8 GLB** (detriti, cavi, tubi e condotte con bocchette, cassette elettriche e quadro, corpi lampada, cartelli con soli disegni, alghe secche e incrostazioni, catene e corde), con più varianti. Usano i materiali e la palette `sala_a` del kit della sala; le texture nuove sono CC0 2K di ambientCG. 8 piccoli oggetti (giocattoli, ciabatta, maschera da sub) fatti con Meshy.
+- **`posizionamento.json`: 479 posti suggeriti nella sala**, in coordinate Godot, trovati con dei raggi sulla geometria vera dei GLB della sala: pavimento libero, muri piatti senza oblò e porte, soffitto della galleria, bordi e fondo della piscina. Il percorso dallo spawn al piedistallo resta pulito. Provato in Godot 4.7.2: tutte le istanze si caricano; c'è lo snippet GDScript nel README.
+- **Render da mostrare**: `docs/report/render_ambienti2/dettagli_vetrina.jpg` (render Cycles della vetrina) e lo screenshot dal motore, prima e dopo: `dettagli_godot_muro_prima.jpg` / `dettagli_godot_muro_dopo.jpg` (Godot 4.7.2, con lo script delle luci della sala).
+- Scelte: niente collisioni (sono decorativi); niente luci dentro i dettagli (accesi/spenti si cambia il materiale); cartelli solo con pittogrammi; ho tolto un cartello con la mascotte disegnata, perché l'aspetto della mascotte lo decide l'utente.
+
+
 ## Cosa è finito
 
 Tutti e quattro i pezzi sono **finiti**: modelli 3D, GLB per Godot e render Cycles (1600x900, denoiser OIDN, dal punto di vista del giocatore).

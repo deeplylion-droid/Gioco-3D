@@ -296,6 +296,9 @@ void fragment() {
 	s -= dip_slope;
 	vec4 rip = water_ripple_sample_tex(ripple_tex, ripple_rect, wp.xz);
 	s += rip.xy * ripple_normal_strength;
+	if (any(isnan(s)) || any(isinf(s))) {
+		s = vec2(0.0);
+	}
 	// lontano le onde fini diventano rugosita' (meno scintillio)
 	float far_fade = 1.0 / (1.0 + cam_dist * 0.02);
 	vec3 n_world = normalize(vec3(-s.x * far_fade, 1.0, -s.y * far_fade));

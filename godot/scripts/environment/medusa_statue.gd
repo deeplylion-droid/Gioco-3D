@@ -31,6 +31,9 @@ extends Node3D
 @export var pulse_channel_light := 6.0
 ## Pulsazioni al secondo durante la sigla.
 @export var pulse_rate := 1.6
+## Da statua (ferma, spenta) le vene luminose dei tentacoli brillano poco: si moltiplica
+## l'emissione del loro materiale (1 = come nel modello).
+@export var tentacle_glow := 0.22
 
 var _instance: Node3D
 var _bell: ShaderMaterial
@@ -105,4 +108,7 @@ func _rebuild() -> void:
 			if mat.resource_name == "M_campana" and _bell:
 				(mi as MeshInstance3D).set_surface_override_material(s, _bell)
 			elif mat.resource_name == "M_tentacoli" and tentacle_material:
-				(mi as MeshInstance3D).set_surface_override_material(s, tentacle_material)
+				var tm := tentacle_material.duplicate() as Material
+				if tm is BaseMaterial3D:
+					(tm as BaseMaterial3D).emission_energy_multiplier *= tentacle_glow
+				(mi as MeshInstance3D).set_surface_override_material(s, tm)

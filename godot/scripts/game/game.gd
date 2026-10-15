@@ -1,7 +1,8 @@
 extends Node
 ## Autoload "Game": pausa con Esc e cattura del mouse.
 ## Esc mette in pausa e libera il mouse: dal menu di pausa si riprende, si aprono le opzioni
-## grafiche (addon grafica) o si esce. Al primo avvio: preset Ultra e calibrazione della luminosità.
+## grafiche (addon grafica) o si esce. Al primo avvio: preset Alto e calibrazione della luminosità.
+## F3 mostra FPS, tempo del fotogramma e preset.
 
 signal paused_changed(is_paused: bool)
 
@@ -13,8 +14,8 @@ signal paused_changed(is_paused: bool)
 const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
 
-## Al primo avvio (nessun user://settings.cfg) parte con il preset Ultra e la GI SDFGI.
-@export var first_run_preset := "ultra"
+## Al primo avvio (nessun user://settings.cfg) parte con questo preset dell'addon grafica.
+@export var first_run_preset := "alto"
 
 var _overlay: CanvasLayer
 var _had_focus := false
@@ -29,7 +30,8 @@ func _ready() -> void:
 	var first_run := not FileAccess.file_exists("user://settings.cfg")
 	if first_run and not is_automated():
 		Grafica.applica_preset(first_run_preset)
-		Grafica.imposta("gi", 2)
+	# Contatore delle prestazioni (F3), spento all'avvio.
+	add_child(load("res://scripts/ui/fps_counter.gd").new())
 	if not is_automated() and not bool(Grafica.valore("calibrato")):
 		_show_calibration.call_deferred()
 	# Aberrazione cromatica più leggera di quella dell'addon (frange colorate ai bordi).

@@ -18,6 +18,10 @@ var p: Player
 
 
 func _ready() -> void:
+	# Interruttore per fermare in fretta una serie di screenshot già in coda.
+	if FileAccess.file_exists("/tmp/claude-0/-home-user/07654ebb-af35-5717-9d4e-86afbe1a6c7d/scratchpad/godot_agent/SALTA_SCREENSHOT"):
+		get_tree().quit()
+		return
 	var args := OS.get_cmdline_user_args()
 	if args.size() > 1:
 		out_dir = args[1]
@@ -118,6 +122,13 @@ func _capture(file: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	img.save_jpg(out_dir.path_join(file + ".jpg"), 0.92)
 	print("salvato ", file)
+	print("memoria: statica %d MB, video %d MB (texture %d MB, buffer %d MB), pipeline %d, oggetti %d" % [
+		Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576,
+		Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED) / 1048576,
+		Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED) / 1048576,
+		Performance.get_monitor(Performance.RENDER_BUFFER_MEM_USED) / 1048576,
+		Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW) + Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION),
+		Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)])
 
 
 func _frames(n: int) -> void:
