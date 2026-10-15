@@ -1,6 +1,6 @@
 # Report grafica (branch `lavoro/grafica`)
 
-Ultimo aggiornamento: 14 ottobre 2026. Progetto di prova: `labs/grafica/` (Godot 4.7.2, Forward+). Come integrarlo nel gioco: `labs/grafica/README.md`.
+Ultimo aggiornamento: 15 ottobre 2026. Progetto di prova: `labs/grafica/` (Godot 4.7.2, Forward+). Come integrarlo nel gioco: `labs/grafica/README.md`.
 
 ## Cosa è finito
 
