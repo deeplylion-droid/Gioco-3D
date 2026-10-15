@@ -12,6 +12,8 @@ signal paused_changed(is_paused: bool)
 
 const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
+const SCENE_TITLE := "res://scenes/ui/menu_principale.tscn"
+const SCENE_CONTROLS := "res://scenes/ui/comandi.tscn"
 
 ## Al primo avvio (nessun user://settings.cfg) parte con il preset Ultra e la GI SDFGI.
 @export var first_run_preset := "ultra"
@@ -72,6 +74,31 @@ func open_options() -> void:
 		if get_tree().paused:
 			_overlay.visible = true
 			_resume_button.grab_focus.call_deferred())
+
+
+## Schermata dei comandi (dal menu di pausa), come le opzioni.
+func open_controls() -> void:
+	if is_instance_valid(_menu_layer):
+		return
+	_overlay.visible = false
+	_menu_layer = load(SCENE_CONTROLS).instantiate()
+	add_child(_menu_layer)
+	_menu_layer.get_node(^"Comandi").connect(&"chiuso", func():
+		_menu_layer = null
+		if get_tree().paused:
+			_overlay.visible = true
+			_resume_button.grab_focus.call_deferred())
+
+
+## Dal menu di pausa al titolo: i progressi in memoria si azzerano (il salvataggio su disco resta).
+func return_to_title() -> void:
+	set_paused(false)
+	# Una sequenza di morte in corso non deve ricaricare il livello dopo.
+	for n in GameState.get_children():
+		if n is DeathSequence:
+			n.queue_free()
+	GameState.reset_progress()
+	get_tree().change_scene_to_file(SCENE_TITLE)
 
 
 func capture_mouse() -> void:
@@ -155,6 +182,8 @@ func _build_overlay() -> void:
 	col.add_child(label)
 	_resume_button = _menu_button(col, "Riprendi", func(): set_paused(false))
 	_menu_button(col, "Opzioni grafiche", open_options)
+	_menu_button(col, "Comandi", open_controls)
+	_menu_button(col, "Torna al titolo", return_to_title)
 	_menu_button(col, "Esci dal gioco", func(): get_tree().quit())
 
 
