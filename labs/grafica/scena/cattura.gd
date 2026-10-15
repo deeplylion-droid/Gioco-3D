@@ -49,6 +49,12 @@ func _ready() -> void:
 	if _arg.get("buio", "0") == "1":
 		_scena.blackout(true)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	if _arg.has("nascondi"):  # per il debug: nasconde i nodi di queste classi o con questi nomi
+		var nomi := String(_arg["nascondi"]).split(",")
+		for n in _scena.find_children("*", "", true, false):
+			var cls: String = n.get_script().get_global_name() if n.get_script() else n.get_class()
+			if (cls in nomi or String(n.name) in nomi) and n is Node3D:
+				n.visible = false
 
 
 func _process(_delta: float) -> void:
