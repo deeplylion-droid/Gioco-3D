@@ -150,6 +150,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Va costruita nel modello 3D: geometria nascosta, osso o shape key per aprirla, bordi strappati.
 - **Versione malvagia (richiesta dell'utente, 15 ottobre)**: con la fauce aperta l'**occhio diventa più venato**, con capillari rossi dal bordo verso l'iride, così fa paura. Nel materiale è un parametro, così in gioco le vene compaiono quando attacca.
 - **Approvazione definitiva del modello**: l'utente vuole una scheda con il giro completo, i dettagli in viste separate e la versione malvagia (`docs/proposte/medusa/scheda/`).
+- **Modello approvato dall'utente (15 ottobre)** con la scheda di lavoro/medusa 94782be: giro, dettagli, versione malvagia e mani nuove ("a parte questo ci sta"). Resta da correggere solo la fauce: i denti sono tutti inclinati da una parte. Serve una fila sull'arcata di sopra e una su quella di sotto, inclinate in senso opposto, che si incastrano come in uno squalo.
 
 ### Movimento (deciso)
 
