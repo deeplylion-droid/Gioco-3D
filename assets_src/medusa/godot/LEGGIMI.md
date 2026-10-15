@@ -10,7 +10,9 @@ File:
   - tentacoli: materiale traslucido (`medusa_tentacoli.tres`) e texture (`tentacoli_base.jpg`,
     `tentacoli_emissione.jpg`, `tentacoli_normal.png`);
   - ciocche dei capelli: materiale lucido e bagnato (`medusa_ciocche.tres`) e texture (`ciocche_base.jpg`,
-    `ciocche_emissione.jpg`, `ciocche_normal.png`).
+    `ciocche_emissione.jpg`, `ciocche_normal.png`);
+  - pelle e labbro dell'orbita: vinile pervinca satinato (`medusa_pelle.tres`, `medusa_orbita.tres`) con le
+    texture 4K del corpo (`medusa_colore_4k.jpg`, `medusa_normal_4k.jpg`).
 
 ## Dove metterli
 
@@ -54,11 +56,19 @@ tentacoli) visto deformato e tinto di lilla, la luce dei canali che si sparge e 
   `$Medusa/Medusa_Scheletro/Skeleton3D/Medusa.set_surface_override_material(2, load("res://assets/models/medusa/medusa_campana.tres"))`
 
 Parametri utili: `luce_canali` (intensita'), `pulsazione_al_secondo` (0 = canali fissi, per la statua
-"spenta"), `opacita_centro` / `opacita_bordo`, `rifrazione`, `bagliore_dentro`.
+"spenta"), `opacita_centro` / `opacita_bordo`, `rifrazione`, `bagliore_dentro`. Dove sono i canali lo dice la
+texture colore (le righe chiare, `soglia_canali`); `campana_emissione.png` da' solo la tinta, sfocata.
 
 Dentro la campana c'e' la mesh `Medusa_Interno` (canali principali e secondari, canale ad anello, quattro
 gonadi: materiale emissivo `M_campana_interno`); sul bordo `Medusa_Bordo` (frangia di linguette col materiale
 dei tentacoli e puntini luminosi). Entrambe pulsano con la blend shape `campana_contrai`, come la campana.
+
+## Pelle
+
+Dal glTF la pelle arriva molto lucida (la ruvidita' della texture e' pensata per il render con la lacca).
+Per il vinile pervinca satinato del gioco usa `medusa_pelle.tres` su `M_pelle` (superficie 0 della mesh
+`Medusa`) e `medusa_orbita.tres` su `M_orbita` (superficie 3), sempre con Use External o da codice con
+`set_surface_override_material`. Tinta pervinca (0,74; 0,80; 1,0) e rugosita' 0,24.
 
 ## Tentacoli
 
