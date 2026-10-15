@@ -16,6 +16,10 @@ var only := ""
 
 
 func _ready() -> void:
+	# Interruttore per fermare in fretta una serie di screenshot già in coda.
+	if FileAccess.file_exists("/tmp/claude-0/-home-user/07654ebb-af35-5717-9d4e-86afbe1a6c7d/scratchpad/godot_agent/SALTA_SCREENSHOT"):
+		get_tree().quit()
+		return
 	var args := OS.get_cmdline_user_args()
 	if args.size() > 1:
 		out_dir = args[1]
