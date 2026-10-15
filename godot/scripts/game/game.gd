@@ -56,6 +56,9 @@ func _show_calibration() -> void:
 	get_tree().paused = true
 	release_mouse()
 	cal.tree_exited.connect(func():
+		# All'uscita dal gioco l'albero non c'è più: niente da riprendere.
+		if not is_inside_tree():
+			return
 		get_tree().paused = false
 		capture_mouse())
 
