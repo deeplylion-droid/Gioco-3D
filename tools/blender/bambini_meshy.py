@@ -217,6 +217,64 @@ for m, tag in (('nano-banana-pro', 'nbp'), ('gpt-image-2-5-flare', 'gpt')):
         'small pale glowing dots, wide open jaws with rows of white shark teeth and a pink tongue, '
         'pale yellow eyes.' + VIETATO, [AGN_LUPO], mv=True)
 
+# ---------------------------------------------------------------- cubo, corpo versione 2
+# Richiesta dell'utente dopo i primi render: il corpo era "troppo pacioccone". La testa a cubo
+# resta; il corpo diventa quello di un bambino magro di 7-9 anni in una muta da sub consunta.
+# '@ref_testa_cubo' è il render da studio (bambini_render.py, vista davanti) del primo modello,
+# ora in assets_src/bambini/scartati/cubo_corpo_v1/cubo_calmo.glb: serve solo per la testa.
+CORPO_MUTA = (
+    'the realistic, thin body of a 7 to 9 year old child, about 1.2 metres tall including the cube: '
+    'narrow shoulders, thin arms and thin legs that are slightly too long for its size, small hands in '
+    'black neoprene diving gloves, feet in black neoprene diving booties. No round belly, no chubby '
+    'toy-like limbs. The whole body is covered by an old, worn black diving wetsuit for children: matte, '
+    'slightly satin neoprene with visible stitched seams and panel lines, knee pads, faded and scuffed '
+    'areas, a few small tears with the lighter grey inner lining showing, a high collar that covers the '
+    'neck completely under the cube. The wetsuit is wet, with soft reflections only in the folds and '
+    'creases, and a few thin strands of dark green seaweed stuck to it. No skin visible anywhere. ')
+POSTURA = (
+    'Posture: it stands perfectly still, slightly hunched forward with drooping shoulders, thin arms '
+    'hanging limp at its sides, the cube head tilted a little to one side. Silent, motionless and '
+    'unsettling. ')
+TESTA_UGUALE = (
+    'The first reference image shows the head to keep: a white cube made of cracked swimming-pool tiles '
+    'with grey grout, green algae, small barnacles, orange rust streaks and a cute face drawn in black '
+    'marker (two short vertical dash eyes, round pink blush cheeks, small smile). Keep this cube head '
+    'exactly the same, same size relative to the body as a big box on the shoulders. ')
+for m, tag in (('nano-banana-pro', 'nbp'), ('gpt-image-2-5-flare', 'gpt')):
+    img(f'cubo2_calmo_{tag}', m, STILE + TESTA_UGUALE + 'Replace the body completely with ' +
+        CORPO_MUTA + POSTURA + 'Place it in the scene of the second reference image: the same abandoned '
+        'indoor water park at night, same spot on the wet tiled floor, same camera and lighting.' +
+        FIGURA_INTERA + VIETATO, ['@ref_testa_cubo', CUBO, AMB_A])
+
+CUBO2 = '@cubo2_calmo_nbp'  # scelto guardando le immagini: testa inclinata, corpo magro, muta
+MV_CUBO2 = (
+    'The same character as in the reference image, exactly the same design, materials, colors and '
+    'proportions: a thin child-sized figure in an old worn black neoprene wetsuit with stitched seams, '
+    'knee pads, small tears showing the light grey lining, black diving gloves and booties and a few '
+    'seaweed strands, with a big white cube head of cracked pool tiles with algae, barnacles and rust. '
+    'Same pose: standing still, slightly hunched, thin arms hanging, cube head tilted a little to one '
+    'side. Full body from head to feet, on a plain flat light grey background with soft even studio '
+    'lighting, no environment, no fog. The back view shows a long zipper with a pull strap running down '
+    'the back of the wetsuit. ')
+for m, tag in (('nano-banana-pro', 'nbp'), ('gpt-image-2-5-flare', 'gpt')):
+    img(f'mv_cubo2_calmo_{tag}', m, MV_CUBO2 + 'The front of the cube has a cute face drawn in black '
+        'marker (two vertical dash eyes, pink blush cheeks, small smile); no face on the back of the '
+        'cube.' + VIETATO, [CUBO2], mv=True)
+    img(f'cubo2_rivelato_{tag}', m, 'The same thin child character in the worn wetsuit as in the first '
+        'reference image: same body, same pose with the cube head tilted, same place, same camera '
+        'framing, same lighting. But its cube head is now broken open like the cube in the second '
+        'reference image. ' + massa(OCCHI_GIALLI) + FIGURA_INTERA + VIETATO,
+        [CUBO2, CUBO_RIV, STATUA])
+
+CUBO2_RIV = '@cubo2_rivelato_gpt'  # stessa testa inclinata del calmo
+for m, tag in (('nano-banana-pro', 'nbp'), ('gpt-image-2-5-flare', 'gpt')):
+    img(f'mv_cubo2_rivelato_{tag}', m, MV_CUBO2.replace('with a big white cube head of cracked pool '
+        'tiles with algae, barnacles and rust', 'with a big white cube head of cracked pool tiles with '
+        'algae, barnacles and rust whose front face is broken open: from inside bursts a mass of glossy '
+        'translucent pink and magenta tentacles with glowing channels and many round eyeballs with '
+        'yellow irises; a few tentacles curl out over the broken edges and droop down; the back of the '
+        'cube is intact') + VIETATO, [CUBO2_RIV], mv=True)
+
 AGN_OCCHIO = '@agnello_occhio_gpt'
 for m, tag in (('nano-banana-pro', 'nbp'), ('gpt-image-2-5-flare', 'gpt')):
     img(f'mv_agnello_occhio_{tag}', m, MV + 'A small chubby soaked plush lamb standing upright '
@@ -230,6 +288,8 @@ for m, tag in (('nano-banana-pro', 'nbp'), ('gpt-image-2-5-flare', 'gpt')):
 # 'immagini' = file locali (in OUT) in un ordine scelto, con la vista frontale per prima.
 JOBS['3d_cubo_calmo'] = dict(kind='3d', model='meshy-7.1', **{'from': 'mv_cubo_nbp'})
 JOBS['3d_agnello_calmo'] = dict(kind='3d', model='meshy-7.1', **{'from': 'mv_agnello_nbp'})
+JOBS['3d_cubo2_calmo'] = dict(kind='3d', model='meshy-7.1', **{'from': 'mv_cubo2_calmo_gpt'})
+JOBS['3d_cubo2_rivelato'] = dict(kind='3d', model='meshy-7.1', **{'from': 'mv_cubo2_rivelato_gpt'})
 JOBS['3d_agnello_occhio'] = dict(kind='3d', model='meshy-7.1', **{'from': 'mv_agnello_occhio_gpt'})
 JOBS['3d_cubo_rivelato'] = dict(kind='3d', model='meshy-7.1', **{'from': 'mv_cubo_rivelato_nbp'})
 # nel multi-view GPT del lupo la vista frontale è la seconda: la metto per prima
