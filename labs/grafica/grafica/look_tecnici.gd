@@ -30,8 +30,8 @@ const NEON_SCRIPT := preload("res://grafica/neon.gd")
 @export_dir var cartella_gi := "res://scenes/tecnici/gi"
 @export_group("Prima del risveglio")
 @export var colore_servizio := Color(0.55, 0.85, 1.0)     # fluorescente freddo
-@export var energia_servizio := 0.9
-@export var emissione_servizio := 0.35                     # i tubi restano fiochi
+@export var energia_servizio := 2.2
+@export var emissione_servizio := 0.5                     # i tubi restano fiochi
 @export var energia_quadri := 1.6
 @export var ambiente_servizio := 0.1
 @export_group("Flash")
@@ -56,6 +56,7 @@ var _vetri_emergenza: Array[BaseMaterial3D] = []
 var _emissioni_servizio: Array = []      # [materiale, emissione piena]
 var _quadri: Array[SpotLight3D] = []
 var _portello: Light3D
+var _altre: Array[Light3D] = []        # altre luci della scena (LuceLeva...): spente nel blackout
 var _schermo: MeshInstance3D
 var _luce_monitor: OmniLight3D
 var _neve: ShaderMaterial
@@ -89,6 +90,11 @@ func _prepara() -> void:
 		for stanza in ambienti.get_children():
 			if stanza is Node3D and _aabb(stanza).size != Vector3.ZERO:
 				_crea_gi(stanza)
+	# Le altre luci della scena dei tecnici fuori da Ambienti (LuceLeva): non a batteria.
+	for c in _tecnici.get_children():
+		if c is Light3D:
+			_altre.append(c)
+			c.set_meta(&"risveglio_ignora", true)
 	# LuciRisveglio (il ripiego generico del livello) non tocca le luci di qui.
 	for l in find_children("*", "Light3D", true, false) + ambienti.find_children("*", "Light3D", true, false):
 		l.set_meta(&"risveglio_ignora", true)
@@ -133,6 +139,8 @@ func imposta_stato(nuovo: Stato) -> void:
 	if _portello:
 		_portello.visible = prima
 		_portello.light_energy = _portello.get_meta(&"servizio", 1.0)
+	for l in _altre:
+		l.visible = prima
 	for e in _emissioni_servizio:
 		(e[0] as BaseMaterial3D).emission_energy_multiplier = e[1] * (0.6 if prima else 0.0)
 	_monitor(not prima)
@@ -170,6 +178,8 @@ func _accendi_tutto() -> void:
 	if _portello:
 		_portello.visible = true
 		_portello.light_energy = _portello.get_meta(&"servizio", 1.0) * 4.0
+	for l in _altre:
+		l.visible = true
 	for e in _emissioni_servizio:
 		(e[0] as BaseMaterial3D).emission_energy_multiplier = e[1]
 	_monitor(false)
