@@ -1,13 +1,14 @@
 """Render della medusa FINITA in luce "acquapark di notte" (emergenza rossa, riflesso azzurro, nebbia).
 
 Inquadrature (1600x900 o piu'):
-  statua_intera  - ferma come una statua, mani giunte, su un piedistallo semplice come nel concept
+  statua_intera  - ferma come una statua, mani giunte, in piedi sui tentacoli su un piedistallo semplice
+  tentacoli      - primo piano dei tentacoli appoggiati sul piedistallo
   viso           - primo piano del viso (occhio di vetro, fauce chiusa: non si vede)
   fauce_chiusa / fauce_aperta - stessa inquadratura, prima e dopo: lo strappo sotto l'occhio
-  fluttua        - sospesa sopra il pavimento bagnato, tentacoli mossi (azione "fluttua")
+  fluttua        - sveglia, staccata dal piedistallo, tentacoli che pendono (azione "fluttua")
 Scrive i PNG in build/render/ e i JPG da mostrare in docs/proposte/medusa/finale/.
 
-Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_render_finale.py [nomi...] [--prova]
+Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_render_finale.py [nomi...] [--prova|--media]
 """
 import os
 import sys
@@ -15,10 +16,14 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
+import medusa_05_tentacoli as TENT  # noqa: E402
+import medusa_07_finale as FIN  # noqa: E402
 
 PROVA = '--prova' in sys.argv
-RES = (480, 270) if PROVA else (1600, 900)
-CAMPIONI = 12 if PROVA else 40
+MEDIA = '--media' in sys.argv
+RES = (480, 270) if PROVA else (960, 540) if MEDIA else (1600, 900)
+CAMPIONI = 12 if PROVA else 24 if MEDIA else 40
+ZP = TENT.STATUA['z_pavimento']          # piano del piedistallo (dove poggiano i tentacoli)
 OUT_PNG = os.path.join(BUILD, 'render')
 OUT_JPG = os.path.join(PROPOSTE, 'finale')
 os.makedirs(OUT_PNG, exist_ok=True)
@@ -65,7 +70,7 @@ def mat_semplice(nome, colore, rough=0.5, metal=0.0):
     return m, m.node_tree, b
 
 
-def piedistallo(z_cima, raggio=0.95, altezza=0.6):
+def piedistallo(z_cima, raggio=1.05, altezza=0.6):
     """Piedistallo cilindrico dipinto di blu con una fascia ondulata gialla e rosa, scrostato."""
     bpy.ops.mesh.primitive_cylinder_add(vertices=96, radius=raggio, depth=altezza,
                                         location=(0, 0, z_cima - altezza / 2))
@@ -213,21 +218,32 @@ def tentacoli_punto_piu_basso():
 def statua_intera():
     prepara()
     usa_azione('statua', 1)
-    z = tentacoli_punto_piu_basso()
-    piedistallo(z + 0.02)
-    pavimento_piastrelle(z + 0.02 - 0.6)
+    piedistallo(ZP)
+    pavimento_piastrelle(ZP - 0.6)
     luci_notte((0, 0, -0.5), 2.4)
     imposta()
-    camera((2.5, -6.0, -0.45), (0.0, 0, -0.92), lens=28)
+    camera((2.0, -4.75, -0.55), (0.0, 0, -0.72), lens=28)
     png = render(os.path.join(OUT_PNG, 'statua_intera.png'))
     return salva_jpg(png, '1_statua_intera')
+
+
+def tentacoli():
+    """Primo piano dei tentacoli appoggiati sul piedistallo (zampe davanti, piedi e riccioli)."""
+    prepara()
+    usa_azione('statua', 1)
+    piedistallo(ZP)
+    pavimento_piastrelle(ZP - 0.6)
+    luci_notte((0, -0.3, ZP + 0.4), 1.4)
+    imposta()
+    camera((0.75, -2.05, ZP + 0.5), (0.05, -0.3, ZP + 0.22), lens=38)
+    png = render(os.path.join(OUT_PNG, 'tentacoli.png'))
+    return salva_jpg(png, '1b_tentacoli_piedistallo')
 
 
 def viso():
     prepara()
     usa_azione('statua', 1)
-    z = tentacoli_punto_piu_basso()
-    piedistallo(z + 0.02)
+    piedistallo(ZP)
     luci_notte((0, 0, 0.4), 1.0)
     imposta()
     camera((0.35, -1.55, 0.62), (0.0, -0.1, 0.5), lens=55)
@@ -238,10 +254,11 @@ def viso():
 def fauce(aperta):
     prepara()
     usa_azione('fauce_apre', 12 if aperta else 1)
-    luci_notte((0, -0.3, 0.3), 1.2)
-    pavimento_piastrelle(-2.7)
+    h = FIN.SOLLEVA                      # da sveglia il corpo e' sollevato
+    luci_notte((0, -0.3, 0.3 + h), 1.2)
+    pavimento_piastrelle(ZP)
     imposta()
-    camera((0.32, -1.5, 0.52), (0.0, -0.12, 0.47), lens=50)
+    camera((0.32, -1.5, 0.52 + h), (0.0, -0.12, 0.47 + h), lens=50)
     nome = 'fauce_aperta' if aperta else 'fauce_chiusa'
     png = render(os.path.join(OUT_PNG, nome + '.png'))
     return salva_jpg(png, ('4_' if aperta else '3_') + nome)
@@ -250,16 +267,19 @@ def fauce(aperta):
 def fluttua():
     prepara()
     usa_azione('fluttua', 9)
-    pavimento_piastrelle(-2.75)
-    luci_notte((0, 0, -0.5), 2.4)
+    h = FIN.SOLLEVA
+    piedistallo(ZP)
+    pavimento_piastrelle(ZP - 0.6)
+    luci_notte((0, 0, -0.5 + h), 2.4)
     imposta()
-    camera((2.5, -4.3, -0.45), (0.0, -0.15, -0.6), lens=30)
+    camera((2.4, -5.2, -0.45 + h * 0.5), (0.0, -0.1, -0.6 + h * 0.6), lens=28)
     png = render(os.path.join(OUT_PNG, 'fluttua.png'))
     return salva_jpg(png, '5_fluttua')
 
 
 INQUADRATURE = {
     'statua_intera': statua_intera,
+    'tentacoli': tentacoli,
     'viso': viso,
     'fauce_chiusa': lambda: fauce(False),
     'fauce_aperta': lambda: fauce(True),
