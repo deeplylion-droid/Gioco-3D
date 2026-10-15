@@ -88,6 +88,11 @@ func _run() -> void:
 	check(GameState.luci == GameState.Luci.BLACKOUT and _checkpoint().ends_with("CheckpointAreaBimbi"), "si riparte dal checkpoint, al buio")
 	check(lei.fase == LeiSbuca.Fase.ATTESA and not lei.medusa.visible, "e la scena è di nuovo in attesa")
 	check(p.global_position.distance_to(Vector3(-18.3, 0.0, -0.5)) < 1.0, "il giocatore è sulla scia (%s)" % str(p.global_position))
+	# Ricaricando il livello al buio, la sala del ritorno (tappa 7) è com'era.
+	var ritorno := level.get(&"ritorno") as RitornoAlBuio
+	var lampione := level.get_node(^"Vasca/Sfarfallio") as FlickerLight
+	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.macchie_scia() >= 15 and not lampione.is_on,
+			"e la sala è ancora al buio: vasca vuota, scia di gocce, lampione spento")
 
 	print("2. Resti lontano: lei ti guarda e se ne va")
 	check(await _cammina_verso(Vector3(-18.3, 0.0, -1.9), 300), "qualche passo avanti")
