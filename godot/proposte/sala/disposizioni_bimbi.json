@@ -1,0 +1,360 @@
+{
+ "nota": "Disposizioni dell'area bimbi (proposte, 15 ottobre 2026). Coordinate Godot. Scritto da tools/proposte/disposizioni_bimbi.py.",
+ "struttura_oggi_godot": [
+  -13.0,
+  0.0,
+  -16.0
+ ],
+ "vb2_oggi_godot": [
+  -15.3,
+  0.0,
+  -12.4
+ ],
+ "togli_oggetti": [
+  "ogg_balena_gonfiabile_sgonfia_26",
+  "ogg_cannoncino_acqua_29",
+  "ogg_cannoncino_acqua_30",
+  "ogg_cannoncino_acqua_31",
+  "ogg_cartello_pavimento_bagnato_92",
+  "ogg_cestino_pesce_87",
+  "ogg_lettino_plastica_75",
+  "ogg_orsacchiotto_grande_35",
+  "ogg_pallone_spiaggia_33",
+  "ogg_pallone_spiaggia_53",
+  "ogg_pallone_spiaggia_67",
+  "ogg_paperella_gigante_32",
+  "ogg_paperella_gigante_34",
+  "ogg_paperella_gigante_60",
+  "ogg_tubi_galleggianti_46"
+ ],
+ "area_godot": {
+  "x": [
+   -20.0,
+   -7.4
+  ],
+  "z": [
+   -24.0,
+   -3.0
+  ]
+ },
+ "disposizioni": {
+  "L1": {
+   "titolo": "1 · Struttura nell'angolo",
+   "idea": "struttura nell'angolo nord-ovest con la scala verso di te; lo scivolo scende nella vasca piccola, verso la spiaggia; piazza libera al centro",
+   "struttura": {
+    "centro_godot": [
+     -14.6,
+     0.0,
+     -19.6
+    ],
+    "rotazione_gradi": 0.0
+   },
+   "secchio_godot": [
+    -14.4,
+    7.1,
+    -21.2
+   ],
+   "vb2_godot": [
+    -9.6,
+    0.02,
+    -18.2
+   ],
+   "funghi": [
+    {
+     "nodo": "ogg_fungo_fontana_27",
+     "pos_godot": [
+      -17.8,
+      0.0,
+      -12.2
+     ],
+     "rotazione_gradi": 20.0
+    },
+    {
+     "nodo": "ogg_fungo_fontana_28",
+     "pos_godot": [
+      -12.2,
+      0.0,
+      -14.4
+     ],
+     "rotazione_gradi": 75.0
+    }
+   ],
+   "festone_godot": [
+    [
+     -20.0,
+     4.2,
+     -13.0
+    ],
+    [
+     -15.9,
+     7.35,
+     -19.65
+    ],
+    [
+     -12.9,
+     7.35,
+     -19.65
+    ],
+    [
+     -8.0,
+     4.2,
+     -24.0
+    ]
+   ],
+   "plafoniera_godot": [
+    -11.9,
+    9.2,
+    -14.7
+   ],
+   "mira_plafoniera_godot": [
+    -14.4,
+    4.4,
+    -20.4
+   ],
+   "ingombri_godot": [
+    [
+     -18.65,
+     -22.650000000000002,
+     -12.95,
+     -16.950000000000003
+    ],
+    [
+     -17.9,
+     -17.200000000000003,
+     -16.5,
+     -14.680000000000001
+    ],
+    [
+     -11.35,
+     -19.95,
+     -7.85,
+     -16.45
+    ],
+    [
+     -18.25,
+     -12.649999999999999,
+     -17.35,
+     -11.75
+    ],
+    [
+     -12.549999999999999,
+     -14.75,
+     -11.85,
+     -14.05
+    ]
+   ]
+  },
+  "L2": {
+   "titolo": "2 · Tutto intorno alla vasca",
+   "idea": "struttura girata con il secchio verso di te; lo scivolo scende nella vasca a scacchi grande; vasca piccola con un fungo contro il muro ovest, l'altro fungo nella vasca grande",
+   "struttura": {
+    "centro_godot": [
+     -13.0,
+     0.0,
+     -15.6
+    ],
+    "rotazione_gradi": -90.0
+   },
+   "secchio_godot": [
+    -11.4,
+    7.1,
+    -15.4
+   ],
+   "vb2_godot": [
+    -18.0,
+    0.02,
+    -11.8
+   ],
+   "funghi": [
+    {
+     "nodo": "ogg_fungo_fontana_27",
+     "pos_godot": [
+      -11.6,
+      0.0,
+      -9.6
+     ],
+     "rotazione_gradi": 20.0
+    },
+    {
+     "nodo": "ogg_fungo_fontana_28",
+     "pos_godot": [
+      -18.0,
+      0.0,
+      -11.8
+     ],
+     "rotazione_gradi": 75.0
+    }
+   ],
+   "festone_godot": [
+    [
+     -20.0,
+     4.2,
+     -15.6
+    ],
+    [
+     -12.95,
+     7.35,
+     -13.9
+    ],
+    [
+     -9.85,
+     7.35,
+     -13.9
+    ],
+    [
+     -9.0,
+     4.2,
+     -24.0
+    ]
+   ],
+   "plafoniera_godot": [
+    -8.9,
+    9.2,
+    -8.9
+   ],
+   "mira_plafoniera_godot": [
+    -11.4,
+    4.4,
+    -14.6
+   ],
+   "ingombri_godot": [
+    [
+     -15.65,
+     -19.65,
+     -9.95,
+     -13.95
+    ],
+    [
+     -17.92,
+     -18.9,
+     -15.4,
+     -17.5
+    ],
+    [
+     -19.75,
+     -13.55,
+     -16.25,
+     -10.05
+    ],
+    [
+     -12.049999999999999,
+     -10.049999999999999,
+     -11.15,
+     -9.15
+    ],
+    [
+     -18.35,
+     -12.15,
+     -17.65,
+     -11.450000000000001
+    ]
+   ]
+  },
+  "L3": {
+   "titolo": "3 · Piazza e viale dei funghi",
+   "idea": "struttura in fondo con il secchio sull'angolo davanti; lo scivolo scende a ovest nella vasca piccola; i due funghi in fila lungo il muro ovest; piazza libera davanti",
+   "struttura": {
+    "centro_godot": [
+     -14.0,
+     0.0,
+     -17.5
+    ],
+    "rotazione_gradi": 180.0
+   },
+   "secchio_godot": [
+    -14.2,
+    7.1,
+    -15.9
+   ],
+   "vb2_godot": [
+    -18.0,
+    0.02,
+    -18.8
+   ],
+   "funghi": [
+    {
+     "nodo": "ogg_fungo_fontana_27",
+     "pos_godot": [
+      -18.4,
+      0.0,
+      -12.4
+     ],
+     "rotazione_gradi": 20.0
+    },
+    {
+     "nodo": "ogg_fungo_fontana_28",
+     "pos_godot": [
+      -18.4,
+      0.0,
+      -15.2
+     ],
+     "rotazione_gradi": 75.0
+    }
+   ],
+   "festone_godot": [
+    [
+     -20.0,
+     4.2,
+     -10.5
+    ],
+    [
+     -15.7,
+     7.35,
+     -14.35
+    ],
+    [
+     -12.7,
+     7.35,
+     -14.35
+    ],
+    [
+     -8.0,
+     4.2,
+     -24.0
+    ]
+   ],
+   "plafoniera_godot": [
+    -11.7,
+    9.2,
+    -9.4
+   ],
+   "mira_plafoniera_godot": [
+    -14.2,
+    4.4,
+    -15.1
+   ],
+   "ingombri_godot": [
+    [
+     -15.65,
+     -20.15,
+     -9.95,
+     -14.45
+    ],
+    [
+     -12.1,
+     -22.42,
+     -10.7,
+     -19.9
+    ],
+    [
+     -19.75,
+     -20.55,
+     -16.25,
+     -17.05
+    ],
+    [
+     -18.849999999999998,
+     -12.85,
+     -17.95,
+     -11.950000000000001
+    ],
+    [
+     -18.75,
+     -15.549999999999999,
+     -18.049999999999997,
+     -14.85
+    ]
+   ]
+  }
+ }
+}
