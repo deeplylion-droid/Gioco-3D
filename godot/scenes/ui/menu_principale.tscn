@@ -33,12 +33,12 @@ glow_intensity = 0.6
 glow_bloom = 0.03
 glow_hdr_threshold = 1.1
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.028
+volumetric_fog_density = 0.04
 volumetric_fog_albedo = Color(0.62, 0.68, 0.76, 1)
 volumetric_fog_anisotropy = 0.55
 volumetric_fog_length = 40.0
 volumetric_fog_detail_spread = 1.6
-volumetric_fog_ambient_inject = 0.08
+volumetric_fog_ambient_inject = 0.3
 volumetric_fog_sky_affect = 0.0
 volumetric_fog_temporal_reprojection_amount = 0.85
 
@@ -47,34 +47,6 @@ density = 0.22
 albedo = Color(0.6, 0.68, 0.76, 1)
 height_falloff = 2.2
 edge_fade = 0.6
-
-[sub_resource type="StandardMaterial3D" id="Material_lampada"]
-albedo_color = Color(0.08, 0.08, 0.09, 1)
-metallic = 0.7
-roughness = 0.5
-
-[sub_resource type="CylinderMesh" id="Mesh_lampada"]
-material = SubResource("Material_lampada")
-top_radius = 0.13
-bottom_radius = 0.16
-height = 0.16
-
-[sub_resource type="CylinderMesh" id="Mesh_vetro"]
-top_radius = 0.11
-bottom_radius = 0.11
-height = 0.01
-
-[sub_resource type="StandardMaterial3D" id="Material_vetro_ciano"]
-albedo_color = Color(0.9, 0.95, 1, 1)
-emission_enabled = true
-emission = Color(0.72, 0.88, 1, 1)
-emission_energy_multiplier = 6.0
-
-[sub_resource type="StandardMaterial3D" id="Material_vetro_rosa"]
-albedo_color = Color(0.9, 0.95, 1, 1)
-emission_enabled = true
-emission = Color(1, 0.45, 0.78, 1)
-emission_energy_multiplier = 6.0
 
 [node name="MenuPrincipale" type="Node3D" node_paths=PackedStringArray("camera", "statua", "tempesta")]
 script = ExtResource("1_menu")
@@ -91,9 +63,17 @@ intervallo_min = 8.0
 intervallo_max = 16.0
 energia_lampo = 6.0
 
+[node name="Luna" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.584305, 0.775568, -0.23892, 0, 0.294405, 0.955681, 0.811534, 0.558409, -0.172023, 0, 12, 0)
+light_color = Color(0.55, 0.66, 1, 1)
+light_energy = 0.12
+light_volumetric_fog_energy = 2.5
+shadow_enabled = true
+metadata/grafica_priorita_ombra = 1
+
 [node name="Camera" type="Camera3D" parent="."]
 physics_interpolation_mode = 2
-transform = Transform3D(0.987008, -0.0249479, -0.158721, -0, 0.987871, -0.155274, 0.16067, 0.153257, 0.975037, -2.40111, 0.6, 6.78783)
+transform = Transform3D(0.986549, -0.0251109, -0.161525, 0, 0.988131, -0.153616, 0.163465, 0.15155, 0.974839, -2.5345, 0.7, 7.16494)
 current = true
 fov = 42.0
 near = 0.1
@@ -105,90 +85,93 @@ metadata/grafica_fov_fisso = true
 [node name="Piedistallo" parent="Statua" instance=ExtResource("3_pied")]
 
 [node name="Medusa" type="Node3D" parent="Statua"]
-transform = Transform3D(1.667, 0, 0, 0, 1.667, 0, 0, 0, 1.667, 0, 0.9, 0)
+transform = Transform3D(1.667, 0, 0, 0, 1.667, 0, 0, 0, 1.667, 0, 1.15, 0)
 script = ExtResource("4_med")
 model = ExtResource("5_glb")
 bell_material = ExtResource("6_camp")
 tentacle_material = ExtResource("7_tent")
 
 [node name="LuceCampana" type="OmniLight3D" parent="Statua"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.65, 0)
 light_color = Color(1, 0.36, 0.78, 1)
 light_energy = 0.5
 light_volumetric_fog_energy = 0.4
 omni_range = 3.8
 omni_attenuation = 1.4
 
-[node name="FaroDallAlto" type="SpotLight3D" parent="Statua"]
-transform = Transform3D(1, 0, 0, 0, 0.42878, 0.90340894, 0, -0.90340894, 0.42878, 0, 9.8, 2.8)
-light_color = Color(1, 0.93, 0.84, 1)
-light_energy = 4.5
-light_volumetric_fog_energy = 1.8
-light_size = 0.05
+[node name="FaroGalleriaSinistro" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.956735, 0.0416032, -0.287971, 0, 0.989725, 0.142986, 0.290961, -0.136799, 0.946904, -2.014, 5.547, 6.616)
+light_color = Color(1, 0.9, 0.76, 1)
+light_energy = 7.0
+light_volumetric_fog_energy = 1.6
 shadow_enabled = true
 spot_range = 16.0
-spot_angle = 16.0
-spot_angle_attenuation = 1.6
+spot_angle = 13.0
+spot_angle_attenuation = 0.6
 metadata/grafica_priorita_ombra = 0
 
-[node name="LampadaSinistra" type="MeshInstance3D" parent="Statua"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.45, 0.08, 1.35)
-mesh = SubResource("Mesh_lampada")
-
-[node name="Vetro" type="MeshInstance3D" parent="Statua/LampadaSinistra"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.085, 0)
-material_override = SubResource("Material_vetro_ciano")
-mesh = SubResource("Mesh_vetro")
-
-[node name="FaroSinistro" type="SpotLight3D" parent="Statua"]
-transform = Transform3D(-0.9083082, -0.15180287, -0.3897847, 0.41830158, -0.32962784, -0.846386, -5.9604645e-08, -0.93182695, 0.36290306, -1.45, 0.2, 1.35)
-light_color = Color(0.72, 0.88, 1, 1)
-light_energy = 1.5
-light_volumetric_fog_energy = 0.9
+[node name="FaroGalleriaDestro" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.956735, -0.0416032, 0.287971, 0, 0.989725, 0.142986, -0.290961, -0.136799, 0.946904, 2.014, 5.547, 6.616)
+light_color = Color(1, 0.9, 0.76, 1)
+light_energy = 7.0
+light_volumetric_fog_energy = 1.6
 shadow_enabled = true
-spot_range = 9.0
-spot_angle = 24.0
+spot_range = 16.0
+spot_angle = 13.0
+spot_angle_attenuation = 0.6
+metadata/grafica_priorita_ombra = 1
+
+[node name="FarettoBasso0" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(-0.707107, 0.637399, 0.306142, 0, 0.43295, -0.901418, -0.707107, -0.637399, -0.306142, 1.252, 0.451, -1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="FarettoBasso1" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(-0.707107, -0.637399, -0.306142, 0, 0.43295, -0.901418, 0.707107, -0.637399, -0.306142, -1.252, 0.451, -1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="FarettoBasso2" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.707107, -0.637399, -0.306142, 0, 0.43295, -0.901418, 0.707107, 0.637399, 0.306142, -1.252, 0.451, 1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="FarettoBasso3" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.707107, 0.637399, 0.306142, 0, 0.43295, -0.901418, -0.707107, 0.637399, 0.306142, 1.252, 0.451, 1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="Controluce" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(-1, 6.721456e-08, -5.5901207e-08, 0, 0.6394353, 0.7688449, 8.742278e-08, 0.7688449, -0.6394353, 0, 9.6, -4.2)
+light_color = Color(0.68, 0.82, 1, 1)
+light_energy = 5.0
+light_volumetric_fog_energy = 1.6
+shadow_enabled = true
+spot_range = 14.0
+spot_angle = 14.0
 spot_angle_attenuation = 1.2
 metadata/grafica_priorita_ombra = 1
 
-[node name="LampadaDestra" type="MeshInstance3D" parent="Statua"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 0.08, 1.35)
-mesh = SubResource("Mesh_lampada")
-
-[node name="Vetro" type="MeshInstance3D" parent="Statua/LampadaDestra"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.085, 0)
-material_override = SubResource("Material_vetro_ciano")
-mesh = SubResource("Mesh_vetro")
-
-[node name="FaroDestro" type="SpotLight3D" parent="Statua"]
-transform = Transform3D(-0.9083082, 0.15180287, 0.3897847, -0.41830158, -0.32962784, -0.846386, 5.9604645e-08, -0.93182695, 0.36290306, 1.45, 0.2, 1.35)
-light_color = Color(0.72, 0.88, 1, 1)
-light_energy = 1.5
-light_volumetric_fog_energy = 0.9
-shadow_enabled = true
-spot_range = 9.0
-spot_angle = 24.0
-spot_angle_attenuation = 1.2
-metadata/grafica_priorita_ombra = 1
-
-[node name="LampadaDietro" type="MeshInstance3D" parent="Statua"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, -1.7)
-mesh = SubResource("Mesh_lampada")
-
-[node name="Vetro" type="MeshInstance3D" parent="Statua/LampadaDietro"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.085, 0)
-material_override = SubResource("Material_vetro_rosa")
-mesh = SubResource("Mesh_vetro")
-
-[node name="FaroDietro" type="SpotLight3D" parent="Statua"]
-transform = Transform3D(-1, -7.692603e-08, -4.1534655e-08, 0, 0.47510105, -0.8799312, 8.742278e-08, -0.8799312, -0.47510105, 0, 0.2, -1.7)
-light_color = Color(1, 0.45, 0.78, 1)
-light_volumetric_fog_energy = 0.9
-shadow_enabled = true
-spot_range = 9.0
-spot_angle = 24.0
-spot_angle_attenuation = 1.2
-metadata/grafica_priorita_ombra = 1
+[node name="LuceViso" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(1, 0, 0, 0, 0.9346418, 0.35559076, 0, -0.35559076, 0.9346418, 0, 7.4, 6.6)
+light_color = Color(1, 0.95, 0.88, 1)
+light_energy = 3.2
+light_volumetric_fog_energy = 0.25
+spot_range = 12.0
+spot_angle = 4.5
+spot_angle_attenuation = 1.8
 
 [node name="NebbiaBassa" type="FogVolume" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
@@ -196,7 +179,7 @@ size = Vector3(34, 1.3, 34)
 material = SubResource("FogMaterial_bassa")
 
 [node name="Polvere" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 1.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 1.2)
 script = ExtResource("9_polv")
 volume = Vector3(5, 5, 5)
 densita = 0.35

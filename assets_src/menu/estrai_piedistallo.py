@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Piedistallo della statua per la schermata del titolo.
 
-Copia dai GLB della sala solo il piedistallo (`amb_piedistallo`, da sala_architettura.glb), il
-pulsante rosso dei bambini (`sala_pulsante_piedistallo`, da sala_interattivi.glb) e le pozzanghere
-vicine (`sala_pozzanghere`), e ci aggiunge un pavimento rotondo con il materiale e le texture del
-pavimento della sala (stessa scala), che si scurisce verso il bordo e sparisce nel buio.
-Tutto in un GLB piccolo, con le texture ridotte a 1024 px e il centro della base del piedistallo
-nell'origine (piano superiore a y = 0,90 m): così il titolo non deve caricare tutta l'architettura
-della sala. Le collisioni non servono e restano fuori. In Godot il GLB usa lo stesso script di
-importazione dell'ambiente.
+Copia dai GLB della sala solo il monumento della statua (piedistallo a gradini `amb_piedistallo`,
+offerte dei bambini `sala_monumento_offerte` e cordone `sala_monumento_cordone`, da
+sala_monumento.glb), il pulsante rosso dei bambini (`sala_pulsante_piedistallo`, da
+sala_interattivi.glb) e le pozzanghere vicine (`sala_pozzanghere`), e ci aggiunge un pavimento
+rotondo con il materiale e le texture del pavimento della sala (stessa scala), che si scurisce verso
+il bordo e sparisce nel buio. Tutto in un GLB piccolo, con le texture ridotte a 1024 px e il centro
+della base del piedistallo nell'origine (piano superiore a y = 1,15 m): così il titolo non deve
+caricare tutta l'architettura della sala. Le collisioni non servono e restano fuori. In Godot il
+GLB usa lo stesso script di importazione dell'ambiente.
 
 Uso, dalla radice del repository:  python3 -I assets_src/menu/estrai_piedistallo.py
 """
@@ -24,7 +25,8 @@ from PIL import Image
 RADICE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ARCHITETTURA = "assets_src/ambiente/glb/sala/sala_architettura.glb"
 INTERATTIVI = "assets_src/ambiente/glb/sala/sala_interattivi.glb"
-CENTRO = (0.0, 0.0, 6.9)  # centro della base del piedistallo nella sala (coordinate Godot)
+MONUMENTO = "assets_src/ambiente/glb/sala/sala_monumento.glb"
+CENTRO = (0.0, 0.0, 10.0)  # centro della base del piedistallo nella sala (coordinate Godot)
 LATO_TEXTURE = 1024
 USCITA = "godot/assets/menu/piedistallo.glb"
 
@@ -301,7 +303,8 @@ class Costruttore:
 
 def main():
     c = Costruttore()
-    c.copia_nodo(ARCHITETTURA, "amb_piedistallo")
+    for nodo in ("amb_piedistallo", "sala_monumento_offerte", "sala_monumento_cordone"):
+        c.copia_nodo(MONUMENTO, nodo)
     c.copia_nodo(INTERATTIVI, "sala_pulsante_piedistallo")
     c.pavimento()
     c.copia_nodo(ARCHITETTURA, "sala_pozzanghere",
