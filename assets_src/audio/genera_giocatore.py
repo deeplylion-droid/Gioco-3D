@@ -22,16 +22,19 @@ def norm(x):
 # --- passi ----------------------------------------------------------------------------------
 
 def tacco_piastrella(rng, i):
-    """Il passo su piastrella: passo su cemento (Kenney) più il 'tic' della ceramica."""
+    """Il passo su piastrella: tacco e punta (passo su cemento di Kenney) più il 'tic' della ceramica."""
     base = norm(kenney('footstep_concrete_00%d.ogg' % (i % 5)))
     base = pitch(base, rng.uniform(-1.2, 1.2))
-    exc = base * 0.5
-    tick = resonator_bank(exc, rng.uniform(0.92, 1.08) * np.array([2700, 4150, 6300]),
-                          [0.025, 0.018, 0.012], [0.5, 0.35, 0.2])
-    out = np.zeros(n_of(0.35))
+    punta = norm(kenney('footstep_concrete_00%d.ogg' % ((i + 3) % 5)))
+    punta = hp(pitch(punta, rng.uniform(1.0, 3.0)), 400) * rng.uniform(0.25, 0.4)
+    exc = hp(base, 1200) * 0.8
+    tick = resonator_bank(exc, rng.uniform(0.92, 1.08) * np.array([2700, 4150, 6300, 8200]),
+                          [0.03, 0.022, 0.015, 0.01], [0.9, 0.6, 0.35, 0.2])
+    out = np.zeros(n_of(0.4))
     mix_into(out, base, 0)
     mix_into(out, tick, 0)
-    out = eq(out, [('peak', 3200, 1.0, 3), ('lowshelf', 180, 0.7, -3)])
+    mix_into(out, punta, n_of(rng.uniform(0.045, 0.07)))
+    out = eq(out, [('lowshelf', 250, 0.7, -6), ('peak', 3400, 0.9, 5), ('highshelf', 6500, 0.7, 2)])
     return out
 
 

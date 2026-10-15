@@ -95,7 +95,7 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `effetti/turbina_loop.ogg` | 2.0 s | sintesi (originale) |  |
 | `effetti/vasca_svuotata.ogg` | 2.8 s | sintesi (originale) |  |
 | `giocatore/atterraggio_acqua_01.ogg` | 0.7 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_acqua_02.ogg` | 0.7 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
+| `giocatore/atterraggio_acqua_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
@@ -114,16 +114,16 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `giocatore/passo_bagnato_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/passo_bagnato_05.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/passo_bagnato_06.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_metallo_01.ogg` | 0.5 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
+| `giocatore/passo_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_03.ogg` | 0.5 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_04.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_05.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_06.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
-| `giocatore/passo_piastrelle_01.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_02.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_03.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
-| `giocatore/passo_piastrelle_04.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
+| `giocatore/passo_piastrelle_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
+| `giocatore/passo_piastrelle_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
+| `giocatore/passo_piastrelle_03.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
+| `giocatore/passo_piastrelle_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
 | `giocatore/passo_piastrelle_05.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
 | `giocatore/passo_piastrelle_06.ogg` | 0.1 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + risonanza della ceramica |
 | `giocatore/passo_scala_01.ogg` | 0.5 s | Kenney Impact Sounds (CC0), rielaborati | impactMetal_light |

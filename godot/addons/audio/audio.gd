@@ -46,13 +46,13 @@ const PER_CARTELLA := {
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
-	&"passo_piastrelle": [BUS_EFFETTI, -5.0, 0.0, 0.0, 0.8],
-	&"passo_bagnato": [BUS_EFFETTI, -5.0, 0.0, 0.0, 0.8],
-	&"passo_acqua": [BUS_EFFETTI, -4.0, 0.0, 0.0, 0.8],
-	&"passo_metallo": [BUS_EFFETTI, -5.0, 0.0, 0.0, 0.8],
-	&"passo_scala": [BUS_EFFETTI, -6.0, 0.0, 0.0, 0.8],
-	&"salto": [BUS_EFFETTI, -8.0, 0.0, 0.0, 0.8],
-	&"zaino_sciabordio": [BUS_EFFETTI, -6.0, 0.0, 0.0, 0.8],
+	&"passo_piastrelle": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
+	&"passo_bagnato": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
+	&"passo_acqua": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
+	&"passo_metallo": [BUS_EFFETTI, -3.0, 0.0, 0.0, 0.8],
+	&"passo_scala": [BUS_EFFETTI, -4.0, 0.0, 0.0, 0.8],
+	&"salto": [BUS_EFFETTI, -6.0, 0.0, 0.0, 0.8],
+	&"zaino_sciabordio": [BUS_EFFETTI, -4.0, 0.0, 0.0, 0.8],
 	&"tuono_vicino": [BUS_AMBIENTE, 0.0, 0.0, 0.0, 0.8],
 	&"tuono_lontano": [BUS_AMBIENTE, -1.0, 0.0, 0.0, 0.8],
 	&"sirena_lontana": [BUS_AMBIENTE, -7.0, 0.0, 0.0, 0.3],
@@ -86,8 +86,8 @@ const TARATURA := {
 }
 ## Loop sulle sorgenti: [volume dB, unit_size, max_distance].
 const LOOP_3D := {
-	&"neon_ronzio_loop": [-8.0, 0.9, 8.0],
-	&"emergenza_ronzio_loop": [-10.0, 0.7, 7.0],
+	&"neon_ronzio_loop": [-5.0, 0.9, 8.0],
+	&"emergenza_ronzio_loop": [-6.0, 0.7, 7.0],
 	&"emergenza_rotante_loop": [-8.0, 1.2, 12.0],
 	&"faro_ronzio_loop": [-10.0, 1.5, 14.0],
 	&"turbina_loop": [-2.0, 4.0, 40.0],
@@ -98,8 +98,8 @@ const LOOP_3D := {
 	&"riempie_loop": [-4.0, 3.0, 35.0],
 	&"scivolo_loop": [-4.0, 3.0, 40.0],
 	&"medusa_presenza_loop": [-2.0, 1.4, 8.0],
-	&"zaino_impatto_loop": [-4.0, 2.5, 30.0],
-	&"zaino_impatto_acqua_loop": [-4.0, 2.5, 30.0],
+	&"zaino_impatto_loop": [-2.0, 2.5, 30.0],
+	&"zaino_impatto_acqua_loop": [-2.0, 2.5, 30.0],
 }
 ## Volume (dB) dei fondi.
 const FONDI := {
@@ -1217,9 +1217,9 @@ class Zaino:
 	func _init(a, n: Node) -> void:
 		audio = a
 		pack = n
-		getto = a.crea_loop_2d(&"zaino_getto_loop", n, -3.0)
-		aspira = a.crea_loop_2d(&"zaino_aspira_loop", n, -3.0)
-		ricarica = a.crea_loop_2d(&"zaino_ricarica_loop", n, -6.0)
+		getto = a.crea_loop_2d(&"zaino_getto_loop", n, 0.0)
+		aspira = a.crea_loop_2d(&"zaino_aspira_loop", n, -1.0)
+		ricarica = a.crea_loop_2d(&"zaino_ricarica_loop", n, -4.0)
 		var holder := Node3D.new()
 		holder.name = "ImpattoGetto"
 		holder.top_level = true

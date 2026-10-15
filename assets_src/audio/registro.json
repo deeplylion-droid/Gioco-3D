@@ -702,72 +702,72 @@
  "giocatore/atterraggio_acqua_01": {
   "file": "res://audio/giocatore/atterraggio_acqua_01.ogg",
   "canali": 1,
-  "durata": 0.692,
+  "durata": 0.673,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
-  "lufs": -22.5,
+  "lufs": -22.8,
   "lufs_max": -16.0
  },
  "giocatore/atterraggio_acqua_02": {
   "file": "res://audio/giocatore/atterraggio_acqua_02.ogg",
   "canali": 1,
-  "durata": 0.667,
+  "durata": 0.571,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
-  "lufs": -22.7,
+  "lufs": -21.5,
   "lufs_max": -16.0
  },
  "giocatore/atterraggio_bagnato_01": {
   "file": "res://audio/giocatore/atterraggio_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.222,
+  "durata": 0.221,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
   "lufs": null,
-  "lufs_max": -20.5
+  "lufs_max": -18.4
  },
  "giocatore/atterraggio_bagnato_02": {
   "file": "res://audio/giocatore/atterraggio_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.211,
+  "durata": 0.21,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
   "lufs": null,
-  "lufs_max": -18.2
+  "lufs_max": -17.6
  },
  "giocatore/atterraggio_metallo_01": {
   "file": "res://audio/giocatore/atterraggio_metallo_01.ogg",
   "canali": 1,
-  "durata": 0.62,
+  "durata": 0.612,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
-  "lufs": -25.1,
-  "lufs_max": -19.1
+  "lufs": -24.7,
+  "lufs_max": -18.7
  },
  "giocatore/atterraggio_metallo_02": {
   "file": "res://audio/giocatore/atterraggio_metallo_02.ogg",
   "canali": 1,
-  "durata": 0.577,
+  "durata": 0.578,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
-  "lufs": -26.3,
-  "lufs_max": -20.3
+  "lufs": -26.2,
+  "lufs_max": -20.2
  },
  "giocatore/atterraggio_piastrelle_01": {
   "file": "res://audio/giocatore/atterraggio_piastrelle_01.ogg",
   "canali": 1,
-  "durata": 0.164,
+  "durata": 0.201,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
   "lufs": null,
-  "lufs_max": -17.9
+  "lufs_max": -16.7
  },
  "giocatore/atterraggio_piastrelle_02": {
   "file": "res://audio/giocatore/atterraggio_piastrelle_02.ogg",
@@ -777,7 +777,7 @@
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
   "lufs": null,
-  "lufs_max": -17.3
+  "lufs_max": -16.6
  },
  "giocatore/passo_acqua_01": {
   "file": "res://audio/giocatore/passo_acqua_01.ogg",
@@ -786,7 +786,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -26.1,
+  "lufs": -26.9,
   "lufs_max": -19.0
  },
  "giocatore/passo_acqua_02": {
@@ -796,7 +796,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -27.4,
+  "lufs": -27.3,
   "lufs_max": -19.0
  },
  "giocatore/passo_acqua_03": {
@@ -806,7 +806,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -26.1,
+  "lufs": -27.2,
   "lufs_max": -19.0
  },
  "giocatore/passo_acqua_04": {
@@ -816,7 +816,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -25.7,
+  "lufs": -26.0,
   "lufs_max": -19.0
  },
  "giocatore/passo_acqua_05": {
@@ -826,7 +826,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -26.9,
+  "lufs": -25.6,
   "lufs_max": -19.0
  },
  "giocatore/passo_acqua_06": {
@@ -836,13 +836,13 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -25.7,
+  "lufs": -26.3,
   "lufs_max": -19.0
  },
  "giocatore/passo_bagnato_01": {
   "file": "res://audio/giocatore/passo_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.211,
+  "durata": 0.227,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
@@ -852,7 +852,7 @@
  "giocatore/passo_bagnato_02": {
   "file": "res://audio/giocatore/passo_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.222,
+  "durata": 0.201,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
@@ -862,7 +862,7 @@
  "giocatore/passo_bagnato_03": {
   "file": "res://audio/giocatore/passo_bagnato_03.ogg",
   "canali": 1,
-  "durata": 0.23,
+  "durata": 0.21,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
@@ -872,7 +872,7 @@
  "giocatore/passo_bagnato_04": {
   "file": "res://audio/giocatore/passo_bagnato_04.ogg",
   "canali": 1,
-  "durata": 0.223,
+  "durata": 0.203,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
@@ -882,7 +882,7 @@
  "giocatore/passo_bagnato_05": {
   "file": "res://audio/giocatore/passo_bagnato_05.ogg",
   "canali": 1,
-  "durata": 0.167,
+  "durata": 0.202,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
@@ -892,7 +892,7 @@
  "giocatore/passo_bagnato_06": {
   "file": "res://audio/giocatore/passo_bagnato_06.ogg",
   "canali": 1,
-  "durata": 0.204,
+  "durata": 0.207,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
   "nota": "",
@@ -902,12 +902,12 @@
  "giocatore/passo_metallo_01": {
   "file": "res://audio/giocatore/passo_metallo_01.ogg",
   "canali": 1,
-  "durata": 0.545,
+  "durata": 0.591,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -26.4,
-  "lufs_max": -20.4
+  "lufs": -25.8,
+  "lufs_max": -19.8
  },
  "giocatore/passo_metallo_02": {
   "file": "res://audio/giocatore/passo_metallo_02.ogg",
@@ -916,28 +916,28 @@
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -27.9,
-  "lufs_max": -21.9
+  "lufs": -28.2,
+  "lufs_max": -22.2
  },
  "giocatore/passo_metallo_03": {
   "file": "res://audio/giocatore/passo_metallo_03.ogg",
   "canali": 1,
-  "durata": 0.528,
+  "durata": 0.515,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -27.2,
-  "lufs_max": -21.2
+  "lufs": -27.6,
+  "lufs_max": -21.6
  },
  "giocatore/passo_metallo_04": {
   "file": "res://audio/giocatore/passo_metallo_04.ogg",
   "canali": 1,
-  "durata": 0.561,
+  "durata": 0.566,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -28.0,
-  "lufs_max": -22.0
+  "lufs": -27.9,
+  "lufs_max": -21.9
  },
  "giocatore/passo_metallo_05": {
   "file": "res://audio/giocatore/passo_metallo_05.ogg",
@@ -946,33 +946,33 @@
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -28.8,
-  "lufs_max": -22.9
+  "lufs": -28.6,
+  "lufs_max": -22.6
  },
  "giocatore/passo_metallo_06": {
   "file": "res://audio/giocatore/passo_metallo_06.ogg",
   "canali": 1,
-  "durata": 0.561,
+  "durata": 0.591,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + impactPlate_light",
-  "lufs": -26.4,
-  "lufs_max": -20.4
+  "lufs": -25.8,
+  "lufs_max": -19.8
  },
  "giocatore/passo_piastrelle_01": {
   "file": "res://audio/giocatore/passo_piastrelle_01.ogg",
   "canali": 1,
-  "durata": 0.122,
+  "durata": 0.175,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + risonanza della ceramica",
   "lufs": null,
-  "lufs_max": -22.3
+  "lufs_max": -22.1
  },
  "giocatore/passo_piastrelle_02": {
   "file": "res://audio/giocatore/passo_piastrelle_02.ogg",
   "canali": 1,
-  "durata": 0.133,
+  "durata": 0.177,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + risonanza della ceramica",
@@ -982,17 +982,17 @@
  "giocatore/passo_piastrelle_03": {
   "file": "res://audio/giocatore/passo_piastrelle_03.ogg",
   "canali": 1,
-  "durata": 0.129,
+  "durata": 0.173,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + risonanza della ceramica",
   "lufs": null,
-  "lufs_max": -23.7
+  "lufs_max": -23.4
  },
  "giocatore/passo_piastrelle_04": {
   "file": "res://audio/giocatore/passo_piastrelle_04.ogg",
   "canali": 1,
-  "durata": 0.131,
+  "durata": 0.169,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + risonanza della ceramica",
@@ -1002,27 +1002,27 @@
  "giocatore/passo_piastrelle_05": {
   "file": "res://audio/giocatore/passo_piastrelle_05.ogg",
   "canali": 1,
-  "durata": 0.136,
+  "durata": 0.132,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + risonanza della ceramica",
   "lufs": null,
-  "lufs_max": -22.1
+  "lufs_max": -22.0
  },
  "giocatore/passo_piastrelle_06": {
   "file": "res://audio/giocatore/passo_piastrelle_06.ogg",
   "canali": 1,
-  "durata": 0.123,
+  "durata": 0.124,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "footstep_concrete + risonanza della ceramica",
   "lufs": null,
-  "lufs_max": -22.3
+  "lufs_max": -22.0
  },
  "giocatore/passo_scala_01": {
   "file": "res://audio/giocatore/passo_scala_01.ogg",
   "canali": 1,
-  "durata": 0.488,
+  "durata": 0.474,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "impactMetal_light",
@@ -1032,7 +1032,7 @@
  "giocatore/passo_scala_02": {
   "file": "res://audio/giocatore/passo_scala_02.ogg",
   "canali": 1,
-  "durata": 0.349,
+  "durata": 0.327,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "impactMetal_light",
@@ -1042,7 +1042,7 @@
  "giocatore/passo_scala_03": {
   "file": "res://audio/giocatore/passo_scala_03.ogg",
   "canali": 1,
-  "durata": 0.314,
+  "durata": 0.313,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "impactMetal_light",
@@ -1052,11 +1052,11 @@
  "giocatore/passo_scala_04": {
   "file": "res://audio/giocatore/passo_scala_04.ogg",
   "canali": 1,
-  "durata": 0.6,
+  "durata": 0.597,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati",
   "nota": "impactMetal_light",
-  "lufs": -28.6,
+  "lufs": -25.8,
   "lufs_max": -20.0
  },
  "giocatore/riemersione": {
@@ -1066,7 +1066,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -27.6,
+  "lufs": -27.8,
   "lufs_max": -17.0
  },
  "giocatore/salto_01": {
@@ -1107,7 +1107,7 @@
   "fonte": "sintesi",
   "nota": "",
   "lufs": null,
-  "lufs_max": -21.6
+  "lufs_max": -21.0
  },
  "giocatore/tuffo": {
   "file": "res://audio/giocatore/tuffo.ogg",
@@ -1116,7 +1116,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -24.5,
+  "lufs": -24.4,
   "lufs_max": -15.0
  },
  "giocatore/zaino_aspira_fine": {
@@ -1126,7 +1126,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -26.2,
+  "lufs": -26.9,
   "lufs_max": -21.0
  },
  "giocatore/zaino_aspira_inizio": {
@@ -1147,7 +1147,7 @@
   "fonte": "sintesi",
   "nota": "",
   "lufs": -21.0,
-  "lufs_max": -18.5
+  "lufs_max": -19.4
  },
  "giocatore/zaino_getto_fine": {
   "file": "res://audio/giocatore/zaino_getto_fine.ogg",
@@ -1156,7 +1156,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -30.7,
+  "lufs": -30.8,
   "lufs_max": -21.0
  },
  "giocatore/zaino_getto_inizio": {
@@ -1177,7 +1177,7 @@
   "fonte": "sintesi",
   "nota": "",
   "lufs": -21.0,
-  "lufs_max": -20.3
+  "lufs_max": -20.4
  },
  "giocatore/zaino_impatto_acqua_loop": {
   "file": "res://audio/giocatore/zaino_impatto_acqua_loop.ogg",
@@ -1187,7 +1187,7 @@
   "fonte": "sintesi",
   "nota": "",
   "lufs": -22.0,
-  "lufs_max": -20.1
+  "lufs_max": -19.7
  },
  "giocatore/zaino_impatto_loop": {
   "file": "res://audio/giocatore/zaino_impatto_loop.ogg",
@@ -1197,7 +1197,7 @@
   "fonte": "sintesi",
   "nota": "",
   "lufs": -22.0,
-  "lufs_max": -19.6
+  "lufs_max": -19.5
  },
  "giocatore/zaino_pieno": {
   "file": "res://audio/giocatore/zaino_pieno.ogg",
@@ -1237,7 +1237,7 @@
   "fonte": "sintesi",
   "nota": "",
   "lufs": -23.0,
-  "lufs_max": -17.9
+  "lufs_max": -18.0
  },
  "giocatore/zaino_sciabordio_01": {
   "file": "res://audio/giocatore/zaino_sciabordio_01.ogg",
@@ -1246,7 +1246,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -26.2,
+  "lufs": -25.6,
   "lufs_max": -22.0
  },
  "giocatore/zaino_sciabordio_02": {
@@ -1256,7 +1256,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -25.5,
+  "lufs": -26.5,
   "lufs_max": -22.0
  },
  "giocatore/zaino_sciabordio_03": {
@@ -1266,7 +1266,7 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "",
-  "lufs": -25.0,
+  "lufs": -26.3,
   "lufs_max": -22.0
  },
  "giocatore/zaino_vuoto": {
