@@ -34,6 +34,7 @@ var _avviato := false
 var _menu: VBoxContainer
 var _voci: Array[Button] = []
 var _titolo: Label
+var _testata: Control
 var _sottomenu: CanvasLayer
 var _pausa_fuoco := true
 var _prossimo_sfarfallio := 7.0
@@ -113,10 +114,13 @@ func _apri(scena: String, controllo: NodePath, voce: Button) -> void:
 		return
 	_sottomenu = load(scena).instantiate()
 	add_child(_sottomenu)
+	# Sotto opzioni e comandi restano solo la statua e la nebbia.
 	_menu.visible = false
+	_testata.visible = false
 	_sottomenu.get_node(controllo).connect(&"chiuso", func():
 		_sottomenu = null
 		_menu.visible = true
+		_testata.visible = true
 		voce.grab_focus.call_deferred())
 
 
@@ -196,6 +200,7 @@ func _costruisci_interfaccia() -> void:
 	testata.position = Vector2(84, 74)
 	testata.add_theme_constant_override("separation", 2)
 	fondo.add_child(testata)
+	_testata = testata
 	_titolo = StileMenu.etichetta("SPLASH LAGOON", StileMenu.oswald(700, 8), 72, Color(0.9, 0.96, 0.98))
 	_titolo.name = "Titolo"
 	_titolo.add_theme_color_override("font_shadow_color", Color(StileMenu.CIANO, 0.18))

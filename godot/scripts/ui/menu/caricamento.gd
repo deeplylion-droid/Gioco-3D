@@ -199,6 +199,21 @@ func _costruisci() -> void:
 	dx.add_child(_torna)
 
 	var riga := HBoxContainer.new()
+	riga.add_theme_constant_override("separation", 12)
+	# Una lucina rossa che pulsa piano, come le luci d'emergenza: il gioco sta lavorando.
+	var spia := Panel.new()
+	var tondo := StyleBoxFlat.new()
+	tondo.bg_color = StileMenu.ROSSO
+	tondo.set_corner_radius_all(5)
+	tondo.shadow_color = Color(StileMenu.ROSSO, 0.5)
+	tondo.shadow_size = 6
+	spia.add_theme_stylebox_override("panel", tondo)
+	spia.custom_minimum_size = Vector2(10, 10)
+	spia.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	riga.add_child(spia)
+	var pulsa := create_tween().set_loops()
+	pulsa.tween_property(spia, ^"modulate:a", 0.2, 0.7).set_trans(Tween.TRANS_SINE)
+	pulsa.tween_property(spia, ^"modulate:a", 1.0, 0.7).set_trans(Tween.TRANS_SINE)
 	_stato = StileMenu.etichetta("Caricamento della sala…", StileMenu.barlow(), 18, StileMenu.TESTO_SPENTO)
 	_stato.name = "Stato"
 	_stato.size_flags_horizontal = Control.SIZE_EXPAND_FILL
