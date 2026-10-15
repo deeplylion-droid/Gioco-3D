@@ -127,6 +127,7 @@ func imposta_stato(nuovo: Stato) -> void:
 			n.call(&"accendi", 1 if i % 3 == 1 else 0)
 		else:
 			n.call(&"spegni", false)
+		_vetro_neon(n, prima)
 	for i in _emergenza.size():
 		var l := _emergenza[i]
 		l.visible = not prima
@@ -164,6 +165,7 @@ func flash(durata := durata_flash, poi := Stato.BLACKOUT) -> void:
 func _accendi_tutto() -> void:
 	stato = Stato.FLASH
 	for n in _neon:
+		_vetro_neon(n, true)
 		_energia_neon(n, energia_flash, colore_flash, 1.0)
 		n.call(&"accendi", 0)
 		n.call(&"_applica", 1.0)
@@ -294,6 +296,16 @@ func _rifai_neon(n: Node3D) -> void:
 	n.set(&"_energie", energie)
 	n.set(&"_materiali", materiali)
 	n.set(&"_emissioni", emissioni)
+
+
+## Un tubo spento è grigio: col diffusore bianco pieno, nel blackout la torcia lo faceva
+## sembrare acceso.
+func _vetro_neon(n: Node3D, acceso: bool) -> void:
+	for m in n.get(&"_materiali"):
+		var mat := m as BaseMaterial3D
+		if not mat.has_meta(&"albedo"):
+			mat.set_meta(&"albedo", mat.albedo_color)
+		mat.albedo_color = mat.get_meta(&"albedo") if acceso else Color(0.3, 0.32, 0.32)
 
 
 func _energia_neon(n: Node3D, energia: float, colore: Color, emissione: float) -> void:
