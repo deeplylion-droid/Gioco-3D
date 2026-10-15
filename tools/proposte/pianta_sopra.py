@@ -112,26 +112,44 @@ def a_capo(testo, f, larghezza):
     return righe
 
 
-def con_fascia(img, titolo, sottotitolo, legenda=None):
+NOTA_SCIVOLI = ("Senza gli scivoli di oggi: la torre va nella sala nuova e vanno rifatti. "
+                "Li proporremo a parte.")
+
+
+def con_fascia(img, titolo, sottotitolo, legenda=None, nota=NOTA_SCIVOLI):
     W, H = img.size
     t = max(34, int(W * 0.042)); st = max(24, int(W * 0.026)); lg = max(22, int(W * 0.024))
     righe = a_capo(sottotitolo, font(st, False), W * 0.94) if sottotitolo else []
+    righe_nota = a_capo(nota, font(lg, False), W * 0.94) if nota else []
     alto = int(t * 1.6 + len(righe) * st * 1.35 + 24)
-    basso = int(lg * 2.2) if legenda else 0
+    # legenda: le voci vanno a capo se non ci stanno
+    fl = font(lg, False)
+    misura = ImageDraw.Draw(Image.new('RGB', (8, 8)))
+    x = int(W * 0.03)
+    posti, cx, riga = [], x, 0
+    for col, testo in (legenda or []):
+        w = int(lg * 2.0 + misura.textlength(testo, font=fl))
+        if cx > x and cx + w > W - x:
+            cx, riga = x, riga + 1
+        posti.append((cx, riga, col, testo))
+        cx += w + int(lg * 1.4)
+    righe_leg = (riga + 1) if legenda else 0
+    h_leg = int(righe_leg * lg * 1.5 + lg * 0.6) if legenda else 0
+    basso = h_leg + (int(len(righe_nota) * lg * 1.35 + lg * 0.8) if righe_nota else 0)
     out = Image.new('RGB', (W, H + alto + basso), (16, 18, 22))
     out.paste(img, (0, alto))
     d = ImageDraw.Draw(out)
-    x = int(W * 0.03)
     d.text((x, 14), titolo, font=font(t), fill=GIALLO)
     for i, r in enumerate(righe):
         d.text((x, int(14 + t * 1.45 + i * st * 1.35)), r, font=font(st, False), fill=(235, 235, 235))
-    if legenda:
-        cx = x
-        y = H + alto + int(lg * 0.55)
-        for col, testo in legenda:
-            d.rectangle([cx, y + 4, cx + lg * 1.6, y + lg - 2], fill=col, outline=NERO)
-            d.text((cx + lg * 2.0, y), testo, font=font(lg, False), fill=(235, 235, 235))
-            cx += int(lg * 2.6 + d.textlength(testo, font=font(lg, False)) + lg * 1.4)
+    for (cx, rr, col, testo) in posti:
+        y = H + alto + int(lg * 0.45 + rr * lg * 1.5)
+        d.rectangle([cx, y + 4, cx + lg * 1.6, y + lg - 2], fill=col, outline=NERO)
+        d.text((cx + lg * 2.0, y), testo, font=fl, fill=(235, 235, 235))
+    if righe_nota:
+        y0 = H + alto + h_leg + int(lg * 0.2)
+        for i, r in enumerate(righe_nota):
+            d.text((x, y0 + int(i * lg * 1.35)), r, font=fl, fill=(165, 165, 170))
     return out
 
 
@@ -143,7 +161,14 @@ def estensione_da_log(log):
     raise SystemExit('riga PIANTA non trovata in ' + log)
 
 
-SCIA = [(-18.3, 2.9), (-18.3, -5.7), (-17.1, -7.1), (-16.3, -7.7)]
+# scia rosa della tappa 7-8 (RitornoAlBuio.scia in sala_principale.tscn) e bava intorno alla fossa
+# (ritorno_al_buio.gd, bordo_fossa e intorno_fossa, lavoro/grafica 762600a): x, z di Godot
+SCIA = [(-3.5, 9.6), (-5.5, 9.1), (-7.3, 8.7), (-8.5, 8.3), (-10.3, 8.3), (-11.9, 8.3), (-13.7, 8.3), (-15.3, 8.3), (-16.7, 7.5),
+        (-16.9, 5.9), (-17.5, 4.3), (-18.3, 2.9), (-18.3, 1.3), (-18.3, -0.5), (-18.3, -2.3), (-18.3, -4.1), (-17.3, -4.9),
+        (-16.3, -5.5), (-15.3, -5.95), (-14.7, -6.1)]
+BORDO_FOSSA = [(-12.15, -7.7), (-12.15, -5.85), (-13.8, -5.85), (-14.95, -7.0)]
+INTORNO_FOSSA = [(-11.7, -7.8), (-11.7, -5.4), (-13.95, -5.4), (-15.4, -6.9), (-15.4, -8.4)]
+MEDUSA_SBUCA = (-13.03, -7.77)
 
 
 SALA = (-20.25, -24.25, 20.25, 20.25)
@@ -151,15 +176,19 @@ SALA = (-20.25, -24.25, 20.25, 20.25)
 
 def bimbi(p):
     p.solo_dentro([SALA])
-    p.linea(SCIA, ROSSO, 9, tratteggio=26)
-    p.etichetta(-17.6, -4.2, 'scia tappa 8', ROSSO, 28)
+    p.linea(SCIA, ROSA, 10)
+    p.linea(INTORNO_FOSSA, ROSA, 10)
+    p.linea(BORDO_FOSSA, ROSA, 6)
+    p.punto(*MEDUSA_SBUCA, ROSA, 13)
+    p.etichetta(-17.2, -3.0, 'scia rosa', ROSA, 28)
+    p.etichetta(-13.4, -9.3, 'fossa: qui sbuca lei', ROSA, 26)
     p.cono(-8.3, -4.0, -16.0, -13.2, 94, 3.6, (60, 150, 255))
     p.freccia([(-8.0, 0.0), (-8.0, -3.4)], BLU, 9)
     p.freccia([(-8.6, -5.2), (-8.9, -11.0), (-7.0, -13.8), (-5.8, -15.2)], BLU, 8, tratteggio=22)
     p.punto(-8.3, -4.0, BLU, 15)
     p.etichetta(-11.6, -3.0, 'arrivo (tappa 4)', BLU, 28)
     p.etichetta(-6.9, -17.4, 'spiaggia', (180, 220, 255), 28)
-    return [(ROSSO, 'scia della tappa 8 (resta libera)'), (BLU, 'arrivo e strada verso la spiaggia')]
+    return [(ROSA, 'scia rosa e bava della tappa 8 (non si toccano)'), (BLU, 'arrivo e strada verso la spiaggia')]
 
 
 def torre(p, v):
@@ -170,15 +199,13 @@ def torre(p, v):
         p.punto(0.0, -24.0, GIALLO, 18)
         p.etichetta(6.6, -24.2, 'cancello', GIALLO, 34)
         p.etichetta(0.0, -40.5, 'sala della torre', BIANCO, 36)
-        p.linea([(0.0, -31.5), (0.0, -24.0), (-3.0, -19.0), (-9.5, -14.5), (-15.0, -10.0), (-16.5, -5.0), (-13.5, -1.0)], ROSA, 8, tratteggio=24)
     else:
         p.freccia([(-15.6, -8.6), (-10.0, -15.5), (0.0, -16.5), (10.0, -16.0), (18.4, -15.2)], ROSSO, 10)
         p.etichetta(-14.0, -6.4, 'tappa 8', ROSSO, 32)
         p.punto(20.0, -15.0, GIALLO, 18)
         p.etichetta(20.0, -20.2, 'portone', GIALLO, 34)
         p.etichetta(30.0, -24.0, 'sala della torre', BIANCO, 36)
-        p.linea([(28.0, -15.0), (20.0, -9.0), (12.0, -21.5), (0.0, -21.5), (-12.0, -21.0), (-16.5, -10.0), (-13.5, -1.0)], ROSA, 8, tratteggio=24)
-    return [(ROSSO, 'dopo la tappa 8, verso il cancello'), (GIALLO, 'cancello'), (ROSA, 'tubo dell\'inseguimento, solo indicativo')]
+    return [(ROSSO, 'dopo la tappa 8, verso il cancello'), (GIALLO, 'cancello')]
 
 
 def main():

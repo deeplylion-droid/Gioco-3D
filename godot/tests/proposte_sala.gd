@@ -313,18 +313,28 @@ func _pulsante(versione: String, verde: bool) -> void:
 			hatch.basis = Basis(Vector3.RIGHT, deg_to_rad(-170.0)) * hatch.basis
 	else:
 		var d: Dictionary = dati.pulsante_b
+		# il faretto sul braccio del cartello: punta la piastra a strisce (al buio, senza luce, non si vede)
 		var s := SpotLight3D.new()
-		s.name = "FarettoCartello"
-		s.light_color = Color(1.0, 0.86, 0.66)
-		s.light_energy = 6.0
-		s.spot_range = 7.0
-		s.spot_angle = 38.0
-		s.spot_attenuation = 1.0
+		s.name = "FarettoPulsante"
+		s.light_color = Color(1.0, 0.88, 0.7)
+		s.light_energy = 14.0
+		s.spot_range = 8.0
+		s.spot_angle = 30.0
+		s.spot_attenuation = 0.8
 		s.shadow_enabled = true
 		s.light_volumetric_fog_energy = 1.5
 		level.add_child(s)
 		s.position = _v(d.faretto_godot)
-		s.look_at_from_position(s.position, _v(d.mira_faretto_godot), Vector3.UP)
+		var piastra := _v(d.pulsante_godot) + Vector3(0, 0, 0.15)
+		s.look_at_from_position(s.position, piastra, Vector3.UP)
+		# e una luce corta davanti al cartello, per leggerlo
+		var o := OmniLight3D.new()
+		o.name = "LuceCartello"
+		o.light_color = Color(1.0, 0.9, 0.75)
+		o.light_energy = 1.6
+		o.omni_range = 1.6
+		o.position = _v(d.cartello_godot) + Vector3(0, 0.55, -0.45)
+		level.add_child(o)
 
 
 # ----------------------------------------------------------------------------- sala della torre
