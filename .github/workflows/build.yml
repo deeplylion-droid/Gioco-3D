@@ -99,9 +99,14 @@ jobs:
           godot --headless --path godot --export-release "Linux" ../build/linux/SplashLagoon.x86_64
           test -f build/windows/SplashLagoon.exe -a -f build/windows/SplashLagoon.pck
           test -f build/linux/SplashLagoon.x86_64 -a -f build/linux/SplashLagoon.pck
+          # Windows in un solo file: il .pck è dentro l'eseguibile (si avvia con un doppio clic, senza scompattare).
+          mkdir -p build/windows_unico
+          godot --headless --path godot --export-release "Windows Portatile" ../build/windows_unico/SplashLagoon.exe
+          test "$(stat -c %s build/windows_unico/SplashLagoon.exe)" -gt 100000000
           V="${{ steps.versione.outputs.versione }}"
           (cd build/windows && zip -9 -q "../SplashLagoon-windows-v$V.zip" SplashLagoon.exe SplashLagoon.pck)
           (cd build/linux && zip -9 -q "../SplashLagoon-linux-v$V.zip" SplashLagoon.x86_64 SplashLagoon.pck)
+          cp build/windows_unico/SplashLagoon.exe "build/SplashLagoon-windows-v$V.exe"
           ls -la build
 
       - name: Carica la build Windows
@@ -118,14 +123,26 @@ jobs:
           name: SplashLagoon-linux-v${{ steps.versione.outputs.versione }}
           path: build/linux/
 
-      - name: Release (solo su main, solo se la versione è nuova)
+      - name: Release (solo su main; crea la Release o aggiunge i file che mancano)
         if: steps.progetto.outputs.presente == 'si' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="v${{ steps.versione.outputs.versione }}"
           if gh release view "$TAG" > /dev/null 2>&1; then
-            echo "La Release $TAG esiste già: non la tocco. Per pubblicarne una nuova alza config/version."
+            # Non si sostituisce e non si cancella niente: si aggiungono solo i file con un nome nuovo.
+            echo "La Release $TAG esiste già: aggiungo solo i file che mancano. Per una versione nuova alza config/version."
+            if [ -f "docs/release/$TAG.md" ]; then gh release edit "$TAG" --notes-file "docs/release/$TAG.md"; fi
+            PRESENTI=$(gh release view "$TAG" --json assets -q '.assets[].name')
+            for f in build/*.zip build/*.exe; do
+              [ -f "$f" ] || continue
+              n=$(basename "$f")
+              if printf '%s\n' "$PRESENTI" | grep -qxF "$n"; then
+                echo "c'è già: $n"
+              else
+                gh release upload "$TAG" "$f"
+              fi
+            done
           else
             # Le note della versione, se ci sono (docs/release/<tag>.md); se no, quelle di riserva.
             if [ -f "docs/release/$TAG.md" ]; then
@@ -133,7 +150,7 @@ jobs:
             else
               NOTE=(--notes "Demo giocabile della sala principale (build automatica del commit $GITHUB_SHA). Windows: scompatta lo zip e avvia SplashLagoon.exe (tieni SplashLagoon.pck nella stessa cartella).")
             fi
-            gh release create "$TAG" build/*.zip \
+            gh release create "$TAG" build/*.zip build/*.exe \
               --target "$GITHUB_SHA" \
               --title "Splash Lagoon $TAG" \
               "${NOTE[@]}"
