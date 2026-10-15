@@ -77,7 +77,7 @@ func _run() -> void:
 				(l as Light3D).visible = false
 		var look := level.get_node_or_null(^"LuciInterni")
 		if look:
-			look.call(&"_spegni_emissioni")
+			LookInterni.spegni_emissioni(level)
 		await _shot("torcia", Vector3(19.0, 0.0, -1.35), Vector3(12.0, 0.9, -1.2))
 	get_tree().quit()
 

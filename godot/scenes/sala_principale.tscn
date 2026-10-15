@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/game/sala_principale.gd" id="1_y3lwm"]
 [ext_resource type="Material" path="res://addons/acqua/materials/pozzanghera.tres" id="2_23p8a"]
 [ext_resource type="Material" path="res://assets/materials/sala/vetro_cupola.tres" id="3_rpag0"]
-[ext_resource type="Script" path="res://addons/grafica/look_sala.gd" id="4_bko5w"]
+[ext_resource type="PackedScene" path="res://scenes/sala/luci_sala.tscn" id="4_bko5w"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_architettura.glb" id="5_yuaxn"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_cupola.glb" id="6_453jb"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_piscina.glb" id="7_sbb23"]
@@ -120,10 +120,6 @@ hatch_button_mesh = NodePath("Sala/Interattivi/sala_pulsante_portello")
 dome_glass = ExtResource("3_rpag0")
 
 [node name="Sala" type="Node3D" parent="." unique_id=425867213]
-script = ExtResource("4_bko5w")
-energia_fari = 7.0
-neon_difettosi = PackedInt32Array(1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25)
-vetro_cupola = ExtResource("3_rpag0")
 
 [node name="Architettura" type="Node3D" parent="Sala" unique_id=1238678118 instance=ExtResource("5_yuaxn")]
 
@@ -163,6 +159,10 @@ roots = Array[NodePath]([NodePath("../Architettura"), NodePath("../Piscina"), No
 name_filter = PackedStringArray()
 exclude_filter = PackedStringArray("pavimento", "pozzanghere", "vetro", "glass", "griglia", "grata", "neon", "luce", "insegna", "lampad", "cartellone", "colature")
 base_wetness = 0.2
+
+[node name="LuciSala" parent="." instance=ExtResource("4_bko5w")]
+energia_fari = 7.0
+vetro_cupola = ExtResource("3_rpag0")
 
 [node name="Statua" type="Node3D" parent="." unique_id=1478140218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)

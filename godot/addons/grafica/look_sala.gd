@@ -1,18 +1,26 @@
 class_name LookSala
 extends Node3D
 ## Look della sala principale (capitolo 1): luci, illuminazione globale, sonde di
-## riflessione, nebbia, lampi e particelle. Si attacca al Node3D che contiene le
-## istanze dei GLB della sala (tutte in 0,0,0), AL POSTO di sala_luci_ambiente.gd.
+## riflessione, nebbia, lampi e particelle. Due modi d'uso:
+## - scena separata (consigliato, scenes/sala/luci_sala.tscn): [member percorso_sala] punta
+##   al Node3D con i GLB della sala; tutto si fa in differita, dopo il _ready della scena,
+##   così chi tocca i modelli e lo script della sala non tocca le luci;
+## - attaccato direttamente al Node3D con i GLB (com'era prima), AL POSTO di sala_luci_ambiente.gd.
 ## Le luci arrivano da sala_luci.glb e vengono riconosciute dal nome.
 ## L'Environment e gli attributi della camera sono risorse .tres riutilizzabili
 ## (grafica/sala/), ritoccabili nell'editor.
 
+## Il Node3D con i GLB della sala. Vuoto: questo nodo stesso.
+@export var percorso_sala := NodePath()
+## Dati del VoxelGI già cotti (vedi [method cuoci_gi]). Se mancano e il GI è attivo,
+## si calcola all'avvio (lento, solo per le prove).
+@export_file("*.res") var dati_gi := ""
 @export var ambiente: Environment = preload("res://addons/grafica/sala/ambiente_sala.tres")
 @export var attributi_camera: CameraAttributesPractical = preload("res://addons/grafica/sala/attributi_camera_sala.tres")
 @export_group("Luci")
-@export var energia_emergenza := 7.0
-@export var portata_emergenza := 9.0
-@export var energia_neon := 2.6
+@export var energia_emergenza := 5.5
+@export var portata_emergenza := 7.0
+@export var energia_neon := 3.0
 @export var energia_lampione := 3.5
 @export var energia_luna := 0.3
 ## Luci del monumento: faretti bassi (0,6) come provato dall'integratore; fari a 5,5 e lampione
@@ -38,6 +46,15 @@ extends Node3D
 ## sonde di riflessione, nebbia bassa e pulviscolo.
 @export var sala_centro := Vector3(0, 7.5, -2.0)
 @export var sala_dimensioni := Vector3(41, 21, 45)
+@export_group("Ritratto della medusa affacciata")
+## Dove punta la lampada sul palo (luce_lampione): il viso della medusa affacciata sulla
+## vasca sollevata (marker medusa_affacciata in sala_dati.json: origine (0, 0,88, 11,75)).
+@export var ritratto_mira := Vector3(0, 1.75, 11.8)
+@export var energia_ritratto := 6.0
+## Il trigger che accende la lampada (Area3D della scena della sala) e dove metterlo:
+## appena passata la porta degli spogliatoi, così la lampada si accende uscendo.
+@export var percorso_trigger := NodePath()
+@export var punto_accensione := Vector3(0, 1.5, 18.6)
 @export_group("Statua sul monumento")
 ## Centro del monumento e altezza della statua (per il controluce).
 @export var monumento := Vector3(0, 0, 10)
@@ -49,27 +66,74 @@ extends Node3D
 
 var tempesta: Tempesta
 var _sfarfallanti: Array = []   # [luce, energia, modalità, attesa, raffica]
+var _sala: Node3D
 
 
 func _ready() -> void:
+	# La tempesta subito: altri nodi della sala la cercano nel loro _ready (es. i bambini
+	# che compaiono con i lampi).
+	if crea_tempesta:
+		_crea_tempesta()
+	if percorso_sala.is_empty():
+		_sala = self
+		_prepara()
+	else:
+		_sala = get_node(percorso_sala) as Node3D
+		# Dopo il _ready della scena della sala (che regola anche lei alcune luci).
+		_prepara.call_deferred()
+
+
+func _prepara() -> void:
 	_imposta_ambiente()
-	_regola_luci(self)
+	_regola_luci(_sala)
+	_prepara_ritratto()
 	if crea_gi:
 		_crea_voxel_gi()
 	if crea_sonde:
 		_crea_sonde()
-	if crea_tempesta:
-		tempesta = Tempesta.new()
-		tempesta.name = "Tempesta"
-		tempesta.energia_lampo = 7.0
-		if vetro_cupola:
-			tempesta.materiali = [vetro_cupola]
-		add_child(tempesta)
-		tempesta.luce.light_angular_distance = 0.2  # ombre dei costoloni nitide anche col lampo
 	if crea_effetti:
 		_crea_effetti()
 	if crea_controluce:
 		_crea_controluce()
+
+
+func _crea_tempesta() -> void:
+	tempesta = Tempesta.new()
+	tempesta.name = "Tempesta"
+	tempesta.energia_lampo = 7.0
+	if vetro_cupola:
+		tempesta.materiali = [vetro_cupola]
+	add_child(tempesta)
+	tempesta.luce.light_angular_distance = 0.2  # ombre dei costoloni nitide anche col lampo
+
+
+## La lampada sul palo accanto alla vasca sollevata: luce da ritratto sul viso della medusa
+## affacciata. La accende lo script della sala (FlickerLight) quando si esce dagli spogliatoi;
+## qui si regolano colore, cono, ombre e l'intensità a cui arriva.
+func _prepara_ritratto() -> void:
+	var lamp := _sala.find_child("luce_lampione", true, false) as SpotLight3D
+	if lamp:
+		lamp.look_at(ritratto_mira, Vector3.UP)
+		lamp.light_color = colore_lampione
+		lamp.spot_angle = 26.0              # stretto: il ritratto, non la sala
+		lamp.spot_angle_attenuation = 1.3   # bordo morbido
+		lamp.spot_range = 8.0
+		lamp.spot_attenuation = 0.9
+		lamp.light_size = 0.06              # ombre morbide del viso e delle mani sul bordo
+		lamp.shadow_enabled = true
+		lamp.shadow_blur = 1.2
+		lamp.light_specular = 0.4
+		lamp.light_volumetric_fog_energy = 1.6   # il cono si vede nella nebbia
+		lamp.set_meta("grafica_priorita_ombra", 0)
+		# L'intensità la comanda la FlickerLight della sala (base_energy * livello).
+		for n in get_tree().root.find_children("*", "Node", true, false):
+			if n.get("light") == lamp and n.get("base_energy") != null:
+				n.set("base_energy", energia_ritratto)
+				if n.get("is_on"):
+					lamp.light_energy = energia_ritratto
+	var trigger := get_node_or_null(percorso_trigger) as Node3D
+	if trigger:
+		trigger.global_position = punto_accensione
 
 
 ## Controluce freddo dall'alto, dietro la statua: stacca la sagoma dal fondo buio
@@ -112,7 +176,7 @@ func _regola_luci(n: Node) -> void:
 			o.light_color = colore_emergenza
 			o.light_energy = energia_emergenza
 			o.omni_range = portata_emergenza
-			o.omni_attenuation = 1.3
+			o.omni_attenuation = 1.8   # pozze raccolte: il rosso non tinge pareti intere
 			o.light_volumetric_fog_energy = 2.5
 			o.light_specular = 0.7
 			# Ombre solo su alcune (costano: sono omnidirezionali).
@@ -125,14 +189,19 @@ func _regola_luci(n: Node) -> void:
 		elif nome.begins_with("luce_neon"):
 			l.light_color = colore_neon
 			l.light_energy = energia_neon
-			l.light_volumetric_fog_energy = 0.8
-			l.shadow_enabled = false
+			l.light_volumetric_fog_energy = 0.6
+			# Pozze di luce fredda con ombre morbide (una sì e una no: costano), il buio in mezzo.
+			var kn := nome.get_slice("_", 2).to_int()
+			l.shadow_enabled = kn % 2 == 0
+			l.shadow_blur = 1.5
+			l.set_meta("grafica_priorita_ombra", 2)
 			if l is SpotLight3D:
 				var s := l as SpotLight3D
-				s.spot_range = 10.0
-				s.spot_angle = 75.0
-				s.spot_angle_attenuation = 0.5
-				s.spot_attenuation = 0.9
+				s.spot_range = 8.0
+				s.spot_angle = 62.0
+				s.spot_angle_attenuation = 1.2
+				s.spot_attenuation = 1.3
+				s.light_size = 0.15
 			elif l is OmniLight3D:
 				(l as OmniLight3D).omni_range = 9.0
 			var k := nome.get_slice("_", 2).to_int()
@@ -181,7 +250,16 @@ func _regola_luci(n: Node) -> void:
 			s.light_size = 0.12
 			s.light_volumetric_fog_energy = 3.0   # il cono si vede nella nebbia
 			s.set_meta("grafica_priorita_ombra", 1)
-			_sfarfallanti.append([s, s.light_energy, "guasto", 3.0, 0.0])
+			# Accensione e sfarfallio li fa la FlickerLight della sala (vedi _prepara_ritratto).
+		elif nome.begins_with("luce_vasca"):
+			# Sott'acqua nella vasca sollevata: fanno brillare la campana sotto la superficie.
+			var o := l as OmniLight3D
+			o.light_color = Color(0.45, 0.85, 1.0)
+			o.light_energy = 2.2
+			o.omni_range = 3.5
+			o.omni_attenuation = 1.6
+			o.shadow_enabled = false
+			o.light_volumetric_fog_energy = 0.4
 		elif nome.begins_with("luce_subacquea"):
 			var o := l as OmniLight3D
 			o.light_energy = 3.0
@@ -257,9 +335,28 @@ func _crea_voxel_gi() -> void:
 	var gi := VoxelGI.new()
 	gi.name = "VoxelGI_Sala"
 	gi.size = sala_dimensioni
-	gi.position = sala_centro
 	gi.subdiv = VoxelGI.SUBDIV_256
+	if dati_gi != "" and ResourceLoader.exists(dati_gi):
+		gi.data = load(dati_gi)
+	# Il bake generico di Grafica cercherebbe la geometria tra i figli di questo nodo.
+	gi.set_meta("grafica_bake_automatico", _sala == self)
 	add_child(gi)
+	gi.global_position = (_sala.global_transform * sala_centro) if _sala != self else to_global(sala_centro)
+	if gi.data == null and _sala != self and is_instance_valid(Grafica) and int(Grafica.valore("gi")) == 1:
+		gi.bake(_sala)   # senza dati cotti: calcolo all'avvio (lento, solo per le prove)
+
+
+## Cuoce il VoxelGI della sala senza le emissioni delle lampade (la loro luce la fanno le
+## Light3D, che il GI segue in tempo reale) e lo salva in [member dati_gi].
+func cuoci_gi() -> void:
+	var gi := get_node_or_null(^"VoxelGI_Sala") as VoxelGI
+	if gi == null or dati_gi == "":
+		return
+	var spente := LookInterni.spegni_emissioni(_sala)
+	gi.bake(_sala)
+	DirAccess.make_dir_recursive_absolute(dati_gi.get_base_dir())
+	print("GI sala -> ", dati_gi, " ", ResourceSaver.save(gi.data, dati_gi))
+	LookInterni.ripristina_emissioni(spente)
 
 
 func _crea_sonde() -> void:
