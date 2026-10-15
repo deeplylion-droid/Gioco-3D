@@ -580,3 +580,40 @@ def esporta_glb(path, obs=None, luci=True):
 
 def argomenti():
     return sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
+
+
+# ---------------------------------------------------------------- collisioni (convenzione dell'importer di Godot)
+
+def _segna_collisione(ob):
+    ob['collisione'] = True
+    ob.hide_render = True
+    ob.display_type = 'WIRE'
+    return ob
+
+
+def collisione_box(nome, lo, hi, padre=None):
+    """Scatola di collisione convessa (suffisso -convcolonly) tra gli angoli lo e hi (coordinate mondo)."""
+    lo, hi = Vector(lo), Vector(hi)
+    ob = box(f'{nome}-convcolonly', (lo + hi) / 2, hi - lo, None, uv=None)
+    if padre is not None:
+        applica_trasf(ob)
+        ob.parent = padre
+        ob.matrix_parent_inverse = padre.matrix_basis.inverted()
+    return _segna_collisione(ob)
+
+
+def collisione_da_bbox(ob, nome=None, margine=0.0, padre=None):
+    """Collisione convessa = scatola che contiene l'oggetto (allineata agli assi del mondo)."""
+    vs = [ob.matrix_basis @ v.co for v in ob.data.vertices]
+    lo = Vector((min(v.x for v in vs), min(v.y for v in vs), min(v.z for v in vs))) - Vector((margine,) * 3)
+    hi = Vector((max(v.x for v in vs), max(v.y for v in vs), max(v.z for v in vs))) + Vector((margine,) * 3)
+    return collisione_box(nome or ob.name + '_col', lo, hi, padre)
+
+
+def collisione_copia(ob, convessa=True, nome=None):
+    """Copia della mesh (gia' semplice) come collisione: -convcolonly o -colonly (trimesh)."""
+    me = ob.data.copy(); me.materials.clear()
+    c = bpy.data.objects.new(f'{nome or ob.name + "_col"}-{"convcolonly" if convessa else "colonly"}', me)
+    c.matrix_basis = ob.matrix_basis.copy()
+    _link(c)
+    return _segna_collisione(c)
