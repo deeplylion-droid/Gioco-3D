@@ -67,7 +67,7 @@ cioè `position = (0, -9.05, 1.36)` e `rotation_degrees.y = -90`. Così:
 - `marker_raccordo_interni` cade in (7,8; -1,8; 45,4) globali, proprio ai piedi della scala che scende dalla porta "sala pompe" del corridoio degli interni. Il raccordo chiude anche i fianchi e il fondo di quella scala;
 - il soffitto del pianerottolo in cima al raccordo arriva a +0,8 globale, appena a sud del muro degli interni (z da 44,8 a 47): lì non deve esserci altro.
 
-**Da sistemare negli interni (non l'ho toccato, sono approvati)**: in fondo alla scala degli interni il muro sud del pianerottolo scende fino al pavimento degli interni, quindi sopra l'ultimo gradino ci sono solo 1,80 m di luce. La capsula del giocatore (1,75 m) sulla rampa a 36° urta lo spigolo e non passa, né in salita né in discesa. Proposta: un'apertura in quel muro sopra la scala, larga quanto la scala e alta 0,5 m sopra il pavimento degli interni (in `tools/blender/ambienti1_build.py`, stanza `scala_pompe`, apertura `'S': [(16.4, 18.6, 0, 0.5)]`), poi rigenerare `corridoio.gltf`. Dal mio lato c'è già il raccordo di collisione (`attacco_scala_interni`) che collega la loro rampa al pianerottolo (la loro rampa finisce 17 cm sopra il pavimento).
+**Scala degli interni**: perché si possa percorrere, il muro sud del loro pianerottolo ha un'apertura alta 0,5 m sopra la scala (luce 2,3 m) e la loro rampa di collisione va dal bordo del pianerottolo fino al piano di sotto (commit separato sugli interni). Dal mio lato `attacco_scala_interni` raccorda la loro rampa al pianerottolo in cima al raccordo. Il test cammina dalla sala pompe fino davanti alla porta "sala pompe" del corridoio.
 
 ## Luci
 

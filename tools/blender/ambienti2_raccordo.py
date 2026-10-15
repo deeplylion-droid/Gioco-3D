@@ -46,6 +46,7 @@ Z_L1, Z_T = SALE, 2 * SALE          # 3,625 e 7,25
 H_R1, H_S = 2.8, 7.2
 H_T = Z_T + 2.6                     # soffitto sopra T (9,85)
 Z_INTERNI = 9.05                    # pavimento degli interni
+LUCE_INTERNI = 0.5                  # apertura nel muro degli interni sopra la loro scala (fino a 0,5 sul loro pavimento)
 
 reset()
 M = {}
@@ -111,8 +112,8 @@ X_I0 = X_T0 - 10 * 0.25
 blocco('sotto_scala_pav', (X_I0, Y_T0, Z_T - 0.25), (X_T0, Y_T1, Z_T - 0.05), M['cemento'], 2.5)
 blocco('sotto_scala_fianco_s', (X_I0, Y_T0 - SP, Z_T - 0.25), (X_T0, Y_T0, Z_INTERNI), M['lamiere'])
 blocco('sotto_scala_fianco_n', (X_I0, Y_T1, Z_T - 0.25), (X_T0, Y_T1 + SP, Z_INTERNI), M['lamiere'])
-# architrave sopra il passaggio verso la scala degli interni (sotto c'è il loro muro, da 9,05)
-blocco('t_architrave', (X_T0, Y_T0 - SP, Z_INTERNI + 0.01), (X_T0 + 0.32, Y_T1 + SP, H_T + 0.01), M['lamiere'])
+# architrave sopra il passaggio verso la scala degli interni (sotto c'è l'apertura nel loro muro)
+blocco('t_architrave', (X_T0, Y_T0 - SP, Z_INTERNI + LUCE_INTERNI + 0.01), (X_T0 + 0.32, Y_T1 + SP, H_T + 0.01), M['lamiere'])
 empty('PUNTO_raccordo_sala', (XR + 0.6, YD, 0))
 empty('PUNTO_raccordo_interni', (X_T0 + 0.6, (Y_G0 + Y_G1) / 2, Z_T))
 

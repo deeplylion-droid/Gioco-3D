@@ -123,6 +123,6 @@ Scena `godot/scenes/tecnici/tecnici.tscn` (si rigenera con `python3 tools/godot_
 - **Texture** in `godot/assets/ambienti_tecnici/texture/` (25 MB): dopo ogni export da Blender vanno alleggerite con `tools/comprimi_texture.py`. Se cambia solo il `.bin` Godot non reimporta da solo: cancellare `.godot/imported/<nome>.gltf-*`.
 - **Raccordo di servizio** (`tools/blender/ambienti2_raccordo.py`, `raccordo.gltf`): dalla porta del ponte inferiore un corridoio e due rampe di scale a 36° (sale di 7,25 m) fino ai piedi della scala degli interni. Per tenerlo corto la scena tecnica va nel livello girata di -90° (vedi LEGGIMI). Il test cammina dalla sala pompe fino in cima con le due scene messe come nel livello.
 - **Vasca di raccolta** piena d'acqua nera (pelo a -0,15), già collegata all'addon acqua (`WaterTank` + `WaterTankLink`, stile scuro).
-- **Aperto, negli interni**: in fondo alla loro scala c'è solo 1,80 m di luce sotto il muro del pianerottolo e il giocatore (1,75 m) sulla rampa urta lo spigolo. Proposta nel LEGGIMI (apertura alta 0,5 m in quel muro).
+- **Scala degli interni sistemata** (commit separato, ok del coordinatore): apertura alta 0,5 m nel muro del pianerottolo sopra la scala (prima c'era solo 1,80 m di luce e il giocatore urtava) e rampa di collisione lunga quanto la scala (prima finiva 17 cm sopra il pavimento, in cima e in fondo).
 
 Screenshot Godot, preset Alto, 1600 × 900: `docs/report/tecnici/`.

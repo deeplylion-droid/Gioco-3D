@@ -91,19 +91,17 @@ func _run() -> void:
 	await _frames(5)
 	var tappe: Array[Vector3] = []
 	for loc in [Vector3(51.6, 0, 1.4), Vector3(51.6, 0, 0.6), Vector3(51.6, 3.625, -6.2), Vector3(50.0, 3.625, -7.8),
-			Vector3(44.2, 7.25, -7.8)]:
+			Vector3(44.2, 7.25, -7.8), Vector3(40.2, 9.05, -7.8)]:
 		tappe.append((level as Node3D).global_transform * loc)
 	var ok := true
 	for t in tappe:
 		ok = ok and await _cammina_verso(t, 600)
-	check(ok, "si cammina dalla porta della sala pompe su per le due rampe")
+	check(ok, "si cammina dalla porta della sala pompe su per le due rampe e la scala degli interni")
 	var fine := p.global_position
-	check(absf(fine.y - (-1.8)) < 0.1, "e si arriva sul pianerottolo in cima al raccordo (y = %.2f)" % fine.y)
+	check(absf(fine.y) < 0.1 and fine.distance_to(Vector3(7.8, 0, 41.6)) < 0.5,
+			"e si arriva sul pianerottolo degli interni, davanti alla porta della sala pompe (%s)" % str(fine))
 	var cima: Node3D = level.get_node("Marker/marker_raccordo_interni")
-	check(cima.global_position.distance_to(Vector3(7.8, -1.8, 45.4)) < 0.05, "che è ai piedi della scala degli interni")
-	# la scala degli interni c'è davvero, subito oltre il pianerottolo
-	var gradino := _ray(p.get_world_3d().direct_space_state, Vector3(7.8, 0.5, 44.4), Vector3(7.8, -3.0, 44.4))
-	check(not gradino.is_empty() and gradino.position.y > -1.8, "e la rampa della scala degli interni parte da lì")
+	check(cima.global_position.distance_to(Vector3(7.8, -1.8, 45.4)) < 0.05, "il marker in cima al raccordo è ai piedi della scala degli interni")
 	interni.queue_free()
 
 	print("")
