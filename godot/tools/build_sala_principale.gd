@@ -129,9 +129,12 @@ func _hall() -> void:
 	sala.name = "Sala"
 	# Il look della sala (addon grafica): luci di sala_luci.glb riconosciute per nome, ambiente
 	# notturno, GI, sonde dei riflessi, tempesta coi lampi, nebbia bassa, polvere, gocce.
-	sala.set_script(load("res://scripts/environment/look_sala_lunga.gd"))
-	var flash_mats: Array[ShaderMaterial] = [M.dome_glass]
-	sala.set(&"materiali_lampo", flash_mats)
+	# LookSala copre anche la sala lunga (volumi, monumento in (0, 0, 10), statua di 4,5 m, il
+	# suo controluce) e accende il vetro della cupola con i lampi.
+	sala.set_script(load("res://addons/grafica/look_sala.gd"))
+	sala.set(&"vetro_cupola", M.dome_glass)
+	sala.set(&"monumento", Vector3(PEDESTAL.x, 0.0, PEDESTAL.z))
+	sala.set(&"altezza_statua", 4.5)
 	own(sala)
 	for part in [["Architettura", "sala_architettura"], ["Cupola", "sala_cupola"], ["Piscina", "sala_piscina"],
 			["AreaBimbi", "sala_area_bimbi"], ["TorreScivoli", "sala_torre_scivoli"], ["Oggetti", "sala_oggetti"],
@@ -183,21 +186,8 @@ func _statue() -> void:
 	glow.set(&"light_energy", 0.35)
 	glow.set(&"omni_range", 3.5)
 	own(glow, medusa)
-	# Controluce: dall'alto, da dietro, stacca la statua dalla sala (la luce principale sono i
-	# due fari sulla ringhiera della galleria, in sala_luci.glb).
-	var rim := SpotLight3D.new()
-	rim.name = "Controluce"
-	rim.position = Vector3(0.0, 9.6, -4.2)
-	own(rim, statue)
-	rim.look_at_from_position(rim.position, Vector3(0, PEDESTAL.y + 3.4, 0), Vector3.UP)
-	rim.light_color = Color(0.68, 0.82, 1.0)
-	rim.light_energy = 5.0
-	rim.spot_range = 14.0
-	rim.spot_angle = 14.0
-	rim.spot_angle_attenuation = 1.2
-	rim.shadow_enabled = true
-	rim.light_volumetric_fog_energy = 1.2
-	rim.set_meta(&"grafica_priorita_ombra", 1)
+	# Il controluce dall'alto, da dietro, lo crea LookSala ("ControluceStatua"); la luce
+	# principale sono i due fari sulla ringhiera della galleria, in sala_luci.glb.
 	# Uno spot stretto sul viso: il viso e l'occhio devono "agganciare" lo sguardo anche da
 	# lontano (e l'occhio di vetro prende il riflesso della luce).
 	var face_y := PEDESTAL.y + 2.3 * MEDUSA_SCALE
@@ -228,7 +218,7 @@ func _statue() -> void:
 	# qui si orienta verso il viso e parte spenta, poi si accende quando ti avvicini.
 	var flicker: Node = load("res://scripts/environment/flicker_light.gd").new()
 	flicker.name = "Sfarfallio"
-	flicker.set(&"base_energy", 5.0)
+	flicker.set(&"base_energy", 3.5)
 	flicker.set(&"base_emission", 6.0)
 	flicker.set(&"flicker_rate", 0.05)
 	flicker.set(&"min_level", 0.35)

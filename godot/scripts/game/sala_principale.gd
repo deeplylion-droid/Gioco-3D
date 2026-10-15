@@ -6,6 +6,9 @@ extends Node3D
 ## getto sulla turbina (ricaricando lo zaino dalla pozza stessa) finché la pozza si svuota, poi
 ## colpisci il pulsante del portello. Nell'area bimbi la ruota a pale riempie il secchio gigante.
 
+## Illuminazione globale VoxelGI della sala già calcolata (tools/bake_voxel_gi.gd).
+const BAKED_GI := "res://assets/ambiente/sala/voxel_gi_sala.res"
+
 ## La lampada sul palo vicino alla statua: si accende quando ti avvicini.
 @export var statue_lamp: FlickerLight
 ## La luce della lampada (in sala_luci.glb) e il punto verso cui puntarla.
@@ -84,6 +87,11 @@ func _setup_hall() -> void:
 					l.set_meta(&"grafica_priorita_ombra", 1)
 			elif l is SpotLight3D and String(l.name).begins_with("luce_neon"):
 				(l as SpotLight3D).light_volumetric_fog_energy = 0.8
+	# Illuminazione globale calcolata in anticipo (tools/bake_voxel_gi.gd), così il preset Alto
+	# non la calcola all'avvio: va messa adesso, prima che la grafica la calcoli (in differita).
+	var gi := get_node_or_null(^"Sala/VoxelGI_Sala") as VoxelGI
+	if gi and gi.data == null and ResourceLoader.exists(BAKED_GI):
+		gi.data = load(BAKED_GI) as VoxelGIData
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override
