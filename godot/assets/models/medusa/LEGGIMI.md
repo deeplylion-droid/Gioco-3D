@@ -40,9 +40,62 @@ e' a circa 1,77 m, il busto tra 2,7 e 3,3 m, la cima della testa a 4,5 m.
 - `fluttua` (ciclo di 2 s): sospesa, ondeggia; la campana pulsa e i tentacoli si muovono.
 - `insegue` (ciclo di 1 s): braccia protese, busto in avanti, tentacoli trascinati indietro.
 - `fauce_apre` (1 s): attacco con la fauce che si apre.
+- `affacciata` (ciclo di 4 s): la medusa vera affacciata alla vasca della sala centrale, immobile, con un
+  respiro appena visibile (campana schiacciata sott'acqua). Vedi sotto.
 
 Le animazioni da sveglia (`sveglia` alla fine, `fluttua`, `insegue`, `fauce_apre`) hanno il corpo alla stessa
 altezza, quindi si possono fondere tra loro. Lo spostamento nel livello lo fa il gioco.
+
+## Sala centrale: la medusa affacciata alla vasca (`affacciata`)
+
+La medusa vera (stesso GLB, stessa scala) dentro la vasca sollevata al centro della sala, come nel concept
+`docs/concept/medusa_sbircia.jpg`: immersa con il pelo dell'acqua appena sopra il seno (regola del GDD: il seno
+resta coperto), busto inclinato in avanti, spalle alzate, testa sporta sopra lo spigolo interno e appena
+inclinata; sbircia dal basso chi entra, con l'occhio all'altezza dei suoi occhi. Mani larghe aggrappate al
+coping, gomiti in fuori; la campana brilla sott'acqua, schiacciata e allargata.
+
+- Marker `medusa_affacciata`: **posizione (0, 0, 10,15), rotazione (0, 0, 0)** (come prima), con la vasca
+  `sala_vasca_centrale.glb` centrata in (0, 0, 10). L'origine del GLB va al livello del pavimento della sala,
+  2,1 m dietro il filo esterno del muro davanti (z 12,25); la medusa guarda verso +Z.
+- Animazione `affacciata` (96 fotogrammi, 4 s) da mettere in ciclo (Loop Mode Linear) e far partire subito:
+  tiene tutta la posa, il solo movimento e' il respiro sul petto e sulle spalle. Mette anche a 1 la blend shape
+  `campana_schiaccia` (mesh `Medusa`, `Medusa_Interno`, `Medusa_Bordo`): la campana si abbassa (x0,38) e si
+  allarga sott'acqua. Le altre animazioni non la toccano: se dopo l'affacciata se ne usa un'altra, rimetterla a 0.
+- Dove tocca la vasca (coordinate della sala): occhio in (0; 1,63; 11,95), cima della testa a y 2,18; vita in
+  (0; 0,43; 11,19); campana tra y 0,07 e 0,45 (tutta sott'acqua); seno sotto il pelo dell'acqua (0,88).
+  Mani sul coping in x +-0,6: polso sullo spigolo interno (z 11,95), palmo sul coping, dita piegate oltre lo
+  spigolo esterno con i polpastrelli sul fronte (fino a z 12,31, y 0,91), pollice sul coping verso l'interno.
+- Tentacoli fuori dal bordo (escono dall'acqua lungo il muro interno, si appoggiano sul coping e ricadono lungo
+  il muro davanti): 4 zampe in x -1,62, -1,42, +1,48, +1,68 che arrivano al pavimento e ci si allargano (fino a
+  circa 0,4 m davanti al muro); 4 medi tra le mani e accanto (x -0,9, -0,34, +0,34, +0,9) che pendono lungo il
+  muro. Restano liberi il pulsante (x -0,2..0,2) e i disegni appesi al muro. Gli altri 17 tentacoli stanno
+  sott'acqua, dentro la vasca.
+- **Aspetto bagnato** (solo questa scena): materiali alternativi da applicare in override al posto di quelli
+  normali, senza cambiare le texture: `medusa_pelle_bagnata.tres` (superficie 0 di `Medusa`),
+  `medusa_capelli_bagnata.tres` (superficie 1), `medusa_orbita_bagnata.tres` (superficie 3),
+  `medusa_mani_bagnata.tres` (`Medusa_Mani`), `medusa_ciocche_bagnata.tres` (`Medusa_Ciocche`: punte appena piu' scure
+  e lucide) e `medusa_tentacoli_bagnata.tres` (`Medusa_Tentacoli` e superficie 0 di `Medusa_Bordo`).
+- Le gocce (punte dei capelli, mento, dita, tentacoli sul bordo) sono particelle del motore. La fisica dei
+  tentacoli resta spenta in questa posa.
+- Per far seguire il giocatore all'occhio si ruota l'osso `occhio` da codice, al massimo 15 gradi.
+
+## Mani
+
+Le mani sono un oggetto a parte, `Medusa_Mani` (materiale `M_mani`): mani da bambola in vinile rifatte da zero,
+cinque dita separate con tre falangi, nocche e unghie appena accennate, pollice opponibile; la giuntura e' il
+solco del polso, come nelle bambole. Ogni vertice dipende al massimo da due ossa (niente influenze da un dito
+all'altro), quindi in Godot si deformano come in Blender. Le ossa hanno gli stessi nomi di prima (`mano`,
+`pollice_1..3`, `indice_1..3`, `medio_1..3`, `anulare_1..3`, `mignolo_1..3`, con `.L` e `.R`); asse Z sul dorso,
+la piega delle dita e' la rotazione intorno all'asse X. Il colore viene dal colore dei vertici (unghie appena piu'
+chiare, pieghe un po' piu' scure): per la tinta del gioco usa `medusa_mani.tres` su `Medusa_Mani`.
+
+## Occhio: versione malvagia (`venatura`)
+
+`medusa_occhio.tres` (shader `medusa_occhio.gdshader`) su `Medusa_Occhio` mescola l'occhio calmo
+(`occhio_bulbo_calmo.png`: iride rosa-lilla, sclera bianca pulita) e quello venato (`occhio_bulbo_venato.png`:
+capillari rossi dal bordo della sclera verso l'iride, sclera ingiallita, iride magenta piu' accesa) con il parametro
+`venatura` da 0 (calma, come nel glTF) a 1. `occhio_bulbo_basecolor.png` e' il vecchio disegno, non serve piu'. In gioco si puo' animare quando attacca:
+`$Medusa_Occhio.get_surface_override_material(0).set_shader_parameter("venatura", v)`.
 
 ## Campana: gelatina trasparente, canali luminosi, struttura interna, bordo
 
@@ -82,16 +135,17 @@ controluce, bordo luminoso e lacca) usa `medusa_tentacoli.tres`, come per la cam
 ## Capelli
 
 Il volume dei capelli fa da fondo (superficie `M_capelli` della mesh `Medusa`); sopra ci sono le ciocche
-separate (`Medusa_Ciocche`, materiale `M_ciocche`): il colore viene dal colore dei vertici (preso dalla texture
-dei capelli) moltiplicato per le fibre, con le punte rosa traslucide. Per il lucido bagnato usa
+separate (`Medusa_Ciocche`, materiale `M_ciocche`): il colore viene dal colore dei vertici moltiplicato per le
+fibre, con le punte rosa traslucide. Colore argento-rosa come nel concept: argento chiaro in alto, qualche ciocca
+piu' rosata, rosa in basso e sulle punte; il volume sotto ha la stessa tinta, un po' piu' scura. Per il lucido bagnato usa
 `medusa_ciocche.tres` (stesso modo: Use External su `M_ciocche`).
 
 Subsurface scattering e refrazione funzionano con il renderer Forward+.
 
 ## Triangoli, texture e LOD
 
-Circa 140 mila triangoli in tutto (corpo circa 60 mila, ciocche circa 33 mila, tentacoli circa 31 mila, campana
-interna e bordo circa 15 mila, occhio e fauce il resto). Texture: corpo e capelli a 4K (colore, normal,
+Circa 160 mila triangoli in tutto (corpo circa 42 mila, ciocche circa 36 mila, tentacoli circa 31 mila, mani
+24 mila, campana interna e bordo circa 18 mila, occhio e fauce il resto). Texture: corpo e capelli a 4K (colore, normal,
 ruvidita'), campana a 2K, tentacoli e ciocche 1024 x 2048 e 512 x 1024.
 
 LOD: Godot crea da solo i livelli di dettaglio all'import (Advanced Import Settings > Meshes > Generate LODs,
@@ -101,9 +155,15 @@ attivo di default): da lontano ogni mesh scende a pochi mila triangoli.
 
 - `occhio`: ruota il bulbo dell'occhio (asse Y dell'osso = direzione dello sguardo). Rotazione massima
   prevista: 15 gradi, oltre il bulbo scopre l'orbita.
-- `mascella` + blend shape `fauce_strappo` (mesh `Medusa`) e `fauce_aperta` (mesh `Medusa_Gola` e
-  `Medusa_Denti`): la fauce. Da chiusa non si vede nulla (il viso resta liscio); l'animazione `fauce_apre`
-  muove tutto insieme (osso e blend shape da 0 a 1).
+- `mascella` + blend shape `fauce_strappo` (mesh `Medusa`) e `fauce_aperta` (mesh `Medusa_Gola`,
+  `Medusa_Denti` e `Medusa_Strappo`): la fauce. Da chiusa non si vede nulla (il viso resta liscio); l'animazione
+  `fauce_apre` muove tutto insieme (osso e blend shape da 0 a 1). `Medusa_Strappo` e' lo spessore della pelle
+  strappata, un bordino arrotolato lungo i due bordi: colore dai colori dei vertici (pelle fuori, rosa e carne
+  dentro), materiale `M_strappo`; con `medusa_pelle.tres` sul viso conviene dargli la stessa tinta
+  (`albedo_color` 0,74; 0,8; 1 con `vertex_color_use_as_albedo`).
+  Denti da squalo in tre file per arcata: la prima fila scende dall'arcata di sopra e sale da quella di sotto,
+  una di fronte all'altra e sfalsate di mezzo dente (si incastrano), tutte inclinate verso l'interno della bocca;
+  le file dietro sono piu' piccole e coricate.
 - `campana_contrai` (mesh `Medusa`, `Medusa_Interno`, `Medusa_Bordo`): la campana si stringe, per la pulsazione.
 - `radice`: tutto il corpo (in `sveglia` sale di 0,83 m).
 - Catene dei tentacoli, figlie di `campana`, per la fisica (per esempio SpringBoneSimulator3D, una catena

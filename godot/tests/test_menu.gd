@@ -35,6 +35,19 @@ func _run() -> void:
 		return
 	var medusa := menu.get_node_or_null("Statua/Medusa") as MedusaStatue
 	check(medusa != null and medusa.get_model_instance() != null, "la statua della medusa c'è")
+	if medusa and medusa.get_model_instance():
+		# La medusa finita (lavoro/medusa 6585aa6): mani nuove, occhio con la venatura, strappo nascosto.
+		var mod := medusa.get_model_instance()
+		var mani := mod.find_child("Medusa_Mani", true, false) as MeshInstance3D
+		var mm := mani.get_surface_override_material(0) if mani else null
+		check(mm != null and mm.resource_name == "M_mani", "le mani nuove hanno il vinile della medusa")
+		var occhio := mod.find_child("Medusa_Occhio", true, false) as MeshInstance3D
+		var om := occhio.get_surface_override_material(0) as ShaderMaterial if occhio else null
+		check(om != null and om.shader.resource_path.ends_with("medusa_occhio.gdshader"), "l'occhio usa lo shader con la venatura")
+		var strappo := mod.find_child("Medusa_Strappo", true, false) as MeshInstance3D
+		var sm := strappo.get_surface_override_material(0) as BaseMaterial3D if strappo else null
+		check(strappo != null and not strappo.visible and sm != null and sm.vertex_color_use_as_albedo
+				and sm.albedo_color.is_equal_approx(Color(0.74, 0.8, 1.0)), "lo strappo della fauce è nascosto e ha la tinta della pelle")
 	var piedistallo := menu.get_node_or_null("Statua/Piedistallo")
 	check(piedistallo != null and piedistallo.find_child("amb_piedistallo", true, false) is MeshInstance3D,
 		"c'è il piedistallo della sala")

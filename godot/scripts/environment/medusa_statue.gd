@@ -55,7 +55,9 @@ extends Node3D
 @export var tentacle_glow := 1.0
 
 ## Le mesh dentro la bocca: si vedono solo quando la fauce si apre.
-const BOCCA := ["Medusa_Gola", "Medusa_Denti"]
+const BOCCA := ["Medusa_Gola", "Medusa_Denti", "Medusa_Strappo"]
+## Lo spessore della pelle strappata intorno alla fauce: colori dei vertici con la tinta della pelle.
+const STRAPPO := "Medusa_Strappo"
 
 var _instance: Node3D
 var _bell: ShaderMaterial
@@ -177,7 +179,29 @@ func _rebuild() -> void:
 				(mi as MeshInstance3D).set_surface_override_material(s, by_name[mat.resource_name])
 			if material_map.has(mat.resource_name) and material_map[mat.resource_name] is Material:
 				(mi as MeshInstance3D).set_surface_override_material(s, material_map[mat.resource_name])
+	_tinta_strappo()
 	_dopo_rebuild()
+
+
+## Il bordo della pelle strappata (Medusa_Strappo, dentro la blend shape fauce_aperta) prende la
+## tinta della pelle del viso (LEGGIMI della medusa): colori dei vertici per pelle, rosa e carne.
+func _tinta_strappo() -> void:
+	var strappo := _instance.find_child(STRAPPO, true, false) as MeshInstance3D
+	if strappo == null or strappo.mesh == null or strappo.mesh.get_surface_count() == 0:
+		return
+	var base := strappo.mesh.surface_get_material(0) as BaseMaterial3D
+	if base == null:
+		return
+	var tinta := Color(0.74, 0.8, 1.0)
+	var corpo := _instance.find_child("Medusa", true, false) as MeshInstance3D
+	if corpo and corpo.mesh and corpo.mesh.get_surface_count() > 0:
+		var pelle := corpo.get_surface_override_material(0) as BaseMaterial3D
+		if pelle:
+			tinta = pelle.albedo_color
+	var m := base.duplicate() as BaseMaterial3D
+	m.vertex_color_use_as_albedo = true
+	m.albedo_color = tinta
+	strappo.set_surface_override_material(0, m)
 
 
 ## Per le sottoclassi: il modello è appena stato creato (animazioni, ossa, effetti).

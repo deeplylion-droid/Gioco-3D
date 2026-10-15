@@ -24,7 +24,7 @@ const VASCA_INTERNO := Vector2(5.4, 3.9)
 const VASCA_PELO := 0.88
 const VASCA_BORDO := 1.0
 ## La medusa affacciata (LEGGIMI della medusa): origine al livello del pavimento, guarda verso +Z.
-const MEDUSA_DIR := "res://assets/models/medusa_affacciata/"
+const MEDUSA_DIR := "res://assets/models/medusa/"
 const MEDUSA_AFFACCIATA := Vector3(0.0, 0.0, 10.15)
 ## Dove sta il suo occhio (per la luce del lampione).
 const OCCHIO_MEDUSA := Vector3(0.0, 1.63, 11.95)

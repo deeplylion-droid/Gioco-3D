@@ -42,6 +42,10 @@ func _run() -> void:
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
 	var medusa := level.get_node("Vasca/Medusa") as MedusaAffacciata
 	check(medusa != null and medusa.get_model_instance() != null, "la medusa è affacciata alla vasca")
+	var strappo := medusa.get_model_instance().find_child("Medusa_Strappo", true, false) as MeshInstance3D
+	var sm := strappo.get_surface_override_material(0) as BaseMaterial3D if strappo else null
+	check(strappo != null and not strappo.visible and sm != null and sm.vertex_color_use_as_albedo
+			and sm.albedo_color.is_equal_approx(Color(0.7, 0.76, 0.96)), "lo strappo della fauce è nascosto, con la tinta della pelle bagnata")
 	var ap := medusa.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
 	check(ap != null and ap.is_playing() and ap.current_animation == "affacciata", "con l'animazione affacciata in ciclo")
 	var eye := medusa.get_eye_position()

@@ -12,6 +12,8 @@
 [ext_resource type="Material" path="res://assets/models/medusa/medusa_pelle.tres" id="10_pelle"]
 [ext_resource type="Material" path="res://assets/models/medusa/medusa_orbita.tres" id="11_orbita"]
 [ext_resource type="Material" path="res://assets/models/medusa/medusa_ciocche.tres" id="12_ciocche"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_mani.tres" id="13_mani"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_occhio.tres" id="14_occhio"]
 
 [sub_resource type="Environment" id="Environment_titolo"]
 background_mode = 1
@@ -93,7 +95,7 @@ script = ExtResource("4_med")
 model = ExtResource("5_glb")
 bell_material = ExtResource("6_camp")
 tentacle_material = ExtResource("7_tent")
-surface_materials = Array[Material]([ExtResource("10_pelle"), ExtResource("11_orbita"), ExtResource("12_ciocche")])
+surface_materials = Array[Material]([ExtResource("10_pelle"), ExtResource("11_orbita"), ExtResource("12_ciocche"), ExtResource("13_mani"), ExtResource("14_occhio")])
 target_height = 4.5
 
 [node name="LuceCampana" type="OmniLight3D" parent="Statua"]
