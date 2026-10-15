@@ -63,6 +63,12 @@ VASCA_CENTRALE = dict(cx=0.0, cy=-10.0, lx=6.0, ly=4.5, r=0.5, h=1.0, coping=0.3
                       cordone=1.3, z_pulsante=0.62)
 CENTRO = {'modo': 'vasca'}   # 'vasca' (di serie) oppure 'monumento' (la statua, per più avanti)
 STRUTTURA = dict(cx=-13.0, cy=16.0)
+# fossa dello scarico di compensazione rotto attaccata al lato sud della VascaBimbi1 (tappa 8, "lei sbuca
+# dal bordo"): pianta x0..x1, y0..y1 (Blender; in Godot x -14,8..-12,3 e z -8,0..-6,0) con l'angolo sud-ovest
+# tagliato a 45 gradi ('taglio'): lì il bordo piastrellato regge la medusa affacciata, rivolta a sud-ovest.
+# Fondo a -3,0; piastrelle fino a -0,6, poi cemento grezzo; in fondo il condotto verso est.
+FOSSA_BIMBI = dict(x0=-14.8, x1=-12.3, y0=6.0, y1=8.0, taglio=1.0, fondo=-3.0, piastrelle=-0.6, bordo=0.3,
+                   h_bordo=0.45, acqua_piena=0.42, condotto=dict(y=7.0, z=-2.3, r=0.6, x_fine=-8.8))
 # vasche basse dell'area bimbi: (x0, y0, x1, y1) del bordo esterno
 VASCHE_BASSE = [(-15.1, 7.7, -10.1, 11.5), (-17.0, 10.7, -13.6, 14.1)]
 TORRE = dict(cx=13.5, cy=17.5, lato=6.0, piani=(3.0, 6.0, 8.6))
@@ -179,30 +185,36 @@ def rumore(x, y, s=1.0):
 
 # ----------------------------------------------------------------------------- pavimenti e soffitti
 
-def pavimento_regione(mats, x0, x1, y0, y1, buchi=(), passo=0.25, z=0.0, nome='sala_pavimento', passo_col=0.5):
+def pavimento_regione(mats, x0, x1, y0, y1, buchi=(), passo=0.25, z=0.0, nome='sala_pavimento', passo_col=0.5,
+                      esatti=()):
     """Pavimento unico a celle di 'passo' metri (una piastrella antiscivolo da 25 cm), con buchi
     rettangolari (vasche). Un solo materiale: sporco e umidità sono nei colori dei vertici in spazio
     mondo (sfumati, niente chiazze a quadretti) e l'acqua vera sta nelle pozzanghere. Collisione
     trimesh a parte, più rada (passo_col), con gli stessi buchi."""
+    def linee(a0, a1, p, extra):
+        v = [round(a0 + i * p, 4) for i in range(int(round((a1 - a0) / p)) + 1)]
+        return sorted(set(v + [round(e, 4) for e in extra if a0 < e < a1]))
     def celle(p):
-        nx, ny = int(round((x1 - x0) / p)), int(round((y1 - y0) / p))
+        # buchi esatti (per esempio la fossa dell'area bimbi): i loro bordi diventano linee della griglia
+        xs = linee(x0, x1, p, [e for r in esatti for e in (r[0], r[2])])
+        ys = linee(y0, y1, p, [e for r in esatti for e in (r[1], r[3])])
         out = []
-        for i in range(nx):
-            for j in range(ny):
-                a, b = x0 + i * p, y0 + j * p
-                cx, cy = a + p / 2, b + p / 2
-                if any(bx0 < cx < bx1 and by0 < cy < by1 for bx0, by0, bx1, by1 in buchi):
+        for i in range(len(xs) - 1):
+            for j in range(len(ys) - 1):
+                a, b, a2, b2 = xs[i], ys[j], xs[i + 1], ys[j + 1]
+                cx, cy = (a + a2) / 2, (b + b2) / 2
+                if any(bx0 < cx < bx1 and by0 < cy < by1 for bx0, by0, bx1, by1 in list(buchi) + list(esatti)):
                     continue
-                out.append((a, b))
+                out.append((a, b, a2, b2))
         return out
     c = K.Costruttore(mats)
-    for (a, b) in celle(passo):
-        c.faccia([(a, b, z), (a + passo, b, z), (a + passo, b + passo, z), (a, b + passo, z)], 'pavimento')
+    for (a, b, a2, b2) in celle(passo):
+        c.faccia([(a, b, z), (a2, b, z), (a2, b2, z), (a, b2, z)], 'pavimento')
     ob = c.crea(nome)
     D.colora(ob, D.sporco_pavimento)
     cc = K.Costruttore(mats)
-    for (a, b) in celle(passo_col):
-        cc.faccia([(a, b, z), (a + passo_col, b, z), (a + passo_col, b + passo_col, z), (a, b + passo_col, z)], 'pavimento')
+    for (a, b, a2, b2) in celle(passo_col):
+        cc.faccia([(a, b, z), (a2, b, z), (a2, b2, z), (a, b2, z)], 'pavimento')
     col = cc.crea(nome + '-colonly')
     col.parent = ob
     col.hide_render = True
@@ -1059,21 +1071,161 @@ def vasca_arrivo(mats):
     return pezzi
 
 
-def vasca_bassa(mats, cx, cy, lx, ly, nome, acqua=0.3):
+def vasca_bassa(mats, cx, cy, lx, ly, nome, acqua=0.3, bordi=None):
     """Vasca bassa dell'area bimbi: bordo rialzato 0,45 m a scacchi blu e bianchi (come nello
-    storyboard S09), fondo azzurro, acqua che sale."""
+    storyboard S09), fondo azzurro, acqua che sale. 'bordi': le scatole del bordo (x0, y0, x1, y1), se
+    non è l'anello di serie (la VascaBimbi1 ha il lato sud aperto sulla fossa)."""
     c = K.Costruttore(mats)
     h, s = 0.45, 0.3
     x0, x1, y0, y1 = cx - lx / 2, cx + lx / 2, cy - ly / 2, cy + ly / 2
     # anello del bordo come 4 scatole
-    for (a0, b0, a1, b1) in ((x0 - s, y0 - s, x1 + s, y0), (x0 - s, y1, x1 + s, y1 + s), (x0 - s, y0, x0, y1), (x1, y0, x1 + s, y1)):
+    bordi = bordi or ((x0 - s, y0 - s, x1 + s, y0), (x0 - s, y1, x1 + s, y1 + s), (x0 - s, y0, x0, y1), (x1, y0, x1 + s, y1))
+    for (a0, b0, a1, b1) in bordi:
         c.scatola((a0, b0, 0), (a1, b1, h), 'scacchi', senza=('-z',))
     c.faccia([(x0, y0, 0.02), (x1, y0, 0.02), (x1, y1, 0.02), (x0, y1, 0.02)], 'vasca_bimbi')
     ob = c.crea(nome, sporco=lambda co: 0.85 if co.z < 0.1 else 1.0)
-    for i, (a0, b0, a1, b1) in enumerate(((x0 - s, y0 - s, x1 + s, y0), (x0 - s, y1, x1 + s, y1 + s), (x0 - s, y0, x0, y1), (x1, y0, x1 + s, y1))):
+    for i, (a0, b0, a1, b1) in enumerate(bordi):
         K.collisione_scatola(f'{nome}_{i}', (a0, b0, 0), (a1, b1, h), padre=ob)
     acq = acqua_piana(nome + '_acqua', x0, x1, y0, y1, acqua)
     return [ob, acq]
+
+
+def fossa_bimbi_punti():
+    """Punti della fossa (Blender): poligono interno (in senso orario visto dall'alto: NO, O, S, SE, NE),
+    esagono dell'angolo tagliato del bordo e triangolo di pavimento fuori dalla diagonale esterna."""
+    F = FOSSA_BIMBI
+    x0, x1, y0, y1, c, s = F['x0'], F['x1'], F['y0'], F['y1'], F['taglio'], F['bordo']
+    r2 = math.sqrt(2.0)
+    interno = [(x0, y1), (x0, y0 + c), (x0 + c, y0), (x1, y0), (x1, y1)]
+    yo = y0 + c - s * r2 + s           # diagonale esterna del bordo sul filo esterno ovest (x0 - s)
+    xo = x0 + c - s * r2 + s           # e sul filo esterno sud (y0 - s)
+    angolo = [(x0 - s, y0 + c), (x0, y0 + c), (x0 + c, y0), (x0 + c, y0 - s), (xo, y0 - s), (x0 - s, yo)]
+    t = c - s * r2                     # il triangolo di pavimento dentro il rettangolo, fuori dal bordo
+    triangolo = [(x0, y0), (x0 + t, y0), (x0, y0 + t)]
+    return interno, angolo, triangolo
+
+
+def bordi_vasca_bimbi_1():
+    """Bordo della VascaBimbi1 con il lato sud aperto sulla fossa (le scatole che restano)."""
+    F = FOSSA_BIMBI
+    s = F['bordo']
+    x0, x1, y0, y1 = -12.6 - 2.2, -12.6 + 2.2, 9.6 - 1.6, 9.6 + 1.6
+    return ((x0 - s, y1, x1 + s, y1 + s),                 # nord
+            (x1, y0, x1 + s, y1),                         # est
+            (F['x1'], y0 - s, x1 + s, y0),                # sud, solo a est della fossa
+            (x0 - s, F['y0'] + F['taglio'], x0, y1))      # ovest, fino all'angolo tagliato della fossa
+
+
+def fossa_bimbi(mats):
+    """Fossa dello scarico di compensazione rotto della VascaBimbi1 (tappa 8): la parte profonda della vasca.
+    Pareti piastrellate fino a -0,6 e poi cemento grezzo, fondo a -3, condotto orizzontale verso est in
+    fondo, griglia divelta e piegata sul lato nord, bordo a scacchi tutto intorno (con l'angolo tagliato
+    a sud-ovest su cui appoggia le mani la medusa). Collisioni: pareti e fondo; il coperchio a filo del
+    fondo della vasca è un oggetto a parte (coperchio_fossa_col), da accendere e spegnere nel gioco.
+    Restituisce (oggetti, acqua segnaposto, coperchio)."""
+    F = FOSSA_BIMBI
+    x0, x1, y0, y1, s, hb = F['x0'], F['x1'], F['y0'], F['y1'], F['bordo'], F['h_bordo']
+    zf_, zp = F['fondo'], F['piastrelle']
+    C = F['condotto']
+    interno, angolo, triangolo = fossa_bimbi_punti()
+    cx_, cy_ = sum(p[0] for p in interno) / len(interno), sum(p[1] for p in interno) / len(interno)
+    c = K.Costruttore(mats)
+    # pareti: piastrelle in alto, cemento sotto (la parete est ha il buco del condotto)
+    for k in range(len(interno)):
+        (ax, ay), (bx, by) = interno[k], interno[(k + 1) % len(interno)]
+        dentro = Vector((cx_ - (ax + bx) / 2, cy_ - (ay + by) / 2, 0)).normalized()
+        if abs(by - ay) < 1e-6 and ay == y1:
+            zt = 0.02                                   # lato nord: sotto il bordo del fondo della vasca
+        else:
+            zt = 0.0
+        c.faccia_verso([(ax, ay, zt), (bx, by, zt), (bx, by, zp), (ax, ay, zp)], 'vasca_bimbi', dentro)
+        if abs(ax - x1) < 1e-6 and abs(bx - x1) < 1e-6:
+            continue                                    # parete est: sotto, il ventaglio intorno al condotto
+        c.faccia_verso([(ax, ay, zp), (bx, by, zp), (bx, by, zf_), (ax, ay, zf_)], 'cemento', dentro)
+    # parete est sotto le piastrelle: ventaglio tra il cerchio del condotto e il rettangolo
+    yc, zc, r = C['y'], C['z'], C['r']
+    def bordo_rett(t):
+        dy, dz = math.cos(t), math.sin(t)
+        ts = [v for v in [((y0 - yc) / dy) if abs(dy) > 1e-9 else None, ((y1 - yc) / dy) if abs(dy) > 1e-9 else None,
+                          ((zf_ - zc) / dz) if abs(dz) > 1e-9 else None, ((zp - zc) / dz) if abs(dz) > 1e-9 else None]
+              if v is not None and v > 0]
+        tt = min(ts)
+        return (x1, yc + dy * tt, zc + dz * tt)
+    n = 40
+    angoli = sorted(set([2 * math.pi * k / n for k in range(n)] +
+                        [math.atan2(pz - zc, py - yc) % (2 * math.pi) for py, pz in ((y0, zf_), (y1, zf_), (y1, zp), (y0, zp))]))
+    for k in range(len(angoli)):
+        t0, t1 = angoli[k], angoli[(k + 1) % len(angoli)]
+        q = [(x1, yc + math.cos(t0) * r, zc + math.sin(t0) * r), bordo_rett(t0), bordo_rett(t1),
+             (x1, yc + math.cos(t1) * r, zc + math.sin(t1) * r)]
+        c.faccia_verso(q, 'cemento', (-1, 0, 0))
+    # condotto: tubo di cemento verso est, con la ghiera arrugginita alla bocca e il buio in fondo
+    xf = C['x_fine']
+    for k in range(32):
+        t0, t1 = 2 * math.pi * k / 32, 2 * math.pi * (k + 1) / 32
+        p0 = (yc + math.cos(t0) * r, zc + math.sin(t0) * r); p1 = (yc + math.cos(t1) * r, zc + math.sin(t1) * r)
+        verso = Vector((0, -(math.cos(t0) + math.cos(t1)), -(math.sin(t0) + math.sin(t1))))
+        c.faccia_verso([(x1, *p0), (xf, *p0), (xf, *p1), (x1, *p1)], 'cemento', verso)
+    c.disco((xf, yc, zc), (-1, 0, 0), r, 'nero', seg=32)
+    c.toro((x1 - 0.02, yc, zc), (1, 0, 0), r + 0.03, 0.035, 'torre', seg=40, seg_r=6)
+    # fondo di cemento
+    c.faccia_verso([(x, y, zf_) for x, y in interno], 'cemento', (0, 0, 1))
+    # bordo a scacchi intorno alla fossa: lato sud, lato est e l'angolo tagliato (esagono)
+    for (a0, b0, a1, b1) in ((x0 + F['taglio'], y0 - s, x1, y0), (x1, y0 - s, x1 + s, y1 - s)):
+        c.scatola((a0, b0, 0), (a1, b1, hb), 'scacchi', senza=('-z',))
+    c.faccia_verso([(x, y, hb) for x, y in angolo], 'scacchi', (0, 0, 1))
+    for k in range(len(angolo)):
+        (ax, ay), (bx, by) = angolo[k], angolo[(k + 1) % len(angolo)]
+        mx, my = (ax + bx) / 2, (ay + by) / 2
+        ccx, ccy = sum(p[0] for p in angolo) / 6, sum(p[1] for p in angolo) / 6
+        c.faccia_verso([(ax, ay, 0), (bx, by, 0), (bx, by, hb), (ax, ay, hb)], 'scacchi', (mx - ccx, my - ccy, 0))
+    # pavimento della sala nel triangolo fuori dalla diagonale esterna del bordo
+    c.faccia_verso([(x, y, 0.0) for x, y in triangolo], 'pavimento', (0, 0, 1))
+    # griglia di scarico divelta: ancora agganciata al lato nord, piegata giù nella fossa in due tratti
+    ga, gb = -14.1, -12.6
+    def tratto(origine, v, lunghezza, nome):
+        v = Vector(v).normalized(); u = Vector((1, 0, 0)); w = u.cross(v).normalized()
+        O = Vector(origine)
+        nb = 26
+        for i in range(nb + 1):
+            x = ga + (gb - ga) * i / nb
+            centro = O + Vector((x - O.x, 0, 0)) + v * (lunghezza / 2)
+            c.scatola_assi(tuple(centro), (u, v, w), (0.004, lunghezza / 2, 0.016), 'torre')
+        for (x, mz) in ((ga, 0.006), (gb, 0.006)):
+            centro = O + Vector((x - O.x, 0, 0)) + v * (lunghezza / 2)
+            c.scatola_assi(tuple(centro), (u, v, w), (0.012, lunghezza / 2, 0.02), 'torre')
+        for j in range(1, int(lunghezza / 0.1)):
+            p = O + v * (j * 0.1)
+            c.cilindro((ga, p.y, p.z), (gb, p.y, p.z), 0.005, 'torre', seg=5, tappi=False)
+        return O + v * lunghezza
+    piega = tratto(((ga + gb) / 2, y1 - 0.02, -0.01), (0, -math.cos(math.radians(14)), -math.sin(math.radians(14))), 0.34, 'a')
+    tratto(tuple(piega), (0, -math.cos(math.radians(72)), -math.sin(math.radians(72))), 0.86, 'b')
+    def sporco(co):
+        if co.z > -0.05:
+            return 0.85
+        return max(0.38, 0.8 + 0.14 * co.z)          # più buio e sporco andando giù
+    ob = c.crea('sala_fossa_bimbi', sporco=sporco)
+    # collisioni: pareti, fondo, bordo e triangolo di pavimento (figlie); il condotto resta chiuso dalla parete est
+    K.collisione_scatola('fossa_parete_o', (x0 - 0.2, y0 + F['taglio'], zf_), (x0, y1, 0.0), padre=ob)
+    K.collisione_scatola('fossa_parete_n', (x0, y1, zf_), (x1, y1 + 0.2, 0.02), padre=ob)
+    K.collisione_scatola('fossa_parete_e', (x1, y0, zf_), (x1 + 0.2, y1, 0.0), padre=ob)
+    K.collisione_scatola('fossa_parete_s', (x0 + F['taglio'], y0 - 0.2, zf_), (x1, y0, 0.0), padre=ob)
+    (bx_, by_), (cx2, cy2) = interno[1], interno[2]
+    off = Vector((-1, -1, 0)).normalized() * 0.2
+    K.collisione_punti('fossa_parete_diagonale', [(px + dx, py + dy, z) for (px, py) in ((bx_, by_), (cx2, cy2))
+                                                   for (dx, dy) in ((0, 0), (off.x, off.y)) for z in (zf_, 0.0)], padre=ob)
+    K.collisione_scatola('fossa_fondo', (x0, y0, zf_ - 0.2), (x1, y1, zf_), padre=ob)
+    K.collisione_scatola('fossa_bordo_s', (x0 + F['taglio'], y0 - s, 0), (x1, y0, hb), padre=ob)
+    K.collisione_scatola('fossa_bordo_e', (x1, y0 - s, 0), (x1 + s, y1 - s, hb), padre=ob)
+    K.collisione_punti('fossa_bordo_angolo', [(x, y, z) for x, y in angolo for z in (0.0, hb)], padre=ob)
+    K.collisione_punti('fossa_pavimento_angolo', [(x, y, z) for x, y in triangolo for z in (-0.2, 0.0)], padre=ob)
+    for ch in ob.children:
+        ch.hide_render = True
+    # coperchio invisibile a filo del fondo della vasca: oggetto a parte, il gioco lo accende e lo spegne
+    coperchio = K.collisione_scatola('coperchio_fossa_col', (x0, y0, -0.1), (x1, y1, 0.02))
+    coperchio.hide_render = True
+    acqua = acqua_piana('sala_fossa_bimbi_acqua', x0, x1, y0, y1, 0.30)
+    return [ob], acqua, coperchio
 
 
 def pozzanghere(mats, n=34, seme=8):
@@ -2433,6 +2585,8 @@ def disponi_oggetti(zf_piscina):
                (-1.0, Y0, 1.0, Y0 + 2.5),
                (SPIRALE['cx'] - 0.6, SPIRALE['cy'] - 0.6, SPIRALE['cx'] + 0.6, SPIRALE['cy'] + 0.6),
                (15.5, 2.8, 17.1, 9.8)]
+    Fb = FOSSA_BIMBI
+    fossa = (Fb['x0'] - 0.6, Fb['y0'] - 0.6, Fb['x1'] + 0.6, Fb['y1'])
     for i in range(30):
         n_, sc_ = sparsi[i % len(sparsi)]
         x0_, x1_, y0_, y1_, z_ = zone[i % len(zone)]
@@ -2440,6 +2594,8 @@ def disponi_oggetti(zf_piscina):
             x, y = rnd.uniform(x0_, x1_), rnd.uniform(y0_, y1_)
             if not any(a < x < c_ and b < y < d for a, b, c_, d in vietati):
                 break
+        if fossa[0] < x < fossa[2] and fossa[1] < y < fossa[3]:
+            y = fossa[1] - 0.4          # sulla fossa: si sposta poco più a sud (stessi numeri casuali per gli altri)
         metti_ogg(n_, (x, y, z_), rnd.uniform(0, 360), sc_ * rnd.uniform(0.85, 1.1), (rnd.uniform(-8, 8), rnd.uniform(-8, 8)))
     for (x, y, r_) in ((-6.0, -10.3, 100), (6.0, -10.4, 80), (-11.0, 19.0, 190)):
         metti_ogg('lettino_plastica', (x, y, 0.0), r_)
@@ -2663,7 +2819,8 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     arch = []
     buchi = [(PISCINA['x0'] - 0.5, PISCINA['y0'] - 0.5, PISCINA['x1'] + 0.5, PISCINA['y1'] + 0.5),
              (VASCA_ARRIVO['x0'] - 0.5, VASCA_ARRIVO['y0'] - 0.5, VASCA_ARRIVO['x1'] + 0.5, VASCA_ARRIVO['y1'] + 0.5)]
-    arch.append(gruppo('architettura', pavimento_regione(mats, X0, X1, Y0, Y1, buchi)))
+    F = FOSSA_BIMBI
+    arch.append(gruppo('architettura', pavimento_regione(mats, X0, X1, Y0, Y1, buchi, esatti=[(F['x0'], F['y0'], F['x1'], F['y1'])])))
     arch += gruppo('architettura', pareti(mats))
     arch += gruppo('architettura', galleria(mats))
     arch.append(gruppo('architettura', soffitto_con_foro(mats, X0, X1, Y0, Y1, Z_SOFF, CUPOLA['cx'], CUPOLA['cy'], CUPOLA['r'])))
@@ -2678,9 +2835,13 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     gruppo('torre_scivoli', [o for o in va if not o.name.endswith('_acqua')])
     gruppo('acqua', [o for o in va if o.name.endswith('_acqua')])
     for args in ((-12.6, 9.6, 4.4, 3.2, 'sala_vasca_bimbi_1', 0.3), (-15.3, 12.4, 2.8, 2.8, 'sala_vasca_bimbi_2', 0.22)):
-        vb = vasca_bassa(mats, *args[:5], acqua=args[5])
+        bordi = bordi_vasca_bimbi_1() if args[4] == 'sala_vasca_bimbi_1' else None
+        vb = vasca_bassa(mats, *args[:5], acqua=args[5], bordi=bordi)
         arch += vb
         gruppo('area_bimbi', vb[0]); gruppo('acqua', vb[1])
+    fossa, acqua_fossa, coperchio = fossa_bimbi(mats)     # tappa 8: la parte profonda della VascaBimbi1
+    arch += fossa
+    gruppo('area_bimbi', fossa + [coperchio]); gruppo('acqua', acqua_fossa)
     lamp, lampadina = lampione(mats, LAMPIONE)
     if CENTRO['modo'] == 'monumento':     # la statua sul monumento (per più avanti)
         ped, luci_mon = piedistallo(mats)
@@ -2823,6 +2984,9 @@ def dati_integrazione(sorgenti, lampadina):
         dict(nome='sala_vasca_arrivo_acqua', cosa="vasca d'arrivo degli scivoli (piena)", x=[V['x0'], V['x1']], y=[V['y0'], V['y1']], quota_blender=V['acqua'], fondo_blender=-V['prof']),
         dict(nome='sala_vasca_bimbi_1_acqua', cosa='vasca bassa a scacchi (area bimbi, scena "lei sbuca dal bordo")', x=[-14.8, -10.4], y=[8.0, 11.2], quota_blender=0.30, bordo_blender=0.45),
         dict(nome='sala_vasca_bimbi_2_acqua', cosa='vasca bassa piccola con la balena sgonfia', x=[-16.7, -13.9], y=[11.0, 13.8], quota_blender=0.22, bordo_blender=0.45),
+        dict(nome='sala_fossa_bimbi_acqua', cosa="fossa dello scarico rotto, la parte profonda della VascaBimbi1 (stessa acqua): pianta nel poligono 'fossa_bimbi.pianta_godot'",
+             x=[FOSSA_BIMBI['x0'], FOSSA_BIMBI['x1']], y=[FOSSA_BIMBI['y0'], FOSSA_BIMBI['y1']], quota_blender=0.30,
+             fondo_blender=FOSSA_BIMBI['fondo'], profondita_sotto_il_fondo_della_vasca=round(0.02 - FOSSA_BIMBI['fondo'], 2), bordo_blender=0.45),
     ]
     for a in acqua:
         if 'centro_blender' in a:
@@ -2862,6 +3026,7 @@ def dati_integrazione(sorgenti, lampadina):
         nota='Coordinate in metri. Blender: Z in alto. Godot/glTF: Y in alto, (x, y, z)_blender -> (x, z, -y)_godot.',
         **centro,
         lampione=dict(base_blender=list(LAMPIONE), base_godot=a_godot(LAMPIONE)),
+        fossa_bimbi=dati_fossa_bimbi(),
         spawn_ingresso=dict(blender=[0.0, Y0 + 0.8, 0.0], godot=a_godot((0.0, Y0 + 0.8, 0.0)), guarda_verso='nord (+y Blender, -z Godot), verso la statua'),
         vano_spogliatoi=dict(nota='vano libero nel muro sud (spessore 0,2 m), con la porta stagna aperta verso la sala',
                              x=[VANO['cx'] - VANO['luce'] / 2, VANO['cx'] + VANO['luce'] / 2], altezza=VANO['h'],
@@ -2877,6 +3042,49 @@ def dati_integrazione(sorgenti, lampadina):
                      for o in GRUPPI.get('interattivi', []) if o.name in bpy.data.objects},
         luci=luci, acqua=acqua,
         camere={k: dict(pos_blender=list(v[0]), guarda_blender=list(v[1]), lente_mm=v[2]) for k, v in CAMERE.items()})
+
+
+def dati_fossa_bimbi():
+    """Marker della fossa della VascaBimbi1 (tappa 8), in coordinate Godot. medusa_sbuca segue la posa
+    'affacciata' della vasca centrale: origine della posa, guarda verso +Z locale, coping 1,0 m sopra
+    l'origine, pelo dell'acqua 0,88 m sopra, spigolo esterno del bordo 2,1 m davanti."""
+    F = FOSSA_BIMBI
+    interno, angolo, triangolo = fossa_bimbi_punti()
+    r2 = math.sqrt(0.5)
+    f = Vector((-r2, 0.0, r2))                                   # verso il giocatore: sud-ovest in Godot
+    # spigolo esterno del bordo sull'angolo tagliato: metà della diagonale esterna (punti E e F dell'esagono)
+    (ex, ey), (fx, fy) = angolo[4], angolo[5]
+    spigolo = Vector(a_godot(((ex + fx) / 2, (ey + fy) / 2, F['h_bordo'])))
+    (bx, by), (cx_, cy_) = angolo[1], angolo[2]
+    interno_mid = Vector(a_godot(((bx + cx_) / 2, (by + cy_) / 2, F['h_bordo'])))
+    origine = spigolo - f * 2.1
+    origine.y = F['h_bordo'] - 1.0
+    lungo = Vector(a_godot((cx_, cy_, 0))) - Vector(a_godot((bx, by, 0)))
+    lungo.y = 0.0
+    lungo.normalize()
+    mani = [interno_mid + f * 0.15 + lungo * d for d in (-0.45, 0.45)]
+    C = F['condotto']
+    g3 = lambda v: [round(v[0], 3), round(v[1], 3), round(v[2], 3)]
+    return dict(
+        nota=("scarico di compensazione rotto attaccato al lato sud della VascaBimbi1: la parte profonda della vasca. "
+              "Il bordo a scacchi (alto 0,45, largo 0,3) gira intorno alla fossa; l'angolo sud-ovest è tagliato a 45 gradi "
+              "e lì la medusa appoggia le mani, rivolta verso chi arriva lungo il muro ovest. Pareti piastrellate fino a "
+              "y -0,6, poi cemento grezzo; fondo a y -3,0; in fondo il condotto verso est; griglia divelta e piegata sul lato nord."),
+        pianta_godot=[g3(a_godot((x, y, 0.0))) for x, y in interno],
+        fondo_y=F['fondo'], fondo_vasca_y=0.02, cima_bordo_y=F['h_bordo'], piastrelle_fino_a_y=F['piastrelle'],
+        coperchio=dict(nodo='coperchio_fossa_col', gruppo='sala_area_bimbi.glb',
+                       nota="corpo di collisione invisibile a filo del fondo della vasca (y 0,02), sopra tutta la fossa: acceso il giocatore non ci cade"),
+        medusa_sbuca=dict(posizione_godot=g3(origine), rotazione_gradi_godot=[0.0, -45.0, 0.0], guarda_verso_godot=g3(f),
+                          spigolo_esterno_bordo_godot=g3(spigolo), spigolo_interno_bordo_godot=g3(interno_mid),
+                          mani_godot=[g3(m) for m in mani], coping_y=F['h_bordo'], fondo_fossa_y=F['fondo'],
+                          nota=("origine della posa 'affacciata' (come medusa_affacciata della vasca centrale): coping 1,0 m sopra, "
+                                "spigolo esterno del bordo 2,1 m davanti; il pelo pieno è più alto di 9 cm rispetto alla posa (0,42 invece di 0,33)")),
+        medusa_fuga=dict(posizione_godot=g3(a_godot((C['x_fine'], C['y'], C['z']))), bocca_godot=g3(a_godot((F['x1'], C['y'], C['z']))),
+                         verso_godot=[1.0, 0.0, 0.0], raggio_condotto=C['r'],
+                         nota="fondo del condotto (buio): da lì la luce della medusa si allontana verso est; la bocca è nella parete est della fossa"),
+        livello_acqua_pieno=dict(y=F['acqua_piena'], nota="vasca e fossa riempite fino a 3 cm sotto il bordo (cima del bordo a y 0,45)",
+                                 vasca_x=[-14.8, -10.4], vasca_z=[-11.2, -8.0], fossa=[g3(a_godot((x, y, 0.0))) for x, y in interno]),
+    )
 
 
 def esporta_luci(cartella, sorgenti, lampadina):

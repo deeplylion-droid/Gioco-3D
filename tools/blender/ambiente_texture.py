@@ -50,6 +50,8 @@ CATALOGO = {
                         uso='vetroresina graffiata dei tubi degli scivoli (ricolorata)'),
     'macchie_acqua': dict(fonte='ambientcg', id='SurfaceImperfections002', lato=2.0, griglia=None,
                           uso='aloni e pozzanghere: maschera per la rugosità bagnata'),
+    'cemento': dict(fonte='ambientcg', id='Concrete042C', lato=2.0, griglia=None,
+                    uso='cemento grezzo: la fossa dello scarico di compensazione nell\'area bimbi'),
 }
 
 

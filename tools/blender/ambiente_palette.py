@@ -132,6 +132,8 @@ PALETTE['sala_a']['materiali'].update({
     # grigio più neutro per i dettagli (cassette, condotte, pannelli caduti): al posto del bianco della CC0, su cui
     # le macchie di ruggine sembravano sangue
     'metallo_grigio': dict(ricetta='vernice', sorgente='metallo_verniciato', colore='#7a807d'),
+    # cemento grezzo e bagnato della fossa dello scarico rotto (tappa 8): sotto le piastrelle della vasca bimbi
+    'cemento': dict(ricetta='tinta', sorgente='cemento', colore='#5d605a', sporco=0.8),
     'cornice_oblo': dict(ricetta='originale', sorgente='ottone'),
     # vasca sollevata al centro della sala (concept medusa_sbircia): piastrelle da 25 cm a scacchi blu notte e
     # crema, fughe scure in rilievo; il bordo (coping) è lo stesso colore ma bagnato e lucido

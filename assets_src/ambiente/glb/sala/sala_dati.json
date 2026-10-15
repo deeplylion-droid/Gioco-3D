@@ -83,6 +83,145 @@
    13.2
   ]
  },
+ "fossa_bimbi": {
+  "nota": "scarico di compensazione rotto attaccato al lato sud della VascaBimbi1: la parte profonda della vasca. Il bordo a scacchi (alto 0,45, largo 0,3) gira intorno alla fossa; l'angolo sud-ovest è tagliato a 45 gradi e lì la medusa appoggia le mani, rivolta verso chi arriva lungo il muro ovest. Pareti piastrellate fino a y -0,6, poi cemento grezzo; fondo a y -3,0; in fondo il condotto verso est; griglia divelta e piegata sul lato nord.",
+  "pianta_godot": [
+   [
+    -14.8,
+    0.0,
+    -8.0
+   ],
+   [
+    -14.8,
+    0.0,
+    -7.0
+   ],
+   [
+    -13.8,
+    0.0,
+    -6.0
+   ],
+   [
+    -12.3,
+    0.0,
+    -6.0
+   ],
+   [
+    -12.3,
+    0.0,
+    -8.0
+   ]
+  ],
+  "fondo_y": -3.0,
+  "fondo_vasca_y": 0.02,
+  "cima_bordo_y": 0.45,
+  "piastrelle_fino_a_y": -0.6,
+  "coperchio": {
+   "nodo": "coperchio_fossa_col",
+   "gruppo": "sala_area_bimbi.glb",
+   "nota": "corpo di collisione invisibile a filo del fondo della vasca (y 0,02), sopra tutta la fossa: acceso il giocatore non ci cade"
+  },
+  "medusa_sbuca": {
+   "posizione_godot": [
+    -13.027,
+    -0.55,
+    -7.773
+   ],
+   "rotazione_gradi_godot": [
+    0.0,
+    -45.0,
+    0.0
+   ],
+   "guarda_verso_godot": [
+    -0.707,
+    0.0,
+    0.707
+   ],
+   "spigolo_esterno_bordo_godot": [
+    -14.512,
+    0.45,
+    -6.288
+   ],
+   "spigolo_interno_bordo_godot": [
+    -14.3,
+    0.45,
+    -6.5
+   ],
+   "mani_godot": [
+    [
+     -14.724,
+     0.45,
+     -6.712
+    ],
+    [
+     -14.088,
+     0.45,
+     -6.076
+    ]
+   ],
+   "coping_y": 0.45,
+   "fondo_fossa_y": -3.0,
+   "nota": "origine della posa 'affacciata' (come medusa_affacciata della vasca centrale): coping 1,0 m sopra, spigolo esterno del bordo 2,1 m davanti; il pelo pieno è più alto di 9 cm rispetto alla posa (0,42 invece di 0,33)"
+  },
+  "medusa_fuga": {
+   "posizione_godot": [
+    -8.8,
+    -2.3,
+    -7.0
+   ],
+   "bocca_godot": [
+    -12.3,
+    -2.3,
+    -7.0
+   ],
+   "verso_godot": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "raggio_condotto": 0.6,
+   "nota": "fondo del condotto (buio): da lì la luce della medusa si allontana verso est; la bocca è nella parete est della fossa"
+  },
+  "livello_acqua_pieno": {
+   "y": 0.42,
+   "nota": "vasca e fossa riempite fino a 3 cm sotto il bordo (cima del bordo a y 0,45)",
+   "vasca_x": [
+    -14.8,
+    -10.4
+   ],
+   "vasca_z": [
+    -11.2,
+    -8.0
+   ],
+   "fossa": [
+    [
+     -14.8,
+     0.0,
+     -8.0
+    ],
+    [
+     -14.8,
+     0.0,
+     -7.0
+    ],
+    [
+     -13.8,
+     0.0,
+     -6.0
+    ],
+    [
+     -12.3,
+     0.0,
+     -6.0
+    ],
+    [
+     -12.3,
+     0.0,
+     -8.0
+    ]
+   ]
+  }
+ },
  "spawn_ingresso": {
   "blender": [
    0.0,
@@ -1778,6 +1917,22 @@
     13.8
    ],
    "quota_blender": 0.22,
+   "bordo_blender": 0.45
+  },
+  {
+   "nome": "sala_fossa_bimbi_acqua",
+   "cosa": "fossa dello scarico rotto, la parte profonda della VascaBimbi1 (stessa acqua): pianta nel poligono 'fossa_bimbi.pianta_godot'",
+   "x": [
+    -14.8,
+    -12.3
+   ],
+   "y": [
+    6.0,
+    8.0
+   ],
+   "quota_blender": 0.3,
+   "fondo_blender": -3.0,
+   "profondita_sotto_il_fondo_della_vasca": 3.02,
    "bordo_blender": 0.45
   }
  ],
