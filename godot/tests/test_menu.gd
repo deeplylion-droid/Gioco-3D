@@ -38,6 +38,7 @@ func _run() -> void:
 	if medusa and medusa.get_model_instance():
 		# La medusa finita (lavoro/medusa 6585aa6): mani nuove, occhio con la venatura, strappo nascosto.
 		var mod := medusa.get_model_instance()
+		check(mod.scale.is_equal_approx(Vector3.ONE), "la statua ha la sua grandezza vera (4,5 m, nessuna scala)")
 		var mani := mod.find_child("Medusa_Mani", true, false) as MeshInstance3D
 		var mm := mani.get_surface_override_material(0) if mani else null
 		check(mm != null and mm.resource_name == "M_mani", "le mani nuove hanno il vinile della medusa")
