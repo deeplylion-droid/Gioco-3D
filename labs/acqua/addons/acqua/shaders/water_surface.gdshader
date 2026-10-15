@@ -84,6 +84,9 @@ uniform int reflection_mode = 1;
 uniform float reflection_strength : hint_range(0.0, 2.0) = 1.0;
 uniform sampler2D planar_reflection_tex : filter_linear, repeat_disable;
 uniform float planar_distortion : hint_range(0.0, 0.5) = 0.08;
+/** Riflessi allungati in verticale (frazione dell'altezza dello schermo): le scie delle luci
+ *  sull'acqua increspata. 0 = riflesso netto. */
+uniform float reflection_stretch : hint_range(0.0, 0.2) = 0.0;
 uniform int ssr_steps : hint_range(4, 96) = 28;
 uniform float ssr_max_distance = 30.0;
 uniform float ssr_thickness = 0.6;
@@ -195,7 +198,7 @@ vec3 env_lookup(vec3 wp, vec3 dir_world, float rough) {
 
 // Riflessi nello spazio dello schermo: marcia del raggio riflesso contro il buffer di profondita'.
 // Restituisce colore e fiducia (0 = nessun impatto).
-vec4 trace_ssr(vec3 origin_v, vec3 dir_v, mat4 proj, mat4 inv_proj, mat4 inv_view, float min_world_y, float rough) {
+vec4 trace_ssr(vec3 origin_v, vec3 dir_v, mat4 proj, mat4 inv_proj, mat4 inv_view, float min_world_y, float rough, float stretch) {
 	if (dir_v.z > 0.25) {
 		return vec4(0.0); // raggio verso la camera: fuori dallo schermo
 	}
@@ -247,8 +250,21 @@ vec4 trace_ssr(vec3 origin_v, vec3 dir_v, mat4 proj, mat4 inv_proj, mat4 inv_vie
 	float conf = edge.x * edge.y;
 	conf *= 1.0 - smoothstep(0.0, 0.25, dir_v.z + 0.1);
 	conf *= 1.0 - smoothstep(ssr_max_distance * 0.6, ssr_max_distance, t);
-	vec3 col = textureLod(screen_tex, hit_uv, rough * 8.0).rgb;
-	return vec4(col, conf);
+	// scia verticale: alcuni campioni sopra e sotto il punto colpito
+	int taps = stretch > 0.0005 ? (water_quality >= 2 ? 7 : 5) : 1;
+	vec3 col = vec3(0.0);
+	float wsum = 0.0;
+	for (int k = 0; k < 7; k++) {
+		if (k >= taps) {
+			break;
+		}
+		float o = taps > 1 ? float(k) / float(taps - 1) * 2.0 - 1.0 : 0.0;
+		float w = exp(-o * o * 2.0);
+		vec2 uvk = clamp(hit_uv + vec2(0.0, o * stretch), vec2(0.001), vec2(0.999));
+		col += textureLod(screen_tex, uvk, rough * 8.0).rgb * w;
+		wsum += w;
+	}
+	return vec4(col / wsum, conf);
 }
 
 void vertex() {
@@ -272,7 +288,10 @@ void fragment() {
 	float flow_len = length(flow_v);
 	vec2 s;
 	float fpat;
-	vec2 fuv = wp.xz * foam_scale;
+	// le celle della schiuma, deformate da un rumore largo, diventano chiazze e filamenti
+	vec2 fwarp = vec2(texture(water_noise_tex, wp.xz * 0.37 + vec2(tt * 0.05, 0.0)).r,
+			texture(water_noise_tex, wp.xz * 0.37 + vec2(0.57, 0.19) - vec2(0.0, tt * 0.04)).r) - 0.5;
+	vec2 fuv = wp.xz * foam_scale + fwarp * 0.7;
 	if (flow_len > 0.002) {
 		// flow map a due fasi: le onde e la schiuma scorrono lungo il flusso senza stirarsi
 		float cyc = 1.6;
@@ -283,11 +302,11 @@ void fragment() {
 		vec2 o1 = flow_v * ph1 * cyc;
 		s = wave_slope(wp.xz - o0, tt) * w0 + wave_slope(wp.xz - o1, tt) * (1.0 - w0);
 		s *= 1.0 + min(flow_len, 1.5) * 2.0;
-		fpat = texture(foam_tex, fuv - o0 * foam_scale).r * w0 + texture(foam_tex, fuv - o1 * foam_scale + 0.37).r * (1.0 - w0);
+		fpat = texture(foam_tex, fuv - o0 * foam_scale, 0.6).r * w0 + texture(foam_tex, fuv - o1 * foam_scale + 0.37, 0.6).r * (1.0 - w0);
 	} else {
 		s = wave_slope(wp.xz, tt);
-		float ftex = texture(foam_tex, fuv + vec2(tt * 0.3, tt * 0.17)).r;
-		float ftex2 = texture(foam_tex, fuv * 0.53 - vec2(tt * 0.21, -tt * 0.12)).r;
+		float ftex = texture(foam_tex, fuv + vec2(tt * 0.3, tt * 0.17), 0.6).r;
+		float ftex2 = texture(foam_tex, fuv * 0.53 - vec2(tt * 0.21, -tt * 0.12), 0.6).r;
 		fpat = max(ftex, ftex2 * 0.9);
 	}
 	float e = 0.03;
@@ -354,21 +373,38 @@ void fragment() {
 		vec3 rdir_w = reflect(vdir, n_world);
 		rdir_w.y = abs(rdir_w.y);
 		vec3 refl = env_lookup(wp, rdir_w, roughness);
+		// le scie si allungano di piu' guardando l'acqua di taglio
+		float stretch = reflection_stretch * mix(0.35, 1.0, 1.0 - n_dot_v);
 		if (reflection_mode == 2) {
 			vec2 puv = vec2(1.0 - SCREEN_UV.x, SCREEN_UV.y);
 			vec2 dist = vec2(-s.x, s.y) * far_fade * planar_distortion;
 			puv = clamp(puv + dist, vec2(0.002), vec2(0.998));
-			refl = textureLod(planar_reflection_tex, puv, 0.0).rgb;
+			int taps = stretch > 0.0005 ? (water_quality >= 2 ? 7 : 5) : 1;
+			vec3 acc = vec3(0.0);
+			float wsum = 0.0;
+			for (int k = 0; k < 7; k++) {
+				if (k >= taps) {
+					break;
+				}
+				float o = taps > 1 ? float(k) / float(taps - 1) * 2.0 - 1.0 : 0.0;
+				float w = exp(-o * o * 2.0);
+				vec2 uvk = clamp(puv + vec2(0.0, o * stretch), vec2(0.002), vec2(0.998));
+				acc += textureLod(planar_reflection_tex, uvk, 0.0).rgb * w;
+				wsum += w;
+			}
+			refl = acc / wsum;
 		} else if (reflection_mode == 1) {
 			vec3 rdir_v = normalize((VIEW_MATRIX * vec4(rdir_w, 0.0)).xyz);
-			vec4 ssr = trace_ssr(VERTEX, rdir_v, PROJECTION_MATRIX, INV_PROJECTION_MATRIX, INV_VIEW_MATRIX, level - 0.03, roughness);
+			vec4 ssr = trace_ssr(VERTEX, rdir_v, PROJECTION_MATRIX, INV_PROJECTION_MATRIX, INV_VIEW_MATRIX, level - 0.03, roughness, stretch);
 			refl = mix(refl, ssr.rgb, ssr.a);
 		}
 
 		// --- schiuma e sporco ---
 		float noise_lo = texture(water_noise_tex, wp.xz * 0.11 + vec2(tt * 0.02)).r;
-		float shore = 1.0 - smoothstep(0.0, foam_shore_width * (0.6 + noise_lo), path0);
-		float foam = smoothstep(0.25, 0.75, shore * (0.35 + fpat * 1.1)) * foam_shore_amount;
+		float shore = 1.0 - smoothstep(0.0, foam_shore_width * (0.5 + noise_lo), path0);
+		// a chiazze lungo la riva, non un anello uniforme
+		float patchy = smoothstep(0.35, 0.7, texture(water_noise_tex, wp.xz * 0.19 + vec2(0.71, 0.23) - vec2(tt * 0.03, 0.0)).r);
+		float foam = smoothstep(0.3, 0.8, shore * (0.25 + 0.75 * patchy) * (0.3 + fpat * 1.1)) * foam_shore_amount;
 		foam += smoothstep(0.08, 0.6, rip.w * foam_ripple_amount * (0.4 + fpat));
 		foam += flow_foam_one(wp.xz, flow_point_0, flow_shape_0, water_time, fpat);
 		foam += flow_foam_one(wp.xz, flow_point_1, flow_shape_1, water_time, fpat);
@@ -378,7 +414,7 @@ void fragment() {
 			float sn = texture(water_noise_tex, wp.xz / scum_scale + vec2(tt * 0.01) - flow_v * 0.3).r;
 			float sn2 = texture(water_noise_tex, wp.xz / (scum_scale * 0.31) - vec2(0.0, tt * 0.015)).g;
 			scum = smoothstep(1.0 - scum_amount, 1.0 - scum_amount + 0.35, sn * 0.7 + sn2 * 0.45) * (0.5 + 0.5 * scum_amount);
-			scum = max(scum, shore * scum_amount * 0.8);
+			scum = max(scum, shore * patchy * scum_amount * 0.8);
 		}
 		float cover = clamp(foam + scum, 0.0, 1.0);
 
@@ -439,7 +475,7 @@ void fragment() {
 		vec3 rd = reflect(vdir, n_dn);
 		if (reflection_mode >= 1) {
 			vec3 rdv = normalize((VIEW_MATRIX * vec4(rd, 0.0)).xyz);
-			vec4 ssr = trace_ssr(VERTEX, rdv, PROJECTION_MATRIX, INV_PROJECTION_MATRIX, INV_VIEW_MATRIX, -1e6, roughness);
+			vec4 ssr = trace_ssr(VERTEX, rdv, PROJECTION_MATRIX, INV_PROJECTION_MATRIX, INV_VIEW_MATRIX, -1e6, roughness, 0.0);
 			below = mix(below, water_fog(ssr.rgb, 3.0, wb), ssr.a);
 		}
 		vec3 col = mix(above, below, fr);

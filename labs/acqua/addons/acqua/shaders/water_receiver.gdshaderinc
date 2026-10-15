@@ -62,6 +62,9 @@ float puddle_mask(vec3 wp, float height01, float amount, float scale, float up) 
 	if (amount <= 0.0 || up < 0.6) {
 		return 0.0;
 	}
+	if (amount >= 0.999) {
+		return smoothstep(0.6, 0.9, up);   // tutta la superficie e' una pozza (mesh delle pozzanghere)
+	}
 	float n = texture(water_noise_tex, wp.xz * scale).r;
 	float n2 = texture(water_noise_tex, wp.xz * scale * 3.7 + vec2(0.37, 0.11)).g;
 	float field = n * 0.75 + n2 * 0.25 + (1.0 - height01) * 0.12;
@@ -109,7 +112,9 @@ vec3 water_light_modulation(vec3 light_world, vec3 wpos, float depth_below, vec3
 	vec2 surf = wpos.xz - lw.xz * up_len;
 	vec3 caus = water_caustics(surf, depth_below, caustics_scale, lod);
 	vec3 tr = water_transmittance(absorption, turbidity * 0.35, up_len);
-	return max(mix(vec3(1.0), caus, caustics_amount), vec3(0.0)) * tr;
+	// l'acqua torbida sparpaglia la luce: caustiche meno nette
+	float sharp = exp(-turbidity * up_len * 0.6);
+	return max(mix(vec3(1.0), caus, caustics_amount * sharp), vec3(0.0)) * tr;
 }
 
 #endif
