@@ -62,5 +62,23 @@ func _regola_monumento(n: Node) -> void:
 			s.spot_angle = 26.0
 			s.shadow_enabled = false
 			s.light_volumetric_fog_energy = 0.6
+	# Luci nuove del GLB che LookSala non conosce ancora: plafoniere calde e insegne al neon.
+	var l := n as Light3D
+	if l:
+		if l.name.begins_with("luce_calda"):
+			l.light_color = Color(1.0, 0.72, 0.45)
+			l.light_energy = 1.8
+			l.shadow_enabled = false
+			l.light_volumetric_fog_energy = 0.8
+			if l is OmniLight3D:
+				(l as OmniLight3D).omni_range = 7.0
+			elif l is SpotLight3D:
+				(l as SpotLight3D).spot_range = 8.0
+		elif l.name.begins_with("luce_insegna_") and l.name != "luce_insegna_rosa":
+			l.light_energy = 2.2
+			l.shadow_enabled = false
+			l.light_volumetric_fog_energy = 1.4
+			if l is OmniLight3D:
+				(l as OmniLight3D).omni_range = 6.0
 	for c in n.get_children():
 		_regola_monumento(c)

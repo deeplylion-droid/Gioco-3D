@@ -196,6 +196,21 @@ func _statue() -> void:
 	rim.shadow_enabled = true
 	rim.light_volumetric_fog_energy = 1.2
 	rim.set_meta(&"grafica_priorita_ombra", 1)
+	# Uno spot stretto sul viso: il viso e l'occhio devono "agganciare" lo sguardo anche da
+	# lontano (e l'occhio di vetro prende il riflesso della luce).
+	var face_y := PEDESTAL.y + 2.3 * MEDUSA_SCALE
+	var face := SpotLight3D.new()
+	face.name = "LuceViso"
+	face.position = Vector3(0.0, 7.4, 6.6)
+	own(face, statue)
+	face.look_at_from_position(face.position, Vector3(0.0, face_y, 0.25), Vector3.UP)
+	face.light_color = Color(1.0, 0.95, 0.88)
+	face.light_energy = 3.2
+	face.spot_range = 12.0
+	face.spot_angle = 4.5
+	face.spot_angle_attenuation = 1.8
+	face.shadow_enabled = false
+	face.light_volumetric_fog_energy = 0.25
 	# Il pulsante per i bambini sul davanti del piedistallo (è già nel modello: qui c'è solo
 	# il bersaglio per il getto).
 	var jingle: WaterButton = S.button.instantiate()
@@ -453,6 +468,24 @@ func _polaroids() -> void:
 
 func _atmosphere() -> void:
 	var fx := group(level, "Atmosfera")
+	# Pozzanghere a specchio lungo l'asse dell'ingresso: entrando ci si vede riflessi la statua e
+	# il lampione (con i riflessi SSR).
+	var puddle_shader: Shader = load("res://shaders/pozzanghera_specchio.gdshader")
+	for pz in [[Vector3(0.25, 0.004, 16.4), Vector2(2.6, 3.6), 0.3, 1.0], [Vector3(-2.0, 0.004, 13.9), Vector2(1.7, 1.3), 1.1, 7.0],
+			[Vector3(2.4, 0.004, 18.1), Vector2(1.3, 1.1), 0.4, 13.0]]:
+		var mi := MeshInstance3D.new()
+		mi.name = "Pozzanghera"
+		var pm := PlaneMesh.new()
+		pm.size = pz[1]
+		mi.mesh = pm
+		var mat := ShaderMaterial.new()
+		mat.shader = puddle_shader
+		mat.set_shader_parameter(&"seme", pz[3])
+		mi.material_override = mat
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.position = pz[0]
+		mi.rotation = Vector3(0, pz[2], 0)
+		own(mi, fx)
 	# Gocce che cadono nella pozza e fanno cerchi (addon acqua). Il resto dell'atmosfera
 	# (sonde, nebbia bassa, polvere, gocce dal soffitto) lo crea il look della sala.
 	var drip: Node3D = (load("res://addons/acqua/scenes/gocciolatoio.tscn") as PackedScene).instantiate()
