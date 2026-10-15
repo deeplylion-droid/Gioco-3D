@@ -14,6 +14,7 @@ wave_strength_b = 0.045
 wave_speed = 0.035
 refraction_strength = 0.15
 reflection_strength = 1.25
+reflection_stretch = 0.035
 foam_color = Color(0.55, 0.58, 0.56, 1)
 foam_shore_amount = 0.25
 foam_ripple_amount = 0.8

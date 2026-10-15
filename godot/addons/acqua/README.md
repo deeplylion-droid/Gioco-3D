@@ -40,6 +40,18 @@ acqua che scorre negli scivoli. Sviluppato nel laboratorio `labs/acqua/` (scena 
 | `scenes/bocchetta.tscn` (WaterInlet) | sul bordo delle vasche che si riempiono | getto che cade nella vasca quando si riempie (asse -Z), con schiuma e increspature. |
 | `scenes/scivolo_acqua.tscn` (SlideWater) | lungo ogni tubo degli scivoli | assegna `curve` (la Curve3D del tubo, coordinate locali) e `tube_radius`: nastro d'acqua che scorre, sale sulla parete nelle curve, schiuma e spruzzi, getto all'uscita. |
 | `materials/pavimento_bagnato.tres`, `materials/piastrelle_vasca.tres` | su mesh senza UV (triplanare) | materiali pronti con texture CC0 (ambientCG). |
+| `materials/acqua_scivolo_kit.tres` | `material_override` delle strisce `ACQUA_scorre_*` del kit degli scivoli (`scivoli_kit.glb`, `vasca_arrivo.glb`) | acqua che scorre a 6 m/s lungo le UV del kit (UV.x lungo il tubo, 1 = 5 m), schiuma sui bordi. `ACQUA_scorre_bivio_camera` non ha UV: usa `acqua_che_scorre_piano.tres` con `local_flow_dir` = (1, 0). |
+| `materials/acqua_che_scorre_piano.tres` | piani d'acqua che scorre, per esempio `FlowingWater.water_material` | il flusso segue il piano XZ locale della mesh: `local_flow_dir` (di serie (0, -1), come `FlowingWater.flow`) e `flow_speed` in m/s. |
+| `materials/pozzanghera.tres` | mesh piatte delle pozzanghere (`acqua_pozze_*` degli ambienti interni) | pozza scura a specchio, opaca (la riflette l'SSR di Godot), con i cerchi delle gocce dei gocciolatoi. |
+
+Gorgo della pozza: WaterTankLink lo disegna da solo sulla superficie (imbuto, schiuma a spirale,
+increspature) quando lo scarico della vasca e' aperto, nel centro della vasca piu' `drain_offset`.
+Un altro gorgo sovrapposto (per esempio un piano con uno shader a parte) si vede doppio: tenerne uno.
+
+Altri ambienti (segnaposto `ACQUA_*` e `acqua_*`): vasche e nicchie (`ACQUA_vasca_raccolta` della
+sala pompe, `ACQUA_nicchia_1..3`, `ACQUA_vasca_arrivo`, `acqua_lavapiedi`) = una `WaterTank` del gioco
+con un `acqua_per_vasca.tscn`, oppure un `vasca_acqua.tscn` con le quote dei loro INTEGRAZIONE.md;
+strisce `ACQUA_scorre_*` = `acqua_scivolo_kit.tres`; pozzanghere piatte = `pozzanghera.tres`.
 
 Coordinate dell'acqua nella sala principale (da `assets_src/ambiente/INTEGRAZIONE.md`):
 pozza torbida livello -2,07 (fondo -2,24, scarico in x 0, z 2); vasca d'arrivo -0,22 (fondo -1,10,

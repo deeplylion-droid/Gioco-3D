@@ -38,7 +38,8 @@ func _physics_process(delta: float) -> void:
 	var rb := _body as RigidBody3D
 	if rb:
 		vel = rb.linear_velocity
-	var wb = WaterManager.get_body_at(p)
+	var wm := get_node_or_null("/root/WaterManager")
+	var wb = wm.get_body_at(p) if wm else null
 	if wb == null or wb.is_empty():
 		in_water = false
 		return

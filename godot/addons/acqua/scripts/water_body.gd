@@ -79,8 +79,8 @@ const FOAM_TEX := preload("res://addons/acqua/textures/foam.png")
 
 @export_group("Riflessi")
 ## Riflesso planare quando la qualita' e' alta (rende di nuovo la scena a mezza risoluzione:
-## conviene attivarlo solo sulla vasca principale).
-@export var planar_reflection_on_high := true
+## conviene attivarlo solo sulla vasca principale, quella vista piu' spesso).
+@export var planar_reflection_on_high := false
 ## Scatola della stanza per i riflessi di riserva (cubemap con proiezione su scatola).
 @export var env_box_min := Vector3(-10, -3, -8)
 @export var env_box_max := Vector3(10, 6, 8)
@@ -373,6 +373,7 @@ func _apply_style() -> void:
 	material.set_shader_parameter("wave_speed", st.wave_speed)
 	material.set_shader_parameter("refraction_strength", st.refraction_strength)
 	material.set_shader_parameter("reflection_strength", st.reflection_strength)
+	material.set_shader_parameter("reflection_stretch", st.reflection_stretch)
 	material.set_shader_parameter("foam_color", st.foam_color)
 	material.set_shader_parameter("foam_shore_amount", st.foam_shore_amount)
 	material.set_shader_parameter("foam_ripple_amount", st.foam_ripple_amount)

@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://addons/acqua/shaders/wet_surface.gdshader" id="1"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/albedo_tint = Color(0.16, 0.17, 0.16, 1)
+shader_parameter/specular_amount = 0.5
+shader_parameter/use_triplanar = true
+shader_parameter/base_wetness = 1.0
+shader_parameter/wetness_variation = 0.0
+shader_parameter/puddle_amount = 1.0
+shader_parameter/puddle_tint = Color(0.9, 0.92, 0.9, 1)
+shader_parameter/wet_darkening = 0.5
+shader_parameter/drop_ring_strength = 1.3
+shader_parameter/receive_caustics = false
