@@ -4,7 +4,7 @@ Corridoio del risveglio, spogliatoi e stanzino dei bagnini. Convenzioni e materi
 
 ## 1. File da copiare
 
-Copiare **tutta** la cartella `assets_src/ambienti_interni/gltf/` in `godot/` (per esempio `godot/assets/ambienti_interni/`), compresa `texture/`: i tre `.gltf` usano le stesse texture.
+Copiare **tutta** la cartella `assets_src/ambienti_interni/gltf/` in `godot/` (per esempio `godot/assets/ambienti_interni/`), compresa `gltf/texture/`: i tre `.gltf` usano le stesse texture, già finali e versionate (22 MB, JPG). **Non serve rigenerare niente**: `tools/blender/ambienti1_texture.py` serve solo a chi vuole rifare i modelli da Blender (crea `assets_src/ambienti_interni/texture/`, le sorgenti, che non sono nel repository).
 
 | File | Zona | Peso |
 |---|---|---|
@@ -15,7 +15,9 @@ Copiare **tutta** la cartella `assets_src/ambienti_interni/gltf/` in `godot/` (p
 
 ## 2. Posizione
 
-**I tre file vanno messi tutti a `Transform3D.IDENTITY`**, nella stessa scena: le coordinate sono già quelle giuste e le stanze combaciano. Scala in metri, pavimento a y = 0.
+**I tre file vanno messi tutti sotto uno stesso nodo**, ciascuno a `Transform3D.IDENTITY`: fra loro combaciano già.
+
+**Attacco con la sala principale** (vedi `assets_src/ambiente/INTEGRAZIONE.md`, sala allungata verso sud): il nodo comune va messo in **`position = (-9.7, 0, 40.9)`**, senza rotazione. Così il `marker_uscita_sala_principale` cade in (0; 0; 20,2), sul retro del vano 1,2 × 2,2 m nel muro sud della sala, e la saracinesca sta subito dietro la porta stagna della sala. **Tutte le coordinate qui sotto sono locali a quel nodo** (per quelle globali: x - 9,7 e z + 40,9; per esempio lo zaino è in (5,24; 1,25; 32,47) globali). Scala in metri, pavimento a y = 0.
 
 Sotto, tutte le coordinate sono **in Godot** (x, y, z), con y in alto. Il nord della pianta è -Z.
 
