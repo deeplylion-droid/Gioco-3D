@@ -1,0 +1,25 @@
+# Texture estratte dai GLB quando Godot li importa: si rigenerano da sole all'importazione
+# (i GLB sono nel repository), così non si tengono due copie delle stesse immagini.
+/assets/ambiente/sala/*.jpg
+/assets/ambiente/sala/*.jpg.import
+/assets/ambiente/sala/*.png
+/assets/ambiente/sala/*.png.import
+/assets/models/medusa/medusa_*.png
+/assets/models/medusa/medusa_*.png.import
+/override.cfg
+/assets/models/bambini/*.jpg
+/assets/models/bambini/*.jpg.import
+/assets/models/bambini/*.png
+/assets/models/bambini/*.png.import
+/assets/models/medusa/medusa_*.jpg
+/assets/models/medusa/medusa_*.jpg.import
+# Texture estratte dal piedistallo della schermata del titolo (assets_src/menu/estrai_piedistallo.py)
+/assets/menu/*.jpg
+/assets/menu/*.jpg.import
+/assets/menu/*.png
+/assets/menu/*.png.import
+# ...ma non i materiali della medusa che si chiamano come loro (texture 4K della pelle).
+!/assets/models/medusa/medusa_colore_4k.jpg
+!/assets/models/medusa/medusa_colore_4k.jpg.import
+!/assets/models/medusa/medusa_normal_4k.jpg
+!/assets/models/medusa/medusa_normal_4k.jpg.import

@@ -1,0 +1,259 @@
+extends Node
+## Test del titolo, del caricamento e del menu di pausa:
+## il titolo è la scena principale e si carica (statua, piedistallo, lampi); le voci ci sono e si
+## scorrono con la tastiera (anche dall'ultima alla prima); Esc nel titolo non apre la pausa; la
+## calibrazione della luminosità sopra il titolo lo ferma e poi gli ridà il focus; Comandi e
+## Opzioni si aprono e si chiudono con Esc; Nuova partita passa al caricamento a thread e arriva
+## alla sala con la dissolvenza dal nero; nel menu di pausa ci sono Comandi e Torna al titolo.
+## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
+## Con "solo_titolo" dopo il percorso del test si ferma prima di caricare la sala (più leggero).
+
+const TITOLO := "res://scenes/ui/menu_principale.tscn"
+const CARICAMENTO := "res://scenes/ui/caricamento.tscn"
+const SALA := "res://scenes/sala_principale.tscn"
+## Secondi massimi (veri) per caricare la sala.
+const ATTESA_MASSIMA := 300.0
+
+var _passed := 0
+var _failed := 0
+
+
+func _ready() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	Grafica.salva_su_disco = false
+	print("Il titolo")
+	check(ProjectSettings.get_setting("application/run/main_scene") == TITOLO, "il titolo è la scena principale del progetto")
+	get_tree().change_scene_to_file(TITOLO)
+	await _frames(5)
+	var menu := get_tree().current_scene
+	check(menu != null and menu.scene_file_path == TITOLO, "la scena del titolo si carica")
+	if menu == null or menu.scene_file_path != TITOLO:
+		_fine()
+		return
+	var medusa := menu.get_node_or_null("Statua/Medusa") as MedusaStatue
+	check(medusa != null and medusa.get_model_instance() != null, "la statua della medusa c'è")
+	var piedistallo := menu.get_node_or_null("Statua/Piedistallo")
+	check(piedistallo != null and piedistallo.find_child("amb_piedistallo", true, false) is MeshInstance3D,
+		"c'è il piedistallo della sala")
+	check(menu.get_node_or_null("Tempesta") is Tempesta, "ci sono i lampi della tempesta")
+	check(not _scrive_il_nome(menu), "il nome provvisorio del gioco non è scritto sul titolo")
+	var versione := menu.find_child("Versione", true, false) as Label
+	var attesa := "Capitolo 1 · demo %s" % ProjectSettings.get_setting("application/config/version")
+	check(versione != null and versione.text == attesa,
+		"in piccolo capitolo e versione (%s)" % (versione.text if versione else "-"))
+	var voci: Array = menu.call(&"voci")
+	var nomi := []
+	for v in voci:
+		nomi.append(String(v.name))
+	check(nomi == ["NuovaPartita", "Opzioni", "Comandi", "Esci"], "le voci sono Nuova partita, Opzioni, Comandi, Esci")
+	check(voci.size() == 4 and voci[0].text == "NUOVA PARTITA", "testo della prima voce: %s" % (voci[0].text if voci.size() > 0 else "-"))
+	await _frames(2)
+	check(_focus() == voci[0], "Nuova partita ha il focus")
+	var audio := get_node_or_null(^"/root/Audio")
+	if audio:
+		var conteggio: Dictionary = audio.get(&"conteggio")
+		check(int(conteggio.get(&"sigla_pulita", 0)) >= 1, "nel titolo parte la sigla pulita")
+
+	print("Tastiera e joypad (azioni ui_*)")
+	await _premi(&"ui_down")
+	check(_focus() == voci[1], "giù: Opzioni")
+	await _premi(&"ui_up")
+	await _premi(&"ui_up")
+	check(_focus() == voci[3], "su dalla prima voce: si passa a Esci")
+	await _premi(&"ui_down")
+	check(_focus() == voci[0], "giù dall'ultima voce: si torna a Nuova partita")
+	await _premi(&"pause")
+	check(not get_tree().paused and not Game.is_paused(), "Esc nel titolo non apre la pausa")
+
+	print("Calibrazione della luminosità al primo avvio, sopra il titolo")
+	Game.call(&"_show_calibration")
+	await _frames(3)
+	check(get_tree().paused, "la calibrazione ferma il titolo")
+	var cal: CalibrazioneLuminosita = null
+	for n in Game.find_children("*", "Control", true, false):
+		if n is CalibrazioneLuminosita:
+			cal = n
+	check(cal != null, "la calibrazione è aperta")
+	if cal:
+		cal.conferma()
+	await _frames(5)
+	check(not get_tree().paused, "confermata la calibrazione, il titolo riparte")
+	check(bool(Grafica.valore("calibrato")), "la calibrazione è segnata come fatta")
+	check(_focus() == voci[0], "il titolo riprende il focus")
+
+	print("Comandi")
+	voci[2].pressed.emit()
+	await _frames(3)
+	var sotto: CanvasLayer = menu.call(&"sottomenu")
+	var comandi := sotto.get_node_or_null("Comandi") as SchermataComandi if sotto else null
+	check(comandi != null, "Comandi apre la schermata dei comandi")
+	if comandi:
+		var elenco := comandi.find_child("Elenco", true, false) as GridContainer
+		check(elenco != null and elenco.get_child_count() == SchermataComandi.RIGHE.size() * 2,
+			"ci sono tutte le righe dei comandi")
+		check(_focus() == comandi.find_child("Indietro", true, false), "Indietro ha il focus")
+	check(SchermataComandi.nomi_tasti([&"move_forward", &"move_left", &"move_back", &"move_right"]) == PackedStringArray(["W", "A", "S", "D"]),
+		"muoversi: W A S D, dalla InputMap")
+	check(SchermataComandi.nomi_tasti([&"sprint"]) == PackedStringArray(["Maiusc"]), "correre: Maiusc")
+	check(SchermataComandi.nomi_tasti([&"crouch"]) == PackedStringArray(["Ctrl"]), "abbassarsi: Ctrl")
+	check(SchermataComandi.nomi_tasti([&"jump"]) == PackedStringArray(["Spazio"]), "saltare: Spazio")
+	check(SchermataComandi.nomi_tasti([&"torcia"]) == PackedStringArray(["F"]), "torcia: F")
+	check(SchermataComandi.nomi_tasti([&"interact"]) == PackedStringArray(["E"]), "usare: E")
+	check(SchermataComandi.nomi_tasti([&"spray"]) == PackedStringArray(["Tasto sinistro"]), "spruzzare: tasto sinistro")
+	check(SchermataComandi.nomi_tasti([&"suck"]) == PackedStringArray(["Tasto destro"]), "aspirare: tasto destro")
+	check(SchermataComandi.nomi_tasti([&"pause"]) == PackedStringArray(["Esc"]), "pausa: Esc")
+	await _premi(&"ui_cancel")
+	await _frames(2)
+	check(menu.call(&"sottomenu") == null, "Esc chiude i comandi")
+	check(_focus() == voci[2], "il focus torna su Comandi")
+	check(not get_tree().paused, "e la pausa resta chiusa")
+
+	print("Opzioni")
+	voci[1].pressed.emit()
+	await _frames(3)
+	sotto = menu.call(&"sottomenu")
+	check(sotto != null and sotto.get_node_or_null("Menu") is MenuOpzioni, "Opzioni apre il menu dell'addon grafica")
+	await _premi(&"ui_cancel")
+	await _frames(2)
+	check(menu.call(&"sottomenu") == null, "Esc chiude le opzioni")
+	check(_focus() == voci[1], "il focus torna su Opzioni")
+
+	if OS.get_cmdline_user_args().has("solo_titolo"):
+		_fine()
+		return
+
+	print("Nuova partita: caricamento a thread e sala")
+	GameState.snapshot = {"scene": "res://finta.tscn"}
+	voci[0].pressed.emit()
+	var car: Node = null
+	for i in 400:
+		await get_tree().process_frame
+		var s := get_tree().current_scene
+		if s and s.scene_file_path == CARICAMENTO:
+			car = s
+			break
+	check(car != null, "Nuova partita porta alla schermata di caricamento")
+	check(GameState.snapshot.is_empty(), "i progressi in memoria ripartono da zero")
+	if car == null:
+		_fine()
+		return
+	check(car.find_child("Barra", true, false) is ProgressBar, "c'è la barra di avanzamento")
+	var consiglio := car.find_child("Consiglio", true, false) as Label
+	check(consiglio != null and consiglio.text != "" and not consiglio.text.contains("{"), "c'è un consiglio: %s" % (consiglio.text if consiglio else "-"))
+	check(car.find_child("Elenco", true, false) is GridContainer, "ci sono i comandi")
+	check(not _scrive_il_nome(car), "il nome provvisorio non è scritto nel caricamento")
+	await _premi(&"pause")
+	check(not get_tree().paused, "Esc durante il caricamento non apre la pausa")
+	var t0 := Time.get_ticks_msec()
+	var a_meta := false
+	var arrivato := false
+	while (Time.get_ticks_msec() - t0) / 1000.0 < ATTESA_MASSIMA:
+		await get_tree().process_frame
+		if is_instance_valid(car) and car.is_inside_tree():
+			var av := float(car.get(&"avanzamento"))
+			if av > 0.05 and av < 0.95:
+				a_meta = true
+		var s := get_tree().current_scene
+		if s and s.scene_file_path == SALA and GameState.player and is_instance_valid(GameState.player):
+			arrivato = true
+			break
+	check(a_meta, "la barra avanza mentre carica")
+	check(arrivato, "si arriva alla sala (%.1f s)" % ((Time.get_ticks_msec() - t0) / 1000.0))
+	if not arrivato:
+		_fine()
+		return
+	check(Dissolvenza.presente(get_tree()), "la sala entra dal nero")
+	for i in 600:
+		if not Dissolvenza.presente(get_tree()):
+			break
+		await get_tree().process_frame
+	check(not Dissolvenza.presente(get_tree()), "la dissolvenza dal nero finisce")
+	check(not get_tree().paused and Game.pause_on_focus_loss, "si gioca: niente pausa, la pausa automatica è di nuovo attiva")
+
+	print("Menu di pausa")
+	Game.set_paused(true)
+	await _frames(3)
+	var overlay := Game.get_node("PauseOverlay") as CanvasLayer
+	var b_comandi := _pulsante(overlay, "Comandi")
+	var b_titolo := _pulsante(overlay, "Torna al titolo")
+	check(_pulsante(overlay, "Riprendi") != null and _pulsante(overlay, "Opzioni") != null
+		and _pulsante(overlay, "Esci dal gioco") != null, "le voci di prima ci sono ancora")
+	check(b_comandi != null, "c'è Comandi")
+	check(b_titolo != null, "c'è Torna al titolo")
+	if b_comandi:
+		b_comandi.pressed.emit()
+		await _frames(3)
+		check(Game.find_child("Comandi", true, false) is SchermataComandi and not overlay.visible, "Comandi apre la schermata sopra la pausa")
+		await _premi(&"ui_cancel")
+		await _frames(3)
+		check(Game.find_child("Comandi", true, false) == null, "Esc chiude i comandi")
+		check(overlay.visible and get_tree().paused, "e si torna al menu di pausa")
+	if b_titolo:
+		b_titolo.pressed.emit()
+		for i in 300:
+			await get_tree().process_frame
+			var s := get_tree().current_scene
+			if s and s.scene_file_path == TITOLO:
+				break
+		var s := get_tree().current_scene
+		check(s != null and s.scene_file_path == TITOLO, "Torna al titolo riporta al titolo")
+		check(not get_tree().paused and not overlay.visible, "senza la pausa")
+		await _frames(5)
+		check(s != null and _focus() == s.call(&"voci")[0], "con il focus su Nuova partita")
+	_fine()
+
+
+func _fine() -> void:
+	print("")
+	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
+	get_tree().quit(1 if _failed > 0 else 0)
+
+
+func check(cond: bool, what: String) -> void:
+	if cond:
+		_passed += 1
+		print("  ok    ", what)
+	else:
+		_failed += 1
+		printerr("  FALLITO ", what)
+
+
+## Vero se un'etichetta della scena scrive il nome provvisorio del gioco (GDD).
+func _scrive_il_nome(radice: Node) -> bool:
+	for l in radice.find_children("*", "Label", true, false):
+		if (l as Label).text.to_lower().contains("lagoon"):
+			return true
+	return false
+
+
+func _focus() -> Control:
+	return get_viewport().gui_get_focus_owner()
+
+
+func _pulsante(radice: Node, testo: String) -> Button:
+	for b in radice.find_children("*", "Button", true, false):
+		if (b as Button).text == testo:
+			return b
+	return null
+
+
+## Preme e rilascia un'azione come farebbe un tasto (passa dalla GUI e da _unhandled_input).
+func _premi(azione: StringName) -> void:
+	var ev := InputEventAction.new()
+	ev.action = azione
+	ev.pressed = true
+	Input.parse_input_event(ev)
+	await _frames(1)
+	var su := InputEventAction.new()
+	su.action = azione
+	su.pressed = false
+	Input.parse_input_event(su)
+	await _frames(2)
+
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame

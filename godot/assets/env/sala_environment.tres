@@ -1,0 +1,57 @@
+[gd_resource type="Environment" format=3]
+
+[ext_resource type="Shader" path="res://addons/grafica/cielo_tempesta.gdshader" id="1_fo4c7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_04wlq"]
+shader = ExtResource("1_fo4c7")
+shader_parameter/colore_alto = null
+shader_parameter/colore_orizzonte = null
+shader_parameter/colore_lampo = null
+shader_parameter/velocita_nuvole = null
+shader_parameter/lampo = null
+shader_parameter/lampo_dir = null
+shader_parameter/fulmine = null
+shader_parameter/fulmine_seme = null
+
+[sub_resource type="Sky" id="Sky_3byn3"]
+sky_material = SubResource("ShaderMaterial_04wlq")
+radiance_size = 1
+
+[resource]
+background_mode = 2
+sky = SubResource("Sky_3byn3")
+ambient_light_source = 2
+ambient_light_color = Color(0.3, 0.38, 0.5, 1)
+ambient_light_energy = 0.22
+reflected_light_source = 1
+tonemap_mode = 4
+tonemap_exposure = 1.35
+ssr_enabled = true
+ssr_depth_tolerance = 0.3
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 2.2
+ssao_power = 1.6
+ssil_enabled = true
+ssil_radius = 4.0
+ssil_intensity = 1.2
+sdfgi_use_occlusion = true
+sdfgi_read_sky_light = false
+sdfgi_energy = 1.1
+glow_enabled = true
+glow_levels/2 = 0.4
+glow_levels/3 = 1.0
+glow_levels/5 = 0.6
+glow_intensity = 0.55
+glow_bloom = 0.025
+glow_hdr_threshold = 1.15
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.016
+volumetric_fog_albedo = Color(0.62, 0.68, 0.76, 1)
+volumetric_fog_gi_inject = 0.4
+volumetric_fog_anisotropy = 0.55
+volumetric_fog_length = 48.0
+volumetric_fog_detail_spread = 1.6
+volumetric_fog_ambient_inject = 0.06
+volumetric_fog_sky_affect = 0.0
+volumetric_fog_temporal_reprojection_amount = 0.85

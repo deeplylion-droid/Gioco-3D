@@ -1,0 +1,204 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/menu_principale.gd" id="1_menu"]
+[ext_resource type="Script" path="res://addons/grafica/tempesta.gd" id="2_temp"]
+[ext_resource type="PackedScene" path="res://assets/menu/piedistallo.glb" id="3_pied"]
+[ext_resource type="Script" path="res://scripts/environment/medusa_statue.gd" id="4_med"]
+[ext_resource type="PackedScene" path="res://assets/models/medusa/medusa.glb" id="5_glb"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_campana.tres" id="6_camp"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_tentacoli.tres" id="7_tent"]
+[ext_resource type="Script" path="res://addons/grafica/luce_emergenza.gd" id="8_emer"]
+[ext_resource type="Script" path="res://addons/grafica/pulviscolo.gd" id="9_polv"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_pelle.tres" id="10_pelle"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_orbita.tres" id="11_orbita"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_ciocche.tres" id="12_ciocche"]
+
+[sub_resource type="Environment" id="Environment_titolo"]
+background_mode = 1
+background_color = Color(0.006, 0.009, 0.014, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.3, 0.38, 0.5, 1)
+ambient_light_energy = 0.14
+reflected_light_source = 1
+tonemap_mode = 4
+tonemap_exposure = 1.3
+ssr_enabled = true
+ssr_depth_tolerance = 0.3
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 2.0
+ssao_power = 1.5
+glow_enabled = true
+glow_levels/2 = 0.4
+glow_levels/3 = 1.0
+glow_levels/5 = 0.6
+glow_intensity = 0.6
+glow_bloom = 0.03
+glow_hdr_threshold = 1.1
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.04
+volumetric_fog_albedo = Color(0.62, 0.68, 0.76, 1)
+volumetric_fog_anisotropy = 0.55
+volumetric_fog_length = 40.0
+volumetric_fog_detail_spread = 1.6
+volumetric_fog_ambient_inject = 0.3
+volumetric_fog_sky_affect = 0.0
+volumetric_fog_temporal_reprojection_amount = 0.85
+
+[sub_resource type="FogMaterial" id="FogMaterial_bassa"]
+density = 0.22
+albedo = Color(0.6, 0.68, 0.76, 1)
+height_falloff = 2.2
+edge_fade = 0.6
+
+[node name="MenuPrincipale" type="Node3D" node_paths=PackedStringArray("camera", "statua", "tempesta")]
+script = ExtResource("1_menu")
+camera = NodePath("Camera")
+statua = NodePath("Statua")
+tempesta = NodePath("Tempesta")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_titolo")
+
+[node name="Tempesta" type="Node3D" parent="."]
+script = ExtResource("2_temp")
+intervallo_min = 8.0
+intervallo_max = 16.0
+energia_lampo = 6.0
+
+[node name="Luna" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.584305, 0.775568, -0.23892, 0, 0.294405, 0.955681, 0.811534, 0.558409, -0.172023, 0, 12, 0)
+light_color = Color(0.55, 0.66, 1, 1)
+light_energy = 0.12
+light_volumetric_fog_energy = 2.5
+shadow_enabled = true
+metadata/grafica_priorita_ombra = 1
+
+[node name="Camera" type="Camera3D" parent="."]
+physics_interpolation_mode = 2
+transform = Transform3D(0.986549, -0.0251109, -0.161525, 0, 0.988131, -0.153616, 0.163465, 0.15155, 0.974839, -2.5345, 0.7, 7.16494)
+current = true
+fov = 42.0
+near = 0.1
+far = 90.0
+metadata/grafica_fov_fisso = true
+
+[node name="Statua" type="Node3D" parent="."]
+
+[node name="Piedistallo" parent="Statua" instance=ExtResource("3_pied")]
+
+[node name="Medusa" type="Node3D" parent="Statua"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+script = ExtResource("4_med")
+model = ExtResource("5_glb")
+bell_material = ExtResource("6_camp")
+tentacle_material = ExtResource("7_tent")
+surface_materials = Array[Material]([ExtResource("10_pelle"), ExtResource("11_orbita"), ExtResource("12_ciocche")])
+target_height = 4.5
+
+[node name="LuceCampana" type="OmniLight3D" parent="Statua"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.25, 0)
+light_color = Color(1, 0.36, 0.78, 1)
+light_energy = 0.5
+light_volumetric_fog_energy = 0.4
+omni_range = 3.8
+omni_attenuation = 1.4
+
+[node name="FaroGalleriaSinistro" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.956735, 0.0416032, -0.287971, 0, 0.989725, 0.142986, 0.290961, -0.136799, 0.946904, -2.014, 5.547, 6.616)
+light_color = Color(1, 0.9, 0.76, 1)
+light_energy = 7.0
+light_volumetric_fog_energy = 1.6
+shadow_enabled = true
+spot_range = 16.0
+spot_angle = 13.0
+spot_angle_attenuation = 0.6
+metadata/grafica_priorita_ombra = 0
+
+[node name="FaroGalleriaDestro" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.956735, -0.0416032, 0.287971, 0, 0.989725, 0.142986, -0.290961, -0.136799, 0.946904, 2.014, 5.547, 6.616)
+light_color = Color(1, 0.9, 0.76, 1)
+light_energy = 7.0
+light_volumetric_fog_energy = 1.6
+shadow_enabled = true
+spot_range = 16.0
+spot_angle = 13.0
+spot_angle_attenuation = 0.6
+metadata/grafica_priorita_ombra = 1
+
+[node name="FarettoBasso0" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(-0.707107, 0.637399, 0.306142, 0, 0.43295, -0.901418, -0.707107, -0.637399, -0.306142, 1.252, 0.451, -1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="FarettoBasso1" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(-0.707107, -0.637399, -0.306142, 0, 0.43295, -0.901418, 0.707107, -0.637399, -0.306142, -1.252, 0.451, -1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="FarettoBasso2" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.707107, -0.637399, -0.306142, 0, 0.43295, -0.901418, 0.707107, 0.637399, 0.306142, -1.252, 0.451, 1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="FarettoBasso3" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(0.707107, 0.637399, 0.306142, 0, 0.43295, -0.901418, -0.707107, 0.637399, 0.306142, 1.252, 0.451, 1.252)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.6
+light_volumetric_fog_energy = 0.8
+spot_range = 6.5
+spot_angle = 26.0
+
+[node name="Controluce" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(-1, 6.721456e-08, -5.5901207e-08, 0, 0.6394353, 0.7688449, 8.742278e-08, 0.7688449, -0.6394353, 0, 9.6, -4.2)
+light_color = Color(0.68, 0.82, 1, 1)
+light_energy = 5.0
+light_volumetric_fog_energy = 1.6
+shadow_enabled = true
+spot_range = 14.0
+spot_angle = 14.0
+spot_angle_attenuation = 1.2
+metadata/grafica_priorita_ombra = 1
+
+[node name="LuceViso" type="SpotLight3D" parent="Statua"]
+transform = Transform3D(1, 0, 0, 0, 0.9346418, 0.35559076, 0, -0.35559076, 0.9346418, 0, 7.4, 6.6)
+light_color = Color(1, 0.95, 0.88, 1)
+light_energy = 3.2
+light_volumetric_fog_energy = 0.25
+spot_range = 12.0
+spot_angle = 4.5
+spot_angle_attenuation = 1.8
+
+[node name="NebbiaBassa" type="FogVolume" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+size = Vector3(34, 1.3, 34)
+material = SubResource("FogMaterial_bassa")
+
+[node name="Polvere" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 1.2)
+script = ExtResource("9_polv")
+volume = Vector3(5, 5, 5)
+densita = 0.35
+
+[node name="LuceEmergenzaSinistra" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -7.5, 3.6, -6.5)
+script = ExtResource("8_emer")
+modalita = 1
+portata = 12.0
+ombre = false
+pulsazioni_al_secondo = 0.45
+
+[node name="LuceEmergenzaDestra" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 8.5, 4.2, -9.0)
+script = ExtResource("8_emer")
+portata = 13.0
+ombre = false

@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/creature/bambino.gd" id="1_bambino"]
+[ext_resource type="PackedScene" path="res://assets/models/bambini/bambino_agnello_calmo.glb" id="2_calmo"]
+[ext_resource type="PackedScene" path="res://assets/models/bambini/bambino_agnello_occhio.glb" id="3_rivelato"]
+
+[node name="BambinoAgnello" type="Node3D" groups=["bambini"]]
+script = ExtResource("1_bambino")
+
+[node name="Calmo" parent="." instance=ExtResource("2_calmo")]
+
+[node name="Rivelato" parent="." instance=ExtResource("3_rivelato")]
+visible = false

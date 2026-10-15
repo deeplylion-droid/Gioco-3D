@@ -780,5 +780,57 @@
    "remove_lighting": true
   },
   "credits": 30
+ },
+ "rig_cubo_calmo": {
+  "kind": "rigging",
+  "task_id": "01a13d16-6793-77e3-831a-85c0b3877545",
+  "status": "SUCCEEDED",
+  "model": "meshy-rig",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": null,
+  "body": null,
+  "credits": 5
+ },
+ "rig_agnello_calmo": {
+  "kind": "rigging",
+  "task_id": "01a13d17-6474-752b-9251-797ad1e3f466",
+  "status": "SUCCEEDED",
+  "model": "meshy-rig",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": null,
+  "body": null,
+  "credits": 5
+ },
+ "rig_cubo_rivelato": {
+  "kind": "rigging",
+  "task_id": "01a13d17-5ed9-7291-ada0-28f76ce5e4cd",
+  "status": "SUCCEEDED",
+  "model": "meshy-rig",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": null,
+  "body": null,
+  "credits": 5
+ },
+ "rig_agnello_occhio": {
+  "kind": "rigging",
+  "task_id": "01a13d17-6a54-7249-a629-6690fcbc4546",
+  "status": "SUCCEEDED",
+  "model": "meshy-rig",
+  "prompt": null,
+  "refs": null,
+  "aspect": null,
+  "multi_view": null,
+  "from_job": null,
+  "body": null,
+  "credits": 5
  }
 }
