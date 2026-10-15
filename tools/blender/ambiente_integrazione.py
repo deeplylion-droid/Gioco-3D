@@ -155,8 +155,9 @@ serve l'alfa (grigliati, rosa dei venti). Gli oggetti piccoli hanno texture 1K, 
   `assets_src/ambiente/godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente.
 - **Spawn del giocatore** (appena passato il vano): {g3(sp['godot'])}, guarda verso **-Z** (la statua).
 - **Monumento (piedistallo vuoto, per la medusa)**: centro {g3(pd['centro_godot'])}.
-  - **Piano superiore a y = {pd['quota_piano']:g} m**, diametro del piano {pd['diametro_piano']:g} m (con il toro del bordo
-    2,84 m). La statua va appoggiata in **{g3(pd['statua']['appoggio_godot'])}**, rivolta verso **+Z** (la porta).
+  - **Piano superiore a y = {pd['quota_piano']:g} m**, diametro del piano {pd['diametro_piano']:g} m (raggio {pd['diametro_piano'] / 2:g}; con il toro del
+    bordo {pd['diametro_piano'] + 0.06:g} m): i tentacoli della medusa (raggio 1,55 m) restano tutti appoggiati.
+    La statua va appoggiata con l'origine in **{g3(pd['statua']['appoggio_godot'])}**, rivolta verso **+Z** (la porta).
     Con 4,5 m di statua la cima arriva a y = {pd['statua']['cima_godot']:g} (la galleria è a 4,0-4,3; il soffitto a 11,5).
   - Gradoni: il primo Ø {pd['diametro_gradino_basso']:g} m alto {pd['quote_gradini'][0]:g}, il secondo Ø {pd['diametro_gradino_alto']:g} m fino a {pd['quote_gradini'][1]:g};
     tamburo Ø {pd['diametro_tamburo']:g} m con il fregio a mosaico (onde, pesci, stella marina, medusa).

@@ -50,9 +50,10 @@ in `sala_monumento.glb`); la medusa la mette il gruppo "medusa".
 
 - Centro: Blender **(0, -10, 0)** = Godot **(0, 0, 10)**. La porta (vano 1,2 x 2,2 m) è a 10 m, sullo
   stesso asse: entrando la statua si vede subito, intera e centrata, con la cupola sopra.
-- **Piano superiore a 1,15 m**, Ø 2,8 m. La medusa va appoggiata in Godot a **(0, 1,15, 10)**,
+- **Piano superiore a 1,15 m**, Ø 3,7 m (raggio 1,85: i tentacoli della medusa arrivano a 1,55 m).
+  La medusa va appoggiata in Godot con l'origine a **(0, 1,15, 10)**,
   rivolta verso la porta (+Z Godot). Prevista alta circa 4,5 m: la cima arriva a 5,65 m.
-- Gradoni: Ø 4,0 m (alto 0,28) e Ø 3,24 m (fino a 0,56), piastrellati; tamburo Ø 2,6 m con il fregio
+- Gradoni: Ø 5,2 m (alto 0,28) e Ø 4,4 m (fino a 0,56), piastrellati; tamburo Ø 3,5 m con il fregio
   a mosaico marino; cornice in ceramica con il toro d'ottone; conchiglie d'ottone sul secondo gradino.
 - Davanti (verso la porta) la scatola gialla con il fungo rosso dei bambini (nodo a parte), a 0,8 m.
 - Luci: 4 faretti nel primo gradino (dal basso), 2 fari sulla ringhiera della galleria sud, il lampione
