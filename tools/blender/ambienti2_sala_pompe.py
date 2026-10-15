@@ -450,6 +450,31 @@ for k, (x, y, acceso) in enumerate(((-4.5, -1.0, False), (0.5, -1.0, True), (5.0
         luce(f'LUCE_neon_{k}', 'AREA', (x, y, H - 0.73), 90, (0.45, 0.9, 1.0), size=1.3, rot=(0, 0, 0))
 luce('LUCE_neon_porta', 'AREA', (XE - 0.15, PORTA_Y, PORTA_H + 0.45), 25, (0.3, 0.95, 1.0), size=1.2, rot=(0, math.radians(-90), 0))
 
+# ------------------------------------------------------------------ collisioni per Godot
+usa_collezione('collisioni')
+for g, ob in statici:
+    if g in ('struttura', 'vasca') and ob.name in bpy.data.objects and len(ob.data.vertices) == 8:
+        collisione_copia(ob)
+for i, (px, col, _) in enumerate(POMPE):
+    c = Vector((px, PY, 0))
+    collisione_box(f'POMPA_{i + 1}_corpo', c + Vector((-1.1, -1.25, 0)), c + Vector((1.1, 1.9, 2.1)))
+    mx, my = px + 0.45, PY - 0.45
+    collisione_box(f'POMPA_{i + 1}_mandata', (mx - 0.32, my - 0.35, 2.1), (mx + 0.32, my + 0.35, HEADER_Z))
+    collisione_box(f'POMPA_{i + 1}_aspirazione', (px - 1.62, my - 0.25, 0), (px - 1.1, my + 0.25, 1.4))
+    tb = bpy.data.objects[f'TURBINA_{i + 1}']
+    collisione_box(f'TURBINA_{i + 1}_disco', tb.location + Vector((-0.76, -0.2, -0.76)), tb.location + Vector((0.76, 0.15, 0.76)), padre=tb)
+for i, (fx, fy) in enumerate(((-7.6, 4.4), (-7.6, 1.8))):
+    collisione_box(f'FILTRO_{i + 1}', (fx - 1.08, fy - 1.08, 0), (fx + 1.08, fy + 1.08, 3.45))
+for o in (scr, sed):
+    collisione_da_bbox(o)
+vx0, vx1, vy0, vy1 = VASCA
+collisione_box('ringhiera_nord', (vx0 - 0.2, vy1 + 0.1, 0), (vx1 + 0.2, vy1 + 0.2, 1.1))
+collisione_box('ringhiera_est', (vx1 + 0.1, vy0 - 0.2, 0), (vx1 + 0.2, vy1 + 0.2, 1.1))
+collisione_box('gabbia_leva', GC - Vector((GD / 2 - 0.05, GW / 2, GH / 2)), GC + Vector((GD / 2, GW / 2, GH / 2)))
+collisione_box('LEVA_braccio', LV + Vector((-0.7, -0.08, -0.05)), LV + Vector((-0.1, 0.08, 0.75)), padre=lv)
+collisione_box('GRATA_leva_anta', GC + Vector((-GD / 2 - 0.03, -GW / 2, -GH / 2)), GC + Vector((-GD / 2 + 0.03, GW / 2, GH / 2)), padre=grata)
+collisione_box('PORTA_ponte_anta', (XE - 0.1, PORTA_Y - PORTA_W / 2, 0), (XE, PORTA_Y + PORTA_W / 2, PORTA_H), padre=pt)
+
 # ------------------------------------------------------------------ unione dei pezzi fissi per gruppo
 gruppi = {}
 for g, ob in statici:

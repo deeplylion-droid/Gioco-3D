@@ -269,13 +269,28 @@ def luce_servizio(nome, p, t, col=(1.0, 0.45, 0.12), energia=5):
     return obs, l
 
 
+def collisione_tubo(nome, pts, maschera=None, limiti=None):
+    """Interno del tubo a bassa risoluzione (16 lati, anelli ogni 0,5 m) come trimesh -colonly.
+    Le normali guardano l'asse: il giocatore scivola sulla faccia giusta."""
+    sub = [q for k, q in enumerate(pts) if k % 5 == 0]
+    if sub[-1] is not pts[-1]:
+        sub.append(pts[-1])
+    if limiti is not None:
+        ob = superficie_tubo(f'{nome}-colonly', pts, R_IN, None, seg=16, spessore=0, limiti=limiti, anelli_n=8)
+    else:
+        ob = _superficie_tubo(f'{nome}-colonly', sub, R_IN, None, seg=16, maschera=maschera, spessore=0)
+    ob['collisione'] = True; ob.hide_render = True
+    return ob
+
+
 # ------------------------------------------------------------------ moduli
 MODULI = {}   # nome -> (oggetti, [uscite])
 
 def modulo_tubo(nome, passi, colore='rosso', luci=(), maschera=None, mat=None, giunti_ogni=2.0, acqua=True, limiti=None):
     coll(nome)
     pts, usc = percorso(passi)
-    obs = [superficie_tubo(f'{nome}_tubo', pts, R_IN, mat or M[colore], maschera=maschera, limiti=limiti)]
+    obs = [superficie_tubo(f'{nome}_tubo', pts, R_IN, mat or M[colore], maschera=maschera, limiti=limiti),
+           collisione_tubo(f'{nome}_col', pts, maschera, limiti)]
     gi = giunti(nome, pts, giunti_ogni, maschera=maschera)
     if gi:
         for o in gi:
@@ -318,7 +333,8 @@ if fare('tubo') or fare('spaccato') or fare('bivio'):
     # tratto trasparente: anelli colorati ogni 0,8 m, si vede fuori
     coll('scivolo_trasparente_4m')
     pts, usc = percorso([('dritto', 4.0)])
-    obs = [superficie_tubo('scivolo_trasparente_4m_tubo', pts, R_IN, M['trasparente'], spessore=0.03)]
+    obs = [superficie_tubo('scivolo_trasparente_4m_tubo', pts, R_IN, M['trasparente'], spessore=0.03),
+           collisione_tubo('scivolo_trasparente_4m_col', pts)]
     an = []
     for k in range(6):
         s = k * 0.8
@@ -344,6 +360,9 @@ if fare('tubo') or fare('spaccato') or fare('bivio'):
         applica_trasf(o)
     gr = unisci('scivolo_grata_cieca_grata', g)
     MODULI['scivolo_grata_cieca'][0].append(gr)
+    cg = box('scivolo_grata_cieca_grata_col-convcolonly', (2.8, 0, 0), (0.1, 1.6, 1.6), None, uv=None)
+    cg['collisione'] = True; cg.hide_render = True
+    MODULI['scivolo_grata_cieca'][0].append(cg)
 
 if fare('spaccato') or fare('tubo'):
     # tubo spaccato: il cielo del tubo si rompe prima, il fondo prosegue come un trampolino
@@ -363,6 +382,7 @@ if fare('bivio') or fare('tubo'):
     obs = []
     pts, _ = percorso([('dritto', 1.5)])
     obs.append(superficie_tubo('bivio_entrata', pts, R_IN, M['rosso']))
+    obs.append(collisione_tubo('bivio_entrata_col', pts))
     obs.append(acqua_scorre('ACQUA_scorre_bivio_entrata', pts))
     CX0, CX1 = 1.5, 4.5          # camera: pareti interne
     CY = 2.1
@@ -384,6 +404,7 @@ if fare('bivio') or fare('tubo'):
     uv_box(est, 2.0)
     est.name = 'bivio_camera'
     obs.append(est)
+    obs.append(collisione_copia(est, convessa=False, nome='bivio_camera_col'))
     # fondo della camera bagnato e acqua
     obs.append(box('ACQUA_scorre_bivio_camera', ((CX0 + CX1) / 2, 0, CZ0 + 0.05), (CX1 - CX0, 2 * CY, 0.01), M['acqua'], uv=None))
     # costole interne e lampada
@@ -408,6 +429,7 @@ if fare('bivio') or fare('tubo'):
         p_s, u = percorso([('dritto', 1.0), ('gira', 5.0, sgn * 30), ('dritto', 1.0)])
         p_s = [(p + Vector((CX1, y, 0)), t, s) for p, t, s in p_s]
         obs.append(superficie_tubo(f'bivio_ramo_{lato}', p_s, R_IN, M['verde'] if lato == 'sx' else M['blu']))
+        obs.append(collisione_tubo(f'bivio_ramo_{lato}_col', p_s))
         obs.append(acqua_scorre(f'ACQUA_scorre_bivio_{lato}', p_s))
         uscite.append(uscita(f'scivolo_bivio_USCITA_{lato}', Matrix.Translation((CX1, y, 0)) @ u))
         # paratia a ribalta: disco d'acciaio, cerniera in alto (asse Y). Origine sulla cerniera.
@@ -419,6 +441,8 @@ if fare('bivio') or fare('tubo'):
             applica_trasf(o)
         pp = unisci(f'PARATIA_bivio_{lato}', par)
         imposta_origine(pp, (CX1 - 0.06, y, R_IN + 0.05))
+        cpp = box(f'PARATIA_bivio_{lato}_disco-convcolonly', (0, 0, -(R_IN + 0.05)), (0.08, 2 * R_IN, 2 * R_IN), None, uv=None)
+        cpp.parent = pp; cpp.matrix_parent_inverse = Matrix.Identity(4); cpp['collisione'] = True; cpp.hide_render = True
         pp['asse_rotazione'] = 'Y Blender (-Z Godot): chiusa = 0, aperta = +80 gradi (si alza verso la camera di smistamento)'
         if lato == 'dx':
             pp.rotation_euler = (0, math.radians(88), 0)
@@ -451,9 +475,10 @@ def esporta_kit():
             if o.name in bpy.data.objects and o.parent is None:
                 o.parent = e; o.matrix_parent_inverse = Matrix.Identity(4)
                 tutti.append(o)
-    esporta_glb(os.path.join(GLB_DIR, 'scivoli_kit.glb'), tutti)
+    figli = [c for o in tutti for c in o.children_recursive if c not in tutti]
+    esporta_glb(os.path.join(GLB_DIR, 'scivoli_kit.glb'), tutti + figli)
     for o in tutti:
-        if o.parent is not None:
+        if o.parent is not None and o.parent.name.startswith('MOD_'):
             o.parent = None
     for o in [o for o in tutti if o.name.startswith('MOD_')]:
         bpy.data.objects.remove(o)
@@ -599,7 +624,19 @@ def vasca_arrivo():
     for o in st + st_t:
         if o.name in bpy.data.objects:
             applica_trasf(o)
-    unisci('VASCA_struttura', [o for o in st if o.name in bpy.data.objects and o.type == 'MESH'])
+    # collisioni: copie delle scatole, trimesh del tubo, figlie per grata e pulsante
+    for o in st:
+        if o.name in bpy.data.objects and o.type == 'MESH' and len(o.data.vertices) == 8 and not o.name.startswith(('scolo', 'neon', 'gradino', 'fondale')):
+            collisione_copia(o)
+    collisione_tubo('vasca_scivolo_tubo_col', pts)
+    for k, x in enumerate((MX + 3.5, MX + 7.5)):
+        collisione_box(f'pilastro{k}_col', (x - 0.2, -0.2, 0), (x + 0.2, 0.2, 2.0))
+    cg = box('GRATA_sicurezza_col-convcolonly', (0, 0, GH / 2), (0.1, GW, GH), None, uv=None)
+    cg.parent = grata; cg.matrix_parent_inverse = Matrix.Identity(4); cg['collisione'] = True; cg.hide_render = True
+    cp = box('PULSANTE_grata_col-convcolonly', (0, 0, 0.05), (0.2, 0.2, 0.12), None, uv=None)
+    cp.parent = pu; cp.matrix_parent_inverse = Matrix.Identity(4); cp['collisione'] = True; cp.hide_render = True
+    collisione_box('pulsante_palo_col', BP + Vector((-0.15, -0.15, 0)), BP + Vector((0.15, 0.15, 1.3)))
+    unisci('VASCA_struttura', [o for o in st if o.name in bpy.data.objects and o.type == 'MESH' and not o.get('collisione')])
     unisci('VASCA_scivolo', [o for o in st_t if o.name in bpy.data.objects and o.type == 'MESH' and not o.name.startswith('ACQUA')])
     empty('PUNTO_uscita_vasca', (0.3, VY0 + 1.6, 0))
     empty('VAPORE_vasca', (3.5, 0, AZ_ + 0.2))
