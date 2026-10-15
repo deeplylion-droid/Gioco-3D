@@ -14,7 +14,7 @@ extends Node3D
 @export var portata_emergenza := 9.0
 @export var energia_neon := 2.6
 @export var energia_lampione := 9.0
-@export var energia_luna := 0.5
+@export var energia_luna := 0.6
 @export var colore_emergenza := Color(1.0, 0.035, 0.02)
 @export var colore_neon := Color(0.78, 1.0, 0.9)        # fluorescente freddo, verso il verde
 @export var colore_lampione := Color(1.0, 0.66, 0.36)   # sodio caldo: il contrasto caldo della sala
@@ -46,6 +46,7 @@ func _ready() -> void:
 		tempesta.name = "Tempesta"
 		tempesta.energia_lampo = 7.0
 		add_child(tempesta)
+		tempesta.luce.light_angular_distance = 0.2  # ombre dei costoloni nitide anche col lampo
 	if crea_effetti:
 		_crea_effetti()
 
@@ -133,7 +134,7 @@ func _regola_luci(n: Node) -> void:
 			d.light_color = Color(0.55, 0.66, 1.0)
 			d.light_energy = energia_luna
 			d.shadow_enabled = true
-			d.light_angular_distance = 0.6
+			d.light_angular_distance = 0.0  # con 0,6° i costoloni sottili spariscono dal pavimento
 			d.light_volumetric_fog_energy = 0.35
 			d.shadow_bias = 0.05
 	for c in n.get_children():
@@ -188,6 +189,7 @@ func _crea_sonde() -> void:
 	sala.interior = true
 	sala.ambient_mode = ReflectionProbe.AMBIENT_DISABLED
 	sala.max_distance = 60.0
+	sala.intensity = 0.5   # piena, il riflesso uniforme del soffitto copriva le ombre sul pavimento
 	add_child(sala)
 	var vasca := ReflectionProbe.new()
 	vasca.name = "Sonda_Piscina"
@@ -205,11 +207,11 @@ func _crea_effetti() -> void:
 	# Nebbia bassa sul pavimento e nella piscina vuota.
 	var nebbia := FogVolume.new()
 	nebbia.name = "NebbiaBassa"
-	nebbia.size = Vector3(40, 3.5, 36)
-	nebbia.position = Vector3(0, -0.6, -6.0)
+	nebbia.size = Vector3(40, 2.6, 36)
+	nebbia.position = Vector3(0, -1.0, -6.0)
 	var fm := FogMaterial.new()
-	fm.density = 0.03
-	fm.height_falloff = 1.6
+	fm.density = 0.018
+	fm.height_falloff = 2.5
 	fm.edge_fade = 0.15
 	fm.albedo = Color(0.78, 0.84, 0.86)
 	var rumore := FastNoiseLite.new()
