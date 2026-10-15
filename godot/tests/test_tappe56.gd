@@ -7,7 +7,7 @@ extends Node
 ## - tappa 6: acqua dalla vasca di raccolta, turbine nell'ordine sbagliato (si ricomincia) e in
 ##   quello dello schema (blu, giallo, rosso), la leva bloccata e poi tirata col getto, il
 ##   risveglio (flash, blackout con le sole luci rosse, neve sul monitor, paratie giù), la porta
-##   col maniglione, il raccordo fino alla scala degli interni e la fine della demo;
+##   col maniglione e il raccordo fino alla scala degli interni (la tappa 7 è in test_tappa7.gd);
 ## - i checkpoint lungo la strada e una ripartenza dopo il risveglio.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappe56.gd
 
@@ -173,6 +173,13 @@ func _run() -> void:
 
 	var ris: RisveglioSalaPompe = level.get(&"risveglio")
 	var leva: LevaGrande = ris.leva
+	print("Il monitor della telecamera")
+	var mon: MonitorCrt = ris.monitor
+	check(mon.immagine != null and not mon.mostra_neve_attiva() and mon.sovrimpressione().begins_with(mon.data),
+		"il monitor mostra la sala dalla telecamera, con data e ora (%s)" % mon.sovrimpressione())
+	var ora := mon.sovrimpressione()
+	await _frames(70)
+	check(mon.sovrimpressione() != ora, "e l'ora corre (%s)" % mon.sovrimpressione())
 	print("La leva bloccata")
 	p.water_pack.set_tank_amount(20.0)
 	_metti(Vector3(43.6, 0.0, -4.4), _m("marker_leva") + Vector3(0, 0.25, 0))
@@ -260,7 +267,7 @@ func _run() -> void:
 	check(_checkpoint() == "Tecnici/Logica/Checkpoint/CheckpointRaccordo", "checkpoint: in cima al raccordo (%s)" % _checkpoint())
 	ok = await _cammina_verso(tec.to_global(Vector3(42.6, 8.2, -7.8)), 600)
 	await _frames(10)
-	check(bool(level.get(&"demo_finished")), "ai piedi della scala degli interni finisce la demo")
+	check(not bool(level.get(&"demo_finished")), "la demo va avanti verso gli interni (tappa 7, test_tappa7.gd)")
 
 	print("Si riparte dal checkpoint del risveglio")
 	GameState.snapshot["checkpoint"] = "Tecnici/Logica/Checkpoint/CheckpointRisveglio"

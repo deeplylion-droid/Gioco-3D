@@ -17,6 +17,8 @@ signal scossa_bloccata
 @export var cardine_path: NodePath
 @export var angolo_apertura := 95.0
 @export var durata := 1.4
+## Se la porta del modello non ha una collisione sua, ne crea una (scatola come la mesh).
+@export var collisione_propria := false
 
 var bloccata := true
 var is_open := false
@@ -34,6 +36,19 @@ func _ready() -> void:
 	prompt = "Apri"
 	add_to_group(&"persist")
 	_porta = get_node_or_null(porta_path) as Node3D
+	if _porta and collisione_propria and _porta is MeshInstance3D:
+		var corpo := StaticBody3D.new()
+		corpo.name = "CollisionePorta"
+		corpo.collision_layer = Layers.WORLD
+		corpo.collision_mask = 0
+		var cs := CollisionShape3D.new()
+		var box := BoxShape3D.new()
+		var bb := (_porta as MeshInstance3D).get_aabb()
+		box.size = bb.size
+		cs.shape = box
+		cs.position = bb.get_center()
+		corpo.add_child(cs)
+		_porta.add_child(corpo)
 	if _porta:
 		_riposo = _porta.global_transform
 		for c in _porta.find_children("*", "CollisionObject3D", true, false):

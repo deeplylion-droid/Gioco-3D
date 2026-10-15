@@ -29,8 +29,10 @@ extends Node3D
 @export var tecnici: Node3D
 ## La sala pompe: ordine delle pompe, leva e risveglio (RisveglioSalaPompe).
 @export var risveglio: Node
-## In cima al raccordo, ai piedi della scala degli interni: fine della demo (la tappa 7 verrà).
+## Dove finisce la scia di gocce della tappa 7, davanti all'area bimbi: fine della demo.
 @export var fine_demo_trigger: Area3D
+## La tappa 7, il ritorno al buio (RitornoAlBuio).
+@export var ritorno: Node
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
 @export var show_controls_hint := true
@@ -222,4 +224,4 @@ func _on_fine_demo(body: Node3D) -> void:
 	demo_finished = true
 	var hud := _hud()
 	if hud:
-		hud.show_banner("FINE DELLA DEMO", "La strada continua al buio.\nGrazie per aver giocato!", 9.0)
+		hud.show_banner("FINE DELLA DEMO", "La scia continua nel buio.\nGrazie per aver giocato!", 9.0)
