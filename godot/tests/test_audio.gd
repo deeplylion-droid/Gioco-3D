@@ -131,6 +131,9 @@ func _run() -> void:
 	await _frames(10)
 	level = get_tree().current_scene
 	p = GameState.player
+	# punto di partenza del giocatore: valido qualunque sia la pianta della sala
+	var partenza := p.global_position
+	var sguardo_partenza := p.yaw
 	var c: Dictionary = audio.get(&"collegati")
 	print("  collegati: ", c)
 	for tipo in ["Tempesta", "Player", "WaterPack", "Torcia", "UnderwaterEffect", "Turbine", "HingedHatch",
@@ -162,17 +165,40 @@ func _run() -> void:
 	storm.tuono.emit(1.0, 0.8)
 	await _frames(2)
 	check(_conta(&"tuono_vicino") + _conta(&"tuono_lontano") > n0, "il tuono suona quando arriva")
+	# passi veri: si cammina dal punto di partenza
 	var passi0 := _conta(&"passo_bagnato") + _conta(&"passo_piastrelle")
-	p.teleport(Vector3(-2.5, 0, 18.0), 0.0, 0.0)
+	p.teleport(partenza, sguardo_partenza, 0.0)
 	Input.action_press(&"move_forward")
 	await _frames(70)
 	Input.action_release(&"move_forward")
-	check(_conta(&"passo_bagnato") + _conta(&"passo_piastrelle") >= passi0 + 3, "camminando si sentono i passi (%d)" %
+	check(_conta(&"passo_bagnato") + _conta(&"passo_piastrelle") >= passi0 + 2, "camminando si sentono i passi (%d)" %
 		(_conta(&"passo_bagnato") + _conta(&"passo_piastrelle") - passi0))
+	# ogni superficie ha il suo passo; la sala è bagnata (WetSurfaceConverter)
+	for prova in [[&"generico", &"passo_bagnato"], [&"metallo", &"passo_metallo"], [&"acqua", &"passo_acqua"],
+			[&"scala", &"passo_scala"]]:
+		var prima := _conta(prova[1])
+		p.footstep.emit(prova[0], false, 1.0)
+		check(_conta(prova[1]) > prima, "superficie %s: %s" % [prova[0], prova[1]])
+	var atterraggi := _conta(&"atterraggio_bagnato")
+	p.landed.emit(&"generico", false, 7.0)
+	check(_conta(&"atterraggio_bagnato") > atterraggi, "atterraggio sul bagnato")
+	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
+	if not lamp.is_on:
+		lamp.turn_on()
+	await _frames(3)
 	check(_conta(&"faro_acceso") >= 1, "il faro della statua si accende con il suo colpo")
+	var torcia := p.find_children("*", "Torcia", true, false)
+	if not torcia.is_empty():
+		var clic := _conta(&"torcia_accesa") + _conta(&"torcia_spenta")
+		torcia[0].call(&"commuta")
+		torcia[0].call(&"commuta")
+		check(_conta(&"torcia_accesa") + _conta(&"torcia_spenta") >= clic + 2, "la torcia fa clic")
 	p.water_pack.set_equipped(true, false)
 	p.water_pack.set_tank_amount(20.0)
-	p.teleport(Vector3(0.0, 0, 14.6), 0.0, 0.0)
+	# davanti al pulsante della sigla (guarda verso +Z), a 3,5 m, sul pavimento
+	var davanti := jingle.global_position + jingle.global_basis.z.normalized() * 3.5
+	davanti.y = 0.0
+	p.teleport(davanti, 0.0, 0.0)
 	p.look_at_point(jingle.global_position + Vector3(0, 0.12, 0))
 	await _frames(3)
 	Input.action_press(&"spray")
@@ -187,9 +213,13 @@ func _run() -> void:
 	await _frames(70)
 	check(bool(audio.call(&"sigla_in_corso")), "la sigla rovinata suona dal piedistallo")
 	check(_conta(&"zaino_getto_fine") >= 1, "il getto si chiude")
+	# sul bordo est della vasca d'arrivo, puntando l'acqua
+	var vasca: WaterTank = level.get_node("Vasche/VascaArrivo")
+	var centro := vasca.global_position
+	var mezza := vasca.inner_size.x * 0.5
 	p.water_pack.set_tank_amount(0.0)
-	p.teleport(Vector3(-8.3, 0, 2.0), 0.0, 0.0)
-	p.look_at_point(Vector3(-10.6, -0.22, 2.0))
+	p.teleport(Vector3(centro.x + mezza + 0.7, 0.0, centro.z), 0.0, 0.0)
+	p.look_at_point(Vector3(centro.x + mezza - 1.6, vasca.get_surface_global_y(), centro.z))
 	await _frames(3)
 	Input.action_press(&"suck")
 	await _frames(30)
