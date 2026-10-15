@@ -49,6 +49,12 @@ func _run() -> void:
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
+	# Interruttori per le prove (variabili d'ambiente): CAMPIONE_NO_SONDE, CAMPIONE_NO_SSR.
+	if OS.get_environment("CAMPIONE_NO_SONDE") != "":
+		for s in level.find_children("*", "ReflectionProbe", true, false):
+			(s as ReflectionProbe).visible = false
+	if OS.get_environment("CAMPIONE_NO_SSR") != "":
+		Grafica.imposta("ssr", 0)
 	var torcia := p.find_child("Torcia", true, false)
 	if torcia:
 		torcia.set(&"accesa", true)
@@ -61,15 +67,17 @@ func _run() -> void:
 	if _want("stanzino"):
 		await _shot("stanzino", Vector3(11.5, 0.0, -8.55), Vector3(15.2, 1.0, -8.3))
 	if _want("torcia"):
-		# Corridoio al buio: si spengono le luci del corridoio, resta solo la torcia.
-		for l in level.get_node(^"Ambienti/Corridoio").find_children("*", "Light3D", true, false):
-			(l as Light3D).visible = false
-			(l as Light3D).set_process(false)
-		for n in level.get_node(^"Ambienti/Corridoio").find_children("*", "Node3D", true, false):
+		# Al buio davvero: tutte le luci degli interni spente (anche le lampade emissive),
+		# resta solo la torcia.
+		for n in level.find_children("*", "Node3D", true, false):
 			if n.get_script() and String(n.get_script().get_global_name()) in ["Neon", "LuceEmergenza"]:
 				n.set_process(false)
-				for l in n.find_children("*", "Light3D", true, false):
-					(l as Light3D).visible = false
+		for l in level.find_children("*", "Light3D", true, false):
+			if not p.is_ancestor_of(l):
+				(l as Light3D).visible = false
+		var look := level.get_node_or_null(^"LuciInterni")
+		if look:
+			look.call(&"_spegni_emissioni")
 		await _shot("torcia", Vector3(19.0, 0.0, -1.35), Vector3(12.0, 0.9, -1.2))
 	get_tree().quit()
 

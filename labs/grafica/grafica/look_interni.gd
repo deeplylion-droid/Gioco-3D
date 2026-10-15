@@ -23,7 +23,7 @@ extends Node3D
 @export var energia_emergenza := 1.7
 @export var portata_emergenza := 4.2
 @export var colore_emergenza := Color(1.0, 0.05, 0.03)
-@export var energia_neon := 2.4
+@export var energia_neon := 3.0   # una sola luce per neon (prima erano due)
 @export var portata_neon := 7.5
 @export var colore_neon := Color(0.76, 0.98, 0.9)
 @export var energia_zaino := 2.6
@@ -46,6 +46,7 @@ func _prepara() -> void:
 		push_warning("LookInterni: non trovo %s" % percorso_ambienti)
 		return
 	_regola_luci()
+	_pozze_opache()
 	for stanza in _ambienti.get_children():
 		if stanza is Node3D:
 			var box := _aabb(stanza)
@@ -74,8 +75,19 @@ func _regola_luci() -> void:
 				o.omni_attenuation = 1.8
 				o.light_specular = 0.5
 		elif cls == "Neon":
+			# interni.gd crea il Neon prima di spostargli dentro il tubo del modello: il Neon,
+			# nato senza figli, si costruisce da solo plafoniera, tubo e luce ad area. Così ogni
+			# neon era doppio (due lampade, luce doppia): spegniamo e nascondiamo i suoi pezzi.
+			for m in n.get_children():
+				if m is MeshInstance3D and ((m as MeshInstance3D).mesh is BoxMesh or (m as MeshInstance3D).mesh is CylinderMesh):
+					(m as MeshInstance3D).visible = false
+				elif m is AreaLight3D:
+					(m as AreaLight3D).light_energy = 0.0
+					(m as AreaLight3D).shadow_enabled = false
 			# I neon fanno la luce "di lavoro": freddi, morbidi, con ombre.
 			for l in n.find_children("*", "Light3D", true, false):
+				if l is AreaLight3D:
+					continue
 				var luce := l as Light3D
 				luce.light_color = colore_neon
 				luce.light_energy = energia_neon
@@ -100,6 +112,22 @@ func _regola_luci() -> void:
 			s.light_volumetric_fog_energy = 0.6
 
 
+## Pozze d'acqua opache e lucidissime, appena sopra il pavimento. Erano trasparenti: in
+## Godot i trasparenti non ricevono gli SSR e riflettevano solo il VoxelGI, sfocato e con
+## i bordi del poligono ("forme fantasma" sul pavimento). Opache, riflettono netto.
+func _pozze_opache() -> void:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.04, 0.045, 0.045)
+	m.roughness = 0.05
+	m.metallic = 0.0
+	m.metallic_specular = 0.6
+	for n in _ambienti.find_children("acqua_pozz*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		mi.material_override = m
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.position.y += 0.003   # niente z-fighting con il pavimento
+
+
 func _crea_gi(stanza: Node3D, box: AABB) -> void:
 	var gi := VoxelGI.new()
 	gi.name = "GI_" + stanza.name
@@ -122,12 +150,38 @@ func _crea_gi(stanza: Node3D, box: AABB) -> void:
 ## volta, a luci a posto; vedi tests/cuoci_gi_interni.gd).
 func cuoci_gi() -> void:
 	DirAccess.make_dir_recursive_absolute(cartella_gi)
+	# Le lampade emissive non vanno "cotte" nel GI: la loro luce la fanno le Light3D, che
+	# il VoxelGI segue in tempo reale. Cotte, resterebbero accese anche al buio.
+	var spente := _spegni_emissioni()
 	for gi in find_children("GI_*", "VoxelGI", false, false):
 		var v := gi as VoxelGI
 		v.bake(v.get_meta("stanza"))   # la geometria sta nella stanza, non tra i figli di LookInterni
 		var file := cartella_gi.path_join(String(v.name).trim_prefix("GI_") + ".res")
 		print("GI ", v.name, " celle ", v.data.get_octree_cells().size(), " dati ", v.data.get_data_cells().size(),
 			" -> ", file, " ", ResourceSaver.save(v.data, file))
+	_ripristina_emissioni(spente)
+
+
+## Toglie l'emissione a tutte le superfici emissive degli interni; restituisce cosa ripristinare.
+func _spegni_emissioni() -> Array:
+	var fatte := []
+	for n in get_parent().find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		for i in mi.mesh.get_surface_count():
+			var mat := mi.get_active_material(i)
+			if mat is BaseMaterial3D and (mat as BaseMaterial3D).emission_enabled:
+				var copia := mat.duplicate() as BaseMaterial3D
+				copia.emission_enabled = false
+				fatte.append([mi, i, mi.get_surface_override_material(i)])
+				mi.set_surface_override_material(i, copia)
+	return fatte
+
+
+func _ripristina_emissioni(fatte: Array) -> void:
+	for f in fatte:
+		(f[0] as MeshInstance3D).set_surface_override_material(f[1], f[2])
 
 
 func _process(_delta: float) -> void:
