@@ -33,6 +33,8 @@ extends Node3D
 @export var fine_demo_trigger: Area3D
 ## La tappa 7, il ritorno al buio (RitornoAlBuio).
 @export var ritorno: Node
+## La tappa 8, lei che sbuca dal bordo della fossa nell'area bimbi (LeiSbuca).
+@export var lei_sbuca: Node
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
 @export var show_controls_hint := true

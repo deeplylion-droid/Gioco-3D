@@ -65,6 +65,7 @@ func _initialize() -> void:
 	_atmosphere()
 	_gameplay(has_interiors)
 	_tappa7(has_interiors)
+	_tappa8()
 	_kid_sighting()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
@@ -224,23 +225,7 @@ func _vasca_centrale() -> void:
 	own(tank, g)
 	_water_link(g, "AcquaVascaCentrale", tank, "res://addons/acqua/presets/stile_1_limpida.tres", false)
 	# La medusa vera affacciata al bordo (animazione "affacciata" in ciclo, aspetto bagnato).
-	var medusa: Node3D = load("res://scripts/environment/medusa_affacciata.gd").new()
-	medusa.name = "Medusa"
-	medusa.set(&"bell_material", load(MEDUSA_DIR + "medusa_campana.tres"))
-	medusa.set(&"model", load(MEDUSA_DIR + "medusa.glb"))
-	var bagnata := {}
-	for coppia in [["M_pelle", "medusa_pelle_bagnata"], ["M_capelli", "medusa_capelli_bagnata"],
-			["M_orbita", "medusa_orbita_bagnata"], ["M_mani", "medusa_mani_bagnata"],
-			["M_ciocche", "medusa_ciocche_bagnata"], ["M_tentacoli", "medusa_tentacoli_bagnata"],
-			["M_occhio_bulbo", "medusa_occhio"]]:
-		bagnata[coppia[0]] = load(MEDUSA_DIR + coppia[1] + ".tres")
-	medusa.set(&"material_map", bagnata)
-	# Gocce da dita, mento, punte dei capelli e tentacoli sul bordo (coordinate della medusa).
-	var o := MEDUSA_AFFACCIATA
-	medusa.set(&"punti_gocce", PackedVector3Array([
-		Vector3(-0.6, 0.91, 12.31) - o, Vector3(0.6, 0.91, 12.31) - o, Vector3(0.0, 1.42, 12.02) - o,
-		Vector3(-0.35, 1.30, 11.98) - o, Vector3(0.38, 1.28, 11.98) - o,
-		Vector3(-1.48, 1.0, 12.3) - o, Vector3(1.48, 1.0, 12.3) - o]))
+	var medusa := _medusa_bagnata("Medusa")
 	medusa.position = MEDUSA_AFFACCIATA
 	own(medusa, g)
 	level.set(&"statue", medusa)
@@ -812,6 +797,111 @@ func _tappa7(has_interiors: bool) -> void:
 	own(fine, gp)
 	shape_box(fine, Vector3(2.4, 3.0, 2.4))
 	level.set(&"fine_demo_trigger", fine)
+
+
+## La trasformazione di [param n] nelle coordinate del livello (il costruttore non è nell'albero).
+func _nel_livello(n: Node3D) -> Transform3D:
+	var xf := Transform3D.IDENTITY
+	var x: Node = n
+	while x and x != level:
+		if x is Node3D:
+			xf = (x as Node3D).transform * xf
+		x = x.get_parent()
+	return xf
+
+
+## La medusa vera nella posa "affacciata" (in ciclo), con l'aspetto bagnato e le gocce che cadono
+## da dita, mento, capelli e tentacoli sul bordo (LEGGIMI della medusa).
+func _medusa_bagnata(nome: String) -> Node3D:
+	var medusa: Node3D = load("res://scripts/environment/medusa_affacciata.gd").new()
+	medusa.name = nome
+	medusa.set(&"bell_material", load(MEDUSA_DIR + "medusa_campana.tres"))
+	medusa.set(&"model", load(MEDUSA_DIR + "medusa.glb"))
+	var bagnata := {}
+	for coppia in [["M_pelle", "medusa_pelle_bagnata"], ["M_capelli", "medusa_capelli_bagnata"],
+			["M_orbita", "medusa_orbita_bagnata"], ["M_mani", "medusa_mani_bagnata"],
+			["M_ciocche", "medusa_ciocche_bagnata"], ["M_tentacoli", "medusa_tentacoli_bagnata"],
+			["M_occhio_bulbo", "medusa_occhio"]]:
+		bagnata[coppia[0]] = load(MEDUSA_DIR + coppia[1] + ".tres")
+	medusa.set(&"material_map", bagnata)
+	# Gocce (coordinate della medusa, misurate sulla vasca centrale).
+	var o := MEDUSA_AFFACCIATA
+	medusa.set(&"punti_gocce", PackedVector3Array([
+		Vector3(-0.6, 0.91, 12.31) - o, Vector3(0.6, 0.91, 12.31) - o, Vector3(0.0, 1.42, 12.02) - o,
+		Vector3(-0.35, 1.30, 11.98) - o, Vector3(0.38, 1.28, 11.98) - o,
+		Vector3(-1.48, 1.0, 12.3) - o, Vector3(1.48, 1.0, 12.3) - o]))
+	return medusa
+
+
+# --- Tappa 8: lei sbuca dal bordo nell'area bimbi, poi la spiaggia fino alla torre ----------------
+
+## Fossa provvisoria (proposta mandata all'ambiente) finché non arrivano i suoi marker: lato sud
+## della VascaBimbi1, metà ovest. Origine della posa "affacciata" e direzione in cui guarda (verso
+## il giocatore che arriva dal muro ovest), fondo del condotto.
+const FOSSA_PROVVISORIA := Vector3(-13.0, -0.45, -7.6)
+const FOSSA_SGUARDO := Vector3(-0.7071, 0.0, 0.7071)
+const FOSSA_FUGA_PROVVISORIA := Vector3(-11.0, -2.6, -6.9)
+## La torre degli scivoli: piede della prima scala (sala_dati.json, "torre").
+const PIEDE_TORRE := Vector3(10.6, 0.0, -14.3)
+
+
+func _tappa8() -> void:
+	var gp := level.get_node("Gioco")
+	var sala := level.get_node("Sala")
+	var lei: Node3D = load("res://scripts/game/lei_sbuca.gd").new()
+	lei.name = "LeiSbuca"
+	own(lei, gp)
+	level.set(&"lei_sbuca", lei)
+	# I marker della fossa (ambiente): se non ci sono ancora la scena resta spenta, con una fossa
+	# provvisoria per i test.
+	var sbuca := sala.find_child("medusa_sbuca", true, false) as Node3D
+	var fuga := sala.find_child("medusa_fuga", true, false) as Node3D
+	var pieno := sala.find_child("livello_acqua_pieno", true, false) as Node3D
+	var coperchio: CollisionObject3D = null
+	for c in sala.find_children("*coperchio*", "CollisionObject3D", true, false):
+		coperchio = c
+		break
+	var pronta := sbuca != null and fuga != null
+	lei.set(&"abilitata", pronta)
+	if not pronta:
+		var m := Marker3D.new()
+		m.name = "SbucaProvvisorio"
+		m.transform = Transform3D(Basis.looking_at(-FOSSA_SGUARDO, Vector3.UP), FOSSA_PROVVISORIA)
+		own(m, lei)
+		sbuca = m
+		var f := Marker3D.new()
+		f.name = "FugaProvvisoria"
+		f.position = FOSSA_FUGA_PROVVISORIA
+		own(f, lei)
+		fuga = f
+	lei.set(&"punto_sbuca", sbuca)
+	lei.set(&"punto_fuga", fuga)
+	if pieno:
+		lei.set(&"livello_pieno", _nel_livello(pieno).origin.y)
+	if coperchio:
+		lei.set(&"coperchio", coperchio)
+	var medusa := _medusa_bagnata("MedusaFossa")
+	medusa.transform = _nel_livello(sbuca)
+	medusa.visible = false
+	own(medusa, lei)
+	lei.set(&"medusa", medusa)
+	var vasche: Array[Node3D] = []
+	var acque: Array[Node3D] = []
+	for n in ["VascaBimbi1", "VascaBimbi2"]:
+		vasche.append(level.get_node("Vasche/" + n) as Node3D)
+		acque.append(level.get_node("Vasche/Acqua" + n) as Node3D)
+	lei.set(&"vasche", vasche)
+	lei.set(&"acque", acque)
+	# Checkpoint prima della scena (sulla scia, lungo il muro ovest, a 7 m da dove sbuca), poi
+	# la strada verso la torre: dal cancello del recinto (aperto nella tappa 4) giù nella spiaggia
+	# della piscina vuota, lungo la spiaggia verso est, fuori dal lato est e ai piedi della torre.
+	checkpoint(gp, "CheckpointAreaBimbi", 12, Vector3(-18.3, 1.5, -0.5), Vector3(2.6, 3.0, 1.6), Vector3(0.0, -1.5, 0.0), 0.0)
+	checkpoint(gp, "CheckpointSpiaggiaBuio", 13, Vector3(2.0, 1.4, -12.6), Vector3(2.6, 3.0, 2.6), Vector3(0.0, -1.5, 0.0), -PI * 0.5)
+	checkpoint(gp, "CheckpointTorre", 14, PIEDE_TORRE + Vector3(-1.2, 1.5, 0.0), Vector3(1.6, 3.0, 2.6), Vector3(0.0, -1.5, 0.0), -PI * 0.5)
+	# Con la fossa pronta la demo finisce ai piedi della torre (la tappa 9 viene dopo).
+	if pronta:
+		var fine := level.get(&"fine_demo_trigger") as Node3D
+		fine.position = PIEDE_TORRE + Vector3(0.4, 1.5, 0.0)
 
 
 # --- B5: i bambini sulla balconata, visti in un lampo mentre sali sulla torre -------------------

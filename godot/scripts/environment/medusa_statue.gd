@@ -113,6 +113,27 @@ func wake_up() -> void:
 		ap.queue(&"fluttua")
 
 
+## Ti prende: la fauce si apre (animazione "fauce_apre": la pelle si strappa sotto l'occhio, gola e
+## denti) e l'occhio si riempie di vene (parametro "venatura" del suo materiale, da 0 a 1, su una
+## copia: le altre medusa restano calme).
+func attacca(durata_vene := 0.7) -> void:
+	if _instance == null:
+		return
+	_mostra_bocca(true)
+	var ap := _instance.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap and ap.has_animation(&"fauce_apre"):
+		ap.play(&"fauce_apre", 0.25)
+	var occhio := _instance.find_child("Medusa_Occhio", true, false) as MeshInstance3D
+	var m := occhio.get_active_material(0) as ShaderMaterial if occhio else null
+	if m == null:
+		return
+	m = m.duplicate() as ShaderMaterial
+	occhio.set_surface_override_material(0, m)
+	m.set_shader_parameter(&"venatura", 0.0)
+	var tw := create_tween()
+	tw.tween_method(func(v: float): m.set_shader_parameter(&"venatura", v), 0.0, 1.0, durata_vene)
+
+
 func _process(delta: float) -> void:
 	if _bell == null:
 		return
