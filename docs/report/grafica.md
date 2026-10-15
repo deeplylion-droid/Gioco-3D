@@ -68,7 +68,13 @@ Per non intralciare chi rifà modelli e texture degli stessi interni, le luci so
 
 Il "disco azzurro" che si vedeva nel tornello era la cornice della finestra del gabbiotto, che sporgeva nel corridoio: ambienti-1 l'ha corretta (4bd815c); `combinato_tornello.jpg` è rifatto con la cornice a filo del muro e il VoxelGI ricotto.
 
-**In attesa del riscontro dell'utente** prima di estendere lo stesso lavoro al resto del gioco.
+**Approvato dall'utente** ("belle le luci e anche le grafiche").
+
+**Secondo giro** (`giro2_corridoio.jpg`, `giro2_tornello.jpg`, `giro2_stanzino.jpg`, `giro2_torcia.jpg`), con soffitti da nave e usura delle pareti di ambienti-1:
+- riflessi delle pozze netti: erano trasparenti e non ricevevano gli SSR (riflettevano solo il VoxelGI, sfocato: le "forme fantasma"); ora sono opache e lucide;
+- torcia al buio davvero: GI cotto senza le emissioni delle lampade, scatto con tutte le luci spente;
+- neon non più doppi (interni.gd);
+- neon a 4,5 e luce ambiente 0,85: con i soffitti nuovi lo stanzino era quasi nero e l'usura delle pareti non si leggeva.
 
 ## Sala principale vera: prima e dopo
 

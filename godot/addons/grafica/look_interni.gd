@@ -23,7 +23,7 @@ extends Node3D
 @export var energia_emergenza := 1.7
 @export var portata_emergenza := 4.2
 @export var colore_emergenza := Color(1.0, 0.05, 0.03)
-@export var energia_neon := 3.0
+@export var energia_neon := 4.5
 @export var portata_neon := 7.5
 @export var colore_neon := Color(0.76, 0.98, 0.9)
 @export var energia_zaino := 2.6

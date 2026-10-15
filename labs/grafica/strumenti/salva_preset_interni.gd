@@ -9,7 +9,7 @@ func _init() -> void:
 	# Le ombre non sono nere piene: un minimo di luce fredda verso il blu-verde (concept A).
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.1, 0.17, 0.19)
-	env.ambient_light_energy = 0.65
+	env.ambient_light_energy = 0.85
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED  # riflessi dalle sonde
 	env.tonemap_mode = Environment.TONE_MAPPER_AGX
 	env.tonemap_exposure = 1.0
