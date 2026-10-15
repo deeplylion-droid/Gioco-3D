@@ -37,8 +37,14 @@ func _run() -> void:
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
 	check((level.get_node("Statua/Medusa") as MedusaStatue).get_model_instance() != null, "la medusa è sul piedistallo")
 	var space := p.get_world_3d().direct_space_state
-	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-3, 1, 10), Vector3(-3, 1, 14)))
-	check(not wall.is_empty() and absf(wall.position.z - 12.0) < 0.3, "il muro sud ha la collisione")
+	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-3, 1, 18), Vector3(-3, 1, 22)))
+	check(not wall.is_empty() and absf(wall.position.z - 20.0) < 0.3, "il muro sud ha la collisione")
+	var door_q := PhysicsRayQueryParameters3D.create(Vector3(0, 1, 18.5), Vector3(0, 1, 21.5))
+	door_q.exclude = [p.get_rid()]
+	var door := space.intersect_ray(door_q)
+	if not door.is_empty():
+		print("  (il raggio nel vano tocca ", door.collider, " in ", door.position, ")")
+	check(door.is_empty() or door.position.z > 20.15, "il vano verso gli spogliatoi è libero")
 	var ghost := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-1, 1, -1), Vector3(3, 1, -1)))
 	check(ghost.is_empty(), "niente muri invisibili in mezzo alla piscina")
 	var floor_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0, 1, 2), Vector3(0, -4, 2)))
@@ -49,7 +55,7 @@ func _run() -> void:
 	await _hold(&"spray", 10)
 	check(not p.water_pack.is_spraying, "senza zaino non si spruzza")
 	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
-	p.teleport(Vector3(4.5, 0, 10.3), 0.0, 0.0)
+	p.teleport(Vector3(4.5, 0, 18.3), 0.0, 0.0)
 	p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
 	await _frames(3)
 	check(p.interactor.current is PackPickup, "il raggio trova lo zaino")
@@ -62,7 +68,7 @@ func _run() -> void:
 
 	print("Lampada della statua e sigla")
 	check(not lamp.is_on, "la lampada è spenta")
-	p.teleport(Vector3(-2.5, 0, 11.0), 0.0, 0.0)
+	p.teleport(Vector3(-2.5, 0, 18.0), 0.0, 0.0)
 	Input.action_press(&"move_forward")
 	await _frames(50)
 	Input.action_release(&"move_forward")
@@ -80,7 +86,7 @@ func _run() -> void:
 
 	var jingle: WaterButton = level.get_node("Statua/PulsanteSigla")
 	p.water_pack.set_tank_amount(20.0)
-	p.teleport(Vector3(0.0, 0, 10.6), 0.0, 0.0)
+	p.teleport(Vector3(0.0, 0, 14.6), 0.0, 0.0)
 	p.look_at_point(jingle.global_position + Vector3(0, 0.12, 0))
 	await _hold(&"spray", 40)
 	check(jingle.powered, "il getto fa partire la sigla dal pulsante del piedistallo")
@@ -167,7 +173,7 @@ func _run() -> void:
 
 	print("B5: i bambini sulla balconata, in un lampo")
 	var kids: KidSighting = level.get_node("BambiniBalconata")
-	var storm: Tempesta = level.get_node("Tempesta")
+	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	var flashes := [0]
 	storm.lampo.connect(func(_i): flashes[0] += 1)
 	p.teleport(Vector3(13.5, 4.5, -16.5), PI, 0.0)

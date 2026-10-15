@@ -24,6 +24,14 @@ var _armed := false
 func _ready() -> void:
 	if trigger:
 		trigger.body_entered.connect(_on_trigger)
+	if storm == null:
+		_find_storm.call_deferred()
+
+
+func _find_storm() -> void:
+	var found := get_tree().root.find_children("*", "Tempesta", true, false)
+	if found.size() > 0:
+		storm = found[0] as Tempesta
 
 
 func _on_trigger(body: Node3D) -> void:

@@ -1,13 +1,17 @@
 extends Node3D
-## Da attaccare al Node3D che contiene le istanze dei GLB della sala (tutte in 0,0,0).
-## Regola le luci importate da sala_luci.glb (le unità glTF non coincidono con Godot),
-## fa sfarfallare i neon a metà e, se manca, crea un WorldEnvironment notturno con nebbia.
-## Valori provati in Godot 4.7.2 (Forward+). Si possono cambiare dall'ispettore.
+## SOLO PER LE PROVE DELL'AMBIENTE (scene di test e screenshot di lavoro/ambiente).
+## Nel gioco le luci della sala le regola LookSala dell'addon grafica (con LookSalaLunga
+## dell'integratore): i valori consigliati sono in assets_src/ambiente/INTEGRAZIONE.md e qui sono
+## allineati a quelli del gioco, così le prove somigliano al gioco.
+## Da attaccare al Node3D che contiene le istanze dei GLB della sala (tutte in 0,0,0): regola le luci
+## importate da sala_luci.glb, fa sfarfallare qualche neon e, se manca, crea un WorldEnvironment.
 
 @export var energia_emergenza := 3.0
 @export var energia_neon := 2.5
 @export var energia_lampione := 10.0
 @export var energia_luna := 0.35
+@export var energia_fari := 9.5
+@export var energia_faretti_bassi := 0.6
 @export var crea_ambiente := true
 @export var neon_che_sfarfallano := 4
 
@@ -29,6 +33,13 @@ func _regola(n: Node) -> void:
 		if o.name.begins_with("luce_emergenza"):
 			o.light_energy = energia_emergenza
 			o.omni_range = 8.0
+		elif o.name.begins_with("luce_calda"):
+			# plafoniere navali ancora accese: un po' di caldo in mezzo al rosso
+			o.light_energy = 1.8
+			o.omni_range = 7.5
+		elif o.name.begins_with("luce_insegna_onda") or o.name.begins_with("luce_insegna_stella"):
+			o.light_energy = 1.3
+			o.omni_range = 5.5
 		elif o.name.begins_with("luce_subacquea"):
 			o.light_energy = 3.0
 			o.omni_range = 5.0
@@ -37,7 +48,23 @@ func _regola(n: Node) -> void:
 			o.omni_range = 9.0
 	elif n is SpotLight3D:
 		var s := n as SpotLight3D
-		if s.name == "luce_lampione":
+		if s.name.begins_with("luce_faro"):
+			# fari sulla ringhiera della galleria sud: illuminano la statua come un monumento
+			# luce bianca calda sul busto e sul viso: la cosa più leggibile entrando dal vano
+			s.light_energy = energia_fari
+			s.light_color = Color(1.0, 0.93, 0.84)
+			s.spot_range = 16.0
+			s.spot_angle = 15.0
+			s.spot_angle_attenuation = 0.7
+			s.shadow_enabled = true
+		elif s.name.begins_with("luce_monumento_basso"):
+			# faretti incassati nel gradino: la statua dal basso
+			s.light_energy = energia_faretti_bassi
+			s.spot_range = 7.0
+			s.spot_angle = 24.0
+			s.spot_angle_attenuation = 0.8
+			s.shadow_enabled = false
+		elif s.name == "luce_lampione":
 			s.light_energy = energia_lampione
 			s.spot_range = 9.0
 			s.spot_angle = 55.0
