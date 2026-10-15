@@ -118,6 +118,13 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - La versione con due occhi.
 - Il costume a fascia.
 
+### Il centro della sala: la vasca sollevata con la medusa affacciata (deciso dall'utente, 15 ottobre, sostituisce la statua)
+
+- La statua che poi si anima è "troppo Poppy Playtime". **La statua si tiene per più avanti** (modello e monumento restano negli asset).
+- Al suo posto, al centro della sala, c'è la **vasca sollevata** del concept `docs/concept/medusa_sbircia.jpg`: bordo piastrellato rialzato, acqua quasi al bordo. Dentro c'è **la medusa vera, affacciata e immobile**: mani sul bordo, campana in acqua, tentacoli che ricadono fuori, l'occhio che guarda chi entra.
+- **Poi sparisce.** Proposta: quando il giocatore torna nella sala dopo la sala pompe, con la stessa inquadratura, la vasca è vuota e l'acqua si muove ancora (da confermare con l'utente).
+- Vale la regola sulla qualità: vasca e posa della medusa devono essere al livello del pezzo campione.
+
 ### La statua: il simbolo del gioco (deciso dall'utente, 15 ottobre)
 
 - La medusa è **il simbolo del gioco**. La sua statua deve essere **imponente** e messa in scena come Huggy Wuggy nella hall di Poppy Playtime.
