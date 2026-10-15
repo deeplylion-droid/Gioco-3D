@@ -177,8 +177,10 @@ func _hall() -> void:
 	# La statua è la cosa più luminosa della sala: i fari della ringhiera un po' più forti.
 	luci.set(&"energia_fari", 7.0)
 	luci.set(&"vetro_cupola", M.dome_glass)
-	# Il lampione illumina il viso della medusa affacciata: punta sul suo occhio vero.
+	# Il lampione illumina il viso della medusa affacciata: punta sul suo occhio vero, e a 2-3 m
+	# basta metà dell'energia di serie (a 6 testa e capelli si bruciano).
 	luci.set(&"ritratto_mira", OCCHIO_MEDUSA)
+	luci.set(&"energia_ritratto", 3.0)
 	own(luci)
 
 

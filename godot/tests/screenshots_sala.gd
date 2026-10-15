@@ -101,6 +101,12 @@ func _run() -> void:
 	if _want("ingresso_vasca"):
 		# Entrando nella sala: la medusa affacciata alla vasca, il viso nel cono del lampione.
 		await _shot("ingresso_vasca", Vector3(0.0, 0.0, 19.2), Vector3(0.0, 1.9, 11.0))
+		# SCATTI_LAMPIONE: la stessa inquadratura con altre energie del lampione, per esempio
+		# "2.5,2" (per sceglierla senza ricaricare la sala: i file finiscono con _<energia>).
+		for e in OS.get_environment("SCATTI_LAMPIONE").split(",", false):
+			lamp.base_energy = float(e)
+			await _frames(maxi(settle * 2 / 3, 12))
+			await _capture("ingresso_vasca_" + e)
 	if _want("vasca_primo_piano"):
 		# Dal bordo, oltre il cordone: occhio negli occhi.
 		await _shot("vasca_primo_piano", Vector3(0.35, 0.0, 13.25), Vector3(0.0, 1.5, 11.9))
