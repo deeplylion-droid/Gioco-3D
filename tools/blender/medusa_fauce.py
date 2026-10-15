@@ -11,6 +11,8 @@ Come funziona (pensato per Godot):
   - denti da squalo che si incastrano: una fila scende dall'arcata di sopra e una sale da quella di sotto,
     una di fronte all'altra e sfalsate di mezzo dente, tutte e due inclinate verso l'interno della bocca e con
     la punta ricurva all'indietro; le file interne sono piu' piccole, piu' indietro e piu' coricate;
+  - file interne (proposta, MEDUSA_DENTI_INTERNI=1): altre file di denti sempre piu' piccoli sul palato, sul fondo
+    della bocca e sui lati, fino alla gola, tutte piegate verso la gola come in una fauce di squalo;
   - la shape key "fauce_strappo" del corpo rende frastagliati i bordi dello strappo (lembi arrotondati);
   - il bordo della pelle strappata ha spessore: Medusa_Strappo, un bordino arrotolato lungo i due bordi
     (pelle fuori, spessore rosa e carne dentro), anche lui collassato a riposo con la shape key "fauce_aperta".
@@ -36,6 +38,26 @@ N_FILE = 3                                    # file di denti per arcata
 SCALA_FILE = (1.0, 0.72, 0.52)                # grandezza delle file, dalla prima (sul labbro) verso la gola
 PASSO_FILE = (2, 3, 4)                        # ogni quante colonne del bordo c'e' un dente
 DENTRO_FILE = (0.3, 0.55, 0.85)               # inclinazione verso l'interno della bocca (le file dietro sono coricate)
+
+# File interne (richiesta dell'utente del 15 ottobre: "piu' file di denti anche dentro, dove si vede tutto quel rosso
+# dell'interno della bocca"). Restano spente finche' l'utente non approva i render: MEDUSA_DENTI_INTERNI=1 le accende.
+# Le file approvate sopra non cambiano (stessi numeri casuali): queste si aggiungono dopo.
+DENTI_INTERNI = os.environ.get('MEDUSA_DENTI_INTERNI', '0') == '1'
+# (arcata, profondita' tra le righe della gola (0 = labbro, 4 = fondo), grandezza rispetto alla prima fila,
+#  coricati verso la gola, sfasamento lungo la fila, fin dove arriva verso il centro: 1 = tutta la fila, meno = solo
+#  vicino agli angoli, dove la bocca aperta mostra le pareti dei lati)
+FILE_INTERNE = [
+    ('tetto', 1.5, 0.62, 0.55, 0.0, 1.0), ('tetto', 2.5, 0.5, 0.7, 0.5, 1.0), ('tetto', 3.2, 0.42, 0.8, 0.0, 1.0),
+    ('tetto', 3.5, 0.34, 0.9, 0.5, 1.0), ('tetto', 3.75, 0.27, 1.0, 0.0, 1.0),
+    ('tetto', 0.5, 0.5, 0.4, 0.5, 0.45), ('tetto', 1.25, 0.55, 0.5, 0.0, 0.6),
+    ('pavimento', 1.5, 0.62, 0.55, 0.5, 1.0), ('pavimento', 2.25, 0.55, 0.65, 0.0, 1.0),
+    ('pavimento', 2.5, 0.5, 0.7, 0.0, 1.0), ('pavimento', 2.8, 0.45, 0.75, 0.5, 1.0),
+    ('pavimento', 3.1, 0.4, 0.8, 0.0, 1.0), ('pavimento', 3.4, 0.34, 0.9, 0.5, 1.0),
+    ('pavimento', 3.65, 0.28, 1.0, 0.0, 1.0), ('pavimento', 3.85, 0.22, 1.1, 0.5, 1.0),
+    ('pavimento', 0.5, 0.5, 0.4, 0.0, 0.45), ('pavimento', 1.25, 0.55, 0.5, 0.5, 0.6),
+]
+DENTE_MAX = 0.026            # lunghezza del dente piu' grande della prima fila (unita' del modello)
+PASSO_INTERNE = 1.0          # distanza tra due denti della stessa fila, in larghezze di dente
 
 
 def piano_taglio():
@@ -315,6 +337,16 @@ def crea_denti(arm, verts_aperti, pesi, K, J, M):
                 w = pesi[k][j]
                 pesi_v += [w] * len(v)
                 basi += [p] * len(v)
+    n_approvati = len(tutti_v)
+    n_interni = 0
+    if DENTI_INTERNI:
+        for v, f, w, b in denti_interni(verts_aperti, pesi, K, J):
+            off = len(tutti_v)
+            tutti_v += v
+            tutte_f += [tuple(x + off for x in ff) for ff in f]
+            pesi_v += [w] * len(v)
+            basi += [b] * len(v)
+            n_interni += 1
     dme = bpy.data.meshes.new('Medusa_Denti')
     # a riposo ogni dente e' collassato nel suo punto di base (invisibile)
     I4 = Matrix.Identity(4)
@@ -341,8 +373,92 @@ def crea_denti(arm, verts_aperti, pesi, K, J, M):
             vg_t.add([i], 1 - w, 'REPLACE')
     denti.parent = arm
     mod = denti.modifiers.new('Scheletro', 'ARMATURE'); mod.object = arm
-    log(f'fauce: {len(tutte_f) // 13} denti in {N_FILE} file per arcata')
+    denti['denti_approvati'] = n_approvati          # vertici delle file approvate (sono i primi della mesh)
+    log(f'fauce: {n_approvati // 16} denti in {N_FILE} file per arcata'
+        + (f", piu' {n_interni} nelle {len(FILE_INTERNE)} file interne" if n_interni else ''))
     return denti
+
+
+def _punto_gola(verts_aperti, pesi, k, j):
+    """Punto (aperto) e peso della gola in una colonna e riga frazionarie (interpolazione bilineare)."""
+    K, R = len(verts_aperti), len(verts_aperti[0])
+    k = min(max(k, 0.0), K - 1.0)
+    j = min(max(j, 0.0), R - 1.0)
+    k0, j0 = min(int(k), K - 2), min(int(j), R - 2)
+    fk, fj = k - k0, j - j0
+    p = ((verts_aperti[k0][j0] * (1 - fj) + verts_aperti[k0][j0 + 1] * fj) * (1 - fk)
+         + (verts_aperti[k0 + 1][j0] * (1 - fj) + verts_aperti[k0 + 1][j0 + 1] * fj) * fk)
+    w = ((pesi[k0][j0] * (1 - fj) + pesi[k0][j0 + 1] * fj) * (1 - fk)
+         + (pesi[k0 + 1][j0] * (1 - fj) + pesi[k0 + 1][j0 + 1] * fj) * fk)
+    return p, w
+
+
+def denti_interni(verts_aperti, pesi, K, J):
+    """Denti delle file interne (FILE_INTERNE), dalla forma aperta della gola: ogni fila segue una riga della gola a
+    profondita' d (0 = labbro, J = fondo) da un angolo all'altro, con i denti uno accanto all'altro (passo in
+    larghezze di dente, file vicine sfalsate). Ogni dente esce dalla carne verso l'interno della bocca e si piega
+    verso la gola; e' piu' piccolo verso gli angoli e non e' mai piu' lungo del 60% dello spazio libero davanti a lui
+    (non buca la carne di fronte: sui lati la bocca e' una parete). Ritorna (vertici, facce, peso della mascella,
+    punto di base) per dente."""
+    from mathutils.bvhtree import BVHTree
+    rng = np.random.default_rng(31)                 # numeri casuali propri: le file approvate non cambiano
+    out = []
+    # superficie della gola aperta, per misurare lo spazio libero davanti a ogni dente
+    R = len(verts_aperti[0])
+    vv = [tuple(p) for col in verts_aperti for p in col]
+    tri = []
+    for k in range(K - 1):
+        for j in range(R - 1):
+            a, b = k * R + j, (k + 1) * R + j
+            tri += [(a, b, b + 1), (a, b + 1, a + 1)]
+    bvh = BVHTree.FromPolygons(vv, tri)
+    for meta, d, scala, coricato, sfasa, centro_max in FILE_INTERNE:
+        jr = (lambda dd: dd) if meta == 'tetto' else (lambda dd: 2 * J - dd)
+        # riga campionata fitta: punti, pesi, ascissa curvilinea
+        ks = np.linspace(0, K - 1, 8 * (K - 1) + 1)
+        P = [_punto_gola(verts_aperti, pesi, k, jr(d)) for k in ks]
+        pts = np.array([tuple(p) for p, _ in P])
+        s = np.concatenate([[0.0], np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))])
+
+        def in_s(x):
+            i = int(np.clip(np.searchsorted(s, x), 1, len(s) - 1))
+            t = (x - s[i - 1]) / max(s[i] - s[i - 1], 1e-12)
+            return ks[i - 1] + t * (ks[i] - ks[i - 1])
+
+        x = s[-1] * 0.03 + sfasa * DENTE_MAX * scala * 0.7 * PASSO_INTERNE
+        while x < s[-1] * 0.97:
+            k = in_s(x)
+            centro = 1 - (2 * k / (K - 1) - 1) ** 2
+            lung = DENTE_MAX * scala * (0.55 + 0.45 * centro)
+            larg = lung * rng.uniform(0.62, 0.75)
+            if 0.04 < centro <= centro_max:
+                p, w = _punto_gola(verts_aperti, pesi, k, jr(d))
+                lato = _punto_gola(verts_aperti, pesi, k + 0.5, jr(d))[0] - _punto_gola(verts_aperti, pesi, k - 0.5, jr(d))[0]
+                # verso la gola lungo la carne (la riga cresce verso il fondo nel tetto, cala nel pavimento)
+                gola = _punto_gola(verts_aperti, pesi, k, jr(d + 0.15))[0] - _punto_gola(verts_aperti, pesi, k, jr(d - 0.15))[0]
+                gola.normalize()
+                # normale verso l'interno della bocca: verso il punto a meta' tra le due arcate
+                n = lato.cross(gola).normalized()
+                meta_bocca = (_punto_gola(verts_aperti, pesi, k, d)[0] + _punto_gola(verts_aperti, pesi, k, 2 * J - d)[0]) / 2
+                if n.dot(meta_bocca - p) < 0:
+                    n = -n
+                lung *= rng.uniform(0.88, 1.12)
+                # come le file davanti: in piedi verso l'altra arcata (tra la normale della carne e la verticale),
+                # poi coricati verso la gola
+                su = (n + Vector((0, 0, -1 if meta == 'tetto' else 1))).normalized()
+                asse = (su + gola * coricato * rng.uniform(0.85, 1.15)
+                        + lato.normalized() * rng.uniform(-0.12, 0.12)).normalized()
+                # spazio libero davanti al dente (fino alla carne di fronte): al massimo il 60%
+                hit = bvh.ray_cast(p + asse * 0.001, asse, 0.2)
+                libero = (hit[3] + 0.001) if hit[0] is not None else 0.2
+                lung = min(lung, 0.6 * libero)
+                larg = min(larg, lung * 0.75)
+                if lung > 0.0018:
+                    base = p - asse * 0.12 * lung              # radice appena dentro la carne
+                    v, f = dente(base, asse, larg, lung, lato, gola, rng)
+                    out.append((v, f, w, p))
+            x += max(larg, 0.004) * PASSO_INTERNE
+    return out
 
 
 def strappo_bordi(corpo, sopra, sotto):
