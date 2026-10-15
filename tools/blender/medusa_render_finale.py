@@ -52,7 +52,8 @@ def M(x, y=None, z=None):
 
 def prepara():
     global K, DZ
-    apri(os.path.join(BUILD, 'medusa_finale_prima.blend' if PRIMA else 'medusa_finale.blend'))
+    apri(os.path.join(BUILD, 'medusa_finale_prima.blend') if PRIMA else
+         os.environ.get('MEDUSA_FINALE', os.path.join(BUILD, 'medusa_finale.blend')))
     for o in list(bpy.data.objects):
         if o.type in ('CAMERA', 'LIGHT'):
             bpy.data.objects.remove(o)
