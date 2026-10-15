@@ -99,6 +99,89 @@ def porta_hq(vecchia, file, cerniera, w, h, rot_z, lato):
     return HQ.metti(nome, file, cerniera, (w, None, h), rot_z=rot_z, perno=(lato * w / 2, 0, 0))
 
 
+def soffitto_nave(nome, x0, x1, y0, y1, h, M, lungo='x', passo=1.25, mancanti=(), pende=None, travi=True, seme=0):
+    """Soffitto da nave: pannelli di lamiera smussati tra le ordinate, con i giunti aperti di 1 cm.
+    lungo = asse lungo cui si susseguono i pannelli. mancanti = indici dei pannelli tolti (si vede il buio
+    sopra); pende = indice del pannello staccato da un lato. travi = ordinate tra i pannelli."""
+    parti = []
+    a0, a1 = (x0, x1) if lungo == 'x' else (y0, y1)
+    b0, b1 = (y0, y1) if lungo == 'x' else (x0, x1)
+    n = max(1, round((a1 - a0) / passo)); pa = (a1 - a0) / n
+    rnd = random.Random(seme)
+    for i in range(n):
+        u0, u1 = a0 + i * pa + 0.006, a0 + (i + 1) * pa - 0.006
+        z0 = h - 0.07 + rnd.uniform(-0.004, 0.004)
+        lo, hi = ((u0, b0 + 0.01, z0), (u1, b1 - 0.01, z0 + 0.02)) if lungo == 'x' else ((b0 + 0.01, u0, z0), (b1 - 0.01, u1, z0 + 0.02))
+        if i in mancanti:
+            continue
+        p = L.scatola(f'{nome}_pannello', lo, hi, M['soffitto_lamiera'], smussa=0.008)
+        if pende is not None and i == pende:
+            # staccato dal lato u0: ruota attorno al bordo opposto
+            perno = Vector((u1, (b0 + b1) / 2, z0 + 0.01)) if lungo == 'x' else Vector(((b0 + b1) / 2, u1, z0 + 0.01))
+            asse = 'Y' if lungo == 'x' else 'X'
+            ang = math.radians(-24 if lungo == 'x' else 24)
+            p.data.transform(Matrix.Translation(perno) @ Matrix.Rotation(ang, 4, asse) @ Matrix.Translation(-perno))
+            L.uv_scatola(p)
+        parti.append(p)
+        if travi and i > 0:
+            c = a0 + i * pa
+            lo, hi = ((c - 0.05, b0, h - 0.16), (c + 0.05, b1, h)) if lungo == 'x' else ((b0, c - 0.05, h - 0.16), (b1, c + 0.05, h))
+            parti.append(L.scatola(f'{nome}_trave', lo, hi, M['soffitto_lamiera'], smussa=0.015))
+    return L.unisci(nome, parti)
+
+
+def condotto_aria(nome, p0, p1, w, hh, M, passo=1.5):
+    """Condotto rettangolare smussato lungo x (da p0 a p1, centro della sezione) con flange e bocchette."""
+    x0, y, z = p0; x1 = p1[0]
+    parti = [L.scatola(nome, (x0, y - w / 2, z - hh / 2), (x1, y + w / 2, z + hh / 2), M['metallo_grezzo'], smussa=0.02)]
+    x = x0 + passo
+    k = 0
+    while x < x1 - 0.2:
+        parti.append(L.scatola(nome + '_flangia', (x - 0.025, y - w / 2 - 0.015, z - hh / 2 - 0.015), (x + 0.025, y + w / 2 + 0.015, z + hh / 2 + 0.015), M['metallo_grezzo'], smussa=0.008))
+        if k % 2 == 0:
+            for j in range(5):
+                xx = x + 0.25 + j * 0.06
+                parti.append(L.scatola(nome + '_bocchetta', (xx, y - w / 2 + 0.05, z - hh / 2 - 0.004), (xx + 0.03, y + w / 2 - 0.05, z - hh / 2 + 0.002), M['nero'], uv=False))
+        x += passo; k += 1
+    return L.unisci(nome, parti)
+
+
+def canalina_cavi(nome, x0, x1, y, z, M):
+    parti = [L.scatola(nome, (x0, y - 0.11, z - 0.01), (x1, y + 0.11, z), M['lamiera_grata'], smussa=0.004),
+             L.scatola(nome, (x0, y - 0.115, z - 0.01), (x1, y - 0.105, z + 0.05), M['metallo_grezzo']),
+             L.scatola(nome, (x0, y + 0.105, z - 0.01), (x1, y + 0.115, z + 0.05), M['metallo_grezzo'])]
+    rnd = random.Random(int(x0 * 10 + y * 100))
+    for k, (dy, r, mat) in enumerate([(-0.06, 0.016, 'gomma'), (-0.02, 0.012, 'gomma'), (0.02, 0.018, 'gomma'), (0.065, 0.01, 'vernice_rossa')]):
+        pts = [(x0, y + dy, z + r)]
+        x = x0
+        while x < x1:
+            x = min(x1, x + rnd.uniform(1.5, 3.0))
+            pts.append((x, y + dy + rnd.uniform(-0.01, 0.01), z + r + rnd.uniform(0, 0.01)))
+        parti.append(L.tubo_percorso(nome + '_cavo', pts, r, M[mat], flange=False))
+    # un cavo che pende fuori dalla canalina
+    xm = (x0 + x1) / 2 + rnd.uniform(-2, 2)
+    parti.append(L.tubo_percorso(nome + '_cavo_pende', [(xm - 0.6, y + 0.1, z + 0.02), (xm - 0.2, y + 0.18, z - 0.35), (xm + 0.3, y + 0.15, z - 0.42), (xm + 0.7, y + 0.1, z + 0.02)], 0.011, M['gomma'], flange=False))
+    return L.unisci(nome, parti)
+
+
+def sprinkler(nome, x, y, z_tubo, z_testa, M):
+    """Stacco verticale dal tubo antincendio e testina Meshy (o una testina semplice)."""
+    parti = [L.cilindro(nome + '_stacco', (x, y, z_tubo), (x, y, z_testa + 0.04), 0.012, M['vernice_rossa'], seg=16)]
+    if HQ.disponibile('sprinkler'):
+        HQ.metti(nome, 'sprinkler', (x, y, z_testa - 0.06), (None, None, 0.1))
+    else:
+        parti.append(L.cilindro(nome, (x, y, z_testa + 0.04), (x, y, z_testa), 0.015, M['cromo'], seg=16))
+    return L.unisci(nome + '_stacco', parti)
+
+
+def pannello_ammaccato(nome, lo, hi, M, seme):
+    """Lamiera ammaccata riportata sulla parete (sporge 1 cm)."""
+    p = L.scatola(nome, lo, hi, M['lamiera_crema'], smussa=0.006)
+    L.ammacca(p, 0.02, 2.2, seme, 10)
+    L.uv_scatola(p)
+    return p
+
+
 def costole(nome, x0, x1, y0, y1, h, passo, M, salta_s=(), salta_n=()):
     """Costole della nave (rinforzi verticali sulle pareti lunghe e travi sul soffitto).
     salta_s / salta_n: intervalli di x liberi (porte, cartelloni) sulla parete sud / nord."""
@@ -278,6 +361,16 @@ def corridoio(M):
     L.vuoto('marker_risveglio', (20.4, 1.25, 0.0), (0, 0, R(90)), 'ARROWS', 0.5)    # sdraiato, guarda verso ovest (-X)
     L.vuoto('marker_polaroid_P1', (20.9, 0.55, 0.005), (0, 0, R(20)), 'CUBE', 0.05)
     L.vuoto('marker_porta_tagliafuoco_cardine', (21.965, 0.72, 0), dim=0.3)
+    # soffitto da nave: pannelli tra le ordinate (uno manca, uno pende), condotto dell'aria,
+    # canalina con i cavi, sprinkler sul tubo rosso
+    statico.append(soffitto_nave('soffitto_pannelli', X0, X1, Y0, Y1, H, M, 'x', 1.25, mancanti=(5, 13), pende=10, travi=False, seme=3))
+    statico.append(condotto_aria('condotto_aria', (0.0, 0.62, 2.5), (X1, 0.62, 2.5), 0.38, 0.2, M))
+    statico.append(canalina_cavi('canalina_soffitto', 0.0, X1, 1.86, 2.56, M))
+    for k, x in enumerate([1.8, 5.2, 8.6, 12.1, 15.6, 19.0]):
+        statico.append(sprinkler(f'sprinkler_corridoio_{k + 1}', x, 2.12, 2.43, 2.3, M))
+    # due lamiere ammaccate (lontano dal cartellone, che sta tra x 13,85 e 15,35 sul lato sud)
+    statico.append(pannello_ammaccato('lamiera_ammaccata_1', (3.3, 2.58, 0.25), (4.4, 2.6, 1.05), M, 21.0))
+    statico.append(pannello_ammaccato('lamiera_ammaccata_2', (9.6, 0.0, 0.3), (10.6, 0.02, 1.0), M, 33.0))
     L.unisci('corridoio_statico', statico)
     L.crea_collisione('corridoio', 'corridoio')
 
@@ -627,6 +720,11 @@ def spogliatoi(M):
     pz = [pozza('pozza_spogliatoi_1', (6.8, 9.2, 0), 1.2, 0.8, M, 11), pozza('pozza_spogliatoi_2', (5.5, 13.0, 0), 1.8, 1.0, M, 12),
           pozza('pozza_spogliatoi_3', (7.4, 5.4, 0), 0.6, 0.4, M, 13), pozza('pozza_spogliatoi_4', (9.7, 15.8, 0), 0.8, 0.6, M, 14)]
     L.unisci('acqua_pozze_spogliatoi', pz)
+    # soffitti da nave nel corridoio lava-piedi e nel gabbiotto
+    statico.append(soffitto_nave('soffitto_lavapiedi', CX0, CX1, CY0, CY1, CH, M, 'y', 1.3, mancanti=(4,), pende=None, travi=True, seme=7))
+    statico.append(soffitto_nave('soffitto_gabbiotto', 11.0, 13.2, 14.6, 17.4, CH, M, 'y', 0.95, mancanti=(), pende=None, travi=True, seme=9))
+    for k, y in enumerate((12.0, 16.8, 19.0)):
+        statico.append(sprinkler(f'sprinkler_lavapiedi_{k + 1}', 10.4, y, CH, CH - 0.2, M))
     L.unisci('spogliatoi_statico', statico)
     L.crea_collisione('spogliatoi', 'spogliatoi')
 
@@ -717,6 +815,11 @@ def stanzino(M):
     L.lampada_emergenza('luce_emergenza_stanzino_02', (15.18, 7.6, 2.3), (-1, 0, 0), M, watt=22)
     L.neon_soffitto('neon_stanzino', (13.2, 8.4, 0), 1.2, M, H, 'sfarfalla', watt=60, rot_z=R(90))
     pozza('acqua_pozza_stanzino', (12.0, 8.6, 0), 0.6, 0.45, M, 21)
+    # soffitto da nave: un pannello manca, uno pende vicino alla rastrelliera
+    statico.append(soffitto_nave('soffitto_stanzino', X0, X1, Y0, Y1, H, M, 'x', 1.0, mancanti=(1,), pende=3, travi=True, seme=11))
+    for k, x in enumerate((11.9, 14.4)):
+        statico.append(sprinkler(f'sprinkler_stanzino_{k + 1}', x, 6.45, 2.4, 2.25, M))
+    statico.append(canalina_cavi('canalina_stanzino', X0, X1, 9.9, 2.46, M))
     L.unisci('stanzino_statico', statico)
     L.crea_collisione('stanzino', 'stanzino')
 
