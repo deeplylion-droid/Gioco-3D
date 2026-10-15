@@ -16,7 +16,7 @@ CONTENUTO = {
     'sala_vasca_centrale': '**vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell\'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d\'ottone HQ; lampione HQ; 2 fari sulla ringhiera della galleria; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella)',
     'sala_cupola': 'cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro)',
     'sala_piscina': 'piscina a onde vuota: fondo con pendenza e conca dello scarico, buco del pozzo sotto il portello (bordo smussato, collare piastrellato), linea dell\'ultimo livello dell\'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette',
-    'sala_area_bimbi': 'struttura di gioco (pali tondi, bordi smussati), **secchio gigante** HQ e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi',
+    'sala_area_bimbi': 'struttura di gioco (pali tondi, bordi smussati), **secchio gigante** HQ e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi, **fossa della VascaBimbi1** (tappa 8) con il coperchio di collisione `coperchio_fossa_col`',
     'sala_torre_scivoli': 'torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d\'arrivo',
     'sala_oggetti': 'oggetti di scena Meshy HQ (istanze condivise): giocattoli e gonfiabili, lettini, sedia del bagnino, funghi-fontana, cannoncini, panche, cestini, cartelli. Uguale con la vasca e con il monumento: le offerte dei bambini stanno nel GLB del centro',
     'sala_interattivi': 'elementi degli enigmi come nodi separati con il perno giusto (vedi sotto)',
@@ -99,6 +99,20 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 
 ## Novità (15 ottobre)
 
+- **Fossa della VascaBimbi1** (tappa 8, "lei sbuca dal bordo"): sul lato sud della prima vasca a scacchi c'è
+  lo scarico di compensazione rotto, cioè la parte profonda della vasca. Pianta Godot x da -14,8 a -12,3 e
+  z da -8,0 a -6,0, con l'angolo sud-ovest tagliato a 45 gradi. Fondo a y -3,0 (3 m sotto il fondo della
+  vasca); piastrelle fino a y -0,6, poi cemento grezzo. In fondo, nella parete est, c'è il condotto
+  (Ø 1,2 m, centro y -2,3) che va verso est fino a x -8,8; la griglia divelta pende dal lato nord.
+  - Il bordo a scacchi (alto 0,45, largo 0,3) gira intorno alla fossa. L'angolo tagliato regge la
+    medusa affacciata, rivolta a sud-ovest verso chi arriva lungo il muro ovest.
+  - Collisioni: pareti, fondo, bordo e un **coperchio** invisibile `coperchio_fossa_col` (nodo a parte in
+    `sala_area_bimbi.glb`) a filo del fondo della vasca, da accendere o spegnere nel gioco. Il condotto è
+    chiuso dalla collisione della parete est.
+  - Marker in `sala_dati.json` → `fossa_bimbi`: `medusa_sbuca` (origine della posa 'affacciata': coping
+    1,0 m sopra, spigolo esterno 2,1 m davanti), `medusa_fuga` (in fondo al condotto) e
+    `livello_acqua_pieno` (y 0,42, 3 cm sotto il bordo). Il segnaposto dell'acqua è
+    `sala_fossa_bimbi_acqua`; la sua quota e il fondo sono nella lista `acqua`.
 - **Buco del pozzo sotto il portello** (tappa 5): nel fondo della piscina a onde c'è il buco verso il pozzo
   della camera delle onde, **x da -0,64 a 0,64 e z da 1,36 a 2,64** (Godot), aperto sia nella mesh sia nella
   collisione. Il bordo è smussato (3 cm a 45 gradi) e il collare è piastrellato come il fondo, fino a

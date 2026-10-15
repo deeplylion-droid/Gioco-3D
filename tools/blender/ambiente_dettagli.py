@@ -312,6 +312,10 @@ def posti_pozzanghere(n=48, seme=8):
         if any(math.hypot(x - a, y - b) < (r0 + rb) * 0.8 for a, b, rb in fatti):
             continue
         fatti.append((x, y, r0))
+    # niente pozzanghere sulla fossa della vasca bimbi (tolte dopo, così le altre restano dov'erano)
+    F = S.FOSSA_BIMBI
+    fatti = [(x, y, r0) for (x, y, r0) in fatti
+             if not (F['x0'] - 0.3 - r0 < x < F['x1'] + 0.3 + r0 and F['y0'] - 0.3 - r0 < y < F['y1'] + r0)]
     return fatti, rnd
 
 
