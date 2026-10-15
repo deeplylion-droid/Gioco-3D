@@ -17,16 +17,16 @@ const SCENA_OPZIONI := "res://addons/grafica/menu_opzioni.tscn"
 ## Secondi della salita dal piedistallo al viso; poi la camera resta sul viso e respira appena.
 @export var durata_salita := 40.0
 ## Distanza orizzontale dalla statua: all'inizio e alla fine.
-@export var raggio := Vector2(7.2, 5.8)
+@export var raggio := Vector2(7.2, 5.2)
 ## Angolo intorno alla statua (radianti, 0 = proprio davanti): all'inizio e alla fine.
-@export var angolo := Vector2(-0.34, 0.06)
+@export var angolo := Vector2(-0.34, 0.04)
 ## Altezza della camera: all'inizio e alla fine.
-@export var altezza := Vector2(0.6, 3.25)
+@export var altezza := Vector2(0.6, 2.3)
 ## Altezza del punto guardato: all'inizio (piedistallo e tentacoli) e alla fine (viso).
-@export var altezza_sguardo := Vector2(1.75, 4.75)
+@export var altezza_sguardo := Vector2(1.75, 4.3)
 ## Spostamento laterale del punto guardato (m, negativo = a sinistra): la statua resta a
 ## destra dell'inquadratura e il menu a sinistra.
-@export var spostamento := -1.45
+@export var spostamento := -1.3
 
 var _t := 0.0
 var _lampo_finale := false
@@ -196,10 +196,10 @@ func _costruisci_interfaccia() -> void:
 	testata.position = Vector2(84, 74)
 	testata.add_theme_constant_override("separation", 2)
 	fondo.add_child(testata)
-	_titolo = StileMenu.etichetta("SPLASH LAGOON", StileMenu.oswald(700, 9), 84, Color(0.9, 0.96, 0.98))
+	_titolo = StileMenu.etichetta("SPLASH LAGOON", StileMenu.oswald(700, 8), 72, Color(0.9, 0.96, 0.98))
 	_titolo.name = "Titolo"
-	_titolo.add_theme_color_override("font_shadow_color", Color(StileMenu.CIANO, 0.2))
-	_titolo.add_theme_constant_override("shadow_outline_size", 18)
+	_titolo.add_theme_color_override("font_shadow_color", Color(StileMenu.CIANO, 0.18))
+	_titolo.add_theme_constant_override("shadow_outline_size", 14)
 	_titolo.add_theme_constant_override("shadow_offset_x", 0)
 	_titolo.add_theme_constant_override("shadow_offset_y", 0)
 	testata.add_child(_titolo)

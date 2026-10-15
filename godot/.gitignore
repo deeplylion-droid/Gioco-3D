@@ -13,6 +13,7 @@
 /assets/models/bambini/*.png.import
 /assets/models/medusa/medusa_*.jpg
 /assets/models/medusa/medusa_*.jpg.import
+# Texture estratte dal piedistallo della schermata del titolo (assets_src/menu/estrai_piedistallo.py)
 /assets/menu/*.jpg
 /assets/menu/*.jpg.import
 /assets/menu/*.png

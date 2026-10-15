@@ -93,7 +93,7 @@ energia_lampo = 6.0
 
 [node name="Camera" type="Camera3D" parent="."]
 physics_interpolation_mode = 2
-transform = Transform3D(0.990038, -0.0217809, -0.139105, 0, 0.987962, -0.154694, 0.1408, 0.153153, 0.97812, -2.40111, 0.6, 6.78783)
+transform = Transform3D(0.987008, -0.0249479, -0.158721, -0, 0.987871, -0.155274, 0.16067, 0.153257, 0.975037, -2.40111, 0.6, 6.78783)
 current = true
 fov = 42.0
 near = 0.1

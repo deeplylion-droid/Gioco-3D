@@ -4,6 +4,9 @@ extends CanvasLayer
 ## sta sotto la radice. Si scurisce prima di cambiare scena e si schiarisce quando la scena
 ## nuova è pronta, poi si toglie da solo. Ce n'è uno solo: Dissolvenza.di(get_tree()).
 
+## Fine di una scurita (anche se interrotta da un'altra richiesta: chi aspetta non resta appeso).
+signal scurito
+
 const NOME := &"Dissolvenza"
 
 var _nero: ColorRect
@@ -74,7 +77,8 @@ func scurisci(durata := 0.8, testo := "") -> void:
 	_tween.tween_property(_nero, ^"modulate:a", 1.0, durata * (1.0 - _nero.modulate.a))
 	if testo != "":
 		_tween.parallel().tween_property(_scritta, ^"modulate:a", 1.0, durata * 0.5).set_delay(durata * 0.5)
-	await _tween.finished
+	_tween.finished.connect(scurito.emit)
+	await scurito
 
 
 ## Dal nero al trasparente, dopo [param attesa_frame] frame disegnati (per lasciare alla scena
@@ -90,8 +94,7 @@ func schiarisci(durata := 1.2, attesa_frame := 0) -> void:
 	_tween = _nuovo_tween()
 	_tween.tween_property(_scritta, ^"modulate:a", 0.0, minf(0.3, durata))
 	_tween.parallel().tween_property(_nero, ^"modulate:a", 0.0, durata).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await _tween.finished
-	queue_free()
+	_tween.finished.connect(queue_free)
 
 
 func _nuovo_tween() -> Tween:
@@ -104,4 +107,5 @@ func _ferma() -> void:
 	_giro += 1
 	if _tween and _tween.is_valid():
 		_tween.kill()
+		scurito.emit()
 	_tween = null

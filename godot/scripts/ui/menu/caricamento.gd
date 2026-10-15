@@ -47,6 +47,8 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_pausa_fuoco = Game.pause_on_focus_loss
 	Game.pause_on_focus_loss = false
+	# Schermata 2D: senza grana e aberrazione il testo si legge meglio.
+	Grafica.post_processing_visibile(false)
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	_costruisci()
@@ -59,6 +61,7 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	Game.pause_on_focus_loss = _pausa_fuoco
+	Grafica.post_processing_visibile(true)
 
 
 func _unhandled_input(event: InputEvent) -> void:
