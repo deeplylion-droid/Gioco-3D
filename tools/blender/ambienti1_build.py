@@ -536,7 +536,8 @@ def spogliatoi(M):
                         {'W': [(GY0 - 0.2, GY1 + 0.2, 0, CH)]})
     WY0, WY1, WZ0, WZ1 = FINESTRA
     dfin = HQ.dimensioni('finestra_gabbiotto'); kf = 1.62 / dfin.z
-    HQ.metti('finestra_gabbiotto', 'finestra_gabbiotto', (10.9 - dfin.y * kf / 2 + 0.06, (WY0 + WY1) / 2, WZ0 - 0.1), (1.32, None, 1.62), rot_z=R(-90))
+    # il modello è profondo (davanzale): lo schiacciamo a 28 cm e lo appoggiamo al muro (faccia a x = 10,8)
+    HQ.metti('finestra_gabbiotto', 'finestra_gabbiotto', (10.8 - 0.14 + 0.08, (WY0 + WY1) / 2, WZ0 - 0.1), (1.32, 0.28, 1.62), rot_z=R(-90))
     # vetro con un buco frastagliato al centro (anello tra il telaio e il bordo del buco); il getto passa
     import bmesh
     bm = bmesh.new(); xg = 10.9
