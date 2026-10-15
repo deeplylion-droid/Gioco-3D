@@ -24,10 +24,14 @@ class RaccoltaErrori extends Logger:
 	var _mutex := Mutex.new()
 
 	func _log_error(function: String, file: String, line: int, code: String, rationale: String,
-			_editor_notify: bool, error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
+			_editor_notify: bool, error_type: int, script_backtraces: Array[ScriptBacktrace]) -> void:
+		var pila := ""
+		for bt in script_backtraces:
+			if bt:
+				pila += bt.format()
 		_mutex.lock()
 		errori.append({"tipo": error_type, "file": file, "riga": line, "codice": code, "motivo": rationale,
-			"funzione": function})
+			"funzione": function, "pila": pila})
 		_mutex.unlock()
 
 	func _log_message(_message: String, _error: bool) -> void:
@@ -246,7 +250,8 @@ func _run() -> void:
 	var errori_audio := 0
 	var altri := 0
 	for e in _logger.copia():
-		var testo: String = "%s %s %s" % [e["file"], e["codice"], e["motivo"]]
+		# dell'audio: nei suoi file, nei server audio o con addons/audio nella pila GDScript
+		var testo: String = "%s %s %s %s" % [e["file"], e["codice"], e["motivo"], e["pila"]]
 		var nostro: bool = testo.contains("addons/audio") or testo.contains("audio_stream") or \
 			testo.contains("audio_server") or e["tipo"] == Logger.ERROR_TYPE_SCRIPT
 		if nostro:

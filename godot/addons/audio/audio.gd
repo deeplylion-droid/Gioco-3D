@@ -158,6 +158,7 @@ var _ui_cursore_t := 0.0
 var _neon_vicini: SorgentiVicine
 var _emergenza_vicine: SorgentiVicine
 var _loop: Array[AudioLoop] = []     # tutti i loop creati (per ferma_tutto)
+var _ultimo_ascoltatore := Vector3.ZERO
 
 
 func _ready() -> void:
@@ -470,9 +471,11 @@ func _tieni(l: AudioLoop) -> void:
 
 func ascoltatore() -> Vector3:
 	var cam := get_viewport().get_camera_3d()
-	if cam:
-		return cam.global_position
-	return _giocatore.global_position if is_instance_valid(_giocatore) else Vector3.ZERO
+	if cam and cam.is_inside_tree():
+		_ultimo_ascoltatore = cam.global_position
+	elif is_instance_valid(_giocatore) and _giocatore.is_inside_tree():
+		_ultimo_ascoltatore = _giocatore.global_position
+	return _ultimo_ascoltatore
 
 
 func registra(tipo: String) -> void:
@@ -1112,7 +1115,7 @@ class Segui:
 	func aggiorna(_a, _d: float) -> bool:
 		if float(p.get_meta(&"partito", -1.0)) != gettone:
 			return false          # il player è stato riusato per un altro suono
-		if not is_instance_valid(n) or not p.playing:
+		if not is_instance_valid(n) or not n.is_inside_tree() or not p.playing:
 			p.remove_meta(&"segue")
 			return false
 		p.global_position = n.global_position
@@ -1174,7 +1177,7 @@ class SorgentiVicine:
 		var centro: Vector3 = a.ascoltatore()
 		if t <= 0.0:
 			t = 0.3
-			var ordinate := sorgenti.duplicate()
+			var ordinate := sorgenti.filter(func(x: Node3D): return x.is_inside_tree())
 			ordinate.sort_custom(func(x: Node3D, y: Node3D):
 				return x.global_position.distance_squared_to(centro) < y.global_position.distance_squared_to(centro))
 			for k in loop.size():
@@ -1182,7 +1185,7 @@ class SorgentiVicine:
 				if s != assegnate[k]:
 					assegnate[k] = s
 					loop[k].salta(0.0)
-					if s:
+					if s and loop[k].is_inside_tree():
 						loop[k].global_position = s.global_position
 		for k in loop.size():
 			var s = assegnate[k]
@@ -1262,6 +1265,8 @@ class Zaino:
 	func aggiorna(_a, delta: float) -> bool:
 		if not is_instance_valid(pack):
 			return false
+		if not pack.is_inside_tree():
+			return true
 		var spruzza := bool(pack.get(&"is_spraying"))
 		var flusso := float(pack.get(&"flow"))
 		var aspirando := bool(pack.get(&"is_sucking"))
@@ -1309,6 +1314,8 @@ class Turbina:
 	func aggiorna(_a, _d: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		var e := clampf(float(n.get(&"energy")), 0.0, 1.0)
 		if l:
 			l.volume = smoothstep(0.0, 0.25, e) * (0.5 + 0.5 * e)
@@ -1340,6 +1347,8 @@ class Porta:
 	func aggiorna(_a, _d: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		var ora := float(n.get(&"open_amount"))
 		var muove := prima >= 0.0 and absf(ora - prima) > 0.00001
 		prima = ora
@@ -1387,6 +1396,8 @@ class Ruota:
 	func aggiorna(_a, _d: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		var v := float(n.get(&"angular_speed"))
 		var vmax := maxf(float(n.get(&"max_angular_speed")), 0.001)
 		var k := clampf(v / vmax, 0.0, 1.0)
@@ -1432,6 +1443,8 @@ class Vasca:
 	func aggiorna(_a, delta: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		if not cercato:
 			_prepara()
 		var fill := float(n.get(&"fill"))
@@ -1467,6 +1480,8 @@ class Lampada:
 	func aggiorna(a, _d: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		var luce = n.get(&"light")
 		if not (luce is Light3D) or not is_instance_valid(luce):
 			return true
@@ -1503,6 +1518,8 @@ class Statua:
 	func aggiorna(a, delta: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		if not sveglia:
 			if not is_instance_valid(ap):
 				cerca_t -= delta
@@ -1533,6 +1550,8 @@ class Gocciolatoio:
 	func aggiorna(a, _d: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		for c in n.get_children():
 			if c is MeshInstance3D:
 				var id: int = c.get_instance_id()
@@ -1556,6 +1575,8 @@ class Bocchetta:
 	func aggiorna(_a, _d: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		var versa := false
 		for c in n.get_children():
 			if c is GPUParticles3D:
@@ -1585,6 +1606,8 @@ class Scivolo:
 	func aggiorna(a, delta: float) -> bool:
 		if not is_instance_valid(n):
 			return false
+		if not n.is_inside_tree():
+			return true
 		t -= delta
 		if t > 0.0 or l == null:
 			return true
