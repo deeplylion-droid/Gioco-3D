@@ -744,7 +744,7 @@ const SCIA := [Vector3(-3.5, 0.0, 9.6), Vector3(-5.5, 0.0, 9.1), Vector3(-7.3, 0
 	Vector3(-10.3, 0.0, 8.3), Vector3(-11.9, 0.0, 8.3), Vector3(-13.7, 0.0, 8.3), Vector3(-15.3, 0.0, 8.3),
 	Vector3(-16.7, 0.0, 7.5), Vector3(-16.9, 0.0, 5.9), Vector3(-17.5, 0.0, 4.3), Vector3(-18.3, 0.0, 2.9),
 	Vector3(-18.3, 0.0, 1.3), Vector3(-18.3, 0.0, -0.5), Vector3(-18.3, 0.0, -2.3), Vector3(-18.3, 0.0, -4.1),
-	Vector3(-18.3, 0.0, -5.7), Vector3(-17.1, 0.0, -7.1), Vector3(-16.3, 0.0, -7.7)]
+	Vector3(-17.3, 0.0, -4.9), Vector3(-16.3, 0.0, -5.5), Vector3(-15.3, 0.0, -5.95), Vector3(-14.7, 0.0, -6.1)]
 
 
 func _tappa7(has_interiors: bool) -> void:
@@ -799,15 +799,9 @@ func _tappa7(has_interiors: bool) -> void:
 	level.set(&"fine_demo_trigger", fine)
 
 
-## La trasformazione di [param n] nelle coordinate del livello (il costruttore non è nell'albero).
-func _nel_livello(n: Node3D) -> Transform3D:
-	var xf := Transform3D.IDENTITY
-	var x: Node = n
-	while x and x != level:
-		if x is Node3D:
-			xf = (x as Node3D).transform * xf
-		x = x.get_parent()
-	return xf
+## Un vettore da una lista [x, y, z] di sala_dati.json.
+static func _v3(a: Array) -> Vector3:
+	return Vector3(float(a[0]), float(a[1]), float(a[2]))
 
 
 ## La medusa vera nella posa "affacciata" (in ciclo), con l'aspetto bagnato e le gocce che cadono
@@ -852,41 +846,44 @@ func _tappa8() -> void:
 	lei.name = "LeiSbuca"
 	own(lei, gp)
 	level.set(&"lei_sbuca", lei)
-	# I marker della fossa (ambiente): se non ci sono ancora la scena resta spenta, con una fossa
-	# provvisoria per i test.
-	var sbuca := sala.find_child("medusa_sbuca", true, false) as Node3D
-	var fuga := sala.find_child("medusa_fuga", true, false) as Node3D
-	var pieno := sala.find_child("livello_acqua_pieno", true, false) as Node3D
-	var coperchio: CollisionObject3D = null
-	for c in sala.find_children("*coperchio*", "CollisionObject3D", true, false):
-		coperchio = c
-		break
-	var pronta := sbuca != null and fuga != null
+	# La fossa dell'ambiente (sala_dati.json, "fossa_bimbi": marker medusa_sbuca, medusa_fuga e
+	# livello_acqua_pieno). Se non c'è ancora la scena resta spenta, su una fossa provvisoria
+	# (per i test).
+	var dati = JSON.parse_string(FileAccess.get_file_as_string(SALA + "sala_dati.json"))
+	var fossa: Dictionary = dati.get("fossa_bimbi", {}) if dati is Dictionary else {}
+	var pronta := fossa.has("medusa_sbuca") and fossa.has("medusa_fuga")
 	lei.set(&"abilitata", pronta)
-	if not pronta:
-		var m := Marker3D.new()
-		m.name = "SbucaProvvisorio"
-		m.transform = Transform3D(Basis.looking_at(-FOSSA_SGUARDO, Vector3.UP), FOSSA_PROVVISORIA)
-		own(m, lei)
-		sbuca = m
-		var f := Marker3D.new()
-		f.name = "FugaProvvisoria"
-		f.position = FOSSA_FUGA_PROVVISORIA
-		own(f, lei)
-		fuga = f
+	var sbuca := Marker3D.new()
+	var fuga := Marker3D.new()
+	if pronta:
+		sbuca.name = "MedusaSbuca"
+		var ms: Dictionary = fossa["medusa_sbuca"]
+		sbuca.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(float(ms["rotazione_gradi_godot"][1]))), _v3(ms["posizione_godot"]))
+		fuga.name = "MedusaFuga"
+		fuga.position = _v3(fossa["medusa_fuga"]["posizione_godot"])
+		lei.set(&"livello_pieno", float(fossa.get("livello_acqua_pieno", {}).get("y", 0.42)))
+	else:
+		sbuca.name = "SbucaProvvisorio"
+		sbuca.transform = Transform3D(Basis.looking_at(-FOSSA_SGUARDO, Vector3.UP), FOSSA_PROVVISORIA)
+		fuga.name = "FugaProvvisoria"
+		fuga.position = FOSSA_FUGA_PROVVISORIA
+	own(sbuca, lei)
+	own(fuga, lei)
 	lei.set(&"punto_sbuca", sbuca)
 	lei.set(&"punto_fuga", fuga)
-	if pieno:
-		lei.set(&"livello_pieno", _nel_livello(pieno).origin.y)
-	if coperchio:
-		lei.set(&"coperchio", coperchio)
+	# Il coperchio di collisione della fossa (sala_area_bimbi.glb): acceso, non ci si cade dentro.
+	for c in sala.find_children("coperchio_fossa*", "CollisionObject3D", true, false):
+		lei.set(&"coperchio", c)
+		break
 	var medusa := _medusa_bagnata("MedusaFossa")
-	medusa.transform = _nel_livello(sbuca)
+	medusa.transform = sbuca.transform
 	medusa.visible = false
 	own(medusa, lei)
 	lei.set(&"medusa", medusa)
 	var vasche: Array[Node3D] = []
 	var acque: Array[Node3D] = []
+	if pronta:
+		lei.set(&"superficie_fossa", _superficie_fossa())
 	for n in ["VascaBimbi1", "VascaBimbi2"]:
 		vasche.append(level.get_node("Vasche/" + n) as Node3D)
 		acque.append(level.get_node("Vasche/Acqua" + n) as Node3D)
@@ -903,6 +900,26 @@ func _tappa8() -> void:
 		var fine := level.get(&"fine_demo_trigger") as Node3D
 		fine.position = PIEDE_TORRE + Vector3(0.4, 1.5, 0.0)
 		level.set(&"fine_demo_testo", "La torre degli scivoli ti aspetta.\nGrazie per aver giocato!")
+
+
+## L'acqua della fossa (la parte profonda della VascaBimbi1, sala_dati.json "fossa_bimbi"): è la
+## stessa acqua della vasca, ma la pianta ha l'angolo sud-ovest tagliato e l'acqua dell'addon è
+## rettangolare (e al massimo 8 masse d'acqua nel livello). Così la superficie è il segnaposto
+## dell'ambiente (sala_acqua.glb, il poligono giusto) col materiale dell'acqua della VascaBimbi1:
+## LeiSbuca la tiene alla quota della vasca.
+func _superficie_fossa() -> MeshInstance3D:
+	var glb := (load(SALA + "sala_acqua.glb") as PackedScene).instantiate()
+	var segnaposto := glb.find_child("sala_fossa_bimbi_acqua", true, false) as MeshInstance3D
+	var mi: MeshInstance3D = null
+	if segnaposto:
+		mi = MeshInstance3D.new()
+		mi.name = "AcquaFossaBimbi"
+		mi.mesh = segnaposto.mesh
+		mi.transform = segnaposto.transform
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		own(mi, level.get_node("Vasche"))
+	glb.free()
+	return mi
 
 
 # --- B5: i bambini sulla balconata, visti in un lampo mentre sali sulla torre -------------------

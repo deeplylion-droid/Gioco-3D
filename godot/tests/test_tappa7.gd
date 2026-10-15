@@ -6,7 +6,8 @@ extends Node
 ## cima del raccordo su per la scala, la porta col maniglione, il corridoio, le docce che scorrono
 ## nel vapore, la saracinesca e la sala dalla stessa porta. Nella sala: vasca vuota (la medusa non
 ## c'è più), l'acqua che si muove, le gocce dal bordo e la scia verso l'area bimbi, la sigla muta,
-## il lampione spento; i checkpoint lungo la strada e la fine della demo in fondo alla scia.
+## il lampione spento; i checkpoint lungo la strada fino all'area bimbi, dove comincia la tappa 8
+## (test_tappa8.gd).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa7.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -110,11 +111,15 @@ func _run() -> void:
 	for punto in [Vector3(-2.7, 0, 17.1), Vector3(-3.9, 0, 15.9), Vector3(-4.5, 0, 14.3), Vector3(-5.7, 0, 13.1),
 			Vector3(-6.9, 0, 11.9), Vector3(-7.7, 0, 10.5), Vector3(-7.9, 0, 8.9)]:
 		ok = ok and await _cammina_verso(punto, 900)
+	# Fino al checkpoint della tappa 8, prima che lei sbuchi dalla fossa (lì la scia continua).
+	var cp_bimbi := (level.get_node("Gioco/CheckpointAreaBimbi") as Node3D).global_position
 	for i in range(3, ritorno.scia.size()):
 		ok = ok and await _cammina_verso(ritorno.scia[i], 900)
-	check(ok, "si segue la scia di gocce fino all'area bimbi")
-	await _frames(10)
-	check(bool(level.get(&"demo_finished")), "in fondo alla scia finisce la demo")
+		if Vector2(ritorno.scia[i].x - cp_bimbi.x, ritorno.scia[i].z - cp_bimbi.z).length() < 0.6:
+			break
+	await _frames(5)
+	check(ok and _checkpoint().ends_with("CheckpointAreaBimbi"), "si segue la scia di gocce fino all'area bimbi (%s)" % _checkpoint())
+	check(not bool(level.get(&"demo_finished")), "la demo non finisce sulla scia: va avanti con la tappa 8")
 
 	print("Si riparte da prima del risveglio")
 	GameState.imposta_luci(GameState.Luci.PRIMA_DEL_RISVEGLIO)

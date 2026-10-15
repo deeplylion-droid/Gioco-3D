@@ -27,15 +27,23 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var punto_fuga: Node3D
 ## Il coperchio di collisione della fossa: acceso, così non ci si cade dentro.
 @export var coperchio: CollisionObject3D
-## Le vasche che si riempiono (WaterTank) e la loro acqua (WaterTankLink, per le increspature).
+## Le vasche che si riempiono (WaterTank) e la loro acqua (WaterTankLink, per gli schizzi): la
+## prima è la VascaBimbi1, quella della fossa.
 @export var vasche: Array[Node3D] = []
 @export var acque: Array[Node3D] = []
+## La superficie dell'acqua della fossa (la pianta con l'angolo tagliato): stessa acqua della
+## prima vasca, alla sua quota e col suo materiale.
+@export var superficie_fossa: MeshInstance3D
 ## Quota del pelo dell'acqua quando le vasche sono piene (marker livello_acqua_pieno).
 @export var livello_pieno := 0.43
-## Velocità con cui sale l'acqua (m/s) quando il giocatore arriva nell'area bimbi.
-@export var velocita_riempimento := 0.005
-## Il giocatore a meno di tanto dalla fossa (in pianta): l'acqua comincia a salire.
+## Velocità con cui sale l'acqua (m/s): piano da quando ripartono le pompe, più in fretta quando
+## il giocatore arriva nell'area bimbi (a meno di [member distanza_riempimento] dalla fossa).
+@export var velocita_lenta := 0.0008
+@export var velocita_riempimento := 0.006
 @export var distanza_riempimento := 16.0
+## Lei sbuca solo con l'acqua almeno a questa quota (la posa vuole il pelo 0,88 m sopra la sua
+## origine: con un po' di margine il seno resta coperto, come vuole il GDD).
+@export var pelo_minimo := 0.37
 ## Il giocatore a meno di tanto dal punto in cui sbuca (in pianta): lei sbuca.
 @export var distanza_inizio := 6.5
 ## Più vicino di così al suo occhio (in pianta) ti prende.
@@ -84,6 +92,14 @@ func _ready() -> void:
 				_prendi())
 
 
+func _process(_delta: float) -> void:
+	if superficie_fossa == null or vasche.is_empty() or not vasche[0] is WaterTank:
+		return
+	if superficie_fossa.material_override == null and acque.size() > 0 and acque[0] and "material" in acque[0]:
+		superficie_fossa.material_override = acque[0].get(&"material")
+	superficie_fossa.global_position.y = (vasche[0] as WaterTank).get_surface_global_y()
+
+
 func _on_luci(f: GameState.Luci) -> void:
 	# Ripartendo da prima del risveglio la scena torna in attesa.
 	if f == GameState.Luci.PRIMA_DEL_RISVEGLIO and fase != Fase.ATTESA:
@@ -100,7 +116,8 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	match fase:
 		Fase.ATTESA:
-			if punto_sbuca and _in_pianta(p.global_position, _testa_prevista()) < distanza_inizio:
+			if punto_sbuca and _in_pianta(p.global_position, _testa_prevista()) < distanza_inizio \
+					and _pelo() >= minf(pelo_minimo, livello_pieno) - 0.001:
 				_sbuca()
 		Fase.SBUCA:
 			var k := clampf(_t / durata_sbuca, 0.0, 1.0)
@@ -130,10 +147,13 @@ func _physics_process(delta: float) -> void:
 				_finita()
 
 
-## Le vasche basse si riempiono dalla fossa quando arrivi: il livello sale davanti a te.
+## Le vasche basse si riempiono dalla fossa: piano da quando ripartono le pompe, poi, quando
+## arrivi, il livello sale davanti a te.
 func _riempi(delta: float, p: Player) -> void:
-	if punto_sbuca == null or _in_pianta(p.global_position, punto_sbuca.global_position) > distanza_riempimento:
+	if punto_sbuca == null:
 		return
+	var vicino := _in_pianta(p.global_position, punto_sbuca.global_position) < distanza_riempimento
+	var velocita := velocita_riempimento if vicino else velocita_lenta
 	var sale := false
 	for v in vasche:
 		var tank := v as WaterTank
@@ -142,17 +162,17 @@ func _riempi(delta: float, p: Player) -> void:
 		var fondo := tank.get_floor_global_y()
 		var target := clampf((livello_pieno - fondo) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
 		if tank.fill < target - 0.0005:
-			tank.fill = minf(tank.fill + velocita_riempimento * delta / maxf(tank.inner_size.y, 0.01), target)
+			tank.fill = minf(tank.fill + velocita * delta / maxf(tank.inner_size.y, 0.01), target)
 			sale = true
 	# L'acqua risale ribollendo dalla fossa.
 	_prossima_bolla -= delta
-	if sale and _prossima_bolla <= 0.0 and acque.size() > 0:
+	if sale and vicino and _prossima_bolla <= 0.0 and acque.size() > 0:
 		_prossima_bolla = _rng.randf_range(0.25, 0.7)
 		var a := acque[0]
-		if a and a.has_method(&"add_impulse"):
-			var c := punto_sbuca.global_position + punto_sbuca.global_basis.z * 1.0
-			c += Vector3(_rng.randf_range(-0.7, 0.7), 0.0, _rng.randf_range(-0.7, 0.7))
-			a.call(&"add_impulse", c, _rng.randf_range(0.2, 0.45), _rng.randf_range(0.006, 0.014), 0.25)
+		if a and a.has_method(&"splash"):
+			var c := punto_sbuca.global_position + punto_sbuca.global_basis.z * 0.6
+			c += Vector3(_rng.randf_range(-0.6, 0.6), 0.0, _rng.randf_range(-0.6, 0.6))
+			a.call(&"splash", c, _rng.randf_range(0.08, 0.2))
 
 
 func _sbuca() -> void:
@@ -216,6 +236,14 @@ func _controlla_presa(p: Player) -> void:
 	var occhio: Vector3 = medusa.call(&"get_eye_position") if medusa.has_method(&"get_eye_position") else medusa.global_position
 	if _in_pianta(p.global_position, occhio) < distanza_presa:
 		_prendi()
+
+
+## Il pelo dell'acqua dove sbuca (la prima vasca: la fossa).
+func _pelo() -> float:
+	for v in vasche:
+		if v is WaterTank:
+			return (v as WaterTank).get_surface_global_y()
+	return livello_pieno
 
 
 ## 0 = al suo posto sul bordo, 1 = giù nella fossa.

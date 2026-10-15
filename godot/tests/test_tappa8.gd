@@ -57,6 +57,10 @@ func _run() -> void:
 
 	print("Al buio, sulla scia")
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	# Dal risveglio a qui passano minuti: l'acqua è già salita un po' (piano, dalla fossa).
+	for v in lei.vasche:
+		var t := v as WaterTank
+		t.fill = minf(t.fill + 0.08 / t.inner_size.y, t.max_fill)
 	p.teleport(Vector3(-18.3, 0.0, 2.6), 0.0, 0.0)
 	await _frames(5)
 	var vasca: WaterTank = level.get_node("Vasche/VascaBimbi1")
@@ -68,15 +72,19 @@ func _run() -> void:
 	await _frames(120)
 	check(vasca.get_surface_global_y() > prima + 0.005, "le vasche basse si riempiono dalla fossa (pelo da %.3f a %.3f)" % [prima, vasca.get_surface_global_y()])
 
-	print("1. Le vai incontro: ti prende")
-	Input.action_press(&"move_forward")
+	print("1. Le vai incontro seguendo la scia: ti prende")
+	var ritorno := level.get(&"ritorno") as RitornoAlBuio
+	var scia := ritorno.scia
 	var sbucata := false
-	for i in 900:
-		var testa: Vector3 = lei.medusa.call(&"get_eye_position") if lei.medusa.visible else lei._testa_prevista()
-		var d := testa - p.global_position
-		p.set_look(atan2(-d.x, -d.z), 0.0)
-		await get_tree().physics_frame
-		sbucata = sbucata or lei.fase == LeiSbuca.Fase.SBUCA or lei.fase == LeiSbuca.Fase.GUARDA
+	Input.action_press(&"move_forward")
+	for k in range(scia.size() - 6, scia.size()):
+		for i in 400:
+			var d := scia[k] - p.global_position
+			if Vector2(d.x, d.z).length() < 0.35 or GameState.is_dying:
+				break
+			p.set_look(atan2(-d.x, -d.z), 0.0)
+			await get_tree().physics_frame
+			sbucata = sbucata or lei.fase == LeiSbuca.Fase.SBUCA or lei.fase == LeiSbuca.Fase.GUARDA
 		if GameState.is_dying:
 			break
 	Input.action_release(&"move_forward")
@@ -99,7 +107,7 @@ func _run() -> void:
 	check(lei.fase == LeiSbuca.Fase.ATTESA and not lei.medusa.visible, "e la scena è di nuovo in attesa")
 	check(p.global_position.distance_to(Vector3(-18.3, 0.0, -0.5)) < 1.0, "il giocatore è sulla scia (%s)" % str(p.global_position))
 	# Ricaricando il livello al buio, la sala del ritorno (tappa 7) è com'era.
-	var ritorno := level.get(&"ritorno") as RitornoAlBuio
+	ritorno = level.get(&"ritorno") as RitornoAlBuio
 	var lampione := level.get_node(^"Vasca/Sfarfallio") as FlickerLight
 	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.macchie_scia() >= 15 and not lampione.is_on,
 			"e la sala è ancora al buio: vasca vuota, scia di gocce, lampione spento")
