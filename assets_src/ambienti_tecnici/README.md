@@ -17,7 +17,7 @@ MESHY_API_KEY=... python3 tools/blender/ambienti2_meshy.py      # scrivania, mon
 
 ## File per Godot
 
-`gltf_2k/` (consigliato): `.gltf` + `.bin` per stanza, texture 2K condivise in `gltf_2k/texture/`. Si generano con `AMBIENTI2_GLTF=1` davanti al comando dello script. `glb/`: GLB autonomi, texture ridotte a 1K (sotto i 50 MB).
+`gltf_2k/` (consigliato): `.gltf` + `.bin` per stanza, texture 2K in `gltf_2k/texture/`, una sola copia per contenuto (61 file, 146 MB). Si generano con `AMBIENTI2_GLTF=1` davanti al comando dello script e poi `tools/blender/gltf_condividi.py assets_src/ambienti_tecnici/gltf_2k` (deduplica e converte in JPG i PNG senza alfa). `glb/`: GLB autonomi, texture ridotte a 1K (sotto i 50 MB).
 
 
 | File | Cosa contiene |

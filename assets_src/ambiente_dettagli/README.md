@@ -16,8 +16,10 @@ $PY tools/blender/dettagli_vetrina.py      # render della vetrina [--anteprima]
 ## File
 
 - `glb/<categoria>.glb`: un GLB per categoria (detriti, cavi, tubi, elettrico, lampade, cartelli, organico, catene_corde), ognuno sotto i 50 MB. Texture incorporate (JPG; PNG solo per le macchie con l'alfa).
+- `gltf/<categoria>.gltf` + `.bin`, con le texture in **una sola cartella `gltf/texture/` deduplicata per contenuto** (79 file, 92 MB, contro i 145 MB dei GLB che ripetono le texture). È la versione da usare nella build: `dettagli_sala.gd` la usa di serie (`usa_gltf = true`). Si rifà con `dettagli_kit.py` e poi `gltf_condividi.py assets_src/ambiente_dettagli/gltf`.
 - `catalogo.json`: tutti i nodi, con categoria, appoggio, ingombro e triangoli.
-- `posizionamento.json`: **484 posti suggeriti nella sala**, già in coordinate Godot (stessa origine dei GLB della sala).
+- `posizionamento.json`: **1219 posti in 457 gruppi** nella sala lunga (con il monumento), in coordinate Godot, con il riepilogo di triangoli e istanze.
+- `godot/dettagli_sala.gd`: lo script che li monta (MultiMeshInstance3D per i nodi ripetuti). `godot/foto_dettagli.gd`: la scena di prova degli screenshot prima/dopo.
 - `texture/`: CC0 nuove (`cc0/`) e derivate (`derivate/`). Le altre texture vengono dal kit della sala (`assets_src/ambiente/textures/`).
 
 ## Convenzioni
@@ -32,22 +34,25 @@ $PY tools/blender/dettagli_vetrina.py      # render della vetrina [--anteprima]
 - **Niente collisioni**: sono dettagli decorativi e leggeri. Se ne serve qualcuna (quadro elettrico, mucchi di piastrelle), basta una scatola.
 - I LOD li genera Godot all'import.
 
-## Come usare posizionamento.json in Godot
+## Come montarli in Godot
 
-```gdscript
-var dati = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ambiente_dettagli/posizionamento.json"))
-var cache = {}
-for p in dati.posti:
-	if not cache.has(p.glb):
-		cache[p.glb] = load("res://assets/ambiente_dettagli/" + p.glb).instantiate()
-	var nodo = cache[p.glb].get_node(p.nodo).duplicate()
-	var b = p.basis
-	nodo.transform = Transform3D(Basis(Vector3(b[0][0], b[0][1], b[0][2]), Vector3(b[1][0], b[1][1], b[1][2]), Vector3(b[2][0], b[2][1], b[2][2])),
-		Vector3(p.posizione[0], p.posizione[1], p.posizione[2]))
-	$Dettagli.add_child(nodo)
-```
+Attaccare `godot/dettagli_sala.gd` a un `Node3D` in (0, 0, 0) accanto ai GLB della sala e impostare `cartella` (dove stanno `glb/` e `posizionamento.json`). Lo script:
+- raggruppa i posti per nodo: i nodi con almeno 6 istanze diventano un **MultiMeshInstance3D** (un draw call per superficie), gli altri sono copie normali;
+- spegne le ombre dei dettagli e nasconde i pezzi piccoli (fogli, piastrelle, giocattoli, macchie, alghe) oltre 30 m (`visibility_range_end`).
 
-Le zone: `pavimento` (sparsi, lontano dai passaggi principali e dal piedistallo), `piede dei muri`, `bordo piscina`, `fondo piscina` (giocattoli e alghe nella piscina vuota), `muri`, `muri, sotto la galleria`, `colatura sotto un tubo`, `base dei muri`, `sotto la galleria`. Ogni posto è stato controllato con dei raggi sulla geometria vera della sala: il pavimento è libero, il muro è piatto (niente oblò, porte o colonne), sotto le cose appese c'è spazio. Il percorso dallo spawn al piedistallo resta pulito. Se un posto non piace si toglie la voce: sono indipendenti.
+**Numeri** (riepilogo in `posizionamento.json`): 1219 posti, 87 nodi diversi, 66 MultiMesh con 1153 istanze, 66 copie singole; **573,630 triangoli** in tutto (prima dei LOD e della distanza di visibilità).
+Misurati in Godot 4.7.2 (Forward+, 1600x900): dallo spawn i draw call passano da 158 a 324 e le primitive da 774 mila a 868 mila; guardando un muro laterale da 54 a 201 draw call e da 390 a 468 mila primitive.
+
+**Come sono messi.** Sempre a **gruppi**, controllati con dei raggi sulla geometria vera della sala:
+- mucchi di detriti (un pezzo grosso, piastrelle, carte, vetri, pannelli caduti, giocattoli) negli angoli, alla base dei muri e negli 8 m nuovi vicino al vano sud;
+- corse di tubi e condotte una dopo l'altra lungo i muri, con le colature di ruggine sotto; incrostazioni continue alla base delle pareti;
+- angoli tecnici (quadro o cassetta, interruttore, tubo che sale, cartello, macchie); più cartelli a pittogrammi;
+- fasci di cavi a festone lungo i muri sotto la galleria; plafoniere spente o penzolanti con cavi e catene intorno e i vetri caduti sotto;
+- alghe secche e calcare a tratti lungo il bordo della piscina; giocattoli e alghe sul fondo della piscina vuota.
+
+**Zone libere**: il percorso dallo spawn (0, 0, 19,2) al monumento, il cordone del monumento (raggio 3 m più margine) e il lampione. Le cose appese stanno fuori dal cono di vista dallo spawn verso la statua, che si vede intera entrando.
+
+Ogni voce ha anche `gruppo` e `zona`: per togliere un gruppo intero basta filtrare su `gruppo`.
 
 ## Dettagli
 

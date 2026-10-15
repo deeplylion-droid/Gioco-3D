@@ -120,7 +120,7 @@ def fondi(nome, parti, origine=(0, 0, 0)):
     return ob
 
 
-def cordone(nome, pts, r, mat, seg=8, u_tile=0.5, liscia=True, tappi=False):
+def cordone(nome, pts, r, mat, seg=8, u_tile=0.5, liscia=True, tappi=False, passo=0.04):
     """Tubo con UV lungo la lunghezza (corde, cavi, tubi): U = metri / u_tile, V = intorno."""
     P = [Vector(p) for p in pts]
     if liscia and len(P) > 2:
@@ -128,7 +128,7 @@ def cordone(nome, pts, r, mat, seg=8, u_tile=0.5, liscia=True, tappi=False):
         Q = []
         for i in range(len(P) - 1):
             p0, p1, p2, p3 = P[max(i - 1, 0)], P[i], P[i + 1], P[min(i + 2, len(P) - 1)]
-            n = max(2, int((p2 - p1).length / 0.04))
+            n = max(2, int((p2 - p1).length / passo))
             for k in range(n):
                 t = k / n
                 Q.append(0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t ** 3))
@@ -268,7 +268,7 @@ for v in range(3):
 # asciugamani bagnati: simulazione di stoffa che cade sul pavimento (con un rilievo sotto per fare le pieghe)
 def asciugamano(nome, mat, w=1.0, h=0.5, seme=0):
     sc = bpy.context.scene
-    bpy.ops.mesh.primitive_grid_add(x_subdivisions=40, y_subdivisions=20, size=1.0, location=(0, 0, 0.3))
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions=28, y_subdivisions=14, size=1.0, location=(0, 0, 0.3))
     ob = bpy.context.active_object; ob.name = nome
     ob.scale = (w, h, 1); ob.rotation_euler = (random.uniform(0.15, 0.35), random.uniform(-0.2, 0.2), random.uniform(0, 3))
     applica_trasf(ob)
@@ -318,7 +318,7 @@ for v, c in enumerate(('righe_turchese', 'righe_rosso', 'tinta_giallo', 'tinta_r
 
 
 # giocattoli e ciabatte (Meshy): puliti, scalati, ridotti
-def importa_meshy(nome, lato, asse=None, tri_max=6000):
+def importa_meshy(nome, lato, asse=None, tri_max=1200):
     path = T(DET, 'meshy', nome + '.glb')
     if not os.path.exists(path):
         print('manca', path); return None
@@ -362,6 +362,37 @@ for nome, lato, asse, nota in (('paperella', 0.11, None, 'paperella di gomma'), 
         registra('detriti', ob, 'pavimento', nota)
 
 
+# pannelli caduti: lamiera piegata, pannello del controsoffitto rotto, griglia caduta
+def pannello(nome, w, h, mat, piega=0.0, rotto=False, sp=0.012):
+    bm = bmesh.new(); uvl = bm.loops.layers.uv.verify()
+    nx, ny = 12, 8
+    vs = [[bm.verts.new((w * (i / nx - 0.5), h * (j / ny - 0.5), 0)) for i in range(nx + 1)] for j in range(ny + 1)]
+    for j in range(ny):
+        for i in range(nx):
+            if rotto and i > nx * 0.6 and j > ny * 0.4 + (i - nx * 0.6) * 0.5:
+                continue
+            f = bm.faces.new((vs[j][i], vs[j][i + 1], vs[j + 1][i + 1], vs[j + 1][i]))
+            for l in f.loops:
+                l[uvl].uv = (l.vert.co.x / 1.0 + 0.5, l.vert.co.y / 1.0 + 0.5)
+    for v in bm.verts:
+        x = v.co.x / w + 0.5
+        v.co.z = max(0.0, (x - 0.55)) * piega * w + 0.03 * noise.noise(Vector((v.co.x * 3, v.co.y * 3, 1)))
+        v.co.z = max(v.co.z, 0.0)
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context='VERTS')
+    me = bpy.data.meshes.new(nome); bm.to_mesh(me); bm.free()
+    ob = bpy.data.objects.new(nome, me); bpy.context.scene.collection.objects.link(ob)
+    assegna(ob, mat)
+    sd = ob.modifiers.new('s', 'SOLIDIFY'); sd.thickness = sp; sd.offset = 1
+    applica_modificatori_ob(ob)
+    return liscio(ob, 40)
+
+
+registra('detriti', fondi('det_pannello_lamiera', [pannello('pl', 1.2, 0.6, M['metallo'], piega=0.6)]), 'pavimento', 'lamiera verniciata caduta, piegata')
+registra('detriti', fondi('det_pannello_lamiera_2', [pannello('pl2', 0.9, 0.9, M['metallo_grigio'], piega=0.25, rotto=True)]), 'pavimento', 'pannello di lamiera rotto')
+registra('detriti', fondi('det_pannello_controsoffitto', [pannello('pc', 0.6, 0.6, M['plastica'], piega=0.1, rotto=True, sp=0.015)]), 'pavimento', 'pannello del controsoffitto caduto e spezzato')
+g = pannello('pg', 0.8, 0.5, M['rete'], piega=0.15, sp=0.02)
+registra('detriti', fondi('det_griglia_caduta', [g]), 'pavimento', 'griglia caduta')
+
 # ================================================================== CAVI
 for v, (L, col) in enumerate(((1.2, 'nero'), (2.0, 'grigio'), (2.8, 'nero'), (1.6, 'arancio'))):
     pts = []
@@ -381,14 +412,14 @@ for v, (L, col) in enumerate(((1.2, 'nero'), (2.0, 'grigio'), (2.8, 'nero'), (1.
     parti.append(cilindro(f'cp{v}att', (0, 0, -0.01), 0.025, 0.02, M['metallo_grigio'], seg=12, uv=0.3))
     registra('cavi', fondi(f'det_cavo_pendente_{v + 1}', parti), 'soffitto', f'cavo strappato che pende, {L} m')
 for v, (L, f, col) in enumerate(((2.0, 0.25, 'nero'), (4.0, 0.6, 'grigio'), (6.0, 1.0, 'nero'))):
-    parti = [cordone(f'cf{v}', catenaria((0, 0, 0), (L, 0, 0), f), 0.009, M[f'cavo_{col}'])]
+    parti = [cordone(f'cf{v}', catenaria((0, 0, 0), (L, 0, 0), f), 0.009, M[f'cavo_{col}'], seg=6, passo=0.1)]
     for x in (0, L):
         parti.append(box(f'cf{v}g{x}', (x, 0, 0.01), (0.04, 0.03, 0.03), M['metallo_grigio'], uv=0.3))
     registra('cavi', fondi(f'det_cavo_festone_{v + 1}', parti), 'soffitto', f'cavo a festone tra due attacchi a {L} m (lungo +X Blender)')
 parti = []
 for k, (col, dy, dz) in enumerate((('nero', 0, 0), ('grigio', 0.025, 0.005), ('giallo', -0.02, 0.01), ('nero', 0.01, -0.02))):
     pts = [p + Vector((0, dy, dz)) for p in catenaria((0, 0, 0), (4, 0, 0), 0.7 + 0.08 * k)]
-    parti.append(cordone(f'fc{k}', pts, 0.008, M[f'cavo_{col}']))
+    parti.append(cordone(f'fc{k}', pts, 0.008, M[f'cavo_{col}'], seg=5, passo=0.12))
 for x in (1.0, 2.0, 3.0):
     i = int(x / 4 * 24); p = catenaria((0, 0, 0), (4, 0, 0), 0.75)[i]
     parti.append(toro(f'fcf{x}', p, 0.035, 0.004, M['gomma'], asse=(1, 0, 0), seg=12, seg2=4, uv=None))
@@ -678,7 +709,7 @@ def catena(nome, pts, mat, maglia=0.05):
         t = (s - acc[i]) / max(acc[i + 1] - acc[i], 1e-6)
         p = P[i].lerp(P[i + 1], t); d = (P[i + 1] - P[i]).normalized()
         bm = bmesh.new()
-        seg, seg2, R, r = 12, 6, 0.016, 0.0045
+        seg, seg2, R, r = 8, 4, 0.016, 0.0045
         vs = []
         for a in range(seg):
             aa = 2 * math.pi * a / seg
@@ -748,6 +779,13 @@ for ci, cat in enumerate(ORDINE):
     for o in obs:
         CATALOGO[o.name]['glb'] = f'glb/{cat}.glb'
     esporta_glb(T(GLB, f'{cat}.glb'), obs, luci=False, max_tex=None)   # kit dei dettagli: texture 2K
+    # anche in .gltf con le texture in una cartella sola (poi gltf_condividi.py le deduplica per contenuto)
+    for o in bpy.context.scene.objects:
+        o.select_set(o in obs)
+    os.makedirs(T(DET, 'gltf'), exist_ok=True)
+    bpy.ops.export_scene.gltf(filepath=T(DET, 'gltf', f'{cat}.gltf'), export_format='GLTF_SEPARATE', export_texture_dir='texture',
+                              use_selection=True, export_apply=True, export_lights=False, export_cameras=False,
+                              export_extras=True, export_yup=True, export_image_format='AUTO')
 with open(T(DET, 'catalogo.json'), 'w') as f:
     json.dump({'nota': "Nodi dei GLB del kit di dettagli. 'appoggio': pavimento (origine alla base), muro (origine sul filo del muro, "
                        "il dettaglio sporge verso +Z Godot), soffitto (origine nel punto d'attacco, pende verso -Y Godot). "

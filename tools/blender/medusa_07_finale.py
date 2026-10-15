@@ -8,6 +8,8 @@
     piedistallo (z = STATUA['z_pavimento']), ci si appoggiano e si arricciano; ogni tentacolo ha una catena
     di ossa per la fisica;
   - occhio di vetro lucido con l'iride approvata;
+  - mani piu' eleganti (dita e polsi piu' sottili);
+  - struttura interna della campana (medusa_campana_interna.py): canali, anello e gonadi luminosi;
   - fauce nascosta sotto l'occhio (medusa_fauce.py);
   - la posa statua (mani giunte sul petto) e' la posa di RIPOSO del modello: in Godot, senza animazioni,
     la medusa e' gia' la statua;
@@ -15,7 +17,10 @@
     il corpo sale di SOLLEVA metri e i tentacoli si staccano dal piano e pendono), "fluttua" (ciclo: corpo
     sospeso che ondeggia, campana che pulsa, tentacoli che ondeggiano), "insegue" (ciclo: braccia protese,
     tentacoli indietro) e "fauce_apre" (mascella + blend shape). Le azioni da sveglia hanno il corpo alla
-    stessa altezza, cosi' si fondono bene.
+    stessa altezza, cosi' si fondono bene;
+  - alla fine tutto passa alla SCALA VERA della statua (ALTEZZA_STATUA = 4,5 m dal piano dei tentacoli alla
+    cima della testa, piano a z = 0): scala_reale.
+Le texture finali del corpo (usura, ciocche dei capelli, giunture da bambola) le fa il passo 8.
 Scrive build/medusa_finale.blend.
 
 Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_07_finale.py
@@ -27,13 +32,16 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
 import medusa_05_tentacoli as TENT  # noqa: E402
+import medusa_campana_interna as INTERNO  # noqa: E402
+import medusa_capelli as CAPELLI  # noqa: E402
 import medusa_fauce as FAUCE  # noqa: E402
 import medusa_pose as POSE  # noqa: E402
 
 Z_VITA = -0.155
 FPS = 24
 
-SOLLEVA = 0.5           # quando si sveglia il corpo sale di tanto (m): i tentacoli si staccano dal piano
+SOLLEVA = 0.5           # quando si sveglia il corpo sale di tanto (unita' del modello, x scala dopo)
+ALTEZZA_STATUA = 4.5    # m: dal piano d'appoggio dei tentacoli alla cima della testa (statua imponente)
 
 # colori dei canali (gradiente dall'alto della campana al bordo), come Halitrephes maasi
 CANALI_GRADIENTE = [(0.0, (1.0, 0.72, 0.08)), (0.45, (1.0, 0.36, 0.22)), (1.0, (1.0, 0.12, 0.55))]
@@ -93,6 +101,121 @@ def maschera_canali(ob):
     return dati
 
 
+# ---------------------------------------------------------------- mani piu' eleganti
+
+DITA_SOTTILI = 0.84     # le dita si stringono attorno all'asse delle ossa (raggio x 0.84)
+POLSO_SOTTILE = 0.9     # polso e fine dell'avambraccio un po' piu' fini
+
+
+def mani_eleganti(arm, corpo):
+    """Dita piu' sottili e polso piu' fine (posa di riposo, prima della posa statua): ogni vertice si avvicina
+    all'asse dell'osso che lo muove di piu', in proporzione al peso. Vale anche per le shape key."""
+    me = corpo.data
+    co = coords(me)
+    nomi = [vg.name for vg in corpo.vertex_groups]
+    W = np.zeros((len(co), len(nomi)), np.float32)
+    for v in me.vertices:
+        for gr in v.groups:
+            W[v.index, gr.group] = gr.weight
+    nuovo = co.copy()
+
+    def stringi(sel_ossa, fattore, rampa=None):
+        idx = [nomi.index(n) for n in sel_ossa if n in nomi]
+        if not idx:
+            return
+        Wd = W[:, idx]
+        tot = np.clip(Wd.sum(1), 0, 1)
+        k = np.argmax(Wd, 1)
+        for j, n in enumerate([nomi[i] for i in idx]):
+            sel = (k == j) & (tot > 0.05)
+            if not sel.any():
+                continue
+            b = arm.data.bones[n]
+            h, t = np.array(b.head_local), np.array(b.tail_local)
+            asse = t - h
+            L2 = asse @ asse
+            p = nuovo[sel]
+            u = np.clip(((p - h) @ asse) / L2, 0, 1)
+            c = h + u[:, None] * asse
+            f = 1 - (1 - fattore) * tot[sel]
+            if rampa is not None:
+                f = 1 - (1 - f) * rampa(u)
+            nuovo[sel] = c + (p - c) * f[:, None]
+
+    for suf in ('.L', '.R'):
+        dita = [f'{d}_{f}{suf}' for d in ('pollice', 'indice', 'medio', 'anulare', 'mignolo') for f in (1, 2, 3)]
+        stringi(dita, DITA_SOTTILI)
+        stringi(['avambraccio' + suf], POLSO_SOTTILE, rampa=lambda u: np.clip((u - 0.45) / 0.45, 0, 1))
+    delta = nuovo - co
+    set_coords(me, nuovo)
+    if me.shape_keys:
+        for kb in me.shape_keys.key_blocks:
+            d = np.empty(len(co) * 3, np.float32)
+            kb.data.foreach_get('co', d)
+            kb.data.foreach_set('co', (d.reshape(-1, 3) + delta).ravel())
+    me.update()
+    log(f'mani eleganti: {int((np.linalg.norm(delta, axis=1) > 1e-5).sum())} vertici spostati '
+        f'(dita x{DITA_SOTTILI}, polso x{POLSO_SOTTILE})')
+
+
+# ---------------------------------------------------------------- viso: palpebre e bocca nascosta
+
+def palpebre(corpo, alza_su=0.0022, alza_giu=0.0009):
+    """Palpebre piu' definite: il labbro dell'orbita (M_orbita) si alza un poco in avanti, di piu' sopra (palpebra
+    superiore piu' spessa, come negli occhi delle bambole), sfumando verso la pelle."""
+    me = corpo.data
+    occ = leggi_json('occhio_3d.json')
+    C = np.array(occ['centro_rotazione'])
+    asse = np.array(occ['asse_riposo'])
+    co = coords(me)
+    nomi = [m.name if m else '' for m in me.materials]
+    if 'M_orbita' not in nomi:
+        return
+    io = nomi.index('M_orbita')
+    sel = np.zeros(len(co), bool)
+    for poly in me.polygons:
+        if poly.material_index == io:
+            sel[list(poly.vertices)] = True
+    if not sel.any():
+        return
+    # sfumatura: piena sul labbro, si spegne entro 8 mm intorno
+    from scipy.spatial import cKDTree
+    d, _ = cKDTree(co[sel]).query(co, distance_upper_bound=0.01)
+    w = np.where(np.isfinite(d), np.clip(1 - d / 0.008, 0, 1), 0) ** 2
+    rel = co - C
+    su = np.clip((rel[:, 2] - 0.0) / 0.03, 0, 1)                  # parte alta dell'orbita
+    alza = (alza_giu + (alza_su - alza_giu) * su) * w
+    delta = alza[:, None] * asse[None, :]
+    set_coords(me, co + delta)
+    if me.shape_keys:
+        for kb in me.shape_keys.key_blocks:
+            dd = np.empty(len(co) * 3, np.float32)
+            kb.data.foreach_get('co', dd)
+            kb.data.foreach_set('co', (dd.reshape(-1, 3) + delta).ravel())
+    me.update()
+    log(f'palpebre: {int((alza > 1e-5).sum())} vertici, fino a {alza_su * 1000:.1f} mm sopra')
+
+
+def normali_cucitura(corpo):
+    """La bocca nascosta e' un taglio (vertici doppi): a riposo le due labbra devono avere la stessa normale,
+    altrimenti si vede una riga. Normali personalizzate = media delle coppie di vertici coincidenti."""
+    from scipy.spatial import cKDTree
+    me = corpo.data
+    co = coords(me)
+    nrm = np.empty(len(co) * 3); me.vertices.foreach_get('normal', nrm); nrm = nrm.reshape(-1, 3)
+    coppie = cKDTree(co).query_pairs(1e-6, output_type='ndarray')
+    if len(coppie) == 0:
+        return
+    nuove = nrm.copy()
+    m = nrm[coppie[:, 0]] + nrm[coppie[:, 1]]
+    m /= np.linalg.norm(m, axis=1, keepdims=True) + 1e-12
+    nuove[coppie[:, 0]] = m
+    nuove[coppie[:, 1]] = m
+    me.normals_split_custom_set_from_vertices([tuple(x) for x in nuove])
+    me.update()
+    log(f'bocca nascosta: {len(coppie)} coppie di vertici con la stessa normale (niente riga a riposo)')
+
+
 # ---------------------------------------------------------------- materiali finali (Cycles)
 
 def vinile_laccato(nomi):
@@ -129,14 +252,14 @@ def materiale_campana():
     # trasparenza: piena sotto, sfuma nella pelle vicino alla vita
     sm = nt.nodes.new('ShaderNodeMapRange'); sm.interpolation_type = 'SMOOTHSTEP'
     sm.inputs['From Min'].default_value = 0.0; sm.inputs['From Max'].default_value = 0.2
-    sm.inputs['To Min'].default_value = 0.0; sm.inputs['To Max'].default_value = 0.88
+    sm.inputs['To Min'].default_value = 0.0; sm.inputs['To Max'].default_value = 0.94
     nt.links.new(sep.outputs['Blue'], sm.inputs['Value'])
     nt.links.new(sm.outputs['Result'], b.inputs['Transmission Weight'])
     for l in list(b.inputs['Roughness'].links):
         nt.links.remove(l)
-    b.inputs['Roughness'].default_value = 0.1
+    b.inputs['Roughness'].default_value = 0.07
     b.inputs['IOR'].default_value = 1.34
-    b.inputs['Coat Weight'].default_value = 0.6
+    b.inputs['Coat Weight'].default_value = 0.45
     b.inputs['Coat Roughness'].default_value = 0.05
     # emissione dei canali: gradiente giallo -> rosa lungo la campana
     ramp = nt.nodes.new('ShaderNodeValToRGB')
@@ -376,17 +499,20 @@ def azione_fluttua(arm, corpo):
         solleva(arm, SOLLEVA + 0.035 * math.sin(f / durata * 2 * math.pi))
         _chiave_posa(arm, f + 1)
     _nla(arm, 'fluttua', act)
-    # pulsazione della campana (shape key)
-    key = corpo.data.shape_keys
-    kb = key.key_blocks['campana_contrai']
-    ad = key.animation_data or key.animation_data_create()
-    ka = bpy.data.actions.new('fluttua_campana')
-    ad.action = ka
-    for f, v in ((1, 0.0), (13, 0.85), (25, 0.15), (37, 0.0), (49, 0.0)):
-        kb.value = v
-        kb.keyframe_insert('value', frame=f)
-    _nla(key, 'fluttua', ka)
-    kb.value = 0
+    # pulsazione della campana (shape key), anche per la struttura interna
+    for ob in (corpo, bpy.data.objects.get('Medusa_Interno'), bpy.data.objects.get('Medusa_Bordo')):
+        if ob is None or not ob.data.shape_keys:
+            continue
+        key = ob.data.shape_keys
+        kb = key.key_blocks['campana_contrai']
+        ad = key.animation_data or key.animation_data_create()
+        ka = bpy.data.actions.new(f'fluttua_campana_{ob.name}')
+        ad.action = ka
+        for f, v in ((1, 0.0), (13, 0.85), (25, 0.15), (37, 0.0), (49, 0.0)):
+            kb.value = v
+            kb.keyframe_insert('value', frame=f)
+        _nla(key, 'fluttua', ka)
+        kb.value = 0
     POSE.azzera(arm)
 
 
@@ -434,18 +560,87 @@ def azione_fauce(arm):
     POSE.azzera(arm)
 
 
+def _fcurves(act):
+    """F-curve di un'azione (API vecchia o azioni a strati di Blender 4.4+)."""
+    try:
+        return list(act.fcurves)
+    except AttributeError:
+        pass
+    out = []
+    for layer in getattr(act, 'layers', []):
+        for strip in layer.strips:
+            for cb in getattr(strip, 'channelbags', []):
+                out.extend(cb.fcurves)
+    return out
+
+
+def scala_reale(arm, altezza=ALTEZZA_STATUA):
+    """Porta la medusa alla scala vera della statua: alta 'altezza' metri dal piano d'appoggio dei tentacoli alla
+    cima della testa, col piano a z = 0 (lo scheletro sta a z = -z_pavimento * k). Scala mesh (con le shape key),
+    ossa e chiavi di posizione delle azioni (sono nello spazio delle ossa). Ritorna il fattore k."""
+    zp = TENT.STATUA['z_pavimento']
+    corpo = bpy.data.objects['Medusa']
+    k = altezza / (coords(corpo.data)[:, 2].max() - zp)
+    if bpy.context.object and bpy.context.object.mode != 'OBJECT':
+        bpy.ops.object.mode_set(mode='OBJECT')
+    S = Matrix.Scale(k, 4)
+    for o in [o for o in bpy.data.objects if o.parent == arm]:
+        if o.matrix_basis != Matrix() or o.matrix_parent_inverse != Matrix():
+            o.data.transform(o.matrix_parent_inverse @ o.matrix_basis, shape_keys=True)
+            o.matrix_parent_inverse = Matrix()
+            o.matrix_basis = Matrix()
+        if o.type == 'MESH':
+            o.data.transform(S, shape_keys=True)
+            o.data.update()
+    attiva(arm)
+    bpy.ops.object.mode_set(mode='EDIT')
+    eb = arm.data.edit_bones
+    teste = {b.name: (b.head.copy(), b.tail.copy()) for b in eb}
+    for b in eb:
+        h, t = teste[b.name]
+        b.head = h * k
+        b.tail = t * k
+    bpy.ops.object.mode_set(mode='OBJECT')
+    n = 0
+    for act in bpy.data.actions:
+        for fc in _fcurves(act):
+            if fc.data_path.endswith('.location'):
+                for kp in fc.keyframe_points:
+                    kp.co.y *= k
+                    kp.handle_left.y *= k
+                    kp.handle_right.y *= k
+                n += 1
+    arm.location = (0, 0, -zp * k)
+    arm['scala'] = k
+    log(f'scala reale: x{k:.3f}, statua alta {altezza} m dal piano dei tentacoli (z = 0), '
+        f'{n} curve di posizione scalate')
+    return k
+
+
 def main():
     t0 = time.time()
     apri(os.path.join(BUILD, 'medusa_04_scheletro.blend'))
     arm = bpy.data.objects['Medusa_Scheletro']
     corpo = bpy.data.objects['Medusa']
+    coll = bpy.data.collections.get('Attacchi_tentacoli')       # vecchi punti d'attacco: non servono piu'
+    if coll:
+        for e in list(coll.objects):
+            bpy.data.objects.remove(e)
+        bpy.data.collections.remove(coll)
+        bpy.context.view_layer.update()
+    mani_eleganti(arm, corpo)
     TENT.crea_tentacoli_statua(arm, TENT.STATUA)
     FAUCE.costruisci_fauce(arm)
     maschera_canali(corpo)
+    INTERNO.crea_interno(arm, corpo)
+    INTERNO.crea_bordo(arm, corpo)
+    CAPELLI.crea_ciocche(arm, corpo)
+    palpebre(corpo)
     vinile_laccato(['M_pelle', 'M_capelli', 'M_orbita'])
     materiale_campana()
     materiale_occhio()
     posa_come_riposo(arm)
+    normali_cucitura(corpo)
     # mentre si scrivono le azioni le mesh non serve deformarle (molto piu' veloce)
     mods = [m for o in bpy.data.objects if o.type == 'MESH' for m in o.modifiers if m.type == 'ARMATURE']
     for m in mods:
@@ -460,6 +655,7 @@ def main():
     bpy.ops.object.mode_set(mode='OBJECT')
     for m in mods:
         m.show_viewport = True
+    scala_reale(arm)
     bpy.context.scene.render.fps = FPS
     salva(os.path.join(BUILD, 'medusa_finale.blend'))
     log(f'fatto in {time.time() - t0:.0f} s')
