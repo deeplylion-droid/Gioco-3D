@@ -47,10 +47,12 @@ func _ready() -> void:
 	Game.release_mouse()
 	_costruisci_interfaccia()
 	_aggiorna_camera(0.0)
-	# Si entra dal nero (anche tornando dal gioco).
+	# Si entra dal nero (anche tornando dal gioco), con la sigla pulita.
 	var velo := Dissolvenza.di(get_tree())
 	velo.nero()
 	velo.schiarisci(2.4, 2)
+	_audio(&"ferma_tutto")
+	_audio(&"musica_titolo")
 	_voci[0].grab_focus.call_deferred()
 
 
@@ -93,6 +95,7 @@ func nuova_partita() -> void:
 	for v in _voci:
 		v.disabled = true
 	GameState.reset_progress()
+	_audio(&"ferma_musica", [0.9])
 	await Dissolvenza.di(get_tree()).scurisci(0.9)
 	get_tree().change_scene_to_file(SCENA_CARICAMENTO)
 
@@ -107,6 +110,13 @@ func apri_comandi() -> void:
 
 func esci() -> void:
 	get_tree().quit()
+
+
+## Chiama l'autoload Audio (addons/audio) se c'è: il titolo funziona anche senza.
+func _audio(metodo: StringName, argomenti := []) -> void:
+	var audio := get_node_or_null(^"/root/Audio")
+	if audio and audio.has_method(metodo):
+		audio.callv(metodo, argomenti)
 
 
 func _apri(scena: String, controllo: NodePath, voce: Button) -> void:

@@ -54,6 +54,10 @@ func _run() -> void:
 	check(voci.size() == 4 and voci[0].text == "NUOVA PARTITA", "testo della prima voce: %s" % (voci[0].text if voci.size() > 0 else "-"))
 	await _frames(2)
 	check(_focus() == voci[0], "Nuova partita ha il focus")
+	var audio := get_node_or_null(^"/root/Audio")
+	if audio:
+		var conteggio: Dictionary = audio.get(&"conteggio")
+		check(int(conteggio.get(&"sigla_pulita", 0)) >= 1, "nel titolo parte la sigla pulita")
 
 	print("Tastiera e joypad (azioni ui_*)")
 	await _premi(&"ui_down")
@@ -176,7 +180,7 @@ func _run() -> void:
 	var overlay := Game.get_node("PauseOverlay") as CanvasLayer
 	var b_comandi := _pulsante(overlay, "Comandi")
 	var b_titolo := _pulsante(overlay, "Torna al titolo")
-	check(_pulsante(overlay, "Riprendi") != null and _pulsante(overlay, "Opzioni grafiche") != null
+	check(_pulsante(overlay, "Riprendi") != null and _pulsante(overlay, "Opzioni") != null
 		and _pulsante(overlay, "Esci dal gioco") != null, "le voci di prima ci sono ancora")
 	check(b_comandi != null, "c'è Comandi")
 	check(b_titolo != null, "c'è Torna al titolo")

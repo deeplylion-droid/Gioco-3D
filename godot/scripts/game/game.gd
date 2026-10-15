@@ -181,7 +181,7 @@ func _build_overlay() -> void:
 	label.add_theme_font_size_override("font_size", 34)
 	col.add_child(label)
 	_resume_button = _menu_button(col, "Riprendi", func(): set_paused(false))
-	_menu_button(col, "Opzioni grafiche", open_options)
+	_menu_button(col, "Opzioni", open_options)
 	_menu_button(col, "Comandi", open_controls)
 	_menu_button(col, "Torna al titolo", return_to_title)
 	_menu_button(col, "Esci dal gioco", func(): get_tree().quit())
