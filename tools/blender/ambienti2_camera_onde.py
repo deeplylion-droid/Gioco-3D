@@ -286,6 +286,26 @@ S('oggetti', toro('salvagente', (7.2, -1.4, 0.09), 0.3, 0.09, M['gonfiabile'], s
 S('oggetti', toro('salvagente2', (13.1, YN + 1.4, ACQ_Z + 0.03), 0.35, 0.1, mat_pbr('gonfiabile_giallo', base=(0.9, 0.7, 0.1), roughness=0.35), seg=24, seg2=12))
 empty('VAPORE_tunnel', (11.0, 0.4, 0.5))
 
+# ------------------------------------------------------------------ collisioni per Godot
+usa_collezione('collisioni')
+for g, ob in statici:
+    if (g in ('struttura', 'pozzo') or g.startswith('NICCHIA_') or g.startswith('PORTALE_')) \
+            and ob.name in bpy.data.objects and len(ob.data.vertices) == 8:
+        collisione_copia(ob)
+for i, xc in enumerate(NICCHIE):
+    collisione_box(f'ringhiera_nicchia_{i + 1}', (xc - NW / 2, YN - 0.2, 0), (xc + NW / 2, YN - 0.1, 1.1))
+    pala = bpy.data.objects[f'PALA_{i + 1}']
+    # scatola nel sistema locale della pala (ruota con lei)
+    loc = box(f'PALA_{i + 1}_piastra-convcolonly', (0, -0.05, 1.45), (NW - 0.4, 0.2, 2.9), None, uv=None)
+    loc.parent = pala; loc.matrix_parent_inverse = Matrix.Identity(4)
+    loc['collisione'] = True; loc.hide_render = True
+for n in (1, 2):
+    par = bpy.data.objects[f'PARATIA_{n}']
+    c = box(f'PARATIA_{n}_lastra-convcolonly', (0, 0, H / 2), (0.3, W - 0.3, H), None, uv=None)
+    c.parent = par; c.matrix_parent_inverse = Matrix.Identity(4); c['collisione'] = True; c.hide_render = True
+c = box('PORTELLO_disco-convcolonly', (-(R_P + 0.08), 0, 0), (2 * R_P + 0.1, 2 * R_P + 0.1, 0.1), None, uv=None)
+c.parent = portello; c.matrix_parent_inverse = Matrix.Identity(4); c['collisione'] = True; c.hide_render = True
+
 # ------------------------------------------------------------------ unione ed export
 gruppi = {}
 for g, ob in statici:

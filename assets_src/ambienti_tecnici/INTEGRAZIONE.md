@@ -56,3 +56,55 @@ Stanza di 18 x 12 m, pavimento a y = 0, soffitto a 5,5 m. Origine al centro del 
 | `VAPORE_pompa_3` | Node3D | (4.15, 2.62, -2.15) |  |
 Collisioni: 61 corpi statici.
 
+## Camera delle onde (`camera_onde.glb`)
+
+Tunnel lungo X, da x = -2 a 24, largo 4,4 m (z da -2,2 a 2,2), alto 4,2. Pavimento a y = 0. Origine sotto il portello.
+Negli extras, "Z" e "Y" sono gli assi di Blender: qui sotto sono già tradotti per Godot.
+
+- **Arrivo dalla piscina**: il portello `PORTELLO` sta in cima al pozzo (y = 6,8, sopra il soffitto: è il fondo della piscina). Cerniera lungo l'asse Z di Godot; nel GLB è **aperto** (ruotato di -110°), chiuso = 0. Scala alla marinara da y = 0 a 6,8 sul lato ovest del pozzo; `PUNTO_arrivo_scala` è dove si scende. In cima al pozzo, nel livello, va attaccato il fondo della piscina a onde (portello e conca: vedi `sala_piscina.glb` del kit della sala).
+- **Pale delle onde** `PALA_1..3` (lato nord, -Z): perno sulla cerniera in basso, oscillano attorno a **X** tra -12° e +12°. Stanno in nicchie allagate (`ACQUA_nicchia_1..3`, pelo a y = -0,35, fondo a -1,6). L'albero a gomiti `ALBERO_pale` gira attorno a X; le bielle `BIELLA_1..3` hanno l'origine sul perno dell'albero (da muovere via script, oppure lasciarle ferme).
+- **Bocchette dell'aria** sul lato sud: `ARIA_bocchetta_1..3` (soffi d'aria a intervalli, rivolti verso il centro del tunnel) e `ARIA_nicchia_1..3` sull'acqua delle nicchie.
+- **Paratie** `PARATIA_1` (x = 17,5) e `PARATIA_2` (x = 21): origine sul bordo inferiore, **scendono lungo Y** fino a y = 0 quando ripartono le pompe. Nel GLB sono alzate (bordo a 2,65 e 2,2 m: si passa sotto).
+- **Verso la sala pompe**: il tunnel finisce aperto in x = 24 (`PUNTO_verso_sala_pompe`); si collega al tunnel ovest della sala pompe (`PUNTO_tunnel_camera_onde`, largo 2,6 m: nel livello serve un raccordo o si allarga quello della sala).
+
+### Nodi utili
+
+| Nodo | Tipo | Posizione Godot | Note |
+|---|---|---|---|
+| `ACQUA_nicchia_1` | MeshInstance3D | (6.00, -0.35, -3.65) |  |
+| `ACQUA_nicchia_2` | MeshInstance3D | (10.00, -0.35, -3.65) |  |
+| `ACQUA_nicchia_3` | MeshInstance3D | (14.00, -0.35, -3.65) |  |
+| `ALBERO_pale` | MeshInstance3D | (10.00, 3.45, -2.95) | asse_rotazione: X |
+| `ARIA_bocchetta_1` | Node3D | (6.00, 2.20, 1.68) |  |
+| `ARIA_bocchetta_2` | Node3D | (10.00, 2.20, 1.68) |  |
+| `ARIA_bocchetta_3` | Node3D | (14.00, 2.20, 1.68) |  |
+| `ARIA_nicchia_1` | Node3D | (6.00, -0.05, -4.80) |  |
+| `ARIA_nicchia_2` | Node3D | (10.00, -0.05, -4.80) |  |
+| `ARIA_nicchia_3` | Node3D | (14.00, -0.05, -4.80) |  |
+| `BIELLA_1` | MeshInstance3D | (6.00, 3.45, -3.40) |  |
+| `BIELLA_2` | MeshInstance3D | (10.00, 3.84, -2.72) |  |
+| `BIELLA_3` | MeshInstance3D | (14.00, 3.06, -2.72) |  |
+| `LUCE_nicchia_1` | OmniLight3D | (7.00, 3.60, -4.60) | colore (1.00, 0.35, 0.25) |
+| `LUCE_nicchia_2` | OmniLight3D | (11.00, 3.60, -4.60) | colore (1.00, 0.35, 0.25) |
+| `LUCE_nicchia_3` | OmniLight3D | (15.00, 3.60, -4.60) | colore (1.00, 0.35, 0.25) |
+| `LUCE_paratia_1` | OmniLight3D | (17.00, 3.80, -1.90) | colore (1.00, 0.35, 0.22) |
+| `LUCE_paratia_2` | OmniLight3D | (20.50, 3.80, -1.90) | colore (1.00, 0.35, 0.22) |
+| `LUCE_portello` | SpotLight3D | (0.00, 8.30, 0.00) | colore (0.77, 0.85, 0.95) |
+| `LUCE_rossa_l1` | OmniLight3D | (3.00, 3.00, 1.93) | colore (1.00, 0.31, 0.22) |
+| `LUCE_rossa_l3` | OmniLight3D | (12.00, 3.00, 1.93) | colore (1.00, 0.31, 0.22) |
+| `LUCE_rossa_l4` | OmniLight3D | (16.00, 3.00, -1.93) | colore (1.00, 0.31, 0.22) |
+| `LUCE_rossa_l5` | OmniLight3D | (23.00, 3.00, 1.93) | colore (1.00, 0.31, 0.22) |
+| `PALA_1` | MeshInstance3D | (6.00, -1.30, -3.70) | asse_rotazione: X; oscilla tra -12 e +12 gradi |
+| `PALA_2` | MeshInstance3D | (10.00, -1.30, -3.70) | asse_rotazione: X; oscilla tra -12 e +12 gradi |
+| `PALA_3` | MeshInstance3D | (14.00, -1.30, -3.70) | asse_rotazione: X; oscilla tra -12 e +12 gradi |
+| `PARATIA_1` | MeshInstance3D | (17.50, 2.65, 0.00) | movimento: scende lungo Z da 2.65 a 0 |
+| `PARATIA_2` | MeshInstance3D | (21.00, 2.20, 0.00) | movimento: scende lungo Z da 2.2 a 0 |
+| `PORTALE_1` | MeshInstance3D | (0.00, 0.00, 0.00) |  |
+| `PORTALE_2` | MeshInstance3D | (0.00, 0.00, 0.00) |  |
+| `PORTELLO` | MeshInstance3D | (0.58, 6.92, 0.00) | cardine: asse Y Blender (-Z Godot); chiuso = 0, aperto = -110 gradi |
+| `PUNTO_arrivo_scala` | Node3D | (0.60, 0.00, 0.00) |  |
+| `PUNTO_portello` | Node3D | (0.00, 6.80, 0.00) |  |
+| `PUNTO_verso_sala_pompe` | Node3D | (24.00, 0.00, 0.00) |  |
+| `VAPORE_tunnel` | Node3D | (11.00, 0.50, -0.40) |  |
+Collisioni: 103 corpi statici.
+
