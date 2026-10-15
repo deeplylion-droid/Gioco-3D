@@ -39,7 +39,11 @@ func _run() -> void:
 	var space := p.get_world_3d().direct_space_state
 	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-3, 1, 18), Vector3(-3, 1, 22)))
 	check(not wall.is_empty() and absf(wall.position.z - 20.0) < 0.3, "il muro sud ha la collisione")
-	var door := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0, 1, 18.5), Vector3(0, 1, 21.5)))
+	var door_q := PhysicsRayQueryParameters3D.create(Vector3(0, 1, 18.5), Vector3(0, 1, 21.5))
+	door_q.exclude = [p.get_rid()]
+	var door := space.intersect_ray(door_q)
+	if not door.is_empty():
+		print("  (il raggio nel vano tocca ", door.collider, " in ", door.position, ")")
 	check(door.is_empty() or door.position.z > 20.15, "il vano verso gli spogliatoi è libero")
 	var ghost := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-1, 1, -1), Vector3(3, 1, -1)))
 	check(ghost.is_empty(), "niente muri invisibili in mezzo alla piscina")
