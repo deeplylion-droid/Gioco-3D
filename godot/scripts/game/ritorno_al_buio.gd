@@ -31,6 +31,13 @@ extends Node
 @export var materiale_bagnato: Material
 ## Passo delle macchie lungo la scia (m).
 @export var passo_scia := 0.55
+## Vero: al posto delle gocce una scia continua di bava rosa fosforescente (BavaRosa dell'addon
+## grafica), del colore dei tentacoli: le gocce al buio non si vedevano (riscontro F5).
+@export var scia_bava := true
+## Bava rosa intorno alla fossa della VascaBimbi1 (tappa 8, riscontro F6): sul bordo e a terra
+## tutto intorno. In coordinate globali, come [member scia].
+@export var bordo_fossa := PackedVector3Array([Vector3(-12.15, 0.455, -7.7), Vector3(-12.15, 0.455, -5.85), Vector3(-13.8, 0.455, -5.85), Vector3(-14.95, 0.455, -7.0)])
+@export var intorno_fossa := PackedVector3Array([Vector3(-11.7, 0.0, -7.8), Vector3(-11.7, 0.0, -5.4), Vector3(-13.95, 0.0, -5.4), Vector3(-15.4, 0.0, -6.9), Vector3(-15.4, 0.0, -8.4)])
 
 var attivo := false
 var increspature := 0   # quante ne ha fatte (per i test)
@@ -107,6 +114,12 @@ func _scia() -> void:
 	radice.name = "Scia"
 	add_child(radice)
 	_nodi.append(radice)
+	if scia_bava:
+		_bava(radice, "BavaScia", scia, 0.34, 3)
+		_bava(radice, "BavaBordoFossa", bordo_fossa, 0.2, 5)
+		_bava(radice, "BavaIntornoFossa", intorno_fossa, 0.42, 7)
+		_gocciolatoi(radice)
+		return
 	var quad := PlaneMesh.new()
 	quad.size = Vector2.ONE
 	var mat := materiale_bagnato if materiale_bagnato else _materiale_goccia()
@@ -136,6 +149,21 @@ func _scia() -> void:
 			m.scale = Vector3(grande * _rng.randf_range(0.55, 0.9), 1.0, grande * _rng.randf_range(1.0, 1.7))
 			d += passo_scia * lerpf(1.0, 1.8, k) * _rng.randf_range(0.8, 1.25)
 		fatta += tratto
+	_gocciolatoi(radice)
+
+
+func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int) -> void:
+	if percorso.size() < 2:
+		return
+	var b := BavaRosa.new()
+	b.name = nome
+	b.punti = percorso
+	b.larghezza = larga
+	b.seme = seme
+	radice.add_child(b)
+
+
+func _gocciolatoi(radice: Node3D) -> void:
 	for g in gocciolatoi:
 		var e := WaterDripEmitter.new()
 		e.name = "Gocciolatoio"
