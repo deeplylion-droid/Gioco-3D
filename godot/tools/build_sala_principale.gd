@@ -902,6 +902,7 @@ func _tappa8() -> void:
 	if pronta:
 		var fine := level.get(&"fine_demo_trigger") as Node3D
 		fine.position = PIEDE_TORRE + Vector3(0.4, 1.5, 0.0)
+		level.set(&"fine_demo_testo", "La torre degli scivoli ti aspetta.\nGrazie per aver giocato!")
 
 
 # --- B5: i bambini sulla balconata, visti in un lampo mentre sali sulla torre -------------------

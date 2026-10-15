@@ -29,8 +29,11 @@ extends Node3D
 @export var tecnici: Node3D
 ## La sala pompe: ordine delle pompe, leva e risveglio (RisveglioSalaPompe).
 @export var risveglio: Node
-## Dove finisce la scia di gocce della tappa 7, davanti all'area bimbi: fine della demo.
+## Dove finisce la demo: in fondo alla scia di gocce della tappa 7 o, con la tappa 8, ai piedi
+## della torre degli scivoli.
 @export var fine_demo_trigger: Area3D
+## Il testo sotto "FINE DELLA DEMO".
+@export_multiline var fine_demo_testo := "La scia continua nel buio.\nGrazie per aver giocato!"
 ## La tappa 7, il ritorno al buio (RitornoAlBuio).
 @export var ritorno: Node
 ## La tappa 8, lei che sbuca dal bordo della fossa nell'area bimbi (LeiSbuca).
@@ -231,4 +234,4 @@ func _on_fine_demo(body: Node3D) -> void:
 	demo_finished = true
 	var hud := _hud()
 	if hud:
-		hud.show_banner("FINE DELLA DEMO", "La scia continua nel buio.\nGrazie per aver giocato!", 9.0)
+		hud.show_banner("FINE DELLA DEMO", fine_demo_testo, 9.0)
