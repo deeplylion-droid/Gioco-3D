@@ -29,6 +29,12 @@ extends Node3D
 	set(value):
 		surface_materials = value
 		_rebuild()
+## Materiali per nome del materiale del modello (per esempio "M_pelle" -> la pelle bagnata): hanno
+## la precedenza sugli altri override.
+@export var material_map: Dictionary = {}:
+	set(value):
+		material_map = value
+		_rebuild()
 ## Altezza della statua (m) dal piano d'appoggio alla cima della testa: se è più di 0 il modello
 ## si scala per arrivarci, misurato dall'AABB delle sue mesh (0: il modello resta com'è).
 @export var target_height := 0.0:
@@ -169,6 +175,14 @@ func _rebuild() -> void:
 				(mi as MeshInstance3D).set_surface_override_material(s, tm)
 			elif by_name.has(mat.resource_name):
 				(mi as MeshInstance3D).set_surface_override_material(s, by_name[mat.resource_name])
+			if material_map.has(mat.resource_name) and material_map[mat.resource_name] is Material:
+				(mi as MeshInstance3D).set_surface_override_material(s, material_map[mat.resource_name])
+	_dopo_rebuild()
+
+
+## Per le sottoclassi: il modello è appena stato creato (animazioni, ossa, effetti).
+func _dopo_rebuild() -> void:
+	pass
 
 
 ## Gola e denti (dentro la bocca chiusa) visibili o no.

@@ -89,7 +89,9 @@ func _run() -> void:
 		hud.visible = false
 	for t in level.find_children("*", "Tempesta", true, false):
 		(t as Tempesta).automatica = false
-	var lamp := level.get_node_or_null("Statua/Sfarfallio")
+	var lamp := level.get_node_or_null("Vasca/Sfarfallio")
+	if lamp == null:
+		lamp = level.get_node_or_null("Statua/Sfarfallio")
 	if lamp and lamp.has_method("turn_on"):
 		lamp.turn_on()
 	p.stand_eye_height = 1.7

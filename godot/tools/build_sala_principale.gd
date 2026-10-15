@@ -13,22 +13,23 @@ const SALA := "res://assets/ambiente/sala/"
 const DETTAGLI := "res://assets/ambiente/dettagli/"
 const MAT_DIR := "res://assets/materials/sala/"
 
-## Quota del piano del piedistallo e centro (dalla guida dell'ambiente).
-const PEDESTAL := Vector3(0.0, 1.15, 10.0)
 const SPAWN := Vector3(0.0, 0.0, 19.2)
 ## Pozza torbida sul fondo della piscina a onde: fondo a conca intorno allo scarico.
 const DRAIN := Vector3(0.0, -2.24, 2.0)
 const PUDDLE_LEVEL := -2.07
-## La medusa eroe è alta 4,5 m (dal piano d'appoggio dei tentacoli alla cima della testa): la
-## scala la calcola MedusaStatue dall'AABB del modello (circa 1,0 per il GLB a grandezza vera).
-const MEDUSA_HEIGHT := 4.5
-## Altezze sulla statua (m sopra il piano): centro della campana e viso.
-const MEDUSA_BELL_Y := 2.2
-const MEDUSA_FACE_Y := 3.9
-## Raggio del piano del monumento (3,7 m di diametro): la collisione della statua lo copre tutto.
-const MONUMENT_RADIUS := 1.85
-## Il pulsante della sigla sul davanti del tamburo (sala_dati.json), rivolto a +Z.
-const JINGLE_BUTTON := Vector3(0.0, 0.8, 11.88)
+## La vasca sollevata al centro della sala (sala_vasca_centrale.glb, INTEGRAZIONE.md dell'ambiente):
+## centro, interno del muro (x, z), pelo dell'acqua e cima del bordo.
+const VASCA := Vector3(0.0, 0.0, 10.0)
+const VASCA_INTERNO := Vector2(5.4, 3.9)
+const VASCA_PELO := 0.88
+const VASCA_BORDO := 1.0
+## La medusa affacciata (LEGGIMI della medusa): origine al livello del pavimento, guarda verso +Z.
+const MEDUSA_DIR := "res://assets/models/medusa_affacciata/"
+const MEDUSA_AFFACCIATA := Vector3(0.0, 0.0, 10.15)
+## Dove sta il suo occhio (per la luce del lampione).
+const OCCHIO_MEDUSA := Vector3(0.0, 1.63, 11.95)
+## Il pulsante della sigla sul muro davanti della vasca (sala_dati.json), rivolto a +Z.
+const JINGLE_BUTTON := Vector3(0.0, 0.62, 12.35)
 ## Senza gli interni lo zaino sta su una rastrelliera davanti all'ingresso, girata verso lo spawn.
 const PACK_STATION := Vector3(-1.8, 0.0, 17.0)
 
@@ -51,7 +52,7 @@ func _initialize() -> void:
 	level.name = "SalaPrincipale"
 	level.set_script(load("res://scripts/game/sala_principale.gd"))
 	_hall()
-	_statue()
+	_vasca_centrale()
 	var has_interiors := _interiors()
 	# SALA_SENZA_ZAINO=1: senza la rastrelliera (variante per gli screenshot della sala).
 	if not has_interiors and OS.get_environment("SALA_SENZA_ZAINO") != "1":
@@ -142,7 +143,7 @@ func _hall() -> void:
 	own(sala)
 	for part in [["Architettura", "sala_architettura"], ["Cupola", "sala_cupola"], ["Piscina", "sala_piscina"],
 			["AreaBimbi", "sala_area_bimbi"], ["TorreScivoli", "sala_torre_scivoli"], ["Oggetti", "sala_oggetti"],
-			["Interattivi", "sala_interattivi"], ["Monumento", "sala_monumento"], ["Luci", "sala_luci"]]:
+			["Interattivi", "sala_interattivi"], ["VascaCentrale", "sala_vasca_centrale"], ["Luci", "sala_luci"]]:
 		var inst: Node3D = (load(SALA + part[1] + ".glb") as PackedScene).instantiate()
 		inst.name = part[0]
 		own(inst, sala)
@@ -176,6 +177,8 @@ func _hall() -> void:
 	# La statua è la cosa più luminosa della sala: i fari della ringhiera un po' più forti.
 	luci.set(&"energia_fari", 7.0)
 	luci.set(&"vetro_cupola", M.dome_glass)
+	# Il lampione illumina il viso della medusa affacciata: punta sul suo occhio vero.
+	luci.set(&"ritratto_mira", OCCHIO_MEDUSA)
 	own(luci)
 
 
@@ -198,63 +201,65 @@ func _details(sala: Node3D) -> void:
 
 # --- La medusa sul piedistallo, la lampada e il pulsante della sigla ---------------------------
 
-func _statue() -> void:
-	var statue := group(level, "Statua")
-	statue.position = Vector3(PEDESTAL.x, 0.0, PEDESTAL.z)
-	# La medusa vera (GLB in posa statua, in piedi sui tentacoli): l'origine del modello è sul
-	# piano d'appoggio. Guarda verso +Z (l'ingresso).
-	var medusa: Node3D = load("res://scripts/environment/medusa_statue.gd").new()
+func _vasca_centrale() -> void:
+	var g := group(level, "Vasca")
+	# L'acqua quasi al bordo (addon acqua): limpida, così sotto si vede brillare la campana. Non si
+	# aspira e non si riempie: la medusa resta immersa fino al seno.
+	var tank: WaterTank = S.tank.instantiate()
+	tank.name = "VascaCentrale"
+	tank.build_walls = false
+	tank.inner_size = Vector3(VASCA_INTERNO.x, VASCA_BORDO, VASCA_INTERNO.y)
+	tank.capacity_liters = 600.0
+	tank.fill = VASCA_PELO / VASCA_BORDO
+	tank.max_fill = tank.fill
+	tank.suckable = false
+	tank.water_material = M.clean
+	tank.position = VASCA
+	own(tank, g)
+	_water_link(g, "AcquaVascaCentrale", tank, "res://addons/acqua/presets/stile_1_limpida.tres", false)
+	# La medusa vera affacciata al bordo (animazione "affacciata" in ciclo, aspetto bagnato).
+	var medusa: Node3D = load("res://scripts/environment/medusa_affacciata.gd").new()
 	medusa.name = "Medusa"
-	medusa.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
-	medusa.set(&"tentacle_material", load("res://assets/models/medusa/medusa_tentacoli.tres"))
-	medusa.set(&"model", load("res://assets/models/medusa/medusa.glb"))
-	var skin: Array[Material] = []
-	for f in ["medusa_pelle", "medusa_orbita", "medusa_ciocche"]:
-		skin.append(load("res://assets/models/medusa/%s.tres" % f) as Material)
-	medusa.set(&"surface_materials", skin)
-	# Statua imponente (indicazione dell'utente): 4,5 m dalle punte dei tentacoli alla testa.
-	# La scala viene dall'AABB del modello (il GLB eroe è già a grandezza vera).
-	medusa.set(&"target_height", MEDUSA_HEIGHT)
-	medusa.position = Vector3(0, PEDESTAL.y, 0)
-	own(medusa, statue)
+	medusa.set(&"bell_material", load(MEDUSA_DIR + "medusa_campana.tres"))
+	medusa.set(&"model", load(MEDUSA_DIR + "medusa.glb"))
+	var bagnata := {}
+	for coppia in [["M_pelle", "medusa_pelle_bagnata"], ["M_capelli", "medusa_capelli_bagnata"],
+			["M_orbita", "medusa_orbita_bagnata"], ["M_mani", "medusa_mani_bagnata"],
+			["M_ciocche", "medusa_ciocche_bagnata"], ["M_tentacoli", "medusa_tentacoli_bagnata"],
+			["M_occhio_bulbo", "medusa_occhio"]]:
+		bagnata[coppia[0]] = load(MEDUSA_DIR + coppia[1] + ".tres")
+	medusa.set(&"material_map", bagnata)
+	# Gocce da dita, mento, punte dei capelli e tentacoli sul bordo (coordinate della medusa).
+	var o := MEDUSA_AFFACCIATA
+	medusa.set(&"punti_gocce", PackedVector3Array([
+		Vector3(-0.6, 0.91, 12.31) - o, Vector3(0.6, 0.91, 12.31) - o, Vector3(0.0, 1.42, 12.02) - o,
+		Vector3(-0.35, 1.30, 11.98) - o, Vector3(0.38, 1.28, 11.98) - o,
+		Vector3(-1.48, 1.0, 12.3) - o, Vector3(1.48, 1.0, 12.3) - o]))
+	medusa.position = MEDUSA_AFFACCIATA
+	own(medusa, g)
 	level.set(&"statue", medusa)
-	# Luce rosa della campana (addon acqua): si vede anche riflessa nell'acqua.
-	var glow: Node3D = (load("res://addons/acqua/scenes/luce_medusa.tscn") as PackedScene).instantiate()
-	glow.name = "LuceCampana"
-	glow.position = Vector3(0, MEDUSA_BELL_Y - 0.15, 0)
-	glow.set(&"light_energy", 0.35)
-	glow.set(&"omni_range", 3.5)
-	own(glow, medusa)
-	# Il controluce dall'alto, da dietro, lo crea LookSala ("ControluceStatua"); la luce
-	# principale sono i due fari sulla ringhiera della galleria, in sala_luci.glb.
-	# Uno spot stretto sul viso: il viso e l'occhio devono "agganciare" lo sguardo anche da
-	# lontano (e l'occhio di vetro prende il riflesso della luce).
-	var face_y := PEDESTAL.y + MEDUSA_FACE_Y
-	var face := SpotLight3D.new()
-	face.name = "LuceViso"
-	face.position = Vector3(0.0, 7.4, 6.6)
-	own(face, statue)
-	face.look_at_from_position(face.position, Vector3(0.0, face_y, 0.25), Vector3.UP)
-	face.light_color = Color(1.0, 0.95, 0.88)
-	face.light_energy = 3.2
-	face.spot_range = 12.0
-	face.spot_angle = 4.5
-	face.spot_angle_attenuation = 1.8
-	face.shadow_enabled = false
-	face.light_volumetric_fog_energy = 0.25
-	# Il pulsante per i bambini sul davanti del piedistallo (è già nel modello: qui c'è solo
-	# il bersaglio per il getto).
+	# Una sonda dei riflessi per lei: il bagnato di pelle e capelli, il vetro dell'occhio, l'acqua.
+	var probe := ReflectionProbe.new()
+	probe.name = "SondaVasca"
+	probe.size = Vector3(8.0, 5.0, 7.0)
+	probe.position = Vector3(0.0, 1.8, 11.0)
+	probe.update_mode = ReflectionProbe.UPDATE_ONCE
+	probe.interior = false
+	probe.box_projection = true
+	own(probe, g)
+	# Il pulsante per i bambini sul muro davanti della vasca (è nel modello: qui c'è solo il
+	# bersaglio per il getto).
 	var jingle: WaterButton = S.button.instantiate()
 	jingle.name = "PulsanteSigla"
 	jingle.mode = WaterButton.Mode.MOMENTARY
 	jingle.radius = 0.14
 	jingle.show_model = false
-	jingle.position = JINGLE_BUTTON - Vector3(PEDESTAL.x, 0.0, PEDESTAL.z) + Vector3(0, 0, 0.03)
-	own(jingle, statue)
+	jingle.position = JINGLE_BUTTON + Vector3(0, 0, 0.03)
+	own(jingle, g)
 	level.set(&"jingle_button", jingle)
 	level.set(&"jingle_button_mesh", NodePath("Sala/Interattivi/sala_pulsante_piedistallo"))
-	# La lampada sul palo è nel modello e la sua luce in sala_luci.glb ("luce_lampione"):
-	# qui si orienta verso il viso e parte spenta, poi si accende quando ti avvicini.
+	# La lampada sul palo (luce_lampione in sala_luci.glb): la orienta LuciSala sul viso della
+	# medusa; parte spenta e si accende quando ti avvicini.
 	var flicker: Node = load("res://scripts/environment/flicker_light.gd").new()
 	flicker.name = "Sfarfallio"
 	flicker.set(&"base_energy", 3.5)
@@ -262,35 +267,9 @@ func _statue() -> void:
 	flicker.set(&"flicker_rate", 0.05)
 	flicker.set(&"min_level", 0.35)
 	flicker.set(&"start_off", true)
-	own(flicker, statue)
+	own(flicker, g)
 	level.set(&"statue_lamp", flicker)
 	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
-	# Una sonda dei riflessi tutta per la statua: il riflesso bagnato dell'occhio di vetro e il
-	# lucido delle ciocche (si cattura una volta sola, all'avvio).
-	var probe := ReflectionProbe.new()
-	probe.name = "SondaMonumento"
-	probe.size = Vector3(8.0, 9.0, 8.0)
-	probe.position = Vector3(0.0, PEDESTAL.y + 3.0, 0.0)
-	probe.update_mode = ReflectionProbe.UPDATE_ONCE
-	probe.interior = false
-	probe.box_projection = true
-	own(probe, statue)
-	# Puntata su campana, tentacoli e davanti del piedistallo.
-	level.set(&"statue_lamp_aim", Vector3(0.0, 2.0, PEDESTAL.z + 0.6))
-	# La statua è solida: un cilindro grande quanto il piano del monumento, così non si sale sul
-	# piano e non si entra nei tentacoli (i gradoni restano calpestabili; il pulsante della sigla,
-	# più in basso, si colpisce ancora col getto).
-	var body := StaticBody3D.new()
-	body.name = "CollisioneStatua"
-	own(body, statue)
-	var cyl := CylinderShape3D.new()
-	cyl.radius = MONUMENT_RADIUS
-	cyl.height = MEDUSA_HEIGHT + 0.1
-	var col := CollisionShape3D.new()
-	col.name = "Cilindro"
-	col.shape = cyl
-	col.position = Vector3(0.0, PEDESTAL.y - 0.05 + cyl.height * 0.5, 0.0)
-	own(col, body)
 
 
 # --- Corridoio, spogliatoi e stanzino (scena degli interni, se c'è) ----------------------------

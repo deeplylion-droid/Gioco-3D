@@ -61,7 +61,7 @@ func _run() -> void:
 			"senza_dettagli":
 				togli.append("Sala/Dettagli")
 			"senza_medusa":
-				togli.append("Statua/Medusa")
+				togli.append("Vasca/Medusa")
 		if o.begins_with("togli="):
 			togli.append_array(o.get_slice("=", 1).split("+", false))
 	# imposta=Nodo:proprieta:valore+...: cambia proprietà prima di entrare in scena.

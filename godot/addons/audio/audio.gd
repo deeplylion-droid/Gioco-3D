@@ -831,7 +831,7 @@ func _esamina(n: Node) -> void:
 		"BucketWheel": _attivi.append(Ruota.new(self, n))
 		"WaterTank": _attivi.append(Vasca.new(self, n))
 		"FlickerLight": _attivi.append(Lampada.new(self, n))
-		"MedusaStatue": _attivi.append(Statua.new(self, n))
+		"MedusaStatue", "MedusaAffacciata": _attivi.append(Statua.new(self, n))
 		"KidSighting": _collega_bambini(n)
 		"PackPickup": _collega_zaino_raccolto(n)
 		"PolaroidPhoto", "Collectible": _collega_collezionabile(n)

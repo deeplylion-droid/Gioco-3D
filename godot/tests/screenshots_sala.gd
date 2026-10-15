@@ -88,16 +88,22 @@ func _run() -> void:
 		hud.visible = false
 	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	storm.automatica = false
-	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
+	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
 	lamp.turn_on()
 	# Davanti alla statua la torcia è spenta: la illuminano solo le sue luci da monumento.
 	var torch := p.find_child("Torcia", true, false) as Torcia
 	var statue_only := not only.is_empty()
 	for o in only:
-		if not String(o).begins_with("statua") and o != "ingresso_statua":
+		if not String(o).begins_with("statua") and not String(o).begins_with("vasca") and not o in ["ingresso_statua", "ingresso_vasca"]:
 			statue_only = false
 	if torch and statue_only:
 		torch.imposta_accesa(false)
+	if _want("ingresso_vasca"):
+		# Entrando nella sala: la medusa affacciata alla vasca, il viso nel cono del lampione.
+		await _shot("ingresso_vasca", Vector3(0.0, 0.0, 19.2), Vector3(0.0, 1.9, 11.0))
+	if _want("vasca_primo_piano"):
+		# Dal bordo, oltre il cordone: occhio negli occhi.
+		await _shot("vasca_primo_piano", Vector3(0.35, 0.0, 13.25), Vector3(0.0, 1.5, 11.9))
 	if _want("ingresso_statua"):
 		# Dall'uscita degli spogliatoi: la medusa intera sul piedistallo, la cupola dietro.
 		await _shot("ingresso_statua", Vector3(0.0, 0.0, 19.2), Vector3(0.0, 3.4, 10.0))

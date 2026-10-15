@@ -142,9 +142,10 @@ func _run() -> void:
 	var c: Dictionary = audio.get(&"collegati")
 	print("  collegati: ", c)
 	for tipo in ["Tempesta", "Player", "WaterPack", "Torcia", "UnderwaterEffect", "Turbine", "HingedHatch",
-			"BucketWheel", "MedusaStatue", "KidSighting", "FlickerLight", "StuckInflatable", "WaterDripEmitter",
+			"BucketWheel", "KidSighting", "FlickerLight", "StuckInflatable", "WaterDripEmitter",
 			"sigla", "GameState"]:
 		check(int(c.get(tipo, 0)) >= 1, "collegato: %s" % tipo)
+	check(int(c.get("MedusaStatue", 0)) + int(c.get("MedusaAffacciata", 0)) >= 1, "collegata la medusa")
 	check(int(c.get("PolaroidPhoto", 0)) >= 10, "collegate le 10 Polaroid")
 	check(int(c.get("WaterButton", 0)) >= 2, "collegati i pulsanti")
 	check(int(c.get("Gocce", 0)) >= 3, "collegate le gocce")
@@ -155,7 +156,7 @@ func _run() -> void:
 	check(storm.tuono.get_connections().size() >= 1, "il tuono della tempesta è collegato")
 	check(p.footstep.get_connections().size() >= 1, "i passi del giocatore sono collegati")
 	check(p.water_pack.spray_started.get_connections().size() >= 1, "lo zaino è collegato")
-	var jingle: WaterButton = level.get_node("Statua/PulsanteSigla")
+	var jingle: WaterButton = level.get_node("Vasca/PulsanteSigla")
 	check(jingle.pressed.get_connections().size() >= 2, "il pulsante della sigla suona la sigla")
 
 	print("Fondi")
@@ -187,7 +188,7 @@ func _run() -> void:
 	var atterraggi := _conta(&"atterraggio_bagnato")
 	p.landed.emit(&"generico", false, 7.0)
 	check(_conta(&"atterraggio_bagnato") > atterraggi, "atterraggio sul bagnato")
-	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
+	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
 	if not lamp.is_on:
 		lamp.turn_on()
 	await _frames(3)
