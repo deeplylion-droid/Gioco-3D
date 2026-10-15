@@ -29,12 +29,24 @@ func _run() -> void:
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("ultra" if preset == "ultra" else preset)
 	if preset == "ultra":
+		# Come screenshots_sala.gd: Ultra con SDFGI, qualche effetto un livello sotto per la
+		# memoria del renderer software.
 		Grafica.imposta("gi", 2)
+		Grafica.imposta("ombre", 3)
+		Grafica.imposta("nebbia", 1)
+		Grafica.imposta("ssil", 2)
+		Grafica.imposta("ssao", 3)
+	var wm := get_node_or_null(^"/root/WaterManager")
+	if wm:
+		wm.set(&"quality", 1)
 	get_tree().change_scene_to_file(LEVEL)
 	await _frames(10)
 	get_tree().paused = false
 	var level := get_tree().current_scene
 	var p: Player = GameState.player
+	var we := level.get_node_or_null(^"WorldEnvironment") as WorldEnvironment
+	if we and we.environment:
+		we.environment.sdfgi_cascades = 3
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false

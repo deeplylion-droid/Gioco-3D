@@ -80,7 +80,21 @@ func _save(m: Material, file: String) -> Material:
 
 
 func _materials() -> void:
-	M.metal = _std("metallo_verniciato", Color(0.16, 0.19, 0.2), 0.55, 0.6)
+	# Metallo verniciato e arrugginito (texture CC0 di Poly Haven, in triplanare).
+	var rust := StandardMaterial3D.new()
+	var tex := "res://assets/textures/metallo_ruggine/green_metal_rust_"
+	rust.albedo_texture = load(tex + "diff.jpg")
+	rust.albedo_color = Color(0.85, 0.9, 0.9)
+	rust.normal_enabled = true
+	rust.normal_texture = load(tex + "nor_gl.jpg")
+	rust.roughness_texture = load(tex + "rough.jpg")
+	rust.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
+	rust.metallic = 0.45
+	rust.uv1_triplanar = true
+	rust.uv1_world_triplanar = true
+	rust.uv1_scale = Vector3.ONE * 1.6
+	rust.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	M.metal = _save(rust, "metallo_verniciato")
 	M.red = _std("gonfiabile_rosso", Color(0.78, 0.07, 0.06), 0.22)
 	(M.red as StandardMaterial3D).clearcoat_enabled = true
 	ResourceSaver.save(M.red, M.red.resource_path)
@@ -325,17 +339,18 @@ func _pack_station() -> void:
 	pick.set(&"remove_node", holder)
 	own(pick, holder)
 	shape_box(pick, Vector3(0.8, 0.8, 0.6), Vector3(0, 0.35, 0))
+	# Una luce calda e debole davanti alla rastrelliera, giusto per far notare lo zaino.
 	var spot := SpotLight3D.new()
 	spot.name = "LuceZaino"
-	spot.position = Vector3(0.0, 2.7, -1.1)
+	spot.position = Vector3(-0.1, 1.55, 1.05)
 	own(spot, st)
-	spot.look_at_from_position(spot.position, Vector3(-0.25, 0.9, 0.0), Vector3.UP)
-	spot.light_color = Color(1.0, 0.9, 0.75)
-	spot.light_energy = 2.5
-	spot.spot_range = 4.5
-	spot.spot_angle = 26.0
-	spot.shadow_enabled = true
-	spot.set_meta(&"grafica_priorita_ombra", 1)
+	spot.look_at_from_position(spot.position, Vector3(-0.25, 1.0, 0.0), Vector3.UP)
+	spot.light_color = Color(1.0, 0.8, 0.58)
+	spot.light_energy = 0.45
+	spot.spot_range = 1.8
+	spot.spot_angle = 32.0
+	spot.light_volumetric_fog_energy = 0.0
+	spot.shadow_enabled = false
 
 
 # --- Piscina a onde vuota: la pozza, la turbina dello scarico e il portello ----------------------

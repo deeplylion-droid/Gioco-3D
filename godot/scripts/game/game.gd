@@ -32,6 +32,12 @@ func _ready() -> void:
 		Grafica.imposta("gi", 2)
 	if not is_automated() and not bool(Grafica.valore("calibrato")):
 		_show_calibration.call_deferred()
+	# Aberrazione cromatica più leggera di quella dell'addon (frange colorate ai bordi).
+	var post := Grafica.get_node_or_null(^"PostProcessing")
+	if post and post.get_child_count() > 0 and post.get_child(0) is CanvasItem:
+		var m := (post.get_child(0) as CanvasItem).material as ShaderMaterial
+		if m:
+			m.set_shader_parameter(&"forza_aberrazione", 0.0014)
 	# La qualità dell'acqua segue il preset grafico.
 	Grafica.impostazione_cambiata.connect(func(_k, _v): _sync_water_quality())
 	_sync_water_quality()

@@ -45,16 +45,22 @@ func _run() -> void:
 		# (atlante 4096 invece di 8192) e nebbia volumetrica normale. A 1080p non si vede la differenza.
 		Grafica.imposta("ombre", 3)
 		Grafica.imposta("nebbia", 1)
+		Grafica.imposta("ssil", 2)
+		Grafica.imposta("ssao", 3)
 	else:
 		Grafica.applica_preset(preset)
+	# Acqua con SSR nello shader invece del riflesso planare (che rende di nuovo la scena).
 	var wm := get_node_or_null(^"/root/WaterManager")
-	if wm and only.size() > 0 and not (only.has("piscina") or only.has("torcia")):
-		wm.set(&"quality", 1)  # l'acqua non si vede: niente riflesso planare
+	if wm:
+		wm.set(&"quality", 1)
 	get_tree().change_scene_to_file(LEVEL)
 	await _frames(10)
 	get_tree().paused = false
 	level = get_tree().current_scene
 	p = GameState.player
+	var we := level.get_node_or_null(^"WorldEnvironment") as WorldEnvironment
+	if we and we.environment:
+		we.environment.sdfgi_cascades = 3
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
@@ -62,6 +68,14 @@ func _run() -> void:
 	storm.automatica = false
 	var lamp: FlickerLight = level.get_node("Statua/Sfarfallio")
 	lamp.turn_on()
+	# Davanti alla statua la torcia è spenta: la illuminano solo le sue luci da monumento.
+	var torch := p.find_child("Torcia", true, false) as Torcia
+	var statue_only := not only.is_empty()
+	for o in only:
+		if not String(o).begins_with("statua") and o != "ingresso_statua":
+			statue_only = false
+	if torch and statue_only:
+		torch.imposta_accesa(false)
 	if _want("ingresso_statua"):
 		# Dall'uscita degli spogliatoi: la medusa intera sul piedistallo, la cupola dietro.
 		await _shot("ingresso_statua", Vector3(0.0, 0.0, 11.2), Vector3(0.0, 3.2, 6.9))
