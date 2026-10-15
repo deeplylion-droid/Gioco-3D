@@ -157,7 +157,9 @@ attivo di default): da lontano ogni mesh scende a pochi mila triangoli.
   prevista: 15 gradi, oltre il bulbo scopre l'orbita.
 - `mascella` + blend shape `fauce_strappo` (mesh `Medusa`) e `fauce_aperta` (mesh `Medusa_Gola` e
   `Medusa_Denti`): la fauce. Da chiusa non si vede nulla (il viso resta liscio); l'animazione `fauce_apre`
-  muove tutto insieme (osso e blend shape da 0 a 1).
+  muove tutto insieme (osso e blend shape da 0 a 1). Denti da squalo in tre file per arcata: la prima fila
+  scende dall'arcata di sopra e sale da quella di sotto, una di fronte all'altra e sfalsate di mezzo dente
+  (si incastrano), tutte inclinate verso l'interno della bocca; le file dietro sono piu' piccole e coricate.
 - `campana_contrai` (mesh `Medusa`, `Medusa_Interno`, `Medusa_Bordo`): la campana si stringe, per la pulsazione.
 - `radice`: tutto il corpo (in `sveglia` sale di 0,83 m).
 - Catene dei tentacoli, figlie di `campana`, per la fisica (per esempio SpringBoneSimulator3D, una catena

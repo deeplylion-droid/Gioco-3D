@@ -6,9 +6,10 @@ viste hanno la stessa distanza e la stessa altezza di camera. Fogli JPG larghi c
   docs/proposte/medusa/scheda/1_giro.jpg       8 viste della statua (posa simbolo, mani giunte sul petto)
   docs/proposte/medusa/scheda/2_dettagli.jpg   viso e occhio, capelli, mani, campana, tentacoli, vinile
   docs/proposte/medusa/scheda/3_malvagia.jpg   posa d'attacco con la fauce aperta e l'occhio venato
+  docs/proposte/medusa/scheda/denti_*.jpg      primi piani della fauce aperta (di fronte e di 3/4)
   docs/proposte/medusa/mani/mani_<posa>.jpg    le mani in ogni posa, 4 angolazioni a circa 60 cm
 Uso: flock /home/user/tools/render.lock nice -n 10 /home/user/tools/blender-venv/bin/python
-     tools/blender/medusa_scheda.py [giro] [dettagli] [malvagia] [mani] [--prova]
+     tools/blender/medusa_scheda.py [giro] [dettagli] [malvagia] [denti] [mani] [--prova]
 """
 import math
 import os
@@ -285,6 +286,33 @@ def malvagia():
            larghezza=3000, sfondo=FONDO)
 
 
+# ---------------------------------------------------------------- 3b. denti (fauce aperta da vicino)
+
+def centro_oggetto(nome):
+    """Centro del riquadro della mesh deformata (posa e shape key attuali), nel mondo."""
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    o = bpy.data.objects[nome]
+    me = o.evaluated_get(dg).to_mesh()
+    co = coords(me)
+    M = np.array(o.matrix_world)
+    co = co @ M[:3, :3].T + M[:3, 3]
+    o.evaluated_get(dg).to_mesh_clear()
+    return Vector(((co.min(0) + co.max(0)) / 2).tolist()), co.max(0) - co.min(0)
+
+
+def denti():
+    """Fauce aperta del tutto da vicino, di fronte e di 3/4: le due arcate di denti che si incastrano."""
+    studio('fauce_apre', 24, venatura=1.0)
+    c, dim = centro_oggetto('Medusa_Denti')
+    res = (1200, 900) if not PROVA else (600, 450)
+    for nome, az, el in (('fronte', 0, 2), ('34', 35, 4)):
+        im = scatto(f'denti_{nome}', orbita(c, 1.45, az, el), c, 85, res, 0.6)
+        p = os.path.join(OUT_SCHEDA if not PROVA else OUT_PNG, f'denti_{nome}.jpg')
+        im.save(p, quality=92)
+        log('immagine', os.path.relpath(p, REPO))
+
+
 # ---------------------------------------------------------------- 4. mani in ogni posa
 
 POSE_MANI = [('statua', 1, 'statua'), ('insegue', 13, 'insegue'), ('fluttua', 1, 'fluttua'),
@@ -340,7 +368,7 @@ if __name__ == '__main__':
     argv = [a for a in sys.argv[1:] if not a.startswith('--')]
     if 'prova_mani' in argv:
         prova_mani()
-    for nome, f in (('giro', giro), ('dettagli', dettagli), ('malvagia', malvagia), ('mani', mani)):
+    for nome, f in (('giro', giro), ('dettagli', dettagli), ('malvagia', malvagia), ('denti', denti), ('mani', mani)):
         if nome in argv:
             t0 = time.time()
             f()

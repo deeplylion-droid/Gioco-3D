@@ -8,6 +8,9 @@ Come funziona (pensato per Godot):
     e verso il collo: aprire = ruotare la mascella e abbassarla (valori in APERTURA);
   - la gola (carne) e i denti sono mesh a parte con geometria "collassata" a riposo (area zero,
     invisibile) e una shape key "fauce_aperta" che li apre nella forma finale;
+  - denti da squalo che si incastrano: una fila scende dall'arcata di sopra e una sale da quella di sotto,
+    una di fronte all'altra e sfalsate di mezzo dente, tutte e due inclinate verso l'interno della bocca e con
+    la punta ricurva all'indietro; le file interne sono piu' piccole, piu' indietro e piu' coricate;
   - la shape key "fauce_strappo" del corpo rende frastagliati i bordi dello strappo.
 In Godot l'animazione "fauce_apre" muove insieme l'osso e le tre blend shape (0 = chiusa, 1 = aperta).
 """
@@ -26,6 +29,9 @@ ANGOLO_X = 0.095
 CERNIERA = Vector((0.0, -0.10, 0.49))       # testa dell'osso mascella
 APERTURA = {'rotazione_x_gradi': 15.0, 'spostamento': (0.0, -0.01, -0.095)}
 N_FILE = 3                                    # file di denti per arcata
+SCALA_FILE = (1.0, 0.72, 0.52)                # grandezza delle file, dalla prima (sul labbro) verso la gola
+PASSO_FILE = (2, 3, 4)                        # ogni quante colonne del bordo c'e' un dente
+DENTRO_FILE = (0.3, 0.55, 0.85)               # inclinazione verso l'interno della bocca (le file dietro sono coricate)
 
 
 def piano_taglio():
@@ -246,12 +252,14 @@ def _orienta_normali(ob, sk, verso):
         bm.to_mesh(me); bm.free()
 
 
-def dente(base, asse, larghezza, lunghezza, lato, rng):
-    """Dente da squalo: lama triangolare piatta con il bordo seghettato. Ritorna vertici e facce."""
+def dente(base, asse, larghezza, lunghezza, lato, piega, rng):
+    """Dente da squalo: lama triangolare piatta con il bordo seghettato, la punta ricurva verso 'piega'.
+    Ritorna vertici e facce."""
     asse = asse.normalized()
     lato = (lato - asse * lato.dot(asse)).normalized()
     spess = asse.cross(lato).normalized()
-    curva = rng.uniform(0.05, 0.18)
+    piega = (piega - asse * piega.dot(asse)).normalized()
+    curva = rng.uniform(0.08, 0.18)
     pts = []
     n_seg = 3
     for s in range(n_seg + 1):
@@ -259,7 +267,7 @@ def dente(base, asse, larghezza, lunghezza, lato, rng):
         w = larghezza * 0.5 * (1 - t) ** 0.9
         if 0 < s < n_seg and s % 2 == 1:
             w *= 1.15                                 # seghettatura
-        c = base + asse * lunghezza * t + spess * curva * lunghezza * t * t
+        c = base + asse * lunghezza * t + piega * curva * lunghezza * t * t
         pts.append((c + lato * w, c - lato * w, c + spess * larghezza * 0.18 * (1 - t), c - spess * larghezza * 0.18 * (1 - t)))
     verts, facce = [], []
     for s, (a, b, f, r) in enumerate(pts):
@@ -275,26 +283,28 @@ def dente(base, asse, larghezza, lunghezza, lato, rng):
 def crea_denti(arm, verts_aperti, pesi, K, J, M):
     rng = np.random.default_rng(3)
     tutti_v, tutte_f, pesi_v, basi = [], [], [], []
+    dentro = Vector((0, 1, 0))                      # verso la gola
     for meta in ('tetto', 'pavimento'):
         for fila in range(N_FILE):
             j = 1 + fila if meta == 'tetto' else 2 * J - 1 - fila
-            jn = j + 1 if meta == 'tetto' else j - 1
-            scala = (1.0, 0.8, 0.62)[fila]
-            passo = (2, 3, 4)[fila]
-            for k in range(1 + fila % 2, K - 1, passo):
+            scala = SCALA_FILE[fila]
+            passo = PASSO_FILE[fila]
+            # le due arcate sfalsate di una colonna: i denti di sotto cadono tra quelli di sopra (si incastrano)
+            inizio = 1 + fila % 2 + (1 if meta == 'pavimento' else 0)
+            for k in range(inizio, K - 1, passo):
                 frac = k / max(K - 1, 1)
                 centro = 1 - (2 * frac - 1) ** 2
                 if centro < 0.12:
                     continue
                 p = verts_aperti[k][j]
-                pn = verts_aperti[k][jn]
                 pk = verts_aperti[min(k + 1, K - 1)][j] - verts_aperti[max(k - 1, 0)][j]
-                # asse: verso l'altra arcata (giu' per il tetto, su per il pavimento), un po' in avanti
+                # asse: verso l'altra arcata (giu' per il tetto, su per il pavimento) e verso l'interno della bocca;
+                # niente pendenza di lato: le due file sono una lo specchio dell'altra
                 verticale = Vector((0, 0, -1)) if meta == 'tetto' else Vector((0, 0, 1))
-                asse = (verticale * 1.0 + Vector((0, -0.45, 0)) + (p - pn).normalized() * 0.25).normalized()
-                lung = (0.012 + 0.014 * centro) * scala * rng.uniform(0.85, 1.15)
+                asse = (verticale + dentro * DENTRO_FILE[fila]).normalized()
+                lung = (0.012 + 0.014 * centro) * scala * rng.uniform(0.9, 1.1)
                 larg = lung * rng.uniform(0.62, 0.75)
-                v, f = dente(p, asse, larg, lung, pk, rng)
+                v, f = dente(p, asse, larg, lung, pk, dentro, rng)
                 off = len(tutti_v)
                 tutti_v += v
                 tutte_f += [tuple(x + off for x in ff) for ff in f]
