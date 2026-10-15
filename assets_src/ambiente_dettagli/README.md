@@ -192,6 +192,17 @@ Ogni voce ha anche `gruppo` e `zona`: per togliere un gruppo intero basta filtra
 | `det_corda_galleggianti_4m` | soffitto | 4.01 x 0.07 x 0.55 | 2228 | corda corsia con galleggianti, 4 m (tra due ringhiere o appesa) |
 | `det_corda_rotolo` | pavimento | 0.35 x 0.35 x 0.13 | 3808 | rotolo di corda per terra |
 
+## Correzioni (15 ottobre, passata HQ della sala)
+
+- **Metallo**: `M_det_metallo_verniciato` usa il grigio-verde navale della sala (`sala_a/metallo_col.jpg`, come
+  colonne e galleria) e `M_det_metallo_grigio` un grigio neutro (`sala_a/metallo_grigio_col.jpg`). Prima erano
+  la CC0 bianca con la ruggine rossa: a terra i pannelli di lamiera caduti (1,2 x 0,6 m) sembravano lenzuola
+  insanguinate. Nei `gltf/texture/` i file hanno ancora il vecchio nome (`metallo_col.jpg`,
+  `metallo_verniciato_col.jpg`), con le immagini nuove.
+- **Asciugamani piegati**: in `posizionamento.json` la Basis degli `det_asciugamano_*` è scalata (0,42 x 3 x 0,75):
+  pianta circa 0,38 x 0,71 m e più spessi, come un telo da 0,7 x 1,4 m piegato. Lo fa anche
+  `dettagli_posiziona.py` (tabella `PIEGA`). I GLB in `glb/` non sono stati rifatti (il gioco usa i gltf).
+
 ## Licenze
 
 Vedi `LICENZE.md`.
