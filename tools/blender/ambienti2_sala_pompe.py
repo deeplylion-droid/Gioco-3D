@@ -72,6 +72,7 @@ def S(gruppo, ob):
 usa_collezione('struttura')
 VASCA = (-3.2, 1.6, -4.6, -1.6)   # x0, x1, y0, y1 della vasca di raccolta
 PROF = 1.7
+ACQUA_Z = -0.15   # pelo dell'acqua nera: la vasca è piena, 15 cm sotto il pavimento
 # pavimento a pezzi intorno al buco della vasca
 vx0, vx1, vy0, vy1 = VASCA
 for nome, (a, b, c, d) in {'p1': (X0, vx0, Y0, Y1), 'p2': (vx1, X1, Y0, Y1), 'p3': (vx0, vx1, vy1, Y1), 'p4': (vx0, vx1, Y0, vy0)}.items():
@@ -89,7 +90,8 @@ for nome, c, d in (('cn', ((vx0 + vx1) / 2, vy1 + 0.12, 0.08), (vx1 - vx0 + 0.48
                    ('co', (vx0 - 0.12, (vy0 + vy1) / 2, 0.08), (0.24, vy1 - vy0, 0.16)),
                    ('ce', (vx1 + 0.12, (vy0 + vy1) / 2, 0.08), (0.24, vy1 - vy0, 0.16))):
     S('vasca', box(f'cordolo_{nome}', c, d, M['pericolo'], uv=0.8))
-acqua = box('ACQUA_vasca_raccolta', ((vx0 + vx1) / 2, (vy0 + vy1) / 2, -0.45), (vx1 - vx0, vy1 - vy0, 0.02), M['acqua'], uv=None)
+acqua = box('ACQUA_vasca_raccolta', ((vx0 + vx1) / 2, (vy0 + vy1) / 2, ACQUA_Z - 0.01), (vx1 - vx0, vy1 - vy0, 0.02), M['acqua'], uv=None)
+empty('PUNTO_vasca_raccolta_fondo', ((vx0 + vx1) / 2, (vy0 + vy1) / 2, -PROF))
 # ringhiera su due lati e scaletta
 for i, (p, q) in enumerate((((vx0 - 0.15, vy1 + 0.15), (vx1 + 0.15, vy1 + 0.15)), ((vx1 + 0.15, vy1 + 0.15), (vx1 + 0.15, vy0 - 0.15)))):
     p, q = Vector((*p, 0)), Vector((*q, 0))
@@ -349,8 +351,7 @@ for k, (c, d) in enumerate((((XE - 0.02, PORTA_Y, PORTA_H + 0.1), (0.14, PORTA_W
                             ((XE - 0.02, PORTA_Y - PORTA_W / 2 - 0.08, PORTA_H / 2), (0.14, 0.16, PORTA_H)),
                             ((XE - 0.02, PORTA_Y + PORTA_W / 2 + 0.08, PORTA_H / 2), (0.14, 0.16, PORTA_H)))):
     S('parete_est', box(f'telaio_porta_{k}', c, d, M['ferro'], uv=1.0))
-# di la' dalla porta: buio (parete di chiusura a 2 m)
-S('struttura', box('oltre_porta', (XE + 2.2, PORTA_Y, PORTA_H / 2), (0.2, 2.0, PORTA_H + 0.4), M['cemento']))
+# di la' dalla porta c'è il raccordo verso gli interni (tools/blender/ambienti2_raccordo.py)
 empty('PUNTO_porta_ponte_inferiore', (XE - 1.0, PORTA_Y, 0))
 # neon azzurro sopra la porta e lampada rossa
 S('luci', box('neon_porta', (XE - 0.08, PORTA_Y, PORTA_H + 0.45), (0.05, 1.3, 0.05), M['neon'], uv=None))

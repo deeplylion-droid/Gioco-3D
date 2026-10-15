@@ -1,6 +1,6 @@
 # Ambienti tecnici: camera delle onde e sala pompe (tappe 5-6)
 
-`tecnici.tscn`: dal portello sul fondo della piscina a onde si scende con la scala del pozzo nella **camera delle onde** (24 m di camera + pozzo, pale, bocchette, due paratie), poi un **tunnel** di 12 m porta alla **sala pompe** (18 × 12 m, h 5,5). Script: `scripts/tecnici/tecnici.gd` (materiali, luci segnaposto, decal). Modelli: `assets/ambienti_tecnici/camera_onde.gltf` e `sala_pompe.gltf`, fatti da `tools/blender/ambienti2_camera_onde.py` e `ambienti2_sala_pompe.py` con `TECNICI_GODOT=1` (modelli Meshy in `assets_src/ambienti_tecnici/meshy_hq/`). La scena si rigenera con `python3 tools/godot_tecnici_scena.py`: i marker si leggono dai glTF, quindi restano giusti se i modelli cambiano.
+`tecnici.tscn`: dal portello sul fondo della piscina a onde si scende con la scala del pozzo nella **camera delle onde** (24 m di camera + pozzo, pale, bocchette, due paratie), poi un **tunnel** di 12 m porta alla **sala pompe** (18 × 12 m, h 5,5). Dalla porta del ponte inferiore un **raccordo di servizio** (corridoio e due rampe di scale, sale di 7,25 m) arriva ai piedi della scala che scende dal corridoio degli interni: ci si passa al ritorno al buio (tappa 7). Script: `scripts/tecnici/tecnici.gd` (materiali, luci segnaposto, decal). Modelli: `assets/ambienti_tecnici/camera_onde.gltf`, `sala_pompe.gltf` e `raccordo.gltf`, fatti da `tools/blender/ambienti2_camera_onde.py`, `ambienti2_sala_pompe.py` e `ambienti2_raccordo.py` con `TECNICI_GODOT=1` (modelli Meshy in `assets_src/ambienti_tecnici/meshy_hq/`). La scena si rigenera con `python3 tools/godot_tecnici_scena.py`: i marker si leggono dai glTF, quindi restano giusti se i modelli cambiano.
 
 Coordinate Godot, metri, pavimento a y = 0. La camera corre lungo +X; la sala pompe è il nodo `Ambienti/SalaPompe` in (37,3; 0; -2,2).
 
@@ -13,7 +13,7 @@ Screenshot: `tests/screenshots_tecnici.gd` (istruzioni in cima al file).
 
 ## Collisioni
 
-Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pavimenti, muri, soffitti, scala del pozzo (rampa), pale, pompe, turbine, filtri, vasca, ringhiera, scrivania, sedia, gabbia della leva, paratie, porta.
+Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pavimenti, muri, soffitti, scala del pozzo, rampe lisce a 36° sotto i gradini del raccordo, pale, pompe, turbine, filtri, vasca, ringhiera, scrivania, sedia, gabbia della leva, paratie, porta.
 
 **Attenzione**: le collisioni delle parti che si muovono sono **figlie** del loro modello (`PARATIA_n`, `PORTA_ponte_anta-convcolonly` sotto `PORTA_ponte`, `GRATA_leva_anta` sotto `GRATA_leva`, `LEVA_braccio` sotto `LEVA`, `TURBINA_n_disco` sotto `TURBINA_n`): muovendo il nodo si muove anche la collisione. Le paratie e la porta sono **StaticBody3D**: se servono come porte vere conviene farle `AnimatableBody3D`.
 
@@ -34,6 +34,8 @@ Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pa
 | `marker_monitor` | (41,57; 1,05; 2,96) | schermo del monitor a tubo sulla scrivania (`SCHERMO_CRT`) |
 | `marker_porta_ponte` | (45,3; 0; 1,4) | davanti alla porta del ponte inferiore, lato sala |
 | `marker_porta_ponte_perno` | (46,25; 0; 1,4) | cardine della porta del ponte inferiore |
+| `marker_raccordo_sala` | (47,2; 0; 1,4) | nel raccordo, appena fuori dalla porta del ponte inferiore |
+| `marker_raccordo_interni` | (44,04; 7,25; -7,8) | in cima al raccordo, ai piedi della scala degli interni. Buon posto per un checkpoint della tappa 7 |
 
 ## Cosa collegare (scripts/mechanisms/)
 
@@ -41,7 +43,7 @@ Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pa
 - **Ordine giusto** (lo schema): **blu, giallo, rosso**, cioè `TURBINA_3`, `TURBINA_1`, `TURBINA_2`. Poi la leva.
 - **Pompe**: `POMPA_n` sono i corpi fermi; per il "ruggito" basta vibrarli e far partire i vapori sugli empty `VAPORE_pompa_n`, `VAPORE_collettore`, `VAPORE_perdita_ovest`.
 - **Leva**: `LEVA` ruota sull'asse **X** (perpendicolare al muro) intorno al suo mozzo: alzata a 0, abbassata a circa -70° attorno all'asse X globale (`LEVA.global_rotate(Vector3.RIGHT, deg_to_rad(-70))`: il nodo ha già una rotazione su Y, quindi non basta `rotation.x`). Si colpisce col getto attraverso la grata: la `GRATA_leva` è di rete, quindi la sua collisione va messa su un livello che ferma il giocatore ma non il getto (come il vetro del gabbiotto negli interni). Se si vuole che la grata si apra, ruota su Y intorno a `marker_grata_leva`.
-- **Vasca di raccolta**: un `WaterTank`/`WaterVolume` sulla forma della vasca; l'acqua `ACQUA_vasca_raccolta` è una lastra che si può abbassare.
+- **Vasca di raccolta** (piena d'acqua nera, da lì si ricarica il serbatoio dello zaino): è già collegata all'addon acqua. `Acqua/VascaRaccolta` è un `WaterTank` (4,8 × 1,7 × 3 m, origine al centro del fondo, `fill` 0,91 = pelo a -0,15, 80 litri, `suckable`); `Acqua/AcquaVascaRaccolta` è il `WaterTankLink` dell'addon con lo stile `stile_3_scura`, che disegna la superficie e la fa scendere quando si aspira. La lastra `ACQUA_vasca_raccolta` del glTF è solo un segnaposto e `tecnici.gd` la nasconde. La scatola dei riflessi (`env_box_*`) la calcola `tecnici.gd` in coordinate mondo, quindi resta giusta anche con la scena girata.
 - **Monitor**: `SCHERMO_CRT` è la mesh dello schermo; per le immagini della telecamera (statua, sagoma B3, poi neve) basta un `material_override` con una ViewportTexture o una texture animata. `LUCE_crt` è la sua luce.
 - **Paratie** ("come esci"): dopo la leva scendono (vedi sopra), il giocatore resta chiuso nella sala.
 - **Porta del ponte inferiore**: `PORTA_ponte` ruota su Y intorno a `marker_porta_ponte_perno`; il maniglione (`PORTA_ponte_maniglione`, figlio) è dal lato della sala. Si apre verso la sala (rotazione positiva).
@@ -49,8 +51,23 @@ Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pa
 
 ## Dove va nel livello
 
-- **Sotto la sala principale**: la scena va messa in **`position = (0, -9.05, 1.36)`**, senza rotazione. Così `marker_portello` cade sul portello dello scarico della piscina a onde (`sala_portello_scarico`, (0; -2,25; 1,36)) e il pozzo sale fino al fondo della piscina.
-- **Aperto**: la porta del ponte inferiore (`marker_porta_ponte`, globale (45,3; -9,05; 2,76) con la posizione sopra) **non combacia ancora** con la porta della sala pompe del corridoio degli interni (perno (7,32; 0; 41,0) globale, con la scala a 36° che scende). Serve un raccordo (scala o corridoio) o uno spostamento dell'uno o dell'altro: da decidere con chi monta il livello.
+Righe da aggiungere a `scenes/sala_principale.tscn` (accanto agli interni, che restano in (-9,7; 0; 40,9)):
+
+```
+[ext_resource type="PackedScene" path="res://scenes/tecnici/tecnici.tscn" id="tecnici_1"]
+
+[node name="Tecnici" parent="." instance=ExtResource("tecnici_1")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, -9.05, 1.36)
+giocatore_proprio = false
+```
+
+cioè `position = (0, -9.05, 1.36)` e `rotation_degrees.y = -90`. Così:
+
+- `marker_portello` cade sul portello dello scarico della piscina a onde (`sala_portello_scarico`, (0; -2,25; 1,36)) e il pozzo sale fino al fondo della piscina; la camera delle onde corre verso sud (+Z globale), sotto la sala, e la sala pompe finisce sotto il retro degli interni (y da -9,05 a -3,55: non tocca niente);
+- `marker_raccordo_interni` cade in (7,8; -1,8; 45,4) globali, proprio ai piedi della scala che scende dalla porta "sala pompe" del corridoio degli interni. Il raccordo chiude anche i fianchi e il fondo di quella scala;
+- il soffitto del pianerottolo in cima al raccordo arriva a +0,8 globale, appena a sud del muro degli interni (z da 44,8 a 47): lì non deve esserci altro.
+
+**Da sistemare negli interni (non l'ho toccato, sono approvati)**: in fondo alla scala degli interni il muro sud del pianerottolo scende fino al pavimento degli interni, quindi sopra l'ultimo gradino ci sono solo 1,80 m di luce. La capsula del giocatore (1,75 m) sulla rampa a 36° urta lo spigolo e non passa, né in salita né in discesa. Proposta: un'apertura in quel muro sopra la scala, larga quanto la scala e alta 0,5 m sopra il pavimento degli interni (in `tools/blender/ambienti1_build.py`, stanza `scala_pompe`, apertura `'S': [(16.4, 18.6, 0, 0.5)]`), poi rigenerare `corridoio.gltf`. Dal mio lato c'è già il raccordo di collisione (`attacco_scala_interni`) che collega la loro rampa al pianerottolo (la loro rampa finisce 17 cm sopra il pavimento).
 
 ## Luci
 

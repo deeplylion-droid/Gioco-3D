@@ -57,6 +57,15 @@ func _run() -> void:
 	if _want("tecnici_scrivania"):
 		# La scrivania col monitor a tubo.
 		await _shot("tecnici_scrivania", Vector3(40.3, 0.0, 0.4), Vector3(41.8, 0.85, 3.3))
+	if _want("tecnici_vasca"):
+		# La vasca di raccolta piena d'acqua nera.
+		await _shot("tecnici_vasca", Vector3(39.6, 0.0, 3.1), Vector3(36.0, -0.2, 0.4))
+	if _want("tecnici_raccordo"):
+		# Il raccordo di servizio: dalla porta del ponte inferiore verso il vano scala.
+		await _shot("tecnici_raccordo", Vector3(47.0, 0.0, 1.4), Vector3(52.0, 1.6, -0.6))
+	if _want("tecnici_rampa"):
+		# La seconda rampa, verso la scala degli interni.
+		await _shot("tecnici_rampa", Vector3(51.7, 3.625, -7.8), Vector3(44.0, 8.3, -7.8))
 	get_tree().quit()
 
 

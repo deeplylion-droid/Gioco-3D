@@ -1,14 +1,15 @@
 extends Node
 ## Test automatico degli ambienti tecnici (scenes/tecnici/tecnici.tscn): la scena si carica con le
 ## collisioni, il giocatore parte in fondo alla scala del pozzo e cammina, dalla camera delle onde
-## si passa per il tunnel nella sala pompe, i marker per la logica di gioco ci sono tutti.
+## si passa per il tunnel nella sala pompe, i marker per la logica di gioco ci sono tutti, la vasca di
+## raccolta è piena e, con le scene messe come nel livello, il raccordo porta ai piedi della scala degli interni.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tecnici.gd
 
 const LEVEL := "res://scenes/tecnici/tecnici.tscn"
 const MARKER := ["marker_portello", "marker_arrivo_scala", "marker_tunnel_sala_pompe", "marker_paratia_1", "marker_paratia_2",
 	"marker_pompa_1", "marker_pompa_2", "marker_pompa_3", "marker_turbina_1", "marker_turbina_2", "marker_turbina_3",
 	"marker_leva", "marker_grata_leva", "marker_schema", "marker_vasca_raccolta", "marker_monitor",
-	"marker_porta_ponte", "marker_porta_ponte_perno"]
+	"marker_porta_ponte", "marker_porta_ponte_perno", "marker_raccordo_sala", "marker_raccordo_interni"]
 
 var level: Node
 var p: Player
@@ -70,9 +71,61 @@ func _run() -> void:
 	Input.action_release(&"move_forward")
 	check(p.global_position.x > 31.0 and p.global_position.y > -0.2, "dal tunnel si entra nella sala pompe (x = %.1f)" % p.global_position.x)
 
+	print("La vasca di raccolta")
+	var tank: WaterTank = level.get_node("Acqua/VascaRaccolta")
+	var pelo := tank.global_position.y + tank.inner_size.y * tank.fill
+	check(absf(pelo - (-0.15)) < 0.03, "la vasca è piena d'acqua nera (pelo a %.2f)" % pelo)
+	check(tank.get_liters() > 50.0, "e il serbatoio ha acqua da aspirare (%.0f l)" % tank.get_liters())
+
+	print("Il raccordo fino agli interni (scene messe come nel livello)")
+	var interni: Node3D = load("res://scenes/interni/interni.tscn").instantiate()
+	interni.set(&"giocatore_proprio", false)
+	interni.position = Vector3(-9.7, 0, 40.9)
+	get_tree().root.add_child(interni)
+	(level as Node3D).position = Vector3(0, -9.05, 1.36)
+	(level as Node3D).rotation.y = -PI / 2.0
+	level.get_node("Ambienti/SalaPompe/PORTA_ponte").queue_free()   # porta aperta
+	await _frames(5)
+	var da: Node3D = level.get_node("Marker/marker_raccordo_sala")
+	p.teleport(da.global_position + Vector3(0, 0.05, 0), p.yaw, 0.0)
+	await _frames(5)
+	var tappe: Array[Vector3] = []
+	for loc in [Vector3(51.6, 0, 1.4), Vector3(51.6, 0, 0.6), Vector3(51.6, 3.625, -6.2), Vector3(50.0, 3.625, -7.8),
+			Vector3(44.2, 7.25, -7.8)]:
+		tappe.append((level as Node3D).global_transform * loc)
+	var ok := true
+	for t in tappe:
+		ok = ok and await _cammina_verso(t, 600)
+	check(ok, "si cammina dalla porta della sala pompe su per le due rampe")
+	var fine := p.global_position
+	check(absf(fine.y - (-1.8)) < 0.1, "e si arriva sul pianerottolo in cima al raccordo (y = %.2f)" % fine.y)
+	var cima: Node3D = level.get_node("Marker/marker_raccordo_interni")
+	check(cima.global_position.distance_to(Vector3(7.8, -1.8, 45.4)) < 0.05, "che è ai piedi della scala degli interni")
+	# la scala degli interni c'è davvero, subito oltre il pianerottolo
+	var gradino := _ray(p.get_world_3d().direct_space_state, Vector3(7.8, 0.5, 44.4), Vector3(7.8, -3.0, 44.4))
+	check(not gradino.is_empty() and gradino.position.y > -1.8, "e la rampa della scala degli interni parte da lì")
+	interni.queue_free()
+
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
+
+
+## Cammina in avanti verso t finché non ci arriva (in pianta). Falso se si blocca.
+func _cammina_verso(t: Vector3, max_frames: int) -> bool:
+	Input.action_press(&"move_forward")
+	var arrivato := false
+	for i in max_frames:
+		var d := t - p.global_position
+		if Vector2(d.x, d.z).length() < 0.35:
+			arrivato = true
+			break
+		p.set_look(atan2(-d.x, -d.z), 0.0)
+		await get_tree().physics_frame
+	Input.action_release(&"move_forward")
+	if not arrivato:
+		printerr("  bloccato in ", p.global_position, " andando verso ", t)
+	return arrivato
 
 
 func _ray(space: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3) -> Dictionary:

@@ -39,6 +39,7 @@ static var _cache := {}
 
 func _ready() -> void:
 	_applica_materiali(ambienti)
+	_prepara_acqua()
 	_prepara_luci()
 	_decal()
 	if giocatore_proprio:
@@ -123,6 +124,28 @@ func _applica_materiali(radice: Node) -> void:
 		(n as MeshInstance3D).material_override = spento
 
 
+# --- Acqua nera della vasca di raccolta (la disegna l'addon acqua: Acqua/AcquaVascaRaccolta) -----
+
+func _prepara_acqua() -> void:
+	var segnaposto := ambienti.find_child("ACQUA_vasca_raccolta", true, false) as Node3D
+	if segnaposto:
+		segnaposto.visible = false
+	# scatola della sala pompe per i riflessi dell'acqua, in coordinate mondo (la scena nel livello è girata)
+	var link := get_node_or_null("Acqua/AcquaVascaRaccolta")
+	if link == null:
+		return
+	var lo := Vector3(INF, INF, INF)
+	var hi := -lo
+	for i in 8:
+		var p := global_transform * Vector3(46.3 if i & 1 else 28.3, 5.5 if i & 2 else -1.7, 3.8 if i & 4 else -8.2)
+		lo = lo.min(p)
+		hi = hi.max(p)
+	link.set(&"env_box_min", lo)
+	link.set(&"env_box_max", hi)
+	if link.has_method(&"_apply_style"):
+		link.call(&"_apply_style")
+
+
 # --- Luci segnaposto (le finali le fa la sessione grafica) ------------------------------------
 
 func _prepara_luci() -> void:
@@ -191,6 +214,13 @@ func _decal() -> void:
 	for p in [Vector3(-4.6, 0.0, -1.2), Vector3(2.2, 0.0, 1.0), Vector3(6.4, 0.0, 3.4)]:
 		MaterialiInterni.decal(sala, "macchia", p, Vector3.UP, 1.6, 1.6, 0.6, rng.randf_range(0, TAU))
 	MaterialiInterni.decal(sala, "crepa", Vector3(-8.98, 0.7, 4.0), Vector3(1, 0, 0), 1.0, 1.0, 0.9, 1.0)
+	# raccordo: colature sul muro sud del corridoio, macchie a terra e sul pianerottolo in cima
+	var racc: Node3D = $Ambienti/Raccordo
+	for x in [47.4, 49.9]:
+		MaterialiInterni.decal(racc, "ruggine", Vector3(x, 1.9, 2.38), Vector3(0, 0, -1), 0.6, 1.4, 0.8)
+	MaterialiInterni.decal(racc, "macchia", Vector3(48.2, 0.0, 1.4), Vector3.UP, 1.4, 1.4, 0.6, 0.7)
+	MaterialiInterni.decal(racc, "macchia", Vector3(44.5, 7.25, -7.8), Vector3.UP, 1.4, 1.4, 0.6, 2.1)
+	MaterialiInterni.decal(racc, "crepa", Vector3(52.58, 1.0, -1.0), Vector3(-1, 0, 0), 1.0, 1.0, 0.9, 0.4)
 
 
 # --- Da sola: Environment e giocatore ---------------------------------------------------------

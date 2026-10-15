@@ -19,6 +19,12 @@ EXT = [
     ('Script', 'res://scripts/tecnici/tecnici.gd', 's_tecnici'),
     ('PackedScene', 'res://assets/ambienti_tecnici/camera_onde.gltf', 'm_camera'),
     ('PackedScene', 'res://assets/ambienti_tecnici/sala_pompe.gltf', 'm_sala'),
+    ('PackedScene', 'res://assets/ambienti_tecnici/raccordo.gltf', 'm_racc'),
+    ('PackedScene', 'res://scenes/props/water_tank.tscn', 'p_tank'),
+    ('Script', 'res://scripts/mechanisms/water_tank.gd', 's_tank'),
+    ('PackedScene', 'res://addons/acqua/scenes/acqua_per_vasca.tscn', 'p_link'),
+    ('Script', 'res://addons/acqua/scripts/water_tank_link.gd', 's_link'),
+    ('Resource', 'res://addons/acqua/presets/stile_3_scura.tres', 'r_stile'),
 ]
 
 
@@ -62,6 +68,7 @@ def nodi_gltf(file, offset):
 
 CAMERA = nodi_gltf('camera_onde.gltf', (0, 0, 0))
 SALA = nodi_gltf('sala_pompe.gltf', OFFSET_SALA)
+RACC = nodi_gltf('raccordo.gltf', (0, 0, 0))
 
 subs, nodes = [], []
 
@@ -70,12 +77,14 @@ def V(*a):
     return 'Vector3(%s)' % ', '.join(f'{x:.6g}' for x in a)
 
 
-def node(name, typ=None, parent=None, inst=None, props=None):
+def node(name, typ=None, parent=None, inst=None, props=None, np=None):
     h = f'[node name="{name}"'
     if typ:
         h += f' type="{typ}"'
     if parent is not None:
         h += f' parent="{parent}"'
+    if np:
+        h += ' node_paths=PackedStringArray(%s)' % ', '.join(f'"{x}"' for x in np)
     if inst:
         h += f' instance=ExtResource("{inst}")'
     nodes.append(h + ']')
@@ -98,6 +107,17 @@ node('Tecnici', 'Node3D', props={'script': 'ExtResource("s_tecnici")'})
 node('Ambienti', 'Node3D', '.')
 node('CameraOnde', None, 'Ambienti', inst='m_camera')
 node('SalaPompe', None, 'Ambienti', inst='m_sala', props={'position': V(*OFFSET_SALA)})
+node('Raccordo', None, 'Ambienti', inst='m_racc')
+
+# vasca di raccolta piena d'acqua nera (4,8 x 3 m, profonda 1,7; pelo a -0,15): serbatoio dell'addon acqua
+fondo, _ = SALA['PUNTO_vasca_raccolta_fondo']
+pelo = SALA['ACQUA_vasca_raccolta#centro'][0][1] + 0.01
+node('Acqua', 'Node3D', '.')
+node('VascaRaccolta', 'Node3D', 'Acqua', inst='p_tank', props={
+    'position': V(*fondo), 'script': 'ExtResource("s_tank")', 'inner_size': V(4.8, 1.7, 3.0),
+    'build_walls': 'false', 'fill': f'{(pelo - fondo[1]) / 1.7:.4f}', 'max_fill': '0.95', 'capacity_liters': '80.0'})
+node('AcquaVascaRaccolta', 'Node3D', 'Acqua', inst='p_link', np=['tank'], props={
+    'script': 'ExtResource("s_link")', 'tank': 'NodePath("../VascaRaccolta")', 'style': 'ExtResource("r_stile")'})
 
 node('Marker', 'Node3D', '.')
 # percorso
@@ -117,6 +137,9 @@ marker('marker_vasca_raccolta', SALA, 'ACQUA_vasca_raccolta#centro', nota='super
 marker('marker_monitor', SALA, 'PUNTO_monitor', nota='schermo del monitor a tubo sulla scrivania')
 marker('marker_porta_ponte', SALA, 'PUNTO_porta_ponte_inferiore', nota='davanti alla porta del ponte inferiore (lato sala)')
 marker('marker_porta_ponte_perno', SALA, 'PORTA_ponte', nota='cardine della porta del ponte inferiore: ruota su Y')
+# raccordo verso gli interni
+marker('marker_raccordo_sala', RACC, 'PUNTO_raccordo_sala', yaw=-H, nota='nel raccordo, appena fuori dalla porta del ponte inferiore')
+marker('marker_raccordo_interni', RACC, 'PUNTO_raccordo_interni', yaw=-H, nota='in cima al raccordo, ai piedi della scala che sale al corridoio degli interni')
 
 # luce segnaposto dentro la gabbia: la leva si deve leggere da terra (le luci finali le fa grafica)
 pl, _ = SALA['LEVA']
@@ -127,7 +150,10 @@ node('LuceLeva', 'OmniLight3D', '.', props={'position': V(pl[0] - 0.4, pl[1] + 0
 node('Atmosfera', 'Node3D', '.')
 for nome, pos, size in [('RiflessiCamera', (12, 2.1, 0), (24.4, 4.4, 4.6)),
                         ('RiflessiTunnel', (30.65, 1.4, 0), (12.7, 2.8, 2.6)),
-                        ('RiflessiSala', (37.3, 2.75, 1.0), (18.4, 5.6, 12.4))]:
+                        ('RiflessiSala', (37.3, 2.75, 1.0), (18.4, 5.6, 12.4)),
+                        ('RiflessiRaccordo', (48.6, 1.4, 1.4), (4.0, 2.8, 2.0)),
+                        ('RiflessiVanoScala', (51.6, 3.6, -3.35), (2.0, 7.2, 11.5)),
+                        ('RiflessiRampa', (47.0, 6.7, -7.8), (7.2, 6.4, 2.6))]:
     node(nome, 'ReflectionProbe', 'Atmosfera', props={'position': V(*pos), 'size': V(*size), 'box_projection': 'true',
                                                       'interior': 'true', 'ambient_mode': '0'})
 

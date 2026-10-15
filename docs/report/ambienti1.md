@@ -121,6 +121,8 @@ Scena `godot/scenes/tecnici/tecnici.tscn` (si rigenera con `python3 tools/godot_
 - **Collisioni** nei glTF; le parti mobili (paratie, porta, grata, leva, turbine) hanno la collisione come figlia. Test: `tests/test_tecnici.gd` (45 controlli, anche in CI).
 - **Marker** per la logica in `Marker/` (pompe, turbine, leva, grata, schema, vasca, monitor, porta, paratie, portello, arrivo scala).
 - **Texture** in `godot/assets/ambienti_tecnici/texture/` (25 MB): dopo ogni export da Blender vanno alleggerite con `tools/comprimi_texture.py`. Se cambia solo il `.bin` Godot non reimporta da solo: cancellare `.godot/imported/<nome>.gltf-*`.
-- **Aperto**: la porta del ponte inferiore della sala pompe non combacia ancora con la porta della sala pompe del corridoio degli interni (vedi LEGGIMI).
+- **Raccordo di servizio** (`tools/blender/ambienti2_raccordo.py`, `raccordo.gltf`): dalla porta del ponte inferiore un corridoio e due rampe di scale a 36° (sale di 7,25 m) fino ai piedi della scala degli interni. Per tenerlo corto la scena tecnica va nel livello girata di -90° (vedi LEGGIMI). Il test cammina dalla sala pompe fino in cima con le due scene messe come nel livello.
+- **Vasca di raccolta** piena d'acqua nera (pelo a -0,15), già collegata all'addon acqua (`WaterTank` + `WaterTankLink`, stile scuro).
+- **Aperto, negli interni**: in fondo alla loro scala c'è solo 1,80 m di luce sotto il muro del pianerottolo e il giocatore (1,75 m) sulla rampa urta lo spigolo. Proposta nel LEGGIMI (apertura alta 0,5 m in quel muro).
 
 Screenshot Godot, preset Alto, 1600 × 900: `docs/report/tecnici/`.
