@@ -779,6 +779,13 @@ for ci, cat in enumerate(ORDINE):
     for o in obs:
         CATALOGO[o.name]['glb'] = f'glb/{cat}.glb'
     esporta_glb(T(GLB, f'{cat}.glb'), obs, luci=False, max_tex=None)   # kit dei dettagli: texture 2K
+    # anche in .gltf con le texture in una cartella sola (poi gltf_condividi.py le deduplica per contenuto)
+    for o in bpy.context.scene.objects:
+        o.select_set(o in obs)
+    os.makedirs(T(DET, 'gltf'), exist_ok=True)
+    bpy.ops.export_scene.gltf(filepath=T(DET, 'gltf', f'{cat}.gltf'), export_format='GLTF_SEPARATE', export_texture_dir='texture',
+                              use_selection=True, export_apply=True, export_lights=False, export_cameras=False,
+                              export_extras=True, export_yup=True, export_image_format='AUTO')
 with open(T(DET, 'catalogo.json'), 'w') as f:
     json.dump({'nota': "Nodi dei GLB del kit di dettagli. 'appoggio': pavimento (origine alla base), muro (origine sul filo del muro, "
                        "il dettaglio sporge verso +Z Godot), soffitto (origine nel punto d'attacco, pende verso -Y Godot). "
