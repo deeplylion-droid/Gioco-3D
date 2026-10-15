@@ -37,6 +37,7 @@ extends Node3D
 @export var crea_sonde := true
 @export var crea_tempesta := true
 @export var crea_effetti := true
+@export var crea_area_bimbi := true
 ## Neon che nel GLB sono "a metà": sfarfallano o sono guasti.
 @export var neon_difettosi: PackedInt32Array = [1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25]
 
@@ -55,6 +56,20 @@ extends Node3D
 ## appena passata la porta degli spogliatoi, così la lampada si accende uscendo.
 @export var percorso_trigger := NodePath()
 @export var punto_accensione := Vector3(0, 1.5, 18.6)
+@export_group("Area bimbi")
+## Struttura di gioco (sala_area_bimbi.glb, x -17..-8, z -19,2..-11,1, alta 8,3): un festone
+## di lampadine da festa colorate, rotte a tratti, sul fronte e sul fianco est, e una
+## plafoniera appesa al soffitto che illumina il fronte e il secchio gigante.
+@export var festone_punti: PackedVector3Array = [Vector3(-16.9, 3.7, -10.95), Vector3(-8.0, 3.7, -10.95), Vector3(-7.85, 3.7, -18.8)]
+@export var festone_cala := 0.55          # quanto scende il filo a metà campata
+@export var festone_passo := 0.42
+@export var energia_festone := 1.1
+## Lampadine spente (rotte) e lampadine che sfarfallano, contate lungo il festone.
+@export var festone_rotte: PackedInt32Array = [5, 6, 7, 13, 22, 29, 30]
+@export var festone_sfarfallano: PackedInt32Array = [3, 17, 26]
+@export var plafoniera_bimbi := Vector3(-9.2, 9.2, -7.6)
+@export var mira_plafoniera_bimbi := Vector3(-12.6, 4.6, -14.8)
+@export var energia_plafoniera_bimbi := 7.0
 @export_group("Statua sul monumento")
 ## Centro del monumento e altezza della statua (per il controluce).
 @export var monumento := Vector3(0, 0, 10)
@@ -95,6 +110,149 @@ func _prepara() -> void:
 		_crea_effetti()
 	if crea_controluce:
 		_crea_controluce()
+	if crea_area_bimbi:
+		_crea_area_bimbi()
+
+
+func _crea_area_bimbi() -> void:
+	var radice := Node3D.new()
+	radice.name = "LuciAreaBimbi"
+	add_child(radice)
+	# Filo nero e lampadine: colori pastello saturi anni '90.
+	var colori := [Color(1.0, 0.25, 0.3), Color(1.0, 0.8, 0.2), Color(0.25, 0.6, 1.0),
+			Color(0.35, 1.0, 0.45), Color(1.0, 0.45, 0.85), Color(1.0, 0.55, 0.15)]
+	var filo := StandardMaterial3D.new()
+	filo.albedo_color = Color(0.03, 0.03, 0.03)
+	filo.roughness = 0.6
+	var vetro_spento := StandardMaterial3D.new()
+	vetro_spento.albedo_color = Color(0.25, 0.25, 0.25)
+	vetro_spento.roughness = 0.2
+	var sfera := SphereMesh.new()
+	sfera.radius = 0.045
+	sfera.height = 0.11
+	sfera.radial_segments = 12
+	sfera.rings = 6
+	var tubo := CylinderMesh.new()
+	tubo.top_radius = 0.006
+	tubo.bottom_radius = 0.006
+	tubo.height = 1.0
+	tubo.radial_segments = 5
+	tubo.rings = 1
+	var materiali := {}
+	var n := 0
+	for c in festone_punti.size() - 1:
+		var a := festone_punti[c]
+		var b := festone_punti[c + 1]
+		var passi := maxi(int(a.distance_to(b) / festone_passo), 2)
+		var prec := a
+		for i in passi + 1:
+			var t := float(i) / passi
+			var p := a.lerp(b, t) - Vector3.UP * festone_cala * 4.0 * t * (1.0 - t)
+			if i > 0:
+				var pezzo := MeshInstance3D.new()
+				pezzo.mesh = tubo
+				pezzo.material_override = filo
+				pezzo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				radice.add_child(pezzo)
+				var dir := p - prec
+				pezzo.global_position = (p + prec) * 0.5
+				pezzo.global_basis = Basis(Quaternion(Vector3.UP, dir.normalized())) * Basis.from_scale(Vector3(1, dir.length(), 1))
+			prec = p
+			if i == 0 and c > 0:
+				continue   # l'angolo ha già la sua lampadina
+			var colore: Color = colori[n % colori.size()]
+			var rotta := n in festone_rotte
+			var lamp := MeshInstance3D.new()
+			lamp.mesh = sfera
+			lamp.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			if rotta:
+				lamp.material_override = vetro_spento
+			else:
+				if not materiali.has(colore):
+					var m := StandardMaterial3D.new()
+					m.albedo_color = colore
+					m.emission_enabled = true
+					m.emission = colore
+					m.emission_energy_multiplier = 4.0
+					materiali[colore] = m
+				lamp.material_override = materiali[colore]
+			radice.add_child(lamp)
+			lamp.global_position = p + Vector3.DOWN * 0.06
+			# Una luce vera ogni tre lampadine accese (le altre sono solo emissive).
+			if not rotta and n % 3 == 1:
+				var o := OmniLight3D.new()
+				o.light_color = colore
+				o.light_energy = energia_festone
+				o.omni_range = 3.2
+				o.omni_attenuation = 1.4
+				o.light_volumetric_fog_energy = 1.2
+				o.light_specular = 0.6
+				o.shadow_enabled = false
+				radice.add_child(o)
+				o.global_position = p + Vector3.DOWN * 0.15
+				if n in festone_sfarfallano or (n + 1) in festone_sfarfallano or (n - 1) in festone_sfarfallano:
+					_sfarfallanti.append([o, o.light_energy, "guasto", randf_range(0.5, 4.0), 0.0])
+			n += 1
+	# Plafoniera navale appesa al soffitto con un'asta, puntata sul fronte della struttura.
+	var plaf := Node3D.new()
+	plaf.name = "PlafonieraBimbi"
+	radice.add_child(plaf)
+	plaf.global_position = plafoniera_bimbi
+	plaf.look_at(mira_plafoniera_bimbi, Vector3.UP)
+	var metallo := StandardMaterial3D.new()
+	metallo.albedo_color = Color(0.16, 0.18, 0.17)
+	metallo.metallic = 0.7
+	metallo.roughness = 0.45
+	var paralume := MeshInstance3D.new()
+	var cil := CylinderMesh.new()
+	cil.top_radius = 0.12
+	cil.bottom_radius = 0.3
+	cil.height = 0.32
+	paralume.mesh = cil
+	paralume.material_override = metallo
+	paralume.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	plaf.add_child(paralume)
+	paralume.rotation_degrees = Vector3(-90, 0, 0)   # l'asse del cilindro lungo -Z (la mira)
+	paralume.position = Vector3(0, 0, -0.05)
+	var disco := MeshInstance3D.new()
+	var dm := CylinderMesh.new()
+	dm.top_radius = 0.27
+	dm.bottom_radius = 0.27
+	dm.height = 0.02
+	disco.mesh = dm
+	var acceso := StandardMaterial3D.new()
+	acceso.albedo_color = Color(1.0, 0.9, 0.75)
+	acceso.emission_enabled = true
+	acceso.emission = Color(1.0, 0.86, 0.68)
+	acceso.emission_energy_multiplier = 6.0
+	disco.material_override = acceso
+	disco.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	plaf.add_child(disco)
+	disco.rotation_degrees = Vector3(-90, 0, 0)
+	disco.position = Vector3(0, 0, -0.21)
+	var asta := MeshInstance3D.new()
+	var am := CylinderMesh.new()
+	am.top_radius = 0.02
+	am.bottom_radius = 0.02
+	am.height = maxf(11.5 - plafoniera_bimbi.y, 0.3)
+	asta.mesh = am
+	asta.material_override = metallo
+	radice.add_child(asta)
+	asta.global_position = plafoniera_bimbi + Vector3.UP * am.height * 0.5
+	var spot := SpotLight3D.new()
+	spot.light_color = Color(1.0, 0.86, 0.68)
+	spot.light_energy = energia_plafoniera_bimbi
+	spot.spot_range = 16.0
+	spot.spot_angle = 34.0
+	spot.spot_angle_attenuation = 1.1
+	spot.spot_attenuation = 0.7
+	spot.shadow_enabled = true
+	spot.light_size = 0.15
+	spot.light_specular = 0.5
+	spot.light_volumetric_fog_energy = 1.5
+	spot.set_meta("grafica_priorita_ombra", 1)
+	plaf.add_child(spot)
+	spot.position = Vector3(0, 0, -0.25)
 
 
 func _crea_tempesta() -> void:
