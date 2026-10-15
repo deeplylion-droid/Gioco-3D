@@ -24,6 +24,13 @@ uniform float passo_pannelli = 1.25;
 uniform float quota_giunto = 1.85;
 // sposta le UV di ogni oggetto (per esempio ogni anta di armadietto) per non avere copie identiche
 uniform vec2 sposta_uv = vec2(0.0);
+// modalità "texture di base" (cemento, lamiere rivettate degli ambienti tecnici): la superficie è la
+// texture del materiale importato invece della vernice piena; restano usura, colature e macchie
+uniform bool usa_base = false;
+uniform sampler2D base_albedo : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D base_normal : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D base_rough : hint_roughness_g, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform bool pannelli = true;
 
 varying vec3 pos_mondo;
 varying vec3 norm_mondo;
@@ -63,8 +70,14 @@ void fragment() {
 	float macro = rum3(p * 0.07 + 3.0);
 	float micro = rum(uv * 0.45 + 7.0);
 	vec3 vernice = colore_vernice * mix(0.7, 1.12, macro) * mix(0.88, 1.04, micro);
+	if (usa_base) {
+		vernice = texture(base_albedo, uv).rgb * colore_vernice * mix(0.75, 1.12, macro);
+	}
 	vec3 alb = mix(vernice, texture(scrostata_albedo, uv).rgb, m);
 	float rgh = mix(lucidita_vernice + (macro - 0.5) * 0.15, texture(scrostata_rough, uv).g, m);
+	if (usa_base) {
+		rgh = mix(texture(base_rough, uv).g, texture(scrostata_rough, uv).g, m);
+	}
 	// --- colature scure che scendono dall'alto (non su pavimenti e soffitti)
 	float verticale = 1.0 - abs(norm_mondo.y);
 	float c = texture(colature, vec2((p.x + p.z) * 0.22, altezza * 0.18)).r;
@@ -74,13 +87,13 @@ void fragment() {
 	float lungo = abs(norm_mondo.x) > abs(norm_mondo.z) ? p.z : p.x;
 	float gx = abs(fract(lungo / passo_pannelli + 0.5) - 0.5) * passo_pannelli;
 	float gy = abs(altezza - quota_giunto);
-	float giunto = (1.0 - smoothstep(0.004, 0.012, gx)) * verticale;
-	giunto = max(giunto, (1.0 - smoothstep(0.004, 0.012, gy)) * verticale);
+	float giunto = (1.0 - smoothstep(0.004, 0.012, gx)) * verticale * (pannelli ? 1.0 : 0.0);
+	giunto = max(giunto, (1.0 - smoothstep(0.004, 0.012, gy)) * verticale * (pannelli ? 1.0 : 0.0));
 	float rx = abs(fract(lungo / passo_pannelli + 0.5) - 0.5) * passo_pannelli - 0.035;
 	float ry = abs(fract(altezza / 0.18) - 0.5) * 0.18;
-	float rivetto = (1.0 - smoothstep(0.007, 0.011, length(vec2(rx, ry)))) * verticale * step(0.3, altezza);
+	float rivetto = (1.0 - smoothstep(0.007, 0.011, length(vec2(rx, ry)))) * verticale * step(0.3, altezza) * (pannelli ? 1.0 : 0.0);
 	alb *= 1.0 - giunto * 0.55;
-	float anello_r = (1.0 - smoothstep(0.011, 0.016, length(vec2(rx, ry)))) * verticale * step(0.3, altezza) - rivetto;
+	float anello_r = ((1.0 - smoothstep(0.011, 0.016, length(vec2(rx, ry)))) * verticale * step(0.3, altezza) - rivetto) * (pannelli ? 1.0 : 0.0);
 	alb = mix(alb, alb * 1.3, rivetto * 0.7);
 	alb *= 1.0 - anello_r * 0.5;
 	// --- ogni pannello ha la sua tinta (niente pannelli tutti uguali)
@@ -102,7 +115,7 @@ void fragment() {
 		float on = step(0.58, h1) * step(0.0, dy) * step(dy, lun) * step(0.3, yc);
 		rug = max(rug, on * (1.0 - smoothstep(w * 0.4, w, xr)) * (1.0 - dy / lun));
 	}
-	rug *= verticale;
+	rug *= verticale * (pannelli ? 1.0 : 0.0);
 	alb = mix(alb, vec3(0.36, 0.15, 0.05), rug * 0.9);
 	rgh = mix(rgh, 0.8, rug);
 	// --- aloni d'acqua scesi dal soffitto, con il bordo più scuro (pannelli a caso)
@@ -130,7 +143,7 @@ void fragment() {
 	ALBEDO = alb;
 	ROUGHNESS = clamp(rgh, 0.05, 1.0);
 	METALLIC = mix(0.15, 0.3, m);
-	vec3 nm = mix(texture(lamiera_normal, uv * 0.5).rgb, texture(scrostata_normal, uv).rgb, m);
+	vec3 nm = mix(usa_base ? texture(base_normal, uv).rgb : texture(lamiera_normal, uv * 0.5).rgb, texture(scrostata_normal, uv).rgb, m);
 	nm.xy += vec2(dFdx(giunto), dFdy(giunto)) * 2.0;
 	NORMAL_MAP = nm;
 	NORMAL_MAP_DEPTH = mix(0.5, 1.0, m);

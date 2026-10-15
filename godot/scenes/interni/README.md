@@ -27,7 +27,7 @@ Con questa traslazione l'uscita degli spogliatoi (`marker_uscita_sala_principale
 
 ```
 [node name="Player" ...]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 10.7, 0, 39.65)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10.7, 0, 39.65)
 ```
 
 Poi, nella sala:
