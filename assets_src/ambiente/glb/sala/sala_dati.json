@@ -1297,27 +1297,160 @@
    ]
   },
   {
+   "nome": "luce_insegna_onda",
+   "tipo": "OmniLight3D davanti all'insegna al neon",
+   "blender": [
+    0.0,
+    -19.5,
+    2.95
+   ],
+   "godot": [
+    0.0,
+    2.95,
+    19.5
+   ],
+   "colore": [
+    0.25,
+    0.85,
+    1.0
+   ]
+  },
+  {
+   "nome": "luce_insegna_stella",
+   "tipo": "OmniLight3D davanti all'insegna al neon",
+   "blender": [
+    -12.5,
+    23.4,
+    7.0
+   ],
+   "godot": [
+    -12.5,
+    7.0,
+    -23.4
+   ],
+   "colore": [
+    1.0,
+    0.72,
+    0.25
+   ]
+  },
+  {
+   "nome": "luce_calda_0",
+   "tipo": "OmniLight3D calda (plafoniera navale accesa)",
+   "blender": [
+    1.75,
+    -19.75,
+    2.5
+   ],
+   "godot": [
+    1.75,
+    2.5,
+    19.75
+   ],
+   "colore": [
+    1.0,
+    0.68,
+    0.38
+   ]
+  },
+  {
+   "nome": "luce_calda_1",
+   "tipo": "OmniLight3D calda (plafoniera navale accesa)",
+   "blender": [
+    19.75,
+    9.0,
+    2.7
+   ],
+   "godot": [
+    19.75,
+    2.7,
+    -9.0
+   ],
+   "colore": [
+    1.0,
+    0.68,
+    0.38
+   ]
+  },
+  {
+   "nome": "luce_calda_2",
+   "tipo": "OmniLight3D calda (plafoniera navale accesa)",
+   "blender": [
+    -19.75,
+    -1.0,
+    2.7
+   ],
+   "godot": [
+    -19.75,
+    2.7,
+    1.0
+   ],
+   "colore": [
+    1.0,
+    0.68,
+    0.38
+   ]
+  },
+  {
+   "nome": "luce_calda_3",
+   "tipo": "OmniLight3D calda (plafoniera navale accesa)",
+   "blender": [
+    10.5,
+    14.13,
+    2.6
+   ],
+   "godot": [
+    10.5,
+    2.6,
+    -14.13
+   ],
+   "colore": [
+    1.0,
+    0.68,
+    0.38
+   ]
+  },
+  {
+   "nome": "luce_calda_4",
+   "tipo": "OmniLight3D calda (plafoniera navale accesa)",
+   "blender": [
+    -3.0,
+    20.9,
+    3.0
+   ],
+   "godot": [
+    -3.0,
+    3.0,
+    -20.9
+   ],
+   "colore": [
+    1.0,
+    0.68,
+    0.38
+   ]
+  },
+  {
    "nome": "luce_monumento_basso_0",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    1.248,
-    -8.752,
-    0.448
+    1.252,
+    -8.748,
+    0.451
    ],
    "godot": [
-    1.248,
-    0.448,
-    8.752
+    1.252,
+    0.451,
+    8.748
    ],
    "direzione_blender": [
-    -0.351,
-    -0.351,
-    0.868
+    -0.306,
+    -0.306,
+    0.901
    ],
    "direzione_godot": [
-    -0.351,
-    0.868,
-    0.351
+    -0.306,
+    0.901,
+    0.306
    ],
    "colore": [
     1.0,
@@ -1329,24 +1462,24 @@
    "nome": "luce_monumento_basso_1",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    -1.248,
-    -8.752,
-    0.448
+    -1.252,
+    -8.748,
+    0.451
    ],
    "godot": [
-    -1.248,
-    0.448,
-    8.752
+    -1.252,
+    0.451,
+    8.748
    ],
    "direzione_blender": [
-    0.351,
-    -0.351,
-    0.868
+    0.306,
+    -0.306,
+    0.901
    ],
    "direzione_godot": [
-    0.351,
-    0.868,
-    0.351
+    0.306,
+    0.901,
+    0.306
    ],
    "colore": [
     1.0,
@@ -1358,24 +1491,24 @@
    "nome": "luce_monumento_basso_2",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    -1.248,
-    -11.248,
-    0.448
+    -1.252,
+    -11.252,
+    0.451
    ],
    "godot": [
-    -1.248,
-    0.448,
-    11.248
+    -1.252,
+    0.451,
+    11.252
    ],
    "direzione_blender": [
-    0.351,
-    0.351,
-    0.868
+    0.306,
+    0.306,
+    0.901
    ],
    "direzione_godot": [
-    0.351,
-    0.868,
-    -0.351
+    0.306,
+    0.901,
+    -0.306
    ],
    "colore": [
     1.0,
@@ -1387,24 +1520,24 @@
    "nome": "luce_monumento_basso_3",
    "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
    "blender": [
-    1.248,
-    -11.248,
-    0.448
+    1.252,
+    -11.252,
+    0.451
    ],
    "godot": [
-    1.248,
-    0.448,
-    11.248
+    1.252,
+    0.451,
+    11.252
    ],
    "direzione_blender": [
-    -0.351,
-    0.351,
-    0.868
+    -0.306,
+    0.306,
+    0.901
    ],
    "direzione_godot": [
-    -0.351,
-    0.868,
-    -0.351
+    -0.306,
+    0.901,
+    -0.306
    ],
    "colore": [
     1.0,
@@ -1416,24 +1549,24 @@
    "nome": "luce_faro_0",
    "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua",
    "blender": [
-    -2.015,
-    -16.622,
-    5.516
+    -2.014,
+    -16.616,
+    5.547
    ],
    "godot": [
-    -2.015,
-    5.516,
-    16.622
+    -2.014,
+    5.547,
+    16.616
    ],
    "direzione_blender": [
-    0.282,
-    0.927,
-    -0.247
+    0.288,
+    0.947,
+    -0.143
    ],
    "direzione_godot": [
-    0.282,
-    -0.247,
-    -0.927
+    0.288,
+    -0.143,
+    -0.947
    ],
    "colore": [
     1.0,
@@ -1445,24 +1578,24 @@
    "nome": "luce_faro_1",
    "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua",
    "blender": [
-    2.015,
-    -16.622,
-    5.516
+    2.014,
+    -16.616,
+    5.547
    ],
    "godot": [
-    2.015,
-    5.516,
-    16.622
+    2.014,
+    5.547,
+    16.616
    ],
    "direzione_blender": [
-    -0.282,
-    0.927,
-    -0.247
+    -0.288,
+    0.947,
+    -0.143
    ],
    "direzione_godot": [
-    -0.282,
-    -0.247,
-    -0.927
+    -0.288,
+    -0.143,
+    -0.947
    ],
    "colore": [
     1.0,

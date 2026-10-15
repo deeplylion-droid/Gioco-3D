@@ -20,21 +20,30 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 - **Monumento della statua** (`sala_monumento.glb`): entrando dal vano la medusa si vede subito, intera
   e centrata, a 10 m, con la cupola e la tempesta sopra la testa (provato in Godot con la medusa del
   gioco portata a 4,5 m).
+- **Tubo dell'inseguimento**: è lo scivolo rosso a spirale (`sala_scivolo_spirale`), ora Ø interno
+  **1,6 m** (parete 6 cm), come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. Parte dal
+  piano in cima alla torre (y 8,6), esce dalla faccia ovest, gira intorno al pennone, attraversa la sala
+  sopra la piscina e sputa nella vasca d'arrivo da est (bocca 16 cm sopra l'acqua). Gli altri due tubi
+  restano da 1,0 m (decorativi).
+- **Passata di qualità**: pavimento a piastrelle asciutte/umide/bagnate e pozzanghere a specchio, sporco
+  nei colori dei vertici, battiscopa a sguscio e listelli, rivetti su travi e galleria, piastrelle
+  mancanti, oblò con vetro scuro, cupola con costoloni a T e lastre sporche/incrinate/rotte, plafoniere
+  calde (`luce_calda_*`) e insegne al neon (`luce_insegna_*`). Dettagli in `KIT.md`.
 
 ## File (cartella `assets_src/ambiente/glb/sala/`)
 
 | File | Cosa contiene | Triangoli | Collisioni | Peso |
 |---|---|---|---|---|
-| `sala_architettura.glb` | pavimento (piastrelle asciutte, umide e bagnate; pozzanghere a specchio), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d'emergenza, insegna a pesce, altoparlanti | 208 mila | 275 | 39.2 MB |
+| `sala_architettura.glb` | pavimento (piastrelle asciutte, umide e bagnate; pozzanghere a specchio), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d'emergenza, insegna a pesce, altoparlanti | 246 mila | 275 | 42.7 MB |
 | `sala_monumento.glb` | **monumento della statua (vuoto)**: piedistallo a gradoni con fregio a mosaico marino, conchiglie d'ottone, scatola del pulsante, 4 faretti dal basso; cordone di velluto su colonnine; lampione; 2 fari sulla ringhiera della galleria; offerte dei bambini (disegni, conchiglie, stelle marine, secchiello) | 18 mila | 14 | 20.7 MB |
-| `sala_cupola.glb` | cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro) | 24 mila | - | 4.7 MB |
+| `sala_cupola.glb` | cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro) | 35 mila | - | 9.6 MB |
 | `sala_piscina.glb` | piscina a onde vuota: fondo con pendenza e conca dello scarico, linea dell'ultimo livello dell'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette | 31 mila | 71 | 19.2 MB |
-| `sala_area_bimbi.glb` | struttura di gioco, **secchio gigante** e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi | 6 mila | 30 | 16.7 MB |
-| `sala_torre_scivoli.glb` | torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d'arrivo | 78 mila | 145 | 28.3 MB |
+| `sala_area_bimbi.glb` | struttura di gioco, **secchio gigante** e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi | 6 mila | 30 | 16.8 MB |
+| `sala_torre_scivoli.glb` | torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d'arrivo | 92 mila | 147 | 29.2 MB |
 | `sala_oggetti.glb` | oggetti di scena Meshy (istanze condivise), comprese le offerte alla base del monumento (salvagente, orsetto, paperelle, pallone, ciambella) | 747 mila | 79 | 25.0 MB |
 | `sala_interattivi.glb` | elementi degli enigmi come nodi separati con il perno giusto (vedi sotto) | 6 mila | 11 | 10.4 MB |
 | `sala_acqua.glb` | **segnaposto** piatti dell'acqua (da sostituire con l'acqua vera) | 8 | - | 0.0 MB |
-| `sala_luci.glb` | 63 luci già al loro posto (Omni, Spot, una Directional) | - | - | |
+| `sala_luci.glb` | 70 luci già al loro posto (Omni, Spot, una Directional) | - | - | |
 | `sala_dati.json` | posizioni di luci, acqua, piedistallo, vano, spawn, camere | | | |
 
 Texture: 2K JPG incorporate (colore, normal OpenGL, ORM = occlusione/rugosità/metallo). PNG solo dove
@@ -118,7 +127,7 @@ sono pozzanghere a specchio (con SSR riflettono le luci rosse).
 
 Le posizioni sono giuste; le intensità le regola `sala_luci_ambiente.gd` (glTF e Godot usano unità
 diverse). In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 4 faretti del monumento,
-2 subacquee, insegna, area bimbi, luna.
+5 plafoniere calde, 3 insegne, 2 subacquee, area bimbi, luna.
 
 | Nome | Tipo | Posizione Godot | Colore | Note |
 |---|---|---|---|---|
@@ -174,12 +183,19 @@ diverse). In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 4 far
 | `luce_emergenza_49` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (19.88, 8.6, 12) | (1, 0.035, 0.02) |  |
 | `luce_emergenza_50` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (-14, 8.6, 19.88) | (1, 0.035, 0.02) |  |
 | `luce_lampione` | SpotLight3D verso il basso, angolo 60 gradi, calda, ronza | (1.65, 4.42, 13.2) | (1, 0.72, 0.42) |  |
-| `luce_monumento_basso_0` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.248, 0.448, 8.752) | (1, 0.82, 0.58) | punta verso (-0.351, 0.868, 0.351) |
-| `luce_monumento_basso_1` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.248, 0.448, 8.752) | (1, 0.82, 0.58) | punta verso (0.351, 0.868, 0.351) |
-| `luce_monumento_basso_2` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.248, 0.448, 11.248) | (1, 0.82, 0.58) | punta verso (0.351, 0.868, -0.351) |
-| `luce_monumento_basso_3` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.248, 0.448, 11.248) | (1, 0.82, 0.58) | punta verso (-0.351, 0.868, -0.351) |
-| `luce_faro_0` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (-2.015, 5.516, 16.622) | (1, 0.9, 0.76) | punta verso (0.282, -0.247, -0.927) |
-| `luce_faro_1` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (2.015, 5.516, 16.622) | (1, 0.9, 0.76) | punta verso (-0.282, -0.247, -0.927) |
+| `luce_insegna_onda` | OmniLight3D davanti all'insegna al neon | (0, 2.95, 19.5) | (0.25, 0.85, 1) |  |
+| `luce_insegna_stella` | OmniLight3D davanti all'insegna al neon | (-12.5, 7, -23.4) | (1, 0.72, 0.25) |  |
+| `luce_calda_0` | OmniLight3D calda (plafoniera navale accesa) | (1.75, 2.5, 19.75) | (1, 0.68, 0.38) |  |
+| `luce_calda_1` | OmniLight3D calda (plafoniera navale accesa) | (19.75, 2.7, -9) | (1, 0.68, 0.38) |  |
+| `luce_calda_2` | OmniLight3D calda (plafoniera navale accesa) | (-19.75, 2.7, 1) | (1, 0.68, 0.38) |  |
+| `luce_calda_3` | OmniLight3D calda (plafoniera navale accesa) | (10.5, 2.6, -14.13) | (1, 0.68, 0.38) |  |
+| `luce_calda_4` | OmniLight3D calda (plafoniera navale accesa) | (-3, 3, -20.9) | (1, 0.68, 0.38) |  |
+| `luce_monumento_basso_0` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.252, 0.451, 8.748) | (1, 0.82, 0.58) | punta verso (-0.306, 0.901, 0.306) |
+| `luce_monumento_basso_1` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.252, 0.451, 8.748) | (1, 0.82, 0.58) | punta verso (0.306, 0.901, 0.306) |
+| `luce_monumento_basso_2` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (-1.252, 0.451, 11.252) | (1, 0.82, 0.58) | punta verso (0.306, 0.901, -0.306) |
+| `luce_monumento_basso_3` | SpotLight3D: faretto nel gradino, illumina la statua dal basso | (1.252, 0.451, 11.252) | (1, 0.82, 0.58) | punta verso (-0.306, 0.901, -0.306) |
+| `luce_faro_0` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (-2.014, 5.547, 16.616) | (1, 0.9, 0.76) | punta verso (0.288, -0.143, -0.947) |
+| `luce_faro_1` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua | (2.014, 5.547, 16.616) | (1, 0.9, 0.76) | punta verso (-0.288, -0.143, -0.947) |
 | `luce_subacquea_0` | OmniLight3D sott'acqua, vasca d'arrivo | (-12.5, -0.7, 6.85) | (0.25, 0.95, 0.75) |  |
 | `luce_subacquea_1` | OmniLight3D sott'acqua, vasca d'arrivo | (-12.5, -0.7, -2.85) | (0.25, 0.95, 0.75) |  |
 | `luce_insegna_rosa` | OmniLight3D davanti all insegna a pesce | (-3, 7.4, -23.5) | (1, 0.22, 0.6) |  |
@@ -196,5 +212,5 @@ diverse). In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari e 4 far
 ## Cosa manca
 
 Kit di dettagli della sessione ambienti-2 (detriti, cavi, tubi a muro, bocchette, corpi lampada):
-quando arriva lo si posiziona con il suo JSON. Altre porte stagne, interno della camera delle onde e
-sala pompe, tubo grande dell'inseguimento (Ø interno 1,6 m, compatibile con il kit di scivoli).
+quando arriva in main lo si posiziona con il suo JSON. L'interno del tubo dell'inseguimento per il
+gioco è nel kit degli scivoli di ambienti_tecnici (qui il tubo ha solo le collisioni esterne).

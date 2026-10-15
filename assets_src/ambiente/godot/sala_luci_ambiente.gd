@@ -8,8 +8,8 @@ extends Node3D
 @export var energia_neon := 2.5
 @export var energia_lampione := 10.0
 @export var energia_luna := 0.35
-@export var energia_fari := 9.0
-@export var energia_faretti_bassi := 2.5
+@export var energia_fari := 12.0
+@export var energia_faretti_bassi := 3.2
 @export var crea_ambiente := true
 @export var neon_che_sfarfallano := 4
 
@@ -31,6 +31,13 @@ func _regola(n: Node) -> void:
 		if o.name.begins_with("luce_emergenza"):
 			o.light_energy = energia_emergenza
 			o.omni_range = 8.0
+		elif o.name.begins_with("luce_calda"):
+			# plafoniere navali ancora accese: un po' di caldo in mezzo al rosso
+			o.light_energy = 1.8
+			o.omni_range = 7.5
+		elif o.name.begins_with("luce_insegna_onda") or o.name.begins_with("luce_insegna_stella"):
+			o.light_energy = 1.3
+			o.omni_range = 5.5
 		elif o.name.begins_with("luce_subacquea"):
 			o.light_energy = 3.0
 			o.omni_range = 5.0
@@ -41,16 +48,19 @@ func _regola(n: Node) -> void:
 		var s := n as SpotLight3D
 		if s.name.begins_with("luce_faro"):
 			# fari sulla ringhiera della galleria sud: illuminano la statua come un monumento
+			# luce bianca calda sul busto e sul viso: la cosa più leggibile entrando dal vano
 			s.light_energy = energia_fari
+			s.light_color = Color(1.0, 0.93, 0.84)
 			s.spot_range = 16.0
-			s.spot_angle = 13.0
-			s.spot_angle_attenuation = 0.6
+			s.spot_angle = 15.0
+			s.spot_angle_attenuation = 0.7
 			s.shadow_enabled = true
 		elif s.name.begins_with("luce_monumento_basso"):
 			# faretti incassati nel gradino: la statua dal basso
 			s.light_energy = energia_faretti_bassi
-			s.spot_range = 6.5
-			s.spot_angle = 26.0
+			s.spot_range = 7.0
+			s.spot_angle = 24.0
+			s.spot_angle_attenuation = 0.8
 			s.shadow_enabled = false
 		elif s.name == "luce_lampione":
 			s.light_energy = energia_lampione
