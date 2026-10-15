@@ -233,9 +233,9 @@
    "categoria": "detriti",
    "appoggio": "pavimento",
    "ingombro_m": [
-    0.609,
-    0.649,
-    0.162
+    0.652,
+    0.689,
+    0.028
    ],
    "note": "asciugamano bagnato, abbandonato per terra",
    "triangoli": 3440,
@@ -245,9 +245,9 @@
    "categoria": "detriti",
    "appoggio": "pavimento",
    "ingombro_m": [
-    0.711,
-    0.537,
-    0.14
+    0.663,
+    0.34,
+    0.094
    ],
    "note": "asciugamano bagnato, abbandonato per terra",
    "triangoli": 3440,
@@ -257,9 +257,9 @@
    "categoria": "detriti",
    "appoggio": "pavimento",
    "ingombro_m": [
-    0.697,
-    0.343,
-    0.107
+    0.649,
+    0.704,
+    0.027
    ],
    "note": "asciugamano bagnato, abbandonato per terra",
    "triangoli": 3440,
@@ -269,9 +269,9 @@
    "categoria": "detriti",
    "appoggio": "pavimento",
    "ingombro_m": [
-    0.632,
-    0.341,
-    0.182
+    0.49,
+    0.726,
+    0.029
    ],
    "note": "asciugamano bagnato, abbandonato per terra",
    "triangoli": 3440,
