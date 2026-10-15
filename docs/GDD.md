@@ -44,7 +44,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Da decidere**, con proposte all'utente: aspetto, quanti sono, che età hanno ora, cosa fanno, dove e come si vedono nel capitolo 1.
 - Vincoli fissi: sempre vestiti, niente nudità, niente gore e niente violenza esplicita sui bambini. Fanno paura con la postura, le maschere, gli occhi e il modo di muoversi.
 - **Primi due bambini (decisi dall'utente, 14 ottobre)**, ispirati ai disegni di Maniani (l'utente dichiara di avere i diritti) ma nel nostro stile marittimo. Modelli in `assets_src/bambini/`.
-  - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il corpo è da rifare (era "troppo pacioccone"): un bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata.
+  - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il primo corpo era "troppo pacioccone". Rifatto il 15 ottobre: bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata (render inviato all'utente, in attesa di riscontro; il primo corpo è in `scartati/`).
   - **L'agnellino**: un peluche cucito, zuppo e macchiato di sale, con bottoni d'ottone al posto degli occhi e un fiocco alla marinara. Quando si rivela, il muso si spacca e mostra **un unico grande occhio**, scelto dall'utente. La testa di lupo resta solo come alternativa.
 
 ## Capitolo 1: scaletta (approvata)
@@ -115,6 +115,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - La medusa è **il simbolo del gioco**. La sua statua deve essere **imponente** e messa in scena come Huggy Wuggy nella hall di Poppy Playtime.
 - Alta circa **4,5 m** in tutto, testa più tentacoli appoggiati. La creatura ha la stessa taglia.
 - La statua **poggia sui tentacoli**, che si appoggiano al piedistallo e si piegano, e non galleggia. I tentacoli devono essere di alta qualità: nastri carnosi e trasparenti, non tubicini.
+- **Tentacoli approvati dall'utente (15 ottobre)**: i nastri carnosi e traslucidi del commit ccbcfe5 ("molto belli"). Non cambiarli. Il resto della ragazza va portato allo stesso livello: prima i capelli, poi viso e occhio, superficie in vinile, mani e campana.
 - Sta su un **piedistallo monumentale**: entrando nella sala il giocatore la vede subito, intera e centrata, illuminata come un monumento, e poi le gira intorno. Da vicino incombe.
 - Alla base ci sono offerte lasciate dai bambini: un indizio silenzioso della lore.
 
