@@ -7,10 +7,14 @@ separate e stratificate che seguono le ciocche scolpite, con un po' di volume e 
     "giu' dalla cima";
   - semi sparsi sulla parte esterna dei capelli (distanza minima fissa), linee di flusso tracciate sulla
     superficie a passi di 6 mm proiettati con un BVH: indietro per la radice, che resta sotto le altre ciocche,
-    e avanti fino in fondo; poi la punta continua un poco e si assottiglia;
+    e avanti fino in fondo; poi la punta continua un poco, si arriccia sotto verso la testa e si assottiglia
+    (resta tonda: niente aghi);
   - ogni ciocca e' un nastro a cupola (piatto sotto, tondo sopra), largo 2-4 cm, appoggiato sulla superficie a
-    strati di altezza diversa, con il colore preso dalla texture dei capelli (colore dei vertici) e UV
-    (u attraverso, v lungo: 0 alla radice, 1 in punta) per le fibre e la punta traslucida rosa (come la campana).
+    strati di altezza diversa, con UV (u attraverso, v lungo: 0 alla radice, 1 in punta) per le fibre e la punta
+    traslucida rosa (come la campana).
+Colore (GDD: "argento-rosa", come nel concept): argento chiaro in alto, riflessi rosa (alcune ciocche piu' rosate),
+sempre piu' rosa verso il basso e sulle punte. Le ciocche lo hanno nel colore dei vertici; il volume dei capelli
+sotto (atlante del corpo) lo prende con ricolora_atlante(), un po' piu' scuro, dal passo 8.
 Un oggetto (Medusa_Ciocche), materiale M_ciocche, pesi sull'osso 'testa'. Uso dal passo 7: crea_ciocche(arm, corpo).
 """
 import os
@@ -28,7 +32,8 @@ CIOCCHE = dict(
     radice=(0.03, 0.12),        # quanto risale la radice dal seme
     passo=0.006,                # passo del tracciamento
     anelli=0.02,                # distanza tra gli anelli della mesh
-    punta=(0.015, 0.04),        # punta che esce oltre la fine della ciocca scolpita
+    punta=(0.012, 0.028),       # punta che esce oltre la fine della ciocca scolpita
+    arriccio=1.1,               # di quanto si arriccia la punta verso la testa (radianti, alla fine)
     cima=(0.0, 0.03, 0.915),    # cima della testa (da qui scendono)
     centro_testa=(0.0, 0.014, 0.6),
     z_max_semi=0.895,           # niente semi sul ciuffo ad anello in cima
@@ -36,6 +41,52 @@ CIOCCHE = dict(
 TEX_CIOCCHE = os.path.join(TEX, 'ciocche_base.jpg')
 TEX_CIOCCHE_N = os.path.join(TEX, 'ciocche_normal.png')
 TEX_CIOCCHE_E = os.path.join(TEX, 'ciocche_emissione.jpg')
+
+# colore finale (sRGB, sotto luce bianca): argento in alto, riflessi rosa, rosa in basso e sulle punte
+ARGENTO = (0.91, 0.9, 0.94)
+RIFLESSO = (0.93, 0.78, 0.9)
+ROSA = (0.94, 0.64, 0.81)
+FONDO_CAPELLI = 0.84            # il volume sotto le ciocche e' un po' piu' scuro (fa da fondo tra le ciocche)
+
+
+# ---------------------------------------------------------------- colore
+
+def _liscio(a, b, x):
+    t = np.clip((np.asarray(x, float) - a) / (b - a), 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def lineare(c):
+    c = np.asarray(c, float)
+    return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+
+
+def srgb(c):
+    c = np.clip(np.asarray(c, float), 0, 1)
+    return np.where(c <= 0.0031308, c * 12.92, 1.055 * c ** (1 / 2.4) - 0.055)
+
+
+def colore_capelli(alto, punta=None, riflesso=None):
+    """Colore lineare (N x 3). alto: 0 in fondo ai capelli, 1 in cima al ciuffo; punta: 0 alla radice della
+    ciocca, 1 in punta; riflesso: 0..1, quanto la ciocca e' rosata."""
+    alto = np.atleast_1d(np.asarray(alto, float))
+    w = 0.92 * _liscio(0.68, 0.1, alto)                         # il rosa sale dal basso
+    if punta is not None:
+        w = w + (1 - w) * 0.5 * _liscio(0.6, 1.0, punta)        # punte piu' rosa
+    c = lineare(ARGENTO) * (1 - w[:, None]) + lineare(ROSA) * w[:, None]
+    if riflesso is not None:
+        r = (np.asarray(riflesso, float) * (1 - w))[:, None]
+        c = c * (1 - r) + lineare(RIFLESSO) * r
+    return c
+
+
+def altezza_testa(arm, ob, punti):
+    """Coordinata lungo l'osso 'testa' (posa di riposo) dei punti dati nello spazio dell'oggetto ob: il colore
+    segue la testa, non la gravita' (vale uguale prima e dopo che la posa della statua diventa il riposo)."""
+    B = arm.matrix_world @ arm.data.bones['testa'].matrix_local
+    M = np.array(B.inverted() @ ob.matrix_world)
+    p = np.asarray(punti, float)
+    return p @ M[:3, :3].T[:, 1] + M[1, 3]
 
 
 # ---------------------------------------------------------------- superficie dei capelli e direzioni
@@ -243,7 +294,9 @@ def ciocca(sup, seme, par, rng):
     k = 4
     for i in range(1, k + 1):
         t = i / k
-        dd = d - N[-1] * 0.12 * t                 # la punta si chiude un poco verso la testa
+        # la punta si arriccia sotto, verso la testa: niente punte dritte che sporgono come aghi
+        a = par['arriccio'] * t
+        dd = d * math.cos(a) - N[-1] * math.sin(a)
         dd /= np.linalg.norm(dd)
         P = np.vstack([P, P[-1] + dd * lp / k])
         N = np.vstack([N, N[-1]])
@@ -264,7 +317,7 @@ def mesh_ciocca(P, N, s, par, rng, u0=0.0):
     W = rng.uniform(*par['larghezza'])
     # profilo: cresce dalla radice, massimo a un terzo, si assottiglia fino alla punta sottile
     prof = np.clip(t / 0.25, 0, 1) ** 0.6 * (1 - 0.88 * np.clip((t - 0.35) / 0.65, 0, 1) ** 1.3)
-    prof = np.maximum(prof, 0.06)
+    prof = np.maximum(prof, 0.13)                    # punta sottile ma tonda, non un ago
     w = W * prof * (1 + 0.1 * np.sin(2 * math.pi * s / 0.09 + rng.uniform(0, 6)))
     h = w * par['spessore']
     alza = rng.uniform(*par['strato'])
@@ -282,7 +335,7 @@ def mesh_ciocca(P, N, s, par, rng, u0=0.0):
             uvf.append([(u0 + j / lati, t[i]), (u0 + (j + 1) / lati, t[i]), (u0 + (j + 1) / lati, t[i + 1]),
                         (u0 + j / lati, t[i + 1])])
     c0, c1 = len(verts), len(verts) + 1
-    verts = np.vstack([verts, centro[0] - T[0] * 0.002, centro[-1] + T[-1] * 0.004])
+    verts = np.vstack([verts, centro[0] - T[0] * 0.002, centro[-1] + T[-1] * 0.002])
     for j in range(lati):
         jn = (j + 1) % lati
         facce.append((jn, j, c0)); uvf.append([(u0 + jn / lati, 0.0), (u0 + j / lati, 0.0), (u0 + 0.5, 0.0)])
@@ -294,7 +347,8 @@ def mesh_ciocca(P, N, s, par, rng, u0=0.0):
 # ---------------------------------------------------------------- texture e materiale
 
 def texture_ciocche():
-    """Fibre della ciocca (u attraverso, v lungo): moltiplicatore del colore, emissione delle punte, normal."""
+    """Fibre della ciocca (u attraverso, v lungo): moltiplicatore del colore, emissione delle punte, normal.
+    Ritorna il moltiplicatore medio (lineare) del lato in vista, per compensarlo nel colore dei vertici."""
     import cv2
     rng = np.random.default_rng(6)
     H, Wt = 1024, 512
@@ -307,8 +361,8 @@ def texture_ciocche():
     fib2 /= fib2.std() + 1e-6
     a = 2 * math.pi * U                          # intorno alla sezione: 0 e 0.5 = bordi, 0.25 = cresta
     cresta = np.clip(np.sin(a), 0, 1)
-    lati = 1 - 0.25 * (1 - cresta) ** 2
-    molt = (0.9 + 0.06 * fib + 0.04 * fib2) * lati
+    lati = 1 - 0.16 * (1 - cresta) ** 2         # bordi un po' piu' scuri: le ciocche si staccano tra loro
+    molt = (0.95 + 0.035 * fib + 0.025 * fib2) * lati
     punta = np.clip((V - 0.72) / 0.28, 0, 1) ** 1.5
     tinta = np.array([1.0, 0.78, 0.9])            # punta rosa chiaro, traslucida (come la campana)
     col = molt[..., None] * (1 - 0.35 * punta[..., None]) + tinta * 0.35 * punta[..., None]
@@ -320,12 +374,15 @@ def texture_ciocche():
     nrm = np.stack([-gu * 0.9, gv * 0.9, np.ones_like(h)], -1)
     nrm /= np.linalg.norm(nrm, axis=-1, keepdims=True)
     cv2.imwrite(TEX_CIOCCHE_N, ((nrm * 0.5 + 0.5) * 255).astype(np.uint8)[..., ::-1])
+    vista = (U < 0.5) & (V < 0.72)                # lato di sopra, prima della punta
+    return float(lineare(np.clip(molt[vista], 0, 1)).mean())
 
 
 def materiale_ciocche(nome='M_ciocche'):
-    """Ciocche lucide e bagnate: colore dei vertici (dalla texture dei capelli) x fibre, punte rosa traslucide."""
-    texture_ciocche()
+    """Ciocche lucide e bagnate: colore dei vertici (argento-rosa) x fibre, punte rosa traslucide."""
+    molt = texture_ciocche()
     m = materiale_pbr(nome, base=TEX_CIOCCHE, normal=TEX_CIOCCHE_N, roughness=0.16, normal_strength=0.6)
+    m['molt_fibre'] = molt
     nt = m.node_tree
     b = nt.nodes['BSDF']
     va = nodo(nt, 'ShaderNodeVertexColor', (-700, 450))
@@ -344,24 +401,27 @@ def materiale_ciocche(nome='M_ciocche'):
     b.inputs['Emission Strength'].default_value = 1.0
     b.inputs['Coat Weight'].default_value = 0.6
     b.inputs['Coat Roughness'].default_value = 0.03
-    b.inputs['Subsurface Weight'].default_value = 0.25
-    b.inputs['Subsurface Radius'].default_value = (1.0, 0.45, 0.75)
+    b.inputs['Subsurface Weight'].default_value = 0.12
+    b.inputs['Subsurface Radius'].default_value = (1.0, 0.62, 0.88)     # rosa, non arancio, in controluce
     b.inputs['Subsurface Scale'].default_value = 0.02
     return m
 
 
 # ---------------------------------------------------------------- creazione
 
-def crea_ciocche(arm, corpo, par=CIOCCHE, img_capelli=None):
-    """Ciocche sopra i capelli; il colore viene dalla texture dei capelli (img_capelli: array HxWx3, 0..1)."""
+def crea_ciocche(arm, corpo, par=CIOCCHE):
+    """Ciocche sopra i capelli, colore argento-rosa nel colore dei vertici (lineare)."""
     rng = np.random.default_rng(par['seme'])
     co, nrm, tri, uv = superficie_capelli(corpo)
     flusso = campo_direzioni(co, nrm, tri, par)
     sup = Superficie(co, nrm, tri, uv, flusso, par)
     S = semi(sup, par, rng)
-    if img_capelli is None:
-        img = corpo.data.materials['M_capelli'].node_tree.nodes['base'].image
-        img_capelli = carica_immagine_np(bpy.path.abspath(img.filepath))[..., :3]
+    mat = materiale_ciocche()
+    molt = float(mat['molt_fibre'])
+    # altezza lungo la testa: 0 in fondo ai capelli, 1 in cima al ciuffo
+    yh = altezza_testa(arm, corpo, co[np.unique(tri)])
+    y0, y1 = yh.min(), yh.max()
+    rng_c = np.random.default_rng(par['seme'] + 101)       # generatore a parte: la forma delle ciocche non cambia
     V, F, UVF, COL = [], [], [], []
     n_ok = 0
     for p in S[rng.permutation(len(S))]:
@@ -371,9 +431,12 @@ def crea_ciocche(arm, corpo, par=CIOCCHE, img_capelli=None):
         P, N, UVt, s = c
         v, f, uvf = mesh_ciocca(P, N, s, par, rng)
         lati = 5
-        # colore per anello dalla texture dei capelli (sRGB -> lineare, come vogliono gli attributi colore)
-        col_an = campiona_uv(img_capelli, UVt)[:, :3]
-        col_an = np.where(col_an <= 0.04045, col_an / 12.92, ((col_an + 0.055) / 1.055) ** 2.4)
+        # colore per anello: argento-rosa per altezza e lungo la ciocca, qualche ciocca piu' rosata (riflessi);
+        # diviso per il moltiplicatore medio delle fibre, cosi' il colore finale e' quello voluto
+        alto = np.clip((altezza_testa(arm, corpo, P) - y0) / (y1 - y0), 0, 1)
+        rif = np.full(len(P), 0.9 * rng_c.uniform(0, 1) ** 1.5)
+        col_an = colore_capelli(alto, s / s[-1], rif) * rng_c.uniform(0.95, 1.02) / molt
+        col_an = np.clip(col_an, 0, 1)
         col = np.vstack([np.repeat(col_an, lati, 0), col_an[:1], col_an[-1:]])
         off = sum(len(x) for x in V)
         V.append(v)
@@ -383,7 +446,6 @@ def crea_ciocche(arm, corpo, par=CIOCCHE, img_capelli=None):
         n_ok += 1
     verts = np.vstack(V)
     cols = np.vstack(COL)
-    mat = materiale_ciocche()
     me = bpy.data.meshes.new('Medusa_Ciocche')
     me.from_pydata([tuple(x) for x in verts], [], F)
     uvl = me.uv_layers.new(name='UVMap')
@@ -405,3 +467,75 @@ def crea_ciocche(arm, corpo, par=CIOCCHE, img_capelli=None):
     ntri = sum(len(p.vertices) - 2 for p in me.polygons)
     log(f'ciocche: {n_ok} su {len(S)} semi, {ntri} triangoli')
     return ob
+
+
+# ---------------------------------------------------------------- volume dei capelli nell'atlante del corpo
+
+def ricolora_atlante(sorgente, uscita, arm=None, corpo=None, margine=10):
+    """Il volume dei capelli (isole M_capelli dell'atlante del corpo) prende lo stesso argento-rosa delle ciocche,
+    piu' scuro di FONDO_CAPELLI (fa da fondo tra una ciocca e l'altra; il ciuffo ad anello in cima resta chiaro).
+    Dalla cottura del passo 8 resta solo il dettaglio: la luminanza rispetto alla media intorno (solchi delle
+    ciocche, occlusione, usura). Riparte sempre dal PNG della cottura (sorgente), quindi si puo' rifare; scrive il
+    JPG dell'atlante (uscita). Anche il margine intorno alle isole cambia colore, per non avere bordi mauve."""
+    import cv2
+    from PIL import Image
+    from scipy import ndimage
+    arm = arm or bpy.data.objects['Medusa_Scheletro']
+    corpo = corpo or bpy.data.objects['Medusa']
+    img = np.asarray(Image.open(sorgente).convert('RGB')).astype(np.float32) / 255.0
+    H, W = img.shape[:2]
+    me = corpo.data
+    co = coords(me)
+    nomi = [m.name if m else '' for m in me.materials]
+    ic = nomi.index('M_capelli')
+    mi = np.empty(len(me.polygons), dtype=np.int32)
+    me.polygons.foreach_get('material_index', mi)
+    ls = np.empty(len(me.polygons), dtype=np.int64)
+    me.polygons.foreach_get('loop_start', ls)
+    lt = np.empty(len(me.polygons), dtype=np.int64)
+    me.polygons.foreach_get('loop_total', lt)
+    uvs = loop_uv(me)
+    lv = loop_vert(me)
+    cap = np.unique(lv[np.concatenate([np.arange(s, s + t) for s, t, m in zip(ls, lt, mi) if m == ic])])
+    y = altezza_testa(arm, corpo, co)
+    y0, y1 = y[cap].min(), y[cap].max()
+    alto_v = (y - y0) / (y1 - y0)
+    # isole dei capelli (con l'altezza media della faccia) e isole delle altre parti
+    capelli = np.zeros((H, W), np.uint8)
+    altri = np.zeros((H, W), np.uint8)
+    somma = np.zeros((H, W), np.float32)
+    for s, t, m in zip(ls, lt, mi):
+        q = uvs[s:s + t]
+        pts = np.round(np.column_stack([q[:, 0] * W, (1 - q[:, 1]) * H]) * 16).astype(np.int32)
+        if m == ic:
+            cv2.fillPoly(capelli, [pts], 255, cv2.LINE_8, 4)
+            cv2.fillPoly(somma, [pts], float(alto_v[lv[s:s + t]].mean()), cv2.LINE_8, 4)
+        else:
+            cv2.fillPoly(altri, [pts], 255, cv2.LINE_8, 4)
+    dentro = capelli > 0
+    fuori = altri > 0
+    k = dentro.astype(np.float32)
+    den = cv2.GaussianBlur(k, (0, 0), 6)
+    alto = np.where(den > 1e-4, cv2.GaussianBlur(somma * k, (0, 0), 6) / np.maximum(den, 1e-4), 0)
+    # dettaglio della cottura: luminanza (lineare) rispetto alla media delle isole dei capelli intorno
+    lin = lineare(img)
+    L = lin @ np.array([0.2126, 0.7152, 0.0722])
+    den2 = cv2.GaussianBlur(k, (0, 0), 24)
+    media = cv2.GaussianBlur((L * k).astype(np.float32), (0, 0), 24) / np.maximum(den2, 1e-4)
+    det = np.clip(L / np.maximum(media, 1e-4), 0.5, 1.3)
+    # margine: i texel vuoti piu' vicini ai capelli che alle altre isole prendono i valori del texel dentro piu' vicino
+    d, (iy, ix) = ndimage.distance_transform_edt(~dentro, return_indices=True)
+    d_altri = ndimage.distance_transform_edt(~fuori)
+    bordo = (d > 0) & (d <= margine) & (d < d_altri)
+    alto = np.where(bordo, alto[iy, ix], alto)
+    det = np.where(bordo, det[iy, ix], det)
+    sel = dentro | bordo
+    a = alto[sel]
+    fondo = FONDO_CAPELLI + (1 - FONDO_CAPELLI) * _liscio(0.9, 0.97, a)     # il ciuffo in cima resta chiaro
+    nuovo = colore_capelli(a) * (fondo * det[sel])[:, None]
+    out = img.copy()
+    out[sel] = srgb(nuovo)
+    Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8)).save(uscita, quality=92, subsampling=0)
+    log(f'capelli argento-rosa nell\'atlante: {int(dentro.sum())} texel (+{int(bordo.sum())} di margine) -> '
+        f'{os.path.relpath(uscita, REPO)}')
+    return uscita

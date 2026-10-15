@@ -10,9 +10,12 @@ Cuoce con Cycles, nell'atlante UV del corpo, colore, normal map e ruvidita' con 
 Gli attributi di vertice che servono (occlusione, coordinate delle ciocche, distanza dalle giunture, viso)
 si calcolano qui sulla posa statua; i motivi fini li disegna lo shader durante la cottura.
 Scrive tex/medusa_colore_4k.jpg, tex/medusa_normal_4k.jpg, tex/medusa_ruvidezza_4k.jpg (G = ruvidita',
-B = metallo) e aggiorna build/medusa_finale.blend (materiali del corpo con le nuove texture).
+B = metallo) e aggiorna build/medusa_finale.blend (materiali del corpo con le nuove texture). Nel colore, il volume
+dei capelli prende poi l'argento-rosa delle ciocche (medusa_capelli.ricolora_atlante, dal PNG della cottura).
 
 Uso: flock /home/user/tools/render.lock nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_08_dettagli.py
+     con --solo-materiali non cuoce: rifa' il colore dei capelli nell'atlante e ricollega ai materiali le
+     texture gia' fatte (dopo un passo 7 che ha cambiato solo pose, animazioni o colori).
 """
 import os
 import sys
@@ -20,11 +23,17 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
+import medusa_capelli as CAPELLI  # noqa: E402
 
 LATO = int(os.environ.get('MEDUSA_LATO_DETTAGLI', '4096'))
 TEX_COLORE = os.path.join(TEX, 'medusa_colore_4k.jpg')
 TEX_NORMAL = os.path.join(TEX, 'medusa_normal_4k.jpg')
 TEX_RUVIDO = os.path.join(TEX, 'medusa_ruvidezza_4k.jpg')
+# sorgenti della cottura: le texture intermedie del passo 2b (sempre queste, cosi' rifare il passo 8 non cuoce
+# di nuovo sopra il proprio risultato)
+SORGENTE_BASE = os.path.join(BUILD, 'medusa_base_4k.png')
+SORGENTE_NORMAL = os.path.join(BUILD, 'medusa_normal_4k.png')
+COTTA_COLORE = os.path.join(BUILD, 'medusa_colore_cotta_4k.png')     # colore appena cotto (prima dei capelli)
 USURA = 1.0             # quantita' di usura (0 = statua nuova)
 CORPO = ('M_pelle', 'M_capelli', 'M_campana', 'M_orbita')
 RUVIDO_BASE = {'M_pelle': 0.13, 'M_capelli': 0.3, 'M_campana': 0.1, 'M_orbita': 0.06}   # orbita: bagnata
@@ -264,6 +273,8 @@ def materiale_cottura(m, k, usura):
     mc = m.copy()
     mc.name = m.name + '_cottura'
     nt = mc.node_tree
+    nt.nodes['base'].image = immagine(SORGENTE_BASE)
+    nt.nodes['normal'].image = immagine(SORGENTE_NORMAL, non_color=True)
     for n in list(nt.nodes):
         if n.name not in ('base', 'normal'):
             nt.nodes.remove(n)
@@ -484,11 +495,12 @@ def cuoci(ob, k):
 
 
 def salva_texture(img):
-    """PNG in build/, poi JPG in tex/ (colore q92; normal q95 senza sottocampionamento del colore)."""
+    """PNG in build/ (nomi diversi dalle sorgenti del passo 2b), poi JPG in tex/ (colore q92; normal q95 senza
+    sottocampionamento del colore)."""
     from PIL import Image
     uscite = {'colore': (TEX_COLORE, 92), 'ruvido': (TEX_RUVIDO, 90), 'normal': (TEX_NORMAL, 95)}
     for nome, im in img.items():
-        png = os.path.join(BUILD, f'medusa_{nome}_4k.png')
+        png = os.path.join(BUILD, f'medusa_{nome}_cotta_4k.png')
         im.filepath_raw = png
         im.file_format = 'PNG'
         im.save()
@@ -527,10 +539,35 @@ def aggiorna_materiali():
 
 def main():
     t0 = time.time()
-    apri(os.path.join(BUILD, 'medusa_finale.blend'))
+    finale = os.environ.get('MEDUSA_FINALE', os.path.join(BUILD, 'medusa_finale.blend'))
+    apri(finale)
+    if '--solo-materiali' in sys.argv:
+        # le texture finali ci sono gia' (la cottura dipende solo dalla posa statua): dopo un passo 7 che ha
+        # cambiato solo le animazioni basta ricollegarle ai materiali
+        for t in (TEX_COLORE, TEX_NORMAL, TEX_RUVIDO, COTTA_COLORE):
+            if not os.path.exists(t):
+                raise SystemExit(f'manca {t}: serve la cottura completa')
+        CAPELLI.ricolora_atlante(COTTA_COLORE, TEX_COLORE)
+        aggiorna_materiali()
+        salva(finale)
+        log(f'materiali aggiornati senza cottura in {time.time() - t0:.0f} s')
+        return
     arm = bpy.data.objects['Medusa_Scheletro']
     ob = bpy.data.objects['Medusa']
     k = float(arm.get('scala', 1.0))
+    # si cuoce nella posa di riposo (la statua): le tracce delle animazioni restano mute durante la cottura
+    mute = []
+    for i in list(bpy.data.objects) + list(bpy.data.shape_keys):
+        if i.animation_data:
+            for tr in i.animation_data.nla_tracks:
+                mute.append((tr, tr.mute))
+                tr.mute = True
+    for pb in arm.pose.bones:
+        pb.matrix_basis = Matrix()
+    for kb in (ob.data.shape_keys.key_blocks if ob.data.shape_keys else []):
+        kb.value = 0.0
+    bpy.context.scene.frame_set(1)
+    bpy.context.view_layer.update()
     me = ob.data
     t = time.time()
     _attributo(me, 'ao', occlusione(ob, dist=0.35 * k))
@@ -547,7 +584,10 @@ def main():
     _attributo(me, 'unghia', campo_unghie(ob, arm, k))
     img = cuoci(ob, k)
     salva_texture(img)
+    CAPELLI.ricolora_atlante(COTTA_COLORE, TEX_COLORE)
     aggiorna_materiali()
+    for tr, m in mute:
+        tr.mute = m
     for a in ('ao', 'ciocca_c', 'ciocca_s', 'ciocca_d', 'giuntura', 'viso', 'clavicola', 'unghia'):
         if a in me.attributes:
             me.attributes.remove(me.attributes[a])

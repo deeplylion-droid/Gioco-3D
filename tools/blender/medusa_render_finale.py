@@ -52,7 +52,8 @@ def M(x, y=None, z=None):
 
 def prepara():
     global K, DZ
-    apri(os.path.join(BUILD, 'medusa_finale_prima.blend' if PRIMA else 'medusa_finale.blend'))
+    apri(os.path.join(BUILD, 'medusa_finale_prima.blend') if PRIMA else
+         os.environ.get('MEDUSA_FINALE', os.path.join(BUILD, 'medusa_finale.blend')))
     for o in list(bpy.data.objects):
         if o.type in ('CAMERA', 'LIGHT'):
             bpy.data.objects.remove(o)
@@ -71,7 +72,8 @@ def prepara():
 
 
 def usa_azione(nome, frame):
-    """Attiva solo le tracce NLA con questo nome (scheletro e shape key) e va al fotogramma."""
+    """Attiva solo le tracce NLA con questo nome (scheletro e shape key) e va al fotogramma. Le shape key si
+    rimettono a 0 prima: una traccia muta lascia nel valore l'ultimo numero che ha scritto."""
     ids = [o for o in bpy.data.objects] + [k for k in bpy.data.shape_keys]
     for i in ids:
         ad = i.animation_data
@@ -79,6 +81,9 @@ def usa_azione(nome, frame):
             continue
         for tr in ad.nla_tracks:
             tr.mute = tr.name != nome
+    for k in bpy.data.shape_keys:
+        for kb in k.key_blocks[1:]:
+            kb.value = 0.0
     bpy.context.scene.frame_set(frame)
 
 
@@ -386,7 +391,219 @@ def giocatore_piedi():
     return salva_jpg(png, nome_jpg('5b_giocatore_ai_piedi'))
 
 
+# ---------------------------------------------------------------- sala centrale: la medusa affacciata alla vasca
+
+def mat_piastrelle_vasca():
+    """Piastrelle quadrate blu scuro e crema, consumate (come nel concept medusa_sbircia.jpg)."""
+    m, nt, b = mat_semplice('piastrelle_vasca', (0.05, 0.08, 0.16), 0.2)
+    tc = nt.nodes.new('ShaderNodeTexCoord')
+    ck = nt.nodes.new('ShaderNodeTexChecker')
+    ck.inputs['Scale'].default_value = 6.0
+    ck.inputs['Color1'].default_value = (0.03, 0.06, 0.16, 1)
+    ck.inputs['Color2'].default_value = (0.55, 0.52, 0.45, 1)
+    nt.links.new(tc.outputs['Object'], ck.inputs['Vector'])
+    br = nt.nodes.new('ShaderNodeTexBrick')
+    br.inputs['Scale'].default_value = 6.0
+    br.inputs['Mortar Size'].default_value = 0.012
+    br.inputs['Color1'].default_value = (1, 1, 1, 1)
+    br.inputs['Color2'].default_value = (0.92, 0.92, 0.92, 1)
+    br.inputs['Mortar'].default_value = (0.05, 0.05, 0.05, 1)
+    br.offset = 0.0
+    br.squash = 1.0
+    nt.links.new(tc.outputs['Object'], br.inputs['Vector'])
+    mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'
+    mix.inputs['Factor'].default_value = 1.0
+    nt.links.new(ck.outputs['Color'], mix.inputs['A']); nt.links.new(br.outputs['Color'], mix.inputs['B'])
+    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 3.0
+    sp = nt.nodes.new('ShaderNodeMix'); sp.data_type = 'RGBA'; sp.blend_type = 'MULTIPLY'
+    sp.inputs['Factor'].default_value = 0.5
+    nt.links.new(mix.outputs['Result'], sp.inputs['A']); nt.links.new(noise.outputs['Color'], sp.inputs['B'])
+    nt.links.new(sp.outputs['Result'], b.inputs['Base Color'])
+    return m
+
+
+def vasca_segnaposto():
+    """Vasca a scatola delle misure giuste (segnaposto: la vera la modella l'agente ambiente): bordo a 1,0 m,
+    coping di 0,30 m, muro esterno verticale, fondo a 0, acqua a 0,88 m. Centro nell'origine, davanti verso -Y."""
+    import medusa_affacciata as AFF
+    V = AFF.VASCA
+    est, sp = -V['fuori'], V['dentro'] - V['fuori']
+    m = mat_piastrelle_vasca()
+    for (x0, x1, y0, y1) in ((-est, est, -est, -est + sp), (-est, est, est - sp, est),
+                             (-est, -est + sp, -est + sp, est - sp), (est - sp, est, -est + sp, est - sp),
+                             (-est, est, -est, est)):
+        alto = V['cima'] if (y1 - y0 < 1.0 or x1 - x0 < 1.0) else 0.02
+        bpy.ops.mesh.primitive_cube_add(size=1, location=((x0 + x1) / 2, (y0 + y1) / 2, alto / 2))
+        o = bpy.context.active_object
+        o.scale = (x1 - x0, y1 - y0, alto)
+        bpy.ops.object.transform_apply(scale=True)
+        bev = o.modifiers.new('smusso', 'BEVEL'); bev.width = 0.015; bev.segments = 2
+        o.data.materials.append(m)
+    # acqua: superficie appena mossa, scura e trasparente
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 0, V['acqua']))
+    w = bpy.context.active_object
+    w.name = 'acqua'
+    w.scale = (2 * V['dentro'] * -1, 2 * V['dentro'] * -1, 1)
+    bpy.ops.object.transform_apply(scale=True)
+    bpy.ops.object.modifier_add(type='SUBSURF')
+    w.modifiers[-1].levels = 0
+    mw, nt, b = mat_semplice('acqua', (0.55, 0.75, 0.8), 0.03)
+    b.inputs['Transmission Weight'].default_value = 1.0
+    b.inputs['IOR'].default_value = 1.33
+    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 6.0
+    bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.08
+    nt.links.new(noise.outputs['Fac'], bump.inputs['Height']); nt.links.new(bump.outputs['Normal'], b.inputs['Normal'])
+    w.data.materials.append(mw)
+
+
+VASCA_SALA = os.path.join(BUILD, 'rif', 'sala_vasca_centrale.glb')   # copia della vasca dell'agente ambiente
+SPOSTA_VASCA = 10.15        # la vasca della sala ha il centro in z 10 Godot; il marker della medusa e' in z 10,15
+
+
+def vasca_sala(acqua=True):
+    """La vasca vera della sala (GLB dell'agente ambiente), spostata nel riferimento della medusa; via le mesh di
+    collisione. Acqua: un blocco dal fondo al pelo (0,88), vetro con un velo verde-azzurro che assorbe la luce e
+    piccole onde in superficie; non fa ombra, cosi' la luce arriva anche sott'acqua."""
+    prima = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=VASCA_SALA)
+    nuovi = [o for o in bpy.data.objects if o not in prima]
+    for o in nuovi:
+        if o.parent is None:
+            o.location.y += SPOSTA_VASCA
+        if 'colonly' in o.name or 'convcol' in o.name:
+            o.hide_render = True
+    if not acqua:
+        return
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0.15, 0.4425))
+    w = bpy.context.active_object
+    w.name = 'acqua'
+    w.scale = (5.38, 3.88, 0.875)
+    bpy.ops.object.transform_apply(scale=True)
+    mw, nt, b = mat_semplice('acqua', (0.82, 0.95, 0.95), 0.02)
+    b.inputs['Transmission Weight'].default_value = 1.0
+    b.inputs['IOR'].default_value = 1.33
+    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 7.0
+    noise.inputs['Detail'].default_value = 3.0
+    bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.06
+    nt.links.new(noise.outputs['Fac'], bump.inputs['Height']); nt.links.new(bump.outputs['Normal'], b.inputs['Normal'])
+    vol = nt.nodes.new('ShaderNodeVolumeAbsorption')
+    vol.inputs['Color'].default_value = (0.3, 0.62, 0.66, 1)
+    vol.inputs['Density'].default_value = 0.9
+    nt.links.new(vol.outputs['Volume'], nt.nodes['Material Output'].inputs['Volume'])
+    w.data.materials.append(mw)
+    w.visible_shadow = False
+
+
+def materiali_bagnati():
+    """Aspetto bagnato solo per la scena della vasca (in Godot: i materiali *_bagnata.tres): pelle e mani piu'
+    lucide, capelli lucidi e appena piu' scuri in punta (restano argento-rosa chiari, come nel concept), tentacoli
+    lucidi."""
+    def _ruvido_per(m, f):
+        nt = m.node_tree
+        b = nt.nodes['BSDF']
+        ls = b.inputs['Roughness'].links
+        if ls:
+            src = ls[0].from_socket
+            mul = nt.nodes.new('ShaderNodeMath'); mul.operation = 'MULTIPLY'
+            mul.inputs[1].default_value = f
+            nt.links.new(src, mul.inputs[0]); nt.links.new(mul.outputs[0], b.inputs['Roughness'])
+        else:
+            b.inputs['Roughness'].default_value *= f
+        return b
+
+    def _scurisci(m, f):
+        nt = m.node_tree
+        b = nt.nodes['BSDF']
+        ls = b.inputs['Base Color'].links
+        mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'
+        mix.inputs['Factor'].default_value = 1.0
+        mix.inputs['B'].default_value = (f, f, f * 1.03, 1)
+        if ls:
+            nt.links.new(ls[0].from_socket, mix.inputs['A'])
+        else:
+            mix.inputs['A'].default_value = b.inputs['Base Color'].default_value
+        nt.links.new(mix.outputs['Result'], b.inputs['Base Color'])
+        return mix
+
+    for n in ('M_pelle', 'M_orbita', 'M_mani'):
+        m = bpy.data.materials.get(n)
+        if m:
+            b = _ruvido_per(m, 0.5)
+            b.inputs['Coat Weight'].default_value = 1.0
+            b.inputs['Coat Roughness'].default_value = 0.02
+            _scurisci(m, 0.93)
+    m = bpy.data.materials.get('M_capelli')
+    if m:
+        b = _ruvido_per(m, 0.6)
+        b.inputs['Coat Weight'].default_value = 0.8
+        b.inputs['Coat Roughness'].default_value = 0.03
+        _scurisci(m, 0.88)
+    m = bpy.data.materials.get('M_ciocche')
+    if m:
+        nt = m.node_tree
+        b = nt.nodes['BSDF']
+        uv = nt.nodes.new('ShaderNodeUVMap')
+        sep = nt.nodes.new('ShaderNodeSeparateXYZ')
+        nt.links.new(uv.outputs['UV'], sep.inputs['Vector'])
+        mr = nt.nodes.new('ShaderNodeMapRange'); mr.interpolation_type = 'SMOOTHSTEP'
+        mr.inputs['From Min'].default_value = 0.35; mr.inputs['From Max'].default_value = 1.0
+        nt.links.new(sep.outputs['Y'], mr.inputs['Value'])          # v: 0 alla radice, 1 in punta
+        mix = _scurisci(m, 0.82)
+        nt.links.new(mr.outputs['Result'], mix.inputs['Factor'])
+        rr = nt.nodes.new('ShaderNodeMapRange')
+        rr.inputs['To Min'].default_value = 0.16; rr.inputs['To Max'].default_value = 0.07
+        nt.links.new(mr.outputs['Result'], rr.inputs['Value'])
+        nt.links.new(rr.outputs['Result'], b.inputs['Roughness'])
+        b.inputs['Coat Weight'].default_value = 0.9
+        b.inputs['Coat Roughness'].default_value = 0.02
+    for n in ('M_tentacoli',):
+        m = bpy.data.materials.get(n)
+        if m:
+            b = m.node_tree.nodes['BSDF']
+            for l in list(b.inputs['Roughness'].links):
+                m.node_tree.links.remove(l)
+            b.inputs['Roughness'].default_value = 0.1
+            b.inputs['Coat Weight'].default_value = 1.0
+            b.inputs['Coat Roughness'].default_value = 0.03
+
+
+def scena_vasca():
+    prepara()
+    usa_azione('affacciata', 1)
+    if os.path.exists(VASCA_SALA):
+        vasca_sala()
+    else:
+        vasca_segnaposto()
+    materiali_bagnati()
+    pavimento_piastrelle(0.0)
+    luci_notte((0, -1.0, 1.4), 2.6, nebbia=0.004)
+    # il bagliore della campana sotto il pelo dell'acqua sale sul viso e sul petto (appena sopra l'acqua)
+    luce_area('bagliore_campana', (0, -1.45, 0.92), (0, -1.75, 1.7), 45, (1.0, 0.45, 0.72), 0.7, 'DISK')
+    imposta()
+
+
+def affacciata_giocatore():
+    """Dal punto di vista del giocatore all'ingresso: a circa 9 m, occhi a 1,7 m."""
+    scena_vasca()
+    camera((0.6, -10.0, 1.7), (0.0, -1.6, 1.3), lens=24)
+    png = render(os.path.join(OUT_PNG, nome_jpg('affacciata_giocatore') + '.png'))
+    return salva_jpg(png, nome_jpg('6_affacciata_9m'))
+
+
+def affacciata_vicino():
+    """Primo piano basso come il concept medusa_sbircia.jpg: camera a 1,2 m di altezza e 1,3 m davanti al bordo,
+    che guarda un po' in su."""
+    scena_vasca()
+    # luce morbida e fredda sul viso (le lampade della sala)
+    luce_area('viso_freddo', (0.6, -3.2, 2.0), (0, -1.8, 1.6), 70, (0.55, 0.65, 1.0), 1.4, 'DISK')
+    camera((0.1, -3.4, 1.2), (0.0, -1.8, 1.45), lens=22)
+    png = render(os.path.join(OUT_PNG, nome_jpg('affacciata_vicino') + '.png'))
+    return salva_jpg(png, nome_jpg('6b_affacciata_vicino'))
+
+
 INQUADRATURE = {
+    'affacciata_giocatore': affacciata_giocatore,
+    'affacciata_vicino': affacciata_vicino,
     'statua_intera': statua_intera,
     'tentacoli': tentacoli,
     'viso_capelli': viso_capelli,
