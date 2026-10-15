@@ -15,8 +15,10 @@ Controlli: reimporta il GLB in Blender e, se c'e' il comando `godot`, lo importa
 Godot di prova (build/godot_prova) e stampa ossa, superfici, blend shape e materiali.
 
 Versione finita: campana con texture RGBA (alfa) ed emissione dei canali cotte nell'atlante UV, gola con un
-gradiente in texture, normal map a 2K (file sotto i 50 MB), animazioni dalle tracce NLA:
-statua, insegue, fluttua, fauce_apre.
+gradiente in texture, normal map a 2K (file sotto i 50 MB), tentacoli con le loro texture (colore, emissione,
+normal), animazioni dalle tracce NLA: statua, sveglia, insegue, fluttua, fauce_apre.
+L'origine del GLB e' sul piano d'appoggio dei tentacoli (il piano del piedistallo): la medusa in posa statua
+sta in piedi su y = 0.
 
 Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_06_export.py [--base] [--blend X] [--out Y]
 """
@@ -27,6 +29,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
+import medusa_05_tentacoli as TENT  # noqa: E402
 
 
 TEX_CAMPANA_BASE = os.path.join(TEX, 'campana_base_alfa.png')
@@ -236,6 +239,9 @@ def materiali_finale_godot():
             b = m.node_tree.nodes['BSDF']
             b.inputs['Coat Weight'].default_value = 0.0
             b.inputs['Subsurface Weight'].default_value = 0.0
+            b.inputs['Transmission Weight'].default_value = 0.0     # traslucenza: medusa_tentacoli.tres
+            if n == 'M_tentacoli':
+                b.inputs['Emission Strength'].default_value = 1.0   # bagliore piu' forte: medusa_tentacoli.tres
 
 
 def prepara_finale():
@@ -244,7 +250,7 @@ def prepara_finale():
     # le stesse texture servono allo shader Godot della campana (assets_src/medusa/godot/)
     gd = os.path.join(ASSET, 'godot')
     os.makedirs(gd, exist_ok=True)
-    for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS):
+    for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS, TENT.TEX_TENT_BASE, TENT.TEX_TENT_EMIS, TENT.TEX_TENT_NORMAL):
         shutil.copy(t, os.path.join(gd, os.path.basename(t)))
     togli_slot_vuoti(corpo)
     materiali_per_godot()
@@ -273,9 +279,13 @@ def attacchi_sull_osso(arm):
         e.matrix_world = mw
 
 
-def esporta(out):
+def esporta(out, origine_a_terra=False):
     arm = bpy.data.objects['Medusa_Scheletro']
     attacchi_sull_osso(arm)
+    if origine_a_terra:
+        # l'origine del GLB va sul piano d'appoggio dei tentacoli: tutto sale di -z_pavimento
+        arm.location.z = -TENT.STATUA['z_pavimento']
+        log(f'origine sul piano del piedistallo: scheletro alzato di {arm.location.z:.2f} m')
     bpy.context.view_layer.update()
     for o in bpy.context.view_layer.objects:
         if o:
@@ -329,6 +339,12 @@ func _init():
 \t\t\tprint("ATTACCO ", n.name, " osso=", n.bone_name)
 \t\tfor c in n.get_children():
 \t\t\tstack.append(c)
+\tvar ap = scena.find_child("AnimationPlayer", true, false)
+\tif ap:
+\t\tprint("ANIMAZIONI ", ap.get_animation_list())
+\tfor r in ["medusa_campana.tres", "medusa_tentacoli.tres"]:
+\t\tvar mat = load("res://assets/models/medusa/" + r)
+\t\tprint("MATERIALE_ESTERNO ", r, " ", mat != null)
 \tquit()
 '''
 
@@ -346,13 +362,21 @@ def controlla_godot(out):
         if f.startswith('medusa'):
             os.remove(os.path.join(prj, f))
     shutil.copy(out, os.path.join(prj, 'medusa.glb'))
+    # i file della cartella godot/ (shader, materiali, texture) come nel progetto vero
+    dest = os.path.join(prj, 'assets', 'models', 'medusa')
+    os.makedirs(dest, exist_ok=True)
+    gd = os.path.join(ASSET, 'godot')
+    for f in os.listdir(gd):
+        if not f.endswith('.md'):
+            shutil.copy(os.path.join(gd, f), os.path.join(dest, f))
     with open(os.path.join(prj, 'controlla.gd'), 'w') as f:
         f.write(GD_CONTROLLO)
     r = subprocess.run(['godot', '--headless', '--path', prj, '--import'], capture_output=True, text=True, timeout=900)
     r = subprocess.run(['godot', '--headless', '--path', prj, '--script', 'res://controlla.gd'],
                        capture_output=True, text=True, timeout=600)
     righe = [x for x in (r.stdout + r.stderr).splitlines()
-             if x.startswith(('SKELETON', 'MESH', '   materiale', 'ATTACCO', 'ANIMAZIONI', 'SCRIPT ERROR'))]
+             if x.startswith(('SKELETON', 'MESH', '   materiale', 'ATTACCO', 'ANIMAZIONI', 'SCRIPT ERROR',
+                              'MATERIALE_ESTERNO', 'ERROR'))]
     log('Godot:')
     for x in righe:
         print('   ', x)
@@ -372,7 +396,7 @@ def main():
     else:
         togli_slot_vuoti(bpy.data.objects['Medusa'])
         materiali_per_godot()
-    esporta(out)
+    esporta(out, origine_a_terra=finale)
     controlla_blender(out)
     if '--no-godot' not in sys.argv:
         controlla_godot(out)

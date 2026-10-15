@@ -3,13 +3,19 @@
   - corpo in vinile lucido laccato, come la statua (pelle, capelli, labbro dell'orbita);
   - campana traslucida con i canali radiali luminosi giallo -> rosa come Halitrephes maasi
     (maschera dei canali ricavata dalla geometria: attributo di vertice "canali");
-  - 12 tentacoli lunghi e spezzati come nel concept della statua, con catene di ossa per la fisica;
+  - tentacoli a nastro carnoso e traslucido (medusa_05_tentacoli.crea_tentacoli_statua): 6 zampe grosse,
+    7 medi e 12 sottili; nella posa statua la medusa STA IN PIEDI sui tentacoli, che arrivano al piano del
+    piedistallo (z = STATUA['z_pavimento']), ci si appoggiano e si arricciano; ogni tentacolo ha una catena
+    di ossa per la fisica;
   - occhio di vetro lucido con l'iride approvata;
   - fauce nascosta sotto l'occhio (medusa_fauce.py);
   - la posa statua (mani giunte sul petto) e' la posa di RIPOSO del modello: in Godot, senza animazioni,
     la medusa e' gia' la statua;
-  - azioni per Godot: "statua" (= riposo), "fluttua" (ciclo: corpo che ondeggia, campana che pulsa,
-    tentacoli che ondeggiano), "fauce_apre" (mascella + blend shape), "insegue" (braccia protese).
+  - azioni per Godot: "statua" (= riposo, in piedi sui tentacoli), "sveglia" (si stacca dal piedistallo:
+    il corpo sale di SOLLEVA metri e i tentacoli si staccano dal piano e pendono), "fluttua" (ciclo: corpo
+    sospeso che ondeggia, campana che pulsa, tentacoli che ondeggiano), "insegue" (ciclo: braccia protese,
+    tentacoli indietro) e "fauce_apre" (mascella + blend shape). Le azioni da sveglia hanno il corpo alla
+    stessa altezza, cosi' si fondono bene.
 Scrive build/medusa_finale.blend.
 
 Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_07_finale.py
@@ -27,10 +33,7 @@ import medusa_pose as POSE  # noqa: E402
 Z_VITA = -0.155
 FPS = 24
 
-TENTACOLI_FINALI = dict(TENT.PRESET['spezzati'], n_grossi=12, lunghezza=1.6, apertura=0.7, ampiezza=0.08,
-                        passo=0.17, angolo_pieghe=34, raggio_base=0.032, raggio_punta=0.005, n_sottili=14,
-                        lunghezza_sottili=1.25, n_ossa=10, seme=7,
-                        lati=8, passo_anelli=0.03, lati_sottili=5, passo_anelli_sottili=0.04)
+SOLLEVA = 0.5           # quando si sveglia il corpo sale di tanto (m): i tentacoli si staccano dal piano
 
 # colori dei canali (gradiente dall'alto della campana al bordo), come Halitrephes maasi
 CANALI_GRADIENTE = [(0.0, (1.0, 0.72, 0.08)), (0.45, (1.0, 0.36, 0.22)), (1.0, (1.0, 0.12, 0.55))]
@@ -157,23 +160,6 @@ def materiale_campana():
         pass
 
 
-def materiale_tentacoli():
-    for nome, col in (('M_tentacoli', (0.78, 0.07, 0.34)), ('M_filamenti', (0.92, 0.18, 0.5))):
-        m = bpy.data.materials.get(nome)
-        if not m:
-            continue
-        b = m.node_tree.nodes['BSDF']
-        b.inputs['Base Color'].default_value = (*col, 1)
-        b.inputs['Roughness'].default_value = 0.2
-        b.inputs['Coat Weight'].default_value = 0.7
-        b.inputs['Coat Roughness'].default_value = 0.06
-        b.inputs['Subsurface Weight'].default_value = 0.3
-        b.inputs['Subsurface Radius'].default_value = (0.7, 0.12, 0.25)
-        b.inputs['Subsurface Scale'].default_value = 0.05
-        b.inputs['Emission Color'].default_value = (*col, 1)
-        b.inputs['Emission Strength'].default_value = 0.08
-
-
 def materiale_occhio():
     mb = bpy.data.materials['M_occhio_bulbo']
     nt = mb.node_tree
@@ -289,47 +275,105 @@ def posa_insegue(arm, f=1.0):
         dorso = Vector((s * 0.15, 0.1, 1.0))
         POSE.posa_braccio(arm, suf, polso, polo, dir_mano, dorso)
         POSE.piega_dita(arm, suf, 38 * f - POSE.DITA_STATUA, pollice=18 * f - POSE.POLLICE_STATUA)
+    # rotazione X positiva = busto in avanti (verso -Y); la testa si rialza per guardare il giocatore
     for nome, gradi in (('colonna_1', 10), ('colonna_2', 9), ('petto', 6)):
         pb = arm.pose.bones[nome]; pb.rotation_mode = 'XYZ'
-        pb.rotation_euler = (math.radians(-gradi * f), 0, 0)
+        pb.rotation_euler = (math.radians(gradi * f), 0, 0)
     pb = arm.pose.bones['testa']; pb.rotation_mode = 'XYZ'
-    pb.rotation_euler = (math.radians(18 * f), 0, 0)
+    pb.rotation_euler = (math.radians(-18 * f), 0, 0)
     POSE.aggiorna()
 
 
+def _catene(arm):
+    """Catene dei tentacoli: {i: [tentacolo_ii_01, tentacolo_ii_02, ...]}."""
+    cat = {}
+    for b in arm.data.bones:
+        if b.name.startswith('tentacolo_'):
+            _, i, k = b.name.split('_')
+            cat.setdefault(int(i), []).append((int(k), b.name))
+    return {i: [n for _, n in sorted(v)] for i, v in sorted(cat.items())}
+
+
+def solleva(arm, dz=SOLLEVA):
+    """Il corpo si stacca dal piedistallo (l'asse Y dell'osso radice e' l'alto)."""
+    arm.pose.bones['radice'].location = (0, dz, 0)
+    POSE.aggiorna()
+
+
+def posa_tentacoli_pendenti(arm, tempo=0.0, scia=0.0, ampiezza=1.0):
+    """Tentacoli staccati dal piano: ogni catena pende dalla campana allargandosi un po' (il primo osso, dentro
+    la campana, resta com'e'), con un'onda che scende verso la punta (tempo in cicli, 0..1) e, con 'scia',
+    resta indietro (+Y) come quando la medusa avanza. Le punte restano sopra il pavimento."""
+    POSE.aggiorna()
+    zp = TENT.STATUA['z_pavimento']
+    for i, nomi in _catene(arm).items():
+        pb0 = arm.pose.bones[nomi[0]]
+        base = pb0.tail.copy()
+        rad = Vector((pb0.head.x, pb0.head.y, 0))
+        rad = rad.normalized() if rad.length > 1e-4 else Vector((1, 0, 0))
+        lato = Vector((-rad.y, rad.x, 0))
+        lungh = [arm.data.bones[nm].length for nm in nomi]
+        fase = i * 2.39
+        n = len(nomi)
+        for prova in range(10):
+            allarga = 0.3 + 0.25 * prova
+            dirs, p, zmin = [], base.copy(), base.z
+            for k in range(1, n):
+                f = k / max(n - 1, 1)
+                onda = ampiezza * 0.32 * f * math.sin(2 * math.pi * (tempo - 0.9 * f) + fase)
+                onda2 = ampiezza * 0.22 * f * math.cos(2 * math.pi * (tempo - 0.8 * f) + 1.3 * fase)
+                d = (Vector((0, 0, -1)) + rad * (allarga * (1 - f) ** 1.3 + 0.1 + onda2) + lato * onda
+                     + Vector((0, 1, 0)) * scia * f)
+                d.normalize()
+                dirs.append(d)
+                p = p + d * lungh[k]
+                zmin = min(zmin, p.z)
+            if zmin > zp + 0.06:
+                break
+        p = base.copy()
+        for k in range(1, n):
+            POSE.orienta(arm, nomi[k], p, dirs[k - 1])
+            p = p + dirs[k - 1] * lungh[k]
+
+
+def posa_sveglia(arm, tempo=0.0, scia=0.0, braccia=0.35):
+    """Medusa sveglia e sospesa: corpo su, braccia un po' avanti, tentacoli che pendono."""
+    posa_insegue(arm, braccia)
+    solleva(arm)
+    posa_tentacoli_pendenti(arm, tempo, scia)
+
+
 def azione_insegue(arm):
+    """Ciclo di 24 fotogrammi (1 s): braccia protese, busto avanti, tentacoli indietro che ondeggiano."""
+    durata = 24
     act = _nuova_azione(arm, 'insegue')
-    posa_insegue(arm)
-    _chiave_posa(arm, 1); _chiave_posa(arm, 2)
+    for f in range(0, durata + 1, 4):
+        POSE.azzera(arm)
+        posa_sveglia(arm, f / durata, scia=0.7, braccia=1.0)
+        _chiave_posa(arm, f + 1)
     _nla(arm, 'insegue', act)
     POSE.azzera(arm)
 
 
-def onda_tentacoli(arm, frame, durata, ampiezza=1.0):
-    """Ondeggiamento dei tentacoli: onda che scende lungo ogni catena."""
-    t = frame / durata * 2 * math.pi
-    for pb in arm.pose.bones:
-        if not pb.name.startswith('tentacolo_'):
-            continue
-        _, i, k = pb.name.split('_')
-        i, k = int(i), int(k)
-        fase = i * 1.7
-        a = math.radians((2.5 + 1.6 * k) * ampiezza)
-        pb.rotation_mode = 'XYZ'
-        pb.rotation_euler = (a * math.sin(t - 0.55 * k + fase), 0, a * 0.7 * math.cos(t - 0.5 * k + fase * 1.3))
+def azione_sveglia(arm):
+    """Da statua a sveglia (30 fotogrammi): il corpo sale, i tentacoli si staccano dal piano e pendono."""
+    act = _nuova_azione(arm, 'sveglia')
+    POSE.azzera(arm)
+    _chiave_posa(arm, 1)
+    posa_sveglia(arm, 0.0)
+    _chiave_posa(arm, 30)
+    _nla(arm, 'sveglia', act)
+    POSE.azzera(arm)
 
 
 def azione_fluttua(arm, corpo):
-    """Ciclo di 48 fotogrammi (2 s): il corpo sale e scende, la campana pulsa, i tentacoli ondeggiano."""
+    """Ciclo di 48 fotogrammi (2 s): corpo sospeso che sale e scende, campana che pulsa, tentacoli che ondeggiano."""
     durata = 48
     act = _nuova_azione(arm, 'fluttua')
     for f in range(0, durata + 1, 4):
         POSE.azzera(arm)
-        posa_insegue(arm, 0.35)
-        t = f / durata * 2 * math.pi
-        pr = arm.pose.bones['radice']
-        pr.location = (0, 0.035 * math.sin(t), 0)          # asse Y dell'osso radice = su
-        onda_tentacoli(arm, f, durata)
+        posa_sveglia(arm, f / durata)
+        solleva(arm, SOLLEVA + 0.035 * math.sin(f / durata * 2 * math.pi))
         _chiave_posa(arm, f + 1)
     _nla(arm, 'fluttua', act)
     # pulsazione della campana (shape key)
@@ -358,9 +402,9 @@ def posa_attacco(arm, f=1.0):
         POSE.piega_dita(arm, suf, 45 * f - POSE.DITA_STATUA, pollice=20 * f - POSE.POLLICE_STATUA)
     for nome, gradi in (('colonna_1', 8), ('colonna_2', 8), ('petto', 5)):
         pb = arm.pose.bones[nome]; pb.rotation_mode = 'XYZ'
-        pb.rotation_euler = (math.radians(-gradi * f), 0, 0)
+        pb.rotation_euler = (math.radians(gradi * f), 0, 0)
     pb = arm.pose.bones['testa']; pb.rotation_mode = 'XYZ'
-    pb.rotation_euler = (math.radians(10 * f), 0, 0)
+    pb.rotation_euler = (math.radians(-14 * f), 0, 0)
     POSE.aggiorna()
 
 
@@ -369,6 +413,8 @@ def azione_fauce(arm):
     for f, v in ((1, 0.0), (5, 0.35), (10, 1.0), (24, 1.0)):
         POSE.azzera(arm)
         posa_attacco(arm, 1.0)
+        solleva(arm)
+        posa_tentacoli_pendenti(arm, 0.0, scia=0.3)
         FAUCE.apri_fauce(arm, v)
         _chiave_posa(arm, f)
     _nla(arm, 'fauce_apre', act)
@@ -393,21 +439,27 @@ def main():
     apri(os.path.join(BUILD, 'medusa_04_scheletro.blend'))
     arm = bpy.data.objects['Medusa_Scheletro']
     corpo = bpy.data.objects['Medusa']
-    TENT.crea_tentacoli(arm, TENTACOLI_FINALI)
+    TENT.crea_tentacoli_statua(arm, TENT.STATUA)
     FAUCE.costruisci_fauce(arm)
     maschera_canali(corpo)
     vinile_laccato(['M_pelle', 'M_capelli', 'M_orbita'])
     materiale_campana()
-    materiale_tentacoli()
     materiale_occhio()
     posa_come_riposo(arm)
+    # mentre si scrivono le azioni le mesh non serve deformarle (molto piu' veloce)
+    mods = [m for o in bpy.data.objects if o.type == 'MESH' for m in o.modifiers if m.type == 'ARMATURE']
+    for m in mods:
+        m.show_viewport = False
     attiva(arm)
     bpy.ops.object.mode_set(mode='POSE')
     azione_statua(arm)
+    azione_sveglia(arm)
     azione_insegue(arm)
     azione_fluttua(arm, corpo)
     azione_fauce(arm)
     bpy.ops.object.mode_set(mode='OBJECT')
+    for m in mods:
+        m.show_viewport = True
     bpy.context.scene.render.fps = FPS
     salva(os.path.join(BUILD, 'medusa_finale.blend'))
     log(f'fatto in {time.time() - t0:.0f} s')
