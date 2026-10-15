@@ -1,6 +1,6 @@
 # Documento di progetto (GDD)
 
-Titolo provvisorio: **Splash Lagoon**. Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
+Titolo provvisorio: **Splash Lagoon**. Finché l'utente non sceglie il nome, nel gioco non si scrive: il titolo mostra solo la statua e "Capitolo 1 · demo". Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
 
 ## Regola d'oro
 
@@ -118,6 +118,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **Tentacoli approvati dall'utente (15 ottobre)**: i nastri carnosi e traslucidi del commit ccbcfe5 ("molto belli"). Non cambiarli. Il resto della ragazza va portato allo stesso livello: prima i capelli, poi viso e occhio, superficie in vinile, mani e campana.
 - Sta su un **piedistallo monumentale**: entrando nella sala il giocatore la vede subito, intera e centrata, illuminata come un monumento, e poi le gira intorno. Da vicino incombe.
 - Alla base ci sono offerte lasciate dai bambini: un indizio silenzioso della lore.
+- **Com'è nella v0.2.0 (15 ottobre)**: per avere la statua intera e centrata a circa 10 m dalla porta degli spogliatoi, la sala è stata allungata di 8 m verso sud. Il monumento a gradoni sta in (0, 0, 10) e ha il piano largo 3,7 m, così i tentacoli appoggiano tutti. Ai lati della statua pendono due teli con la mascotte. Dall'ingresso la statua compete ancora con la cupola: c'è da proporre all'utente una versione più grande, circa 6 m con il monumento in proporzione.
 
 ### Natura: fuori bambola, dentro viva (deciso)
 
