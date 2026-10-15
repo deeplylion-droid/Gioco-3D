@@ -38,6 +38,7 @@ import medusa_capelli as CAPELLI  # noqa: E402
 import medusa_affacciata as AFF  # noqa: E402
 import medusa_mani as MANI  # noqa: E402
 import medusa_occhio_venato as VENE  # noqa: E402
+import medusa_vasca_anim as VASCA  # noqa: E402
 import medusa_attacco as ATT  # noqa: E402
 import medusa_fauce as FAUCE  # noqa: E402
 import medusa_pose as POSE  # noqa: E402
@@ -656,6 +657,7 @@ def main():
     vinile_laccato(['M_pelle', 'M_capelli', 'M_orbita'])
     materiale_campana()
     materiale_occhio()
+    VENE.forma_venatura(arm)            # blend shape 'venatura' dell'occhio (si gonfia appena quando attacca)
     posa_come_riposo(arm)
     normali_cucitura(corpo)
     AFF.schiaccia_campana(arm)          # solo per la posa affacciata (campana sott'acqua)
@@ -673,6 +675,8 @@ def main():
     # sala centrale: la medusa vera affacciata alla vasca (stessa scala vera della statua)
     k_vero = ALTEZZA_STATUA / (coords(corpo.data)[:, 2].max() - TENT.STATUA['z_pavimento'])
     AFF.azione_affacciata(arm, k_vero, TENT.STATUA['z_pavimento'], _chiave_posa, _nla)
+    # tappa 8: dalla posa affacciata scivola sotto, nuota via, oppure afferra chi si avvicina troppo
+    VASCA.azioni_vasca(arm, k_vero, TENT.STATUA['z_pavimento'], _chiave_posa, _nla)
     bpy.ops.object.mode_set(mode='OBJECT')
     for m in mods:
         m.show_viewport = True

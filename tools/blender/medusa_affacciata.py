@@ -120,7 +120,7 @@ def spigolo_bordo(x_t, g=1.0):
     return (x_t, VASCA['dentro'] + 0.02 * g, VASCA['cima'] + 0.07 * g)
 
 
-def percorso_bordo(R, x_t, verso, curva, z_fondo, g=1.0):
+def percorso_bordo(R, x_t, verso, curva, z_fondo, g=1.0, vita=VITA):
     """Tentacolo che esce dall'acqua: scende sotto il bordo della campana, va in avanti fino al muro, giu' fino a
     z_fondo e su lungo il muro interno, sopra il coping e giu' lungo il muro esterno fino al pavimento, poi sul
     pavimento verso 'verso' con una curva morbida (coordinate del mondo). I tentacoli corti finiscono prima, appesi
@@ -133,7 +133,7 @@ def percorso_bordo(R, x_t, verso, curva, z_fondo, g=1.0):
     piede = np.array([x_t, V['fuori'] - 0.13])
     pav = [piede + d * t + lato * curva * math.sin(math.pi * t / 1.0) for t in (0.22, 0.4, 0.6, 0.8, 1.0, 1.2)]
     return [R,
-            (0.6 * R[0] + 0.4 * x_t, max(VITA[1] - 0.45, V['dentro'] + 0.22), 0.075),
+            (0.6 * R[0] + 0.4 * x_t, max(vita[1] - 0.45, V['dentro'] + 0.22), 0.075),
             (x_t, V['dentro'] + 0.16 * g, z_fondo),
             (x_t, V['dentro'] + 0.14 * g, V['acqua'] - 0.02),
             spigolo_bordo(x_t, g),
@@ -144,10 +144,10 @@ def percorso_bordo(R, x_t, verso, curva, z_fondo, g=1.0):
             (x_t + d[0] * 0.08, V['fuori'] - 0.17 + d[1] * 0.04, 0.085)] + [(p[0], p[1], 0.075) for p in pav]
 
 
-def percorso_acqua(R, az, lunghezza, rng):
+def percorso_acqua(R, az, lunghezza, rng, vita=VITA):
     """Tentacolo sott'acqua: scende sotto il bordo della campana e le gira intorno, dietro, a mezz'acqua."""
     V = VASCA
-    c = np.array([VITA[0], VITA[1]])
+    c = np.array([vita[0], vita[1]])
     pts = [R, (R[0] + 0.25 * math.cos(az), R[1] + 0.25 * math.sin(az), 0.075)]
     # verso dell'arco: verso il dietro (+y in Blender = lontano da chi entra)
     verso = 1.0 if math.cos(az) >= 0 else -1.0
@@ -222,11 +222,12 @@ def _fuori_dal_bordo(P):
     return fuori
 
 
-def _orienta_dita(arm, suf, d_mano, k, zp):
+def _orienta_dita(arm, suf, d_mano, k, zp, piega_min=20):
     """Dita aggrappate allo spigolo del coping: la prima falange sul coping, la seconda piegata giu' oltre lo
     spigolo (circa 90 gradi, nocca in alto), la punta premuta sul fronte. Per ogni dito si cercano le due pieghe
     che tengono le falangi fuori dal bordo (al loro spessore) con il polpastrello appoggiato al fronte.
-    Il pollice resta sul coping, verso l'interno."""
+    Il pollice resta sul coping, verso l'interno. Con piega_min piu' bassa le dita possono anche distendersi sul
+    coping (mani che scivolano indietro, quando lo spigolo non si raggiunge piu')."""
     import medusa_mani as MANI
     V = VASCA
     s = 1.0 if suf == '.L' else -1.0
@@ -260,7 +261,7 @@ def _orienta_dita(arm, suf, d_mano, k, zp):
             d1 = avanti * math.cos(pend) - su * math.sin(pend)
             P1 = K + d1 * L[0]
             migliore = None
-            for a2 in np.radians(np.arange(20, 121, 4)):
+            for a2 in np.radians(np.arange(piega_min, 121, 4)):
                 d2 = avanti * math.cos(a2) - su * math.sin(a2)
                 P2 = P1 + d2 * L[1]
                 for a3 in np.radians(np.arange(0, 71, 5)):
@@ -292,7 +293,6 @@ def _orienta_dita(arm, suf, d_mano, k, zp):
 
 def posa_affacciata(arm, k, zp, respiro=0.0):
     """Tutta la posa nello spazio dello scheletro (prima della scala vera)."""
-    rng = np.random.default_rng(31)
     POSE.azzera(arm)
     # 1. corpo: la vita va al suo posto nella vasca
     vita_riposo = np.array(arm.data.bones['colonna_1'].head_local)
@@ -341,13 +341,27 @@ def posa_affacciata(arm, k, zp, respiro=0.0):
         dirz = np.array(q @ Vector(attuale))
     POSE.orienta(arm, 'occhio', Vector(testa_occ), Vector(dirz))
     # 6. tentacoli: quelli davanti escono dall'acqua e ricadono fuori dal bordo, gli altri restano sott'acqua
+    perc = percorsi_tentacoli(arm, k, zp)
+    for c in perc:
+        adatta_catena(arm, c['nomi'], c['pts'])
+    n_d = sum(1 for c in perc if c['ruolo'] == 'bordo')
+    return n_d, len(perc) - n_d
+
+
+def percorsi_tentacoli(arm, k, zp, vita=VITA, schiaccia=1.0):
+    """Percorsi dei tentacoli nella posa affacciata (spazio dello scheletro), dalle radici nella posa attuale.
+    Ritorna per ogni catena un dizionario: nomi, radice R (mondo), ruolo ('bordo': esce dall'acqua e scavalca il
+    bordo; 'acqua': resta sott'acqua), i parametri del percorso e i punti 'pts'. Con vita e schiaccia diversi
+    (campana spostata o meno schiacciata) le radici e i percorsi seguono la campana; i tentacoli che escono
+    scavalcano sempre lo stesso punto del bordo."""
+    rng = np.random.default_rng(31)
     cat = _catene(arm)
-    vita_w = np.array(VITA)
+    vita_w = np.array(vita, float)
     tutte = []
     for i, nomi in cat.items():
         R = _mondo(np.array(arm.pose.bones[nomi[0]].head), k, zp)
         # le radici seguono la campana schiacciata (restano dentro, sopra il fondo della vasca)
-        R[2] = vita_w[2] - (vita_w[2] - R[2]) * SCHIACCIA[0]
+        R[2] = vita_w[2] - (vita_w[2] - R[2]) * (1.0 - schiaccia * (1.0 - SCHIACCIA[0]))
         az = math.atan2(R[1] - vita_w[1], R[0] - vita_w[0])
         tutte.append((i, nomi, R, az))
     # escono dall'acqua le zampe e i medi piu' vicini al davanti (azimut -90 gradi, verso chi entra)
@@ -357,6 +371,7 @@ def posa_affacciata(arm, k, zp, respiro=0.0):
     davanti = list(zip(zampe, POSTI_ZAMPE)) + list(zip(medi, POSTI_MEDI))
     fuori = {c[0] for c, _ in davanti}
     dietro = [c for c in tutte if c[0] not in fuori]
+    out = []
     for (i, nomi, R, az), (x_t, verso) in davanti:
         g = 1.0 if len(nomi) >= 10 else 0.5            # i medi sono larghi e spessi la meta' delle zampe
         curva = rng.uniform(0.12, 0.2) * rng.choice([-1, 1])
@@ -367,16 +382,17 @@ def posa_affacciata(arm, k, zp, respiro=0.0):
         A = _mod(spigolo_bordo(x_t, g), k, zp)
         migliore = None
         for z_fondo in np.linspace(0.1, 0.55, 46):
-            pts = [_mod(p, k, zp) for p in percorso_bordo(R, x_t, verso, curva, z_fondo, g)]
+            pts = [_mod(p, k, zp) for p in percorso_bordo(R, x_t, verso, curva, z_fondo, g, vita_w)]
             e = min(np.linalg.norm(q - A) for q in giunti_catena(pts, lunghezze))
             if migliore is None or e < migliore[0]:
-                migliore = (e, pts)
-        adatta_catena(arm, nomi, migliore[1])
+                migliore = (e, pts, z_fondo)
+        out.append(dict(i=i, nomi=nomi, R=R, az=az, ruolo='bordo', x_t=x_t, verso=verso, curva=curva, g=g,
+                        z_fondo=migliore[2], pts=migliore[1]))
     for i, nomi, R, az in dietro:
         L = sum(arm.data.bones[n].length for n in nomi) * k
-        pts = [_mod(p, k, zp) for p in percorso_acqua(R, az, L, rng)]
-        adatta_catena(arm, nomi, pts)
-    return len(davanti), len(dietro)
+        pts = [_mod(p, k, zp) for p in percorso_acqua(R, az, L, rng, vita_w)]
+        out.append(dict(i=i, nomi=nomi, R=R, az=az, ruolo='acqua', pts=pts))
+    return out
 
 
 def azione_affacciata(arm, k, zp, chiave, nla):

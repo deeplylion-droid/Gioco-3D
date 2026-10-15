@@ -161,6 +161,33 @@ def materiale_venatura():
     nt.links.new(mix.outputs['Result'], b.inputs['Emission Color'])
 
 
+def forma_venatura(arm, gonfia=0.0025):
+    """Blend shape 'venatura' su Medusa_Occhio: il davanti del bulbo (iride e pupilla) si gonfia appena in avanti,
+    l'occhio che si accende quando attacca. Le animazioni la portano a 1 insieme alla venatura del materiale: in
+    Godot il suo valore e' anche il segnale per il parametro 'venatura' dello shader (vedi LEGGIMI.md).
+    Va fatta prima che la posa statua diventi il riposo (passo 7). gonfia: spostamento massimo (modello)."""
+    ob = bpy.data.objects['Medusa_Occhio']
+    me = ob.data
+    co = coords(me)
+    b = arm.data.bones['occhio']
+    Mi = ob.matrix_world.inverted() @ arm.matrix_world
+    c = np.array(Mi @ b.head_local)
+    d = np.array(Mi.to_3x3() @ (b.tail_local - b.head_local))
+    d /= np.linalg.norm(d)
+    rel = co - c
+    r = np.linalg.norm(rel, axis=1).max()
+    cosang = (rel @ d) / (np.linalg.norm(rel, axis=1) + 1e-12)
+    peso = _smooth(0.55, 0.95, cosang)                  # solo la calotta davanti, sfumata verso la sclera
+    nuovo = co + d[None] * (gonfia * peso)[:, None]
+    if me.shape_keys is None:
+        ob.shape_key_add(name='Basis', from_mix=False)
+    sk = ob.shape_key_add(name='venatura', from_mix=False)
+    sk.data.foreach_set('co', nuovo.ravel())
+    sk.value = 0.0
+    log(f'occhio: blend shape venatura (gonfia {gonfia} sul davanti del bulbo, raggio {r:.3f})')
+    return sk
+
+
 if __name__ == '__main__':
     crea_calmo()
     crea_texture()

@@ -80,12 +80,27 @@ def _normale_nastro(arm, nomi):
     return asse
 
 
-def _percorso_riposo(arm, corpo, s):
-    """Punti (posa di riposo) del percorso sul corpo, per il lato s (+1: parte da +X e sale alla spalla -X)."""
+def _percorso_riposo(arm, corpo, s, radice=None, alza=0.0):
+    """Punti (posa di riposo) del percorso sul corpo, per il lato s (+1: parte da +X e sale alla spalla -X).
+    Se la radice e' dietro (la zampa nasce sul retro della campana), prima gira intorno alla campana dal fianco.
+    'alza' sposta in su il tratto sul davanti (unita' del modello)."""
     bvh, co, osso, nomi = _bvh_busto(arm, corpo)
-    punti = []        # (punto, normale, faccia-osso)
+    punti = []        # (punto, normale)
+    if radice is not None and radice[1] > 0.05:
+        az_r = math.atan2(radice[1], radice[0])
+        az_f = math.radians(-50.0 if s > 0 else -130.0)
+        if s < 0 and az_r < 0:
+            az_r += 2 * math.pi
+        if s < 0:
+            az_f += 2 * math.pi
+        for t in (0.3, 0.55, 0.8):
+            a = az_r + (az_f - az_r) * t
+            d = np.array([math.cos(a), math.sin(a), 0.0])
+            p, n = _raggio(bvh, tuple(d * 1.5 + np.array([0.0, 0.0, -0.5])), tuple(-d))
+            if p is not None:
+                punti.append((p + n * SPESSORE * 1.5, n))
     for x, z in DAVANTI:
-        p, n = _raggio(bvh, (s * x, -1.5, z), (0, 1, 0))
+        p, n = _raggio(bvh, (s * x, -1.5, z + alza), (0, 1, 0))
         if p is not None:
             punti.append((p + n * SPESSORE, n))
     for x, y in SPALLA:
@@ -113,10 +128,46 @@ def _osso_piu_vicino(arm, p):
     return migliore
 
 
-def zampe_sul_petto(arm, corpo):
-    """Le due zampe piu' davanti (una per lato) incrociate sul petto, nella posa attuale dello scheletro."""
+def percorso_petto(arm, corpo, nomi, s, alza=0.0):
+    """Percorso della zampa (nomi) incrociata sul petto, nella posa attuale dello scheletro: punti e normali
+    (spazio dello scheletro), radice compresa. None se i raggi non trovano il corpo."""
+    rip = _percorso_riposo(arm, corpo, s, np.array(arm.data.bones[nomi[0]].head_local), alza)
+    if len(rip) < 4:
+        return None
+    # dalla posa di riposo alla posa attuale con l'osso del busto piu' vicino
+    pts, nrm = [], []
+    for p, n in rip:
+        b = _osso_piu_vicino(arm, p)
+        D = arm.pose.bones[b].matrix @ arm.data.bones[b].matrix_local.inverted()
+        pts.append(np.array(D @ Vector(p)))
+        nrm.append(np.array(D.to_3x3() @ Vector(n)).astype(float))
+    radice = np.array(arm.pose.bones[nomi[0]].head)
+    return [radice] + pts, [nrm[0]] + nrm
+
+
+def metti_zampa(arm, nomi, percorso, normali=None):
+    """La catena lungo il percorso (spazio dello scheletro); con le normali il nastro gira il lato piatto sul
+    corpo, senza resta la torsione naturale."""
     import medusa_affacciata as AFF
-    POSE.aggiorna()
+    giunti = AFF.giunti_catena(percorso, [arm.data.bones[n].length for n in nomi])
+    asse = _normale_nastro(arm, nomi) if normali is not None else None
+    P = np.array(percorso)
+    for k, n in enumerate(nomi):
+        a, b = giunti[k], giunti[k + 1]
+        d = b - a
+        if normali is None:
+            POSE.orienta(arm, n, Vector(a), Vector(d))
+            continue
+        m = (a + b) / 2
+        j = int(np.argmin(np.linalg.norm(P - m, axis=1)))
+        nn = normali[j] / (np.linalg.norm(normali[j]) + 1e-9)
+        zv = nn if asse == 'Z' else np.cross(d / (np.linalg.norm(d) + 1e-9), nn)
+        POSE.orienta(arm, n, Vector(a), Vector(d), Vector(zv))
+
+
+def zampe_davanti(arm):
+    """Le due zampe piu' davanti (una per lato): {+1: nomi, -1: nomi}."""
+    import medusa_affacciata as AFF
     cat = AFF._catene(arm)
     zampe = []
     for i, nomi in cat.items():
@@ -125,35 +176,42 @@ def zampe_sul_petto(arm, corpo):
         h = np.array(arm.data.bones[nomi[0]].head_local)
         zampe.append((h[1], h[0], nomi))           # piu' davanti = y piu' piccola
     zampe.sort()
+    out = {}
     sinistra = next((z for z in zampe if z[1] > 0), None)
     destra = next((z for z in zampe if z[1] < 0), None)
-    for z, s in ((sinistra, 1.0), (destra, -1.0)):
-        if z is None:
+    if sinistra:
+        out[1.0] = sinistra[2]
+    if destra:
+        out[-1.0] = destra[2]
+    return out
+
+
+def zampe_dietro(arm):
+    """Le due zampe piu' dietro (una per lato): {+1: nomi, -1: nomi}."""
+    import medusa_affacciata as AFF
+    cat = AFF._catene(arm)
+    zampe = []
+    for i, nomi in cat.items():
+        if len(nomi) < 10:
             continue
-        nomi = z[2]
-        rip = _percorso_riposo(arm, corpo, s)
-        if len(rip) < 4:
+        h = np.array(arm.data.bones[nomi[0]].head_local)
+        zampe.append((-h[1], h[0], nomi))
+    zampe.sort()
+    out = {}
+    sinistra = next((z for z in zampe if z[1] > 0), None)
+    destra = next((z for z in zampe if z[1] < 0), None)
+    if sinistra:
+        out[1.0] = sinistra[2]
+    if destra:
+        out[-1.0] = destra[2]
+    return out
+
+
+def zampe_sul_petto(arm, corpo, catene=None):
+    """Due zampe (una per lato; di serie le piu' davanti) incrociate sul petto, nella posa attuale."""
+    POSE.aggiorna()
+    for s, nomi in (catene or zampe_davanti(arm)).items():
+        perc = percorso_petto(arm, corpo, nomi, s)
+        if perc is None:
             continue
-        # dalla posa di riposo alla posa attuale con l'osso del busto piu' vicino
-        pts, nrm = [], []
-        for p, n in rip:
-            b = _osso_piu_vicino(arm, p)
-            D = arm.pose.bones[b].matrix @ arm.data.bones[b].matrix_local.inverted()
-            pts.append(np.array(D @ Vector(p)))
-            nrm.append(np.array(D.to_3x3() @ Vector(n)).astype(float))
-        radice = np.array(arm.pose.bones[nomi[0]].head)
-        percorso = [radice] + pts
-        giunti = AFF.giunti_catena(percorso, [arm.data.bones[n].length for n in nomi])
-        asse = _normale_nastro(arm, nomi)
-        P = np.array(pts)
-        for k, n in enumerate(nomi):
-            a, b = giunti[k], giunti[k + 1]
-            d = b - a
-            m = (a + b) / 2
-            j = int(np.argmin(np.linalg.norm(P - m, axis=1)))
-            nn = nrm[j] / (np.linalg.norm(nrm[j]) + 1e-9)
-            if asse == 'Z':
-                zv = nn
-            else:
-                zv = np.cross(d / (np.linalg.norm(d) + 1e-9), nn)
-            POSE.orienta(arm, n, Vector(a), Vector(d), Vector(zv))
+        metti_zampa(arm, nomi, perc[0], perc[1])
