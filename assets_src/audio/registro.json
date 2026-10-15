@@ -1,0 +1,1402 @@
+{
+ "ambiente/goccia_acqua_01": {
+  "file": "res://audio/ambiente/goccia_acqua_01.ogg",
+  "canali": 1,
+  "durata": 0.45,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_acqua_02": {
+  "file": "res://audio/ambiente/goccia_acqua_02.ogg",
+  "canali": 1,
+  "durata": 0.45,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_acqua_03": {
+  "file": "res://audio/ambiente/goccia_acqua_03.ogg",
+  "canali": 1,
+  "durata": 0.45,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_acqua_04": {
+  "file": "res://audio/ambiente/goccia_acqua_04.ogg",
+  "canali": 1,
+  "durata": 0.45,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_acqua_05": {
+  "file": "res://audio/ambiente/goccia_acqua_05.ogg",
+  "canali": 1,
+  "durata": 0.45,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_acqua_06": {
+  "file": "res://audio/ambiente/goccia_acqua_06.ogg",
+  "canali": 1,
+  "durata": 0.45,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_pavimento_01": {
+  "file": "res://audio/ambiente/goccia_pavimento_01.ogg",
+  "canali": 1,
+  "durata": 0.3,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_pavimento_02": {
+  "file": "res://audio/ambiente/goccia_pavimento_02.ogg",
+  "canali": 1,
+  "durata": 0.3,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -19.1
+ },
+ "ambiente/goccia_pavimento_03": {
+  "file": "res://audio/ambiente/goccia_pavimento_03.ogg",
+  "canali": 1,
+  "durata": 0.3,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/goccia_pavimento_04": {
+  "file": "res://audio/ambiente/goccia_pavimento_04.ogg",
+  "canali": 1,
+  "durata": 0.3,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "ambiente/nave_colpo_lontano_01": {
+  "file": "res://audio/ambiente/nave_colpo_lontano_01.ogg",
+  "canali": 1,
+  "durata": 5.5,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds + RPG Audio (CC0), rielaborati",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -12.9
+ },
+ "ambiente/nave_colpo_lontano_02": {
+  "file": "res://audio/ambiente/nave_colpo_lontano_02.ogg",
+  "canali": 1,
+  "durata": 5.5,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds + RPG Audio (CC0), rielaborati",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -14.3
+ },
+ "ambiente/nave_colpo_lontano_03": {
+  "file": "res://audio/ambiente/nave_colpo_lontano_03.ogg",
+  "canali": 1,
+  "durata": 5.5,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds + RPG Audio (CC0), rielaborati",
+  "nota": "",
+  "lufs": -19.8,
+  "lufs_max": -14.0
+ },
+ "ambiente/nave_gemito_01": {
+  "file": "res://audio/ambiente/nave_gemito_01.ogg",
+  "canali": 1,
+  "durata": 8.661,
+  "loop": false,
+  "fonte": "sintesi + Kenney RPG Audio (CC0)",
+  "nota": "creak rallentato e lamiera sintetica",
+  "lufs": -20.0,
+  "lufs_max": -15.4
+ },
+ "ambiente/nave_gemito_02": {
+  "file": "res://audio/ambiente/nave_gemito_02.ogg",
+  "canali": 1,
+  "durata": 8.367,
+  "loop": false,
+  "fonte": "sintesi + Kenney RPG Audio (CC0)",
+  "nota": "creak rallentato e lamiera sintetica",
+  "lufs": -20.0,
+  "lufs_max": -13.9
+ },
+ "ambiente/nave_gemito_03": {
+  "file": "res://audio/ambiente/nave_gemito_03.ogg",
+  "canali": 1,
+  "durata": 7.844,
+  "loop": false,
+  "fonte": "sintesi + Kenney RPG Audio (CC0)",
+  "nota": "creak rallentato e lamiera sintetica",
+  "lufs": -20.0,
+  "lufs_max": -14.5
+ },
+ "ambiente/nave_gemito_04": {
+  "file": "res://audio/ambiente/nave_gemito_04.ogg",
+  "canali": 1,
+  "durata": 6.791,
+  "loop": false,
+  "fonte": "sintesi + Kenney RPG Audio (CC0)",
+  "nota": "creak rallentato e lamiera sintetica",
+  "lufs": -20.0,
+  "lufs_max": -14.8
+ },
+ "ambiente/nave_loop": {
+  "file": "res://audio/ambiente/nave_loop.ogg",
+  "canali": 2,
+  "durata": 40.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "ronzio elettrico a 50 Hz, macchine lontane, onde contro lo scafo",
+  "lufs": -28.0,
+  "lufs_max": -24.3
+ },
+ "ambiente/nave_scricchiolio_01": {
+  "file": "res://audio/ambiente/nave_scricchiolio_01.ogg",
+  "canali": 1,
+  "durata": 3.809,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborato",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -12.4
+ },
+ "ambiente/nave_scricchiolio_02": {
+  "file": "res://audio/ambiente/nave_scricchiolio_02.ogg",
+  "canali": 1,
+  "durata": 3.954,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborato",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -12.0
+ },
+ "ambiente/nave_scricchiolio_03": {
+  "file": "res://audio/ambiente/nave_scricchiolio_03.ogg",
+  "canali": 1,
+  "durata": 2.978,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborato",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -11.4
+ },
+ "ambiente/nave_tic_01": {
+  "file": "res://audio/ambiente/nave_tic_01.ogg",
+  "canali": 1,
+  "durata": 2.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -27.9,
+  "lufs_max": -16.0
+ },
+ "ambiente/nave_tic_02": {
+  "file": "res://audio/ambiente/nave_tic_02.ogg",
+  "canali": 1,
+  "durata": 2.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.3,
+  "lufs_max": -16.0
+ },
+ "ambiente/nave_tic_03": {
+  "file": "res://audio/ambiente/nave_tic_03.ogg",
+  "canali": 1,
+  "durata": 2.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -29.7,
+  "lufs_max": -16.0
+ },
+ "ambiente/pioggia_cupola_loop": {
+  "file": "res://audio/ambiente/pioggia_cupola_loop.ogg",
+  "canali": 2,
+  "durata": 40.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "pioggia battente sulla cupola di vetro sentita dalla sala",
+  "lufs": -24.0,
+  "lufs_max": -22.0
+ },
+ "ambiente/sirena_lontana_01": {
+  "file": "res://audio/ambiente/sirena_lontana_01.ogg",
+  "canali": 2,
+  "durata": 10.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.9,
+  "lufs_max": -21.2
+ },
+ "ambiente/sirena_lontana_02": {
+  "file": "res://audio/ambiente/sirena_lontana_02.ogg",
+  "canali": 2,
+  "durata": 9.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.0,
+  "lufs_max": -21.5
+ },
+ "ambiente/sottacqua_loop": {
+  "file": "res://audio/ambiente/sottacqua_loop.ogg",
+  "canali": 2,
+  "durata": 16.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "fondo ovattato sott'acqua",
+  "lufs": -24.0,
+  "lufs_max": -20.3
+ },
+ "ambiente/tuono_lontano_01": {
+  "file": "res://audio/ambiente/tuono_lontano_01.ogg",
+  "canali": 2,
+  "durata": 9.297,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "lowFrequency_explosion come sub",
+  "lufs": -22.0,
+  "lufs_max": -17.3
+ },
+ "ambiente/tuono_lontano_02": {
+  "file": "res://audio/ambiente/tuono_lontano_02.ogg",
+  "canali": 2,
+  "durata": 10.554,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "lowFrequency_explosion come sub",
+  "lufs": -21.9,
+  "lufs_max": -17.5
+ },
+ "ambiente/tuono_lontano_03": {
+  "file": "res://audio/ambiente/tuono_lontano_03.ogg",
+  "canali": 2,
+  "durata": 11.839,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "lowFrequency_explosion come sub",
+  "lufs": -22.0,
+  "lufs_max": -17.8
+ },
+ "ambiente/tuono_vicino_01": {
+  "file": "res://audio/ambiente/tuono_vicino_01.ogg",
+  "canali": 2,
+  "durata": 8.784,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "lowFrequency_explosion come sub",
+  "lufs": -16.0,
+  "lufs_max": -11.6
+ },
+ "ambiente/tuono_vicino_02": {
+  "file": "res://audio/ambiente/tuono_vicino_02.ogg",
+  "canali": 2,
+  "durata": 8.544,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "lowFrequency_explosion come sub",
+  "lufs": -16.0,
+  "lufs_max": -12.8
+ },
+ "ambiente/tuono_vicino_03": {
+  "file": "res://audio/ambiente/tuono_vicino_03.ogg",
+  "canali": 2,
+  "durata": 7.529,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "lowFrequency_explosion come sub",
+  "lufs": -16.0,
+  "lufs_max": -11.1
+ },
+ "ambiente/vento_loop": {
+  "file": "res://audio/ambiente/vento_loop.ogg",
+  "canali": 2,
+  "durata": 45.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "vento e ululati fuori dalla cupola",
+  "lufs": -27.0,
+  "lufs_max": -23.7
+ },
+ "effetti/cancello_fine": {
+  "file": "res://audio/effetti/cancello_fine.ogg",
+  "canali": 1,
+  "durata": 0.849,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds + RPG Audio (CC0), rielaborati",
+  "nota": "",
+  "lufs": -20.2,
+  "lufs_max": -14.0
+ },
+ "effetti/cancello_ruota": {
+  "file": "res://audio/effetti/cancello_ruota.ogg",
+  "canali": 1,
+  "durata": 5.0,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborato",
+  "nota": "",
+  "lufs": -26.5,
+  "lufs_max": -18.0
+ },
+ "effetti/emergenza_ronzio_loop": {
+  "file": "res://audio/effetti/emergenza_ronzio_loop.ogg",
+  "canali": 1,
+  "durata": 4.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.0,
+  "lufs_max": -23.1
+ },
+ "effetti/emergenza_rotante_loop": {
+  "file": "res://audio/effetti/emergenza_rotante_loop.ogg",
+  "canali": 1,
+  "durata": 3.636,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -24.0,
+  "lufs_max": -22.7
+ },
+ "effetti/faro_acceso": {
+  "file": "res://audio/effetti/faro_acceso.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.7,
+  "lufs_max": -14.0
+ },
+ "effetti/faro_ronzio_loop": {
+  "file": "res://audio/effetti/faro_ronzio_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -27.0,
+  "lufs_max": -24.5
+ },
+ "effetti/gonfiabile_colpito": {
+  "file": "res://audio/effetti/gonfiabile_colpito.ogg",
+  "canali": 1,
+  "durata": 0.35,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -19.0
+ },
+ "effetti/gonfiabile_libero": {
+  "file": "res://audio/effetti/gonfiabile_libero.ogg",
+  "canali": 1,
+  "durata": 2.2,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.8,
+  "lufs_max": -15.0
+ },
+ "effetti/medusa_presenza_loop": {
+  "file": "res://audio/effetti/medusa_presenza_loop.ogg",
+  "canali": 1,
+  "durata": 8.0,
+  "loop": true,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "slime rallentato",
+  "lufs": -30.0,
+  "lufs_max": -21.2
+ },
+ "effetti/medusa_risveglio": {
+  "file": "res://audio/effetti/medusa_risveglio.ogg",
+  "canali": 1,
+  "durata": 4.5,
+  "loop": false,
+  "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
+  "nota": "slime rallentato",
+  "lufs": -16.3,
+  "lufs_max": -13.4
+ },
+ "effetti/neon_clic_01": {
+  "file": "res://audio/effetti/neon_clic_01.ogg",
+  "canali": 1,
+  "durata": 0.104,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "effetti/neon_clic_02": {
+  "file": "res://audio/effetti/neon_clic_02.ogg",
+  "canali": 1,
+  "durata": 0.074,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "effetti/neon_clic_03": {
+  "file": "res://audio/effetti/neon_clic_03.ogg",
+  "canali": 1,
+  "durata": 0.093,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "effetti/neon_ronzio_loop": {
+  "file": "res://audio/effetti/neon_ronzio_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -24.0,
+  "lufs_max": -22.1
+ },
+ "effetti/neon_scintilla_01": {
+  "file": "res://audio/effetti/neon_scintilla_01.ogg",
+  "canali": 1,
+  "durata": 0.362,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -17.6
+ },
+ "effetti/neon_scintilla_02": {
+  "file": "res://audio/effetti/neon_scintilla_02.ogg",
+  "canali": 1,
+  "durata": 0.52,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.9,
+  "lufs_max": -16.0
+ },
+ "effetti/neon_scintilla_03": {
+  "file": "res://audio/effetti/neon_scintilla_03.ogg",
+  "canali": 1,
+  "durata": 0.518,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -24.5,
+  "lufs_max": -16.0
+ },
+ "effetti/porta_aperta": {
+  "file": "res://audio/effetti/porta_aperta.ogg",
+  "canali": 1,
+  "durata": 0.847,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds + RPG Audio (CC0), rielaborati",
+  "nota": "",
+  "lufs": -20.1,
+  "lufs_max": -14.0
+ },
+ "effetti/porta_chiusa": {
+  "file": "res://audio/effetti/porta_chiusa.ogg",
+  "canali": 1,
+  "durata": 0.873,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds + RPG Audio (CC0), rielaborati",
+  "nota": "",
+  "lufs": -21.5,
+  "lufs_max": -14.3
+ },
+ "effetti/porta_motore_loop": {
+  "file": "res://audio/effetti/porta_motore_loop.ogg",
+  "canali": 1,
+  "durata": 2.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.0,
+  "lufs_max": -20.0
+ },
+ "effetti/portello_apre": {
+  "file": "res://audio/effetti/portello_apre.ogg",
+  "canali": 1,
+  "durata": 3.2,
+  "loop": false,
+  "fonte": "Kenney RPG Audio + Impact Sounds (CC0), rielaborati",
+  "nota": "",
+  "lufs": -22.5,
+  "lufs_max": -15.0
+ },
+ "effetti/pulsante_premuto": {
+  "file": "res://audio/effetti/pulsante_premuto.ogg",
+  "canali": 1,
+  "durata": 1.0,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -19.4,
+  "lufs_max": -15.0
+ },
+ "effetti/pulsante_rilasciato": {
+  "file": "res://audio/effetti/pulsante_rilasciato.ogg",
+  "canali": 1,
+  "durata": 0.2,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -26.2
+ },
+ "effetti/quadro_scintille": {
+  "file": "res://audio/effetti/quadro_scintille.ogg",
+  "canali": 1,
+  "durata": 2.2,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -22.7,
+  "lufs_max": -14.8
+ },
+ "effetti/riempie_loop": {
+  "file": "res://audio/effetti/riempie_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.0,
+  "lufs_max": -19.2
+ },
+ "effetti/ruota_pale_loop": {
+  "file": "res://audio/effetti/ruota_pale_loop.ogg",
+  "canali": 1,
+  "durata": 2.4,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -15.6
+ },
+ "effetti/saracinesca_fine": {
+  "file": "res://audio/effetti/saracinesca_fine.ogg",
+  "canali": 1,
+  "durata": 0.966,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds + RPG Audio (CC0), rielaborati",
+  "nota": "",
+  "lufs": -19.7,
+  "lufs_max": -14.0
+ },
+ "effetti/saracinesca_loop": {
+  "file": "res://audio/effetti/saracinesca_loop.ogg",
+  "canali": 1,
+  "durata": 2.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -18.0
+ },
+ "effetti/scarico_loop": {
+  "file": "res://audio/effetti/scarico_loop.ogg",
+  "canali": 1,
+  "durata": 4.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.0,
+  "lufs_max": -15.9
+ },
+ "effetti/scivolo_loop": {
+  "file": "res://audio/effetti/scivolo_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -17.0
+ },
+ "effetti/secchio_ribalta": {
+  "file": "res://audio/effetti/secchio_ribalta.ogg",
+  "canali": 1,
+  "durata": 4.5,
+  "loop": false,
+  "fonte": "sintesi + Kenney RPG Audio (CC0)",
+  "nota": "",
+  "lufs": -17.6,
+  "lufs_max": -14.0
+ },
+ "effetti/secchio_ritorno": {
+  "file": "res://audio/effetti/secchio_ritorno.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0), rielaborato",
+  "nota": "",
+  "lufs": -28.7,
+  "lufs_max": -19.0
+ },
+ "effetti/turbina_bloccata": {
+  "file": "res://audio/effetti/turbina_bloccata.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.4,
+  "lufs_max": -19.4
+ },
+ "effetti/turbina_loop": {
+  "file": "res://audio/effetti/turbina_loop.ogg",
+  "canali": 1,
+  "durata": 2.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -20.0,
+  "lufs_max": -16.5
+ },
+ "effetti/vasca_svuotata": {
+  "file": "res://audio/effetti/vasca_svuotata.ogg",
+  "canali": 1,
+  "durata": 2.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -24.0,
+  "lufs_max": -17.0
+ },
+ "giocatore/atterraggio_acqua_01": {
+  "file": "res://audio/giocatore/atterraggio_acqua_01.ogg",
+  "canali": 1,
+  "durata": 0.692,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": -22.5,
+  "lufs_max": -16.0
+ },
+ "giocatore/atterraggio_acqua_02": {
+  "file": "res://audio/giocatore/atterraggio_acqua_02.ogg",
+  "canali": 1,
+  "durata": 0.667,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": -22.7,
+  "lufs_max": -16.0
+ },
+ "giocatore/atterraggio_bagnato_01": {
+  "file": "res://audio/giocatore/atterraggio_bagnato_01.ogg",
+  "canali": 1,
+  "durata": 0.222,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.5
+ },
+ "giocatore/atterraggio_bagnato_02": {
+  "file": "res://audio/giocatore/atterraggio_bagnato_02.ogg",
+  "canali": 1,
+  "durata": 0.211,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.2
+ },
+ "giocatore/atterraggio_metallo_01": {
+  "file": "res://audio/giocatore/atterraggio_metallo_01.ogg",
+  "canali": 1,
+  "durata": 0.62,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": -25.1,
+  "lufs_max": -19.1
+ },
+ "giocatore/atterraggio_metallo_02": {
+  "file": "res://audio/giocatore/atterraggio_metallo_02.ogg",
+  "canali": 1,
+  "durata": 0.577,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": -26.3,
+  "lufs_max": -20.3
+ },
+ "giocatore/atterraggio_piastrelle_01": {
+  "file": "res://audio/giocatore/atterraggio_piastrelle_01.ogg",
+  "canali": 1,
+  "durata": 0.164,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -17.9
+ },
+ "giocatore/atterraggio_piastrelle_02": {
+  "file": "res://audio/giocatore/atterraggio_piastrelle_02.ogg",
+  "canali": 1,
+  "durata": 0.2,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -17.3
+ },
+ "giocatore/passo_acqua_01": {
+  "file": "res://audio/giocatore/passo_acqua_01.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.1,
+  "lufs_max": -19.0
+ },
+ "giocatore/passo_acqua_02": {
+  "file": "res://audio/giocatore/passo_acqua_02.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -27.4,
+  "lufs_max": -19.0
+ },
+ "giocatore/passo_acqua_03": {
+  "file": "res://audio/giocatore/passo_acqua_03.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.1,
+  "lufs_max": -19.0
+ },
+ "giocatore/passo_acqua_04": {
+  "file": "res://audio/giocatore/passo_acqua_04.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.7,
+  "lufs_max": -19.0
+ },
+ "giocatore/passo_acqua_05": {
+  "file": "res://audio/giocatore/passo_acqua_05.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.9,
+  "lufs_max": -19.0
+ },
+ "giocatore/passo_acqua_06": {
+  "file": "res://audio/giocatore/passo_acqua_06.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.7,
+  "lufs_max": -19.0
+ },
+ "giocatore/passo_bagnato_01": {
+  "file": "res://audio/giocatore/passo_bagnato_01.ogg",
+  "canali": 1,
+  "durata": 0.211,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_bagnato_02": {
+  "file": "res://audio/giocatore/passo_bagnato_02.ogg",
+  "canali": 1,
+  "durata": 0.222,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_bagnato_03": {
+  "file": "res://audio/giocatore/passo_bagnato_03.ogg",
+  "canali": 1,
+  "durata": 0.23,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_bagnato_04": {
+  "file": "res://audio/giocatore/passo_bagnato_04.ogg",
+  "canali": 1,
+  "durata": 0.223,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_bagnato_05": {
+  "file": "res://audio/giocatore/passo_bagnato_05.ogg",
+  "canali": 1,
+  "durata": 0.167,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_bagnato_06": {
+  "file": "res://audio/giocatore/passo_bagnato_06.ogg",
+  "canali": 1,
+  "durata": 0.204,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_metallo_01": {
+  "file": "res://audio/giocatore/passo_metallo_01.ogg",
+  "canali": 1,
+  "durata": 0.545,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + impactPlate_light",
+  "lufs": -26.4,
+  "lufs_max": -20.4
+ },
+ "giocatore/passo_metallo_02": {
+  "file": "res://audio/giocatore/passo_metallo_02.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + impactPlate_light",
+  "lufs": -27.9,
+  "lufs_max": -21.9
+ },
+ "giocatore/passo_metallo_03": {
+  "file": "res://audio/giocatore/passo_metallo_03.ogg",
+  "canali": 1,
+  "durata": 0.528,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + impactPlate_light",
+  "lufs": -27.2,
+  "lufs_max": -21.2
+ },
+ "giocatore/passo_metallo_04": {
+  "file": "res://audio/giocatore/passo_metallo_04.ogg",
+  "canali": 1,
+  "durata": 0.561,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + impactPlate_light",
+  "lufs": -28.0,
+  "lufs_max": -22.0
+ },
+ "giocatore/passo_metallo_05": {
+  "file": "res://audio/giocatore/passo_metallo_05.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + impactPlate_light",
+  "lufs": -28.8,
+  "lufs_max": -22.9
+ },
+ "giocatore/passo_metallo_06": {
+  "file": "res://audio/giocatore/passo_metallo_06.ogg",
+  "canali": 1,
+  "durata": 0.561,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + impactPlate_light",
+  "lufs": -26.4,
+  "lufs_max": -20.4
+ },
+ "giocatore/passo_piastrelle_01": {
+  "file": "res://audio/giocatore/passo_piastrelle_01.ogg",
+  "canali": 1,
+  "durata": 0.122,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + risonanza della ceramica",
+  "lufs": null,
+  "lufs_max": -22.3
+ },
+ "giocatore/passo_piastrelle_02": {
+  "file": "res://audio/giocatore/passo_piastrelle_02.ogg",
+  "canali": 1,
+  "durata": 0.133,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + risonanza della ceramica",
+  "lufs": null,
+  "lufs_max": -24.0
+ },
+ "giocatore/passo_piastrelle_03": {
+  "file": "res://audio/giocatore/passo_piastrelle_03.ogg",
+  "canali": 1,
+  "durata": 0.129,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + risonanza della ceramica",
+  "lufs": null,
+  "lufs_max": -23.7
+ },
+ "giocatore/passo_piastrelle_04": {
+  "file": "res://audio/giocatore/passo_piastrelle_04.ogg",
+  "canali": 1,
+  "durata": 0.131,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + risonanza della ceramica",
+  "lufs": null,
+  "lufs_max": -23.0
+ },
+ "giocatore/passo_piastrelle_05": {
+  "file": "res://audio/giocatore/passo_piastrelle_05.ogg",
+  "canali": 1,
+  "durata": 0.136,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + risonanza della ceramica",
+  "lufs": null,
+  "lufs_max": -22.1
+ },
+ "giocatore/passo_piastrelle_06": {
+  "file": "res://audio/giocatore/passo_piastrelle_06.ogg",
+  "canali": 1,
+  "durata": 0.123,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "footstep_concrete + risonanza della ceramica",
+  "lufs": null,
+  "lufs_max": -22.3
+ },
+ "giocatore/passo_scala_01": {
+  "file": "res://audio/giocatore/passo_scala_01.ogg",
+  "canali": 1,
+  "durata": 0.488,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "impactMetal_light",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_scala_02": {
+  "file": "res://audio/giocatore/passo_scala_02.ogg",
+  "canali": 1,
+  "durata": 0.349,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "impactMetal_light",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_scala_03": {
+  "file": "res://audio/giocatore/passo_scala_03.ogg",
+  "canali": 1,
+  "durata": 0.314,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "impactMetal_light",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/passo_scala_04": {
+  "file": "res://audio/giocatore/passo_scala_04.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "Kenney Impact Sounds (CC0), rielaborati",
+  "nota": "impactMetal_light",
+  "lufs": -28.6,
+  "lufs_max": -20.0
+ },
+ "giocatore/riemersione": {
+  "file": "res://audio/giocatore/riemersione.ogg",
+  "canali": 1,
+  "durata": 1.4,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -27.6,
+  "lufs_max": -17.0
+ },
+ "giocatore/salto_01": {
+  "file": "res://audio/giocatore/salto_01.ogg",
+  "canali": 1,
+  "durata": 0.35,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0)",
+  "nota": "cloth",
+  "lufs": null,
+  "lufs_max": -24.0
+ },
+ "giocatore/salto_02": {
+  "file": "res://audio/giocatore/salto_02.ogg",
+  "canali": 1,
+  "durata": 0.35,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0)",
+  "nota": "cloth",
+  "lufs": null,
+  "lufs_max": -24.0
+ },
+ "giocatore/torcia_accesa": {
+  "file": "res://audio/giocatore/torcia_accesa.ogg",
+  "canali": 1,
+  "durata": 0.16,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -20.0
+ },
+ "giocatore/torcia_spenta": {
+  "file": "res://audio/giocatore/torcia_spenta.ogg",
+  "canali": 1,
+  "durata": 0.16,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -21.6
+ },
+ "giocatore/tuffo": {
+  "file": "res://audio/giocatore/tuffo.ogg",
+  "canali": 1,
+  "durata": 1.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -24.5,
+  "lufs_max": -15.0
+ },
+ "giocatore/zaino_aspira_fine": {
+  "file": "res://audio/giocatore/zaino_aspira_fine.ogg",
+  "canali": 1,
+  "durata": 0.7,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.2,
+  "lufs_max": -21.0
+ },
+ "giocatore/zaino_aspira_inizio": {
+  "file": "res://audio/giocatore/zaino_aspira_inizio.ogg",
+  "canali": 1,
+  "durata": 0.55,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -22.6,
+  "lufs_max": -20.0
+ },
+ "giocatore/zaino_aspira_loop": {
+  "file": "res://audio/giocatore/zaino_aspira_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.0,
+  "lufs_max": -18.5
+ },
+ "giocatore/zaino_getto_fine": {
+  "file": "res://audio/giocatore/zaino_getto_fine.ogg",
+  "canali": 1,
+  "durata": 0.7,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -30.7,
+  "lufs_max": -21.0
+ },
+ "giocatore/zaino_getto_inizio": {
+  "file": "res://audio/giocatore/zaino_getto_inizio.ogg",
+  "canali": 1,
+  "durata": 0.45,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -18.0
+ },
+ "giocatore/zaino_getto_loop": {
+  "file": "res://audio/giocatore/zaino_getto_loop.ogg",
+  "canali": 1,
+  "durata": 2.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -21.0,
+  "lufs_max": -20.3
+ },
+ "giocatore/zaino_impatto_acqua_loop": {
+  "file": "res://audio/giocatore/zaino_impatto_acqua_loop.ogg",
+  "canali": 1,
+  "durata": 2.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -22.0,
+  "lufs_max": -20.1
+ },
+ "giocatore/zaino_impatto_loop": {
+  "file": "res://audio/giocatore/zaino_impatto_loop.ogg",
+  "canali": 1,
+  "durata": 2.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -22.0,
+  "lufs_max": -19.6
+ },
+ "giocatore/zaino_pieno": {
+  "file": "res://audio/giocatore/zaino_pieno.ogg",
+  "canali": 1,
+  "durata": 1.1,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -23.0,
+  "lufs_max": -19.0
+ },
+ "giocatore/zaino_pompata": {
+  "file": "res://audio/giocatore/zaino_pompata.ogg",
+  "canali": 1,
+  "durata": 0.65,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -23.2,
+  "lufs_max": -20.0
+ },
+ "giocatore/zaino_preso": {
+  "file": "res://audio/giocatore/zaino_preso.ogg",
+  "canali": 1,
+  "durata": 1.659,
+  "loop": false,
+  "fonte": "Kenney RPG Audio (CC0) + sintesi",
+  "nota": "cloth, clothBelt, metalLatch e pompate sintetiche",
+  "lufs": -20.9,
+  "lufs_max": -17.0
+ },
+ "giocatore/zaino_ricarica_loop": {
+  "file": "res://audio/giocatore/zaino_ricarica_loop.ogg",
+  "canali": 1,
+  "durata": 2.5,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -23.0,
+  "lufs_max": -17.9
+ },
+ "giocatore/zaino_sciabordio_01": {
+  "file": "res://audio/giocatore/zaino_sciabordio_01.ogg",
+  "canali": 1,
+  "durata": 0.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -26.2,
+  "lufs_max": -22.0
+ },
+ "giocatore/zaino_sciabordio_02": {
+  "file": "res://audio/giocatore/zaino_sciabordio_02.ogg",
+  "canali": 1,
+  "durata": 0.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.5,
+  "lufs_max": -22.0
+ },
+ "giocatore/zaino_sciabordio_03": {
+  "file": "res://audio/giocatore/zaino_sciabordio_03.ogg",
+  "canali": 1,
+  "durata": 0.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.0,
+  "lufs_max": -22.0
+ },
+ "giocatore/zaino_vuoto": {
+  "file": "res://audio/giocatore/zaino_vuoto.ogg",
+  "canali": 1,
+  "durata": 0.9,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -23.6,
+  "lufs_max": -19.0
+ },
+ "interfaccia/ui_apri": {
+  "file": "res://audio/interfaccia/ui_apri.ogg",
+  "canali": 1,
+  "durata": 0.419,
+  "loop": false,
+  "fonte": "Kenney Interface Sounds (CC0)",
+  "nota": "open_002",
+  "lufs": null,
+  "lufs_max": -24.0
+ },
+ "interfaccia/ui_chiudi": {
+  "file": "res://audio/interfaccia/ui_chiudi.ogg",
+  "canali": 1,
+  "durata": 0.419,
+  "loop": false,
+  "fonte": "Kenney Interface Sounds (CC0)",
+  "nota": "close_002",
+  "lufs": null,
+  "lufs_max": -24.0
+ },
+ "interfaccia/ui_clic": {
+  "file": "res://audio/interfaccia/ui_clic.ogg",
+  "canali": 1,
+  "durata": 0.109,
+  "loop": false,
+  "fonte": "Kenney Interface Sounds (CC0)",
+  "nota": "click_001",
+  "lufs": null,
+  "lufs_max": -25.3
+ },
+ "interfaccia/ui_cursore": {
+  "file": "res://audio/interfaccia/ui_cursore.ogg",
+  "canali": 1,
+  "durata": 0.026,
+  "loop": false,
+  "fonte": "Kenney Interface Sounds (CC0)",
+  "nota": "tick_002",
+  "lufs": null,
+  "lufs_max": -28.0
+ },
+ "interfaccia/ui_pausa": {
+  "file": "res://audio/interfaccia/ui_pausa.ogg",
+  "canali": 1,
+  "durata": 0.4,
+  "loop": false,
+  "fonte": "Kenney Interface Sounds (CC0)",
+  "nota": "switch_002",
+  "lufs": null,
+  "lufs_max": -24.0
+ },
+ "interfaccia/ui_scatto": {
+  "file": "res://audio/interfaccia/ui_scatto.ogg",
+  "canali": 1,
+  "durata": 0.14,
+  "loop": false,
+  "fonte": "Kenney Interface Sounds (CC0)",
+  "nota": "toggle_002",
+  "lufs": null,
+  "lufs_max": -23.0
+ },
+ "musica/polaroid_chiudi": {
+  "file": "res://audio/musica/polaroid_chiudi.ogg",
+  "canali": 1,
+  "durata": 0.3,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": null,
+  "lufs_max": -26.0
+ },
+ "musica/polaroid_raccolta": {
+  "file": "res://audio/musica/polaroid_raccolta.ogg",
+  "canali": 2,
+  "durata": 2.6,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.5,
+  "lufs_max": -20.0
+ },
+ "musica/sigla_pulita": {
+  "file": "res://audio/musica/sigla_pulita.ogg",
+  "canali": 2,
+  "durata": 37.627,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "melodia e arrangiamento originali; carillon, organetto, percussioni giocattolo",
+  "lufs": -16.0,
+  "lufs_max": -11.3
+ },
+ "musica/sigla_rovinata": {
+  "file": "res://audio/musica/sigla_rovinata.ogg",
+  "canali": 2,
+  "durata": 30.983,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "96 BPM, primo battito a 0.05 s",
+  "lufs": -17.0,
+  "lufs_max": -10.9
+ },
+ "musica/stinger_bambini": {
+  "file": "res://audio/musica/stinger_bambini.ogg",
+  "canali": 2,
+  "durata": 6.0,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -19.8,
+  "lufs_max": -12.7
+ },
+ "musica/stinger_morte": {
+  "file": "res://audio/musica/stinger_morte.ogg",
+  "canali": 2,
+  "durata": 7.5,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -14.0,
+  "lufs_max": -9.0
+ }
+}
