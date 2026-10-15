@@ -428,13 +428,17 @@ func _regola_luci(n: Node) -> void:
 			# Accensione e sfarfallio li fa la FlickerLight della sala (vedi _prepara_ritratto).
 		elif nome.begins_with("luce_vasca"):
 			# Sott'acqua nella vasca sollevata: fanno brillare la campana sotto la superficie.
-			var o := l as OmniLight3D
-			o.light_color = Color(0.45, 0.85, 1.0)
-			o.light_energy = 2.2
-			o.omni_range = 3.5
-			o.omni_attenuation = 1.6
-			o.shadow_enabled = false
-			o.light_volumetric_fog_energy = 0.4
+			# (Nel GLB nuovo possono essere anche faretti: si regola quello che c'è.)
+			l.light_color = Color(0.45, 0.85, 1.0)
+			l.light_energy = 2.2
+			l.shadow_enabled = false
+			l.light_volumetric_fog_energy = 0.4
+			if l is OmniLight3D:
+				(l as OmniLight3D).omni_range = 3.5
+				(l as OmniLight3D).omni_attenuation = 1.6
+			elif l is SpotLight3D:
+				(l as SpotLight3D).spot_range = maxf((l as SpotLight3D).spot_range, 4.0)
+				(l as SpotLight3D).spot_attenuation = 1.6
 		elif nome.begins_with("luce_subacquea"):
 			var o := l as OmniLight3D
 			o.light_energy = 3.0
