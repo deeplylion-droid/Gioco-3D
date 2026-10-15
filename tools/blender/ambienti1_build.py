@@ -292,12 +292,13 @@ def corridoio(M):
         L.figlio(L.unisci('maniglione_antipanico', mb), porta_pp)
     # pianerottolo e scala che scende verso la sala pompe (si collega al piano sotto)
     pian = L.stanza('scala_pompe', 16.2, -3.9, 18.8, -0.2, 2.7, dict(pav=M['cemento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'], battiscopa=M['battiscopa']),
-                    {'N': [(17.0, 18.0, 0, 2.05)]}, pavimento=False)
+                    {'N': [(17.0, 18.0, 0, 2.05)], 'S': [(16.4, 18.6, 0, 0.5)]}, pavimento=False)
     L.raccogli(True)
     pian.append(L.scatola('scala_pompe_pian', (16.0, -1.4, -0.2), (19.0, 0.0, 0), M['cemento']))
     L.raccogli(False)
-    # collisione della scala: una rampa (36 gradi) invece dei gradini
-    rampa = L.scatola('scala_pompe_rampa-colonly', (16.4, -1.25, -0.1), (18.6, 1.25, 0.0), None, uv=False)
+    # collisione della scala: una rampa (36 gradi) invece dei gradini, sulla retta dei nasi: dal bordo del
+    # pianerottolo (y -1,4, z 0) al piano di sotto (y -3,9, z -1,8), lunga 3,08 m
+    rampa = L.scatola('scala_pompe_rampa-colonly', (16.4, -1.54, -0.1), (18.6, 1.54, 0.0), None, uv=False)
     rampa.data.transform(Matrix.Rotation(math.atan2(1.8, 2.5), 4, 'X'))
     rampa.location = (0, -2.65, -0.9); rampa.hide_render = True; rampa.display_type = 'WIRE'
     for i in range(10):
