@@ -9,6 +9,9 @@ extends LookSala
 ## Volume della sala lunga (x -20..20, z -24..20, dal fondo della piscina alla cupola).
 const SALA_LUNGA_CENTRO := Vector3(0.0, 7.5, -2.0)
 const SALA_LUNGA_DIMENSIONI := Vector3(41.0, 21.0, 45.0)
+## Illuminazione globale già calcolata (tools/bake_voxel_gi.gd): se c'è, il preset Alto non
+## deve calcolarla all'avvio.
+const GI_CALCOLATA := "res://assets/ambiente/sala/voxel_gi_sala.res"
 
 @export_group("Monumento")
 @export var energia_fari := 9.5
@@ -23,6 +26,8 @@ func _ready() -> void:
 	if gi:
 		gi.size = SALA_LUNGA_DIMENSIONI
 		gi.position = SALA_LUNGA_CENTRO
+		if ResourceLoader.exists(GI_CALCOLATA):
+			gi.data = load(GI_CALCOLATA) as VoxelGIData
 	var sonda := get_node_or_null(^"Sonda_Sala") as ReflectionProbe
 	if sonda:
 		sonda.size = Vector3(40.0, 13.0, 44.0)

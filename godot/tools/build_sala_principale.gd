@@ -43,13 +43,15 @@ func _initialize() -> void:
 	level.set_script(load("res://scripts/game/sala_principale.gd"))
 	_hall()
 	_statue()
-	_pack_station()
+	var has_interiors := _interiors()
+	if not has_interiors:
+		_pack_station()
 	_pool()
 	_pools()
 	_kids_toys()
 	_polaroids()
 	_atmosphere()
-	_gameplay()
+	_gameplay(has_interiors)
 	_kid_sighting()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
@@ -235,6 +237,23 @@ func _statue() -> void:
 	level.set(&"statue_lamp", flicker)
 	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
 	level.set(&"statue_lamp_aim", Vector3.INF)
+
+
+# --- Corridoio, spogliatoi e stanzino (scena degli interni, se c'è) ----------------------------
+
+const INTERNI := "res://scenes/interni/interni.tscn"
+## Traslazione che porta l'uscita degli spogliatoi (9,7; 0; -20,7) sul vano del muro sud (0; 0; 20,2).
+const INTERNI_OFFSET := Vector3(-9.7, 0.0, 40.9)
+
+
+func _interiors() -> bool:
+	if not ResourceLoader.exists(INTERNI):
+		return false
+	var inst: Node3D = (load(INTERNI) as PackedScene).instantiate()
+	inst.name = "Interni"
+	inst.position = INTERNI_OFFSET
+	own(inst)
+	return true
 
 
 # --- La postazione dei bagnini all'ingresso: rastrelliera con lo zaino-pompa ---------------------
@@ -496,11 +515,15 @@ func _atmosphere() -> void:
 
 # --- Giocatore, checkpoint, trigger -----------------------------------------------------------
 
-func _gameplay() -> void:
+func _gameplay(has_interiors := false) -> void:
 	var gp := group(level, "Gioco")
 	var player: Node3D = S.player.instantiate()
 	player.name = "Player"
 	player.position = SPAWN
+	if has_interiors:
+		# Ci si sveglia a terra nel corridoio (marker_risveglio degli interni), guardando a ovest.
+		player.position = INTERNI_OFFSET + Vector3(20.40, 0.0, -1.25)
+		player.rotation = Vector3(0.0, PI * 0.5, 0.0)
 	own(player, level)
 	checkpoint(gp, "CheckpointIngresso", 0, SPAWN + Vector3(0, 1.5, 0), Vector3(4, 3, 1.4), Vector3(0, -1.5, 0), 0.0)
 	checkpoint(gp, "CheckpointStatua", 1, Vector3(0, 1.5, 14.4), Vector3(8, 3, 1.5), Vector3(0, -1.5, 0), 0.0)
