@@ -640,6 +640,143 @@ def disegni_bambini(cartella, seme=5):
     print('disegni dei bambini ->', cartella)
 
 
+def _rumore2(W, H, celle, rng):
+    """Rumore morbido 0..1 (W x H) da una griglia casuale ingrandita (bicubica)."""
+    g = (rng.random((celle[1], celle[0])) * 255).astype(np.uint8)
+    return np.asarray(Image.fromarray(g).resize((W, H), Image.BICUBIC), np.float32) / 255
+
+
+def _fbm2(W, H, rng, ottave=5, base=4):
+    out = np.zeros((H, W), np.float32); amp = 1.0; tot = 0.0
+    for o in range(ottave):
+        n = base * 2 ** o
+        out += amp * _rumore2(W, H, (n, max(1, n * H // W)), rng); tot += amp; amp *= 0.5
+    return out / tot
+
+
+def vetro_cupola_atlante(cartella, lato=2048, seme=21):
+    """Lastre della cupola, 4 varianti in un atlante 2 x 2 (RGBA): sporca con rivoli di pioggia,
+    molto sporca con alghe in basso, incrinata a ragnatela, appena velata. v = 0 in basso (verso il
+    tamburo): lo sporco si accumula in basso e i rivoli scendono. Alfa = quanto copre il vetro.
+    Scrive vetro_cupola_col.png (RGBA) e vetro_cupola_orm.jpg."""
+    from PIL import ImageDraw
+    rng = np.random.default_rng(seme)
+    C = lato // 2
+    col = np.zeros((lato, lato, 3), np.float32)
+    alfa = np.zeros((lato, lato), np.float32)
+    rough = np.zeros((lato, lato), np.float32)
+    yy = np.linspace(1, 0, C)[:, None]           # 1 in alto nell'immagine = v alto = verso l'oculo
+    xx = np.linspace(0, 1, C)[None, :]
+    for k in range(4):
+        r0, c0 = (k // 2) * C, (k % 2) * C
+        f = _fbm2(C, C, rng, 5, 3)
+        basso = np.clip(1 - yy * 1.6, 0, 1) ** 1.5          # fascia sporca in basso
+        bordo = np.clip(1 - np.minimum(np.minimum(xx, 1 - xx), np.minimum(yy, 1 - yy)) / 0.06, 0, 1) ** 2
+        # rivoli: colonne che scendono, più fitte in alto
+        riv = np.zeros((C, C), np.float32)
+        for _ in range(26 if k != 3 else 14):
+            x0 = rng.uniform(0.05, 0.95) * C
+            lung = rng.uniform(0.3, 1.0)
+            dev = np.cumsum(rng.normal(0, 0.6, C))
+            cx = x0 + dev
+            t = np.arange(C)[:, None]
+            w = rng.uniform(1.5, 4.0)
+            inizio = rng.uniform(0, 0.4) * C
+            m = (t > inizio) & (t < inizio + lung * C)
+            riv += np.exp(-((np.arange(C)[None, :] - cx[:, None]) / w) ** 2) * m * rng.uniform(0.3, 0.8)
+        riv = np.clip(riv, 0, 1)
+        sporco = np.clip(0.35 * f + 0.55 * basso * (0.6 + 0.8 * f) + 0.5 * bordo * f, 0, 1)
+        if k == 1:
+            sporco = np.clip(sporco * 1.5 + 0.15, 0, 1)
+        if k == 3:
+            sporco *= 0.45
+        a = 0.2 + 0.62 * sporco + 0.25 * riv
+        c = np.ones((C, C, 3)) * np.array([0.11, 0.115, 0.11]) * (0.8 + 0.4 * f[..., None])
+        c = c * (1 - sporco[..., None] * 0.3) + np.array([0.24, 0.22, 0.17]) * sporco[..., None] * 0.55
+        if k == 1:   # alghe verdi-brune in basso
+            alg = np.clip(basso * 1.3, 0, 1) * _smooth(0.38, 0.6, f)
+            c = c * (1 - alg[..., None] * 0.6) + np.array([0.12, 0.17, 0.08]) * alg[..., None] * 0.6
+            a = np.clip(a + 0.25 * alg, 0, 1)
+        c = c * (1 - riv[..., None] * 0.25) + np.array([0.3, 0.32, 0.33]) * riv[..., None] * 0.25
+        rg = np.clip(0.06 + 0.6 * sporco - 0.04 * riv, 0.03, 1)
+        if k == 2:   # ragnatela di crepe da un punto d'impatto
+            im = Image.new('L', (C, C), 0)
+            d = ImageDraw.Draw(im)
+            px, py = rng.uniform(0.35, 0.65) * C, rng.uniform(0.3, 0.6) * C
+            for i in range(14):
+                ang = i * 2 * np.pi / 14 + rng.normal(0, 0.12)
+                pts = [(px, py)]
+                x, y = px, py
+                for j in range(9):
+                    ang += rng.normal(0, 0.18)
+                    passo = rng.uniform(40, 90)
+                    x += np.cos(ang) * passo; y += np.sin(ang) * passo
+                    pts.append((x, y))
+                d.line(pts, fill=255, width=3)
+            for rr in (60, 130, 220, 330):
+                pts = []
+                for i in range(41):
+                    ang = i * 2 * np.pi / 40
+                    q = rr * rng.uniform(0.85, 1.15)
+                    pts.append((px + np.cos(ang) * q, py + np.sin(ang) * q))
+                d.line(pts, fill=200, width=2)
+            cr = np.asarray(im, np.float32) / 255
+            c = c * (1 - cr[..., None]) + np.array([0.75, 0.78, 0.8]) * cr[..., None]
+            a = np.clip(a + 0.75 * cr, 0, 1)
+            rg = np.clip(rg + 0.4 * cr, 0, 1)
+        col[r0:r0 + C, c0:c0 + C] = c
+        alfa[r0:r0 + C, c0:c0 + C] = np.clip(a, 0, 1)
+        rough[r0:r0 + C, c0:c0 + C] = rg
+    rgba = np.dstack([lin_srgb(col) * 255, alfa * 255]).astype(np.uint8)
+    os.makedirs(cartella, exist_ok=True)
+    Image.fromarray(rgba, 'RGBA').save(os.path.join(cartella, 'vetro_cupola_col.png'), optimize=True)
+    orm = np.dstack([np.ones_like(rough), rough, np.zeros_like(rough)])
+    _salva_jpg(Image.fromarray((orm * 255 + 0.5).astype(np.uint8)), os.path.join(cartella, 'vetro_cupola_orm.jpg'), 92, colore=False)
+    print('vetro della cupola ->', cartella)
+
+
+def vetro_oblo(cartella, lato=1024, seme=9):
+    """Vetro degli oblò, opaco (fuori è notte): quasi nero, con aloni di salsedine sui bordi e gocce
+    secche. La rugosità segue lo sporco, così con SSR il vetro pulito riflette le luci rosse."""
+    rng = np.random.default_rng(seme)
+    yy, xx = np.mgrid[0:lato, 0:lato] / (lato - 1) * 2 - 1
+    r = np.hypot(xx, yy)
+    f = _fbm2(lato, lato, rng, 5, 4)
+    sale = np.clip((r - 0.72) / 0.25, 0, 1) * (0.35 + 0.5 * f)
+    gocce = np.zeros((lato, lato), np.float32)
+    for _ in range(140):
+        cx, cy, rr = rng.uniform(-0.8, 0.8), rng.uniform(-0.8, 0.8), rng.uniform(0.01, 0.035)
+        gocce += np.clip(1 - np.hypot(xx - cx, yy - cy) / rr, 0, 1) ** 0.5 * rng.uniform(0.3, 0.8)
+    sporco = np.clip(sale + 0.35 * gocce + 0.15 * f, 0, 1)
+    col = np.array([0.012, 0.016, 0.022]) * (1 - sporco[..., None]) + np.array([0.33, 0.33, 0.3]) * sporco[..., None] * 0.6
+    rough = np.clip(0.04 + 0.7 * sporco, 0.03, 1)
+    _salva_jpg(Image.fromarray((lin_srgb(col) * 255 + 0.5).astype(np.uint8)), os.path.join(cartella, 'vetro_oblo_col.jpg'))
+    orm = np.dstack([np.ones_like(rough), rough, np.zeros_like(rough)])
+    _salva_jpg(Image.fromarray((orm * 255 + 0.5).astype(np.uint8)), os.path.join(cartella, 'vetro_oblo_orm.jpg'), 92, colore=False)
+    print('vetro degli oblò ->', cartella)
+
+
+def malta(cartella, lato=512, seme=13):
+    """Dove manca una piastrella da 12,5 cm: colla grigia a righe di spatola dentata, bordi con i
+    resti della fuga, un po' di sporco. Colore, normal e ORM; 1 texture = 1 piastrella."""
+    rng = np.random.default_rng(seme)
+    yy, xx = np.mgrid[0:lato, 0:lato] / lato
+    f = _fbm2(lato, lato, rng, 5, 4)
+    righe = 0.5 + 0.5 * np.sin((yy + 0.02 * f) * 2 * np.pi * 9)            # creste della spatola
+    bordo = np.minimum(np.minimum(xx, 1 - xx), np.minimum(yy, 1 - yy))
+    fuga = np.clip(1 - bordo / 0.05, 0, 1)
+    alt = 0.35 * righe * (1 - fuga) + 0.15 * f - 0.4 * np.clip(1 - bordo / 0.02, 0, 1) + 0.3 * fuga
+    col = np.array([0.42, 0.41, 0.38]) * (0.75 + 0.35 * f[..., None]) * (0.85 + 0.15 * righe[..., None])
+    col = col * (1 - fuga[..., None] * 0.35) + np.array([0.5, 0.5, 0.47]) * fuga[..., None] * 0.35
+    col *= (1 - 0.35 * np.clip(f - 0.55, 0, 1)[..., None] * 2)
+    os.makedirs(cartella, exist_ok=True)
+    _salva_jpg(Image.fromarray((lin_srgb(col) * 255 + 0.5).astype(np.uint8)), os.path.join(cartella, 'malta_col.jpg'))
+    _salva_jpg(Image.fromarray(_normali_da_altezza(alt.astype(np.float32), 6.0)), os.path.join(cartella, 'malta_nrm.jpg'), 92, colore=False)
+    orm = np.dstack([0.75 + 0.25 * righe, np.full_like(f, 0.9), np.zeros_like(f)])
+    _salva_jpg(Image.fromarray((np.clip(orm, 0, 1) * 255 + 0.5).astype(np.uint8)), os.path.join(cartella, 'malta_orm.jpg'), 92, colore=False)
+    print('malta ->', cartella)
+
+
 def deriva(nomi=None):
     from ambiente_palette import PALETTE
     nomi = nomi or list(PALETTE)
@@ -669,9 +806,12 @@ def deriva(nomi=None):
             invecchia_cartellone(pn, k, f'cartellone_{k}_col.jpg')
         if 'torre' in pal['materiali']:
             grata_png(pn)
-        if pn == 'sala_a':   # monumento della statua: fregio a mosaico e disegni dei bambini
+        if pn == 'sala_a':   # monumento della statua, vetri, piastrelle mancanti
             fregio_marino(cart)
             disegni_bambini(cart)
+            vetro_cupola_atlante(cart)
+            vetro_oblo(cart)
+            malta(cart)
     dec = os.path.join(TEX, 'decal')
     os.makedirs(dec, exist_ok=True)
     colatura_png(os.path.join(dec, 'colatura_col.png'))

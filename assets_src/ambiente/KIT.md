@@ -36,7 +36,7 @@ sala principale in Godot leggi `INTEGRAZIONE.md`.
 | Porta stagna (da fare) | luce 0,8 x 1,9 m, soglia 0,3 m, angoli arrotondati, 8 tiranti |
 | Oblò | luce Ø 60 cm, flangia Ø 84 cm con 12 bulloni, manicotto nello spessore (20 cm), centro a 1,5 m |
 | Galleria | profonda 3 m, soletta 0,3 m, a 4,0 m (sala) / 3,0 m (kit) |
-| Scivoli | tubo chiuso Ø interno 1,0 m, vetroresina 12 mm, flange imbullonate ogni 2 m |
+| Scivoli | tubo chiuso Ø interno 1,0 m, vetroresina 12 mm, flange imbullonate ogni 2 m; quello dell'inseguimento Ø 1,6 m, parete 6 cm |
 | Plafoniera al neon | 2 tubi T8 da 120 cm (Ø 26 mm) |
 | Luce d'emergenza | plafoniera stagna Ø 18 cm con gabbia e vetro rosso |
 | Cartelloni | 2,4 x 1,35 m (kit) e 3,2 x 1,8 m (sala), solo disegni, nessuna scritta |
@@ -60,6 +60,29 @@ in `sala_monumento.glb`); la medusa la mette il gruppo "medusa".
 - Cordone di velluto su colonnine d'ottone a raggio 3 m, con un varco di 3 m sul davanti.
 - Alla base le offerte dei bambini: disegni a pastello (senza scritte), conchiglie, stelle marine,
   secchiello, salvagente, orsetto, paperelle, pallone, ciambella.
+
+## Passata di qualità della sala (ottobre)
+
+Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagli.py`:
+
+- **Pavimento** a piastrelle da 25 cm con tre materiali (asciutto, umido, bagnato) scelti piastrella
+  per piastrella da un campo in spazio mondo; pozzanghere a specchio con la texture del pavimento.
+- **Sporco nei colori dei vertici** calcolato in spazio mondo (pareti, pavimento, galleria, piscina,
+  scivoli, torre, giochi): niente ripetizioni. Pareti e pavimento hanno vertici ogni 25 cm.
+- **Profili**: battiscopa a sguscio (raggio 8 cm) tra pavimento e piastrelle, listelli ai bordi della
+  fascia rossa, toro bianco a 2 m dove finiscono le piastrelle; gocciolatoio e rivetti sul fronte della
+  galleria; rivetti e irrigidimenti sulle travi del soffitto; piastre imbullonate e capitelli sulle
+  colonne; spigoli smussati su torre e struttura di gioco.
+- **Piastrelle mancanti** a gruppi (colla a righe di spatola, `M_amb_malta`) sulle pareti e in piscina.
+- **Oblò** con vetro scuro e aloni di sale (`M_amb_vetro_oblo`, opaco: riflette con SSR).
+- **Cupola**: costoloni e anelli a T, piastre imbullonate negli incroci, lesene sul tamburo; lastre da un
+  atlante a 4 varianti (sporca con rivoli di pioggia, molto sporca con alghe, incrinata, velata);
+  8 lastre rotte con le schegge nel telaio e i vetri caduti sotto (lì il pavimento è bagnato).
+- **Luci**: plafoniere navali calde accese (`luce_calda_*`) tra le rosse, insegne al neon disegnate
+  (onda azzurra sopra il vano, stella-sole gialla sopra l'area bimbi; un tratto spento).
+- **Tubo dell'inseguimento** (lo scivolo rosso a spirale): Ø interno 1,6 m, parete 6 cm, flange ogni
+  2 m con 12 bulloni, come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. La bocca
+  sputa nella vasca d'arrivo da est, 16 cm sopra l'acqua. Gli altri due tubi restano da 1,0 m.
 
 ## Convenzioni dei nomi
 

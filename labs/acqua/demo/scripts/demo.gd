@@ -98,6 +98,8 @@ func _ready() -> void:
 	if args.has("out"):
 		var shots: Array = args["shots"].split(",") if args.has("shots") else [args.get("shot", "sala")]
 		_capture_and_quit(args["out"], int(args.get("frames", "45")), shots)
+	elif args.has("measure"):
+		_measure_and_quit()
 
 
 func _parse_args() -> Dictionary:
@@ -155,6 +157,34 @@ func _capture_and_quit(path: String, frames: int, shots: Array) -> void:
 		else:
 			img.save_png(p)
 		print("screenshot: ", p)
+	get_tree().quit()
+
+
+## Misura i costi ai tre livelli di qualita' (draw call, primitive, tempi) e stampa una tabella.
+func _measure_and_quit() -> void:
+	var vp := get_viewport().get_viewport_rid()
+	RenderingServer.viewport_set_measure_render_time(vp, true)
+	var lines := ["qualita' | draw call | primitive | oggetti | ms CPU | ms GPU"]
+	for q in [0, 1, 2]:
+		WaterManager.quality = q
+		for f in 20:
+			await get_tree().process_frame
+		var dc := 0.0
+		var prim := 0.0
+		var obj := 0.0
+		var cpu := 0.0
+		var gpu := 0.0
+		var n := 8
+		for f in n:
+			await RenderingServer.frame_post_draw
+			dc += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+			prim += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)
+			obj += RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME)
+			cpu += RenderingServer.viewport_get_measured_render_time_cpu(vp)
+			gpu += RenderingServer.viewport_get_measured_render_time_gpu(vp)
+		lines.append("%d | %d | %d | %d | %.1f | %.1f" % [q, dc / n, prim / n, obj / n, cpu / n, gpu / n])
+	for l in lines:
+		print("MISURA ", l)
 	get_tree().quit()
 
 
