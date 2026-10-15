@@ -278,8 +278,8 @@ def malvagia():
     celle.append((scatto('malvagia_fauce', orbita(t + Vector((0, -0.2, -0.15)), 1.9, 18, -4),
                          t + Vector((0, -0.2, -0.15)), 85, (800, 1150), 0.8), 'fauce aperta'))
     e = occhio_centro(arm)
-    celle.append((scatto('malvagia_occhio', orbita(e + Vector((0, -0.12, 0)), 0.85, 8, 3),
-                         e + Vector((0, -0.12, 0)), 85, (800, 1150), 0.4), 'occhio venato'))
+    celle.append((scatto('malvagia_occhio', orbita(e + Vector((0, -0.12, 0)), 1.5, 8, 3),
+                         e + Vector((0, -0.12, 0)), 85, (800, 1150), 0.5), 'occhio venato'))
     tavola(celle, os.path.join(OUT_SCHEDA, '3_malvagia.jpg'), colonne=5, titolo='Medusa - versione malvagia',
            sottotitolo='posa d\'attacco, fauce aperta, occhio venato (parametro venatura = 1)',
            larghezza=3000, sfondo=FONDO)
