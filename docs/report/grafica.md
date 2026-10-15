@@ -88,6 +88,11 @@ Luminosità media rispetto a `combinato_`: corridoio −10%, tornello −6%, sta
 
 ## Sala principale vera: prima e dopo
 
+**DOPO per la v0.2.1** (`docs/report/qualita_sala/dopo_*.jpg`, le 6 camere di `tests/scatti_sala.gd`). Sono fatti su `lavoro/ambiente` 474a772 unito a questo branch, in un worktree locale. Il GI (`scenes/sala/gi/sala.res`) è cotto sulla stessa geometria. Per stare nella memoria del sandbox, le texture estratte dai GLB della sala sono in VRAM compressa (come le comprime la CI con `tools/godot_vram_textures.py`). In Lossless la sala da sola supera i 13,6 GB su llvmpipe.
+Luminosità media: a_ingresso 28 (prima 48), b_vasca_3m 27 (prima 33), c 17, d 10, e 24, f 16.
+La camera d (area bimbi) guarda la parte bassa dello scivolo, in controluce rispetto a luce_area_bimbi, ed esce quasi nera. Va rivista: o la camera o una luce davanti alla struttura di gioco.
+
+
 Scena di prova: `labs/grafica/sala_reale/` con i GLB veri (`strumenti/prepara_sala_reale.sh` li copia e li importa con lo script di post-import). Consegna: `godot/addons/grafica/look_sala.gd` + `godot/addons/grafica/sala/*.tres` (passi nel README dell'addon).
 
 Screenshot 1920×1080 in `docs/report/render_grafica/sala_reale/` (prima = `sala_luci_ambiente.gd`, dopo = `LookSala`, preset Ultra):
