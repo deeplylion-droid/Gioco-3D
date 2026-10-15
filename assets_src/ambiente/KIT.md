@@ -42,25 +42,25 @@ sala principale in Godot leggi `INTEGRAZIONE.md`.
 | Cartelloni | 2,4 x 1,35 m (kit) e 3,2 x 1,8 m (sala), solo disegni, nessuna scritta |
 | Torre degli scivoli | 6 x 6 m, piani a 3,0 / 6,0 / 8,6 m, pozzo centrale 2,2 m, gradini da 18 cm |
 
-## Monumento della statua (per il gruppo "medusa")
+## Centro della sala: la vasca sollevata (per la medusa affacciata)
 
-La statua della medusa è il simbolo del gioco: il suo piedistallo è un **monumento** al centro del
-piazzale sud, sull'asse della porta degli spogliatoi. Il piedistallo è **vuoto** (nodo `amb_piedistallo`
-in `sala_monumento.glb`); la medusa la mette il gruppo "medusa".
+Deciso dall'utente il 15 ottobre (GDD, "Il centro della sala"): al posto della statua sul monumento c'è la
+**vasca sollevata** del concept `docs/concept/medusa_sbircia.jpg`, con dentro la medusa affacciata, immobile,
+le mani sul bordo verso l'ingresso. Nodo `sala_vasca_centrale` in `sala_vasca_centrale.glb`.
 
-- Centro: Blender **(0, -10, 0)** = Godot **(0, 0, 10)**. La porta (vano 1,2 x 2,2 m) è a 10 m, sullo
-  stesso asse: entrando la statua si vede subito, intera e centrata, con la cupola sopra.
-- **Piano superiore a 1,15 m**, Ø 3,7 m (raggio 1,85: i tentacoli della medusa arrivano a 1,55 m).
-  La medusa va appoggiata in Godot con l'origine a **(0, 1,15, 10)**,
-  rivolta verso la porta (+Z Godot). Prevista alta circa 4,5 m: la cima arriva a 5,65 m.
-- Gradoni: Ø 5,2 m (alto 0,28) e Ø 4,4 m (fino a 0,56), piastrellati; tamburo Ø 3,5 m con il fregio
-  a mosaico marino; cornice in ceramica con il toro d'ottone; conchiglie d'ottone sul secondo gradino.
-- Davanti (verso la porta) la scatola gialla con il fungo rosso dei bambini (nodo a parte), a 0,8 m.
-- Luci: 4 faretti nel primo gradino (dal basso), 2 fari sulla ringhiera della galleria sud, il lampione
-  accanto (base in Blender (2,8, -13,2)) con la lampada sopra il davanti della statua.
-- Cordone di velluto su colonnine d'ottone a raggio 3 m, con un varco di 3 m sul davanti.
-- Alla base le offerte dei bambini: disegni a pastello (senza scritte), conchiglie, stelle marine,
-  secchiello, salvagente, orsetto, paperelle, pallone, ciambella.
+- Centro Godot **(0, 0, 10)**; pianta esterna **6,0 x 4,5 m** (x per z) con angoli arrotondati r 0,5.
+- Muro alto 1 m: **cima del bordo a 1,0 m**, coping largo **0,30 m** con il toro esterno (r 3,75 cm), bagnato e
+  lucido; muro esterno rientrato di 3 cm sotto il toro. **Acqua a 0,88**, fondo interno a 0.
+- Piastrelle da **25 cm a scacchi blu notte e crema** (`vasca_alta`, texture 2K su 3 m = 680 px/m), fughe scure
+  in rilievo, ogni piastrella col suo tono, crepe e macchie; le UV seguono il perimetro (le piastrelle girano
+  negli angoli). Sporco nei colori dei vertici: schizzi in basso, righe dove l'acqua è traboccata, alghe sotto
+  l'acqua. Fascia RGBA di **alghe e calcare sulla linea dell'acqua** (`decal_calcare`).
+- Marker **`medusa_affacciata`** in `sala_dati.json`: origine consigliata (0; 0,88; 11,75), rotazione (0, 0, 0),
+  guarda verso +Z; mani sul coping in (±0,45; 1,0; 12,1).
+- Pulsante della sigla sul muro davanti (nodo `sala_pulsante_piedistallo`), cordone di velluto a 1,3 m dal bordo
+  con il varco davanti, lampione, 2 fari dalla galleria e 2 luci sott'acqua, offerte dei bambini intorno.
+- Il **monumento della statua** (piedistallo a gradoni, piano 3,7 m, fregio marino) resta per più avanti:
+  `glb/per_dopo/sala_monumento.glb`, si rifà con `ambiente_sala.py --glb <cartella> --monumento`.
 
 ## Passata di qualità della sala (ottobre)
 

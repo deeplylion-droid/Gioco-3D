@@ -53,9 +53,10 @@ const PREDEFINITI := {
 	"saturazione": 1.0,
 	"color_grading": 1,         # indice in GRADING
 	"glow": true,
-	"grana": true,
+	"grana": false,             # di serie spenta: sporcava l'immagine (revisione dell'utente)
 	"vignetta": true,
-	"aberrazione": true,
+	"aberrazione": false,
+	"profondita_campo": true,   # sfocatura leggera solo in lontananza
 	"riduci_lampi": false,      # accessibilità: lampi più deboli e senza sfarfallio
 	"calibrato": false,         # true dopo la prima calibrazione della luminosità
 	# Controlli (li legge il controller del giocatore)
@@ -68,13 +69,13 @@ const PRESET := {
 	"basso": {"scala_rendering": 0.67, "upscaler": 1, "nitidezza_fsr": 0.3, "antialiasing": 1,
 		"ombre": 0, "gi": 0, "nebbia": 0, "ssr": 0, "ssao": 0, "ssil": 0,
 		"qualita_texture": 0, "particelle": 0},
-	"medio": {"scala_rendering": 0.77, "upscaler": 2, "nitidezza_fsr": 0.2, "antialiasing": 0,
+	"medio": {"scala_rendering": 0.85, "upscaler": 1, "nitidezza_fsr": 0.25, "antialiasing": 2,
 		"ombre": 2, "gi": 0, "nebbia": 1, "ssr": 1, "ssao": 2, "ssil": 0,
 		"qualita_texture": 1, "particelle": 1},
-	"alto": {"scala_rendering": 1.0, "upscaler": 0, "nitidezza_fsr": 0.2, "antialiasing": 3,
+	"alto": {"scala_rendering": 1.0, "upscaler": 0, "nitidezza_fsr": 0.2, "antialiasing": 2,
 		"ombre": 3, "gi": 1, "nebbia": 1, "ssr": 2, "ssao": 3, "ssil": 2,
 		"qualita_texture": 2, "particelle": 2},
-	"ultra": {"scala_rendering": 1.0, "upscaler": 2, "nitidezza_fsr": 0.2, "antialiasing": 0,
+	"ultra": {"scala_rendering": 1.0, "upscaler": 0, "nitidezza_fsr": 0.2, "antialiasing": 5,
 		"ombre": 4, "gi": 1, "nebbia": 2, "ssr": 3, "ssao": 4, "ssil": 3,
 		"qualita_texture": 2, "particelle": 2},
 }
@@ -159,7 +160,16 @@ func applica_tutto() -> void:
 	_applica_particelle()
 	_applica_post()
 	_applica_fov()
+	_applica_camera()
 	applicate.emit()
+
+
+## Da chiamare quando la scena cambia Environment o attributi della camera
+## (per esempio le zone con un Environment proprio): li riprende e riapplica le opzioni.
+func aggiorna_environment() -> void:
+	_env = null
+	_applica_environment()
+	_applica_camera()
 
 
 func carica() -> void:
@@ -214,6 +224,8 @@ func _applica_chiave(chiave: String) -> void:
 			_applica_post()
 		"fov":
 			_applica_fov()
+		"profondita_campo":
+			_applica_camera()
 		_:
 			_applica_environment()
 
@@ -395,6 +407,29 @@ func _applica_post() -> void:
 	m.set_shader_parameter("aberrazione", 1.0 if valori["aberrazione"] else 0.0)
 
 
+## Profondità di campo leggera: sfoca solo ciò che è lontano (non i dettagli vicini).
+func _applica_camera() -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var attr: CameraAttributes = cam.attributes
+	if attr == null:
+		var w := get_viewport().find_world_3d()
+		for we in get_tree().root.find_children("*", "WorldEnvironment", true, false):
+			if (we as WorldEnvironment).camera_attributes:
+				attr = (we as WorldEnvironment).camera_attributes
+		if attr == null and w:
+			attr = CameraAttributesPractical.new()
+			cam.attributes = attr
+	if attr is CameraAttributesPractical:
+		var a := attr as CameraAttributesPractical
+		a.dof_blur_far_enabled = bool(valori["profondita_campo"])
+		a.dof_blur_far_distance = 14.0
+		a.dof_blur_far_transition = 10.0
+		a.dof_blur_near_enabled = false
+		a.dof_blur_amount = 0.04
+
+
 func _applica_fov() -> void:
 	var cam := get_viewport().get_camera_3d()
 	if cam and not cam.has_meta("grafica_fov_fisso"):
@@ -411,6 +446,7 @@ func _su_nodo_aggiunto(n: Node) -> void:
 		_applica_environment.call_deferred()
 	elif n is Camera3D:
 		_applica_fov.call_deferred()
+		_applica_camera.call_deferred()
 	elif n is GPUParticles3D and n.is_in_group("grafica_particelle"):
 		_applica_particelle.call_deferred()
 

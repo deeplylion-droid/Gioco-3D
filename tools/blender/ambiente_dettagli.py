@@ -292,7 +292,7 @@ def posti_pozzanghere(n=48, seme=8):
     P, V, PD, ST, T = S.PISCINA, S.VASCA_ARRIVO, S.PIEDISTALLO, S.STRUTTURA, S.TORRE
     vietati = [(P['x0'] - 0.75, P['y0'] - 0.75, P['x1'] + 0.75, P['y1'] + 0.75),
                (V['x0'] - 0.75, V['y0'] - 0.75, V['x1'] + 0.75, V['y1'] + 0.75),
-               (PD['cx'] - PD['r_cordone'] - 0.4, PD['cy'] - PD['r_cordone'] - 0.4, PD['cx'] + PD['r_cordone'] + 0.4, PD['cy'] + PD['r_cordone'] + 0.4),
+               tuple(v + d for v, d in zip(S.ingombro_centro(), (-0.2, -0.2, 0.2, 0.2))),
                (S.LAMPIONE[0] - 0.4, S.LAMPIONE[1] - 0.4, S.LAMPIONE[0] + 0.4, S.LAMPIONE[1] + 0.4),
                (-1.2, S.Y0, 1.2, S.Y0 + 1.6),
                (ST['cx'] - 4.6, ST['cy'] - 5.6, ST['cx'] + 2.0, ST['cy'] + 3.4),
@@ -494,3 +494,25 @@ def plafoniere_calde(mats):
             c.tubo([tuple(v) for v in arco], 0.005, 'metallo', seg=5)
         luci.append(dict(nome=f'luce_calda_{i}', pos=tuple(P + N * 0.25), colore=(1.0, 0.68, 0.38)))
     return c.crea('sala_plafoniere_calde'), luci
+
+
+def sporco_vasca_centrale(P, N):
+    """Vasca sollevata: fuori sporco in basso (schizzi, pavimento bagnato) e righe dove l'acqua è
+    traboccata dal bordo; dentro, sotto l'acqua, verdastro (alghe) e più scuro verso il fondo."""
+    V = S.VASCA_CENTRALE
+    x, y, z = P[:, 0] - V['cx'], P[:, 1] - V['cy'], P[:, 2]
+    radiale = np.stack([x, y], -1)
+    fuori = (N[:, 0] * x + N[:, 1] * y) > 0
+    ang = np.arctan2(y, x)
+    S1 = np.stack([ang * 3.2, np.zeros_like(ang), np.zeros_like(ang)], -1)
+    m = fbm3(P, 1.4, 3, seme=91)
+    v = 0.84 + 0.16 * liscio(0.3, 0.7, m)
+    righe = liscio(0.55, 0.78, fbm3(S1, 2.2, 2, seme=93)) * liscio(0.15, 0.85, z)
+    est = v * (0.74 + 0.26 * liscio(0.0, 0.4, z)) * (1 - 0.28 * righe)
+    sotto = z < V['acqua'] - 0.01
+    inn = v * np.where(sotto, 0.72 - 0.25 * liscio(0.8, 0.1, z), 0.95)
+    val = np.where(fuori, est, inn)
+    rgb = np.repeat(val[:, None], 3, 1)
+    verde = np.where((~fuori) & sotto, 1.0, 0.0)[:, None]
+    rgb = rgb * (1 - 0.25 * verde) + rgb * np.array([0.78, 0.95, 0.72]) * 0.25 * verde
+    return np.clip(rgb, 0.25, 1.0)

@@ -31,6 +31,45 @@ Tutti in `docs/report/render_grafica/` (presi dal motore, 1280×720, Vulkan soft
 | `lampi_cupola.mp4` (+ `.gif`) | 7 secondi di temporale visto dalla sala |
 | `neon_corridoio.mp4` (+ `.gif`) | 6 secondi di neon che sfarfallano e lampeggiante rotante |
 
+## Pezzo campione: luce e immagine degli interni (15 ottobre, da approvare)
+
+L'utente, dopo la v0.2.0: "è tutto offuscato e piatto" e "la torcia è troppo forte". Rifatti su un pezzo campione, da approvare prima del resto: corridoio del risveglio, tornello con la vasca lava-piedi, stanzino.
+
+Screenshot 1600×900 da Godot, stessi punti prima e dopo (preset Alto), in `docs/report/render_grafica/campione/`:
+
+| Inquadratura | Prima | Dopo |
+|---|---|---|
+| Corridoio dal risveglio | `prima_corridoio.jpg` | `dopo_corridoio.jpg` |
+| Tornello con la vasca lava-piedi | `prima_tornello.jpg` | `dopo_tornello.jpg` |
+| Dentro lo stanzino | `prima_stanzino.jpg` | `dopo_stanzino.jpg` |
+| Corridoio al buio con la torcia | `prima_torcia.jpg` | `dopo_torcia.jpg` |
+
+Cosa rendeva l'immagine "offuscata" e cosa è cambiato:
+- **Antialiasing**: il TAA sul preset Alto ammorbidiva tutto. Ora Alto usa **SMAA** (nitido), Ultra **MSAA 4×**, Medio FSR 1 all'85% con nitidezza e SMAA; il TAA resta solo come scelta ("morbido") nel menu.
+- **Grana e aberrazione cromatica spente di serie** (si possono riaccendere); vignetta leggera (0,3).
+- **Nebbia** degli interni molto più leggera (0,008): aloni attorno alle lampade, nessun velo sull'immagine.
+- **Profondità di campo** leggera, solo oltre i 14 m (negli interni quasi non si vede), disattivabile nel menu (Immagine > Profondità di campo).
+
+Profondità e atmosfera invece di "piatto":
+- Le luci rosse d'emergenza fanno **pozze raccolte** (raggio 4,2 m, calo rapido) invece di tingere di rosso pareti intere; i neon fanno la luce "di lavoro" fredda, con **ombre morbide**; la lampada sullo zaino è l'unica luce calda.
+- **Ombre** in mezzo agli ambienti: zone buie vere tra una pozza di luce e l'altra; luce ambiente fredda minima (blu-verde, come il concept A) perché il buio non sia nero piatto.
+- **SSAO** stretto (0,9 m) per gli angoli, **SSIL** a 3 m, **SSR** sul pavimento bagnato, **VoxelGI cotto per stanza** (dati in `godot/scenes/interni/gi/`, circa 10 MB) e le sonde di riflessione che c'erano già.
+- AgX con contrasto 1,2 ed esposizione fissa; glow solo sulle lampade.
+
+Torcia rifatta:
+- Nuova texture del fascio: punto caldo pieno, anello del riflettore, stacco più scuro, corona larga e debole, bordo che sfuma senza scalino.
+- **Bianco caldo** (circa 4000 K), energia 9 ma con calo più lento con la distanza e **attenuazione vicino ai muri**: illumina lontano senza bruciare da vicino.
+- Segue lo sguardo con **un po' di inerzia**; nella nebbia è appena accennata.
+- **Non illumina la lancia in mano** (strato 2 escluso dalla luce).
+
+Per non intralciare chi rifà modelli e texture degli stessi interni, le luci sono in una scena separata: `godot/scenes/interni/luci_interni.tscn` (istanziata in `interni.tscn`), con lo script `addons/grafica/look_interni.gd`.
+
+**Risultato combinato** con i modelli e le texture nuovi di ambienti-1 (oggetti Meshy, pareti senza "mimetica", piastrelle con le fughe), VoxelGI ricotto sulla geometria nuova: `combinato_corridoio.jpg`, `combinato_tornello.jpg`, `combinato_stanzino.jpg`, `combinato_torcia.jpg`.
+
+Il "disco azzurro" che si vedeva nel tornello era la cornice della finestra del gabbiotto, che sporgeva nel corridoio: ambienti-1 l'ha corretta (4bd815c); `combinato_tornello.jpg` è rifatto con la cornice a filo del muro e il VoxelGI ricotto.
+
+**In attesa del riscontro dell'utente** prima di estendere lo stesso lavoro al resto del gioco.
+
 ## Sala principale vera: prima e dopo
 
 Scena di prova: `labs/grafica/sala_reale/` con i GLB veri (`strumenti/prepara_sala_reale.sh` li copia e li importa con lo script di post-import). Consegna: `godot/addons/grafica/look_sala.gd` + `godot/addons/grafica/sala/*.tres` (passi nel README dell'addon).

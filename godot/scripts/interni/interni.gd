@@ -131,17 +131,23 @@ func _prepara_luci() -> void:
 		neon.name = String(tubo.name).replace("_tubo_sfarfalla", "_neon")
 		neon.set(&"modalita", 1)          # SFARFALLA
 		neon.set(&"colore", Color(0.78, 1.0, 0.9))
-		tubo.get_parent().add_child(neon)
-		neon.global_transform = tubo.global_transform
-		tubo.reparent(neon, true)
+		# Il Neon va montato completo (tubo del modello + luce) PRIMA di entrare nella scena:
+		# se entra vuoto si costruisce da solo un'altra plafoniera con un'altra luce (neon doppi)
+		# e non vede la luce aggiunta dopo (che quindi non sfarfallava).
+		var genitore := tubo.get_parent()
+		neon.transform = (tubo as Node3D).transform
+		genitore.remove_child(tubo)
+		neon.add_child(tubo)
+		(tubo as Node3D).transform = Transform3D.IDENTITY
 		var luce := OmniLight3D.new()
 		luce.light_color = Color(0.78, 1.0, 0.9)
 		luce.light_energy = 0.7
 		luce.omni_range = 5.0
 		luce.light_volumetric_fog_energy = 0.3
 		luce.shadow_enabled = true
-		neon.add_child(luce)
 		luce.position = Vector3(0, -0.15, 0)
+		neon.add_child(luce)
+		genitore.add_child(neon)
 	# La lucina del pulsante del tornello: solo un alone sul pulsante.
 	var spia := ambienti.find_child("luce_pulsante_tornello", true, false) as OmniLight3D
 	if spia:

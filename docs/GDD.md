@@ -47,6 +47,15 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
   - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il primo corpo era "troppo pacioccone". Rifatto il 15 ottobre: bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata (render inviato all'utente, in attesa di riscontro; il primo corpo è in `scartati/`).
   - **L'agnellino**: un peluche cucito, zuppo e macchiato di sale, con bottoni d'ottone al posto degli occhi e un fiocco alla marinara. Quando si rivela, il muso si spacca e mostra **un unico grande occhio**, scelto dall'utente. La testa di lupo resta solo come alternativa.
 
+## Qualità grafica: prima di tutto (deciso dall'utente, 15 ottobre, dopo aver giocato la v0.2.0)
+
+- **Non si fanno altri ambienti finché la qualità non è quella giusta.** Si lavora su un pezzo campione (corridoio del risveglio, zona davanti allo stanzino dei bagnini con il tornello) finché l'utente non lo approva; poi si porta tutto allo stesso livello.
+- **Pezzo campione approvato dall'utente (15 ottobre)**: il "dopo" del confronto (modelli Meshy di ambienti-1 più la luce nuova di grafica, `docs/report/render_grafica/campione/combinato_*.jpg`). "Belle le luci e anche le grafiche". Lo giudicherà meglio in gioco. Questo è il livello minimo per tutto il resto: ora si porta la sala principale allo stesso livello, poi si va avanti con gli ambienti nuovi.
+- Bocciato nella v0.2.0: forme troppo squadrate, texture che si ripetono troppo (soprattutto nel corridoio), tornello in bassissima definizione. I modelli devono essere di qualità vera: per oggetti e arredi si usa Meshy ad alta risoluzione, come deciso all'inizio.
+- Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
+- La luce della torcia è troppo forte e brutta: va studiata diversamente.
+- I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
@@ -110,6 +119,13 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - La versione con due occhi.
 - Il costume a fascia.
 
+### Il centro della sala: la vasca sollevata con la medusa affacciata (deciso dall'utente, 15 ottobre, sostituisce la statua)
+
+- La statua che poi si anima è "troppo Poppy Playtime". **La statua si tiene per più avanti** (modello e monumento restano negli asset).
+- Al suo posto, al centro della sala, c'è la **vasca sollevata** del concept `docs/concept/medusa_sbircia.jpg`: bordo piastrellato rialzato, acqua quasi al bordo. Dentro c'è **la medusa vera, affacciata e immobile**: mani sul bordo, campana in acqua, tentacoli che ricadono fuori, l'occhio che guarda chi entra.
+- **Poi sparisce**, nel punto della scaletta approvata in cui il piedistallo restava vuoto (tappa 7, ritorno al buio dopo la sala pompe). Con la stessa inquadratura, la vasca è vuota, l'acqua si muove ancora e una scia di gocce scende dal bordo e si allontana nel buio, verso l'area bimbi.
+- Vale la regola sulla qualità: vasca e posa della medusa devono essere al livello del pezzo campione.
+
 ### La statua: il simbolo del gioco (deciso dall'utente, 15 ottobre)
 
 - La medusa è **il simbolo del gioco**. La sua statua deve essere **imponente** e messa in scena come Huggy Wuggy nella hall di Poppy Playtime.
@@ -132,6 +148,8 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Da chiusa **non si vede**.
 - Quando attacca, la pelle del viso **si strappa sotto l'occhio** e si apre una **fauce enorme con file di denti da squalo**.
 - Va costruita nel modello 3D: geometria nascosta, osso o shape key per aprirla, bordi strappati.
+- **Versione malvagia (richiesta dell'utente, 15 ottobre)**: con la fauce aperta l'**occhio diventa più venato**, con capillari rossi dal bordo verso l'iride, così fa paura. Nel materiale è un parametro, così in gioco le vene compaiono quando attacca.
+- **Approvazione definitiva del modello**: l'utente vuole una scheda con il giro completo, i dettagli in viste separate e la versione malvagia (`docs/proposte/medusa/scheda/`).
 
 ### Movimento (deciso)
 

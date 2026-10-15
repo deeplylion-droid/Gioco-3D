@@ -46,6 +46,12 @@ VASCA_ARRIVO = dict(x0=-16.0, x1=-9.0, y0=-7.0, y1=3.0, prof=1.1, acqua=-0.22)
 PIEDISTALLO = dict(cx=0.0, cy=-10.0, r_base=2.6, r_gradino=2.2, r_tamburo=1.75, r_piano=1.88,
                    z1=0.28, z2=0.56, z3=1.03, h=1.15, z_pulsante=0.8, r_cordone=3.0)
 RINGHIERA_H_SALA = 1.05
+# VASCA SOLLEVATA al centro (deciso dall'utente il 15 ottobre: sostituisce il monumento, che resta per
+# dopo con --monumento). Pianta esterna 6 x 4,5 m con angoli r 0,5; bordo (coping) largo 0,30 con il
+# toro esterno, cima a 1,0 m; acqua a 0,88; fondo a 0. La medusa si affaccia sul lato verso l'ingresso.
+VASCA_CENTRALE = dict(cx=0.0, cy=-10.0, lx=6.0, ly=4.5, r=0.5, h=1.0, coping=0.30, acqua=0.88,
+                      cordone=1.3, z_pulsante=0.62)
+CENTRO = {'modo': 'vasca'}   # 'vasca' (di serie) oppure 'monumento' (la statua, per più avanti)
 STRUTTURA = dict(cx=-13.0, cy=16.0)
 # vasche basse dell'area bimbi: (x0, y0, x1, y1) del bordo esterno
 VASCHE_BASSE = [(-15.1, 7.7, -10.1, 11.5), (-17.0, 10.7, -13.6, 14.1)]
@@ -567,7 +573,12 @@ def interattivi(mats, zf):
     obs.append(quadro)
     # pulsante dei bambini sul piedistallo (il fungo rosso; la scatola gialla è nel piedistallo)
     PD = PIEDISTALLO
-    obs.append(pulsante(mats, 'sala_pulsante_piedistallo', (PD['cx'], PD['cy'] - PD['r_tamburo'] - 0.13, PD['z_pulsante']), (0, -1)))
+    if CENTRO['modo'] == 'monumento':
+        obs.append(pulsante(mats, 'sala_pulsante_piedistallo', (PD['cx'], PD['cy'] - PD['r_tamburo'] - 0.13, PD['z_pulsante']), (0, -1)))
+    else:   # sul muro davanti della vasca sollevata (il nome del nodo resta lo stesso per il gioco)
+        V = VASCA_CENTRALE
+        yf = V['cy'] - V['ly'] / 2 + (V['coping'] / 2 - 0.12)
+        obs.append(pulsante(mats, 'sala_pulsante_piedistallo', (V['cx'], yf - 0.13, V['z_pulsante']), (0, -1)))
     for o in obs:
         for ch in o.children:
             ch.hide_render = True
@@ -1230,12 +1241,13 @@ def cordone(mats):
     return ob
 
 
-def fari_galleria(mats):
-    """Due fari da palcoscenico fissati alla ringhiera della galleria sud, puntati sulla statua."""
+def fari_galleria(mats, bersaglio=None):
+    """Due fari da palcoscenico fissati alla ringhiera della galleria sud, puntati sulla statua (o
+    sulla medusa affacciata alla vasca)."""
     P = PIEDISTALLO
     c = K.Costruttore(mats)
     luci = []
-    bersaglio = Vector((P['cx'], P['cy'], P['h'] + 3.4))   # busto e viso della statua
+    bersaglio = Vector(bersaglio) if bersaglio else Vector((P['cx'], P['cy'], P['h'] + 3.4))   # busto e viso
     yr = Y0 + PROF_GAL - 0.06
     for i, x in enumerate((-2.1, 2.1)):
         attacco = Vector((x, yr, Z_GAL + SP_GAL + RINGHIERA_H_SALA))
@@ -1321,6 +1333,262 @@ def offerte_monumento(mats):
     c.cilindro(tuple(b + Vector((0.16, 0.05, 0.012))), tuple(b + Vector((0.36, 0.12, 0.012))), 0.01, 'gioco_giallo', seg=6)
     c.scatola(tuple(b + Vector((0.08, 0.0, 0.004))), tuple(b + Vector((0.17, 0.09, 0.012))), 'gioco_giallo')
     return c.crea('sala_monumento_offerte', sporco=lambda co: 0.9)
+
+
+# ----------------------------------------------------------------------------- vasca sollevata al centro
+
+def rett_arrotondato(cx, cy, lx, ly, r, z=0.0, passo=0.25, seg_arco=12):
+    """Perimetro di un rettangolo con gli angoli arrotondati, in senso antiorario visto dall'alto, a
+    partire dal centro del lato nord (la giunta delle UV resta sul retro). Restituisce la lista di
+    (punto, normale verso fuori) e le lunghezze d'arco cumulate (una in più: il giro chiuso)."""
+    hx, hy = lx / 2 - r, ly / 2 - r
+    C = Vector((cx, cy, z))
+    pts = []
+    def linea(a, b, n):
+        L = (b - a).length
+        k = max(1, int(math.ceil(L / passo - 1e-6)))
+        for i in range(k):
+            pts.append((a.lerp(b, i / k), Vector(n)))
+    def arco(c, a0):
+        for i in range(seg_arco):
+            a = math.radians(a0 + 90.0 * i / seg_arco)
+            d = Vector((math.cos(a), math.sin(a), 0.0))
+            pts.append((c + d * r, d))
+    linea(C + Vector((0, ly / 2, 0)), C + Vector((-hx, ly / 2, 0)), (0, 1, 0))
+    arco(C + Vector((-hx, hy, 0)), 90)
+    linea(C + Vector((-lx / 2, hy, 0)), C + Vector((-lx / 2, -hy, 0)), (-1, 0, 0))
+    arco(C + Vector((-hx, -hy, 0)), 180)
+    linea(C + Vector((-hx, -ly / 2, 0)), C + Vector((hx, -ly / 2, 0)), (0, -1, 0))
+    arco(C + Vector((hx, -hy, 0)), 270)
+    linea(C + Vector((lx / 2, -hy, 0)), C + Vector((lx / 2, hy, 0)), (1, 0, 0))
+    arco(C + Vector((hx, hy, 0)), 0)
+    linea(C + Vector((hx, ly / 2, 0)), C + Vector((0, ly / 2, 0)), (0, 1, 0))
+    s = [0.0]
+    for i in range(1, len(pts) + 1):
+        s.append(s[-1] + (pts[i % len(pts)][0] - pts[i - 1][0]).length)
+    return pts, s
+
+
+def _parete_lungo(c, giro, zs, mat, verso, lato_uv, v0=0.0, v_scala=None):
+    """Parete verticale lungo un perimetro chiuso, a fasce alle quote zs. verso +1 = facce verso fuori.
+    UV: u = lunghezza d'arco / lato_uv, v = (z - v0) / (v_scala o lato_uv)."""
+    pts, s = giro
+    n = len(pts)
+    vs = v_scala or lato_uv
+    for i in range(n):
+        (a, na), (b, nb) = pts[i], pts[(i + 1) % n]
+        for z0, z1 in zip(zs, zs[1:]):
+            q = [(a.x, a.y, z0), (b.x, b.y, z0), (b.x, b.y, z1), (a.x, a.y, z1)]
+            uv = [(s[i] / lato_uv, (z0 - v0) / vs), (s[i + 1] / lato_uv, (z0 - v0) / vs),
+                  (s[i + 1] / lato_uv, (z1 - v0) / vs), (s[i] / lato_uv, (z1 - v0) / vs)]
+            c.faccia_verso(q, mat, tuple((na + nb) * verso), uv=uv, liscia=True)
+
+
+def materiale_acqua(torbida=False):
+    """Materiale segnaposto dell'acqua (lo stesso di acqua_piana)."""
+    nome = 'M_acqua_torbida' if torbida else 'M_acqua_vasca'
+    m = bpy.data.materials.get(nome)
+    if m is None:
+        m = bpy.data.materials.new(nome)
+        m.use_nodes = True
+        nt = m.node_tree
+        b = nt.nodes['Principled BSDF']
+        b.inputs['Base Color'].default_value = (0.09, 0.12, 0.07, 1) if torbida else (0.06, 0.16, 0.15, 1)
+        b.inputs['Roughness'].default_value = 0.035
+        b.inputs['Transmission Weight'].default_value = 0.55 if torbida else 0.9
+        b.inputs['IOR'].default_value = 1.333
+        no = nt.nodes.new('ShaderNodeTexNoise'); no.inputs['Scale'].default_value = 2.5
+        no.inputs['Detail'].default_value = 4.0
+        bu = nt.nodes.new('ShaderNodeBump'); bu.inputs['Strength'].default_value = 0.035
+        nt.links.new(no.outputs['Fac'], bu.inputs['Height'])
+        nt.links.new(bu.outputs['Normal'], b.inputs['Normal'])
+    return m
+
+
+def vasca_centrale(mats):
+    """Vasca sollevata al centro della sala (concept medusa_sbircia): muro alto 1 m piastrellato a
+    scacchi blu notte e crema (piastrelle da 25 cm, fughe scure in rilievo), coping largo 0,30 m con il
+    toro esterno, bagnato e lucido; dentro alghe e calcare sulla linea dell'acqua; acqua a 0,88 quasi al
+    bordo. La medusa (gruppo "medusa") si affaccia sul lato verso l'ingresso (-y Blender, +Z Godot).
+    Restituisce (oggetti, acqua, luci)."""
+    V = VASCA_CENTRALE
+    cx, cy, lx, ly, r, H, cp = V['cx'], V['cy'], V['lx'], V['ly'], V['r'], V['h'], V['coping']
+    c = K.Costruttore(mats)
+    d_c = cp / 2                                    # linea di mezzo del coping, dal filo esterno
+    z_sotto = H - 0.075                             # sotto del coping
+    # muro esterno (rientra di 3 cm sotto il toro), a fasce da 12,5 cm per lo sporco nei colori dei vertici
+    est = rett_arrotondato(cx, cy, lx - 2 * (d_c - 0.12), ly - 2 * (d_c - 0.12), r - (d_c - 0.12))
+    zs = [0.0] + [0.125 * k for k in range(1, 8)] + [z_sotto]
+    _parete_lungo(c, est, zs, 'vasca_alta', +1, 3.0)
+    # muro interno e fondo
+    inn = rett_arrotondato(cx, cy, lx - 2 * cp, ly - 2 * cp, r - cp)
+    _parete_lungo(c, inn, [0.004, 0.25, 0.5, 0.75, 0.8, 0.85, V['acqua'], z_sotto], 'vasca_alta', -1, 3.0)
+    c.faccia_verso([tuple(p_ + Vector((0, 0, 0.004))) for p_, n_ in inn[0]], 'vasca', (0, 0, 1))
+    # coping: profilo con lo spigolo interno smussato e il toro esterno, fatto scorrere sul perimetro
+    mezzo = rett_arrotondato(cx, cy, lx - 2 * d_c, ly - 2 * d_c, r - d_c, z=H, passo=0.25)
+    rb = 0.0375
+    prof = [(-cp / 2, -0.075), (-cp / 2, -0.012), (-cp / 2 + 0.008, -0.002), (-cp / 2 + 0.02, 0.0), (cp / 2 - 0.045, 0.0)]
+    prof += [(cp / 2 - 0.045 + rb * math.cos(math.radians(a)), -rb + rb * math.sin(math.radians(a))) for a in (60, 30, 0, -30, -60, -90)]
+    c.profilo_lungo([p_ for p_, n_ in mezzo[0]], [(0, 0, 1)] * len(mezzo[0]), prof, 'vasca_alta_bordo', chiuso_percorso=True, liscia=True)
+    # scatola gialla del pulsante dei bambini (sigla) sul muro davanti, tra le mani della medusa
+    yf = cy - ly / 2 + (d_c - 0.12) + 0.0
+    zb = V['z_pulsante']
+    c.scatola((cx - 0.2, yf - 0.13, zb - 0.18), (cx + 0.2, yf + 0.02, zb + 0.18), 'gioco_giallo', smusso=0.012)
+    ob = c.crea('sala_vasca_centrale')
+    D.colora(ob, D.sporco_vasca_centrale)
+    # alghe e calcare sulla linea dell'acqua (fascia RGBA 2 mm davanti al muro interno)
+    f = K.Costruttore(mats)
+    fascia = rett_arrotondato(cx, cy, lx - 2 * cp - 0.004, ly - 2 * cp - 0.004, r - cp - 0.002)
+    zb0 = V['acqua'] - 0.45 * 0.256
+    _parete_lungo(f, fascia, [zb0, min(H - 0.015, zb0 + 0.256)], 'decal_calcare', -1, 2.048, v0=zb0, v_scala=0.256)
+    ob_f = f.crea('sala_vasca_centrale_calcare')
+    # acqua (segnaposto, gruppo acqua)
+    w = K.Costruttore(type('M', (), {'lato': lambda self_, n: 1.0, 'get': lambda self_, n: materiale_acqua()})())
+    w.faccia_verso([tuple(p_ + Vector((0, 0, V['acqua']))) for p_, n_ in rett_arrotondato(cx, cy, lx - 2 * cp - 0.002, ly - 2 * cp - 0.002, r - cp - 0.001)[0]], 'acqua', (0, 0, 1))
+    acqua = w.crea('sala_vasca_centrale_acqua')
+    # collisioni: quattro tratti dritti di muro (con il coping) e quattro angoli convessi
+    hx, hy = lx / 2 - r, ly / 2 - r
+    for nome_, lo, hi in (('vasca_c_sud', (cx - hx, cy - ly / 2, 0), (cx + hx, cy - ly / 2 + cp, H)),
+                          ('vasca_c_nord', (cx - hx, cy + ly / 2 - cp, 0), (cx + hx, cy + ly / 2, H)),
+                          ('vasca_c_ovest', (cx - lx / 2, cy - hy, 0), (cx - lx / 2 + cp, cy + hy, H)),
+                          ('vasca_c_est', (cx + lx / 2 - cp, cy - hy, 0), (cx + lx / 2, cy + hy, H))):
+        K.collisione_scatola(nome_, lo, hi, padre=ob)
+    for k, (sx, sy) in enumerate(((-1, 1), (-1, -1), (1, -1), (1, 1))):
+        cc = Vector((cx + sx * hx, cy + sy * hy, 0))
+        a0 = math.atan2(sy, sx) - math.pi / 4
+        pts = []
+        for i in range(7):
+            a = a0 + (math.pi / 2) * i / 6
+            d = Vector((math.cos(a), math.sin(a), 0))
+            for z in (0.0, H):
+                pts.append(tuple(cc + d * r + Vector((0, 0, z))))
+                pts.append(tuple(cc + d * (r - cp) + Vector((0, 0, z))))
+        K.collisione_punti(f'vasca_c_angolo_{k}', pts, padre=ob)
+    # luci sott'acqua: due faretti dal fondo verso il davanti (la campana della medusa si accende)
+    luci = []
+    for i, sx in enumerate((-1, 1)):
+        p = Vector((cx + sx * 1.4, cy - 0.2, 0.25))
+        d = (Vector((cx, cy - ly / 2 + 0.55, 0.95)) - p).normalized()
+        luci.append(dict(nome=f'luce_vasca_{i}', pos=tuple(p), dir=tuple(d), colore=(0.35, 0.9, 0.85)))
+    return [ob, ob_f], acqua, luci
+
+
+def ingombro_centro():
+    """Rettangolo (x0, y0, x1, y1) occupato al centro (vasca o monumento, con il cordone)."""
+    if CENTRO['modo'] == 'monumento':
+        P = PIEDISTALLO
+        rc = P['r_cordone'] + 0.3
+        return (P['cx'] - rc, P['cy'] - rc, P['cx'] + rc, P['cy'] + rc)
+    V = VASCA_CENTRALE
+    m = V['cordone'] + 0.3
+    return (V['cx'] - V['lx'] / 2 - m, V['cy'] - V['ly'] / 2 - m, V['cx'] + V['lx'] / 2 + m, V['cy'] + V['ly'] / 2 + m)
+
+
+def cordone_vasca(mats):
+    """Cordone di velluto su colonnine d'ottone intorno alla vasca (1,3 m dal bordo), con il varco
+    davanti, verso l'ingresso. Collisioni sulle campate."""
+    V = VASCA_CENTRALE
+    m = V['cordone']
+    giro, s = rett_arrotondato(V['cx'], V['cy'], V['lx'] + 2 * m, V['ly'] + 2 * m, V['r'] + m, passo=0.05, seg_arco=24)
+    totale = s[-1]
+    n = max(8, int(round(totale / 1.45)))
+    pali = []
+    for k in range(n):
+        target = totale * k / n
+        i = min(range(len(giro)), key=lambda j: abs(s[j] - target))
+        p = giro[i][0]
+        davanti = p.y < V['cy'] - V['ly'] / 2 - m + 0.05 and abs(p.x - V['cx']) < 1.2
+        pali.append((p.x, p.y, davanti))
+    pali = [(x, y) for x, y, dv in pali if not dv]
+    c = K.Costruttore(mats)
+    H = 0.95
+    for (x, y) in pali:
+        c.anello((x, y, 0.0), (0, 0, 1), 0.0, 0.16, 0.025, 'cornice_oblo', seg=20)
+        c.cilindro((x, y, 0.025), (x, y, 0.08), 0.06, 'cornice_oblo', seg=14)
+        c.cilindro((x, y, 0.08), (x, y, H), 0.022, 'cornice_oblo', seg=12)
+        c.cilindro((x, y, H), (x, y, H + 0.05), 0.045, 'cornice_oblo', seg=14)
+        c.disco((x, y, H + 0.05), (0, 0, 1), 0.045, 'cornice_oblo', seg=14)
+    campate = []
+    for i in range(len(pali)):
+        a, b = pali[i], pali[(i + 1) % len(pali)]
+        if math.hypot(b[0] - a[0], b[1] - a[1]) > 2.2:     # il varco davanti
+            continue
+        A = Vector((a[0], a[1], H - 0.07)); B = Vector((b[0], b[1], H - 0.07))
+        curva = []
+        for k in range(13):
+            t = k / 12
+            p = A.lerp(B, t)
+            p.z -= 0.16 * (1 - (2 * t - 1) ** 2)
+            curva.append(tuple(p))
+        c.tubo(curva, 0.024, 'velluto', seg=10)
+        for e in (A, B):
+            c.cilindro(tuple(e + Vector((0, 0, -0.03))), tuple(e + Vector((0, 0, 0.03))), 0.03, 'cornice_oblo', seg=8)
+        campate.append((a, b))
+    ob = c.crea('sala_vasca_cordone', sporco=lambda co: 0.85)
+    for i, (a, b) in enumerate(campate):
+        d = Vector((b[0] - a[0], b[1] - a[1], 0)).normalized()
+        nn = Vector((-d.y, d.x, 0)) * 0.04
+        pts = [tuple(Vector((p[0], p[1], z)) + s_ * nn) for p in (a, b) for z in (0.0, 1.0) for s_ in (-1, 1)]
+        K.collisione_punti(f'cordone_vasca_{i}', pts, padre=ob)
+    return ob
+
+
+def offerte_vasca(mats):
+    """Offerte dei bambini intorno alla vasca: disegni attaccati al muro davanti e a terra, conchiglie
+    e stelle marine sugli angoli del bordo, secchiello con paletta. (Salvagente, orsetto, paperelle,
+    pallone e ciambella sono in disponi_oggetti.)"""
+    import random
+    rnd = random.Random(78)
+    V = VASCA_CENTRALE
+    cx, cy, lx, ly = V['cx'], V['cy'], V['lx'], V['ly']
+    c = K.Costruttore(mats)
+    yf = cy - ly / 2 + (V['coping'] / 2 - 0.12)            # faccia del muro davanti
+    def foglio(i, centro, U, Vv, curva=0.01):
+        C = Vector(centro); U = Vector(U).normalized(); Vv = Vector(Vv).normalized()
+        N = U.cross(Vv).normalized()
+        u0, v1 = (i % 2) * 0.5, 1.0 - (i // 2) * 0.5
+        for k in range(3):
+            a, b = k / 3, (k + 1) / 3
+            def pt(s_, t_):
+                return tuple(C + U * (s_ - 0.5) * 0.21 + Vv * (t_ - 0.5) * 0.297 + N * curva * math.sin(math.pi * s_))
+            q = [pt(a, 0), pt(b, 0), pt(b, 1), pt(a, 1)]
+            uv = [(u0 + a * 0.5, v1 - 0.5), (u0 + b * 0.5, v1 - 0.5), (u0 + b * 0.5, v1), (u0 + a * 0.5, v1)]
+            c.faccia(q, 'disegni', uv=uv)
+            c.faccia(q[::-1], 'disegni', uv=uv[::-1])
+    # due disegni attaccati al muro davanti (ai lati del pulsante), due a terra, uno sul fianco
+    for i, x in ((0, -1.15), (3, 1.25)):
+        foglio(i, (cx + x, yf - 0.006, 0.6), (1, 0, 0), (0, 0, 1), curva=-0.004)
+    for i, (x, y, rot) in ((1, (-0.75, yf - 0.45, 0.3)), (2, (0.9, yf - 0.5, -0.4))):
+        foglio(i, (cx + x, y, 0.005), (math.cos(rot), math.sin(rot), 0), (-math.sin(rot), math.cos(rot), 0))
+    foglio(2, (cx - lx / 2 + 0.12 - 0.006 + (V['coping'] / 2 - 0.12) * 0, cy - 0.9, 0.55), (0, -1, 0), (0, 0, 1), curva=0.004)
+    # conchiglie e stelle marine sugli angoli del coping (non davanti, dove ci sono le mani)
+    for k, (x, y) in enumerate(((-lx / 2 + 0.2, ly / 2 - 0.2), (lx / 2 - 0.2, ly / 2 - 0.22), (-lx / 2 + 0.22, -ly / 2 + 0.25),
+                                (lx / 2 - 0.25, -ly / 2 + 0.2), (-1.6, ly / 2 - 0.15), (1.3, ly / 2 - 0.14))):
+        p = (cx + x + rnd.uniform(-0.04, 0.04), cy + y + rnd.uniform(-0.04, 0.04), V['h'] + 0.002)
+        if k % 3 == 1:
+            stella_marina(c, p, rnd.uniform(0.06, 0.08), 'gioco_arancio', rot=rnd.uniform(0, 6.28))
+        else:
+            dd = rnd.uniform(0, 6.28)
+            conchiglia(c, p, (0, 0, 1), rnd.uniform(0.045, 0.065), 'conchiglia', su=(math.cos(dd), math.sin(dd), 0))
+    for k in range(4):   # qualcuna anche a terra, contro il muro davanti
+        p = (cx + rnd.uniform(-2.4, 2.4), yf - rnd.uniform(0.08, 0.3), 0.003)
+        if abs(p[0] - cx) < 0.35:
+            continue
+        conchiglia(c, p, (0, 0, 1), rnd.uniform(0.045, 0.065), 'conchiglia', su=(rnd.uniform(-1, 1), -1, 0))
+    # secchiello con paletta, a terra davanti a sinistra
+    b = Vector((cx - 2.0, yf - 0.55, 0.0))
+    seg = 16
+    for k in range(seg):
+        t0, t1 = 2 * math.pi * k / seg, 2 * math.pi * (k + 1) / seg
+        q = [b + Vector((math.cos(t0) * 0.075, math.sin(t0) * 0.075, 0)), b + Vector((math.cos(t1) * 0.075, math.sin(t1) * 0.075, 0)),
+             b + Vector((math.cos(t1) * 0.095, math.sin(t1) * 0.095, 0.14)), b + Vector((math.cos(t0) * 0.095, math.sin(t0) * 0.095, 0.14))]
+        c.faccia([tuple(v) for v in q], 'gioco_blu', liscia=True)
+        c.faccia([tuple(v) for v in q[::-1]], 'gioco_blu', liscia=True)
+    c.disco(tuple(b + Vector((0, 0, 0.004))), (0, 0, 1), 0.075, 'gioco_blu', seg=seg)
+    c.tubo([tuple(b + Vector((math.cos(t) * 0.095, 0.0, 0.14 + math.sin(t) * 0.1))) for t in [math.pi * k / 10 for k in range(11)]], 0.005, 'inox', seg=5)
+    c.cilindro(tuple(b + Vector((0.16, 0.05, 0.012))), tuple(b + Vector((0.36, 0.12, 0.012))), 0.01, 'gioco_rosso', seg=6)
+    c.scatola(tuple(b + Vector((0.08, 0.0, 0.004))), tuple(b + Vector((0.17, 0.09, 0.012))), 'gioco_rosso')
+    return c.crea('sala_vasca_offerte', sporco=lambda co: 0.9)
 
 
 def lampione(mats, base, nome='amb_lampione'):
@@ -1975,16 +2243,27 @@ def disponi_oggetti(zf_piscina):
     def sul_gradino(a, r, z):
         t = math.radians(a)
         return (PD['cx'] + math.cos(t) * r, PD['cy'] + math.sin(t) * r, z)
-    r1 = (PD['r_gradino'] + PD['r_base']) / 2      # pedata bassa
-    r2 = (PD['r_tamburo'] + PD['r_gradino']) / 2    # pedata alta
-    rt = (PD['r_base'] + PD['r_cordone']) / 2       # a terra, dentro il cordone
-    metti_ogg('salvagente_nave', sul_gradino(238, PD['r_gradino'] + 0.1, PD['z1']), 238 + 90, 1.0, (75, 0))
-    metti_ogg('orsacchiotto_grande', sul_gradino(300, r1, PD['z1']), 300 + 90, 0.38)
-    metti_ogg('paperella_gigante', sul_gradino(276, r2, PD['z2']), 276 + 90, 0.22)
-    metti_ogg('paperella_gigante', sul_gradino(205, r1, PD['z1']), 160, 0.2)
-    metti_ogg('paperella_gigante', sul_gradino(330, r2, PD['z2']), 20, 0.18)
-    metti_ogg('pallone_spiaggia', sul_gradino(196, rt, 0.0), 0, 0.75)
-    metti_ogg('ciambella_gonfiabile', sul_gradino(322, r1, PD['z1']), 40, 0.45, (4, 0))
+    if CENTRO['modo'] == 'monumento':
+        r1 = (PD['r_gradino'] + PD['r_base']) / 2      # pedata bassa
+        r2 = (PD['r_tamburo'] + PD['r_gradino']) / 2    # pedata alta
+        rt = (PD['r_base'] + PD['r_cordone']) / 2       # a terra, dentro il cordone
+        metti_ogg('salvagente_nave', sul_gradino(238, PD['r_gradino'] + 0.1, PD['z1']), 238 + 90, 1.0, (75, 0))
+        metti_ogg('orsacchiotto_grande', sul_gradino(300, r1, PD['z1']), 300 + 90, 0.38)
+        metti_ogg('paperella_gigante', sul_gradino(276, r2, PD['z2']), 276 + 90, 0.22)
+        metti_ogg('paperella_gigante', sul_gradino(205, r1, PD['z1']), 160, 0.2)
+        metti_ogg('paperella_gigante', sul_gradino(330, r2, PD['z2']), 20, 0.18)
+        metti_ogg('pallone_spiaggia', sul_gradino(196, rt, 0.0), 0, 0.75)
+        metti_ogg('ciambella_gonfiabile', sul_gradino(322, r1, PD['z1']), 40, 0.45, (4, 0))
+    else:
+        V = VASCA_CENTRALE
+        yf = V['cy'] - V['ly'] / 2 + (V['coping'] / 2 - 0.12)
+        metti_ogg('salvagente_nave', (V['cx'] - 1.75, yf - 0.1, 0.0), 0, 1.0, (75, 0))          # appoggiato al muro davanti
+        metti_ogg('orsacchiotto_grande', (V['cx'] + 1.9, yf - 0.35, 0.0), 160, 0.38)          # seduto a terra, guarda l'ingresso
+        metti_ogg('paperella_gigante', (V['cx'] - 2.62, V['cy'] + V['ly'] / 2 - 0.16, V['h']), 210, 0.2)
+        metti_ogg('paperella_gigante', (V['cx'] + 2.6, V['cy'] + 0.4, V['h']), 120, 0.18)
+        metti_ogg('paperella_gigante', (V['cx'] + 1.2, V['cy'] + 0.9, V['acqua'] - 0.03), 70, 0.24)   # galleggia
+        metti_ogg('ciambella_gonfiabile', (V['cx'] - 1.4, V['cy'] + 0.7, V['acqua'] - 0.06), 25, 0.6, (3, 0))
+        metti_ogg('pallone_spiaggia', (V['cx'] - 3.45, V['cy'] - 1.2, 0.0), 0, 0.75)
     # --- altri giocattoli sparsi (la sala è grande: nel concept è piena di roba lasciata lì)
     import random
     rnd = random.Random(31)
@@ -1993,8 +2272,7 @@ def disponi_oggetti(zf_piscina):
     zone = [(-6.5, 6.5, -4.6, 12.6, None), (8.6, 16.6, -8.0, 12.0, 0.0), (-8.4, -7.8, -8.0, 6.0, 0.0),
             (-16.5, -9.5, 4.5, 6.0, 0.0), (-15.0, -5.0, -18.5, -12.5, 0.0), (-6.0, 6.0, 14.0, 20.5, 0.0),
             (5.0, 15.0, -18.5, -12.5, 0.0)]
-    rc = PIEDISTALLO['r_cordone'] + 0.5
-    vietati = [(PIEDISTALLO['cx'] - rc, PIEDISTALLO['cy'] - rc, PIEDISTALLO['cx'] + rc, PIEDISTALLO['cy'] + rc),
+    vietati = [tuple(v + d for v, d in zip(ingombro_centro(), (-0.2, -0.2, 0.2, 0.2))),
                (LAMPIONE[0] - 0.5, LAMPIONE[1] - 0.5, LAMPIONE[0] + 0.5, LAMPIONE[1] + 0.5),
                (-1.0, Y0, 1.0, Y0 + 2.5),
                (SPIRALE['cx'] - 0.6, SPIRALE['cy'] - 0.6, SPIRALE['cx'] + 0.6, SPIRALE['cy'] + 0.6),
@@ -2057,8 +2335,9 @@ def illumina(sorgenti, lampadina_lampione, lampo=False):
     # monumento: faretti dal basso e fari dalla galleria
     for L in LUCI_MONUMENTO:
         faro = L['nome'].startswith('luce_faro')
-        ob = luce(L['nome'], 'SPOT', L['pos'], 2600 if faro else 260, L['colore'],
-                  spot_size=math.radians(24 if faro else 46), spot_blend=0.35 if faro else 0.6, shadow_soft_size=0.04)
+        vasca = L['nome'].startswith('luce_vasca')
+        ob = luce(L['nome'], 'SPOT', L['pos'], 2600 if faro else (120 if vasca else 260), L['colore'],
+                  spot_size=math.radians(24 if faro else (70 if vasca else 46)), spot_blend=0.35 if faro else 0.6, shadow_soft_size=0.04)
         ob.rotation_euler = Vector(L['dir']).to_track_quat('-Z', 'Y').to_euler()
     for L in LUCI_CARTELLONI:   # faretti dei teli con la mascotte
         ob = luce(L['nome'], 'SPOT', L['pos'], 380, L['colore'], spot_size=math.radians(60), spot_blend=0.5, shadow_soft_size=0.05)
@@ -2119,6 +2398,7 @@ def nebbia(densita=1.0):
 CAMERE = {
     # nome: (posizione, bersaglio, lente mm) -- occhio del giocatore a 1,65 m
     'S04_statua': ((0.35, -19.2, 1.65), (0.0, -10.0, 3.1), 18.0),
+    'ingresso': ((0.0, -19.2, 1.65), (0.0, -10.0, 3.1), 13.9),   # come lo scatto in Godot (FOV verticale 72)
     'S06_pozza': ((5.6, -6.9, 1.9), (-0.6, -0.4, -1.1), 18.0),
     'S08_piedistallo': ((3.6, -14.9, 1.55), (0.0, -10.0, 1.3), 24.0),
     'S09_vasca_bimbi': ((-12.2, 5.4, 0.95), (-12.9, 12.5, 1.9), 20.0),
@@ -2219,11 +2499,19 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
         vb = vasca_bassa(mats, *args[:5], acqua=args[5])
         arch += vb
         gruppo('area_bimbi', vb[0]); gruppo('acqua', vb[1])
-    ped, luci_mon = piedistallo(mats)
     lamp, lampadina = lampione(mats, LAMPIONE)
-    fari, luci_fari = fari_galleria(mats)
-    LUCI_MONUMENTO[:] = luci_mon + luci_fari
-    arch += gruppo('monumento', [ped, cordone(mats), lamp, fari, offerte_monumento(mats)])
+    if CENTRO['modo'] == 'monumento':     # la statua sul monumento (per più avanti)
+        ped, luci_mon = piedistallo(mats)
+        fari, luci_fari = fari_galleria(mats)
+        LUCI_MONUMENTO[:] = luci_mon + luci_fari
+        arch += gruppo('monumento', [ped, cordone(mats), lamp, fari, offerte_monumento(mats)])
+    else:                                 # la vasca sollevata con la medusa affacciata
+        VC = VASCA_CENTRALE
+        vasca, acqua_vc, luci_vasca = vasca_centrale(mats)
+        fari, luci_fari = fari_galleria(mats, (VC['cx'], VC['cy'] - VC['ly'] / 2 + 0.55, 1.75))
+        LUCI_MONUMENTO[:] = luci_vasca + luci_fari
+        arch += gruppo('vasca_centrale', vasca + [cordone_vasca(mats), lamp, fari, offerte_vasca(mats)])
+        gruppo('acqua', acqua_vc)
     arch += gruppo('area_bimbi', struttura_gioco(mats))
     arch += gruppo('torre_scivoli', torre_scivoli(mats))
     arch += gruppo('torre_scivoli', scivoli(mats, zf))
@@ -2269,6 +2557,42 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     return mats, arch, copie, modelli, sorgenti, lampadina, zf
 
 
+def medusa_segnaposto(percorso):
+    """Solo per i render: la medusa del gioco (posa statua) come segnaposto. Sulla vasca la mette con
+    la campana all'altezza dell'acqua, dietro il muro davanti; sul monumento sul piano."""
+    prima = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=os.path.abspath(percorso))
+    nuovi = [o for o in bpy.data.objects if o not in prima]
+    bpy.context.view_layer.update()
+    pts = []
+    for o in nuovi:
+        if o.type == 'MESH':
+            pts += [o.matrix_world @ v.co for v in o.data.vertices]
+    if not pts:
+        return
+    zmin = min(p.z for p in pts); zmax = max(p.z for p in pts)
+    xm = (min(p.x for p in pts) + max(p.x for p in pts)) / 2
+    ym = (min(p.y for p in pts) + max(p.y for p in pts)) / 2
+    radici = [o for o in nuovi if o.parent is None]
+    vuoto = bpy.data.objects.new('medusa_segnaposto', None)
+    bpy.context.scene.collection.objects.link(vuoto)
+    for o in radici:
+        o.parent = vuoto
+    altezza = zmax - zmin
+    if CENTRO['modo'] == 'monumento':
+        k = 4.5 / altezza
+        P = PIEDISTALLO
+        base = (P['cx'], P['cy'], P['h'])
+    else:
+        k = 2.6 / altezza                    # più piccola: è affacciata, la campana in acqua
+        V = VASCA_CENTRALE
+        base = (V['cx'], V['cy'] - V['ly'] / 2 + V['coping'] + 0.3, V['acqua'] - 0.393 * 2.6)
+    vuoto.scale = (k, k, k)
+    vuoto.location = (base[0] - xm * k, base[1] - ym * k, base[2] - zmin * k)
+    # nel GLB guarda verso +Z di Godot, che dopo l'import è -y di Blender: già verso la porta
+    print('medusa segnaposto: altezza', round(altezza * k, 2), 'm')
+
+
 def a_godot(p):
     """Coordinate Blender (Z in alto) -> Godot (Y in alto): (x, y, z) -> (x, z, -y)."""
     return [round(p[0], 3), round(p[2], 3), round(-p[1], 3)]
@@ -2296,8 +2620,9 @@ def dati_integrazione(sorgenti, lampadina):
                          direzione_blender=[round(v, 3) for v in L['dir']], direzione_godot=a_godot(L['dir']), colore=list(L['colore'])))
     for L in LUCI_MONUMENTO:
         faro = L['nome'].startswith('luce_faro')
-        luci.append(dict(nome=L['nome'], tipo=('SpotLight3D: faro sulla ringhiera della galleria, punta la statua' if faro else
-                                               'SpotLight3D: faretto nel gradino, illumina la statua dal basso'),
+        luci.append(dict(nome=L['nome'], tipo=('SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata' if faro else
+                                               ("SpotLight3D sott'acqua nella vasca sollevata, verso la medusa" if L['nome'].startswith('luce_vasca') else
+                                                'SpotLight3D: faretto nel gradino, illumina la statua dal basso')),
                          blender=[round(v, 3) for v in L['pos']], godot=a_godot(L['pos']),
                          direzione_blender=[round(v, 3) for v in L['dir']], direzione_godot=a_godot(L['dir']), colore=list(L['colore'])))
     for j, (x, y) in enumerate(((-12.5, -6.85), (-12.5, 2.85))):
@@ -2319,17 +2644,39 @@ def dati_integrazione(sorgenti, lampadina):
         if 'centro_blender' in a:
             a['centro_godot'] = a_godot(a['centro_blender'])
     pd = PIEDISTALLO
-    pulsante = (pd['cx'], pd['cy'] - pd['r_tamburo'] - 0.13, pd['z_pulsante'])
+    centro = {}
+    if CENTRO['modo'] == 'monumento':
+        pulsante = (pd['cx'], pd['cy'] - pd['r_tamburo'] - 0.13, pd['z_pulsante'])
+        centro['piedistallo'] = dict(
+            nota='monumento della statua: piano superiore libero per la medusa, rivolta verso la porta (+z Godot)',
+            centro_blender=[pd['cx'], pd['cy'], 0.0], centro_godot=a_godot((pd['cx'], pd['cy'], 0.0)),
+            quota_piano=pd['h'], diametro_piano=round(2 * (pd['r_piano'] - 0.03), 2), diametro_tamburo=2 * pd['r_tamburo'],
+            diametro_gradino_basso=2 * pd['r_base'], diametro_gradino_alto=2 * pd['r_gradino'],
+            quote_gradini=[pd['z1'], pd['z2']], raggio_cordone=pd['r_cordone'],
+            statua=dict(appoggio_godot=a_godot((pd['cx'], pd['cy'], pd['h'])), altezza_prevista=4.5, cima_godot=round(pd['h'] + 4.5, 2)),
+            pulsante_bimbi=dict(blender=[round(v, 3) for v in pulsante], godot=a_godot(pulsante), verso_godot=[0, 0, 1]))
+    else:
+        V = VASCA_CENTRALE
+        yf = V['cy'] - V['ly'] / 2 + (V['coping'] / 2 - 0.12)
+        pulsante = (V['cx'], yf - 0.13, V['z_pulsante'])
+        centro['vasca_centrale'] = dict(
+            nota="vasca sollevata al centro della sala (concept medusa_sbircia): la medusa si affaccia sul lato verso l'ingresso (+Z Godot)",
+            centro_godot=a_godot((V['cx'], V['cy'], 0.0)), pianta_esterna_godot=dict(x=V['lx'], z=V['ly']), raggio_angoli=V['r'],
+            cima_bordo=V['h'], larghezza_coping=V['coping'], pelo_acqua=V['acqua'], fondo=0.0,
+            filo_esterno_davanti_godot_z=round(-(V['cy'] - V['ly'] / 2), 3), filo_interno_davanti_godot_z=round(-(V['cy'] - V['ly'] / 2 + V['coping']), 3),
+            muro_davanti_godot_z=round(-yf, 3), raggio_cordone_dal_bordo=V['cordone'],
+            pulsante_bimbi=dict(nodo='sala_pulsante_piedistallo', blender=[round(v, 3) for v in pulsante], godot=a_godot(pulsante), verso_godot=[0, 0, 1]))
+        mani = [(V['cx'] + sx * 0.45, V['cy'] - V['ly'] / 2 + 0.15, V['h']) for sx in (-1, 1)]
+        origine = (V['cx'], V['cy'] - V['ly'] / 2 + V['coping'] + 0.2, V['acqua'])
+        centro['medusa_affacciata'] = dict(
+            nota=("posizione consigliata dell'origine della medusa affacciata: sul pelo dell'acqua, 20 cm dentro il muro davanti, "
+                  "rivolta verso +Z (l'ingresso). Le mani sul coping in x +-0,45, z 12,1 (cima del bordo a y 1,0). "
+                  "La campana in acqua, i tentacoli che ricadono fuori dal bordo davanti."),
+            posizione_godot=a_godot(origine), rotazione_gradi_godot=[0.0, 0.0, 0.0], guarda_verso_godot=[0, 0, 1],
+            mani_godot=[a_godot(m) for m in mani], cima_bordo=V['h'], pelo_acqua=V['acqua'])
     return dict(
         nota='Coordinate in metri. Blender: Z in alto. Godot/glTF: Y in alto, (x, y, z)_blender -> (x, z, -y)_godot.',
-        piedistallo=dict(nota='monumento della statua: piano superiore libero per la medusa, rivolta verso la porta (+z Godot)',
-                         centro_blender=[pd['cx'], pd['cy'], 0.0], centro_godot=a_godot((pd['cx'], pd['cy'], 0.0)),
-                         quota_piano=pd['h'], diametro_piano=round(2 * (pd['r_piano'] - 0.03), 2), diametro_tamburo=2 * pd['r_tamburo'],
-                         diametro_gradino_basso=2 * pd['r_base'], diametro_gradino_alto=2 * pd['r_gradino'],
-                         quote_gradini=[pd['z1'], pd['z2']], raggio_cordone=pd['r_cordone'],
-                         statua=dict(appoggio_godot=a_godot((pd['cx'], pd['cy'], pd['h'])), altezza_prevista=4.5,
-                                     cima_godot=round(pd['h'] + 4.5, 2)),
-                         pulsante_bimbi=dict(blender=[round(v, 3) for v in pulsante], godot=a_godot(pulsante), verso_godot=[0, 0, 1])),
+        **centro,
         lampione=dict(base_blender=list(LAMPIONE), base_godot=a_godot(LAMPIONE)),
         spawn_ingresso=dict(blender=[0.0, Y0 + 0.8, 0.0], godot=a_godot((0.0, Y0 + 0.8, 0.0)), guarda_verso='nord (+y Blender, -z Godot), verso la statua'),
         vano_spogliatoi=dict(nota='vano libero nel muro sud (spessore 0,2 m), con la porta stagna aperta verso la sala',
@@ -2359,7 +2706,7 @@ def esporta_luci(cartella, sorgenti, lampadina):
         elif L['nome'].startswith('luce_neon') or L['nome'] == 'luce_lampione':
             ld = bpy.data.lights.new(L['nome'], 'SPOT'); ld.energy = 60 if 'neon' in L['nome'] else 300
             ld.spot_size = math.radians(150 if 'neon' in L['nome'] else 110)
-        elif L['nome'].startswith(('luce_faro', 'luce_monumento', 'luce_cartellone')):
+        elif L['nome'].startswith(('luce_faro', 'luce_monumento', 'luce_cartellone', 'luce_vasca')):
             ld = bpy.data.lights.new(L['nome'], 'SPOT'); ld.energy = 400 if 'faro' in L['nome'] else 80
             ld.spot_size = math.radians(24 if 'faro' in L['nome'] else (60 if 'cartellone' in L['nome'] else 46))
         else:
@@ -2419,7 +2766,11 @@ def main():
     ap.add_argument('--glb', default='')
     ap.add_argument('--blend', default='')
     ap.add_argument('--controlla', action='store_true', help='solo i controlli degli scivoli')
+    ap.add_argument('--monumento', action='store_true', help='al centro il monumento della statua (per più avanti) invece della vasca')
+    ap.add_argument('--medusa', default='', help='GLB della medusa da mettere come segnaposto nei render')
     a = ap.parse_args(argv)
+    if a.monumento:
+        CENTRO['modo'] = 'monumento'
     if a.controlla:
         controlla_scivoli()
         return
@@ -2431,6 +2782,8 @@ def main():
         if not a.render:
             return
     cielo_tempesta()
+    if a.medusa:
+        medusa_segnaposto(a.medusa)
     impostazioni(a.campioni, a.larghezza, a.altezza, a.fili)
     if not a.rapida:
         nebbia()
