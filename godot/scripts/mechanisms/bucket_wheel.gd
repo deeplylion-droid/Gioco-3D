@@ -6,6 +6,7 @@ extends Node3D
 ## della piscina a onde e bagna il quadro elettrico (scintille). Poi il secchio torna dritto.
 ## Ruote, secchio e cancello sono nodi dei GLB dell'ambiente con il perno giusto: qui vengono
 ## solo mossi (ruote e secchio sull'asse X, cancello sull'asse Y).
+## Il cancello aperto fa parte dei checkpoint (gruppo "persist"): ripartendo resta aperto.
 
 signal bucket_tipped
 signal gate_opened
@@ -65,6 +66,7 @@ var _spark_t := -1.0
 
 
 func _ready() -> void:
+	add_to_group(&"persist")
 	_wheel = get_node_or_null(wheel_path) as Node3D
 	_bucket = get_node_or_null(bucket_path) as Node3D
 	if _wheel:
@@ -161,6 +163,23 @@ func _update_gate(delta: float) -> void:
 	if k >= 1.0 and not gate_open:
 		gate_open = true
 		gate_opened.emit()
+
+
+func save_state() -> Dictionary:
+	return {"gate_open": gate_open}
+
+
+func load_state(data: Dictionary) -> void:
+	if not bool(data.get("gate_open", false)) or gate_open:
+		return
+	# Già aperto: la ruota ha fatto i suoi giri e il cancello resta spalancato (senza suoni).
+	gate_open = true
+	_gate_wheel_speed = 0.0
+	_gate_wheel_angle = gate_wheel_turns * TAU
+	if _gate_wheel:
+		_gate_wheel.basis = Basis(Vector3.RIGHT, _gate_wheel_angle) * _gate_wheel_basis
+	if _gate:
+		_gate.basis = Basis(Vector3.UP, deg_to_rad(gate_open_angle)) * _gate_basis
 
 
 func _make_sparks() -> void:

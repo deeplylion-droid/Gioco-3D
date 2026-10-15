@@ -226,6 +226,7 @@ func _run() -> void:
 			break
 		await get_tree().physics_frame
 	check(toy.gate_open, "l'ondata apre il cancello della piscina")
+	check(bool(toy.save_state().get("gate_open", false)), "e resta aperto ai checkpoint (si salva)")
 
 	if interni:
 		print("Dagli spogliatoi alla sala")
