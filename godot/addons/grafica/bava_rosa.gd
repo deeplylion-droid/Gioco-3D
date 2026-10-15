@@ -17,7 +17,7 @@ extends Node3D
 @export var sollevamento := 0.008
 ## Colore delle vene dei tentacoli (medusa/tentacoli_emissione.jpg: circa 126, 19, 86).
 @export var colore := Color(1.0, 0.16, 0.68)
-@export var emissione := 2.6
+@export var emissione := 1.5
 ## Luci magenta lungo il percorso: una ogni [member passo_luci] metri (0 = nessuna).
 @export var passo_luci := 3.0
 @export var energia_luci := 0.45
@@ -128,7 +128,7 @@ func _materiale() -> ShaderMaterial:
 shader_type spatial;
 render_mode blend_mix, depth_draw_never, cull_disabled;
 uniform vec4 colore : source_color = vec4(1.0, 0.16, 0.68, 1.0);
-uniform float emissione = 2.6;
+uniform float emissione = 1.5;
 
 float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float n2(vec2 p) {
