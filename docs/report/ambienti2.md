@@ -15,7 +15,11 @@ Tutti e quattro i pezzi sono **finiti**: modelli 3D, GLB per Godot e render Cycl
 
 I render più rappresentativi, da mostrare per primi: `sala_pompe.jpg`, `camera_onde.jpg`, `scivolo_interno.jpg`, `vasca_arrivo.jpg`.
 
-Ho verificato l'import dei GLB in Godot 4.7.2: nodi, perni degli oggetti mobili e luci arrivano giusti.
+Ho verificato l'import dei GLB in Godot 4.7.2: nodi, perni degli oggetti mobili, luci e collisioni arrivano giusti.
+
+**Pronti per il gioco** (richiesta del coordinatore del 14 ottobre):
+- collisioni semplificate in tutti i GLB, con i suffissi dell'importer: scatole convesse `-convcolonly` per muri, pavimenti, pompe, filtri, arredo, ringhiere; trimesh `-colonly` per l'interno dei tubi. Quelle degli oggetti mobili (turbine, leva, porta, grate, paratie, pale, portello, pulsante) sono figlie dell'oggetto e si muovono con lui. Corpi statici: sala pompe 61, camera delle onde 103, kit dei tubi 20, vasca 32;
+- `assets_src/ambienti_tecnici/INTEGRAZIONE.md`: come importare e montare, con le posizioni in coordinate Godot di luci, acqua, vapore e oggetti interattivi, e le uscite dei moduli dei tubi.
 
 ## Cosa c'è dentro
 
@@ -45,7 +49,7 @@ Ho verificato l'import dei GLB in Godot 4.7.2: nodi, perni degli oggetti mobili 
 - L'acqua (`ACQUA_*`) ha un materiale segnaposto: nei render quella che scorre nei tubi sembra una striscia scura e lucida. Lo shader vero lo fa l'agente dell'acqua.
 - Le luci ad area (neon, schermo del CRT) il glTF non le esporta: vanno aggiunte in Godot. Le intensità delle altre luci vanno regolate.
 - Le turbine, la leva, le pale, le paratie e la grata sono pronte per essere animate, ma le animazioni e le collisioni non le ho fatte: le collisioni dei tubi per l'inseguimento vanno fatte a parte (binario o collisioni dedicate), come dice anche il KIT dell'ambiente.
-- I GLB stanno tra 23 e 35 MB perché ognuno porta dentro le sue texture. Se servono più leggeri si possono esportare con le texture fuori e condivise.
+- Le texture sono 1K (2K solo le piastrelle della sala pompe e quelle prese dal kit della sala): il coordinatore chiedeva 2K, ma così i GLB supererebbero i 50 MB. Oggi pesano tra 23 e 35 MB. Per averle a 2K si possono esportare le texture fuori dal GLB e condividerle tra le stanze: è un lavoro di un'ora, lo faccio se serve.
 
 ## Come si rigenera
 

@@ -108,3 +108,65 @@ Negli extras, "Z" e "Y" sono gli assi di Blender: qui sotto sono già tradotti p
 | `VAPORE_tunnel` | Node3D | (11.00, 0.50, -0.40) |  |
 Collisioni: 103 corpi statici.
 
+## Tubi degli scivoli (`scivoli_kit.glb`)
+
+13 moduli, ognuno sotto un nodo `MOD_<nome>`: nel file sono in fila ogni 12 m lungo -Z, ma si usano uno per uno (Import > "Save to file" per scena, oppure si istanzia il GLB e si prende il nodo che serve). Diametro interno **1,6 m**, parete 6 cm.
+
+- **Ingresso** di ogni modulo = origine del suo nodo `MOD_`; l'asse del tubo parte lungo **+X** a y = 0, il fondo del tubo è a y = -0,8.
+- **Aggancio**: il modulo successivo va messo con origine e rotazione uguali al nodo `..._USCITA` (tabella sotto, coordinate locali al modulo). Il bivio ne ha due.
+- **Collisioni**: l'interno di ogni tubo è una trimesh (`-colonly`, 16 lati, anelli ogni 0,5 m) con le facce rivolte verso l'asse: il giocatore ci scivola dentro. Il bivio ha anche la camera di smistamento come trimesh. La grata cieca e le due paratie del bivio sono scatole convesse.
+- **Acqua**: le strisce `ACQUA_scorre_*` stanno sul fondo, 10 cm d'acqua; UV.x lungo il tubo (1 = 5 m) per far scorrere la texture. Extra `velocita_m_s` = 6.
+- **Bivio** (`scivolo_bivio`): camera d'acciaio con due uscite, sinistra (ramo verde) e destra (ramo blu). Le paratie `PARATIA_bivio_sx` e `PARATIA_bivio_dx` hanno la cerniera in alto: ruotano attorno al loro asse Z locale, chiusa = 0, aperta = +80° (si alzano verso la camera). Nel GLB la destra è aperta. Al centro hanno un bersaglio colorato (giallo a sinistra, rosso a destra) dove colpire col getto.
+- **Strada sbagliata**: `scivolo_grata_cieca` finisce contro una grata (lei ti raggiunge).
+- **Tratto spaccato**: `scivolo_spaccato_partenza` e `scivolo_spaccato_arrivo` hanno i bordi rotti; la distanza e il dislivello tra i due (il "volo") si decidono nel livello.
+- **Tratto trasparente**: `scivolo_trasparente_4m`, materiale `SCIVOLO_trasparente` in trasparenza alpha.
+- **Luci di servizio**: ambra, dentro alcuni moduli (`LUCE_*_luce*`), più una rossa nel bivio.
+
+### Uscite dei moduli
+
+| Modulo | Uscita | Posizione uscita (locale) | Rotazione uscita (gradi, XYZ) |
+|---|---|---|---|
+| `scivolo_bivio` | `scivolo_bivio_USCITA_dx` | (8.87, 0.00, 2.22) | (-0, -30, 0) |
+| `scivolo_bivio` | `scivolo_bivio_USCITA_sx` | (8.87, 0.00, -2.22) | (-0, 30, 0) |
+| `scivolo_curva_dx_45` | `scivolo_curva_dx_45_USCITA` | (2.83, 0.00, 1.17) | (-0, -45, 0) |
+| `scivolo_curva_dx_90` | `scivolo_curva_dx_90_USCITA` | (4.00, 0.00, 4.00) | (-0, -90, 0) |
+| `scivolo_curva_sx_45` | `scivolo_curva_sx_45_USCITA` | (2.83, 0.00, -1.17) | (-0, 45, 0) |
+| `scivolo_curva_sx_90` | `scivolo_curva_sx_90_USCITA` | (4.00, 0.00, -4.00) | (-0, 90, 0) |
+| `scivolo_discesa_4m` | `scivolo_discesa_4m_USCITA` | (4.00, 0.00, 0.00) | (-0, 0, 0) |
+| `scivolo_discesa_fine` | `scivolo_discesa_fine_USCITA` | (1.71, 0.30, 0.00) | (-0, 0, 20) |
+| `scivolo_discesa_inizio` | `scivolo_discesa_inizio_USCITA` | (1.71, -0.30, 0.00) | (-0, 0, -20) |
+| `scivolo_dritto_4m` | `scivolo_dritto_4m_USCITA` | (4.00, 0.00, 0.00) | (-0, 0, 0) |
+| `scivolo_grata_cieca` | `scivolo_grata_cieca_USCITA` | (3.00, 0.00, 0.00) | (-0, 0, 0) |
+| `scivolo_spaccato_arrivo` | `scivolo_spaccato_arrivo_USCITA` | (4.00, 0.00, 0.00) | (-0, 0, 0) |
+| `scivolo_spaccato_partenza` | `scivolo_spaccato_partenza_USCITA` | (4.00, 0.00, 0.00) | (-0, 0, 0) |
+| `scivolo_spirale_dx` | `scivolo_spirale_dx_USCITA` | (0.00, 0.00, 7.00) | (-0, 180, 0) |
+| `scivolo_trasparente_4m` | `scivolo_trasparente_4m_USCITA` | (4.00, 0.00, 0.00) | (-0, 0, 0) |
+
+Collisioni: 17 trimesh (interni dei tubi e camera del bivio) e 3 scatole.
+
+## Vasca d'arrivo (`vasca_arrivo.glb`)
+
+Vasca 7 x 10 m (x da 0 a 7, z da -5 a 5), acqua a y = -0,22, fondo a -1,10: come la vasca d'arrivo della sala principale, con le stesse texture. Pavimento intorno a y = 0. Il tubo dell'inseguimento (rosso, 1,6 m) arriva da est (+X) e sputa nella vasca dalla bocca in x = 6,4.
+
+- **Grata di sicurezza** `GRATA_sicurezza`: davanti alla bocca, origine sul bordo inferiore. **Scende lungo Y**: alzata = y 2,2 (dentro il cassone), chiusa = y -0,27 (sotto il pelo dell'acqua). Nel GLB è a metà corsa (y 1,05).
+- **Pulsante** `PULSANTE_grata`: fungo rosso su un palo giallo vicino alla scaletta; si preme lungo -Y (5 cm).
+- **Uscita dall'acqua**: scaletta sul lato ovest, `PUNTO_uscita_vasca`.
+- Il tubo ha la sua collisione trimesh interna: lei può arrivare fino alla grata.
+
+### Nodi utili
+
+| Nodo | Tipo | Posizione Godot | Note |
+|---|---|---|---|
+| `ACQUA_scorre_vasca` | MeshInstance3D | (0.00, 0.00, 0.00) | velocita_m_s: 6.0 |
+| `ACQUA_vasca_arrivo` | MeshInstance3D | (3.50, -0.22, 0.00) |  |
+| `GRATA_sicurezza` | MeshInstance3D | (6.05, 1.05, 0.00) | movimento: scende lungo Z fino a Z = -0.27 (bordo dell acqua); alzata: Z = 2.2 |
+| `LUCE_bocca` | SpotLight3D | (3.40, 3.80, -2.00) | colore (1.00, 0.48, 0.35) |
+| `LUCE_bocca_fredda` | SpotLight3D | (3.90, 3.50, 3.50) | colore (0.67, 0.91, 1.00) |
+| `LUCE_rossa_la1` | OmniLight3D | (-4.75, 3.00, 3.00) | colore (1.00, 0.31, 0.22) |
+| `LUCE_rossa_la2` | OmniLight3D | (3.00, 3.20, 6.75) | colore (1.00, 0.31, 0.22) |
+| `LUCE_rossa_la3` | OmniLight3D | (10.50, 3.00, -6.75) | colore (1.00, 0.31, 0.22) |
+| `PULSANTE_grata` | MeshInstance3D | (-1.00, 1.30, 6.20) |  |
+| `PUNTO_uscita_vasca` | Node3D | (0.30, 0.00, 3.40) |  |
+| `VAPORE_vasca` | Node3D | (3.50, -0.02, 0.00) |  |
+Collisioni: 32 corpi statici.
+
