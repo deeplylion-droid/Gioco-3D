@@ -15,7 +15,10 @@ MESHY_API_KEY=... python3 tools/blender/ambienti2_meshy.py      # scrivania, mon
 
 `--anteprima` fa render piccoli e veloci (non vanno nel repository), `--render` quelli finiti in `docs/report/render_ambienti2/`.
 
-## File per Godot (`glb/`)
+## File per Godot
+
+`gltf_2k/` (consigliato): `.gltf` + `.bin` per stanza, texture 2K condivise in `gltf_2k/texture/`. Si generano con `AMBIENTI2_GLTF=1` davanti al comando dello script. `glb/`: GLB autonomi, texture ridotte a 1K (sotto i 50 MB).
+
 
 | File | Cosa contiene |
 |---|---|
