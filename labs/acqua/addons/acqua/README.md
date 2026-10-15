@@ -53,6 +53,21 @@ sala pompe, `ACQUA_nicchia_1..3`, `ACQUA_vasca_arrivo`, `acqua_lavapiedi`) = una
 con un `acqua_per_vasca.tscn`, oppure un `vasca_acqua.tscn` con le quote dei loro INTEGRAZIONE.md;
 strisce `ACQUA_scorre_*` = `acqua_scivolo_kit.tres`; pozzanghere piatte = `pozzanghera.tres`.
 
+### Valori consigliati per la sala principale (revisione di qualita')
+
+Nella build la pozza si leggeva quasi nera e i pavimenti sembravano asciutti. Valori consigliati:
+
+- `PavimentiBagnati` (WetSurfaceConverter dei pavimenti): `base_wetness` circa 0,65,
+  `wet_darkening` 0,5, `puddle_amount` 0,6, `puddle_scale` 0,18.
+- 8-10 pozzanghere da 1-3 m con `materials/pozzanghera.tres` (mesh piatte 3-5 mm sopra il
+  pavimento): sotto le luci d'emergenza lungo il bordo della vasca, davanti ai lettini e intorno al
+  monumento. Con l'SSR acceso riflettono le luci rosse; i gocciolatoi ci fanno i cerchi.
+- `AcquaPozza`: `planar_reflection_on_high = false` (il valore di serie dell'addon); la pozza prende
+  i riflessi con l'SSR dello shader.
+- Tutte le vasche della sala: `env_box_max` = (20, 11,5, 20) (con `env_box_min` (-20, -2,5, -24)).
+- Pozza e vasche usano gia' i preset aggiornati (pozza grigio-verde con patina, riflessi piu' forti,
+  bordo bagnato scuro sul fondo intorno): basta aggiornare la cartella dell'addon.
+
 Coordinate dell'acqua nella sala principale (da `assets_src/ambiente/INTEGRAZIONE.md`):
 pozza torbida livello -2,07 (fondo -2,24, scarico in x 0, z 2); vasca d'arrivo -0,22 (fondo -1,10,
 x -16..-9, z -3..7); vasca bimbi 1 0,30 (fondo 0,02, x -14,8..-10,4, z -11,2..-8,0); vasca bimbi 2
@@ -80,6 +95,12 @@ La scelta finale dell'aspetto e' dell'utente.
 | griglia della superficie | 25 cm | 10 cm | 5 cm |
 | caustiche | 1 campione | 2 campioni | dispersione dei colori (4) |
 | particelle | 35% | 65% | 100% |
+| costo misurato nella sala vera (4 vasche, 960x540) | +8 draw call, +5 mila triangoli | +2 draw call, +32 mila triangoli | la sala viene resa due volte: draw call 373 -> 756, triangoli 1,09 -> 2,02 milioni |
+
+I tempi in millisecondi non sono misurabili qui (Vulkan software su CPU, condiviso con altri
+lavori); misura: `godot --path labs/acqua res://tests/sala_vera/test_sala_vera.tscn -- --measure`.
+Su GPU vere il riflesso planare e' la voce che pesa di piu': se serve, `planar_reflection_on_high`
+solo sulla vasca piu' vista (di serie e' spento).
 
 ## Note e limiti
 

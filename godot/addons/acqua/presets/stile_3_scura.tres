@@ -25,4 +25,4 @@ caustics_scale = 2.0
 underwater_fog_color = Color(0.001, 0.006, 0.006, 1)
 underwater_distortion = 0.006
 underwater_density = 1.0
-glow_scatter = 3.5
+glow_scatter = 2.5

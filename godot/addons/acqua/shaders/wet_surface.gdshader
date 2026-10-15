@@ -48,8 +48,8 @@ uniform vec3 puddle_tint : source_color = vec3(0.9, 0.92, 0.9);
 uniform float wet_darkening : hint_range(0.0, 1.0) = 0.5;
 uniform float drop_ring_strength : hint_range(0.0, 3.0) = 1.0;
 /** Bordo bagnato subito sopra il pelo dell'acqua delle vasche: altezza (m) e quanto scurisce. */
-uniform float shoreline_height : hint_range(0.0, 0.3) = 0.04;
-uniform float shoreline_darkening : hint_range(0.0, 1.0) = 0.45;
+uniform float shoreline_height : hint_range(0.0, 0.3) = 0.05;
+uniform float shoreline_darkening : hint_range(0.0, 1.0) = 0.6;
 
 group_uniforms acqua;
 uniform bool receive_caustics = true;
@@ -126,7 +126,10 @@ void fragment() {
 	// bordo dell'acqua: velo d'acqua appena sopra il pelo, piu' scuro e lucido (si legge la riva)
 	if (wb.found && !submerged && shoreline_height > 0.0) {
 		float film = 1.0 - smoothstep(0.0, shoreline_height, wp.y - wb.level);
-		film *= 0.75 + 0.5 * texture(water_noise_tex, wp.xz * 1.7).g;
+		film *= 0.85 + 0.3 * texture(water_noise_tex, wp.xz * 1.7).g;
+		// sfuma vicino ai bordi del rettangolo della vasca (niente taglio dritto)
+		float rect_d = min(min(wp.x - wb.rect.x, wb.rect.z - wp.x), min(wp.z - wb.rect.y, wb.rect.w - wp.z));
+		film *= smoothstep(-0.05, 0.45, rect_d);
 		film = clamp(film, 0.0, 1.0);
 		albedo *= 1.0 - film * shoreline_darkening;
 		rough = mix(rough, 0.05, film);

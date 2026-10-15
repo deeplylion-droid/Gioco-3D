@@ -17,9 +17,11 @@ const SHOTS := {
 	# scie delle luci rosse della parete ovest sulla vasca d'arrivo (come S12)
 	"arrivo_scie": [Vector3(-8.4, 0.55, 4.6), Vector3(-19.0, 0.2, 3.0), 55.0],
 	# sott'acqua nella vasca d'arrivo, verso la luce subacquea
-	"sotto": [Vector3(-11.6, -0.62, 0.6), Vector3(-12.5, -0.68, 6.85), 62.0],
+	"sotto": [Vector3(-11.4, -0.6, 4.3), Vector3(-12.5, -0.68, 6.85), 64.0],
 	# la luce rosa della medusa nella vasca bimbi
 	"medusa": [Vector3(-10.0, 0.75, -7.6), Vector3(-12.0, 0.15, -9.0), 55.0],
+	# prova dei materiali sciolti (acqua del kit scivoli, piano che scorre, pozzanghera)
+	"materiali": [Vector3(12.0, 1.5, 12.0), Vector3(12.0, 0.0, 9.2), 60.0],
 }
 
 var cam: Camera3D
@@ -103,6 +105,8 @@ func _ready() -> void:
 	if args.has("drain"):
 		bodies["pozza"].drain(0.01)
 	var shots: Array = args.get("shots", "pozza").split(",")
+	if shots.has("materiali"):
+		_material_samples()
 	_shot(shots[0])
 	if args.has("style"):
 		var st: WaterStyle = load(["", "res://addons/acqua/presets/stile_1_limpida.tres", "res://addons/acqua/presets/stile_2_torbida.tres", "res://addons/acqua/presets/stile_3_scura.tres"][int(args["style"])])
@@ -117,6 +121,19 @@ func _ready() -> void:
 		_capture(args["out"], int(args.get("frames", "30")), shots)
 	elif args.has("measure"):
 		_measure_and_quit()
+
+
+## Tre piani sul pavimento con i materiali dell'addon che non stanno nella sala.
+func _material_samples() -> void:
+	var mats := ["res://addons/acqua/materials/acqua_scivolo_kit.tres", "res://addons/acqua/materials/acqua_che_scorre_piano.tres", "res://addons/acqua/materials/pozzanghera.tres"]
+	for i in mats.size():
+		var mi := MeshInstance3D.new()
+		var pm := PlaneMesh.new()
+		pm.size = Vector2(1.0, 2.2)
+		mi.mesh = pm
+		mi.material_override = load(mats[i])
+		mi.position = Vector3(10.8 + i * 1.2, 0.012, 9.2)
+		add_child(mi)
 
 
 ## Costo dell'acqua: stessa inquadratura senza acqua e con le tre qualita'.
@@ -159,7 +176,7 @@ const SEQ := [
 	# vasca bimbi che si riempie, luce rosa della medusa sotto l'acqua (S09)
 	[11.0, Vector3(-9.9, 0.95, -7.1), Vector3(-12.2, 0.12, -9.2), Vector3(-10.5, 0.75, -7.7), Vector3(-12.1, 0.12, -9.1), 55.0],
 	# sott'acqua nella vasca d'arrivo, verso la luce subacquea
-	[16.0, Vector3(-11.6, -0.6, 0.0), Vector3(-12.5, -0.62, 6.85), Vector3(-11.9, -0.66, 1.8), Vector3(-12.4, -0.45, 6.85), 62.0],
+	[16.0, Vector3(-11.3, -0.6, 3.2), Vector3(-12.5, -0.62, 6.85), Vector3(-11.6, -0.64, 4.4), Vector3(-12.4, -0.42, 6.85), 64.0],
 ]
 const SEQ_LEN := 20.0
 var _sequence := false

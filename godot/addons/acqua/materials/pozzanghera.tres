@@ -4,7 +4,7 @@
 
 [resource]
 shader = ExtResource("1")
-shader_parameter/albedo_tint = Color(0.16, 0.17, 0.16, 1)
+shader_parameter/albedo_tint = Color(0.35, 0.36, 0.35, 1)
 shader_parameter/specular_amount = 0.5
 shader_parameter/use_triplanar = true
 shader_parameter/base_wetness = 1.0

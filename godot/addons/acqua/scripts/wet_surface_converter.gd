@@ -29,8 +29,8 @@ const WET_SHADER := preload("res://addons/acqua/shaders/wet_surface.gdshader")
 @export_range(0.0, 1.0) var wet_darkening := 0.45
 @export_range(0.0, 3.0) var drop_ring_strength := 1.0
 ## Bordo bagnato piu' scuro e lucido subito sopra il pelo dell'acqua delle vasche (m).
-@export_range(0.0, 0.3) var shoreline_height := 0.04
-@export_range(0.0, 1.0) var shoreline_darkening := 0.45
+@export_range(0.0, 0.3) var shoreline_height := 0.05
+@export_range(0.0, 1.0) var shoreline_darkening := 0.6
 @export_group("Acqua")
 @export var receive_caustics := true
 @export_range(0.0, 3.0) var caustics_strength := 1.0
