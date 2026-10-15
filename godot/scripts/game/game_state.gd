@@ -65,6 +65,11 @@ func _on_level_ready() -> void:
 		capture_snapshot("inizio", -1, player.global_transform)
 
 
+## Vero mentre il livello si sta caricando per ripartire da un checkpoint o da un salvataggio.
+func is_restoring() -> bool:
+	return _restore_pending
+
+
 func _scene_path() -> String:
 	var s := get_tree().current_scene
 	return s.scene_file_path if s else ""

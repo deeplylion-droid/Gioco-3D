@@ -105,12 +105,11 @@ position = Vector3(0, 1.6, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
 current = true
-fov = 75.0
+fov = 62.0
 near = 0.03
 
 [node name="Torcia" parent="Head/Camera3D" instance=ExtResource("11_torch")]
 dimensione_sorgente = 0.012
-energia = 32.0
 
 [node name="EffettoSottacqua" parent="Head/Camera3D" instance=ExtResource("12_under")]
 

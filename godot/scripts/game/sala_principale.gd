@@ -9,6 +9,9 @@ extends Node3D
 ## Illuminazione globale VoxelGI della sala già calcolata (tools/bake_voxel_gi.gd).
 const BAKED_GI := "res://assets/ambiente/sala/voxel_gi_sala.res"
 
+## Materiale delle pozzanghere della sala (addon acqua) al posto di M_amb_pozzanghera del GLB.
+@export var puddle_material: Material
+
 ## La lampada sul palo vicino alla statua: si accende quando ti avvicini.
 @export var statue_lamp: FlickerLight
 ## La luce della lampada (in sala_luci.glb) e il punto verso cui puntarla.
@@ -52,6 +55,11 @@ func _ready() -> void:
 		p.water_pack.set_tank_amount(start_water)
 		if not start_with_pack and not p.has_item(&"zaino_pompa"):
 			p.water_pack.set_equipped(false, false)
+	# Con gli interni montati si parte dal risveglio nel corridoio (non quando si riparte da un
+	# checkpoint o da un salvataggio).
+	var interni := get_node_or_null(^"Interni")
+	if p and interni and interni.has_method(&"fai_risveglio") and not GameState.is_restoring():
+		interni.call(&"fai_risveglio", p)
 
 
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
@@ -68,7 +76,15 @@ func _setup_hall() -> void:
 		lamp.shadow_enabled = true
 		lamp.light_size = 0.08
 		lamp.set_meta(&"grafica_priorita_ombra", 0)
-		var bulb := _find_surface_material(get_node_or_null(^"Sala/Architettura/amb_lampione"), "M_amb_lampadina")
+		# La lampada sul palo (amb_lampione*): la si cerca in tutta la sala, perché è passata
+		# dall'architettura al GLB del monumento.
+		var bulb: StandardMaterial3D = null
+		var sala := get_node_or_null(^"Sala")
+		if sala:
+			for n in sala.find_children("amb_lampione*", "MeshInstance3D", true, false):
+				bulb = _find_surface_material(n, "M_amb_lampadina")
+				if bulb:
+					break
 		if statue_lamp:
 			statue_lamp.set_targets(lamp, bulb)
 	if dome_glass:
@@ -87,11 +103,33 @@ func _setup_hall() -> void:
 					l.set_meta(&"grafica_priorita_ombra", 1)
 			elif l is SpotLight3D and String(l.name).begins_with("luce_neon"):
 				(l as SpotLight3D).light_volumetric_fog_energy = 0.8
+			elif l is SpotLight3D and String(l.name).begins_with("luce_cartellone"):
+				# Faretti caldi sui due teli con la mascotte ai lati della statua (LookSala non li
+				# conosce): valori di INTEGRAZIONE.md dell'ambiente.
+				var c := l as SpotLight3D
+				c.light_color = Color(1.0, 0.78, 0.5)
+				c.light_energy = 2.5
+				c.spot_angle = 30.0
+				c.spot_range = 6.0
+				c.shadow_enabled = false
+				c.light_volumetric_fog_energy = 0.8
 	# Illuminazione globale calcolata in anticipo (tools/bake_voxel_gi.gd), così il preset Alto
 	# non la calcola all'avvio: va messa adesso, prima che la grafica la calcoli (in differita).
+	if puddle_material:
+		for n in find_children("*pozzanghere*", "MeshInstance3D", true, false):
+			var mi := n as MeshInstance3D
+			if mi.mesh:
+				for i in mi.mesh.get_surface_count():
+					var m := mi.mesh.surface_get_material(i)
+					if m and m.resource_name == "M_amb_pozzanghera":
+						mi.set_surface_override_material(i, puddle_material)
+	# Senza i dati la GI resta spenta: calcolarla durante il gioco blocca tutto per secondi.
 	var gi := get_node_or_null(^"Sala/VoxelGI_Sala") as VoxelGI
-	if gi and gi.data == null and ResourceLoader.exists(BAKED_GI):
-		gi.data = load(BAKED_GI) as VoxelGIData
+	if gi and gi.data == null:
+		if ResourceLoader.exists(BAKED_GI):
+			gi.data = load(BAKED_GI) as VoxelGIData
+		else:
+			gi.set_meta(&"grafica_bake_automatico", false)
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override

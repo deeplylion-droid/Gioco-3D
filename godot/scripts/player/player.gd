@@ -97,6 +97,8 @@ var _eye_prev := 1.6
 var _step_phase := 0.0
 var _phase_prev := 0.0
 var _bob_weight := 0.0
+## Moltiplicatore della sensibilità del mouse scelto nelle opzioni.
+var _sensitivity_scale := 1.0
 var _bob_prev := 0.0
 var _land_offset := 0.0
 var _land_prev := 0.0
@@ -132,6 +134,31 @@ func _ready() -> void:
 		interactor.setup(self)
 	_update_head(1.0)
 	GameState.register_player(self)
+	# Sensibilità, asse Y invertito e oscillazione della camera dalla scheda Controlli delle
+	# opzioni (addon grafica, salvati in settings.cfg).
+	_read_controls()
+	var g := get_node_or_null(^"/root/Grafica")
+	if g and g.has_signal(&"impostazione_cambiata"):
+		g.connect(&"impostazione_cambiata", _on_setting_changed)
+
+
+func _on_setting_changed(_key: String, _value: Variant) -> void:
+	_read_controls()
+
+
+func _read_controls() -> void:
+	var g := get_node_or_null(^"/root/Grafica")
+	if g == null or not g.has_method(&"valore"):
+		return
+	var sens: Variant = g.call(&"valore", "sensibilita_mouse")
+	if sens != null:
+		_sensitivity_scale = float(sens)
+	var inv: Variant = g.call(&"valore", "inverti_y")
+	if inv != null:
+		invert_y = bool(inv)
+	var bob: Variant = g.call(&"valore", "oscillazione_camera")
+	if bob != null:
+		head_bob_enabled = bool(bob)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -139,7 +166,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	var motion := event as InputEventMouseMotion
 	if motion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		var d := motion.screen_relative * deg_to_rad(mouse_sensitivity)
+		var d := motion.screen_relative * deg_to_rad(mouse_sensitivity * _sensitivity_scale)
 		yaw = wrapf(yaw - d.x, -PI, PI)
 		pitch += d.y if invert_y else -d.y
 		pitch = clampf(pitch, -deg_to_rad(max_pitch_degrees), deg_to_rad(max_pitch_degrees))

@@ -9,6 +9,8 @@ extends SceneTree
 
 const OUT := "res://scenes/sala_principale.tscn"
 const SALA := "res://assets/ambiente/sala/"
+## Il kit di dettagli della sala (ambienti-2): posizionamento.json e i glTF in gltf/.
+const DETTAGLI := "res://assets/ambiente/dettagli/"
 const MAT_DIR := "res://assets/materials/sala/"
 
 ## Quota del piano del piedistallo e centro (dalla guida dell'ambiente).
@@ -17,11 +19,18 @@ const SPAWN := Vector3(0.0, 0.0, 19.2)
 ## Pozza torbida sul fondo della piscina a onde: fondo a conca intorno allo scarico.
 const DRAIN := Vector3(0.0, -2.24, 2.0)
 const PUDDLE_LEVEL := -2.07
-## La medusa scalata a circa 4,5 m di altezza (il modello è alto 2,7 m).
-const MEDUSA_SCALE := 1.667
-## Altezze sul modello non scalato: bordo della campana e cima della testa.
-const MEDUSA_BELL_Y := 1.05
-const MEDUSA_TOP_Y := 2.7
+## La medusa eroe è alta 4,5 m (dal piano d'appoggio dei tentacoli alla cima della testa): la
+## scala la calcola MedusaStatue dall'AABB del modello (circa 1,0 per il GLB a grandezza vera).
+const MEDUSA_HEIGHT := 4.5
+## Altezze sulla statua (m sopra il piano): centro della campana e viso.
+const MEDUSA_BELL_Y := 2.2
+const MEDUSA_FACE_Y := 3.9
+## Raggio del piano del monumento (3,7 m di diametro): la collisione della statua lo copre tutto.
+const MONUMENT_RADIUS := 1.85
+## Il pulsante della sigla sul davanti del tamburo (sala_dati.json), rivolto a +Z.
+const JINGLE_BUTTON := Vector3(0.0, 0.8, 11.88)
+## Senza gli interni lo zaino sta su una rastrelliera davanti all'ingresso, girata verso lo spawn.
+const PACK_STATION := Vector3(-1.8, 0.0, 17.0)
 
 var level: Node3D
 var M := {}
@@ -49,7 +58,7 @@ func _initialize() -> void:
 	_pool()
 	_pools()
 	_kids_toys()
-	_polaroids()
+	_polaroids(has_interiors)
 	_atmosphere()
 	_gameplay(has_interiors)
 	_kid_sighting()
@@ -142,7 +151,9 @@ func _hall() -> void:
 		var inst: Node3D = (load(SALA + part[1] + ".glb") as PackedScene).instantiate()
 		inst.name = part[0]
 		own(inst, sala)
+	_details(sala)
 	level.set(&"dome_glass", M.dome_glass)
+	level.set(&"puddle_material", load("res://addons/acqua/materials/pozzanghera.tres"))
 	# Superfici bagnabili (addon acqua): pavimenti con pozzanghere e cerchi delle gocce, pareti
 	# e vasche con la banda bagnata e le caustiche vicino all'acqua.
 	var roots: Array[NodePath] = [NodePath("../Architettura"), NodePath("../Piscina"), NodePath("../AreaBimbi"), NodePath("../TorreScivoli")]
@@ -150,8 +161,11 @@ func _hall() -> void:
 	floors.name = "PavimentiBagnati"
 	floors.set(&"roots", roots)
 	floors.set(&"name_filter", PackedStringArray(["pavimento"]))
-	floors.set(&"puddle_amount", 0.45)
-	floors.set(&"base_wetness", 0.35)
+	# Valori della revisione di qualità (README dell'addon acqua): pavimenti bagnati davvero.
+	floors.set(&"base_wetness", 0.65)
+	floors.set(&"wet_darkening", 0.5)
+	floors.set(&"puddle_amount", 0.6)
+	floors.set(&"puddle_scale", 0.18)
 	own(floors, sala)
 	var walls: Node = (load("res://addons/acqua/scenes/convertitore_bagnato.tscn") as PackedScene).instantiate()
 	walls.name = "SuperficiBagnate"
@@ -159,6 +173,22 @@ func _hall() -> void:
 	walls.set(&"exclude_filter", PackedStringArray(["pavimento", "pozzanghere", "vetro", "glass", "griglia", "grata", "neon", "luce", "insegna", "lampad", "cartellone", "colature"]))
 	walls.set(&"base_wetness", 0.2)
 	own(walls, sala)
+
+
+## Detriti, cartelli, cavi, tubi e macchie (1219 posti): li crea DettagliSala all'avvio, con i
+## MultiMesh. I modelli stanno nella scena, così si caricano nel thread del caricamento.
+func _details(sala: Node3D) -> void:
+	if not FileAccess.file_exists(DETTAGLI + "posizionamento.json"):
+		return
+	var det: Node3D = load("res://scripts/environment/dettagli_sala.gd").new()
+	det.name = "Dettagli"
+	det.set(&"cartella", DETTAGLI.trim_suffix("/"))
+	var models: Array[PackedScene] = []
+	for f in DirAccess.get_files_at(DETTAGLI + "gltf"):
+		if f.ends_with(".gltf"):
+			models.append(load(DETTAGLI + "gltf/" + f) as PackedScene)
+	det.set(&"modelli", models)
+	own(det, sala)
 
 
 # --- La medusa sul piedistallo, la lampada e il pulsante della sigla ---------------------------
@@ -173,9 +203,13 @@ func _statue() -> void:
 	medusa.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
 	medusa.set(&"tentacle_material", load("res://assets/models/medusa/medusa_tentacoli.tres"))
 	medusa.set(&"model", load("res://assets/models/medusa/medusa.glb"))
-	# Statua imponente (indicazione dell'utente): circa 4,5 m dalle punte dei tentacoli alla
-	# testa. Il modello è alto 2,7 m: per ora si scala (arriverà il modello da eroe).
-	medusa.scale = Vector3.ONE * MEDUSA_SCALE
+	var skin: Array[Material] = []
+	for f in ["medusa_pelle", "medusa_orbita", "medusa_ciocche"]:
+		skin.append(load("res://assets/models/medusa/%s.tres" % f) as Material)
+	medusa.set(&"surface_materials", skin)
+	# Statua imponente (indicazione dell'utente): 4,5 m dalle punte dei tentacoli alla testa.
+	# La scala viene dall'AABB del modello (il GLB eroe è già a grandezza vera).
+	medusa.set(&"target_height", MEDUSA_HEIGHT)
 	medusa.position = Vector3(0, PEDESTAL.y, 0)
 	own(medusa, statue)
 	level.set(&"statue", medusa)
@@ -190,7 +224,7 @@ func _statue() -> void:
 	# principale sono i due fari sulla ringhiera della galleria, in sala_luci.glb.
 	# Uno spot stretto sul viso: il viso e l'occhio devono "agganciare" lo sguardo anche da
 	# lontano (e l'occhio di vetro prende il riflesso della luce).
-	var face_y := PEDESTAL.y + 2.3 * MEDUSA_SCALE
+	var face_y := PEDESTAL.y + MEDUSA_FACE_Y
 	var face := SpotLight3D.new()
 	face.name = "LuceViso"
 	face.position = Vector3(0.0, 7.4, 6.6)
@@ -210,7 +244,7 @@ func _statue() -> void:
 	jingle.mode = WaterButton.Mode.MOMENTARY
 	jingle.radius = 0.14
 	jingle.show_model = false
-	jingle.position = Vector3(0, 0.8, 1.47)
+	jingle.position = JINGLE_BUTTON - Vector3(PEDESTAL.x, 0.0, PEDESTAL.z) + Vector3(0, 0, 0.03)
 	own(jingle, statue)
 	level.set(&"jingle_button", jingle)
 	level.set(&"jingle_button_mesh", NodePath("Sala/Interattivi/sala_pulsante_piedistallo"))
@@ -226,7 +260,22 @@ func _statue() -> void:
 	own(flicker, statue)
 	level.set(&"statue_lamp", flicker)
 	level.set(&"statue_lamp_light", NodePath("Sala/Luci/luce_lampione"))
-	level.set(&"statue_lamp_aim", Vector3.INF)
+	# Puntata su campana, tentacoli e davanti del piedistallo.
+	level.set(&"statue_lamp_aim", Vector3(0.0, 2.0, PEDESTAL.z + 0.6))
+	# La statua è solida: un cilindro grande quanto il piano del monumento, così non si sale sul
+	# piano e non si entra nei tentacoli (i gradoni restano calpestabili; il pulsante della sigla,
+	# più in basso, si colpisce ancora col getto).
+	var body := StaticBody3D.new()
+	body.name = "CollisioneStatua"
+	own(body, statue)
+	var cyl := CylinderShape3D.new()
+	cyl.radius = MONUMENT_RADIUS
+	cyl.height = MEDUSA_HEIGHT + 0.1
+	var col := CollisionShape3D.new()
+	col.name = "Cilindro"
+	col.shape = cyl
+	col.position = Vector3(0.0, PEDESTAL.y - 0.05 + cyl.height * 0.5, 0.0)
+	own(col, body)
 
 
 # --- Corridoio, spogliatoi e stanzino (scena degli interni, se c'è) ----------------------------
@@ -249,11 +298,12 @@ func _interiors() -> bool:
 # --- La postazione dei bagnini all'ingresso: rastrelliera con lo zaino-pompa ---------------------
 
 func _pack_station() -> void:
-	# Gli spogliatoi e lo stanzino dei bagnini non sono ancora modellati: per la demo lo zaino
-	# sta su una rastrelliera dei bagnini contro il muro dell'ingresso, sotto la luce rossa.
+	# Senza gli interni (spogliatoi e stanzino dei bagnini) lo zaino sta su una rastrelliera dei
+	# bagnini appena dentro la sala, davanti a chi entra.
 	var st := group(level, "PostazioneBagnini")
-	st.position = Vector3(4.3, 0.0, 19.55)
-	st.rotation = Vector3(0, PI, 0)
+	st.position = PACK_STATION
+	# Il davanti della rastrelliera (+Z locale) guarda lo spawn: la si vede appena si entra.
+	st.rotation = Vector3(0, atan2(SPAWN.x - PACK_STATION.x, SPAWN.z - PACK_STATION.z), 0)
 	var rack := csg_root(st, "Rastrelliera")
 	for x in [-0.9, 0.9]:
 		box(rack, "Montante", Vector3(0.05, 1.9, 0.05), Vector3(x, 0.95, 0.2), UNION, M.metal)
@@ -302,7 +352,7 @@ func _pool() -> void:
 	puddle.position = Vector3(DRAIN.x, DRAIN.y - 0.02, DRAIN.z)
 	own(puddle, pool)
 	# L'acqua vera (addon acqua): superficie torbida con riflessi, gorgo sullo scarico.
-	_water_link(pool, "AcquaPozza", puddle, "res://addons/acqua/presets/stile_2_torbida.tres", true)
+	_water_link(pool, "AcquaPozza", puddle, "res://addons/acqua/presets/stile_2_torbida.tres", false)
 	# Il gorgo sullo scarico lo disegna l'acqua dell'addon (WaterTankLink) quando lo scarico è
 	# aperto: lo scarico è al centro della pozza, quindi drain_offset resta zero.
 	# Turbina dello scarico in alto sulla parete sud (nel modello: qui si fa girare la sua
@@ -424,11 +474,12 @@ func _water_link(parent: Node, node_name: String, tank: Node3D, style_path: Stri
 	link.name = node_name
 	link.set(&"tank", tank)
 	link.set(&"style", load(style_path))
-	# Il riflesso planare rende di nuovo la scena: solo sulla pozza, che si guarda di più.
+	# Il riflesso planare rende di nuovo la scena (raddoppia draw call e triangoli): spento anche
+	# sulla pozza, che prende i riflessi con l'SSR dello shader.
 	link.set(&"planar_reflection_on_high", planar)
 	# Scatola della sala (coordinate del mondo) per i riflessi di riserva.
 	link.set(&"env_box_min", Vector3(-20, -2.5, -24))
-	link.set(&"env_box_max", Vector3(20, 11.5, 12))
+	link.set(&"env_box_max", Vector3(20, 11.5, 20))
 	own(link, parent)
 
 
@@ -447,14 +498,17 @@ func _kids_toys() -> void:
 
 # --- Le 10 Polaroid -----------------------------------------------------------------------------
 
-func _polaroids() -> void:
+func _polaroids(has_interiors := false) -> void:
 	var g := group(level, "Polaroid")
+	# P3 sta sulla rastrelliera dello zaino, sul ripiano accanto a lui.
+	var rack_yaw := atan2(SPAWN.x - PACK_STATION.x, SPAWN.z - PACK_STATION.z)
+	var p3 := PACK_STATION + Basis(Vector3.UP, rack_yaw) * Vector3(0.5, 0.83, 0.02)
 	# Le zone del documento del livello che non sono ancora modellate (corridoio, spogliatoi,
 	# stanzino, camera delle onde, sala pompe, ponte inferiore) hanno un posto provvisorio in sala.
 	var spots := [
 		[1, Vector3(-1.6, 0.0, 18.4), 0.4],     # vicino a dove si entra
 		[2, Vector3(-6.0, 0.6, 8.0), 1.2],      # su un lettino
-		[3, Vector3(4.6, 0.85, 19.35), 2.9],    # sulla rastrelliera dei bagnini, accanto allo zaino
+		[3, p3, rack_yaw + 0.35],                # sulla rastrelliera dei bagnini, accanto allo zaino
 		[4, Vector3(-11.3, 6.4, -17.4), 0.2],   # in cima alla struttura di gioco, accanto al secchio
 		[5, Vector3(1.2, -2.0, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
 		[6, Vector3(-4.6, -1.9, 4.2), 0.9],     # vicino alle bocchette della camera delle onde
@@ -464,6 +518,9 @@ func _polaroids() -> void:
 		[10, Vector3(13.5, 9.0, -17.5), 0.6],   # in cima alla torre degli scivoli
 	]
 	for s in spots:
+		# Con gli interni montati, P1-P3 stanno nel corridoio, negli spogliatoi e nello stanzino.
+		if has_interiors and int(s[0]) <= 3:
+			continue
 		var p: Node3D = S.polaroid.instantiate()
 		p.name = "Polaroid%02d" % s[0]
 		p.position = s[1]

@@ -9,7 +9,8 @@ signal paused_changed(is_paused: bool)
 ## Mette in pausa da solo quando la finestra perde il fuoco.
 @export var pause_on_focus_loss := true
 ## Tasti di prova: F1 = demo della sala principale, F2 = scena di prova delle meccaniche.
-@export var debug_scene_keys := true
+## Solo nelle build di debug (editor e prove): nella Release si passa dal menu.
+@export var debug_scene_keys := OS.is_debug_build()
 
 const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"

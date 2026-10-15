@@ -9,6 +9,9 @@
 [ext_resource type="Material" path="res://assets/models/medusa/medusa_tentacoli.tres" id="7_tent"]
 [ext_resource type="Script" path="res://addons/grafica/luce_emergenza.gd" id="8_emer"]
 [ext_resource type="Script" path="res://addons/grafica/pulviscolo.gd" id="9_polv"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_pelle.tres" id="10_pelle"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_orbita.tres" id="11_orbita"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_ciocche.tres" id="12_ciocche"]
 
 [sub_resource type="Environment" id="Environment_titolo"]
 background_mode = 1
@@ -85,14 +88,16 @@ metadata/grafica_fov_fisso = true
 [node name="Piedistallo" parent="Statua" instance=ExtResource("3_pied")]
 
 [node name="Medusa" type="Node3D" parent="Statua"]
-transform = Transform3D(1.667, 0, 0, 0, 1.667, 0, 0, 0, 1.667, 0, 1.15, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
 script = ExtResource("4_med")
 model = ExtResource("5_glb")
 bell_material = ExtResource("6_camp")
 tentacle_material = ExtResource("7_tent")
+surface_materials = Array[Material]([ExtResource("10_pelle"), ExtResource("11_orbita"), ExtResource("12_ciocche")])
+target_height = 4.5
 
 [node name="LuceCampana" type="OmniLight3D" parent="Statua"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.65, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.25, 0)
 light_color = Color(1, 0.36, 0.78, 1)
 light_energy = 0.5
 light_volumetric_fog_energy = 0.4

@@ -35,7 +35,13 @@ func _run() -> void:
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
-	check((level.get_node("Statua/Medusa") as MedusaStatue).get_model_instance() != null, "la medusa è sul piedistallo")
+	var medusa := level.get_node("Statua/Medusa") as MedusaStatue
+	check(medusa.get_model_instance() != null, "la medusa è sul piedistallo")
+	var top := (medusa.global_transform * medusa.get_model_aabb()).end.y
+	check(top > 5.55 and top < 5.75, "la statua arriva a %.2f m (4,5 m sopra il piano a 1,15)" % top)
+	var det := level.get_node_or_null("Sala/Dettagli")
+	if det:
+		check(det.get_child_count() >= 100, "i dettagli della sala sono montati (%d nodi)" % det.get_child_count())
 	var space := p.get_world_3d().direct_space_state
 	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-3, 1, 18), Vector3(-3, 1, 22)))
 	check(not wall.is_empty() and absf(wall.position.z - 20.0) < 0.3, "il muro sud ha la collisione")
@@ -49,13 +55,19 @@ func _run() -> void:
 	check(ghost.is_empty(), "niente muri invisibili in mezzo alla piscina")
 	var floor_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0, 1, 2), Vector3(0, -4, 2)))
 	check(not floor_hit.is_empty() and floor_hit.position.y < -2.0, "il fondo della piscina ha la collisione")
+	var statue_q := PhysicsRayQueryParameters3D.create(Vector3(0, 1.6, 14.0), Vector3(0, 1.6, 10.0))
+	statue_q.exclude = [p.get_rid()]
+	var statue_hit := space.intersect_ray(statue_q)
+	check(not statue_hit.is_empty() and statue_hit.position.z > 11.7, "la statua è solida: non si sale sul piano del monumento")
 
 	print("Lo zaino sulla rastrelliera dei bagnini")
 	check(not p.water_pack.equipped, "si parte senza zaino")
 	await _hold(&"spray", 10)
 	check(not p.water_pack.is_spraying, "senza zaino non si spruzza")
 	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
-	p.teleport(Vector3(4.5, 0, 18.3), 0.0, 0.0)
+	var station: Node3D = level.get_node("PostazioneBagnini")
+	var stand := station.global_position + station.global_basis.z * 1.2
+	p.teleport(Vector3(stand.x, 0.0, stand.z), 0.0, 0.0)
 	p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
 	await _frames(3)
 	check(p.interactor.current is PackPickup, "il raggio trova lo zaino")
@@ -68,7 +80,7 @@ func _run() -> void:
 
 	print("Lampada della statua e sigla")
 	check(not lamp.is_on, "la lampada è spenta")
-	p.teleport(Vector3(-2.5, 0, 18.0), 0.0, 0.0)
+	p.teleport(Vector3(2.5, 0, 18.0), 0.0, 0.0)
 	Input.action_press(&"move_forward")
 	await _frames(50)
 	Input.action_release(&"move_forward")

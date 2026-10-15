@@ -68,7 +68,9 @@ func _run() -> void:
 	# 1) Lo zaino sulla rastrelliera dei bagnini, all'ingresso.
 	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
 	if only == "" or only == "rastrelliera":
-		p.teleport(Vector3(3.7, 0, 17.9), 0.0, 0.0)
+		var station: Node3D = level.get_node("PostazioneBagnini")
+		var view := station.global_position + station.global_basis.z * 1.6 + station.global_basis.x * 0.6
+		p.teleport(Vector3(view.x, 0.0, view.z), 0.0, 0.0)
 		p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
 		await _frames(settle)
 		await _capture("zaino_sulla_rastrelliera")

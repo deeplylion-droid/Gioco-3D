@@ -186,7 +186,3 @@ water_glow_count={
 "type": "int",
 "value": 0
 }
-
-[threading]
-
-worker_pool/max_threads=2
