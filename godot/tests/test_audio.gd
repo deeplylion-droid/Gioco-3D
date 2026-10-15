@@ -131,6 +131,11 @@ func _run() -> void:
 	await _frames(10)
 	level = get_tree().current_scene
 	p = GameState.player
+	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca.
+	for i in 400:
+		if p.input_enabled:
+			break
+		await get_tree().process_frame
 	# punto di partenza del giocatore: valido qualunque sia la pianta della sala
 	var partenza := p.global_position
 	var sguardo_partenza := p.yaw

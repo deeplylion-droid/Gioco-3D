@@ -53,19 +53,22 @@ func _initialize() -> void:
 	_hall()
 	_statue()
 	var has_interiors := _interiors()
-	if not has_interiors:
+	# SALA_SENZA_ZAINO=1: senza la rastrelliera (variante per gli screenshot della sala).
+	if not has_interiors and OS.get_environment("SALA_SENZA_ZAINO") != "1":
 		_pack_station()
 	_pool()
 	_pools()
 	_kids_toys()
-	_polaroids(has_interiors)
+	_polaroids(has_interiors or OS.get_environment("SALA_SENZA_ZAINO") == "1")
 	_atmosphere()
 	_gameplay(has_interiors)
 	_kid_sighting()
 	var packed := PackedScene.new()
 	var err := packed.pack(level)
 	if err == OK:
-		err = ResourceSaver.save(packed, OUT)
+		# SALA_OUT: un'altra destinazione (per esempio una variante per gli screenshot).
+		var out := OS.get_environment("SALA_OUT")
+		err = ResourceSaver.save(packed, out if out != "" else OUT)
 	print("build_sala_principale: ", error_string(err))
 	level.free()
 	quit(0 if err == OK else 1)
@@ -144,6 +147,8 @@ func _hall() -> void:
 	sala.set(&"vetro_cupola", M.dome_glass)
 	sala.set(&"monumento", Vector3(PEDESTAL.x, 0.0, PEDESTAL.z))
 	sala.set(&"altezza_statua", 4.5)
+	# La statua è la cosa più luminosa della sala: i fari della ringhiera un po' più forti.
+	sala.set(&"energia_fari", 7.0)
 	own(sala)
 	for part in [["Architettura", "sala_architettura"], ["Cupola", "sala_cupola"], ["Piscina", "sala_piscina"],
 			["AreaBimbi", "sala_area_bimbi"], ["TorreScivoli", "sala_torre_scivoli"], ["Oggetti", "sala_oggetti"],
@@ -178,7 +183,8 @@ func _hall() -> void:
 ## Detriti, cartelli, cavi, tubi e macchie (1219 posti): li crea DettagliSala all'avvio, con i
 ## MultiMesh. I modelli stanno nella scena, così si caricano nel thread del caricamento.
 func _details(sala: Node3D) -> void:
-	if not FileAccess.file_exists(DETTAGLI + "posizionamento.json"):
+	# SALA_SENZA_DETTAGLI=1: variante senza il kit (screenshot sul renderer software).
+	if not FileAccess.file_exists(DETTAGLI + "posizionamento.json") or OS.get_environment("SALA_SENZA_DETTAGLI") == "1":
 		return
 	var det: Node3D = load("res://scripts/environment/dettagli_sala.gd").new()
 	det.name = "Dettagli"
@@ -296,11 +302,14 @@ const INTERNI_OFFSET := Vector3(-9.7, 0.0, 40.9)
 
 
 func _interiors() -> bool:
-	if not ResourceLoader.exists(INTERNI):
+	# SALA_SENZA_INTERNI=1: variante senza gli interni (screenshot sul renderer software).
+	if not ResourceLoader.exists(INTERNI) or OS.get_environment("SALA_SENZA_INTERNI") == "1":
 		return false
 	var inst: Node3D = (load(INTERNI) as PackedScene).instantiate()
 	inst.name = "Interni"
 	inst.position = INTERNI_OFFSET
+	# Il giocatore e l'ambiente sono quelli della sala (README degli interni).
+	inst.set(&"giocatore_proprio", false)
 	own(inst)
 	return true
 
@@ -544,24 +553,9 @@ func _polaroids(has_interiors := false) -> void:
 
 func _atmosphere() -> void:
 	var fx := group(level, "Atmosfera")
-	# Pozzanghere a specchio lungo l'asse dell'ingresso: entrando ci si vede riflessi la statua e
-	# il lampione (con i riflessi SSR).
-	var puddle_shader: Shader = load("res://shaders/pozzanghera_specchio.gdshader")
-	for pz in [[Vector3(0.25, 0.004, 16.4), Vector2(2.6, 3.6), 0.3, 1.0], [Vector3(-2.0, 0.004, 13.9), Vector2(1.7, 1.3), 1.1, 7.0],
-			[Vector3(2.4, 0.004, 18.1), Vector2(1.3, 1.1), 0.4, 13.0]]:
-		var mi := MeshInstance3D.new()
-		mi.name = "Pozzanghera"
-		var pm := PlaneMesh.new()
-		pm.size = pz[1]
-		mi.mesh = pm
-		var mat := ShaderMaterial.new()
-		mat.shader = puddle_shader
-		mat.set_shader_parameter(&"seme", pz[3])
-		mi.material_override = mat
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.position = pz[0]
-		mi.rotation = Vector3(0, pz[2], 0)
-		own(mi, fx)
+	# Niente più pozzanghere a specchio sull'asse dell'ingresso: dove l'SSR non trova niente da
+	# riflettere sembravano buchi neri nel pavimento. I riflessi li danno i pavimenti bagnati e le
+	# pozzanghere della sala (addon acqua).
 	# Gocce che cadono nella pozza e fanno cerchi (addon acqua). Il resto dell'atmosfera
 	# (sonde, nebbia bassa, polvere, gocce dal soffitto) lo crea il look della sala.
 	var drip: Node3D = (load("res://addons/acqua/scenes/gocciolatoio.tscn") as PackedScene).instantiate()

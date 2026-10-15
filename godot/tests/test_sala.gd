@@ -26,6 +26,11 @@ func _run() -> void:
 	await _frames(5)
 	level = get_tree().current_scene
 	p = GameState.player
+	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca.
+	for i in 400:
+		if p.input_enabled:
+			break
+		await get_tree().process_frame
 	var puddle: WaterTank = level.get_node("Piscina/Pozza")
 	var turbine: Turbine = level.get_node("Piscina/TurbinaScarico")
 	var inflatable: StuckInflatable = level.get_node("Piscina/GonfiabileIncastrato")
@@ -64,18 +69,32 @@ func _run() -> void:
 	check(not p.water_pack.equipped, "si parte senza zaino")
 	await _hold(&"spray", 10)
 	check(not p.water_pack.is_spraying, "senza zaino non si spruzza")
-	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
-	var station: Node3D = level.get_node("PostazioneBagnini")
-	var stand := station.global_position + station.global_basis.z * 1.2
-	p.teleport(Vector3(stand.x, 0.0, stand.z), 0.0, 0.0)
-	p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
-	await _frames(3)
-	check(p.interactor.current is PackPickup, "il raggio trova lo zaino")
-	await _hold(&"interact", 2)
-	await _frames(3)
-	check(p.water_pack.equipped and p.has_item(&"zaino_pompa"), "preso lo zaino: la pistola è in mano")
-	check(p.water_pack.lance_rig != null, "la pistola 3D con le mani è montata")
-	check(not is_instance_valid(level.get_node_or_null("PostazioneBagnini/Zaino")), "lo zaino sparisce dalla rastrelliera")
+	var interni := level.get_node_or_null("Interni")
+	if interni:
+		# Con gli interni lo zaino è nello stanzino dei bagnini: si prende da lì.
+		check(level.get_node_or_null("PostazioneBagnini") == null, "con gli interni la rastrelliera della sala non c'è")
+		var picks := interni.find_children("*", "PackPickup", true, false)
+		check(picks.size() == 1, "lo zaino è nello stanzino degli interni")
+		var pack_holder: Node = (picks[0] as Node).get(&"remove_node") if picks.size() > 0 else null
+		if picks.size() > 0:
+			(picks[0] as PackPickup).interact(p)
+		await _frames(3)
+		check(p.water_pack.equipped and p.has_item(&"zaino_pompa"), "preso lo zaino: la pistola è in mano")
+		check(p.water_pack.lance_rig != null, "la pistola 3D con le mani è montata")
+		check(pack_holder == null or not is_instance_valid(pack_holder), "lo zaino sparisce dalla rastrelliera")
+	else:
+		var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
+		var station: Node3D = level.get_node("PostazioneBagnini")
+		var stand := station.global_position + station.global_basis.z * 1.2
+		p.teleport(Vector3(stand.x, 0.0, stand.z), 0.0, 0.0)
+		p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
+		await _frames(3)
+		check(p.interactor.current is PackPickup, "il raggio trova lo zaino")
+		await _hold(&"interact", 2)
+		await _frames(3)
+		check(p.water_pack.equipped and p.has_item(&"zaino_pompa"), "preso lo zaino: la pistola è in mano")
+		check(p.water_pack.lance_rig != null, "la pistola 3D con le mani è montata")
+		check(not is_instance_valid(level.get_node_or_null("PostazioneBagnini/Zaino")), "lo zaino sparisce dalla rastrelliera")
 	check(p.water_pack.tank_amount < 0.01, "il serbatoio è vuoto")
 
 	print("Lampada della statua e sigla")
@@ -182,6 +201,24 @@ func _run() -> void:
 			break
 		await get_tree().physics_frame
 	check(toy.gate_open, "l'ondata apre il cancello della piscina")
+
+	if interni:
+		print("Dagli spogliatoi alla sala")
+		var shutters := interni.find_children("*", "Saracinesca", true, false)
+		check(shutters.size() == 1, "c'è la saracinesca tra gli spogliatoi e la sala")
+		if shutters.size() == 1:
+			var d := shutters[0] as Node3D
+			check(absf(d.global_position.x) < 0.1 and absf(d.global_position.z - 20.3) < 0.3,
+				"la saracinesca combacia con il vano sud (%s)" % d.global_position)
+			d.set(&"_latched", true)
+			await _frames(60 * 10)
+			check(bool(d.get(&"is_open")), "la saracinesca si alza")
+			p.teleport(Vector3(0.0, 0.0, 21.4), 0.0, 0.0)
+			await _frames(3)
+			Input.action_press(&"move_forward")
+			await _frames(150)
+			Input.action_release(&"move_forward")
+			check(p.global_position.z < 19.4, "dagli spogliatoi si entra nella sala (z %.2f)" % p.global_position.z)
 
 	print("B5: i bambini sulla balconata, in un lampo")
 	var kids: KidSighting = level.get_node("BambiniBalconata")

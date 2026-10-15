@@ -108,8 +108,9 @@ func _setup_hall() -> void:
 				# conosce): valori di INTEGRAZIONE.md dell'ambiente.
 				var c := l as SpotLight3D
 				c.light_color = Color(1.0, 0.78, 0.5)
-				c.light_energy = 2.5
-				c.spot_angle = 30.0
+				# Secondari rispetto alla statua: deboli e stretti sul telo.
+				c.light_energy = 1.2
+				c.spot_angle = 22.0
 				c.spot_range = 6.0
 				c.shadow_enabled = false
 				c.light_volumetric_fog_energy = 0.8

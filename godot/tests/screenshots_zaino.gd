@@ -37,9 +37,12 @@ func _ready() -> void:
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
-	Grafica.applica_preset("ultra" if preset == "ultra" else ("alto" if preset == "alto_senza_gi" else preset))
+	Grafica.applica_preset("ultra" if preset == "ultra" else ("alto" if preset in ["alto_senza_gi", "alto_smaa"] else preset))
 	if preset == "alto_senza_gi":
 		Grafica.imposta("gi", 0)
+	if preset == "alto_smaa":
+		# Come screenshots_sala.gd: SMAA al posto del TAA per la memoria del renderer software.
+		Grafica.imposta("antialiasing", 2)
 	if preset == "ultra":
 		# Come screenshots_sala.gd: Ultra con SDFGI, qualche effetto un livello sotto per la
 		# memoria del renderer software.
@@ -51,11 +54,17 @@ func _run() -> void:
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		wm.set(&"quality", 1)
-	get_tree().change_scene_to_file(LEVEL)
+	var level_path := OS.get_environment("SCATTI_LIVELLO")
+	get_tree().change_scene_to_file(level_path if level_path != "" else LEVEL)
 	await _frames(10)
 	get_tree().paused = false
 	var level := get_tree().current_scene
 	var p: Player = GameState.player
+	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca.
+	for i in 400:
+		if p.input_enabled:
+			break
+		await get_tree().process_frame
 	for we in level.find_children("*", "WorldEnvironment", true, false):
 		if (we as WorldEnvironment).environment:
 			(we as WorldEnvironment).environment.sdfgi_cascades = 3
@@ -77,7 +86,13 @@ func _run() -> void:
 		if only != "":
 			get_tree().quit()
 			return
-	(level.get_node("PostazioneBagnini/Zaino/Prendi") as PackPickup).interact(p)
+	var pick := level.get_node_or_null("PostazioneBagnini/Zaino/Prendi") as PackPickup
+	if pick:
+		pick.interact(p)
+	else:
+		# Senza la rastrelliera nella scena: lo zaino si dà direttamente.
+		p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
+		p.water_pack.set_equipped(true)
 	await _frames(40 if only == "" else 2)
 	# 2) La pistola in mano mentre spruzza sulla turbina dello scarico (gonfiabile già caduto).
 	var turbine: Turbine = level.get_node("Piscina/TurbinaScarico")

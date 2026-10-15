@@ -52,6 +52,11 @@ func _run() -> void:
 		Grafica.imposta("nebbia", 1)
 		Grafica.imposta("ssil", 2)
 		Grafica.imposta("ssao", 3)
+	elif preset == "alto_smaa":
+		# Alto con la GI calcolata, ma SMAA al posto del TAA: senza i vettori di movimento il
+		# renderer software compila meno pipeline e lo scatto sta in memoria (a fermo non cambia).
+		Grafica.applica_preset("alto")
+		Grafica.imposta("antialiasing", 2)
 	elif preset == "alto_senza_gi":
 		# Alto senza illuminazione globale: sta nella memoria del renderer software anche a
 		# 1600x900 (la GI VoxelGI calcolata la usa il gioco vero).
@@ -63,11 +68,18 @@ func _run() -> void:
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		wm.set(&"quality", 1)
-	get_tree().change_scene_to_file(LEVEL)
+	# SCATTI_LIVELLO: un'altra scena della sala (per esempio la variante senza dettagli).
+	var level_path := OS.get_environment("SCATTI_LIVELLO")
+	get_tree().change_scene_to_file(level_path if level_path != "" else LEVEL)
 	await _frames(10)
 	get_tree().paused = false
 	level = get_tree().current_scene
 	p = GameState.player
+	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca.
+	for i in 400:
+		if p.input_enabled:
+			break
+		await get_tree().process_frame
 	for we in level.find_children("*", "WorldEnvironment", true, false):
 		if (we as WorldEnvironment).environment:
 			(we as WorldEnvironment).environment.sdfgi_cascades = 3
