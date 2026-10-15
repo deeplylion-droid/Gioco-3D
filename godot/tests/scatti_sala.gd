@@ -112,8 +112,12 @@ func _run() -> void:
 
 ## Memoria residente massima del processo (Linux), per esempio "9876 MB".
 func _picco_memoria() -> String:
-	var st := FileAccess.get_file_as_string("/proc/self/status")
-	for riga in st.split("\n"):
+	# i file di /proc hanno lunghezza 0: si leggono riga per riga
+	var f := FileAccess.open("/proc/self/status", FileAccess.READ)
+	if f == null:
+		return "?"
+	while not f.eof_reached():
+		var riga := f.get_line()
 		if riga.begins_with("VmHWM:"):
 			return "%d MB" % int(int(riga.split(":")[1].strip_edges().split(" ")[0]) / 1024)
 	return "?"
