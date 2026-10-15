@@ -138,7 +138,7 @@ func _on_lamp_trigger(body: Node3D) -> void:
 
 
 func _on_jingle() -> void:
-	# La sigla (audio) arriverà più avanti: per ora pulsa solo la campana.
+	# La sigla (rovinata) la suona l'addon audio; qui i canali della campana pulsano a tempo.
 	if statue and statue.has_method(&"pulse"):
 		statue.call(&"pulse", 6.0)
 
