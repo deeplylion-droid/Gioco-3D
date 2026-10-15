@@ -73,7 +73,7 @@ func _ready() -> void:
 	_cursore(t, "Scala di rendering", "scala_rendering", 0.5, 1.0, 0.01, "%d%%", 100.0)
 	_scelta(t, "Upscaler", "upscaler", ["Bilineare", "AMD FSR 1.0", "AMD FSR 2.2"])
 	_cursore(t, "Nitidezza FSR", "nitidezza_fsr", 0.0, 2.0, 0.05, "%d%%", 50.0, true)
-	_scelta(t, "Antialiasing", "antialiasing", ["No", "FXAA", "SMAA", "TAA", "MSAA 2×", "MSAA 4×", "MSAA 8×"])
+	_scelta(t, "Antialiasing", "antialiasing", ["No", "FXAA", "SMAA (nitido)", "TAA (morbido)", "MSAA 2×", "MSAA 4×", "MSAA 8×"])
 	_nota_aa = Label.new()
 	_nota_aa.add_theme_color_override("font_color", Color(0.65, 0.68, 0.7))
 	_nota_aa.add_theme_font_size_override("font_size", 14)
@@ -99,6 +99,7 @@ func _ready() -> void:
 	_spunta(t, "Grana della pellicola", "grana")
 	_spunta(t, "Vignettatura", "vignetta")
 	_spunta(t, "Aberrazione cromatica", "aberrazione")
+	_spunta(t, "Profondità di campo (lontano)", "profondita_campo")
 	_spunta(t, "Riduci i lampi (fotosensibilità)", "riduci_lampi")
 
 	t = _scheda("Controlli")

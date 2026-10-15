@@ -48,6 +48,8 @@ var _tornello_in_giro := false
 
 func _ready() -> void:
 	add_to_group(&"persist")
+	MaterialiInterni.applica(ambienti)
+	MaterialiInterni.metti_decal(self)
 	_prepara_ambienti()
 	_prepara_luci()
 	_prepara_docce()
@@ -73,6 +75,27 @@ func _prepara_ambienti() -> void:
 	for n in ambienti.find_children("acqua_pozz*", "MeshInstance3D", true, false):
 		(n as MeshInstance3D).material_override = pozza
 		(n as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Neon spenti: il diffusore del modello non deve brillare.
+	var spento := StandardMaterial3D.new()
+	spento.albedo_color = Color(0.62, 0.64, 0.62)
+	spento.roughness = 0.35
+	for n in ambienti.find_children("*_tubi", "MeshInstance3D", true, false):
+		(n as MeshInstance3D).material_override = spento
+	# Ante colorate degli armadietti (stile B): tinta sopra la texture del modello.
+	for n in ambienti.find_children("armadietti_*", "MeshInstance3D", true, false):
+		var colore := Color.WHITE
+		if "_giallo" in n.name:
+			colore = Color(1.25, 1.0, 0.35)
+		elif "_rosso" in n.name:
+			colore = Color(1.35, 0.45, 0.4)
+		else:
+			continue
+		var mi := n as MeshInstance3D
+		var base := mi.mesh.surface_get_material(0) as BaseMaterial3D
+		if base:
+			var t := base.duplicate() as BaseMaterial3D
+			t.albedo_color = colore
+			mi.material_override = t
 	# L'acqua della vasca lava-piedi la disegna l'addon acqua (Acqua/AcquaLavapiedi).
 	var lp := spogliatoi.find_child("acqua_lavapiedi", true, false)
 	if lp:
@@ -108,17 +131,23 @@ func _prepara_luci() -> void:
 		neon.name = String(tubo.name).replace("_tubo_sfarfalla", "_neon")
 		neon.set(&"modalita", 1)          # SFARFALLA
 		neon.set(&"colore", Color(0.78, 1.0, 0.9))
-		tubo.get_parent().add_child(neon)
-		neon.global_transform = tubo.global_transform
-		tubo.reparent(neon, true)
+		# Il Neon va montato completo (tubo del modello + luce) PRIMA di entrare nella scena:
+		# se entra vuoto si costruisce da solo un'altra plafoniera con un'altra luce (neon doppi)
+		# e non vede la luce aggiunta dopo (che quindi non sfarfallava).
+		var genitore := tubo.get_parent()
+		neon.transform = (tubo as Node3D).transform
+		genitore.remove_child(tubo)
+		neon.add_child(tubo)
+		(tubo as Node3D).transform = Transform3D.IDENTITY
 		var luce := OmniLight3D.new()
 		luce.light_color = Color(0.78, 1.0, 0.9)
 		luce.light_energy = 0.7
 		luce.omni_range = 5.0
 		luce.light_volumetric_fog_energy = 0.3
 		luce.shadow_enabled = true
-		neon.add_child(luce)
 		luce.position = Vector3(0, -0.15, 0)
+		neon.add_child(luce)
+		genitore.add_child(neon)
 	# La lucina del pulsante del tornello: solo un alone sul pulsante.
 	var spia := ambienti.find_child("luce_pulsante_tornello", true, false) as OmniLight3D
 	if spia:

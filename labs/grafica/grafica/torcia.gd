@@ -14,17 +14,20 @@ signal batteria_esaurita
 
 @export var accesa := true
 @export_group("Luce")
-@export var energia := 11.0
-@export var colore := Color(1.0, 0.93, 0.82)  # LED un po' caldo
-@export var angolo := 30.0
+@export var energia := 9.0
+@export var colore := Color(1.0, 0.86, 0.68)  # bianco caldo (circa 4000 K)
+@export var angolo := 26.0
 @export var portata := 26.0
-@export var attenuazione := 1.0
-@export var dimensione_sorgente := 0.025       # ombre morbide (PCSS)
-@export var energia_nebbia := 0.35             # quanto il fascio si vede nella nebbia volumetrica
+@export var attenuazione := 0.75   # calo più lento: illumina anche lontano senza bruciare vicino
+@export var dimensione_sorgente := 0.02        # ombre morbide (PCSS)
+@export var energia_nebbia := 0.12             # fascio appena accennato nella nebbia
 @export var cookie: Texture2D = preload("res://grafica/texture/torcia_cookie.png")
 ## Posizione della luce rispetto alla camera (a destra e in basso, come in mano):
 ## lo scarto fa vedere le ombre degli oggetti vicini.
 @export var offset_mano := Vector3(0.2, -0.2, -0.15)
+## Strati che la torcia NON illumina: di serie il 2, quello del modello in mano
+## (lancia, impugnatura), che altrimenti si accende in primo piano.
+@export_flags_3d_render var strati_esclusi := 2
 ## Vicino ai muri la luce si abbassa (come l'occhio che si adatta): senza, entro
 ## 3 m bruciava tutto. Fattore = clamp(distanza / distanza_piena, minimo, 1).
 @export var attenua_vicino := true
@@ -33,7 +36,7 @@ signal batteria_esaurita
 @export var portata_controllo := 3.0
 @export_group("Movimento")
 ## Più è alto, più la luce segue lo sguardo in fretta.
-@export var rapidita := 11.0
+@export var rapidita := 7.0
 @export var oscillazione := 0.004             # piccolo movimento della mano
 @export_group("Batteria")
 @export var batteria_attiva := false
@@ -63,15 +66,16 @@ func _ready() -> void:
 	luce.spot_angle = angolo
 	luce.spot_range = portata
 	luce.spot_attenuation = attenuazione
-	luce.spot_angle_attenuation = 0.6
+	luce.spot_angle_attenuation = 0.4    # il bordo morbido lo fa la texture
 	luce.light_projector = cookie
 	luce.light_size = dimensione_sorgente
 	luce.light_volumetric_fog_energy = energia_nebbia
-	luce.light_specular = 0.6
+	luce.light_specular = 0.35
+	luce.light_cull_mask &= ~strati_esclusi
 	luce.shadow_enabled = true
 	luce.shadow_bias = 0.04
 	luce.shadow_normal_bias = 1.2
-	luce.shadow_blur = 1.0
+	luce.shadow_blur = 1.5
 	luce.set_meta("grafica_priorita_ombra", 0)  # l'ombra della torcia resta anche al minimo
 	add_child(luce)
 	var p := get_parent()

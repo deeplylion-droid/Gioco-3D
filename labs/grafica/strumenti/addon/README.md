@@ -98,3 +98,12 @@ Preset di illuminazione e post-processing per la sala vera (`assets_src/ambiente
 5. **Statua (medusa)**: nel materiale `medusa_tentacoli.tres` va messo `emission_operator = Multiply` (come nel GLB). Con "Add" (predefinito) il bianco di `emission` si somma alla texture delle vene e i tentacoli escono bianchi, "bruciati". Con Multiply le vene possono restare al 100%.
 6. Le opzioni grafiche dell'utente (Grafica) restano attive: spengono VoxelGI, SSR, SSAO, SSIL, nebbia volumetrica secondo il preset; il color grading è quello dell'opzione "Color grading" (predefinito "Notte fredda": ombre verso il blu-verde).
 7. Tutti i valori sono `@export` su LookSala (energie, colori) e le due `.tres` si possono ritoccare nell'Inspector.
+
+## Interni (pezzo campione): LookInterni
+
+Luce e immagine del corridoio del risveglio, degli spogliatoi con tornello e lava-piedi e dello stanzino. Prima e dopo: `docs/report/render_grafica/campione/`.
+
+- Le luci stanno in una scena separata, `scenes/interni/luci_interni.tscn` (radice con `look_interni.gd`), istanziata in `interni.tscn` come `LuciInterni`: chi rifà modelli e texture degli interni non tocca le luci.
+- All'avvio regola per nome i `Neon` e le `LuceEmergenza` create da `interni.gd` (rosse raccolte in pozze, neon freddi con ombre morbide, lampada calda sullo zaino), crea un `VoxelGI` per stanza con i dati cotti in `scenes/interni/gi/` e, quando la camera è dentro gli interni, le dà `interni/ambiente_interni.tres` e `interni/attributi_interni.tres` (in gioco gli interni stanno dentro la sala, che ha un Environment diverso).
+- **Ricuocere il GI** quando cambiano i modelli: `xvfb-run -a godot --path godot --rendering-driver vulkan --script res://tests/run.gd -- res://tests/cuoci_gi_interni.gd`.
+- Screenshot prima/dopo: `tests/screenshots_campione.gd` (istruzioni in cima al file).
