@@ -61,8 +61,8 @@ func _ready() -> void:
 		leva.tirata.connect(_risveglio)
 		leva.colpita_bloccata.connect(func(): _suona(&"pulsante_rilasciato", leva.global_position, -4.0, 0.7))
 	if porta:
-		porta.scossa_bloccata.connect(func(): _suona(&"turbina_bloccata", porta.global_position, -2.0, 1.4))
-		porta.aperta.connect(func(): _suona(&"porta_aperta", porta.global_position))
+		porta.scossa_bloccata.connect(func(): _suona(&"maniglione_bloccato", porta.global_position))
+		porta.aperta.connect(func(): _suona(&"porta_ponte_apre", porta.global_position))
 	for v in vapori:
 		var punto := get_node_or_null(v) as Node3D
 		if punto:
@@ -82,7 +82,7 @@ func _turbina_accesa(i: int) -> void:
 	if i == avviate:
 		pompe[i].avvia()
 		_motore(i, 0.45, 0.65)
-		_suona(&"faro_acceso", pompe[i].global_position, -2.0, 0.7)
+		_suona(&"pompa_avvio", pompe[i].global_position)
 		avviate += 1
 		pompa_avviata.emit(i)
 		if avviate == pompe.size():
@@ -122,14 +122,14 @@ func _risveglio() -> void:
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	if is_instance_valid(sigla) and sigla.has_method(&"stop"):
 		sigla.call(&"stop")
-	_suona(&"quadro_scintille", null, 0.0, 0.7)
+	_suona(&"corrente_salta")
 	if monitor:
 		monitor.mostra_neve()
 	await get_tree().create_timer(attesa_plastica, false).timeout
 	# Lontano, sotto il rombo delle pompe: plastica che si piega a lungo, poi un tonfo.
-	_suona(&"medusa_risveglio", punto_lontano, -2.0, 0.8)
+	_suona(&"plastica_piega_lontano", punto_lontano)
 	await get_tree().create_timer(attesa_tonfo, false).timeout
-	_suona(&"tuffo", punto_lontano, 6.0, 0.55)
+	_suona(&"tonfo_acqua_lontano", punto_lontano)
 	await get_tree().create_timer(attesa_paratie, false).timeout
 	for p in paratie:
 		p.chiudi()
@@ -157,7 +157,7 @@ func _motore(i: int, volume: float, tono: float) -> void:
 	while _motori.size() <= i:
 		_motori.append(null)
 	if _motori[i] == null and volume > 0.0:
-		_motori[i] = audio.call(&"crea_loop", &"porta_motore_loop", pompe[i])
+		_motori[i] = audio.call(&"crea_loop", &"pompe_ruggito_loop", pompe[i])
 	var l = _motori[i]
 	if l:
 		l.set(&"volume", volume)
