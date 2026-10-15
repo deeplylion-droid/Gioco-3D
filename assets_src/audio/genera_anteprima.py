@@ -8,9 +8,12 @@
   tempi di scripts/tecnici/risveglio_sala_pompe.gd e le distanze vere della scena.
 - anteprima_lei.ogg (circa 27 s): la tappa 8 nell'area bimbi, la fossa che ribolle, lei che sbuca,
   guarda e scivola sotto; poi l'altro finale, il morso.
+- proposta_lei_gutturale.ogg e proposta_lei_estrema.ogg (circa 20 s): proposte per l'utente, NON
+  nel gioco: lei più gutturale (respiro umido, gola che gorgoglia sott'acqua, rantolo, ringhio
+  prima del morso), in due intensità (genera_lei.proposte).
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
-nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei] (senza argomenti, tutte).
+nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte] (senza argomenti, tutte).
 """
 import os
 import sys
@@ -327,14 +330,63 @@ def anteprima_lei():
     print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
 
 
-def main(quali=('sala', 'tecnici', 'lei')):
+def anteprima_proposta_lei(estrema=False):
+    """Proposta per l'utente (non nel gioco): lei più gutturale. I tre suoni nuovi in fila, nella
+    scena come nel gioco: lei che sbuca (a 6,5 m, con la fossa che ribolle), guarda e scivola
+    sotto; poi, dopo un attimo di pioggia, il morso con lo stinger alla chiusura della fauce."""
+    import genera_lei
+    voce = genera_lei.proposte(estrema)
+    sbuca, scivola, morso = voce['lei_sbuca'], voce['lei_scivola_sotto'], voce['morso']
+    T_SBUCA = 1.0
+    T_SCIVOLA = T_SBUCA + 1.8 + 6.0          # durata_sbuca + attesa (lei_sbuca.gd)
+    T_MORSO = T_SCIVOLA + len(scivola) / SR + 1.6
+    DURT = T_MORSO + 4.2
+    n = n_of(DURT)
+    eff = np.zeros((n, 2), dtype=np.float32)
+    amb = np.zeros((n, 2), dtype=np.float32)
+    mus = np.zeros((n, 2), dtype=np.float32)
+    ui = np.zeros((n, 2), dtype=np.float32)
+    for rel, g, off in [('ambiente/pioggia_cupola_loop.ogg', 0.0, 5.0), ('ambiente/vento_loop.ogg', -2.0, 9.0),
+                        ('ambiente/nave_loop.ogg', 0.0, 2.0)]:
+        mix_into(amb, fade(tile(leggi(rel), DURT, off), 1.0, 0.0) * db(g), 0)
+    # la fossa ribolle finché lei non va sotto (come AudioLei in audio.gd)
+    k = np.arange(n) / SR
+    fossa = tile(leggi('lei/fossa_ribolle_loop.ogg', 1), DURT, 0.7)
+    vol = np.clip(k / 1.0, 0, 1) * np.clip(1.0 - (k - T_SCIVOLA) / 2.5, 0, 1)
+    mix_into(eff, pan(fossa * vol * db(distanza_db(6.5, 5.0)), 0.15), 0)
+    mix_into(eff, pan(sbuca * db(distanza_db(6.5, 6.0)), 0.2), n_of(T_SBUCA))
+    mix_into(eff, pan(scivola * db(distanza_db(6.5, 6.0)), 0.2), n_of(T_SCIVOLA))
+    for k2 in range(3):
+        mix_into(eff, pan(leggi('giocatore/passo_bagnato_%02d.ogg' % (k2 + 2), 1) * db(-2), 0.0),
+                 n_of(T_MORSO - 1.1 + k2 * 0.36))
+    mix_into(ui, morso, n_of(T_MORSO))
+    mix_into(mus, leggi('musica/stinger_morte.ogg'), n_of(T_MORSO + 1.0))
+    giu = np.clip((k - T_MORSO) / 0.4, 0.0, 1.0)[:, None]
+    amb *= 10 ** (-12 * giu / 20)
+    eff *= 10 ** (-14 * giu / 20)
+    eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+    out = hp(amb + eff + mus + ui, 20, 2)
+    out = fade(out, 0.3, 2.5)
+    g = db(-16.0 - lufs(out))
+    out = limiter(out * g, -1.0)
+    nome = 'proposta_lei_estrema.ogg' if estrema else 'proposta_lei_gutturale.ogg'
+    path = os.path.join(AUDIO, 'anteprima', nome)
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}  '
+          f'(sbuca {T_SBUCA:.1f}s, scivola {T_SCIVOLA:.1f}s, morso {T_MORSO:.1f}s)')
+
+
+def main(quali=('sala', 'tecnici', 'lei', 'proposte')):
     if 'sala' in quali:
         anteprima_sala()
     if 'tecnici' in quali:
         anteprima_tecnici()
     if 'lei' in quali:
         anteprima_lei()
+    if 'proposte' in quali:
+        anteprima_proposta_lei(False)
+        anteprima_proposta_lei(True)
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:] or ('sala', 'tecnici', 'lei'))
+    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte'))
