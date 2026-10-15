@@ -298,6 +298,37 @@ JOBS['3d_agnello_lupo'] = dict(kind='3d', model='meshy-7.1', **{'from': 'mv_agne
                                          'mv_agnello_lupo_gpt_2.png'])
 
 
+# ---------------------------------------------------------------- scheletro (rigging di Meshy)
+# 'glb': GLB del repo (versione gioco, rivolta verso +Z); 'altezza' in metri.
+# Escono <job>.glb (personaggio con scheletro e pesi) e <job>_walking.glb / <job>_running.glb
+# (animazioni di base con la pelle), più le versioni con il solo scheletro (_armature).
+G = 'assets_src/bambini/game/'
+for nome, glb, alt in (('cubo_calmo', G + 'cubo_calmo.glb', 1.2),
+                       ('cubo_rivelato', G + 'cubo_rivelato.glb', 1.25),
+                       ('agnello_calmo', G + 'agnello_calmo.glb', 1.2),
+                       # il corpo senza il guscio dell'occhio (si riattacca all'osso della testa)
+                       ('agnello_occhio', '@agnello_occhio_corpo.glb', 1.2)):
+    JOBS[f'rig_{nome}'] = dict(kind='rig', glb=glb, altezza=alt)
+
+
+def run_rig(name, j):
+    p = os.path.join(OUT, j['glb'][1:]) if j['glb'].startswith('@') else os.path.join(REPO, j['glb'])
+    with open(p, 'rb') as f:
+        uri = 'data:application/octet-stream;base64,' + base64.b64encode(f.read()).decode()
+    tid = _create('rigging', dict(model_url=uri, height_meters=j['altezza']))
+    t = meshy.wait('rigging', tid, every=8, timeout=3600)
+    _log(name, 'rigging', tid, dict(j, model='meshy-rig'), t)
+    if t['status'] != 'SUCCEEDED':
+        print(name, t['status'], t.get('task_error'), flush=True)
+        return
+    r = t['result']
+    meshy.download(r['rigged_character_glb_url'], os.path.join(OUT, f'{name}.glb'))
+    for k, u in (r.get('basic_animations') or {}).items():
+        if k.endswith('_glb_url'):
+            meshy.download(u, os.path.join(OUT, f"{name}_{k[:-len('_glb_url')]}.glb"))
+    print(name, 'OK rig', flush=True)
+
+
 def run_img(name, j):
     refs = []
     for r in j['refs']:
@@ -389,7 +420,7 @@ def main(names):
     ths = []
     for n in names:
         j = JOBS[n]
-        fn = run_img if j['kind'] == 'img' else run_3d
+        fn = {'img': run_img, '3d': run_3d, 'rig': run_rig}[j['kind']]
         th = threading.Thread(target=lambda n=n, j=j, fn=fn: _safe(fn, n, j))
         th.start(); ths.append(th)
         time.sleep(1.5)
