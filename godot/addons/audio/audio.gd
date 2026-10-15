@@ -1143,6 +1143,7 @@ class SorgentiVicine:
 	var loop: Array[AudioLoop] = []
 	var assegnate: Array = []
 	var visibili := {}
+	var massimi := {}      # energia massima vista per ogni luce (le pulsanti seguono la luce)
 	var t := 0.0
 
 	func _init(a, nome_loop: StringName, quante: int) -> void:
@@ -1188,10 +1189,12 @@ class SorgentiVicine:
 			if not is_instance_valid(s) or not s.is_inside_tree():
 				loop[k].volume = 0.0
 				continue
-			var acceso: bool = s.is_visible_in_tree() and (s as Light3D).light_energy > 0.01
-			loop[k].volume = 1.0 if acceso else 0.0
-			# sfarfallio: un clic quando la luce vicina si accende o si spegne
+			var energia: float = (s as Light3D).light_energy
+			var acceso: bool = s.is_visible_in_tree() and energia > 0.01
 			var id: int = s.get_instance_id()
+			massimi[id] = maxf(float(massimi.get(id, 0.0)), energia)
+			loop[k].volume = clampf(energia / maxf(massimi[id], 0.001), 0.3, 1.0) if acceso else 0.0
+			# sfarfallio: un clic quando la luce vicina si accende o si spegne
 			if visibili.has(id) and visibili[id] != acceso and s.global_position.distance_to(centro) < 9.0:
 				if acceso and randf() < 0.12:
 					a.suona_limitato("scintilla%d" % id, 1.5, &"neon_scintilla", s.global_position, -4.0)
