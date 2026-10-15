@@ -81,6 +81,12 @@ Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagl
   8 lastre rotte con le schegge nel telaio e i vetri caduti sotto (lì il pavimento è bagnato).
 - **Luci**: plafoniere navali calde accese (`luce_calda_*`) tra le rosse, insegne al neon disegnate
   (onda azzurra sopra il vano, stella-sole gialla sopra l'area bimbi; un tratto spento).
+- **Revisione di qualità**: vernice navale grigio-verde su colonne, sostegni, galleria e ringhiere
+  (`metallo` #5f6d69, prima era bianca con la ruggine: sembravano tronchi di betulla); piano del
+  piedistallo in piastrelle avorio lucide con un velo d'acqua (`piano_statua`, rugosità circa 0,06);
+  due teli da 2 x 3 m con la mascotte (grafiche di `assets_src/ambienti_interni/poster`) appesi alla
+  trave ai lati della statua, girati verso l'ingresso, con un faretto caldo ciascuno (`luce_cartellone_*`);
+  tolti i due cartelloni del lato est.
 - **Tubo dell'inseguimento** (lo scivolo rosso a spirale): Ø interno 1,6 m, parete 6 cm, flange ogni
   2 m con 12 bulloni, come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. La bocca
   sputa nella vasca d'arrivo da est, 16 cm sopra l'acqua. Gli altri due tubi restano da 1,0 m.
