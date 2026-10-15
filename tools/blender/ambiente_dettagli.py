@@ -342,3 +342,155 @@ def pozzanghere(mats, n=48, seme=8):
     ob = c.crea('sala_pozzanghere')
     colora(ob, lambda P, N: 0.62 + 0.1 * fbm3(P, 0.8, 2, seme=71))
     return ob
+
+
+# ----------------------------------------------------------------------------- piastrelle mancanti
+
+def piastrelle_mancanti(mats, gruppi_pareti=44, gruppi_piscina=14, seme=12):
+    """Piastrelle staccate (12,5 cm), a gruppi: quadratini di colla a righe (M_amb_malta) 3 mm davanti
+    alle pareti basse e alle pareti della piscina, sulla griglia delle piastrelle. Evitano il vano,
+    gli oblò, la turbina, le bocchette e le scalette."""
+    import random
+    rnd = random.Random(seme)
+    c = K.Costruttore(mats)
+    T = 0.125
+    P = S.PISCINA
+    # (asse lungo il muro, coordinata fissa, normale verso la stanza, intervallo, quote ammesse)
+    muri = [('x', S.Y1, (0, -1, 0), (S.X0 + 0.5, S.X1 - 0.5), (0.125, 1.875)),
+            ('x', S.Y0, (0, 1, 0), (S.X0 + 0.5, S.X1 - 0.5), (0.125, 1.875)),
+            ('y', S.X1, (-1, 0, 0), (S.Y0 + 0.5, S.Y1 - 0.5), (0.125, 1.875)),
+            ('y', S.X0, (1, 0, 0), (S.Y0 + 0.5, S.Y1 - 0.5), (0.125, 1.875))]
+    vasca = [('x', P['y0'], (0, 1, 0), (P['x0'] + 0.3, P['x1'] - 0.3), (-1.125, -0.25)),
+             ('y', P['x1'], (-1, 0, 0), (P['y0'] + 0.3, P['y_pendenza'] + 1.0), (-1.125, -0.25)),
+             ('y', P['x0'], (1, 0, 0), (P['y0'] + 0.3, P['y_pendenza'] + 1.0), (-1.125, -0.25))]
+    def vietato(muro, a, z):
+        asse, fisso = muro[0], muro[1]
+        if asse == 'x' and abs(fisso - S.Y0) < 1e-6 and -0.95 < a < 0.95:
+            return True                                    # vano e telaio della porta stagna
+        if asse == 'y' and abs(abs(fisso) - abs(S.X1)) < 1e-6:
+            i = math.floor((a - S.Y0) / 2)                 # oblò bassi nei moduli dispari
+            if i % 2 == 1 and abs(a - (S.Y0 + 2 * i + 1)) < 0.55 and 0.95 < z < 2.05:
+                return True
+            if abs(a - (-1.0 if fisso < 0 else 4.0)) < 0.6 or abs(a - (11.0 if fisso < 0 else -7.6)) < 0.6:
+                return True                                # salvagenti appesi
+        if muro in vasca:
+            if asse == 'x' and (abs(a - 4.6) < 0.7 or abs(a - 1.9) < 0.3):
+                return True                                # turbina e pulsante
+            if asse == 'x' and z < -0.75 and any(abs(a - bx) < 1.2 for bx in (-4.5, 0.0, 4.5)):
+                return True                                # bocchette della camera delle onde
+            if asse == 'y' and (abs(a - (-3.2 if fisso > 0 else -2.2)) < 0.5):
+                return True                                # scalette
+        return False
+    def gruppo(muro):
+        asse, fisso, nrm, (a0, a1), (z0, z1) = muro
+        a = round(rnd.uniform(a0, a1) / T) * T
+        z = round(rnd.uniform(z0, z1) / T) * T
+        celle = [(a, z)]
+        for _ in range(rnd.choice((0, 0, 1, 1, 2, 3, 4, 6))):
+            da, dz = rnd.choice(((T, 0), (-T, 0), (0, T), (0, -T), (T, 0)))
+            na, nz = celle[-1][0] + da, celle[-1][1] + dz
+            if z0 <= nz <= z1 and (na, nz) not in celle:
+                celle.append((na, nz))
+        if any(vietato(muro, ca + T / 2, cz + T / 2) for ca, cz in celle):
+            return False
+        o = 0.003
+        for (ca, cz) in celle:
+            if asse == 'x':
+                y = fisso + nrm[1] * o
+                q = [(ca, y, cz), (ca + T, y, cz), (ca + T, y, cz + T), (ca, y, cz + T)]
+            else:
+                x = fisso + nrm[0] * o
+                q = [(x, ca, cz), (x, ca + T, cz), (x, ca + T, cz + T), (x, ca, cz + T)]
+            c.faccia_verso(q, 'malta', nrm, uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
+        return True
+    for lista, n in ((muri, gruppi_pareti), (vasca, gruppi_piscina)):
+        fatti, tent = 0, 0
+        while fatti < n and tent < 2000:
+            tent += 1
+            fatti += 1 if gruppo(rnd.choice(lista)) else 0
+    ob = c.crea('sala_piastrelle_mancanti')
+    colora(ob, lambda P_, N_: 0.85 + 0.15 * fbm3(P_, 2.0, 2, seme=83))
+    return ob
+
+
+# ----------------------------------------------------------------------------- insegne e luci calde
+
+def _materiale_neon(nome, colore, forza):
+    m = bpy.data.materials.get(nome) or bpy.data.materials.new(nome)
+    m.use_nodes = True
+    b = m.node_tree.nodes['Principled BSDF']
+    b.inputs['Base Color'].default_value = (*colore, 1)
+    b.inputs['Emission Color'].default_value = (*colore, 1)
+    b.inputs['Emission Strength'].default_value = forza
+    b.inputs['Roughness'].default_value = 0.3
+    return m
+
+
+def insegne_neon(mats):
+    """Insegne al neon disegnate (nessuna scritta): un'onda azzurra sopra il vano della porta (dentro la
+    sala) e una stella-sole gialla sulla parete nord sopra l'area bimbi. Un tratto dell'onda è spento.
+    Restituisce (oggetto, luci)."""
+    m_az = _materiale_neon('M_amb_neon_azzurro', (0.25, 0.85, 1.0), 22.0)
+    m_gi = _materiale_neon('M_amb_neon_giallo', (1.0, 0.72, 0.2), 22.0)
+    m_sp = mats.get('neon_spento')
+    class _M:
+        def lato(self, n): return 1.0
+        def get(self, n): return {'az': m_az, 'gi': m_gi, 'sp': m_sp}.get(n) or mats.get(n)
+    c = K.Costruttore(_M())
+    luci = []
+    # onda sopra il vano (parete sud, verso +y), due tubi paralleli su distanziali
+    y = S.Y0 + 0.07
+    for riga, dz in enumerate((0.0, -0.22)):
+        pts = [(x, y, 3.05 + dz + 0.12 * math.sin((x + 1.1) / 2.2 * 3 * math.pi)) for x in [-1.1 + 2.2 * k / 60 for k in range(61)]]
+        if riga == 1:
+            c.tubo(pts[:40], 0.014, 'az', seg=8)
+            c.tubo(pts[39:52], 0.014, 'sp', seg=8)     # tratto spento
+            c.tubo(pts[51:], 0.014, 'az', seg=8)
+        else:
+            c.tubo(pts, 0.014, 'az', seg=8)
+        for k in range(0, 61, 15):
+            px, py, pz = pts[k]
+            c.cilindro((px, S.Y0 + 0.001, pz), (px, py, pz), 0.008, 'metallo', seg=6)
+    luci.append(dict(nome='luce_insegna_onda', pos=(0.0, S.Y0 + 0.5, 2.95), colore=(0.25, 0.85, 1.0)))
+    # stella-sole sulla parete nord (verso -y), sopra l'area bimbi
+    cx, cz, y = -12.5, 7.0, S.Y1 - 0.07
+    stella = []
+    for i in range(11):
+        a = math.pi / 2 + i * 2 * math.pi / 10
+        rr = 0.75 if i % 2 == 0 else 0.32
+        stella.append((cx + math.cos(a) * rr, y, cz + math.sin(a) * rr))
+    c.tubo(stella, 0.016, 'gi', seg=8)
+    for i in range(12):
+        a = i * 2 * math.pi / 12 + 0.13
+        c.tubo([(cx + math.cos(a) * 0.95, y, cz + math.sin(a) * 0.95), (cx + math.cos(a) * 1.2, y, cz + math.sin(a) * 1.2)],
+               0.014, 'gi' if i not in (4, 9) else 'sp', seg=8)
+    for (dx, dz) in ((0, 0.75), (0.7, -0.6), (-0.7, -0.6)):
+        c.cilindro((cx + dx, S.Y1 - 0.001, cz + dz), (cx + dx, y, cz + dz), 0.008, 'metallo', seg=6)
+    luci.append(dict(nome='luce_insegna_stella', pos=(cx, S.Y1 - 0.6, cz), colore=(1.0, 0.72, 0.25)))
+    return c.crea('sala_insegne_neon'), luci
+
+
+def plafoniere_calde(mats):
+    """Plafoniere navali 'a tartaruga' ancora accese, luce calda: un po' di caldo in mezzo al rosso
+    (vicino alla porta, sul muro est vicino alla scala, sul muro ovest sopra il salvagente, sulla
+    torre e su una colonna della galleria nord). Restituisce (oggetto, luci)."""
+    posti = [((1.75, S.Y0, 2.5), (0, 1, 0)), ((S.X1, 9.0, 2.7), (-1, 0, 0)), ((S.X0, -1.0, 2.7), (1, 0, 0)),
+             ((10.5, 14.38, 2.6), (0, -1, 0)), ((-3.0, 21.15, 3.0), (0, -1, 0))]
+    c = K.Costruttore(mats)
+    luci = []
+    for i, (p, n) in enumerate(posti):
+        P = Vector(p); N = Vector(n)
+        su = Vector((0, 0, 1)); lato = su.cross(N).normalized()
+        c.scatola_assi(P + N * 0.02, (lato, su, N), (0.15, 0.1, 0.02), 'metallo')
+        seg = 12
+        for k in range(seg):   # vetro a mezzo cilindro, caldo
+            t0, t1 = math.pi * k / seg, math.pi * (k + 1) / seg
+            a0 = lato * math.cos(t0) * 0.1 + N * (0.04 + math.sin(t0) * 0.07)
+            a1 = lato * math.cos(t1) * 0.1 + N * (0.04 + math.sin(t1) * 0.07)
+            q = [P + a0 - su * 0.07, P + a1 - su * 0.07, P + a1 + su * 0.07, P + a0 + su * 0.07]
+            c.faccia_verso([tuple(v) for v in q], 'lampadina', tuple((a0 + a1) / 2 - N * 0.04), liscia=True)
+        for zz in (-0.05, 0.0, 0.05):   # gabbia
+            arco = [P + su * zz + lato * math.cos(t) * 0.112 + N * (0.04 + math.sin(t) * 0.082) for t in [math.pi * k / 10 for k in range(11)]]
+            c.tubo([tuple(v) for v in arco], 0.005, 'metallo', seg=5)
+        luci.append(dict(nome=f'luce_calda_{i}', pos=tuple(P + N * 0.25), colore=(1.0, 0.68, 0.38)))
+    return c.crea('sala_plafoniere_calde'), luci
