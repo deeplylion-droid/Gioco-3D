@@ -66,7 +66,8 @@ void fragment() {
 	float t = water_time;
 	float surf = b.level
 			+ 0.012 * sin(near_w.x * 2.1 + t * 1.7) + 0.01 * sin(near_w.z * 2.7 - t * 1.3);
-	bool under = b.found && near_w.y < surf;
+	// Sotto il fondo (un tunnel che passa sotto la vasca) non si e' sott'acqua.
+	bool under = b.found && near_w.y < surf && near_w.y > b.bottom - 0.05;
 
 	if (!under) {
 		if (lens_wet <= 0.001) {

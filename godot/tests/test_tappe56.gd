@@ -18,6 +18,9 @@ var tec: Node3D
 var p: Player
 var _passed := 0
 var _failed := 0
+## E1: mentre è vero, a ogni frame si guarda se la vista è finita sott'acqua.
+var _controlla_sott_acqua := false
+var _sott_acqua_visto := false
 
 
 func _ready() -> void:
@@ -153,10 +156,31 @@ func _run() -> void:
 	check(p.global_position.y < -8.5, "guardando in basso e camminando nel buco si scende (y %.2f)" % p.global_position.y)
 
 	print("La camera delle onde e il tunnel fino alla sala pompe")
+	# E1: la camera delle onde e il tunnel passano sotto la vasca della medusa e sotto la vasca
+	# lava-piedi degli spogliatoi: lì la vista non deve mai diventare quella sott'acqua.
+	var effetto := _effetto_sott_acqua()
+	check(effetto != null, "la camera del giocatore ha l'effetto sott'acqua")
+	_sott_acqua_visto = false
+	_controlla_sott_acqua = true
 	var ok := true
 	for loc in [Vector3(4.0, 0, 0.3), Vector3(16.0, 0, 0.3), Vector3(23.0, 0, 0.0), Vector3(27.0, 0, 0.0), Vector3(31.0, 0, 0.0)]:
 		ok = ok and await _cammina_verso(tec.to_global(loc), 900)
+	_controlla_sott_acqua = false
 	check(ok, "si cammina dalla scala, sotto le paratie e nel tunnel fino alla sala pompe")
+	check(not _sott_acqua_visto, "E1: camminando nella camera delle onde e nel tunnel la vista non va mai sott'acqua")
+	print("E1: la vista sott'acqua solo nell'acqua profonda")
+	var vasca_medusa: WaterTank = level.get_node("Vasca/VascaCentrale")
+	var lavapiedi := level.find_children("VascaLavapiedi", "WaterTank", true, false)
+	var sotto_medusa := Vector3(0.0, vasca_medusa.get_floor_global_y() - 7.5, vasca_medusa.global_position.z)
+	check(not await _sott_acqua_in(sotto_medusa), "nel tunnel sotto la vasca della medusa non si è sott'acqua")
+	if lavapiedi.size() > 0:
+		var lp := lavapiedi[0] as WaterTank
+		check(not await _sott_acqua_in(Vector3(lp.global_position.x, -7.4, lp.global_position.z)), "nel tunnel sotto la vasca lava-piedi non si è sott'acqua")
+		check(not await _sott_acqua_in(lp.global_position + Vector3(0.0, lp.get_level() * 0.5, 0.0)), "e nemmeno dentro il velo d'acqua della lava-piedi (%.2f m)" % lp.get_level())
+	check(await _sott_acqua_in(vasca_medusa.global_position + Vector3(0.0, vasca_medusa.get_level() * 0.5, 0.0)), "dentro la vasca della medusa (acqua profonda) invece sì")
+	var arrivo: WaterTank = level.get_node("Vasche/VascaArrivo")
+	check(await _sott_acqua_in(Vector3(arrivo.global_position.x, arrivo.get_surface_global_y() - 0.3, arrivo.global_position.z)), "e anche sotto il pelo della vasca d'arrivo")
+	check(not await _sott_acqua_in(Vector3(arrivo.global_position.x, arrivo.get_floor_global_y() - 3.0, arrivo.global_position.z)), "ma non tre metri sotto il suo fondo")
 	await _frames(5)
 	check(_checkpoint() == "Tecnici/Logica/Checkpoint/CheckpointSalaPompe", "checkpoint: ingresso della sala pompe (%s)" % _checkpoint())
 
@@ -177,6 +201,12 @@ func _run() -> void:
 	var mon: MonitorCrt = ris.monitor
 	check(mon.immagine != null and not mon.mostra_neve_attiva() and mon.sovrimpressione().begins_with(mon.data),
 		"il monitor mostra la sala dalla telecamera, con data e ora (%s)" % mon.sovrimpressione())
+	var schermo := tec.find_child("SCHERMO_CRT", true, false) as MeshInstance3D
+	check(schermo != null and schermo.material_override is ShaderMaterial
+			and (schermo.material_override as ShaderMaterial).shader.resource_path.ends_with("crt.gdshader"),
+		"E5: sullo schermo c'è l'immagine del tubo (non il materiale del modello)")
+	check(mon.vertici_sul_vetro >= (mon.suddivisioni.x + 1) * (mon.suddivisioni.y + 1) - 4,
+		"E5: lo schermo è appoggiato sul vetro bombato, non un foglio piatto davanti (%d vertici)" % mon.vertici_sul_vetro)
 	var ora := mon.sovrimpressione()
 	await _frames(70)
 	check(mon.sovrimpressione() != ora, "e l'ora corre (%s)" % mon.sovrimpressione())
@@ -278,6 +308,35 @@ func _run() -> void:
 	check(GameState.luci == GameState.Luci.BLACKOUT, "ripartendo, le luci sono di nuovo al blackout")
 
 	_fine()
+
+
+func _physics_process(_delta: float) -> void:
+	if _controlla_sott_acqua:
+		var e := _effetto_sott_acqua()
+		if e and e.is_underwater:
+			if not _sott_acqua_visto:
+				printerr("  vista sott'acqua in ", p.camera.global_position)
+			_sott_acqua_visto = true
+
+
+func _effetto_sott_acqua() -> UnderwaterEffect:
+	var e := p.find_children("*", "UnderwaterEffect", true, false)
+	return e[0] as UnderwaterEffect if e.size() > 0 else null
+
+
+## E1: una camera libera in [param dove]: la vista è quella sott'acqua? (Poi torna la camera del giocatore.)
+func _sott_acqua_in(dove: Vector3) -> bool:
+	var cam := Camera3D.new()
+	level.add_child(cam)
+	cam.global_position = dove
+	cam.current = true
+	await _frames(3)
+	var e := _effetto_sott_acqua()
+	var sotto := e != null and e.is_underwater
+	cam.queue_free()
+	p.camera.current = true
+	await _frames(3)
+	return sotto
 
 
 func _fine() -> void:

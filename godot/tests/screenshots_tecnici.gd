@@ -57,6 +57,28 @@ func _run() -> void:
 	if _want("tecnici_scrivania"):
 		# La scrivania col monitor a tubo.
 		await _shot("tecnici_scrivania", Vector3(40.3, 0.0, 0.4), Vector3(41.8, 0.85, 3.3))
+	if _want("tecnici_monitor") or _want("tecnici_monitor_vicino") or _want("tecnici_monitor_lato") or _want("tecnici_monitor_neve"):
+		# Il monitor a tubo come nel gioco (MonitorCrt della sala principale): da 1,3 m e da vicino.
+		if level.find_children("*", "MonitorCrt", true, false).is_empty():
+			var mon := MonitorCrt.new()
+			mon.name = "Monitor"
+			mon.schermo_path = NodePath("../Ambienti/SalaPompe/SCHERMO_CRT")
+			mon.luce_path = NodePath("../Ambienti/SalaPompe/LUCE_crt")
+			mon.immagine = load("res://assets/tecnici/monitor_sala.jpg")
+			# SCATTI_MONITOR_PIATTO=1: com'era nella v0.3.0, il rettangolo piatto del modello.
+			mon.appoggia_sul_vetro = OS.get_environment("SCATTI_MONITOR_PIATTO") != "1"
+			level.add_child(mon)
+		if _want("tecnici_monitor"):
+			await _shot("tecnici_monitor", Vector3(41.15, 0.0, 1.75), Vector3(41.57, 1.0, 2.96))
+		if _want("tecnici_monitor_vicino"):
+			await _shot("tecnici_monitor_vicino", Vector3(41.33, 0.0, 2.3), Vector3(41.57, 1.05, 2.96))
+		if _want("tecnici_monitor_lato"):
+			# Di sbieco, da vicino: lo schermo deve stare sul vetro, non staccato come un foglio.
+			await _shot("tecnici_monitor_lato", Vector3(40.6, 0.0, 2.45), Vector3(41.57, 1.02, 2.96))
+		if _want("tecnici_monitor_neve"):
+			GameState.imposta_luci(GameState.Luci.BLACKOUT)
+			await _shot("tecnici_monitor_neve", Vector3(41.15, 0.0, 1.75), Vector3(41.57, 1.0, 2.96))
+			GameState.imposta_luci(GameState.Luci.PRIMA_DEL_RISVEGLIO)
 	if _want("tecnici_vasca"):
 		# La vasca di raccolta piena d'acqua nera.
 		await _shot("tecnici_vasca", Vector3(39.6, 0.0, 3.1), Vector3(36.0, -0.2, 0.4))
