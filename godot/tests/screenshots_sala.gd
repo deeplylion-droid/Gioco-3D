@@ -41,8 +41,15 @@ func _run() -> void:
 	if preset == "ultra" or preset == "ultra_sdfgi":
 		Grafica.applica_preset("ultra")
 		Grafica.imposta("gi", 2)
+		# Sul renderer software del sandbox l'Ultra pieno non sta in memoria: ombre "alte"
+		# (atlante 4096 invece di 8192) e nebbia volumetrica normale. A 1080p non si vede la differenza.
+		Grafica.imposta("ombre", 3)
+		Grafica.imposta("nebbia", 1)
 	else:
 		Grafica.applica_preset(preset)
+	var wm := get_node_or_null(^"/root/WaterManager")
+	if wm and only.size() > 0 and not (only.has("piscina") or only.has("torcia")):
+		wm.set(&"quality", 1)  # l'acqua non si vede: niente riflesso planare
 	get_tree().change_scene_to_file(LEVEL)
 	await _frames(10)
 	get_tree().paused = false

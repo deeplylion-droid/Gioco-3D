@@ -17,8 +17,11 @@ const SPAWN := Vector3(0.0, 0.0, 11.2)
 ## Pozza torbida sul fondo della piscina a onde: fondo a conca intorno allo scarico.
 const DRAIN := Vector3(0.0, -2.24, 2.0)
 const PUDDLE_LEVEL := -2.07
-## La medusa scalata a circa 4,5 m di altezza (dalle punte dei tentacoli alla testa).
-const MEDUSA_SCALE := 1.54
+## La medusa scalata a circa 4,5 m di altezza (il modello è alto 2,7 m).
+const MEDUSA_SCALE := 1.667
+## Altezze sul modello non scalato: bordo della campana e cima della testa.
+const MEDUSA_BELL_Y := 1.05
+const MEDUSA_TOP_Y := 2.7
 
 var level: Node3D
 var M := {}
@@ -183,24 +186,23 @@ func _hall() -> void:
 func _statue() -> void:
 	var statue := group(level, "Statua")
 	statue.position = Vector3(PEDESTAL.x, 0.0, PEDESTAL.z)
-	# La medusa vera (GLB in posa statua): l'origine è alla vita, le punte dei tentacoli
-	# (misurate sul modello) 1,95 m più in basso, appoggiate sul piano del piedistallo.
-	# Guarda verso +Z (l'ingresso).
+	# La medusa vera (GLB in posa statua, in piedi sui tentacoli): l'origine del modello è sul
+	# piano d'appoggio. Guarda verso +Z (l'ingresso).
 	var medusa: Node3D = load("res://scripts/environment/medusa_statue.gd").new()
 	medusa.name = "Medusa"
 	medusa.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
+	medusa.set(&"tentacle_material", load("res://assets/models/medusa/medusa_tentacoli.tres"))
 	medusa.set(&"model", load("res://assets/models/medusa/medusa.glb"))
 	# Statua imponente (indicazione dell'utente): circa 4,5 m dalle punte dei tentacoli alla
-	# testa. Il modello è alto 2,92 m: per ora si scala (arriverà il modello da eroe).
-	medusa.set(&"feet_depth", 1.97 * MEDUSA_SCALE)
+	# testa. Il modello è alto 2,7 m: per ora si scala (arriverà il modello da eroe).
 	medusa.scale = Vector3.ONE * MEDUSA_SCALE
-	medusa.position = Vector3(0, PEDESTAL.y + 1.97 * MEDUSA_SCALE - 0.02, 0)
+	medusa.position = Vector3(0, PEDESTAL.y, 0)
 	own(medusa, statue)
 	level.set(&"statue", medusa)
 	# Luce rosa della campana (addon acqua): si vede anche riflessa nell'acqua.
 	var glow: Node3D = (load("res://addons/acqua/scenes/luce_medusa.tscn") as PackedScene).instantiate()
 	glow.name = "LuceCampana"
-	glow.position = Vector3(0, -0.2, 0)
+	glow.position = Vector3(0, MEDUSA_BELL_Y - 0.15, 0)
 	glow.set(&"light_energy", 0.35)
 	glow.set(&"omni_range", 3.5)
 	own(glow, medusa)
@@ -234,8 +236,8 @@ func _statue() -> void:
 ## Luci da monumento: un faro dall'alto e tre fari a terra intorno al piedistallo, con i fasci
 ## che si vedono nella nebbia. Coordinate locali al gruppo della statua (centro del piedistallo).
 func _monument_lights(statue: Node3D) -> void:
-	var top := PEDESTAL.y + 1.97 * MEDUSA_SCALE * 1.48
-	var chest := Vector3(0, PEDESTAL.y + 1.97 * MEDUSA_SCALE + 0.35, 0)
+	var top := PEDESTAL.y + MEDUSA_TOP_Y * MEDUSA_SCALE
+	var chest := Vector3(0, PEDESTAL.y + (MEDUSA_BELL_Y + 0.75) * MEDUSA_SCALE, 0)
 	var key := SpotLight3D.new()
 	key.name = "FaroDallAlto"
 	key.position = Vector3(0.0, 9.8, 2.8)

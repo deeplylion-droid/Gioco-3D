@@ -2,11 +2,11 @@
 class_name MedusaStatue
 extends Node3D
 ## La medusa ferma come una statua sul piedistallo (scena S1, "il benvenuto").
-## Carica il GLB della medusa (la posa di riposo è già la statua, con le mani giunte), mette lo
-## shader "a gelatina" sulla campana e tiene i canali appena accesi. Con pulse() i canali
-## pulsano a tempo per un attimo (quando parte la sigla).
-## Il nodo va messo con l'origine all'altezza della vita della medusa: le punte dei tentacoli
-## stanno [member feet_depth] metri più in basso, sul piano del piedistallo.
+## Carica il GLB della medusa (la posa di riposo è già la statua, con le mani giunte, in piedi
+## sui tentacoli), mette lo shader "a gelatina" sulla campana e il materiale traslucido sui
+## tentacoli, e tiene i canali appena accesi. Con pulse() i canali pulsano a tempo per un attimo
+## (quando parte la sigla); con wake_up() si stacca dal piedistallo (animazione "sveglia").
+## L'origine del modello è sul piano d'appoggio: il nodo va messo sulla faccia del piedistallo.
 
 @export var model: PackedScene:
 	set(value):
@@ -17,8 +17,13 @@ extends Node3D
 	set(value):
 		bell_material = value
 		_rebuild()
-## Distanza tra l'origine (vita) e le punte dei tentacoli.
-@export var feet_depth := 2.2
+## Materiale dei tentacoli (superficie "M_tentacoli").
+@export var tentacle_material: Material:
+	set(value):
+		tentacle_material = value
+		_rebuild()
+## Distanza tra l'origine del nodo e le punte dei tentacoli (0: l'origine è sul piano).
+@export var feet_depth := 0.0
 @export_group("Campana")
 ## Luce dei canali da ferma: appena accesi.
 @export var idle_channel_light := 0.55
@@ -46,6 +51,14 @@ func pulse(seconds := 6.0) -> void:
 
 func get_model_instance() -> Node3D:
 	return _instance
+
+
+## La statua si sveglia: si stacca dal piedistallo e sale (animazione "sveglia").
+func wake_up() -> void:
+	var ap := _instance.find_child("AnimationPlayer", true, false) as AnimationPlayer if _instance else null
+	if ap and ap.has_animation(&"sveglia"):
+		ap.play(&"sveglia")
+		ap.queue(&"fluttua")
 
 
 func _process(delta: float) -> void:
@@ -81,11 +94,15 @@ func _rebuild() -> void:
 		_bell = bell_material.duplicate() as ShaderMaterial
 		_bell.set_shader_parameter(&"pulsazione_al_secondo", 0.0)
 		_bell.set_shader_parameter(&"luce_canali", idle_channel_light)
-		for mi in _instance.find_children("*", "MeshInstance3D", true, false):
-			var m := (mi as MeshInstance3D).mesh
-			if m == null:
+	for mi in _instance.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		if m == null:
+			continue
+		for s in m.get_surface_count():
+			var mat := m.surface_get_material(s)
+			if mat == null:
 				continue
-			for s in m.get_surface_count():
-				var mat := m.surface_get_material(s)
-				if mat and mat.resource_name == "M_campana":
-					(mi as MeshInstance3D).set_surface_override_material(s, _bell)
+			if mat.resource_name == "M_campana" and _bell:
+				(mi as MeshInstance3D).set_surface_override_material(s, _bell)
+			elif mat.resource_name == "M_tentacoli" and tentacle_material:
+				(mi as MeshInstance3D).set_surface_override_material(s, tentacle_material)
