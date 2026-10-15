@@ -279,11 +279,8 @@ func _pool() -> void:
 	own(puddle, pool)
 	# L'acqua vera (addon acqua): superficie torbida con riflessi, gorgo sullo scarico.
 	_water_link(pool, "AcquaPozza", puddle, "res://addons/acqua/presets/stile_2_torbida.tres", true)
-	var vortex: MeshInstance3D = load("res://scripts/environment/drain_vortex.gd").new()
-	vortex.name = "Gorgo"
-	vortex.set(&"tank", puddle)
-	vortex.position = Vector3(DRAIN.x, DRAIN.y + 0.3, DRAIN.z + 1.25)
-	own(vortex, pool)
+	# Il gorgo sullo scarico lo disegna l'acqua dell'addon (WaterTankLink) quando lo scarico è
+	# aperto: lo scarico è al centro della pozza, quindi drain_offset resta zero.
 	# Turbina dello scarico in alto sulla parete sud (nel modello: qui si fa girare la sua
 	# girante), bloccata da un gonfiabile.
 	var turbine: Turbine = S.turbine.instantiate()

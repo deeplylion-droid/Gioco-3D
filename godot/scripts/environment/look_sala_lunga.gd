@@ -11,8 +11,8 @@ const SALA_LUNGA_CENTRO := Vector3(0.0, 7.5, -2.0)
 const SALA_LUNGA_DIMENSIONI := Vector3(41.0, 21.0, 45.0)
 
 @export_group("Monumento")
-@export var energia_fari := 6.5
-@export var energia_faretti_bassi := 1.4
+@export var energia_fari := 9.5
+@export var energia_faretti_bassi := 0.6
 ## Materiali che si accendono con i lampi (per esempio il vetro della cupola).
 @export var materiali_lampo: Array[ShaderMaterial] = []
 

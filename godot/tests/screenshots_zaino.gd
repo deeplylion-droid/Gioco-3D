@@ -10,6 +10,9 @@ const LEVEL := "res://scenes/sala_principale.tscn"
 var out_dir := "user://screenshots_zaino"
 var preset := "ultra"
 var settle := 40
+## Solo un'inquadratura (rastrelliera, spruzzo, aspirazione) o tutte: sul renderer software
+## conviene un processo per inquadratura (la memoria cresce a ogni nuova vista).
+var only := ""
 
 
 func _ready() -> void:
@@ -20,6 +23,8 @@ func _ready() -> void:
 		preset = args[2]
 	if args.size() > 3:
 		settle = int(args[3])
+	if args.size() > 4:
+		only = args[4]
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	_run.call_deferred()
 
@@ -55,15 +60,22 @@ func _run() -> void:
 	(level.get_node("Statua/Sfarfallio") as FlickerLight).turn_on()
 	# 1) Lo zaino sulla rastrelliera dei bagnini, all'ingresso.
 	var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
-	p.teleport(Vector3(3.7, 0, 17.9), 0.0, 0.0)
-	p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
-	await _frames(settle)
-	await _capture("zaino_sulla_rastrelliera")
+	if only == "" or only == "rastrelliera":
+		p.teleport(Vector3(3.7, 0, 17.9), 0.0, 0.0)
+		p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
+		await _frames(settle)
+		await _capture("zaino_sulla_rastrelliera")
+		if only != "":
+			get_tree().quit()
+			return
 	(level.get_node("PostazioneBagnini/Zaino/Prendi") as PackPickup).interact(p)
-	await _frames(40)
+	await _frames(40 if only == "" else 2)
 	# 2) La pistola in mano mentre spruzza sulla turbina dello scarico (gonfiabile già caduto).
 	var turbine: Turbine = level.get_node("Piscina/TurbinaScarico")
 	(level.get_node("Piscina/GonfiabileIncastrato") as StuckInflatable).release(Vector3(0, 0, -1))
+	if only == "aspirazione":
+		await _suck_shot(p)
+		return
 	p.water_pack.set_tank_amount(18.0)
 	p.teleport(Vector3(2.6, -1.95, 1.6), PI, 0.0)
 	await _frames(10)
@@ -73,8 +85,15 @@ func _run() -> void:
 	await _frames(50)
 	await _capture("pistola_spruzza_turbina")
 	Input.action_release("spray")
+	if only == "spruzzo":
+		get_tree().quit()
+		return
 	await _frames(10)
-	# 3) La pistola in mano mentre aspira dalla pozza.
+	await _suck_shot(p)
+
+
+## 3) La pistola in mano mentre aspira dalla pozza.
+func _suck_shot(p: Player) -> void:
 	p.water_pack.set_tank_amount(4.0)
 	p.teleport(Vector3(-2.5, -1.95, -0.4), PI, 0.0)
 	await _frames(10)
