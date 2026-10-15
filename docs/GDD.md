@@ -57,6 +57,13 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - La luce della torcia è troppo forte e brutta: va studiata diversamente.
 - I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
 
+## Principi di livello (deciso dall'utente, 15 ottobre)
+
+- **Il giocatore deve sentirsi guidato**: obiettivi chiari e oggetti da usare ben segnalati.
+- **Niente backtracking**: non si torna indietro per strade già fatte.
+- **Sempre un ambiente nuovo**: dopo ogni parte si entra in un posto mai visto, per esempio passando un cancello importante rimasto chiuso fino a quel momento.
+- Le risposte al questionario del 15 ottobre sono in `docs/riscontri/2026-10-15_questionario.md`.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
