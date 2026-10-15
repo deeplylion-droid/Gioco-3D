@@ -32,7 +32,7 @@ const PREDEFINITI := {
 	"risoluzione": 0,           # indice in RISOLUZIONI (solo in finestra)
 	"vsync": 1,                 # 0 no, 1 sì, 2 adattivo, 3 mailbox
 	"limite_fps": 0,            # 0 = nessun limite
-	"fov": 75.0,
+	"fov": 62.0,                # verticale (circa 92° orizzontali in 16:9)
 	# Resa (dal preset)
 	"scala_rendering": 1.0,
 	"upscaler": 0,              # 0 bilineare, 1 FSR 1, 2 FSR 2
@@ -58,6 +58,10 @@ const PREDEFINITI := {
 	"aberrazione": true,
 	"riduci_lampi": false,      # accessibilità: lampi più deboli e senza sfarfallio
 	"calibrato": false,         # true dopo la prima calibrazione della luminosità
+	# Controlli (li legge il controller del giocatore)
+	"sensibilita_mouse": 1.0,   # moltiplicatore
+	"inverti_y": false,
+	"oscillazione_camera": true,
 }
 
 const PRESET := {
@@ -179,6 +183,11 @@ func salva() -> void:
 	for k in valori:
 		cfg.set_value(SEZIONE, k, valori[k])
 	cfg.save(PERCORSO)
+
+
+## Campo visivo orizzontale (gradi) corrispondente a un FOV verticale, per un rapporto dato.
+static func fov_orizzontale(fov_verticale: float, rapporto := 16.0 / 9.0) -> float:
+	return rad_to_deg(2.0 * atan(tan(deg_to_rad(fov_verticale) / 2.0) * rapporto))
 
 
 ## Moltiplicatore dei lampi per l'opzione di accessibilità.
