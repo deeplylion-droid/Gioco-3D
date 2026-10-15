@@ -43,7 +43,7 @@ MESHY_API_KEY=... python3 tools/blender/ambienti2_meshy.py      # scrivania, mon
   - `SCHEMA_pompe`: lo schema a colori sul muro.
 - **Acqua**: tutti gli oggetti `ACQUA_*` hanno un materiale segnaposto. Lo shader vero lo fa l'agente dell'acqua. Le strisce `ACQUA_scorre_*` dentro i tubi hanno la U lungo il tubo (1 = 5 m) e l'extra `velocita_m_s`.
 - **Segnaposto (Empty)**: `VAPORE_*` (vapore), `ARIA_*` (soffi d'aria dalle bocchette), `PUNTO_*` (punti utili: porte, scala, monitor), `USCITA*` (aggancio dei moduli di tubo).
-- **Luci**: sono nel GLB (KHR_lights_punctual), ma l'intensità va rivista in Godot. Le luci rosse d'emergenza sono `LUCE_rossa_*`, i neon `LUCE_neon_*`.
+- **Luci**: le puntiformi e gli spot sono nel GLB (KHR_lights_punctual), ma l'intensità va rivista in Godot (rosse d'emergenza `LUCE_rossa_*`: `light_energy` 2-3, `omni_range` 6). Le luci ad area (neon, schermo del CRT) il glTF non le porta: in Godot vanno messe sui tubi al neon (`neon_*`, emissivi) e sullo `SCHERMO_CRT`. Verificato l'import in Godot 4.7.2: nodi, perni e luci arrivano giusti.
 - **Volumi di nebbia e vapore** servono solo ai render: in Godot c'è la nebbia volumetrica.
 
 ## Colori
