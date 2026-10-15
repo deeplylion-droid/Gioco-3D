@@ -73,7 +73,7 @@ coping, gomiti in fuori; la campana brilla sott'acqua, schiacciata e allargata.
 - **Aspetto bagnato** (solo questa scena): materiali alternativi da applicare in override al posto di quelli
   normali, senza cambiare le texture: `medusa_pelle_bagnata.tres` (superficie 0 di `Medusa`),
   `medusa_capelli_bagnata.tres` (superficie 1), `medusa_orbita_bagnata.tres` (superficie 3),
-  `medusa_mani_bagnata.tres` (`Medusa_Mani`), `medusa_ciocche_bagnata.tres` (`Medusa_Ciocche`: punte piu' scure
+  `medusa_mani_bagnata.tres` (`Medusa_Mani`), `medusa_ciocche_bagnata.tres` (`Medusa_Ciocche`: punte appena piu' scure
   e lucide) e `medusa_tentacoli_bagnata.tres` (`Medusa_Tentacoli` e superficie 0 di `Medusa_Bordo`).
 - Le gocce (punte dei capelli, mento, dita, tentacoli sul bordo) sono particelle del motore. La fisica dei
   tentacoli resta spenta in questa posa.
@@ -91,9 +91,10 @@ chiare, pieghe un po' piu' scure): per la tinta del gioco usa `medusa_mani.tres`
 
 ## Occhio: versione malvagia (`venatura`)
 
-`medusa_occhio.tres` (shader `medusa_occhio.gdshader`) su `Medusa_Occhio` mescola l'occhio calmo e quello venato
-(capillari rossi dal bordo della sclera verso l'iride, sclera ingiallita, iride piu' accesa) con il parametro
-`venatura` da 0 (calma, come nel glTF) a 1. In gioco si puo' animare quando attacca:
+`medusa_occhio.tres` (shader `medusa_occhio.gdshader`) su `Medusa_Occhio` mescola l'occhio calmo
+(`occhio_bulbo_calmo.png`: iride rosa-lilla, sclera bianca pulita) e quello venato (`occhio_bulbo_venato.png`:
+capillari rossi dal bordo della sclera verso l'iride, sclera ingiallita, iride magenta piu' accesa) con il parametro
+`venatura` da 0 (calma, come nel glTF) a 1. `occhio_bulbo_basecolor.png` e' il vecchio disegno, non serve piu'. In gioco si puo' animare quando attacca:
 `$Medusa_Occhio.get_surface_override_material(0).set_shader_parameter("venatura", v)`.
 
 ## Campana: gelatina trasparente, canali luminosi, struttura interna, bordo
@@ -134,8 +135,9 @@ controluce, bordo luminoso e lacca) usa `medusa_tentacoli.tres`, come per la cam
 ## Capelli
 
 Il volume dei capelli fa da fondo (superficie `M_capelli` della mesh `Medusa`); sopra ci sono le ciocche
-separate (`Medusa_Ciocche`, materiale `M_ciocche`): il colore viene dal colore dei vertici (preso dalla texture
-dei capelli) moltiplicato per le fibre, con le punte rosa traslucide. Per il lucido bagnato usa
+separate (`Medusa_Ciocche`, materiale `M_ciocche`): il colore viene dal colore dei vertici moltiplicato per le
+fibre, con le punte rosa traslucide. Colore argento-rosa come nel concept: argento chiaro in alto, qualche ciocca
+piu' rosata, rosa in basso e sulle punte; il volume sotto ha la stessa tinta, un po' piu' scura. Per il lucido bagnato usa
 `medusa_ciocche.tres` (stesso modo: Use External su `M_ciocche`).
 
 Subsurface scattering e refrazione funzionano con il renderer Forward+.

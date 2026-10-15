@@ -289,7 +289,7 @@ def prepara_finale():
     for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS, TENT.TEX_TENT_BASE, TENT.TEX_TENT_EMIS, TENT.TEX_TENT_NORMAL,
               CAP.TEX_CIOCCHE, CAP.TEX_CIOCCHE_N, CAP.TEX_CIOCCHE_E,
               os.path.join(TEX, 'medusa_colore_4k.jpg'), os.path.join(TEX, 'medusa_normal_4k.jpg'),
-              os.path.join(TEX, 'occhio_bulbo_basecolor.png'), os.path.join(TEX, 'occhio_bulbo_venato.png')):
+              os.path.join(TEX, 'occhio_bulbo_calmo.png'), os.path.join(TEX, 'occhio_bulbo_venato.png')):
         if os.path.exists(t):
             shutil.copy(t, os.path.join(gd, os.path.basename(t)))
     togli_slot_vuoti(corpo)

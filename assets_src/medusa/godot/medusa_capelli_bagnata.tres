@@ -5,7 +5,7 @@
 
 [resource]
 resource_name = "M_capelli_bagnata"
-albedo_color = Color(0.62, 0.62, 0.68, 1)
+albedo_color = Color(0.88, 0.88, 0.9, 1)
 albedo_texture = ExtResource("1_colore")
 roughness = 0.16
 metallic_specular = 0.6

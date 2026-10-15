@@ -10,11 +10,12 @@ Cuoce con Cycles, nell'atlante UV del corpo, colore, normal map e ruvidita' con 
 Gli attributi di vertice che servono (occlusione, coordinate delle ciocche, distanza dalle giunture, viso)
 si calcolano qui sulla posa statua; i motivi fini li disegna lo shader durante la cottura.
 Scrive tex/medusa_colore_4k.jpg, tex/medusa_normal_4k.jpg, tex/medusa_ruvidezza_4k.jpg (G = ruvidita',
-B = metallo) e aggiorna build/medusa_finale.blend (materiali del corpo con le nuove texture).
+B = metallo) e aggiorna build/medusa_finale.blend (materiali del corpo con le nuove texture). Nel colore, il volume
+dei capelli prende poi l'argento-rosa delle ciocche (medusa_capelli.ricolora_atlante, dal PNG della cottura).
 
 Uso: flock /home/user/tools/render.lock nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_08_dettagli.py
-     con --solo-materiali non cuoce: ricollega ai materiali le texture gia' fatte (dopo un passo 7 che ha
-     cambiato solo pose e animazioni).
+     con --solo-materiali non cuoce: rifa' il colore dei capelli nell'atlante e ricollega ai materiali le
+     texture gia' fatte (dopo un passo 7 che ha cambiato solo pose, animazioni o colori).
 """
 import os
 import sys
@@ -22,6 +23,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
+import medusa_capelli as CAPELLI  # noqa: E402
 
 LATO = int(os.environ.get('MEDUSA_LATO_DETTAGLI', '4096'))
 TEX_COLORE = os.path.join(TEX, 'medusa_colore_4k.jpg')
@@ -31,6 +33,7 @@ TEX_RUVIDO = os.path.join(TEX, 'medusa_ruvidezza_4k.jpg')
 # di nuovo sopra il proprio risultato)
 SORGENTE_BASE = os.path.join(BUILD, 'medusa_base_4k.png')
 SORGENTE_NORMAL = os.path.join(BUILD, 'medusa_normal_4k.png')
+COTTA_COLORE = os.path.join(BUILD, 'medusa_colore_cotta_4k.png')     # colore appena cotto (prima dei capelli)
 USURA = 1.0             # quantita' di usura (0 = statua nuova)
 CORPO = ('M_pelle', 'M_capelli', 'M_campana', 'M_orbita')
 RUVIDO_BASE = {'M_pelle': 0.13, 'M_capelli': 0.3, 'M_campana': 0.1, 'M_orbita': 0.06}   # orbita: bagnata
@@ -541,9 +544,10 @@ def main():
     if '--solo-materiali' in sys.argv:
         # le texture finali ci sono gia' (la cottura dipende solo dalla posa statua): dopo un passo 7 che ha
         # cambiato solo le animazioni basta ricollegarle ai materiali
-        for t in (TEX_COLORE, TEX_NORMAL, TEX_RUVIDO):
+        for t in (TEX_COLORE, TEX_NORMAL, TEX_RUVIDO, COTTA_COLORE):
             if not os.path.exists(t):
                 raise SystemExit(f'manca {t}: serve la cottura completa')
+        CAPELLI.ricolora_atlante(COTTA_COLORE, TEX_COLORE)
         aggiorna_materiali()
         salva(finale)
         log(f'materiali aggiornati senza cottura in {time.time() - t0:.0f} s')
@@ -580,6 +584,7 @@ def main():
     _attributo(me, 'unghia', campo_unghie(ob, arm, k))
     img = cuoci(ob, k)
     salva_texture(img)
+    CAPELLI.ricolora_atlante(COTTA_COLORE, TEX_COLORE)
     aggiorna_materiali()
     for tr, m in mute:
         tr.mute = m

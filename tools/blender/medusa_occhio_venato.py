@@ -1,11 +1,14 @@
-"""Occhio venato (versione malvagia): texture e parametro 'venatura' del materiale dell'occhio.
+"""Occhio calmo e occhio venato (versione malvagia): texture e parametro 'venatura' del materiale dell'occhio.
 
-La texture tex/occhio_bulbo_venato.png nasce da quella calma (tex/occhio_bulbo_basecolor.png, stessa
-proiezione: iride al centro, sclera intorno):
+Occhio calmo, tex/occhio_bulbo_calmo.png: nasce dal disegno del passo 3 (tex/occhio_bulbo_basecolor.png, che resta
+com'e'; stessa proiezione: iride al centro, sclera intorno). Con la luce neutra quel disegno si legge rosso:
+qui l'iride va verso il rosa-lilla (tinta spostata verso il viola, un po' piu' chiara, raggi meno contrastati),
+anello e pupilla prugna, e la sclera diventa bianca pulita (restano le punte scure intorno all'iride).
+Occhio venato, tex/occhio_bulbo_venato.png, nasce da quello calmo:
   - capillari rossi che partono dal bordo della sclera e vanno verso l'iride, ramificati, piu' fitti ai bordi
     e sempre piu' sottili verso l'iride, con un alone rosato intorno (occhio iniettato di sangue);
   - sclera un po' ingiallita, di piu' verso il bordo;
-  - iride rosa piu' accesa (piu' satura e un po' piu' luminosa).
+  - iride piu' accesa: torna verso il magenta, piu' satura e un po' piu' luminosa.
 Il materiale M_occhio_bulbo mescola le due texture con il valore 'venatura' (0 = calma, 1 = malvagia): in Blender
 e' un nodo Value con quel nome, in Godot il parametro dello shader medusa_occhio.gdshader. Nella calma resta a 0.
 Uso dal passo 7 (materiale_venatura) oppure da solo per rifare la texture.
@@ -17,9 +20,12 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
 
-TEX_CALMO = os.path.join(TEX, 'occhio_bulbo_basecolor.png')
+TEX_DISEGNO = os.path.join(TEX, 'occhio_bulbo_basecolor.png')      # disegno del passo 3 (non si tocca)
+TEX_CALMO = os.path.join(TEX, 'occhio_bulbo_calmo.png')
 TEX_VENATO = os.path.join(TEX, 'occhio_bulbo_venato.png')
 R_IRIDE = 0.358         # raggio esterno dell'anello dell'iride (frazione del lato della texture)
+TINTA_CALMA = -15.0     # gradi: l'iride dal rosa-magenta verso il rosa-lilla
+SCLERA = (0.95, 0.945, 0.96)
 
 
 def _smooth(a, b, x):
@@ -27,9 +33,41 @@ def _smooth(a, b, x):
     return t * t * (3 - 2 * t)
 
 
+def crea_calmo():
+    """Occhio calmo dal disegno del passo 3: iride rosa-lilla, sclera bianca pulita."""
+    import cv2
+    from PIL import Image
+    base = np.asarray(Image.open(TEX_DISEGNO).convert('RGB')).astype(np.float32) / 255.0
+    H = base.shape[0]
+    c = H / 2.0
+    yy, xx = np.mgrid[0:H, 0:H]
+    r = np.hypot(xx - c, yy - c) / H
+    hsv = cv2.cvtColor(base, cv2.COLOR_RGB2HSV)            # H in gradi, S e V 0..1
+    # disegno (iride, anello, punte) contro sclera: la sclera e' chiara e poco satura
+    disegno = np.maximum(_smooth(0.24, 0.38, hsv[..., 1]), _smooth(0.78, 0.62, hsv[..., 2]))
+    disegno = np.maximum(disegno, 1 - _smooth(R_IRIDE - 0.01, R_IRIDE + 0.012, r))
+    # iride: tinta verso il viola, un po' meno satura, parti chiare un po' piu' chiare
+    h = (hsv[..., 0] + TINTA_CALMA) % 360.0
+    s = hsv[..., 1] * 0.82
+    v = hsv[..., 2] + (1 - hsv[..., 2]) * 0.16 * _smooth(0.45, 0.8, hsv[..., 2])
+    iride = cv2.cvtColor(np.dstack([h, s, v]).astype(np.float32), cv2.COLOR_HSV2RGB)
+    # raggi un po' meno contrastati (solo nella parte chiara dell'iride)
+    morbida = cv2.GaussianBlur(iride, (0, 0), 2.5)
+    chiara = _smooth(0.5, 0.75, v)[..., None] * (1 - _smooth(R_IRIDE - 0.05, R_IRIDE - 0.02, r))[..., None]
+    iride = iride * (1 - 0.35 * chiara) + morbida * 0.35 * chiara
+    # sclera bianca pulita (un filo d'ombra verso il bordo del bulbo, che sta nell'orbita)
+    bianco = np.array(SCLERA, np.float32) * (1 - 0.04 * _smooth(0.42, 0.5, r))[..., None]
+    out = iride * disegno[..., None] + bianco * (1 - disegno[..., None])
+    Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8)).save(TEX_CALMO)
+    log('occhio calmo:', os.path.relpath(TEX_CALMO, REPO))
+    return TEX_CALMO
+
+
 def crea_texture(seme=7):
     import cv2
     from PIL import Image
+    if not os.path.exists(TEX_CALMO):
+        crea_calmo()
     base = np.asarray(Image.open(TEX_CALMO).convert('RGB')).astype(np.float32) / 255.0
     H = base.shape[0]
     c = H / 2.0
@@ -81,10 +119,11 @@ def crea_texture(seme=7):
     rosso = np.array([0.55, 0.035, 0.06], np.float32)
     v = np.clip(vene, 0, 1) * sclera
     out = out * (1 - v[..., None]) + rosso * v[..., None]
-    # iride piu' accesa
+    # iride piu' accesa: torna verso il magenta, piu' satura
     hsv = cv2.cvtColor(np.clip(out, 0, 1).astype(np.float32), cv2.COLOR_RGB2HSV)
     iride = 1 - sclera
-    hsv[..., 1] = np.clip(hsv[..., 1] * (1 + 0.45 * iride), 0, 1)
+    hsv[..., 0] = (hsv[..., 0] - 1.3 * TINTA_CALMA * iride) % 360.0
+    hsv[..., 1] = np.clip(hsv[..., 1] * (1 + 0.55 * iride), 0, 1)
     hsv[..., 2] = np.clip(hsv[..., 2] * (1 + 0.12 * iride), 0, 1)
     out = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
     Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8)).save(TEX_VENATO)
@@ -94,12 +133,15 @@ def crea_texture(seme=7):
 
 def materiale_venatura():
     """M_occhio_bulbo: colore = mix(texture calma, texture venata, venatura); anche la luce propria."""
-    if not os.path.exists(TEX_VENATO):
+    if not os.path.exists(TEX_CALMO):
+        crea_calmo()
+    if not os.path.exists(TEX_VENATO) or os.path.getmtime(TEX_VENATO) < os.path.getmtime(TEX_CALMO):
         crea_texture()
     m = bpy.data.materials['M_occhio_bulbo']
     nt = m.node_tree
     b = nt.nodes['BSDF']
     base = nt.nodes['base']
+    base.image = immagine(TEX_CALMO)
     ven = nt.nodes.get('base_venata') or nodo(nt, 'ShaderNodeTexImage', (base.location.x, base.location.y - 320))
     ven.name = 'base_venata'
     ven.image = immagine(TEX_VENATO)
@@ -120,4 +162,5 @@ def materiale_venatura():
 
 
 if __name__ == '__main__':
+    crea_calmo()
     crea_texture()

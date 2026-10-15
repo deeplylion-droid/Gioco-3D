@@ -495,7 +495,8 @@ def vasca_sala(acqua=True):
 
 def materiali_bagnati():
     """Aspetto bagnato solo per la scena della vasca (in Godot: i materiali *_bagnata.tres): pelle e mani piu'
-    lucide, capelli piu' scuri e lucidi in punta, tentacoli lucidi."""
+    lucide, capelli lucidi e appena piu' scuri in punta (restano argento-rosa chiari, come nel concept), tentacoli
+    lucidi."""
     def _ruvido_per(m, f):
         nt = m.node_tree
         b = nt.nodes['BSDF']
@@ -535,7 +536,7 @@ def materiali_bagnati():
         b = _ruvido_per(m, 0.6)
         b.inputs['Coat Weight'].default_value = 0.8
         b.inputs['Coat Roughness'].default_value = 0.03
-        _scurisci(m, 0.7)
+        _scurisci(m, 0.88)
     m = bpy.data.materials.get('M_ciocche')
     if m:
         nt = m.node_tree
@@ -546,7 +547,7 @@ def materiali_bagnati():
         mr = nt.nodes.new('ShaderNodeMapRange'); mr.interpolation_type = 'SMOOTHSTEP'
         mr.inputs['From Min'].default_value = 0.35; mr.inputs['From Max'].default_value = 1.0
         nt.links.new(sep.outputs['Y'], mr.inputs['Value'])          # v: 0 alla radice, 1 in punta
-        mix = _scurisci(m, 0.52)
+        mix = _scurisci(m, 0.82)
         nt.links.new(mr.outputs['Result'], mix.inputs['Factor'])
         rr = nt.nodes.new('ShaderNodeMapRange')
         rr.inputs['To Min'].default_value = 0.16; rr.inputs['To Max'].default_value = 0.07
