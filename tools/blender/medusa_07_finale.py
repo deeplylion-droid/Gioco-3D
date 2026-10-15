@@ -17,7 +17,8 @@
     il corpo sale di SOLLEVA metri e i tentacoli si staccano dal piano e pendono), "fluttua" (ciclo: corpo
     sospeso che ondeggia, campana che pulsa, tentacoli che ondeggiano), "insegue" (ciclo: braccia protese,
     tentacoli indietro) e "fauce_apre" (mascella + blend shape). Le azioni da sveglia hanno il corpo alla
-    stessa altezza, cosi' si fondono bene;
+    stessa altezza, cosi' si fondono bene. Piu' "affacciata" (medusa_affacciata.py): la medusa vera nella vasca
+    sollevata della sala centrale, mani sul bordo, tentacoli che ricadono fuori, immobile con un respiro;
   - alla fine tutto passa alla SCALA VERA della statua (ALTEZZA_STATUA = 4,5 m dal piano dei tentacoli alla
     cima della testa, piano a z = 0): scala_reale.
 Le texture finali del corpo (usura, ciocche dei capelli, giunture da bambola) le fa il passo 8.
@@ -34,6 +35,7 @@ from medusa_comune import *  # noqa: E402,F401
 import medusa_05_tentacoli as TENT  # noqa: E402
 import medusa_campana_interna as INTERNO  # noqa: E402
 import medusa_capelli as CAPELLI  # noqa: E402
+import medusa_affacciata as AFF  # noqa: E402
 import medusa_fauce as FAUCE  # noqa: E402
 import medusa_pose as POSE  # noqa: E402
 
@@ -308,6 +310,9 @@ def _nla(id_data, nome, action):
     st = tr.strips.new(nome, int(action.frame_range[0]), action)
     st.name = nome
     ad.action = None
+    # muta mentre si scrivono le altre azioni (le tracce attive rimetterebbero i loro valori nella posa):
+    # alla fine del passo si riattivano tutte
+    tr.mute = True
     return tr
 
 
@@ -652,9 +657,17 @@ def main():
     azione_insegue(arm)
     azione_fluttua(arm, corpo)
     azione_fauce(arm)
+    # sala centrale: la medusa vera affacciata alla vasca (stessa scala vera della statua)
+    k_vero = ALTEZZA_STATUA / (coords(corpo.data)[:, 2].max() - TENT.STATUA['z_pavimento'])
+    AFF.azione_affacciata(arm, k_vero, TENT.STATUA['z_pavimento'], _chiave_posa, _nla)
     bpy.ops.object.mode_set(mode='OBJECT')
     for m in mods:
         m.show_viewport = True
+    for i in list(bpy.data.objects) + list(bpy.data.shape_keys):
+        if i.animation_data:
+            for tr in i.animation_data.nla_tracks:
+                tr.mute = False
+    POSE.azzera(arm)
     scala_reale(arm)
     bpy.context.scene.render.fps = FPS
     salva(os.path.join(BUILD, 'medusa_finale.blend'))

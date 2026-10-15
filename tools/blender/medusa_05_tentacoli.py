@@ -123,9 +123,10 @@ def togli_moncherini(ob):
             f.material_index = idx_c
             f.smooth = True
             if uv:
-                f.loops[0][uv].uv = uvs[(i + 1) % len(anello)]
-                f.loops[1][uv].uv = uvs[i]
-                f.loops[2][uv].uv = uv_c
+                # toppa nascosta sotto la campana: UV ridotte a un punto (i vertici dell'anello possono stare in
+                # isole diverse dell'atlante: un triangolo UV enorme sporcherebbe le texture cotte)
+                for lp in f.loops:
+                    lp[uv].uv = uvs[0]
             nuove.append(f)
     bmesh.ops.recalc_face_normals(bm, faces=nuove)
     # normali delle toppe verso il basso (fuori dalla campana)

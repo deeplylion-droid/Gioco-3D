@@ -25,6 +25,10 @@ LATO = int(os.environ.get('MEDUSA_LATO_DETTAGLI', '4096'))
 TEX_COLORE = os.path.join(TEX, 'medusa_colore_4k.jpg')
 TEX_NORMAL = os.path.join(TEX, 'medusa_normal_4k.jpg')
 TEX_RUVIDO = os.path.join(TEX, 'medusa_ruvidezza_4k.jpg')
+# sorgenti della cottura: le texture intermedie del passo 2b (sempre queste, cosi' rifare il passo 8 non cuoce
+# di nuovo sopra il proprio risultato)
+SORGENTE_BASE = os.path.join(BUILD, 'medusa_base_4k.png')
+SORGENTE_NORMAL = os.path.join(BUILD, 'medusa_normal_4k.png')
 USURA = 1.0             # quantita' di usura (0 = statua nuova)
 CORPO = ('M_pelle', 'M_capelli', 'M_campana', 'M_orbita')
 RUVIDO_BASE = {'M_pelle': 0.13, 'M_capelli': 0.3, 'M_campana': 0.1, 'M_orbita': 0.06}   # orbita: bagnata
@@ -264,6 +268,8 @@ def materiale_cottura(m, k, usura):
     mc = m.copy()
     mc.name = m.name + '_cottura'
     nt = mc.node_tree
+    nt.nodes['base'].image = immagine(SORGENTE_BASE)
+    nt.nodes['normal'].image = immagine(SORGENTE_NORMAL, non_color=True)
     for n in list(nt.nodes):
         if n.name not in ('base', 'normal'):
             nt.nodes.remove(n)
@@ -484,11 +490,12 @@ def cuoci(ob, k):
 
 
 def salva_texture(img):
-    """PNG in build/, poi JPG in tex/ (colore q92; normal q95 senza sottocampionamento del colore)."""
+    """PNG in build/ (nomi diversi dalle sorgenti del passo 2b), poi JPG in tex/ (colore q92; normal q95 senza
+    sottocampionamento del colore)."""
     from PIL import Image
     uscite = {'colore': (TEX_COLORE, 92), 'ruvido': (TEX_RUVIDO, 90), 'normal': (TEX_NORMAL, 95)}
     for nome, im in img.items():
-        png = os.path.join(BUILD, f'medusa_{nome}_4k.png')
+        png = os.path.join(BUILD, f'medusa_{nome}_cotta_4k.png')
         im.filepath_raw = png
         im.file_format = 'PNG'
         im.save()
@@ -531,6 +538,19 @@ def main():
     arm = bpy.data.objects['Medusa_Scheletro']
     ob = bpy.data.objects['Medusa']
     k = float(arm.get('scala', 1.0))
+    # si cuoce nella posa di riposo (la statua): le tracce delle animazioni restano mute durante la cottura
+    mute = []
+    for i in list(bpy.data.objects) + list(bpy.data.shape_keys):
+        if i.animation_data:
+            for tr in i.animation_data.nla_tracks:
+                mute.append((tr, tr.mute))
+                tr.mute = True
+    for pb in arm.pose.bones:
+        pb.matrix_basis = Matrix()
+    for kb in (ob.data.shape_keys.key_blocks if ob.data.shape_keys else []):
+        kb.value = 0.0
+    bpy.context.scene.frame_set(1)
+    bpy.context.view_layer.update()
     me = ob.data
     t = time.time()
     _attributo(me, 'ao', occlusione(ob, dist=0.35 * k))
@@ -548,6 +568,8 @@ def main():
     img = cuoci(ob, k)
     salva_texture(img)
     aggiorna_materiali()
+    for tr, m in mute:
+        tr.mute = m
     for a in ('ao', 'ciocca_c', 'ciocca_s', 'ciocca_d', 'giuntura', 'viso', 'clavicola', 'unghia'):
         if a in me.attributes:
             me.attributes.remove(me.attributes[a])

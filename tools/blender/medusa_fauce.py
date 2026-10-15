@@ -412,7 +412,12 @@ def apri_fauce(arm, f=1.0):
     """Posa della mascella aperta (frazione f) + shape key: per i render e per l'animazione."""
     pb = arm.pose.bones['mascella']
     rest = arm.data.bones['mascella'].matrix_local
-    pb.matrix = matrice_apertura(f) @ rest
+    # l'apertura e' definita a riposo: se la testa e' in posa (busto in avanti, corpo sollevato) la mascella
+    # la segue, altrimenti resterebbe indietro staccata dalla testa
+    bpy.context.view_layer.update()
+    pt = arm.pose.bones[arm.data.bones['mascella'].parent.name]
+    D = pt.matrix @ arm.data.bones[pt.name].matrix_local.inverted()
+    pb.matrix = D @ matrice_apertura(f) @ rest
     bpy.context.view_layer.update()
     for nome, key in (('Medusa', 'fauce_strappo'), ('Medusa_Gola', 'fauce_aperta'), ('Medusa_Denti', 'fauce_aperta')):
         ob = bpy.data.objects.get(nome)

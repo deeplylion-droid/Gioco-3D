@@ -386,7 +386,136 @@ def giocatore_piedi():
     return salva_jpg(png, nome_jpg('5b_giocatore_ai_piedi'))
 
 
+# ---------------------------------------------------------------- sala centrale: la medusa affacciata alla vasca
+
+def mat_piastrelle_vasca():
+    """Piastrelle quadrate blu scuro e crema, consumate (come nel concept medusa_sbircia.jpg)."""
+    m, nt, b = mat_semplice('piastrelle_vasca', (0.05, 0.08, 0.16), 0.2)
+    tc = nt.nodes.new('ShaderNodeTexCoord')
+    ck = nt.nodes.new('ShaderNodeTexChecker')
+    ck.inputs['Scale'].default_value = 6.0
+    ck.inputs['Color1'].default_value = (0.03, 0.06, 0.16, 1)
+    ck.inputs['Color2'].default_value = (0.55, 0.52, 0.45, 1)
+    nt.links.new(tc.outputs['Object'], ck.inputs['Vector'])
+    br = nt.nodes.new('ShaderNodeTexBrick')
+    br.inputs['Scale'].default_value = 6.0
+    br.inputs['Mortar Size'].default_value = 0.012
+    br.inputs['Color1'].default_value = (1, 1, 1, 1)
+    br.inputs['Color2'].default_value = (0.92, 0.92, 0.92, 1)
+    br.inputs['Mortar'].default_value = (0.05, 0.05, 0.05, 1)
+    br.offset = 0.0
+    br.squash = 1.0
+    nt.links.new(tc.outputs['Object'], br.inputs['Vector'])
+    mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'
+    mix.inputs['Factor'].default_value = 1.0
+    nt.links.new(ck.outputs['Color'], mix.inputs['A']); nt.links.new(br.outputs['Color'], mix.inputs['B'])
+    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 3.0
+    sp = nt.nodes.new('ShaderNodeMix'); sp.data_type = 'RGBA'; sp.blend_type = 'MULTIPLY'
+    sp.inputs['Factor'].default_value = 0.5
+    nt.links.new(mix.outputs['Result'], sp.inputs['A']); nt.links.new(noise.outputs['Color'], sp.inputs['B'])
+    nt.links.new(sp.outputs['Result'], b.inputs['Base Color'])
+    return m
+
+
+def vasca_segnaposto():
+    """Vasca a scatola delle misure giuste (segnaposto: la vera la modella l'agente ambiente): bordo a 1,0 m,
+    coping di 0,30 m, muro esterno verticale, fondo a 0, acqua a 0,88 m. Centro nell'origine, davanti verso -Y."""
+    import medusa_affacciata as AFF
+    V = AFF.VASCA
+    est, sp = -V['fuori'], V['dentro'] - V['fuori']
+    m = mat_piastrelle_vasca()
+    for (x0, x1, y0, y1) in ((-est, est, -est, -est + sp), (-est, est, est - sp, est),
+                             (-est, -est + sp, -est + sp, est - sp), (est - sp, est, -est + sp, est - sp),
+                             (-est, est, -est, est)):
+        alto = V['cima'] if (y1 - y0 < 1.0 or x1 - x0 < 1.0) else 0.02
+        bpy.ops.mesh.primitive_cube_add(size=1, location=((x0 + x1) / 2, (y0 + y1) / 2, alto / 2))
+        o = bpy.context.active_object
+        o.scale = (x1 - x0, y1 - y0, alto)
+        bpy.ops.object.transform_apply(scale=True)
+        bev = o.modifiers.new('smusso', 'BEVEL'); bev.width = 0.015; bev.segments = 2
+        o.data.materials.append(m)
+    # acqua: superficie appena mossa, scura e trasparente
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 0, V['acqua']))
+    w = bpy.context.active_object
+    w.name = 'acqua'
+    w.scale = (2 * V['dentro'] * -1, 2 * V['dentro'] * -1, 1)
+    bpy.ops.object.transform_apply(scale=True)
+    bpy.ops.object.modifier_add(type='SUBSURF')
+    w.modifiers[-1].levels = 0
+    mw, nt, b = mat_semplice('acqua', (0.55, 0.75, 0.8), 0.03)
+    b.inputs['Transmission Weight'].default_value = 1.0
+    b.inputs['IOR'].default_value = 1.33
+    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 6.0
+    bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.08
+    nt.links.new(noise.outputs['Fac'], bump.inputs['Height']); nt.links.new(bump.outputs['Normal'], b.inputs['Normal'])
+    w.data.materials.append(mw)
+
+
+VASCA_SALA = os.path.join(BUILD, 'rif', 'sala_vasca_centrale.glb')   # copia della vasca dell'agente ambiente
+SPOSTA_VASCA = 10.15        # la vasca della sala ha il centro in z 10 Godot; il marker della medusa e' in z 10,15
+
+
+def vasca_sala():
+    """La vasca vera della sala (GLB dell'agente ambiente), spostata nel riferimento della medusa; via le mesh di
+    collisione. Acqua a 0,88 dentro il bordo interno."""
+    prima = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=VASCA_SALA)
+    nuovi = [o for o in bpy.data.objects if o not in prima]
+    for o in nuovi:
+        if o.parent is None:
+            o.location.y += SPOSTA_VASCA
+        if 'colonly' in o.name or 'convcol' in o.name:
+            o.hide_render = True
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 0.15, 0.88))
+    w = bpy.context.active_object
+    w.name = 'acqua'
+    w.scale = (5.4, 3.9, 1)
+    bpy.ops.object.transform_apply(scale=True)
+    mw, nt, b = mat_semplice('acqua', (0.55, 0.75, 0.8), 0.03)
+    b.inputs['Transmission Weight'].default_value = 1.0
+    b.inputs['IOR'].default_value = 1.33
+    noise = nt.nodes.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value = 6.0
+    bump = nt.nodes.new('ShaderNodeBump'); bump.inputs['Strength'].default_value = 0.08
+    nt.links.new(noise.outputs['Fac'], bump.inputs['Height']); nt.links.new(bump.outputs['Normal'], b.inputs['Normal'])
+    w.data.materials.append(mw)
+
+
+def scena_vasca():
+    prepara()
+    usa_azione('affacciata', 1)
+    if os.path.exists(VASCA_SALA):
+        vasca_sala()
+    else:
+        vasca_segnaposto()
+    pavimento_piastrelle(0.0)
+    luci_notte((0, -1.0, 1.4), 2.6, nebbia=0.004)
+    # un po' di luce fredda dall'acqua sulla medusa (la campana e' accesa sotto il pelo)
+    luce_area('riflesso_acqua', (0, -2.6, 0.95), (0, -1.0, 2.0), 120, (0.3, 0.7, 1.0), 1.5, 'DISK')
+    imposta()
+
+
+def affacciata_giocatore():
+    """Dal punto di vista del giocatore all'ingresso: a circa 9 m, occhi a 1,7 m."""
+    scena_vasca()
+    camera((0.6, -10.0, 1.7), (0.0, -1.3, 1.6), lens=24)
+    png = render(os.path.join(OUT_PNG, nome_jpg('affacciata_giocatore') + '.png'))
+    return salva_jpg(png, nome_jpg('6_affacciata_9m'))
+
+
+def affacciata_vicino():
+    """Da vicino, basso sul bordo, come il concept medusa_sbircia.jpg."""
+    scena_vasca()
+    # luce morbida sul viso (riflesso freddo dall'acqua e dalle lampade della sala), come nel concept
+    luce_area('viso_freddo', (0.6, -3.6, 2.4), (0, -1.3, 2.1), 110, (0.55, 0.65, 1.0), 1.8, 'DISK')
+    # bassa, appena sopra il bordo: viso, mani aggrappate e tentacoli che passano il bordo e pendono dal muro
+    camera((0.3, -4.4, 1.08), (0.0, -1.5, 1.8), lens=20)
+    png = render(os.path.join(OUT_PNG, nome_jpg('affacciata_vicino') + '.png'))
+    return salva_jpg(png, nome_jpg('6b_affacciata_vicino'))
+
+
 INQUADRATURE = {
+    'affacciata_giocatore': affacciata_giocatore,
+    'affacciata_vicino': affacciata_vicino,
     'statua_intera': statua_intera,
     'tentacoli': tentacoli,
     'viso_capelli': viso_capelli,

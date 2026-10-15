@@ -16,7 +16,7 @@ Godot di prova (build/godot_prova) e stampa ossa, superfici, blend shape e mater
 
 Versione finita: campana con texture RGBA (alfa) ed emissione dei canali cotte nell'atlante UV, gola con un
 gradiente in texture, normal map a 2K (file sotto i 50 MB), tentacoli con le loro texture (colore, emissione,
-normal), animazioni dalle tracce NLA: statua, sveglia, insegue, fluttua, fauce_apre.
+normal), animazioni dalle tracce NLA: statua, sveglia, insegue, fluttua, fauce_apre, affacciata.
 L'origine del GLB e' sul piano d'appoggio dei tentacoli (il piano del piedistallo): la medusa in posa statua
 sta in piedi su y = 0.
 
@@ -278,8 +278,10 @@ def prepara_finale():
     # le stesse texture servono allo shader Godot della campana (assets_src/medusa/godot/)
     gd = os.path.join(ASSET, 'godot')
     os.makedirs(gd, exist_ok=True)
+    # (piu' colore e normal 4K del corpo, usate da medusa_pelle.tres e medusa_orbita.tres)
     for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS, TENT.TEX_TENT_BASE, TENT.TEX_TENT_EMIS, TENT.TEX_TENT_NORMAL,
-              CAP.TEX_CIOCCHE, CAP.TEX_CIOCCHE_N, CAP.TEX_CIOCCHE_E):
+              CAP.TEX_CIOCCHE, CAP.TEX_CIOCCHE_N, CAP.TEX_CIOCCHE_E,
+              os.path.join(TEX, 'medusa_colore_4k.jpg'), os.path.join(TEX, 'medusa_normal_4k.jpg')):
         if os.path.exists(t):
             shutil.copy(t, os.path.join(gd, os.path.basename(t)))
     togli_slot_vuoti(corpo)

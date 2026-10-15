@@ -40,9 +40,35 @@ e' a circa 1,77 m, il busto tra 2,7 e 3,3 m, la cima della testa a 4,5 m.
 - `fluttua` (ciclo di 2 s): sospesa, ondeggia; la campana pulsa e i tentacoli si muovono.
 - `insegue` (ciclo di 1 s): braccia protese, busto in avanti, tentacoli trascinati indietro.
 - `fauce_apre` (1 s): attacco con la fauce che si apre.
+- `affacciata` (ciclo di 4 s): la medusa vera affacciata alla vasca della sala centrale, immobile, con un
+  respiro appena visibile. Vedi sotto.
 
 Le animazioni da sveglia (`sveglia` alla fine, `fluttua`, `insegue`, `fauce_apre`) hanno il corpo alla stessa
 altezza, quindi si possono fondere tra loro. Lo spostamento nel livello lo fa il gioco.
+
+## Sala centrale: la medusa affacciata alla vasca (`affacciata`)
+
+La medusa vera (stesso GLB, stessa scala) dentro la vasca sollevata al centro della sala, come nel concept
+`docs/concept/medusa_sbircia.jpg`: mani sul bordo con le dita aggrappate oltre lo spigolo, busto e testa fuori
+dall'acqua, campana a pelo d'acqua, tentacoli che passano il bordo e ricadono lungo il muro, gli altri
+sott'acqua; testa appena inclinata, occhio fisso su chi entra.
+
+- Marker `medusa_affacciata`: **posizione (0, 0, 10,15), rotazione (0, 0, 0)**, con la vasca
+  `sala_vasca_centrale.glb` centrata in (0, 0, 10). L'origine del GLB va al livello del pavimento della sala,
+  2,1 m dietro il filo esterno del muro davanti (z 12,25); la medusa guarda verso +Z.
+- Animazione `affacciata` (96 fotogrammi, 4 s) da mettere in ciclo (Loop Mode Linear) e far partire subito:
+  tiene tutta la posa, il solo movimento e' il respiro sul petto e sulle spalle.
+- Dove tocca la vasca (coordinate della sala): mani sul coping in x +-0,45, dita oltre lo spigolo esterno fino a
+  z 12,32; vita in (0; 1,2; 11,0); cima della campana a y 1,06 (18 cm sopra l'acqua), bordo della campana
+  sott'acqua a y 0,24-0,34; occhio in (0; 2,37; 11,8), cima della testa a y 2,94.
+- Tentacoli fuori dal bordo: escono dall'acqua lungo il muro interno, si appoggiano sul coping e ricadono lungo
+  il muro davanti. 4 zampe in x -1,62, -1,42, +1,48, +1,68 arrivano al pavimento e ci si allargano (fino a
+  circa 0,3 m davanti al muro); 4 medi in x -0,88, -0,68, +0,66, +0,86 pendono fino a circa 0,45 m da terra,
+  con la punta arricciata. Restano liberi il pulsante (x -0,2..0,2) e i disegni appesi al muro. Gli altri 17
+  tentacoli stanno sott'acqua, dentro la vasca.
+- Le gocce (punte dei capelli, mento, dita, tentacoli sul bordo) sono particelle del motore. La fisica dei
+  tentacoli resta spenta in questa posa.
+- Per far seguire il giocatore all'occhio si ruota l'osso `occhio` da codice, al massimo 15 gradi.
 
 ## Campana: gelatina trasparente, canali luminosi, struttura interna, bordo
 
