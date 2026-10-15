@@ -29,6 +29,8 @@ Già nei file, importate da sole grazie al suffisso `-colonly` (StaticBody3D con
 - `scala_pompe_rampa`: la scala verso la sala pompe è una rampa di 36° (salire i gradini veri non serve).
 - `vetro_rotto_blocco`: chiude il buco del vetro del gabbiotto. **Va messo su un livello che ferma il giocatore ma non il getto d'acqua**, altrimenti il getto non arriva al pulsante.
 
+Attenzione: i suffissi valgono solo con l'import normale dell'editor. Se i file si caricano a runtime con `GLTFDocument` (come in `labs/ambienti1`), le mesh `-colonly` compaiono bianche e vanno nascoste o convertite a mano.
+
 Senza collisione nei file (si muovono: vanno date dal codice): porte, saracinesca, rotore del tornello, anta dell'armadietto che sbatte, grata d'aerazione. Misure sotto.
 
 ## 4. Oggetti che si muovono

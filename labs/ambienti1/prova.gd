@@ -50,6 +50,9 @@ func _ready() -> void:
 func _sistema(n: Node) -> void:
 	for c in n.get_children():
 		_sistema(c)
+	if n is MeshInstance3D and ("colonly" in n.name or "collisione" in n.name or "rampa" in n.name or "blocco" in n.name):
+		# a runtime GLTFDocument non applica i suffissi -colonly dell'import: le nascondo
+		n.visible = false
 	if n is MeshInstance3D and n.name.begins_with("acqua"):
 		# acqua: superficie scura e lucida (in attesa dello shader dell'acqua)
 		var m := StandardMaterial3D.new()
