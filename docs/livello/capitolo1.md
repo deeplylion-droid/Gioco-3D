@@ -101,6 +101,9 @@
 
 ### 4. Area bimbi · 7-15 min
 
+> **Rifatta su richiesta dell'utente (15 ottobre, dopo la v0.3.0).** L'area bimbi della v0.3.0 era "tutta ammassata senza senso" e l'enigma del secchio non si capiva: si rifà da zero, più ordinata. Restano: la struttura di gioco con il secchio gigante (solo scenografia, senza enigma), le vasche basse a scacchi (con la fossa della tappa 8), i funghi-fontana e il festone di lampadine. Prima di costruirla l'utente sceglie tra 2-3 disposizioni. Il testo qui sotto è il piano vecchio.
+
+
 - La zona più colorata: giocattoli saturi dello stile B e pastelli anni '90 dello stile C. Struttura di gioco a più piani, cannoncini ad acqua, funghi-fontana, vasche basse e, in cima, il secchio gigante.
 - **Zaino: "il secchio"**
   - Le scale sono crollate. Col getto fai girare una ruota a pale: si abbassa un ponticello.
@@ -110,6 +113,9 @@
 - **Tensione:** il secchio che si rovescia fa un rumore assordante. L'acqua bagna un quadro elettrico: scintille, e dagli altoparlanti parte la sigla, rallentata e storta. Si spegne a metà.
 
 ### 5. Piscina a onde vuota · 15-21 min
+
+> **Enigma rifatto su richiesta dell'utente (15 ottobre, dopo la v0.3.0).** Quello della v0.3.0 (gonfiabile nella turbina, portello) non si capiva. Ora: in fondo alla piscina a onde, sott'acqua, c'è il **cancello** che porta giù alla camera delle onde. La piscina va **svuotata con lo zaino**: aspiri l'acqua e la spari fuori dalla vasca finché il livello arriva a zero, e allora **il cancello si apre da solo**. L'obiettivo deve essere chiaro: il cancello ha una **luce gialla che lampeggia** (verde quando si apre), la **cornice a strisce gialle e nere** e un **cartello con un disegno, senza scritte**. Prima di costruirlo l'utente sceglie tra due versioni: cancello a griglia nel pavimento, o cancello nel muro in fondo alla vasca. Il testo qui sotto è il piano vecchio.
+
 
 - La grande vasca sotto la cupola, vuota: piastrelle scrostate, giocattoli sul fondo, una rosa dei venti a mosaico. Sopra, la tempesta e i lampi.
 - Entri dalla spiaggia, la parte bassa in pendenza. Nella parte profonda è rimasta solo una pozza d'acqua torbida. La piscina resta vuota.
