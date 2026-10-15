@@ -600,7 +600,8 @@ func _kid_sighting() -> void:
 	shape_box(trig, Vector3(7.0, 4.0, 9.0))
 	var ks: Node3D = load("res://scripts/environment/kid_sighting.gd").new()
 	ks.name = "BambiniBalconata"
-	var models: Array[PackedScene] = [load("res://assets/models/bambini/cubo_calmo.glb"), load("res://assets/models/bambini/agnello_calmo.glb")]
+	# I bambini animati (scenes/creature): ti seguono con la testa mentre sali.
+	var models: Array[PackedScene] = [load("res://scenes/creature/bambino_cubo.tscn"), load("res://scenes/creature/bambino_agnello.tscn")]
 	ks.set(&"models", models)
 	# Sulla balconata ovest, dall'altra parte della sala rispetto alla torre.
 	ks.set(&"spots", PackedVector3Array([Vector3(-18.4, 4.3, -11.2), Vector3(-18.6, 4.3, -9.7),

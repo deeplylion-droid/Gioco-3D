@@ -6,7 +6,7 @@ extends Node3D
 
 signal seen
 
-## I modelli dei bambini (si alternano lungo la fila).
+## I bambini (scene con Bambino, o modelli fermi), alternati lungo la fila.
 @export var models: Array[PackedScene] = []
 ## Dove stanno (coordinate globali, piedi a terra).
 @export var spots := PackedVector3Array()
@@ -44,6 +44,15 @@ func _on_trigger(body: Node3D) -> void:
 			break
 		var kid := models[i % models.size()].instantiate() as Node3D
 		kid.name = "Bambino%d" % (i + 1)
+		if kid is Bambino:
+			# I bambini animati: fermi in fila, ti seguono con la testa; niente fughe (spariscono
+			# col lampo dopo o se ti avvicini).
+			var b := kid as Bambino
+			b.modalita = Bambino.Modalita.OSSERVA
+			b.reazione = Bambino.Reazione.NESSUNA
+			b.gira_il_corpo = false
+			b.scappa_con_la_torcia = false
+			b.distanza_fuga = 0.0
 		add_child(kid)
 		kid.global_position = spots[i]
 		# Girati verso di te, con il viso un po' storto: uno diverso dall'altro.

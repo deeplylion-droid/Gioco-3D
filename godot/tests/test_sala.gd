@@ -191,6 +191,7 @@ func _run() -> void:
 	p.teleport(Vector3(13.5, 4.5, -16.5), PI, 0.0)
 	await _frames(5)
 	check(kids.get_child_count() >= 5, "sulla torre compaiono i bambini sulla balconata")
+	check(kids.get_child_count() > 0 and kids.get_child(0) is Bambino, "sono i bambini animati (ti seguono con la testa)")
 	check(flashes[0] >= 1, "e un lampo li illumina")
 	await _frames(150)
 	storm.lampo_ora(1.0, 1.0)
