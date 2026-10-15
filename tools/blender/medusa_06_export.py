@@ -30,6 +30,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
 import medusa_05_tentacoli as TENT  # noqa: E402
+import medusa_capelli as CAP  # noqa: E402
 
 
 TEX_CAMPANA_BASE = os.path.join(TEX, 'campana_base_alfa.png')
@@ -89,26 +90,49 @@ def materiali_per_godot():
 # ---------------------------------------------------------------- versione finita (passo 7)
 
 def _raster_valori(me, mask_facce, valori_v, size):
-    """Disegna nell'atlante UV (size x size) il valore medio per faccia di un attributo di vertice."""
+    """Disegna nell'atlante UV (size x size) un attributo di vertice, interpolato dentro ogni triangolo
+    (coordinate baricentriche): canali netti anche dove i triangoli sono grandi."""
     import cv2
     uv = loop_uv(me)
-    st, tot = poly_loops(me)
+    me.calc_loop_triangles()
+    nt = len(me.loop_triangles)
+    tl = np.empty(nt * 3, dtype=np.int64); me.loop_triangles.foreach_get('loops', tl)
+    tp = np.empty(nt, dtype=np.int64); me.loop_triangles.foreach_get('polygon_index', tp)
     lv = loop_vert(me)
-    out = np.zeros((size, size, valori_v.shape[1]), np.float32)
+    tl = tl.reshape(-1, 3)[mask_facce[tp]]
+    C = valori_v.shape[1]
+    out = np.zeros((size, size, C), np.float32)
     cop = np.zeros((size, size), np.uint8)
-    for fi in np.nonzero(mask_facce)[0]:
-        ls = slice(st[fi], st[fi] + tot[fi])
-        p = uv[ls]
-        pts = np.round(np.stack([p[:, 0] * size, (1 - p[:, 1]) * size], 1) * 4).astype(np.int32)
-        val = valori_v[lv[ls]].mean(0)
-        cv2.fillPoly(out, [pts], [float(x) for x in val], shift=2)
-        cv2.fillPoly(cop, [pts], 255, shift=2)
+    for t in tl:
+        P = np.stack([uv[t, 0] * size - 0.5, (1 - uv[t, 1]) * size - 0.5], 1)
+        x0, y0 = np.floor(P.min(0)).astype(int)
+        x1, y1 = np.ceil(P.max(0)).astype(int)
+        x0, y0 = max(x0, 0), max(y0, 0)
+        x1, y1 = min(x1, size - 1), min(y1, size - 1)
+        if x1 < x0 or y1 < y0:
+            continue
+        xs, ys = np.meshgrid(np.arange(x0, x1 + 1), np.arange(y0, y1 + 1))
+        a, b, c = P
+        den = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
+        if abs(den) < 1e-12:
+            continue
+        w0 = ((b[1] - c[1]) * (xs - c[0]) + (c[0] - b[0]) * (ys - c[1])) / den
+        w1 = ((c[1] - a[1]) * (xs - c[0]) + (a[0] - c[0]) * (ys - c[1])) / den
+        w2 = 1 - w0 - w1
+        dentro = (w0 >= -0.02) & (w1 >= -0.02) & (w2 >= -0.02)
+        if not dentro.any():
+            continue
+        val = valori_v[lv[t]]
+        v = w0[..., None] * val[0] + w1[..., None] * val[1] + w2[..., None] * val[2]
+        yy, xx = ys[dentro], xs[dentro]
+        out[yy, xx] = v[dentro]
+        cop[yy, xx] = 255
     # allarga un po' i bordi delle isole (niente aloni scuri col filtro della GPU)
     k = np.ones((5, 5), np.uint8)
     dil = cv2.dilate(out, k)
     cop_d = cv2.dilate(cop, k)
     out = np.where((cop > 0)[..., None], out, dil)
-    return cv2.GaussianBlur(out, (0, 0), 1.2), cop_d
+    return cv2.GaussianBlur(out, (0, 0), 0.8), cop_d
 
 
 def texture_campana(ob, size=2048):
@@ -190,11 +214,15 @@ def materiali_finale_godot():
         if nt.nodes['base'].image.name.startswith('medusa_basecolor_pulita'):   # atlante 4K di Meshy
             nt.nodes['normal'].image = n2
             nt.nodes['base'].image = b2
-        for l in list(b.inputs['Metallic'].links):
-            nt.links.remove(l)
-        b.inputs['Metallic'].default_value = 0.0
-        if 'mr' in nt.nodes:
-            nt.nodes.remove(nt.nodes['mr'])
+        mr = nt.nodes.get('mr')
+        if mr is None or not mr.image or mr.image.name.startswith('medusa_mr'):
+            # vecchia texture metallic/roughness di Meshy: via, metallo 0 costante
+            for l in list(b.inputs['Metallic'].links):
+                nt.links.remove(l)
+            b.inputs['Metallic'].default_value = 0.0
+            if mr is not None:
+                nt.nodes.remove(mr)
+        # altrimenti resta la texture del passo 8 (G = ruvidita', B = metallo): diventa metallicRoughness
     # campana: RGBA + emissione cotte
     m = bpy.data.materials['M_campana']
     nt = m.node_tree
@@ -233,7 +261,7 @@ def materiali_finale_godot():
     mb = bpy.data.materials.get('M_occhio_bulbo')
     if mb:
         mb.node_tree.nodes['BSDF'].inputs['Emission Strength'].default_value = 0.22
-    for n in ('M_tentacoli', 'M_filamenti', 'M_denti'):
+    for n in ('M_tentacoli', 'M_filamenti', 'M_denti', 'M_ciocche'):
         m = bpy.data.materials.get(n)
         if m:
             b = m.node_tree.nodes['BSDF']
@@ -250,8 +278,10 @@ def prepara_finale():
     # le stesse texture servono allo shader Godot della campana (assets_src/medusa/godot/)
     gd = os.path.join(ASSET, 'godot')
     os.makedirs(gd, exist_ok=True)
-    for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS, TENT.TEX_TENT_BASE, TENT.TEX_TENT_EMIS, TENT.TEX_TENT_NORMAL):
-        shutil.copy(t, os.path.join(gd, os.path.basename(t)))
+    for t in (TEX_CAMPANA_BASE, TEX_CAMPANA_EMIS, TENT.TEX_TENT_BASE, TENT.TEX_TENT_EMIS, TENT.TEX_TENT_NORMAL,
+              CAP.TEX_CIOCCHE, CAP.TEX_CIOCCHE_N, CAP.TEX_CIOCCHE_E):
+        if os.path.exists(t):
+            shutil.copy(t, os.path.join(gd, os.path.basename(t)))
     togli_slot_vuoti(corpo)
     materiali_per_godot()
     materiali_finale_godot()
@@ -282,10 +312,12 @@ def attacchi_sull_osso(arm):
 def esporta(out, origine_a_terra=False):
     arm = bpy.data.objects['Medusa_Scheletro']
     attacchi_sull_osso(arm)
-    if origine_a_terra:
+    if origine_a_terra and 'scala' not in arm:
         # l'origine del GLB va sul piano d'appoggio dei tentacoli: tutto sale di -z_pavimento
         arm.location.z = -TENT.STATUA['z_pavimento']
         log(f'origine sul piano del piedistallo: scheletro alzato di {arm.location.z:.2f} m')
+    elif 'scala' in arm:
+        log(f"statua a grandezza vera (scala x{arm['scala']:.3f}), piano dei tentacoli a y = 0")
     bpy.context.view_layer.update()
     for o in bpy.context.view_layer.objects:
         if o:
@@ -300,6 +332,7 @@ def esporta(out, origine_a_terra=False):
         export_image_format='AUTO', export_tangents=True, export_materials='EXPORT',
         export_skins=True, export_influence_nb=4, export_def_bones=False, export_leaf_bone=False,
         export_morph=True, export_morph_normal=True, export_animations=True, export_yup=True,
+        export_vertex_color='ACTIVE',
         export_animation_mode='NLA_TRACKS', export_force_sampling=True,
         export_apply=False, export_extras=False)
     log('esportato', os.path.relpath(out, REPO), f'{os.path.getsize(out) / 1e6:.1f} MB')
@@ -334,7 +367,7 @@ func _init():
 \t\t\tfor s in m.get_surface_count():
 \t\t\t\tvar mat = m.surface_get_material(s)
 \t\t\t\tif mat is BaseMaterial3D:
-\t\t\t\t\tprint("   materiale ", mat.resource_name, " trasparenza=", mat.transparency, " albedo_tex=", mat.albedo_texture != null, " normal=", mat.normal_enabled, " roughness=", mat.roughness)
+\t\t\t\t\tprint("   materiale ", mat.resource_name, " trasparenza=", mat.transparency, " albedo_tex=", mat.albedo_texture != null, " normal=", mat.normal_enabled, " roughness=", mat.roughness, " rough_tex=", mat.roughness_texture != null, " emissione=", mat.emission_enabled, " x", mat.emission_energy_multiplier, " op=", mat.emission_operator, " colore_vertici=", mat.vertex_color_use_as_albedo)
 \t\tif n is BoneAttachment3D:
 \t\t\tprint("ATTACCO ", n.name, " osso=", n.bone_name)
 \t\tfor c in n.get_children():
@@ -342,9 +375,10 @@ func _init():
 \tvar ap = scena.find_child("AnimationPlayer", true, false)
 \tif ap:
 \t\tprint("ANIMAZIONI ", ap.get_animation_list())
-\tfor r in ["medusa_campana.tres", "medusa_tentacoli.tres"]:
+\tfor r in ["medusa_campana.tres", "medusa_tentacoli.tres", "medusa_ciocche.tres"]:
 \t\tvar mat = load("res://assets/models/medusa/" + r)
-\t\tprint("MATERIALE_ESTERNO ", r, " ", mat != null)
+\t\tvar op = mat.emission_operator if mat is BaseMaterial3D else -1
+\t\tprint("MATERIALE_ESTERNO ", r, " ", mat != null, " op=", op)
 \tquit()
 '''
 

@@ -28,7 +28,7 @@ import cv2  # noqa: E402
 from mathutils.bvhtree import BVHTree  # noqa: E402
 
 S_TEX = 0.11              # la texture dell'occhio copre +-11 cm attorno al centro dell'occhio
-N_TEX = 1024
+N_TEX = 2048              # la statua e' alta 4,5 m: l'occhio (mezzo metro) si vede da vicino
 SCLERA = (0.80, 0.82, 0.95)  # bianco porcellana-lavanda, vicino alla pelle: da fermo l'occhio resta come approvato
 RIENTRO_BULBO = 0.0025    # il bulbo sta 2,5 mm sotto la pelle (piccolo gradino dell'orbita)
 ALTEZZA_CORNEA = 0.003    # la cornea sporge 3 mm sopra l'iride
@@ -131,6 +131,29 @@ def texture_iride(occ, sclera=SCLERA):
     rgb[r_a:r_b] = smesc * w + anello[None] * (1 - w)
     rgb[r_b:] = anello[None]
 
+    # polari a risoluzione doppia, poi fibre dell'iride (striature radiali sottili) tra pupilla e anello:
+    # la texture di Meshy e' morbida e la statua alta 4,5 m mostra l'occhio da vicino
+    H, Sa, V = _hsv(rgb)
+    prof = np.median(V, axis=1)
+    lim = row(ri)
+    meta = 0.5 * (prof[:lim].min() + prof[:lim].max())
+    sopra = np.nonzero(prof[:lim] > meta)[0]
+    r_pup = 2 * ((sopra[0] if sopra.size else lim // 3) + 1)
+    NT, NR = 2 * NT, 2 * NR
+    rgb = cv2.resize(rgb.astype(np.float32), (NT, NR), interpolation=cv2.INTER_CUBIC)
+    alpha = cv2.resize(alpha.astype(np.float32), (NT, NR), interpolation=cv2.INTER_LINEAR)
+    lim = 2 * lim
+    rng = np.random.default_rng(4)
+    fib = cv2.GaussianBlur(rng.normal(size=(NR, NT)).astype(np.float32), (0, 0), sigmaX=2.2, sigmaY=30)
+    fib2 = cv2.GaussianBlur(rng.normal(size=(NR, NT)).astype(np.float32), (0, 0), sigmaX=6, sigmaY=8)
+    fib = fib / (fib.std() + 1e-6) + 0.3 * fib2 / (fib2.std() + 1e-6)
+    rr_i = np.arange(NR)[:, None]
+    m_ir = np.clip((rr_i - r_pup) / 10.0, 0, 1) * np.clip((lim - 4 - rr_i) / 10.0, 0, 1)
+    rgb = np.clip(rgb * (1 + 0.055 * fib * m_ir)[..., None], 0, 1)
+    bordo_p = np.exp(-0.5 * ((rr_i - r_pup) / 3.0) ** 2) * 0.18          # bordo della pupilla piu' netto
+    rgb = np.clip(rgb * (1 - bordo_p)[..., None], 0, 1)
+    log(f'iride: pupilla a {r_pup / NR * S_TEX * 1000:.1f} mm, fibre aggiunte, polari {NT}x{NR}')
+
     # da polari a cartesiane (u verso +X, v verso +Z, vista da davanti)
     pad = 8
     polp = np.concatenate([rgb[:, -pad:], rgb, rgb[:, :pad]], 1)
@@ -146,8 +169,8 @@ def texture_iride(occ, sclera=SCLERA):
     ca[rr > S_TEX] = 0
     car = np.clip(car, 0, 1)
     # nitidezza leggera (la texture di Meshy e' a bassa risoluzione sull'occhio)
-    blur = cv2.GaussianBlur(car, (0, 0), 2.0)
-    car = np.clip(car + 0.45 * (car - blur), 0, 1)
+    blur = cv2.GaussianBlur(car, (0, 0), 2.5)
+    car = np.clip(car + 0.35 * (car - blur), 0, 1)
     rgba = np.dstack([car, np.clip(ca, 0, 1)])
     cv2.imwrite(IRIDE_RGBA, (rgba * 255).astype(np.uint8))
     componi_bulbo(sclera)
@@ -401,7 +424,7 @@ def main():
     def uv_frontale(co):
         return np.stack([0.5 + (co[:, 0] - ex) / (2 * S_TEX), 0.5 + (co[:, 2] - ez) / (2 * S_TEX)], 1)
 
-    bulbo = calotta('Medusa_Occhio', C, Rb, asse, ang_cal, n_seg=48, n_anelli=20, uv_fun=uv_frontale)
+    bulbo = calotta('Medusa_Occhio', C, Rb, asse, ang_cal, n_seg=64, n_anelli=28, uv_fun=uv_frontale)
     # cornea: calotta bombata che tocca il bulbo sul bordo esterno dell'anello
     phi = math.asin(min(occ['raggio_anello_esterno'] / Rb, 0.99)) + math.radians(1.5)
     a = Rb * math.sin(phi); t = Rb * math.cos(phi)
@@ -410,7 +433,7 @@ def main():
     dc = Rb + ALTEZZA_CORNEA - Rc
     Cc = C + asse * dc
     ang_c = math.asin(min(a / Rc, 0.999))
-    cornea = calotta('Medusa_Cornea', Cc, Rc, asse, ang_c, n_seg=48, n_anelli=12)
+    cornea = calotta('Medusa_Cornea', Cc, Rc, asse, ang_c, n_seg=64, n_anelli=16)
     materiali_occhio(bulbo, cornea)
     dati = {
         'centro_rotazione': [round(v, 5) for v in C], 'raggio_bulbo': round(Rb, 5), 'raggio_viso': round(Rf, 5),
