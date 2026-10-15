@@ -5,6 +5,7 @@ extends Node3D
 ## gli altri sono copie normali. I pezzi piccoli si spengono da lontano e non fanno ombra.
 
 @export_dir var cartella := "res://assets/ambiente_dettagli"
+@export var usa_gltf := true   # true: gltf/<categoria>.gltf con le texture condivise; false: glb/<categoria>.glb
 @export var soglia_multimesh := 6
 @export var distanza_pezzi_piccoli := 30.0   # m: oltre, fogli, piastrelle, giocattoli e macchie non si disegnano
 @export var ombre_pezzi_grandi := false
@@ -24,6 +25,8 @@ func _ready() -> void:
 	var scene := {}
 	for k in per_nodo:
 		var glb: String = k.get_slice("|", 0)
+		if usa_gltf:
+			glb = glb.replace("glb/", "gltf/").replace(".glb", ".gltf")
 		var nome: String = k.get_slice("|", 1)
 		if not scene.has(glb):
 			scene[glb] = load(cartella.path_join(glb)).instantiate()

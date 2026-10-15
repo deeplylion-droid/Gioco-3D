@@ -16,6 +16,7 @@ $PY tools/blender/dettagli_vetrina.py      # render della vetrina [--anteprima]
 ## File
 
 - `glb/<categoria>.glb`: un GLB per categoria (detriti, cavi, tubi, elettrico, lampade, cartelli, organico, catene_corde), ognuno sotto i 50 MB. Texture incorporate (JPG; PNG solo per le macchie con l'alfa).
+- `gltf/<categoria>.gltf` + `.bin`, con le texture in **una sola cartella `gltf/texture/` deduplicata per contenuto** (79 file, 92 MB, contro i 145 MB dei GLB che ripetono le texture). È la versione da usare nella build: `dettagli_sala.gd` la usa di serie (`usa_gltf = true`). Si rifà con `dettagli_kit.py` e poi `gltf_condividi.py assets_src/ambiente_dettagli/gltf`.
 - `catalogo.json`: tutti i nodi, con categoria, appoggio, ingombro e triangoli.
 - `posizionamento.json`: **1219 posti in 457 gruppi** nella sala lunga (con il monumento), in coordinate Godot, con il riepilogo di triangoli e istanze.
 - `godot/dettagli_sala.gd`: lo script che li monta (MultiMeshInstance3D per i nodi ripetuti). `godot/foto_dettagli.gd`: la scena di prova degli screenshot prima/dopo.

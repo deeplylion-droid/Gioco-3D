@@ -642,7 +642,7 @@ def _esporta_gltf(path, obs, luci):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     bpy.ops.export_scene.gltf(filepath=path, export_format='GLTF_SEPARATE', export_texture_dir='texture', use_selection=True,
                               export_apply=True, export_lights=luci, export_cameras=False, export_extras=True,
-                              export_yup=True, export_image_format='JPEG', export_jpeg_quality=90)
+                              export_yup=True, export_image_format='AUTO')
     bin_ = path.replace('.gltf', '.bin')
     for f in (path, bin_):
         mb = os.path.getsize(f) / 1e6

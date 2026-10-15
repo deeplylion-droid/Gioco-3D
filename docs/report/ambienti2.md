@@ -12,6 +12,7 @@ Agente degli ambienti tecnici del capitolo 1. Ultimo aggiornamento: 15 ottobre 2
 - **Da mostrare** (screenshot dal motore, Godot 4.7.2): `dettagli_godot_spawn_prima.jpg` / `dettagli_godot_spawn_dopo.jpg` (dallo spawn) e `dettagli_godot_lato_prima.jpg` / `dettagli_godot_lato_dopo.jpg` (muro est). Render Cycles della vetrina: `dettagli_vetrina.jpg`.
 - Scelte: niente collisioni e niente luci nei dettagli (acceso/spento si cambia il materiale); cartelli solo con pittogrammi (ho tolto quello con la mascotte disegnata: l'aspetto della mascotte lo decide l'utente).
 - Problema: il muro sud nuovo è a pannelli inclinati, quindi lì ci sono pochi dettagli a muro; il lato sud è riempito con gruppi per terra e cose appese sotto la galleria.
+- **Texture condivise (per la 0.2.1)**: il kit di dettagli è anche in `assets_src/ambiente_dettagli/gltf/` (.gltf + una cartella `texture/` deduplicata per contenuto: 92 MB invece dei 145 MB dei GLB); `dettagli_sala.gd` lo usa di serie. Stesso trattamento per le mie stanze in `gltf_2k/` (146 MB di texture 2K uniche). Script: `tools/blender/gltf_condividi.py`. Provato in Godot 4.7.2.
 - **Le mie stanze anche in 2K**: `assets_src/ambienti_tecnici/gltf_2k/` (.gltf con le texture 2K condivise), provate in Godot. In `glb/` restano i GLB a 1K.
 
 ## Cosa è finito
