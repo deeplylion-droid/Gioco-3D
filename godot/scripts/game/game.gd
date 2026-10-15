@@ -63,6 +63,9 @@ static func is_automated() -> bool:
 
 func _show_calibration() -> void:
 	var cal: CanvasLayer = load("res://addons/grafica/calibrazione_luminosita.tscn").instantiate()
+	# Sopra il menu del titolo (livello 100) e sotto la dissolvenza (120): allo stesso livello
+	# il titolo copriva la calibrazione, e con il gioco in pausa nessuno dei due rispondeva.
+	cal.layer = 110
 	add_child(cal)
 	get_tree().paused = true
 	release_mouse()

@@ -78,7 +78,20 @@ func _run() -> void:
 			cal = n
 	check(cal != null, "la calibrazione è aperta")
 	if cal:
-		cal.conferma()
+		# Deve stare sopra tutti i livelli del titolo, se no il menu la copre e non si può confermare.
+		var livello_cal := (cal.owner as CanvasLayer).layer if cal.owner is CanvasLayer else 0
+		var livello_titolo := -1000
+		for l in menu.find_children("*", "CanvasLayer", true, false):
+			livello_titolo = maxi(livello_titolo, (l as CanvasLayer).layer)
+		check(livello_cal > livello_titolo, "la calibrazione sta sopra il menu del titolo (%d > %d)" % [livello_cal, livello_titolo])
+		# Come il giocatore: Conferma ha il focus e si preme con Invio.
+		var conferma := _pulsante(cal, "Conferma")
+		check(conferma != null and _focus() == conferma, "Conferma ha il focus")
+		await _premi(&"ui_accept")
+		await _frames(3)
+		if get_tree().paused:
+			check(false, "Invio conferma la calibrazione")
+			cal.conferma()
 	await _frames(5)
 	check(not get_tree().paused, "confermata la calibrazione, il titolo riparte")
 	check(bool(Grafica.valore("calibrato")), "la calibrazione è segnata come fatta")
