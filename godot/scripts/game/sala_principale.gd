@@ -6,9 +6,6 @@ extends Node3D
 ## getto sulla turbina (ricaricando lo zaino dalla pozza stessa) finché la pozza si svuota, poi
 ## colpisci il pulsante del portello. Nell'area bimbi la ruota a pale riempie il secchio gigante.
 
-## Illuminazione globale VoxelGI della sala già calcolata (tools/bake_voxel_gi.gd).
-const BAKED_GI := "res://assets/ambiente/sala/voxel_gi_sala.res"
-
 ## Materiale delle pozzanghere della sala (addon acqua) al posto di M_amb_pozzanghera del GLB.
 @export var puddle_material: Material
 
@@ -37,6 +34,8 @@ var demo_finished := false
 
 
 func _ready() -> void:
+	# Prima del primo frame: meno varianti di shader, a parità di aspetto (UnificaMateriali).
+	UnificaMateriali.unifica(self)
 	_setup_hall()
 	if lamp_trigger:
 		lamp_trigger.body_entered.connect(_on_lamp_trigger)
@@ -124,13 +123,6 @@ func _setup_hall() -> void:
 					var m := mi.mesh.surface_get_material(i)
 					if m and m.resource_name == "M_amb_pozzanghera":
 						mi.set_surface_override_material(i, puddle_material)
-	# Senza i dati la GI resta spenta: calcolarla durante il gioco blocca tutto per secondi.
-	var gi := get_node_or_null(^"Sala/VoxelGI_Sala") as VoxelGI
-	if gi and gi.data == null:
-		if ResourceLoader.exists(BAKED_GI):
-			gi.data = load(BAKED_GI) as VoxelGIData
-		else:
-			gi.set_meta(&"grafica_bake_automatico", false)
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override

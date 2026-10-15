@@ -48,6 +48,9 @@ extends Node3D
 ## materiale deve avere emission_operator = Multiply, se no la texture si somma al bianco).
 @export var tentacle_glow := 1.0
 
+## Le mesh dentro la bocca: si vedono solo quando la fauce si apre.
+const BOCCA := ["Medusa_Gola", "Medusa_Denti"]
+
 var _instance: Node3D
 var _bell: ShaderMaterial
 var _pulse_left := 0.0
@@ -95,6 +98,7 @@ static func _aabb_of(root: Node3D) -> AABB:
 
 ## La statua si sveglia: si stacca dal piedistallo e sale (animazione "sveglia").
 func wake_up() -> void:
+	_mostra_bocca(true)
 	var ap := _instance.find_child("AnimationPlayer", true, false) as AnimationPlayer if _instance else null
 	if ap and ap.has_animation(&"sveglia"):
 		ap.play(&"sveglia")
@@ -130,6 +134,9 @@ func _rebuild() -> void:
 		return
 	_instance.name = "Modello"
 	add_child(_instance, false, Node.INTERNAL_MODE_FRONT)
+	# Da statua la bocca è chiusa: gola e denti stanno dentro la testa e non si vedono. Spenti
+	# finché non si sveglia, così non costano niente (sul renderer software, centinaia di MB).
+	_mostra_bocca(false)
 	if target_height > 0.0:
 		var top := _aabb_of(_instance).end.y
 		if top > 0.01:
@@ -162,3 +169,13 @@ func _rebuild() -> void:
 				(mi as MeshInstance3D).set_surface_override_material(s, tm)
 			elif by_name.has(mat.resource_name):
 				(mi as MeshInstance3D).set_surface_override_material(s, by_name[mat.resource_name])
+
+
+## Gola e denti (dentro la bocca chiusa) visibili o no.
+func _mostra_bocca(on: bool) -> void:
+	if _instance == null:
+		return
+	for nome in BOCCA:
+		var n := _instance.find_child(nome, true, false) as Node3D
+		if n:
+			n.visible = on

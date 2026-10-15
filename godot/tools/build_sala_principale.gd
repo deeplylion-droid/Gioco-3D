@@ -139,16 +139,6 @@ func _materials() -> void:
 func _hall() -> void:
 	var sala := Node3D.new()
 	sala.name = "Sala"
-	# Il look della sala (addon grafica): luci di sala_luci.glb riconosciute per nome, ambiente
-	# notturno, GI, sonde dei riflessi, tempesta coi lampi, nebbia bassa, polvere, gocce.
-	# LookSala copre anche la sala lunga (volumi, monumento in (0, 0, 10), statua di 4,5 m, il
-	# suo controluce) e accende il vetro della cupola con i lampi.
-	sala.set_script(load("res://addons/grafica/look_sala.gd"))
-	sala.set(&"vetro_cupola", M.dome_glass)
-	sala.set(&"monumento", Vector3(PEDESTAL.x, 0.0, PEDESTAL.z))
-	sala.set(&"altezza_statua", 4.5)
-	# La statua è la cosa più luminosa della sala: i fari della ringhiera un po' più forti.
-	sala.set(&"energia_fari", 7.0)
 	own(sala)
 	for part in [["Architettura", "sala_architettura"], ["Cupola", "sala_cupola"], ["Piscina", "sala_piscina"],
 			["AreaBimbi", "sala_area_bimbi"], ["TorreScivoli", "sala_torre_scivoli"], ["Oggetti", "sala_oggetti"],
@@ -178,6 +168,15 @@ func _hall() -> void:
 	walls.set(&"exclude_filter", PackedStringArray(["pavimento", "pozzanghere", "vetro", "glass", "griglia", "grata", "neon", "luce", "insegna", "lampad", "cartellone", "colature"]))
 	walls.set(&"base_wetness", 0.2)
 	own(walls, sala)
+	# Il look della sala (addon grafica) è una scena a parte, LuciSala (scenes/sala/luci_sala.tscn):
+	# luci di sala_luci.glb riconosciute per nome, ambiente notturno, GI cotto, sonde dei riflessi,
+	# tempesta coi lampi, nebbia bassa, polvere, controluce e luce da ritratto della statua.
+	var luci: Node3D = (load("res://scenes/sala/luci_sala.tscn") as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+	luci.name = "LuciSala"
+	# La statua è la cosa più luminosa della sala: i fari della ringhiera un po' più forti.
+	luci.set(&"energia_fari", 7.0)
+	luci.set(&"vetro_cupola", M.dome_glass)
+	own(luci)
 
 
 ## Detriti, cartelli, cavi, tubi e macchie (1219 posti): li crea DettagliSala all'avvio, con i

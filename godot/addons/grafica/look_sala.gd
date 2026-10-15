@@ -342,8 +342,10 @@ func _crea_voxel_gi() -> void:
 	gi.set_meta("grafica_bake_automatico", _sala == self)
 	add_child(gi)
 	gi.global_position = (_sala.global_transform * sala_centro) if _sala != self else to_global(sala_centro)
-	if gi.data == null and _sala != self and is_instance_valid(Grafica) and int(Grafica.valore("gi")) == 1:
-		gi.bake(_sala)   # senza dati cotti: calcolo all'avvio (lento, solo per le prove)
+	# Senza dati cotti il GI resta spento: calcolarlo durante il gioco blocca l'avvio e, sul
+	# renderer software, porta la sala oltre la memoria della macchina (tools/bake_voxel_gi.gd).
+	if gi.data == null and _sala != self:
+		push_warning("LookSala: GI della sala non cotto (%s): resta spento" % dati_gi)
 
 
 ## Cuoce il VoxelGI della sala senza le emissioni delle lampade (la loro luce la fanno le
