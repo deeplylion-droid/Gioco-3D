@@ -141,20 +141,22 @@ func cuoci_gi() -> void:
 	DirAccess.make_dir_recursive_absolute(cartella_gi)
 	# Le lampade emissive non vanno "cotte" nel GI: la loro luce la fanno le Light3D, che
 	# il VoxelGI segue in tempo reale. Cotte, resterebbero accese anche al buio.
-	var spente := _spegni_emissioni()
+	var spente := LookInterni.spegni_emissioni(get_parent())
 	for gi in find_children("GI_*", "VoxelGI", false, false):
 		var v := gi as VoxelGI
 		v.bake(v.get_meta("stanza"))   # la geometria sta nella stanza, non tra i figli di LookInterni
 		var file := cartella_gi.path_join(String(v.name).trim_prefix("GI_") + ".res")
 		print("GI ", v.name, " celle ", v.data.get_octree_cells().size(), " dati ", v.data.get_data_cells().size(),
 			" -> ", file, " ", ResourceSaver.save(v.data, file))
-	_ripristina_emissioni(spente)
+	LookInterni.ripristina_emissioni(spente)
 
 
-## Toglie l'emissione a tutte le superfici emissive degli interni; restituisce cosa ripristinare.
-func _spegni_emissioni() -> Array:
+## Toglie l'emissione a tutte le superfici emissive sotto [param radice]; restituisce cosa
+## ripristinare con [method ripristina_emissioni]. Serve per cuocere il GI senza la luce
+## delle lampade (la fanno le Light3D) e per gli scatti "al buio".
+static func spegni_emissioni(radice: Node) -> Array:
 	var fatte := []
-	for n in get_parent().find_children("*", "MeshInstance3D", true, false):
+	for n in radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null:
 			continue
@@ -168,7 +170,7 @@ func _spegni_emissioni() -> Array:
 	return fatte
 
 
-func _ripristina_emissioni(fatte: Array) -> void:
+static func ripristina_emissioni(fatte: Array) -> void:
 	for f in fatte:
 		(f[0] as MeshInstance3D).set_surface_override_material(f[1], f[2])
 
