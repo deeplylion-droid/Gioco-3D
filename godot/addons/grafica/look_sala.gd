@@ -13,8 +13,14 @@ extends Node3D
 @export var energia_emergenza := 7.0
 @export var portata_emergenza := 9.0
 @export var energia_neon := 2.6
-@export var energia_lampione := 9.0
+@export var energia_lampione := 3.5
 @export var energia_luna := 0.6
+## Luci del monumento: faretti bassi (0,6) come provato dall'integratore; fari a 5,5 e lampione
+## a 3,5 perché il busto in vinile lucido resti leggibile senza bruciarsi.
+@export var energia_fari := 5.5
+@export var energia_faretti := 0.6
+@export var energia_plafoniere := 1.8
+@export var energia_insegne := 1.3
 @export var colore_emergenza := Color(1.0, 0.035, 0.02)
 @export var colore_neon := Color(0.78, 1.0, 0.9)        # fluorescente freddo, verso il verde
 @export var colore_lampione := Color(1.0, 0.66, 0.36)   # sodio caldo: il contrasto caldo della sala
@@ -26,9 +32,20 @@ extends Node3D
 ## Neon che nel GLB sono "a metà": sfarfallano o sono guasti.
 @export var neon_difettosi: PackedInt32Array = [1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25]
 
-## Volume della sala in coordinate Godot (dai dati di sala_dati.json).
-const SALA_CENTRO := Vector3(0, 6.0, -6.0)
-const SALA_DIMENSIONI := Vector3(41, 19, 37)
+@export_group("Volume della sala")
+## Centro e dimensioni della sala in coordinate Godot (da sala_dati.json: x -20..20,
+## z -24..20, pavimento 0, soffitto 11,5, cupola fino a ~17). Usati da VoxelGI,
+## sonde di riflessione, nebbia bassa e pulviscolo.
+@export var sala_centro := Vector3(0, 7.5, -2.0)
+@export var sala_dimensioni := Vector3(41, 21, 45)
+@export_group("Statua sul monumento")
+## Centro del monumento e altezza della statua (per il controluce).
+@export var monumento := Vector3(0, 0, 10)
+@export var altezza_statua := 4.5
+@export var crea_controluce := true
+## Se impostato, il vetro della cupola si accende con i lampi (es. un ShaderMaterial
+## con vetro_cupola.gdshader, assegnato anche ai vetri della cupola).
+@export var vetro_cupola: ShaderMaterial
 
 var tempesta: Tempesta
 var _sfarfallanti: Array = []   # [luce, energia, modalità, attesa, raffica]
@@ -45,10 +62,32 @@ func _ready() -> void:
 		tempesta = Tempesta.new()
 		tempesta.name = "Tempesta"
 		tempesta.energia_lampo = 7.0
+		if vetro_cupola:
+			tempesta.materiali = [vetro_cupola]
 		add_child(tempesta)
 		tempesta.luce.light_angular_distance = 0.2  # ombre dei costoloni nitide anche col lampo
 	if crea_effetti:
 		_crea_effetti()
+	if crea_controluce:
+		_crea_controluce()
+
+
+## Controluce freddo dall'alto, dietro la statua: stacca la sagoma dal fondo buio
+## quando si entra dal vano sud.
+func _crea_controluce() -> void:
+	var c := SpotLight3D.new()
+	c.name = "ControluceStatua"
+	c.light_color = Color(0.62, 0.78, 1.0)
+	c.light_energy = 5.0
+	c.spot_range = 14.0
+	c.spot_angle = 16.0
+	c.spot_angle_attenuation = 1.4
+	c.light_specular = 0.6
+	c.light_volumetric_fog_energy = 0.5
+	c.shadow_enabled = false
+	add_child(c)
+	var cima := monumento + Vector3(0, 1.15 + altezza_statua * 0.7, 0)
+	c.look_at_from_position(monumento + Vector3(0, 9.6, -4.2), cima)
 
 
 func _imposta_ambiente() -> void:
@@ -100,10 +139,41 @@ func _regola_luci(n: Node) -> void:
 			if k in neon_difettosi:
 				var modo: String = ["guasto", "sfarfalla", "morente"][k % 3]
 				_sfarfallanti.append([l, l.light_energy, modo, randf_range(0.5, 4.0), 0.0])
+		elif nome.begins_with("luce_faro"):
+			# Luce principale della statua: dall'alto e davanti (fari sulla ringhiera sud).
+			var s := l as SpotLight3D
+			s.light_color = Color(1.0, 0.9, 0.8)
+			s.light_energy = energia_fari
+			s.spot_range = 16.0
+			s.spot_angle = 13.0
+			s.spot_angle_attenuation = 1.6   # bordo morbido
+			s.spot_attenuation = 0.6
+			s.shadow_enabled = true
+			s.light_size = 0.06
+			s.light_specular = 0.45           # niente riflessi bruciati sul vinile lucido
+			s.light_volumetric_fog_energy = 1.6
+			s.set_meta("grafica_priorita_ombra", 1)
+		elif nome.begins_with("luce_monumento_basso"):
+			# Faretti caldi dal basso: ombre in su sul viso, effetto "monumento di notte".
+			var s := l as SpotLight3D
+			s.light_color = Color(1.0, 0.7, 0.42)
+			s.light_energy = energia_faretti
+			s.spot_range = 7.0
+			s.spot_angle = 24.0
+			s.spot_angle_attenuation = 1.2
+			s.spot_attenuation = 1.2
+			s.light_specular = 0.3
+			s.light_volumetric_fog_energy = 0.6
+			# Ombre solo sui due davanti (verso la porta, +Z): il viso proietta le ombre in alto.
+			var k := nome.get_slice("_", 3).to_int()
+			s.shadow_enabled = k >= 2
+			s.shadow_bias = 0.03
+			s.set_meta("grafica_priorita_ombra", 2)
 		elif nome == "luce_lampione":
 			var s := l as SpotLight3D
 			s.light_color = colore_lampione
 			s.light_energy = energia_lampione
+			s.light_specular = 0.5
 			s.spot_range = 11.0
 			s.spot_angle = 50.0
 			s.spot_angle_attenuation = 0.8
@@ -117,11 +187,21 @@ func _regola_luci(n: Node) -> void:
 			o.light_energy = 3.0
 			o.omni_range = 6.0
 			o.light_volumetric_fog_energy = 1.5
-		elif nome == "luce_insegna_rosa":
+		elif nome.begins_with("luce_insegna"):
+			# Insegne al neon colorate (rosa, onda, stella): pozze di colore saturo, stile B.
 			var o := l as OmniLight3D
-			o.light_energy = 3.0
-			o.omni_range = 8.0
+			o.light_energy = energia_insegne * (2.0 if nome == "luce_insegna_rosa" else 1.0)
+			o.omni_range = 5.5 if nome != "luce_insegna_rosa" else 8.0
 			o.light_volumetric_fog_energy = 2.0
+		elif nome.begins_with("luce_calda"):
+			# Plafoniere navali a incandescenza: le poche luci calde per il contrasto col rosso e il blu.
+			var o := l as OmniLight3D
+			o.light_color = Color(1.0, 0.66, 0.36)
+			o.light_energy = energia_plafoniere
+			o.omni_range = 7.5
+			o.omni_attenuation = 1.2
+			o.light_volumetric_fog_energy = 1.4
+			o.shadow_enabled = false
 		elif nome == "luce_area_bimbi":
 			var o := l as OmniLight3D
 			o.light_color = Color(1.0, 0.74, 0.42)
@@ -173,8 +253,8 @@ func _process(delta: float) -> void:
 func _crea_voxel_gi() -> void:
 	var gi := VoxelGI.new()
 	gi.name = "VoxelGI_Sala"
-	gi.size = SALA_DIMENSIONI
-	gi.position = SALA_CENTRO
+	gi.size = sala_dimensioni
+	gi.position = sala_centro
 	gi.subdiv = VoxelGI.SUBDIV_256
 	add_child(gi)
 
@@ -182,8 +262,8 @@ func _crea_voxel_gi() -> void:
 func _crea_sonde() -> void:
 	var sala := ReflectionProbe.new()
 	sala.name = "Sonda_Sala"
-	sala.size = Vector3(40, 13, 36)
-	sala.position = Vector3(0, 4.0, -6.0)
+	sala.size = Vector3(sala_dimensioni.x - 1.0, 13, sala_dimensioni.z - 1.0)
+	sala.position = Vector3(sala_centro.x, 4.0, sala_centro.z)
 	sala.origin_offset = Vector3(0, -2.0, 0)
 	sala.box_projection = true
 	sala.interior = true
@@ -207,8 +287,8 @@ func _crea_effetti() -> void:
 	# Nebbia bassa sul pavimento e nella piscina vuota.
 	var nebbia := FogVolume.new()
 	nebbia.name = "NebbiaBassa"
-	nebbia.size = Vector3(40, 2.6, 36)
-	nebbia.position = Vector3(0, -1.0, -6.0)
+	nebbia.size = Vector3(sala_dimensioni.x - 1.0, 2.6, sala_dimensioni.z - 1.0)
+	nebbia.position = Vector3(sala_centro.x, -1.0, sala_centro.z)
 	var fm := FogMaterial.new()
 	fm.density = 0.018
 	fm.height_falloff = 2.5
@@ -226,9 +306,9 @@ func _crea_effetti() -> void:
 	nebbia.material = fm
 	add_child(nebbia)
 	var polvere := Pulviscolo.new()
-	polvere.volume = Vector3(38, 9, 34)
+	polvere.volume = Vector3(sala_dimensioni.x - 3.0, 9, sala_dimensioni.z - 3.0)
 	polvere.densita = 0.5
-	polvere.position = Vector3(0, 4.5, -6.0)
+	polvere.position = Vector3(sala_centro.x, 4.5, sala_centro.z)
 	add_child(polvere)
 	for p in [Vector3(6.5, 11.4, -3.0), Vector3(-9.0, 11.4, 4.5), Vector3(1.2, 11.4, 6.0), Vector3(14.0, 11.4, -9.0)]:
 		var g := Gocce.new()

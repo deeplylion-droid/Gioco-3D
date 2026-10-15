@@ -12,19 +12,19 @@ DEST = os.path.join(QUI, '..', '..', 'assets_src', 'ambienti_tecnici', 'texture'
 # id -> risoluzione
 TEXTURE = {
     'Tiles133D': '2K',       # piastrelle bianche sporche e rotte (muri sala pompe)
-    'Tiles107': '1K',        # piastrelle bianche pulite (vasca d'arrivo, base pavimento)
-    'Concrete042C': '1K',    # cemento rovinato (soffitti, pavimento camera onde)
-    'Metal021': '1K',        # metallo scuro arrugginito (pompe, filtri)
-    'Metal041B': '1K',       # metallo chiaro con ruggine (tubi)
-    'Rust004': '1K',         # ruggine piena (sporco, bulloni)
-    'PaintedMetal006': '1K', # vernice verde scrostata (valvole, porte)
-    'PaintedMetal016': '1K', # strisce di pericolo gialle e nere
-    'MetalPlates013': '1K',  # lamiere rivettate (camera delle onde)
-    'MetalWalkway014': '1K', # lamiera forata (passerelle)
-    'Fence008A': '1K',       # rete metallica con alpha (grata della leva)
-    'Plastic006': '1K',      # plastica opaca consumata (scivoli, roughness)
+    'Tiles107': '2K',        # piastrelle bianche pulite (vasca d'arrivo, base pavimento)
+    'Concrete042C': '2K',    # cemento rovinato (soffitti, pavimento camera onde)
+    'Metal021': '2K',        # metallo scuro arrugginito (pompe, filtri)
+    'Metal041B': '2K',       # metallo chiaro con ruggine (tubi)
+    'Rust004': '2K',         # ruggine piena (sporco, bulloni)
+    'PaintedMetal006': '2K', # vernice verde scrostata (valvole, porte)
+    'PaintedMetal016': '2K', # strisce di pericolo gialle e nere
+    'MetalPlates013': '2K',  # lamiere rivettate (camera delle onde)
+    'MetalWalkway014': '2K', # lamiera forata (passerelle)
+    'Fence008A': '2K',       # rete metallica con alpha (grata della leva)
+    'Plastic006': '2K',      # plastica opaca consumata (scivoli, roughness)
 }
-MAPPE = ('_Color', '_NormalGL', '_Roughness', '_Metalness', '_AmbientOcclusion', '_Opacity')
+MAPPE = ('_Color', '_NormalGL', '_Roughness', '_Metalness', '_Opacity')
 
 
 def scarica(aid, res):
