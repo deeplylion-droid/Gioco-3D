@@ -1,46 +1,36 @@
 {
  "nota": "Coordinate in metri. Blender: Z in alto. Godot/glTF: Y in alto, (x, y, z)_blender -> (x, z, -y)_godot.",
- "piedistallo": {
-  "nota": "monumento della statua: piano superiore libero per la medusa, rivolta verso la porta (+z Godot)",
-  "centro_blender": [
-   0.0,
-   -10.0,
-   0.0
-  ],
+ "vasca_centrale": {
+  "nota": "vasca sollevata al centro della sala (concept medusa_sbircia): la medusa si affaccia sul lato verso l'ingresso (+Z Godot)",
   "centro_godot": [
    0.0,
    0.0,
    10.0
   ],
-  "quota_piano": 1.15,
-  "diametro_piano": 3.7,
-  "diametro_tamburo": 3.5,
-  "diametro_gradino_basso": 5.2,
-  "diametro_gradino_alto": 4.4,
-  "quote_gradini": [
-   0.28,
-   0.56
-  ],
-  "raggio_cordone": 3.0,
-  "statua": {
-   "appoggio_godot": [
-    0.0,
-    1.15,
-    10.0
-   ],
-   "altezza_prevista": 4.5,
-   "cima_godot": 5.65
+  "pianta_esterna_godot": {
+   "x": 6.0,
+   "z": 4.5
   },
+  "raggio_angoli": 0.5,
+  "cima_bordo": 1.0,
+  "larghezza_coping": 0.3,
+  "pelo_acqua": 0.88,
+  "fondo": 0.0,
+  "filo_esterno_davanti_godot_z": 12.25,
+  "filo_interno_davanti_godot_z": 11.95,
+  "muro_davanti_godot_z": 12.22,
+  "raggio_cordone_dal_bordo": 1.3,
   "pulsante_bimbi": {
+   "nodo": "sala_pulsante_piedistallo",
    "blender": [
     0.0,
-    -11.88,
-    0.8
+    -12.35,
+    0.62
    ],
    "godot": [
     0.0,
-    0.8,
-    11.88
+    0.62,
+    12.35
    ],
    "verso_godot": [
     0,
@@ -48,6 +38,38 @@
     1
    ]
   }
+ },
+ "medusa_affacciata": {
+  "nota": "posizione consigliata dell'origine della medusa affacciata: sul pelo dell'acqua, 20 cm dentro il muro davanti, rivolta verso +Z (l'ingresso). Le mani sul coping in x +-0,45, z 12,1 (cima del bordo a y 1,0). La campana in acqua, i tentacoli che ricadono fuori dal bordo davanti.",
+  "posizione_godot": [
+   0.0,
+   0.88,
+   11.75
+  ],
+  "rotazione_gradi_godot": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "guarda_verso_godot": [
+   0,
+   0,
+   1
+  ],
+  "mani_godot": [
+   [
+    -0.45,
+    1.0,
+    12.1
+   ],
+   [
+    0.45,
+    1.0,
+    12.1
+   ]
+  ],
+  "cima_bordo": 1.0,
+  "pelo_acqua": 0.88
  },
  "lampione": {
   "base_blender": [
@@ -267,13 +289,13 @@
   "sala_pulsante_piedistallo": {
    "perno_blender": [
     0.0,
-    -11.88,
-    0.8
+    -12.35,
+    0.62
    ],
    "perno_godot": [
     0.0,
-    0.8,
-    11.88
+    0.62,
+    12.35
    ]
   }
  },
@@ -1488,143 +1510,85 @@
    ]
   },
   {
-   "nome": "luce_monumento_basso_0",
-   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
+   "nome": "luce_vasca_0",
+   "tipo": "SpotLight3D sott'acqua nella vasca sollevata, verso la medusa",
    "blender": [
-    1.663,
-    -8.337,
-    0.446
+    -1.4,
+    -10.2,
+    0.25
    ],
    "godot": [
-    1.663,
-    0.446,
-    8.337
+    -1.4,
+    0.25,
+    10.2
    ],
    "direzione_blender": [
-    -0.38,
-    -0.38,
-    0.844
+    0.646,
+    -0.692,
+    0.323
    ],
    "direzione_godot": [
-    -0.38,
-    0.844,
-    0.38
+    0.646,
+    0.323,
+    0.692
    ],
    "colore": [
-    1.0,
-    0.82,
-    0.58
+    0.35,
+    0.9,
+    0.85
    ]
   },
   {
-   "nome": "luce_monumento_basso_1",
-   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
+   "nome": "luce_vasca_1",
+   "tipo": "SpotLight3D sott'acqua nella vasca sollevata, verso la medusa",
    "blender": [
-    -1.663,
-    -8.337,
-    0.446
+    1.4,
+    -10.2,
+    0.25
    ],
    "godot": [
-    -1.663,
-    0.446,
-    8.337
+    1.4,
+    0.25,
+    10.2
    ],
    "direzione_blender": [
-    0.38,
-    -0.38,
-    0.844
+    -0.646,
+    -0.692,
+    0.323
    ],
    "direzione_godot": [
-    0.38,
-    0.844,
-    0.38
+    -0.646,
+    0.323,
+    0.692
    ],
    "colore": [
-    1.0,
-    0.82,
-    0.58
-   ]
-  },
-  {
-   "nome": "luce_monumento_basso_2",
-   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
-   "blender": [
-    -1.663,
-    -11.663,
-    0.446
-   ],
-   "godot": [
-    -1.663,
-    0.446,
-    11.663
-   ],
-   "direzione_blender": [
-    0.38,
-    0.38,
-    0.844
-   ],
-   "direzione_godot": [
-    0.38,
-    0.844,
-    -0.38
-   ],
-   "colore": [
-    1.0,
-    0.82,
-    0.58
-   ]
-  },
-  {
-   "nome": "luce_monumento_basso_3",
-   "tipo": "SpotLight3D: faretto nel gradino, illumina la statua dal basso",
-   "blender": [
-    1.663,
-    -11.663,
-    0.446
-   ],
-   "godot": [
-    1.663,
-    0.446,
-    11.663
-   ],
-   "direzione_blender": [
-    -0.38,
-    0.38,
-    0.844
-   ],
-   "direzione_godot": [
-    -0.38,
-    0.844,
-    -0.38
-   ],
-   "colore": [
-    1.0,
-    0.82,
-    0.58
+    0.35,
+    0.9,
+    0.85
    ]
   },
   {
    "nome": "luce_faro_0",
-   "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua",
+   "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata",
    "blender": [
-    -2.014,
-    -16.616,
-    5.547
+    -2.007,
+    -16.67,
+    5.421
    ],
    "godot": [
-    -2.014,
-    5.547,
-    16.616
+    -2.007,
+    5.421,
+    16.67
    ],
    "direzione_blender": [
-    0.288,
-    0.947,
-    -0.143
+    0.309,
+    0.765,
+    -0.565
    ],
    "direzione_godot": [
-    0.288,
-    -0.143,
-    -0.947
+    0.309,
+    -0.565,
+    -0.765
    ],
    "colore": [
     1.0,
@@ -1634,26 +1598,26 @@
   },
   {
    "nome": "luce_faro_1",
-   "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua",
+   "tipo": "SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata",
    "blender": [
-    2.014,
-    -16.616,
-    5.547
+    2.007,
+    -16.67,
+    5.421
    ],
    "godot": [
-    2.014,
-    5.547,
-    16.616
+    2.007,
+    5.421,
+    16.67
    ],
    "direzione_blender": [
-    -0.288,
-    0.947,
-    -0.143
+    -0.309,
+    0.765,
+    -0.565
    ],
    "direzione_godot": [
-    -0.288,
-    -0.143,
-    -0.947
+    -0.309,
+    -0.565,
+    -0.765
    ],
    "colore": [
     1.0,
@@ -1830,6 +1794,19 @@
     3.1
    ],
    "lente_mm": 18.0
+  },
+  "ingresso": {
+   "pos_blender": [
+    0.0,
+    -19.2,
+    1.65
+   ],
+   "guarda_blender": [
+    0.0,
+    -10.0,
+    3.1
+   ],
+   "lente_mm": 13.9
   },
   "S06_pozza": {
    "pos_blender": [
