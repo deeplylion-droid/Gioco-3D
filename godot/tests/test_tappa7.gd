@@ -96,6 +96,31 @@ func _run() -> void:
 			a_terra = false
 			print("  (la scia passa su una vasca in %s)" % str(q))
 	check(a_terra, "sempre a terra, senza passare sopra le vasche")
+	# Prova della v0.3.2: la scia si interrompeva (sotto il pavimento) o si staccava. Ogni vertice dei
+	# nastri appoggiati sta a 1-3 cm sopra il pavimento che ha sotto.
+	var staccati := 0
+	var sotto := 0
+	var vertici := 0
+	for b in radice.find_children("*", "BavaRosa", true, false):
+		if not (b as BavaRosa).appoggia:
+			continue
+		var nastro := b.get_node_or_null(^"Nastro") as MeshInstance3D
+		if nastro == null:
+			continue
+		var vv: PackedVector3Array = nastro.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+		for k in range(0, vv.size(), 3):
+			var q := vv[k]
+			vertici += 1
+			var giu := space.intersect_ray(PhysicsRayQueryParameters3D.create(q + Vector3(0.0, 0.3, 0.0), q + Vector3(0.0, -0.3, 0.0), Layers.WORLD))
+			if giu.is_empty():
+				continue
+			var dy := q.y - float(giu.position.y)
+			if dy < 0.002:
+				sotto += 1
+			elif dy > 0.03:
+				staccati += 1
+	check(vertici > 100 and sotto == 0 and staccati == 0,
+		"la bava è continua: appoggiata al pavimento, mai sotto (%d) né staccata (%d) su %d vertici" % [sotto, staccati, vertici])
 	check(ritorno.find_children("*", "WaterDripEmitter", true, false).size() >= 2, "dal bordo della vasca gocciola ancora")
 	check(not bool(interni.get(&"docce_aperte")) and ritorno.find_children("VaporeBuio*", "", true, false).is_empty(),
 		"con la strada B le docce non scorrono e negli spogliatoi non c'è vapore")

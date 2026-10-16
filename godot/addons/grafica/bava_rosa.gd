@@ -14,7 +14,14 @@ extends Node3D
 @export var larghezza := 0.32
 @export var variazione := 0.45
 ## Quanto sta sopra la superficie (contro lo z-fighting).
-@export var sollevamento := 0.008
+@export var sollevamento := 0.012
+## Appoggia ogni vertice del nastro sul pavimento vero (un raggio verso il basso sui corpi del mondo),
+## così segue gradini, soglie e bordi senza finire sotto il pavimento o staccarsene (prova della
+## v0.3.2: "la scia si interrompe in alcuni punti e poi riparte"). Falso per i tratti in verticale.
+@export var appoggia := true
+## Quanto sopra (gradini, soglie: non i ripiani delle panche) e sotto il percorso cerca il pavimento (m).
+@export var ricerca_su := 0.3
+@export var ricerca_giu := 0.6
 ## Colore delle vene dei tentacoli (medusa/tentacoli_emissione.jpg: circa 126, 19, 86).
 @export var colore := Color(1.0, 0.16, 0.68)
 @export var emissione := 1.5
@@ -65,6 +72,9 @@ func costruisci() -> void:
 		var centro := p + lato * rumore.get_noise_1d(lungo * 1.3 + 40.0) * larghezza * 0.6 + Vector3.UP * sollevamento
 		var s := centro - lato * w * 0.5
 		var d := centro + lato * w * 0.5
+		if appoggia:
+			s = _a_terra(s)
+			d = _a_terra(d)
 		if i > 0:
 			_quad(st, prec_s, prec_d, s, d, prec_u, lungo)
 		prec_s = s
@@ -96,6 +106,18 @@ func costruisci() -> void:
 				o.set_meta(&"risveglio_ignora", true)
 				add_child(o)
 				o.global_position = percorso[i] + Vector3.UP * 0.25
+
+
+## Il punto appoggiato sul pavimento sotto (o appena sopra) di lui, più [member sollevamento].
+func _a_terra(q: Vector3) -> Vector3:
+	var w := get_world_3d()
+	if w == null:
+		return q
+	var rq := PhysicsRayQueryParameters3D.create(q + Vector3.UP * ricerca_su, q - Vector3.UP * ricerca_giu, Layers.WORLD)
+	var hit := w.direct_space_state.intersect_ray(rq)
+	if hit.is_empty():
+		return q
+	return Vector3(q.x, (hit.position as Vector3).y + sollevamento, q.z)
 
 
 func _quad(st: SurfaceTool, a_s: Vector3, a_d: Vector3, b_s: Vector3, b_d: Vector3, ua: float, ub: float) -> void:

@@ -1844,8 +1844,8 @@ class AudioLei:
 ##  - piscina_vuota quando la vasca si svuota ("emptied"), se l'acqua stava scendendo (non quando
 ##    si riparte con la piscina già vuota);
 ##  - il pulsante della botola: su "pulsante_attivato" lo scatto e il jingle
-##    (pulsante_botola_attiva) e il lampeggiante che prende giri (tono da TONO_FERMO a 1); a ogni
-##    lampo il bi-bu (pulsante_botola_bibu): col segnale "lampeggio" se c'è, se no ogni
+##    (pulsante_botola_attiva) e il lampeggiante che prende giri (tono da TONO_FERMO a 1); il bi-bu a
+##    ogni lampo (pulsante_botola_bibu) è spento dalla v0.3.2 (BIBU): col segnale "lampeggio" se c'è, se no ogni
 ##    PERIODO_LAMPO secondi; il lampo che arriva insieme al jingle non fa il bi-bu (il primo è al
 ##    lampo dopo). attivo e premuto() si rileggono a ogni fotogramma: quando il pulsante è premuto
 ##    il lampeggiante si ferma; ripartendo da un checkpoint gira (o tace) da solo.
@@ -1858,6 +1858,8 @@ class AudioPiscina:
 	const SCESA_DA_POCO := 3.0
 	## Dopo lo scatto e il jingle, per tanti secondi niente bi-bu (si sovrapporrebbe al jingle).
 	const DOPO_JINGLE := 1.2
+	## Il bi-bu a ogni lampo (tolto dopo la prova della v0.3.2).
+	const BIBU := false
 
 	var audio
 	var n: Node
@@ -1914,7 +1916,9 @@ class AudioPiscina:
 		da_attivazione = 0.0
 
 	func _su_lampo() -> void:
-		if gira and da_attivazione >= DOPO_JINGLE and is_instance_valid(pulsante):
+		# Prova della v0.3.2: il bi-bu ripetuto a ogni lampo era una "musichetta in loop che dà molto
+		# fastidio". Resta solo il jingle dell'attivazione, una volta; il bi-bu si riaccende con BIBU.
+		if BIBU and gira and da_attivazione >= DOPO_JINGLE and is_instance_valid(pulsante):
 			audio.suona(&"pulsante_botola_bibu", pulsante.global_position)
 
 	func _su_vuota() -> void:

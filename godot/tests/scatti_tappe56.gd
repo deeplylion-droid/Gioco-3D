@@ -11,9 +11,12 @@ extends Node
 ##   sotto_scala          in fondo alla scala del pozzo, guardando sotto la scala (punto 5)
 ##   cancelli             camera delle onde, davanti al primo cancello stagno (punto 6)
 ##   cancelli_aperti      lo stesso punto dopo il passaggio, cancelli aperti (punto 6)
+##   cupola               (v0.3.2, punto 5) la cupola dal bordo della piscina, 4 fotogrammi di fila (PNG)
+##                        com'è, senza pulviscolo e senza rivoli sul vetro: per trovare i puntini che
+##                        sfarfallano confrontando i fotogrammi
 
 const LEVEL := "res://scenes/sala_principale.tscn"
-const TUTTI := ["portellone_spiaggia", "portellone_vicino", "portellone_vuota", "sotto_scala", "cancelli", "cancelli_aperti"]
+const TUTTI := ["portellone_spiaggia", "portellone_vicino", "portellone_vuota", "sotto_scala", "cancelli", "cancelli_aperti", "cupola"]
 
 var out_dir := "user://scatti_tappe56"
 var scatti: Array = TUTTI
@@ -112,6 +115,40 @@ func _cancelli_aperti() -> void:
 		await get_tree().physics_frame
 	Engine.time_scale = 1.0
 	await _foto("cancelli_aperti", tec.to_global(Vector3(12.5, 0.0, -0.6)), tec.to_global(Vector3(17.5, 1.3, 0.0)))
+
+
+func _cupola() -> void:
+	var dove := Vector3(5.0, 0.0, 6.5)
+	var verso := Vector3(0.0, 15.0, -5.0)
+	_metti(dove, verso)
+	for i in 60:
+		await get_tree().process_frame
+		_metti(dove, verso)
+	await _fotogrammi("cupola_normale", dove, verso)
+	var polvere := level.find_children("*", "Pulviscolo", true, false)
+	for n in polvere:
+		(n as Node3D).visible = false
+	await _fotogrammi("cupola_senza_pulviscolo", dove, verso)
+	for n in polvere:
+		(n as Node3D).visible = true
+	var vetro := level.get_node_or_null(^"Sala/Cupola/sala_cupola_vetro") as MeshInstance3D
+	if vetro:
+		var m := vetro.get_active_material(0) as ShaderMaterial
+		if m:
+			m.set_shader_parameter(&"pioggia", 0.0)
+	await _fotogrammi("cupola_senza_rivoli", dove, verso)
+
+
+func _fotogrammi(nome: String, dove: Vector3, verso: Vector3) -> void:
+	for i in 20:
+		await get_tree().process_frame
+		_metti(dove, verso)
+	for k in 4:
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(out_dir.path_join("%s_%d.png" % [nome, k]))
+		await get_tree().process_frame
+		_metti(dove, verso)
+	print("scatto ", nome)
 
 
 # --- Aiuti ----------------------------------------------------------------------------------------

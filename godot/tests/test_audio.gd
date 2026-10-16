@@ -443,7 +443,7 @@ func _run() -> void:
 		check(lamp_botola != null and lamp_botola.volume > 0.5 and lamp_botola.is_suonando(), "il lampeggiante gira")
 		check(_conta(&"pulsante_botola_bibu") == bibu, "insieme al jingle niente bi-bu")
 		await _frames(100)
-		check(_conta(&"pulsante_botola_bibu") > bibu, "al lampo dopo (1,6 s) il bi-bu")
+		check(_conta(&"pulsante_botola_bibu") == bibu, "niente bi-bu ripetuto a ogni lampo (prova della v0.3.2)")
 		# colpito col getto: il lampeggiante si ferma e i bi-bu smettono
 		var bottone: WaterButton = piscina.get(&"pulsante")
 		bottone.powered = true
