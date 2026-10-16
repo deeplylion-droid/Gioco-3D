@@ -2,35 +2,40 @@ extends Node3D
 ## PROPOSTA (non usata dal gioco): getto e aspirazione dello zaino-pompa molto più potenti,
 ## "come una manichetta dei pompieri potenziata". Si aggancia a un WaterPack già pronto e
 ## cambia solo la grafica e le sensazioni (rinculo, vibrazione, scossa della camera): la logica
-## del gioco (litri, gittata utile, bersagli, pozze) resta quella di WaterPack.
-## Due stili:
-##  - A "manichetta": un getto pieno e compatto che lontano si apre in spruzzo, nebbiolina,
-##    schiuma e schizzi all'impatto, muri bagnati, rinculo e un po' di scossa;
-##  - B "potenziata": tutto più grosso e violento: getto più largo e veloce, onda d'urto
-##    all'ugello, ventaglio d'impatto enorme con goccioloni, nebbia che riempie la luce, strattoni
-##    del tubo e scossa più forte.
+## del gioco (litri, bersagli, pozze) resta quella di WaterPack.
+## Due stili, tutti e due molto più forti di oggi:
+##  - A "manichetta": nucleo d'acqua pieno e lucido che lontano si apre in spruzzo, ventaglio
+##    d'impatto di un metro, rivoli, bagnato che si allarga, rinculo all'avvio e scossa leggera;
+##  - B "potenziata": un attimo di carica (la pressione sale), poi un colpo: getto enorme, ventaglio
+##    d'impatto di 1,5 m con lame e goccioloni che tornano verso la camera, nebbia che resta,
+##    strattoni del tubo e scossa più forte.
+## Aspirazione (tutti e due): una colonna d'acqua spessa che si torce dalla superficie all'ugello,
+## un gorgo a imbuto profondo, gocce strappate dai bordi che ci volano dentro.
 ## Uso: var g = load("res://proposte/zaino/getto_potente.gd").new(); g.stile = "B"; add_child(g); g.aggancia(pack)
+
+const NUCLEO := preload("res://proposte/zaino/getto_nucleo.gdshader")
+const COLONNA := preload("res://proposte/zaino/colonna_aspirata.gdshader")
 
 const STILI := {
 	"A": {
-		"velocita": 20.0, "volo": 1.0,
-		"raggio": 0.055, "allarga": 0.36, "sfalda": 0.55,
-		"opacita": [0.62, 0.95], "bianco": 0.65,
-		"spruzzo": 260, "nebbia": 24, "nebbia_dim": 0.45,
-		"schizzi": 220, "goccioloni": 40, "schiuma": 36, "impatto_vel": 4.5,
-		"rinculo": 0.04, "vibra": 0.006, "scossa": 0.0035, "strattoni": 0.0,
-		"aspira_base": 0.2, "aspira_cima": 0.03, "vortice": 240, "vortice_r": 0.75,
-		"nebbia_vol": 0.35, "bocca": 0,
+		"velocita": 21.0, "volo": 1.0,
+		"raggio": 0.06, "allarga": 0.4, "sfalda": 0.55, "bianco": 0.1,
+		"spruzzo": 300, "nebbia": 30, "nebbia_dim": 0.5,
+		"ventaglio": 1.0, "schizzi": 420, "lame": 40, "goccioloni": 80, "rivoli": 60, "impatto_vel": 7.0,
+		"nebbia_resta": 40, "bagnato": 1.3,
+		"rinculo": 0.05, "rinculo_avvio": 1.0, "vibra": 0.007, "scossa": 0.004, "strattoni": 0.012,
+		"carica": 0.0,
+		"colonna_base": 0.12, "colonna_cima": 0.04, "vortice": 260, "vortice_r": 0.55, "imbuto": 0.3,
 	},
 	"B": {
-		"velocita": 26.0, "volo": 1.05,
-		"raggio": 0.095, "allarga": 0.62, "sfalda": 0.5,
-		"opacita": [0.72, 1.0], "bianco": 0.8,
-		"spruzzo": 720, "nebbia": 56, "nebbia_dim": 0.85,
-		"schizzi": 680, "goccioloni": 130, "schiuma": 100, "impatto_vel": 8.0,
-		"rinculo": 0.08, "vibra": 0.013, "scossa": 0.009, "strattoni": 0.028,
-		"aspira_base": 0.28, "aspira_cima": 0.04, "vortice": 420, "vortice_r": 1.1,
-		"nebbia_vol": 0.7, "bocca": 60,
+		"velocita": 27.0, "volo": 1.05,
+		"raggio": 0.1, "allarga": 0.65, "sfalda": 0.5, "bianco": 0.18,
+		"spruzzo": 700, "nebbia": 50, "nebbia_dim": 0.75,
+		"ventaglio": 1.5, "schizzi": 800, "lame": 90, "goccioloni": 160, "rivoli": 120, "impatto_vel": 10.0,
+		"nebbia_resta": 80, "bagnato": 1.8,
+		"rinculo": 0.08, "rinculo_avvio": 1.6, "vibra": 0.012, "scossa": 0.009, "strattoni": 0.028,
+		"carica": 0.35,
+		"colonna_base": 0.17, "colonna_cima": 0.05, "vortice": 420, "vortice_r": 0.65, "imbuto": 0.5,
 	},
 }
 
@@ -39,24 +44,31 @@ const STILI := {
 var pack: Node
 var s: Dictionary
 var _cam: Camera3D
-var _fx: WaterPackFX
+var _fx: Node
 var _spruzzi: Array[GPUParticles3D] = []
 var _nebbie: Array[GPUParticles3D] = []
 var _bocca: GPUParticles3D
 var _schizzi: GPUParticles3D
+var _lame: GPUParticles3D
 var _goccioloni: GPUParticles3D
-var _schiuma: GPUParticles3D
+var _rivoli: GPUParticles3D
 var _nebbia_impatto: GPUParticles3D
 var _bagnato: Array[Decal] = []
 var _bagnato_t := 0.0
+var _colonna: MeshInstance3D
+var _colonna_mesh := ArrayMesh.new()
+var _colonna_mat: ShaderMaterial
 var _vortice: MultiMeshInstance3D
 var _vortice_k := 0.0
-var _vortice_nebbia: GPUParticles3D
 var _t := 0.0
 var _strattone := 0.0
 var _strattone_dir := Vector3.ZERO
 var _prossimo_strattone := 0.0
 var _scossa_k := 0.0
+var _avvio := 0.0          # rinculo all'avvio del getto (1 -> 0)
+var _spruzzava := false
+var _carica := 0.0         # tempo di carica rimasto (stile B)
+var _carica_tot := 0.0
 var _tex_bagnato: Texture2D
 var _tex_bagnato_orm: Texture2D
 
@@ -64,122 +76,126 @@ var _tex_bagnato_orm: Texture2D
 func aggancia(p_pack: Node) -> void:
 	pack = p_pack
 	s = STILI[stile]
-	process_priority = 500   # dopo WaterPack: aggiunge rinculo e strattoni alla lancia
+	process_priority = 500   # dopo WaterPack e WaterPackFX: aggiunge rinculo e gorgo
 	top_level = true
 	global_transform = Transform3D.IDENTITY
 	var player = pack.get(&"player")
 	_cam = player.camera if player else get_viewport().get_camera_3d()
-	# Getto: velocità e volo (la gittata cresce un po'), forma e materiale del nastro.
 	pack.set(&"jet_speed", s.velocita)
 	pack.set(&"jet_max_time", s.volo)
 	pack.set(&"spray_kick", s.rinculo)
 	pack.set(&"spray_shake", s.vibra)
 	pack.set(&"suck_shake", s.vibra * 0.8)
 	pack.call(&"_apply_jet_parameters")
+	# Il nucleo: acqua lucida e rifratta, bianca solo dove si sfalda.
 	var stream = pack.get(&"stream")
 	stream.max_age = s.volo
 	stream.radius_start = s.raggio
 	stream.radius_growth = s.allarga
 	stream.breakup_start = s.sfalda
-	var m: ShaderMaterial = stream.material_override
-	m.set_shader_parameter(&"color", Color(0.86, 0.94, 1.0).lerp(Color.WHITE, s.bianco * 0.4))
-	m.set_shader_parameter(&"opacity_center", s.opacita[0])
-	m.set_shader_parameter(&"opacity_edge", s.opacita[1])
-	m.set_shader_parameter(&"streak_density", 0.9)
-	m.set_shader_parameter(&"streak_strength", 0.7)
-	m.set_shader_parameter(&"emission_strength", 0.12)
-	m.set_shader_parameter(&"rim_emission", 0.35)
-	var suction = pack.get(&"suction_stream")
-	suction.radius_base = s.aspira_base
-	suction.radius_top = s.aspira_cima
-	suction.flow_speed = 7.0
-	(suction.material_override as ShaderMaterial).set_shader_parameter(&"flow_speed", 7.0)
-	(suction.material_override as ShaderMaterial).set_shader_parameter(&"opacity_center", 0.22)
-	(suction.material_override as ShaderMaterial).set_shader_parameter(&"streak_strength", 0.85)
-	(suction.material_override as ShaderMaterial).set_shader_parameter(&"streak_density", 3.5)
-	# Le goccioline fini intorno al getto (le particelle della lancia): più grandi e più fitte.
+	var m := ShaderMaterial.new()
+	m.shader = NUCLEO
+	m.set_shader_parameter(&"bianco_base", s.bianco)
+	stream.material_override = m
+	# L'aspirazione di oggi (un nastro piatto) lascia il posto alla colonna 3D.
+	(pack.get(&"suction_stream") as Node3D).visible = false
 	var jet: GPUParticles3D = pack.get(&"jet_particles")
 	if jet:
-		jet.amount = 600 if stile == "B" else 420
+		jet.amount = 500 if stile == "B" else 360
 		var jm := jet.process_material as ShaderMaterial
 		if jm:
 			jm.set_shader_parameter(&"base_size", 0.012)
-			jm.set_shader_parameter(&"size_growth", 0.03)
+			jm.set_shader_parameter(&"size_growth", 0.035)
 			jm.set_shader_parameter(&"spread_degrees", 3.5 if stile == "B" else 2.6)
 			jm.set_shader_parameter(&"color", Color(0.9, 0.96, 1.0, 0.7))
 	for n in get_tree().root.find_children("*", "Node3D", true, false):
 		if n is WaterPackFX:
 			_fx = n
-			_fx.suction_radius = s.vortice_r * 1.8
-			# La nebbiolina dell'addon viene tirata tutta verso l'ugello e lì fa una palla bianca
-			# sotto la torcia: qui la sostituisce la nebbia del vortice.
-			(_fx.get(&"_suck_mist") as Node3D).visible = false
+			# Le gocce e la nebbiolina tonde dell'aspirazione di oggi: le fa la colonna.
+			(n.get(&"_suck_drops") as Node3D).visible = false
+			(n.get(&"_suck_mist") as Node3D).visible = false
+			n.set(&"suction_radius", s.vortice_r)
 	_crea_particelle()
-	_crea_vortice()
+	_crea_colonna()
 	_crea_texture_bagnato()
 
 
+## Stile B: un attimo di carica prima del colpo (la pressione sale nella lancia).
+func carica(durata: float) -> void:
+	_carica = durata
+	_carica_tot = durata
+
+
 func _crea_particelle() -> void:
-	# Spruzzo lungo il getto: tre punti nella seconda metà del volo, dove il nucleo si apre.
+	# Spruzzo lungo il getto, dove il nucleo si apre.
 	for i in 3:
-		var p := WaterParticles.make_droplets(int(s.spruzzo / 3), 0.55, Vector2(0.02, 0.06) * (1.4 if stile == "B" else 1.0))
+		var p := WaterParticles.make_droplets(int(s.spruzzo / 3), 0.55, Vector2(0.02, 0.07) * (1.3 if stile == "B" else 1.0))
 		var pm: ParticleProcessMaterial = p.process_material
-		pm.spread = 7.0 + i * 5.0
-		pm.initial_velocity_min = 0.6
-		pm.initial_velocity_max = 0.95
+		pm.spread = 6.0 + i * 5.0
 		pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-		pm.emission_sphere_radius = s.raggio * (2.0 + i * 2.0)
+		pm.emission_sphere_radius = s.raggio * (1.5 + i * 2.0)
 		_aggiungi(p)
 		_spruzzi.append(p)
 		var nb := WaterParticles.make_mist(int(s.nebbia / 3), 1.2, s.nebbia_dim)
 		var nm: ParticleProcessMaterial = nb.process_material
 		nm.spread = 25.0
 		nm.initial_velocity_min = 0.2
-		nm.initial_velocity_max = 0.5
+		nm.initial_velocity_max = 0.6
 		_aggiungi(nb)
 		_nebbie.append(nb)
-	# Impatto: ventaglio di schizzi, goccioloni pesanti, schiuma e una nuvola di nebbia.
-	_schizzi = WaterParticles.make_droplets(s.schizzi, 0.8, Vector2(0.025, 0.08) * (1.3 if stile == "B" else 1.0))
+	# Impatto: ventaglio di schizzi, lame d'acqua, goccioloni che tornano indietro, rivoli che colano.
+	_schizzi = WaterParticles.make_droplets(s.schizzi, 0.75, Vector2(0.025, 0.09) * (1.3 if stile == "B" else 1.0))
 	var sm: ParticleProcessMaterial = _schizzi.process_material
-	sm.spread = 70.0
-	sm.initial_velocity_min = s.impatto_vel * 0.4
+	sm.spread = 75.0
+	sm.initial_velocity_min = s.impatto_vel * 0.35
 	sm.initial_velocity_max = s.impatto_vel
 	sm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	sm.emission_sphere_radius = 0.12
+	sm.emission_sphere_radius = s.ventaglio * 0.12
 	_aggiungi(_schizzi)
-	_goccioloni = WaterParticles.make_droplets(s.goccioloni, 1.4, Vector2(0.05, 0.09) * (1.3 if stile == "B" else 1.0))
+	_lame = WaterParticles.make_droplets(s.lame, 0.45, Vector2(0.05, 0.32) * (1.25 if stile == "B" else 1.0))
+	var lm: ParticleProcessMaterial = _lame.process_material
+	lm.spread = 60.0
+	lm.initial_velocity_min = s.impatto_vel * 0.6
+	lm.initial_velocity_max = s.impatto_vel * 1.1
+	lm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	lm.emission_sphere_radius = s.ventaglio * 0.1
+	_aggiungi(_lame)
+	_goccioloni = WaterParticles.make_droplets(s.goccioloni, 1.3, Vector2(0.05, 0.11) * (1.3 if stile == "B" else 1.0))
 	var gm: ParticleProcessMaterial = _goccioloni.process_material
-	gm.spread = 50.0
-	gm.initial_velocity_min = 1.0
-	gm.initial_velocity_max = 3.0
+	gm.spread = 45.0
+	gm.initial_velocity_min = 2.0
+	gm.initial_velocity_max = s.impatto_vel * 0.6
 	gm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	gm.emission_sphere_radius = 0.25
+	gm.emission_sphere_radius = s.ventaglio * 0.2
 	_aggiungi(_goccioloni)
-	_schiuma = WaterParticles.make_mist(s.schiuma, 0.9, 0.18 if stile == "A" else 0.28)
-	var fm: ParticleProcessMaterial = _schiuma.process_material
-	fm.spread = 80.0
-	fm.initial_velocity_min = 0.3
-	fm.initial_velocity_max = 1.2
-	fm.gravity = Vector3(0, -1.5, 0)
-	fm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	fm.emission_sphere_radius = 0.18
-	_schiuma.amount_ratio = 1.0
-	_aggiungi(_schiuma)
-	_nebbia_impatto = WaterParticles.make_mist(int(s.nebbia), 1.8, s.nebbia_dim * 1.6)
+	_rivoli = WaterParticles.make_droplets(s.rivoli, 1.8, Vector2(0.02, 0.16))
+	var rm: ParticleProcessMaterial = _rivoli.process_material
+	rm.direction = Vector3.DOWN
+	rm.spread = 4.0
+	rm.initial_velocity_min = 0.2
+	rm.initial_velocity_max = 0.6
+	rm.gravity = Vector3(0, -2.5, 0)   # scivolano sul muro, più lente della caduta libera
+	rm.damping_min = 1.0
+	rm.damping_max = 2.0
+	rm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	_aggiungi(_rivoli)
+	# Nebbia d'impatto: lunga, resta nell'aria dopo lo stop.
+	_nebbia_impatto = WaterParticles.make_mist(s.nebbia_resta, 3.5, s.nebbia_dim * 1.8)
 	var im: ParticleProcessMaterial = _nebbia_impatto.process_material
 	im.spread = 85.0
-	im.initial_velocity_min = 0.4
-	im.initial_velocity_max = 1.6
+	im.initial_velocity_min = 0.3
+	im.initial_velocity_max = 1.4
+	im.damping_min = 0.8
+	im.damping_max = 1.6
 	_aggiungi(_nebbia_impatto)
-	if s.bocca > 0:
-		# B: onda d'urto all'ugello, un anello di gocce che si apre di traverso.
-		_bocca = WaterParticles.make_droplets(s.bocca, 0.25, Vector2(0.015, 0.05))
-		var bm: ParticleProcessMaterial = _bocca.process_material
-		bm.spread = 35.0
-		bm.initial_velocity_min = 2.0
-		bm.initial_velocity_max = 4.0
-		bm.gravity = Vector3(0, -4.0, 0)
-		_aggiungi(_bocca)
+	# All'ugello: nebbiolina e gocce (nella carica e quando parte il colpo).
+	_bocca = WaterParticles.make_droplets(60 if stile == "B" else 30, 0.3, Vector2(0.015, 0.05))
+	var bm: ParticleProcessMaterial = _bocca.process_material
+	bm.spread = 35.0
+	bm.initial_velocity_min = 1.0
+	bm.initial_velocity_max = 3.5
+	bm.gravity = Vector3(0, -6.0, 0)
+	_aggiungi(_bocca)
 
 
 func _aggiungi(p: GPUParticles3D) -> void:
@@ -189,36 +205,33 @@ func _aggiungi(p: GPUParticles3D) -> void:
 	add_child(p)
 
 
-func _crea_vortice() -> void:
-	# Gocce che salgono a spirale dalla pozza all'ugello (posizioni calcolate qui, a ogni frame).
+func _crea_colonna() -> void:
+	_colonna = MeshInstance3D.new()
+	_colonna.mesh = _colonna_mesh
+	_colonna.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_colonna_mat = ShaderMaterial.new()
+	_colonna_mat.shader = COLONNA
+	_colonna.material_override = _colonna_mat
+	_colonna.visible = false
+	add_child(_colonna)
+	# Gocce strappate dai bordi del gorgo che volano dentro la colonna (posizioni calcolate qui).
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.instance_count = int(s.vortice)
 	var q := QuadMesh.new()
-	q.size = Vector2(0.018, 0.16) * (1.3 if stile == "B" else 1.0)
+	q.size = Vector2(0.016, 0.14) * (1.25 if stile == "B" else 1.0)
 	var gocce := WaterParticles.droplet_material().duplicate() as ShaderMaterial
-	gocce.set_shader_parameter(&"opacity", 0.95)
-	gocce.set_shader_parameter(&"rim_light", 0.8)
+	gocce.set_shader_parameter(&"opacity", 0.9)
+	gocce.set_shader_parameter(&"rim_light", 0.7)
 	gocce.set_shader_parameter(&"tint", Color(0.85, 0.93, 1.0))
 	q.material = gocce
 	mm.mesh = q
 	_vortice = MultiMeshInstance3D.new()
 	_vortice.multimesh = mm
 	_vortice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_vortice.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	_vortice.visible = false
 	add_child(_vortice)
-	_vortice_nebbia = WaterParticles.make_mist(10 if stile == "A" else 18, 0.8, 0.5 * s.nebbia_dim)
-	var vm: ParticleProcessMaterial = _vortice_nebbia.process_material
-	vm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
-	vm.emission_ring_axis = Vector3.UP
-	vm.emission_ring_radius = s.vortice_r
-	vm.emission_ring_inner_radius = s.vortice_r * 0.3
-	vm.emission_ring_height = 0.02
-	vm.direction = Vector3.UP
-	vm.spread = 15.0
-	vm.initial_velocity_min = 0.4
-	vm.initial_velocity_max = 1.0
-	_aggiungi(_vortice_nebbia)
 
 
 func _crea_texture_bagnato() -> void:
@@ -233,7 +246,7 @@ func _crea_texture_bagnato() -> void:
 			var bordo := 0.75 + 0.25 * rumore.get_noise_2d(x, y)
 			var a := clampf((bordo - d) / 0.25, 0.0, 1.0)
 			img.set_pixel(x, y, Color(0.05, 0.06, 0.07, a * 0.55))
-			orm.set_pixel(x, y, Color(1.0, 0.06, 0.0, a))
+			orm.set_pixel(x, y, Color(1.0, 0.05, 0.0, a))
 	_tex_bagnato = ImageTexture.create_from_image(img)
 	_tex_bagnato_orm = ImageTexture.create_from_image(orm)
 
@@ -244,10 +257,15 @@ func _process(delta: float) -> void:
 	_t += delta
 	var spruzza := bool(pack.get(&"is_spraying"))
 	var aspira := bool(pack.get(&"is_sucking"))
+	if spruzza and not _spruzzava:
+		_avvio = 1.0
+	_spruzzava = spruzza
+	_avvio = move_toward(_avvio, 0.0, delta / 0.3)
+	_carica = maxf(_carica - delta, 0.0)
 	var stream = pack.get(&"stream")
 	_aggiorna_getto(stream, spruzza)
 	_aggiorna_impatto(spruzza and bool(pack.get(&"has_hit")), delta)
-	_aggiorna_vortice(aspira, delta)
+	_aggiorna_aspirazione(aspira, delta)
 	_aggiorna_sensazioni(spruzza, aspira, delta)
 
 
@@ -288,16 +306,15 @@ func _aggiorna_getto(stream, spruzza: bool) -> void:
 			pm.direction = v.normalized()
 			pm.initial_velocity_min = v.length() * 0.55
 			pm.initial_velocity_max = v.length() * 0.95
-	if _bocca:
-		var muzzle: Node3D = pack.get(&"muzzle")
-		_bocca.emitting = spruzza
-		if muzzle:
-			_bocca.global_position = muzzle.global_position
-			(_bocca.process_material as ParticleProcessMaterial).direction = -muzzle.global_basis.z
+	var muzzle: Node3D = pack.get(&"muzzle")
+	_bocca.emitting = (spruzza and _avvio > 0.5) or _carica > 0.0
+	if muzzle:
+		_bocca.global_position = muzzle.global_position
+		(_bocca.process_material as ParticleProcessMaterial).direction = -muzzle.global_basis.z
 
 
 func _aggiorna_impatto(colpisce: bool, delta: float) -> void:
-	for p in [_schizzi, _goccioloni, _schiuma, _nebbia_impatto]:
+	for p in [_schizzi, _lame, _goccioloni, _rivoli, _nebbia_impatto]:
 		(p as GPUParticles3D).emitting = colpisce
 	if not colpisce:
 		_bagnato_t = 0.0
@@ -310,90 +327,164 @@ func _aggiorna_impatto(colpisce: bool, delta: float) -> void:
 	var dentro := Vector3.ZERO
 	if not arrivo.is_empty():
 		dentro = (arrivo[1] as Vector3).normalized()
-	# Gli schizzi rimbalzano: fra la normale e la direzione riflessa del getto.
+	# Il ventaglio rimbalza fra la normale e la direzione riflessa del getto: torna verso chi spara.
 	var rif := dentro.bounce(normale).normalized() if dentro != Vector3.ZERO else normale
-	var dir := (normale + rif).normalized()
-	for p in [_schizzi, _goccioloni, _schiuma, _nebbia_impatto]:
+	var dir := (normale * 0.6 + rif).normalized()
+	for p in [_schizzi, _lame, _goccioloni, _nebbia_impatto]:
 		(p as GPUParticles3D).global_position = punto + normale * 0.05
 		((p as GPUParticles3D).process_material as ParticleProcessMaterial).direction = dir
-	# Macchie di bagnato lucido che si allargano dove colpisce.
+	# Rivoli: colano sul muro sotto il punto colpito (solo su superfici verticali).
+	_rivoli.emitting = absf(normale.y) < 0.6
+	_rivoli.global_position = punto + normale * 0.03 + Vector3.DOWN * 0.1
+	(_rivoli.process_material as ParticleProcessMaterial).emission_box_extents = Vector3(0.35, 0.15, 0.35) * s.ventaglio
+	# Bagnato lucido che si allarga sul muro colpito e sul pavimento sotto.
 	_bagnato_t -= delta
 	if _bagnato_t <= 0.0:
-		_bagnato_t = 0.12
+		_bagnato_t = 0.1
 		_macchia(punto, normale)
+		var sotto := _pavimento_sotto(punto)
+		if not sotto.is_empty():
+			_macchia(sotto[0], sotto[1])
 	for d in _bagnato:
-		if d.global_position.distance_to(punto) < 0.6:
-			d.size.x = minf(d.size.x + delta * 0.8, 1.6 if stile == "B" else 1.1)
+		var vicino := d.global_position.distance_to(punto) < 0.8
+		var sotto_punto := Vector2(d.global_position.x - punto.x, d.global_position.z - punto.z).length() < 1.2
+		if vicino or sotto_punto:
+			d.size.x = minf(d.size.x + delta * 1.2, s.bagnato)
 			d.size.z = d.size.x
 			d.modulate.a = minf(d.modulate.a + delta * 2.0, 1.0)
 
 
+func _pavimento_sotto(punto: Vector3) -> Array:
+	var q := PhysicsRayQueryParameters3D.create(punto + Vector3.UP * 0.1, punto + Vector3.DOWN * 4.0, 1)
+	var r := get_world_3d().direct_space_state.intersect_ray(q)
+	if r.is_empty():
+		return []
+	return [r.position, r.normal]
+
+
 func _macchia(punto: Vector3, normale: Vector3) -> void:
 	for d in _bagnato:
-		if d.global_position.distance_to(punto) < 0.25:
+		if d.global_position.distance_to(punto) < 0.3:
 			return
 	var d := Decal.new()
 	d.texture_albedo = _tex_bagnato
 	d.texture_orm = _tex_bagnato_orm
-	d.size = Vector3(0.4, 0.5, 0.4)
-	d.modulate = Color(1, 1, 1, 0.2)
+	d.size = Vector3(0.5, 0.5, 0.5)
+	d.modulate = Color(1, 1, 1, 0.25)
 	d.upper_fade = 0.2
 	d.lower_fade = 0.2
 	add_child(d)
 	d.global_position = punto
 	# Il Decal proietta lungo il suo -Y: lo si gira verso la superficie colpita.
-	var y := normale
+	var y := normale.normalized()
 	var x := y.cross(Vector3.FORWARD if absf(y.z) < 0.9 else Vector3.RIGHT).normalized()
 	d.global_basis = Basis(x, y, x.cross(y)).orthonormalized()
 	d.rotate_object_local(Vector3.UP, randf() * TAU)
 	_bagnato.append(d)
-	if _bagnato.size() > 60:
+	if _bagnato.size() > 80:
 		_bagnato.pop_front().queue_free()
 
 
 func _asciuga(delta: float) -> void:
 	for d in _bagnato:
-		d.modulate.a = maxf(d.modulate.a - delta * 0.04, 0.0)
+		d.modulate.a = maxf(d.modulate.a - delta * 0.03, 0.0)
 
 
-func _aggiorna_vortice(aspira: bool, delta: float) -> void:
-	_vortice_k = move_toward(_vortice_k, 1.0 if aspira else 0.0, delta * 3.0)
-	_vortice.visible = _vortice_k > 0.01
-	_vortice_nebbia.emitting = aspira
-	if not _vortice.visible:
+func _aggiorna_aspirazione(aspira: bool, delta: float) -> void:
+	_vortice_k = move_toward(_vortice_k, 1.0 if aspira else 0.0, delta * (4.0 if aspira else 2.5))
+	_colonna.visible = _vortice_k > 0.01
+	_vortice.visible = _colonna.visible
+	if not _colonna.visible:
 		return
 	var muzzle: Node3D = pack.get(&"muzzle")
 	var base: Vector3 = pack.get(&"suck_point")
 	var cima: Vector3 = muzzle.global_position if muzzle else base + Vector3.UP
-	_vortice_nebbia.global_position = base + Vector3.UP * 0.03
+	# Gorgo a imbuto profondo sulla superficie (l'acqua dell'addon): sostituisce quello di WaterPackFX.
+	if _fx:
+		var corpo = _fx.get(&"_suck_body")
+		if corpo and is_instance_valid(corpo) and aspira:
+			corpo.set_flow(1, base, s.vortice_r, _vortice_k, 1.6, s.imbuto, 1.6, 0.12)
+	_costruisci_colonna(base, cima)
+	_colonna_mat.set_shader_parameter(&"forza", _vortice_k)
 	var mm := _vortice.multimesh
 	var n := mm.instance_count
 	var cam_pos := _cam.global_position if _cam else Vector3.ZERO
 	for i in n:
-		# Ogni goccia ha la sua fase: sale lungo un cono che si stringe verso l'ugello girando.
-		var fase := fmod(float(i) * 0.61803 + _t * (0.9 + 0.5 * fmod(i * 0.37, 1.0)), 1.0)
+		# Ogni goccia parte dal bordo del gorgo e gira verso la colonna, poi sale fino all'ugello.
+		var fase := fmod(float(i) * 0.61803 + _t * (0.7 + 0.5 * fmod(i * 0.37, 1.0)), 1.0)
 		var u := fase * fase
-		var r: float = lerpf(float(s.vortice_r) * (0.6 + 0.4 * fmod(i * 0.71, 1.0)), 0.02, u)
-		var ang := float(i) * 2.399 + _t * (4.0 + 10.0 * u) * (1.0 if stile == "A" else 1.4)
-		var centro := base.lerp(cima, u) + Vector3.UP * sin(u * PI) * 0.15
+		var r: float = lerpf(float(s.vortice_r) * (0.75 + 0.25 * fmod(i * 0.71, 1.0)), float(s.colonna_base) * 0.8, minf(u * 3.0, 1.0))
+		r = lerpf(r, 0.02, smoothstep(0.35, 1.0, u))
+		var ang := float(i) * 2.399 + _t * (5.0 + 12.0 * u) * (1.0 if stile == "A" else 1.3)
+		var centro := _curva(base, cima, smoothstep(0.25, 1.0, u)) + Vector3.UP * minf(u * 3.0, 1.0) * 0.04
 		var p := centro + Vector3(cos(ang), 0.0, sin(ang)) * r
-		var vel := (cima - p).normalized()
+		var vel := (cima - p).normalized() if u > 0.3 else (Vector3(-sin(ang), 0.15, cos(ang))).normalized()
 		var to_cam := (cam_pos - p).normalized()
 		var x := vel.cross(to_cam).normalized()
 		var z := x.cross(vel).normalized()
-		var scala := _vortice_k * (1.0 - smoothstep(0.85, 1.0, u)) * (0.6 + 0.8 * fmod(i * 0.43, 1.0))
-		mm.set_instance_transform(i, Transform3D(Basis(x * scala, vel * scala * 1.4, z), p))
+		var scala := _vortice_k * smoothstep(0.0, 0.08, u) * (1.0 - smoothstep(0.85, 1.0, u)) * (0.6 + 0.8 * fmod(i * 0.43, 1.0))
+		mm.set_instance_transform(i, Transform3D(Basis(x * scala, vel * scala, z * scala), p))
+
+
+## La colonna si piega: sale dritta dalla superficie e poi curva verso l'ugello.
+func _curva(base: Vector3, cima: Vector3, t: float) -> Vector3:
+	var c1 := base + Vector3.UP * base.distance_to(cima) * 0.45
+	return base.lerp(c1, t).lerp(c1.lerp(cima, t), t)
+
+
+func _costruisci_colonna(base: Vector3, cima: Vector3) -> void:
+	_colonna_mesh.clear_surfaces()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var anelli := 28
+	var lati := 18
+	var prec: Array = []
+	for i in anelli + 1:
+		var t := float(i) / anelli
+		var p := _curva(base, cima, t)
+		var d := (_curva(base, cima, minf(t + 0.02, 1.0)) - _curva(base, cima, maxf(t - 0.02, 0.0))).normalized()
+		var x := d.cross(Vector3.FORWARD if absf(d.z) < 0.9 else Vector3.RIGHT).normalized()
+		var y := d.cross(x).normalized()
+		# Larga alla base (si strappa dalla superficie), poi stretta come l'ugello; si torce e pulsa.
+		var r: float = lerpf(float(s.colonna_base), float(s.colonna_cima), smoothstep(0.0, 0.7, t))
+		r *= 1.0 + 0.12 * sin(t * 18.0 - _t * 14.0) * (1.0 - t)
+		r *= _vortice_k
+		var anello := []
+		for k in lati + 1:
+			var ang := TAU * k / lati + t * 4.0
+			var off := (x * cos(ang) + y * sin(ang))
+			anello.append([p + off * r, off, Vector2(float(k) / lati, t)])
+		if i > 0:
+			for k in lati:
+				for v in [prec[k], anello[k], anello[k + 1], prec[k], anello[k + 1], prec[k + 1]]:
+					st.set_normal(v[1])
+					st.set_uv(v[2])
+					st.add_vertex(v[0])
+		prec = anello
+	st.commit(_colonna_mesh)
 
 
 func _aggiorna_sensazioni(spruzza: bool, aspira: bool, delta: float) -> void:
-	# Scossa della camera (offset dell'obiettivo, non tocca la mira) e strattoni del tubo.
-	_scossa_k = move_toward(_scossa_k, 1.0 if spruzza else (0.4 if aspira else 0.0), delta * 6.0)
-	if _cam:
-		var a: float = s.scossa * _scossa_k
-		_cam.h_offset = (sin(_t * 61.0) * 0.6 + sin(_t * 37.0 + 1.0) * 0.4) * a
-		_cam.v_offset = (sin(_t * 53.0 + 2.0) * 0.6 + sin(_t * 29.0) * 0.4) * a
 	var vm: Node3D = pack.get(&"view_model")
-	if vm == null or s.strattoni <= 0.0:
+	var caricando := _carica > 0.0
+	_scossa_k = move_toward(_scossa_k, 1.0 if spruzza else (0.5 if aspira or caricando else 0.0), delta * 6.0)
+	if _cam:
+		var a: float = s.scossa * (_scossa_k + _avvio * 2.0)
+		if caricando:
+			a = s.scossa * 1.5 * (1.0 - _carica / maxf(_carica_tot, 0.01))
+		_cam.h_offset = (sin(_t * 61.0) * 0.6 + sin(_t * 37.0 + 1.0) * 0.4) * a
+		_cam.v_offset = (sin(_t * 53.0 + 2.0) * 0.6 + sin(_t * 29.0) * 0.4) * a + _avvio * _avvio * s.scossa * 3.0
+	if vm == null:
+		return
+	# Rinculo all'avvio: la lancia scatta indietro e in su, poi torna.
+	var k := _avvio * _avvio * float(s.rinculo_avvio)
+	vm.position += Vector3(0.0, 0.03, 0.09) * k
+	vm.rotate_object_local(Vector3.RIGHT, 0.14 * k)
+	# Carica (B): la lancia trema sempre di più mentre sale la pressione.
+	if caricando:
+		var c := 1.0 - _carica / maxf(_carica_tot, 0.01)
+		vm.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0.0) * 0.006 * c
+	if s.strattoni <= 0.0:
 		return
 	if spruzza:
 		_prossimo_strattone -= delta

@@ -23,6 +23,8 @@ var foto := PackedFloat32Array()
 var cartella := "/tmp/claude-0/zaino_foto"
 var p: Player
 var pack: Node
+var getto: Node
+var _caricato := false
 var _f := -RISCALDA
 
 
@@ -59,10 +61,14 @@ func _avvia() -> void:
 	if lancia != "attuale":
 		pack.set_lance(load(lancia))
 	if stile != "attuale":
-		var g: Node = GETTO.new()
-		g.set(&"stile", stile)
-		get_tree().current_scene.add_child(g)
-		g.call(&"aggancia", pack)
+		getto = GETTO.new()
+		getto.set(&"stile", stile)
+		get_tree().current_scene.add_child(getto)
+		getto.call(&"aggancia", pack)
+	# Il cartello giallo del pavimento bagnato copriva l'ugello per metà video: qui si toglie.
+	var cartello := get_tree().current_scene.find_child("cartello_bagnato", true, false) as Node3D
+	if cartello:
+		cartello.visible = false
 	pack.set(&"tank_start_amount", 0.0)
 	pack.call(&"set_tank_amount", 0.0)
 	# Neon fissi accesi: lo sfarfallio a caso cambierebbe la luce fra un video e l'altro.
@@ -98,7 +104,12 @@ func _process(_delta: float) -> void:
 		print("DBG audio suonano=%d master_db=%.1f muto=%s picco=%.1f" % [suonano, AudioServer.get_bus_volume_db(0),
 			AudioServer.is_bus_mute(0), AudioServer.get_bus_peak_volume_left_db(0, 0)])
 	var aspira := t >= 0.5 and t < 3.0
-	var spara := t >= 3.5 and t < 7.0
+	# B: dalle 3,5 la pressione sale (carica), il colpo parte a 3,85; lo sparo finisce sempre a 7,0.
+	var carica := 0.35 if stile == "B" else 0.0
+	if carica > 0.0 and t >= 3.5 and not _caricato and getto:
+		_caricato = true
+		getto.call(&"carica", carica)
+	var spara := t >= 3.5 + carica and t < 7.0
 	_azione(&"suck", aspira)
 	_azione(&"spray", spara)
 	if t < 3.2:
