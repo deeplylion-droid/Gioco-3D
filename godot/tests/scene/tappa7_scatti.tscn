@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/tecnici/tecnici.tscn" id="1_tec"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_architettura.glb" id="2_arc"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_oggetti.glb" id="3_ogg"]
+[ext_resource type="PackedScene" path="res://scenes/sala/luci_sala.tscn" id="4_luci"]
+
+[node name="Tappa7Scatti" type="Node3D"]
+editor_description = "Solo per gli scatti della tappa 7 (strada B): i tecnici messi come nel livello e l'architettura della sala, senza il resto (sala_principale non entra in memoria sul renderer software)."
+
+[node name="Tecnici" parent="." instance=ExtResource("1_tec")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, -9.05, 1.36)
+
+[node name="Sala" type="Node3D" parent="."]
+
+[node name="Architettura" parent="Sala" instance=ExtResource("2_arc")]
+
+[node name="Oggetti" parent="Sala" instance=ExtResource("3_ogg")]
+
+[node name="LuciSala" parent="." instance=ExtResource("4_luci")]

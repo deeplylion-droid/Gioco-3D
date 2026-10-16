@@ -76,6 +76,9 @@ SPIRALE = dict(cx=8.6, cy=10.6, r=2.5)   # pennone dello scivolo a spirale (il t
 SCIVOLO_INSEGUIMENTO_R = 0.8             # raggio interno del tubo dell'inseguimento (Ø 1,6 m)
 # vano verso gli spogliatoi nel muro sud (lo chiede il gioco): luce 1,2 x 2,2 m, x da -0,6 a 0,6
 VANO = dict(cx=0.0, luce=1.2, h=2.2)
+# varco della serranda del magazzino dei gonfiabili (tappa 7, ambienti-1, 16 ottobre): angolo sud-ovest,
+# modulo da x -16 a -14 del muro sud, luce 1,8 x 2,5 m. Dietro c'è il magazzino (raccordo.gltf dei tecnici).
+VANO_SERRANDA = dict(cx=-15.0, luce=1.8, h=2.5)
 # lastre della cupola rotte (costolone k da 0 a 31, anello j da 0 = tamburo a 6 = oculo): lì piove dentro
 LASTRE_ROTTE = {(3, 2), (11, 4), (12, 4), (20, 1), (27, 5), (7, 1), (24, 1), (16, 0)}
 
@@ -258,9 +261,15 @@ def pareti(mats):
     # accanto si accorciano a 1 m. (Prima il vano non c'era: i moduli cadevano a cavallo di x = 0.)
     x, i = X0, 0
     a_vano = VANO['cx'] - 1.0
+    a_serranda = VANO_SERRANDA['cx'] - 1.0
     while x < X1 - 1e-6:
         if abs(x - a_vano) < 1e-6:   # vano 1,2 x 2,2 m con la porta stagna aperta
             sotto.append(metti(K.parete_porta(mats, 2.0, H1, luce=VANO['luce'], h_porta=VANO['h'], nome=f'ps_{i}',
+                                              suddividi=0.25, ante=False, telaio=False, cornici=True), (x + 2.0, Y0, 0), 180))
+            x += 2.0; i += 1
+            continue
+        if abs(x - a_serranda) < 1e-6:   # varco della serranda del magazzino (la serranda è nel raccordo dei tecnici)
+            sotto.append(metti(K.parete_porta(mats, 2.0, H1, luce=VANO_SERRANDA['luce'], h_porta=VANO_SERRANDA['h'], nome=f'ps_{i}',
                                               suddividi=0.25, ante=False, telaio=False, cornici=True), (x + 2.0, Y0, 0), 180))
             x += 2.0; i += 1
             continue

@@ -146,9 +146,17 @@ marker('marker_vasca_raccolta', SALA, 'ACQUA_vasca_raccolta#centro', nota='super
 marker('marker_monitor', SALA, 'PUNTO_monitor', nota='schermo del monitor a tubo sulla scrivania')
 marker('marker_porta_ponte', SALA, 'PUNTO_porta_ponte_inferiore', nota='davanti alla porta del ponte inferiore (lato sala)')
 marker('marker_porta_ponte_perno', SALA, 'PORTA_ponte', nota='cardine della porta del ponte inferiore: ruota su Y')
+marker('marker_chiavistello', SALA, 'PUNTO_chiavistello', nota='puleggia del chiavistello della porta: ci arriva il cavo della leva')
+marker('marker_chiusura_stagna', SALA, 'PUNTO_chiusura_stagna', nota='cilindro della chiusura stagna della porta: ci arrivano i tubi delle tre turbine')
 # raccordo verso gli interni
 marker('marker_raccordo_sala', RACC, 'PUNTO_raccordo_sala', yaw=-H, nota='nel raccordo, appena fuori dalla porta del ponte inferiore')
-marker('marker_raccordo_interni', RACC, 'PUNTO_raccordo_interni', yaw=-H, nota='in cima al raccordo, ai piedi della scala che sale al corridoio degli interni')
+marker('marker_raccordo_interni', RACC, 'PUNTO_raccordo_interni', yaw=-H, nota='in cima al raccordo, davanti alla grata chiusa della scala degli interni')
+# tappa 7 (strada nuova verso la sala grande): checkpoint e inizio della scia
+marker('marker_t7_inizio', RACC, 'PUNTO_t7_inizio', yaw=-H, nota='checkpoint: inizio del corridoio, appena fuori dalla porta della sala pompe')
+marker('marker_t7_cima_scala', RACC, 'PUNTO_t7_cima_scala', nota='in cima alla scala del corridoio C2, al livello della sala grande')
+marker('marker_t7_magazzino', RACC, 'PUNTO_t7_magazzino', yaw=H, nota='checkpoint: entrata del magazzino dei gonfiabili')
+marker('marker_t7_serranda', RACC, 'PUNTO_t7_serranda', yaw=H, nota='checkpoint: appena usciti dalla serranda, nella sala grande (angolo sud-ovest)')
+marker('marker_t7_inizio_scia', RACC, 'PUNTO_t7_inizio_scia', nota='qui comincia la scia rosa verso l area bimbi')
 
 # luce segnaposto dentro la gabbia: la leva si deve leggere da terra (le luci finali le fa grafica)
 pl, _ = SALA['LEVA']

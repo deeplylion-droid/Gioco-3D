@@ -35,6 +35,25 @@ OGGETTI = {
     'paratia': ('A heavy steel sluice gate panel: thick plate with horizontal stiffening ribs, rounded edges, bolts, '
                 'a yellow and black hazard stripe band at the bottom edge, worn grey paint.', 30000),
     'quadro_strumenti': ('A wall panel with three round pressure gauges and two small valves on short pipes, painted grey-green.', 25000),
+    # dopo il questionario del 15 ottobre: leva nuova (base e braccio separati, il braccio ruota), chiavistello
+    # della porta tirato dal cavo della leva, chiusura stagna azionata dalle turbine
+    'leva_base': ('A heavy cast iron wall-mounted lever housing: a thick rectangular base plate with four big bolts, a round '
+                  'pivot boss in the middle, and a curved notched quadrant guide plate above it, dark green paint worn at '
+                  'the edges. No lever arm.', 25000),
+    'leva_maniglia': ('A thick industrial lever arm only: a long chunky steel bar painted bright red, a black rubber handle '
+                      'grip at the top end, a round pivot eye with a bolt at the bottom end.', 15000),
+    'chiavistello': ('A heavy industrial sliding door bolt latch mechanism mounted on a steel plate: a thick round steel bolt '
+                     'in two guide brackets, a spring, and a small pulley wheel where a steel cable pulls the bolt, '
+                     'yellow and black paint on the bolt.', 20000),
+    'attuatore_stagno': ('A hydraulic watertight door seal actuator: a short thick steel cylinder with a piston rod and clevis, '
+                         'three small pipe connections with brass unions on top, a round pressure gauge, teal paint.', 25000),
+    # per le proposte della tappa 7 (dietro le quinte dell'acquapark): solo render, non nel gioco
+    'caldaia': ('A big old industrial boiler: a horizontal riveted steel cylinder painted dark red with a round furnace door '
+                'and a big pressure gauge on the front, pipes and a valve wheel on top, on a steel frame base.', 50000),
+    'gonfiabili_mucchio': ('A messy pile of deflated colorful pool inflatables on the floor: crumpled swim rings, an orange '
+                           'inflatable crocodile, folded air mattresses in blue and yellow, vinyl with soft wrinkles.', 40000),
+    'scaffale_magazzino': ('A grey metal storage shelving unit with four shelves holding cardboard boxes, folded pool '
+                           'inflatables, coiled hoses and plastic buckets.', 40000),
 }
 
 
