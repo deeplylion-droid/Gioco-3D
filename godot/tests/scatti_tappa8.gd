@@ -163,6 +163,9 @@ func _portellone_getto(vecchio := false) -> void:
 	vasca.fill = 0.0
 	for m in level.find_children("Medusine", "", true, false):
 		m.call(&"ricomincia")
+	# Subito sul fondo della piscina vuota: senza gli interni (SCATTI_TOGLI) il giocatore nasce nel
+	# vuoto e, nei secondi d'attesa, cadrebbe sotto il livello (si muore e la scena si ricarica).
+	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	Engine.time_scale = 4.0
 	await _frames(int(60 * 3.0 / 4.0) + 20)
 	Engine.time_scale = 1.0
