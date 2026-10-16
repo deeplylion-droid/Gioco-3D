@@ -108,12 +108,12 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `giocatore/passo_acqua_04.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_05.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_06.ogg` | 0.8 s | sintesi (originale) |  |
-| `giocatore/passo_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_03.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_05.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_06.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
+| `giocatore/passo_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_03.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_05.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_06.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
 | `giocatore/passo_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_03.ogg` | 0.5 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |

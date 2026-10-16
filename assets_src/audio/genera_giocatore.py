@@ -417,8 +417,11 @@ def main():
         salva(CART, f'passo_piastrelle_{i + 1:02d}', passo_piastrelle(rng, i), loudness=-20, corto=True,
               qualita=3, fonte=K_PASSI, nota='footstep_concrete + risonanza della ceramica')
     for i in range(6):
-        salva(CART, f'passo_bagnato_{i + 1:02d}', passo_bagnato(rng, i), loudness=-20, corto=True, qualita=3,
-              fonte=K_PASSI + ' + sintesi')
+        # senza le goccioline che schizzavano: scelta dell'utente del 16 ottobre (le sentiva come
+        # bollicine); stessi numeri casuali, quindi gli altri suoni non cambiano
+        salva(CART, f'passo_bagnato_{i + 1:02d}', passo_bagnato(rng, i, goccioline=False), loudness=-20,
+              corto=True, qualita=3, fonte=K_PASSI + ' + sintesi',
+              nota='lo sciac della suola sul bagnato, senza goccioline (16 ottobre)')
     for i in range(6):
         salva(CART, f'passo_acqua_{i + 1:02d}', passo_acqua(rng, i), loudness=-19, corto=True, qualita=3)
     for i in range(6):
