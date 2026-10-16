@@ -16,7 +16,7 @@ const STILI := {
 		"velocita": 20.0, "volo": 1.0,
 		"raggio": 0.045, "allarga": 0.3, "sfalda": 0.55,
 		"opacita": [0.62, 0.95], "bianco": 0.65,
-		"spruzzo": 260, "nebbia": 40, "nebbia_dim": 0.7,
+		"spruzzo": 260, "nebbia": 24, "nebbia_dim": 0.45,
 		"schizzi": 220, "goccioloni": 40, "schiuma": 36, "impatto_vel": 4.5,
 		"rinculo": 0.04, "vibra": 0.006, "scossa": 0.0035, "strattoni": 0.0,
 		"aspira_base": 0.32, "aspira_cima": 0.035, "vortice": 240, "vortice_r": 0.75,
@@ -26,7 +26,7 @@ const STILI := {
 		"velocita": 26.0, "volo": 1.05,
 		"raggio": 0.07, "allarga": 0.45, "sfalda": 0.5,
 		"opacita": [0.72, 1.0], "bianco": 0.8,
-		"spruzzo": 520, "nebbia": 80, "nebbia_dim": 1.1,
+		"spruzzo": 520, "nebbia": 40, "nebbia_dim": 0.7,
 		"schizzi": 480, "goccioloni": 90, "schiuma": 70, "impatto_vel": 6.5,
 		"rinculo": 0.07, "vibra": 0.011, "scossa": 0.0075, "strattoni": 0.022,
 		"aspira_base": 0.5, "aspira_cima": 0.05, "vortice": 420, "vortice_r": 1.1,
@@ -101,14 +101,17 @@ func aggancia(p_pack: Node) -> void:
 		jet.amount = 600 if stile == "B" else 420
 		var jm := jet.process_material as ShaderMaterial
 		if jm:
-			jm.set_shader_parameter(&"base_size", s.raggio * 0.6)
-			jm.set_shader_parameter(&"size_growth", s.allarga * 0.5)
+			jm.set_shader_parameter(&"base_size", 0.012)
+			jm.set_shader_parameter(&"size_growth", 0.03)
 			jm.set_shader_parameter(&"spread_degrees", 3.5 if stile == "B" else 2.6)
 			jm.set_shader_parameter(&"color", Color(0.9, 0.96, 1.0, 0.7))
 	for n in get_tree().root.find_children("*", "Node3D", true, false):
 		if n is WaterPackFX:
 			_fx = n
 			_fx.suction_radius = s.vortice_r * 1.8
+			# La nebbiolina dell'addon viene tirata tutta verso l'ugello e lì fa una palla bianca
+			# sotto la torcia: qui la sostituisce la nebbia del vortice.
+			(_fx.get(&"_suck_mist") as Node3D).visible = false
 	_crea_particelle()
 	_crea_vortice()
 	_crea_texture_bagnato()
@@ -150,7 +153,7 @@ func _crea_particelle() -> void:
 	gm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	gm.emission_sphere_radius = 0.25
 	_aggiungi(_goccioloni)
-	_schiuma = WaterParticles.make_mist(s.schiuma, 0.9, 0.35 if stile == "A" else 0.55)
+	_schiuma = WaterParticles.make_mist(s.schiuma, 0.9, 0.18 if stile == "A" else 0.28)
 	var fm: ParticleProcessMaterial = _schiuma.process_material
 	fm.spread = 80.0
 	fm.initial_velocity_min = 0.3
@@ -159,7 +162,6 @@ func _crea_particelle() -> void:
 	fm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	fm.emission_sphere_radius = 0.18
 	_schiuma.amount_ratio = 1.0
-	(_schiuma.draw_pass_1 as QuadMesh).material = _materiale_schiuma()
 	_aggiungi(_schiuma)
 	_nebbia_impatto = WaterParticles.make_mist(int(s.nebbia), 1.8, s.nebbia_dim * 1.6)
 	var im: ParticleProcessMaterial = _nebbia_impatto.process_material
@@ -185,41 +187,13 @@ func _aggiungi(p: GPUParticles3D) -> void:
 	add_child(p)
 
 
-func _materiale_schiuma() -> ShaderMaterial:
-	var sh := Shader.new()
-	sh.code = """
-shader_type spatial;
-render_mode blend_mix, depth_draw_never, cull_disabled, unshaded, shadows_disabled;
-varying float a;
-void vertex() {
-	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
-	MODELVIEW_MATRIX = MODELVIEW_MATRIX * mat4(vec4(length(MODEL_MATRIX[0].xyz), 0, 0, 0), vec4(0, length(MODEL_MATRIX[1].xyz), 0, 0), vec4(0, 0, length(MODEL_MATRIX[2].xyz), 0), vec4(0, 0, 0, 1));
-	a = COLOR.a;
-}
-float h(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float n2(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
-	return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
-void fragment() {
-	vec2 d = UV - 0.5;
-	float r = length(d) * 2.0;
-	float bolle = n2(UV * 9.0 + INSTANCE_CUSTOM.x * 13.0) * 0.6 + n2(UV * 23.0) * 0.4;
-	float forma = smoothstep(1.0, 0.45, r + (bolle - 0.5) * 0.6);
-	ALBEDO = vec3(0.92, 0.96, 1.0) * (0.75 + 0.25 * bolle);
-	ALPHA = forma * a * 0.85;
-}
-"""
-	var m := ShaderMaterial.new()
-	m.shader = sh
-	return m
-
-
 func _crea_vortice() -> void:
 	# Gocce che salgono a spirale dalla pozza all'ugello (posizioni calcolate qui, a ogni frame).
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.instance_count = int(s.vortice)
 	var q := QuadMesh.new()
-	q.size = Vector2(0.035, 0.1) * (1.3 if stile == "B" else 1.0)
+	q.size = Vector2(0.018, 0.16) * (1.3 if stile == "B" else 1.0)
 	var gocce := WaterParticles.droplet_material().duplicate() as ShaderMaterial
 	gocce.set_shader_parameter(&"opacity", 0.95)
 	gocce.set_shader_parameter(&"rim_light", 0.8)
@@ -231,7 +205,7 @@ func _crea_vortice() -> void:
 	_vortice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_vortice.visible = false
 	add_child(_vortice)
-	_vortice_nebbia = WaterParticles.make_mist(30 if stile == "A" else 60, 1.0, 0.6 * s.nebbia_dim)
+	_vortice_nebbia = WaterParticles.make_mist(10 if stile == "A" else 18, 0.8, 0.5 * s.nebbia_dim)
 	var vm: ParticleProcessMaterial = _vortice_nebbia.process_material
 	vm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
 	vm.emission_ring_axis = Vector3.UP
