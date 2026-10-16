@@ -1,19 +1,20 @@
 extends Node
-## PROPOSTA (non usata dal gioco): video e scatti del getto nella sala pompe (scena leggera).
+## PROPOSTA (non usata dal gioco): video e scatti del getto negli spogliatoi degli interni (scena
+## leggera, luce approvata), davanti alla vasca lava-piedi.
 ## Scaletta fissa di 8 s dal momento in cui stampa "INIZIO frame N":
-##   0,0-0,5 fermo; 0,5-3,0 aspira dalla vasca di raccolta a ~2 m; 3,0-3,5 pausa a serbatoio pieno;
-##   3,5-7,0 spara verso le pompe a ~7-8 m girando piano da sinistra a destra; 7,0-8,0 stop e gocce.
+##   0,0-0,5 fermo; 0,5-3,0 aspira dalla vasca lava-piedi a ~2 m; 3,0-3,5 pausa a serbatoio pieno;
+##   3,5-7,0 spara verso il tornello a ~7 m girando piano da sinistra a destra; 7,0-8,0 stop e gocce.
 ## Uso (video):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://proposte/zaino/video_zaino.gd \
 ##     <stile: attuale|A|B> [lancia: attuale|res://...tscn] [foto: t1,t2,... (scatti invece del video)] [cartella]
 
-const LEVEL := "res://scenes/tecnici/tecnici.tscn"
+const LEVEL := "res://scenes/interni/interni.tscn"
 const GETTO := preload("res://proposte/zaino/getto_potente.gd")
-const POSIZIONE := Vector3(39.6, 0.0, 1.0)
-const POZZA := Vector3(37.5, -0.15, 1.0)
-const MIRA_DA := Vector3(34.0, 1.3, -5.0)
-const MIRA_A := Vector3(42.0, 1.3, -5.0)
+const POSIZIONE := Vector3(9.7, 0.0, -10.6)
+const POZZA := Vector3(9.7, -0.05, -12.9)
+const MIRA_DA := Vector3(6.8, 1.2, -17.6)
+const MIRA_A := Vector3(12.6, 1.2, -17.6)
 const RISCALDA := 90   # frame di assestamento prima della scaletta
 
 var stile := "attuale"
@@ -62,6 +63,10 @@ func _avvia() -> void:
 		g.call(&"aggancia", pack)
 	pack.set(&"tank_start_amount", 0.0)
 	pack.call(&"set_tank_amount", 0.0)
+	# Neon fissi accesi: lo sfarfallio a caso cambierebbe la luce fra un video e l'altro.
+	for n in get_tree().current_scene.find_children("*", "Node3D", true, false):
+		if n.get_script() and String(n.get_script().get_global_name()) == "Neon":
+			n.set(&"modalita", 0)
 	var torcia := p.find_child("Torcia", true, false)
 	if torcia:
 		torcia.call(&"imposta_accesa", true)
