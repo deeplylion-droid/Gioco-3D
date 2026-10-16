@@ -136,6 +136,9 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Respinge i mostri per un attimo e dà una spinta per saltare.
 - **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
 - **Aspetto scelto dall'utente il 14 ottobre**: lo zaino-giocattolo anni '90, colorato (turchese, giallo e arancione, con adesivi di delfini), con un serbatoio trasparente e una pistola ad acqua tipo Super Soaker. È un modello 3D di Meshy, l'opzione 2 in `godot/assets/models/zaino/`.
+- **Rework estetico chiesto dall'utente il 16 ottobre**: "Deve essere diversa in mano, ma anche il getto aspirato e sparato deve essere molto molto più imponente e soddisfacente da vedere e sentire. Pensa alla pompa dei pompieri e potenzia ancora. Dobbiamo competere con il grab pack e al momento abbiamo una pisciatina stupidita. La fisica delle pozze invece va bene."
+  - Da rifare: la lancia in mano, il getto sparato, l'aspirazione e i loro suoni. La fisica delle pozze resta com'è.
+  - L'utente sceglie da proposte con video e suoni veri. Riferimenti: la pompa dei pompieri potenziata e il Grab Pack di Poppy Playtime.
 
 ## La mascotte del capitolo 1: la medusa
 
