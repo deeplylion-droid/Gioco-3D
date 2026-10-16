@@ -13,8 +13,8 @@ const LEVEL := "res://scenes/interni/interni.tscn"
 const GETTO := preload("res://proposte/zaino/getto_potente.gd")
 const POSIZIONE := Vector3(9.7, 0.0, -10.6)
 const POZZA := Vector3(9.7, -0.05, -12.9)
-const MIRA_DA := Vector3(6.8, 1.2, -17.6)
-const MIRA_A := Vector3(12.6, 1.2, -17.6)
+const MIRA_DA := Vector3(8.5, 1.2, -17.8)
+const MIRA_A := Vector3(11.0, 1.2, -17.8)
 const RISCALDA := 90   # frame di assestamento prima della scaletta
 
 var stile := "attuale"

@@ -19,7 +19,7 @@ const STILI := {
 		"spruzzo": 260, "nebbia": 24, "nebbia_dim": 0.45,
 		"schizzi": 220, "goccioloni": 40, "schiuma": 36, "impatto_vel": 4.5,
 		"rinculo": 0.04, "vibra": 0.006, "scossa": 0.0035, "strattoni": 0.0,
-		"aspira_base": 0.32, "aspira_cima": 0.035, "vortice": 240, "vortice_r": 0.75,
+		"aspira_base": 0.2, "aspira_cima": 0.03, "vortice": 240, "vortice_r": 0.75,
 		"nebbia_vol": 0.35, "bocca": 0,
 	},
 	"B": {
@@ -29,7 +29,7 @@ const STILI := {
 		"spruzzo": 520, "nebbia": 40, "nebbia_dim": 0.7,
 		"schizzi": 480, "goccioloni": 90, "schiuma": 70, "impatto_vel": 6.5,
 		"rinculo": 0.07, "vibra": 0.011, "scossa": 0.0075, "strattoni": 0.022,
-		"aspira_base": 0.5, "aspira_cima": 0.05, "vortice": 420, "vortice_r": 1.1,
+		"aspira_base": 0.28, "aspira_cima": 0.04, "vortice": 420, "vortice_r": 1.1,
 		"nebbia_vol": 0.7, "bocca": 60,
 	},
 }
@@ -94,7 +94,9 @@ func aggancia(p_pack: Node) -> void:
 	suction.radius_top = s.aspira_cima
 	suction.flow_speed = 7.0
 	(suction.material_override as ShaderMaterial).set_shader_parameter(&"flow_speed", 7.0)
-	(suction.material_override as ShaderMaterial).set_shader_parameter(&"opacity_center", 0.45)
+	(suction.material_override as ShaderMaterial).set_shader_parameter(&"opacity_center", 0.22)
+	(suction.material_override as ShaderMaterial).set_shader_parameter(&"streak_strength", 0.85)
+	(suction.material_override as ShaderMaterial).set_shader_parameter(&"streak_density", 3.5)
 	# Le goccioline fini intorno al getto (le particelle della lancia): più grandi e più fitte.
 	var jet: GPUParticles3D = pack.get(&"jet_particles")
 	if jet:
