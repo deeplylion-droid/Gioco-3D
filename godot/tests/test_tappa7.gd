@@ -62,7 +62,7 @@ func _run() -> void:
 	await _frames(3)
 	check(ritorno.attivo, "parte il ritorno al buio")
 	check(not medusa.visible, "la medusa non c'è più")
-	check(ritorno.macchie_scia() >= 15, "una scia di gocce a terra (%d macchie)" % ritorno.macchie_scia())
+	check(ritorno.metri_scia() >= 8.0, "una scia di bava rosa a terra (%.1f m)" % ritorno.metri_scia())
 	check(ritorno.find_children("*", "WaterDripEmitter", true, false).size() >= 2, "dal bordo della vasca gocciola ancora")
 	check(bool(interni.get(&"docce_aperte")), "le docce scorrono")
 	check(ritorno.find_children("VaporeBuio*", "", true, false).size() >= 2, "e il vapore copre gli spogliatoi")
@@ -118,13 +118,13 @@ func _run() -> void:
 		if Vector2(ritorno.scia[i].x - cp_bimbi.x, ritorno.scia[i].z - cp_bimbi.z).length() < 0.6:
 			break
 	await _frames(5)
-	check(ok and _checkpoint().ends_with("CheckpointAreaBimbi"), "si segue la scia di gocce fino all'area bimbi (%s)" % _checkpoint())
+	check(ok and _checkpoint().ends_with("CheckpointAreaBimbi"), "si segue la scia fino all'area bimbi (%s)" % _checkpoint())
 	check(not bool(level.get(&"demo_finished")), "la demo non finisce sulla scia: va avanti con la tappa 8")
 
 	print("Si riparte da prima del risveglio")
 	GameState.imposta_luci(GameState.Luci.PRIMA_DEL_RISVEGLIO)
 	await _frames(3)
-	check(medusa.visible and not ritorno.attivo and ritorno.macchie_scia() == 0, "la medusa torna nella vasca e la scia sparisce")
+	check(medusa.visible and not ritorno.attivo and ritorno.metri_scia() == 0.0, "la medusa torna nella vasca e la scia sparisce")
 	_fine()
 
 

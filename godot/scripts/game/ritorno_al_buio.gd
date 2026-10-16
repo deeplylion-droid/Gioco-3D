@@ -6,7 +6,8 @@ extends Node
 ## - la porta "sala pompe" del corridoio degli interni si apre (prima era chiusa);
 ## - le docce scorrono senza fermarsi e il vapore copre tutto;
 ## - nella sala la vasca è vuota: la medusa non c'è più, l'acqua si muove ancora, dal bordo
-##   gocciola e una scia di gocce si allontana nel buio verso l'area bimbi;
+##   gocciola e una scia di bava rosa fosforescente (prima erano gocce) si allontana nel buio verso
+##   l'area bimbi;
 ## - niente musica (senza corrente il pulsante della sigla non suona), solo gocce e tempesta;
 ##   il lampione resta spento (lo spegne il blackout).
 ## Tutto dipende da GameState.luci, che si salva con i checkpoint: ripartendo dal blackout la
@@ -23,7 +24,7 @@ extends Node
 @export var porta_interni: Node
 ## Il pulsante della sigla: senza corrente non fa niente.
 @export var pulsante_sigla: Node
-## La scia di gocce, dal bordo della vasca verso l'area bimbi (punti a terra, in ordine).
+## La scia (bava rosa o gocce), dal bordo della vasca verso l'area bimbi (punti a terra, in ordine).
 @export var scia := PackedVector3Array()
 ## Da dove gocciola ancora (sul bordo della vasca, dalla parte della scia).
 @export var gocciolatoi := PackedVector3Array()
@@ -199,6 +200,21 @@ static func _materiale_goccia() -> StandardMaterial3D:
 func macchie_scia() -> int:
 	var radice := get_node_or_null(^"Scia")
 	return radice.find_children("*", "MeshInstance3D", false, false).size() if radice else 0
+
+
+## Quanti metri di scia ci sono a terra: la bava rosa lungo [member scia] o, con le gocce, una
+## macchia ogni [member passo_scia] (0 se non c'è).
+func metri_scia() -> float:
+	var radice := get_node_or_null(^"Scia")
+	if radice == null:
+		return 0.0
+	var bava := radice.get_node_or_null(^"BavaScia") as BavaRosa
+	if bava == null:
+		return macchie_scia() * passo_scia
+	var metri := 0.0
+	for i in range(1, bava.punti.size()):
+		metri += bava.punti[i - 1].distance_to(bava.punti[i])
+	return metri if bava.get_child_count() > 0 else 0.0
 
 
 func _process(delta: float) -> void:

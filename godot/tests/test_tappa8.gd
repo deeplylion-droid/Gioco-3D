@@ -108,8 +108,8 @@ func _run() -> void:
 	# Ricaricando il livello al buio, la sala del ritorno (tappa 7) è com'era.
 	ritorno = level.get(&"ritorno") as RitornoAlBuio
 	var lampione := level.get_node(^"Vasca/Sfarfallio") as FlickerLight
-	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.macchie_scia() >= 15 and not lampione.is_on,
-			"e la sala è ancora al buio: vasca vuota, scia di gocce, lampione spento")
+	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.metri_scia() >= 8.0 and not lampione.is_on,
+			"e la sala è ancora al buio: vasca vuota, scia di bava rosa, lampione spento")
 
 	print("2. Non la guardi: lei resta affacciata")
 	check(await _cammina_verso(Vector3(-18.3, 0.0, -1.9), 300), "qualche passo avanti")
