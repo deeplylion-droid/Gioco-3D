@@ -311,6 +311,17 @@ func _pulsante(versione: String, verde: bool) -> void:
 		if verde:
 			var hatch := level.get_node("Sala/Interattivi/sala_portello_scarico") as Node3D
 			hatch.basis = Basis(Vector3.RIGHT, deg_to_rad(-170.0)) * hatch.basis
+			# gli ambienti tecnici (il pozzo sotto la botola) qui non sono caricati: sotto il buco, buio
+			var buio := MeshInstance3D.new()
+			var pm := PlaneMesh.new()
+			pm.size = Vector2(1.5, 1.5)
+			buio.mesh = pm
+			var nero := StandardMaterial3D.new()
+			nero.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			nero.albedo_color = Color(0.0, 0.0, 0.0)
+			buio.material_override = nero
+			buio.position = Vector3(0.0, -2.6, 2.0)
+			level.add_child(buio)
 	else:
 		var d: Dictionary = dati.pulsante_b
 		# il faretto sul braccio del cartello: punta la piastra a strisce (al buio, senza luce, non si vede)
@@ -376,8 +387,8 @@ func _torre(v: String) -> void:
 		level.add_child(o)
 	var oi := OmniLight3D.new()
 	oi.light_color = Color(1.0, 0.85, 0.6)
-	oi.light_energy = 1.2
-	oi.omni_range = 5.0
+	oi.light_energy = 0.35
+	oi.omni_range = 4.0
 	oi.position = _v(d.insegna)
 	level.add_child(oi)
 	var s := SpotLight3D.new()
@@ -392,11 +403,24 @@ func _torre(v: String) -> void:
 	s.look_at_from_position(s.position, _v(d.mira_torre), Vector3.UP)
 	var fill := OmniLight3D.new()
 	fill.light_color = Color(0.6, 0.72, 0.85)
-	fill.light_energy = 0.8
+	fill.light_energy = 1.6
 	fill.omni_range = 16.0
 	var tg := _v(d.torre_godot)
-	fill.position = tg + Vector3(0, 6.0, 0)
+	fill.position = tg + Vector3(0, 4.0, 0)
 	level.add_child(fill)
+	# la torre si deve vedere dal cancello: una luce fredda dal soffitto della sala sulla scala davanti
+	var fronte := SpotLight3D.new()
+	fronte.light_color = Color(0.75, 0.88, 1.0)
+	fronte.light_energy = 10.0
+	fronte.spot_range = 24.0
+	fronte.spot_angle = 34.0
+	fronte.shadow_enabled = true
+	fronte.light_volumetric_fog_energy = 2.0
+	level.add_child(fronte)
+	var verso_cancello := (_v(d.insegna) - tg)
+	verso_cancello.y = 0.0
+	fronte.position = tg + verso_cancello.normalized() * 6.0 + Vector3(0, 12.5, 0)
+	fronte.look_at_from_position(fronte.position, tg + Vector3(0, 3.0, 0), Vector3.UP)
 	if v == "est":
 		var dentro := OmniLight3D.new()   # luce della sala che filtra sotto il portone
 		dentro.light_color = Color(0.75, 0.88, 1.0)
@@ -518,6 +542,7 @@ func _rimappa(radice: Node) -> void:
 					if sm.emission_enabled:
 						sm.emission_texture = sm.albedo_texture
 						sm.emission = Color.WHITE
+						sm.emission_energy_multiplier = 0.35   # insegna retroilluminata, non un faro
 					nuovi[nome] = sm
 				(mi as MeshInstance3D).set_surface_override_material(i, nuovi[nome])
 			elif nome.begins_with("M_amb_"):

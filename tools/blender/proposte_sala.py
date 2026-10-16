@@ -845,10 +845,10 @@ def cancello_sbarre(mats, cx, h, w):
         p.cilindro((x, yp + 0.12, h + 0.6), (x, yp + 0.12, h + 0.78), 0.11, 'faro_rosso', seg=24, tappi=False)
         cupola(p, (x, yp + 0.12, h + 0.78), (0, 0, 1), 0.11, 0.1, 'faro_rosso', seg=24)
     p.scatola_smussata((cx - w / 2 - 0.6, yp, h), (cx + w / 2 + 0.6, Y1, h + 0.5), 'portale_blu', s=0.03)
-    # insegna (2048 x 640) sopra la trave
+    # insegna (2048 x 640) sopra la trave, sopra le lampade dei pilastri
     W_ins = w + 0.6
     H_ins = W_ins * 640 / 2048
-    zi = h + 0.6
+    zi = h + 1.05
     p.scatola((cx - W_ins / 2 - 0.08, yp + 0.02, zi - 0.08), (cx + W_ins / 2 + 0.08, Y1, zi + H_ins + 0.08), 'nero_opaco')
     p.faccia([(cx - W_ins / 2, yp + 0.015, zi), (cx + W_ins / 2, yp + 0.015, zi), (cx + W_ins / 2, yp + 0.015, zi + H_ins),
               (cx - W_ins / 2, yp + 0.015, zi + H_ins)], 'insegna_torre', uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
