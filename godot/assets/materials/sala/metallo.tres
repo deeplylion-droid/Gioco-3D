@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/graybox.gdshader" id="1_tgtnq"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_tgtnq")
+shader_parameter/base_color = Color(0.13, 0.13, 0.14, 1)
+shader_parameter/line_color = Color(0.1, 0.1, 0.11, 1)
+shader_parameter/grid_size = 1.0
+shader_parameter/line_width = null
+shader_parameter/sub_lines = 0.0
+shader_parameter/roughness_value = 0.45
+shader_parameter/specular_value = 0.6
+shader_parameter/emission_color = null
+shader_parameter/emission_energy = null

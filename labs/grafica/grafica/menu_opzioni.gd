@@ -67,13 +67,13 @@ func _ready() -> void:
 	_scelta(t, "Sincronia verticale (VSync)", "vsync", ["No", "Sì", "Adattiva", "Mailbox"])
 	_scelta(t, "Limite FPS", "limite_fps", ["Nessuno", "30", "60", "120", "144", "165", "240"],
 		[0, 30, 60, 120, 144, 165, 240])
-	_cursore(t, "Campo visivo (FOV)", "fov", 60, 110, 1, "%d°")
+	_cursore(t, "Campo visivo (FOV)", "fov", 50, 90, 1, "%d°")
 
 	t = _scheda("Resa")
 	_cursore(t, "Scala di rendering", "scala_rendering", 0.5, 1.0, 0.01, "%d%%", 100.0)
 	_scelta(t, "Upscaler", "upscaler", ["Bilineare", "AMD FSR 1.0", "AMD FSR 2.2"])
 	_cursore(t, "Nitidezza FSR", "nitidezza_fsr", 0.0, 2.0, 0.05, "%d%%", 50.0, true)
-	_scelta(t, "Antialiasing", "antialiasing", ["No", "FXAA", "SMAA", "TAA", "MSAA 2×", "MSAA 4×", "MSAA 8×"])
+	_scelta(t, "Antialiasing", "antialiasing", ["No", "FXAA", "SMAA (nitido)", "TAA (morbido)", "MSAA 2×", "MSAA 4×", "MSAA 8×"])
 	_nota_aa = Label.new()
 	_nota_aa.add_theme_color_override("font_color", Color(0.65, 0.68, 0.7))
 	_nota_aa.add_theme_font_size_override("font_size", 14)
@@ -99,7 +99,13 @@ func _ready() -> void:
 	_spunta(t, "Grana della pellicola", "grana")
 	_spunta(t, "Vignettatura", "vignetta")
 	_spunta(t, "Aberrazione cromatica", "aberrazione")
+	_spunta(t, "Profondità di campo (lontano)", "profondita_campo")
 	_spunta(t, "Riduci i lampi (fotosensibilità)", "riduci_lampi")
+
+	t = _scheda("Controlli")
+	_cursore(t, "Sensibilità del mouse", "sensibilita_mouse", 0.2, 3.0, 0.05, "%.2f")
+	_spunta(t, "Inverti l'asse Y", "inverti_y")
+	_spunta(t, "Oscillazione della camera", "oscillazione_camera")
 
 	t = _scheda("Luminosità")
 	_cursore(t, "Luminosità (gamma)", "luminosita", 0.6, 1.8, 0.01, "%.2f")
@@ -148,7 +154,7 @@ func apri_calibrazione() -> void:
 	add_child(_calibrazione)
 
 
-## Mostra una scheda (0..4), utile per gli screenshot.
+## Mostra una scheda (0..5), utile per gli screenshot.
 func mostra_scheda(i: int) -> void:
 	_tabs.current_tab = i
 
@@ -198,11 +204,11 @@ func _cursore(c: Control, titolo: String, chiave: String, minimo: float, massimo
 	s.custom_minimum_size = Vector2(200, 0)
 	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var l := Label.new()
-	l.custom_minimum_size.x = 60
+	l.custom_minimum_size.x = 120 if chiave == "fov" else 60
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	s.value_changed.connect(func(v):
 		var reale: float = (massimo + minimo - v) if inverti else v
-		l.text = formato % (v * scala_testo)
+		l.text = _testo(chiave, formato, v * scala_testo)
 		if chiave == "fov" or chiave == "limite_fps":
 			Grafica.imposta(chiave, roundf(reale))
 		else:
@@ -214,6 +220,13 @@ func _cursore(c: Control, titolo: String, chiave: String, minimo: float, massimo
 	h.add_child(s)
 	h.add_child(l)
 	_controlli[chiave] = s
+
+
+## Testo accanto al cursore; il FOV mostra anche i gradi orizzontali.
+func _testo(chiave: String, formato: String, v: float) -> String:
+	if chiave == "fov":
+		return "%d° (%d° orizz.)" % [roundi(v), roundi(Grafica.fov_orizzontale(v))]
+	return formato % v
 
 
 func _spunta(c: Control, titolo: String, chiave: String) -> void:
@@ -238,7 +251,7 @@ func _aggiorna() -> void:
 		elif c is HSlider:
 			var s := c as HSlider
 			s.value = (s.max_value + s.min_value - float(v)) if s.get_meta("inverti") else float(v)
-			(s.get_meta("etichetta") as Label).text = String(s.get_meta("formato")) % (s.value * float(s.get_meta("scala_testo")))
+			(s.get_meta("etichetta") as Label).text = _testo(chiave, String(s.get_meta("formato")), s.value * float(s.get_meta("scala_testo")))
 		elif c is CheckButton:
 			(c as CheckButton).button_pressed = bool(v)
 		c.set_block_signals(false)

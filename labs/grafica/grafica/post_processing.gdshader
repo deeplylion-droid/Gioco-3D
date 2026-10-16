@@ -7,7 +7,7 @@ uniform float gamma = 1.0;          // >1 schiarisce le ombre (schermata di cali
 uniform float grana = 1.0;          // 0 spenta, 1 normale
 uniform float forza_grana = 0.045;
 uniform float vignetta = 1.0;
-uniform float forza_vignetta = 0.45;
+uniform float forza_vignetta = 0.3;
 uniform float aberrazione = 1.0;
 uniform float forza_aberrazione = 0.0035;
 

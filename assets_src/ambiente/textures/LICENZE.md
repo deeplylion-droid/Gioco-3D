@@ -16,3 +16,4 @@ Sono state scaricate a 2K e riconvertite con `tools/blender/ambiente_texture.py 
 | `plastica_bianca` | [Plastic013B](https://ambientcg.com/a/Plastic013B) | ambientCG (Lennart Demes) | CC0 1.0 | 1.0 m | plastica graffiata: griglie di scolo, plafoniere, cartelli |
 | `vetroresina` | [Plastic014B](https://ambientcg.com/a/Plastic014B) | ambientCG (Lennart Demes) | CC0 1.0 | 1.0 m | vetroresina graffiata dei tubi degli scivoli (ricolorata) |
 | `macchie_acqua` | [SurfaceImperfections002](https://ambientcg.com/a/SurfaceImperfections002) | ambientCG (Lennart Demes) | CC0 1.0 | 2.0 m | aloni e pozzanghere: maschera per la rugosità bagnata |
+| `cemento` | [Concrete042C](https://ambientcg.com/view?id=Concrete042C) | ambientCG | CC0 1.0 | 2.0 m | cemento grezzo: la fossa dello scarico di compensazione nell'area bimbi (copiata da `assets_src/ambienti_tecnici/texture/Concrete042C`) |

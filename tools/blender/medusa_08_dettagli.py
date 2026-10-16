@@ -10,9 +10,19 @@ Cuoce con Cycles, nell'atlante UV del corpo, colore, normal map e ruvidita' con 
 Gli attributi di vertice che servono (occlusione, coordinate delle ciocche, distanza dalle giunture, viso)
 si calcolano qui sulla posa statua; i motivi fini li disegna lo shader durante la cottura.
 Scrive tex/medusa_colore_4k.jpg, tex/medusa_normal_4k.jpg, tex/medusa_ruvidezza_4k.jpg (G = ruvidita',
-B = metallo) e aggiorna build/medusa_finale.blend (materiali del corpo con le nuove texture).
+B = metallo) e aggiorna build/medusa_finale.blend (materiali del corpo con le nuove texture). Nel colore, il volume
+dei capelli prende poi l'argento-rosa delle ciocche (medusa_capelli.ricolora_atlante, dal PNG della cottura).
+
+Protezione delle texture approvate: le tre texture 4K di tex/ sono quelle approvate dall'utente (in git), e una
+cottura rifatta non viene identica (quella rifatta il 16 ottobre cambia alcune isole UV dei capelli). Le texture
+nuove si scrivono prima in build/texture_nuove/; se una texture di tex/ c'e' gia' ed e' diversa dalla nuova, il
+passo si ferma con un messaggio e non tocca niente. Con MEDUSA_RISCRIVI_TEXTURE=1 le sostituisce (solo se l'utente
+ha approvato le nuove); con MEDUSA_RISCRIVI_TEXTURE=0 tiene quelle approvate e finisce il passo. Vale anche con
+--solo-materiali.
 
 Uso: flock /home/user/tools/render.lock nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_08_dettagli.py
+     con --solo-materiali non cuoce: rifa' il colore dei capelli nell'atlante e ricollega ai materiali le
+     texture gia' fatte (dopo un passo 7 che ha cambiato solo pose, animazioni o colori).
 """
 import os
 import sys
@@ -20,11 +30,20 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from medusa_comune import *  # noqa: E402,F401
+import medusa_capelli as CAPELLI  # noqa: E402
 
 LATO = int(os.environ.get('MEDUSA_LATO_DETTAGLI', '4096'))
 TEX_COLORE = os.path.join(TEX, 'medusa_colore_4k.jpg')
 TEX_NORMAL = os.path.join(TEX, 'medusa_normal_4k.jpg')
 TEX_RUVIDO = os.path.join(TEX, 'medusa_ruvidezza_4k.jpg')
+# sorgenti della cottura: le texture intermedie del passo 2b (sempre queste, cosi' rifare il passo 8 non cuoce
+# di nuovo sopra il proprio risultato)
+SORGENTE_BASE = os.path.join(BUILD, 'medusa_base_4k.png')
+SORGENTE_NORMAL = os.path.join(BUILD, 'medusa_normal_4k.png')
+COTTA_COLORE = os.path.join(BUILD, 'medusa_colore_cotta_4k.png')     # colore appena cotto (prima dei capelli)
+# protezione delle texture approvate (vedi in cima): le nuove passano prima da qui
+NUOVE = os.path.join(BUILD, 'texture_nuove')
+RISCRIVI = os.environ.get('MEDUSA_RISCRIVI_TEXTURE', '')     # '1' sostituisce quelle approvate, '0' le tiene
 USURA = 1.0             # quantita' di usura (0 = statua nuova)
 CORPO = ('M_pelle', 'M_capelli', 'M_campana', 'M_orbita')
 RUVIDO_BASE = {'M_pelle': 0.13, 'M_capelli': 0.3, 'M_campana': 0.1, 'M_orbita': 0.06}   # orbita: bagnata
@@ -264,6 +283,8 @@ def materiale_cottura(m, k, usura):
     mc = m.copy()
     mc.name = m.name + '_cottura'
     nt = mc.node_tree
+    nt.nodes['base'].image = immagine(SORGENTE_BASE)
+    nt.nodes['normal'].image = immagine(SORGENTE_NORMAL, non_color=True)
     for n in list(nt.nodes):
         if n.name not in ('base', 'normal'):
             nt.nodes.remove(n)
@@ -484,17 +505,84 @@ def cuoci(ob, k):
 
 
 def salva_texture(img):
-    """PNG in build/, poi JPG in tex/ (colore q92; normal q95 senza sottocampionamento del colore)."""
+    """PNG in build/ (nomi diversi dalle sorgenti del passo 2b); ruvidita' (q90) e normal (q95) anche in JPG senza
+    sottocampionamento del colore, in build/texture_nuove/ (in tex/ le mette installa_texture). Il JPG del colore lo
+    scrive poi medusa_capelli.ricolora_atlante, dal PNG."""
     from PIL import Image
-    uscite = {'colore': (TEX_COLORE, 92), 'ruvido': (TEX_RUVIDO, 90), 'normal': (TEX_NORMAL, 95)}
+    uscite = {'ruvido': (TEX_RUVIDO, 90), 'normal': (TEX_NORMAL, 95)}
     for nome, im in img.items():
-        png = os.path.join(BUILD, f'medusa_{nome}_4k.png')
+        png = os.path.join(BUILD, f'medusa_{nome}_cotta_4k.png')
         im.filepath_raw = png
         im.file_format = 'PNG'
         im.save()
-        dst, q = uscite[nome]
-        Image.open(png).convert('RGB').save(dst, quality=q, subsampling=0)
-        log('texture', os.path.relpath(dst, REPO), f'{os.path.getsize(dst) / 1e6:.1f} MB')
+        if nome in uscite:
+            dst, q = uscite[nome]
+            Image.open(png).convert('RGB').save(nuova(dst), quality=q, subsampling=0)
+
+
+# ---------------------------------------------------------------- protezione delle texture approvate
+
+def nuova(path):
+    """Dove si scrive la versione appena fatta di una texture di tex/: build/texture_nuove/, con lo stesso nome."""
+    os.makedirs(NUOVE, exist_ok=True)
+    return os.path.join(NUOVE, os.path.basename(path))
+
+
+def differenza(a, b):
+    """None se le due immagini hanno gli stessi pixel, se no una riga che dice quanto cambiano."""
+    import filecmp
+    from PIL import Image
+    if filecmp.cmp(a, b, shallow=False):
+        return None
+    x = np.asarray(Image.open(a).convert('RGB')).astype(np.int16)
+    y = np.asarray(Image.open(b).convert('RGB')).astype(np.int16)
+    if x.shape != y.shape:
+        return f'misure diverse ({x.shape[1]} x {x.shape[0]} quella approvata, {y.shape[1]} x {y.shape[0]} la nuova)'
+    d = np.abs(x - y).max(axis=2)
+    if not d.any():
+        return None
+    return (f'cambia il {100 * (d > 0).mean():.2f}% dei pixel ({100 * (d > 8).mean():.2f}% di piu\' di 8/255), '
+            f'differenza massima {d.max()}/255')
+
+
+def installa_texture(texture):
+    """Mette in tex/ le texture appena fatte (sono in build/texture_nuove/). Se una texture di tex/ c'e' gia' ed e'
+    diversa dalla nuova (quelle di tex/ sono le approvate, in git), si ferma senza toccare niente; con
+    MEDUSA_RISCRIVI_TEXTURE=1 la sostituisce, con MEDUSA_RISCRIVI_TEXTURE=0 tiene quella approvata e va avanti."""
+    nuove = {dst: nuova(dst) for dst in texture}
+    cambiate = {}
+    for dst, src in nuove.items():
+        if os.path.exists(dst):
+            d = differenza(dst, src)
+            if d is not None:
+                cambiate[dst] = d
+    if cambiate and RISCRIVI not in ('0', '1'):
+        raise SystemExit('\n'.join([
+            '',
+            '[medusa] PASSO 8 FERMATO: le texture nuove sono diverse da quelle approvate.',
+            *[f'  {os.path.relpath(t, REPO)}: {d}' for t, d in cambiate.items()],
+            'Le texture approvate (in git) non sono state toccate; le nuove sono in '
+            f'{os.path.relpath(NUOVE, REPO)}/, per confrontarle.',
+            'Una cottura rifatta non viene identica: quella rifatta il 16 ottobre cambia alcune isole UV dei capelli.',
+            '  - per tenere quelle approvate e finire il passo: MEDUSA_RISCRIVI_TEXTURE=0 davanti al comando;',
+            '  - per sostituirle con le nuove (solo se l\'utente le ha approvate): MEDUSA_RISCRIVI_TEXTURE=1.',
+            'Con medusa_tutto.py si riparte da questo passo con --da medusa_08_dettagli.py.',
+        ]))
+    for dst, src in nuove.items():
+        r = os.path.relpath(dst, REPO)
+        if dst in cambiate and RISCRIVI == '0':
+            log(f'{r}: tengo quella approvata (MEDUSA_RISCRIVI_TEXTURE=0); la nuova, rimasta in '
+                f'{os.path.relpath(src, REPO)}, {cambiate[dst]}')
+        elif dst in cambiate or not os.path.exists(dst):
+            os.replace(src, dst)
+            log(f'{r}: scritta, {os.path.getsize(dst) / 1e6:.1f} MB' +
+                (f' (MEDUSA_RISCRIVI_TEXTURE=1, al posto di quella approvata: {cambiate[dst]})'
+                 if dst in cambiate else ''))
+        else:
+            os.remove(src)
+            log(f'{r}: uguale a quella che c\'era, non riscritta')
+    if os.path.isdir(NUOVE) and not os.listdir(NUOVE):
+        os.rmdir(NUOVE)
 
 
 def aggiorna_materiali():
@@ -527,10 +615,36 @@ def aggiorna_materiali():
 
 def main():
     t0 = time.time()
-    apri(os.path.join(BUILD, 'medusa_finale.blend'))
+    finale = os.environ.get('MEDUSA_FINALE', os.path.join(BUILD, 'medusa_finale.blend'))
+    apri(finale)
+    if '--solo-materiali' in sys.argv:
+        # le texture finali ci sono gia' (la cottura dipende solo dalla posa statua): dopo un passo 7 che ha
+        # cambiato solo le animazioni basta ricollegarle ai materiali
+        for t in (TEX_COLORE, TEX_NORMAL, TEX_RUVIDO, COTTA_COLORE):
+            if not os.path.exists(t):
+                raise SystemExit(f'manca {t}: serve la cottura completa')
+        CAPELLI.ricolora_atlante(COTTA_COLORE, nuova(TEX_COLORE))
+        installa_texture([TEX_COLORE])
+        aggiorna_materiali()
+        salva(finale)
+        log(f'materiali aggiornati senza cottura in {time.time() - t0:.0f} s')
+        return
     arm = bpy.data.objects['Medusa_Scheletro']
     ob = bpy.data.objects['Medusa']
     k = float(arm.get('scala', 1.0))
+    # si cuoce nella posa di riposo (la statua): le tracce delle animazioni restano mute durante la cottura
+    mute = []
+    for i in list(bpy.data.objects) + list(bpy.data.shape_keys):
+        if i.animation_data:
+            for tr in i.animation_data.nla_tracks:
+                mute.append((tr, tr.mute))
+                tr.mute = True
+    for pb in arm.pose.bones:
+        pb.matrix_basis = Matrix()
+    for kb in (ob.data.shape_keys.key_blocks if ob.data.shape_keys else []):
+        kb.value = 0.0
+    bpy.context.scene.frame_set(1)
+    bpy.context.view_layer.update()
     me = ob.data
     t = time.time()
     _attributo(me, 'ao', occlusione(ob, dist=0.35 * k))
@@ -547,7 +661,11 @@ def main():
     _attributo(me, 'unghia', campo_unghie(ob, arm, k))
     img = cuoci(ob, k)
     salva_texture(img)
+    CAPELLI.ricolora_atlante(COTTA_COLORE, nuova(TEX_COLORE))
+    installa_texture([TEX_COLORE, TEX_NORMAL, TEX_RUVIDO])
     aggiorna_materiali()
+    for tr, m in mute:
+        tr.mute = m
     for a in ('ao', 'ciocca_c', 'ciocca_s', 'ciocca_d', 'giuntura', 'viso', 'clavicola', 'unghia'):
         if a in me.attributes:
             me.attributes.remove(me.attributes[a])

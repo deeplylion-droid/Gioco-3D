@@ -2,7 +2,7 @@ class_name UnderwaterEffect
 extends Node3D
 ## Effetto sott'acqua per la camera: va messo come figlio della Camera3D del giocatore.
 ## Attiva il quad a schermo intero (underwater_post.gdshader) quando la camera e' sotto il pelo
-## dell'acqua o vicina alla superficie, aggiunge le bollicine intorno alla camera, fa lo schizzo
+## dell'acqua o vicina alla superficie (solo acqua profonda almeno min_depth, e mai sotto il fondo), aggiunge le bollicine intorno alla camera, fa lo schizzo
 ## quando la camera attraversa la superficie e le gocce sull'obiettivo quando riemerge.
 
 signal entered_water
@@ -14,6 +14,11 @@ const BUBBLE_SHADER := preload("res://addons/acqua/shaders/bubble_particle.gdsha
 ## Durata delle gocce sull'obiettivo dopo essere riemersi (s).
 @export var lens_wet_time := 2.2
 @export var bubbles := true
+## Profondita' minima dell'acqua (m, dal pelo al fondo) perche' la camera possa andarci sotto:
+## pozze e veli d'acqua non fanno mai partire l'effetto.
+@export var min_depth := 0.5
+## Distanza dal pelo (m) entro cui il quad resta acceso anche sopra l'acqua (menisco, gocce).
+@export var near_surface_distance := 0.6
 
 var is_underwater := false
 var _quad: MeshInstance3D
@@ -45,13 +50,14 @@ func _process(delta: float) -> void:
 	if cam == null:
 		return
 	var p := cam.global_position
-	var wb = WaterManager.get_body_at(p)
+	var wm := get_node_or_null("/root/WaterManager")
+	var wb = body_around(p, wm)
 	var under := false
 	var near_surface := false
-	if wb and not wb.is_empty():
+	if wb:
 		var h: float = wb.get_surface_height(p)
 		under = p.y < h
-		near_surface = absf(p.y - h) < 0.6
+		near_surface = absf(p.y - h) < near_surface_distance
 		var st: WaterStyle = wb.style if wb.style else WaterStyle.new()
 		_mat.set_shader_parameter("distortion", st.underwater_distortion)
 		_mat.set_shader_parameter("density", st.underwater_density)
@@ -71,6 +77,30 @@ func _process(delta: float) -> void:
 	if _bubbles:
 		_bubbles.emitting = under
 		_bubbles.global_position = p
+
+
+## La massa d'acqua in cui sta (o appena sopra cui sta) il punto, o null. Conta solo l'acqua
+## profonda almeno [member min_depth] e solo tra il fondo e poco sopra il pelo: un tunnel che passa
+## sotto una vasca, o una pozza bassa, non mettono la camera sott'acqua.
+func body_around(p: Vector3, wm: Node = null) -> Node:
+	if wm == null:
+		wm = get_node_or_null("/root/WaterManager")
+	if wm == null:
+		return null
+	var best: Node = null
+	var best_d := INF
+	for b in wm.get_bodies():
+		if not is_instance_valid(b) or b.is_empty() or not b.contains_xz(p):
+			continue
+		var level: float = b.level
+		var bottom: float = b.bottom
+		if level - bottom < min_depth or p.y < bottom - 0.05 or p.y > level + near_surface_distance:
+			continue
+		var d := absf(p.y - level)
+		if d < best_d:
+			best_d = d
+			best = b
+	return best
 
 
 func _make_bubbles() -> GPUParticles3D:

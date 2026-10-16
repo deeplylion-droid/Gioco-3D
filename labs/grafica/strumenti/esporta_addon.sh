@@ -8,9 +8,11 @@ mkdir -p "$DEST/texture"
 for f in grafica/*.gd grafica/*.gdshader; do
   sed 's#res://grafica/#res://addons/grafica/#g' "$f" > "$DEST/$(basename "$f")"
 done
-mkdir -p "$DEST/sala"
-for f in grafica/sala/*.tres; do
-  sed 's#res://grafica/#res://addons/grafica/#g; /^\[ext_resource/ s# uid="[^"]*"##' "$f" > "$DEST/sala/$(basename "$f")"
+for d in sala interni; do
+  mkdir -p "$DEST/$d"
+  for f in grafica/$d/*.tres; do
+    sed 's#res://grafica/#res://addons/grafica/#g; /^\[ext_resource/ s# uid="[^"]*"##' "$f" > "$DEST/$d/$(basename "$f")"
+  done
 done
 cp grafica/texture/torcia_cookie.png "$DEST/texture/"
 cp strumenti/addon/*.tscn strumenti/addon/README.md "$DEST/"

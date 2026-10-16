@@ -17,6 +17,9 @@ signal applicate
 
 const PERCORSO := "user://settings.cfg"
 const SEZIONE := "grafica"
+## Sale quando cambiano i valori di serie che vanno imposti anche a chi ha già salvato.
+## 2: glow e grana spenti di serie (riscontro dell'utente sulla v0.2.1).
+const VERSIONE := 2
 const POST_SHADER := preload("res://grafica/post_processing.gdshader")
 
 const RISOLUZIONI: Array[Vector2i] = [
@@ -32,7 +35,7 @@ const PREDEFINITI := {
 	"risoluzione": 0,           # indice in RISOLUZIONI (solo in finestra)
 	"vsync": 1,                 # 0 no, 1 sì, 2 adattivo, 3 mailbox
 	"limite_fps": 0,            # 0 = nessun limite
-	"fov": 75.0,
+	"fov": 62.0,                # verticale (circa 92° orizzontali in 16:9)
 	# Resa (dal preset)
 	"scala_rendering": 1.0,
 	"upscaler": 0,              # 0 bilineare, 1 FSR 1, 2 FSR 2
@@ -52,25 +55,30 @@ const PREDEFINITI := {
 	"contrasto": 1.0,
 	"saturazione": 1.0,
 	"color_grading": 1,         # indice in GRADING
-	"glow": true,
-	"grana": true,
+	"glow": false,              # di serie spento (v0.2.1: l'utente preferisce senza); dal menu si riaccende
+	"grana": false,             # di serie spenta: sporcava l'immagine (revisione dell'utente)
 	"vignetta": true,
-	"aberrazione": true,
+	"aberrazione": false,
+	"profondita_campo": true,   # sfocatura leggera solo in lontananza
 	"riduci_lampi": false,      # accessibilità: lampi più deboli e senza sfarfallio
 	"calibrato": false,         # true dopo la prima calibrazione della luminosità
+	# Controlli (li legge il controller del giocatore)
+	"sensibilita_mouse": 1.0,   # moltiplicatore
+	"inverti_y": false,
+	"oscillazione_camera": true,
 }
 
 const PRESET := {
 	"basso": {"scala_rendering": 0.67, "upscaler": 1, "nitidezza_fsr": 0.3, "antialiasing": 1,
 		"ombre": 0, "gi": 0, "nebbia": 0, "ssr": 0, "ssao": 0, "ssil": 0,
 		"qualita_texture": 0, "particelle": 0},
-	"medio": {"scala_rendering": 0.77, "upscaler": 2, "nitidezza_fsr": 0.2, "antialiasing": 0,
+	"medio": {"scala_rendering": 0.85, "upscaler": 1, "nitidezza_fsr": 0.25, "antialiasing": 2,
 		"ombre": 2, "gi": 0, "nebbia": 1, "ssr": 1, "ssao": 2, "ssil": 0,
 		"qualita_texture": 1, "particelle": 1},
-	"alto": {"scala_rendering": 1.0, "upscaler": 0, "nitidezza_fsr": 0.2, "antialiasing": 3,
+	"alto": {"scala_rendering": 1.0, "upscaler": 0, "nitidezza_fsr": 0.2, "antialiasing": 2,
 		"ombre": 3, "gi": 1, "nebbia": 1, "ssr": 2, "ssao": 3, "ssil": 2,
 		"qualita_texture": 2, "particelle": 2},
-	"ultra": {"scala_rendering": 1.0, "upscaler": 2, "nitidezza_fsr": 0.2, "antialiasing": 0,
+	"ultra": {"scala_rendering": 1.0, "upscaler": 0, "nitidezza_fsr": 0.2, "antialiasing": 5,
 		"ombre": 4, "gi": 1, "nebbia": 2, "ssr": 3, "ssao": 4, "ssil": 3,
 		"qualita_texture": 2, "particelle": 2},
 }
@@ -155,7 +163,16 @@ func applica_tutto() -> void:
 	_applica_particelle()
 	_applica_post()
 	_applica_fov()
+	_applica_camera()
 	applicate.emit()
+
+
+## Da chiamare quando la scena cambia Environment o attributi della camera
+## (per esempio le zone con un Environment proprio): li riprende e riapplica le opzioni.
+func aggiorna_environment() -> void:
+	_env = null
+	_applica_environment()
+	_applica_camera()
 
 
 func carica() -> void:
@@ -168,6 +185,10 @@ func carica() -> void:
 		var v: Variant = cfg.get_value(SEZIONE, k, PREDEFINITI[k])
 		if typeof(v) == typeof(PREDEFINITI[k]) or (typeof(v) in [TYPE_INT, TYPE_FLOAT] and typeof(PREDEFINITI[k]) in [TYPE_INT, TYPE_FLOAT]):
 			valori[k] = v
+	# Impostazioni salvate da una versione vecchia: glow e grana tornano ai nuovi valori di serie.
+	if int(cfg.get_value(SEZIONE, "versione", 1)) < 2:
+		valori["glow"] = false
+		valori["grana"] = false
 
 
 func salva() -> void:
@@ -178,7 +199,13 @@ func salva() -> void:
 	cfg.load(PERCORSO)  # mantiene le altre sezioni (audio, comandi...)
 	for k in valori:
 		cfg.set_value(SEZIONE, k, valori[k])
+	cfg.set_value(SEZIONE, "versione", VERSIONE)
 	cfg.save(PERCORSO)
+
+
+## Campo visivo orizzontale (gradi) corrispondente a un FOV verticale, per un rapporto dato.
+static func fov_orizzontale(fov_verticale: float, rapporto := 16.0 / 9.0) -> float:
+	return rad_to_deg(2.0 * atan(tan(deg_to_rad(fov_verticale) / 2.0) * rapporto))
 
 
 ## Moltiplicatore dei lampi per l'opzione di accessibilità.
@@ -205,6 +232,8 @@ func _applica_chiave(chiave: String) -> void:
 			_applica_post()
 		"fov":
 			_applica_fov()
+		"profondita_campo":
+			_applica_camera()
 		_:
 			_applica_environment()
 
@@ -295,6 +324,11 @@ func _trova_environment() -> Environment:
 func _base(env: Environment) -> Dictionary:
 	if env != _env:
 		_env = env
+		# I valori originali si leggono una volta sola per Environment: se si torna in una
+		# stanza già vista, il suo glow è già spento dall'impostazione e non va preso come base.
+		if env.has_meta(&"grafica_base"):
+			_env_base = env.get_meta(&"grafica_base")
+			return _env_base
 		_env_base = {
 			"fog_enabled": env.fog_enabled, "fog_density": env.fog_density,
 			"volumetric_fog_enabled": env.volumetric_fog_enabled,
@@ -303,6 +337,7 @@ func _base(env: Environment) -> Dictionary:
 			"ssr_enabled": env.ssr_enabled, "ssao_enabled": env.ssao_enabled,
 			"ssil_enabled": env.ssil_enabled,
 		}
+		env.set_meta(&"grafica_base", _env_base)
 	return _env_base
 
 
@@ -386,6 +421,29 @@ func _applica_post() -> void:
 	m.set_shader_parameter("aberrazione", 1.0 if valori["aberrazione"] else 0.0)
 
 
+## Profondità di campo leggera: sfoca solo ciò che è lontano (non i dettagli vicini).
+func _applica_camera() -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var attr: CameraAttributes = cam.attributes
+	if attr == null:
+		var w := get_viewport().find_world_3d()
+		for we in get_tree().root.find_children("*", "WorldEnvironment", true, false):
+			if (we as WorldEnvironment).camera_attributes:
+				attr = (we as WorldEnvironment).camera_attributes
+		if attr == null and w:
+			attr = CameraAttributesPractical.new()
+			cam.attributes = attr
+	if attr is CameraAttributesPractical:
+		var a := attr as CameraAttributesPractical
+		a.dof_blur_far_enabled = bool(valori["profondita_campo"])
+		a.dof_blur_far_distance = 14.0
+		a.dof_blur_far_transition = 10.0
+		a.dof_blur_near_enabled = false
+		a.dof_blur_amount = 0.04
+
+
 func _applica_fov() -> void:
 	var cam := get_viewport().get_camera_3d()
 	if cam and not cam.has_meta("grafica_fov_fisso"):
@@ -402,6 +460,7 @@ func _su_nodo_aggiunto(n: Node) -> void:
 		_applica_environment.call_deferred()
 	elif n is Camera3D:
 		_applica_fov.call_deferred()
+		_applica_camera.call_deferred()
 	elif n is GPUParticles3D and n.is_in_group("grafica_particelle"):
 		_applica_particelle.call_deferred()
 

@@ -2,8 +2,9 @@
 
 - sporco in spazio mondo nei colori dei vertici (niente ripetizioni: macchie grandi, umidità che
   risale, colature dall'alto, angoli più sporchi, linea dell'acqua nella piscina);
-- pavimento bagnato a chiazze (tre materiali con rugosità diverse, assegnati piastrella per
-  piastrella) e pozzanghere a specchio che seguono le zone bagnate;
+- pavimento con un solo materiale (l'umidità sfumata è nei colori dei vertici; i materiali diversi
+  piastrella per piastrella facevano chiazze a quadretti) e pozzanghere a specchio opache, 3 mm sopra
+  il pavimento, che seguono le zone bagnate;
 - funzioni di rumore (numpy) usate anche dalle texture.
 
 Lo usa tools/blender/ambiente_sala.py (che va lanciato come script: importa questo modulo).
@@ -153,12 +154,6 @@ def bagnato_punto(x, y):
     return float(W[min(i, W.shape[0] - 1), min(j, W.shape[1] - 1)])
 
 
-def materiali_pavimento(cx, cy):
-    """Materiale di ogni piastrella (25 cm) di centro (cx, cy): asciutto, umido o bagnato."""
-    w = bagnato(np.asarray(cx, np.float64), np.asarray(cy, np.float64))
-    return np.where(w > 0.6, 'pavimento_bagnato', np.where(w < 0.3, 'pavimento_asciutto', 'pavimento'))
-
-
 def sporco_pavimento(P, N):
     x, y = P[:, 0], P[:, 1]
     n1 = fbm3(P, 0.12, 3, seme=3)
@@ -289,16 +284,17 @@ def posti_pozzanghere(n=48, seme=8):
     piedistallo, struttura e torre. Più fitte lungo il percorso del giocatore."""
     import random
     rnd = random.Random(seme)
-    P, V, PD, ST, T = S.PISCINA, S.VASCA_ARRIVO, S.PIEDISTALLO, S.STRUTTURA, S.TORRE
+    # struttura e vasche basse dove stavano fino al 15 ottobre (così le altre pozzanghere restano dov'erano)
+    P, V, PD, ST, T = S.PISCINA, S.VASCA_ARRIVO, S.PIEDISTALLO, S.STRUTTURA_15_OTTOBRE, S.TORRE
     vietati = [(P['x0'] - 0.75, P['y0'] - 0.75, P['x1'] + 0.75, P['y1'] + 0.75),
                (V['x0'] - 0.75, V['y0'] - 0.75, V['x1'] + 0.75, V['y1'] + 0.75),
-               (PD['cx'] - PD['r_cordone'] - 0.4, PD['cy'] - PD['r_cordone'] - 0.4, PD['cx'] + PD['r_cordone'] + 0.4, PD['cy'] + PD['r_cordone'] + 0.4),
+               tuple(v + d for v, d in zip(S.ingombro_centro('vasca'), (-0.2, -0.2, 0.2, 0.2))),
                (S.LAMPIONE[0] - 0.4, S.LAMPIONE[1] - 0.4, S.LAMPIONE[0] + 0.4, S.LAMPIONE[1] + 0.4),
                (-1.2, S.Y0, 1.2, S.Y0 + 1.6),
                (ST['cx'] - 4.6, ST['cy'] - 5.6, ST['cx'] + 2.0, ST['cy'] + 3.4),
                (T['cx'] - 3.3, T['cy'] - 4.5, T['cx'] + 3.3, T['cy'] + 3.3),
                (15.5, 2.8, 17.1, 9.8)] + \
-              [(a - 0.3, b - 0.3, c + 0.3, d + 0.3) for a, b, c, d in S.VASCHE_BASSE]
+              [(a - 0.3, b - 0.3, c + 0.3, d + 0.3) for a, b, c, d in S.VASCHE_BASSE_15_OTTOBRE]
     fatti, tent = [], 0
     while len(fatti) < n and tent < 6000:
         tent += 1
@@ -317,11 +313,22 @@ def posti_pozzanghere(n=48, seme=8):
         if any(math.hypot(x - a, y - b) < (r0 + rb) * 0.8 for a, b, rb in fatti):
             continue
         fatti.append((x, y, r0))
+    # niente pozzanghere sulla fossa della vasca bimbi (tolte dopo, così le altre restano dov'erano)
+    F = S.FOSSA_BIMBI
+    fatti = [(x, y, r0) for (x, y, r0) in fatti
+             if not (F['x0'] - 0.3 - r0 < x < F['x1'] + 0.3 + r0 and F['y0'] - 0.3 - r0 < y < F['y1'] + r0)]
+    # area bimbi rifatta il 16 ottobre (disposizione 1): via quelle sotto la struttura, le vasche e i funghi
+    ST = S.STRUTTURA
+    nuovi = [(ST['cx'] - 4.6, ST['cy'] - 5.6, ST['cx'] + 2.0, ST['cy'] + 3.4)] + \
+            [(a - 0.3, b - 0.3, c + 0.3, d + 0.3) for a, b, c, d in S.VASCHE_BASSE] + \
+            [(x - 1.2 * s, y - 1.2 * s, x + 1.2 * s, y + 1.2 * s) for (x, y, _, s) in S.FUNGHI]
+    fatti = [(x, y, r0) for (x, y, r0) in fatti
+             if not any(a - r0 < x < c + r0 and b - r0 < y < d + r0 for a, b, c, d in nuovi)]
     return fatti, rnd
 
 
 def pozzanghere(mats, n=48, seme=8):
-    """Pozzanghere a specchio: poligoni irregolari 4 mm sopra il pavimento, con la stessa texture
+    """Pozzanghere a specchio: poligoni irregolari 3 mm sopra il pavimento, con la stessa texture
     del pavimento (UV in scala reale: le fughe combaciano) ma lisci e scuri (M_amb_pozzanghera:
     opaco, così in Godot riflettono con SSR)."""
     c = K.Costruttore(mats)
@@ -337,7 +344,7 @@ def pozzanghere(mats, n=48, seme=8):
             rr = r0 * (1 + 0.22 * math.sin(2 * t + fase[0]) + 0.12 * math.sin(3 * t + fase[1]) +
                        0.07 * math.sin(5 * t + fase[2]) + 0.04 * math.sin(9 * t + fase[3]))
             px, py = math.cos(t) * rr * sx, math.sin(t) * rr * sy
-            pts.append((x + px * math.cos(a) - py * math.sin(a), y + px * math.sin(a) + py * math.cos(a), 0.004))
+            pts.append((x + px * math.cos(a) - py * math.sin(a), y + px * math.sin(a) + py * math.cos(a), 0.003))
         c.faccia(pts, 'pozzanghera')
     ob = c.crea('sala_pozzanghere')
     colora(ob, lambda P, N: 0.62 + 0.1 * fbm3(P, 0.8, 2, seme=71))
@@ -381,6 +388,21 @@ def piastrelle_mancanti(mats, gruppi_pareti=44, gruppi_piscina=14, seme=12):
             if asse == 'y' and (abs(a - (-3.2 if fisso > 0 else -2.2)) < 0.5):
                 return True                                # scalette
         return False
+    va, vb, vh = S.varco_torre()
+    PB = S.PULSANTE_BOTOLA
+    def nascosto(muro, a, z):
+        """Posti nuovi del 16 ottobre: il varco della sala della torre (e il portone) nella parete est, la
+        cassetta del pulsante della botola, il varco della serranda del magazzino nel muro sud. Lì il gruppo non si disegna ma conta come fatto: i numeri
+        casuali restano gli stessi e le altre piastrelle mancanti non si spostano."""
+        asse, fisso = muro[0], muro[1]
+        if asse == 'y' and abs(fisso - S.X1) < 1e-6 and va - 0.25 < a < vb + 0.25:
+            return True
+        if muro in vasca and asse == 'x' and abs(a - PB['x']) < 0.46 and z > PB['z'] - 0.62:
+            return True
+        VS = S.VANO_SERRANDA          # varco della serranda del magazzino (ambienti-1, tappa 7 B)
+        if asse == 'x' and abs(fisso - S.Y0) < 1e-6 and abs(a - VS['cx']) < 1.0 and z < VS['h'] + 0.1:
+            return True
+        return False
     def gruppo(muro):
         asse, fisso, nrm, (a0, a1), (z0, z1) = muro
         a = round(rnd.uniform(a0, a1) / T) * T
@@ -393,6 +415,8 @@ def piastrelle_mancanti(mats, gruppi_pareti=44, gruppi_piscina=14, seme=12):
                 celle.append((na, nz))
         if any(vietato(muro, ca + T / 2, cz + T / 2) for ca, cz in celle):
             return False
+        if any(nascosto(muro, ca + T / 2, cz + T / 2) for ca, cz in celle):
+            return True
         o = 0.003
         for (ca, cz) in celle:
             if asse == 'x':
@@ -472,13 +496,18 @@ def insegne_neon(mats):
 
 def plafoniere_calde(mats):
     """Plafoniere navali 'a tartaruga' ancora accese, luce calda: un po' di caldo in mezzo al rosso
-    (vicino alla porta, sul muro est vicino alla scala, sul muro ovest sopra il salvagente, sulla
-    torre e su una colonna della galleria nord). Restituisce (oggetto, luci)."""
+    (vicino alla porta, sul muro est, sul muro ovest sopra il salvagente e sulla parete nord). Dal 16
+    ottobre la 3 non c'è più (era sulla torre degli scivoli, tolta dalla sala) e la 4, che era su una
+    colonna del soppalco nord, è sulla parete nord: i nomi delle luci restano gli stessi.
+    Restituisce (oggetto, luci)."""
     posti = [((1.75, S.Y0, 2.5), (0, 1, 0)), ((S.X1, 9.0, 2.7), (-1, 0, 0)), ((S.X0, -1.0, 2.7), (1, 0, 0)),
-             ((10.5, 14.38, 2.6), (0, -1, 0)), ((-3.0, 21.15, 3.0), (0, -1, 0))]
+             None, ((-4.6, S.Y1, 3.0), (0, -1, 0))]
     c = K.Costruttore(mats)
     luci = []
-    for i, (p, n) in enumerate(posti):
+    for i, posto in enumerate(posti):
+        if posto is None:
+            continue
+        p, n = posto
         P = Vector(p); N = Vector(n)
         su = Vector((0, 0, 1)); lato = su.cross(N).normalized()
         c.scatola_assi(P + N * 0.02, (lato, su, N), (0.15, 0.1, 0.02), 'metallo')
@@ -494,3 +523,25 @@ def plafoniere_calde(mats):
             c.tubo([tuple(v) for v in arco], 0.005, 'metallo', seg=5)
         luci.append(dict(nome=f'luce_calda_{i}', pos=tuple(P + N * 0.25), colore=(1.0, 0.68, 0.38)))
     return c.crea('sala_plafoniere_calde'), luci
+
+
+def sporco_vasca_centrale(P, N):
+    """Vasca sollevata: fuori sporco in basso (schizzi, pavimento bagnato) e righe dove l'acqua è
+    traboccata dal bordo; dentro, sotto l'acqua, verdastro (alghe) e più scuro verso il fondo."""
+    V = S.VASCA_CENTRALE
+    x, y, z = P[:, 0] - V['cx'], P[:, 1] - V['cy'], P[:, 2]
+    radiale = np.stack([x, y], -1)
+    fuori = (N[:, 0] * x + N[:, 1] * y) > 0
+    ang = np.arctan2(y, x)
+    S1 = np.stack([ang * 3.2, np.zeros_like(ang), np.zeros_like(ang)], -1)
+    m = fbm3(P, 1.4, 3, seme=91)
+    v = 0.84 + 0.16 * liscio(0.3, 0.7, m)
+    righe = liscio(0.55, 0.78, fbm3(S1, 2.2, 2, seme=93)) * liscio(0.15, 0.85, z)
+    est = v * (0.74 + 0.26 * liscio(0.0, 0.4, z)) * (1 - 0.28 * righe)
+    sotto = z < V['acqua'] - 0.01
+    inn = v * np.where(sotto, 0.72 - 0.25 * liscio(0.8, 0.1, z), 0.95)
+    val = np.where(fuori, est, inn)
+    rgb = np.repeat(val[:, None], 3, 1)
+    verde = np.where((~fuori) & sotto, 1.0, 0.0)[:, None]
+    rgb = rgb * (1 - 0.25 * verde) + rgb * np.array([0.78, 0.95, 0.72]) * 0.25 * verde
+    return np.clip(rgb, 0.25, 1.0)

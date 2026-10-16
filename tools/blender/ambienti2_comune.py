@@ -238,11 +238,21 @@ def _ob_da_bm(nome, bm, mat=None):
     return ob
 
 
-def box(nome, centro, dim, mat=None, uv=SCALA_UV, rot=(0, 0, 0), matrice=None):
+# smusso di default degli spigoli delle scatole (0 = spigoli vivi); gli script lo alzano per le strutture
+SMUSSO = [0.0]
+
+
+def box(nome, centro, dim, mat=None, uv=SCALA_UV, rot=(0, 0, 0), matrice=None, smussa=None):
     bm = bmesh.new()
     bmesh.ops.create_cube(bm, size=1.0)
     bmesh.ops.scale(bm, vec=Vector(dim), verts=bm.verts)
+    sm = SMUSSO[0] if smussa is None else smussa
+    sm = min(sm, min(dim) * 0.3) if mat is not None else 0.0
+    if sm > 0.0005:
+        bmesh.ops.bevel(bm, geom=list(bm.edges), offset=sm, segments=2, affect='EDGES', profile=0.5)
     ob = _ob_da_bm(nome, bm, mat)
+    # una scatola senza rotazione: la collisione si ricava dal suo ingombro anche se smussata
+    ob['scatola'] = matrice is None and tuple(rot) == (0, 0, 0)
     if matrice is not None:
         ob.matrix_basis = matrice
     else:
@@ -563,10 +573,20 @@ def renderizza(nome_file):
 # Con AMBIENTI2_GLTF=1 l'export scrive .gltf + .bin in assets_src/ambienti_tecnici/gltf_2k/ con le texture
 # 2K condivise in gltf_2k/texture/ (una sola copia per tutte le stanze). Senza, scrive i GLB autonomi in glb/.
 GLTF_2K = os.environ.get('AMBIENTI2_GLTF') == '1'
+# Con TECNICI_GODOT=1 scrive .gltf + .bin in godot/assets/ambienti_tecnici/ (texture condivise in texture/):
+# colori a 2K, le altre mappe a 1K.
+TECNICI_GODOT = os.environ.get('TECNICI_GODOT') == '1'
+GODOT_TEC = os.path.join(RADICE, 'godot', 'assets', 'ambienti_tecnici')
 
 
 def esporta_glb(path, obs=None, luci=True, max_tex=1024):
     """Esporta in GLB gli oggetti (default: tutti tranne volumi e camera)."""
+    if TECNICI_GODOT:
+        for im in bpy.data.images:
+            lim = 2048 if im.colorspace_settings.name != 'Non-Color' else 1024
+            if im.size[0] > lim:
+                im.scale(lim, lim)
+        return _esporta_gltf(os.path.join(GODOT_TEC, os.path.basename(path).replace('.glb', '.gltf')), obs, luci)
     if GLTF_2K and os.sep + 'ambienti_tecnici' + os.sep in path:
         return _esporta_gltf(os.path.join(SRC, 'gltf_2k', os.path.basename(path).replace('.glb', '.gltf')), obs, luci)
     if obs is None:
@@ -642,10 +662,19 @@ def _esporta_gltf(path, obs, luci):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     bpy.ops.export_scene.gltf(filepath=path, export_format='GLTF_SEPARATE', export_texture_dir='texture', use_selection=True,
                               export_apply=True, export_lights=luci, export_cameras=False, export_extras=True,
-                              export_yup=True, export_image_format='AUTO')
+                              export_yup=True, export_image_format='JPEG' if TECNICI_GODOT else 'AUTO', export_jpeg_quality=88)
     bin_ = path.replace('.gltf', '.bin')
     for f in (path, bin_):
         mb = os.path.getsize(f) / 1e6
         print(f'GLTF {f}: {mb:.1f} MB', flush=True)
         assert mb < 50
     return path
+
+
+def collisione_struttura(ob):
+    """Collisione di un pezzo di struttura: dall'ingombro se e' una scatola (anche smussata), copia se e' semplice."""
+    if ob.get('scatola'):
+        return collisione_da_bbox(ob)
+    if len(ob.data.vertices) == 8:
+        return collisione_copia(ob)
+    return None

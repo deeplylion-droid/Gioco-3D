@@ -18,6 +18,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy
 from mathutils import Vector, Matrix
 from ambienti2_comune import *
+import ambienti2_comune as C
+import ambienti1_hq as HQ
+HQ.LINK[0] = C._link
+R_ = math.radians
 
 ARGS = argomenti()
 XA, XB = -2.0, 24.0
@@ -46,6 +50,7 @@ M['neon_spento'] = mat_pbr('neon_spento', base=(0.7, 0.7, 0.68), roughness=0.3)
 M['acqua'] = mat_acqua_nera()
 M['gonfiabile'] = mat_pbr('gonfiabile_rosa', base=(0.85, 0.25, 0.45), roughness=0.35)
 
+C.SMUSSO[0] = 0.012   # spigoli smussati
 statici = []
 def S(g, ob):
     statici.append((g, ob)); return ob
@@ -55,7 +60,8 @@ usa_collezione('struttura')
 NICCHIE = [6.0, 10.0, 14.0]   # centri X delle nicchie delle pale
 NW = 3.0                      # larghezza nicchia
 ND = 2.6                      # profondita' nicchia (oltre il muro nord)
-POZZO = (0.0, 0.0)            # centro del pozzo del portello
+POZZO = (0.64, 0.0)           # centro del pozzo, sotto il centro del portello della piscina (la cerniera
+                              # del portello della sala è 0,64 m più a nord, cioè a X = 0 qui)
 PZ = 1.3                      # lato del pozzo
 
 S('struttura', box('pavimento', ((XA + XB) / 2, 0, -0.15), (XB - XA, W, 0.3), M['cemento_bagnato'], uv=3.0))
@@ -79,10 +85,26 @@ for nome, (a, b, c, d) in {'s1': (XA, px - PZ / 2, YS, YN), 's2': (px + PZ / 2, 
     S('struttura', box(f'soffitto_{nome}', ((a + b) / 2, (c + d) / 2, H + 0.15), (b - a, d - c, 0.3), M['cemento'], uv=2.5))
 # testate: inizio chiuso, fine aperta verso la sala pompe (tratto buio)
 S('struttura', box('testata_ovest', (XA - SP / 2, 0, H / 2), (SP, W, H), M['lamiere'], uv=2.0))
+# testata est: vano largo 2,6 e alto 2,8 verso il tunnel della sala pompe (centrato sull'asse del tunnel)
+TUN_W, TUN_H = 2.6, 2.8
+for nome, c, d in (('testata_est_n', (XB + SP / 2, (TUN_W / 2 + YN) / 2, H / 2), (SP, YN - TUN_W / 2, H)),
+                   ('testata_est_s', (XB + SP / 2, (YS - TUN_W / 2) / 2, H / 2), (SP, YN - TUN_W / 2, H)),
+                   ('testata_est_alto', (XB + SP / 2, 0, (TUN_H + H) / 2), (SP, TUN_W, H - TUN_H))):
+    S('struttura', box(nome, c, d, M['lamiere'], uv=2.0))
+for k, (c, d) in enumerate((((XB - 0.02, 0, TUN_H + 0.12), (0.12, TUN_W + 0.5, 0.24)),
+                            ((XB - 0.02, -TUN_W / 2 - 0.12, TUN_H / 2), (0.12, 0.24, TUN_H)),
+                            ((XB - 0.02, TUN_W / 2 + 0.12, TUN_H / 2), (0.12, 0.24, TUN_H)))):
+    S('struttura', box(f'telaio_vano_est_{k}', c, d, M['pericolo'], uv=0.8))
 empty('PUNTO_verso_sala_pompe', (XB, 0, 0))
 
 # costole d'acciaio ogni 2 m (profilo a U intorno alla sezione)
 for k, x in enumerate([x for x in range(-1, 24, 2)]):
+    sopra_pozzo = abs(x - POZZO[0]) < PZ / 2 + 0.2
+    if sopra_pozzo:
+        # la trave del soffitto non deve passare sotto il buco del pozzo: solo le due colonne
+        S('costole', box(f'costola{k}_s', (x, YS + 0.1, H / 2), (0.25, 0.2, H), M['ferro'], uv=1.0))
+        S('costole', box(f'costola{k}_n', (x, YN - 0.1, H / 2), (0.25, 0.2, H), M['ferro'], uv=1.0))
+        continue
     if any(abs(x - xc) < NW / 2 + 0.1 for xc in NICCHIE):
         # sopra le nicchie solo la parte alta
         S('costole', box(f'costola{k}_s', (x, YS + 0.1, H / 2), (0.25, 0.2, H), M['ferro'], uv=1.0))
@@ -222,7 +244,7 @@ for i, xc in enumerate(NICCHIE):
         S('bocchette', o)
     empty(f'ARIA_bocchetta_{i + 1}', c + Vector((0, 0.5, 0)), rot=(math.radians(-90), 0, 0))
 # condotta dell'aria lungo il muro sud, che alimenta le bocchette
-S('bocchette', tubo('condotta_aria', [(XA, YS + 0.4, 3.6), (XB, YS + 0.4, 3.6)], 0.3, M['tubi'], seg=20, uv=1.5))
+S('bocchette', tubo('condotta_aria', [(XA, YS + 0.4, 3.6), (XB, YS + 0.4, 3.6)], 0.3, M['tubi'], seg=32, uv=1.5))
 for i, xc in enumerate(NICCHIE):
     S('bocchette', tubo(f'raccordo{i}', [(xc, YS + 0.4, 3.35), (xc, YS + 0.4, 2.85)], 0.18, M['tubi'], seg=16))
     S('bocchette', box(f'scatola{i}', (xc, YS + 0.32, 2.8), (0.8, 0.6, 0.3), M['ferro'], uv=1.0))
@@ -254,6 +276,10 @@ for i, xg in enumerate((17.5, 21.0)):
         applica_trasf(p)
     par = unisci(f'PARATIA_{n}', parti)
     imposta_origine(par, (xg, 0, alza))
+    if HQ.disponibile('paratia'):
+        # lastra Meshy, larga quanto il tunnel e alta H; origine sul bordo inferiore, fronte verso -X (chi arriva)
+        bpy.data.objects.remove(par)
+        par = HQ.metti(f'PARATIA_{n}', 'paratia', (xg, 0, alza), (pw, 0.3, H), rot_z=R_(-90))
     par['movimento'] = f'scende lungo Z da {alza} a 0'
     S(g, cilindro(f'{g}_luce_base', (xg - 0.3, W / 2 - 0.2, H - 0.3), 0.08, 0.1, M['ferro'], asse=(1, 0, 0), seg=12))
     S(g, sfera(f'{g}_luce', (xg - 0.36, W / 2 - 0.2, H - 0.3), 0.07, M['rosso_luce'], seg=12, uv=None))
@@ -263,6 +289,16 @@ for i, xg in enumerate((17.5, 21.0)):
 usa_collezione('luci')
 def lampada(nome, pos, normale, accesa=True):
     n = Vector(normale).normalized(); pos = Vector(pos)
+    if HQ.disponibile('lampada_muro'):
+        rosso = lambda c, nrm: c[0] > 0.25 and c[0] > c[1] * 2.2 and c[0] > c[2] * 2.0
+        HQ.dividi('lampada_muro', 'lampada_muro_vetro', rosso, (1, 0.05, 0.02), 14.0)
+        Rm = n.to_track_quat('Z', 'Y').to_matrix().to_4x4()
+        for o in (HQ.metti(f'lampada_{nome}', 'lampada_muro', (0, 0, 0), (0.34, None, None)),
+                  HQ.metti(f'lampada_{nome}_vetro' if accesa else f'lampada_{nome}_vetro_spento', 'lampada_muro', (0, 0, 0), (0.34, None, None), parte='lampada_muro_vetro')):
+            o.matrix_world = Matrix.Translation(pos) @ Rm @ o.matrix_world
+        if accesa:
+            luce(f'LUCE_rossa_{nome}', 'POINT', pos + n * 0.25, 45, (1.0, 0.08, 0.04), raggio=0.08)
+        return
     S('lampade', cilindro(f'{nome}_base', pos, 0.12, 0.06, M['ferro'], asse=n, seg=16))
     S('lampade', sfera(f'{nome}_vetro', pos + n * 0.03, 0.1, M['rosso_luce'] if accesa else M['neon_spento'], seg=16, uv=None))
     t1 = n.orthogonal().normalized(); t2 = n.cross(t1)
@@ -276,9 +312,16 @@ lampada('l2', (8.0, YS + 0.02, 3.0), (0, 1, 0), accesa=False)
 lampada('l3', (12.0, YS + 0.02, 3.0), (0, 1, 0))
 lampada('l4', (16.0, YN - 0.02, 3.0), (0, -1, 0))
 lampada('l5', (23.0, YS + 0.02, 3.0), (0, 1, 0))
-for k, (x, acceso) in enumerate(((4.0, False), (10.0, True), (19.3, False))):
-    S('lampade', box(f'plafoniera_{k}', (x, -0.6, H - 0.06), (1.5, 0.22, 0.08), M['ferro'], uv=None))
-    S('lampade', cilindro(f'neon_{k}', (x, -0.6, H - 0.13), 0.025, 1.35, M['neon'] if acceso else M['neon_spento'], asse=(1, 0, 0), seg=10, uv=None))
+# fra le costole (ogni 2 m da x = -1) e lontano dai cassoni delle paratie
+for k, (x, acceso) in enumerate(((4.0, False), (10.0, True), (19.85, False))):
+    if HQ.disponibile('plafoniera_neon'):
+        giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
+        HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
+        HQ.metti(f'plafoniera_{k}', 'plafoniera_neon', (x, -0.6, H - 0.12), (1.4, 0.32, 0.1))
+        HQ.metti(f'neon_{k}_tubo_sfarfalla' if acceso else f'neon_{k}_tubi', 'plafoniera_neon', (x, -0.6, H - 0.12), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
+    else:
+        S('lampade', box(f'plafoniera_{k}', (x, -0.6, H - 0.06), (1.5, 0.22, 0.08), M['ferro'], uv=None))
+        S('lampade', cilindro(f'neon_{k}', (x, -0.6, H - 0.13), 0.025, 1.35, M['neon'] if acceso else M['neon_spento'], asse=(1, 0, 0), seg=10, uv=None))
     if acceso:
         luce(f'LUCE_neon_{k}', 'AREA', (x, -0.6, H - 0.17), 60, (0.45, 0.9, 1.0), size=1.3)
 # un gonfiabile e un salvagente portati dall'acqua, una pozza
@@ -290,8 +333,8 @@ empty('VAPORE_tunnel', (11.0, 0.4, 0.5))
 usa_collezione('collisioni')
 for g, ob in statici:
     if (g in ('struttura', 'pozzo') or g.startswith('NICCHIA_') or g.startswith('PORTALE_')) \
-            and ob.name in bpy.data.objects and len(ob.data.vertices) == 8:
-        collisione_copia(ob)
+            and ob.name in bpy.data.objects:
+        collisione_struttura(ob)
 for i, xc in enumerate(NICCHIE):
     collisione_box(f'ringhiera_nicchia_{i + 1}', (xc - NW / 2, YN - 0.2, 0), (xc + NW / 2, YN - 0.1, 1.1))
     pala = bpy.data.objects[f'PALA_{i + 1}']
@@ -301,8 +344,8 @@ for i, xc in enumerate(NICCHIE):
     loc['collisione'] = True; loc.hide_render = True
 for n in (1, 2):
     par = bpy.data.objects[f'PARATIA_{n}']
-    c = box(f'PARATIA_{n}_lastra-convcolonly', (0, 0, H / 2), (0.3, W - 0.3, H), None, uv=None)
-    c.parent = par; c.matrix_parent_inverse = Matrix.Identity(4); c['collisione'] = True; c.hide_render = True
+    c = box(f'PARATIA_{n}_lastra-convcolonly', (par.location.x, 0, par.location.z + H / 2), (0.3, W - 0.3, H), None, uv=None)
+    bpy.context.view_layer.update(); mw = c.matrix_world.copy(); c.parent = par; c.matrix_world = mw; c['collisione'] = True; c.hide_render = True
 c = box('PORTELLO_disco-convcolonly', (-(R_P + 0.08), 0, 0), (2 * R_P + 0.1, 2 * R_P + 0.1, 0.1), None, uv=None)
 c.parent = portello; c.matrix_parent_inverse = Matrix.Identity(4); c['collisione'] = True; c.hide_render = True
 

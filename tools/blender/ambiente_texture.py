@@ -50,6 +50,8 @@ CATALOGO = {
                         uso='vetroresina graffiata dei tubi degli scivoli (ricolorata)'),
     'macchie_acqua': dict(fonte='ambientcg', id='SurfaceImperfections002', lato=2.0, griglia=None,
                           uso='aloni e pozzanghere: maschera per la rugosità bagnata'),
+    'cemento': dict(fonte='ambientcg', id='Concrete042C', lato=2.0, griglia=None,
+                    uso='cemento grezzo: la fossa dello scarico di compensazione nell\'area bimbi'),
 }
 
 
@@ -777,6 +779,65 @@ def malta(cartella, lato=512, seme=13):
     print('malta ->', cartella)
 
 
+def linea_calcare(cartella, W=2048, H=256, seme=27):
+    """Fascia RGBA della linea dell'acqua per le vasche: sotto alghe verdi-brune, sopra la crosta
+    bianca di calcare con qualche colatura. Si ripete in orizzontale senza giunte (v = 0 in basso).
+    -> linea_calcare_col.png"""
+    rng = np.random.default_rng(seme)
+    yy = np.linspace(1, 0, H)[:, None]          # 1 in alto
+    xx = np.arange(W)[None, :]
+    def onda(n, amp, s):
+        f = np.zeros(W)
+        for k in range(1, n + 1):
+            f += rng.normal(0, amp / k) * np.sin(2 * np.pi * k * (np.arange(W) / W) + rng.uniform(0, 6.28))
+        return f
+    f = _fbm2(W, H, rng, 5, 8)
+    # crosta di calcare: fascia tra 0,45 e 0,75 (la linea dell'acqua è a 0,45), bordo alto irregolare
+    alto = 0.68 + onda(9, 0.05, 0)[None, :]
+    basso = 0.45 + onda(7, 0.02, 1)[None, :]
+    calc = _smooth(basso - 0.01, basso + 0.03, yy) * (1 - _smooth(alto - 0.04, alto + 0.02, yy))
+    calc *= 0.55 + 0.45 * f
+    # colature di calcare sotto la linea (pochi rivoli)
+    for _ in range(16):
+        x0 = rng.uniform(0, W); lung = rng.uniform(0.1, 0.35); w = rng.uniform(3, 9)
+        d = np.minimum(np.abs(xx - x0), W - np.abs(xx - x0))
+        calc = np.maximum(calc, np.exp(-(d / w) ** 2) * _smooth(0.45 - lung, 0.45, yy) * (1 - _smooth(0.45, 0.5, yy)) * 0.6)
+    # alghe: sotto la linea, più fitte appena sotto
+    alg = (1 - _smooth(0.38, 0.47, yy)) * _smooth(0.0, 0.25, yy) * _smooth(0.35, 0.65, f)
+    col = np.zeros((H, W, 3), np.float32)
+    a = np.zeros((H, W), np.float32)
+    bianco = np.array([0.78, 0.77, 0.7]) * (0.85 + 0.2 * f[..., None])
+    verde = np.array([0.08, 0.11, 0.05]) * (0.7 + 0.6 * f[..., None])
+    col = bianco * calc[..., None] + verde * alg[..., None] * (1 - calc[..., None])
+    a = np.clip(calc * 0.95 + alg * 0.85, 0, 1)
+    col = col / np.maximum(a[..., None], 1e-3)
+    rgba = np.dstack([lin_srgb(np.clip(col, 0, 1)) * 255, a * 255]).astype(np.uint8)
+    os.makedirs(cartella, exist_ok=True)
+    Image.fromarray(rgba, 'RGBA').save(os.path.join(cartella, 'linea_calcare_col.png'), optimize=True)
+    print('linea del calcare ->', cartella)
+
+
+def cartelloni_mascotte(cartella):
+    """Cartelloni con la mascotte (grafiche di assets_src/ambienti_interni/poster, già invecchiate,
+    copiate in assets_src/ambiente/cartelloni/mascotte_*_vecchio.jpg): taglio 2:3 per i teli da
+    2 x 3 m appesi ai lati della statua. -> cartellone_medusa_col.jpg, cartellone_bagnino_col.jpg"""
+    src = os.path.join(RADICE, 'assets_src', 'ambiente', 'cartelloni')
+    for chiave in ('medusa', 'bagnino'):
+        f = os.path.join(src, f'mascotte_{chiave}_vecchio.jpg')
+        if not os.path.exists(f):
+            continue
+        im = Image.open(f).convert('RGB')
+        w, h = im.size
+        nw = int(round(h * 2 / 3))
+        if nw <= w:
+            im = im.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
+        else:
+            nh = int(round(w * 3 / 2))
+            im = im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+        _salva_jpg(im.resize((1024, 1536), Image.LANCZOS), os.path.join(cartella, f'cartellone_{chiave}_col.jpg'))
+        print('cartellone con la mascotte', chiave)
+
+
 def deriva(nomi=None):
     from ambiente_palette import PALETTE
     nomi = nomi or list(PALETTE)
@@ -812,6 +873,8 @@ def deriva(nomi=None):
             vetro_cupola_atlante(cart)
             vetro_oblo(cart)
             malta(cart)
+            cartelloni_mascotte(cart)
+            linea_calcare(cart)
     dec = os.path.join(TEX, 'decal')
     os.makedirs(dec, exist_ok=True)
     colatura_png(os.path.join(dec, 'colatura_col.png'))

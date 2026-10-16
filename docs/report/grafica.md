@@ -31,7 +31,67 @@ Tutti in `docs/report/render_grafica/` (presi dal motore, 1280×720, Vulkan soft
 | `lampi_cupola.mp4` (+ `.gif`) | 7 secondi di temporale visto dalla sala |
 | `neon_corridoio.mp4` (+ `.gif`) | 6 secondi di neon che sfarfallano e lampeggiante rotante |
 
+## Pezzo campione: luce e immagine degli interni (15 ottobre, da approvare)
+
+L'utente, dopo la v0.2.0: "è tutto offuscato e piatto" e "la torcia è troppo forte". Rifatti su un pezzo campione, da approvare prima del resto: corridoio del risveglio, tornello con la vasca lava-piedi, stanzino.
+
+Screenshot 1600×900 da Godot, stessi punti prima e dopo (preset Alto), in `docs/report/render_grafica/campione/`:
+
+| Inquadratura | Prima | Dopo |
+|---|---|---|
+| Corridoio dal risveglio | `prima_corridoio.jpg` | `dopo_corridoio.jpg` |
+| Tornello con la vasca lava-piedi | `prima_tornello.jpg` | `dopo_tornello.jpg` |
+| Dentro lo stanzino | `prima_stanzino.jpg` | `dopo_stanzino.jpg` |
+| Corridoio al buio con la torcia | `prima_torcia.jpg` | `dopo_torcia.jpg` |
+
+Cosa rendeva l'immagine "offuscata" e cosa è cambiato:
+- **Antialiasing**: il TAA sul preset Alto ammorbidiva tutto. Ora Alto usa **SMAA** (nitido), Ultra **MSAA 4×**, Medio FSR 1 all'85% con nitidezza e SMAA; il TAA resta solo come scelta ("morbido") nel menu.
+- **Grana e aberrazione cromatica spente di serie** (si possono riaccendere); vignetta leggera (0,3).
+- **Nebbia** degli interni molto più leggera (0,008): aloni attorno alle lampade, nessun velo sull'immagine.
+- **Profondità di campo** leggera, solo oltre i 14 m (negli interni quasi non si vede), disattivabile nel menu (Immagine > Profondità di campo).
+
+Profondità e atmosfera invece di "piatto":
+- Le luci rosse d'emergenza fanno **pozze raccolte** (raggio 4,2 m, calo rapido) invece di tingere di rosso pareti intere; i neon fanno la luce "di lavoro" fredda, con **ombre morbide**; la lampada sullo zaino è l'unica luce calda.
+- **Ombre** in mezzo agli ambienti: zone buie vere tra una pozza di luce e l'altra; luce ambiente fredda minima (blu-verde, come il concept A) perché il buio non sia nero piatto.
+- **SSAO** stretto (0,9 m) per gli angoli, **SSIL** a 3 m, **SSR** sul pavimento bagnato, **VoxelGI cotto per stanza** (dati in `godot/scenes/interni/gi/`, circa 10 MB) e le sonde di riflessione che c'erano già.
+- AgX con contrasto 1,2 ed esposizione fissa; glow solo sulle lampade.
+
+Torcia rifatta:
+- Nuova texture del fascio: punto caldo pieno, anello del riflettore, stacco più scuro, corona larga e debole, bordo che sfuma senza scalino.
+- **Bianco caldo** (circa 4000 K), energia 9 ma con calo più lento con la distanza e **attenuazione vicino ai muri**: illumina lontano senza bruciare da vicino.
+- Segue lo sguardo con **un po' di inerzia**; nella nebbia è appena accennata.
+- **Non illumina la lancia in mano** (strato 2 escluso dalla luce).
+
+Per non intralciare chi rifà modelli e texture degli stessi interni, le luci sono in una scena separata: `godot/scenes/interni/luci_interni.tscn` (istanziata in `interni.tscn`), con lo script `addons/grafica/look_interni.gd`.
+
+**Risultato combinato** con i modelli e le texture nuovi di ambienti-1 (oggetti Meshy, pareti senza "mimetica", piastrelle con le fughe), VoxelGI ricotto sulla geometria nuova: `combinato_corridoio.jpg`, `combinato_tornello.jpg`, `combinato_stanzino.jpg`, `combinato_torcia.jpg`.
+
+Il "disco azzurro" che si vedeva nel tornello era la cornice della finestra del gabbiotto, che sporgeva nel corridoio: ambienti-1 l'ha corretta (4bd815c); `combinato_tornello.jpg` è rifatto con la cornice a filo del muro e il VoxelGI ricotto.
+
+**Approvato dall'utente** ("belle le luci e anche le grafiche").
+
+**Secondo giro** (`giro2_corridoio.jpg`, `giro2_tornello.jpg`, `giro2_stanzino.jpg`, `giro2_torcia.jpg`), con soffitti da nave e usura delle pareti di ambienti-1:
+- riflessi delle pozze netti: erano trasparenti e non ricevevano gli SSR (riflettevano solo il VoxelGI, sfocato: le "forme fantasma"); ora sono opache e lucide;
+- torcia al buio davvero: GI cotto senza le emissioni delle lampade, scatto con tutte le luci spente;
+- neon non più doppi (interni.gd);
+- neon a 4,5 e luce ambiente 0,85: con i soffitti nuovi lo stanzino era quasi nero e l'usura delle pareti non si leggeva.
+
+**Terzo giro** (`giro3_*.jpg`): il secondo giro era troppo scuro (corridoio −31%, tornello −26%, stanzino −70%, torcia −37%). Cause trovate e corrette, senza alzare la luce ambiente:
+- le plafoniere facevano ombra alla loro stessa luce (nella versione approvata c'era una seconda luce senza ombre): ora le plafoniere non proiettano ombre;
+- i neon finivano sopra i soffitti nuovi (corridoio: plafoniera a 2,6-2,7 m, soffitto a 2,53): `LookInterni` li abbassa sotto il soffitto e ci mette la luce appena sotto;
+- GI cotto di nuovo, con le emissioni delle lampade;
+- negli scatti i neon sfarfallavano a caso (lo stanzino −70% era un neon spento in quel frame): ora nel test sono fissi accesi;
+- pozze dentro lo shader del pavimento (maschera con le stesse forme, piastrelle un po' più scure, rugosità 0,05, normali appiattite); i piani delle pozze sono nascosti.
+Valori: neon 6, stanzino 4,8 (soffitto basso e chiaro), emergenza 2,8.
+
+Luminosità media rispetto a `combinato_`: corridoio −10%, tornello −6%, stanzino +8%, torcia −20%. La torcia è più scura perché ora è un buio vero (tutte le luci spente, come chiesto nel secondo giro); nel combinato approvato le lampade d'emergenza erano accese.
+
 ## Sala principale vera: prima e dopo
+
+**DOPO per la v0.2.1** (`docs/report/qualita_sala/dopo_*.jpg`, le 6 camere di `tests/scatti_sala.gd`). Sono fatti su `lavoro/ambiente` 474a772 unito a questo branch, in un worktree locale. Il GI (`scenes/sala/gi/sala.res`) è cotto sulla stessa geometria. Per stare nella memoria del sandbox, le texture estratte dai GLB della sala sono in VRAM compressa (come le comprime la CI con `tools/godot_vram_textures.py`). In Lossless la sala da sola supera i 13,6 GB su llvmpipe.
+Luminosità media: a_ingresso 28 (prima 48), b_vasca_3m 27 (prima 33), c 17, d 28,5, e 24, f 16.
+Area bimbi: LookSala crea un festone di lampadine colorate (alcune rotte, alcune che sfarfallano) sul fronte e sul fianco est della struttura di gioco, più una plafoniera appesa al soffitto che illumina il fronte e il secchio. La camera d era coperta dallo scivolo grande: ora sta in (-12,5; 0; -4,5) e guarda verso (-12,3; 3,4; -15), davanti alla vaschetta. Luminosità media da 10 a 28,5.
+
 
 Scena di prova: `labs/grafica/sala_reale/` con i GLB veri (`strumenti/prepara_sala_reale.sh` li copia e li importa con lo script di post-import). Consegna: `godot/addons/grafica/look_sala.gd` + `godot/addons/grafica/sala/*.tres` (passi nel README dell'addon).
 
@@ -39,12 +99,13 @@ Screenshot 1920×1080 in `docs/report/render_grafica/sala_reale/` (prima = `sala
 
 | Inquadratura | Prima | Dopo |
 |---|---|---|
-| Ingresso con il piedistallo | `prima_ingresso.jpg` | `dopo_ingresso.jpg` |
+| Ingresso dal vano sud, statua sul monumento | `prima_ingresso.jpg` | `dopo_ingresso.jpg` |
+| Monumento da vicino | `prima_monumento.jpg` | `dopo_monumento.jpg` |
 | Piscina | `prima_piscina.jpg` | `dopo_piscina.jpg` |
 | Area bimbi | `prima_area_bimbi.jpg` | `dopo_area_bimbi.jpg` |
 | Cima della torre | `prima_torre.jpg` | `dopo_torre.jpg` |
 
-In più: `dopo_lampo_ingresso.jpg` (un lampo), `dopo_sdfgi_piscina.jpg` e `dopo_senza_gi_piscina.jpg` (confronto della GI). La statua sul piedistallo è la base Meshy ridotta, solo per l'inquadratura.
+In più: `dopo_lampo_ingresso.jpg` (un lampo). `dopo_sdfgi_piscina.jpg` e `dopo_senza_gi_piscina.jpg` (confronto della GI) sono ancora della sala prima dell'allungamento. Sala allungata (muro sud a z = 20) con il monumento; la statua è la medusa vera del gioco, alta 4,5 m.
 
 Cosa cambia nel "dopo":
 - **Colore come il concept A**: emergenze rosse più profonde e più forti (alcune pulsano), neon freddi verso il verde, ambiente e ombre verso il blu-verde (color grading "Notte fredda"), luce calda solo dal lampione e dall'area bimbi per il contrasto.
@@ -53,11 +114,24 @@ Cosa cambia nel "dopo":
 - **Nebbia volumetrica** leggera che prende i coni delle luci, più una nebbia bassa con rumore sul pavimento e nella piscina.
 - **Luna senza penombra**: con il diametro angolare realistico (0,6°) le ombre dei costoloni sottili sparivano dal pavimento; a 0° tornano le strisce sul pavimento e nella piscina.
 - Lampi dalla cupola, pulviscolo, gocce; neon "a metà" che sfarfallano, sono guasti o morenti.
+- **Statua**: fari dall'alto e davanti (5,5), faretti caldi dal basso (0,6), controluce freddo da dietro, lampione abbassato (3,5): entrando dal vano è la cosa più leggibile della sala, senza bruciare il vinile.
+- **Difetto trovato nella medusa**: `medusa_tentacoli.tres` non ha `emission_operator = Multiply` (il GLB sì). Con "Add" i tentacoli escono bianchi: era questo il "bruciato" visto dall'integratore. Segnalato al coordinatore.
 
 GI per la sala vera:
 - **VoxelGI** resta la scelta: costo moderato, segue le luci che cambiano.
 - **SDFGI** (immagine apposta): funziona ma con muri e gallerie sottili fa filtrare luce e costa di più.
 - **LightmapGI**: la UV2 si genera già all'import (`meshes/light_baking = Static Lightmaps` nello script di preparazione), ma il bake si fa solo dall'editor con la GPU: nel sandbox (rendering software, senza editor interattivo) non è stato possibile cuocerlo. Resta comunque sconsigliato come GI principale, perché il capitolo spegne e riaccende le luci della sala.
+
+### Revisione di qualità (15 ottobre, notte)
+
+Correzioni chieste dalla revisione sugli scatti Ultra, controllate con `sala_reale/dopo_ingresso_revisione.jpg`:
+- **Campo visivo** di serie 62° verticali (circa 92° orizzontali); cursore da 50 a 90 che mostra anche i gradi orizzontali.
+- **Torcia**: energia 11 (prima 28) e attenuazione vicino ai muri: un raggio di 3 m davanti e luce × clamp(distanza / 2,5; 0,4; 1).
+- **Luna** più debole (0,3) e morbida (1,3°, opacità dell'ombra 0,75): la "ragnatela" netta dei costoloni compare solo durante il lampo.
+- **Esposizione**: luce ambiente 0,7, contrasto AgX 1,15, vignetta 0,3, nebbia volumetrica 0,015 con anisotropia 0,3 (fasci visibili anche di lato), nebbia bassa 0,04.
+- **Cielo** della cupola più chiaro, nuvole più contrastate. L'orizzonte del mare non c'è: dalla sala si vede solo il cielo sopra la cupola.
+- **Scheda Controlli** nel menu: sensibilità del mouse, inverti Y, oscillazione della camera (in `settings.cfg`, chiavi `sensibilita_mouse`, `inverti_y`, `oscillazione_camera`: le legge il controller del giocatore).
+- FPS: sul rendering software del sandbox non sono misurabili. La nebbia più densa non cambia il costo (dipende dalla dimensione del volume, non dalla densità).
 
 ## Scelte prese (e perché)
 
@@ -126,3 +200,12 @@ Il capitolo 1 si basa su luci che cambiano: le pompe accendono tutto e poi fanno
 3. Mettere la `Torcia` sulla camera del giocatore e collegare i segnali all'audio (tuono, neon, gocce, clic della torcia).
 4. Collegare il menu delle opzioni al menu di pausa e mostrare la calibrazione al primo avvio.
 5. Da decidere con l'utente: lo stile del menu, la batteria della torcia, il color grading definitivo.
+
+## Ambienti tecnici: luci in tre stati (15 ottobre)
+
+`LookTecnici` (`addons/grafica/look_tecnici.gd`, scena `scenes/tecnici/luci_tecnici.tscn`, da mettere come figlia della radice di `tecnici.tscn`) segue `GameState.luci`:
+- **prima del risveglio**: neon di servizio freddi e bassi (uno su tre sfarfalla), faretti sui quadri, luce del portello, lampade rosse spente, la vasca nera;
+- **flash**: tutto acceso, neon bianchi forti;
+- **blackout**: solo le rosse d'emergenza e il monitor (neve); i tubi dei neon diventano grigi.
+Il VoxelGI (`scenes/tecnici/gi/`) è cotto senza emissioni e le luci sono dinamiche: nel blackout il rimbalzo si spegne con le luci, non resta rosso cotto nei muri. Le luci dei tecnici hanno il meta `risveglio_ignora`, quindi `LuciRisveglio` non le tocca. I neon fatti da `tecnici.gd` erano doppi (entravano vuoti nella scena): `LookTecnici` li rimette a posto.
+Scatti in `docs/report/tecnici_luci/` (`<stato>_<punto>.jpg`, dagli stessi punti di `docs/report/tecnici/`). La rampa prima del risveglio è nera: lì ci sono solo lampade rosse, e ci si passa al ritorno, nel blackout.

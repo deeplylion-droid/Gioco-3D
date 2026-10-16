@@ -42,31 +42,33 @@ sala principale in Godot leggi `INTEGRAZIONE.md`.
 | Cartelloni | 2,4 x 1,35 m (kit) e 3,2 x 1,8 m (sala), solo disegni, nessuna scritta |
 | Torre degli scivoli | 6 x 6 m, piani a 3,0 / 6,0 / 8,6 m, pozzo centrale 2,2 m, gradini da 18 cm |
 
-## Monumento della statua (per il gruppo "medusa")
+## Centro della sala: la vasca sollevata (per la medusa affacciata)
 
-La statua della medusa è il simbolo del gioco: il suo piedistallo è un **monumento** al centro del
-piazzale sud, sull'asse della porta degli spogliatoi. Il piedistallo è **vuoto** (nodo `amb_piedistallo`
-in `sala_monumento.glb`); la medusa la mette il gruppo "medusa".
+Deciso dall'utente il 15 ottobre (GDD, "Il centro della sala"): al posto della statua sul monumento c'è la
+**vasca sollevata** del concept `docs/concept/medusa_sbircia.jpg`, con dentro la medusa affacciata, immobile,
+le mani sul bordo verso l'ingresso. Nodo `sala_vasca_centrale` in `sala_vasca_centrale.glb`.
 
-- Centro: Blender **(0, -10, 0)** = Godot **(0, 0, 10)**. La porta (vano 1,2 x 2,2 m) è a 10 m, sullo
-  stesso asse: entrando la statua si vede subito, intera e centrata, con la cupola sopra.
-- **Piano superiore a 1,15 m**, Ø 2,8 m. La medusa va appoggiata in Godot a **(0, 1,15, 10)**,
-  rivolta verso la porta (+Z Godot). Prevista alta circa 4,5 m: la cima arriva a 5,65 m.
-- Gradoni: Ø 4,0 m (alto 0,28) e Ø 3,24 m (fino a 0,56), piastrellati; tamburo Ø 2,6 m con il fregio
-  a mosaico marino; cornice in ceramica con il toro d'ottone; conchiglie d'ottone sul secondo gradino.
-- Davanti (verso la porta) la scatola gialla con il fungo rosso dei bambini (nodo a parte), a 0,8 m.
-- Luci: 4 faretti nel primo gradino (dal basso), 2 fari sulla ringhiera della galleria sud, il lampione
-  accanto (base in Blender (2,8, -13,2)) con la lampada sopra il davanti della statua.
-- Cordone di velluto su colonnine d'ottone a raggio 3 m, con un varco di 3 m sul davanti.
-- Alla base le offerte dei bambini: disegni a pastello (senza scritte), conchiglie, stelle marine,
-  secchiello, salvagente, orsetto, paperelle, pallone, ciambella.
+- Centro Godot **(0, 0, 10)**; pianta esterna **6,0 x 4,5 m** (x per z) con angoli arrotondati r 0,5.
+- Muro alto 1 m: **cima del bordo a 1,0 m**, coping largo **0,30 m** con il toro esterno (r 3,75 cm), bagnato e
+  lucido; muro esterno rientrato di 3 cm sotto il toro. **Acqua a 0,88**, fondo interno a 0.
+- Piastrelle da **25 cm a scacchi blu notte e crema** (`vasca_alta`, texture 2K su 3 m = 680 px/m), fughe scure
+  in rilievo, ogni piastrella col suo tono, crepe e macchie; le UV seguono il perimetro (le piastrelle girano
+  negli angoli). Sporco nei colori dei vertici: schizzi in basso, righe dove l'acqua è traboccata, alghe sotto
+  l'acqua. Fascia RGBA di **alghe e calcare sulla linea dell'acqua** (`decal_calcare`).
+- Marker **`medusa_affacciata`** in `sala_dati.json`: origine consigliata (0; 0,88; 11,75), rotazione (0, 0, 0),
+  guarda verso +Z; mani sul coping in (±0,45; 1,0; 12,1).
+- Pulsante della sigla sul muro davanti (nodo `sala_pulsante_piedistallo`), cordone di velluto a 1,3 m dal bordo
+  con il varco davanti, lampione, 2 fari dalla galleria e 2 luci sott'acqua, offerte dei bambini intorno.
+- Il **monumento della statua** (piedistallo a gradoni, piano 3,7 m, fregio marino) resta per più avanti:
+  `glb/per_dopo/sala_monumento.glb`, si rifà con `ambiente_sala.py --glb <cartella> --monumento`.
 
 ## Passata di qualità della sala (ottobre)
 
 Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagli.py`:
 
-- **Pavimento** a piastrelle da 25 cm con tre materiali (asciutto, umido, bagnato) scelti piastrella
-  per piastrella da un campo in spazio mondo; pozzanghere a specchio con la texture del pavimento.
+- **Pavimento** a piastrelle da 25 cm con **un solo materiale**: umidità e sporco sfumati nei colori dei
+  vertici (i tre materiali asciutto/umido/bagnato scelti piastrella per piastrella facevano chiazze a
+  quadretti, tolti nella passata HQ); pozzanghere a specchio opache, 3 mm sopra il pavimento.
 - **Sporco nei colori dei vertici** calcolato in spazio mondo (pareti, pavimento, galleria, piscina,
   scivoli, torre, giochi): niente ripetizioni. Pareti e pavimento hanno vertici ogni 25 cm.
 - **Profili**: battiscopa a sguscio (raggio 8 cm) tra pavimento e piastrelle, listelli ai bordi della
@@ -80,9 +82,58 @@ Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagl
   8 lastre rotte con le schegge nel telaio e i vetri caduti sotto (lì il pavimento è bagnato).
 - **Luci**: plafoniere navali calde accese (`luce_calda_*`) tra le rosse, insegne al neon disegnate
   (onda azzurra sopra il vano, stella-sole gialla sopra l'area bimbi; un tratto spento).
+- **Revisione di qualità**: vernice navale grigio-verde su colonne, sostegni, galleria e ringhiere
+  (`metallo` #5f6d69, prima era bianca con la ruggine: sembravano tronchi di betulla); piano del
+  piedistallo in piastrelle avorio lucide con un velo d'acqua (`piano_statua`, rugosità circa 0,06);
+  due teli da 2 x 3 m con la mascotte (grafiche di `assets_src/ambienti_interni/poster`) appesi alla
+  trave ai lati della statua, girati verso l'ingresso, con un faretto caldo ciascuno (`luce_cartellone_*`);
+  tolti i due cartelloni del lato est.
 - **Tubo dell'inseguimento** (lo scivolo rosso a spirale): Ø interno 1,6 m, parete 6 cm, flange ogni
   2 m con 12 bulloni, come i moduli di `assets_src/ambienti_tecnici/glb/scivoli_kit.glb`. La bocca
   sputa nella vasca d'arrivo da est, 16 cm sopra l'acqua. Gli altri due tubi restano da 1,0 m.
+
+## Passata HQ della sala (al livello del pezzo campione)
+
+- **Oggetti di scena rifatti con Meshy** come gli interni di ambienti-1 (`assets_src/ambiente/oggetti_hq/genera_hq.py`):
+  immagine di riferimento nano-banana-pro nello stile del campione (bordi morbidi smussati, usura leggera)
+  -> image-to-3d meshy-7.1, geometria 4k, PBR, remesh a triangoli. Nel repository i GLB hanno le texture
+  già ridotte a 2K JPG (le 4K si riscaricano dal task in `<nome>.json`). Stessi nomi e stesse misure dei
+  vecchi (lettino, salvagente, sedia del bagnino, paperella, pallone, ciambella, tubi, delfino, balena,
+  orsacchiotto, fungo-fontana, cannoncino) più quelli nuovi: colonnina d'ottone del cordone, lampione
+  col braccio, cestino a pesce, cartello giallo del pavimento bagnato, secchio gigante; la panca è quella
+  HQ degli spogliatoi. In sala le texture sono 2K per gli oggetti grandi, 1K per i piccoli.
+- **Lampione**: il modello HQ si gira e si scala da solo perché la lampadina cada dove c'è `luce_lampione`
+  (la luce non si sposta); la lampadina che sfarfalla resta `M_amb_lampadina`, nel nodo `amb_lampione`.
+- **Secchio gigante**: modello HQ nello stesso nodo `sala_secchio_gigante`, con i mozzi sul perno (asse x)
+  e la stessa collisione; il gioco lo fa ribaltare come prima.
+- **Cordone**: colonnine HQ (istanze), il velluto e le collisioni delle campate restano quelli di prima.
+- **Arredi nuovi** (`arredi()` in `ambiente_sala.py`): 5 panche lungo i muri, 5 cestini, 4 cartelli
+  (uno caduto), fuori dai percorsi.
+- **Struttura di gioco** ancora fatta a mano (pedane e collisioni del gioco), con pali tondi a cappuccio,
+  piastre di base, smussi più larghi e tubi più fitti.
+- **GLB uguali col monumento e con la vasca**: le offerte dei bambini stanno nel GLB del centro
+  (`sala_vasca_centrale.glb` o `sala_monumento.glb`), `sala_oggetti.glb` e `sala_architettura.glb` non
+  dipendono dal centro (zone libere calcolate sempre sull'ingombro della vasca col cordone, che copre
+  anche il monumento).
+
+### Buco del pozzo (tappa 5)
+
+Nel fondo della piscina a onde, sotto il portello, c'è il buco verso il pozzo della camera delle onde:
+`BUCO_POZZO` in `ambiente_sala.py`, cioè x ±0,64 e y da -2,64 a -1,36 in Blender (Godot z da 1,36 a
+2,64). La griglia del fondo ha le linee anche sul bordo del buco, quindi lo smusso e il collare
+piastrellato (fino a 24 cm sotto lo scarico) condividono i vertici del fondo, senza fessure. La
+collisione è la copia della mesh, quindi segue il buco. Il portello è quadrato e copre il buco.
+
+### Fossa della VascaBimbi1 (tappa 8)
+
+`FOSSA_BIMBI` e `fossa_bimbi()` in `ambiente_sala.py`. È lo scarico di compensazione rotto, attaccato al
+lato sud della prima vasca bassa: la vasca ha il lato sud aperto, e il bordo a scacchi gira intorno alla
+fossa con l'angolo sud-ovest tagliato. Il pavimento della sala ha un buco esatto: i bordi della fossa sono
+linee della griglia.
+- Pareti piastrellate (`vasca_bimbi`) fino a -0,6, poi cemento grezzo (`cemento`, da Concrete042C CC0),
+  fondo a -3, condotto verso est.
+- Il coperchio di collisione `coperchio_fossa_col` è un oggetto a parte.
+- I marker per la medusa sono in `sala_dati.json`.
 
 ## Convenzioni dei nomi
 
@@ -131,7 +182,8 @@ Tutto in `tools/blender/ambiente_sala.py`, `ambiente_kit.py` e `ambiente_dettagl
   dell'acqua nella piscina. Le fughe delle piastrelle hanno la normal map più forte (`normale` 1,6).
 - Grigliati e rosa dei venti: PNG con alfa (alpha scissor in Godot).
 - Oggetti Meshy: GLB grezzi in `oggetti/<nome>/<nome>_meshy.glb` (texture ricompresse in JPG, la
-  geometria è quella di Meshy); in sala hanno texture 1K se piccoli, 2K se grandi.
+  geometria è quella di Meshy); in sala hanno texture 1K se piccoli, 2K se grandi. Se esiste la versione
+  HQ in `oggetti_hq/<nome>.glb` la sala usa quella.
 
 ## LOD e poligoni
 
@@ -165,6 +217,7 @@ $PY tools/blender/ambiente_texture.py scarica              # texture CC0 (2K) + 
 $PY tools/blender/ambiente_texture.py deriva sala_a        # texture della palette (anche p1_..., p2_..., p3_...)
 $PY assets_src/ambiente/oggetti/meshy_oggetti.py immagini   # Meshy: immagini di riferimento (crediti!)
 $PY assets_src/ambiente/oggetti/meshy_oggetti.py modelli    # Meshy: modelli 3D (crediti!)
+python3 assets_src/ambiente/oggetti_hq/genera_hq.py [--immagini] [nomi]   # Meshy HQ (crediti!): solo quelli che mancano
 $PY tools/blender/ambiente_oggetti.py ricomprimi --copia <cartella fuori dal repo>
 $PY tools/blender/ambiente_sala.py --glb assets_src/ambiente/glb/sala          # GLB della sala
 $PY tools/blender/ambiente_integrazione.py                                      # INTEGRAZIONE.md dai GLB

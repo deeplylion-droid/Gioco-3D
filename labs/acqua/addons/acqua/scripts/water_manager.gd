@@ -18,6 +18,8 @@ const TEXELS_PER_BODY := 4
 const MAX_DROPS := 24
 const MAX_GLOWS := 4
 const TIME_ROLLOVER := 3600.0
+## Quanto sotto il fondo di una massa d'acqua (m) un punto conta ancora come "dentro" (get_body_at).
+const BELOW_BOTTOM := 0.5
 
 ## Livello di qualita' corrente (0 basso, 1 medio, 2 alto).
 var quality: int = Quality.HIGH:
@@ -137,10 +139,12 @@ func get_bodies() -> Array[Node]:
 	return _bodies
 
 
-## Restituisce la massa d'acqua che contiene il punto (in pianta), o null.
+## Restituisce la massa d'acqua che contiene il punto (in pianta), o null. Le masse d'acqua con il
+## fondo piu' alto del punto (di oltre [constant BELOW_BOTTOM]) non contano: un tunnel o un pozzo
+## che passa sotto una vasca non e' dentro la vasca.
 func get_body_at(world_pos: Vector3, margin := 0.0) -> Node:
 	for b in _bodies:
-		if is_instance_valid(b) and b.contains_xz(world_pos, margin):
+		if is_instance_valid(b) and b.contains_xz(world_pos, margin) and world_pos.y >= b.bottom - BELOW_BOTTOM:
 			return b
 	return null
 
@@ -148,7 +152,7 @@ func get_body_at(world_pos: Vector3, margin := 0.0) -> Node:
 ## Vero se il punto e' sotto la superficie di una massa d'acqua (onde comprese).
 func is_underwater(world_pos: Vector3) -> bool:
 	var b := get_body_at(world_pos)
-	return b != null and world_pos.y < b.get_surface_height(world_pos)
+	return b != null and world_pos.y < b.get_surface_height(world_pos) and world_pos.y > b.bottom - 0.05
 
 
 func _update_body_table() -> void:

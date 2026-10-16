@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/polaroid_photo.gd" id="1_s"]
+[ext_resource type="PackedScene" path="res://assets/models/polaroid/polaroid.glb" id="2_m"]
+
+[sub_resource type="BoxShape3D" id="shape"]
+size = Vector3(0.4, 0.3, 0.4)
+
+[node name="Polaroid" type="Area3D"]
+script = ExtResource("1_s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.15, 0)
+shape = SubResource("shape")
+
+[node name="Modello" parent="." instance=ExtResource("2_m")]

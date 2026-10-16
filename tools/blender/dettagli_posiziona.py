@@ -391,9 +391,16 @@ for _ in range(50):
 # ------------------------------------------------------------------ scrittura (coordinate Godot) e riepilogo
 C = Matrix(((1, 0, 0, 0), (0, 0, 1, 0), (0, -1, 0, 0), (0, 0, 0, 1)))    # Blender -> Godot
 uscita = []
+# asciugamani piegati (0,7 x 1,4 m piegato in quattro): pianta circa 0,38 x 0,71 m, un po' più spessi
+PIEGA = {'det_asciugamano': (0.42, 3.0, 0.75)}     # scala delle colonne x, y, z (Godot) della Basis
 for p in POSTI:
     G = C @ p['matrice_blender'] @ C.inverted()
     b = G.to_3x3(); o = G.translation
+    for pref, k in PIEGA.items():
+        if p['nodo'].startswith(pref):
+            for c_ in range(3):
+                for r_ in range(3):
+                    b[r_][c_] *= k[c_]
     yaw = math.degrees(math.atan2(-b[2][0], b[0][0])) if abs(b[1][1] - 1) < 1e-4 else None
     uscita.append({'nodo': p['nodo'], 'glb': p['glb'], 'zona': p['zona'], 'gruppo': p['gruppo'],
                    'posizione': [round(v, 3) for v in o], 'rotazione_y_gradi': round(yaw, 1) if yaw is not None else None,

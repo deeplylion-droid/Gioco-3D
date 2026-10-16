@@ -17,7 +17,7 @@ Copiare **tutta** la cartella `assets_src/ambienti_interni/gltf/` in `godot/` (p
 
 **I tre file vanno messi tutti sotto uno stesso nodo**, ciascuno a `Transform3D.IDENTITY`: fra loro combaciano già.
 
-**Attacco con la sala principale** (vedi `assets_src/ambiente/INTEGRAZIONE.md`, sala allungata verso sud): il nodo comune va messo in **`position = (-9.7, 0, 40.9)`**, senza rotazione. Così il `marker_uscita_sala_principale` cade in (0; 0; 20,2), sul retro del vano 1,2 × 2,2 m nel muro sud della sala, e la saracinesca sta subito dietro la porta stagna della sala. **Tutte le coordinate qui sotto sono locali a quel nodo** (per quelle globali: x - 9,7 e z + 40,9; per esempio lo zaino è in (5,24; 1,25; 32,47) globali). Scala in metri, pavimento a y = 0.
+**Attacco con la sala principale** (vedi `assets_src/ambiente/INTEGRAZIONE.md`, sala allungata verso sud): il nodo comune va messo in **`position = (-9.7, 0, 40.9)`**, senza rotazione. Così il `marker_uscita_sala_principale` cade in (0; 0; 20,2), sul retro del vano 1,2 × 2,2 m nel muro sud della sala, e la saracinesca sta subito dietro la porta stagna della sala. **Tutte le coordinate qui sotto sono locali a quel nodo** (per quelle globali: x - 9,7 e z + 40,9; per esempio lo zaino è in (4,80; 1,25; 32,47) globali). Scala in metri, pavimento a y = 0.
 
 Sotto, tutte le coordinate sono **in Godot** (x, y, z), con y in alto. Il nord della pianta è -Z.
 
@@ -57,7 +57,7 @@ Collegamento con gli script di `lavoro/godot` (`godot/scripts/mechanisms/`):
 - `Turbine` nel punto di `turbina_saracinesca`, con `rotation_degrees.y = 90` (lo script guarda verso +Z, la turbina guarda verso +X, cioè verso il corridoio). Il modello della ruota va come figlio e ruota con lei.
 - `WaterButton` nel punto di `pulsante_tornello`, con `rotation_degrees.y = -90` (guarda verso -X, verso il vetro rotto), modalità `LATCH`: sblocca il `tornello_rotore`.
 - `PoweredDoor` sulla `saracinesca` con `sources = [Turbine]`, `open_offset = (0, 2.2, 0)`.
-- `PackPickup`: lo zaino sul `marker_zaino_pompa` in **(14,94; 1,25; -8,43)**, appeso ai due ganci centrali della rastrelliera, schiena verso il muro (+X). La rastrelliera ha il posto libero apposta.
+- `PackPickup`: lo zaino sul `marker_zaino_pompa` in **(14,50; 1,25; -8,43)**, appeso ai due ganci centrali della rastrelliera, schiena verso il muro (+X). La rastrelliera ha il posto libero apposta.
 - Acqua da aspirare: `acqua_lavapiedi` (vasca x 8,6…10,8, z -12,4…-14,4; superficie a y -0,05, fondo a -0,20). Un `WaterTank`/`WaterVolume` con quella forma; quando lo zaino aspira, il livello scende fino a -0,2 (la mesh si può scalare in Y o spostare).
 
 ## 5. Luci
@@ -65,7 +65,7 @@ Collegamento con gli script di `lavoro/godot` (`godot/scripts/mechanisms/`):
 Nei file ci sono le **luci rosse d'emergenza** come `OmniLight3D` (`luce_emergenza_*_luce`, già con colore rosso); le luci ad area dei neon invece non vengono esportate. Consiglio di sostituirle con i nodi dell'addon `grafica`:
 
 - `LuceEmergenza` (rossa, FISSA; una o due PULSANTI) al posto di ogni `luce_emergenza_*_luce`. Corridoio: (3,00; 2,20; -2,38), (10,80; 2,20; -2,38), (19,20; 2,20; -2,38), (17,50; 2,35; -0,22) sopra la porta della sala pompe, (17,50; 2,25; -2,38) di fronte, (21,78; 2,40; -1,30) sopra la porta tagliafuoco, (0,22; 2,35; -1,30) in fondo, (7,50; 2,20; -0,22). Spogliatoi: (6,80; 2,45; -3,22), (3,22; 2,40; -7,00), (5,60; 2,55; -14,38) docce, (9,70; 2,50; -11,42), (10,58; 2,30; -18,20), (12,98; 2,30; -16,00) gabbiotto. Stanzino: (11,42; 2,30; -9,60), (14,98; 2,30; -7,60).
-- `Neon` ai nodi `neon_*`: quelli con `_tubo_sfarfalla` sono accesi (modalità SFARFALLA, fanno da tubo emissivo): `neon_corridoio_2` (10,00; 2,59; -1,30), `neon_spogliatoi_1` (7,00; 2,79; -5,00), `neon_stanzino` (13,20; 2,49; -8,40). Gli altri (`_tubi`) sono spenti; `neon_corridoio_3` pende storto da un cavo.
+- `Neon` ai nodi `neon_*`: quelli con `_tubo_sfarfalla` sono accesi (modalità SFARFALLA, fanno da tubo emissivo): `neon_corridoio_2` (10,00; 2,43; -1,30), `neon_spogliatoi_1` (7,00; 2,80; -5,00), `neon_stanzino` (13,20; 2,34; -8,40). Gli altri (`_tubi`) sono spenti; `neon_corridoio_3` pende storto da un cavo.
 - `luce_pulsante_tornello`: piccola luce rossa sul pulsante, per farlo vedere attraverso il vetro.
 - Il vetro delle lampade (`*_vetro`) e i tubi dei neon hanno un materiale emissivo: per lo sfarfallio basta cambiare `emission_energy` insieme alla luce.
 
@@ -85,7 +85,7 @@ Nei file ci sono le **luci rosse d'emergenza** come `OmniLight3D` (`luce_emergen
 | `marker_polaroid_P2` | (3,25; 1,60; -7,90) | sul ripiano di un armadietto aperto |
 | `marker_polaroid_P3` | (12,65; 1,30; -6,24) | sulla bacheca dello stanzino |
 | `marker_armadietto_sbatte` | (10,75; 1,00; -5,10) | trigger dell'armadietto che sbatte |
-| `marker_zaino_pompa` | (14,94; 1,25; -8,43) | lo zaino-pompa |
+| `marker_zaino_pompa` | (14,50; 1,25; -8,43) | lo zaino-pompa |
 | `marker_uscita_sala_principale` | (9,70; 0; -20,70) | attacco con la sala principale |
 
 Checkpoint consigliati: al risveglio, all'ingresso degli spogliatoi (6,80; 0; -3,40), dopo aver preso lo zaino, davanti al tornello (9,70; 0; -15,50).

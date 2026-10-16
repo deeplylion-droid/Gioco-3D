@@ -110,7 +110,7 @@ def materiale(nome, asset, seed, tint=None, tint_f=0.0, scur=1.0, sp=0.5, wet=No
         col, rgh = bagnato(col, rgh, seed + 3, *wet)
     salva(nome, col, nrm, rgh, met * met_mul)
 
-if __name__ == '__main__':
+if __name__ == '__main__' and '--godot' not in sys.argv:
     # pareti: lamiera verniciata crema scrostata sopra, verde petrolio scuro sotto (come S01)
     materiale('lamiera_crema', 'PaintedMetal013', 11, tint=(0.78, 0.74, 0.62), tint_f=0.35, scur=0.8, sp=0.55)
     materiale('lamiera_petrolio', 'PaintedMetal006', 12, tint=(0.25, 0.38, 0.36), tint_f=0.55, scur=0.6, sp=0.6)
@@ -145,5 +145,91 @@ def salvagente():
     nrm = np.zeros((h, w, 3)) + np.array([0.5, 0.5, 1.0])
     salva('salvagente', col.astype(np.float32), nrm.astype(np.float32), rgh.astype(np.float32))
 
-if __name__ == '__main__':
+if __name__ == '__main__' and '--godot' not in sys.argv:
     salvagente()
+
+
+# ------------------------------------------------------------------ texture per gli shader di Godot
+GODOT_TEX = os.path.join(ROOT, 'godot/assets/ambienti_interni/shader_tex')
+
+
+def _scarica_mappa(asset, mappa):
+    """Scarica (se manca) una sola mappa di un materiale ambientCG 2K."""
+    d = os.path.join(SRC, asset)
+    os.makedirs(d, exist_ok=True)
+    if any(f.endswith(f'_{mappa}.jpg') for f in os.listdir(d)):
+        return [os.path.join(d, f) for f in os.listdir(d) if f.endswith(f'_{mappa}.jpg')][0]
+    url = f'https://ambientcg.com/get?file={asset}_2K-JPG.zip'
+    req = urllib.request.Request(url, headers={'User-Agent': 'curl/8.5.0'})
+    for k in range(5):
+        try:
+            z = zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(req, timeout=300).read()))
+            break
+        except Exception as e:
+            print('riprovo', asset, e); import time; time.sleep(3 + 5 * k)
+    for n in z.namelist():
+        if n.endswith(f'_{mappa}.jpg') or n.endswith('_Color.jpg') or n.endswith('_NormalGL.jpg'):
+            z.extract(n, d)
+    return [os.path.join(d, f) for f in os.listdir(d) if f.endswith(f'_{mappa}.jpg')][0]
+
+
+def texture_godot():
+    os.makedirs(GODOT_TEX, exist_ok=True)
+    def salva_png(a, nome, mode='L'):
+        Image.fromarray(np.clip(a * 255, 0, 255).astype(np.uint8), mode).save(os.path.join(GODOT_TEX, nome))
+    # rumore periodico a più ottave (per le variazioni in spazio mondo)
+    global N
+    vecchio = N; N = 1024
+    r = rumore(101, 4, 6)
+    salva_png(r, 'rumore.png')
+    N = vecchio
+    # normale della lamiera verniciata intera (Metal032) e colature (Leaking003)
+    Image.open(_scarica_mappa('Metal032', 'NormalGL')).convert('RGB').resize((1024, 1024), Image.LANCZOS).save(os.path.join(GODOT_TEX, 'lamiera_nrm.jpg'), quality=92)
+    c = np.asarray(Image.open(_scarica_mappa('Leaking003', 'Color')).convert('L').resize((1024, 1024), Image.LANCZOS), np.float32) / 255
+    c = np.clip((c - c.min()) / (c.max() - c.min() + 1e-6), 0, 1)
+    salva_png(1 - c, 'colature.png')
+    # altezze delle piastrelle (fughe in rilievo)
+    for asset, nome in (('Tiles040', 'piastrelle_pavimento'), ('Tiles036', 'piastrelle_doccia'), ('Tiles032', 'piastrelle_verdi')):
+        h = Image.open(_scarica_mappa(asset, 'Displacement')).convert('L').resize((1024, 1024), Image.LANCZOS)
+        h.save(os.path.join(GODOT_TEX, f'{nome}_alt.png'))
+    # decal (PNG con alfa): macchia d'acqua, colatura di ruggine, crepa
+    rng = np.random.default_rng(7)
+    S = 512
+    yy, xx = np.mgrid[0:S, 0:S] / S
+    def blob(seed, k):
+        g = np.random.default_rng(seed).random((k, k)).astype(np.float32)
+        return np.asarray(Image.fromarray((g * 255).astype(np.uint8)).resize((S, S), Image.BICUBIC), np.float32) / 255
+    # macchia d'acqua: anello scuro con alone
+    d = np.hypot(xx - 0.5, yy - 0.5) * 2 + (blob(1, 6) - 0.5) * 0.35
+    anello = np.exp(-((d - 0.8) ** 2) / 0.004) * 0.8 + np.clip(1 - d, 0, 1) * 0.35
+    a = np.clip(anello * (d < 1.0), 0, 1) * (0.7 + 0.3 * blob(2, 24))
+    img = np.dstack([np.full_like(a, 0.18), np.full_like(a, 0.15), np.full_like(a, 0.1), a])
+    Image.fromarray((img * 255).astype(np.uint8), 'RGBA').save(os.path.join(GODOT_TEX, 'decal_macchia.png'))
+    # colatura di ruggine: strisce verticali che sfumano verso il basso
+    x = np.linspace(0, 1, S)
+    strisce = np.clip(np.sin(x * 40 + blob(3, 8)[0] * 9) * 0.5 + 0.5, 0, 1) ** 3
+    a = (strisce[None, :] * (1 - yy) ** 1.5) * np.exp(-((xx - 0.5) ** 2) / 0.05) * (0.6 + 0.4 * blob(4, 32))
+    a = np.clip(a * 1.6, 0, 1)
+    img = np.dstack([np.full_like(a, 0.36), np.full_like(a, 0.16), np.full_like(a, 0.06), a])
+    Image.fromarray((img * 255).astype(np.uint8), 'RGBA').save(os.path.join(GODOT_TEX, 'decal_ruggine.png'))
+    # crepa: spezzata ramificata
+    from PIL import ImageDraw, ImageFilter
+    im = Image.new('L', (S, S), 0); dr = ImageDraw.Draw(im)
+    def ramo(x, y, ang, lun, w, liv):
+        for _ in range(int(lun)):
+            ang += rng.normal(0, 0.35)
+            x2, y2 = x + np.cos(ang) * 8, y + np.sin(ang) * 8
+            dr.line([(x, y), (x2, y2)], fill=255, width=max(1, int(w)))
+            x, y = x2, y2
+            w *= 0.97
+            if liv < 3 and rng.random() < 0.08:
+                ramo(x, y, ang + rng.choice([-1, 1]) * 0.8, lun * 0.5, w * 0.8, liv + 1)
+    ramo(40, 256, 0.0, 55, 4, 0)
+    a = np.asarray(im.filter(ImageFilter.GaussianBlur(0.8)), np.float32) / 255
+    img = np.dstack([np.full_like(a, 0.05), np.full_like(a, 0.045), np.full_like(a, 0.04), a])
+    Image.fromarray((img * 255).astype(np.uint8), 'RGBA').save(os.path.join(GODOT_TEX, 'decal_crepa.png'))
+    print('texture per Godot in', GODOT_TEX)
+
+
+if __name__ == '__main__' and '--godot' in sys.argv:
+    texture_godot()

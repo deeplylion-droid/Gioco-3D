@@ -12,6 +12,8 @@ La statua e' alta 4,5 m e si vede da vicino: la riduzione e' leggera (viso intat
 sono a 4K. Scrive build/medusa_base_4k.png, build/medusa_normal_4k.png (intermedie: le texture finali, con
 usura, ciocche e giunture, le fa il passo 8) e build/medusa_02b_ridotta.blend.
 Uso: nice -n 10 /home/user/tools/blender-venv/bin/python tools/blender/medusa_02b_riduci.py
+     con --solo-normal rifa' solo build/medusa_normal_4k.png sulla mesh ridotta gia' salvata (stesse UV dei passi
+     successivi), senza toccare i .blend.
 """
 import os
 import sys
@@ -83,7 +85,19 @@ def uv_nuove(ob):
     bpy.ops.object.mode_set(mode='OBJECT')
 
 
-def cuoci(alto, basso):
+def ripulisci_normal(path, nz_min=0.35):
+    """Le isole piccolissime a volte mancano la mesh alta e prendono normali assurde (quasi di taglio o
+    rovesciate): quei pixel tornano piatti, cosi' sulla statua non si vedono puntini che brillano."""
+    from PIL import Image
+    a = np.asarray(Image.open(path).convert('RGB')).astype(np.float32) / 255.0
+    nz = a[:, :, 2] * 2.0 - 1.0
+    male = nz < nz_min
+    a[male] = (0.5, 0.5, 1.0)
+    Image.fromarray(np.clip(a * 255.0 + 0.5, 0, 255).astype(np.uint8)).save(path)
+    log(f'normal map: {int(male.sum())} pixel sbagliati rimessi piatti')
+
+
+def cuoci(alto, basso, solo_normal=False):
     """Bake (selected to active) di colore e normal map dalla mesh alta alla ridotta."""
     sc = bpy.context.scene
     sc.render.engine = 'CYCLES'
@@ -119,16 +133,18 @@ def cuoci(alto, basso):
     basso.select_set(True)
     bpy.context.view_layer.objects.active = basso
     t = time.time()
-    bersaglio(img_b)
-    bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True,
-                        cage_extrusion=0.015, max_ray_distance=0.05, margin=16, target='IMAGE_TEXTURES')
-    img_b.filepath_raw = BASE_2K; img_b.file_format = 'PNG'; img_b.save()
-    log(f'bake colore in {time.time() - t:.0f} s')
+    if not solo_normal:
+        bersaglio(img_b)
+        bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, use_selected_to_active=True,
+                            cage_extrusion=0.015, max_ray_distance=0.05, margin=16, target='IMAGE_TEXTURES')
+        img_b.filepath_raw = BASE_2K; img_b.file_format = 'PNG'; img_b.save()
+        log(f'bake colore in {time.time() - t:.0f} s')
     t = time.time()
     bersaglio(img_n)
     bpy.ops.object.bake(type='NORMAL', normal_space='TANGENT', use_selected_to_active=True,
                         cage_extrusion=0.015, max_ray_distance=0.05, margin=16, target='IMAGE_TEXTURES')
     img_n.filepath_raw = NORMAL_2K; img_n.file_format = 'PNG'; img_n.save()
+    ripulisci_normal(NORMAL_2K)
     log(f'bake normal map in {time.time() - t:.0f} s')
     return nuovi
 
@@ -181,5 +197,23 @@ def main():
     log(f'fatto in {time.time() - t0:.0f} s')
 
 
+def rifai_normal():
+    """Solo la normal map intermedia, sulla mesh ridotta di build/medusa_02b_ridotta.blend: le UV sono quelle
+    usate da tutti i passi successivi, quindi il resto della catena non cambia."""
+    t0 = time.time()
+    apri(os.path.join(BUILD, 'medusa_02_texture.blend'))
+    alto = bpy.data.objects['Medusa']
+    with bpy.data.libraries.load(os.path.join(BUILD, 'medusa_02b_ridotta.blend'), link=False) as (_, dst):
+        dst.objects = ['Medusa']
+    basso = dst.objects[0]
+    basso.name = 'Medusa_ridotta'
+    collega(basso)
+    cuoci(alto, basso, solo_normal=True)
+    log(f'normal map intermedia rifatta: {os.path.relpath(NORMAL_2K, REPO)} ({time.time() - t0:.0f} s)')
+
+
 if __name__ == '__main__':
-    main()
+    if '--solo-normal' in sys.argv:
+        rifai_normal()
+    else:
+        main()

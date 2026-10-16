@@ -10,11 +10,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy
 from mathutils import Vector, Matrix, Euler
 import ambienti1_lib as L
+import ambienti1_hq as HQ
 
 AI = L.AI
 MESHY = os.path.join(AI, 'meshy')
 POSTER = os.path.join(AI, 'poster')
 R = math.radians
+# turbina della saracinesca rifatta con Meshy (TURBINA_CANCELLO=vecchia per la vecchia, solo per i confronti)
+TURBINA_NUOVA = os.environ.get('TURBINA_CANCELLO', 'nuova') == 'nuova'   # approvata il 16 ottobre
+# finestra del gabbiotto nella parete est del corridoio lava-piedi (y0, y1, z0, z1)
+FINESTRA = (15.45, 16.55, 0.85, 2.25)
 
 
 def materiali():
@@ -28,6 +33,8 @@ def materiali():
     M['pulsante_verde'] = L.mat_colore('pulsante_verde', (0.05, 0.5, 0.1), rough=0.35, emiss=(0.1, 1, 0.2), forza=8.0)
     M['impronte'] = L.mat_colore('impronte_bagnate', (0.02, 0.02, 0.02), rough=0.05)
     M['polaroid'] = L.mat_colore('polaroid_retro', (0.82, 0.8, 0.74), rough=0.6)
+    M['battiscopa'] = L.mat_colore('battiscopa', (0.06, 0.07, 0.07), rough=0.45, metal=0.3)
+    M['battiscopa_piastrelle'] = L.mat_colore('battiscopa_piastrelle', (0.08, 0.2, 0.15), rough=0.25)
     return M
 
 
@@ -76,10 +83,105 @@ def cornice_porta(nome, lato, a, b, za, piano_muro, M, mat=None, s=0.08, sporge=
         pezzi = [((a - s, za), (a, 0)), ((b, za), (b + s, 0)), ((a - s, za + s), (b + s, za))]
         for (u0, z1), (u1, z0) in pezzi:
             if lato in ('N', 'S'):
-                parti.append(L.scatola(nome, (u0, p0, z0), (u1, p1, z1), mat))
+                parti.append(L.scatola(nome, (u0, p0, z0), (u1, p1, z1), mat, smussa=0.012))
             else:
-                parti.append(L.scatola(nome, (p0, u0, z0), (p1, u1, z1), mat))
+                parti.append(L.scatola(nome, (p0, u0, z0), (p1, u1, z1), mat, smussa=0.012))
     return L.unisci(nome, parti)
+
+
+def porta_hq(vecchia, file, cerniera, w, h, rot_z, lato):
+    """Sostituisce la porta procedurale con il modello Meshy: stesso nome, origine sul cardine.
+    lato: -1 = cardine sul bordo sinistro del modello (visto dal fronte), +1 = destro."""
+    if not HQ.disponibile(file):
+        return vecchia
+    nome = vecchia.name
+    for c in list(vecchia.children):
+        bpy.data.objects.remove(c)
+    bpy.data.objects.remove(vecchia)
+    return HQ.metti(nome, file, cerniera, (w, None, h), rot_z=rot_z, perno=(lato * w / 2, 0, 0))
+
+
+def soffitto_nave(nome, x0, x1, y0, y1, h, M, lungo='x', passo=1.25, mancanti=(), pende=None, travi=True, seme=0):
+    """Soffitto da nave: pannelli di lamiera smussati tra le ordinate, con i giunti aperti di 1 cm.
+    lungo = asse lungo cui si susseguono i pannelli. mancanti = indici dei pannelli tolti (si vede il buio
+    sopra); pende = indice del pannello staccato da un lato. travi = ordinate tra i pannelli."""
+    parti = []
+    a0, a1 = (x0, x1) if lungo == 'x' else (y0, y1)
+    b0, b1 = (y0, y1) if lungo == 'x' else (x0, x1)
+    n = max(1, round((a1 - a0) / passo)); pa = (a1 - a0) / n
+    rnd = random.Random(seme)
+    for i in range(n):
+        u0, u1 = a0 + i * pa + 0.006, a0 + (i + 1) * pa - 0.006
+        z0 = h - 0.07 + rnd.uniform(-0.004, 0.004)
+        lo, hi = ((u0, b0 + 0.01, z0), (u1, b1 - 0.01, z0 + 0.02)) if lungo == 'x' else ((b0 + 0.01, u0, z0), (b1 - 0.01, u1, z0 + 0.02))
+        if i in mancanti:
+            continue
+        p = L.scatola(f'{nome}_pannello', lo, hi, M['soffitto_lamiera'], smussa=0.008)
+        if pende is not None and i == pende:
+            # staccato dal lato u0: ruota attorno al bordo opposto
+            perno = Vector((u1, (b0 + b1) / 2, z0 + 0.01)) if lungo == 'x' else Vector(((b0 + b1) / 2, u1, z0 + 0.01))
+            asse = 'Y' if lungo == 'x' else 'X'
+            ang = math.radians(-24 if lungo == 'x' else 24)
+            p.data.transform(Matrix.Translation(perno) @ Matrix.Rotation(ang, 4, asse) @ Matrix.Translation(-perno))
+            L.uv_scatola(p)
+        parti.append(p)
+        if travi and i > 0:
+            c = a0 + i * pa
+            lo, hi = ((c - 0.05, b0, h - 0.16), (c + 0.05, b1, h)) if lungo == 'x' else ((b0, c - 0.05, h - 0.16), (b1, c + 0.05, h))
+            parti.append(L.scatola(f'{nome}_trave', lo, hi, M['soffitto_lamiera'], smussa=0.015))
+    return L.unisci(nome, parti)
+
+
+def condotto_aria(nome, p0, p1, w, hh, M, passo=1.5):
+    """Condotto rettangolare smussato lungo x (da p0 a p1, centro della sezione) con flange e bocchette."""
+    x0, y, z = p0; x1 = p1[0]
+    parti = [L.scatola(nome, (x0, y - w / 2, z - hh / 2), (x1, y + w / 2, z + hh / 2), M['metallo_grezzo'], smussa=0.02)]
+    x = x0 + passo
+    k = 0
+    while x < x1 - 0.2:
+        parti.append(L.scatola(nome + '_flangia', (x - 0.025, y - w / 2 - 0.015, z - hh / 2 - 0.015), (x + 0.025, y + w / 2 + 0.015, z + hh / 2 + 0.015), M['metallo_grezzo'], smussa=0.008))
+        if k % 2 == 0:
+            for j in range(5):
+                xx = x + 0.25 + j * 0.06
+                parti.append(L.scatola(nome + '_bocchetta', (xx, y - w / 2 + 0.05, z - hh / 2 - 0.004), (xx + 0.03, y + w / 2 - 0.05, z - hh / 2 + 0.002), M['nero'], uv=False))
+        x += passo; k += 1
+    return L.unisci(nome, parti)
+
+
+def canalina_cavi(nome, x0, x1, y, z, M):
+    parti = [L.scatola(nome, (x0, y - 0.11, z - 0.01), (x1, y + 0.11, z), M['lamiera_grata'], smussa=0.004),
+             L.scatola(nome, (x0, y - 0.115, z - 0.01), (x1, y - 0.105, z + 0.05), M['metallo_grezzo']),
+             L.scatola(nome, (x0, y + 0.105, z - 0.01), (x1, y + 0.115, z + 0.05), M['metallo_grezzo'])]
+    rnd = random.Random(int(x0 * 10 + y * 100))
+    for k, (dy, r, mat) in enumerate([(-0.06, 0.016, 'gomma'), (-0.02, 0.012, 'gomma'), (0.02, 0.018, 'gomma'), (0.065, 0.01, 'vernice_rossa')]):
+        pts = [(x0, y + dy, z + r)]
+        x = x0
+        while x < x1:
+            x = min(x1, x + rnd.uniform(1.5, 3.0))
+            pts.append((x, y + dy + rnd.uniform(-0.01, 0.01), z + r + rnd.uniform(0, 0.01)))
+        parti.append(L.tubo_percorso(nome + '_cavo', pts, r, M[mat], flange=False))
+    # un cavo che pende fuori dalla canalina
+    xm = (x0 + x1) / 2 + rnd.uniform(-2, 2)
+    parti.append(L.tubo_percorso(nome + '_cavo_pende', [(xm - 0.6, y + 0.1, z + 0.02), (xm - 0.2, y + 0.18, z - 0.35), (xm + 0.3, y + 0.15, z - 0.42), (xm + 0.7, y + 0.1, z + 0.02)], 0.011, M['gomma'], flange=False))
+    return L.unisci(nome, parti)
+
+
+def sprinkler(nome, x, y, z_tubo, z_testa, M):
+    """Stacco verticale dal tubo antincendio e testina Meshy (o una testina semplice)."""
+    parti = [L.cilindro(nome + '_stacco', (x, y, z_tubo), (x, y, z_testa + 0.04), 0.012, M['vernice_rossa'], seg=16)]
+    if HQ.disponibile('sprinkler'):
+        HQ.metti(nome, 'sprinkler', (x, y, z_testa - 0.06), (None, None, 0.1))
+    else:
+        parti.append(L.cilindro(nome, (x, y, z_testa + 0.04), (x, y, z_testa), 0.015, M['cromo'], seg=16))
+    return L.unisci(nome + '_stacco', parti)
+
+
+def pannello_ammaccato(nome, lo, hi, M, seme, mat='lamiera_crema'):
+    """Lamiera ammaccata riportata sulla parete (sporge 1 cm), dello stesso colore della fascia su cui sta."""
+    p = L.scatola(nome, lo, hi, M[mat], smussa=0.006)
+    L.ammacca(p, 0.02, 2.2, seme, 10)
+    L.uv_scatola(p)
+    return p
 
 
 def costole(nome, x0, x1, y0, y1, h, passo, M, salta_s=(), salta_n=()):
@@ -91,10 +193,10 @@ def costole(nome, x0, x1, y0, y1, h, passo, M, salta_s=(), salta_n=()):
         x = x0 + passo
         while x < x1 - 0.3:
             if libero(x, salta_s):
-                parti.append(L.scatola(nome, (x - 0.06, y0, 0), (x + 0.06, y0 + 0.07, h), M['lamiera_crema']))
+                parti.append(L.scatola(nome, (x - 0.06, y0 - 0.02, 0), (x + 0.06, y0 + 0.07, h), M['lamiera_crema'], smussa=0.018))
             if libero(x, salta_n):
-                parti.append(L.scatola(nome, (x - 0.06, y1 - 0.07, 0), (x + 0.06, y1, h), M['lamiera_crema']))
-            parti.append(L.scatola(nome, (x - 0.06, y0, h - 0.16), (x + 0.06, y1, h), M['lamiera_crema']))
+                parti.append(L.scatola(nome, (x - 0.06, y1 - 0.07, 0), (x + 0.06, y1 + 0.02, h), M['lamiera_crema'], smussa=0.018))
+            parti.append(L.scatola(nome, (x - 0.07, y0, h - 0.17), (x + 0.07, y1, h + 0.02), M['soffitto_lamiera'], smussa=0.02))
             x += passo
     return L.unisci(nome, parti)
 
@@ -120,7 +222,7 @@ def grata_parete(nome, centro, w, h, normale, M):
 def corridoio(M):
     L.usa_collezione('corridoio')
     X0, X1, Y0, Y1, H = 0.0, 22.0, 0.0, 2.6, 2.7
-    mats = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'])
+    mats = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'], battiscopa=M['battiscopa'])
     ap = {
         'E': [(0.7, 1.9, 0, 2.1)],          # porta tagliafuoco (alle spalle del giocatore)
         'S': [(17.0, 18.0, 0, 2.05)],       # porta della sala pompe
@@ -167,6 +269,7 @@ def corridoio(M):
     L.origine(porta_tf, (21.965, 0.72, 0))
     vtf = L.scatola('porta_tagliafuoco_vetro', (21.915, 1.17, 1.37), (21.925, 1.43, 1.73), M['vetro_sporco'], uv=False)
     L.figlio(vtf, porta_tf)
+    porta_tf = porta_hq(porta_tf, 'porta_tagliafuoco', (21.965, 0.72, 0.01), 1.16, 2.07, R(-90), +1)
     # oltre la porta: un tratto di corridoio buio da cui si e' arrivati
     statico += L.stanza('corridoio_oltre', 22.2, 0.4, 25.0, 2.2, 2.4, mats, {'W': [(0.4, 2.2, 0, 2.4)]})
 
@@ -182,14 +285,22 @@ def corridoio(M):
     L.origine(porta_pp, (17.02, -0.1, 0))
     vpp = L.scatola('porta_sala_pompe_vetro', (17.33, -0.075, 1.38), (17.67, -0.065, 1.77), M['vetro_sporco'], uv=False)
     L.figlio(vpp, porta_pp)
+    porta_pp = porta_hq(porta_pp, 'porta_servizio', (17.02, -0.1, 0.01), 0.96, 2.02, R(180), +1)
+    if HQ.disponibile('porta_servizio'):
+        # maniglione antipanico sul lato della sala pompe
+        mb = [L.cilindro('maniglione', (17.15, -0.25, 1.0), (17.85, -0.25, 1.0), 0.022, M['vernice_rossa'], seg=24)]
+        for x in (17.15, 17.85):
+            mb.append(L.cilindro('maniglione', (x, -0.25, 1.0), (x, -0.16, 1.0), 0.018, M['cromo'], seg=16))
+        L.figlio(L.unisci('maniglione_antipanico', mb), porta_pp)
     # pianerottolo e scala che scende verso la sala pompe (si collega al piano sotto)
-    pian = L.stanza('scala_pompe', 16.2, -3.9, 18.8, -0.2, 2.7, dict(pav=M['cemento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio']),
-                    {'N': [(17.0, 18.0, 0, 2.05)]}, pavimento=False)
+    pian = L.stanza('scala_pompe', 16.2, -3.9, 18.8, -0.2, 2.7, dict(pav=M['cemento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'], battiscopa=M['battiscopa']),
+                    {'N': [(17.0, 18.0, 0, 2.05)], 'S': [(16.4, 18.6, 0, 0.5)]}, pavimento=False)
     L.raccogli(True)
     pian.append(L.scatola('scala_pompe_pian', (16.0, -1.4, -0.2), (19.0, 0.0, 0), M['cemento']))
     L.raccogli(False)
-    # collisione della scala: una rampa (36 gradi) invece dei gradini
-    rampa = L.scatola('scala_pompe_rampa-colonly', (16.4, -1.25, -0.1), (18.6, 1.25, 0.0), None, uv=False)
+    # collisione della scala: una rampa (36 gradi) invece dei gradini, sulla retta dei nasi: dal bordo del
+    # pianerottolo (y -1,4, z 0) al piano di sotto (y -3,9, z -1,8), lunga 3,08 m
+    rampa = L.scatola('scala_pompe_rampa-colonly', (16.4, -1.54, -0.1), (18.6, 1.54, 0.0), None, uv=False)
     rampa.data.transform(Matrix.Rotation(math.atan2(1.8, 2.5), 4, 'X'))
     rampa.location = (0, -2.65, -0.9); rampa.hide_render = True; rampa.display_type = 'WIRE'
     for i in range(10):
@@ -202,8 +313,10 @@ def corridoio(M):
     ps.append(L.scatola('ps_oblo', (0.06, 1.1, 1.35), (0.075, 1.5, 1.8), M['metallo_grezzo']))
     ps.append(L.cilindro('ps_maniglia', (0.06, 1.65, 1.0), (0.13, 1.65, 1.0), 0.02, M['cromo']))
     porta_s = L.unisci('porta_servizio', ps); L.ammacca(porta_s, 0.005, 2.0, 9.0, 3)
+    porta_s = porta_hq(porta_s, 'porta_servizio', (0.04, 0.82, 0.01), 0.96, 2.02, R(90), -1)
     L.col_scatola((0.0, 0.8, 0.0), (0.08, 1.8, 2.05))
-    statico.append(L.scatola('porta_servizio_vetro', (0.074, 1.13, 1.38), (0.078, 1.47, 1.77), M['vetro_sporco'], uv=False))
+    if not HQ.disponibile('porta_servizio'):
+        statico.append(L.scatola('porta_servizio_vetro', (0.074, 1.13, 1.38), (0.078, 1.47, 1.77), M['vetro_sporco'], uv=False))
 
     # ---- cartellone della mascotte (accanto alla porta della sala pompe, lato sud)
     cx, cz, cw, ch = 14.6, 1.3, 1.5, 2.0
@@ -222,7 +335,7 @@ def corridoio(M):
                                 ((7.5, 0.02, 2.2), (0, 1, 0)), ((17.5, 2.58, 2.25), (0, -1, 0))]):
         c, v, l = L.lampada_emergenza(f'luce_emergenza_{i + 1:02d}', p, n, M, watt=32 if i != 4 else 22)
         luci += [c, v]
-    for i, (x, stato, app) in enumerate([(4.5, 'spento', 0), (10.0, 'sfarfalla', 0), (15.5, 'spento', 0.35), (20.0, 'spento', 0)]):
+    for i, (x, stato, app) in enumerate([(4.2, 'spento', 0), (10.0, 'sfarfalla', 0), (15.5, 'spento', 0.35), (20.0, 'spento', 0)]):
         c, t, l = L.neon_soffitto(f'neon_corridoio_{i + 1}', (x, 1.3, 0), 1.2, M, H, stato, watt=90, appeso=app, rot_z=0)
         luci += [c, t]
 
@@ -235,16 +348,57 @@ def corridoio(M):
     L.vuoto('emit_goccia_corridoio_2', (19.4, 2.32, 2.29))
 
     # ---- oggetti
-    prop('estintore', 'estintore', (9.6, 0.12, 0.9), 0, 0.55, 'z')
+    # estintore appeso con la staffa (16 ottobre): il modello di prima aveva una tavola di legno dietro, che nel
+    # gioco stava davanti. Questo non ha tavole: la staffa (lato +x del modello) va contro il muro, il tubo di lato.
+    HQ.metti('estintore', 'estintore_staffa', (9.6, 0.21, 0.84), (None, None, 0.62), rot_z=R(-90))
     prop('cestino', 'cestino', (5.3, 2.3, 0), 30, 0.55, 'z')
     prop('paperella', 'paperella', (13.9, 1.2, 0.0), 140, 0.09)
     prop('pallone', 'pallone', (2.2, 0.6, 0), 0, 0.42)
+    if HQ.disponibile('valvola_volantino'):
+        # valvola in linea su un bypass del tubo grande: scende, passa dalle flange della valvola e risale
+        # (prima pendeva da un tubicino con le flange libere: "valvole appese al nulla")
+        for k, x in enumerate((4.9, 15.9)):   # la prima non più sopra il passaggio degli spogliatoi (x 6..7,6)
+            v = HQ.metti(f'valvola_corridoio_{k + 1}', 'valvola_volantino', (x, 2.32, 1.58), (None, None, 0.42), rot_z=R(180))
+            bpy.context.view_layer.update()
+            ws = [v.matrix_world @ p.co for p in v.data.vertices]
+            x0, x1 = min(p.x for p in ws), max(p.x for p in ws)
+            # misure prese solo sulla faccia della flangia (prima contavano anche il volantino: tubo storto e sottile)
+            faccia = [p for p in ws if p.x > x1 - 0.004]
+            zf = (min(p.z for p in faccia) + max(p.z for p in faccia)) / 2
+            yf = (min(p.y for p in faccia) + max(p.y for p in faccia)) / 2
+            r_tubo = (max(p.y for p in faccia) - min(p.y for p in faccia)) / 2          # foro della valvola
+            corona = [p for p in ws if p.x > x1 - 0.012]
+            r_fl = (max(p.y for p in corona) - min(p.y for p in corona)) / 2           # flangia della valvola
+            for lato, xa in ((-1, x0), (1, x1)):
+                xb = x + lato * 0.5
+                statico.append(L.tubo_percorso(f'bypass_valvola_{k + 1}_{lato + 1}', [(xa, yf, zf), (xb, yf, zf), (xb, yf, 2.3), (xb, 2.32, 2.36)],
+                                               r_tubo, M['ruggine'], flange=False))
+                # controflangia del tubo, appoggiata a quella della valvola, con i bulloni
+                fl = [L.cilindro('bypass_flangia', (xa, yf, zf), (xa + lato * 0.025, yf, zf), r_fl, M['metallo_grezzo'], seg=32)]
+                for j in range(8):
+                    t = 2 * math.pi * j / 8
+                    py, pz = yf + math.cos(t) * r_fl * 0.8, zf + math.sin(t) * r_fl * 0.8
+                    fl.append(L.cilindro('bypass_bullone', (xa - lato * 0.01, py, pz), (xa + lato * 0.04, py, pz), 0.008, M['ruggine'], seg=8))
+                statico.append(L.unisci(f'bypass_flangia_{k + 1}_{lato + 1}', fl))
+    if HQ.disponibile('cartello_pericolo'):
+        HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60))
     prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.7, 0), 75, 0.8)
 
     # ---- punti per il gioco
     L.vuoto('marker_risveglio', (20.4, 1.25, 0.0), (0, 0, R(90)), 'ARROWS', 0.5)    # sdraiato, guarda verso ovest (-X)
     L.vuoto('marker_polaroid_P1', (20.9, 0.55, 0.005), (0, 0, R(20)), 'CUBE', 0.05)
     L.vuoto('marker_porta_tagliafuoco_cardine', (21.965, 0.72, 0), dim=0.3)
+    # soffitto da nave: pannelli tra le ordinate (uno manca, uno pende), condotto dell'aria,
+    # canalina con i cavi, sprinkler sul tubo rosso
+    statico.append(soffitto_nave('soffitto_pannelli', X0, X1, Y0, Y1, H, M, 'x', 1.25, mancanti=(5, 13), pende=10, travi=False, seme=3))
+    statico.append(condotto_aria('condotto_aria', (0.0, 0.62, 2.5), (X1, 0.62, 2.5), 0.38, 0.2, M))
+    statico.append(canalina_cavi('canalina_soffitto', 0.0, X1, 1.86, 2.56, M))
+    for k, x in enumerate([1.8, 5.2, 8.6, 12.1, 15.6, 19.0]):
+        statico.append(sprinkler(f'sprinkler_corridoio_{k + 1}', x, 2.12, 2.43, 2.3, M))
+    # due lamiere ammaccate (lontano dal cartellone, che sta tra x 13,85 e 15,35 sul lato sud)
+    # sta nello zoccolo (fino a 1,1 m): color petrolio come lui. Crema sembrava una tavola di legno
+    statico.append(pannello_ammaccato('lamiera_ammaccata_1', (1.1, 2.58, 0.25), (2.1, 2.6, 1.05), M, 21.0, 'lamiera_petrolio'))   # su muro libero
+    # (la seconda lamiera ammaccata stava vicino all'estintore: tolta del tutto, questionario del 16 ottobre)
     L.unisci('corridoio_statico', statico)
     L.crea_collisione('corridoio', 'corridoio')
 
@@ -291,6 +445,8 @@ def armadietto(nome, x, y, faccia, M, stato='chiuso', ang=0, mat_anta=None, seme
 
 
 def fila_armadietti(prefisso, x, y0, n, faccia, M, stati, seme=0):
+    if HQ.disponibile('armadietto_anta') and HQ.disponibile('armadietto_corpo'):
+        return fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme)
     corpi, ante, speciali = [], [], {}
     colori = {3: M['vernice_gialla'], 9: M['vernice_rossa'], 14: M['vernice_gialla']}
     for i in range(n):
@@ -305,7 +461,42 @@ def fila_armadietti(prefisso, x, y0, n, faccia, M, stati, seme=0):
     return L.unisci(prefisso + '_corpi', corpi), (L.unisci(prefisso + '_ante', ante) if ante else None), speciali
 
 
+def fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme=0):
+    """Armadietti Meshy: quelli chiusi sono il modello intero, quelli aperti sono il corpo vuoto
+    più l'anta (ricavata dal modello chiuso) con l'origine sul cardine. Alcune ante sono colorate
+    (suffisso _giallo / _rosso: la tinta la dà Godot)."""
+    HQ.sportello_da_chiuso('armadietto_anta', 'armadietto_sportello')
+    colori = {3: '_giallo', 9: '_rosso', 14: '_giallo'}
+    rz = R(90) if faccia > 0 else R(-90)
+    speciali = {}
+    for i in range(n):
+        st, ang = stati.get(i, ('chiuso', 0.0))
+        yy = y0 + i * 0.4
+        c = (x + 0.25 * faccia, yy + 0.2, 0)
+        nome = f'{prefisso}_{i:02d}' + colori.get((i + seme) % 17, '')
+        if st == 'chiuso':
+            HQ.metti(nome, 'armadietto_anta', c, (0.4, 0.5, 1.92), rot_z=rz + R(random.uniform(-0.6, 0.6)))
+            continue
+        HQ.metti(nome + '_corpo', 'armadietto_corpo', c, (0.4, 0.5, 1.92), rot_z=rz)
+        if st == 'mancante':
+            continue
+        cern = (x + 0.5, yy, 0) if faccia > 0 else (x - 0.5, yy + 0.4, 0)
+        anta = HQ.metti(nome + '_anta', 'armadietto_anta', cern, (0.4, 0.5, 1.92), rot_z=rz - R(ang),
+                        perno=(-0.2, -0.25, 0), parte='armadietto_sportello')
+        if st == 'speciale':
+            speciali[i] = anta
+    return None, None, speciali
+
+
 def panca(nome, x0, y0, x1, y1, M, rotta=False):
+    if HQ.disponibile('panca'):
+        # panche Meshy da circa 1,9 m in fila lungo y
+        lung = y1 - y0
+        k = max(1, round(lung / 1.9))
+        l = lung / k
+        for j in range(k):
+            HQ.metti(f'{nome}_{j + 1}', 'panca', ((x0 + x1) / 2, y0 + l * (j + 0.5), 0), (l - 0.05, x1 - x0 + 0.02, 0.46), rot_z=R(90))
+        return None
     """Panca di legno a tre doghe su gambe di metallo, lungo l'asse y."""
     parti = []; cx = (x0 + x1) / 2
     for k in range(3):
@@ -344,7 +535,7 @@ def doccia(i, x, yparete, M):
 def spogliatoi(M):
     L.usa_collezione('spogliatoi')
     X0, X1, Y0, Y1, H = 3.0, 11.0, 3.0, 11.0, 2.9
-    mats = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'])
+    mats = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'], battiscopa=M['battiscopa'])
     statico = L.stanza('spogliatoi', X0, Y0, X1, Y1, H, mats, {
         'S': [(6.0, 7.6, 0, 2.2)],
         'N': [(3.6, 7.8, 0, 2.4), (8.6, 10.8, 0, 2.4)],
@@ -360,16 +551,18 @@ def spogliatoi(M):
     ce, ae, se = fila_armadietti('armadietti_est', X1, 3.3, 11, -1, M,
                                  {1: ('aperto', 70), 4: ('speciale', 4), 7: ('aperto', 30), 9: ('aperto', 100)}, seme=5)
     ce2, ae2, _ = fila_armadietti('armadietti_est2', X1, 9.3, 4, -1, M, {2: ('aperto', 45)}, seme=21)
-    L.col_scatola((X0, 3.3, 0), (X0 + 0.52, 3.3 + 18 * 0.4, 1.94))
-    L.col_scatola((X1 - 0.52, 3.3, 0), (X1, 3.3 + 11 * 0.4, 1.94))
-    L.col_scatola((X1 - 0.52, 9.3, 0), (X1, 9.3 + 4 * 0.4, 1.94))
+    # collisione solo nella parte posteriore: gli armadietti aperti restano raggiungibili (Polaroid P2)
+    L.col_scatola((X0, 3.3, 0), (X0 + 0.3, 3.3 + 18 * 0.4, 1.94))
+    L.col_scatola((X1 - 0.3, 3.3, 0), (X1, 3.3 + 11 * 0.4, 1.94))
+    L.col_scatola((X1 - 0.3, 9.3, 0), (X1, 9.3 + 4 * 0.4, 1.94))
     # l'armadietto che sbatte (anta separata, cardine come origine; dentro un salvagente colorato)
     anta_sb = se[4]; anta_sb.name = 'armadietto_sbatte_anta'
-    anta_sb.rotation_euler = (0, 0, R(180 + 4))
+    if not HQ.disponibile('armadietto_corpo'):
+        anta_sb.rotation_euler = (0, 0, R(180 + 4))
     L.vuoto('marker_armadietto_sbatte', (X1 - 0.25, 3.3 + 4 * 0.4 + 0.2, 1.0), dim=0.2)
     sg = prop('salvagente_giocattolo', 'salvagente_giocattolo', (X1 - 0.26, 3.3 + 4 * 0.4 + 0.2, 0.15), 90, 0.36)
     sg.rotation_euler = (R(75), 0, R(90))
-    L.vuoto('marker_polaroid_P2', (X0 + 0.25, 3.3 + 11 * 0.4 + 0.2, 1.6), dim=0.05)   # sul ripiano dell'armadietto aperto
+    L.vuoto('marker_polaroid_P2', (X0 + 0.38, 3.3 + 11 * 0.4 + 0.2, 1.595), dim=0.05)   # sul ripiano dell'armadietto aperto
 
     # ---- panche
     statico.append(panca('panca_ovest', 4.45, 4.0, 4.85, 9.8, M))
@@ -383,7 +576,7 @@ def spogliatoi(M):
 
     # ---- docce   x 3..8.2, y 11.2..14.6
     DX0, DX1, DY0, DY1 = 3.0, 8.2, 11.2, 14.6
-    md = dict(pav=M['piastrelle_doccia'], sof=M['soffitto_lamiera'], muro=M['piastrelle_doccia'], muro_basso=M['piastrelle_verdi'])
+    md = dict(pav=M['piastrelle_doccia'], sof=M['soffitto_lamiera'], muro=M['piastrelle_doccia'], muro_basso=M['piastrelle_verdi'], battiscopa=M['battiscopa_piastrelle'])
     statico += L.stanza('docce', DX0, DY0, DX1, DY1, H, md, {'S': [(DX0 - 0.2, DX1 + 0.2, 0, H)], 'W': [(12.0, 12.6, 0, 0.5)]}, zoccolo=1.2)
     tubi_d = []
     for i, x in enumerate([3.7, 4.65, 5.6, 6.55, 7.5]):
@@ -416,16 +609,19 @@ def spogliatoi(M):
     # ---- corridoio con la vasca lava-piedi   x 8.6..10.8, y 11.2..20.5, h 2.7
     CX0, CX1, CY0, CY1, CH = 8.6, 10.8, 11.2, 20.5, 2.7
     UX0, UX1, UH = 9.1, 10.3, 2.2    # uscita verso la sala principale: 1,2 x 2,2 m
-    mc = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['piastrelle_doccia'], muro_basso=M['piastrelle_verdi'])
+    mc = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['piastrelle_doccia'], muro_basso=M['piastrelle_verdi'], battiscopa=M['battiscopa_piastrelle'])
     statico += L.stanza('corridoio_lavapiedi', CX0, CY0, CX1, CY1, CH, mc,
-                        {'S': [(CX0 - 0.2, CX1 + 0.2, 0, CH)], 'E': [(15.2, 16.8, 0.95, 2.0)], 'N': [(UX0, UX1, 0, UH)]}, pavimento=False, zoccolo=1.2)
+                        {'S': [(CX0 - 0.2, CX1 + 0.2, 0, CH)], 'E': [(FINESTRA[0], FINESTRA[1], FINESTRA[2], FINESTRA[3])], 'N': [(UX0, UX1, 0, UH)]}, pavimento=False, zoccolo=1.2)
     VY0, VY1, VZ = 12.4, 14.4, -0.2
     L.raccogli(True)
     statico.append(L.scatola('pav_lavapiedi_a', (CX0 - 0.2, CY0, -0.2), (CX1 + 0.2, VY0, 0), M['piastrelle_pavimento']))
     statico.append(L.scatola('pav_lavapiedi_b', (CX0 - 0.2, VY1, -0.2), (CX1 + 0.2, CY1 + 0.2, 0), M['piastrelle_pavimento']))
     statico.append(L.scatola('vasca_lavapiedi_fondo', (CX0, VY0, VZ - 0.2), (CX1, VY1, VZ), M['piastrelle_verdi']))
-    statico.append(L.scatola('vasca_lavapiedi_bordo', (CX0, VY0 - 0.06, -0.03), (CX1, VY0, 0.02), M['piastrelle_doccia']))
-    statico.append(L.scatola('vasca_lavapiedi_bordo', (CX0, VY1, -0.03), (CX1, VY1 + 0.06, 0.02), M['piastrelle_doccia']))
+    # bordi della vasca a toro (piastrelle "bullnose") e cartello del pavimento bagnato
+    for yb in (VY0, VY1):
+        statico.append(L.cilindro('vasca_lavapiedi_bordo', (CX0, yb, -0.01), (CX1, yb, -0.01), 0.035, M['piastrelle_doccia'], seg=24))
+    if HQ.disponibile('cartello_pericolo'):
+        HQ.metti('cartello_bagnato', 'cartello_pericolo', (10.3, 11.75, 0), (None, None, 0.62), rot_z=R(160))
     L.raccogli(False)
     acqua_lp = L.scatola('acqua_lavapiedi', (CX0, VY0, VZ), (CX1, VY1, -0.05), M['acqua'], uv=False)
     L.uv_scatola(acqua_lp, 1.0); acqua_lp.visible_shadow = False
@@ -438,68 +634,93 @@ def spogliatoi(M):
     for xx in (CX0 + 0.06, CX1 - 0.06):
         statico.append(L.tubo_percorso('corrimano_lavapiedi', [(xx, 11.8, 0.95), (xx, 15.0, 0.95)], 0.02, M['cromo'], flange=False))
 
-    # tornello a tutta altezza (rotore separato, perno verticale) e grate fisse ai lati
-    TY = 16.4; TX = 9.5; TR = 0.6
-    rot = []
-    rot.append(L.cilindro('tornello_rotore', (TX, TY, 0.0), (TX, TY, 2.25), 0.05, M['cromo']))
-    for k in range(3):
-        a = R(120 * k + 30)
-        for z in [0.25 + 0.16 * j for j in range(12)]:
-            rot.append(L.cilindro('tornello_rotore', (TX, TY, z), (TX + TR * math.cos(a), TY + TR * math.sin(a), z), 0.018, M['cromo'], seg=8))
-    rotore = L.unisci('tornello_rotore', rot); L.origine(rotore, (TX, TY, 0))
+    # tornello a tutta altezza (Meshy): telaio fisso e rotore separato con l'origine sul perno
+    TY = 16.4; TX = 9.5
     L.col_scatola((CX0, TY - 0.05, 0), (CX0 + 0.3, TY + 0.05, 2.7)); L.col_scatola((CX1 - 0.68, TY - 0.05, 0), (CX1, TY + 0.05, 2.7))
     L.col_scatola((CX0, TY - 0.05, 2.25), (CX1, TY + 0.05, 2.7))
-    fisso = [L.scatola('tornello_fisso', (CX0, TY - 0.05, 2.25), (CX1, TY + 0.05, 2.35), M['metallo_grezzo']),
-             L.scatola('tornello_fisso', (CX0, TY - 0.05, 0.0), (CX0 + 0.3, TY + 0.05, 2.25), M['metallo_grezzo']),
-             L.scatola('tornello_fisso', (CX1 - 0.68, TY - 0.05, 0.0), (CX1, TY + 0.05, 0.08), M['metallo_grezzo'])]
-    for x in [CX1 - 0.66 + 0.12 * j for j in range(6)]:
-        fisso.append(L.cilindro('tornello_fisso', (x, TY, 0.08), (x, TY, 2.25), 0.015, M['cromo'], seg=8))
-    statico.append(L.unisci('tornello_fisso', fisso))
+    HQ.metti('tornello_telaio', 'tornello_telaio', (TX, TY, 0), (1.76, 1.3, 2.32))
+    dr = HQ.dimensioni('tornello_rotore'); kxy = 1.2 / dr.x; kz = 2.2 / dr.z
+    asse = HQ.asse_rotore('tornello_rotore')
+    HQ.metti('tornello_rotore', 'tornello_rotore', (TX, TY, 0.04), (dr.x * kxy, dr.y * kxy, 2.2), perno=(asse.x * kxy, asse.y * kxy, 0))
+    # grata fissa tra il telaio e la parete est
+    fisso = []
+    for x in [10.42 + 0.095 * j for j in range(4)]:
+        fisso.append(L.cilindro('grata_tornello', (x, TY, 0.0), (x, TY, 2.32), 0.016, M['cromo'], seg=20))
+    fisso.append(L.cilindro('grata_tornello', (10.38, TY, 2.3), (CX1, TY, 2.3), 0.025, M['cromo'], seg=20))
+    fisso.append(L.cilindro('grata_tornello', (10.38, TY, 1.05), (CX1, TY, 1.05), 0.02, M['cromo'], seg=20))
+    statico.append(L.unisci('grata_tornello', fisso))
     L.vuoto('marker_tornello_perno', (TX, TY, 0), dim=0.3)
 
-    # gabbiotto con il vetro rotto e il pulsante del tornello (fuori portata)
+    # gabbiotto con il vetro rotto (finestra Meshy) e il pulsante del tornello (fuori portata)
     GX0, GX1, GY0, GY1 = 11.0, 13.2, 14.6, 17.4
-    statico += L.stanza('gabbiotto', GX0, GY0, GX1, GY1, CH, dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio']),
+    statico += L.stanza('gabbiotto', GX0, GY0, GX1, GY1, CH, dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'], battiscopa=M['battiscopa']),
                         {'W': [(GY0 - 0.2, GY1 + 0.2, 0, CH)]})
-    # il vano del vetro rotto: blocca il giocatore ma non il getto (vedi INTEGRAZIONE.md)
-    vb = L.scatola('vetro_rotto_blocco-colonly', (10.85, 15.2, 0.95), (10.95, 16.8, 2.0), None, uv=False)
-    vb.hide_render = True; vb.display_type = 'WIRE'
-    statico.append(L.scatola('davanzale_gabbiotto', (10.7, 15.15, 0.9), (11.25, 16.85, 0.95), M['metallo_grezzo']))
-    # vetro con un buco frastagliato al centro (anello tra il telaio e il bordo del buco)
+    WY0, WY1, WZ0, WZ1 = FINESTRA
+    dfin = HQ.dimensioni('finestra_gabbiotto'); kf = 1.62 / dfin.z
+    # il modello è profondo (davanzale): lo schiacciamo a 28 cm e lo appoggiamo al muro (faccia a x = 10,8)
+    HQ.metti('finestra_gabbiotto', 'finestra_gabbiotto', (10.8 - 0.14 + 0.08, (WY0 + WY1) / 2, WZ0 - 0.1), (1.32, 0.28, 1.62), rot_z=R(-90))
+    # vetro con un buco frastagliato al centro (anello tra il telaio e il bordo del buco); il getto passa
     import bmesh
     bm = bmesh.new(); xg = 10.9
     rnd = random.Random(4)
-    cen = (16.05, 1.42); NB = 48
+    cy, cz = (WY0 + WY1) / 2, (WZ0 + WZ1) / 2
+    hy, hz = (WY1 - WY0) / 2, (WZ1 - WZ0) / 2
+    cen = (cy + 0.03, cz - 0.05); NB = 56
     def bordo_telaio(t):
-        # punto sul perimetro del telaio (y 15.2..16.8, z 0.95..2.0) all'angolo t
         dy, dz = math.cos(t), math.sin(t)
-        k = min(0.8 / abs(dy) if abs(dy) > 1e-6 else 9, 0.525 / abs(dz) if abs(dz) > 1e-6 else 9)
-        return (16.0 + dy * k, 1.475 + dz * k)
+        k = min(hy / abs(dy) if abs(dy) > 1e-6 else 9, hz / abs(dz) if abs(dz) > 1e-6 else 9)
+        return (cy + dy * k, cz + dz * k)
     est, inn = [], []
     for i in range(NB):
         t = 2 * math.pi * i / NB
         est.append(bm.verts.new((xg, *bordo_telaio(t))))
-        r = (0.33 if i % 2 else 0.22) * rnd.uniform(0.6, 1.5)
-        inn.append(bm.verts.new((xg, cen[0] + math.cos(t) * r * 1.3, cen[1] + math.sin(t) * r)))
+        r = (0.3 if i % 2 else 0.2) * rnd.uniform(0.6, 1.4)
+        inn.append(bm.verts.new((xg, cen[0] + math.cos(t) * r * 1.1, cen[1] + math.sin(t) * r * 1.3)))
     for i in range(NB):
         j = (i + 1) % NB
         bm.faces.new((est[i], est[j], inn[j], inn[i]))
+    pi_ = [v.co.copy() for v in inn]   # bordo del buco (prima che la bmesh diventi un oggetto)
     vetro = L._ob_da_bm('vetro_rotto', bm, M['vetro_sporco']); L.uv_scatola(vetro, 1.0)
+    # bordo chiaro e frastagliato del buco e qualche crepa che parte da lì: senza, il vetro quasi
+    # trasparente non si vedeva e la finestra sembrava vuota (questionario del 15 ottobre)
+    mb = L.mat_colore('vetro_bordo', (0.86, 0.92, 0.9), rough=0.18)
+    bm = bmesh.new()
+    xb = xg - 0.002
+    for i in range(NB):
+        j = (i + 1) % NB
+        a, b = pi_[i], pi_[j]
+        da = Vector((0, a.y - cen[0], a.z - cen[1])).normalized() * 0.014
+        db = Vector((0, b.y - cen[0], b.z - cen[1])).normalized() * 0.014
+        q = [bm.verts.new((xb, a.y, a.z)), bm.verts.new((xb, b.y, b.z)), bm.verts.new((xb, b.y + db.y, b.z + db.z)), bm.verts.new((xb, a.y + da.y, a.z + da.z))]
+        bm.faces.new(q)
+    for k in range(9):
+        i = rnd.randrange(NB)
+        a = pi_[i]
+        d = Vector((0, a.y - cen[0], a.z - cen[1])).normalized()
+        lung = rnd.uniform(0.12, 0.34)
+        pts = [Vector((xb, a.y, a.z))]
+        for t in range(3):   # crepa a zig-zag
+            d = (d + Vector((0, rnd.uniform(-0.35, 0.35), rnd.uniform(-0.35, 0.35)))).normalized()
+            pts.append(pts[-1] + d * lung / 3)
+        for p0, p1 in zip(pts, pts[1:]):
+            n = Vector((0, -(p1 - p0).z, (p1 - p0).y)).normalized() * 0.0025
+            if not (cy - hy + 0.02 < p1.y < cy + hy - 0.02 and cz - hz + 0.02 < p1.z < cz + hz - 0.02):
+                break   # la crepa si ferma al telaio
+            bm.faces.new([bm.verts.new(p0 - n), bm.verts.new(p1 - n), bm.verts.new(p1 + n), bm.verts.new(p0 + n)])
+    L._ob_da_bm('vetro_rotto_bordo', bm, mb)
     sch = []
-    for k in range(14):
-        x = rnd.uniform(9.6, 10.7) if k < 8 else rnd.uniform(11.1, 12.2); y = rnd.uniform(15.0, 17.0)
-        o = L.piano('schegge_vetro', (x, y, 0.003 if x < 10.8 else 0.003), rnd.uniform(0.04, 0.12), rnd.uniform(0.03, 0.08), M['vetro_sporco'], rot=(0, 0, rnd.uniform(0, 3)))
+    for k in range(18):
+        x = rnd.uniform(9.9, 10.6) if k < 10 else rnd.uniform(11.1, 12.2); y = rnd.uniform(15.2, 16.8)
+        o = L.piano('schegge_vetro', (x, y, 0.003), rnd.uniform(0.03, 0.1), rnd.uniform(0.02, 0.07), M['vetro_sporco'], rot=(0, 0, rnd.uniform(0, 3)))
         sch.append(o)
     L.unisci('schegge_vetro', sch)
-    statico.append(L.scatola('banco_gabbiotto', (12.4, 14.7, 0), (13.2, 17.3, 0.8), M['porta_lamiera']))
-    L.col_scatola((12.4, 14.7, 0), (13.2, 17.3, 0.8))
-    statico.append(L.scatola('quadro_pulsante', (13.17, 15.75, 1.05), (13.2, 16.25, 1.55), M['vernice_gialla']))
-    pul = [L.cilindro('pulsante_tornello', (13.17, 16.0, 1.3), (13.08, 16.0, 1.3), 0.06, M['pulsante'], seg=20),
-           L.cilindro('pulsante_tornello', (13.17, 16.0, 1.3), (13.13, 16.0, 1.3), 0.085, M['metallo_grezzo'], seg=20)]
-    pulsante = L.unisci('pulsante_tornello', pul); L.origine(pulsante, (13.17, 16.0, 1.3))
+    if HQ.disponibile('scrivania'):
+        HQ.metti('banco_gabbiotto', 'scrivania', (12.8, 16.0, 0), (1.2, 0.6, 0.78), rot_z=R(-90))
+        L.col_scatola((12.5, 15.4, 0), (13.1, 16.6, 0.8))
+    dq = HQ.dimensioni('quadro_pulsante'); kq = 0.55 / dq.z
+    HQ.metti('quadro_pulsante', 'quadro_pulsante', (13.2 - dq.y * kq / 2, 16.0, 0.95), (None, None, 0.55), rot_z=R(-90))
     L.luce_punto('luce_pulsante_tornello', (12.95, 16.0, 1.35), (1.0, 0.15, 0.08), 6, 0.03)
-    statico.append(L.scatola('spia_tornello', (13.17, 16.15, 1.45), (13.15, 16.2, 1.5), M['pulsante_verde']))
-    prop('radio_gabbiotto', 'radio', (12.8, 15.2, 0.8), 100, 0.3)
+    prop('radio_gabbiotto', 'radio', (12.6, 16.35, 0.78), 100, 0.3)
 
     # saracinesca (si alza) nell'uscita verso la sala principale, con la turbina sulla parete ovest
     SY = CY1 + 0.1
@@ -530,6 +751,12 @@ def spogliatoi(M):
         pale.append(p)
     turb = L.unisci('turbina_saracinesca', pale); L.uv_scatola(turb, 0.5)
     L.origine(turb, (CX0 + 0.19, TBy, TBz))
+    if TURBINA_NUOVA and HQ.disponibile('turbina_cancello'):
+        # ruota Meshy (questionario del 15 ottobre: "la turbina è orribile"): stesso nome, stesso perno, asse X
+        bpy.data.objects.remove(turb)
+        dt = HQ.dimensioni('turbina_cancello'); kt = 0.6 / max(dt.x, dt.z)
+        turb = HQ.metti('turbina_saracinesca', 'turbina_cancello', (CX0 + 0.19, TBy, TBz), tuple(dt * kt), rot_z=R(90),
+                        perno=(0, 0, dt.z * kt / 2))
     statico.append(L.tubo_percorso('catena_turbina', [(CX0 + 0.05, TBy, TBz + 0.3), (CX0 + 0.05, TBy, 2.45), (CX0 + 0.05, SY - 0.2, 2.45), (UX0 - 0.1, SY - 0.2, 2.45)], 0.03, M['metallo_grezzo'], flange=False))
 
     # ---- luci
@@ -555,6 +782,11 @@ def spogliatoi(M):
     pz = [pozza('pozza_spogliatoi_1', (6.8, 9.2, 0), 1.2, 0.8, M, 11), pozza('pozza_spogliatoi_2', (5.5, 13.0, 0), 1.8, 1.0, M, 12),
           pozza('pozza_spogliatoi_3', (7.4, 5.4, 0), 0.6, 0.4, M, 13), pozza('pozza_spogliatoi_4', (9.7, 15.8, 0), 0.8, 0.6, M, 14)]
     L.unisci('acqua_pozze_spogliatoi', pz)
+    # soffitti da nave nel corridoio lava-piedi e nel gabbiotto
+    statico.append(soffitto_nave('soffitto_lavapiedi', CX0, CX1, CY0, CY1, CH, M, 'y', 1.3, mancanti=(4,), pende=None, travi=True, seme=7))
+    statico.append(soffitto_nave('soffitto_gabbiotto', 11.0, 13.2, 14.6, 17.4, CH, M, 'y', 0.95, mancanti=(), pende=None, travi=True, seme=9))
+    for k, y in enumerate((12.0, 16.8, 19.0)):
+        statico.append(sprinkler(f'sprinkler_lavapiedi_{k + 1}', 10.4, y, CH, CH - 0.2, M))
     L.unisci('spogliatoi_statico', statico)
     L.crea_collisione('spogliatoi', 'spogliatoi')
 
@@ -565,7 +797,7 @@ def spogliatoi(M):
 def stanzino(M):
     L.usa_collezione('stanzino')
     X0, X1, Y0, Y1, H = 11.2, 15.2, 6.2, 10.6, 2.6
-    mats = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'])
+    mats = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'], battiscopa=M['battiscopa'])
     statico = L.stanza('stanzino', X0, Y0, X1, Y1, H, mats, {'W': [(Y0 - 0.2, Y1 + 0.2, 0, H)]}, zoccolo=1.0)
     # porta (aperta verso l'interno, cardine sul lato nord del vano)
     pt = [L.scatola('porta_stanzino', (11.02, 8.02, 0.01), (11.07, 8.88, 2.03), M['porta_lamiera'])]
@@ -573,6 +805,7 @@ def stanzino(M):
     pt.append(L.scatola('porta_stanzino', (11.0, 8.3, 1.35), (11.09, 8.6, 1.75), M['metallo_grezzo']))
     porta = L.unisci('porta_stanzino', pt); L.ammacca(porta, 0.004, 2.0, 12.0, 3)
     L.origine(porta, (11.05, 8.88, 0)); porta.rotation_euler = (0, 0, R(-75))
+    porta = porta_hq(porta, 'porta_servizio', (11.05, 8.88, 0.01), 0.86, 2.02, R(-90 - 75), -1)
     # costole
     for y in (7.4, 9.4):
         statico.append(L.scatola('costola', (X1 - 0.07, y - 0.06, 0), (X1, y + 0.06, H), M['lamiera_crema']))
@@ -601,30 +834,24 @@ def stanzino(M):
 
     # ---- parete est: rastrelliera dello zaino-pompa (posto libero al centro) e salvagenti
     RX = X1 - 0.04
+    drs = HQ.dimensioni('rastrelliera'); krs = 2.0 / drs.z
+    HQ.metti('rastrelliera_zaino', 'rastrelliera', (X1 - drs.y * krs / 2, 8.42, 0), (None, None, 2.0), rot_z=R(-90))
     ras = []
-    for y in (7.0, 8.4, 9.8):
-        ras.append(L.scatola('rastrelliera', (RX - 0.05, y - 0.03, 0.0), (RX, y + 0.03, 2.0), M['vernice_gialla']))
-    for z in (0.35, 1.25, 1.95):
-        ras.append(L.cilindro('rastrelliera', (RX - 0.05, 6.95, z), (RX - 0.05, 9.85, z), 0.025, M['vernice_gialla'], seg=10))
-    ras.append(L.scatola('rastrelliera_ripiano', (RX - 0.45, 6.95, 1.95), (RX, 9.85, 1.98), M['lamiera_grata']))
-    for y in (7.4, 8.1, 8.75, 9.4):
-        ras.append(L.tubo_percorso('rastrelliera_gancio', [(RX - 0.05, y, 1.25), (RX - 0.22, y, 1.25), (RX - 0.22, y, 1.32)], 0.012, M['metallo_grezzo'], flange=False))
-    statico.append(L.unisci('rastrelliera_zaino', ras))
+    statico.append(L.unisci('rastrelliera_zaino_extra', ras))
     L.col_scatola((RX - 0.45, 6.95, 0), (RX, 9.85, 2.0))
     # posto dello zaino: due ganci centrali (y 8.1 e 8.75) liberi; lo zaino va appeso qui, schiena verso il muro
-    L.vuoto('marker_zaino_pompa', (RX - 0.22, 8.425, 1.25), (0, 0, R(90)), 'ARROWS', 0.4)
-    for k, y in enumerate((7.4, 9.4)):
-        s = L.toro(f'salvagente_rastrelliera_{k + 1}', Vector((RX - 0.16, y, 0.98)), 0.28, 0.08, M['salvagente'], rot=(R(90), R(8 * (k * 2 - 1)), R(90)))
-    sal_ripiano = L.toro('salvagente_ripiano', Vector((RX - 0.25, 7.6, 2.06)), 0.27, 0.075, M['salvagente'], rot=(0, R(4), 0))
-    prop('braccioli_stanzino', 'braccioli', (RX - 0.25, 9.3, 1.98), 70, 0.3)
+    FR = X1 - drs.y * krs          # fronte della rastrelliera (i ganci sporgono qui)
+    L.vuoto('marker_zaino_pompa', (FR - 0.12, 8.425, 1.25), (0, 0, R(90)), 'ARROWS', 0.4)
+    for k, y in enumerate((7.55, 9.3)):
+        s = L.toro(f'salvagente_rastrelliera_{k + 1}', Vector((FR - 0.1, y, 1.0)), 0.28, 0.08, M['salvagente'], rot=(R(90), R(8 * (k * 2 - 1)), R(90)))
+    sal_ripiano = L.toro('salvagente_ripiano', Vector((X1 - 0.3, 7.9, 2.06)), 0.27, 0.075, M['salvagente'], rot=(0, R(4), 0))
+    prop('braccioli_stanzino', 'braccioli', (X1 - 0.3, 9.0, 2.02), 70, 0.3)
 
     # ---- parete sud: bacheca di sughero con cartello, poster e foglietti; scrivania con radio; sedia
     BY = Y0 + 0.03
-    statico.append(L.scatola('bacheca', (11.9, Y0, 1.15), (13.5, BY, 2.05), M['sughero']))
-    cor = []
-    for (a, b) in [((11.86, 1.11), (13.54, 1.15)), ((11.86, 2.05), (13.54, 2.09)), ((11.86, 1.15), (11.9, 2.05)), ((13.5, 1.15), (13.54, 2.05))]:
-        cor.append(L.scatola('bacheca_cornice', (a[0], Y0, a[1]), (b[0], BY + 0.012, b[1]), M['legno_panca']))
-    statico.append(L.unisci('bacheca_cornice', cor))
+    dbc = HQ.dimensioni('bacheca'); kb = 1.6 / dbc.x
+    HQ.metti('bacheca', 'bacheca', (12.7, Y0 + dbc.y * kb / 2, 1.1), (1.6, None, None), rot_z=R(180))
+    BY = Y0 + dbc.y * kb * 0.75
     statico.append(L.piano('bacheca_cartello_regole', (12.25, BY + 0.003, 1.62), 0.42, 0.56, M['cartello_regole'], rot=(R(90), 0, 0)))
     statico.append(L.piano('bacheca_poster_bagnino', (13.05, BY + 0.003, 1.6), 0.5, 0.67, M['poster_bagnino'], rot=(R(90), 0, R(2))))
     fog = []
@@ -637,24 +864,69 @@ def stanzino(M):
     if fog:
         statico.append(L.unisci('bacheca_foglietti', fog))
     L.vuoto('marker_polaroid_P3', (12.65, BY + 0.01, 1.3), (R(90), 0, 0), 'CUBE', 0.05)
-    statico.append(L.scatola('scrivania', (11.8, Y0, 0.74), (13.2, Y0 + 0.6, 0.78), M['legno_panca']))
+    HQ.metti('scrivania', 'scrivania', (12.5, Y0 + 0.32, 0), (1.4, 0.62, 0.78), rot_z=R(180))
     L.col_scatola((11.8, Y0, 0), (13.2, Y0 + 0.6, 0.78))
-    for (x, y) in [(11.85, Y0 + 0.05), (13.15, Y0 + 0.05), (11.85, Y0 + 0.55), (13.15, Y0 + 0.55)]:
-        statico.append(L.scatola('scrivania', (x - 0.025, y - 0.025, 0), (x + 0.025, y + 0.025, 0.74), M['metallo_grezzo']))
     prop('radio', 'radio', (12.95, Y0 + 0.3, 0.78), 190, 0.32)
     prop('ricetrasmittente', 'radio_ricetrasmittente', (12.35, Y0 + 0.35, 0.78), 0, 0.2, rot=(R(90), 0, 0))
     prop('sedia', 'sedia', (12.4, Y0 + 1.05, 0), 160, 0.88, 'z')
-    prop('estintore_stanzino', 'estintore', (14.6, Y0 + 0.12, 0.85), 0, 0.55, 'z')
+    HQ.metti('estintore_stanzino', 'estintore_staffa', (14.6, Y0 + 0.21, 0.82), (None, None, 0.62), rot_z=R(-90))
     prop('ciabatta_stanzino', 'ciabatta', (14.2, 9.5, 0), 250, 0.27)
-    statico.append(L.piano('poster_bagnino_parete', (14.4, Y0 + 0.012, 1.55), 0.75, 1.0, M['poster_bagnino'], rot=(R(90), 0, 0)))
 
     # ---- luci
     L.lampada_emergenza('luce_emergenza_stanzino_01', (11.22, 9.6, 2.3), (1, 0, 0), M, watt=30)
     L.lampada_emergenza('luce_emergenza_stanzino_02', (15.18, 7.6, 2.3), (-1, 0, 0), M, watt=22)
     L.neon_soffitto('neon_stanzino', (13.2, 8.4, 0), 1.2, M, H, 'sfarfalla', watt=60, rot_z=R(90))
     pozza('acqua_pozza_stanzino', (12.0, 8.6, 0), 0.6, 0.45, M, 21)
+    # soffitto da nave: un pannello manca, uno pende vicino alla rastrelliera
+    statico.append(soffitto_nave('soffitto_stanzino', X0, X1, Y0, Y1, H, M, 'x', 1.0, mancanti=(1,), pende=3, travi=True, seme=11))
+    for k, x in enumerate((11.9, 14.4)):
+        statico.append(sprinkler(f'sprinkler_stanzino_{k + 1}', x, 6.45, 2.4, 2.25, M))
+    statico.append(canalina_cavi('canalina_stanzino', X0, X1, 9.9, 2.46, M))
     L.unisci('stanzino_statico', statico)
     L.crea_collisione('stanzino', 'stanzino')
+
+
+def neon_sotto_il_soffitto(margine=0.004):
+    """Le plafoniere stanno appoggiate sotto il soffitto vero (pannelli, travi, condotti), non sotto la quota
+    della stanza: misura il soffitto sopra ogni plafoniera e la abbassa, con tubi, luce e cavo."""
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    sc = bpy.context.scene
+    plafoniere = [o for o in sc.objects if o.type == 'MESH' and o.name.startswith('neon_')
+                  and not any(o.name.endswith(s) for s in ('_tubi', '_tubi_accesi', '_tubo_sfarfalla', '_cavo'))]
+    for corpo in plafoniere:
+        nome = corpo.name
+        if nome + '_cavo' in sc.objects:
+            continue   # appesa a un cavo: è già più in basso
+        bb = [corpo.matrix_world @ Vector(c) for c in corpo.bound_box]
+        x0, x1 = min(v.x for v in bb), max(v.x for v in bb)
+        y0, y1 = min(v.y for v in bb), max(v.y for v in bb)
+        z0, z1 = min(v.z for v in bb), max(v.z for v in bb)
+        cielo = None
+        # griglia fitta: una trave larga 10 cm non deve passare fra due campioni
+        lungo_x = (x1 - x0) > (y1 - y0)
+        fitti, radi = [k / 24 for k in range(1, 24)], (0.1, 0.5, 0.9)
+        for fx in (fitti if lungo_x else radi):
+            for fy in (radi if lungo_x else fitti):
+                o = Vector((x0 + (x1 - x0) * fx, y0 + (y1 - y0) * fy, z0 - 0.3))   # da sotto: anche le travi che la attraversano
+                for _ in range(8):
+                    hit, loc, _n, _i, ob, _m = sc.ray_cast(dg, o, Vector((0, 0, 1)), distance=1.0)
+                    if not hit:
+                        break
+                    if ob.name.startswith(nome) or ob.hide_render or 'colonly' in ob.name:
+                        o = loc + Vector((0, 0, 0.001))
+                        continue
+                    if cielo is None or loc.z < cielo:
+                        cosa = (ob.name, round(o.x, 2), round(o.y, 2))
+                    cielo = loc.z if cielo is None else min(cielo, loc.z)
+                    break
+        if cielo is None or z1 <= cielo - margine:
+            continue
+        giu = z1 - (cielo - margine)
+        for o in sc.objects:
+            if o.name == nome or o.name.startswith(nome + '_'):
+                o.location.z -= giu
+        print(f'{nome}: abbassata di {giu * 100:.1f} cm (soffitto a {cielo:.3f}: {cosa})')
 
 
 def costruisci():
@@ -663,6 +935,7 @@ def costruisci():
     corridoio(M)
     spogliatoi(M)
     stanzino(M)
+    neon_sotto_il_soffitto()
     return M
 
 

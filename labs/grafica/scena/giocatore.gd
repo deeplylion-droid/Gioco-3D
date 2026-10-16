@@ -21,8 +21,10 @@ func imposta_vista(pos: Vector3, yaw_gradi: float, pitch_gradi: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		rotation.y -= event.relative.x * sensibilita
-		_pitch = clampf(_pitch - event.relative.y * sensibilita, -1.45, 1.45)
+		var k := sensibilita * float(Grafica.valore("sensibilita_mouse"))
+		var y := -1.0 if Grafica.valore("inverti_y") else 1.0
+		rotation.y -= event.relative.x * k
+		_pitch = clampf(_pitch - event.relative.y * k * y, -1.45, 1.45)
 		camera.rotation.x = _pitch
 
 
