@@ -28,6 +28,7 @@ Gioco horror 3D in prima persona fatto con Claude per deeplylion-droid. L'utente
 - **Meshy**: `tools/meshy.py`, con le funzioni `create`, `wait`, `download` e `balance`. Prima di cambiarli, leggi i parametri in `https://docs.meshy.ai/llms.txt`.
 - La rete permette Poly Haven, ambientCG, Kenney, Quaternius, Meshy, Hugging Face e `downloads.godotengine.org`. I download di Release da GitHub sono bloccati.
 - Le macchine hanno 4 CPU: render lunghi e build possono rallentare gli altri agenti.
+- **Memoria: 15 GB.** Un Godot con la sala principale arriva a 12-13 GB, e due processi pesanti insieme fanno riavviare la macchina: è successo due volte il 16 ottobre. Ogni processo Godot o Blender passa da `flock /home/user/tools/render.lock`, uno alla volta, compresi import, test, `check_scripts` e build. Lo scatto parte solo con almeno 13,5 GB di `MemAvailable` (`/proc/meminfo`). Mentre gira, niente elaborazioni pesanti di immagini.
 
 ## Git
 
