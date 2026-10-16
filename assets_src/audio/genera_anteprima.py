@@ -17,11 +17,14 @@
   prima (con le bollicine dei rivoli) e 15 s con quella di adesso (16 ottobre).
 - confronto_passi_goccioline.ogg (circa 21 s): si cammina sul bagnato nella sala, 10 s con i passi
   di oggi (con le goccioline che schizzano) e 10 s con gli stessi passi senza goccioline.
+- cancello_stagno.ogg (circa 10 s): nella camera delle onde, dopo la scala del pozzo, i due
+  cancelli stagni che si aprono da soli uno dopo l'altro (il secondo 2 s dopo, più lontano), col
+  fondo della stanza tecnica sotto (16 ottobre).
 Le anteprime delle altre proposte (proposta_<nome>_a/b.ogg) le fa genera_proposte.py.
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
-nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte|pioggia|passi] (senza
-argomenti, tutte).
+nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte|pioggia|passi|cancello]
+(senza argomenti, tutte).
 """
 import os
 import sys
@@ -459,7 +462,60 @@ def anteprima_confronto_passi():
     print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS prima {lufs(out[:n]):.1f}  dopo {lufs(out[-n:]):.1f}')
 
 
-def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi')):
+# --- i cancelli stagni della camera delle onde (16 ottobre) ---------------------------------------
+
+def come_3d(x, d, unit, vol_db=0.0, max_d=0.0):
+    """Un suono mono come lo fa sentire AudioStreamPlayer3D dell'addon a d metri: distanza inversa
+    più il volume della taratura, con il tetto max_db = 0; la dissolvenza lineare fino a
+    max_distance; il filtro d'attenuazione del pool (mensola alta a 6 kHz, fino a -20 dB)."""
+    att = min(0.0, 20 * np.log10(unit / max(d, 0.01)) + vol_db)
+    mult = 10 ** (att / 20) * (max(0.0, 1.0 - d / max_d) if max_d > 0 else 1.0)
+    mensola = (1.0 - min(1.0, mult)) * -20.0
+    y = biquad(x, 'highshelf', 6000, 0.7, mensola) if mensola < -0.05 else x
+    return y * mult
+
+
+def anteprima_cancello():
+    """Si cammina nella camera delle onde, dopo la scala del pozzo, verso i due cancelli stagni:
+    il primo, a 3,5 m un po' a sinistra, si apre da solo; il secondo, 3,5 m più in là, parte 2 s
+    dopo (l'altra variante). Sotto, il fondo della stanza tecnica come in anteprima_tecnici: la
+    nave bassa (la camera è sotto la sala, lontano dalla cupola) e qualche goccia dal pozzo.
+    Livelli e distanze come nel gioco: taratura di cancello_stagno_apre in audio.gd (+2 dB,
+    unit_size 5 m, max_distance 60 m), bus Effetti col riverbero della sala."""
+    rng = np.random.default_rng(1610)
+    T1, T2 = 2.5, 4.5
+    DURT = 10.5
+    n = n_of(DURT)
+    eff = np.zeros((n, 2), dtype=np.float32)    # bus Effetti (riverbero della sala)
+    amb = np.zeros((n, 2), dtype=np.float32)    # bus Ambiente (i fondi)
+
+    def metti(x, t, g_db=0.0, p=0.0):
+        mix_into(eff, pan(x * db(g_db), p), n_of(t))
+
+    nave = tile(leggi('ambiente/nave_loop.ogg'), DURT, 7.0)
+    mix_into(amb, fade(nave, 1.0, 0.0) * db(-10), 0)
+    for tc, g, p in [(0.9, -16, 0.4), (5.9, -18, -0.5), (9.1, -16, 0.3)]:
+        metti(leggi('ambiente/goccia_acqua_0%d.ogg' % rng.integers(1, 7), 1), tc, g, p)
+    # i passi sul bagnato fino a 3,5 m dal primo cancello, poi ci si ferma a guardare
+    t = 0.4
+    for k in range(5):
+        metti(leggi('giocatore/passo_bagnato_%02d.ogg' % (k % 6 + 1), 1), t, -5 + rng.uniform(-1, 1),
+              -0.08 if k % 2 else 0.08)
+        t += 0.48 + rng.uniform(-0.02, 0.02)
+    for tc, var, d, p in [(T1, 1, 3.5, -0.12), (T2, 2, 7.0, 0.05)]:
+        x = leggi('tecnici/cancello_stagno_apre_%02d.ogg' % var, 1)
+        metti(come_3d(x, d, 5.0, 2.0, 60.0), tc, 0.0, p)
+    eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+    out = hp(amb + eff, 20, 2)
+    out = fade(out, 0.3, 1.5)
+    g = db(-16.0 - lufs(out))
+    out = limiter(out * g, -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'cancello_stagno.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
+
+
+def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi', 'cancello')):
     if 'sala' in quali:
         anteprima_sala()
     if 'tecnici' in quali:
@@ -473,7 +529,9 @@ def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi')):
         anteprima_confronto_pioggia()
     if 'passi' in quali:
         anteprima_confronto_passi()
+    if 'cancello' in quali:
+        anteprima_cancello()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi'))
+    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi', 'cancello'))
