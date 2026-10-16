@@ -2117,6 +2117,55 @@ def lampione(mats, base, nome='amb_lampione'):
 
 # ----------------------------------------------------------------------------- area bimbi
 
+def scivolo_solido(c, pts, W=0.40, D=0.22, T=0.04, H=0.16, R=0.025, mat='gioco_giallo'):
+    """Scivolo aperto di vetroresina come solido (prima era una superficie senza spessore): canale a U
+    largo 2W con il fondo a mezza ellisse profondo D, sponde dritte alte H sopra il bordo della curva,
+    spessore T, bordo superiore arrotondato (raggio R) e le due testate chiuse. 'pts' è la linea del
+    bordo del canale (dove finisce la curva e cominciano le sponde); la sezione è perpendicolare alla
+    pendenza."""
+    n_curva, n_bordo = 14, 6
+
+    def mezza(a, b):                        # da sinistra a destra passando per il fondo
+        return [(-a * math.cos(math.pi * j / n_curva), -b * math.sin(math.pi * j / n_curva)) for j in range(n_curva + 1)]
+    dentro = [(-W, H)] + mezza(W, D) + [(W, H)]
+    fuori = [(-W - T, H)] + mezza(W + T, D + T) + [(W + T, H)]
+    cb = W + T / 2
+
+    def bordo(lato):                        # dal filo interno al filo esterno, sopra
+        return [(lato * (cb - (T / 2 + 0.005) * math.cos(math.pi * j / n_bordo)),
+                 H + R * math.sin(math.pi * j / n_bordo)) for j in range(n_bordo + 1)]
+    anello = (dentro + bordo(1)[1:-1] + fuori[::-1] + bordo(-1)[::-1][1:-1])[::-1]   # normali verso fuori
+
+    def assi(i):
+        a, b = pts[max(i - 1, 0)], pts[min(i + 1, len(pts) - 1)]
+        d = (b - a).normalized()
+        lato = d.cross(Vector((0, 0, 1))).normalized()
+        su = lato.cross(d).normalized()
+        return d, lato, su
+
+    def punto(i, s, h, dentro_di=0.0):
+        d, lato, su = assi(i)
+        return pts[i] + lato * s + su * h + d * dentro_di
+    n = len(anello)
+    for i in range(len(pts) - 1):
+        for k in range(n):
+            s0, h0 = anello[k]
+            s1, h1 = anello[(k + 1) % n]
+            c.faccia([punto(i, s0, h0), punto(i + 1, s0, h0), punto(i + 1, s1, h1), punto(i, s1, h1)], mat, liscia=True)
+    # testate: fra la curva interna e quella esterna, più i bordi arrotondati (1 mm dentro, così non
+    # condividono i vertici con le facce lisce e l'ombreggiatura del canale non si piega)
+    for i, verso, dd in ((0, -1, 0.001), (len(pts) - 1, 1, -0.001)):
+        d = assi(i)[0]
+        for k in range(len(dentro) - 1):
+            q = [punto(i, *dentro[k], dd), punto(i, *dentro[k + 1], dd), punto(i, *fuori[k + 1], dd), punto(i, *fuori[k], dd)]
+            c.faccia_verso(q, mat, d * verso)
+        for lato in (1, -1):
+            arco = bordo(lato)
+            centro = punto(i, lato * cb, H, dd)
+            for j in range(len(arco) - 1):
+                c.faccia_verso([centro, punto(i, *arco[j], dd), punto(i, *arco[j + 1], dd)], mat, d * verso)
+
+
 def struttura_gioco(mats):
     """Struttura di gioco a più piani con il secchio gigante in cima (area bimbi, angolo nord-ovest dal
     16 ottobre: la scala guarda verso chi arriva, lo scivolo scende nella vasca piccola)."""
@@ -2148,13 +2197,19 @@ def struttura_gioco(mats):
             for k in range(1, n):
                 px = a[0] + (b[0] - a[0]) * k / n; py = a[1] + (b[1] - a[1]) * k / n
                 c.cilindro((px, py, zp), (px, py, zp + 0.95), 0.016, 'gioco_blu', seg=10, tappi=False)
-        if tetto:  # tetto a piramide
-            ztop = hpost
-            apice = (cx + ox, cy + oy, ztop + 1.0)
-            bordo = [(x0 - 0.25, y0 - 0.25, ztop), (x1 + 0.25, y0 - 0.25, ztop), (x1 + 0.25, y1 + 0.25, ztop), (x0 - 0.25, y1 + 0.25, ztop)]
+        if tetto:  # tetto a piramide: stesso profilo, stesse misure e stessa sporgenza di prima, ma solido
+            # (lastra spessa 6 cm sotto la superficie di sempre: prima era una superficie e da sotto spariva)
+            ztop, sp = hpost, 0.06
+            apice = Vector((cx + ox, cy + oy, ztop + 1.0))
+            bordo = [Vector(p) for p in ((x0 - 0.25, y0 - 0.25, ztop), (x1 + 0.25, y0 - 0.25, ztop),
+                                         (x1 + 0.25, y1 + 0.25, ztop), (x0 - 0.25, y1 + 0.25, ztop))]
+            giu = Vector((0, 0, -sp))
             for i in range(4):
-                c.faccia([bordo[i], bordo[(i + 1) % 4], apice], tetto)
-                c.faccia([bordo[(i + 1) % 4], bordo[i], apice], tetto)
+                a, b = bordo[i], bordo[(i + 1) % 4]
+                fuori = ((a + b) / 2 - Vector((cx + ox, cy + oy, ztop))).normalized()
+                c.faccia_verso([a, b, apice], tetto, fuori + Vector((0, 0, 1)))                    # sopra
+                c.faccia_verso([a + giu, b + giu, apice + giu], tetto, -fuori - Vector((0, 0, 1)))  # sotto
+                c.faccia_verso([a, b, b + giu, a + giu], tetto, fuori)                            # costa della lastra
     # passerelle tra le torri e scalette
     c.scatola((cx - 1.4, cy - 1.7, 1.32), (cx - 1.0, cy - 0.7, 1.4), 'gioco_giallo', smusso=0.02)
     for k in range(9):  # scala dal pavimento alla prima torre (lato sud)
@@ -2168,20 +2223,10 @@ def struttura_gioco(mats):
     for k in range(7):
         y = cy - 0.0 + 0.2 * k - 0.6
         c.scatola((cx - 0.6, y, 3.0 + 0.12 * k), (cx + 1.0, y + 0.14, 3.06 + 0.12 * k), 'gioco_giallo', smusso=0.015)
-    # scivolo aperto dalla torre 2 verso est (mezza canna)
-    pts = []
-    for k in range(17):
-        t = k / 16
-        pts.append(Vector((cx + 1.6 + 3.2 * t, cy - 1.2 - 0.6 * math.sin(t * math.pi), 2.6 * (1 - t) ** 1.3 + 0.25)))
-    for i in range(len(pts) - 1):
-        a, b = pts[i], pts[i + 1]
-        d = (b - a).normalized(); side = d.cross(Vector((0, 0, 1))).normalized()
-        for j in range(14):
-            t0, t1 = math.pi * j / 14, math.pi * (j + 1) / 14
-            def q(p, t):
-                return p + side * math.cos(t) * 0.42 - Vector((0, 0, 1)) * math.sin(t) * 0.3
-            c.faccia([q(a, t0), q(b, t0), q(b, t1), q(a, t1)], 'gioco_giallo', liscia=True)
-            c.faccia([q(a, t1), q(b, t1), q(b, t0), q(a, t0)], 'gioco_giallo', liscia=True)
+    # scivolo aperto dalla torre 2 verso est: un solido (riscontro della v0.3.1: "lo scivolo giallo è bidimensionale")
+    scivolo_solido(c, [Vector((cx + 1.40, cy - 1.2, 2.85))] +
+                   [Vector((cx + 1.6 + 3.2 * k / 16, cy - 1.2 - 0.6 * math.sin(k / 16 * math.pi),
+                            2.6 * (1 - k / 16) ** 1.3 + 0.25)) for k in range(17)])
     # telaio del secchio gigante sopra la torre 3
     tx, ty = cx + 0.2, cy + 1.6
     for (px, py) in ((tx - 1.5, ty - 1.55), (tx + 1.5, ty - 1.55), (tx + 1.5, ty + 1.55), (tx - 1.5, ty + 1.55)):
