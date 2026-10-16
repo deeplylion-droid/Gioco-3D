@@ -18,7 +18,10 @@ extends Node
 ## si rifanno gli scatti per ognuno.
 ## SCATTI_PISCINA_ASPETTO=<A|B|C>[,...]: l'aspetto dell'acqua della piscina (PiscinaOnde.aspetto).
 ## SCATTI_LUCI=BLACKOUT: le luci del blackout (dopo il risveglio); SCATTI_DOPO_TAPPA8=1: lei è già
-## andata via (tappa 8 finita); SCATTI_PORTONE=aperto|chiuso: il portone della sala della torre.
+## andata via (tappa 8 finita); SCATTI_PORTONE=aperto|chiuso: il portone della sala della torre;
+## SCATTI_OCCHIO_CHIUSO=1: la medusa affacciata con l'occhio chiuso (easter egg del getto in faccia);
+## SCATTI_PULSANTE=attivo|premuto: il pulsante della botola acceso (lampeggiante giallo) o già colpito
+## (verde), con SCATTI_PISCINA=0.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -39,6 +42,8 @@ const EXTRA := {
 	"i_pulsante_botola": [Vector3(-1.2, -2.0, -0.6), Vector3(1.9, -1.35, 4.95)],  # tappa 5: il pulsante della botola sulla parete sud, dal fondo
 	"j_portone_lontano": [Vector3(8.5, 0.0, -6.0), Vector3(19.8, 2.4, -15.0)],  # dopo la tappa 8: il portone della sala della torre da lontano
 	"k_portone_vicino": [Vector3(14.0, 0.0, -11.0), Vector3(19.8, 2.2, -15.0)],  # il portone da vicino (aperto, col lampeggiante)
+	"m_medusa_occhio": [Vector3(0.0, 0.0, 14.6), Vector3(0.0, 1.5, 11.95)],  # la medusa affacciata da davanti (easter egg dell'occhio)
+	"n_scia_serranda": [Vector3(-15.0, 0.0, 19.0), Vector3(-18.0, 0.3, 9.0)],  # tappa 7: appena usciti dalla serranda, la scia lungo il muro ovest
 	# tappa 5: dal bordo est con lo zaino, mentre aspira la micro medusina più vicina (due scatti di fila)
 	"l_aspira_medusine": [Vector3(7.35, 0.0, 2.0), Vector3(5.6, -1.5, 2.4)],
 }
@@ -123,6 +128,10 @@ func _run() -> void:
 		lamp = level.get_node_or_null("Statua/Sfarfallio")
 	if lamp and lamp.has_method("turn_on") and not buio:
 		lamp.turn_on()
+	if OS.get_environment("SCATTI_OCCHIO_CHIUSO") == "1":
+		var medusa := level.get_node_or_null(^"Vasca/Medusa")
+		if medusa and medusa.has_method(&"chiudi_occhio"):
+			medusa.call(&"chiudi_occhio", 600.0)
 	p.stand_eye_height = 1.7
 	var camere := SCATTI.duplicate()
 	for nome in EXTRA:
@@ -150,6 +159,12 @@ func _run() -> void:
 				var med: Node = svuota.get_node_or_null(^"Medusine") if svuota else null
 				if med:
 					med.call(&"ricomincia")
+			var stato_pulsante := OS.get_environment("SCATTI_PULSANTE")
+			if svuota and stato_pulsante in ["attivo", "premuto"]:
+				svuota.call(&"load_state", {"attivo": true})
+				var pulsante: Node = svuota.get(&"pulsante")
+				if pulsante and stato_pulsante == "premuto":
+					pulsante.call(&"load_state", {"powered": true})
 			var pref := prefisso
 			if asp != "":
 				pref += "_" + asp
