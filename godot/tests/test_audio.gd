@@ -1,10 +1,10 @@
 extends Node
 ## Test dell'audio: autoload "Audio", bus ed effetti, stream del catalogo (si caricano, i loop
 ## si ripetono), volumi salvati in settings.cfg, collegamenti automatici con la sala principale
-## (segnali e suoni che partono davvero), monitor e paratie delle tappe 5-6, la fossa e il morso
-## della tappa 8, la piscina a onde della tappa 5 (gorgo, piscina vuota, pulsante della botola
-## col lampeggiante e il bi-bu, micro medusine), il portone della sala della torre, i nomi dei
-## suoni chiesti dagli script, scheda nel menu delle opzioni, morte e ripartenza.
+## (segnali e suoni che partono davvero), monitor, paratie e cancelli stagni delle tappe 5-6, la
+## fossa e il morso della tappa 8, la piscina a onde della tappa 5 (gorgo, piscina vuota, pulsante
+## della botola col lampeggiante e il bi-bu, micro medusine), il portone della sala della torre, i
+## nomi dei suoni chiesti dagli script, scheda nel menu delle opzioni, morte e ripartenza.
 ## Alla fine controlla che l'audio non abbia prodotto errori (un Logger li raccoglie tutti).
 ## In headless il driver audio è "Dummy": i player suonano senza uscire dalle casse.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
@@ -293,6 +293,22 @@ func _run() -> void:
 		check(lontano is AudioStreamPlayer3D and (lontano as AudioStreamPlayer3D).unit_size >= 30.0,
 			"la plastica lontana arriva dalla vasca e si sente anche dalla sala pompe")
 		lontano.call(&"stop")
+	# I cancelli stagni della camera delle onde (prova della v0.3.1): li suona lo script dei
+	# cancelli, un suono per cancello; l'animazione segue CANCELLO_STAGNO_PARTE e _ARRIVA.
+	var costanti: Dictionary = (audio.get_script() as GDScript).get_script_constant_map()
+	var arriva := float(costanti.get("CANCELLO_STAGNO_ARRIVA", 0.0))
+	var cancelli = audio.call(&"stream_di", &"cancello_stagno_apre")
+	var varianti_ok: bool = cancelli is AudioStreamRandomizer and (cancelli as AudioStreamRandomizer).streams_count == 2
+	if varianti_ok:
+		for i in 2:
+			varianti_ok = varianti_ok and (cancelli as AudioStreamRandomizer).get_stream(i).get_length() > arriva + 0.5
+	check(varianti_ok and arriva > float(costanti.get("CANCELLO_STAGNO_PARTE", 9.0)),
+		"il cancello stagno ha due varianti che durano oltre il colpo a fine corsa (%.2f s)" % arriva)
+	var cancello: Node = audio.call(&"suona", &"cancello_stagno_apre", Vector3(0, 1.2, 4.0))
+	check(cancello is AudioStreamPlayer3D and (cancello as AudioStreamPlayer3D).unit_size >= 5.0
+		and (cancello as AudioStreamPlayer3D).volume_db >= 2.0, "il cancello stagno è forte, pieno fino a circa 6 m")
+	if cancello:
+		cancello.call(&"stop")
 
 	print("Area bimbi: lei (tappa 8)")
 	var suoni_lei := [&"fossa_ribolle_loop", &"lei_sbuca", &"lei_scivola_sotto", &"morso"]
