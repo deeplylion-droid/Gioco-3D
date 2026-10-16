@@ -19,9 +19,11 @@ signal aperta
 ## Chiusa all'inizio, si apre da sola quando il giocatore si avvicina.
 @export var apri_al_passaggio := true
 ## Distanza in pianta (m) dal cancello a cui comincia ad aprirsi.
-@export var raggio_apertura := 6.5
-## Tempo (s) per alzarsi del tutto: più svelta della discesa, si passa senza fermarsi.
-@export var durata_apertura := 1.4
+@export var raggio_apertura := 10.0
+## Quando si alza rispetto all'inizio del suono (s): parte e sbatte in cima. Di serie quelli dell'audio
+## (Audio.CANCELLO_STAGNO_PARTE e _ARRIVA), prima si sentono i chiavistelli e lo sfiato.
+@export var apertura_parte := 0.55
+@export var apertura_arriva := 2.55
 ## Il suono dell'apertura (nel catalogo dell'audio).
 @export var suono_apertura := &"cancello_stagno_apre"
 
@@ -35,11 +37,17 @@ var in_salita := false
 var _pannello: Node3D
 var _alto := Vector3.ZERO
 var _t := 0.0
+var _tempo := 0.0
 
 
 func _ready() -> void:
 	add_to_group(&"persist")
 	_pannello = get_node_or_null(pannello_path) as Node3D
+	var audio := get_node_or_null(^"/root/Audio")
+	if audio and audio.get_script():
+		var c: Dictionary = (audio.get_script() as Script).get_script_constant_map()
+		apertura_parte = float(c.get("CANCELLO_STAGNO_PARTE", apertura_parte))
+		apertura_arriva = float(c.get("CANCELLO_STAGNO_ARRIVA", apertura_arriva))
 	if _pannello:
 		_alto = _pannello.position
 		if apri_al_passaggio:
@@ -69,6 +77,7 @@ func apri() -> void:
 		return
 	in_salita = true
 	_t = 0.0
+	_tempo = 0.0
 	_suona()
 
 
@@ -78,10 +87,10 @@ func _physics_process(delta: float) -> void:
 			apri()
 		return
 	if in_salita:
-		_t = minf(_t + delta / maxf(durata_apertura, 0.01), 1.0)
-		# Uno strappo e su, rallenta solo in cima.
-		var k := 1.0 - (1.0 - _t) * (1.0 - _t)
-		_metti(1.0 - k)
+		_tempo += delta
+		var corsa := maxf(apertura_arriva - apertura_parte, 0.1)
+		_t = clampf((_tempo - apertura_parte) / corsa, 0.0, 1.0)
+		_metti(1.0 - _profilo_salita(_t * corsa, corsa))
 		if _t >= 1.0:
 			in_salita = false
 			is_aperta = true
@@ -96,6 +105,24 @@ func _physics_process(delta: float) -> void:
 		is_chiusa = true
 		is_aperta = false
 		chiusa.emit()
+
+
+## Quanta strada ha fatto salendo (0..1) dopo [param t] secondi su [param corsa]: uno strappo, a
+## velocità piena dopo 0,4 s, frena appena nell'ultimo quarto di secondo e sbatte in cima.
+static func _profilo_salita(t: float, corsa: float) -> float:
+	var a := minf(0.4, corsa * 0.4)
+	var b := minf(0.25, corsa * 0.2)
+	var v_fine := 0.5
+	var totale := a * 0.5 + (corsa - a - b) + b - (1.0 - v_fine) * b * 0.5
+	var s: float
+	if t < a:
+		s = t * t / (2.0 * a)
+	elif t < corsa - b:
+		s = a * 0.5 + (t - a)
+	else:
+		var u := minf(t, corsa) - (corsa - b)
+		s = a * 0.5 + (corsa - a - b) + u - (1.0 - v_fine) * u * u / (2.0 * b)
+	return clampf(s / totale, 0.0, 1.0)
 
 
 ## Vero quando il giocatore è entro [member raggio_apertura] in pianta dal cancello.

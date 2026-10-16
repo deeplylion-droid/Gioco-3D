@@ -86,7 +86,7 @@ func _portellone_vicino() -> void:
 
 func _portellone_vuota() -> void:
 	await _svuota_e_apri()
-	await _foto("portellone_vuota", Vector3(2.6, -2.0, 4.4), Vector3(0.0, -2.3, 2.0), 90)
+	await _foto("portellone_vuota", Vector3(2.6, -2.0, 4.4), Vector3(0.0, -2.3, 2.0))
 
 
 func _sotto_scala() -> void:
@@ -94,17 +94,22 @@ func _sotto_scala() -> void:
 
 
 func _cancelli() -> void:
+	# Fermi per lo scatto: da qui si aprirebbero già (si aprono a 10 m).
+	_cancelli_al_passaggio(false)
 	await _foto("cancelli", tec.to_global(Vector3(12.5, 0.0, -0.6)), tec.to_global(Vector3(17.5, 1.3, 0.0)))
 
 
 func _cancelli_aperti() -> void:
 	# Si passa davanti ai cancelli: si aprono da soli e restano aperti.
+	_cancelli_al_passaggio(true)
+	Engine.time_scale = 4.0
 	_metti(tec.to_global(Vector3(15.0, 0.0, 0.0)), tec.to_global(Vector3(25.0, 1.0, 0.0)))
-	for i in 60 * 3:
+	for i in 60:
 		await get_tree().physics_frame
 	_metti(tec.to_global(Vector3(19.5, 0.0, 0.0)), tec.to_global(Vector3(25.0, 1.0, 0.0)))
-	for i in 60 * 4:
+	for i in 80:
 		await get_tree().physics_frame
+	Engine.time_scale = 1.0
 	await _foto("cancelli_aperti", tec.to_global(Vector3(12.5, 0.0, -0.6)), tec.to_global(Vector3(17.5, 1.3, 0.0)))
 
 
@@ -113,13 +118,22 @@ func _cancelli_aperti() -> void:
 func _svuota_e_apri() -> void:
 	var vasca: WaterTank = level.get_node("Piscina/Pozza")
 	vasca.fill = 0.0
-	for i in 60 * 4:
+	# Sul renderer software ogni frame costa: il tempo del gioco va 4 volte più svelto.
+	Engine.time_scale = 4.0
+	for i in 60:
 		await get_tree().physics_frame
 	var pulsante: WaterButton = level.get_node("Piscina/PulsantePortello")
 	pulsante.powered = true
 	level.get_node("Piscina/Portello").call(&"open")
-	for i in 60 * 4:
+	for i in 60:
 		await get_tree().physics_frame
+	Engine.time_scale = 1.0
+
+
+func _cancelli_al_passaggio(si: bool) -> void:
+	for c in level.find_children("*", "Paratia", true, false):
+		if &"apri_al_passaggio" in c:
+			c.set(&"apri_al_passaggio", si)
 
 
 func _metti(dove: Vector3, verso: Vector3) -> void:
