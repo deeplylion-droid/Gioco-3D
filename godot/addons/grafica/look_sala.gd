@@ -39,7 +39,7 @@ extends Node3D
 @export var crea_effetti := true
 @export var crea_area_bimbi := true
 ## Neon che nel GLB sono "a metà": sfarfallano o sono guasti.
-@export var neon_difettosi: PackedInt32Array = [1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25]
+@export var neon_difettosi: PackedInt32Array = [1, 3, 4, 6, 7, 13, 14, 17, 24, 25]
 
 @export_group("Volume della sala")
 ## Centro e dimensioni della sala in coordinate Godot (da sala_dati.json: x -20..20,

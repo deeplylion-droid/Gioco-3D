@@ -891,8 +891,8 @@ func _tappa8() -> void:
 		checkpoint(gp, "CheckpointTorre", 14, PORTONE_TORRE + Vector3(-3.34, 1.5, 0.0), Vector3(1.6, 3.0, 4.0), Vector3(0.0, -1.5, 0.0), -PI * 0.5)
 	else:
 		checkpoint(gp, "CheckpointTorre", 14, PIEDE_TORRE + Vector3(-1.2, 1.5, 0.0), Vector3(1.6, 3.0, 2.6), Vector3(0.0, -1.5, 0.0), -PI * 0.5)
-	# Il portone della sala della torre (PortoneTorre): chiuso fino a dopo la tappa 8; di serie si
-	# apre quando arrivi davanti (FineDemo), con DOPO_TAPPA8 da solo appena lei va via.
+	# Il portone della sala della torre (PortoneTorre): chiuso fino a dopo la tappa 8, poi si apre
+	# da solo appena lei va via (scelta dell'utente del 16 ottobre; con ALL_ARRIVO quando arrivi).
 	var portone: Node3D = load("res://scripts/mechanisms/portone_torre.gd").new()
 	portone.name = "PortoneTorre"
 	portone.position = PORTONE_TORRE
@@ -1010,10 +1010,17 @@ func shape_box(parent: Node, size: Vector3, pos := Vector3.ZERO) -> CollisionSha
 	return cs
 
 
+## I checkpoint del ritorno al buio (tappe 7-8): valgono solo dopo il risveglio (Checkpoint.solo_al_buio).
+const CHECKPOINT_AL_BUIO := ["CheckpointT7Inizio", "CheckpointRaccordo", "CheckpointMagazzino", "CheckpointSerranda",
+	"CheckpointAreaBimbi", "CheckpointSpiaggiaBuio", "CheckpointTorre"]
+
+
 func checkpoint(parent: Node, node_name: String, order: int, pos: Vector3, size: Vector3, spawn_offset: Vector3, spawn_yaw: float) -> Area3D:
 	var cp: Area3D = load("res://scripts/game/checkpoint.gd").new()
 	cp.name = node_name
 	cp.set(&"order", order)
+	if node_name in CHECKPOINT_AL_BUIO:
+		cp.set(&"solo_al_buio", true)
 	cp.position = pos
 	own(cp, parent)
 	shape_box(cp, size)

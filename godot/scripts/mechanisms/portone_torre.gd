@@ -3,8 +3,9 @@ extends Node3D
 ## Il portone scorrevole della sala della torre, sulla parete est (scelta dell'utente del 16 ottobre:
 ## versione 2, con la torre dipinta e le bande a strisce, senza cartello). Resta chiuso fino a dopo
 ## la tappa 8. Poi si apre scorrendo di [member corsa] metri, in due modi ([member apertura]):
-## - ALL_ARRIVO (di serie): quando arrivi davanti ([method apri], lo chiama la sala con FineDemo);
-## - DOPO_TAPPA8: da solo, appena lei è andata via (LeiSbuca.andata_via).
+## - DOPO_TAPPA8 (di serie, scelto dall'utente il 16 ottobre): da solo, appena lei è andata via
+##   (LeiSbuca.andata_via);
+## - ALL_ARRIVO: quando arrivi davanti ([method apri], lo chiama la sala con FineDemo).
 ## Il movimento segue il suono del motore (portone_torre_apre, 8,5 s, lo suona l'addon audio su
 ## [signal apertura_iniziata]): la serratura a 0, l'anta parte a [member partenza] secondi,
 ## accelera per [member accelera] secondi, frena nell'ultimo [member frena] e sbatte a fine corsa
@@ -15,8 +16,8 @@ signal aperto
 
 enum Apertura { ALL_ARRIVO, DOPO_TAPPA8 }
 
-## Quando si apre (lo sceglie l'utente; si cambia con una riga).
-@export var apertura := Apertura.ALL_ARRIVO
+## Quando si apre: di serie da solo dopo la tappa 8 (scelta dell'utente del 16 ottobre).
+@export var apertura := Apertura.DOPO_TAPPA8
 ## L'anta che scorre (sala_portone_torre del GLB della sala; la collisione è sua figlia).
 @export var anta: Node3D
 ## Dove scorre (direzione globale) e di quanto (m).

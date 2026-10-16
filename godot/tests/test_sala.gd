@@ -60,7 +60,8 @@ func _run() -> void:
 	check(absf(pool.get_surface_global_y() - 0.88) < 0.03 and not pool.suckable, "l'acqua della vasca è quasi al bordo e non si aspira")
 	var det := level.get_node_or_null("Sala/Dettagli")
 	if det:
-		check(det.get_child_count() >= 100, "i dettagli della sala sono montati (%d nodi)" % det.get_child_count())
+		# (Il 16 ottobre l'ambiente ne ha tolti un po', compenetrati o al posto del soppalco.)
+		check(det.get_child_count() >= 80, "i dettagli della sala sono montati (%d nodi)" % det.get_child_count())
 	var space := p.get_world_3d().direct_space_state
 	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-3, 1, 18), Vector3(-3, 1, 22)))
 	check(not wall.is_empty() and absf(wall.position.z - 20.0) < 0.3, "il muro sud ha la collisione")
@@ -74,7 +75,8 @@ func _run() -> void:
 	check(ghost.is_empty(), "niente muri invisibili in mezzo alla piscina")
 	var floor_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0, 1, 2), Vector3(0, -4, 2)))
 	check(not floor_hit.is_empty() and floor_hit.position.y < -2.0, "il fondo della piscina ha la collisione")
-	var pool_q := PhysicsRayQueryParameters3D.create(Vector3(0, 0.5, 14.0), Vector3(0, 0.5, 10.0))
+	# (Solo il mondo: il muro invisibile del cordone, davanti, ferma solo il giocatore.)
+	var pool_q := PhysicsRayQueryParameters3D.create(Vector3(0, 0.5, 14.0), Vector3(0, 0.5, 10.0), Layers.WORLD)
 	pool_q.exclude = [p.get_rid()]
 	var pool_hit := space.intersect_ray(pool_q)
 	check(not pool_hit.is_empty() and pool_hit.position.z > 12.1 and pool_hit.position.z < 12.5, "la vasca è solida: il muro davanti ferma (z %.2f)" % (pool_hit.position.z if not pool_hit.is_empty() else 0.0))
@@ -251,15 +253,19 @@ func _run() -> void:
 	# Sotto c'è il pozzo della camera delle onde (tappe 5-6, test_tappe56.gd): la demo va avanti.
 	check(not bool(level.get(&"demo_finished")), "la demo non finisce al portello: sotto c'è il pozzo")
 
-	print("Area bimbi e recinto (tappa 5 rifatta)")
+	print("Area bimbi e spiaggia senza recinto (tappa 5 rifatta)")
 	check(level.get_node_or_null("RuotaESecchio") == null, "il secchio gigante è solo scenografia: niente ruota a pale da far girare")
-	var cancello := level.get_node_or_null("Sala/Interattivi/sala_cancello_spiaggia") as Node3D
-	if cancello:
-		var space2 := p.get_world_3d().direct_space_state
-		var varco := PhysicsRayQueryParameters3D.create(Vector3(-0.6, 1.0, -15.0), Vector3(-0.6, 1.0, -12.0))
-		varco.exclude = [p.get_rid()]
-		var colpo := space2.intersect_ray(varco)
-		check(colpo.is_empty(), "il cancello del recinto è aperto: si passa (%s)" % (str(colpo.get("collider")) if not colpo.is_empty() else "libero"))
+	var interattivi := level.get_node_or_null("Sala/Interattivi")
+	var tolti := []
+	for nome in ["sala_recinto_spiaggia", "sala_cancello_spiaggia", "sala_ruota_cancello", "sala_turbina_scarico", "sala_quadro_elettrico"]:
+		if interattivi and interattivi.get_node_or_null(nome):
+			tolti.append(nome)
+	check(tolti.is_empty(), "niente recinto, cancello, ruota, turbina e quadro sulla spiaggia %s" % str(tolti))
+	var space2 := p.get_world_3d().direct_space_state
+	var varco := PhysicsRayQueryParameters3D.create(Vector3(-0.6, 1.0, -15.0), Vector3(-0.6, 1.0, -12.0))
+	varco.exclude = [p.get_rid()]
+	var colpo := space2.intersect_ray(varco)
+	check(colpo.is_empty(), "dalla sala si scende sulla spiaggia della piscina (%s)" % (str(colpo.get("collider")) if not colpo.is_empty() else "libero"))
 
 	if interni:
 		print("Dagli spogliatoi alla sala")
@@ -292,7 +298,17 @@ func _run() -> void:
 	var turn := rad_to_deg(dir_side.angle_to(dir_front))
 	check(turn > 3.0 and turn < 17.0, "di lato, l'occhio si gira ma al massimo di 15 gradi (%.1f)" % turn)
 
-	print("Easter egg: il getto in faccia le chiude l'occhio")
+	print("Easter egg: il getto in faccia le chiude l'occhio, anche da fuori dal cordone")
+	var cordone := level.find_children("cordone_vasca_*", "CollisionObject3D", true, false)
+	var solo_giocatore := cordone.all(func(c): return (c as CollisionObject3D).collision_layer == Layers.SOLO_GIOCATORE)
+	check(cordone.size() >= 20 and solo_giocatore,
+		"il muro invisibile del cordone (%d pezzi) è sul livello che ferma solo il giocatore" % cordone.size())
+	p.teleport(Vector3(0.0, 0.0, 15.2), 0.0, 0.0)
+	await _frames(5)
+	Input.action_press(&"move_forward")
+	await _frames(120)
+	Input.action_release(&"move_forward")
+	check(p.global_position.z > 13.2, "il cordone ferma il giocatore (z %.2f)" % p.global_position.z)
 	check(not medusa.occhio_chiuso(), "l'occhio è aperto")
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.0, 0.0, 15.2), 0.0, 0.0)

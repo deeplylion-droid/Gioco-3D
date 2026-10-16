@@ -6,13 +6,10 @@ extends Node3D
 ## profonda e sparandola fuori dalla vasca; a piscina vuota il pulsante della botola si attiva, lo
 ## colpisci e scendi dalla scala del pozzo. Tappa 6, sotto la sala (ambienti tecnici): la sala
 ## pompe e il risveglio (RisveglioSalaPompe). Poi il ritorno al buio (tappa 7) e lei che sbuca dal
-## bordo (tappa 8); la demo finisce ai piedi della torre degli scivoli.
+## bordo (tappa 8); la demo finisce al portone della sala della torre, sulla parete est.
 
 ## Materiale delle pozzanghere della sala (addon acqua) al posto di M_amb_pozzanghera del GLB.
 @export var puddle_material: Material
-## Il cancello del recinto della spiaggia è aperto fin dall'inizio (gradi intorno a Y, come lo
-## apriva la ruota grande nella v0.3.0).
-@export var cancello_aperto := -95.0
 
 ## La lampada sul palo vicino alla vasca: si accende quando ti avvicini.
 @export var statue_lamp: FlickerLight
@@ -99,7 +96,7 @@ func _ready() -> void:
 
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
-	_tappa5_rifatta()
+	_cordone_vasca()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D
@@ -157,14 +154,12 @@ func _setup_hall() -> void:
 ## riempire, niente recinto, niente turbina dello scarico. Finché l'ambiente non manda i modelli
 ## nuovi, il cancello del recinto resta spalancato (con la sua collisione) e la turbina dello
 ## scarico, che non serve più, non si vede.
-func _tappa5_rifatta() -> void:
-	var cancello := get_node_or_null(^"Sala/Interattivi/sala_cancello_spiaggia") as Node3D
-	if cancello:
-		cancello.basis = Basis(Vector3.UP, deg_to_rad(cancello_aperto)) * cancello.basis
-	for nome in [^"Sala/Interattivi/sala_turbina_scarico", ^"Sala/Interattivi/sala_turbina_carter"]:
-		var n := get_node_or_null(nome) as Node3D
-		if n:
-			n.visible = false
+## Il muro invisibile del cordone chiuso intorno alla vasca della medusa (cordone_vasca_0..19 di
+## sala_vasca_centrale.glb, D1): ferma il giocatore ma non il getto (l'easter egg dell'occhio si
+## raggiunge da fuori), sul livello "solo_giocatore".
+func _cordone_vasca() -> void:
+	for n in find_children("cordone_vasca_*", "CollisionObject3D", true, false):
+		(n as CollisionObject3D).collision_layer = Layers.SOLO_GIOCATORE
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override

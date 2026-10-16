@@ -9,15 +9,15 @@ extends Node
 ## 3. Quando l'hai vista bene (nell'inquadratura, vicino al centro, senza niente in mezzo, per due
 ##    secondi di fila) ti fissa ancora un po', poi scivola sotto e la sua luce si allontana lungo il
 ##    condotto.
-## 4. Poi la strada verso la torre: lungo il muro nord, dal cancello del recinto (aperto fin
-##    dall'inizio, finché l'ambiente non toglie il recinto) giù nella spiaggia della piscina vuota, lungo la spiaggia e fuori dal lato est, ai
-##    piedi della torre, con i checkpoint.
+## 4. Appena lei se ne va, il portone della sala della torre sulla parete est si apre da solo
+##    (scelta dell'utente del 16 ottobre): tra l'area bimbi e la piscina, poi lungo il lato nord della
+##    spiaggia fino al portone, con i checkpoint; lì finisce la demo.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
 ## è spenta: il test la accende sulla fossa provvisoria e spegne la fine della demo sulla scia.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa8.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
-const PIEDE_TORRE := Vector3(10.6, 0.0, -14.3)
+const PORTONE := Vector3(19.84, 0.0, -15.0)
 
 var level: Node
 var p: Player
@@ -42,14 +42,22 @@ func _run() -> void:
 	print("  (fossa dell'ambiente: %s)" % ("sì" if fossa_vera else "non ancora, uso quella provvisoria"))
 	check(not lei.medusa.visible, "prima non si vede")
 
-	print("Il recinto della piscina è aperto (tappa 5 rifatta, niente ruota né secchio)")
+	print("Niente recinto sulla spiaggia (tappa 5 rifatta, niente ruota né secchio)")
 	check(level.get_node_or_null("RuotaESecchio") == null, "niente più ruota a pale e secchio da riempire")
-	var cancello := level.get_node_or_null(^"Sala/Interattivi/sala_cancello_spiaggia") as Node3D
-	if cancello:
-		check(absf(cancello.basis.get_euler().y) > deg_to_rad(80.0), "il cancello del recinto è spalancato fin dall'inizio")
+	check(level.get_node_or_null(^"Sala/Interattivi/sala_cancello_spiaggia") == null, "niente recinto né cancello")
+	var portone := level.get(&"portone") as PortoneTorre
+	check(portone != null and portone.anta != null and portone.apertura == PortoneTorre.Apertura.DOPO_TAPPA8 and not portone.is_aperto(),
+		"il portone della sala della torre è chiuso e si aprirà da solo dopo la tappa 8")
 
 	print("Prima del risveglio non succede niente")
 	_prepara()
+	p.teleport(Vector3(18.5, 0.0, -15.0), -PI * 0.5, 0.0)
+	await _frames(10)
+	check(not bool(level.get(&"demo_finished")) and not portone.is_aperto() and not portone.in_movimento,
+		"davanti al portone prima della tappa 8: resta chiuso e la demo non finisce")
+	p.teleport(Vector3(16.5, 0.0, -15.0), -PI * 0.5, 0.0)
+	await _frames(10)
+	check(not _checkpoint().ends_with("CheckpointTorre"), "e il checkpoint del portone vale solo al buio (%s)" % _checkpoint())
 	p.teleport(Vector3(-18.3, 0.0, -3.0), 0.0, 0.0)
 	await _frames(60)
 	check(lei.fase == LeiSbuca.Fase.ATTESA and not lei.medusa.visible, "con le luci di prima lei non sbuca")
@@ -135,10 +143,21 @@ func _run() -> void:
 	p.set_look(PI, 0.0)
 	await _frames(30)
 
-	# Da qui lo scivolo grande è in mezzo: anche guardando verso di lei non la vedi.
+	# Con qualcosa in mezzo (un pannello messo qui per il test: lo scivolo grande che la copriva da
+	# qui non c'è più dal 16 ottobre) anche guardando verso di lei non la vedi.
+	var pannello := StaticBody3D.new()
+	var forma := CollisionShape3D.new()
+	var scatola := BoxShape3D.new()
+	scatola.size = Vector3(3.0, 3.0, 0.2)
+	forma.shape = scatola
+	pannello.add_child(forma)
+	level.add_child(pannello)
+	var meta := p.camera.global_position.lerp(occhio_lei, 0.5)
+	pannello.global_transform = Transform3D(Basis.looking_at(occhio_lei - p.camera.global_position, Vector3.UP), meta)
 	p.look_at_point(occhio_lei)
 	await _frames(3)
-	check(not lei.la_stai_guardando(p), "con lo scivolo in mezzo non conta come vista")
+	check(not lei.la_stai_guardando(p), "con qualcosa in mezzo non conta come vista")
+	pannello.queue_free()
 	p.set_look(PI, 0.0)
 	await _frames(30)
 
@@ -174,30 +193,30 @@ func _run() -> void:
 	check(fuga_vista and luce_lontana > 1.5, "scivola sotto e la sua luce si allontana sott'acqua (%.1f m)" % luce_lontana)
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
 
-	print("4. Verso la torre, dalla spiaggia della piscina vuota")
-	var ok := true
-	for t in [Vector3(-18.3, 0, -9.7), Vector3(-18.3, 0, -15.1), Vector3(-17.5, 0, -16.5), Vector3(-15.9, 0, -16.9),
-			Vector3(-10.5, 0, -16.9), Vector3(-5.5, 0, -17.1), Vector3(-0.7, 0, -16.3), Vector3(0.0, 0, -15.0)]:
-		ok = ok and await _cammina_verso(t, 900)
-	check(ok, "lungo il muro nord, lontano dalle vasche")
-	ok = true
-	for t in [Vector3(0.0, 0, -13.0), Vector3(0.6, 0, -12.2), Vector3(3.5, 0, -11.8)]:
-		ok = ok and await _cammina_verso(t, 600)
+	print("4. Il portone della sala della torre si apre da solo; la strada fino a lì")
+	portone = level.get(&"portone") as PortoneTorre
 	await _frames(5)
-	check(ok and p.global_position.y < -0.1, "dal cancello giù nella spiaggia della piscina vuota (y %.2f)" % p.global_position.y)
+	check(portone.in_movimento or portone.is_aperto(), "appena lei se ne va il portone comincia ad aprirsi")
+	var ok := true
+	for t in [Vector3(-14.0, 0, -4.0), Vector3(-8.3, 0, -4.5), Vector3(-8.3, 0, -8.0), Vector3(-8.3, 0, -12.75),
+			Vector3(0.0, 0, -12.75), Vector3(2.0, 0, -12.75)]:
+		ok = ok and await _cammina_verso(t, 900)
+	await _frames(5)
+	check(ok, "tra l'area bimbi e la piscina, poi lungo il lato nord della spiaggia")
 	check(_checkpoint().ends_with("CheckpointSpiaggiaBuio"), "checkpoint: la spiaggia (%s)" % _checkpoint())
+	check(portone.is_aperto(), "intanto il portone si è aperto")
+	var anta := portone.anta.global_position
+	check(absf(anta.z - (PORTONE.z + portone.corsa)) < 0.05 and absf(anta.x - PORTONE.x) < 0.05,
+		"l'anta è scorsa di %.1f m verso sud (%s)" % [portone.corsa, str(anta)])
 	ok = true
-	for t in [Vector3(6.1, 0, -12.2)]:
-		ok = ok and await _cammina_verso(t, 600)
-	ok = true
-	for t in [Vector3(8.1, 0, -12.5), Vector3(9.5, 0, -13.3), PIEDE_TORRE + Vector3(-0.3, 0, 0)]:
-		ok = ok and await _cammina_verso(t, 600)
+	for t in [Vector3(8.0, 0, -12.75), Vector3(15.0, 0, -14.0), Vector3(16.5, 0, -15.0)]:
+		ok = ok and await _cammina_verso(t, 900)
 	await _frames(10)
-	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino ai piedi della torre: checkpoint (%s)" % _checkpoint())
+	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino davanti al portone: checkpoint (%s)" % _checkpoint())
 	if fossa_vera:
-		check(bool(level.get(&"demo_finished")), "ai piedi della torre finisce la demo")
+		check(bool(level.get(&"demo_finished")), "davanti al portone aperto finisce la demo")
 	else:
-		print("  (la fine della demo passa ai piedi della torre quando c'è la fossa)")
+		print("  (la fine della demo passa al portone quando c'è la fossa)")
 	_fine()
 
 
