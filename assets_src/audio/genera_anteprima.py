@@ -13,6 +13,7 @@
   gutturale (respiro umido, gola che gorgoglia sott'acqua, rantolo, ringhio prima del morso), in
   due intensità (genera_lei.proposte). Il 16 ottobre l'utente ha scelto la gutturale, che ora è
   nel gioco; le due anteprime restano com'erano.
+Le altre proposte ancora da approvare (proposta_<nome>_a/b.ogg) le fa genera_proposte.py.
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
 nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte] (senza argomenti, tutte).

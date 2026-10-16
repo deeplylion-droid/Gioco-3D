@@ -187,6 +187,7 @@ riproduzioni appese; lo stato resta giusto. Il test forza la riproduzione vera c
 Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e le anteprime
 `res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg` e `anteprima_lei.ogg` (cartella
 con `.gdignore`: non entra nel gioco). Le proposte per l'utente non sono nel gioco: le loro anteprime
-(`anteprima/proposta_*.ogg`) le fa `genera_anteprima.py proposte`.
+(`anteprima/proposta_*.ogg`) le fanno `genera_lei.py` con `genera_anteprima.py proposte` e
+`genera_proposte.py`.
 `assets_src/audio/verifica.py file.ogg --png cartella` stampa loudness e picchi e disegna lo
 spettrogramma.
