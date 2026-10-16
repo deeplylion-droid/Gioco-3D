@@ -214,13 +214,14 @@ func _run() -> void:
 	p.water_pack.set_tank_amount(20.0)
 	var prima_spiaggia := puddle.get_liters()
 	p.look_at_point(Vector3(2.0, 1.0, -9.0))
-	await _hold(&"spray", 60)
+	# Il getto B parte dopo un attimo di carica (WaterPack.spray_delay): lo si tiene premuto di più.
+	await _hold(&"spray", 60 + int(p.water_pack.spray_delay * 60.0))
 	var dove_spiaggia := p.water_pack.hit_point
 	await _frames(40)
 	check(puddle.get_liters() > prima_spiaggia + 4.0, "l'acqua sparata dentro la vasca (in %s) ci ricola (+%.1f l)" % [dove_spiaggia, puddle.get_liters() - prima_spiaggia])
 	var prima_fuori := puddle.get_liters()
 	p.look_at_point(Vector3(13.0, 0.5, 2.0))
-	await _hold(&"spray", 60)
+	await _hold(&"spray", 60 + int(p.water_pack.spray_delay * 60.0))
 	var dove_fuori := p.water_pack.hit_point
 	await _frames(40)
 	check(absf(puddle.get_liters() - prima_fuori) < 0.05, "l'acqua sparata fuori dalla vasca (in %s) non torna" % dove_fuori)

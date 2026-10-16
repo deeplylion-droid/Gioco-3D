@@ -210,7 +210,8 @@ func _run() -> void:
 	p.look_at_point(jingle.global_position + Vector3(0, 0.12, 0))
 	await _frames(3)
 	Input.action_press(&"spray")
-	await _frames(40)
+	# Il getto B parte dopo un attimo di carica (WaterPack.spray_delay).
+	await _frames(40 + int(p.water_pack.spray_delay * 60.0))
 	check(_conta(&"zaino_getto_inizio") >= 1, "parte il getto")
 	var zaino := _zaino()
 	check(zaino != null and zaino.get(&"getto").is_suonando(), "il getto suona finché si spruzza")
