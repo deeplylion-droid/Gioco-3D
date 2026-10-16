@@ -292,6 +292,32 @@ func _run() -> void:
 	var turn := rad_to_deg(dir_side.angle_to(dir_front))
 	check(turn > 3.0 and turn < 17.0, "di lato, l'occhio si gira ma al massimo di 15 gradi (%.1f)" % turn)
 
+	print("Easter egg: il getto in faccia le chiude l'occhio")
+	check(not medusa.occhio_chiuso(), "l'occhio è aperto")
+	p.water_pack.set_tank_amount(20.0)
+	p.teleport(Vector3(0.0, 0.0, 15.2), 0.0, 0.0)
+	await _frames(5)
+	p.look_at_point(medusa.get_eye_position())
+	await _frames(3)
+	# Primo colpo (1 s di getto): si chiude; poi, mentre è chiuso, un altro colpo di mezzo secondo.
+	Input.action_press(&"spray")
+	var chiuso_a := -1
+	for i in 60:
+		await get_tree().physics_frame
+		if chiuso_a < 0 and medusa.occhio_chiuso():
+			chiuso_a = i
+	Input.action_release(&"spray")
+	check(chiuso_a >= 0, "col getto in faccia l'occhio si chiude (dopo %.2f s)" % (chiuso_a / 60.0))
+	await _frames(90)
+	check(medusa.occhio_chiuso(), "e resta chiuso")
+	Input.action_press(&"spray")
+	await _frames(30)
+	Input.action_release(&"spray")
+	# Si riapre circa 5,75 s dopo il primo colpo (0,25 + 5 + 0,5): i colpi mentre è chiuso non lo
+	# fanno ripartire (altrimenti sarebbe chiuso fino a circa 8,4 s).
+	await _frames(216)
+	check(not medusa.occhio_chiuso(), "e si riapre da solo dopo circa 5 s, anche se intanto lo colpisci ancora")
+
 	print("B5: i bambini sulla balconata (spenti dal 16 ottobre), in un lampo")
 	var kids: KidSighting = level.get_node("BambiniBalconata")
 	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]

@@ -21,6 +21,11 @@ extends Node3D
 @export var lamp_trigger: Area3D
 ## La medusa al centro della sala (con un metodo pulse() per la sigla).
 @export var statue: Node
+## Easter egg (16 ottobre): il getto in faccia alla medusa affacciata le fa chiudere l'occhio per
+## questi secondi (si chiude in 0,25 s e si riapre da solo); i colpi mentre è chiuso non lo fanno
+## ripartire. Un bersaglio del getto (WaterHitbox) davanti alla sua faccia, di questo raggio (m).
+@export var occhio_chiuso_secondi := 5.0
+@export var raggio_faccia := 0.6
 ## Il pulsante per i bambini sul muro della vasca: fa partire la sigla.
 @export var jingle_button: WaterButton
 @export var jingle_button_mesh: NodePath
@@ -76,6 +81,7 @@ func _ready() -> void:
 		puddle.emptied.connect(func(): GameState.reach_checkpoint(checkpoint_pozza))
 	if fine_demo_trigger:
 		fine_demo_trigger.body_entered.connect(_on_fine_demo)
+	_faccia_bagnabile.call_deferred()
 	_setup_tecnici()
 	if show_controls_hint:
 		_show_hint.call_deferred()
@@ -241,6 +247,30 @@ func _setup_tecnici() -> void:
 		for c in doppione.find_children("*", "CollisionObject3D", true, false):
 			(c as CollisionObject3D).collision_layer = 0
 			(c as CollisionObject3D).collision_mask = 0
+
+
+## Il bersaglio del getto sulla faccia della medusa (easter egg dell'occhio che si chiude).
+func _faccia_bagnabile() -> void:
+	var m := statue as Node3D
+	if m == null or not m.has_method(&"chiudi_occhio") or not m.has_method(&"get_eye_position"):
+		return
+	# L'occhio si sa dove sta quando il modello è pronto.
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	if not is_instance_valid(m):
+		return
+	var faccia := WaterHitbox.new()
+	faccia.name = "FacciaMedusa"
+	var forma := CollisionShape3D.new()
+	var sfera := SphereShape3D.new()
+	sfera.radius = raggio_faccia
+	forma.shape = sfera
+	faccia.add_child(forma)
+	m.add_child(faccia)
+	faccia.global_position = (m.call(&"get_eye_position") as Vector3) + Vector3(0.0, -0.15, 0.0)
+	faccia.water_hit.connect(func(_litri: float, _punto: Vector3, _dir: Vector3):
+		if m.visible and not bool(m.call(&"occhio_chiuso")):
+			m.call(&"chiudi_occhio", occhio_chiuso_secondi))
 
 
 func _on_fine_demo(body: Node3D) -> void:

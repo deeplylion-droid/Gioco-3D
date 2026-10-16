@@ -894,6 +894,7 @@ func _tappa8() -> void:
 	# apre quando arrivi davanti (FineDemo), con DOPO_TAPPA8 da solo appena lei va via.
 	var portone: Node3D = load("res://scripts/mechanisms/portone_torre.gd").new()
 	portone.name = "PortoneTorre"
+	portone.position = PORTONE_TORRE
 	own(portone, gp)
 	portone.set(&"anta", anta)
 	portone.set(&"vetro", sala.get_node_or_null("Interattivi/sala_lampeggiante_torre"))
