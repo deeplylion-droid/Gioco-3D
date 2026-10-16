@@ -38,8 +38,10 @@ def tacco_piastrella(rng, i):
     return out
 
 
-def strato_bagnato(rng, forza=1.0):
-    """Lo 'splat' della suola sull'acqua sottile e le goccioline che schizzano."""
+def strato_bagnato(rng, forza=1.0, goccioline=True):
+    """Lo 'splat' della suola sull'acqua sottile e le goccioline che schizzano. goccioline=False:
+    solo lo splat e il risucchio della suola (i numeri casuali si estraggono lo stesso, così il
+    resto non cambia; per l'anteprima di confronto del 16 ottobre)."""
     n = n_of(0.35)
     out = np.zeros(n)
     k = n_of(0.05)
@@ -53,8 +55,10 @@ def strato_bagnato(rng, forza=1.0):
     suck += bp(white(k, rng), 400, 1500, 2) * env_points([(0, 0), (0.015, 1), (0.06, 0)], k) * 0.2
     mix_into(out, suck * forza, n_of(rng.uniform(0.07, 0.12)))
     for _ in range(rng.integers(4, 9)):
-        b = bollicina(rng, rng.uniform(1600, 4200), rng.uniform(0.004, 0.012), rise=0.6)
-        mix_into(out, b * rng.uniform(0.05, 0.2) * forza, n_of(rng.uniform(0.005, 0.15)))
+        f0, tau = rng.uniform(1600, 4200), rng.uniform(0.004, 0.012)
+        g, t0 = rng.uniform(0.05, 0.2), rng.uniform(0.005, 0.15)
+        if goccioline:
+            mix_into(out, bollicina(rng, f0, tau, rise=0.6) * g * forza, n_of(t0))
     return out
 
 
@@ -62,10 +66,10 @@ def passo_piastrelle(rng, i):
     return fade(trim_silence(tacco_piastrella(rng, i)), 0, 0.02)
 
 
-def passo_bagnato(rng, i):
+def passo_bagnato(rng, i, goccioline=True):
     out = np.zeros(n_of(0.45))
     mix_into(out, tacco_piastrella(rng, i) * 0.6, 0)
-    mix_into(out, strato_bagnato(rng), n_of(0.004))
+    mix_into(out, strato_bagnato(rng, goccioline=goccioline), n_of(0.004))
     return fade(trim_silence(out), 0, 0.03)
 
 

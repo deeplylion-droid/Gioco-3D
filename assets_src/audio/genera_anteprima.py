@@ -15,11 +15,13 @@
   nel gioco; le due anteprime restano com'erano.
 - confronto_pioggia_bollicine.ogg (circa 31 s): la sala con solo i fondi, 15 s con la pioggia di
   prima (con le bollicine dei rivoli) e 15 s con quella di adesso (16 ottobre).
+- confronto_passi_goccioline.ogg (circa 21 s): si cammina sul bagnato nella sala, 10 s con i passi
+  di oggi (con le goccioline che schizzano) e 10 s con gli stessi passi senza goccioline.
 Le anteprime delle altre proposte (proposta_<nome>_a/b.ogg) le fa genera_proposte.py.
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
-nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte|pioggia] (senza argomenti,
-tutte).
+nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte|pioggia|passi] (senza
+argomenti, tutte).
 """
 import os
 import sys
@@ -412,7 +414,52 @@ def anteprima_confronto_pioggia():
           f'dopo {lufs(out[-n_of(PEZZO):]):.1f}')
 
 
-def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia')):
+# --- confronto: i passi bagnati con e senza le goccioline (16 ottobre) --------------------------
+
+def anteprima_confronto_passi():
+    """Si cammina sul bagnato nella sala, con i fondi del gioco (pioggia sulla cupola senza
+    bollicine, vento, nave): 10 s con i passi bagnati di oggi (lo sciac della suola e 4-9 goccioline
+    acute che schizzano), un attimo di silenzio, poi 10 s con gli stessi passi senza goccioline.
+    Stessi passi (stessi semi di genera_giocatore), stessi tempi, stessi fondi, stesso guadagno."""
+    import genera_giocatore as gg
+    from lib_audio import f32, normalize_lufs
+
+    def passi(goccioline):
+        rng = np.random.default_rng(1990)           # come genera_giocatore.main()
+        for i in range(6):
+            gg.passo_piastrelle(rng, i)
+        return [normalize_lufs(f32(gg.passo_bagnato(rng, i, goccioline=goccioline)), -20.0, -1.0, short=True)
+                for i in range(6)]
+
+    PEZZO, PAUSA, DA = 10.0, 0.8, 6.0
+    n = n_of(PEZZO)
+    fondi = np.zeros((n, 2), dtype=np.float32)
+    for rel, g in [('ambiente/pioggia_cupola_loop.ogg', 0.0), ('ambiente/vento_loop.ogg', -2.0),
+                   ('ambiente/nave_loop.ogg', 0.0)]:
+        fondi += tile(leggi(rel), PEZZO, DA) * db(g)
+    meta = []
+    for goccioline in (True, False):
+        varianti = passi(goccioline)
+        rng = np.random.default_rng(16)             # stessi tempi, toni e volumi nelle due metà
+        eff = np.zeros((n, 2), dtype=np.float32)
+        t, k = 0.4, 0
+        while t < PEZZO - 0.4:
+            x = varianti[k % 6]
+            # come nel gioco: -2 dB di taratura, l'intensità del passo e ±0,8 semitoni di tono
+            x = varispeed(x, 2 ** (rng.uniform(-0.8, 0.8) / 12))
+            mix_into(eff, pan(x * db(-5.0 + rng.uniform(-1, 1)), -0.08 if k % 2 else 0.08), n_of(t))
+            t += 0.5 + rng.uniform(-0.03, 0.03)
+            k += 1
+        eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+        meta.append(fade(fondi + eff, 0.6, 0.4))
+    out = np.concatenate([meta[0], np.zeros((n_of(PAUSA), 2), dtype=np.float32), meta[1]])
+    out = limiter(out * db(-16.0 - lufs(out)), -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'confronto_passi_goccioline.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS prima {lufs(out[:n]):.1f}  dopo {lufs(out[-n:]):.1f}')
+
+
+def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi')):
     if 'sala' in quali:
         anteprima_sala()
     if 'tecnici' in quali:
@@ -424,7 +471,9 @@ def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia')):
         anteprima_proposta_lei(True)
     if 'pioggia' in quali:
         anteprima_confronto_pioggia()
+    if 'passi' in quali:
+        anteprima_confronto_passi()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte', 'pioggia'))
+    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi'))
