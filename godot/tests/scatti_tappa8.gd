@@ -153,7 +153,8 @@ func _portellone_getto_vecchio() -> void:
 
 ## Piscina vuota: dal fondo si spara un po' d'acqua sul muro sotto il pulsante (come mirandolo), poi
 ## lo si colpisce e il portellone si apre; lo scatto dal fondo verso il portellone aperto. Con
-## [param vecchio] la vasca raccoglie ancora l'acqua sparata, come nella v0.3.1.
+## [param vecchio] la vasca raccoglie ancora l'acqua sparata e la tiene, come nella v0.3.1 (lo scolo
+## della piscina vuota è fermo).
 func _portellone_getto(vecchio := false) -> void:
 	var vasca := level.get_node(^"Piscina/Pozza") as WaterTank
 	var svuota := level.get_node(^"Piscina/SvuotaPiscina")
@@ -165,8 +166,10 @@ func _portellone_getto(vecchio := false) -> void:
 	Engine.time_scale = 4.0
 	await _frames(int(60 * 3.0 / 4.0) + 20)
 	Engine.time_scale = 1.0
-	if vecchio and not vasca.is_in_group(&"water_catchers"):
-		vasca.add_to_group(&"water_catchers")
+	if vecchio:
+		svuota.set_physics_process(false)
+		if not vasca.is_in_group(&"water_catchers"):
+			vasca.add_to_group(&"water_catchers")
 	if not p.has_item(&"zaino_pompa"):
 		p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
 	p.water_pack.set_equipped(true, false)
@@ -190,6 +193,7 @@ func _portellone_getto(vecchio := false) -> void:
 		# Di nuovo come prima del colpo: vuota, pulsante acceso e non premuto, portellone chiuso.
 		vasca.remove_from_group(&"water_catchers")
 		vasca.fill = 0.0
+		svuota.set_physics_process(true)
 		pulsante.call(&"load_state", {"powered": false})
 		svuota.call(&"load_state", {"attivo": true})
 		portello.set(&"is_open", false)
