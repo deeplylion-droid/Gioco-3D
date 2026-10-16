@@ -15,9 +15,11 @@ Scatti dal motore con la luce vera di quel momento (blackout dopo il risveglio: 
 | 7 | magazzino dei gonfiabili | | | |
 | 8 | la serranda vista dalla sala | | | |
 
-**A, deposito della festa.** La roba della piscina messa via e dimenticata: lettini impilati, ombrelloni chiusi, carrelli di asciugamani, casse di tubi galleggianti, un coccodrillo gonfiabile sgonfio e la grande testa della mascotte, un delfino, appoggiata al muro del corridoio che guarda chi passa. Nella tromba delle scale e nel magazzino ci sono festoni di bandierine sbiadite, alcune cadute.
+**Versione piena (16 ottobre, sera).** Dopo la prima versione, che restava quasi vuota, ogni tratto di muro è pieno sui due lati: gruppi di oggetti appoggiati, cataste, cose cadute, roba appesa ai muri e, sulle scale, oggetti piccoli sui gradini. Il magazzino è stracolmo. Al centro resta sempre una corsia libera di almeno un metro. Niente ripetizioni vicine e sempre la stessa lancia (la C1) in tutti gli scatti, anche in `senza/`.
 
-**B, manutenzione.** Il retro dell'acquapark: fusti blu di cloro, bancali di sacchi di sale, un transpallet lasciato davanti alla grata, il carrello rosso degli attrezzi con il retino. Frecce gialle dipinte a terra e nastro bianco e rosso sul corrimano.
+**A, deposito della festa.** La roba della piscina messa via e dimenticata: lettini impilati, ombrelloni chiusi, materassini arrotolati, carrelli di asciugamani, casse di tubi galleggianti, scatoloni colorati, palloni, braccioli, un coccodrillo gonfiabile sgonfio; ai muri salvagenti, bacheche e cartelli e la grande testa della mascotte, un delfino, appoggiata al muro del corridoio che guarda chi passa. Nella tromba delle scale e nel magazzino ci sono festoni di bandierine sbiadite, alcune cadute.
+
+**B, manutenzione.** Il retro dell'acquapark: fusti blu di cloro, bancali di sacchi di sale, casse di plastica impilate, scatoloni, transpallet, carrelli degli attrezzi, secchi; ai muri rulli col tubo, quadri elettrici, estintori, cartelli e un fascio di tubi sotto il soffitto. Frecce gialle dipinte a terra e nastro bianco e rosso sul corrimano.
 
 **In tutte e due**, per non perdersi: cartelli verdi d'uscita accesi alle svolte (con la loro lucina) e un corrimano giallo sulla scala del corridoio C2. Gli oggetti stanno ai lati: la strada resta libera.
 
