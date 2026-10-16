@@ -34,5 +34,5 @@ if __name__ == '__main__':
         m.main()
     catalogo.main()
     licenze.main()
-    genera_anteprima.main(('sala', 'tecnici', 'lei', 'pioggia'))
+    genera_anteprima.main(('sala', 'tecnici', 'lei', 'pioggia', 'passi'))
     print(f'Fatto in {time.time() - t0:.0f} s')

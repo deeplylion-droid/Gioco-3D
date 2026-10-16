@@ -226,8 +226,9 @@ riproduzioni appese; lo stato resta giusto. Il test forza la riproduzione vera c
 ```
 
 Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e le anteprime
-`res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg`, `anteprima_lei.ogg` e
-`confronto_pioggia_bollicine.ogg` (cartella con `.gdignore`: non entra nel gioco). Le anteprime delle
+`res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg`, `anteprima_lei.ogg`,
+`confronto_pioggia_bollicine.ogg` e `confronto_passi_goccioline.ogg` (cartella con `.gdignore`: non
+entra nel gioco). Le anteprime delle
 proposte per l'utente (`anteprima/proposta_*.ogg`) restano com'erano quando le ha ascoltate: si
 rifanno solo a mano (`genera_anteprima.py proposte` per lei, `genera_proposte.py` per le altre,
 `genera_proposte_getto.py` per la lancia dello zaino, con i suoni sciolti in
