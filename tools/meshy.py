@@ -17,14 +17,19 @@ def _req(method, path, body=None):
         raise RuntimeError(f'{method} {path} -> {e.code}: {e.read().decode()[:500]}')
 
 
+def _path(kind):
+    # 'image-to-3d' -> /v1/image-to-3d; text-to-3d sta su /v2
+    return f'/v2/{kind}' if kind == 'text-to-3d' else f'/v1/{kind}'
+
+
 def create(kind, body):
-    return _req('POST', f'/v1/{kind}', body)['result']
+    return _req('POST', _path(kind), body)['result']
 
 
 def wait(kind, task_id, every=5, timeout=1800):
     t0 = time.time()
     while True:
-        t = _req('GET', f'/v1/{kind}/{task_id}')
+        t = _req('GET', f'{_path(kind)}/{task_id}')
         if t['status'] in ('SUCCEEDED', 'FAILED', 'CANCELED'):
             return t
         if time.time() - t0 > timeout:

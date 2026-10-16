@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/pickup.gd" id="1_s"]
+[ext_resource type="Material" path="res://assets/materials/graybox_pickup.tres" id="2_m"]
+
+[sub_resource type="BoxShape3D" id="shape"]
+size = Vector3(0.45, 0.4, 0.45)
+
+[sub_resource type="BoxMesh" id="mesh"]
+size = Vector3(0.24, 0.16, 0.24)
+
+[node name="Pickup" type="Area3D"]
+script = ExtResource("1_s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.2, 0)
+shape = SubResource("shape")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.08, 0)
+mesh = SubResource("mesh")
+material_override = ExtResource("2_m")

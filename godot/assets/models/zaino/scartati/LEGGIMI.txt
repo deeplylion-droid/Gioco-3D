@@ -1,0 +1,2 @@
+Opzioni dello zaino-pompa scartate dall'utente (ha scelto l'opzione 2, lo zaino-giocattolo).
+Restano qui come archivio; il file .gdignore le esclude dall'import di Godot.

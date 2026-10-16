@@ -1,6 +1,6 @@
 # Documento di progetto (GDD)
 
-Titolo provvisorio: **Splash Lagoon**. Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
+Titolo provvisorio: **Splash Lagoon**. Finché l'utente non sceglie il nome, nel gioco non si scrive: il titolo mostra solo la statua e "Capitolo 1 · demo". Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
 
 ## Regola d'oro
 
@@ -29,7 +29,67 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 ## Trama (decisa)
 
 - Il giocatore **si sveglia a bordo**, senza spiegazioni e senza prologhi lunghi. Il mistero resta.
-- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises*, l'anno 1997 e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises* e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+
+### Lore nascosta (decisa dall'utente)
+
+- La crociera **è naufragata**.
+- **Un gruppo di bambini** a bordo è sopravvissuto, cavandosela da solo.
+- **Un mostro marino ha preso possesso della bambola-mascotte** (la nostra medusa) e negli anni **li ha cresciuti e allevati**.
+- Il gioco non la racconta in modo esplicito. Si scopre **solo in parte** con le Polaroid da collezione: nel capitolo 1 ce ne sono 10, e insieme non rivelano tutto.
+
+### Creature minori: i bambini (decise dall'utente, aspetto da decidere)
+
+- Sono i bambini cresciuti dal mostro, e compaiono **già nel capitolo 1**, magari solo **viste di sfuggita**.
+- **Da decidere**, con proposte all'utente: aspetto, quanti sono, che età hanno ora, cosa fanno, dove e come si vedono nel capitolo 1.
+- Vincoli fissi: sempre vestiti, niente nudità, niente gore e niente violenza esplicita sui bambini. Fanno paura con la postura, le maschere, gli occhi e il modo di muoversi.
+- **Primi due bambini (decisi dall'utente, 14 ottobre)**, ispirati ai disegni di Maniani (l'utente dichiara di avere i diritti) ma nel nostro stile marittimo. Modelli in `assets_src/bambini/`.
+  - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il primo corpo era "troppo pacioccone". Rifatto il 15 ottobre: bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata (render inviato all'utente, in attesa di riscontro; il primo corpo è in `scartati/`).
+  - **L'agnellino**: un peluche cucito, zuppo e macchiato di sale, con bottoni d'ottone al posto degli occhi e un fiocco alla marinara. Quando si rivela, il muso si spacca e mostra **un unico grande occhio**, scelto dall'utente. La testa di lupo resta solo come alternativa.
+
+## Qualità grafica: prima di tutto (deciso dall'utente, 15 ottobre, dopo aver giocato la v0.2.0)
+
+- **Non si fanno altri ambienti finché la qualità non è quella giusta.** Si lavora su un pezzo campione (corridoio del risveglio, zona davanti allo stanzino dei bagnini con il tornello) finché l'utente non lo approva; poi si porta tutto allo stesso livello.
+- **Pezzo campione approvato dall'utente (15 ottobre)**: il "dopo" del confronto (modelli Meshy di ambienti-1 più la luce nuova di grafica, `docs/report/render_grafica/campione/combinato_*.jpg`). "Belle le luci e anche le grafiche". Lo giudicherà meglio in gioco. Questo è il livello minimo per tutto il resto: ora si porta la sala principale allo stesso livello, poi si va avanti con gli ambienti nuovi.
+- **Grana della pellicola e glow spenti di serie** (deciso dall'utente giocando la v0.2.1, 15 ottobre): li ha spenti e gli piace di più. Restano attivabili dalle opzioni.
+- Bocciato nella v0.2.0: forme troppo squadrate, texture che si ripetono troppo (soprattutto nel corridoio), tornello in bassissima definizione. I modelli devono essere di qualità vera: per oggetti e arredi si usa Meshy ad alta risoluzione, come deciso all'inizio.
+- Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
+- La luce della torcia è troppo forte e brutta: va studiata diversamente.
+- I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
+
+## Principi di livello (deciso dall'utente, 15 ottobre)
+
+- **Il giocatore deve sentirsi guidato**: obiettivi chiari e oggetti da usare ben segnalati.
+- **Niente backtracking**: non si torna indietro per strade già fatte.
+- **Sempre un ambiente nuovo**: dopo ogni parte si entra in un posto mai visto, per esempio passando un cancello importante rimasto chiuso fino a quel momento.
+- Le risposte al questionario del 15 ottobre sono in `docs/riscontri/2026-10-15_questionario.md`.
+
+## Scelte del 16 ottobre (pagina delle proposte)
+
+Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-16_proposte.md`.
+
+- **Torcia**: sincronizzata con lo sguardo, cono di 40°, luce più uniforme. Approvata, ma l'utente la vuole rivedere in gioco.
+- **Interni**: approvati il vetro del primo pulsante con le crepe e la turbina nuova del cancello. **Da rifare**:
+  - la lamiera vicino all'estintore va tolta di lì del tutto;
+  - le valvole rosse vanno sul tubo con lo stesso diametro della sezione con la valvola.
+- **Sala principale**: approvati il soppalco tolto (neon, fari e cartelloni sulle pareti) e il cordone chiuso tutto intorno alla vasca della medusa, con un muro invisibile alto 2,5 m.
+- **Medusa**:
+  - approvate le 17 file di denti dentro la bocca;
+  - l'occhio che si chiude (easter egg, circa 5 secondi quando le spruzzi la faccia) ha una palpebra sola che scende dall'alto, come negli occhi delle bambole;
+  - voce della tappa 8: la versione gutturale.
+- **Area bimbi**: disposizione 1. La struttura sta nell'angolo con la scala verso chi arriva, lo scivolo scende nella vasca piccola e due funghi sono nella piazza.
+- **Piscina a onde (tappa 5)**:
+  - si svuota con lo zaino in circa **30 secondi, 4 zainate**;
+  - l'acqua sparata dentro la vasca ci torna, quindi va sparata fuori;
+  - niente scritte a schermo;
+  - l'acqua resta torbida com'è, ma ci nuotano **micro medusine luminose di vari colori** che attirano l'attenzione: si aspirano con l'acqua e si sparano via;
+  - pulsante della botola: versione A, un fungo rosso su una cassetta gialla con il lampeggiante giallo, che diventa verde quando lo colpisci.
+- **Sala pompe**: approvati la leva nuova, il cavo dalla leva al chiavistello, i tubi colorati dalle turbine alla chiusura stagna e lo schermo della TV appoggiato sul vetro.
+- **Tappa 7**: dopo la sala pompe si risale dal **magazzino dei gonfiabili** (proposta B). Si esce da una serranda nell'angolo sud-ovest della sala e la scia va lungo il muro fino all'area bimbi.
+- **Tappa 8**:
+  - lei resta affacciata finché non la guardi bene per 2 secondi (entro 18°, a meno di 14 m, senza ostacoli), poi dopo 6 secondi scivola sotto;
+  - la scia e la bava rosa sono **visibili al 75%**, cioè un po' trasparenti.
+- **Dopo la tappa 8**: la sala della torre è dietro la parete est (versione 2). Si entra da un portone scorrevole con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi e i bambini della balconata si propongono a parte.
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -38,7 +98,29 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Tra il 5° e il 7° minuto** il giocatore vede la mascotte **immobile come una statua**, come Huggy Wuggy nel primo capitolo di Poppy Playtime. Più tardi ripassa di lì e non c'è più.
 - Nella sala pompe il giocatore **riattiva le pompe** e la mascotte si sveglia.
 - **Finale**: inseguimento dentro gli scivoli.
-- Ordine delle zone, enigmi, tempi e percorso sono **da decidere**: vanno proposti all'utente.
+### Livello: scelte dell'utente (14 ottobre 2026)
+
+Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione decisa è in `docs/livello/capitolo1.md`. Queste sono le scelte:
+
+- **Percorso A, lineare** (circa 42 minuti, vedi `docs/livello/capitolo1.md`): risveglio, spogliatoi (zaino), statua, area bimbi (secchio gigante), piscina a onde vuota, sala pompe (lei si sveglia), ritorno al buio con il piedistallo vuoto, torre degli scivoli, inseguimento, fine.
+- **Statua S1, "il benvenuto"**: vicina e immobile, il giocatore le gira intorno quanto vuole e non succede niente.
+- **Piedistallo vuoto V1, "silenzio"**: una pozza d'acqua sul piedistallo e una scia di gocce che si allontana nel buio, senza musica.
+- **Inseguimento I1**: scivolata veloce negli scivoli con l'acqua che scorre. Ai bivi si colpisce la paratia giusta; ci si gira e la si respinge col getto. Alla fine una grata di sicurezza cala davanti a lei.
+- **Zaino Z1**: è una vera pompa. Aspira l'acqua da una vasca e la spara in un'altra, con un serbatoio; nell'acqua che scorre si ricarica.
+- **La scena in cui sbuca dal bordo va messa due volte**: a metà capitolo (SB2) e come ultima immagine del capitolo (SB1).
+- Il giocatore **si sveglia per terra nel corridoio**.
+- **Lo zaino si trova nello stanzino dei bagnini.**
+- **Oggetti da collezione: 10 Polaroid**, che rivelano una parte della lore nascosta.
+- **Checkpoint invisibili ma frequenti.**
+- **Morte**: la scena intera si può saltare.
+- **Prima dell'inseguimento lei può prenderti solo se te la vai a cercare** (per esempio se le arrivi troppo vicino). Non ti dà la caccia.
+
+**Confermato dall'utente il 14 ottobre:**
+- La scena dal bordo a metà capitolo va al ritorno al buio dopo le pompe: le vasche basse dell'area bimbi si stanno riempiendo e lei sbuca dal bordo a pochi metri. Poi scivola sotto e la sua luce si allontana sott'acqua.
+- La pianta comune: una sola sala sotto la cupola, con la piscina a onde al centro, l'area bimbi a sinistra e la torre degli scivoli a destra.
+- Il ritorno al buio passando dagli spogliatoi.
+- Nella scena della statua, quando parte la sigla, i canali della campana pulsano a tempo per un attimo.
+- 10 Polaroid, che rivelano la lore nascosta ma non per intero (vedi sopra).
 
 ## Strumento: lo zaino-pompa (approvato)
 
@@ -46,7 +128,8 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Il getto attiva turbine e pulsanti a distanza.
 - Riempie e svuota le vasche per raggiungere posti nuovi.
 - Respinge i mostri per un attimo e dà una spinta per saltare.
-- L'aspetto dello zaino è **da decidere**.
+- **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
+- **Aspetto scelto dall'utente il 14 ottobre**: lo zaino-giocattolo anni '90, colorato (turchese, giallo e arancione, con adesivi di delfini), con un serbatoio trasparente e una pistola ad acqua tipo Super Soaker. È un modello 3D di Meshy, l'opzione 2 in `godot/assets/models/zaino/`.
 
 ## La mascotte del capitolo 1: la medusa
 
@@ -71,6 +154,23 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - La versione con due occhi.
 - Il costume a fascia.
 
+### Il centro della sala: la vasca sollevata con la medusa affacciata (deciso dall'utente, 15 ottobre, sostituisce la statua)
+
+- La statua che poi si anima è "troppo Poppy Playtime". **La statua si tiene per più avanti** (modello e monumento restano negli asset).
+- Al suo posto, al centro della sala, c'è la **vasca sollevata** del concept `docs/concept/medusa_sbircia.jpg`: bordo piastrellato rialzato, acqua quasi al bordo. Dentro c'è **la medusa vera, affacciata e immobile**: mani sul bordo, campana in acqua, tentacoli che ricadono fuori, l'occhio che guarda chi entra.
+- **Poi sparisce**, nel punto della scaletta approvata in cui il piedistallo restava vuoto (tappa 7, ritorno al buio dopo la sala pompe). Con la stessa inquadratura, la vasca è vuota, l'acqua si muove ancora e una scia di gocce scende dal bordo e si allontana nel buio, verso l'area bimbi.
+- Vale la regola sulla qualità: vasca e posa della medusa devono essere al livello del pezzo campione.
+
+### La statua: il simbolo del gioco (deciso dall'utente, 15 ottobre)
+
+- La medusa è **il simbolo del gioco**. La sua statua deve essere **imponente** e messa in scena come Huggy Wuggy nella hall di Poppy Playtime.
+- Alta circa **4,5 m** in tutto, testa più tentacoli appoggiati. La creatura ha la stessa taglia.
+- La statua **poggia sui tentacoli**, che si appoggiano al piedistallo e si piegano, e non galleggia. I tentacoli devono essere di alta qualità: nastri carnosi e trasparenti, non tubicini.
+- **Tentacoli approvati dall'utente (15 ottobre)**: i nastri carnosi e traslucidi del commit ccbcfe5 ("molto belli"). Non cambiarli. Il resto della ragazza va portato allo stesso livello: prima i capelli, poi viso e occhio, superficie in vinile, mani e campana.
+- Sta su un **piedistallo monumentale**: entrando nella sala il giocatore la vede subito, intera e centrata, illuminata come un monumento, e poi le gira intorno. Da vicino incombe.
+- Alla base ci sono offerte lasciate dai bambini: un indizio silenzioso della lore.
+- **Com'è nella v0.2.0 (15 ottobre)**: per avere la statua intera e centrata a circa 10 m dalla porta degli spogliatoi, la sala è stata allungata di 8 m verso sud. Il monumento a gradoni sta in (0, 0, 10) e ha il piano largo 3,7 m, così i tentacoli appoggiano tutti. Ai lati della statua pendono due teli con la mascotte. Dall'ingresso la statua compete ancora con la cupola: c'è da proporre all'utente una versione più grande, circa 6 m con il monumento in proporzione.
+
 ### Natura: fuori bambola, dentro viva (deciso)
 
 - Il corpo è quello di una **bambola-mascotte in vinile**: liscio come un manichino, con un aspetto "plasticoso" voluto.
@@ -83,6 +183,9 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Da chiusa **non si vede**.
 - Quando attacca, la pelle del viso **si strappa sotto l'occhio** e si apre una **fauce enorme con file di denti da squalo**.
 - Va costruita nel modello 3D: geometria nascosta, osso o shape key per aprirla, bordi strappati.
+- **Versione malvagia (richiesta dell'utente, 15 ottobre)**: con la fauce aperta l'**occhio diventa più venato**, con capillari rossi dal bordo verso l'iride, così fa paura. Nel materiale è un parametro, così in gioco le vene compaiono quando attacca.
+- **Approvazione definitiva del modello**: l'utente vuole una scheda con il giro completo, i dettagli in viste separate e la versione malvagia (`docs/proposte/medusa/scheda/`).
+- **Modello approvato dall'utente (15 ottobre)** con la scheda di lavoro/medusa 94782be: giro, dettagli, versione malvagia e mani nuove ("a parte questo ci sta"). Resta da correggere solo la fauce: i denti sono tutti inclinati da una parte. Serve una fila sull'arcata di sopra e una su quella di sotto, inclinate in senso opposto, che si incastrano come in uno squalo.
 
 ### Movimento (deciso)
 

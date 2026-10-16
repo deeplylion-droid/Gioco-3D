@@ -1,0 +1,302 @@
+extends Node
+## Test automatico della demo della sala principale (architettura vera), simulando gli input:
+## zaino sulla rastrelliera, aspirare dalla vasca d'arrivo, lampada della statua, sigla,
+## pozza, gonfiabile, turbina dello scarico, pozza vuota, portello, e il gioco dell'area bimbi
+## (ruota a pale, secchio, cancello). Il pozzo e la sala pompe sono in test_tappe56.gd.
+## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
+
+const LEVEL := "res://scenes/sala_principale.tscn"
+
+var level: Node
+var p: Player
+var _passed := 0
+var _failed := 0
+
+
+func _ready() -> void:
+	_run.call_deferred()
+
+
+func _run() -> void:
+	get_tree().change_scene_to_file(LEVEL)
+	for i in 300:
+		await get_tree().process_frame
+		if GameState.player and is_instance_valid(GameState.player):
+			break
+	await _frames(5)
+	level = get_tree().current_scene
+	p = GameState.player
+	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca.
+	for i in 400:
+		if p.input_enabled:
+			break
+		await get_tree().process_frame
+	var puddle: WaterTank = level.get_node("Piscina/Pozza")
+	var turbine: Turbine = level.get_node("Piscina/TurbinaScarico")
+	var inflatable: StuckInflatable = level.get_node("Piscina/GonfiabileIncastrato")
+	var hatch_button: WaterButton = level.get_node("Piscina/PulsantePortello")
+	var hatch: HingedHatch = level.get_node("Piscina/Portello")
+	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
+
+	print("La sala: architettura, collisioni e medusa")
+	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
+	var medusa := level.get_node("Vasca/Medusa") as MedusaAffacciata
+	check(medusa != null and medusa.get_model_instance() != null, "la medusa è affacciata alla vasca")
+	var strappo := medusa.get_model_instance().find_child("Medusa_Strappo", true, false) as MeshInstance3D
+	var sm := strappo.get_surface_override_material(0) as BaseMaterial3D if strappo else null
+	check(strappo != null and not strappo.visible and sm != null and sm.vertex_color_use_as_albedo
+			and sm.albedo_color.is_equal_approx(Color(0.7, 0.76, 0.96)), "lo strappo della fauce è nascosto, con la tinta della pelle bagnata")
+	var ap := medusa.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
+	check(ap != null and ap.is_playing() and ap.current_animation == "affacciata", "con l'animazione affacciata in ciclo")
+	var eye := medusa.get_eye_position()
+	check(absf(eye.y - 1.63) < 0.1 and absf(eye.x) < 0.15 and eye.z > 11.5 and eye.z < 12.1, "l'occhio è sopra il bordo, all'altezza dei tuoi occhi (%s)" % eye)
+	var pool: WaterTank = level.get_node("Vasca/VascaCentrale")
+	check(absf(pool.get_surface_global_y() - 0.88) < 0.03 and not pool.suckable, "l'acqua della vasca è quasi al bordo e non si aspira")
+	var det := level.get_node_or_null("Sala/Dettagli")
+	if det:
+		check(det.get_child_count() >= 100, "i dettagli della sala sono montati (%d nodi)" % det.get_child_count())
+	var space := p.get_world_3d().direct_space_state
+	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-3, 1, 18), Vector3(-3, 1, 22)))
+	check(not wall.is_empty() and absf(wall.position.z - 20.0) < 0.3, "il muro sud ha la collisione")
+	var door_q := PhysicsRayQueryParameters3D.create(Vector3(0, 1, 18.5), Vector3(0, 1, 21.5))
+	door_q.exclude = [p.get_rid()]
+	var door := space.intersect_ray(door_q)
+	if not door.is_empty():
+		print("  (il raggio nel vano tocca ", door.collider, " in ", door.position, ")")
+	check(door.is_empty() or door.position.z > 20.15, "il vano verso gli spogliatoi è libero")
+	var ghost := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-1, 1, -1), Vector3(3, 1, -1)))
+	check(ghost.is_empty(), "niente muri invisibili in mezzo alla piscina")
+	var floor_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(0, 1, 2), Vector3(0, -4, 2)))
+	check(not floor_hit.is_empty() and floor_hit.position.y < -2.0, "il fondo della piscina ha la collisione")
+	var pool_q := PhysicsRayQueryParameters3D.create(Vector3(0, 0.5, 14.0), Vector3(0, 0.5, 10.0))
+	pool_q.exclude = [p.get_rid()]
+	var pool_hit := space.intersect_ray(pool_q)
+	check(not pool_hit.is_empty() and pool_hit.position.z > 12.1 and pool_hit.position.z < 12.5, "la vasca è solida: il muro davanti ferma (z %.2f)" % (pool_hit.position.z if not pool_hit.is_empty() else 0.0))
+
+	print("Lo zaino sulla rastrelliera dei bagnini")
+	check(not p.water_pack.equipped, "si parte senza zaino")
+	await _hold(&"spray", 10)
+	check(not p.water_pack.is_spraying, "senza zaino non si spruzza")
+	var interni := level.get_node_or_null("Interni")
+	if interni:
+		# Con gli interni lo zaino è nello stanzino dei bagnini: si prende da lì.
+		check(level.get_node_or_null("PostazioneBagnini") == null, "con gli interni la rastrelliera della sala non c'è")
+		var picks := interni.find_children("*", "PackPickup", true, false)
+		check(picks.size() == 1, "lo zaino è nello stanzino degli interni")
+		var pack_holder: Node = (picks[0] as Node).get(&"remove_node") if picks.size() > 0 else null
+		if picks.size() > 0:
+			(picks[0] as PackPickup).interact(p)
+		await _frames(3)
+		check(p.water_pack.equipped and p.has_item(&"zaino_pompa"), "preso lo zaino: la pistola è in mano")
+		check(p.water_pack.lance_rig != null, "la pistola 3D con le mani è montata")
+		check(pack_holder == null or not is_instance_valid(pack_holder), "lo zaino sparisce dalla rastrelliera")
+	else:
+		var pack_node: Node3D = level.get_node("PostazioneBagnini/Zaino")
+		var station: Node3D = level.get_node("PostazioneBagnini")
+		var stand := station.global_position + station.global_basis.z * 1.2
+		p.teleport(Vector3(stand.x, 0.0, stand.z), 0.0, 0.0)
+		p.look_at_point(pack_node.global_position + Vector3(0, 0.3, 0))
+		await _frames(3)
+		check(p.interactor.current is PackPickup, "il raggio trova lo zaino")
+		await _hold(&"interact", 2)
+		await _frames(3)
+		check(p.water_pack.equipped and p.has_item(&"zaino_pompa"), "preso lo zaino: la pistola è in mano")
+		check(p.water_pack.lance_rig != null, "la pistola 3D con le mani è montata")
+		check(not is_instance_valid(level.get_node_or_null("PostazioneBagnini/Zaino")), "lo zaino sparisce dalla rastrelliera")
+	check(p.water_pack.tank_amount < 0.01, "il serbatoio è vuoto")
+
+	print("Lampada della statua e sigla")
+	check(not lamp.is_on, "la lampada è spenta")
+	p.teleport(Vector3(2.5, 0, 18.0), 0.0, 0.0)
+	Input.action_press(&"move_forward")
+	await _frames(50)
+	Input.action_release(&"move_forward")
+	check(lamp.is_on, "avvicinandosi la lampada si accende")
+	# Ripartendo da un checkpoint oltre il lampione, o con "Continua" da un salvataggio (anche
+	# della v0.2.0), la lampada è già accesa: lo stesso percorso di GameState al caricamento.
+	lamp.turn_off()
+	GameState.capture_snapshot("Gioco/CheckpointStatua", 1, Transform3D(Basis(), Vector3(0, 0, 14.4)))
+	GameState._restore_pending = true
+	GameState._on_level_ready()
+	await _frames(2)
+	check(lamp.is_on and lamp.light.light_energy > 1.0, "ripartendo oltre il lampione la lampada è già accesa")
+	lamp.turn_off()
+	# (Prima del trigger, che LuciSala mette appena dopo la porta: z 18,1-19,1 per x -4..4.)
+	GameState.capture_snapshot("inizio", -1, Transform3D(Basis(), Vector3(5.0, 0, 19.2)))
+	GameState._restore_pending = true
+	GameState._on_level_ready()
+	await _frames(2)
+	check(not lamp.is_on, "ripartendo dall'ingresso la lampada è spenta (si accende entrando)")
+	lamp.turn_on(true)
+
+	print("Aspirare dalla vasca d'arrivo")
+	var arrival: WaterTank = level.get_node("Vasche/VascaArrivo")
+	p.teleport(Vector3(-8.3, 0, 2.0), 0.0, 0.0)
+	p.look_at_point(Vector3(-10.6, -0.22, 2.0))
+	await _frames(3)
+	var arrival_before := arrival.get_liters()
+	await _hold(&"suck", 60)
+	check(p.water_pack.tank_amount > 6.0, "aspira dalla vasca d'arrivo (%.1f l)" % p.water_pack.tank_amount)
+	check(arrival.get_liters() < arrival_before - 5.0, "il livello della vasca d'arrivo scende")
+
+	var jingle: WaterButton = level.get_node("Vasca/PulsanteSigla")
+	p.water_pack.set_tank_amount(20.0)
+	p.teleport(Vector3(0.0, 0, 14.6), 0.0, 0.0)
+	p.look_at_point(jingle.global_position + Vector3(0, 0.12, 0))
+	await _hold(&"spray", 40)
+	check(jingle.powered, "il getto fa partire la sigla dal pulsante del piedistallo")
+
+	print("Aspirare la pozza")
+	p.water_pack.set_tank_amount(0.0)
+	p.teleport(Vector3(-2.6, -1.95, -0.6), PI, 0.0)
+	await _frames(10)
+	p.look_at_point(Vector3(-0.9, -2.07, 1.6))
+	await _frames(3)
+	var before := puddle.get_liters()
+	await _hold(&"suck", 90)
+	var gained := p.water_pack.tank_amount
+	check(gained > 12.0, "il serbatoio si riempie dalla pozza (%.1f l)" % gained)
+	check(absf((before - puddle.get_liters()) - gained) < 0.05, "il livello della pozza scende davvero")
+
+	print("Gonfiabile, turbina e scarico")
+	p.water_pack.set_tank_amount(20.0)
+	p.teleport(Vector3(3.4, -1.95, 1.2), PI, 0.0)
+	await _frames(10)
+	# Il getto scende per la gravità: si punta un po' sopra.
+	p.look_at_point(turbine.global_position + Vector3(0, 0.3, 0))
+	await _frames(3)
+	check(turbine.jammed and inflatable.is_stuck(), "la turbina parte bloccata dal gonfiabile")
+	await _hold(&"spray", 60)
+	check(not inflatable.is_stuck() and not turbine.jammed, "il getto fa cadere il gonfiabile")
+	await _frames(40)
+	p.water_pack.set_tank_amount(20.0)
+	p.look_at_point(turbine.global_position + Vector3(0.0, 0.3, 0.0))
+	await _hold(&"spray", 120)
+	check(turbine.powered, "la turbina gira (energia %.2f)" % turbine.energy)
+	check(puddle.is_draining(), "lo scarico è aperto: la pozza si svuota")
+	# Si alterna: aspira dalla pozza, spruzza sulla turbina, finché la pozza è vuota.
+	for round in 12:
+		if puddle.fill <= 0.001:
+			break
+		p.look_at_point(Vector3(1.2, -2.07, 2.4))
+		await _hold(&"suck", 60)
+		p.look_at_point(turbine.global_position + Vector3(0.0, 0.3, 0.0))
+		await _hold(&"spray", 150)
+	for i in 900:
+		if puddle.fill <= 0.001:
+			break
+		await get_tree().physics_frame
+	check(puddle.fill <= 0.001, "la pozza è vuota (fill %.3f)" % puddle.fill)
+
+	print("Portello")
+	p.water_pack.set_tank_amount(20.0)
+	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
+	await _frames(10)
+	p.look_at_point(hatch_button.global_position + Vector3(0, 0.4, 0))
+	await _frames(3)
+	await _hold(&"spray", 60)
+	if not hatch_button.powered:
+		print("  (il getto colpisce: ", p.water_pack.hit_collider, " in ", p.water_pack.hit_point, ")")
+	check(hatch_button.powered, "il pulsante del portello si accende")
+	for i in 300:
+		await get_tree().physics_frame
+		if hatch.is_open:
+			break
+	check(hatch.is_open, "il portello si apre")
+	# Sotto c'è il pozzo della camera delle onde (tappe 5-6, test_tappe56.gd): la demo va avanti.
+	check(not bool(level.get(&"demo_finished")), "la demo non finisce al portello: sotto c'è il pozzo")
+
+	print("Area bimbi: ruota a pale, secchio e cancello")
+	var toy: BucketWheel = level.get_node("RuotaESecchio")
+	var wheel: Node3D = level.get_node("Sala/AreaBimbi/sala_ruota_pale")
+	p.teleport(Vector3(-17.4, 0, -10.8), PI, 0.0)
+	await _frames(10)
+	var tipped := [false]
+	toy.bucket_tipped.connect(func(): tipped[0] = true)
+	for round in 10:
+		if tipped[0]:
+			break
+		p.water_pack.set_tank_amount(20.0)
+		p.look_at_point(wheel.global_position + Vector3(0, 0.45, 0))
+		await _hold(&"spray", 150)
+	check(toy.angular_speed > 0.5 or tipped[0], "il getto fa girare la ruota a pale")
+	check(tipped[0], "il secchio si riempie e si ribalta")
+	for i in 600:
+		if toy.gate_open:
+			break
+		await get_tree().physics_frame
+	check(toy.gate_open, "l'ondata apre il cancello della piscina")
+	check(bool(toy.save_state().get("gate_open", false)), "e resta aperto ai checkpoint (si salva)")
+
+	if interni:
+		print("Dagli spogliatoi alla sala")
+		var shutters := interni.find_children("*", "Saracinesca", true, false)
+		check(shutters.size() == 1, "c'è la saracinesca tra gli spogliatoi e la sala")
+		if shutters.size() == 1:
+			var d := shutters[0] as Node3D
+			check(absf(d.global_position.x) < 0.1 and absf(d.global_position.z - 20.3) < 0.3,
+				"la saracinesca combacia con il vano sud (%s)" % d.global_position)
+			d.set(&"_latched", true)
+			await _frames(60 * 10)
+			check(bool(d.get(&"is_open")), "la saracinesca si alza")
+			p.teleport(Vector3(0.0, 0.0, 21.4), 0.0, 0.0)
+			await _frames(3)
+			Input.action_press(&"move_forward")
+			await _frames(150)
+			Input.action_release(&"move_forward")
+			check(p.global_position.z < 19.4, "dagli spogliatoi si entra nella sala (z %.2f)" % p.global_position.z)
+
+	print("La medusa ti segue con l'occhio")
+	p.teleport(Vector3(0.0, 0.0, 16.0), 0.0, 0.0)
+	p.look_at_point(medusa.get_eye_position())
+	await _frames(90)
+	var to_cam := (p.camera.global_position - medusa.get_eye_position()).normalized()
+	var dir_front := medusa.get_eye_direction()
+	check(rad_to_deg(dir_front.angle_to(to_cam)) < 20.0, "di fronte, l'occhio ti guarda (%.1f gradi)" % rad_to_deg(dir_front.angle_to(to_cam)))
+	p.teleport(Vector3(5.5, 0.0, 13.0), 0.0, 0.0)
+	await _frames(90)
+	var dir_side := medusa.get_eye_direction()
+	var turn := rad_to_deg(dir_side.angle_to(dir_front))
+	check(turn > 3.0 and turn < 17.0, "di lato, l'occhio si gira ma al massimo di 15 gradi (%.1f)" % turn)
+
+	print("B5: i bambini sulla balconata, in un lampo")
+	var kids: KidSighting = level.get_node("BambiniBalconata")
+	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
+	var flashes := [0]
+	storm.lampo.connect(func(_i): flashes[0] += 1)
+	p.teleport(Vector3(13.5, 4.5, -16.5), PI, 0.0)
+	await _frames(5)
+	check(kids.get_child_count() >= 5, "sulla torre compaiono i bambini sulla balconata")
+	check(kids.get_child_count() > 0 and kids.get_child(0) is Bambino, "sono i bambini animati (ti seguono con la testa)")
+	check(flashes[0] >= 1, "e un lampo li illumina")
+	await _frames(150)
+	storm.lampo_ora(1.0, 1.0)
+	await _frames(5)
+	var left := 0
+	for c in kids.get_children():
+		if not c.is_queued_for_deletion():
+			left += 1
+	check(left == 0, "al lampo dopo non c'è più nessuno")
+	print("")
+	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
+	get_tree().quit(1 if _failed > 0 else 0)
+
+
+func check(cond: bool, what: String) -> void:
+	if cond:
+		_passed += 1
+		print("  ok    ", what)
+	else:
+		_failed += 1
+		printerr("  FALLITO ", what)
+
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().physics_frame
+
+
+func _hold(action: StringName, frames: int) -> void:
+	Input.action_press(action)
+	await _frames(frames)
+	Input.action_release(action)

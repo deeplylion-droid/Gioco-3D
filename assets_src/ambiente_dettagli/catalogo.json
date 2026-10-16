@@ -1,0 +1,1205 @@
+{
+ "nota": "Nodi dei GLB del kit di dettagli. 'appoggio': pavimento (origine alla base), muro (origine sul filo del muro, il dettaglio sporge verso +Z Godot), soffitto (origine nel punto d'attacco, pende verso -Y Godot). Ingombro in metri (x, y, z di Blender).",
+ "dettagli": {
+  "det_piastrella_rotta_1": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.142,
+    0.107,
+    0.011
+   ],
+   "note": "pezzo di piastrella staccata",
+   "triangoli": 16,
+   "glb": "glb/detriti.glb"
+  },
+  "det_piastrella_rotta_2": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.067,
+    0.051,
+    0.01
+   ],
+   "note": "pezzo di piastrella staccata",
+   "triangoli": 16,
+   "glb": "glb/detriti.glb"
+  },
+  "det_piastrella_rotta_3": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.074,
+    0.072,
+    0.01
+   ],
+   "note": "pezzo di piastrella staccata",
+   "triangoli": 16,
+   "glb": "glb/detriti.glb"
+  },
+  "det_piastrella_rotta_4": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.194,
+    0.103,
+    0.011
+   ],
+   "note": "pezzo di piastrella staccata",
+   "triangoli": 12,
+   "glb": "glb/detriti.glb"
+  },
+  "det_piastrella_rotta_5": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.088,
+    0.085,
+    0.01
+   ],
+   "note": "pezzo di piastrella staccata",
+   "triangoli": 20,
+   "glb": "glb/detriti.glb"
+  },
+  "det_piastrella_rotta_6": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.075,
+    0.046,
+    0.012
+   ],
+   "note": "pezzo di piastrella staccata",
+   "triangoli": 16,
+   "glb": "glb/detriti.glb"
+  },
+  "det_mucchio_piastrelle_1": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.469,
+    0.517,
+    0.045
+   ],
+   "note": "mucchio di piastrelle cadute, ~0,8 m: sotto le pareti scrostate",
+   "triangoli": 168,
+   "glb": "glb/detriti.glb"
+  },
+  "det_mucchio_piastrelle_2": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.606,
+    0.489,
+    0.038
+   ],
+   "note": "mucchio di piastrelle cadute, ~0,8 m: sotto le pareti scrostate",
+   "triangoli": 192,
+   "glb": "glb/detriti.glb"
+  },
+  "det_mucchio_piastrelle_3": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.602,
+    0.595,
+    0.04
+   ],
+   "note": "mucchio di piastrelle cadute, ~0,8 m: sotto le pareti scrostate",
+   "triangoli": 280,
+   "glb": "glb/detriti.glb"
+  },
+  "det_vetri_rotti_1": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.61,
+    0.74,
+    0.011
+   ],
+   "note": "schegge di vetro (oblo, plafoniere): sotto le lampade rotte",
+   "triangoli": 192,
+   "glb": "glb/detriti.glb"
+  },
+  "det_vetri_rotti_2": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.596,
+    0.666,
+    0.008
+   ],
+   "note": "schegge di vetro (oblo, plafoniere): sotto le lampade rotte",
+   "triangoli": 200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_vetri_rotti_3": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.536,
+    0.604,
+    0.011
+   ],
+   "note": "schegge di vetro (oblo, plafoniere): sotto le lampade rotte",
+   "triangoli": 172,
+   "glb": "glb/detriti.glb"
+  },
+  "det_foglio_1": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.364,
+    0.347,
+    0.017
+   ],
+   "note": "foglio bagnato (moduli, volantini: solo righe, niente testo)",
+   "triangoli": 280,
+   "glb": "glb/detriti.glb"
+  },
+  "det_foglio_2": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.237,
+    0.316,
+    0.031
+   ],
+   "note": "foglio bagnato (moduli, volantini: solo righe, niente testo)",
+   "triangoli": 280,
+   "glb": "glb/detriti.glb"
+  },
+  "det_foglio_3": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.299,
+    0.351,
+    0.045
+   ],
+   "note": "foglio bagnato (moduli, volantini: solo righe, niente testo)",
+   "triangoli": 280,
+   "glb": "glb/detriti.glb"
+  },
+  "det_foglio_4": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.363,
+    0.348,
+    0.069
+   ],
+   "note": "foglio bagnato (moduli, volantini: solo righe, niente testo)",
+   "triangoli": 280,
+   "glb": "glb/detriti.glb"
+  },
+  "det_carta_accartocciata_1": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.083,
+    0.085,
+    0.083
+   ],
+   "note": "pallina di carta",
+   "triangoli": 320,
+   "glb": "glb/detriti.glb"
+  },
+  "det_carta_accartocciata_2": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.102,
+    0.101,
+    0.105
+   ],
+   "note": "pallina di carta",
+   "triangoli": 320,
+   "glb": "glb/detriti.glb"
+  },
+  "det_carta_accartocciata_3": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.118,
+    0.12,
+    0.119
+   ],
+   "note": "pallina di carta",
+   "triangoli": 320,
+   "glb": "glb/detriti.glb"
+  },
+  "det_asciugamano_1": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.907,
+    0.95,
+    0.025
+   ],
+   "note": "asciugamano bagnato, abbandonato per terra",
+   "triangoli": 1736,
+   "glb": "glb/detriti.glb"
+  },
+  "det_asciugamano_2": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.71,
+    0.977,
+    0.025
+   ],
+   "note": "asciugamano bagnato, abbandonato per terra",
+   "triangoli": 1736,
+   "glb": "glb/detriti.glb"
+  },
+  "det_asciugamano_3": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.896,
+    0.967,
+    0.025
+   ],
+   "note": "asciugamano bagnato, abbandonato per terra",
+   "triangoli": 1736,
+   "glb": "glb/detriti.glb"
+  },
+  "det_asciugamano_4": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.981,
+    0.895,
+    0.025
+   ],
+   "note": "asciugamano bagnato, abbandonato per terra",
+   "triangoli": 1736,
+   "glb": "glb/detriti.glb"
+  },
+  "det_paperella": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.083,
+    0.11,
+    0.104
+   ],
+   "note": "paperella di gomma",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_secchiello": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.136,
+    0.133,
+    0.167
+   ],
+   "note": "secchiello da spiaggia",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_paletta": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.121,
+    0.219,
+    0.083
+   ],
+   "note": "paletta",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_barchetta": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.2,
+    0.069,
+    0.2
+   ],
+   "note": "barchetta",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_pistola_acqua": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.203,
+    0.05,
+    0.123
+   ],
+   "note": "pistola ad acqua",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_pesce_gomma": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.06,
+    0.121,
+    0.055
+   ],
+   "note": "pesce di gomma",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_maschera_sub": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.144,
+    0.2,
+    0.142
+   ],
+   "note": "maschera da sub",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_ciabatta": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.26,
+    0.108,
+    0.068
+   ],
+   "note": "ciabatta di gomma",
+   "triangoli": 1200,
+   "glb": "glb/detriti.glb"
+  },
+  "det_pannello_lamiera": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    1.201,
+    0.602,
+    0.335
+   ],
+   "note": "lamiera verniciata caduta, piegata",
+   "triangoli": 464,
+   "glb": "glb/detriti.glb"
+  },
+  "det_pannello_lamiera_2": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.9,
+    0.9,
+    0.114
+   ],
+   "note": "pannello di lamiera rotto",
+   "triangoli": 424,
+   "glb": "glb/detriti.glb"
+  },
+  "det_pannello_controsoffitto": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.6,
+    0.601,
+    0.042
+   ],
+   "note": "pannello del controsoffitto caduto e spezzato",
+   "triangoli": 424,
+   "glb": "glb/detriti.glb"
+  },
+  "det_griglia_caduta": {
+   "categoria": "detriti",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.8,
+    0.502,
+    0.071
+   ],
+   "note": "griglia caduta",
+   "triangoli": 464,
+   "glb": "glb/detriti.glb"
+  },
+  "det_cavo_pendente_1": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.193,
+    0.145,
+    1.205
+   ],
+   "note": "cavo strappato che pende, 1.2 m",
+   "triangoli": 612,
+   "glb": "glb/cavi.glb"
+  },
+  "det_cavo_pendente_2": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.146,
+    0.187,
+    2.009
+   ],
+   "note": "cavo strappato che pende, 2.0 m",
+   "triangoli": 996,
+   "glb": "glb/cavi.glb"
+  },
+  "det_cavo_pendente_3": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.18,
+    0.222,
+    2.817
+   ],
+   "note": "cavo strappato che pende, 2.8 m",
+   "triangoli": 1188,
+   "glb": "glb/cavi.glb"
+  },
+  "det_cavo_pendente_4": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.184,
+    0.197,
+    1.607
+   ],
+   "note": "cavo strappato che pende, 1.6 m",
+   "triangoli": 804,
+   "glb": "glb/cavi.glb"
+  },
+  "det_cavo_festone_1": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    2.04,
+    0.03,
+    0.283
+   ],
+   "note": "cavo a festone tra due attacchi a 2.0 m (lungo +X Blender)",
+   "triangoli": 600,
+   "glb": "glb/cavi.glb"
+  },
+  "det_cavo_festone_2": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    4.04,
+    0.03,
+    0.633
+   ],
+   "note": "cavo a festone tra due attacchi a 4.0 m (lungo +X Blender)",
+   "triangoli": 600,
+   "glb": "glb/cavi.glb"
+  },
+  "det_cavo_festone_3": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    6.04,
+    0.03,
+    1.033
+   ],
+   "note": "cavo a festone tra due attacchi a 6.0 m (lungo +X Blender)",
+   "triangoli": 600,
+   "glb": "glb/cavi.glb"
+  },
+  "det_fascio_cavi_4m": {
+   "categoria": "cavi",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    4.01,
+    0.078,
+    0.983
+   ],
+   "note": "fascio di 4 cavi con fascette, 4 m",
+   "triangoli": 2208,
+   "glb": "glb/cavi.glb"
+  },
+  "det_tubo_muro_10cm_2m": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    2.0,
+    0.172,
+    0.144
+   ],
+   "note": "tubo orizzontale Ø 10 cm, 2 m lungo +X, con staffe",
+   "triangoli": 528,
+   "glb": "glb/tubi.glb"
+  },
+  "det_tubo_muro_16cm_2m": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    2.0,
+    0.232,
+    0.204
+   ],
+   "note": "tubo orizzontale Ø 16 cm, 2 m lungo +X, con staffe",
+   "triangoli": 528,
+   "glb": "glb/tubi.glb"
+  },
+  "det_tubo_muro_7cm_2m": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    2.0,
+    0.142,
+    0.12
+   ],
+   "note": "tubo orizzontale Ø 7 cm, 2 m lungo +X, con staffe",
+   "triangoli": 528,
+   "glb": "glb/tubi.glb"
+  },
+  "det_tubi_paralleli_2m": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    2.0,
+    0.18,
+    0.5
+   ],
+   "note": "tre tubi paralleli su un supporto, 2 m",
+   "triangoli": 120,
+   "glb": "glb/tubi.glb"
+  },
+  "det_tubo_curva_su": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    1.058,
+    0.164,
+    1.564
+   ],
+   "note": "tubo che gira e sale verso la galleria (1,5 m)",
+   "triangoli": 2008,
+   "glb": "glb/tubi.glb"
+  },
+  "det_tubo_verticale_3m": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.1,
+    0.135,
+    3.0
+   ],
+   "note": "tubo verticale 3 m, origine in basso",
+   "triangoli": 68,
+   "glb": "glb/tubi.glb"
+  },
+  "det_tubo_valvola_T": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    1.2,
+    0.283,
+    0.77
+   ],
+   "note": "raccordo a T con valvola a volantino e manometro",
+   "triangoli": 512,
+   "glb": "glb/tubi.glb"
+  },
+  "det_condotta_aria_2m": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    2.03,
+    0.33,
+    0.28
+   ],
+   "note": "condotta dell aria 30 x 25 cm, 2 m lungo +X",
+   "triangoli": 48,
+   "glb": "glb/tubi.glb"
+  },
+  "det_condotta_aria_4m": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    4.03,
+    0.33,
+    0.28
+   ],
+   "note": "condotta dell aria 30 x 25 cm, 4 m lungo +X",
+   "triangoli": 72,
+   "glb": "glb/tubi.glb"
+  },
+  "det_condotta_aria_curva": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.615,
+    0.33,
+    0.815
+   ],
+   "note": "condotta che sale (curva a 90 gradi)",
+   "triangoli": 36,
+   "glb": "glb/tubi.glb"
+  },
+  "det_bocchetta_rettangolare": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.53,
+    0.03,
+    0.28
+   ],
+   "note": "bocchetta dell aria 50 x 25 cm",
+   "triangoli": 144,
+   "glb": "glb/tubi.glb"
+  },
+  "det_bocchetta_rettangolare_rotta": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.631,
+    0.291,
+    0.43
+   ],
+   "note": "bocchetta con la griglia storta",
+   "triangoli": 144,
+   "glb": "glb/tubi.glb"
+  },
+  "det_bocchetta_tonda": {
+   "categoria": "tubi",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.38,
+    0.04,
+    0.38
+   ],
+   "note": "bocchetta tonda Ø 36 cm",
+   "triangoli": 744,
+   "glb": "glb/tubi.glb"
+  },
+  "det_cassetta_piccola": {
+   "categoria": "elettrico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.18,
+    0.09,
+    0.98
+   ],
+   "note": "scatola di derivazione 18 x 18 cm, tubo che sale 80 cm",
+   "triangoli": 92,
+   "glb": "glb/elettrico.glb"
+  },
+  "det_cassetta_aperta": {
+   "categoria": "elettrico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.415,
+    0.531,
+    1.701
+   ],
+   "note": "cassetta 40 x 30 con lo sportello aperto e i fili che pendono",
+   "triangoli": 848,
+   "glb": "glb/elettrico.glb"
+  },
+  "det_quadro_elettrico": {
+   "categoria": "elettrico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    1.089,
+    1.002,
+    2.601
+   ],
+   "note": "quadro elettrico 80 x 120, aperto: interruttori e fili. Origine al centro (metterlo a 1,4 m)",
+   "triangoli": 1748,
+   "glb": "glb/elettrico.glb"
+  },
+  "det_interruttore_stagno": {
+   "categoria": "elettrico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.09,
+    0.075,
+    0.96
+   ],
+   "note": "interruttore stagno con tubo che sale",
+   "triangoli": 40,
+   "glb": "glb/elettrico.glb"
+  },
+  "det_neon_soffitto": {
+   "categoria": "lampade",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    1.26,
+    0.2,
+    0.107
+   ],
+   "note": "plafoniera 2 x T8 120 cm, accesa (materiale M_det_neon_acceso)",
+   "triangoli": 160,
+   "glb": "glb/lampade.glb"
+  },
+  "det_neon_soffitto_spento": {
+   "categoria": "lampade",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    1.26,
+    0.2,
+    0.107
+   ],
+   "note": "plafoniera spenta",
+   "triangoli": 160,
+   "glb": "glb/lampade.glb"
+  },
+  "det_neon_senza_diffusore": {
+   "categoria": "lampade",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    1.26,
+    0.2,
+    0.1
+   ],
+   "note": "plafoniera senza diffusore, un tubo rotto",
+   "triangoli": 148,
+   "glb": "glb/lampade.glb"
+  },
+  "det_neon_penzolante": {
+   "categoria": "lampade",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    1.081,
+    0.2,
+    1.123
+   ],
+   "note": "plafoniera staccata da un lato, pende da una catenella (origine sull attacco rimasto)",
+   "triangoli": 548,
+   "glb": "glb/lampade.glb"
+  },
+  "det_applique_emergenza": {
+   "categoria": "lampade",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.18,
+    0.168,
+    0.18
+   ],
+   "note": "luce d emergenza rossa accesa (Ø 18 cm, gabbia)",
+   "triangoli": 932,
+   "glb": "glb/lampade.glb"
+  },
+  "det_applique_emergenza_spenta": {
+   "categoria": "lampade",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.18,
+    0.168,
+    0.18
+   ],
+   "note": "luce d emergenza spenta",
+   "triangoli": 932,
+   "glb": "glb/lampade.glb"
+  },
+  "det_applique_emergenza_rotta": {
+   "categoria": "lampade",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.18,
+    0.168,
+    0.18
+   ],
+   "note": "luce d emergenza col vetro rotto",
+   "triangoli": 700,
+   "glb": "glb/lampade.glb"
+  },
+  "det_faro": {
+   "categoria": "lampade",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.356,
+    0.375,
+    0.267
+   ],
+   "note": "faro da muro acceso, inclinato in basso di 25 gradi",
+   "triangoli": 300,
+   "glb": "glb/lampade.glb"
+  },
+  "det_faro_spento": {
+   "categoria": "lampade",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.356,
+    0.35,
+    0.291
+   ],
+   "note": "faro spento, girato verso il basso",
+   "triangoli": 300,
+   "glb": "glb/lampade.glb"
+  },
+  "det_cartello_non_correre": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.4,
+    0.01,
+    0.4
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (dritto); centro a 1,6-1,8 m",
+   "triangoli": 126,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_non_tuffarsi": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.458,
+    0.01,
+    0.458
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (storto); centro a 1,6-1,8 m",
+   "triangoli": 126,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_vietato_vetro": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.4,
+    0.01,
+    0.4
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (dritto); centro a 1,6-1,8 m",
+   "triangoli": 126,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_pavimento_bagnato": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.561,
+    0.01,
+    0.561
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (penzolante); centro a 1,6-1,8 m",
+   "triangoli": 42,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_profondita": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.4,
+    0.01,
+    0.4
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (dritto); centro a 1,6-1,8 m",
+   "triangoli": 126,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_uscita": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.458,
+    0.01,
+    0.458
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (storto); centro a 1,6-1,8 m",
+   "triangoli": 126,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_pronto_soccorso": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.4,
+    0.096,
+    0.4
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (piegato); centro a 1,6-1,8 m",
+   "triangoli": 126,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_salvagente": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.4,
+    0.01,
+    0.4
+   ],
+   "note": "cartello 40 x 40 cm, solo disegno (dritto); centro a 1,6-1,8 m",
+   "triangoli": 126,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_non_correre_penzolante": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.561,
+    0.01,
+    0.561
+   ],
+   "note": "variante appesa a una vite sola",
+   "triangoli": 42,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_cartello_pavimento_bagnato_penzolante": {
+   "categoria": "cartelli",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.561,
+    0.01,
+    0.561
+   ],
+   "note": "variante appesa a una vite sola",
+   "triangoli": 42,
+   "glb": "glb/cartelli.glb"
+  },
+  "det_macchia_calcare_muro": {
+   "categoria": "organico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    1.2,
+    0.0,
+    0.6
+   ],
+   "note": "decal con alfa (alpha scissor): macchia",
+   "triangoli": 2,
+   "glb": "glb/organico.glb"
+  },
+  "det_macchia_muffa_muro": {
+   "categoria": "organico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    1.0,
+    0.0,
+    0.8
+   ],
+   "note": "decal con alfa (alpha scissor): macchia",
+   "triangoli": 2,
+   "glb": "glb/organico.glb"
+  },
+  "det_macchia_ruggine_colata_muro": {
+   "categoria": "organico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    0.35,
+    0.0,
+    1.2
+   ],
+   "note": "decal con alfa (alpha scissor): sotto un tubo o un attacco: la colatura scende dall origine",
+   "triangoli": 2,
+   "glb": "glb/organico.glb"
+  },
+  "det_macchia_alghe_secche_pavimento": {
+   "categoria": "organico",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    1.4,
+    1.0,
+    0.0
+   ],
+   "note": "decal con alfa (alpha scissor): macchia",
+   "triangoli": 2,
+   "glb": "glb/organico.glb"
+  },
+  "det_macchia_alghe_verdi_pavimento": {
+   "categoria": "organico",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    1.2,
+    0.9,
+    0.0
+   ],
+   "note": "decal con alfa (alpha scissor): macchia",
+   "triangoli": 2,
+   "glb": "glb/organico.glb"
+  },
+  "det_macchia_calcare_pavimento": {
+   "categoria": "organico",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    1.0,
+    1.0,
+    0.0
+   ],
+   "note": "decal con alfa (alpha scissor): macchia",
+   "triangoli": 2,
+   "glb": "glb/organico.glb"
+  },
+  "det_alghe_secche_mucchio_1": {
+   "categoria": "organico",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    1.099,
+    0.984,
+    0.016
+   ],
+   "note": "mucchio di alghe secche: bordi delle vasche, scarichi, fondo della piscina",
+   "triangoli": 1794,
+   "glb": "glb/organico.glb"
+  },
+  "det_alghe_secche_mucchio_2": {
+   "categoria": "organico",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    1.068,
+    1.145,
+    0.018
+   ],
+   "note": "mucchio di alghe secche: bordi delle vasche, scarichi, fondo della piscina",
+   "triangoli": 2306,
+   "glb": "glb/organico.glb"
+  },
+  "det_alghe_secche_mucchio_3": {
+   "categoria": "organico",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    1.029,
+    1.122,
+    0.018
+   ],
+   "note": "mucchio di alghe secche: bordi delle vasche, scarichi, fondo della piscina",
+   "triangoli": 2818,
+   "glb": "glb/organico.glb"
+  },
+  "det_incrostazione_spigolo_1": {
+   "categoria": "organico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    1.0,
+    0.042,
+    0.056
+   ],
+   "note": "crosta di calcare lungo uno spigolo, 1 m lungo +X (bordo vasca, base del muro)",
+   "triangoli": 200,
+   "glb": "glb/organico.glb"
+  },
+  "det_incrostazione_spigolo_2": {
+   "categoria": "organico",
+   "appoggio": "muro",
+   "ingombro_m": [
+    1.0,
+    0.042,
+    0.057
+   ],
+   "note": "crosta di calcare lungo uno spigolo, 1 m lungo +X (bordo vasca, base del muro)",
+   "triangoli": 200,
+   "glb": "glb/organico.glb"
+  },
+  "det_catena_pendente_1m": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.07,
+    0.06,
+    1.028
+   ],
+   "note": "catena che pende, 1 m",
+   "triangoli": 1292,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_catena_pendente_2m": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.07,
+    0.06,
+    2.028
+   ],
+   "note": "catena che pende, 2 m",
+   "triangoli": 2572,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_catena_pendente_3m": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.07,
+    0.06,
+    3.028
+   ],
+   "note": "catena che pende, 3 m",
+   "triangoli": 3852,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_catena_festone_3m": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    2.977,
+    0.041,
+    0.625
+   ],
+   "note": "catena a festone tra due punti a 3 m (ringhiere, transenne)",
+   "triangoli": 4160,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_catena_a_terra": {
+   "categoria": "catene_corde",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.311,
+    0.384,
+    0.05
+   ],
+   "note": "catena ammucchiata per terra",
+   "triangoli": 3968,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_gancio": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.089,
+    0.052,
+    0.23
+   ],
+   "note": "gancio (da mettere in fondo a una catena)",
+   "triangoli": 256,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_corda_pendente_1": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.106,
+    0.028,
+    1.552
+   ],
+   "note": "corda che pende sfilacciata, 1.5 m",
+   "triangoli": 632,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_corda_pendente_2": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    0.106,
+    0.028,
+    3.052
+   ],
+   "note": "corda che pende sfilacciata, 3.0 m",
+   "triangoli": 1432,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_corda_galleggianti_4m": {
+   "categoria": "catene_corde",
+   "appoggio": "soffitto",
+   "ingombro_m": [
+    4.012,
+    0.07,
+    0.547
+   ],
+   "note": "corda corsia con galleggianti, 4 m (tra due ringhiere o appesa)",
+   "triangoli": 2228,
+   "glb": "glb/catene_corde.glb"
+  },
+  "det_corda_rotolo": {
+   "categoria": "catene_corde",
+   "appoggio": "pavimento",
+   "ingombro_m": [
+    0.354,
+    0.355,
+    0.13
+   ],
+   "note": "rotolo di corda per terra",
+   "triangoli": 3808,
+   "glb": "glb/catene_corde.glb"
+  }
+ }
+}

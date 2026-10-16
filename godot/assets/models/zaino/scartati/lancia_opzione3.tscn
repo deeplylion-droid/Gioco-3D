@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/player/lance_rig.gd" id="1_r"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/lancia_opzione3/lancia_opzione3.gltf" id="2_m"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/mano_impugnatura/mano_impugnatura.gltf" id="3_rh"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/mano_tubo/mano_tubo.gltf" id="4_lh"]
+[ext_resource type="Script" path="res://scripts/player/reservoir_gauge.gd" id="5_g"]
+
+[node name="LanciaOpzione3" type="Node3D"]
+script = ExtResource("1_r")
+model_scene = ExtResource("2_m")
+tip_point = Vector3(0, 0.098, 0.02)
+tube_point = Vector3(0, 0.098, 0.4)
+right_hand_scene = ExtResource("3_rh")
+right_hand_position = Vector3(0, -0.138, 0.605)
+right_hand_rotation = Vector3(-20, 0, 0)
+right_hand_mirror = false
+left_hand_scene = ExtResource("4_lh")
+left_hand_position = Vector3(0, 0, 0.3)
+left_hand_rotation = Vector3(0, 0, 0)
+
+[node name="Muzzle" type="Marker3D" parent="."]
+
+[node name="Indicatore" type="Node3D" parent="."]
+position = Vector3(0.03, 0.03, 0.48)
+script = ExtResource("5_g")

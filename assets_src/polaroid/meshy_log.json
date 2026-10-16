@@ -1,0 +1,582 @@
+[
+ {
+  "job": "cast97_gpt1",
+  "kind": "text-to-image",
+  "task_id": "01a13c6f-7c05-748a-ac5a-06f6d71720f6",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "16:9",
+  "refs": [],
+  "prompt": "Reference photograph of a group of eight children for a film set in 1997: a casting line-up. They stand side by side in one straight row, full body from head to toe, all facing the camera with relaxed arms and shy natural smiles, on the wet tiled deck of a cruise ship's indoor water park in daytime, in front of a plain pale blue painted wall. Soft even light, sharp focus, realistic photograph, every face clearly visible, authentic 1997 clothes and haircuts, barefoot or in sandals. From left to right: first, the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; second, a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; third, a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; fourth, a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; fifth, a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; sixth, an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; seventh, a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; eighth, the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:02:01"
+ },
+ {
+  "job": "cast97_gpt2",
+  "kind": "text-to-image",
+  "task_id": "01a13c6f-8289-7321-b5d2-e2d2d5b31ffb",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "16:9",
+  "refs": [],
+  "prompt": "Reference photograph of a group of eight children for a film set in 1997: a casting line-up. They stand side by side in one straight row, full body from head to toe, all facing the camera with relaxed arms and shy natural smiles, on the wet tiled deck of a cruise ship's indoor water park in daytime, in front of a plain pale blue painted wall. Soft even light, sharp focus, realistic photograph, every face clearly visible, authentic 1997 clothes and haircuts, barefoot or in sandals. From left to right: first, the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; second, a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; third, a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; fourth, a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; fifth, a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; sixth, an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; seventh, a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; eighth, the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:02:02"
+ },
+ {
+  "job": "cast97_nbp2",
+  "kind": "text-to-image",
+  "task_id": "01a13c6f-774b-7205-957e-e685ca1ba24f",
+  "model": "nano-banana-pro",
+  "aspect": "16:9",
+  "refs": [],
+  "prompt": "Reference photograph of a group of eight children for a film set in 1997: a casting line-up. They stand side by side in one straight row, full body from head to toe, all facing the camera with relaxed arms and shy natural smiles, on the wet tiled deck of a cruise ship's indoor water park in daytime, in front of a plain pale blue painted wall. Soft even light, sharp focus, realistic photograph, every face clearly visible, authentic 1997 clothes and haircuts, barefoot or in sandals. From left to right: first, the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; second, a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; third, a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; fourth, a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; fifth, a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; sixth, an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; seventh, a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; eighth, the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:03:03"
+ },
+ {
+  "job": "cast97_nbp1",
+  "kind": "text-to-image",
+  "task_id": "01a13c6f-7082-71b6-93a0-0a01cf84f940",
+  "model": "nano-banana-pro",
+  "aspect": "16:9",
+  "refs": [],
+  "prompt": "Reference photograph of a group of eight children for a film set in 1997: a casting line-up. They stand side by side in one straight row, full body from head to toe, all facing the camera with relaxed arms and shy natural smiles, on the wet tiled deck of a cruise ship's indoor water park in daytime, in front of a plain pale blue painted wall. Soft even light, sharp focus, realistic photograph, every face clearly visible, authentic 1997 clothes and haircuts, barefoot or in sandals. From left to right: first, the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; second, a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; third, a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; fourth, a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; fifth, a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; sixth, an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; seventh, a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; eighth, the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:03:21"
+ },
+ {
+  "job": "castdopo_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c71-47e2-75ae-bf4d-1808dedb2a78",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "16:9",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg"
+  ],
+  "prompt": "The same eight children as in the reference image, in the same order from left to right, in the same full-body line-up in front of the same wall, but about four years later, after years of living alone in a dark abandoned shipwrecked cruise ship. Now they are 10 to 15 years old, taller and very thin, with pale skin that never sees the sun, dark circles under the eyes, long tangled salt-stiff hair, barefoot, with wild, watchful, feral expressions. Each one still wears the same clothes and colors as in the reference, now faded, torn, too small and patched with pieces of towel and rope, and most of them wear dirty, frayed orange ship life jackets over them. Same distinctive details as before: the auburn-red braid (now very long and messy), the round sports glasses (one lens cracked, held with tape), the red cap worn backwards (faded pink), the two afro puffs (bigger and wilder), the bowl haircut grown out into a shaggy blond mop, the two pigtails with the old pink scrunchies, the orange armbands (now patched), and the smallest girl now wears her old white plush lamb, cut open and stitched into a hood over her curly hair, with the lamb's floppy ears and button eyes on top of her head. The blond boy holds under his arm a white cube box mask with a simple smiley face drawn in black marker. The wall is now dirty and peeling, lit by a harsh camera flash in a dark room. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "FAILED",
+  "error": {
+   "type": "invalid_input",
+   "code": "provider_content_refused",
+   "message": "This content was declined by a safety check. Please adjust your prompt or image and retry.",
+   "doc_url": "https://docs.meshy.ai/en/api/errors#invalid-input"
+  },
+  "time": "2026-10-14 22:04:05"
+ },
+ {
+  "job": "castdopo_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c71-428d-7441-9590-a5ee18a611a2",
+  "model": "nano-banana-pro",
+  "aspect": "16:9",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg"
+  ],
+  "prompt": "The same eight children as in the reference image, in the same order from left to right, in the same full-body line-up in front of the same wall, but about four years later, after years of living alone in a dark abandoned shipwrecked cruise ship. Now they are 10 to 15 years old, taller and very thin, with pale skin that never sees the sun, dark circles under the eyes, long tangled salt-stiff hair, barefoot, with wild, watchful, feral expressions. Each one still wears the same clothes and colors as in the reference, now faded, torn, too small and patched with pieces of towel and rope, and most of them wear dirty, frayed orange ship life jackets over them. Same distinctive details as before: the auburn-red braid (now very long and messy), the round sports glasses (one lens cracked, held with tape), the red cap worn backwards (faded pink), the two afro puffs (bigger and wilder), the bowl haircut grown out into a shaggy blond mop, the two pigtails with the old pink scrunchies, the orange armbands (now patched), and the smallest girl now wears her old white plush lamb, cut open and stitched into a hood over her curly hair, with the lamb's floppy ears and button eyes on top of her head. The blond boy holds under his arm a white cube box mask with a simple smiley face drawn in black marker. The wall is now dirty and peeling, lit by a harsh camera flash in a dark room. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:04:55"
+ },
+ {
+  "job": "castdopo_gpt2",
+  "kind": "image-to-image",
+  "task_id": "01a13c72-de0e-70c4-800d-649b917e0fa7",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "16:9",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg"
+  ],
+  "prompt": "The same eight children as in the reference image, in the same order from left to right, in the same full-body line-up, but four years later, as castaways who have lived for years on an old drifting cruise ship: now they are 10 to 15 years old, taller and thinner, a little pale, with long untidy sun-bleached hair and serious, quiet faces, barefoot. Each one wears the same clothes and colors as in the reference, now faded, worn, patched and a bit too small, and most of them wear faded orange ship life jackets. Same details as before: the auburn braid (longer), the round sports glasses mended with tape, the backwards red cap (faded), the two afro puffs, the blond bowl cut grown out, the pigtails with pink scrunchies, the orange armbands, and the smallest girl wears her old white plush lamb sewn into a hood with floppy ears. The blond boy holds a white cardboard cube mask with a simple smiley face drawn in marker. Dim room, flash photo. Important: they must look clearly older than in the reference, a head taller with longer arms and legs and older faces: the tallest girl now looks 15, the smallest girl now looks 10. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:05:43"
+ },
+ {
+  "job": "castdopo_nbp2",
+  "kind": "image-to-image",
+  "task_id": "01a13c72-d7f1-711b-ad6c-c3e813abf787",
+  "model": "nano-banana-pro",
+  "aspect": "16:9",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg"
+  ],
+  "prompt": "The same eight children as in the reference image, in the same order from left to right, in the same full-body line-up in front of the same wall, but about four years later, after years of living alone in a dark abandoned shipwrecked cruise ship. Now they are 10 to 15 years old, taller and very thin, with pale skin that never sees the sun, dark circles under the eyes, long tangled salt-stiff hair, barefoot, with wild, watchful, feral expressions. Each one still wears the same clothes and colors as in the reference, now faded, torn, too small and patched with pieces of towel and rope, and most of them wear dirty, frayed orange ship life jackets over them. Same distinctive details as before: the auburn-red braid (now very long and messy), the round sports glasses (one lens cracked, held with tape), the red cap worn backwards (faded pink), the two afro puffs (bigger and wilder), the bowl haircut grown out into a shaggy blond mop, the two pigtails with the old pink scrunchies, the orange armbands (now patched), and the smallest girl now wears her old white plush lamb, cut open and stitched into a hood over her curly hair, with the lamb's floppy ears and button eyes on top of her head. The blond boy holds under his arm a white cube box mask with a simple smiley face drawn in black marker. The wall is now dirty and peeling, lit by a harsh camera flash in a dark room. Important: they must look clearly older than in the reference, a head taller with longer arms and legs and older faces: the tallest girl now looks 15, the smallest girl now looks 10. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "FAILED",
+  "error": {
+   "type": "invalid_input",
+   "code": "provider_content_refused",
+   "message": "This content was declined by a safety check. Please adjust your prompt or image and retry.",
+   "doc_url": "https://docs.meshy.ai/en/api/errors#invalid-input"
+  },
+  "time": "2026-10-14 22:07:49"
+ },
+ {
+  "job": "P01_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-5965-770b-b399-e27f89a3a9f7",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/medusa_turnaround.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. A happy family snapshot at the entrance of the indoor water park of a 1990s family cruise ship, on the first day of the cruise. A smiling mother with permed brown hair in a floral summer dress and a father with a moustache in a bright Hawaiian shirt pose with their two children from the first reference image: the blond boy with the bowl haircut in the lime-green shark T-shirt and red swim shorts, and the smallest girl with curly light-blonde hair in the yellow daisy T-shirt, hugging her small white plush lamb. Behind them, above the colorful entrance arch, a big painted billboard shows the water park mascot as a cute smiling cartoon drawing: the one-eyed jellyfish girl of the other reference images (single huge pink eye, short wavy silver-pink hair with a little loop on top, periwinkle skin, a pink-violet jellyfish bell and magenta tentacles), drawn as a friendly cartoon, waving, on a sea-blue background with bubbles and starfish. The billboard has no words and no letters at all, only the drawing. Clean, brand-new, cheerful colors, turnstiles, potted palms, a glass dome with blue sky. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:39"
+ },
+ {
+  "job": "P04_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-7b65-705f-ac24-de4d148b7aaa",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/ambiente_B_colorato.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. The night of the shipwreck, in the indoor water park of the cruise ship of the reference images. The eight children of the first reference image, soaked and terrified, huddle together at the very top of the colorful children's play structure, right under the giant tipping bucket, wearing big orange adult life jackets over their T-shirts, clutching each other and the railings. All around and below them there is only dark churning flood water reaching the platforms, with floating toys and debris, rain and sea spray pouring through the broken glass dome, and red emergency lights glowing in the darkness. The flash lights the wet frightened faces in the foreground, everything else falls into red-black darkness. Recognizable children: the auburn-red braid, the round sports glasses, the backwards red cap, the afro puffs, the blond bowl cut, the pigtails with pink scrunchies, the orange armbands, the smallest curly-blonde girl hugging her white plush lamb. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "FAILED",
+  "error": {
+   "type": "invalid_input",
+   "code": "provider_content_refused",
+   "message": "This content was declined by a safety check. Please adjust your prompt or image and retry.",
+   "doc_url": "https://docs.meshy.ai/en/api/errors#invalid-input"
+  },
+  "time": "2026-10-14 22:08:41"
+ },
+ {
+  "job": "P02_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-63e1-7558-a92e-70df6d5a3ab9",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Bright daytime inside the brand-new indoor water park of a family cruise ship, under a glass dome with blue sky. The eight children of the first reference image stand in a cheerful line in front of the water park mascot statue and wave at it, some wearing colorful kids' life vests over their T-shirts. The water park mascot statue is exactly the one in the reference image of the statue: a life-size glossy vinyl statue of a cute one-eyed jellyfish girl, with a smooth periwinkle-blue mannequin-like doll torso without any anatomical details, hands clasped on her chest, a single huge eye with a pink iris in the middle of the face and no mouth, short wavy silver-pink hair with a little loop of hair on top, and from the waist down a translucent pink-violet jellyfish bell with radial channels and long glossy magenta tentacles reaching down to a round blue pedestal painted with waves and shells. The statue is brand new, spotless and shiny, its bell channels softly lit, and a huge red satin ribbon bow is tied around the pedestal for the inauguration. Behind them colorful slides, palm plants, turquoise water and a few blurry parents. The children are the eight children of the first reference image, with the same faces, hair, clothes and colors: the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:41"
+ },
+ {
+  "job": "P03_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-6f9a-71e0-8528-e966220edc21",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_C_anni90.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Group photo of a children's swimming class in the indoor water park of a family cruise ship, posing by the pool edge with their two lifeguard instructors. The eight children of the first reference image stand in two rows, the smaller ones kneeling in front, holding colorful foam kickboards and pool noodles, smiling; the two lifeguards, a young man with a whistle and a young woman with a sun visor, stand at the back in plain red polo shirts with no print at all. Daylight from the glass dome, turquoise water, pastel slides in the background and, far behind them, small, the mascot statue of the second reference image on its round blue pedestal. The children are the eight children of the first reference image, with the same faces, hair, clothes and colors: the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:44"
+ },
+ {
+  "job": "P06_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-8d8e-767b-86d0-c2a1b8fc744f",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Flash photo, close and straight on, of the old white tiled wall of a dark, wet machine tunnel under a wave pool, stained with rust streaks and salt. The wall is covered from edge to edge with hundreds of hand-drawn tally marks in groups of five (four short vertical strokes crossed by a diagonal one), made with crayons, markers and scratches in many colors, row after row, so many that they cannot be counted. On the right, a child's naive crayon drawing of the water park mascot of the first reference image: a one-eyed jellyfish girl with a big round single pink eye, pink scribbled hair, a striped pink and violet jellyfish bell and long wavy magenta tentacles, surrounded by many red and pink hearts, holding hands with eight tiny stick-figure children. Only tally marks, hearts and drawings: no letters, no words, no numbers. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:45"
+ },
+ {
+  "job": "P05_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-8139-713d-8bfa-dee8aefee6e7",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/ambiente_B_colorato.jpg",
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. The empty wave pool of the abandoned indoor water park of the reference images, photographed from the pool edge looking down into the deep end, some weeks after the shipwreck. The dry, cracked tiled pool floor with the faded compass-rose mosaic has become a children's camp: colorful inflatable mattresses and pool floats arranged in a circle, ship blankets and beach towels, pillows, a small camping lantern, rows of plain unlabeled tin cans, plastic bottles of water, toys, a rope with small T-shirts hung to dry. No adults anywhere. Two children of the first reference image sleep curled up under the blankets: the smallest curly-blonde girl hugging her white plush lamb, and the small boy with the orange armbands. Grey stormy light from the glass dome, deep shadows, red emergency lights at the edges. At the very top of the frame, on the pool rim above the camp, stands the round blue pedestal of the mascot statue of the third reference image, with her glossy magenta tentacles hanging over the edge, the rest of the statue cut off by the frame. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:48"
+ },
+ {
+  "job": "P05_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-874c-7597-8501-26570543b5bb",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/ambiente_B_colorato.jpg",
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. The empty wave pool of the abandoned indoor water park of the reference images, photographed from the pool edge looking down into the deep end, some weeks after the shipwreck. The dry, cracked tiled pool floor with the faded compass-rose mosaic has become a children's camp: colorful inflatable mattresses and pool floats arranged in a circle, ship blankets and beach towels, pillows, a small camping lantern, rows of plain unlabeled tin cans, plastic bottles of water, toys, a rope with small T-shirts hung to dry. No adults anywhere. Two children of the first reference image sleep curled up under the blankets: the smallest curly-blonde girl hugging her white plush lamb, and the small boy with the orange armbands. Grey stormy light from the glass dome, deep shadows, red emergency lights at the edges. At the very top of the frame, on the pool rim above the camp, stands the round blue pedestal of the mascot statue of the third reference image, with her glossy magenta tentacles hanging over the edge, the rest of the statue cut off by the frame. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:50"
+ },
+ {
+  "job": "P02_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-5db8-72c6-baf3-7a0c9011273d",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Bright daytime inside the brand-new indoor water park of a family cruise ship, under a glass dome with blue sky. The eight children of the first reference image stand in a cheerful line in front of the water park mascot statue and wave at it, some wearing colorful kids' life vests over their T-shirts. The water park mascot statue is exactly the one in the reference image of the statue: a life-size glossy vinyl statue of a cute one-eyed jellyfish girl, with a smooth periwinkle-blue mannequin-like doll torso without any anatomical details, hands clasped on her chest, a single huge eye with a pink iris in the middle of the face and no mouth, short wavy silver-pink hair with a little loop of hair on top, and from the waist down a translucent pink-violet jellyfish bell with radial channels and long glossy magenta tentacles reaching down to a round blue pedestal painted with waves and shells. The statue is brand new, spotless and shiny, its bell channels softly lit, and a huge red satin ribbon bow is tied around the pedestal for the inauguration. Behind them colorful slides, palm plants, turquoise water and a few blurry parents. The children are the eight children of the first reference image, with the same faces, hair, clothes and colors: the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:52"
+ },
+ {
+  "job": "P06_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-92b1-70f2-8396-d72e63fc9f63",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Flash photo, close and straight on, of the old white tiled wall of a dark, wet machine tunnel under a wave pool, stained with rust streaks and salt. The wall is covered from edge to edge with hundreds of hand-drawn tally marks in groups of five (four short vertical strokes crossed by a diagonal one), made with crayons, markers and scratches in many colors, row after row, so many that they cannot be counted. On the right, a child's naive crayon drawing of the water park mascot of the first reference image: a one-eyed jellyfish girl with a big round single pink eye, pink scribbled hair, a striped pink and violet jellyfish bell and long wavy magenta tentacles, surrounded by many red and pink hearts, holding hands with eight tiny stick-figure children. Only tally marks, hearts and drawings: no letters, no words, no numbers. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:53"
+ },
+ {
+  "job": "P07_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-9900-734f-92b1-4cbb5f7c062c",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_sottacqua.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night in the abandoned indoor water park of the reference images, months after the shipwreck, flash photo from the pool edge. In the dark water of the shallow children's pool, the eight children of the first reference image, thinner and dirtier, in their old T-shirts and orange life jackets, sleep peacefully on inflatable mattresses and swim rings floating close together. In the middle of them, half submerged, is the mascot of the second and third reference images, now alive: her long wet silver-pink hair falls over her shoulders and chest, her smooth pale periwinkle doll-like arms are wrapped tenderly around the sleeping children, and her single huge pink eye is wide open, staring straight at the camera. Under the water her translucent jellyfish bell glows pink and violet, lighting the children from below, with magenta tentacles spreading among the floats. In the background, under a red emergency light, the round blue pedestal where her statue stood is empty, with a faded red ribbon bow lying on it. The mascot is now alive, the same character as in the reference images of the jellyfish girl: a smooth pale periwinkle-blue vinyl-doll body like a mannequin, without any anatomical details, long wet wavy silver-pink hair, a single huge eye with a bright pink iris in the middle of her face and no visible mouth, and from the waist down a translucent jellyfish bell glowing pink and violet from within with luminous radial channels, trailing many long magenta tentacles. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:55"
+ },
+ {
+  "job": "P03_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-69e3-77c7-9b99-895ee5c35c20",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_C_anni90.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Group photo of a children's swimming class in the indoor water park of a family cruise ship, posing by the pool edge with their two lifeguard instructors. The eight children of the first reference image stand in two rows, the smaller ones kneeling in front, holding colorful foam kickboards and pool noodles, smiling; the two lifeguards, a young man with a whistle and a young woman with a sun visor, stand at the back in plain red polo shirts with no print at all. Daylight from the glass dome, turquoise water, pastel slides in the background and, far behind them, small, the mascot statue of the second reference image on its round blue pedestal. The children are the eight children of the first reference image, with the same faces, hair, clothes and colors: the tallest girl, 11, with long straight auburn-red hair in one thick braid over her shoulder and freckles, in a teal T-shirt with a purple and yellow 1990s squiggle pattern and black knee-length shorts; a boy, 10, with dark brown skin, short black hair and round black sports glasses with an elastic strap, in a long-sleeve swim shirt with yellow and black horizontal stripes and black swim shorts; a boy, 9, with light brown skin and dark hair, wearing a red baseball cap backwards, in a navy blue T-shirt with white stripes on the sleeves and grey shorts; a Black girl, 10, with two big round afro puffs tied with yellow hair ties, in a purple T-shirt with neon orange and turquoise color-block panels and purple shorts; a boy, 9, with a blond bowl haircut and a sunburnt nose, in a lime-green T-shirt with a cartoon shark printed on the front and red swim shorts; an East Asian girl, 8, with black hair in two high pigtails tied with neon pink scrunchies, in a pink-and-white striped long-sleeve swim shirt and white shorts; a small boy, 7, with dark skin, a very short buzzcut and a gap-toothed smile, in an oversized white T-shirt with a small blue cartoon whale, wearing bright orange inflatable armbands; the smallest girl, 6, with curly light-blonde hair, in a yellow T-shirt with a big white daisy and pink jelly sandals, hugging a small white plush lamb toy. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:55"
+ },
+ {
+  "job": "P07_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-9eca-761c-b7e0-bcf70fa97a5f",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_sottacqua.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night in the abandoned indoor water park of the reference images, months after the shipwreck, flash photo from the pool edge. In the dark water of the shallow children's pool, the eight children of the first reference image, thinner and dirtier, in their old T-shirts and orange life jackets, sleep peacefully on inflatable mattresses and swim rings floating close together. In the middle of them, half submerged, is the mascot of the second and third reference images, now alive: her long wet silver-pink hair falls over her shoulders and chest, her smooth pale periwinkle doll-like arms are wrapped tenderly around the sleeping children, and her single huge pink eye is wide open, staring straight at the camera. Under the water her translucent jellyfish bell glows pink and violet, lighting the children from below, with magenta tentacles spreading among the floats. In the background, under a red emergency light, the round blue pedestal where her statue stood is empty, with a faded red ribbon bow lying on it. The mascot is now alive, the same character as in the reference images of the jellyfish girl: a smooth pale periwinkle-blue vinyl-doll body like a mannequin, without any anatomical details, long wet wavy silver-pink hair, a single huge eye with a bright pink iris in the middle of her face and no visible mouth, and from the waist down a translucent jellyfish bell glowing pink and violet from within with luminous radial channels, trailing many long magenta tentacles. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:56"
+ },
+ {
+  "job": "P10_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-c16d-75ea-85db-81ed825ce8ef",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "docs/concept/medusa_sottacqua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. A blurry, murky underwater photograph in deep green water full of floating particles, taken far below the hull of a large cruise ship, looking up. At the top, the dark silhouette of the ship's keel against the faint green-grey light of the surface. Clinging under the keel there is an enormous dark shape, many times bigger than a person, with dozens of long thick tentacles hanging and spreading down into the depths, barely distinguishable from the gloom. High up near the hull, small and far away, a single soft pink glowing light like a little lantern: the glow of the jellyfish bell of the reference image. Heavy blur, soft focus, flash backscatter on the particles, strong green color cast, very low contrast. No people. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:58"
+ },
+ {
+  "job": "P08_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-aa92-772e-85f4-10a02701ba03",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_dopo.jpg",
+   "docs/concept/medusa_sbircia.jpg",
+   "docs/concept/medusa_sottacqua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Years later. Night at the tiled edge of a pool in the abandoned indoor water park, red emergency lights and a harsh flash. The living mascot of the second and third reference images rises from the black water up to her waist, her long wet silver-pink hair covering her shoulders and chest, and feeds the children one at a time, like a mother bird or like puppies: she holds a small whole raw silver fish by the tail above the open mouth of a child kneeling at the edge. The children of the first reference image, now years older, kneel in a row on the wet tiles waiting for their turn with eager upturned faces. At the edge of the frame, out of focus and half in shadow, one child wears a white cube box over the head with a simple smiley face drawn in marker, another wears the old white plush lamb as a hood. The fish is whole and clean, no blood. The children are the same children of the first reference image, years after the shipwreck: 10 to 15 years old, thin and pale, long tangled hair, barefoot, in torn faded versions of their old T-shirts and swim shirts and dirty orange life jackets, recognizable by the auburn-red braid, the round taped sports glasses, the faded backwards cap, the afro puffs, the shaggy blond mop, the pigtails with pink scrunchies. The mascot is now alive, the same character as in the reference images of the jellyfish girl: a smooth pale periwinkle-blue vinyl-doll body like a mannequin, without any anatomical details, long wet wavy silver-pink hair, a single huge eye with a bright pink iris in the middle of her face and no visible mouth, and from the waist down a translucent jellyfish bell glowing pink and violet from within with luminous radial channels, trailing many long magenta tentacles. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:08:59"
+ },
+ {
+  "job": "P09_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-b035-7407-8acf-0092c7605cbc",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_dopo.jpg",
+   "docs/concept/medusa_sottacqua.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night in the flooded shallow pools of the children's area of the abandoned indoor water park. The children of the first reference image, now years older, stand motionless in a long row in the dark water up to their chests, seen from behind, all turned toward the living mascot of the second reference image, who glows at the center a few metres in front of them. Her translucent jellyfish bell lights the water pink and violet from below and her single huge pink eye shines in the dark. Against her light the children are dark silhouettes: long tangled hair, torn T-shirts, orange life jackets; one of them has a hood with floppy lamb ears, another a white boxy cube head. Nobody looks at the camera. Underexposed and grainy, only her glow and faint red emergency lights far away. The mascot is now alive, the same character as in the reference images of the jellyfish girl: a smooth pale periwinkle-blue vinyl-doll body like a mannequin, without any anatomical details, long wet wavy silver-pink hair, a single huge eye with a bright pink iris in the middle of her face and no visible mouth, and from the waist down a translucent jellyfish bell glowing pink and violet from within with luminous radial channels, trailing many long magenta tentacles. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:09:01"
+ },
+ {
+  "job": "P09_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-b668-7315-8956-afcd178c1f3b",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_dopo.jpg",
+   "docs/concept/medusa_sottacqua.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night in the flooded shallow pools of the children's area of the abandoned indoor water park. The children of the first reference image, now years older, stand motionless in a long row in the dark water up to their chests, seen from behind, all turned toward the living mascot of the second reference image, who glows at the center a few metres in front of them. Her translucent jellyfish bell lights the water pink and violet from below and her single huge pink eye shines in the dark. Against her light the children are dark silhouettes: long tangled hair, torn T-shirts, orange life jackets; one of them has a hood with floppy lamb ears, another a white boxy cube head. Nobody looks at the camera. Underexposed and grainy, only her glow and faint red emergency lights far away. The mascot is now alive, the same character as in the reference images of the jellyfish girl: a smooth pale periwinkle-blue vinyl-doll body like a mannequin, without any anatomical details, long wet wavy silver-pink hair, a single huge eye with a bright pink iris in the middle of her face and no visible mouth, and from the waist down a translucent jellyfish bell glowing pink and violet from within with luminous radial channels, trailing many long magenta tentacles. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:09:02"
+ },
+ {
+  "job": "P10_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-bb70-769b-9349-5ebbaeb17f2a",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "docs/concept/medusa_sottacqua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. A blurry, murky underwater photograph in deep green water full of floating particles, taken far below the hull of a large cruise ship, looking up. At the top, the dark silhouette of the ship's keel against the faint green-grey light of the surface. Clinging under the keel there is an enormous dark shape, many times bigger than a person, with dozens of long thick tentacles hanging and spreading down into the depths, barely distinguishable from the gloom. High up near the hull, small and far away, a single soft pink glowing light like a little lantern: the glow of the jellyfish bell of the reference image. Heavy blur, soft focus, flash backscatter on the particles, strong green color cast, very low contrast. No people. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:09:09"
+ },
+ {
+  "job": "P01_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-5333-720d-a1c9-fd77e9e2afc5",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_statua.jpg",
+   "docs/concept/medusa_turnaround.jpg",
+   "docs/concept/ambiente_B_colorato.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. A happy family snapshot at the entrance of the indoor water park of a 1990s family cruise ship, on the first day of the cruise. A smiling mother with permed brown hair in a floral summer dress and a father with a moustache in a bright Hawaiian shirt pose with their two children from the first reference image: the blond boy with the bowl haircut in the lime-green shark T-shirt and red swim shorts, and the smallest girl with curly light-blonde hair in the yellow daisy T-shirt, hugging her small white plush lamb. Behind them, above the colorful entrance arch, a big painted billboard shows the water park mascot as a cute smiling cartoon drawing: the one-eyed jellyfish girl of the other reference images (single huge pink eye, short wavy silver-pink hair with a little loop on top, periwinkle skin, a pink-violet jellyfish bell and magenta tentacles), drawn as a friendly cartoon, waving, on a sea-blue background with bubbles and starfish. The billboard has no words and no letters at all, only the drawing. Clean, brand-new, cheerful colors, turnstiles, potted palms, a glass dome with blue sky. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:09:15"
+ },
+ {
+  "job": "P04_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-7573-7465-a30d-59c0e2435279",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/ambiente_B_colorato.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. The night of the shipwreck, in the indoor water park of the cruise ship of the reference images. The eight children of the first reference image, soaked and terrified, huddle together at the very top of the colorful children's play structure, right under the giant tipping bucket, wearing big orange adult life jackets over their T-shirts, clutching each other and the railings. All around and below them there is only dark churning flood water reaching the platforms, with floating toys and debris, rain and sea spray pouring through the broken glass dome, and red emergency lights glowing in the darkness. The flash lights the wet frightened faces in the foreground, everything else falls into red-black darkness. Recognizable children: the auburn-red braid, the round sports glasses, the backwards red cap, the afro puffs, the blond bowl cut, the pigtails with pink scrunchies, the orange armbands, the smallest curly-blonde girl hugging her white plush lamb. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:10:34"
+ },
+ {
+  "job": "P08_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a13c75-a4a0-701d-8cc2-e09bf7873c4f",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_dopo.jpg",
+   "docs/concept/medusa_sbircia.jpg",
+   "docs/concept/medusa_sottacqua.jpg",
+   "docs/concept/ambiente_A_realistico.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Years later. Night at the tiled edge of a pool in the abandoned indoor water park, red emergency lights and a harsh flash. The living mascot of the second and third reference images rises from the black water up to her waist, her long wet silver-pink hair covering her shoulders and chest, and feeds the children one at a time, like a mother bird or like puppies: she holds a small whole raw silver fish by the tail above the open mouth of a child kneeling at the edge. The children of the first reference image, now years older, kneel in a row on the wet tiles waiting for their turn with eager upturned faces. At the edge of the frame, out of focus and half in shadow, one child wears a white cube box over the head with a simple smiley face drawn in marker, another wears the old white plush lamb as a hood. The fish is whole and clean, no blood. The children are the same children of the first reference image, years after the shipwreck: 10 to 15 years old, thin and pale, long tangled hair, barefoot, in torn faded versions of their old T-shirts and swim shirts and dirty orange life jackets, recognizable by the auburn-red braid, the round taped sports glasses, the faded backwards cap, the afro puffs, the shaggy blond mop, the pigtails with pink scrunchies. The mascot is now alive, the same character as in the reference images of the jellyfish girl: a smooth pale periwinkle-blue vinyl-doll body like a mannequin, without any anatomical details, long wet wavy silver-pink hair, a single huge eye with a bright pink iris in the middle of her face and no visible mouth, and from the waist down a translucent jellyfish bell glowing pink and violet from within with luminous radial channels, trailing many long magenta tentacles. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "FAILED",
+  "error": {
+   "type": "invalid_input",
+   "code": "provider_content_refused",
+   "message": "This content was declined by a safety check. Please adjust your prompt or image and retry.",
+   "doc_url": "https://docs.meshy.ai/en/api/errors#invalid-input"
+  },
+  "time": "2026-10-14 22:10:52"
+ },
+ {
+  "job": "P10_gpt2",
+  "kind": "image-to-image",
+  "task_id": "01a13c7b-2ec3-75d9-a54a-5542f66d9083",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "docs/concept/medusa_sottacqua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. A blurry, murky underwater photograph in deep green water full of floating particles, taken far below the hull of a large cruise ship, looking up. At the top, the long dark silhouette of the bottom of a big ship's hull, with a huge propeller and rudder at one end, against the faint green-grey light of the surface. Clinging under the keel there is an enormous dark shape, many times bigger than a person, with dozens of long thick tentacles hanging and spreading down into the depths, barely distinguishable from the gloom. High up near the hull, small and far away, a single soft pink glowing light like a little lantern: the glow of the jellyfish bell of the reference image. Heavy blur, soft focus, flash backscatter on the particles, strong green color cast, very low contrast. No people. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:14:54"
+ },
+ {
+  "job": "P04_gpt2",
+  "kind": "image-to-image",
+  "task_id": "01a13c7b-19fe-76a4-a2a1-669158a13314",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   [
+    "docs/concept/ambiente_B_colorato.jpg",
+    [
+     380,
+     90,
+     1060,
+     520
+    ],
+    [
+     [
+      685,
+      340,
+      830,
+      415
+     ],
+     [
+      380,
+      480,
+      1060,
+      520
+     ]
+    ]
+   ]
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. A stormy night in the flooded indoor water park of a cruise ship. The eight children of the first reference image wait close together at the very top of the colorful children's play structure of the second reference image, right under the giant yellow bucket, wearing big orange adult life jackets over their wet T-shirts, holding on to each other and to the railings, scared and cold. Below them the whole water park is flooded with dark churning water up to the platforms, with floating toys and swim rings; rain and sea spray pour in through the broken glass dome with lightning; red emergency lights glow in the darkness. The flash lights the children's wet faces in the foreground, everything else falls into red-black darkness. Recognizable children: the auburn-red braid, the round sports glasses, the backwards red cap, the afro puffs, the blond bowl cut, the pigtails with pink scrunchies, the orange armbands, the smallest curly-blonde girl hugging her white plush lamb. There are no signs anywhere. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:14:55"
+ },
+ {
+  "job": "P07_gpt2",
+  "kind": "image-to-image",
+  "task_id": "01a13c7b-1df8-723f-ae34-069b37be1f20",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   "docs/concept/medusa_sottacqua.jpg",
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night in the abandoned indoor water park of the reference images, months after the shipwreck, flash photo from the pool edge. In the dark water of the shallow children's pool, the eight children of the first reference image, thinner and dirtier, in their old T-shirts and orange life jackets, sleep peacefully on inflatable mattresses and swim rings floating close together. In the middle of them, half submerged, is the mascot of the second and third reference images, now alive: her long wet silver-pink hair falls over her shoulders and chest, her smooth pale periwinkle doll-like arms are wrapped tenderly around the sleeping children, and her single huge pink eye is wide open, staring straight at the camera. Under the water her translucent jellyfish bell glows pink and violet, lighting the children from below, with magenta tentacles spreading among the floats. Behind them, on the pool deck, clearly visible and lit by a red emergency light, stands the round blue pedestal painted with waves and shells of the third reference image, completely empty: the statue is gone from it, and a faded red ribbon bow lies at its foot. The mascot is now alive, the same character as in the reference images of the jellyfish girl: a smooth pale periwinkle-blue vinyl-doll body like a mannequin, without any anatomical details, long wet wavy silver-pink hair, a single huge eye with a bright pink iris in the middle of her face and no visible mouth, and from the waist down a translucent jellyfish bell glowing pink and violet from within with luminous radial channels, trailing many long magenta tentacles. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:14:56"
+ },
+ {
+  "job": "P09_gpt2",
+  "kind": "image-to-image",
+  "task_id": "01a13c7b-297a-743f-81ac-483a597fa38e",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_dopo.jpg",
+   "docs/concept/medusa_sbircia.jpg",
+   "docs/concept/medusa_sottacqua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night in the flooded shallow pools of the children's area of the abandoned indoor water park. The children of the first reference image, now years older, stand motionless in a long row in the dark water up to their chests, seen from behind, all turned toward the living mascot of the other reference images, a few metres in front of them at the center. She floats upright in the deeper water, submerged up to her shoulders: above the surface only her head, her long wet silver-pink hair spread on the water and her single huge pink eye, shining in the dark; under the surface her translucent jellyfish bell glows pink and violet and lights the water from below, with luminous magenta tentacles spreading toward the children. Against her light the children are dark silhouettes: long tangled hair, torn T-shirts, orange life jackets; one of them has a hood with floppy lamb ears, another a white boxy cube head. Nobody looks at the camera. Underexposed and grainy, only her glow and faint red emergency lights far away. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:14:59"
+ },
+ {
+  "job": "P04_nbp2",
+  "kind": "image-to-image",
+  "task_id": "01a13c7b-1544-704a-a3bf-0f3acc63ba53",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_1997.jpg",
+   [
+    "docs/concept/ambiente_B_colorato.jpg",
+    [
+     380,
+     90,
+     1060,
+     520
+    ],
+    [
+     [
+      685,
+      340,
+      830,
+      415
+     ],
+     [
+      380,
+      480,
+      1060,
+      520
+     ]
+    ]
+   ]
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. A stormy night in the flooded indoor water park of a cruise ship. The eight children of the first reference image wait close together at the very top of the colorful children's play structure of the second reference image, right under the giant yellow bucket, wearing big orange adult life jackets over their wet T-shirts, holding on to each other and to the railings, scared and cold. Below them the whole water park is flooded with dark churning water up to the platforms, with floating toys and swim rings; rain and sea spray pour in through the broken glass dome with lightning; red emergency lights glow in the darkness. The flash lights the children's wet faces in the foreground, everything else falls into red-black darkness. Recognizable children: the auburn-red braid, the round sports glasses, the backwards red cap, the afro puffs, the blond bowl cut, the pigtails with pink scrunchies, the orange armbands, the smallest curly-blonde girl hugging her white plush lamb. There are no signs anywhere. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:15:00"
+ },
+ {
+  "job": "P09_nbp2",
+  "kind": "image-to-image",
+  "task_id": "01a13c7b-231d-7315-a157-51bd5daeb081",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "assets_src/polaroid/riferimenti/cast_dopo.jpg",
+   "docs/concept/medusa_sbircia.jpg",
+   "docs/concept/medusa_sottacqua.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Direct on-camera flash that brightens the nearest subjects and falls off quickly into the background, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night in the flooded shallow pools of the children's area of the abandoned indoor water park. The children of the first reference image, now years older, stand motionless in a long row in the dark water up to their chests, seen from behind, all turned toward the living mascot of the other reference images, a few metres in front of them at the center. She floats upright in the deeper water, submerged up to her shoulders: above the surface only her head, her long wet silver-pink hair spread on the water and her single huge pink eye, shining in the dark; under the surface her translucent jellyfish bell glows pink and violet and lights the water from below, with luminous magenta tentacles spreading toward the children. Against her light the children are dark silhouettes: long tangled hair, torn T-shirts, orange life jackets; one of them has a hood with floppy lamb ears, another a white boxy cube head. Nobody looks at the camera. Underexposed and grainy, only her glow and faint red emergency lights far away. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-14 22:15:16"
+ }
+]

@@ -1,0 +1,4 @@
+.godot/
+*.tmp
+# copie locali dei GLB della sala (vedi strumenti/prepara_sala_reale.sh)
+sala_reale/glb/

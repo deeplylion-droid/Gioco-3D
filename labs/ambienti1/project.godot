@@ -1,0 +1,10 @@
+; Prova d'import degli ambienti interni del capitolo 1 (corridoio, spogliatoi, stanzino).
+config_version=5
+
+[application]
+config/name="Prova ambienti 1"
+run/main_scene="res://prova.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+
+[rendering]
+renderer/rendering_method="forward_plus"

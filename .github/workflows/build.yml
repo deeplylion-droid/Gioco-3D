@@ -1,0 +1,173 @@
+# Compila il gioco Godot (cartella godot/) a ogni push, su tutti i branch:
+# controlla gli script, esegue il test delle meccaniche ed esporta Windows e Linux.
+# Solo su main crea la Release "v<config/version>" se non esiste già (non cancella mai nulla).
+name: Build del gioco
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_BIN_DIR: /home/runner/godot-bin
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: C'è il progetto Godot?
+        id: progetto
+        run: |
+          if [ -f godot/project.godot ]; then echo "presente=si" >> "$GITHUB_OUTPUT"; else echo "presente=no" >> "$GITHUB_OUTPUT"; echo "Nessun godot/project.godot su questo branch: salto la build."; fi
+
+      - name: Cache di Godot e dei template
+        if: steps.progetto.outputs.presente == 'si'
+        uses: actions/cache@v4
+        with:
+          path: |
+            /home/runner/godot-bin
+            ~/.local/share/godot/export_templates
+          key: godot-${{ env.GODOT_VERSION }}-templates-v1
+
+      - name: Scarica Godot e i template
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          bash tools/godot_ci_setup.sh
+          echo "$GODOT_BIN_DIR" >> "$GITHUB_PATH"
+
+      - name: Versione del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        id: versione
+        run: |
+          VER=$(sed -n 's/^config\/version="\([^"]*\)"/\1/p' godot/project.godot)
+          if [ -z "$VER" ]; then echo "config/version mancante in project.godot"; exit 1; fi
+          echo "versione=$VER" >> "$GITHUB_OUTPUT"
+          echo "Versione: $VER"
+
+      - name: Importa il progetto
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          godot --headless --path godot --import
+          # Le texture estratte dai GLB vanno in compressione VRAM (meno memoria), poi si reimporta.
+          python3 tools/godot_vram_textures.py godot
+          godot --headless --path godot --import
+
+      - name: Controllo degli script
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/check_scripts.gd
+
+      - name: Test delle meccaniche
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_mechanics.gd
+
+      - name: Test della demo (sala principale)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
+
+      - name: Test dell'audio
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
+
+      - name: Test del menu (titolo, caricamento, pausa)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_menu.gd
+
+      - name: Test dei bambini (scene, animazioni, modalità)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini.gd
+
+      - name: Test degli interni (corridoio, spogliatoi, stanzino)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd
+
+      - name: Test degli ambienti tecnici (camera delle onde, sala pompe)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tecnici.gd
+
+      - name: Test delle tappe 5-6 (dalla pozza al raccordo, il risveglio)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappe56.gd
+
+      - name: Test della tappa 7 (il ritorno al buio)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa7.gd
+
+      - name: Test della tappa 8 (lei sbuca dal bordo, la strada verso la torre)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa8.gd
+
+      - name: Esporta Windows e Linux
+        if: steps.progetto.outputs.presente == 'si'
+        run: |
+          mkdir -p build/windows build/linux
+          godot --headless --path godot --export-release "Windows Desktop" ../build/windows/SplashLagoon.exe
+          godot --headless --path godot --export-release "Linux" ../build/linux/SplashLagoon.x86_64
+          test -f build/windows/SplashLagoon.exe -a -f build/windows/SplashLagoon.pck
+          test -f build/linux/SplashLagoon.x86_64 -a -f build/linux/SplashLagoon.pck
+          # Windows in un solo file: il .pck è dentro l'eseguibile (si avvia con un doppio clic, senza scompattare).
+          mkdir -p build/windows_unico
+          godot --headless --path godot --export-release "Windows Portatile" ../build/windows_unico/SplashLagoon.exe
+          test "$(stat -c %s build/windows_unico/SplashLagoon.exe)" -gt 100000000
+          V="${{ steps.versione.outputs.versione }}"
+          (cd build/windows && zip -9 -q "../SplashLagoon-windows-v$V.zip" SplashLagoon.exe SplashLagoon.pck)
+          (cd build/linux && zip -9 -q "../SplashLagoon-linux-v$V.zip" SplashLagoon.x86_64 SplashLagoon.pck)
+          cp build/windows_unico/SplashLagoon.exe "build/SplashLagoon-windows-v$V.exe"
+          ls -la build
+
+      - name: Carica la build Windows
+        if: steps.progetto.outputs.presente == 'si'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SplashLagoon-windows-v${{ steps.versione.outputs.versione }}
+          path: build/windows/
+
+      - name: Carica la build Linux
+        if: steps.progetto.outputs.presente == 'si'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SplashLagoon-linux-v${{ steps.versione.outputs.versione }}
+          path: build/linux/
+
+      - name: Release (solo su main; crea la Release o aggiunge i file che mancano)
+        if: steps.progetto.outputs.presente == 'si' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.versione.outputs.versione }}"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            # Non si sostituisce e non si cancella niente: si aggiungono solo i file con un nome nuovo.
+            echo "La Release $TAG esiste già: aggiungo solo i file che mancano. Per una versione nuova alza config/version."
+            if [ -f "docs/release/$TAG.md" ]; then gh release edit "$TAG" --notes-file "docs/release/$TAG.md"; fi
+            PRESENTI=$(gh release view "$TAG" --json assets -q '.assets[].name')
+            for f in build/*.zip build/*.exe; do
+              [ -f "$f" ] || continue
+              n=$(basename "$f")
+              if printf '%s\n' "$PRESENTI" | grep -qxF "$n"; then
+                echo "c'è già: $n"
+              else
+                gh release upload "$TAG" "$f"
+              fi
+            done
+          else
+            # Le note della versione, se ci sono (docs/release/<tag>.md); se no, quelle di riserva.
+            if [ -f "docs/release/$TAG.md" ]; then
+              NOTE=(--notes-file "docs/release/$TAG.md")
+            else
+              NOTE=(--notes "Demo giocabile della sala principale (build automatica del commit $GITHUB_SHA). Windows: scompatta lo zip e avvia SplashLagoon.exe (tieni SplashLagoon.pck nella stessa cartella).")
+            fi
+            gh release create "$TAG" build/*.zip build/*.exe \
+              --target "$GITHUB_SHA" \
+              --title "Splash Lagoon $TAG" \
+              "${NOTE[@]}"
+          fi

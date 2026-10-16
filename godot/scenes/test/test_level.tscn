@@ -1,0 +1,663 @@
+[gd_scene format=3]
+
+[ext_resource type="Environment" path="res://assets/env/graybox_environment.tres" id="1_yqvmj"]
+[ext_resource type="Material" path="res://assets/materials/graybox_wall.tres" id="2_kx1rg"]
+[ext_resource type="Material" path="res://assets/materials/graybox_floor.tres" id="3_jmk3s"]
+[ext_resource type="Material" path="res://assets/materials/graybox_dark.tres" id="4_7k5i0"]
+[ext_resource type="PackedScene" path="res://scenes/props/ladder.tscn" id="5_ctjbk"]
+[ext_resource type="Script" path="res://scripts/mechanisms/ladder.gd" id="6_r7ba0"]
+[ext_resource type="PackedScene" path="res://scenes/props/turbine.tscn" id="7_wvg0q"]
+[ext_resource type="Script" path="res://scripts/mechanisms/turbine.gd" id="8_8g6mn"]
+[ext_resource type="PackedScene" path="res://scenes/props/powered_door.tscn" id="9_acp0x"]
+[ext_resource type="Script" path="res://scripts/mechanisms/powered_door.gd" id="10_ga7xo"]
+[ext_resource type="PackedScene" path="res://scenes/props/pickup.tscn" id="11_kq13l"]
+[ext_resource type="Script" path="res://scripts/interaction/pickup.gd" id="12_yrjiq"]
+[ext_resource type="PackedScene" path="res://scenes/props/polaroid.tscn" id="13_i7x3w"]
+[ext_resource type="Script" path="res://scripts/interaction/collectible.gd" id="14_jkywo"]
+[ext_resource type="Material" path="res://assets/materials/graybox_wet.tres" id="15_glknx"]
+[ext_resource type="Script" path="res://scripts/water/wet_zone.gd" id="16_g656t"]
+[ext_resource type="Script" path="res://scripts/water/flowing_water.gd" id="17_s74dt"]
+[ext_resource type="PackedScene" path="res://scenes/props/water_tank.tscn" id="18_c7rtq"]
+[ext_resource type="Script" path="res://scripts/mechanisms/water_tank.gd" id="19_cgmvo"]
+[ext_resource type="Material" path="res://assets/materials/graybox_target.tres" id="20_sglrb"]
+[ext_resource type="Script" path="res://scripts/game/checkpoint.gd" id="21_ftjpa"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="22_atw58"]
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="23_6b7do"]
+[ext_resource type="PackedScene" path="res://scenes/props/floating_platform.tscn" id="24_qpgi2"]
+[ext_resource type="Script" path="res://scripts/mechanisms/floating_platform.gd" id="25_i1jsh"]
+[ext_resource type="PackedScene" path="res://scenes/props/water_button.tscn" id="26_2n470"]
+[ext_resource type="Script" path="res://scripts/mechanisms/water_button.gd" id="27_5mkma"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/dummy_enemy.tscn" id="28_65p4d"]
+[ext_resource type="Script" path="res://scripts/enemies/dummy_enemy.gd" id="29_xlrs7"]
+[ext_resource type="Script" path="res://scripts/game/kill_zone.gd" id="30_co2aw"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_jdgni"]
+size = Vector3(3, 0.01, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6rr7l"]
+size = Vector3(3, 0.6, 3)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_cgrvv"]
+radius = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_or7mi"]
+radius = 0.3
+height = 0.6
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_4alyn"]
+radius = 0.25
+
+[sub_resource type="SphereMesh" id="SphereMesh_wn851"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_a1ava"]
+size = Vector3(0.6, 0.6, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1u428"]
+size = Vector3(0.6, 0.6, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u35vc"]
+size = Vector3(4, 3, 3)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_mqmgo"]
+radius = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_2smg7"]
+radius = 0.3
+height = 0.6
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_t622k"]
+size = Vector3(0.6, 0.6, 0.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ma24k"]
+size = Vector3(0.6, 0.6, 0.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_p2p2n"]
+size = Vector3(2, 1, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pud7t"]
+albedo_color = Color(0.39999998, 0.04, 0.02, 1)
+emission_enabled = true
+emission = Color(1, 0.1, 0.05, 1)
+emission_energy_multiplier = 1.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_sxomn"]
+size = Vector3(1.9, 0.05, 1.9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_megek"]
+size = Vector3(3, 3, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n1phd"]
+size = Vector3(6, 3, 4)
+
+[node name="TestLevel" type="Node3D" unique_id=1182866274]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1110665103]
+environment = ExtResource("1_yqvmj")
+
+[node name="StanzaPartenza" type="Node3D" parent="." unique_id=1404185012]
+
+[node name="Muri" type="CSGCombiner3D" parent="StanzaPartenza" unique_id=905747337]
+use_collision = true
+collision_mask = 0
+
+[node name="Esterno" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1333759185]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
+size = Vector3(15, 5.5, 13)
+material = ExtResource("2_kx1rg")
+
+[node name="Interno" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=176166945]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.225, 0)
+operation = 2
+size = Vector3(14, 4.55, 12)
+material = ExtResource("2_kx1rg")
+
+[node name="Pavimento" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1928707345]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0)
+size = Vector3(14.5, 0.05, 12.5)
+material = ExtResource("3_jmk3s")
+
+[node name="NicchiaEsterno" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1768562989]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.25, 1.1, 2)
+size = Vector3(5.5, 3.2, 5)
+material = ExtResource("2_kx1rg")
+
+[node name="NicchiaInterno" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1713599311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1.075, 2)
+operation = 2
+size = Vector3(3, 2.25, 4)
+material = ExtResource("2_kx1rg")
+
+[node name="NicchiaPavimento" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=471546304]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, -0.025, 2)
+size = Vector3(3.4, 0.05, 4.4)
+material = ExtResource("3_jmk3s")
+
+[node name="MensolaAlta" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1104391429]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.775, 5)
+size = Vector3(2, 1.55, 2)
+material = ExtResource("4_7k5i0")
+
+[node name="Tavolo" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1777609089]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.4, 3.5)
+size = Vector3(1.2, 0.8, 0.7)
+material = ExtResource("4_7k5i0")
+
+[node name="VanoPorta" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1179741267]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.301, -6.25)
+operation = 2
+size = Vector3(2, 2.6, 1.4)
+material = ExtResource("2_kx1rg")
+
+[node name="PassaggioBasso" type="CSGBox3D" parent="StanzaPartenza/Muri" unique_id=1047630790]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.3, 0.576, 2)
+operation = 2
+size = Vector3(2.8, 1.15, 1.4)
+material = ExtResource("2_kx1rg")
+
+[node name="Ballatoio" type="CSGCombiner3D" parent="StanzaPartenza" unique_id=1408275658]
+use_collision = true
+collision_mask = 0
+metadata/superficie = &"metallo"
+
+[node name="Piano" type="CSGBox3D" parent="StanzaPartenza/Ballatoio" unique_id=888388099]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 2.375, -2)
+size = Vector3(2.5, 0.25, 6)
+material = ExtResource("4_7k5i0")
+
+[node name="Sostegno" type="CSGBox3D" parent="StanzaPartenza/Ballatoio" unique_id=1922285825]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.125, -4)
+size = Vector3(2.5, 2.25, 2)
+material = ExtResource("2_kx1rg")
+
+[node name="Ringhiera" type="CSGBox3D" parent="StanzaPartenza/Ballatoio" unique_id=664161537]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.54, 3, -0.75)
+size = Vector3(0.08, 1, 3.5)
+material = ExtResource("4_7k5i0")
+
+[node name="ScalaPioli" type="Area3D" parent="StanzaPartenza" unique_id=1826174695 instance=ExtResource("5_ctjbk")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 4.5, 0, -4)
+collision_layer = 128
+collision_mask = 0
+monitoring = false
+script = ExtResource("6_r7ba0")
+height = 2.5
+
+[node name="Turbina" type="Node3D" parent="StanzaPartenza" unique_id=884152654 instance=ExtResource("7_wvg0q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 2.2, -6)
+script = ExtResource("8_8g6mn")
+
+[node name="PortaTurbina" type="Node3D" parent="StanzaPartenza" unique_id=898967925 node_paths=PackedStringArray("sources") instance=ExtResource("9_acp0x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.25)
+script = ExtResource("10_ga7xo")
+sources = [NodePath("../Turbina")]
+
+[node name="Chiave" type="Area3D" parent="StanzaPartenza" unique_id=1267134399 instance=ExtResource("11_kq13l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.8, 3.5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("12_yrjiq")
+item_id = &"chiave"
+item_name = "Chiave"
+prompt = "Raccogli"
+one_shot = true
+
+[node name="Fusibile" type="Area3D" parent="StanzaPartenza" unique_id=258378586 instance=ExtResource("11_kq13l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, 2)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("12_yrjiq")
+item_id = &"fusibile"
+item_name = "Fusibile"
+prompt = "Raccogli"
+one_shot = true
+
+[node name="Polaroid01" type="Area3D" parent="StanzaPartenza" unique_id=1188025602 instance=ExtResource("13_i7x3w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.3, 2.5, -0.6)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("14_jkywo")
+entry_id = &"polaroid01"
+prompt = "Raccogli"
+one_shot = true
+
+[node name="Polaroid02" type="Area3D" parent="StanzaPartenza" unique_id=556345504 instance=ExtResource("13_i7x3w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.55, 5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("14_jkywo")
+entry_id = &"polaroid02"
+prompt = "Raccogli"
+one_shot = true
+
+[node name="Pozzanghera" type="MeshInstance3D" parent="StanzaPartenza" unique_id=752857531]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.005, 1.5)
+material_override = ExtResource("15_glknx")
+mesh = SubResource("BoxMesh_jdgni")
+
+[node name="ZonaBagnata" type="Area3D" parent="StanzaPartenza" unique_id=1510652998]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.3, 1.5)
+collision_layer = 64
+collision_mask = 0
+monitoring = false
+script = ExtResource("16_g656t")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StanzaPartenza/ZonaBagnata" unique_id=1225483235]
+shape = SubResource("BoxShape3D_6rr7l")
+
+[node name="AcquaCheScorre" type="Area3D" parent="StanzaPartenza" unique_id=521141363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -2)
+collision_layer = 64
+collision_mask = 0
+monitoring = false
+script = ExtResource("17_s74dt")
+size = Vector3(1.2, 0.12, 4)
+
+[node name="VascaPiccola" type="Node3D" parent="StanzaPartenza" unique_id=1048323122 instance=ExtResource("18_c7rtq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -0.5)
+script = ExtResource("19_cgmvo")
+inner_size = Vector3(1.4, 0.6, 1)
+wall_thickness = 0.15
+fill = 0.9
+max_fill = 0.9
+capacity_liters = 15.0
+
+[node name="Palla1" type="RigidBody3D" parent="StanzaPartenza" unique_id=1654830749]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.3, -2.5)
+collision_layer = 8
+collision_mask = 15
+mass = 2.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StanzaPartenza/Palla1" unique_id=695357659]
+shape = SubResource("SphereShape3D_cgrvv")
+
+[node name="Mesh" type="MeshInstance3D" parent="StanzaPartenza/Palla1" unique_id=1515879139]
+material_override = ExtResource("20_sglrb")
+mesh = SubResource("SphereMesh_or7mi")
+
+[node name="Palla2" type="RigidBody3D" parent="StanzaPartenza" unique_id=1423857379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3, 0.3, -3.2)
+collision_layer = 8
+collision_mask = 15
+mass = 1.5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StanzaPartenza/Palla2" unique_id=1254454212]
+shape = SubResource("SphereShape3D_4alyn")
+
+[node name="Mesh" type="MeshInstance3D" parent="StanzaPartenza/Palla2" unique_id=875258060]
+material_override = ExtResource("20_sglrb")
+mesh = SubResource("SphereMesh_wn851")
+
+[node name="Cassa" type="RigidBody3D" parent="StanzaPartenza" unique_id=105072162]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.3, -3.5)
+collision_layer = 8
+collision_mask = 15
+mass = 8.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StanzaPartenza/Cassa" unique_id=1440535663]
+shape = SubResource("BoxShape3D_a1ava")
+
+[node name="Mesh" type="MeshInstance3D" parent="StanzaPartenza/Cassa" unique_id=156978568]
+material_override = ExtResource("2_kx1rg")
+mesh = SubResource("BoxMesh_1u428")
+
+[node name="CheckpointPartenza" type="Area3D" parent="StanzaPartenza" unique_id=2090532447 node_paths=PackedStringArray("spawn_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 4)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("21_ftjpa")
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StanzaPartenza/CheckpointPartenza" unique_id=719056698]
+shape = SubResource("BoxShape3D_u35vc")
+
+[node name="Ripartenza" type="Marker3D" parent="StanzaPartenza/CheckpointPartenza" unique_id=1356394440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0.5)
+
+[node name="Cartello01" type="Label3D" parent="StanzaPartenza" unique_id=336195526]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 3.55, -5.95)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "TURBINA
+spruzzala (tasto sinistro): apre la porta"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello02" type="Label3D" parent="StanzaPartenza" unique_id=459881410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7, 3.1, -4)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "SCALA A PIOLI: avvicinati e premi W"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello03" type="Label3D" parent="StanzaPartenza" unique_id=983147598]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6.95, 1.75, 2)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "PASSAGGIO BASSO
+tieni premuto Ctrl"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello04" type="Label3D" parent="StanzaPartenza" unique_id=1556726361]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -6, 2.4, 3.95)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "MENSOLA ALTA
+salta e spruzza verso il basso"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello05" type="Label3D" parent="StanzaPartenza" unique_id=2143301043]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1, 3.05)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "PAVIMENTO BAGNATO
+(passi bagnati)"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello06" type="Label3D" parent="StanzaPartenza" unique_id=1120663910]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 1.2, 0)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "ACQUA CHE SCORRE
+ricarica lo zaino"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello07" type="Label3D" parent="StanzaPartenza" unique_id=154207933]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 1.5, 0.1)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "VASCA PICCOLA
+aspira col tasto destro"
+font_size = 30
+outline_size = 8
+
+[node name="Luce" type="OmniLight3D" parent="StanzaPartenza" unique_id=1718399583]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.1, 0)
+light_color = Color(1, 0.92, 0.8, 1)
+light_energy = 1.4
+shadow_enabled = true
+omni_range = 11.0
+
+[node name="LuceNicchia" type="OmniLight3D" parent="StanzaPartenza" unique_id=80867399]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1.9, 2)
+light_color = Color(0.7, 0.8, 1, 1)
+light_energy = 0.8
+shadow_enabled = true
+
+[node name="LuceEmergenza" type="OmniLight3D" parent="StanzaPartenza" unique_id=1151842135]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, 4.1, 5.4)
+light_color = Color(1, 0.12, 0.06, 1)
+light_energy = 1.2
+shadow_enabled = true
+omni_range = 6.0
+
+[node name="LuceTurbina" type="OmniLight3D" parent="StanzaPartenza" unique_id=995685179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 3.6, -4.8)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 0.7
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=2110008324 instance=ExtResource("22_atw58")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.5)
+collision_layer = 2
+collision_mask = 13
+floor_snap_length = 0.3
+script = ExtResource("23_6b7do")
+
+[node name="SalaVasche" type="Node3D" parent="." unique_id=1088021950]
+
+[node name="Muri" type="CSGCombiner3D" parent="SalaVasche" unique_id=626469249]
+use_collision = true
+collision_mask = 0
+
+[node name="Esterno" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=268720573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -19)
+size = Vector3(19, 12, 19)
+material = ExtResource("2_kx1rg")
+
+[node name="Interno" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=72826706]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.975, -19)
+operation = 2
+size = Vector3(18, 8.05, 18)
+material = ExtResource("2_kx1rg")
+
+[node name="Pavimento" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=1161691731]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, -19)
+size = Vector3(18.5, 0.05, 18.5)
+material = ExtResource("3_jmk3s")
+
+[node name="CorridoioEsterno" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=1967377943]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8)
+size = Vector3(4, 4, 3.6)
+material = ExtResource("2_kx1rg")
+
+[node name="CorridoioInterno" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=1515921351]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.475, -8)
+operation = 2
+size = Vector3(3, 3.05, 4.4)
+material = ExtResource("2_kx1rg")
+
+[node name="CorridoioPavimento" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=931234960]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, -8)
+size = Vector3(3.4, 0.05, 4.4)
+material = ExtResource("3_jmk3s")
+
+[node name="Gradino" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=1112072786]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, -15.75)
+size = Vector3(4, 1.4, 1.5)
+material = ExtResource("4_7k5i0")
+
+[node name="Rampa" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=2123516523]
+transform = Transform3D(1, 0, 0, 0, 0.9486833, -0.31622776, 0, 0.31622776, 0.9486833, 0, 0.6051, -12.9316)
+size = Vector3(4, 0.2, 4.6)
+material = ExtResource("4_7k5i0")
+
+[node name="Sporgenza" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=1150475459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -25.5)
+size = Vector3(6, 2.5, 5)
+material = ExtResource("4_7k5i0")
+
+[node name="BucoVasca" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=1048998911]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, -20)
+operation = 2
+size = Vector3(6, 2.3, 7)
+material = ExtResource("2_kx1rg")
+
+[node name="Pozzo" type="CSGBox3D" parent="SalaVasche/Muri" unique_id=831464164]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, -1.5, -14)
+operation = 2
+size = Vector3(2, 3, 2)
+material = ExtResource("4_7k5i0")
+
+[node name="VascaGrande" type="Node3D" parent="SalaVasche" unique_id=387072528 node_paths=PackedStringArray("drain_sources") instance=ExtResource("18_c7rtq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, -20)
+script = ExtResource("19_cgmvo")
+inner_size = Vector3(5, 3, 6)
+max_fill = 0.95
+drain_sources = [NodePath("../PulsanteScarico")]
+
+[node name="PiattaformaGalleggiante" type="AnimatableBody3D" parent="SalaVasche" unique_id=848703004 node_paths=PackedStringArray("tank") instance=ExtResource("24_qpgi2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.3, -20)
+script = ExtResource("25_i1jsh")
+tank = NodePath("../VascaGrande")
+size = Vector3(2.6, 0.6, 2.6)
+draft = 0.15
+
+[node name="ScalaVasca" type="Area3D" parent="SalaVasche" unique_id=1360970959 instance=ExtResource("5_ctjbk")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 1.8, -1.6, -17)
+collision_layer = 128
+collision_mask = 0
+monitoring = false
+script = ExtResource("6_r7ba0")
+
+[node name="VascaSorgente" type="Node3D" parent="SalaVasche" unique_id=1671460494 instance=ExtResource("18_c7rtq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -20)
+script = ExtResource("19_cgmvo")
+inner_size = Vector3(2.5, 1, 2.5)
+wall_thickness = 0.25
+fill = 0.95
+max_fill = 0.95
+capacity_liters = 60.0
+
+[node name="PulsanteScarico" type="Node3D" parent="SalaVasche" unique_id=1794201177 instance=ExtResource("26_2n470")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -9, 2, -15.5)
+script = ExtResource("27_5mkma")
+
+[node name="Polaroid03" type="Area3D" parent="SalaVasche" unique_id=1510611664 instance=ExtResource("13_i7x3w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -25.5)
+collision_layer = 16
+collision_mask = 0
+monitoring = false
+script = ExtResource("14_jkywo")
+entry_id = &"polaroid03"
+prompt = "Raccogli"
+one_shot = true
+
+[node name="Manichino" type="CharacterBody3D" parent="SalaVasche" unique_id=1508273388 instance=ExtResource("28_65p4d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -24.5)
+collision_layer = 4
+collision_mask = 15
+script = ExtResource("29_xlrs7")
+stop_distance = 0.6
+kill_distance = 1.0
+
+[node name="Palla3" type="RigidBody3D" parent="SalaVasche" unique_id=166841905]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.3, -12)
+collision_layer = 8
+collision_mask = 15
+mass = 2.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SalaVasche/Palla3" unique_id=773062192]
+shape = SubResource("SphereShape3D_mqmgo")
+
+[node name="Mesh" type="MeshInstance3D" parent="SalaVasche/Palla3" unique_id=395156856]
+material_override = ExtResource("20_sglrb")
+mesh = SubResource("SphereMesh_2smg7")
+
+[node name="Cassa2" type="RigidBody3D" parent="SalaVasche" unique_id=930696480]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.3, -12.5)
+collision_layer = 8
+collision_mask = 15
+mass = 8.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SalaVasche/Cassa2" unique_id=730279073]
+shape = SubResource("BoxShape3D_t622k")
+
+[node name="Mesh" type="MeshInstance3D" parent="SalaVasche/Cassa2" unique_id=1628683814]
+material_override = ExtResource("2_kx1rg")
+mesh = SubResource("BoxMesh_ma24k")
+
+[node name="PozzoMortale" type="Area3D" parent="SalaVasche" unique_id=36604769]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, -2.4, -14)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("30_co2aw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SalaVasche/PozzoMortale" unique_id=1007735342]
+shape = SubResource("BoxShape3D_p2p2n")
+
+[node name="FondoPozzo" type="MeshInstance3D" parent="SalaVasche" unique_id=1421301901]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, -2.95, -14)
+material_override = SubResource("StandardMaterial3D_pud7t")
+mesh = SubResource("BoxMesh_sxomn")
+
+[node name="CheckpointCorridoio" type="Area3D" parent="SalaVasche" unique_id=1776538795 node_paths=PackedStringArray("spawn_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("21_ftjpa")
+order = 1
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SalaVasche/CheckpointCorridoio" unique_id=2069247425]
+shape = SubResource("BoxShape3D_megek")
+
+[node name="Ripartenza" type="Marker3D" parent="SalaVasche/CheckpointCorridoio" unique_id=1829321681]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+
+[node name="CheckpointSporgenza" type="Area3D" parent="SalaVasche" unique_id=383040982 node_paths=PackedStringArray("spawn_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -25)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("21_ftjpa")
+order = 2
+spawn_point = NodePath("Ripartenza")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SalaVasche/CheckpointSporgenza" unique_id=1144105380]
+shape = SubResource("BoxShape3D_n1phd")
+
+[node name="Ripartenza" type="Marker3D" parent="SalaVasche/CheckpointSporgenza" unique_id=300691112]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+
+[node name="Cartello08" type="Label3D" parent="SalaVasche" unique_id=644676613]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2.2, -18.6)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "VASCA SORGENTE
+aspira (tasto destro), poi spruzza
+nella vasca grande"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello09" type="Label3D" parent="SalaVasche" unique_id=1206256834]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, -27.95)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "VASCA GRANDE: riempila col getto,
+la piattaforma sale fino alla sporgenza"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello10" type="Label3D" parent="SalaVasche" unique_id=1881170942]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -8.95, 3, -15.5)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "PULSANTE
+scarico della vasca (on/off)"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello11" type="Label3D" parent="SalaVasche" unique_id=953993496]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.6, -12.9)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "POZZO MORTALE
+(prova della morte)"
+font_size = 30
+outline_size = 8
+
+[node name="Cartello12" type="Label3D" parent="SalaVasche" unique_id=1472874523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.4, -22)
+modulate = Color(1, 0.93, 0.7, 1)
+text = "MANICHINO: spruzzalo per spingerlo.
+Non farti prendere!"
+font_size = 30
+outline_size = 8
+
+[node name="Luce" type="OmniLight3D" parent="SalaVasche" unique_id=764507568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.5, -19)
+light_color = Color(0.85, 0.9, 1, 1)
+light_energy = 2.2
+shadow_enabled = true
+omni_range = 20.0
+
+[node name="LuceIngresso" type="OmniLight3D" parent="SalaVasche" unique_id=1259618053]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 3.5, -12.5)
+light_color = Color(1, 0.9, 0.75, 1)
+shadow_enabled = true
+omni_range = 9.0
+
+[node name="LuceVasca" type="OmniLight3D" parent="SalaVasche" unique_id=639270113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -20)
+light_color = Color(0.6, 0.85, 1, 1)
+light_energy = 0.8
+omni_range = 7.0
+
+[node name="LuceEmergenza" type="OmniLight3D" parent="SalaVasche" unique_id=1401230321]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 3, -26.5)
+light_color = Color(1, 0.12, 0.06, 1)
+light_energy = 1.4
+shadow_enabled = true
+omni_range = 8.0

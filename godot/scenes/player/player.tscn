@@ -1,0 +1,188 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_pl"]
+[ext_resource type="Script" path="res://scripts/player/water_pack.gd" id="2_wp"]
+[ext_resource type="Script" path="res://scripts/player/interactor.gd" id="3_in"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
+[ext_resource type="Shader" path="res://shaders/water_jet_particles.gdshader" id="5_jet"]
+[ext_resource type="Material" path="res://assets/materials/water_droplet.tres" id="6_drop"]
+[ext_resource type="Material" path="res://assets/materials/graybox_dark.tres" id="7_dark"]
+[ext_resource type="Material" path="res://assets/materials/graybox_target.tres" id="8_acc"]
+[ext_resource type="Shader" path="res://shaders/water_suction_particles.gdshader" id="9_suck"]
+[ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_opzione2.tscn" id="10_lance"]
+[ext_resource type="PackedScene" path="res://addons/grafica/torcia.tscn" id="11_torch"]
+[ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetto_sottacqua.tscn" id="12_under"]
+[ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetti_zaino.tscn" id="13_fx"]
+
+[sub_resource type="CylinderShape3D" id="body_shape"]
+resource_local_to_scene = true
+radius = 0.35
+height = 1.75
+
+[sub_resource type="CapsuleShape3D" id="sensor_shape"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="BoxMesh" id="lance_mesh"]
+size = Vector3(0.022, 0.022, 0.5)
+
+[sub_resource type="BoxMesh" id="grip_mesh"]
+size = Vector3(0.03, 0.09, 0.04)
+
+[sub_resource type="BoxMesh" id="valve_mesh"]
+size = Vector3(0.04, 0.032, 0.06)
+
+[sub_resource type="ShaderMaterial" id="jet_process"]
+shader = ExtResource("5_jet")
+shader_parameter/speed = 15.0
+shader_parameter/speed_random = 0.05
+shader_parameter/spread_degrees = 1.4
+shader_parameter/gravity = Vector3(0, -9.8, 0)
+shader_parameter/max_age = 1.1
+shader_parameter/base_size = 0.03
+shader_parameter/size_growth = 0.07
+shader_parameter/stretch = 0.012
+shader_parameter/inherit_velocity = Vector3(0, 0, 0)
+shader_parameter/color = Color(0.78, 0.9, 1, 0.75)
+
+[sub_resource type="SphereMesh" id="drop_mesh"]
+material = ExtResource("6_drop")
+radius = 0.5
+height = 1.0
+radial_segments = 8
+rings = 4
+
+[sub_resource type="ParticleProcessMaterial" id="splash_process"]
+emission_shape = 1
+emission_sphere_radius = 0.08
+direction = Vector3(0, 1, 0)
+spread = 65.0
+initial_velocity_min = 1.0
+initial_velocity_max = 3.0
+gravity = Vector3(0, -9.8, 0)
+scale_min = 0.04
+scale_max = 0.09
+color = Color(0.8, 0.9, 1, 0.8)
+
+[sub_resource type="ShaderMaterial" id="suction_process"]
+shader = ExtResource("9_suck")
+shader_parameter/target = Vector3(0, 1.5, 0)
+shader_parameter/emission_radius = 0.35
+shader_parameter/start_speed = 1.5
+shader_parameter/pull = 18.0
+shader_parameter/max_speed = 9.0
+shader_parameter/base_size = 0.03
+shader_parameter/color = Color(0.75, 0.88, 1, 0.7)
+
+[sub_resource type="SphereMesh" id="splash_mesh"]
+material = ExtResource("6_drop")
+radius = 0.5
+height = 1.0
+radial_segments = 6
+rings = 3
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 13
+floor_snap_length = 0.3
+script = ExtResource("1_pl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.875, 0)
+shape = SubResource("body_shape")
+
+[node name="Sensor" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 192
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sensor"]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("sensor_shape")
+
+[node name="Head" type="Node3D" parent="."]
+position = Vector3(0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+current = true
+fov = 62.0
+near = 0.03
+
+[node name="Torcia" parent="Head/Camera3D" instance=ExtResource("11_torch")]
+dimensione_sorgente = 0.012
+
+[node name="EffettoSottacqua" parent="Head/Camera3D" instance=ExtResource("12_under")]
+
+[node name="ViewModel" type="Node3D" parent="Head/Camera3D"]
+position = Vector3(0.21, -0.2, -0.36)
+
+[node name="Lancia" type="MeshInstance3D" parent="Head/Camera3D/ViewModel"]
+position = Vector3(0, 0, -0.25)
+layers = 2
+cast_shadow = 0
+mesh = SubResource("lance_mesh")
+material_override = ExtResource("7_dark")
+
+[node name="Impugnatura" type="MeshInstance3D" parent="Head/Camera3D/ViewModel"]
+position = Vector3(0, -0.05, 0.02)
+layers = 2
+cast_shadow = 0
+mesh = SubResource("grip_mesh")
+material_override = ExtResource("7_dark")
+
+[node name="Valvola" type="MeshInstance3D" parent="Head/Camera3D/ViewModel"]
+position = Vector3(0, 0.004, -0.03)
+layers = 2
+cast_shadow = 0
+mesh = SubResource("valve_mesh")
+material_override = ExtResource("8_acc")
+
+[node name="Muzzle" type="Marker3D" parent="Head/Camera3D/ViewModel"]
+position = Vector3(0, 0, -0.5)
+
+[node name="JetParticles" type="GPUParticles3D" parent="Head/Camera3D/ViewModel/Muzzle"]
+cast_shadow = 0
+emitting = false
+amount = 360
+lifetime = 1.15
+fixed_fps = 60
+visibility_aabb = AABB(-25, -25, -25, 50, 50, 50)
+process_material = SubResource("jet_process")
+draw_pass_1 = SubResource("drop_mesh")
+
+[node name="WaterPack" type="Node3D" parent="." node_paths=PackedStringArray("view_model", "muzzle", "jet_particles", "splash_particles", "suction_particles")]
+script = ExtResource("2_wp")
+view_model = NodePath("../Head/Camera3D/ViewModel")
+muzzle = NodePath("../Head/Camera3D/ViewModel/Muzzle")
+jet_particles = NodePath("../Head/Camera3D/ViewModel/Muzzle/JetParticles")
+splash_particles = NodePath("SplashParticles")
+suction_particles = NodePath("SuctionParticles")
+lance_scene = ExtResource("10_lance")
+tank_indicator = 1
+
+[node name="SplashParticles" type="GPUParticles3D" parent="WaterPack"]
+cast_shadow = 0
+emitting = false
+amount = 80
+lifetime = 0.55
+fixed_fps = 60
+visibility_aabb = AABB(-4, -4, -4, 8, 8, 8)
+process_material = SubResource("splash_process")
+draw_pass_1 = SubResource("splash_mesh")
+
+[node name="SuctionParticles" type="GPUParticles3D" parent="WaterPack"]
+cast_shadow = 0
+emitting = false
+amount = 120
+lifetime = 0.8
+fixed_fps = 60
+visibility_aabb = AABB(-6, -6, -6, 12, 12, 12)
+process_material = SubResource("suction_process")
+draw_pass_1 = SubResource("splash_mesh")
+
+[node name="EffettiZaino" parent="." instance=ExtResource("13_fx")]
+
+[node name="Interactor" type="Node" parent="."]
+script = ExtResource("3_in")
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]
