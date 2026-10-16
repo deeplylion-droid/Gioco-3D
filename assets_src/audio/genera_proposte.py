@@ -746,10 +746,11 @@ class Scena:
         self.metti(lp(fade(imp, 0.1, 0.2), 5000), t0 + 0.3, impatto_db, 0.15)
         mix_into(self.vicino, stereo(leggi('giocatore/zaino_getto_fine.ogg', 1) * db(g_db - 1)), n_of(t1))
 
-    def scrivi(self, nome, wet=0.26):
+    def scrivi(self, nome, wet=0.26, fin=0.3, fout=2.0, wet_vicino=0.0):
         eff = reverb(self.eff, ir_sala(), wet=wet, dry=1.0, tail=False)
-        out = hp(self.amb + eff + self.vicino, 20, 2)
-        out = fade(out, 0.3, 2.0)
+        vicino = reverb(self.vicino, ir_sala(), wet=wet_vicino, dry=1.0, tail=False) if wet_vicino > 0 else self.vicino
+        out = hp(self.amb + eff + vicino, 20, 2)
+        out = fade(out, fin, fout)
         out = limiter(out * db(-16.0 - lufs(out)), -1.0)
         path = os.path.join(ANTEPRIMA, nome)
         write_ogg(path, out, 5)

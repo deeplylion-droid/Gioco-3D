@@ -229,7 +229,9 @@ Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md`
 `res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg`, `anteprima_lei.ogg` e
 `confronto_pioggia_bollicine.ogg` (cartella con `.gdignore`: non entra nel gioco). Le anteprime delle
 proposte per l'utente (`anteprima/proposta_*.ogg`) restano com'erano quando le ha ascoltate: si
-rifanno solo a mano (`genera_anteprima.py proposte` per lei, `genera_proposte.py` per le altre).
+rifanno solo a mano (`genera_anteprima.py proposte` per lei, `genera_proposte.py` per le altre,
+`genera_proposte_getto.py` per la lancia dello zaino, con i suoni sciolti in
+`assets_src/audio/proposte_getto/`).
 I suoni scelti fra le proposte li fanno `genera_piscina.py` e `genera_torre.py`, con le stesse
 funzioni e gli stessi semi delle anteprime approvate.
 `assets_src/audio/verifica.py file.ogg --png cartella` stampa loudness e picchi e disegna lo
