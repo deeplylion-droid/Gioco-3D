@@ -44,9 +44,9 @@
 			"name":"tubo_lancia_b_cannone",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.05000000074505806,
-					0.6200000047683716,
-					0.6200000047683716,
+					0,
+					0.10000000149011612,
+					0.11999999731779099,
 					1
 				],
 				"metallicFactor":0,
@@ -118,15 +118,15 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":25530,
+			"count":25531,
 			"max":[
-				0.08748787641525269,
-				0.08927826583385468,
-				0.699999988079071
+				0.11827122420072556,
+				0.12106448411941528,
+				0.949999988079071
 			],
 			"min":[
-				-0.0875990018248558,
-				-0.21014057099819183,
+				-0.11934667080640793,
+				-0.2852896749973297,
 				0
 			],
 			"type":"VEC3"
@@ -134,13 +134,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":25530,
+			"count":25531,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":25530,
+			"count":25531,
 			"type":"VEC2"
 		},
 		{
@@ -152,23 +152,23 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":5047,
+			"count":5408,
 			"max":[
-				0.15739788115024567,
-				-0.0876077339053154,
-				1.1250853538513184
+				0.16377589106559753,
+				-0.13091814517974854,
+				1.3819332122802734
 			],
 			"min":[
-				-0.0184578076004982,
-				-1.058220624923706,
-				0.667245090007782
+				-0.026023587211966515,
+				-1.1059365272521973,
+				0.9108217358589172
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":5047,
+			"count":5408,
 			"type":"VEC3"
 		},
 		{
@@ -181,44 +181,44 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":306360,
+			"byteLength":306372,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":306360,
-			"byteOffset":306360,
+			"byteLength":306372,
+			"byteOffset":306372,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":204240,
-			"byteOffset":612720,
+			"byteLength":204248,
+			"byteOffset":612744,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":183642,
-			"byteOffset":816960,
+			"byteOffset":816992,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":60564,
-			"byteOffset":1000604,
+			"byteLength":64896,
+			"byteOffset":1000636,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":60564,
-			"byteOffset":1061168,
+			"byteLength":64896,
+			"byteOffset":1065532,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":45600,
-			"byteOffset":1121732,
+			"byteOffset":1130428,
 			"target":34963
 		}
 	],
@@ -230,7 +230,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":1167332,
+			"byteLength":1176028,
 			"uri":"lancia_b_cannone.bin"
 		}
 	]

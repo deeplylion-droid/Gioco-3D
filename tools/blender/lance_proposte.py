@@ -21,9 +21,18 @@ PROVA = '--prova' in sys.argv
 # nome: lunghezza (m, senza il tubo), verso della punta sull'asse lungo ('+'/'-'/'auto'),
 #       tubo verso lo zaino: colore, raggio, direzione d'uscita dal moncone (Blender: +Y avanti, +Z su)
 LANCE = {
-    'lancia_a_pompiere': dict(lung=0.60, punta='auto', tubo=((0.25, 0.025, 0.02), 0.032, (0, -1, -0.15)), rough=0.8),
-    'lancia_b_cannone': dict(lung=0.70, punta='auto', tubo=((0.05, 0.62, 0.62), 0.018, (0, -0.4, -1)), rough=0.35),
-    'lancia_c_industriale': dict(lung=0.65, punta='auto', tubo=((0.02, 0.02, 0.02), 0.03, (0, -0.4, -1)), rough=0.6),
+    # misure di gioco (16 ottobre: "molto molto più imponente", circa 1,4 volte le prime proposte)
+    'lancia_a_pompiere': dict(lung=0.85, punta='auto', tubo=((0.25, 0.025, 0.02), 0.05, (0, -1, -0.15)), rough=0.8,
+                              canna=1.35),   # canna e ugello davanti alla leva più grossi (lancia da pompiere massiccia)
+    # B: colori più accesi e più scuri, e un po' di ruggine (richiesta dell'utente, 16 ottobre)
+    'lancia_b_cannone': dict(lung=0.95, punta='auto', tubo=((0.0, 0.10, 0.12), 0.025, (0, -0.4, -1)), rough=0.35,
+                             colore=dict(sat=2.3, luce=0.55, ruggine=0.06, seme=7)),
+    'lancia_c_industriale': dict(lung=0.90, punta='auto', tubo=((0.02, 0.02, 0.02), 0.042, (0, -0.4, -1)), rough=0.6),
+    # C con un colore al posto del nero (richiesta dell'utente, 16 ottobre): giallo delle bande e metallo restano
+    'lancia_c1_antincendio': dict(file='lancia_c_industriale', lung=0.90, punta='auto', rough=0.6,
+                                  tubo=((0.42, 0.04, 0.01), 0.042, (0, -0.4, -1)), nero=(0.80, 0.16, 0.03)),
+    'lancia_c2_turchese': dict(file='lancia_c_industriale', lung=0.90, punta='auto', rough=0.6,
+                               tubo=((0.0, 0.30, 0.32), 0.042, (0, -0.4, -1)), nero=(0.0, 0.62, 0.64)),
 }
 
 
@@ -48,6 +57,78 @@ def importa(nome):
         if img.size[0] > 2048:
             img.scale(2048, 2048)
     return ob
+
+
+RUGGINE = os.path.join(RADICE, 'godot', 'assets', 'ambienti_tecnici', 'texture', 'Rust004_Color.jpg')
+
+
+def ricolora(ob, sat, luce, ruggine, seme):
+    """Colori più saturi e più scuri sulla texture del colore, poi chiazze di ruggine (Rust004 di ambientCG, CC0)
+    con un bordo scuro, più ruvide e non metalliche. Lavora sulle immagini già caricate (texture in spazio UV)."""
+    import numpy as np
+    from scipy.ndimage import gaussian_filter
+    from PIL import Image
+    mat = ob.data.materials[0]
+    bsdf = next(n for n in mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+    def immagine_di(ingresso):
+        stack = [l.from_node for l in bsdf.inputs[ingresso].links]
+        while stack:
+            n = stack.pop()
+            if n.type == 'TEX_IMAGE':
+                return n.image
+            stack += [l.from_node for i in n.inputs for l in i.links]
+    col, mr = immagine_di('Base Color'), immagine_di('Roughness')
+    W, H = col.size
+    px = np.array(col.pixels[:], dtype=np.float32).reshape(H, W, 4)
+    rgb = px[..., :3]
+    # saturazione e luminosità (lo spazio della texture è sRGB: si lavora sui valori così come sono)
+    grigio = rgb.mean(axis=2, keepdims=True)
+    rgb = np.clip(grigio + (rgb - grigio) * sat, 0, 1) * luce
+    # maschera della ruggine: rumore a più scale, soglia per avere circa la copertura voluta
+    rnd = np.random.default_rng(seme)
+    m = sum(gaussian_filter(rnd.standard_normal((H, W)).astype(np.float32), s) * (s ** 0.9) for s in (14, 40, 110))
+    soglia = np.quantile(m, 1.0 - ruggine)
+    a = np.clip((m - soglia) / (0.25 * m.std()), 0, 1)
+    bordo = np.clip((m - (soglia - 0.35 * m.std())) / (0.35 * m.std()), 0, 1) * (1 - a)
+    rug = np.asarray(Image.open(RUGGINE).convert('RGB').resize((512, 512)), dtype=np.float32) / 255.0
+    rug = np.flipud(np.tile(rug, (H // 512 + 1, W // 512 + 1, 1))[:H, :W])
+    rgb = rgb * (1 - 0.45 * bordo[..., None])                 # alone scuro intorno alle chiazze
+    rgb = rgb * (1 - a[..., None]) + rug * 0.85 * a[..., None]
+    px[..., :3] = rgb
+    col.pixels.foreach_set(px.ravel())
+    col.update()
+    if mr is not None and mr.size[0] == W:
+        q = np.array(mr.pixels[:], dtype=np.float32).reshape(H, W, 4)
+        q[..., 1] = q[..., 1] * (1 - a) + 0.85 * a            # G = ruvidezza
+        q[..., 2] = q[..., 2] * (1 - a)                        # B = metallo
+        mr.pixels.foreach_set(q.ravel())
+        mr.update()
+
+
+def colora_nero(ob, colore):
+    """Dove la texture del colore è nera o quasi (scura e poco satura) mette 'colore' (sRGB), tenendo le
+    variazioni di luce della texture (graffi, sporco). Il giallo e il metallo chiaro restano come sono."""
+    import numpy as np
+    mat = ob.data.materials[0]
+    bsdf = next(n for n in mat.node_tree.nodes if n.type == 'BSDF_PRINCIPLED')
+    stack = [l.from_node for l in bsdf.inputs['Base Color'].links]
+    col = None
+    while stack and col is None:
+        n = stack.pop()
+        if n.type == 'TEX_IMAGE':
+            col = n.image
+        stack += [l.from_node for i in n.inputs for l in i.links]
+    W, H = col.size
+    px = np.array(col.pixels[:], dtype=np.float32).reshape(H, W, 4)
+    rgb = px[..., :3]
+    v = rgb.max(axis=2)
+    sat = (v - rgb.min(axis=2)) / np.maximum(v, 1e-4)
+    m = np.clip((0.30 - v) / 0.10, 0, 1) * np.clip((0.45 - sat) / 0.2, 0, 1)
+    lum = np.clip(v / max(float(np.median(v[m > 0.9])) if (m > 0.9).any() else 0.1, 1e-3), 0.45, 1.5)
+    nuovo = np.array(colore, dtype=np.float32)[None, None, :] * lum[..., None]
+    px[..., :3] = rgb * (1 - m[..., None]) + np.clip(nuovo, 0, 1) * m[..., None]
+    col.pixels.foreach_set(px.ravel())
+    col.update()
 
 
 def estremi(ob):
@@ -81,6 +162,19 @@ def orienta(ob, cfg):
     return punta
 
 
+def ingrossa_canna(ob, k):
+    """Allarga in sezione (X, Z) la canna davanti alla leva: il punto più alto del modello è la leva a staffa,
+    davanti a lei (+Y) c'è solo la canna con l'ugello. Raccordo morbido di 5 cm, l'asse della canna resta fermo."""
+    lo, hi = estremi(ob)
+    y_leva = max(ob.data.vertices, key=lambda v: v.co.z).co.y
+    y0 = y_leva + 0.05
+    for v in ob.data.vertices:
+        if v.co.y > y0:
+            t = min(1.0, (v.co.y - y0) / 0.05)
+            f = 1.0 + (k - 1.0) * (t * t * (3 - 2 * t))
+            v.co.x *= f; v.co.z *= f
+
+
 def punti_utili(ob):
     """Impugnatura (centro della parte più bassa), canna (sopra l'impugnatura, davanti) e moncone del tubo dietro."""
     lo, hi = estremi(ob)
@@ -90,7 +184,10 @@ def punti_utili(ob):
     gi = sum(imp, Vector()) / len(imp)
     dietro = [v for v in vs if v.y < lo.y + 0.02]
     gd = sum(dietro, Vector()) / len(dietro)
-    return dict(impugnatura=gi, retro=gd, lo=lo, hi=hi)
+    top = max(vs, key=lambda v: v.z)
+    alto = [v for v in vs if v.z > top.z - 0.02]   # la sommità: barra della leva a staffa (A) o della maniglia (C)
+    ga = sum(alto, Vector()) / len(alto)
+    return dict(impugnatura=gi, retro=gd, cima=ga, lo=lo, hi=hi)
 
 
 def tubo_zaino(nome, cfg, attacco):
@@ -174,8 +271,14 @@ def render_ugello(nome, ob):
 
 def fai(nome):
     cfg = LANCE[nome]
-    ob = importa(nome)
+    ob = importa(cfg.get('file', nome))
     punta = orienta(ob, cfg)
+    if cfg.get('canna'):
+        ingrossa_canna(ob, cfg['canna'])
+    if cfg.get('colore'):
+        ricolora(ob, **cfg['colore'])
+    if cfg.get('nero'):
+        colora_nero(ob, cfg['nero'])
     if '--ugello' in sys.argv:
         return render_ugello(nome, ob)
     pu = punti_utili(ob)
@@ -183,7 +286,7 @@ def fai(nome):
     obs = [ob, t]
     esporta(nome, obs)
     g = lambda v: [round(v.x, 4), round(v.z, 4), round(-v.y, 4)]   # Blender -> Godot
-    info = dict(punta_sull_asse=punta, impugnatura=g(pu['impugnatura']), retro=g(pu['retro']),
+    info = dict(punta_sull_asse=punta, impugnatura=g(pu['impugnatura']), retro=g(pu['retro']), cima=g(pu['cima']),
                 misure=[round(x, 3) for x in (pu['hi'] - pu['lo'])], facce=len(ob.data.polygons))
     json.dump(info, open(os.path.join(GODOT, nome, nome + '.json'), 'w'), indent=1)
     print(nome, info, flush=True)

@@ -118,15 +118,15 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":25822,
+			"count":25820,
 			"max":[
-				0.07418468594551086,
-				0.12158557772636414,
-				0.6499999761581421
+				0.10270588845014572,
+				0.1683492660522461,
+				0.8999999761581421
 			],
 			"min":[
-				-0.0862915962934494,
-				-0.2318848967552185,
+				-0.11949203908443451,
+				-0.3210713863372803,
 				0
 			],
 			"type":"VEC3"
@@ -134,13 +134,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":25822,
+			"count":25820,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":25822,
+			"count":25820,
 			"type":"VEC2"
 		},
 		{
@@ -152,23 +152,23 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":5123,
+			"count":5365,
 			"max":[
-				0.17162464559078217,
-				-0.11176848411560059,
-				1.0897796154022217
+				0.18343119323253632,
+				-0.1608767956495285,
+				1.3506048917770386
 			],
 			"min":[
-				-0.02813483029603958,
-				-1.0899336338043213,
-				0.609188437461853
+				-0.04023196920752525,
+				-1.1465940475463867,
+				0.847262978553772
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":5123,
+			"count":5365,
 			"type":"VEC3"
 		},
 		{
@@ -181,44 +181,44 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":309864,
+			"byteLength":309840,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":309864,
-			"byteOffset":309864,
+			"byteLength":309840,
+			"byteOffset":309840,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":206576,
-			"byteOffset":619728,
+			"byteLength":206560,
+			"byteOffset":619680,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":183210,
-			"byteOffset":826304,
+			"byteOffset":826240,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":61476,
-			"byteOffset":1009516,
+			"byteLength":64380,
+			"byteOffset":1009452,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":61476,
-			"byteOffset":1070992,
+			"byteLength":64380,
+			"byteOffset":1073832,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":45600,
-			"byteOffset":1132468,
+			"byteOffset":1138212,
 			"target":34963
 		}
 	],
@@ -230,7 +230,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":1178068,
+			"byteLength":1183812,
 			"uri":"lancia_c_industriale.bin"
 		}
 	]

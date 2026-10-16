@@ -118,15 +118,15 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":26802,
+			"count":26818,
 			"max":[
-				0.0745679959654808,
-				0.12007631361484528,
-				0.5999999642372131
+				0.12674210965633392,
+				0.1701081097126007,
+				0.8500000238418579
 			],
 			"min":[
-				-0.07424662262201309,
-				-0.2103409320116043,
+				-0.12756307423114777,
+				-0.37359458208084106,
 				0
 			],
 			"type":"VEC3"
@@ -134,13 +134,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":26802,
+			"count":26818,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":26802,
+			"count":26818,
 			"type":"VEC2"
 		},
 		{
@@ -152,23 +152,23 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":5063,
+			"count":5230,
 			"max":[
-				0.1715598702430725,
-				0.03365125134587288,
-				1.0430933237075806
+				0.18872785568237305,
+				0.051994871348142624,
+				1.309757113456726
 			],
 			"min":[
-				-0.03198612481355667,
-				-0.9564155340194702,
-				0.575098991394043
+				-0.05056348443031311,
+				-0.9597748517990112,
+				0.8203278183937073
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":5063,
+			"count":5230,
 			"type":"VEC3"
 		},
 		{
@@ -181,44 +181,44 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":321624,
+			"byteLength":321816,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":321624,
-			"byteOffset":321624,
+			"byteLength":321816,
+			"byteOffset":321816,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":214416,
-			"byteOffset":643248,
+			"byteLength":214544,
+			"byteOffset":643632,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":186522,
-			"byteOffset":857664,
+			"byteOffset":858176,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":60756,
-			"byteOffset":1044188,
+			"byteLength":62760,
+			"byteOffset":1044700,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":60756,
-			"byteOffset":1104944,
+			"byteLength":62760,
+			"byteOffset":1107460,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":45600,
-			"byteOffset":1165700,
+			"byteOffset":1170220,
 			"target":34963
 		}
 	],
@@ -230,7 +230,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":1211300,
+			"byteLength":1215820,
 			"uri":"lancia_a_pompiere.bin"
 		}
 	]
