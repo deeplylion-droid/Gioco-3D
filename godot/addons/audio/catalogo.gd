@@ -16,6 +16,7 @@ const SUONI := {
 	&"atterraggio_piastrelle": ["res://audio/giocatore/atterraggio_piastrelle_01.ogg", "res://audio/giocatore/atterraggio_piastrelle_02.ogg"],
 	&"cancello_fine": ["res://audio/effetti/cancello_fine.ogg"],
 	&"cancello_ruota": ["res://audio/effetti/cancello_ruota.ogg"],
+	&"cancello_stagno_apre": ["res://audio/tecnici/cancello_stagno_apre_01.ogg", "res://audio/tecnici/cancello_stagno_apre_02.ogg"],
 	&"corrente_salta": ["res://audio/tecnici/corrente_salta.ogg"],
 	&"crt_neve_loop": ["res://audio/tecnici/crt_neve_loop.ogg"],
 	&"emergenza_ronzio_loop": ["res://audio/effetti/emergenza_ronzio_loop.ogg"],

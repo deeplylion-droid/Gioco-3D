@@ -3,8 +3,10 @@ extends Node3D
 ## La leva grande della sala pompe (tappa 6), in alto dietro una grata: si colpisce col getto.
 ## Finché le tre pompe non sono avviate è bloccata (il getto la fa solo sbattere); poi, con
 ## abbastanza acqua, scatta in basso e parte il risveglio ([signal tirata]).
-## Il nodo sta sul mozzo della leva, con la rotazione della scena degli ambienti tecnici: il suo
-## asse X è quello perpendicolare al muro, intorno a cui gira la leva.
+## Il nodo sta sul mozzo della leva (il centro dell'occhio del braccio, sul perno della base), con la
+## rotazione della scena degli ambienti tecnici: il suo asse X è quello perpendicolare al muro, intorno
+## a cui gira la leva. Il braccio gira intorno a questo punto, non alla sua origine (che nel modello
+## non sta sull'occhio): così resta attaccato al perno per tutta la corsa.
 ## La grata e la gabbia sono di rete: la loro collisione non deve fermare il getto (la leva è a
 ## 3,6 m, il giocatore non ci arriva comunque), quindi qui si tolgono dai livelli fisici.
 
@@ -17,8 +19,10 @@ signal colpita_bloccata
 @export var reti: Array[NodePath] = []
 ## Litri d'acqua che servono per tirarla giù.
 @export var litri_per_tirarla := 1.2
-## Angolo della leva abbassata (gradi, intorno all'asse X del nodo) e tempo per arrivarci.
-@export var angolo := -70.0
+## Angolo della leva abbassata (gradi, intorno all'asse X del nodo) e tempo per arrivarci. Positivo:
+## dall'alto verso il cavo e la porta (a sud), lungo l'arco del quadrante della base, fino alla fine dell'arco
+## (oltre l'impugnatura toccherebbe la gabbia).
+@export var angolo := 75.0
 @export var durata := 0.45
 ## Bersaglio del getto: centro e dimensioni (coordinate del nodo).
 @export var centro_bersaglio := Vector3(0.0, 0.28, 0.0)
@@ -106,8 +110,9 @@ func _process(delta: float) -> void:
 
 
 func _ruota(asse: Vector3, ang: float) -> void:
-	var perno := _riposo.origin
-	_leva.global_transform = Transform3D(Basis(asse, ang) * _riposo.basis, perno)
+	var perno := global_position
+	var r := Basis(asse, ang)
+	_leva.global_transform = Transform3D(r * _riposo.basis, perno + r * (_riposo.origin - perno))
 
 
 func save_state() -> Dictionary:

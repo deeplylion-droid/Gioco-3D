@@ -1,0 +1,312 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.2.40",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0,
+    1
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "sala_cupola_ferro"
+  },
+  {
+   "mesh": 1,
+   "name": "sala_cupola_vetro"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "M_amb_ferro_cupola",
+   "normalTexture": {
+    "index": 0
+   },
+   "occlusionTexture": {
+    "index": 1
+   },
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 2
+    },
+    "metallicRoughnessTexture": {
+     "index": 1
+    }
+   }
+  },
+  {
+   "alphaMode": "BLEND",
+   "doubleSided": true,
+   "name": "M_amb_vetro_cupola",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 3
+    },
+    "metallicFactor": 0,
+    "metallicRoughnessTexture": {
+     "index": 4
+    }
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "sala_cupola_ferro",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2,
+      "COLOR_0": 3
+     },
+     "indices": 4,
+     "material": 0
+    }
+   ]
+  },
+  {
+   "name": "sala_cupola_vetro",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 5,
+      "NORMAL": 6,
+      "TEXCOORD_0": 7,
+      "COLOR_0": 8,
+      "COLOR_1": 9
+     },
+     "indices": 10,
+     "material": 1
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  },
+  {
+   "sampler": 0,
+   "source": 3
+  },
+  {
+   "sampler": 0,
+   "source": 4
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "metallo_verniciato_nrm",
+   "uri": "texture/sala_architettura_metallo_verniciato_nrm_0.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "metallo_verniciato_orm",
+   "uri": "texture/sala_architettura_metallo_verniciato_orm_1.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "ferro_cupola_col",
+   "uri": "texture/sala_architettura_ferro_cupola_col_38.jpg"
+  },
+  {
+   "mimeType": "image/png",
+   "name": "vetro_cupola_col",
+   "uri": "texture/sala_cupola_vetro_cupola_col_3.png"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "vetro_cupola_orm",
+   "uri": "texture/sala_cupola_vetro_cupola_orm_4.jpg"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 61677,
+   "max": [
+    13.175000190734863,
+    18.07328987121582,
+    8.175000190734863
+   ],
+   "min": [
+    -13.175000190734863,
+    11.40000057220459,
+    -18.174999237060547
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 61677,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 61677,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5126,
+   "count": 61677,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 4,
+   "componentType": 5123,
+   "count": 104640,
+   "type": "SCALAR"
+  },
+  {
+   "bufferView": 5,
+   "componentType": 5126,
+   "count": 1064,
+   "max": [
+    13,
+    17.973289489746094,
+    8
+   ],
+   "min": [
+    -13,
+    12.5,
+    -18
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 6,
+   "componentType": 5126,
+   "count": 1064,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 7,
+   "componentType": 5126,
+   "count": 1064,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 8,
+   "componentType": 5121,
+   "count": 1064,
+   "normalized": true,
+   "type": "VEC4"
+  },
+  {
+   "bufferView": 9,
+   "componentType": 5123,
+   "count": 1064,
+   "normalized": true,
+   "type": "VEC4"
+  },
+  {
+   "bufferView": 10,
+   "componentType": 5123,
+   "count": 1584,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 740124,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 740124,
+   "byteOffset": 740124,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 493416,
+   "byteOffset": 1480248,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 740124,
+   "byteOffset": 1973664,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 209280,
+   "byteOffset": 2713788,
+   "target": 34963
+  },
+  {
+   "buffer": 0,
+   "byteLength": 12768,
+   "byteOffset": 2923068,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 12768,
+   "byteOffset": 2935836,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 8512,
+   "byteOffset": 2948604,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 4256,
+   "byteOffset": 2957116,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 8512,
+   "byteOffset": 2961372,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 3168,
+   "byteOffset": 2969884,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 2973052,
+   "uri": "sala_cupola.bin"
+  }
+ ]
+}

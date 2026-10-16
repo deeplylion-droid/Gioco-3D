@@ -1569,6 +1569,26 @@
   "lufs": -24.0,
   "lufs_max": -22.5
  },
+ "tecnici/cancello_stagno_apre_01": {
+  "file": "res://audio/tecnici/cancello_stagno_apre_01.ogg",
+  "canali": 1,
+  "durata": 3.7,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s",
+  "lufs": -18.4,
+  "lufs_max": -12.0
+ },
+ "tecnici/cancello_stagno_apre_02": {
+  "file": "res://audio/tecnici/cancello_stagno_apre_02.ogg",
+  "canali": 1,
+  "durata": 3.7,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s",
+  "lufs": -17.2,
+  "lufs_max": -12.3
+ },
  "tecnici/corrente_salta": {
   "file": "res://audio/tecnici/corrente_salta.ogg",
   "canali": 2,

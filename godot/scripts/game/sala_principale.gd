@@ -55,6 +55,9 @@ extends Node3D
 
 var demo_finished := false
 
+# Il bersaglio del getto sulla faccia della medusa (_faccia_bagnabile).
+var _faccia: WaterHitbox
+
 
 func _ready() -> void:
 	# Prima del primo frame: meno varianti di shader, a parità di aspetto (UnificaMateriali).
@@ -245,28 +248,42 @@ func _setup_tecnici() -> void:
 			(c as CollisionObject3D).collision_mask = 0
 
 
-## Il bersaglio del getto sulla faccia della medusa (easter egg dell'occhio che si chiude).
+## Il bersaglio del getto sulla faccia della medusa (easter egg dell'occhio che si chiude). Segue
+## la faccia a ogni passo della fisica (_segui_faccia). Prima si metteva una volta sola, due passi di
+## fisica dopo l'ingresso della sala: nel gioco il caricamento è lungo e il primo fotogramma recupera
+## più passi di fisica prima di disegnare, così l'animazione non era ancora partita e il bersaglio
+## restava sull'occhio della posa di riposo, 2,6 m sopra la faccia (v0.3.1: "se spruzzo l'acqua in
+## faccia alla medusina non chiude l'occhio"; nei test, a 60 fotogrammi fissi, non succedeva).
 func _faccia_bagnabile() -> void:
 	var m := statue as Node3D
 	if m == null or not m.has_method(&"chiudi_occhio") or not m.has_method(&"get_eye_position"):
 		return
-	# L'occhio si sa dove sta quando il modello è pronto.
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	if not is_instance_valid(m):
-		return
-	var faccia := WaterHitbox.new()
-	faccia.name = "FacciaMedusa"
+	_faccia = WaterHitbox.new()
+	_faccia.name = "FacciaMedusa"
+	# Figlio della medusa (quando sparisce al buio si spegne con lei), ma la posizione la decide lei.
+	_faccia.top_level = true
 	var forma := CollisionShape3D.new()
 	var sfera := SphereShape3D.new()
 	sfera.radius = raggio_faccia
 	forma.shape = sfera
-	faccia.add_child(forma)
-	m.add_child(faccia)
-	faccia.global_position = (m.call(&"get_eye_position") as Vector3) + Vector3(0.0, -0.15, 0.0)
-	faccia.water_hit.connect(func(_litri: float, _punto: Vector3, _dir: Vector3):
+	_faccia.add_child(forma)
+	m.add_child(_faccia)
+	_segui_faccia()
+	_faccia.water_hit.connect(func(_litri: float, _punto: Vector3, _dir: Vector3):
 		if m.visible and not bool(m.call(&"occhio_chiuso")):
 			m.call(&"chiudi_occhio", occhio_chiuso_secondi))
+
+
+func _physics_process(_delta: float) -> void:
+	_segui_faccia()
+
+
+## Il bersaglio del getto davanti alla faccia: dove sta l'occhio adesso (con l'animazione e lo
+## sguardo), 15 cm più in basso.
+func _segui_faccia() -> void:
+	if _faccia == null or not is_instance_valid(_faccia) or not is_instance_valid(statue):
+		return
+	_faccia.global_position = (statue.call(&"get_eye_position") as Vector3) + Vector3(0.0, -0.15, 0.0)
 
 
 func _on_fine_demo(body: Node3D) -> void:

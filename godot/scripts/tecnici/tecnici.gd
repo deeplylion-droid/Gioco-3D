@@ -95,6 +95,17 @@ func _applica_materiali(radice: Node) -> void:
 				sm.set_shader_parameter("bagnato", d["bagnato"])
 				sm.set_shader_parameter("profondita_fughe", 0.0)
 				nuovo = sm
+			elif nome == "lamiera_forata":
+				# La canaletta della camera delle onde (riscontro della v0.3.1, punto 5): è una scatola
+				# sottile col fondo alla quota del pavimento. Con la trasparenza "blend" e le due facce, dai
+				# fori si vedevano due superfici alla stessa quota che sfarfallavano a cerchietti. Fori ritagliati
+				# (alpha scissor) e solo le facce davanti: dai fori si vede il pavimento, fermo.
+				var lam := m.duplicate() as BaseMaterial3D
+				lam.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+				lam.alpha_scissor_threshold = 0.5
+				lam.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
+				lam.cull_mode = BaseMaterial3D.CULL_BACK
+				nuovo = lam
 			elif nome.begins_with("ACQUA"):
 				var acqua := StandardMaterial3D.new()
 				acqua.albedo_color = Color(0.02, 0.025, 0.025, 0.85)

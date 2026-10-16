@@ -38,6 +38,17 @@ var _segnali := {}
 var _f := 0
 var _f_vuota := -1
 var _f_attivo := -1
+# Riscontro sulla v0.3.1, punto 4: quando comincia a scolare da sola l'ultima acqua, quando la vasca
+# è asciutta, l'acqua che c'era quando si è acceso il pulsante, se intanto aspiravi e se lo scarico era
+# aperto (il gorgo).
+var _f_scola := -1
+var _f_asciutta := -1
+var _fill_attivo := -1.0
+var _aspira_mentre_scola := false
+var _scarico_aperto := false
+# Punto 6: a che distanza (in pianta) dal giocatore ogni cancello stagno comincia ad alzarsi.
+var _cancelli_seguiti: Array = []
+var _dist_apertura := {}
 var _svuota: PiscinaOnde
 
 
@@ -169,6 +180,14 @@ func _run() -> void:
 			break
 		await get_tree().physics_frame
 	check(hatch_button.enabled and svuota.attivo, "a piscina vuota il pulsante si attiva")
+	var scolo := (_f_asciutta - _f_scola) / 60.0
+	check(_f_scola >= 0 and _scarico_aperto and not _aspira_mentre_scola,
+		"rimasta poca acqua, il resto scola da solo dallo scarico, col gorgo (riscontro sulla v0.3.1; scarico aperto %s, aspirando %s)" \
+		% [str(_scarico_aperto), str(_aspira_mentre_scola)])
+	check(_f_asciutta >= 0 and scolo > 0.2 and scolo <= 2.0, "in un paio di secondi (%.1f s)" % scolo)
+	var velo: Node = svuota.superficie()
+	check(_fill_attivo == 0.0 and (velo == null or float(velo.get(&"level")) <= float(velo.get(&"bottom")) + 0.005),
+		"il pulsante si accende solo a vasca asciutta (acqua %.4f)" % _fill_attivo)
 	var ritardo := (_f_attivo - _f_vuota) / 60.0
 	check(absf(ritardo - svuota.ritardo_pulsante) < 0.1,
 		"ma solo %.1f s dopo che l'acqua è finita, dopo il sorso finale della piscina vuota (%.2f s)" % [svuota.ritardo_pulsante, ritardo])
@@ -190,6 +209,12 @@ func _run() -> void:
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	await _frames(10)
+	# L'acqua sparata nella piscina vuota (sul fondo e sul muro, mirando al pulsante) non ci resta.
+	p.look_at_point(Vector3(1.6, -1.9, 4.9))
+	await _frames(3)
+	await _hold(&"spray", 60)
+	await _frames(30)
+	check(puddle.fill <= 0.0, "l'acqua sparata nella piscina vuota scola via (%.4f)" % puddle.fill)
 	p.look_at_point(hatch_button.global_position + Vector3(0, 0.4, 0))
 	await _frames(3)
 	await _hold(&"spray", 60)
@@ -198,6 +223,10 @@ func _run() -> void:
 		if bool(hatch.get(&"is_open")):
 			break
 	check(bool(hatch.get(&"is_open")), "il pulsante apre il portello")
+	await _frames(60)
+	check(puddle.fill <= 0.0 and (velo == null or float(velo.get(&"level")) <= float(velo.get(&"bottom")) + 0.005)
+		and (med == null or med.in_acqua() == 0),
+		"il portellone si apre all'asciutto: nessun velo d'acqua, né dalle medusine né dal getto")
 	check(svuota.premuto() and lampeggiante != null and lampeggiante.light_color.g > 0.9 and lampeggiante.light_color.r < 0.5,
 		"e la luce diventa verde")
 	var lampi_dopo := int(_segnali.get("lampeggio", 0))
@@ -265,6 +294,17 @@ func _run() -> void:
 	# lava-piedi degli spogliatoi: lì la vista non deve mai diventare quella sott'acqua.
 	var effetto := _effetto_sott_acqua()
 	check(effetto != null, "la camera del giocatore ha l'effetto sott'acqua")
+	# Riscontro v0.3.1, punto 6: i due cancelli stagni sono chiusi e si aprono da soli al passaggio.
+	var cancelli: Array[Paratia] = []
+	for n in ["Tecnici/Logica/SalaPompe/Paratia1", "Tecnici/Logica/SalaPompe/Paratia2"]:
+		cancelli.append(level.get_node(n) as Paratia)
+	check(cancelli.all(func(c): return not c.is_aperta and not c.is_chiusa), "scesi dalla scala, i due cancelli stagni sono chiusi")
+	var space0 := p.get_world_3d().direct_space_state
+	var q0 := PhysicsRayQueryParameters3D.create(tec.to_global(Vector3(14.0, 1.0, 0.0)), tec.to_global(Vector3(23.0, 1.0, 0.0)))
+	check(not space0.intersect_ray(q0).is_empty(), "e chiudono davvero il passaggio")
+	var audio := get_node_or_null(^"/root/Audio")
+	var suoni_prima := int(audio.get(&"conteggio").get(&"cancello_stagno_apre", 0)) if audio else 0
+	_cancelli_seguiti = cancelli
 	_sott_acqua_visto = false
 	_controlla_sott_acqua = true
 	var ok := true
@@ -272,6 +312,16 @@ func _run() -> void:
 		ok = ok and await _cammina_verso(tec.to_global(loc), 900)
 	_controlla_sott_acqua = false
 	check(ok, "si cammina dalla scala, sotto le paratie e nel tunnel fino alla sala pompe")
+	check(cancelli.all(func(c): return c.is_aperta), "al passaggio i cancelli stagni si sono aperti da soli")
+	if audio:
+		var suoni := int(audio.get(&"conteggio").get(&"cancello_stagno_apre", 0)) - suoni_prima
+		check(suoni == 2, "ognuno col suo colpo metallico (cancello_stagno_apre: %d)" % suoni)
+	check(audio == null or audio.call(&"stream_di", &"cancello_stagno_apre") != null, "il suono cancello_stagno_apre è nel catalogo")
+	check(space0.intersect_ray(q0).is_empty(), "e passato il giocatore restano aperti")
+	var distanze: Array = _dist_apertura.values()
+	check(distanze.size() == 2 and distanze.all(func(d): return d <= 5.0 and d >= 3.0),
+		"si aprono al tuo passaggio, a 4-5 m, non da lontano (%s m)" % str(distanze))
+	_cancelli_seguiti = []
 	check(not _sott_acqua_visto, "E1: camminando nella camera delle onde e nel tunnel la vista non va mai sott'acqua")
 	print("E1: la vista sott'acqua solo nell'acqua profonda")
 	var vasca_medusa: WaterTank = level.get_node("Vasca/VascaCentrale")
@@ -429,7 +479,9 @@ func _svuota_piscina(vasca: WaterTank, dove: Vector3, acqua: Vector3, fuori: Vec
 		fotogrammi += 30
 		Input.action_press(&"suck")
 		var k := 0
-		while p.water_pack.tank_amount < p.water_pack.tank_capacity - 0.01 and vasca.fill > 0.001 and k < 600:
+		# Quando l'ultima acqua scola da sola, il giocatore smette di aspirare.
+		while p.water_pack.tank_amount < p.water_pack.tank_capacity - 0.01 and vasca.fill > 0.001 and k < 600 \
+				and not (_svuota and bool(_svuota.get(&"scola"))):
 			await get_tree().physics_frame
 			k += 1
 		Input.action_release(&"suck")
@@ -455,6 +507,22 @@ func _physics_process(_delta: float) -> void:
 			_f_vuota = _f
 		if _f_attivo < 0 and _svuota.attivo:
 			_f_attivo = _f
+			_fill_attivo = _svuota.vasca.fill
+		if bool(_svuota.get(&"scola")):
+			if _f_scola < 0:
+				_f_scola = _f
+			# Il giocatore smette di aspirare appena comincia a scolare: i primi fotogrammi non contano.
+			if _f - _f_scola > 5:
+				_aspira_mentre_scola = _aspira_mentre_scola or p.water_pack.is_sucking
+			_scarico_aperto = _scarico_aperto or _svuota.vasca.is_draining()
+		if _f_scola >= 0 and _f_asciutta < 0 and _svuota.vasca.fill <= 0.0:
+			_f_asciutta = _f
+	for c in _cancelli_seguiti:
+		if is_instance_valid(c) and bool(c.get(&"in_salita")) and not _dist_apertura.has(c.name):
+			var pannello := c.get_node_or_null(c.get(&"pannello_path")) as Node3D
+			if pannello:
+				var d := pannello.global_position - p.global_position
+				_dist_apertura[c.name] = snappedf(Vector2(d.x, d.z).length(), 0.1)
 	if _med and is_instance_valid(_med):
 		_segui_medusine()
 	if _controlla_sott_acqua:

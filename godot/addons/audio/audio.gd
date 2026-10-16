@@ -98,6 +98,8 @@ const TARATURA := {
 	&"tonfo_acqua_lontano": [BUS_EFFETTI, 0.0, 40.0, 220.0, 0.0],
 	&"maniglione_bloccato": [BUS_EFFETTI, 0.0, 3.0, 35.0, 0.6],
 	&"porta_ponte_apre": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
+	# i cancelli stagni della camera delle onde: forti, pieni fino a circa 6 m (il tetto è max_db 0)
+	&"cancello_stagno_apre": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 	# la piscina a onde (tappa 5): scelti dall'utente il 16 ottobre; le medusine appena percettibili
@@ -140,6 +142,12 @@ const MORSO_COLPO := 1.0
 ## PortoneTorre deve seguire questi tempi (accelera in circa 1,1 s, frena nell'ultimo 0,9 s).
 const PORTONE_PARTE := 0.7
 const PORTONE_ARRIVA := 6.4
+## I cancelli stagni della camera delle onde (cancello_stagno_apre, 3,7 s, due varianti con gli
+## stessi tempi): dopo quanti secondi dall'inizio del suono la porta comincia a muoversi (con uno
+## strappo; è a velocità piena circa 0,4 s dopo) e quando sbatte a fine corsa. L'animazione dei
+## cancelli deve seguire questi tempi (rallenta appena nell'ultimo quarto di secondo).
+const CANCELLO_STAGNO_PARTE := 0.55
+const CANCELLO_STAGNO_ARRIVA := 2.55
 ## Volume (dB) dei fondi.
 const FONDI := {
 	&"pioggia_cupola_loop": 0.0,

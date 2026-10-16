@@ -98,6 +98,54 @@ func _run() -> void:
 	check(absf(pelo - (-0.15)) < 0.03, "la vasca è piena d'acqua nera (pelo a %.2f)" % pelo)
 	check(tank.get_liters() > 50.0, "e il serbatoio ha acqua da aspirare (%.0f l)" % tank.get_liters())
 
+	print("La vasca di raccolta non si esaurisce (riscontro v0.3.1, punto 7)")
+	var inesauribile := level.get_node_or_null("Acqua/VascaInesauribile") as VascaInesauribile
+	check(inesauribile != null and inesauribile.vasca == tank, "la vasca ha il rabbocco che la tiene piena")
+	var pieno := tank.fill
+	var minimo_visto := 1.0
+	var dati := 0.0
+	for i in 40:
+		dati += tank.take_water(20.0)   # 40 pieni di zaino, uno a fotogramma: molto più di quanto ci sta
+		await get_tree().physics_frame
+		minimo_visto = minf(minimo_visto, tank.fill)
+	check(dati >= 40.0 * 20.0 - 0.1, "dà acqua a ogni zainata, anche dopo 40 di fila (%.0f l)" % dati)
+	check(minimo_visto < pieno - 0.05, "il livello scende davvero mentre si aspira (%.2f -> %.2f)" % [pieno, minimo_visto])
+	if inesauribile:
+		check(minimo_visto >= inesauribile.fill_minimo() - 0.001, "ma non va mai sotto il minimo (%.2f, minimo %.2f)" % [minimo_visto, inesauribile.fill_minimo()])
+	await _frames(60 * 8)
+	check(tank.fill > minimo_visto + 0.1, "smesso di aspirare, la vasca si rabbocca (%.2f)" % tank.fill)
+
+	print("Si cade nella vasca di raccolta e si risale con la scaletta (riscontro v0.3.1, punto 9)")
+	var scaletta := level.get_node_or_null("Gioco/ScalettaVasca") as Ladder
+	check(scaletta != null, "c'è la scaletta della vasca di raccolta")
+	p.teleport(Vector3(36.0, 0.6, 0.6), 0.0, 0.0)
+	await _frames(90)
+	check(p.global_position.y < -1.0, "si cade dentro la vasca (y %.2f)" % p.global_position.y)
+	if scaletta:
+		# Verso la scaletta, contro il muro sud della vasca, e su con W.
+		# Basta camminare verso la scaletta: ci si aggrappa già andandoci incontro.
+		var presa := [false]
+		var su_scala := func(si: bool) -> void: presa[0] = presa[0] or si
+		p.ladder_changed.connect(su_scala)
+		var base := scaletta.global_position + scaletta.get_climb_normal() * 0.6
+		await _cammina_verso(Vector3(base.x, p.global_position.y, base.z), 300, false)
+		var verso := -scaletta.get_climb_normal()
+		p.set_look(atan2(-verso.x, -verso.z), 0.0)
+		Input.action_press(&"move_forward")
+		var fuori := false
+		for i in 60 * 10:
+			await get_tree().physics_frame
+			if presa[0] and not p.is_on_ladder() and p.is_on_floor() and p.global_position.y > -0.1:
+				fuori = true
+				break
+		await _frames(30)   # il giocatore tiene W ancora un attimo, come farebbe davvero
+		Input.action_release(&"move_forward")
+		p.ladder_changed.disconnect(su_scala)
+		check(presa[0], "camminando verso la scaletta ci si aggrappa")
+		check(fuori, "e salendo si esce dalla vasca (y %.2f)" % p.global_position.y)
+		var dentro_vasca := Rect2(34.1, -0.6, 4.8, 3.0).has_point(Vector2(p.global_position.x, p.global_position.z))
+		check(not dentro_vasca, "fuori dalla vasca, oltre il bordo (%s)" % str(p.global_position))
+
 	print("Il raccordo fino agli interni (scene messe come nel livello)")
 	var interni: Node3D = load("res://scenes/interni/interni.tscn").instantiate()
 	interni.set(&"giocatore_proprio", false)
