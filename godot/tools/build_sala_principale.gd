@@ -367,6 +367,8 @@ func _pool() -> void:
 	svuota.set(&"pulsante", hatch_button)
 	# Il vetro del lampeggiante sopra il pulsante A (GLB della sala).
 	svuota.set(&"vetro_lampeggiante", level.get_node_or_null("Sala/Interattivi/sala_lampeggiante_portello"))
+	# Lo scarico, dove gira il gorgo quando l'ultima acqua scola da sola: il portellone.
+	svuota.set(&"scarico", level.get_node_or_null("Sala/Interattivi/sala_portello_scarico"))
 	own(svuota, pool)
 	var hatch: Node3D = load("res://scripts/mechanisms/hinged_hatch.gd").new()
 	hatch.name = "Portello"

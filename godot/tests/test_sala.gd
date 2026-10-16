@@ -248,6 +248,14 @@ func _run() -> void:
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	await _frames(10)
+	# Riscontro sulla v0.3.1: l'acqua sparata nella piscina vuota (sul fondo, sul muro sotto il
+	# pulsante) non resta sul fondo; prima la vasca la raccoglieva e, aperto il portellone, un velo
+	# d'acqua ne copriva il buco.
+	p.look_at_point(Vector3(1.6, -1.9, 4.9))
+	await _frames(3)
+	await _hold(&"spray", 60)
+	await _frames(30)
+	check(puddle.fill <= 0.0001, "l'acqua sparata nella piscina vuota scola via (fill %.4f)" % puddle.fill)
 	p.look_at_point(hatch_button.global_position + Vector3(0, 0.4, 0))
 	await _frames(3)
 	await _hold(&"spray", 60)
@@ -259,6 +267,10 @@ func _run() -> void:
 		if hatch.is_open:
 			break
 	check(hatch.is_open, "il portello si apre")
+	await _frames(60)
+	var velo: Node = svuota.superficie()
+	check(puddle.fill <= 0.0001 and (velo == null or float(velo.get(&"level")) <= float(velo.get(&"bottom")) + 0.005),
+		"aperto, sul buco del portellone non c'è un velo d'acqua (fill %.4f)" % puddle.fill)
 	# Sotto c'è il pozzo della camera delle onde (tappe 5-6, test_tappe56.gd): la demo va avanti.
 	check(not bool(level.get(&"demo_finished")), "la demo non finisce al portello: sotto c'è il pozzo")
 
