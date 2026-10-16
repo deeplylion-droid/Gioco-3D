@@ -379,6 +379,13 @@ func _pool() -> void:
 	hatch.set(&"sources", hatch_sources)
 	own(hatch, pool)
 	level.set(&"hatch", hatch)
+	# La luce del portellone (riscontro della v0.3.1, punto 3): anello color ambra e bagliore
+	# nell'acqua torbida, si vede già dalla spiaggia a piscina piena.
+	var luce_portellone: Node3D = load("res://scripts/game/luce_portellone.gd").new()
+	luce_portellone.name = "LucePortellone"
+	luce_portellone.set(&"portellone", level.get_node_or_null("Sala/Interattivi/sala_portello_scarico"))
+	luce_portellone.set(&"vasca", puddle)
+	own(luce_portellone, pool)
 	# Checkpoint di quando la piscina è vuota (un passo dell'enigma): lo raggiunge lo script della
 	# sala; si riparte sul fondo, davanti al portello.
 	var cp: Area3D = load("res://scripts/game/checkpoint.gd").new()

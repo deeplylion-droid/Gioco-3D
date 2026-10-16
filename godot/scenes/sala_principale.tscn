@@ -79,6 +79,7 @@
 [ext_resource type="Script" path="res://scripts/environment/kid_sighting.gd" id="77_hiwkq"]
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_cubo.tscn" id="78_nwfer"]
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_agnello.tscn" id="79_6lyoo"]
+[ext_resource type="Script" path="res://scripts/game/luce_portellone.gd" id="80_lucep"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5tb5"]
 resource_name = "M_acqua_vasca"
@@ -344,6 +345,11 @@ script = ExtResource("49_6lj7b")
 sources = [NodePath("../PulsantePortello")]
 target_path = NodePath("../../Sala/Interattivi/sala_portello_scarico")
 open_angle = -170.0
+
+[node name="LucePortellone" type="Node3D" parent="Piscina" unique_id=1733070160 node_paths=PackedStringArray("portellone", "vasca")]
+script = ExtResource("80_lucep")
+portellone = NodePath("../../Sala/Interattivi/sala_portello_scarico")
+vasca = NodePath("../Pozza")
 
 [node name="CheckpointPozzaVuota" type="Area3D" parent="Piscina" unique_id=1630076266 node_paths=PackedStringArray("spawn_point")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, -2.2, 0.4)

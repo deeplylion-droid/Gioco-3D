@@ -268,6 +268,17 @@ func _run() -> void:
 	if not paratie.is_empty():
 		var par: Node = paratie[0]
 		var catena := _loop_su(par.get_node_or_null(par.get(&"pannello_path")), &"paratia_scende_loop")
+		# I cancelli stagni sono chiusi finché non arriva il giocatore (riscontro v0.3.1, punto 6): la si
+		# apre come al passaggio, col suo colpo metallico, poi si fa scendere come al risveglio.
+		var aperture := _conta(&"cancello_stagno_apre")
+		if par.has_method(&"apri") and not bool(par.get(&"is_aperta")):
+			par.call(&"apri")
+			for i in 300:
+				if bool(par.get(&"is_aperta")):
+					break
+				await get_tree().physics_frame
+			await _frames(10)
+		check(_conta(&"cancello_stagno_apre") == aperture + 1, "aprendosi il cancello stagno fa il suo colpo metallico")
 		check(catena != null and not catena.is_suonando(), "la paratia alzata tace")
 		var tonfi := _conta(&"porta_chiusa")
 		par.call(&"chiudi")

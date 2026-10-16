@@ -265,6 +265,16 @@ func _run() -> void:
 	# lava-piedi degli spogliatoi: lì la vista non deve mai diventare quella sott'acqua.
 	var effetto := _effetto_sott_acqua()
 	check(effetto != null, "la camera del giocatore ha l'effetto sott'acqua")
+	# Riscontro v0.3.1, punto 6: i due cancelli stagni sono chiusi e si aprono da soli al passaggio.
+	var cancelli: Array[Paratia] = []
+	for n in ["Tecnici/Logica/SalaPompe/Paratia1", "Tecnici/Logica/SalaPompe/Paratia2"]:
+		cancelli.append(level.get_node(n) as Paratia)
+	check(cancelli.all(func(c): return not c.is_aperta and not c.is_chiusa), "scesi dalla scala, i due cancelli stagni sono chiusi")
+	var space0 := p.get_world_3d().direct_space_state
+	var q0 := PhysicsRayQueryParameters3D.create(tec.to_global(Vector3(14.0, 1.0, 0.0)), tec.to_global(Vector3(23.0, 1.0, 0.0)))
+	check(not space0.intersect_ray(q0).is_empty(), "e chiudono davvero il passaggio")
+	var audio := get_node_or_null(^"/root/Audio")
+	var suoni_prima := int(audio.get(&"conteggio").get(&"cancello_stagno_apre", 0)) if audio else 0
 	_sott_acqua_visto = false
 	_controlla_sott_acqua = true
 	var ok := true
@@ -272,6 +282,12 @@ func _run() -> void:
 		ok = ok and await _cammina_verso(tec.to_global(loc), 900)
 	_controlla_sott_acqua = false
 	check(ok, "si cammina dalla scala, sotto le paratie e nel tunnel fino alla sala pompe")
+	check(cancelli.all(func(c): return c.is_aperta), "al passaggio i cancelli stagni si sono aperti da soli")
+	if audio:
+		var suoni := int(audio.get(&"conteggio").get(&"cancello_stagno_apre", 0)) - suoni_prima
+		check(suoni == 2, "ognuno col suo colpo metallico (cancello_stagno_apre: %d)" % suoni)
+	check(audio == null or audio.call(&"stream_di", &"cancello_stagno_apre") != null, "il suono cancello_stagno_apre è nel catalogo")
+	check(space0.intersect_ray(q0).is_empty(), "e passato il giocatore restano aperti")
 	check(not _sott_acqua_visto, "E1: camminando nella camera delle onde e nel tunnel la vista non va mai sott'acqua")
 	print("E1: la vista sott'acqua solo nell'acqua profonda")
 	var vasca_medusa: WaterTank = level.get_node("Vasca/VascaCentrale")
