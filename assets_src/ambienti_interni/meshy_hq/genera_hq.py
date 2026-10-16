@@ -48,6 +48,10 @@ OGGETTI = {
     'condotto_aria': ('A short straight section of rectangular galvanized sheet metal air duct with rounded edges, raised '
                       'flange joints at both ends with bolts, and a small louvered vent grille on one side.', 20000),
     'bacheca': ('An empty cork bulletin board with a rounded wooden frame, a few push pins, landscape format.', 10000),
+    # turbina della saracinesca (rifatta dopo il questionario del 15 ottobre: "è orribile")
+    'turbina_cancello': ('A sturdy industrial water turbine wheel seen from the front: a thick round steel hub with a big '
+                         'hex nut, ten curved bucket-shaped blades painted safety orange, a solid outer steel rim ring with '
+                         'bolts, chunky and well proportioned.', 30000),
 }
 
 
