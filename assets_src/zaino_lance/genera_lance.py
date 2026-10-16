@@ -27,6 +27,12 @@ LANCE = {
           "a tall carry handle on top, a heavy wide steel nozzle at the front, rubber hose fitting at the back. "
           "Bulky, worn and scratched." + COMUNE,
           "worn painted steel, yellow and black hazard stripes, black rubber grip, gauge with white face"),
+    # Terzo giro della C: la forma di una pistola da idropulitrice industriale, che Meshy conosce.
+    "D": ("Heavy-duty industrial pressure washer spray gun with a thick short steel lance, the gun body painted with "
+          "yellow and black diagonal hazard stripes, a big round pressure gauge on top of the body, a pistol grip "
+          "with a large trigger, a carry handle arching over the body, a wide heavy nozzle at the front, a rubber "
+          "hose fitting at the back of the grip. Worn industrial maintenance equipment." + COMUNE,
+          "yellow and black hazard stripes paint, scratched steel lance, black rubber grip, white gauge face with red needle"),
 }
 
 
