@@ -97,9 +97,34 @@ func _ready() -> void:
 		interni.call(&"fai_risveglio", p)
 
 
+## La struttura di gioco dell'area bimbi: lo scivolo giallo e i tre tetti a piramide non hanno
+## collisioni nel GLB (solo pedane, passerelle, parapetti e scala): ci si passava attraverso (prova
+## della v0.3.2, punto 10, "lo scivolo giallo è incorporeo"). Una collisione che segue la forma
+## esatta della mesh: sullo scivolo si cammina e si scivola, sui tetti si sta sopra.
+func _collisione_struttura_gioco() -> void:
+	var mi := get_node_or_null(^"Sala/AreaBimbi/sala_struttura_gioco") as MeshInstance3D
+	if mi == null:
+		for n in find_children("sala_struttura_gioco", "MeshInstance3D", true, false):
+			mi = n as MeshInstance3D
+			break
+	if mi == null or mi.mesh == null or mi.has_node(^"CollisioneForma"):
+		return
+	var corpo := StaticBody3D.new()
+	corpo.name = "CollisioneForma"
+	corpo.collision_layer = Layers.WORLD
+	corpo.collision_mask = 0
+	var forma := CollisionShape3D.new()
+	var trimesh := mi.mesh.create_trimesh_shape()
+	trimesh.backface_collision = true   # bordi e testate sottili: niente da attraversare da dietro
+	forma.shape = trimesh
+	corpo.add_child(forma)
+	mi.add_child(corpo)
+
+
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
 	_cordone_vasca()
+	_collisione_struttura_gioco()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D

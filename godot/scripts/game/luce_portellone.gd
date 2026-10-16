@@ -6,6 +6,9 @@ extends Node3D
 ## WaterGlowLight dell'addon acqua appena sopra: fa brillare il volume d'acqua intorno, e il bagliore
 ## si vede anche da fuori, attraverso la superficie. A piscina vuota resta solo l'anello, più tenue.
 ## Si spegne col blackout, come le altre luci della sala.
+## Prova della v0.3.2 (punto 9, "la luce è sull'acqua, deve essere sotto, sul portellone"): la luce sta
+## a pochi centimetri dal portellone e il bagliore nell'acqua è piccolo e raccolto intorno a lei; quello
+## che si vede da sopra è soprattutto l'anello sul fondo, attraverso l'acqua.
 
 ## Il portellone (la sua mesh: il centro si prende dal suo AABB, a portellone chiuso).
 @export var portellone: Node3D
@@ -16,13 +19,13 @@ extends Node3D
 @export var raggio_anello := 0.68
 @export var spessore_anello := 0.09
 @export var quota_anello := 0.03
-@export var emissione_anello := 14.0
+@export var emissione_anello := 24.0
 ## La luce sopra il portellone: quota, energia e portata; il bagliore nell'acqua.
-@export var quota_luce := 0.35
-@export var energia := 4.5
-@export var portata := 6.0
-@export var bagliore := 16.0
-@export var raggio_bagliore := 3.5
+@export var quota_luce := 0.08
+@export var energia := 3.0
+@export var portata := 2.6
+@export var bagliore := 4.0
+@export var raggio_bagliore := 1.4
 
 var centro := Vector3.ZERO
 var _luce: OmniLight3D

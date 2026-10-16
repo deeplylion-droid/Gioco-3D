@@ -50,6 +50,34 @@ func _run() -> void:
 	check(portone != null and portone.anta != null and portone.apertura == PortoneTorre.Apertura.DOPO_TAPPA8 and not portone.is_aperto(),
 		"il portone della sala della torre è chiuso e si aprirà da solo dopo la tappa 8")
 
+	print("Lo scivolo giallo e i tetti della struttura di gioco sono solidi (prova della v0.3.2, punto 10)")
+	var spazio := p.get_world_3d().direct_space_state
+	var su_scivolo := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-11.5, 4.0, -17.8), Vector3(-11.5, 0.5, -17.8), Layers.WORLD))
+	check(not su_scivolo.is_empty() and float(su_scivolo.position.y) > 1.0,
+		"lo scivolo ha la sua collisione (a metà, alto %.2f m)" % (float(su_scivolo.position.y) if not su_scivolo.is_empty() else 0.0))
+	# Ci vai contro di lato: ti ferma.
+	p.teleport(Vector3(-11.5, 0.0, -16.2), 0.0, 0.0)
+	await _frames(5)
+	await _cammina_verso(Vector3(-11.5, 0.0, -19.6), 150)
+	check(p.global_position.z > -17.5, "camminandoci contro di lato non lo attraversi (z %.2f)" % p.global_position.z)
+	# Ci sali sopra: ci stai e scivoli giù lungo il canale, senza cadere attraverso.
+	p.teleport(Vector3(-11.5, 1.7, -17.8), 0.0, 0.0)
+	var min_y := 9.0
+	for i in 20:
+		await get_tree().physics_frame
+		min_y = minf(min_y, p.global_position.y)
+	check(min_y > 0.6, "salito sopra lo scivolo ci resti sopra (y minima %.2f)" % min_y)
+	var tetti_ok := true
+	# Sopra l'apice di ciascun tetto (gronda a 3,4 o 4,6 m, apice 1 m più su): scivoli giù ma non dentro.
+	for tetto in [[Vector3(-17.2, 4.8, -18.4), 3.4], [Vector3(-17.2, 6.0, -21.2), 4.6], [Vector3(-14.4, 6.0, -18.4), 4.6]]:
+		var t: Vector3 = tetto[0]
+		p.teleport(t, 0.0, 0.0)
+		await _frames(20)
+		if p.global_position.y < float(tetto[1]) - 0.3 and absf(p.global_position.x - t.x) < 1.2 and absf(p.global_position.z - t.z) < 1.2:
+			tetti_ok = false
+			print("  (caduto attraverso il tetto sopra %s: y %.2f)" % [str(t), p.global_position.y])
+	check(tetti_ok, "e sui tre tetti a piramide si sta sopra")
+
 	print("Prima del risveglio non succede niente")
 	_prepara()
 	p.teleport(Vector3(18.5, 0.0, -15.0), -PI * 0.5, 0.0)
