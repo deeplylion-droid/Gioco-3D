@@ -13,10 +13,10 @@ import bimbi_hq as H  # noqa: E402
 
 # vista: (cosa, posizione camera, punto guardato, lente mm)
 VISTE = {
-    'fedele_tre_quarti': ('fedele', (11.0, -12.5, 3.4), (0.4, -0.6, 3.4), 30),
+    'fedele_tre_quarti': ('fedele', (11.0, -12.5, 3.4), (0.4, -0.6, 3.4), 38),
     'fedele_scala': ('fedele', (-6.6, -10.5, 1.7), (-2.6, -3.0, 1.7), 30),
     'fedele_secchio': ('fedele', (5.5, -4.5, 5.0), (0.2, 1.6, 6.6), 32),
-    'variante_tre_quarti': ('variante', (9.5, -12.5, 3.2), (-0.6, 0.3, 3.4), 30),
+    'variante_tre_quarti': ('variante', (9.5, -12.5, 3.2), (-0.6, 0.3, 3.4), 36),
     'fungo_tre_quarti': ('fungo', (3.2, -4.4, 1.9), (0.0, 0.0, 1.0), 40),
     'fungo_vicino': ('fungo', (2.0, -2.2, 1.7), (0.1, 0.0, 1.35), 35),
     'secchio_vicino': ('secchio', (2.3, -2.7, 1.5), (0.0, 0.0, 0.75), 45),
@@ -59,15 +59,18 @@ def scena(cosa):
     sc.world = w
     w.use_nodes = True
     nt = w.node_tree
-    env = nt.nodes.new('ShaderNodeTexEnvironment')
-    env.image = bpy.data.images.load(os.path.join(os.path.dirname(bpy.__file__), '5.2', 'datafiles', 'studiolights',
-                                                  'world', 'studio.exr'))
-    nt.links.new(env.outputs['Color'], nt.nodes['Background'].inputs['Color'])
-    nt.nodes['Background'].inputs['Strength'].default_value = 0.55
+    hdri = bpy.utils.system_resource('DATAFILES', path='studiolights/world/studio.exr')
+    if hdri:
+        env = nt.nodes.new('ShaderNodeTexEnvironment')
+        env.image = bpy.data.images.load(hdri)
+        nt.links.new(env.outputs['Color'], nt.nodes['Background'].inputs['Color'])
+    else:
+        nt.nodes['Background'].inputs['Color'].default_value = (0.5, 0.5, 0.52, 1)
+    nt.nodes['Background'].inputs['Strength'].default_value = 0.4
     H_ = 8.2 if cosa in ('fedele', 'variante') else 2.0
-    for nome, pos, en, col in (('chiave', (-1.0, -1.4, 1.2), 900, (1.0, 0.96, 0.9)),
-                               ('riempimento', (1.5, -0.8, 0.5), 300, (0.85, 0.9, 1.0)),
-                               ('controluce', (0.4, 1.5, 1.3), 500, (1.0, 0.92, 0.85))):
+    for nome, pos, en, col in (('chiave', (-1.0, -1.4, 1.2), 540, (1.0, 0.96, 0.9)),
+                               ('riempimento', (1.5, -0.8, 0.5), 180, (0.85, 0.9, 1.0)),
+                               ('controluce', (0.4, 1.5, 1.3), 300, (1.0, 0.92, 0.85))):
         l = bpy.data.lights.new(nome, 'AREA')
         l.energy = en * H_ * H_ / 4
         l.color = col
