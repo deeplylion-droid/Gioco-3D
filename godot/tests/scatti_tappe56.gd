@@ -94,7 +94,7 @@ func _sotto_scala() -> void:
 
 
 func _cancelli() -> void:
-	# Fermi per lo scatto: da qui si aprirebbero già (si aprono a 10 m).
+	# Fermi per lo scatto: da qui si aprirebbero già (si aprono a 4,5 m).
 	_cancelli_al_passaggio(false)
 	await _foto("cancelli", tec.to_global(Vector3(12.5, 0.0, -0.6)), tec.to_global(Vector3(17.5, 1.3, 0.0)))
 

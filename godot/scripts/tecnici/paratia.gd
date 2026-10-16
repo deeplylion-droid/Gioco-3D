@@ -18,8 +18,9 @@ signal aperta
 @export var durata := 4.5
 ## Chiusa all'inizio, si apre da sola quando il giocatore si avvicina.
 @export var apri_al_passaggio := true
-## Distanza in pianta (m) dal cancello a cui comincia ad aprirsi.
-@export var raggio_apertura := 10.0
+## Distanza in pianta (m) dal cancello a cui comincia ad aprirsi: al tuo passaggio, dove il suono è
+## ancora pieno (fino a 6 m). A 10 m si apriva troppo presto (riscontro sulla v0.3.1, punto 6).
+@export var raggio_apertura := 4.5
 ## Quando si alza rispetto all'inizio del suono (s): parte e sbatte in cima. Di serie quelli dell'audio
 ## (Audio.CANCELLO_STAGNO_PARTE e _ARRIVA), prima si sentono i chiavistelli e lo sfiato.
 @export var apertura_parte := 0.55
