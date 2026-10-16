@@ -2,8 +2,9 @@ extends Node
 ## Test dell'audio: autoload "Audio", bus ed effetti, stream del catalogo (si caricano, i loop
 ## si ripetono), volumi salvati in settings.cfg, collegamenti automatici con la sala principale
 ## (segnali e suoni che partono davvero), monitor e paratie delle tappe 5-6, la fossa e il morso
-## della tappa 8, i nomi dei suoni chiesti dagli script, scheda nel menu delle opzioni, morte e
-## ripartenza.
+## della tappa 8, la piscina a onde della tappa 5 (gorgo, piscina vuota, pulsante della botola
+## col lampeggiante e il bi-bu, micro medusine), il portone della sala della torre, i nomi dei
+## suoni chiesti dagli script, scheda nel menu delle opzioni, morte e ripartenza.
 ## Alla fine controlla che l'audio non abbia prodotto errori (un Logger li raccoglie tutti).
 ## In headless il driver audio è "Dummy": i player suonano senza uscire dalle casse.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
@@ -347,6 +348,107 @@ func _run() -> void:
 	audio.call(&"_su_ripartenza")
 	(audio.get(&"_stinger") as AudioStreamPlayer).stop()
 
+	print("Piscina a onde (tappa 5) e portone della torre")
+	var suoni_nuovi := [&"piscina_svuota_loop", &"piscina_vuota", &"pulsante_botola_attiva",
+		&"pulsante_botola_lampeggiante_loop", &"pulsante_botola_bibu", &"medusina_aspirata",
+		&"medusine_sparate", &"portone_torre_apre"]
+	check(suoni_nuovi.all(func(n): return audio.call(&"stream_di", n) != null),
+		"ci sono gli 8 suoni scelti il 16 ottobre (piscina, pulsante, medusine, portone)")
+	# le micro medusine: una entra nell'ugello, poi esce col getto
+	var med: Node = _primo("Medusine")
+	var am: Object = _attivo_di(med)
+	check(med != null and am != null, "collegate: le micro medusine")
+	if med and am:
+		var aspirate := _conta(&"medusina_aspirata")
+		var sparate := _conta(&"medusine_sparate")
+		if med.has_signal(&"aspirata") and med.has_signal(&"sparata"):
+			med.emit_signal(&"aspirata", (med as Node3D).global_position)
+			await _frames(2)
+			med.emit_signal(&"sparata", (med as Node3D).global_position)
+			await _frames(2)
+		else:
+			var lista: Array = med.get(&"_medusine")
+			if not lista.is_empty():
+				var m0 = lista[0]
+				var stato0: int = m0.stato
+				m0.stato = int(am.get(&"nello_zaino"))
+				await _frames(2)
+				m0.stato = int(am.get(&"in_volo"))
+				await _frames(2)
+				m0.stato = stato0
+				await _frames(2)
+		check(_conta(&"medusina_aspirata") > aspirate, "una medusina aspirata: i tintinnii che scendono nel tubo")
+		check(_conta(&"medusine_sparate") > sparate, "le medusine sparate via: la cascata di tintinnii")
+	var piscina: Node = _primo("PiscinaOnde")
+	var ap: Object = _attivo_di(piscina)
+	check(piscina != null and ap != null, "collegata: la piscina a onde")
+	if piscina and ap:
+		var vasca_p: WaterTank = piscina.get(&"vasca")
+		var gorgo: AudioLoop = ap.get(&"gorgo")
+		var lamp_botola: AudioLoop = ap.get(&"lampeggiante")
+		var pieno0 := vasca_p.fill
+		check(gorgo != null and gorgo.volume == 0.0, "il gorgo tace finché l'acqua non scende")
+		for i in 30:
+			vasca_p.take_water(0.4)
+			await _frames(1)
+		check(gorgo.volume > 0.5 and gorgo.is_suonando(), "mentre il livello scende il gorgo suona")
+		await _frames(45)
+		check(gorgo.volume == 0.0, "quando smette di scendere il gorgo tace")
+		# si svuota: l'ultimo sorso, poi il pulsante si attiva (scatto e jingle) e il lampeggiante gira
+		var vuote := _conta(&"piscina_vuota")
+		var svuotate := _conta(&"vasca_svuotata")
+		var attivazioni := _conta(&"pulsante_botola_attiva")
+		var bibu := _conta(&"pulsante_botola_bibu")
+		vasca_p.take_water(vasca_p.capacity_liters * 2.0)
+		await _frames(10)
+		check(_conta(&"piscina_vuota") == vuote + 1 and _conta(&"vasca_svuotata") == svuotate,
+			"a piscina vuota l'ultimo sorso (e non il suono delle vasche)")
+		# il pulsante può attivarsi qualche secondo dopo (dopo l'ultimo sorso)
+		for i in 360:
+			if bool(piscina.get(&"attivo")):
+				break
+			await _frames(1)
+		await _frames(2)
+		check(bool(piscina.get(&"attivo")) and _conta(&"pulsante_botola_attiva") == attivazioni + 1,
+			"il pulsante della botola si attiva con lo scatto e il jingle")
+		await _frames(20)
+		check(lamp_botola != null and lamp_botola.volume > 0.5 and lamp_botola.is_suonando(), "il lampeggiante gira")
+		check(_conta(&"pulsante_botola_bibu") == bibu, "insieme al jingle niente bi-bu")
+		await _frames(100)
+		check(_conta(&"pulsante_botola_bibu") > bibu, "al lampo dopo (1,6 s) il bi-bu")
+		# colpito col getto: il lampeggiante si ferma e i bi-bu smettono
+		var bottone: WaterButton = piscina.get(&"pulsante")
+		bottone.powered = true
+		await _frames(5)
+		check(lamp_botola.volume == 0.0, "colpito il pulsante, il lampeggiante si ferma")
+		var bibu_dopo := _conta(&"pulsante_botola_bibu")
+		await _frames(110)
+		check(_conta(&"pulsante_botola_bibu") == bibu_dopo, "colpito il pulsante, niente più bi-bu")
+		# com'era: pulsante spento, piscina piena
+		bottone.powered = false
+		piscina.call(&"load_state", {"attivo": false})
+		vasca_p.fill = pieno0
+		await _frames(30)
+		check(lamp_botola.volume == 0.0 and not bool(ap.get(&"gira")), "a pulsante spento il lampeggiante tace")
+	# il portone della sala della torre: quello vero se c'è nella sala, se no uno finto col segnale
+	var portone: Node = _primo("PortoneTorre")
+	var finto: Node3D = null
+	if portone == null:
+		finto = Node3D.new()
+		finto.name = "PortoneFinto"
+		finto.add_user_signal("apertura_iniziata")
+		level.add_child(finto)
+		audio.call(&"_collega_portone_torre", finto)
+		portone = finto
+	else:
+		check(int(c.get("PortoneTorre", 0)) >= 1, "collegato: PortoneTorre")
+	var portoni := _conta(&"portone_torre_apre")
+	portone.emit_signal(&"apertura_iniziata")
+	await _frames(2)
+	check(_conta(&"portone_torre_apre") == portoni + 1, "il portone della torre si apre col suo suono")
+	if finto:
+		finto.queue_free()
+
 	print("Nomi dei suoni negli script del gioco")
 	var mancanti := _suoni_mancanti("res://scripts") + _suoni_mancanti("res://addons/audio")
 	check(mancanti.is_empty(), "tutti i suoni chiesti dagli script esistono %s" % str(mancanti))
@@ -411,6 +513,16 @@ func _run() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
+
+
+## L'oggetto dell'audio che segue [param nodo] (AudioPiscina, AudioMedusine...), o null.
+func _attivo_di(nodo: Node) -> Object:
+	if nodo == null:
+		return null
+	for a in audio.get(&"_attivi"):
+		if a is Object and a.get(&"n") == nodo:
+			return a
+	return null
 
 
 func _zaino() -> Object:

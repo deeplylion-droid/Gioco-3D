@@ -39,7 +39,9 @@ def treno_impulsi(n, rate, rng, gust=None, alpha=3.0, cap=6.0):
     return x
 
 
-def pioggia_cupola(rng, dur=40.0, xf=2.0):
+def pioggia_cupola(rng, dur=40.0, xf=2.0, rivoli=False):
+    """La pioggia sulla cupola sentita dalla sala. rivoli=True rimette lo strato tolto il 16
+    ottobre (le bollicine dei rivoli), solo per l'anteprima di confronto."""
     n = n_of(dur + xf)
     raffiche = 0.75 + 0.25 * smooth_noise(n, 0.06, rng, octaves=3)
     out = np.zeros((n, 2))
@@ -70,13 +72,19 @@ def pioggia_cupola(rng, dur=40.0, xf=2.0):
     # 4) la cupola che vibra: rumore marrone molto basso
     rumble = lp(brown(n, rng), 140, 2)
     out += (rumble * 0.06 * raffiche)[:, None]
-    # 5) rivoli che scendono sul vetro e nelle grondaie: bollicine leggere
-    rivoli = np.zeros((n, 2))
+    # 5) i rivoli che scendevano sul vetro: 30 bollicine al secondo, che si sentivano in tutta la
+    #    sala e anche negli interni ("perché in tutti i suoni c'è un rumore di bollicine?", utente,
+    #    16 ottobre). Tolti. I numeri casuali si estraggono lo stesso, nello stesso ordine: così
+    #    i suoni generati dopo questo (vento, nave, tuoni...) restano identici.
+    strato = np.zeros((n, 2)) if rivoli else None
     for _ in range(int(dur * 30)):
         t0 = rng.uniform(0, dur + xf - 0.1)
-        b = bollicina(rng, rng.uniform(700, 2200), rng.uniform(0.015, 0.04), rise=rng.uniform(0.6, 1.4))
-        mix_into(rivoli, pan(b * rng.uniform(0.02, 0.08), rng.uniform(-1, 1)), n_of(t0))
-    out += lp(rivoli, 5000)
+        f0, tau, sale = rng.uniform(700, 2200), rng.uniform(0.015, 0.04), rng.uniform(0.6, 1.4)
+        g, p = rng.uniform(0.02, 0.08), rng.uniform(-1, 1)
+        if rivoli:
+            mix_into(strato, pan(bollicina(rng, f0, tau, rise=sale) * g, p), n_of(t0))
+    if rivoli:
+        out += lp(strato, 5000)
     out = reverb(out, ir_sala(), wet=0.32, dry=0.85, tail=False)
     return make_loop(hp(out, 25, 2), dur, xf)
 
@@ -381,7 +389,7 @@ def main():
     rng = np.random.default_rng(2026)
     print('Ambiente')
     salva(CART, 'pioggia_cupola_loop', pioggia_cupola(rng), loudness=-24, qualita=4,
-          nota='pioggia battente sulla cupola di vetro sentita dalla sala')
+          nota='pioggia battente sulla cupola di vetro sentita dalla sala (senza le bollicine dei rivoli dal 16 ottobre)')
     salva(CART, 'vento_loop', vento(rng), loudness=-27, qualita=4, nota='vento e ululati fuori dalla cupola')
     salva(CART, 'nave_loop', nave(rng), loudness=-28, qualita=4,
           nota='ronzio elettrico a 50 Hz, macchine lontane, onde contro lo scafo')

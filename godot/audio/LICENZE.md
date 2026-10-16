@@ -48,7 +48,7 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `ambiente/nave_tic_01.ogg` | 2.6 s | sintesi (originale) |  |
 | `ambiente/nave_tic_02.ogg` | 2.6 s | sintesi (originale) |  |
 | `ambiente/nave_tic_03.ogg` | 2.6 s | sintesi (originale) |  |
-| `ambiente/pioggia_cupola_loop.ogg` | 40.0 s | sintesi (originale) | pioggia battente sulla cupola di vetro sentita dalla sala |
+| `ambiente/pioggia_cupola_loop.ogg` | 40.0 s | sintesi (originale) | pioggia battente sulla cupola di vetro sentita dalla sala (senza le bollicine dei rivoli dal 16 ottobre) |
 | `ambiente/sirena_lontana_01.ogg` | 10.8 s | sintesi (originale) |  |
 | `ambiente/sirena_lontana_02.ogg` | 9.8 s | sintesi (originale) |  |
 | `ambiente/sottacqua_loop.ogg` | 16.0 s | sintesi (originale) | fondo ovattato sott'acqua |
@@ -168,6 +168,19 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `musica/sigla_rovinata.ogg` | 31.0 s | sintesi (originale) | 96 BPM, primo battito a 0.05 s |
 | `musica/stinger_bambini.ogg` | 6.0 s | sintesi (originale) |  |
 | `musica/stinger_morte.ogg` | 7.5 s | sintesi (originale) |  |
+| `piscina/medusina_aspirata_01.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_02.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_03.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_04.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_05.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_06.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusine_sparate_01.ogg` | 1.8 s | sintesi (originale) | A: cascata di tintinnii che si allontana |
+| `piscina/medusine_sparate_02.ogg` | 1.8 s | sintesi (originale) | A: cascata di tintinnii che si allontana |
+| `piscina/piscina_svuota_loop.ogg` | 6.0 s | sintesi (originale) | gorgo (A, scelto il 16 ottobre): suona dove aspiri finché il livello scende |
+| `piscina/piscina_vuota.ogg` | 6.5 s | sintesi (originale) | A: ultimo risucchio, sorso grave a 2,2 s, gocce nella piscina vuota |
+| `piscina/pulsante_botola_attiva.ogg` | 1.4 s | sintesi (originale) | richiamo (B, scelto il 16 ottobre): scatto del contattore e jingle che cala |
+| `piscina/pulsante_botola_bibu.ogg` | 0.4 s | sintesi (originale) | un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s) |
+| `piscina/pulsante_botola_lampeggiante_loop.ogg` | 3.2 s | sintesi (originale) | il lampeggiante giallo che gira |
 | `tecnici/corrente_salta.ogg` | 5.5 s | sintesi (originale) |  |
 | `tecnici/crt_neve_loop.ogg` | 3.0 s | sintesi (originale) | la neve di un televisore senza segnale: si sente anche col ruggito delle pompe |
 | `tecnici/maniglione_bloccato.ogg` | 0.9 s | Kenney RPG Audio + Impact Sounds (CC0) + sintesi | metalLatch, impactMetal_heavy |
@@ -177,5 +190,6 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `tecnici/pompe_ruggito_loop.ogg` | 4.0 s | sintesi (originale) | una pompa a pieno regime, ruggito basso; tre pompe = tre loop |
 | `tecnici/porta_ponte_apre.ogg` | 3.4 s | Kenney RPG Audio (CC0) + sintesi | metalLatch, creak, doorClose |
 | `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
+| `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 
-Totale: 153 file, 6.2 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 167 file, 6.4 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
