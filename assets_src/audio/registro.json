@@ -1352,11 +1352,11 @@
  "lei/lei_sbuca": {
   "file": "res://audio/lei/lei_sbuca.ogg",
   "canali": 1,
-  "durata": 6.5,
+  "durata": 7.6,
   "loop": false,
   "fonte": "sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0)",
-  "nota": "impactSoft_medium, slime_000",
-  "lufs": -22.7,
+  "nota": "versione gutturale (16 ottobre): gola sott'acqua, respiro umido, rantolo; impactSoft_medium, slime_000",
+  "lufs": -20.7,
   "lufs_max": -14.0
  },
  "lei/lei_scivola_sotto": {
@@ -1365,8 +1365,8 @@
   "durata": 4.5,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -20.4,
+  "nota": "versione gutturale (16 ottobre): brontolio di gola, l'ultimo fiato che gorgoglia sott'acqua",
+  "lufs": -21.0,
   "lufs_max": -16.0
  },
  "lei/morso": {
@@ -1375,8 +1375,8 @@
   "durata": 1.8,
   "loop": false,
   "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
-  "nota": "slime_000, slime_001; la fauce si chiude a 1,0 s",
-  "lufs": -20.5,
+  "nota": "versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001",
+  "lufs": -16.5,
   "lufs_max": -12.0
  },
  "musica/polaroid_chiudi": {

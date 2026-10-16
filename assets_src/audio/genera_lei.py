@@ -1,17 +1,27 @@
-"""Suoni della tappa 8: lei sbuca dalla fossa allagata nell'area bimbi, al buio. Niente versi:
-lei non parla. Solo acqua, pelle bagnata, vinile che si tende e la fauce.
+"""Suoni della tappa 8: lei sbuca dalla fossa allagata nell'area bimbi, al buio. Lei non parla:
+niente parole né voce umana. Acqua, pelle bagnata, vinile che si tende, la fauce e, dal 16
+ottobre, la sua gola.
 
 - fossa_ribolle_loop: l'acqua che risale dalla fossa e riempie le vasche basse: gorgoglio
   profondo dal condotto (sacche d'aria, glu-glu-glu), bolle grosse che scoppiano in superficie,
   l'acqua che si allarga e lambisce i bordi.
-- lei_sbuca: una massa grande che emerge lenta: l'acqua che si gonfia e si apre, che le cola di
-  dosso a cascata e ricade a lastre, le dita e i palmi che si appoggiano bagnati sulle piastrelle,
-  il vinile che si tende sotto il peso, poi l'acqua che lambisce i bordi e le gocce (6,5 s).
-- lei_scivola_sotto: le mani che scivolano dal bordo bagnato, il corpo che torna giù, il
-  risucchio dell'acqua che si richiude sopra la testa, poche bolle e poi silenzio.
-- morso: lo scatto fuori dall'acqua, la pelle che si tende e si strappa sotto l'occhio, la
-  fauce che si apre e, al secondo MORSO_COLPO (il lampo rosso di DeathSequence), si chiude.
-  Stereo, da vicino: suona sul bus Interfaccia, che durante la morte non si abbassa.
+- lei_sbuca, lei_scivola_sotto, morso: la **versione gutturale** scelta dall'utente il 16
+  ottobre (proposta A, anteprima godot/audio/anteprima/proposta_lei_gutturale.ogg; stessi semi,
+  quindi gli stessi suoni dell'anteprima). Sotto c'è l'acqua di prima (lei_sbuca(),
+  lei_scivola_sotto(), morso()), sopra la voce di una creatura grande (gola(), tratto(), più
+  sotto):
+  - lei_sbuca: sale gorgogliando di gola sott'acqua, rompe la superficie, l'acqua le cola di
+    dosso, le mani bagnate sul bordo, un respiro profondo e umido; poi, affacciata, un rantolo
+    trattenuto che cresce fino a quando scivola sotto (7,6 s: durata_sbuca + attesa di
+    lei_sbuca.gd);
+  - lei_scivola_sotto: un brontolio di gola mentre si ritira, le mani che scivolano dal bordo, il
+    risucchio, l'ultimo fiato che esce gorgogliando sempre più giù, poi silenzio (4,5 s);
+  - morso: lo scatto con un risucchio d'aria tra i denti, un ringhio che cresce mentre la pelle si
+    strappa sotto l'occhio, un attimo di vuoto e, al secondo MORSO_COLPO (il lampo rosso di
+    DeathSequence), la fauce che si chiude col fiato spinto fuori; poi un gorgoglio che mastica.
+    Stereo, da vicino: suona sul bus Interfaccia, che durante la morte non si abbassa.
+  La prima versione (solo acqua e pelle, "da cambiare" per l'utente il 15 ottobre) è in
+  assets_src/audio/scartati/lei_v1/.
 Uscita: godot/audio/lei/.
 """
 import numpy as np
@@ -313,20 +323,27 @@ def main():
     print('Lei (tappa 8)')
     salva(CART, 'fossa_ribolle_loop', fossa_ribolle_loop(rng), loudness=-19, qualita=4,
           nota='gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse')
-    salva(CART, 'lei_sbuca', lei_sbuca(rng), loudness=-14, corto=True, qualita=4,
-          fonte='sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0)', nota='impactSoft_medium, slime_000')
-    salva(CART, 'lei_scivola_sotto', lei_scivola_sotto(rng), loudness=-16, corto=True, qualita=4)
-    salva(CART, 'morso', morso(rng), loudness=-12, corto=True, qualita=5,
-          fonte='sintesi + Kenney Sci-Fi Sounds (CC0)', nota='slime_000, slime_001; la fauce si chiude a 1,0 s')
+    # La versione gutturale scelta dall'utente il 16 ottobre: gli stessi suoni dell'anteprima
+    # proposta_lei_gutturale.ogg (stesso seme, stesso ordine, stessa normalizzazione di proposte()).
+    voce = voce_gutturale(estrema=False)
+    salva(CART, 'lei_sbuca', voce['lei_sbuca'], loudness=-14, corto=True, qualita=4,
+          fonte='sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0)',
+          nota='versione gutturale (16 ottobre): gola sott\'acqua, respiro umido, rantolo; impactSoft_medium, slime_000')
+    salva(CART, 'lei_scivola_sotto', voce['lei_scivola_sotto'], loudness=-16, corto=True, qualita=4,
+          nota='versione gutturale (16 ottobre): brontolio di gola, l\'ultimo fiato che gorgoglia sott\'acqua')
+    salva(CART, 'morso', voce['morso'], loudness=-12, corto=True, qualita=5,
+          fonte='sintesi + Kenney Sci-Fi Sounds (CC0)',
+          nota='versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001')
 
 
 
 # =============================================================================================
-# Proposte: lei più gutturale e spaventosa (richiesta dell'utente, 15 ottobre). NON sono nel
-# gioco finché l'utente non sceglie: le ascolta nelle anteprime proposta_lei_*.ogg
-# (genera_anteprima.py). Sempre "non parla": niente parole né voce umana chiara. La voce è una
-# creatura grande: gola bassissima e ruvida (jitter, subarmoniche), tratto vocale lungo con
-# risonanze basse e larghe che si muovono (nessuna vocale riconoscibile), saturazione.
+# Lei più gutturale e spaventosa (richiesta dell'utente, 15 ottobre). Due proposte, ascoltate
+# nelle anteprime proposta_lei_*.ogg (genera_anteprima.py): il 16 ottobre l'utente ha scelto la
+# A, gutturale (estrema=False), che main() mette nel gioco. La B, estrema, resta solo come
+# anteprima. Sempre "non parla": niente parole né voce umana chiara. La voce è una creatura
+# grande: gola bassissima e ruvida (jitter, subarmoniche), tratto vocale lungo con risonanze
+# basse e larghe che si muovono (nessuna vocale riconoscibile), saturazione.
 # =============================================================================================
 
 def gola(rng, dur, f0, jitter=0.1, shimmer=0.25, sotto=0.35, aspira=0.4):
@@ -564,13 +581,23 @@ def morso_gola(rng, estrema=False):
     return fade(hp(out, 22, 2), 0.0, 0.3)
 
 
-def proposte(estrema=False):
-    """I tre suoni di una proposta, normalizzati come quelli del gioco (seme fisso)."""
+def voce_gutturale(estrema=False):
+    """I tre suoni di una proposta, non ancora normalizzati (seme fisso, sempre nello stesso
+    ordine: sbuca, scivola, morso). estrema=False è la versione nel gioco."""
     rng = np.random.default_rng(3008 if not estrema else 4008)
+    sbuca = lei_sbuca_gola(rng, estrema)
+    scivola = lei_scivola_sotto_gola(rng, estrema)
+    morde = morso_gola(rng, estrema)
+    return {'lei_sbuca': sbuca, 'lei_scivola_sotto': scivola, 'morso': morde}
+
+
+def proposte(estrema=False):
+    """I tre suoni di una proposta, normalizzati come quelli del gioco (per le anteprime)."""
+    voce = voce_gutturale(estrema)
     return {
-        'lei_sbuca': normalize_lufs(lei_sbuca_gola(rng, estrema), -14.0, -1.0, short=True),
-        'lei_scivola_sotto': normalize_lufs(lei_scivola_sotto_gola(rng, estrema), -16.0, -1.0, short=True),
-        'morso': normalize_lufs(morso_gola(rng, estrema), -12.0, -1.0, short=True),
+        'lei_sbuca': normalize_lufs(voce['lei_sbuca'], -14.0, -1.0, short=True),
+        'lei_scivola_sotto': normalize_lufs(voce['lei_scivola_sotto'], -16.0, -1.0, short=True),
+        'morso': normalize_lufs(voce['morso'], -12.0, -1.0, short=True),
     }
 
 

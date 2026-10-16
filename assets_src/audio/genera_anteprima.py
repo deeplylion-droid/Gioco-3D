@@ -7,10 +7,12 @@
 - anteprima_tecnici.ogg (circa 40 s): la sala pompe delle tappe 5-6 sentita da chi gioca, con i
   tempi di scripts/tecnici/risveglio_sala_pompe.gd e le distanze vere della scena.
 - anteprima_lei.ogg (circa 27 s): la tappa 8 nell'area bimbi, la fossa che ribolle, lei che sbuca,
-  guarda e scivola sotto; poi l'altro finale, il morso.
-- proposta_lei_gutturale.ogg e proposta_lei_estrema.ogg (circa 20 s): proposte per l'utente, NON
-  nel gioco: lei più gutturale (respiro umido, gola che gorgoglia sott'acqua, rantolo, ringhio
-  prima del morso), in due intensità (genera_lei.proposte).
+  guarda e scivola sotto; poi l'altro finale, il morso (con i suoni del gioco: dal 16 ottobre la
+  versione gutturale).
+- proposta_lei_gutturale.ogg e proposta_lei_estrema.ogg (circa 20 s): le due proposte per lei più
+  gutturale (respiro umido, gola che gorgoglia sott'acqua, rantolo, ringhio prima del morso), in
+  due intensità (genera_lei.proposte). Il 16 ottobre l'utente ha scelto la gutturale, che ora è
+  nel gioco; le due anteprime restano com'erano.
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
 nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte] (senza argomenti, tutte).

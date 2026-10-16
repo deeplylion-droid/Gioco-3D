@@ -116,15 +116,17 @@ direzione (`unit_size` 40), così si sentono anche dalla sala pompe, sotto il ru
 
 ## Tappa 8: lei nell'area bimbi
 
-Suoni in `res://audio/lei/`. Niente versi: lei non parla. La fossa e il morso li suona l'addon da
-solo; lei che sbuca e che scivola sotto li chiama `scripts/game/lei_sbuca.gd` (`_suona()`).
+Suoni in `res://audio/lei/`. Lei non parla (niente parole né voce umana), ma si sente la sua gola:
+è la versione gutturale scelta dall'utente il 16 ottobre (la prima, solo acqua e pelle, è in
+`assets_src/audio/scartati/lei_v1/`). La fossa e il morso li suona l'addon da solo; lei che sbuca e
+che scivola sotto li chiama `scripts/game/lei_sbuca.gd` (`_suona()`).
 
 | Suono | Cosa | Come |
 |---|---|---|
 | `fossa_ribolle_loop` | gorgoglio profondo dal condotto, bolle grosse: l'acqua che risale e riempie le vasche basse | da solo (`LeiSbuca`) |
-| `lei_sbuca` | una massa grande che emerge lenta, l'acqua che le cola di dosso, le dita e i palmi bagnati sulle piastrelle, poi gocce (6,5 s) | `_sbuca()`: `_suona(&"lei_sbuca")` |
-| `lei_scivola_sotto` | le mani che scivolano dal bordo, il corpo che torna giù, il risucchio, poche bolle, poi silenzio (4,5 s) | `_scivola()`: `_suona(&"lei_scivola_sotto")` |
-| `morso` | lo scatto fuori dall'acqua, la pelle che si strappa sotto l'occhio, la fauce che si chiude a 1,0 s (stereo, 1,8 s) | da solo, alla morte con causa `&"medusa"` |
+| `lei_sbuca` | sale gorgogliando di gola sott'acqua, l'acqua che le cola di dosso, le mani bagnate sul bordo, un respiro profondo e umido; poi, affacciata, un rantolo trattenuto fino a quando va sotto (7,6 s) | `_sbuca()`: `_suona(&"lei_sbuca")` |
+| `lei_scivola_sotto` | un brontolio di gola, le mani che scivolano dal bordo, il risucchio, l'ultimo fiato che gorgoglia sott'acqua sempre più giù, poi silenzio (4,5 s) | `_scivola()`: `_suona(&"lei_scivola_sotto")` |
+| `morso` | lo scatto con un risucchio d'aria tra i denti, un ringhio che cresce mentre la pelle si strappa sotto l'occhio, la fauce che si chiude a 1,0 s col fiato spinto fuori, un gorgoglio che mastica (stereo, 1,8 s) | da solo, alla morte con causa `&"medusa"` |
 
 Il morso suona sul bus Interfaccia (da vicino, niente riverbero, non si abbassa con la morte); la
 fauce si chiude a `MORSO_COLPO` = 1,0 s, il lampo rosso di `DeathSequence`, e lì parte lo stinger.
@@ -184,6 +186,7 @@ riproduzioni appese; lo stato resta giusto. Il test forza la riproduzione vera c
 
 Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e le anteprime
 `res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg` e `anteprima_lei.ogg` (cartella
-con `.gdignore`: non entra nel gioco).
+con `.gdignore`: non entra nel gioco). Le proposte per l'utente non sono nel gioco: le loro anteprime
+(`anteprima/proposta_*.ogg`) le fa `genera_anteprima.py proposte`.
 `assets_src/audio/verifica.py file.ogg --png cartella` stampa loudness e picchi e disegna lo
 spettrogramma.
