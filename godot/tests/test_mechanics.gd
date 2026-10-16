@@ -314,7 +314,8 @@ func test_turbine_door() -> void:
 	p.look_at_point(Vector3(-3.5, 2.2, -5.75))
 	await _frames(3)
 	check(not door.is_open and door.open_amount == 0.0, "la porta parte chiusa")
-	await _hold(&"spray", 90)
+	# Il getto B parte dopo un attimo di carica (WaterPack.spray_delay): lo si tiene premuto di più.
+	await _hold(&"spray", 90 + int(p.water_pack.spray_delay * 60.0))
 	check(turbine.powered and turbine.energy > 0.55, "la turbina gira e dà energia (%.2f)" % turbine.energy)
 	check(p.water_pack.tank_amount < 12.0, "il getto consuma il serbatoio (%.1f l)" % p.water_pack.tank_amount)
 	for i in 240:
