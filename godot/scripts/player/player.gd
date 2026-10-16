@@ -146,6 +146,9 @@ var _body_height := 1.75
 
 func _ready() -> void:
 	add_to_group(&"player")
+	# I muri invisibili (per esempio il cordone intorno alla vasca della medusa) fermano il giocatore ma
+	# non il getto: stanno su un livello loro, che il getto non guarda.
+	collision_mask |= Layers.BARRIERS
 	collision_shape.shape = ConvexPolygonShape3D.new()
 	_apply_height(stand_height)
 	# Si scende dai gradini restando attaccati a terra (fino alla stessa altezza di quelli in salita).

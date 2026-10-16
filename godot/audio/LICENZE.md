@@ -48,7 +48,7 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `ambiente/nave_tic_01.ogg` | 2.6 s | sintesi (originale) |  |
 | `ambiente/nave_tic_02.ogg` | 2.6 s | sintesi (originale) |  |
 | `ambiente/nave_tic_03.ogg` | 2.6 s | sintesi (originale) |  |
-| `ambiente/pioggia_cupola_loop.ogg` | 40.0 s | sintesi (originale) | pioggia battente sulla cupola di vetro sentita dalla sala |
+| `ambiente/pioggia_cupola_loop.ogg` | 40.0 s | sintesi (originale) | pioggia battente sulla cupola di vetro sentita dalla sala (senza le bollicine dei rivoli dal 16 ottobre) |
 | `ambiente/sirena_lontana_01.ogg` | 10.8 s | sintesi (originale) |  |
 | `ambiente/sirena_lontana_02.ogg` | 9.8 s | sintesi (originale) |  |
 | `ambiente/sottacqua_loop.ogg` | 16.0 s | sintesi (originale) | fondo ovattato sott'acqua |
@@ -96,8 +96,8 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `effetti/vasca_svuotata.ogg` | 2.8 s | sintesi (originale) |  |
 | `giocatore/atterraggio_acqua_01.ogg` | 0.7 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_acqua_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
+| `giocatore/atterraggio_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | senza goccioline, come i passi bagnati (16 ottobre) |
+| `giocatore/atterraggio_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | senza goccioline, come i passi bagnati (16 ottobre) |
 | `giocatore/atterraggio_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_piastrelle_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
@@ -108,12 +108,12 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `giocatore/passo_acqua_04.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_05.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_06.ogg` | 0.8 s | sintesi (originale) |  |
-| `giocatore/passo_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_03.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_05.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/passo_bagnato_06.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
+| `giocatore/passo_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_03.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_04.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_05.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
+| `giocatore/passo_bagnato_06.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | lo sciac della suola sul bagnato, senza goccioline (16 ottobre) |
 | `giocatore/passo_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
 | `giocatore/passo_metallo_03.ogg` | 0.5 s | Kenney Impact Sounds (CC0), rielaborati | footstep_concrete + impactPlate_light |
@@ -159,15 +159,28 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `interfaccia/ui_pausa.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | switch_002 |
 | `interfaccia/ui_scatto.ogg` | 0.1 s | Kenney Interface Sounds (CC0) | toggle_002 |
 | `lei/fossa_ribolle_loop.ogg` | 5.0 s | sintesi (originale) | gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse |
-| `lei/lei_sbuca.ogg` | 6.5 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | impactSoft_medium, slime_000 |
-| `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) |  |
-| `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | slime_000, slime_001; la fauce si chiude a 1,0 s |
+| `lei/lei_sbuca.ogg` | 7.6 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): gola sott'acqua, respiro umido, rantolo; impactSoft_medium, slime_000 |
+| `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) | versione gutturale (16 ottobre): brontolio di gola, l'ultimo fiato che gorgoglia sott'acqua |
+| `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001 |
 | `musica/polaroid_chiudi.ogg` | 0.3 s | sintesi (originale) |  |
 | `musica/polaroid_raccolta.ogg` | 2.6 s | sintesi (originale) |  |
 | `musica/sigla_pulita.ogg` | 37.6 s | sintesi (originale) | melodia e arrangiamento originali; carillon, organetto, percussioni giocattolo |
 | `musica/sigla_rovinata.ogg` | 31.0 s | sintesi (originale) | 96 BPM, primo battito a 0.05 s |
 | `musica/stinger_bambini.ogg` | 6.0 s | sintesi (originale) |  |
 | `musica/stinger_morte.ogg` | 7.5 s | sintesi (originale) |  |
+| `piscina/medusina_aspirata_01.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_02.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_03.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_04.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_05.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusina_aspirata_06.ogg` | 0.8 s | sintesi (originale) | vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo |
+| `piscina/medusine_sparate_01.ogg` | 1.8 s | sintesi (originale) | A: cascata di tintinnii che si allontana |
+| `piscina/medusine_sparate_02.ogg` | 1.8 s | sintesi (originale) | A: cascata di tintinnii che si allontana |
+| `piscina/piscina_svuota_loop.ogg` | 6.0 s | sintesi (originale) | gorgo (A, scelto il 16 ottobre): suona dove aspiri finché il livello scende |
+| `piscina/piscina_vuota.ogg` | 6.5 s | sintesi (originale) | A: ultimo risucchio, sorso grave a 2,2 s, gocce nella piscina vuota |
+| `piscina/pulsante_botola_attiva.ogg` | 1.4 s | sintesi (originale) | richiamo (B, scelto il 16 ottobre): scatto del contattore e jingle che cala |
+| `piscina/pulsante_botola_bibu.ogg` | 0.4 s | sintesi (originale) | un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s) |
+| `piscina/pulsante_botola_lampeggiante_loop.ogg` | 3.2 s | sintesi (originale) | il lampeggiante giallo che gira |
 | `tecnici/corrente_salta.ogg` | 5.5 s | sintesi (originale) |  |
 | `tecnici/crt_neve_loop.ogg` | 3.0 s | sintesi (originale) | la neve di un televisore senza segnale: si sente anche col ruggito delle pompe |
 | `tecnici/maniglione_bloccato.ogg` | 0.9 s | Kenney RPG Audio + Impact Sounds (CC0) + sintesi | metalLatch, impactMetal_heavy |
@@ -177,5 +190,6 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `tecnici/pompe_ruggito_loop.ogg` | 4.0 s | sintesi (originale) | una pompa a pieno regime, ruggito basso; tre pompe = tre loop |
 | `tecnici/porta_ponte_apre.ogg` | 3.4 s | Kenney RPG Audio (CC0) + sintesi | metalLatch, creak, doorClose |
 | `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
+| `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 
-Totale: 153 file, 6.1 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 167 file, 6.4 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

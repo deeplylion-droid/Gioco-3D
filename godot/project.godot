@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Splash Lagoon"
 config/description="Horror in prima persona (mascot horror) sull'acquapark di una nave da crociera abbandonata. Titolo provvisorio."
-config/version="0.3.0"
+config/version="0.3.1"
 run/main_scene="res://scenes/ui/menu_principale.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
@@ -120,6 +120,7 @@ menu_opzioni={
 3d_physics/layer_6="bersagli_acqua"
 3d_physics/layer_7="volumi_acqua"
 3d_physics/layer_8="scale"
+3d_physics/layer_9="barriere"
 
 [physics]
 

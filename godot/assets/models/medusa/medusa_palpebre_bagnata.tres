@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "M_palpebre_bagnata"
+albedo_color = Color(0.486, 0.552, 0.845, 1)
+roughness = 0.1
+metallic_specular = 0.6
+clearcoat_enabled = true
+clearcoat = 1.0
+clearcoat_roughness = 0.03

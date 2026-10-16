@@ -56,6 +56,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
 - La luce della torcia è troppo forte e brutta: va studiata diversamente.
 - I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
+- **Da fare più avanti (richiesta dell'utente, 16 ottobre)**: i poster grandi, e anche dei piccoli volantini da mettere in giro sulle pareti, con gli eventi e i manifesti della crociera. Stile e contenuti si propongono all'utente.
 
 ## Principi di livello (deciso dall'utente, 15 ottobre)
 
@@ -89,7 +90,30 @@ Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-16_
 - **Tappa 8**:
   - lei resta affacciata finché non la guardi bene per 2 secondi (entro 18°, a meno di 14 m, senza ostacoli), poi dopo 6 secondi scivola sotto;
   - la scia e la bava rosa sono **visibili al 75%**, cioè un po' trasparenti.
+- **Suoni nuovi** (seconda pagina dello stesso giorno):
+  - piscina che si svuota: gorgo;
+  - pulsante della botola: richiamo, con un jingle giocattolo che cala e un bi-bu insieme al lampeggiante;
+  - micro medusine: tintinnii di vetro;
+  - portone: motore e rulli.
+  L'utente ha notato le bollicine nel fondo della pioggia sulla cupola: si tolgono.
+- **Ritocchi approvati (terza pagina)**:
+  - il portone della torre si apre da solo dopo la tappa 8;
+  - le micro medusine vanno bene così;
+  - la pioggia resta senza bollicine;
+  - i passi bagnati non hanno più le goccioline.
 - **Dopo la tappa 8**: la sala della torre è dietro la parete est (versione 2). Si entra da un portone scorrevole con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi e i bambini della balconata si propongono a parte.
+
+## Prova della v0.3.1 (16 ottobre)
+
+L'utente ha giocato la v0.3.1. Il messaggio completo, parola per parola, è in `docs/riscontri/2026-10-16_prova_v031.md`. Le sue richieste:
+- **Vaschetta lava-piedi davanti ai tornelli**: si riempie di nuovo quando la svuoti.
+- **Portellone della piscina a onde**: deve notarsi di più, per esempio con una luce che si veda attraverso l'acqua. A piscina vuota deve restare all'asciutto.
+- **I due cancelli stagni dopo la scala**: si aprono da soli al tuo passaggio, con un suono metallico forte.
+- **Stanza dei generatori (sala pompe)**: l'acqua lì non si esaurisce mai. La scaletta della vasca deve far risalire.
+- **Serranda di sud-ovest (tappa 7)**: resta chiusa finché non risali dal magazzino.
+- **Strada di risalita**: è troppo vuota e brutta. Va arredata, con un'apparizione dei bambini mostriciattoli. Prima si mostra all'utente.
+- **Scia di bava (tappa 8)**: parte dalla vasca centrale della sala, dove la medusa stava affacciata.
+- **Medusa nella fossa dell'area bimbi (tappa 8)**: è già affacciata quando arrivi. Nel jumpscare guarda la camera da qualsiasi lato ti avvicini.
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -130,6 +154,9 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Respinge i mostri per un attimo e dà una spinta per saltare.
 - **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
 - **Aspetto scelto dall'utente il 14 ottobre**: lo zaino-giocattolo anni '90, colorato (turchese, giallo e arancione, con adesivi di delfini), con un serbatoio trasparente e una pistola ad acqua tipo Super Soaker. È un modello 3D di Meshy, l'opzione 2 in `godot/assets/models/zaino/`.
+- **Rework estetico chiesto dall'utente il 16 ottobre**: "Deve essere diversa in mano, ma anche il getto aspirato e sparato deve essere molto molto più imponente e soddisfacente da vedere e sentire. Pensa alla pompa dei pompieri e potenzia ancora. Dobbiamo competere con il grab pack e al momento abbiamo una pisciatina stupidita. La fisica delle pozze invece va bene."
+  - Da rifare: la lancia in mano, il getto sparato, l'aspirazione e i loro suoni. La fisica delle pozze resta com'è.
+  - L'utente sceglie da proposte con video e suoni veri. Riferimenti: la pompa dei pompieri potenziata e il Grab Pack di Poppy Playtime.
 
 ## La mascotte del capitolo 1: la medusa
 
@@ -211,4 +238,8 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **Godot 4.7.2**, renderer Forward+, per PC. Build automatiche con GitHub Actions e Release su GitHub.
 - **Blender 5.2** usato come modulo Python (`bpy`) per modellare, fare il rig, animare e fare i render da script.
 - **Meshy API** per immagini concept, modelli 3D e rig degli umanoidi. La chiave è nella variabile `MESHY_API_KEY`. L'utente non bada ai crediti, ma non vanno sprecati.
+- **Crediti Meshy (16 ottobre)**: 14.628 crediti mensili, che si azzerano il 15 novembre. L'utente è d'accordo a usarli di più per la qualità:
+  - rifare ad alta definizione gli oggetti della sala che non sono ancora di Meshy (struttura dell'area bimbi, funghi, secchio);
+  - la sala della torre e gli scivoli nuovi.
+  Si propone sempre all'utente con i render prima di metterli nel gioco.
 - **Asset CC0**: texture da Poly Haven e ambientCG, modelli da Kenney e Quaternius.

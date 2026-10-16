@@ -245,9 +245,9 @@
   "durata": 40.0,
   "loop": true,
   "fonte": "sintesi",
-  "nota": "pioggia battente sulla cupola di vetro sentita dalla sala",
+  "nota": "pioggia battente sulla cupola di vetro sentita dalla sala (senza le bollicine dei rivoli dal 16 ottobre)",
   "lufs": -24.0,
-  "lufs_max": -22.0
+  "lufs_max": -22.8
  },
  "ambiente/sirena_lontana_01": {
   "file": "res://audio/ambiente/sirena_lontana_01.ogg",
@@ -722,22 +722,22 @@
  "giocatore/atterraggio_bagnato_01": {
   "file": "res://audio/giocatore/atterraggio_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.221,
+  "durata": 0.204,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
   "lufs": null,
-  "lufs_max": -18.4
+  "lufs_max": -19.3
  },
  "giocatore/atterraggio_bagnato_02": {
   "file": "res://audio/giocatore/atterraggio_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.21,
+  "durata": 0.2,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
   "lufs": null,
-  "lufs_max": -17.6
+  "lufs_max": -17.8
  },
  "giocatore/atterraggio_metallo_01": {
   "file": "res://audio/giocatore/atterraggio_metallo_01.ogg",
@@ -842,32 +842,32 @@
  "giocatore/passo_bagnato_01": {
   "file": "res://audio/giocatore/passo_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.227,
+  "durata": 0.171,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },
  "giocatore/passo_bagnato_02": {
   "file": "res://audio/giocatore/passo_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.201,
+  "durata": 0.184,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },
  "giocatore/passo_bagnato_03": {
   "file": "res://audio/giocatore/passo_bagnato_03.ogg",
   "canali": 1,
-  "durata": 0.21,
+  "durata": 0.18,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -20.3
  },
  "giocatore/passo_bagnato_04": {
   "file": "res://audio/giocatore/passo_bagnato_04.ogg",
@@ -875,27 +875,27 @@
   "durata": 0.203,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },
  "giocatore/passo_bagnato_05": {
   "file": "res://audio/giocatore/passo_bagnato_05.ogg",
   "canali": 1,
-  "durata": 0.202,
+  "durata": 0.184,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -20.3
  },
  "giocatore/passo_bagnato_06": {
   "file": "res://audio/giocatore/passo_bagnato_06.ogg",
   "canali": 1,
-  "durata": 0.207,
+  "durata": 0.186,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },
@@ -1352,11 +1352,11 @@
  "lei/lei_sbuca": {
   "file": "res://audio/lei/lei_sbuca.ogg",
   "canali": 1,
-  "durata": 6.5,
+  "durata": 7.6,
   "loop": false,
   "fonte": "sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0)",
-  "nota": "impactSoft_medium, slime_000",
-  "lufs": -22.7,
+  "nota": "versione gutturale (16 ottobre): gola sott'acqua, respiro umido, rantolo; impactSoft_medium, slime_000",
+  "lufs": -20.7,
   "lufs_max": -14.0
  },
  "lei/lei_scivola_sotto": {
@@ -1365,8 +1365,8 @@
   "durata": 4.5,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "",
-  "lufs": -20.4,
+  "nota": "versione gutturale (16 ottobre): brontolio di gola, l'ultimo fiato che gorgoglia sott'acqua",
+  "lufs": -21.0,
   "lufs_max": -16.0
  },
  "lei/morso": {
@@ -1375,8 +1375,8 @@
   "durata": 1.8,
   "loop": false,
   "fonte": "sintesi + Kenney Sci-Fi Sounds (CC0)",
-  "nota": "slime_000, slime_001; la fauce si chiude a 1,0 s",
-  "lufs": -20.5,
+  "nota": "versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001",
+  "lufs": -16.5,
   "lufs_max": -12.0
  },
  "musica/polaroid_chiudi": {
@@ -1438,6 +1438,136 @@
   "nota": "",
   "lufs": -14.0,
   "lufs_max": -9.0
+ },
+ "piscina/medusina_aspirata_01": {
+  "file": "res://audio/piscina/medusina_aspirata_01.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo",
+  "lufs": -29.9,
+  "lufs_max": -24.0
+ },
+ "piscina/medusina_aspirata_02": {
+  "file": "res://audio/piscina/medusina_aspirata_02.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo",
+  "lufs": -29.9,
+  "lufs_max": -24.0
+ },
+ "piscina/medusina_aspirata_03": {
+  "file": "res://audio/piscina/medusina_aspirata_03.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo",
+  "lufs": -30.0,
+  "lufs_max": -24.0
+ },
+ "piscina/medusina_aspirata_04": {
+  "file": "res://audio/piscina/medusina_aspirata_04.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo",
+  "lufs": -32.7,
+  "lufs_max": -24.0
+ },
+ "piscina/medusina_aspirata_05": {
+  "file": "res://audio/piscina/medusina_aspirata_05.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo",
+  "lufs": -30.0,
+  "lufs_max": -24.0
+ },
+ "piscina/medusina_aspirata_06": {
+  "file": "res://audio/piscina/medusina_aspirata_06.ogg",
+  "canali": 1,
+  "durata": 0.85,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "vetro (A, scelto il 16 ottobre): tintinnii che scendono nel tubo",
+  "lufs": -29.9,
+  "lufs_max": -24.0
+ },
+ "piscina/medusine_sparate_01": {
+  "file": "res://audio/piscina/medusine_sparate_01.ogg",
+  "canali": 1,
+  "durata": 1.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "A: cascata di tintinnii che si allontana",
+  "lufs": -28.5,
+  "lufs_max": -21.0
+ },
+ "piscina/medusine_sparate_02": {
+  "file": "res://audio/piscina/medusine_sparate_02.ogg",
+  "canali": 1,
+  "durata": 1.8,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "A: cascata di tintinnii che si allontana",
+  "lufs": -30.1,
+  "lufs_max": -21.0
+ },
+ "piscina/piscina_svuota_loop": {
+  "file": "res://audio/piscina/piscina_svuota_loop.ogg",
+  "canali": 1,
+  "durata": 6.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "gorgo (A, scelto il 16 ottobre): suona dove aspiri finché il livello scende",
+  "lufs": -20.0,
+  "lufs_max": -15.9
+ },
+ "piscina/piscina_vuota": {
+  "file": "res://audio/piscina/piscina_vuota.ogg",
+  "canali": 1,
+  "durata": 6.5,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "A: ultimo risucchio, sorso grave a 2,2 s, gocce nella piscina vuota",
+  "lufs": -19.9,
+  "lufs_max": -14.0
+ },
+ "piscina/pulsante_botola_attiva": {
+  "file": "res://audio/piscina/pulsante_botola_attiva.ogg",
+  "canali": 1,
+  "durata": 1.4,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "richiamo (B, scelto il 16 ottobre): scatto del contattore e jingle che cala",
+  "lufs": -16.6,
+  "lufs_max": -15.0
+ },
+ "piscina/pulsante_botola_bibu": {
+  "file": "res://audio/piscina/pulsante_botola_bibu.ogg",
+  "canali": 1,
+  "durata": 0.44,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s)",
+  "lufs": null,
+  "lufs_max": -16.0
+ },
+ "piscina/pulsante_botola_lampeggiante_loop": {
+  "file": "res://audio/piscina/pulsante_botola_lampeggiante_loop.ogg",
+  "canali": 1,
+  "durata": 3.2,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "il lampeggiante giallo che gira",
+  "lufs": -24.0,
+  "lufs_max": -22.5
  },
  "tecnici/corrente_salta": {
   "file": "res://audio/tecnici/corrente_salta.ogg",
@@ -1528,5 +1658,15 @@
   "nota": "",
   "lufs": -22.8,
   "lufs_max": -16.0
+ },
+ "torre/portone_torre_apre": {
+  "file": "res://audio/torre/portone_torre_apre.ogg",
+  "canali": 1,
+  "durata": 8.5,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s",
+  "lufs": -22.5,
+  "lufs_max": -16.7
  }
 }

@@ -12,6 +12,8 @@ signal released
 enum Mode { MOMENTARY, TOGGLE, LATCH }
 
 @export var mode := Mode.TOGGLE
+## Se falso il getto non lo preme (per esempio finché un enigma non è risolto).
+@export var enabled := true
 ## Litri d'acqua necessari per premerlo.
 @export var liters_to_press := 0.5
 ## Pressione persa al secondo quando non è colpito (litri/s).
@@ -60,6 +62,8 @@ func load_state(data: Dictionary) -> void:
 
 
 func _on_water_hit(amount: float, _point: Vector3, _direction: Vector3) -> void:
+	if not enabled:
+		return
 	pressure = minf(pressure + amount, liters_to_press * 1.5)
 
 

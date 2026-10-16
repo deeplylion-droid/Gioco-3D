@@ -11,6 +11,8 @@
   - mani piu' eleganti (dita e polsi piu' sottili);
   - struttura interna della campana (medusa_campana_interna.py): canali, anello e gonadi luminosi;
   - fauce nascosta sotto l'occhio (medusa_fauce.py);
+  - file di denti interne (medusa_fauce.FILE_INTERNE) e palpebra per l'easter egg dell'occhio che si chiude
+    (medusa_palpebre.py, proposta B scelta il 16 ottobre), con le azioni "occhio_chiude" e "occhio_riapre";
   - la posa statua (mani giunte sul petto) e' la posa di RIPOSO del modello: in Godot, senza animazioni,
     la medusa e' gia' la statua;
   - azioni per Godot: "statua" (= riposo, in piedi sui tentacoli), "sveglia" (si stacca dal piedistallo:
@@ -40,6 +42,7 @@ import medusa_mani as MANI  # noqa: E402
 import medusa_occhio_venato as VENE  # noqa: E402
 import medusa_attacco as ATT  # noqa: E402
 import medusa_fauce as FAUCE  # noqa: E402
+import medusa_palpebre as PALPEBRE  # noqa: E402
 import medusa_pose as POSE  # noqa: E402
 
 Z_VITA = -0.155
@@ -653,6 +656,7 @@ def main():
     INTERNO.crea_bordo(arm, corpo)
     CAPELLI.crea_ciocche(arm, corpo)
     palpebre(corpo)
+    PALPEBRE.crea_palpebre(arm, corpo)  # palpebra dell'occhio che si chiude (MEDUSA_PALPEBRE, di serie 'una')
     vinile_laccato(['M_pelle', 'M_capelli', 'M_orbita'])
     materiale_campana()
     materiale_occhio()
@@ -673,6 +677,7 @@ def main():
     # sala centrale: la medusa vera affacciata alla vasca (stessa scala vera della statua)
     k_vero = ALTEZZA_STATUA / (coords(corpo.data)[:, 2].max() - TENT.STATUA['z_pavimento'])
     AFF.azione_affacciata(arm, k_vero, TENT.STATUA['z_pavimento'], _chiave_posa, _nla)
+    PALPEBRE.azioni_palpebre(_nla)      # occhio_chiude e occhio_riapre (shape key della palpebra in sequenza)
     bpy.ops.object.mode_set(mode='OBJECT')
     for m in mods:
         m.show_viewport = True

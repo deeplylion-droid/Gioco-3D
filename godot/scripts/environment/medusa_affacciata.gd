@@ -7,6 +7,9 @@ extends MedusaStatue
 ## material_map), l'occhio che segue il giocatore (osso "occhio", al massimo [member angolo_occhio]
 ## gradi) e qualche goccia che cade da dita, mento, capelli e tentacoli.
 ## L'origine del modello è al livello del pavimento della sala (LEGGIMI della medusa).
+## Easter egg: chiudi_occhio(secondi) (della MedusaStatue) abbassa la palpebra, bagnata come la pelle.
+
+const MATERIALE_PALPEBRE_BAGNATA := "res://assets/models/medusa/medusa_palpebre_bagnata.tres"
 
 ## L'animazione della posa, messa in ciclo e fatta partire subito.
 @export var animazione: StringName = &"affacciata"
@@ -90,6 +93,13 @@ func _process(delta: float) -> void:
 	var p := GameState.player
 	if p and is_instance_valid(p):
 		_bersaglio.global_position = p.camera.global_position
+
+
+## Nella vasca la palpebra è bagnata come la pelle (se material_map non sceglie un altro "M_palpebre").
+func _materiale_palpebre() -> Material:
+	if ResourceLoader.exists(MATERIALE_PALPEBRE_BAGNATA):
+		return load(MATERIALE_PALPEBRE_BAGNATA) as Material
+	return super._materiale_palpebre()
 
 
 ## Dove sta l'occhio adesso (coordinate del mondo, con lo sguardo applicato).

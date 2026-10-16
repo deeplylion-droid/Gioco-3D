@@ -8,6 +8,9 @@ extends Area3D
 @export var order := 0
 ## Punto e direzione di ripartenza (vuoto = questo nodo). Si guarda verso il suo -Z.
 @export var spawn_point: Node3D
+## Vale solo al buio, dopo il risveglio (GameState.Luci.BLACKOUT): i checkpoint del ritorno (tappe
+## 7-8) stanno in posti dove si può passare anche prima, e lì l'ordine andrebbe avanti troppo presto.
+@export var solo_al_buio := false
 
 
 func _init() -> void:
@@ -21,7 +24,7 @@ func _ready() -> void:
 
 
 func _on_body_entered(body: Node3D) -> void:
-	if body is Player:
+	if body is Player and (not solo_al_buio or GameState.luci == GameState.Luci.BLACKOUT):
 		GameState.reach_checkpoint(self)
 
 
