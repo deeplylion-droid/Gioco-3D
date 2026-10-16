@@ -14,22 +14,22 @@ extends Node3D
 const STILI := {
 	"A": {
 		"velocita": 20.0, "volo": 1.0,
-		"raggio": 0.03, "allarga": 0.16, "sfalda": 0.55,
+		"raggio": 0.045, "allarga": 0.3, "sfalda": 0.55,
 		"opacita": [0.62, 0.95], "bianco": 0.65,
 		"spruzzo": 260, "nebbia": 40, "nebbia_dim": 0.7,
 		"schizzi": 220, "goccioloni": 40, "schiuma": 36, "impatto_vel": 4.5,
 		"rinculo": 0.04, "vibra": 0.006, "scossa": 0.0035, "strattoni": 0.0,
-		"aspira_base": 0.32, "aspira_cima": 0.035, "vortice": 140, "vortice_r": 0.75,
+		"aspira_base": 0.32, "aspira_cima": 0.035, "vortice": 240, "vortice_r": 0.75,
 		"nebbia_vol": 0.35, "bocca": 0,
 	},
 	"B": {
 		"velocita": 26.0, "volo": 1.05,
-		"raggio": 0.05, "allarga": 0.26, "sfalda": 0.5,
+		"raggio": 0.07, "allarga": 0.45, "sfalda": 0.5,
 		"opacita": [0.72, 1.0], "bianco": 0.8,
 		"spruzzo": 520, "nebbia": 80, "nebbia_dim": 1.1,
 		"schizzi": 480, "goccioloni": 90, "schiuma": 70, "impatto_vel": 6.5,
 		"rinculo": 0.07, "vibra": 0.011, "scossa": 0.0075, "strattoni": 0.022,
-		"aspira_base": 0.5, "aspira_cima": 0.05, "vortice": 260, "vortice_r": 1.1,
+		"aspira_base": 0.5, "aspira_cima": 0.05, "vortice": 420, "vortice_r": 1.1,
 		"nebbia_vol": 0.7, "bocca": 60,
 	},
 }
@@ -47,7 +47,6 @@ var _schizzi: GPUParticles3D
 var _goccioloni: GPUParticles3D
 var _schiuma: GPUParticles3D
 var _nebbia_impatto: GPUParticles3D
-var _fog: Array[FogVolume] = []
 var _bagnato: Array[Decal] = []
 var _bagnato_t := 0.0
 var _vortice: MultiMeshInstance3D
@@ -177,17 +176,6 @@ func _crea_particelle() -> void:
 		bm.initial_velocity_max = 4.0
 		bm.gravity = Vector3(0, -4.0, 0)
 		_aggiungi(_bocca)
-	# Il getto nella nebbia volumetrica: volumi di nebbia leggera che seguono il getto.
-	for i in 5:
-		var f := FogVolume.new()
-		f.shape = RenderingServer.FOG_VOLUME_SHAPE_ELLIPSOID
-		var mat := FogMaterial.new()
-		mat.density = 0.0
-		mat.albedo = Color(0.9, 0.95, 1.0)
-		mat.edge_fade = 0.6
-		f.material = mat
-		add_child(f)
-		_fog.append(f)
 
 
 func _aggiungi(p: GPUParticles3D) -> void:
@@ -231,8 +219,12 @@ func _crea_vortice() -> void:
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.instance_count = int(s.vortice)
 	var q := QuadMesh.new()
-	q.size = Vector2(0.025, 0.07) * (1.3 if stile == "B" else 1.0)
-	q.material = WaterParticles.droplet_material()
+	q.size = Vector2(0.035, 0.1) * (1.3 if stile == "B" else 1.0)
+	var gocce := WaterParticles.droplet_material().duplicate() as ShaderMaterial
+	gocce.set_shader_parameter(&"opacity", 0.95)
+	gocce.set_shader_parameter(&"rim_light", 0.8)
+	gocce.set_shader_parameter(&"tint", Color(0.85, 0.93, 1.0))
+	q.material = gocce
 	mm.mesh = q
 	_vortice = MultiMeshInstance3D.new()
 	_vortice.multimesh = mm
@@ -326,17 +318,6 @@ func _aggiorna_getto(stream, spruzza: bool) -> void:
 		if muzzle:
 			_bocca.global_position = muzzle.global_position
 			(_bocca.process_material as ParticleProcessMaterial).direction = -muzzle.global_basis.z
-	# Nebbia volumetrica lungo il getto.
-	for i in _fog.size():
-		var pv := _punto_getto(stream, 0.15 + 0.17 * i) if spruzza else []
-		var f := _fog[i]
-		var mat := f.material as FogMaterial
-		var target: float = s.nebbia_vol * (0.4 + 0.15 * i) if not pv.is_empty() else 0.0
-		mat.density = move_toward(mat.density, target, get_process_delta_time() * 2.0)
-		if not pv.is_empty():
-			f.global_position = pv[0]
-			var r: float = 0.25 + 0.18 * i * (1.5 if stile == "B" else 1.0)
-			f.size = Vector3(r, r, r) * 2.0
 
 
 func _aggiorna_impatto(colpisce: bool, delta: float) -> void:

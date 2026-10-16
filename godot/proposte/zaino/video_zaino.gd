@@ -10,10 +10,10 @@ extends Node
 
 const LEVEL := "res://scenes/tecnici/tecnici.tscn"
 const GETTO := preload("res://proposte/zaino/getto_potente.gd")
-const POSIZIONE := Vector3(40.9, 0.0, 1.0)
-const POZZA := Vector3(38.7, -0.15, 1.0)
-const MIRA_DA := Vector3(35.0, 1.3, -5.0)
-const MIRA_A := Vector3(43.0, 1.3, -5.0)
+const POSIZIONE := Vector3(39.6, 0.0, 1.0)
+const POZZA := Vector3(37.5, -0.15, 1.0)
+const MIRA_DA := Vector3(34.0, 1.3, -5.0)
+const MIRA_A := Vector3(42.0, 1.3, -5.0)
 const RISCALDA := 90   # frame di assestamento prima della scaletta
 
 var stile := "attuale"
@@ -80,6 +80,10 @@ func _process(_delta: float) -> void:
 		p.look_at_point(POZZA)
 		return
 	var t := _f / 30.0
+	if OS.get_environment("ZAINO_DEBUG") != "" and _f % 15 == 0:
+		print("DBG t=%.1f equip=%s input=%s suck=%s spray=%s tank=%.1f fonte=%s hit=%s" % [t, pack.get(&"equipped"),
+			p.input_enabled, pack.get(&"is_sucking"), pack.get(&"is_spraying"), pack.get(&"tank_amount"),
+			pack.call(&"find_suction_source"), pack.get(&"has_hit")])
 	var aspira := t >= 0.5 and t < 3.0
 	var spara := t >= 3.5 and t < 7.0
 	_azione(&"suck", aspira)
