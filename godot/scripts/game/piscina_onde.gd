@@ -8,11 +8,18 @@ extends Node3D
 ## (l'aspetto del pulsante lo sceglie l'utente fra due versioni). Colpito col getto apre la botola,
 ## sotto c'è il pozzo della camera delle onde.
 ## L'acqua da togliere ha due tarature, da circa 1 e circa 2 minuti di lavoro ([member taratura]).
+## L'aspetto dell'acqua ha due varianti da proporre all'utente ([member aspetto]); finché non sceglie
+## resta com'è.
 
 ## Il pulsante si è attivato (la piscina è vuota).
 signal pulsante_attivato
 
 enum Taratura { UN_MINUTO, DUE_MINUTI }
+## OGGI: com'è adesso (dalla spiaggia piena e a metà quasi non si distinguono). LEGGIBILE (B):
+## superficie più riflettente, un po' più chiara e meno torbida, con la schiuma sul pelo lungo la
+## riva e le pareti, senza luci in più. LEGGIBILE_CON_LAMPADA (C): come B, più una lampada di
+## servizio che illumina la parte profonda dall'alto.
+enum Aspetto { OGGI, LEGGIBILE, LEGGIBILE_CON_LAMPADA }
 
 ## L'acqua della piscina (WaterTank, col fondo nella conca dello scarico).
 @export var vasca: WaterTank
@@ -28,6 +35,21 @@ enum Taratura { UN_MINUTO, DUE_MINUTI }
 @export var pieni_due_minuti := 18
 ## Litri di un pieno di zaino (WaterPack.tank_capacity).
 @export var litri_pieno := 20.0
+## L'aspetto dell'acqua (proposte per l'utente, 16 ottobre). Di serie OGGI.
+@export var aspetto := Aspetto.OGGI:
+	set(v):
+		aspetto = v
+		if is_inside_tree():
+			_applica_aspetto()
+
+@export_group("Lampada di servizio (aspetto C)")
+## Appesa in alto sopra la parte profonda (sopra lo scivolo a spirale che passa a 4-4,6 m), punta
+## dritta in giù: sull'acqua arriva un po' più luce di quella dei fari sulla medusa.
+@export var lampada_posizione := Vector3(0.0, 8.0, 1.2)
+@export var lampada_colore := Color(0.92, 0.96, 1.0)
+@export var lampada_energia := 16.0
+@export var lampada_angolo := 36.0
+@export var lampada_portata := 16.0
 
 @export_group("Ritorno dell'acqua")
 ## L'acqua sparata dentro la vasca della piscina ci ritorna (conta solo quella sparata fuori).
@@ -49,6 +71,8 @@ enum Taratura { UN_MINUTO, DUE_MINUTI }
 var attivo := false
 var _luce: OmniLight3D
 var _t := 0.0
+var _stile_di_serie: Resource
+var _lampada: SpotLight3D
 
 
 func _ready() -> void:
@@ -68,6 +92,67 @@ func _ready() -> void:
 		add_child(_luce)
 		_luce.global_position = pulsante.global_transform * posizione_segnale
 	_aggiorna_pulsante()
+	GameState.luci_cambiate.connect(func(_f): _aggiorna_lampada())
+	if aspetto != Aspetto.OGGI:
+		_applica_aspetto()
+
+
+## La superficie dell'acqua della piscina (il WaterTankLink dell'addon che segue [member vasca]).
+func superficie() -> Node:
+	if vasca == null or get_parent() == null:
+		return null
+	for n in get_parent().get_children():
+		if n != vasca and &"tank" in n and n.get(&"tank") == vasca:
+			return n
+	return null
+
+
+func _applica_aspetto() -> void:
+	var acqua := superficie()
+	if acqua:
+		if _stile_di_serie == null:
+			_stile_di_serie = acqua.get(&"style")
+		acqua.set(&"style", _stile_di_serie if aspetto == Aspetto.OGGI else stile_leggibile(_stile_di_serie as WaterStyle))
+	if aspetto == Aspetto.LEGGIBILE_CON_LAMPADA and _lampada == null:
+		_lampada = SpotLight3D.new()
+		_lampada.name = "LampadaServizio"
+		_lampada.light_color = lampada_colore
+		_lampada.light_energy = lampada_energia
+		_lampada.spot_angle = lampada_angolo
+		_lampada.spot_angle_attenuation = 1.4
+		_lampada.spot_range = lampada_portata
+		_lampada.spot_attenuation = 0.6
+		_lampada.shadow_enabled = true
+		_lampada.light_size = 0.2
+		_lampada.light_volumetric_fog_energy = 0.6
+		add_child(_lampada)
+		_lampada.global_position = lampada_posizione
+		_lampada.global_basis = Basis(Vector3.RIGHT, -PI * 0.5)
+	_aggiorna_lampada()
+
+
+func _aggiorna_lampada() -> void:
+	if _lampada:
+		# Va con la corrente: al blackout si spegne come le altre luci della sala.
+		_lampada.visible = aspetto == Aspetto.LEGGIBILE_CON_LAMPADA and GameState.luci != GameState.Luci.BLACKOUT
+
+
+## L'acqua dell'aspetto B: la stessa torbida di serie, ma più riflettente, un po' più chiara e meno
+## fitta (vicino alla riva si intravede il fondo), con le caustiche sul fondo e una riga di schiuma
+## dove il pelo tocca la spiaggia e le pareti.
+static func stile_leggibile(base: WaterStyle) -> WaterStyle:
+	var st := (base.duplicate() if base else WaterStyle.new()) as WaterStyle
+	st.reflection_strength = 3.6
+	st.roughness = 0.028
+	st.turbidity = 1.6
+	st.scatter_color = Color(0.36, 0.44, 0.36)
+	st.scatter_ambient = 0.18
+	st.scum_amount = 0.2
+	st.foam_color = Color(0.82, 0.84, 0.76)
+	st.foam_shore_amount = 1.4
+	st.foam_shore_width = 0.35
+	st.caustics_strength = 1.0
+	return st
 
 
 ## Litri d'acqua da togliere con la taratura scelta.

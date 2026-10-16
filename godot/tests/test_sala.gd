@@ -167,6 +167,21 @@ func _run() -> void:
 	check(puddle.get_surface_global_y() > -1.6 and puddle.inner_size.x >= 13.0,
 		"c'è l'acqua nella parte profonda (pelo a %.2f)" % puddle.get_surface_global_y())
 	check(not hatch_button.enabled and not svuota.attivo, "con l'acqua il pulsante della botola è spento")
+	# Le varianti dell'aspetto dell'acqua (proposte per l'utente): di serie resta com'è.
+	var acqua := svuota.superficie()
+	var stile_serie: Resource = acqua.get(&"style") if acqua else null
+	check(svuota.aspetto == PiscinaOnde.Aspetto.OGGI and acqua != null and stile_serie != null, "l'acqua della piscina è com'era (aspetto di serie)")
+	svuota.aspetto = PiscinaOnde.Aspetto.LEGGIBILE
+	var stile_b := acqua.get(&"style") as WaterStyle
+	check(stile_b != stile_serie and stile_b.reflection_strength > (stile_serie as WaterStyle).reflection_strength
+			and stile_b.foam_shore_amount > (stile_serie as WaterStyle).foam_shore_amount
+			and svuota.get_node_or_null("LampadaServizio") == null, "aspetto B: acqua più riflettente con la schiuma sul pelo, senza luci in più")
+	svuota.aspetto = PiscinaOnde.Aspetto.LEGGIBILE_CON_LAMPADA
+	var lampada := svuota.get_node_or_null("LampadaServizio") as SpotLight3D
+	check(lampada != null and lampada.visible and lampada.global_position.y > 5.0 and (-lampada.global_basis.z).y < -0.99,
+		"aspetto C: in più la lampada di servizio in alto, puntata in giù sulla parte profonda")
+	svuota.aspetto = PiscinaOnde.Aspetto.OGGI
+	check(acqua.get(&"style") == stile_serie and not lampada.visible, "si torna all'aspetto di serie")
 	var segnale := svuota.get_node_or_null("SegnalePulsante") as Light3D
 	check(segnale != null and not segnale.visible, "e la sua luce è spenta")
 	# Il getto sul pulsante con l'acqua ancora dentro non fa niente.

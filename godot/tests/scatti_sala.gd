@@ -15,6 +15,7 @@ extends Node
 ## separati da virgole) toglie anche quei nodi prima del primo frame. Va usato uguale nei prima e nei dopo.
 ## SCATTI_PISCINA=<0..1>[,<0..1>...]: quanta acqua c'è nella piscina a onde (tappa 5; 1 = piena, 0 = vuota,
 ## con il pulsante della botola acceso); con più livelli si rifanno gli scatti per ognuno.
+## SCATTI_PISCINA_ASPETTO=<A|B|C>[,...]: l'aspetto dell'acqua della piscina (PiscinaOnde.aspetto).
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -114,22 +115,35 @@ func _run() -> void:
 	if livelli.is_empty():
 		livelli.append("")
 	var vasca := level.get_node_or_null(^"Piscina/Pozza") as WaterTank
-	for liv in livelli:
-		if liv != "" and vasca:
-			vasca.fill = clampf(float(liv), 0.0, 1.0)
-		var pref := prefisso if livelli.size() == 1 else "%s_%s" % [prefisso, liv.replace(".", "")]
-		for nome in camere:
-			if only.is_empty() or only.has(nome):
-				var s: Array = camere[nome]
-				p.teleport(s[0], 0.0, 0.0)
-				p.look_at_point(s[1])
-				await _frames(settle)
-				p.look_at_point(s[1])
-				await _frames(2)
-				await RenderingServer.frame_post_draw
-				var img := get_viewport().get_texture().get_image()
-				img.save_jpg(out_dir.path_join("%s_%s.jpg" % [pref, nome]), 0.92)
-				print("salvato ", pref, "_", nome)
+	# SCATTI_PISCINA_ASPETTO: uno o più aspetti dell'acqua della piscina (A com'è, B leggibile,
+	# C leggibile con la lampada di servizio; PiscinaOnde.aspetto), per esempio "B,C".
+	var aspetti := OS.get_environment("SCATTI_PISCINA_ASPETTO").split(",", false)
+	if aspetti.is_empty():
+		aspetti.append("")
+	var svuota := level.get_node_or_null(^"Piscina/SvuotaPiscina")
+	for asp in aspetti:
+		if asp != "" and svuota:
+			svuota.set(&"aspetto", {"A": 0, "B": 1, "C": 2}.get(asp, 0))
+		for liv in livelli:
+			if liv != "" and vasca:
+				vasca.fill = clampf(float(liv), 0.0, 1.0)
+			var pref := prefisso
+			if asp != "":
+				pref += "_" + asp
+			if livelli.size() > 1:
+				pref += "_" + liv.replace(".", "")
+			for nome in camere:
+				if only.is_empty() or only.has(nome):
+					var s: Array = camere[nome]
+					p.teleport(s[0], 0.0, 0.0)
+					p.look_at_point(s[1])
+					await _frames(settle)
+					p.look_at_point(s[1])
+					await _frames(2)
+					await RenderingServer.frame_post_draw
+					var img := get_viewport().get_texture().get_image()
+					img.save_jpg(out_dir.path_join("%s_%s.jpg" % [pref, nome]), 0.92)
+					print("salvato ", pref, "_", nome)
 	print("scatti salvati in ", ProjectSettings.globalize_path(out_dir))
 	print("memoria massima del processo: ", _picco_memoria())
 	get_tree().quit()
