@@ -12,7 +12,9 @@ File:
   - ciocche dei capelli: materiale lucido e bagnato (`medusa_ciocche.tres`) e texture (`ciocche_base.jpg`,
     `ciocche_emissione.jpg`, `ciocche_normal.png`);
   - pelle e labbro dell'orbita: vinile pervinca satinato (`medusa_pelle.tres`, `medusa_orbita.tres`) con le
-    texture 4K del corpo (`medusa_colore_4k.jpg`, `medusa_normal_4k.jpg`).
+    texture 4K del corpo (`medusa_colore_4k.jpg`, `medusa_normal_4k.jpg`);
+  - palpebra dell'easter egg: `medusa_palpebre.tres` (asciutta) e `medusa_palpebre_bagnata.tres` (la vasca), pelle
+    senza texture con il colore della pelle intorno all'occhio, gia' moltiplicato per la tinta di `medusa_pelle.tres`.
 
 ## Dove metterli
 
@@ -42,6 +44,9 @@ e' a circa 1,77 m, il busto tra 2,7 e 3,3 m, la cima della testa a 4,5 m.
 - `fauce_apre` (1 s): attacco con la fauce che si apre.
 - `affacciata` (ciclo di 4 s): la medusa vera affacciata alla vasca della sala centrale, immobile, con un
   respiro appena visibile (campana schiacciata sott'acqua). Vedi sotto.
+- `occhio_chiude` (0,25 s) e `occhio_riapre` (0,5 s): solo le blend shape della palpebra (vedi "Occhio che si
+  chiude"); non toccano le ossa, quindi non servono per la posa. Nel GLB sono campionate a 24 fps: lo script
+  della medusa non le usa, muove le blend shape da se'.
 
 Le animazioni da sveglia (`sveglia` alla fine, `fluttua`, `insegue`, `fauce_apre`) hanno il corpo alla stessa
 altezza, quindi si possono fondere tra loro. Lo spostamento nel livello lo fa il gioco.
@@ -74,10 +79,32 @@ coping, gomiti in fuori; la campana brilla sott'acqua, schiacciata e allargata.
   normali, senza cambiare le texture: `medusa_pelle_bagnata.tres` (superficie 0 di `Medusa`),
   `medusa_capelli_bagnata.tres` (superficie 1), `medusa_orbita_bagnata.tres` (superficie 3),
   `medusa_mani_bagnata.tres` (`Medusa_Mani`), `medusa_ciocche_bagnata.tres` (`Medusa_Ciocche`: punte appena piu' scure
-  e lucide) e `medusa_tentacoli_bagnata.tres` (`Medusa_Tentacoli` e superficie 0 di `Medusa_Bordo`).
+  e lucide), `medusa_tentacoli_bagnata.tres` (`Medusa_Tentacoli` e superficie 0 di `Medusa_Bordo`) e
+  `medusa_palpebre_bagnata.tres` (`Medusa_Palpebre`: la mette da solo `MedusaAffacciata`, se `material_map` non ha
+  `M_palpebre`).
 - Le gocce (punte dei capelli, mento, dita, tentacoli sul bordo) sono particelle del motore. La fisica dei
   tentacoli resta spenta in questa posa.
 - Per far seguire il giocatore all'occhio si ruota l'osso `occhio` da codice, al massimo 15 gradi.
+
+## Occhio che si chiude (easter egg, palpebra)
+
+Se le spruzzi l'acqua in faccia l'occhio si chiude per un po' (questionario del 15 ottobre, voce D2; il 16 ottobre
+l'utente ha scelto la proposta B: una palpebra sola che scende dall'alto, come negli occhi delle bambole).
+
+- Mesh `Medusa_Palpebre` (materiale `M_palpebre`), pesata tutta sull'osso `testa`. A occhio aperto non si vede: le
+  sue blend shape sono a 0 e la geometria e' raccolta dentro il bulbo, sotto il labbro dell'orbita e la frangia.
+- Blend shape `palpebre_1` ... `palpebre_10`: le tappe della chiusura, da usare **in sequenza** (al massimo due
+  accese, tappe vicine: tra la s e la s+1 pesi 1 - x e x). Con chiusura c da 0 a 1: x = c * 10, tappa s = floor(x),
+  peso (1 - (x - s)) sulla s e (x - s) sulla s+1. `palpebre_5` = bordo della palpebra a meta' occhio,
+  `palpebre_10` = occhio chiuso del tutto (il bordo si infila sotto il labbro di sotto). Accese tutte insieme o
+  interpolate in un altro modo la palpebra taglierebbe dentro la cornea.
+- Negli script del gioco (`godot/scripts/environment/medusa_statue.gd`, quindi anche `MedusaAffacciata`):
+  `chiudi_occhio(secondi := 5.0)` chiude l'occhio in `durata_chiusura` (0,25 s), lo tiene chiuso `secondi` e lo
+  riapre da solo in `durata_riapertura` (0,5 s); `occhio_chiuso()` dice se la palpebra copre l'occhio. Mentre e'
+  chiuso l'osso `occhio` torna dritto (la sua posa di riposo, un modificatore dello scheletro che vince sullo sguardo
+  che segue il giocatore e sulla posa dell'animazione): la cornea girata toccherebbe la palpebra. Il materiale lo
+  mettono gli script (asciutto la statua, bagnato `MedusaAffacciata`), a meno che `material_map` o
+  `surface_materials` non abbiano gia' un `M_palpebre`.
 
 ## Mani
 
@@ -144,8 +171,8 @@ Subsurface scattering e refrazione funzionano con il renderer Forward+.
 
 ## Triangoli, texture e LOD
 
-Circa 160 mila triangoli in tutto (corpo circa 42 mila, ciocche circa 36 mila, tentacoli circa 31 mila, mani
-24 mila, campana interna e bordo circa 18 mila, occhio e fauce il resto). Texture: corpo e capelli a 4K (colore, normal,
+Circa 173 mila triangoli in tutto (corpo circa 42 mila, ciocche circa 36 mila, tentacoli circa 31 mila, mani
+24 mila, campana interna e bordo circa 18 mila, denti circa 12,6 mila, palpebra 3,8 mila, occhio e fauce il resto). Texture: corpo e capelli a 4K (colore, normal,
 ruvidita'), campana a 2K, tentacoli e ciocche 1024 x 2048 e 512 x 1024.
 
 LOD: Godot crea da solo i livelli di dettaglio all'import (Advanced Import Settings > Meshes > Generate LODs,
@@ -163,8 +190,12 @@ attivo di default): da lontano ogni mesh scende a pochi mila triangoli.
   (`albedo_color` 0,74; 0,8; 1 con `vertex_color_use_as_albedo`).
   Denti da squalo in tre file per arcata: la prima fila scende dall'arcata di sopra e sale da quella di sotto,
   una di fronte all'altra e sfalsate di mezzo dente (si incastrano), tutte inclinate verso l'interno della bocca;
-  le file dietro sono piu' piccole e coricate.
+  le file dietro sono piu' piccole e coricate. Dietro ancora (approvate il 16 ottobre) altre 17 file di denti
+  sempre piu' piccoli sul palato, sul fondo della bocca e sulle pareti dei lati, fino alla gola, piegati verso la
+  gola: 485 denti in tutto, nella stessa mesh e con la stessa blend shape.
 - `campana_contrai` (mesh `Medusa`, `Medusa_Interno`, `Medusa_Bordo`): la campana si stringe, per la pulsazione.
+- `palpebre_1` ... `palpebre_10` (mesh `Medusa_Palpebre`): la palpebra, tappe in sequenza (vedi "Occhio che si
+  chiude").
 - `radice`: tutto il corpo (in `sveglia` sale di 0,83 m).
 - Catene dei tentacoli, figlie di `campana`, per la fisica (per esempio SpringBoneSimulator3D, una catena
   per tentacolo): `tentacolo_01` ... `tentacolo_06` sono le 6 zampe (10 ossa: `tentacolo_01_01` ...
