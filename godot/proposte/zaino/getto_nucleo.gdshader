@@ -41,7 +41,7 @@ void fragment() {
 	float vis = COLOR.a;
 	float rotto = clamp(1.0 - vis, 0.0, 1.0);
 	float chiazze = noise(vec2(x * 3.0, l * 6.0)) * 0.6 + noise(vec2(x * 9.0 + 4.0, l * 17.0)) * 0.4;
-	float schiuma = clamp(smoothstep(0.55, 0.85, chiazze + rotto * 0.9 + bianco_base) + fres * 0.25, 0.0, 1.0);
+	float schiuma = clamp(smoothstep(0.6, 0.9, chiazze + rotto * 0.9 + bianco_base) + fres * 0.08, 0.0, 1.0);
 	// Il centro rifrange lo sfondo (come un cilindro d'acqua), i bordi lo riflettono.
 	vec2 off = (n.xy) * rifrazione * (1.0 - abs(xr));
 	vec3 dietro = texture(schermo, SCREEN_UV + off).rgb;

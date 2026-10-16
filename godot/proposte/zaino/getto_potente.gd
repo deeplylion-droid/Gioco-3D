@@ -15,11 +15,12 @@ extends Node3D
 
 const NUCLEO := preload("res://proposte/zaino/getto_nucleo.gdshader")
 const COLONNA := preload("res://proposte/zaino/colonna_aspirata.gdshader")
+const GOCCIA_CHIARA := preload("res://proposte/zaino/goccia_chiara.gdshader")
 
 const STILI := {
 	"A": {
 		"velocita": 21.0, "volo": 1.0,
-		"raggio": 0.06, "allarga": 0.4, "sfalda": 0.55, "bianco": 0.1,
+		"raggio": 0.04, "allarga": 0.6, "sfalda": 0.55, "bianco": 0.0,
 		"spruzzo": 300, "nebbia": 30, "nebbia_dim": 0.5,
 		"ventaglio": 1.0, "schizzi": 420, "lame": 40, "goccioloni": 80, "rivoli": 60, "impatto_vel": 7.0,
 		"nebbia_resta": 40, "bagnato": 1.3,
@@ -29,7 +30,7 @@ const STILI := {
 	},
 	"B": {
 		"velocita": 27.0, "volo": 1.05,
-		"raggio": 0.1, "allarga": 0.65, "sfalda": 0.5, "bianco": 0.18,
+		"raggio": 0.05, "allarga": 0.95, "sfalda": 0.5, "bianco": 0.04,
 		"spruzzo": 700, "nebbia": 50, "nebbia_dim": 0.75,
 		"ventaglio": 1.5, "schizzi": 800, "lame": 90, "goccioloni": 160, "rivoli": 120, "impatto_vel": 10.0,
 		"nebbia_resta": 80, "bagnato": 1.8,
@@ -116,6 +117,20 @@ func aggancia(p_pack: Node) -> void:
 			(n.get(&"_suck_mist") as Node3D).visible = false
 			n.set(&"suction_radius", s.vortice_r)
 	_crea_particelle()
+	# Gli schizzi d'impatto e lo spruzzo con la goccia chiara: quella rifratta contro i muri non si vede.
+	var chiara := ShaderMaterial.new()
+	chiara.shader = GOCCIA_CHIARA
+	chiara.set_shader_parameter(&"tint", Color(0.88, 0.94, 1.0))
+	chiara.set_shader_parameter(&"opacity", 0.9)
+	chiara.set_shader_parameter(&"rim_light", 0.8)
+	for p in _spruzzi + [_schizzi, _lame, _goccioloni, _rivoli, _bocca]:
+		(p.draw_pass_1 as QuadMesh).material = chiara
+	# Niente schiuma "a pelliccia" sull'acqua aspirata: lo stile dell'acqua con meno schiuma.
+	for n in get_tree().root.find_children("*", "Node3D", true, false):
+		if n is WaterBody and n.style:
+			var st: WaterStyle = n.style.duplicate()
+			st.foam_ripple_amount = 0.15
+			n.style = st
 	_crea_colonna()
 	_crea_texture_bagnato()
 
@@ -403,7 +418,7 @@ func _aggiorna_aspirazione(aspira: bool, delta: float) -> void:
 	if _fx:
 		var corpo = _fx.get(&"_suck_body")
 		if corpo and is_instance_valid(corpo) and aspira:
-			corpo.set_flow(1, base, s.vortice_r, _vortice_k, 1.6, s.imbuto, 1.6, 0.12)
+			corpo.set_flow(1, base, s.vortice_r, _vortice_k, 1.6, s.imbuto, 1.6, 0.0)
 	_costruisci_colonna(base, cima)
 	_colonna_mat.set_shader_parameter(&"forza", _vortice_k)
 	var mm := _vortice.multimesh
