@@ -74,6 +74,18 @@ func _run() -> void:
 	var gained := p.water_pack.tank_amount
 	check(gained > 6.0, "il serbatoio si riempie dalla vasca (%.1f l)" % gained)
 	check(tank.get_liters() < before - 5.0, "il livello della vasca lava-piedi scende")
+	# Riscontro sulla v0.3.1: la vaschetta si riempie di nuovo quando smetti di aspirare.
+	var ricarica := tank.get_node_or_null(^"Ricarica") as RicaricaVasca
+	check(ricarica != null and absf(ricarica.get_livello() * tank.capacity_liters - before) < 0.05,
+		"la vasca lava-piedi si riempie di nuovo fino al livello di partenza (%.1f l)" % before)
+	var svuotata := tank.get_liters()
+	await _frames(60)
+	check(tank.get_liters() <= svuotata + 0.01, "appena smetti di aspirare l'acqua non risale subito")
+	await _frames(240)
+	var risale := tank.get_liters()
+	check(risale > svuotata + 1.0, "poi risale piano (da %.1f a %.1f l in 4 s)" % [svuotata, risale])
+	await _frames(60 * 26)
+	check(absf(tank.get_liters() - before) < 0.05, "e torna com'era (%.1f l)" % tank.get_liters())
 
 	print("Il pulsante del tornello dietro il vetro rotto")
 	var button: WaterButton = level.get_node("Meccanismi/PulsanteTornello")
