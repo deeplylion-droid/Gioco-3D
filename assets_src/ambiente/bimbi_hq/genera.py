@@ -128,6 +128,25 @@ for _m, _d in MODULI.items():
                                   prompt=RESA + _d + ' ' + DETTAGLIO)
     VOCI[f'modulo_{_m}_b'] = dict(img='gpt-image-2', rif=[f'blockout_{_m}'], formato='1:1', poligoni=80000,
                                   prompt=RESA + _d + ' ' + DETTAGLIO)
+# fungo e secchio fedeli: dalle immagini di riferimento dei modelli di oggi (oggetti_hq/rif, 15 ottobre), stessa
+# forma e stessi colori (il fungo_c aveva il cappello piatto e il gambo sottile, il secchio_d i mozzi d'acciaio)
+VOCI['fungo_e'] = dict(img='nano-banana-pro', rif=['oggi_fungo_fontana'], formato='1:1', poligoni=40000, prompt=(
+    'Edit this product photo of a kids water playground mushroom fountain into a much more detailed and realistic '
+    'version of the very same object. Keep exactly the same shape and proportions (the deep glossy red dome cap with '
+    'big round white spots, the thick slightly tapered cream stem, the ring of brass nozzles under the rim, the round '
+    'steel base plate with bolts), the same colors and the same camera. Only add realistic detail: fiberglass with a '
+    'slightly sun-faded and chalky red, hairline cracks and small chips in the gel coat, scuffs and fine scratches, '
+    'white limescale crusts and green verdigris on the brass nozzles, dried water streaks running down the stem, '
+    'grime at the base, rusty bolts. Worn but intact and still cheerful. Plain light grey background, the whole '
+    'object visible, no text.'))
+VOCI['secchio_e'] = dict(img='nano-banana-pro', rif=['oggi_secchio_gigante'], formato='1:1', poligoni=30000, prompt=(
+    'Edit this product photo of a giant tipping water bucket into a much more detailed and realistic version of the '
+    'very same object. Keep exactly the same shape and proportions (slightly tapered round red plastic bucket, thick '
+    'rounded yellow rim, two round yellow pivot hubs on opposite sides just under the rim), the same colors and the '
+    'same camera. Only add realistic detail: rotomolded plastic with a sun-faded chalky red, molded seams, scuffs and '
+    'fine scratches, a short steel axle stub with a nut in the center of each hub, dried water streaks outside and a '
+    'dark limescale ring inside the rim, grime. Worn but intact. Plain light grey background, the whole object '
+    'visible, no text.'))
 # arancio e secchio: blockout rifatti con più margine (nel primo il tetto e un palo uscivano dall'immagine)
 for _m in ('arancio', 'secchio'):
     VOCI[f'modulo_{_m}_c'] = dict(img='nano-banana-pro', rif=[f'blockout_{_m}2'], formato='1:1', poligoni=80000,
@@ -255,8 +274,11 @@ FINALI = {
     'modulo_secchio': 'modulo_secchio_c',
     # variante: la struttura disegnata da capo (4 torri, telaio a portale), da mostrare accanto
     'struttura_variante': 'insieme_c_vuoto',
-    'fungo_fontana': 'fungo_c',             # cappello largo come quello di prima (fungo_d: cupola, punti dentro)
-    'secchio_gigante': 'secchio_d',         # due mozzi sull'asse (secchio_c ne aveva quattro)
+    # fungo e secchio fedeli a quelli di oggi (dalle loro immagini di riferimento). Scartati: fungo_c (cappello
+    # piatto, gambo sottile: da lontano sembrava un tavolino), fungo_d (punti bianchi anche dentro il cappello),
+    # secchio_c (quattro mozzi), secchio_d (mozzi d'acciaio invece che gialli)
+    'fungo_fontana': 'fungo_e',
+    'secchio_gigante': 'secchio_e',
 }
 
 

@@ -52,7 +52,7 @@ def struttura_gioco_hd(mats):
     if VERSIONE == 'fedele':
         ob, secchio = _struttura_gioco(mats)     # la struttura di oggi: nodi, collisioni, perno del secchio
         sostituisci_mesh(ob, H.struttura_fedele(), 'sala_struttura_gioco')
-        sostituisci_mesh(secchio, H.secchio_locale(nome='tmp_secchio_hd'), 'sala_secchio_gigante')
+        sostituisci_mesh(secchio, H.secchio_locale(nome='secchio_gigante_hd'), 'sala_secchio_gigante')
         cx, cy = H.CENTRO_FEDELE
         secchio.location = (cx + H.PERNO_FEDELE[0], cy + H.PERNO_FEDELE[1], H.PERNO_FEDELE[2])
         return [ob, secchio]
