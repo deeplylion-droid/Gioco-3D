@@ -96,6 +96,11 @@ Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-16_
   - micro medusine: tintinnii di vetro;
   - portone: motore e rulli.
   L'utente ha notato le bollicine nel fondo della pioggia sulla cupola: si tolgono.
+- **Ritocchi approvati (terza pagina)**:
+  - il portone della torre si apre da solo dopo la tappa 8;
+  - le micro medusine vanno bene così;
+  - la pioggia resta senza bollicine;
+  - i passi bagnati non hanno più le goccioline.
 - **Dopo la tappa 8**: la sala della torre è dietro la parete est (versione 2). Si entra da un portone scorrevole con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi e i bambini della balconata si propongono a parte.
 
 ## Capitolo 1: scaletta (approvata)
