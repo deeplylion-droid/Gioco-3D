@@ -4,7 +4,8 @@ lavoro/proposte-sala):
   - i dettagli appesi sotto il soppalco (zona 'sotto la galleria'): il soppalco non c'è più;
   - area bimbi, disposizione 1: i giocattoli e gli oggetti sparsi a terra nell'area, e tutto quello che
     cade sotto la struttura di gioco (spostata nell'angolo nord-ovest), la vasca piccola e i funghi;
-  - la parete est dove c'è il varco della sala della torre e dove scorre il portone.
+  - la parete est dove c'è il varco della sala della torre e dove scorre il portone;
+  - il muro sud dove c'è il varco della serranda del magazzino dei gonfiabili (tappa 7 B, ambienti-1).
 Lavora su tutte e due le copie (godot/assets/ambiente/dettagli/ e assets_src/ambiente_dettagli/) e mette i
 posti tolti, con il motivo, in assets_src/ambiente_dettagli/posizionamento_tolti_2026-10-16.json (niente si
 perde). Si può rilanciare: i posti già tolti non ci sono più e il file dei tolti si aggiorna.
@@ -26,6 +27,8 @@ VB2 = (-9.6, 18.2)               # centro della vasca piccola
 FUNGHI = [(-17.8, 12.2, 0.45), (-12.2, 14.4, 0.35)]   # centro e mezzo ingombro del gambo
 # varco della sala della torre nella parete est (pianta) e corsa del portone verso sud
 VARCO = dict(x_da=19.5, y=(9.6, 18.6))
+# varco della serranda del magazzino nel muro sud (ambienti-1, tappa 7 B): x -15,9..-14,1, alto 2,5 m
+SERRANDA = dict(x=(-16.2, -13.8), z_da=19.8, h_sotto=3.1)
 
 
 def ingombri():
@@ -53,6 +56,9 @@ def motivo(q):
                 return 'sotto la struttura di gioco, la vasca piccola o un fungo (disposizione 1)'
     if x > VARCO['x_da'] and VARCO['y'][0] < y < VARCO['y'][1] and h < 5.6:
         return 'nel varco della sala della torre o dove scorre il portone'
+    if (z > SERRANDA['z_da'] and SERRANDA['x'][0] < x < SERRANDA['x'][1] and h < SERRANDA['h_sotto']
+            and not q['nodo'].startswith('det_tubi')):
+        return 'sul muro sud dove c\'è il varco della serranda del magazzino (tappa 7 B)'
     return None
 
 

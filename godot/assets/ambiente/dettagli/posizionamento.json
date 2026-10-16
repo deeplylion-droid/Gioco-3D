@@ -1,8 +1,8 @@
 {
  "nota": "Posti per i dettagli nella sala principale (sala lunga, con il monumento), trovati con raycast sui GLB della sala. Coordinate Godot (Y in alto), stessa origine della sala. 'basis' = colonne x, y, z della Basis. Per montarli: godot/dettagli_sala.gd (MultiMeshInstance3D per i nodi ripetuti). Il 16 ottobre 2026 (scelte dell'utente: niente soppalco, area bimbi disposizione 1, sala della torre a est) alcuni posti sono stati tolti con tools/dettagli_sala_16ottobre.py: sono in assets_src/ambiente_dettagli/posizionamento_tolti_2026-10-16.json.",
  "riepilogo": {
-  "posti": 1044,
-  "gruppi": 363,
+  "posti": 1040,
+  "gruppi": 361,
   "nodi_diversi": 70,
   "triangoli_totali": 573630,
   "multimesh": {
@@ -34,8 +34,8 @@
   },
   "per_nodo": {
    "det_foglio_3": 42,
-   "det_macchia_ruggine_colata_muro": 39,
    "det_foglio_2": 38,
+   "det_macchia_ruggine_colata_muro": 38,
    "det_incrostazione_spigolo_1": 35,
    "det_piastrella_rotta_5": 34,
    "det_incrostazione_spigolo_2": 34,
@@ -52,7 +52,7 @@
    "det_foglio_4": 22,
    "det_mucchio_piastrelle_3": 21,
    "det_carta_accartocciata_2": 21,
-   "det_macchia_muffa_muro": 21,
+   "det_macchia_muffa_muro": 20,
    "det_barchetta": 19,
    "det_carta_accartocciata_1": 18,
    "det_pistola_acqua": 17,
@@ -83,20 +83,20 @@
    "det_cartello_salvagente": 8,
    "det_cartello_profondita": 7,
    "det_cartello_pronto_soccorso": 7,
-   "det_cartello_vietato_vetro": 7,
    "det_bocchetta_rettangolare": 7,
    "det_macchia_alghe_secche_pavimento": 6,
    "det_cassetta_aperta": 6,
    "det_cartello_non_correre_penzolante": 6,
    "det_cartello_non_correre": 6,
+   "det_cartello_vietato_vetro": 6,
    "det_bocchetta_tonda": 6,
    "det_bocchetta_rettangolare_rotta": 6,
    "det_asciugamano_2": 5,
    "det_asciugamano_3": 5,
    "det_asciugamano_1": 4,
-   "det_cartello_pavimento_bagnato_penzolante": 4,
    "det_asciugamano_4": 3,
    "det_tubo_muro_7cm_2m": 3,
+   "det_cartello_pavimento_bagnato_penzolante": 3,
    "det_faro_spento": 3,
    "det_cartello_uscita": 2,
    "det_applique_emergenza_rotta": 2,
@@ -22554,35 +22554,6 @@
    ]
   },
   {
-   "nodo": "det_macchia_ruggine_colata_muro",
-   "glb": "glb/organico.glb",
-   "zona": "colatura sotto un tubo",
-   "gruppo": "corsa_447",
-   "posizione": [
-    -14.923,
-    3.037,
-    20.0
-   ],
-   "rotazione_y_gradi": 180.0,
-   "basis": [
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     -1.0
-    ]
-   ]
-  },
-  {
    "nodo": "det_tubi_paralleli_2m",
    "glb": "glb/tubi.glb",
    "zona": "muri, sotto la galleria",
@@ -25947,35 +25918,6 @@
    ]
   },
   {
-   "nodo": "det_cartello_pavimento_bagnato_penzolante",
-   "glb": "glb/cartelli.glb",
-   "zona": "muri",
-   "gruppo": "impianto_520",
-   "posizione": [
-    -14.99,
-    1.75,
-    20.0
-   ],
-   "rotazione_y_gradi": 180.0,
-   "basis": [
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     -1.0
-    ]
-   ]
-  },
-  {
    "nodo": "det_cassetta_aperta",
    "glb": "glb/elettrico.glb",
    "zona": "muri",
@@ -26668,35 +26610,6 @@
      0.0,
      0.0,
      1.0
-    ]
-   ]
-  },
-  {
-   "nodo": "det_cartello_vietato_vetro",
-   "glb": "glb/cartelli.glb",
-   "zona": "muri",
-   "gruppo": "cartelli_572",
-   "posizione": [
-    -15.873,
-    1.854,
-    20.0
-   ],
-   "rotazione_y_gradi": 180.0,
-   "basis": [
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     -1.0
     ]
    ]
   },
@@ -29220,35 +29133,6 @@
      1.0,
      0.0,
      0.0
-    ]
-   ]
-  },
-  {
-   "nodo": "det_macchia_muffa_muro",
-   "glb": "glb/organico.glb",
-   "zona": "muri",
-   "gruppo": "macchie_775",
-   "posizione": [
-    -15.79,
-    0.98,
-    20.0
-   ],
-   "rotazione_y_gradi": 180.0,
-   "basis": [
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     -1.0
     ]
    ]
   },

@@ -392,12 +392,15 @@ def piastrelle_mancanti(mats, gruppi_pareti=44, gruppi_piscina=14, seme=12):
     PB = S.PULSANTE_BOTOLA
     def nascosto(muro, a, z):
         """Posti nuovi del 16 ottobre: il varco della sala della torre (e il portone) nella parete est, la
-        cassetta del pulsante della botola. Lì il gruppo non si disegna ma conta come fatto: i numeri
+        cassetta del pulsante della botola, il varco della serranda del magazzino nel muro sud. Lì il gruppo non si disegna ma conta come fatto: i numeri
         casuali restano gli stessi e le altre piastrelle mancanti non si spostano."""
         asse, fisso = muro[0], muro[1]
         if asse == 'y' and abs(fisso - S.X1) < 1e-6 and va - 0.25 < a < vb + 0.25:
             return True
         if muro in vasca and asse == 'x' and abs(a - PB['x']) < 0.46 and z > PB['z'] - 0.62:
+            return True
+        VS = S.VANO_SERRANDA          # varco della serranda del magazzino (ambienti-1, tappa 7 B)
+        if asse == 'x' and abs(fisso - S.Y0) < 1e-6 and abs(a - VS['cx']) < 1.0 and z < VS['h'] + 0.1:
             return True
         return False
     def gruppo(muro):

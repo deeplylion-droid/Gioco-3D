@@ -5250,6 +5250,126 @@
     ]
    ],
    "motivo": "pannello appoggiato al muro nord: tagliava il battiscopa e il muro di 7 cm anche spostato (controllo degli oggetti)"
+  },
+  {
+   "nodo": "det_macchia_ruggine_colata_muro",
+   "glb": "glb/organico.glb",
+   "zona": "colatura sotto un tubo",
+   "gruppo": "corsa_447",
+   "posizione": [
+    -14.923,
+    3.037,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "sul muro sud dove c'è il varco della serranda del magazzino (tappa 7 B)"
+  },
+  {
+   "nodo": "det_cartello_pavimento_bagnato_penzolante",
+   "glb": "glb/cartelli.glb",
+   "zona": "muri",
+   "gruppo": "impianto_520",
+   "posizione": [
+    -14.99,
+    1.75,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "sul muro sud dove c'è il varco della serranda del magazzino (tappa 7 B)"
+  },
+  {
+   "nodo": "det_cartello_vietato_vetro",
+   "glb": "glb/cartelli.glb",
+   "zona": "muri",
+   "gruppo": "cartelli_572",
+   "posizione": [
+    -15.873,
+    1.854,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "sul muro sud dove c'è il varco della serranda del magazzino (tappa 7 B)"
+  },
+  {
+   "nodo": "det_macchia_muffa_muro",
+   "glb": "glb/organico.glb",
+   "zona": "muri",
+   "gruppo": "macchie_775",
+   "posizione": [
+    -15.79,
+    0.98,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "sul muro sud dove c'è il varco della serranda del magazzino (tappa 7 B)"
   }
  ]
 }

@@ -251,6 +251,15 @@
   ],
   "nota_attacco": "il marker_uscita_sala_principale degli spogliatoi (9,7; 0; -20,7) va sul retro del muro, in (0; 0; 20,2): traslare i tre glTF di (-9,7; 0; 40,9)"
  },
+ "vano_serranda": {
+  "nota": "varco della serranda del magazzino dei gonfiabili (tappa 7 B, ambienti-1) nel muro sud, angolo sud-ovest: la serranda e il magazzino sono nel raccordo dei tecnici",
+  "x": [
+   -15.9,
+   -14.1
+  ],
+  "altezza": 2.5,
+  "faccia_sala_godot_z": 20.0
+ },
  "sala": {
   "x": [
    -20.0,

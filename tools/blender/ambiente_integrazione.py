@@ -124,7 +124,10 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
   `sala_lampeggiante_torre`. Dietro c'è solo il guscio della sala (x da {d['sala_torre']['sala']['x_godot'][0]:g} a {d['sala_torre']['sala']['x_godot'][1]:g}, alto {d['sala_torre']['sala']['altezza']:g} m), vuoto.
   La torre e gli scivoli di prima **non sono più nella sala**: si rifanno nella sala nuova, con una proposta a parte.
   Le luci che cadevano nel varco non ci sono più (`luce_neon_11`, `luce_emergenza_32`); le altre tengono il nome.
-- Il kit di dettagli ha {n_tolti} posti in meno (sotto il soppalco, area bimbi, varco, due che tagliavano lo sfondo):
+- **Varco della serranda** del magazzino dei gonfiabili (tappa 7 B, lo ha aggiunto ambienti-1): nel muro sud,
+  x da {d['vano_serranda']['x'][0]:g} a {d['vano_serranda']['x'][1]:g}, alto {d['vano_serranda']['altezza']:g} m, con le collisioni. La serranda e il magazzino sono nel raccordo
+  dei tecnici. Davanti al varco non c'è niente: il soppalco e le sue colonne non ci sono più.
+- Il kit di dettagli ha {n_tolti} posti in meno (sotto il soppalco, area bimbi, varco della torre, varco della serranda, due che tagliavano lo sfondo):
   vedi `assets_src/ambiente_dettagli/posizionamento_tolti_2026-10-16.json`.
 - **Controllo degli oggetti** che entrano nello sfondo o galleggiano (riscontro C3: il gonfiabile incastrato nella
   scala): `tools/blender/controlla_oggetti_sala.py`, sui GLB del gioco e sul kit di dettagli. Gli oggetti a terra

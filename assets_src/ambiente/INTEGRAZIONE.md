@@ -30,7 +30,10 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
   `sala_lampeggiante_torre`. Dietro c'è solo il guscio della sala (x da 20.2 a 40, alto 14 m), vuoto.
   La torre e gli scivoli di prima **non sono più nella sala**: si rifanno nella sala nuova, con una proposta a parte.
   Le luci che cadevano nel varco non ci sono più (`luce_neon_11`, `luce_emergenza_32`); le altre tengono il nome.
-- Il kit di dettagli ha 175 posti in meno (sotto il soppalco, area bimbi, varco, due che tagliavano lo sfondo):
+- **Varco della serranda** del magazzino dei gonfiabili (tappa 7 B, lo ha aggiunto ambienti-1): nel muro sud,
+  x da -15.9 a -14.1, alto 2.5 m, con le collisioni. La serranda e il magazzino sono nel raccordo
+  dei tecnici. Davanti al varco non c'è niente: il soppalco e le sue colonne non ci sono più.
+- Il kit di dettagli ha 179 posti in meno (sotto il soppalco, area bimbi, varco della torre, varco della serranda, due che tagliavano lo sfondo):
   vedi `assets_src/ambiente_dettagli/posizionamento_tolti_2026-10-16.json`.
 - **Controllo degli oggetti** che entrano nello sfondo o galleggiano (riscontro C3: il gonfiabile incastrato nella
   scala): `tools/blender/controlla_oggetti_sala.py`, sui GLB del gioco e sul kit di dettagli. Gli oggetti a terra
@@ -99,7 +102,7 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 
 | File | Cosa contiene | Triangoli | Collisioni | Peso |
 |---|---|---|---|---|
-| `sala_architettura.glb` | pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò, il **vano verso gli spogliatoi** con la porta stagna aperta e il **varco della sala della torre** nella parete est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon e altoparlanti sulle pareti, luci d'emergenza, insegna a pesce, il **guscio della sala della torre** (`sala_torre_guscio`) | 194 mila | 177 | 39.5 MB |
+| `sala_architettura.glb` | pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò, il **vano verso gli spogliatoi** con la porta stagna aperta e il **varco della sala della torre** nella parete est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon e altoparlanti sulle pareti, luci d'emergenza, insegna a pesce, il **guscio della sala della torre** (`sala_torre_guscio`) | 194 mila | 179 | 39.5 MB |
 | `sala_vasca_centrale.glb` | **vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d'ottone HQ; lampione HQ; 2 fari sulla parete sud; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella) | 145 mila | 36 | 24.3 MB |
 | `sala_cupola.glb` | cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro) | 35 mila | - | 9.6 MB |
 | `sala_piscina.glb` | piscina a onde vuota: fondo con pendenza e conca dello scarico, buco del pozzo sotto il portello (bordo smussato, collare piastrellato), linea dell'ultimo livello dell'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette | 31 mila | 71 | 19.2 MB |
