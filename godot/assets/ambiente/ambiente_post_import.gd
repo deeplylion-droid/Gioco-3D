@@ -8,6 +8,9 @@ extends EditorScenePostImport
 ##  - vetri: trasparenza alpha, doppia faccia;
 ##  - pozzanghere: lucidissime (con SSR riflettono);
 ##  - neon, luci rosse, lampadina, insegna: emissione più forte (per il glow).
+## E mette i muri invisibili del cordone intorno alla vasca della medusa (cordone_vasca_*, alti 2,5 m)
+## sul livello fisico "barriere": fermano il giocatore ma non il getto d'acqua (il pulsante della sigla
+## e l'occhio della medusa si colpiscono da fuori).
 
 func _post_import(scene: Node) -> Object:
 	_visita(scene)
@@ -15,6 +18,9 @@ func _post_import(scene: Node) -> Object:
 
 
 func _visita(n: Node) -> void:
+	if n is CollisionObject3D and String(n.name).begins_with("cordone_vasca_"):
+		(n as CollisionObject3D).collision_layer = 256   # Layers.BARRIERS
+		(n as CollisionObject3D).collision_mask = 0
 	if n is MeshInstance3D:
 		var mesh: Mesh = (n as MeshInstance3D).mesh
 		if mesh:
