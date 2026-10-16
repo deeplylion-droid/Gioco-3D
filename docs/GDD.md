@@ -103,6 +103,18 @@ Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-16_
   - i passi bagnati non hanno più le goccioline.
 - **Dopo la tappa 8**: la sala della torre è dietro la parete est (versione 2). Si entra da un portone scorrevole con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi e i bambini della balconata si propongono a parte.
 
+## Prova della v0.3.1 (16 ottobre)
+
+L'utente ha giocato la v0.3.1. Il messaggio completo, parola per parola, è in `docs/riscontri/2026-10-16_prova_v031.md`. Le sue richieste:
+- **Vaschetta lava-piedi davanti ai tornelli**: si riempie di nuovo quando la svuoti.
+- **Portellone della piscina a onde**: deve notarsi di più, per esempio con una luce che si veda attraverso l'acqua. A piscina vuota deve restare all'asciutto.
+- **I due cancelli stagni dopo la scala**: si aprono da soli al tuo passaggio, con un suono metallico forte.
+- **Stanza dei generatori (sala pompe)**: l'acqua lì non si esaurisce mai. La scaletta della vasca deve far risalire.
+- **Serranda di sud-ovest (tappa 7)**: resta chiusa finché non risali dal magazzino.
+- **Strada di risalita**: è troppo vuota e brutta. Va arredata, con un'apparizione dei bambini mostriciattoli. Prima si mostra all'utente.
+- **Scia di bava (tappa 8)**: parte dalla vasca centrale della sala, dove la medusa stava affacciata.
+- **Medusa nella fossa dell'area bimbi (tappa 8)**: è già affacciata quando arrivi. Nel jumpscare guarda la camera da qualsiasi lato ti avvicini.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
