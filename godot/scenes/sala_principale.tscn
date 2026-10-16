@@ -491,7 +491,7 @@ corpi = Array[NodePath]([NodePath("../../../Ambienti/SalaPompe/POMPA_2")])
 vapore_path = NodePath("../../../Ambienti/SalaPompe/VAPORE_pompa_2")
 
 [node name="Leva" type="Node3D" parent="Tecnici/Logica/SalaPompe" unique_id=1240721022]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.097, 3.78927, -5.20525)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.114, 3.716, -4.954)
 script = ExtResource("60_0po16")
 leva_path = NodePath("../../../Ambienti/SalaPompe/LEVA")
 reti = Array[NodePath]([NodePath("../../../Ambienti/SalaPompe/GRATA_leva"), NodePath("../../../Ambienti/SalaPompe/gabbia_leva")])
