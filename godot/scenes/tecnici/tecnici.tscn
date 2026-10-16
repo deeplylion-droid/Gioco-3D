@@ -109,7 +109,7 @@ gizmo_extents = 0.5
 editor_description = "turbina d avviamento della pompa 3: ruota sul suo asse, che è Z (guarda verso +Z, verso la stanza)"
 
 [node name="marker_leva" type="Marker3D" parent="Marker"]
-position = Vector3(46.097, 3.7883, -5.19497)
+position = Vector3(46.097, 3.78927, -5.20525)
 gizmo_extents = 0.5
 editor_description = "mozzo della leva grande: ruota su X, abbassata = -70 gradi"
 
@@ -166,7 +166,7 @@ rotation = Vector3(0, -1.5708, 0)
 editor_description = "in cima al raccordo, ai piedi della scala che sale al corridoio degli interni"
 
 [node name="LuceLeva" type="OmniLight3D" parent="."]
-position = Vector3(45.697, 4.1383, -5.19497)
+position = Vector3(45.697, 4.13927, -5.20525)
 light_color = Color(1, 0.82, 0.6, 1)
 light_energy = 1.6
 omni_range = 1.8

@@ -27,7 +27,7 @@ Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pa
 | `marker_tunnel_sala_pompe` | (24; 0; 0) | vano 2,6 × 2,8 m nel muro est della camera: inizio del tunnel |
 | `marker_pompa_1..3` | (31,5 / 36,0 / 40,5; 1,0; -5,25) | corpi delle pompe (muro nord) |
 | `marker_turbina_1..3` | (31,8 / 36,3 / 40,8; 1,2; -3,25) | centro delle turbine d'avviamento (Ø 1,5 m), davanti alle pompe. Asse Z: guardano verso +Z, verso la stanza |
-| `marker_leva` | (46,10; 3,79; -5,19) | occhio del perno della leva grande (braccio rosso `LEVA` sulla base in ghisa `LEVA_base`), in alto sul muro est; il braccio va verso nord (-Z) e in alto |
+| `marker_leva` | (46,10; 3,79; -5,21) | occhio del perno della leva grande (braccio rosso `LEVA` sulla base in ghisa `LEVA_base`), in alto sul muro est; il braccio va verso nord (-Z) e in alto |
 | `marker_grata_leva` | (45,35; 4,0; -4,55) | cardine della grata davanti alla leva |
 | `marker_schema` | (46,27; 2,0; -2,6) | schema a colori sul muro est |
 | `marker_vasca_raccolta` | (36,5; -0,45; 0,9) | superficie dell'acqua nera (vasca 4,8 × 3,2 m, x 34,1…38,9, z -0,6…2,4 globali; fondo a -1,7) |

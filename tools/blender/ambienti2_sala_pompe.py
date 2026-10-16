@@ -366,6 +366,20 @@ for k, dz in enumerate((-1, 1)):
 
 # leva grande in alto, dietro una grata (gabbia)
 LV = Vector((XE - 0.05, 2.9, 3.9))
+def allinea_occhio(base, braccio):
+    """Sposta il braccio della leva in modo che l'occhio del perno stia sul centro del perno della base."""
+    bpy.context.view_layer.update()
+    vs = [base.matrix_world @ v.co for v in base.data.vertices]
+    xmin = min(v.x for v in vs)
+    boss = [v for v in vs if v.x < xmin + 0.02]
+    c = Vector(((min(v.x for v in boss) + max(v.x for v in boss)) / 2, (min(v.y for v in boss) + max(v.y for v in boss)) / 2,
+                (min(v.z for v in boss) + max(v.z for v in boss)) / 2))
+    occhio = braccio.matrix_world @ Vector((-0.84, 0.0, 0.148))   # occhio nel GLB, origine al centro della base
+    d = c - occhio
+    braccio.matrix_world = Matrix.Translation((0, d.y, d.z)) @ braccio.matrix_world
+    return braccio
+
+
 LEVA_NUOVA = HQ.disponibile('leva_base') and HQ.disponibile('leva_maniglia')
 if LEVA_NUOVA:
     # leva nuova (questionario del 15 ottobre): base in ghisa con il quadrante e braccio rosso con l'impugnatura,
@@ -378,7 +392,8 @@ if LEVA_NUOVA:
     # occhio del perno nel GLB: (-0,81; 0; -0,64) con il centro della scatola nello zero; braccio a 38 gradi,
     # raddrizzato a 63 gradi (rot Y -25) e girato verso nord (rot Z +90)
     lv = HQ.metti('LEVA', 'leva_maniglia', MOZZO + Vector((-db.y * kb - 0.045, 0, 0)), tuple(dm * km), rot=(0, R_(-25), 0),
-                  rot_z=R_(90), perno=(-0.81 * km, 0, (0.7744 - 0.64) * km))
+                  rot_z=R_(90), perno=(-0.84 * km, 0, 0.148 * km))
+    allinea_occhio(base_leva, lv)
     lv['alzata'] = 'braccio verso nord e in alto (63 gradi); abbassata: -70 gradi attorno a X globale'
 else:
     MOZZO = LV + Vector((0, -0.4, -0.2))   # il mozzo della leva Meshy: piastra e perno a muro dietro di lui
