@@ -156,8 +156,21 @@ func _frames(n: int) -> void:
 		await get_tree().process_frame
 
 
-## Gli scatti delle camere libere (LIBERE) chiamati per nome.
+## Gli scatti delle camere libere (LIBERE) chiamati per nome. SCATTI_LUCE="x,y,z,r,g,b,energia,raggio"
+## aggiunge una OmniLight3D con le ombre (per esempio la luce del lampeggiante del pulsante A, che nel gioco
+## mette lo script della sala).
 func _scatti_liberi() -> void:
+	var luce := OS.get_environment("SCATTI_LUCE").split(",", false)
+	if luce.size() == 8:
+		var o := OmniLight3D.new()
+		o.position = Vector3(float(luce[0]), float(luce[1]), float(luce[2]))
+		o.light_color = Color(float(luce[3]), float(luce[4]), float(luce[5]))
+		o.light_energy = float(luce[6])
+		o.omni_range = float(luce[7])
+		o.omni_attenuation = 1.3
+		o.shadow_enabled = true
+		o.light_volumetric_fog_energy = 2.0
+		level.add_child(o)
 	for nome in LIBERE:
 		if not only.has(nome):
 			continue
