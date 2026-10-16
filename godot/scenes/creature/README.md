@@ -58,7 +58,7 @@ Spunti, da montare nei livelli. `sala_principale.tscn` non è stata toccata.
 - **B1, spogliatoi.** Un `bambino_cubo` in CAMMINA verso la grata, con `sparisce_a_fine_percorso`. Se il giocatore gli punta la torcia addosso, scappa.
 - **B3, sala pompe (monitor).** Un `bambino_agnello` in CAMMINA verso il piedistallo, con `percorso` di due punti e `sparisce_a_fine_percorso`.
 - **B4, spogliatoi al buio.** Un `bambino_agnello` in STATUA con `reazione = INCLINA_TESTA`, `distanza_fuga` di 3 m e un punto di fuga dietro gli armadietti.
-- **B5, balconata.** Più istanze in STATUA con `reazione = NESSUNA`, girate verso la torre, e `segue_con_la_testa` attivo. Quando passano a OSSERVA ti guardano tutte. Il `KidSighting` esistente può usare queste scene al posto dei GLB statici.
+- **B5, balconata.** Più istanze in STATUA con `reazione = NESSUNA`, girate verso la torre, e `segue_con_la_testa` attivo. Quando passano a OSSERVA ti guardano tutte. Il `KidSighting` esistente può usare queste scene al posto dei GLB statici. **16 ottobre: spento** (`BambiniBalconata`, `attivo = false`), perché il soppalco della sala non c'è più; si ripropone all'utente con la sala della torre.
 
 ## Prove
 

@@ -10,3 +10,4 @@ const INTERACTION := 16     ## 5 "interazione": aree Interactable (tasto E)
 const WATER_TARGETS := 32   ## 6 "bersagli_acqua": aree WaterHitbox colpite dal getto
 const WATER_VOLUMES := 64   ## 7 "volumi_acqua": WaterVolume e zone bagnate
 const LADDERS := 128        ## 8 "scale": aree Ladder
+const BARRIERS := 256       ## 9 "barriere": muri invisibili che fermano il giocatore ma non il getto d'acqua

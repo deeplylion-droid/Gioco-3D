@@ -22,6 +22,7 @@ INQ = {
     'stanzino_rastrelliera': ((12.6, 8.9, OCCHI), (15.2, 8.3, 1.15), 24),
     'corridoio_cartellone_vicino': ((14.6, 2.3, 1.55), (14.6, 0.0, 1.4), 26),
     'stanzino_bacheca': ((13.0, 8.4, OCCHI), (12.6, 6.2, 1.35), 22),
+    'turbina_cancello': ((9.95, 17.5, OCCHI), (8.75, 19.4, 2.0), 24),
 }
 
 def prepara():

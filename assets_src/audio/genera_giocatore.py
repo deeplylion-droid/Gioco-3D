@@ -38,8 +38,10 @@ def tacco_piastrella(rng, i):
     return out
 
 
-def strato_bagnato(rng, forza=1.0):
-    """Lo 'splat' della suola sull'acqua sottile e le goccioline che schizzano."""
+def strato_bagnato(rng, forza=1.0, goccioline=True):
+    """Lo 'splat' della suola sull'acqua sottile e le goccioline che schizzano. goccioline=False:
+    solo lo splat e il risucchio della suola (i numeri casuali si estraggono lo stesso, così il
+    resto non cambia; per l'anteprima di confronto del 16 ottobre)."""
     n = n_of(0.35)
     out = np.zeros(n)
     k = n_of(0.05)
@@ -53,8 +55,10 @@ def strato_bagnato(rng, forza=1.0):
     suck += bp(white(k, rng), 400, 1500, 2) * env_points([(0, 0), (0.015, 1), (0.06, 0)], k) * 0.2
     mix_into(out, suck * forza, n_of(rng.uniform(0.07, 0.12)))
     for _ in range(rng.integers(4, 9)):
-        b = bollicina(rng, rng.uniform(1600, 4200), rng.uniform(0.004, 0.012), rise=0.6)
-        mix_into(out, b * rng.uniform(0.05, 0.2) * forza, n_of(rng.uniform(0.005, 0.15)))
+        f0, tau = rng.uniform(1600, 4200), rng.uniform(0.004, 0.012)
+        g, t0 = rng.uniform(0.05, 0.2), rng.uniform(0.005, 0.15)
+        if goccioline:
+            mix_into(out, bollicina(rng, f0, tau, rise=0.6) * g * forza, n_of(t0))
     return out
 
 
@@ -62,10 +66,10 @@ def passo_piastrelle(rng, i):
     return fade(trim_silence(tacco_piastrella(rng, i)), 0, 0.02)
 
 
-def passo_bagnato(rng, i):
+def passo_bagnato(rng, i, goccioline=True):
     out = np.zeros(n_of(0.45))
     mix_into(out, tacco_piastrella(rng, i) * 0.6, 0)
-    mix_into(out, strato_bagnato(rng), n_of(0.004))
+    mix_into(out, strato_bagnato(rng, goccioline=goccioline), n_of(0.004))
     return fade(trim_silence(out), 0, 0.03)
 
 
@@ -126,8 +130,9 @@ def atterraggio(rng, sup, i):
     elif sup == 'bagnato':
         mix_into(out, tacco_piastrella(rng, i) * 0.7, 0)
         mix_into(out, tacco_piastrella(rng, i + 2) * 0.5, n_of(0.03))
-        mix_into(out, strato_bagnato(rng, 1.6), 0)
-        mix_into(out, strato_bagnato(rng, 1.2), n_of(0.03))
+        # senza goccioline, come i passi bagnati (scelta dell'utente del 16 ottobre)
+        mix_into(out, strato_bagnato(rng, 1.6, goccioline=False), 0)
+        mix_into(out, strato_bagnato(rng, 1.2, goccioline=False), n_of(0.03))
         mix_into(out, thud * 0.7, 0)
     elif sup == 'acqua':
         mix_into(out, passo_acqua(rng, i, 1.8), 0)
@@ -413,8 +418,11 @@ def main():
         salva(CART, f'passo_piastrelle_{i + 1:02d}', passo_piastrelle(rng, i), loudness=-20, corto=True,
               qualita=3, fonte=K_PASSI, nota='footstep_concrete + risonanza della ceramica')
     for i in range(6):
-        salva(CART, f'passo_bagnato_{i + 1:02d}', passo_bagnato(rng, i), loudness=-20, corto=True, qualita=3,
-              fonte=K_PASSI + ' + sintesi')
+        # senza le goccioline che schizzavano: scelta dell'utente del 16 ottobre (le sentiva come
+        # bollicine); stessi numeri casuali, quindi gli altri suoni non cambiano
+        salva(CART, f'passo_bagnato_{i + 1:02d}', passo_bagnato(rng, i, goccioline=False), loudness=-20,
+              corto=True, qualita=3, fonte=K_PASSI + ' + sintesi',
+              nota='lo sciac della suola sul bagnato, senza goccioline (16 ottobre)')
     for i in range(6):
         salva(CART, f'passo_acqua_{i + 1:02d}', passo_acqua(rng, i), loudness=-19, corto=True, qualita=3)
     for i in range(6):
@@ -426,7 +434,8 @@ def main():
     for sup in ['piastrelle', 'bagnato', 'acqua', 'metallo']:
         for i in range(2):
             salva(CART, f'atterraggio_{sup}_{i + 1:02d}', atterraggio(rng, sup, i), loudness=-16, corto=True,
-                  qualita=3, fonte=K_PASSI + ' + sintesi')
+                  qualita=3, fonte=K_PASSI + ' + sintesi',
+                  nota='senza goccioline, come i passi bagnati (16 ottobre)' if sup == 'bagnato' else '')
     for i in range(2):
         salva(CART, f'salto_{i + 1:02d}', salto(rng, i), loudness=-24, corto=True, qualita=3,
               fonte='Kenney RPG Audio (CC0)', nota='cloth')

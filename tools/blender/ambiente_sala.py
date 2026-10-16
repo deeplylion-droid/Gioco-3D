@@ -2,16 +2,20 @@
 
 Layout da docs/livello/capitolo1.md (mappa del percorso A): una sola grande sala sotto la cupola di
 vetro. Coordinate in metri, Z in alto; +Y = prua (nord), +X = dritta (est).
-  - sala: x -20..20, y -20..24; galleria a 4,0 m tutto intorno (profonda 3 m); soffitto a 11,5 m
+  - sala: x -20..20, y -20..24; soffitto a 11,5 m. Il soppalco (galleria a 4,0 m tutto intorno) è stato
+    tolto il 16 ottobre (scelta dell'utente C1): plafoniere, fari, cartelloni e altoparlanti sono sulle pareti
   - cupola: centro (0, 5), raggio 13 m, chiave a 18 m
   - piscina a onde VUOTA: x -7..7, y -5..13; parte profonda (2 m) a sud, spiaggia a nord;
     pozza torbida sul fondo intorno allo scarico (0, -2)
   - monumento della statua: piedistallo a gradoni sul piazzale sud, sull'asse dell'ingresso, 10 m
     davanti alla porta: entrando la si vede intera con la cupola sopra (vedi PIEDISTALLO)
   - ingresso dagli spogliatoi: vano 1,2 x 2,2 m con porta stagna aperta nella parete sud (x = 0)
-  - area bimbi a nord-ovest (struttura di gioco con il secchio gigante, vasche basse a scacchi)
-  - vasca d'arrivo a ovest (x -16..-9, y -7..3), dove finiscono gli scivoli
-  - torre degli scivoli a nord-est (centro 13,5 / 17,5), tubi colorati lungo i bordi
+  - area bimbi a nord-ovest, disposizione 1 (16 ottobre): struttura di gioco con il secchio gigante
+    nell'angolo, vasca piccola sotto lo scivolo, vasca a scacchi con la fossa della tappa 8, due funghi
+  - vasca d'arrivo a ovest (x -16..-9, y -7..3)
+  - sala della torre a est (versione 2, 16 ottobre): varco nella parete est (y 12..18) chiuso dal
+    portone scorrevole dipinto; dietro solo il guscio. La torre e gli scivoli di prima non sono più
+    nella sala (si rifanno dopo, con una proposta a parte): le funzioni restano qui sotto, non usate
 
 Uso (dalla radice del repository):
   PY=/home/user/tools/blender-venv/bin/python
@@ -62,7 +66,9 @@ RINGHIERA_H_SALA = 1.05
 VASCA_CENTRALE = dict(cx=0.0, cy=-10.0, lx=6.0, ly=4.5, r=0.5, h=1.0, coping=0.30, acqua=0.88,
                       cordone=1.3, z_pulsante=0.62)
 CENTRO = {'modo': 'vasca'}   # 'vasca' (di serie) oppure 'monumento' (la statua, per più avanti)
-STRUTTURA = dict(cx=-13.0, cy=16.0)
+# area bimbi, disposizione 1 (scelta dall'utente il 16 ottobre): la struttura nell'angolo nord-ovest
+# (dove c'era il soppalco) con la scala verso chi arriva; lo scivolo scende nella vasca piccola
+STRUTTURA = dict(cx=-14.6, cy=19.6)
 # fossa dello scarico di compensazione rotto attaccata al lato sud della VascaBimbi1 (tappa 8, "lei sbuca
 # dal bordo"): pianta x0..x1, y0..y1 (Blender; in Godot x -14,8..-12,3 e z -8,0..-6,0) con l'angolo sud-ovest
 # tagliato a 45 gradi ('taglio'): lì il bordo piastrellato regge la medusa affacciata, rivolta a sud-ovest.
@@ -70,12 +76,37 @@ STRUTTURA = dict(cx=-13.0, cy=16.0)
 FOSSA_BIMBI = dict(x0=-14.8, x1=-12.3, y0=6.0, y1=8.0, taglio=1.0, fondo=-3.0, piastrelle=-0.6, bordo=0.3,
                    h_bordo=0.45, acqua_piena=0.42, condotto=dict(y=7.0, z=-2.3, r=0.6, x_fine=-8.8))
 # vasche basse dell'area bimbi: (x0, y0, x1, y1) del bordo esterno
-VASCHE_BASSE = [(-15.1, 7.7, -10.1, 11.5), (-17.0, 10.7, -13.6, 14.1)]
+VASCHE_BASSE = [(-15.1, 7.7, -10.1, 11.5), (-11.3, 16.5, -7.9, 19.9)]
+VASCA_BIMBI_2 = dict(cx=-9.6, cy=18.2, lato=2.8, acqua=0.22)   # sotto la fine dello scivolo
+# dove stavano struttura e vasca piccola fino al 15 ottobre: servono solo a tenere le pozzanghere dov'erano
+# (stessi numeri casuali); quelle che finiscono sotto i pezzi nuovi si tolgono dopo
+STRUTTURA_15_OTTOBRE = dict(cx=-13.0, cy=16.0)
+VASCHE_BASSE_15_OTTOBRE = [(-15.1, 7.7, -10.1, 11.5), (-17.0, 10.7, -13.6, 14.1)]
+# oggetti di scena tolti con la disposizione 1 dell'area bimbi (16 ottobre): giocattoli sparsi nell'area e
+# sulla strada della scia rosa (tappa 8), i cannoncini, la balena della vasca piccola. I nomi degli altri
+# oggetti non cambiano (il numero nel nome resta quello di prima).
+TOGLI_OGGETTI = {'ogg_balena_gonfiabile_sgonfia_26', 'ogg_cannoncino_acqua_29', 'ogg_cannoncino_acqua_30',
+                 'ogg_cannoncino_acqua_31', 'ogg_cartello_pavimento_bagnato_92', 'ogg_cestino_pesce_87',
+                 'ogg_lettino_plastica_75', 'ogg_orsacchiotto_grande_35', 'ogg_pallone_spiaggia_33',
+                 'ogg_pallone_spiaggia_53', 'ogg_pallone_spiaggia_67', 'ogg_paperella_gigante_32',
+                 'ogg_paperella_gigante_34', 'ogg_paperella_gigante_60', 'ogg_tubi_galleggianti_46'}
+# funghi-fontana nella piazza: (x, y, rotazione, scala)
+FUNGHI = [(-17.8, 12.2, 20, 1.0), (-12.2, 14.4, 75, 0.75)]
+# pulsante della botola, versione A (16 ottobre): centro del fungo sulla parete sud, tra due bocchette
+PULSANTE_BOTOLA = dict(x=2.25, y=-5.0, z=-1.12)
+# sala della torre (versione 2, 16 ottobre): dietro la parete est, varco con il portone scorrevole.
+# Per ora solo il guscio della sala; torre e scivoli nuovi si propongono a parte.
+SALA_TORRE = dict(cy=15.0, largo=6.0, alto=5.0, x1=X1 + 20.0, y0=4.0, y1=26.0, h=14.0)
+# telecamera di sorveglianza del monitor della sala pompe (sul muro sud, prima era sul soppalco)
+TELECAMERA_MONITOR = dict(x=-5.0, z=5.3, mira=(0.0, -11.0, 1.1))
 TORRE = dict(cx=13.5, cy=17.5, lato=6.0, piani=(3.0, 6.0, 8.6))
 SPIRALE = dict(cx=8.6, cy=10.6, r=2.5)   # pennone dello scivolo a spirale (il tubo dell'inseguimento)
 SCIVOLO_INSEGUIMENTO_R = 0.8             # raggio interno del tubo dell'inseguimento (Ø 1,6 m)
 # vano verso gli spogliatoi nel muro sud (lo chiede il gioco): luce 1,2 x 2,2 m, x da -0,6 a 0,6
 VANO = dict(cx=0.0, luce=1.2, h=2.2)
+# varco della serranda del magazzino dei gonfiabili (tappa 7, ambienti-1, 16 ottobre): angolo sud-ovest,
+# modulo da x -16 a -14 del muro sud, luce 1,8 x 2,5 m. Dietro c'è il magazzino (raccordo.gltf dei tecnici).
+VANO_SERRANDA = dict(cx=-15.0, luce=1.8, h=2.5)
 # lastre della cupola rotte (costolone k da 0 a 31, anello j da 0 = tamburo a 6 = oculo): lì piove dentro
 LASTRE_ROTTE = {(3, 2), (11, 4), (12, 4), (20, 1), (27, 5), (7, 1), (24, 1), (16, 0)}
 
@@ -248,19 +279,294 @@ def soffitto_con_foro(mats, x0, x1, y0, y1, z, cx, cy, r, mat='intonaco_alto', n
 
 # ----------------------------------------------------------------------------- pareti e galleria
 
+def lineare(hexa):
+    """Colore sRGB '#rrggbb' -> lineare (Blender lavora in lineare)."""
+    c = [int(hexa[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    return tuple(((v + 0.055) / 1.055) ** 2.4 if v > 0.04045 else v / 12.92 for v in c)
+
+
+def materiali_nuovi(mats):
+    """Materiali dei pezzi scelti dall'utente il 16 ottobre (pulsante A della botola, portone e guscio della
+    sala della torre): le tinte unite delle proposte approvate e le due texture disegnate di
+    ambiente_disegni.py (strisce gialle e nere, portone con la torre dipinta)."""
+    import ambiente_disegni as DIS
+    DIS.disegna_tutto()
+    for nome, hexa, rough, metallo, emissione in (
+            ('pulsante_rosso', '#d01810', 0.22, 0.0, 0.0), ('giallo_sicurezza', '#f2b705', 0.5, 0.0, 0.0),
+            ('nero_opaco', '#141414', 0.6, 0.0, 0.0), ('faro_giallo', '#ffb300', 0.25, 0.0, 6.0),
+            ('faro_rosso', '#ff2a10', 0.25, 0.0, 6.0), ('acciaio_portone', '#3b4043', 0.55, 0.6, 0.0),
+            ('stanza_muro', '#4d5652', 0.85, 0.0, 0.0), ('stanza_soffitto', '#2a2e2d', 0.9, 0.0, 0.0)):
+        if nome in mats.cache:
+            continue
+        m = mats._semplice(nome, lineare(hexa), rough, metallo)
+        if emissione > 0:
+            b = m.node_tree.nodes['Principled BSDF']
+            b.inputs['Emission Color'].default_value = (*lineare(hexa), 1)
+            b.inputs['Emission Strength'].default_value = emissione
+        mats.cache[nome] = m
+    for nome, file, rough, metallo in (('strisce', DIS.percorso('strisce'), 0.5, 0.2),
+                                        ('portone', DIS.percorso('portone'), 0.6, 0.3)):
+        if nome in mats.cache:
+            continue
+        m, nt, b = mats._base(nome)
+        uv = nt.nodes.new('ShaderNodeUVMap'); uv.uv_map = 'UVMap'
+        t = nt.nodes.new('ShaderNodeTexImage')
+        t.image = bpy.data.images.load(file, check_existing=True)
+        nt.links.new(uv.outputs['UV'], t.inputs['Vector'])
+        nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
+        b.inputs['Roughness'].default_value = rough
+        b.inputs['Metallic'].default_value = metallo
+        mats.cache[nome] = m
+        mats.lati[nome] = 1.0
+
+
+def calotta(c, centro, asse, r, h, mat, seg=32, anelli=8):
+    """Calotta (mezzo ellissoide) con la base in 'centro' e la cima verso 'asse'."""
+    C = Vector(centro); a = Vector(asse).normalized()
+    u = a.orthogonal().normalized(); v = a.cross(u)
+    for i in range(anelli):
+        t0, t1 = (math.pi / 2) * i / anelli, (math.pi / 2) * (i + 1) / anelli
+        r0, r1 = r * math.cos(t0), r * math.cos(t1)
+        h0, h1 = h * math.sin(t0), h * math.sin(t1)
+        for j in range(seg):
+            p0, p1 = 2 * math.pi * j / seg, 2 * math.pi * (j + 1) / seg
+            d0 = u * math.cos(p0) + v * math.sin(p0); d1 = u * math.cos(p1) + v * math.sin(p1)
+            q = [C + a * h0 + d0 * r0, C + a * h0 + d1 * r0, C + a * h1 + d1 * r1, C + a * h1 + d0 * r1]
+            if r1 < 1e-6:
+                q = q[:3]
+            c.faccia([tuple(p) for p in q], mat, liscia=True)
+
+
+def con_perno(ob, perno):
+    """Porta l'origine dell'oggetto nel punto 'perno' (coordinate della sala) senza spostare la geometria:
+    nel GLB il nodo sta lì, e lì gira o scorre. Le collisioni figlie si aggiungono dopo, in coordinate locali."""
+    ob.data.transform(Matrix.Translation(-Vector(perno)))
+    ob.location = Vector(perno)
+    return ob
+
+
+def varco_torre():
+    """Varco della sala della torre nella parete est: (y iniziale, y finale, altezza)."""
+    T = SALA_TORRE
+    return T['cy'] - T['largo'] / 2, T['cy'] + T['largo'] / 2, T['alto']
+
+
+def pulsante_botola(mats):
+    """Pulsante della botola, versione A (scelta dall'utente il 16 ottobre): cassetta gialla sulla parete
+    sud della piscina (tra due bocchette), fungo rosso grosso (Ø 50 cm, sporge 48 cm dalla parete) e sopra
+    il lampeggiante (giallo quando la piscina è vuota, verde quando la botola si apre: lo decide il gioco).
+    Restituisce i tre nodi e i dati per il gioco:
+      sala_pulsante_portello_cassetta  fisso: cassetta, piastra, bulloni, collare, base e gabbia del
+                                       lampeggiante; la sua collisione copre anche il fungo
+      sala_pulsante_portello           il fungo (gambo e testa) con il perno sul collare: si preme lungo il
+                                       suo -Z di Godot, come il pulsante di prima (stesso nome del nodo)
+      sala_lampeggiante_portello       il vetro del lampeggiante, con il perno alla sua base"""
+    B = PULSANTE_BOTOLA
+    x, y, z = B['x'], B['y'], B['z']
+    yf = y + 0.21                                    # fronte della cassetta
+    c = K.Costruttore(mats)
+    c.scatola_smussata((x - 0.33, y, z - 0.5), (x + 0.33, yf, z + 0.47), 'giallo_sicurezza', s=0.025)
+    c.scatola((x - 0.27, yf, z - 0.27), (x + 0.27, yf + 0.012, z + 0.27), 'nero_opaco')
+    for (bx, bz) in ((x - 0.28, z - 0.43), (x + 0.28, z - 0.43), (x - 0.28, z + 0.4), (x + 0.28, z + 0.4)):
+        c.cilindro((bx, yf, bz), (bx, yf + 0.012, bz), 0.016, 'inox', seg=8)
+    c.cilindro((x, yf + 0.012, z), (x, yf + 0.07, z), 0.14, 'nero_opaco', seg=32)          # collare
+    yb, zb = (y + yf) / 2, z + 0.47                  # lampeggiante sulla cassetta
+    c.cilindro((x, yb, zb), (x, yb, zb + 0.07), 0.13, 'nero_opaco', seg=32)
+    for k in range(4):   # gabbia
+        a = math.radians(45 + 90 * k)
+        d = Vector((math.cos(a), math.sin(a), 0))
+        P = Vector((x, yb, zb + 0.07))
+        c.tubo([tuple(P + d * 0.12), tuple(P + d * 0.12 + Vector((0, 0, 0.16))), tuple(P + d * 0.08 + Vector((0, 0, 0.26))),
+                tuple(P + Vector((0, 0, 0.29)))], 0.007, 'nero_opaco', seg=6)
+    c.toro((x, yb, zb + 0.16), (0, 0, 1), 0.12, 0.007, 'nero_opaco', seg=32, seg_r=4)
+    cassetta = c.crea('sala_pulsante_portello_cassetta')
+    K.collisione_scatola('pulsante_portello', (x - 0.33, y, z - 0.5), (x + 0.33, yf + 0.25, z + 0.47), padre=cassetta)
+    # il fungo, in coordinate locali come pulsante(): il perno sul collare, la testa verso -y (girato di 180
+    # gradi guarda la piscina; in Godot la testa è sul +Z locale e si preme verso -Z)
+    f = K.Costruttore(mats)
+    f.cilindro((0, 0, 0), (0, -0.06, 0), 0.075, 'inox', seg=24)                          # gambo
+    f.disco((0, -0.06, 0), (0, 1, 0), 0.25, 'pulsante_rosso', seg=48)
+    f.cilindro((0, -0.06, 0), (0, -0.09, 0), 0.25, 'pulsante_rosso', seg=48, tappi=False)
+    f.toro((0, -0.09, 0), (0, -1, 0), 0.235, 0.015, 'pulsante_rosso', seg=48, seg_r=6)
+    calotta(f, (0, -0.09, 0), (0, -1, 0), 0.25, 0.11, 'pulsante_rosso', seg=48)
+    fungo = f.crea('sala_pulsante_portello')
+    fungo.location = (x, yf + 0.07, z)
+    fungo.rotation_euler = Euler((0, 0, math.pi))
+    v = K.Costruttore(mats)
+    v.cilindro((0, 0, 0), (0, 0, 0.15), 0.105, 'faro_giallo', seg=32, tappi=False)
+    calotta(v, (0, 0, 0.15), (0, 0, 1), 0.105, 0.1, 'faro_giallo', seg=32)
+    vetro = v.crea('sala_lampeggiante_portello')
+    vetro.location = (x, yb, zb + 0.07)
+    testa = (x, yf + 0.07 + 0.2, z)
+    dati = dict(
+        nota=("pulsante della botola, versione A (16 ottobre): fungo rosso Ø 50 cm su una cassetta gialla nella parete "
+              "sud della piscina, tra due bocchette; sopra il lampeggiante (vetro giallo, il gioco lo fa verde)"),
+        fungo=dict(nodo='sala_pulsante_portello', perno_godot=a_godot(tuple(fungo.location)), verso_godot=[0, 0, -1],
+                   corsa=0.025, nota="si preme come prima: _press_with lo sposta di 2,5 cm lungo il suo -Z locale (verso la parete)"),
+        bersaglio_getto=dict(centro_testa_godot=a_godot((x, yf + 0.2, z)), fronte_testa_godot=a_godot(testa), raggio_testa=0.25,
+                             nota="per il WaterButton PulsantePortello: centro sulla testa del fungo, raggio circa 0,26"),
+        cassetta=dict(nodo='sala_pulsante_portello_cassetta', collisione='pulsante_portello (copre anche il fungo)'),
+        lampeggiante=dict(nodo='sala_lampeggiante_portello', vetro_centro_godot=a_godot((x, yb, zb + 0.2)),
+                          luce_godot=a_godot((x, yb + 0.25, zb + 0.25)),
+                          nota=("il vetro ha il materiale M_amb_faro_giallo (emissivo): per il verde basta un altro materiale o "
+                                "l'emissione cambiata. Nelle proposte la luce era una OmniLight3D in luce_godot, energia 4, raggio 7, "
+                                "attenuazione 1,3, con le ombre")))
+    return [cassetta, fungo, vetro], dati
+
+
+def portone_torre(mats):
+    """Sala della torre, versione 2 (scelta dall'utente il 16 ottobre): portone scorrevole davanti al varco
+    della parete est, lamiera gialla con la torre dipinta, binario in alto, bande a strisce ai lati e il
+    lampeggiante rosso sopra. Senza l'insegna sopra (nota dell'utente: "basta il cancello con il suo
+    disegno"). Restituisce i tre nodi e i dati per il gioco:
+      sala_portone_torre          l'anta con i carrelli e il maniglione; perno al centro della base. Si apre
+                                  scorrendo verso sud (-y qui, +Z in Godot) fino a 2,0 m, la fine del binario
+      sala_portone_torre_telaio   fisso: binario con le staffe, bande a strisce sugli stipiti, base del lampeggiante
+      sala_lampeggiante_torre     il vetro rosso del lampeggiante, perno alla sua base"""
+    T = SALA_TORRE
+    cy, w, h = T['cy'], T['largo'], T['alto']
+    x = X1 - 0.12                                   # retro dell'anta (verso il muro)
+    ya, yb = cy - w / 2 - 0.15, cy + w / 2 + 0.15
+    corsa = 2.0
+    c = K.Costruttore(mats)
+    c.scatola((x - 0.08, ya, 0.06), (x, yb, h + 0.1), 'acciaio_portone')
+    # faccia dipinta verso la sala (-x); u da y alto a y basso (chi guarda verso +x ha +y a sinistra)
+    c.faccia([(x - 0.081, yb, 0.06), (x - 0.081, ya, 0.06), (x - 0.081, ya, h + 0.1), (x - 0.081, yb, h + 0.1)], 'portone',
+             uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
+    for yy in (ya + 0.5, yb - 0.5):   # carrelli appesi al binario
+        c.cilindro((x - 0.14, yy, h + 0.1), (x - 0.14, yy, h + 0.25), 0.07, 'nero_opaco', seg=16)
+        c.cilindro((x - 0.24, yy, h + 0.19), (x - 0.04, yy, h + 0.19), 0.05, 'inox', seg=12)
+    c.cilindro((x - 0.2, ya + 0.35, 1.0), (x - 0.2, ya + 0.35, 1.6), 0.03, 'inox', seg=10)   # maniglione
+    for zz in (1.0, 1.6):
+        c.cilindro((x - 0.2, ya + 0.35, zz), (x - 0.08, ya + 0.35, zz), 0.02, 'inox', seg=8)
+    perno = (x - 0.04, cy, 0.0)
+    anta = con_perno(c.crea('sala_portone_torre'), perno)
+    K.collisione_scatola('portone_torre', (-0.04, ya - cy, 0.0), (0.04, yb - cy, h + 0.1), padre=anta)
+    p = K.Costruttore(mats)
+    y0r, y1r = ya - corsa, yb + 0.6
+    p.scatola((x - 0.2, y0r, h + 0.25), (x - 0.02, y1r, h + 0.4), 'acciaio_portone')   # binario
+    n = int(math.ceil((y1r - y0r) / 1.6))
+    for k in range(n + 1):   # staffe del binario fino al muro
+        yy = y0r + 0.1 + k * (y1r - y0r - 0.2) / n
+        p.scatola((x - 0.02, yy - 0.04, h + 0.27), (X1, yy + 0.04, h + 0.38), 'acciaio_portone')
+        p.scatola((X1 - 0.012, yy - 0.08, h + 0.22), (X1, yy + 0.08, h + 0.43), 'acciaio_portone')
+    zl = h + 0.55
+    p.scatola((X1 - 0.08, cy - 0.15, zl - 0.12), (X1, cy + 0.15, zl + 0.05), 'nero_opaco')   # staffa del lampeggiante
+    p.cilindro((X1 - 0.2, cy, zl), (X1 - 0.2, cy, zl + 0.08), 0.13, 'nero_opaco', seg=24)
+    for sy in (-1, 1):   # bande a strisce sui due stipiti del varco
+        y0_ = cy + sy * (w / 2 + 0.15)
+        a_, b_ = min(y0_, y0_ + sy * 0.4), max(y0_, y0_ + sy * 0.4)
+        p.scatola((X1 - 0.04, a_, 0), (X1, b_, h + 0.2), 'nero_opaco')
+        p.faccia([(X1 - 0.041, b_, 0), (X1 - 0.041, a_, 0), (X1 - 0.041, a_, h + 0.2), (X1 - 0.041, b_, h + 0.2)],
+                 'strisce', uv=[(0, 0), (0.25, 0), (0.25, 1), (0, 1)])
+    telaio = p.crea('sala_portone_torre_telaio')
+    v = K.Costruttore(mats)
+    v.cilindro((0, 0, 0), (0, 0, 0.18), 0.105, 'faro_rosso', seg=24, tappi=False)
+    calotta(v, (0, 0, 0.18), (0, 0, 1), 0.105, 0.1, 'faro_rosso', seg=24)
+    vetro = v.crea('sala_lampeggiante_torre')
+    vetro.location = (X1 - 0.2, cy, zl + 0.08)
+    va, vb, vh = varco_torre()
+    dati = dict(
+        nota=("sala della torre, versione 2 (16 ottobre): varco nella parete est (y Blender da %g a %g, alto %g m) chiuso dal "
+              "portone scorrevole; dietro c'è solo il guscio della sala (l'interno si decide dopo)") % (va, vb, vh),
+        varco_godot=dict(x=X1, z=[-vb, -va], altezza=vh),
+        anta=dict(nodo='sala_portone_torre', perno_godot=a_godot(perno), larghezza=round(yb - ya, 3), altezza=round(h + 0.04, 3),
+                  apertura=dict(tipo='scorre', verso_godot=[0, 0, 1], corsa_massima=corsa,
+                                nota="scorre verso sud lungo il muro (+Z in Godot), al massimo di 2,0 m: dove finisce il binario"),
+                  collisione='portone_torre (figlia: scorre con l\'anta)'),
+        telaio=dict(nodo='sala_portone_torre_telaio', nota='binario con le staffe, bande a strisce, base del lampeggiante (fisso)'),
+        lampeggiante=dict(nodo='sala_lampeggiante_torre', vetro_centro_godot=a_godot((X1 - 0.2, cy, zl + 0.2)),
+                          luce_godot=a_godot((X1 - 0.45, cy, zl + 0.25)),
+                          nota="vetro rosso M_amb_faro_rosso (emissivo); il gioco può farlo verde quando si apre"),
+        davanti_al_portone_godot=a_godot((X1 - 2.5, cy, 0.0)),
+        dentro_la_sala_godot=a_godot((X1 + 3.0, cy, 0.0)),
+        sala=dict(x_godot=[X1 + K.SPESSORE_PARETE, T['x1']], z_godot=[-T['y1'], -T['y0']], altezza=T['h'],
+                  nota="guscio vuoto (pavimento, pareti, soffitto, collisioni), sala_torre_guscio in sala_architettura.glb"))
+    return [anta, telaio, vetro], dati
+
+
+def guscio_sala_torre(mats):
+    """Guscio della sala della torre dietro il varco della parete est (per ora vuoto: l'interno si decide
+    dopo con l'utente): pavimento come la sala, pareti in cemento verniciato sopra uno zoccolo di cemento,
+    soffitto scuro. A ovest c'è il retro della parete est della sala; qui si chiude quello che resta: sopra
+    il soffitto della sala e il pezzo a nord della sala (da y 24 a 26). Collisioni su tutti i lati."""
+    T = SALA_TORRE
+    x0, x1, y0, y1, h = X1, T['x1'], T['y0'], T['y1'], T['h']
+    xo = X1 + K.SPESSORE_PARETE                      # retro della parete est della sala
+    c = K.Costruttore(mats)
+    c.faccia_griglia([(x0, y0, 0), (x1, y0, 0), (x1, y1, 0), (x0, y1, 0)], 'pavimento', 2.0)
+    c.faccia_griglia([(x0, y1, h), (x1, y1, h), (x1, y0, h), (x0, y0, h)], 'stanza_soffitto', 4.0)
+    muri = {'s': [(x1, y0), (xo, y0)], 'n': [(xo, y1), (x1, y1)], 'e': [(x1, y1), (x1, y0)]}
+    for lato, (p, q) in muri.items():
+        c.faccia_griglia([(p[0], p[1], 1.2), (q[0], q[1], 1.2), (q[0], q[1], h), (p[0], p[1], h)], 'stanza_muro', 2.0)
+        c.faccia_griglia([(p[0], p[1], 0), (q[0], q[1], 0), (q[0], q[1], 1.2), (p[0], p[1], 1.2)], 'cemento', 2.0)
+    # lato ovest: sopra la parete della sala (da 11,5 a 14) e il pezzo a nord della sala (da y 24 a 26)
+    c.faccia_griglia([(xo, y0, Z_SOFF), (xo, y1, Z_SOFF), (xo, y1, h), (xo, y0, h)], 'stanza_muro', 2.0)
+    c.faccia_griglia([(xo, Y1, 1.2), (xo, y1, 1.2), (xo, y1, Z_SOFF), (xo, Y1, Z_SOFF)], 'stanza_muro', 2.0)
+    c.faccia_griglia([(xo, Y1, 0), (xo, y1, 0), (xo, y1, 1.2), (xo, Y1, 1.2)], 'cemento', 2.0)
+    ob = c.crea('sala_torre_guscio', sporco=lambda co: 0.55 + 0.45 * min(1.0, co.z / 3.0))
+    K.collisione_scatola('torre_guscio_pavimento', (x0, y0, -0.2), (x1, y1, 0.0), padre=ob)
+    K.collisione_scatola('torre_guscio_soffitto', (x0, y0, h), (x1, y1, h + 0.2), padre=ob)
+    K.collisione_scatola('torre_guscio_sud', (x0, y0 - 0.2, 0), (x1, y0, h), padre=ob)
+    K.collisione_scatola('torre_guscio_nord', (x0, y1, 0), (x1, y1 + 0.2, h), padre=ob)
+    K.collisione_scatola('torre_guscio_est', (x1, y0, 0), (x1 + 0.2, y1, h), padre=ob)
+    K.collisione_scatola('torre_guscio_ovest_alto', (X1, y0, Z_SOFF), (xo, y1, h), padre=ob)
+    K.collisione_scatola('torre_guscio_ovest_nord', (X1, Y1, 0), (xo, y1, Z_SOFF), padre=ob)
+    return ob
+
+
+def fari_parete(mats, bersaglio=None):
+    """Due fari da palcoscenico su due bracci fissati alla parete sud (prima erano sulla ringhiera del
+    soppalco, tolto il 16 ottobre: stessa quota), puntati sulla medusa affacciata alla vasca (o sulla
+    statua). Stesso nome dell'oggetto e delle luci di prima (luce_faro_0 e luce_faro_1)."""
+    P = PIEDISTALLO
+    c = K.Costruttore(mats)
+    luci = []
+    bersaglio = Vector(bersaglio) if bersaglio else Vector((P['cx'], P['cy'], P['h'] + 3.4))   # busto e viso
+    for i, x in enumerate((-2.1, 2.1)):
+        z = Z_GAL + SP_GAL + RINGHIERA_H_SALA
+        piastra = Vector((x, Y0, z))
+        corpo = Vector((x, Y0 + 0.55, z + 0.2))
+        d = (bersaglio - corpo).normalized()
+        c.scatola(tuple(piastra + Vector((-0.12, 0, -0.12))), tuple(piastra + Vector((0.12, 0.02, 0.12))), 'nero')   # piastra
+        c.tubo([tuple(piastra + Vector((0, 0.02, 0))), tuple(piastra + Vector((0, 0.35, 0.0))), tuple(corpo - Vector((0, 0, 0.12)))],
+               0.025, 'nero', seg=8)   # braccio
+        lato = d.cross(Vector((0, 0, 1))).normalized()
+        for sgn in (-1, 1):   # forcella
+            c.cilindro(tuple(corpo - Vector((0, 0, 0.12)) + lato * 0.15 * sgn), tuple(corpo + lato * 0.15 * sgn), 0.012, 'nero', seg=6)
+        c.cilindro(tuple(corpo - lato * 0.15), tuple(corpo + lato * 0.15), 0.012, 'nero', seg=6, tappi=False)
+        c.cilindro(tuple(corpo - d * 0.22), tuple(corpo + d * 0.2), 0.14, 'nero', seg=16)
+        c.anello(tuple(corpo + d * 0.2), tuple(d), 0.1, 0.15, 0.03, 'nero', seg=16)
+        c.disco(tuple(corpo + d * 0.205), tuple(d), 0.1, 'lampadina', seg=16)
+        for k in range(4):   # alette di raffreddamento
+            o = d * (-0.15 + k * 0.08)
+            c.toro(tuple(corpo + o), tuple(d), 0.15, 0.01, 'nero', seg=16, seg_r=4)
+        luci.append(dict(nome=f'luce_faro_{i}', pos=tuple(corpo + d * 0.3), dir=tuple(d), colore=(1.0, 0.9, 0.76)))
+    return c.crea('sala_monumento_fari'), luci
+
+
 def pareti(mats):
     """Pareti perimetrali: sotto (0-4 m, piastrelle + intonaco, oblò sui fianchi dello scafo) e sopra
-    (4-10 m, intonaco grigio-verde, oblò sui fianchi). Porta degli spogliatoi a sud, al centro."""
+    (4-11,5 m, intonaco grigio-verde, oblò sui fianchi). Porta degli spogliatoi a sud, al centro.
+    Nella parete est c'è il varco della sala della torre (16 ottobre): y da 12 a 18, alto 5 m. Lì resta
+    solo il muro sopra il varco (senza oblò) e sotto si chiude con l'intradosso (sala_varco_intradosso)."""
     sotto, sopra, oblo = [], [], []
     H1, H2 = Z_GAL, Z_SOFF - Z_GAL
+    va, vb, vh = varco_torre()
     # sud (y = Y0), fronte verso +y: rotazione 180, il modulo va da T.x - L a T.x. Sotto la galleria
     # moduli da 2 m con il modulo del vano (2 m) centrato sul vano verso gli spogliatoi: i moduli
     # accanto si accorciano a 1 m. (Prima il vano non c'era: i moduli cadevano a cavallo di x = 0.)
     x, i = X0, 0
     a_vano = VANO['cx'] - 1.0
+    a_serranda = VANO_SERRANDA['cx'] - 1.0
     while x < X1 - 1e-6:
         if abs(x - a_vano) < 1e-6:   # vano 1,2 x 2,2 m con la porta stagna aperta
             sotto.append(metti(K.parete_porta(mats, 2.0, H1, luce=VANO['luce'], h_porta=VANO['h'], nome=f'ps_{i}',
+                                              suddividi=0.25, ante=False, telaio=False, cornici=True), (x + 2.0, Y0, 0), 180))
+            x += 2.0; i += 1
+            continue
+        if abs(x - a_serranda) < 1e-6:   # varco della serranda del magazzino (la serranda è nel raccordo dei tecnici)
+            sotto.append(metti(K.parete_porta(mats, 2.0, H1, luce=VANO_SERRANDA['luce'], h_porta=VANO_SERRANDA['h'], nome=f'ps_{i}',
                                               suddividi=0.25, ante=False, telaio=False, cornici=True), (x + 2.0, Y0, 0), 180))
             x += 2.0; i += 1
             continue
@@ -278,30 +584,39 @@ def pareti(mats):
         sotto.append(metti(K.parete(mats, 2.0, altezza=H1, nome=f'pn_{i}', suddividi=0.25, cornici=True), (xa, Y1, 0)))
         sopra.append(metti(K.parete(mats, 2.0, alta=True, altezza=H2, mat_alta='intonaco_alto', nome=f'pns_{i}', suddividi=0.5), (xa, Y1, Z_GAL)))
     # est (x = 20), fronte verso -x; ovest (x = -20), fronte verso +x: oblò a moduli alterni
+    intradosso = K.Costruttore(mats)
     for i in range(int(round((Y1 - Y0) / 2))):
         yb = Y0 + 2 * i
         ob_s = (i % 2 == 1)
         ob_a = (i % 2 == 0)
-        sotto.append(metti(K.parete(mats, 2.0, altezza=H1, oblo=ob_s, nome=f'pe_{i}', suddividi=0.25, cornici=True), (X1, yb + 2, 0), -90))
-        sopra.append(metti(K.parete(mats, 2.0, alta=True, altezza=H2, oblo=ob_a, oblo_z=2.2, mat_alta='intonaco_alto',
-                                    nome=f'pes_{i}', suddividi=0.5), (X1, yb + 2, Z_GAL), -90))
+        if va - 1e-6 <= yb and yb + 2 <= vb + 1e-6:   # modulo nel varco della sala della torre
+            sopra.append(metti(K.parete(mats, 2.0, alta=True, altezza=Z_SOFF - vh, mat_alta='intonaco_alto',
+                                        nome=f'pes_{i}', suddividi=0.5), (X1, yb + 2, vh), -90))
+            intradosso.faccia([(X1, yb, vh), (X1, yb + 2, vh), (X1 + K.SPESSORE_PARETE, yb + 2, vh), (X1 + K.SPESSORE_PARETE, yb, vh)], 'metallo')
+        else:
+            sotto.append(metti(K.parete(mats, 2.0, altezza=H1, oblo=ob_s, nome=f'pe_{i}', suddividi=0.25, cornici=True), (X1, yb + 2, 0), -90))
+            sopra.append(metti(K.parete(mats, 2.0, alta=True, altezza=H2, oblo=ob_a, oblo_z=2.2, mat_alta='intonaco_alto',
+                                        nome=f'pes_{i}', suddividi=0.5), (X1, yb + 2, Z_GAL), -90))
+            if ob_s:
+                oblo.append(metti(K.oblo(mats, nome=f'oblo_e_{i}'), (X1, yb + 1, K.OBLO_Z), -90))
+            if ob_a:
+                oblo.append(metti(K.oblo(mats, nome=f'obloa_e_{i}'), (X1, yb + 1, Z_GAL + 2.2), -90))
         sotto.append(metti(K.parete(mats, 2.0, altezza=H1, oblo=ob_s, nome=f'po_{i}', suddividi=0.25, cornici=True), (X0, yb, 0), 90))
         sopra.append(metti(K.parete(mats, 2.0, alta=True, altezza=H2, oblo=ob_a, oblo_z=2.2, mat_alta='intonaco_alto',
                                     nome=f'pos_{i}', suddividi=0.5), (X0, yb, Z_GAL), 90))
         if ob_s:
-            oblo.append(metti(K.oblo(mats, nome=f'oblo_e_{i}'), (X1, yb + 1, K.OBLO_Z), -90))
             oblo.append(metti(K.oblo(mats, nome=f'oblo_o_{i}'), (X0, yb + 1, K.OBLO_Z), 90))
         if ob_a:
-            oblo.append(metti(K.oblo(mats, nome=f'obloa_e_{i}'), (X1, yb + 1, Z_GAL + 2.2), -90))
             oblo.append(metti(K.oblo(mats, nome=f'obloa_o_{i}'), (X0, yb + 1, Z_GAL + 2.2), 90))
     basse, alte = unisci(sotto, 'sala_pareti_basse'), unisci(sopra, 'sala_pareti_alte')
     D.colora(basse, D.sporco_pareti_basse)
     D.colora(alte, D.sporco_pareti_alte)
-    return [basse, alte, unisci(oblo, 'sala_obloi')]
+    return [basse, alte, unisci(oblo, 'sala_obloi'), intradosso.crea('sala_varco_intradosso', sporco=lambda co: 0.75)]
 
 
 def galleria(mats):
-    """Balconata a 4 m tutto intorno, colonne sotto il bordo, ringhiera."""
+    """Balconata a 4 m tutto intorno, colonne sotto il bordo, ringhiera. NON USATA dal 16 ottobre (soppalco
+    tolto, scelta dell'utente C1): resta per riferimento."""
     pezzi = []
     pezzi.append(metti(K.galleria_bordo(mats, 40.0, PROF_GAL, z=Z_GAL, spessore=SP_GAL, nome='gal_s', suddividi=0.5, cornice=True), (X1, Y0 + PROF_GAL, 0), 180))
     pezzi.append(metti(K.galleria_bordo(mats, 40.0, PROF_GAL, z=Z_GAL, spessore=SP_GAL, nome='gal_n', suddividi=0.5, cornice=True), (X0, Y1 - PROF_GAL, 0)))
@@ -380,8 +695,10 @@ def soffitto_struttura(mats):
 
 
 def colature(mats):
-    """Colature di ruggine e calcare sotto gli oblò alti e lungo il fronte della galleria (piani con
-    alfa a 1 cm dal muro: in Godot si possono sostituire con nodi Decal)."""
+    """Colature di ruggine e calcare sotto gli oblò alti e sui muri bassi (piani con alfa a 1 cm dal muro:
+    in Godot si possono sostituire con nodi Decal). Quelle sul fronte del soppalco (tolto il 16 ottobre) e
+    quelle nel varco della sala della torre non ci sono più: i loro numeri casuali si consumano lo stesso,
+    così le altre restano dov'erano."""
     m = bpy.data.materials.get('M_amb_decal_colatura')
     if m is None:
         m = bpy.data.materials.new('M_amb_decal_colatura')
@@ -403,9 +720,14 @@ def colature(mats):
     c = K.Costruttore(_M())
     import random
     rnd = random.Random(21)
-    def colatura(centro, normale, w, h):
+    va, vb, vh = varco_torre()
+    def colatura(centro, normale, w, h, metti=True):
         cx_, cy_, zc = centro
         nx, ny = normale
+        if not metti:
+            return
+        if abs(cx_ - X1) < 0.1 and cy_ + w / 2 > va - 0.15 and cy_ - w / 2 < vb + 0.15 and zc - h < vh + 0.1:
+            return            # nel varco della sala della torre (o dietro il portone)
         tx, ty = -ny, nx          # direzione orizzontale lungo il muro
         p = lambda a, b: (cx_ + nx * 0.012 + tx * a, cy_ + ny * 0.012 + ty * a, zc + b)
         q = [p(-w / 2, -h), p(w / 2, -h), p(w / 2, 0), p(-w / 2, 0)]
@@ -418,13 +740,13 @@ def colature(mats):
             colatura((X1, yb, Z_GAL + 2.2 - 0.38), (-1, 0), rnd.uniform(0.7, 1.1), rnd.uniform(1.0, 1.8))
         if i % 2 == 0 and rnd.random() < 0.75:
             colatura((X0, yb, Z_GAL + 2.2 - 0.38), (1, 0), rnd.uniform(0.7, 1.1), rnd.uniform(1.0, 1.8))
-    # sotto il bordo della galleria (fronte), qua e là
+    # erano sotto il bordo del soppalco (fronte): si consumano i numeri ma non si mettono
     for i in range(14):
         x = rnd.uniform(-16, 16)
-        colatura((x, Y1 - PROF_GAL, Z_GAL - 0.12), (0, -1), rnd.uniform(1.0, 2.2), rnd.uniform(0.8, 1.6))
+        colatura((x, Y1 - PROF_GAL, Z_GAL - 0.12), (0, -1), rnd.uniform(1.0, 2.2), rnd.uniform(0.8, 1.6), metti=False)
         x = rnd.uniform(-16, 16)
-        colatura((x, Y0 + PROF_GAL, Z_GAL - 0.12), (0, 1), rnd.uniform(1.0, 2.2), rnd.uniform(0.8, 1.6))
-    # muri bassi sotto la galleria, sopra le piastrelle
+        colatura((x, Y0 + PROF_GAL, Z_GAL - 0.12), (0, 1), rnd.uniform(1.0, 2.2), rnd.uniform(0.8, 1.6), metti=False)
+    # muri bassi, sopra le piastrelle
     for i in range(16):
         y = rnd.uniform(Y0 + 1, Y1 - 1)
         colatura((X1, y, Z_GAL - 0.05), (-1, 0), rnd.uniform(0.8, 1.6), rnd.uniform(1.2, 2.0))
@@ -437,7 +759,7 @@ def colature(mats):
 
 def scala_galleria(mats):
     """Scala in acciaio per salire sulla galleria est: parte a terra in y = 9,6 e arriva in y = 3,0 a
-    4,3 m, con pianerottolo che entra nella galleria (lì la ringhiera è aperta)."""
+    4,3 m, con pianerottolo che entra nella galleria (lì la ringhiera è aperta). NON USATA dal 16 ottobre."""
     c = K.Costruttore(mats)
     g = K.Costruttore(mats)
     x0, x1 = 15.7, 16.9
@@ -489,7 +811,10 @@ def pulsante(mats, nome, pos, verso, colore='gioco_rosso'):
 
 def interattivi(mats, zf):
     """Elementi degli enigmi come nodi separati, ognuno con il perno dove ruota o si muove.
-    Le posizioni sono in sala_dati.json; si possono spostare senza toccare il resto."""
+    Le posizioni sono in sala_dati.json; si possono spostare senza toccare il resto.
+    Dal 16 ottobre (tappa 5 rifatta, sala della torre a est) non ci sono più la turbina dello scarico, il
+    recinto con il cancello della spiaggia, la ruota del cancello con la trasmissione e il quadro elettrico;
+    ci sono il pulsante A della botola e il portone della sala della torre. Restituisce (nodi, dati)."""
     obs = []
     P = PISCINA
     sx, sy = P['scarico']
@@ -521,88 +846,12 @@ def interattivi(mats, zf):
     port.location = (sx, sy + 0.64, zp - 0.01)
     K.collisione_scatola('portello', (-0.64, -1.28, 0.0), (0.64, 0.0, 0.06), padre=port)
     obs.append(port)
-    # pulsante del portello, sulla parete sud della vasca
-    obs.append(pulsante(mats, 'sala_pulsante_portello', (1.9, P['y0'] + 0.01, -1.15), (0, 1)))
-    # turbina dello scarico, in alto sulla parete sud (asse lungo y), con il gonfiabile incastrato
-    c = K.Costruttore(mats)
-    c.toro((0, 0, 0), (0, 1, 0), 0.42, 0.05, 'torre', seg=40, seg_r=6)
-    c.cilindro((0, -0.02, 0), (0, 0.12, 0), 0.09, 'inox', seg=12)
-    for k in range(7):
-        a = 2 * math.pi * k / 7
-        d = Vector((math.cos(a), 0, math.sin(a)))
-        t_ = Vector((-math.sin(a), 0, math.cos(a)))
-        q = [d * 0.08 + Vector((0, 0.02, 0)), d * 0.38 + t_ * 0.06 + Vector((0, 0.06, 0)), d * 0.38 - t_ * 0.06 + Vector((0, 0.1, 0)), d * 0.08 + Vector((0, 0.1, 0))]
-        c.faccia([tuple(v) for v in q], 'gioco_giallo'); c.faccia([tuple(v) for v in q[::-1]], 'gioco_giallo')
-    turb = c.crea('sala_turbina_scarico')
-    turb.location = (4.6, P['y0'] + 0.16, -0.62)
-    obs.append(turb)
-    f = K.Costruttore(mats)   # carter fisso intorno alla turbina
-    f.anello((4.6, P['y0'] + 0.01, -0.62), (0, 1, 0), 0.46, 0.56, 0.22, 'torre', seg=40)
-    for k in range(6):
-        x = 4.6 - 0.45 + k * 0.18
-        f.cilindro((x, P['y0'] + 0.23, -1.06), (x, P['y0'] + 0.23, -0.18), 0.012, 'torre', seg=5, tappi=False)
-    carter = f.crea('sala_turbina_carter')
-    obs.append(carter)
-    # cancello della spiaggia: recinzione bassa lungo la spiaggia (y = 13,6) con cancello al centro
-    rec = []
-    for x0 in (-7.5, -5.5, -3.5):
-        rec.append(metti(K.ringhiera(mats, 2.0 if x0 > -7.5 else 2.0, nome=un('recinto')), (x0, P['y1'] + 0.6, 0)))
-    rec.append(metti(K.ringhiera(mats, 0.0001 + 0.5, nome=un('recinto'), paletto_fine=True), (-1.5, P['y1'] + 0.6, 0)))
-    for x0 in (1.0, 3.0, 5.0):
-        rec.append(metti(K.ringhiera(mats, 2.0 if x0 < 5.0 else 2.5, nome=un('recinto'), paletto_fine=(x0 == 5.0)), (x0, P['y1'] + 0.6, 0)))
-    recinto = unisci(rec, 'sala_recinto_spiaggia')
-    obs.append(recinto)
-    c = K.Costruttore(mats)   # anta del cancello: 2 m, cerniera in x = -1
-    for zz in (0.12, 0.55, 1.0):
-        c.cilindro((0.03, 0, zz), (1.97, 0, zz), 0.02, 'metallo', seg=8, tappi=False)
-    for k in range(0, 19):
-        x = 0.05 + k * 0.105
-        c.cilindro((x, 0, 0.12), (x, 0, 1.0), 0.008, 'metallo', seg=6, tappi=False)
-    c.cilindro((0.0, 0, 0.05), (0.0, 0, 1.08), 0.025, 'metallo', seg=10)
-    c.cilindro((2.0, 0, 0.05), (2.0, 0, 1.08), 0.025, 'metallo', seg=10)
-    canc = c.crea('sala_cancello_spiaggia')
-    canc.location = (-1.0, P['y1'] + 0.6, 0.0)
-    K.collisione_scatola('cancello', (0, -0.04, 0), (2.0, 0.04, 1.1), padre=canc)
-    obs.append(canc)
-    # grande ruota che apre il cancello (la fa girare l'ondata del secchio), con l'albero fino al cancello
-    c = K.Costruttore(mats)
-    R_ = 1.3
-    for xx in (-0.2, 0.2):
-        c.toro((xx, 0, 0), (1, 0, 0), R_, 0.05, 'gioco_blu', seg=40, seg_r=6)
-    c.cilindro((-0.35, 0, 0), (0.35, 0, 0), 0.1, 'inox', seg=12)
-    for k in range(12):
-        a = 2 * math.pi * k / 12
-        dy, dz = math.cos(a), math.sin(a)
-        c.cilindro((0, dy * 0.1, dz * 0.1), (0, dy * R_, dz * R_), 0.03, 'gioco_blu', seg=6, tappi=False)
-        q = [(-0.22, dy * 0.7, dz * 0.7), (0.22, dy * 0.7, dz * 0.7), (0.22, dy * 1.34, dz * 1.34), (-0.22, dy * 1.34, dz * 1.34)]
-        n_ = (0, -dz * 0.02, dy * 0.02)
-        q = [(a_[0], a_[1] + n_[1], a_[2] + n_[2]) for a_ in q]
-        c.faccia(q, 'gioco_giallo'); c.faccia(q[::-1], 'gioco_giallo')
-    ruota = c.crea('sala_ruota_cancello')
-    ruota.location = (-9.2, 13.8, 1.45)
-    K.collisione_scatola('ruota_cancello', (-0.4, -1.4, -1.4), (0.4, 1.4, 1.4), padre=ruota)
-    obs.append(ruota)
-    c = K.Costruttore(mats)   # supporti della ruota e albero di trasmissione (fissi)
-    for xx in (-9.6, -8.8):
-        c.tubo([(xx, 13.1, 0.0), (xx, 13.8, 1.45), (xx, 14.5, 0.0)], 0.06, 'torre', seg=8)
-    c.cilindro((-8.8, 13.8, 1.45), (-8.2, 13.8, 1.45), 0.05, 'inox', seg=8)
-    c.tubo([(-8.2, 13.8, 1.45), (-7.9, 13.8, 0.25), (-7.4, 13.95, 0.25)], 0.05, 'inox', seg=8)
-    c.cilindro((-7.4, 13.95, 0.25), (-1.05, 13.95, 0.25), 0.04, 'inox', seg=8)
-    for x in range(-7, 0, 2):
-        c.scatola((x - 0.05, 13.88, 0.0), (x + 0.05, 14.02, 0.22), 'torre')
-    trasm = c.crea('sala_trasmissione_cancello')
-    obs.append(trasm)
-    # quadro elettrico vicino alla struttura (l'acqua del secchio lo bagna: scintille)
-    c = K.Costruttore(mats)
-    c.scatola((-0.35, -0.12, 0.0), (0.35, 0.12, 0.9), 'metallo')
-    c.scatola((-0.32, -0.125, 0.04), (0.32, -0.12, 0.86), 'gioco_giallo')
-    for k in range(3):
-        c.cilindro((-0.2 + k * 0.2, -0.13, 0.7), (-0.2 + k * 0.2, -0.16, 0.7), 0.03, 'luce_rossa' if k == 1 else 'inox', seg=10)
-    c.tubo([(0.0, 0.0, 0.9), (0.0, 0.0, 2.6)], 0.03, 'inox', seg=6)
-    quadro = c.crea('sala_quadro_elettrico')
-    quadro.location = (-9.0, Y1 - PROF_GAL + 0.15, 1.1)
-    K.collisione_scatola('quadro', (-0.35, -0.12, 0.0), (0.35, 0.12, 0.9), padre=quadro)
-    obs.append(quadro)
+    # pulsante della botola, versione A: cassetta, fungo e lampeggiante sulla parete sud della vasca
+    pulsante_a, dati_pulsante = pulsante_botola(mats)
+    obs += pulsante_a
+    # portone scorrevole della sala della torre, nel varco della parete est
+    portone, dati_portone = portone_torre(mats)
+    obs += portone
     # pulsante dei bambini sul piedistallo (il fungo rosso; la scatola gialla è nel piedistallo)
     PD = PIEDISTALLO
     if CENTRO['modo'] == 'monumento':
@@ -614,23 +863,25 @@ def interattivi(mats, zf):
     for o in obs:
         for ch in o.children:
             ch.hide_render = True
-    return obs
+    return obs, dict(pulsante_botola=dati_pulsante, portone_torre=dati_portone)
 
 
 def altoparlanti(mats):
-    """Altoparlanti a tromba sulle colonne della galleria (da qui parte la sigla)."""
+    """Altoparlanti a tromba (da qui parte la sigla): erano sulle colonne del soppalco; dal 16 ottobre sulle
+    pareti nord e sud, stessa x e stessa quota."""
     c = K.Costruttore(mats)
-    posti = [(-9.0, Y0 + PROF_GAL - 0.35 + 0.22, 3.3, 1), (9.0, Y0 + PROF_GAL - 0.35 + 0.22, 3.3, 1),
-             (-9.0, Y1 - PROF_GAL + 0.35 - 0.22, 3.3, -1), (9.0, Y1 - PROF_GAL + 0.35 - 0.22, 3.3, -1)]
-    for (x, y, z, v) in posti:
-        b = Vector((x, y, z))
+    for (x, y, v) in ((-9.0, Y0, 1), (9.0, Y0, 1), (-9.0, Y1, -1), (9.0, Y1, -1)):
+        z = 3.3
+        b = Vector((x, y + 0.08 * v, z))
+        if v > 0:
+            c.scatola((x - 0.1, y, z - 0.1), (x + 0.1, y + 0.08 * v, z + 0.1), 'metallo')
+        else:
+            c.scatola((x - 0.1, y + 0.08 * v, z - 0.1), (x + 0.1, y, z + 0.1), 'metallo')
         d = Vector((0, v, -0.25)).normalized()
-        c.scatola((x - 0.1, y - 0.06 * v, z - 0.1), (x + 0.1, y + 0.02 * v, z + 0.1), 'metallo')
         pts = [b + d * 0.05, b + d * 0.45]
-        seg = 16
         u = Vector((1, 0, 0)); w = d.cross(u).normalized()
-        for k in range(seg):
-            a0, a1 = 2 * math.pi * k / seg, 2 * math.pi * (k + 1) / seg
+        for k in range(16):
+            a0, a1 = 2 * math.pi * k / 16, 2 * math.pi * (k + 1) / 16
             q = [pts[0] + (u * math.cos(a0) + w * math.sin(a0)) * 0.06, pts[0] + (u * math.cos(a1) + w * math.sin(a1)) * 0.06,
                  pts[1] + (u * math.cos(a1) + w * math.sin(a1)) * 0.24, pts[1] + (u * math.cos(a0) + w * math.sin(a0)) * 0.24]
             c.faccia([tuple(p_) for p_ in q], 'metallo', liscia=True)
@@ -1690,8 +1941,9 @@ def ingombro_centro(modo=None):
 
 
 def cordone_vasca(mats):
-    """Cordone di velluto su colonnine d'ottone intorno alla vasca (1,3 m dal bordo), con il varco
-    davanti, verso l'ingresso. Collisioni sulle campate."""
+    """Cordone di velluto su colonnine d'ottone intorno alla vasca della medusa (1,3 m dal bordo). Dal 16
+    ottobre è chiuso (20 colonnine, niente varco davanti) e ogni campata ha un muro invisibile alto 2,5 m:
+    non ci si avvicina e non lo si salta (D1, nota dell'utente)."""
     V = VASCA_CENTRALE
     m = V['cordone']
     giro, s = rett_arrotondato(V['cx'], V['cy'], V['lx'] + 2 * m, V['ly'] + 2 * m, V['r'] + m, passo=0.05, seg_arco=24)
@@ -1702,17 +1954,12 @@ def cordone_vasca(mats):
         target = totale * k / n
         i = min(range(len(giro)), key=lambda j: abs(s[j] - target))
         p = giro[i][0]
-        davanti = p.y < V['cy'] - V['ly'] / 2 - m + 0.05 and abs(p.x - V['cx']) < 1.2
-        pali.append((p.x, p.y, davanti))
-    pali = [(x, y) for x, y, dv in pali if not dv]
+        pali.append((p.x, p.y))
     c = K.Costruttore(mats)
     H = 0.95
     copie = colonnine(c, pali, H, 'sala_vasca_colonnina')
-    campate = []
     for i in range(len(pali)):
         a, b = pali[i], pali[(i + 1) % len(pali)]
-        if math.hypot(b[0] - a[0], b[1] - a[1]) > 2.2:     # il varco davanti
-            continue
         A = Vector((a[0], a[1], H - 0.07)); B = Vector((b[0], b[1], H - 0.07))
         curva = []
         for k in range(13):
@@ -1723,12 +1970,12 @@ def cordone_vasca(mats):
         c.tubo(curva, 0.024, 'velluto', seg=10)
         for e in (A, B):
             c.cilindro(tuple(e + Vector((0, 0, -0.03))), tuple(e + Vector((0, 0, 0.03))), 0.03, 'cornice_oblo', seg=8)
-        campate.append((a, b))
     ob = c.crea('sala_vasca_cordone', sporco=lambda co: 0.85)
-    for i, (a, b) in enumerate(campate):
+    for i in range(len(pali)):
+        a, b = pali[i], pali[(i + 1) % len(pali)]
         d = Vector((b[0] - a[0], b[1] - a[1], 0)).normalized()
-        nn = Vector((-d.y, d.x, 0)) * 0.04
-        pts = [tuple(Vector((p[0], p[1], z)) + s_ * nn) for p in (a, b) for z in (0.0, 1.0) for s_ in (-1, 1)]
+        nn = Vector((-d.y, d.x, 0)) * 0.06
+        pts = [tuple(Vector((p[0], p[1], z)) + s_ * nn) for p in (a, b) for z in (0.0, 2.5) for s_ in (-1, 1)]
         K.collisione_punti(f'cordone_vasca_{i}', pts, padre=ob)
     return [ob] + copie
 
@@ -1871,7 +2118,8 @@ def lampione(mats, base, nome='amb_lampione'):
 # ----------------------------------------------------------------------------- area bimbi
 
 def struttura_gioco(mats):
-    """Struttura di gioco a più piani con il secchio gigante in cima (area bimbi, nord-ovest)."""
+    """Struttura di gioco a più piani con il secchio gigante in cima (area bimbi, angolo nord-ovest dal
+    16 ottobre: la scala guarda verso chi arriva, lo scivolo scende nella vasca piccola)."""
     cx, cy = STRUTTURA['cx'], STRUTTURA['cy']
     c = K.Costruttore(mats)
     torri = [((-2.6, -1.2), 1.4, 'gioco_verde'), ((0.2, -1.2), 2.6, 'gioco_arancio'),
@@ -1961,23 +2209,8 @@ def struttura_gioco(mats):
     K.collisione_scatola('gioco_passerella_2', (cx - 1.4, cy + 1.2, 2.52), (cx - 1.0, cy + 2.0, 2.6), padre=ob)
     K.collisione_punti('gioco_ponte', [(cx - 0.6, cy - 0.6, 2.95), (cx + 1.0, cy - 0.6, 2.95), (cx - 0.6, cy + 0.8, 3.75),
                                        (cx + 1.0, cy + 0.8, 3.75), (cx - 0.6, cy - 0.6, 3.05), (cx + 1.0, cy + 0.8, 3.85)], padre=ob)
-    # ruota a pale (oggetto a parte, perno sull'asse x: la fa girare il getto)
-    r = K.Costruttore(mats)
-    r.toro((0, 0, 0), (1, 0, 0), 0.85, 0.035, 'gioco_rosso', seg=32, seg_r=6)
-    r.toro((0.3, 0, 0), (1, 0, 0), 0.85, 0.035, 'gioco_rosso', seg=32, seg_r=6)
-    r.cilindro((-0.1, 0, 0), (0.55, 0, 0), 0.06, 'inox', seg=10)
-    for k in range(10):
-        t = 2 * math.pi * k / 10
-        dy, dz = math.cos(t), math.sin(t)
-        pal = [Vector((0.0, dy * 0.2, dz * 0.2)), Vector((0.3, dy * 0.2, dz * 0.2)), Vector((0.0, dy * 0.85, dz * 0.85)), Vector((0.3, dy * 0.85, dz * 0.85))]
-        n_ = Vector((0, -dz, dy)) * 0.02
-        q = [pal[0] - n_, pal[1] - n_, pal[3] - n_, pal[2] - n_]
-        r.faccia(q, 'gioco_giallo'); r.faccia(q[::-1], 'gioco_giallo')
-        r.cilindro((0.15, dy * 0.06, dz * 0.06), (0.15, dy * 0.82, dz * 0.82), 0.025, 'gioco_rosso', seg=6, tappi=False)
-    ruota = r.crea('sala_ruota_pale')
-    ruota.location = (cx - 4.2, cy - 1.2, 1.3)
-    K.collisione_scatola('ruota_pale', (-0.1, -0.9, -0.9), (0.4, 0.9, 0.9), padre=ruota)
-    ruota.children[0].hide_render = True
+    # (la ruota a pale che riempiva il secchio non c'è più: tolta il 16 ottobre con la tappa 5 rifatta,
+    #  il secchio gigante resta come scenografia)
     # secchio gigante (oggetto a parte, ruota sull'asse x)
     s = K.Costruttore(mats)
     Rb, Rt, Hb = 0.9, 1.15, 1.5
@@ -2003,7 +2236,7 @@ def struttura_gioco(mats):
     secchio.rotation_euler = Euler((math.radians(-14), 0, 0))
     K.collisione_scatola('secchio', (-1.2, -1.2, -0.85), (1.2, 1.2, 0.65), padre=secchio)
     secchio.children[0].hide_render = True
-    return [ob, secchio, ruota]
+    return [ob, secchio]
 
 
 def senza_colori(ob):
@@ -2038,7 +2271,8 @@ def secchio_hq(secchio, mats):
 
 def torre_scivoli(mats):
     """Impalcatura di acciaio arrugginito: 4 colonne, pozzo centrale aperto, piattaforme a grigliato
-    a 3, 6 e 8,6 m, controventi a croce, scale a rampe sul lato est, parapetti."""
+    a 3, 6 e 8,6 m, controventi a croce, scale a rampe sul lato est, parapetti. NON USATA dal 16 ottobre:
+    la torre lascia la sala grande e si rifà nella sala della torre, con una proposta a parte."""
     T = TORRE
     cx, cy, Lt = T['cx'], T['cy'], T['lato']
     x0, x1, y0, y1 = cx - Lt / 2, cx + Lt / 2, cy - Lt / 2, cy + Lt / 2
@@ -2251,15 +2485,16 @@ def scivoli(mats, zf_piscina):
 # ----------------------------------------------------------------------------- arredi dell'architettura
 
 def cartelloni(mats):
-    """Cartelloni disegnati (nessuna scritta) appesi alle ringhiere della galleria."""
+    """Cartelloni disegnati (nessuna scritta): erano appesi alle ringhiere del soppalco; dal 16 ottobre
+    stanno sulle pareti nord e sud, alla stessa quota, con la cornice appoggiata al muro."""
     obs = []
     zr = Z_GAL + SP_GAL - 0.15
     for i, (x, chiave) in enumerate(((-9.0, 'p1'), (-1.5, 'p2'), (6.0, 'p3'))):
         ob = K.cartellone(mats, 3.2, 1.8, nome=f'sala_cartellone_n{i}')
-        obs.append(metti(ob, (x, Y1 - PROF_GAL - 0.06, zr)))
+        obs.append(metti(ob, (x, Y1 - 0.005, zr)))
     # (i due cartelloni sul lato est sono stati sostituiti dai teli con la mascotte, vedi cartelloni_mascotte)
     ob = K.cartellone(mats, 3.2, 1.8, nome='sala_cartellone_s0')
-    obs.append(metti(ob, (-8.0, Y0 + PROF_GAL + 0.06, zr), 180))
+    obs.append(metti(ob, (-8.0, Y0 + 0.005, zr), 180))
     # ogni cartellone con la sua grafica
     grafiche = ['p1', 'p2', 'p3', 'p3']
     for ob, g in zip(obs, grafiche):
@@ -2307,29 +2542,55 @@ def cartelloni_mascotte(mats):
 
 
 def lampade(mats):
-    """Plafoniere al neon sotto la galleria (accese, spente o a metà) e luci d'emergenza rosse.
-    Restituisce gli oggetti e l'elenco delle sorgenti (tipo, posizione, ...) per le luci."""
+    """Plafoniere al neon (accese, spente o a metà) e luci d'emergenza rosse. Dal 16 ottobre (soppalco tolto)
+    ogni plafoniera sta su due staffe fissate alla parete, alla quota di prima (3,88 m) e a 32 cm dal
+    muro: stesso seme, quindi le stesse lampade accese e le luci con gli stessi nomi. Quelle che cadono
+    nel varco della sala della torre non ci sono più ma tengono il loro numero, così i nomi delle altre
+    luci non cambiano. Restituisce gli oggetti e le sorgenti (tipo, posizione, rotazione, intensità, tolta)."""
     obs, sorgenti = [], []
-    zl = Z_GAL - 0.12  # sotto la veletta del fronte
+    zl = Z_GAL - 0.12  # quota di prima (sotto la veletta del soppalco)
     import random
     rnd = random.Random(11)
+    D_ = 0.32
+    va, vb, vh = varco_torre()
+    def nel_varco(p):   # parete est, nel varco o accanto al portone
+        return abs(p[0] - X1) < 0.5 and va - 1.4 < p[1] < vb + 1.4 and p[2] < vh + 3.0
     stati = []
-    # lato est e ovest: plafoniere orientate lungo y; nord e sud lungo x
+    # lato est e ovest: plafoniere orientate lungo y; nord e sud lungo x (verso: dalla lampada al muro)
     for y in range(int(Y0) + 4, 21, 4):
-        stati.append(((X1 - 1.5, y + 0.0, zl), 90))
-        stati.append(((X0 + 1.5, y + 0.0, zl), 90))
+        stati.append(((X1 - D_, y + 0.0, zl), 90, (1, 0)))
+        stati.append(((X0 + D_, y + 0.0, zl), 90, (-1, 0)))
     for x in range(-16, 17, 4):
         if abs(x) < 1:
             continue
-        stati.append(((x + 0.0, Y0 + 1.5, zl), 0))
-        stati.append(((x + 0.0, Y1 - 1.5, zl), 0))
-    for i, (pos, rot) in enumerate(stati):
+        stati.append(((x + 0.0, Y0 + D_, zl), 0, (0, -1)))
+        stati.append(((x + 0.0, Y1 - D_, zl), 0, (0, 1)))
+    for i, (pos, rot, verso) in enumerate(stati):
         r = rnd.random()
         acc = (True, True) if r < 0.5 else ((True, False) if r < 0.75 else (False, False))
-        obs.append(metti(K.lampada_neon(mats, accesa=acc, nome=f'neon_{i}'), pos, rot))
+        via = nel_varco(pos)
         if acc[0]:
-            sorgenti.append(('neon', pos, rot, 1.0 if acc[1] else 0.45))
-    # luci d'emergenza rosse sulle pareti (sotto e sopra la galleria)
+            sorgenti.append(('neon', pos, rot, 1.0 if acc[1] else 0.45, via))
+        if via:
+            continue
+        obs.append(metti(K.lampada_neon(mats, accesa=acc, nome=f'neon_{i}'), pos, rot))
+        c = K.Costruttore(mats)
+        lungo = Vector((0, 1, 0)) if rot == 90 else Vector((1, 0, 0))
+        n = Vector((verso[0], verso[1], 0))
+        muro = Vector((pos[0] + verso[0] * D_, pos[1] + verso[1] * D_, zl))
+        for s_ in (-0.42, 0.42):
+            a = muro + lungo * s_
+            b = Vector(pos) + lungo * s_
+            lo = Vector((min(a.x, b.x), min(a.y, b.y), zl - 0.005))
+            hi = Vector((max(a.x, b.x), max(a.y, b.y), zl + 0.035))
+            if rot == 90:
+                lo.y -= 0.02; hi.y += 0.02
+            else:
+                lo.x -= 0.02; hi.x += 0.02
+            c.scatola(tuple(lo), tuple(hi), 'metallo')                     # staffa
+            c.scatola_assi(tuple(muro + lungo * s_ - n * 0.005), (tuple(lungo), (0, 0, 1), tuple(n)), (0.05, 0.07, 0.008), 'metallo')   # piastra
+        obs.append(c.crea(f'staffe_{i}'))
+    # luci d'emergenza rosse sulle pareti (in basso e in alto)
     emerg = [((X1, -6.0, 2.9), -90), ((X1, 6.0, 2.9), -90), ((X1, 18.0, 2.9), -90),
              ((X0, -4.0, 2.9), 90), ((X0, 8.0, 2.9), 90), ((X0, 20.0, 2.9), 90),
              ((-6.0, Y1, 2.9), 0), ((8.0, Y1, 2.9), 0), ((-5.0, Y0, 2.9), 180), ((5.0, Y0, 2.9), 180),
@@ -2337,10 +2598,12 @@ def lampade(mats):
              ((2.0, Y1, 8.6), 0), ((X1, 14.0, 8.6), -90), ((X0, -6.0, 8.6), 90),
              ((X1, -14.0, 2.9), -90), ((X0, -16.0, 2.9), 90), ((X1, -12.0, 8.6), -90), ((-14.0, Y0, 8.6), 180)]
     for i, (pos, rot) in enumerate(emerg):
-        obs.append(metti(K.luce_emergenza(mats, nome=f'emerg_{i}'), pos, rot))
+        via = nel_varco(pos)
         d = Vector((0, -0.12, 0))
         d.rotate(Euler((0, 0, math.radians(rot))))
-        sorgenti.append(('rossa', tuple(Vector(pos) + d), rot, 1.0))
+        sorgenti.append(('rossa', tuple(Vector(pos) + d), rot, 1.0, via))
+        if not via:
+            obs.append(metti(K.luce_emergenza(mats, nome=f'emerg_{i}'), pos, rot))
     return obs, sorgenti
 
 
@@ -2488,6 +2751,49 @@ def importa_oggetto(nome):
     return ob
 
 
+def appoggia(o, zf_piscina):
+    """Porta un oggetto messo a terra a toccare il pavimento (o il fondo della piscina) con il suo punto più
+    basso. Con l'inclinazione a caso alcuni entravano nel pavimento e altri restavano sollevati (riscontro C3
+    dell'utente: niente oggetti compenetrati con lo sfondo). Gli oggetti dritti non si muovono."""
+    import numpy as np
+    bpy.context.view_layer.update()
+    me = o.data
+    co = np.empty(len(me.vertices) * 3)
+    me.vertices.foreach_get('co', co)
+    mw = np.array(o.matrix_world)
+    co = co.reshape(-1, 3) @ mw[:3, :3].T + mw[:3, 3]
+    P = PISCINA
+    dentro = (co[:, 0] > P['x0']) & (co[:, 0] < P['x1']) & (co[:, 1] > P['y0']) & (co[:, 1] < P['y1'])
+    base = np.zeros(len(co))
+    if dentro.any():
+        base[dentro] = [zf_piscina(float(x), float(y)) for x, y in co[dentro][:, :2]]
+    dz = float((base - co[:, 2]).max())
+    o.location.z += dz
+    return dz
+
+
+def appoggia_muro(o):
+    """Porta un oggetto appeso a toccare il muro della sala più vicino con il suo punto più vicino al muro: i
+    salvagenti appesi restavano staccati di qualche centimetro (controllo degli oggetti, riscontro C3)."""
+    import numpy as np
+    if o is None:
+        return 0.0
+    bpy.context.view_layer.update()
+    me = o.data
+    co = np.empty(len(me.vertices) * 3)
+    me.vertices.foreach_get('co', co)
+    mw = np.array(o.matrix_world)
+    co = co.reshape(-1, 3) @ mw[:3, :3].T + mw[:3, 3]
+    x, y = o.location.x, o.location.y
+    vicino = min((X1 - x, 'e'), (x - X0, 'o'), (Y1 - y, 'n'), (y - Y0, 's'))[1]
+    d = {'e': X1 - co[:, 0].max(), 'o': X0 - co[:, 0].min(), 'n': Y1 - co[:, 1].max(), 's': Y0 - co[:, 1].min()}[vicino]
+    if vicino in 'eo':
+        o.location.x += d
+    else:
+        o.location.y += d
+    return d
+
+
 def disponi_oggetti(zf_piscina):
     """Oggetti di scena messi in modo credibile (lasciati lì, spostati dall'acqua, ammucchiati).
     Restituisce (copie, offerte, modelli): le offerte dei bambini intorno al centro (vasca o
@@ -2495,13 +2801,21 @@ def disponi_oggetti(zf_piscina):
     monumento."""
     copie, offerte = [], []
     dest = [copie]
+    conta = [0]
     def metti_ogg(n, pos, rot=0.0, scala=1.0, incl=(0.0, 0.0)):
+        nome_ob = f'ogg_{n}_{conta[0]}'
+        conta[0] += 1                    # anche per quelli tolti: i nomi degli altri restano gli stessi
+        if nome_ob in TOGLI_OGGETTI:
+            return None
         x, y, z = pos
+        a_terra = z is None or z == 0.0
         if z is None:
             z = 0.0
             if PISCINA['x0'] < x < PISCINA['x1'] and PISCINA['y0'] < y < PISCINA['y1']:
                 z = zf_piscina(x, y)
-        o = copia_modello(n, (x, y, z), rot, scala, incl, nome_ob=f'ogg_{n}_{len(copie) + len(offerte)}')
+        o = copia_modello(n, (x, y, z), rot, scala, incl, nome_ob=nome_ob)
+        if a_terra:
+            appoggia(o, zf_piscina)
         dest[0].append(o)
         return o
     # --- fondo della piscina e pozza (S06): giocattoli trascinati verso lo scarico
@@ -2521,12 +2835,12 @@ def disponi_oggetti(zf_piscina):
     metti_ogg('ciambella_gonfiabile', (17.6, -2.4, 0.0), 30, 1.0)
     metti_ogg('paperella_gigante', (18.6, -2.9, 0.0), -120, 0.5)
     metti_ogg('tubi_galleggianti', (16.4, -6.4, 0.0), 75)
-    # salvagenti appesi ai muri (in piedi, con il retro contro le piastrelle)
-    metti_ogg('salvagente_nave', (X1 - 0.04, -7.6, 1.15), -90, 1.0, (90, 0))
-    metti_ogg('salvagente_nave', (X1 - 0.04, 4.0, 1.15), -90, 1.0, (88, 0))
-    metti_ogg('salvagente_nave', (X0 + 0.04, -1.0, 1.15), 90, 1.0, (88, 0))
-    metti_ogg('salvagente_nave', (X0 + 0.04, 11.0, 1.15), 90, 1.0, (92, 0))
-    metti_ogg('salvagente_nave', (-3.2, Y0 + 0.04, 1.25), 180, 1.0, (90, 0))
+    # salvagenti appesi ai muri (in piedi, con il retro contro le piastrelle: appoggia_muro li porta a toccarle)
+    appoggia_muro(metti_ogg('salvagente_nave', (X1 - 0.04, -7.6, 1.15), -90, 1.0, (90, 0)))
+    appoggia_muro(metti_ogg('salvagente_nave', (X1 - 0.04, 4.0, 1.15), -90, 1.0, (88, 0)))
+    appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, -1.0, 1.15), 90, 1.0, (88, 0)))
+    appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, 11.0, 1.15), 90, 1.0, (92, 0)))
+    appoggia_muro(metti_ogg('salvagente_nave', (-3.2, Y0 + 0.04, 1.25), 180, 1.0, (90, 0)))
     # --- bordo piscina: sedia del bagnino, lettini in fila (uno rovesciato)
     metti_ogg('sedia_bagnino', (8.6, 2.5, 0.0), -90)
     for i, y in enumerate((-3.5, -1.2, 5.6, 8.0)):
@@ -2535,8 +2849,8 @@ def disponi_oggetti(zf_piscina):
     metti_ogg('lettino_plastica', (-6.0, -8.2, 0.0), 75)
     # --- area bimbi: balena sgonfia nella vasca bassa, funghi, cannoncini, paperelle
     metti_ogg('balena_gonfiabile_sgonfia', (-15.0, 12.1, 0.33), 140, 0.95)
-    metti_ogg('fungo_fontana', (-10.4, 12.4, 0.0), 20, 1.0)
-    metti_ogg('fungo_fontana', (-9.4, 9.8, 0.0), 75, 0.75)
+    for (fx, fy, fr, fs) in FUNGHI:   # nella piazza della disposizione 1 (prima: (-10,4; 12,4) e (-9,4; 9,8))
+        metti_ogg('fungo_fontana', (fx, fy, 0.0), fr, fs)
     metti_ogg('cannoncino_acqua', (-12.0, 13.9, 2.6), 160, 0.85)
     metti_ogg('cannoncino_acqua', (-14.0, 14.0, 1.4), 200, 0.85)
     metti_ogg('cannoncino_acqua', (-10.8, 5.6, 0.0), 120, 1.0)
@@ -2567,7 +2881,7 @@ def disponi_oggetti(zf_piscina):
         metti_ogg('salvagente_nave', (V['cx'] - 1.75, yf - 0.1, 0.0), 0, 1.0, (75, 0))          # appoggiato al muro davanti
         metti_ogg('orsacchiotto_grande', (V['cx'] + 1.9, yf - 0.35, 0.0), 160, 0.38)          # seduto a terra, guarda l'ingresso
         metti_ogg('paperella_gigante', (V['cx'] - 2.62, V['cy'] + V['ly'] / 2 - 0.16, V['h']), 210, 0.2)
-        metti_ogg('paperella_gigante', (V['cx'] + 2.6, V['cy'] + 0.4, V['h']), 120, 0.18)
+        metti_ogg('paperella_gigante', (V['cx'] + 2.85, V['cy'] + 0.4, V['h']), 120, 0.18)   # sul bordo (a 2,6 era sospesa sull'acqua)
         metti_ogg('paperella_gigante', (V['cx'] + 1.2, V['cy'] + 0.9, V['acqua'] - 0.03), 70, 0.24)   # galleggia
         metti_ogg('ciambella_gonfiabile', (V['cx'] - 1.4, V['cy'] + 0.7, V['acqua'] - 0.06), 25, 0.6, (3, 0))
         metti_ogg('pallone_spiaggia', (V['cx'] - 3.45, V['cy'] - 1.2, 0.0), 0, 0.75)
@@ -2617,18 +2931,19 @@ def arredi(metti_ogg):
     metti_ogg('panca', (6.0, yp, 0.0), 0)
     metti_ogg('panca', (X0 + 0.42, -12.0, 0.0), 90)
     metti_ogg('panca', (X1 - 0.42, -14.0, 0.0), 90)
-    metti_ogg('panca', (X1 - 0.42, 10.0, 0.0), 90)
+    # (era in y 10: dal 16 ottobre lì scorre il portone della sala della torre, aprendosi verso sud)
+    metti_ogg('panca', (X1 - 0.42, 6.6, 0.0), 90)
     metti_ogg('cestino_pesce', (-4.5, Y0 + 0.5, 0.0), 180 + 8)
     metti_ogg('cestino_pesce', (7.6, Y0 + 0.5, 0.0), 180 - 12)
     metti_ogg('cestino_pesce', (13.2, 10.6, 0.0), -90 + 15)
-    metti_ogg('cestino_pesce', (-8.6, 18.4, 0.0), 90 - 10)       # vicino alla struttura di gioco (fuori dalla camera d)
+    metti_ogg('cestino_pesce', (-8.6, 18.4, 0.0), 90 - 10)       # vicino alla struttura di gioco (tolto con la disposizione 1)
     metti_ogg('cestino_pesce', (X0 + 0.7, -9.0, 0.0), 90 + 6, 1.0, (0, -4))
     # (fuori dai punti dove il giocatore si ferma: il test della sala parte da (2,5; 18) Godot verso il
     # lampione e aspira dalla vasca d'arrivo da (-8,3; 2))
     metti_ogg('cartello_pavimento_bagnato', (-3.4, -15.0, 0.0), 15)
     metti_ogg('cartello_pavimento_bagnato', (-3.0, -6.2, 0.0), 10)
     metti_ogg('cartello_pavimento_bagnato', (-8.2, 2.6, 0.0), 75)
-    metti_ogg('cartello_pavimento_bagnato', (-9.4, 4.6, 0.2), 30, 1.0, (88, 0))      # caduto
+    metti_ogg('cartello_pavimento_bagnato', (-9.4, 4.6, 0.2), 30, 1.0, (88, 0))      # caduto (tolto con la disposizione 1)
 
 
 # ----------------------------------------------------------------------------- luci, nebbia, camere
@@ -2657,7 +2972,9 @@ def illumina(sorgenti, lampadina_lampione, lampo=False):
         f.rotation_euler = Vector((0.45, -0.55, -1.0)).to_track_quat('-Z', 'Y').to_euler()
     # cielo diffuso attraverso la cupola
     luce('cielo_cupola', 'AREA', (0, 5, Z_SOFF + CUPOLA['tamburo'] + 5.2), 600, (0.42, 0.52, 0.85), size=18.0, shape='DISK')
-    for tipo, pos, rot, k in sorgenti:
+    for tipo, pos, rot, k, via in sorgenti:
+        if via:
+            continue
         if tipo == 'neon':
             p = Vector(pos) + Vector((0, 0, -0.11))
             ob = luce('neon_luce', 'AREA', tuple(p), 70 * k, (0.80, 1.0, 0.93), size=1.25, size_y=0.12, shape='RECTANGLE')
@@ -2669,7 +2986,7 @@ def illumina(sorgenti, lampadina_lampione, lampo=False):
               spot_size=math.radians(120), spot_blend=0.55, shadow_soft_size=0.05)
     lp.rotation_euler = Euler((0, 0, 0))
     luce('lampione_alone', 'POINT', tuple(lampadina_lampione + Vector((0, 0, 0.12))), 18, (1.0, 0.72, 0.42), shadow_soft_size=0.05)
-    # monumento: faretti dal basso e fari dalla galleria
+    # monumento: faretti dal basso e fari dalla parete sud
     for L in LUCI_MONUMENTO:
         faro = L['nome'].startswith('luce_faro')
         vasca = L['nome'].startswith('luce_vasca')
@@ -2798,6 +3115,7 @@ GRUPPI = {}
 LUCI_MONUMENTO = []          # faretti dal basso e fari dalla galleria (riempita da costruisci)
 LUCI_EXTRA = []              # plafoniere calde e insegne al neon (riempita da costruisci)
 LUCI_CARTELLONI = []         # faretti caldi dei teli con la mascotte (riempita da costruisci)
+DATI_NUOVI = {}              # pulsante della botola e portone della sala della torre (riempita da costruisci)
 LAMPIONE = (2.8, -13.2, 0.0)  # lampione accanto al monumento: il braccio porta la lampada verso la statua
 
 
@@ -2816,13 +3134,15 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     _CONTA.clear()
     _MODELLI.clear()
     mats = K.Materiali(PALETTE_SALA, per_render=per_render)
+    materiali_nuovi(mats)
+    DATI_NUOVI.clear()
     arch = []
     buchi = [(PISCINA['x0'] - 0.5, PISCINA['y0'] - 0.5, PISCINA['x1'] + 0.5, PISCINA['y1'] + 0.5),
              (VASCA_ARRIVO['x0'] - 0.5, VASCA_ARRIVO['y0'] - 0.5, VASCA_ARRIVO['x1'] + 0.5, VASCA_ARRIVO['y1'] + 0.5)]
     F = FOSSA_BIMBI
     arch.append(gruppo('architettura', pavimento_regione(mats, X0, X1, Y0, Y1, buchi, esatti=[(F['x0'], F['y0'], F['x1'], F['y1'])])))
     arch += gruppo('architettura', pareti(mats))
-    arch += gruppo('architettura', galleria(mats))
+    # (soppalco, colonne e ringhiere tolti il 16 ottobre: galleria() non si usa più)
     arch.append(gruppo('architettura', soffitto_con_foro(mats, X0, X1, Y0, Y1, Z_SOFF, CUPOLA['cx'], CUPOLA['cy'], CUPOLA['r'])))
     arch += gruppo('cupola', cupola(mats))
     pis, zf = piscina_onde(mats)
@@ -2834,7 +3154,9 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     arch += va
     gruppo('torre_scivoli', [o for o in va if not o.name.endswith('_acqua')])
     gruppo('acqua', [o for o in va if o.name.endswith('_acqua')])
-    for args in ((-12.6, 9.6, 4.4, 3.2, 'sala_vasca_bimbi_1', 0.3), (-15.3, 12.4, 2.8, 2.8, 'sala_vasca_bimbi_2', 0.22)):
+    VB = VASCA_BIMBI_2
+    for args in ((-12.6, 9.6, 4.4, 3.2, 'sala_vasca_bimbi_1', 0.3),
+                 (VB['cx'], VB['cy'], VB['lato'], VB['lato'], 'sala_vasca_bimbi_2', VB['acqua'])):
         bordi = bordi_vasca_bimbi_1() if args[4] == 'sala_vasca_bimbi_1' else None
         vb = vasca_bassa(mats, *args[:5], acqua=args[5], bordi=bordi)
         arch += vb
@@ -2845,19 +3167,20 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     lamp, lampadina = lampione(mats, LAMPIONE)
     if CENTRO['modo'] == 'monumento':     # la statua sul monumento (per più avanti)
         ped, luci_mon = piedistallo(mats)
-        fari, luci_fari = fari_galleria(mats)
+        fari, luci_fari = fari_parete(mats)
         LUCI_MONUMENTO[:] = luci_mon + luci_fari
         arch += gruppo('monumento', [ped] + cordone(mats) + [lamp, fari, offerte_monumento(mats)])
     else:                                 # la vasca sollevata con la medusa affacciata
         VC = VASCA_CENTRALE
         vasca, acqua_vc, luci_vasca = vasca_centrale(mats)
-        fari, luci_fari = fari_galleria(mats, (VC['cx'], VC['cy'] - VC['ly'] / 2 + 0.55, 1.75))
+        fari, luci_fari = fari_parete(mats, (VC['cx'], VC['cy'] - VC['ly'] / 2 + 0.55, 1.75))
         LUCI_MONUMENTO[:] = luci_vasca + luci_fari
         arch += gruppo('vasca_centrale', vasca + cordone_vasca(mats) + [lamp, fari, offerte_vasca(mats)])
         gruppo('acqua', acqua_vc)
     arch += gruppo('area_bimbi', struttura_gioco(mats))
-    arch += gruppo('torre_scivoli', torre_scivoli(mats))
-    arch += gruppo('torre_scivoli', scivoli(mats, zf))
+    # (la torre degli scivoli e gli scivoli non sono più nella sala dal 16 ottobre: si rifanno nella sala
+    #  della torre con una proposta a parte; sala_torre_scivoli.glb tiene solo la vasca d'arrivo)
+    arch.append(gruppo('architettura', guscio_sala_torre(mats)))
     arch += gruppo('architettura', cartelloni(mats))
     teli, luci_teli = cartelloni_mascotte(mats)
     arch += gruppo('architettura', teli)
@@ -2872,13 +3195,14 @@ def costruisci(con_oggetti=True, per_render=True, con_corridoio=False):
     arch.append(gruppo('architettura', D.pozzanghere(mats)))
     arch.append(gruppo('architettura', soffitto_struttura(mats)))
     arch.append(gruppo('architettura', colature(mats)))
-    arch += gruppo('architettura', scala_galleria(mats))
     arch.append(gruppo('architettura', altoparlanti(mats)))
     porta = metti(K.porta_stagna(mats, VANO['luce'], VANO['h'], nome='sala_porta_stagna'), (VANO['cx'], Y0, 0.0), 180)
     arch.append(gruppo('architettura', unisci([porta], 'sala_porta_stagna')))
     if con_corridoio:   # solo per i render: il corridoio vero è negli spogliatoi (assets_src/ambienti_interni)
         arch.append(gruppo('architettura', corridoio_spogliatoi(mats)))
-    arch += gruppo('interattivi', interattivi(mats, zf))
+    inter, dati_inter = interattivi(mats, zf)
+    arch += gruppo('interattivi', inter)
+    DATI_NUOVI.update(dati_inter)
     # sporco in spazio mondo nei colori dei vertici (passata di qualità)
     for nome_ob, funz in (('sala_galleria', D.sporco_galleria), ('sala_colonne', D.sporco_metallo),
                           ('sala_soffitto', D.sporco_soffitto), ('sala_torre', D.sporco_metallo),
@@ -2946,7 +3270,9 @@ def a_godot(p):
 def dati_integrazione(sorgenti, lampadina):
     """Posizioni utili per montare la sala in Godot (scritte in sala_dati.json)."""
     luci = []
-    for i, (tipo, pos, rot, k) in enumerate(sorgenti):
+    for i, (tipo, pos, rot, k, via) in enumerate(sorgenti):
+        if via:          # nel varco della sala della torre: la luce non c'è più (il numero resta preso)
+            continue
         if tipo == 'neon':
             luci.append(dict(nome=f'luce_neon_{i:02d}', tipo='neon (OmniLight3D o SpotLight3D verso il basso)', blender=list(pos),
                              godot=a_godot(pos), colore=[0.80, 1.0, 0.93], intensita='piena' if k >= 1 else 'metà (un tubo spento: sfarfallio)'))
@@ -2983,7 +3309,10 @@ def dati_integrazione(sorgenti, lampadina):
              centro_blender=[P['scarico'][0], P['scarico'][1], -2.07], quota_blender=-2.07, nota="il fondo è a conca: l'acqua visibile è circa un cerchio di raggio 3-3,5 m intorno a (0, -2); scende fino a -2,24 al centro"),
         dict(nome='sala_vasca_arrivo_acqua', cosa="vasca d'arrivo degli scivoli (piena)", x=[V['x0'], V['x1']], y=[V['y0'], V['y1']], quota_blender=V['acqua'], fondo_blender=-V['prof']),
         dict(nome='sala_vasca_bimbi_1_acqua', cosa='vasca bassa a scacchi (area bimbi, scena "lei sbuca dal bordo")', x=[-14.8, -10.4], y=[8.0, 11.2], quota_blender=0.30, bordo_blender=0.45),
-        dict(nome='sala_vasca_bimbi_2_acqua', cosa='vasca bassa piccola con la balena sgonfia', x=[-16.7, -13.9], y=[11.0, 13.8], quota_blender=0.22, bordo_blender=0.45),
+        dict(nome='sala_vasca_bimbi_2_acqua', cosa='vasca bassa piccola, dove finisce lo scivolo della struttura di gioco',
+             x=[VASCA_BIMBI_2['cx'] - VASCA_BIMBI_2['lato'] / 2, VASCA_BIMBI_2['cx'] + VASCA_BIMBI_2['lato'] / 2],
+             y=[VASCA_BIMBI_2['cy'] - VASCA_BIMBI_2['lato'] / 2, VASCA_BIMBI_2['cy'] + VASCA_BIMBI_2['lato'] / 2],
+             quota_blender=VASCA_BIMBI_2['acqua'], bordo_blender=0.45),
         dict(nome='sala_fossa_bimbi_acqua', cosa="fossa dello scarico rotto, la parte profonda della VascaBimbi1 (stessa acqua): pianta nel poligono 'fossa_bimbi.pianta_godot'",
              x=[FOSSA_BIMBI['x0'], FOSSA_BIMBI['x1']], y=[FOSSA_BIMBI['y0'], FOSSA_BIMBI['y1']], quota_blender=0.30,
              fondo_blender=FOSSA_BIMBI['fondo'], profondita_sotto_il_fondo_della_vasca=round(0.02 - FOSSA_BIMBI['fondo'], 2), bordo_blender=0.45),
@@ -3033,11 +3362,23 @@ def dati_integrazione(sorgenti, lampadina):
                              faccia_sala_godot_z=-Y0, faccia_retro_godot_z=-(Y0 - K.SPESSORE_PARETE),
                              attacco_spogliatoi_godot=a_godot((VANO['cx'], Y0 - K.SPESSORE_PARETE, 0.0)),
                              nota_attacco="il marker_uscita_sala_principale degli spogliatoi (9,7; 0; -20,7) va sul retro del muro, in (0; 0; 20,2): traslare i tre glTF di (-9,7; 0; 40,9)"),
-        sala=dict(x=[X0, X1], y=[Y0, Y1], soffitto=Z_SOFF, galleria=Z_GAL + SP_GAL, cupola=CUPOLA),
+        vano_serranda=dict(nota=("varco della serranda del magazzino dei gonfiabili (tappa 7 B, ambienti-1) nel muro sud, angolo "
+                                 "sud-ovest: la serranda e il magazzino sono nel raccordo dei tecnici"),
+                           x=[VANO_SERRANDA['cx'] - VANO_SERRANDA['luce'] / 2, VANO_SERRANDA['cx'] + VANO_SERRANDA['luce'] / 2],
+                           altezza=VANO_SERRANDA['h'], faccia_sala_godot_z=-Y0),
+        sala=dict(x=[X0, X1], y=[Y0, Y1], soffitto=Z_SOFF, cupola=CUPOLA,
+                  nota="niente soppalco dal 16 ottobre: plafoniere, fari, cartelloni e altoparlanti sono sulle pareti"),
         piscina_onde=dict(x=[P['x0'], P['x1']], y=[P['y0'], P['y1']], profondita=P['prof'], spiaggia='nord (y=13)', scarico_portello=list(P['scarico'])),
-        torre=dict(centro=[TORRE['cx'], TORRE['cy']], lato=TORRE['lato'], piani=list(TORRE['piani'])),
-        secchio=dict(nodo='sala_secchio_gigante', perno_blender=[STRUTTURA['cx'] + 0.2, STRUTTURA['cy'] + 1.6, 7.1], asse='x'),
-        ruota_pale=dict(nodo='sala_ruota_pale', perno_blender=[STRUTTURA['cx'] - 4.2, STRUTTURA['cy'] - 1.2, 1.3], asse='x'),
+        struttura_gioco=dict(centro_blender=[STRUTTURA['cx'], STRUTTURA['cy']], centro_godot=a_godot((STRUTTURA['cx'], STRUTTURA['cy'], 0.0)),
+                             nota="disposizione 1 (16 ottobre): nell'angolo nord-ovest, scala verso sud, scivolo verso est nella vasca piccola"),
+        secchio=dict(nodo='sala_secchio_gigante', perno_blender=[STRUTTURA['cx'] + 0.2, STRUTTURA['cy'] + 1.6, 7.1],
+                     perno_godot=a_godot((STRUTTURA['cx'] + 0.2, STRUTTURA['cy'] + 1.6, 7.1)), asse='x', nota='solo scenografia (niente ruota a pale)'),
+        funghi=[dict(pos_godot=a_godot((x, y, 0.0)), rotazione_gradi=r, scala=sc) for (x, y, r, sc) in FUNGHI],
+        pulsante_botola=DATI_NUOVI.get('pulsante_botola'),
+        sala_torre=DATI_NUOVI.get('portone_torre'),
+        telecamera_monitor=dict(pos_godot=a_godot((TELECAMERA_MONITOR['x'], Y0 + 0.4, TELECAMERA_MONITOR['z'])),
+                                guarda_godot=a_godot(TELECAMERA_MONITOR['mira']),
+                                nota="punto di vista della telecamera di sorveglianza del monitor della sala pompe: sul muro sud (prima era sul soppalco)"),
         interattivi={o.name: dict(perno_blender=[round(v, 3) for v in o.location], perno_godot=a_godot(tuple(o.location)))
                      for o in GRUPPI.get('interattivi', []) if o.name in bpy.data.objects},
         luci=luci, acqua=acqua,

@@ -29,7 +29,8 @@ void fragment() {
 	float n = casuale(floor(uv * vec2(240.0, 180.0)) + vec2(floor(t * 30.0) * 17.0, floor(t * 30.0) * 5.0));
 	vec3 neve_col = vec3(n * n * 1.2) * (0.75 + 0.25 * sin(uv.y * 520.0));
 	col = mix(col, neve_col, neve);
-	float bordo = smoothstep(0.62, 0.42, length(c * vec2(1.0, 1.25)));
+	// Angoli più scuri del tubo (ora lo schermo sta sul vetro bombato: basta una sfumatura).
+	float bordo = smoothstep(0.76, 0.5, length(c * vec2(1.0, 1.25)));
 	// Senza luci (unshaded): il colore è già la luce dello schermo, anche oltre 1 per il bagliore.
 	ALBEDO = max(col, vec3(0.0)) * luminosita * bordo * accensione;
 }

@@ -1,7 +1,7 @@
 class_name Torcia
 extends Node3D
 ## Torcia del giocatore. Va messa come figlia della Camera3D.
-## La luce segue lo sguardo con un leggero ritardo, ha un fascio con texture
+## La luce segue lo sguardo nello stesso frame (senza ritardo: richiesta dell'utente), ha un fascio con texture
 ## (cookie), ombre morbide e si accende/spegne con l'azione "torcia" (tasto F).
 ## Lo sfarfallio si attiva da fuori, per esempio quando il mostro è vicino:
 ##   torcia.sfarfalla(1.5)                 # un attacco di sfarfallio
@@ -14,9 +14,9 @@ signal batteria_esaurita
 
 @export var accesa := true
 @export_group("Luce")
-@export var energia := 9.0
+@export var energia := 7.0   # con il cono largo (40°) la stessa luce si distribuisce di più
 @export var colore := Color(1.0, 0.86, 0.68)  # bianco caldo (circa 4000 K)
-@export var angolo := 26.0
+@export var angolo := 40.0   # fascio ampio (l'utente: "troppo concentrata verso il centro")
 @export var portata := 26.0
 @export var attenuazione := 0.75   # calo più lento: illumina anche lontano senza bruciare vicino
 @export var dimensione_sorgente := 0.02        # ombre morbide (PCSS)
@@ -35,9 +35,11 @@ signal batteria_esaurita
 @export var minimo_vicino := 0.4
 @export var portata_controllo := 3.0
 @export_group("Movimento")
-## Più è alto, più la luce segue lo sguardo in fretta.
+## Falso (di serie): la luce è sincronizzata con lo sguardo. Vero: lo segue con un ritardo.
+@export var ritardo := false
+## Con [member ritardo]: più è alto, più la luce segue lo sguardo in fretta.
 @export var rapidita := 7.0
-@export var oscillazione := 0.004             # piccolo movimento della mano
+@export var oscillazione := 0.0               # movimento della mano (spento: la luce è ferma nello sguardo)
 @export_group("Batteria")
 @export var batteria_attiva := false
 @export var durata_batteria := 420.0          # secondi di luce piena
@@ -59,6 +61,8 @@ var _esclusi: Array[RID] = []   # il corpo del giocatore, da non colpire col rag
 
 
 func _ready() -> void:
+	# Dopo il giocatore e la camera: la luce usa lo sguardo già aggiornato di questo frame.
+	process_priority = 1000
 	luce = SpotLight3D.new()
 	luce.name = "Luce"
 	luce.top_level = true
@@ -121,9 +125,9 @@ func ricarica(quanto := 1.0) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	# Segue lo sguardo con ritardo (interpolazione esponenziale, indipendente dagli FPS).
+	# Segue lo sguardo; con [member ritardo] in modo morbido (esponenziale, indipendente dagli FPS).
 	var target := global_basis.get_rotation_quaternion()
-	_rot = _rot.slerp(target, 1.0 - exp(-rapidita * delta))
+	_rot = _rot.slerp(target, 1.0 - exp(-rapidita * delta)) if ritardo else target
 	var mano := Vector3(_rumore.get_noise_1d(_t * 0.7), _rumore.get_noise_1d(_t * 0.7 + 50.0), 0.0) * oscillazione
 	luce.global_position = global_transform * (offset_mano + mano)
 	luce.global_basis = Basis(_rot)

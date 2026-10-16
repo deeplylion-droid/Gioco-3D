@@ -3,8 +3,13 @@ extends Node3D
 ## Momento B5 del capitolo 1: mentre sali sulla torre, un lampo illumina la balconata
 ## dall'altra parte della sala e si vede una fila di bambini immobili, tutti girati verso di
 ## te. Al lampo dopo non c'è più nessuno. Succede una volta sola; non si possono raggiungere.
+## 16 ottobre: spento nella sala principale ([member attivo]), perché il soppalco non c'è più. Si
+## ripropone all'utente con la sala della torre.
 
 signal seen
+
+## Falso: il momento non parte (i bambini non compaiono).
+@export var attivo := true
 
 ## I bambini (scene con Bambino, o modelli fermi), alternati lungo la fila.
 @export var models: Array[PackedScene] = []
@@ -35,7 +40,7 @@ func _find_storm() -> void:
 
 
 func _on_trigger(body: Node3D) -> void:
-	if _done or not (body is Player):
+	if not attivo or _done or not (body is Player):
 		return
 	_done = true
 	var player := body as Player
