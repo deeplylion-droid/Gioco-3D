@@ -57,6 +57,40 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - La luce della torcia è troppo forte e brutta: va studiata diversamente.
 - I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
 
+## Principi di livello (deciso dall'utente, 15 ottobre)
+
+- **Il giocatore deve sentirsi guidato**: obiettivi chiari e oggetti da usare ben segnalati.
+- **Niente backtracking**: non si torna indietro per strade già fatte.
+- **Sempre un ambiente nuovo**: dopo ogni parte si entra in un posto mai visto, per esempio passando un cancello importante rimasto chiuso fino a quel momento.
+- Le risposte al questionario del 15 ottobre sono in `docs/riscontri/2026-10-15_questionario.md`.
+
+## Scelte del 16 ottobre (pagina delle proposte)
+
+Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-16_proposte.md`.
+
+- **Torcia**: sincronizzata con lo sguardo, cono di 40°, luce più uniforme. Approvata, ma l'utente la vuole rivedere in gioco.
+- **Interni**: approvati il vetro del primo pulsante con le crepe e la turbina nuova del cancello. **Da rifare**:
+  - la lamiera vicino all'estintore va tolta di lì del tutto;
+  - le valvole rosse vanno sul tubo con lo stesso diametro della sezione con la valvola.
+- **Sala principale**: approvati il soppalco tolto (neon, fari e cartelloni sulle pareti) e il cordone chiuso tutto intorno alla vasca della medusa, con un muro invisibile alto 2,5 m.
+- **Medusa**:
+  - approvate le 17 file di denti dentro la bocca;
+  - l'occhio che si chiude (easter egg, circa 5 secondi quando le spruzzi la faccia) ha una palpebra sola che scende dall'alto, come negli occhi delle bambole;
+  - voce della tappa 8: la versione gutturale.
+- **Area bimbi**: disposizione 1. La struttura sta nell'angolo con la scala verso chi arriva, lo scivolo scende nella vasca piccola e due funghi sono nella piazza.
+- **Piscina a onde (tappa 5)**:
+  - si svuota con lo zaino in circa **30 secondi, 4 zainate**;
+  - l'acqua sparata dentro la vasca ci torna, quindi va sparata fuori;
+  - niente scritte a schermo;
+  - l'acqua resta torbida com'è, ma ci nuotano **micro medusine luminose di vari colori** che attirano l'attenzione: si aspirano con l'acqua e si sparano via;
+  - pulsante della botola: versione A, un fungo rosso su una cassetta gialla con il lampeggiante giallo, che diventa verde quando lo colpisci.
+- **Sala pompe**: approvati la leva nuova, il cavo dalla leva al chiavistello, i tubi colorati dalle turbine alla chiusura stagna e lo schermo della TV appoggiato sul vetro.
+- **Tappa 7**: dopo la sala pompe si risale dal **magazzino dei gonfiabili** (proposta B). Si esce da una serranda nell'angolo sud-ovest della sala e la scia va lungo il muro fino all'area bimbi.
+- **Tappa 8**:
+  - lei resta affacciata finché non la guardi bene per 2 secondi (entro 18°, a meno di 14 m, senza ostacoli), poi dopo 6 secondi scivola sotto;
+  - la scia e la bava rosa sono **visibili al 75%**, cioè un po' trasparenti.
+- **Dopo la tappa 8**: la sala della torre è dietro la parete est (versione 2). Si entra da un portone scorrevole con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi e i bambini della balconata si propongono a parte.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
