@@ -167,7 +167,7 @@ func _crea_particelle() -> void:
 	sm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	sm.emission_sphere_radius = s.ventaglio * 0.12
 	_aggiungi(_schizzi)
-	_lame = WaterParticles.make_droplets(s.lame, 0.45, Vector2(0.05, 0.32) * (1.25 if stile == "B" else 1.0))
+	_lame = WaterParticles.make_droplets(s.lame, 0.35, Vector2(0.035, 0.32) * (1.25 if stile == "B" else 1.0))
 	var lm: ParticleProcessMaterial = _lame.process_material
 	lm.spread = 60.0
 	lm.initial_velocity_min = s.impatto_vel * 0.6
@@ -175,11 +175,13 @@ func _crea_particelle() -> void:
 	lm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	lm.emission_sphere_radius = s.ventaglio * 0.1
 	_aggiungi(_lame)
-	_goccioloni = WaterParticles.make_droplets(s.goccioloni, 1.3, Vector2(0.05, 0.11) * (1.3 if stile == "B" else 1.0))
+	# Goccioloni: allungati e pesanti, cadono prima di arrivare alla camera (niente dischi tondi).
+	_goccioloni = WaterParticles.make_droplets(s.goccioloni, 1.1, Vector2(0.03, 0.13) * (1.2 if stile == "B" else 1.0))
 	var gm: ParticleProcessMaterial = _goccioloni.process_material
 	gm.spread = 45.0
-	gm.initial_velocity_min = 2.0
-	gm.initial_velocity_max = s.impatto_vel * 0.6
+	gm.initial_velocity_min = 1.5
+	gm.initial_velocity_max = s.impatto_vel * 0.4
+	gm.gravity = Vector3(0, -14.0, 0)
 	gm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	gm.emission_sphere_radius = s.ventaglio * 0.2
 	_aggiungi(_goccioloni)
