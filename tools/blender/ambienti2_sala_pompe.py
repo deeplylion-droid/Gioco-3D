@@ -366,24 +366,39 @@ for k, dz in enumerate((-1, 1)):
 
 # leva grande in alto, dietro una grata (gabbia)
 LV = Vector((XE - 0.05, 2.9, 3.9))
-MOZZO = LV + Vector((0, -0.4, -0.2))   # il mozzo della leva Meshy: piastra e perno a muro dietro di lui
-S('parete_est', box('leva_piastra', MOZZO + Vector((-0.02, 0, 0)), (0.04, 0.42, 0.42), M['ferro'], uv=1.0))
-S('parete_est', cilindro('leva_perno_base', MOZZO + Vector((-0.08, 0, 0)), 0.07, 0.1, M['ruggine'], asse=(1, 0, 0), seg=16))
-leva = [tubo('LEVA_braccio', [LV + Vector((-0.12, 0, 0)), LV + Vector((-0.55, 0, 0.55))], 0.045, M['pericolo'], seg=10),
-        cilindro('LEVA_pomello', LV + Vector((-0.6, 0, 0.62)), 0.07, 0.3, M['leva_pomello'], asse=(1, 0, 1.0), seg=16)]
-for p in leva:
-    applica_trasf(p)
-lv = unisci('LEVA', leva)
-imposta_origine(lv, LV + Vector((-0.12, 0, 0)))
-if HQ.disponibile('leva_braccio'):
-    # braccio Meshy: perno sull'estremità col mozzo, braccio inclinato verso la stanza e in alto
-    bpy.data.objects.remove(lv)
-    dl = HQ.dimensioni('leva_braccio')
-    # nel GLB il braccio è già inclinato di 30 gradi, mozzo (asse Y) in basso sul lato -X. Girato di 90 gradi
-    # il mozzo guarda la stanza e il braccio corre lungo il muro, verso nord e in alto: si legge da lontano
-    kl = 1.0 / max(dl)
-    lv = HQ.metti('LEVA', 'leva_braccio', MOZZO + Vector((-0.14, 0, 0)), tuple(dl * kl), rot_z=math.pi / 2,
-                  perno=(-0.41 * dl.x * kl, 0, 0.17 * dl.z * kl))
+LEVA_NUOVA = HQ.disponibile('leva_base') and HQ.disponibile('leva_maniglia')
+if LEVA_NUOVA:
+    # leva nuova (questionario del 15 ottobre): base in ghisa con il quadrante e braccio rosso con l'impugnatura,
+    # modelli Meshy. Il braccio ruota sull'asse X (perpendicolare al muro) attorno all'occhio del perno.
+    MOZZO = Vector((XE, 2.75, 3.72))
+    db = HQ.dimensioni('leva_base'); kb = 0.55 / max(db.x, db.z)
+    # il perno del quadrante è al centro in larghezza e a 0,46 dell'altezza
+    base_leva = HQ.metti('LEVA_base', 'leva_base', MOZZO + Vector((-db.y * kb / 2, 0, -0.464 * db.z * kb)), tuple(db * kb), rot_z=R_(-90))
+    dm = HQ.dimensioni('leva_maniglia'); km = 0.7 / 2.26   # braccio lungo 0,7 m (occhio-impugnatura 2,26 nel GLB)
+    # occhio del perno nel GLB: (-0,81; 0; -0,64) con il centro della scatola nello zero; braccio a 38 gradi,
+    # raddrizzato a 63 gradi (rot Y -25) e girato verso nord (rot Z +90)
+    lv = HQ.metti('LEVA', 'leva_maniglia', MOZZO + Vector((-db.y * kb - 0.045, 0, 0)), tuple(dm * km), rot=(0, R_(-25), 0),
+                  rot_z=R_(90), perno=(-0.81 * km, 0, (0.7744 - 0.64) * km))
+    lv['alzata'] = 'braccio verso nord e in alto (63 gradi); abbassata: -70 gradi attorno a X globale'
+else:
+    MOZZO = LV + Vector((0, -0.4, -0.2))   # il mozzo della leva Meshy: piastra e perno a muro dietro di lui
+    S('parete_est', box('leva_piastra', MOZZO + Vector((-0.02, 0, 0)), (0.04, 0.42, 0.42), M['ferro'], uv=1.0))
+    S('parete_est', cilindro('leva_perno_base', MOZZO + Vector((-0.08, 0, 0)), 0.07, 0.1, M['ruggine'], asse=(1, 0, 0), seg=16))
+    leva = [tubo('LEVA_braccio', [LV + Vector((-0.12, 0, 0)), LV + Vector((-0.55, 0, 0.55))], 0.045, M['pericolo'], seg=10),
+            cilindro('LEVA_pomello', LV + Vector((-0.6, 0, 0.62)), 0.07, 0.3, M['leva_pomello'], asse=(1, 0, 1.0), seg=16)]
+    for p in leva:
+        applica_trasf(p)
+    lv = unisci('LEVA', leva)
+    imposta_origine(lv, LV + Vector((-0.12, 0, 0)))
+    if HQ.disponibile('leva_braccio'):
+        # braccio Meshy: perno sull'estremità col mozzo, braccio inclinato verso la stanza e in alto
+        bpy.data.objects.remove(lv)
+        dl = HQ.dimensioni('leva_braccio')
+        # nel GLB il braccio è già inclinato di 30 gradi, mozzo (asse Y) in basso sul lato -X. Girato di 90 gradi
+        # il mozzo guarda la stanza e il braccio corre lungo il muro, verso nord e in alto: si legge da lontano
+        kl = 1.0 / max(dl)
+        lv = HQ.metti('LEVA', 'leva_braccio', MOZZO + Vector((-0.14, 0, 0)), tuple(dl * kl), rot_z=math.pi / 2,
+                      perno=(-0.41 * dl.x * kl, 0, 0.17 * dl.z * kl))
 lv['asse_rotazione'] = 'X (Blender e Godot), perpendicolare al muro; abbassata = -70 gradi'
 # gabbia con rete metallica (la grata davanti si puo' aprire: oggetto separato)
 GC = LV + Vector((-0.45, 0, 0.1)); GW, GH, GD = 1.1, 1.3, 0.9
@@ -401,6 +416,54 @@ for p in [gr] + gr_tel:
     applica_trasf(p)
 grata = unisci('GRATA_leva', [gr] + gr_tel)
 imposta_origine(grata, GC + Vector((-GD / 2, -GW / 2, 0)))
+# la leva tira il chiavistello della porta con un cavo d'acciaio; le tre turbine comandano la chiusura stagna
+# della stessa porta con tre tubi dei loro colori (questionario del 15 ottobre: deve essere chiaro a cosa servono)
+if LEVA_NUOVA:
+    usa_collezione('meccanismi')
+    M['cavo'] = mat_pbr('cavo_acciaio', base=(0.62, 0.63, 0.64), roughness=0.35)
+    # chiavistello sul muro accanto alla porta, dal lato del maniglione (nord); il catenaccio entra nello stipite
+    CH = Vector((XE - 0.055, PORTA_Y + PORTA_W / 2 + 0.27, 1.0))
+    dc = HQ.dimensioni('chiavistello'); kc = 0.5 / dc.x
+    chiav = HQ.metti('CHIAVISTELLO', 'chiavistello', CH, tuple(dc * kc), rot_z=R_(-90))
+    chiav['uso'] = 'il cavo della leva lo tira: catenaccio lungo Y, si apre spostandolo di +0,12 lungo Y'
+    puleggia_ch = Vector((XE - 0.06, CH.y - 0.18 * kc, CH.z + 0.23 * kc))
+    empty('PUNTO_chiavistello', puleggia_ch)
+    ZC = 3.25   # quota del cavo lungo il muro
+    cavo = [Vector((XE - 0.17, MOZZO.y, MOZZO.z - 0.12)), Vector((XE - 0.06, MOZZO.y, ZC)), Vector((XE - 0.06, puleggia_ch.y, ZC)), puleggia_ch]
+    S('meccanismi', tubo('CAVO_leva', cavo, 0.008, M['cavo'], rc=0.06, seg=8, uv=None))
+    for k, pz in enumerate((cavo[1], cavo[2])):
+        S('meccanismi', cilindro(f'cavo_puleggia{k}', pz + Vector((0.01, 0, 0)), 0.05, 0.03, M['ferro'], asse=(1, 0, 0), seg=20, uv=None))
+        S('meccanismi', box(f'cavo_staffa{k}', pz + Vector((0.035, 0, 0)), (0.03, 0.04, 0.14), M['ruggine'], uv=None))
+    for k in range(1, 6):   # ganci a muro lungo il tratto orizzontale
+        y = cavo[1].y + (cavo[2].y - cavo[1].y) * k / 6
+        S('meccanismi', box(f'cavo_gancio{k}', (XE - 0.03, y, ZC), (0.06, 0.02, 0.03), M['ferro'], uv=None))
+    # chiusura stagna: cilindro idraulico dal lato del cardine (sud) che spinge sullo stipite
+    AT = Vector((XE - 0.15, PORTA_Y - PORTA_W / 2 - 0.7, 1.2))
+    da = HQ.dimensioni('attuatore_stagno'); ka = 0.6 / da.x
+    att = HQ.metti('ATTUATORE_stagno', 'attuatore_stagno', AT, tuple(da * ka), rot_z=R_(-90))
+    att['uso'] = 'chiusura stagna della porta: le tre turbine la mettono in pressione con i tubi TUBO_stagno_1..3'
+    S('meccanismi', box('attuatore_tirante', (AT.x, AT.y + 0.3 + 0.12, AT.z + 0.12), (0.04, 0.26, 0.04), M['ferro'], uv=None))
+    S('meccanismi', box('attuatore_staffa', (XE - 0.02, AT.y, AT.z + 0.18), (0.04, 0.5, 0.3), M['ferro'], uv=1.0))
+    empty('PUNTO_chiusura_stagna', AT + Vector((0, 0, 0.18)))
+    attacchi = [AT + Vector((0, -rx * ka, 0.31)) for rx in (-0.25, 0.13, 0.32)]
+    for i, (px, col, _) in enumerate(POMPE):
+        n = i + 1
+        T = Vector((px, PY - 1.55, 1.2))
+        yk = T.y + 0.12 + 0.1 * i
+        zk = 3.5 + 0.13 * i
+        # parte dalla cima del carter della sua turbina, sale, corre verso il muro est e scende sulla chiusura stagna
+        punti = [Vector((px, T.y + 0.12, 1.96)), Vector((px, yk, 2.3)), Vector((px, yk, zk)), Vector((AT.x, yk, zk)),
+                 Vector((AT.x, attacchi[i].y, zk)), attacchi[i]]
+        S('meccanismi', tubo(f'TUBO_stagno_{n}', punti, 0.03, M[col], rc=0.12, seg=12, uv=1.0))
+        for k in range(2, 5):
+            q, r = punti[k], punti[k + 1]
+            d = (r - q).normalized()
+            for o in flangia(f'tubo_stagno_{n}_fl{k}', q + d * 0.18, d, 0.045, M['ferro'], 0.02, 6, M['ruggine']):
+                S('meccanismi', o)
+        for k in range(1, 4):   # tiranti al soffitto lungo il tratto lungo
+            x = px + (AT.x - px) * k / 4
+            S('meccanismi', box(f'tubo_stagno_{n}_tirante{k}', (x, yk, (zk + H) / 2), (0.02, 0.02, H - zk), M['ferro'], uv=None))
+
 # strisce di pericolo sotto la leva
 S('parete_est', quad('pericolo_leva', (XE - 0.02, 2.9, 3.05), 1.3, 0.2, (-1, 0, 0), M['pericolo']))
 
@@ -454,7 +517,7 @@ else:
     scr, sdim = importa_meshy('scrivania', 1.5, DESK, 180, asse_lato=0)
     mon, mdim = importa_meshy('monitor_crt', 0.5, DESK + Vector((-0.25, 0.08, sdim.z)), 200, asse_lato=0)
 sed, _ = importa_meshy('sedia', 0.95, DESK + Vector((0.1, 1.1, 0)), 160, asse_lato=2)
-# schermo: quadrato davanti al vetro del CRT (in Godot ci va la ViewportTexture della telecamera)
+# schermo: quadrato davanti al vetro del CRT (in Godot MonitorCrt lo sostituisce con una griglia sul vetro)
 ang = math.radians(200)
 fronte = Matrix.Rotation(ang, 3, 'Z') @ Vector((0, -1, 0))
 sc_c = mon.location + fronte * (mdim.y / 2 + 0.003) + Vector((0, 0, mdim.z * 0.6))
@@ -547,7 +610,10 @@ vx0, vx1, vy0, vy1 = VASCA
 collisione_box('ringhiera_nord', (vx0 - 0.2, vy1 + 0.1, 0), (vx1 + 0.2, vy1 + 0.2, 1.1))
 collisione_box('ringhiera_est', (vx1 + 0.1, vy0 - 0.2, 0), (vx1 + 0.2, vy1 + 0.2, 1.1))
 collisione_box('gabbia_leva', GC - Vector((GD / 2 - 0.05, GW / 2, GH / 2)), GC + Vector((GD / 2, GW / 2, GH / 2)))
-collisione_box('LEVA_braccio', LV + Vector((-0.3, -0.55, -0.35)), LV + Vector((-0.06, 0.55, 0.4)), padre=lv)
+if LEVA_NUOVA:
+    collisione_box('LEVA_braccio', (XE - 0.27, MOZZO.y - 0.08, MOZZO.z - 0.08), (XE - 0.15, MOZZO.y + 0.4, MOZZO.z + 0.66), padre=lv)
+else:
+    collisione_box('LEVA_braccio', LV + Vector((-0.3, -0.55, -0.35)), LV + Vector((-0.06, 0.55, 0.4)), padre=lv)
 collisione_box('GRATA_leva_anta', GC + Vector((-GD / 2 - 0.03, -GW / 2, -GH / 2)), GC + Vector((-GD / 2 + 0.03, GW / 2, GH / 2)), padre=grata)
 collisione_box('PORTA_ponte_anta', (XE - 0.1, PORTA_Y - PORTA_W / 2, 0), (XE, PORTA_Y + PORTA_W / 2, PORTA_H), padre=pt)
 
@@ -580,6 +646,7 @@ if '--render' in ARGS or '--anteprima' in ARGS:
         'sala_pompe': ((X0 + 2.2, -4.3, 1.65), (3.0, 3.0, 1.7)),
         'sala_pompe_scrivania': ((2.9, -2.9, 1.65), (4.6, -5.4, 0.95)),
         'sala_pompe_leva': ((3.6, -2.6, 1.65), (XE, 1.9, 3.1)),
+        'sala_pompe_porta': ((4.2, 0.6, 1.65), (XE, -3.4, 2.0)),
     }
     for nome, (loc, mira) in viste.items():
         camera(loc, mira, lente=20)

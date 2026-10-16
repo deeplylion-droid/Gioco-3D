@@ -312,7 +312,8 @@ lampada('l2', (8.0, YS + 0.02, 3.0), (0, 1, 0), accesa=False)
 lampada('l3', (12.0, YS + 0.02, 3.0), (0, 1, 0))
 lampada('l4', (16.0, YN - 0.02, 3.0), (0, -1, 0))
 lampada('l5', (23.0, YS + 0.02, 3.0), (0, 1, 0))
-for k, (x, acceso) in enumerate(((4.0, False), (10.0, True), (19.3, False))):
+# fra le costole (ogni 2 m da x = -1) e lontano dai cassoni delle paratie
+for k, (x, acceso) in enumerate(((4.0, False), (10.0, True), (19.85, False))):
     if HQ.disponibile('plafoniera_neon'):
         giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
         HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)

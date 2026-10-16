@@ -146,6 +146,8 @@ marker('marker_vasca_raccolta', SALA, 'ACQUA_vasca_raccolta#centro', nota='super
 marker('marker_monitor', SALA, 'PUNTO_monitor', nota='schermo del monitor a tubo sulla scrivania')
 marker('marker_porta_ponte', SALA, 'PUNTO_porta_ponte_inferiore', nota='davanti alla porta del ponte inferiore (lato sala)')
 marker('marker_porta_ponte_perno', SALA, 'PORTA_ponte', nota='cardine della porta del ponte inferiore: ruota su Y')
+marker('marker_chiavistello', SALA, 'PUNTO_chiavistello', nota='puleggia del chiavistello della porta: ci arriva il cavo della leva')
+marker('marker_chiusura_stagna', SALA, 'PUNTO_chiusura_stagna', nota='cilindro della chiusura stagna della porta: ci arrivano i tubi delle tre turbine')
 # raccordo verso gli interni
 marker('marker_raccordo_sala', RACC, 'PUNTO_raccordo_sala', yaw=-H, nota='nel raccordo, appena fuori dalla porta del ponte inferiore')
 marker('marker_raccordo_interni', RACC, 'PUNTO_raccordo_interni', yaw=-H, nota='in cima al raccordo, ai piedi della scala che sale al corridoio degli interni')

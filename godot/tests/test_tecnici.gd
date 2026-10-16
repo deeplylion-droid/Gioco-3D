@@ -9,7 +9,7 @@ const LEVEL := "res://scenes/tecnici/tecnici.tscn"
 const MARKER := ["marker_portello", "marker_arrivo_scala", "marker_tunnel_sala_pompe", "marker_paratia_1", "marker_paratia_2",
 	"marker_pompa_1", "marker_pompa_2", "marker_pompa_3", "marker_turbina_1", "marker_turbina_2", "marker_turbina_3",
 	"marker_leva", "marker_grata_leva", "marker_schema", "marker_vasca_raccolta", "marker_monitor",
-	"marker_porta_ponte", "marker_porta_ponte_perno", "marker_raccordo_sala", "marker_raccordo_interni"]
+	"marker_porta_ponte", "marker_porta_ponte_perno", "marker_raccordo_sala", "marker_raccordo_interni", "marker_chiavistello", "marker_chiusura_stagna"]
 
 var level: Node
 var p: Player
@@ -40,7 +40,8 @@ func _run() -> void:
 		check(level.get_node_or_null("Marker/" + m) is Marker3D, "c'è il marker " + m)
 	for n in ["Ambienti/CameraOnde/PARATIA_1", "Ambienti/CameraOnde/PARATIA_2", "Ambienti/SalaPompe/LEVA",
 			"Ambienti/SalaPompe/GRATA_leva", "Ambienti/SalaPompe/PORTA_ponte", "Ambienti/SalaPompe/SCHERMO_CRT",
-			"Ambienti/SalaPompe/TURBINA_1", "Ambienti/SalaPompe/TURBINA_2", "Ambienti/SalaPompe/TURBINA_3"]:
+			"Ambienti/SalaPompe/TURBINA_1", "Ambienti/SalaPompe/TURBINA_2", "Ambienti/SalaPompe/TURBINA_3",
+			"Ambienti/SalaPompe/CHIAVISTELLO", "Ambienti/SalaPompe/ATTUATORE_stagno", "Ambienti/SalaPompe/LEVA_base"]:
 		check(level.get_node_or_null(n) != null, "c'è il nodo da animare " + n.get_file())
 
 	print("Collisioni")
