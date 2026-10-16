@@ -253,7 +253,7 @@ energia_fari = 2.0
 neon_difettosi = PackedInt32Array(1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25)
 ritratto_mira = Vector3(0, 1.63, 11.95)
 energia_ritratto = 3.0
-festone_punti = PackedVector3Array(-16.9, 3.7, -10.95, -8, 3.7, -10.95, -7.85, 3.7, -18.8)
+festone_punti = PackedVector3Array(-20, 4.2, -13, -15.9, 7.35, -19.65, -12.9, 7.35, -19.65, -8, 4.2, -24)
 festone_rotte = PackedInt32Array(5, 6, 7, 13, 22, 29, 30)
 festone_sfarfallano = PackedInt32Array(3, 17, 26)
 vetro_cupola = ExtResource("3_ftbmh")
@@ -372,10 +372,10 @@ script = ExtResource("52_al75a")
 shape = SubResource("CylinderShape3D_0qhem")
 
 [node name="PulsantePortello" type="Node3D" parent="Piscina" unique_id=239926922 instance=ExtResource("41_xq6tq")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 1.9, -1.15, 4.95)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 2.25, -1.12, 4.6)
 script = ExtResource("42_48fcl")
 mode = 2
-radius = 0.14
+radius = 0.26
 show_model = false
 
 [node name="Portello" type="Node3D" parent="Piscina" unique_id=1452477881 node_paths=PackedStringArray("sources")]
@@ -451,7 +451,7 @@ env_box_min = Vector3(-20, -2.5, -24)
 env_box_max = Vector3(20, 11.5, 20)
 
 [node name="VascaBimbi2" type="Node3D" parent="Vasche" unique_id=1655745662 instance=ExtResource("25_t1jif")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.3, 0.02, -12.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.6, 0.02, -18.2)
 script = ExtResource("26_igq28")
 inner_size = Vector3(2.8, 0.43, 2.8)
 build_walls = false
@@ -647,7 +647,7 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, -
 [node name="Polaroid" type="Node3D" parent="." unique_id=1196674342]
 
 [node name="Polaroid04" type="Area3D" parent="Polaroid" unique_id=1122697370 instance=ExtResource("69_vat3c")]
-transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -11.3, 6.4, -17.4)
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -12.9, 6.4, -21)
 collision_layer = 16
 collision_mask = 0
 monitoring = false

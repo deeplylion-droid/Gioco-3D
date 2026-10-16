@@ -12,14 +12,14 @@ SALA = os.path.join(RADICE, 'assets_src', 'ambiente', 'glb', 'sala')
 OUT = os.path.join(RADICE, 'assets_src', 'ambiente', 'INTEGRAZIONE.md')
 
 CONTENUTO = {
-    'sala_architettura': 'pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d\'emergenza, insegna a pesce, altoparlanti',
-    'sala_vasca_centrale': '**vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell\'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d\'ottone HQ; lampione HQ; 2 fari sulla ringhiera della galleria; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella)',
+    'sala_architettura': 'pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò, il **vano verso gli spogliatoi** con la porta stagna aperta e il **varco della sala della torre** nella parete est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon e altoparlanti sulle pareti, luci d\'emergenza, insegna a pesce, il **guscio della sala della torre** (`sala_torre_guscio`)',
+    'sala_vasca_centrale': '**vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell\'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d\'ottone HQ; lampione HQ; 2 fari sulla parete sud; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella)',
     'sala_cupola': 'cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro)',
     'sala_piscina': 'piscina a onde vuota: fondo con pendenza e conca dello scarico, buco del pozzo sotto il portello (bordo smussato, collare piastrellato), linea dell\'ultimo livello dell\'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette',
-    'sala_area_bimbi': 'struttura di gioco (pali tondi, bordi smussati), **secchio gigante** HQ e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi, **fossa della VascaBimbi1** (tappa 8) con il coperchio di collisione `coperchio_fossa_col`',
-    'sala_torre_scivoli': 'torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d\'arrivo',
-    'sala_oggetti': 'oggetti di scena Meshy HQ (istanze condivise): giocattoli e gonfiabili, lettini, sedia del bagnino, funghi-fontana, cannoncini, panche, cestini, cartelli. Uguale con la vasca e con il monumento: le offerte dei bambini stanno nel GLB del centro',
-    'sala_interattivi': 'elementi degli enigmi come nodi separati con il perno giusto (vedi sotto)',
+    'sala_area_bimbi': 'struttura di gioco (pali tondi, bordi smussati) nell\'angolo nord-ovest, **secchio gigante** HQ (nodo a parte, con il perno giusto), vasche basse a scacchi, **fossa della VascaBimbi1** (tappa 8) con il coperchio di collisione `coperchio_fossa_col`',
+    'sala_torre_scivoli': 'solo la **vasca d\'arrivo** (la torre e gli scivoli non sono più nella sala dal 16 ottobre; il nome del file resta per la scena)',
+    'sala_oggetti': 'oggetti di scena Meshy HQ (istanze condivise): giocattoli e gonfiabili, lettini, sedia del bagnino, funghi-fontana, panche, cestini, cartelli. Uguale con la vasca e con il monumento: le offerte dei bambini stanno nel GLB del centro',
+    'sala_interattivi': 'elementi degli enigmi come nodi separati con il perno giusto (vedi sotto): portello della botola, **pulsante A** con il lampeggiante, **portone della sala della torre**, pulsante della sigla',
     'sala_acqua': '**segnaposto** piatti dell\'acqua (da sostituire con l\'acqua vera)',
 }
 ORDINE = ['sala_architettura', 'sala_vasca_centrale', 'sala_cupola', 'sala_piscina', 'sala_area_bimbi',
@@ -82,6 +82,9 @@ def scrivi():
             extra = (extra + ' ' if extra else '') + 'punta verso ' + g3(L['direzione_godot'])
         tab_luci.append(f"| `{L['nome']}` | {L['tipo']} | {dove} | {g3(L['colore'])} | {extra} |")
     tab_int = [f"| `{k}` | {g3(v['perno_godot'])} |" for k, v in d['interattivi'].items()]
+    dati_calda4 = next((L['godot'] for L in d['luci'] if L['nome'] == 'luce_calda_4'), [0, 0, 0])
+    p_tolti = os.path.join(RADICE, 'assets_src', 'ambiente_dettagli', 'posizionamento_tolti_2026-10-16.json')
+    n_tolti = len(json.load(open(p_tolti))['tolti']) if os.path.exists(p_tolti) else 0
     acqua = []
     for a in d['acqua']:
         if 'x' in a:
@@ -96,6 +99,38 @@ origine: in Godot si istanziano tutti in **(0, 0, 0)**, scala 1, e combaciano. M
 Le coordinate qui sotto sono già **in Godot** (Y in alto). Da Blender: `(x, y, z) -> (x, z, -y)`.
 Tutti i numeri vengono da `glb/sala/sala_dati.json`, scritto dallo stesso script che fa i GLB; questo
 file lo rigenera `tools/blender/ambiente_integrazione.py`.
+
+## Novità (16 ottobre): le scelte dell'utente sulle proposte
+
+- **Niente soppalco** (C1): via galleria, colonne, ringhiere e scala. Le plafoniere al neon sono sulle pareti alla
+  quota di prima (3,88 m, 32 cm dal muro, su due staffe), con gli stessi nomi delle luci; i due fari della medusa
+  (`luce_faro_0/1`) sono su due bracci fissati alla parete sud, alla stessa quota; cartelloni e altoparlanti sulle
+  pareti nord e sud; la plafoniera calda `luce_calda_4` è sulla parete nord in {g3(dati_calda4)}.
+- **Cordone chiuso** intorno alla vasca della medusa (D1): 20 colonnine, niente varco, e su ogni campata un muro
+  invisibile alto 2,5 m (`cordone_vasca_0..19`).
+- **Area bimbi, disposizione 1**: struttura di gioco nell'angolo nord-ovest (centro {g3(d['struttura_gioco']['centro_godot'])}), con la
+  scala verso chi arriva e lo scivolo che scende nella vasca piccola (VascaBimbi2, ora con il centro dell'acqua in
+  x {(d['acqua'][3]['x'][0] + d['acqua'][3]['x'][1]) / 2:g}, z {-(d['acqua'][3]['y'][0] + d['acqua'][3]['y'][1]) / 2:g}); i due funghi nella piazza. La VascaBimbi1 e la fossa della tappa 8 restano dove sono.
+  Niente ruota a pale (il secchio è scenografia), niente cannoncini; tolti i giocattoli sparsi nell'area e sulla
+  strada della scia rosa (gli altri oggetti hanno gli stessi nomi di prima).
+- **Pulsante della botola, versione A**: cassetta gialla sulla parete sud della piscina con il fungo rosso Ø 50 cm
+  (`sala_pulsante_portello`, stesso nome di prima: si preme lungo il suo -Z) e il lampeggiante
+  (`sala_lampeggiante_portello`, vetro giallo). Dati in `sala_dati.json` → `pulsante_botola`.
+- **Tappa 5 rifatta**: via la turbina dello scarico, il recinto con il cancello, la ruota del cancello con la
+  trasmissione e il quadro elettrico.
+- **Sala della torre, versione 2 (a est)**: varco nella parete est (z da {d['sala_torre']['varco_godot']['z'][0]:g} a {d['sala_torre']['varco_godot']['z'][1]:g}, alto {d['sala_torre']['varco_godot']['altezza']:g} m) chiuso dal portone
+  scorrevole con la torre dipinta e le bande a strisce, **senza l'insegna sopra**. L'anta è `sala_portone_torre`
+  (perno {g3(d['sala_torre']['anta']['perno_godot'])}): si apre scorrendo verso +Z fino a 2,0 m. Il lampeggiante rosso è
+  `sala_lampeggiante_torre`. Dietro c'è solo il guscio della sala (x da {d['sala_torre']['sala']['x_godot'][0]:g} a {d['sala_torre']['sala']['x_godot'][1]:g}, alto {d['sala_torre']['sala']['altezza']:g} m), vuoto.
+  La torre e gli scivoli di prima **non sono più nella sala**: si rifanno nella sala nuova, con una proposta a parte.
+  Le luci che cadevano nel varco non ci sono più (`luce_neon_11`, `luce_emergenza_32`); le altre tengono il nome.
+- Il kit di dettagli ha {n_tolti} posti in meno (sotto il soppalco, area bimbi, varco, due che tagliavano lo sfondo):
+  vedi `assets_src/ambiente_dettagli/posizionamento_tolti_2026-10-16.json`.
+- **Controllo degli oggetti** che entrano nello sfondo o galleggiano (riscontro C3: il gonfiabile incastrato nella
+  scala): `tools/blender/controlla_oggetti_sala.py`, sui GLB del gioco e sul kit di dettagli. Gli oggetti a terra
+  inclinati ora toccano il pavimento con il punto più basso, i salvagenti appesi toccano il muro, e i dettagli del
+  fondo in pendenza della piscina seguono la pendenza. Restano solo le 4 lampade a muro del kit, con la piastra
+  4 cm dentro il muro (non si vede).
 
 ## Novità (15 ottobre)
 
@@ -197,20 +232,20 @@ al posto di `sala_monumento.glb`, che è in `glb/per_dopo/`.
     guarda verso +Z; mani sul coping in {g3(ma['mani_godot'][0])} e {g3(ma['mani_godot'][1])}.
   - **Pulsante della sigla (scena S1)**: il nodo `sala_pulsante_piedistallo` (stesso nome di prima) è sul
     muro davanti della vasca, in {g3(vc['pulsante_bimbi']['godot'])}, rivolto verso +Z; si preme verso -Z.
-  - Collisioni: muro e bordo (4 tratti dritti e 4 angoli), cordone di velluto a {vc['raggio_cordone_dal_bordo']:g} m dal bordo con il
-    varco davanti. L'acqua è il segnaposto `sala_vasca_centrale_acqua` in `sala_acqua.glb`.
-  - Luci: `luce_faro_0/1` (fari sulla ringhiera della galleria sud, puntati sul davanti della vasca),
+  - Collisioni: muro e bordo (4 tratti dritti e 4 angoli), cordone di velluto a {vc['raggio_cordone_dal_bordo']:g} m dal bordo, chiuso,
+    con un muro invisibile alto 2,5 m. L'acqua è il segnaposto `sala_vasca_centrale_acqua` in `sala_acqua.glb`.
+  - Luci: `luce_faro_0/1` (fari su due bracci della parete sud, puntati sul davanti della vasca),
     `luce_vasca_0/1` (sott'acqua, verso la medusa), `luce_lampione` (base {g3(d['lampione']['base_godot'])}).
   - Offerte dei bambini intorno alla vasca: disegni a pastello senza scritte, conchiglie, stelle marine,
     secchiello; salvagente, orsetto, paperelle (una galleggia), ciambella in acqua e pallone (sono nello stesso GLB della vasca).
 - **Secchio gigante**: nodo `sala_secchio_gigante`, perno sui suoi perni; si ribalta ruotando intorno all'asse **X**.
-- **Ruota a pale**: nodo `sala_ruota_pale`, perno sull'asse, gira intorno all'asse **X**.
-- La galleria si sale dalla scala sul lato est; la torre dalle rampe sul lato sud.
+- Niente ruota a pale, galleria e torre (16 ottobre).
 
 ## Elementi interattivi (`sala_interattivi.glb`)
 
 Ogni nodo ha l'origine sul suo perno (cerniera o asse): basta ruotarlo o spostarlo.
-Non sono cambiati, tranne il pulsante del piedistallo (nuova posizione).
+Il 16 ottobre: nuovi il pulsante A della botola (cassetta, fungo, lampeggiante) e il portone della sala della torre
+(anta, telaio, lampeggiante); tolti turbina, recinto, cancello, ruota del cancello, trasmissione e quadro elettrico.
 
 | Nodo | Perno in Godot |
 |---|---|
@@ -237,7 +272,7 @@ ombre); plafoniere calde `luce_calda_*`
 1,8 (raggio 7,5, colore 1,0/0,68/0,38); insegne `luce_insegna_*` 1,3 (raggio 5,5); subacquee 3 (raggio 5);
 faretti dei teli con la mascotte `luce_cartellone_*` 2,5 (spot, angolo 30, raggio 6, caldi); luna 0,35 con ombre. `godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente e usa gli
 stessi valori. In tutto {n_neon} neon accesi, {n_em} luci d'emergenza, lampione, 2 fari, 2 luci sott'acqua nella
-vasca sollevata, 2 faretti dei teli, 5 plafoniere calde, 3 insegne, 2 subacquee della vasca d'arrivo, area bimbi, luna.
+vasca sollevata, 2 faretti dei teli, 4 plafoniere calde, 3 insegne, 2 subacquee della vasca d'arrivo, area bimbi, luna.
 
 | Nome | Tipo | Posizione Godot | Colore | Note |
 |---|---|---|---|---|

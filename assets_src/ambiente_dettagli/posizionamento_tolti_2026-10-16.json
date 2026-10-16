@@ -1,0 +1,5255 @@
+{
+ "nota": "Posti del kit di dettagli tolti dalla sala il 16 ottobre 2026 (tools/dettagli_sala_16ottobre.py), con il motivo. Coordinate Godot, come posizionamento.json.",
+ "tolti": [
+  {
+   "nodo": "det_mucchio_piastrelle_1",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_003",
+   "posizione": [
+    -19.1,
+    0.001,
+    -23.1
+   ],
+   "rotazione_y_gradi": -152.8,
+   "basis": [
+    [
+     -0.8895,
+     0.0,
+     0.4569
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.4569,
+     0.0,
+     -0.8895
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_5",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_003",
+   "posizione": [
+    -19.833,
+    0.001,
+    -22.395
+   ],
+   "rotazione_y_gradi": -41.6,
+   "basis": [
+    [
+     0.7472,
+     0.0,
+     0.6646
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.6646,
+     0.0,
+     0.7472
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_paletta",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_003",
+   "posizione": [
+    -18.73,
+    0.001,
+    -22.585
+   ],
+   "rotazione_y_gradi": 164.4,
+   "basis": [
+    [
+     -0.9634,
+     0.0,
+     -0.2681
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.2681,
+     0.0,
+     -0.9634
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_carta_accartocciata_3",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_003",
+   "posizione": [
+    -17.905,
+    0.001,
+    -23.352
+   ],
+   "rotazione_y_gradi": -14.2,
+   "basis": [
+    [
+     0.9696,
+     0.0,
+     0.2446
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.2446,
+     0.0,
+     0.9696
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_003",
+   "posizione": [
+    -18.602,
+    0.001,
+    -21.664
+   ],
+   "rotazione_y_gradi": -28.3,
+   "basis": [
+    [
+     0.8808,
+     0.0,
+     0.4734
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.4734,
+     0.0,
+     0.8808
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_005",
+   "posizione": [
+    -17.885,
+    0.001,
+    -19.275
+   ],
+   "rotazione_y_gradi": 104.6,
+   "basis": [
+    [
+     -0.2528,
+     0.0,
+     -0.9675
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9675,
+     0.0,
+     -0.2528
+    ]
+   ],
+   "motivo": "sotto la struttura di gioco, la vasca piccola o un fungo (disposizione 1)"
+  },
+  {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_007",
+   "posizione": [
+    -18.962,
+    0.001,
+    -8.861
+   ],
+   "rotazione_y_gradi": -115.7,
+   "basis": [
+    [
+     -0.4335,
+     0.0,
+     0.9011
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9011,
+     0.0,
+     -0.4335
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_ciabatta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_022",
+   "posizione": [
+    -19.535,
+    0.001,
+    -16.805
+   ],
+   "rotazione_y_gradi": 44.4,
+   "basis": [
+    [
+     0.7149,
+     0.0,
+     -0.6992
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.6992,
+     0.0,
+     0.7149
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_paperella",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_022",
+   "posizione": [
+    -18.327,
+    0.001,
+    -14.962
+   ],
+   "rotazione_y_gradi": -84.8,
+   "basis": [
+    [
+     0.0902,
+     0.0,
+     0.9959
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9959,
+     0.0,
+     0.0902
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_paletta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_022",
+   "posizione": [
+    -18.843,
+    0.001,
+    -16.934
+   ],
+   "rotazione_y_gradi": 90.8,
+   "basis": [
+    [
+     -0.0137,
+     0.0,
+     -0.9999
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9999,
+     0.0,
+     -0.0137
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_025",
+   "posizione": [
+    19.735,
+    0.001,
+    -12.023
+   ],
+   "rotazione_y_gradi": -150.6,
+   "basis": [
+    [
+     -0.871,
+     0.0,
+     0.4913
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.4913,
+     0.0,
+     -0.871
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_pistola_acqua",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_025",
+   "posizione": [
+    19.794,
+    0.001,
+    -11.479
+   ],
+   "rotazione_y_gradi": -100.1,
+   "basis": [
+    [
+     -0.1746,
+     0.0,
+     0.9846
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9846,
+     0.0,
+     -0.1746
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_piastrella_rotta_4",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_025",
+   "posizione": [
+    19.673,
+    0.001,
+    -12.286
+   ],
+   "rotazione_y_gradi": -13.0,
+   "basis": [
+    [
+     0.9745,
+     0.0,
+     0.2245
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.2245,
+     0.0,
+     0.9745
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_026",
+   "posizione": [
+    -10.28,
+    0.001,
+    -22.037
+   ],
+   "rotazione_y_gradi": 175.9,
+   "basis": [
+    [
+     -0.9974,
+     0.0,
+     -0.0717
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0717,
+     0.0,
+     -0.9974
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pistola_acqua",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_026",
+   "posizione": [
+    -11.784,
+    0.005,
+    -22.195
+   ],
+   "rotazione_y_gradi": -165.9,
+   "basis": [
+    [
+     -0.97,
+     0.0,
+     0.2432
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.2432,
+     0.0,
+     -0.97
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_paletta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_026",
+   "posizione": [
+    -10.673,
+    0.001,
+    -23.569
+   ],
+   "rotazione_y_gradi": 19.3,
+   "basis": [
+    [
+     0.9437,
+     0.0,
+     -0.3307
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.3307,
+     0.0,
+     0.9437
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_4",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_036",
+   "posizione": [
+    -17.304,
+    0.001,
+    -22.473
+   ],
+   "rotazione_y_gradi": 25.7,
+   "basis": [
+    [
+     0.9013,
+     0.0,
+     -0.4332
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4332,
+     0.0,
+     0.9013
+    ]
+   ],
+   "motivo": "sotto la struttura di gioco, la vasca piccola o un fungo (disposizione 1)"
+  },
+  {
+   "nodo": "det_foglio_4",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_036",
+   "posizione": [
+    -17.022,
+    0.001,
+    -22.234
+   ],
+   "rotazione_y_gradi": -131.2,
+   "basis": [
+    [
+     -0.658,
+     0.0,
+     0.753
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.753,
+     0.0,
+     -0.658
+    ]
+   ],
+   "motivo": "sotto la struttura di gioco, la vasca piccola o un fungo (disposizione 1)"
+  },
+  {
+   "nodo": "det_secchiello",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_036",
+   "posizione": [
+    -17.135,
+    0.001,
+    -23.676
+   ],
+   "rotazione_y_gradi": -135.9,
+   "basis": [
+    [
+     -0.718,
+     0.0,
+     0.6961
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.6961,
+     0.0,
+     -0.718
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_045",
+   "posizione": [
+    -14.404,
+    0.005,
+    -21.838
+   ],
+   "rotazione_y_gradi": 61.1,
+   "basis": [
+    [
+     0.4827,
+     0.0,
+     -0.8758
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8758,
+     0.0,
+     0.4827
+    ]
+   ],
+   "motivo": "sotto la struttura di gioco, la vasca piccola o un fungo (disposizione 1)"
+  },
+  {
+   "nodo": "det_vetri_rotti_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_045",
+   "posizione": [
+    -15.087,
+    0.001,
+    -22.297
+   ],
+   "rotazione_y_gradi": 110.6,
+   "basis": [
+    [
+     -0.3513,
+     0.0,
+     -0.9363
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9363,
+     0.0,
+     -0.3513
+    ]
+   ],
+   "motivo": "sotto la struttura di gioco, la vasca piccola o un fungo (disposizione 1)"
+  },
+  {
+   "nodo": "det_paletta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_045",
+   "posizione": [
+    -13.883,
+    0.001,
+    -22.597
+   ],
+   "rotazione_y_gradi": -133.4,
+   "basis": [
+    [
+     -0.6871,
+     0.0,
+     0.7265
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.7265,
+     0.0,
+     -0.6871
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_055",
+   "posizione": [
+    -9.063,
+    0.001,
+    -22.38
+   ],
+   "rotazione_y_gradi": -24.3,
+   "basis": [
+    [
+     0.9111,
+     0.0,
+     0.4121
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.4121,
+     0.0,
+     0.9111
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pistola_acqua",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_055",
+   "posizione": [
+    -10.582,
+    0.001,
+    -22.301
+   ],
+   "rotazione_y_gradi": -28.4,
+   "basis": [
+    [
+     0.8796,
+     0.0,
+     0.4757
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.4757,
+     0.0,
+     0.8796
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_maschera_sub",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_055",
+   "posizione": [
+    -10.344,
+    0.001,
+    -22.635
+   ],
+   "rotazione_y_gradi": 128.2,
+   "basis": [
+    [
+     -0.619,
+     0.0,
+     -0.7854
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.7854,
+     0.0,
+     -0.619
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_carta_accartocciata_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_113",
+   "posizione": [
+    19.771,
+    0.001,
+    -14.993
+   ],
+   "rotazione_y_gradi": -176.4,
+   "basis": [
+    [
+     -0.998,
+     0.0,
+     0.0635
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0635,
+     0.0,
+     -0.998
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_113",
+   "posizione": [
+    19.723,
+    0.001,
+    -14.065
+   ],
+   "rotazione_y_gradi": 167.6,
+   "basis": [
+    [
+     -0.9766,
+     0.0,
+     -0.2151
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.2151,
+     0.0,
+     -0.9766
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_alghe_secche_mucchio_3",
+   "glb": "glb/organico.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_241",
+   "posizione": [
+    -10.346,
+    0.001,
+    -15.212
+   ],
+   "rotazione_y_gradi": 19.8,
+   "basis": [
+    [
+     0.941,
+     0.0,
+     -0.3384
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.3384,
+     0.0,
+     0.941
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_241",
+   "posizione": [
+    -10.408,
+    0.001,
+    -15.834
+   ],
+   "rotazione_y_gradi": 84.9,
+   "basis": [
+    [
+     0.0894,
+     0.0,
+     -0.996
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.996,
+     0.0,
+     0.0894
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_6",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_241",
+   "posizione": [
+    -9.845,
+    0.001,
+    -14.736
+   ],
+   "rotazione_y_gradi": -149.5,
+   "basis": [
+    [
+     -0.8621,
+     0.0,
+     0.5068
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.5068,
+     0.0,
+     -0.8621
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_mucchio_piastrelle_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_249",
+   "posizione": [
+    -8.906,
+    0.001,
+    -12.964
+   ],
+   "rotazione_y_gradi": 60.9,
+   "basis": [
+    [
+     0.4857,
+     0.0,
+     -0.8741
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8741,
+     0.0,
+     0.4857
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pannello_lamiera_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_251",
+   "posizione": [
+    -8.267,
+    0.001,
+    -17.237
+   ],
+   "rotazione_y_gradi": -2.6,
+   "basis": [
+    [
+     0.9989,
+     0.0,
+     0.0462
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0462,
+     0.0,
+     0.9989
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_251",
+   "posizione": [
+    -8.343,
+    0.001,
+    -18.544
+   ],
+   "rotazione_y_gradi": 53.5,
+   "basis": [
+    [
+     0.5945,
+     0.0,
+     -0.8041
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8041,
+     0.0,
+     0.5945
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_5",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_251",
+   "posizione": [
+    -7.628,
+    0.001,
+    -17.092
+   ],
+   "rotazione_y_gradi": 76.6,
+   "basis": [
+    [
+     0.2325,
+     0.0,
+     -0.9726
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9726,
+     0.0,
+     0.2325
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pannello_controsoffitto",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_260",
+   "posizione": [
+    -15.695,
+    0.001,
+    -20.51
+   ],
+   "rotazione_y_gradi": 93.0,
+   "basis": [
+    [
+     -0.0524,
+     0.0,
+     -0.9986
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9986,
+     0.0,
+     -0.0524
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_maschera_sub",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_260",
+   "posizione": [
+    -15.668,
+    0.001,
+    -19.211
+   ],
+   "rotazione_y_gradi": -143.8,
+   "basis": [
+    [
+     -0.8066,
+     0.0,
+     0.5911
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.5911,
+     0.0,
+     -0.8066
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_260",
+   "posizione": [
+    -16.783,
+    0.001,
+    -20.617
+   ],
+   "rotazione_y_gradi": 105.2,
+   "basis": [
+    [
+     -0.2622,
+     0.0,
+     -0.965
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.965,
+     0.0,
+     -0.2622
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_4",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_260",
+   "posizione": [
+    -16.809,
+    0.001,
+    -20.142
+   ],
+   "rotazione_y_gradi": 73.2,
+   "basis": [
+    [
+     0.2896,
+     0.0,
+     -0.9571
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9571,
+     0.0,
+     0.2896
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pannello_lamiera_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_282",
+   "posizione": [
+    -12.06,
+    0.0,
+    -4.9
+   ],
+   "rotazione_y_gradi": -87.9,
+   "basis": [
+    [
+     0.0368,
+     0.0,
+     0.9993
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9993,
+     0.0,
+     0.0368
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_vetri_rotti_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_282",
+   "posizione": [
+    -12.166,
+    0.001,
+    -5.126
+   ],
+   "rotazione_y_gradi": -8.8,
+   "basis": [
+    [
+     0.9882,
+     0.0,
+     0.1532
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1532,
+     0.0,
+     0.9882
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_secchiello",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_282",
+   "posizione": [
+    -11.141,
+    0.001,
+    -5.505
+   ],
+   "rotazione_y_gradi": 176.6,
+   "basis": [
+    [
+     -0.9982,
+     0.0,
+     -0.0595
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0595,
+     0.0,
+     -0.9982
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_mucchio_piastrelle_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_289",
+   "posizione": [
+    -10.227,
+    0.001,
+    -17.452
+   ],
+   "rotazione_y_gradi": -175.6,
+   "basis": [
+    [
+     -0.9971,
+     0.0,
+     0.0767
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0767,
+     0.0,
+     -0.9971
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_289",
+   "posizione": [
+    -10.557,
+    0.001,
+    -16.68
+   ],
+   "rotazione_y_gradi": -30.1,
+   "basis": [
+    [
+     0.8654,
+     0.0,
+     0.501
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.501,
+     0.0,
+     0.8654
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_carta_accartocciata_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_289",
+   "posizione": [
+    -11.672,
+    0.001,
+    -16.96
+   ],
+   "rotazione_y_gradi": -151.2,
+   "basis": [
+    [
+     -0.8765,
+     0.0,
+     0.4814
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.4814,
+     0.0,
+     -0.8765
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_secchiello",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_289",
+   "posizione": [
+    -8.854,
+    0.005,
+    -16.86
+   ],
+   "rotazione_y_gradi": -80.1,
+   "basis": [
+    [
+     0.1718,
+     0.0,
+     0.9851
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9851,
+     0.0,
+     0.1718
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_carta_accartocciata_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_289",
+   "posizione": [
+    -10.122,
+    0.001,
+    -18.218
+   ],
+   "rotazione_y_gradi": 155.9,
+   "basis": [
+    [
+     -0.9128,
+     0.0,
+     -0.4085
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4085,
+     0.0,
+     -0.9128
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_mucchio_piastrelle_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_290",
+   "posizione": [
+    -11.85,
+    0.021,
+    -8.126
+   ],
+   "rotazione_y_gradi": -51.0,
+   "basis": [
+    [
+     0.6292,
+     0.0,
+     0.7773
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.7773,
+     0.0,
+     0.6292
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_290",
+   "posizione": [
+    -13.05,
+    0.0,
+    -5.15
+   ],
+   "rotazione_y_gradi": 13.0,
+   "basis": [
+    [
+     0.9744,
+     0.0,
+     -0.2249
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.2249,
+     0.0,
+     0.9744
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_foglio_4",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_290",
+   "posizione": [
+    -11.182,
+    0.021,
+    -9.096
+   ],
+   "rotazione_y_gradi": -23.1,
+   "basis": [
+    [
+     0.9198,
+     0.0,
+     0.3924
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.3924,
+     0.0,
+     0.9198
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_290",
+   "posizione": [
+    -12.292,
+    0.021,
+    -9.054
+   ],
+   "rotazione_y_gradi": 19.6,
+   "basis": [
+    [
+     0.942,
+     0.0,
+     -0.3356
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.3356,
+     0.0,
+     0.942
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_305",
+   "posizione": [
+    -8.681,
+    0.001,
+    -15.054
+   ],
+   "rotazione_y_gradi": -178.3,
+   "basis": [
+    [
+     -0.9996,
+     0.0,
+     0.0288
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0288,
+     0.0,
+     -0.9996
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_foglio_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_305",
+   "posizione": [
+    -7.45,
+    0.001,
+    -15.66
+   ],
+   "rotazione_y_gradi": 108.8,
+   "basis": [
+    [
+     -0.3227,
+     0.0,
+     -0.9465
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9465,
+     0.0,
+     -0.3227
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pannello_lamiera",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_308",
+   "posizione": [
+    -13.63,
+    0.0,
+    -4.75
+   ],
+   "rotazione_y_gradi": 36.3,
+   "basis": [
+    [
+     0.8054,
+     0.0,
+     -0.5927
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5927,
+     0.0,
+     0.8054
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pannello_controsoffitto",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_308",
+   "posizione": [
+    -14.4,
+    0.0,
+    -5.0
+   ],
+   "rotazione_y_gradi": 33.4,
+   "basis": [
+    [
+     0.8348,
+     0.0,
+     -0.5506
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5506,
+     0.0,
+     0.8348
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_4",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_308",
+   "posizione": [
+    -13.42,
+    0.0,
+    -5.35
+   ],
+   "rotazione_y_gradi": 42.6,
+   "basis": [
+    [
+     0.7357,
+     0.0,
+     -0.6773
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.6773,
+     0.0,
+     0.7357
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_alghe_secche_mucchio_3",
+   "glb": "glb/organico.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_331",
+   "posizione": [
+    -17.422,
+    0.001,
+    -4.085
+   ],
+   "rotazione_y_gradi": 65.1,
+   "basis": [
+    [
+     0.4207,
+     0.0,
+     -0.9072
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9072,
+     0.0,
+     0.4207
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_macchia_calcare_pavimento",
+   "glb": "glb/organico.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_331",
+   "posizione": [
+    -16.444,
+    -0.001,
+    -3.1
+   ],
+   "rotazione_y_gradi": 162.8,
+   "basis": [
+    [
+     -0.9553,
+     0.0,
+     -0.2955
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.2955,
+     0.0,
+     -0.9553
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_331",
+   "posizione": [
+    -17.134,
+    0.001,
+    -5.084
+   ],
+   "rotazione_y_gradi": 29.7,
+   "basis": [
+    [
+     0.8685,
+     0.0,
+     -0.4957
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4957,
+     0.0,
+     0.8685
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_piastrella_rotta_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_331",
+   "posizione": [
+    -16.579,
+    0.001,
+    -4.491
+   ],
+   "rotazione_y_gradi": 27.4,
+   "basis": [
+    [
+     0.8874,
+     0.0,
+     -0.461
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.461,
+     0.0,
+     0.8874
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_asciugamano_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_346",
+   "posizione": [
+    -14.747,
+    0.021,
+    -8.804
+   ],
+   "rotazione_y_gradi": 72.7,
+   "basis": [
+    [
+     0.1248,
+     0.0,
+     -0.401
+    ],
+    [
+     0.0,
+     3.0,
+     0.0
+    ],
+    [
+     0.7161,
+     0.0,
+     0.2229
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_346",
+   "posizione": [
+    -15.356,
+    0.001,
+    -9.323
+   ],
+   "rotazione_y_gradi": -174.8,
+   "basis": [
+    [
+     -0.996,
+     0.0,
+     0.0898
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0898,
+     0.0,
+     -0.996
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_paperella",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_346",
+   "posizione": [
+    -14.066,
+    0.021,
+    -8.385
+   ],
+   "rotazione_y_gradi": -164.0,
+   "basis": [
+    [
+     -0.9611,
+     0.0,
+     0.276
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.276,
+     0.0,
+     -0.9611
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_asciugamano_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_352",
+   "posizione": [
+    -13.511,
+    0.001,
+    -20.81
+   ],
+   "rotazione_y_gradi": -15.4,
+   "basis": [
+    [
+     0.4048,
+     0.0,
+     0.1118
+    ],
+    [
+     0.0,
+     3.0,
+     0.0
+    ],
+    [
+     -0.1997,
+     0.0,
+     0.7229
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_pesce_gomma",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_352",
+   "posizione": [
+    -13.234,
+    0.001,
+    -20.06
+   ],
+   "rotazione_y_gradi": -62.5,
+   "basis": [
+    [
+     0.4625,
+     0.0,
+     0.8866
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8866,
+     0.0,
+     0.4625
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_asciugamano_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_379",
+   "posizione": [
+    -8.949,
+    0.001,
+    -7.708
+   ],
+   "rotazione_y_gradi": 47.7,
+   "basis": [
+    [
+     0.2825,
+     0.0,
+     -0.3108
+    ],
+    [
+     0.0,
+     3.0,
+     0.0
+    ],
+    [
+     0.5549,
+     0.0,
+     0.5045
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_paletta",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_379",
+   "posizione": [
+    -8.881,
+    0.001,
+    -6.911
+   ],
+   "rotazione_y_gradi": 178.8,
+   "basis": [
+    [
+     -0.9998,
+     0.0,
+     -0.0215
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0215,
+     0.0,
+     -0.9998
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_secchiello",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_379",
+   "posizione": [
+    -9.3,
+    0.001,
+    -8.426
+   ],
+   "rotazione_y_gradi": -86.1,
+   "basis": [
+    [
+     0.0682,
+     0.0,
+     0.9977
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9977,
+     0.0,
+     0.0682
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_379",
+   "posizione": [
+    -8.959,
+    0.001,
+    -8.508
+   ],
+   "rotazione_y_gradi": -7.2,
+   "basis": [
+    [
+     0.9922,
+     0.0,
+     0.1246
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1246,
+     0.0,
+     0.9922
+    ]
+   ],
+   "motivo": "giocattolo nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_condotta_aria_4m",
+   "glb": "glb/tubi.glb",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_465",
+   "posizione": [
+    20.0,
+    3.7,
+    -16.11
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_incrostazione_spigolo_2",
+   "glb": "glb/organico.glb",
+   "zona": "base dei muri",
+   "gruppo": "corsa_484",
+   "posizione": [
+    20.0,
+    0.1,
+    -16.268
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_incrostazione_spigolo_2",
+   "glb": "glb/organico.glb",
+   "zona": "base dei muri",
+   "gruppo": "corsa_484",
+   "posizione": [
+    20.0,
+    0.1,
+    -15.268
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_incrostazione_spigolo_2",
+   "glb": "glb/organico.glb",
+   "zona": "base dei muri",
+   "gruppo": "corsa_484",
+   "posizione": [
+    20.0,
+    0.1,
+    -14.268
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_incrostazione_spigolo_2",
+   "glb": "glb/organico.glb",
+   "zona": "base dei muri",
+   "gruppo": "corsa_484",
+   "posizione": [
+    20.0,
+    0.1,
+    -13.268
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_incrostazione_spigolo_2",
+   "glb": "glb/organico.glb",
+   "zona": "base dei muri",
+   "gruppo": "corsa_484",
+   "posizione": [
+    20.0,
+    0.1,
+    -12.268
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_incrostazione_spigolo_1",
+   "glb": "glb/organico.glb",
+   "zona": "base dei muri",
+   "gruppo": "corsa_488",
+   "posizione": [
+    20.0,
+    0.1,
+    -18.432
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_incrostazione_spigolo_1",
+   "glb": "glb/organico.glb",
+   "zona": "base dei muri",
+   "gruppo": "corsa_488",
+   "posizione": [
+    20.0,
+    0.1,
+    -17.432
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_cassetta_piccola",
+   "glb": "glb/elettrico.glb",
+   "zona": "muri",
+   "gruppo": "impianto_509",
+   "posizione": [
+    20.0,
+    2.2,
+    -10.482
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_cassetta_aperta",
+   "glb": "glb/elettrico.glb",
+   "zona": "muri",
+   "gruppo": "impianto_531",
+   "posizione": [
+    20.0,
+    1.667,
+    -16.649
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_cartello_vietato_vetro",
+   "glb": "glb/cartelli.glb",
+   "zona": "muri",
+   "gruppo": "cartelli_602",
+   "posizione": [
+    20.0,
+    1.798,
+    -13.295
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_cartello_uscita",
+   "glb": "glb/cartelli.glb",
+   "zona": "muri",
+   "gruppo": "cartelli_681",
+   "posizione": [
+    20.0,
+    1.705,
+    -12.731
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_cartello_non_tuffarsi",
+   "glb": "glb/cartelli.glb",
+   "zona": "muri",
+   "gruppo": "cartelli_682",
+   "posizione": [
+    20.0,
+    1.794,
+    -18.063
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_faro_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "muri",
+   "gruppo": "luci_muro_754",
+   "posizione": [
+    20.0,
+    3.322,
+    -17.787
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ],
+   "motivo": "nel varco della sala della torre o dove scorre il portone"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_889",
+   "posizione": [
+    11.45,
+    4.0,
+    18.278
+   ],
+   "rotazione_y_gradi": 14.0,
+   "basis": [
+    [
+     0.9705,
+     0.0,
+     -0.2412
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.2412,
+     0.0,
+     0.9705
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_3m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_892",
+   "posizione": [
+    17.714,
+    4.0,
+    16.274
+   ],
+   "rotazione_y_gradi": 173.4,
+   "basis": [
+    [
+     -0.9933,
+     0.0,
+     -0.1152
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.1152,
+     0.0,
+     -0.9933
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_896",
+   "posizione": [
+    -3.173,
+    4.0,
+    18.715
+   ],
+   "rotazione_y_gradi": -55.7,
+   "basis": [
+    [
+     0.5633,
+     0.0,
+     0.8263
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8263,
+     0.0,
+     0.5633
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_901",
+   "posizione": [
+    -4.261,
+    4.0,
+    17.076
+   ],
+   "rotazione_y_gradi": -167.6,
+   "basis": [
+    [
+     -0.9765,
+     0.0,
+     0.2153
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.2153,
+     0.0,
+     -0.9765
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_902",
+   "posizione": [
+    -9.573,
+    4.0,
+    17.362
+   ],
+   "rotazione_y_gradi": -0.6,
+   "basis": [
+    [
+     0.9999,
+     0.0,
+     0.0113
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0113,
+     0.0,
+     0.9999
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_903",
+   "posizione": [
+    -4.913,
+    4.0,
+    18.691
+   ],
+   "rotazione_y_gradi": -107.9,
+   "basis": [
+    [
+     -0.307,
+     0.0,
+     0.9517
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9517,
+     0.0,
+     -0.307
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_3m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_904",
+   "posizione": [
+    -12.993,
+    4.0,
+    17.968
+   ],
+   "rotazione_y_gradi": 154.7,
+   "basis": [
+    [
+     -0.9042,
+     0.0,
+     -0.4271
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4271,
+     0.0,
+     -0.9042
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_906",
+   "posizione": [
+    -18.093,
+    4.0,
+    16.166
+   ],
+   "rotazione_y_gradi": -120.7,
+   "basis": [
+    [
+     -0.5112,
+     0.0,
+     0.8594
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8594,
+     0.0,
+     -0.5112
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_910",
+   "posizione": [
+    17.855,
+    4.0,
+    17.242
+   ],
+   "rotazione_y_gradi": 15.9,
+   "basis": [
+    [
+     0.9617,
+     0.0,
+     -0.2741
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.2741,
+     0.0,
+     0.9617
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_913",
+   "posizione": [
+    -16.153,
+    4.0,
+    17.595
+   ],
+   "rotazione_y_gradi": -50.5,
+   "basis": [
+    [
+     0.6359,
+     0.0,
+     0.7718
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.7718,
+     0.0,
+     0.6359
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_917",
+   "posizione": [
+    -18.395,
+    4.0,
+    17.463
+   ],
+   "rotazione_y_gradi": -133.4,
+   "basis": [
+    [
+     -0.6874,
+     0.0,
+     0.7262
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.7262,
+     0.0,
+     -0.6874
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_919",
+   "posizione": [
+    -5.101,
+    4.0,
+    17.049
+   ],
+   "rotazione_y_gradi": -37.6,
+   "basis": [
+    [
+     0.7921,
+     0.0,
+     0.6104
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.6104,
+     0.0,
+     0.7921
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "ingresso_appesi_920",
+   "posizione": [
+    -17.059,
+    4.0,
+    17.481
+   ],
+   "rotazione_y_gradi": 159.1,
+   "basis": [
+    [
+     -0.9344,
+     0.0,
+     -0.3561
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.3561,
+     0.0,
+     -0.9344
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_931",
+   "posizione": [
+    -19.179,
+    4.0,
+    4.893
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_936",
+   "posizione": [
+    19.127,
+    4.0,
+    -13.345
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_944",
+   "posizione": [
+    3.065,
+    4.0,
+    19.435
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_945",
+   "posizione": [
+    -12.812,
+    4.0,
+    -23.186
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_951",
+   "posizione": [
+    -19.277,
+    4.0,
+    17.244
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_951",
+   "posizione": [
+    -19.277,
+    4.0,
+    13.234
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_955",
+   "posizione": [
+    -17.111,
+    4.0,
+    19.39
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_963",
+   "posizione": [
+    -19.362,
+    4.0,
+    11.563
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_968",
+   "posizione": [
+    12.32,
+    4.0,
+    19.589
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_969",
+   "posizione": [
+    5.287,
+    4.0,
+    -23.2
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_971",
+   "posizione": [
+    -19.203,
+    4.0,
+    8.531
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_971",
+   "posizione": [
+    -19.203,
+    4.0,
+    12.571
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_976",
+   "posizione": [
+    16.778,
+    4.0,
+    -23.597
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_976",
+   "posizione": [
+    12.768,
+    4.0,
+    -23.597
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_976",
+   "posizione": [
+    8.758,
+    4.0,
+    -23.597
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_979",
+   "posizione": [
+    -19.333,
+    4.0,
+    -13.862
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_997",
+   "posizione": [
+    -19.49,
+    4.0,
+    0.247
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_997",
+   "posizione": [
+    -19.49,
+    4.0,
+    -1.793
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_997",
+   "posizione": [
+    -19.49,
+    4.0,
+    -3.833
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_997",
+   "posizione": [
+    -19.49,
+    4.0,
+    -5.873
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_997",
+   "posizione": [
+    -19.49,
+    4.0,
+    -7.913
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1003",
+   "posizione": [
+    15.904,
+    4.0,
+    -23.494
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1004",
+   "posizione": [
+    -13.907,
+    4.0,
+    -23.583
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1005",
+   "posizione": [
+    -19.276,
+    4.0,
+    5.058
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1009",
+   "posizione": [
+    -15.704,
+    4.0,
+    -23.122
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1010",
+   "posizione": [
+    19.192,
+    4.0,
+    -20.523
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1012",
+   "posizione": [
+    -8.444,
+    4.0,
+    19.101
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_fascio_cavi_4m",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1013",
+   "posizione": [
+    -19.18,
+    4.0,
+    -6.154
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_festone_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "fascio_cavi_1016",
+   "posizione": [
+    19.486,
+    4.0,
+    -18.1
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_soffitto_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1029",
+   "posizione": [
+    -9.564,
+    4.0,
+    -21.611
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_senza_diffusore",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1030",
+   "posizione": [
+    6.087,
+    4.0,
+    -22.649
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1030",
+   "posizione": [
+    6.001,
+    4.0,
+    -23.705
+   ],
+   "rotazione_y_gradi": 40.5,
+   "basis": [
+    [
+     0.7606,
+     0.0,
+     -0.6493
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.6493,
+     0.0,
+     0.7606
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_penzolante",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1032",
+   "posizione": [
+    -14.282,
+    4.0,
+    -21.894
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_2m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1032",
+   "posizione": [
+    -15.404,
+    4.0,
+    -21.667
+   ],
+   "rotazione_y_gradi": 83.0,
+   "basis": [
+    [
+     0.1218,
+     0.0,
+     -0.9926
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9926,
+     0.0,
+     0.1218
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_senza_diffusore",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1035",
+   "posizione": [
+    -18.057,
+    4.0,
+    18.652
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_penzolante",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1041",
+   "posizione": [
+    3.819,
+    4.0,
+    17.604
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_soffitto_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1042",
+   "posizione": [
+    -18.01,
+    4.0,
+    -6.354
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_vetri_rotti_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sotto le lampade",
+   "gruppo": "lampada_pendente_1042",
+   "posizione": [
+    -18.01,
+    0.001,
+    -6.354
+   ],
+   "rotazione_y_gradi": 10.6,
+   "basis": [
+    [
+     0.9828,
+     0.0,
+     -0.1848
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.1848,
+     0.0,
+     0.9828
+    ]
+   ],
+   "motivo": "sparso a terra nell'area bimbi (disposizione 1)"
+  },
+  {
+   "nodo": "det_neon_soffitto_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1043",
+   "posizione": [
+    8.084,
+    4.0,
+    17.65
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_penzolante",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1044",
+   "posizione": [
+    9.81,
+    4.0,
+    -22.269
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_soffitto_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1048",
+   "posizione": [
+    18.418,
+    4.0,
+    -6.865
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_penzolante",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1053",
+   "posizione": [
+    -18.431,
+    4.0,
+    -17.783
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_1m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1053",
+   "posizione": [
+    -19.228,
+    4.0,
+    -16.893
+   ],
+   "rotazione_y_gradi": -174.5,
+   "basis": [
+    [
+     -0.9955,
+     0.0,
+     0.0953
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0953,
+     0.0,
+     -0.9955
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_senza_diffusore",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1058",
+   "posizione": [
+    18.148,
+    4.0,
+    11.906
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_corda_pendente_2",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1058",
+   "posizione": [
+    17.059,
+    4.0,
+    11.903
+   ],
+   "rotazione_y_gradi": -66.8,
+   "basis": [
+    [
+     0.3945,
+     0.0,
+     0.9189
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9189,
+     0.0,
+     0.3945
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_soffitto_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1059",
+   "posizione": [
+    -18.092,
+    4.0,
+    10.272
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_penzolante",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1062",
+   "posizione": [
+    -11.48,
+    4.0,
+    -22.318
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_senza_diffusore",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1065",
+   "posizione": [
+    -18.378,
+    4.0,
+    2.204
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_senza_diffusore",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1066",
+   "posizione": [
+    -7.934,
+    4.0,
+    18.259
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_corda_pendente_1",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1066",
+   "posizione": [
+    -8.134,
+    4.0,
+    19.302
+   ],
+   "rotazione_y_gradi": -71.1,
+   "basis": [
+    [
+     0.3245,
+     0.0,
+     0.9459
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9459,
+     0.0,
+     0.3245
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_penzolante",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1068",
+   "posizione": [
+    -8.063,
+    3.81,
+    -22.481
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_soffitto_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1071",
+   "posizione": [
+    17.274,
+    4.0,
+    18.333
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_soffitto_spento",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1072",
+   "posizione": [
+    2.259,
+    4.0,
+    18.661
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_neon_penzolante",
+   "glb": "glb/lampade.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "lampada_pendente_1075",
+   "posizione": [
+    18.943,
+    4.0,
+    -9.325
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_2m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1089",
+   "posizione": [
+    -18.679,
+    4.0,
+    -22.754
+   ],
+   "rotazione_y_gradi": -9.0,
+   "basis": [
+    [
+     0.9877,
+     0.0,
+     0.1566
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1566,
+     0.0,
+     0.9877
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_3m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1090",
+   "posizione": [
+    17.5,
+    4.0,
+    -19.948
+   ],
+   "rotazione_y_gradi": -106.2,
+   "basis": [
+    [
+     -0.2798,
+     0.0,
+     0.9601
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9601,
+     0.0,
+     -0.2798
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1092",
+   "posizione": [
+    -17.429,
+    4.0,
+    15.591
+   ],
+   "rotazione_y_gradi": -98.1,
+   "basis": [
+    [
+     -0.1408,
+     0.0,
+     0.99
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.99,
+     0.0,
+     -0.1408
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1094",
+   "posizione": [
+    -6.317,
+    4.0,
+    -22.639
+   ],
+   "rotazione_y_gradi": -102.4,
+   "basis": [
+    [
+     -0.2145,
+     0.0,
+     0.9767
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9767,
+     0.0,
+     -0.2145
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_3m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1095",
+   "posizione": [
+    7.305,
+    4.0,
+    -22.037
+   ],
+   "rotazione_y_gradi": 114.5,
+   "basis": [
+    [
+     -0.4146,
+     0.0,
+     -0.91
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.91,
+     0.0,
+     -0.4146
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_1m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1099",
+   "posizione": [
+    -19.133,
+    4.0,
+    9.042
+   ],
+   "rotazione_y_gradi": 176.7,
+   "basis": [
+    [
+     -0.9983,
+     0.0,
+     -0.0578
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0578,
+     0.0,
+     -0.9983
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1100",
+   "posizione": [
+    -17.523,
+    4.0,
+    14.734
+   ],
+   "rotazione_y_gradi": -34.2,
+   "basis": [
+    [
+     0.8268,
+     0.0,
+     0.5624
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.5624,
+     0.0,
+     0.8268
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1103",
+   "posizione": [
+    -18.742,
+    4.0,
+    -12.722
+   ],
+   "rotazione_y_gradi": 25.2,
+   "basis": [
+    [
+     0.9051,
+     0.0,
+     -0.4252
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4252,
+     0.0,
+     0.9051
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1105",
+   "posizione": [
+    18.607,
+    4.0,
+    0.083
+   ],
+   "rotazione_y_gradi": 111.7,
+   "basis": [
+    [
+     -0.369,
+     0.0,
+     -0.9294
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9294,
+     0.0,
+     -0.369
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_2m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1106",
+   "posizione": [
+    13.09,
+    4.0,
+    -22.068
+   ],
+   "rotazione_y_gradi": 10.8,
+   "basis": [
+    [
+     0.9824,
+     0.0,
+     -0.1866
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.1866,
+     0.0,
+     0.9824
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1114",
+   "posizione": [
+    -18.138,
+    4.0,
+    8.536
+   ],
+   "rotazione_y_gradi": -149.7,
+   "basis": [
+    [
+     -0.8638,
+     0.0,
+     0.5038
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.5038,
+     0.0,
+     -0.8638
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_2m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1115",
+   "posizione": [
+    -19.169,
+    4.0,
+    -14.638
+   ],
+   "rotazione_y_gradi": 5.3,
+   "basis": [
+    [
+     0.9956,
+     0.0,
+     -0.0932
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0932,
+     0.0,
+     0.9956
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1117",
+   "posizione": [
+    14.883,
+    4.0,
+    18.23
+   ],
+   "rotazione_y_gradi": -65.9,
+   "basis": [
+    [
+     0.4084,
+     0.0,
+     0.9128
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9128,
+     0.0,
+     0.4084
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_1",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1118",
+   "posizione": [
+    18.99,
+    4.0,
+    1.264
+   ],
+   "rotazione_y_gradi": 8.3,
+   "basis": [
+    [
+     0.9895,
+     0.0,
+     -0.1445
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.1445,
+     0.0,
+     0.9895
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1120",
+   "posizione": [
+    17.69,
+    4.0,
+    1.186
+   ],
+   "rotazione_y_gradi": -57.2,
+   "basis": [
+    [
+     0.5417,
+     0.0,
+     0.8406
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8406,
+     0.0,
+     0.5417
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_2m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1121",
+   "posizione": [
+    7.469,
+    4.0,
+    19.02
+   ],
+   "rotazione_y_gradi": 61.5,
+   "basis": [
+    [
+     0.4776,
+     0.0,
+     -0.8786
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8786,
+     0.0,
+     0.4776
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_3m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1123",
+   "posizione": [
+    18.275,
+    4.0,
+    -18.846
+   ],
+   "rotazione_y_gradi": -142.9,
+   "basis": [
+    [
+     -0.7971,
+     0.0,
+     0.6038
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.6038,
+     0.0,
+     -0.7971
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1125",
+   "posizione": [
+    -19.249,
+    4.0,
+    -15.64
+   ],
+   "rotazione_y_gradi": -100.5,
+   "basis": [
+    [
+     -0.1827,
+     0.0,
+     0.9832
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9832,
+     0.0,
+     -0.1827
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1128",
+   "posizione": [
+    -17.798,
+    4.0,
+    -16.077
+   ],
+   "rotazione_y_gradi": 29.3,
+   "basis": [
+    [
+     0.8722,
+     0.0,
+     -0.4891
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4891,
+     0.0,
+     0.8722
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_2",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1132",
+   "posizione": [
+    18.79,
+    4.0,
+    16.087
+   ],
+   "rotazione_y_gradi": 55.2,
+   "basis": [
+    [
+     0.5711,
+     0.0,
+     -0.8209
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8209,
+     0.0,
+     0.5711
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_4",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1134",
+   "posizione": [
+    -10.129,
+    4.0,
+    -23.029
+   ],
+   "rotazione_y_gradi": -44.4,
+   "basis": [
+    [
+     0.7141,
+     0.0,
+     0.7
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.7,
+     0.0,
+     0.7141
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1135",
+   "posizione": [
+    8.291,
+    4.0,
+    19.021
+   ],
+   "rotazione_y_gradi": -107.1,
+   "basis": [
+    [
+     -0.2936,
+     0.0,
+     0.9559
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9559,
+     0.0,
+     -0.2936
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_catena_pendente_1m",
+   "glb": "glb/catene_corde.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1136",
+   "posizione": [
+    -18.038,
+    4.0,
+    -16.695
+   ],
+   "rotazione_y_gradi": 114.1,
+   "basis": [
+    [
+     -0.4079,
+     0.0,
+     -0.913
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.913,
+     0.0,
+     -0.4079
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_cavo_pendente_3",
+   "glb": "glb/cavi.glb",
+   "zona": "sotto la galleria",
+   "gruppo": "appesi_1138",
+   "posizione": [
+    -19.098,
+    4.0,
+    4.95
+   ],
+   "rotazione_y_gradi": -119.8,
+   "basis": [
+    [
+     -0.4963,
+     0.0,
+     0.8682
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8682,
+     0.0,
+     -0.4963
+    ]
+   ],
+   "motivo": "appeso sotto il soppalco, che non c'è più"
+  },
+  {
+   "nodo": "det_mucchio_piastrelle_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_252",
+   "posizione": [
+    6.89,
+    -0.045,
+    -12.722
+   ],
+   "rotazione_y_gradi": 114.4,
+   "basis": [
+    [
+     -0.4134,
+     0.0,
+     -0.9106
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9106,
+     0.0,
+     -0.4134
+    ]
+   ],
+   "motivo": "a cavallo del bordo della piscina (controllo degli oggetti: entrava 6 cm nel bordo da tutte e due le parti)"
+  },
+  {
+   "nodo": "det_pannello_lamiera_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_105",
+   "posizione": [
+    -5.001,
+    0.001,
+    -23.812
+   ],
+   "rotazione_y_gradi": -66.3,
+   "basis": [
+    [
+     0.4015,
+     0.0,
+     0.9159
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9159,
+     0.0,
+     0.4015
+    ]
+   ],
+   "motivo": "pannello appoggiato al muro nord: tagliava il battiscopa e il muro di 7 cm anche spostato (controllo degli oggetti)"
+  }
+ ]
+}

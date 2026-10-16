@@ -284,7 +284,8 @@ def posti_pozzanghere(n=48, seme=8):
     piedistallo, struttura e torre. Più fitte lungo il percorso del giocatore."""
     import random
     rnd = random.Random(seme)
-    P, V, PD, ST, T = S.PISCINA, S.VASCA_ARRIVO, S.PIEDISTALLO, S.STRUTTURA, S.TORRE
+    # struttura e vasche basse dove stavano fino al 15 ottobre (così le altre pozzanghere restano dov'erano)
+    P, V, PD, ST, T = S.PISCINA, S.VASCA_ARRIVO, S.PIEDISTALLO, S.STRUTTURA_15_OTTOBRE, S.TORRE
     vietati = [(P['x0'] - 0.75, P['y0'] - 0.75, P['x1'] + 0.75, P['y1'] + 0.75),
                (V['x0'] - 0.75, V['y0'] - 0.75, V['x1'] + 0.75, V['y1'] + 0.75),
                tuple(v + d for v, d in zip(S.ingombro_centro('vasca'), (-0.2, -0.2, 0.2, 0.2))),
@@ -293,7 +294,7 @@ def posti_pozzanghere(n=48, seme=8):
                (ST['cx'] - 4.6, ST['cy'] - 5.6, ST['cx'] + 2.0, ST['cy'] + 3.4),
                (T['cx'] - 3.3, T['cy'] - 4.5, T['cx'] + 3.3, T['cy'] + 3.3),
                (15.5, 2.8, 17.1, 9.8)] + \
-              [(a - 0.3, b - 0.3, c + 0.3, d + 0.3) for a, b, c, d in S.VASCHE_BASSE]
+              [(a - 0.3, b - 0.3, c + 0.3, d + 0.3) for a, b, c, d in S.VASCHE_BASSE_15_OTTOBRE]
     fatti, tent = [], 0
     while len(fatti) < n and tent < 6000:
         tent += 1
@@ -316,6 +317,13 @@ def posti_pozzanghere(n=48, seme=8):
     F = S.FOSSA_BIMBI
     fatti = [(x, y, r0) for (x, y, r0) in fatti
              if not (F['x0'] - 0.3 - r0 < x < F['x1'] + 0.3 + r0 and F['y0'] - 0.3 - r0 < y < F['y1'] + r0)]
+    # area bimbi rifatta il 16 ottobre (disposizione 1): via quelle sotto la struttura, le vasche e i funghi
+    ST = S.STRUTTURA
+    nuovi = [(ST['cx'] - 4.6, ST['cy'] - 5.6, ST['cx'] + 2.0, ST['cy'] + 3.4)] + \
+            [(a - 0.3, b - 0.3, c + 0.3, d + 0.3) for a, b, c, d in S.VASCHE_BASSE] + \
+            [(x - 1.2 * s, y - 1.2 * s, x + 1.2 * s, y + 1.2 * s) for (x, y, _, s) in S.FUNGHI]
+    fatti = [(x, y, r0) for (x, y, r0) in fatti
+             if not any(a - r0 < x < c + r0 and b - r0 < y < d + r0 for a, b, c, d in nuovi)]
     return fatti, rnd
 
 
@@ -380,6 +388,18 @@ def piastrelle_mancanti(mats, gruppi_pareti=44, gruppi_piscina=14, seme=12):
             if asse == 'y' and (abs(a - (-3.2 if fisso > 0 else -2.2)) < 0.5):
                 return True                                # scalette
         return False
+    va, vb, vh = S.varco_torre()
+    PB = S.PULSANTE_BOTOLA
+    def nascosto(muro, a, z):
+        """Posti nuovi del 16 ottobre: il varco della sala della torre (e il portone) nella parete est, la
+        cassetta del pulsante della botola. Lì il gruppo non si disegna ma conta come fatto: i numeri
+        casuali restano gli stessi e le altre piastrelle mancanti non si spostano."""
+        asse, fisso = muro[0], muro[1]
+        if asse == 'y' and abs(fisso - S.X1) < 1e-6 and va - 0.25 < a < vb + 0.25:
+            return True
+        if muro in vasca and asse == 'x' and abs(a - PB['x']) < 0.46 and z > PB['z'] - 0.62:
+            return True
+        return False
     def gruppo(muro):
         asse, fisso, nrm, (a0, a1), (z0, z1) = muro
         a = round(rnd.uniform(a0, a1) / T) * T
@@ -392,6 +412,8 @@ def piastrelle_mancanti(mats, gruppi_pareti=44, gruppi_piscina=14, seme=12):
                 celle.append((na, nz))
         if any(vietato(muro, ca + T / 2, cz + T / 2) for ca, cz in celle):
             return False
+        if any(nascosto(muro, ca + T / 2, cz + T / 2) for ca, cz in celle):
+            return True
         o = 0.003
         for (ca, cz) in celle:
             if asse == 'x':
@@ -471,13 +493,18 @@ def insegne_neon(mats):
 
 def plafoniere_calde(mats):
     """Plafoniere navali 'a tartaruga' ancora accese, luce calda: un po' di caldo in mezzo al rosso
-    (vicino alla porta, sul muro est vicino alla scala, sul muro ovest sopra il salvagente, sulla
-    torre e su una colonna della galleria nord). Restituisce (oggetto, luci)."""
+    (vicino alla porta, sul muro est, sul muro ovest sopra il salvagente e sulla parete nord). Dal 16
+    ottobre la 3 non c'è più (era sulla torre degli scivoli, tolta dalla sala) e la 4, che era su una
+    colonna del soppalco nord, è sulla parete nord: i nomi delle luci restano gli stessi.
+    Restituisce (oggetto, luci)."""
     posti = [((1.75, S.Y0, 2.5), (0, 1, 0)), ((S.X1, 9.0, 2.7), (-1, 0, 0)), ((S.X0, -1.0, 2.7), (1, 0, 0)),
-             ((10.5, 14.38, 2.6), (0, -1, 0)), ((-3.0, 21.15, 3.0), (0, -1, 0))]
+             None, ((-4.6, S.Y1, 3.0), (0, -1, 0))]
     c = K.Costruttore(mats)
     luci = []
-    for i, (p, n) in enumerate(posti):
+    for i, posto in enumerate(posti):
+        if posto is None:
+            continue
+        p, n = posto
         P = Vector(p); N = Vector(n)
         su = Vector((0, 0, 1)); lato = su.cross(N).normalized()
         c.scatola_assi(P + N * 0.02, (lato, su, N), (0.15, 0.1, 0.02), 'metallo')

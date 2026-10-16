@@ -6,6 +6,38 @@ Le coordinate qui sotto sono già **in Godot** (Y in alto). Da Blender: `(x, y, 
 Tutti i numeri vengono da `glb/sala/sala_dati.json`, scritto dallo stesso script che fa i GLB; questo
 file lo rigenera `tools/blender/ambiente_integrazione.py`.
 
+## Novità (16 ottobre): le scelte dell'utente sulle proposte
+
+- **Niente soppalco** (C1): via galleria, colonne, ringhiere e scala. Le plafoniere al neon sono sulle pareti alla
+  quota di prima (3,88 m, 32 cm dal muro, su due staffe), con gli stessi nomi delle luci; i due fari della medusa
+  (`luce_faro_0/1`) sono su due bracci fissati alla parete sud, alla stessa quota; cartelloni e altoparlanti sulle
+  pareti nord e sud; la plafoniera calda `luce_calda_4` è sulla parete nord in (-4.6, 3, -23.75).
+- **Cordone chiuso** intorno alla vasca della medusa (D1): 20 colonnine, niente varco, e su ogni campata un muro
+  invisibile alto 2,5 m (`cordone_vasca_0..19`).
+- **Area bimbi, disposizione 1**: struttura di gioco nell'angolo nord-ovest (centro (-14.6, 0, -19.6)), con la
+  scala verso chi arriva e lo scivolo che scende nella vasca piccola (VascaBimbi2, ora con il centro dell'acqua in
+  x -9.6, z -18.2); i due funghi nella piazza. La VascaBimbi1 e la fossa della tappa 8 restano dove sono.
+  Niente ruota a pale (il secchio è scenografia), niente cannoncini; tolti i giocattoli sparsi nell'area e sulla
+  strada della scia rosa (gli altri oggetti hanno gli stessi nomi di prima).
+- **Pulsante della botola, versione A**: cassetta gialla sulla parete sud della piscina con il fungo rosso Ø 50 cm
+  (`sala_pulsante_portello`, stesso nome di prima: si preme lungo il suo -Z) e il lampeggiante
+  (`sala_lampeggiante_portello`, vetro giallo). Dati in `sala_dati.json` → `pulsante_botola`.
+- **Tappa 5 rifatta**: via la turbina dello scarico, il recinto con il cancello, la ruota del cancello con la
+  trasmissione e il quadro elettrico.
+- **Sala della torre, versione 2 (a est)**: varco nella parete est (z da -18 a -12, alto 5 m) chiuso dal portone
+  scorrevole con la torre dipinta e le bande a strisce, **senza l'insegna sopra**. L'anta è `sala_portone_torre`
+  (perno (19.84, 0, -15)): si apre scorrendo verso +Z fino a 2,0 m. Il lampeggiante rosso è
+  `sala_lampeggiante_torre`. Dietro c'è solo il guscio della sala (x da 20.2 a 40, alto 14 m), vuoto.
+  La torre e gli scivoli di prima **non sono più nella sala**: si rifanno nella sala nuova, con una proposta a parte.
+  Le luci che cadevano nel varco non ci sono più (`luce_neon_11`, `luce_emergenza_32`); le altre tengono il nome.
+- Il kit di dettagli ha 175 posti in meno (sotto il soppalco, area bimbi, varco, due che tagliavano lo sfondo):
+  vedi `assets_src/ambiente_dettagli/posizionamento_tolti_2026-10-16.json`.
+- **Controllo degli oggetti** che entrano nello sfondo o galleggiano (riscontro C3: il gonfiabile incastrato nella
+  scala): `tools/blender/controlla_oggetti_sala.py`, sui GLB del gioco e sul kit di dettagli. Gli oggetti a terra
+  inclinati ora toccano il pavimento con il punto più basso, i salvagenti appesi toccano il muro, e i dettagli del
+  fondo in pendenza della piscina seguono la pendenza. Restano solo le 4 lampade a muro del kit, con la piastra
+  4 cm dentro il muro (non si vede).
+
 ## Novità (15 ottobre)
 
 - **Fossa della VascaBimbi1** (tappa 8, "lei sbuca dal bordo"): sul lato sud della prima vasca a scacchi c'è
@@ -67,16 +99,16 @@ file lo rigenera `tools/blender/ambiente_integrazione.py`.
 
 | File | Cosa contiene | Triangoli | Collisioni | Peso |
 |---|---|---|---|---|
-| `sala_architettura.glb` | pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò e il **vano verso gli spogliatoi** con la porta stagna aperta, galleria con colonne e ringhiere, scala della galleria est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon, luci d'emergenza, insegna a pesce, altoparlanti | 247 mila | 275 | 40.7 MB |
-| `sala_vasca_centrale.glb` | **vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d'ottone HQ; lampione HQ; 2 fari sulla ringhiera della galleria; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella) | 141 mila | 34 | 24.3 MB |
+| `sala_architettura.glb` | pavimento (un solo materiale, umidità e sporco sfumati nei colori dei vertici; pozzanghere a specchio opache 3 mm sopra), pareti con oblò, il **vano verso gli spogliatoi** con la porta stagna aperta e il **varco della sala della torre** nella parete est, soffitto con travi, cartelloni (solo disegni), plafoniere al neon e altoparlanti sulle pareti, luci d'emergenza, insegna a pesce, il **guscio della sala della torre** (`sala_torre_guscio`) | 194 mila | 177 | 39.5 MB |
+| `sala_vasca_centrale.glb` | **vasca sollevata al centro** (6 x 4,5 m, bordo a 1,0 m, acqua a 0,88): piastrelle a scacchi blu notte e crema, coping bagnato con il toro, alghe e calcare sulla linea dell'acqua, scatola del pulsante della sigla; cordone di velluto su colonnine d'ottone HQ; lampione HQ; 2 fari sulla parete sud; offerte dei bambini (anche quelle Meshy: salvagente, orsetto, paperelle, pallone, ciambella) | 145 mila | 36 | 24.3 MB |
 | `sala_cupola.glb` | cupola: tamburo, costoloni, anelli, lastre di vetro (alcune rotte: lì sotto piove dentro) | 35 mila | - | 9.6 MB |
 | `sala_piscina.glb` | piscina a onde vuota: fondo con pendenza e conca dello scarico, buco del pozzo sotto il portello (bordo smussato, collare piastrellato), linea dell'ultimo livello dell'acqua, bordi a sfioro con griglie, bocchette della camera delle onde, rosa dei venti a mosaico, 2 scalette | 31 mila | 71 | 19.2 MB |
-| `sala_area_bimbi.glb` | struttura di gioco (pali tondi, bordi smussati), **secchio gigante** HQ e **ruota a pale** (nodi a parte, con il perno giusto), vasche basse a scacchi, **fossa della VascaBimbi1** (tappa 8) con il coperchio di collisione `coperchio_fossa_col` | 23 mila | 41 | 25.5 MB |
-| `sala_torre_scivoli.glb` | torre degli scivoli (piani a grigliato, scale a rampe, pozzo centrale aperto), 3 tubi colorati con sostegni e pennone della spirale, vasca d'arrivo | 92 mila | 147 | 29.0 MB |
-| `sala_oggetti.glb` | oggetti di scena Meshy HQ (istanze condivise): giocattoli e gonfiabili, lettini, sedia del bagnino, funghi-fontana, cannoncini, panche, cestini, cartelli. Uguale con la vasca e con il monumento: le offerte dei bambini stanno nel GLB del centro | 729 mila | 86 | 19.3 MB |
-| `sala_interattivi.glb` | elementi degli enigmi come nodi separati con il perno giusto (vedi sotto) | 6 mila | 11 | 10.2 MB |
+| `sala_area_bimbi.glb` | struttura di gioco (pali tondi, bordi smussati) nell'angolo nord-ovest, **secchio gigante** HQ (nodo a parte, con il perno giusto), vasche basse a scacchi, **fossa della VascaBimbi1** (tappa 8) con il coperchio di collisione `coperchio_fossa_col` | 22 mila | 40 | 25.4 MB |
+| `sala_torre_scivoli.glb` | solo la **vasca d'arrivo** (la torre e gli scivoli non sono più nella sala dal 16 ottobre; il nome del file resta per la scena) | 13 mila | 41 | 13.2 MB |
+| `sala_oggetti.glb` | oggetti di scena Meshy HQ (istanze condivise): giocattoli e gonfiabili, lettini, sedia del bagnino, funghi-fontana, panche, cestini, cartelli. Uguale con la vasca e con il monumento: le offerte dei bambini stanno nel GLB del centro | 597 mila | 71 | 16.0 MB |
+| `sala_interattivi.glb` | elementi degli enigmi come nodi separati con il perno giusto (vedi sotto): portello della botola, **pulsante A** con il lampeggiante, **portone della sala della torre**, pulsante della sigla | 5 mila | 3 | 6.0 MB |
 | `sala_acqua.glb` | **segnaposto** piatti dell'acqua (da sostituire con l'acqua vera) | 124 | - | 0.0 MB |
-| `sala_luci.glb` | 70 luci già al loro posto (Omni, Spot, una Directional) | - | - | |
+| `sala_luci.glb` | 67 luci già al loro posto (Omni, Spot, una Directional) | - | - | |
 | `sala_dati.json` | posizioni di luci, acqua, piedistallo, vano, spawn, camere | | | |
 
 Texture: 2K JPG incorporate (colore, normal OpenGL, ORM = occlusione/rugosità/metallo). PNG solo dove
@@ -114,32 +146,30 @@ al posto di `sala_monumento.glb`, che è in `glb/per_dopo/`.
     guarda verso +Z; mani sul coping in (-0.45, 1, 12.1) e (0.45, 1, 12.1).
   - **Pulsante della sigla (scena S1)**: il nodo `sala_pulsante_piedistallo` (stesso nome di prima) è sul
     muro davanti della vasca, in (0, 0.62, 12.35), rivolto verso +Z; si preme verso -Z.
-  - Collisioni: muro e bordo (4 tratti dritti e 4 angoli), cordone di velluto a 1.3 m dal bordo con il
-    varco davanti. L'acqua è il segnaposto `sala_vasca_centrale_acqua` in `sala_acqua.glb`.
-  - Luci: `luce_faro_0/1` (fari sulla ringhiera della galleria sud, puntati sul davanti della vasca),
+  - Collisioni: muro e bordo (4 tratti dritti e 4 angoli), cordone di velluto a 1.3 m dal bordo, chiuso,
+    con un muro invisibile alto 2,5 m. L'acqua è il segnaposto `sala_vasca_centrale_acqua` in `sala_acqua.glb`.
+  - Luci: `luce_faro_0/1` (fari su due bracci della parete sud, puntati sul davanti della vasca),
     `luce_vasca_0/1` (sott'acqua, verso la medusa), `luce_lampione` (base (2.8, 0, 13.2)).
   - Offerte dei bambini intorno alla vasca: disegni a pastello senza scritte, conchiglie, stelle marine,
     secchiello; salvagente, orsetto, paperelle (una galleggia), ciambella in acqua e pallone (sono nello stesso GLB della vasca).
 - **Secchio gigante**: nodo `sala_secchio_gigante`, perno sui suoi perni; si ribalta ruotando intorno all'asse **X**.
-- **Ruota a pale**: nodo `sala_ruota_pale`, perno sull'asse, gira intorno all'asse **X**.
-- La galleria si sale dalla scala sul lato est; la torre dalle rampe sul lato sud.
+- Niente ruota a pale, galleria e torre (16 ottobre).
 
 ## Elementi interattivi (`sala_interattivi.glb`)
 
 Ogni nodo ha l'origine sul suo perno (cerniera o asse): basta ruotarlo o spostarlo.
-Non sono cambiati, tranne il pulsante del piedistallo (nuova posizione).
+Il 16 ottobre: nuovi il pulsante A della botola (cassetta, fungo, lampeggiante) e il portone della sala della torre
+(anta, telaio, lampeggiante); tolti turbina, recinto, cancello, ruota del cancello, trasmissione e quadro elettrico.
 
 | Nodo | Perno in Godot |
 |---|---|
 | `sala_portello_scarico` | (0, -2.25, 1.36) |
-| `sala_pulsante_portello` | (1.9, -1.15, 4.99) |
-| `sala_turbina_scarico` | (4.6, -0.62, 4.84) |
-| `sala_turbina_carter` | (0, 0, -0) |
-| `sala_recinto_spiaggia` | (0, 0, -0) |
-| `sala_cancello_spiaggia` | (-1, 0, -13.6) |
-| `sala_ruota_cancello` | (-9.2, 1.45, -13.8) |
-| `sala_trasmissione_cancello` | (0, 0, -0) |
-| `sala_quadro_elettrico` | (-9, 1.1, -21.15) |
+| `sala_pulsante_portello_cassetta` | (0, 0, -0) |
+| `sala_pulsante_portello` | (2.25, -1.12, 4.72) |
+| `sala_lampeggiante_portello` | (2.25, -0.58, 4.895) |
+| `sala_portone_torre` | (19.84, 0, -15) |
+| `sala_portone_torre_telaio` | (0, 0, -0) |
+| `sala_lampeggiante_torre` | (19.8, 5.63, -15) |
 | `sala_pulsante_piedistallo` | (0, 0.62, 12.35) |
 
 ## Acqua (da fare con l'acqua vera; in `sala_acqua.glb` ci sono i segnaposto)
@@ -149,7 +179,7 @@ Non sono cambiati, tranne il pulsante del piedistallo (nuova posizione).
 | `sala_pozza` | pozza torbida sul fondo della piscina a onde (sopra il portello dello scarico) | -2.07 | intorno a (0, -2.07, 2) |
 | `sala_vasca_arrivo_acqua` | vasca d'arrivo degli scivoli (piena) | -0.22 | x da -16 a -9, z da -3 a 7 |
 | `sala_vasca_bimbi_1_acqua` | vasca bassa a scacchi (area bimbi, scena "lei sbuca dal bordo") | 0.3 | x da -14.8 a -10.4, z da -11.2 a -8 |
-| `sala_vasca_bimbi_2_acqua` | vasca bassa piccola con la balena sgonfia | 0.22 | x da -16.7 a -13.9, z da -13.8 a -11 |
+| `sala_vasca_bimbi_2_acqua` | vasca bassa piccola, dove finisce lo scivolo della struttura di gioco | 0.22 | x da -11 a -8.2, z da -19.6 a -16.8 |
 | `sala_fossa_bimbi_acqua` | fossa dello scarico rotto, la parte profonda della VascaBimbi1 (stessa acqua): pianta nel poligono 'fossa_bimbi.pianta_godot' | 0.3 | x da -14.8 a -12.3, z da -8 a -6 |
 
 La piscina a onde resta **vuota**: sul fondo si vede la linea scura dell'ultimo livello dell'acqua e la
@@ -166,44 +196,42 @@ la medusa); sott'acqua `luce_vasca_*` 1,5 (spot, angolo 35, raggio 4, turchese);
 ombre); plafoniere calde `luce_calda_*`
 1,8 (raggio 7,5, colore 1,0/0,68/0,38); insegne `luce_insegna_*` 1,3 (raggio 5,5); subacquee 3 (raggio 5);
 faretti dei teli con la mascotte `luce_cartellone_*` 2,5 (spot, angolo 30, raggio 6, caldi); luna 0,35 con ombre. `godot/sala_luci_ambiente.gd` serve solo per le prove dell'ambiente e usa gli
-stessi valori. In tutto 30 neon accesi, 21 luci d'emergenza, lampione, 2 fari, 2 luci sott'acqua nella
-vasca sollevata, 2 faretti dei teli, 5 plafoniere calde, 3 insegne, 2 subacquee della vasca d'arrivo, area bimbi, luna.
+stessi valori. In tutto 29 neon accesi, 20 luci d'emergenza, lampione, 2 fari, 2 luci sott'acqua nella
+vasca sollevata, 2 faretti dei teli, 4 plafoniere calde, 3 insegne, 2 subacquee della vasca d'arrivo, area bimbi, luna.
 
 | Nome | Tipo | Posizione Godot | Colore | Note |
 |---|---|---|---|---|
-| `luce_neon_00` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, 16) | (0.8, 1, 0.93) | piena |
-| `luce_neon_01` | neon (OmniLight3D o SpotLight3D verso il basso) | (-18.5, 3.88, 16) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_02` | neon (OmniLight3D o SpotLight3D verso il basso) | (-18.5, 3.88, 12) | (0.8, 1, 0.93) | piena |
-| `luce_neon_03` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, 8) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_04` | neon (OmniLight3D o SpotLight3D verso il basso) | (-18.5, 3.88, 8) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_05` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, 4) | (0.8, 1, 0.93) | piena |
-| `luce_neon_06` | neon (OmniLight3D o SpotLight3D verso il basso) | (-18.5, 3.88, 4) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_07` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, -0) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_08` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, -4) | (0.8, 1, 0.93) | piena |
-| `luce_neon_09` | neon (OmniLight3D o SpotLight3D verso il basso) | (-18.5, 3.88, -4) | (0.8, 1, 0.93) | piena |
-| `luce_neon_10` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, -8) | (0.8, 1, 0.93) | piena |
-| `luce_neon_11` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, -12) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_12` | neon (OmniLight3D o SpotLight3D verso il basso) | (-18.5, 3.88, -12) | (0.8, 1, 0.93) | piena |
-| `luce_neon_13` | neon (OmniLight3D o SpotLight3D verso il basso) | (18.5, 3.88, -20) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_14` | neon (OmniLight3D o SpotLight3D verso il basso) | (-18.5, 3.88, -20) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_15` | neon (OmniLight3D o SpotLight3D verso il basso) | (-16, 3.88, 18.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_16` | neon (OmniLight3D o SpotLight3D verso il basso) | (-16, 3.88, -22.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_17` | neon (OmniLight3D o SpotLight3D verso il basso) | (-12, 3.88, 18.5) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_18` | neon (OmniLight3D o SpotLight3D verso il basso) | (-12, 3.88, -22.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_19` | neon (OmniLight3D o SpotLight3D verso il basso) | (-8, 3.88, 18.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_20` | neon (OmniLight3D o SpotLight3D verso il basso) | (-8, 3.88, -22.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_21` | neon (OmniLight3D o SpotLight3D verso il basso) | (-4, 3.88, 18.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_22` | neon (OmniLight3D o SpotLight3D verso il basso) | (-4, 3.88, -22.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_23` | neon (OmniLight3D o SpotLight3D verso il basso) | (4, 3.88, 18.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_24` | neon (OmniLight3D o SpotLight3D verso il basso) | (8, 3.88, 18.5) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_25` | neon (OmniLight3D o SpotLight3D verso il basso) | (8, 3.88, -22.5) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_26` | neon (OmniLight3D o SpotLight3D verso il basso) | (12, 3.88, 18.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_27` | neon (OmniLight3D o SpotLight3D verso il basso) | (12, 3.88, -22.5) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
-| `luce_neon_28` | neon (OmniLight3D o SpotLight3D verso il basso) | (16, 3.88, 18.5) | (0.8, 1, 0.93) | piena |
-| `luce_neon_29` | neon (OmniLight3D o SpotLight3D verso il basso) | (16, 3.88, -22.5) | (0.8, 1, 0.93) | piena |
+| `luce_neon_00` | neon (OmniLight3D o SpotLight3D verso il basso) | (19.68, 3.88, 16) | (0.8, 1, 0.93) | piena |
+| `luce_neon_01` | neon (OmniLight3D o SpotLight3D verso il basso) | (-19.68, 3.88, 16) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_02` | neon (OmniLight3D o SpotLight3D verso il basso) | (-19.68, 3.88, 12) | (0.8, 1, 0.93) | piena |
+| `luce_neon_03` | neon (OmniLight3D o SpotLight3D verso il basso) | (19.68, 3.88, 8) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_04` | neon (OmniLight3D o SpotLight3D verso il basso) | (-19.68, 3.88, 8) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_05` | neon (OmniLight3D o SpotLight3D verso il basso) | (19.68, 3.88, 4) | (0.8, 1, 0.93) | piena |
+| `luce_neon_06` | neon (OmniLight3D o SpotLight3D verso il basso) | (-19.68, 3.88, 4) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_07` | neon (OmniLight3D o SpotLight3D verso il basso) | (19.68, 3.88, -0) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_08` | neon (OmniLight3D o SpotLight3D verso il basso) | (19.68, 3.88, -4) | (0.8, 1, 0.93) | piena |
+| `luce_neon_09` | neon (OmniLight3D o SpotLight3D verso il basso) | (-19.68, 3.88, -4) | (0.8, 1, 0.93) | piena |
+| `luce_neon_10` | neon (OmniLight3D o SpotLight3D verso il basso) | (19.68, 3.88, -8) | (0.8, 1, 0.93) | piena |
+| `luce_neon_12` | neon (OmniLight3D o SpotLight3D verso il basso) | (-19.68, 3.88, -12) | (0.8, 1, 0.93) | piena |
+| `luce_neon_13` | neon (OmniLight3D o SpotLight3D verso il basso) | (19.68, 3.88, -20) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_14` | neon (OmniLight3D o SpotLight3D verso il basso) | (-19.68, 3.88, -20) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_15` | neon (OmniLight3D o SpotLight3D verso il basso) | (-16, 3.88, 19.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_16` | neon (OmniLight3D o SpotLight3D verso il basso) | (-16, 3.88, -23.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_17` | neon (OmniLight3D o SpotLight3D verso il basso) | (-12, 3.88, 19.68) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_18` | neon (OmniLight3D o SpotLight3D verso il basso) | (-12, 3.88, -23.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_19` | neon (OmniLight3D o SpotLight3D verso il basso) | (-8, 3.88, 19.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_20` | neon (OmniLight3D o SpotLight3D verso il basso) | (-8, 3.88, -23.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_21` | neon (OmniLight3D o SpotLight3D verso il basso) | (-4, 3.88, 19.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_22` | neon (OmniLight3D o SpotLight3D verso il basso) | (-4, 3.88, -23.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_23` | neon (OmniLight3D o SpotLight3D verso il basso) | (4, 3.88, 19.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_24` | neon (OmniLight3D o SpotLight3D verso il basso) | (8, 3.88, 19.68) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_25` | neon (OmniLight3D o SpotLight3D verso il basso) | (8, 3.88, -23.68) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_26` | neon (OmniLight3D o SpotLight3D verso il basso) | (12, 3.88, 19.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_27` | neon (OmniLight3D o SpotLight3D verso il basso) | (12, 3.88, -23.68) | (0.8, 1, 0.93) | metà (un tubo spento: sfarfallio) |
+| `luce_neon_28` | neon (OmniLight3D o SpotLight3D verso il basso) | (16, 3.88, 19.68) | (0.8, 1, 0.93) | piena |
+| `luce_neon_29` | neon (OmniLight3D o SpotLight3D verso il basso) | (16, 3.88, -23.68) | (0.8, 1, 0.93) | piena |
 | `luce_emergenza_30` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (19.88, 2.9, 6) | (1, 0.035, 0.02) |  |
 | `luce_emergenza_31` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (19.88, 2.9, -6) | (1, 0.035, 0.02) |  |
-| `luce_emergenza_32` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (19.88, 2.9, -18) | (1, 0.035, 0.02) |  |
 | `luce_emergenza_33` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (-19.88, 2.9, 4) | (1, 0.035, 0.02) |  |
 | `luce_emergenza_34` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (-19.88, 2.9, -8) | (1, 0.035, 0.02) |  |
 | `luce_emergenza_35` | emergenza rossa (OmniLight3D, raggio 6-8 m) | (-19.88, 2.9, -20) | (1, 0.035, 0.02) |  |
@@ -228,18 +256,17 @@ vasca sollevata, 2 faretti dei teli, 5 plafoniere calde, 3 insegne, 2 subacquee 
 | `luce_calda_0` | OmniLight3D calda (plafoniera navale accesa) | (1.75, 2.5, 19.75) | (1, 0.68, 0.38) |  |
 | `luce_calda_1` | OmniLight3D calda (plafoniera navale accesa) | (19.75, 2.7, -9) | (1, 0.68, 0.38) |  |
 | `luce_calda_2` | OmniLight3D calda (plafoniera navale accesa) | (-19.75, 2.7, 1) | (1, 0.68, 0.38) |  |
-| `luce_calda_3` | OmniLight3D calda (plafoniera navale accesa) | (10.5, 2.6, -14.13) | (1, 0.68, 0.38) |  |
-| `luce_calda_4` | OmniLight3D calda (plafoniera navale accesa) | (-3, 3, -20.9) | (1, 0.68, 0.38) |  |
+| `luce_calda_4` | OmniLight3D calda (plafoniera navale accesa) | (-4.6, 3, -23.75) | (1, 0.68, 0.38) |  |
 | `luce_cartellone_0` | SpotLight3D: faretto caldo sul telo con la mascotte | (-5.274, 6.81, 10.414) | (1, 0.78, 0.5) | punta verso (-0.172, -0.93, -0.324) |
 | `luce_cartellone_1` | SpotLight3D: faretto caldo sul telo con la mascotte | (5.274, 6.81, 10.414) | (1, 0.78, 0.5) | punta verso (0.172, -0.93, -0.324) |
 | `luce_vasca_0` | SpotLight3D sott'acqua nella vasca sollevata, verso la medusa | (-1.4, 0.25, 10.2) | (0.35, 0.9, 0.85) | punta verso (0.646, 0.323, 0.692) |
 | `luce_vasca_1` | SpotLight3D sott'acqua nella vasca sollevata, verso la medusa | (1.4, 0.25, 10.2) | (0.35, 0.9, 0.85) | punta verso (-0.646, 0.323, 0.692) |
-| `luce_faro_0` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata | (-2.007, 5.421, 16.67) | (1, 0.9, 0.76) | punta verso (0.309, -0.565, -0.765) |
-| `luce_faro_1` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata | (2.007, 5.421, 16.67) | (1, 0.9, 0.76) | punta verso (-0.309, -0.565, -0.765) |
+| `luce_faro_0` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata | (-2.029, 5.422, 19.188) | (1, 0.9, 0.76) | punta verso (0.236, -0.428, -0.872) |
+| `luce_faro_1` | SpotLight3D: faro sulla ringhiera della galleria, punta la statua o la medusa affacciata | (2.029, 5.422, 19.188) | (1, 0.9, 0.76) | punta verso (-0.236, -0.428, -0.872) |
 | `luce_subacquea_0` | OmniLight3D sott'acqua, vasca d'arrivo | (-12.5, -0.7, 6.85) | (0.25, 0.95, 0.75) |  |
 | `luce_subacquea_1` | OmniLight3D sott'acqua, vasca d'arrivo | (-12.5, -0.7, -2.85) | (0.25, 0.95, 0.75) |  |
 | `luce_insegna_rosa` | OmniLight3D davanti all insegna a pesce | (-3, 7.4, -23.5) | (1, 0.22, 0.6) |  |
-| `luce_area_bimbi` | OmniLight3D gialla sulla struttura | (-12.8, 3.6, -17.6) | (1, 0.8, 0.5) |  |
+| `luce_area_bimbi` | OmniLight3D gialla sulla struttura | (-14.4, 3.6, -21.2) | (1, 0.8, 0.5) |  |
 | `luce_luna` | DirectionalLight3D blu dalla cupola (ombre dei costoloni) | direzione (0.25, -1, 0.18) | (0.55, 0.66, 1) |  |
 
 ## Ambiente consigliato (WorldEnvironment)

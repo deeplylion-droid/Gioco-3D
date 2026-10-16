@@ -39,6 +39,22 @@ var settle := 50
 var level: Node
 var p: Player
 
+## Camere libere (non gli occhi del giocatore, campo visivo 62 gradi), solo se chiamate per nome: le
+## stesse inquadrature delle proposte approvate il 16 ottobre (godot/tests/proposte_sala.gd sul branch
+## lavoro/proposte-sala), per rifare gli scatti con la sala vera. [posizione della camera, punto guardato,
+## campo visivo se non è 62]
+const LIBERE := {
+	"sala_da_terra": [Vector3(18.4, 1.7, -0.5), Vector3(0.0, 2.2, 1.5)],          # la sala senza soppalco, da terra
+	"sala_dall_alto": [Vector3(18.6, 9.6, 18.6), Vector3(-5.0, 0.5, -5.5)],       # la sala d'insieme, dall'alto
+	"bimbi_arrivo": [Vector3(-8.3, 1.7, -4.0), Vector3(-16.0, 2.0, -13.2)],       # l'area bimbi da dove si arriva
+	"pulsante_vicino": [Vector3(-0.8, -0.27, -1.2), Vector3(1.3, -1.6, 3.6)],     # il pulsante A dal fondo della piscina
+	"pulsante_spiaggia": [Vector3(0.6, 1.7, -14.2), Vector3(1.2, -1.6, 3.5)],     # il pulsante A dalla spiaggia
+	"portone_est": [Vector3(8.6, 1.7, -14.2), Vector3(20.0, 3.4, -15.0)],         # il portone della sala della torre
+	"vasca_cordone": [Vector3(-3.6, 1.7, 17.6), Vector3(0.0, 1.0, 10.8)],         # il cordone chiuso intorno alla vasca
+	# la telecamera di sorveglianza per il monitor della sala pompe (come in screenshots_sala.gd): sul muro sud
+	"telecamera_monitor": [Vector3(-5.0, 5.3, 19.6), Vector3(0.0, 1.1, 11.0), 60.0],
+}
+
 
 func _ready() -> void:
 	if FileAccess.file_exists("user://salta_screenshot"):
@@ -100,6 +116,7 @@ func _run() -> void:
 	if lamp and lamp.has_method("turn_on"):
 		lamp.turn_on()
 	p.stand_eye_height = 1.7
+	await _scatti_liberi()
 	var camere := SCATTI.duplicate()
 	for nome in EXTRA:
 		if only.has(nome):
@@ -137,3 +154,27 @@ func _picco_memoria() -> String:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().process_frame
+
+
+## Gli scatti delle camere libere (LIBERE) chiamati per nome.
+func _scatti_liberi() -> void:
+	for nome in LIBERE:
+		if not only.has(nome):
+			continue
+		var c: Array = LIBERE[nome]
+		var cam := Camera3D.new()
+		cam.fov = float(c[2]) if c.size() > 2 else 62.0
+		cam.near = 0.05
+		cam.far = 200.0
+		level.add_child(cam)
+		cam.global_position = c[0]
+		cam.look_at(c[1], Vector3.UP)
+		cam.make_current()
+		p.teleport(Vector3(0.0, 0.0, 19.0), 0.0, 0.0)   # il giocatore resta nella scena, lontano
+		await _frames(settle)
+		await RenderingServer.frame_post_draw
+		var img := get_viewport().get_texture().get_image()
+		img.save_jpg(out_dir.path_join("%s_%s.jpg" % [prefisso, nome]), 0.92)
+		print("salvato ", prefisso, "_", nome)
+		cam.queue_free()
+		p.camera.make_current()
