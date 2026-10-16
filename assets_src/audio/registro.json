@@ -722,22 +722,22 @@
  "giocatore/atterraggio_bagnato_01": {
   "file": "res://audio/giocatore/atterraggio_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.221,
+  "durata": 0.204,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
   "lufs": null,
-  "lufs_max": -18.4
+  "lufs_max": -19.3
  },
  "giocatore/atterraggio_bagnato_02": {
   "file": "res://audio/giocatore/atterraggio_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.21,
+  "durata": 0.2,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
   "lufs": null,
-  "lufs_max": -17.6
+  "lufs_max": -17.8
  },
  "giocatore/atterraggio_metallo_01": {
   "file": "res://audio/giocatore/atterraggio_metallo_01.ogg",

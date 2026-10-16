@@ -96,8 +96,8 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `effetti/vasca_svuotata.ogg` | 2.8 s | sintesi (originale) |  |
 | `giocatore/atterraggio_acqua_01.ogg` | 0.7 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_acqua_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
-| `giocatore/atterraggio_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
+| `giocatore/atterraggio_bagnato_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | senza goccioline, come i passi bagnati (16 ottobre) |
+| `giocatore/atterraggio_bagnato_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi | senza goccioline, come i passi bagnati (16 ottobre) |
 | `giocatore/atterraggio_metallo_01.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_piastrelle_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
