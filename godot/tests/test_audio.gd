@@ -144,7 +144,7 @@ func _run() -> void:
 	var c: Dictionary = audio.get(&"collegati")
 	print("  collegati: ", c)
 	for tipo in ["Tempesta", "Player", "WaterPack", "Torcia", "UnderwaterEffect", "Turbine", "HingedHatch",
-			"KidSighting", "FlickerLight", "WaterDripEmitter", "sigla", "GameState"]:
+			"KidSighting", "FlickerLight", "WaterDripEmitter", "sigla", "GameState", "PiscinaOnde"]:
 		check(int(c.get(tipo, 0)) >= 1, "collegato: %s" % tipo)
 	check(int(c.get("MedusaStatue", 0)) + int(c.get("MedusaAffacciata", 0)) >= 1, "collegata la medusa")
 	check(int(c.get("PolaroidPhoto", 0)) >= 10, "collegate le 10 Polaroid")

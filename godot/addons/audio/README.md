@@ -51,11 +51,10 @@ Se il progetto ha già bus con questi nomi (un `default_bus_layout.tres`), usa q
 | `WaterPack` | getto e aspirazione in loop, impatto del getto (3D, sul punto colpito), ricarica, serbatoio pieno/vuoto, pompata | segnali + `flow`, `has_hit`, `hit_point`, `tank_amount` |
 | `WaterButton` | "ciunk" e campanello giocattolo, rilascio | `pressed`, `released` |
 | `Turbine` | loop che segue `energy` (tono e volume); colpi se è bloccata | `energy`, `jet_hit` dello zaino |
-| `StuckInflatable` | squittio della gomma quando il getto lo colpisce, sblocco e tonfo nella pozza | `released`, `jet_hit` |
 | `PoweredDoor` | motore (o saracinesca, se sale in verticale), colpo a fine corsa | `open_amount`, `opened`, `closed` |
 | `HingedHatch` | portello che cigola e sbatte | `opened` |
-| `BucketWheel` | ruota a pale, secchio che si ribalta e torna, ruota del cancello, cancello, quadro in corto | segnali + `angular_speed` |
-| `WaterTank` | gorgoglio dello scarico (sul gorgo `DrainVortex`), vasca svuotata, riempimento | `is_draining()`, `emptied`, `fill_sources` |
+| `PiscinaOnde` | colpo del faro quando, a piscina vuota, il pulsante della botola si accende (tappa 5; per ora suoni già approvati) | `pulsante_attivato` |
+| `WaterTank` | gorgoglio dello scarico (sul gorgo `DrainVortex`), vasca svuotata (anche quando la si svuota aspirando con lo zaino), riempimento | `is_draining()`, `emptied`, `fill_sources` |
 | `FlickerLight` | colpo del faro che si accende e ronzio che segue la luce | `is_on`, `light` |
 | `MedusaStatue` | respiro umido appena udibile da vicino; risveglio | animazione `sveglia` |
 | scena con `jingle_button` e `statue` (sala principale) | la **sigla rovinata** dal piedistallo | `pressed` del pulsante |

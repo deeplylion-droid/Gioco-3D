@@ -14,7 +14,8 @@ extends Node
 ## Se la memoria non basta: SCATTI_TOGLI="Sala/Dettagli,Statua/Medusa" (percorsi di nodi della scena,
 ## separati da virgole) toglie anche quei nodi prima del primo frame. Va usato uguale nei prima e nei dopo.
 ## SCATTI_PISCINA=<0..1>[,<0..1>...]: quanta acqua c'è nella piscina a onde (tappa 5; 1 = piena, 0 = vuota,
-## con il pulsante della botola acceso); con più livelli si rifanno gli scatti per ognuno.
+## con il pulsante della botola acceso), con le micro medusine che vuole quel livello; con più livelli
+## si rifanno gli scatti per ognuno.
 ## SCATTI_PISCINA_ASPETTO=<A|B|C>[,...]: l'aspetto dell'acqua della piscina (PiscinaOnde.aspetto).
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -127,6 +128,10 @@ func _run() -> void:
 		for liv in livelli:
 			if liv != "" and vasca:
 				vasca.fill = clampf(float(liv), 0.0, 1.0)
+				# Le micro medusine: quante ne vuole quel livello d'acqua.
+				var med: Node = svuota.get_node_or_null(^"Medusine") if svuota else null
+				if med:
+					med.call(&"ricomincia")
 			var pref := prefisso
 			if asp != "":
 				pref += "_" + asp

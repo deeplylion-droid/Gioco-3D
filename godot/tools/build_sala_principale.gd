@@ -335,7 +335,7 @@ func _pool() -> void:
 	puddle.build_walls = false
 	var fondo := DRAIN.y - 0.02
 	puddle.inner_size = Vector3(POOL_RECT.size.x, POOL_LEVEL - fondo, POOL_RECT.size.y)
-	# I litri li decide la taratura di SvuotaPiscina (circa 1 o 2 minuti di lavoro).
+	# I litri li decide la taratura di SvuotaPiscina (di serie circa 30 secondi, 4 zainate).
 	puddle.capacity_liters = 180.0
 	puddle.max_fill = 1.0
 	puddle.fill = 1.0
@@ -358,7 +358,8 @@ func _pool() -> void:
 	hatch_button.enabled = false
 	own(hatch_button, pool)
 	# Lo svuotamento con lo zaino: taratura dei litri, l'acqua sparata dentro la vasca che ci
-	# ritorna, il pulsante che si attiva a piscina vuota con il suo segnale provvisorio.
+	# ritorna, il pulsante che si attiva a piscina vuota con il suo lampeggiante, le micro
+	# medusine luminose (le crea lui).
 	var svuota: Node3D = load("res://scripts/game/piscina_onde.gd").new()
 	svuota.name = "SvuotaPiscina"
 	svuota.set(&"vasca", puddle)
@@ -914,6 +915,8 @@ func _kid_sighting() -> void:
 	ks.set(&"spots", PackedVector3Array([Vector3(-18.4, 4.3, -11.2), Vector3(-18.6, 4.3, -9.7),
 		Vector3(-18.3, 4.3, -8.1), Vector3(-18.5, 4.3, -6.6), Vector3(-18.4, 4.3, -5.0)]))
 	ks.set(&"trigger", trig)
+	# 16 ottobre: il soppalco non c'è più e B5 si ripropone con la sala della torre: spento.
+	ks.set(&"attivo", false)
 	own(ks)
 
 

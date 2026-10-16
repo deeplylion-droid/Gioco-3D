@@ -114,16 +114,30 @@ func _run() -> void:
 	await _suck_shot(p)
 
 
-## 3) La pistola in mano mentre aspira l'acqua della piscina a onde, dal bordo est.
+## 3) La pistola in mano mentre aspira l'acqua della piscina a onde, dal bordo est: si mira alla
+## micro medusina più vicina, così la corrente la tira su col filo d'acqua (due scatti di fila).
 func _suck_shot(p: Player) -> void:
 	p.water_pack.set_tank_amount(4.0)
 	p.teleport(Vector3(7.35, 0.0, 2.0), -PI * 0.5, 0.0)
 	await _frames(10)
-	p.look_at_point(Vector3(5.6, -1.5, 2.4))
+	var mira := Vector3(5.6, -1.5, 2.4)
+	var med := get_tree().current_scene.get_node_or_null(^"Piscina/SvuotaPiscina/Medusine") as Medusine
+	if med:
+		var occhio := Vector3(7.35, 1.7, 2.0)
+		var best := 3.2
+		var st := med.stati()
+		var pos := med.posizioni()
+		for i in pos.size():
+			if st[i] == Medusine.Stato.NUOTA and pos[i].distance_to(occhio) < best:
+				best = pos[i].distance_to(occhio)
+				mira = pos[i]
+	p.look_at_point(mira)
 	await _frames(maxi(settle - 20, 10))
 	Input.action_press("suck")
-	await _frames(45)
+	await _frames(int(OS.get_environment("SCATTI_ASPIRA_FRAME")) if OS.get_environment("SCATTI_ASPIRA_FRAME") != "" else 24)
 	await _capture("pistola_aspira_piscina")
+	await _frames(8)
+	await _capture("pistola_aspira_piscina_2")
 	Input.action_release("suck")
 	print("screenshot salvati in ", ProjectSettings.globalize_path(out_dir))
 	get_tree().quit()

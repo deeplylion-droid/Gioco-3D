@@ -13,7 +13,7 @@ extends Node
 ##  - a ogni cambio di scena cerca i nodi che conosce e si collega ai loro segnali (o ne
 ##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
-##    portelli, ruota e secchio, vasche, Polaroid, statua della medusa, bambini, morte,
+##    portelli, piscina a onde, vasche, Polaroid, statua della medusa, bambini, morte,
 ##    monitor a tubo e paratie della sala pompe, la fossa dell'area bimbi (tappa 8) e il
 ##    morso quando ti prende lei;
 ##    le luci al neon e d'emergenza della sala (dal GLB) ronzano;
@@ -847,10 +847,9 @@ func _esamina(n: Node) -> void:
 		"WaterPack": _attivi.append(Zaino.new(self, n))
 		"WaterButton": _collega_pulsante(n)
 		"Turbine": _attivi.append(Turbina.new(self, n))
-		"StuckInflatable": _collega_gonfiabile(n)
 		"PoweredDoor": _attivi.append(Porta.new(self, n))
 		"HingedHatch": _collega_portello(n)
-		"BucketWheel": _attivi.append(Ruota.new(self, n))
+		"PiscinaOnde": _collega_piscina(n)
 		"WaterTank": _attivi.append(Vasca.new(self, n))
 		"FlickerLight": _attivi.append(Lampada.new(self, n))
 		"MedusaStatue", "MedusaAffacciata": _attivi.append(Statua.new(self, n))
@@ -1045,8 +1044,13 @@ func _collega_pulsante(n: Node) -> void:
 	n.connect(&"released", func(): suona(&"pulsante_rilasciato", (n as Node3D).global_position))
 
 
-func _collega_gonfiabile(n: Node) -> void:
-	n.connect(&"released", func(): suona(&"gonfiabile_libero", (n as Node3D).global_position))
+## La piscina a onde svuotata con lo zaino (tappa 5): quando si svuota il pulsante della botola si
+## accende col colpo del faro. Suoni già approvati; quelli nuovi li propone l'agente audio.
+func _collega_piscina(n: Node) -> void:
+	n.connect(&"pulsante_attivato", func():
+		var pulsante = n.get(&"pulsante")
+		var dove: Vector3 = (pulsante as Node3D).global_position if pulsante is Node3D else (n as Node3D).global_position
+		suona(&"faro_acceso", dove, -4.0))
 
 
 func _collega_portello(n: Node) -> void:
@@ -1295,9 +1299,6 @@ class Zaino:
 			if (&"jammed" in nodo) and bool(nodo.get(&"jammed")):
 				audio.suona_limitato("turbina_bloccata", 0.4, &"turbina_bloccata", punto)
 				return
-			if nodo.has_method(&"is_stuck") and bool(nodo.call(&"is_stuck")):
-				audio.suona_limitato("gonfiabile", 0.3, &"gonfiabile_colpito", punto)
-				return
 			nodo = nodo.get_parent()
 
 	func aggiorna(_a, delta: float) -> bool:
@@ -1395,57 +1396,8 @@ class Porta:
 		return true
 
 
-## Ruota a pale, secchio, cancello e quadro elettrico dell'area bimbi.
-class Ruota:
-	var n: Node
-	var l: AudioLoop
-
-	func _init(a, nodo: Node) -> void:
-		n = nodo
-		var ruota := _nodo(nodo, &"wheel_path")
-		l = a.crea_loop(&"ruota_pale_loop", ruota if ruota else nodo)
-		var secchio := _nodo(nodo, &"bucket_path")
-		var cancello := _nodo(nodo, &"gate_path")
-		var ruota_cancello := _nodo(nodo, &"gate_wheel_path")
-		var quadro := _nodo(nodo, &"panel_path")
-		nodo.connect(&"bucket_tipped", func():
-			if is_instance_valid(secchio):
-				a.suona(&"secchio_ribalta", secchio.global_position)
-			a.get_tree().create_timer(0.7, false).timeout.connect(func():
-				var dove: Node3D = ruota_cancello if is_instance_valid(ruota_cancello) else cancello
-				if is_instance_valid(dove):
-					a.suona(&"cancello_ruota", dove.global_position))
-			a.get_tree().create_timer(2.5, false).timeout.connect(func():
-				if is_instance_valid(secchio):
-					a.suona(&"secchio_ritorno", secchio.global_position)))
-		nodo.connect(&"gate_opened", func():
-			if is_instance_valid(cancello):
-				a.suona(&"cancello_fine", cancello.global_position))
-		nodo.connect(&"panel_shorted", func():
-			if is_instance_valid(quadro):
-				a.suona(&"quadro_scintille", quadro.global_position + Vector3.UP * 1.5))
-
-	static func _nodo(nodo: Node, prop: StringName) -> Node3D:
-		var p = nodo.get(prop)
-		if p is NodePath and not (p as NodePath).is_empty():
-			return nodo.get_node_or_null(p) as Node3D
-		return null
-
-	func aggiorna(_a, _d: float) -> bool:
-		if not is_instance_valid(n):
-			return false
-		if not n.is_inside_tree():
-			return true
-		var v := float(n.get(&"angular_speed"))
-		var vmax := maxf(float(n.get(&"max_angular_speed")), 0.001)
-		var k := clampf(v / vmax, 0.0, 1.0)
-		if l:
-			l.volume = smoothstep(0.0, 0.15, k) * (0.4 + 0.6 * k)
-			l.tono = 0.45 + 0.6 * k
-		return true
-
-
-## Vasca: gorgoglio dello scarico mentre si svuota, scroscio mentre si riempie da sola.
+## Vasca: gorgoglio dello scarico mentre si svuota, scroscio mentre si riempie da sola; quando si
+## svuota (dallo scarico o aspirata con lo zaino) il suono della vasca svuotata.
 class Vasca:
 	var audio
 	var n: Node
@@ -1488,7 +1440,9 @@ class Vasca:
 		var fill := float(n.get(&"fill"))
 		var drena := bool(n.call(&"is_draining")) and fill > 0.001
 		var forza := float(n.call(&"get_drain_strength")) if drena else 0.0
-		svuotava = 1.0 if drena else maxf(0.0, svuotava - delta)
+		# Anche aspirata con lo zaino si sta svuotando (per il suono di quando è vuota).
+		var aspirata := prima >= 0.0 and fill < prima - 0.00001
+		svuotava = 1.0 if drena or aspirata else maxf(0.0, svuotava - delta * 0.25)
 		if scarico:
 			scarico.volume = (0.4 + 0.6 * forza) if drena else 0.0
 		var sorgenti = n.get(&"fill_sources")

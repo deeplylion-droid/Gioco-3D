@@ -2,9 +2,11 @@ extends Node
 ## Test automatico delle tappe 5 e 6 (docs/livello/capitolo1.md), tutto il percorso dalla pozza
 ## della piscina a onde fino al raccordo verso gli interni, simulando gli input:
 ## - tappa 5 (rifatta il 15 ottobre): la piscina a onde si svuota con lo zaino, aspirando
-##   l'acqua dal bordo e sparandola fuori dalla vasca (taratura da circa 1 minuto: si contano i
-##   pieni di zaino e il tempo); a piscina vuota il pulsante della botola si attiva, il getto apre
-##   il portello e si scende davvero dalla scala del pozzo;
+##   l'acqua dal bordo e sparandola fuori dalla vasca (taratura di serie, circa 30 secondi e 4
+##   zainate: si contano i pieni di zaino e il tempo); le micro medusine luminose nuotano
+##   nell'acqua, si aspirano con lei, escono col getto e finiscono a terra fuori dalla vasca, e a
+##   piscina vuota non ne resta nessuna; il pulsante della botola si attiva col lampeggiante
+##   giallo, il getto lo fa diventare verde e apre il portello, e si scende dalla scala del pozzo;
 ## - camera delle onde e tunnel fino alla sala pompe;
 ## - tappa 6: acqua dalla vasca di raccolta, turbine nell'ordine sbagliato (si ricomincia) e in
 ##   quello dello schema (blu, giallo, rosso), la leva bloccata e poi tirata col getto, il
@@ -23,6 +25,13 @@ var _failed := 0
 ## E1: mentre è vero, a ogni frame si guarda se la vista è finita sott'acqua.
 var _controlla_sott_acqua := false
 var _sott_acqua_visto := false
+## Le micro medusine seguite a ogni passo della fisica mentre si svuota la piscina.
+var _med: Medusine
+var _med_vasca: WaterTank
+var _med_fuori_acqua := 0
+var _med_zaino_max := 0
+var _med_sparate := {}
+var _med_atterrate := {}
 
 
 func _ready() -> void:
@@ -67,17 +76,90 @@ func _run() -> void:
 	var svuota: PiscinaOnde = level.get_node("Piscina/SvuotaPiscina")
 	var hatch_button: WaterButton = level.get_node("Piscina/PulsantePortello")
 	var hatch: Node = level.get_node("Piscina/Portello")
-	check(svuota.taratura == PiscinaOnde.Taratura.UN_MINUTO and is_equal_approx(puddle.get_liters(), svuota.litri_da_togliere()),
-		"di serie la taratura da circa 1 minuto (%.0f litri)" % puddle.get_liters())
+	check(svuota.taratura == PiscinaOnde.Taratura.TRENTA_SECONDI and svuota.pieni_da_togliere() == 4
+			and is_equal_approx(puddle.get_liters(), svuota.litri_da_togliere()),
+		"di serie la taratura da circa 30 secondi, 4 zainate (%.0f litri)" % puddle.get_liters())
 	check(not hatch_button.enabled, "finché c'è acqua il pulsante della botola è spento")
+	# Le micro medusine luminose (scelta dell'utente del 16 ottobre).
+	var med := svuota.get_node_or_null("Medusine") as Medusine
+	check(med != null, "nella piscina ci sono le micro medusine luminose")
+	if med:
+		await _frames(10)
+		check(med.numero >= 12 and med.numero <= 18 and med.in_acqua() == med.numero,
+			"una quindicina, tutte nell'acqua (%d su %d)" % [med.in_acqua(), med.numero])
+		var livello := puddle.get_surface_global_y()
+		var pos0 := med.posizioni()
+		var sotto := 0
+		var profonde := 0
+		for q in pos0:
+			if q.y < livello and q.y > med.fondo(q.x, q.z):
+				sotto += 1
+			if q.z > -2.0 and absf(q.x) < 7.0:
+				profonde += 1
+		check(sotto == pos0.size(), "nuotano sotto il pelo e sopra il fondo (%d su %d)" % [sotto, pos0.size()])
+		check(profonde == pos0.size(), "nella parte profonda (%d su %d)" % [profonde, pos0.size()])
+		var colori := {}
+		for c in med.colori:
+			colori[c.to_html()] = true
+		check(colori.size() >= 4, "di vari colori (%d)" % colori.size())
+		var r_min := 1.0
+		var r_max := 0.0
+		for r in med.raggi():
+			r_min = minf(r_min, r)
+			r_max = maxf(r_max, r)
+		check(r_min > 0.02 and r_max < 0.08, "piccole: campane da %.0f a %.0f cm" % [r_min * 200.0, r_max * 200.0])
+		var c_min := 1.0
+		var c_max := 0.0
+		for i in 120:
+			await get_tree().physics_frame
+			var cc := med.contrazioni()
+			c_min = minf(c_min, cc[0])
+			c_max = maxf(c_max, cc[0])
+		check(c_min < 0.1 and c_max > 0.9, "la campana pulsa: si chiude e si riapre (%.2f-%.2f)" % [c_min, c_max])
+		var mosse := 0
+		var pos1 := med.posizioni()
+		for i in pos0.size():
+			if pos0[i].distance_to(pos1[i]) > 0.01:
+				mosse += 1
+		check(mosse >= pos0.size() - 1, "nuotano (%d su %d si sono spostate)" % [mosse, pos0.size()])
+		_med = med
+		_med_vasca = puddle
 	p.water_pack.set_tank_amount(0.0)
 	var esito: Array = await _svuota_piscina(puddle, Vector3(7.35, 0.0, 2.0), Vector3(6.5, -1.5, 2.0), Vector3(13.0, 0.5, 2.0))
-	print("  (taratura da 1 minuto: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
+	print("  (taratura da 30 secondi: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
 	check(puddle.fill <= 0.001, "aspirando dal bordo e sparando fuori la piscina si svuota (fill %.3f)" % puddle.fill)
-	check(int(esito[0]) == svuota.pieni_un_minuto, "servono %d pieni di zaino (%d)" % [svuota.pieni_un_minuto, int(esito[0])])
-	check(float(esito[1]) > 45.0 and float(esito[1]) < 75.0, "circa 1 minuto di lavoro (%.0f s)" % float(esito[1]))
+	check(int(esito[0]) == svuota.pieni_da_togliere(), "servono %d pieni di zaino (%d)" % [svuota.pieni_da_togliere(), int(esito[0])])
+	check(float(esito[1]) > 18.0 and float(esito[1]) < 42.0, "circa 30 secondi di lavoro (%.0f s)" % float(esito[1]))
+	if med:
+		await _frames(90)
+		_med = null
+		check(med.in_acqua() == 0, "a piscina vuota non resta nessuna medusina nell'acqua")
+		check(_med_fuori_acqua == 0, "mentre nuotano restano nell'acqua (%d volte fuori)" % _med_fuori_acqua)
+		check(_med_zaino_max >= 1, "si aspirano con l'acqua: entrano nello zaino (fino a %d insieme)" % _med_zaino_max)
+		check(_med_sparate.size() >= med.numero - 1, "ed escono col getto (%d su %d)" % [_med_sparate.size(), med.numero])
+		var fuori := 0
+		for k in _med_atterrate:
+			if (_med_atterrate[k] as Vector3).x > 7.2:
+				fuori += 1
+		check(_med_atterrate.size() >= med.numero - 2 and fuori == _med_atterrate.size(),
+			"volano via e finiscono a terra fuori dalla vasca (%d a terra, %d fuori)" % [_med_atterrate.size(), fuori])
+		check(med.quante(Medusine.Stato.NELLO_ZAINO) == 0 and med.quante(Medusine.Stato.IN_VOLO) == 0,
+			"nello zaino e in volo non ne resta nessuna")
+		await _frames(int(med.durata_a_terra * 60.0) + 30)
+		check(med.quante(Medusine.Stato.A_TERRA) == 0, "a terra si spengono e spariscono")
 	await _frames(3)
 	check(hatch_button.enabled and svuota.attivo, "a piscina vuota il pulsante si attiva")
+	var lampeggiante := svuota.get_node_or_null("SegnalePulsante") as OmniLight3D
+	var giallo := lampeggiante != null and lampeggiante.visible and lampeggiante.light_color.r > 0.9 \
+		and lampeggiante.light_color.g < 0.85 and lampeggiante.light_color.b < 0.3
+	var e_min := 100.0
+	var e_max := 0.0
+	for i in 60:
+		await get_tree().physics_frame
+		if lampeggiante:
+			e_min = minf(e_min, lampeggiante.light_energy)
+			e_max = maxf(e_max, lampeggiante.light_energy)
+	check(giallo and e_max > 3.0 * e_min, "e il suo lampeggiante giallo lampeggia (%.2f-%.2f)" % [e_min, e_max])
 	check(_checkpoint() == "Piscina/CheckpointPozzaVuota", "checkpoint: piscina vuota (%s)" % _checkpoint())
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
@@ -90,6 +172,8 @@ func _run() -> void:
 		if bool(hatch.get(&"is_open")):
 			break
 	check(bool(hatch.get(&"is_open")), "il pulsante apre il portello")
+	check(svuota.premuto() and lampeggiante != null and lampeggiante.light_color.g > 0.9 and lampeggiante.light_color.r < 0.5,
+		"e la luce diventa verde")
 	check(not bool(level.get(&"demo_finished")), "la demo non finisce più al portello")
 
 	print("Giù dalla scala del pozzo")
@@ -335,12 +419,39 @@ func _svuota_piscina(vasca: WaterTank, dove: Vector3, acqua: Vector3, fuori: Vec
 
 
 func _physics_process(_delta: float) -> void:
+	if _med and is_instance_valid(_med):
+		_segui_medusine()
 	if _controlla_sott_acqua:
 		var e := _effetto_sott_acqua()
 		if e and e.is_underwater:
 			if not _sott_acqua_visto:
 				printerr("  vista sott'acqua in ", p.camera.global_position)
 			_sott_acqua_visto = true
+
+
+## Le micro medusine mentre si svuota la piscina: quelle che nuotano stanno nell'acqua, quante
+## sono nello zaino, quali escono col getto e dove cadono.
+func _segui_medusine() -> void:
+	var livello := _med_vasca.get_surface_global_y()
+	var st := _med.stati()
+	var pos := _med.posizioni()
+	var r := _med.raggi()
+	var nello_zaino := 0
+	for i in st.size():
+		match st[i]:
+			Medusine.Stato.NUOTA:
+				if pos[i].y > livello - r[i] * 0.5 + 0.002 and _med_vasca.fill > 0.02 and pos[i].y > _med.fondo(pos[i].x, pos[i].z) + r[i]:
+					if _med_fuori_acqua == 0:
+						printerr("  medusina %d fuori dall'acqua in %s (pelo a %.3f)" % [i, pos[i], livello])
+					_med_fuori_acqua += 1
+			Medusine.Stato.NELLO_ZAINO:
+				nello_zaino += 1
+			Medusine.Stato.IN_VOLO:
+				_med_sparate[i] = true
+			Medusine.Stato.A_TERRA:
+				if not _med_atterrate.has(i):
+					_med_atterrate[i] = pos[i]
+	_med_zaino_max = maxi(_med_zaino_max, nello_zaino)
 
 
 func _effetto_sott_acqua() -> UnderwaterEffect:

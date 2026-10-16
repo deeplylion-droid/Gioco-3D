@@ -2,9 +2,10 @@ extends Node
 ## Test automatico della demo della sala principale (architettura vera), simulando gli input:
 ## zaino sulla rastrelliera, aspirare dalla vasca d'arrivo, lampada della statua, sigla, la
 ## piscina a onde da svuotare con lo zaino (tappa 5 decisa dall'utente il 15 ottobre: l'acqua
-## sparata dentro la vasca ci ritorna, la taratura da circa 2 minuti, il pulsante della botola che
-## si attiva a piscina vuota), il portello e il recinto aperto. Il pozzo e la sala pompe sono in
-## test_tappe56.gd (con la taratura da circa 1 minuto).
+## sparata dentro la vasca ci ritorna, la taratura da circa 1 minuto proposta prima, le micro
+## medusine che se ne vanno con l'acqua, il pulsante della botola che si attiva a piscina vuota),
+## il portello e il recinto aperto. Il pozzo e la sala pompe sono in test_tappe56.gd (con la
+## taratura di serie, circa 30 secondi, e le medusine seguite da vicino).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -164,7 +165,7 @@ func _run() -> void:
 		"niente più turbina dello scarico né gonfiabile")
 	var rotore := level.get_node_or_null("Sala/Interattivi/sala_turbina_scarico") as Node3D
 	check(rotore == null or not rotore.visible, "la turbina dello scarico non si vede più")
-	check(puddle.get_surface_global_y() > -1.6 and puddle.inner_size.x >= 13.0,
+	check(puddle.get_surface_global_y() > -1.8 and puddle.inner_size.x >= 13.0,
 		"c'è l'acqua nella parte profonda (pelo a %.2f)" % puddle.get_surface_global_y())
 	check(not hatch_button.enabled and not svuota.attivo, "con l'acqua il pulsante della botola è spento")
 	# Le varianti dell'aspetto dell'acqua (proposte per l'utente): di serie resta com'è.
@@ -208,19 +209,24 @@ func _run() -> void:
 	var dove_fuori := p.water_pack.hit_point
 	await _frames(40)
 	check(absf(puddle.get_liters() - prima_fuori) < 0.05, "l'acqua sparata fuori dalla vasca (in %s) non torna" % dove_fuori)
-	# La taratura da circa 2 minuti: si riempie e si svuota tutta, come un giocatore.
-	svuota.taratura = PiscinaOnde.Taratura.DUE_MINUTI
+	# La taratura da circa 1 minuto (proposta prima delle scelte del 16 ottobre, resta come
+	# opzione): si riempie e si svuota tutta, come un giocatore.
+	svuota.taratura = PiscinaOnde.Taratura.UN_MINUTO
 	puddle.fill = 1.0
 	p.water_pack.set_tank_amount(0.0)
 	await _frames(2)
-	check(is_equal_approx(puddle.get_liters(), svuota.litri_da_togliere()), "taratura da 2 minuti: %.0f litri" % puddle.get_liters())
+	check(is_equal_approx(puddle.get_liters(), svuota.litri_da_togliere()), "taratura da 1 minuto: %.0f litri" % puddle.get_liters())
+	var med := svuota.get_node_or_null("Medusine") as Medusine
+	check(med != null and med.in_acqua() > 0, "nell'acqua nuotano le micro medusine (%d)" % (med.in_acqua() if med else 0))
 	var esito: Array = await _svuota_piscina(puddle, Vector3(7.35, 0.0, 2.0), Vector3(6.5, -1.5, 2.0), Vector3(13.0, 0.5, 2.0))
-	print("  (taratura da 2 minuti: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
+	print("  (taratura da 1 minuto: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
 	check(puddle.fill <= 0.001, "la piscina si svuota tutta (fill %.3f)" % puddle.fill)
-	check(int(esito[0]) == svuota.pieni_due_minuti, "servono %d pieni di zaino (%d)" % [svuota.pieni_due_minuti, int(esito[0])])
-	check(float(esito[1]) > 100.0 and float(esito[1]) < 140.0, "circa 2 minuti di lavoro (%.0f s)" % float(esito[1]))
+	check(int(esito[0]) == svuota.pieni_un_minuto, "servono %d pieni di zaino (%d)" % [svuota.pieni_un_minuto, int(esito[0])])
+	check(float(esito[1]) > 45.0 and float(esito[1]) < 75.0, "circa 1 minuto di lavoro (%.0f s)" % float(esito[1]))
 	await _frames(3)
-	check(hatch_button.enabled and svuota.attivo and segnale.visible, "a piscina vuota il pulsante si attiva e la sua luce si accende")
+	check(med == null or med.in_acqua() == 0, "a piscina vuota non resta nessuna medusina nell'acqua")
+	check(hatch_button.enabled and svuota.attivo and segnale.visible and segnale.light_color.b < 0.3,
+		"a piscina vuota il pulsante si attiva e il suo lampeggiante giallo si accende")
 	check(String(GameState.snapshot.get("checkpoint", "")).ends_with("CheckpointPozzaVuota"), "checkpoint: piscina vuota")
 
 	print("Portello")
@@ -282,14 +288,22 @@ func _run() -> void:
 	var turn := rad_to_deg(dir_side.angle_to(dir_front))
 	check(turn > 3.0 and turn < 17.0, "di lato, l'occhio si gira ma al massimo di 15 gradi (%.1f)" % turn)
 
-	print("B5: i bambini sulla balconata, in un lampo")
+	print("B5: i bambini sulla balconata (spenti dal 16 ottobre), in un lampo")
 	var kids: KidSighting = level.get_node("BambiniBalconata")
 	var storm: Tempesta = level.find_children("*", "Tempesta", true, false)[0]
 	var flashes := [0]
 	storm.lampo.connect(func(_i): flashes[0] += 1)
+	check(not kids.attivo, "nella sala i bambini sulla balconata sono spenti")
 	p.teleport(Vector3(13.5, 4.5, -16.5), PI, 0.0)
 	await _frames(5)
-	check(kids.get_child_count() >= 5, "sulla torre compaiono i bambini sulla balconata")
+	check(kids.get_child_count() == 0, "sulla torre non compare nessuno")
+	# Il meccanismo resta (si ripropone con la sala della torre): lo si riaccende solo qui.
+	p.teleport(Vector3(0.0, 0.0, 16.0), 0.0, 0.0)
+	await _frames(5)
+	kids.attivo = true
+	p.teleport(Vector3(13.5, 4.5, -16.5), PI, 0.0)
+	await _frames(5)
+	check(kids.get_child_count() >= 5, "riacceso, sulla torre compaiono i bambini sulla balconata")
 	check(kids.get_child_count() > 0 and kids.get_child(0) is Bambino, "sono i bambini animati (ti seguono con la testa)")
 	check(flashes[0] >= 1, "e un lampo li illumina")
 	await _frames(150)
