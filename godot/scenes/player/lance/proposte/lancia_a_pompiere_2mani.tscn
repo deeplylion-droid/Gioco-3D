@@ -5,8 +5,18 @@
 [ext_resource type="PackedScene" path="res://assets/models/zaino/mano_impugnatura/mano_impugnatura.gltf" id="3_rh"]
 [ext_resource type="PackedScene" path="res://assets/models/zaino/mano_tubo/mano_tubo.gltf" id="4_lh"]
 
+[sub_resource type="CylinderMesh" id="manica_lunga"]
+top_radius = 0.046
+bottom_radius = 0.046
+height = 0.5
+radial_segments = 16
+
+[sub_resource type="StandardMaterial3D" id="mat_manica"]
+albedo_color = Color(0.37, 0.38, 0.41, 1)
+roughness = 0.9
+
 [node name="LanciaAPompiere2Mani" type="Node3D"]
-editor_description = "Proposta per la lancia dello zaino (16 ottobre), non usata nel gioco. Due mani: la sinistra sulla leva a staffa. Muzzle = centro dell'ugello, da qui esce il getto."
+editor_description = "Proposta per la lancia dello zaino (16 ottobre), non usata nel gioco. Due mani: la sinistra è la mano a pugno (lo stesso modello della destra), chiusa intorno alla leva a staffa. Muzzle = centro dell'ugello, da qui esce il getto."
 script = ExtResource("1_r")
 model_scene = ExtResource("2_m")
 view_offset = Vector3(0.24, -0.3, -1.15)
@@ -15,9 +25,17 @@ tube_point = Vector3(0, 0, 0.3)
 right_hand_scene = ExtResource("3_rh")
 right_hand_position = Vector3(0, -0.25, 0.465)
 right_hand_rotation = Vector3(-15, 0, 0)
-left_hand_scene = ExtResource("4_lh")
-left_hand_position = Vector3(0.014, 0.16, 0.52)
-left_hand_rotation = Vector3(0, -75, 135)
+left_hand_scene = ExtResource("3_rh")
+left_hand_position = Vector3(0.014, 0.15, 0.52)
+left_hand_rotation = Vector3(30, -15, -105)
 left_hand_mirror = false
+
+[node name="ManicaSinistraLunga" type="MeshInstance3D" parent="."]
+editor_description = "Prolunga la manica della mano sinistra fino al bordo dello schermo (stessa trasformazione della mano)."
+transform = Transform3D(-0.8844, -0.4585, 0.0872, 0.3376, -0.4997, 0.7977, -0.3222, 0.7349, 0.5967, -0.2759, -0.1541, 0.9059)
+layers = 2
+cast_shadow = 0
+mesh = SubResource("manica_lunga")
+surface_material_override/0 = SubResource("mat_manica")
 
 [node name="Muzzle" type="Marker3D" parent="."]
