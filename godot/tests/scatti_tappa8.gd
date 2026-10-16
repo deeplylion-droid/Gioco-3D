@@ -7,7 +7,15 @@ extends Node
 ## - t8_arrivo: arrivi all'area bimbi seguendo la scia, un minuto dopo il risveglio;
 ## - t8_presa_lato: ti avvicini di lato e lei ti prende (la camera della sequenza di morte);
 ## - t8_scivola: lei scivola sotto (tre scatti di fila);
-## - occhio_cordone: dal cordone, di lato, il getto in faccia alla medusa affacciata.
+## - occhio_cordone: dal cordone, di lato, il getto in faccia alla medusa affacciata;
+## - portellone_spiaggia (e portellone_spiaggia_spenta, senza la sua luce): piscina piena, dalla
+##   spiaggia, la luce del portellone attraverso l'acqua (punto 3);
+## - portellone_getto (e portellone_getto_vecchio, con la vasca che raccoglie ancora l'acqua come
+##   nella v0.3.1): piscina vuota, si spara un po' d'acqua sul fondo e sul muro, si colpisce il
+##   pulsante e il portellone si apre (punto 4);
+## - sotto_scala: in fondo alla scala del pozzo, la canaletta di lamiera forata (punto 5);
+## - cancello_10m, cancello_4m: arrivi al primo cancello stagno della camera delle onde, lo scatto
+##   quando comincia ad alzarsi, con l'apertura a 10 m (v0.3.1) e a 4,5 m (punto 6).
 ## Uso, sotto il render.lock:
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_tappa8.gd \
@@ -76,6 +84,11 @@ func _run() -> void:
 		await _occhio_cordone()
 	if only.has("serranda_sala"):
 		await _scatto("serranda_sala", Vector3(-15.0, 0.0, 15.6), Vector3(-15.0, 1.1, 20.3))
+	# Tappe 5-6, prima del risveglio (la luce del portellone e i cancelli stagni sono di prima).
+	for nome in ["portellone_spiaggia_spenta", "portellone_spiaggia", "portellone_getto_vecchio", "portellone_getto",
+			"sotto_scala", "cancello_10m", "cancello_4m"]:
+		if only.has(nome):
+			await call(StringName("_" + nome))
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	await _frames(10)
 	if only.has("serranda_magazzino"):
@@ -116,6 +129,117 @@ func _salva(nome: String) -> void:
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_jpg(out_dir.path_join("%s_%s.jpg" % [prefisso, nome]), 0.92)
 	print("salvato ", prefisso, "_", nome)
+
+
+## La luce del portellone vista dalla spiaggia, con la piscina piena (accesa e spenta).
+func _portellone_spiaggia() -> void:
+	await _scatto("portellone_spiaggia", Vector3(0.0, 0.0, -11.5), Vector3(0.0, -2.2, 2.0), 80)
+
+
+func _portellone_spiaggia_spenta() -> void:
+	var luce := level.get_node_or_null(^"Piscina/LucePortellone") as Node3D
+	if luce:
+		luce.visible = false
+		luce.process_mode = Node.PROCESS_MODE_DISABLED
+	await _scatto("portellone_spiaggia_spenta", Vector3(0.0, 0.0, -11.5), Vector3(0.0, -2.2, 2.0), 80)
+	if luce:
+		luce.visible = true
+		luce.process_mode = Node.PROCESS_MODE_INHERIT
+
+
+func _portellone_getto_vecchio() -> void:
+	await _portellone_getto(true)
+
+
+## Piscina vuota: dal fondo si spara un po' d'acqua sul muro sotto il pulsante (come mirandolo), poi
+## lo si colpisce e il portellone si apre; lo scatto dal fondo verso il portellone aperto. Con
+## [param vecchio] la vasca raccoglie ancora l'acqua sparata, come nella v0.3.1.
+func _portellone_getto(vecchio := false) -> void:
+	var vasca := level.get_node(^"Piscina/Pozza") as WaterTank
+	var svuota := level.get_node(^"Piscina/SvuotaPiscina")
+	var pulsante := level.get_node(^"Piscina/PulsantePortello") as WaterButton
+	var portello := level.get_node(^"Piscina/Portello")
+	vasca.fill = 0.0
+	for m in level.find_children("Medusine", "", true, false):
+		m.call(&"ricomincia")
+	Engine.time_scale = 4.0
+	await _frames(int(60 * 3.0 / 4.0) + 20)
+	Engine.time_scale = 1.0
+	if vecchio and not vasca.is_in_group(&"water_catchers"):
+		vasca.add_to_group(&"water_catchers")
+	if not p.has_item(&"zaino_pompa"):
+		p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
+	p.water_pack.set_equipped(true, false)
+	p.water_pack.set_tank_amount(20.0)
+	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
+	await _frames(10)
+	p.look_at_point(Vector3(1.6, -1.9, 4.9))
+	Input.action_press(&"spray")
+	await _frames(60)
+	p.look_at_point(pulsante.global_position + Vector3(0.0, 0.4, 0.0))
+	await _frames(40)
+	Input.action_release(&"spray")
+	for i in 300:
+		await get_tree().physics_frame
+		if bool(portello.get(&"is_open")):
+			break
+	print("  portellone aperto: %s, acqua nella piscina %.4f" % [str(portello.get(&"is_open")), vasca.fill])
+	p.water_pack.set_equipped(false, false)
+	await _scatto("portellone_getto_vecchio" if vecchio else "portellone_getto", Vector3(2.6, -2.0, 4.4), Vector3(0.0, -2.3, 2.0), 60)
+	if vecchio:
+		# Di nuovo come prima del colpo: vuota, pulsante acceso e non premuto, portellone chiuso.
+		vasca.remove_from_group(&"water_catchers")
+		vasca.fill = 0.0
+		pulsante.call(&"load_state", {"powered": false})
+		svuota.call(&"load_state", {"attivo": true})
+		portello.set(&"is_open", false)
+		portello.set(&"_t", 0.0)
+		var lastra = portello.get(&"_target")
+		if lastra:
+			(lastra as Node3D).basis = portello.get(&"_base")
+
+
+## In fondo alla scala del pozzo, guardando la canaletta di lamiera forata sotto la scala.
+func _sotto_scala() -> void:
+	var tec := level.get_node(^"Tecnici") as Node3D
+	await _scatto("sotto_scala", tec.to_global(Vector3(2.6, 0.0, 0.9)), tec.to_global(Vector3(-0.2, 0.1, -0.2)), 60)
+
+
+func _cancello_10m() -> void:
+	await _cancello(10.0, "cancello_10m")
+
+
+func _cancello_4m() -> void:
+	await _cancello(4.5, "cancello_4m")
+
+
+## Si cammina lungo la camera delle onde verso il primo cancello stagno (chiuso): lo scatto appena
+## comincia ad alzarsi, con l'apertura a [param raggio] metri.
+func _cancello(raggio: float, nome: String) -> void:
+	var tec := level.get_node(^"Tecnici") as Node3D
+	var cancelli := level.find_children("*", "Paratia", true, false)
+	for c in cancelli:
+		c.call(&"load_state", {"chiusa": false, "aperta": false})
+		c.set(&"raggio_apertura", raggio)
+	var meta := tec.to_global(Vector3(25.0, 1.3, 0.0))
+	p.teleport(tec.to_global(Vector3(5.0, 0.0, 0.0)), 0.0, 0.0)
+	await _frames(5)
+	Input.action_press(&"move_forward")
+	var partito := false
+	for i in 1200:
+		var d := meta - p.global_position
+		p.set_look(atan2(-d.x, -d.z), 0.0)
+		await get_tree().physics_frame
+		for c in cancelli:
+			if bool(c.get(&"in_salita")):
+				partito = true
+		if partito:
+			break
+	Input.action_release(&"move_forward")
+	p.velocity = Vector3.ZERO
+	# Il colpo e lo strappo: il pannello si stacca da terra circa mezzo secondo dopo.
+	await _frames(70)
+	await _salva(nome)
 
 
 ## Dal magazzino verso la serranda: entri nella zona davanti e si alza (a metà corsa e alla fine).
