@@ -201,6 +201,10 @@ func _run() -> void:
 					await _frames(settle)
 					p.look_at_point(s[1])
 					await _frames(2)
+					# Il lampeggiante giallo del pulsante: lo scatto subito dopo un lampo.
+					if nome == "i_pulsante_botola" and svuota and bool(svuota.get(&"attivo")) and not bool(svuota.call(&"premuto")):
+						await svuota.lampeggio
+						await _frames(4)
 					await RenderingServer.frame_post_draw
 					var img := get_viewport().get_texture().get_image()
 					img.save_jpg(out_dir.path_join("%s_%s.jpg" % [pref, nome]), 0.92)
