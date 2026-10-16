@@ -21,7 +21,8 @@ extends Node
 ## andata via (tappa 8 finita); SCATTI_PORTONE=aperto|chiuso: il portone della sala della torre;
 ## SCATTI_OCCHIO_CHIUSO=1: la medusa affacciata con l'occhio chiuso (easter egg del getto in faccia);
 ## SCATTI_PULSANTE=attivo|premuto: il pulsante della botola acceso (lampeggiante giallo) o già colpito
-## (verde), con SCATTI_PISCINA=0.
+## (verde), solo ai livelli con la piscina vuota (SCATTI_PISCINA=...,0).
+## SCATTI_PORTONE=auto: il portone chiuso per j_portone_lontano e aperto per k_portone_vicino.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -39,7 +40,7 @@ const SCATTI := {
 const EXTRA := {
 	"g_fossa_bimbi": [Vector3(-16.2, 0.0, -5.6), Vector3(-13.6, -1.0, -7.3)],  # tappa 8: la fossa della VascaBimbi1 da dove arriva il giocatore
 	"h_piscina_bordo": [Vector3(7.35, 0.0, 2.0), Vector3(2.0, -1.8, 2.6)],     # tappa 5: dal bordo est, dove si aspira l'acqua della piscina
-	"i_pulsante_botola": [Vector3(-1.2, -2.0, -0.6), Vector3(1.9, -1.35, 4.95)],  # tappa 5: il pulsante della botola sulla parete sud, dal fondo
+	"i_pulsante_botola": [Vector3(-1.2, -2.0, -0.6), Vector3(2.25, -0.95, 4.6)],  # tappa 5: il pulsante A della botola sulla parete sud, dal fondo
 	"j_portone_lontano": [Vector3(8.5, 0.0, -6.0), Vector3(19.8, 2.4, -15.0)],  # dopo la tappa 8: il portone della sala della torre da lontano
 	"k_portone_vicino": [Vector3(14.0, 0.0, -11.0), Vector3(19.8, 2.2, -15.0)],  # il portone da vicino (aperto, col lampeggiante)
 	"m_medusa_occhio": [Vector3(0.0, 0.0, 14.6), Vector3(0.0, 1.5, 11.95)],  # la medusa affacciata da davanti (easter egg dell'occhio)
@@ -177,7 +178,7 @@ func _run() -> void:
 				if med:
 					med.call(&"ricomincia")
 			var stato_pulsante := OS.get_environment("SCATTI_PULSANTE")
-			if svuota and stato_pulsante in ["attivo", "premuto"]:
+			if svuota and stato_pulsante in ["attivo", "premuto"] and vasca and vasca.fill <= 0.001:
 				svuota.call(&"load_state", {"attivo": true})
 				var pulsante: Node = svuota.get(&"pulsante")
 				if pulsante and stato_pulsante == "premuto":
@@ -193,6 +194,8 @@ func _run() -> void:
 					if nome == "l_aspira_medusine":
 						await _aspira_medusine(pref, s[0], s[1])
 						continue
+					if portone and stato_portone == "auto" and nome in ["j_portone_lontano", "k_portone_vicino"]:
+						portone.call(&"load_state", {"aperto": nome == "k_portone_vicino"})
 					p.teleport(s[0], 0.0, 0.0)
 					p.look_at_point(s[1])
 					await _frames(settle)
