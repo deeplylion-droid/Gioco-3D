@@ -722,22 +722,22 @@
  "giocatore/atterraggio_bagnato_01": {
   "file": "res://audio/giocatore/atterraggio_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.221,
+  "durata": 0.204,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
   "lufs": null,
-  "lufs_max": -18.4
+  "lufs_max": -19.3
  },
  "giocatore/atterraggio_bagnato_02": {
   "file": "res://audio/giocatore/atterraggio_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.21,
+  "durata": 0.2,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "senza goccioline, come i passi bagnati (16 ottobre)",
   "lufs": null,
-  "lufs_max": -17.6
+  "lufs_max": -17.8
  },
  "giocatore/atterraggio_metallo_01": {
   "file": "res://audio/giocatore/atterraggio_metallo_01.ogg",
@@ -842,32 +842,32 @@
  "giocatore/passo_bagnato_01": {
   "file": "res://audio/giocatore/passo_bagnato_01.ogg",
   "canali": 1,
-  "durata": 0.227,
+  "durata": 0.171,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },
  "giocatore/passo_bagnato_02": {
   "file": "res://audio/giocatore/passo_bagnato_02.ogg",
   "canali": 1,
-  "durata": 0.201,
+  "durata": 0.184,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },
  "giocatore/passo_bagnato_03": {
   "file": "res://audio/giocatore/passo_bagnato_03.ogg",
   "canali": 1,
-  "durata": 0.21,
+  "durata": 0.18,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -20.3
  },
  "giocatore/passo_bagnato_04": {
   "file": "res://audio/giocatore/passo_bagnato_04.ogg",
@@ -875,27 +875,27 @@
   "durata": 0.203,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },
  "giocatore/passo_bagnato_05": {
   "file": "res://audio/giocatore/passo_bagnato_05.ogg",
   "canali": 1,
-  "durata": 0.202,
+  "durata": 0.184,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
-  "lufs_max": -20.0
+  "lufs_max": -20.3
  },
  "giocatore/passo_bagnato_06": {
   "file": "res://audio/giocatore/passo_bagnato_06.ogg",
   "canali": 1,
-  "durata": 0.207,
+  "durata": 0.186,
   "loop": false,
   "fonte": "Kenney Impact Sounds (CC0), rielaborati + sintesi",
-  "nota": "",
+  "nota": "lo sciac della suola sul bagnato, senza goccioline (16 ottobre)",
   "lufs": null,
   "lufs_max": -20.0
  },

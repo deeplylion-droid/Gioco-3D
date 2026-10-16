@@ -130,8 +130,9 @@ def atterraggio(rng, sup, i):
     elif sup == 'bagnato':
         mix_into(out, tacco_piastrella(rng, i) * 0.7, 0)
         mix_into(out, tacco_piastrella(rng, i + 2) * 0.5, n_of(0.03))
-        mix_into(out, strato_bagnato(rng, 1.6), 0)
-        mix_into(out, strato_bagnato(rng, 1.2), n_of(0.03))
+        # senza goccioline, come i passi bagnati (scelta dell'utente del 16 ottobre)
+        mix_into(out, strato_bagnato(rng, 1.6, goccioline=False), 0)
+        mix_into(out, strato_bagnato(rng, 1.2, goccioline=False), n_of(0.03))
         mix_into(out, thud * 0.7, 0)
     elif sup == 'acqua':
         mix_into(out, passo_acqua(rng, i, 1.8), 0)
@@ -417,8 +418,11 @@ def main():
         salva(CART, f'passo_piastrelle_{i + 1:02d}', passo_piastrelle(rng, i), loudness=-20, corto=True,
               qualita=3, fonte=K_PASSI, nota='footstep_concrete + risonanza della ceramica')
     for i in range(6):
-        salva(CART, f'passo_bagnato_{i + 1:02d}', passo_bagnato(rng, i), loudness=-20, corto=True, qualita=3,
-              fonte=K_PASSI + ' + sintesi')
+        # senza le goccioline che schizzavano: scelta dell'utente del 16 ottobre (le sentiva come
+        # bollicine); stessi numeri casuali, quindi gli altri suoni non cambiano
+        salva(CART, f'passo_bagnato_{i + 1:02d}', passo_bagnato(rng, i, goccioline=False), loudness=-20,
+              corto=True, qualita=3, fonte=K_PASSI + ' + sintesi',
+              nota='lo sciac della suola sul bagnato, senza goccioline (16 ottobre)')
     for i in range(6):
         salva(CART, f'passo_acqua_{i + 1:02d}', passo_acqua(rng, i), loudness=-19, corto=True, qualita=3)
     for i in range(6):
@@ -430,7 +434,8 @@ def main():
     for sup in ['piastrelle', 'bagnato', 'acqua', 'metallo']:
         for i in range(2):
             salva(CART, f'atterraggio_{sup}_{i + 1:02d}', atterraggio(rng, sup, i), loudness=-16, corto=True,
-                  qualita=3, fonte=K_PASSI + ' + sintesi')
+                  qualita=3, fonte=K_PASSI + ' + sintesi',
+                  nota='senza goccioline, come i passi bagnati (16 ottobre)' if sup == 'bagnato' else '')
     for i in range(2):
         salva(CART, f'salto_{i + 1:02d}', salto(rng, i), loudness=-24, corto=True, qualita=3,
               fonte='Kenney RPG Audio (CC0)', nota='cloth')
