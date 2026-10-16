@@ -13,23 +13,28 @@ import bimbi_hq as H  # noqa: E402
 
 # vista: (cosa, posizione camera, punto guardato, lente mm)
 VISTE = {
-    'struttura_tre_quarti': ('struttura', (9.5, -12.5, 3.2), (-0.6, 0.3, 3.4), 30),
-    'struttura_scala': ('struttura', (-6.0, -8.2, 1.7), (-2.4, -1.6, 1.6), 30),
-    'struttura_secchio': ('struttura', (3.6, -3.4, 5.3), (-1.2, 2.2, 6.4), 32),
+    'fedele_tre_quarti': ('fedele', (11.0, -12.5, 3.4), (0.4, -0.6, 3.4), 30),
+    'fedele_scala': ('fedele', (-6.6, -10.5, 1.7), (-2.6, -3.0, 1.7), 30),
+    'fedele_secchio': ('fedele', (5.5, -4.5, 5.0), (0.2, 1.6, 6.6), 32),
+    'variante_tre_quarti': ('variante', (9.5, -12.5, 3.2), (-0.6, 0.3, 3.4), 30),
     'fungo_tre_quarti': ('fungo', (3.2, -4.4, 1.9), (0.0, 0.0, 1.0), 40),
-    'fungo_sotto': ('fungo', (1.7, -2.0, 0.9), (0.0, 0.0, 1.55), 30),
-    'secchio_vicino': ('secchio', (2.2, -2.6, 0.9), (0.0, 0.0, 0.0), 45),
+    'fungo_vicino': ('fungo', (2.0, -2.2, 1.7), (0.1, 0.0, 1.35), 35),
+    'secchio_vicino': ('secchio', (2.3, -2.7, 1.5), (0.0, 0.0, 0.75), 45),
 }
 
 
 def scena(cosa):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     sc = bpy.context.scene
-    if cosa == 'struttura':
-        H.struttura_locale(grezzo=True)
+    if cosa in ('fedele', 'variante'):
+        if cosa == 'fedele':
+            H.struttura_fedele(centro=(0.0, 0.0), grezzo=True)
+            perno = H.PERNO_FEDELE
+        else:
+            H.struttura_variante(centro=(0.0, 0.0), grezzo=True)
+            perno = H.PERNO_VARIANTE
         s = H.secchio_locale(grezzo=True)
-        A = H.ASSE_SECCHIO
-        s.location = (A['x'], A['y'], A['z'])
+        s.location = perno
         s.rotation_euler = Euler((math.radians(-14), 0, 0))
     elif cosa == 'fungo':
         f = H.importa_unito(H.file_hq(H.FUNGO_HD, grezzo=True), 'fungo')
@@ -37,9 +42,11 @@ def scena(cosa):
         f.data.transform(__import__('mathutils').Matrix.Translation(-Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, lo.z))))
         f.data.transform(__import__('mathutils').Matrix.Scale(2.0 / (hi.z - lo.z), 4))
     else:
-        H.secchio_locale(grezzo=True)
+        s = H.secchio_locale(grezzo=True)
+        lo, hi = H.limiti(s.data)
+        s.location = (0, 0, -lo.z)      # appoggiato al pavimento, perno all'altezza dei mozzi
     # pavimento grigio chiaro, appena lucido
-    bpy.ops.mesh.primitive_plane_add(size=80, location=(0, 0, -0.75 if cosa == 'secchio' else 0.0))
+    bpy.ops.mesh.primitive_plane_add(size=80, location=(0, 0, 0.0))
     pav = bpy.context.active_object
     m = bpy.data.materials.new('pavimento')
     m.use_nodes = True
@@ -57,7 +64,7 @@ def scena(cosa):
                                                   'world', 'studio.exr'))
     nt.links.new(env.outputs['Color'], nt.nodes['Background'].inputs['Color'])
     nt.nodes['Background'].inputs['Strength'].default_value = 0.55
-    H_ = 8.2 if cosa == 'struttura' else 2.0
+    H_ = 8.2 if cosa in ('fedele', 'variante') else 2.0
     for nome, pos, en, col in (('chiave', (-1.0, -1.4, 1.2), 900, (1.0, 0.96, 0.9)),
                                ('riempimento', (1.5, -0.8, 0.5), 300, (0.85, 0.9, 1.0)),
                                ('controluce', (0.4, 1.5, 1.3), 500, (1.0, 0.92, 0.85))):

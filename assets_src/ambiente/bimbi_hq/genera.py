@@ -57,6 +57,39 @@ MARGINE = 'The entire object is inside the frame with a wide empty margin of bac
 SOLO_SECCHIO = (' Only the bucket itself: the pivot hubs end in short stub axles, no stand, no legs, no frame, nothing '
                 'under the bucket.')
 
+# versione fedele (richiesta del coordinatore): la struttura di oggi divisa in 4 moduli; per ognuno un render
+# grezzo dalla geometria del gioco (blockout.py, colori piatti) reso fotorealistico con l'image-to-image,
+# poi image-to-3d e il modulo torna esattamente nell'ingombro di oggi (stesse collisioni)
+RESA = ('Turn this simple untextured 3D blockout render into a photorealistic studio product photo of the very same '
+        'object, built as real, highly detailed 1990s commercial water park play equipment. Keep exactly the same '
+        'parts, layout, proportions, heights, number of posts, colors and camera angle as in the blockout; do not add '
+        'or remove parts, only make every part real and detailed. ')
+DETTAGLIO = ('Real detail: rounded molded fiberglass decks and steps with anti-slip texture, powder-coated round steel '
+             'posts with clamps, hex bolts, brackets, welded joints and rubber end caps, sun-faded and chlorine-'
+             'bleached colors, scuffs, fine scratches, chipped paint at the edges, limescale and dried water stains, '
+             'grime in the joints, a little rust bleeding from the bolts; worn but intact and still colorful. Single '
+             'isolated object, the whole object visible, soft even studio lighting, plain light grey background, no '
+             'people, no text, no logos, no water.')
+MODULI = {
+    'verde': ('A square play tower: a yellow deck on four tall round blue steel posts, a teal green pyramid roof on '
+              'top of the posts, red horizontal railing tubes with thin blue vertical bars on three sides of the deck, '
+              'open on the back; a straight yellow stair with open treads and two red handrails climbs from the '
+              'ground at the front up to the deck; a short yellow walkway plank sticks out of the right side of the deck.'),
+    'arancio': ('A taller square play tower: a yellow deck on four tall round blue steel posts, an orange pyramid roof '
+                'on top of the posts, red horizontal railing tubes with thin blue vertical bars on three sides of the '
+                'deck, open on the back; an open yellow half-pipe slide starts from the right side of the deck and '
+                'curves down to the ground on the right.'),
+    'rossa': ('A square play tower: a yellow deck high up on four tall round blue steel posts, a red pyramid roof on top '
+              'of the posts, red horizontal railing tubes with thin blue vertical bars on three sides of the deck; a '
+              'short yellow walkway plank sticks out of the right side of the deck.'),
+    'secchio': ('The highest play tower: a yellow deck on four round blue steel posts with red horizontal railing tubes '
+                'and thin blue vertical bars on three sides, no roof; above the deck a tall rust-red painted steel '
+                'frame of four posts with horizontal crossbars, diagonal braces and two top beams, and a horizontal '
+                'stainless steel axle across the top where a giant bucket would hang (no bucket); a blue water pipe '
+                'rises from the ground at the back right and bends over the top of the frame; a yellow plank bridge '
+                'goes down from the front edge of the deck.'),
+}
+
 # nome: dict(img=modello immagine, prompt=..., rif=[voci di riferimento] (image-to-image), formato, poligoni)
 VOCI = {
     # --- disegno d'insieme della struttura (riferimento interno) e versioni senza secchio per il 3D
@@ -90,6 +123,15 @@ VOCI = {
     'secchio_d': dict(img='nano-banana-pro', prompt=SECCHIO + SOLO_SECCHIO + ' Front view from slightly above, the two '
                       'pivot hubs on the left and right sides. ' + MARGINE + ' ' + STILE, formato='1:1', poligoni=30000),
 }
+for _m, _d in MODULI.items():
+    VOCI[f'modulo_{_m}_a'] = dict(img='nano-banana-pro', rif=[f'blockout_{_m}'], formato='1:1', poligoni=80000,
+                                  prompt=RESA + _d + ' ' + DETTAGLIO)
+    VOCI[f'modulo_{_m}_b'] = dict(img='gpt-image-2', rif=[f'blockout_{_m}'], formato='1:1', poligoni=80000,
+                                  prompt=RESA + _d + ' ' + DETTAGLIO)
+# arancio e secchio: blockout rifatti con più margine (nel primo il tetto e un palo uscivano dall'immagine)
+for _m in ('arancio', 'secchio'):
+    VOCI[f'modulo_{_m}_c'] = dict(img='nano-banana-pro', rif=[f'blockout_{_m}2'], formato='1:1', poligoni=80000,
+                                  prompt=RESA + MODULI[_m] + ' ' + DETTAGLIO)
 
 
 def _scarica(url, path):
@@ -206,7 +248,13 @@ def modello(nome):
 
 # modelli scelti (dopo aver guardato le anteprime di Meshy): nome finale -> voce
 FINALI = {
-    'struttura_gioco': 'insieme_c_vuoto',   # disegno d'insieme senza secchio (il secchio è un oggetto a parte)
+    # versione fedele (la proposta principale): i 4 moduli della struttura di oggi
+    'modulo_verde': 'modulo_verde_a',       # nano-banana-pro per tutti (scala vera al posto dei gradini sospesi)
+    'modulo_arancio': 'modulo_arancio_c',
+    'modulo_rossa': 'modulo_rossa_a',
+    'modulo_secchio': 'modulo_secchio_c',
+    # variante: la struttura disegnata da capo (4 torri, telaio a portale), da mostrare accanto
+    'struttura_variante': 'insieme_c_vuoto',
     'fungo_fontana': 'fungo_c',             # cappello largo come quello di prima (fungo_d: cupola, punti dentro)
     'secchio_gigante': 'secchio_d',         # due mozzi sull'asse (secchio_c ne aveva quattro)
 }
@@ -216,6 +264,9 @@ def finali():
     """Copia i modelli scelti con il nome finale (anche il 4K in GREZZI, per i render)."""
     import shutil
     for fin, voce in FINALI.items():
+        if not os.path.exists(os.path.join(QUI, voce + '.glb')):    # le prove già copiate si tolgono dal repository
+            print(fin, 'già fatto')
+            continue
         shutil.copyfile(os.path.join(QUI, voce + '.glb'), os.path.join(QUI, fin + '.glb'))
         g = os.path.join(GREZZI, voce + '_4k.glb')
         if os.path.exists(g):
