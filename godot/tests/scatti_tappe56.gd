@@ -71,7 +71,8 @@ func _run() -> void:
 	for riga in st.split("\n"):
 		if riga.begins_with("VmHWM"):
 			print("memoria massima: ", riga)
-	get_tree().quit()
+	# Liberare il livello intero sul renderer software può restare appeso: gli scatti sono salvati.
+	OS.kill(OS.get_process_id())
 
 
 # --- Gli scatti ---------------------------------------------------------------------------------

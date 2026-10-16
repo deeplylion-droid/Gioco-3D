@@ -11,18 +11,18 @@ extends Node3D
 @export var portellone: Node3D
 ## L'acqua della piscina: col livello si regola il bagliore.
 @export var vasca: WaterTank
-@export var colore := Color(1.0, 0.68, 0.25)
+@export var colore := Color(1.0, 0.58, 0.16)
 ## Anello: raggio interno ed esterno (m), quanto sta sopra il portellone, quanto brilla.
 @export var raggio_anello := 0.68
-@export var spessore_anello := 0.07
+@export var spessore_anello := 0.09
 @export var quota_anello := 0.03
-@export var emissione_anello := 6.0
+@export var emissione_anello := 14.0
 ## La luce sopra il portellone: quota, energia e portata; il bagliore nell'acqua.
 @export var quota_luce := 0.35
-@export var energia := 2.2
-@export var portata := 5.0
-@export var bagliore := 7.0
-@export var raggio_bagliore := 5.0
+@export var energia := 4.5
+@export var portata := 6.0
+@export var bagliore := 16.0
+@export var raggio_bagliore := 3.5
 
 var centro := Vector3.ZERO
 var _luce: OmniLight3D
