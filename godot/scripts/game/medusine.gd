@@ -11,6 +11,11 @@ extends Node3D
 ## nuotano di nuovo. Più l'acqua scende, meno ne restano: quando la piscina è vuota non ce n'è più
 ## nessuna. Le crea PiscinaOnde ([member PiscinaOnde.medusine]).
 
+## Una medusina è entrata nell'ugello dello zaino (per il suono di vetro).
+signal aspirata(posizione: Vector3)
+## Una medusina è uscita col getto.
+signal sparata(posizione: Vector3)
+
 enum Stato { NUOTA, TIRATA, RISUCCHIATA, NELLO_ZAINO, IN_VOLO, A_TERRA, SPENTA }
 
 ## Passo della griglia con l'altezza del fondo sotto l'acqua (m).
@@ -32,10 +37,10 @@ const MASCHERA := 13
 @export var seme := 1610
 
 @export_group("Luce")
-@export var luminosita := 2.2
-@export var luminosita_alone := 0.7
+@export var luminosita := 2.6
+@export var luminosita_alone := 0.6
 ## Diametro dell'alone appena sotto il pelo (m): più sono in fondo, più è largo e fioco.
-@export var alone := 0.34
+@export var alone := 0.22
 ## Quanto le attenua l'acqua torbida rispetto al fondo della vasca (1 = uguale, meno = si vedono di più).
 @export_range(0.0, 1.0) var attenuazione := 0.4
 
@@ -415,6 +420,7 @@ func _risucchiata(m: Medusina, delta: float, zaino: WaterPack) -> void:
 		m.stato = Stato.NELLO_ZAINO
 		m.soglia = _rng.randf_range(0.15, 0.85) * maxf(zaino.tank_amount, 1.0)
 		m.scala = 1.0
+		aspirata.emit(b)
 
 
 func _nello_zaino(m: Medusina, zaino: WaterPack) -> void:
@@ -444,6 +450,7 @@ func _spara(m: Medusina, zaino: WaterPack) -> void:
 	m.luce = 1.0
 	m.affonda = false
 	m.salto = true
+	sparata.emit(m.pos)
 
 
 func _in_volo(m: Medusina, delta: float, zaino: WaterPack) -> void:
@@ -756,7 +763,7 @@ func _prepara_disegno(m: Medusina, livello: float, occhio: Vector3) -> void:
 		var vicino := smoothstep(0.25, 1.0, m.pos.distance_to(occhio))
 		m.col_alone = Color(m.colore.r * tr_alone.x, m.colore.g * tr_alone.y, m.colore.b * tr_alone.z,
 				m.luce * (0.85 + 0.3 * m.contrazione) * vicino)
-		var grande := alone * (1.0 + maxf(sotto, 0.0) * 2.5) * (m.raggio / (diametro * 0.5)) * m.scala
+		var grande := alone * (1.0 + maxf(sotto, 0.0) * 2.0) * (m.raggio / (diametro * 0.5)) * m.scala
 		if sotto <= 0.0 and m.stato != Stato.A_TERRA:
 			grande *= 0.6
 		m.alone_xf = Transform3D(Basis() * grande, m.pos + m.base.y.normalized() * m.raggio * m.scala * 0.25)

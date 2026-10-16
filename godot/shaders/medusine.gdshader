@@ -16,7 +16,7 @@ render_mode blend_add, unshaded, cull_disabled, depth_draw_never, depth_test_dis
 #include "res://addons/acqua/shaders/water_common.gdshaderinc"
 
 uniform sampler2D depth_texture : hint_depth_texture, filter_nearest, repeat_disable;
-uniform float luminosita = 2.2;
+uniform float luminosita = 2.6;
 
 varying vec4 v_col;
 varying float v_c;
