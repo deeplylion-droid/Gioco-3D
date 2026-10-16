@@ -1,6 +1,6 @@
 # Ambienti tecnici: camera delle onde e sala pompe (tappe 5-6)
 
-`tecnici.tscn`: dal portello sul fondo della piscina a onde si scende con la scala del pozzo nella **camera delle onde** (24 m di camera + pozzo, pale, bocchette, due paratie), poi un **tunnel** di 12 m porta alla **sala pompe** (18 × 12 m, h 5,5). Dalla porta del ponte inferiore un **raccordo di servizio** (corridoio e due rampe di scale, sale di 7,25 m) arriva ai piedi della scala che scende dal corridoio degli interni: ci si passa al ritorno al buio (tappa 7). Script: `scripts/tecnici/tecnici.gd` (materiali, luci segnaposto, decal). Modelli: `assets/ambienti_tecnici/camera_onde.gltf`, `sala_pompe.gltf` e `raccordo.gltf`, fatti da `tools/blender/ambienti2_camera_onde.py`, `ambienti2_sala_pompe.py` e `ambienti2_raccordo.py` con `TECNICI_GODOT=1` (modelli Meshy in `assets_src/ambienti_tecnici/meshy_hq/`). La scena si rigenera con `python3 tools/godot_tecnici_scena.py`: i marker si leggono dai glTF, quindi restano giusti se i modelli cambiano.
+`tecnici.tscn`: dal portello sul fondo della piscina a onde si scende con la scala del pozzo nella **camera delle onde** (24 m di camera + pozzo, pale, bocchette, due paratie), poi un **tunnel** di 12 m porta alla **sala pompe** (18 × 12 m, h 5,5). Dalla porta del ponte inferiore un **raccordo di servizio** (corridoio e due rampe di scale, sale di 7,25 m) arriva ai piedi della scala che scende dal corridoio degli interni, chiusa da una grata con la catena. Al ritorno al buio (tappa 7, strada B scelta il 16 ottobre) si va invece per il **corridoio C2** (verso ovest, 10 gradini fino al livello della sala grande), il **corridoio C3** (verso nord) e il **magazzino dei gonfiabili**, che si apre con una **serranda mezza alzata** nell'angolo sud-ovest della sala grande. Script: `scripts/tecnici/tecnici.gd` (materiali, luci segnaposto, decal). Modelli: `assets/ambienti_tecnici/camera_onde.gltf`, `sala_pompe.gltf` e `raccordo.gltf`, fatti da `tools/blender/ambienti2_camera_onde.py`, `ambienti2_sala_pompe.py` e `ambienti2_raccordo.py` con `TECNICI_GODOT=1` (modelli Meshy in `assets_src/ambienti_tecnici/meshy_hq/`). La scena si rigenera con `python3 tools/godot_tecnici_scena.py`: i marker si leggono dai glTF, quindi restano giusti se i modelli cambiano.
 
 Coordinate Godot, metri, pavimento a y = 0. La camera corre lungo +X; la sala pompe è il nodo `Ambienti/SalaPompe` in (37,3; 0; -2,2).
 
@@ -37,7 +37,12 @@ Già nei glTF (suffissi `-colonly` / `-convcolonly`, diventano StaticBody3D): pa
 | `marker_chiavistello` | accanto alla porta, lato maniglione | puleggia del `CHIAVISTELLO` (catenaccio giallo e nero sul muro): ci arriva il cavo d'acciaio della leva |
 | `marker_chiusura_stagna` | accanto alla porta, lato cardine | cilindro idraulico `ATTUATORE_stagno` della chiusura stagna: ci arrivano i tre tubi delle turbine |
 | `marker_raccordo_sala` | (47,2; 0; 1,4) | nel raccordo, appena fuori dalla porta del ponte inferiore |
-| `marker_raccordo_interni` | (44,04; 7,25; -7,8) | in cima al raccordo, ai piedi della scala degli interni. Buon posto per un checkpoint della tappa 7 |
+| `marker_raccordo_interni` | (44,04; 7,25; -7,8) | in cima al raccordo, davanti alla grata chiusa della scala degli interni (di lì non si passa più) |
+| `marker_t7_inizio` | (47,5; 0; 1,4) | **checkpoint tappa 7**: inizio del corridoio, appena fuori dalla porta col maniglione. Globale (-1,4; -9,05; 48,86) |
+| `marker_t7_cima_scala` | (44,55; 9,05; 0,4) | in cima alla scala di C2, al livello della sala grande. Globale (-0,4; 0; 45,91) |
+| `marker_t7_magazzino` | (27,64; 9,05; 15) | **checkpoint tappa 7**: entrata del magazzino dei gonfiabili, guarda verso la serranda. Globale (-15; 0; 29,0) |
+| `marker_t7_serranda` | (17,94; 9,05; 15) | **checkpoint tappa 7**: appena usciti dalla serranda, nella sala grande, guarda a nord. Globale (-15; 0; 19,3) |
+| `marker_t7_inizio_scia` | (17,24; 9,05; 15) | qui comincia la scia rosa verso l'area bimbi. Globale (-15; 0; 18,6) |
 
 ## Cosa collegare (scripts/mechanisms/)
 
@@ -70,7 +75,11 @@ cioè `position = (0, -9.05, 1.36)` e `rotation_degrees.y = -90`. Così:
 - `marker_raccordo_interni` cade in (7,8; -1,8; 45,4) globali, proprio ai piedi della scala che scende dalla porta "sala pompe" del corridoio degli interni. Il raccordo chiude anche i fianchi e il fondo di quella scala;
 - il soffitto del pianerottolo in cima al raccordo arriva a +0,8 globale, appena a sud del muro degli interni (z da 44,8 a 47): lì non deve esserci altro.
 
-**Scala degli interni**: perché si possa percorrere, il muro sud del loro pianerottolo ha un'apertura alta 0,5 m sopra la scala (luce 2,3 m) e la loro rampa di collisione va dal bordo del pianerottolo fino al piano di sotto (commit separato sugli interni). Dal mio lato `attacco_scala_interni` raccorda la loro rampa al pianerottolo in cima al raccordo. Il test cammina dalla sala pompe fino davanti alla porta "sala pompe" del corridoio.
+**Tappa 7, strada B (magazzino dei gonfiabili)**. Dalla porta del ponte inferiore si sale per R1 e le due rampe fino al pianerottolo T, come prima. Lì la scala degli interni è chiusa da una **grata verde con catena e lucchetto** (`grata_interni`, con collisione): la porta "sala pompe" degli interni resta chiusa. Da T si va a ovest per il corridoio **C2** (largo 1,9 m, globale z 45-46,9): 10 gradini da 18 cm (pedata 28 cm, rampa liscia sotto) portano da -1,8 a 0, il livello della sala. Poi **C3** verso nord (x globale -16..-14) fino al **magazzino** (x -18..-12, z 20,2..30,2, alto 3,4 m): scaffali contro i muri lunghi, cinque mucchi di gonfiabili (uno già nel C3), tutti con collisioni basse. Il magazzino si apre nel muro sud della sala con la **serranda** a lamelle (`serranda_*`, varco x -15,9..-14,1, alto 2,5 m) alzata fino a 1,95 m: si passa in piedi, sopra c'è la collisione della serranda. Luci: lampade rosse d'emergenza lungo la strada (`LUCE_rossa_t7_*`, diventano `LuceEmergenza`) e una luce rossa che guida sulla serranda vista dalla sala (`LUCE_guida_serranda`). Il test cammina da `marker_raccordo_sala` fino alla serranda, con gli interni al loro posto, e controlla che dalla grata non si passi.
+
+**Nella sala grande** (`tools/blender/ambiente_sala.py`, dell'agente ambiente) ho cambiato solo il modulo del muro sud da x -16 a -14: `VANO_SERRANDA` lo fa diventare una parete con un varco di 1,8 × 2,5 m, con le collisioni, come il vano verso gli spogliatoi. Rigenerato `sala_architettura.glb` (gli altri GLB della sala escono identici).
+
+**Scala degli interni** (prima della tappa 7 B): perché si possa percorrere, il muro sud del loro pianerottolo ha un'apertura alta 0,5 m sopra la scala (luce 2,3 m) e la loro rampa di collisione va dal bordo del pianerottolo fino al piano di sotto (commit separato sugli interni). Dal mio lato `attacco_scala_interni` raccorda la loro rampa al pianerottolo in cima al raccordo. Ora è chiusa dalla grata.
 
 ## Luci
 

@@ -163,7 +163,35 @@ editor_description = "nel raccordo, appena fuori dalla porta del ponte inferiore
 position = Vector3(44.04, 7.25, -7.8)
 gizmo_extents = 0.5
 rotation = Vector3(0, -1.5708, 0)
-editor_description = "in cima al raccordo, ai piedi della scala che sale al corridoio degli interni"
+editor_description = "in cima al raccordo, davanti alla grata chiusa della scala degli interni"
+
+[node name="marker_t7_inizio" type="Marker3D" parent="Marker"]
+position = Vector3(47.5, 0, 1.4)
+gizmo_extents = 0.5
+rotation = Vector3(0, -1.5708, 0)
+editor_description = "checkpoint: inizio del corridoio, appena fuori dalla porta della sala pompe"
+
+[node name="marker_t7_cima_scala" type="Marker3D" parent="Marker"]
+position = Vector3(44.55, 9.05, 0.4)
+gizmo_extents = 0.5
+editor_description = "in cima alla scala del corridoio C2, al livello della sala grande"
+
+[node name="marker_t7_magazzino" type="Marker3D" parent="Marker"]
+position = Vector3(27.64, 9.05, 15)
+gizmo_extents = 0.5
+rotation = Vector3(0, 1.5708, 0)
+editor_description = "checkpoint: entrata del magazzino dei gonfiabili"
+
+[node name="marker_t7_serranda" type="Marker3D" parent="Marker"]
+position = Vector3(17.94, 9.05, 15)
+gizmo_extents = 0.5
+rotation = Vector3(0, 1.5708, 0)
+editor_description = "checkpoint: appena usciti dalla serranda, nella sala grande (angolo sud-ovest)"
+
+[node name="marker_t7_inizio_scia" type="Marker3D" parent="Marker"]
+position = Vector3(17.24, 9.05, 15)
+gizmo_extents = 0.5
+editor_description = "qui comincia la scia rosa verso l area bimbi"
 
 [node name="LuceLeva" type="OmniLight3D" parent="."]
 position = Vector3(45.697, 4.13927, -5.20525)
