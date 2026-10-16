@@ -155,11 +155,12 @@ func _setup_hall() -> void:
 ## nuovi, il cancello del recinto resta spalancato (con la sua collisione) e la turbina dello
 ## scarico, che non serve più, non si vede.
 ## Il muro invisibile del cordone chiuso intorno alla vasca della medusa (cordone_vasca_0..19 di
-## sala_vasca_centrale.glb, D1): ferma il giocatore ma non il getto (l'easter egg dell'occhio si
-## raggiunge da fuori), sul livello "solo_giocatore".
+## sala_vasca_centrale.glb, D1): ferma il giocatore ma non il getto (l'easter egg dell'occhio e il
+## pulsante della sigla si raggiungono da fuori), sul livello "barriere". Lo mette già
+## ambiente_post_import.gd; qui per sicurezza, se un import vecchio non l'avesse fatto.
 func _cordone_vasca() -> void:
 	for n in find_children("cordone_vasca_*", "CollisionObject3D", true, false):
-		(n as CollisionObject3D).collision_layer = Layers.SOLO_GIOCATORE
+		(n as CollisionObject3D).collision_layer = Layers.BARRIERS
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override

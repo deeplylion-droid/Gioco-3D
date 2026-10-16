@@ -120,7 +120,7 @@ menu_opzioni={
 3d_physics/layer_6="bersagli_acqua"
 3d_physics/layer_7="volumi_acqua"
 3d_physics/layer_8="scale"
-3d_physics/layer_9="solo_giocatore"
+3d_physics/layer_9="barriere"
 
 [physics]
 

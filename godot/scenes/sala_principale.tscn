@@ -931,7 +931,7 @@ shape = SubResource("BoxShape3D_8xk4k")
 [node name="Player" type="CharacterBody3D" parent="." unique_id=72875329 instance=ExtResource("75_elmpe")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 10.7, 0, 39.65)
 collision_layer = 2
-collision_mask = 269
+collision_mask = 13
 floor_snap_length = 0.3
 script = ExtResource("76_a51qx")
 

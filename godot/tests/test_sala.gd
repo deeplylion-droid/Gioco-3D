@@ -300,9 +300,9 @@ func _run() -> void:
 
 	print("Easter egg: il getto in faccia le chiude l'occhio, anche da fuori dal cordone")
 	var cordone := level.find_children("cordone_vasca_*", "CollisionObject3D", true, false)
-	var solo_giocatore := cordone.all(func(c): return (c as CollisionObject3D).collision_layer == Layers.SOLO_GIOCATORE)
-	check(cordone.size() >= 20 and solo_giocatore,
-		"il muro invisibile del cordone (%d pezzi) è sul livello che ferma solo il giocatore" % cordone.size())
+	var barriere := cordone.all(func(c): return (c as CollisionObject3D).collision_layer == Layers.BARRIERS)
+	check(cordone.size() >= 20 and barriere,
+		"il muro invisibile del cordone (%d pezzi) è sul livello delle barriere: ferma il giocatore, non il getto" % cordone.size())
 	p.teleport(Vector3(0.0, 0.0, 15.2), 0.0, 0.0)
 	await _frames(5)
 	Input.action_press(&"move_forward")
