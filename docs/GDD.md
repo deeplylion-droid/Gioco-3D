@@ -56,6 +56,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
 - La luce della torcia è troppo forte e brutta: va studiata diversamente.
 - I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
+- **Da fare più avanti (richiesta dell'utente, 16 ottobre)**: i poster grandi, e anche dei piccoli volantini da mettere in giro sulle pareti, con gli eventi e i manifesti della crociera. Stile e contenuti si propongono all'utente.
 
 ## Principi di livello (deciso dall'utente, 15 ottobre)
 
