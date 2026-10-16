@@ -197,6 +197,16 @@ func ricomincia() -> void:
 	_da_rifare = true
 
 
+## (Per gli scatti) Sposta la medusina [param i], se nuota, in [param punto] (in pianta), appena sotto il pelo.
+func sposta(i: int, punto: Vector3) -> void:
+	if i < 0 or i >= _medusine.size() or _medusine[i].stato != Stato.NUOTA or vasca == null:
+		return
+	var m := _medusine[i]
+	m.pos = Vector3(punto.x, vasca.get_surface_global_y() - m.raggio * 1.6, punto.z)
+	m.vel = Vector3.ZERO
+	m.salto = true
+
+
 # --- Checkpoint: dipendono solo dal livello dell'acqua -----------------------------------------
 
 func save_state() -> Dictionary:

@@ -39,6 +39,8 @@ const EXTRA := {
 	"i_pulsante_botola": [Vector3(-1.2, -2.0, -0.6), Vector3(1.9, -1.35, 4.95)],  # tappa 5: il pulsante della botola sulla parete sud, dal fondo
 	"j_portone_lontano": [Vector3(8.5, 0.0, -6.0), Vector3(19.8, 2.4, -15.0)],  # dopo la tappa 8: il portone della sala della torre da lontano
 	"k_portone_vicino": [Vector3(14.0, 0.0, -11.0), Vector3(19.8, 2.2, -15.0)],  # il portone da vicino (aperto, col lampeggiante)
+	# tappa 5: dal bordo est con lo zaino, mentre aspira la micro medusina più vicina (due scatti di fila)
+	"l_aspira_medusine": [Vector3(7.35, 0.0, 2.0), Vector3(5.6, -1.5, 2.4)],
 }
 
 var out_dir := "user://scatti_sala"
@@ -156,6 +158,9 @@ func _run() -> void:
 			for nome in camere:
 				if only.is_empty() or only.has(nome):
 					var s: Array = camere[nome]
+					if nome == "l_aspira_medusine":
+						await _aspira_medusine(pref, s[0], s[1])
+						continue
 					p.teleport(s[0], 0.0, 0.0)
 					p.look_at_point(s[1])
 					await _frames(settle)
@@ -168,6 +173,46 @@ func _run() -> void:
 	print("scatti salvati in ", ProjectSettings.globalize_path(out_dir))
 	print("memoria massima del processo: ", _picco_memoria())
 	get_tree().quit()
+
+
+## Lo zaino in mano dal bordo est della piscina: si mira alla micro medusina più vicina che si può
+## raggiungere e si aspira; due scatti mentre la corrente la tira su col filo d'acqua.
+func _aspira_medusine(pref: String, dove: Vector3, mira: Vector3) -> void:
+	if not p.has_item(&"zaino_pompa"):
+		p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
+	p.water_pack.set_equipped(true, false)
+	p.water_pack.set_tank_amount(4.0)
+	var hud := p.get_node_or_null(^"HUD")
+	if hud:
+		hud.visible = false
+	p.teleport(dove, 0.0, 0.0)
+	await _frames(10)
+	var med := level.get_node_or_null(^"Piscina/SvuotaPiscina/Medusine") as Medusine
+	if med:
+		# La medusina più vicina al bordo (le altre restano dove sono) si porta a portata dello zaino
+		# (0,9 m dal bordo) e la si mira: la corrente la prende subito.
+		var st := med.stati()
+		var pos := med.posizioni()
+		var scelta := -1
+		for i in pos.size():
+			if st[i] == Medusine.Stato.NUOTA and (scelta < 0 or pos[i].x > pos[scelta].x):
+				scelta = i
+		if scelta >= 0:
+			mira = Vector3(dove.x - 0.9, -1.6, dove.z + 0.2)
+			med.sposta(scelta, mira)
+	p.look_at_point(mira)
+	await _frames(settle)
+	p.look_at_point(mira)
+	Input.action_press(&"suck")
+	var attese := [14, 10, 10]
+	for k in attese.size():
+		await _frames(attese[k])
+		await RenderingServer.frame_post_draw
+		var img := get_viewport().get_texture().get_image()
+		img.save_jpg(out_dir.path_join("%s_l_aspira_medusine_%d.jpg" % [pref, k + 1]), 0.92)
+		print("salvato ", pref, "_l_aspira_medusine_", k + 1)
+	Input.action_release(&"suck")
+	p.water_pack.set_equipped(false, false)
 
 
 ## Memoria residente massima del processo (Linux), per esempio "9876 MB".
