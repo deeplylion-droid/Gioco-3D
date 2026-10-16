@@ -21,11 +21,17 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	# Come nel gioco: la sala si carica in qualche secondo e il primo fotogramma dopo il caricamento
+	# recupera più passi di fisica prima di disegnare (fino a 8). Con --fixed-fps non succede da solo:
+	# si fa con la fisica a 480 Hz finché la sala non è pronta. Così, nella v0.3.1, il bersaglio del
+	# getto sulla faccia della medusa finiva sull'occhio della posa di riposo, 2,6 m sopra la faccia.
+	Engine.physics_ticks_per_second = 480
 	get_tree().change_scene_to_file(LEVEL)
 	for i in 300:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player):
 			break
+	Engine.physics_ticks_per_second = 60
 	await _frames(5)
 	level = get_tree().current_scene
 	p = GameState.player
@@ -56,6 +62,9 @@ func _run() -> void:
 	check(ap != null and ap.is_playing() and ap.current_animation == "affacciata", "con l'animazione affacciata in ciclo")
 	var eye := medusa.get_eye_position()
 	check(absf(eye.y - 1.63) < 0.1 and absf(eye.x) < 0.15 and eye.z > 11.5 and eye.z < 12.1, "l'occhio è sopra il bordo, all'altezza dei tuoi occhi (%s)" % eye)
+	var faccia := medusa.get_node_or_null(^"FacciaMedusa") as Node3D
+	check(faccia != null and faccia.global_position.distance_to(eye + Vector3(0.0, -0.15, 0.0)) < 0.1,
+		"il bersaglio del getto è sulla sua faccia, anche dopo un caricamento lungo (%s)" % (str(faccia.global_position) if faccia else "-"))
 	var pool: WaterTank = level.get_node("Vasca/VascaCentrale")
 	check(absf(pool.get_surface_global_y() - 0.88) < 0.03 and not pool.suckable, "l'acqua della vasca è quasi al bordo e non si aspira")
 	var det := level.get_node_or_null("Sala/Dettagli")
@@ -310,6 +319,41 @@ func _run() -> void:
 	Input.action_release(&"move_forward")
 	check(p.global_position.z > 13.2, "il cordone ferma il giocatore (z %.2f)" % p.global_position.z)
 	check(not medusa.occhio_chiuso(), "l'occhio è aperto")
+	# Dal cordone, da più punti intorno a lei (fino a 45 gradi di lato), mirando occhio e bocca.
+	var avanti := medusa.global_basis.z
+	avanti.y = 0.0
+	avanti = avanti.normalized()
+	var riusciti := 0
+	var prove := 0
+	for angolo in [-45.0, -20.0, 20.0, 45.0]:
+		var d := avanti.rotated(Vector3.UP, deg_to_rad(angolo))
+		var da := Vector3(eye.x, 1.0, eye.z)
+		var r := space.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + d * 12.0, Layers.BARRIERS))
+		if r.is_empty():
+			continue
+		for mira in [Vector3.ZERO, Vector3(0.0, -0.2, 0.0)]:
+			p.water_pack.set_tank_amount(20.0)
+			p.teleport(Vector3(r.position.x, 0.0, r.position.z) + d * 0.5, 0.0, 0.0)
+			await _frames(4)
+			p.look_at_point(medusa.get_eye_position() + mira)
+			await _frames(3)
+			Input.action_press(&"spray")
+			var chiuso := false
+			for i in 45:
+				await get_tree().physics_frame
+				chiuso = chiuso or medusa.occhio_chiuso()
+			Input.action_release(&"spray")
+			prove += 1
+			if chiuso:
+				riusciti += 1
+			else:
+				print("  (da %.0f gradi il getto colpisce %s)" % [angolo, p.water_pack.hit_collider])
+			# L'occhio si riapre subito per la prova dopo.
+			if medusa._tw_occhio and medusa._tw_occhio.is_valid():
+				medusa._tw_occhio.kill()
+			medusa._imposta_chiusura(0.0)
+			await _frames(10)
+	check(prove == 8 and riusciti == prove, "dal cordone, da destra e da sinistra, il getto in faccia le chiude l'occhio (%d su %d)" % [riusciti, prove])
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.0, 0.0, 15.2), 0.0, 0.0)
 	await _frames(5)
