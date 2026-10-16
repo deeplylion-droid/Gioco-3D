@@ -1,14 +1,14 @@
-"""Palpebre della medusa per l'easter egg dell'occhio che si chiude (questionario del 15 ottobre, voce D2: "se le
-spruzzi l'acqua in faccia l'occhio si chiude per un po'"). Sono una PROPOSTA: restano fuori dal modello finche'
-l'utente non sceglie. Due varianti:
-  'due' (A): due palpebre di pelle, una scende dall'alto e una sale dal basso, e si incontrano a meta';
-  'una' (B): una palpebra sola che scende dall'alto e copre tutto l'occhio, come negli occhi delle bambole.
-Si accendono dal passo 7 con MEDUSA_PALPEBRE=due, =una oppure =due,una (per le proposte: un oggetto per variante,
-Medusa_Palpebre_due e Medusa_Palpebre_una; con una variante sola l'oggetto si chiama Medusa_Palpebre).
+"""Palpebra della medusa per l'easter egg dell'occhio che si chiude (questionario del 15 ottobre, voce D2: "se le
+spruzzi l'acqua in faccia l'occhio si chiude per un po'"). Il 16 ottobre l'utente ha scelto la proposta B:
+  'una' (B, di serie): una palpebra sola che scende dall'alto e copre tutto l'occhio, come negli occhi delle bambole;
+  'due' (A, scartata, resta disponibile): due palpebre, una scende dall'alto e una sale dal basso, a meta'.
+MEDUSA_PALPEBRE sceglie le varianti: di serie 'una' (oggetto Medusa_Palpebre); 'due' per la A; 'due,una' per le
+proposte (un oggetto per variante, Medusa_Palpebre_due e Medusa_Palpebre_una); 'nessuna' per toglierla.
 
 Come sono fatte (pensate per Godot, come la fauce):
-  - pelle di vinile pervinca come il viso (colore preso dall'atlante intorno all'orbita, stessa lacca), con un bordo
-    arrotondato e un po' piu' spesso sul davanti, come il margine di una palpebra;
+  - pelle di vinile pervinca come il viso (colore preso dall'atlante intorno all'orbita, stessa lacca; materiale
+    M_palpebre a colore unico, in Godot medusa_palpebre.tres e medusa_palpebre_bagnata.tres), con un bordo
+    arrotondato e piu' spesso sul davanti, come il margine di una palpebra;
   - a occhio aperto non si vedono: la geometria e' "collassata" (area zero) dentro il bulbo, sotto il labbro
     dell'orbita e sotto la frangia;
   - chiudendosi scivolano sul bulbo a una distanza fissa dalla cornea (che sporge 3 mm): ogni colonna va dal bordo
@@ -20,8 +20,10 @@ Come sono fatte (pensate per Godot, come la fauce):
     solo vicino al bordo, dove la palpebra esce da sotto il labbro, passa sotto la superficie del bulbo).
     'palpebre_K' = occhio chiuso del tutto; la tappa K/2 e' meta' chiusura (nella B il bordo a meta' occhio).
   - pesi: tutto sull'osso 'testa' (le palpebre non seguono la rotazione dell'occhio: quando si chiude, l'osso
-    'occhio' va riportato a 0, altrimenti la cornea girata puo' toccare la palpebra).
-Uso: dal passo 7 (crea_palpebre), dopo palpebre() che alza il labbro dell'orbita.
+    'occhio' va riportato a 0, altrimenti la cornea girata puo' toccare la palpebra);
+  - azioni per Godot (azioni_palpebre): 'occhio_chiude' (6 fotogrammi, 0,25 s) e 'occhio_riapre' (12 fotogrammi,
+    0,5 s), le stesse tappe in sequenza; nel GLB sono campionate a 24 fps.
+Uso: dal passo 7 (crea_palpebre), dopo palpebre() che alza il labbro dell'orbita; azioni_palpebre con le altre azioni.
 """
 import math
 import os
@@ -35,7 +37,8 @@ from mathutils.bvhtree import BVHTree
 from medusa_comune import (log, collega, coords, leggi_json, carica_immagine_np, campiona_uv, loop_uv, loop_vert,
                            TEX)
 
-VARIANTI = [v for v in os.environ.get('MEDUSA_PALPEBRE', '').replace(' ', '').split(',') if v]
+VARIANTI = [v for v in os.environ.get('MEDUSA_PALPEBRE', 'una').replace(' ', '').split(',')
+            if v and v != 'nessuna']
 GAP = 0.0006             # aria tra la cornea (o il bulbo) e la palpebra (unita' del modello; x1,67 sulla statua)
 SPESSORE = 0.0016        # spessore della palpebra
 R_BORDO = 0.0026         # raggio del bordo arrotondato (sporge sopra la palpebra, come il margine di una palpebra)
@@ -46,6 +49,8 @@ N_COL = 64               # colonne, da un lato all'altro dell'occhio
 N_SUP = 18               # righe sulla superficie
 N_BORDO = 8              # righe sul bordo arrotondato
 TAPPE = {'due': 6, 'una': 10}
+CHIUDE = 6               # fotogrammi di occhio_chiude (0,25 s a 24 fps)
+RIAPRE = 12              # fotogrammi di occhio_riapre (0,5 s)
 
 
 def _smooth(e0, e1, x):
@@ -296,7 +301,9 @@ def colore_pelle(corpo, occ):
     return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
 
 
-def materiale_palpebre():
+def materiale_palpebre(colore):
+    """M_palpebre: colore unico (la pelle intorno all'orbita, lineare) e la stessa lacca del vinile del viso
+    (medusa_07_finale.vinile_laccato). Nel glTF arriva come colore base, senza texture."""
     m = bpy.data.materials.get('M_palpebre')
     if m:
         return m
@@ -304,9 +311,7 @@ def materiale_palpebre():
     m.use_nodes = True
     nt = m.node_tree
     b = nt.nodes['Principled BSDF']; b.name = 'BSDF'
-    va = nt.nodes.new('ShaderNodeVertexColor'); va.layer_name = 'Col'
-    nt.links.new(va.outputs['Color'], b.inputs['Base Color'])
-    # stessa lacca del vinile del viso (medusa_07_finale.vinile_laccato)
+    b.inputs['Base Color'].default_value = (*[float(x) for x in colore], 1.0)
     b.inputs['Roughness'].default_value = 0.12
     b.inputs['Coat Weight'].default_value = 1.0
     b.inputs['Coat Roughness'].default_value = 0.04
@@ -324,7 +329,7 @@ def crea_palpebre(arm, corpo, varianti=None):
     occ = Occhio(corpo)
     colore = colore_pelle(corpo, occ)
     log(f'palpebre: colore della pelle intorno all\'orbita {np.round(colore, 3)} (lineare)')
-    mat = materiale_palpebre()
+    mat = materiale_palpebre(colore)
     oggetti = []
     for variante in varianti:
         n = TAPPE[variante]
@@ -360,10 +365,6 @@ def crea_palpebre(arm, corpo, varianti=None):
         loc = lv % n_lato
         uv = np.stack([(loc // n_r) / (N_COL - 1), (loc % n_r) / (n_r - 1)], 1)
         uvl.data.foreach_set('uv', uv.ravel())
-        ca = me.color_attributes.new('Col', 'FLOAT_COLOR', 'POINT')
-        col = np.tile(np.r_[colore, 1.0], (len(me.vertices), 1)).astype(np.float32)
-        ca.data.foreach_set('color', col.ravel())
-        me.color_attributes.active_color = ca
         me.shade_smooth()
         me.materials.append(mat)
         ob = bpy.data.objects.new(nome, me)
@@ -414,18 +415,48 @@ def controlla_cornea(occ, forme, nome, passi=10, n_r=None):
     return peggio
 
 
-def imposta_chiusura(ob, c):
-    """Mette le shape key della palpebra alla chiusura c (0 = aperta, 1 = chiusa), tappe in sequenza."""
-    n = int(ob.get('tappe', len(ob.data.shape_keys.key_blocks) - 1))
-    kb = ob.data.shape_keys.key_blocks
-    for s in range(1, n + 1):
-        kb[f'palpebre_{s}'].value = 0.0
+def pesi_chiusura(n, c):
+    """Pesi delle n shape key (palpebre_1 ... palpebre_n) per la chiusura c (0 = aperta, 1 = chiusa): al massimo due
+    tappe vicine accese, (1 - x) e x."""
+    w = [0.0] * n
     x = min(max(c, 0.0), 1.0) * n
     s = int(math.floor(x))
     fr = x - s
     if s >= n:
-        kb[f'palpebre_{n}'].value = 1.0
-        return
+        w[n - 1] = 1.0
+        return w
     if s >= 1:
-        kb[f'palpebre_{s}'].value = 1.0 - fr
-    kb[f'palpebre_{s + 1}'].value = fr
+        w[s - 1] = 1.0 - fr
+    w[s] = fr
+    return w
+
+
+def imposta_chiusura(ob, c):
+    """Mette le shape key della palpebra alla chiusura c (0 = aperta, 1 = chiusa), tappe in sequenza."""
+    n = int(ob.get('tappe', len(ob.data.shape_keys.key_blocks) - 1))
+    kb = ob.data.shape_keys.key_blocks
+    for s, w in enumerate(pesi_chiusura(n, c), 1):
+        kb[f'palpebre_{s}'].value = w
+
+
+def azioni_palpebre(nla):
+    """Azioni 'occhio_chiude' (CHIUDE fotogrammi, chiusura a velocita' costante) e 'occhio_riapre' (RIAPRE fotogrammi,
+    lenta all'inizio e alla fine) sulle shape key della palpebra, scritte come tracce NLA (nla = medusa_07_finale._nla):
+    a ogni fotogramma tutte le tappe hanno il loro peso, cosi' anche campionate a 24 fps restano in sequenza."""
+    for ob in [o for o in bpy.data.objects if o.name.startswith('Medusa_Palpebre') and o.data.shape_keys]:
+        key = ob.data.shape_keys
+        n = int(ob.get('tappe', len(key.key_blocks) - 1))
+        for nome, fotogrammi, curva in (('occhio_chiude', CHIUDE, lambda t: t),
+                                       ('occhio_riapre', RIAPRE, lambda t: 1.0 - t * t * (3 - 2 * t))):
+            ad = key.animation_data or key.animation_data_create()
+            act = bpy.data.actions.new(f'{nome}_{ob.name}')
+            ad.action = act
+            for f in range(fotogrammi + 1):
+                for s, w in enumerate(pesi_chiusura(n, curva(f / fotogrammi)), 1):
+                    kb = key.key_blocks[f'palpebre_{s}']
+                    kb.value = w
+                    kb.keyframe_insert('value', frame=f + 1)
+            nla(key, nome, act)
+            for kb in key.key_blocks[1:]:
+                kb.value = 0.0
+        log(f'palpebre: azioni occhio_chiude ({CHIUDE} fotogrammi) e occhio_riapre ({RIAPRE}) su {ob.name}')

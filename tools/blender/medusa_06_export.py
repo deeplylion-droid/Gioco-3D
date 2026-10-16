@@ -16,7 +16,8 @@ Godot di prova (build/godot_prova) e stampa ossa, superfici, blend shape e mater
 
 Versione finita: campana con texture RGBA (alfa) ed emissione dei canali cotte nell'atlante UV, gola con un
 gradiente in texture, normal map a 2K (file sotto i 50 MB), tentacoli con le loro texture (colore, emissione,
-normal), animazioni dalle tracce NLA: statua, sveglia, insegue, fluttua, fauce_apre, affacciata.
+normal), animazioni dalle tracce NLA: statua, sveglia, insegue, fluttua, fauce_apre, affacciata, occhio_chiude e
+occhio_riapre (le blend shape della palpebra, Medusa_Palpebre).
 L'origine del GLB e' sul piano d'appoggio dei tentacoli (il piano del piedistallo): la medusa in posa statua
 sta in piedi su y = 0.
 
@@ -268,7 +269,7 @@ def materiali_finale_godot():
                 nt.nodes.remove(nt.nodes[nome])
         nt.links.new(nt.nodes['base'].outputs['Color'], nt.nodes['BSDF'].inputs['Base Color'])
         nt.links.new(nt.nodes['base'].outputs['Color'], nt.nodes['BSDF'].inputs['Emission Color'])
-    for n in ('M_tentacoli', 'M_filamenti', 'M_denti', 'M_ciocche'):
+    for n in ('M_tentacoli', 'M_filamenti', 'M_denti', 'M_ciocche', 'M_palpebre'):
         m = bpy.data.materials.get(n)
         if m:
             b = m.node_tree.nodes['BSDF']
@@ -277,6 +278,40 @@ def materiali_finale_godot():
             b.inputs['Transmission Weight'].default_value = 0.0     # traslucenza: medusa_tentacoli.tres
             if n == 'M_tentacoli':
                 b.inputs['Emission Strength'].default_value = 1.0   # bagliore piu' forte: medusa_tentacoli.tres
+
+
+def _srgb(c):
+    c = max(c, 0.0)
+    return c * 12.92 if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
+
+
+def _lineare(c):
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def materiali_palpebre_godot(gd):
+    """medusa_palpebre.tres e medusa_palpebre_bagnata.tres (cartella godot/): la palpebra non ha la texture del corpo,
+    quindi il suo colore unico (M_palpebre, la pelle intorno all'orbita) si moltiplica qui per la tinta di
+    medusa_pelle.tres / medusa_pelle_bagnata.tres, come fa Godot sul viso; il resto (ruvidita', lacca) e' copiato."""
+    import re
+    m = bpy.data.materials.get('M_palpebre')
+    if not m:
+        return
+    base = list(m.node_tree.nodes['BSDF'].inputs['Base Color'].default_value)[:3]
+    for pelle, uscita, nome in (('medusa_pelle.tres', 'medusa_palpebre.tres', 'M_palpebre'),
+                                ('medusa_pelle_bagnata.tres', 'medusa_palpebre_bagnata.tres', 'M_palpebre_bagnata')):
+        testo = open(os.path.join(gd, pelle)).read()
+        tinta = [float(x) for x in re.search(r'albedo_color = Color\(([^)]*)\)', testo).group(1).split(',')[:3]]
+        col = [_srgb(b * _lineare(t)) for b, t in zip(base, tinta)]
+        righe = ['[gd_resource type="StandardMaterial3D" format=3]', '', '[resource]', f'resource_name = "{nome}"',
+                 'albedo_color = Color(%.3f, %.3f, %.3f, 1)' % tuple(col)]
+        for chiave in ('roughness', 'metallic_specular', 'clearcoat_enabled', 'clearcoat', 'clearcoat_roughness'):
+            r = re.search(rf'^{chiave} = (.*)$', testo, re.M)
+            if r:
+                righe.append(f'{chiave} = {r.group(1)}')
+        with open(os.path.join(gd, uscita), 'w') as f:
+            f.write('\n'.join(righe) + '\n')
+        log('materiale Godot della palpebra:', uscita, 'colore', [round(c, 3) for c in col])
 
 
 def prepara_finale():
@@ -292,6 +327,7 @@ def prepara_finale():
               os.path.join(TEX, 'occhio_bulbo_calmo.png'), os.path.join(TEX, 'occhio_bulbo_venato.png')):
         if os.path.exists(t):
             shutil.copy(t, os.path.join(gd, os.path.basename(t)))
+    materiali_palpebre_godot(gd)
     togli_slot_vuoti(corpo)
     materiali_per_godot()
     materiali_finale_godot()

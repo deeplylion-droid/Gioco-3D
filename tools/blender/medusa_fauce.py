@@ -11,8 +11,8 @@ Come funziona (pensato per Godot):
   - denti da squalo che si incastrano: una fila scende dall'arcata di sopra e una sale da quella di sotto,
     una di fronte all'altra e sfalsate di mezzo dente, tutte e due inclinate verso l'interno della bocca e con
     la punta ricurva all'indietro; le file interne sono piu' piccole, piu' indietro e piu' coricate;
-  - file interne (proposta, MEDUSA_DENTI_INTERNI=1): altre file di denti sempre piu' piccoli sul palato, sul fondo
-    della bocca e sui lati, fino alla gola, tutte piegate verso la gola come in una fauce di squalo;
+  - file interne (approvate il 16 ottobre): altre file di denti sempre piu' piccoli sul palato, sul fondo della bocca
+    e sui lati, fino alla gola, tutte piegate verso la gola come in una fauce di squalo;
   - la shape key "fauce_strappo" del corpo rende frastagliati i bordi dello strappo (lembi arrotondati);
   - il bordo della pelle strappata ha spessore: Medusa_Strappo, un bordino arrotolato lungo i due bordi
     (pelle fuori, spessore rosa e carne dentro), anche lui collassato a riposo con la shape key "fauce_aperta".
@@ -40,9 +40,9 @@ PASSO_FILE = (2, 3, 4)                        # ogni quante colonne del bordo c'
 DENTRO_FILE = (0.3, 0.55, 0.85)               # inclinazione verso l'interno della bocca (le file dietro sono coricate)
 
 # File interne (richiesta dell'utente del 15 ottobre: "piu' file di denti anche dentro, dove si vede tutto quel rosso
-# dell'interno della bocca"). Restano spente finche' l'utente non approva i render: MEDUSA_DENTI_INTERNI=1 le accende.
-# Le file approvate sopra non cambiano (stessi numeri casuali): queste si aggiungono dopo.
-DENTI_INTERNI = os.environ.get('MEDUSA_DENTI_INTERNI', '0') == '1'
+# dell'interno della bocca"; approvate il 16 ottobre). Le file di prima non cambiano (stessi numeri casuali): queste si
+# aggiungono dopo. MEDUSA_DENTI_INTERNI=0 le spegne (per i confronti con la versione di prima).
+DENTI_INTERNI = os.environ.get('MEDUSA_DENTI_INTERNI', '1') == '1'
 # (arcata, profondita' tra le righe della gola (0 = labbro, 4 = fondo), grandezza rispetto alla prima fila,
 #  coricati verso la gola, sfasamento lungo la fila, fin dove arriva verso il centro: 1 = tutta la fila, meno = solo
 #  vicino agli angoli, dove la bocca aperta mostra le pareti dei lati)
