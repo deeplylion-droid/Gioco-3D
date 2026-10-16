@@ -3,8 +3,9 @@ extends Node
 ## Uso:
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_liberi.gd <scena.tscn> <cartella> \
-##        "nome:px,py,pz:lx,ly,lz;nome2:..." [preset] [frame di attesa] [torcia 0/1] [luci: prima/blackout] [fisse: neon e luci rosse senza sfarfallio]
+##        "nome:px,py,pz:lx,ly,lz[:lancia];nome2:..." [preset] [frame di attesa] [torcia 0/1] [luci: prima/blackout] [fisse: neon e luci rosse senza sfarfallio | neon: tutti i neon accesi, rosse spente]
 ## Le coordinate sono globali nella scena (il giocatore viene messo coi piedi in p e guarda verso l).
+## lancia (facoltativa): scena LanceRig da mettere in mano, percorso senza "res://" (per esempio scenes/player/lance/x.tscn).
 
 var scena := ""
 var out_dir := "user://scatti"
@@ -14,6 +15,7 @@ var settle := 60
 var torcia := true
 var blackout := false
 var fisse := false
+var neon := false   # luce normale: tutti i neon accesi e fermi, luci rosse d'emergenza spente
 
 
 func _ready() -> void:
@@ -22,7 +24,7 @@ func _ready() -> void:
 	out_dir = a[2]
 	for s in a[3].split(";", false):
 		var p := s.split(":")
-		scatti.append([p[0], _v(p[1]), _v(p[2])])
+		scatti.append([p[0], _v(p[1]), _v(p[2]), p[3] if p.size() > 3 else ""])
 	if a.size() > 4:
 		preset = a[4]
 	if a.size() > 5:
@@ -32,7 +34,8 @@ func _ready() -> void:
 	if a.size() > 7:
 		blackout = a[7] == "blackout"
 	if a.size() > 8:
-		fisse = a[8] == "fisse"
+		fisse = a[8] == "fisse" or a[8] == "neon"
+		neon = a[8] == "neon"
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	_run.call_deferred()
 
@@ -61,11 +64,20 @@ func _run() -> void:
 				n.set(&"modalita", 0)   # PULSANTE, ROTANTE -> FISSA (le SPENTE restano spente)
 			elif n is Neon and int(n.get(&"modalita")) in [1, 2, 3]:
 				n.set(&"modalita", 0)   # SFARFALLA, GUASTO, MORENTE -> STABILE (gli SPENTI restano spenti)
+			if neon and n is Neon:
+				n.set(&"modalita", 0)
+			elif neon and n is LuceEmergenza:
+				n.set(&"modalita", 3)   # SPENTA
 	var p: Player = GameState.player
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
 	for s in scatti:
+		if s[3] != "":
+			var pack := p.get_node_or_null(^"WaterPack") as WaterPack
+			if pack:
+				pack.set_equipped(true, false)   # negli interni lo zaino si prende dopo: per gli scatti lo si indossa subito
+				pack.set_lance(load("res://" + s[3]))
 		p.teleport(s[1], 0.0, 0.0)
 		p.set_physics_process(false)
 		p.velocity = Vector3.ZERO

@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/player/lance_rig.gd" id="1_r"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/proposte_lance/lancia_c_industriale/lancia_c_industriale.gltf" id="2_m"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/mano_impugnatura/mano_impugnatura.gltf" id="3_rh"]
+[ext_resource type="PackedScene" path="res://assets/models/zaino/mano_tubo/mano_tubo.gltf" id="4_lh"]
+
+[node name="LanciaCIndustriale" type="Node3D"]
+editor_description = "Proposta per la lancia dello zaino (16 ottobre), non usata nel gioco. Mano sinistra sotto la canna. Muzzle = centro dell'ugello, da qui esce il getto."
+script = ExtResource("1_r")
+model_scene = ExtResource("2_m")
+view_offset = Vector3(0.24, -0.3, -1.15)
+tip_point = Vector3(0, 0, 0)
+tube_point = Vector3(0, 0, 0.3)
+right_hand_scene = ExtResource("3_rh")
+right_hand_position = Vector3(0, -0.22, 0.5685)
+right_hand_rotation = Vector3(-15, 0, 0)
+left_hand_scene = ExtResource("4_lh")
+left_hand_position = Vector3(0, -0.13, 0.25)
+left_hand_rotation = Vector3(0, 0, 0)
+left_hand_mirror = false
+
+[node name="Muzzle" type="Marker3D" parent="."]

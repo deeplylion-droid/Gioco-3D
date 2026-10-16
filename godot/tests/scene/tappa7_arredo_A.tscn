@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/tecnici/tecnici.tscn" id="1_tec"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_architettura.glb" id="2_arc"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_oggetti.glb" id="3_ogg"]
+[ext_resource type="PackedScene" path="res://scenes/sala/luci_sala.tscn" id="4_luci"]
+[ext_resource type="PackedScene" path="res://assets/ambienti_tecnici/proposte_tappa7/arredo_A.gltf" id="5_arredo"]
+
+[node name="Tappa7ArredoA" type="Node3D"]
+editor_description = "Proposta di arredamento A della strada di risalita, solo per gli scatti (punto 12 della prova v0.3.1): i tecnici messi come nel livello e l'architettura della sala, senza il resto (sala_principale non entra in memoria sul renderer software)."
+
+[node name="Tecnici" parent="." instance=ExtResource("1_tec")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, -9.05, 1.36)
+
+[node name="Sala" type="Node3D" parent="."]
+
+[node name="Architettura" parent="Sala" instance=ExtResource("2_arc")]
+
+[node name="Oggetti" parent="Sala" instance=ExtResource("3_ogg")]
+
+[node name="LuciSala" parent="." instance=ExtResource("4_luci")]
+
+[node name="ArredoA" parent="Tecnici" instance=ExtResource("5_arredo")]
+
+[node name="LuciUscita" type="Node3D" parent="Tecnici"]
+editor_description = "La luce verde dei cartelli d'uscita (coordinate della scena dei tecnici)."
+
+[node name="uscita_r1" type="OmniLight3D" parent="Tecnici/LuciUscita"]
+position = Vector3(50.28, 2.35, 1.4)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_l1" type="OmniLight3D" parent="Tecnici/LuciUscita"]
+position = Vector3(52.28, 5.975, -7.8)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_t" type="OmniLight3D" parent="Tecnici/LuciUscita"]
+position = Vector3(45.18, 9.45, -4.8)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_c3" type="OmniLight3D" parent="Tecnici/LuciUscita"]
+position = Vector3(43.92, 11.3, 13.4)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_mag" type="OmniLight3D" parent="Tecnici/LuciUscita"]
+position = Vector3(19.46, 11.55, 13.6)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
