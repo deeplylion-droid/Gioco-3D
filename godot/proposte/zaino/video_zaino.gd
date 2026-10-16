@@ -54,6 +54,8 @@ func _avvia() -> void:
 	if hud:
 		hud.visible = false
 	pack = p.water_pack
+	# Negli interni lo zaino si trova nello stanzino: qui lo si ha già.
+	pack.call(&"set_equipped", true, false)
 	if lancia != "attuale":
 		pack.set_lance(load(lancia))
 	if stile != "attuale":
