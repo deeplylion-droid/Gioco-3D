@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/zaino_risucchio_loop.ogg-4bcfb311ddb445f69897
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0
