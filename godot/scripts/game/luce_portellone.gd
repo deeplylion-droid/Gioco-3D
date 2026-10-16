@@ -24,8 +24,8 @@ extends Node3D
 @export var quota_luce := 0.08
 @export var energia := 3.0
 @export var portata := 2.6
-@export var bagliore := 4.0
-@export var raggio_bagliore := 1.4
+@export var bagliore := 7.0
+@export var raggio_bagliore := 2.2
 
 var centro := Vector3.ZERO
 var _luce: OmniLight3D
