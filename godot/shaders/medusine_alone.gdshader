@@ -9,7 +9,7 @@ render_mode blend_add, unshaded, cull_disabled, depth_draw_never, depth_test_dis
 #include "res://addons/acqua/shaders/water_common.gdshaderinc"
 
 uniform sampler2D depth_texture : hint_depth_texture, filter_nearest, repeat_disable;
-uniform float luminosita = 0.7;
+uniform float luminosita = 0.6;
 // Di quanto la scena può stare davanti all'alone prima di coprirlo (m).
 uniform float tolleranza = 0.12;
 
@@ -35,7 +35,7 @@ void fragment() {
 	if (d2 >= 1.0 || v_col.a <= 0.001 || water_reflection_clip(v_world, CAMERA_VISIBLE_LAYERS, CAMERA_POSITION_WORLD)) {
 		discard;
 	}
-	float a = exp(-d2 * 4.5) * (1.0 - d2);
+	float a = exp(-d2 * 5.5) * (1.0 - d2) * (1.0 - d2);
 	float scene = texture(depth_texture, SCREEN_UV).r;
 	vec4 sv = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, scene, 1.0);
 	float scene_dist = -sv.z / sv.w;

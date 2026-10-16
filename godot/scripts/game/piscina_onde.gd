@@ -14,6 +14,13 @@ extends Node3D
 
 ## Il pulsante si è attivato (la piscina è vuota).
 signal pulsante_attivato
+## Un lampo del lampeggiante giallo (uno ogni [member periodo_lampeggio] secondi finché non colpisci
+## il pulsante): per il richiamo dell'audio.
+signal lampeggio
+## Il pulsante è stato colpito: la luce diventa verde e il richiamo si ferma.
+signal pulsante_premuto
+## Si comincia ([code]true[/code]) o si smette di togliere acqua dalla piscina (per il gorgo).
+signal svuotamento(attivo: bool)
 
 enum Taratura { TRENTA_SECONDI, UN_MINUTO, DUE_MINUTI }
 ## OGGI: com'è adesso (dalla spiaggia piena e a metà quasi non si distinguono). LEGGIBILE (B):
@@ -66,12 +73,13 @@ enum Aspetto { OGGI, LEGGIBILE, LEGGIBILE_CON_LAMPADA }
 @export var medusine := 15
 
 @export_group("Lampeggiante del pulsante")
-## A piscina vuota la luce accanto al pulsante lampeggia gialla finché non lo colpisci, poi resta verde.
-@export var colore_attesa := Color(1.0, 0.68, 0.12)
-@export var colore_premuto := Color(0.35, 1.0, 0.45)
-@export var energia_segnale := 2.4
-@export var raggio_segnale := 3.2
-@export var lampeggi_al_secondo := 1.4
+## A piscina vuota il lampeggiante sopra il pulsante dà un lampo giallo ogni [member periodo_lampeggio]
+## secondi finché non lo colpisci, poi resta verde (valori della proposta A approvata).
+@export var colore_attesa := Color(1.0, 0.68, 0.08)
+@export var colore_premuto := Color(0.15, 1.0, 0.3)
+@export var energia_segnale := 4.0
+@export var raggio_segnale := 7.0
+@export var periodo_lampeggio := 1.6
 ## Dove sta la luce rispetto al pulsante (coordinate del pulsante: +Z è davanti).
 @export var posizione_segnale := Vector3(0.0, 0.12, 0.3)
 
@@ -79,6 +87,11 @@ enum Aspetto { OGGI, LEGGIBILE, LEGGIBILE_CON_LAMPADA }
 var attivo := false
 var _luce: OmniLight3D
 var _t := 0.0
+var _t_lampo := -1.0
+var _premuto_detto := false
+var _fill_prima := -1.0
+var _svuota_t := 0.0
+var _svuotando := false
 var _stile_di_serie: Resource
 var _lampada: SpotLight3D
 var _medusine: Medusine
@@ -94,8 +107,8 @@ func _ready() -> void:
 		_luce.light_color = colore_attesa
 		_luce.light_energy = energia_segnale
 		_luce.omni_range = raggio_segnale
-		_luce.omni_attenuation = 1.2
-		_luce.shadow_enabled = false
+		_luce.omni_attenuation = 1.3
+		_luce.shadow_enabled = true
 		_luce.light_volumetric_fog_energy = 0.5
 		_luce.visible = false
 		add_child(_luce)
@@ -194,19 +207,54 @@ func _applica_taratura() -> void:
 
 func _physics_process(delta: float) -> void:
 	_t += delta
+	_segui_svuotamento(delta)
 	if not attivo and vasca and vasca.fill <= 0.001:
 		attivo = true
+		_t_lampo = -1.0
 		_aggiorna_pulsante()
 		pulsante_attivato.emit()
+	if premuto() and not _premuto_detto:
+		_premuto_detto = true
+		pulsante_premuto.emit()
 	if _luce and _luce.visible:
 		if premuto():
 			_luce.light_color = colore_premuto
 			_luce.light_energy = energia_segnale
 		else:
-			# Il lampeggiante giallo: lampi corti e regolari.
+			# Il lampeggiante giallo: un lampo corto ogni periodo_lampeggio secondi.
 			_luce.light_color = colore_attesa
-			var k := pow(maxf(sin(_t * TAU * lampeggi_al_secondo), 0.0), 2.0)
-			_luce.light_energy = energia_segnale * (0.08 + 0.92 * k)
+			_luce.light_energy = energia_segnale * (0.04 + 0.96 * _lampo(delta))
+
+
+## Quanto è acceso il lampeggiante in attesa (0..1): sale in fretta, si spegne in mezzo secondo.
+func _lampo(delta: float) -> float:
+	if _t_lampo < 0.0:
+		_t_lampo = 0.0
+		lampeggio.emit()
+	else:
+		var prima := _t_lampo
+		_t_lampo += delta
+		if fmod(_t_lampo, periodo_lampeggio) < fmod(prima, periodo_lampeggio):
+			lampeggio.emit()
+	var tf := fmod(_t_lampo, periodo_lampeggio)
+	return smoothstep(0.0, 0.05, tf) * (1.0 - smoothstep(0.1, 0.55, tf))
+
+
+## Quando il livello scende si sta svuotando la piscina (con lo zaino): svuotamento(true), e
+## svuotamento(false) quando smette da un quinto di secondo.
+func _segui_svuotamento(delta: float) -> void:
+	if vasca == null:
+		return
+	var f := vasca.fill
+	if _fill_prima >= 0.0 and f < _fill_prima - 0.000001:
+		_svuota_t = 0.2
+	else:
+		_svuota_t = maxf(0.0, _svuota_t - delta)
+	_fill_prima = f
+	var ora := _svuota_t > 0.0
+	if ora != _svuotando:
+		_svuotando = ora
+		svuotamento.emit(ora)
 
 
 ## Vero quando il pulsante è stato colpito (la botola si apre).
@@ -251,4 +299,7 @@ func save_state() -> Dictionary:
 
 func load_state(data: Dictionary) -> void:
 	attivo = bool(data.get("attivo", false))
+	_premuto_detto = premuto()
+	_t_lampo = -1.0
+	_fill_prima = -1.0
 	_aggiorna_pulsante()

@@ -32,6 +32,8 @@ var _med_fuori_acqua := 0
 var _med_zaino_max := 0
 var _med_sparate := {}
 var _med_atterrate := {}
+## Quante volte sono arrivati i segnali per l'audio della tappa 5.
+var _segnali := {}
 
 
 func _ready() -> void:
@@ -124,12 +126,19 @@ func _run() -> void:
 		check(mosse >= pos0.size() - 1, "nuotano (%d su %d si sono spostate)" % [mosse, pos0.size()])
 		_med = med
 		_med_vasca = puddle
+		med.aspirata.connect(func(_q): _segnali["aspirata"] = int(_segnali.get("aspirata", 0)) + 1)
+		med.sparata.connect(func(_q): _segnali["sparata"] = int(_segnali.get("sparata", 0)) + 1)
+	svuota.svuotamento.connect(func(on: bool): _segnali["svuotamento_" + str(on)] = int(_segnali.get("svuotamento_" + str(on), 0)) + 1)
+	svuota.lampeggio.connect(func(): _segnali["lampeggio"] = int(_segnali.get("lampeggio", 0)) + 1)
+	svuota.pulsante_premuto.connect(func(): _segnali["premuto"] = int(_segnali.get("premuto", 0)) + 1)
 	p.water_pack.set_tank_amount(0.0)
 	var esito: Array = await _svuota_piscina(puddle, Vector3(7.35, 0.0, 2.0), Vector3(6.5, -1.5, 2.0), Vector3(13.0, 0.5, 2.0))
 	print("  (taratura da 30 secondi: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
 	check(puddle.fill <= 0.001, "aspirando dal bordo e sparando fuori la piscina si svuota (fill %.3f)" % puddle.fill)
 	check(int(esito[0]) == svuota.pieni_da_togliere(), "servono %d pieni di zaino (%d)" % [svuota.pieni_da_togliere(), int(esito[0])])
 	check(float(esito[1]) > 18.0 and float(esito[1]) < 42.0, "circa 30 secondi di lavoro (%.0f s)" % float(esito[1]))
+	check(int(_segnali.get("svuotamento_true", 0)) == int(esito[0]) and int(_segnali.get("svuotamento_false", 0)) == int(esito[0]),
+		"per l'audio: svuotamento(true/false) a ogni zainata (%s)" % str(_segnali))
 	if med:
 		await _frames(90)
 		_med = null
@@ -145,6 +154,8 @@ func _run() -> void:
 			"volano via e finiscono a terra fuori dalla vasca (%d a terra, %d fuori)" % [_med_atterrate.size(), fuori])
 		check(med.quante(Medusine.Stato.NELLO_ZAINO) == 0 and med.quante(Medusine.Stato.IN_VOLO) == 0,
 			"nello zaino e in volo non ne resta nessuna")
+		check(int(_segnali.get("aspirata", 0)) >= med.numero - 1 and int(_segnali.get("sparata", 0)) == _med_sparate.size(),
+			"per l'audio: un segnale quando entrano nell'ugello e uno quando escono col getto")
 		await _frames(int(med.durata_a_terra * 60.0) + 30)
 		check(med.quante(Medusine.Stato.A_TERRA) == 0, "a terra si spengono e spariscono")
 	await _frames(3)
@@ -154,12 +165,15 @@ func _run() -> void:
 		and lampeggiante.light_color.g < 0.85 and lampeggiante.light_color.b < 0.3
 	var e_min := 100.0
 	var e_max := 0.0
-	for i in 60:
+	var lampi := int(_segnali.get("lampeggio", 0))
+	for i in 200:
 		await get_tree().physics_frame
 		if lampeggiante:
 			e_min = minf(e_min, lampeggiante.light_energy)
 			e_max = maxf(e_max, lampeggiante.light_energy)
+	lampi = int(_segnali.get("lampeggio", 0)) - lampi
 	check(giallo and e_max > 3.0 * e_min, "e il suo lampeggiante giallo lampeggia (%.2f-%.2f)" % [e_min, e_max])
+	check(lampi >= 2 and lampi <= 3, "un lampo ogni 1,6 s, col segnale per il richiamo dell'audio (%d in 3,3 s)" % lampi)
 	check(_checkpoint() == "Piscina/CheckpointPozzaVuota", "checkpoint: piscina vuota (%s)" % _checkpoint())
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
@@ -174,6 +188,10 @@ func _run() -> void:
 	check(bool(hatch.get(&"is_open")), "il pulsante apre il portello")
 	check(svuota.premuto() and lampeggiante != null and lampeggiante.light_color.g > 0.9 and lampeggiante.light_color.r < 0.5,
 		"e la luce diventa verde")
+	var lampi_dopo := int(_segnali.get("lampeggio", 0))
+	await _frames(120)
+	check(int(_segnali.get("premuto", 0)) == 1 and int(_segnali.get("lampeggio", 0)) == lampi_dopo,
+		"col segnale pulsante_premuto, e il lampeggiante (e il richiamo) si ferma")
 	check(not bool(level.get(&"demo_finished")), "la demo non finisce più al portello")
 
 	print("Giù dalla scala del pozzo")
