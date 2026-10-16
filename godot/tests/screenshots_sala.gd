@@ -153,9 +153,9 @@ func _run() -> void:
 				var bordo := testa + verso * 1.6
 				await _shot("lei_sottacqua", Vector3(bordo.x, 0.0, bordo.z), lei.punto_sbuca.global_position + Vector3(0.0, -0.6, 0.0))
 	if _want("telecamera_monitor"):
-		# La telecamera di sorveglianza della sala, per il monitor della sala pompe: in alto sopra
-		# l'ingresso, verso la medusa nella vasca (si ritaglia in 4:3).
-		await _shot_camera("telecamera_monitor", Vector3(-5.0, 5.3, 16.4), Vector3(0.0, 1.1, 11.0), 60.0)
+		# La telecamera di sorveglianza della sala, per il monitor della sala pompe: in alto sul muro
+		# sud (prima era sul soppalco, tolto il 16 ottobre), verso la medusa nella vasca (si ritaglia in 4:3).
+		await _shot_camera("telecamera_monitor", Vector3(-5.0, 5.3, 19.6), Vector3(0.0, 1.1, 11.0), 60.0)
 	if _want("vasca_primo_piano"):
 		# Dal bordo, oltre il cordone: occhio negli occhi.
 		await _shot("vasca_primo_piano", Vector3(0.35, 0.0, 13.25), Vector3(0.0, 1.5, 11.9))

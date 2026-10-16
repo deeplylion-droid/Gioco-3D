@@ -350,9 +350,10 @@ func _pool() -> void:
 	var hatch_button: WaterButton = S.button.instantiate()
 	hatch_button.name = "PulsantePortello"
 	hatch_button.mode = WaterButton.Mode.LATCH
-	hatch_button.radius = 0.14
+	hatch_button.radius = 0.26
 	hatch_button.show_model = false
-	hatch_button.position = Vector3(1.9, -1.15, 4.95)
+	# Pulsante A (16 ottobre): sulla testa del fungo rosso Ø 50 cm (sala_dati.json, "pulsante_botola").
+	hatch_button.position = Vector3(2.25, -1.12, 4.6)
 	hatch_button.rotation = Vector3(0, PI, 0)
 	# Si attiva solo a piscina vuota (lo accende SvuotaPiscina).
 	hatch_button.enabled = false
@@ -410,7 +411,7 @@ func _pools() -> void:
 	# [nome, centro xz, fondo, livello, bordo, litri, materiale]
 	for v in [["VascaArrivo", Vector2(-12.5, 2.0), Vector2(7.0, 10.0), -1.1, -0.22, -0.05, 400.0],
 			["VascaBimbi1", Vector2(-12.6, -9.6), Vector2(4.4, 3.2), 0.02, 0.30, 0.45, 120.0],
-			["VascaBimbi2", Vector2(-15.3, -12.4), Vector2(2.8, 2.8), 0.02, 0.22, 0.45, 60.0]]:
+			["VascaBimbi2", Vector2(-9.6, -18.2), Vector2(2.8, 2.8), 0.02, 0.22, 0.45, 60.0]]:
 		var tank: WaterTank = S.tank.instantiate()
 		tank.name = v[0]
 		tank.build_walls = false
@@ -650,7 +651,7 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 		[1, Vector3(-1.6, 0.0, 18.4), 0.4],     # vicino a dove si entra
 		[2, Vector3(-6.0, 0.6, 8.0), 1.2],      # su un lettino
 		[3, p3, rack_yaw + 0.35],                # sulla rastrelliera dei bagnini, accanto allo zaino
-		[4, Vector3(-11.3, 6.4, -17.4), 0.2],   # in cima alla struttura di gioco, accanto al secchio
+		[4, Vector3(-12.9, 6.4, -21.0), 0.2],   # in cima alla struttura di gioco, accanto al secchio
 		[5, Vector3(1.2, -2.0, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
 		[6, Vector3(-4.6, -1.9, 4.2), 0.9],     # vicino alle bocchette della camera delle onde
 		[7, Vector3(8.2, 1.2, -2.4), 1.6],      # sulla sedia del bagnino
