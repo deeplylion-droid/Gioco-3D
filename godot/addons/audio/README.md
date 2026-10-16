@@ -111,9 +111,24 @@ resto lo suona `scripts/tecnici/risveglio_sala_pompe.gd` con l'API, con questi n
 | `paratia_scende_loop` | paratia d'acciaio che scende: motore, catene, guide | da sola (`Paratia`) |
 | `maniglione_bloccato` | maniglione antipanico spinto, ma la porta non si apre | `suona(&"maniglione_bloccato", porta.global_position)` |
 | `porta_ponte_apre` | lo stesso maniglione che si sblocca, porta pesante che si apre | `suona(&"porta_ponte_apre", porta.global_position)` |
+| `cancello_stagno_apre` | uno dei due cancelli stagni della camera delle onde, dopo la scala del pozzo, che si apre da solo al passaggio (3,7 s, due varianti) | `suona(&"cancello_stagno_apre", cancello)`, dallo script dei cancelli (vedi sotto) |
 
 I due suoni lontani hanno già dentro la distanza (passa-basso e riverbero): in 3D danno solo la
 direzione (`unit_size` 40), così si sentono anche dalla sala pompe, sotto il ruggito.
+
+**I cancelli stagni** (prova della v0.3.1, 16 ottobre: "si aprono al tuo passaggio con un bel suono
+metallico forte"). Un suono per cancello, che contiene tutto: la valvola pilota (0 s), quattro
+chiavistelli che si sfilano con colpi secchi (fino a 0,35 s), la guarnizione che si stacca e l'aria
+che si sfoga (0,37 s), la porta d'acciaio che parte con uno strappo spinta dall'idraulica, stride e
+gratta nelle guide e rimbomba nel corridoio, il colpo a fine corsa, i fermi che scattano e l'ultimo
+sfiato. L'animazione deve seguirlo: la porta parte `Audio.CANCELLO_STAGNO_PARTE` (0,55 s) dopo
+`suona()`, è a velocità piena circa 0,4 s dopo, rallenta appena nell'ultimo quarto di secondo e
+sbatte a fine corsa dopo `Audio.CANCELLO_STAGNO_ARRIVA` (2,55 s). Le due varianti hanno gli stessi
+tempi e si alternano (mai la stessa due volte di fila), così i due cancelli non suonano uguali.
+Taratura: +2 dB, `unit_size` 5, `max_distance` 60, cioè pieno fino a circa 6 m. Se i cancelli
+fossero `Paratia` o `PoweredDoor`, l'addon ci metterebbe anche i suoni di quelle classi (motore e
+catene, motore della porta): per i cancelli che si aprono basta questo suono. Anteprima:
+`res://audio/anteprima/cancello_stagno.ogg` (i due cancelli, il secondo 2 s dopo e più lontano).
 
 ## Tappa 5: la piscina a onde, il pulsante della botola, le micro medusine
 
@@ -206,7 +221,8 @@ Lasciando un cursore parte un suono di prova sul suo bus (anche col gioco in pau
 
 `tests/test_audio.gd` (anche nella CI): bus ed effetti, tutti gli stream del catalogo, volumi su
 disco, collegamenti con la sala principale e suoni che partono davvero (tuono, passi, getto,
-aspirazione, pulsante, sigla, faro), monitor e paratie della sala pompe, la fossa e il morso della
+aspirazione, pulsante, sigla, faro), monitor e paratie della sala pompe, i cancelli stagni (due
+varianti più lunghe del colpo a fine corsa, forti in 3D), la fossa e il morso della
 tappa 8, la piscina a onde (gorgo, piscina vuota, pulsante della botola, lampeggiante, bi-bu, micro
 medusine), il portone della torre (con un portone finto), i nomi dei suoni chiesti dagli script
 (devono esistere nel catalogo), pausa, menu, morte e ripartenza, nessun errore.
@@ -227,8 +243,8 @@ riproduzioni appese; lo stato resta giusto. Il test forza la riproduzione vera c
 
 Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e le anteprime
 `res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg`, `anteprima_lei.ogg`,
-`confronto_pioggia_bollicine.ogg` e `confronto_passi_goccioline.ogg` (cartella con `.gdignore`: non
-entra nel gioco). Le anteprime delle
+`confronto_pioggia_bollicine.ogg`, `confronto_passi_goccioline.ogg` e `cancello_stagno.ogg`
+(cartella con `.gdignore`: non entra nel gioco). Le anteprime delle
 proposte per l'utente (`anteprima/proposta_*.ogg`) restano com'erano quando le ha ascoltate: si
 rifanno solo a mano (`genera_anteprima.py proposte` per lei, `genera_proposte.py` per le altre,
 `genera_proposte_getto.py` per la lancia dello zaino, con i suoni sciolti in

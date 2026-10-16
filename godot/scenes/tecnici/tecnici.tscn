@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://addons/acqua/scripts/water_tank_link.gd" id="s_link"]
 [ext_resource type="Resource" path="res://addons/acqua/presets/stile_3_scura.tres" id="r_stile"]
 [ext_resource type="Script" path="res://scripts/mechanisms/ladder.gd" id="s_ladder"]
+[ext_resource type="Script" path="res://scripts/tecnici/vasca_inesauribile.gd" id="s_inesauribile"]
 [ext_resource type="PackedScene" path="res://scenes/tecnici/luci_tecnici.tscn" id="p_luci"]
 
 [node name="Tecnici" type="Node3D"]
@@ -40,6 +41,10 @@ script = ExtResource("s_link")
 tank = NodePath("../VascaRaccolta")
 style = ExtResource("r_stile")
 
+[node name="VascaInesauribile" type="Node" parent="Acqua" node_paths=PackedStringArray("vasca")]
+script = ExtResource("s_inesauribile")
+vasca = NodePath("../VascaRaccolta")
+
 [node name="Gioco" type="Node3D" parent="."]
 
 [node name="ScalaPozzo" type="Area3D" parent="Gioco"]
@@ -47,6 +52,14 @@ position = Vector3(0.17, 0, 0)
 rotation = Vector3(0, 1.5708, 0)
 script = ExtResource("s_ladder")
 height = 6.800
+width = 0.6
+show_model = false
+
+[node name="ScalettaVasca" type="Area3D" parent="Gioco"]
+position = Vector3(35, -1.7, 2.4)
+rotation = Vector3(0, 3.14159, 0)
+script = ExtResource("s_ladder")
+height = 1.95
 width = 0.6
 show_model = false
 

@@ -181,6 +181,8 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `piscina/pulsante_botola_attiva.ogg` | 1.4 s | sintesi (originale) | richiamo (B, scelto il 16 ottobre): scatto del contattore e jingle che cala |
 | `piscina/pulsante_botola_bibu.ogg` | 0.4 s | sintesi (originale) | un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s) |
 | `piscina/pulsante_botola_lampeggiante_loop.ogg` | 3.2 s | sintesi (originale) | il lampeggiante giallo che gira |
+| `tecnici/cancello_stagno_apre_01.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
+| `tecnici/cancello_stagno_apre_02.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
 | `tecnici/corrente_salta.ogg` | 5.5 s | sintesi (originale) |  |
 | `tecnici/crt_neve_loop.ogg` | 3.0 s | sintesi (originale) | la neve di un televisore senza segnale: si sente anche col ruggito delle pompe |
 | `tecnici/maniglione_bloccato.ogg` | 0.9 s | Kenney RPG Audio + Impact Sounds (CC0) + sintesi | metalLatch, impactMetal_heavy |
@@ -192,4 +194,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 
-Totale: 167 file, 6.4 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 169 file, 6.5 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
