@@ -14,7 +14,7 @@ extends Node3D
 const STILI := {
 	"A": {
 		"velocita": 20.0, "volo": 1.0,
-		"raggio": 0.045, "allarga": 0.3, "sfalda": 0.55,
+		"raggio": 0.055, "allarga": 0.36, "sfalda": 0.55,
 		"opacita": [0.62, 0.95], "bianco": 0.65,
 		"spruzzo": 260, "nebbia": 24, "nebbia_dim": 0.45,
 		"schizzi": 220, "goccioloni": 40, "schiuma": 36, "impatto_vel": 4.5,
@@ -24,11 +24,11 @@ const STILI := {
 	},
 	"B": {
 		"velocita": 26.0, "volo": 1.05,
-		"raggio": 0.07, "allarga": 0.45, "sfalda": 0.5,
+		"raggio": 0.095, "allarga": 0.62, "sfalda": 0.5,
 		"opacita": [0.72, 1.0], "bianco": 0.8,
-		"spruzzo": 520, "nebbia": 40, "nebbia_dim": 0.7,
-		"schizzi": 480, "goccioloni": 90, "schiuma": 70, "impatto_vel": 6.5,
-		"rinculo": 0.07, "vibra": 0.011, "scossa": 0.0075, "strattoni": 0.022,
+		"spruzzo": 720, "nebbia": 56, "nebbia_dim": 0.85,
+		"schizzi": 680, "goccioloni": 130, "schiuma": 100, "impatto_vel": 8.0,
+		"rinculo": 0.08, "vibra": 0.013, "scossa": 0.009, "strattoni": 0.028,
 		"aspira_base": 0.28, "aspira_cima": 0.04, "vortice": 420, "vortice_r": 1.1,
 		"nebbia_vol": 0.7, "bocca": 60,
 	},

@@ -91,6 +91,12 @@ func _process(_delta: float) -> void:
 		print("DBG t=%.1f equip=%s input=%s suck=%s spray=%s tank=%.1f fonte=%s hit=%s" % [t, pack.get(&"equipped"),
 			p.input_enabled, pack.get(&"is_sucking"), pack.get(&"is_spraying"), pack.get(&"tank_amount"),
 			pack.call(&"find_suction_source"), pack.get(&"has_hit")])
+		var suonano := 0
+		for n in get_tree().root.find_children("*", "", true, false):
+			if (n is AudioStreamPlayer or n is AudioStreamPlayer3D) and n.playing:
+				suonano += 1
+		print("DBG audio suonano=%d master_db=%.1f muto=%s picco=%.1f" % [suonano, AudioServer.get_bus_volume_db(0),
+			AudioServer.is_bus_mute(0), AudioServer.get_bus_peak_volume_left_db(0, 0)])
 	var aspira := t >= 0.5 and t < 3.0
 	var spara := t >= 3.5 and t < 7.0
 	_azione(&"suck", aspira)
