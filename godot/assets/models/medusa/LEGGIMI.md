@@ -204,3 +204,20 @@ attivo di default): da lontano ogni mesh scende a pochi mila triangoli.
 
 Per un riflesso bagnato credibile sull'occhio di vetro e sulle ciocche serve una ReflectionProbe vicino alla
 statua (o un cielo/ambiente nel WorldEnvironment).
+
+## Rigenerare il modello (pipeline)
+
+Il GLB si rifa' con gli script di `tools/blender/`: `medusa_tutto.py` lancia i passi nell'ordine giusto (l'elenco e
+l'uso sono in cima allo script); i file intermedi stanno in `assets_src/medusa/build/` (ignorata da git, si rigenera).
+
+Le texture 4K del corpo in `assets_src/medusa/tex/` (`medusa_colore_4k.jpg`, `medusa_normal_4k.jpg`,
+`medusa_ruvidezza_4k.jpg`) sono quelle approvate e stanno in git. Il passo 8 (`medusa_08_dettagli.py`) le cuoce di
+nuovo, ma una cottura rifatta non viene identica: quella rifatta il 16 ottobre cambia alcune isole UV dei capelli.
+Per questo il passo 8 ha una protezione: scrive le texture nuove in `assets_src/medusa/build/texture_nuove/` e, se
+una texture di `tex/` c'e' gia' ed e' diversa dalla nuova, si ferma con un messaggio e non tocca niente (anche con
+`--solo-materiali`, che rifa' il colore dei capelli nell'atlante). Per andare avanti si rilancia il passo (con
+`medusa_tutto.py`: `--da medusa_08_dettagli.py`) con la variabile d'ambiente:
+
+- `MEDUSA_RISCRIVI_TEXTURE=0`: tiene le texture approvate e finisce il passo (per rifare il modello senza cambiare
+  le texture);
+- `MEDUSA_RISCRIVI_TEXTURE=1`: sostituisce le texture approvate con quelle nuove, solo se l'utente le ha approvate.
