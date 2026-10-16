@@ -319,6 +319,21 @@ func _run() -> void:
 			check(fossa.volume == 0.0, "quando smette di salire, la fossa si calma")
 			vasca_bimbi.set(&"fill", fill0)
 			lei.set(&"abilitata", era)
+		# Se resta affacciata più a lungo di lei_sbuca (aspetta che la guardi bene), riparte piano il
+		# suo respiro col rantolo, un pezzo di lei_sbuca ripetuto; quando va sotto smette.
+		var respiri := _conta(&"lei_respiro")
+		var fase0 = lei.get(&"fase")
+		lei.set(&"fase", LeiSbuca.Fase.GUARDA)
+		await _frames(300)
+		check(_conta(&"lei_respiro") == respiri, "finché dura lei_sbuca il respiro non riparte")
+		await _frames(330)
+		check(_conta(&"lei_respiro") >= respiri + 2, "affacciata a lungo, il respiro riparte e continua (%d giri)" % (_conta(&"lei_respiro") - respiri))
+		lei.set(&"fase", LeiSbuca.Fase.SCIVOLA)
+		await _frames(10)
+		var dopo := _conta(&"lei_respiro")
+		await _frames(240)
+		check(_conta(&"lei_respiro") == dopo, "quando scivola sotto il respiro smette")
+		lei.set(&"fase", fase0)
 	# Quando ti prende lei: il morso subito, lo stinger quando la fauce si chiude (lampo rosso).
 	var morsi := _conta(&"morso")
 	var stinger := _conta(&"stinger_morte")

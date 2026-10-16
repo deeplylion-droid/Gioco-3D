@@ -1669,12 +1669,34 @@ class AudioParatia:
 
 ## La tappa 8 (LeiSbuca): la fossa che ribolle mentre l'acqua risale nelle vasche basse; tace
 ## quando lei scivola sotto. Lei che sbuca e che scivola sotto li suona lo script della scena.
+## Se resta affacciata più a lungo di lei_sbuca (aspetta che la guardi bene), riparte piano il
+## suo respiro col rantolo: il pezzo finale di lei_sbuca, ripetuto in dissolvenza incrociata
+## (nessun suono nuovo), finché non scivola sotto.
 class AudioLei:
+	## Il pezzo di lei_sbuca col rantolo e l'ultimo respiro (s), la dissolvenza tra un giro e
+	## l'altro, da quando sbuca a quando comincia (lei_sbuca dura 7,6 s) e quanto più piano.
+	const RESPIRO_DA := 3.6
+	const RESPIRO_A := 6.9
+	const RESPIRO_DISSOLVENZA := 0.7
+	const RESPIRO_DOPO := 6.8
+	const RESPIRO_DB := -5.0
+
 	var n: Node
 	var l: AudioLoop
 	var prima := -1.0
 	var sale_t := 0.0
 	var sotto: Array = []
+	var fase_sbuca = null
+	var fase_guarda = null
+	var fase_prima = null
+	var affacciata_t := 0.0
+	## I due player del respiro (si passano il testimone), il loro volume (0..1), dove sono arrivati.
+	var respiro: Array[AudioStreamPlayer3D] = []
+	var gain := [0.0, 0.0]
+	var meta := [0.0, 0.0]
+	var testina := [0.0, 0.0]
+	var di_turno := -1
+	var base_db := 0.0
 
 	func _init(a, nodo: Node) -> void:
 		n = nodo
@@ -1695,8 +1717,29 @@ class AudioLei:
 		for k in ["SCIVOLA", "FUGA", "FINITA", "PRESA"]:
 			if fasi.has(k):
 				sotto.append(fasi[k])
+		fase_sbuca = fasi.get("SBUCA")
+		fase_guarda = fasi.get("GUARDA")
+		# Il respiro viene dalla sua testa, sopra il bordo (come lei_sbuca, dal punto in cui sbuca).
+		var t: Array = a.taratura(&"lei_sbuca")
+		base_db = float(t[1])
+		var testa := Node3D.new()
+		testa.name = "AudioRespiro"
+		if punto:
+			testa.position = Vector3(0.0, 1.6, 1.8)
+			punto.add_child(testa)
+		else:
+			nodo.add_child(testa)
+		for i in 2:
+			var p := AudioStreamPlayer3D.new()
+			p.name = "Respiro%d" % i
+			p.stream = a.stream_di(&"lei_sbuca")
+			p.bus = t[0]
+			p.unit_size = float(t[2]) if float(t[2]) > 0.0 else 3.0
+			p.max_distance = float(t[3]) if float(t[3]) > 0.0 else 40.0
+			testa.add_child(p)
+			respiro.append(p)
 
-	func aggiorna(_a, delta: float) -> bool:
+	func aggiorna(a, delta: float) -> bool:
 		if not is_instance_valid(n):
 			return false
 		if not n.is_inside_tree():
@@ -1709,7 +1752,49 @@ class AudioLei:
 					tot += float(v.get(&"fill"))
 		sale_t = 0.4 if prima >= 0.0 and tot > prima + 1e-7 else maxf(0.0, sale_t - delta)
 		prima = tot
+		var fase = n.get(&"fase")
 		if l:
-			var acceso: bool = sale_t > 0.0 and bool(n.get(&"abilitata")) and not (n.get(&"fase") in sotto)
+			var acceso: bool = sale_t > 0.0 and bool(n.get(&"abilitata")) and not (fase in sotto)
 			l.volume = 1.0 if acceso else 0.0
+		# Da quando è sbucata (o da quando è affacciata, se non l'abbiamo vista sbucare).
+		if fase != fase_prima and (fase == fase_sbuca or (fase == fase_guarda and fase_prima != fase_sbuca)):
+			affacciata_t = 0.0
+		fase_prima = fase
+		if fase == fase_sbuca or fase == fase_guarda:
+			affacciata_t += delta
+		_respiro(a, delta, fase == fase_guarda and fase_guarda != null and affacciata_t >= RESPIRO_DOPO)
 		return true
+
+	## Il respiro col rantolo mentre aspetta: un giro di RESPIRO_DA..RESPIRO_A di lei_sbuca, il giro
+	## dopo che entra mentre il primo sfuma.
+	func _respiro(a, delta: float, vuole: bool) -> void:
+		var vero := AudioLoop.riproduzione_attiva()
+		if vuole:
+			if di_turno < 0 or testina[di_turno] >= RESPIRO_A - RESPIRO_DISSOLVENZA:
+				var j := 1 if di_turno == 0 else 0
+				var da := RESPIRO_DA + randf_range(-0.15, 0.15)
+				testina[j] = da
+				gain[j] = 0.0
+				meta[j] = 1.0
+				if di_turno >= 0:
+					meta[di_turno] = 0.0
+				di_turno = j
+				respiro[j].volume_db = -80.0
+				if vero:
+					respiro[j].play(da)
+				a.conteggio[&"lei_respiro"] = int(a.conteggio.get(&"lei_respiro", 0)) + 1
+		elif di_turno >= 0:
+			meta[0] = 0.0
+			meta[1] = 0.0
+			di_turno = -1
+		for i in 2:
+			if gain[i] <= 0.0 and meta[i] <= 0.0:
+				continue
+			# entra in RESPIRO_DISSOLVENZA; quando lei va sotto sfuma in fretta
+			var rapidita := 1.0 / RESPIRO_DISSOLVENZA if (meta[i] > gain[i] or vuole) else 2.5
+			gain[i] = move_toward(gain[i], meta[i], delta * rapidita)
+			testina[i] += delta
+			if gain[i] <= 0.0:
+				respiro[i].stop()
+			else:
+				respiro[i].volume_db = base_db + RESPIRO_DB + linear_to_db(gain[i])

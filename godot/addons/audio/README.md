@@ -127,6 +127,11 @@ che scivola sotto li chiama `scripts/game/lei_sbuca.gd` (`_suona()`).
 | `lei_scivola_sotto` | un brontolio di gola, le mani che scivolano dal bordo, il risucchio, l'ultimo fiato che gorgoglia sott'acqua sempre più giù, poi silenzio (4,5 s) | `_scivola()`: `_suona(&"lei_scivola_sotto")` |
 | `morso` | lo scatto con un risucchio d'aria tra i denti, un ringhio che cresce mentre la pelle si strappa sotto l'occhio, la fauce che si chiude a 1,0 s col fiato spinto fuori, un gorgoglio che mastica (stereo, 1,8 s) | da solo, alla morte con causa `&"medusa"` |
 
+Lei resta affacciata finché non la guardi bene, quindi a volte più dei 7,6 s di `lei_sbuca`. In quel
+caso l'addon (`AudioLei`) fa ripartire piano il suo respiro col rantolo: il pezzo 3,6-6,9 s di
+`lei_sbuca`, 5 dB più piano, ripetuto con una dissolvenza incrociata di 0,7 s. Viene dalla sua testa e
+smette quando scivola sotto. Nessun suono nuovo.
+
 Il morso suona sul bus Interfaccia (da vicino, niente riverbero, non si abbassa con la morte); la
 fauce si chiude a `MORSO_COLPO` = 1,0 s, il lampo rosso di `DeathSequence`, e lì parte lo stinger.
 
