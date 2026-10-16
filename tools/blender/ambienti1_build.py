@@ -16,8 +16,8 @@ AI = L.AI
 MESHY = os.path.join(AI, 'meshy')
 POSTER = os.path.join(AI, 'poster')
 R = math.radians
-# turbina della saracinesca rifatta con Meshy: entra nel gioco solo dopo l'ok dell'utente (TURBINA_CANCELLO=nuova)
-TURBINA_NUOVA = os.environ.get('TURBINA_CANCELLO') == 'nuova'
+# turbina della saracinesca rifatta con Meshy (TURBINA_CANCELLO=vecchia per la vecchia, solo per i confronti)
+TURBINA_NUOVA = os.environ.get('TURBINA_CANCELLO', 'nuova') == 'nuova'   # approvata il 16 ottobre
 # finestra del gabbiotto nella parete est del corridoio lava-piedi (y0, y1, z0, z1)
 FINESTRA = (15.45, 16.55, 0.85, 2.25)
 
@@ -348,7 +348,9 @@ def corridoio(M):
     L.vuoto('emit_goccia_corridoio_2', (19.4, 2.32, 2.29))
 
     # ---- oggetti
-    prop('estintore', 'estintore', (9.6, 0.12, 0.9), 0, 0.55, 'z')
+    # estintore appeso con la staffa (16 ottobre): il modello di prima aveva una tavola di legno dietro, che nel
+    # gioco stava davanti. Questo non ha tavole: la staffa (lato +x del modello) va contro il muro, il tubo di lato.
+    HQ.metti('estintore', 'estintore_staffa', (9.6, 0.21, 0.84), (None, None, 0.62), rot_z=R(-90))
     prop('cestino', 'cestino', (5.3, 2.3, 0), 30, 0.55, 'z')
     prop('paperella', 'paperella', (13.9, 1.2, 0.0), 140, 0.09)
     prop('pallone', 'pallone', (2.2, 0.6, 0), 0, 0.42)
@@ -360,13 +362,24 @@ def corridoio(M):
             bpy.context.view_layer.update()
             ws = [v.matrix_world @ p.co for p in v.data.vertices]
             x0, x1 = min(p.x for p in ws), max(p.x for p in ws)
-            fl = [p for p in ws if p.x > x1 - 0.03 or p.x < x0 + 0.03]          # le facce delle due flange
-            zf = (min(p.z for p in fl) + max(p.z for p in fl)) / 2
-            yf = (min(p.y for p in fl) + max(p.y for p in fl)) / 2
-            for lato, xa in ((-1, x0 + 0.01), (1, x1 - 0.01)):
+            # misure prese solo sulla faccia della flangia (prima contavano anche il volantino: tubo storto e sottile)
+            faccia = [p for p in ws if p.x > x1 - 0.004]
+            zf = (min(p.z for p in faccia) + max(p.z for p in faccia)) / 2
+            yf = (min(p.y for p in faccia) + max(p.y for p in faccia)) / 2
+            r_tubo = (max(p.y for p in faccia) - min(p.y for p in faccia)) / 2          # foro della valvola
+            corona = [p for p in ws if p.x > x1 - 0.012]
+            r_fl = (max(p.y for p in corona) - min(p.y for p in corona)) / 2           # flangia della valvola
+            for lato, xa in ((-1, x0), (1, x1)):
                 xb = x + lato * 0.5
                 statico.append(L.tubo_percorso(f'bypass_valvola_{k + 1}_{lato + 1}', [(xa, yf, zf), (xb, yf, zf), (xb, yf, 2.3), (xb, 2.32, 2.36)],
-                                               0.045, M['ruggine'], flange=False))
+                                               r_tubo, M['ruggine'], flange=False))
+                # controflangia del tubo, appoggiata a quella della valvola, con i bulloni
+                fl = [L.cilindro('bypass_flangia', (xa, yf, zf), (xa + lato * 0.025, yf, zf), r_fl, M['metallo_grezzo'], seg=32)]
+                for j in range(8):
+                    t = 2 * math.pi * j / 8
+                    py, pz = yf + math.cos(t) * r_fl * 0.8, zf + math.sin(t) * r_fl * 0.8
+                    fl.append(L.cilindro('bypass_bullone', (xa - lato * 0.01, py, pz), (xa + lato * 0.04, py, pz), 0.008, M['ruggine'], seg=8))
+                statico.append(L.unisci(f'bypass_flangia_{k + 1}_{lato + 1}', fl))
     if HQ.disponibile('cartello_pericolo'):
         HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60))
     prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.7, 0), 75, 0.8)
@@ -383,10 +396,9 @@ def corridoio(M):
     for k, x in enumerate([1.8, 5.2, 8.6, 12.1, 15.6, 19.0]):
         statico.append(sprinkler(f'sprinkler_corridoio_{k + 1}', x, 2.12, 2.43, 2.3, M))
     # due lamiere ammaccate (lontano dal cartellone, che sta tra x 13,85 e 15,35 sul lato sud)
-    # stanno nello zoccolo (fino a 1,1 m): color petrolio come lui. Crema sembravano tavole di legno, e la
-    # seconda stava proprio dietro l'estintore (questionario del 15 ottobre)
-    statico.append(pannello_ammaccato('lamiera_ammaccata_1', (3.3, 2.58, 0.25), (4.4, 2.6, 1.05), M, 21.0, 'lamiera_petrolio'))
-    statico.append(pannello_ammaccato('lamiera_ammaccata_2', (10.9, 0.0, 0.3), (11.9, 0.02, 1.0), M, 33.0, 'lamiera_petrolio'))
+    # sta nello zoccolo (fino a 1,1 m): color petrolio come lui. Crema sembrava una tavola di legno
+    statico.append(pannello_ammaccato('lamiera_ammaccata_1', (1.1, 2.58, 0.25), (2.1, 2.6, 1.05), M, 21.0, 'lamiera_petrolio'))   # su muro libero
+    # (la seconda lamiera ammaccata stava vicino all'estintore: tolta del tutto, questionario del 16 ottobre)
     L.unisci('corridoio_statico', statico)
     L.crea_collisione('corridoio', 'corridoio')
 
@@ -857,7 +869,7 @@ def stanzino(M):
     prop('radio', 'radio', (12.95, Y0 + 0.3, 0.78), 190, 0.32)
     prop('ricetrasmittente', 'radio_ricetrasmittente', (12.35, Y0 + 0.35, 0.78), 0, 0.2, rot=(R(90), 0, 0))
     prop('sedia', 'sedia', (12.4, Y0 + 1.05, 0), 160, 0.88, 'z')
-    prop('estintore_stanzino', 'estintore', (14.6, Y0 + 0.12, 0.85), 0, 0.55, 'z')
+    HQ.metti('estintore_stanzino', 'estintore_staffa', (14.6, Y0 + 0.21, 0.82), (None, None, 0.62), rot_z=R(-90))
     prop('ciabatta_stanzino', 'ciabatta', (14.2, 9.5, 0), 250, 0.27)
 
     # ---- luci

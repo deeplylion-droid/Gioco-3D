@@ -52,6 +52,10 @@ OGGETTI = {
     'turbina_cancello': ('A sturdy industrial water turbine wheel seen from the front: a thick round steel hub with a big '
                          'hex nut, ten curved bucket-shaped blades painted safety orange, a solid outer steel rim ring with '
                          'bolts, chunky and well proportioned.', 30000),
+    # estintore nuovo (16 ottobre): il vecchio aveva una tavola di legno dietro, che nel gioco stava davanti
+    'estintore_staffa': ('A red fire extinguisher hanging on a small steel wall bracket: red cylinder with a black hose, '
+                         'a chrome valve with a red lever, the bracket is a thin metal strap and a hook. No wooden board, '
+                         'no backplate, no sign.', 15000),
 }
 
 
