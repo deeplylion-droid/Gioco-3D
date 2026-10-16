@@ -18,6 +18,9 @@ extends Node3D
 ## Colore delle vene dei tentacoli (medusa/tentacoli_emissione.jpg: circa 126, 19, 86).
 @export var colore := Color(1.0, 0.16, 0.68)
 @export var emissione := 1.5
+## Quanto si vede (1 = piena). L'utente la vuole "al 75% visibile": moltiplica la trasparenza e
+## l'emissione nella stessa proporzione, così non sembra più luminosa.
+@export_range(0.0, 1.0) var opacita := 0.75
 ## Luci magenta lungo il percorso: una ogni [member passo_luci] metri (0 = nessuna).
 @export var passo_luci := 3.0
 @export var energia_luci := 0.45
@@ -129,6 +132,7 @@ shader_type spatial;
 render_mode blend_mix, depth_draw_never, cull_disabled;
 uniform vec4 colore : source_color = vec4(1.0, 0.16, 0.68, 1.0);
 uniform float emissione = 1.5;
+uniform float opacita = 0.75;
 
 float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float n2(vec2 p) {
@@ -150,12 +154,13 @@ void fragment() {
 	ALBEDO = colore.rgb * 0.25;
 	ROUGHNESS = 0.08;
 	SPECULAR = 0.7;
-	EMISSION = colore.rgb * emissione * (0.5 + 0.7 * dense + 0.6 * filamenti) * respiro * forma;
-	ALPHA = clamp(alpha, 0.0, 1.0);
+	EMISSION = colore.rgb * emissione * opacita * (0.5 + 0.7 * dense + 0.6 * filamenti) * respiro * forma;
+	ALPHA = clamp(alpha, 0.0, 1.0) * opacita;
 }
 """
 	var m := ShaderMaterial.new()
 	m.shader = _shader
 	m.set_shader_parameter(&"colore", colore)
 	m.set_shader_parameter(&"emissione", emissione)
+	m.set_shader_parameter(&"opacita", opacita)
 	return m
