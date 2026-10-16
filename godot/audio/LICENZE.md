@@ -159,9 +159,9 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `interfaccia/ui_pausa.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | switch_002 |
 | `interfaccia/ui_scatto.ogg` | 0.1 s | Kenney Interface Sounds (CC0) | toggle_002 |
 | `lei/fossa_ribolle_loop.ogg` | 5.0 s | sintesi (originale) | gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse |
-| `lei/lei_sbuca.ogg` | 6.5 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | impactSoft_medium, slime_000 |
-| `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) |  |
-| `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | slime_000, slime_001; la fauce si chiude a 1,0 s |
+| `lei/lei_sbuca.ogg` | 7.6 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): gola sott'acqua, respiro umido, rantolo; impactSoft_medium, slime_000 |
+| `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) | versione gutturale (16 ottobre): brontolio di gola, l'ultimo fiato che gorgoglia sott'acqua |
+| `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001 |
 | `musica/polaroid_chiudi.ogg` | 0.3 s | sintesi (originale) |  |
 | `musica/polaroid_raccolta.ogg` | 2.6 s | sintesi (originale) |  |
 | `musica/sigla_pulita.ogg` | 37.6 s | sintesi (originale) | melodia e arrangiamento originali; carillon, organetto, percussioni giocattolo |
@@ -178,4 +178,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `tecnici/porta_ponte_apre.ogg` | 3.4 s | Kenney RPG Audio (CC0) + sintesi | metalLatch, creak, doorClose |
 | `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
 
-Totale: 153 file, 6.1 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 153 file, 6.2 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

@@ -1,4 +1,5 @@
-"""Rigenera tutti i suoni del gioco, il catalogo per Godot, le licenze e l'anteprima.
+"""Rigenera tutti i suoni del gioco, il catalogo per Godot, le licenze, le anteprime e le
+anteprime delle proposte per l'utente (genera_proposte.py).
 
 Uso (dalla radice del repository):
     /home/user/tools/blender-venv/bin/python assets_src/audio/genera_tutto.py
@@ -16,6 +17,7 @@ import genera_giocatore
 import genera_interfaccia
 import genera_lei
 import genera_musica
+import genera_proposte
 import genera_tecnici
 import licenze
 from comune import REGISTRO
@@ -30,4 +32,5 @@ if __name__ == '__main__':
     catalogo.main()
     licenze.main()
     genera_anteprima.main()
+    genera_proposte.main()
     print(f'Fatto in {time.time() - t0:.0f} s')
