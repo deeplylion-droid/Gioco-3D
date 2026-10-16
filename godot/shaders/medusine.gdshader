@@ -16,7 +16,7 @@ render_mode blend_add, unshaded, cull_disabled, depth_draw_never, depth_test_dis
 #include "res://addons/acqua/shaders/water_common.gdshaderinc"
 
 uniform sampler2D depth_texture : hint_depth_texture, filter_nearest, repeat_disable;
-uniform float luminosita = 2.6;
+uniform float luminosita = 2.0;
 
 varying vec4 v_col;
 varying float v_c;
@@ -94,7 +94,7 @@ void fragment() {
 		float canali = pow(max(cos(th * 8.0), 0.0), 24.0) * smoothstep(0.25, 0.85, s) * 0.5;
 		float puntini = pow(max(cos(th * 16.0), 0.0), 10.0) * smoothstep(0.9, 0.99, s);
 		a = 0.06 + 0.5 * rim + 0.55 * orlo + 0.8 * gon + canali + 0.7 * puntini;
-		col = mix(col, vec3(1.0), 0.3 * gon + 0.35 * puntini);
+		col = mix(col, vec3(1.0), 0.15 * gon + 0.2 * puntini);
 		// un lampo di luce a ogni contrazione
 		a *= 0.8 + 0.45 * v_c;
 	} else {

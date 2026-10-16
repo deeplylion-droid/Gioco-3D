@@ -17,6 +17,8 @@ extends Node
 ## con il pulsante della botola acceso), con le micro medusine che vuole quel livello; con più livelli
 ## si rifanno gli scatti per ognuno.
 ## SCATTI_PISCINA_ASPETTO=<A|B|C>[,...]: l'aspetto dell'acqua della piscina (PiscinaOnde.aspetto).
+## SCATTI_LUCI=BLACKOUT: le luci del blackout (dopo il risveglio); SCATTI_DOPO_TAPPA8=1: lei è già
+## andata via (tappa 8 finita); SCATTI_PORTONE=aperto|chiuso: il portone della sala della torre.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -35,6 +37,8 @@ const EXTRA := {
 	"g_fossa_bimbi": [Vector3(-16.2, 0.0, -5.6), Vector3(-13.6, -1.0, -7.3)],  # tappa 8: la fossa della VascaBimbi1 da dove arriva il giocatore
 	"h_piscina_bordo": [Vector3(7.35, 0.0, 2.0), Vector3(2.0, -1.8, 2.6)],     # tappa 5: dal bordo est, dove si aspira l'acqua della piscina
 	"i_pulsante_botola": [Vector3(-1.2, -2.0, -0.6), Vector3(1.9, -1.35, 4.95)],  # tappa 5: il pulsante della botola sulla parete sud, dal fondo
+	"j_portone_lontano": [Vector3(8.5, 0.0, -6.0), Vector3(19.8, 2.4, -15.0)],  # dopo la tappa 8: il portone della sala della torre da lontano
+	"k_portone_vicino": [Vector3(14.0, 0.0, -11.0), Vector3(19.8, 2.2, -15.0)],  # il portone da vicino (aperto, col lampeggiante)
 }
 
 var out_dir := "user://scatti_sala"
@@ -100,10 +104,22 @@ func _run() -> void:
 		hud.visible = false
 	for t in level.find_children("*", "Tempesta", true, false):
 		(t as Tempesta).automatica = false
+	var buio := OS.get_environment("SCATTI_LUCI") == "BLACKOUT"
+	if buio:
+		GameState.imposta_luci(GameState.Luci.BLACKOUT)
+		await _frames(5)
+	if OS.get_environment("SCATTI_DOPO_TAPPA8") == "1":
+		var lei := level.get_node_or_null(^"Gioco/LeiSbuca")
+		if lei:
+			lei.call(&"load_state", {"finita": true})
+	var stato_portone := OS.get_environment("SCATTI_PORTONE")
+	var portone := level.get_node_or_null(^"Gioco/PortoneTorre")
+	if portone and stato_portone != "":
+		portone.call(&"load_state", {"aperto": stato_portone == "aperto"})
 	var lamp := level.get_node_or_null("Vasca/Sfarfallio")
 	if lamp == null:
 		lamp = level.get_node_or_null("Statua/Sfarfallio")
-	if lamp and lamp.has_method("turn_on"):
+	if lamp and lamp.has_method("turn_on") and not buio:
 		lamp.turn_on()
 	p.stand_eye_height = 1.7
 	var camere := SCATTI.duplicate()

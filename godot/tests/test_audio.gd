@@ -147,7 +147,7 @@ func _run() -> void:
 			"KidSighting", "FlickerLight", "WaterDripEmitter", "sigla", "GameState", "PiscinaOnde"]:
 		check(int(c.get(tipo, 0)) >= 1, "collegato: %s" % tipo)
 	check(int(c.get("MedusaStatue", 0)) + int(c.get("MedusaAffacciata", 0)) >= 1, "collegata la medusa")
-	check(int(c.get("PolaroidPhoto", 0)) >= 10, "collegate le 10 Polaroid")
+	check(int(c.get("PolaroidPhoto", 0)) >= 9, "collegate le 9 Polaroid della demo")
 	check(int(c.get("WaterButton", 0)) >= 2, "collegati i pulsanti")
 	check(int(c.get("Gocce", 0)) >= 3, "collegate le gocce")
 	check(int(c.get("WaterTank", 0)) >= 3, "collegate le vasche")

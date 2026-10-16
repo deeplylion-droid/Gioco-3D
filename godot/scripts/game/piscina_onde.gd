@@ -80,8 +80,15 @@ enum Aspetto { OGGI, LEGGIBILE, LEGGIBILE_CON_LAMPADA }
 @export var energia_segnale := 4.0
 @export var raggio_segnale := 7.0
 @export var periodo_lampeggio := 1.6
-## Dove sta la luce rispetto al pulsante (coordinate del pulsante: +Z è davanti).
+## A piscina vuota il pulsante si attiva dopo questi secondi: il sorso finale del suono della
+## piscina vuota (a 2,2 s) non si sovrappone allo scatto e al jingle del pulsante.
+@export var ritardo_pulsante := 2.5
+## Dove sta la luce rispetto al pulsante (coordinate del pulsante: +Z è davanti), se non c'è il
+## vetro del lampeggiante.
 @export var posizione_segnale := Vector3(0.0, 0.12, 0.3)
+## Il vetro del lampeggiante sopra il pulsante (sala_lampeggiante_portello del GLB della sala):
+## la luce sta al suo centro, la sua emissione lampeggia con lei e diventa verde col colpo.
+@export var vetro_lampeggiante: MeshInstance3D
 
 ## Vero quando la piscina è stata svuotata e il pulsante funziona (resta vero).
 var attivo := false
@@ -92,9 +99,12 @@ var _premuto_detto := false
 var _fill_prima := -1.0
 var _svuota_t := 0.0
 var _svuotando := false
+var _vuota_t := 0.0
 var _stile_di_serie: Resource
 var _lampada: SpotLight3D
 var _medusine: Medusine
+var _mat_vetro: BaseMaterial3D
+var _emissione_vetro := 1.0
 
 
 func _ready() -> void:
@@ -113,6 +123,17 @@ func _ready() -> void:
 		_luce.visible = false
 		add_child(_luce)
 		_luce.global_position = pulsante.global_transform * posizione_segnale
+	if vetro_lampeggiante and vetro_lampeggiante.mesh:
+		vetro_lampeggiante.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		for i in vetro_lampeggiante.mesh.get_surface_count():
+			var m := vetro_lampeggiante.get_active_material(i) as BaseMaterial3D
+			if m and m.emission_enabled:
+				_mat_vetro = m.duplicate() as BaseMaterial3D
+				_emissione_vetro = maxf(_mat_vetro.emission_energy_multiplier, 1.0)
+				vetro_lampeggiante.set_surface_override_material(i, _mat_vetro)
+				break
+		if _luce:
+			_luce.global_position = vetro_lampeggiante.global_transform * vetro_lampeggiante.get_aabb().get_center()
 	_aggiorna_pulsante()
 	if medusine > 0 and vasca:
 		_medusine = Medusine.new()
@@ -208,11 +229,13 @@ func _applica_taratura() -> void:
 func _physics_process(delta: float) -> void:
 	_t += delta
 	_segui_svuotamento(delta)
-	if not attivo and vasca and vasca.fill <= 0.001:
-		attivo = true
-		_t_lampo = -1.0
-		_aggiorna_pulsante()
-		pulsante_attivato.emit()
+	if not attivo and vasca:
+		_vuota_t = _vuota_t + delta if vasca.fill <= 0.001 else 0.0
+		if _vuota_t >= ritardo_pulsante:
+			attivo = true
+			_t_lampo = -1.0
+			_aggiorna_pulsante()
+			pulsante_attivato.emit()
 	if premuto() and not _premuto_detto:
 		_premuto_detto = true
 		pulsante_premuto.emit()
@@ -220,10 +243,19 @@ func _physics_process(delta: float) -> void:
 		if premuto():
 			_luce.light_color = colore_premuto
 			_luce.light_energy = energia_segnale
+			_vetro(colore_premuto, 1.0)
 		else:
 			# Il lampeggiante giallo: un lampo corto ogni periodo_lampeggio secondi.
+			var k := _lampo(delta)
 			_luce.light_color = colore_attesa
-			_luce.light_energy = energia_segnale * (0.04 + 0.96 * _lampo(delta))
+			_luce.light_energy = energia_segnale * (0.04 + 0.96 * k)
+			_vetro(colore_attesa, 0.08 + 0.92 * k)
+
+
+func _vetro(colore: Color, k: float) -> void:
+	if _mat_vetro:
+		_mat_vetro.emission = colore
+		_mat_vetro.emission_energy_multiplier = _emissione_vetro * k
 
 
 ## Quanto è acceso il lampeggiante in attesa (0..1): sale in fretta, si spegne in mezzo secondo.
@@ -267,6 +299,9 @@ func _aggiorna_pulsante() -> void:
 		pulsante.enabled = attivo
 	if _luce:
 		_luce.visible = attivo
+	# Prima che la piscina sia vuota il lampeggiante è spento.
+	if not attivo:
+		_vetro(colore_attesa, 0.0)
 
 
 # --- L'acqua che ricade nella vasca (gruppo "water_catchers", come le vasche) -----------------
@@ -302,4 +337,5 @@ func load_state(data: Dictionary) -> void:
 	_premuto_detto = premuto()
 	_t_lampo = -1.0
 	_fill_prima = -1.0
+	_vuota_t = 0.0
 	_aggiorna_pulsante()

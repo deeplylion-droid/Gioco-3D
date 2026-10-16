@@ -37,12 +37,14 @@ const MASCHERA := 13
 @export var seme := 1610
 
 @export_group("Luce")
-@export var luminosita := 2.6
-@export var luminosita_alone := 0.6
-## Diametro dell'alone appena sotto il pelo (m): più sono in fondo, più è largo e fioco.
-@export var alone := 0.22
+@export var luminosita := 2.0
+@export var luminosita_alone := 1.0
+## Diametro dell'alone appena sotto il pelo, da vicino (m): più sono in fondo, più è largo e fioco.
+@export var alone := 0.16
 ## Quanto le attenua l'acqua torbida rispetto al fondo della vasca (1 = uguale, meno = si vedono di più).
 @export_range(0.0, 1.0) var attenuazione := 0.4
+## Quanto crescono gli aloni visti da lontano (0 = niente): dalla spiaggia restano luci colorate.
+@export_range(0.0, 2.0) var lontananza := 1.0
 
 @export_group("Nuoto")
 @export var periodo_min := 1.1
@@ -760,10 +762,14 @@ func _prepara_disegno(m: Medusina, livello: float, occhio: Vector3) -> void:
 			tr_alone = Vector3(exp(-_sigma.x * c2), exp(-_sigma.y * c2), exp(-_sigma.z * c2))
 		m.col = Color(m.colore.r * tr.x, m.colore.g * tr.y, m.colore.b * tr.z, m.luce)
 		# Vicino agli occhi (mentre entra nell'ugello) l'alone si spegne.
-		var vicino := smoothstep(0.25, 1.0, m.pos.distance_to(occhio))
+		var distanza := m.pos.distance_to(occhio)
+		var vicino := smoothstep(0.25, 1.0, distanza)
+		# Da lontano (dalla spiaggia) l'alone cresce, così sullo schermo resta una piccola luce colorata
+		# anche quando la medusina è troppo piccola per vedersi; da vicino resta piccolo.
+		var lontano := smoothstep(1.5, 12.0, distanza) * lontananza
 		m.col_alone = Color(m.colore.r * tr_alone.x, m.colore.g * tr_alone.y, m.colore.b * tr_alone.z,
-				m.luce * (0.85 + 0.3 * m.contrazione) * vicino)
-		var grande := alone * (1.0 + maxf(sotto, 0.0) * 2.0) * (m.raggio / (diametro * 0.5)) * m.scala
+				m.luce * (0.85 + 0.3 * m.contrazione) * vicino * (1.0 + 0.4 * lontano))
+		var grande := alone * (1.0 + maxf(sotto, 0.0) * 2.0) * (m.raggio / (diametro * 0.5)) * m.scala * (1.0 + 3.0 * lontano)
 		if sotto <= 0.0 and m.stato != Stato.A_TERRA:
 			grande *= 0.6
 		m.alone_xf = Transform3D(Basis() * grande, m.pos + m.base.y.normalized() * m.raggio * m.scala * 0.25)

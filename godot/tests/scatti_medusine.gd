@@ -77,6 +77,14 @@ func _run() -> void:
 	cam.fov = 75.0
 	mondo.add_child(cam)
 	cam.current = true
+	# La torcia del giocatore (come nella sala): un cono di luce calda dalla camera.
+	var torcia := SpotLight3D.new()
+	torcia.light_color = Color(1.0, 0.92, 0.8)
+	torcia.light_energy = 6.0
+	torcia.spot_angle = 20.0
+	torcia.spot_range = 25.0
+	torcia.shadow_enabled = true
+	cam.add_child(torcia)
 	cam.global_position = Vector3(0.0, 1.6, 6.5)
 	cam.look_at(Vector3(0.0, -0.3, 0.5))
 	# Nuotano un po' prima dello scatto.

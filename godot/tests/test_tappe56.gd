@@ -1,6 +1,6 @@
 extends Node
 ## Test automatico delle tappe 5 e 6 (docs/livello/capitolo1.md), tutto il percorso dalla pozza
-## della piscina a onde fino al raccordo verso gli interni, simulando gli input:
+## della piscina a onde fino al raccordo, simulando gli input:
 ## - tappa 5 (rifatta il 15 ottobre): la piscina a onde si svuota con lo zaino, aspirando
 ##   l'acqua dal bordo e sparandola fuori dalla vasca (taratura di serie, circa 30 secondi e 4
 ##   zainate: si contano i pieni di zaino e il tempo); le micro medusine luminose nuotano
@@ -11,7 +11,7 @@ extends Node
 ## - tappa 6: acqua dalla vasca di raccolta, turbine nell'ordine sbagliato (si ricomincia) e in
 ##   quello dello schema (blu, giallo, rosso), la leva bloccata e poi tirata col getto, il
 ##   risveglio (flash, blackout con le sole luci rosse, neve sul monitor, paratie giù), la porta
-##   col maniglione e il raccordo fino alla scala degli interni (la tappa 7 è in test_tappa7.gd);
+##   col maniglione e il raccordo fino al pianerottolo davanti alla grata (la tappa 7 è in test_tappa7.gd);
 ## - i checkpoint lungo la strada e una ripartenza dopo il risveglio.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappe56.gd
 
@@ -34,6 +34,11 @@ var _med_sparate := {}
 var _med_atterrate := {}
 ## Quante volte sono arrivati i segnali per l'audio della tappa 5.
 var _segnali := {}
+## Quando la piscina è rimasta vuota e quando si è attivato il pulsante (fotogrammi della fisica).
+var _f := 0
+var _f_vuota := -1
+var _f_attivo := -1
+var _svuota: PiscinaOnde
 
 
 func _ready() -> void:
@@ -131,6 +136,7 @@ func _run() -> void:
 	svuota.svuotamento.connect(func(on: bool): _segnali["svuotamento_" + str(on)] = int(_segnali.get("svuotamento_" + str(on), 0)) + 1)
 	svuota.lampeggio.connect(func(): _segnali["lampeggio"] = int(_segnali.get("lampeggio", 0)) + 1)
 	svuota.pulsante_premuto.connect(func(): _segnali["premuto"] = int(_segnali.get("premuto", 0)) + 1)
+	_svuota = svuota
 	p.water_pack.set_tank_amount(0.0)
 	var esito: Array = await _svuota_piscina(puddle, Vector3(7.35, 0.0, 2.0), Vector3(6.5, -1.5, 2.0), Vector3(13.0, 0.5, 2.0))
 	print("  (taratura da 30 secondi: %d pieni di zaino, %.0f secondi)" % [esito[0], esito[1]])
@@ -158,8 +164,14 @@ func _run() -> void:
 			"per l'audio: un segnale quando entrano nell'ugello e uno quando escono col getto")
 		await _frames(int(med.durata_a_terra * 60.0) + 30)
 		check(med.quante(Medusine.Stato.A_TERRA) == 0, "a terra si spengono e spariscono")
-	await _frames(3)
+	for i in 200:
+		if svuota.attivo:
+			break
+		await get_tree().physics_frame
 	check(hatch_button.enabled and svuota.attivo, "a piscina vuota il pulsante si attiva")
+	var ritardo := (_f_attivo - _f_vuota) / 60.0
+	check(absf(ritardo - svuota.ritardo_pulsante) < 0.1,
+		"ma solo %.1f s dopo che l'acqua è finita, dopo il sorso finale della piscina vuota (%.2f s)" % [svuota.ritardo_pulsante, ritardo])
 	var lampeggiante := svuota.get_node_or_null("SegnalePulsante") as OmniLight3D
 	var giallo := lampeggiante != null and lampeggiante.visible and lampeggiante.light_color.r > 0.9 \
 		and lampeggiante.light_color.g < 0.85 and lampeggiante.light_color.b < 0.3
@@ -388,9 +400,9 @@ func _run() -> void:
 	check(ok, "dalla porta su per le due rampe del raccordo")
 	await _frames(10)
 	check(_checkpoint() == "Tecnici/Logica/Checkpoint/CheckpointRaccordo", "checkpoint: in cima al raccordo (%s)" % _checkpoint())
-	ok = await _cammina_verso(tec.to_global(Vector3(42.6, 8.2, -7.8)), 600)
+	ok = await _cammina_verso(tec.to_global(Vector3(44.55, 7.25, -4.0)), 600)
 	await _frames(10)
-	check(not bool(level.get(&"demo_finished")), "la demo va avanti verso gli interni (tappa 7, test_tappa7.gd)")
+	check(ok and not bool(level.get(&"demo_finished")), "la demo va avanti per il corridoio verso il magazzino dei gonfiabili (tappa 7, test_tappa7.gd)")
 
 	print("Si riparte dal checkpoint del risveglio")
 	GameState.snapshot["checkpoint"] = "Tecnici/Logica/Checkpoint/CheckpointRisveglio"
@@ -437,6 +449,12 @@ func _svuota_piscina(vasca: WaterTank, dove: Vector3, acqua: Vector3, fuori: Vec
 
 
 func _physics_process(_delta: float) -> void:
+	_f += 1
+	if _svuota and is_instance_valid(_svuota) and _svuota.vasca:
+		if _f_vuota < 0 and _svuota.vasca.fill <= 0.001:
+			_f_vuota = _f
+		if _f_attivo < 0 and _svuota.attivo:
+			_f_attivo = _f
 	if _med and is_instance_valid(_med):
 		_segui_medusine()
 	if _controlla_sott_acqua:

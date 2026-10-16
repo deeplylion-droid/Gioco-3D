@@ -1,13 +1,14 @@
 class_name RitornoAlBuio
 extends Node
 ## Tappa 7 di docs/livello/capitolo1.md, il ritorno al buio: dopo il risveglio nella sala pompe
-## (GameState.luci = BLACKOUT) si torna su dal raccordo, si ripassa dagli spogliatoi e si esce
-## dalla stessa porta di prima nella sala.
-## - la porta "sala pompe" del corridoio degli interni si apre (prima era chiusa);
-## - le docce scorrono senza fermarsi e il vapore copre tutto;
+## (GameState.luci = BLACKOUT) si torna su dal raccordo e, per la strada B scelta dall'utente il 16
+## ottobre, per il corridoio e il magazzino dei gonfiabili; si esce dalla serranda nell'angolo
+## sud-ovest della sala (la strada la fanno gli ambienti tecnici, i checkpoint sono sui loro marker).
 ## - nella sala la vasca è vuota: la medusa non c'è più, l'acqua si muove ancora, dal bordo
-##   gocciola e una scia di bava rosa fosforescente (prima erano gocce) si allontana nel buio verso
-##   l'area bimbi;
+##   gocciola; dalla serranda una scia di bava rosa fosforescente va lungo il muro ovest, nel buio,
+##   fino all'area bimbi;
+## - con la strada A di prima (dagli spogliatoi, [member interni] e [member porta_interni]) la porta
+##   "sala pompe" degli interni si apriva e le docce scorrevano nel vapore: con la B restano vuoti;
 ## - niente musica (senza corrente il pulsante della sigla non suona), solo gocce e tempesta;
 ##   il lampione resta spento (lo spegne il blackout).
 ## Tutto dipende da GameState.luci, che si salva con i checkpoint: ripartendo dal blackout la
@@ -19,12 +20,12 @@ extends Node
 @export var acqua_vasca: Node3D
 ## Dove stava la medusa: da lì partono le increspature.
 @export var centro_increspature := Vector3(0.0, 0.88, 11.0)
-## Gli interni (docce) e la porta della sala pompe nel loro corridoio.
+## Gli interni (docce) e la porta della sala pompe nel loro corridoio: solo con la strada A.
 @export var interni: Node
 @export var porta_interni: Node
 ## Il pulsante della sigla: senza corrente non fa niente.
 @export var pulsante_sigla: Node
-## La scia (bava rosa o gocce), dal bordo della vasca verso l'area bimbi (punti a terra, in ordine).
+## La scia (bava rosa o gocce), dalla serranda verso l'area bimbi (punti a terra, in ordine).
 @export var scia := PackedVector3Array()
 ## Da dove gocciola ancora (sul bordo della vasca, dalla parte della scia).
 @export var gocciolatoi := PackedVector3Array()

@@ -42,6 +42,10 @@ func _run() -> void:
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
+	var polaroid := level.find_children("*", "PolaroidPhoto", true, false)
+	var p10 := polaroid.filter(func(n): return int(n.get(&"photo")) == 10)
+	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == 9,
+		"nella demo ci sono 9 Polaroid: P10 torna con la sala della torre (%d)" % polaroid.size())
 	var medusa := level.get_node("Vasca/Medusa") as MedusaAffacciata
 	check(medusa != null and medusa.get_model_instance() != null, "la medusa è affacciata alla vasca")
 	var strappo := medusa.get_model_instance().find_child("Medusa_Strappo", true, false) as MeshInstance3D

@@ -32,8 +32,8 @@ extends Node3D
 @export var tecnici: Node3D
 ## La sala pompe: ordine delle pompe, leva e risveglio (RisveglioSalaPompe).
 @export var risveglio: Node
-## Dove finisce la demo: in fondo alla scia di gocce della tappa 7 o, con la tappa 8, ai piedi
-## della torre degli scivoli.
+## Dove finisce la demo: in fondo alla scia della tappa 7 o, con la tappa 8, davanti al portone
+## della sala della torre.
 @export var fine_demo_trigger: Area3D
 ## Il testo sotto "FINE DELLA DEMO".
 @export_multiline var fine_demo_testo := "La scia continua nel buio.\nGrazie per aver giocato!"
@@ -41,6 +41,8 @@ extends Node3D
 @export var ritorno: Node
 ## La tappa 8, lei che sbuca dal bordo della fossa nell'area bimbi (LeiSbuca).
 @export var lei_sbuca: Node
+## Il portone della sala della torre (PortoneTorre): la demo finisce lì, dopo la tappa 8.
+@export var portone: Node
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
 @export var show_controls_hint := true
@@ -244,6 +246,16 @@ func _setup_tecnici() -> void:
 func _on_fine_demo(body: Node3D) -> void:
 	if demo_finished or not body is Player:
 		return
+	# Al portone della sala della torre la demo finisce solo dopo la tappa 8; se si apre all'arrivo
+	# (PortoneTorre.Apertura.ALL_ARRIVO) la scritta arriva quando è aperto.
+	if portone and portone.has_method(&"si_puo_aprire"):
+		if not bool(portone.call(&"si_puo_aprire")):
+			return
+		demo_finished = true
+		if not bool(portone.call(&"is_aperto")):
+			portone.call(&"apri")
+			await portone.aperto
+			await get_tree().create_timer(0.8, false).timeout
 	demo_finished = true
 	var hud := _hud()
 	if hud:
