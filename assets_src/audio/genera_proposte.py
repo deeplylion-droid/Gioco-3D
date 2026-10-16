@@ -40,7 +40,11 @@ nave: 6 dB sotto il gioco, così i suoni nuovi si sentono bene), col riverbero d
 
 Solo sintesi: niente campioni (né Kenney né altro). Tutto deterministico (semi fissi).
 Uso: genera_proposte.py [piscina|pulsante|medusine|portone] (senza argomenti, tutte).
-Quando l'utente sceglie, la versione scelta va nel generatore della sua cartella (con salva()).
+
+Scelte dell'utente (16 ottobre): piscina a (gorgo), pulsante b (richiamo), medusine a (vetro),
+portone a (motore). Sono nel gioco con genera_piscina.py e genera_torre.py, che usano queste
+funzioni con gli stessi semi delle anteprime. Le anteprime restano quelle ascoltate: rifatte oggi
+cambierebbero un poco, perché leggono i fondi del gioco (la pioggia senza bollicine dal 16 ottobre).
 """
 import os
 import sys
@@ -440,15 +444,17 @@ def medusina_aspirata_a(rng):
     return fade(out, 0.0, 0.08)
 
 
-def medusine_sparate_a(rng):
+def medusine_sparate_a(rng, mono=False):
     """a, vetro: sparate via col getto, una cascata di tintinnii sulla scala a toni interi che si
-    allontanano (più bassi, più ovattati) e un soffio leggero. Stereo."""
+    allontanano (più bassi, più ovattati) e un soffio leggero. Stereo; mono=True è la stessa
+    cascata (stessi numeri casuali) senza panorama, come la vuole un suono posizionato nel gioco."""
     dur = 1.8
     n = n_of(dur)
-    out = np.zeros((n, 2))
+    out = np.zeros(n) if mono else np.zeros((n, 2))
     k = n_of(0.6)
     soffio = tv_biquad(white(k, rng), 'bandpass', env_points([(0, 5200), (0.6, 2400)], k), 1.5)
-    mix_into(out, stereo(soffio * env_points([(0, 0), (0.04, 1), (0.6, 0)], k) ** 2 * 0.05), 0)
+    soffio = soffio * env_points([(0, 0), (0.04, 1), (0.6, 0)], k) ** 2 * 0.05
+    mix_into(out, soffio if mono else stereo(soffio), 0)
     t = 0.0
     for i in range(9):
         lontano = i / 8.0
@@ -456,7 +462,8 @@ def medusine_sparate_a(rng):
         x = campanellino(rng, f0, 0.6, 0.7)
         x = varispeed(x, env_points([(0, 1.0), (0.6, 0.93)], len(x)))
         x = lp(x, 9000 - 6000 * lontano, 2) * (1.0 - 0.75 * lontano)
-        mix_into(out, pan(x, rng.uniform(-0.5, 0.5) * (1 - 0.5 * lontano)), n_of(t))
+        lato = rng.uniform(-0.5, 0.5) * (1 - 0.5 * lontano)
+        mix_into(out, x * np.sqrt(0.5) if mono else pan(x, lato), n_of(t))
         t += rng.uniform(0.04, 0.09) * (1 + 1.5 * lontano)
     return fade(out, 0.0, 0.3)
 

@@ -13,9 +13,10 @@ extends Node
 ##  - a ogni cambio di scena cerca i nodi che conosce e si collega ai loro segnali (o ne
 ##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
-##    portelli, piscina a onde, vasche, Polaroid, statua della medusa, bambini, morte,
-##    monitor a tubo e paratie della sala pompe, la fossa dell'area bimbi (tappa 8) e il
-##    morso quando ti prende lei;
+##    portelli, vasche, Polaroid, statua della medusa, bambini, morte, la piscina a onde con
+##    il pulsante della botola e le micro medusine (tappa 5), monitor a tubo e paratie della
+##    sala pompe, la fossa dell'area bimbi (tappa 8), il morso quando ti prende lei e il
+##    portone della sala della torre;
 ##    le luci al neon e d'emergenza della sala (dal GLB) ronzano;
 ##  - aggiunge la scheda "Audio" al menu delle opzioni dell'addon grafica.
 ## API: suona(), suona_sigla(), musica_titolo(), ferma_musica(), imposta_volume(), volume().
@@ -47,6 +48,8 @@ const PER_CARTELLA := {
 	"interfaccia": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.3],
 	"tecnici": [BUS_EFFETTI, 0.0, 6.0, 60.0, 0.2],
 	"lei": [BUS_EFFETTI, 0.0, 6.0, 50.0, 0.0],
+	"piscina": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
+	"torre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -97,6 +100,14 @@ const TARATURA := {
 	&"porta_ponte_apre": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
+	# la piscina a onde (tappa 5): scelti dall'utente il 16 ottobre; le medusine appena percettibili
+	&"piscina_vuota": [BUS_EFFETTI, 4.0, 5.0, 55.0, 0.0],
+	&"pulsante_botola_attiva": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
+	&"pulsante_botola_bibu": [BUS_EFFETTI, 3.0, 5.0, 60.0, 0.0],
+	&"medusina_aspirata": [BUS_EFFETTI, 2.0, 1.5, 12.0, 0.0],
+	&"medusine_sparate": [BUS_EFFETTI, 3.0, 2.0, 25.0, 0.0],
+	# il portone della sala della torre
+	&"portone_torre_apre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
 }
 ## Loop sulle sorgenti: [volume dB, unit_size, max_distance].
 const LOOP_3D := {
@@ -118,10 +129,17 @@ const LOOP_3D := {
 	&"paratia_scende_loop": [0.0, 12.0, 80.0],
 	&"crt_neve_loop": [0.0, 2.0, 16.0],
 	&"fossa_ribolle_loop": [0.0, 5.0, 45.0],
+	&"piscina_svuota_loop": [4.0, 4.0, 45.0],
+	&"pulsante_botola_lampeggiante_loop": [2.0, 5.0, 50.0],
 }
 ## Quando lei ti prende (morte con causa &"medusa"): secondi dall'inizio del morso a quando la
 ## fauce si chiude, che è il lampo rosso di DeathSequence. Lo stinger di morte parte lì.
 const MORSO_COLPO := 1.0
+## Il portone della sala della torre (portone_torre_apre, 8,5 s, da "apertura_iniziata"): dopo
+## quanti secondi il portone comincia a scorrere e quando sbatte a fine corsa. L'animazione di
+## PortoneTorre deve seguire questi tempi (accelera in circa 1,1 s, frena nell'ultimo 0,9 s).
+const PORTONE_PARTE := 0.7
+const PORTONE_ARRIVA := 6.4
 ## Volume (dB) dei fondi.
 const FONDI := {
 	&"pioggia_cupola_loop": 0.0,
@@ -849,7 +867,9 @@ func _esamina(n: Node) -> void:
 		"Turbine": _attivi.append(Turbina.new(self, n))
 		"PoweredDoor": _attivi.append(Porta.new(self, n))
 		"HingedHatch": _collega_portello(n)
-		"PiscinaOnde": _collega_piscina(n)
+		"PiscinaOnde": _attivi.append(AudioPiscina.new(self, n))
+		"Medusine": _attivi.append(AudioMedusine.new(self, n))
+		"PortoneTorre": _collega_portone_torre(n)
 		"WaterTank": _attivi.append(Vasca.new(self, n))
 		"FlickerLight": _attivi.append(Lampada.new(self, n))
 		"MedusaStatue", "MedusaAffacciata": _attivi.append(Statua.new(self, n))
@@ -1044,13 +1064,22 @@ func _collega_pulsante(n: Node) -> void:
 	n.connect(&"released", func(): suona(&"pulsante_rilasciato", (n as Node3D).global_position))
 
 
-## La piscina a onde svuotata con lo zaino (tappa 5): quando si svuota il pulsante della botola si
-## accende col colpo del faro. Suoni già approvati; quelli nuovi li propone l'agente audio.
-func _collega_piscina(n: Node) -> void:
-	n.connect(&"pulsante_attivato", func():
-		var pulsante = n.get(&"pulsante")
-		var dove: Vector3 = (pulsante as Node3D).global_position if pulsante is Node3D else (n as Node3D).global_position
-		suona(&"faro_acceso", dove, -4.0))
+## Il portone scorrevole della sala della torre (PortoneTorre), suono scelto dall'utente il 16
+## ottobre: su "apertura_iniziata" la serratura, il motore, il portone che scorre sui rulli e sbatte
+## a fine corsa, tutto in un suono (portone_torre_apre, 8,5 s), 2 m sopra l'anta (la proprietà
+## "anta" del portone, il perno al centro della base) o, se non c'è, sopra il nodo.
+## L'animazione segue il suono: vedi PORTONE_PARTE e PORTONE_ARRIVA.
+func _collega_portone_torre(n: Node) -> void:
+	if not n.has_signal(&"apertura_iniziata"):
+		push_warning("Audio: PortoneTorre senza il segnale apertura_iniziata")
+		return
+	n.connect(&"apertura_iniziata", func():
+		if not is_instance_valid(n):
+			return
+		var anta = n.get(&"anta")
+		var dove: Node3D = anta if anta is Node3D else (n as Node3D)
+		if dove:
+			suona(&"portone_torre_apre", dove.global_position + Vector3.UP * 2.0))
 
 
 func _collega_portello(n: Node) -> void:
@@ -1410,8 +1439,9 @@ class Vasca:
 	func _init(a, nodo: Node) -> void:
 		audio = a
 		n = nodo
+		# (la vasca della piscina a onde ha il suo: piscina_vuota, in AudioPiscina)
 		nodo.connect(&"emptied", func():
-			if svuotava > 0.0 and scarico:
+			if svuotava > 0.0 and scarico and not nodo.has_meta(&"_audio_piscina"):
 				a.suona(&"vasca_svuotata", scarico.global_position))
 
 	func _prepara() -> void:
@@ -1798,3 +1828,201 @@ class AudioLei:
 				respiro[i].stop()
 			else:
 				respiro[i].volume_db = base_db + RESPIRO_DB + linear_to_db(gain[i])
+
+
+## La piscina a onde (tappa 5, PiscinaOnde), suoni scelti dall'utente il 16 ottobre:
+##  - il gorgo (piscina_svuota_loop) dove aspira lo zaino (WaterPack.suck_point), finché il livello
+##    della vasca scende; il tono sale un po' quando l'acqua è poca;
+##  - piscina_vuota quando la vasca si svuota ("emptied"), se l'acqua stava scendendo (non quando
+##    si riparte con la piscina già vuota);
+##  - il pulsante della botola: su "pulsante_attivato" lo scatto e il jingle
+##    (pulsante_botola_attiva) e il lampeggiante che prende giri (tono da TONO_FERMO a 1); a ogni
+##    lampo il bi-bu (pulsante_botola_bibu): col segnale "lampeggio" se c'è, se no ogni
+##    PERIODO_LAMPO secondi; il lampo che arriva insieme al jingle non fa il bi-bu (il primo è al
+##    lampo dopo). attivo e premuto() si rileggono a ogni fotogramma: quando il pulsante è premuto
+##    il lampeggiante si ferma; ripartendo da un checkpoint gira (o tace) da solo.
+class AudioPiscina:
+	const TONO_PIENA := 1.0
+	const TONO_VUOTA := 1.12
+	const PERIODO_LAMPO := 1.6
+	const TONO_FERMO := 0.35
+	## piscina_vuota solo se l'acqua scendeva da meno di tanti secondi.
+	const SCESA_DA_POCO := 3.0
+	## Dopo lo scatto e il jingle, per tanti secondi niente bi-bu (si sovrapporrebbe al jingle).
+	const DOPO_JINGLE := 1.2
+
+	var audio
+	var n: Node
+	var vasca: Node
+	var gorgo: AudioLoop
+	var gorgo_punto: Node3D
+	var lampeggiante: AudioLoop
+	var pulsante: Node3D
+	var prima := -1.0
+	var piena := 0.0
+	var scende_t := 0.0
+	var da_quando_scende := 1000.0
+	var gira := false
+	var con_lampi := false
+	var lampo_t := 0.0
+	var da_attivazione := 1000.0
+
+	func _init(a, nodo: Node) -> void:
+		audio = a
+		n = nodo
+		var v = nodo.get(&"vasca")
+		if v is Node:
+			vasca = v
+			vasca.set_meta(&"_audio_piscina", true)
+			if vasca.has_signal(&"emptied"):
+				vasca.connect(&"emptied", _su_vuota)
+		gorgo_punto = Node3D.new()
+		gorgo_punto.name = "AudioGorgo"
+		gorgo_punto.top_level = true
+		nodo.add_child(gorgo_punto)
+		if vasca is Node3D:
+			gorgo_punto.global_position = (vasca as Node3D).global_position
+		gorgo = a.crea_loop(&"piscina_svuota_loop", gorgo_punto)
+		var p = nodo.get(&"pulsante")
+		pulsante = (p as Node3D) if p is Node3D else (nodo as Node3D)
+		var luce := nodo.get_node_or_null(^"SegnalePulsante") as Node3D
+		lampeggiante = a.crea_loop(&"pulsante_botola_lampeggiante_loop", luce if luce else pulsante)
+		if lampeggiante:
+			lampeggiante.rapidita_tono = 2.5
+		if nodo.has_signal(&"pulsante_attivato"):
+			nodo.connect(&"pulsante_attivato", _su_attivato)
+		if nodo.has_signal(&"lampeggio"):
+			con_lampi = true
+			nodo.connect(&"lampeggio", _su_lampo)
+
+	func _premuto() -> bool:
+		return n.has_method(&"premuto") and bool(n.call(&"premuto"))
+
+	func _su_attivato() -> void:
+		if is_instance_valid(pulsante):
+			audio.suona(&"pulsante_botola_attiva", pulsante.global_position)
+		_gira(true)
+		lampo_t = 0.0
+		da_attivazione = 0.0
+
+	func _su_lampo() -> void:
+		if gira and da_attivazione >= DOPO_JINGLE and is_instance_valid(pulsante):
+			audio.suona(&"pulsante_botola_bibu", pulsante.global_position)
+
+	func _su_vuota() -> void:
+		if da_quando_scende < SCESA_DA_POCO and is_instance_valid(gorgo_punto):
+			audio.suona(&"piscina_vuota", gorgo_punto.global_position)
+
+	## Il lampeggiante si accende: da fermo prende giri (il tono sale), se no gira già.
+	func _gira(da_fermo: bool) -> void:
+		gira = true
+		if lampeggiante:
+			if da_fermo:
+				lampeggiante.salta(0.001, TONO_FERMO)
+			lampeggiante.volume = 1.0
+			lampeggiante.tono = 1.0
+
+	## Il pulsante è stato colpito: il motorino si ferma (cala di tono mentre sfuma).
+	func _ferma() -> void:
+		gira = false
+		if lampeggiante:
+			lampeggiante.volume = 0.0
+			lampeggiante.tono = TONO_FERMO
+
+	func aggiorna(_a, delta: float) -> bool:
+		if not is_instance_valid(n):
+			return false
+		if not n.is_inside_tree():
+			return true
+		da_attivazione += delta
+		if is_instance_valid(vasca):
+			var fill := float(vasca.get(&"fill"))
+			piena = maxf(piena, fill)
+			var scende := prima >= 0.0 and fill < prima - 0.000001
+			prima = fill
+			if scende:
+				scende_t = 0.3
+				da_quando_scende = 0.0
+			else:
+				scende_t = maxf(0.0, scende_t - delta)
+				da_quando_scende += delta
+			if gorgo:
+				gorgo.volume = 1.0 if scende_t > 0.0 else 0.0
+				gorgo.tono = lerpf(TONO_VUOTA, TONO_PIENA, clampf(fill / maxf(piena, 0.0001), 0.0, 1.0))
+				var g = audio._giocatore
+				var pack = g.get(&"water_pack") if is_instance_valid(g) else null
+				if pack is Node and bool(pack.get(&"is_sucking")):
+					gorgo_punto.global_position = pack.get(&"suck_point")
+		var deve := bool(n.get(&"attivo")) and not _premuto()
+		if deve and not gira:
+			_gira(false)
+		elif gira and not deve:
+			_ferma()
+		if gira and not con_lampi:
+			lampo_t += delta
+			if lampo_t >= PERIODO_LAMPO:
+				lampo_t -= PERIODO_LAMPO
+				_su_lampo()
+		return true
+
+
+## Le micro medusine luminose della piscina a onde (tappa 5, Medusine), suoni scelti dall'utente
+## il 16 ottobre, appena percettibili: un grappolo di tintinnii di vetro quando una entra
+## nell'ugello (medusina_aspirata) e la cascata quando escono col getto (medusine_sparate, al
+## massimo una ogni INTERVALLO_SPARATE secondi anche se ne escono tante insieme). Usa i segnali
+## "aspirata" e "sparata" (posizione) se ci sono; se no legge stati() e posizioni(): il passaggio a
+## NELLO_ZAINO è un'aspirata, quello da NELLO_ZAINO a IN_VOLO una sparata.
+class AudioMedusine:
+	const INTERVALLO_ASPIRATA := 0.07
+	const INTERVALLO_SPARATE := 1.2
+
+	var audio
+	var n: Node
+	var con_segnali := false
+	var nello_zaino := -1
+	var in_volo := -1
+	var prima := PackedInt32Array()
+
+	func _init(a, nodo: Node) -> void:
+		audio = a
+		n = nodo
+		if nodo.has_signal(&"aspirata") and nodo.has_signal(&"sparata"):
+			con_segnali = true
+			nodo.connect(&"aspirata", func(pos: Vector3): _aspirata(pos))
+			nodo.connect(&"sparata", func(pos: Vector3): _sparata(pos))
+		var s: Script = nodo.get_script()
+		var stato = s.get_script_constant_map().get("Stato", {}) if s else {}
+		if stato is Dictionary:
+			nello_zaino = int(stato.get("NELLO_ZAINO", -1))
+			in_volo = int(stato.get("IN_VOLO", -1))
+
+	func _aspirata(pos: Vector3) -> void:
+		audio.suona_limitato("medusina_aspirata", INTERVALLO_ASPIRATA, &"medusina_aspirata", pos)
+
+	func _sparata(pos: Vector3) -> void:
+		audio.suona_limitato("medusine_sparate", INTERVALLO_SPARATE, &"medusine_sparate", pos)
+
+	func aggiorna(_a, _d: float) -> bool:
+		if not is_instance_valid(n):
+			return false
+		if con_segnali or not n.is_inside_tree() or not n.has_method(&"stati"):
+			return true
+		var ora: PackedInt32Array = n.call(&"stati")
+		if ora.size() == prima.size():
+			var pos := PackedVector3Array()
+			for i in ora.size():
+				if ora[i] == prima[i]:
+					continue
+				var dentro: bool = ora[i] == nello_zaino
+				var fuori: bool = ora[i] == in_volo and prima[i] == nello_zaino
+				if not dentro and not fuori:
+					continue
+				if pos.is_empty():
+					pos = n.call(&"posizioni")
+				if i < pos.size():
+					if dentro:
+						_aspirata(pos[i])
+					else:
+						_sparata(pos[i])
+		prima = ora
+		return true

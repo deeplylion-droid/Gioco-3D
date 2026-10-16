@@ -13,10 +13,13 @@
   gutturale (respiro umido, gola che gorgoglia sott'acqua, rantolo, ringhio prima del morso), in
   due intensità (genera_lei.proposte). Il 16 ottobre l'utente ha scelto la gutturale, che ora è
   nel gioco; le due anteprime restano com'erano.
-Le altre proposte ancora da approvare (proposta_<nome>_a/b.ogg) le fa genera_proposte.py.
+- confronto_pioggia_bollicine.ogg (circa 31 s): la sala con solo i fondi, 15 s con la pioggia di
+  prima (con le bollicine dei rivoli) e 15 s con quella di adesso (16 ottobre).
+Le anteprime delle altre proposte (proposta_<nome>_a/b.ogg) le fa genera_proposte.py.
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
-nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte] (senza argomenti, tutte).
+nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte|pioggia] (senza argomenti,
+tutte).
 """
 import os
 import sys
@@ -379,7 +382,37 @@ def anteprima_proposta_lei(estrema=False):
           f'(sbuca {T_SBUCA:.1f}s, scivola {T_SCIVOLA:.1f}s, morso {T_MORSO:.1f}s)')
 
 
-def main(quali=('sala', 'tecnici', 'lei', 'proposte')):
+# --- confronto: la pioggia sulla cupola con e senza le bollicine (16 ottobre) ------------------
+
+def anteprima_confronto_pioggia():
+    """La sala con solo i fondi del gioco (pioggia sulla cupola, vento, nave, ai volumi di
+    FONDI in audio.gd): 15 s con la pioggia di prima, che aveva le bollicine dei rivoli, un attimo
+    di silenzio, poi 15 s con quella di adesso. Stesso guadagno per le due metà."""
+    from genera_ambiente import pioggia_cupola
+    from lib_audio import f32, normalize_lufs
+
+    def pioggia(rivoli):
+        # come la genera genera_ambiente.main(): primo suono col seme 2026, poi salva()
+        x = f32(pioggia_cupola(np.random.default_rng(2026), rivoli=rivoli))
+        x = normalize_lufs(x, -24.0, -1.0)
+        return limiter(x, -1.0) if float(np.abs(x).max()) > db(-1.0) + 1e-4 else x
+
+    PEZZO, PAUSA, DA = 15.0, 0.8, 4.0
+    vento = tile(leggi('ambiente/vento_loop.ogg'), PEZZO, DA) * db(-2.0)
+    nave = tile(leggi('ambiente/nave_loop.ogg'), PEZZO, DA)
+    meta = []
+    for rivoli in (True, False):
+        x = tile(pioggia(rivoli), PEZZO, DA) + vento + nave
+        meta.append(fade(x, 0.6, 0.4))
+    out = np.concatenate([meta[0], np.zeros((n_of(PAUSA), 2), dtype=np.float32), meta[1]])
+    out = limiter(out * db(-16.0 - lufs(out)), -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'confronto_pioggia_bollicine.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS prima {lufs(out[:n_of(PEZZO)]):.1f}  '
+          f'dopo {lufs(out[-n_of(PEZZO):]):.1f}')
+
+
+def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia')):
     if 'sala' in quali:
         anteprima_sala()
     if 'tecnici' in quali:
@@ -389,7 +422,9 @@ def main(quali=('sala', 'tecnici', 'lei', 'proposte')):
     if 'proposte' in quali:
         anteprima_proposta_lei(False)
         anteprima_proposta_lei(True)
+    if 'pioggia' in quali:
+        anteprima_confronto_pioggia()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte'))
+    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte', 'pioggia'))
