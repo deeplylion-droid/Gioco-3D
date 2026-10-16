@@ -89,6 +89,12 @@ Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-16_
 - **Tappa 8**:
   - lei resta affacciata finché non la guardi bene per 2 secondi (entro 18°, a meno di 14 m, senza ostacoli), poi dopo 6 secondi scivola sotto;
   - la scia e la bava rosa sono **visibili al 75%**, cioè un po' trasparenti.
+- **Suoni nuovi** (seconda pagina dello stesso giorno):
+  - piscina che si svuota: gorgo;
+  - pulsante della botola: richiamo, con un jingle giocattolo che cala e un bi-bu insieme al lampeggiante;
+  - micro medusine: tintinnii di vetro;
+  - portone: motore e rulli.
+  L'utente ha notato le bollicine nel fondo della pioggia sulla cupola: si tolgono.
 - **Dopo la tappa 8**: la sala della torre è dietro la parete est (versione 2). Si entra da un portone scorrevole con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi e i bambini della balconata si propongono a parte.
 
 ## Capitolo 1: scaletta (approvata)
