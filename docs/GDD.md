@@ -221,4 +221,8 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **Godot 4.7.2**, renderer Forward+, per PC. Build automatiche con GitHub Actions e Release su GitHub.
 - **Blender 5.2** usato come modulo Python (`bpy`) per modellare, fare il rig, animare e fare i render da script.
 - **Meshy API** per immagini concept, modelli 3D e rig degli umanoidi. La chiave è nella variabile `MESHY_API_KEY`. L'utente non bada ai crediti, ma non vanno sprecati.
+- **Crediti Meshy (16 ottobre)**: 14.628 crediti mensili, che si azzerano il 15 novembre. L'utente è d'accordo a usarli di più per la qualità:
+  - rifare ad alta definizione gli oggetti della sala che non sono ancora di Meshy (struttura dell'area bimbi, funghi, secchio);
+  - la sala della torre e gli scivoli nuovi.
+  Si propone sempre all'utente con i render prima di metterli nel gioco.
 - **Asset CC0**: texture da Poly Haven e ambientCG, modelli da Kenney e Quaternius.
