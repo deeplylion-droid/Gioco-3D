@@ -20,7 +20,18 @@ static func b(x: float, y: float, z: float) -> Vector3:
 ## emergenza: lampeggianti rossi ai muri [pos, verso del muro]; lavoro: lampade calde [pos];
 ## lei: il centro del pozzo; scatti: nome -> [camera, punto guardato, campo visivo].
 var VERSIONI := {
+	# la seconda passata della A: tre GLB (struttura, scivoli, prop) e le luci in torre_A_luci.json
 	"A": {
+		"glb": ["torre_A_struttura", "torre_A_scivoli", "torre_A_prop"],
+		"luci_json": "torre_A_luci",
+		"scatti": {
+			"1_cima": [b(27.3, 18.9, 1.75), b(34.5, 11.5, -4.0), 80.0],
+			"2_meta": [b(34.4, 9.4, -4.25), b(27.0, 17.0, -13.0), 80.0],
+			"3_fondo": [b(31.2, 10.9, -18.3), b(31.0, 16.5, 5.0), 84.0],
+			"4_balconata": [b(29.0, 20.6, 0.9), b(31.0, 25.3, -0.9), 75.0],
+		},
+	},
+	"A0": {
 		"emergenza": [[b(20.9, 11.5, 3.2), Vector3.RIGHT], [b(39.6, 21.0, 1.0), Vector3.LEFT],
 				[b(39.6, 9.5, -8.5), Vector3.LEFT], [b(20.9, 20.5, -11.0), Vector3.RIGHT],
 				[b(30.0, 4.4, -15.0), Vector3.FORWARD], [b(35.0, 25.6, -17.5), Vector3.BACK]],
@@ -53,11 +64,14 @@ func _initialize() -> void:
 	radice = Node3D.new()
 	root.add_child(radice)
 	var v: Dictionary = VERSIONI[versione]
-	var glb: Node3D = (load("res://proposte/torre/torre_%s.glb" % versione) as PackedScene).instantiate()
-	radice.add_child(glb)
 	var acqua: Material = load("res://assets/materials/sala/acqua_torbida.tres")
-	for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
-		(m as MeshInstance3D).material_override = acqua
+	for nome in v.get("glb", ["torre_" + versione]):
+		var glb: Node3D = (load("res://proposte/torre/%s.glb" % nome) as PackedScene).instantiate()
+		radice.add_child(glb)
+		for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
+			(m as MeshInstance3D).material_override = acqua
+	if v.has("luci_json"):
+		_luci_da_json(JSON.parse_string(FileAccess.get_file_as_string("res://proposte/torre/%s.json" % v["luci_json"])))
 	var env := WorldEnvironment.new()
 	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
 	env.environment.sdfgi_enabled = true
@@ -66,17 +80,140 @@ func _initialize() -> void:
 	env.environment.ambient_light_energy = 1.0
 	env.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
 	radice.add_child(env)
-	for e in v["emergenza"]:
+	for e in v.get("emergenza", []):
 		_emergenza(e[0], e[1])
-	for p in v["lavoro"]:
+	for p in v.get("lavoro", []):
 		_lampada(p)
-	_lei(v["lei"])
-	for ap in v["appese"]:
+	if v.has("lei"):
+		_lei(v["lei"])
+	for ap in v.get("appese", []):
 		_appesa(ap[0], ap[1])
 	cam = Camera3D.new()
 	radice.add_child(cam)
 	cam.current = true
 	_scatta.call_deferred(v["scatti"])
+
+
+static func bv(a: Array) -> Vector3:
+	return b(a[0], a[1], a[2])
+
+
+func _luci_da_json(d: Dictionary) -> void:
+	var versi := {"e": Vector3.RIGHT, "o": Vector3.LEFT, "n": Vector3.FORWARD, "s": Vector3.BACK}
+	for e in d["emergenza"]:
+		_emergenza(bv(e[0]), versi[e[1]])
+	for p in d["lavoro"]:
+		_lampada(bv(p))
+	for f in d["fari"]:
+		_faro(bv(f[0]), bv(f[1]))
+	for g in d["gocce"]:
+		_gocce(bv(g))
+	_lei(bv(d["lei"]))
+	_catena(bv(d["lei"]))
+
+
+func _catena(fondo: Vector3) -> void:
+	# una catena appesa al centro del soffitto con tre grappoli di lampade da cantiere (gabbie calde): illumina
+	# il vuoto e gli scivoli tutt'intorno, così i colori si leggono anche lontano dai fari
+	var cavo := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.02
+	cm.bottom_radius = 0.02
+	var basso := fondo.y + 6.0
+	cm.height = 14.0 - basso
+	cavo.mesh = cm
+	var nero := StandardMaterial3D.new()
+	nero.albedo_color = Color(0.06, 0.06, 0.06)
+	nero.metallic = 0.8
+	cavo.material_override = nero
+	cavo.position = Vector3(fondo.x + 1.2, (14.0 + basso) / 2.0, fondo.z)
+	radice.add_child(cavo)
+	for y in [9.0, -3.0, basso]:
+		for k in 3:
+			var a := TAU * k / 3.0
+			var p := Vector3(fondo.x + 1.2 + cos(a) * 0.35, y - 0.1 * k, fondo.z + sin(a) * 0.35)
+			var bulbo := MeshInstance3D.new()
+			var sf := SphereMesh.new()
+			sf.radius = 0.08
+			sf.height = 0.16
+			bulbo.mesh = sf
+			var m := StandardMaterial3D.new()
+			m.emission_enabled = true
+			m.emission = CALDO
+			m.emission_energy_multiplier = 9.0
+			bulbo.material_override = m
+			bulbo.position = p
+			radice.add_child(bulbo)
+		var l := OmniLight3D.new()
+		l.light_color = Color(1.0, 0.82, 0.62)
+		l.light_energy = 6.0
+		l.omni_range = 15.0
+		l.omni_attenuation = 0.8
+		l.shadow_enabled = true
+		l.light_volumetric_fog_energy = 0.6
+		l.position = Vector3(fondo.x + 1.2, y - 0.2, fondo.z)
+		radice.add_child(l)
+
+
+func _faro(p: Vector3, mira: Vector3) -> void:
+	# faro da cantiere sul traliccio: scatola nera col vetro acceso, luce bianca calda verso gli scivoli di fronte
+	var corpo := MeshInstance3D.new()
+	var bx := BoxMesh.new()
+	bx.size = Vector3(0.45, 0.35, 0.2)
+	corpo.mesh = bx
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.08, 0.08, 0.08)
+	corpo.material_override = m
+	radice.add_child(corpo)
+	corpo.position = p
+	corpo.look_at(mira)
+	var vetro := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(0.4, 0.3)
+	vetro.mesh = q
+	var mv := StandardMaterial3D.new()
+	mv.emission_enabled = true
+	mv.emission = Color(1.0, 0.9, 0.75)
+	mv.emission_energy_multiplier = 12.0
+	vetro.material_override = mv
+	corpo.add_child(vetro)
+	vetro.position = Vector3(0, 0, -0.11)
+	vetro.rotation_degrees = Vector3(0, 180, 0)
+	var l := SpotLight3D.new()
+	l.light_color = Color(1.0, 0.88, 0.72)
+	l.light_energy = 16.0
+	l.spot_range = 30.0
+	l.spot_angle = 24.0
+	l.spot_attenuation = 0.6
+	l.shadow_enabled = true
+	l.light_volumetric_fog_energy = 0.8
+	radice.add_child(l)
+	l.position = p
+	l.look_at(mira)
+
+
+func _gocce(p: Vector3) -> void:
+	# acqua che gocciola dalla bocca di uno scivolo
+	var g := CPUParticles3D.new()
+	var sf := SphereMesh.new()
+	sf.radius = 0.012
+	sf.height = 0.05
+	g.mesh = sf
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.7, 0.8, 0.85, 0.6)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.roughness = 0.05
+	g.material_override = m
+	g.amount = 40
+	g.lifetime = 2.0
+	g.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	g.emission_box_extents = Vector3(0.3, 0.02, 0.3)
+	g.direction = Vector3.DOWN
+	g.initial_velocity_min = 0.2
+	g.initial_velocity_max = 0.6
+	g.gravity = Vector3(0, -9.8, 0)
+	g.position = p
+	radice.add_child(g)
 
 
 func _emergenza(p: Vector3, verso: Vector3) -> void:

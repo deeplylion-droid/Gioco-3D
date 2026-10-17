@@ -49,11 +49,17 @@ def disegna(png, pxy, titolo, legenda):
         else:
             d.line([a, b], fill=(255, 40, 120), width=7)
     f = font(22); n = 1
+    occupati = []
+
     def etichetta(p, testo, sotto=False):
         w = d.textlength(testo, font=f)
         x = p[0] + 14 if p[0] + 14 + w < im.width - 4 else p[0] - 14 - w
         y = p[1] + (20 if sotto else -12)
         y = min(y, im.height - 30)
+        # niente etichette una sopra l'altra: si sposta in giù finché non è libera
+        while any(abs(y - oy) < 26 and x < ox + ow and ox < x + w for ox, oy, ow in occupati):
+            y += 26
+        occupati.append((x, y, w))
         d.text((x, y), testo, fill=(255, 255, 255), font=f, stroke_width=3, stroke_fill=(0, 0, 0))
     for k, p in pts:
         if k in ('scivolo',): continue

@@ -10,8 +10,10 @@ profondità nello scafo: il portone, alla quota della sala grande, dà su una pa
 20 m più giù. Nelle scene di proposta il guscio di oggi (sala_torre_guscio) si nasconde e vale quello di qui.
 
 Versioni (un GLB per versione in godot/proposte/torre/, fuori dall'export del gioco):
-  A  groviglio: gli scivoli scendono a spirale attorno al vuoto centrale, stringendosi verso il fondo, dove
-     nel pozzo c'è la luce di lei.
+  A  la struttura mastodontica (torre_a.py): quattro torri di traliccio, decine di scivoli tra una torre e
+     l'altra su tutti i livelli, la discesa che gira da torre a torre fino al pozzo della luce di lei.
+     Tre GLB (struttura, scivoli, prop) e le luci in torre_A_luci.json.
+  A0 la prima passata della A (groviglio di pochi scivoli attorno al vuoto): scartata dal coordinatore.
 
 Coordinate di Blender (Z in alto, metri, come ambiente_sala.py); in Godot (x, z, -y).
 Uso: /home/user/tools/blender-venv/bin/python tools/blender/torre_proposte.py A [--blend file.blend]
@@ -495,7 +497,7 @@ def porta_murata(c, base, lato):
 A = dict(centro=(31.0, 15.0))
 
 
-def versione_A(mats):
+def versione_A0(mats):
     """Si entra in cima dal portone, su una passerella; la discesa gira attorno al vuoto centrale stringendosi:
     scivolo, salto, scivolo fino alla pedana est con la vasca intermedia; poi un pezzo spezzato dove serve la
     spinta del getto, fino alla pedana ovest (la Polaroid 10, sotto la passerella da cui sei entrato); l'ultimo
@@ -616,7 +618,12 @@ def versione_A(mats):
     return [ob, gr, pol] + scivoli + acque + grov + props, percorso
 
 
-VERSIONI = {'A': versione_A}
+def versione_A(mats):
+    import torre_a
+    return torre_a.versione_A(mats)
+
+
+VERSIONI = {'A0': versione_A0, 'A': versione_A}
 
 
 def main():
@@ -627,12 +634,24 @@ def main():
     mats = K.Materiali(S.PALETTE_SALA, per_render=False)
     S.materiali_nuovi(mats)
     materiali_torre(mats)
-    oggetti, percorso = VERSIONI[nome](mats)
+    ris = VERSIONI[nome](mats)
     os.makedirs(USCITA, exist_ok=True)
-    out = os.path.join(USCITA, f'torre_{nome}.glb')
-    K.esporta(oggetti, out)
-    tri = sum(sum(len(p.vertices) - 2 for p in o.data.polygons) for o in oggetti if o.type == 'MESH')
-    print(f'GLB {out}: {len(oggetti)} oggetti, {tri} triangoli, {os.path.getsize(out) / 1e6:.1f} MB')
+    if isinstance(ris[0], dict):
+        # più GLB (ognuno sotto i 50 MB): torre_<v>_<gruppo>.glb, più le luci per lo script degli scatti
+        gruppi, percorso, luci = ris
+        for g, oggetti in gruppi.items():
+            out = os.path.join(USCITA, f'torre_{nome}_{g}.glb')
+            K.esporta(oggetti, out)
+            tri = sum(sum(len(p.vertices) - 2 for p in o.data.polygons) for o in oggetti if o.type == 'MESH')
+            print(f'GLB {out}: {len(oggetti)} oggetti, {tri} triangoli, {os.path.getsize(out) / 1e6:.1f} MB')
+        with open(os.path.join(USCITA, f'torre_{nome}_luci.json'), 'w') as f:
+            json.dump(luci, f, indent=1)
+    else:
+        oggetti, percorso = ris
+        out = os.path.join(USCITA, f'torre_{nome}.glb')
+        K.esporta(oggetti, out)
+        tri = sum(sum(len(p.vertices) - 2 for p in o.data.polygons) for o in oggetti if o.type == 'MESH')
+        print(f'GLB {out}: {len(oggetti)} oggetti, {tri} triangoli, {os.path.getsize(out) / 1e6:.1f} MB')
     with open(os.path.join(USCITA, f'torre_{nome}_percorso.json'), 'w') as f:
         json.dump([dict(cosa=k, x=round(p.x, 2), y=round(p.y, 2), z=round(p.z, 2)) for k, p in percorso], f, indent=1)
     if '--blend' in argv:
