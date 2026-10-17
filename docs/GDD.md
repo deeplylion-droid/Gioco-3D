@@ -131,6 +131,16 @@ L'utente ha giocato la v0.3.2. Le sue parole, punto per punto, sono in `docs/ris
 - **Quando sparisce nella fossa dell'area bimbi**: un'esplosione d'acqua la avvolge completamente, poi sparisce. Si propone prima.
 - **Entrata della sala**: nei due angoli verso la prima entrata ci vanno due pile alte quasi fino al soffitto, una di palloni da spiaggia gonfi e sgonfi e una di scatoloni di vari colori. Si propone prima, con scatti dal gioco.
 
+## Scelte del 17 ottobre (pagina delle scelte)
+
+Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-17_scelte.md`.
+
+- **Strada di risalita (tappa 7)**: l'arredo è un misto delle proposte A (deposito della festa) e B (manutenzione), con i modelli più riusciti dell'una e dell'altra. I bambini compaiono una volta: l'agnellino aspetta in cima alla scala del corridoio C2, inclina la testa quando lo guardi e scappa avanti dove devi andare.
+- **Sala grande, vicino alla prima entrata**: entrando, a destra (sud-est) c'è la pila di palloni da spiaggia dentro la rete da carico, a sinistra (sud-ovest) la pila di scatoloni. Sono alte circa 10 m.
+- **Area bimbi**: la variante HD ridisegnata, con la disposizione 1 di prima.
+- **Jumpscare della medusa**: A, glitch forte, con l'urlo al massimo del volume.
+- **Quando sparisce nella fossa (tappa 8)**: A, un geyser d'acqua. L'acqua non deve essere trasparente: deve coprirla del tutto mentre sparisce.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
