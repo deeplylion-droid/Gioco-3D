@@ -78,7 +78,6 @@ func _avvia() -> void:
 		var t := v as WaterTank
 		t.fill = clampf((lei.livello_pieno - t.get_floor_global_y()) / t.inner_size.y, 0.0, t.max_fill)
 	lei.distanza_presa = 0.0
-	lei.attesa = 1000.0
 	await get_tree().physics_frame
 	lei.call(&"_affaccia")
 	_mettiti()

@@ -5,14 +5,17 @@ extends Node
 ## scia lungo il muro ovest: il checkpoint prima della scena, le vasche basse che si riempiono.
 ## 1. Se le vai incontro ti prende: si gira verso di te, fauce aperta, vene nell'occhio, sequenza di
 ##    morte (saltata) e si riparte dal checkpoint con lei di nuovo affacciata.
-## 2. Se non la guardi resta affacciata, anche oltre l'attesa e anche se ti allontani.
-## 3. Quando l'hai vista bene (nell'inquadratura, vicino al centro, senza niente in mezzo, per due
-##    secondi di fila) ti fissa ancora un po', poi scivola sotto (finché si vede, mani e tentacoli non
-##    entrano nel bordo né nel pavimento) e la sua luce si allontana lungo il condotto.
+## 2. Se non la spruzzi resta affacciata a lungo: anche se ti allontani e anche dopo che l'hai vista
+##    bene (riscontro sulla v0.3.4: va via solo se la spruzzi).
+## 3. La spruzzi col getto dello zaino: parte subito il geyser, lei sparisce lì dentro solo quando è
+##    coperta (finché si vede, mani e tentacoli non entrano nel bordo né nel pavimento) e la sua luce
+##    si allontana lungo il condotto.
 ## 4. Appena lei se ne va, il portone della sala della torre sulla parete est si apre da solo
 ##    (scelta dell'utente del 16 ottobre): tra l'area bimbi e la piscina, poi lungo il lato nord della
 ##    spiaggia fino al portone, con i checkpoint; lì finisce la demo.
-## 5. Se le arrivi di lato ti prende girandosi verso di te: la camera della morte la trova di fronte.
+## 5. La spruzzi da altre distanze e da altri lati, sulla testa, su una mano, su un tentacolo: se ne
+##    va subito ogni volta.
+## 6. Se le arrivi di lato ti prende girandosi verso di te: la camera della morte la trova di fronte.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
 ## è spenta: il test la accende sulla fossa provvisoria e spegne la fine della demo sulla scia.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa8.gd
@@ -169,19 +172,19 @@ func _run() -> void:
 	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.metri_scia() >= 8.0 and not lampione.is_on,
 			"e la sala è ancora al buio: vasca vuota, scia di bava rosa, lampione spento")
 
-	print("2. Non la guardi: lei resta affacciata")
+	print("2. Non la spruzzi: lei resta affacciata")
 	check(await _cammina_verso(Vector3(-18.3, 0.0, -1.9), 300), "qualche passo avanti")
 	await _frames(10)
 	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible, "lei è lì, affacciata a pochi metri (fase %d)" % lei.fase)
 	# Ti giri dall'altra parte (a sud, da dove sei venuto) e ti allontani di qualche passo, senza
-	# guardarla: lei resta lì ben oltre l'attesa.
+	# guardarla: lei resta lì.
 	p.set_look(PI, 0.0)
 	await _frames(30)
 	check(await _cammina_verso(Vector3(-18.3, 0.0, 1.6), 300), "ti allontani senza guardarla")
 	p.set_look(PI, 0.0)
-	await _frames(int((lei.attesa + lei.tempo_vista + 2.0) * 60.0))
+	await _frames(10 * 60)
 	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible and not lei.vista_bene,
-			"dopo %.0f s è ancora affacciata: non l'hai vista (fase %d)" % [lei.attesa + lei.tempo_vista + 2.0, lei.fase])
+			"dopo 10 s è ancora affacciata, e non l'hai vista (fase %d)" % lei.fase)
 	var occhio_lei: Vector3 = lei.medusa.call(&"get_eye_position")
 	# Oltre la distanza massima non conta, anche guardandola dritta.
 	p.look_at_point(occhio_lei)
@@ -211,7 +214,7 @@ func _run() -> void:
 	p.set_look(PI, 0.0)
 	await _frames(30)
 
-	print("3. La guardi bene: ti fissa, poi scivola sotto e se ne va")
+	print("3. La guardi bene ma resta lì; la spruzzi e se ne va subito")
 	# Torni sulla scia, un po' più avanti, dove né lo scivolo né le colonne la coprono, e la guardi.
 	check(await _cammina_verso(Vector3(-18.3, 0.0, -3.0), 400), "torni sulla scia, dove si vede bene")
 	check(not lei.vista_bene and lei.fase == LeiSbuca.Fase.GUARDA, "camminando senza guardarla non conta")
@@ -228,8 +231,9 @@ func _run() -> void:
 	check(lei.fase == LeiSbuca.Fase.GUARDA and sguardo.dot(verso_te) > 0.85,
 			"le mani sul bordo, l'occhio fisso su di te (%.2f)" % sguardo.dot(verso_te))
 	check(LeiSbuca._in_pianta(p.global_position, occhio_lei) > lei.distanza_presa + 1.0, "e tu sei lontano (%.1f m)" % LeiSbuca._in_pianta(p.global_position, occhio_lei))
-	await _frames(int(lei.attesa * 60.0 * 0.5))
-	check(lei.fase == LeiSbuca.Fase.GUARDA, "ti fissa ancora per un po'")
+	# Prima andava via da sola 6 s dopo che l'avevi vista bene: adesso no, resta finché non la spruzzi.
+	await _frames(15 * 60)
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible, "dopo 15 s ti fissa ancora: senza spruzzarla non se ne va")
 	var fuga_vista := false
 	var luce_lontana := 0.0
 	# Mani e tentacoli (i punti delle gocce: dita, punte dei tentacoli sul bordo) mentre scivola sotto:
@@ -238,6 +242,9 @@ func _run() -> void:
 	var dentro0 := _dentro_pavimento(punti)
 	var peggio := 0.0
 	var scivolata := false
+	var dopo := await _spruzzala(p.global_position, lei.medusa.call(&"get_eye_position"))
+	check(dopo >= 0.0 and dopo < 1.2, "la spruzzi in faccia dalla scia: se ne va subito (%.2f s dal primo getto)" % dopo)
+	check(lei.get_node_or_null(^"Geyser") != null and (lei.get_node(^"Geyser") as GeyserFossa).in_corso(), "parte il geyser")
 	for i in 900:
 		await get_tree().physics_frame
 		if lei.fase == LeiSbuca.Fase.SCIVOLA and lei.opacita() > 0.25:
@@ -280,7 +287,34 @@ func _run() -> void:
 	else:
 		print("  (la fine della demo passa al portone quando c'è la fossa)")
 
-	print("5. Le arrivi di lato: ti prende girandosi verso di te")
+	print("5. La spruzzi da altre distanze e da altri lati: se ne va subito ogni volta")
+	var avanti5 := lei.punto_sbuca.global_basis.z.normalized()
+	var lato5 := lei.punto_sbuca.global_basis.x.normalized()
+	var testa5: Vector3 = lei.punto_sbuca.global_transform * Vector3(0.0, 1.63, 1.8)
+	var dita: Vector3 = lei.medusa.global_transform * punti[0]
+	var tentacolo := dita
+	for q in punti:
+		var g: Vector3 = lei.medusa.global_transform * q
+		if g.y < tentacolo.y:
+			tentacolo = g
+	for prova in [["davanti a 4 m, sulla testa", testa5 + avanti5 * 4.0, testa5],
+			["davanti a 9 m, sulla testa", testa5 + avanti5 * 9.0, testa5],
+			["di lato a destra, su una mano", testa5 + lato5 * 3.5 + avanti5 * 1.0, dita],
+			["di lato a sinistra, su un tentacolo", testa5 - lato5 * 3.5 + avanti5 * 1.5, tentacolo],
+			["di traverso a 6 m, sul tentacolo", testa5 + (avanti5 + lato5).normalized() * 6.0, tentacolo]]:
+		lei.load_state({"finita": false})
+		await _frames(5)
+		var piedi5: Vector3 = prova[1]
+		piedi5.y = 0.0
+		var tempo := await _spruzzala(piedi5, prova[2])
+		check(tempo >= 0.0 and tempo < 1.2 and not GameState.is_dying, "%s: se ne va subito (%.2f s)" % [prova[0], tempo])
+		for i in 600:
+			if lei.fase == LeiSbuca.Fase.FINITA:
+				break
+			await get_tree().physics_frame
+
+	print("6. Le arrivi di lato: ti prende girandosi verso di te")
+	p.water_pack.set_equipped(false, false)
 	lei.load_state({"finita": false})
 	await _frames(5)
 	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible, "(di nuovo affacciata)")
@@ -301,6 +335,37 @@ func _run() -> void:
 
 
 ## Di quanti gradi lei è girata rispetto a [param punto] (in pianta, dal suo occhio).
+## Ti metti in [param piedi], prendi lo zaino pieno, miri a [param bersaglio] (un po' più in alto
+## con la distanza: il getto cade) e spari. Ritorna i secondi dal primo getto a quando lei comincia
+## ad andarsene (fase SCIVOLA), -1 se non se ne va in 3 s.
+func _spruzzala(piedi: Vector3, bersaglio: Vector3) -> float:
+	if not p.has_item(&"zaino_pompa"):
+		p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
+	p.water_pack.set_equipped(true, false)
+	p.water_pack.set_tank_amount(20.0)
+	p.teleport(piedi, 0.0, 0.0)
+	var d := p.camera.global_position.distance_to(bersaglio)
+	var mira := bersaglio + Vector3.UP * 0.0067 * d * d
+	p.look_at_point(mira)
+	await _frames(5)
+	p.look_at_point(mira)
+	Input.action_press(&"spray")
+	var t := 0.0
+	var getto := -1.0
+	var risultato := -1.0
+	for i in 180:
+		await get_tree().physics_frame
+		t += 1.0 / 60.0
+		p.look_at_point(mira)
+		if getto < 0.0 and bool(p.water_pack.get(&"is_spraying")):
+			getto = t
+		if lei.fase != LeiSbuca.Fase.GUARDA:
+			risultato = t - maxf(getto, 0.0)
+			break
+	Input.action_release(&"spray")
+	return risultato
+
+
 func _angolo_verso(punto: Vector3) -> float:
 	var testa: Vector3 = lei.medusa.call(&"get_eye_position")
 	var verso := punto - testa
