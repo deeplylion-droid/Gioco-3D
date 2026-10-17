@@ -11,7 +11,10 @@ extends Node3D
 ##   pavimento e onde sull'acqua della fossa (gocce con la goccia chiara: riflessi speculari).
 ## Lei (LeiSbuca) deve sparire solo quando è coperta: [member copre] è quando la colonna la nasconde
 ## del tutto. Il suono (lei_esplosione) lo fa partire LeiSbuca.
-## Uso: geyser.scoppia(pavimento, acque) con il punto sul pavimento al centro della fossa.
+## - Getti più piccoli e uguali dove i suoi tentacoli escono dalla colonna (stesi oltre il bordo):
+##   così anche loro sono coperti quando lei sparisce.
+## Uso: geyser.scoppia(pavimento, acque, punti) con il punto sul pavimento al centro della fossa e i
+## punti di lei da coprire (le punte dei tentacoli, in coordinate globali).
 
 const SHADER := preload("res://addons/grafica/geyser_acqua.gdshader")
 const GOCCIA := preload("res://addons/grafica/goccia_chiara.gdshader")
@@ -29,6 +32,8 @@ var _t := -1.0
 var _acque: Array = []
 var _muro: MeshInstance3D
 var _mat: ShaderMaterial
+# I getti piccoli sui tentacoli: [MeshInstance3D, ShaderMaterial, altezza].
+var _getti: Array = []
 var _gocce: GPUParticles3D
 var _goccioloni: GPUParticles3D
 var _pioggia: GPUParticles3D
@@ -47,10 +52,11 @@ func _ready() -> void:
 
 
 ## Fa partire il geyser dal punto [param pavimento] (sul pavimento, al centro della fossa).
-func scoppia(pavimento: Vector3, acque: Array = []) -> void:
+func scoppia(pavimento: Vector3, acque: Array = [], punti := PackedVector3Array()) -> void:
 	_acque = acque
 	_rng.seed = 41
 	global_position = pavimento
+	_crea_getti(pavimento, punti)
 	_t = 0.0
 	_crollata = false
 	_schizzata = false
@@ -98,6 +104,10 @@ func _aggiorna_muro() -> void:
 	var c := clampf((_t - crolla) / crollo_durata, 0.0, 1.0)
 	_mat.set_shader_parameter(&"crollo", c)
 	_muro.visible = c < 1.0
+	for g in _getti:
+		(g[1] as ShaderMaterial).set_shader_parameter(&"altezza", float(g[2]) * (1.0 - pow(1.0 - k, 3.0)))
+		(g[1] as ShaderMaterial).set_shader_parameter(&"crollo", c)
+		(g[0] as MeshInstance3D).visible = c < 1.0
 
 
 func _crea() -> void:
@@ -191,6 +201,43 @@ func _crea() -> void:
 	zm.emission_ring_height = 0.02
 	_one_shot(_schizzi, 0.15, chiara)
 	_schizzi.position = Vector3(0.0, 0.02, 0.0)
+
+
+## Un getto piccolo per ogni gruppo di punti fuori dalla colonna (punti a meno di 0,6 m fanno un
+## getto solo), sul pavimento sotto di loro.
+func _crea_getti(pavimento: Vector3, punti: PackedVector3Array) -> void:
+	for g in _getti:
+		(g[0] as Node).queue_free()
+	_getti.clear()
+	var centri: Array[Vector3] = []
+	for q in punti:
+		var piano := Vector3(q.x, pavimento.y, q.z)
+		if piano.distance_to(pavimento) < raggio * 0.85:
+			continue
+		var vicino := false
+		for c in centri:
+			if c.distance_to(piano) < 0.6:
+				vicino = true
+				break
+		if not vicino:
+			centri.append(piano)
+	for c in centri:
+		var mi := MeshInstance3D.new()
+		mi.name = "Getto"
+		mi.mesh = _muro.mesh
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.custom_aabb = AABB(Vector3(-2, -1, -2), Vector3(4, 4, 4))
+		var m := ShaderMaterial.new()
+		m.shader = SHADER
+		m.set_shader_parameter(&"raggio", 0.5)
+		m.set_shader_parameter(&"piede", 1.3)
+		m.set_shader_parameter(&"seme", float(_getti.size()) * 7.3)
+		var h := _rng.randf_range(1.6, 2.2)
+		m.set_shader_parameter(&"altezza", 0.0)
+		mi.material_override = m
+		add_child(mi)
+		mi.global_position = c
+		_getti.append([mi, m, h])
 
 
 func _goccia(opacita: float, rim: float) -> ShaderMaterial:

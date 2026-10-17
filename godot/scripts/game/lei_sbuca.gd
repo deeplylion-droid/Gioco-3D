@@ -318,7 +318,12 @@ func _scivola() -> void:
 			_geyser.name = "Geyser"
 			add_child(_geyser)
 		# Sul pavimento (l'origine della posa), al centro della fossa davanti al bordo.
-		_geyser.scoppia(punto_sbuca.global_transform * Vector3(0.0, 0.0, 1.7), acque)
+		# Getti più piccoli anche sui suoi tentacoli stesi oltre il bordo (i punti delle gocce).
+		var punti := PackedVector3Array()
+		if medusa and "punti_gocce" in medusa:
+			for q in medusa.get(&"punti_gocce"):
+				punti.append(medusa.global_transform * q)
+		_geyser.scoppia(punto_sbuca.global_transform * Vector3(0.0, 0.0, 1.5), acque, punti)
 		_suona(&"lei_esplosione")
 	else:
 		_suona(&"lei_scivola_sotto")

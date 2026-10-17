@@ -3,7 +3,7 @@
 // vede lo stesso lei scomparire." Quindi acqua piena, bianca di schiuma, mossa, coprente fino a
 // [code]coprente[/code] della sua altezza; sopra si sfalda in brandelli.
 // La mesh e' una griglia cilindrica (UV.x intorno, UV.y dal pavimento in su); la forma la fa il vertex
-// shader: al piede si allarga (l'acqua che trabocca dal bordo e copre i tentacoli sul pavimento),
+// shader: al piede si allarga (l'acqua che trabocca dal bordo),
 // poi si stringe salendo e in cima si apre a fungo. crollo 0..1: l'acqua ricade e si apre in buchi.
 shader_type spatial;
 render_mode blend_mix, depth_draw_always, cull_disabled, specular_schlick_ggx;
@@ -11,8 +11,8 @@ render_mode blend_mix, depth_draw_always, cull_disabled, specular_schlick_ggx;
 uniform float altezza = 4.0;
 uniform float raggio = 1.3;
 // Di quanto si allarga al piede (moltiplica il raggio) e fin dove (frazione dell'altezza).
-uniform float piede = 2.4;
-uniform float piede_alto = 0.2;
+uniform float piede = 1.4;
+uniform float piede_alto = 0.14;
 // Fin dove e' piena (frazione dell'altezza): sopra si sfalda.
 uniform float coprente = 0.8;
 uniform float crollo = 0.0;
@@ -38,7 +38,7 @@ void vertex() {
 	// Il bordo dell'acqua ribolle (il rumore usa l'angolo in modo periodico: la griglia si chiude).
 	vec2 giro = vec2(cos(a), sin(a)) * 1.6;
 	float n = noise(giro + vec2(seme, v * 3.0 - TIME * 2.5)) - 0.5;
-	float allarga = mix(piede, 1.0, smoothstep(piede_alto * 0.6, piede_alto, v));
+	float allarga = mix(piede, 1.0, smoothstep(0.0, piede_alto, v));
 	float r = raggio * allarga * (1.0 - 0.4 * v + 0.9 * smoothstep(0.75, 1.0, v)) * (1.0 + 0.25 * n);
 	float y = altezza * v;
 	// Ricade: la cima scende piu' in fretta della base e l'acqua si apre verso fuori.
