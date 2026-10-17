@@ -50,7 +50,7 @@ func _avvia() -> void:
 		wm.set(&"quality", 1)
 	var level := (load(LEVEL) as PackedScene).instantiate()
 	# Come tests/scatti_tappa8.gd con SCATTI_TOGLI=Interni,Tecnici: con tutto la memoria non basta.
-	for percorso in ["Interni", "Tecnici"]:
+	for percorso in ["Interni", "Tecnici", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata"]:
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
 			n.get_parent().remove_child(n)

@@ -40,7 +40,7 @@ func _run() -> void:
 	if OS.get_cmdline_user_args().has("senza_preparazione"):
 		Engine.set_meta(&"prepara_effetti_spento", true)
 	level = (load(LEVEL) as PackedScene).instantiate()
-	for percorso in ["Interni", "Tecnici"]:
+	for percorso in ["Interni", "Tecnici", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata"]:
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
 			n.get_parent().remove_child(n)
