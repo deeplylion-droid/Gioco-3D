@@ -191,6 +191,181 @@ def pila_palloni():
     return obs
 
 
+# Prova della v0.3.4: "L'angolo dei palloni io lo volevo senza grata a reggere i palloni, e deve essere più grande la
+# base, tipo una piramide." Un mucchio a piramide appoggiato nell'angolo, senza rete: la base si allarga lungo il muro
+# sud (asse +y, fino a 7,5 m) e meno lungo il muro est (asse +x, 4,4 m: lì dopo c'è la panca), alto circa 6 m. I
+# palloni (gonfi, mezzi sgonfi e sgonfi) si posano con la fisica su un nucleo nascosto a cono (i palloni di dentro,
+# che non si vedono), poi si fissano. Collisione: un quarto di cono convesso.
+PIR_X, PIR_Y, PIR_H = 4.4, 7.5, 6.5
+# cose della sala lì vicino (coordinate della pila): la panca, un pallone e una paperella a terra
+PIR_OSTACOLI = [((4.85, 0.0, 0.0), (6.9, 0.6, 0.45)), ((4.9, 5.8, 0.0), (5.6, 6.5, 0.55)), ((5.4, 9.4, 0.0), (5.9, 9.8, 0.25))]
+
+
+def posa_centro(nome, file, centro, k, rz, obs, rot=(0, 0, 0)):
+    """Come posa, ma con l'origine (e la rotazione) nel centro del modello, non alla base: un pallone girato a caso
+    resta dov'è invece di ruotare intorno al punto in basso (e finire nel pavimento o nel muro)."""
+    d = HQ.dimensioni(file)
+    o = HQ.metti(nome, file, tuple(centro), (d.x * k, d.y * k, d.z * k), rot_z=rz, perno=(0, 0, d.z * k / 2), rot=rot)
+    obs.append(o)
+    return o
+
+
+def _fuori(o, tolleranza=0.02):
+    """Il modello entra nel pavimento o in uno dei due muri (x = 0, y = 0) più della tolleranza."""
+    import numpy as np
+    me = o.data
+    v = np.zeros(len(me.vertices) * 3); me.vertices.foreach_get('co', v); v = v.reshape(-1, 3)
+    M = np.array(o.matrix_world); w = v @ M[:3, :3].T + M[:3, 3]
+    return w.min(axis=0).min() < -tolleranza
+
+
+def _quarto_di_cono(nome, ax, ay, h, seg=24):
+    import bmesh
+    bm = bmesh.new()
+    vs = [bm.verts.new((0, 0, 0)), bm.verts.new((0, 0, h))]
+    for k in range(seg + 1):
+        t = k / seg * math.pi / 2
+        vs.append(bm.verts.new((ax * math.cos(t), ay * math.sin(t), 0)))
+    bmesh.ops.convex_hull(bm, input=vs)
+    return C._ob_da_bm(nome, bm, None)
+
+
+def pila_piramide():
+    reset()
+    rnd = random.Random(5)
+    obs = []
+    scene = bpy.context.scene
+    bpy.ops.rigidbody.world_add()
+    scene.rigidbody_world.substeps_per_frame = 10
+    scene.rigidbody_world.solver_iterations = 20
+    ax, ay, hc = PIR_X - 0.75, PIR_Y - 0.75, PIR_H - 0.7   # il nucleo: i palloni di dentro
+    nucleo = _quarto_di_cono('pir_nucleo', ax, ay, hc)
+    cont = [nucleo,
+            C.box('pir_pav', (6, 6, -0.25), (24, 24, 0.5), None, uv=None),
+            C.box('pir_mx', (-0.25, 6, 6), (0.5, 24, 14), None, uv=None),
+            C.box('pir_my', (6, -0.25, 6), (24, 0.5, 14), None, uv=None)]
+    for k, (lo, hi) in enumerate(PIR_OSTACOLI):
+        lo, hi = Vector(lo), Vector(hi)
+        cont.append(C.box(f'pir_ost{k}', (lo + hi) / 2, hi - lo, None, uv=None))
+    for o in cont:
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.context.view_layer.objects.active = o; o.select_set(True)
+        bpy.ops.rigidbody.object_add(type='PASSIVE')
+        o.rigid_body.collision_shape = 'MESH' if o is nucleo else 'BOX'
+        o.rigid_body.friction = 0.6 if o is nucleo else 0.2   # sui muri i palloni scivolano: niente colonne contro i muri
+        o.hide_render = True
+
+    tipi = ['pallone_gonfio_a'] * 6 + ['pallone_gonfio_b'] * 6 + ['pallone_mezzo'] * 3 + ['pallone_sgonfio'] * 4
+
+    def quota(x, y):
+        return hc * max(0.0, 1.0 - math.sqrt((x / ax) ** 2 + (y / ay) ** 2))
+
+    # i palloni di dentro: un reticolo fitto (fermi) che riempie il nucleo; quelli di fuori ci si posano sopra
+    nucleo.scale = (0.8, 0.8, 0.8)   # resta un sostegno più piccolo, tutto coperto dal reticolo
+    passo = 0.78
+    dentro = []
+    zi = 0.4
+    riga = 0
+    while zi < hc:
+        off = (passo / 2) * (riga % 2)
+        xi = 0.4 + off
+        while xi < ax:
+            yi = 0.4 + off
+            while yi < ay:
+                if quota(xi, yi) > zi + 0.15:
+                    f = rnd.choice(tipi[:12] + ['pallone_mezzo'])
+                    d = HQ.dimensioni(f)
+                    k = rnd.uniform(0.74, 0.86) / max(d.x, d.y, d.z)
+                    o = posa_centro(f'pallone_dentro_{len(dentro)}', f, (xi + rnd.uniform(-0.04, 0.04), yi + rnd.uniform(-0.04, 0.04), zi), k,
+                                    rnd.uniform(0, math.tau), obs, rot=(rnd.uniform(0, math.tau), rnd.uniform(0, math.tau), 0))
+                    if _fuori(o):
+                        obs.remove(o); bpy.data.objects.remove(o)
+                        yi += passo
+                        continue
+                    bpy.ops.object.select_all(action='DESELECT')
+                    bpy.context.view_layer.objects.active = o; o.select_set(True)
+                    bpy.ops.rigidbody.object_add(type='PASSIVE')
+                    o.rigid_body.collision_shape = 'CONVEX_HULL'   # la sfera di Blender sta sull'origine, cioè alla base
+                    o.rigid_body.friction = 0.6
+                    dentro.append(o)
+                yi += passo
+            xi += passo
+        zi += passo * 0.82
+        riga += 1
+    print('palloni di dentro:', len(dentro), flush=True)
+
+    palle = []
+    for onda in range(3):   # a ondate, da più in alto ogni volta: niente palloni che nascono uno dentro l'altro
+        for _ in range(40):
+            while True:
+                u, v = rnd.random(), rnd.random()
+                if u * u + v * v <= 1.1:
+                    break
+            f = rnd.choice(tipi)
+            tondo = f != 'pallone_sgonfio'
+            diam = rnd.uniform(0.6, 1.05) if f.startswith('pallone_gonfio') else rnd.uniform(0.75, 1.0)
+            x, y = diam / 2 + 0.05 + u * (ax + 0.6), diam / 2 + 0.05 + v * (ay + 0.6)
+            d = HQ.dimensioni(f)
+            k = diam / max(d.x, d.y, d.z)
+            z = quota(x, y) + 0.6 + diam / 2 + onda * 1.2 + rnd.uniform(0, 0.8)
+            o = posa_centro(f'pallone_{len(palle)}', f, (x, y, z), k, rnd.uniform(0, math.tau), obs,
+                     rot=(rnd.uniform(0, math.tau), rnd.uniform(0, math.tau), 0) if tondo else (rnd.uniform(-0.6, 0.6), rnd.uniform(-0.6, 0.6), 0))
+            bpy.ops.object.select_all(action='DESELECT')
+            bpy.context.view_layer.objects.active = o; o.select_set(True)
+            bpy.ops.rigidbody.object_add(type='ACTIVE')
+            o.rigid_body.collision_shape = 'CONVEX_HULL'   # la sfera di Blender sta sull'origine del modello, cioè alla base
+            o.rigid_body.mass = 0.3 if tondo else 0.2
+            o.rigid_body.friction = 0.7
+            o.rigid_body.restitution = 0.1
+            o.rigid_body.linear_damping = 0.3; o.rigid_body.angular_damping = 0.5   # rotolano giù e si fermano nelle conche
+            palle.append(o)
+    fine = 420
+    scene.frame_start, scene.frame_end = 1, fine
+    scene.rigidbody_world.point_cache.frame_end = fine
+    for f in range(1, fine + 1):
+        scene.frame_set(f)
+    # la posa della simulazione si applica alla trasformazione (togliendo il corpo rigido Blender rimetterebbe
+    # ogni pallone dov'era nato)
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in palle:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = palle[0]
+    bpy.ops.object.visual_transform_apply()
+    bpy.ops.rigidbody.objects_remove()
+    finali = []
+    for o in palle:
+        t = o.matrix_world.translation
+        lontano = (t.x / (PIR_X + 1.6)) ** 2 + (t.y / (PIR_Y + 2.0)) ** 2 > 1.0
+        sulla_panca = t.x > PIR_X + 0.2 and t.y < 1.2
+        troppo_alto = t.z > PIR_H + 0.6   # quelli rimasti in bilico sopra la cima (sopra non hanno niente)
+        if t.z < -0.3 or lontano or sulla_panca or troppo_alto or _fuori(o):
+            obs.remove(o); bpy.data.objects.remove(o)
+            continue
+        finali.append(o)
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in dentro:
+        o.select_set(True)
+    if dentro:
+        bpy.context.view_layer.objects.active = dentro[0]
+        bpy.ops.rigidbody.objects_remove()   # fermi: la posa è quella di partenza
+    for o in cont:
+        bpy.data.objects.remove(o)
+    bpy.ops.rigidbody.world_remove()
+    alto = max((o.matrix_world.translation.z for o in finali + dentro), default=PIR_H)
+    print('palloni nella pila:', len(finali), 'quota del più alto:', round(alto, 2), flush=True)
+    col = _quarto_di_cono('angolo_palloni-convcolonly', PIR_X - 0.2, PIR_Y - 0.2, alto + 0.5)
+    C._segna_collisione(col)
+    # i palloni rotolati fuori dal cono: una scatola ciascuno (niente da attraversare)
+    for o in finali:
+        t = o.matrix_world.translation
+        if (t.x / (PIR_X - 0.2)) ** 2 + (t.y / (PIR_Y - 0.2)) ** 2 > 0.9:
+            vs = [o.matrix_world @ Vector(c) for c in o.bound_box]
+            lo = Vector([min(v[i] for v in vs) for i in range(3)]); hi = Vector([max(v[i] for v in vs) for i in range(3)])
+            lo.z = max(lo.z, 0.0)
+            C.collisione_box(o.name + '_col', lo, hi)
+    return obs
+
+
 def esporta(nome, obs):
     os.makedirs(USCITA, exist_ok=True)
     for im in bpy.data.images:
@@ -211,4 +386,4 @@ def esporta(nome, obs):
 if __name__ == '__main__':
     scelte = [a for a in C.argomenti() if a in ('palloni', 'scatoloni')] or ['palloni', 'scatoloni']
     for s in scelte:
-        esporta(s, pila_palloni() if s == 'palloni' else catasta_scatoloni())
+        esporta(s, (pila_piramide() if GIOCO else pila_palloni()) if s == 'palloni' else catasta_scatoloni())

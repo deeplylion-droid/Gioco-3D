@@ -3,8 +3,10 @@ extends Node3D
 ## L'apparizione dei bambini sulla strada di risalita (tappa 7 B, scelta dell'utente del 17 ottobre: la 1).
 ## Col blackout, quando il giocatore sale la rampa F2 verso il pianerottolo davanti alla grata, un agnellino
 ## compare in cima alla scala del corridoio C2 (non si vede ancora: è dietro l'angolo). Fermo a guardarti;
-## quando lo guardi inclina la testa; se ti avvicini scappa lungo il corridoio e sparisce dietro l'angolo
-## di C3. Succede una volta sola (anche ripartendo da un checkpoint).
+## quando lo guardi inclina la testa; se ti avvicini scappa lungo il corridoio, molto più veloce di te anche se
+## corri (prova della v0.3.4: "deve correre più veloce perché altrimenti puoi raggiungerlo e vederlo sparire"),
+## e sparisce solo quando non lo vedi più, dietro l'angolo di C3. Succede una volta sola (anche ripartendo da un
+## checkpoint).
 ## Le posizioni sono nelle coordinate del genitore (la scena dei tecnici).
 
 const AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
@@ -21,6 +23,8 @@ const AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
 ## Dove scappa: giù per C2 e dietro l'angolo di C3.
 @export var punti_fuga := PackedVector3Array([Vector3(44.55, 9.05, 7.0), Vector3(44.55, 9.05, 14.9), Vector3(41.84, 9.05, 15.0)])
 @export var distanza_fuga := 3.6
+## Quanto corre (il giocatore corre a 5,8 m/s).
+@export var velocita_corsa := 9.0
 
 var bambino: Bambino
 var _fatto := false
@@ -54,6 +58,8 @@ func compari() -> void:
 	bambino.tempo_per_vederlo = 0.5
 	bambino.distanza_fuga = distanza_fuga
 	bambino.scappa_con_la_torcia = false
+	bambino.velocita_corsa = velocita_corsa
+	bambino.sparisce_fuori_vista = true
 	var da := genitore.to_global(posizione)
 	var dir := (da - genitore.to_global(guarda_verso)) * Vector3(1, 0, 1)
 	bambino.transform = Transform3D(Basis.looking_at(dir, Vector3.UP), da)   # la faccia (+Z) verso il giocatore

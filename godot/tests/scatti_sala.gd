@@ -23,6 +23,7 @@ extends Node
 ## SCATTI_PULSANTE=attivo|premuto: il pulsante della botola acceso (lampeggiante giallo) o già colpito
 ## (verde), solo ai livelli con la piscina vuota (SCATTI_PISCINA=...,0).
 ## SCATTI_PORTONE=auto: il portone chiuso per j_portone_lontano e aperto per k_portone_vicino.
+## SCATTI_TORCIA=1: nelle camere libere la torcia del giocatore accesa, in mano alla camera.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -66,6 +67,9 @@ const LIBERE := {
 	"sala_dall_alto": [Vector3(18.6, 9.6, 18.6), Vector3(-5.0, 0.5, -5.5)],       # la sala d'insieme, dall'alto
 	"bimbi_arrivo": [Vector3(-8.3, 1.7, -4.0), Vector3(-16.0, 2.0, -13.2)],       # l'area bimbi da dove si arriva
 	# l'area bimbi HD (17 ottobre): come i confronti di docs/proposte/bimbi_hq (camere rifatte dalle immagini)
+	# da vicino (1,5-2 m), per vedere il rilievo di normal e ORM con la torcia (SCATTI_TORCIA=1)
+	"vicino_pavimento": [Vector3(-14.0, 1.6, 5.0), Vector3(-13.3, 0.0, 6.4)],      # piastrelle bagnate a terra
+	"vicino_muro": [Vector3(-17.6, 1.6, 2.0), Vector3(-19.4, 1.1, 2.4)],          # il muro ovest piastrellato
 	"bimbi_scivolo": [Vector3(-6.8, 1.7, -15.0), Vector3(-13.8, 2.4, -19.4)],     # lo scivolo nella vasca piccola
 	"bimbi_scala": [Vector3(-13.0, 1.6, -10.5), Vector3(-16.6, 2.2, -17.5)],      # la scala verso chi arriva
 	"bimbi_secchio": [Vector3(-11.6, 1.2, -14.0), Vector3(-15.2, 5.5, -19.5)],    # il secchio sul telaio, dal basso
@@ -304,6 +308,9 @@ func _scatti_liberi() -> void:
 		cam.global_position = c[0]
 		cam.look_at(c[1], Vector3.UP)
 		cam.make_current()
+		if OS.get_environment("SCATTI_TORCIA") == "1":
+			# la torcia del giocatore, in mano alla camera dello scatto
+			cam.add_child(load("res://addons/grafica/torcia.tscn").instantiate())
 		p.teleport(Vector3(0.0, 0.0, 19.0), 0.0, 0.0)   # il giocatore resta nella scena, lontano
 		await _frames(settle)
 		await RenderingServer.frame_post_draw
