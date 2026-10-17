@@ -10,11 +10,11 @@ extends Node
 ## 3. La spruzzi col getto dello zaino: parte subito il geyser, lei sparisce lì dentro solo quando è
 ##    coperta (finché si vede, mani e tentacoli non entrano nel bordo né nel pavimento) e la sua luce
 ##    si allontana lungo il condotto.
-## 4. Appena lei se ne va, il portone della sala della torre sulla parete est si apre da solo
+## 4. La spruzzi da altre distanze e da altri lati, sulla testa, su una mano, su un tentacolo: se ne
+##    va subito ogni volta.
+## 5. Appena lei se ne va, il portone della sala della torre sulla parete est si apre da solo
 ##    (scelta dell'utente del 16 ottobre): tra l'area bimbi e la piscina, poi lungo il lato nord della
 ##    spiaggia fino al portone, con i checkpoint; lì finisce la demo.
-## 5. La spruzzi da altre distanze e da altri lati, sulla testa, su una mano, su un tentacolo: se ne
-##    va subito ogni volta.
 ## 6. Se le arrivi di lato ti prende girandosi verso di te: la camera della morte la trova di fronte.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
 ## è spenta: il test la accende sulla fossa provvisoria e spegne la fine della demo sulla scia.
@@ -262,32 +262,7 @@ func _run() -> void:
 	check(fuga_vista and luce_lontana > 1.5, "scivola sotto e la sua luce si allontana sott'acqua (%.1f m)" % luce_lontana)
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
 
-	print("4. Il portone della sala della torre si apre da solo; la strada fino a lì")
-	portone = level.get(&"portone") as PortoneTorre
-	await _frames(5)
-	check(portone.in_movimento or portone.is_aperto(), "appena lei se ne va il portone comincia ad aprirsi")
-	var ok := true
-	for t in [Vector3(-14.0, 0, -4.0), Vector3(-8.3, 0, -4.5), Vector3(-8.3, 0, -8.0), Vector3(-8.3, 0, -12.75),
-			Vector3(0.0, 0, -12.75), Vector3(2.0, 0, -12.75)]:
-		ok = ok and await _cammina_verso(t, 900)
-	await _frames(5)
-	check(ok, "tra l'area bimbi e la piscina, poi lungo il lato nord della spiaggia")
-	check(_checkpoint().ends_with("CheckpointSpiaggiaBuio"), "checkpoint: la spiaggia (%s)" % _checkpoint())
-	check(portone.is_aperto(), "intanto il portone si è aperto")
-	var anta := portone.anta.global_position
-	check(absf(anta.z - (PORTONE.z + portone.corsa)) < 0.05 and absf(anta.x - PORTONE.x) < 0.05,
-		"l'anta è scorsa di %.1f m verso sud (%s)" % [portone.corsa, str(anta)])
-	ok = true
-	for t in [Vector3(8.0, 0, -12.75), Vector3(15.0, 0, -14.0), Vector3(16.5, 0, -15.0)]:
-		ok = ok and await _cammina_verso(t, 900)
-	await _frames(10)
-	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino davanti al portone: checkpoint (%s)" % _checkpoint())
-	if fossa_vera:
-		check(bool(level.get(&"demo_finished")), "davanti al portone aperto finisce la demo")
-	else:
-		print("  (la fine della demo passa al portone quando c'è la fossa)")
-
-	print("5. La spruzzi da altre distanze e da altri lati: se ne va subito ogni volta")
+	print("4. La spruzzi da altre distanze e da altri lati: se ne va subito ogni volta")
 	var avanti5 := lei.punto_sbuca.global_basis.z.normalized()
 	var lato5 := lei.punto_sbuca.global_basis.x.normalized()
 	var testa5: Vector3 = lei.punto_sbuca.global_transform * Vector3(0.0, 1.63, 1.8)
@@ -312,6 +287,31 @@ func _run() -> void:
 			if lei.fase == LeiSbuca.Fase.FINITA:
 				break
 			await get_tree().physics_frame
+
+	print("5. Il portone della sala della torre si apre da solo; la strada fino a lì")
+	portone = level.get(&"portone") as PortoneTorre
+	await _frames(5)
+	check(portone.in_movimento or portone.is_aperto(), "appena lei se ne va il portone comincia ad aprirsi")
+	var ok := true
+	for t in [Vector3(-14.0, 0, -4.0), Vector3(-8.3, 0, -4.5), Vector3(-8.3, 0, -8.0), Vector3(-8.3, 0, -12.75),
+			Vector3(0.0, 0, -12.75), Vector3(2.0, 0, -12.75)]:
+		ok = ok and await _cammina_verso(t, 900)
+	await _frames(5)
+	check(ok, "tra l'area bimbi e la piscina, poi lungo il lato nord della spiaggia")
+	check(_checkpoint().ends_with("CheckpointSpiaggiaBuio"), "checkpoint: la spiaggia (%s)" % _checkpoint())
+	check(portone.is_aperto(), "intanto il portone si è aperto")
+	var anta := portone.anta.global_position
+	check(absf(anta.z - (PORTONE.z + portone.corsa)) < 0.05 and absf(anta.x - PORTONE.x) < 0.05,
+		"l'anta è scorsa di %.1f m verso sud (%s)" % [portone.corsa, str(anta)])
+	ok = true
+	for t in [Vector3(8.0, 0, -12.75), Vector3(15.0, 0, -14.0), Vector3(16.5, 0, -15.0)]:
+		ok = ok and await _cammina_verso(t, 900)
+	await _frames(10)
+	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino davanti al portone: checkpoint (%s)" % _checkpoint())
+	if fossa_vera:
+		check(bool(level.get(&"demo_finished")), "davanti al portone aperto finisce la demo")
+	else:
+		print("  (la fine della demo passa al portone quando c'è la fossa)")
 
 	print("6. Le arrivi di lato: ti prende girandosi verso di te")
 	p.water_pack.set_equipped(false, false)
