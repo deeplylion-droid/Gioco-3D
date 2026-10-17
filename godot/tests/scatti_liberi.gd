@@ -85,6 +85,9 @@ func _run() -> void:
 		var luce := p.find_child("*orcia*", true, false)
 		if luce and luce is Node3D:
 			(luce as Node3D).visible = torcia
+		if blackout:
+			# chi prepara le luci in differita (LuciSala, i tecnici) può arrivare dopo il primo avviso: lo si ripete
+			GameState.luci_cambiate.emit(GameState.luci)
 		for i in settle:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw

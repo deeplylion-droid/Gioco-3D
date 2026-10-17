@@ -65,6 +65,11 @@ const LIBERE := {
 	"sala_da_terra": [Vector3(18.4, 1.7, -0.5), Vector3(0.0, 2.2, 1.5)],          # la sala senza soppalco, da terra
 	"sala_dall_alto": [Vector3(18.6, 9.6, 18.6), Vector3(-5.0, 0.5, -5.5)],       # la sala d'insieme, dall'alto
 	"bimbi_arrivo": [Vector3(-8.3, 1.7, -4.0), Vector3(-16.0, 2.0, -13.2)],       # l'area bimbi da dove si arriva
+	# l'area bimbi HD (17 ottobre): come i confronti di docs/proposte/bimbi_hq (camere rifatte dalle immagini)
+	"bimbi_scivolo": [Vector3(-6.8, 1.7, -15.0), Vector3(-13.8, 2.4, -19.4)],     # lo scivolo nella vasca piccola
+	"bimbi_scala": [Vector3(-13.0, 1.6, -10.5), Vector3(-16.6, 2.2, -17.5)],      # la scala verso chi arriva
+	"bimbi_secchio": [Vector3(-11.6, 1.2, -14.0), Vector3(-15.2, 5.5, -19.5)],    # il secchio sul telaio, dal basso
+	"bimbi_fungo": [Vector3(-18.6, 1.6, -6.0), Vector3(-16.0, 1.5, -14.0)],       # il fungo-fontana vicino al muro
 	"pulsante_vicino": [Vector3(-0.8, -0.27, -1.2), Vector3(1.3, -1.6, 3.6)],     # il pulsante A dal fondo della piscina
 	"pulsante_spiaggia": [Vector3(0.6, 1.7, -14.2), Vector3(1.2, -1.6, 3.5)],     # il pulsante A dalla spiaggia
 	"portone_est": [Vector3(8.6, 1.7, -14.2), Vector3(20.0, 3.4, -15.0)],         # il portone della sala della torre

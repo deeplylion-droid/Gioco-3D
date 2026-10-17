@@ -1,0 +1,11 @@
+{
+ "immagine": "01a14487-12ee-72df-a17a-afaecec50ecb",
+ "tipo_immagine": "text-to-image",
+ "modello_immagine": "nano-banana-pro",
+ "prompt": "A giant tipping water bucket for a kids water playground, standing perfectly upright and symmetric: a big round slightly tapered bucket about 1.6 m tall and 2.3 m wide at the top, faded red rotomolded plastic with molded horizontal reinforcing ribs, a thick rounded yellow rolled rim, two identical heavy steel pivot hubs with bolted bearing plates on opposite sides at mid height, empty inside with a dark limescale ring inside the rim, dried water streaks and scuffs outside. Only the bucket itself: the pivot hubs end in short stub axles, no stand, no legs, no frame, nothing under the bucket. Front view from slightly above, the two pivot hubs on the left and right sides. The entire object is inside the frame with a wide empty margin of background on every side, nothing cropped. Photorealistic studio product photo of real 1990s commercial water park play equipment, very detailed and believable: fiberglass and rotomolded plastic with a slightly chalky, sun-faded and chlorine-bleached surface, powder-coated round steel posts, visible hex bolts, clamps, brackets, welded joints and rubber end caps; real wear: scuffs, fine scratches, chipped paint at the edges, limescale and dried water stains, grime in the corners and joints, a little rust bleeding from the bolts. Worn but intact and still cheerful: saturated 1990s toy colors with some faded pastel tones. Single isolated object, the whole object fully visible and centered, soft even studio lighting, plain light grey background, no people, no text, no letters, no numbers, no logos, no water.",
+ "riferimenti": [],
+ "task": "01a1448e-ee06-7139-99d9-9c165d8d60e2",
+ "status": "SUCCEEDED",
+ "poligoni": 30000,
+ "crediti": 35
+}
