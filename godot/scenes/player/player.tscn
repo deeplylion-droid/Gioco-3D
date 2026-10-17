@@ -9,10 +9,11 @@
 [ext_resource type="Material" path="res://assets/materials/graybox_dark.tres" id="7_dark"]
 [ext_resource type="Material" path="res://assets/materials/graybox_target.tres" id="8_acc"]
 [ext_resource type="Shader" path="res://shaders/water_suction_particles.gdshader" id="9_suck"]
-[ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_opzione2.tscn" id="10_lance"]
+[ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_c1.tscn" id="10_lance"]
 [ext_resource type="PackedScene" path="res://addons/grafica/torcia.tscn" id="11_torch"]
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetto_sottacqua.tscn" id="12_under"]
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetti_zaino.tscn" id="13_fx"]
+[ext_resource type="Script" path="res://addons/grafica/getto_potente.gd" id="14_getto"]
 
 [sub_resource type="CylinderShape3D" id="body_shape"]
 resource_local_to_scene = true
@@ -179,6 +180,9 @@ fixed_fps = 60
 visibility_aabb = AABB(-6, -6, -6, 12, 12, 12)
 process_material = SubResource("suction_process")
 draw_pass_1 = SubResource("splash_mesh")
+
+[node name="GettoPotente" type="Node3D" parent="WaterPack"]
+script = ExtResource("14_getto")
 
 [node name="EffettiZaino" parent="." instance=ExtResource("13_fx")]
 

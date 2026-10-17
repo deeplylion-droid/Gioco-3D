@@ -3,7 +3,9 @@ extends Node
 ## - serranda_sala, serranda_magazzino: la serranda del magazzino dalla sala (prima del risveglio) e
 ##   dal magazzino (al buio); serranda_si_alza, serranda_aperta: ci arrivi dal magazzino e si alza;
 ## - scia_vasca, scia_serranda, scia_bimbi: la scia di bava dalla vasca centrale, vista uscendo dalla
-##   serranda e dove gira lungo il muro ovest verso l'area bimbi (al buio);
+##   serranda e dove gira lungo il muro ovest verso l'area bimbi (al buio); scia_centro, scia_muro_ovest,
+##   scia_fossa: il resto del percorso fino alla fossa. Con SCATTI_BAVA_VECCHIA=1 la bava è com'era
+##   fino alla v0.3.2 (non appoggiata al pavimento), per il confronto prima/dopo;
 ## - t8_arrivo: arrivi all'area bimbi seguendo la scia, un minuto dopo il risveglio;
 ## - t8_presa_lato: ti avvicini di lato e lei ti prende (la camera della sequenza di morte);
 ## - t8_scivola: lei scivola sotto (tre scatti di fila);
@@ -95,12 +97,26 @@ func _run() -> void:
 		await _scatto("serranda_magazzino", Vector3(-15.0, 0.0, 25.2), Vector3(-15.0, 1.1, 20.3))
 	if only.has("serranda_si_alza"):
 		await _serranda_si_alza()
+	if OS.get_environment("SCATTI_BAVA_VECCHIA") == "1":
+		# Com'era fino alla v0.3.2: il nastro seguiva solo i punti del percorso, senza appoggiarsi.
+		for b in level.find_children("*", "BavaRosa", true, false):
+			(b as BavaRosa).appoggia = false
+			(b as BavaRosa).sollevamento = 0.008
+			(b as BavaRosa).costruisci()
+		await _frames(2)
 	if only.has("scia_vasca"):
 		await _scatto("scia_vasca", Vector3(-5.2, 0.0, 16.4), Vector3(-1.2, 0.2, 12.4))
 	if only.has("scia_serranda"):
 		await _scatto("scia_serranda", Vector3(-15.0, 0.0, 19.0), Vector3(-9.0, 0.2, 12.4))
 	if only.has("scia_bimbi"):
 		await _scatto("scia_bimbi", Vector3(-12.5, 0.0, 13.6), Vector3(-18.0, 0.0, 6.0))
+	# Prova della v0.3.2 (punto 6): il resto del percorso, lungo il muro ovest fino alla fossa.
+	if only.has("scia_centro"):
+		await _scatto("scia_centro", Vector3(-7.0, 0.0, 15.0), Vector3(-10.0, 0.0, 12.5))
+	if only.has("scia_muro_ovest"):
+		await _scatto("scia_muro_ovest", Vector3(-16.6, 0.0, 9.5), Vector3(-18.3, 0.0, 1.5))
+	if only.has("scia_fossa"):
+		await _scatto("scia_fossa", Vector3(-17.2, 0.0, 0.5), Vector3(-15.0, 0.0, -6.0))
 	var lei := level.get_node_or_null(^"Gioco/LeiSbuca") as LeiSbuca
 	if lei and only.has("t8_arrivo"):
 		# Un minuto dopo il risveglio: l'acqua delle vasche basse è salita piano (velocita_lenta).
@@ -113,7 +129,8 @@ func _run() -> void:
 	if lei and only.has("t8_presa_lato"):
 		await _presa_lato(lei)
 	print("scatti salvati in ", ProjectSettings.globalize_path(out_dir))
-	get_tree().quit()
+	# Liberare il livello sul renderer software può restare appeso: gli scatti sono salvati.
+	OS.kill(OS.get_process_id())
 
 
 func _scatto(nome: String, piedi: Vector3, guarda: Vector3, attesa := 50) -> void:
@@ -163,6 +180,9 @@ func _portellone_getto(vecchio := false) -> void:
 	vasca.fill = 0.0
 	for m in level.find_children("Medusine", "", true, false):
 		m.call(&"ricomincia")
+	# Subito sul fondo della piscina vuota: senza gli interni (SCATTI_TOGLI) il giocatore nasce nel
+	# vuoto e, nei secondi d'attesa, cadrebbe sotto il livello (si muore e la scena si ricarica).
+	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	Engine.time_scale = 4.0
 	await _frames(int(60 * 3.0 / 4.0) + 20)
 	Engine.time_scale = 1.0

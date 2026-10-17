@@ -48,6 +48,9 @@ func _run() -> void:
 	if _want("interni_corridoio"):
 		# Dal punto del risveglio, verso ovest: cartellone a sinistra, luci rosse, acqua a terra.
 		await _shot("interni_corridoio", Vector3(21.2, 0.0, -1.35), Vector3(9.0, 1.25, -1.05))
+	if _want("interni_soffitto"):
+		# Il soffitto del corridoio verso ovest: il pannello che pendeva (prova della v0.3.2, punto 2).
+		await _shot("interni_soffitto", Vector3(17.0, 0.0, -1.3), Vector3(12.8, 2.5, -1.3))
 	if _want("interni_spogliatoi"):
 		await _shot("interni_spogliatoi", Vector3(6.8, 0.0, -3.25), Vector3(6.3, 1.15, -12.0))
 	if _want("interni_lavapiedi"):

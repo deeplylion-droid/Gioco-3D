@@ -124,7 +124,7 @@ func _scia() -> void:
 	if scia_bava:
 		_bava(radice, "BavaScia", scia, 0.34, 3)
 		_bava(radice, "BavaBordoVasca", bordo_vasca, 0.3, 9)
-		_bava(radice, "BavaMuroVasca", muro_vasca, 0.32, 11)
+		_bava(radice, "BavaMuroVasca", muro_vasca, 0.32, 11, false)
 		_bava(radice, "BavaBordoFossa", bordo_fossa, 0.2, 5)
 		_bava(radice, "BavaIntornoFossa", intorno_fossa, 0.42, 7)
 		_gocciolatoi(radice)
@@ -161,15 +161,17 @@ func _scia() -> void:
 	_gocciolatoi(radice)
 
 
-func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int) -> void:
+func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int, appoggia := true) -> BavaRosa:
 	if percorso.size() < 2:
-		return
+		return null
 	var b := BavaRosa.new()
 	b.name = nome
 	b.punti = percorso
 	b.larghezza = larga
 	b.seme = seme
+	b.appoggia = appoggia   # il tratto giù per il muro della vasca è in verticale
 	radice.add_child(b)
+	return b
 
 
 func _gocciolatoi(radice: Node3D) -> void:

@@ -25,6 +25,8 @@ signal tank_changed(amount: float, capacity: float)
 signal tank_empty
 ## Si sta aspirando con il serbatoio pieno.
 signal tank_full
+## Si è premuto per spruzzare e la pressione sta salendo ([member spray_delay] prima del getto).
+signal spray_charge_started
 
 @export_group("Nodi")
 ## Il modello della lancia (figlio della camera): viene orientato verso il punto di convergenza.
@@ -72,6 +74,8 @@ signal tank_full
 @export_range(4, 48) var jet_segments := 18
 ## Secondi per arrivare al getto pieno dopo aver premuto.
 @export var spin_up_time := 0.12
+## Attimo di carica prima del getto (s): la pressione sale, poi parte il colpo (0 = subito).
+@export var spray_delay := 0.0
 ## Distanza a cui il getto incrocia il mirino (m).
 @export var converge_distance := 6.0
 ## Impulso dato ai corpi rigidi per ogni litro (N·s).
@@ -115,6 +119,7 @@ enum TankIndicator { HUD_BAR, LANCE, NONE }
 
 ## Litri nel serbatoio.
 var tank_amount := 0.0
+var _charge_t := 0.0
 var is_spraying := false
 var is_sucking := false
 ## Rampa del getto: 0..1.
@@ -331,6 +336,15 @@ func _physics_process(delta: float) -> void:
 	var can_act := equipped and player.input_enabled and not player.is_on_ladder()
 	var want_suck := suck_enabled and can_act and Input.is_action_pressed("suck")
 	var want_spray := can_act and Input.is_action_pressed("spray") and not want_suck
+	# Carica: tenendo premuto, il getto parte dopo spray_delay secondi.
+	if want_spray and not is_spraying and spray_delay > 0.0 and has_water():
+		if _charge_t == 0.0:
+			spray_charge_started.emit()
+		_charge_t += delta
+		if _charge_t < spray_delay:
+			want_spray = false
+	elif not want_spray:
+		_charge_t = 0.0
 	if want_spray and not has_water():
 		if is_spraying or Input.is_action_just_pressed("spray"):
 			tank_empty.emit()
