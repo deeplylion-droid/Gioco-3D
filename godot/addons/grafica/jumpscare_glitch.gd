@@ -46,13 +46,25 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	# Saltando la sequenza l'urlo si ferma con lei; e lei torna al suo posto.
-	if is_instance_valid(_urlo) and _urlo.has_method(&"stop"):
+	_spegni()
+
+
+func _spegni() -> void:
+	if is_instance_valid(_urlo) and _urlo.has_method(&"stop") and _t < 2.0:
 		_urlo.call(&"stop")
+	_urlo = null
 	_rimetti_lei()
+	visible = false
+	set_process(false)
 
 
 func _process(delta: float) -> void:
+	# Finita (o saltata) la sequenza di morte, il jumpscare si spegne subito: niente scosse sulla
+	# camera dopo la ripartenza, niente urlo, lei al suo posto.
+	var seq := get_parent()
+	if not GameState.is_dying or (seq and bool(seq.get(&"_done"))):
+		_spegni()
+		return
 	_t += delta
 	var forza := _forza_glitch()
 	_mat.set_shader_parameter(&"forza", forza)
