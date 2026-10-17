@@ -292,6 +292,7 @@ def appendi_muro(nome, a, b, n, z0, tavolozza, obs, rnd, passo=(0.9, 1.8), vuoti
         dm = _dim(file, k)
         if u + dm.x / 2 > L - 0.05:
             break
+        u = max(u, dm.x / 2 + 0.05)   # niente che sporga oltre l'inizio del muro (le aperture dei corridoi)
         c = a + d * u + n * (dm.y / 2 + 0.005)
         zz = (zfun(c) if zfun else 0) + z0 - dm.z / 2 + rnd.uniform(-0.06, 0.06)
         o = HQ.metti(f'{nome}_{k_obj}', file, (c.x, c.y, zz), (dm.x, dm.y, dm.z), rot_z=rz)
