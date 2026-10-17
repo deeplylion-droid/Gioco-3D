@@ -1,0 +1,13 @@
+{
+ "immagine": "01a1449f-8f47-7549-9e21-b41709324877",
+ "tipo_immagine": "image-to-image",
+ "modello_immagine": "nano-banana-pro",
+ "prompt": "Turn this simple untextured 3D blockout render into a photorealistic studio product photo of the very same object, built as real, highly detailed 1990s commercial water park play equipment. Keep exactly the same parts, layout, proportions, heights, number of posts, colors and camera angle as in the blockout; do not add or remove parts, only make every part real and detailed. A square play tower: a yellow deck on four tall round blue steel posts, a teal green pyramid roof on top of the posts, red horizontal railing tubes with thin blue vertical bars on three sides of the deck, open on the back; a straight yellow stair with open treads and two red handrails climbs from the ground at the front up to the deck; a short yellow walkway plank sticks out of the right side of the deck. Real detail: rounded molded fiberglass decks and steps with anti-slip texture, powder-coated round steel posts with clamps, hex bolts, brackets, welded joints and rubber end caps, sun-faded and chlorine-bleached colors, scuffs, fine scratches, chipped paint at the edges, limescale and dried water stains, grime in the joints, a little rust bleeding from the bolts; worn but intact and still colorful. Single isolated object, the whole object visible, soft even studio lighting, plain light grey background, no people, no text, no logos, no water.",
+ "riferimenti": [
+  "blockout_verde"
+ ],
+ "task": "01a144a2-1a5a-730a-8608-d8d9002b7cc8",
+ "status": "SUCCEEDED",
+ "poligoni": 80000,
+ "crediti": 35
+}

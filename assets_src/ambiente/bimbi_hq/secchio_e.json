@@ -1,0 +1,13 @@
+{
+ "immagine": "01a144da-fa3e-70ad-b49d-51713a660ccd",
+ "tipo_immagine": "image-to-image",
+ "modello_immagine": "nano-banana-pro",
+ "prompt": "Edit this product photo of a giant tipping water bucket into a much more detailed and realistic version of the very same object. Keep exactly the same shape and proportions (slightly tapered round red plastic bucket, thick rounded yellow rim, two round yellow pivot hubs on opposite sides just under the rim), the same colors and the same camera. Only add realistic detail: rotomolded plastic with a sun-faded chalky red, molded seams, scuffs and fine scratches, a short steel axle stub with a nut in the center of each hub, dried water streaks outside and a dark limescale ring inside the rim, grime. Worn but intact. Plain light grey background, the whole object visible, no text.",
+ "riferimenti": [
+  "oggi_secchio_gigante"
+ ],
+ "task": "01a144dd-5b19-70a3-8a41-3e0671967975",
+ "status": "SUCCEEDED",
+ "poligoni": 30000,
+ "crediti": 35
+}

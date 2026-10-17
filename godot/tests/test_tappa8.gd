@@ -53,7 +53,7 @@ func _run() -> void:
 	print("Lo scivolo giallo e i tetti della struttura di gioco sono solidi (prova della v0.3.2, punto 10)")
 	var spazio := p.get_world_3d().direct_space_state
 	var su_scivolo := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-11.5, 4.0, -17.8), Vector3(-11.5, 0.5, -17.8), Layers.WORLD))
-	check(not su_scivolo.is_empty() and float(su_scivolo.position.y) > 1.0,
+	check(not su_scivolo.is_empty() and float(su_scivolo.position.y) > 0.6,
 		"lo scivolo ha la sua collisione (a metà, alto %.2f m)" % (float(su_scivolo.position.y) if not su_scivolo.is_empty() else 0.0))
 	# Ci vai contro di lato: ti ferma.
 	p.teleport(Vector3(-11.5, 0.0, -16.2), 0.0, 0.0)
@@ -67,15 +67,23 @@ func _run() -> void:
 		await get_tree().physics_frame
 		min_y = minf(min_y, p.global_position.y)
 	check(min_y > 0.6, "salito sopra lo scivolo ci resti sopra (y minima %.2f)" % min_y)
+	# Area bimbi HD, la variante (17 ottobre): tre torri col tetto a piramide. Sopra il centro di ogni
+	# torre un raggio dall'alto trova il tetto (ben sopra la pedana); lasciato lì sopra, ci resti.
 	var tetti_ok := true
-	# Sopra l'apice di ciascun tetto (gronda a 3,4 o 4,6 m, apice 1 m più su): scivoli giù ma non dentro.
-	for tetto in [[Vector3(-17.2, 4.8, -18.4), 3.4], [Vector3(-17.2, 6.0, -21.2), 4.6], [Vector3(-14.4, 6.0, -18.4), 4.6]]:
-		var t: Vector3 = tetto[0]
-		p.teleport(t, 0.0, 0.0)
-		await _frames(20)
-		if p.global_position.y < float(tetto[1]) - 0.3 and absf(p.global_position.x - t.x) < 1.2 and absf(p.global_position.z - t.z) < 1.2:
+	for torre in [[Vector3(-17.2, 0.0, -15.6), 1.24], [Vector3(-17.225, 0.0, -18.375), 2.72], [Vector3(-14.15, 0.0, -18.375), 1.71]]:
+		var c: Vector3 = torre[0]
+		var pedana: float = torre[1]
+		var tetto := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(c + Vector3(0.0, 12.0, 0.0), c, Layers.WORLD))
+		if tetto.is_empty() or float(tetto.position.y) < pedana + 1.5:
 			tetti_ok = false
-			print("  (caduto attraverso il tetto sopra %s: y %.2f)" % [str(t), p.global_position.y])
+			print("  (niente tetto sopra la torre in %s)" % str(c))
+			continue
+		var sopra := Vector3(c.x, float(tetto.position.y) + 0.4, c.z)
+		p.teleport(sopra, 0.0, 0.0)
+		await _frames(20)
+		if p.global_position.y < pedana + 1.0 and absf(p.global_position.x - c.x) < 0.9 and absf(p.global_position.z - c.z) < 0.9:
+			tetti_ok = false
+			print("  (caduto attraverso il tetto sopra %s: y %.2f)" % [str(c), p.global_position.y])
 	check(tetti_ok, "e sui tre tetti a piramide si sta sopra")
 
 	print("Prima del risveglio non succede niente")

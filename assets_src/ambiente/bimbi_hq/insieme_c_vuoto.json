@@ -1,0 +1,13 @@
+{
+ "immagine": "01a14487-12f1-71a3-8bc3-d1792e82172e",
+ "tipo_immagine": "image-to-image",
+ "modello_immagine": "nano-banana-pro",
+ "prompt": "Edit this product photo: remove the red bucket that hangs in the tall frame at the top right, so the frame is empty, and show the frame posts, the top beam, the blue pipe and the two axle bearings on the posts complete where the bucket was. Keep everything else exactly the same: same structure, same colors, same wear, same camera, same light grey background.",
+ "riferimenti": [
+  "insieme_c"
+ ],
+ "task": "01a14487-f3e3-775d-a622-fdeb803278ef",
+ "status": "SUCCEEDED",
+ "poligoni": 250000,
+ "crediti": 35
+}
