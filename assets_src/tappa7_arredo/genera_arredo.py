@@ -25,6 +25,12 @@ OGGETTI = {
     'sacchi_sale': ('A wooden pallet with stacked white plastic sacks of pool salt, a few torn and spilling, wrapped in loose plastic film.', 20000),
     'transpallet': ('A manual hand pallet jack with a long handle, yellow painted forks, worn and scratched.', 15000),
     'carrello_attrezzi': ('A red metal tool trolley with three drawers, a pool skimmer net and a long brush leaning on it, a bucket on top.', 20000),
+    # più pieno (16 ottobre, "molto vuota"): roba da appendere e da accatastare
+    'salvagente_anulare': ('An orange and white ring lifebuoy with a grey rope around it, hanging on a small steel wall hook, faded.', 6000),
+    'casse_plastica': ('A stack of three stackable blue plastic crates with handle holes, scratched and dirty, one slightly askew.', 8000),
+    'materassini_arrotolati': ('A bundle of four rolled up foam pool mats in faded blue, yellow and pink, tied with a strap, standing upright.', 8000),
+    'rullo_tubo': ('A wall mounted red hose reel with a coiled flat grey water hose, metal bracket, worn paint.', 10000),
+    'sedie_impilate': ('A stack of six white plastic patio chairs stacked into each other, yellowed and dirty.', 12000),
     # per tutte e due: dove andare
     'cartello_uscita': ('A rectangular green emergency exit sign light box with a white running man pictogram and a white arrow, glowing, no text.', 6000),
 }

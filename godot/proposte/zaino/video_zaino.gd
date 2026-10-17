@@ -72,9 +72,15 @@ func _avvia() -> void:
 	pack.set(&"tank_start_amount", 0.0)
 	pack.call(&"set_tank_amount", 0.0)
 	# Neon fissi accesi: lo sfarfallio a caso cambierebbe la luce fra un video e l'altro.
+	# ZAINO_BUIO=1: neon spenti e luci della scena spente, resta solo la torcia (come al blackout).
+	var buio := OS.get_environment("ZAINO_BUIO") != ""
 	for n in get_tree().current_scene.find_children("*", "Node3D", true, false):
 		if n.get_script() and String(n.get_script().get_global_name()) == "Neon":
-			n.set(&"modalita", 0)
+			n.set(&"modalita", 4 if buio else 0)
+	if buio:
+		for l in get_tree().current_scene.find_children("*", "Light3D", true, false):
+			if not p.is_ancestor_of(l) and not l is DirectionalLight3D:
+				(l as Light3D).visible = false
 	var torcia := p.find_child("Torcia", true, false)
 	if torcia:
 		torcia.call(&"imposta_accesa", true)
@@ -130,7 +136,7 @@ func _process(_delta: float) -> void:
 
 func _scatto(x: float) -> void:
 	await RenderingServer.frame_post_draw
-	var nome := "%s_%s_%04.1f.jpg" % [stile, lancia.get_file().get_basename(), x]
+	var nome := "%s_%s%s_%04.1f.jpg" % [stile, lancia.get_file().get_basename(), "_buio" if OS.get_environment("ZAINO_BUIO") != "" else "", x]
 	get_viewport().get_texture().get_image().save_jpg(cartella.path_join(nome), 0.9)
 	print("salvato ", nome)
 

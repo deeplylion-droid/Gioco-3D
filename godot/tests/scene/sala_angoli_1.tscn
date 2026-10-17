@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_architettura.glb" id="1_arc"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_oggetti.glb" id="2_ogg"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_piscina.glb" id="3_pis"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_cupola.glb" id="4_cup"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_vasca_centrale.glb" id="5_vas"]
+[ext_resource type="PackedScene" path="res://scenes/sala/luci_sala.tscn" id="6_luci"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_luci.glb" id="10_lgl"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/proposte_angoli/angolo_palloni.gltf" id="7_pal"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/proposte_angoli/angolo_scatoloni.gltf" id="8_sca"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="9_pl"]
+
+[node name="SalaAngoli1" type="Node3D"]
+editor_description = "Proposta (punto 8 della prova v0.3.2), solo per gli scatti: le due pile negli angoli dalla parte dell'entrata, disposizione 1 (1: palloni a sud-ovest e scatoloni a sud-est; 2: al contrario). Senza il resto della sala_principale, che sul renderer software non entra in memoria."
+
+[node name="Sala" type="Node3D" parent="."]
+
+[node name="Architettura" parent="Sala" instance=ExtResource("1_arc")]
+
+[node name="Oggetti" parent="Sala" instance=ExtResource("2_ogg")]
+
+[node name="Piscina" parent="Sala" instance=ExtResource("3_pis")]
+
+[node name="Cupola" parent="Sala" instance=ExtResource("4_cup")]
+
+[node name="VascaCentrale" parent="Sala" instance=ExtResource("5_vas")]
+
+[node name="Luci" parent="Sala" instance=ExtResource("10_lgl")]
+
+[node name="LuciSala" parent="." instance=ExtResource("6_luci")]
+energia_fari = 2.0
+neon_difettosi = PackedInt32Array(1, 3, 4, 6, 7, 13, 14, 17, 24, 25)
+
+[node name="PilaPalloni" parent="." instance=ExtResource("7_pal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.85, 0, 19.85)
+
+[node name="PilaScatoloni" parent="." instance=ExtResource("8_sca")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 19.85, 0, 19.85)
+
+[node name="Player" parent="." instance=ExtResource("9_pl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 18.5)

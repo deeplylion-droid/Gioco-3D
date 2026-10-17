@@ -5,7 +5,8 @@ extends CanvasLayer
 ## livello dall'ultimo checkpoint e poi chiama fade_in().
 ## - Se ti prende lei (causa &"medusa", con la medusa nel gruppo "medusa_che_prende"): la camera
 ##   viene tirata verso il suo viso mentre la fauce si apre e l'occhio si riempie di vene (lo fa
-##   la medusa, MedusaStatue.attacca()), lampo rosso al morso, poi nero.
+##   la medusa, MedusaStatue.attacca()), lampo rosso al morso, poi nero; sopra, il jumpscare
+##   (JumpscareGlitch: glitch dello schermo, scosse, il suo urlo).
 ## - Le altre cause (PROVVISORIO): la camera cade, lampo rosso, poi nero.
 
 signal finished(skipped: bool)
@@ -43,6 +44,8 @@ func _ready() -> void:
 	_title.modulate.a = 0.0
 	if cause == &"medusa":
 		_lei = get_tree().get_first_node_in_group(&"medusa_che_prende") as Node3D
+		# Il jumpscare: glitch, scosse e il suo urlo (addons/grafica/jumpscare_glitch.gd).
+		add_child(JumpscareGlitch.new())
 		_title.visible = false
 		var p := GameState.player
 		if p and is_instance_valid(p):
