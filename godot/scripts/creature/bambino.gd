@@ -81,6 +81,12 @@ const VEL_CORSA_ANIM := 2.2
 ## Senza punti di fuga: quanto lontano corre prima di sparire.
 @export var distanza_fuga_libera := 7.0
 @export var rivela_quando_scappa := false
+## Vero: in fuga sparisce solo quando il giocatore non lo vede (fuori dall'inquadratura o dietro un muro), anche
+## prima della fine del percorso; se alla fine lo stai ancora guardando resta fermo finché non lo perdi di vista.
+## Falso: sparisce alla fine del percorso.
+@export var sparisce_fuori_vista := false
+## Con [member sparisce_fuori_vista]: per almeno tanti secondi lo si vede correre via.
+@export var fuga_minima := 0.4
 ## Quando sparisce si toglie dalla scena (altrimenti resta nascosto e si può riusare).
 @export var libera_quando_sparisce := true
 
@@ -96,6 +102,8 @@ var _visto_da := 0.0
 var _reazione_in_corso := false
 var _prossima_inclinazione := 0.0
 var _punti: Array[Vector3] = []
+var _in_fuga := 0.0
+var _fermo_a_fine_fuga := false
 var _influenza := 0.0
 var _illuminato := 0.0
 var _torcia: Torcia
@@ -228,6 +236,8 @@ func scappa_ora() -> void:
 		return
 	modalita = Modalita.SCAPPA
 	_reazione_in_corso = false
+	_in_fuga = 0.0
+	_fermo_a_fine_fuga = false
 	if rivela_quando_scappa and not e_rivelato:
 		rivela()
 	_punti.clear()
@@ -302,8 +312,18 @@ func _process(delta: float) -> void:
 						ap.speed_scale = 1.0
 					osserva()
 		Modalita.SCAPPA:
-			if _segui_punti(velocita_corsa * delta, deg_to_rad(540.0) * delta):
+			_in_fuga += delta
+			var arrivato := _segui_punti(velocita_corsa * delta, deg_to_rad(540.0) * delta)
+			if not sparisce_fuori_vista:
+				if arrivato:
+					_sparisci()
+			elif (arrivato or _in_fuga >= fuga_minima) and not visibile_da(p):
 				_sparisci()
+			elif arrivato and not _fermo_a_fine_fuga:
+				_fermo_a_fine_fuga = true
+				for ap in _player_anim:
+					ap.speed_scale = 1.0
+				_anima(&"fermo", 0.2)
 
 
 func _reagisci() -> void:
@@ -348,6 +368,21 @@ func _guardato_da(p: Player) -> bool:
 	if rad_to_deg(p.get_aim_direction().angle_to(verso)) > angolo_vista:
 		return false
 	return _vista_libera(occhio, testa, p)
+
+
+## Il giocatore lo può vedere: qualche punto del corpo (dai piedi alla testa) è nell'inquadratura e senza
+## muri in mezzo.
+func visibile_da(p: Player) -> bool:
+	var cam := get_viewport().get_camera_3d()
+	var occhio := p.get_eye_position()
+	for i in 9:   # una griglia di punti sul corpo (solo in fuga): basta uno in vista
+		for j in 5:
+			var punto: Vector3 = global_position + global_basis.y * (0.05 + i * 0.15) + global_basis.x * (j * 0.15 - 0.3)
+			if cam and not cam.is_position_in_frustum(punto):
+				continue
+			if _vista_libera(occhio, punto, p):
+				return true
+	return false
 
 
 ## Il fascio della torcia accesa lo prende in pieno, senza muri in mezzo.
