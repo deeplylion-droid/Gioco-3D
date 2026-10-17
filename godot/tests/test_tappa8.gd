@@ -263,8 +263,6 @@ func _run() -> void:
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
 
 	print("4. La spruzzi da altre distanze e da altri lati: se ne va subito ogni volta")
-	var avanti5 := lei.punto_sbuca.global_basis.z.normalized()
-	var lato5 := lei.punto_sbuca.global_basis.x.normalized()
 	var testa5: Vector3 = lei.punto_sbuca.global_transform * Vector3(0.0, 1.63, 1.8)
 	var dita: Vector3 = lei.medusa.global_transform * punti[0]
 	var tentacolo := dita
@@ -272,11 +270,11 @@ func _run() -> void:
 		var g: Vector3 = lei.medusa.global_transform * q
 		if g.y < tentacolo.y:
 			tentacolo = g
-	for prova in [["davanti a 4 m, sulla testa", testa5 + avanti5 * 4.0, testa5],
-			["davanti a 9 m, sulla testa", testa5 + avanti5 * 9.0, testa5],
-			["di lato a destra, su una mano", testa5 + lato5 * 3.5 + avanti5 * 1.0, dita],
-			["di lato a sinistra, su un tentacolo", testa5 - lato5 * 3.5 + avanti5 * 1.5, tentacolo],
-			["di traverso a 6 m, sul tentacolo", testa5 + (avanti5 + lato5).normalized() * 6.0, tentacolo]]:
+	for prova in [["davanti a 4 m, sulla testa", _davanti_a(testa5, 0.0, 4.0), testa5],
+			["davanti a 9 m, sulla testa", _davanti_a(testa5, 0.0, 9.0), testa5],
+			["di traverso a destra, su una mano", _davanti_a(testa5, 25.0, 6.5), dita],
+			["di lato a sinistra, su un tentacolo", _davanti_a(testa5, -60.0, 6.5), tentacolo],
+			["di lato a sinistra da vicino, sulla testa", _davanti_a(testa5, -60.0, 3.5), testa5]]:
 		lei.load_state({"finita": false})
 		await _frames(5)
 		var piedi5: Vector3 = prova[1]
@@ -335,6 +333,20 @@ func _run() -> void:
 
 
 ## Di quanti gradi lei è girata rispetto a [param punto] (in pianta, dal suo occhio).
+## Un punto sul pavimento a [param metri] dalla sua testa, girato di [param gradi] da dove guarda lei,
+## sempre dentro la sala (se in quella direzione c'è un muro ci si ferma prima).
+func _davanti_a(testa: Vector3, gradi: float, metri: float) -> Vector3:
+	var dir := lei.punto_sbuca.global_basis.z.rotated(Vector3.UP, deg_to_rad(gradi))
+	dir.y = 0.0
+	dir = dir.normalized()
+	var da := Vector3(testa.x, 1.0, testa.z)
+	var colpo := p.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + dir * metri, Layers.WORLD))
+	var dist := metri if colpo.is_empty() else maxf(da.distance_to(colpo.position) - 0.6, 3.0)
+	var piedi := testa + dir * dist
+	piedi.y = 0.0
+	return piedi
+
+
 ## Ti metti in [param piedi], prendi lo zaino pieno, miri a [param bersaglio] (un po' più in alto
 ## con la distanza: il getto cade) e spari. Ritorna i secondi dal primo getto a quando lei comincia
 ## ad andarsene (fase SCIVOLA), -1 se non se ne va in 3 s.
