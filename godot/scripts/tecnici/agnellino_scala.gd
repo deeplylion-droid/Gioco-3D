@@ -13,6 +13,8 @@ const AGNELLO := preload("res://scenes/creature/bambino_agnello.tscn")
 
 ## Falso: non compare.
 @export var attivo := true
+## La scena dell'agnellino (vuota: quello di serie). Per le proposte, per esempio quello fluorescente.
+@export var scena: PackedScene
 ## Dove sta: in cima alla scala di C2, piedi a terra.
 @export var posizione := Vector3(44.55, 9.05, 1.6)
 ## Verso dove guarda (il pianerottolo davanti alla grata, da dove arriva il giocatore).
@@ -51,7 +53,7 @@ func compari() -> void:
 		return
 	_fatto = true
 	var genitore := get_parent() as Node3D
-	bambino = AGNELLO.instantiate() as Bambino
+	bambino = (scena if scena else AGNELLO).instantiate() as Bambino
 	bambino.name = "Agnellino"
 	bambino.modalita = Bambino.Modalita.STATUA
 	bambino.reazione = Bambino.Reazione.INCLINA_TESTA
