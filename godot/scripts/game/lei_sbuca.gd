@@ -318,7 +318,7 @@ func _scivola() -> void:
 			_geyser.name = "Geyser"
 			add_child(_geyser)
 		# Sul pavimento (l'origine della posa), al centro della fossa davanti al bordo.
-		_geyser.scoppia(punto_sbuca.global_transform * Vector3(0.0, 0.0, 1.5), acque)
+		_geyser.scoppia(punto_sbuca.global_transform * Vector3(0.0, 0.0, 1.7), acque)
 		_suona(&"lei_esplosione")
 	else:
 		_suona(&"lei_scivola_sotto")

@@ -38,7 +38,7 @@ void vertex() {
 	// Il bordo dell'acqua ribolle (il rumore usa l'angolo in modo periodico: la griglia si chiude).
 	vec2 giro = vec2(cos(a), sin(a)) * 1.6;
 	float n = noise(giro + vec2(seme, v * 3.0 - TIME * 2.5)) - 0.5;
-	float allarga = mix(piede, 1.0, smoothstep(0.0, piede_alto, v));
+	float allarga = mix(piede, 1.0, smoothstep(piede_alto * 0.6, piede_alto, v));
 	float r = raggio * allarga * (1.0 - 0.4 * v + 0.9 * smoothstep(0.75, 1.0, v)) * (1.0 + 0.25 * n);
 	float y = altezza * v;
 	// Ricade: la cima scende piu' in fretta della base e l'acqua si apre verso fuori.
