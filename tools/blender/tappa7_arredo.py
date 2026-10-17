@@ -258,26 +258,66 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
         u += dm.x + rnd.uniform(*passo)
 
 
+def _scatola(o):
+    """Ingombro (min, max) di un oggetto nella scena."""
+    vs = [o.matrix_world @ Vector(c) for c in o.bound_box]
+    return Vector([min(v[i] for v in vs) for i in range(3)]), Vector([max(v[i] for v in vs) for i in range(3)])
+
+
+def _tocca(o, altri, margine=0.02):
+    lo, hi = _scatola(o)
+    for x in altri:
+        a, b = _scatola(x)
+        if all(lo[i] < b[i] - margine and hi[i] > a[i] + margine for i in range(3)):
+            return True
+    return False
+
+
 def appendi_muro(nome, a, b, n, z0, tavolozza, obs, rnd, passo=(0.9, 1.8), vuoti=(), zfun=None):
-    """Roba appesa al muro (salvagenti, bacheche, cartelli, rulli col tubo) a quota z0 dal pavimento."""
+    """Roba appesa al muro (salvagenti, bacheche, cartelli, rulli col tubo) col centro a quota z0 dal pavimento
+    (o dal gradino sotto). A filo del muro, senza rotazioni a caso; i salvagenti su un piolo d'acciaio.
+    Dove toccherebbe la roba già messa a terra si salta il posto."""
     a, b, n = Vector((a[0], a[1], 0)), Vector((b[0], b[1], 0)), Vector((n[0], n[1], 0)).normalized()
     L = (b - a).length; d = (b - a).normalized()
     rz = math.atan2(n.x, -n.y)
     u = rnd.uniform(0.3, 0.9); k_obj = 0
     ultimo = None
+    gia = list(obs)
     while u < L - 0.3:
         if any(v0 <= u <= v1 for v0, v1 in vuoti):
             u += 0.3
             continue
         file, alto = rnd.choice([t for t in tavolozza if t[0] != ultimo] or tavolozza)
-        ultimo = file
         k = _scala_per(file, alto=alto)
         dm = _dim(file, k)
-        c = a + d * u + n * (dm.y / 2 + 0.01)
-        zz = (zfun(c) if zfun else 0) + z0 + rnd.uniform(-0.15, 0.15)
-        posa(f'{nome}_{k_obj}', file, (c.x, c.y, zz), k, rz + rnd.uniform(-0.05, 0.05), obs)
+        if u + dm.x / 2 > L - 0.05:
+            break
+        c = a + d * u + n * (dm.y / 2 + 0.005)
+        zz = (zfun(c) if zfun else 0) + z0 - dm.z / 2 + rnd.uniform(-0.06, 0.06)
+        o = HQ.metti(f'{nome}_{k_obj}', file, (c.x, c.y, zz), (dm.x, dm.y, dm.z), rot_z=rz)
+        if _tocca(o, gia):
+            bpy.data.objects.remove(o)
+            u += 0.25
+            continue
+        obs.append(o)
+        ultimo = file
+        if file == 'salvagente_anulare':   # piolo nel muro, dentro l'anello in alto
+            muro = c - n * (dm.y / 2 + 0.005)
+            obs.append(C.box(f'{nome}_{k_obj}_piolo', muro + n * (dm.y * 0.5) + Vector((0, 0, zz + dm.z * 0.8)),
+                             (0.025 + abs(n.x) * dm.y * 0.9, 0.025 + abs(n.y) * dm.y * 0.9, 0.025), _acciaio(), uv=None))
+            obs.append(C.box(f'{nome}_{k_obj}_piastra', muro + n * 0.006 + Vector((0, 0, zz + dm.z * 0.8)),
+                             (0.012 + abs(n.y) * 0.08, 0.012 + abs(n.x) * 0.08, 0.08), _acciaio(), uv=None))
         k_obj += 1
         u += dm.x + rnd.uniform(*passo)
+
+
+_ACC = []
+
+
+def _acciaio():
+    if not _ACC or _ACC[0].name not in bpy.data.materials:
+        _ACC[:] = [C.mat_pbr('piolo_acciaio', base=(0.45, 0.46, 0.47), roughness=0.4, metallic=0.9)]
+    return _ACC[0]
 
 
 def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045):
@@ -314,20 +354,23 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
     # R1: muro sud (porta del ponte a ovest: si lascia libero il primo metro) e muro nord
     riempi_muro(f'{nome}_r1s', (XR + 1.0, Y_R0), (X_S0, Y_R0), (0, 1), 0, tav_terra, obs, 0.5, rnd)
     riempi_muro(f'{nome}_r1n', (XR + 1.0, Y_R1), (X_S0 - 0.1, Y_R1), (0, -1), 0, tav_terra, obs, 0.45, rnd)
-    appendi_muro(f'{nome}_r1s_m', (XR + 0.5, Y_R0), (X_S0, Y_R0), (0, 1), 1.5, tav_muro, obs, rnd)
-    appendi_muro(f'{nome}_r1n_m', (XR + 0.5, Y_R1), (X_S0, Y_R1), (0, -1), 1.5, tav_muro, obs, rnd)
+    appendi_muro(f'{nome}_r1s_m', (XR + 0.5, Y_R0), (X_S0, Y_R0), (0, 1), 1.55, tav_muro, obs, rnd)
+    appendi_muro(f'{nome}_r1n_m', (XR + 0.5, Y_R1), (X_S0, Y_R1), (0, -1), 1.55, tav_muro, obs, rnd)
     # scala F1: roba piccola sui gradini contro il muro ovest, roba appesa ai due muri
     riempi_muro(f'{nome}_f1', (X_S0, Y_R1 + 0.3), (X_S0, 4.4), (1, 0), 0, tav_piccoli, obs, 0.4, rnd, passo=(0.3, 0.7), zfun=z_f1)
-    appendi_muro(f'{nome}_f1o_m', (X_S0, Y_R1), (X_S0, 4.5), (1, 0), 1.6, tav_muro, obs, rnd, zfun=z_f1)
-    appendi_muro(f'{nome}_f1e_m', (X_S1, -2.2), (X_S1, 4.5), (-1, 0), 1.7, tav_muro, obs, rnd, zfun=z_f1)
+    appendi_muro(f'{nome}_f1o_m', (X_S0, Y_R1), (X_S0, 4.5), (1, 0), 1.55, tav_muro, obs, rnd, zfun=z_f1)
+    appendi_muro(f'{nome}_f1e_m', (X_S1, -2.2), (X_S1, 4.5), (-1, 0), 1.55, tav_muro, obs, rnd, zfun=z_f1)
+    # niente roba appesa ai primi due metri del muro est: a un passo dall'ingresso della scala, di scorcio, sembrava storta
+    for o in [o for o in obs if o.name.startswith(f'{nome}_f1e_m') and o.location.y < 0.6]:
+        obs.remove(o); bpy.data.objects.remove(o)
     # pianerottolo L1: muro est pieno e muro nord (la strada passa in x 50,6..52,0)
     riempi_muro(f'{nome}_l1e', (X_S1, 4.9), (X_S1, Y_T1), (-1, 0), Z_L1, tav_terra, obs, 0.6, rnd)
     riempi_muro(f'{nome}_l1n', (X_S1 - 0.6, Y_T1), (X_S0 + 0.2, Y_T1), (0, -1), Z_L1, tav_terra, obs, 0.4, rnd)
-    appendi_muro(f'{nome}_l1_m', (X_S1, 4.7), (X_S1, Y_T1), (-1, 0), Z_L1 + 1.7, tav_muro, obs, rnd)
+    appendi_muro(f'{nome}_l1_m', (X_S1, 4.7), (X_S1, Y_T1), (-1, 0), Z_L1 + 1.55, tav_muro, obs, rnd)
     # rampa F2: roba piccola sui gradini contro il muro nord, appesa ai due muri
     riempi_muro(f'{nome}_f2', (X_S0 - 0.3, Y_T1), (X_F2 + 0.3, Y_T1), (0, -1), 0, tav_piccoli, obs, 0.35, rnd, passo=(0.3, 0.8), zfun=z_f2)
-    appendi_muro(f'{nome}_f2s_m', (X_S0, Y_T0), (X_F2, Y_T0), (0, 1), 1.7, tav_muro, obs, rnd, zfun=z_f2)
-    appendi_muro(f'{nome}_f2n_m', (X_S0, Y_T1), (X_F2, Y_T1), (0, -1), 1.7, tav_muro, obs, rnd, zfun=z_f2)
+    appendi_muro(f'{nome}_f2s_m', (X_S0, Y_T0), (X_F2, Y_T0), (0, 1), 1.55, tav_muro, obs, rnd, zfun=z_f2)
+    appendi_muro(f'{nome}_f2n_m', (X_S0, Y_T1), (X_F2, Y_T1), (0, -1), 1.55, tav_muro, obs, rnd, zfun=z_f2)
     # pianerottolo T: davanti alla grata (muro ovest) e nell'angolo nord
     riempi_muro(f'{nome}_t', (X_T0 + 0.1, Y_T1), (X_T0 + 1.2, Y_T1), (0, -1), Z_T, tav_terra, obs, 0.7, rnd)
     # corridoio C2: tutti e due i lati, sopra e sotto la scala (sulla scala solo roba piccola)
@@ -336,11 +379,11 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         riempi_muro(f'{nome}_c2{lato}s', (x, Y_SCALA2), (x, Y_SCALA2 - N2 * PED2), nn, 0, tav_piccoli, obs, 0.3, rnd, passo=(0.3, 0.6), zfun=z_c2)
         riempi_muro(f'{nome}_c2{lato}b', (x, -0.2), (x, YC3_1 - 0.1), nn, Z_SALA, tav_terra, obs, 0.42, rnd,
                     vuoti=((8.8, 10.4),) if lato == 'o' else ())   # lì la testa della mascotte (A)
-        appendi_muro(f'{nome}_c2{lato}_m', (x, Y_T0), (x, YC3_1), nn, 1.6, tav_muro, obs, rnd, zfun=z_c2, vuoti=((20.4, 22.6),) if lato == 'o' else ())
+        appendi_muro(f'{nome}_c2{lato}_m', (x, Y_T0), (x, YC3_1), nn, 1.55, tav_muro, obs, rnd, zfun=z_c2, vuoti=((20.4, 22.6),) if lato == 'o' else ())
     # corridoio C3: tutti e due i lati
     for lato, y, nn in (('s', YC3_0, (0, 1)), ('n', YC3_1, (0, -1))):
         riempi_muro(f'{nome}_c3{lato}', (XC0 - 0.1, y), (XM1 + 0.4, y), nn, Z_SALA, tav_terra, obs, 0.45, rnd)
-        appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.6, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
+        appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
     if tubi:
         mat, quanti = tubi
         tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S0, Y_R0, 0), (0, 1), 2.45, mat, obs, quanti)
