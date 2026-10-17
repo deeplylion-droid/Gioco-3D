@@ -1,7 +1,8 @@
 @tool
 class_name PolaroidPhoto
 extends Collectible
-## Una delle 10 Polaroid del capitolo 1: il modello 3D con la sua foto. Raccolta, si guarda
+## Una delle 10 Polaroid del capitolo 1 (nella demo ce ne sono 9: P10 stava in cima alla torre e
+## torna con la sala della torre): il modello 3D con la sua foto. Raccolta, si guarda
 ## da vicino (PhotoViewer) e va nella collezione. Con [member snap_to_surface] all'avvio si
 ## appoggia sulla superficie sotto di sé.
 

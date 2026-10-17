@@ -2,14 +2,15 @@ extends Node
 ## Test automatico degli ambienti tecnici (scenes/tecnici/tecnici.tscn): la scena si carica con le
 ## collisioni, il giocatore parte in fondo alla scala del pozzo e cammina, dalla camera delle onde
 ## si passa per il tunnel nella sala pompe, i marker per la logica di gioco ci sono tutti, la vasca di
-## raccolta è piena e, con le scene messe come nel livello, il raccordo porta ai piedi della scala degli interni.
+## raccolta è piena e, con le scene messe come nel livello, il raccordo porta al pianerottolo davanti alla grata
+## chiusa della scala degli interni e di lì, per il corridoio della tappa 7, al magazzino dei gonfiabili e alla serranda.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tecnici.gd
 
 const LEVEL := "res://scenes/tecnici/tecnici.tscn"
 const MARKER := ["marker_portello", "marker_arrivo_scala", "marker_tunnel_sala_pompe", "marker_paratia_1", "marker_paratia_2",
 	"marker_pompa_1", "marker_pompa_2", "marker_pompa_3", "marker_turbina_1", "marker_turbina_2", "marker_turbina_3",
 	"marker_leva", "marker_grata_leva", "marker_schema", "marker_vasca_raccolta", "marker_monitor",
-	"marker_porta_ponte", "marker_porta_ponte_perno", "marker_raccordo_sala", "marker_raccordo_interni"]
+	"marker_porta_ponte", "marker_porta_ponte_perno", "marker_raccordo_sala", "marker_raccordo_interni", "marker_chiavistello", "marker_chiusura_stagna"]
 
 var level: Node
 var p: Player
@@ -40,7 +41,8 @@ func _run() -> void:
 		check(level.get_node_or_null("Marker/" + m) is Marker3D, "c'è il marker " + m)
 	for n in ["Ambienti/CameraOnde/PARATIA_1", "Ambienti/CameraOnde/PARATIA_2", "Ambienti/SalaPompe/LEVA",
 			"Ambienti/SalaPompe/GRATA_leva", "Ambienti/SalaPompe/PORTA_ponte", "Ambienti/SalaPompe/SCHERMO_CRT",
-			"Ambienti/SalaPompe/TURBINA_1", "Ambienti/SalaPompe/TURBINA_2", "Ambienti/SalaPompe/TURBINA_3"]:
+			"Ambienti/SalaPompe/TURBINA_1", "Ambienti/SalaPompe/TURBINA_2", "Ambienti/SalaPompe/TURBINA_3",
+			"Ambienti/SalaPompe/CHIAVISTELLO", "Ambienti/SalaPompe/ATTUATORE_stagno", "Ambienti/SalaPompe/LEVA_base"]:
 		check(level.get_node_or_null(n) != null, "c'è il nodo da animare " + n.get_file())
 
 	print("Collisioni")
@@ -96,6 +98,54 @@ func _run() -> void:
 	check(absf(pelo - (-0.15)) < 0.03, "la vasca è piena d'acqua nera (pelo a %.2f)" % pelo)
 	check(tank.get_liters() > 50.0, "e il serbatoio ha acqua da aspirare (%.0f l)" % tank.get_liters())
 
+	print("La vasca di raccolta non si esaurisce (riscontro v0.3.1, punto 7)")
+	var inesauribile := level.get_node_or_null("Acqua/VascaInesauribile") as VascaInesauribile
+	check(inesauribile != null and inesauribile.vasca == tank, "la vasca ha il rabbocco che la tiene piena")
+	var pieno := tank.fill
+	var minimo_visto := 1.0
+	var dati := 0.0
+	for i in 40:
+		dati += tank.take_water(20.0)   # 40 pieni di zaino, uno a fotogramma: molto più di quanto ci sta
+		await get_tree().physics_frame
+		minimo_visto = minf(minimo_visto, tank.fill)
+	check(dati >= 40.0 * 20.0 - 0.1, "dà acqua a ogni zainata, anche dopo 40 di fila (%.0f l)" % dati)
+	check(minimo_visto < pieno - 0.05, "il livello scende davvero mentre si aspira (%.2f -> %.2f)" % [pieno, minimo_visto])
+	if inesauribile:
+		check(minimo_visto >= inesauribile.fill_minimo() - 0.001, "ma non va mai sotto il minimo (%.2f, minimo %.2f)" % [minimo_visto, inesauribile.fill_minimo()])
+	await _frames(60 * 8)
+	check(tank.fill > minimo_visto + 0.1, "smesso di aspirare, la vasca si rabbocca (%.2f)" % tank.fill)
+
+	print("Si cade nella vasca di raccolta e si risale con la scaletta (riscontro v0.3.1, punto 9)")
+	var scaletta := level.get_node_or_null("Gioco/ScalettaVasca") as Ladder
+	check(scaletta != null, "c'è la scaletta della vasca di raccolta")
+	p.teleport(Vector3(36.0, 0.6, 0.6), 0.0, 0.0)
+	await _frames(90)
+	check(p.global_position.y < -1.0, "si cade dentro la vasca (y %.2f)" % p.global_position.y)
+	if scaletta:
+		# Verso la scaletta, contro il muro sud della vasca, e su con W.
+		# Basta camminare verso la scaletta: ci si aggrappa già andandoci incontro.
+		var presa := [false]
+		var su_scala := func(si: bool) -> void: presa[0] = presa[0] or si
+		p.ladder_changed.connect(su_scala)
+		var base := scaletta.global_position + scaletta.get_climb_normal() * 0.6
+		await _cammina_verso(Vector3(base.x, p.global_position.y, base.z), 300, false)
+		var verso := -scaletta.get_climb_normal()
+		p.set_look(atan2(-verso.x, -verso.z), 0.0)
+		Input.action_press(&"move_forward")
+		var fuori := false
+		for i in 60 * 10:
+			await get_tree().physics_frame
+			if presa[0] and not p.is_on_ladder() and p.is_on_floor() and p.global_position.y > -0.1:
+				fuori = true
+				break
+		await _frames(30)   # il giocatore tiene W ancora un attimo, come farebbe davvero
+		Input.action_release(&"move_forward")
+		p.ladder_changed.disconnect(su_scala)
+		check(presa[0], "camminando verso la scaletta ci si aggrappa")
+		check(fuori, "e salendo si esce dalla vasca (y %.2f)" % p.global_position.y)
+		var dentro_vasca := Rect2(34.1, -0.6, 4.8, 3.0).has_point(Vector2(p.global_position.x, p.global_position.z))
+		check(not dentro_vasca, "fuori dalla vasca, oltre il bordo (%s)" % str(p.global_position))
+
 	print("Il raccordo fino agli interni (scene messe come nel livello)")
 	var interni: Node3D = load("res://scenes/interni/interni.tscn").instantiate()
 	interni.set(&"giocatore_proprio", false)
@@ -110,19 +160,38 @@ func _run() -> void:
 	var da: Node3D = level.get_node("Marker/marker_raccordo_sala")
 	p.teleport(da.global_position + Vector3(0, 0.05, 0), p.yaw, 0.0)
 	await _frames(5)
-	var tappe: Array[Vector3] = []
-	for loc in [Vector3(51.6, 0, 1.4), Vector3(51.6, 0, 0.6), Vector3(51.6, 3.625, -6.2), Vector3(50.0, 3.625, -7.8),
-			Vector3(44.2, 7.25, -7.8), Vector3(40.2, 9.05, -7.8)]:
-		tappe.append((level as Node3D).global_transform * loc)
+	var lv := (level as Node3D).global_transform
 	var ok := true
-	for t in tappe:
-		ok = ok and await _cammina_verso(t, 600)
-	check(ok, "si cammina dalla porta della sala pompe su per le due rampe e la scala degli interni")
-	var fine := p.global_position
-	check(absf(fine.y) < 0.1 and fine.distance_to(Vector3(7.8, 0, 41.6)) < 0.5,
-			"e si arriva sul pianerottolo degli interni, davanti alla porta della sala pompe (%s)" % str(fine))
+	for loc in [Vector3(51.6, 0, 1.4), Vector3(51.6, 0, 0.6), Vector3(51.6, 3.625, -6.2), Vector3(50.0, 3.625, -7.8),
+			Vector3(44.55, 7.25, -7.8)]:
+		ok = ok and await _cammina_verso(lv * loc, 600)
+	check(ok, "si cammina dalla porta della sala pompe su per le due rampe fino al pianerottolo T")
 	var cima: Node3D = level.get_node("Marker/marker_raccordo_interni")
 	check(cima.global_position.distance_to(Vector3(7.8, -1.8, 45.4)) < 0.05, "il marker in cima al raccordo è ai piedi della scala degli interni")
+	var grata := _ray(p.get_world_3d().direct_space_state, lv * Vector3(44.2, 8.0, -7.8), lv * Vector3(42.5, 8.0, -7.8))
+	check(not grata.is_empty(), "la grata chiusa blocca la scala degli interni")
+	var bloccato := not await _cammina_verso(lv * Vector3(41.0, 9.05, -7.8), 240, false)
+	check(bloccato and p.global_position.y < -1.0, "e di lì non si sale agli interni (%s)" % str(p.global_position))
+
+	print("Tappa 7: il corridoio, il magazzino dei gonfiabili e la serranda (con gli interni al loro posto)")
+	for m in ["marker_t7_inizio", "marker_t7_cima_scala", "marker_t7_magazzino", "marker_t7_serranda", "marker_t7_inizio_scia"]:
+		check(level.get_node_or_null("Marker/" + m) is Marker3D, "c'è il marker " + m)
+	p.teleport(lv * Vector3(44.55, 7.30, -7.8), p.yaw, 0.0)
+	await _frames(5)
+	ok = true
+	var salita := 0.0
+	for loc in [Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 15.0), Vector3(30.0, 9.05, 15.0),
+			Vector3(24.0, 9.05, 15.0), Vector3(19.3, 9.05, 15.0)]:
+		ok = ok and await _cammina_verso(lv * loc, 900)
+		salita = maxf(salita, p.global_position.y)
+	check(ok, "dal pianerottolo T si va per il corridoio, su per la scala, nel magazzino fino alla serranda")
+	check(absf(p.global_position.y) < 0.1, "il magazzino è al livello della sala grande (y = %.2f)" % p.global_position.y)
+	var serr: Node3D = level.get_node("Marker/marker_t7_serranda")
+	check(serr.global_position.distance_to(Vector3(-15.0, 0, 19.3)) < 0.1, "il marker della serranda è appena dentro la sala, angolo sud-ovest (%s)" % str(serr.global_position))
+	var space2 := p.get_world_3d().direct_space_state
+	check(_ray(space2, Vector3(-15.0, 1.0, 21.0), Vector3(-15.0, 1.0, 19.0)).is_empty(), "sotto la serranda alzata si passa in piedi")
+	check(not _ray(space2, Vector3(-15.0, 2.2, 21.0), Vector3(-15.0, 2.2, 19.0)).is_empty(), "e la serranda chiude sopra 1,95 m")
+	check(not _ray(space2, Vector3(-17.0, 1.0, 21.0), Vector3(-17.0, 1.0, 19.0)).is_empty(), "accanto alla serranda c'è il muro")
 	interni.queue_free()
 
 	print("")
@@ -131,7 +200,7 @@ func _run() -> void:
 
 
 ## Cammina in avanti verso t finché non ci arriva (in pianta). Falso se si blocca.
-func _cammina_verso(t: Vector3, max_frames: int) -> bool:
+func _cammina_verso(t: Vector3, max_frames: int, avvisa := true) -> bool:
 	Input.action_press(&"move_forward")
 	var arrivato := false
 	for i in max_frames:
@@ -142,7 +211,7 @@ func _cammina_verso(t: Vector3, max_frames: int) -> bool:
 		p.set_look(atan2(-d.x, -d.z), 0.0)
 		await get_tree().physics_frame
 	Input.action_release(&"move_forward")
-	if not arrivato:
+	if not arrivato and avvisa:
 		printerr("  bloccato in ", p.global_position, " andando verso ", t)
 	return arrivato
 

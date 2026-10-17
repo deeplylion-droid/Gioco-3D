@@ -101,18 +101,24 @@ func _prepara_ambienti() -> void:
 	if lp:
 		lp.visible = false
 	# Vetri sporchi trasparenti: dietro il vetro rotto si deve vedere il pulsante del tornello.
-	var vetro := StandardMaterial3D.new()
-	vetro.albedo_color = Color(0.55, 0.62, 0.6, 0.18)
-	vetro.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	vetro.roughness = 0.1
-	vetro.metallic_specular = 0.7
-	vetro.cull_mode = BaseMaterial3D.CULL_DISABLED
+	# Sporco e riflessi sui bordi (shaders/interni/vetro_sporco.gdshader): prima era quasi invisibile e la
+	# finestra del gabbiotto sembrava vuota. Il bordo del buco e le crepe sono più chiari e quasi opachi.
+	var vetro := ShaderMaterial.new()
+	vetro.shader = preload("res://shaders/interni/vetro_sporco.gdshader")
+	vetro.set_shader_parameter("rumore", load("res://assets/ambienti_interni/shader_tex/rumore.png"))
+	var bordo := StandardMaterial3D.new()
+	bordo.albedo_color = Color(0.8, 0.88, 0.86, 0.75)
+	bordo.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	bordo.roughness = 0.15
+	bordo.cull_mode = BaseMaterial3D.CULL_DISABLED
 	for n in ambienti.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		for i in mi.mesh.get_surface_count() if mi.mesh else 0:
 			var m := mi.mesh.surface_get_material(i)
 			if m and m.resource_name.begins_with("vetro_sporco"):
 				mi.set_surface_override_material(i, vetro)
+			elif m and m.resource_name.begins_with("vetro_bordo"):
+				mi.set_surface_override_material(i, bordo)
 	# Vetri: niente ombre (altrimenti le luci rosse non passano dagli oblò).
 	for n in ambienti.find_children("*vetro*", "MeshInstance3D", true, false):
 		(n as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

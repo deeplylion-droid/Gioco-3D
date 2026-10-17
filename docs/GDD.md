@@ -56,6 +56,90 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - Luce e immagine: l'immagine è offuscata e piatta. Servono ombre, profondità, antialiasing nitido, profondità di campo e l'atmosfera giusta.
 - La luce della torcia è troppo forte e brutta: va studiata diversamente.
 - I poster si vede che sono generati con l'IA: serve un altro stile (da decidere più avanti).
+- **Da fare più avanti (richiesta dell'utente, 16 ottobre)**: i poster grandi, e anche dei piccoli volantini da mettere in giro sulle pareti, con gli eventi e i manifesti della crociera. Stile e contenuti si propongono all'utente.
+
+## Principi di livello (deciso dall'utente, 15 ottobre)
+
+- **Il giocatore deve sentirsi guidato**: obiettivi chiari e oggetti da usare ben segnalati.
+- **Niente backtracking**: non si torna indietro per strade già fatte.
+- **Sempre un ambiente nuovo**: dopo ogni parte si entra in un posto mai visto, per esempio passando un cancello importante rimasto chiuso fino a quel momento.
+- Le risposte al questionario del 15 ottobre sono in `docs/riscontri/2026-10-15_questionario.md`.
+
+## Scelte del 16 ottobre (pagina delle proposte)
+
+Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-16_proposte.md`.
+
+- **Torcia**: sincronizzata con lo sguardo, cono di 40°, luce più uniforme. Approvata, ma l'utente la vuole rivedere in gioco.
+- **Interni**: approvati il vetro del primo pulsante con le crepe e la turbina nuova del cancello. **Da rifare**:
+  - la lamiera vicino all'estintore va tolta di lì del tutto;
+  - le valvole rosse vanno sul tubo con lo stesso diametro della sezione con la valvola.
+- **Sala principale**: approvati il soppalco tolto (neon, fari e cartelloni sulle pareti) e il cordone chiuso tutto intorno alla vasca della medusa, con un muro invisibile alto 2,5 m.
+- **Medusa**:
+  - approvate le 17 file di denti dentro la bocca;
+  - l'occhio che si chiude (easter egg, circa 5 secondi quando le spruzzi la faccia) ha una palpebra sola che scende dall'alto, come negli occhi delle bambole;
+  - voce della tappa 8: la versione gutturale.
+- **Area bimbi**: disposizione 1. La struttura sta nell'angolo con la scala verso chi arriva, lo scivolo scende nella vasca piccola e due funghi sono nella piazza.
+- **Piscina a onde (tappa 5)**:
+  - si svuota con lo zaino in circa **30 secondi, 4 zainate**;
+  - l'acqua sparata dentro la vasca ci torna, quindi va sparata fuori;
+  - niente scritte a schermo;
+  - l'acqua resta torbida com'è, ma ci nuotano **micro medusine luminose di vari colori** che attirano l'attenzione: si aspirano con l'acqua e si sparano via;
+  - pulsante della botola: versione A, un fungo rosso su una cassetta gialla con il lampeggiante giallo, che diventa verde quando lo colpisci.
+- **Sala pompe**: approvati la leva nuova, il cavo dalla leva al chiavistello, i tubi colorati dalle turbine alla chiusura stagna e lo schermo della TV appoggiato sul vetro.
+- **Tappa 7**: dopo la sala pompe si risale dal **magazzino dei gonfiabili** (proposta B). Si esce da una serranda nell'angolo sud-ovest della sala e la scia va lungo il muro fino all'area bimbi.
+- **Tappa 8**:
+  - lei resta affacciata finché non la guardi bene per 2 secondi (entro 18°, a meno di 14 m, senza ostacoli), poi dopo 6 secondi scivola sotto;
+  - la scia e la bava rosa sono **visibili al 75%**, cioè un po' trasparenti.
+- **Suoni nuovi** (seconda pagina dello stesso giorno):
+  - piscina che si svuota: gorgo;
+  - pulsante della botola: richiamo, con un jingle giocattolo che cala e un bi-bu insieme al lampeggiante;
+  - micro medusine: tintinnii di vetro;
+  - portone: motore e rulli.
+  L'utente ha notato le bollicine nel fondo della pioggia sulla cupola: si tolgono.
+- **Ritocchi approvati (terza pagina)**:
+  - il portone della torre si apre da solo dopo la tappa 8;
+  - le micro medusine vanno bene così;
+  - la pioggia resta senza bollicine;
+  - i passi bagnati non hanno più le goccioline.
+- **Dopo la tappa 8**: la sala della torre è dietro la parete est (versione 2). Si entra da un portone scorrevole con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi e i bambini della balconata si propongono a parte.
+
+## Prova della v0.3.1 (16 ottobre)
+
+L'utente ha giocato la v0.3.1. Il messaggio completo, parola per parola, è in `docs/riscontri/2026-10-16_prova_v031.md`. Le sue richieste:
+- **Vaschetta lava-piedi davanti ai tornelli**: si riempie di nuovo quando la svuoti.
+- **Portellone della piscina a onde**: deve notarsi di più, per esempio con una luce che si veda attraverso l'acqua. A piscina vuota deve restare all'asciutto.
+- **I due cancelli stagni dopo la scala**: si aprono da soli al tuo passaggio, con un suono metallico forte.
+- **Stanza dei generatori (sala pompe)**: l'acqua lì non si esaurisce mai. La scaletta della vasca deve far risalire.
+- **Serranda di sud-ovest (tappa 7)**: resta chiusa finché non risali dal magazzino.
+- **Strada di risalita**: è troppo vuota e brutta. Va arredata, con un'apparizione dei bambini mostriciattoli. Prima si mostra all'utente.
+- **Scia di bava (tappa 8)**: parte dalla vasca centrale della sala, dove la medusa stava affacciata.
+- **Medusa nella fossa dell'area bimbi (tappa 8)**: è già affacciata quando arrivi. Nel jumpscare guarda la camera da qualsiasi lato ti avvicini.
+
+## Lo zaino (scelte del 16 ottobre, quarta pagina)
+
+- **Getto**: B, "potenziata". Prima di partire c'è una carica di 0,35 s in cui la lancia trema, poi un getto grosso con rinculo e un ventaglio di spruzzi all'impatto. L'aspirazione è una colonna d'acqua che si torce fino all'ugello. Suoni della versione B.
+- **Lancia**: C1, industriale, arancio antincendio e giallo, tenuta con **una mano**. Sopra la canna c'è la finestrella con il livello del serbatoio.
+
+## Prova della v0.3.2 (16 ottobre)
+
+L'utente ha giocato la v0.3.2. Le sue parole, punto per punto, sono in `docs/riscontri/2026-10-16_prova_v032.md`. Le richieste sono queste:
+- **Musichetta in loop**: va tolta. Era il bi-bu del pulsante della botola, che si ripeteva col lampeggiante: ora resta solo il jingle, una volta.
+- **Torcia**: 20% di luce in meno.
+- **Luce del portellone**: va giù sul portellone, sotto l'acqua, non sopra.
+- **Difetti**: il soffitto storto nel corridoio iniziale, i puntini bianchi nella cupola, la scia rosa che si interrompe (deve essere continua) e lo scivolo giallo che si attraversa.
+- **Jumpscare della medusa**: più movimentato (scosse, effetto glitch) e rumoroso (un urlo alla FNAF). Si propone prima di metterlo nel gioco.
+- **Quando sparisce nella fossa dell'area bimbi**: un'esplosione d'acqua la avvolge completamente, poi sparisce. Si propone prima.
+- **Entrata della sala**: nei due angoli verso la prima entrata ci vanno due pile alte quasi fino al soffitto, una di palloni da spiaggia gonfi e sgonfi e una di scatoloni di vari colori. Si propone prima, con scatti dal gioco.
+
+## Scelte del 17 ottobre (pagina delle scelte)
+
+Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-17_scelte.md`.
+
+- **Strada di risalita (tappa 7)**: l'arredo è un misto delle proposte A (deposito della festa) e B (manutenzione), con i modelli più riusciti dell'una e dell'altra. I bambini compaiono una volta: l'agnellino aspetta in cima alla scala del corridoio C2, inclina la testa quando lo guardi e scappa avanti dove devi andare.
+- **Sala grande, vicino alla prima entrata**: entrando, a destra (sud-est) c'è la pila di palloni da spiaggia dentro la rete da carico, a sinistra (sud-ovest) la pila di scatoloni. Sono alte circa 10 m.
+- **Area bimbi**: la variante HD ridisegnata, con la disposizione 1 di prima.
+- **Jumpscare della medusa**: A, glitch forte, con l'urlo al massimo del volume.
+- **Quando sparisce nella fossa (tappa 8)**: A, un geyser d'acqua. L'acqua non deve essere trasparente: deve coprirla del tutto mentre sparisce.
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -96,6 +180,9 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - Respinge i mostri per un attimo e dà una spinta per saltare.
 - **Versione Z1, decisa dall'utente**: aspira l'acqua da una vasca o pozza (il livello scende davvero) e la spara altrove. Ha un serbatoio, che si ricarica nell'acqua che scorre.
 - **Aspetto scelto dall'utente il 14 ottobre**: lo zaino-giocattolo anni '90, colorato (turchese, giallo e arancione, con adesivi di delfini), con un serbatoio trasparente e una pistola ad acqua tipo Super Soaker. È un modello 3D di Meshy, l'opzione 2 in `godot/assets/models/zaino/`.
+- **Rework estetico chiesto dall'utente il 16 ottobre**: "Deve essere diversa in mano, ma anche il getto aspirato e sparato deve essere molto molto più imponente e soddisfacente da vedere e sentire. Pensa alla pompa dei pompieri e potenzia ancora. Dobbiamo competere con il grab pack e al momento abbiamo una pisciatina stupidita. La fisica delle pozze invece va bene."
+  - Da rifare: la lancia in mano, il getto sparato, l'aspirazione e i loro suoni. La fisica delle pozze resta com'è.
+  - L'utente sceglie da proposte con video e suoni veri. Riferimenti: la pompa dei pompieri potenziata e il Grab Pack di Poppy Playtime.
 
 ## La mascotte del capitolo 1: la medusa
 
@@ -177,4 +264,8 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **Godot 4.7.2**, renderer Forward+, per PC. Build automatiche con GitHub Actions e Release su GitHub.
 - **Blender 5.2** usato come modulo Python (`bpy`) per modellare, fare il rig, animare e fare i render da script.
 - **Meshy API** per immagini concept, modelli 3D e rig degli umanoidi. La chiave è nella variabile `MESHY_API_KEY`. L'utente non bada ai crediti, ma non vanno sprecati.
+- **Crediti Meshy (16 ottobre)**: 14.628 crediti mensili, che si azzerano il 15 novembre. L'utente è d'accordo a usarli di più per la qualità:
+  - rifare ad alta definizione gli oggetti della sala che non sono ancora di Meshy (struttura dell'area bimbi, funghi, secchio);
+  - la sala della torre e gli scivoli nuovi.
+  Si propone sempre all'utente con i render prima di metterli nel gioco.
 - **Asset CC0**: texture da Poly Haven e ambientCG, modelli da Kenney e Quaternius.

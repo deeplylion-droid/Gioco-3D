@@ -1,12 +1,15 @@
 class_name RitornoAlBuio
 extends Node
 ## Tappa 7 di docs/livello/capitolo1.md, il ritorno al buio: dopo il risveglio nella sala pompe
-## (GameState.luci = BLACKOUT) si torna su dal raccordo, si ripassa dagli spogliatoi e si esce
-## dalla stessa porta di prima nella sala.
-## - la porta "sala pompe" del corridoio degli interni si apre (prima era chiusa);
-## - le docce scorrono senza fermarsi e il vapore copre tutto;
+## (GameState.luci = BLACKOUT) si torna su dal raccordo e, per la strada B scelta dall'utente il 16
+## ottobre, per il corridoio e il magazzino dei gonfiabili; si esce dalla serranda nell'angolo
+## sud-ovest della sala (la strada la fanno gli ambienti tecnici, i checkpoint sono sui loro marker).
 ## - nella sala la vasca è vuota: la medusa non c'è più, l'acqua si muove ancora, dal bordo
-##   gocciola e una scia di gocce si allontana nel buio verso l'area bimbi;
+##   gocciola; dalla vasca, da dove era affacciata, una scia di bava rosa fosforescente va nel buio
+##   fino all'area bimbi (riscontro sulla v0.3.1: "la scia di bava deve partire dalla piscina dove
+##   era la medusina prima"): sul bordo dove si è tirata fuori, giù per il muro della vasca e a terra;
+## - con la strada A di prima (dagli spogliatoi, [member interni] e [member porta_interni]) la porta
+##   "sala pompe" degli interni si apriva e le docce scorrevano nel vapore: con la B restano vuoti;
 ## - niente musica (senza corrente il pulsante della sigla non suona), solo gocce e tempesta;
 ##   il lampione resta spento (lo spegne il blackout).
 ## Tutto dipende da GameState.luci, che si salva con i checkpoint: ripartendo dal blackout la
@@ -18,13 +21,17 @@ extends Node
 @export var acqua_vasca: Node3D
 ## Dove stava la medusa: da lì partono le increspature.
 @export var centro_increspature := Vector3(0.0, 0.88, 11.0)
-## Gli interni (docce) e la porta della sala pompe nel loro corridoio.
+## Gli interni (docce) e la porta della sala pompe nel loro corridoio: solo con la strada A.
 @export var interni: Node
 @export var porta_interni: Node
 ## Il pulsante della sigla: senza corrente non fa niente.
 @export var pulsante_sigla: Node
-## La scia di gocce, dal bordo della vasca verso l'area bimbi (punti a terra, in ordine).
+## La scia (bava rosa o gocce), dalla vasca della medusa verso l'area bimbi (punti a terra, in ordine).
 @export var scia := PackedVector3Array()
+## Bava rosa dove si è tirata fuori dalla vasca: sul bordo e giù per il muro, fino all'inizio di
+## [member scia] (coordinate globali; il muro come linea verticale, un poco staccata dalla parete).
+@export var bordo_vasca := PackedVector3Array()
+@export var muro_vasca := PackedVector3Array()
 ## Da dove gocciola ancora (sul bordo della vasca, dalla parte della scia).
 @export var gocciolatoi := PackedVector3Array()
 ## Materiale delle macchie bagnate a terra (quello delle pozzanghere della sala).
@@ -116,6 +123,8 @@ func _scia() -> void:
 	_nodi.append(radice)
 	if scia_bava:
 		_bava(radice, "BavaScia", scia, 0.34, 3)
+		_bava(radice, "BavaBordoVasca", bordo_vasca, 0.3, 9)
+		_bava(radice, "BavaMuroVasca", muro_vasca, 0.32, 11, false)
 		_bava(radice, "BavaBordoFossa", bordo_fossa, 0.2, 5)
 		_bava(radice, "BavaIntornoFossa", intorno_fossa, 0.42, 7)
 		_gocciolatoi(radice)
@@ -152,15 +161,17 @@ func _scia() -> void:
 	_gocciolatoi(radice)
 
 
-func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int) -> void:
+func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int, appoggia := true) -> BavaRosa:
 	if percorso.size() < 2:
-		return
+		return null
 	var b := BavaRosa.new()
 	b.name = nome
 	b.punti = percorso
 	b.larghezza = larga
 	b.seme = seme
+	b.appoggia = appoggia   # il tratto giù per il muro della vasca è in verticale
 	radice.add_child(b)
+	return b
 
 
 func _gocciolatoi(radice: Node3D) -> void:
@@ -199,6 +210,21 @@ static func _materiale_goccia() -> StandardMaterial3D:
 func macchie_scia() -> int:
 	var radice := get_node_or_null(^"Scia")
 	return radice.find_children("*", "MeshInstance3D", false, false).size() if radice else 0
+
+
+## Quanti metri di scia ci sono a terra: la bava rosa lungo [member scia] o, con le gocce, una
+## macchia ogni [member passo_scia] (0 se non c'è).
+func metri_scia() -> float:
+	var radice := get_node_or_null(^"Scia")
+	if radice == null:
+		return 0.0
+	var bava := radice.get_node_or_null(^"BavaScia") as BavaRosa
+	if bava == null:
+		return macchie_scia() * passo_scia
+	var metri := 0.0
+	for i in range(1, bava.punti.size()):
+		metri += bava.punti[i - 1].distance_to(bava.punti[i])
+	return metri if bava.get_child_count() > 0 else 0.0
 
 
 func _process(delta: float) -> void:

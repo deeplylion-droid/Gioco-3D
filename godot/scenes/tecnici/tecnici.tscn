@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://addons/acqua/scripts/water_tank_link.gd" id="s_link"]
 [ext_resource type="Resource" path="res://addons/acqua/presets/stile_3_scura.tres" id="r_stile"]
 [ext_resource type="Script" path="res://scripts/mechanisms/ladder.gd" id="s_ladder"]
+[ext_resource type="Script" path="res://scripts/tecnici/vasca_inesauribile.gd" id="s_inesauribile"]
 [ext_resource type="PackedScene" path="res://scenes/tecnici/luci_tecnici.tscn" id="p_luci"]
 
 [node name="Tecnici" type="Node3D"]
@@ -40,6 +41,10 @@ script = ExtResource("s_link")
 tank = NodePath("../VascaRaccolta")
 style = ExtResource("r_stile")
 
+[node name="VascaInesauribile" type="Node" parent="Acqua" node_paths=PackedStringArray("vasca")]
+script = ExtResource("s_inesauribile")
+vasca = NodePath("../VascaRaccolta")
+
 [node name="Gioco" type="Node3D" parent="."]
 
 [node name="ScalaPozzo" type="Area3D" parent="Gioco"]
@@ -47,6 +52,14 @@ position = Vector3(0.17, 0, 0)
 rotation = Vector3(0, 1.5708, 0)
 script = ExtResource("s_ladder")
 height = 6.800
+width = 0.6
+show_model = false
+
+[node name="ScalettaVasca" type="Area3D" parent="Gioco"]
+position = Vector3(35, -1.7, 2.4)
+rotation = Vector3(0, 3.14159, 0)
+script = ExtResource("s_ladder")
+height = 1.95
 width = 0.6
 show_model = false
 
@@ -109,7 +122,7 @@ gizmo_extents = 0.5
 editor_description = "turbina d avviamento della pompa 3: ruota sul suo asse, che è Z (guarda verso +Z, verso la stanza)"
 
 [node name="marker_leva" type="Marker3D" parent="Marker"]
-position = Vector3(46.11, 3.60576, -5.11)
+position = Vector3(46.097, 3.78927, -5.20525)
 gizmo_extents = 0.5
 editor_description = "mozzo della leva grande: ruota su X, abbassata = -70 gradi"
 
@@ -143,6 +156,16 @@ position = Vector3(46.25, 0.01, 1.4)
 gizmo_extents = 0.5
 editor_description = "cardine della porta del ponte inferiore: ruota su Y"
 
+[node name="marker_chiavistello" type="Marker3D" parent="Marker"]
+position = Vector3(46.24, 1.06053, 0.627373)
+gizmo_extents = 0.5
+editor_description = "puleggia del chiavistello della porta: ci arriva il cavo della leva"
+
+[node name="marker_chiusura_stagna" type="Marker3D" parent="Marker"]
+position = Vector3(46.15, 1.38, 2.65)
+gizmo_extents = 0.5
+editor_description = "cilindro della chiusura stagna della porta: ci arrivano i tubi delle tre turbine"
+
 [node name="marker_raccordo_sala" type="Marker3D" parent="Marker"]
 position = Vector3(47.2, 0, 1.4)
 gizmo_extents = 0.5
@@ -153,10 +176,38 @@ editor_description = "nel raccordo, appena fuori dalla porta del ponte inferiore
 position = Vector3(44.04, 7.25, -7.8)
 gizmo_extents = 0.5
 rotation = Vector3(0, -1.5708, 0)
-editor_description = "in cima al raccordo, ai piedi della scala che sale al corridoio degli interni"
+editor_description = "in cima al raccordo, davanti alla grata chiusa della scala degli interni"
+
+[node name="marker_t7_inizio" type="Marker3D" parent="Marker"]
+position = Vector3(47.5, 0, 1.4)
+gizmo_extents = 0.5
+rotation = Vector3(0, -1.5708, 0)
+editor_description = "checkpoint: inizio del corridoio, appena fuori dalla porta della sala pompe"
+
+[node name="marker_t7_cima_scala" type="Marker3D" parent="Marker"]
+position = Vector3(44.55, 9.05, 0.4)
+gizmo_extents = 0.5
+editor_description = "in cima alla scala del corridoio C2, al livello della sala grande"
+
+[node name="marker_t7_magazzino" type="Marker3D" parent="Marker"]
+position = Vector3(27.64, 9.05, 15)
+gizmo_extents = 0.5
+rotation = Vector3(0, 1.5708, 0)
+editor_description = "checkpoint: entrata del magazzino dei gonfiabili"
+
+[node name="marker_t7_serranda" type="Marker3D" parent="Marker"]
+position = Vector3(17.94, 9.05, 15)
+gizmo_extents = 0.5
+rotation = Vector3(0, 1.5708, 0)
+editor_description = "checkpoint: appena usciti dalla serranda, nella sala grande (angolo sud-ovest)"
+
+[node name="marker_t7_inizio_scia" type="Marker3D" parent="Marker"]
+position = Vector3(17.24, 9.05, 15)
+gizmo_extents = 0.5
+editor_description = "qui comincia la scia rosa verso l area bimbi"
 
 [node name="LuceLeva" type="OmniLight3D" parent="."]
-position = Vector3(45.71, 3.95576, -5.11)
+position = Vector3(45.697, 4.13927, -5.20525)
 light_color = Color(1, 0.82, 0.6, 1)
 light_energy = 1.6
 omni_range = 1.8

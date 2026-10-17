@@ -29,6 +29,7 @@ EXT = [
     ('PackedScene', 'res://scenes/props/polaroid.tscn', 'p_pol'),
     ('Script', 'res://scripts/interaction/polaroid_photo.gd', 's_pol'),
     ('Script', 'res://scripts/game/checkpoint.gd', 's_cp'),
+    ('PackedScene', 'res://scenes/interni/luci_interni.tscn', 'p_luci'),
 ]
 
 subs, nodes = [], []
@@ -91,7 +92,7 @@ node('CollisionShape3D', 'CollisionShape3D', 'Meccanismi/BloccoTornello', props=
 area('PassaggioTornello', 'Meccanismi', (9.5, 1.0, -16.4), (1.2, 2.0, 1.4))
 node('PernoTurbina', 'Node3D', 'Meccanismi', props={'position': V(8.79, 2.05, -19.4), 'rotation': V(0, H, 0)})
 node('TurbinaSaracinesca', 'Node3D', 'Meccanismi', inst='p_turb', props={
-    'position': V(8.79, 2.05, -19.4), 'rotation': V(0, H, 0), 'script': 'ExtResource("s_turb")', 'radius': '0.26',
+    'position': V(8.79, 2.05, -19.4), 'rotation': V(0, H, 0), 'script': 'ExtResource("s_turb")', 'radius': '0.3',
     'show_model': 'false', 'external_rotor': 'NodePath("../PernoTurbina")', 'spin_per_liter': '14.0'})
 node('Saracinesca', 'Node3D', 'Meccanismi', np=['sources'], props={
     'position': V(9.7, 0, -20.6), 'script': 'ExtResource("s_sar")', 'sources': '[NodePath("../TurbinaSaracinesca")]',
@@ -145,6 +146,9 @@ for nome, pos, size in [('RiflessiCorridoio', (11, 1.35, -1.3), (22.4, 2.8, 2.8)
                         ('RiflessiStanzino', (13.2, 1.3, -8.4), (4.2, 2.7, 4.6))]:
     node(nome, 'ReflectionProbe', 'Atmosfera', props={'position': V(*pos), 'size': V(*size), 'box_projection': 'true',
                                                       'interior': 'true', 'ambient_mode': '0'})
+
+# luci degli interni (addon grafica, la sessione grafica)
+node('LuciInterni', None, '.', inst='p_luci')
 
 testo = ['[gd_scene format=3]', ''] + [f'[ext_resource type="{t}" path="{p}" id="{i}"]' for t, p, i in EXT] + [''] + subs + nodes
 with open(OUT, 'w') as f:

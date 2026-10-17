@@ -2,11 +2,11 @@ extends Node3D
 ## Demo giocabile della sala principale (vertical slice) sull'architettura vera dell'acquapark.
 ## Si entra dagli spogliatoi, si prende lo zaino-pompa dalla rastrelliera dei bagnini, si
 ## incontra la medusa affacciata alla vasca (la lampada si accende quando ti avvicini).
-## Nell'area bimbi la ruota a pale riempie il secchio gigante. Tappa 5: fai cadere il gonfiabile
-## incastrato nella turbina dello scarico, tieni il getto sulla turbina (ricaricando lo zaino
-## dalla pozza stessa) finché la pozza si svuota, colpisci il pulsante del portello e scendi
-## dalla scala del pozzo. Tappa 6, sotto la sala (ambienti tecnici): la sala pompe e il risveglio
-## (RisveglioSalaPompe); la demo finisce in cima al raccordo verso gli interni.
+## Tappa 5 (PiscinaOnde): svuoti la piscina a onde con lo zaino, aspirando l'acqua della parte
+## profonda e sparandola fuori dalla vasca; a piscina vuota il pulsante della botola si attiva, lo
+## colpisci e scendi dalla scala del pozzo. Tappa 6, sotto la sala (ambienti tecnici): la sala
+## pompe e il risveglio (RisveglioSalaPompe). Poi il ritorno al buio (tappa 7) e lei che sbuca dal
+## bordo (tappa 8); la demo finisce al portone della sala della torre, sulla parete est.
 
 ## Materiale delle pozzanghere della sala (addon acqua) al posto di M_amb_pozzanghera del GLB.
 @export var puddle_material: Material
@@ -18,6 +18,11 @@ extends Node3D
 @export var lamp_trigger: Area3D
 ## La medusa al centro della sala (con un metodo pulse() per la sigla).
 @export var statue: Node
+## Easter egg (16 ottobre): il getto in faccia alla medusa affacciata le fa chiudere l'occhio per
+## questi secondi (si chiude in 0,25 s e si riapre da solo); i colpi mentre è chiuso non lo fanno
+## ripartire. Un bersaglio del getto (WaterHitbox) davanti alla sua faccia, di questo raggio (m).
+@export var occhio_chiuso_secondi := 5.0
+@export var raggio_faccia := 0.6
 ## Il pulsante per i bambini sul muro della vasca: fa partire la sigla.
 @export var jingle_button: WaterButton
 @export var jingle_button_mesh: NodePath
@@ -29,8 +34,8 @@ extends Node3D
 @export var tecnici: Node3D
 ## La sala pompe: ordine delle pompe, leva e risveglio (RisveglioSalaPompe).
 @export var risveglio: Node
-## Dove finisce la demo: in fondo alla scia di gocce della tappa 7 o, con la tappa 8, ai piedi
-## della torre degli scivoli.
+## Dove finisce la demo: in fondo alla scia della tappa 7 o, con la tappa 8, davanti al portone
+## della sala della torre.
 @export var fine_demo_trigger: Area3D
 ## Il testo sotto "FINE DELLA DEMO".
 @export_multiline var fine_demo_testo := "La scia continua nel buio.\nGrazie per aver giocato!"
@@ -38,6 +43,8 @@ extends Node3D
 @export var ritorno: Node
 ## La tappa 8, lei che sbuca dal bordo della fossa nell'area bimbi (LeiSbuca).
 @export var lei_sbuca: Node
+## Il portone della sala della torre (PortoneTorre): la demo finisce lì, dopo la tappa 8.
+@export var portone: Node
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
 @export var show_controls_hint := true
@@ -47,6 +54,9 @@ extends Node3D
 @export var start_with_pack := false
 
 var demo_finished := false
+
+# Il bersaglio del getto sulla faccia della medusa (_faccia_bagnabile).
+var _faccia: WaterHitbox
 
 
 func _ready() -> void:
@@ -71,6 +81,7 @@ func _ready() -> void:
 		puddle.emptied.connect(func(): GameState.reach_checkpoint(checkpoint_pozza))
 	if fine_demo_trigger:
 		fine_demo_trigger.body_entered.connect(_on_fine_demo)
+	_faccia_bagnabile.call_deferred()
 	_setup_tecnici()
 	if show_controls_hint:
 		_show_hint.call_deferred()
@@ -86,8 +97,34 @@ func _ready() -> void:
 		interni.call(&"fai_risveglio", p)
 
 
+## La struttura di gioco dell'area bimbi: lo scivolo giallo e i tre tetti a piramide non hanno
+## collisioni nel GLB (solo pedane, passerelle, parapetti e scala): ci si passava attraverso (prova
+## della v0.3.2, punto 10, "lo scivolo giallo è incorporeo"). Una collisione che segue la forma
+## esatta della mesh: sullo scivolo si cammina e si scivola, sui tetti si sta sopra.
+func _collisione_struttura_gioco() -> void:
+	var mi := get_node_or_null(^"Sala/AreaBimbi/sala_struttura_gioco") as MeshInstance3D
+	if mi == null:
+		for n in find_children("sala_struttura_gioco", "MeshInstance3D", true, false):
+			mi = n as MeshInstance3D
+			break
+	if mi == null or mi.mesh == null or mi.has_node(^"CollisioneForma"):
+		return
+	var corpo := StaticBody3D.new()
+	corpo.name = "CollisioneForma"
+	corpo.collision_layer = Layers.WORLD
+	corpo.collision_mask = 0
+	var forma := CollisionShape3D.new()
+	var trimesh := mi.mesh.create_trimesh_shape()
+	trimesh.backface_collision = true   # bordi e testate sottili: niente da attraversare da dietro
+	forma.shape = trimesh
+	corpo.add_child(forma)
+	mi.add_child(corpo)
+
+
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
+	_cordone_vasca()
+	_collisione_struttura_gioco()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D
@@ -139,6 +176,19 @@ func _setup_hall() -> void:
 					var m := mi.mesh.surface_get_material(i)
 					if m and m.resource_name == "M_amb_pozzanghera":
 						mi.set_surface_override_material(i, puddle_material)
+
+
+## La tappa 5 rifatta (decisa dall'utente il 15 ottobre): niente ruota a pale né secchio da
+## riempire, niente recinto, niente turbina dello scarico. Finché l'ambiente non manda i modelli
+## nuovi, il cancello del recinto resta spalancato (con la sua collisione) e la turbina dello
+## scarico, che non serve più, non si vede.
+## Il muro invisibile del cordone chiuso intorno alla vasca della medusa (cordone_vasca_0..19 di
+## sala_vasca_centrale.glb, D1): ferma il giocatore ma non il getto (l'easter egg dell'occhio e il
+## pulsante della sigla si raggiungono da fuori), sul livello "barriere". Lo mette già
+## ambiente_post_import.gd; qui per sicurezza, se un import vecchio non l'avesse fatto.
+func _cordone_vasca() -> void:
+	for n in find_children("cordone_vasca_*", "CollisionObject3D", true, false):
+		(n as CollisionObject3D).collision_layer = Layers.BARRIERS
 
 
 ## Duplica il materiale [param mat_name] di una mesh importata e lo mette come override
@@ -196,11 +246,6 @@ func _on_player_respawned() -> void:
 	var p := GameState.player
 	if statue_lamp and not statue_lamp.is_on and p and p.global_position.z < lamp_trigger.global_position.z:
 		statue_lamp.turn_on(true)
-	# I salvataggi di prima (v0.2.x) non hanno lo stato del cancello della piscina: dal fondo
-	# della piscina in poi (checkpoint 3) era per forza già aperto.
-	var giochi := get_node_or_null(^"RuotaESecchio")
-	if giochi and int(GameState.snapshot.get("order", -1)) >= 3 and not bool(giochi.get(&"gate_open")):
-		giochi.call(&"load_state", {"gate_open": true})
 
 
 func _on_jingle() -> void:
@@ -228,9 +273,57 @@ func _setup_tecnici() -> void:
 			(c as CollisionObject3D).collision_mask = 0
 
 
+## Il bersaglio del getto sulla faccia della medusa (easter egg dell'occhio che si chiude). Segue
+## la faccia a ogni passo della fisica (_segui_faccia). Prima si metteva una volta sola, due passi di
+## fisica dopo l'ingresso della sala: nel gioco il caricamento è lungo e il primo fotogramma recupera
+## più passi di fisica prima di disegnare, così l'animazione non era ancora partita e il bersaglio
+## restava sull'occhio della posa di riposo, 2,6 m sopra la faccia (v0.3.1: "se spruzzo l'acqua in
+## faccia alla medusina non chiude l'occhio"; nei test, a 60 fotogrammi fissi, non succedeva).
+func _faccia_bagnabile() -> void:
+	var m := statue as Node3D
+	if m == null or not m.has_method(&"chiudi_occhio") or not m.has_method(&"get_eye_position"):
+		return
+	_faccia = WaterHitbox.new()
+	_faccia.name = "FacciaMedusa"
+	# Figlio della medusa (quando sparisce al buio si spegne con lei), ma la posizione la decide lei.
+	_faccia.top_level = true
+	var forma := CollisionShape3D.new()
+	var sfera := SphereShape3D.new()
+	sfera.radius = raggio_faccia
+	forma.shape = sfera
+	_faccia.add_child(forma)
+	m.add_child(_faccia)
+	_segui_faccia()
+	_faccia.water_hit.connect(func(_litri: float, _punto: Vector3, _dir: Vector3):
+		if m.visible and not bool(m.call(&"occhio_chiuso")):
+			m.call(&"chiudi_occhio", occhio_chiuso_secondi))
+
+
+func _physics_process(_delta: float) -> void:
+	_segui_faccia()
+
+
+## Il bersaglio del getto davanti alla faccia: dove sta l'occhio adesso (con l'animazione e lo
+## sguardo), 15 cm più in basso.
+func _segui_faccia() -> void:
+	if _faccia == null or not is_instance_valid(_faccia) or not is_instance_valid(statue):
+		return
+	_faccia.global_position = (statue.call(&"get_eye_position") as Vector3) + Vector3(0.0, -0.15, 0.0)
+
+
 func _on_fine_demo(body: Node3D) -> void:
 	if demo_finished or not body is Player:
 		return
+	# Al portone della sala della torre la demo finisce solo dopo la tappa 8; se si apre all'arrivo
+	# (PortoneTorre.Apertura.ALL_ARRIVO) la scritta arriva quando è aperto.
+	if portone and portone.has_method(&"si_puo_aprire"):
+		if not bool(portone.call(&"si_puo_aprire")):
+			return
+		demo_finished = true
+		if not bool(portone.call(&"is_aperto")):
+			portone.call(&"apri")
+			await portone.aperto
+			await get_tree().create_timer(0.8, false).timeout
 	demo_finished = true
 	var hud := _hud()
 	if hud:

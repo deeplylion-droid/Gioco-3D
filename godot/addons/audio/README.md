@@ -51,11 +51,12 @@ Se il progetto ha già bus con questi nomi (un `default_bus_layout.tres`), usa q
 | `WaterPack` | getto e aspirazione in loop, impatto del getto (3D, sul punto colpito), ricarica, serbatoio pieno/vuoto, pompata | segnali + `flow`, `has_hit`, `hit_point`, `tank_amount` |
 | `WaterButton` | "ciunk" e campanello giocattolo, rilascio | `pressed`, `released` |
 | `Turbine` | loop che segue `energy` (tono e volume); colpi se è bloccata | `energy`, `jet_hit` dello zaino |
-| `StuckInflatable` | squittio della gomma quando il getto lo colpisce, sblocco e tonfo nella pozza | `released`, `jet_hit` |
 | `PoweredDoor` | motore (o saracinesca, se sale in verticale), colpo a fine corsa | `open_amount`, `opened`, `closed` |
 | `HingedHatch` | portello che cigola e sbatte | `opened` |
-| `BucketWheel` | ruota a pale, secchio che si ribalta e torna, ruota del cancello, cancello, quadro in corto | segnali + `angular_speed` |
-| `WaterTank` | gorgoglio dello scarico (sul gorgo `DrainVortex`), vasca svuotata, riempimento | `is_draining()`, `emptied`, `fill_sources` |
+| `PiscinaOnde` (tappa 5) | il gorgo mentre il livello scende, la piscina vuota, il pulsante della botola che si attiva, il lampeggiante e il bi-bu (vedi sotto) | `vasca`, `pulsante_attivato`, `lampeggio`, `attivo`, `premuto()` |
+| `Medusine` (tappa 5) | tintinnii quando una entra nell'ugello, la cascata quando escono col getto (vedi sotto) | `aspirata`, `sparata` (o `stati()`, `posizioni()`) |
+| `PortoneTorre` | il portone della sala della torre che si apre (vedi sotto) | `apertura_iniziata` |
+| `WaterTank` | gorgoglio dello scarico (sul gorgo `DrainVortex`), vasca svuotata (anche quando la si svuota aspirando con lo zaino; non quella della piscina a onde, che ha il suo), riempimento | `is_draining()`, `emptied`, `fill_sources` |
 | `FlickerLight` | colpo del faro che si accende e ronzio che segue la luce | `is_on`, `light` |
 | `MedusaStatue` | respiro umido appena udibile da vicino; risveglio | animazione `sveglia` |
 | scena con `jingle_button` e `statue` (sala principale) | la **sigla rovinata** dal piedistallo | `pressed` del pulsante |
@@ -110,21 +111,77 @@ resto lo suona `scripts/tecnici/risveglio_sala_pompe.gd` con l'API, con questi n
 | `paratia_scende_loop` | paratia d'acciaio che scende: motore, catene, guide | da sola (`Paratia`) |
 | `maniglione_bloccato` | maniglione antipanico spinto, ma la porta non si apre | `suona(&"maniglione_bloccato", porta.global_position)` |
 | `porta_ponte_apre` | lo stesso maniglione che si sblocca, porta pesante che si apre | `suona(&"porta_ponte_apre", porta.global_position)` |
+| `cancello_stagno_apre` | uno dei due cancelli stagni della camera delle onde, dopo la scala del pozzo, che si apre da solo al passaggio (3,7 s, due varianti) | `suona(&"cancello_stagno_apre", cancello)`, dallo script dei cancelli (vedi sotto) |
 
 I due suoni lontani hanno già dentro la distanza (passa-basso e riverbero): in 3D danno solo la
 direzione (`unit_size` 40), così si sentono anche dalla sala pompe, sotto il ruggito.
 
+**I cancelli stagni** (prova della v0.3.1, 16 ottobre: "si aprono al tuo passaggio con un bel suono
+metallico forte"). Un suono per cancello, che contiene tutto: la valvola pilota (0 s), quattro
+chiavistelli che si sfilano con colpi secchi (fino a 0,35 s), la guarnizione che si stacca e l'aria
+che si sfoga (0,37 s), la porta d'acciaio che parte con uno strappo spinta dall'idraulica, stride e
+gratta nelle guide e rimbomba nel corridoio, il colpo a fine corsa, i fermi che scattano e l'ultimo
+sfiato. L'animazione deve seguirlo: la porta parte `Audio.CANCELLO_STAGNO_PARTE` (0,55 s) dopo
+`suona()`, è a velocità piena circa 0,4 s dopo, rallenta appena nell'ultimo quarto di secondo e
+sbatte a fine corsa dopo `Audio.CANCELLO_STAGNO_ARRIVA` (2,55 s). Le due varianti hanno gli stessi
+tempi e si alternano (mai la stessa due volte di fila), così i due cancelli non suonano uguali.
+Taratura: +2 dB, `unit_size` 5, `max_distance` 60, cioè pieno fino a circa 6 m. Se i cancelli
+fossero `Paratia` o `PoweredDoor`, l'addon ci metterebbe anche i suoni di quelle classi (motore e
+catene, motore della porta): per i cancelli che si aprono basta questo suono. Anteprima:
+`res://audio/anteprima/cancello_stagno.ogg` (i due cancelli, il secondo 2 s dopo e più lontano).
+
+## Tappa 5: la piscina a onde, il pulsante della botola, le micro medusine
+
+Suoni in `res://audio/piscina/`, scelti dall'utente il 16 ottobre fra le proposte (gorgo A, richiamo
+B, vetro A; le anteprime sono in `res://audio/anteprima/proposta_*.ogg`). Li suona l'addon da solo,
+non vanno chiamati dagli script: `AudioPiscina` segue `PiscinaOnde`, `AudioMedusine` segue `Medusine`.
+
+| Suono | Cosa | Nodo e segnale |
+|---|---|---|
+| `piscina_svuota_loop` | il gorgo: l'acqua che gira e scende con glu-glu profondi e bolle | `PiscinaOnde`: suona finché `vasca.fill` scende, dove aspira lo zaino (`WaterPack.suck_point`); tono da 1 (piena) a 1,12 (quasi vuota) |
+| `piscina_vuota` | l'ultima acqua che gira più veloce, il risucchio, un sorso grave a 2,2 s, l'aria che fischia, gocce nella piscina vuota (6,5 s) | `emptied` della vasca della piscina (`PiscinaOnde.vasca`), se l'acqua stava scendendo; per questa vasca non suona `vasca_svuotata` |
+| `pulsante_botola_attiva` | lo scatto del contattore nella cassetta gialla e il jingle giocattolo che cala, come a pile scariche (1,4 s) | `PiscinaOnde.pulsante_attivato`, sul pulsante |
+| `pulsante_botola_lampeggiante_loop` | il lampeggiante giallo che gira (motorino, ingranaggi, un tic a giro) | da `pulsante_attivato` prende giri (tono da 0,35 a 1); gira finché `attivo` è vero e `premuto()` falso, poi si ferma calando; ai checkpoint riparte da solo |
+| `pulsante_botola_bibu` | un bi-bu da giocattolo | a ogni `PiscinaOnde.lampeggio` (uno ogni 1,6 s; se il segnale non c'è, l'addon conta 1,6 s da solo), finché non è premuto; il lampo che arriva insieme al jingle non lo fa, il primo bi-bu è al lampo dopo |
+| `medusina_aspirata` (6 varianti) | un grappolo di tintinnii di vetro minuscoli che scende di tono nel tubo | `Medusine.aspirata(posizione)`; senza il segnale, il passaggio a `NELLO_ZAINO` in `stati()` |
+| `medusine_sparate` (2 varianti) | la cascata di tintinnii su una scala a toni interi che si allontana | `Medusine.sparata(posizione)`, al massimo una cascata ogni 1,2 s; senza il segnale, il passaggio da `NELLO_ZAINO` a `IN_VOLO` |
+
+Le medusine sono appena percettibili (sotto lo zaino), come le ha approvate l'utente.
+`pulsante_attivato` deve arrivare circa 2,5 s dopo che l'acqua è finita (`ritardo_pulsante` di
+`PiscinaOnde`), così il sorso finale di `piscina_vuota` non si sovrappone allo scatto e al jingle;
+se arriva subito funziona lo stesso, ma si sovrappongono.
+
+## Sala della torre: il portone
+
+Suono in `res://audio/torre/`, scelto dall'utente il 16 ottobre (motore, A).
+
+| Suono | Cosa | Nodo e segnale |
+|---|---|---|
+| `portone_torre_apre` | la serratura che scatta (0 s), il motore che parte, il portone pesante che scorre sui rulli da 0,7 s (giunti della rotaia, la lastra che rimbomba), sbatte a fine corsa a 6,4 s, il motore che si spegne (8,5 s, mono) | `PortoneTorre.apertura_iniziata`, 2 m sopra l'anta (la proprietà `anta`, perno al centro della base) o, se non c'è, sopra il nodo |
+
+Il suono è uno solo, quindi l'animazione deve seguirlo: il portone parte `Audio.PORTONE_PARTE` (0,7 s)
+dopo `apertura_iniziata`, accelera in circa 1,1 s, frena nell'ultimo 0,9 s e arriva in fondo dopo
+`Audio.PORTONE_ARRIVA` (6,4 s): lì `aperto()`. `PortoneTorre` non prende i suoni generici delle
+porte (`PoweredDoor`).
+
 ## Tappa 8: lei nell'area bimbi
 
-Suoni in `res://audio/lei/`. Niente versi: lei non parla. La fossa e il morso li suona l'addon da
-solo; lei che sbuca e che scivola sotto li chiama `scripts/game/lei_sbuca.gd` (`_suona()`).
+Suoni in `res://audio/lei/`. Lei non parla (niente parole né voce umana), ma si sente la sua gola:
+è la versione gutturale scelta dall'utente il 16 ottobre (la prima, solo acqua e pelle, è in
+`assets_src/audio/scartati/lei_v1/`). La fossa e il morso li suona l'addon da solo; lei che sbuca e
+che scivola sotto li chiama `scripts/game/lei_sbuca.gd` (`_suona()`).
 
 | Suono | Cosa | Come |
 |---|---|---|
 | `fossa_ribolle_loop` | gorgoglio profondo dal condotto, bolle grosse: l'acqua che risale e riempie le vasche basse | da solo (`LeiSbuca`) |
-| `lei_sbuca` | una massa grande che emerge lenta, l'acqua che le cola di dosso, le dita e i palmi bagnati sulle piastrelle, poi gocce (6,5 s) | `_sbuca()`: `_suona(&"lei_sbuca")` |
-| `lei_scivola_sotto` | le mani che scivolano dal bordo, il corpo che torna giù, il risucchio, poche bolle, poi silenzio (4,5 s) | `_scivola()`: `_suona(&"lei_scivola_sotto")` |
-| `morso` | lo scatto fuori dall'acqua, la pelle che si strappa sotto l'occhio, la fauce che si chiude a 1,0 s (stereo, 1,8 s) | da solo, alla morte con causa `&"medusa"` |
+| `lei_sbuca` | sale gorgogliando di gola sott'acqua, l'acqua che le cola di dosso, le mani bagnate sul bordo, un respiro profondo e umido; poi, affacciata, un rantolo trattenuto fino a quando va sotto (7,6 s) | `_sbuca()`: `_suona(&"lei_sbuca")` |
+| `lei_scivola_sotto` | un brontolio di gola, le mani che scivolano dal bordo, il risucchio, l'ultimo fiato che gorgoglia sott'acqua sempre più giù, poi silenzio (4,5 s) | `_scivola()`: `_suona(&"lei_scivola_sotto")` |
+| `morso` | lo scatto con un risucchio d'aria tra i denti, un ringhio che cresce mentre la pelle si strappa sotto l'occhio, la fauce che si chiude a 1,0 s col fiato spinto fuori, un gorgoglio che mastica (stereo, 1,8 s) | da solo, alla morte con causa `&"medusa"` |
+
+Lei resta affacciata finché non la guardi bene, quindi a volte più dei 7,6 s di `lei_sbuca`. In quel
+caso l'addon (`AudioLei`) fa ripartire piano il suo respiro col rantolo: il pezzo 3,6-6,9 s di
+`lei_sbuca`, 5 dB più piano, ripetuto con una dissolvenza incrociata di 0,7 s. Viene dalla sua testa e
+smette quando scivola sotto. Nessun suono nuovo.
 
 Il morso suona sul bus Interfaccia (da vicino, niente riverbero, non si abbassa con la morte); la
 fauce si chiude a `MORSO_COLPO` = 1,0 s, il lampo rosso di `DeathSequence`, e lì parte lo stinger.
@@ -164,9 +221,11 @@ Lasciando un cursore parte un suono di prova sul suo bus (anche col gioco in pau
 
 `tests/test_audio.gd` (anche nella CI): bus ed effetti, tutti gli stream del catalogo, volumi su
 disco, collegamenti con la sala principale e suoni che partono davvero (tuono, passi, getto,
-aspirazione, pulsante, sigla, faro), monitor e paratie della sala pompe, la fossa e il morso della
-tappa 8, i nomi dei suoni chiesti dagli script (devono esistere nel catalogo), pausa, menu, morte e
-ripartenza, nessun errore.
+aspirazione, pulsante, sigla, faro), monitor e paratie della sala pompe, i cancelli stagni (due
+varianti più lunghe del colpo a fine corsa, forti in 3D), la fossa e il morso della
+tappa 8, la piscina a onde (gorgo, piscina vuota, pulsante della botola, lampeggiante, bi-bu, micro
+medusine), il portone della torre (con un portone finto), i nomi dei suoni chiesti dagli script
+(devono esistere nel catalogo), pausa, menu, morte e ripartenza, nessun errore.
 
 ```
 godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
@@ -183,7 +242,14 @@ riproduzioni appese; lo stato resta giusto. Il test forza la riproduzione vera c
 ```
 
 Rigenera tutti gli OGG (deterministici), `catalogo.gd`, `res://audio/LICENZE.md` e le anteprime
-`res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg` e `anteprima_lei.ogg` (cartella
-con `.gdignore`: non entra nel gioco).
+`res://audio/anteprima/anteprima_audio.ogg`, `anteprima_tecnici.ogg`, `anteprima_lei.ogg`,
+`confronto_pioggia_bollicine.ogg`, `confronto_passi_goccioline.ogg` e `cancello_stagno.ogg`
+(cartella con `.gdignore`: non entra nel gioco). Le anteprime delle
+proposte per l'utente (`anteprima/proposta_*.ogg`) restano com'erano quando le ha ascoltate: si
+rifanno solo a mano (`genera_anteprima.py proposte` per lei, `genera_proposte.py` per le altre,
+`genera_proposte_getto.py` per la lancia dello zaino, con i suoni sciolti in
+`assets_src/audio/proposte_getto/`).
+I suoni scelti fra le proposte li fanno `genera_piscina.py` e `genera_torre.py`, con le stesse
+funzioni e gli stessi semi delle anteprime approvate.
 `assets_src/audio/verifica.py file.ogg --png cartella` stampa loudness e picchi e disegna lo
 spettrogramma.

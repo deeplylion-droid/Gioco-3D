@@ -26,6 +26,7 @@ EXT = [
     ('Script', 'res://addons/acqua/scripts/water_tank_link.gd', 's_link'),
     ('Resource', 'res://addons/acqua/presets/stile_3_scura.tres', 'r_stile'),
     ('Script', 'res://scripts/mechanisms/ladder.gd', 's_ladder'),
+    ('Script', 'res://scripts/tecnici/vasca_inesauribile.gd', 's_inesauribile'),
     ('PackedScene', 'res://scenes/tecnici/luci_tecnici.tscn', 'p_luci'),
 ]
 
@@ -120,6 +121,9 @@ node('VascaRaccolta', 'Node3D', 'Acqua', inst='p_tank', props={
     'build_walls': 'false', 'fill': f'{(pelo - fondo[1]) / 1.7:.4f}', 'max_fill': '0.95', 'capacity_liters': '80.0'})
 node('AcquaVascaRaccolta', 'Node3D', 'Acqua', inst='p_link', np=['tank'], props={
     'script': 'ExtResource("s_link")', 'tank': 'NodePath("../VascaRaccolta")', 'style': 'ExtResource("r_stile")'})
+# riscontro della v0.3.1, punto 7: nella sala pompe l'acqua non si esaurisce mai (scende fino al 60%, poi si rabbocca)
+node('VascaInesauribile', 'Node', 'Acqua', np=['vasca'], props={
+    'script': 'ExtResource("s_inesauribile")', 'vasca': 'NodePath("../VascaRaccolta")'})
 
 # scala alla marinara del pozzo: dal pavimento della camera al fondo della piscina, contro la parete -X del pozzo
 pp, _ = CAMERA['PUNTO_portello']
@@ -127,6 +131,12 @@ node('Gioco', 'Node3D', '.')
 node('ScalaPozzo', 'Area3D', 'Gioco', props={'position': V(pp[0] - 0.65 + 0.18, 0, pp[2]), 'rotation': V(0, H, 0),
                                             'script': 'ExtResource("s_ladder")', 'height': f'{pp[1]:.3f}', 'width': '0.6',
                                             'show_model': 'false'})
+
+# riscontro della v0.3.1, punto 9: la scaletta della vasca di raccolta (contro il muro sud, 1,5 m a ovest
+# del centro) fa risalire chi ci cade dentro: dal fondo (-1,7) fino a scavalcare il cordolo (+0,16)
+node('ScalettaVasca', 'Area3D', 'Gioco', props={'position': V(fondo[0] - 1.5, fondo[1], fondo[2] + 1.5), 'rotation': V(0, math.pi, 0),
+                                               'script': 'ExtResource("s_ladder")', 'height': '1.95', 'width': '0.6',
+                                               'show_model': 'false'})
 
 node('Marker', 'Node3D', '.')
 # percorso
@@ -146,9 +156,17 @@ marker('marker_vasca_raccolta', SALA, 'ACQUA_vasca_raccolta#centro', nota='super
 marker('marker_monitor', SALA, 'PUNTO_monitor', nota='schermo del monitor a tubo sulla scrivania')
 marker('marker_porta_ponte', SALA, 'PUNTO_porta_ponte_inferiore', nota='davanti alla porta del ponte inferiore (lato sala)')
 marker('marker_porta_ponte_perno', SALA, 'PORTA_ponte', nota='cardine della porta del ponte inferiore: ruota su Y')
+marker('marker_chiavistello', SALA, 'PUNTO_chiavistello', nota='puleggia del chiavistello della porta: ci arriva il cavo della leva')
+marker('marker_chiusura_stagna', SALA, 'PUNTO_chiusura_stagna', nota='cilindro della chiusura stagna della porta: ci arrivano i tubi delle tre turbine')
 # raccordo verso gli interni
 marker('marker_raccordo_sala', RACC, 'PUNTO_raccordo_sala', yaw=-H, nota='nel raccordo, appena fuori dalla porta del ponte inferiore')
-marker('marker_raccordo_interni', RACC, 'PUNTO_raccordo_interni', yaw=-H, nota='in cima al raccordo, ai piedi della scala che sale al corridoio degli interni')
+marker('marker_raccordo_interni', RACC, 'PUNTO_raccordo_interni', yaw=-H, nota='in cima al raccordo, davanti alla grata chiusa della scala degli interni')
+# tappa 7 (strada nuova verso la sala grande): checkpoint e inizio della scia
+marker('marker_t7_inizio', RACC, 'PUNTO_t7_inizio', yaw=-H, nota='checkpoint: inizio del corridoio, appena fuori dalla porta della sala pompe')
+marker('marker_t7_cima_scala', RACC, 'PUNTO_t7_cima_scala', nota='in cima alla scala del corridoio C2, al livello della sala grande')
+marker('marker_t7_magazzino', RACC, 'PUNTO_t7_magazzino', yaw=H, nota='checkpoint: entrata del magazzino dei gonfiabili')
+marker('marker_t7_serranda', RACC, 'PUNTO_t7_serranda', yaw=H, nota='checkpoint: appena usciti dalla serranda, nella sala grande (angolo sud-ovest)')
+marker('marker_t7_inizio_scia', RACC, 'PUNTO_t7_inizio_scia', nota='qui comincia la scia rosa verso l area bimbi')
 
 # luce segnaposto dentro la gabbia: la leva si deve leggere da terra (le luci finali le fa grafica)
 pl, _ = SALA['LEVA']

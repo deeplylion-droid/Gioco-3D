@@ -20,6 +20,7 @@
 [ext_resource type="Script" path="res://scripts/interaction/polaroid_photo.gd" id="s_pol"]
 [ext_resource type="Script" path="res://scripts/game/checkpoint.gd" id="s_cp"]
 [ext_resource type="PackedScene" path="res://scenes/interni/luci_interni.tscn" id="p_luci"]
+[ext_resource type="Script" path="res://scripts/mechanisms/ricarica_vasca.gd" id="s_ricarica"]
 
 [sub_resource type="BoxShape3D" id="blocco_tornello"]
 size = Vector3(1.25, 2.25, 0.3)
@@ -76,6 +77,9 @@ fill = 0.75
 max_fill = 0.9
 capacity_liters = 30.0
 
+[node name="Ricarica" type="Node" parent="Acqua/VascaLavapiedi"]
+script = ExtResource("s_ricarica")
+
 [node name="AcquaLavapiedi" type="Node3D" parent="Acqua" node_paths=PackedStringArray("tank") instance=ExtResource("p_link")]
 script = ExtResource("s_link")
 tank = NodePath("../VascaLavapiedi")
@@ -116,7 +120,7 @@ rotation = Vector3(0, 1.5708, 0)
 position = Vector3(8.79, 2.05, -19.4)
 rotation = Vector3(0, 1.5708, 0)
 script = ExtResource("s_turb")
-radius = 0.26
+radius = 0.3
 show_model = false
 external_rotor = NodePath("../PernoTurbina")
 spin_per_liter = 14.0

@@ -1,20 +1,24 @@
 extends Node
 ## Test automatico della tappa 8 (docs/livello/capitolo1.md), "lei sbuca dal bordo" nell'area bimbi,
-## simulando gli input. Al buio (dopo il risveglio) si segue la scia lungo il muro ovest: il
-## checkpoint prima della scena, le vasche basse che si riempiono dalla fossa, lei che sbuca dal
-## bordo quando ti avvicini.
-## 1. Se le vai incontro ti prende: fauce aperta, vene nell'occhio, sequenza di morte (saltata) e
-##    si riparte dal checkpoint con la scena di nuovo in attesa.
-## 2. Se resti lontano ti guarda, scivola sotto e la sua luce si allontana lungo il condotto.
-## 3. Poi la strada verso la torre: lungo il muro nord, dal cancello del recinto (aperto nella
-##    tappa 4) giù nella spiaggia della piscina vuota, lungo la spiaggia e fuori dal lato est, ai
-##    piedi della torre, con i checkpoint.
+## simulando gli input. Al buio (dopo il risveglio) lei è già affacciata alla fossa prima che tu
+## arrivi, anche con l'acqua delle vasche basse ancora bassa (riscontro sulla v0.3.1); si segue la
+## scia lungo il muro ovest: il checkpoint prima della scena, le vasche basse che si riempiono.
+## 1. Se le vai incontro ti prende: si gira verso di te, fauce aperta, vene nell'occhio, sequenza di
+##    morte (saltata) e si riparte dal checkpoint con lei di nuovo affacciata.
+## 2. Se non la guardi resta affacciata, anche oltre l'attesa e anche se ti allontani.
+## 3. Quando l'hai vista bene (nell'inquadratura, vicino al centro, senza niente in mezzo, per due
+##    secondi di fila) ti fissa ancora un po', poi scivola sotto (finché si vede, mani e tentacoli non
+##    entrano nel bordo né nel pavimento) e la sua luce si allontana lungo il condotto.
+## 4. Appena lei se ne va, il portone della sala della torre sulla parete est si apre da solo
+##    (scelta dell'utente del 16 ottobre): tra l'area bimbi e la piscina, poi lungo il lato nord della
+##    spiaggia fino al portone, con i checkpoint; lì finisce la demo.
+## 5. Se le arrivi di lato ti prende girandosi verso di te: la camera della morte la trova di fronte.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
 ## è spenta: il test la accende sulla fossa provvisoria e spegne la fine della demo sulla scia.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa8.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
-const PIEDE_TORRE := Vector3(10.6, 0.0, -14.3)
+const PORTONE := Vector3(19.84, 0.0, -15.0)
 
 var level: Node
 var p: Player
@@ -39,43 +43,86 @@ func _run() -> void:
 	print("  (fossa dell'ambiente: %s)" % ("sì" if fossa_vera else "non ancora, uso quella provvisoria"))
 	check(not lei.medusa.visible, "prima non si vede")
 
-	print("Un salvataggio di prima, senza lo stato del cancello, oltre il fondo della piscina")
-	var giochi := level.get_node("RuotaESecchio")
-	check(not bool(giochi.get(&"gate_open")), "in una partita nuova il cancello della piscina è chiuso")
-	GameState.capture_snapshot("Gioco/CheckpointFondo", 3, Transform3D(Basis(), Vector3(0.0, -0.6, -1.0)))
-	(GameState.snapshot["objects"] as Dictionary).erase(GameState.persist_key(giochi))
-	GameState._restore_pending = true
-	GameState._on_level_ready()
-	await _frames(2)
-	check(bool(giochi.get(&"gate_open")), "ripartendo da lì il cancello è aperto")
+	print("Niente recinto sulla spiaggia (tappa 5 rifatta, niente ruota né secchio)")
+	check(level.get_node_or_null("RuotaESecchio") == null, "niente più ruota a pale e secchio da riempire")
+	check(level.get_node_or_null(^"Sala/Interattivi/sala_cancello_spiaggia") == null, "niente recinto né cancello")
+	var portone := level.get(&"portone") as PortoneTorre
+	check(portone != null and portone.anta != null and portone.apertura == PortoneTorre.Apertura.DOPO_TAPPA8 and not portone.is_aperto(),
+		"il portone della sala della torre è chiuso e si aprirà da solo dopo la tappa 8")
+
+	print("Lo scivolo giallo e i tetti della struttura di gioco sono solidi (prova della v0.3.2, punto 10)")
+	var spazio := p.get_world_3d().direct_space_state
+	var su_scivolo := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-11.5, 4.0, -17.8), Vector3(-11.5, 0.5, -17.8), Layers.WORLD))
+	check(not su_scivolo.is_empty() and float(su_scivolo.position.y) > 1.0,
+		"lo scivolo ha la sua collisione (a metà, alto %.2f m)" % (float(su_scivolo.position.y) if not su_scivolo.is_empty() else 0.0))
+	# Ci vai contro di lato: ti ferma.
+	p.teleport(Vector3(-11.5, 0.0, -16.2), 0.0, 0.0)
+	await _frames(5)
+	await _cammina_verso(Vector3(-11.5, 0.0, -19.6), 150)
+	check(p.global_position.z > -17.5, "camminandoci contro di lato non lo attraversi (z %.2f)" % p.global_position.z)
+	# Ci sali sopra: ci stai e scivoli giù lungo il canale, senza cadere attraverso.
+	p.teleport(Vector3(-11.5, 1.7, -17.8), 0.0, 0.0)
+	var min_y := 9.0
+	for i in 20:
+		await get_tree().physics_frame
+		min_y = minf(min_y, p.global_position.y)
+	check(min_y > 0.6, "salito sopra lo scivolo ci resti sopra (y minima %.2f)" % min_y)
+	var tetti_ok := true
+	# Sopra l'apice di ciascun tetto (gronda a 3,4 o 4,6 m, apice 1 m più su): scivoli giù ma non dentro.
+	for tetto in [[Vector3(-17.2, 4.8, -18.4), 3.4], [Vector3(-17.2, 6.0, -21.2), 4.6], [Vector3(-14.4, 6.0, -18.4), 4.6]]:
+		var t: Vector3 = tetto[0]
+		p.teleport(t, 0.0, 0.0)
+		await _frames(20)
+		if p.global_position.y < float(tetto[1]) - 0.3 and absf(p.global_position.x - t.x) < 1.2 and absf(p.global_position.z - t.z) < 1.2:
+			tetti_ok = false
+			print("  (caduto attraverso il tetto sopra %s: y %.2f)" % [str(t), p.global_position.y])
+	check(tetti_ok, "e sui tre tetti a piramide si sta sopra")
 
 	print("Prima del risveglio non succede niente")
 	_prepara()
+	p.teleport(Vector3(18.5, 0.0, -15.0), -PI * 0.5, 0.0)
+	await _frames(10)
+	check(not bool(level.get(&"demo_finished")) and not portone.is_aperto() and not portone.in_movimento,
+		"davanti al portone prima della tappa 8: resta chiuso e la demo non finisce")
+	p.teleport(Vector3(16.5, 0.0, -15.0), -PI * 0.5, 0.0)
+	await _frames(10)
+	check(not _checkpoint().ends_with("CheckpointTorre"), "e il checkpoint del portone vale solo al buio (%s)" % _checkpoint())
 	p.teleport(Vector3(-18.3, 0.0, -3.0), 0.0, 0.0)
 	await _frames(60)
 	check(lei.fase == LeiSbuca.Fase.ATTESA and not lei.medusa.visible, "con le luci di prima lei non sbuca")
 
-	print("Al buio, sulla scia")
+	print("Al buio: lei è già affacciata alla fossa (riscontro sulla v0.3.1)")
+	# Come nel gioco: dal risveglio si arriva in fretta, l'acqua delle vasche basse è ancora quella di
+	# prima (nella v0.3.1 lei restava sotto finché non le eri addosso).
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
-	# Dal risveglio a qui passano minuti: l'acqua è già salita un po' (piano, dalla fossa).
-	for v in lei.vasche:
-		var t := v as WaterTank
-		t.fill = minf(t.fill + 0.08 / t.inner_size.y, t.max_fill)
+	await _frames(5)
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible, "appena c'è il blackout è già sul bordo, prima che tu arrivi (fase %d)" % lei.fase)
+	var vasca: WaterTank = level.get_node("Vasche/VascaBimbi1")
+	check(vasca.get_surface_global_y() >= minf(lei.pelo_minimo, lei.livello_pieno) - 0.002,
+		"e l'acqua della fossa le copre il seno (pelo %.3f)" % vasca.get_surface_global_y())
 	p.teleport(Vector3(-18.3, 0.0, 2.6), 0.0, 0.0)
 	await _frames(5)
-	var vasca: WaterTank = level.get_node("Vasche/VascaBimbi1")
 	var prima := vasca.get_surface_global_y()
-	check(await _cammina_verso(Vector3(-18.3, 0.0, -0.4), 600), "lungo il muro ovest fino al checkpoint")
+	var sempre := true
+	Input.action_press(&"move_forward")
+	for i in 600:
+		var d := Vector3(-18.3, 0.0, -0.4) - p.global_position
+		if Vector2(d.x, d.z).length() < 0.35:
+			break
+		p.set_look(atan2(-d.x, -d.z), 0.0)
+		await get_tree().physics_frame
+		sempre = sempre and lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible
+	Input.action_release(&"move_forward")
 	await _frames(5)
+	check(sempre, "mentre arrivi lungo la scia lei è lì, affacciata")
 	check(_checkpoint().ends_with("CheckpointAreaBimbi"), "checkpoint: prima della scena (%s)" % _checkpoint())
-	check(lei.fase == LeiSbuca.Fase.ATTESA, "al checkpoint lei non è ancora sbucata")
 	await _frames(120)
 	check(vasca.get_surface_global_y() > prima + 0.005, "le vasche basse si riempiono dalla fossa (pelo da %.3f a %.3f)" % [prima, vasca.get_surface_global_y()])
 
 	print("1. Le vai incontro seguendo la scia: ti prende")
 	var ritorno := level.get(&"ritorno") as RitornoAlBuio
 	var scia := ritorno.scia
-	var sbucata := false
+	var affacciata := true
 	Input.action_press(&"move_forward")
 	for k in range(scia.size() - 6, scia.size()):
 		for i in 400:
@@ -84,12 +131,14 @@ func _run() -> void:
 				break
 			p.set_look(atan2(-d.x, -d.z), 0.0)
 			await get_tree().physics_frame
-			sbucata = sbucata or lei.fase == LeiSbuca.Fase.SBUCA or lei.fase == LeiSbuca.Fase.GUARDA
+			affacciata = affacciata and (GameState.is_dying or (lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible))
 		if GameState.is_dying:
 			break
 	Input.action_release(&"move_forward")
-	check(sbucata, "avvicinandosi, lei sbuca dal bordo")
+	check(affacciata, "mentre ti avvicini resta affacciata")
 	check(GameState.is_dying and lei.fase == LeiSbuca.Fase.PRESA, "troppo vicino: ti prende")
+	await _frames(20)
+	check(_angolo_verso(p.global_position) < 12.0, "e si gira verso di te (%.1f gradi)" % _angolo_verso(p.global_position))
 	var seq := GameState.get_children().filter(func(n): return n is DeathSequence)
 	check(seq.size() == 1 and (seq[0] as DeathSequence).cause == &"medusa", "parte la sequenza di morte di lei")
 	await _frames(45)
@@ -104,63 +153,172 @@ func _run() -> void:
 	_prepara()
 	await _frames(10)
 	check(GameState.luci == GameState.Luci.BLACKOUT and _checkpoint().ends_with("CheckpointAreaBimbi"), "si riparte dal checkpoint, al buio")
-	check(lei.fase == LeiSbuca.Fase.ATTESA and not lei.medusa.visible, "e la scena è di nuovo in attesa")
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible and not lei.vista_bene, "e lei è di nuovo affacciata alla fossa")
 	check(p.global_position.distance_to(Vector3(-18.3, 0.0, -0.5)) < 1.0, "il giocatore è sulla scia (%s)" % str(p.global_position))
 	# Ricaricando il livello al buio, la sala del ritorno (tappa 7) è com'era.
 	ritorno = level.get(&"ritorno") as RitornoAlBuio
 	var lampione := level.get_node(^"Vasca/Sfarfallio") as FlickerLight
-	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.macchie_scia() >= 15 and not lampione.is_on,
-			"e la sala è ancora al buio: vasca vuota, scia di gocce, lampione spento")
+	check(ritorno.attivo and not ritorno.medusa.visible and ritorno.metri_scia() >= 8.0 and not lampione.is_on,
+			"e la sala è ancora al buio: vasca vuota, scia di bava rosa, lampione spento")
 
-	print("2. Resti lontano: lei ti guarda e se ne va")
+	print("2. Non la guardi: lei resta affacciata")
 	check(await _cammina_verso(Vector3(-18.3, 0.0, -1.9), 300), "qualche passo avanti")
 	await _frames(10)
-	check(lei.fase == LeiSbuca.Fase.SBUCA or lei.fase == LeiSbuca.Fase.GUARDA, "lei sbuca a pochi metri (fase %d)" % lei.fase)
-	await _frames(150)
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible, "lei è lì, affacciata a pochi metri (fase %d)" % lei.fase)
+	# Ti giri dall'altra parte (a sud, da dove sei venuto) e ti allontani di qualche passo, senza
+	# guardarla: lei resta lì ben oltre l'attesa.
+	p.set_look(PI, 0.0)
+	await _frames(30)
+	check(await _cammina_verso(Vector3(-18.3, 0.0, 1.6), 300), "ti allontani senza guardarla")
+	p.set_look(PI, 0.0)
+	await _frames(int((lei.attesa + lei.tempo_vista + 2.0) * 60.0))
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible and not lei.vista_bene,
+			"dopo %.0f s è ancora affacciata: non l'hai vista (fase %d)" % [lei.attesa + lei.tempo_vista + 2.0, lei.fase])
 	var occhio_lei: Vector3 = lei.medusa.call(&"get_eye_position")
+	# Oltre la distanza massima non conta, anche guardandola dritta.
+	p.look_at_point(occhio_lei)
+	await _frames(2)
+	var dv := lei.distanza_vista
+	lei.distanza_vista = p.camera.global_position.distance_to(occhio_lei) - 0.5
+	check(not lei.la_stai_guardando(p), "più lontano della distanza massima non conta come vista")
+	lei.distanza_vista = dv
+	p.set_look(PI, 0.0)
+	await _frames(30)
+
+	# Con qualcosa in mezzo (un pannello messo qui per il test: lo scivolo grande che la copriva da
+	# qui non c'è più dal 16 ottobre) anche guardando verso di lei non la vedi.
+	var pannello := StaticBody3D.new()
+	var forma := CollisionShape3D.new()
+	var scatola := BoxShape3D.new()
+	scatola.size = Vector3(3.0, 3.0, 0.2)
+	forma.shape = scatola
+	pannello.add_child(forma)
+	level.add_child(pannello)
+	var meta := p.camera.global_position.lerp(occhio_lei, 0.5)
+	pannello.global_transform = Transform3D(Basis.looking_at(occhio_lei - p.camera.global_position, Vector3.UP), meta)
+	p.look_at_point(occhio_lei)
+	await _frames(3)
+	check(not lei.la_stai_guardando(p), "con qualcosa in mezzo non conta come vista")
+	pannello.queue_free()
+	p.set_look(PI, 0.0)
+	await _frames(30)
+
+	print("3. La guardi bene: ti fissa, poi scivola sotto e se ne va")
+	# Torni sulla scia, un po' più avanti, dove né lo scivolo né le colonne la coprono, e la guardi.
+	check(await _cammina_verso(Vector3(-18.3, 0.0, -3.0), 400), "torni sulla scia, dove si vede bene")
+	check(not lei.vista_bene and lei.fase == LeiSbuca.Fase.GUARDA, "camminando senza guardarla non conta")
+	p.look_at_point(occhio_lei)
+	await _frames(3)
+	check(lei.la_stai_guardando(p), "lei è nell'inquadratura, vicino al centro, senza niente in mezzo")
+	await _frames(int(lei.tempo_vista * 60.0 * 0.5))
+	check(not lei.vista_bene and lei.fase == LeiSbuca.Fase.GUARDA, "dopo un secondo non basta ancora (%.1f s)" % lei.vista_t)
+	await _frames(int(lei.tempo_vista * 60.0 * 0.5) + 10)
+	check(lei.vista_bene, "dopo %.0f secondi di fila l'hai vista bene" % lei.tempo_vista)
+	occhio_lei = lei.medusa.call(&"get_eye_position")
 	var sguardo: Vector3 = lei.medusa.call(&"get_eye_direction")
 	var verso_te := (p.get_eye_position() - occhio_lei).normalized()
 	check(lei.fase == LeiSbuca.Fase.GUARDA and sguardo.dot(verso_te) > 0.85,
 			"le mani sul bordo, l'occhio fisso su di te (%.2f)" % sguardo.dot(verso_te))
 	check(LeiSbuca._in_pianta(p.global_position, occhio_lei) > lei.distanza_presa + 1.0, "e tu sei lontano (%.1f m)" % LeiSbuca._in_pianta(p.global_position, occhio_lei))
+	await _frames(int(lei.attesa * 60.0 * 0.5))
+	check(lei.fase == LeiSbuca.Fase.GUARDA, "ti fissa ancora per un po'")
 	var fuga_vista := false
 	var luce_lontana := 0.0
+	# Mani e tentacoli (i punti delle gocce: dita, punte dei tentacoli sul bordo) mentre scivola sotto:
+	# finché si vedono non devono entrare nel bordo né nel pavimento più di quanto già lo toccano.
+	var punti: PackedVector3Array = lei.medusa.get(&"punti_gocce")
+	var dentro0 := _dentro_pavimento(punti)
+	var peggio := 0.0
+	var scivolata := false
 	for i in 900:
 		await get_tree().physics_frame
+		if lei.fase == LeiSbuca.Fase.SCIVOLA and lei.opacita() > 0.25:
+			scivolata = true
+			var ora := _dentro_pavimento(punti)
+			for j in ora.size():
+				peggio = maxf(peggio, ora[j] - maxf(dentro0[j], 0.0))
 		var luce := lei.get_node_or_null(^"LuceSottacqua") as OmniLight3D
 		if luce:
 			fuga_vista = true
 			luce_lontana = maxf(luce_lontana, luce.global_position.distance_to(lei.punto_sbuca.global_position))
 		if lei.fase == LeiSbuca.Fase.FINITA:
 			break
+	check(scivolata and peggio < 0.05, "scivolando sotto, finché si vedono, mani e tentacoli non entrano nel pavimento (%.2f m)" % peggio)
 	check(fuga_vista and luce_lontana > 1.5, "scivola sotto e la sua luce si allontana sott'acqua (%.1f m)" % luce_lontana)
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
 
-	print("3. Verso la torre, dalla spiaggia della piscina vuota")
-	var ok := true
-	for t in [Vector3(-18.3, 0, -9.7), Vector3(-18.3, 0, -15.1), Vector3(-17.5, 0, -16.5), Vector3(-15.9, 0, -16.9),
-			Vector3(-10.5, 0, -16.9), Vector3(-5.5, 0, -17.1), Vector3(-0.7, 0, -16.3), Vector3(0.0, 0, -15.0)]:
-		ok = ok and await _cammina_verso(t, 900)
-	check(ok, "lungo il muro nord, lontano dalle vasche")
-	ok = true
-	for t in [Vector3(0.0, 0, -13.0), Vector3(0.6, 0, -12.2), Vector3(3.5, 0, -11.8)]:
-		ok = ok and await _cammina_verso(t, 600)
+	print("4. Il portone della sala della torre si apre da solo; la strada fino a lì")
+	portone = level.get(&"portone") as PortoneTorre
 	await _frames(5)
-	check(ok and p.global_position.y < -0.1, "dal cancello giù nella spiaggia della piscina vuota (y %.2f)" % p.global_position.y)
+	check(portone.in_movimento or portone.is_aperto(), "appena lei se ne va il portone comincia ad aprirsi")
+	var ok := true
+	for t in [Vector3(-14.0, 0, -4.0), Vector3(-8.3, 0, -4.5), Vector3(-8.3, 0, -8.0), Vector3(-8.3, 0, -12.75),
+			Vector3(0.0, 0, -12.75), Vector3(2.0, 0, -12.75)]:
+		ok = ok and await _cammina_verso(t, 900)
+	await _frames(5)
+	check(ok, "tra l'area bimbi e la piscina, poi lungo il lato nord della spiaggia")
 	check(_checkpoint().ends_with("CheckpointSpiaggiaBuio"), "checkpoint: la spiaggia (%s)" % _checkpoint())
+	check(portone.is_aperto(), "intanto il portone si è aperto")
+	var anta := portone.anta.global_position
+	check(absf(anta.z - (PORTONE.z + portone.corsa)) < 0.05 and absf(anta.x - PORTONE.x) < 0.05,
+		"l'anta è scorsa di %.1f m verso sud (%s)" % [portone.corsa, str(anta)])
 	ok = true
-	for t in [Vector3(6.1, 0, -12.2)]:
-		ok = ok and await _cammina_verso(t, 600)
-	ok = true
-	for t in [Vector3(8.1, 0, -12.5), Vector3(9.5, 0, -13.3), PIEDE_TORRE + Vector3(-0.3, 0, 0)]:
-		ok = ok and await _cammina_verso(t, 600)
+	for t in [Vector3(8.0, 0, -12.75), Vector3(15.0, 0, -14.0), Vector3(16.5, 0, -15.0)]:
+		ok = ok and await _cammina_verso(t, 900)
 	await _frames(10)
-	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino ai piedi della torre: checkpoint (%s)" % _checkpoint())
+	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino davanti al portone: checkpoint (%s)" % _checkpoint())
 	if fossa_vera:
-		check(bool(level.get(&"demo_finished")), "ai piedi della torre finisce la demo")
+		check(bool(level.get(&"demo_finished")), "davanti al portone aperto finisce la demo")
 	else:
-		print("  (la fine della demo passa ai piedi della torre quando c'è la fossa)")
+		print("  (la fine della demo passa al portone quando c'è la fossa)")
+
+	print("5. Le arrivi di lato: ti prende girandosi verso di te")
+	lei.load_state({"finita": false})
+	await _frames(5)
+	check(lei.fase == LeiSbuca.Fase.GUARDA and lei.medusa.visible, "(di nuovo affacciata)")
+	var testa: Vector3 = lei.punto_sbuca.global_transform * Vector3(0.0, 1.63, 1.8)
+	var lato := lei.punto_sbuca.global_basis.x.normalized()
+	var piedi := testa + lato * 3.2
+	piedi.y = 0.0
+	p.teleport(piedi, 0.0, 0.0)
+	p.look_at_point(testa)
+	await _frames(5)
+	check(_angolo_verso(p.global_position) > 70.0, "di lato: lei guarda altrove (%.0f gradi)" % _angolo_verso(p.global_position))
+	var preso := await _cammina_verso(testa, 300)
+	check(preso or GameState.is_dying, "le vai incontro")
+	check(GameState.is_dying and lei.fase == LeiSbuca.Fase.PRESA, "ti prende")
+	await _frames(20)
+	check(_angolo_verso(p.global_position) < 12.0, "e intanto si gira verso di te: la camera la trova di fronte (%.1f gradi)" % _angolo_verso(p.global_position))
 	_fine()
+
+
+## Di quanti gradi lei è girata rispetto a [param punto] (in pianta, dal suo occhio).
+func _angolo_verso(punto: Vector3) -> float:
+	var testa: Vector3 = lei.medusa.call(&"get_eye_position")
+	var verso := punto - testa
+	verso.y = 0.0
+	var avanti := lei.medusa.global_basis.z
+	avanti.y = 0.0
+	if verso.length() < 0.01 or avanti.length() < 0.01:
+		return 180.0
+	return rad_to_deg(avanti.angle_to(verso))
+
+
+## Per ogni punto (coordinate della medusa) quanto sta sotto la superficie su cui poggia (bordo,
+## pavimento, fondo della fossa senza il coperchio): positivo se ci è dentro.
+func _dentro_pavimento(punti: PackedVector3Array) -> PackedFloat32Array:
+	var out := PackedFloat32Array()
+	var space := p.get_world_3d().direct_space_state
+	var esclusi: Array[RID] = [p.get_rid()]
+	if lei.coperchio:
+		esclusi.append(lei.coperchio.get_rid())
+	for q in punti:
+		var g: Vector3 = lei.medusa.global_transform * q
+		var giu := PhysicsRayQueryParameters3D.create(Vector3(g.x, 2.5, g.z), Vector3(g.x, -4.0, g.z), Layers.WORLD)
+		giu.exclude = esclusi
+		var r := space.intersect_ray(giu)
+		out.append(float(r.position.y) - g.y if not r.is_empty() else -10.0)
+	return out
 
 
 ## Dopo un caricamento (o una ripartenza): i riferimenti nuovi. Senza la fossa dell'ambiente la
@@ -181,10 +339,6 @@ func _aspetta_livello() -> void:
 
 
 func _prepara() -> void:
-	# La tappa 4 è già fatta: il cancello del recinto della piscina è aperto.
-	var giochi := level.get_node_or_null(^"RuotaESecchio")
-	if giochi:
-		giochi.call(&"load_state", {"gate_open": true})
 	if lei and not lei.abilitata:
 		lei.abilitata = true
 		var fine := level.get(&"fine_demo_trigger") as Area3D

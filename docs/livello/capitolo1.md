@@ -101,6 +101,10 @@
 
 ### 4. Area bimbi · 7-15 min
 
+> **Rifatta su richiesta dell'utente (15 ottobre, dopo la v0.3.0).** L'area bimbi della v0.3.0 era "tutta ammassata senza senso" e l'enigma del secchio non si capiva: si rifà da zero, più ordinata. Restano: la struttura di gioco con il secchio gigante (solo scenografia, senza enigma), le vasche basse a scacchi (con la fossa della tappa 8), i funghi-fontana e il festone di lampadine. Prima di costruirla l'utente sceglie tra 2-3 disposizioni. Il testo qui sotto è il piano vecchio.
+> **Scelta il 16 ottobre: disposizione 1** (`docs/proposte/sala/bimbi_L1_*.jpg` su lavoro/proposte-sala). La struttura sta nell'angolo con la scala verso chi arriva, lo scivolo scende nella vasca piccola e due funghi sono nella piazza. Niente ruote, cannoncini né oggetti sparsi. La vasca con la fossa della tappa 8 e la scia restano dove sono.
+
+
 - La zona più colorata: giocattoli saturi dello stile B e pastelli anni '90 dello stile C. Struttura di gioco a più piani, cannoncini ad acqua, funghi-fontana, vasche basse e, in cima, il secchio gigante.
 - **Zaino: "il secchio"**
   - Le scale sono crollate. Col getto fai girare una ruota a pale: si abbassa un ponticello.
@@ -110,6 +114,22 @@
 - **Tensione:** il secchio che si rovescia fa un rumore assordante. L'acqua bagna un quadro elettrico: scintille, e dagli altoparlanti parte la sigla, rallentata e storta. Si spegne a metà.
 
 ### 5. Piscina a onde vuota · 15-21 min
+
+> **Enigma rifatto su richiesta dell'utente (15 ottobre, dopo la v0.3.0).** Quello della v0.3.0 non si capiva. Dopo averlo giocato l'utente ha deciso:
+> - **niente più ruota a pale né secchio da riempire**: il secchio resta solo come scenografia;
+> - **niente recinto**: la spiaggia della piscina a onde è aperta;
+> - **resta la botola** nel fondo della parte profonda, sopra il pozzo della camera delle onde;
+> - la piscina si **svuota con lo zaino**: aspiri l'acqua e la spari fuori dalla vasca finché non ne resta;
+> - a piscina vuota si **preme il pulsante** della botola, che va reso **molto più evidente**. Come renderlo evidente lo sceglie l'utente da due versioni con le immagini.
+> Il testo qui sotto è il piano vecchio.
+>
+> **Scelte del 16 ottobre:**
+> - si svuota in circa **30 secondi, con 4 zainate**;
+> - l'acqua sparata dentro la vasca ci ricola: va sparata fuori;
+> - niente scritte a schermo;
+> - l'acqua resta torbida com'è, ma ci nuotano **micro medusine luminose di vari colori** che attirano lo sguardo: si aspirano insieme all'acqua e si sparano via;
+> - il pulsante è la **versione A**: un fungo rosso di 50 cm su una cassetta gialla, sulla parete sud, con un lampeggiante giallo; quando lo colpisci la luce diventa verde e la botola si apre.
+
 
 - La grande vasca sotto la cupola, vuota: piastrelle scrostate, giocattoli sul fondo, una rosa dei venti a mosaico. Sopra, la tempesta e i lampi.
 - Entri dalla spiaggia, la parte bassa in pendenza. Nella parte profonda è rimasta solo una pozza d'acqua torbida. La piscina resta vuota.
@@ -137,6 +157,8 @@
 
 ### 7. Ritorno al buio: il piedistallo vuoto · 28-31 min
 
+> **Strada nuova, scelta dall'utente il 16 ottobre (proposta B, `docs/proposte/tappa7/` su lavoro/ambienti-1).** Per non ripassare dagli spogliatoi, dalla sala pompe si sale per un corridoio con le scale (circa 9 m) fino al **magazzino dei gonfiabili**: scaffali, mucchi di gonfiabili sgonfi, una serranda mezza alzata. Si esce dalla serranda nell'angolo sud-ovest della sala grande, al buio del blackout. La scia di bava rosa va lungo il muro ovest fino all'area bimbi, dove lei sbuca rivolta verso chi arriva da quel lato. Il testo qui sotto è il piano vecchio.
+
 - Ripassi dal ponte inferiore e dagli spogliatoi, al buio. Le docce scorrono senza fermarsi e il vapore copre tutto.
 - Esci dalla stessa porta di prima: la stessa inquadratura della statua, ma al buio.
 - **Il piedistallo è vuoto.** Sopra c'è una pozza d'acqua che ancora gocciola dai bordi.
@@ -144,6 +166,8 @@
 - Niente musica, niente mostri. Solo le gocce e la tempesta. E devi andare avanti lo stesso.
 
 ### 8. Area bimbi: lei sbuca dal bordo · 31-33 min
+
+> **16 ottobre.** Lei resta affacciata finché non la guardi bene per 2 secondi di fila: vicino al centro dello schermo (entro 18°), a meno di 14 m, senza niente davanti al viso. Poi aspetta 6 secondi e scivola sotto; se le arrivi troppo vicino ti prende. La scia e la bava rosa intorno alla fossa sono visibili al 75%, un po' trasparenti. Dopo la scena si va alla sala della torre (vedi la tappa 9).
 
 È la scena di [medusa_sbircia.jpg](../concept/medusa_sbircia.jpg).
 
@@ -157,6 +181,8 @@
 - Poi attraversi la spiaggia della piscina vuota, fino alla torre. Niente ripari.
 
 ### 9. Torre degli scivoli · 33-38 min
+
+> **16 ottobre: la torre si sposta in una sala nuova dietro la parete est** (versione 2, `docs/proposte/sala/torre_est_*.jpg` su lavoro/proposte-sala). Il portone resta chiuso fino a dopo la tappa 8. È un portone scorrevole pieno con la torre dipinta e le bande a strisce, **senza il cartello sopra**. L'interno della sala, gli scivoli nuovi (quelli di oggi vanno rifatti) e i bambini della balconata si propongono all'utente a parte.
 
 - Un'impalcatura altissima di tubi colorati, scale e piattaforme. In cima, le partenze degli scivoli. Con le pompe accese l'acqua scorre.
 - **Zaino: "la salita"**

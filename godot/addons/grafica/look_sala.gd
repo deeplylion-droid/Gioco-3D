@@ -39,7 +39,7 @@ extends Node3D
 @export var crea_effetti := true
 @export var crea_area_bimbi := true
 ## Neon che nel GLB sono "a metà": sfarfallano o sono guasti.
-@export var neon_difettosi: PackedInt32Array = [1, 3, 4, 6, 7, 11, 13, 14, 17, 24, 25]
+@export var neon_difettosi: PackedInt32Array = [1, 3, 4, 6, 7, 13, 14, 17, 24, 25]
 
 @export_group("Volume della sala")
 ## Centro e dimensioni della sala in coordinate Godot (da sala_dati.json: x -20..20,
@@ -57,18 +57,19 @@ extends Node3D
 @export var percorso_trigger := NodePath()
 @export var punto_accensione := Vector3(0, 1.5, 18.6)
 @export_group("Area bimbi")
-## Struttura di gioco (sala_area_bimbi.glb, x -17..-8, z -19,2..-11,1, alta 8,3): un festone
-## di lampadine da festa colorate, rotte a tratti, sul fronte e sul fianco est, e una
-## plafoniera appesa al soffitto che illumina il fronte e il secchio gigante.
-@export var festone_punti: PackedVector3Array = [Vector3(-16.9, 3.7, -10.95), Vector3(-8.0, 3.7, -10.95), Vector3(-7.85, 3.7, -18.8)]
+## Struttura di gioco (sala_area_bimbi.glb, nell'angolo nord-ovest dalla disposizione 1 del 16 ottobre:
+## x -18,7..-9,8, z -22,8..-14,7, alta 8,3): un festone di lampadine da festa colorate, rotte a tratti, dal
+## muro ovest alla cima del telaio del secchio e da lì al muro nord, e una plafoniera appesa al soffitto
+## che illumina il fronte e il secchio gigante.
+@export var festone_punti: PackedVector3Array = [Vector3(-20.0, 4.2, -13.0), Vector3(-15.9, 7.35, -19.65), Vector3(-12.9, 7.35, -19.65), Vector3(-8.0, 4.2, -24.0)]
 @export var festone_cala := 0.55          # quanto scende il filo a metà campata
 @export var festone_passo := 0.42
 @export var energia_festone := 1.1
 ## Lampadine spente (rotte) e lampadine che sfarfallano, contate lungo il festone.
 @export var festone_rotte: PackedInt32Array = [5, 6, 7, 13, 22, 29, 30]
 @export var festone_sfarfallano: PackedInt32Array = [3, 17, 26]
-@export var plafoniera_bimbi := Vector3(-9.2, 9.2, -7.6)
-@export var mira_plafoniera_bimbi := Vector3(-12.6, 4.6, -14.8)
+@export var plafoniera_bimbi := Vector3(-11.9, 9.2, -14.7)
+@export var mira_plafoniera_bimbi := Vector3(-14.4, 4.4, -20.4)
 @export var energia_plafoniera_bimbi := 7.0
 @export_group("Statua sul monumento")
 ## Centro del monumento e altezza della statua (per il controluce).

@@ -7,10 +7,24 @@
 - anteprima_tecnici.ogg (circa 40 s): la sala pompe delle tappe 5-6 sentita da chi gioca, con i
   tempi di scripts/tecnici/risveglio_sala_pompe.gd e le distanze vere della scena.
 - anteprima_lei.ogg (circa 27 s): la tappa 8 nell'area bimbi, la fossa che ribolle, lei che sbuca,
-  guarda e scivola sotto; poi l'altro finale, il morso.
+  guarda e scivola sotto; poi l'altro finale, il morso (con i suoni del gioco: dal 16 ottobre la
+  versione gutturale).
+- proposta_lei_gutturale.ogg e proposta_lei_estrema.ogg (circa 20 s): le due proposte per lei più
+  gutturale (respiro umido, gola che gorgoglia sott'acqua, rantolo, ringhio prima del morso), in
+  due intensità (genera_lei.proposte). Il 16 ottobre l'utente ha scelto la gutturale, che ora è
+  nel gioco; le due anteprime restano com'erano.
+- confronto_pioggia_bollicine.ogg (circa 31 s): la sala con solo i fondi, 15 s con la pioggia di
+  prima (con le bollicine dei rivoli) e 15 s con quella di adesso (16 ottobre).
+- confronto_passi_goccioline.ogg (circa 21 s): si cammina sul bagnato nella sala, 10 s con i passi
+  di oggi (con le goccioline che schizzano) e 10 s con gli stessi passi senza goccioline.
+- cancello_stagno.ogg (circa 10 s): nella camera delle onde, dopo la scala del pozzo, i due
+  cancelli stagni che si aprono da soli uno dopo l'altro (il secondo 2 s dopo, più lontano), col
+  fondo della stanza tecnica sotto (16 ottobre).
+Le anteprime delle altre proposte (proposta_<nome>_a/b.ogg) le fa genera_proposte.py.
 
 Uscita: godot/audio/anteprima/ (la cartella ha un .gdignore: Godot non la importa e non finisce
-nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei] (senza argomenti, tutte).
+nel gioco esportato). Uso: genera_anteprima.py [sala|tecnici|lei|proposte|pioggia|passi|cancello]
+(senza argomenti, tutte).
 """
 import os
 import sys
@@ -327,14 +341,197 @@ def anteprima_lei():
     print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
 
 
-def main(quali=('sala', 'tecnici', 'lei')):
+def anteprima_proposta_lei(estrema=False):
+    """Proposta per l'utente (non nel gioco): lei più gutturale. I tre suoni nuovi in fila, nella
+    scena come nel gioco: lei che sbuca (a 6,5 m, con la fossa che ribolle), guarda e scivola
+    sotto; poi, dopo un attimo di pioggia, il morso con lo stinger alla chiusura della fauce."""
+    import genera_lei
+    voce = genera_lei.proposte(estrema)
+    sbuca, scivola, morso = voce['lei_sbuca'], voce['lei_scivola_sotto'], voce['morso']
+    T_SBUCA = 1.0
+    T_SCIVOLA = T_SBUCA + 1.8 + 6.0          # durata_sbuca + attesa (lei_sbuca.gd)
+    T_MORSO = T_SCIVOLA + len(scivola) / SR + 1.6
+    DURT = T_MORSO + 4.2
+    n = n_of(DURT)
+    eff = np.zeros((n, 2), dtype=np.float32)
+    amb = np.zeros((n, 2), dtype=np.float32)
+    mus = np.zeros((n, 2), dtype=np.float32)
+    ui = np.zeros((n, 2), dtype=np.float32)
+    for rel, g, off in [('ambiente/pioggia_cupola_loop.ogg', 0.0, 5.0), ('ambiente/vento_loop.ogg', -2.0, 9.0),
+                        ('ambiente/nave_loop.ogg', 0.0, 2.0)]:
+        mix_into(amb, fade(tile(leggi(rel), DURT, off), 1.0, 0.0) * db(g), 0)
+    # la fossa ribolle finché lei non va sotto (come AudioLei in audio.gd)
+    k = np.arange(n) / SR
+    fossa = tile(leggi('lei/fossa_ribolle_loop.ogg', 1), DURT, 0.7)
+    vol = np.clip(k / 1.0, 0, 1) * np.clip(1.0 - (k - T_SCIVOLA) / 2.5, 0, 1)
+    mix_into(eff, pan(fossa * vol * db(distanza_db(6.5, 5.0)), 0.15), 0)
+    mix_into(eff, pan(sbuca * db(distanza_db(6.5, 6.0)), 0.2), n_of(T_SBUCA))
+    mix_into(eff, pan(scivola * db(distanza_db(6.5, 6.0)), 0.2), n_of(T_SCIVOLA))
+    for k2 in range(3):
+        mix_into(eff, pan(leggi('giocatore/passo_bagnato_%02d.ogg' % (k2 + 2), 1) * db(-2), 0.0),
+                 n_of(T_MORSO - 1.1 + k2 * 0.36))
+    mix_into(ui, morso, n_of(T_MORSO))
+    mix_into(mus, leggi('musica/stinger_morte.ogg'), n_of(T_MORSO + 1.0))
+    giu = np.clip((k - T_MORSO) / 0.4, 0.0, 1.0)[:, None]
+    amb *= 10 ** (-12 * giu / 20)
+    eff *= 10 ** (-14 * giu / 20)
+    eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+    out = hp(amb + eff + mus + ui, 20, 2)
+    out = fade(out, 0.3, 2.5)
+    g = db(-16.0 - lufs(out))
+    out = limiter(out * g, -1.0)
+    nome = 'proposta_lei_estrema.ogg' if estrema else 'proposta_lei_gutturale.ogg'
+    path = os.path.join(AUDIO, 'anteprima', nome)
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}  '
+          f'(sbuca {T_SBUCA:.1f}s, scivola {T_SCIVOLA:.1f}s, morso {T_MORSO:.1f}s)')
+
+
+# --- confronto: la pioggia sulla cupola con e senza le bollicine (16 ottobre) ------------------
+
+def anteprima_confronto_pioggia():
+    """La sala con solo i fondi del gioco (pioggia sulla cupola, vento, nave, ai volumi di
+    FONDI in audio.gd): 15 s con la pioggia di prima, che aveva le bollicine dei rivoli, un attimo
+    di silenzio, poi 15 s con quella di adesso. Stesso guadagno per le due metà."""
+    from genera_ambiente import pioggia_cupola
+    from lib_audio import f32, normalize_lufs
+
+    def pioggia(rivoli):
+        # come la genera genera_ambiente.main(): primo suono col seme 2026, poi salva()
+        x = f32(pioggia_cupola(np.random.default_rng(2026), rivoli=rivoli))
+        x = normalize_lufs(x, -24.0, -1.0)
+        return limiter(x, -1.0) if float(np.abs(x).max()) > db(-1.0) + 1e-4 else x
+
+    PEZZO, PAUSA, DA = 15.0, 0.8, 4.0
+    vento = tile(leggi('ambiente/vento_loop.ogg'), PEZZO, DA) * db(-2.0)
+    nave = tile(leggi('ambiente/nave_loop.ogg'), PEZZO, DA)
+    meta = []
+    for rivoli in (True, False):
+        x = tile(pioggia(rivoli), PEZZO, DA) + vento + nave
+        meta.append(fade(x, 0.6, 0.4))
+    out = np.concatenate([meta[0], np.zeros((n_of(PAUSA), 2), dtype=np.float32), meta[1]])
+    out = limiter(out * db(-16.0 - lufs(out)), -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'confronto_pioggia_bollicine.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS prima {lufs(out[:n_of(PEZZO)]):.1f}  '
+          f'dopo {lufs(out[-n_of(PEZZO):]):.1f}')
+
+
+# --- confronto: i passi bagnati con e senza le goccioline (16 ottobre) --------------------------
+
+def anteprima_confronto_passi():
+    """Si cammina sul bagnato nella sala, con i fondi del gioco (pioggia sulla cupola senza
+    bollicine, vento, nave): 10 s con i passi bagnati di oggi (lo sciac della suola e 4-9 goccioline
+    acute che schizzano), un attimo di silenzio, poi 10 s con gli stessi passi senza goccioline.
+    Stessi passi (stessi semi di genera_giocatore), stessi tempi, stessi fondi, stesso guadagno."""
+    import genera_giocatore as gg
+    from lib_audio import f32, normalize_lufs
+
+    def passi(goccioline):
+        rng = np.random.default_rng(1990)           # come genera_giocatore.main()
+        for i in range(6):
+            gg.passo_piastrelle(rng, i)
+        return [normalize_lufs(f32(gg.passo_bagnato(rng, i, goccioline=goccioline)), -20.0, -1.0, short=True)
+                for i in range(6)]
+
+    PEZZO, PAUSA, DA = 10.0, 0.8, 6.0
+    n = n_of(PEZZO)
+    fondi = np.zeros((n, 2), dtype=np.float32)
+    for rel, g in [('ambiente/pioggia_cupola_loop.ogg', 0.0), ('ambiente/vento_loop.ogg', -2.0),
+                   ('ambiente/nave_loop.ogg', 0.0)]:
+        fondi += tile(leggi(rel), PEZZO, DA) * db(g)
+    meta = []
+    for goccioline in (True, False):
+        varianti = passi(goccioline)
+        rng = np.random.default_rng(16)             # stessi tempi, toni e volumi nelle due metà
+        eff = np.zeros((n, 2), dtype=np.float32)
+        t, k = 0.4, 0
+        while t < PEZZO - 0.4:
+            x = varianti[k % 6]
+            # come nel gioco: -2 dB di taratura, l'intensità del passo e ±0,8 semitoni di tono
+            x = varispeed(x, 2 ** (rng.uniform(-0.8, 0.8) / 12))
+            mix_into(eff, pan(x * db(-5.0 + rng.uniform(-1, 1)), -0.08 if k % 2 else 0.08), n_of(t))
+            t += 0.5 + rng.uniform(-0.03, 0.03)
+            k += 1
+        eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+        meta.append(fade(fondi + eff, 0.6, 0.4))
+    out = np.concatenate([meta[0], np.zeros((n_of(PAUSA), 2), dtype=np.float32), meta[1]])
+    out = limiter(out * db(-16.0 - lufs(out)), -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'confronto_passi_goccioline.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS prima {lufs(out[:n]):.1f}  dopo {lufs(out[-n:]):.1f}')
+
+
+# --- i cancelli stagni della camera delle onde (16 ottobre) ---------------------------------------
+
+def come_3d(x, d, unit, vol_db=0.0, max_d=0.0):
+    """Un suono mono come lo fa sentire AudioStreamPlayer3D dell'addon a d metri: distanza inversa
+    più il volume della taratura, con il tetto max_db = 0; la dissolvenza lineare fino a
+    max_distance; il filtro d'attenuazione del pool (mensola alta a 6 kHz, fino a -20 dB)."""
+    att = min(0.0, 20 * np.log10(unit / max(d, 0.01)) + vol_db)
+    mult = 10 ** (att / 20) * (max(0.0, 1.0 - d / max_d) if max_d > 0 else 1.0)
+    mensola = (1.0 - min(1.0, mult)) * -20.0
+    y = biquad(x, 'highshelf', 6000, 0.7, mensola) if mensola < -0.05 else x
+    return y * mult
+
+
+def anteprima_cancello():
+    """Si cammina nella camera delle onde, dopo la scala del pozzo, verso i due cancelli stagni:
+    il primo, a 3,5 m un po' a sinistra, si apre da solo; il secondo, 3,5 m più in là, parte 2 s
+    dopo (l'altra variante). Sotto, il fondo della stanza tecnica come in anteprima_tecnici: la
+    nave bassa (la camera è sotto la sala, lontano dalla cupola) e qualche goccia dal pozzo.
+    Livelli e distanze come nel gioco: taratura di cancello_stagno_apre in audio.gd (+2 dB,
+    unit_size 5 m, max_distance 60 m), bus Effetti col riverbero della sala."""
+    rng = np.random.default_rng(1610)
+    T1, T2 = 2.5, 4.5
+    DURT = 10.5
+    n = n_of(DURT)
+    eff = np.zeros((n, 2), dtype=np.float32)    # bus Effetti (riverbero della sala)
+    amb = np.zeros((n, 2), dtype=np.float32)    # bus Ambiente (i fondi)
+
+    def metti(x, t, g_db=0.0, p=0.0):
+        mix_into(eff, pan(x * db(g_db), p), n_of(t))
+
+    nave = tile(leggi('ambiente/nave_loop.ogg'), DURT, 7.0)
+    mix_into(amb, fade(nave, 1.0, 0.0) * db(-10), 0)
+    for tc, g, p in [(0.9, -16, 0.4), (5.9, -18, -0.5), (9.1, -16, 0.3)]:
+        metti(leggi('ambiente/goccia_acqua_0%d.ogg' % rng.integers(1, 7), 1), tc, g, p)
+    # i passi sul bagnato fino a 3,5 m dal primo cancello, poi ci si ferma a guardare
+    t = 0.4
+    for k in range(5):
+        metti(leggi('giocatore/passo_bagnato_%02d.ogg' % (k % 6 + 1), 1), t, -5 + rng.uniform(-1, 1),
+              -0.08 if k % 2 else 0.08)
+        t += 0.48 + rng.uniform(-0.02, 0.02)
+    for tc, var, d, p in [(T1, 1, 3.5, -0.12), (T2, 2, 7.0, 0.05)]:
+        x = leggi('tecnici/cancello_stagno_apre_%02d.ogg' % var, 1)
+        metti(come_3d(x, d, 5.0, 2.0, 60.0), tc, 0.0, p)
+    eff = reverb(eff, ir_sala(), wet=0.26, dry=1.0, tail=False)
+    out = hp(amb + eff, 20, 2)
+    out = fade(out, 0.3, 1.5)
+    g = db(-16.0 - lufs(out))
+    out = limiter(out * g, -1.0)
+    path = os.path.join(AUDIO, 'anteprima', 'cancello_stagno.ogg')
+    write_ogg(path, out, 5)
+    print(f'anteprima: {path}  {len(out) / SR:.1f}s  LUFS {lufs(out):.1f}  picco {np.abs(out).max():.2f}')
+
+
+def main(quali=('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi', 'cancello')):
     if 'sala' in quali:
         anteprima_sala()
     if 'tecnici' in quali:
         anteprima_tecnici()
     if 'lei' in quali:
         anteprima_lei()
+    if 'proposte' in quali:
+        anteprima_proposta_lei(False)
+        anteprima_proposta_lei(True)
+    if 'pioggia' in quali:
+        anteprima_confronto_pioggia()
+    if 'passi' in quali:
+        anteprima_confronto_passi()
+    if 'cancello' in quali:
+        anteprima_cancello()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:] or ('sala', 'tecnici', 'lei'))
+    main(sys.argv[1:] or ('sala', 'tecnici', 'lei', 'proposte', 'pioggia', 'passi', 'cancello'))

@@ -1,25 +1,41 @@
 class_name LeiSbuca
 extends Node3D
 ## Tappa 8 di docs/livello/capitolo1.md, "lei sbuca dal bordo" (concept medusa_sbircia.jpg). Dopo
-## il risveglio (GameState.luci = BLACKOUT) la scia di gocce porta all'area bimbi: le vasche basse
+## il risveglio (GameState.luci = BLACKOUT) la scia di bava porta all'area bimbi: le vasche basse
 ## si stanno riempiendo dalla fossa (lo scarico di compensazione rotto, attaccato alla VascaBimbi1)
-## e, quando ti avvicini, lei sbuca dal bordo: le mani sulle piastrelle, l'occhio fisso su di te.
-## - Se resti lontano, dopo [member attesa] secondi scivola sotto e la sua luce si allontana
-##   sott'acqua lungo il condotto in fondo alla fossa (concept medusa_sottacqua.jpg).
+## e lei è già affacciata al bordo quando arrivi: le mani sulle piastrelle, l'occhio fisso su di te
+## (riscontro sulla v0.3.1: "doveva già essere lì quando io arrivo"). Prima sbucava quando ti
+## avvicinavi, ma solo con l'acqua già alta: arrivando presto dalla sala pompe l'acqua non c'era,
+## lei restava sotto finché non le eri addosso e allora sbucava e ti prendeva subito; ripartendo dal
+## checkpoint, vicino alla fossa, l'acqua saliva in fretta e la si vedeva.
+## - Resta affacciata finché non l'hai vista bene: nell'inquadratura, vicino al centro, senza niente
+##   in mezzo ed entro [member distanza_vista], per [member tempo_vista] secondi di fila (riscontro
+##   dell'utente sulla v0.3.0: "non l'ho vista, forse mi sono allontanato ed è sparita?").
+## - Solo dopo, se resti lontano, passati [member attesa] secondi scivola sotto e la sua luce si
+##   allontana sott'acqua lungo il condotto in fondo alla fossa (concept medusa_sottacqua.jpg).
 ## - Se le arrivi troppo vicino ([member distanza_presa]) o la tocchi, ti prende: la fauce si apre,
 ##   l'occhio si riempie di vene e parte la sequenza di morte (GameState.kill_player(&"medusa")).
-##   Si riparte dal checkpoint prima della scena e la scena si ripete.
+##   Si riparte dal checkpoint prima della scena e la scena si ripete. Mentre ti prende si gira verso
+##   di te, da qualsiasi lato arrivi (prima la camera la trovava di traverso).
+## - Scivola sotto all'indietro: prima si stacca dal bordo (si alza di scatto, così mani e tentacoli
+##   appoggiati fuori dal bordo lo superano, e arretra sopra l'acqua della fossa), poi va giù e intanto
+##   svanisce nell'acqua torbida, prima che i tentacoli stesi oltre il bordo arrivino al pavimento
+##   (prima scendeva dritta e mani e tentacoli passavano attraverso il bordo e il pavimento). Nella
+##   fossa i tentacoli non ci stanno: senza un'animazione che li ritiri, svanire è il modo per non
+##   farli entrare nel pavimento.
 ## La fossa (con i marker medusa_sbuca, medusa_fuga, livello_acqua_pieno e il coperchio) la fa
 ## l'ambiente. Le animazioni nuove (sbuca, scivola sotto, via sott'acqua, afferra) le fa l'agente
 ## medusa: per ora la posa è "affacciata" e il resto lo fa il codice (sale, scende, la luce).
 
 signal sbucata
+## Il giocatore l'ha vista bene (da qui parte l'attesa prima che scivoli sotto).
+signal vista
 signal andata_via
 signal presa
 
 enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 
-## La medusa (MedusaAffacciata): nascosta finché non sbuca.
+## La medusa (MedusaAffacciata): nascosta fino al blackout, poi affacciata.
 @export var medusa: Node3D
 ## Dove sbuca: l'origine della posa "affacciata", rivolta verso il giocatore (+Z locale).
 @export var punto_sbuca: Node3D
@@ -41,17 +57,34 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var velocita_lenta := 0.0008
 @export var velocita_riempimento := 0.006
 @export var distanza_riempimento := 16.0
-## Lei sbuca solo con l'acqua almeno a questa quota (la posa vuole il pelo 0,88 m sopra la sua
-## origine: con un po' di margine il seno resta coperto, come vuole il GDD).
+## Quando lei si affaccia l'acqua della fossa è almeno a questa quota (la posa vuole il pelo 0,88 m
+## sopra la sua origine: con un po' di margine il seno resta coperto, come vuole il GDD). Al blackout
+## le pompe ripartono e la fossa ci arriva subito; poi sale piano fino a [member livello_pieno].
 @export var pelo_minimo := 0.37
-## Il giocatore a meno di tanto dal punto in cui sbuca (in pianta): lei sbuca.
-@export var distanza_inizio := 6.5
 ## Più vicino di così al suo occhio (in pianta) ti prende.
 @export var distanza_presa := 2.4
-## Secondi che ti guarda prima di scivolare sotto (se resti lontano).
+## Secondi che ti guarda, dopo che l'hai vista bene, prima di scivolare sotto (se resti lontano).
 @export var attesa := 6.0
+@export_group("Vederla bene")
+## Secondi di fila in cui la devi avere nell'inquadratura perché conti come vista.
+@export var tempo_vista := 2.0
+## Angolo massimo (gradi) tra il centro dello schermo e il suo occhio.
+@export var angolo_vista := 18.0
+## Distanza massima (m) dai tuoi occhi al suo.
+@export var distanza_vista := 14.0
+## Uno sguardo interrotto per meno di così (s) non fa ripartire il conto.
+@export var tolleranza_vista := 0.3
+@export_group("")
 @export var durata_sbuca := 1.8
 @export var durata_scivola := 1.6
+## Scivolando sotto: quanto si alza e quanto arretra (m) per staccarsi dal bordo prima di scendere,
+## in che parte della discesa (0..1) lo fa, e in che parte della discesa vera e propria svanisce.
+@export var scivola_su := 0.5
+@export var scivola_indietro := 0.5
+@export var scivola_stacco := 0.45
+@export var scivola_svanisce := 0.5
+## Mentre ti prende si gira verso di te in questi secondi.
+@export var durata_girata := 0.2
 @export var durata_fuga := 4.5
 ## Quanto sotto il punto in cui sbuca sta, prima di salire (e dopo essere scivolata giù).
 @export var profondita := 2.3
@@ -60,6 +93,11 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 
 var fase := Fase.ATTESA
 var _t := 0.0
+## Secondi di fila in cui la stai guardando (fino a [member tempo_vista]).
+var vista_t := 0.0
+## Vero quando l'hai vista bene: parte l'attesa prima che scivoli sotto.
+var vista_bene := false
+var _non_vista_t := 0.0
 var _luce: OmniLight3D
 var _tocco: Area3D
 var _prossima_bolla := 0.0
@@ -116,26 +154,34 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	match fase:
 		Fase.ATTESA:
-			if punto_sbuca and _in_pianta(p.global_position, _testa_prevista()) < distanza_inizio \
-					and _pelo() >= minf(pelo_minimo, livello_pieno) - 0.001:
-				_sbuca()
+			# Già affacciata quando arrivi: dal blackout (o ripartendo al buio) è sul bordo.
+			if punto_sbuca:
+				_affaccia()
 		Fase.SBUCA:
 			var k := clampf(_t / durata_sbuca, 0.0, 1.0)
 			_metti_a(1.0 - _ease_out(k))
 			_controlla_presa(p)
+			_conta_vista(p, delta)
 			if k >= 1.0:
 				fase = Fase.GUARDA
 				_t = 0.0
 		Fase.GUARDA:
 			_controlla_presa(p)
-			if _t >= attesa:
+			if fase != Fase.GUARDA:
+				return
+			# Resta lì finché non l'hai vista bene: solo dopo parte l'attesa.
+			if not vista_bene:
+				_conta_vista(p, delta)
+				_t = 0.0
+			elif _t >= attesa:
 				_scivola()
 		Fase.SCIVOLA:
 			var k := clampf(_t / durata_scivola, 0.0, 1.0)
-			_metti_a(k * k)
+			_scivola_a(k)
 			if k < 0.35:
 				_controlla_presa(p)
-			if k >= 1.0:
+			# Appena tutta sott'acqua sparisce: nell'acqua torbida resta solo la sua luce.
+			if k >= 1.0 or (k > scivola_stacco and _testa_sotto()):
 				_fuga()
 		Fase.FUGA:
 			var k := clampf(_t / durata_fuga, 0.0, 1.0)
@@ -175,12 +221,78 @@ func _riempi(delta: float, p: Player) -> void:
 			a.call(&"splash", c, _rng.randf_range(0.08, 0.2))
 
 
+## Conta i secondi di fila in cui la stai guardando bene; arrivato a [member tempo_vista] è vista.
+func _conta_vista(p: Player, delta: float) -> void:
+	if vista_bene:
+		return
+	if la_stai_guardando(p):
+		vista_t += delta
+		_non_vista_t = 0.0
+	else:
+		_non_vista_t += delta
+		if _non_vista_t > tolleranza_vista:
+			vista_t = 0.0
+	if vista_t >= tempo_vista:
+		vista_bene = true
+		vista.emit()
+
+
+## Vero se in questo momento lei è nell'inquadratura del giocatore, vicino al centro, entro
+## [member distanza_vista] e senza muri od oggetti in mezzo.
+func la_stai_guardando(p: Player) -> bool:
+	if medusa == null or not medusa.visible or p.camera == null:
+		return false
+	var occhio: Vector3 = medusa.call(&"get_eye_position") if medusa.has_method(&"get_eye_position") else medusa.global_position
+	var da := p.camera.global_position
+	var verso := occhio - da
+	var dist := verso.length()
+	if dist > distanza_vista or dist < 0.05:
+		return false
+	if rad_to_deg((-p.camera.global_basis.z).angle_to(verso)) > angolo_vista:
+		return false
+	# Niente in mezzo: raggi dagli occhi fin quasi al suo viso (lei non ha collisioni). Ne basta
+	# uno libero su tre (occhio e 12 cm ai lati), così un cavo o una sbarra sottile non contano,
+	# ma una colonna o un muro davanti al viso sì.
+	var space := p.get_world_3d().direct_space_state
+	var lato := verso.cross(Vector3.UP).normalized() * 0.12
+	for dx in [Vector3.ZERO, lato, -lato]:
+		var punto: Vector3 = occhio + dx
+		var q := PhysicsRayQueryParameters3D.create(da, punto - (punto - da).normalized() * 0.15, Layers.WORLD | Layers.PROPS, [p.get_rid()])
+		if space.intersect_ray(q).is_empty():
+			return true
+	return false
+
+
+## Lei è già sul bordo della fossa, affacciata, senza la salita né il suono di quando sbuca: la fossa
+## arriva subito almeno a [member pelo_minimo]. Ti segue con l'occhio e aspetta che la guardi bene.
+func _affaccia() -> void:
+	var tank := vasche[0] as WaterTank if vasche.size() > 0 else null
+	if tank:
+		var minimo := clampf((minf(pelo_minimo, livello_pieno) - tank.get_floor_global_y()) / maxf(tank.inner_size.y, 0.01), 0.0, tank.max_fill)
+		if tank.fill < minimo:
+			tank.fill = minimo
+	fase = Fase.GUARDA
+	_t = 0.0
+	vista_t = 0.0
+	vista_bene = false
+	_non_vista_t = 0.0
+	medusa.visible = true
+	medusa.process_mode = Node.PROCESS_MODE_INHERIT
+	_metti_a(0.0)
+	_svanisci(0.0)
+	medusa.reset_physics_interpolation()
+
+
 func _sbuca() -> void:
 	fase = Fase.SBUCA
 	_t = 0.0
+	vista_t = 0.0
+	vista_bene = false
+	_non_vista_t = 0.0
 	medusa.visible = true
 	medusa.process_mode = Node.PROCESS_MODE_INHERIT
 	_metti_a(1.0)
+	_svanisci(0.0)
 	_schizzo(1.4)
 	_suona(&"lei_sbuca")
 	sbucata.emit()
@@ -223,6 +335,8 @@ func _prendi() -> void:
 		return
 	fase = Fase.PRESA
 	_metti_a(0.0)
+	_svanisci(0.0)
+	_girati_verso(GameState.player)
 	if medusa.has_method(&"attacca"):
 		medusa.call(&"attacca")
 	medusa.add_to_group(&"medusa_che_prende")
@@ -253,6 +367,71 @@ func _metti_a(giu: float) -> void:
 	medusa.global_transform = punto_sbuca.global_transform.translated(Vector3.DOWN * profondita * giu)
 
 
+## Scivola sotto ([param k] da 0 a 1): fino a [member scivola_stacco] si alza (prima) e arretra (poi)
+## verso il centro della fossa, così mani e tentacoli passano sopra il bordo; poi scende sempre più in
+## fretta e intanto svanisce: è trasparente del tutto a [member scivola_svanisce] della discesa, quando
+## i tentacoli stesi oltre il bordo sono ancora sopra il pavimento.
+func _scivola_a(k: float) -> void:
+	if medusa == null or punto_sbuca == null:
+		return
+	var a := clampf(k / maxf(scivola_stacco, 0.01), 0.0, 1.0)
+	var b := clampf((k - scivola_stacco) / maxf(1.0 - scivola_stacco, 0.01), 0.0, 1.0)
+	var su := scivola_su * smoothstep(0.0, 0.35, a)
+	var indietro := scivola_indietro * smoothstep(0.35, 1.0, a)
+	var giu := profondita * b * b
+	var xf := punto_sbuca.global_transform
+	medusa.global_transform = Transform3D(xf.basis, xf.origin + Vector3.UP * (su - giu) - xf.basis.z.normalized() * indietro)
+	_svanisci(smoothstep(0.0, maxf(scivola_svanisce, 0.01), b))
+
+
+## Quanto è trasparente (0 si vede tutta, 1 non si vede più): GeometryInstance3D.transparency delle
+## sue mesh.
+func _svanisci(t: float) -> void:
+	if medusa == null:
+		return
+	for m in medusa.find_children("*", "GeometryInstance3D", true, false):
+		(m as GeometryInstance3D).transparency = t
+
+
+## Quanto si vede adesso (1 tutta, 0 per niente).
+func opacita() -> float:
+	if medusa == null or not medusa.visible:
+		return 0.0
+	for m in medusa.find_children("*", "GeometryInstance3D", true, false):
+		return 1.0 - (m as GeometryInstance3D).transparency
+	return 1.0
+
+
+## Vero quando la testa (fino alla cima dei capelli, 35 cm sopra l'occhio) è sotto il pelo dell'acqua.
+func _testa_sotto() -> bool:
+	if medusa == null or not medusa.has_method(&"get_eye_position"):
+		return false
+	return (medusa.call(&"get_eye_position") as Vector3).y + 0.35 < _pelo() - 0.05
+
+
+## Mentre ti prende si gira verso di te, intorno alla verticale del suo occhio: così da qualsiasi
+## lato arrivi la camera della sequenza di morte la trova di fronte.
+func _girati_verso(p: Player) -> void:
+	if p == null or not is_instance_valid(p) or medusa == null or punto_sbuca == null:
+		return
+	var testa := _testa_prevista()
+	var verso := p.camera.global_position - testa
+	verso.y = 0.0
+	var avanti := punto_sbuca.global_basis.z
+	avanti.y = 0.0
+	if verso.length() < 0.05 or avanti.length() < 0.05:
+		return
+	var angolo := avanti.normalized().signed_angle_to(verso.normalized(), Vector3.UP)
+	var da := medusa.global_transform
+	# L'occhio resta fermo: si gira intorno alla sua verticale.
+	var gira := func(k: float):
+		if is_instance_valid(medusa):
+			medusa.global_transform = Transform3D(Basis(Vector3.UP, angolo * k), testa) * Transform3D(Basis.IDENTITY, -testa) * da
+	var tw := create_tween()
+	tw.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	tw.tween_method(gira, 0.0, 1.0, maxf(durata_girata, 0.01)).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
 func _nascondi() -> void:
 	if medusa == null:
 		return
@@ -264,6 +443,9 @@ func _nascondi() -> void:
 func _ricomincia() -> void:
 	fase = Fase.ATTESA
 	_t = 0.0
+	vista_t = 0.0
+	vista_bene = false
+	_non_vista_t = 0.0
 	_nascondi()
 	if is_instance_valid(_luce):
 		_luce.queue_free()

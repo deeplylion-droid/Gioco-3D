@@ -13,9 +13,10 @@ extends Node
 ##  - a ogni cambio di scena cerca i nodi che conosce e si collega ai loro segnali (o ne
 ##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
-##    portelli, ruota e secchio, vasche, Polaroid, statua della medusa, bambini, morte,
-##    monitor a tubo e paratie della sala pompe, la fossa dell'area bimbi (tappa 8) e il
-##    morso quando ti prende lei;
+##    portelli, vasche, Polaroid, statua della medusa, bambini, morte, la piscina a onde con
+##    il pulsante della botola e le micro medusine (tappa 5), monitor a tubo e paratie della
+##    sala pompe, la fossa dell'area bimbi (tappa 8), il morso quando ti prende lei e il
+##    portone della sala della torre;
 ##    le luci al neon e d'emergenza della sala (dal GLB) ronzano;
 ##  - aggiunge la scheda "Audio" al menu delle opzioni dell'addon grafica.
 ## API: suona(), suona_sigla(), musica_titolo(), ferma_musica(), imposta_volume(), volume().
@@ -47,6 +48,8 @@ const PER_CARTELLA := {
 	"interfaccia": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.3],
 	"tecnici": [BUS_EFFETTI, 0.0, 6.0, 60.0, 0.2],
 	"lei": [BUS_EFFETTI, 0.0, 6.0, 50.0, 0.0],
+	"piscina": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
+	"torre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -95,8 +98,18 @@ const TARATURA := {
 	&"tonfo_acqua_lontano": [BUS_EFFETTI, 0.0, 40.0, 220.0, 0.0],
 	&"maniglione_bloccato": [BUS_EFFETTI, 0.0, 3.0, 35.0, 0.6],
 	&"porta_ponte_apre": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
+	# i cancelli stagni della camera delle onde: forti, pieni fino a circa 6 m (il tetto è max_db 0)
+	&"cancello_stagno_apre": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
+	# la piscina a onde (tappa 5): scelti dall'utente il 16 ottobre; le medusine appena percettibili
+	&"piscina_vuota": [BUS_EFFETTI, 4.0, 5.0, 55.0, 0.0],
+	&"pulsante_botola_attiva": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
+	&"pulsante_botola_bibu": [BUS_EFFETTI, 3.0, 5.0, 60.0, 0.0],
+	&"medusina_aspirata": [BUS_EFFETTI, 2.0, 1.5, 12.0, 0.0],
+	&"medusine_sparate": [BUS_EFFETTI, 3.0, 2.0, 25.0, 0.0],
+	# il portone della sala della torre
+	&"portone_torre_apre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
 }
 ## Loop sulle sorgenti: [volume dB, unit_size, max_distance].
 const LOOP_3D := {
@@ -118,10 +131,23 @@ const LOOP_3D := {
 	&"paratia_scende_loop": [0.0, 12.0, 80.0],
 	&"crt_neve_loop": [0.0, 2.0, 16.0],
 	&"fossa_ribolle_loop": [0.0, 5.0, 45.0],
+	&"piscina_svuota_loop": [4.0, 4.0, 45.0],
+	&"pulsante_botola_lampeggiante_loop": [2.0, 5.0, 50.0],
 }
 ## Quando lei ti prende (morte con causa &"medusa"): secondi dall'inizio del morso a quando la
 ## fauce si chiude, che è il lampo rosso di DeathSequence. Lo stinger di morte parte lì.
 const MORSO_COLPO := 1.0
+## Il portone della sala della torre (portone_torre_apre, 8,5 s, da "apertura_iniziata"): dopo
+## quanti secondi il portone comincia a scorrere e quando sbatte a fine corsa. L'animazione di
+## PortoneTorre deve seguire questi tempi (accelera in circa 1,1 s, frena nell'ultimo 0,9 s).
+const PORTONE_PARTE := 0.7
+const PORTONE_ARRIVA := 6.4
+## I cancelli stagni della camera delle onde (cancello_stagno_apre, 3,7 s, due varianti con gli
+## stessi tempi): dopo quanti secondi dall'inizio del suono la porta comincia a muoversi (con uno
+## strappo; è a velocità piena circa 0,4 s dopo) e quando sbatte a fine corsa. L'animazione dei
+## cancelli deve seguire questi tempi (rallenta appena nell'ultimo quarto di secondo).
+const CANCELLO_STAGNO_PARTE := 0.55
+const CANCELLO_STAGNO_ARRIVA := 2.55
 ## Volume (dB) dei fondi.
 const FONDI := {
 	&"pioggia_cupola_loop": 0.0,
@@ -847,10 +873,11 @@ func _esamina(n: Node) -> void:
 		"WaterPack": _attivi.append(Zaino.new(self, n))
 		"WaterButton": _collega_pulsante(n)
 		"Turbine": _attivi.append(Turbina.new(self, n))
-		"StuckInflatable": _collega_gonfiabile(n)
 		"PoweredDoor": _attivi.append(Porta.new(self, n))
 		"HingedHatch": _collega_portello(n)
-		"BucketWheel": _attivi.append(Ruota.new(self, n))
+		"PiscinaOnde": _attivi.append(AudioPiscina.new(self, n))
+		"Medusine": _attivi.append(AudioMedusine.new(self, n))
+		"PortoneTorre": _collega_portone_torre(n)
 		"WaterTank": _attivi.append(Vasca.new(self, n))
 		"FlickerLight": _attivi.append(Lampada.new(self, n))
 		"MedusaStatue", "MedusaAffacciata": _attivi.append(Statua.new(self, n))
@@ -1045,8 +1072,22 @@ func _collega_pulsante(n: Node) -> void:
 	n.connect(&"released", func(): suona(&"pulsante_rilasciato", (n as Node3D).global_position))
 
 
-func _collega_gonfiabile(n: Node) -> void:
-	n.connect(&"released", func(): suona(&"gonfiabile_libero", (n as Node3D).global_position))
+## Il portone scorrevole della sala della torre (PortoneTorre), suono scelto dall'utente il 16
+## ottobre: su "apertura_iniziata" la serratura, il motore, il portone che scorre sui rulli e sbatte
+## a fine corsa, tutto in un suono (portone_torre_apre, 8,5 s), 2 m sopra l'anta (la proprietà
+## "anta" del portone, il perno al centro della base) o, se non c'è, sopra il nodo.
+## L'animazione segue il suono: vedi PORTONE_PARTE e PORTONE_ARRIVA.
+func _collega_portone_torre(n: Node) -> void:
+	if not n.has_signal(&"apertura_iniziata"):
+		push_warning("Audio: PortoneTorre senza il segnale apertura_iniziata")
+		return
+	n.connect(&"apertura_iniziata", func():
+		if not is_instance_valid(n):
+			return
+		var anta = n.get(&"anta")
+		var dove: Node3D = anta if anta is Node3D else (n as Node3D)
+		if dove:
+			suona(&"portone_torre_apre", dove.global_position + Vector3.UP * 2.0))
 
 
 func _collega_portello(n: Node) -> void:
@@ -1295,9 +1336,6 @@ class Zaino:
 			if (&"jammed" in nodo) and bool(nodo.get(&"jammed")):
 				audio.suona_limitato("turbina_bloccata", 0.4, &"turbina_bloccata", punto)
 				return
-			if nodo.has_method(&"is_stuck") and bool(nodo.call(&"is_stuck")):
-				audio.suona_limitato("gonfiabile", 0.3, &"gonfiabile_colpito", punto)
-				return
 			nodo = nodo.get_parent()
 
 	func aggiorna(_a, delta: float) -> bool:
@@ -1395,57 +1433,8 @@ class Porta:
 		return true
 
 
-## Ruota a pale, secchio, cancello e quadro elettrico dell'area bimbi.
-class Ruota:
-	var n: Node
-	var l: AudioLoop
-
-	func _init(a, nodo: Node) -> void:
-		n = nodo
-		var ruota := _nodo(nodo, &"wheel_path")
-		l = a.crea_loop(&"ruota_pale_loop", ruota if ruota else nodo)
-		var secchio := _nodo(nodo, &"bucket_path")
-		var cancello := _nodo(nodo, &"gate_path")
-		var ruota_cancello := _nodo(nodo, &"gate_wheel_path")
-		var quadro := _nodo(nodo, &"panel_path")
-		nodo.connect(&"bucket_tipped", func():
-			if is_instance_valid(secchio):
-				a.suona(&"secchio_ribalta", secchio.global_position)
-			a.get_tree().create_timer(0.7, false).timeout.connect(func():
-				var dove: Node3D = ruota_cancello if is_instance_valid(ruota_cancello) else cancello
-				if is_instance_valid(dove):
-					a.suona(&"cancello_ruota", dove.global_position))
-			a.get_tree().create_timer(2.5, false).timeout.connect(func():
-				if is_instance_valid(secchio):
-					a.suona(&"secchio_ritorno", secchio.global_position)))
-		nodo.connect(&"gate_opened", func():
-			if is_instance_valid(cancello):
-				a.suona(&"cancello_fine", cancello.global_position))
-		nodo.connect(&"panel_shorted", func():
-			if is_instance_valid(quadro):
-				a.suona(&"quadro_scintille", quadro.global_position + Vector3.UP * 1.5))
-
-	static func _nodo(nodo: Node, prop: StringName) -> Node3D:
-		var p = nodo.get(prop)
-		if p is NodePath and not (p as NodePath).is_empty():
-			return nodo.get_node_or_null(p) as Node3D
-		return null
-
-	func aggiorna(_a, _d: float) -> bool:
-		if not is_instance_valid(n):
-			return false
-		if not n.is_inside_tree():
-			return true
-		var v := float(n.get(&"angular_speed"))
-		var vmax := maxf(float(n.get(&"max_angular_speed")), 0.001)
-		var k := clampf(v / vmax, 0.0, 1.0)
-		if l:
-			l.volume = smoothstep(0.0, 0.15, k) * (0.4 + 0.6 * k)
-			l.tono = 0.45 + 0.6 * k
-		return true
-
-
-## Vasca: gorgoglio dello scarico mentre si svuota, scroscio mentre si riempie da sola.
+## Vasca: gorgoglio dello scarico mentre si svuota, scroscio mentre si riempie da sola; quando si
+## svuota (dallo scarico o aspirata con lo zaino) il suono della vasca svuotata.
 class Vasca:
 	var audio
 	var n: Node
@@ -1458,8 +1447,9 @@ class Vasca:
 	func _init(a, nodo: Node) -> void:
 		audio = a
 		n = nodo
+		# (la vasca della piscina a onde ha il suo: piscina_vuota, in AudioPiscina)
 		nodo.connect(&"emptied", func():
-			if svuotava > 0.0 and scarico:
+			if svuotava > 0.0 and scarico and not nodo.has_meta(&"_audio_piscina"):
 				a.suona(&"vasca_svuotata", scarico.global_position))
 
 	func _prepara() -> void:
@@ -1488,7 +1478,9 @@ class Vasca:
 		var fill := float(n.get(&"fill"))
 		var drena := bool(n.call(&"is_draining")) and fill > 0.001
 		var forza := float(n.call(&"get_drain_strength")) if drena else 0.0
-		svuotava = 1.0 if drena else maxf(0.0, svuotava - delta)
+		# Anche aspirata con lo zaino si sta svuotando (per il suono di quando è vuota).
+		var aspirata := prima >= 0.0 and fill < prima - 0.00001
+		svuotava = 1.0 if drena or aspirata else maxf(0.0, svuotava - delta * 0.25)
 		if scarico:
 			scarico.volume = (0.4 + 0.6 * forza) if drena else 0.0
 		var sorgenti = n.get(&"fill_sources")
@@ -1715,12 +1707,34 @@ class AudioParatia:
 
 ## La tappa 8 (LeiSbuca): la fossa che ribolle mentre l'acqua risale nelle vasche basse; tace
 ## quando lei scivola sotto. Lei che sbuca e che scivola sotto li suona lo script della scena.
+## Se resta affacciata più a lungo di lei_sbuca (aspetta che la guardi bene), riparte piano il
+## suo respiro col rantolo: il pezzo finale di lei_sbuca, ripetuto in dissolvenza incrociata
+## (nessun suono nuovo), finché non scivola sotto.
 class AudioLei:
+	## Il pezzo di lei_sbuca col rantolo e l'ultimo respiro (s), la dissolvenza tra un giro e
+	## l'altro, da quando sbuca a quando comincia (lei_sbuca dura 7,6 s) e quanto più piano.
+	const RESPIRO_DA := 3.6
+	const RESPIRO_A := 6.9
+	const RESPIRO_DISSOLVENZA := 0.7
+	const RESPIRO_DOPO := 6.8
+	const RESPIRO_DB := -5.0
+
 	var n: Node
 	var l: AudioLoop
 	var prima := -1.0
 	var sale_t := 0.0
 	var sotto: Array = []
+	var fase_sbuca = null
+	var fase_guarda = null
+	var fase_prima = null
+	var affacciata_t := 0.0
+	## I due player del respiro (si passano il testimone), il loro volume (0..1), dove sono arrivati.
+	var respiro: Array[AudioStreamPlayer3D] = []
+	var gain := [0.0, 0.0]
+	var meta := [0.0, 0.0]
+	var testina := [0.0, 0.0]
+	var di_turno := -1
+	var base_db := 0.0
 
 	func _init(a, nodo: Node) -> void:
 		n = nodo
@@ -1741,8 +1755,29 @@ class AudioLei:
 		for k in ["SCIVOLA", "FUGA", "FINITA", "PRESA"]:
 			if fasi.has(k):
 				sotto.append(fasi[k])
+		fase_sbuca = fasi.get("SBUCA")
+		fase_guarda = fasi.get("GUARDA")
+		# Il respiro viene dalla sua testa, sopra il bordo (come lei_sbuca, dal punto in cui sbuca).
+		var t: Array = a.taratura(&"lei_sbuca")
+		base_db = float(t[1])
+		var testa := Node3D.new()
+		testa.name = "AudioRespiro"
+		if punto:
+			testa.position = Vector3(0.0, 1.6, 1.8)
+			punto.add_child(testa)
+		else:
+			nodo.add_child(testa)
+		for i in 2:
+			var p := AudioStreamPlayer3D.new()
+			p.name = "Respiro%d" % i
+			p.stream = a.stream_di(&"lei_sbuca")
+			p.bus = t[0]
+			p.unit_size = float(t[2]) if float(t[2]) > 0.0 else 3.0
+			p.max_distance = float(t[3]) if float(t[3]) > 0.0 else 40.0
+			testa.add_child(p)
+			respiro.append(p)
 
-	func aggiorna(_a, delta: float) -> bool:
+	func aggiorna(a, delta: float) -> bool:
 		if not is_instance_valid(n):
 			return false
 		if not n.is_inside_tree():
@@ -1755,7 +1790,251 @@ class AudioLei:
 					tot += float(v.get(&"fill"))
 		sale_t = 0.4 if prima >= 0.0 and tot > prima + 1e-7 else maxf(0.0, sale_t - delta)
 		prima = tot
+		var fase = n.get(&"fase")
 		if l:
-			var acceso: bool = sale_t > 0.0 and bool(n.get(&"abilitata")) and not (n.get(&"fase") in sotto)
+			var acceso: bool = sale_t > 0.0 and bool(n.get(&"abilitata")) and not (fase in sotto)
 			l.volume = 1.0 if acceso else 0.0
+		# Da quando è sbucata (o da quando è affacciata, se non l'abbiamo vista sbucare).
+		if fase != fase_prima and (fase == fase_sbuca or (fase == fase_guarda and fase_prima != fase_sbuca)):
+			affacciata_t = 0.0
+		fase_prima = fase
+		if fase == fase_sbuca or fase == fase_guarda:
+			affacciata_t += delta
+		_respiro(a, delta, fase == fase_guarda and fase_guarda != null and affacciata_t >= RESPIRO_DOPO)
+		return true
+
+	## Il respiro col rantolo mentre aspetta: un giro di RESPIRO_DA..RESPIRO_A di lei_sbuca, il giro
+	## dopo che entra mentre il primo sfuma.
+	func _respiro(a, delta: float, vuole: bool) -> void:
+		var vero := AudioLoop.riproduzione_attiva()
+		if vuole:
+			if di_turno < 0 or testina[di_turno] >= RESPIRO_A - RESPIRO_DISSOLVENZA:
+				var j := 1 if di_turno == 0 else 0
+				var da := RESPIRO_DA + randf_range(-0.15, 0.15)
+				testina[j] = da
+				gain[j] = 0.0
+				meta[j] = 1.0
+				if di_turno >= 0:
+					meta[di_turno] = 0.0
+				di_turno = j
+				respiro[j].volume_db = -80.0
+				if vero:
+					respiro[j].play(da)
+				a.conteggio[&"lei_respiro"] = int(a.conteggio.get(&"lei_respiro", 0)) + 1
+		elif di_turno >= 0:
+			meta[0] = 0.0
+			meta[1] = 0.0
+			di_turno = -1
+		for i in 2:
+			if gain[i] <= 0.0 and meta[i] <= 0.0:
+				continue
+			# entra in RESPIRO_DISSOLVENZA; quando lei va sotto sfuma in fretta
+			var rapidita := 1.0 / RESPIRO_DISSOLVENZA if (meta[i] > gain[i] or vuole) else 2.5
+			gain[i] = move_toward(gain[i], meta[i], delta * rapidita)
+			testina[i] += delta
+			if gain[i] <= 0.0:
+				respiro[i].stop()
+			else:
+				respiro[i].volume_db = base_db + RESPIRO_DB + linear_to_db(gain[i])
+
+
+## La piscina a onde (tappa 5, PiscinaOnde), suoni scelti dall'utente il 16 ottobre:
+##  - il gorgo (piscina_svuota_loop) dove aspira lo zaino (WaterPack.suck_point), finché il livello
+##    della vasca scende; il tono sale un po' quando l'acqua è poca;
+##  - piscina_vuota quando la vasca si svuota ("emptied"), se l'acqua stava scendendo (non quando
+##    si riparte con la piscina già vuota);
+##  - il pulsante della botola: su "pulsante_attivato" lo scatto e il jingle
+##    (pulsante_botola_attiva) e il lampeggiante che prende giri (tono da TONO_FERMO a 1); il bi-bu a
+##    ogni lampo (pulsante_botola_bibu) è spento dalla v0.3.2 (BIBU): col segnale "lampeggio" se c'è, se no ogni
+##    PERIODO_LAMPO secondi; il lampo che arriva insieme al jingle non fa il bi-bu (il primo è al
+##    lampo dopo). attivo e premuto() si rileggono a ogni fotogramma: quando il pulsante è premuto
+##    il lampeggiante si ferma; ripartendo da un checkpoint gira (o tace) da solo.
+class AudioPiscina:
+	const TONO_PIENA := 1.0
+	const TONO_VUOTA := 1.12
+	const PERIODO_LAMPO := 1.6
+	const TONO_FERMO := 0.35
+	## piscina_vuota solo se l'acqua scendeva da meno di tanti secondi.
+	const SCESA_DA_POCO := 3.0
+	## Dopo lo scatto e il jingle, per tanti secondi niente bi-bu (si sovrapporrebbe al jingle).
+	const DOPO_JINGLE := 1.2
+	## Il bi-bu a ogni lampo (tolto dopo la prova della v0.3.2).
+	const BIBU := false
+
+	var audio
+	var n: Node
+	var vasca: Node
+	var gorgo: AudioLoop
+	var gorgo_punto: Node3D
+	var lampeggiante: AudioLoop
+	var pulsante: Node3D
+	var prima := -1.0
+	var piena := 0.0
+	var scende_t := 0.0
+	var da_quando_scende := 1000.0
+	var gira := false
+	var con_lampi := false
+	var lampo_t := 0.0
+	var da_attivazione := 1000.0
+
+	func _init(a, nodo: Node) -> void:
+		audio = a
+		n = nodo
+		var v = nodo.get(&"vasca")
+		if v is Node:
+			vasca = v
+			vasca.set_meta(&"_audio_piscina", true)
+			if vasca.has_signal(&"emptied"):
+				vasca.connect(&"emptied", _su_vuota)
+		gorgo_punto = Node3D.new()
+		gorgo_punto.name = "AudioGorgo"
+		gorgo_punto.top_level = true
+		nodo.add_child(gorgo_punto)
+		if vasca is Node3D:
+			gorgo_punto.global_position = (vasca as Node3D).global_position
+		gorgo = a.crea_loop(&"piscina_svuota_loop", gorgo_punto)
+		var p = nodo.get(&"pulsante")
+		pulsante = (p as Node3D) if p is Node3D else (nodo as Node3D)
+		var luce := nodo.get_node_or_null(^"SegnalePulsante") as Node3D
+		lampeggiante = a.crea_loop(&"pulsante_botola_lampeggiante_loop", luce if luce else pulsante)
+		if lampeggiante:
+			lampeggiante.rapidita_tono = 2.5
+		if nodo.has_signal(&"pulsante_attivato"):
+			nodo.connect(&"pulsante_attivato", _su_attivato)
+		if nodo.has_signal(&"lampeggio"):
+			con_lampi = true
+			nodo.connect(&"lampeggio", _su_lampo)
+
+	func _premuto() -> bool:
+		return n.has_method(&"premuto") and bool(n.call(&"premuto"))
+
+	func _su_attivato() -> void:
+		if is_instance_valid(pulsante):
+			audio.suona(&"pulsante_botola_attiva", pulsante.global_position)
+		_gira(true)
+		lampo_t = 0.0
+		da_attivazione = 0.0
+
+	func _su_lampo() -> void:
+		# Prova della v0.3.2: il bi-bu ripetuto a ogni lampo era una "musichetta in loop che dà molto
+		# fastidio". Resta solo il jingle dell'attivazione, una volta; il bi-bu si riaccende con BIBU.
+		if BIBU and gira and da_attivazione >= DOPO_JINGLE and is_instance_valid(pulsante):
+			audio.suona(&"pulsante_botola_bibu", pulsante.global_position)
+
+	func _su_vuota() -> void:
+		if da_quando_scende < SCESA_DA_POCO and is_instance_valid(gorgo_punto):
+			audio.suona(&"piscina_vuota", gorgo_punto.global_position)
+
+	## Il lampeggiante si accende: da fermo prende giri (il tono sale), se no gira già.
+	func _gira(da_fermo: bool) -> void:
+		gira = true
+		if lampeggiante:
+			if da_fermo:
+				lampeggiante.salta(0.001, TONO_FERMO)
+			lampeggiante.volume = 1.0
+			lampeggiante.tono = 1.0
+
+	## Il pulsante è stato colpito: il motorino si ferma (cala di tono mentre sfuma).
+	func _ferma() -> void:
+		gira = false
+		if lampeggiante:
+			lampeggiante.volume = 0.0
+			lampeggiante.tono = TONO_FERMO
+
+	func aggiorna(_a, delta: float) -> bool:
+		if not is_instance_valid(n):
+			return false
+		if not n.is_inside_tree():
+			return true
+		da_attivazione += delta
+		if is_instance_valid(vasca):
+			var fill := float(vasca.get(&"fill"))
+			piena = maxf(piena, fill)
+			var scende := prima >= 0.0 and fill < prima - 0.000001
+			prima = fill
+			if scende:
+				scende_t = 0.3
+				da_quando_scende = 0.0
+			else:
+				scende_t = maxf(0.0, scende_t - delta)
+				da_quando_scende += delta
+			if gorgo:
+				gorgo.volume = 1.0 if scende_t > 0.0 else 0.0
+				gorgo.tono = lerpf(TONO_VUOTA, TONO_PIENA, clampf(fill / maxf(piena, 0.0001), 0.0, 1.0))
+				var g = audio._giocatore
+				var pack = g.get(&"water_pack") if is_instance_valid(g) else null
+				if pack is Node and bool(pack.get(&"is_sucking")):
+					gorgo_punto.global_position = pack.get(&"suck_point")
+		var deve := bool(n.get(&"attivo")) and not _premuto()
+		if deve and not gira:
+			_gira(false)
+		elif gira and not deve:
+			_ferma()
+		if gira and not con_lampi:
+			lampo_t += delta
+			if lampo_t >= PERIODO_LAMPO:
+				lampo_t -= PERIODO_LAMPO
+				_su_lampo()
+		return true
+
+
+## Le micro medusine luminose della piscina a onde (tappa 5, Medusine), suoni scelti dall'utente
+## il 16 ottobre, appena percettibili: un grappolo di tintinnii di vetro quando una entra
+## nell'ugello (medusina_aspirata) e la cascata quando escono col getto (medusine_sparate, al
+## massimo una ogni INTERVALLO_SPARATE secondi anche se ne escono tante insieme). Usa i segnali
+## "aspirata" e "sparata" (posizione) se ci sono; se no legge stati() e posizioni(): il passaggio a
+## NELLO_ZAINO è un'aspirata, quello da NELLO_ZAINO a IN_VOLO una sparata.
+class AudioMedusine:
+	const INTERVALLO_ASPIRATA := 0.07
+	const INTERVALLO_SPARATE := 1.2
+
+	var audio
+	var n: Node
+	var con_segnali := false
+	var nello_zaino := -1
+	var in_volo := -1
+	var prima := PackedInt32Array()
+
+	func _init(a, nodo: Node) -> void:
+		audio = a
+		n = nodo
+		if nodo.has_signal(&"aspirata") and nodo.has_signal(&"sparata"):
+			con_segnali = true
+			nodo.connect(&"aspirata", func(pos: Vector3): _aspirata(pos))
+			nodo.connect(&"sparata", func(pos: Vector3): _sparata(pos))
+		var s: Script = nodo.get_script()
+		var stato = s.get_script_constant_map().get("Stato", {}) if s else {}
+		if stato is Dictionary:
+			nello_zaino = int(stato.get("NELLO_ZAINO", -1))
+			in_volo = int(stato.get("IN_VOLO", -1))
+
+	func _aspirata(pos: Vector3) -> void:
+		audio.suona_limitato("medusina_aspirata", INTERVALLO_ASPIRATA, &"medusina_aspirata", pos)
+
+	func _sparata(pos: Vector3) -> void:
+		audio.suona_limitato("medusine_sparate", INTERVALLO_SPARATE, &"medusine_sparate", pos)
+
+	func aggiorna(_a, _d: float) -> bool:
+		if not is_instance_valid(n):
+			return false
+		if con_segnali or not n.is_inside_tree() or not n.has_method(&"stati"):
+			return true
+		var ora: PackedInt32Array = n.call(&"stati")
+		if ora.size() == prima.size():
+			var pos := PackedVector3Array()
+			for i in ora.size():
+				if ora[i] == prima[i]:
+					continue
+				var dentro: bool = ora[i] == nello_zaino
+				var fuori: bool = ora[i] == in_volo and prima[i] == nello_zaino
+				if not dentro and not fuori:
+					continue
+				if pos.is_empty():
+					pos = n.call(&"posizioni")
+				if i < pos.size():
+					if dentro:
+						_aspirata(pos[i])
+					else:
+						_sparata(pos[i])
+		prima = ora
 		return true
