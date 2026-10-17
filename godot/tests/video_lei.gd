@@ -96,7 +96,15 @@ func _mettiti() -> void:
 	if tipo == "jumpscare":
 		piedi = testa + avanti.rotated(Vector3.UP, deg_to_rad(20.0)) * 2.8
 	else:
-		piedi = testa + avanti.rotated(Vector3.UP, deg_to_rad(angolo)) * 6.5
+		# A 6,5 m, ma sempre dentro la sala: se in quella direzione c'è un muro ci si ferma prima.
+		var dir := avanti.rotated(Vector3.UP, deg_to_rad(angolo))
+		dir.y = 0.0
+		dir = dir.normalized()
+		var da := Vector3(testa.x, 1.0, testa.z)
+		var colpo := p.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + dir * 6.5, Layers.WORLD))
+		var dist := 6.5 if colpo.is_empty() else maxf(da.distance_to(colpo.position) - 0.6, 3.0)
+		piedi = testa + dir * dist
+		print("camera a %.1f m, angolo %.0f" % [dist, angolo])
 	piedi.y = 0.0
 	p.teleport(piedi, 0.0, 0.0)
 	_guarda()
