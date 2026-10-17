@@ -57,18 +57,18 @@ func _run() -> void:
 	p.water_pack.set_tank_amount(0.0)
 	p.teleport(POSIZIONE, 0.0, 0.0)
 	p.look_at_point(POZZA)
-	await _frames(240)
+	await _frames(60)
 	print("misuro")
-	risultati["normale"] = await _misura(&"", 40)
+	risultati["normale"] = await _misura(&"", 15)
 	for volta in ["prima", "seconda"]:
 		p.look_at_point(POZZA)
-		risultati["aspirazione_" + volta] = await _misura(&"suck", 30)
-		await _frames(40)
+		risultati["aspirazione_" + volta] = await _misura(&"suck", 20)
+		await _frames(15)
 	p.look_at_point(MIRA)
 	for volta in ["prima", "seconda"]:
 		p.water_pack.set_tank_amount(20.0)
-		risultati["getto_" + volta] = await _misura(&"spray", 50)
-		await _frames(60)
+		risultati["getto_" + volta] = await _misura(&"spray", 30)
+		await _frames(20)
 	p.look_at_point(POZZA)
 	for volta in ["prima", "seconda"]:
 		var g := GeyserFossa.new()
@@ -76,11 +76,11 @@ func _run() -> void:
 		_durate.clear()
 		_registra = true
 		g.scoppia(p.global_position + p.global_basis * Vector3(0.0, 0.0, -4.0), [])
-		await _frames(25)
+		await _frames(15)
 		_registra = false
 		risultati["geyser_" + volta] = _massimo()
 		g.queue_free()
-		await _frames(30)
+		await _frames(10)
 	for volta in ["prima", "seconda"]:
 		var strato := CanvasLayer.new()
 		var r := ColorRect.new()
@@ -93,11 +93,11 @@ func _run() -> void:
 		_durate.clear()
 		_registra = true
 		add_child(strato)
-		await _frames(20)
+		await _frames(8)
 		_registra = false
 		risultati["jumpscare_" + volta] = _massimo()
 		strato.queue_free()
-		await _frames(20)
+		await _frames(5)
 	print("MISURA (ms, fotogramma più lungo nei primi 20-25 dopo l'avvio):")
 	for k in risultati:
 		print("  %s: %.0f" % [k, risultati[k]])
