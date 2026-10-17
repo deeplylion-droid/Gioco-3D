@@ -192,7 +192,28 @@ def struttura_variante(centro=None, grezzo=False, nome='sala_struttura_gioco'):
     me.transform(Matrix.Scale(V['alto'] / (hi.z - lo.z), 4))
     togli_nel_box(ob, *TAGLIO_ASSE)
     me.transform(Matrix.Translation((centro[0], centro[1], 0.0)))
+    appoggia_su(ob, VASCA_PICCOLA, FONDO_VASCA_PICCOLA)
     return ob
+
+
+# la vasca piccola dove finisce lo scivolo (VASCA_BIMBI_2 di ambiente_sala.py): fondo a 2 cm dal pavimento
+VASCA_PICCOLA = ((-11.3, 16.5), (-7.9, 19.9))
+FONDO_VASCA_PICCOLA = 0.02
+
+
+def appoggia_su(ob, box, quota, fino=0.3):
+    """Dentro il rettangolo box (x, y del mondo) i vertici sotto la quota (i piedini della fine dello
+    scivolo, che Meshy mette a terra) salgono fino a lì: si appoggiano al fondo della vasca invece di
+    attraversarlo. La correzione sparisce a fino metri d'altezza."""
+    (x0, y0), (x1, y1) = box
+    mossi = 0
+    for v in ob.data.vertices:
+        if x0 <= v.co.x <= x1 and y0 <= v.co.y <= y1 and v.co.z < fino:
+            z = v.co.z
+            v.co.z = quota + 0.005 + (z - 0.0) * (fino - quota - 0.005) / fino if z < fino else z
+            mossi += 1
+    ob.data.update()
+    return mossi
 
 
 def togli_nel_box(ob, lo, hi):
