@@ -1,0 +1,12 @@
+{
+ "id": "01a144dd-5b19-70a3-8a41-3e0671967975",
+ "type": "image-to-3d",
+ "status": "SUCCEEDED",
+ "created_at": 1792156720405,
+ "finished_at": 1792157088194,
+ "expires_at": 1792416288194,
+ "geometry_resolution": "4k",
+ "hd_texture": true,
+ "texture_resolution": "4k",
+ "consumed_credits": 35
+}

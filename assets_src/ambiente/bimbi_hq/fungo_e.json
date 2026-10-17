@@ -1,0 +1,13 @@
+{
+ "immagine": "01a144da-fa3d-70fe-9422-42dfaea0c144",
+ "tipo_immagine": "image-to-image",
+ "modello_immagine": "nano-banana-pro",
+ "prompt": "Edit this product photo of a kids water playground mushroom fountain into a much more detailed and realistic version of the very same object. Keep exactly the same shape and proportions (the deep glossy red dome cap with big round white spots, the thick slightly tapered cream stem, the ring of brass nozzles under the rim, the round steel base plate with bolts), the same colors and the same camera. Only add realistic detail: fiberglass with a slightly sun-faded and chalky red, hairline cracks and small chips in the gel coat, scuffs and fine scratches, white limescale crusts and green verdigris on the brass nozzles, dried water streaks running down the stem, grime at the base, rusty bolts. Worn but intact and still cheerful. Plain light grey background, the whole object visible, no text.",
+ "riferimenti": [
+  "oggi_fungo_fontana"
+ ],
+ "task": "01a144dd-549e-745b-a81e-4216fe10c7c8",
+ "status": "SUCCEEDED",
+ "poligoni": 40000,
+ "crediti": 35
+}
