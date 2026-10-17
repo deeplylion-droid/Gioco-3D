@@ -55,29 +55,41 @@ void vertex() {
 	v_su = v;
 }
 
+float lamina_vis(float l) {
+	return smoothstep(0.3, 0.6, l);
+}
+
 void fragment() {
 	float v = v_su;
-	// Lame d'acqua verticali: rumore stirato lungo la colonna che sale veloce.
-	float giro = UV.x * 22.0;
-	float s1 = noise(vec2(giro, v * 2.5 - TIME * 5.0 + seme));
-	float s2 = noise(vec2(giro * 2.3 + 3.0, v * 6.0 - TIME * 8.0));
-	float s3 = noise(vec2(UV.x * 60.0, v * 14.0 - TIME * 11.0));
+	// Lame e veli d'acqua: strisce lungo la colonna. In A l'acqua sale; nella cupola di B, quando si
+	// chiude, scorre giu' sulla calotta.
+	float flusso = mix(-1.0, 1.0, forma * smoothstep(0.3, 0.8, chiusura));
+	float giro = UV.x * 26.0;
+	float s1 = noise(vec2(giro, v * 2.2 + TIME * 4.5 * flusso + seme));
+	float s2 = noise(vec2(giro * 2.6 + 3.0, v * 5.0 + TIME * 7.0 * flusso));
+	float s3 = noise(vec2(UV.x * 70.0, v * 12.0 + TIME * 10.0 * flusso));
 	float lame = s1 * 0.55 + s2 * 0.3 + s3 * 0.15;
-	float fres = pow(1.0 - clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0), 2.0);
-	// Bianca dove l'acqua e' rotta (lame chiare, base e cima), trasparente e rifrangente altrove.
-	float schiuma = clamp(smoothstep(0.5, 0.8, lame) + (1.0 - smoothstep(0.0, 0.18, v)) * 0.6 + smoothstep(0.7, 1.0, v) * 0.5 + forma * 0.3, 0.0, 1.0);
-	vec2 off = NORMAL.xy * 0.06;
+	// Increspature: la normale segue le strisce, cosi' le luci fanno riflessi lunghi e mossi.
+	NORMAL = normalize(NORMAL + vec3((s2 - 0.5) * 0.9, (s1 - 0.5) * 0.5, 0.0) + vec3((s3 - 0.5) * 0.3));
+	float fres = pow(1.0 - clamp(abs(dot(NORMAL, VIEW)), 0.0, 1.0), 3.0);
+	// Bianca solo sulle creste delle lame e al piede, dove l'acqua si strappa dal pelo.
+	float piede = 1.0 - smoothstep(0.0, 0.12, v);
+	float cresta = smoothstep(0.72, 0.86, lame);
+	float schiuma = clamp(cresta * 0.8 + piede * 0.5 + smoothstep(0.85, 1.0, v) * 0.4 * (1.0 - forma), 0.0, 1.0);
+	// Il resto rifrange quello che c'e' dietro (la colonna e' acqua trasparente, non un muro).
+	vec2 off = NORMAL.xy * 0.09 * (1.0 - schiuma);
 	vec3 dietro = texture(schermo, SCREEN_UV + off).rgb;
-	ALBEDO = mix(colore.rgb * 0.15, vec3(0.62, 0.68, 0.72), schiuma);
-	EMISSION = dietro * colore.rgb * (1.0 - schiuma) * 0.95 + dietro * 0.25 * schiuma;
-	ROUGHNESS = mix(0.03, 0.45, schiuma);
+	ALBEDO = mix(vec3(0.02, 0.03, 0.035), vec3(0.55, 0.6, 0.63), schiuma);
+	// Il velo rifrange lo sfondo schiarito: al buio si legge come acqua lucida, non come un buco.
+	EMISSION = dietro * colore.rgb * (1.0 - schiuma) * 1.35 + colore.rgb * 0.035 * lamina_vis(lame);
+	ROUGHNESS = mix(0.015, 0.35, schiuma);
 	SPECULAR = 1.0;
-	// Fra una lama e l'altra si vede attraverso; la cima si sfalda in brandelli; col crollo si
-	// aprono buchi sempre piu' grandi.
-	float pieno = smoothstep(0.25, 0.55, lame + 0.15 * (1.0 - v));
+	METALLIC = 0.0;
+	// Velo sottile fra una lama e l'altra, piu' pieno sulle lame, riflesso ai bordi; la cima si
+	// sfalda in brandelli; col crollo si aprono buchi sempre piu' grandi.
+	float lamina = smoothstep(0.3, 0.6, lame);
 	float cima = 1.0 - smoothstep(0.7, 1.0, v + (lame - 0.5) * 0.6) * (1.0 - forma * chiusura);
 	float buchi = smoothstep(crollo * 1.15 - 0.05, crollo * 1.15 + 0.1, lame * 0.8 + (1.0 - v) * 0.35);
-	// La cupola (B) quando si chiude e' un velo pieno: lei dentro non si vede piu'.
-	float a = mix(0.35, 0.9, schiuma) * pieno + fres * 0.3 + forma * smoothstep(0.2, 0.7, chiusura) * 0.55;
+	float a = 0.22 + lamina * 0.45 + schiuma * 0.35 + fres * 0.6;
 	ALPHA = clamp(a * opacita * cima * buchi, 0.0, 1.0);
 }
