@@ -11,8 +11,8 @@ render_mode blend_mix, depth_draw_always, cull_disabled, specular_schlick_ggx;
 uniform float altezza = 4.0;
 uniform float raggio = 1.3;
 // Di quanto si allarga al piede (moltiplica il raggio) e fin dove (frazione dell'altezza).
-uniform float piede = 1.7;
-uniform float piede_alto = 0.14;
+uniform float piede = 1.45;
+uniform float piede_alto = 0.1;
 // Fin dove e' piena (frazione dell'altezza): sopra si sfalda.
 uniform float coprente = 0.8;
 uniform float crollo = 0.0;
@@ -59,12 +59,16 @@ void fragment() {
 	float lame = s1 * 0.55 + s2 * 0.3 + s3 * 0.15;
 	// Superficie mossa: la normale segue i getti, le luci ci fanno riflessi lunghi.
 	NORMAL = normalize(NORMAL + vec3((s2 - 0.5) * 0.9, (s1 - 0.5) * 0.5, 0.0) + vec3((s3 - 0.5) * 0.35));
-	float schiuma = clamp(0.55 + smoothstep(0.35, 0.75, lame) * 0.45 + (1.0 - smoothstep(0.0, 0.2, v)) * 0.3, 0.0, 1.0);
-	ALBEDO = mix(vec3(0.3, 0.38, 0.43), vec3(0.88, 0.92, 0.95), schiuma);
+	// Schiuma a strisce con solchi d'acqua piu' scura e grana fine: si legge come acqua che corre,
+	// non come un tronco liscio.
+	float grana = noise(vec2(UV.x * 160.0, v * 40.0 - TIME * 14.0));
+	float schiuma = clamp(0.3 + smoothstep(0.3, 0.75, lame) * 0.6 + (grana - 0.5) * 0.35
+			+ (1.0 - smoothstep(0.0, 0.2, v)) * 0.3, 0.0, 1.0);
+	ALBEDO = mix(vec3(0.16, 0.22, 0.26), vec3(0.9, 0.93, 0.96), schiuma);
 	// Un filo di luce propria: al buio la schiuma resta bianca e non diventa un muro grigio.
 	EMISSION = vec3(0.05, 0.06, 0.07) * schiuma;
-	ROUGHNESS = mix(0.05, 0.5, schiuma);
-	SPECULAR = 0.8;
+	ROUGHNESS = mix(0.03, 0.45, schiuma);
+	SPECULAR = 0.9;
 	// Piena fino a "coprente"; sopra si strappa in brandelli; col crollo si aprono buchi.
 	float cima = 1.0 - smoothstep(coprente, 1.0, v + (lame - 0.5) * 0.35 * smoothstep(coprente - 0.1, coprente, v));
 	float buchi = smoothstep(crollo * 1.15 - 0.05, crollo * 1.15 + 0.1, lame * 0.8 + (1.0 - v) * 0.35);
