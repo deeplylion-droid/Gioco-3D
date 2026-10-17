@@ -11,8 +11,8 @@ render_mode blend_mix, depth_draw_always, cull_disabled, specular_schlick_ggx;
 uniform float altezza = 4.0;
 uniform float raggio = 1.3;
 // Di quanto si allarga al piede (moltiplica il raggio) e fin dove (frazione dell'altezza).
-uniform float piede = 1.45;
-uniform float piede_alto = 0.1;
+uniform float piede = 1.8;
+uniform float piede_alto = 0.16;
 // Fin dove e' piena (frazione dell'altezza): sopra si sfalda.
 uniform float coprente = 0.8;
 uniform float crollo = 0.0;
