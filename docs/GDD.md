@@ -141,6 +141,13 @@ Risposte complete, con le note parola per parola, in `docs/riscontri/2026-10-17_
 - **Jumpscare della medusa**: A, glitch forte, con l'urlo al massimo del volume.
 - **Quando sparisce nella fossa (tappa 8)**: A, un geyser d'acqua. L'acqua non deve essere trasparente: deve coprirla del tutto mentre sparisce.
 
+## Prova della v0.3.4 (17 ottobre)
+
+Parole dell'utente in `docs/riscontri/2026-10-17_prova_v034.md`.
+- **Tappa 8, nuova regola**: lei resta affacciata alla fossa finché non la spruzzi con la lancia. Appena il getto la colpisce, parte subito il geyser e lei sparisce. Questo prende il posto della regola del 16 ottobre ("la guardi 2 secondi, poi dopo 6 secondi scivola sotto").
+- **L'agnellino della risalita** scappa molto più veloce: non lo devi mai raggiungere né vedere mentre sparisce.
+- **Niente scatti al primo uso**: aspirazione, getto e geyser non devono bloccare il gioco la prima volta.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
