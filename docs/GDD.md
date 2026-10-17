@@ -65,6 +65,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Niente backtracking**: non si torna indietro per strade già fatte.
 - **Sempre un ambiente nuovo**: dopo ogni parte si entra in un posto mai visto, per esempio passando un cancello importante rimasto chiuso fino a quel momento.
 - Le risposte al questionario del 15 ottobre sono in `docs/riscontri/2026-10-15_questionario.md`.
+- **Ambienti nuovi pieni da subito** (17 ottobre): ogni ambiente nuovo si fa già pieno e credibile dalla prima proposta, tenendo conto di tutte le correzioni fatte finora. Niente prop messi in modo insensato: niente oggetti appesi al nulla o storti rispetto al muro, niente compenetrazioni, niente oggetti davanti a quello che devono lasciare libero, niente ripetizioni evidenti.
 
 ## Scelte del 16 ottobre (pagina delle proposte)
 
@@ -149,6 +150,14 @@ Parole dell'utente in `docs/riscontri/2026-10-17_prova_v034.md`.
 - **L'agnellino della risalita** scappa molto più veloce: non lo devi mai raggiungere né vedere mentre sparisce.
 - **Niente scatti al primo uso**: aspirazione, getto e geyser non devono bloccare il gioco la prima volta.
 - **La pila di palloni** all'entrata della sala va senza rete: un mucchio a piramide, con la base molto più larga, appoggiato nell'angolo.
+
+## La sala della torre (idea dell'utente, 17 ottobre)
+
+Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.md`.
+- È una **struttura mastodontica di scivoli colorati**.
+- **Non si scala: si scende**, scivolando tra diversi segmenti di scivoli spezzati, senza cadere.
+- A volte ci si aiuta con il getto per saltare da un pezzo all'altro.
+- Le versioni (dove entri in alto, come è fatta la discesa, dove stanno la balconata dei bambini, la luce di lei e la Polaroid 10) si propongono all'utente con scatti dal motore.
 
 ## Capitolo 1: scaletta (approvata)
 
