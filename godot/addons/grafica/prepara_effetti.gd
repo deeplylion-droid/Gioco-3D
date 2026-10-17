@@ -7,7 +7,8 @@ extends Node
 ## per [constant FOTOGRAMMI] fotogrammi accende davanti alla camera, una volta sola:
 ## - le particelle e le mesh dello zaino (aspirazione, getto, schizzi, gocce, colonna aspirata,
 ##   vortice) e i due getti (WaterStream: il nastro del nucleo, e la sua aspirazione);
-## - un geyser della fossa (GeyserFossa) e lo schermo rotto del jumpscare (glitch_schermo);
+## - una macchia di bagnato (il primo Decal prepara l'atlante dei decal), un geyser della fossa
+##   (GeyserFossa) e lo schermo rotto del jumpscare (glitch_schermo);
 ## - i suoni che partono in quei momenti (caricati in memoria, senza suonarli).
 ## Poi rimette tutto com'era: particelle spente e vuote, mesh nascoste, getti vuoti.
 ## La crea GettoPotente quando si aggancia allo zaino. Con Engine.set_meta(&"prepara_effetti_spento",
@@ -27,6 +28,7 @@ var _stati: Array = []
 var _getti: Array = []
 var _geyser: Node3D
 var _glitch: CanvasLayer
+var _macchia: Node
 
 
 func _ready() -> void:
@@ -72,6 +74,13 @@ func _raccogli() -> void:
 			_getti.append(s)
 	if getto and getto.has_method(&"_costruisci_colonna"):
 		getto.call(&"_costruisci_colonna", Vector3.ZERO, Vector3.UP)
+	# La prima macchia di bagnato (Decal) prepara l'atlante dei decal: a mezz'aria, non si vede.
+	if getto and getto.has_method(&"_macchia"):
+		var cam := get_viewport().get_camera_3d()
+		getto.call(&"_macchia", cam.global_transform * Vector3(0.0, 0.0, -2.0), Vector3.UP)
+		var bagnato: Array = getto.get(&"_bagnato")
+		if not bagnato.is_empty():
+			_macchia = bagnato[bagnato.size() - 1]
 	_geyser = GeyserFossa.new()
 	_geyser.name = "GeyserPreparato"
 	add_child(_geyser)
@@ -122,6 +131,9 @@ func _rimetti() -> void:
 		g.visible = st[1]
 	for s in _getti:
 		(s as Node3D).call(&"clear")
+	if is_instance_valid(_macchia) and getto:
+		(getto.get(&"_bagnato") as Array).erase(_macchia)
+		_macchia.queue_free()
 
 
 func _carica_suoni() -> void:

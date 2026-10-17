@@ -3,8 +3,8 @@ extends Node
 ## alla fossa dell'area bimbi: com'è nel gioco (scelte dell'utente del 17 ottobre).
 ##   jumpscare: sei a 2,8 m da lei; a 1,0 s ti prende (LeiSbuca._prendi: DeathSequence con
 ##     JumpscareGlitch e il suo urlo). Fine a 3,0 s.
-##   geyser: sei a 6,5 m da lei; a 1,0 s scivola sotto (LeiSbuca._scivola: GeyserFossa col boato).
-##     Fine a 4,5 s.
+##   geyser: sei a 6,5 m da lei con lo zaino; a 1,0 s la spruzzi in faccia: appena il getto la colpisce
+##     parte il geyser (GeyserFossa col boato) e lei sparisce. Fine a 4,5 s.
 ## Stampa "INIZIO frame N" quando parte la scaletta (per tagliare il video).
 ## Uso (con Movie Maker l'audio viene registrato):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
@@ -80,6 +80,11 @@ func _avvia() -> void:
 	lei.distanza_presa = 0.0
 	await get_tree().physics_frame
 	lei.call(&"_affaccia")
+	if tipo == "geyser":
+		if not p.has_item(&"zaino_pompa"):
+			p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
+		p.water_pack.set_equipped(true, false)
+		p.water_pack.set_tank_amount(20.0)
 	_mettiti()
 	set_process(true)
 
@@ -130,9 +135,12 @@ func _process(_delta: float) -> void:
 		if tipo == "jumpscare":
 			lei.call(&"_prendi")
 		else:
-			lei.call(&"_scivola")
+			# La nuova regola (v0.3.4): la spruzzi e se ne va.
+			Input.action_press(&"spray")
 	elif tipo == "geyser" and _partito:
 		_guarda()
+		if lei.fase != LeiSbuca.Fase.GUARDA and Input.is_action_pressed(&"spray"):
+			Input.action_release(&"spray")
 	for x in foto:
 		if absf(t - x) < 0.5 / 30.0:
 			_scatto.call_deferred(x)
