@@ -43,6 +43,7 @@ func _run() -> void:
 		Engine.set_meta(&"prepara_effetti_spento", true)
 	get_tree().change_scene_to_file(LEVEL)
 	await _frames(10)
+	print("livello caricato")
 	get_tree().paused = false
 	p = GameState.player
 	for i in 400:
@@ -57,6 +58,7 @@ func _run() -> void:
 	p.teleport(POSIZIONE, 0.0, 0.0)
 	p.look_at_point(POZZA)
 	await _frames(240)
+	print("misuro")
 	risultati["normale"] = await _misura(&"", 40)
 	for volta in ["prima", "seconda"]:
 		p.look_at_point(POZZA)
