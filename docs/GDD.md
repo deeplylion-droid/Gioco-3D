@@ -147,6 +147,7 @@ Parole dell'utente in `docs/riscontri/2026-10-17_prova_v034.md`.
 - **Tappa 8, nuova regola**: lei resta affacciata alla fossa finché non la spruzzi con la lancia. Appena il getto la colpisce, parte subito il geyser e lei sparisce. Questo prende il posto della regola del 16 ottobre ("la guardi 2 secondi, poi dopo 6 secondi scivola sotto").
 - **L'agnellino della risalita** scappa molto più veloce: non lo devi mai raggiungere né vedere mentre sparisce.
 - **Niente scatti al primo uso**: aspirazione, getto e geyser non devono bloccare il gioco la prima volta.
+- **La pila di palloni** all'entrata della sala va senza rete: un mucchio a piramide, con la base molto più larga, appoggiato nell'angolo.
 
 ## Capitolo 1: scaletta (approvata)
 
