@@ -26,6 +26,7 @@ EXT = [
     ('Script', 'res://addons/acqua/scripts/water_tank_link.gd', 's_link'),
     ('Resource', 'res://addons/acqua/presets/stile_3_scura.tres', 'r_stile'),
     ('Script', 'res://scripts/mechanisms/ladder.gd', 's_ladder'),
+    ('Script', 'res://scripts/tecnici/vasca_inesauribile.gd', 's_inesauribile'),
     ('PackedScene', 'res://scenes/tecnici/luci_tecnici.tscn', 'p_luci'),
 ]
 
@@ -120,6 +121,9 @@ node('VascaRaccolta', 'Node3D', 'Acqua', inst='p_tank', props={
     'build_walls': 'false', 'fill': f'{(pelo - fondo[1]) / 1.7:.4f}', 'max_fill': '0.95', 'capacity_liters': '80.0'})
 node('AcquaVascaRaccolta', 'Node3D', 'Acqua', inst='p_link', np=['tank'], props={
     'script': 'ExtResource("s_link")', 'tank': 'NodePath("../VascaRaccolta")', 'style': 'ExtResource("r_stile")'})
+# riscontro della v0.3.1, punto 7: nella sala pompe l'acqua non si esaurisce mai (scende fino al 60%, poi si rabbocca)
+node('VascaInesauribile', 'Node', 'Acqua', np=['vasca'], props={
+    'script': 'ExtResource("s_inesauribile")', 'vasca': 'NodePath("../VascaRaccolta")'})
 
 # scala alla marinara del pozzo: dal pavimento della camera al fondo della piscina, contro la parete -X del pozzo
 pp, _ = CAMERA['PUNTO_portello']
@@ -127,6 +131,12 @@ node('Gioco', 'Node3D', '.')
 node('ScalaPozzo', 'Area3D', 'Gioco', props={'position': V(pp[0] - 0.65 + 0.18, 0, pp[2]), 'rotation': V(0, H, 0),
                                             'script': 'ExtResource("s_ladder")', 'height': f'{pp[1]:.3f}', 'width': '0.6',
                                             'show_model': 'false'})
+
+# riscontro della v0.3.1, punto 9: la scaletta della vasca di raccolta (contro il muro sud, 1,5 m a ovest
+# del centro) fa risalire chi ci cade dentro: dal fondo (-1,7) fino a scavalcare il cordolo (+0,16)
+node('ScalettaVasca', 'Area3D', 'Gioco', props={'position': V(fondo[0] - 1.5, fondo[1], fondo[2] + 1.5), 'rotation': V(0, math.pi, 0),
+                                               'script': 'ExtResource("s_ladder")', 'height': '1.95', 'width': '0.6',
+                                               'show_model': 'false'})
 
 node('Marker', 'Node3D', '.')
 # percorso

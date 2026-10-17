@@ -21,11 +21,17 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	# Come nel gioco: la sala si carica in qualche secondo e il primo fotogramma dopo il caricamento
+	# recupera più passi di fisica prima di disegnare (fino a 8). Con --fixed-fps non succede da solo:
+	# si fa con la fisica a 480 Hz finché la sala non è pronta. Così, nella v0.3.1, il bersaglio del
+	# getto sulla faccia della medusa finiva sull'occhio della posa di riposo, 2,6 m sopra la faccia.
+	Engine.physics_ticks_per_second = 480
 	get_tree().change_scene_to_file(LEVEL)
 	for i in 300:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player):
 			break
+	Engine.physics_ticks_per_second = 60
 	await _frames(5)
 	level = get_tree().current_scene
 	p = GameState.player
@@ -56,6 +62,9 @@ func _run() -> void:
 	check(ap != null and ap.is_playing() and ap.current_animation == "affacciata", "con l'animazione affacciata in ciclo")
 	var eye := medusa.get_eye_position()
 	check(absf(eye.y - 1.63) < 0.1 and absf(eye.x) < 0.15 and eye.z > 11.5 and eye.z < 12.1, "l'occhio è sopra il bordo, all'altezza dei tuoi occhi (%s)" % eye)
+	var faccia := medusa.get_node_or_null(^"FacciaMedusa") as Node3D
+	check(faccia != null and faccia.global_position.distance_to(eye + Vector3(0.0, -0.15, 0.0)) < 0.1,
+		"il bersaglio del getto è sulla sua faccia, anche dopo un caricamento lungo (%s)" % (str(faccia.global_position) if faccia else "-"))
 	var pool: WaterTank = level.get_node("Vasca/VascaCentrale")
 	check(absf(pool.get_surface_global_y() - 0.88) < 0.03 and not pool.suckable, "l'acqua della vasca è quasi al bordo e non si aspira")
 	var det := level.get_node_or_null("Sala/Dettagli")
@@ -205,13 +214,14 @@ func _run() -> void:
 	p.water_pack.set_tank_amount(20.0)
 	var prima_spiaggia := puddle.get_liters()
 	p.look_at_point(Vector3(2.0, 1.0, -9.0))
-	await _hold(&"spray", 60)
+	# Il getto B parte dopo un attimo di carica (WaterPack.spray_delay): lo si tiene premuto di più.
+	await _hold(&"spray", 60 + int(p.water_pack.spray_delay * 60.0))
 	var dove_spiaggia := p.water_pack.hit_point
 	await _frames(40)
 	check(puddle.get_liters() > prima_spiaggia + 4.0, "l'acqua sparata dentro la vasca (in %s) ci ricola (+%.1f l)" % [dove_spiaggia, puddle.get_liters() - prima_spiaggia])
 	var prima_fuori := puddle.get_liters()
 	p.look_at_point(Vector3(13.0, 0.5, 2.0))
-	await _hold(&"spray", 60)
+	await _hold(&"spray", 60 + int(p.water_pack.spray_delay * 60.0))
 	var dove_fuori := p.water_pack.hit_point
 	await _frames(40)
 	check(absf(puddle.get_liters() - prima_fuori) < 0.05, "l'acqua sparata fuori dalla vasca (in %s) non torna" % dove_fuori)
@@ -239,6 +249,14 @@ func _run() -> void:
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.6, -1.95, 1.0), PI, 0.0)
 	await _frames(10)
+	# Riscontro sulla v0.3.1: l'acqua sparata nella piscina vuota (sul fondo, sul muro sotto il
+	# pulsante) non resta sul fondo; prima la vasca la raccoglieva e, aperto il portellone, un velo
+	# d'acqua ne copriva il buco.
+	p.look_at_point(Vector3(1.6, -1.9, 4.9))
+	await _frames(3)
+	await _hold(&"spray", 60)
+	await _frames(30)
+	check(puddle.fill <= 0.0001, "l'acqua sparata nella piscina vuota scola via (fill %.4f)" % puddle.fill)
 	p.look_at_point(hatch_button.global_position + Vector3(0, 0.4, 0))
 	await _frames(3)
 	await _hold(&"spray", 60)
@@ -250,6 +268,10 @@ func _run() -> void:
 		if hatch.is_open:
 			break
 	check(hatch.is_open, "il portello si apre")
+	await _frames(60)
+	var velo: Node = svuota.superficie()
+	check(puddle.fill <= 0.0001 and (velo == null or float(velo.get(&"level")) <= float(velo.get(&"bottom")) + 0.005),
+		"aperto, sul buco del portellone non c'è un velo d'acqua (fill %.4f)" % puddle.fill)
 	# Sotto c'è il pozzo della camera delle onde (tappe 5-6, test_tappe56.gd): la demo va avanti.
 	check(not bool(level.get(&"demo_finished")), "la demo non finisce al portello: sotto c'è il pozzo")
 
@@ -310,6 +332,41 @@ func _run() -> void:
 	Input.action_release(&"move_forward")
 	check(p.global_position.z > 13.2, "il cordone ferma il giocatore (z %.2f)" % p.global_position.z)
 	check(not medusa.occhio_chiuso(), "l'occhio è aperto")
+	# Dal cordone, da più punti intorno a lei (fino a 45 gradi di lato), mirando occhio e bocca.
+	var avanti := medusa.global_basis.z
+	avanti.y = 0.0
+	avanti = avanti.normalized()
+	var riusciti := 0
+	var prove := 0
+	for angolo in [-45.0, -20.0, 20.0, 45.0]:
+		var d := avanti.rotated(Vector3.UP, deg_to_rad(angolo))
+		var da := Vector3(eye.x, 1.0, eye.z)
+		var r := space.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + d * 12.0, Layers.BARRIERS))
+		if r.is_empty():
+			continue
+		for mira in [Vector3.ZERO, Vector3(0.0, -0.2, 0.0)]:
+			p.water_pack.set_tank_amount(20.0)
+			p.teleport(Vector3(r.position.x, 0.0, r.position.z) + d * 0.5, 0.0, 0.0)
+			await _frames(4)
+			p.look_at_point(medusa.get_eye_position() + mira)
+			await _frames(3)
+			Input.action_press(&"spray")
+			var chiuso := false
+			for i in 45:
+				await get_tree().physics_frame
+				chiuso = chiuso or medusa.occhio_chiuso()
+			Input.action_release(&"spray")
+			prove += 1
+			if chiuso:
+				riusciti += 1
+			else:
+				print("  (da %.0f gradi il getto colpisce %s)" % [angolo, p.water_pack.hit_collider])
+			# L'occhio si riapre subito per la prova dopo.
+			if medusa._tw_occhio and medusa._tw_occhio.is_valid():
+				medusa._tw_occhio.kill()
+			medusa._imposta_chiusura(0.0)
+			await _frames(10)
+	check(prove == 8 and riusciti == prove, "dal cordone, da destra e da sinistra, il getto in faccia le chiude l'occhio (%d su %d)" % [riusciti, prove])
 	p.water_pack.set_tank_amount(20.0)
 	p.teleport(Vector3(0.0, 0.0, 15.2), 0.0, 0.0)
 	await _frames(5)

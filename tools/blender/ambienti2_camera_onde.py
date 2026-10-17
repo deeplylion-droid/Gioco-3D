@@ -66,7 +66,8 @@ PZ = 1.3                      # lato del pozzo
 
 S('struttura', box('pavimento', ((XA + XB) / 2, 0, -0.15), (XB - XA, W, 0.3), M['cemento_bagnato'], uv=3.0))
 # canaletta al centro con un filo d'acqua
-S('struttura', box('canaletta', ((XA + XB) / 2, -0.9, 0.005), (XB - XA, 0.4, 0.01), M['lamiera'], uv=1.0))
+# il fondo sta 3 mm sopra il pavimento: alla stessa quota, dai fori sfarfallava (riscontro v0.3.1, punto 5)
+S('struttura', box('canaletta', ((XA + XB) / 2, -0.9, 0.008), (XB - XA, 0.4, 0.01), M['lamiera'], uv=1.0))
 # muro sud continuo (lamiere sopra 1 m, cemento sotto)
 S('struttura', box('muro_s_basso', ((XA + XB) / 2, YS - SP / 2, 0.5), (XB - XA, SP, 1.0), M['cemento'], uv=2.5))
 S('struttura', box('muro_s_alto', ((XA + XB) / 2, YS - SP / 2, (1.0 + H) / 2), (XB - XA, SP, H - 1.0), M['lamiere'], uv=2.0))

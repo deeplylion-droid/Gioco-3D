@@ -1,14 +1,16 @@
 extends Node
 ## Test automatico della tappa 7 (docs/livello/capitolo1.md), il ritorno al buio dopo il risveglio
 ## della sala pompe, simulando gli input, sulla strada B scelta dall'utente il 16 ottobre. Prima del
-## risveglio la medusa è nella vasca. Poi il blackout (come dopo la leva): dalla porta col maniglione
-## della sala pompe si sale per il raccordo fino al pianerottolo davanti alla grata chiusa della scala
-## degli interni (di lì non si passa), si va per il corridoio e su per la scala, nel magazzino dei
-## gonfiabili e fuori dalla serranda nell'angolo sud-ovest della sala; la porta "sala pompe" degli
+## risveglio la medusa è nella vasca e la serranda del magazzino è chiusa (dalla sala non si passa).
+## Poi il blackout (come dopo la leva): dalla porta col maniglione della sala pompe si sale per il
+## raccordo fino al pianerottolo davanti alla grata chiusa della scala degli interni (di lì non si
+## passa), si va per il corridoio e su per la scala, nel magazzino dei gonfiabili, dove la serranda si
+## alza quando ci arrivi, e fuori nell'angolo sud-ovest della sala; la porta "sala pompe" degli
 ## interni resta chiusa e le docce non scorrono. Nella sala: vasca vuota (la medusa non c'è più),
-## l'acqua che si muove, le gocce dal bordo, la scia di bava rosa dalla serranda lungo il muro ovest,
-## la sigla muta, il lampione spento; i checkpoint sui marker della strada fino all'area bimbi, dove
-## comincia la tappa 8 (test_tappa8.gd).
+## l'acqua che si muove, le gocce dal bordo, la scia di bava rosa che parte dalla vasca, da dove lei
+## era affacciata, e va lungo il muro ovest fino all'area bimbi (riscontri sulla v0.3.1), la sigla
+## muta, il lampione spento; i checkpoint sui marker della strada fino all'area bimbi, dove comincia
+## la tappa 8 (test_tappa8.gd).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tappa7.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -54,20 +56,71 @@ func _run() -> void:
 	print("Prima del risveglio")
 	check(GameState.luci == GameState.Luci.PRIMA_DEL_RISVEGLIO, "si parte con le luci di prima")
 	check(medusa.visible and not bool(interni.get(&"docce_aperte")), "la medusa è nella vasca, le docce chiuse")
+	# Riscontro sulla v0.3.1: la serranda del magazzino resta chiusa finché non risali dal magazzino.
+	var serranda := tec.find_child("SerrandaMagazzino", true, false) as PoweredDoor
+	check(serranda != null, "c'è la serranda del magazzino dei gonfiabili")
+	var vano := PhysicsRayQueryParameters3D.create(Vector3(-15.0, 1.0, 18.8), Vector3(-15.0, 1.0, 22.0))
+	vano.exclude = [p.get_rid()]
+	p.teleport(Vector3(-15.0, 0.0, 18.6), PI, 0.0)
+	Input.action_press(&"move_forward")
+	await _frames(120)
+	Input.action_release(&"move_forward")
+	check(serranda != null and serranda.open_amount == 0.0 and not space.intersect_ray(vano).is_empty() and p.global_position.z < 20.0,
+		"dalla sala la serranda è chiusa e non si passa (z %.2f)" % p.global_position.z)
+	if serranda:
+		check(int(serranda.call(&"lamelle_visibili")) >= 30, "chiusa, le lamelle arrivano fino a terra (%d)" % int(serranda.call(&"lamelle_visibili")))
 
 	print("Il blackout (dopo la leva della sala pompe)")
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	await _frames(3)
 	check(ritorno.attivo, "parte il ritorno al buio")
 	check(not medusa.visible, "la medusa non c'è più")
-	var inizio_scia := tec.to_global(_m(tec, "marker_t7_inizio_scia"))
 	check(ritorno.metri_scia() >= 8.0, "una scia di bava rosa a terra (%.1f m)" % ritorno.metri_scia())
-	check(ritorno.scia.size() > 0 and Vector2(ritorno.scia[0].x - inizio_scia.x, ritorno.scia[0].z - inizio_scia.z).length() < 0.2,
-		"la scia comincia alla serranda (%s)" % (str(ritorno.scia[0]) if ritorno.scia.size() > 0 else "-"))
-	var ovest := true
+	# Riscontro sulla v0.3.1: la scia parte dalla vasca, da dove lei era affacciata.
+	var occhio_vasca: Vector3 = medusa.call(&"get_eye_position")
+	check(ritorno.scia.size() > 0 and Vector2(ritorno.scia[0].x - occhio_vasca.x, ritorno.scia[0].z - occhio_vasca.z).length() < 1.2,
+		"la scia comincia dalla vasca, sotto dove era affacciata (%s)" % (str(ritorno.scia[0]) if ritorno.scia.size() > 0 else "-"))
+	var radice := ritorno.get_node_or_null(^"Scia")
+	var bordo: BavaRosa = radice.get_node_or_null(^"BavaBordoVasca") as BavaRosa if radice else null
+	var muro: BavaRosa = radice.get_node_or_null(^"BavaMuroVasca") as BavaRosa if radice else null
+	check(bordo != null and muro != null and bordo.get_child_count() > 0 and muro.get_child_count() > 0,
+		"la bava sul bordo da dove si è tirata fuori e giù per il muro della vasca")
+	var tappa8 := level.get(&"lei_sbuca") as LeiSbuca
+	var fine_scia := ritorno.scia[ritorno.scia.size() - 1]
+	var testa_fossa: Vector3 = tappa8.call(&"_testa_prevista")
+	check(Vector2(fine_scia.x - testa_fossa.x, fine_scia.z - testa_fossa.z).length() < 1.5, "e arriva all'area bimbi, alla fossa (%s)" % str(fine_scia))
+	var a_terra := true
 	for q in ritorno.scia:
-		ovest = ovest and q.x < -14.0
-	check(ovest, "e va lungo il muro ovest fino all'area bimbi")
+		var giu := space.intersect_ray(PhysicsRayQueryParameters3D.create(q + Vector3(0.0, 1.0, 0.0), q + Vector3(0.0, -3.0, 0.0), Layers.WORLD))
+		if giu.is_empty() or float(giu.position.y) < -0.3:
+			a_terra = false
+			print("  (la scia passa su una vasca in %s)" % str(q))
+	check(a_terra, "sempre a terra, senza passare sopra le vasche")
+	# Prova della v0.3.2: la scia si interrompeva (sotto il pavimento) o si staccava. Ogni vertice dei
+	# nastri appoggiati sta a 1-3 cm sopra il pavimento che ha sotto.
+	var staccati := 0
+	var sotto := 0
+	var vertici := 0
+	for b in radice.find_children("*", "BavaRosa", true, false):
+		if not (b as BavaRosa).appoggia:
+			continue
+		var nastro := b.get_node_or_null(^"Nastro") as MeshInstance3D
+		if nastro == null:
+			continue
+		var vv: PackedVector3Array = nastro.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+		for k in range(0, vv.size(), 3):
+			var q := vv[k]
+			vertici += 1
+			var giu := space.intersect_ray(PhysicsRayQueryParameters3D.create(q + Vector3(0.0, 0.3, 0.0), q + Vector3(0.0, -0.3, 0.0), Layers.WORLD))
+			if giu.is_empty():
+				continue
+			var dy := q.y - float(giu.position.y)
+			if dy < 0.002:
+				sotto += 1
+			elif dy > 0.03:
+				staccati += 1
+	check(vertici > 100 and sotto == 0 and staccati == 0,
+		"la bava è continua: appoggiata al pavimento, mai sotto (%d) né staccata (%d) su %d vertici" % [sotto, staccati, vertici])
 	check(ritorno.find_children("*", "WaterDripEmitter", true, false).size() >= 2, "dal bordo della vasca gocciola ancora")
 	check(not bool(interni.get(&"docce_aperte")) and ritorno.find_children("VaporeBuio*", "", true, false).is_empty(),
 		"con la strada B le docce non scorrono e negli spogliatoi non c'è vapore")
@@ -104,8 +157,23 @@ func _run() -> void:
 	ok = await _cammina_verso(tec.to_global(Vector3(26.5, 9.05, 15.0)), 900)
 	await _frames(5)
 	check(ok and _checkpoint() == CP + "CheckpointMagazzino", "nel magazzino dei gonfiabili: checkpoint (%s)" % _checkpoint())
-	ok = true
-	for loc in [Vector3(24.0, 9.05, 15.0), Vector3(19.3, 9.05, 15.0), Vector3(17.9, 9.05, 15.0)]:
+	check(serranda and serranda.open_amount == 0.0, "la serranda è ancora chiusa")
+	ok = await _cammina_verso(tec.to_global(Vector3(24.0, 9.05, 15.0)), 900)
+	var alzata := -1
+	Input.action_press(&"move_forward")
+	for i in 400:
+		var d := tec.to_global(Vector3(19.3, 9.05, 15.0)) - p.global_position
+		p.set_look(atan2(-d.x, -d.z), 0.0)
+		await get_tree().physics_frame
+		if alzata < 0 and serranda and serranda.open_amount > 0.0:
+			alzata = i
+		if serranda and serranda.is_open:
+			break
+	Input.action_release(&"move_forward")
+	check(alzata >= 0 and serranda.is_open, "ci arrivi dal magazzino e la serranda si alza")
+	var visibili := int(serranda.call(&"lamelle_visibili")) if serranda else 0
+	check(absi(visibili - 7) <= 1, "fin dove è modellata: la barra a 1,95 m (%d lamelle sotto l'architrave)" % visibili)
+	for loc in [Vector3(19.3, 9.05, 15.0), Vector3(17.9, 9.05, 15.0)]:
 		ok = ok and await _cammina_verso(tec.to_global(loc), 900)
 	await _frames(5)
 	check(ok and _checkpoint() == CP + "CheckpointSerranda", "sotto la serranda, nella sala: checkpoint (%s)" % _checkpoint())
@@ -113,8 +181,27 @@ func _run() -> void:
 
 	print("Nella sala, lungo la scia")
 	var cp_bimbi := (level.get_node("Gioco/CheckpointAreaBimbi") as Node3D).global_position
-	ok = true
+	# Dalla serranda si va al punto della scia più vicino; poi la si segue dall'inizio, appena fuori
+	# dal cordone della vasca (dentro non si entra), fino al checkpoint dell'area bimbi.
+	var vicino := 0
 	for i in ritorno.scia.size():
+		if ritorno.scia[i].distance_to(p.global_position) < ritorno.scia[vicino].distance_to(p.global_position):
+			vicino = i
+	ok = await _cammina_verso(ritorno.scia[vicino], 1200)
+	check(ok, "dalla serranda si arriva alla scia (%s)" % str(ritorno.scia[vicino]))
+	var primo := 0
+	for i in ritorno.scia.size():
+		var q := ritorno.scia[i]
+		var dal_centro := PhysicsRayQueryParameters3D.create(Vector3(0.0, 1.0, 10.0), Vector3(q.x, 1.0, q.z), Layers.BARRIERS)
+		if not space.intersect_ray(dal_centro).is_empty():
+			primo = i
+			break
+	check(primo > 0, "la scia esce dal cordone della vasca (al punto %d)" % primo)
+	var verso := ritorno.scia[primo + 1] - ritorno.scia[primo]
+	p.teleport(ritorno.scia[primo], atan2(-verso.x, -verso.z), 0.0)
+	await _frames(5)
+	ok = true
+	for i in range(primo + 1, ritorno.scia.size()):
 		ok = ok and await _cammina_verso(ritorno.scia[i], 900)
 		if Vector2(ritorno.scia[i].x - cp_bimbi.x, ritorno.scia[i].z - cp_bimbi.z).length() < 0.6:
 			break

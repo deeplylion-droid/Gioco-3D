@@ -1,10 +1,10 @@
 extends Node
 ## Test dell'audio: autoload "Audio", bus ed effetti, stream del catalogo (si caricano, i loop
 ## si ripetono), volumi salvati in settings.cfg, collegamenti automatici con la sala principale
-## (segnali e suoni che partono davvero), monitor e paratie delle tappe 5-6, la fossa e il morso
-## della tappa 8, la piscina a onde della tappa 5 (gorgo, piscina vuota, pulsante della botola
-## col lampeggiante e il bi-bu, micro medusine), il portone della sala della torre, i nomi dei
-## suoni chiesti dagli script, scheda nel menu delle opzioni, morte e ripartenza.
+## (segnali e suoni che partono davvero), monitor, paratie e cancelli stagni delle tappe 5-6, la
+## fossa e il morso della tappa 8, la piscina a onde della tappa 5 (gorgo, piscina vuota, pulsante
+## della botola col lampeggiante e il bi-bu, micro medusine), il portone della sala della torre, i
+## nomi dei suoni chiesti dagli script, scheda nel menu delle opzioni, morte e ripartenza.
 ## Alla fine controlla che l'audio non abbia prodotto errori (un Logger li raccoglie tutti).
 ## In headless il driver audio è "Dummy": i player suonano senza uscire dalle casse.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_audio.gd
@@ -210,7 +210,8 @@ func _run() -> void:
 	p.look_at_point(jingle.global_position + Vector3(0, 0.12, 0))
 	await _frames(3)
 	Input.action_press(&"spray")
-	await _frames(40)
+	# Il getto B parte dopo un attimo di carica (WaterPack.spray_delay).
+	await _frames(40 + int(p.water_pack.spray_delay * 60.0))
 	check(_conta(&"zaino_getto_inizio") >= 1, "parte il getto")
 	var zaino := _zaino()
 	check(zaino != null and zaino.get(&"getto").is_suonando(), "il getto suona finché si spruzza")
@@ -268,6 +269,17 @@ func _run() -> void:
 	if not paratie.is_empty():
 		var par: Node = paratie[0]
 		var catena := _loop_su(par.get_node_or_null(par.get(&"pannello_path")), &"paratia_scende_loop")
+		# I cancelli stagni sono chiusi finché non arriva il giocatore (riscontro v0.3.1, punto 6): la si
+		# apre come al passaggio, col suo colpo metallico, poi si fa scendere come al risveglio.
+		var aperture := _conta(&"cancello_stagno_apre")
+		if par.has_method(&"apri") and not bool(par.get(&"is_aperta")):
+			par.call(&"apri")
+			for i in 300:
+				if bool(par.get(&"is_aperta")):
+					break
+				await get_tree().physics_frame
+			await _frames(10)
+		check(_conta(&"cancello_stagno_apre") == aperture + 1, "aprendosi il cancello stagno fa il suo colpo metallico")
 		check(catena != null and not catena.is_suonando(), "la paratia alzata tace")
 		var tonfi := _conta(&"porta_chiusa")
 		par.call(&"chiudi")
@@ -293,6 +305,22 @@ func _run() -> void:
 		check(lontano is AudioStreamPlayer3D and (lontano as AudioStreamPlayer3D).unit_size >= 30.0,
 			"la plastica lontana arriva dalla vasca e si sente anche dalla sala pompe")
 		lontano.call(&"stop")
+	# I cancelli stagni della camera delle onde (prova della v0.3.1): li suona lo script dei
+	# cancelli, un suono per cancello; l'animazione segue CANCELLO_STAGNO_PARTE e _ARRIVA.
+	var costanti: Dictionary = (audio.get_script() as GDScript).get_script_constant_map()
+	var arriva := float(costanti.get("CANCELLO_STAGNO_ARRIVA", 0.0))
+	var cancelli = audio.call(&"stream_di", &"cancello_stagno_apre")
+	var varianti_ok: bool = cancelli is AudioStreamRandomizer and (cancelli as AudioStreamRandomizer).streams_count == 2
+	if varianti_ok:
+		for i in 2:
+			varianti_ok = varianti_ok and (cancelli as AudioStreamRandomizer).get_stream(i).get_length() > arriva + 0.5
+	check(varianti_ok and arriva > float(costanti.get("CANCELLO_STAGNO_PARTE", 9.0)),
+		"il cancello stagno ha due varianti che durano oltre il colpo a fine corsa (%.2f s)" % arriva)
+	var cancello: Node = audio.call(&"suona", &"cancello_stagno_apre", Vector3(0, 1.2, 4.0))
+	check(cancello is AudioStreamPlayer3D and (cancello as AudioStreamPlayer3D).unit_size >= 5.0
+		and (cancello as AudioStreamPlayer3D).volume_db >= 2.0, "il cancello stagno è forte, pieno fino a circa 6 m")
+	if cancello:
+		cancello.call(&"stop")
 
 	print("Area bimbi: lei (tappa 8)")
 	var suoni_lei := [&"fossa_ribolle_loop", &"lei_sbuca", &"lei_scivola_sotto", &"morso"]
@@ -415,7 +443,7 @@ func _run() -> void:
 		check(lamp_botola != null and lamp_botola.volume > 0.5 and lamp_botola.is_suonando(), "il lampeggiante gira")
 		check(_conta(&"pulsante_botola_bibu") == bibu, "insieme al jingle niente bi-bu")
 		await _frames(100)
-		check(_conta(&"pulsante_botola_bibu") > bibu, "al lampo dopo (1,6 s) il bi-bu")
+		check(_conta(&"pulsante_botola_bibu") == bibu, "niente bi-bu ripetuto a ogni lampo (prova della v0.3.2)")
 		# colpito col getto: il lampeggiante si ferma e i bi-bu smettono
 		var bottone: WaterButton = piscina.get(&"pulsante")
 		bottone.powered = true

@@ -55,6 +55,9 @@ extends Node3D
 
 var demo_finished := false
 
+# Il bersaglio del getto sulla faccia della medusa (_faccia_bagnabile).
+var _faccia: WaterHitbox
+
 
 func _ready() -> void:
 	# Prima del primo frame: meno varianti di shader, a parità di aspetto (UnificaMateriali).
@@ -94,9 +97,34 @@ func _ready() -> void:
 		interni.call(&"fai_risveglio", p)
 
 
+## La struttura di gioco dell'area bimbi: lo scivolo giallo e i tre tetti a piramide non hanno
+## collisioni nel GLB (solo pedane, passerelle, parapetti e scala): ci si passava attraverso (prova
+## della v0.3.2, punto 10, "lo scivolo giallo è incorporeo"). Una collisione che segue la forma
+## esatta della mesh: sullo scivolo si cammina e si scivola, sui tetti si sta sopra.
+func _collisione_struttura_gioco() -> void:
+	var mi := get_node_or_null(^"Sala/AreaBimbi/sala_struttura_gioco") as MeshInstance3D
+	if mi == null:
+		for n in find_children("sala_struttura_gioco", "MeshInstance3D", true, false):
+			mi = n as MeshInstance3D
+			break
+	if mi == null or mi.mesh == null or mi.has_node(^"CollisioneForma"):
+		return
+	var corpo := StaticBody3D.new()
+	corpo.name = "CollisioneForma"
+	corpo.collision_layer = Layers.WORLD
+	corpo.collision_mask = 0
+	var forma := CollisionShape3D.new()
+	var trimesh := mi.mesh.create_trimesh_shape()
+	trimesh.backface_collision = true   # bordi e testate sottili: niente da attraversare da dietro
+	forma.shape = trimesh
+	corpo.add_child(forma)
+	mi.add_child(corpo)
+
+
 ## Ritocchi alla sala importata: lampada della statua, vetro della cupola, luci rosse.
 func _setup_hall() -> void:
 	_cordone_vasca()
+	_collisione_struttura_gioco()
 	# La lampada sul palo: mira, cono e ombre li regola LuciSala (luce da ritratto sul viso della
 	# medusa); qui solo l'accensione con lo sfarfallio, sulla luce e sulla lampadina.
 	var lamp := get_node_or_null(statue_lamp_light) as SpotLight3D
@@ -245,28 +273,42 @@ func _setup_tecnici() -> void:
 			(c as CollisionObject3D).collision_mask = 0
 
 
-## Il bersaglio del getto sulla faccia della medusa (easter egg dell'occhio che si chiude).
+## Il bersaglio del getto sulla faccia della medusa (easter egg dell'occhio che si chiude). Segue
+## la faccia a ogni passo della fisica (_segui_faccia). Prima si metteva una volta sola, due passi di
+## fisica dopo l'ingresso della sala: nel gioco il caricamento è lungo e il primo fotogramma recupera
+## più passi di fisica prima di disegnare, così l'animazione non era ancora partita e il bersaglio
+## restava sull'occhio della posa di riposo, 2,6 m sopra la faccia (v0.3.1: "se spruzzo l'acqua in
+## faccia alla medusina non chiude l'occhio"; nei test, a 60 fotogrammi fissi, non succedeva).
 func _faccia_bagnabile() -> void:
 	var m := statue as Node3D
 	if m == null or not m.has_method(&"chiudi_occhio") or not m.has_method(&"get_eye_position"):
 		return
-	# L'occhio si sa dove sta quando il modello è pronto.
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	if not is_instance_valid(m):
-		return
-	var faccia := WaterHitbox.new()
-	faccia.name = "FacciaMedusa"
+	_faccia = WaterHitbox.new()
+	_faccia.name = "FacciaMedusa"
+	# Figlio della medusa (quando sparisce al buio si spegne con lei), ma la posizione la decide lei.
+	_faccia.top_level = true
 	var forma := CollisionShape3D.new()
 	var sfera := SphereShape3D.new()
 	sfera.radius = raggio_faccia
 	forma.shape = sfera
-	faccia.add_child(forma)
-	m.add_child(faccia)
-	faccia.global_position = (m.call(&"get_eye_position") as Vector3) + Vector3(0.0, -0.15, 0.0)
-	faccia.water_hit.connect(func(_litri: float, _punto: Vector3, _dir: Vector3):
+	_faccia.add_child(forma)
+	m.add_child(_faccia)
+	_segui_faccia()
+	_faccia.water_hit.connect(func(_litri: float, _punto: Vector3, _dir: Vector3):
 		if m.visible and not bool(m.call(&"occhio_chiuso")):
 			m.call(&"chiudi_occhio", occhio_chiuso_secondi))
+
+
+func _physics_process(_delta: float) -> void:
+	_segui_faccia()
+
+
+## Il bersaglio del getto davanti alla faccia: dove sta l'occhio adesso (con l'animazione e lo
+## sguardo), 15 cm più in basso.
+func _segui_faccia() -> void:
+	if _faccia == null or not is_instance_valid(_faccia) or not is_instance_valid(statue):
+		return
+	_faccia.global_position = (statue.call(&"get_eye_position") as Vector3) + Vector3(0.0, -0.15, 0.0)
 
 
 func _on_fine_demo(body: Node3D) -> void:

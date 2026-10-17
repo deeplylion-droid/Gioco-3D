@@ -11,6 +11,12 @@
 - paratia_scende_loop: una paratia d'acciaio che scende: motore, catene, guide che stridono.
 - maniglione_bloccato: un maniglione antipanico che non si apre.
 - porta_ponte_apre: il maniglione che si sblocca e la porta pesante che si apre.
+- cancello_stagno_apre (2 varianti, stessi tempi): i cancelli stagni della camera delle onde che
+  si aprono da soli al passaggio (prova della v0.3.1, 16 ottobre): la valvola pilota, quattro
+  chiavistelli che si sfilano con colpi secchi, la guarnizione che si stacca e l'aria che si
+  sfoga, la porta d'acciaio che parte con uno strappo a 0,55 s spinta dall'idraulica (centralina,
+  cilindro), stride e gratta nelle guide e rimbomba nel corridoio, sbatte a fine corsa a 2,55 s;
+  poi i fermi che scattano e l'ultimo sfiato. Solo sintesi.
 Uscita: godot/audio/tecnici/.
 """
 import numpy as np
@@ -19,8 +25,9 @@ from comune import ir_nave, kenney, salva
 from genera_ambiente import MODI_LAMIERA, bollicina, gemito_attrito, treno_impulsi
 from genera_effetti import cigolio_metallo, impulso, ronzio_rete
 from genera_giocatore import motorino, norm
-from lib_audio import (SR, biquad, bp, colored, comb, env_ad, env_points, f32, fade, hp, lp, make_loop,
-                       mix_into, n_of, pitch, resonator_bank, reverb, smooth_noise, t_axis, tv_biquad, white)
+from lib_audio import (SR, biquad, bp, colored, comb, db, env_ad, env_points, f32, fade, hp, lp, lufs,
+                       lufs_max, make_ir, make_loop, mix_into, n_of, pitch, resonator_bank, reverb, smooth_noise,
+                       t_axis, tv_biquad, white)
 
 CART = 'tecnici'
 GIRI = 48.25          # giri al secondo del motore (2 poli a 50 Hz, con lo scorrimento)
@@ -274,6 +281,305 @@ def porta_ponte_apre(rng):
     return fade(out, 0.0, 0.4)
 
 
+# --- cancelli stagni della camera delle onde ------------------------------------------------------
+
+# Tempi di cancello_stagno_apre (s dall'inizio del suono): la porta comincia a muoversi con uno
+# strappo e sbatte a fine corsa. L'animazione deve seguirli (CANCELLO_STAGNO_PARTE e
+# CANCELLO_STAGNO_ARRIVA in audio.gd).
+CANCELLO_PARTE = 0.55
+CANCELLO_ARRIVA = 2.55
+CANCELLO_DURATA = 3.7
+MODI_LASTRA = np.array(MODI_LAMIERA) * 0.6      # una porta stagna spessa: modi bassi
+
+# Livelli dei pezzi in dB rispetto al colpo finale: LUFS massimi su 100 ms per i colpi, LUFS
+# integrati durante la corsa per i pezzi continui (corsa, centralina, stridio).
+LIVELLI_CANCELLO = {
+    'valvola': -14.0,
+    'chiavistelli': (-3.5, -4.5, -4.0, -2.5),
+    'guarnizione': -9.0,
+    'sfiato': -5.0,
+    'strappo': -6.0,            # il primo scossone; i tre dopo calano di 2,5 dB l'uno
+    'giunto': -11.0,
+    'corsa': -9.0,              # rombo, lastra, cilindro e raschio
+    'centralina': -14.0,
+    'stridio': -13.0,
+    'colpo': 0.0,
+    'fermi': (-9.0, -10.0),
+    'sfiato_fine': -15.0,
+}
+
+
+def _rms(x, r):
+    """Valore efficace r."""
+    return f32(x * (r / (float(np.sqrt(np.mean(np.square(x)))) + 1e-12)))
+
+
+def _a_livello(x, l):
+    """Porta x alla loudness massima l (LUFS su finestre di 100 ms): i pezzi del cancello si
+    dosano fra loro in dB relativi (LIVELLI_CANCELLO), poi salva() normalizza il tutto."""
+    return f32(x * db(l - lufs_max(x)))
+
+
+def _a_livello_medio(x, l, dove):
+    """Porta x alla loudness integrata l nel tratto dove (uno slice): per i pezzi continui,
+    così le varianti restano uguali anche se gli scatti cadono in modo diverso."""
+    return f32(x * db(l - lufs(x[dove])))
+
+
+def _morbido(x, k):
+    """Saturazione morbida a picco invariato: colpi più densi e pieni, con meno picchi."""
+    p = float(np.abs(x).max()) + 1e-12
+    return f32(np.tanh(x / p * k) / np.tanh(k) * p)
+
+
+def _mezzo_seno(ms, n_s=0.4):
+    """Eccitazione a mezzo seno lunga ms millisecondi: più è lunga, più il colpo è sordo."""
+    e = np.zeros(n_of(n_s))
+    k = max(2, int(ms * 1e-3 * SR))
+    e[:k] = np.sin(np.pi * np.arange(k) / k)
+    return e
+
+
+def _tonfo(f_da, f_a, dur, decay):
+    """Un botto basso che cala di tono."""
+    k = n_of(dur)
+    f = env_points([(0, f_da), (dur, f_a)], k)
+    return f32(np.sin(2 * np.pi * np.cumsum(f) / SR) * env_ad(k, 0.0015, decay))
+
+
+def _schianto(rng, dur, lo, hi, decay):
+    """Il rumore dell'urto: breve e a banda larga, dà corpo e forza a un colpo."""
+    k = n_of(dur)
+    return f32(norm(bp(white(k, rng), lo, hi, 2)) * env_ad(k, 0.0004, decay))
+
+
+def chiavistello(rng, tono=1.0):
+    """Un chiavistello d'acciaio che si sfila: lo scatto della leva, il catenaccio che corre nella
+    guida e il colpo secco a fine corsa ("ka-ciunk"), che fa suonare un poco anche la porta."""
+    out = np.zeros(n_of(0.45))
+    ka = resonator_bank(_mezzo_seno(0.25, 0.1), tono * rng.uniform(0.95, 1.05) * np.array([1900, 3400, 5200]),
+                        [0.02, 0.012, 0.008], [1, 0.6, 0.3])
+    mix_into(out, norm(ka) * 0.2, 0)
+    corsa = rng.uniform(0.024, 0.036)
+    k = n_of(corsa)
+    raschio = bp(white(k, rng), 1500, 6000, 2) * env_points([(0, 0.2), (corsa * 0.6, 1), (corsa, 0.6)], k)
+    mix_into(out, norm(raschio) * 0.1, n_of(0.002))
+    c0 = n_of(corsa)
+    exc = _mezzo_seno(0.5, 0.4)
+    bullone = resonator_bank(exc, tono * rng.uniform(0.93, 1.07) * np.array([820, 1370, 2240, 3310, 4630]),
+                             [0.09, 0.07, 0.05, 0.035, 0.02], [1, 0.8, 0.6, 0.4, 0.25])
+    corpo = resonator_bank(exc, tono * rng.uniform(0.95, 1.05) * np.array([168, 254, 392, 575]),
+                           [0.14, 0.11, 0.08, 0.06], [1, 0.8, 0.55, 0.35])
+    mix_into(out, norm(bullone) * 0.5, c0)
+    mix_into(out, norm(corpo) * 0.7, c0)
+    mix_into(out, _tonfo(95 * tono, 62 * tono, 0.14, 0.11) * 0.55, c0)
+    mix_into(out, _schianto(rng, 0.03, 500, 6000, 0.012) * 0.6, c0)
+    return _morbido(out, 2.2)
+
+
+def valvola_pilota(rng):
+    """La valvola pilota dell'idraulica che scatta: il clic del solenoide e il colpo sordo dell'olio."""
+    out = np.zeros(n_of(0.3))
+    clic = resonator_bank(impulso(0.1), np.array([2600, 4100, 6900]) * rng.uniform(0.95, 1.05),
+                          [0.012, 0.008, 0.005], [1, 0.6, 0.3])
+    mix_into(out, norm(clic) * 0.3, 0)
+    sol = resonator_bank(_mezzo_seno(0.8, 0.2), [310, 520, 870], [0.06, 0.05, 0.03], [1, 0.6, 0.3])
+    mix_into(out, norm(sol) * 0.35, n_of(0.012))
+    k = n_of(0.2)
+    mix_into(out, norm(lp(white(k, rng), 300, 2) * env_ad(k, 0.002, 0.12)) * 0.4, n_of(0.012))
+    return f32(out)
+
+
+def sfiato_aria(rng, dur=0.6, f_da=5200, f_a=2600):
+    """L'aria in pressione che si sfoga: un pssshh forte che parte di colpo e cala, col fischio
+    cavo del tubo."""
+    n = n_of(dur)
+    e = env_points([(0, 0), (0.005, 1.0), (0.07, 0.75), (dur * 0.4, 0.3), (dur, 0)], n) ** 1.3
+    turb = 1 + 0.18 * smooth_noise(n, 35, rng) + 0.08 * smooth_noise(n, 90, rng)
+    alto = tv_biquad(white(n, rng), 'bandpass', env_points([(0, f_da), (dur, f_a)], n), 0.9)
+    lucc = hp(white(n, rng), 6000, 2)
+    basso = bp(colored(n, rng, -3.0), 350, 1400, 2) * env_points([(0, 1), (0.2, 0.3), (dur, 0)], n)
+    x = (_rms(alto, 1) + _rms(lucc, 0.35) + _rms(basso, 0.55)) * e * turb
+    return f32(x + comb(x, 1 / 1750.0, 0.35) * 0.25)
+
+
+def guarnizione(rng):
+    """La guarnizione di gomma che si stacca dal telaio: uno schiocco sordo, risucchiato."""
+    k = n_of(0.1)
+    x = tv_biquad(colored(k, rng, -3.0), 'bandpass', env_points([(0, 140), (0.1, 560)], k), 3.0)
+    x = norm(x) * env_points([(0, 0), (0.008, 1), (0.1, 0)], k)
+    out = np.zeros(n_of(0.12))
+    mix_into(out, x * 0.7, 0)
+    mix_into(out, _tonfo(80, 170, 0.07, 0.05) * 0.5, 0)
+    return f32(out)
+
+
+def centralina_idraulica(rng, n, giri, carico):
+    """La centralina che spinge la porta: il motore elettrico che ronza, il fischio della pompa a
+    ingranaggi (11 denti), l'olio che pulsa nei tubi. giri e carico da 0 a 1 (curve)."""
+    giri = np.broadcast_to(np.asarray(giri, dtype=np.float64), (n,))
+    carico = np.broadcast_to(np.asarray(carico, dtype=np.float64), (n,))
+    f = 47.5 * giri * (1 - 0.07 * carico) * (1 + 0.004 * smooth_noise(n, 6, rng))
+    ph = np.cumsum(f) / SR
+    mot = np.zeros(n)
+    for k, a in [(1, 0.3), (2, 0.6), (3, 0.45), (4, 0.4), (6, 0.25), (8, 0.15), (10, 0.08)]:
+        mot += a * np.sin(2 * np.pi * k * ph + rng.uniform(0, 6))
+    denti = np.sin(2 * np.pi * 11 * ph) + 0.35 * np.sin(2 * np.pi * 22 * ph + 0.7)
+    denti *= 1 + 0.3 * np.sin(2 * np.pi * ph)
+    olio = bp(white(n, rng), 300, 1800, 2) * (0.6 + 0.4 * smooth_noise(n, 13, rng))
+    x = _rms(mot, 0.35) + _rms(denti, 0.2) * (0.5 + 0.5 * carico) + _rms(olio, 0.15) * (0.4 + 0.6 * carico)
+    return f32(x * np.clip(giri * 1.5, 0, 1))
+
+
+def _scatti(rng, n, rate):
+    """Scatti d'attrito irregolari, circa rate al secondo."""
+    ph = np.cumsum(np.full(n, rate) * (1 + 0.3 * smooth_noise(n, 3, rng)) / SR) + 0.05 * smooth_noise(n, 40, rng)
+    return (np.diff(np.floor(ph), prepend=0) > 0) * rng.uniform(0.3, 1.0, n)
+
+
+def stridio_guide(rng, n, forza, alto=1.0):
+    """Acciaio che striscia nelle guide e stride: un modo della lastra che l'attrito innesca (un
+    fischio metallico che trema e scivola un poco di tono), a tratti un altro più acuto, col
+    raschio a scatti sotto. forza da 0 a 1 (curva)."""
+    forza = np.broadcast_to(np.asarray(forza, dtype=np.float64), (n,))
+    out = np.zeros(n)
+    for f_m, g, primo in [(1240.0, 1.0, True), (1870.0, 0.55, False), (2630.0, 0.3, False)]:
+        f = f_m * alto * rng.uniform(0.96, 1.04) * (1 + 0.012 * smooth_noise(n, 9, rng)
+                                                     + 0.004 * smooth_noise(n, 55, rng))
+        s = np.sin(2 * np.pi * np.cumsum(f) / SR)
+        # il modo si innesca a tratti: chi prende il sopravvento cambia nel tempo
+        quando = np.clip(smooth_noise(n, 2.4, rng) * 1.8 - 0.2 + (0.25 if primo else 0.0), 0, 1) ** 1.3
+        trema = 0.65 + 0.35 * np.clip(smooth_noise(n, 17, rng) + 0.3, 0, 1)
+        out += np.tanh(s * 1.8) * quando * trema * g
+    raschio = resonator_bank(_scatti(rng, n, 150.0), np.array([610, 930, 1420, 2050]) * alto,
+                             [0.03, 0.025, 0.02, 0.015], [1, 0.8, 0.6, 0.4])
+    return f32((_rms(out, 1.0) + _rms(raschio, 0.5)) * forza)
+
+
+def raschio_lastra(rng, n, vel):
+    """La lastra che gratta nelle guide: fruscio ruvido sui medi (si sente anche dagli
+    altoparlanti piccoli, dove il rombo non arriva)."""
+    x = bp(white(n, rng), 280, 1600, 2)
+    ruvido = 0.45 + 0.55 * np.clip(smooth_noise(n, 11, rng, 2) * 1.4 + 0.3, 0, 1)
+    return f32(x * ruvido * vel)
+
+
+def gemito_cilindro(rng, n, forza, tono=1.0):
+    """Il cilindro idraulico e la porta sotto sforzo: attrito lento (30-50 scatti al secondo) sui
+    modi bassi della lastra, un brontolio d'acciaio. forza da 0 a 1 (curva)."""
+    rate = 38 + 14 * smooth_noise(n, 0.9, rng)
+    ph = np.cumsum(rate / SR) + 0.1 * smooth_noise(n, 25, rng)
+    exc = (np.diff(np.floor(ph), prepend=0) > 0) * rng.uniform(0.4, 1.0, n) * forza
+    exc = exc + white(n, rng) * 0.015 * forza
+    fr = MODI_LASTRA[:7] * tono * rng.uniform(0.92, 1.08)
+    return resonator_bank(exc, fr, [0.5, 0.45, 0.4, 0.3, 0.25, 0.2, 0.15], 1 / (1 + np.arange(7) * 0.35))
+
+
+def colpo_guida(rng):
+    """La porta che passa su un giunto della guida, o lo strappo alla partenza: un colpo sordo."""
+    out = np.zeros(n_of(0.5))
+    c = resonator_bank(_mezzo_seno(1.5, 0.5), rng.uniform(0.9, 1.1) * np.array([120, 260, 480, 830, 1400]),
+                       [0.14, 0.1, 0.07, 0.045, 0.025], [1, 0.75, 0.5, 0.3, 0.15])
+    mix_into(out, norm(c) * 0.8, 0)
+    mix_into(out, _tonfo(70, 50, 0.2, 0.16) * 0.6, 0)
+    mix_into(out, _schianto(rng, 0.03, 200, 2500, 0.015) * 0.3, 0)
+    return _morbido(out, 1.8)
+
+
+def colpo_fine_corsa(rng, tono=1.0):
+    """La porta che sbatte a fine corsa: il botto basso, lo schianto, la lastra spessa che suona,
+    il clangore; due piccoli rimbalzi."""
+    out = np.zeros(n_of(2.0))
+    mix_into(out, _tonfo(62 * tono, 41 * tono, 0.6, 0.5) * 0.9, 0)
+    k = n_of(0.3)
+    mix_into(out, norm(lp(white(k, rng), 170, 3) * env_ad(k, 0.001, 0.2)) * 0.6, 0)
+    mix_into(out, _schianto(rng, 0.08, 250, 5000, 0.03) * 0.8, 0)
+    lastra = resonator_bank(_mezzo_seno(1.0, 2.0), MODI_LASTRA * tono * rng.uniform(0.97, 1.03),
+                            np.linspace(1.5, 0.4, len(MODI_LASTRA)), 1 / (1 + np.arange(len(MODI_LASTRA)) * 0.25))
+    mix_into(out, norm(lastra) * 0.75, 0)
+    clang = resonator_bank(_mezzo_seno(0.35, 1.0),
+                           tono * rng.uniform(0.96, 1.04) * np.array([690, 1130, 1720, 2480, 3350, 4620]),
+                           [0.55, 0.45, 0.35, 0.25, 0.16, 0.1], [1, 0.8, 0.6, 0.45, 0.3, 0.2])
+    mix_into(out, norm(clang) * 0.5, 0)
+    for dt, g in [(0.085, 0.3), (0.15, 0.12)]:
+        r = resonator_bank(_mezzo_seno(1.2, 0.8), MODI_LASTRA[2:8] * tono * rng.uniform(0.97, 1.03),
+                           [0.5, 0.4, 0.3, 0.25, 0.2, 0.15], [1, 0.8, 0.6, 0.4, 0.3, 0.2])
+        mix_into(out, norm(r) * g, n_of(dt))
+        mix_into(out, _tonfo(55 * tono, 45 * tono, 0.2, 0.15) * g * 1.2, n_of(dt))
+        mix_into(out, _schianto(rng, 0.03, 300, 4000, 0.012) * g * 0.8, n_of(dt))
+    return _morbido(out, 2.5)
+
+
+def cancello_stagno_apre(rng, tono=1.0):
+    """Un cancello stagno d'acciaio, pesante, che si apre da solo: la valvola pilota, quattro
+    chiavistelli che si sfilano, la guarnizione che si stacca e l'aria che si sfoga; la porta parte
+    con uno strappo a CANCELLO_PARTE, spinta dall'idraulica, stride e gratta nelle guide e
+    rimbomba nel corridoio, sbatte a fine corsa a CANCELLO_ARRIVA; i fermi che scattano, l'ultimo
+    sfiato. tono < 1: una porta un po' più grave (la seconda variante). Mono, 3,7 s."""
+    L = LIVELLI_CANCELLO
+    dur = CANCELLO_DURATA
+    n = n_of(dur)
+    t = t_axis(n)
+    out = np.zeros(n)
+    # 1) la valvola pilota e i chiavistelli che si sfilano uno dopo l'altro
+    mix_into(out, _a_livello(valvola_pilota(rng), L['valvola']), 0)
+    tempi = [0.04, 0.13, 0.21, 0.32]
+    tempi = [tempi[0]] + [x + rng.uniform(-0.01, 0.01) for x in tempi[1:]]
+    for t0, l in zip(tempi, L['chiavistelli']):
+        mix_into(out, _a_livello(chiavistello(rng, tono * rng.uniform(0.92, 1.08)), l), n_of(t0))
+    # 2) la guarnizione che si stacca e l'aria che si sfoga
+    T_SF = 0.37
+    mix_into(out, _a_livello(guarnizione(rng), L['guarnizione']), n_of(T_SF - 0.01))
+    mix_into(out, _a_livello(sfiato_aria(rng, 0.6), L['sfiato']), n_of(T_SF))
+    # 3) la corsa: la velocità (0..1) parte con uno strappo, è piena da circa 0,4 s, cala del 20%
+    # nell'ultimo quarto di secondo; il carico è massimo allo strappo
+    tt = t - CANCELLO_PARTE
+    D = CANCELLO_ARRIVA - CANCELLO_PARTE
+    vel = np.clip(tt / 0.05, 0, 1) * 0.35 + np.clip((tt - 0.12) / 0.3, 0, 1) * 0.65
+    vel *= 1 - 0.2 * np.clip((tt - (D - 0.25)) / 0.25, 0, 1)
+    vel *= (tt >= 0) & (tt < D)
+    vel = vel * (1 + 0.06 * smooth_noise(n, 4, rng))
+    carico = np.clip(np.clip(1 - tt / 0.5, 0, 1) * (tt >= -0.05) + 0.35 * (tt >= 0) * (tt < D), 0, 1)
+    giri = np.clip((t - 0.2) / 0.35, 0, 1) ** 1.5 * np.clip(1 - (t - CANCELLO_ARRIVA) / 0.45, 0, 1)
+    in_corsa = slice(n_of(CANCELLO_PARTE), n_of(CANCELLO_ARRIVA))
+    cent = centralina_idraulica(rng, n, giri, carico)
+    mix_into(out, _a_livello_medio(cent, L['centralina'], in_corsa), 0)
+    rombo = lp(colored(n, rng, -6.0, fmin=25.0), 200, 3) * vel * (0.75 + 0.25 * smooth_noise(n, 3, rng))
+    ecc = lp(white(n, rng), 800, 2) * vel * 0.3 + rombo * 0.3
+    lastra = resonator_bank(ecc, MODI_LASTRA[:8] * tono, [0.6, 0.6, 0.55, 0.5, 0.45, 0.4, 0.35, 0.3],
+                            [1, 0.8, 0.6, 0.45, 0.3, 0.2, 0.12, 0.08])
+    gem = gemito_cilindro(rng, n, vel * (0.5 + 0.8 * carico), tono)
+    corsa = _rms(rombo, 1.0) + _rms(lastra, 0.7) + _rms(gem, 0.8) + _rms(raschio_lastra(rng, n, vel), 0.35)
+    # sotto i 45 Hz non si sente quasi niente, ma toglierebbe spazio al colpo finale
+    mix_into(out, _a_livello_medio(hp(corsa, 45, 2), L['corsa'], in_corsa), 0)
+    forza = np.clip(smooth_noise(n, 2.2, rng) * 1.3 + 0.1, 0, 1) ** 1.5 * 0.35
+    forza = forza + env_points([(0, 0), (CANCELLO_PARTE, 0), (CANCELLO_PARTE + 0.05, 1.0),
+                                (CANCELLO_PARTE + 0.45, 0.5), (CANCELLO_PARTE + 0.9, 0.12), (dur, 0.12)], n)
+    strid = stridio_guide(rng, n, vel * np.clip(forza, 0, 1), tono * tono)
+    mix_into(out, _a_livello_medio(strid, L['stridio'], in_corsa), 0)
+    # lo strappo alla partenza (quattro scossoni) e i giunti delle guide
+    for j, dt in enumerate([0.0, 0.055, 0.105, 0.15]):
+        mix_into(out, _a_livello(colpo_guida(rng), L['strappo'] - j * 2.5), n_of(CANCELLO_PARTE + dt))
+    for tb in [1.05, 1.6, 2.12]:
+        mix_into(out, _a_livello(colpo_guida(rng), L['giunto']), n_of(tb + rng.uniform(-0.04, 0.04)))
+    # 4) il colpo a fine corsa, i fermi che scattano, lo sfiato della pressione
+    mix_into(out, _a_livello(colpo_fine_corsa(rng, tono), L['colpo']), n_of(CANCELLO_ARRIVA))
+    mix_into(out, _a_livello(chiavistello(rng, tono * 1.12), L['fermi'][0]), n_of(CANCELLO_ARRIVA + 0.2))
+    mix_into(out, _a_livello(chiavistello(rng, tono * 1.05), L['fermi'][1]), n_of(CANCELLO_ARRIVA + 0.26))
+    mix_into(out, _a_livello(sfiato_aria(rng, 0.35, 4200, 3000), L['sfiato_fine']), n_of(CANCELLO_ARRIVA + 0.33))
+    # il corridoio: l'eco a pettine fra le pareti di metallo, una coda corta e scura, i modi bassi
+    # che rimbombano (il riverbero lungo della sala lo aggiunge il bus Effetti)
+    alti = hp(out, 300, 2)
+    x = out + (comb(alti, 0.0125, 0.3) - alti) * 0.35
+    ir = make_ir(rt60=1.3, predelay=0.006, hf_damp=0.45, early=18, early_span=0.05, brightness=6500,
+                 lf_rt_mul=1.5, seed=61)
+    x = reverb(x, ir, wet=0.28, dry=1.0, tail=False).mean(axis=1)
+    bassi = lp(x, 200, 2)
+    modi = resonator_bank(bassi, [43, 66, 91, 122], [1.1, 0.9, 0.7, 0.5], [1, 0.8, 0.6, 0.4])
+    x = x + _rms(modi, float(np.sqrt(np.mean(np.square(bassi))))) * 0.5
+    return fade(hp(f32(x), 25, 2), 0.0, 0.5)
+
+
 def main():
     rng = np.random.default_rng(2006)
     print('Tecnici')
@@ -291,6 +597,12 @@ def main():
           fonte='Kenney RPG Audio + Impact Sounds (CC0) + sintesi', nota='metalLatch, impactMetal_heavy')
     salva(CART, 'porta_ponte_apre', porta_ponte_apre(rng), loudness=-16, corto=True, qualita=3,
           fonte='Kenney RPG Audio (CC0) + sintesi', nota='metalLatch, creak, doorClose')
+    # i cancelli stagni della camera delle onde (16 ottobre): semi propri, così gli altri suoni
+    # non cambiano; due varianti con gli stessi tempi (la seconda un po' più grave)
+    for i, (seme, tono) in enumerate([(1610, 1.0), (2610, 0.94)]):
+        salva(CART, f'cancello_stagno_apre_{i + 1:02d}', cancello_stagno_apre(np.random.default_rng(seme), tono),
+              loudness=-12, corto=True, qualita=4,
+              nota='cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s')
 
 
 if __name__ == '__main__':

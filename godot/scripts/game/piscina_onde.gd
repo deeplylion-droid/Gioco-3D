@@ -4,7 +4,12 @@ extends Node3D
 ## onde si svuota con lo zaino. Si aspira l'acqua della parte profonda (tasto destro) e la si spara
 ## fuori dalla vasca (tasto sinistro): il livello scende davvero. L'acqua sparata dentro la vasca
 ## (sul fondo, sulle pareti o sulla spiaggia) ci ricola dentro: conta solo quella che esce.
-## A piscina vuota il pulsante della botola si attiva e il suo lampeggiante giallo lampeggia;
+## Quando ne resta poca (sotto [member soglia_scolo]) il resto scola da solo dallo scarico in un paio
+## di secondi, col gorgo; a piscina asciutta (e solo allora) il pulsante della botola si attiva e il
+## suo lampeggiante giallo lampeggia. Riscontro sulla v0.3.1, trovato dall'utente: "il pulsante si
+## sblocca quando ancora c'è un pochino d'acqua sul fondo"; e l'acqua sparata dentro dopo (per
+## esempio mirando al pulsante dal fondo) restava sul fondo e, aperto il portellone, ne copriva il
+## buco. Ora la piscina vuota non tiene più acqua (_scarico).
 ## colpito col getto la luce diventa verde e la botola si apre: sotto c'è il pozzo della camera delle
 ## onde (pulsante A, scelto dall'utente il 16 ottobre; il modello lo mette la sala).
 ## Scelte del 16 ottobre: si svuota in circa 30 secondi, con 4 zainate ([member taratura]; restano
@@ -68,6 +73,14 @@ enum Aspetto { OGGI, LEGGIBILE, LEGGIBILE_CON_LAMPADA }
 ## Sotto questa quota (il bordo della vasca) l'acqua che cade nella conca ci ricola dentro.
 @export var quota_bordo := -0.05
 
+@export_group("Scolo dell'ultima acqua")
+## Sotto questo riempimento (circa 4 cm d'acqua nella conca) il resto scola da solo dallo scarico, col
+## gorgo, in al massimo [member durata_scolo] secondi.
+@export var soglia_scolo := 0.05
+@export var durata_scolo := 1.5
+## Lo scarico (il portellone sul fondo): lì gira il gorgo.
+@export var scarico: Node3D
+
 @export_group("Micro medusine")
 ## Quante micro medusine luminose nuotano nella piscina piena (0 = nessuna).
 @export var medusine := 15
@@ -92,6 +105,9 @@ enum Aspetto { OGGI, LEGGIBILE, LEGGIBILE_CON_LAMPADA }
 
 ## Vero quando la piscina è stata svuotata e il pulsante funziona (resta vero).
 var attivo := false
+## Vero mentre l'ultima acqua scola da sola.
+var scola := false
+var _scolo: PowerSource
 var _luce: OmniLight3D
 var _t := 0.0
 var _t_lampo := -1.0
@@ -134,6 +150,16 @@ func _ready() -> void:
 				break
 		if _luce:
 			_luce.global_position = vetro_lampeggiante.global_transform * vetro_lampeggiante.get_aabb().get_center()
+	if vasca:
+		# Lo scarico della vasca: si apre da solo quando resta poca acqua (_physics_process).
+		_scolo = PowerSource.new()
+		_scolo.name = "Scolo"
+		add_child(_scolo)
+		vasca.drain_sources.append(_scolo)
+		vasca.drain_time = durata_scolo / maxf(soglia_scolo, 0.001)
+		var acqua := superficie()
+		if acqua and scarico and "drain_offset" in acqua:
+			acqua.set(&"drain_offset", _centro_scarico() - (acqua as Node3D).global_position)
 	_aggiorna_pulsante()
 	if medusine > 0 and vasca:
 		_medusine = Medusine.new()
@@ -230,12 +256,25 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	_segui_svuotamento(delta)
 	if not attivo and vasca:
-		_vuota_t = _vuota_t + delta if vasca.fill <= 0.001 else 0.0
+		# Poca acqua: il resto scola da solo; il pulsante solo a vasca asciutta.
+		var ora := vasca.fill > 0.0 and vasca.fill < soglia_scolo
+		if ora and not scola and scarico:
+			# Il gorgo dell'audio (AudioPiscina) si sente dallo scarico, non dal punto da cui aspiravi.
+			var g := get_node_or_null(^"AudioGorgo") as Node3D
+			if g:
+				g.global_position = _centro_scarico()
+		scola = ora
+		if _scolo:
+			_scolo.powered = scola
+		_vuota_t = _vuota_t + delta if vasca.fill <= 0.0 else 0.0
 		if _vuota_t >= ritardo_pulsante:
 			attivo = true
 			_t_lampo = -1.0
 			_aggiorna_pulsante()
 			pulsante_attivato.emit()
+	elif attivo and vasca and vasca.fill > 0.0:
+		# A piscina vuota quel poco che arriva scola via (vedi _scarico).
+		vasca.fill = 0.0
 	if premuto() and not _premuto_detto:
 		_premuto_detto = true
 		pulsante_premuto.emit()
@@ -302,6 +341,33 @@ func _aggiorna_pulsante() -> void:
 	# Prima che la piscina sia vuota il lampeggiante è spento.
 	if not attivo:
 		_vetro(colore_attesa, 0.0)
+	_scarico(attivo)
+	if attivo:
+		scola = false
+		if _scolo:
+			_scolo.powered = false
+
+
+## Il centro dello scarico (il portellone sul fondo; la sua origine è sulla cerniera).
+func _centro_scarico() -> Vector3:
+	if scarico is MeshInstance3D:
+		return scarico.global_transform * (scarico as MeshInstance3D).get_aabb().get_center()
+	return scarico.global_position if scarico else global_position
+
+
+## Svuotata la piscina (pulsante attivo), l'acqua non ci resta più: quella sparata dentro, per esempio
+## mirando al pulsante dal fondo, scola via dallo scarico. Prima la vasca la raccoglieva ancora (era
+## nel gruppo "water_catchers") e sul fondo tornava un velo d'acqua: aperto il portellone, il pelo
+## dell'acqua ne copriva il buco (riscontro sulla v0.3.1, punto 4).
+func _scarico(aperto: bool) -> void:
+	if vasca == null:
+		return
+	if aperto:
+		if vasca.is_in_group(&"water_catchers"):
+			vasca.remove_from_group(&"water_catchers")
+		vasca.fill = 0.0
+	elif not vasca.is_in_group(&"water_catchers"):
+		vasca.add_to_group(&"water_catchers")
 
 
 # --- L'acqua che ricade nella vasca (gruppo "water_catchers", come le vasche) -----------------

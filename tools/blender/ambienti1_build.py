@@ -388,9 +388,10 @@ def corridoio(M):
     L.vuoto('marker_risveglio', (20.4, 1.25, 0.0), (0, 0, R(90)), 'ARROWS', 0.5)    # sdraiato, guarda verso ovest (-X)
     L.vuoto('marker_polaroid_P1', (20.9, 0.55, 0.005), (0, 0, R(20)), 'CUBE', 0.05)
     L.vuoto('marker_porta_tagliafuoco_cardine', (21.965, 0.72, 0), dim=0.3)
-    # soffitto da nave: pannelli tra le ordinate (uno manca, uno pende), condotto dell'aria,
-    # canalina con i cavi, sprinkler sul tubo rosso
-    statico.append(soffitto_nave('soffitto_pannelli', X0, X1, Y0, Y1, H, M, 'x', 1.25, mancanti=(5, 13), pende=10, travi=False, seme=3))
+    # soffitto da nave: pannelli tra le ordinate (due mancano), condotto dell'aria,
+    # canalina con i cavi, sprinkler sul tubo rosso. Il pannello 10 pendeva (pende=10): nella prova
+    # della v0.3.2 l'utente l'ha visto come un pezzo di soffitto "buggato in obliquo", ora è dritto.
+    statico.append(soffitto_nave('soffitto_pannelli', X0, X1, Y0, Y1, H, M, 'x', 1.25, mancanti=(5, 13), pende=None, travi=False, seme=3))
     statico.append(condotto_aria('condotto_aria', (0.0, 0.62, 2.5), (X1, 0.62, 2.5), 0.38, 0.2, M))
     statico.append(canalina_cavi('canalina_soffitto', 0.0, X1, 1.86, 2.56, M))
     for k, x in enumerate([1.8, 5.2, 8.6, 12.1, 15.6, 19.0]):

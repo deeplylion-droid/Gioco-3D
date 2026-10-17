@@ -5,8 +5,9 @@ extends Node
 ## ottobre, per il corridoio e il magazzino dei gonfiabili; si esce dalla serranda nell'angolo
 ## sud-ovest della sala (la strada la fanno gli ambienti tecnici, i checkpoint sono sui loro marker).
 ## - nella sala la vasca è vuota: la medusa non c'è più, l'acqua si muove ancora, dal bordo
-##   gocciola; dalla serranda una scia di bava rosa fosforescente va lungo il muro ovest, nel buio,
-##   fino all'area bimbi;
+##   gocciola; dalla vasca, da dove era affacciata, una scia di bava rosa fosforescente va nel buio
+##   fino all'area bimbi (riscontro sulla v0.3.1: "la scia di bava deve partire dalla piscina dove
+##   era la medusina prima"): sul bordo dove si è tirata fuori, giù per il muro della vasca e a terra;
 ## - con la strada A di prima (dagli spogliatoi, [member interni] e [member porta_interni]) la porta
 ##   "sala pompe" degli interni si apriva e le docce scorrevano nel vapore: con la B restano vuoti;
 ## - niente musica (senza corrente il pulsante della sigla non suona), solo gocce e tempesta;
@@ -25,8 +26,12 @@ extends Node
 @export var porta_interni: Node
 ## Il pulsante della sigla: senza corrente non fa niente.
 @export var pulsante_sigla: Node
-## La scia (bava rosa o gocce), dalla serranda verso l'area bimbi (punti a terra, in ordine).
+## La scia (bava rosa o gocce), dalla vasca della medusa verso l'area bimbi (punti a terra, in ordine).
 @export var scia := PackedVector3Array()
+## Bava rosa dove si è tirata fuori dalla vasca: sul bordo e giù per il muro, fino all'inizio di
+## [member scia] (coordinate globali; il muro come linea verticale, un poco staccata dalla parete).
+@export var bordo_vasca := PackedVector3Array()
+@export var muro_vasca := PackedVector3Array()
 ## Da dove gocciola ancora (sul bordo della vasca, dalla parte della scia).
 @export var gocciolatoi := PackedVector3Array()
 ## Materiale delle macchie bagnate a terra (quello delle pozzanghere della sala).
@@ -118,6 +123,8 @@ func _scia() -> void:
 	_nodi.append(radice)
 	if scia_bava:
 		_bava(radice, "BavaScia", scia, 0.34, 3)
+		_bava(radice, "BavaBordoVasca", bordo_vasca, 0.3, 9)
+		_bava(radice, "BavaMuroVasca", muro_vasca, 0.32, 11, false)
 		_bava(radice, "BavaBordoFossa", bordo_fossa, 0.2, 5)
 		_bava(radice, "BavaIntornoFossa", intorno_fossa, 0.42, 7)
 		_gocciolatoi(radice)
@@ -154,15 +161,17 @@ func _scia() -> void:
 	_gocciolatoi(radice)
 
 
-func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int) -> void:
+func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int, appoggia := true) -> BavaRosa:
 	if percorso.size() < 2:
-		return
+		return null
 	var b := BavaRosa.new()
 	b.name = nome
 	b.punti = percorso
 	b.larghezza = larga
 	b.seme = seme
+	b.appoggia = appoggia   # il tratto giù per il muro della vasca è in verticale
 	radice.add_child(b)
+	return b
 
 
 func _gocciolatoi(radice: Node3D) -> void:

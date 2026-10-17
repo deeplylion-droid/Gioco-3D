@@ -367,6 +367,8 @@ func _pool() -> void:
 	svuota.set(&"pulsante", hatch_button)
 	# Il vetro del lampeggiante sopra il pulsante A (GLB della sala).
 	svuota.set(&"vetro_lampeggiante", level.get_node_or_null("Sala/Interattivi/sala_lampeggiante_portello"))
+	# Lo scarico, dove gira il gorgo quando l'ultima acqua scola da sola: il portellone.
+	svuota.set(&"scarico", level.get_node_or_null("Sala/Interattivi/sala_portello_scarico"))
 	own(svuota, pool)
 	var hatch: Node3D = load("res://scripts/mechanisms/hinged_hatch.gd").new()
 	hatch.name = "Portello"
@@ -379,6 +381,13 @@ func _pool() -> void:
 	hatch.set(&"sources", hatch_sources)
 	own(hatch, pool)
 	level.set(&"hatch", hatch)
+	# La luce del portellone (riscontro della v0.3.1, punto 3): anello color ambra e bagliore
+	# nell'acqua torbida, si vede già dalla spiaggia a piscina piena.
+	var luce_portellone: Node3D = load("res://scripts/game/luce_portellone.gd").new()
+	luce_portellone.name = "LucePortellone"
+	luce_portellone.set(&"portellone", level.get_node_or_null("Sala/Interattivi/sala_portello_scarico"))
+	luce_portellone.set(&"vasca", puddle)
+	own(luce_portellone, pool)
 	# Checkpoint di quando la piscina è vuota (un passo dell'enigma): lo raggiunge lo script della
 	# sala; si riparte sul fondo, davanti al portello.
 	var cp: Area3D = load("res://scripts/game/checkpoint.gd").new()
@@ -448,6 +457,9 @@ const TECNICI := "res://scenes/tecnici/tecnici.tscn"
 ## piscina a onde, il raccordo ai piedi della scala degli interni (LEGGIMI).
 const TECNICI_XF := Transform3D(Basis(Vector3.UP, -PI * 0.5), Vector3(0.0, -9.05, 1.36))
 ## L'immagine della telecamera della sala sul monitor della sala pompe (uno scatto vero).
+## Dal marker della leva al mozzo vero della base (scena dei tecnici): (46,097; 3,789; -5,205) ->
+## (46,114; 3,716; -4,954), misurato da ambienti-1.
+const LEVA_MOZZO := Vector3(0.017, -0.07327, 0.25125)
 const MONITOR_IMMAGINE := "res://assets/tecnici/monitor_sala.jpg"
 ## Lo schermo del monitor appoggiato sul vetro bombato del tubo (lo calcola questo costruttore).
 const SCHERMO_SUL_VETRO := "res://assets/tecnici/schermo_crt_sul_vetro.res"
@@ -533,7 +545,9 @@ func _sala_pompe(tec: Node3D, lg: Node3D) -> void:
 	# La leva grande in alto dietro la grata.
 	var leva: Node3D = load(T + "leva_grande.gd").new()
 	leva.name = "Leva"
-	leva.position = _marker(tec, "marker_leva")
+	# Sul mozzo vero della base, il centro dell'occhio del braccio (ambienti-1, 16 ottobre): il braccio
+	# gira intorno a questo punto e resta attaccato al perno. Il marker sta un poco più in alto.
+	leva.position = _marker(tec, "marker_leva") + LEVA_MOZZO
 	own(leva, g)
 	leva.set(&"leva_path", leva.get_path_to(tec.get_node(sp + "LEVA")))
 	var reti := leva.get(&"reti") as Array
@@ -631,6 +645,26 @@ func _checkpoint_tecnici(tec: Node3D, lg: Node3D) -> void:
 	# verso la serranda e poi a nord (-X della scena).
 	checkpoint(g, "CheckpointMagazzino", 10, _marker(tec, "marker_t7_magazzino") + Vector3(0.0, 1.5, 0.0), Vector3(1.6, 3.0, 3.0), Vector3(0.0, -1.5, 0.0), PI * 0.5)
 	checkpoint(g, "CheckpointSerranda", 11, _marker(tec, "marker_t7_serranda") + Vector3(0.0, 1.5, 0.0), Vector3(1.4, 3.0, 2.4), Vector3(0.0, -1.5, 0.0), PI * 0.5)
+	_serranda_magazzino(tec, lg)
+
+
+## La serranda del magazzino dei gonfiabili nell'angolo sud-ovest della sala (riscontro sulla v0.3.1):
+## chiusa finché non ci arrivi dal magazzino, poi si alza fino a dove è modellata (barra a 1,95 m).
+## Coordinate della scena dei tecnici (glTF del raccordo): il vano va da z 14,1 a 15,9, il pavimento è
+## a y 9,05 e le lamelle stanno su x 18,97..19,01; il magazzino è dalla parte delle x più grandi.
+const SERRANDA_MAGAZZINO := Vector3(18.99, 9.05, 15.0)
+
+
+func _serranda_magazzino(tec: Node3D, lg: Node3D) -> void:
+	var s: PoweredDoor = load("res://scripts/tecnici/serranda_magazzino.gd").new()
+	s.name = "SerrandaMagazzino"
+	# +Z locale verso il magazzino (+X della scena dei tecnici), X lungo il vano.
+	s.transform = Transform3D(Basis(Vector3.UP, PI * 0.5), SERRANDA_MAGAZZINO)
+	s.size = Vector3(1.8, 2.5, 0.2)
+	s.open_offset = Vector3(0.0, 1.95, 0.0)
+	s.open_speed = 0.4
+	own(s, lg)
+	s.set(&"modello", s.get_path_to(tec.get_node("Ambienti/Raccordo/RACCORDO_dettagli")))
 
 
 # --- Le Polaroid (9 nella demo) -------------------------------------------------------------------
@@ -727,13 +761,17 @@ func _gameplay(has_interiors := false) -> void:
 
 # --- Tappa 7: il ritorno al buio (scripts/game/ritorno_al_buio.gd) -----------------------------
 
-## La scia della tappa 7 (strada B, 16 ottobre): dalla serranda nell'angolo sud-ovest della sala
-## (marker_t7_inizio_scia, -15; 0; 18,6), prima a ovest e poi lungo il muro ovest, tra il muro e la
-## fila di colonne (x -17,25), dove non ci sono scivoli né vasche: lì si cammina; fino al buio
-## accanto alle vasche basse, dove sbuca lei (tappa 8).
-const SCIA := [Vector3(-15.0, 0.0, 18.6), Vector3(-16.0, 0.0, 18.4), Vector3(-17.2, 0.0, 18.2),
-	Vector3(-18.3, 0.0, 17.6), Vector3(-18.3, 0.0, 16.0), Vector3(-18.3, 0.0, 14.4), Vector3(-18.3, 0.0, 12.6),
-	Vector3(-18.3, 0.0, 10.8), Vector3(-18.3, 0.0, 9.25), Vector3(-18.3, 0.0, 7.8), Vector3(-18.3, 0.0, 6.0),
+## La scia della bava (tappe 7 e 8): parte dalla vasca centrale, da dove lei era affacciata (riscontro
+## sulla v0.3.1), a terra sotto la bava che scende dal bordo; dentro il cordone gira intorno al
+## salvagente appoggiato al muro, passa sotto la corda e va verso ovest a sud dei lettini, fin quasi al
+## muro ovest; poi lungo il muro, tra il muro e la vasca d'arrivo, come la strada B approvata il 16
+## ottobre, fino alla fossa dell'area bimbi dove lei è affacciata (tappa 8). Uscendo dalla serranda
+## (angolo sud-ovest) la si vede davanti, 7 m a nord, che attraversa la sala.
+const SCIA := [Vector3(-0.5, 0.0, 12.45), Vector3(-1.0, 0.0, 12.75), Vector3(-1.8, 0.0, 13.0),
+	Vector3(-2.8, 0.0, 12.95), Vector3(-3.6, 0.0, 12.7), Vector3(-4.6, 0.0, 12.55), Vector3(-6.0, 0.0, 12.5),
+	Vector3(-7.5, 0.0, 12.55), Vector3(-9.0, 0.0, 12.5), Vector3(-10.5, 0.0, 12.45), Vector3(-12.0, 0.0, 12.5),
+	Vector3(-13.5, 0.0, 12.45), Vector3(-15.0, 0.0, 12.4), Vector3(-16.3, 0.0, 12.2), Vector3(-17.4, 0.0, 11.7),
+	Vector3(-18.2, 0.0, 10.8), Vector3(-18.3, 0.0, 9.25), Vector3(-18.3, 0.0, 7.8), Vector3(-18.3, 0.0, 6.0),
 	Vector3(-18.3, 0.0, 4.3), Vector3(-18.3, 0.0, 2.9), Vector3(-18.3, 0.0, 1.3), Vector3(-18.3, 0.0, -0.5),
 	Vector3(-18.3, 0.0, -2.3), Vector3(-18.3, 0.0, -4.1), Vector3(-17.3, 0.0, -4.9), Vector3(-16.3, 0.0, -5.5),
 	Vector3(-15.3, 0.0, -5.95), Vector3(-14.7, 0.0, -6.1)]
@@ -748,9 +786,15 @@ func _tappa7(has_interiors: bool) -> void:
 	r.set(&"centro_increspature", Vector3(VASCA.x, VASCA_PELO, VASCA.z + 1.0))
 	r.set(&"pulsante_sigla", level.get_node("Vasca/PulsanteSigla"))
 	r.set(&"scia", PackedVector3Array(SCIA))
-	# Gocciola ancora dal bordo, dalla parte da cui è uscita (ovest, verso l'area bimbi).
-	var bordo_x := VASCA.x - VASCA_INTERNO.x * 0.5 - 0.42
-	r.set(&"gocciolatoi", PackedVector3Array([Vector3(bordo_x, VASCA_BORDO - 0.02, 9.4), Vector3(bordo_x, VASCA_BORDO - 0.02, 10.6)]))
+	# Si è tirata fuori dalla vasca dove era affacciata (bordo sud, sopra il pulsante della sigla): la
+	# bava sul bordo e giù per il muro (verticale, a lato del pulsante, 2 cm fuori dalla parete), fino
+	# all'inizio della scia a terra; e da lì gocciola ancora.
+	var muro_z := VASCA.z + VASCA_INTERNO.y * 0.5 + 0.42
+	r.set(&"bordo_vasca", PackedVector3Array([Vector3(-0.95, VASCA_BORDO, muro_z - 0.22), Vector3(-0.35, VASCA_BORDO, muro_z - 0.24),
+		Vector3(0.45, VASCA_BORDO, muro_z - 0.2)]))
+	r.set(&"muro_vasca", PackedVector3Array([Vector3(-0.5, VASCA_BORDO - 0.01, muro_z + 0.02), Vector3(-0.5, 0.5, muro_z + 0.02),
+		Vector3(-0.5, 0.02, muro_z + 0.02)]))
+	r.set(&"gocciolatoi", PackedVector3Array([Vector3(-0.55, VASCA_BORDO - 0.03, muro_z + 0.03), Vector3(0.45, VASCA_BORDO - 0.03, muro_z + 0.03)]))
 	own(r, gp)
 	level.set(&"ritorno", r)
 	if has_interiors:

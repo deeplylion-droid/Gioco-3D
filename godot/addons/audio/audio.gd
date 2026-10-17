@@ -98,6 +98,8 @@ const TARATURA := {
 	&"tonfo_acqua_lontano": [BUS_EFFETTI, 0.0, 40.0, 220.0, 0.0],
 	&"maniglione_bloccato": [BUS_EFFETTI, 0.0, 3.0, 35.0, 0.6],
 	&"porta_ponte_apre": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
+	# i cancelli stagni della camera delle onde: forti, pieni fino a circa 6 m (il tetto è max_db 0)
+	&"cancello_stagno_apre": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 	# la piscina a onde (tappa 5): scelti dall'utente il 16 ottobre; le medusine appena percettibili
@@ -140,6 +142,12 @@ const MORSO_COLPO := 1.0
 ## PortoneTorre deve seguire questi tempi (accelera in circa 1,1 s, frena nell'ultimo 0,9 s).
 const PORTONE_PARTE := 0.7
 const PORTONE_ARRIVA := 6.4
+## I cancelli stagni della camera delle onde (cancello_stagno_apre, 3,7 s, due varianti con gli
+## stessi tempi): dopo quanti secondi dall'inizio del suono la porta comincia a muoversi (con uno
+## strappo; è a velocità piena circa 0,4 s dopo) e quando sbatte a fine corsa. L'animazione dei
+## cancelli deve seguire questi tempi (rallenta appena nell'ultimo quarto di secondo).
+const CANCELLO_STAGNO_PARTE := 0.55
+const CANCELLO_STAGNO_ARRIVA := 2.55
 ## Volume (dB) dei fondi.
 const FONDI := {
 	&"pioggia_cupola_loop": 0.0,
@@ -1836,8 +1844,8 @@ class AudioLei:
 ##  - piscina_vuota quando la vasca si svuota ("emptied"), se l'acqua stava scendendo (non quando
 ##    si riparte con la piscina già vuota);
 ##  - il pulsante della botola: su "pulsante_attivato" lo scatto e il jingle
-##    (pulsante_botola_attiva) e il lampeggiante che prende giri (tono da TONO_FERMO a 1); a ogni
-##    lampo il bi-bu (pulsante_botola_bibu): col segnale "lampeggio" se c'è, se no ogni
+##    (pulsante_botola_attiva) e il lampeggiante che prende giri (tono da TONO_FERMO a 1); il bi-bu a
+##    ogni lampo (pulsante_botola_bibu) è spento dalla v0.3.2 (BIBU): col segnale "lampeggio" se c'è, se no ogni
 ##    PERIODO_LAMPO secondi; il lampo che arriva insieme al jingle non fa il bi-bu (il primo è al
 ##    lampo dopo). attivo e premuto() si rileggono a ogni fotogramma: quando il pulsante è premuto
 ##    il lampeggiante si ferma; ripartendo da un checkpoint gira (o tace) da solo.
@@ -1850,6 +1858,8 @@ class AudioPiscina:
 	const SCESA_DA_POCO := 3.0
 	## Dopo lo scatto e il jingle, per tanti secondi niente bi-bu (si sovrapporrebbe al jingle).
 	const DOPO_JINGLE := 1.2
+	## Il bi-bu a ogni lampo (tolto dopo la prova della v0.3.2).
+	const BIBU := false
 
 	var audio
 	var n: Node
@@ -1906,7 +1916,9 @@ class AudioPiscina:
 		da_attivazione = 0.0
 
 	func _su_lampo() -> void:
-		if gira and da_attivazione >= DOPO_JINGLE and is_instance_valid(pulsante):
+		# Prova della v0.3.2: il bi-bu ripetuto a ogni lampo era una "musichetta in loop che dà molto
+		# fastidio". Resta solo il jingle dell'attivazione, una volta; il bi-bu si riaccende con BIBU.
+		if BIBU and gira and da_attivazione >= DOPO_JINGLE and is_instance_valid(pulsante):
 			audio.suona(&"pulsante_botola_bibu", pulsante.global_position)
 
 	func _su_vuota() -> void:
