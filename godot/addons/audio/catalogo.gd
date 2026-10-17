@@ -36,6 +36,8 @@ const SUONI := {
 	&"medusina_aspirata": ["res://audio/piscina/medusina_aspirata_01.ogg", "res://audio/piscina/medusina_aspirata_02.ogg", "res://audio/piscina/medusina_aspirata_03.ogg", "res://audio/piscina/medusina_aspirata_04.ogg", "res://audio/piscina/medusina_aspirata_05.ogg", "res://audio/piscina/medusina_aspirata_06.ogg"],
 	&"medusine_sparate": ["res://audio/piscina/medusine_sparate_01.ogg", "res://audio/piscina/medusine_sparate_02.ogg"],
 	&"morso": ["res://audio/lei/morso.ogg"],
+	&"lei_urlo": ["res://audio/lei/lei_urlo.ogg"],
+	&"lei_esplosione": ["res://audio/lei/lei_esplosione.ogg"],
 	&"nave_colpo_lontano": ["res://audio/ambiente/nave_colpo_lontano_01.ogg", "res://audio/ambiente/nave_colpo_lontano_02.ogg", "res://audio/ambiente/nave_colpo_lontano_03.ogg"],
 	&"nave_gemito": ["res://audio/ambiente/nave_gemito_01.ogg", "res://audio/ambiente/nave_gemito_02.ogg", "res://audio/ambiente/nave_gemito_03.ogg", "res://audio/ambiente/nave_gemito_04.ogg"],
 	&"nave_loop": ["res://audio/ambiente/nave_loop.ogg"],

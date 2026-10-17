@@ -102,6 +102,8 @@ const TARATURA := {
 	&"cancello_stagno_apre": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
+	# il suo urlo nel jumpscare (JumpscareGlitch): forte, scelto così dall'utente il 17 ottobre
+	&"lei_urlo": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 	# la piscina a onde (tappa 5): scelti dall'utente il 16 ottobre; le medusine appena percettibili
 	&"piscina_vuota": [BUS_EFFETTI, 4.0, 5.0, 55.0, 0.0],
 	&"pulsante_botola_attiva": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],

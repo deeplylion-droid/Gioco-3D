@@ -90,6 +90,10 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var profondita := 2.3
 ## Falso finché la fossa non c'è: niente scena, niente acqua che sale.
 @export var abilitata := true
+## Quando scivola sotto, un geyser d'acqua (GeyserFossa) si alza dalla fossa e la copre tutta: lei
+## sparisce solo quando è coperta (scelta dell'utente del 17 ottobre). Falso: scivola e svanisce come
+## prima.
+@export var geyser := true
 
 var fase := Fase.ATTESA
 var _t := 0.0
@@ -102,6 +106,7 @@ var _luce: OmniLight3D
 var _tocco: Area3D
 var _prossima_bolla := 0.0
 var _rng := RandomNumberGenerator.new()
+var _geyser: GeyserFossa
 
 
 func _ready() -> void:
@@ -176,6 +181,11 @@ func _physics_process(delta: float) -> void:
 			elif _t >= attesa:
 				_scivola()
 		Fase.SCIVOLA:
+			if _geyser and _geyser.in_corso():
+				# Col geyser resta ferma e si vede tutta finché l'acqua non la copre, poi sparisce lì dentro.
+				if _t >= _geyser.copre:
+					_fuga()
+				return
 			var k := clampf(_t / durata_scivola, 0.0, 1.0)
 			_scivola_a(k)
 			if k < 0.35:
@@ -302,7 +312,21 @@ func _scivola() -> void:
 	fase = Fase.SCIVOLA
 	_t = 0.0
 	_schizzo(0.8)
-	_suona(&"lei_scivola_sotto")
+	if geyser and punto_sbuca:
+		if _geyser == null:
+			_geyser = GeyserFossa.new()
+			_geyser.name = "Geyser"
+			add_child(_geyser)
+		# Sul pavimento (l'origine della posa), al centro della fossa davanti al bordo.
+		# Getti più piccoli anche sui suoi tentacoli stesi oltre il bordo (i punti delle gocce).
+		var punti := PackedVector3Array()
+		if medusa and "punti_gocce" in medusa:
+			for q in medusa.get(&"punti_gocce"):
+				punti.append(medusa.global_transform * q)
+		_geyser.scoppia(punto_sbuca.global_transform * Vector3(0.0, 0.0, 1.5), acque, punti)
+		_suona(&"lei_esplosione")
+	else:
+		_suona(&"lei_scivola_sotto")
 
 
 ## Sotto: la medusa sparisce e resta la sua luce, che si allontana lungo il condotto.
