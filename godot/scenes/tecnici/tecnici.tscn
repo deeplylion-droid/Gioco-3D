@@ -12,6 +12,8 @@
 [ext_resource type="Script" path="res://scripts/mechanisms/ladder.gd" id="s_ladder"]
 [ext_resource type="Script" path="res://scripts/tecnici/vasca_inesauribile.gd" id="s_inesauribile"]
 [ext_resource type="PackedScene" path="res://scenes/tecnici/luci_tecnici.tscn" id="p_luci"]
+[ext_resource type="PackedScene" path="res://assets/ambienti_tecnici/arredo_risalita/arredo_risalita.gltf" id="m_arredo"]
+[ext_resource type="Script" path="res://scripts/tecnici/agnellino_scala.gd" id="s_agnellino"]
 
 [node name="Tecnici" type="Node3D"]
 script = ExtResource("s_tecnici")
@@ -24,6 +26,46 @@ script = ExtResource("s_tecnici")
 position = Vector3(37.3, 0, -2.2)
 
 [node name="Raccordo" parent="Ambienti" instance=ExtResource("m_racc")]
+
+[node name="ArredoRisalita" parent="Ambienti/Raccordo" instance=ExtResource("m_arredo")]
+editor_description = "L'arredamento della strada di risalita (tappa 7 B): misto delle proposte A e B scelto dall'utente il 17 ottobre, con le collisioni. Generato da tools/blender/tappa7_arredo.py gioco."
+
+[node name="LuciUscita" type="Node3D" parent="Ambienti/Raccordo"]
+editor_description = "La luce verde dei cartelli d'uscita della strada di risalita (luci d'emergenza: restano accese col blackout)."
+
+[node name="uscita_r1" type="OmniLight3D" parent="Ambienti/Raccordo/LuciUscita"]
+position = Vector3(50.28, 2.35, 1.4)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_l1" type="OmniLight3D" parent="Ambienti/Raccordo/LuciUscita"]
+position = Vector3(52.28, 5.975, -7.8)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_t" type="OmniLight3D" parent="Ambienti/Raccordo/LuciUscita"]
+position = Vector3(45.18, 9.45, -4.8)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_c3" type="OmniLight3D" parent="Ambienti/Raccordo/LuciUscita"]
+position = Vector3(43.92, 11.3, 13.4)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="uscita_mag" type="OmniLight3D" parent="Ambienti/Raccordo/LuciUscita"]
+position = Vector3(19.46, 11.55, 13.6)
+light_color = Color(0.3, 1, 0.45, 1)
+light_energy = 0.35
+omni_range = 3.0
+
+[node name="AgnellinoScala" type="Node3D" parent="."]
+script = ExtResource("s_agnellino")
+editor_description = "Tappa 7 B: l'agnellino in cima alla scala del corridoio C2 (apparizione 1 scelta dall'utente il 17 ottobre). Compare una volta sola, col blackout."
 
 [node name="Acqua" type="Node3D" parent="."]
 

@@ -1,6 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/game/sala_principale.gd" id="1_hjbnl"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/angoli_sala/angolo_palloni.gltf" id="angoli_pal"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/angoli_sala/angolo_scatoloni.gltf" id="angoli_sca"]
 [ext_resource type="Material" path="res://addons/acqua/materials/pozzanghera.tres" id="2_xxl8b"]
 [ext_resource type="Material" path="res://assets/materials/sala/vetro_cupola.tres" id="3_qo5ie"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_architettura.glb" id="4_jn0j2"]
@@ -236,6 +238,14 @@ roots = Array[NodePath]([NodePath("../Architettura"), NodePath("../Piscina"), No
 name_filter = PackedStringArray()
 exclude_filter = PackedStringArray("pavimento", "pozzanghere", "vetro", "glass", "griglia", "grata", "neon", "luce", "insegna", "lampad", "cartellone", "colature")
 base_wetness = 0.2
+
+[node name="AngoloPalloni" type="Node3D" parent="Sala" instance=ExtResource("angoli_pal")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 19.85, 0, 19.85)
+editor_description = "Angolo sud-est, a destra entrando: la pila di palloni nella rete (disposizione 2 scelta dall'utente il 17 ottobre). Da tools/blender/sala_angoli.py."
+
+[node name="AngoloScatoloni" type="Node3D" parent="Sala" instance=ExtResource("angoli_sca")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.85, 0, 19.85)
+editor_description = "Angolo sud-ovest, a sinistra entrando: la catasta di scatoloni, accanto alla serranda del magazzino (che resta libera). Da tools/blender/sala_angoli.py gioco."
 
 [node name="LuciSala" parent="." unique_id=1895997875 instance=ExtResource("24_rfbqv")]
 energia_fari = 2.0

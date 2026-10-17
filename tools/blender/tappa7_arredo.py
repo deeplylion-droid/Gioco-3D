@@ -364,7 +364,7 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
     for o in [o for o in obs if o.name.startswith(f'{nome}_f1e_m') and o.location.y < 0.6]:
         obs.remove(o); bpy.data.objects.remove(o)
     # pianerottolo L1: muro est pieno e muro nord (la strada passa in x 50,6..52,0)
-    riempi_muro(f'{nome}_l1e', (X_S1, 4.9), (X_S1, Y_T1), (-1, 0), Z_L1, tav_terra, obs, 0.6, rnd)
+    riempi_muro(f'{nome}_l1e', (X_S1, 4.9), (X_S1, Y_T1), (-1, 0), Z_L1, tav_terra, obs, 0.6 if nome != 'G' else 0.45, rnd)
     riempi_muro(f'{nome}_l1n', (X_S1 - 0.6, Y_T1), (X_S0 + 0.2, Y_T1), (0, -1), Z_L1, tav_terra, obs, 0.4, rnd)
     appendi_muro(f'{nome}_l1_m', (X_S1, 4.7), (X_S1, Y_T1), (-1, 0), Z_L1 + 1.55, tav_muro, obs, rnd)
     # rampa F2: roba piccola sui gradini contro il muro nord, appesa ai due muri
@@ -378,11 +378,13 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         riempi_muro(f'{nome}_c2{lato}a', (x, Y_T0 - 0.2), (x, Y_SCALA2 + 0.3), nn, Z_T, tav_terra, obs, 0.42, rnd)
         riempi_muro(f'{nome}_c2{lato}s', (x, Y_SCALA2), (x, Y_SCALA2 - N2 * PED2), nn, 0, tav_piccoli, obs, 0.3, rnd, passo=(0.3, 0.6), zfun=z_c2)
         riempi_muro(f'{nome}_c2{lato}b', (x, -0.2), (x, YC3_1 - 0.1), nn, Z_SALA, tav_terra, obs, 0.42, rnd,
-                    vuoti=((8.8, 10.4),) if lato == 'o' else ())   # lì la testa della mascotte (A)
+                    vuoti=((8.8, 10.4),) if lato == 'o' and nome == 'A' else ())   # lì la testa della mascotte (A)
         appendi_muro(f'{nome}_c2{lato}_m', (x, Y_T0), (x, YC3_1), nn, 1.55, tav_muro, obs, rnd, zfun=z_c2, vuoti=((20.4, 22.6),) if lato == 'o' else ())
     # corridoio C3: tutti e due i lati
     for lato, y, nn in (('s', YC3_0, (0, 1)), ('n', YC3_1, (0, -1))):
-        riempi_muro(f'{nome}_c3{lato}', (XC0 - 0.1, y), (XM1 + 0.4, y), nn, Z_SALA, tav_terra, obs, 0.45, rnd)
+        # davanti al mucchio di gonfiabili del raccordo (x 36,5) non si mette niente: col mucchio la corsia si chiudeva
+        riempi_muro(f'{nome}_c3{lato}', (XC0 - 0.1, y), (XM1 + 0.4, y), nn, Z_SALA, tav_terra, obs, 0.4, rnd,
+                    vuoti=((XC0 - 0.1 - 38.2, XC0 - 0.1 - 34.8),))
         appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
     if tubi:
         mat, quanti = tubi
@@ -391,12 +393,12 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.5, mat, obs, quanti)
 
 
-def magazzino_pieno(nome, tav_cumuli, obs, rnd):
+def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
     """Il magazzino stracolmo: cumuli a terra in tutte e due le metà, davanti agli scaffali e tra uno e l'altro,
     lasciando la corsia y -15,75..-14,25 dal passaggio di C3 alla serranda."""
     k_obj = 0
     # i mucchi di gonfiabili che ci sono già nel raccordo (ambienti2_raccordo.py): lì non si mette niente
-    gia = [(XM1 - 2.4, YM0 + 1.3), (XM0 + 4.2, YM1 - 1.2), (XM0 + 2.0, YM0 + 1.4), (XM1 - 4.6, YM1 - 1.1)]
+    gia = [(XM1 - 2.4, YM0 + 1.3), (XM0 + 4.2, YM1 - 1.2), (XM0 + 2.0, YM0 + 1.4), (XM1 - 4.6, YM1 - 1.1)] + list(liberi)
     for y0, y1 in ((YM0 + 0.7, -15.85), (-14.15, YM1 - 0.7)):
         x = XM1 - 0.4
         while x > XM0 + 0.8:
@@ -478,8 +480,62 @@ def proposta_B_piena():
     comuni(obs, C.mat_pbr('corrimano_B', base=(0.85, 0.65, 0.12), roughness=0.5, metallic=0.5))
     return obs
 
-def esporta(nome, obs):
-    os.makedirs(USCITA, exist_ok=True)
+# ---------------------------------------------------------------------------------------------------------------
+# Versione del gioco (scelta dell'utente del 17 ottobre: "un misto di A e B. Tieni i modelli di cui sei più sicuro").
+# Dal provino dei modelli restano fuori quelli dubbi: il secchio col mocio (lo straccio si stacca), il pallone sgonfio
+# (forma confusa), lo scatolone blu a onde e gli ombrelloni chiusi (troppo sottili); il cartello di pericolo, che è un
+# cavalletto, sta a terra e non appeso. Con le collisioni (scatole) per tutto quello che è più alto di 25 cm.
+
+TESTA_MAG = (XM1 - 1.6, YM1 - 0.8)
+
+
+def proposta_gioco():
+    reset()
+    obs = []
+    rnd = random.Random(17)
+    terra = [('lettini_impilati', 0.9, False), ('materassini_arrotolati', 1.1, False), ('cassa_tubi', 0.85, False),
+             ('scatolone_rosso', 0.45, True), ('scatolone_giallo', 0.42, True), ('scatolone_marrone', 0.45, True),
+             ('pallone_gonfio_a', 0.5, False), ('pallone_gonfio_b', 0.5, False), ('carrello_asciugamani', 1.0, False),
+             ('fusti_cloro', 0.75, False), ('casse_plastica', 0.8, True), ('carrello_attrezzi', 1.2, False),
+             ('sacchi_sale', 0.75, False), ('cartello_pericolo', 0.5, False)]
+    muro = [('salvagente_anulare', 0.75), ('bacheca', 0.65), ('rullo_tubo', 0.6), ('quadro_elettrico', 0.7), ('estintore_staffa', 0.6)]
+    piccoli = [('pallone_gonfio_a', 0.35, False), ('pallone_gonfio_b', 0.35, False), ('braccioli', 0.18, False),
+               ('salvagente_giocattolo', 0.25, False), ('paperella', 0.12, False), ('ciabatta', 0.08, False),
+               ('scatolone_giallo', 0.25, True), ('cestino', 0.4, False), ('casse_plastica', 0.3, True)]
+    tubi = C.mat_pbr('tubi_B', base=(0.35, 0.38, 0.36), roughness=0.5, metallic=0.7)
+    percorso_pieno('G', terra, muro, piccoli, obs, rnd, tubi=(tubi, 3))
+    magazzino_pieno('G', [('gonfiabili_mucchio', 0.6, False), ('lettini_impilati', 1.0, True), ('materassini_arrotolati', 1.2, False),
+                          ('scatolone_rosso', 0.5, True), ('scatolone_giallo', 0.45, True), ('scatolone_marrone', 0.55, True),
+                          ('pallone_gonfio_a', 0.55, False), ('pallone_gonfio_b', 0.55, False), ('pallone_mezzo', 0.4, False),
+                          ('sedie_impilate', 1.6, False), ('cassa_tubi', 0.9, True), ('fusti_cloro', 0.85, False),
+                          ('sacchi_sale', 0.8, True), ('casse_plastica', 0.85, True), ('transpallet', 1.2, False)], obs, rnd,
+                    liberi=[(TESTA_MAG[0] + 0.4, TESTA_MAG[1]), (TESTA_MAG[0] - 0.4, TESTA_MAG[1])])
+    # la testa della mascotte (1,8 m di muso) nel corridoio C2 lo chiudeva: sta nel magazzino, contro il muro nord
+    # accanto all'entrata, girata verso la corsia (lì intorno il magazzino resta libero)
+    d = HQ.dimensioni('testa_mascotte')
+    metti('G_testa_mascotte', 'testa_mascotte', (TESTA_MAG[0], YM1 - 0.05 - d.y * 0.7 / d.z / 2, Z_SALA), alto=0.7, rz=0, obs=obs)
+    metti('G_coccodrillo_l1', 'coccodrillo_sgonfio', (51.4, 6.2, Z_L1), largo=1.2, rz=170, obs=obs)
+    festone('G_festone_s1', (X_S0 + 0.1, 0.3, 3.3), (X_S1 - 0.1, 4.2, 5.0), 16, obs, seme=1)
+    festone('G_festone_s2', (X_S1 - 0.1, 6.8, 6.6), (X_S0 - 3.0, 8.8, 9.2), 16, obs, seme=2)
+    festone('G_festone_c2', (XC0 + 0.05, 1.5, Z_SALA + 2.6), (XC1 - 0.05, -2.0, Z_SALA + 2.6), 10, obs, seme=3)
+    festone('G_festone_mag', (XM1 - 0.5, YM0 + 0.4, Z_SALA + 3.1), (XM0 + 1.0, YM1 - 0.4, Z_SALA + 3.1), 22, obs, pendenza=0.6, seme=4)
+    giallo = C.mat_pbr('vernice_frecce', base=(0.85, 0.65, 0.05), roughness=0.7)
+    for k, (p, d) in enumerate((((48.0, YD, 0), (1, 0, 0)), ((51.6, -1.2, 0), (0, 1, 0)), ((51.6, 7.8, Z_L1), (-1, 0, 0)),
+                                ((44.55, 6.0, Z_T), (0, -1, 0)), ((44.55, -3.0, Z_SALA), (0, -1, 0)), ((44.55, -13.0, Z_SALA), (0, -1, 0)),
+                                ((42.0, -15.0, Z_SALA), (-1, 0, 0)), ((33.0, -15.0, Z_SALA), (-1, 0, 0)), ((24.0, -15.0, Z_SALA), (-1, 0, 0)))):
+        freccia_terra(f'G_freccia_{k}', p, d, obs, giallo)
+    comuni(obs, C.mat_pbr('corrimano_A', base=(0.85, 0.65, 0.12), roughness=0.5, metallic=0.5))
+    # collisioni: una scatola (allineata agli assi) per ogni modello più alto di 25 cm
+    sorgenti = {o.data for o in HQ._base.values()}
+    for o in list(obs):
+        if o.type == 'MESH' and o.data in sorgenti and o.dimensions.z > 0.25:
+            lo, hi = _scatola(o)
+            obs.append(C.collisione_box(o.name + '_col', lo, hi))
+    return obs
+
+
+def esporta(nome, obs, percorso=None):
+    os.makedirs(os.path.dirname(percorso) if percorso else USCITA, exist_ok=True)
     for im in bpy.data.images:
         lim = 2048 if im.colorspace_settings.name != 'Non-Color' else 1024
         if im.size[0] > lim:
@@ -487,7 +543,7 @@ def esporta(nome, obs):
     bpy.ops.object.select_all(action='DESELECT')
     for o in obs:
         o.select_set(True)
-    p = os.path.join(USCITA, f'arredo_{nome}.gltf')
+    p = percorso or os.path.join(USCITA, f'arredo_{nome}.gltf')
     bpy.ops.export_scene.gltf(filepath=p, export_format='GLTF_SEPARATE', export_texture_dir='texture', use_selection=True,
                               export_apply=True, export_lights=False, export_cameras=False, export_yup=True,
                               export_image_format='JPEG', export_jpeg_quality=88)
@@ -495,6 +551,9 @@ def esporta(nome, obs):
 
 
 if __name__ == '__main__':
+    if 'gioco' in C.argomenti():
+        esporta('gioco', proposta_gioco(), os.path.join(C.RADICE, 'godot', 'assets', 'ambienti_tecnici', 'arredo_risalita', 'arredo_risalita.gltf'))
+        sys.exit()
     scelte = [a for a in C.argomenti() if a in ('A', 'B')] or ['A', 'B']
     for s in scelte:
         esporta(s, proposta_A_piena() if s == 'A' else proposta_B_piena())

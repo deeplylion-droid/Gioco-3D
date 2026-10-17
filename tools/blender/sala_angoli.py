@@ -20,7 +20,9 @@ import ambienti1_hq as HQ
 
 HQ.LINK[0] = C._link
 HQ.CARTELLE.append(os.path.join(C.RADICE, 'assets_src', 'sala_angoli'))
-USCITA = os.path.join(C.RADICE, 'godot', 'assets', 'ambiente', 'proposte_angoli')
+# Con 'gioco' tra gli argomenti scrive la versione del gioco (disposizione 2, scelta il 17 ottobre) in angoli_sala/.
+GIOCO = 'gioco' in C.argomenti()
+USCITA = os.path.join(C.RADICE, 'godot', 'assets', 'ambiente', 'angoli_sala' if GIOCO else 'proposte_angoli')
 LATO = 3.4      # quanto si allarga la pila lungo ciascun muro
 ALTEZZA = 10.0  # il soffitto è a 11,5
 
@@ -75,7 +77,12 @@ def catasta_scatoloni():
         f = rnd.choice(tipi)
         d = HQ.dimensioni(f)
         k = 0.55 / max(d.x, d.y)
-        posa(f'scat_caduto_{k_obj}', f, (r * math.cos(a), r * math.sin(a), 0.0), k, rnd.uniform(0, math.pi), obs)
+        rz = rnd.uniform(0, math.pi)
+        # nel gioco la catasta sta nell'angolo sud-ovest, accanto alla serranda del magazzino (lungo +X): lì non
+        # cade niente, la serranda resta libera
+        if GIOCO and r * math.cos(a) > LATO - 0.3:
+            continue
+        posa(f'scat_caduto_{k_obj}', f, (r * math.cos(a), r * math.sin(a), 0.0), k, rz, obs)
     C.collisione_box('angolo_scatoloni', (0, 0, 0), (LATO, LATO, ALTEZZA))
     return obs
 
