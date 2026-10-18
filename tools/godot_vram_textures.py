@@ -21,6 +21,24 @@ TEXTURE_3D = {
 }
 
 
+# Texture estratte dai GLB con un lato massimo per tipo (parte del nome): nella sala i materiali sono
+# ripetuti su superfici grandi e ogni GLB ne estrae la sua copia; a 1024 le normal map e le ORM non si
+# distinguono da quelle a 2048 (il colore resta a 2048) e il pacchetto del gioco scende di circa 180 MB.
+LIMITI_ESTRATTE = {
+    os.path.join("assets", "ambiente", "sala"): {"_nrm.": 1024, "_orm.": 1024},
+}
+
+
+def _limite_estratta(root: str, d: str, nome: str):
+    regole = LIMITI_ESTRATTE.get(os.path.relpath(d, root))
+    if not regole:
+        return None
+    for parte, lato in regole.items():
+        if parte in nome.lower():
+            return lato
+    return None
+
+
 def _in_3d_folder(root: str, d: str):
     rel = os.path.relpath(d, root)
     for folder, limit in TEXTURE_3D.items():
@@ -50,6 +68,9 @@ def main(root: str) -> int:
             low = f.lower()
             if "_nrm" in low or "normal" in low:
                 s2 = s2.replace("compress/normal_map=0", "compress/normal_map=1")
+            lato = _limite_estratta(root, d, f)
+            if lato:
+                s2 = s2.replace("process/size_limit=0", f"process/size_limit={lato}")
             if limit is not None:
                 if limit > 0:
                     s2 = s2.replace("process/size_limit=0", f"process/size_limit={limit}")

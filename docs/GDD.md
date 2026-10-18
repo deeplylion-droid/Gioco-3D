@@ -46,6 +46,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Primi due bambini (decisi dall'utente, 14 ottobre)**, ispirati ai disegni di Maniani (l'utente dichiara di avere i diritti) ma nel nostro stile marittimo. Modelli in `assets_src/bambini/`.
   - **Il bambino col cubo**: in testa ha un cubo di **piastrelle da piscina** crepato, con cirripedi e alghe e una faccina carina disegnata. Quando si rivela, il cubo si apre e mostra una massa di tentacoli rosa traslucidi con **occhi gialli**. Il primo corpo era "troppo pacioccone". Rifatto il 15 ottobre: bambino magro di 7-9 anni, un po' curvo, con una muta da sub consumata (render inviato all'utente, in attesa di riscontro; il primo corpo è in `scartati/`).
   - **L'agnellino**: un peluche cucito, zuppo e macchiato di sale, con bottoni d'ottone al posto degli occhi e un fiocco alla marinara. Quando si rivela, il muso si spacca e mostra **un unico grande occhio**, scelto dall'utente. La testa di lupo resta solo come alternativa.
+  - **Idea dell'utente (17 ottobre), da sviluppare**: la medusa ha modificato l'agnellino con i suoi geni e ora brilla al buio, come le pecore vere rese fluorescenti con un gene di medusa. Scelta del 18 ottobre: **variante B**, tutto il pelo brilla a chiazze del rosa dei tentacoli, più forte sul muso. Con la torcia addosso non si nota.
 
 ## Qualità grafica: prima di tutto (deciso dall'utente, 15 ottobre, dopo aver giocato la v0.2.0)
 
@@ -64,6 +65,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 - **Niente backtracking**: non si torna indietro per strade già fatte.
 - **Sempre un ambiente nuovo**: dopo ogni parte si entra in un posto mai visto, per esempio passando un cancello importante rimasto chiuso fino a quel momento.
 - Le risposte al questionario del 15 ottobre sono in `docs/riscontri/2026-10-15_questionario.md`.
+- **Ambienti nuovi pieni da subito** (17 ottobre): ogni ambiente nuovo si fa già pieno e credibile dalla prima proposta, tenendo conto di tutte le correzioni fatte finora. Niente prop messi in modo insensato: niente oggetti appesi al nulla o storti rispetto al muro, niente compenetrazioni, niente oggetti davanti a quello che devono lasciare libero, niente ripetizioni evidenti.
 
 ## Scelte del 16 ottobre (pagina delle proposte)
 
@@ -148,6 +150,20 @@ Parole dell'utente in `docs/riscontri/2026-10-17_prova_v034.md`.
 - **L'agnellino della risalita** scappa molto più veloce: non lo devi mai raggiungere né vedere mentre sparisce.
 - **Niente scatti al primo uso**: aspirazione, getto e geyser non devono bloccare il gioco la prima volta.
 - **La pila di palloni** all'entrata della sala va senza rete: un mucchio a piramide, con la base molto più larga, appoggiato nell'angolo.
+
+## La sala della torre (idea dell'utente, 17 ottobre)
+
+Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.md`.
+- È una **struttura mastodontica di scivoli colorati**.
+- **Non si scala: si scende**, scivolando tra diversi segmenti di scivoli spezzati, senza cadere.
+- A volte ci si aiuta con il getto per saltare da un pezzo all'altro.
+- Le versioni (dove entri in alto, come è fatta la discesa, dove stanno la balconata dei bambini, la luce di lei e la Polaroid 10) si propongono all'utente con scatti dal motore.
+- **Scelta del 18 ottobre** (`docs/riscontri/2026-10-18_torre_agnellino.md`): si sviluppa la **versione A**.
+  - Quattro torri di traliccio colorate alte 34 m, con più di 30 scivoli intrecciati e il vuoto centrale col pozzo da cui sale la luce di lei.
+  - Si entra dal portone in cima e si scende fino al fondo, 20 m più giù nello scafo.
+  - La discesa va fatta con **più salti**.
+  - Le piattaforme stanno **solo dove servono**.
+  - La luce resta com'è: rosso d'emergenza con fari e lampade da lavoro.
 
 ## Capitolo 1: scaletta (approvata)
 

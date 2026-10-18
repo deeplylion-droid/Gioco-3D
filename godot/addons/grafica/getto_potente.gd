@@ -157,6 +157,11 @@ func aggancia(p_pack: Node) -> void:
 		(p.draw_pass_1 as QuadMesh).material = chiara
 	_crea_colonna()
 	_crea_texture_bagnato()
+	# Shader e particelle compilati subito, a schermo ancora nero, invece che al primo uso.
+	var prepara := PreparaEffetti.new()
+	prepara.pack = pack
+	prepara.getto = self
+	add_child(prepara)
 
 
 ## Stile B: un attimo di carica prima del colpo (la pressione sale nella lancia).
