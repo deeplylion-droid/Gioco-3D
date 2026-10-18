@@ -1,0 +1,46 @@
+{
+ "vasca_telaio": {
+  "esterno": [
+   2.0,
+   0.928,
+   1.633
+  ],
+  "interno_mezza_x": 9,
+  "interno_mezza_z_godot": 0.31,
+  "fondo": 0.086,
+  "sopra": 1.554,
+  "pannello_base": 0.633
+ },
+ "basamento_vasca": {
+  "esterno": [
+   2.0,
+   0.93,
+   0.5
+  ]
+ },
+ "cilindro": {
+  "diametro_vetro": 1.1,
+  "alt_base": 0.849,
+  "alt_coperchio": 0.915
+ },
+ "valvola_rossa": {
+  "esterno": [
+   1.1,
+   0.585,
+   1.017
+  ]
+ },
+ "lampada_gabbia": {
+  "esterno": [
+   0.321,
+   0.549,
+   0.42
+  ],
+  "raggio_globo": 0.096,
+  "centro_globo": [
+   0.0,
+   -0.339,
+   0.0
+  ]
+ }
+}

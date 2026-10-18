@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WaterStyle" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://addons/acqua/scripts/water_style.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+absorption = Vector3(0.05, 0.35, 3.0)
+turbidity = 0.3
+scatter_color = Color(0.95, 0.74, 0.1, 1)
+scatter_ambient = 0.35
+roughness = 0.04
+wave_strength_a = 0.05
+wave_strength_b = 0.04
+wave_speed = 0.03
+refraction_strength = 0.12
+reflection_strength = 1.4
+foam_color = Color(0.85, 0.82, 0.6, 1)
+foam_shore_amount = 0.3
+foam_shore_width = 0.06
+foam_ripple_amount = 1.0
+scum_amount = 0.15
+scum_color = Color(0.4, 0.4, 0.32, 1)
+caustics_strength = 0.6
+caustics_scale = 2.0
+underwater_fog_color = Color(0.048, 0.037, 0.005, 1)
+glow_scatter = 1.0
