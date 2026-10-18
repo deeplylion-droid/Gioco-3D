@@ -5,7 +5,7 @@
 cd "$(dirname "$0")/.." || exit 1
 OUT=$1; shift
 LISTA=${*:-meta pieni verde portone gorgo}
-export SCATTI_TOGLI=${SCATTI_TOGLI:-Tecnici/Ambienti/CameraOnde,Tecnici/Ambienti/SalaPompe,Sala/TorreScivoli,BambiniBalconata,Sala/AreaBimbi,Polaroid}
+export SCATTI_TOGLI=${SCATTI_TOGLI:-Tecnici,Sala/TorreScivoli,BambiniBalconata,Sala/AreaBimbi,Polaroid}   # senza Tecnici non c è la serranda: gli acquari compaiono con la tappa 8 finita
 mkdir -p "$OUT"
 for s in $LISTA; do
 	[ -f "$OUT/gioco_$s.jpg" ] && continue

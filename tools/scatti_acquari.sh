@@ -27,6 +27,15 @@ while kill -0 "$XP" 2>/dev/null; do
 			[ "$R" -gt "$LIMITE_MB" ] && { kill -9 "$GP"; echo "FERMATO: memoria $R MB"; }
 		fi
 	fi
+	# a volte Godot resta bloccato all'uscita dopo aver salvato (con la memoria e il lock in mano)
+	if [ -n "$GP" ] && grep -q "^salvato" "$LOG" 2>/dev/null; then
+		[ -z "${SALVATO_DA:-}" ] && SALVATO_DA=$(date +%s)
+		if [ $(( $(date +%s) - SALVATO_DA )) -gt 60 ] && ! grep -q "memoria massima del processo" "$LOG"; then
+			N_SALVATI=$(grep -c "^salvato" "$LOG")
+			[ "$N_SALVATI" = "${N_PREC:-}" ] && { kill -9 "$GP"; echo "Godot fermo dopo il salvataggio, chiuso"; }
+			N_PREC=$N_SALVATI; SALVATO_DA=$(date +%s)
+		fi
+	fi
 	sleep 1
 done
 echo "memoria massima ${MAX} MB, $(( $(date +%s) - T0 )) s"
