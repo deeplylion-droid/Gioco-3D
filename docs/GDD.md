@@ -267,6 +267,8 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 
 ## La mascotte del capitolo 1: la medusa
 
+**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il titolo del gioco è ancora da decidere: per ora resta "Splash Lagoon", che è anche il nome del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
+
 ### Riferimenti approvati
 
 - `docs/concept/medusa_statua.jpg`: ferma come una statua sul piedistallo.
