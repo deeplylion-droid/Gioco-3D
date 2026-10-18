@@ -38,6 +38,9 @@ const SEZIONE := "audio"
 const PREDEFINITI := {"generale": 1.0, "musica": 0.8, "ambiente": 1.0, "effetti": 1.0}
 const BUS_DEL_VOLUME := {"generale": &"Master", "musica": BUS_MUSICA, "ambiente": BUS_AMBIENTE,
 	"effetti": BUS_EFFETTI}
+## Tutto il suono più basso di questi dB, anche con il volume generale al massimo (l'utente, 18 ottobre:
+## "i suoni risultano tutti troppo alti").
+const ABBASSAMENTO_GENERALE_DB := -6.0
 
 ## Taratura per cartella: [bus, volume dB, unit_size (0 = non posizionale), max_distance, variazione di tono (semitoni)].
 const PER_CARTELLA := {
@@ -602,7 +605,10 @@ func _applica_volumi() -> void:
 			continue
 		var v := volume(k)
 		AudioServer.set_bus_mute(i, v <= 0.001)
-		AudioServer.set_bus_volume_db(i, linear_to_db(maxf(v, 0.001)) + float(_offset.get(BUS_DEL_VOLUME[k], 0.0)))
+		var db := linear_to_db(maxf(v, 0.001)) + float(_offset.get(BUS_DEL_VOLUME[k], 0.0))
+		if k == "generale":
+			db += ABBASSAMENTO_GENERALE_DB
+		AudioServer.set_bus_volume_db(i, db)
 	var iu := AudioServer.get_bus_index(BUS_INTERFACCIA)
 	if iu >= 0:
 		AudioServer.set_bus_mute(iu, volume("effetti") <= 0.001)

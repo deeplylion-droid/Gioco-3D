@@ -151,6 +151,12 @@ Parole dell'utente in `docs/riscontri/2026-10-17_prova_v034.md`.
 - **Niente scatti al primo uso**: aspirazione, getto e geyser non devono bloccare il gioco la prima volta.
 - **La pila di palloni** all'entrata della sala va senza rete: un mucchio a piramide, con la base molto più larga, appoggiato nell'angolo.
 
+## Prova della v0.3.5 (18 ottobre)
+
+Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
+- **Niente scatti al primo uso**: per l'aspirazione e il geyser è risolto. Resta da risolvere per il primo spruzzo dello zaino.
+- **Suoni più bassi**: tutto il suono è 6 dB più basso, e gli equilibri tra i suoni non cambiano. Il volume generale del menu resta regolabile.
+
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
 Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.md`.
