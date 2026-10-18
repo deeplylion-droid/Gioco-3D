@@ -58,6 +58,10 @@ func _run() -> void:
 		if GameState.player and is_instance_valid(GameState.player):
 			break
 	get_tree().paused = false
+	# Fermo subito: togliendo nodi (per esempio gli Interni) il giocatore potrebbe cadere nel vuoto e
+	# morire prima degli scatti.
+	if GameState.player:
+		GameState.player.set_physics_process(false)
 	for percorso in togli:
 		var n := get_tree().current_scene.get_node_or_null(NodePath(percorso))
 		if n:
