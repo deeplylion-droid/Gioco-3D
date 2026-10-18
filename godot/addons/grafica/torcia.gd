@@ -14,7 +14,7 @@ signal batteria_esaurita
 
 @export var accesa := true
 @export_group("Luce")
-@export var energia := 5.6   # -20% su richiesta dell'utente (era 7.0); con il cono largo (40°) la stessa luce si distribuisce di più
+@export var energia := 2.8   # richieste dell'utente: -20% il 17 ottobre (era 7.0), poi un altro -50% il 18 ottobre (era 5.6)
 @export var colore := Color(1.0, 0.86, 0.68)  # bianco caldo (circa 4000 K)
 @export var angolo := 40.0   # fascio ampio (l'utente: "troppo concentrata verso il centro")
 @export var portata := 26.0

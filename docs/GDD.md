@@ -155,7 +155,9 @@ Parole dell'utente in `docs/riscontri/2026-10-17_prova_v034.md`.
 
 Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Niente scatti al primo uso**: per l'aspirazione e il geyser è risolto. Resta da risolvere per il primo spruzzo dello zaino.
-- **Suoni più bassi**: tutto il suono è 6 dB più basso, e gli equilibri tra i suoni non cambiano. Il volume generale del menu resta regolabile.
+- **Suoni più bassi**: tutto il suono è 20 dB più basso, e il massimo ora suona come il 10% a cui l'utente teneva il volume generale. Gli equilibri tra i suoni non cambiano, e il volume generale del menu resta regolabile.
+- **Torcia**: un altro 50% di luce in meno, dopo il 20% del 17 ottobre.
+- **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 

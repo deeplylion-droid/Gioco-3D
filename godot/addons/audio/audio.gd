@@ -39,8 +39,11 @@ const PREDEFINITI := {"generale": 1.0, "musica": 0.8, "ambiente": 1.0, "effetti"
 const BUS_DEL_VOLUME := {"generale": &"Master", "musica": BUS_MUSICA, "ambiente": BUS_AMBIENTE,
 	"effetti": BUS_EFFETTI}
 ## Tutto il suono più basso di questi dB, anche con il volume generale al massimo (l'utente, 18 ottobre:
-## "i suoni risultano tutti troppo alti").
-const ABBASSAMENTO_GENERALE_DB := -6.0
+## "i suoni risultano tutti troppo alti", e teneva il generale al 10%: il massimo ora suona come quel 10%).
+const ABBASSAMENTO_GENERALE_DB := -20.0
+## Le impostazioni salvate prima dell'abbassamento non hanno questa versione: il loro volume generale
+## torna al massimo, altrimenti il vecchio 10% diventerebbe 20 dB più basso ancora.
+const VERSIONE_VOLUMI := 2
 
 ## Taratura per cartella: [bus, volume dB, unit_size (0 = non posizionale), max_distance, variazione di tono (semitoni)].
 const PER_CARTELLA := {
@@ -428,6 +431,9 @@ func carica_impostazioni() -> void:
 			var v: Variant = cfg.get_value(SEZIONE, k, PREDEFINITI[k])
 			if v is float or v is int:
 				volumi[k] = clampf(float(v), 0.0, 1.0)
+		if int(cfg.get_value(SEZIONE, "versione", 1)) < VERSIONE_VOLUMI:
+			volumi["generale"] = PREDEFINITI["generale"]
+			_salvataggio_pendente = 0.3
 	_applica_volumi()
 
 
@@ -439,6 +445,7 @@ func salva_impostazioni() -> void:
 	cfg.load(percorso_impostazioni)  # tiene le altre sezioni (grafica...)
 	for k in PREDEFINITI:
 		cfg.set_value(SEZIONE, k, volume(k))
+	cfg.set_value(SEZIONE, "versione", VERSIONE_VOLUMI)
 	cfg.save(percorso_impostazioni)
 
 
