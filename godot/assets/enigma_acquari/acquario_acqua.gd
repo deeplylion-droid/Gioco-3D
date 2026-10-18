@@ -28,6 +28,9 @@ const VETRO_SHADER := preload("res://assets/enigma_acquari/vetro_acquario.gdshad
 	set(v):
 		forma = v
 		_rebuild()
+## Cubemap propria per i riflessi del pelo (costa memoria): serve agli acquari bassi, che si guardano
+## da sopra; negli alti il pelo non si vede.
+@export var riflessi_propri := false
 @export var vetri := true:
 	set(v):
 		vetri = v
@@ -91,7 +94,7 @@ func _rebuild() -> void:
 	_body.name = "Superficie"
 	_body.size = Vector2(inner_size.x, inner_size.z)
 	# vasche piccole: niente cubemap propria (prende i riflessi della sala) e increspature leggere
-	_body.capture_env_cubemap = false
+	_body.capture_env_cubemap = riflessi_propri
 	_body.ripple_max_resolution = 128
 	add_child(_body, false, Node.INTERNAL_MODE_FRONT)
 	if cil:

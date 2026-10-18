@@ -75,6 +75,7 @@ func _acqua(parent: Node3D, pos: Vector3, size: Vector3, colore: String, cil: bo
 	a.position = pos
 	a.forma = 1 if cil else 0
 	a.inner_size = size
+	a.riflessi_propri = size.y < 0.5   # i bassi si guardano da sopra
 	if colore == "vuoto":
 		a.style = load(DIR + "acqua_verde.tres")
 		a.fill = 0.0
@@ -191,16 +192,17 @@ func _cilindro_b(t: Node3D, colore: String, miscuglio_: bool, basso: bool) -> vo
 
 
 ## Il disegno dei bambini sul vetro del giallo, dal lato del miscuglio, all'altezza degli occhi; se il
-## giallo è basso, sul davanti del suo basamento.
+## giallo è basso, più piccolo sul suo vetro basso.
 func _disegno(t: Node3D, basso: bool) -> void:
 	if stile == "A":
 		if basso:
-			_disegno_piano(t, Vector3(-0.45, 0.2, 0.58 + 0.012), 0.75)
+			# sul vetro basso del giallo (fascia di 0,22 m): più piccolo
+			_disegno_piano(t, Vector3(0.6, A_BASSO_BASE + 0.10 + 0.108, 0.32 * 1.25 + 0.024), 0.5)
 		else:
 			_disegno_piano(t, Vector3(0.5, A_BASE + 0.85, 0.332 + 0.012), 1.0)
 	else:
 		if basso:
-			_disegno_curvo(t, 0.55 * B_BASSO_SCALA + 0.03, 0.2, -25.0, 0.75)
+			_disegno_curvo(t, 0.55 * B_BASSO_SCALA + 0.014, B_BASSO_BASE + 0.19, 25.0, 0.8)
 		else:
 			_disegno_curvo(t, 0.562 + 0.014, B_BASE + 0.6, 28.0, 1.0)
 
@@ -213,7 +215,7 @@ func _luce_alta(parent: Node3D, y: float) -> void:
 	l.position = Vector3(0.0, y, 0.0)
 	l.rotation_degrees.x = -90.0
 	l.light_color = Color(1.0, 0.95, 0.86)
-	l.light_energy = 3.0
+	l.light_energy = 1.2
 	l.spot_range = 1.45   # arriva all'acqua ma non al pavimento (senza ombre passerebbe la base)
 	l.spot_angle = 50.0
 	l.spot_attenuation = 0.8
@@ -266,6 +268,14 @@ func _mat_disegno() -> StandardMaterial3D:
 	m.albedo_color = Color(0.86, 0.84, 0.78)
 	m.roughness = 0.85
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED   # il foglio piegato sul cilindro
+	# carta sottile attaccata a un vetro illuminato: la luce dell'acquario passa dal foglio e il disegno
+	# traspare anche senza torcia (emissione col disegno stesso, tinta della luce gialla dell'acqua)
+	m.backlight_enabled = true
+	m.backlight = Color(0.55, 0.5, 0.3)
+	m.emission_enabled = true
+	m.emission_texture = m.albedo_texture
+	m.emission = Color(1.0, 0.9, 0.55)
+	m.emission_energy_multiplier = 0.55
 	return m
 
 
@@ -456,6 +466,7 @@ func _gabbie(n: Node3D) -> void:
 			o.light_energy = 3.0
 			o.omni_range = 8.0
 			o.omni_attenuation = 1.2
-			o.shadow_enabled = true
+			# senza ombre: le sbarre della gabbia facevano enormi ventagli neri sul muro
+			o.shadow_enabled = false
 			o.light_volumetric_fog_energy = 1.2
 			n.add_child(o)

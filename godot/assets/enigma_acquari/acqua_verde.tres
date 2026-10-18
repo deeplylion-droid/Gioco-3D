@@ -4,23 +4,23 @@
 
 [resource]
 script = ExtResource("1")
-absorption = Vector3(1.8, 0.08, 1.6)
-turbidity = 0.3
-scatter_color = Color(0.28, 0.88, 0.16, 1)
-scatter_ambient = 0.35
-roughness = 0.04
-wave_strength_a = 0.05
-wave_strength_b = 0.04
-wave_speed = 0.03
+absorption = Vector3(4.0, 0.45, 3.6)
+turbidity = 0.7
+scatter_color = Color(0.05, 0.26, 0.04, 1)
+scatter_ambient = 0.1
+roughness = 0.02
+wave_strength_a = 0.14
+wave_strength_b = 0.11
+wave_speed = 0.05
 refraction_strength = 0.12
-reflection_strength = 1.4
+reflection_strength = 2.0
 foam_color = Color(0.75, 0.85, 0.6, 1)
 foam_shore_amount = 0.3
 foam_shore_width = 0.06
 foam_ripple_amount = 1.0
 scum_amount = 0.15
 scum_color = Color(0.4, 0.4, 0.32, 1)
-caustics_strength = 0.6
+caustics_strength = 1.0
 caustics_scale = 2.0
 underwater_fog_color = Color(0.014, 0.044, 0.008, 1)
 glow_scatter = 1.0
