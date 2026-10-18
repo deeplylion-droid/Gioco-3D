@@ -1679,6 +1679,16 @@
   "lufs": -22.8,
   "lufs_max": -16.0
  },
+ "tecnici/zampette_condotto": {
+  "file": "res://audio/tecnici/zampette_condotto.ogg",
+  "canali": 2,
+  "durata": 7.96,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "l'agnellino che corre via dentro il condotto della grata di C2 (v0.3.6)",
+  "lufs": -27.6,
+  "lufs_max": -20.0
+ },
  "torre/portone_torre_apre": {
   "file": "res://audio/torre/portone_torre_apre.ogg",
   "canali": 1,

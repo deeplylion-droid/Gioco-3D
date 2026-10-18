@@ -1,19 +1,27 @@
 extends Node
 ## L'agnellino della scala di C2 (tappa 7 B) inseguito dal giocatore che corre: compare col blackout salendo la
-## rampa F2, scappa quando ti avvicini, non lo raggiungi e non lo vedi mai sparire (sparisce solo fuori vista).
-## Prova della v0.3.4: "deve correre più veloce perché altrimenti puoi raggiungerlo e vederlo sparire".
+## rampa F2, scappa quando ti avvicini, corre piano con le zampe a tempo e si infila nella grata sfondata del
+## muro di C2 prima che tu lo raggiunga; quando sparisce è tutto dentro la cavità buia. Mentre si infila non
+## passa mai attraverso il muro, il pavimento o la roba accatastata, e il giocatore nel buco non ci entra, neanche accucciato.
+## Prova della v0.3.5: "sgambetta come una pazza, facciamo che invece corre piano ed entra in un buco nel muro
+## invece che sparire".
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_agnellino.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
-## Da dove si parte (la rampa F2) e la strada di corsa, nelle coordinate della scena dei tecnici.
+## Da dove si parte (la rampa F2) e la strada di corsa fino al buco, nelle coordinate della scena dei tecnici.
 const PARTENZA := Vector3(49.5, 3.625, -7.8)
-const CORSA := [Vector3(44.55, 7.25, -7.8), Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 15.0),
-		Vector3(38.0, 9.05, 15.0)]
+const CORSA := [Vector3(44.55, 7.25, -7.8), Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 4.3)]
+## Il buco (come tools/blender/ambienti2_raccordo.py): largo 0,85, alto 0,9, nel muro spesso 0,3.
+const BUCO_MEZZA_LARGHEZZA := 0.425
+const BUCO_ALTO := 0.9
+const MURO := 0.3
 
 var p: Player
+var tec: Node3D
+var ag: AgnellinoScala
 var _comparso := false
 var _sparito_a := -1
-var _visibile_quando_sparisce := false
+var _fuori_dalla_cavita := false
 var _corso := 0
 var _passed := 0
 var _failed := 0
@@ -34,8 +42,8 @@ func _run() -> void:
 		if p.input_enabled:
 			break
 		await get_tree().process_frame
-	var tec: Node3D = get_tree().current_scene.get_node("Tecnici")
-	var ag := tec.get_node_or_null("AgnellinoScala") as AgnellinoScala
+	tec = get_tree().current_scene.get_node("Tecnici")
+	ag = tec.get_node_or_null("AgnellinoScala") as AgnellinoScala
 	check(ag != null, "c'è l'agnellino della scala")
 	if ag == null:
 		_fine()
@@ -47,6 +55,8 @@ func _run() -> void:
 	await _frames(10)
 	var b: Bambino = null
 	var minima := INF
+	var tempo_anim := 0.0
+	var compenetra := ""
 	Input.action_press(&"move_forward")
 	Input.action_press(&"sprint")
 	var tappa := 0
@@ -55,47 +65,91 @@ func _run() -> void:
 			b = ag.bambino
 			_comparso = true
 			b.sparito.connect(_su_sparito.bind(b))
-		var t: Vector3 = tec.to_global(CORSA[tappa])
-		var d := t - p.global_position
-		if Vector2(d.x, d.z).length() < 0.35:
-			tappa += 1
-			if tappa >= CORSA.size():
-				break
-			continue
-		p.set_look(atan2(-d.x, -d.z), 0.0)
+		if tappa < CORSA.size():
+			var t: Vector3 = tec.to_global(CORSA[tappa])
+			var d := t - p.global_position
+			if Vector2(d.x, d.z).length() < 0.35:
+				tappa += 1
+				continue
+			p.set_look(atan2(-d.x, -d.z), 0.0)
+		elif _sparito_a >= 0:
+			break
 		if b and is_instance_valid(b) and b.visible:
-			# si corre guardando avanti lungo la strada, come chi lo insegue
 			minima = minf(minima, b.global_position.distance_to(p.global_position))
+			if b.modalita == Bambino.Modalita.SCAPPA:
+				for ap in b.find_children("*", "AnimationPlayer", true, false):
+					tempo_anim = (ap as AnimationPlayer).speed_scale
+				if compenetra == "":
+					compenetra = _compenetra(b)
 		await get_tree().physics_frame
 		_corso += 1
 	Input.action_release(&"move_forward")
 	Input.action_release(&"sprint")
 	check(_comparso, "salendo la rampa F2 l'agnellino compare in cima alla scala di C2")
-	check(_sparito_a >= 0, "scappa e sparisce (dopo %d frame di corsa)" % _sparito_a)
-	check(_sparito_a >= 0 and not _visibile_quando_sparisce, "non lo si vede sparire: nessun punto del corpo è in vista quando sparisce")
-	check(minima > 3.0, "correndo non lo si raggiunge (il più vicino: %.1f m)" % minima)
+	check(is_equal_approx(ag.velocita_corsa, 3.0) and is_equal_approx(tempo_anim, ag.velocita_corsa / Bambino.VEL_CORSA_ANIM),
+			"corre piano (%.1f m/s), con l'animazione a tempo (velocità %.2f)" % [ag.velocita_corsa, tempo_anim])
+	check(_sparito_a >= 0, "si infila nel buco e sparisce (dopo %d frame di corsa)" % _sparito_a)
+	check(_sparito_a >= 0 and not _fuori_dalla_cavita, "quando sparisce è tutto dentro la cavità, al buio")
+	check(compenetra == "", "correndo e infilandosi non passa attraverso muri, pavimento e roba accatastata %s" % compenetra)
+	check(minima > 1.2, "correndo non lo si raggiunge (il più vicino: %.1f m)" % minima)
 	await _frames(10)
 	check(ag.bambino == null or not is_instance_valid(ag.bambino), "non c'è più")
+	# il giocatore nel buco non ci entra, neanche accucciato
+	var dir := tec.global_basis * Vector3(1, 0, 0)
+	p.teleport(tec.to_global(Vector3(44.2, 9.1, ag.buco_z)), atan2(-dir.x, -dir.z), 0.0)
+	Input.action_press(&"crouch")
+	await _frames(30)
+	Input.action_press(&"move_forward")
+	var massima := -INF
+	for i in 150:
+		p.set_look(atan2(-dir.x, -dir.z), 0.0)
+		massima = maxf(massima, tec.to_local(p.global_position).x)
+		await get_tree().physics_frame
+	Input.action_release(&"move_forward")
+	Input.action_release(&"crouch")
+	check(massima > 44.7 and massima < ag.muro_x, "nel buco il giocatore non entra, neanche accucciato (arriva a x %.2f, il muro è a %.2f)" % [massima, ag.muro_x])
 	_fine()
 
 
-## Quando sparisce: una griglia fitta di punti sul corpo, nessuno nell'inquadratura e senza muri in mezzo.
+## Punti del corpo (lungo il suo asse alto, piegato quando si infila): dentro lo spessore del muro solo dentro
+## il buco, mai sotto il pavimento.
+func _compenetra(b: Bambino) -> String:
+	for h in range(0, 14):
+		for l in range(-2, 3):
+			var w: Vector3 = _piedi(b) + b.global_basis.y * (h * 0.1) + b.global_basis.x * (l * 0.1)
+			var q := tec.to_local(w)
+			var alto := q.y - ag.posizione.y
+			if alto < -0.03:
+				return "(sotto il pavimento: %s)" % q
+			if q.x > ag.muro_x and q.x < ag.muro_x + MURO:
+				if alto > BUCO_ALTO or absf(q.z - ag.buco_z) > BUCO_MEZZA_LARGHEZZA:
+					return "(nel muro: %s)" % q
+			# e dentro niente di solido (la roba accatastata ai muri, gli spigoli del buco)
+			if h > 0:
+				var pq := PhysicsPointQueryParameters3D.new()
+				pq.position = w
+				pq.exclude = [p.get_rid()]
+				var dentro := p.get_world_3d().direct_space_state.intersect_point(pq, 1)
+				if not dentro.is_empty():
+					return "(dentro %s: %s)" % [dentro[0].collider.name, q]
+	return ""
+
+
+## I piedi del modello (quando si piega i modelli si alzano un po' sopra il nodo).
+func _piedi(b: Bambino) -> Vector3:
+	var m := b.get_node_or_null(^"Calmo") as Node3D
+	return m.global_position if m else b.global_position
+
+
+## Quando sparisce: tutti i punti del corpo oltre il muro, dentro la cavità.
 func _su_sparito(b: Bambino) -> void:
 	_sparito_a = _corso
-	var cam := get_viewport().get_camera_3d()
-	var occhio := p.get_eye_position()
-	var space := p.get_world_3d().direct_space_state
-	for h in range(0, 13):
-		for l in range(-3, 4):
-			var punto: Vector3 = b.global_position + b.global_basis.y * (h * 0.1) + b.global_basis.x * (l * 0.1)
-			if cam and not cam.is_position_in_frustum(punto):
-				continue
-			var q := PhysicsRayQueryParameters3D.create(occhio, punto)
-			q.exclude = [p.get_rid()]
-			var hit := space.intersect_ray(q)
-			if hit.is_empty() or hit.position.distance_to(punto) < 0.2:
-				_visibile_quando_sparisce = true
-				print("  in vista quando sparisce: ", punto)
+	for h in range(0, 14):
+		for l in range(-2, 3):
+			var w: Vector3 = _piedi(b) + b.global_basis.y * (h * 0.1) + b.global_basis.x * (l * 0.1)
+			if tec.to_local(w).x < ag.muro_x + MURO:
+				_fuori_dalla_cavita = true
+				print("  fuori dalla cavità quando sparisce: ", tec.to_local(w))
 				return
 
 
