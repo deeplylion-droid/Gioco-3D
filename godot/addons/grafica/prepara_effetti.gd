@@ -5,8 +5,8 @@ extends Node
 ## secondo di freeze"): il motore compila shader e pipeline la prima volta che li disegna.
 ## Appena entra il livello (lo schermo è ancora nero: Dissolvenza dopo la schermata di caricamento)
 ## per [constant FOTOGRAMMI] fotogrammi accende davanti alla camera, una volta sola:
-## - le particelle e le mesh dello zaino (aspirazione, getto, schizzi, gocce, colonna aspirata,
-##   vortice) e i due getti (WaterStream: il nastro del nucleo, e la sua aspirazione);
+## - le particelle e le mesh del giocatore (zaino: aspirazione, getto, schizzi, gocce, colonna
+##   aspirata, vortice; EffettiZaino: schizzi e nebbia dove il getto colpisce; SlideFx) e i due getti (WaterStream: il nastro del nucleo, e la sua aspirazione);
 ## - una macchia di bagnato (il primo Decal prepara l'atlante dei decal), un geyser della fossa
 ##   (GeyserFossa) e lo schermo rotto del jumpscare (glitch_schermo);
 ## - i suoni che partono in quei momenti (caricati in memoria, senza suonarli).
@@ -56,7 +56,9 @@ func _process(_delta: float) -> void:
 
 func _raccogli() -> void:
 	var visti := {}
-	for radice in [pack, getto]:
+	# Tutto il giocatore: anche gli effetti che stanno fuori dallo zaino (EffettiZaino, gli schizzi
+	# dell'impatto sui muri; SlideFx, gli schizzi della scivolata).
+	for radice in [pack.get_parent(), pack, getto]:
 		if radice == null:
 			continue
 		for n in (radice as Node).find_children("*", "GeometryInstance3D", true, false):

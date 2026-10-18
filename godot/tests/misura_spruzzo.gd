@@ -74,14 +74,24 @@ func _run() -> void:
 	p.water_pack.call(&"set_equipped", true, false)
 	p.teleport(POSIZIONE, 0.0, 0.0)
 	p.look_at_point(MIRA)
-	await _frames(90)
+	await _frames(30)
+	if OS.get_cmdline_user_args().has("prepara_qui"):
+		# Prova: la preparazione rifatta qui, davanti al tornello (con le luci di qui).
+		var pr := PreparaEffetti.new()
+		pr.pack = p.water_pack
+		pr.getto = p.water_pack.get_node_or_null(^"GettoPotente")
+		p.water_pack.add_child(pr)
+	await _frames(60)
 	for volta in ["PRIMA", "SECONDA"]:
 		p.water_pack.set_tank_amount(20.0)
 		_azzera()
 		_righe.clear()
 		_registra = true
 		Input.action_press(&"spray")
-		await _frames(45)
+		for i in 45:
+			if volta == "PRIMA":
+				_nascondi()
+			await get_tree().process_frame
 		Input.action_release(&"spray")
 		await _frames(15)
 		_registra = false
@@ -109,6 +119,22 @@ func _stampa(volta: String) -> void:
 			print("  #%02d %6.0f ms (process %.0f, physics %.0f)%s%s%s" % [i, r.ms, r.process, r.physics,
 					" [carica]" if r.carica else "", " [getto]" if r.getto else "", comp])
 	print("  compilazioni in tutto: %s" % str(totali))
+
+
+## Prova per trovare il colpevole: nasconde una parte degli effetti durante il primo spruzzo
+## (argomento nascondi_getto, nascondi_particelle, nascondi_decal, nascondi_lancia).
+func _nascondi() -> void:
+	var args := OS.get_cmdline_user_args()
+	if args.has("nascondi_getto"):
+		(p.water_pack.get(&"stream") as Node3D).visible = false
+	if args.has("nascondi_particelle"):
+		for n in p.find_children("*", "GPUParticles3D", true, false):
+			(n as Node3D).visible = false
+	if args.has("nascondi_decal"):
+		for n in get_tree().root.find_children("*", "Decal", true, false):
+			(n as Node3D).visible = false
+	if args.has("nascondi_lancia"):
+		p.water_pack.view_model.visible = false
 
 
 func _frames(n: int) -> void:
