@@ -9,7 +9,7 @@ Fila: **giallo | miscuglio | blu**. Il miscuglio è **basso** (bordo a 0,8 m, ap
 tenuta in basso non versa più su), un po' più avanti, con 1,2 m liberi ai lati. Sotto c'è la
 **valvola rossa** (avvitata alla bocca del basamento, scarico a pavimento davanti). Il **disegno a
 pastello** è attaccato col nastro di carta al vetro del giallo, dal lato del miscuglio, all'altezza
-degli occhi (al buio si vede solo con la torcia). Dentro gli alti c'è una luce di servizio.
+degli occhi: carta sottile retroilluminata dalla luce dell'acquario, si legge anche senza torcia. Dentro gli alti c'è una luce di servizio.
 
 ## Domande per l'utente
 
@@ -20,7 +20,7 @@ degli occhi (al buio si vede solo con la torcia). Dentro gli alti c'è una luce 
    appena esci, a 9 m (`*1_uscita`). **2** a est, a sud del portone della torre: dalla serranda non
    si vede, la nasconde la vasca centrale; si scopre a metà sala (`*2_uscita`, `*2_meta`).
 3. **Il miscuglio basso** in mezzo a due alti (opzione 1, tutti gli scatti) o **tutti e tre bassi**
-   (opzione 3, `A1_vicino_tuttibassi`, `B1_vicino_tuttibassi`, da confrontare con `A1_vicino`, `B1_vicino`).
+   (opzione 3, col disegno più piccolo sul vetro basso del giallo: `A1_vicino_tuttibassi`, `B1_vicino_tuttibassi`, da confrontare con `A1_vicino`, `B1_vicino`).
 4. **Le lampade del portone**: fila di **lampadine da luna park** intorno al portone, o **due lampade
    a gabbia** ai lati (`portone_*_spente`, `portone_*_accese`).
 5. **Il disegno**: va bene così, attaccato al vetro del giallo? (`A1_disegno_A`, `B1_disegno_B`)

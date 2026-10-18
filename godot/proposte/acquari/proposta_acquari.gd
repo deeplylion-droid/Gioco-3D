@@ -75,7 +75,9 @@ func _acqua(parent: Node3D, pos: Vector3, size: Vector3, colore: String, cil: bo
 	a.position = pos
 	a.forma = 1 if cil else 0
 	a.inner_size = size
-	a.riflessi_propri = size.y < 0.5   # i bassi si guardano da sopra
+	# i bassi si guardano da sopra: cubemap propria per i riflessi (nel B no: con la sala intera supera la
+	# memoria della macchina negli scatti, restano i riflessi in screen space)
+	a.riflessi_propri = size.y < 0.5 and not cil
 	if colore == "vuoto":
 		a.style = load(DIR + "acqua_verde.tres")
 		a.fill = 0.0
