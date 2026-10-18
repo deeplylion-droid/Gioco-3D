@@ -83,6 +83,7 @@
 [ext_resource type="Script" path="res://scripts/environment/kid_sighting.gd" id="79_g4hmn"]
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_cubo.tscn" id="80_xkett"]
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_agnello.tscn" id="81_ccseb"]
+[ext_resource type="PackedScene" path="res://scenes/sala/enigma_acquari.tscn" id="82_enigma"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5tb5"]
 resource_name = "M_acqua_vasca"
@@ -946,6 +947,12 @@ script = ExtResource("76_nwfer")
 anta = NodePath("../../Sala/Interattivi/sala_portone_torre")
 tappa8 = NodePath("../LeiSbuca")
 vetro = NodePath("../../Sala/Interattivi/sala_lampeggiante_torre")
+apertura = 2
+
+[node name="EnigmaAcquari" parent="Gioco" unique_id=1873301457 node_paths=PackedStringArray("portone", "tappa8", "serranda") instance=ExtResource("82_enigma")]
+portone = NodePath("../PortoneTorre")
+tappa8 = NodePath("../LeiSbuca")
+serranda = NodePath("../../Tecnici/Logica/SerrandaMagazzino")
 
 [node name="SalitaTorre" type="Area3D" parent="Gioco" unique_id=260514101]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 5, -16.5)

@@ -147,6 +147,7 @@ func capture_snapshot(checkpoint_id: String, order: int, spawn: Transform3D) -> 
 			"yaw": atan2(-f.x, -f.z),
 			"inventory": inventory,
 			"water": player.water_pack.tank_amount if player.water_pack else 0.0,
+			"water_mix": player.water_pack.water_mix.duplicate() if player.water_pack else {},
 		},
 		"objects": objects,
 		"removed": _removed.keys(),
@@ -183,6 +184,7 @@ func _apply_snapshot(s: Dictionary) -> void:
 			var pack := player.water_pack
 			pack.set_equipped(pack.start_equipped or player.has_item(&"zaino_pompa"), false)
 			pack.set_tank_amount(float(ps.get("water", pack.tank_amount)))
+			pack.set_water_mix(ps.get("water_mix", {}))
 		player.input_enabled = true
 
 

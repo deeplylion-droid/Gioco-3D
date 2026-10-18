@@ -5,7 +5,9 @@ extends Node3D
 ## la tappa 8. Poi si apre scorrendo di [member corsa] metri, in due modi ([member apertura]):
 ## - DOPO_TAPPA8 (di serie, scelto dall'utente il 16 ottobre): da solo, appena lei è andata via
 ##   (LeiSbuca.andata_via);
-## - ALL_ARRIVO: quando arrivi davanti ([method apri], lo chiama la sala con FineDemo).
+## - ALL_ARRIVO: quando arrivi davanti ([method apri], lo chiama la sala con FineDemo);
+## - SOLO_ENIGMA (GDD, 18 ottobre: prende il posto di DOPO_TAPPA8): lo apre solo l'enigma degli
+##   acquari (EnigmaAcquari chiama [method apri]); né la tappa 8 né l'arrivo lo aprono.
 ## Il movimento segue il suono del motore (portone_torre_apre, 8,5 s, lo suona l'addon audio su
 ## [signal apertura_iniziata]): la serratura a 0, l'anta parte a [member partenza] secondi,
 ## accelera per [member accelera] secondi, frena nell'ultimo [member frena] e sbatte a fine corsa
@@ -14,7 +16,7 @@ extends Node3D
 signal apertura_iniziata
 signal aperto
 
-enum Apertura { ALL_ARRIVO, DOPO_TAPPA8 }
+enum Apertura { ALL_ARRIVO, DOPO_TAPPA8, SOLO_ENIGMA }
 
 ## Quando si apre: di serie da solo dopo la tappa 8 (scelta dell'utente del 16 ottobre).
 @export var apertura := Apertura.DOPO_TAPPA8
@@ -89,7 +91,10 @@ func _ready() -> void:
 
 
 ## Vero se si può aprire: dopo la tappa 8 (o se non c'è).
+## Con SOLO_ENIGMA, solo dopo che l'enigma l'ha aperto.
 func si_puo_aprire() -> bool:
+	if apertura == Apertura.SOLO_ENIGMA:
+		return in_movimento or quanto >= 1.0
 	if tappa8 == null or not (&"fase" in tappa8):
 		return true
 	var s: Script = tappa8.get_script()

@@ -21,6 +21,9 @@ signal suck_stopped
 ## Il getto ha colpito qualcosa in questo tick (per suoni ed effetti).
 signal jet_hit(collider: Object, point: Vector3, normal: Vector3)
 signal tank_changed(amount: float, capacity: float)
+## Il colore dell'acqua nel serbatoio è cambiato (vedi WaterMix): lo seguono la finestrella
+## della lancia e il getto.
+signal water_mix_changed(mix: Dictionary)
 ## Si è provato a spruzzare (o si sta spruzzando) con il serbatoio vuoto.
 signal tank_empty
 ## Si sta aspirando con il serbatoio pieno.
@@ -119,6 +122,8 @@ enum TankIndicator { HUD_BAR, LANCE, NONE }
 
 ## Litri nel serbatoio.
 var tank_amount := 0.0
+## Il colore dell'acqua nel serbatoio (WaterMix): si mescola per litri aspirando.
+var water_mix := {}
 var _charge_t := 0.0
 var is_spraying := false
 var is_sucking := false
@@ -462,7 +467,10 @@ func _deliver(liters: float) -> void:
 		body.apply_impulse(dir * push_impulse * liters, hit_point - body.global_position)
 	for c in get_tree().get_nodes_in_group(&"water_catchers"):
 		if c.catches_point(hit_point):
-			c.receive_water(liters, hit_point, dir)
+			if c is WaterTank:
+				(c as WaterTank).receive_water(liters, hit_point, dir, water_mix)
+			else:
+				c.receive_water(liters, hit_point, dir)
 
 
 func _apply_boost(dir: Vector3, delta: float) -> void:
@@ -498,9 +506,10 @@ func _update_suction(want: bool, delta: float) -> void:
 	if source == null:
 		return
 	var room := tank_capacity - tank_amount if tank_enabled else suck_rate * delta
+	var source_mix: Dictionary = source.mix if &"mix" in source else {}
 	var got: float = source.take_water(minf(suck_rate * delta, room))
 	if tank_enabled and got > 0.0:
-		_set_amount(tank_amount + got)
+		_add_water(got, source_mix)
 
 
 ## Cerca da dove aspirare lungo lo sguardo: la superficie di una vasca o di un volume
@@ -559,11 +568,34 @@ func _refill_from_flowing_water(delta: float) -> void:
 
 ## Aggiunge acqua al serbatoio (litri).
 func refill(liters: float) -> void:
-	_set_amount(tank_amount + liters)
+	_add_water(liters, {})
 
 
+## Mette il serbatoio a [param liters] litri: l'acqua in più è chiara.
 func set_tank_amount(liters: float) -> void:
-	_set_amount(liters)
+	if liters > tank_amount:
+		_add_water(liters - tank_amount, {})
+	else:
+		_set_amount(liters)
+
+
+## Cambia il colore dell'acqua nel serbatoio (vedi WaterMix).
+func set_water_mix(m: Dictionary) -> void:
+	var v := {} if tank_amount <= 0.001 else m.duplicate()
+	if v == water_mix:
+		return
+	water_mix = v
+	water_mix_changed.emit(water_mix)
+
+
+## Aggiunge [param liters] litri d'acqua del colore [param m]: si mescola per litri.
+func _add_water(liters: float, m: Dictionary) -> void:
+	var v := clampf(tank_amount + liters, 0.0, tank_capacity)
+	if v <= tank_amount:
+		return
+	var mixed := WaterMix.mescola(water_mix, tank_amount, m, v - tank_amount)
+	_set_amount(v)
+	set_water_mix(mixed)
 
 
 func _set_amount(liters: float) -> void:
@@ -574,6 +606,8 @@ func _set_amount(liters: float) -> void:
 		_full_notified = false
 	tank_amount = v
 	tank_changed.emit(tank_amount, tank_capacity)
+	if tank_amount <= 0.001:
+		set_water_mix({})
 
 
 # --- Grafica -------------------------------------------------------------------------------
