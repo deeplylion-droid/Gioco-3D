@@ -490,12 +490,16 @@ func _apply_boost(dir: Vector3, delta: float) -> void:
 func _update_suction(want: bool, delta: float) -> void:
 	var source = null
 	if want:
+		source = find_suction_source()
+		# Aspirando un colore (gli acquari dell'enigma) lo zaino butta via da solo l'acqua chiara che
+		# aveva (scelta B dell'utente, 18 ottobre): restano solo i colori già dentro.
+		if source and tank_enabled and &"fill_pigment" in source and String(source.get(&"fill_pigment")) != "":
+			scarta_acqua_chiara()
 		if tank_enabled and tank_amount >= tank_capacity - 0.001:
+			source = null
 			if not _full_notified:
 				_full_notified = true
 				tank_full.emit()
-		else:
-			source = find_suction_source()
 	if source and not is_sucking:
 		is_sucking = true
 		suck_started.emit()
@@ -577,6 +581,16 @@ func set_tank_amount(liters: float) -> void:
 		_add_water(liters - tank_amount, {})
 	else:
 		_set_amount(liters)
+
+
+## Butta via la parte chiara dell'acqua nel serbatoio: restano solo i colori (vedi WaterMix).
+func scarta_acqua_chiara() -> void:
+	var k := WaterMix.intensita(water_mix)
+	if tank_amount <= 0.001 or k >= 0.9999:
+		return
+	var m := WaterMix.solo_colori(water_mix)
+	_set_amount(tank_amount * k)
+	set_water_mix(m)
 
 
 ## Cambia il colore dell'acqua nel serbatoio (vedi WaterMix).
