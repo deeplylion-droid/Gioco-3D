@@ -18,7 +18,7 @@ global uniform sampler2D water_glow_tex;
 global uniform int water_glow_count;
 
 const float WATER_IOR = 1.333;
-const int WATER_MAX_BODIES = 8;
+const int WATER_MAX_BODIES = 12;
 
 // Dati di una massa d'acqua letti dalla tabella globale (4 texel per vasca).
 struct WaterBody {

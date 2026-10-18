@@ -59,6 +59,18 @@ func _run() -> void:
 	check(enigma.comparsi and giallo.visible and blu.visible and misto.visible, "gli acquari ci sono")
 	check(_lampade_accese(), "le lampade del portone sono accese")
 	check(not _collisioni_spente(), "e hanno le collisioni")
+	# L'acqua vera dell'addon sui tre acquari (la mette enigma-ambiente): con le 7 masse d'acqua che
+	# ci sono già fanno 10, e l'addon ne regge 12.
+	var wm := get_node_or_null(^"/root/WaterManager")
+	if wm:
+		for t in [giallo, blu, misto]:
+			var link := (load("res://addons/acqua/scenes/acqua_per_vasca.tscn") as PackedScene).instantiate()
+			link.set(&"tank", t)
+			t.add_child(link)
+		await _frames(5)
+		var masse: int = (wm.call(&"get_bodies") as Array).size()
+		var massimo: int = (wm.get_script() as Script).get_script_constant_map().get("MAX_BODIES", 0)
+		check(masse >= 10 and masse <= massimo, "le masse d'acqua dell'addon ci stanno tutte (%d su %d)" % [masse, massimo])
 	check(not enigma.attivi, "prima della tappa 8 non funzionano")
 	p.water_pack.set_tank_amount(0.0)
 	await _aspira(giallo)
