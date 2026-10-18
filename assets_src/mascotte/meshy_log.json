@@ -1,0 +1,954 @@
+{
+ "polpo_a_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-6917-71cf-8dec-a64337e6b779",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon octopus standing upright on its curled lower tentacles like legs, with a big round coral-pink head, big round friendly eyes with long lashes, rosy cheeks and a wide happy smile. Two of its upper tentacles are raised and opened wide in a big welcoming hug gesture, waving hello, the other tentacles curl on the pedestal. It wears a little white sailor hat with a blue band tilted on its head and a blue polka-dot bow tie.  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mostro_a_nbp": {
+  "kind": "text-to-image",
+  "task_id": "01a14fe1-74a8-7704-aec4-6b9478f035e3",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A photorealistic monstrous shark creature, a living animal, not a statue or a toy: a huge, round, bloated barrel-shaped body leaning forward, standing on two short, thick, slightly bent legs with reptile-like three-toed feet with dark claws. The large head merges directly into the body with no neck, a rounded blunt snout with a white patch above the mouth, tiny black eyes set far apart, a very wide grin full of small sharp pointed teeth with a red mouth inside, gill slits on the sides. A tall dorsal fin on the back and a shark tail fin behind, held almost horizontal. Two short arms with long hands and long curved claws, one arm raised forward reaching. The skin is wet living shark skin, mottled grey and brown in blotches, with a paler belly and snout, glistening with water. Clumsy but menacing, like a bulldog. About 2.2 metres tall. It looks a bit goofy and almost endearing in its proportions, a creature design faithful to a storybook watercolor monster, but with real wet skin.  Full body from head to feet, centered, seen from a three-quarter front view, standing on a plain flat neutral light grey studio background with soft even lighting, no environment.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "squalo_a_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-5e5e-7543-8e48-3eae2cdb5560",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon shark standing upright on two short sturdy legs, light blue-grey back and white belly, a rounded snout, big round friendly eyes, a big toothy grin with rounded cartoon teeth, a tall dorsal fin and its tail fin behind. It wears red lifeguard swim shorts. With its right fin-hand it gives a big thumbs up, and with its left arm it holds a red and white life ring against its hip.  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "squalo_b_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-633d-7082-8cf2-2834fee667aa",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon shark standing upright on two short sturdy legs, deep turquoise-blue back and cream belly, a rounded snout, big round friendly eyes, a wide open happy smile with a few rounded cartoon teeth, a tall dorsal fin and its tail fin behind. It wears a little white sailor hat with a blue band and a yellow lifeguard whistle on a cord around its neck. With both fin-hands it holds up in front of its chest a wooden welcome sign shaped like a surfboard, painted with colorful waves and a sun (no text).  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mostro_a_gpt": {
+  "kind": "text-to-image",
+  "task_id": "01a14fe1-97f3-71c2-959d-7e92ee016659",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A photorealistic monstrous shark creature, a living animal, not a statue or a toy: a huge, round, bloated barrel-shaped body leaning forward, standing on two short, thick, slightly bent legs with reptile-like three-toed feet with dark claws. The large head merges directly into the body with no neck, a rounded blunt snout with a white patch above the mouth, tiny black eyes set far apart, a very wide grin full of small sharp pointed teeth with a red mouth inside, gill slits on the sides. A tall dorsal fin on the back and a shark tail fin behind, held almost horizontal. Two short arms with long hands and long curved claws, one arm raised forward reaching. The skin is wet living shark skin, mottled grey and brown in blotches, with a paler belly and snout, glistening with water. Clumsy but menacing, like a bulldog. About 2.2 metres tall. It looks a bit goofy and almost endearing in its proportions, a creature design faithful to a storybook watercolor monster, but with real wet skin.  Full body from head to feet, centered, seen from a three-quarter front view, standing on a plain flat neutral light grey studio background with soft even lighting, no environment.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "squalo_a_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-8079-738f-8b02-ba0e834fc5b0",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon shark standing upright on two short sturdy legs, light blue-grey back and white belly, a rounded snout, big round friendly eyes, a big toothy grin with rounded cartoon teeth, a tall dorsal fin and its tail fin behind. It wears red lifeguard swim shorts. With its right fin-hand it gives a big thumbs up, and with its left arm it holds a red and white life ring against its hip.  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "squalo_b_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-8670-75c8-8616-6973a8ec49d3",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon shark standing upright on two short sturdy legs, deep turquoise-blue back and cream belly, a rounded snout, big round friendly eyes, a wide open happy smile with a few rounded cartoon teeth, a tall dorsal fin and its tail fin behind. It wears a little white sailor hat with a blue band and a yellow lifeguard whistle on a cord around its neck. With both fin-hands it holds up in front of its chest a wooden welcome sign shaped like a surfboard, painted with colorful waves and a sun (no text).  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "polpo_a_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-8c5c-7273-8275-2b4ffe86b796",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon octopus standing upright on its curled lower tentacles like legs, with a big round coral-pink head, big round friendly eyes with long lashes, rosy cheeks and a wide happy smile. Two of its upper tentacles are raised and opened wide in a big welcoming hug gesture, waving hello, the other tentacles curl on the pedestal. It wears a little white sailor hat with a blue band tilted on its head and a blue polka-dot bow tie.  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "polpo_b_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-92e9-7208-98d0-ceed8ef93e4a",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon octopus standing upright on its curled lower tentacles like legs, with a big round lavender-purple head with lighter spots, big round friendly eyes, rosy cheeks and a wide happy smile. It wears a yellow snorkel mask pushed up on its forehead and an orange swim ring around its waist. One upper tentacle waves hello high in the air, another holds a striped beach ball, another holds a little ice cream cone, the other tentacles curl on the pedestal.  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "mostro_b_nbp": {
+  "kind": "text-to-image",
+  "task_id": "01a14fe1-7b9f-74b6-91c0-ba0981ee07ba",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A photorealistic monstrous shark creature, a living animal, not a statue or a toy: a huge, round, bloated barrel-shaped body leaning forward, standing on two short, thick, slightly bent legs with reptile-like three-toed feet with dark claws. The large head merges directly into the body with no neck, a rounded blunt snout with a white patch above the mouth, tiny black eyes set far apart, a very wide grin full of small sharp pointed teeth with a red mouth inside, gill slits on the sides. A tall dorsal fin on the back and a shark tail fin behind, held almost horizontal. Two short arms with long hands and long curved claws, one arm raised forward reaching. The skin is wet living shark skin, mottled grey and brown in blotches, with a paler belly and snout, glistening with water. Clumsy but menacing, like a bulldog. About 2.2 metres tall. A more horrifying version: the skin is scarred, sickly and slimy, with old wounds, barnacle clusters and torn fins, the grin is wider and the teeth are crooked and needle-like in several rows, the tiny eyes are glossy and dead, the claws longer and hooked, the posture more hunched and predatory.  Full body from head to feet, centered, seen from a three-quarter front view, standing on a plain flat neutral light grey studio background with soft even lighting, no environment.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mostro_b_gpt": {
+  "kind": "text-to-image",
+  "task_id": "01a14fe1-9dcd-7715-8866-493c1f9bb3f1",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A photorealistic monstrous shark creature, a living animal, not a statue or a toy: a huge, round, bloated barrel-shaped body leaning forward, standing on two short, thick, slightly bent legs with reptile-like three-toed feet with dark claws. The large head merges directly into the body with no neck, a rounded blunt snout with a white patch above the mouth, tiny black eyes set far apart, a very wide grin full of small sharp pointed teeth with a red mouth inside, gill slits on the sides. A tall dorsal fin on the back and a shark tail fin behind, held almost horizontal. Two short arms with long hands and long curved claws, one arm raised forward reaching. The skin is wet living shark skin, mottled grey and brown in blotches, with a paler belly and snout, glistening with water. Clumsy but menacing, like a bulldog. About 2.2 metres tall. A more horrifying version: the skin is scarred, sickly and slimy, with old wounds, barnacle clusters and torn fins, the grin is wider and the teeth are crooked and needle-like in several rows, the tiny eyes are glossy and dead, the claws longer and hooked, the posture more hunched and predatory.  Full body from head to feet, centered, seen from a three-quarter front view, standing on a plain flat neutral light grey studio background with soft even lighting, no environment.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "polpo_b_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe1-6eef-7551-bb0d-c5c0a0adf5ef",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A life-size painted fiberglass mascot statue from a 1990s family water park aboard a cruise ship, the same family and the same craftsmanship as the jellyfish mascot statue in the reference image: a cheerful cartoon character sculpted in smooth glossy fiberglass and painted in bright saturated colors, with big friendly painted eyes and a wide happy smile. It is clearly a STATUE, a single solid sculpted piece, not a living animal: simplified rounded sculpted shapes, no real skin or scales, painted details. Now, after years abandoned in a wet indoor water park, it is faded, sun-bleached and weathered: cracked gelcoat, chipped and flaking paint showing the white fiberglass underneath, brown water stains and drip marks, patches of green algae in the crevices, white limescale crust. It stands on a sturdy round fiberglass pedestal painted with faded wave patterns, bolted down with big rusty bolts and rusty metal brackets, orange rust streaks running down. Total height about 2.3 metres including the pedestal. Cheerful in daylight, unsettling in the dark. The character is an anthropomorphic friendly cartoon octopus standing upright on its curled lower tentacles like legs, with a big round lavender-purple head with lighter spots, big round friendly eyes, rosy cheeks and a wide happy smile. It wears a yellow snorkel mask pushed up on its forehead and an orange swim ring around its waist. One upper tentacle waves hello high in the air, another holds a striped beach ball, another holds a little ice cream cone, the other tentacles curl on the pedestal.  Full figure from the top of the head to the bottom of the base, centered, seen from a slightly high three-quarter front view, on a plain flat neutral light grey studio background with soft even lighting, no environment, no floor details.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "docs/concept/medusa_statua.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_squalo_b_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-a261-7198-96e7-b0ec58997c30",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@squalo_b_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_polpo_a_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-ae79-75ee-8ab7-933e15b0c502",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@polpo_a_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_squalo_a_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-98d3-74cc-b488-125a66db33d4",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@squalo_a_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_mostro_a_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-c5a5-7486-9be1-7d04dc494a4f",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the dorsal fin and the tail.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mostro_a_nbp"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_squalo_a_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-9581-7729-9318-5d143d6fcda4",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@squalo_a_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_squalo_b_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-a08c-734b-b550-28c063c4fb17",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@squalo_b_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_polpo_b_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-ba0c-772e-8757-f63e11516496",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@polpo_b_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_polpo_a_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-a845-776a-9dfe-9076b921a053",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@polpo_a_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_polpo_b_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-b474-7675-9a07-261dd253037c",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the back of the character and of the pedestal.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@polpo_b_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_mostro_b_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-d15d-75f5-8cb0-7c3c9fdf5925",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the dorsal fin and the tail.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mostro_b_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "mv_mostro_b_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-cb94-7358-9283-e144fd87cec7",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the dorsal fin and the tail.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mostro_b_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_mostro_a_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14fe2-c26a-748d-8758-c6c1dec37481",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the dorsal fin and the tail.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mostro_a_nbp"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "3d_squalo_b_gpt": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-136e-7265-94f2-dbbb13ab3b08",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_squalo_b_gpt_1.png",
+   "mv_squalo_b_gpt_2.png",
+   "mv_squalo_b_gpt_0.png",
+   "squalo_b_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_squalo_a_nbp": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe3-ffbd-719a-a2dd-f34b4afe2b9b",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_squalo_a_nbp_0.png",
+   "mv_squalo_a_nbp_1.png",
+   "mv_squalo_a_nbp_2.png",
+   "squalo_a_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_squalo_b_nbp": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-0bb3-730f-a255-637027c135cd",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_squalo_b_nbp_0.png",
+   "mv_squalo_b_nbp_1.png",
+   "mv_squalo_b_nbp_2.png",
+   "squalo_b_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_squalo_a_gpt": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-058e-7036-955e-c773fe8fdf86",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_squalo_a_gpt_2.png",
+   "mv_squalo_a_gpt_1.png",
+   "mv_squalo_a_gpt_0.png",
+   "squalo_a_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_polpo_a_nbp": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-162c-7640-bf02-d2bb283a8cb4",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_polpo_a_nbp_0.png",
+   "mv_polpo_a_nbp_1.png",
+   "mv_polpo_a_nbp_2.png",
+   "polpo_a_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_mostro_a_nbp": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-2d8d-77ca-a37e-f6d464278a5d",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_mostro_a_nbp_1.png",
+   "mv_mostro_a_nbp_2.png",
+   "mv_mostro_a_nbp_0.png",
+   "mostro_a_nbp_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_mostro_b_gpt": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-3990-733a-98e5-abfa03ca80ee",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_mostro_b_gpt_2.png",
+   "mv_mostro_b_gpt_0.png",
+   "mv_mostro_b_gpt_1.png",
+   "mostro_b_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_mostro_a_gpt": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-337c-7589-b2a5-490881dd52b7",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_mostro_a_gpt_0.png",
+   "mv_mostro_a_gpt_2.png",
+   "mv_mostro_a_gpt_1.png",
+   "mostro_a_nbp_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_polpo_a_gpt": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-1c23-73f7-9c3d-233bdcb0ce97",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_polpo_a_gpt_2.png",
+   "mv_polpo_a_gpt_0.png",
+   "mv_polpo_a_gpt_1.png",
+   "polpo_a_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_mostro_b_nbp": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-3fab-7512-a4bb-533e7578f79d",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_mostro_b_nbp_0.png",
+   "mv_mostro_b_nbp_2.png",
+   "mv_mostro_b_nbp_1.png",
+   "mostro_b_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_polpo_b_gpt": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-27eb-7571-b9b9-39e33dff25ab",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_polpo_b_gpt_2.png",
+   "mv_polpo_b_gpt_0.png",
+   "mv_polpo_b_gpt_1.png",
+   "polpo_b_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_polpo_b_nbp": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fe4-2200-73cc-af00-ef1afe28beb6",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_polpo_b_nbp_0.png",
+   "mv_polpo_b_nbp_1.png",
+   "mv_polpo_b_nbp_2.png",
+   "polpo_b_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "mostro_a2_nbp": {
+  "kind": "text-to-image",
+  "task_id": "01a14fee-f585-76f0-be47-d90b3393115d",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A photorealistic monstrous shark creature, a living animal, not a statue or a toy: a huge, round, bloated barrel-shaped body leaning forward, standing on two short, thick, slightly bent legs with reptile-like three-toed feet with dark claws. The large head merges directly into the body with no neck, a rounded blunt snout with a white patch above the mouth, tiny black eyes set far apart, a very wide grin full of small sharp pointed teeth with a red mouth inside, gill slits on the sides. A tall dorsal fin on the back and a shark tail fin behind, held almost horizontal. Two short arms with long hands and long curved claws, one arm raised forward reaching. The skin is wet living shark skin, mottled grey and brown in blotches, with a paler belly and snout, glistening with water. Clumsy but menacing, like a bulldog. About 2.2 metres tall. Its skin is matte-wet, not shiny plastic: dark slate grey and muddy olive-brown in irregular blotches and spots like a nurse shark or a catshark, only the lower belly and the snout patch are a dirty cream colour. Its right arm is raised forward toward the viewer at shoulder height, the long clawed fingers spread, the left arm hangs low. It looks goofy and almost endearing in its proportions, like a storybook watercolor monster, but with real wet skin.  Full body from head to feet, centered, seen from a three-quarter front view, standing on a plain flat neutral light grey studio background with soft even lighting, no environment.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mostro_a2_gpt": {
+  "kind": "text-to-image",
+  "task_id": "01a14fee-f9ff-7298-9bfd-7c7025f48f86",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A photorealistic monstrous shark creature, a living animal, not a statue or a toy: a huge, round, bloated barrel-shaped body leaning forward, standing on two short, thick, slightly bent legs with reptile-like three-toed feet with dark claws. The large head merges directly into the body with no neck, a rounded blunt snout with a white patch above the mouth, tiny black eyes set far apart, a very wide grin full of small sharp pointed teeth with a red mouth inside, gill slits on the sides. A tall dorsal fin on the back and a shark tail fin behind, held almost horizontal. Two short arms with long hands and long curved claws, one arm raised forward reaching. The skin is wet living shark skin, mottled grey and brown in blotches, with a paler belly and snout, glistening with water. Clumsy but menacing, like a bulldog. About 2.2 metres tall. Its skin is matte-wet, not shiny plastic: dark slate grey and muddy olive-brown in irregular blotches and spots like a nurse shark or a catshark, only the lower belly and the snout patch are a dirty cream colour. Its right arm is raised forward toward the viewer at shoulder height, the long clawed fingers spread, the left arm hangs low. It looks goofy and almost endearing in its proportions, like a storybook watercolor monster, but with real wet skin.  Full body from head to feet, centered, seen from a three-quarter front view, standing on a plain flat neutral light grey studio background with soft even lighting, no environment.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "3d_mostro_b_gpt_3v": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14fef-0027-73a0-a4e3-82b418780bff",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_mostro_b_gpt_2.png",
+   "mv_mostro_b_gpt_0.png",
+   "mv_mostro_b_gpt_1.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "mv_mostro_a2_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a14ff3-b41c-7131-97c9-246113c4b890",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the dorsal fin and the tail.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mostro_a2_nbp"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "mv_mostro_a2_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a14ff3-b9d9-76fb-9df4-fa93359e6d5d",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same object as in the reference image, exactly the same design, materials, colors, wear, pose and proportions, full figure, on a plain flat neutral light grey background with soft even studio lighting, no environment, no cast shadows. The back view shows the dorsal fin and the tail.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mostro_a2_gpt"
+  ],
+  "multi_view": true,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "3d_mostro_a2_nbp": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14ff4-fd47-758d-b0c2-38bf36088d51",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_mostro_a2_nbp_1.png",
+   "mv_mostro_a2_nbp_2.png",
+   "mv_mostro_a2_nbp_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "3d_mostro_a2_gpt": {
+  "kind": "multi-image-to-3d",
+  "task_id": "01a14ff5-0312-71c6-9f2d-7e4a544f0d34",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": [
+   "mv_mostro_a2_gpt_1.png",
+   "mv_mostro_a2_gpt_2.png",
+   "mv_mostro_a2_gpt_0.png"
+  ],
+  "body": {
+   "ai_model": "meshy-7.1",
+   "should_texture": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "should_remesh": false,
+   "target_formats": [
+    "glb"
+   ],
+   "image_enhancement": true,
+   "remove_lighting": true,
+   "geometry_resolution": "2k"
+  },
+  "credits": 35
+ },
+ "nuova_squalo_b": {
+  "kind": "image-to-image",
+  "task_id": "01a14ffa-e742-75e9-a104-ddb63dc2e0d8",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same statue as in the reference image, exactly the same shape, pose, proportions, design and colors, same view and framing, on the same plain background, but brand new as on its opening day in 1995: freshly painted glossy fiberglass with clean bright saturated colors, smooth flawless gelcoat, crisp painted details, no cracks, no chipped paint, no stains, no algae, no rust: the pedestal is clean with bright painted waves and shiny new steel bolts.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mv_squalo_b_nbp_0.png"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "nuova_polpo_a": {
+  "kind": "image-to-image",
+  "task_id": "01a14ffa-ebdc-7395-90e8-d9e64a86d338",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same statue as in the reference image, exactly the same shape, pose, proportions, design and colors, same view and framing, on the same plain background, but brand new as on its opening day in 1995: freshly painted glossy fiberglass with clean bright saturated colors, smooth flawless gelcoat, crisp painted details, no cracks, no chipped paint, no stains, no algae, no rust: the pedestal is clean with bright painted waves and shiny new steel bolts.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mv_polpo_a_nbp_0.png"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "nuova_polpo_b": {
+  "kind": "image-to-image",
+  "task_id": "01a14ffa-f1ca-76f2-b16e-83e53b5e6434",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same statue as in the reference image, exactly the same shape, pose, proportions, design and colors, same view and framing, on the same plain background, but brand new as on its opening day in 1995: freshly painted glossy fiberglass with clean bright saturated colors, smooth flawless gelcoat, crisp painted details, no cracks, no chipped paint, no stains, no algae, no rust: the pedestal is clean with bright painted waves and shiny new steel bolts.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mv_polpo_b_nbp_0.png"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "nuova_squalo_a": {
+  "kind": "image-to-image",
+  "task_id": "01a14ffa-e1c2-7244-b583-2082715bfeb6",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "The same statue as in the reference image, exactly the same shape, pose, proportions, design and colors, same view and framing, on the same plain background, but brand new as on its opening day in 1995: freshly painted glossy fiberglass with clean bright saturated colors, smooth flawless gelcoat, crisp painted details, no cracks, no chipped paint, no stains, no algae, no rust: the pedestal is clean with bright painted waves and shiny new steel bolts.  Absolutely no text, no letters, no numbers, no logos, no writing, no watermark. No blood, no gore.",
+  "refs": [
+   "@mv_squalo_a_nbp_0.png"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "ritex_nuova_squalo_a": {
+  "kind": "retexture",
+  "task_id": "01a14ffb-8438-7442-b61d-cf0833fdb530",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": null,
+  "body": {
+   "input_task_id": "01a14fe3-ffbd-719a-a2dd-f34b4afe2b9b",
+   "ai_model": "meshy-7",
+   "enable_original_uv": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "target_formats": [
+    "glb"
+   ]
+  },
+  "credits": 10
+ },
+ "ritex_nuova_squalo_b": {
+  "kind": "retexture",
+  "task_id": "01a14ffb-8b4f-721f-b29f-ec74d336397a",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": null,
+  "body": {
+   "input_task_id": "01a14fe4-0bb3-730f-a255-637027c135cd",
+   "ai_model": "meshy-7",
+   "enable_original_uv": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "target_formats": [
+    "glb"
+   ]
+  },
+  "credits": 10
+ },
+ "ritex_nuova_polpo_a": {
+  "kind": "retexture",
+  "task_id": "01a14ffb-8fe8-746a-986a-181059e63048",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": null,
+  "body": {
+   "input_task_id": "01a14fe4-162c-7640-bf02-d2bb283a8cb4",
+   "ai_model": "meshy-7",
+   "enable_original_uv": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "target_formats": [
+    "glb"
+   ]
+  },
+  "credits": 10
+ },
+ "ritex_nuova_polpo_b": {
+  "kind": "retexture",
+  "task_id": "01a14ffb-95ca-735c-8117-83a2e30f1a34",
+  "status": "SUCCEEDED",
+  "model": "meshy-7.1",
+  "prompt": null,
+  "refs": null,
+  "multi_view": null,
+  "immagini": null,
+  "body": {
+   "input_task_id": "01a14fe4-2200-73cc-af00-ef1afe28beb6",
+   "ai_model": "meshy-7",
+   "enable_original_uv": true,
+   "enable_pbr": true,
+   "texture_resolution": "4k",
+   "target_formats": [
+    "glb"
+   ]
+  },
+  "credits": 10
+ }
+}
