@@ -12,9 +12,10 @@ extends Node
 ##    si allontana lungo il condotto.
 ## 4. La spruzzi da altre distanze e da altri lati, sulla testa, su una mano, su un tentacolo: se ne
 ##    va subito ogni volta.
-## 5. Appena lei se ne va, il portone della sala della torre sulla parete est si apre da solo
-##    (scelta dell'utente del 16 ottobre): tra l'area bimbi e la piscina, poi lungo il lato nord della
-##    spiaggia fino al portone, con i checkpoint; lì finisce la demo.
+## 5. Quando lei se ne va il portone della sala della torre sulla parete est NON si apre da solo: lo
+##    apre l'enigma degli acquari (GDD, 18 ottobre; lo prova test_acquari.gd, qui si apre come farebbe
+##    l'enigma). La strada tra l'area bimbi e la piscina, poi lungo il lato nord della spiaggia fino al
+##    portone, con i checkpoint; lì finisce la demo.
 ## 6. Se le arrivi di lato ti prende girandosi verso di te: la camera della morte la trova di fronte.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
 ## è spenta: il test la accende sulla fossa provvisoria e spegne la fine della demo sulla scia.
@@ -50,8 +51,8 @@ func _run() -> void:
 	check(level.get_node_or_null("RuotaESecchio") == null, "niente più ruota a pale e secchio da riempire")
 	check(level.get_node_or_null(^"Sala/Interattivi/sala_cancello_spiaggia") == null, "niente recinto né cancello")
 	var portone := level.get(&"portone") as PortoneTorre
-	check(portone != null and portone.anta != null and portone.apertura == PortoneTorre.Apertura.DOPO_TAPPA8 and not portone.is_aperto(),
-		"il portone della sala della torre è chiuso e si aprirà da solo dopo la tappa 8")
+	check(portone != null and portone.anta != null and portone.apertura == PortoneTorre.Apertura.SOLO_ENIGMA and not portone.is_aperto(),
+		"il portone della sala della torre è chiuso e lo aprirà l'enigma degli acquari")
 
 	print("Lo scivolo giallo e i tetti della struttura di gioco sono solidi (prova della v0.3.2, punto 10)")
 	var spazio := p.get_world_3d().direct_space_state
@@ -286,10 +287,12 @@ func _run() -> void:
 				break
 			await get_tree().physics_frame
 
-	print("5. Il portone della sala della torre si apre da solo; la strada fino a lì")
+	print("5. Il portone della sala della torre non si apre da solo; la strada fino a lì")
 	portone = level.get(&"portone") as PortoneTorre
 	await _frames(5)
-	check(portone.in_movimento or portone.is_aperto(), "appena lei se ne va il portone comincia ad aprirsi")
+	check(not portone.in_movimento and not portone.is_aperto(), "quando lei se ne va il portone resta chiuso")
+	# Lo apre l'enigma degli acquari (test_acquari.gd).
+	portone.apri()
 	var ok := true
 	for t in [Vector3(-14.0, 0, -4.0), Vector3(-8.3, 0, -4.5), Vector3(-8.3, 0, -8.0), Vector3(-8.3, 0, -12.75),
 			Vector3(0.0, 0, -12.75), Vector3(2.0, 0, -12.75)]:
