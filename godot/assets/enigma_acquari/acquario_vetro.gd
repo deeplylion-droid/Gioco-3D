@@ -38,6 +38,9 @@ var _disco_fatto := false
 # il miscuglio già applicato: il WaterTank mette quello iniziale (fill_pigment) nel suo _ready, dopo
 # quello dei figli e senza segnale, quindi lo si confronta anche a ogni fotogramma
 var _mix_visto = null
+# fotogrammi da quando l'acquario è visibile e lavora: la cubemap dei riflessi (se il pelo ne ha una)
+# si rifà dopo che è comparso, perché la prima cattura avviene quando è ancora nascosto e fermo
+var _f_visibile := 0
 
 
 func _ready() -> void:
@@ -63,6 +66,14 @@ func _process(_delta: float) -> void:
 		_volume.visible = l > 0.01
 	if not _disco_fatto:
 		_disco()
+	_f_visibile += 1
+	if _f_visibile == 10 and not Engine.is_editor_hint():
+		_ricattura()
+	# un filo d'increspature sul pelo (acqua ferma ma viva: prende il riflesso delle luci)
+	if acqua and _livello > 0.05 and randf() < 0.04 and acqua.has_method(&"add_impulse"):
+		var r := _dimensioni().x * 0.4
+		var a := randf() * TAU
+		acqua.call(&"add_impulse", global_position + Vector3(cos(a) * r * randf(), _livello, sin(a) * r * randf()), 0.12, 0.002)
 	var m = _tank.get(&"mix")
 	if m is Dictionary and m != _mix_visto:
 		_su_mix(m)
@@ -130,6 +141,21 @@ func _costruisci() -> void:
 	add_child(_vetro, false, Node.INTERNAL_MODE_FRONT)
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		_f_visibile = 0
+
+
+func _ricattura() -> void:
+	if acqua == null or not bool(acqua.get(&"capture_env_cubemap")):
+		return
+	var ec = acqua.get(&"_env_capture")
+	if ec is Node and (ec as Node).has_method(&"capture"):
+		ec.call(&"capture", acqua)
+	elif acqua.has_method(&"_start_env_capture"):
+		acqua.call(&"_start_env_capture")
+
+
 ## Il pelo dell'acqua del WaterTankLink diventa un disco grande quanto il vetro.
 func _disco() -> void:
 	if acqua == null or not acqua.has_method(&"get_surface"):
@@ -168,7 +194,15 @@ func _su_mix(m: Dictionary) -> void:
 		_vol_mat.set_shader_parameter("scatter_color", stile.scatter_color)
 		_vol_mat.set_shader_parameter("scatter_ambient", stile.scatter_ambient)
 	if acqua and &"style" in acqua:
-		acqua.set(&"style", stile)
+		# dai vetri il liquido è denso e pieno di colore (richiesta dell'utente); il pelo, che si guarda
+		# da sopra, è meno torbido: così ha profondità e riflessi e non sembra una lastra dipinta
+		var pelo := stile.duplicate() as WaterStyle
+		# (non il torbido: resta denso anche sopra, e nell'imbuto del gorgo non si vede il fondo)
+		var k := 1.0 - clampf(float(m.get("torbida", 0.0)), 0.0, 1.0)
+		pelo.turbidity = stile.turbidity * lerpf(1.0, 0.35, k)
+		pelo.scatter_ambient = stile.scatter_ambient * lerpf(1.0, 0.5, k)
+		pelo.roughness = 0.02
+		acqua.set(&"style", pelo)
 
 
 ## Lo stile dell'acqua per un miscuglio (WaterMix): tra blu, verde e giallo secondo la parte di

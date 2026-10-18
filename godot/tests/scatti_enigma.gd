@@ -86,7 +86,11 @@ func _run() -> void:
 			enigma.stato = EnigmaAcquari.Stato.TORBIDO
 			misto.set_mix(WaterMix.pura(WaterMix.TORBIDA))
 			misto.fill = misto.max_fill
-			await _frames(20)
+			await _frames(5)
+			# più corto che nel gioco (4 s): la memoria del renderer software cresce coi fotogrammi;
+			# a metà il gorgo è lo stesso (la forza segue la frazione del tempo)
+			enigma.durata_gorgo = 1.5
+			enigma.durata_ricarica = 1.5
 			enigma.svuota()
 			settle = int(enigma.durata_gorgo * 60.0 * 0.45)
 	var c: Array = CAMERE[scatto]

@@ -131,11 +131,14 @@ def acquario(nome, pos, alto, pigmento=None):
              light_color='Color(1, 0.95, 0.86, 1)', light_energy='4.0', light_volumetric_fog_energy='0.4',
              spot_range='1.9', spot_attenuation='0.8', spot_angle='75.0')   # non arriva al pavimento
     else:
-        node('LuceAcquario', 'SpotLight3D', nome, transform=tr('1, 0, 0, 0, 0, 1, 0, -1, 0', (0, 1.6, 0)),
+        # dal lato lontano da chi arriva (-Z locale, a est), inclinata verso il centro: il riflesso sul
+        # pelo lo vede chi si avvicina da ovest
+        node('LuceAcquario', 'SpotLight3D', nome, transform=tr('1, 0, 0, 0, -0.573576, 0.819152, 0, -0.819152, -0.573576', (0, 1.25, -0.75)),
              light_color='Color(1, 0.95, 0.86, 1)', light_energy='2.0', light_volumetric_fog_energy='0.0',
-             spot_range='1.65', spot_attenuation='0.8', spot_angle='50.0')
+             spot_range='1.7', spot_attenuation='0.8', spot_angle='55.0')
+    # cubemap propria per i riflessi solo nel basso, che si guarda da sopra (negli alti il pelo non si vede)
     node('Acqua', parent=nome, inst='acqua', node_paths='PackedStringArray("tank")', tank='NodePath("..")',
-         capture_env_cubemap='false', ripple_max_resolution='128')
+         capture_env_cubemap='true' if not alto else 'false', ripple_max_resolution='128')
     node('Vetro', 'Node3D', nome, node_paths='PackedStringArray("acqua")', script='ExtResource("vetro")', acqua='NodePath("../Acqua")')
 
 

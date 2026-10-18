@@ -54,10 +54,26 @@ func _run() -> void:
 	cam.make_current()
 	for i in 40:
 		await get_tree().process_frame
-	if mis == "gorgo":
-		e.call(&"svuota")
+	if mis == "gorgo" or OS.get_environment("PROVA_SLOT") != "":
+		if mis == "gorgo":
+			e.call(&"svuota")
+		var slot := int(OS.get_environment("PROVA_SLOT")) if OS.get_environment("PROVA_SLOT") != "" else -1
+		var lk := e.get_node("AcquarioMisto/Acqua")
 		for i in 100:
+			if slot >= 0:
+				lk.call(&"set_flow", slot, lk.global_position, 0.7, 1.0, 1.5, 0.3, 0.55, 1.0)
+			if i == 99:
+				var mt: ShaderMaterial = lk.get(&"material")
+				print("slot ", slot, " fp0 ", mt.get_shader_parameter("flow_point_0"), " fp1 ", mt.get_shader_parameter("flow_point_1"), " surf mat uguale ", (lk.call(&"get_surface") as MeshInstance3D).material_override == mt)
 			await get_tree().process_frame
+	var nas := OS.get_environment("PROVA_NASCONDI")
+	if nas == "pelo":
+		(e.get_node("AcquarioMisto/Acqua").call(&"get_surface") as Node3D).visible = false
+	elif nas == "volume":
+		for c in e.get_node("AcquarioMisto/Vetro").get_children(true):
+			c.visible = false
+	for i in 3:
+		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_jpg(out, 0.9)
 	for n in ["AcquarioGiallo", "AcquarioMisto"]:
