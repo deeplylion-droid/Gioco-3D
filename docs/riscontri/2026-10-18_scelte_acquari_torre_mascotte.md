@@ -18,3 +18,5 @@ https://claude.ai/artifact/VA4J4xrxVQNYPs2TVEMkkY).
 | Statua dello squalo | A, pollice in su | | mascotte |
 | Statua del polpo | tutte e due | | mascotte |
 | Mostro-squalo | A, vicino al disegno | | mascotte |
+
+Dopo la pagina, sempre il 18 ottobre: "i colori dei liquidi falli più saturi e meno trasparenti". Il giallo, il blu, il verde e i miscugli diventano più saturi, sia nei cilindri sia nel getto e nello zaino, e nei cilindri sono più densi e meno trasparenti. Il torbido resta com'è. Lo fa enigma-ambiente.
