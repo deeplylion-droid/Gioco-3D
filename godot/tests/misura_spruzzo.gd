@@ -84,6 +84,19 @@ func _run() -> void:
 		pr.getto = p.water_pack.get_node_or_null(^"GettoPotente")
 		p.water_pack.add_child(pr)
 	await _frames(60)
+	if OS.get_cmdline_user_args().has("nastro_prima"):
+		var st := p.water_pack.get(&"stream") as Node3D
+		var cam := get_viewport().get_camera_3d()
+		_azzera()
+		for i in 8:
+			st.call(&"physics_step", 1.0 / 60.0, true, cam.global_transform * Vector3(0, 0, -2.5), -cam.global_basis.z * 4.0 + Vector3.UP * 2.0)
+			await get_tree().process_frame
+		var c := {}
+		for k in MONITOR:
+			c[k] = int(Performance.get_monitor(MONITOR[k]) - _prima[k])
+		print("  nastro a mano prima di spruzzare: %s" % str(c))
+		st.call(&"clear")
+		await _frames(20)
 	for volta in ["PRIMA", "SECONDA"]:
 		p.water_pack.set_tank_amount(20.0)
 		_azzera()
@@ -125,8 +138,32 @@ func _stampa(volta: String) -> void:
 
 ## Prova per trovare il colpevole: nasconde una parte degli effetti durante il primo spruzzo
 ## (argomento nascondi_getto, nascondi_particelle, nascondi_decal, nascondi_lancia).
+var _nodi_prima := {}
+
+
+## Prova: i nodi nuovi nel fotogramma (argomento nodi_nuovi).
+func _nodi_nuovi() -> void:
+	var ora := {}
+	for n in get_tree().root.find_children("*", "", true, false):
+		ora[n] = true
+	if not _nodi_prima.is_empty():
+		for n in ora:
+			if not _nodi_prima.has(n):
+				print("    nuovo: %s (%s) in %s" % [n.name, n.get_class(), n.get_parent().get_path() if n.get_parent() else ""])
+	_nodi_prima = ora
+
+
 func _nascondi() -> void:
 	var args := OS.get_cmdline_user_args()
+	if args.has("nodi_nuovi"):
+		print("  fotogramma: spruzza=%s carica=%.2f" % [p.water_pack.is_spraying, p.water_pack.get(&"_charge_t")])
+		_nodi_nuovi()
+	if args.has("senza_nastro"):
+		var st := p.water_pack.get(&"stream") as MeshInstance3D
+		st.set_process(false)
+		(st.mesh as ArrayMesh).clear_surfaces()
+	if args.has("senza_macchie"):
+		p.water_pack.get_node(^"GettoPotente").set(&"_bagnato_t", 999.0)
 	if args.has("nascondi_getto"):
 		(p.water_pack.get(&"stream") as Node3D).visible = false
 	if args.has("nascondi_particelle"):
