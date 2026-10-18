@@ -109,3 +109,8 @@ func _stampa(volta: String) -> void:
 			print("  #%02d %6.0f ms (process %.0f, physics %.0f)%s%s%s" % [i, r.ms, r.process, r.physics,
 					" [carica]" if r.carica else "", " [getto]" if r.getto else "", comp])
 	print("  compilazioni in tutto: %s" % str(totali))
+
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame
