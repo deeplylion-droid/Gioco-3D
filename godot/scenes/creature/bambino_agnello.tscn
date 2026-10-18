@@ -4,8 +4,8 @@
 [ext_resource type="PackedScene" path="res://assets/models/bambini/bambino_agnello_calmo.glb" id="2_calmo"]
 [ext_resource type="PackedScene" path="res://assets/models/bambini/bambino_agnello_occhio.glb" id="3_rivelato"]
 [ext_resource type="Script" path="res://scripts/creature/agnello_fluorescente.gd" id="4_luminoso"]
-[ext_resource type="Texture2D" path="res://assets/models/bambini/agnello_luminoso_calmo.png" id="5_calmo"]
-[ext_resource type="Texture2D" path="res://assets/models/bambini/agnello_luminoso_rivelato.png" id="6_rivelato"]
+[ext_resource type="Texture2D" path="res://assets/models/bambini/luminoso/agnello_luminoso_calmo.png" id="5_calmo"]
+[ext_resource type="Texture2D" path="res://assets/models/bambini/luminoso/agnello_luminoso_rivelato.png" id="6_rivelato"]
 
 [node name="BambinoAgnello" type="Node3D" groups=["bambini"]]
 script = ExtResource("1_bambino")
