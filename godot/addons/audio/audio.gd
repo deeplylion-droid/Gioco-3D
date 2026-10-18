@@ -11,7 +11,7 @@ extends Node
 ##  - suona i fondi (pioggia sulla cupola, vento, nave) e ogni tanto scricchiolii, gemiti
 ##    metallici, colpi lontani e la sirena d'allarme, intorno al giocatore;
 ##  - a ogni cambio di scena cerca i nodi che conosce e si collega ai loro segnali (o ne
-##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
+##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
 ##    portelli, vasche, Polaroid, statua della medusa, bambini, morte, la piscina a onde con
 ##    il pulsante della botola e le micro medusine (tappa 5), monitor a tubo e paratie della
@@ -38,6 +38,12 @@ const SEZIONE := "audio"
 const PREDEFINITI := {"generale": 1.0, "musica": 0.8, "ambiente": 1.0, "effetti": 1.0}
 const BUS_DEL_VOLUME := {"generale": &"Master", "musica": BUS_MUSICA, "ambiente": BUS_AMBIENTE,
 	"effetti": BUS_EFFETTI}
+## Tutto il suono più basso di questi dB, anche con il volume generale al massimo (l'utente, 18 ottobre:
+## "i suoni risultano tutti troppo alti", e teneva il generale al 10%: il massimo ora suona come quel 10%).
+const ABBASSAMENTO_GENERALE_DB := -20.0
+## Le impostazioni salvate prima dell'abbassamento non hanno questa versione: il loro volume generale
+## torna al massimo, altrimenti il vecchio 10% diventerebbe 20 dB più basso ancora.
+const VERSIONE_VOLUMI := 2
 
 ## Taratura per cartella: [bus, volume dB, unit_size (0 = non posizionale), max_distance, variazione di tono (semitoni)].
 const PER_CARTELLA := {
@@ -100,6 +106,8 @@ const TARATURA := {
 	&"porta_ponte_apre": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 	# i cancelli stagni della camera delle onde: forti, pieni fino a circa 6 m (il tetto è max_db 0)
 	&"cancello_stagno_apre": [BUS_EFFETTI, 2.0, 5.0, 60.0, 0.0],
+	# l'agnellino che corre via dentro il condotto della grata di C2 (v0.3.6): vicino, poi si perde nel muro
+	&"zampette_condotto": [BUS_EFFETTI, 0.0, 3.0, 25.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 	# il suo urlo nel jumpscare (JumpscareGlitch): forte, scelto così dall'utente il 17 ottobre
@@ -425,6 +433,9 @@ func carica_impostazioni() -> void:
 			var v: Variant = cfg.get_value(SEZIONE, k, PREDEFINITI[k])
 			if v is float or v is int:
 				volumi[k] = clampf(float(v), 0.0, 1.0)
+		if int(cfg.get_value(SEZIONE, "versione", 1)) < VERSIONE_VOLUMI:
+			volumi["generale"] = PREDEFINITI["generale"]
+			_salvataggio_pendente = 0.3
 	_applica_volumi()
 
 
@@ -436,6 +447,7 @@ func salva_impostazioni() -> void:
 	cfg.load(percorso_impostazioni)  # tiene le altre sezioni (grafica...)
 	for k in PREDEFINITI:
 		cfg.set_value(SEZIONE, k, volume(k))
+	cfg.set_value(SEZIONE, "versione", VERSIONE_VOLUMI)
 	cfg.save(percorso_impostazioni)
 
 
@@ -602,7 +614,10 @@ func _applica_volumi() -> void:
 			continue
 		var v := volume(k)
 		AudioServer.set_bus_mute(i, v <= 0.001)
-		AudioServer.set_bus_volume_db(i, linear_to_db(maxf(v, 0.001)) + float(_offset.get(BUS_DEL_VOLUME[k], 0.0)))
+		var db := linear_to_db(maxf(v, 0.001)) + float(_offset.get(BUS_DEL_VOLUME[k], 0.0))
+		if k == "generale":
+			db += ABBASSAMENTO_GENERALE_DB
+		AudioServer.set_bus_volume_db(i, db)
 	var iu := AudioServer.get_bus_index(BUS_INTERFACCIA)
 	if iu >= 0:
 		AudioServer.set_bus_mute(iu, volume("effetti") <= 0.001)
@@ -865,7 +880,6 @@ func _esamina(n: Node) -> void:
 		"Neon": _collega_neon(n)
 		"LuceEmergenza": _collega_emergenza(n)
 		"Gocce": _collega_gocce(n)
-		"Torcia": _collega_torcia(n)
 		"UnderwaterEffect": _collega_sottacqua(n)
 		"WaterDripEmitter": _attivi.append(Gocciolatoio.new(self, n))
 		"WaterInlet": _attivi.append(Bocchetta.new(self, n))
@@ -1005,10 +1019,6 @@ func _nome_goccia(pos: Vector3) -> StringName:
 	return &"goccia_pavimento"
 
 
-func _collega_torcia(n: Node) -> void:
-	n.connect(&"accesa_cambiata", func(accesa: bool): suona(&"torcia_accesa" if accesa else &"torcia_spenta"))
-
-
 # --- addon acqua -----------------------------------------------------------------------------
 
 func _collega_sottacqua(n: Node) -> void:
@@ -1039,6 +1049,16 @@ func _collega_giocatore(n: Node) -> void:
 	n.connect(&"jumped", func():
 		suona(&"salto")
 		_sciabordio(0.5))
+	# Sullo scivolo (sala della torre): il fruscio dell'acqua sotto di te, più forte e più acuto
+	# quanto più vai veloce.
+	if n.has_signal(&"slide_changed"):
+		var scivolo := crea_loop_2d(&"scivolo_loop", n, 0.0)
+		if scivolo:
+			scivolo.rapidita_volume = 10.0
+			_attivi.append(Funzione.new(n, func(_d: float):
+				var v: float = n.call(&"get_slide_speed")
+				scivolo.volume = clampf(0.25 + v / 14.0, 0.0, 1.1) if bool(n.get(&"is_sliding")) else 0.0
+				scivolo.tono = clampf(0.8 + v * 0.025, 0.8, 1.35)))
 
 
 func _nome_passo(superficie: StringName, bagnato: bool) -> StringName:
@@ -1049,6 +1069,8 @@ func _nome_passo(superficie: StringName, bagnato: bool) -> StringName:
 			return &"passo_scala"
 		&"metallo", &"lamiera", &"grata":
 			return &"passo_metallo"
+		&"scivolo":
+			return &"passo_scivolo"
 	if bagnato or pavimento_bagnato or _bagnato_scena:
 		return &"passo_bagnato"
 	return &"passo_piastrelle"

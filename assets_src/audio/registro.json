@@ -1679,6 +1679,36 @@
   "lufs": -22.8,
   "lufs_max": -16.0
  },
+ "tecnici/zampette_condotto": {
+  "file": "res://audio/tecnici/zampette_condotto.ogg",
+  "canali": 2,
+  "durata": 7.96,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "l'agnellino che corre via dentro il condotto della grata di C2 (v0.3.6)",
+  "lufs": -27.6,
+  "lufs_max": -20.0
+ },
+ "torre/atterraggio_scivolo_01": {
+  "file": "res://audio/torre/atterraggio_scivolo_01.ogg",
+  "canali": 1,
+  "durata": 0.9,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.7,
+  "lufs_max": -19.2
+ },
+ "torre/atterraggio_scivolo_02": {
+  "file": "res://audio/torre/atterraggio_scivolo_02.ogg",
+  "canali": 1,
+  "durata": 0.9,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "",
+  "lufs": -25.1,
+  "lufs_max": -18.0
+ },
  "torre/portone_torre_apre": {
   "file": "res://audio/torre/portone_torre_apre.ogg",
   "canali": 1,
@@ -1688,5 +1718,15 @@
   "nota": "motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s",
   "lufs": -22.5,
   "lufs_max": -16.7
+ },
+ "torre/scivolo_loop": {
+  "file": "res://audio/torre/scivolo_loop.ogg",
+  "canali": 1,
+  "durata": 3.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità",
+  "lufs": -20.0,
+  "lufs_max": -18.0
  }
 }

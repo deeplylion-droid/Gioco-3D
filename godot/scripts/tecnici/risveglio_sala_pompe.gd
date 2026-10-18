@@ -9,7 +9,8 @@ extends Node
 ##   e parte la sigla a tutto volume (GameState.Luci.FLASH); poi salta la corrente e restano le
 ##   rosse d'emergenza (BLACKOUT); il monitor mostra solo neve; lontano, plastica che si piega e
 ##   un tonfo nell'acqua; le paratie della camera delle onde si abbassano. Si esce dalla porta
-##   del ponte inferiore col maniglione (prima era bloccata).
+##   del ponte inferiore col maniglione: il chiavistello si sfila un attimo dopo la leva
+##   ([member sblocco_porta]), senza aspettare la fine del risveglio.
 ## Le luci le cambia GameState.imposta_luci(): un punto solo, a cui si aggancia la grafica.
 
 signal pompa_avviata(indice: int)
@@ -17,6 +18,8 @@ signal sequenza_sbagliata
 signal pompe_avviate
 signal risveglio_iniziato
 signal risveglio_finito
+## Il chiavistello della porta del ponte si è sfilato (poco dopo la leva).
+signal porta_sbloccata
 
 ## Le turbine d'avviamento nell'ordine dello schema (blu, giallo, rosso).
 @export var turbine: Array[Turbine] = []
@@ -37,6 +40,10 @@ signal risveglio_finito
 @export var attesa_plastica := 1.4
 @export var attesa_tonfo := 2.6
 @export var attesa_paratie := 1.2
+## Secondi dalla leva allo sblocco della porta: la leva scatta in basso (LevaGrande.durata), il cavo
+## tira e il chiavistello della porta si sfila con un colpo. Il resto del risveglio (blackout, rumori,
+## paratie) va avanti intanto: la porta non lo aspetta (l'utente: "deve farlo in 1-2 secondi").
+@export var sblocco_porta := 0.9
 
 ## Quante pompe sono avviate nell'ordine giusto.
 var avviate := 0
@@ -107,6 +114,7 @@ func _risveglio() -> void:
 	risvegliata = true
 	risveglio_iniziato.emit()
 	_suona(&"cancello_fine", leva.global_position if leva else null, 0.0, 0.8)
+	get_tree().create_timer(sblocco_porta, false).timeout.connect(_sblocca_porta)
 	for k in pompe.size():
 		pompe[k].ruggisci()
 		_motore(k, 1.0, 0.95)
@@ -138,6 +146,14 @@ func _risveglio() -> void:
 		piu_lunga = maxf(piu_lunga, p.durata)
 	await get_tree().create_timer(piu_lunga + 0.2, false).timeout
 	_fine()
+
+
+func _sblocca_porta() -> void:
+	if porta and porta.bloccata:
+		porta.bloccata = false
+		# il chiavistello si sfila: un colpo di metallo accanto alla porta
+		_suona(&"maniglione_bloccato", porta.global_position, -1.0, 0.75)
+		porta_sbloccata.emit()
 
 
 func _fine() -> void:

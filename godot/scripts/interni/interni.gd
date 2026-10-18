@@ -130,6 +130,39 @@ func _prepara_ambienti() -> void:
 
 # --- Luci: neon dell'addon grafica e luci d'emergenza ------------------------------------------
 
+## La lampada sopra la vasca lava-piedi davanti ai tornelli (scelta dell'utente del 18 ottobre, senza
+## più la torcia): una plafoniera come le altre degli spogliatoi (la stessa del modello, appesa al
+## soffitto), sempre accesa, con una luce bianca fredda da servizio sulla vasca e sui tornelli.
+const LAMPADA_TORNELLI := Vector3(9.7, 2.7, -13.4)   # il soffitto sopra il centro della vasca
+
+
+func _lampada_tornelli() -> void:
+	var cassa := ambienti.find_child("neon_spogliatoi_4", true, false) as MeshInstance3D
+	var tubi := ambienti.find_child("neon_spogliatoi_4_tubi", true, false) as MeshInstance3D
+	if cassa == null or tubi == null:
+		return
+	var neon: Node3D = NEON_SCRIPT.new()
+	neon.name = "LampadaTornelli"
+	neon.set(&"colore", Color(0.85, 0.93, 1.0))
+	var alto := cassa.get_aabb().end.y
+	neon.transform = Transform3D(cassa.global_basis, LAMPADA_TORNELLI - Vector3(0.0, alto, 0.0))
+	for m in [cassa, tubi]:
+		var copia := MeshInstance3D.new()
+		copia.name = String(m.name).replace("neon_spogliatoi_4", "lampada")
+		copia.mesh = m.mesh   # senza il materiale "spento" dei tubi: il diffusore resta acceso
+		neon.add_child(copia)
+	var luce := OmniLight3D.new()
+	luce.name = "Luce"
+	luce.light_color = Color(0.85, 0.93, 1.0)
+	luce.light_energy = 1.6
+	luce.omni_range = 6.5
+	luce.light_volumetric_fog_energy = 0.4
+	luce.shadow_enabled = true
+	luce.position = Vector3(0.0, -0.15, 0.0)
+	neon.add_child(luce)
+	add_child(neon)
+
+
 func _prepara_luci() -> void:
 	# Neon accesi che sfarfallano: il tubo del modello diventa una lampada Neon con la sua luce.
 	for tubo in ambienti.find_children("*_tubo_sfarfalla", "MeshInstance3D", true, false):
@@ -154,6 +187,7 @@ func _prepara_luci() -> void:
 		luce.position = Vector3(0, -0.15, 0)
 		neon.add_child(luce)
 		genitore.add_child(neon)
+	_lampada_tornelli()
 	# La lucina del pulsante del tornello: solo un alone sul pulsante.
 	var spia := ambienti.find_child("luce_pulsante_tornello", true, false) as OmniLight3D
 	if spia:

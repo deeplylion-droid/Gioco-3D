@@ -3,7 +3,7 @@ extends Node
 ## Uso:
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_liberi.gd <scena.tscn> <cartella> \
-##        "nome:px,py,pz:lx,ly,lz[:lancia];nome2:..." [preset] [frame di attesa] [torcia 0/1] [luci: prima/blackout] [fisse: neon e luci rosse senza sfarfallio | neon: tutti i neon accesi, rosse spente]
+##        "nome:px,py,pz:lx,ly,lz[:lancia];nome2:..." [preset] [frame di attesa] [torcia 0/1] [luci: prima/blackout] [fisse: neon e luci rosse senza sfarfallio | neon: tutti i neon accesi, rosse spente] [togli: nodi della scena da togliere, separati da virgola, per stare nella memoria]
 ## Le coordinate sono globali nella scena (il giocatore viene messo coi piedi in p e guarda verso l).
 ## lancia (facoltativa): scena LanceRig da mettere in mano, percorso senza "res://" (per esempio scenes/player/lance/x.tscn).
 
@@ -16,6 +16,7 @@ var torcia := true
 var blackout := false
 var fisse := false
 var neon := false   # luce normale: tutti i neon accesi e fermi, luci rosse d'emergenza spente
+var togli := PackedStringArray()
 
 
 func _ready() -> void:
@@ -36,6 +37,8 @@ func _ready() -> void:
 	if a.size() > 8:
 		fisse = a[8] == "fisse" or a[8] == "neon"
 		neon = a[8] == "neon"
+	if a.size() > 9 and a[9] != "":
+		togli = a[9].split(",")
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	_run.call_deferred()
 
@@ -55,6 +58,14 @@ func _run() -> void:
 		if GameState.player and is_instance_valid(GameState.player):
 			break
 	get_tree().paused = false
+	# Fermo subito: togliendo nodi (per esempio gli Interni) il giocatore potrebbe cadere nel vuoto e
+	# morire prima degli scatti.
+	if GameState.player:
+		GameState.player.set_physics_process(false)
+	for percorso in togli:
+		var n := get_tree().current_scene.get_node_or_null(NodePath(percorso))
+		if n:
+			n.free()
 	if blackout:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	if fisse:

@@ -1,7 +1,7 @@
 extends Node
 ## Test dei bambini (creature minori): le due scene si caricano, i modelli hanno lo scheletro e
 ## tutte le animazioni, e le modalità funzionano nella scena di prova: statua che reagisce allo
-## sguardo, osserva con la testa, si rivela, scappa con la torcia o se ti avvicini, sparisce.
+## sguardo, osserva con la testa, si rivela, scappa se ti avvicini (la torcia non c'è più), sparisce.
 ## Uso:
 ##   godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini.gd
 ## Esce con codice 0 se tutto va bene, 1 se qualche controllo fallisce.
@@ -105,10 +105,10 @@ func _test_scene() -> void:
 
 
 func _test_statua_e_fuga() -> void:
-	print("Testa a cubo: statua, sguardo, rivelazione, torcia, fuga")
+	print("Testa a cubo: statua, sguardo, rivelazione, fuga")
 	p.teleport(Vector3(0.5, 0, 5.2), 0.0, 0.0)
-	var torcia := p.get_node("Head/Camera3D/Torcia") as Torcia
-	torcia.imposta_accesa(false)
+	check(p.find_children("*", "Torcia", true, false).is_empty() and not InputMap.has_action(&"torcia"),
+		"il giocatore non ha la torcia (e il tasto F non c'è più)")
 	var b := (load(CUBO) as PackedScene).instantiate() as Bambino
 	b.modalita = Bambino.Modalita.STATUA
 	b.reazione = Bambino.Reazione.SI_GIRA
@@ -142,13 +142,12 @@ func _test_statua_e_fuga() -> void:
 	fuga.global_position = Vector3(3.0, 0, -0.5)
 	b.punti_fuga = [fuga]
 	await _frames(20)
-	check(not ev.has(&"scappa"), "a torcia spenta non scappa")
-	torcia.imposta_accesa(true)
 	p.look_at_point(b.global_position + Vector3(0, 0.7, 0))
-	await _frames(15)
-	check(not ev.has(&"scappa"), "un colpo di torcia veloce non basta")
-	await _frames(55)
-	check(ev.has(&"scappa"), "la torcia addosso lo fa scappare (segnale scappa)")
+	await _frames(60)
+	check(not ev.has(&"scappa"), "guardarlo da lontano non lo fa scappare")
+	p.teleport(Vector3(0.5, 0, 2.6), 0.0, 0.0)
+	await _frames(10)
+	check(ev.has(&"scappa"), "se ti avvicini troppo scappa (segnale scappa)")
 	check(_anim(b).current_animation == &"corsa", "scappa di corsa")
 	await _frames(150)
 	check(ev.has(&"sparito") and not b.visible, "arriva al punto di fuga e sparisce (segnale sparito)")
@@ -161,7 +160,6 @@ func _test_statua_e_fuga() -> void:
 func _test_vicino_e_occhio() -> void:
 	print("Agnellino: osserva con l'occhio, scappa se ti avvicini")
 	p.teleport(Vector3(0.5, 0, 5.2), 0.0, 0.0)
-	(p.get_node("Head/Camera3D/Torcia") as Torcia).imposta_accesa(false)
 	var b := (load(AGNELLO) as PackedScene).instantiate() as Bambino
 	b.modalita = Bambino.Modalita.OSSERVA
 	b.rivelato_all_inizio = true
