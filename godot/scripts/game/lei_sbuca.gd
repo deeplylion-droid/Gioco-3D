@@ -8,11 +8,13 @@ extends Node3D
 ## avvicinavi, ma solo con l'acqua già alta: arrivando presto dalla sala pompe l'acqua non c'era,
 ## lei restava sotto finché non le eri addosso e allora sbucava e ti prendeva subito; ripartendo dal
 ## checkpoint, vicino alla fossa, l'acqua saliva in fretta e la si vedeva.
-## - Resta affacciata finché non l'hai vista bene: nell'inquadratura, vicino al centro, senza niente
-##   in mezzo ed entro [member distanza_vista], per [member tempo_vista] secondi di fila (riscontro
-##   dell'utente sulla v0.3.0: "non l'ho vista, forse mi sono allontanato ed è sparita?").
-## - Solo dopo, se resti lontano, passati [member attesa] secondi scivola sotto e la sua luce si
+## - Resta affacciata finché il getto dello zaino non la colpisce (riscontro dell'utente sulla
+##   v0.3.4: "devi semplicemente spruzzarla con la pistola e allora se ne va"): conta qualsiasi punto
+##   di lei, testa, spalle, mani o tentacoli stesi oltre il bordo (un WaterHitbox che la segue).
+##   Appena la colpisci parte il geyser (GeyserFossa), lei sparisce lì dentro e la sua luce si
 ##   allontana sott'acqua lungo il condotto in fondo alla fossa (concept medusa_sottacqua.jpg).
+##   Prima andava via da sola: dopo che l'avevi vista bene per 2 s, passati altri 6 s. Quanto la
+##   guardi lo conta ancora ([member vista_bene], segnale [signal vista]), ma non la manda più via.
 ## - Se le arrivi troppo vicino ([member distanza_presa]) o la tocchi, ti prende: la fauce si apre,
 ##   l'occhio si riempie di vene e parte la sequenza di morte (GameState.kill_player(&"medusa")).
 ##   Si riparte dal checkpoint prima della scena e la scena si ripete. Mentre ti prende si gira verso
@@ -28,8 +30,10 @@ extends Node3D
 ## medusa: per ora la posa è "affacciata" e il resto lo fa il codice (sale, scende, la luce).
 
 signal sbucata
-## Il giocatore l'ha vista bene (da qui parte l'attesa prima che scivoli sotto).
+## Il giocatore l'ha vista bene.
 signal vista
+## Il getto l'ha colpita: da qui scivola sotto (col geyser).
+signal spruzzata
 signal andata_via
 signal presa
 
@@ -63,8 +67,6 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var pelo_minimo := 0.37
 ## Più vicino di così al suo occhio (in pianta) ti prende.
 @export var distanza_presa := 2.4
-## Secondi che ti guarda, dopo che l'hai vista bene, prima di scivolare sotto (se resti lontano).
-@export var attesa := 6.0
 @export_group("Vederla bene")
 ## Secondi di fila in cui la devi avere nell'inquadratura perché conti come vista.
 @export var tempo_vista := 2.0
@@ -99,7 +101,7 @@ var fase := Fase.ATTESA
 var _t := 0.0
 ## Secondi di fila in cui la stai guardando (fino a [member tempo_vista]).
 var vista_t := 0.0
-## Vero quando l'hai vista bene: parte l'attesa prima che scivoli sotto.
+## Vero quando l'hai vista bene (non la manda più via: va via quando la spruzzi).
 var vista_bene := false
 var _non_vista_t := 0.0
 var _luce: OmniLight3D
@@ -107,6 +109,7 @@ var _tocco: Area3D
 var _prossima_bolla := 0.0
 var _rng := RandomNumberGenerator.new()
 var _geyser: GeyserFossa
+var _colpibile: WaterHitbox
 
 
 func _ready() -> void:
@@ -133,6 +136,7 @@ func _ready() -> void:
 		_tocco.body_entered.connect(func(b: Node3D):
 			if b is Player and (fase == Fase.GUARDA or fase == Fase.SBUCA):
 				_prendi())
+		_crea_colpibile()
 
 
 func _process(_delta: float) -> void:
@@ -174,12 +178,8 @@ func _physics_process(delta: float) -> void:
 			_controlla_presa(p)
 			if fase != Fase.GUARDA:
 				return
-			# Resta lì finché non l'hai vista bene: solo dopo parte l'attesa.
-			if not vista_bene:
-				_conta_vista(p, delta)
-				_t = 0.0
-			elif _t >= attesa:
-				_scivola()
+			# Resta lì finché non la spruzzi (_on_spruzzata); quanto la guardi si conta ancora.
+			_conta_vista(p, delta)
 		Fase.SCIVOLA:
 			if _geyser and _geyser.in_corso():
 				# Col geyser resta ferma e si vede tutta finché l'acqua non la copre, poi sparisce lì dentro.
@@ -415,6 +415,40 @@ func _svanisci(t: float) -> void:
 		return
 	for m in medusa.find_children("*", "GeometryInstance3D", true, false):
 		(m as GeometryInstance3D).transparency = t
+
+
+## Il bersaglio del getto: tutta lei, testa, spalle, mani e tentacoli stesi oltre il bordo (i punti
+## delle gocce della MedusaAffacciata, in coordinate locali della medusa). Figlio della medusa: si
+## spegne quando lei sparisce.
+func _crea_colpibile() -> void:
+	_colpibile = WaterHitbox.new()
+	_colpibile.name = "Colpibile"
+	var forme: Array = [[Vector3(0.0, 1.35, 1.75), Vector3(1.9, 1.3, 1.2)], [Vector3(0.0, 1.85, 1.8), Vector3(0.9, 0.9, 0.9)]]
+	for f in forme:
+		var cs := CollisionShape3D.new()
+		var box := BoxShape3D.new()
+		box.size = f[1]
+		cs.shape = box
+		cs.position = f[0]
+		_colpibile.add_child(cs)
+	if "punti_gocce" in medusa:
+		for q in medusa.get(&"punti_gocce"):
+			var cs := CollisionShape3D.new()
+			var sfera := SphereShape3D.new()
+			sfera.radius = 0.3
+			cs.shape = sfera
+			cs.position = q
+			_colpibile.add_child(cs)
+	medusa.add_child(_colpibile)
+	_colpibile.water_hit.connect(_on_spruzzata)
+
+
+func _on_spruzzata(_litri: float, _punto: Vector3, _dir: Vector3) -> void:
+	if not abilitata or GameState.is_dying or not medusa.visible:
+		return
+	if fase == Fase.GUARDA or fase == Fase.SBUCA:
+		spruzzata.emit()
+		_scivola()
 
 
 ## Quanto si vede adesso (1 tutta, 0 per niente).
