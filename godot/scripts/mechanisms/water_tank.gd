@@ -37,6 +37,7 @@ signal mix_changed(mix: Dictionary)
 	set(value):
 		water_material = value
 		_own_material = null
+		_base_colors = {}
 		if _surface:
 			_surface.material_override = value if value else Graybox.WATER
 			_update_color()
@@ -80,8 +81,8 @@ signal mix_changed(mix: Dictionary)
 var mix := {}
 var _pending_liters := 0.0
 var _pending_mix := {}
-var _own_material: BaseMaterial3D
-var _base_color := Color(1, 1, 1)
+var _own_material: Material
+var _base_colors := {}
 var _full_sent := false
 var _empty_sent := true
 var _time := 0.0
@@ -358,16 +359,33 @@ func _build_water(s: Vector3) -> void:
 	_update_water()
 
 
-## Il colore della superficie segue [member mix]. Con un materiale standard (il segnaposto) se ne fa
-## una copia tutta sua e ne cambia il colore; con uno shader lo fa chi ascolta [signal mix_changed].
+## Il colore della superficie segue [member mix]. Del materiale (il segnaposto o uno standard) se ne
+## fa una copia tutta sua e ne cambia il colore: albedo_color, o shallow_color e deep_color dello
+## shader segnaposto. Con un altro shader lo fa chi ascolta [signal mix_changed].
 func _update_color() -> void:
 	if _surface == null:
 		return
 	if _own_material == null:
-		var m := _surface.material_override as BaseMaterial3D
+		var m := _surface.material_override
 		if m == null or (mix.is_empty() and fill_pigment == ""):
 			return
-		_own_material = m.duplicate() as BaseMaterial3D
-		_base_color = m.albedo_color
+		_own_material = m.duplicate() as Material
+		if _own_material is BaseMaterial3D:
+			_base_colors = {&"albedo_color": (_own_material as BaseMaterial3D).albedo_color}
+		elif _own_material is ShaderMaterial:
+			for k in [&"shallow_color", &"deep_color"]:
+				var c = (_own_material as ShaderMaterial).get_shader_parameter(k)
+				if c is Color:
+					_base_colors[k] = c
 		_surface.material_override = _own_material
-	_own_material.albedo_color = WaterMix.colore(mix, _base_color)
+	for k in _base_colors:
+		var base: Color = _base_colors[k]
+		var c := WaterMix.colore(mix, base)
+		if k == &"deep_color":
+			# Il fondo dello stesso colore, più scuro.
+			c = base.lerp(WaterMix.tinta(mix) * 0.35, WaterMix.intensita(mix))
+			c.a = base.a
+		if _own_material is BaseMaterial3D:
+			_own_material.set(k, c)
+		else:
+			(_own_material as ShaderMaterial).set_shader_parameter(k, c)

@@ -1,14 +1,14 @@
 extends Node
 ## Breve video dell'enigma degli acquari risolto (forme provvisorie), dagli occhi del giocatore:
 ## dopo la tappa 8 aspira due volte il giallo e una il blu, versa ogni volta nell'acquario vuoto, che
-## cambia colore e diventa verde, poi il portone della torre si apre con le lampade accese.
-## Come scatti_sala.gd toglie gli interni prima del primo frame (memoria).
-## Salva un JPG per fotogramma in <cartella> (il Movie Maker su llvmpipe qui si blocca); poi
-## ffmpeg -framerate 25 -i <cartella>/f_%05d.jpg ne fa il video. Uso, sotto il render.lock:
+## cambia colore e diventa verde, poi il portone si apre con le lampade accese.
+## La sala intera su llvmpipe qui si blocca nel caricamento: il video si fa in una scena piccola fatta
+## al volo, con l'enigma, il giocatore, pavimento e parete est provvisori e un portone provvisorio
+## (PortoneTorre con un'anta a scatola) al posto di quello della sala.
+## Salva un JPG per fotogramma in <cartella>; poi ffmpeg -framerate 25 -i <cartella>/f_%05d.jpg ne
+## fa il video. Uso, sotto il render.lock:
 ##   xvfb-run -a -s "-screen 0 960x540x24" godot --path godot --rendering-driver vulkan --fixed-fps 25 \
 ##        --resolution 960x540 --script res://tests/run.gd -- res://tests/video_acquari.gd <cartella>
-
-const LEVEL := "res://scenes/sala_principale.tscn"
 
 var level: Node
 var p: Player
@@ -40,12 +40,7 @@ func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("medio")
-	level = (load(LEVEL) as PackedScene).instantiate()
-	for percorso in ["Interni"]:
-		var n := level.get_node_or_null(NodePath(percorso))
-		if n:
-			n.get_parent().remove_child(n)
-			n.free()
+	level = _scena()
 	get_tree().root.add_child(level)
 	get_tree().current_scene = level
 	await _frames(10)
@@ -57,12 +52,7 @@ func _run() -> void:
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
-	for t in level.find_children("*", "Tempesta", true, false):
-		(t as Tempesta).automatica = false
-	GameState.imposta_luci(GameState.Luci.BLACKOUT)
-	(level.get_node(^"Tecnici/Logica/SerrandaMagazzino")).call(&"apri")
-	(level.get(&"lei_sbuca") as Node).call(&"load_state", {"finita": true})
-	enigma = level.get_node(^"Gioco/EnigmaAcquari") as EnigmaAcquari
+	enigma = level.get_node(^"EnigmaAcquari") as EnigmaAcquari
 	if not p.has_item(&"zaino_pompa"):
 		p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
 	p.water_pack.set_equipped(true, false)
@@ -131,3 +121,55 @@ func _secondi(s: float) -> void:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().physics_frame
+
+
+## La scena piccola: pavimento, parete est, luce e ambiente scuri, il giocatore, l'enigma e il portone.
+func _scena() -> Node3D:
+	var radice := Node3D.new()
+	radice.name = "VideoAcquari"
+	var env := WorldEnvironment.new()
+	env.environment = Environment.new()
+	env.environment.background_mode = Environment.BG_COLOR
+	env.environment.background_color = Color(0.02, 0.025, 0.035)
+	env.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.environment.ambient_light_color = Color(0.35, 0.4, 0.5)
+	env.environment.ambient_light_energy = 0.6
+	env.environment.tonemap_mode = Environment.TONE_MAPPER_ACES
+	radice.add_child(env)
+	var luce := DirectionalLight3D.new()
+	luce.rotation_degrees = Vector3(-55.0, -30.0, 0.0)
+	luce.light_energy = 0.5
+	luce.shadow_enabled = true
+	radice.add_child(luce)
+	var mondo := StaticBody3D.new()
+	mondo.name = "Mondo"
+	radice.add_child(mondo)
+	Graybox.box(mondo, Vector3(16.0, 0.2, 20.0), Vector3(13.0, -0.1, -9.0), Graybox.FLOOR)
+	Graybox.box_shape(mondo, Vector3(16.0, 0.2, 20.0), Vector3(13.0, -0.1, -9.0))
+	# Parete est, con il vano del portone (z da -16 a -14, alto 3,5 m).
+	for parte in [[Vector3(0.4, 7.0, 13.0), Vector3(20.04, 3.5, -22.5)], [Vector3(0.4, 7.0, 13.0), Vector3(20.04, 3.5, -7.5)],
+			[Vector3(0.4, 3.5, 2.0), Vector3(20.04, 5.25, -15.0)]]:
+		Graybox.box(mondo, parte[0], parte[1], Graybox.WALL)
+		Graybox.box_shape(mondo, parte[0], parte[1])
+	var anta := Node3D.new()
+	anta.name = "Anta"
+	radice.add_child(anta)
+	anta.position = Vector3(19.84, 0.0, -15.0)
+	var corpo := StaticBody3D.new()
+	anta.add_child(corpo)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.85, 0.35, 0.12)
+	Graybox.box(corpo, Vector3(0.15, 3.5, 2.0), Vector3(0.0, 1.75, 0.0), mat)
+	var portone := PortoneTorre.new()
+	portone.name = "PortoneTorre"
+	portone.apertura = PortoneTorre.Apertura.SOLO_ENIGMA
+	portone.anta = anta
+	radice.add_child(portone)
+	portone.position = Vector3(19.84, 0.0, -15.0)
+	var e := (load("res://scenes/sala/enigma_acquari.tscn") as PackedScene).instantiate()
+	e.set(&"portone", portone)
+	radice.add_child(e)
+	var giocatore := (load("res://scenes/player/player.tscn") as PackedScene).instantiate()
+	radice.add_child(giocatore)
+	giocatore.position = Vector3(13.0, 0.0, -7.2)
+	return radice
