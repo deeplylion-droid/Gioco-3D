@@ -61,8 +61,15 @@ func _run() -> void:
 	var sotto_ok := 0
 	var sopra_ok := 0
 	var n := 0
+	var capi: Array[Vector3] = []
+	for x in dati["salti"]:
+		capi.append(SalaTorre.b(x["da"]))
+		capi.append(SalaTorre.b(x["a"]))
 	for q in punti:
 		if q["cosa"] != "scivolo":
+			continue
+		# (i capi dei pezzi accanto ai buchi non contano: lì il canale finisce)
+		if capi.any(func(c): return c.distance_to(SalaTorre.b([q["x"], q["y"], q["z"]])) < 0.8):
 			continue
 		n += 1
 		var pos := SalaTorre.b([q["x"], q["y"], q["z"]])
@@ -152,6 +159,8 @@ func _run() -> void:
 
 	print("   Una caduta")
 	var ultimo := sala.checkpoint[sala.checkpoint.size() - 2]
+	var ultimo_pos := ultimo.get_spawn_transform().origin
+	var ultimo_nome := String(ultimo.name)
 	_metti(p, Vector3(31.0, ultimo.global_position.y - 1.0, -15.0), Vector3(31.0, 0, -10.0))   # nel vuoto sopra il pozzo
 	for i in 400:
 		await _frames(1)
@@ -160,12 +169,13 @@ func _run() -> void:
 	check(GameState.is_dying, "cadendo dalla discesa si muore")
 	await _salta_morte()
 	await _aspetta_livello()
+	await _frames(10)
 	level = get_tree().current_scene
 	p = GameState.player
 	sala = level.get(&"sala_torre")
 	check(sala != null and is_instance_valid(sala), "si riparte con la torre già lì")
 	if sala:
-		check(p.global_position.distance_to(ultimo.global_position) < 2.0, "dall'ultimo checkpoint (%s)" % ultimo.name)
+		check(p.global_position.distance_to(ultimo_pos) < 2.0, "dall'ultimo checkpoint (%s)" % ultimo_nome)
 		check((level.get(&"portone") as PortoneTorre).chiuso_dietro, "col portone chiuso alle spalle")
 		print("   La vasca del fondo")
 		var fondo := sala.get_node("VascaFondo") as Area3D
@@ -192,6 +202,7 @@ func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool) -> String:
 	await _frames(10)
 	Input.action_press(&"move_forward")
 	var premuto := false
+	var fermo := 0
 	var esito := "tempo scaduto"
 	for i in 60 * 20:
 		await _frames(1)
@@ -206,7 +217,17 @@ func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool) -> String:
 		if pos.y < dopo.global_position.y - 3.0:
 			esito = "caduto a %.1f m" % pos.y
 			break
-		if pos.distance_to(dopo.global_position) < 2.2 and not p.is_sliding and p.is_on_floor():
+		# fermi su qualcosa nel vuoto, lontano dalla pedana dopo (SalaTorre la conta come caduta)
+		if p.is_on_floor() and not p.is_sliding and pos.y < torre.checkpoint[k].global_position.y - 1.0 \
+				and pos.distance_to(dopo.global_position) > 4.0:
+			fermo += 1
+			if fermo > 90:
+				esito = "caduto (fermo nel vuoto a %.1f m)" % pos.y
+				break
+		else:
+			fermo = 0
+		if absf(pos.y - dopo.global_position.y) < 0.6 and Vector2(pos.x - dopo.global_position.x, pos.z - dopo.global_position.z).length() < 4.5 \
+				and not p.is_sliding and p.is_on_floor():
 			esito = "arrivato"
 			break
 	Input.action_release(&"move_forward")

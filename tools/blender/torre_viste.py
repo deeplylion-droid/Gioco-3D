@@ -8,7 +8,7 @@ blend, pj, out, ver = sys.argv[-4:]
 X0, X1, Y0, Y1, Z0, Z1 = 20.2, 40.0, 4.0, 26.0, -20.0, 14.0
 def prepara(taglia):
     bpy.ops.wm.open_mainfile(filepath=blend)
-    ob = bpy.data.objects[f'torre_{ver}']
+    ob = bpy.data.objects.get(f'torre_{ver}') or bpy.data.objects[f'torre_{ver}-col']
     bm = bmesh.new(); bm.from_mesh(ob.data)
     via = [f for f in bm.faces if taglia(f.calc_center_median(), f.normal)]
     bmesh.ops.delete(bm, geom=via, context='FACES'); bm.to_mesh(ob.data); bm.free()

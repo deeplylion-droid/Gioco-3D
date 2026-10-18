@@ -34,6 +34,8 @@ const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creat
 @export var ordine_base := 20
 ## Metri sotto la pedana del prossimo checkpoint oltre i quali si è caduti.
 @export var margine_caduta := 3.0
+## Secondi fermi su qualcosa nel vuoto (lontano dalle pedane) dopo i quali si è caduti.
+@export var tempo_bloccato := 1.5
 ## Luce di lei: energia in cima e in fondo alla discesa.
 @export var lei_in_cima := 1.5
 @export var lei_in_fondo := 14.0
@@ -47,6 +49,7 @@ var _lei: Array[Light3D] = []
 var _lampo_fatto := false
 var _bambini: Array[Node3D] = []
 var _finita := false
+var _fermo := 0.0
 
 
 static func b(v: Array) -> Vector3:
@@ -222,6 +225,17 @@ func _physics_process(_delta: float) -> void:
 		if y < _quote_cp[i + 1] - margine_caduta:
 			GameState.kill_player(&"caduta")
 			return
+		# fermi su qualcosa nel vuoto (un tubo, una trave), lontano dalle pedane e sotto l'ultimo checkpoint:
+		# da lì non si riparte, quindi conta come caduta
+		if p.is_on_floor() and not p.is_sliding and y < _quote_cp[i] - 1.0 \
+				and p.global_position.distance_to(checkpoint[i + 1].global_position) > 4.0:
+			_fermo += _delta
+			if _fermo > tempo_bloccato:
+				_fermo = 0.0
+				GameState.kill_player(&"caduta")
+				return
+		else:
+			_fermo = 0.0
 	# la luce di lei sale dal pozzo: più forte man mano che scendi
 	var k := clampf((_quote_cp[0] - y) / maxf(_quote_cp[0] - _quote_cp[-1], 1.0), 0.0, 1.0)
 	for l in _lei:

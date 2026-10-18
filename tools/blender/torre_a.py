@@ -395,6 +395,27 @@ def aperture_tutte(r, pts, mezza):
 
 # --- la versione A -------------------------------------------------------------------------------------------
 
+def percorso_gioco(g):
+    """Le tappe della discesa per le viste e per test_torre (torre_percorso.json), ricavate dai dati del gioco:
+    il portone, il canale di ogni tratto, i salti (tra i pezzi, o col getto in fondo al tratto), le pedane
+    dei checkpoint, la Polaroid e la vasca del fondo."""
+    per = [('portone', Vector(g['checkpoint'][0]['pos']))]
+    giu = Vector((0, 0, PROF_D))
+    for k, tr in enumerate(g['tratti']):
+        tipi = list(tr['salti'])
+        for j, ln in enumerate(tr['linee']):
+            pz = [Vector(q) + giu for q in ln]
+            if j >= 1:
+                per.append((tipi.pop(0), pz[0]))
+            per += [('scivolo', q) for q in pz]
+        if tipi:   # il salto in fondo al tratto, fino alla pedana dopo
+            per.append((tipi.pop(0), Vector(tr['a'])))
+        cp = g['checkpoint'][k + 1]
+        per.append(('fondo' if cp['nome'] == 'fondo' else f"pedana {cp['nome']}", Vector(cp['pos'])))
+    per.append(('polaroid 10', Vector(g['polaroid_10'])))
+    return per
+
+
 def versione_A(mats):
     P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear()
     materiali_scivoli(mats)
@@ -593,7 +614,7 @@ def versione_A(mats):
             # i due col getto finiscono sopra una pedana lontana (il secondo più lungo); l'ultimo tratto è un
             # salto normale che finisce nella vasca del fondo, sul lato est
             if t1:
-                pz, s_, tg = getto_lungo(t0, L0, 4.3 if t1 == 'NO' else 4.8, 1.5, (t1, L1))
+                pz, s_, tg = getto_lungo(t0, L0, 3.8 if t1 == 'NO' else 4.2, 1.5, (t1, L1))
             else:
                 pz, s_, tg = getto_lungo(t0, L0, 2.2, 1.7, None, -1, 2.0, 'salto')
             pezzi, ss = [pz], [s_]
@@ -602,6 +623,10 @@ def versione_A(mats):
             sp.discesa.append(pz)
             P.CANALI.append(pz)
             apri(t0, L0, pz, 2.0)
+            if t1:
+                # la ringhiera della pedana d'arrivo si apre dove arriva il volo
+                volo = [s_['a'] - tg * (j * 0.25) for j in range(int((s_['larghezza'] + 1.0) / 0.25) + 1)]
+                apri(t1, L1, volo, 2.2)
             if t1 is None:
                 # la vasca del fondo dove si atterra col getto (senza, si cade sul pavimento prima)
                 c0 = s_['da'] + tg * 3.0
@@ -1064,4 +1089,4 @@ def versione_A(mats):
     gioco['vasca_fondo'] = dict(rett=[xv0, yv0, xv1, yv1], acqua=FONDO + 0.6 - 0.12)
     gioco['passerella'] = list(passerella)
     luci['gioco'] = gioco
-    return gruppi, percorso, luci
+    return gruppi, percorso_gioco(gioco), luci

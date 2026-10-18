@@ -20,6 +20,16 @@ static func b(x: float, y: float, z: float) -> Vector3:
 ## emergenza: lampeggianti rossi ai muri [pos, verso del muro]; lavoro: lampade calde [pos];
 ## lei: il centro del pozzo; scatti: nome -> [camera, punto guardato, campo visivo].
 var VERSIONI := {
+	# la sala vera del gioco (scenes/sala/torre/sala_torre.tscn, con le sue luci)
+	"G": {
+		"scena": "res://scenes/sala/torre/sala_torre.tscn",
+		"scatti": {
+			"1_cima": [b(26.6, 20.4, 1.75), b(34.0, 13.0, -6.0), 80.0],
+			"2_meta": [b(27.6, 10.4, -7.25), b(33.0, 16.5, -17.0), 80.0],
+			"3_fondo": [b(35.0, 14.8, -18.3), b(30.0, 15.5, 1.0), 84.0],
+			"4_balconata": [b(25.5, 23.6, 1.7), b(31.0, 25.2, -1.4), 75.0],
+		},
+	},
 	# la seconda passata della A: tre GLB (struttura, scivoli, prop) e le luci in torre_A_luci.json
 	"A": {
 		"glb": ["torre_A_struttura", "torre_A_scivoli", "torre_A_prop"],
@@ -65,7 +75,9 @@ func _initialize() -> void:
 	root.add_child(radice)
 	var v: Dictionary = VERSIONI[versione]
 	var acqua: Material = load("res://assets/materials/sala/acqua_torbida.tres")
-	for nome in v.get("glb", ["torre_" + versione]):
+	if v.has("scena"):
+		radice.add_child((load(v["scena"]) as PackedScene).instantiate())
+	for nome in v.get("glb", [] if v.has("scena") else ["torre_" + versione]):
 		var glb: Node3D = (load("res://proposte/torre/%s.glb" % nome) as PackedScene).instantiate()
 		radice.add_child(glb)
 		for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
