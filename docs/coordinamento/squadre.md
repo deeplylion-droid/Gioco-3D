@@ -21,3 +21,7 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 - Le pagine di scelta si fanno con `tools/questionario/genera_pagina.py`. Le risposte si leggono con ArtifactData, collezione `risposte`.
 - Pagine aperte: scelte del 17 ottobre (https://claude.ai/artifact/TirmdiyjMMDgHtDRNdv52f, risposte lette) e sala della torre (https://claude.ai/artifact/FmJYNYwt1R4e2yA3L12txa, risposte lette).
 - L'exe Windows pesa circa 1,44 GB. Le proposte sono escluse dall'export con `exclude_filter` in `godot/export_presets.cfg`.
+
+## Da chiedere all'utente dopo la v0.3.6
+
+- Se togliere del tutto la torcia (sue parole del 18 ottobre: "la torcia sto valutando se eliminarla completamente. Chiedimelo dopo la prossiam build"). Ricordargli cosa dipende dalla torcia, per esempio il buio delle stanze.
