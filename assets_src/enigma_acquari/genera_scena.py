@@ -124,6 +124,16 @@ def acquario(nome, pos, alto, pigmento=None):
             node('Parete%d' % (k + 1), 'CollisionShape3D', nome + '/Collisione',
                  transform=tr(roty(-a + math.pi / 2), (math.cos(a) * (R_B + 0.02), 0.2, math.sin(a) * (R_B + 0.02))),
                  shape='SubResource("forma_parete")')
+    # la luce di servizio, come nella proposta approvata: dentro gli alti sotto il coperchio, sopra il
+    # basso (debole e corta: arriva all'acqua ma non al pavimento)
+    if alto:
+        node('LuceAcquario', 'SpotLight3D', nome, transform=tr('1, 0, 0, 0, 0, 1, 0, -1, 0', (0, B_VETRO - 0.05, 0)),
+             light_color='Color(1, 0.95, 0.86, 1)', light_energy='4.0', light_volumetric_fog_energy='0.4',
+             spot_range='1.9', spot_attenuation='0.8', spot_angle='75.0')   # non arriva al pavimento
+    else:
+        node('LuceAcquario', 'SpotLight3D', nome, transform=tr('1, 0, 0, 0, 0, 1, 0, -1, 0', (0, 1.6, 0)),
+             light_color='Color(1, 0.95, 0.86, 1)', light_energy='2.0', light_volumetric_fog_energy='0.0',
+             spot_range='1.65', spot_attenuation='0.8', spot_angle='50.0')
     node('Acqua', parent=nome, inst='acqua', node_paths='PackedStringArray("tank")', tank='NodePath("..")',
          capture_env_cubemap='false', ripple_max_resolution='128')
     node('Vetro', 'Node3D', nome, node_paths='PackedStringArray("acqua")', script='ExtResource("vetro")', acqua='NodePath("../Acqua")')
@@ -150,24 +160,28 @@ node('Buco', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.002 - 0.45, 0)
 node('Disegno', 'Node3D', '.', transform=tr(ROT, (15.6, B_BASE, -6.4)))
 node('Modello', 'MeshInstance3D', 'Disegno', mesh='ExtResource("disegno")', cast_shadow='0')
 
-# le lampadine del portone: la guida e le lampadine spente ci sono sempre (un Node: EnigmaAcquari non
-# lo nasconde), quelle accese e le luci in LampadePortone, che lo script accende con gli acquari
-node('LampadeFisse', 'Node', '.')
-node('GuidaSinistra', 'MeshInstance3D', 'LampadeFisse', transform=tr(ID, (X, (YT + YB) / 2, Z0)), mesh='SubResource("guida_lato")',
-     material_override='ExtResource("m_giallo")')
-node('GuidaDestra', 'MeshInstance3D', 'LampadeFisse', transform=tr(ID, (X, (YT + YB) / 2, Z1)), mesh='SubResource("guida_lato")',
-     material_override='ExtResource("m_giallo")')
-node('GuidaSopra', 'MeshInstance3D', 'LampadeFisse', transform=tr(ID, (X, YT, (Z0 + Z1) / 2)), mesh='SubResource("guida_sopra")',
-     material_override='ExtResource("m_giallo")')
-node('Portalampade', 'MultiMeshInstance3D', 'LampadeFisse', cast_shadow='0', multimesh='ExtResource("mm_porta")')
-node('LampadineSpente', 'MultiMeshInstance3D', 'LampadeFisse', cast_shadow='0', multimesh='ExtResource("mm_spente")')
+# le lampadine del portone (contratto con enigma-logica): LampadePortone sempre visibile; in Spente la
+# guida e le lampadine spente, che si vedono sempre; in Accese le lampadine accese e le luci, che lo
+# script mostra quando gli acquari compaiono
 node('LampadePortone', 'Node3D', '.')
+node('Spente', 'Node3D', 'LampadePortone')
+G = 'LampadePortone/Spente'
+node('GuidaSinistra', 'MeshInstance3D', G, transform=tr(ID, (X, (YT + YB) / 2, Z0)), mesh='SubResource("guida_lato")',
+     material_override='ExtResource("m_giallo")')
+node('GuidaDestra', 'MeshInstance3D', G, transform=tr(ID, (X, (YT + YB) / 2, Z1)), mesh='SubResource("guida_lato")',
+     material_override='ExtResource("m_giallo")')
+node('GuidaSopra', 'MeshInstance3D', G, transform=tr(ID, (X, YT, (Z0 + Z1) / 2)), mesh='SubResource("guida_sopra")',
+     material_override='ExtResource("m_giallo")')
+node('Portalampade', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_porta")')
+node('Lampadine', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_spente")')
+node('Accese', 'Node3D', 'LampadePortone')
 luci = [('Lampada1', (X - 0.55, 3.0, Z0)), ('Lampada2', (X - 0.55, 3.0, Z1)), ('Lampada3', (X - 0.55, YT - 0.2, (Z0 + Z1) / 2))]
 for i, (nome, p) in enumerate(luci):
-    node(nome, 'Node3D', 'LampadePortone')
+    node(nome, 'Node3D', 'LampadePortone/Accese')
     if i == 0:
-        node('Modello', 'MultiMeshInstance3D', 'LampadePortone/' + nome, cast_shadow='0', multimesh='ExtResource("mm_accese")')
-    node('Luce', 'OmniLight3D', 'LampadePortone/' + nome, transform=tr(ID, p), light_color='Color(1, 0.75, 0.45, 1)',
+        # tutte le lampadine accese (poco più grandi delle spente, che coprono)
+        node('Modello', 'MultiMeshInstance3D', 'LampadePortone/Accese/' + nome, cast_shadow='0', multimesh='ExtResource("mm_accese")')
+    node('Luce', 'OmniLight3D', 'LampadePortone/Accese/' + nome, transform=tr(ID, p), light_color='Color(1, 0.75, 0.45, 1)',
          light_energy='2.2', light_volumetric_fog_energy='1.0', omni_range='7.0', omni_attenuation='1.2')
 
 node('Gorgo', 'Node', '.', node_paths='PackedStringArray("enigma", "acqua_misto")', script='ExtResource("gorgo")',

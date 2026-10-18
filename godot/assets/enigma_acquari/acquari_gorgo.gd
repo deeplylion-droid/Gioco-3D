@@ -16,7 +16,7 @@ extends Node
 @export var acqua_misto: Node3D
 ## Rotazione del gorgo (+1 o -1) e profondità massima dell'imbuto (m).
 @export var verso := 1.0
-@export var imbuto := 0.22
+@export var imbuto := 0.3
 
 var _t := -1.0
 var _durata := 4.0

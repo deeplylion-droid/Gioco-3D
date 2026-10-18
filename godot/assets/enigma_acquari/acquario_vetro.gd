@@ -35,6 +35,9 @@ var _vetro: MeshInstance3D
 var _vetro_mat: ShaderMaterial
 var _livello := -1.0
 var _disco_fatto := false
+# il miscuglio già applicato: il WaterTank mette quello iniziale (fill_pigment) nel suo _ready, dopo
+# quello dei figli e senza segnale, quindi lo si confronta anche a ogni fotogramma
+var _mix_visto = null
 
 
 func _ready() -> void:
@@ -60,6 +63,9 @@ func _process(_delta: float) -> void:
 		_volume.visible = l > 0.01
 	if not _disco_fatto:
 		_disco()
+	var m = _tank.get(&"mix")
+	if m is Dictionary and m != _mix_visto:
+		_su_mix(m)
 
 
 func _dimensioni() -> Vector3:
@@ -154,6 +160,7 @@ func _disco() -> void:
 
 
 func _su_mix(m: Dictionary) -> void:
+	_mix_visto = m.duplicate()
 	var stile := stile_per(m)
 	if _vol_mat:
 		_vol_mat.set_shader_parameter("absorption", stile.absorption)
@@ -204,7 +211,7 @@ static func _mescola_stili(pesi: Dictionary) -> WaterStyle:
 	for c in campi_v:
 		out.set(c, Vector3.ZERO)
 	for c in campi_c:
-		out.set(c, Color(0, 0, 0))
+		out.set(c, Color(0, 0, 0, 0))
 	for c in campi_f:
 		out.set(c, 0.0)
 	for k in pesi:

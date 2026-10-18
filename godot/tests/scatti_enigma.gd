@@ -6,13 +6,15 @@ extends Node
 ## Uso, sotto il render.lock, un processo per scatto:
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_enigma.gd <cartella> <scatto>
-## Scatti: meta (la fila da metà sala), vicino, verde (il miscuglio riuscito), portone (le lampadine
+## Scatti: meta (la fila da metà sala), vicino, pieni (da vicino, col verde riuscito), verde (il
+## miscuglio riuscito da vicino), portone (le lampadine
 ## accese), gorgo (a metà del gorgo che svuota il miscuglio torbido).
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 const CAMERE := {
 	"meta": [Vector3(4.0, 1.7, 3.5), Vector3(15.6, 1.1, -3.6)],
 	"vicino": [Vector3(11.8, 1.7, -2.6), Vector3(15.6, 1.25, -3.6)],
+	"pieni": [Vector3(11.8, 1.7, -2.6), Vector3(15.6, 1.25, -3.6)],   # come vicino, col verde riuscito
 	"verde": [Vector3(13.4, 1.5, -2.9), Vector3(15.1, 0.95, -3.5)],
 	"portone": [Vector3(8.6, 1.7, -14.2), Vector3(20.0, 3.0, -15.0)],
 	"gorgo": [Vector3(13.7, 1.85, -3.0), Vector3(15.25, 0.55, -3.6)],
@@ -76,7 +78,7 @@ func _run() -> void:
 	var misto := enigma.get_node(^"AcquarioMisto") as WaterTank
 	var settle := 40
 	match scatto:
-		"verde":
+		"verde", "pieni":
 			enigma.stato = EnigmaAcquari.Stato.RISOLTO
 			misto.set_mix(WaterMix.pura(WaterMix.VERDE))
 			misto.fill = misto.max_fill
