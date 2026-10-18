@@ -16,7 +16,8 @@ extends Node
 
 const FOTOGRAMMI := 6
 const SUONI := [&"zaino_carica", &"zaino_gocce", &"zaino_risucchio_loop", &"zaino_serbatoio_loop",
-		&"zaino_strattone", &"lei_esplosione", &"lei_urlo", &"morso", &"stinger_morte", &"lei_scivola_sotto"]
+		&"zaino_strattone", &"lei_esplosione", &"lei_urlo", &"morso", &"stinger_morte", &"lei_scivola_sotto",
+		&"piscina_svuota_loop", &"vasca_svuotata"]
 
 ## Lo zaino (WaterPack) e il suo GettoPotente.
 var pack: Node

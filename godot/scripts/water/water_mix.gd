@@ -12,20 +12,21 @@ const BLU := "blu"
 const VERDE := "verde"
 const TORBIDA := "torbida"
 
-## I colori, provvisori: l'aspetto dell'acqua colorata lo propone enigma-ambiente all'utente.
+## I colori, approvati dall'utente il 18 ottobre e poi resi più saturi (sua richiesta: "i colori dei
+## liquidi falli più saturi e meno trasparenti"). Il torbido resta scuro com'era.
 const COLORI := {
-	GIALLO: Color(1.0, 0.82, 0.08),
-	BLU: Color(0.08, 0.3, 0.95),
-	VERDE: Color(0.25, 0.78, 0.12),
+	GIALLO: Color(1.0, 0.76, 0.0),
+	BLU: Color(0.0, 0.2, 1.0),
+	VERDE: Color(0.1, 0.82, 0.0),
 	TORBIDA: Color(0.36, 0.3, 0.18),
 }
 ## Le tinte tra blu (0) e giallo (1), in base alla parte di giallo sul totale di giallo e blu: con
 ## 2 di giallo e 1 di blu viene il verde.
 const SFUMATURA := [
-	[0.0, Color(0.08, 0.3, 0.95)],
-	[0.5, Color(0.05, 0.55, 0.55)],
-	[0.667, Color(0.25, 0.78, 0.12)],
-	[1.0, Color(1.0, 0.82, 0.08)],
+	[0.0, Color(0.0, 0.2, 1.0)],
+	[0.5, Color(0.0, 0.58, 0.55)],
+	[0.667, Color(0.1, 0.82, 0.0)],
+	[1.0, Color(1.0, 0.76, 0.0)],
 ]
 
 
