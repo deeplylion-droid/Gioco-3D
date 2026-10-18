@@ -16,7 +16,8 @@ Versioni (un GLB per versione in godot/proposte/torre/, fuori dall'export del gi
   A0 la prima passata della A (groviglio di pochi scivoli attorno al vuoto): scartata dal coordinatore.
 
 Coordinate di Blender (Z in alto, metri, come ambiente_sala.py); in Godot (x, z, -y).
-Uso: /home/user/tools/blender-venv/bin/python tools/blender/torre_proposte.py A [--blend file.blend]
+Uso: /home/user/tools/blender-venv/bin/python tools/blender/torre_proposte.py A [--gioco] [--blend file.blend]
+(--gioco: la sala vera, con le collisioni, in godot/assets/ambiente/torre/)
 """
 import json, math, os, sys
 QUI = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +28,7 @@ import ambiente_kit as K  # noqa: E402
 import ambiente_sala as S  # noqa: E402
 
 USCITA = os.path.normpath(os.path.join(QUI, '..', '..', 'godot', 'proposte', 'torre'))
+GIOCO_USCITA = os.path.normpath(os.path.join(QUI, '..', '..', 'godot', 'assets', 'ambiente', 'torre'))
 T = S.SALA_TORRE
 XI0, XI1, YI0, YI1, H = S.X1 + K.SPESSORE_PARETE, T['x1'], T['y0'], T['y1'], T['h']   # interno della sala
 FONDO = -20.0                                   # il fondo della sala, nello scafo
@@ -634,17 +636,29 @@ def main():
     mats = K.Materiali(S.PALETTE_SALA, per_render=False)
     S.materiali_nuovi(mats)
     materiali_torre(mats)
+    gioco = '--gioco' in argv
+    if gioco:
+        # la sala vera del gioco: GLB con le collisioni in godot/assets/ambiente/torre/, nomi senza versione
+        import torre_a
+        torre_a.GIOCO = True
+    uscita = GIOCO_USCITA if gioco else USCITA
+    prefisso = 'torre' if gioco else f'torre_{nome}'
     ris = VERSIONI[nome](mats)
-    os.makedirs(USCITA, exist_ok=True)
+    os.makedirs(uscita, exist_ok=True)
     if isinstance(ris[0], dict):
         # più GLB (ognuno sotto i 50 MB): torre_<v>_<gruppo>.glb, più le luci per lo script degli scatti
         gruppi, percorso, luci = ris
+        if gioco:
+            with open(os.path.join(uscita, 'torre_gioco.json'), 'w') as f:
+                json.dump(luci.pop('gioco'), f, indent=1)
+        else:
+            luci.pop('gioco', None)
         for g, oggetti in gruppi.items():
-            out = os.path.join(USCITA, f'torre_{nome}_{g}.glb')
+            out = os.path.join(uscita, f'{prefisso}_{g}.glb')
             K.esporta(oggetti, out)
             tri = sum(sum(len(p.vertices) - 2 for p in o.data.polygons) for o in oggetti if o.type == 'MESH')
             print(f'GLB {out}: {len(oggetti)} oggetti, {tri} triangoli, {os.path.getsize(out) / 1e6:.1f} MB')
-        with open(os.path.join(USCITA, f'torre_{nome}_luci.json'), 'w') as f:
+        with open(os.path.join(uscita, f'{prefisso}_luci.json'), 'w') as f:
             json.dump(luci, f, indent=1)
     else:
         oggetti, percorso = ris
@@ -652,7 +666,7 @@ def main():
         K.esporta(oggetti, out)
         tri = sum(sum(len(p.vertices) - 2 for p in o.data.polygons) for o in oggetti if o.type == 'MESH')
         print(f'GLB {out}: {len(oggetti)} oggetti, {tri} triangoli, {os.path.getsize(out) / 1e6:.1f} MB')
-    with open(os.path.join(USCITA, f'torre_{nome}_percorso.json'), 'w') as f:
+    with open(os.path.join(uscita, f'{prefisso}_percorso.json'), 'w') as f:
         json.dump([dict(cosa=k, x=round(p.x, 2), y=round(p.y, 2), z=round(p.z, 2)) for k, p in percorso], f, indent=1)
     if '--blend' in argv:
         bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(argv[argv.index('--blend') + 1]))
