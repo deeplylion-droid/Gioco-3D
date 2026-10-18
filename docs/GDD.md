@@ -185,6 +185,15 @@ Risposte alle domande (18 ottobre):
 - **Cosa apre**: il portone della torre. Prende il posto della regola di prima ("si apre da solo dopo la tappa 8").
 - L'aspetto (acquari, posizione, disegno, lampade) si propone all'utente con scatti dal motore prima di metterlo nel gioco.
 
+## Nuove mascotte (idea dell'utente, 18 ottobre)
+
+Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
+- **Stile delle statue**: mascotte del parco, cioè vetroresina dipinta da acquapark, sorridenti e colorate, ora scolorite e crepate. Sono della stessa famiglia della medusa.
+- **Animali**: uno squalo e un polpo.
+- **Il mostro-squalo**: per ora solo il modello. Il ruolo nel gioco si decide dopo.
+- **Dove metterle**: si decide dopo aver visto i render, su scatti dal gioco.
+- I crediti Meshy del mese (circa 12.600) si perdono il 15 novembre: si possono usare.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
