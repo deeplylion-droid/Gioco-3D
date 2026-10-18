@@ -3,9 +3,10 @@ extends Node
 ## dopo la tappa 8 aspira due volte il giallo e una il blu, versa ogni volta nell'acquario vuoto, che
 ## cambia colore e diventa verde, poi il portone della torre si apre con le lampade accese.
 ## Come scatti_sala.gd toglie gli interni prima del primo frame (memoria).
-## Uso, sotto il render.lock, con il Movie Maker di Godot:
+## Salva un JPG per fotogramma in <cartella> (il Movie Maker su llvmpipe qui si blocca); poi
+## ffmpeg -framerate 25 -i <cartella>/f_%05d.jpg ne fa il video. Uso, sotto il render.lock:
 ##   xvfb-run -a -s "-screen 0 960x540x24" godot --path godot --rendering-driver vulkan --fixed-fps 25 \
-##        --resolution 960x540 --write-movie <file.avi> --script res://tests/run.gd -- res://tests/video_acquari.gd
+##        --resolution 960x540 --script res://tests/run.gd -- res://tests/video_acquari.gd <cartella>
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
@@ -13,10 +14,26 @@ var level: Node
 var p: Player
 var enigma: EnigmaAcquari
 var _guarda := Vector3.ZERO
+var _cartella := ""
+var _n := 0
 
 
 func _ready() -> void:
+	var args := OS.get_cmdline_user_args()
+	if args.size() > 1:
+		_cartella = args[1]
+		DirAccess.make_dir_recursive_absolute(_cartella)
 	_run.call_deferred()
+
+
+func _process(_delta: float) -> void:
+	if _cartella == "" or p == null:
+		return
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_jpg("%s/f_%05d.jpg" % [_cartella, _n], 0.9)
+	_n += 1
+	if _n % 50 == 0:
+		print("fotogramma ", _n)
 
 
 func _run() -> void:
