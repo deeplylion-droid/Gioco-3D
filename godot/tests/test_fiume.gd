@@ -2,6 +2,8 @@ extends Node
 ## Test del prototipo grigio del fiume lento (proposte/fiume/fiume_prototipo.tscn), simulando gli
 ## input: si sale sulla ciambella, la corrente porta, col getto si accelera e si frena, le paratie
 ## si girano colpendo i bersagli. Misura anche i tempi del giro.
+## 0. L'indizio: a ogni bivio è acceso solo il cartello d'uscita del ramo giusto, e seguendo i cartelli
+##    accesi si arriva all'approdo.
 ## 1. Prima delle pompe la corrente non c'è.
 ## 2. Dopo: la ciambella va a circa 2,2 m/s; sparando all'indietro si accelera, in avanti si frena.
 ## 3. Senza colpire niente al bivio 1 si va nel ramo sbagliato e si torna all'imbarco; la paratia
@@ -38,6 +40,24 @@ func _run() -> void:
 	var p2 := fiume.get_node(^"Paratia2") as ParatiaFiume
 	var p3 := fiume.get_node(^"Paratia3") as ParatiaFiume
 	_zaino()
+
+	print("0. L'indizio: i cartelli d'uscita accesi solo sui rami giusti")
+	var coerenti := true
+	for par in [p1, p2, p3]:
+		var acceso_sx := _cartello_acceso((par as ParatiaFiume).sinistra)
+		var acceso_dx := _cartello_acceso((par as ParatiaFiume).destra)
+		coerenti = coerenti and acceso_sx != acceso_dx
+	check(coerenti, "a ogni bivio è acceso il cartello di un ramo solo")
+	# Seguendo i cartelli accesi dall'imbarco si arriva all'uscita senza mai tornare indietro.
+	var t: TrattoFiume = fiume.imbarco
+	var passi := 0
+	while t and not t.uscita and passi < 10:
+		if t.paratia:
+			t = t.paratia.sinistra if _cartello_acceso(t.paratia.sinistra) else t.paratia.destra
+		else:
+			t = t.prossimo
+		passi += 1
+	check(t != null and t.uscita, "seguendo i cartelli accesi si arriva all'approdo (%d tratti)" % passi)
 
 	print("1. Prima delle pompe la corrente non c'è")
 	GameState.imposta_luci(GameState.Luci.PRIMA_DEL_RISVEGLIO)
@@ -175,6 +195,13 @@ func _spara_al_bersaglio(par: ParatiaFiume, secondi := 6.0) -> bool:
 	Input.action_release(&"spray")
 	await _secondi(0.2)
 	return par.colpi > colpi
+
+
+func _cartello_acceso(t: TrattoFiume) -> bool:
+	for c in level.find_children("*", "CartelloUscita", true, false):
+		if (c as CartelloUscita).tratto == t:
+			return (c as CartelloUscita).acceso
+	return false
 
 
 func _guarda_verso(d: Vector3) -> void:

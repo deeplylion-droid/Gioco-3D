@@ -60,6 +60,14 @@ func _ready() -> void:
 	tratti["Giusto1"].paratia = _paratia("Paratia2", Vector3(16, 0, -75), tratti["Sbagliato2"], tratti["Giusto2"], true, Vector3(18.4, 1.4, -62))
 	tratti["Giusto2"].paratia = _paratia("Paratia3", Vector3(-20, 0, -90), tratti["Sbagliato3"], tratti["Uscita"], false, Vector3(-6, 1.4, -92.4))
 	add_child(fiume)
+	# I cartelli d'uscita sopra l'imbocco di ogni ramo dei bivi: accesi solo sui rami giusti.
+	for t in [tratti["Giusto1"], tratti["Sbagliato1"], tratti["Giusto2"], tratti["Sbagliato2"], tratti["Uscita"], tratti["Sbagliato3"]]:
+		var c := CartelloUscita.new()
+		c.name = "Cartello" + String(t.name)
+		c.tratto = t
+		add_child(c)
+		var dove: Vector3 = t.punto(4.0)
+		c.global_transform = Transform3D(Basis.looking_at(-t.direzione(4.0), Vector3.UP), dove + Vector3(0, 2.6, 0))
 	# La colonna che nasconde il bersaglio del bivio 3 a chi arriva.
 	var colonna := StaticBody3D.new()
 	colonna.name = "Colonna"

@@ -33,6 +33,9 @@ signal uscito
 @export var dopo_le_pompe := true
 ## Dove si scende all'approdo, rispetto alla fine del tratto d'uscita (globale, in più).
 @export var discesa := Vector3(0.0, 0.0, 0.0)
+## La ciambella ondeggia piano (m) e nelle curve gira un po' su sé stessa (giri per radiante di curva).
+@export var ondeggio := 0.04
+@export var giro_nelle_curve := 0.12
 
 var giocatore: Player
 var tratto: TrattoFiume
@@ -43,6 +46,9 @@ var arrivato := false
 
 var _ciambella: Node3D
 var _sali: Interactable
+var _t := 0.0
+var _giro := 0.0
+var _dir_prima := Vector3.ZERO
 
 
 func _ready() -> void:
@@ -125,6 +131,13 @@ func _physics_process(delta: float) -> void:
 	if pack:
 		pack.refill(ricarica * delta)
 	s += (tratto.velocita if fissa else v) * delta
+	# Nelle curve la ciambella gira un po' su sé stessa (verso la curva), poi rallenta.
+	_t += delta
+	var dn := tratto.direzione(s)
+	if _dir_prima != Vector3.ZERO:
+		_giro += _dir_prima.signed_angle_to(dn, Vector3.UP) * giro_nelle_curve * TAU
+	_giro *= exp(-0.15 * delta)
+	_dir_prima = dn
 	while s >= tratto.lunghezza():
 		var dopo := tratto.seguente()
 		if tratto.uscita or dopo == null:
@@ -161,7 +174,8 @@ func _metti_ciambella() -> void:
 	if tratto == null or _ciambella == null:
 		return
 	var d := tratto.direzione(s)
-	_ciambella.global_transform = Transform3D(Basis.looking_at(d, Vector3.UP), tratto.punto(s))
+	var su := Vector3.UP * ondeggio * sin(_t * 1.3) if giocatore else Vector3.ZERO
+	_ciambella.global_transform = Transform3D(Basis.looking_at(d, Vector3.UP).rotated(Vector3.UP, _giro), tratto.punto(s) + su)
 
 
 func _porta_giocatore() -> void:

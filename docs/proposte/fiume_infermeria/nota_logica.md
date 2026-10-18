@@ -75,3 +75,9 @@ Nel codice sono pronti il lettore (`LettoreTessera`, con lo stato che si salva) 
 - mettere la keycard come Pickup, con `item_id = keycard`, nella cassaforte.
 
 Lo fa chi costruisce le stanze, nella scena vera.
+
+## 4. I prototipi grigi (per le squadre, non per l'utente)
+
+- `godot/proposte/fiume/fiume_prototipo.tscn`, provato da `tests/test_fiume.gd`: la ciambella che ondeggia e si gira un po' nelle curve, la spinta col getto, i 3 bivi, i cartelli d'uscita accesi solo sui rami giusti, e all'approdo la keycard, il lettore e la serranda.
+- `godot/proposte/infermeria/infermeria_prototipo.tscn`, provato da `tests/test_infermeria.gd`: l'interruttore col getto, il negatoscopio, lo schedario con il cassetto dall'adesivo rosa, la radiografia con i puntini 4-1-7 e la cassaforte con dentro la keycard e la Polaroid (la Polaroid è un segnaposto).
+- Le classi si riusano nelle scene vere: `FiumeLento`, `TrattoFiume`, `ParatiaFiume`, `CartelloUscita`, `Negatoscopio`, `CassettoSchedario`, `CassaforteRotelle` e `LettoreTessera`, tutte in `scripts/mechanisms/`. La serranda del magazzino ha in più il campo `lettore`.
