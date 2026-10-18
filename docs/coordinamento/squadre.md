@@ -26,4 +26,4 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 
 ## Da chiedere all'utente dopo la v0.3.6
 
-- Se togliere del tutto la torcia (sue parole del 18 ottobre: "la torcia sto valutando se eliminarla completamente. Chiedimelo dopo la prossiam build"). Ricordargli cosa dipende dalla torcia, per esempio il buio delle stanze.
+- La torcia: deciso il 18 ottobre, si toglie. Ai prossimi giri si propongono i punti bui con scatti.
