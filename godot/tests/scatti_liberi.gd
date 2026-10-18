@@ -52,20 +52,29 @@ func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset(preset)
-	get_tree().change_scene_to_file(scena)
+	if togli.is_empty():
+		get_tree().change_scene_to_file(scena)
+	else:
+		# La scena si istanzia a mano per togliere i nodi pesanti prima che entrino nell'albero
+		# (come scatti_sala.gd): così sta nella memoria.
+		var livello := (load(scena) as PackedScene).instantiate()
+		for percorso in togli:
+			var n := livello.get_node_or_null(NodePath(percorso))
+			if n:
+				n.get_parent().remove_child(n)
+				n.free()
+		get_tree().root.add_child(livello)
+		get_tree().current_scene = livello
 	for i in 300:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player):
 			break
 	get_tree().paused = false
-	# Fermo subito: togliendo nodi (per esempio gli Interni) il giocatore potrebbe cadere nel vuoto e
-	# morire prima degli scatti.
-	if GameState.player:
-		GameState.player.set_physics_process(false)
-	for percorso in togli:
-		var n := get_tree().current_scene.get_node_or_null(NodePath(percorso))
-		if n:
-			n.free()
+	# Si aspetta la fine del risveglio, se c'è (la camera è storta finché il giocatore si alza).
+	for i in 600:
+		if GameState.player.input_enabled:
+			break
+		await get_tree().process_frame
 	if blackout:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	if fisse:
