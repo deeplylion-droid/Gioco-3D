@@ -23,8 +23,9 @@ const SCENA_OPZIONI := "res://addons/grafica/menu_opzioni.tscn"
 @export var angolo := Vector2(-0.34, 0.04)
 ## Altezza della camera: all'inizio e alla fine.
 @export var altezza := Vector2(0.7, 2.55)
-## Altezza del punto guardato: all'inizio (piedistallo e tentacoli) e alla fine (viso).
-@export var altezza_sguardo := Vector2(1.9, 4.6)
+## Altezza del punto guardato: all'inizio (la statua intera, con la faccia già dentro lo schermo:
+## riscontro del 18 ottobre, prima si partiva dai tentacoli con la testa tagliata) e alla fine (viso).
+@export var altezza_sguardo := Vector2(3.3, 4.6)
 ## Spostamento laterale del punto guardato (m, negativo = a sinistra): la statua resta a
 ## destra dell'inquadratura e il menu a sinistra.
 @export var spostamento := -1.35
