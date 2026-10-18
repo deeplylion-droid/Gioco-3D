@@ -319,11 +319,13 @@ def pozzo_lei(c, centro, r=1.8):
     c.anello((centro[0], centro[1], FONDO + 0.6), (0, 0, 1), r - 0.02, r + 0.38, 0.05, 'inox', seg=48)
     c.anello((centro[0], centro[1], FONDO - 8.0), (0, 0, 1), r - 0.05, r, 8.6, 'nero', seg=48)
     c.disco((centro[0], centro[1], FONDO - 8.0), (0, 0, 1), r, 'nero', seg=48)
-    # due sbarre della grata rimaste, piegate verso il basso
+    # due sbarre della grata rimaste attaccate al bordo, piegate verso il basso
     for a in (20.0, 200.0):
-        p = polare(centro, r * 0.55, a, FONDO + 0.55)
-        q = polare(centro, -r * 0.1, a, FONDO + 0.1)
-        c.cilindro(p, q, 0.035, 'metallo', seg=8)
+        p = polare(centro, r + 0.05, a, FONDO + 0.6)
+        m = polare(centro, r * 0.5, a, FONDO + 0.45)
+        q = polare(centro, r * 0.2, a, FONDO - 0.5)
+        c.cilindro(p, m, 0.035, 'metallo', seg=8)
+        c.cilindro(m, q, 0.035, 'metallo', seg=8)
 
 
 def balconata(c, x0, x1, y, z, profondita=1.6):
@@ -348,6 +350,16 @@ def tubo_muro(c, punti, r=0.14, mat='metallo'):
         a, b = Vector(punti[i]), Vector(punti[i + 1])
         m = (a + b) / 2
         c.anello(m, (b - a).normalized(), r, r + 0.04, 0.1, 'gioco_rosso', seg=16)
+        # staffe al muro più vicino, ogni 2,5 m
+        n = max(1, int((b - a).length / 2.5))
+        for k in range(n + 1):
+            q = a.lerp(b, (k + 0.5) / (n + 1))
+            muri = [(q.x - XI0, Vector((XI0 - 0.05, q.y, q.z))), (XI1 - q.x, Vector((XI1 + 0.05, q.y, q.z))),
+                    (q.y - YI0, Vector((q.x, YI0 - 0.05, q.z))), (YI1 - q.y, Vector((q.x, YI1 + 0.05, q.z)))]
+            dist, w = min(muri, key=lambda m_: m_[0])
+            if dist < 1.0:
+                c.cilindro(q, w, 0.035, 'metallo', seg=8)
+                c.anello(q, (b - a).normalized(), r, r + 0.025, 0.05, 'metallo', seg=14)
 
 
 def cancello_partenza(c, base, verso):

@@ -28,6 +28,8 @@ var VERSIONI := {
 			"2_meta": [b(27.6, 10.4, -7.25), b(33.0, 16.5, -17.0), 80.0],
 			"3_fondo": [b(35.0, 14.8, -18.3), b(30.0, 15.5, 1.0), 84.0],
 			"4_balconata": [b(25.5, 23.6, 1.7), b(31.0, 25.2, -1.4), 75.0],
+			"5_controllo_se": [b(38.6, 4.6, 7.0), b(27.0, 22.0, -7.0), 85.0],
+			"6_controllo_no": [b(21.4, 24.6, -13.0), b(36.0, 6.0, -1.0), 85.0],
 		},
 	},
 	# la seconda passata della A: tre GLB (struttura, scivoli, prop) e le luci in torre_A_luci.json

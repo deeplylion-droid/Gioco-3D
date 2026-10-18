@@ -199,9 +199,59 @@ def pendenza(pts):
     return (pts[0].z - pts[-1].z) / max(lung, 1e-6), lung
 
 
+T_U, R_U = 0.08, 0.06                      # spessore e bordo arrotondato dei canali aperti (si vedono come solidi)
+
+
+def flange_u(c, pts, W, D, T, H, mat, ogni=2.0, e=0.035, b=0.05):
+    """Le flange dei giunti di un canale aperto a U: una fascia attorno all'esterno ogni `ogni` metri e una a
+    ogni testata (così il bordo si vede spesso, come i tubi chiusi)."""
+    n_c = 14
+
+    def prof(a, bb):
+        return [(-a, H)] + [(-a * math.cos(math.pi * j / n_c), -bb * math.sin(math.pi * j / n_c)) for j in range(n_c + 1)] + [(a, H)]
+    dentro = prof(W + T - 0.004, D + T - 0.004)
+    fuori = prof(W + T + e, D + T + e)
+    lung = [0.0]
+    for i in range(1, len(pts)):
+        lung.append(lung[-1] + (pts[i] - pts[i - 1]).length)
+    dove = [0]
+    prossimo = ogni
+    for i in range(1, len(pts) - 1):
+        if lung[i] >= prossimo and lung[-1] - lung[i] > ogni * 0.5:
+            dove.append(i)
+            prossimo = lung[i] + ogni
+    dove.append(len(pts) - 1)
+    for i in dove:
+        a_, b_ = pts[max(i - 1, 0)], pts[min(i + 1, len(pts) - 1)]
+        d = (b_ - a_).normalized()
+        lato = d.cross(Vector((0, 0, 1))).normalized()
+        su = lato.cross(d).normalized()
+        sp_ = b if i == 0 else (-b if i == len(pts) - 1 else 0.0)
+
+        def P_(sv, hv, off):
+            return pts[i] + lato * sv + su * hv + d * (sp_ + off)
+        for k in range(len(fuori) - 1):
+            (s0, h0), (s1, h1) = fuori[k], fuori[k + 1]
+            (t0, g0), (t1, g1) = dentro[k], dentro[k + 1]
+            sm, hm = (s0 + s1) / 2, (h0 + h1) / 2
+            n_out = (lato * (1 if sm > 0 else -1)) if hm > 0.001 else (lato * sm / (W * W) + su * hm / (D * D)).normalized()
+            c.faccia_verso([P_(s0, h0, -b), P_(s1, h1, -b), P_(s1, h1, b), P_(s0, h0, b)], mat, n_out)
+            for off, vv in ((-b, -d), (b, d)):
+                c.faccia_verso([P_(t0, g0, off), P_(t1, g1, off), P_(s1, h1, off), P_(s0, h0, off)], mat, vv)
+        for (t_, g_), (s_, h_) in ((dentro[0], fuori[0]), (dentro[-1], fuori[-1])):
+            c.faccia_verso([P_(t_, g_, -b), P_(s_, h_, -b), P_(s_, h_, b), P_(t_, g_, b)], mat, su)
+
+
 def scivolo_discesa(c, pts, mat):
-    """Un pezzo della discesa: canale aperto più largo e con le sponde alte (vedi LARGO_D)."""
-    S.scivolo_solido(c, [Vector(p) for p in pts], W=LARGO_D, D=PROF_D, T=0.05, H=SPONDA_D, R=0.035, mat=mat)
+    """Un pezzo della discesa: canale aperto più largo e con le sponde alte (vedi LARGO_D), con le flange."""
+    S.scivolo_solido(c, [Vector(p) for p in pts], W=LARGO_D, D=PROF_D, T=T_U, H=SPONDA_D, R=R_U, mat=mat)
+    flange_u(c, [Vector(p) for p in pts], LARGO_D, PROF_D, T_U, SPONDA_D, mat)
+
+
+def scivolo_aperto(c, pts, mat):
+    """Uno scivolo aperto decorativo (come P.scivolo, ma spesso e con le flange)."""
+    S.scivolo_solido(c, [Vector(p) for p in pts], W=LARGO, D=PROF, T=T_U, H=SPONDA, R=R_U, mat=mat)
+    flange_u(c, [Vector(p) for p in pts], LARGO, PROF, T_U, SPONDA, mat)
 
 
 def travatura(c, pts, chiuso, esclusi, mat='metallo', largo=None, prof=None):
@@ -334,6 +384,8 @@ def scala_servizio(c, sp, x0, y0, lungo, asse, verso_ponte, mat='gioco_giallo'):
     for g in range(n0):
         box(lp + corsa - (g + 1) * (corsa / n0), 1.2, FONDO + (g + 1) * alz - 0.05, lp + corsa - g * (corsa / n0),
             largo - 0.05, FONDO + (g + 1) * alz, 'metallo_grigio')
+    for vv in (1.2, largo - 0.05):     # i cosciali della prima rampa, dal fondo al pianerottolo
+        c.cilindro(P_(lp + corsa, vv, FONDO), P_(lp, vv, L0), 0.05, mat, seg=6)
 
 
 def ringhiere_ponte(c, r, L, aperture):
@@ -414,6 +466,249 @@ def percorso_gioco(g):
         per.append(('fondo' if cp['nome'] == 'fondo' else f"pedana {cp['nome']}", Vector(cp['pos'])))
     per.append(('polaroid 10', Vector(g['polaroid_10'])))
     return per
+
+
+def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
+    """Sostegni dei pezzi (scivoli della discesa e decorativi): un pezzo è retto dove poggia su una pedana,
+    dove entra nel muro e dove c'è una mensola; altrove ci vuole un sostegno nuovo a ogni capo libero (a
+    `sbalzo` metri dalla fine) e almeno ogni `campata` metri. In ordine si prova: un puntone dalla colonna
+    più vicina di un traliccio, due tiranti fino al soffitto o al fondo di una pedana, un palo fino al fondo
+    o a una pedana. I sostegni non devono passare in un altro pezzo, in una scatola occupata o nel volo
+    di un salto. Ritorna l'elenco dei pezzi con le campate più lunghe rimaste."""
+    def lunghezze(pts):
+        lung = [0.0]
+        for i in range(1, len(pts)):
+            lung.append(lung[-1] + (pts[i] - pts[i - 1]).length)
+        return lung
+
+    def a_s(pts, lung, s_):
+        for i in range(1, len(pts)):
+            if lung[i] >= s_:
+                f = (s_ - lung[i - 1]) / max(1e-6, lung[i] - lung[i - 1])
+                return pts[i - 1].lerp(pts[i], f), (pts[i] - pts[i - 1])
+        return pts[-1], pts[-1] - pts[-2]
+
+    def su_pedana(p):
+        return any(dentro_rett(p, r, 0.1) and L - 0.1 < p.z < L + 1.7 for (_, L), r in pedane.items())
+
+    altri_tutti = [(pz, M_DISCESA) for pz in sp.discesa] + list(sp.deco)
+
+    perche = {}
+
+    def no(motivo):
+        perche[motivo] = perche.get(motivo, 0) + 1
+        return False
+
+    def libero(a, b, proprio, raggio=0.12, fine_su=None):
+        """Il segmento a-b non passa in altri pezzi, nelle scatole occupate o nei voli. (Le scatole dei
+        tralicci non contano: i puntoni ci si attaccano, e dentro ci sono solo le colonne.)"""
+        n = max(2, int((b - a).length / 0.3))
+        for k in range(n + 1):
+            q = a.lerp(b, k / n)
+            for (pts, m) in altri_tutti:
+                if pts is proprio:
+                    continue
+                for t in pts[::2]:
+                    if abs(t.x - q.x) < 2.5 and abs(t.y - q.y) < 2.5 and \
+                            math.hypot(t.x - q.x, t.y - q.y) < m + raggio + 0.05 and -0.6 - m < q.z - t.z < m + 0.1:
+                        return no('pezzo')
+            for (x0, y0, z0, x1, y1, z1, nome) in sp.scatole:
+                if nome.startswith(('ponte_', 'vasca_', 'pozzo', 'nucleo_')) or nome == fine_su:
+                    continue
+                if x0 < q.x < x1 and y0 < q.y < y1 and z0 < q.z < z1:
+                    return no(nome.split('_')[0])
+            for (da, aa) in voli:
+                for j in range(13):
+                    f = j / 12
+                    v = da.lerp(aa, f) + Vector((0, 0, 1.6 * 4 * f * (1 - f)))
+                    if math.hypot(v.x - q.x, v.y - q.y) < 1.1 and -1.0 < q.z - v.z < 1.6:
+                        return no('volo')
+        return True
+
+    def sopra(x, y, z):
+        """Dove arriva un tirante che sale da (x, y, z): il fondo di una pedana o il soffitto."""
+        best = H
+        for (_, L), r in pedane.items():
+            if dentro_rett(Vector((x, y, 0)), r, -0.15) and z < L - 0.3 < best:
+                best = L - 0.27
+        return best
+
+    def sotto(x, y, z):
+        best = FONDO
+        for (_, L), r in pedane.items():
+            if dentro_rett(Vector((x, y, 0)), r, -0.15) and best < L < z:
+                best = L - 0.02
+        for (x0, y0, z0, x1, y1, z1, nome) in sp.scatole:
+            if nome.startswith(('vasca_', 'pozzo')) and x0 < x < x1 and y0 < y < y1 and best < z1 < z:
+                best = z1
+        return best
+
+    def sella(u, d, lat, w):
+        c.scatola_assi(u - Vector((0, 0, 0.07)), [d, lat, Vector((0, 0, 1))], (0.08, w, 0.07), 'gioco_rosso')
+        for sg in (-1, 1):
+            q = u + lat * (sg * (w - 0.04))
+            c.cilindro(q - Vector((0, 0, 0.12)), q + Vector((0, 0, 0.12)), 0.035, 'metallo', seg=8)
+
+    def collare(p, d3, lat, chiuso, largo, prof):
+        """Il collare che abbraccia il pezzo dove è retto (si vede anche dall'alto) e i due punti in cima, ai
+        lati, dove si attaccano i tiranti."""
+        if chiuso:
+            c.anello(p, d3, R_GROVIGLIO + 0.005, R_GROVIGLIO + 0.06, 0.16, 'metallo', seg=20)
+            return [p + lat * (sg * (R_GROVIGLIO + 0.09)) for sg in (-1, 1)]
+        sponda = SPONDA_D if largo == LARGO_D else SPONDA
+        flange_u(c, [p - d3 * 0.16, p + d3 * 0.16], largo, prof, T_U, sponda, 'metallo', ogni=99.0, e=0.05, b=0.05)
+        return [p + lat * (sg * (largo + T_U + 0.1)) + Vector((0, 0, sponda - 0.04)) for sg in (-1, 1)]
+
+    def attacco(q, sg_lat, lat):
+        """La staffa tra il collare e il tirante (un braccetto corto verso l'esterno)."""
+        c.cilindro(q - lat * (sg_lat * 0.08), q, 0.04, 'metallo', seg=8)
+
+    def prova(pts, mezza, chiuso, largo, prof, p, d):
+        d3 = d.normalized()
+        d = Vector((d.x, d.y, 0))
+        if d.length < 1e-6:
+            return None
+        d.normalize()
+        lat = Vector((-d.y, d.x, 0))
+        du = (R_GROVIGLIO + 0.07) if chiuso else prof + 0.12
+        u = p - Vector((0, 0, du))
+        w = (R_GROVIGLIO + 0.14) if chiuso else largo + 0.14
+        colonne = [(t, Vector((centro(t).x + sx * NUCLEO, centro(t).y + sy * NUCLEO, 0)))
+                   for t in ORDINE for sx in (-1, 1) for sy in (-1, 1)]
+        t_col, col = min(colonne, key=lambda tq: math.hypot(tq[1].x - u.x, tq[1].y - u.y))
+        vernice = VERNICI_TORRI[t_col]
+        dist = math.hypot(col.x - u.x, col.y - u.y)
+        # 1) puntone dalla colonna più vicina di un traliccio
+        if 0.6 < dist < 3.6:
+            a1 = Vector((col.x, col.y, u.z - 0.1))
+            a2 = Vector((col.x, col.y, u.z - 0.1 - max(1.0, 0.8 * dist)))
+            if libero(a1, u, pts) and libero(a2, u, pts):
+                sella(u, d, lat, w)
+                collare(p, d3, lat, chiuso, largo, prof)
+                c.cilindro(a1, u - Vector((0, 0, 0.1)), 0.09, vernice, seg=10)
+                c.cilindro(a2, u - Vector((0, 0, 0.12)), 0.06, vernice, seg=8)
+                c.anello(a1, (0, 0, 1), 0.19, 0.28, 0.14, 'metallo', seg=12)
+                return 'puntone'
+        # i tiranti partono dai lati del collare, in alto
+        capi_alti = [p + lat * (sg * ((R_GROVIGLIO + 0.09) if chiuso else (largo + T_U + 0.1))) +
+                     Vector((0, 0, 0.0 if chiuso else (SPONDA_D if largo == LARGO_D else SPONDA) - 0.04)) for sg in (-1, 1)]
+        # 2) tiranti fino al soffitto o sotto una pedana
+        tetti = [sopra(q.x, q.y, q.z) for q in capi_alti]
+        if all(libero(q + Vector((0, 0, 0.3)), Vector((q.x, q.y, z1)), pts, 0.06) for q, z1 in zip(capi_alti, tetti)):
+            collare(p, d3, lat, chiuso, largo, prof)
+            for sg, q, z1 in zip((-1, 1), capi_alti, tetti):
+                attacco(q, sg, lat)
+                c.cilindro(q, Vector((q.x, q.y, z1)), 0.05, 'metallo', seg=8, tappi=False)
+                c.scatola((q.x - 0.1, q.y - 0.1, z1 - 0.03), (q.x + 0.1, q.y + 0.1, z1 + 0.02), 'metallo')
+                m = (q.z + z1) / 2
+                c.cilindro(Vector((q.x, q.y, m - 0.18)), Vector((q.x, q.y, m + 0.18)), 0.08, 'gioco_rosso', seg=8)
+            return 'tiranti'
+        # 3) tiranti inclinati fino alla colonna più vicina, più in alto (del colore della torre)
+        if dist < 7.5:
+            alto = Vector((col.x, col.y, max(capi_alti[0].z, capi_alti[1].z) + max(1.6, 0.55 * dist)))
+            if alto.z < H - 0.5 and all(libero(q + (alto - q).normalized() * 0.3, alto, pts, 0.06) for q in capi_alti):
+                collare(p, d3, lat, chiuso, largo, prof)
+                for sg, q in zip((-1, 1), capi_alti):
+                    attacco(q, sg, lat)
+                    c.cilindro(q, alto, 0.06, vernice, seg=8, tappi=False)
+                    m = q.lerp(alto, 0.5)
+                    c.cilindro(m - (alto - q).normalized() * 0.18, m + (alto - q).normalized() * 0.18, 0.09, 'metallo', seg=8)
+                c.anello(alto, (0, 0, 1), 0.19, 0.28, 0.16, 'metallo', seg=12)
+                return 'tiranti alla colonna'
+        # 4) palo fino al fondo o a una pedana
+        z0 = sotto(u.x, u.y, u.z)
+        if u.z - z0 > 0.4 and libero(u - Vector((0, 0, 0.2)), Vector((u.x, u.y, z0)), pts, 0.15):
+            sella(u, d, lat, w)
+            collare(p, d3, lat, chiuso, largo, prof)
+            c.cilindro((u.x, u.y, z0), (u.x, u.y, u.z - 0.06), 0.12, 'gioco_giallo', seg=12)
+            c.anello((u.x, u.y, z0), (0, 0, 1), 0.0, 0.28, 0.04, 'metallo', seg=12)
+            return 'palo'
+        return None
+
+    rapporto = []
+    conta = {}
+    for (pts, mezza, chiuso, largo, prof, muro_fine, nome) in pezzi:
+        lung = lunghezze(pts)
+        tot = lung[-1]
+        retti = [lung[i] for i, q in enumerate(pts) if su_pedana(q)]
+        if chiuso:
+            # i tubi chiusi poggiano sulla pedana con una culla (il fondo del tubo è qualche cm più su)
+            for i in (0, len(pts) - 1):
+                if not su_pedana(pts[i]):
+                    continue
+                L = max(L_ for (_, L_), r in pedane.items() if dentro_rett(pts[i], r, 0.1) and L_ - 0.1 < pts[i].z < L_ + 1.7)
+                s_ = min(0.5, tot / 4) if i == 0 else tot - min(0.5, tot / 4)
+                p, d = a_s(pts, lung, s_)
+                d = Vector((d.x, d.y, 0)).normalized()
+                lat = Vector((-d.y, d.x, 0))
+                alto = p.z - R_GROVIGLIO + 0.06
+                cen = Vector((p.x, p.y, (L + alto) / 2))
+                c.scatola_assi(cen, [d, lat, Vector((0, 0, 1))], (0.12, R_GROVIGLIO * 0.75, (alto - L) / 2), 'metallo')
+        retti += [lung[i] for i in mensole_su.get(id(pts), [])]
+        if muro_fine:
+            retti.append(tot)
+        if pts[-1].z < FONDO + 1.6:
+            retti.append(tot)          # finisce nella vasca del fondo
+        nuovi = []
+
+        def metti(s_obiettivo, spazio=1.2):
+            for dv in [x * sg for x in (0.0, 0.35, 0.7, 1.05, 1.4, 1.75, 2.1, 2.45) for sg in (1, -1)]:
+                s_ = s_obiettivo + dv
+                if not (0.25 <= s_ <= tot - 0.25) or abs(s_obiettivo - s_) > spazio:
+                    continue
+                p, d = a_s(pts, lung, s_)
+                tipo = prova(pts, mezza, chiuso, largo, prof, p, d)
+                if tipo:
+                    conta[tipo] = conta.get(tipo, 0) + 1
+                    nuovi.append(s_)
+                    retti.append(s_)
+                    return True
+            return False
+        if not retti or min(retti) > sbalzo + 0.3:
+            metti(min(sbalzo, tot / 2))
+        if not retti or max(retti) < tot - sbalzo - 0.3:
+            metti(max(tot - sbalzo, tot / 2))
+        for _ in range(20):
+            rr = sorted(set(round(x, 2) for x in retti))
+            buchi = [(b_ - a_, a_, b_) for a_, b_ in zip(rr[:-1], rr[1:]) if b_ - a_ > campata]
+            if not buchi:
+                break
+            gap, a_, b_ = max(buchi)
+            if not metti((a_ + b_) / 2, gap / 2 - 0.5):
+                break
+        rr = sorted(set(retti))
+        peggiore = max([b_ - a_ for a_, b_ in zip(rr[:-1], rr[1:])] + [0.0]) if rr else tot
+        rapporto.append((nome, round(tot, 1), round(rr[0], 1) if rr else None, round(tot - rr[-1], 1) if rr else None,
+                         round(peggiore, 1), len(nuovi)))
+    print('sostegni nuovi:', conta, 'scartati per:', perche)
+    for r_ in rapporto:
+        if r_[2] is None or r_[2] > sbalzo + 0.6 or r_[3] > sbalzo + 0.6 or r_[4] > campata + 1.5:
+            print('  sostegni scarsi:', r_)
+    return rapporto
+
+
+def chiusa_bocca(c, dal_capo, chiuso, L):
+    """Chiude la bocca di uno scivolo decorativo sulla sua pedana: una grata tonda dentro il tubo, o un
+    cancello a sbarre davanti al canale aperto (con la collisione: non ci si entra)."""
+    lung = 0.0
+    i = 1
+    while i < len(dal_capo) - 1 and lung + (dal_capo[i] - dal_capo[i - 1]).length < 0.35:
+        lung += (dal_capo[i] - dal_capo[i - 1]).length
+        i += 1
+    p = dal_capo[i]
+    d = (dal_capo[i + 1] - dal_capo[i - 1]).normalized()
+    if chiuso:
+        r = R_GROVIGLIO - 0.04
+        lat = d.cross(Vector((0, 0, 1))).normalized()
+        su = lat.cross(d).normalized()
+        c.anello(p, d, r - 0.05, r + 0.02, 0.06, 'gioco_rosso', seg=20)
+        for k in range(-3, 4):
+            o = k * r / 3.6
+            h = math.sqrt(max(r * r - o * o, 0.0))
+            c.cilindro(p + lat * o - su * h, p + lat * o + su * h, 0.022, 'inox', seg=6)
+            c.cilindro(p + su * o - lat * h, p + su * o + lat * h, 0.018, 'inox', seg=6)
+    else:
+        P.cancello_partenza(c, Vector((p.x, p.y, L)), Vector((d.x, d.y, 0)))
 
 
 def versione_A(mats):
@@ -787,6 +1082,7 @@ def versione_A(mats):
 
     # --- costruzione degli scivoli ------------------------------------------------------------------
     oggetti_scivoli = []
+    ostacoli = []                      # per chi cammina sulle pedane (video, IA): [x, y, quota, mezzo lato]
     colori = list(COLORI)
     canali_discesa = []
     for k, (_, pezzi, mat) in enumerate(discesa):
@@ -805,16 +1101,23 @@ def versione_A(mats):
             oggetti_scivoli.append(K.tubo_scivolo(mats, pts, nome=f'torre_scivolo_{j}' + ('-col' if GIOCO else ''), materiali=m, seg=18,
                                                   passo_flange=1.6 if len(m) > 1 else 2.5))
         else:
-            P.scivolo(cs, pts, rnd.choice(colori[:-1]))
+            scivolo_aperto(cs, pts, rnd.choice(colori[:-1]))
         for (tt, LL) in capi:
-            apri(tt, LL, pts if (tt, LL) == capi[0] else pts[::-1])
+            dal_capo = pts if (tt, LL) == capi[0] else pts[::-1]
+            apri(tt, LL, dal_capo)
+            # la bocca sulla pedana è chiusa (cancello o grata): i decorativi non si percorrono, sarebbero
+            # scorciatoie per saltare i salti della discesa
+            chiusa_bocca(c, dal_capo, chiuso, LL)
+            ostacoli.append([round(dal_capo[0].x, 2), round(dal_capo[0].y, 2), LL, 1.0])
     # travature: sotto tutto, tranne sopra le piattaforme dei capi
     rett_ponti = [ponte(t, 0) for t in ORDINE]
+    ct = K.Costruttore(mats)           # travature sotto gli scivoli (a parte: torre_sostegni.py le conta col pezzo)
     for _, pezzi, _m in discesa:
         for pz in pezzi:
-            travatura(c, pz, False, rett_ponti, 'metallo', LARGO_D, PROF_D)
+            travatura(ct, pz, False, rett_ponti, 'metallo', LARGO_D, PROF_D)
     for cand, pts, capi in scelti:
-        travatura(c, pts, cand[6], rett_ponti, rnd.choice(['metallo', 'metallo_grigio']))
+        travatura(ct, pts, cand[6], rett_ponti, rnd.choice(['metallo', 'metallo_grigio']))
+    mensole_su = {}                    # id(punti) -> indici dei punti retti da una mensola
     # mensole: dove uno scivolo passa accanto a un traliccio, un braccio lo regge
     for pts, mezza in [(p, M_DISCESA) for p in sp.discesa] + sp.deco:
         for t in ORDINE:
@@ -830,6 +1133,7 @@ def versione_A(mats):
                 q = Vector((min(max(p.x, cc.x - NUCLEO), cc.x + NUCLEO), min(max(p.y, cc.y - NUCLEO), cc.y + NUCLEO), p.z - du - 0.1))
                 c.cilindro(q, Vector((p.x, p.y, q.z)), 0.08, 'metallo', seg=8)
                 c.cilindro(Vector((q.x, q.y, q.z - 1.0)), Vector((p.x, p.y, q.z)), 0.05, 'metallo', seg=6)
+                mensole_su.setdefault(id(pts), []).append(i)
     # la spirale finale ha i suoi piloni dove sotto non passa niente
     tutta = [q for pz in spirale for q in pz]
     for pz in spirale:
@@ -848,12 +1152,14 @@ def versione_A(mats):
     for cand, pts, capi in scelti:
         servono.update(capi)
     print('piattaforme:', len(servono), 'su', len(ORDINE) * len(LIVELLI))
+    costruite = {}                     # (torre, L) -> rettangolo della pedana costruita
     for t in ORDINE:
         torre(c, t, VERNICI_TORRI[t], {L for (tt, L) in DISCESA_PONTI if tt == t})
         for L in LIVELLI:
             if (t, L) not in servono:
                 continue
             r = ponte(t, L)
+            costruite[(t, L)] = r
             ap = list(aperture.get((t, L), []))
             if (t, L) not in DISCESA_PONTI:
                 # solo scivoli decorativi: una pedana piccola attaccata al traliccio, grande quanto serve
@@ -863,6 +1169,7 @@ def versione_A(mats):
                     xs += [pts_[0].x - 1.1, pts_[0].x + 1.1]
                     ys += [pts_[0].y - 1.1, pts_[0].y + 1.1]
                 r = (max(r[0], min(xs)), max(r[1], min(ys)), min(r[2], max(xs)), min(r[3], max(ys)))
+                costruite[(t, L)] = r
                 ap = [a_ for a_ in (apertura(r, pts_) for pts_ in capi_pts.get((t, L), [])) if a_]
                 P.piattaforma(c, r[0], r[1], r[2], r[3], L, lati=(), pali=False)
             if (t, L) == ('NO', -12.0) and PEDANA_NO12:
@@ -921,6 +1228,18 @@ def versione_A(mats):
     for z in (-17.0, -7.5, 4.5, 10.5):
         P.tubo_muro(c, [(XI0 + 0.3, YI0 + 0.35, z), (XI1 - 0.35, YI0 + 0.35, z)], r=0.16)
         P.tubo_muro(c, [(XI1 - 0.35, YI0 + 0.35, z + 0.6), (XI1 - 0.35, YI1 - 0.35, z + 0.6)], r=0.12)
+
+    # --- sostegni: ogni pezzo retto ogni pochi metri e vicino ai capi liberi -------------------------------
+    cv = K.Costruttore(mats)           # solo da vedere (nessuna collisione): non cambiano i salti
+    costruite[('passerella', 0.0)] = (XI0, 13.4, rno[0] + 0.05, 16.6)
+    pezzi_tutti = [(pz, M_DISCESA, False, LARGO_D, PROF_D, False, f'discesa_{k}_{j}')
+                   for k, (_, pezzi, _m) in enumerate(discesa) for j, pz in enumerate(pezzi)]
+    pezzi_tutti += [(pts, M_CHIUSO if cand[6] else M_APERTO, cand[6], LARGO, PROF, cand[0] == 'muro', f'deco_{j}')
+                    for j, (cand, pts, capi) in enumerate(scelti)]
+    voli = [(s_['da'], s_['a']) for s_ in salti]
+    rapporto_sostegni = sostieni(cv, sp, pezzi_tutti, costruite, mensole_su, voli)
+    linee_pezzi = [dict(nome=n_, mezza=m_, punti=[[round(v, 3) for v in q] for q in pts_])
+                   for (pts_, m_, _c, _l, _p, _mu, n_) in pezzi_tutti]
 
     # --- prop: sulle piattaforme lontano dai capi degli scivoli, e sul fondo ---------------------------
     props = []
@@ -1004,8 +1323,9 @@ def versione_A(mats):
         cc = centro(t)
         sx = 1 if (TORRI[t] % 360) in (45.0, 315.0) else -1
         sy = 1 if (TORRI[t] % 360) in (45.0, 135.0) else -1
-        luci['lavoro'].append([cc.x + sx * (PONTE - 0.1), cc.y + sy * (PONTE - 0.1), L + 1.25])
-    luci['lavoro'].append([31.0, YI1 - 0.35, -1.5 + 2.45])     # sopra la porta della balconata dei bambini
+        if (t, L) in costruite and dentro_rett(Vector((cc.x + sx * (PONTE - 0.1), cc.y + sy * (PONTE - 0.1), 0)), costruite[(t, L)], -0.05):
+            luci['lavoro'].append([cc.x + sx * (PONTE - 0.1), cc.y + sy * (PONTE - 0.1), L + 1.25, 'palo'])
+    luci['lavoro'].append([31.0, YI1 - 0.35, -1.5 + 2.45, 'muro_n'])     # sopra la porta della balconata dei bambini
     # fari sui tralicci: ognuno punta il centro di uno scivolo dall'altra parte della sala, più in basso
     medi = [pts[len(pts) // 2] for _, pts, _ in scelti] + [pz[len(pz) // 2] for _, pezzi, _ in discesa for pz in pezzi]
     usati = set()
@@ -1019,7 +1339,13 @@ def versione_A(mats):
                 continue
             _, i = min(buoni)
             usati.add(i)
-            luci['fari'].append([[p.x, p.y, p.z], [medi[i].x, medi[i].y, medi[i].z]])
+            # sulla colonna del traliccio dalla parte dello scivolo, con un braccio corto
+            m_ = medi[i]
+            col = min((Vector((cc.x + sx * NUCLEO, cc.y + sy * NUCLEO, zf)) for sx in (-1, 1) for sy in (-1, 1)),
+                      key=lambda q: math.hypot(q.x - m_.x, q.y - m_.y))
+            dv = Vector((m_.x - col.x, m_.y - col.y, 0)).normalized()
+            p = col + dv * 0.55
+            luci['fari'].append([[p.x, p.y, p.z], [m_.x, m_.y, m_.z], [col.x, col.y, col.z]])
     luci['emergenza'] = [[[XI0 + 0.1, 20.5, 6.0], 'e'], [[XI1 - 0.1, 15.0, 1.5], 'o'], [[31.0, YI0 + 0.1, -2.5], 'n'],
                          [[31.0, YI1 - 0.1, -8.0], 's'], [[XI0 + 0.1, 10.0, -12.0], 'e'], [[XI1 - 0.1, 15.0, -16.5], 'o'],
                          [[27.0, YI1 - 0.1, 9.0], 's']]
@@ -1031,8 +1357,11 @@ def versione_A(mats):
     suff = '-col' if GIOCO else ''
     gr = P.GRATE[0].crea('torre_A_grigliati' + suff)
     ob = c.crea('torre_A' + suff, sporco=sporco)
+    ob_t = ct.crea('torre_A_travi' + suff, sporco=sporco)
+    ob_v = cv.crea('torre_A_sostegni', sporco=sporco)
+    bpy.context.scene['linee_pezzi'] = json.dumps(linee_pezzi)
     ob_s = cs.crea('torre_A_canali' + suff, sporco=lambda co: 0.75)
-    gruppi = {'struttura': [ob, gr, pol] + acque, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
+    gruppi = {'struttura': [ob, ob_t, ob_v, gr, pol] + acque, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
     # per il gioco: checkpoint, salti, Polaroid, balconata, pozzo e vasca del fondo (coordinate di Blender)
     gioco = dict(checkpoint=[], salti=[], tratti=[])
     passerella = Vector((XI0 + 1.2, 15.0, 0.0))
@@ -1088,5 +1417,13 @@ def versione_A(mats):
     gioco['pozzo'] = [C[0], C[1], FONDO]
     gioco['vasca_fondo'] = dict(rett=[xv0, yv0, xv1, yv1], acqua=FONDO + 0.6 - 0.12)
     gioco['passerella'] = list(passerella)
+    gioco['pedane'] = [[round(v, 2) for v in r] + [L] for (t, L), r in sorted(costruite.items(), key=lambda kv: (kv[0][1], kv[0][0]))]
+    # i pianerottoli delle due scale di servizio (alla quota di ogni livello, accanto alle pedane)
+    for L in LIVELLI:
+        gioco['pedane'].append([round(XI0 + 0.05, 2), round(rno[1] + 0.2, 2), round(XI0 + 0.05 + 2.2, 2), round(rno[1] + 0.2 + 1.2, 2), L])
+        gioco['pedane'].append([round(rse[0] + 0.2, 2), round(YI0 + 0.08, 2), round(rse[0] + 0.2 + 1.2, 2), round(YI0 + 0.08 + 2.2, 2), L])
+    gioco['ostacoli'] = ostacoli + [[round((rv[0] + rv[2]) / 2, 2), round((rv[1] + rv[3]) / 2, 2), -6.0,
+                                     round(max(rv[2] - rv[0], rv[3] - rv[1]) / 2 + 0.2, 2), round(min(rv[2] - rv[0], rv[3] - rv[1]) / 2 + 0.2, 2),
+                                     'x' if rv[2] - rv[0] > rv[3] - rv[1] else 'y']]
     luci['gioco'] = gioco
     return gruppi, percorso_gioco(gioco), luci

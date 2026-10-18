@@ -402,9 +402,9 @@ func _luci(d: Dictionary) -> void:
 	for e in d["emergenza"]:
 		_emergenza(radice, b(e[0]), versi[e[1]])
 	for p in d["lavoro"]:
-		_lampada(radice, b(p))
+		_lampada(radice, b(p), str(p[3]) if (p as Array).size() > 3 else "")
 	for f in d["fari"]:
-		_faro(radice, b(f[0]), b(f[1]))
+		_faro(radice, b(f[0]), b(f[1]), b(f[2]) if (f as Array).size() > 2 else null)
 	for g in d["gocce"]:
 		_gocce(radice, b(g))
 	_catena(radice, b(d["lei"]))
@@ -436,15 +436,46 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	l.global_position = p + verso * 0.4
 
 
-func _lampada(radice: Node3D, p: Vector3) -> void:
+func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
+	# lampada da cantiere: bulbo caldo in una gabbia, su un palo dalla pedana o su una staffa al muro
 	var bulbo := MeshInstance3D.new()
 	var sf := SphereMesh.new()
-	sf.radius = 0.09
-	sf.height = 0.18
+	sf.radius = 0.07
+	sf.height = 0.14
 	bulbo.mesh = sf
-	bulbo.material_override = _emissivo(CALDO, 8.0)
+	bulbo.material_override = _emissivo(Color(1.0, 0.55, 0.25), 1.2)
 	radice.add_child(bulbo)
 	bulbo.global_position = p
+	var metallo := _metallo_scuro()
+	var gabbia := MeshInstance3D.new()
+	var gm := CylinderMesh.new()
+	gm.top_radius = 0.1
+	gm.bottom_radius = 0.1
+	gm.height = 0.24
+	gm.radial_segments = 8
+	gm.rings = 2
+	gabbia.mesh = gm
+	var mg := _metallo_scuro()
+	mg.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	mg.albedo_texture = _griglia()
+	mg.cull_mode = BaseMaterial3D.CULL_DISABLED
+	gabbia.material_override = mg
+	radice.add_child(gabbia)
+	gabbia.global_position = p
+	var cappello := MeshInstance3D.new()
+	var cp := CylinderMesh.new()
+	cp.top_radius = 0.06
+	cp.bottom_radius = 0.13
+	cp.height = 0.07
+	cappello.mesh = cp
+	cappello.material_override = metallo
+	radice.add_child(cappello)
+	cappello.global_position = p + Vector3(0, 0.15, 0)
+	if appoggio == "palo":
+		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, -1.25, 0), 0.03, metallo)
+	elif appoggio.begins_with("muro_"):
+		var verso: Vector3 = {"muro_n": Vector3.FORWARD, "muro_s": Vector3.BACK, "muro_e": Vector3.RIGHT, "muro_o": Vector3.LEFT}[appoggio]
+		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, 0.18, 0) + verso * 0.4, 0.025, metallo)
 	var l := OmniLight3D.new()
 	l.light_color = CALDO
 	l.light_energy = 4.0
@@ -453,25 +484,49 @@ func _lampada(radice: Node3D, p: Vector3) -> void:
 	l.global_position = p + Vector3(0, -0.15, 0)
 
 
-func _faro(radice: Node3D, p: Vector3, mira: Vector3) -> void:
-	var corpo := MeshInstance3D.new()
-	var bx := BoxMesh.new()
-	bx.size = Vector3(0.45, 0.35, 0.2)
-	corpo.mesh = bx
-	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.08, 0.08, 0.08)
-	corpo.material_override = m
+## Faro da cantiere su un braccio dalla colonna del traliccio: corpo tondo di metallo, cornice e lente
+## tonda calda (non abbagliante), staffa a U. La luce è quella di prima.
+func _faro(radice: Node3D, p: Vector3, mira: Vector3, attacco = null) -> void:
+	var metallo := _metallo_scuro()
+	var corpo := Node3D.new()
 	radice.add_child(corpo)
 	corpo.global_position = p
 	corpo.look_at(mira)
-	var vetro := MeshInstance3D.new()
-	var q := QuadMesh.new()
-	q.size = Vector2(0.4, 0.3)
-	vetro.mesh = q
-	vetro.material_override = _emissivo(Color(1.0, 0.9, 0.75), 12.0)
-	corpo.add_child(vetro)
-	vetro.position = Vector3(0, 0, -0.11)
-	vetro.rotation_degrees = Vector3(0, 180, 0)
+	var guscio := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.16
+	cm.bottom_radius = 0.2
+	cm.height = 0.3
+	guscio.mesh = cm
+	guscio.material_override = metallo
+	corpo.add_child(guscio)
+	guscio.rotation_degrees = Vector3(-90, 0, 0)
+	var cornice := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.17
+	tm.outer_radius = 0.22
+	cornice.mesh = tm
+	cornice.material_override = metallo
+	corpo.add_child(cornice)
+	cornice.rotation_degrees = Vector3(90, 0, 0)
+	cornice.position = Vector3(0, 0, -0.15)
+	var lente := MeshInstance3D.new()
+	var lm := CylinderMesh.new()
+	lm.top_radius = 0.175
+	lm.bottom_radius = 0.175
+	lm.height = 0.02
+	lente.mesh = lm
+	lente.material_override = _emissivo(Color(1.0, 0.6, 0.28), 0.9)
+	corpo.add_child(lente)
+	lente.rotation_degrees = Vector3(90, 0, 0)
+	lente.position = Vector3(0, 0, -0.145)
+	# staffa a U attorno al corpo e braccio fino alla colonna
+	for sg in [-1.0, 1.0]:
+		_asta(corpo, Vector3(sg * 0.24, 0, 0), Vector3(sg * 0.24, -0.26, 0), 0.02, metallo, false)
+	_asta(corpo, Vector3(-0.24, -0.26, 0), Vector3(0.24, -0.26, 0), 0.02, metallo, false)
+	if attacco != null:
+		var a: Vector3 = attacco
+		_asta(radice, corpo.to_global(Vector3(0, -0.26, 0)), a, 0.04, metallo)
 	var l := SpotLight3D.new()
 	l.light_color = Color(1.0, 0.88, 0.72)
 	l.light_energy = 16.0
@@ -483,6 +538,54 @@ func _faro(radice: Node3D, p: Vector3, mira: Vector3) -> void:
 	radice.add_child(l)
 	l.global_position = p
 	l.look_at(mira)
+
+
+static func _metallo_scuro() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.32, 0.31, 0.29)
+	m.metallic = 0.7
+	m.roughness = 0.45
+	return m
+
+
+static var _tex_griglia: ImageTexture
+
+
+static func _griglia() -> ImageTexture:
+	if _tex_griglia == null:
+		var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
+		img.fill(Color(0, 0, 0, 0))
+		for i in 32:
+			for j in 32:
+				if i % 8 < 2 or j % 16 < 2:
+					img.set_pixel(i, j, Color(1, 1, 1, 1))
+		_tex_griglia = ImageTexture.create_from_image(img)
+	return _tex_griglia
+
+
+## Un'asta tonda da a a b (in coordinate del padre se globale = false).
+func _asta(padre: Node3D, a: Vector3, b_: Vector3, r: float, m: Material, globale := true) -> void:
+	var mi := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = r
+	cm.bottom_radius = r
+	cm.height = a.distance_to(b_)
+	cm.radial_segments = 8
+	cm.rings = 1
+	mi.mesh = cm
+	mi.material_override = m
+	padre.add_child(mi)
+	var centro := (a + b_) * 0.5
+	var asse := (b_ - a).normalized()
+	var t := Transform3D()
+	var su := asse
+	var lato := su.cross(Vector3.FORWARD if absf(su.dot(Vector3.FORWARD)) < 0.9 else Vector3.RIGHT).normalized()
+	t.basis = Basis(lato, su, lato.cross(su))
+	t.origin = centro
+	if globale:
+		mi.global_transform = t
+	else:
+		mi.transform = t
 
 
 func _gocce(radice: Node3D, p: Vector3) -> void:
