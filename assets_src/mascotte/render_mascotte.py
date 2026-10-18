@@ -30,6 +30,7 @@ ap.add_argument('--campioni', type=int, default=64)
 ap.add_argument('--res', default='960x1280')
 ap.add_argument('--dettaglio', type=float, default=0.85)
 ap.add_argument('--bagnato', type=float, default=0.0)
+ap.add_argument('--zoom', type=float, default=1.0)  # <1 allarga le viste da studio
 ap.add_argument('--anteprima', action='store_true')
 A = ap.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:])
 
@@ -197,7 +198,7 @@ def inquadra(vista):
         cam.location = Vector((0.4, -3.3, 1.65))
         guarda(cam, (0, 0, H * 0.5))
     else:
-        cd.lens = 50 if vista == 'lato' else 68
+        cd.lens = (50 if vista == 'lato' else 68) * A.zoom
         f = Vector((0, 0, H * 0.5))
         cam.location = f + Vector((0, -H * 2.55, H * 0.12))
         guarda(cam, f)
