@@ -165,6 +165,18 @@ Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.
   - Le piattaforme stanno **solo dove servono**.
   - La luce resta com'è: rosso d'emergenza con fari e lampade da lavoro.
 
+## L'enigma degli acquari (idea dell'utente, 18 ottobre)
+
+L'utente trova il capitolo corto e vuole un enigma in più nella sala principale. Le sue parole: "saranno tre acquari di acqua colorata, due pieni di due colori e uno vuoto, in quello vuoto bisognerà versare i due colori per formarne un terzo, per farlo serviranno due zaini di un colore e uno zaino dell'altro. Fare bene aprirà il cancello della torre degli scivoli, che a questo punto risulterà chiuso MA avrà lampade luminose prima spente che saranno invece accese quando rientriamo nella sala. Anche gli acquari saranno comparsi ora mentre prima, durante il primo accesso alla sala non c'erano. Se sbagli la combo dei colori devi poter resettare l'enigma. Deve esserci un riferimento al colore da creare."
+
+Risposte alle domande (18 ottobre):
+- **Colori**: giallo e blu; con due zainate di giallo e una di blu viene il verde.
+- **Indizio**: accanto agli acquari c'è un disegno a pastello dei bambini con quel verde.
+- **Quando**: gli acquari compaiono quando rientri nella sala dal magazzino (tappa 7), insieme alle lampade del portone della torre che si accendono. Si possono usare dopo la tappa 8, quando lei se n'è andata.
+- **Se sbagli**: sotto l'acquario c'è una grossa valvola rossa da colpire col getto. L'acquario si svuota col gorgo e i due acquari colorati tornano pieni.
+- **Cosa apre**: il portone della torre. Prende il posto della regola di prima ("si apre da solo dopo la tappa 8").
+- L'aspetto (acquari, posizione, disegno, lampade) si propone all'utente con scatti dal motore prima di metterlo nel gioco.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
