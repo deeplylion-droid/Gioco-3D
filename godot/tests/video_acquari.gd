@@ -84,7 +84,7 @@ func _run() -> void:
 		await _secondi(0.6)
 		Input.action_release(&"spray")
 		await _secondi(0.4)
-	print("stato dell'enigma: ", enigma.stato)
+	print("stato dell'enigma: ", enigma.stato, " (", Engine.get_frames_drawn(), " fotogrammi)")
 	await _secondi(1.0)
 	# Il portone che si apre, con le lampade accese.
 	await _vai(Vector3(12.5, 0.0, -11.5), Vector3(19.8, 2.4, -15.0), 1.5)
