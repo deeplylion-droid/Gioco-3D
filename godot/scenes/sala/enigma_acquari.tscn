@@ -1,135 +1,357 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/game/enigma_acquari.gd" id="1_enigma"]
-[ext_resource type="Script" path="res://scripts/mechanisms/water_tank.gd" id="2_tank"]
-[ext_resource type="Script" path="res://scripts/water/water_hitbox.gd" id="3_hitbox"]
+[ext_resource type="Script" path="res://scripts/game/enigma_acquari.gd" id="enigma"]
+[ext_resource type="Script" path="res://scripts/mechanisms/water_tank.gd" id="tank"]
+[ext_resource type="Script" path="res://scripts/water/water_hitbox.gd" id="hitbox"]
+[ext_resource type="PackedScene" path="res://assets/enigma_acquari/cilindro_base.glb" id="base"]
+[ext_resource type="PackedScene" path="res://assets/enigma_acquari/cilindro_base_bassa.glb" id="base_bassa"]
+[ext_resource type="PackedScene" path="res://assets/enigma_acquari/cilindro_coperchio.glb" id="coperchio"]
+[ext_resource type="PackedScene" path="res://assets/enigma_acquari/valvola_rossa.glb" id="valvola"]
+[ext_resource type="PackedScene" path="res://addons/acqua/scenes/acqua_per_vasca.tscn" id="acqua"]
+[ext_resource type="Script" path="res://assets/enigma_acquari/acquario_vetro.gd" id="vetro"]
+[ext_resource type="Script" path="res://assets/enigma_acquari/acquari_gorgo.gd" id="gorgo"]
+[ext_resource type="Material" path="res://assets/materials/sala/metallo_verniciato.tres" id="m_tiranti"]
+[ext_resource type="Material" path="res://assets/enigma_acquari/metallo_rosso.tres" id="m_rosso"]
+[ext_resource type="Material" path="res://assets/enigma_acquari/metallo_giallo.tres" id="m_giallo"]
+[ext_resource type="Material" path="res://assets/enigma_acquari/griglia_scarico.tres" id="m_griglia"]
+[ext_resource type="ArrayMesh" path="res://assets/enigma_acquari/disegno_curvo.res" id="disegno"]
+[ext_resource type="MultiMesh" path="res://assets/enigma_acquari/portalampade_portone.res" id="mm_porta"]
+[ext_resource type="MultiMesh" path="res://assets/enigma_acquari/lampadine_spente.res" id="mm_spente"]
+[ext_resource type="MultiMesh" path="res://assets/enigma_acquari/lampadine_accese.res" id="mm_accese"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_base"]
-size = Vector3(2, 0.1, 2)
+[sub_resource type="CylinderMesh" id="tirante"]
+top_radius = 0.022
+bottom_radius = 0.022
+height = 1.500
+radial_segments = 12
 
-[sub_resource type="StandardMaterial3D" id="Mat_base"]
-albedo_color = Color(0.42, 0.44, 0.47, 1)
-roughness = 0.7
+[sub_resource type="CylinderShape3D" id="forma_alto"]
+radius = 0.5
+height = 2.95
 
-[sub_resource type="BoxShape3D" id="Shape_base"]
-size = Vector3(2, 0.1, 2)
+[sub_resource type="TorusMesh" id="anello"]
+inner_radius = 0.7725
+outer_radius = 0.8425
+rings = 64
 
-[sub_resource type="CylinderMesh" id="Mesh_volantino"]
-top_radius = 0.16
-bottom_radius = 0.16
-height = 0.1
+[sub_resource type="CylinderShape3D" id="forma_base_bassa"]
+radius = 0.818
+height = 0.4
 
-[sub_resource type="StandardMaterial3D" id="Mat_valvola"]
-albedo_color = Color(0.85, 0.08, 0.05, 1)
-roughness = 0.4
+[sub_resource type="BoxShape3D" id="forma_parete"]
+size = Vector3(0.45, 0.4, 0.06)
 
-[sub_resource type="SphereShape3D" id="Shape_valvola"]
+[sub_resource type="BoxShape3D" id="forma_valvola"]
+size = Vector3(0.77, 0.3, 0.3)
+
+[sub_resource type="SphereShape3D" id="forma_bersaglio"]
 radius = 0.3
 
-[sub_resource type="QuadMesh" id="Mesh_disegno"]
-size = Vector2(0.6, 0.45)
+[sub_resource type="CylinderMesh" id="griglia"]
+top_radius = 0.26
+bottom_radius = 0.26
+height = 0.01
 
-[sub_resource type="StandardMaterial3D" id="Mat_disegno"]
-albedo_color = Color(0.25, 0.78, 0.12, 1)
-roughness = 0.9
+[sub_resource type="StandardMaterial3D" id="nero"]
+albedo_color = Color(0.01, 0.01, 0.01, 1)
 
-[sub_resource type="SphereMesh" id="Mesh_lampada"]
-radius = 0.15
-height = 0.3
+[sub_resource type="CylinderMesh" id="buco"]
+top_radius = 0.24
+bottom_radius = 0.24
+height = 0.004
+material = SubResource("nero")
 
-[sub_resource type="StandardMaterial3D" id="Mat_lampada"]
-albedo_color = Color(1, 0.85, 0.5, 1)
-emission_enabled = true
-emission = Color(1, 0.8, 0.45, 1)
-emission_energy_multiplier = 3.0
+[sub_resource type="BoxMesh" id="guida_lato"]
+size = Vector3(0.05, 4.720, 0.09)
+
+[sub_resource type="BoxMesh" id="guida_sopra"]
+size = Vector3(0.05, 0.09, 6.990)
 
 [node name="EnigmaAcquari" type="Node3D"]
-script = ExtResource("1_enigma")
+script = ExtResource("enigma")
 
 [node name="AcquarioGiallo" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0.1, -4.8)
-script = ExtResource("2_tank")
-inner_size = Vector3(1.6, 0.85, 1.6)
-wall_thickness = 0.1
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15.6, 0.849, -6.4)
+script = ExtResource("tank")
+build_walls = false
+inner_size = Vector3(1.1, 1.300, 1.1)
 fill = 0.94
 capacity_liters = 80.0
 fill_pigment = "giallo"
 min_fill = 0.2
 
+[node name="Base" parent="AcquarioGiallo" instance=ExtResource("base")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.849, 0)
+
+[node name="Coperchio" parent="AcquarioGiallo" instance=ExtResource("coperchio")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+
+[node name="Tirante1" type="MeshInstance3D" parent="AcquarioGiallo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4243, 0.65, 0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Tirante2" type="MeshInstance3D" parent="AcquarioGiallo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4243, 0.65, 0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Tirante3" type="MeshInstance3D" parent="AcquarioGiallo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4243, 0.65, -0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Tirante4" type="MeshInstance3D" parent="AcquarioGiallo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4243, 0.65, -0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Collisione" type="StaticBody3D" parent="AcquarioGiallo"]
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape3D" parent="AcquarioGiallo/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.626, 0)
+shape = SubResource("forma_alto")
+
+[node name="Acqua" parent="AcquarioGiallo" node_paths=PackedStringArray("tank") instance=ExtResource("acqua")]
+tank = NodePath("..")
+capture_env_cubemap = false
+ripple_max_resolution = 128
+
+[node name="Vetro" type="Node3D" parent="AcquarioGiallo" node_paths=PackedStringArray("acqua")]
+script = ExtResource("vetro")
+acqua = NodePath("../Acqua")
+
 [node name="AcquarioMisto" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0.2, -7.2)
-script = ExtResource("2_tank")
-inner_size = Vector3(1.6, 0.6, 1.6)
-wall_thickness = 0.1
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15.25, 0.4, -3.6)
+script = ExtResource("tank")
+build_walls = false
+inner_size = Vector3(1.595, 0.380, 1.595)
 capacity_liters = 62.0
 suckable = false
 
-[node name="Basamento" type="StaticBody3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.15, 0)
+[node name="Base" parent="AcquarioMisto" instance=ExtResource("base_bassa")]
+transform = Transform3D(1.45, 0, 0, 0, 1, 0, 0, 0, 1.45, 0, -0.4, 0)
+
+[node name="Anello" type="MeshInstance3D" parent="AcquarioMisto"]
+transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 1, 0, 0.386, 0)
+mesh = SubResource("anello")
+material_override = ExtResource("m_rosso")
+
+[node name="Collisione" type="StaticBody3D" parent="AcquarioMisto"]
 collision_mask = 0
 
-[node name="Mesh" type="MeshInstance3D" parent="AcquarioMisto/Basamento"]
-mesh = SubResource("BoxMesh_base")
-surface_material_override/0 = SubResource("Mat_base")
+[node name="Base" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+shape = SubResource("forma_base_bassa")
 
-[node name="Forma" type="CollisionShape3D" parent="AcquarioMisto/Basamento"]
-shape = SubResource("Shape_base")
+[node name="Parete1" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(6.12323e-17, 0, 1, 0, 1, 0, -1, 0, 6.12323e-17, 0.8175, 0.2, 0)
+shape = SubResource("forma_parete")
+
+[node name="Parete2" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 0.708, 0.2, 0.4087)
+shape = SubResource("forma_parete")
+
+[node name="Parete3" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 0.4088, 0.2, 0.708)
+shape = SubResource("forma_parete")
+
+[node name="Parete4" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 5.006e-17, 0.2, 0.8175)
+shape = SubResource("forma_parete")
+
+[node name="Parete5" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -0.4087, 0.2, 0.708)
+shape = SubResource("forma_parete")
+
+[node name="Parete6" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, 0.5, -0.708, 0.2, 0.4087)
+shape = SubResource("forma_parete")
+
+[node name="Parete7" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(6.12323e-17, 0, -1, 0, 1, 0, 1, 0, 6.12323e-17, -0.8175, 0.2, 1.001e-16)
+shape = SubResource("forma_parete")
+
+[node name="Parete8" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(-0.5, 0, -0.866025, 0, 1, 0, 0.866025, 0, -0.5, -0.708, 0.2, -0.4087)
+shape = SubResource("forma_parete")
+
+[node name="Parete9" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(-0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, -0.866025, -0.4088, 0.2, -0.708)
+shape = SubResource("forma_parete")
+
+[node name="Parete10" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(-1, 0, -1.22465e-16, 0, 1, 0, 1.22465e-16, 0, -1, -1.502e-16, 0.2, -0.8175)
+shape = SubResource("forma_parete")
+
+[node name="Parete11" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, 0.4088, 0.2, -0.708)
+shape = SubResource("forma_parete")
+
+[node name="Parete12" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, 0.708, 0.2, -0.4088)
+shape = SubResource("forma_parete")
+
+[node name="Acqua" parent="AcquarioMisto" node_paths=PackedStringArray("tank") instance=ExtResource("acqua")]
+tank = NodePath("..")
+capture_env_cubemap = false
+ripple_max_resolution = 128
+
+[node name="Vetro" type="Node3D" parent="AcquarioMisto" node_paths=PackedStringArray("acqua")]
+script = ExtResource("vetro")
+acqua = NodePath("../Acqua")
 
 [node name="AcquarioBlu" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0.1, -9.6)
-script = ExtResource("2_tank")
-inner_size = Vector3(1.6, 0.85, 1.6)
-wall_thickness = 0.1
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15.6, 0.849, -0.8)
+script = ExtResource("tank")
+build_walls = false
+inner_size = Vector3(1.1, 1.300, 1.1)
 fill = 0.94
 capacity_liters = 80.0
 fill_pigment = "blu"
 min_fill = 0.2
 
-[node name="Valvola" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.85, 0.3, -7.2)
+[node name="Base" parent="AcquarioBlu" instance=ExtResource("base")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.849, 0)
 
-[node name="Modello" type="MeshInstance3D" parent="Valvola"]
-transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("Mesh_volantino")
-surface_material_override/0 = SubResource("Mat_valvola")
+[node name="Coperchio" parent="AcquarioBlu" instance=ExtResource("coperchio")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+
+[node name="Tirante1" type="MeshInstance3D" parent="AcquarioBlu"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4243, 0.65, 0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Tirante2" type="MeshInstance3D" parent="AcquarioBlu"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4243, 0.65, 0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Tirante3" type="MeshInstance3D" parent="AcquarioBlu"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4243, 0.65, -0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Tirante4" type="MeshInstance3D" parent="AcquarioBlu"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4243, 0.65, -0.4243)
+mesh = SubResource("tirante")
+material_override = ExtResource("m_tiranti")
+
+[node name="Collisione" type="StaticBody3D" parent="AcquarioBlu"]
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape3D" parent="AcquarioBlu/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.626, 0)
+shape = SubResource("forma_alto")
+
+[node name="Acqua" parent="AcquarioBlu" node_paths=PackedStringArray("tank") instance=ExtResource("acqua")]
+tank = NodePath("..")
+capture_env_cubemap = false
+ripple_max_resolution = 128
+
+[node name="Vetro" type="Node3D" parent="AcquarioBlu" node_paths=PackedStringArray("acqua")]
+script = ExtResource("vetro")
+acqua = NodePath("../Acqua")
+
+[node name="Valvola" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.09, 0.45, -3.6)
+
+[node name="Modello" parent="Valvola" instance=ExtResource("valvola")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, -0.24, 0)
+
+[node name="Collisione" type="StaticBody3D" parent="Valvola"]
+collision_mask = 0
+
+[node name="Forma" type="CollisionShape3D" parent="Valvola/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+shape = SubResource("forma_valvola")
 
 [node name="Bersaglio" type="Area3D" parent="Valvola"]
-script = ExtResource("3_hitbox")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0, 0)
+script = ExtResource("hitbox")
 
 [node name="Forma" type="CollisionShape3D" parent="Valvola/Bersaglio"]
-shape = SubResource("Shape_valvola")
+shape = SubResource("forma_bersaglio")
+
+[node name="Scarico" type="MeshInstance3D" parent="Valvola"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.505, -0.446, 0)
+mesh = SubResource("griglia")
+material_override = ExtResource("m_griglia")
+
+[node name="Buco" type="MeshInstance3D" parent="Valvola"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.505, -0.448, 0)
+mesh = SubResource("buco")
 
 [node name="Disegno" type="Node3D" parent="."]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 19.7, 1.7, -7.2)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 15.6, 0.849, -6.4)
 
 [node name="Modello" type="MeshInstance3D" parent="Disegno"]
-mesh = SubResource("Mesh_disegno")
-surface_material_override/0 = SubResource("Mat_disegno")
+mesh = ExtResource("disegno")
+cast_shadow = 0
+
+[node name="LampadeFisse" type="Node" parent="."]
+
+[node name="GuidaSinistra" type="MeshInstance3D" parent="LampadeFisse"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 3.2, -18.45)
+mesh = SubResource("guida_lato")
+material_override = ExtResource("m_giallo")
+
+[node name="GuidaDestra" type="MeshInstance3D" parent="LampadeFisse"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 3.2, -11.55)
+mesh = SubResource("guida_lato")
+material_override = ExtResource("m_giallo")
+
+[node name="GuidaSopra" type="MeshInstance3D" parent="LampadeFisse"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 5.5, -15)
+mesh = SubResource("guida_sopra")
+material_override = ExtResource("m_giallo")
+
+[node name="Portalampade" type="MultiMeshInstance3D" parent="LampadeFisse"]
+cast_shadow = 0
+multimesh = ExtResource("mm_porta")
+
+[node name="LampadineSpente" type="MultiMeshInstance3D" parent="LampadeFisse"]
+cast_shadow = 0
+multimesh = ExtResource("mm_spente")
 
 [node name="LampadePortone" type="Node3D" parent="."]
 
 [node name="Lampada1" type="Node3D" parent="LampadePortone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.6, 4.6, -16.8)
 
-[node name="Modello" type="MeshInstance3D" parent="LampadePortone/Lampada1"]
-mesh = SubResource("Mesh_lampada")
-surface_material_override/0 = SubResource("Mat_lampada")
+[node name="Modello" type="MultiMeshInstance3D" parent="LampadePortone/Lampada1"]
+cast_shadow = 0
+multimesh = ExtResource("mm_accese")
 
 [node name="Luce" type="OmniLight3D" parent="LampadePortone/Lampada1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0, 0)
-light_color = Color(1, 0.8, 0.45, 1)
-light_energy = 2.0
-omni_range = 6.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.09, 3, -18.45)
+light_color = Color(1, 0.75, 0.45, 1)
+light_energy = 2.2
+light_volumetric_fog_energy = 1.0
+omni_range = 7.0
+omni_attenuation = 1.2
 
 [node name="Lampada2" type="Node3D" parent="LampadePortone"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.6, 4.6, -13.2)
-
-[node name="Modello" type="MeshInstance3D" parent="LampadePortone/Lampada2"]
-mesh = SubResource("Mesh_lampada")
-surface_material_override/0 = SubResource("Mat_lampada")
 
 [node name="Luce" type="OmniLight3D" parent="LampadePortone/Lampada2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0, 0)
-light_color = Color(1, 0.8, 0.45, 1)
-light_energy = 2.0
-omni_range = 6.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.09, 3, -11.55)
+light_color = Color(1, 0.75, 0.45, 1)
+light_energy = 2.2
+light_volumetric_fog_energy = 1.0
+omni_range = 7.0
+omni_attenuation = 1.2
+
+[node name="Lampada3" type="Node3D" parent="LampadePortone"]
+
+[node name="Luce" type="OmniLight3D" parent="LampadePortone/Lampada3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.09, 5.3, -15)
+light_color = Color(1, 0.75, 0.45, 1)
+light_energy = 2.2
+light_volumetric_fog_energy = 1.0
+omni_range = 7.0
+omni_attenuation = 1.2
+
+[node name="Gorgo" type="Node" parent="." node_paths=PackedStringArray("enigma", "acqua_misto")]
+script = ExtResource("gorgo")
+enigma = NodePath("..")
+acqua_misto = NodePath("../AcquarioMisto/Acqua")
