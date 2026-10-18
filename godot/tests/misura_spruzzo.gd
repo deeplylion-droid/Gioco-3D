@@ -74,6 +74,8 @@ func _run() -> void:
 	p.water_pack.call(&"set_equipped", true, false)
 	p.teleport(POSIZIONE, 0.0, 0.0)
 	p.look_at_point(MIRA)
+	if OS.get_cmdline_user_args().has("in_alto"):
+		p.set_look(p.yaw, deg_to_rad(80.0))
 	await _frames(30)
 	if OS.get_cmdline_user_args().has("prepara_qui"):
 		# Prova: la preparazione rifatta qui, davanti al tornello (con le luci di qui).
