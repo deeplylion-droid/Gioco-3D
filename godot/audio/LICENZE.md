@@ -192,6 +192,7 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `tecnici/pompe_ruggito_loop.ogg` | 4.0 s | sintesi (originale) | una pompa a pieno regime, ruggito basso; tre pompe = tre loop |
 | `tecnici/porta_ponte_apre.ogg` | 3.4 s | Kenney RPG Audio (CC0) + sintesi | metalLatch, creak, doorClose |
 | `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
+| `tecnici/zampette_condotto.ogg` | 8.0 s | sintesi (originale) | l'agnellino che corre via dentro il condotto della grata di C2 (v0.3.6) |
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 
-Totale: 169 file, 6.5 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 170 file, 6.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

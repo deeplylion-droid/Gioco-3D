@@ -17,6 +17,9 @@
   sfoga, la porta d'acciaio che parte con uno strappo a 0,55 s spinta dall'idraulica (centralina,
   cilindro), stride e gratta nelle guide e rimbomba nel corridoio, sbatte a fine corsa a 2,55 s;
   poi i fermi che scattano e l'ultimo sfiato. Solo sintesi.
+- zampette_condotto: l'agnellino che si infila nella grata sfondata di C2 (v0.3.6) e corre via dentro il
+  condotto di lamiera: zampette leggere e fitte che rimbombano nel tubo, si allontanano (più piano, più cupe,
+  più eco) e si perdono; un ultimo graffio lontano. Solo sintesi.
 Uscita: godot/audio/tecnici/.
 """
 import numpy as np
@@ -580,6 +583,40 @@ def cancello_stagno_apre(rng, tono=1.0):
     return fade(hp(f32(x), 25, 2), 0.0, 0.5)
 
 
+# --- l'agnellino nel condotto -----------------------------------------------------------------------
+
+def zampette_condotto(rng, dur=2.4):
+    n = n_of(dur)
+    t = t_axis(n)
+    out = np.zeros(n)
+    lontano = np.clip(t / 1.9, 0, 1)                       # 0 alla grata, 1 perso nel condotto
+    tt = 0.02
+    while tt < 1.95:
+        k = int(tt * SR)
+        d = tt / 1.9
+        # una zampetta: tocco secco sulla lamiera (modi alti, corti) e un tonfetto morbido
+        e = np.zeros(n_of(0.12))
+        e[0] = rng.uniform(0.7, 1.0)
+        tocco = resonator_bank(e, np.array(MODI_LAMIERA[4:9]) * rng.uniform(0.95, 1.08),
+                               [0.03, 0.025, 0.02, 0.015, 0.012], [0.5, 0.7, 0.6, 0.4, 0.25])
+        tonfo = lp(white(n_of(0.12), rng) * env_ad(n_of(0.12), 0.002, 0.03), 900, 2) * 0.8
+        passo = (tocco * 0.6 + tonfo) * (1.0 - 0.85 * d) ** 1.5
+        mix_into(out, passo, k)
+        # passi a coppie (zampe davanti e dietro), sempre un po' irregolari
+        tt += (0.055 if int(tt * 100) % 2 else 0.11) * rng.uniform(0.85, 1.2) * (1.0 + 0.35 * d)
+    # un graffio lontano, alla fine
+    g0 = int(1.98 * SR)
+    gr = bp(white(n_of(0.25), rng), 1500, 4500, 2) * env_points([(0, 0), (0.03, 1), (0.25, 0)], n_of(0.25)) * 0.08
+    mix_into(out, gr, g0)
+    # il condotto: rimbombo di tubo (pettine) e sempre più cupo man mano che si allontana
+    tubo = out * 0.6 + comb(out, 1 / 190.0, 0.62) * 0.35 + comb(out, 1 / 117.0, 0.5) * 0.25
+    vicino = lp(tubo, 6000, 2)
+    via = lp(tubo, 900, 2)
+    x = vicino * (1 - lontano) + via * lontano
+    x = reverb(x, ir_nave(), wet=0.25, dry=1.0)
+    return fade(x, 0.0, 0.3)
+
+
 def main():
     rng = np.random.default_rng(2006)
     print('Tecnici')
@@ -603,6 +640,8 @@ def main():
         salva(CART, f'cancello_stagno_apre_{i + 1:02d}', cancello_stagno_apre(np.random.default_rng(seme), tono),
               loudness=-12, corto=True, qualita=4,
               nota='cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s')
+    salva(CART, 'zampette_condotto', zampette_condotto(np.random.default_rng(3606)), loudness=-20, corto=True, qualita=4,
+          nota="l'agnellino che corre via dentro il condotto della grata di C2 (v0.3.6)")
 
 
 if __name__ == '__main__':
