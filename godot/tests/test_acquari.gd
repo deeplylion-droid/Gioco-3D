@@ -107,6 +107,11 @@ func _run() -> void:
 	if getto:
 		var cg: Color = (p.water_pack.stream.material_override as ShaderMaterial).get_shader_parameter(&"colore")
 		check(cg.r > 0.8 and cg.b < 0.3, "il getto è giallo (%s)" % str(cg))
+		var ok_tinte := true
+		for t in getto.get(&"_tinte"):
+			var ct: Color = (t[0] as ShaderMaterial).get_shader_parameter(&"tint")
+			ok_tinte = ok_tinte and ct.r > 0.8 and ct.b < 0.3
+		check(ok_tinte and not (getto.get(&"_tinte") as Array).is_empty(), "e anche schizzi, gocce e nebbia")
 	# Mezza zainata di blu sopra il giallo: il serbatoio si mescola per litri.
 	p.water_pack.set_tank_amount(10.0)
 	await _aspira(blu)

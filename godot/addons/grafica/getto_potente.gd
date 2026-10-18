@@ -63,6 +63,8 @@ var _colonna_mesh := ArrayMesh.new()
 var _colonna_mat: ShaderMaterial
 var _colore_getto: Variant
 var _colore_colonna: Variant
+## Schizzi, gocce e nebbia che prendono la tinta del serbatoio: [materiale, colore chiaro].
+var _tinte: Array = []
 var _vortice: MultiMeshInstance3D
 var _vortice_k := 0.0
 var _t := 0.0
@@ -160,6 +162,13 @@ func aggancia(p_pack: Node) -> void:
 	chiara.set_shader_parameter(&"rim_light", 0.8)
 	for p in _spruzzi + [_schizzi, _lame, _goccioloni, _rivoli, _bocca]:
 		(p.draw_pass_1 as QuadMesh).material = chiara
+	_tinte.append([chiara, Color(0.88, 0.94, 1.0)])
+	# La nebbia ha il suo materiale (quello dell'addon è in comune con le altre nebbie).
+	var nebbia := WaterParticles.mist_material().duplicate() as ShaderMaterial
+	for nb in _nebbie + [_nebbia_impatto]:
+		((nb as GPUParticles3D).draw_pass_1 as QuadMesh).material = nebbia
+	var tn = nebbia.get_shader_parameter(&"tint")
+	_tinte.append([nebbia, tn if tn is Color else Color(0.8, 0.85, 0.88)])
 	_crea_colonna()
 	_colore_getto = m.get_shader_parameter(&"colore")
 	_colore_colonna = _colonna_mat.get_shader_parameter(&"colore")
@@ -280,6 +289,7 @@ func _crea_colonna() -> void:
 	gocce.set_shader_parameter(&"opacity", 0.9)
 	gocce.set_shader_parameter(&"rim_light", 0.7)
 	gocce.set_shader_parameter(&"tint", Color(0.85, 0.93, 1.0))
+	_tinte.append([gocce, Color(0.85, 0.93, 1.0)])
 	q.material = gocce
 	mm.mesh = q
 	_vortice = MultiMeshInstance3D.new()
@@ -574,8 +584,11 @@ func _aggiorna_sensazioni(spruzza: bool, aspira: bool, delta: float) -> void:
 	vm.position += _strattone_dir * s.strattoni * _strattone * _strattone
 
 
-## Getto e colonna dell'aspirazione del colore dell'acqua nel serbatoio (WaterMix).
+## Getto, colonna dell'aspirazione, schizzi, gocce e nebbia del colore dell'acqua nel serbatoio
+## (WaterMix).
 func _colora(m: Dictionary) -> void:
+	for t in _tinte:
+		(t[0] as ShaderMaterial).set_shader_parameter(&"tint", WaterMix.colore(m, t[1]))
 	var stream = pack.get(&"stream")
 	var mat := stream.material_override as ShaderMaterial if stream else null
 	if mat:
