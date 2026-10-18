@@ -8,7 +8,10 @@ extends Node
 ##    resta com'era.
 ## 4. Il giro giusto: si colpisce il bersaglio 1, il 2 no, il 3 dopo la colonna (girandosi): approdo.
 ## 5. Colpire il bersaglio 2 (già giusto) lo sbaglia; dopo il bivio i bersagli non rispondono.
-## 6. Checkpoint: si riparte all'imbarco, giù dalla ciambella, con le paratie come erano.
+## 4b. All'approdo: la serranda del magazzino non si apre senza keycard; il lettore dice di no (rosso);
+##     presa la keycard il lettore la legge (verde) e la serranda si apre.
+## 6. Checkpoint: si riparte all'imbarco, giù dalla ciambella, con le paratie, la keycard, il lettore e
+##    la serranda come erano.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume.gd
 
 const SCENA := "res://proposte/fiume/fiume_prototipo.tscn"
@@ -99,6 +102,27 @@ func _run() -> void:
 	await _secondi(0.5)
 	check(p.is_on_floor() and p.global_position.y > -0.3, "si sta in piedi sulla banchina dell'approdo")
 
+	print("4b. La serranda del magazzino con il lettore della keycard")
+	var serranda := level.get_node(^"SerrandaMagazzino")
+	var lettore := level.get_node(^"LettoreTessera") as LettoreTessera
+	var tessera := level.get_node(^"Keycard") as Pickup
+	p.teleport(serranda.global_position + Vector3(0.0, 0.0, 1.8), 0.0, 0.0)
+	await _secondi(1.0)
+	check(not bool(serranda.get(&"aperta")), "senza keycard, davanti alla serranda resta chiusa")
+	var no := {"n": 0}
+	lettore.rifiutato.connect(func(): no.n += 1)
+	lettore.interact(p)
+	check(no.n == 1 and not lettore.aperto and not bool(serranda.get(&"aperta")), "il lettore senza keycard dice di no (rosso)")
+	check(lettore.get_prompt(p) == "Serve una keycard", "e lo scrive")
+	tessera.interact(p)
+	check(p.has_item(&"keycard"), "presa la keycard: è nell'inventario")
+	await _secondi(0.2)
+	check(lettore.get_prompt(p) == "Passa la keycard", "ora il lettore chiede di passarla")
+	lettore.interact(p)
+	check(lettore.aperto and bool(serranda.get(&"aperta")), "il lettore legge la keycard (verde) e la serranda si apre")
+	await _secondi(6.0)
+	check(float(serranda.get(&"open_amount")) > 0.95, "la serranda è su (%.2f)" % float(serranda.get(&"open_amount")))
+
 	print("5. Il bersaglio 2 (già giusto) colpito sbaglia la paratia; dopo il bivio non risponde")
 	var cp := _salva("TestFiumeImbarco")
 	fiume.arrivato = false
@@ -122,6 +146,9 @@ func _run() -> void:
 	p3 = fiume.get_node(^"Paratia3") as ParatiaFiume
 	check(not fiume.a_bordo() and fiume.tratto == fiume.imbarco and fiume.s == 0.0, "si riparte all'imbarco, giù dalla ciambella")
 	check(p1.a_destra and p2.a_destra and p3.a_destra, "le paratie sono come erano al checkpoint")
+	check(p.has_item(&"keycard") and (level.get_node(^"LettoreTessera") as LettoreTessera).aperto \
+		and bool(level.get_node(^"SerrandaMagazzino").get(&"aperta")), "con la keycard, il lettore verde e la serranda aperta")
+	check(level.get_node_or_null(^"Keycard") == null or (level.get_node(^"Keycard") as Node).is_queued_for_deletion(), "e la keycard non è più lì")
 	_fine()
 
 

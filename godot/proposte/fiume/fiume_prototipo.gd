@@ -6,6 +6,8 @@ extends Node3D
 ## - bivio 2: è già giusta; se la colpisci la sbagli;
 ## - bivio 3: il bersaglio è dietro una colonna, si vede solo dopo esserci passati: ti giri e spari.
 ## I rami sbagliati (più veloci) riportano all'imbarco; il ramo giusto del bivio 3 finisce all'approdo.
+## Sulla banchina dell'approdo, al posto dell'infermeria, la keycard e la serranda del magazzino con il
+## lettore (scelta dell'utente del 18 ottobre).
 ## La strada è costruita qui da elenchi di punti (in pianta, quota dell'acqua 0).
 
 const PUNTI := {
@@ -71,6 +73,43 @@ func _ready() -> void:
 	for b in [[Vector3(3.0, 0.2, 6.0), Vector3(2.5, -0.1, 1.0)], [Vector3(6.0, 0.2, 6.0), Vector3(-38.0, -0.1, -96.0)]]:
 		Graybox.box(banchine, b[0], b[1], Graybox.FLOOR)
 		Graybox.box_shape(banchine, b[0], b[1])
+	_keycard_e_serranda()
+
+
+## Dopo l'approdo, al posto dell'infermeria: la keycard (sarebbe nella cassaforte) e la serranda del
+## magazzino con il lettore (SerrandaMagazzino vera, senza il modello del raccordo).
+func _keycard_e_serranda() -> void:
+	var tessera := Pickup.new()
+	tessera.name = "Keycard"
+	tessera.item_id = &"keycard"
+	tessera.item_name = "Keycard"
+	var forma := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(0.3, 0.3, 0.3)
+	forma.shape = box
+	tessera.add_child(forma)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.9, 0.9, 1.0)
+	Graybox.box(tessera, Vector3(0.09, 0.005, 0.055), Vector3.ZERO, mat)
+	add_child(tessera)
+	tessera.global_position = Vector3(-36.5, 0.9, -94.0)
+	var lettore := LettoreTessera.new()
+	lettore.name = "LettoreTessera"
+	var fl := CollisionShape3D.new()
+	var bl := BoxShape3D.new()
+	bl.size = Vector3(0.3, 0.35, 0.2)
+	fl.shape = bl
+	lettore.add_child(fl)
+	add_child(lettore)
+	lettore.global_position = Vector3(-36.4, 1.2, -98.9)
+	var serranda := (load("res://scripts/tecnici/serranda_magazzino.gd") as GDScript).new() as PoweredDoor
+	serranda.name = "SerrandaMagazzino"
+	serranda.set(&"size", Vector3(1.8, 2.5, 0.2))
+	serranda.set(&"open_offset", Vector3(0.0, 1.95, 0.0))
+	serranda.set(&"open_speed", 0.4)
+	serranda.set(&"lettore", lettore)
+	add_child(serranda)
+	serranda.global_position = Vector3(-38.0, 0.0, -99.2)
 
 
 func _paratia(nome: String, dove: Vector3, sx: TrattoFiume, dx: TrattoFiume, a_destra: bool, bersaglio: Vector3) -> ParatiaFiume:

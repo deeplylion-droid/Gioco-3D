@@ -56,17 +56,22 @@ Non serve la torcia: il negatoscopio, l'adesivo fosforescente e i puntini che br
 
 **Tempi.** Luce 30 s, cartella 1 minuto, radiografia 1 minuto, cassaforte 1 minuto, più il tempo per guardarsi intorno: 3-5 minuti. I checkpoint sono dopo ogni passo, come per gli altri enigmi.
 
-## 3. Dove metterle nel capitolo: due proposte
+## 3. Come si innestano nella strada di risalita (posto scelto dall'utente, 18 ottobre)
 
-**Proposta 1: tra la sala pompe e il magazzino (tappe 6 e 7).**
-- Le pompe ripartono, salta la luce e la corrente riempie il canale.
-- Dalla sala pompe si scende al fiume, poi si sale all'infermeria. Dall'infermeria la scala di servizio porta al magazzino dei gonfiabili, e la tappa 7 continua come oggi, con la serranda e la scia.
-- *Pro:* il motivo della corrente si vede subito. Sono stanze nuove al buio prima che lei si faccia vedere, quindi la tensione sale piano, e tutto resta lineare, senza tornare indietro.
-- *Contro:* lei arriva 10 minuti più tardi. Il corridoio con le scale verso il magazzino (ambienti tecnici) va accorciato o sostituito.
+Oggi la tappa 7 fa così: sala pompe, raccordo, corridoio con le scale (circa 9 m), magazzino dei gonfiabili e serranda nell'angolo sud-ovest della sala grande. Con le due stanze diventa così:
 
-**Proposta 2: dopo gli acquari, prima della torre.**
-- Il portone della torre aperto dall'enigma degli acquari dà su un corridoio di servizio, che porta al fiume, poi all'infermeria. La tessera dell'infermeria apre l'accesso alla cima della sala della torre.
-- *Pro:* la seconda metà del capitolo, oggi la più corta, diventa più ricca. E la tessera ha uno scopo chiaro: "ti fa entrare nella torre".
-- *Contro:* il portone non porta più direttamente nella sala della torre, quindi ambienti-2 deve cambiare l'ingresso in cima. Inoltre tre enigmi di fila (acquari, fiume, infermeria) sono tanti, con lei già andata via.
+1. **Sala pompe → raccordo**, come oggi. Le pompe sono appena ripartite ed è buio.
+2. **Il corridoio con le scale verso il magazzino è chiuso**, per esempio da una grata calata col blackout o da un crollo. Così l'unica strada è il fiume e non si torna indietro.
+3. **Dal raccordo all'imbarco.** Una porta di servizio laterale porta alla vasca di partenza del fiume lento. Il canale è riempito dalle stesse pompe e si sente scorrere già dal raccordo. Checkpoint all'imbarco.
+4. **Il fiume.** Un anello con 3 bivi. I rami sbagliati riportano all'imbarco.
+5. **L'approdo.** Il ramo giusto finisce su una banchina con una scaletta, che sale nella zona del personale. Checkpoint all'approdo.
+6. **L'infermeria.** Dalla zona del personale si entra nell'infermeria, con i 4 passi e un checkpoint dopo ognuno. Nella cassaforte ci sono la keycard e la Polaroid.
+7. **La scala di servizio.** Dall'infermeria una scala di servizio sale al magazzino dei gonfiabili, nel punto dove arriva oggi il corridoio.
+8. **La serranda con il lettore.** Senza keycard la serranda resta chiusa, anche arrivandoci davanti, e il lettore accanto è rosso e si vede al buio. Passando la keycard (tasto E) diventa verde, fa il suo suono e la serranda si alza. Da lì tutto continua come oggi: la sala grande al buio, la scia, gli acquari che compaiono, la tappa 8.
 
-Il mio consiglio è la **proposta 1**, per il ritmo: un enigma nuovo dopo le pompe, poi lei e gli acquari, poi la torre.
+Nel codice sono pronti il lettore (`LettoreTessera`, con lo stato che si salva) e la serranda, che ha un campo `lettore`: se è vuoto si comporta come oggi. Per metterli nella sala bisogna:
+- aggiungere il lettore accanto alla serranda, in `Tecnici/Logica`;
+- collegarlo al campo `lettore` di `SerrandaMagazzino`;
+- mettere la keycard come Pickup, con `item_id = keycard`, nella cassaforte.
+
+Lo fa chi costruisce le stanze, nella scena vera.

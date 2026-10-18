@@ -22,6 +22,9 @@ extends PoweredDoor
 @export var quota_architrave := 2.45
 ## Dove deve arrivare il giocatore per aprirla (coordinate locali, dalla parte del magazzino).
 @export var zona_apertura := AABB(Vector3(-1.2, 0.0, 0.7), Vector3(2.4, 2.5, 3.0))
+## Il lettore della keycard (LettoreTessera, scelta dell'utente del 18 ottobre): se c'è, la serranda
+## si apre solo quando il lettore ha letto la tessera, e allora si apre subito. Vuoto = come prima.
+@export var lettore: Node
 
 ## Vero quando il giocatore ci è arrivato dal magazzino: si apre e resta aperta.
 var aperta := false
@@ -55,12 +58,16 @@ func _ready() -> void:
 	zona.body_entered.connect(func(b: Node3D):
 		if b is Player:
 			apri())
+	if lettore and lettore.has_signal(&"sbloccato"):
+		lettore.connect(&"sbloccato", apri)
 	# Dopo che la sala e gli ambienti tecnici hanno sistemato i materiali.
 	_prepara_modello.call_deferred()
 
 
-## Si alza (e resta su).
+## Si alza (e resta su). Con il lettore, solo dopo che ha letto la keycard.
 func apri() -> void:
+	if lettore and not bool(lettore.get(&"aperto")):
+		return
 	aperta = true
 
 
