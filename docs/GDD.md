@@ -209,6 +209,13 @@ Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare 
 
 **Scelte del 18 ottobre:** statua dello squalo A (pollice in su, pantaloncini rossi, salvagente), tutte e due le statue del polpo (A rosa con le braccia aperte, B lilla con maschera, salvagente, pallone e gelato) e mostro-squalo A, quello vicino al disegno. Le posizioni si scelgono su scatti dal gioco.
 
+## Allungare il capitolo (scelte dell'utente, 18 ottobre)
+
+L'utente: "al momento, arrivare alla porta della torre si impiegano 5 minuti". Con gli acquari e la torre per lui diventano circa 10 minuti, e per chi gioca la prima volta 20-25, mentre ne erano previsti 39-42. Per allungare, l'utente ha scelto:
+- **l'inseguimento e il finale**, già nella scaletta (I1 e SB1): dopo la torre lei ti insegue negli scivoli, e il capitolo finisce con lei che sbuca dal bordo;
+- **due stanze nuove con un enigma**: il **fiume lento**, un canale buio con la corrente che ti trascina, dove col getto colpisci le chiuse per deviare la corrente verso l'uscita giusta (se sbagli, il giro ti riporta all'inizio), e l'**infermeria**, la stanza del medico del parco con una cassaforte il cui codice è nascosto tra cartelle e Polaroid, e la storia delle pecore modificate con i geni della medusa.
+Prima si fanno le proposte con render veri, compreso il punto del percorso dove metterle. Le altre idee (enigmi nelle zone che ci sono già, più esplorazione e Polaroid) si valutano dopo.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
