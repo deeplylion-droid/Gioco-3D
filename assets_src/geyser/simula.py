@@ -11,9 +11,9 @@ RIS = int(ARG[0]) if ARG else 64
 CACHE = ARG[1] if len(ARG) > 1 else '/tmp/geyser_cache'
 FPS = 30
 DURATA = 2.6          # secondi simulati
-SPARO = 0.7           # secondi di getto
-VEL = 13.0            # m/s verso l'alto
-R_GETTO = 1.1         # raggio del getto: la colonna deve coprirla tutta
+SPARO = 0.8           # secondi di getto
+VEL = 15.0            # m/s verso l'alto: la massa deve arrivare a 4-5 m sopra il pavimento
+R_GETTO = 1.0         # raggio del getto: la colonna deve coprirla tutta
 LATO, ALTO = 7.0, 7.0  # dominio
 
 bpy.ops.wm.read_factory_settings(use_empty=True)

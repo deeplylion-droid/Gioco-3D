@@ -1,5 +1,5 @@
 """Dalla simulazione (geyser.blend con la cache) alle mesh del gioco: un oggetto per fotogramma (f000, f001...),
-ridotto a circa TRI triangoli e liscio, tutti in un GLB solo.
+lisciato, ridotto a circa TRI triangoli e con le normali morbide, tutti in un GLB solo.
 Uso: blender -b <cache>/geyser.blend --python assets_src/geyser/esporta_mesh.py -- <uscita.glb> [triangoli] [ogni n fotogrammi]"""
 import os, sys
 import bpy
@@ -25,6 +25,15 @@ for f in range(sc.frame_start, sc.frame_end + 1):
         continue
     ob = bpy.data.objects.new(f'f{f - sc.frame_start:03d}', me)
     sc.collection.objects.link(ob)
+    # la superficie della simulazione a 96 è a gradini e accartocciata: la si liscia (senza restringerla) prima di ridurla
+    lis = ob.modifiers.new('liscia', 'CORRECTIVE_SMOOTH')
+    lis.iterations = 6
+    lis.smooth_type = 'LENGTH_WEIGHTED'
+    lis.use_only_smooth = True
+    bpy.context.view_layer.objects.active = ob
+    ob.select_set(True)
+    bpy.ops.object.modifier_apply(modifier='liscia')
+    ob.select_set(False)
     tri = sum(len(p.vertices) - 2 for p in me.polygons)
     if tri > TRI:
         dec = ob.modifiers.new('riduci', 'DECIMATE')

@@ -263,7 +263,7 @@ func _crea_particelle() -> void:
 	nm.proximity_fade_distance = 0.8
 	nm.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	q.material = nm
-	_nebbia = _particelle("Nebbia", 70, 2.6, q, 0.5)
+	_nebbia = _particelle("Nebbia", 30, 1.8, q, 0.5)
 	_nebbia.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var em := _nebbia.process_material as ParticleProcessMaterial
 	em.particle_flag_align_y = false
@@ -276,10 +276,10 @@ func _crea_particelle() -> void:
 	em.gravity = Vector3(0, -0.2, 0)
 	em.damping_min = 0.4
 	em.damping_max = 0.8
-	em.scale_min = 0.8
-	em.scale_max = 2.0
+	em.scale_min = 0.6
+	em.scale_max = 1.4
 	var cresce := Curve.new()
-	cresce.add_point(Vector2(0, 0.5)); cresce.add_point(Vector2(1, 1.8))
+	cresce.add_point(Vector2(0, 0.5)); cresce.add_point(Vector2(1, 1.3))
 	var ct := CurveTexture.new(); ct.curve = cresce
 	em.scale_curve = ct
 	var g := Gradient.new()
