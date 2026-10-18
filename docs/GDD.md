@@ -214,7 +214,8 @@ Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare 
 L'utente: "al momento, arrivare alla porta della torre si impiegano 5 minuti". Con gli acquari e la torre per lui diventano circa 10 minuti, e per chi gioca la prima volta 20-25, mentre ne erano previsti 39-42. Per allungare, l'utente ha scelto:
 - **l'inseguimento e il finale**, già nella scaletta (I1 e SB1): dopo la torre lei ti insegue negli scivoli, e il capitolo finisce con lei che sbuca dal bordo;
 - **due stanze nuove con un enigma**: il **fiume lento**, un canale buio con la corrente che ti trascina, dove col getto colpisci le chiuse per deviare la corrente verso l'uscita giusta (se sbagli, il giro ti riporta all'inizio), e l'**infermeria**, la stanza del medico del parco con una cassaforte il cui codice è nascosto tra cartelle e Polaroid, e la storia delle pecore modificate con i geni della medusa.
-Prima si fanno le proposte con render veri, compreso il punto del percorso dove metterle. Le altre idee (enigmi nelle zone che ci sono già, più esplorazione e Polaroid) si valutano dopo.
+Le stanze sono due, in sequenza: prima il fiume lento, poi l'infermeria. Il posto l'ha scelto l'utente: "possiamo collocarle lungo il percorso in risalita da dopo la stanza dei generatori, evitando che si apra la serranda che riporta alla sala centrale, finché non hai preso una keycard dall'infermeria. Aggiungi una lettore per leggere la keycard a quella serranda e fallo illuminato." Quindi le stanze stanno lungo la strada di risalita, dopo la sala dei generatori. Nell'infermeria si prende una keycard, e la serranda del magazzino che riporta nella sala grande si apre solo passando la keycard in un lettore illuminato accanto alla serranda, che si vede anche al buio.
+Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che ci sono già, più esplorazione e Polaroid) si valutano dopo.
 
 ## Capitolo 1: scaletta (approvata)
 
