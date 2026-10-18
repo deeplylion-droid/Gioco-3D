@@ -64,7 +64,7 @@ func _run() -> void:
 		if Vector2(v.x, v.z).length() > 1.0:
 			var dir := atan2(-v.x, -v.z)
 			p.set_look(lerp_angle(p.yaw, dir, 0.08), p.pitch)
-		var voluto := deg_to_rad(-70.0) if spruzzo else deg_to_rad(-14.0)
+		var voluto := deg_to_rad(-48.0) if spruzzo else deg_to_rad(-14.0)
 		guarda = lerpf(guarda, voluto, 0.15)
 		p.set_look(p.yaw, guarda)
 		if p.is_on_floor() and not p.is_sliding and lanci >= 2:

@@ -71,6 +71,30 @@ func _ambiente() -> void:
 	sole.light_energy = 0.9
 	sole.shadow_enabled = true
 	add_child(sole)
+	# Il fondo del vuoto, lontano: si vede quanto si è in alto.
+	var fondo := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(160.0, 160.0)
+	var fm := StandardMaterial3D.new()
+	fm.albedo_color = Color(0.22, 0.24, 0.27)
+	fm.roughness = 0.3
+	fm.uv1_triplanar = true
+	fm.uv1_scale = Vector3(0.25, 0.25, 0.25)
+	var scacchi := NoiseTexture2D.new()
+	scacchi.noise = FastNoiseLite.new()
+	scacchi.noise.frequency = 0.08
+	fm.albedo_texture = scacchi
+	pm.material = fm
+	fondo.mesh = pm
+	fondo.position = Vector3(10.0, -9.0, -30.0)
+	add_child(fondo)
+	for pos in [Vector3(-4.0, -7.0, -20.0), Vector3(8.0, -7.0, -45.0), Vector3(25.0, -7.0, -60.0)]:
+		var l := OmniLight3D.new()
+		l.light_color = Color(1.0, 0.25, 0.15)
+		l.light_energy = 3.0
+		l.omni_range = 18.0
+		l.position = pos
+		add_child(l)
 	# Rosso d'emergenza da sotto, come nella sala della torre.
 	var rossa := OmniLight3D.new()
 	rossa.light_color = Color(1.0, 0.18, 0.12)
