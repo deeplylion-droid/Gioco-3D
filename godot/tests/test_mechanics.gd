@@ -27,6 +27,7 @@ func _run() -> void:
 	await test_jump()
 	await test_crouch_ceiling()
 	await test_ladder()
+	await test_ladder_scendere()
 	await test_pickup_and_polaroid()
 	await test_turbine_door()
 	await test_suction_and_flowing_water()
@@ -279,6 +280,49 @@ func test_ladder() -> void:
 	await _frames(10)
 	check(climbed, "si aggrappa alla scala")
 	check(p.global_position.y > 2.4 and p.global_position.x > 4.6, "arriva sul ballatoio (%s)" % str(p.global_position))
+
+
+## Scendere con avanti guardando in basso: una volta che si scende, alzando un po' lo sguardo (-10 gradi)
+## si continua a scendere; si risale solo guardando chiaramente in alto. Indietro scende sempre.
+func test_ladder_scendere() -> void:
+	print("Scala a pioli: scendere")
+	p.teleport(Vector3(3.85, 0, -4.0), -PI * 0.5)
+	await _frames(5)
+	Input.action_press(&"move_forward")
+	for i in 120:
+		await get_tree().physics_frame
+		if p.is_on_ladder() and p.global_position.y > 1.5:
+			break
+	check(p.is_on_ladder(), "a metà scala (%.2f m)" % p.global_position.y)
+	# si guarda in basso: avanti scende
+	p.set_look(p.yaw, deg_to_rad(-30.0))
+	await _frames(12)
+	var y0 := p.global_position.y
+	await _frames(10)
+	check(p.global_position.y < y0 - 0.1, "guardando in basso (-30) avanti scende")
+	# si alza un po' lo sguardo: si continua a scendere
+	p.set_look(p.yaw, deg_to_rad(-10.0))
+	y0 = p.global_position.y
+	await _frames(10)
+	check(p.is_on_ladder() and p.global_position.y < y0 - 0.1, "alzando lo sguardo a -10 si continua a scendere (%.2f -> %.2f)" % [y0, p.global_position.y])
+	# guardando chiaramente in alto si risale
+	p.set_look(p.yaw, deg_to_rad(20.0))
+	await _frames(3)
+	y0 = p.global_position.y
+	await _frames(10)
+	check(p.global_position.y > y0 + 0.1, "guardando in alto (+20) avanti risale")
+	Input.action_release(&"move_forward")
+	# indietro scende sempre, anche guardando in basso
+	p.set_look(p.yaw, deg_to_rad(-45.0))
+	Input.action_press(&"move_back")
+	await _frames(3)
+	y0 = p.global_position.y
+	await _frames(10)
+	Input.action_release(&"move_back")
+	check(p.global_position.y < y0 - 0.1, "indietro scende anche guardando in basso")
+	p.set_look(p.yaw, 0.0)
+	p.teleport(Vector3(3.85, 0, -2.0), -PI * 0.5)
+	await _frames(5)
 
 
 func test_pickup_and_polaroid() -> void:

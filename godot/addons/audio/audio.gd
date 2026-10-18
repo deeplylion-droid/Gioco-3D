@@ -1054,6 +1054,16 @@ func _collega_giocatore(n: Node) -> void:
 	n.connect(&"jumped", func():
 		suona(&"salto")
 		_sciabordio(0.5))
+	# Sullo scivolo (sala della torre): il fruscio dell'acqua sotto di te, più forte e più acuto
+	# quanto più vai veloce.
+	if n.has_signal(&"slide_changed"):
+		var scivolo := crea_loop_2d(&"scivolo_loop", n, 0.0)
+		if scivolo:
+			scivolo.rapidita_volume = 10.0
+			_attivi.append(Funzione.new(n, func(_d: float):
+				var v: float = n.call(&"get_slide_speed")
+				scivolo.volume = clampf(0.25 + v / 14.0, 0.0, 1.1) if bool(n.get(&"is_sliding")) else 0.0
+				scivolo.tono = clampf(0.8 + v * 0.025, 0.8, 1.35)))
 
 
 func _nome_passo(superficie: StringName, bagnato: bool) -> StringName:
@@ -1064,6 +1074,8 @@ func _nome_passo(superficie: StringName, bagnato: bool) -> StringName:
 			return &"passo_scala"
 		&"metallo", &"lamiera", &"grata":
 			return &"passo_metallo"
+		&"scivolo":
+			return &"passo_scivolo"
 	if bagnato or pavimento_bagnato or _bagnato_scena:
 		return &"passo_bagnato"
 	return &"passo_piastrelle"

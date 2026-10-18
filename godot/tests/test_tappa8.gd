@@ -14,7 +14,7 @@ extends Node
 ##    va subito ogni volta.
 ## 5. Appena lei se ne va, il portone della sala della torre sulla parete est si apre da solo
 ##    (scelta dell'utente del 16 ottobre): tra l'area bimbi e la piscina, poi lungo il lato nord della
-##    spiaggia fino al portone, con i checkpoint; lì finisce la demo.
+##    spiaggia fino al portone, con i checkpoint; il portone che si apre fa caricare la sala della torre.
 ## 6. Se le arrivi di lato ti prende girandosi verso di te: la camera della morte la trova di fronte.
 ## Finché l'ambiente non ha fatto la fossa (marker medusa_sbuca e medusa_fuga) la scena nel livello
 ## è spenta: il test la accende sulla fossa provvisoria e spegne la fine della demo sulla scia.
@@ -306,10 +306,14 @@ func _run() -> void:
 		ok = ok and await _cammina_verso(t, 900)
 	await _frames(10)
 	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino davanti al portone: checkpoint (%s)" % _checkpoint())
-	if fossa_vera:
-		check(bool(level.get(&"demo_finished")), "davanti al portone aperto finisce la demo")
-	else:
-		print("  (la fine della demo passa al portone quando c'è la fossa)")
+	# con la sala della torre la demo non finisce più qui ma in fondo alla discesa (test_torre.gd): il
+	# portone che si apre la fa caricare
+	for i in 600:
+		if level.get(&"sala_torre") != null:
+			break
+		await get_tree().process_frame
+	check(level.get(&"sala_torre") != null and not bool(level.get(&"demo_finished")),
+		"davanti al portone aperto c'è la sala della torre (la demo finisce in fondo alla discesa)")
 
 	print("6. Le arrivi di lato: ti prende girandosi verso di te")
 	p.water_pack.set_equipped(false, false)

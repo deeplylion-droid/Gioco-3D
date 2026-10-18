@@ -392,6 +392,9 @@ func _run() -> void:
 
 	print("La leva e il risveglio")
 	var fasi := []
+	var frame_leva := [-1, -1]
+	leva.tirata.connect(func(): frame_leva[0] = Engine.get_physics_frames())
+	ris.porta_sbloccata.connect(func(): frame_leva[1] = Engine.get_physics_frames())
 	GameState.luci_cambiate.connect(func(f): fasi.append(f))
 	p.water_pack.set_tank_amount(20.0)
 	_metti(Vector3(43.6, 0.0, -4.4), _m("marker_leva") + Vector3(0, 0.25, 0))
@@ -419,9 +422,10 @@ func _run() -> void:
 				altre.append(String(tec.get_path_to(l)))
 	check(accese > 0 and accese == rosse, "restano solo le luci rosse d'emergenza (e il monitor): %d su %d %s" % [rosse, accese, altre])
 	var porta: PortaManiglione = ris.porta
-	porta.interact(p)
-	await _frames(3)
-	check(not porta.is_open, "durante il risveglio la porta è ancora bloccata")
+	var dopo_s := float(frame_leva[1] - frame_leva[0]) / Engine.physics_ticks_per_second
+	check(frame_leva[1] > 0 and not porta.bloccata and dopo_s <= 2.0,
+			"la porta si sblocca entro 2 s dalla leva (%.2f s), mentre il risveglio va avanti" % dopo_s)
+	check(not ris.finito and not porta.is_open, "la porta sbloccata resta chiusa finché non la si apre col maniglione")
 	for i in 60 * 20:
 		if ris.finito:
 			break
