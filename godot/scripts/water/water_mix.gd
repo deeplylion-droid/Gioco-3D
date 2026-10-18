@@ -62,6 +62,17 @@ static func intensita(m: Dictionary) -> float:
 	return clampf(s, 0.0, 1.0)
 
 
+## Lo stesso miscuglio senza l'acqua chiara: le frazioni dei colori sommano a 1 (vuoto se è tutta chiara).
+static func solo_colori(m: Dictionary) -> Dictionary:
+	var k := intensita(m)
+	var r := {}
+	if k <= 0.0:
+		return r
+	for p in m:
+		r[p] = float(m[p]) / k
+	return r
+
+
 ## Il colore della parte colorata (senza l'acqua chiara). Va usato insieme a [method intensita].
 static func tinta(m: Dictionary) -> Color:
 	var g := frazione(m, GIALLO)

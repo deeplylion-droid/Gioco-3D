@@ -6,10 +6,11 @@ extends Node
 ##    ma prima della tappa 8 non funzionano: non si aspira e non si versa.
 ## 3. Dopo la tappa 8 il portone non si apre da solo.
 ## 4. Il colore: aspirando il serbatoio prende il colore dell'acquario, la finestrella e il getto
-##    lo mostrano; versando l'acquario del miscuglio cambia colore mentre si riempie.
+##    lo mostrano; aspirando un colore lo zaino butta via l'acqua chiara che aveva (scelta B
+##    dell'utente); versando l'acquario del miscuglio cambia colore mentre si riempie.
 ## 5. Un miscuglio sbagliato (1 giallo + 2 blu) diventa torbido e il portone resta chiuso; la valvola
 ##    colpita col getto lo svuota col gorgo e i colorati tornano pieni.
-## 6. Il giro dopo, 2 giallo + 1 blu: verde e il portone si apre.
+## 6. Il giro dopo, 2 giallo + 1 blu, partendo con acqua chiara nello zaino: verde e il portone si apre.
 ## 7. I colorati non si esauriscono; la tolleranza del rapporto.
 ## 8. I checkpoint: prima della tappa 7, torbido, risolto.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acquari.gd
@@ -64,6 +65,12 @@ func _run() -> void:
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		for t in [giallo, blu, misto]:
+			# Se l'acqua dell'addon c'è già nella scena (la mette enigma-ambiente) non se ne aggiunge un'altra.
+			var ha_link := false
+			for c in t.find_children("*", "", true, false):
+				ha_link = ha_link or c is WaterTankLink
+			if ha_link:
+				continue
 			var link := (load("res://addons/acqua/scenes/acqua_per_vasca.tscn") as PackedScene).instantiate()
 			link.set(&"tank", t)
 			t.add_child(link)
@@ -119,6 +126,17 @@ func _run() -> void:
 	check(absf(g - 0.5) < 0.05, "mezzo giallo e mezzo blu nel serbatoio: metà e metà (%.2f)" % g)
 	p.water_pack.set_tank_amount(0.0)
 	check(p.water_pack.water_mix.is_empty(), "vuoto, il serbatoio non ha più colore")
+	# Scelta B dell'utente: aspirando un colore lo zaino butta via l'acqua chiara che aveva.
+	p.water_pack.set_tank_amount(10.0)
+	check(p.water_pack.water_mix.is_empty(), "10 litri d'acqua chiara nello zaino")
+	await _aspira(giallo)
+	check(WaterMix.frazione(p.water_pack.water_mix, WaterMix.GIALLO) > 0.99 and p.water_pack.tank_amount > 19.5,
+		"aspirando il giallo l'acqua chiara se ne va: dentro c'è solo giallo (%.2f, %.1f L)" % [WaterMix.frazione(p.water_pack.water_mix, WaterMix.GIALLO), p.water_pack.tank_amount])
+	p.water_pack.set_tank_amount(10.0)
+	await _aspira(blu)
+	g = WaterMix.frazione(p.water_pack.water_mix, WaterMix.GIALLO)
+	check(absf(g - 0.5) < 0.05 and WaterMix.intensita(p.water_pack.water_mix) > 0.99, "i colori che c'erano restano (giallo %.2f)" % g)
+	p.water_pack.set_tank_amount(0.0)
 
 	print("5. Miscuglio sbagliato: 1 giallo + 2 blu")
 	var colori := []
@@ -129,7 +147,9 @@ func _run() -> void:
 	await _frames(10)
 	check(enigma.stato == EnigmaAcquari.Stato.TORBIDO, "pieno di colore sbagliato: torbido (giallo %.2f, pieno %.2f)" % [enigma.parte_di_giallo(), misto.fill])
 	check(WaterMix.frazione(misto.mix, WaterMix.TORBIDA) > 0.99, "l'acqua è torbida")
-	check((colori[0] as Color).is_equal_approx(WaterMix.COLORI[WaterMix.GIALLO]) and not (colori[1] as Color).is_equal_approx(colori[0]),
+	var c0 := colori[0] as Color
+	# Colori tolleranti: i valori esatti li sceglie enigma-ambiente con l'utente.
+	check(c0.r > 0.6 and c0.g > 0.5 and c0.b < 0.4 and not (colori[1] as Color).is_equal_approx(c0),
 		"il colore cambia mentre si riempie (%s)" % str(colori))
 	check(not portone.in_movimento and not portone.is_aperto(), "il portone resta chiuso")
 	check(giallo.can_give_water() and blu.can_give_water(), "i colorati non sono vuoti")
@@ -142,8 +162,9 @@ func _run() -> void:
 	check(enigma.stato == EnigmaAcquari.Stato.APERTO and misto.fill < 0.001 and misto.mix.is_empty(), "l'acquario del miscuglio è vuoto")
 	check(giallo.fill >= giallo.max_fill - 0.001 and blu.fill >= blu.max_fill - 0.001, "i colorati sono di nuovo pieni")
 
-	print("6. Il giro dopo: 2 giallo + 1 blu")
+	print("6. Il giro dopo: 2 giallo + 1 blu, partendo con l'acqua chiara nello zaino")
 	p.water_pack.set_tank_amount(0.0)
+	p.water_pack.set_tank_amount(12.0)
 	for t in [giallo, blu, giallo]:
 		await _aspira(t)
 		await _versa()
@@ -283,8 +304,16 @@ func _serranda() -> Node:
 	return level.get_node(^"Tecnici/Logica/SerrandaMagazzino")
 
 
+## Con i figli Spente e Accese conta solo Accese (le spente si vedono sempre).
 func _lampade_accese() -> bool:
 	var lampade := enigma.get_node(^"LampadePortone") as Node3D
+	var accese := lampade.get_node_or_null(^"Accese") as Node3D
+	if accese:
+		var spente := lampade.get_node_or_null(^"Spente") as Node3D
+		if spente and not spente.is_visible_in_tree():
+			printerr("  le lampade spente non si vedono")
+			return false
+		lampade = accese
 	if not lampade.is_visible_in_tree():
 		return false
 	for l in lampade.find_children("*", "Light3D", true, false):

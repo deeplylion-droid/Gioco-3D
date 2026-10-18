@@ -124,6 +124,14 @@ func _mostra(on: bool) -> void:
 		var n3 := n as Node3D
 		if n3 == null:
 			continue
+		# Le lampade del portone con le versioni spenta e accesa: le spente si vedono sempre ("prima
+		# spente, poi accese"), si accendono solo quelle di Accese.
+		var accese := n3.get_node_or_null(^"Accese") as Node3D if n3.name == &"LampadePortone" else null
+		if accese:
+			n3.visible = true
+			n3.process_mode = Node.PROCESS_MODE_INHERIT
+			accese.visible = on
+			continue
 		n3.visible = on
 		# Nascosti non hanno collisioni né bersagli.
 		n3.process_mode = Node.PROCESS_MODE_INHERIT if on else Node.PROCESS_MODE_DISABLED
