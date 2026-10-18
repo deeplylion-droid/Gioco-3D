@@ -227,7 +227,7 @@ func _hud() -> Hud:
 func _show_hint() -> void:
 	var hud := _hud()
 	if hud:
-		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · F torcia · Esc pausa", 10.0)
+		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · Esc pausa", 10.0)
 
 
 ## Chiamato quando il giocatore prende lo zaino.

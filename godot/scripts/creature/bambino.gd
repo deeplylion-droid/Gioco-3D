@@ -14,13 +14,13 @@ extends Node3D
 ##            l'occhio, spostando le UV); ogni tanto inclina la testa. Gira piano il corpo.
 ##   CAMMINA  cammina piano lungo "percorso", poi osserva (o sparisce, se richiesto).
 ##   SCAPPA   corre lungo "punti_fuga" (l'ultimo dietro un angolo) e sparisce.
-## Dalla statua, dall'osservazione e dalla camminata scappa se la torcia lo colpisce o se il
-## giocatore si avvicina troppo. È nel gruppo "bambini". I segnali servono per l'audio.
+## Dalla statua, dall'osservazione e dalla camminata scappa se il giocatore si avvicina troppo
+## (prima scappava anche dalla torcia: tolta il 18 ottobre). È nel gruppo "bambini". I segnali servono per l'audio.
 
 signal visto      ## il giocatore lo ha guardato (fine della modalità statua)
 signal si_gira    ## comincia a girarsi verso il giocatore
 signal rivelato   ## il travestimento si apre
-signal scappa     ## comincia a scappare (torcia addosso o giocatore troppo vicino)
+signal scappa     ## comincia a scappare (giocatore troppo vicino)
 signal sparito    ## è sparito, alla fine della fuga o del percorso
 
 enum Modalita { STATUA, OSSERVA, CAMMINA, SCAPPA, SPARITO }
@@ -70,9 +70,6 @@ const VEL_CORSA_ANIM := 2.2
 @export var sparisce_a_fine_percorso := false
 
 @export_group("Fuga")
-@export var scappa_con_la_torcia := true
-## Per quanto il fascio della torcia deve restargli addosso prima che scappi (secondi).
-@export var tempo_torcia := 0.7
 ## Se il giocatore arriva più vicino di così, scappa (0 = mai).
 @export var distanza_fuga := 3.5
 ## Dove corre; l'ultimo punto va messo dietro un angolo. Se è vuoto corre via dal giocatore.
@@ -105,8 +102,6 @@ var _punti: Array[Vector3] = []
 var _in_fuga := 0.0
 var _fermo_a_fine_fuga := false
 var _influenza := 0.0
-var _illuminato := 0.0
-var _torcia: Torcia
 
 
 func _ready() -> void:
@@ -288,8 +283,7 @@ func _process(delta: float) -> void:
 			else:
 				_visto_da = 0.0
 		Modalita.OSSERVA:
-			# mentre si gira non scappa per la torcia (il giro si deve vedere), per la vicinanza sì
-			if _deve_scappare(p, delta, not _reazione_in_corso):
+			if _deve_scappare(p):
 				scappa_ora()
 				return
 			if gira_il_corpo and not _reazione_in_corso:
@@ -301,7 +295,7 @@ func _process(delta: float) -> void:
 					_reazione_in_corso = true
 					_anima(&"inclina_testa", 0.6)
 		Modalita.CAMMINA:
-			if _deve_scappare(p, delta, true):
+			if _deve_scappare(p):
 				scappa_ora()
 				return
 			if _segui_punti(velocita_camminata * delta, deg_to_rad(90.0) * delta):
@@ -347,15 +341,8 @@ func _fine_animazione(nome: StringName) -> void:
 			_anima(&"fermo", 0.5)
 
 
-func _deve_scappare(p: Player, delta: float, conta_torcia: bool) -> bool:
-	var d := global_position.distance_to(p.global_position)
-	if distanza_fuga > 0.0 and d < distanza_fuga:
-		return true
-	if scappa_con_la_torcia and conta_torcia and _torcia_addosso(p):
-		_illuminato += delta
-	else:
-		_illuminato = 0.0
-	return _illuminato >= tempo_torcia
+func _deve_scappare(p: Player) -> bool:
+	return distanza_fuga > 0.0 and global_position.distance_to(p.global_position) < distanza_fuga
 
 
 ## Il giocatore guarda verso di lui (vicino al centro dello sguardo), senza muri in mezzo.
@@ -385,25 +372,6 @@ func visibile_da(p: Player) -> bool:
 	return false
 
 
-## Il fascio della torcia accesa lo prende in pieno, senza muri in mezzo.
-func _torcia_addosso(p: Player) -> bool:
-	if _torcia == null or not is_instance_valid(_torcia):
-		_torcia = p.get_node_or_null("Head/Camera3D/Torcia") as Torcia
-		if _torcia == null:
-			var t := p.find_children("*", "Torcia", true, false)
-			_torcia = t[0] as Torcia if t.size() > 0 else null
-	if _torcia == null or not _torcia.accesa or _torcia.luce == null or not _torcia.luce.visible:
-		return false
-	var luce := _torcia.luce
-	var petto := global_position + global_basis.y * 0.7
-	var verso := petto - luce.global_position
-	if verso.length() > luce.spot_range:
-		return false
-	if rad_to_deg((-luce.global_basis.z).angle_to(verso)) > luce.spot_angle * 0.75:
-		return false
-	return _vista_libera(luce.global_position, petto, p)
-
-
 func _vista_libera(da: Vector3, a: Vector3, p: Player) -> bool:
 	var q := PhysicsRayQueryParameters3D.create(da, a)
 	q.exclude = [p.get_rid()]
@@ -411,7 +379,7 @@ func _vista_libera(da: Vector3, a: Vector3, p: Player) -> bool:
 	return hit.is_empty() or hit.position.distance_to(a) < 0.35
 
 
-## Punto della testa (per lo sguardo del giocatore e la luce).
+## Punto della testa (per lo sguardo del giocatore).
 func punto_testa() -> Vector3:
 	return global_position + global_basis.y * 1.0
 
