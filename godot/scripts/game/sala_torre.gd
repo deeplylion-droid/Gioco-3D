@@ -41,6 +41,11 @@ const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creat
 @export var lei_in_fondo := 14.0
 ## Le luci accese (per i test e le macchine lente si possono spegnere).
 @export var crea_luci := true
+## Guida agli imbocchi: nei primi metri di ogni tratto, finché si va piano, la velocità si allinea al canale
+## e riporta verso il centro (si entra anche arrivando spostati o storti).
+@export var guida_metri := 1.2
+@export var guida_forza := 7.0
+@export var guida_fino_a := 4.0      ## m/s: più veloce di così la guida non serve più
 
 var dati := {}
 var checkpoint: Array[Checkpoint] = []
@@ -50,6 +55,7 @@ var _lampo_fatto := false
 var _bambini: Array[Node3D] = []
 var _finita := false
 var _fermo := 0.0
+var _imbocchi: Array[PackedVector3Array] = []   ## i primi metri della linea di fondo di ogni tratto
 
 
 static func b(v: Array) -> Vector3:
@@ -70,6 +76,7 @@ func _ready() -> void:
 	for m in find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = acqua
 	_scivoli()
+	_prepara_imbocchi()
 	_checkpoint()
 	_caduta_sul_fondo()
 	_polaroid()
@@ -99,10 +106,52 @@ func _scivoli() -> void:
 			for q in t["linee"][j]:
 				linea.append(b(q))
 			radice.add_child(_corpo_scivolo(String(t["pezzi"][j]), linea))
+			if j == 0:
+				radice.add_child(_rampa_imbocco(String(t["pezzi"][j]) + "_rampa", linea))
 
 
 const RAGGIO_CANALE := 1.05
 const SPONDA_CANALE := 84.0
+
+
+## L'imbocco svasato: davanti all'inizio del canale un fondo curvo largo e quasi piano (raggio da 3 m fino a
+## quello del canale) che parte a filo della grata della pedana e sale di pochi centimetri fino al fondo del
+## canale. Chi entra spostato dal centro ci sale sopra invece di urtare il bordo del canale, e non c'è una
+## cresta che lo faccia decollare.
+func _rampa_imbocco(nome: String, linea: PackedVector3Array) -> StaticBody3D:
+	var tg := Vector3(linea[1].x - linea[0].x, 0.0, linea[1].z - linea[0].z).normalized()
+	var lato := tg.cross(Vector3.UP).normalized()
+	var colonne := 12
+	var anelli: Array[PackedVector3Array] = []
+	for passo in [[-0.7, 3.0, -0.06], [-0.35, 2.0, -0.035], [0.0, 1.4, -0.01], [0.35, 1.15, -0.03]]:
+		var s_: float = passo[0]
+		var r: float = passo[1]
+		var base: Vector3 = linea[0] + tg * s_ + Vector3.UP * float(passo[2])
+		if s_ > 0.0:
+			base = linea[0].lerp(linea[1], s_ / linea[0].distance_to(linea[1])) + Vector3.UP * float(passo[2])
+		var largo := minf(1.25, r * 0.9)
+		var anello := PackedVector3Array()
+		for k in colonne + 1:
+			var x := lerpf(-largo, largo, float(k) / colonne)
+			anello.append(base + lato * x + Vector3.UP * (r - sqrt(r * r - x * x)))
+		anelli.append(anello)
+	var facce := PackedVector3Array()
+	for i in anelli.size() - 1:
+		for k in colonne:
+			facce.append_array([anelli[i][k], anelli[i + 1][k], anelli[i][k + 1],
+					anelli[i][k + 1], anelli[i + 1][k], anelli[i + 1][k + 1]])
+	var corpo := StaticBody3D.new()
+	corpo.name = nome
+	corpo.add_to_group(&"scivolo")
+	corpo.set_meta(&"superficie", &"scivolo")
+	corpo.set_meta(&"bagnato", true)
+	var cs := CollisionShape3D.new()
+	var forma := ConcavePolygonShape3D.new()
+	forma.set_faces(facce)
+	forma.backface_collision = true
+	cs.shape = forma
+	corpo.add_child(cs)
+	return corpo
 
 
 func _corpo_scivolo(nome: String, punti: PackedVector3Array) -> StaticBody3D:
@@ -236,10 +285,61 @@ func _physics_process(_delta: float) -> void:
 				return
 		else:
 			_fermo = 0.0
+	_guida_imbocchi(p, _delta)
 	# la luce di lei sale dal pozzo: più forte man mano che scendi
 	var k := clampf((_quote_cp[0] - y) / maxf(_quote_cp[0] - _quote_cp[-1], 1.0), 0.0, 1.0)
 	for l in _lei:
 		l.light_energy = float(l.get_meta(&"base")) * lerpf(lei_in_cima, lei_in_fondo, k) / lei_in_fondo
+
+
+func _prepara_imbocchi() -> void:
+	for tr in dati["tratti"]:
+		var linea: Array = tr["linee"][0]
+		var pts := PackedVector3Array()
+		var lung := 0.0
+		for i in linea.size():
+			var q := b(linea[i])
+			if i > 0:
+				lung += q.distance_to(pts[i - 1])
+			pts.append(q)
+			if lung > guida_metri:
+				break
+		_imbocchi.append(pts)
+
+
+func _guida_imbocchi(p: Player, delta: float) -> void:
+	var hv := Vector3(p.velocity.x, 0.0, p.velocity.z)
+	if hv.length() > guida_fino_a or p.slide_launched:
+		return
+	var pos := p.global_position
+	for pts in _imbocchi:
+		# il segmento più vicino (in pianta) dei primi metri del canale, o il prolungamento davanti all'imbocco
+		var migliore := -1
+		var dm := 1.5
+		for i in pts.size() - 1:
+			if pos.y - pts[i].y > 2.0 or pos.y - pts[i].y < -1.0:
+				continue
+			var a := Vector2(pts[i].x, pts[i].z)
+			var c := Vector2(pts[i + 1].x, pts[i + 1].z)
+			if i == 0:
+				a -= (c - a).normalized() * 1.2      # davanti all'imbocco, dentro l'imbuto
+			var d := Geometry2D.get_closest_point_to_segment(Vector2(pos.x, pos.z), a, c).distance_to(Vector2(pos.x, pos.z))
+			if d < dm:
+				dm = d
+				migliore = i
+		if migliore < 0:
+			continue
+		var t := Vector3(pts[migliore + 1].x - pts[migliore].x, 0.0, pts[migliore + 1].z - pts[migliore].z).normalized()
+		# solo chi va verso il canale (o ci scivola già): l'acqua lo porta dentro e al centro
+		if hv.dot(t) < 0.1 and not p.is_sliding:
+			return
+		var lat := Vector3(-t.z, 0.0, t.x)
+		var e := (pos - pts[migliore]).dot(lat)
+		var voluta := (t - lat * clampf(e, -1.0, 1.0) * 0.9).normalized() * maxf(hv.length(), 2.6)
+		hv = hv.lerp(voluta, clampf(guida_forza * delta, 0.0, 1.0))
+		p.velocity.x = hv.x
+		p.velocity.z = hv.z
+		return
 
 
 func _in_sala(pos: Vector3) -> bool:

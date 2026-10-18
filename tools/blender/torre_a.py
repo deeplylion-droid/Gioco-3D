@@ -287,7 +287,10 @@ def travatura(c, pts, chiuso, esclusi, mat='metallo', largo=None, prof=None):
         d = (b - a); d.z = 0
         d.normalize()
         lat = Vector((-d.y, d.x, 0))
-        u = p - Vector((0, 0, du))
+        # sotto un canale ripido il fondo è più giù sulla verticale (la sezione è perpendicolare alla pendenza)
+        inclinato = (b - a).normalized()
+        fondo = R_GROVIGLIO if chiuso else (prof or PROF) + T_U
+        u = p - Vector((0, 0, fondo / max(0.5, math.sqrt(max(0.0, 1.0 - inclinato.z ** 2))) - 0.02))
         kp = u - Vector((0, 0, 0.75))
         w = 0.45 if chiuso else (0.45 if largo else LARGO + 0.08)
         c.scatola_assi(u - Vector((0, 0, 0.05)), [d, lat, Vector((0, 0, 1))], (0.05, w, 0.05), mat)
@@ -687,6 +690,46 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
     return rapporto
 
 
+IMBUTO_L, IMBUTO_BOCCA, IMBUTO_H = 1.6, 0.6, 0.95      # lunghezza, quanto si allarga per lato, altezza
+
+
+def imbuto(c, pz, t, L, mat, ostacoli):
+    """Le due sponde svasate davanti all'imbocco di un tratto: dal fianco del canale si aprono di IMBUTO_BOCCA
+    metri per lato in IMBUTO_L metri, sulla pedana (si accorciano se la pedana finisce prima)."""
+    p0 = Vector((pz[0].x, pz[0].y, L))
+    tg = pz[1] - pz[0]
+    tg.z = 0
+    tg.normalize()
+    lat = Vector((-tg.y, tg.x, 0))
+    r = ponte(t, L)
+    cc = centro(t)
+    lung = IMBUTO_L
+
+    def bocca_ok(lu):
+        # la bocca sta sulla pedana e lascia almeno 1,2 m di passaggio verso il traliccio
+        for sg in (-1, 1):
+            q = p0 - tg * lu + lat * (sg * (LARGO_D + IMBUTO_BOCCA * lu / IMBUTO_L))
+            if not dentro_rett(q, r, -0.1) or max(abs(q.x - cc.x), abs(q.y - cc.y)) < NUCLEO + 0.2 + 1.2:
+                return False
+        return True
+    while lung > 0.5 and not bocca_ok(lung):
+        lung -= 0.1
+    for sg in (-1, 1):
+        a = p0 + lat * (sg * (LARGO_D + T_U - 0.02)) + tg * 0.05
+        b = p0 - tg * lung + lat * (sg * (LARGO_D + IMBUTO_BOCCA * lung / IMBUTO_L))
+        d = b - a
+        lu = d.length
+        d.normalize()
+        n = Vector((-d.y, d.x, 0))
+        cen = (a + b) / 2 + Vector((0, 0, IMBUTO_H / 2))
+        c.scatola_assi(cen, [d, n, Vector((0, 0, 1))], (lu / 2, 0.045, IMBUTO_H / 2), mat)
+        c.cilindro(a + Vector((0, 0, IMBUTO_H)), b + Vector((0, 0, IMBUTO_H)), 0.06, mat, seg=10)
+        c.cilindro(b, b + Vector((0, 0, IMBUTO_H + 0.06)), 0.06, mat, seg=10)
+        for j in range(int(lu / 0.35) + 1):
+            q = a.lerp(b, j / max(1, int(lu / 0.35)))
+            ostacoli.append([round(q.x, 2), round(q.y, 2), L, 0.12])
+
+
 def chiusa_bocca(c, dal_capo, chiuso, L):
     """Chiude la bocca di uno scivolo decorativo sulla sua pedana: una grata tonda dentro il tubo, o un
     cancello a sbarre davanti al canale aperto (con la collisione: non ci si entra)."""
@@ -878,15 +921,29 @@ def versione_A(mats):
             tg = polare(C, BANDA, a + verso * 0.5) - e
             tg.normalize()
             if verso_pedana:
+                # si atterra almeno 1,6 m dentro la pedana, lontano dal traliccio (col getto si plana oltre)
                 r = ponte(*verso_pedana)
+                cv = centro(verso_pedana[0])
                 dd = next((d / 10 for d in range(5, 120) if dentro_rett(e + tg * (d / 10), r, 0.6)), None)
                 if dd is not None and dd <= d_volo:
-                    break
+                    q = e + tg * (dd + 1.6)
+                    if dentro_rett(q, r, -0.9) and max(abs(q.x - cv.x), abs(q.y - cv.y)) > NUCLEO + 0.9:
+                        break
             elif abs(a0 - a) * math.pi / 180 * BANDA > arco_m:
                 dd = d_volo
                 break
         z_fine = (verso_pedana[1] if verso_pedana else FONDO + 0.6) + h + PROF_D + 0.06
         pz = liscia(arco(BANDA, BANDA, a0, a, z0, z_fine), 2)
+        # la pendenza cresce piano nel primo metro e 20 (si entra camminando: niente spigolo che fa decollare)
+        Ls = 1.2 if tipo == 'getto' else 0.0
+        lung_ = [0.0]
+        for i in range(1, len(pz)):
+            lung_.append(lung_[-1] + math.hypot(pz[i].x - pz[i - 1].x, pz[i].y - pz[i - 1].y))
+        m_ = (z0 - z_fine) / max(lung_[-1] - Ls / 2, 0.1)
+        for i, s_l in enumerate(lung_):
+            pz[i].z = z0 - (m_ * s_l * s_l / (2 * Ls) if s_l < Ls else m_ * (s_l - Ls / 2))
+        if Ls == 0.0:
+            pz = liscia(arco(BANDA, BANDA, a0, a, z0, z_fine), 2)
         fine = pz[-1]
         tg = pz[-1] - pz[-2]
         tg.z = 0
@@ -943,7 +1000,7 @@ def versione_A(mats):
                 d = max(abs(q.x - cc.x), abs(q.y - cc.y))
                 assert d > NUCLEO + 0.2 + LARGO_D, f'la discesa tocca il traliccio {t} in {tuple(round(v, 1) for v in q)}'
     # le piattaforme che la discesa attraversa senza fermarsi non si fanno (niente capi di scivoli lì)
-    vietati = set()
+    vietati = set(DISCESA_PONTI)     # (e sulle pedane della discesa si cammina: niente bocche di decorativi)
     for t in ORDINE:
         r = ponte(t, 0)
         for L in LIVELLI:
@@ -966,20 +1023,6 @@ def versione_A(mats):
             percorso.append((nomi_arrivo[k], pezzi[-1][-1]))
     percorso.append(('fondo', spir[-1]))
 
-    # la vasca intermedia sulla piattaforma SE a -6, dove arriva lo scivolo
-    arrivo = discesa[1][1][-1][-1]
-    cse = centro('SE')
-    # la vasca è una striscia tra il traliccio e il bordo della piattaforma, dal lato dove arriva lo scivolo
-    dx, dy = arrivo.x - cse.x, arrivo.y - cse.y
-    a_, b_ = NUCLEO + 0.45, PONTE - 0.15
-    if abs(dy) >= abs(dx):
-        y0_, y1_ = (cse.y + a_, cse.y + b_) if dy > 0 else (cse.y - b_, cse.y - a_)
-        rv = (cse.x - PONTE + 0.15, y0_, cse.x + PONTE - 0.15, y1_)
-    else:
-        x0_, x1_ = (cse.x + a_, cse.x + b_) if dx > 0 else (cse.x - b_, cse.x - a_)
-        rv = (x0_, cse.y - PONTE + 0.15, x1_, cse.y + PONTE - 0.15)
-    va = Vector(((rv[0] + rv[2]) / 2, (rv[1] + rv[3]) / 2, arrivo.z))
-    sp.scatola(rv[0], rv[1], -6.3, rv[2], rv[3], -5.3, 'vasca_intermedia')
 
     # --- gli altri scivoli: si scelgono da soli --------------------------------------------------------
     candidati = []
@@ -1083,9 +1126,13 @@ def versione_A(mats):
     # --- costruzione degli scivoli ------------------------------------------------------------------
     oggetti_scivoli = []
     ostacoli = []                      # per chi cammina sulle pedane (video, IA): [x, y, quota, mezzo lato]
+    ostacoli_imbuti = []
     colori = list(COLORI)
     canali_discesa = []
     for k, (_, pezzi, mat) in enumerate(discesa):
+        # l'imbuto davanti all'imbocco: sponde svasate sulla pedana che portano dentro il canale anche chi
+        # arriva spostato o storto (insieme alla guida di SalaTorre nei primi metri)
+        imbuto(c, pezzi[0], tappe[k][0], tappe[k][1], mat, ostacoli_imbuti)
         for j, pz in enumerate(pezzi):
             cd = K.Costruttore(mats)
             scivolo_discesa(cd, pz, mat)
@@ -1223,7 +1270,6 @@ def versione_A(mats):
     # la bocca del tubo grande dell'inseguimento: dal muro est, sopra la vasca est
     bocca = [(XI1 + 1.0, 15.0, FONDO + 1.4), (XI1 - 1.2, 15.0, FONDO + 1.6), (XI1 - 2.4, 15.0, FONDO + 1.6)]
     oggetti_scivoli.append(K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06))
-    acque.append(P.vasca(c, rv[0], rv[1], rv[2], rv[3], -6.0, alto=0.45, nome_acqua='acqua_vasca_intermedia'))
     # tubi di servizio sui muri
     for z in (-17.0, -7.5, 4.5, 10.5):
         P.tubo_muro(c, [(XI0 + 0.3, YI0 + 0.35, z), (XI1 - 0.35, YI0 + 0.35, z)], r=0.16)
@@ -1253,41 +1299,39 @@ def versione_A(mats):
     scelta_prop = ['salvagente_nave', 'ciambella_gonfiabile', 'cestino_pesce', 'tubi_galleggianti',
                    'pallone_spiaggia', 'cartello_pavimento_bagnato', 'paperella_gigante']
     usati_ponti = set()
-    for t in ORDINE:
+    # sulle pedane della discesa si cammina dall'arrivo all'imbocco dopo, girando attorno al traliccio dalla
+    # parte più corta: i prop (e il lettino della Polaroid) vanno nell'angolo più lontano da tutti e due
+    arrivi, partenze = {}, {}
+    for k, (t0, L0, t1, L1) in enumerate(tappe):
+        partenze[(t0, L0)] = discesa[k][1][0][0]
+        if t1:
+            s_fine = [s_ for s_ in salti if (s_['da'] - discesa[k][1][-1][-1]).length < 0.01]
+            arrivi[(t1, L1)] = s_fine[0]['a'] if s_fine else discesa[k][1][-1][-1]
+    arrivi[('NO', 0.0)] = Vector((rno[0], rno[1] + 0.6, 0.0))      # dalla scala e dalla passerella
+
+    def angolo_libero(t, L, rientro=1.15):
         cc = centro(t)
-        for L in LIVELLI:
-            if (t, L) not in DISCESA_PONTI:
-                continue
-            for _ in range(12):
-                sx, sy = rnd.choice([(-1, -1), (1, -1), (1, 1), (-1, 1), (0, -1), (0, 1), (-1, 0), (1, 0)])
-                p = Vector((cc.x + sx * (PONTE - 0.95), cc.y + sy * (PONTE - 0.95), L))
-                if max(abs(p.x - cc.x), abs(p.y - cc.y)) < NUCLEO + 0.8:
-                    continue
-                if any((Vector((q.x, q.y, 0)) - Vector((p.x, p.y, 0))).length < 2.0 and abs(q.z - L) < 1.5 for q in tutti_capi):
-                    continue
-                if any(math.hypot(q.x - p.x, q.y - p.y) < 1.9 and -0.5 < q.z - L < 2.5
-                       for pts_ in sp.discesa + [d_[0] for d_ in sp.deco] for q in pts_[::2]):
-                    continue
-                if t == 'NO' and p.x < cc.x - 1.0 and sy <= 0:   # davanti alla scala
-                    continue
-                if t == 'SE' and p.y < cc.y - 1.0:
-                    continue
-                if (t, L) == ('SE', -6.0) and dentro_rett(p, rv, -1.0):
-                    continue
-                props.append(P.prop(rnd.choice(scelta_prop), (p.x, p.y, L), rnd.uniform(0, 360)))
-                usati_ponti.add((t, L))
-                break
-    # la Polaroid 10 sul lettino della piattaforma NO a -12
+        punti = [q for q in (arrivi.get((t, L)), partenze.get((t, L))) if q is not None]
+        angoli = [Vector((cc.x + sx * (PONTE - rientro), cc.y + sy * (PONTE - rientro), L)) for sx in (-1, 1) for sy in (-1, 1)]
+        return max(angoli, key=lambda q: min(math.hypot(q.x - a_.x, q.y - a_.y) for a_ in punti))
+    angoli_prop = {}
+    for (t, L) in sorted(DISCESA_PONTI):
+        p = angolo_libero(t, L)
+        angoli_prop[(t, L)] = p
+        if (t, L) in (('NO', -12.0), ('NO', 0.0)):
+            continue        # lì ci sono il lettino della Polaroid e il cartello
+        props.append(P.prop(rnd.choice(scelta_prop), (p.x, p.y, L), rnd.uniform(0, 360)))
+        usati_ponti.add((t, L))
+    # la Polaroid 10 sul lettino della piattaforma NO a -12, nell'angolo fuori dal passaggio
     cno = centro('NO')
-    pl = Vector((cno.x - 1.0, cno.y + 2.1, -12.0))
+    pl = angoli_prop[('NO', -12.0)]
     props.append(P.prop('lettino_plastica', (pl.x, pl.y, -12.0), 90))
     polaroid_pos = Vector((pl.x, pl.y, -12.0 + 0.36))
     c2 = K.Costruttore(mats)
     P.polaroid(c2, Vector((pl.x, pl.y, -12.0 + 0.36)), Vector((1, 0, 0)))
     pol = c2.crea('torre_polaroid_10')
-    oltre = Vector((rv[0] + 0.6, (rv[1] + rv[3]) / 2, 0)) if arrivo.x > va.x else Vector((rv[2] - 0.6, (rv[1] + rv[3]) / 2, 0))
-    props += [P.prop('paperella_gigante', (oltre.x, oltre.y, -6.0 + 0.45 - 0.12 - 0.15), 200),
-              P.prop('cartello_pavimento_bagnato', (cno.x - 1.8, cno.y - 1.6, 0.0), 30)]
+    cart = angoli_prop[('NO', 0.0)]
+    props += [P.prop('cartello_pavimento_bagnato', (cart.x, cart.y, 0.0), 30)]
     fondo = [('sedia_bagnino', (29.4, 9.9), 0), ('lettino_plastica', (21.2, 9.0), 90), ('lettino_plastica', (21.2, 10.8), 95),
              ('balena_gonfiabile_sgonfia', (30.0, 21.6), 15), ('delfino_gonfiabile_sgonfio', (25.6, 4.9), 120),
              ('pallone_spiaggia', (27.0, 12.6), 0), ('secchio_gigante', (32.6, 9.6), 30),
@@ -1420,10 +1464,8 @@ def versione_A(mats):
     gioco['pedane'] = [[round(v, 2) for v in r] + [L] for (t, L), r in sorted(costruite.items(), key=lambda kv: (kv[0][1], kv[0][0]))]
     # i pianerottoli delle due scale di servizio (alla quota di ogni livello, accanto alle pedane)
     for L in LIVELLI:
-        gioco['pedane'].append([round(XI0 + 0.05, 2), round(rno[1] + 0.2, 2), round(XI0 + 0.05 + 2.2, 2), round(rno[1] + 0.2 + 1.2, 2), L])
-        gioco['pedane'].append([round(rse[0] + 0.2, 2), round(YI0 + 0.08, 2), round(rse[0] + 0.2 + 1.2, 2), round(YI0 + 0.08 + 2.2, 2), L])
-    gioco['ostacoli'] = ostacoli + [[round((rv[0] + rv[2]) / 2, 2), round((rv[1] + rv[3]) / 2, 2), -6.0,
-                                     round(max(rv[2] - rv[0], rv[3] - rv[1]) / 2 + 0.2, 2), round(min(rv[2] - rv[0], rv[3] - rv[1]) / 2 + 0.2, 2),
-                                     'x' if rv[2] - rv[0] > rv[3] - rv[1] else 'y']]
+        gioco['pedane'].append([round(XI0 + 0.05, 2), round(rno[1] + 0.2, 2), round(XI0 + 0.05 + 2.2, 2), round(rno[1] + 0.2 + 1.2, 2), L, 'scala'])
+        gioco['pedane'].append([round(rse[0] + 0.2, 2), round(YI0 + 0.08, 2), round(rse[0] + 0.2 + 1.2, 2), round(YI0 + 0.08 + 2.2, 2), L, 'scala'])
+    gioco['ostacoli'] = ostacoli + ostacoli_imbuti
     luci['gioco'] = gioco
     return gruppi, percorso_gioco(gioco), luci

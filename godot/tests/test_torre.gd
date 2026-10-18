@@ -5,7 +5,9 @@ extends Node
 ##    movimento dello scivolare), lungo tutta la discesa c'è il canale sotto e 2 m liberi sopra, i
 ##    checkpoint sono sulle pedane d'arrivo, la Polaroid 10 è sul lettino, il fondo fuori dalla vasca uccide.
 ## 2. La discesa col movimento vero sugli scivoli (Player di grafica): ogni tratto si scende dalla sua pedana
-##    alla pedana dopo; nei due tratti che finiscono col getto, senza getto si cade.
+##    alla pedana dopo (sulla pedana, non sul pianerottolo della scala), anche entrando spostati di 45 cm o
+##    storti di 22 gradi; nei due tratti che finiscono col getto, senza getto si cade. Dall'arrivo si cammina
+##    fino all'imbocco dopo con un passaggio libero di 1 m, senza scavalcare niente.
 ## 3. Nella sala grande: il portone (aperto qui senza la tappa 8) fa caricare la torre in un thread, il guscio
 ##    vecchio sparisce, sulla passerella si entra (il portone si richiude, interni e tecnici si scaricano);
 ##    cadendo dalla discesa si muore e si riparte dall'ultimo checkpoint, con la torre di nuovo lì; le pedane
@@ -14,6 +16,9 @@ extends Node
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
+const Camminatore := preload("res://tests/camminatore.gd")
+## Ingressi nel canale spostati (m, di lato) e storti (gradi).
+const INGRESSI := [[0.45, 0.0], [-0.45, 0.0], [0.0, 22.0], [0.0, -22.0]]
 var _passed := 0
 var _failed := 0
 
@@ -33,7 +38,9 @@ func _run() -> void:
 	for t in dati["tratti"]:
 		n_pezzi += (t["pezzi"] as Array).size()
 	var scivoli := torre.corpi_scivolo()
-	check(n_pezzi >= 8 and scivoli.size() == n_pezzi, "%d pezzi di discesa, %d corpi nel gruppo \"scivolo\"" % [n_pezzi, scivoli.size()])
+	var rampe := scivoli.filter(func(c): return String(c.name).ends_with("_rampa"))
+	check(n_pezzi >= 8 and scivoli.size() - rampe.size() == n_pezzi and rampe.size() == (dati["tratti"] as Array).size(),
+			"%d pezzi di discesa e %d rampe d'imbocco: %d corpi nel gruppo \"scivolo\"" % [n_pezzi, rampe.size(), scivoli.size()])
 	check(torre.checkpoint.size() == 7, "7 checkpoint: il portone, le 5 pedane d'arrivo, il fondo (%d)" % torre.checkpoint.size())
 	var ordini_ok := true
 	for i in range(1, torre.checkpoint.size()):
@@ -110,6 +117,15 @@ func _run() -> void:
 		var col_getto: bool = (tr["salti"] as Array).has("getto")
 		var esito := await _scendi(torre, pl, k, true)
 		check(esito == "arrivato", "tratto %d (%s -> %s, salti %s): %s" % [k, torre.checkpoint[k].name, torre.checkpoint[k + 1].name, tr["salti"], esito])
+		if esito == "arrivato" and k + 1 < (dati["tratti"] as Array).size():
+			# dall'arrivo all'imbocco dopo, a piedi: passaggio di 1 m, senza saltare
+			var cam = Camminatore.new(torre, pl, self)
+			cam.margine = 0.5
+			var ok: bool = await cam.verso(SalaTorre.b(dati["tratti"][k + 1]["entrata"]), 0.3)
+			check(ok, "   sulla pedana %s si arriva all'imbocco dopo camminando (1 m libero, senza salti)" % torre.checkpoint[k + 1].name)
+		for ing in INGRESSI:
+			var e2 := await _scendi(torre, pl, k, true, ing[0], ing[1])
+			check(e2 == "arrivato", "   entrando spostati di %.2f m e storti di %d gradi: %s" % [ing[0], int(ing[1]), e2])
 		if col_getto:
 			var senza := await _scendi(torre, pl, k, false)
 			check(senza.begins_with("caduto"), "   senza il getto non si arriva (%s)" % senza)
@@ -189,15 +205,16 @@ func _run() -> void:
 ## avanti finché si scivola, poi si lascia fare; nei tratti che finiscono col getto, con [param getto], negli
 ## ultimi metri si tiene premuto lo spruzzo verso il basso (la carica si fa scivolando, in aria la spinta parte
 ## subito). "arrivato" se ci si ferma sulla pedana del checkpoint dopo, "caduto ..." se si va giù.
-func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool) -> String:
+func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool, spostato := 0.0, storto := 0.0) -> String:
 	var tr: Dictionary = torre.dati["tratti"][k]
 	var dopo := torre.checkpoint[k + 1]
 	var avanti := SalaTorre.b(tr["verso"])
 	var decollo := SalaTorre.b(tr["a"])
 	var fine_getto: bool = (tr["salti"] as Array).size() > 0 and tr["salti"][-1] == "getto"
-	p.global_position = SalaTorre.b(tr["entrata"]) + Vector3(0, 0.2, 0)
+	var lato := Vector3(-avanti.z, 0, avanti.x)
+	p.global_position = SalaTorre.b(tr["entrata"]) + lato * spostato + Vector3(0, 0.2, 0)
 	p.velocity = Vector3.ZERO
-	p.set_look(atan2(-avanti.x, -avanti.z), 0.0)
+	p.set_look(atan2(-avanti.x, -avanti.z) + deg_to_rad(storto), 0.0)
 	p.water_pack.set_tank_amount(20.0)
 	await _frames(10)
 	Input.action_press(&"move_forward")
@@ -206,7 +223,9 @@ func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool) -> String:
 	var esito := "tempo scaduto"
 	for i in 60 * 20:
 		await _frames(1)
-		if p.is_sliding and Input.is_action_pressed(&"move_forward"):
+		# avanti si tiene premuto finché non si scivola davvero (come chi gioca), poi si lascia fare
+		if p.is_sliding and Vector2(p.velocity.x, p.velocity.z).length() > 2.5 and Input.is_action_pressed(&"move_forward") \
+				and _dentro_canale(torre, k, p.global_position) > 0.5:
 			Input.action_release(&"move_forward")
 		if getto and fine_getto and not premuto and p.is_sliding \
 				and Vector2(p.global_position.x - decollo.x, p.global_position.z - decollo.z).length() < 3.0:
@@ -226,14 +245,30 @@ func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool) -> String:
 				break
 		else:
 			fermo = 0
-		if absf(pos.y - dopo.global_position.y) < 0.6 and Vector2(pos.x - dopo.global_position.x, pos.z - dopo.global_position.z).length() < 4.5 \
-				and not p.is_sliding and p.is_on_floor():
-			esito = "arrivato"
-			break
+		if absf(pos.y - dopo.global_position.y) < 0.6 and not p.is_sliding and p.is_on_floor():
+			var ultimo := k + 2 == torre.checkpoint.size()
+			var dove := _su_pedana(torre, pos)
+			if ultimo and Vector2(pos.x - dopo.global_position.x, pos.z - dopo.global_position.z).length() < 4.5:
+				esito = "arrivato"
+				break
+			if not ultimo and dove == "pedana":
+				esito = "arrivato"
+				break
+			if not ultimo and dove == "scala":
+				esito = "arrivato sul pianerottolo della scala, non sulla pedana"
+				break
 	Input.action_release(&"move_forward")
 	Input.action_release(&"spray")
 	p.set_look(p.yaw, 0.0)
 	return esito
+
+
+## "pedana" se pos (Godot) è su una pedana della torre, "scala" se è su un pianerottolo, "" altrimenti.
+func _su_pedana(torre: SalaTorre, pos: Vector3) -> String:
+	for r in torre.dati.get("pedane", []):
+		if absf(pos.y - float(r[4])) < 0.6 and r[0] - 0.1 < pos.x and pos.x < r[2] + 0.1 and r[1] - 0.1 < -pos.z and -pos.z < r[3] + 0.1:
+			return "scala" if (r as Array).size() > 5 else "pedana"
+	return ""
 
 
 func _metti(p: Player, pos: Vector3, guarda: Vector3) -> void:
@@ -283,3 +318,12 @@ func check(cond: bool, what: String) -> void:
 func _frames(k: int) -> void:
 	for i in k:
 		await get_tree().physics_frame
+
+
+## Quanti metri si è già dentro il canale del tratto k (negativo prima dell'imbocco), lungo la sua direzione.
+func _dentro_canale(torre: SalaTorre, k: int, pos: Vector3) -> float:
+	var linea: Array = torre.dati["tratti"][k]["linee"][0]
+	var a := SalaTorre.b(linea[0])
+	var c := SalaTorre.b(linea[1])
+	var t := Vector3(c.x - a.x, 0, c.z - a.z).normalized()
+	return Vector3(pos.x - a.x, 0, pos.z - a.z).dot(t)
