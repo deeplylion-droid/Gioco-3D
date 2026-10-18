@@ -173,6 +173,8 @@ Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.
   - Le piattaforme stanno **solo dove servono**.
   - La luce resta com'è: rosso d'emergenza con fari e lampade da lavoro.
 
+**Scelte del 18 ottobre:** discesa e aspetto approvati. L'utente vuole provarla nel gioco prima di dire altro: "Lo devo vedere in gioco per dirti". Nei due salti col getto resta la carica del getto B: si impara a spruzzare prima del bordo.
+
 ## L'enigma degli acquari (idea dell'utente, 18 ottobre)
 
 L'utente trova il capitolo corto e vuole un enigma in più nella sala principale. Le sue parole: "saranno tre acquari di acqua colorata, due pieni di due colori e uno vuoto, in quello vuoto bisognerà versare i due colori per formarne un terzo, per farlo serviranno due zaini di un colore e uno zaino dell'altro. Fare bene aprirà il cancello della torre degli scivoli, che a questo punto risulterà chiuso MA avrà lampade luminose prima spente che saranno invece accese quando rientriamo nella sala. Anche gli acquari saranno comparsi ora mentre prima, durante il primo accesso alla sala non c'erano. Se sbagli la combo dei colori devi poter resettare l'enigma. Deve esserci un riferimento al colore da creare."
@@ -185,6 +187,15 @@ Risposte alle domande (18 ottobre):
 - **Cosa apre**: il portone della torre. Prende il posto della regola di prima ("si apre da solo dopo la tappa 8").
 - L'aspetto (acquari, posizione, disegno, lampade) si propone all'utente con scatti dal motore prima di metterlo nel gioco.
 
+**Scelte del 18 ottobre (pagina, risposte in `docs/riscontri/2026-10-18_scelte_acquari_torre_mascotte.md`):**
+- stile B: grandi cilindri di vetro tra una base e un coperchio di acciaio rosso, con tubi e manometri;
+- posizione 2: sul lato est, vicino al portone della torre. Dalla serranda non si vedono, si scoprono a metà sala;
+- il miscuglio è basso e largo, in mezzo ai due alti, perché con lo zaino si versa solo fino a circa 0,8 m. Sotto c'è la valvola rossa;
+- sul portone ci sono le lampadine da luna park, spente al primo passaggio e accese quando rientri dal magazzino;
+- l'indizio è un disegno a pastello attaccato al vetro dell'acquario giallo, retroilluminato dall'acquario, così si legge anche senza torcia;
+- i colori dell'acqua (giallo, blu, verde e torbido) sono approvati;
+- zaino: quando inizi ad aspirare un colore, l'acqua normale che avevi nel serbatoio viene buttata via da sola.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
@@ -193,6 +204,8 @@ Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare 
 - **Il mostro-squalo**: per ora solo il modello. Il ruolo nel gioco si decide dopo.
 - **Dove metterle**: si decide dopo aver visto i render, su scatti dal gioco.
 - I crediti Meshy del mese (circa 12.600) si perdono il 15 novembre: si possono usare.
+
+**Scelte del 18 ottobre:** statua dello squalo A (pollice in su, pantaloncini rossi, salvagente), tutte e due le statue del polpo (A rosa con le braccia aperte, B lilla con maschera, salvagente, pallone e gelato) e mostro-squalo A, quello vicino al disegno. Le posizioni si scelgono su scatti dal gioco.
 
 ## Capitolo 1: scaletta (approvata)
 
