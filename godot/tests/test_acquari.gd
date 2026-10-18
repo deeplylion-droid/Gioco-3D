@@ -147,7 +147,9 @@ func _run() -> void:
 	await _frames(10)
 	check(enigma.stato == EnigmaAcquari.Stato.TORBIDO, "pieno di colore sbagliato: torbido (giallo %.2f, pieno %.2f)" % [enigma.parte_di_giallo(), misto.fill])
 	check(WaterMix.frazione(misto.mix, WaterMix.TORBIDA) > 0.99, "l'acqua è torbida")
-	check((colori[0] as Color).is_equal_approx(WaterMix.COLORI[WaterMix.GIALLO]) and not (colori[1] as Color).is_equal_approx(colori[0]),
+	var c0 := colori[0] as Color
+	# Colori tolleranti: i valori esatti li sceglie enigma-ambiente con l'utente.
+	check(c0.r > 0.6 and c0.g > 0.5 and c0.b < 0.4 and not (colori[1] as Color).is_equal_approx(c0),
 		"il colore cambia mentre si riempie (%s)" % str(colori))
 	check(not portone.in_movimento and not portone.is_aperto(), "il portone resta chiuso")
 	check(giallo.can_give_water() and blu.can_give_water(), "i colorati non sono vuoti")
