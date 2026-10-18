@@ -4,7 +4,7 @@ extends Node
 ## rese fluorescenti col gene di una medusa, e ora brilla al buio col rosa dei suoi tentacoli. Si mette come figlio
 ## di un Bambino (l'agnellino): ai materiali dei modelli Calmo e Rivelato (copie, il modello non cambia) aggiunge
 ## un'emissione rosa attraverso una maschera, con una pulsazione lenta facoltativa e una luce rosa debole intorno.
-## Solo proposta: nel gioco non c'è.
+## Nel gioco: l'agnellino luminoso (variante B, scelta dell'utente il 18 ottobre) in scenes/creature/bambino_agnello.tscn.
 
 ## Maschera dell'emissione sul modello calmo (stesse UV della texture del colore).
 @export var maschera_calmo: Texture2D

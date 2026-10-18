@@ -3,6 +3,9 @@
 [ext_resource type="Script" path="res://scripts/creature/bambino.gd" id="1_bambino"]
 [ext_resource type="PackedScene" path="res://assets/models/bambini/bambino_agnello_calmo.glb" id="2_calmo"]
 [ext_resource type="PackedScene" path="res://assets/models/bambini/bambino_agnello_occhio.glb" id="3_rivelato"]
+[ext_resource type="Script" path="res://scripts/creature/agnello_fluorescente.gd" id="4_luminoso"]
+[ext_resource type="Texture2D" path="res://assets/models/bambini/agnello_luminoso_calmo.png" id="5_calmo"]
+[ext_resource type="Texture2D" path="res://assets/models/bambini/agnello_luminoso_rivelato.png" id="6_rivelato"]
 
 [node name="BambinoAgnello" type="Node3D" groups=["bambini"]]
 script = ExtResource("1_bambino")
@@ -11,3 +14,11 @@ script = ExtResource("1_bambino")
 
 [node name="Rivelato" parent="." instance=ExtResource("3_rivelato")]
 visible = false
+
+[node name="Luminoso" type="Node" parent="."]
+editor_description = "L'agnellino luminoso (scelta dell'utente del 18 ottobre, variante B): la medusa l'ha modificato coi suoi geni e tutto il pelo brilla a chiazze del rosa dei suoi tentacoli, più forte sul muso. Maschere da assets_src/agnello_fluo/maschere.py."
+script = ExtResource("4_luminoso")
+maschera_calmo = ExtResource("5_calmo")
+maschera_rivelato = ExtResource("6_rivelato")
+occhio_grande = false
+energia = 1.6
