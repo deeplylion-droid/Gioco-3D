@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/tecnici/tecnici.gd" id="s_tecnici"]
+[ext_resource type="Script" path="res://addons/grafica/luce_emergenza.gd" id="s_lampeggiante"]
 [ext_resource type="PackedScene" path="res://assets/ambienti_tecnici/camera_onde.gltf" id="m_camera"]
 [ext_resource type="PackedScene" path="res://assets/ambienti_tecnici/sala_pompe.gltf" id="m_sala"]
 [ext_resource type="PackedScene" path="res://assets/ambienti_tecnici/raccordo.gltf" id="m_racc"]
@@ -300,3 +301,10 @@ interior = true
 ambient_mode = 0
 
 [node name="LuciTecnici" parent="." instance=ExtResource("p_luci")]
+
+[node name="LampeggianteParatia1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 16.4, 3, -2.15)
+script = ExtResource("s_lampeggiante")
+modalita = 2
+portata = 9.0
+editor_description = "Lampeggiante rosso prima del cancello stagno 1 (paratia 1), sul muro nord dal lato da cui arrivi: scelta dell'utente del 18 ottobre, senza più la torcia."
