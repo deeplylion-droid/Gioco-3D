@@ -68,10 +68,43 @@ yin = min(raggio(bvh, Vector((mx.x - 0.03, 0, c.z + dz)), (0, 1, 0)) or 9 for dz
 pann = max((mx.z - (raggio(bvh, Vector((dx, mn.y + 0.01, mx.z + 1)), (0, 0, -1)) or 0) - 1) for dx in (-0.5, 0, 0.5))
 fondo = c.z - min(raggio(bvh, c + Vector((dx, 0, 0)), (0, 0, -1)) or 9 for dx in (-0.5, 0, 0.5))
 sopra = c.z + min(raggio(bvh, c + Vector((dx, 0, 0)), (0, 0, 1)) or 9 for dx in (-0.5, 0, 0.5))
+# il telaio di Meshy ha un coperchio sopra: si tolgono le facce del coperchio dentro il bordo (si versa e
+# si aspira da sopra)
+bm = bmesh.new(); bm.from_mesh(o.data)
+via = []
+for f in bm.faces:
+    cz = f.calc_center_median()
+    if cz.z > sopra - 0.02 and abs(cz.x) < 0.91 and abs(cz.y) < 0.35 and abs(f.normal.z) > 0.7:   # coperchio: orizzontale, dentro il bordo
+        via.append(f)
+bmesh.ops.delete(bm, geom=via, context='FACES')
+bm.to_mesh(o.data); bm.free()
+print('coperchio: tolte', len(via), 'facce')
 misure['vasca_telaio'] = dict(esterno=[round(v, 3) for v in (mx - mn)], interno_mezza_x=round(xin, 3),
                               interno_mezza_z_godot=round(yin, 3), fondo=round(fondo, 3), sopra=round(sopra, 3),
                               pannello_base=round(pann, 3))
 esporta('vasca_telaio', [o])
+
+# --- stile A, acquario basso del miscuglio: la stessa vasca tagliata, la vaschetta di base (fino a
+# 0,10 m) e il bordo di sopra (da 1,33 m), uniti; i montanti hanno la stessa sezione e si saldano. ---
+TAGLIO_GIU, TAGLIO_SU = 0.10, 1.33
+b = o.copy(); b.data = o.data.copy(); b.name = 'vasca_bassa_telaio'
+bpy.context.scene.collection.objects.link(b)
+bm = bmesh.new(); bm.from_mesh(b.data)
+# via la fascia di mezzo, poi il pezzo di sopra scende
+r = bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, TAGLIO_GIU),
+                           plane_no=(0, 0, 1))
+r = bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=(0, 0, TAGLIO_SU),
+                           plane_no=(0, 0, 1))
+via = [f for f in bm.faces if TAGLIO_GIU + 1e-4 < f.calc_center_median().z < TAGLIO_SU - 1e-4]
+bmesh.ops.delete(bm, geom=via, context='FACES')
+for v in bm.verts:
+    if v.co.z > TAGLIO_SU - 1e-4:
+        v.co.z -= TAGLIO_SU - TAGLIO_GIU
+bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=0.004)
+bm.to_mesh(b.data); bm.free()
+misure['vasca_bassa_telaio'] = dict(alto=round(1.633 - (TAGLIO_SU - TAGLIO_GIU), 3), fondo=0.086,
+                                    sopra=round(1.554 - (TAGLIO_SU - TAGLIO_GIU), 3))
+esporta('vasca_bassa_telaio', [b])
 
 # --- stile A: basamento (2,0 x 0,5 x 0,93 m, origine in basso al centro; bocca flangiata davanti) ---
 o = carica('basamento_vasca')
@@ -118,6 +151,7 @@ def tieni(obj, nome, zmin, zmax):
 
 
 base = tieni(o, 'cilindro_base', None, z_base)
+base_bassa = tieni(o, 'cilindro_base_bassa', None, 0.40)   # per l'acquario basso del miscuglio
 cop = tieni(o, 'cilindro_coperchio', z_cop, None)
 # il coperchio scende sopra il vetro: lo si porta con il taglio a z = 0 (in Godot lo si mette alla
 # quota giusta), la base resta a terra
@@ -126,6 +160,7 @@ bpy.data.objects.remove(o)
 misure['cilindro'] = dict(diametro_vetro=1.1, alt_base=round(z_base, 3),
                           alt_coperchio=round((mx.z - mn.z) * s - z_cop, 3))
 esporta('cilindro_base', [base])
+esporta('cilindro_base_bassa', [base_bassa])
 esporta('cilindro_coperchio', [cop])
 
 # --- valvola ---

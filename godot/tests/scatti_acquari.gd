@@ -7,8 +7,10 @@ extends Node
 ## Uso, sotto il render.lock e con almeno 13,5 GB liberi:
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_acquari.gd <cartella> <giri>
-## <giri>: elenco separato da ";" di giri "stile,posizione,lampade,accese,miscuglio,camere" con le camere
+## <giri>: elenco separato da ";" di giri "stile,posizione,lampade,accese,miscuglio,camere[,bassi]" con le camere
 ## separate da "+", per esempio "A,1,lampadine,0,vuoto,uscita+meta+vicino;A,1,lampadine,1,verde,portone".
+## Negli scatti "vicino" e "dettaglio" la torcia del giocatore è accesa (al buio rosso la si usa).
+## Un settimo campo "bassi" nel giro fa anche il giallo e il blu bassi (opzione 3).
 ## Le immagini: <cartella>/<stile><posizione>_<camera>[_<miscuglio>][_<lampade>_<accese|spente>].jpg
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -22,6 +24,9 @@ const CAMERE := {
 		"meta": [Vector3(-4.0, 1.7, 15.8), Vector3(-11.3, 1.2, 9.7)],
 		"vicino": [Vector3(-10.6, 1.7, 13.6), Vector3(-11.3, 1.25, 9.7)],
 		"dettaglio": [Vector3(-10.4, 1.5, 12.3), Vector3(-11.1, 0.95, 10.2)],
+		# il disegno sul vetro del giallo, con la torcia puntata (A e B hanno il giallo in punti diversi)
+		"disegno_A": [Vector3(-13.6, 1.55, 11.7), Vector3(-14.4, 1.35, 10.04)],
+		"disegno_B": [Vector3(-13.0, 1.55, 11.8), Vector3(-14.13, 1.4, 10.21)],
 	},
 	"2": {
 		"uscita": [Vector3(-15.0, 1.7, 18.6), Vector3(15.6, 1.4, -3.6)],
@@ -108,6 +113,8 @@ func _run() -> void:
 		proposta.set(&"lampade", c[2])
 		proposta.set(&"lampade_accese", c[3] == "1")
 		proposta.set(&"miscuglio", c[4])
+		var bassi := c.size() > 6 and c[6] == "bassi"
+		proposta.set(&"tutti_bassi", bassi)
 		level.add_child(proposta)
 		for nome in c[5].split("+"):
 			var cam_def: Array = CAMERE.get(pos, {}).get(nome, CAMERE["*"].get(nome, []))
@@ -122,6 +129,9 @@ func _run() -> void:
 			cam.global_position = cam_def[0]
 			cam.look_at(cam_def[1], Vector3.UP)
 			cam.make_current()
+			if nome in ["dettaglio", "vicino"] or nome.begins_with("disegno"):
+				# da vicino come nel gioco: con la torcia del giocatore in mano alla camera
+				cam.add_child(load("res://addons/grafica/torcia.tscn").instantiate())
 			await _frames(settle)
 			await RenderingServer.frame_post_draw
 			var nomefile := "%s%s_%s" % [stile, pos, nome]
@@ -129,6 +139,8 @@ func _run() -> void:
 				nomefile = "%s_%s_%s" % [nome, c[2], "accese" if c[3] == "1" else "spente"]
 			elif c[4] != "vuoto":
 				nomefile += "_" + c[4]
+			if bassi:
+				nomefile += "_tuttibassi"
 			get_viewport().get_texture().get_image().save_jpg(out_dir.path_join(nomefile + ".jpg"), 0.92)
 			print("salvato ", nomefile)
 			cam.queue_free()

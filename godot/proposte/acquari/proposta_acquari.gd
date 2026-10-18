@@ -19,12 +19,18 @@ const AcquarioAcquaScript := preload("res://assets/enigma_acquari/acquario_acqua
 ## Il contenuto dell'acquario del miscuglio: "vuoto", "verde" o "torbido".
 @export var miscuglio := "vuoto"
 @export var miscuglio_pieno := 0.85
+## Opzione 3: anche il giallo e il blu bassi come quello del miscuglio.
+@export var tutti_bassi := false
 
 ## Dove sta la fila e dove guarda (verso il giocatore): [centro, angolo in gradi attorno a Y].
 const POSIZIONI := {
-	"1": [Vector3(-11.3, 0.0, 9.7), 0.0],      # davanti alla serranda, a nord della scia rosa (z 12,5); guarda a sud
+	"1": [Vector3(-11.6, 0.0, 9.7), 0.0],      # davanti alla serranda, a nord della scia rosa (z 12,5); guarda a sud
 	"2": [Vector3(15.6, 0.0, -3.6), -90.0],    # a est, verso il portone; guarda a ovest (la sala)
 }
+## Il miscuglio è basso (bordo a 0,8 m: la lancia tenuta in basso non versa più su) e sta un poco più
+## avanti, con almeno 1,2 m liberi ai lati, per avvicinarsi e versare senza essere chiusi dagli alti.
+const AVANTI_BASSO := 0.35
+const SPAZIO := 1.2
 
 var acque: Array[AcquarioAcqua] = []
 
@@ -36,17 +42,26 @@ func _ready() -> void:
 	var p: Array = POSIZIONI[posizione]
 	fila.position = p[0]
 	fila.rotation_degrees.y = p[1]
-	var passo := 2.6 if stile == "A" else 1.85
+	# larghezze: A alto 2,0 / basso 2,2; B alto 1,3 / basso 1,9 (con piedi e raccordi)
+	var largo_alto := 2.0 if stile == "A" else 1.3
+	var largo_basso := 2.2 if stile == "A" else 1.9
+	var lato := largo_basso if tutti_bassi else largo_alto
+	var passo := (lato + largo_basso) * 0.5 + SPAZIO
 	var colori := ["giallo", miscuglio, "blu"]
 	for i in 3:
 		var t := Node3D.new()
 		t.name = ["AcquarioGiallo", "AcquarioMiscuglio", "AcquarioBlu"][i]
 		t.position.x = (i - 1) * passo
+		var basso := i == 1 or tutti_bassi
+		if i == 1:
+			t.position.z = AVANTI_BASSO
 		fila.add_child(t)
 		if stile == "A":
-			_vasca_a(t, colori[i], i == 1)
+			_vasca_a(t, colori[i], i == 1, basso)
 		else:
-			_cilindro_b(t, colori[i], i == 1)
+			_cilindro_b(t, colori[i], i == 1, basso)
+		if i == 0:
+			_disegno(t, basso)
 	_lampade_portone()
 
 
@@ -87,30 +102,73 @@ func _luce_interna(parent: Node3D, y: float) -> void:
 
 
 # --- stile A ---------------------------------------------------------------------------------------
-# basamento 2,0 x 0,5 x 0,93 m; sopra il telaio (2,0 x 1,63 x 0,93): interno dei vetri 1,76 x 1,43 x 0,64
-# dal fondo della vaschetta della base del telaio (0,10 m) in su (misure in assets_src/enigma_acquari).
+# alto: basamento 2,0 x 0,5 x 0,93 m e sopra il telaio (2,0 x 1,63 x 0,93), interno dei vetri
+# 1,76 x 1,43 x 0,64 dal fondo della vaschetta della base del telaio (0,10 m) in su.
+# basso: basamento abbassato e allargato (2,2 x 0,4 x 1,16) e sopra la stessa vasca tagliata
+# (vasca_bassa_telaio, alta 0,40): bordo a 0,80 m, vetro da 0,50 a 0,72 (misure in assets_src/enigma_acquari).
 const A_BASE := 0.5
+const A_BASSO_SCALA := Vector3(1.1, 1.0, 1.25)
+const A_BASSO_BASE := 0.4
 
-func _vasca_a(t: Node3D, colore: String, miscuglio_: bool) -> void:
-	var base := _glb("basamento_vasca") if ResourceLoader.exists(DIR + "basamento_vasca.glb") else null
-	if base:
-		t.add_child(base)
-	var telaio := _glb("vasca_telaio")
-	telaio.position.y = A_BASE
+func _vasca_a(t: Node3D, colore: String, miscuglio_: bool, basso: bool) -> void:
+	var base := _glb("basamento_vasca")
+	t.add_child(base)
+	if not basso:
+		var telaio := _glb("vasca_telaio")
+		telaio.position.y = A_BASE
+		t.add_child(telaio)
+		_acqua(t, Vector3(0.0, A_BASE + 0.10, 0.0), Vector3(1.76, 1.43, 0.64), colore, false)
+		_luce_interna(t, A_BASE + 1.50)
+		return
+	base.scale = Vector3(A_BASSO_SCALA.x, A_BASSO_BASE / A_BASE, A_BASSO_SCALA.z)
+	var telaio := _glb("vasca_bassa_telaio")
+	telaio.position.y = A_BASSO_BASE
+	telaio.scale = A_BASSO_SCALA
 	t.add_child(telaio)
-	_acqua(t, Vector3(0.0, A_BASE + 0.10, 0.0), Vector3(1.76, 1.43, 0.64), colore, false)
-	_luce_interna(t, A_BASE + 1.50)
+	_acqua(t, Vector3(0.0, A_BASSO_BASE + 0.10, 0.0), Vector3(1.76 * 1.1, 0.215, 0.64 * 1.25), colore, false)
+	_luce_alta(t, A_BASSO_BASE + 1.6)
 	if miscuglio_:
-		_valvola(t, 0.5, 0.465, 0.27)
-		_disegno_piano(t, Vector3(-0.42, A_BASE + 0.95, 0.32 + 0.016))
+		# la bocca flangiata del basamento: x 0,5, alta 0,27, davanti a z 0,465 (prima della scala)
+		_valvola(t, 0.5 * A_BASSO_SCALA.x, 0.465 * A_BASSO_SCALA.z, 0.27 * A_BASSO_BASE / A_BASE, 0.72)
 
 
 # --- stile B ---------------------------------------------------------------------------------------
-# base 0,85 m, vetro di 1,1 m di diametro alto 1,3 m, coperchio sopra.
+# alto: base 0,85 m, vetro di 1,1 m di diametro alto 1,3 m, coperchio sopra.
+# basso: base tagliata a 0,40 m e allargata x1,45 (vetro di 1,6 m), vetro alto 0,38, anello sul bordo a 0,8 m.
 const B_BASE := 0.849
 const B_VETRO := 1.3
+const B_BASSO_SCALA := 1.45
+const B_BASSO_BASE := 0.40
+const B_BASSO_VETRO := 0.38
 
-func _cilindro_b(t: Node3D, colore: String, miscuglio_: bool) -> void:
+func _mat_rosso() -> StandardMaterial3D:
+	var m := load("res://assets/materials/sala/metallo_verniciato.tres").duplicate() as StandardMaterial3D
+	m.albedo_color = Color(0.95, 0.32, 0.26)
+	return m
+
+
+func _cilindro_b(t: Node3D, colore: String, miscuglio_: bool, basso: bool) -> void:
+	if basso:
+		var base := _glb("cilindro_base_bassa")
+		base.scale = Vector3(B_BASSO_SCALA, 1.0, B_BASSO_SCALA)
+		t.add_child(base)
+		var r := 0.55 * B_BASSO_SCALA
+		_acqua(t, Vector3(0.0, B_BASSO_BASE, 0.0), Vector3(r * 2.0, B_BASSO_VETRO, r * 2.0), colore, true)
+		# l'anello di acciaio sul bordo del vetro
+		var anello := MeshInstance3D.new()
+		var tm := TorusMesh.new()
+		tm.inner_radius = r - 0.025
+		tm.outer_radius = r + 0.045
+		tm.rings = 64
+		anello.mesh = tm
+		anello.scale.y = 0.6
+		anello.material_override = _mat_rosso()
+		anello.position.y = B_BASSO_BASE + B_BASSO_VETRO + 0.006
+		t.add_child(anello)
+		_luce_alta(t, B_BASSO_BASE + 1.6)
+		if miscuglio_:
+			_valvola(t, 0.0, r - 0.02, 0.21, 0.7)
+		return
 	t.add_child(_glb("cilindro_base"))
 	var cop := _glb("cilindro_coperchio")
 	cop.position.y = B_BASE + B_VETRO
@@ -130,17 +188,44 @@ func _cilindro_b(t: Node3D, colore: String, miscuglio_: bool) -> void:
 		r.material_override = mat
 		r.position = Vector3(cos(a) * 0.6, B_BASE + B_VETRO * 0.5, sin(a) * 0.6)
 		t.add_child(r)
-	if miscuglio_:
-		_valvola(t, 0.0, 0.52, 0.3)
-		_disegno_curvo(t, 0.562 + 0.014, B_BASE + 0.62, -18.0)
+
+
+## Il disegno dei bambini sul vetro del giallo, dal lato del miscuglio, all'altezza degli occhi; se il
+## giallo è basso, sul davanti del suo basamento.
+func _disegno(t: Node3D, basso: bool) -> void:
+	if stile == "A":
+		if basso:
+			_disegno_piano(t, Vector3(-0.45, 0.2, 0.58 + 0.012), 0.75)
+		else:
+			_disegno_piano(t, Vector3(0.5, A_BASE + 0.85, 0.332 + 0.012), 1.0)
+	else:
+		if basso:
+			_disegno_curvo(t, 0.55 * B_BASSO_SCALA + 0.03, 0.2, -25.0, 0.75)
+		else:
+			_disegno_curvo(t, 0.562 + 0.014, B_BASE + 0.6, 28.0, 1.0)
+
+
+## Luce di servizio sopra un acquario basso aperto (una plafoniera del soffitto non c'è: la luce è
+## quella del buio rosso più questa, debole, per leggere il colore da sopra).
+func _luce_alta(parent: Node3D, y: float) -> void:
+	var l := SpotLight3D.new()
+	l.name = "LuceAcquario"
+	l.position = Vector3(0.0, y, 0.0)
+	l.rotation_degrees.x = -90.0
+	l.light_color = Color(1.0, 0.95, 0.86)
+	l.light_energy = 3.0
+	l.spot_range = 1.45   # arriva all'acqua ma non al pavimento (senza ombre passerebbe la base)
+	l.spot_angle = 50.0
+	l.spot_attenuation = 0.8
+	l.light_volumetric_fog_energy = 0.0
+	parent.add_child(l)
 
 
 ## La valvola rossa: tubo in avanti (verso il giocatore), la flangia di dietro contro la base,
 ## il volantino in alto; sotto la bocca davanti, la griglia dello scarico a pavimento.
-func _valvola(t: Node3D, x: float, z_base: float, y: float) -> void:
+func _valvola(t: Node3D, x: float, z_base: float, y: float, s := 0.85) -> void:
 	var v := _glb("valvola_rossa")
 	v.name = "ValvolaRossa"
-	var s := 0.85
 	v.scale = Vector3.ONE * s
 	# nel modello il tubo è lungo X (1,1 m) e il volantino sta in alto: si gira il tubo su Z
 	v.rotation_degrees.y = 90.0
@@ -180,9 +265,7 @@ func _mat_disegno() -> StandardMaterial3D:
 	m.albedo_texture = load(DIR + "disegno_bambini.jpg")
 	m.albedo_color = Color(0.86, 0.84, 0.78)
 	m.roughness = 0.85
-	m.normal_enabled = true
-	m.normal_texture = load("res://assets/ambiente/dettagli/gltf/texture/Paper003_NormalGL.jpg")
-	m.normal_scale = 0.4
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED   # il foglio piegato sul cilindro
 	return m
 
 
@@ -194,6 +277,7 @@ func _nastro(parent: Node3D, pos: Vector3, rot: float, n: Vector3) -> void:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = Color(0.78, 0.72, 0.55, 0.85)
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	m.roughness = 0.6
 	q.material_override = m
 	parent.add_child(q)
@@ -204,11 +288,12 @@ func _nastro(parent: Node3D, pos: Vector3, rot: float, n: Vector3) -> void:
 
 
 ## Il disegno (30 x 40 cm) attaccato col nastro di carta al vetro davanti della vasca A.
-func _disegno_piano(t: Node3D, pos: Vector3) -> void:
+func _disegno_piano(t: Node3D, pos: Vector3, sc: float) -> void:
 	var d := Node3D.new()
 	d.name = "Disegno"
 	d.position = pos
 	d.rotation_degrees.z = 2.5
+	d.scale = Vector3.ONE * sc
 	t.add_child(d)
 	var f := MeshInstance3D.new()
 	var pm := QuadMesh.new()
@@ -221,11 +306,11 @@ func _disegno_piano(t: Node3D, pos: Vector3) -> void:
 
 
 ## Il disegno piegato sul vetro del cilindro B, centrato all'angolo [param ang] (gradi, 0 = davanti).
-func _disegno_curvo(t: Node3D, r: float, y: float, ang: float) -> void:
+func _disegno_curvo(t: Node3D, r: float, y: float, ang: float, sc: float) -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var w := 0.3
-	var h := 0.4
+	var w := 0.3 * sc
+	var h := 0.4 * sc
 	var nx := 12
 	var a0 := deg_to_rad(ang) - w / r * 0.5
 	for i in nx:
@@ -254,7 +339,7 @@ func _disegno_curvo(t: Node3D, r: float, y: float, ang: float) -> void:
 	for c in [Vector2(0.0, 0.19), Vector2(1.0, 0.19), Vector2(0.0, -0.19), Vector2(1.0, -0.19)]:
 		var a: float = a0 + c.x * w / r
 		var n := Vector3(sin(a), 0, cos(a))
-		_nastro(t, n * (r + 0.002) + Vector3(0, y + c.y, 0), deg_to_rad(40.0 if (c.x - 0.5) * c.y > 0 else -40.0), n)
+		_nastro(t, n * (r + 0.002) + Vector3(0, y + c.y * sc, 0), deg_to_rad(40.0 if (c.x - 0.5) * c.y > 0 else -40.0), n)
 
 
 # --- le lampade del portone della torre ---------------------------------------------------------------

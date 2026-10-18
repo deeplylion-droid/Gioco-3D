@@ -41,6 +41,17 @@ MODELLI = {
         texture='Faded red painted steel, chipped paint, rust, brass gauges with dirty glass dials, '
                 'limescale, grime, damp and dirty, abandoned indoor water park machinery.',
         polycount=40000),
+    # Stile A, l'acquario del miscuglio: basso e largo (il bordo a 0,8 m, perché la lancia tenuta in
+    # basso non versa più su; vincolo di enigma-logica, 18 ottobre).
+    'vasca_bassa': dict(
+        prompt='Empty steel frame of a low wide rectangular 1990s water park display basin, 2.2 m wide, '
+               '1.2 m deep, only 0.8 m tall: thick square steel tube corner posts and a sturdy top rim, a '
+               'solid low base band 30 cm tall with rivets and a small vent grille, a round flanged pipe '
+               'outlet in the middle of the front base band. Open top. The frame is open: no glass panes, '
+               'no water, see-through between the posts above the base band. Realistic.',
+        texture='Faded teal and yellow enamel paint on steel, chipped and peeling, rust streaks running '
+                'down from bolts, limescale and grime, damp and dirty, abandoned indoor water park.',
+        polycount=30000),
     # Stile A: il basamento sotto la vasca, perché la valvola rossa stia davvero sotto l'acquario.
     'basamento_vasca': dict(
         prompt='Low heavy rectangular steel equipment plinth, 2 m wide, 1 m deep, 0.5 m tall, flat top, '

@@ -89,11 +89,13 @@ func _rebuild() -> void:
 	# il pelo dell'acqua
 	_body = WaterBody.new()
 	_body.name = "Superficie"
-	_body.size = Vector2(inner_size.x, inner_size.z) * (0.72 if cil else 1.0)
+	_body.size = Vector2(inner_size.x, inner_size.z)
 	# vasche piccole: niente cubemap propria (prende i riflessi della sala) e increspature leggere
 	_body.capture_env_cubemap = false
 	_body.ripple_max_resolution = 128
 	add_child(_body, false, Node.INTERNAL_MODE_FRONT)
+	if cil:
+		_disco.call_deferred()
 	# i vetri
 	if vetri:
 		_vetro = MeshInstance3D.new()
@@ -135,6 +137,33 @@ func _rebuild() -> void:
 		add_child(_vetro, false, Node.INTERNAL_MODE_FRONT)
 	_apply_style()
 	_apply_level()
+
+
+## Nel cilindro il pelo dell'acqua è un disco (la WaterBody fa un rettangolo): stessa densità di
+## vertici della griglia della WaterBody, per le increspature e il gorgo.
+func _disco() -> void:
+	var surf := _body.get_surface() if _body else null
+	if surf == null:
+		return
+	var r := inner_size.x * 0.5 - 0.004
+	var anelli := 24
+	var spicchi := 64
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.set_normal(Vector3.UP)
+	for a in anelli:
+		var r0 := r * float(a) / anelli
+		var r1 := r * float(a + 1) / anelli
+		for k in spicchi:
+			var t0 := TAU * k / spicchi
+			var t1 := TAU * (k + 1) / spicchi
+			var p00 := Vector3(cos(t0) * r0, 0, sin(t0) * r0)
+			var p01 := Vector3(cos(t1) * r0, 0, sin(t1) * r0)
+			var p10 := Vector3(cos(t0) * r1, 0, sin(t0) * r1)
+			var p11 := Vector3(cos(t1) * r1, 0, sin(t1) * r1)
+			for v in [p00, p11, p10, p00, p01, p11]:
+				st.add_vertex(v)
+	surf.mesh = st.commit()
 
 
 func _apply_style() -> void:

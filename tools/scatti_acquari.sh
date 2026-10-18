@@ -1,11 +1,11 @@
 #!/bin/bash
 # Scatti della proposta degli acquari (godot/tests/scatti_acquari.gd), sotto il render.lock, solo con
-# almeno 13,5 GB di MemAvailable; ferma Godot se supera LIMITE_MB (13000) di memoria.
+# almeno 13,5 GB di MemAvailable; ferma Godot se supera LIMITE_MB (12500) di memoria.
 # Uso: tools/scatti_acquari.sh <cartella> "<giri>" [frame di attesa]
 set -u
 RADICE=$(cd "$(dirname "$0")/.." && pwd)
 CARTELLA=$1; GIRI=$2; FRAME=${3:-40}
-LIMITE_MB=${LIMITE_MB:-13000}
+LIMITE_MB=${LIMITE_MB:-12500}
 LOG=${LOG:-/tmp/scatti_acquari.log}
 exec 9>/home/user/tools/render.lock
 flock 9

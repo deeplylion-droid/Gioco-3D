@@ -11,6 +11,11 @@
   "sopra": 1.554,
   "pannello_base": 0.633
  },
+ "vasca_bassa_telaio": {
+  "alto": 0.403,
+  "fondo": 0.086,
+  "sopra": 0.324
+ },
  "basamento_vasca": {
   "esterno": [
    2.0,
