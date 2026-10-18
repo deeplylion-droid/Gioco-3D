@@ -13,7 +13,7 @@ signal quality_changed(quality: int)
 
 enum Quality { LOW, MEDIUM, HIGH }
 
-const MAX_BODIES := 8
+const MAX_BODIES := 12
 const TEXELS_PER_BODY := 4
 const MAX_DROPS := 24
 const MAX_GLOWS := 4

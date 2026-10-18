@@ -5,8 +5,8 @@ extends Node
 ## secondo di freeze"): il motore compila shader e pipeline la prima volta che li disegna.
 ## Appena entra il livello (lo schermo è ancora nero: Dissolvenza dopo la schermata di caricamento)
 ## per [constant FOTOGRAMMI] fotogrammi accende davanti alla camera, una volta sola:
-## - le particelle e le mesh dello zaino (aspirazione, getto, schizzi, gocce, colonna aspirata,
-##   vortice) e i due getti (WaterStream: il nastro del nucleo, e la sua aspirazione);
+## - le particelle e le mesh del giocatore (zaino: aspirazione, getto, schizzi, gocce, colonna
+##   aspirata, vortice; EffettiZaino: schizzi e nebbia dove il getto colpisce; SlideFx) e i due getti (WaterStream: il nastro del nucleo, e la sua aspirazione);
 ## - una macchia di bagnato (il primo Decal prepara l'atlante dei decal), un geyser della fossa
 ##   (GeyserFossa) e lo schermo rotto del jumpscare (glitch_schermo);
 ## - i suoni che partono in quei momenti (caricati in memoria, senza suonarli).
@@ -23,9 +23,10 @@ var pack: Node
 var getto: Node
 
 var _f := 0
-# [nodo, visible, global_transform, emitting (o null)]
+# [nodo, visible, global_transform, emitting (o null), da spostare davanti alla camera]
 var _stati: Array = []
 var _getti: Array = []
+var _modi := {}
 var _geyser: Node3D
 var _glitch: CanvasLayer
 var _macchia: Node
@@ -56,7 +57,19 @@ func _process(_delta: float) -> void:
 
 func _raccogli() -> void:
 	var visti := {}
-	for radice in [pack, getto]:
+	# I getti (WaterStream): il nastro è in coordinate del mondo, si accendono davanti senza spostarli.
+	for nome in [&"stream", &"suction_stream"]:
+		var s = pack.get(nome)
+		if s is Node3D and (s as Node3D).has_method(&"physics_step"):
+			_getti.append(s)
+			visti[s] = true
+			_stati.append([s, (s as Node3D).visible, (s as Node3D).global_transform, null, false])
+			# Il livello parte in pausa: il nastro si costruisce nel suo _process, che deve girare.
+			_modi[s] = (s as Node).process_mode
+			(s as Node).process_mode = Node.PROCESS_MODE_ALWAYS
+	# Tutto il giocatore: anche gli effetti che stanno fuori dallo zaino (EffettiZaino, gli schizzi
+	# dell'impatto sui muri; SlideFx, gli schizzi della scivolata).
+	for radice in [pack.get_parent(), pack, getto]:
 		if radice == null:
 			continue
 		for n in (radice as Node).find_children("*", "GeometryInstance3D", true, false):
@@ -67,11 +80,8 @@ func _raccogli() -> void:
 				continue
 			visti[n] = true
 			var g := n as GeometryInstance3D
-			_stati.append([g, g.visible, g.global_transform, (g as GPUParticles3D).emitting if g is GPUParticles3D else null])
-	for nome in [&"stream", &"suction_stream"]:
-		var s = pack.get(nome)
-		if s is Node3D and (s as Node3D).has_method(&"physics_step"):
-			_getti.append(s)
+			_stati.append([g, g.visible, g.global_transform, (g as GPUParticles3D).emitting if g is GPUParticles3D else null, true])
+
 	if getto and getto.has_method(&"_costruisci_colonna"):
 		getto.call(&"_costruisci_colonna", Vector3.ZERO, Vector3.UP)
 	# La prima macchia di bagnato (Decal) prepara l'atlante dei decal: a mezz'aria, non si vede.
@@ -105,15 +115,19 @@ func _accendi(cam: Camera3D) -> void:
 		if not is_instance_valid(g):
 			continue
 		g.visible = true
-		g.global_position = davanti + Vector3(0.05 * (i % 5), 0.05 * (i / 5), 0.0)
-		i += 1
+		if st[4]:
+			g.global_position = davanti + Vector3(0.05 * (i % 5), 0.05 * (i / 5), 0.0)
+			i += 1
 		if g is GPUParticles3D:
 			var p := g as GPUParticles3D
 			if _f == 1:
 				p.restart()
 			p.emitting = true
+	# Tre pezzetti di fila per fotogramma: tra un fotogramma e l'altro lo zaino fa il suo passo senza
+	# getto e la catena si spezza; con un pezzetto solo il nastro non si disegna.
 	for s in _getti:
-		(s as Node3D).call(&"physics_step", 1.0 / 60.0, true, davanti, -cam.global_basis.z * 4.0 + Vector3.UP * 2.0)
+		for k in 3:
+			(s as Node3D).call(&"physics_step", 1.0 / 60.0, true, davanti, -cam.global_basis.z * 4.0 + Vector3.UP * 2.0)
 	if _f == 1:
 		_geyser.call(&"scoppia", davanti + Vector3.DOWN * 1.5, [])
 
@@ -131,6 +145,7 @@ func _rimetti() -> void:
 		g.visible = st[1]
 	for s in _getti:
 		(s as Node3D).call(&"clear")
+		(s as Node).process_mode = _modi.get(s, Node.PROCESS_MODE_INHERIT)
 	if is_instance_valid(_macchia) and getto:
 		(getto.get(&"_bagnato") as Array).erase(_macchia)
 		_macchia.queue_free()

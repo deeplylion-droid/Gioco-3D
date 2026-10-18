@@ -56,7 +56,6 @@ func _on_trigger(body: Node3D) -> void:
 			b.modalita = Bambino.Modalita.OSSERVA
 			b.reazione = Bambino.Reazione.NESSUNA
 			b.gira_il_corpo = false
-			b.scappa_con_la_torcia = false
 			b.distanza_fuga = 0.0
 		add_child(kid)
 		kid.global_position = spots[i]

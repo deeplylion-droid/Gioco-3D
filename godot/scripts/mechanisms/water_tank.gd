@@ -7,12 +7,16 @@ extends Node3D
 ##   aspirare da una vasca e spruzzare in un'altra sposta la stessa quantità d'acqua.
 ## - Si svuota con lo scarico (drain_sources). È la base per le piattaforme galleggianti.
 ## L'origine è al centro del fondo interno; inner_size è lo spazio interno (x, profondità, z).
+## L'acqua ha un colore ([member mix], vedi WaterMix): si mescola per litri con quella che arriva
+## e passa allo zaino quando la aspira.
 ## Il livello fa parte dei checkpoint (gruppo "persist").
 ## La grafica (muri e acqua) è provvisoria: l'acqua vera arriverà dal lavoro su labs/acqua.
 
 signal level_changed(fill: float)
 signal filled
 signal emptied
+## Il colore dell'acqua è cambiato (vedi WaterMix).
+signal mix_changed(mix: Dictionary)
 
 @export var inner_size := Vector3(5.0, 3.0, 7.0):
 	set(value):
@@ -32,8 +36,11 @@ signal emptied
 @export var water_material: Material:
 	set(value):
 		water_material = value
+		_own_material = null
+		_base_colors = {}
 		if _surface:
 			_surface.material_override = value if value else Graybox.WATER
+			_update_color()
 ## Riempimento attuale: 0 = vuota, 1 = piena fino al bordo.
 @export_range(0.0, 1.0) var fill := 0.0:
 	set(value):
@@ -49,6 +56,13 @@ signal emptied
 @export var capacity_liters := 40.0
 ## Lo zaino può aspirare da questa vasca.
 @export var suckable := true
+## Se falso l'acqua del getto non entra (trabocca): il livello e il colore non cambiano.
+@export var accepts_water := true
+## Il pigmento dell'acqua che c'è all'inizio e che entra dai tubi di carico (vuoto = chiara).
+@export var fill_pigment := ""
+## Riserva che non finisce: aspirando, il livello non scende sotto questa frazione ma l'acqua
+## continua a uscire (gli acquari colorati dell'enigma non si devono esaurire).
+@export_range(0.0, 1.0) var min_fill := 0.0
 ## Secondi per riempirla tutta con un tubo di carico acceso (fill_sources).
 @export var fill_time := 8.0
 ## Secondi per svuotarla tutta con lo scarico aperto.
@@ -63,7 +77,12 @@ signal emptied
 ## Ampiezza delle onde della superficie (m).
 @export var wave_amplitude := 0.02
 
+## Il colore dell'acqua dentro (WaterMix): {pigmento: frazione}, vuoto = chiara.
+var mix := {}
 var _pending_liters := 0.0
+var _pending_mix := {}
+var _own_material: Material
+var _base_colors := {}
 var _full_sent := false
 var _empty_sent := true
 var _time := 0.0
@@ -81,6 +100,9 @@ func _ready() -> void:
 	add_to_group(&"persist")
 	if suckable:
 		add_to_group(&"water_sources")
+	if mix.is_empty() and fill > 0.0:
+		mix = WaterMix.pura(fill_pigment)
+	_update_color()
 	_empty_sent = fill <= 0.001
 	_full_sent = fill >= max_fill - 0.001
 
@@ -146,9 +168,21 @@ func surface_hit_fraction(a: Vector3, b: Vector3) -> float:
 	return -1.0
 
 
-## Acqua arrivata col getto (litri).
-func receive_water(liters: float, _point: Vector3, _direction: Vector3) -> void:
+## Acqua arrivata col getto (litri), del colore [param water_mix] (vedi WaterMix).
+func receive_water(liters: float, _point: Vector3, _direction: Vector3, water_mix := {}) -> void:
+	if not accepts_water or liters <= 0.0:
+		return
+	_pending_mix = WaterMix.mescola(_pending_mix, _pending_liters, water_mix, liters)
 	_pending_liters += liters
+
+
+## Cambia il colore dell'acqua dentro.
+func set_mix(m: Dictionary) -> void:
+	if m == mix:
+		return
+	mix = m.duplicate()
+	_update_color()
+	mix_changed.emit(mix)
 
 
 # --- Sorgente per l'aspirazione dello zaino -----------------------------------------------
@@ -195,27 +229,35 @@ func take_water(liters: float) -> float:
 		return 0.0
 	var got := minf(liters, get_liters())
 	if got > 0.0:
-		fill = clampf(fill - got / maxf(capacity_liters, 0.001), 0.0, 1.0)
+		fill = clampf(fill - got / maxf(capacity_liters, 0.001), minf(min_fill, fill), 1.0)
 	return got
 
 
 # --- Checkpoint -------------------------------------------------------------------------------
 
 func save_state() -> Dictionary:
-	return {"fill": fill}
+	return {"fill": fill, "mix": mix.duplicate()}
 
 
 func load_state(data: Dictionary) -> void:
+	_pending_liters = 0.0
+	_pending_mix = {}
 	fill = float(data.get("fill", fill))
+	set_mix(data.get("mix", mix))
 
 
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 	var df := _pending_liters / maxf(capacity_liters, 0.001)
+	var new_mix := mix
+	if _pending_liters > 0.0 and fill < max_fill:
+		new_mix = WaterMix.mescola(new_mix, get_liters(), _pending_mix, _pending_liters)
 	_pending_liters = 0.0
+	_pending_mix = {}
 	if PowerSource.any_powered(fill_sources):
 		df += delta / maxf(fill_time, 0.001)
+		new_mix = WaterMix.mescola(new_mix, get_liters(), WaterMix.pura(fill_pigment), capacity_liters * delta / maxf(fill_time, 0.001))
 	var drain := get_drain_strength()
 	if drain > 0.0:
 		df -= drain * delta / maxf(drain_time, 0.001)
@@ -230,6 +272,9 @@ func _physics_process(delta: float) -> void:
 			filled.emit()
 	else:
 		_full_sent = false
+	if fill <= 0.001:
+		new_mix = {}
+	set_mix(new_mix)
 	if fill <= 0.001:
 		if not _empty_sent:
 			_empty_sent = true
@@ -300,6 +345,7 @@ func _build_water(s: Vector3) -> void:
 	plane.subdivide_depth = 8
 	_surface.mesh = plane
 	_surface.material_override = water_material if water_material else Graybox.WATER
+	_update_color()
 	_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_vis.add_child(_surface)
 	# Volume d'acqua per il giocatore (passi nell'acqua, ricarica del serbatoio).
@@ -311,3 +357,35 @@ func _build_water(s: Vector3) -> void:
 	_volume_shape.shape = BoxShape3D.new()
 	_volume.add_child(_volume_shape)
 	_update_water()
+
+
+## Il colore della superficie segue [member mix]. Del materiale (il segnaposto o uno standard) se ne
+## fa una copia tutta sua e ne cambia il colore: albedo_color, o shallow_color e deep_color dello
+## shader segnaposto. Con un altro shader lo fa chi ascolta [signal mix_changed].
+func _update_color() -> void:
+	if _surface == null:
+		return
+	if _own_material == null:
+		var m := _surface.material_override
+		if m == null or (mix.is_empty() and fill_pigment == ""):
+			return
+		_own_material = m.duplicate() as Material
+		if _own_material is BaseMaterial3D:
+			_base_colors = {&"albedo_color": (_own_material as BaseMaterial3D).albedo_color}
+		elif _own_material is ShaderMaterial:
+			for k in [&"shallow_color", &"deep_color"]:
+				var c = (_own_material as ShaderMaterial).get_shader_parameter(k)
+				if c is Color:
+					_base_colors[k] = c
+		_surface.material_override = _own_material
+	for k in _base_colors:
+		var base: Color = _base_colors[k]
+		var c := WaterMix.colore(mix, base)
+		if k == &"deep_color":
+			# Il fondo dello stesso colore, più scuro.
+			c = base.lerp(WaterMix.tinta(mix) * 0.35, WaterMix.intensita(mix))
+			c.a = base.a
+		if _own_material is BaseMaterial3D:
+			_own_material.set(k, c)
+		else:
+			(_own_material as ShaderMaterial).set_shader_parameter(k, c)

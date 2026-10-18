@@ -99,7 +99,6 @@ func compari() -> void:
 	bambino.reazione = Bambino.Reazione.INCLINA_TESTA
 	bambino.tempo_per_vederlo = 0.5
 	bambino.distanza_fuga = distanza_fuga
-	bambino.scappa_con_la_torcia = false
 	bambino.velocita_corsa = velocita_corsa
 	bambino.sparisce_fuori_vista = false   # sparisce in fondo alla cavità, al buio
 	bambino.sparito.connect(_corre_nel_muro)
