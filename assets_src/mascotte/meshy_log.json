@@ -950,5 +950,121 @@
    ]
   },
   "credits": 10
+ },
+ "logo_a_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a1511c-f9ae-7678-ace5-ed4b56abac64",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A 1990s water park mascot logo: big puffy rounded bubble letters, glossy like inflatable pool toys, in a gradient from pink to lavender with a thick white outline and a dark purple drop shadow, small water bubbles and a few splash drops around, a wavy aqua water line under the letters. The dots of the letter i are drawn as a single big round eye with a pink iris (like the one-eyed jellyfish mascot in the reference image). Playful, colorful, toyetic, like a 1995 theme park sign. The text reads exactly \"JILLY JUBILEE\" (two words, spelled J-I-L-L-Y  J-U-B-I-L-E-E), and no other text at all.  Flat graphic design, centered, on a plain flat white background, no mockup, no photo, no perspective, no shadows on the background, no watermark.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "logo_b_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a1511c-ffcf-7163-be3d-13350ef1dd7d",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A 1990s cruise ship showbiz logo: the word \"Jilly\" in a big flowing retro brush script with a coral-pink fill and a navy blue outline, above the word \"JUBILEE\" in bold condensed capital letters in gold on a navy blue ribbon banner with curled ends, a few gold stars and a small stylized pink jellyfish bell with tentacles beside the script. Elegant variety show marquee style, like a 1994 cruise entertainment program. The text reads exactly \"JILLY JUBILEE\" (two words, spelled J-I-L-L-Y  J-U-B-I-L-E-E), and no other text at all.  Flat graphic design, centered, on a plain flat white background, no mockup, no photo, no perspective, no shadows on the background, no watermark.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "logo_b_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a1511d-057c-7638-8a40-ecdd5c7182f0",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A 1990s cruise ship showbiz logo: the word \"Jilly\" in a big flowing retro brush script with a coral-pink fill and a navy blue outline, above the word \"JUBILEE\" in bold condensed capital letters in gold on a navy blue ribbon banner with curled ends, a few gold stars and a small stylized pink jellyfish bell with tentacles beside the script. Elegant variety show marquee style, like a 1994 cruise entertainment program. The text reads exactly \"JILLY JUBILEE\" (two words, spelled J-I-L-L-Y  J-U-B-I-L-E-E), and no other text at all.  Flat graphic design, centered, on a plain flat white background, no mockup, no photo, no perspective, no shadows on the background, no watermark.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "logo_a_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a1511c-f61b-7250-8c04-bd222d9514e4",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A 1990s water park mascot logo: big puffy rounded bubble letters, glossy like inflatable pool toys, in a gradient from pink to lavender with a thick white outline and a dark purple drop shadow, small water bubbles and a few splash drops around, a wavy aqua water line under the letters. The dots of the letter i are drawn as a single big round eye with a pink iris (like the one-eyed jellyfish mascot in the reference image). Playful, colorful, toyetic, like a 1995 theme park sign. The text reads exactly \"JILLY JUBILEE\" (two words, spelled J-I-L-L-Y  J-U-B-I-L-E-E), and no other text at all.  Flat graphic design, centered, on a plain flat white background, no mockup, no photo, no perspective, no shadows on the background, no watermark.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "manifesto_a_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a1511d-c1c4-77d3-898f-c6ca6f0578a9",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A 1990s cruise ship water park show poster, portrait format, printed offset look with halftone dots. In the middle the cartoon mascot from the first reference image, exactly the same design: a slender one-eyed jellyfish girl with periwinkle-blue skin, a single big eye with a pink iris, short wavy silver-pink hair, a translucent glowing jellyfish bell skirt and magenta tentacles, smiling and waving, on a bright underwater stage with spotlights, bubbles and confetti. At the top the logo exactly as in the second reference image. At the bottom, in simple bold capital letters, the only other text: \"LIVE SHOW\" and below it \"EVERY DAY 11 AM & 4 PM\". No other text, no small print, no logos of real companies. Flat poster, full frame, no wall, no mockup.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg",
+   "@logo_a_gpt"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "manifesto_b_gpt": {
+  "kind": "image-to-image",
+  "task_id": "01a1511d-cd79-7775-9d74-9a24eb2bf0c0",
+  "status": "SUCCEEDED",
+  "model": "gpt-image-2-5-flare",
+  "prompt": "A 1990s cruise ship water park show poster, portrait format, printed offset look with halftone dots. In the middle the cartoon mascot from the first reference image, exactly the same design: a slender one-eyed jellyfish girl with periwinkle-blue skin, a single big eye with a pink iris, short wavy silver-pink hair, a translucent glowing jellyfish bell skirt and magenta tentacles, smiling and waving, on a bright underwater stage with spotlights, bubbles and confetti. At the top the logo exactly as in the second reference image. At the bottom, in simple bold capital letters, the only other text: \"LIVE SHOW\" and below it \"EVERY DAY 11 AM & 4 PM\". No other text, no small print, no logos of real companies. Flat poster, full frame, no wall, no mockup.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg",
+   "@logo_b_gpt"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 12
+ },
+ "manifesto_a_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a1511e-57d1-764e-bc30-eb65c5f6c5a5",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A 1990s cruise ship water park show poster, portrait format, printed offset look with halftone dots. In the middle the cartoon mascot from the first reference image, exactly the same design: a slender one-eyed jellyfish girl with periwinkle-blue skin, a single big eye with a pink iris, short wavy silver-pink hair, a translucent glowing jellyfish bell skirt and magenta tentacles, smiling and waving, on a bright underwater stage with spotlights, bubbles and confetti. At the top the logo exactly as in the second reference image. At the bottom, in simple bold capital letters, the only other text: \"LIVE SHOW\" and below it \"EVERY DAY 11 AM & 4 PM\". No other text, no small print, no logos of real companies. Flat poster, full frame, no wall, no mockup.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg",
+   "@logo_a_gpt"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
+ },
+ "manifesto_b_nbp": {
+  "kind": "image-to-image",
+  "task_id": "01a1511e-5da3-702a-baf5-301d1ec934ef",
+  "status": "SUCCEEDED",
+  "model": "nano-banana-pro",
+  "prompt": "A 1990s cruise ship water park show poster, portrait format, printed offset look with halftone dots. In the middle the cartoon mascot from the first reference image, exactly the same design: a slender one-eyed jellyfish girl with periwinkle-blue skin, a single big eye with a pink iris, short wavy silver-pink hair, a translucent glowing jellyfish bell skirt and magenta tentacles, smiling and waving, on a bright underwater stage with spotlights, bubbles and confetti. At the top the logo exactly as in the second reference image. At the bottom, in simple bold capital letters, the only other text: \"LIVE SHOW\" and below it \"EVERY DAY 11 AM & 4 PM\". No other text, no small print, no logos of real companies. Flat poster, full frame, no wall, no mockup.",
+  "refs": [
+   "docs/concept/medusa_turnaround.jpg",
+   "@logo_b_gpt"
+  ],
+  "multi_view": false,
+  "immagini": null,
+  "body": null,
+  "credits": 9
  }
 }

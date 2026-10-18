@@ -9,6 +9,8 @@ extends Node
 ## <statue>: "modello@x,z@gradi;..." con modello = statua_squalo_A, statua_polpo_A, statua_polpo_B
 ##   (in assets/models/mascotte/). La y la trova un raggio verso il pavimento; gradi = rotazione su Y
 ##   (0 = la statua guarda verso +Z, cioè verso l'ingresso a sud della sala).
+##   Oggetti da parete: "muro=<percorso res:// senza prefisso>@ox,oy,oz@dx,dy,dz": un raggio da o lungo d
+##   trova la parete; l'oggetto (davanti verso +Z, retro a z = 0) ci si appoggia, girato come la parete.
 ## <scatti>: "nome:px,py,pz:lx,ly,lz[:i,j];..." il giocatore coi piedi in p guarda verso l; i,j = indici
 ##   delle sole statue visibili in quello scatto (di serie tutte). Il nome "pianta"
 ##   fa invece una vista dall'alto ortografica (p = centro, l.x = lato in metri) con una luce in più.
@@ -113,6 +115,9 @@ func _monta_statue() -> void:
 	var spazio := (level as Node3D).get_world_3d().direct_space_state
 	for s in statue.split(";", false):
 		var c := s.split("@")
+		if c[0].begins_with("muro="):
+			_monta_a_muro(spazio, c[0].substr(5), _v(c[1]), _v(c[2]))
+			continue
 		var xz := c[1].split(",")
 		var x := float(xz[0])
 		var z := float(xz[1])
@@ -142,6 +147,23 @@ func _monta_statue() -> void:
 			nomi.append(str((t.collider as Node).get_path()))
 		print("STATUA ", c[0], " in (%.2f, %.2f, %.2f) " % [x, y, z],
 			"libera" if nomi.is_empty() else "TOCCA " + ", ".join(nomi))
+
+
+func _monta_a_muro(spazio: PhysicsDirectSpaceState3D, percorso: String, o: Vector3, d: Vector3) -> void:
+	var q := PhysicsRayQueryParameters3D.create(o, o + d.normalized() * 25.0)
+	q.exclude = [p.get_rid()]
+	var hit := spazio.intersect_ray(q)
+	var ob := (load("res://" + percorso) as PackedScene).instantiate() as Node3D
+	level.add_child(ob)
+	montate.append(ob)
+	if not hit:
+		print("ATTENZIONE ", percorso, ": nessuna parete da ", o, " verso ", d)
+		ob.global_position = o
+		return
+	var n: Vector3 = hit.normal
+	var pos: Vector3 = hit.position + n * 0.003
+	ob.global_transform = Transform3D(Basis.looking_at(-n, Vector3.UP), pos)
+	print("MURO ", percorso, " su ", (hit.collider as Node).get_path(), " in ", pos, " normale ", n)
 
 
 func _pianta(nome: String, centro: Vector3, lato: float) -> void:
