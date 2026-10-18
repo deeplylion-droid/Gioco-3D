@@ -65,6 +65,12 @@ func _run() -> void:
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		for t in [giallo, blu, misto]:
+			# Se l'acqua dell'addon c'è già nella scena (la mette enigma-ambiente) non se ne aggiunge un'altra.
+			var ha_link := false
+			for c in t.find_children("*", "", true, false):
+				ha_link = ha_link or c is WaterTankLink
+			if ha_link:
+				continue
 			var link := (load("res://addons/acqua/scenes/acqua_per_vasca.tscn") as PackedScene).instantiate()
 			link.set(&"tank", t)
 			t.add_child(link)
@@ -296,8 +302,16 @@ func _serranda() -> Node:
 	return level.get_node(^"Tecnici/Logica/SerrandaMagazzino")
 
 
+## Con i figli Spente e Accese conta solo Accese (le spente si vedono sempre).
 func _lampade_accese() -> bool:
 	var lampade := enigma.get_node(^"LampadePortone") as Node3D
+	var accese := lampade.get_node_or_null(^"Accese") as Node3D
+	if accese:
+		var spente := lampade.get_node_or_null(^"Spente") as Node3D
+		if spente and not spente.is_visible_in_tree():
+			printerr("  le lampade spente non si vedono")
+			return false
+		lampade = accese
 	if not lampade.is_visible_in_tree():
 		return false
 	for l in lampade.find_children("*", "Light3D", true, false):
