@@ -231,6 +231,12 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 **L'inseguimento e il finale, scelta del 19 ottobre** (proposta di ambienti-2 in `docs/proposte/inseguimento/inseguimento.md`, lavoro/ambienti-2 9aa6217): **versione A, "Le condotte"**. È una sala macchine piena e allagata, ricavata nello scafo dietro la bocca in fondo alla torre. Si scivola in tubi chiusi tra tre vasche sospese, con tre bivi. Ai bivi la paratia giusta ha la luce verde e l'anello di led verdi, la sbagliata una lampada rossa guasta; si colpisce il bersaglio col getto. Lei ti raggiunge nelle vasche, e un getto in faccia la respinge. Poi una spirale attorno al serbatoio, la grata che cala davanti a lei e, prima della porta, SB1: lei sbuca dal pozzo di scarico e ti guarda. Dura circa 5:40 senza errori. Le pose di lei sono provvisorie: le animazioni dell'inseguimento sono da fare.
 Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
+**L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
+- **fiume lento: A, "giungla finta"**. Rocce finte color ocra sotto il tetto del capannone, palme e liane di plastica, maschere tiki, pappagallo e scimmia di vetroresina, tettoia di paglia sull'imbarco, luce calda. La B, "viaggio sottomarino", non si butta. Parole dell'utente: "Però tieni anche l'altro, magari potrebbe essere il viaggio di ritorno, oppure una nuova sezione. Non è da buttare. Riproponimelo." Va riproposta più avanti;
+- **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle);
+- **lettore della serranda: 1**, a strisciata anni '90, di plastica beige, con la spia tonda in alto (rossa, poi verde). La luce verde va più debole che negli scatti;
+- **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
+
 ## Capitolo 1: scaletta (approvata)
 
 - Il giocatore entra nell'acquapark dal ponte inferiore.
