@@ -28,7 +28,7 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 
 L'utente ha finito i crediti fino a mercoledì: il 19 ottobre alle 07:20 UTC tutte le squadre sono state fermate, con l'ordine di committare quello che avevano e di aspettare un messaggio del coordinatore. Hanno risposto tutte che il lavoro è salvato.
 
-Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD. Alla ripresa:
+Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD; i difetti trovati giocando sono in `docs/riscontri/2026-10-19_prova.md` (8 punti, con la squadra per ognuno) e vanno nella v0.3.8. Alla ripresa:
 - **mascotte**: nel gioco le statue nei posti scelti (squalo A in S2, polpo A in A3, polpo B in B1); Jilly Jubilee in stile B, molto più invecchiato: targa, manifesto e insegna con le sue due lampade. Il manifesto tiene "LIVE SHOW" e gli orari (confermato dall'utente).
 - **ambienti-2**: l'inseguimento A "Le condotte" con SB1 nel gioco (stima 2-3 giorni), partendo dal giro 3 (lavoro/ambienti-2 8a3b141: SB1 in agguato senza posa a T, tubo laterale nella vasca 2, lampada sulla spirale; restano le vasche un po' scure). I cartelli con le scritte vanno rifatti come disegni. Le rapide restano da parte per un altro punto; se si usano, l'insegna diventa un disegno.
 - **ambienti-1**: il geyser V1 (mesh simulata) nel gioco, e via il punto bianco al centro (5f95315: cause già escluse, ripartire dalla prova col cartellone nascosto).
