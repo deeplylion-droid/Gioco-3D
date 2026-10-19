@@ -80,11 +80,13 @@ SEZIONI = [
           SI_NO),
         V("JLI", "L'insegna sopra la vasca d'arrivo",
           "Un'insegna di lamiera dipinta di 1,8 x 1 m in una cornice d'acciaio, in alto sul muro ovest, sopra la vasca "
-          "d'arrivo del finale, tra due oblò. Lassù arriva poca luce: al buio è quasi nera e il logo non si legge. Se la "
-          "vuoi leggibile, posso darle due lampade sue a collo d'oca, consumate, con una luce calda e debole: in quel caso "
-          "te la mostro accesa prima di metterla nel gioco.",
+          "d'arrivo del finale, tra due oblò. Lassù arriva poca luce: al buio è quasi nera e il logo non si legge. Con due "
+          "lampade sue a collo d'oca, consumate, con una luce calda e debole che illumina solo il pannello, il logo si legge "
+          "in tutti e due gli stili: sono le ultime quattro foto.",
           [("img", "jilly_insegna_a.jpg", "Insegna A, com'è al buio"), ("img", "jilly_insegna_a_dettaglio.jpg", "Insegna A, ingrandita"),
-           ("img", "jilly_insegna_b.jpg", "Insegna B, com'è al buio"), ("img", "jilly_insegna_b_dettaglio.jpg", "Insegna B, ingrandita")],
+           ("img", "jilly_insegna_b.jpg", "Insegna B, com'è al buio"), ("img", "jilly_insegna_b_dettaglio.jpg", "Insegna B, ingrandita"),
+           ("img", "jilly_insegna_a_luce.jpg", "Insegna A con le sue lampade"), ("img", "jilly_insegna_a_luce_dettaglio.jpg", "Insegna A con le lampade, ingrandita"),
+           ("img", "jilly_insegna_b_luce.jpg", "Insegna B con le sue lampade"), ("img", "jilly_insegna_b_luce_dettaglio.jpg", "Insegna B con le lampade, ingrandita")],
           [("buio", "Sì, al buio com'è"), ("lampade", "Sì, con le sue lampade"), ("no", "No, non serve"), ("cambia", "Da cambiare")]),
         V("LINGUA", "La lingua delle scritte del parco",
           "Finora i cartelli del gioco hanno solo disegni. Il manifesto di Jilly è in inglese (\"LIVE SHOW\"), mentre "
