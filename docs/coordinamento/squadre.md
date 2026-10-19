@@ -4,11 +4,12 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 
 | Squadra | Sessione cloud | Branch | Lavoro in corso |
 |---|---|---|---|
-| grafica | session_01Q9PdaHCaFPsyZ4J69AtTTt | lavoro/grafica | movimento sugli scivoli fatto (8334bfc); in attesa |
-| ambienti-1 | session_01E1m21YyF95ZHLwLFM1yLCv | lavoro/ambienti-1 | agnellino luminoso B fatto (1671c44); in attesa |
-| ambienti-2 | session_01DHF6GjuPt1SH74CXxGYGC2 | lavoro/ambienti-2 | sala della torre A giocabile (10-12 h) |
-| enigma-logica (nuova) | session_01RPrxxeJjwAgHgEzLWPXgsn | lavoro/enigma-logica | logica dell'enigma degli acquari |
-| enigma-ambiente (nuova) | session_01Jn42hE4synLdT5YNKedMqv | lavoro/enigma-ambiente | proposta dell'aspetto degli acquari, poi i modelli |
+| grafica | session_01Q9PdaHCaFPsyZ4J69AtTTt | lavoro/grafica | blocco al primo spruzzo dello zaino (4-5 h, dalle 15:40 UTC del 18), con il merge di lavoro/enigma-logica |
+| ambienti-1 | session_01E1m21YyF95ZHLwLFM1yLCv | lavoro/ambienti-1 | agnellino luminoso B fatto (1671c44, per la v0.3.6 si prende questo hash); geyser nuovo V1 mesh e V2 flipbook (11-13 h), poi i commit vanno su lavoro/ambienti-1 sopra 1671c44 |
+| ambienti-2 | session_01DHF6GjuPt1SH74CXxGYGC2 | lavoro/ambienti-2 | sala della torre A fatta (764089e); sostegni dei pezzi, faretti, spessore, scatti e video della discesa (5-6 h dalle 13:40 UTC del 18) |
+| enigma-logica | session_01RPrxxeJjwAgHgEzLWPXgsn | lavoro/enigma-logica | logica fatta (656bb30, CI verde); aspetta la risposta dell'utente sull'acqua chiara e i modelli |
+| enigma-ambiente | session_01Jn42hE4synLdT5YNKedMqv | lavoro/enigma-ambiente | scatti della proposta degli acquari; dopo la scelta dell'utente, i modelli nella scena dell'enigma |
+| mascotte (nuova) | session_01Ut6TnWfhFvUH1yfran7kFa | lavoro/mascotte | statue dello squalo e del polpo e mostro-squalo: modelli Meshy e render, per ora niente nel gioco |
 
 ## Come si fa una build
 
@@ -21,3 +22,8 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 - Le pagine di scelta si fanno con `tools/questionario/genera_pagina.py`. Le risposte si leggono con ArtifactData, collezione `risposte`.
 - Pagine aperte: scelte del 17 ottobre (https://claude.ai/artifact/TirmdiyjMMDgHtDRNdv52f, risposte lette) e sala della torre (https://claude.ai/artifact/FmJYNYwt1R4e2yA3L12txa, risposte lette).
 - L'exe Windows pesa circa 1,44 GB. Le proposte sono escluse dall'export con `exclude_filter` in `godot/export_presets.cfg`.
+- Unione della torre (ambienti-2) con enigma-logica: i conflitti sono solo in `.github/workflows/build.yml`, dove vanno tenute le righe dei test di tutti e due, e nel commento del punto 5 in cima a `godot/tests/test_tappa8.gd`. Il codice si unisce da solo: il portone non si apre da solo (enigma), lo apre `apri()` e la torre si carica.
+
+## Da chiedere all'utente dopo la v0.3.6
+
+- La torcia: deciso il 18 ottobre, si toglie. Ai prossimi giri si propongono i punti bui con scatti.

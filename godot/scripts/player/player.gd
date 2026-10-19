@@ -804,6 +804,15 @@ func _leave_ladder() -> void:
 	ladder_changed.emit(false)
 
 
+## Sulla scala, avanti (W) scende se si guarda in basso: si comincia a scendere sotto -20 gradi e si
+## continua finché non si guarda chiaramente in alto (sopra +10), così alzando un po' lo sguardo mentre si
+## scende non si risale. Indietro (S) scende sempre.
+const LADDER_GIU_DA := -20.0
+const LADDER_SU_DA := 10.0
+var _ladder_giu := false
+var _ladder_giu_su: Ladder = null
+
+
 func _move_on_ladder(delta: float) -> void:
 	var input := _move_input()
 	var n := ladder.get_climb_normal()
@@ -812,8 +821,17 @@ func _move_on_ladder(delta: float) -> void:
 		_leave_ladder()
 		jumped.emit()
 		return
+	if _ladder_giu_su != ladder:
+		_ladder_giu_su = ladder
+		_ladder_giu = pitch < deg_to_rad(LADDER_GIU_DA)
+	if pitch < deg_to_rad(LADDER_GIU_DA):
+		_ladder_giu = true
+	elif pitch > deg_to_rad(LADDER_SU_DA):
+		_ladder_giu = false
 	var climb := -input.y
-	if pitch < deg_to_rad(-40.0):
+	if input.y > 0.0:
+		climb = -absf(input.y)
+	elif _ladder_giu:
 		climb = -climb
 	if _ladder_from_top:
 		if is_zero_approx(input.y):

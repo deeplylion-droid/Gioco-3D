@@ -695,8 +695,9 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 	]
 	if tecnici:
 		# Negli ambienti tecnici (coordinate della loro scena, LEGGIMI): P6 nella camera delle
-		# onde, a terra contro il muro sud tra le bocchette; P7 sulla scrivania accanto al monitor.
-		for t in [[6, Vector3(9.2, 0.01, 1.75), 0.4], [7, Vector3(41.15, 0.79, 3.25), 2.6]]:
+		# onde, a terra contro il muro sud tra le bocchette; P7 sulla scrivania accanto al monitor, nello
+		# spazio libero dietro lo schermo, tutta dentro il piano (prima era sul bordo, mezza fuori).
+		for t in [[6, Vector3(9.2, 0.01, 1.75), 0.4], [7, Vector3(42.3, 0.79, 3.23), 2.92]]:
 			var i := spots.find_custom(func(x): return int(x[0]) == int(t[0]))
 			spots[i] = [t[0], TECNICI_XF * (t[1] as Vector3), float(t[2]) - PI * 0.5]
 	for s in spots:

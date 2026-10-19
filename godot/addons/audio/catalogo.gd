@@ -124,4 +124,5 @@ const SUONI := {
 	&"zaino_serbatoio_loop": ["res://audio/giocatore/zaino_serbatoio_loop.ogg"],
 	&"zaino_strattone": ["res://audio/giocatore/zaino_strattone_01.ogg", "res://audio/giocatore/zaino_strattone_02.ogg", "res://audio/giocatore/zaino_strattone_03.ogg"],
 	&"zaino_vuoto": ["res://audio/giocatore/zaino_vuoto.ogg"],
+	&"zampette_condotto": ["res://audio/tecnici/zampette_condotto.ogg"],
 }
