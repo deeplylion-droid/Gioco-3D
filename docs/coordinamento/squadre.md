@@ -30,7 +30,7 @@ L'utente ha finito i crediti fino a mercoledì: il 19 ottobre alle 07:20 UTC tut
 
 Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD. Alla ripresa:
 - **mascotte**: nel gioco le statue nei posti scelti (squalo A in S2, polpo A in A3, polpo B in B1); Jilly Jubilee in stile B, molto più invecchiato: targa, manifesto e insegna con le sue due lampade. Il manifesto tiene "LIVE SHOW" e gli orari (confermato dall'utente).
-- **ambienti-2**: l'inseguimento A "Le condotte" con SB1 nel gioco (stima 2-3 giorni). Le rapide restano da parte per un altro punto; se si usano, l'insegna diventa un disegno.
+- **ambienti-2**: l'inseguimento A "Le condotte" con SB1 nel gioco (stima 2-3 giorni), partendo dal giro 3 (lavoro/ambienti-2 8a3b141: SB1 in agguato senza posa a T, tubo laterale nella vasca 2, lampada sulla spirale; restano le vasche un po' scure). I cartelli con le scritte vanno rifatti come disegni. Le rapide restano da parte per un altro punto; se si usano, l'insegna diventa un disegno.
 - **ambienti-1**: il geyser V1 (mesh simulata) nel gioco, e via il punto bianco al centro (5f95315: cause già escluse, ripartire dalla prova col cartellone nascosto).
 - **enigma-ambiente ed enigma-logica**: nel gioco, lungo la strada di risalita, il fiume lento A (giungla finta), l'infermeria B (per bambini), il lettore 1 accanto alla serranda e la keycard 1 (proposte in lavoro/enigma-ambiente 295e9c6, logica in lavoro/enigma-logica 8b08b31). La luce verde del lettore va più debole. Il fiume B (viaggio sottomarino) resta da parte: l'utente vuole che glielo si riproponga, per il viaggio di ritorno o per una sezione nuova.
 - **grafica**: aspetta le risposte della pagina dei punti bui (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb).
