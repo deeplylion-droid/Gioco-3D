@@ -35,6 +35,7 @@ func _ready() -> void:
 	_cartellone.name = "Cartellone"
 	_cartellone.mesh = q
 	_cartellone.material_override = _mf
+	_cartellone.layers = LIVELLO_ACQUA
 	_cartellone.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_cartellone.position = Vector3(0, Z_BASSO + ALTO / 2.0, 0)
 	_cartellone.custom_aabb = AABB(Vector3(-4, -4.5, -4), Vector3(8, 9, 8))

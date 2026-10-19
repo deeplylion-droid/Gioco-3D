@@ -102,6 +102,15 @@ func _avvia() -> void:
 		g.name = "Geyser"
 		lei.add_child(g)
 		lei._geyser = g
+		if OS.get_environment("SENZA_CARTELLONE") != "":   # prova: il punto bianco è dietro la colonna?
+			var c := g.get_node_or_null(^"Cartellone") as Node3D
+			if c:
+				c.set_script(null)
+				c.scale = Vector3(0.001, 0.001, 0.001)
+		if OS.get_environment("SENZA_PARTICELLE") != "":   # prova: da dove viene il punto bianco?
+			for c in g.get_children():
+				if c is GPUParticles3D:
+					(c as GPUParticles3D).visible = false
 	await get_tree().physics_frame
 	lei.call(&"_affaccia")
 	if tipo == "geyser":
@@ -110,6 +119,10 @@ func _avvia() -> void:
 		p.water_pack.set_equipped(true, false)
 		p.water_pack.set_tank_amount(20.0)
 	_mettiti()
+	if OS.get_environment("SENZA_TORCIA") != "":   # prova: il punto bianco al centro è la torcia?
+		var torcia := p.get_node_or_null(^"Head/Camera3D/Torcia/Luce") as Light3D
+		if torcia:
+			torcia.visible = false
 	set_process(true)
 
 
@@ -202,8 +215,33 @@ func _process(_delta: float) -> void:
 		get_tree().quit()
 
 
+## Che cosa c'è sul raggio della camera che passa per [param px] (per trovare la causa di un punto strano).
+func _sonda(px: Vector2) -> void:
+	var cam := get_viewport().get_camera_3d()
+	var o := cam.project_ray_origin(px)
+	var d := cam.project_ray_normal(px)
+	var g := lei.get_node_or_null(^"Geyser") as Node3D
+	if g:
+		print("SONDA centro del geyser %.2f m avanti, %.2f dal raggio" % [(g.global_position - o).dot(d), ((g.global_position - o) - d * (g.global_position - o).dot(d)).length()])
+	for n in get_tree().root.find_children("*", "VisualInstance3D", true, false):
+		var v := n as VisualInstance3D
+		if not v.is_visible_in_tree():
+			continue
+		if v is Light3D:
+			var q := v.global_position - o
+			var dist := (q - d * q.dot(d)).length()
+			if dist < 2.0:
+				print("SONDA luce ", v.get_path(), " a %.2f m dal raggio, %.2f m avanti, energia %.1f" % [dist, q.dot(d), (v as Light3D).light_energy])
+			continue
+		var a: AABB = v.global_transform * v.get_aabb()
+		if a.size.length() < 12.0 and a.intersects_ray(o, d):
+			print("SONDA ", v.get_class(), " ", v.get_path(), " ", a.size)
+
+
 func _scatto(x: float) -> void:
 	await RenderingServer.frame_post_draw
+	if OS.get_environment("SONDA_PIXEL") != "":
+		_sonda(Vector2(float(OS.get_environment("SONDA_PIXEL").get_slice(",", 0)), float(OS.get_environment("SONDA_PIXEL").get_slice(",", 1))))
 	var nome := "%s_%03d_%03.1f.jpg" % [tipo, int(angolo), x]
 	get_viewport().get_texture().get_image().save_jpg(cartella.path_join(nome), 0.9)
 	print("salvato ", nome)

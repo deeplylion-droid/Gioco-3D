@@ -46,10 +46,14 @@ void fragment() {
 	// il colore della resa è solo albedo con l'occlusione: la luce è tutta delle lampade della sala (al buio è
 	// scura, prende i riflessi rossi); acqua bagnata: speculare e clearcoat, la luce che passa dai bordi sottili
 	ALBEDO = c.rgb * 0.5;
-	NORMAL_MAP = texture(normali, cella(f, uv)).rgb;
-	ROUGHNESS = 0.12;
-	SPECULAR = 0.65;
-	CLEARCOAT = 0.6;
+	vec3 nm = texture(normali, cella(f, uv)).rgb;
+	NORMAL_MAP = nm;
+	// dove la superficie guarda dritta verso chi guarda, la torcia (che sta sulla camera) si rifletteva in un unico
+	// punto bianco al centro della colonna: lì niente lucido, i riflessi delle lampade di lato restano
+	float frontale = smoothstep(0.8, 0.97, nm.z * 2.0 - 1.0);
+	ROUGHNESS = mix(0.12, 0.5, frontale);
+	SPECULAR = 0.65 * (1.0 - 0.8 * frontale);
+	CLEARCOAT = 0.6 * (1.0 - frontale);
 	CLEARCOAT_ROUGHNESS = 0.06;
 	BACKLIGHT = vec3(0.03);   // poca: la luce di lei, dentro la colonna, faceva una macchia bianca
 	RIM = 0.15;

@@ -16,6 +16,9 @@ const SEQUENZA := "res://proposte/geyser/geyser_sequenza.glb"   # caricata in _r
 const SHADER_SCHIUMA := preload("res://proposte/geyser/acqua_schiuma.gdshader")
 const RUMORE := preload("res://proposte/geyser/rumore_schiuma.png")
 const FPS := 30.0
+## Il livello di render dell'acqua del geyser: le macchie di bagnato del getto (Decal) non ci si proiettano (sul
+## cartellone della V2 la macchia di dove lei era stata colpita faceva un punto chiaro in mezzo alla colonna).
+const LIVELLO_ACQUA := 1 << 19
 
 ## La colonna la copre tutta (copre, da qui lei può sparire) la prima volta che supera questa altezza (m).
 @export var altezza_copre := 2.6
@@ -62,6 +65,7 @@ func _istanza(nome: String, m: Material) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.name = nome
 	mi.material_override = m
+	mi.layers = LIVELLO_ACQUA
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	mi.custom_aabb = AABB(Vector3(-4, -1, -4), Vector3(8, 8, 8))
 	mi.visible = false
@@ -81,6 +85,8 @@ func scoppia(pavimento: Vector3, acque: Array = [], _punti := PackedVector3Array
 	_anello.visible = true
 	_aggiorna()
 	_spruzza(1.0)
+	for d in get_tree().root.find_children("*", "Decal", true, false):
+		(d as Decal).cull_mask &= ~LIVELLO_ACQUA
 	set_process(true)
 
 
