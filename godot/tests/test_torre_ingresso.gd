@@ -12,10 +12,11 @@ extends Node
 ##        --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd [senza_preparazione]
 
 const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
-## Quanto può durare in più del solito il fotogramma più lungo mentre la torre si costruisce (ms). La CI
-## disegna sulla CPU (llvmpipe): lì il passo più caro, un bambino della balconata, costa 40-90 ms; prima
-## la torre entrava tutta in un fotogramma (più di 1 s, e 11 s per le pipeline).
-const IN_PIU_MASSIMO := 200.0
+## Quanti ms di costruzione possono finire in un fotogramma (la CI fa tutto sulla CPU, anche il disegno:
+## lì i passi più cari costano 30-60 ms; prima la torre entrava tutta in un fotogramma, più di 1 s, e poi
+## 11 s per le pipeline). Si misura il tempo dei passi, non il fotogramma intero: col disegno sulla CPU
+## e le pipeline compilate in sottofondo la durata dei fotogrammi nella CI va su e giù da sola.
+const CARICO_MASSIMO := 100.0
 
 var _passed := 0
 var _failed := 0
@@ -66,8 +67,14 @@ func _run() -> void:
 	cam.make_current()
 	cam.position = Vector3(0, 2, 0)
 	# Come nella sala: le scene dei bambini e la torre sono già caricate (la torre col thread)
+	# (e nella sala i bambini e la Polaroid sono già in scena: il primo instantiate di una scena e la prima
+	# entrata di un bambino costano 50-100 ms sulla CPU, i successivi pochi ms)
 	for s in ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creature/bambino_agnello.tscn", "res://scenes/props/polaroid.tscn"]:
-		load(s)
+		var n := (load(s) as PackedScene).instantiate()
+		n.set(&"visible", false)
+		add_child(n)
+		await _frames(1)
+		n.queue_free()
 	var scena := load(TORRE) as PackedScene
 	await _frames(10)
 
@@ -89,10 +96,12 @@ func _run() -> void:
 	add_child(torre)
 	await torre.costruisci_a_pezzi()
 	_registra = false
+	if OS.has_environment("TORRE_TEMPI"):
+		print("durate: ", _durate.map(func(x): return roundi(x)))
 	var d := _durate.duplicate()
 	d.sort()
 	check(torre.costruita and torre.checkpoint.size() > 2 and not torre.corpi_scivolo().is_empty(), "la torre è costruita (%d checkpoint, %d scivoli)" % [torre.checkpoint.size(), torre.corpi_scivolo().size()])
-	check(d[-1] - base < IN_PIU_MASSIMO, "%d fotogrammi, il più lungo %.0f ms: %.0f ms più del solito (%.0f ms; al massimo %.0f in più)" % [d.size(), d[-1], d[-1] - base, base, IN_PIU_MASSIMO])
+	check(torre.fotogramma_piu_carico_ms < CARICO_MASSIMO, "in %d fotogrammi, al più %.0f ms di costruzione in uno (al massimo %.0f; fotogramma solito %.0f ms, il più lungo %.0f ms)" % [d.size(), torre.fotogramma_piu_carico_ms, CARICO_MASSIMO, base, d[-1]])
 
 	print("2. Disegnata una volta fuori vista")
 	if not OS.get_cmdline_user_args().has("senza_preparazione"):

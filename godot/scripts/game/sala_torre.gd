@@ -72,6 +72,12 @@ var costruita := false
 ## (la sala principale, mentre il giocatore è all'enigma degli acquari, senza fotogrammi lunghi).
 var costruzione_a_pezzi := false
 var _a_pezzi := false
+## Il fotogramma più carico della costruzione a pezzi: quanti ms di passi ci sono finiti dentro (per i test).
+var fotogramma_piu_carico_ms := 0.0
+# I bambini della balconata creati in un thread durante la costruzione a pezzi (instantiate di un
+# bambino costa decine di ms la prima volta): _bambino_balconata li prende da qui.
+var _bambini_pronti: Array = []
+var _compito_bambini := -1
 var _coda: Array = []
 signal pronta
 
@@ -86,6 +92,9 @@ func _ready() -> void:
 ## La costruzione divisa in passi brevi, uno per fotogramma (al più [param ms_per_fotogramma] ms di fila).
 func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	_a_pezzi = true
+	_bambini_pronti.resize(4)
+	_compito_bambini = WorkerThreadPool.add_group_task(func(i: int):
+		_bambini_pronti[i] = (load(BAMBINI[i % 2]) as PackedScene).instantiate(), 4, -1, true, "Bambini della balconata")
 	var t0 := Time.get_ticks_usec()
 	var k := 0
 	_coda = _passi()
@@ -97,8 +106,12 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 			print("passo %d: %.1f ms" % [k, (Time.get_ticks_usec() - tp) / 1000.0])
 		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
+			fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
+			if OS.has_environment("TORRE_TEMPI"):
+				print("-- fine fotogramma dopo il passo %d (%.0f ms di passi)" % [k - 1, (Time.get_ticks_usec() - t0) / 1000.0])
 			await get_tree().process_frame
 			t0 = Time.get_ticks_usec()
+	fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
 	costruita = true
 	pronta.emit()
 
@@ -550,7 +563,14 @@ func _passi_balconata() -> Array:
 func _bambino_balconata(i: int) -> void:
 	var c := b(dati["balconata"]["centro"])
 	var salto := b(dati["balconata"]["primo_salto"])
-	var bimbo: Node3D = (load(BAMBINI[i % 2]) as PackedScene).instantiate()
+	var bimbo: Node3D
+	if _compito_bambini >= 0:
+		WorkerThreadPool.wait_for_group_task_completion(_compito_bambini)   # di solito è finito da un pezzo
+		_compito_bambini = -1
+	if i < _bambini_pronti.size() and _bambini_pronti[i]:
+		bimbo = _bambini_pronti[i]
+	else:
+		bimbo = (load(BAMBINI[i % 2]) as PackedScene).instantiate()
 	bimbo.name = "BambinoBalconata%d" % i
 	add_child(bimbo)
 	bimbo.global_position = c + Vector3(-1.8 + 1.2 * i, 0.0, -0.3)
