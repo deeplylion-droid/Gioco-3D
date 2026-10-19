@@ -1,12 +1,13 @@
 """Geyser V2: la stessa simulazione (simula.py) resa in Cycles come flipbook per un cartellone che guarda la camera.
-Per ogni fotogramma: il colore con l'alfa (acqua bianca di schiuma, piena, luce morbida dappertutto: la luce vera la
-mette il gioco) e le normali viste dalla camera, per illuminarla nel gioco con le luci della sala.
+Per ogni fotogramma: il colore con l'alfa (acqua bianca, piena: solo il colore di base con l'occlusione nelle pieghe,
+senza luce: la luce la mette il gioco) e le normali viste dalla camera, per illuminarla nel gioco con le luci della sala.
 Camera ortografica di fronte (da -Y), larga LARGO m e alta ALTO m a partire da Z_BASSO sopra la base del getto.
 Come nel gioco (acqua_schiuma.gdshader) si tiene solo l'acqua che sale e ricade: quella ferma della fossa e quella
 stesa a terra sono trasparenti.
 Uso: blender -b <cache>/geyser.blend --python assets_src/geyser/flipbook.py -- <cartella> [campioni] [fotogrammi separati da virgola]
 Poi: python assets_src/geyser/flipbook_atlante.py <cartella> per mettere insieme gli atlanti."""
 import os, sys
+import bmesh
 import bpy
 
 ARG = sys.argv[sys.argv.index('--') + 1:]
@@ -30,11 +31,11 @@ nt = mat.node_tree; N = nt.nodes; L = nt.links
 for n in list(N):
     N.remove(n)
 out = N.new('ShaderNodeOutputMaterial')
-pb = N.new('ShaderNodeBsdfPrincipled')
-pb.inputs['Base Color'].default_value = (0.92, 0.94, 0.95, 1)
-pb.inputs['Roughness'].default_value = 0.25
-pb.inputs['Subsurface Weight'].default_value = 0.2
-pb.inputs['Subsurface Radius'].default_value = (0.05, 0.06, 0.07)
+# solo il colore di base per l'occlusione nelle pieghe, senza luce (prova del coordinatore: con la luce bianca
+# uniforme sembrava illuminata da sola, incollata sulla sala buia): la luce la mettono le lampade del gioco
+ao = N.new('ShaderNodeAmbientOcclusion'); ao.inputs['Distance'].default_value = 0.35; ao.samples = 16
+ao.inputs['Color'].default_value = (0.92, 0.94, 0.95, 1)
+pb = N.new('ShaderNodeEmission'); L.new(ao.outputs['Color'], pb.inputs['Color'])
 tr = N.new('ShaderNodeBsdfTransparent')
 geo = N.new('ShaderNodeNewGeometry')
 sep = N.new('ShaderNodeSeparateXYZ'); L.new(geo.outputs['Position'], sep.inputs[0])
@@ -47,6 +48,33 @@ sopra = N.new('ShaderNodeMath'); sopra.operation = 'GREATER_THAN'; L.new(sep.out
 mix = N.new('ShaderNodeMixShader'); L.new(sopra.outputs[0], mix.inputs['Fac']); L.new(tr.outputs[0], mix.inputs[1]); L.new(pb.outputs[0], mix.inputs[2])
 L.new(mix.outputs[0], out.inputs['Surface'])
 dom.data.materials.clear(); dom.data.materials.append(mat)
+# si rende una copia della mesh di ogni fotogramma senza le goccioline staccate (come esporta_mesh.py: le gocce in
+# volo le fanno le particelle del gioco; nel flipbook sembravano fiocchi bianchi)
+PEZZO_MINIMO = 0.25
+copia = bpy.data.objects.new('Acqua', bpy.data.meshes.new('Acqua')); sc.collection.objects.link(copia)
+dom.hide_render = True
+
+
+def togli_goccioline(me):
+    bm = bmesh.new(); bm.from_mesh(me)
+    bm.verts.ensure_lookup_table()
+    visti = set(); via = []
+    for v in bm.verts:
+        if v.index in visti:
+            continue
+        isola = []; pila = [v]; visti.add(v.index)
+        while pila:
+            a = pila.pop(); isola.append(a)
+            for e in a.link_edges:
+                b = e.other_vert(a)
+                if b.index not in visti:
+                    visti.add(b.index); pila.append(b)
+        lo = [min(x.co[i] for x in isola) for i in range(3)]
+        hi = [max(x.co[i] for x in isola) for i in range(3)]
+        if max(hi[i] - lo[i] for i in range(3)) < PEZZO_MINIMO:
+            via.extend(isola)
+    bmesh.ops.delete(bm, geom=via, context='VERTS')
+    bm.to_mesh(me); bm.free()
 
 cam = bpy.data.objects.new('cam', bpy.data.cameras.new('cam')); sc.collection.objects.link(cam)
 cam.data.type = 'ORTHO'; cam.data.ortho_scale = ALTO
@@ -90,12 +118,18 @@ nl.new(mx2.outputs[0], o2.inputs['Surface'])
 
 def rendi(f):
     sc.frame_set(f)
-    dom.data.materials[0] = mat
+    vecchia = copia.data
+    copia.data = bpy.data.meshes.new_from_object(dom.evaluated_get(bpy.context.evaluated_depsgraph_get()))
+    bpy.data.meshes.remove(vecchia)
+    togli_goccioline(copia.data)
+    for p in copia.data.polygons:
+        p.use_smooth = True
+    copia.data.materials.clear(); copia.data.materials.append(mat)
     sc.cycles.samples = CAMPIONI; sc.cycles.use_denoising = True
     sc.view_settings.view_transform = 'Standard'
     sc.render.filepath = os.path.join(OUT, f'c_{f:04d}.png')
     bpy.ops.render.render(write_still=True)
-    dom.data.materials[0] = nm
+    copia.data.materials[0] = nm
     sc.cycles.samples = 4; sc.cycles.use_denoising = False
     sc.view_settings.view_transform = 'Raw'
     sc.render.filepath = os.path.join(OUT, f'n_{f:04d}.png')

@@ -33,7 +33,7 @@ var _fatti := {}
 
 func _ready() -> void:
 	top_level = true
-	gocce = 170
+	gocce = 110
 	var s := (load(SEQUENZA) as PackedScene).instantiate()
 	var figli := s.find_children("f*", "MeshInstance3D", true, false)
 	figli.sort_custom(func(x, y): return String(x.name) < String(y.name))
@@ -161,15 +161,14 @@ func _goccia_mesh(raggio: float, lungo: float) -> Mesh:
 	c.radial_segments = 8
 	c.rings = 3
 	# gocce d'acqua bagnate: lucide, col riflesso, allungate nella direzione del moto (align_y)
+	# quasi nere e lucidissime: si vedono solo col lampo dove le colpisce una luce, non come fiocchi bianchi
 	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.55, 0.6, 0.63)
-	m.roughness = 0.04
-	m.metallic_specular = 0.9
+	m.albedo_color = Color(0.1, 0.11, 0.12)
+	m.roughness = 0.03
+	m.metallic_specular = 1.0
 	m.clearcoat_enabled = true
-	m.clearcoat = 0.8
-	m.clearcoat_roughness = 0.05
-	m.rim_enabled = true
-	m.rim = 0.3
+	m.clearcoat = 1.0
+	m.clearcoat_roughness = 0.02
 	m.vertex_color_use_as_albedo = false
 	c.material = m
 	return c
@@ -198,7 +197,7 @@ func _particelle(nome: String, quante: int, vita: float, mesh: Mesh, esplosivo: 
 
 func _crea_particelle() -> void:
 	# la fontana: dal piede della colonna, verso l'alto e un po' verso fuori
-	_fontana = _particelle("Fontana", gocce, 1.6, _goccia_mesh(0.008, 0.075), 0.85)
+	_fontana = _particelle("Fontana", gocce, 1.6, _goccia_mesh(0.005, 0.14), 0.85)
 	var fm := _fontana.process_material as ParticleProcessMaterial
 	fm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
 	fm.emission_ring_axis = Vector3.UP
@@ -211,7 +210,7 @@ func _crea_particelle() -> void:
 	fm.initial_velocity_max = 11.0
 	_fontana.position = Vector3(0, 0.9, 0)
 	# la corona: dalla cima della colonna, gocce grosse che si aprono in fuori
-	_corona = _particelle("Corona", int(gocce * 0.4), 1.8, _goccia_mesh(0.012, 0.07), 0.6)
+	_corona = _particelle("Corona", int(gocce * 0.4), 1.8, _goccia_mesh(0.007, 0.16), 0.6)
 	var cm := _corona.process_material as ParticleProcessMaterial
 	cm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	cm.emission_sphere_radius = 0.8
@@ -221,7 +220,7 @@ func _crea_particelle() -> void:
 	cm.initial_velocity_max = 4.5
 	_corona.position = Vector3(0, 3.8, 0)
 	# la pioggia pesante che ricade
-	_pioggia = _particelle("Pioggia", gocce, 1.1, _goccia_mesh(0.006, 0.12), 0.35)
+	_pioggia = _particelle("Pioggia", gocce, 1.1, _goccia_mesh(0.004, 0.2), 0.35)
 	var pm := _pioggia.process_material as ParticleProcessMaterial
 	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
 	pm.emission_box_extents = Vector3(1.5, 1.2, 1.5)
@@ -232,7 +231,7 @@ func _crea_particelle() -> void:
 	pm.gravity = Vector3(0, -12.0, 0)
 	_pioggia.position = Vector3(0, 3.4, 0)
 	# gli schizzi a terra intorno alla vasca, dove arriva la pioggia
-	_schizzi = _particelle("Schizzi", 120, 0.5, _goccia_mesh(0.005, 0.04), 0.2)
+	_schizzi = _particelle("Schizzi", 80, 0.5, _goccia_mesh(0.004, 0.07), 0.2)
 	var zm := _schizzi.process_material as ParticleProcessMaterial
 	zm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
 	zm.emission_ring_axis = Vector3.UP
@@ -249,10 +248,10 @@ func _crea_particelle() -> void:
 	q.size = Vector2(1.6, 1.6)
 	var nm := StandardMaterial3D.new()
 	nm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	nm.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	nm.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX   # la luce mediata sul quadratino: per pixel vicino alla luce di lei faceva un punto bianco
 	nm.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	nm.vertex_color_use_as_albedo = true
-	nm.albedo_color = Color(0.9, 0.93, 0.95, 1.0)
+	nm.albedo_color = Color(0.55, 0.57, 0.6, 1.0)   # presa dalle luci della sala (per pixel)
 	nm.albedo_texture = _morbida()
 	nm.proximity_fade_enabled = true
 	nm.proximity_fade_distance = 0.8
@@ -325,7 +324,7 @@ void fragment() {
 	float k = anello * (1.0 - vita * 0.85) + (1.0 - smoothstep(0.0, 0.6, r)) * 0.9 * (1.0 - smoothstep(0.0, 0.5, vita));
 	// chiazze di schiuma opache, niente velo trasparente: si scarta dove non c'è schiuma
 	if (n * k < 0.3) { discard; }
-	ALBEDO = vec3(0.75, 0.78, 0.8);
+	ALBEDO = vec3(0.5, 0.53, 0.55);
 	ROUGHNESS = 0.5;
 }
 """

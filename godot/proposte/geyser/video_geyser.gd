@@ -2,7 +2,7 @@ extends Node
 ## Video delle proposte del geyser (dopo la v0.3.5): come tests/video_lei.gd in modalità geyser, ma al posto del
 ## geyser di oggi (GeyserFossa) usa quello della proposta, e misura quanto costa ogni fotogramma (tempo della CPU,
 ## primitive disegnate, chiamate di disegno), prima e durante il geyser.
-## Argomenti: <v1|v2|oggi> [angolo in gradi] [distanza in m, 0 = come video_lei] [fine in s] [foto: t1,t2,... o "video"] [cartella]
+## Argomenti: <v1|v2|oggi> [angolo in gradi] [distanza in m, 0 = come video_lei] [fine in s] [foto: t1,t2,... o "video"] [cartella] [orbita]
 ## Il resto com'era in video_lei.gd:
 ##   jumpscare: sei a 2,8 m da lei; a 1,0 s ti prende (LeiSbuca._prendi: DeathSequence con
 ##     JumpscareGlitch e il suo urlo). Fine a 3,0 s.
@@ -23,6 +23,10 @@ var tipo := "geyser"
 var versione := "v1"
 var distanza := 0.0
 var fine_s := 7.0
+## "orbita": durante il geyser la camera le gira intorno di 90 gradi (si vede se il cartellone della V2 ruota?)
+var orbita := false
+var _geyser_da := -1
+var _dist := 6.5
 var _misure := {"prima": [], "durante": []}
 var angolo := 25.0
 var foto := PackedFloat32Array()
@@ -48,6 +52,7 @@ func _ready() -> void:
 			foto.append(float(t))
 	if args.size() > 6:
 		cartella = args[6]
+	orbita = args.size() > 7 and args[7] == "orbita"
 	DirAccess.make_dir_recursive_absolute(cartella)
 	# Il sistema audio del gioco tace senza scheda audio: qui deve suonare per il video.
 	AudioLoop.forza_riproduzione(true)
@@ -130,6 +135,7 @@ func _mettiti() -> void:
 			dist = minf(dist, distanza)
 		piedi = testa + dir * dist
 		print("camera a %.1f m, angolo %.0f" % [dist, angolo])
+		_dist = dist
 	piedi.y = 0.0
 	p.teleport(piedi, 0.0, 0.0)
 	_guarda()
@@ -167,6 +173,17 @@ func _process(_delta: float) -> void:
 			_scatto.call_deferred(x)
 	var g := lei.get_node_or_null(^"Geyser")
 	var durante := g != null and g.has_method(&"in_corso") and bool(g.call(&"in_corso"))
+	if durante and _geyser_da < 0:
+		_geyser_da = _f
+		print("GEYSER dal fotogramma ", _f)
+	if orbita and _geyser_da >= 0:
+		var k := clampf((_f - _geyser_da) / 60.0, 0.0, 1.0)
+		var testa := _testa()
+		var dir := lei.punto_sbuca.global_basis.z.rotated(Vector3.UP, deg_to_rad(angolo + 90.0 * k * k * (3.0 - 2.0 * k)))
+		dir.y = 0.0
+		var pos := testa + dir.normalized() * _dist
+		p.global_position = Vector3(pos.x, p.global_position.y, pos.z)
+		_guarda()
 	(_misure["durante" if durante else "prima"] as Array).append([Performance.get_monitor(Performance.TIME_PROCESS),
 			Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME), Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)])
 	var fine := fine_s

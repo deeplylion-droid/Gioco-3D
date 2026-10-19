@@ -21,7 +21,7 @@ var _mf: ShaderMaterial
 
 func _ready() -> void:
 	top_level = true
-	gocce = 170
+	gocce = 110
 	copre = 0.33   # come la V1 con la stessa simulazione: la colonna supera i 2,6 m a circa un terzo di secondo
 	var q := QuadMesh.new()
 	q.size = Vector2(LARGO, ALTO)
