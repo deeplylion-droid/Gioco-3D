@@ -4,12 +4,12 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 
 | Squadra | Sessione cloud | Branch | Lavoro in corso |
 |---|---|---|---|
-| grafica | session_01Q9PdaHCaFPsyZ4J69AtTTt | lavoro/grafica | v0.3.6 fatta (cfffdf5: niente torcia, lampada bianca e luce rossa, menu). Ora controlla lo slot 1 dei gorghi dell'addon acqua (`WaterBody.set_flow(1, ...)`), poi aspetta le risposte sui punti bui |
-| ambienti-1 | session_01E1m21YyF95ZHLwLFM1yLCv | lavoro/ambienti-1 | geyser nuovo: V1 mesh corretta e V2 flipbook, acqua non trasparente; video in registrazione per il confronto |
-| ambienti-2 | session_01DHF6GjuPt1SH74CXxGYGC2 | lavoro/ambienti-2 | torre in v0.3.6. Ora lo schermo del monitor CRT (per la v0.3.7), poi la proposta dell'inseguimento rifatta: ambienti pieni, B1 meno buio, B come rapide e non come fiume lento |
+| grafica | session_01Q9PdaHCaFPsyZ4J69AtTTt | lavoro/grafica | v0.3.7: torre precaricata e costruita a pezzi senza blocchi (c2c9afd), pacchetto più leggero 1658 -> 1240 MB (42a9d35). Ora la riserva in build.yml (exe unico solo sotto 1,95 GB) e docs/tecnico/peso_build.md; poi aspetta le risposte sui punti bui |
+| ambienti-1 | session_01E1m21YyF95ZHLwLFM1yLCv | lavoro/ambienti-1 | geyser: V2 flipbook rivista con la luce della sala (e642b91), toglie il punto bianco al centro; poi va nella pagina con la V1 come alternativa |
+| ambienti-2 | session_01DHF6GjuPt1SH74CXxGYGC2 | lavoro/ambienti-2 | monitor e fogli della scrivania nella v0.3.7. Inseguimento I1 + SB1, giro 2 con i video (9aa6217): ultimi ritocchi 2-3 h (schiuma delle rapide, partenza B, scogli visibili, posa di A_5), poi nella pagina |
 | enigma-logica | session_01RPrxxeJjwAgHgEzLWPXgsn | lavoro/enigma-logica | fiume lento e infermeria: nota e prototipi grigi fatti (8b08b31, logica approvata dall'utente). Aspetta la scelta dell'aspetto |
-| enigma-ambiente | session_01Jn42hE4synLdT5YNKedMqv | lavoro/enigma-ambiente | acquari in v0.3.6 (e9e7fad). Ora le proposte d'aspetto del fiume lento e dell'infermeria (2 aspetti ciascuno, keycard e lettore) |
-| mascotte | session_01Ut6TnWfhFvUH1yfran7kFa | lavoro/mascotte | statue di squalo e polpo e mostro-squalo fatti. Ora gli scatti dei 9 posti senza torcia e le proposte del nome Jilly Jubilee (logo, targa, manifesti, insegna) |
+| enigma-ambiente | session_01Jn42hE4synLdT5YNKedMqv | lavoro/enigma-ambiente | keycard e lettore, poi fiume (d6b959e da riempire, riflessi bianchi, soffitto della A), poi infermeria (71536c3 da rifare con oggetti veri, piena, B da bambini): 18-25 h |
+| mascotte | session_01Ut6TnWfhFvUH1yfran7kFa | lavoro/mascotte | rifà tutti gli scatti sulla v0.3.6 (posti delle statue e nome Jilly Jubilee) con le correzioni: testo del manifesto B, targa da vicino, insegna con le sue lampade |
 
 ## Come si fa una build
 
@@ -24,7 +24,11 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 - L'exe Windows pesa circa 1,44 GB. Le proposte sono escluse dall'export con `exclude_filter` in `godot/export_presets.cfg`.
 - Unione della torre (ambienti-2) con enigma-logica: i conflitti sono solo in `.github/workflows/build.yml`, dove vanno tenute le righe dei test di tutti e due, e nel commento del punto 5 in cima a `godot/tests/test_tappa8.gd`. Il codice si unisce da solo: il portone non si apre da solo (enigma), lo apre `apri()` e la torre si carica.
 
+## Versione pronta
+
+- **v0.3.7** in lavoro/godot (2e02246): schermo del monitor, fogli della scrivania, torre senza blocchi all'ingresso, riserve dei caricamenti, pacchetto più leggero. CI verde su d37ed09. Da pubblicare quando l'utente ha provato la v0.3.6, insieme alle correzioni dei suoi riscontri: non serve fargli scaricare due versioni di fila.
+
 ## Da chiedere all'utente
 
-- La v0.3.7 con lo schermo del monitor sistemato, quando ambienti-2 l'ha finito.
-- Le proposte in arrivo: geyser V1 e V2, inseguimento rifatto, posti delle statue e nome Jilly Jubilee, aspetto del fiume lento e dell'infermeria.
+- Una pagina con: posti delle statue, nome Jilly Jubilee, lingua delle scritte del parco (le rapide sono in italiano, il manifesto di Jilly in inglese), inseguimento A/B, geyser V2/V1.
+- Dopo, una seconda pagina: aspetto del fiume lento e dell'infermeria, keycard e lettore.
