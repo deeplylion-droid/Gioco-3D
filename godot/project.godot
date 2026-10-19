@@ -122,6 +122,10 @@ menu_opzioni={
 3d/physics_engine="Jolt Physics"
 common/physics_interpolation=true
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/esportazione/plugin.cfg")
+
 [rendering]
 
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
