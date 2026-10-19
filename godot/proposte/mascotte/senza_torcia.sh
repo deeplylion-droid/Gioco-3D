@@ -31,8 +31,8 @@ SCATTI_LUCI=BLACKOUT uno "$1" "$ST" $TB "polpo_B_1_bimbi_buio:-8.3,0,-4:-18.3,1.
 # i nomi: le stesse posizioni di giro_jilly.sh
 J=proposte/mascotte/jilly
 eval "$(sed -n '/^ST=/p;/^ST+=/p' "$D/giro_jilly.sh")"
-uno "$2" "$ST" $T "jilly_targa_a:-5.4,0,11.3:-2.95,0.8,10:0"
-uno "$2" "$ST" $T "jilly_targa_b:-5.4,0,11.3:-2.95,0.8,10:1"
+uno "$2" "$ST" $T "jilly_targa_a:-5.4,0,11.3:-2.95,0.65,10:0"
+uno "$2" "$ST" $T "jilly_targa_b:-5.4,0,11.3:-2.95,0.65,10:1"
 uno "$2" "$ST" $TT "jilly_manifesto_a:-15.6,0,12.2:-19.9,1.5,13.95:2"
 uno "$2" "$ST" $TT "jilly_manifesto_b:-15.6,0,12.2:-19.9,1.5,13.95:3"
 uno "$2" "$ST" $TT "jilly_insegna_a:-13.5,0,7.8:-19.9,4.1,5.35:4"
