@@ -71,6 +71,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_mechanics.gd
 
+      - name: Test dell'esportazione (i file esclusi dal pacchetto non servono al gioco)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_esportazione.gd
+
       - name: Test della demo (sala principale)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
@@ -143,6 +147,10 @@ jobs:
           (cd build/windows && zip -9 -q "../SplashLagoon-windows-v$V.zip" SplashLagoon.exe SplashLagoon.pck)
           (cd build/linux && zip -9 -q "../SplashLagoon-linux-v$V.zip" SplashLagoon.x86_64 SplashLagoon.pck)
           cp build/windows_unico/SplashLagoon.exe "build/SplashLagoon-windows-v$V.exe"
+          # Pacchetti: i doppioni tolti da EsportaSenzaDoppioni rimandano a dati che ci sono; peso per cartella.
+          python3 tools/verifica_pck.py build/windows/SplashLagoon.pck 20
+          python3 tools/verifica_pck.py build/linux/SplashLagoon.pck 0
+          python3 tools/verifica_pck.py build/windows_unico/SplashLagoon.exe 0
           ls -la build
 
       - name: Carica la build Windows
