@@ -37,3 +37,6 @@ uno "$2" "$ST" $TT "jilly_manifesto_a:-15.6,0,12.2:-19.9,1.5,13.95:2"
 uno "$2" "$ST" $TT "jilly_manifesto_b:-15.6,0,12.2:-19.9,1.5,13.95:3"
 uno "$2" "$ST" $TT "jilly_insegna_a:-13.5,0,7.8:-19.9,4.1,5.35:4"
 uno "$2" "$ST" $TT "jilly_insegna_b:-13.5,0,7.8:-19.9,4.1,5.35:5"
+# l'alternativa da far scegliere: la stessa insegna con due lampade a collo d'oca (luce calda e debole)
+uno "$2" "$ST" $TT "jilly_insegna_luce_a:-13.5,0,7.8:-19.9,4.1,5.35:6"
+uno "$2" "$ST" $TT "jilly_insegna_luce_b:-13.5,0,7.8:-19.9,4.1,5.35:7"

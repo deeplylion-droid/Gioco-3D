@@ -311,7 +311,7 @@ def manifesto(stile):
 
 
 # ---------------------------------------------------------------- insegna
-def insegna(stile):
+def insegna(stile, lampade=False):
     W, H = 2048, 1138
     logo = ritaglia_logo(os.path.join(GEN, f'logo_{stile}_gpt_0.png'))
     fondo = (30, 120, 150) if stile == 'a' else (246, 238, 214)
@@ -345,8 +345,52 @@ def insegna(stile):
     # tutto spostato in avanti di 12 cm: il retro delle piastre sta a y = 0 (la parete)
     for o in bpy.context.scene.objects:
         o.location.y -= 0.12
-    esporta(os.path.join(OUT, f'insegna_{stile}.glb'))
+    if lampade:
+        collo_d_oca()
+        esporta(os.path.join(OUT, f'insegna_luce_{stile}.glb'))
+    else:
+        esporta(os.path.join(OUT, f'insegna_{stile}.glb'))
+
+
+def collo_d_oca():
+    """Due lampade a collo d'oca sopra l'insegna (proposta per leggerla al buio): piastra a muro, braccio
+    curvo, paralume smaltato verde scuro e consunto, lampadina. Gli empty luce_sx / luce_dx segnano dove
+    lo script degli scatti mette le luci vere (calde e deboli) e verso dove puntano: il centro del pannello."""
+    from mathutils import Vector
+    smalto = tinta('smalto_lampada', (0.10, 0.17, 0.13), 0.55, 0.35)
+    ferro = tinta('ferro_lampada', (0.22, 0.17, 0.13), 0.7, 0.8)
+    vetro = bpy.data.materials.new('lampadina'); vetro.use_nodes = True
+    b = vetro.node_tree.nodes['Principled BSDF']
+    b.inputs['Base Color'].default_value = (1.0, 0.8, 0.5, 1)
+    b.inputs['Emission Color'].default_value = (1.0, 0.7, 0.4, 1); b.inputs['Emission Strength'].default_value = 2.0
+    centro = Vector((0, -0.15, 0.0))
+    for lato, x in (('sx', -0.5), ('dx', 0.5)):
+        bpy.ops.mesh.primitive_cube_add(size=1, location=(x, -0.006, 0.70))
+        pl = bpy.context.active_object; pl.name = f'lampada_{lato}_piastra'; pl.scale = (0.09, 0.012, 0.12)
+        pl.data.materials.append(ferro)
+        cu = bpy.data.curves.new(f'braccio_{lato}', 'CURVE'); cu.dimensions = '3D'
+        cu.bevel_depth = 0.011; cu.bevel_resolution = 3; cu.resolution_u = 12
+        sp = cu.splines.new('BEZIER')
+        punti = [(x, -0.012, 0.72), (x, -0.16, 0.86), (x, -0.36, 0.85), (x, -0.46, 0.76)]
+        sp.bezier_points.add(len(punti) - 1)
+        for bp, pt in zip(sp.bezier_points, punti):
+            bp.co = pt; bp.handle_left_type = bp.handle_right_type = 'AUTO'
+        br = collega(bpy.data.objects.new(f'lampada_{lato}_braccio', cu)); br.data.materials.append(ferro)
+        bpy.context.view_layer.objects.active = br; br.select_set(True)
+        bpy.ops.object.convert(target='MESH'); br.select_set(False)
+        bocca = Vector((x, -0.48, 0.72))
+        d = (centro + Vector((x * 0.6, 0, 0)) - bocca).normalized()
+        q = Vector((0, 0, -1)).rotation_difference(d)
+        bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=0.075, radius2=0.022, depth=0.12, end_fill_type='NOTHING',
+                                        location=bocca)
+        pa = bpy.context.active_object; pa.name = f'lampada_{lato}_paralume'
+        pa.rotation_mode = 'QUATERNION'; pa.rotation_quaternion = q
+        sol = pa.modifiers.new('spessore', 'SOLIDIFY'); sol.thickness = 0.004
+        pa.data.materials.append(smalto)
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.025, location=bocca + d * 0.035)
+        lb = bpy.context.active_object; lb.name = f'lampada_{lato}_lampadina'; lb.data.materials.append(vetro)
+        e = bpy.data.objects.new(f'luce_{lato}', None); collega(e); e.location = bocca + d * 0.05
 
 
 for s in ('a', 'b'):
-    targa(s); manifesto(s); insegna(s)
+    targa(s); manifesto(s); insegna(s); insegna(s, lampade=True)

@@ -164,7 +164,26 @@ func _monta_a_muro(spazio: PhysicsDirectSpaceState3D, percorso: String, o: Vecto
 	var n: Vector3 = hit.normal
 	var pos: Vector3 = hit.position + n * scosta
 	ob.global_transform = Transform3D(Basis.looking_at(-n, Vector3.UP), pos)
+	_accendi_lampade(ob)
 	print("MURO ", percorso, " su ", (hit.collider as Node).get_path(), " in ", pos, " normale ", n)
+
+
+## Le lampade degli oggetti (empty "luce_*" nel glTF, per esempio l'insegna con i colli d'oca): una luce
+## calda e debole che punta al centro del pannello, senza cambiare la scena intorno.
+func _accendi_lampade(ob: Node3D) -> void:
+	for e in ob.find_children("luce_*", "Node3D", true, false):
+		var l := SpotLight3D.new()
+		l.light_color = Color(1.0, 0.72, 0.42)
+		l.light_energy = float(OS.get_environment("SCATTI_LAMPADE_ENERGIA")) if OS.get_environment("SCATTI_LAMPADE_ENERGIA") != "" else 1.4
+		l.spot_range = 2.0
+		l.spot_angle = 40.0
+		l.spot_attenuation = 1.2
+		l.shadow_enabled = true
+		l.light_volumetric_fog_energy = 0.3
+		(e as Node3D).add_child(l)
+		var loc := ob.to_local((e as Node3D).global_position)
+		l.look_at(ob.to_global(Vector3(loc.x * 0.4, -0.05, 0.15)), ob.global_basis.y)
+		print("LAMPADA ", e.name, " in ", (e as Node3D).global_position)
 
 
 func _pianta(nome: String, centro: Vector3, lato: float) -> void:
