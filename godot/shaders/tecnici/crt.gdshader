@@ -8,6 +8,8 @@ uniform float neve : hint_range(0.0, 1.0) = 0.0;
 uniform float luminosita = 1.3;
 uniform float accensione : hint_range(0.0, 1.0) = 1.0;
 uniform vec3 tinta : source_color = vec3(0.82, 1.0, 0.94);
+// Il raggio degli angoli tondi del vetro, in UV (0 = rettangolo): fuori non si disegna, e l'orlo si spegne.
+uniform vec2 raggio_angoli = vec2(0.0);
 
 float casuale(vec2 p) {
 	return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
@@ -32,5 +34,14 @@ void fragment() {
 	// Angoli più scuri del tubo (ora lo schermo sta sul vetro bombato: basta una sfumatura).
 	float bordo = smoothstep(0.76, 0.5, length(c * vec2(1.0, 1.25)));
 	// Senza luci (unshaded): il colore è già la luce dello schermo, anche oltre 1 per il bagliore.
-	ALBEDO = max(col, vec3(0.0)) * luminosita * bordo * accensione;
+	float orlo = 1.0;
+	if (raggio_angoli.x > 0.0) {
+		vec2 q = abs(UV - 0.5) - (vec2(0.5) - raggio_angoli);
+		float e = length(max(q, vec2(0.0)) / raggio_angoli);
+		if (e > 1.0) {
+			discard;
+		}
+		orlo = smoothstep(1.0, 0.8, e);
+	}
+	ALBEDO = max(col, vec3(0.0)) * luminosita * bordo * orlo * accensione;
 }
