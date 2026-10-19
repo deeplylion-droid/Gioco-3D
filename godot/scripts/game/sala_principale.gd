@@ -363,7 +363,7 @@ func _setup_torre() -> void:
 func _carica_torre() -> void:
 	if sala_torre or _torre_in_caricamento:
 		return
-	if ResourceLoader.load_threaded_request(sala_torre_scena) == OK:
+	if ResourceLoader.load_threaded_request(sala_torre_scena, "PackedScene") == OK:
 		_torre_in_caricamento = true
 	else:
 		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
@@ -377,8 +377,11 @@ func _process(_delta: float) -> void:
 		_torre_in_caricamento = false
 		_aggiungi_torre(ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene)
 	elif stato == ResourceLoader.THREAD_LOAD_FAILED or stato == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+		# Riserva: se il thread non ce la fa, la torre si carica qui (un attimo di fermo), così il
+		# giocatore non resta mai davanti al portone aperto senza la sala.
 		_torre_in_caricamento = false
-		push_error("Sala della torre: caricamento fallito (%s)" % sala_torre_scena)
+		push_warning("Sala della torre: caricamento nel thread fallito (%s), la carico subito" % sala_torre_scena)
+		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
 
 
 func _aggiungi_torre(scena: PackedScene) -> void:

@@ -230,7 +230,30 @@ func _run() -> void:
 		check(not get_tree().paused and not overlay.visible, "senza la pausa")
 		await _frames(5)
 		check(s != null and _focus() == s.call(&"voci")[0], "con il focus su Nuova partita")
+	await _test_riserva_caricamento()
 	_fine()
+
+
+## Se il caricamento nel thread fallisce, la sala si carica di seguito (riserva) invece di fermarsi
+## sull'errore. Qui il thread "fallisce" perché il risultato lo si prende prima noi: il caricamento
+## trova allora lo stato INVALID_RESOURCE, come quando il thread non ce la fa.
+func _test_riserva_caricamento() -> void:
+	print("Caricamento: la riserva se il thread fallisce")
+	const LEGGERA := "res://scenes/test/scivoli_prova.tscn"
+	var car: Node = (load(CARICAMENTO) as PackedScene).instantiate()
+	car.set(&"scena", LEGGERA)
+	car.set(&"tempo_minimo", 999.0)   # resta nella schermata: qui non si entra nella scena
+	get_tree().root.add_child(car)
+	var t0 := Time.get_ticks_msec()
+	while ResourceLoader.load_threaded_get_status(LEGGERA) == ResourceLoader.THREAD_LOAD_IN_PROGRESS \
+			and Time.get_ticks_msec() - t0 < 60000:
+		await get_tree().process_frame
+	ResourceLoader.load_threaded_get(LEGGERA)
+	await _frames(5)
+	check(car.get(&"fase") == 0 and car.get(&"_pacchetto") is PackedScene,
+		"il thread fallisce: la scena si carica lo stesso e si va avanti, senza errore")
+	car.queue_free()
+	await _frames(2)
 
 
 func _fine() -> void:
