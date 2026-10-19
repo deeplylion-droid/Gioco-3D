@@ -20,21 +20,25 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 ## Cose da sapere
 
 - Le pagine di scelta si fanno con `tools/questionario/genera_pagina.py`. Le risposte si leggono con ArtifactData, collezione `risposte`.
-- Pagine aperte: punti bui senza torcia (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb) scelte del 19 ottobre (https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn) e stanze nuove (https://claude.ai/artifact/AEqY4ZWpQC7xyTHAZD7Gsq: fiume, infermeria, lettore, keycard; enigma-ambiente 295e9c6), risposte non ancora arrivate. Quelle del 17 e 18 ottobre (scelte, torre, acquari, mascotte) sono lette e nel GDD.
+- Pagine aperte: punti bui senza torcia (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb) scelte del 19 ottobre (https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn) e stanze nuove (https://claude.ai/artifact/AEqY4ZWpQC7xyTHAZD7Gsq: fiume, infermeria, lettore, keycard; enigma-ambiente 295e9c6), risposte non ancora arrivate. Le scelte del 19 ottobre (https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn) sono lette. Quelle del 17 e 18 ottobre (scelte, torre, acquari, mascotte) sono lette e nel GDD.
 - L'exe Windows pesa circa 1,44 GB. Le proposte sono escluse dall'export con `exclude_filter` in `godot/export_presets.cfg`.
 - Unione della torre (ambienti-2) con enigma-logica: i conflitti sono solo in `.github/workflows/build.yml`, dove vanno tenute le righe dei test di tutti e due, e nel commento del punto 5 in cima a `godot/tests/test_tappa8.gd`. Il codice si unisce da solo: il portone non si apre da solo (enigma), lo apre `apri()` e la torre si carica.
 
 ## Pausa fino a mercoledì 21 ottobre
 
-L'utente ha finito i crediti fino a mercoledì: il 19 ottobre alle 07:20 UTC tutte le squadre sono state fermate, con l'ordine di committare quello che avevano e di aspettare un messaggio del coordinatore. Alla ripresa:
-- leggere le risposte della pagina https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn (statue, nome Jilly Jubilee, lingua delle scritte, inseguimento, geyser) e di quella dei punti bui;
-- enigma-ambiente ha consegnato le proposte riviste (295e9c6): dopo le scelte dell'utente porta nel gioco l'aspetto scelto, con enigma-logica;
-- ambienti-1 toglie il punto bianco al centro del geyser;
-- mascotte: se l'utente vuole l'insegna con le sue lampade, scatti insegna_a_luce e insegna_b_luce.
+L'utente ha finito i crediti fino a mercoledì: il 19 ottobre alle 07:20 UTC tutte le squadre sono state fermate, con l'ordine di committare quello che avevano e di aspettare un messaggio del coordinatore. Hanno risposto tutte che il lavoro è salvato.
+
+Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD. Alla ripresa:
+- **mascotte**: nel gioco le statue nei posti scelti (squalo A in S2, polpo A in A3, polpo B in B1); Jilly Jubilee in stile B, molto più invecchiato: targa, manifesto e insegna con le sue due lampade. Prima chiedere all'utente se "LIVE SHOW" e gli orari del manifesto restano, visto che nel parco ci sono solo disegni tranne le scritte di Jilly.
+- **ambienti-2**: l'inseguimento A "Le condotte" con SB1 nel gioco (stima 2-3 giorni). Le rapide restano da parte per un altro punto; se si usano, l'insegna diventa un disegno.
+- **ambienti-1**: il geyser V1 (mesh simulata) nel gioco, e via il punto bianco al centro (5f95315: cause già escluse, ripartire dalla prova col cartellone nascosto).
+- **enigma-ambiente ed enigma-logica**: aspettano le risposte della pagina delle stanze nuove (https://claude.ai/artifact/AEqY4ZWpQC7xyTHAZD7Gsq, proposte in lavoro/enigma-ambiente 295e9c6).
+- **grafica**: aspetta le risposte della pagina dei punti bui (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb).
+- **Regola nuova per tutti**: nei cartelli del parco solo disegni, niente scritte; fa eccezione il nome di Jilly Jubilee.
 
 ## Ultima versione
 
-- **v0.3.7** pubblicata il 19 ottobre su richiesta dell'utente (main 3abc887): schermo del monitor, fogli della scrivania, torre senza blocchi all'ingresso, riserve dei caricamenti, pacchetto più leggero.
+- **v0.3.7** pubblicata il 19 ottobre alle 07:48 UTC su richiesta dell'utente (main 3abc887; exe unico 1,35 GB): schermo del monitor, fogli della scrivania, torre senza blocchi all'ingresso, riserve dei caricamenti, pacchetto più leggero.
 
 ## Da chiedere all'utente
 

@@ -160,6 +160,7 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Niente torcia** (decisione dell'utente, 18 ottobre sera): "togliamo la torcia". Le luci in più le indica lui. Per ora sono due: una lampada bianca a soffitto sopra la pozza d'acqua davanti ai tornelli e una luce rossa lampeggiante prima del portone stagno n. 1. I bambini scappano solo se ti avvicini troppo.
 - **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
+  - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
@@ -209,6 +210,11 @@ Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare 
 
 **Scelte del 18 ottobre:** statua dello squalo A (pollice in su, pantaloncini rossi, salvagente), tutte e due le statue del polpo (A rosa con le braccia aperte, B lilla con maschera, salvagente, pallone e gelato) e mostro-squalo A, quello vicino al disegno. Le posizioni si scelgono su scatti dal gioco.
 
+**Posizioni, scelte il 19 ottobre** (scatti in `docs/proposte/mascotte/posti/`, lavoro/mascotte 961a53a):
+- **squalo A in S2**: sul bordo est della piscina a onde, accanto alla sedia del bagnino e ai lettini, rivolto verso la piscina (x 10, z 1,5, -90°);
+- **polpo A in A3**: all'ingresso dell'area bimbi, vicino allo scivolo giallo (x -5,5, z -18, -12°);
+- **polpo B in B1**: nell'area bimbi contro il muro ovest, accanto al fungo (x -18,3, z -8, 90°). Nella tappa 8, al buio, resta quasi nascosto dietro la medusa della fossa: l'utente l'ha visto e l'ha scelto lo stesso.
+
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
 L'utente: "al momento, arrivare alla porta della torre si impiegano 5 minuti". Con gli acquari e la torre per lui diventano circa 10 minuti, e per chi gioca la prima volta 20-25, mentre ne erano previsti 39-42. Per allungare, l'utente ha scelto:
@@ -221,6 +227,9 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 - **Fiume lento** (4-6 minuti la prima volta, 80 s un giro giusto). La corrente c'è perché le pompe sono ripartite dopo la tappa 6. Si sta su una ciambella del parco a 2,2 m/s. Ci si guarda intorno, si spruzza e si aspira; spruzzando all'indietro si accelera fino a 3,2 m/s, in avanti si frena fino a 1,2 m/s. Tre bivi su un anello: prima di ognuno, 12-15 m prima, col getto si colpisce un disco a strisce di 80 cm che gira la paratia. Al bivio 1 la paratia va girata; al 2 è già giusta, e se la colpisci la sbagli; al 3 il disco si vede solo dopo averlo passato, quindi si spara all'indietro. L'indizio sono i cartelli verdi d'uscita d'emergenza: dopo il blackout sono accesi solo sui rami giusti (scelta dell'utente). Se sbagli, un ramo corto e uno scivolo ti riportano all'imbarco, e le paratie restano come le hai lasciate. Non si cade e non si muore.
 - **Infermeria** (3-5 minuti, senza testi da leggere). 1) Col getto colpisci l'interruttore e si accende il negatoscopio. 2) Una Polaroid del medico mostra lo schedario con un cassetto segnato da un adesivo rosa, che al buio brilla. 3) Nel cassetto c'è la radiografia di un agnello: sul negatoscopio, nelle ossa brillano puntini rosa, 4 nella testa, 1 nel corpo e 7 nella coda. È anche la storia delle pecore modificate. 4) La cassaforte ha tre rotelle segnate testa, corpo e coda: il codice è 4-1-7. Dentro trovi la keycard per la serranda e una Polaroid della pecora che brilla.
 - **Dove**: tra la sala pompe e il magazzino, lungo la strada di risalita. Prima il fiume, poi l'infermeria, poi dalla scala di servizio il magazzino con la serranda e il lettore della keycard.
+
+**L'inseguimento e il finale, scelta del 19 ottobre** (proposta di ambienti-2 in `docs/proposte/inseguimento/inseguimento.md`, lavoro/ambienti-2 9aa6217): **versione A, "Le condotte"**. È una sala macchine piena e allagata, ricavata nello scafo dietro la bocca in fondo alla torre. Si scivola in tubi chiusi tra tre vasche sospese, con tre bivi. Ai bivi la paratia giusta ha la luce verde e l'anello di led verdi, la sbagliata una lampada rossa guasta; si colpisce il bersaglio col getto. Lei ti raggiunge nelle vasche, e un getto in faccia la respinge. Poi una spirale attorno al serbatoio, la grata che cala davanti a lei e, prima della porta, SB1: lei sbuca dal pozzo di scarico e ti guarda. Dura circa 5:40 senza errori. Le pose di lei sono provvisorie: le animazioni dell'inseguimento sono da fare.
+Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -268,6 +277,14 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 ## La mascotte del capitolo 1: la medusa
 
 **Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il titolo del gioco è ancora da decidere: per ora resta "Splash Lagoon", che è anche il nome del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
+
+**Il nome nel parco, scelte del 19 ottobre** (render e scatti in `docs/proposte/mascotte/jilly/`, lavoro/mascotte 38c2738):
+- **logo stile B**, "spettacolo della nave": "Jilly" in corsivo corallo, "JUBILEE" in oro su un nastro blu, stelle e una piccola medusa. Nota dell'utente: "ma molto più invecchiati", quindi targa, manifesto e insegna vanno invecchiati molto di più di quelli proposti;
+- **la targa** smaltata (70 x 39 cm) sul lato ovest della vasca di Jilly, accanto al cordone: sì;
+- **il manifesto dello spettacolo** (70 x 105 cm) sul muro ovest vicino all'ingresso, tra il cartello giallo e l'oblò: sì;
+- **l'insegna** di lamiera (1,8 x 1 m) in alto sul muro ovest sopra la vasca d'arrivo: sì, **con le sue due lampade a collo d'oca**, luce calda e debole solo sul pannello.
+
+**Le scritte nel parco** (scelta dell'utente, 19 ottobre): **solo disegni, niente scritte**. Le scritte di Jilly Jubilee fanno eccezione. Parole dell'utente: "Togli la scritta le rapide, sostituiscila con un disegno. Le scritte di Jilly Jubilee fanno eccezione". Da chiarire con lui: il manifesto dice anche "LIVE SHOW" e gli orari in inglese.
 
 ### Riferimenti approvati
 
