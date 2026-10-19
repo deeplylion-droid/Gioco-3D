@@ -20,7 +20,7 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 ## Cose da sapere
 
 - Le pagine di scelta si fanno con `tools/questionario/genera_pagina.py`. Le risposte si leggono con ArtifactData, collezione `risposte`.
-- Pagine aperte: punti bui senza torcia (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb) e scelte del 19 ottobre (https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn), risposte non ancora arrivate. Quelle del 17 e 18 ottobre (scelte, torre, acquari, mascotte) sono lette e nel GDD.
+- Pagine aperte: punti bui senza torcia (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb) scelte del 19 ottobre (https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn) e stanze nuove (https://claude.ai/artifact/AEqY4ZWpQC7xyTHAZD7Gsq: fiume, infermeria, lettore, keycard; enigma-ambiente 295e9c6), risposte non ancora arrivate. Quelle del 17 e 18 ottobre (scelte, torre, acquari, mascotte) sono lette e nel GDD.
 - L'exe Windows pesa circa 1,44 GB. Le proposte sono escluse dall'export con `exclude_filter` in `godot/export_presets.cfg`.
 - Unione della torre (ambienti-2) con enigma-logica: i conflitti sono solo in `.github/workflows/build.yml`, dove vanno tenute le righe dei test di tutti e due, e nel commento del punto 5 in cima a `godot/tests/test_tappa8.gd`. Il codice si unisce da solo: il portone non si apre da solo (enigma), lo apre `apri()` e la torre si carica.
 
@@ -28,7 +28,7 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 
 L'utente ha finito i crediti fino a mercoledì: il 19 ottobre alle 07:20 UTC tutte le squadre sono state fermate, con l'ordine di committare quello che avevano e di aspettare un messaggio del coordinatore. Alla ripresa:
 - leggere le risposte della pagina https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn (statue, nome Jilly Jubilee, lingua delle scritte, inseguimento, geyser) e di quella dei punti bui;
-- enigma-ambiente riparte da keycard e lettore, poi fiume e infermeria (18-25 h);
+- enigma-ambiente ha consegnato le proposte riviste (295e9c6): dopo le scelte dell'utente porta nel gioco l'aspetto scelto, con enigma-logica;
 - ambienti-1 toglie il punto bianco al centro del geyser;
 - mascotte: se l'utente vuole l'insegna con le sue lampade, scatti insegna_a_luce e insegna_b_luce.
 
