@@ -1,6 +1,6 @@
 #!/bin/bash
 # Lancia proposte/mascotte/scatti_statue.gd (statue montate al volo nella sala) con le regole della
-# macchina: dentro render.lock, solo con almeno 13,5 GB liberi, e fermato se supera 13 GB.
+# macchina: dentro render.lock, solo con almeno 13,5 GB liberi, e fermato se supera LIMITE_MB (12,5 GB).
 # Uso: godot/proposte/mascotte/scatti_statue.sh <cartella> "<statue>" "<scatti>" [frame]
 set -u
 RADICE=$(cd "$(dirname "$0")/../../.." && pwd)
@@ -15,6 +15,7 @@ cd "$RADICE/godot"
 xvfb-run -a -s "-screen 0 1600x900x24" nice -n 8 godot --rendering-driver vulkan --fixed-fps 60 \
 	--resolution 1600x900 --path . --script res://tests/run.gd -- res://proposte/mascotte/scatti_statue.gd \
 	"$CARTELLA" "$STATUE" "$SCATTI" "$FRAME" > "$LOG" 2>&1 &
+ULTIMO=$(echo "$SCATTI" | tr ';' '\n' | tail -1 | cut -d: -f1)
 XP=$!; MAX=0; GP=""; T0=$(date +%s)
 while kill -0 "$XP" 2>/dev/null; do
 	[ -z "$GP" ] && GP=$(pgrep -P "$XP" -x godot | head -1)
@@ -22,10 +23,15 @@ while kill -0 "$XP" 2>/dev/null; do
 		R=$(awk '/^VmHWM/{print int($2/1024)}' "/proc/$GP/status" 2>/dev/null)
 		if [ -n "$R" ]; then
 			[ "$R" -gt "$MAX" ] && MAX=$R
-			[ "$R" -gt 13000 ] && { kill -9 "$GP"; echo "FERMATO: memoria $R MB"; }
+			[ "$R" -gt ${LIMITE_MB:-12500} ] && { kill -9 "$GP"; echo "FERMATO: memoria $R MB"; }
 		fi
 	fi
-	sleep 0.5
+	# dopo l'ultimo scatto Godot a volte resta appeso nell'uscita con la memoria in mano: si chiude
+	if [ -n "$GP" ] && grep -q "^salvato ${ULTIMO}$" "$LOG" 2>/dev/null; then
+		[ -z "${FINE:-}" ] && FINE=$(date +%s)
+		[ $(( $(date +%s) - FINE )) -gt 60 ] && { kill -9 "$GP" 2>/dev/null; echo "Godot appeso dopo l'ultimo scatto, chiuso"; }
+	fi
+	sleep 0.2
 done
 echo "memoria massima ${MAX} MB, $(( $(date +%s) - T0 )) s"
 grep -E "salvato|STATUA|ATTENZIONE|SCRIPT ERROR|Parse Error" "$LOG" | head -40

@@ -11,6 +11,7 @@ extends Node
 ##   (0 = la statua guarda verso +Z, cioè verso l'ingresso a sud della sala).
 ##   Oggetti da parete: "muro=<percorso res:// senza prefisso>@ox,oy,oz@dx,dy,dz": un raggio da o lungo d
 ##   trova la parete; l'oggetto (davanti verso +Z, retro a z = 0) ci si appoggia, girato come la parete.
+##   Un quarto campo facoltativo "@m" lo scosta di m metri (le piastrelle sporgono dalla collisione).
 ## <scatti>: "nome:px,py,pz:lx,ly,lz[:i,j];..." il giocatore coi piedi in p guarda verso l; i,j = indici
 ##   delle sole statue visibili in quello scatto (di serie tutte). Il nome "pianta"
 ##   fa invece una vista dall'alto ortografica (p = centro, l.x = lato in metri) con una luce in più.
@@ -116,7 +117,7 @@ func _monta_statue() -> void:
 	for s in statue.split(";", false):
 		var c := s.split("@")
 		if c[0].begins_with("muro="):
-			_monta_a_muro(spazio, c[0].substr(5), _v(c[1]), _v(c[2]))
+			_monta_a_muro(spazio, c[0].substr(5), _v(c[1]), _v(c[2]), float(c[3]) if c.size() > 3 else 0.003)
 			continue
 		var xz := c[1].split(",")
 		var x := float(xz[0])
@@ -149,7 +150,7 @@ func _monta_statue() -> void:
 			"libera" if nomi.is_empty() else "TOCCA " + ", ".join(nomi))
 
 
-func _monta_a_muro(spazio: PhysicsDirectSpaceState3D, percorso: String, o: Vector3, d: Vector3) -> void:
+func _monta_a_muro(spazio: PhysicsDirectSpaceState3D, percorso: String, o: Vector3, d: Vector3, scosta: float) -> void:
 	var q := PhysicsRayQueryParameters3D.create(o, o + d.normalized() * 25.0)
 	q.exclude = [p.get_rid()]
 	var hit := spazio.intersect_ray(q)
@@ -161,7 +162,7 @@ func _monta_a_muro(spazio: PhysicsDirectSpaceState3D, percorso: String, o: Vecto
 		ob.global_position = o
 		return
 	var n: Vector3 = hit.normal
-	var pos: Vector3 = hit.position + n * 0.003
+	var pos: Vector3 = hit.position + n * scosta
 	ob.global_transform = Transform3D(Basis.looking_at(-n, Vector3.UP), pos)
 	print("MURO ", percorso, " su ", (hit.collider as Node).get_path(), " in ", pos, " normale ", n)
 

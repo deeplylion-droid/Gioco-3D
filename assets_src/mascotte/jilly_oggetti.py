@@ -8,7 +8,7 @@ macchie d'acqua, ruggine, scheggiature) e si mettono su modelli semplici. Escono
   targa_<s>.glb     targa smaltata 70 x 39 cm con quattro viti, da avvitare a una parete;
   manifesto_<s>.glb manifesto di carta 70 x 105 cm, ondulato e strappato (bordo irregolare, angolo
                     mancante), con due pezzi di nastro adesivo;
-  insegna_<s>.glb   insegna di lamiera dipinta 3,2 x 1,8 m in una cornice d'acciaio con quattro
+  insegna_<s>.glb   insegna di lamiera dipinta 2,0 x 1,1 m in una cornice d'acciaio con quattro
                     staffe a muro.
 Origine al centro del retro, il davanti guarda verso +Y in Blender (+Z... vedi export: -Y Blender
 diventa +Z glTF), cioè dopo l'export il davanti guarda verso +Z in Godot.
@@ -309,7 +309,7 @@ def manifesto(stile):
 
 # ---------------------------------------------------------------- insegna
 def insegna(stile):
-    W, H = 2048, 1152
+    W, H = 2048, 1126
     logo = ritaglia_logo(os.path.join(GEN, f'logo_{stile}_gpt_0.png'))
     fondo = (30, 120, 150) if stile == 'a' else (246, 238, 214)
     im = su_fondo(logo, W, H, fondo, 0.07)
@@ -324,7 +324,7 @@ def insegna(stile):
     scena_vuota()
     mf = materiale(f'insegna_{stile}', pc, rug_png=pr)
     acc = tinta('acciaio_ruggine', (0.28, 0.2, 0.15), 0.75, 0.7)
-    w, h, sp = 3.2, 1.8, 0.03
+    w, h, sp = 2.0, 1.1, 0.03   # sta tra due oblò e sopra il tubo del muro ovest
     lastra('pannello', w, h, sp, mf, acc)
     # cornice: quattro profilati davanti al pannello, staccata dal muro dalle staffe
     for nome, (x, z, sx, sz) in {'cornice_su': (0, h / 2, w + 0.1, 0.06), 'cornice_giu': (0, -h / 2, w + 0.1, 0.06),
@@ -332,12 +332,12 @@ def insegna(stile):
         bpy.ops.mesh.primitive_cube_add(size=1, location=(x, -sp - 0.02, z))
         c = bpy.context.active_object; c.name = nome; c.scale = (sx, 0.05, sz); c.data.materials.append(acc)
     # staffe a muro: il pannello sta 12 cm davanti alla parete
-    for i, (x, z) in enumerate(((-1.3, 0.6), (1.3, 0.6), (-1.3, -0.6), (1.3, -0.6))):
+    for i, (x, z) in enumerate(((-0.8, 0.35), (0.8, 0.35), (-0.8, -0.35), (0.8, -0.35))):
         bpy.ops.mesh.primitive_cube_add(size=1, location=(x, 0.06, z))
-        s = bpy.context.active_object; s.name = f'staffa_{i}'; s.scale = (0.05, 0.12, 0.05)
+        s = bpy.context.active_object; s.name = f'staffa_{i}'; s.scale = (0.04, 0.12, 0.04)
         s.data.materials.append(acc)
         bpy.ops.mesh.primitive_cube_add(size=1, location=(x, 0.115, z))
-        p = bpy.context.active_object; p.name = f'piastra_{i}'; p.scale = (0.14, 0.01, 0.14)
+        p = bpy.context.active_object; p.name = f'piastra_{i}'; p.scale = (0.11, 0.01, 0.11)
         p.data.materials.append(acc)
     # tutto spostato in avanti di 12 cm: il retro delle piastre sta a y = 0 (la parete)
     for o in bpy.context.scene.objects:
