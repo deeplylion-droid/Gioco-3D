@@ -67,14 +67,13 @@ func _run() -> void:
 	cam.make_current()
 	cam.position = Vector3(0, 2, 0)
 	# Come nella sala: le scene dei bambini e la torre sono già caricate (la torre col thread)
-	# (e nella sala i bambini e la Polaroid sono già in scena: il primo instantiate di una scena e la prima
-	# entrata di un bambino costano 50-100 ms sulla CPU, i successivi pochi ms)
+	# (e nella sala i bambini e la Polaroid sono già in scena e restano: il primo instantiate di una scena
+	# e la prima entrata di un bambino costano 50-100 ms sulla CPU, i successivi pochi ms)
 	for s in ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creature/bambino_agnello.tscn", "res://scenes/props/polaroid.tscn"]:
 		var n := (load(s) as PackedScene).instantiate()
 		n.set(&"visible", false)
 		add_child(n)
 		await _frames(1)
-		n.queue_free()
 	var scena := load(TORRE) as PackedScene
 	await _frames(10)
 
