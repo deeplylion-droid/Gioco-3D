@@ -65,7 +65,9 @@ def disegna_tutto():
     for nome, im in (('insegna_rapide', insegna_rapide()),
                      ('cartello_tenersi', cartello('t', 'ATTENZIONE', 'SALTO!', (242, 183, 5), (20, 20, 20), 2)),
                      ('cartello_vietato', cartello('v', 'VIETATO', 'ALZARSI', (235, 235, 230), (200, 25, 20), 3)),
-                     ('cartello_uscita', cartello('u', 'USCITA', '<<<', (20, 120, 60), (240, 250, 240), 4))):
+                     ('cartello_uscita', cartello('u', 'USCITA', '<<<', (20, 120, 60), (240, 250, 240), 4)),
+                     ('cartello_altezza', cartello('h', 'ALTEZZA', 'MINIMA 1,20 m', (235, 235, 230), (20, 60, 140), 5)),
+                     ('cartello_turno', cartello('c', 'ATTENDERE', 'IL TURNO', (18, 92, 110), (255, 214, 40), 6))):
         p = os.path.join(CARTELLA, nome + '.png')
         im.save(p)
         fatti[nome] = p

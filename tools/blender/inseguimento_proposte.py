@@ -335,7 +335,7 @@ def versione_A(mats):
     x1, y0, y1, z0, z1 = 78.0, -2.0, 32.0, -34.0, -6.0
     T = -33.4                                       # pelo dell'acqua che allaga il fondo
     porta = (5.0, -30.0)
-    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=(43.0, 7.4, 46.4, 10.6, 4.5, -33.4 + 0.12))
+    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=(43.6, 7.9, 45.8, 10.1, 4.5, -33.4 + 0.12))
     acque.append(P.acqua_piano('acqua_allagata', X0, y0, x1, y1, T))
     oggetti_tubi = []
     pedane = []
@@ -367,7 +367,7 @@ def versione_A(mats):
     # bivio 1 (lato est della vasca 1): a nord la giusta (verso la vasca 2), a sud la sbagliata (scolo 0)
     paratia(c, (C1[2] - 0.2, 16.4, zc1), (1, 0), True, luci)
     paratia(c, (C1[2] - 0.2, 13.6, zc1), (1, 0), False, luci)
-    t1 = tubo('ins_A_tubo_1', [(C1[2] - 0.3, 16.4, zc1 - 0.1), (57.5, 17.5, -23.4), (60.5, 21.0, -24.2), (63.5, 23.0, zc2 + 0.4), (65.5, 25.4, zc2)], ['tsc_rosso', 'tsc_bianco'])
+    t1 = tubo('ins_A_tubo_1', [(C1[2] - 0.3, 16.4, zc1 - 0.1), (57.5, 17.5, -23.4), (60.5, 21.0, -24.2), (61.3, 25.0, zc2 + 0.5), (61.9, 27.6, zc2 + 0.2), (C2[0] + 0.3, 27.8, zc2)], ['tsc_rosso', 'tsc_bianco'])
     tubo('ins_A_scolo_0', [(C1[2] - 0.3, 13.6, zc1 - 0.1), (56.6, 13.9, -23.5), (58.2, 13.0, -24.4), (59.0, 11.8, D[0][4] + 0.9)], ['tsc_rosso'])
     # bivio 2 (lato sud della vasca 2): a est la giusta (verso la vasca 3), a ovest la sbagliata (scolo 1)
     paratia(c, (67.0, C2[1] + 0.2, zc2), (0, -1), True, luci)
@@ -490,12 +490,12 @@ def versione_A(mats):
     luci['emergenza'] += [[X0 + 0.15, 25.0, -16.0], [x1 - 0.15, 10.0, -22.0], [60.0, y1 - 0.15, -18.0], [50.0, y0 + 0.15, -26.0], [70.0, y0 + 0.15, -14.0]]
     luci['lavoro'] += [[C1[0] + 0.3, C1[1] + 0.3, C1[4] + 1.6], [C2[0] + 0.3, C2[3] - 0.3, C2[4] + 1.6], [C3[2] - 0.3, C3[3] - 0.3, C3[4] + 1.6],
                        [BX[0] + 0.6, BX[1] + 0.6, T + 2.0]]
-    luci['acqua_scorre'] += [[x, y, z] for (x, y, z) in ((50.8, 15.0, zc1), (65.5, 25.6, zc2), (69.6, 7.4, zc3), (50.8, 6.5, -33.4))]
+    luci['acqua_scorre'] += [[x, y, z] for (x, y, z) in ((50.8, 15.0, zc1), (62.8, 27.8, zc2), (69.6, 7.4, zc3), (50.8, 6.5, -33.4))]
     # lei: dove ti raggiunge (le pose per gli scatti)
     luci['lei'] += [[47.5, 18.3, -25.0, 200.0, 'insegue', 'raggiunge la vasca 1 dal basso'],
                     [62.0, 31.0, -21.0, 160.0, 'insegue', 'arriva sulla condotta nord alla vasca 2'],
                     [BX[2] + 2.2, 6.5, -34.0, 270.0, 'insegue', 'sbatte contro la grata'],
-                    [44.7, 9.0, T + 0.12, 120.0, 'affacciata', 'SB1: sbuca dal pozzo di scarico del bacino']]
+                    [44.7, 9.0, T + 0.12 - 0.8, 120.0, 'affacciata', 'SB1: sbuca dal pozzo di scarico del bacino']]
 
     percorso = [('bocca', BOCCA)] + [('tubo', p) for p in t0[::4]] + [('vasca 1', Vector(((C1[0] + C1[2]) / 2, (C1[1] + C1[3]) / 2, C1[4])))]
     percorso += [('bivio', Vector((C1[2], 15.0, C1[4])))] + [('tubo', p) for p in t1[::4]]
@@ -537,6 +537,24 @@ def nastro_acqua(nome, pts, mezza, sotto):
             fs.append((k - 2, k - 1, k + 1, k))
     me = bpy.data.meshes.new(nome)
     me.from_pydata(vs, [], fs)
+    # UV: u attraverso il canale (0..1), v lungo la corrente (metri); nella seconda UV la pendenza
+    # (la schiuma è più fitta nei salti): lo shader delle rapide ci disegna le strisce che corrono
+    lung = [0.0]
+    for i in range(1, len(pts)):
+        lung.append(lung[-1] + (pts[i] - pts[i - 1]).length)
+    pend = []
+    for i in range(len(pts)):
+        a_, b_ = pts[max(i - 2, 0)], pts[min(i + 2, len(pts) - 1)]
+        dz = a_.z - b_.z
+        dl = max((b_ - a_).length, 0.01)
+        pend.append(min(1.0, max(0.0, dz / dl * 4.0)))
+    uv = me.uv_layers.new(name='UVMap')
+    uv2 = me.uv_layers.new(name='UVSalto')          # in Godot è UV2: x = pendenza
+    for poly in me.polygons:
+        for li in poly.loop_indices:
+            vi = me.loops[li].vertex_index
+            uv.data[li].uv = (vi % 2, lung[vi // 2])
+            uv2.data[li].uv = (pend[vi // 2], 0.0)
     ob = bpy.data.objects.new(nome, me)
     bpy.context.scene.collection.objects.link(ob)
     return ob
@@ -580,7 +598,8 @@ def materiali_rapide(mats):
     import inseguimento_insegne as INS
     for nome, col, rough in (('roccia_finta', (0.42, 0.27, 0.15), 0.8), ('roccia_finta_scura', (0.22, 0.16, 0.12), 0.85),
                              ('gomma_gialla', (0.85, 0.6, 0.02), 0.55), ('gomma_rossa', (0.62, 0.06, 0.03), 0.55),
-                             ('gomma_blu', (0.05, 0.2, 0.55), 0.55), ('gomma_nera_ins', (0.03, 0.03, 0.03), 0.7)):
+                             ('gomma_blu', (0.05, 0.2, 0.55), 0.55), ('gomma_nera_ins', (0.03, 0.03, 0.03), 0.7),
+                             ('gomma_verde', (0.05, 0.4, 0.12), 0.55), ('gomma_arancio', (0.85, 0.28, 0.02), 0.55)):
         if nome not in mats.cache:
             mats.cache[nome] = mats._semplice(nome, col, rough)
     for nome, file in INS.disegna_tutto().items():
@@ -704,7 +723,7 @@ def versione_B(mats):
     acque = []
     x1, y0, y1, z0, z1 = 84.0, -6.0, 36.0, -36.0, -6.0
     porta = (-3.0, -32.6)
-    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=(44.2, -3.6, 47.6, -0.2, 4.5, z0 + 0.9 + 0.25 + 0.12))
+    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=(44.8, -3.0, 47.0, -0.8, 4.5, z0 + 0.9 + 0.25 + 0.12))
     canali = K.Costruttore(mats)
     materiali_rapide(mats)
     # sotto il canale, il bacino di raccolta della giostra: acqua ferma e scura tra gli scogli
@@ -801,6 +820,59 @@ def versione_B(mats):
     c.scatola((51.3, 15.0 - W_B - 0.2, pz + 3.3), (51.5, 15.0 + W_B + 0.2, pz + 3.5), 'gioco_rosso')
     insegna(c, 'insegna_rapide', (51.25, 15.0, pz + 1.95), (-1, 0), 4.6, 1.26)
     luci['fari'].append([[49.4, 15.0, pz + 3.9], [51.25, 15.0, pz + 2.5], [1.0, 0.85, 0.6]])
+    # --- la partenza della giostra: la pedana d'imbarco a nord della vasca, con le transenne della coda,
+    # la pila di gommoni, la cabina dell'operatore, i cartelli e le lucine (alcune rotte)
+    zi = VP[4] + 1.0
+    PI = (43.5, VP[3] + 0.2, 50.0, 23.5)
+    P.piattaforma(c, PI[0], PI[1], PI[2], PI[3], zi, lati=('n', 'e', 'o'), pali=False)
+    gambe(c, PI[0], PI[1], PI[2], PI[3], zi - 0.3, z0)
+    for k, yq in enumerate((20.0, 21.3, 22.6)):
+        xa, xb = (45.4, 47.4) if k % 2 == 0 else (46.0, 48.0)
+        x = xa
+        while x <= xb + 0.01:
+            c.cilindro((x, yq, zi), (x, yq, zi + 1.0), 0.03, 'metallo_grigio', seg=8)
+            x += 0.5
+        for h in (0.5, 0.95):
+            c.cilindro((xa, yq, zi + h), (xb, yq, zi + h), 0.022, 'gioco_giallo', seg=8)
+    props_partenza = [gommone(mats, 'ins_B_gommone_pila_0', (44.75, 20.0, zi), 'gomma_arancio', (0.0, 0.0, 10.0)),
+                      gommone(mats, 'ins_B_gommone_pila_1', (44.75, 20.0, zi + 0.64), 'gomma_verde', (0.0, 0.0, 47.0)),
+                      gommone(mats, 'ins_B_gommone_pila_2', (44.8, 20.05, zi + 1.28), 'gomma_gialla', (0.0, 0.0, -20.0))]
+    # la cabina dell'operatore: muri con la finestra verso la coda, il tetto rosso, il quadro dei comandi
+    CB = (48.3, 21.8, PI[2] - 0.12, PI[3] - 0.12)
+    hc = 2.3
+    c.scatola((CB[0], CB[3] - 0.08, zi), (CB[2], CB[3], zi + hc), 'gioco_giallo')
+    c.scatola((CB[2] - 0.08, CB[1], zi), (CB[2], CB[3], zi + hc), 'gioco_giallo')
+    c.scatola((CB[0], CB[1], zi), (CB[2], CB[1] + 0.08, zi + 1.0), 'gioco_giallo')
+    c.scatola((CB[0], CB[1], zi + 1.95), (CB[2], CB[1] + 0.08, zi + hc), 'gioco_giallo')
+    for x in (CB[0], CB[2] - 0.08):
+        c.scatola((x, CB[1], zi + 1.0), (x + 0.08, CB[1] + 0.08, zi + 1.95), 'gioco_giallo')
+    c.scatola((CB[0], CB[1], zi), (CB[0] + 0.08, CB[1] + 0.5, zi + hc), 'gioco_giallo')
+    c.scatola((CB[0] - 0.15, CB[1] - 0.2, zi + hc), (CB[2] + 0.1, CB[3] + 0.1, zi + hc + 0.12), 'gioco_rosso')
+    c.scatola((CB[0] + 0.15, CB[1] + 0.1, zi), (CB[2] - 0.15, CB[1] + 0.55, zi + 0.95), 'nero_opaco')
+    for k, m_ in enumerate(('faro_rosso', 'faro_giallo', 'faro_giallo', 'faro_rosso')):
+        q = Vector((CB[0] + 0.35 + k * 0.28, CB[1] + 0.3, zi + 0.95))
+        c.cilindro(q, q + Vector((0, 0, 0.04)), 0.045, m_, seg=10)
+    insegna(c, 'cartello_altezza', (PI[0] + 0.05, 21.0, zi + 1.1), (1, 0), 0.9, 0.56)
+    q = Vector((47.8, PI[1] + 0.2, zi))
+    c.cilindro(q, q + Vector((0, 0, 1.9)), 0.04, 'nero_opaco', seg=8)
+    insegna(c, 'cartello_turno', q + Vector((0.0, 0.05, 1.15)), (0, -1), 1.0, 0.62)
+    # le lucine della giostra: sul traverso del portale e lungo la ringhiera nord della pedana (alcune rotte)
+    luci['lucine'] = []
+    k = 0
+    y = 15.0 - W_B - 0.15
+    while y <= 15.0 + W_B + 0.15:
+        luci['lucine'].append([51.4, round(y, 2), pz + 3.52, k % 5 != 3, k % 3])
+        y += 0.42
+        k += 1
+    x = PI[0] + 0.2
+    while x <= PI[2] - 0.2:
+        luci['lucine'].append([round(x, 2), PI[3] - 0.03, zi + 1.12, k % 4 != 1, k % 3])
+        x += 0.55
+        k += 1
+    luci['fari'].append([[CB[0] - 0.1, CB[1] - 0.15, zi + hc - 0.1], [46.0, 20.5, zi], [1.0, 0.8, 0.55]])
+    # i murales, ognuno col suo faro sul traliccio più vicino
+    luci['fari'].append([[56.4, 30.0, -9.6], [60.0, 35.8, -13.6], [1.0, 0.92, 0.8], 30.0, 26.0])
+    luci['fari'].append([[82.0, 14.4, -9.6], [83.8, 22.0, -14.6], [1.0, 0.92, 0.8], 30.0, 26.0])
     for (x, y, z, rot, graf) in ((60.0, y1 - 0.02, -15.0, 0, 'p1'), (x1 - 0.02, 22.0, -16.0, 90, 'p3')):
         cart = K.cartellone(mats, 5.0, 2.8, nome=f'ins_B_cartellone_{graf}')
         cart.location = Vector((x, y, z))
@@ -829,21 +901,22 @@ def versione_B(mats):
         q = Vector((x + d[0] * (r + 1.6), y + d[1] * (r + 1.6), z0))
         c.scatola((q.x - 0.25, q.y - 0.25, q.z), (q.x + 0.25, q.y + 0.25, q.z + 0.18), 'nero_opaco')
         c.cilindro(q + Vector((0, 0, 0.18)), q + Vector((0, 0, 0.42)), 0.17, 'nero_opaco', seg=12)
-        luci['fari'].append([[q.x, q.y, q.z + 0.45], [x, y, z0 + h * 0.6], list(col)])
+        luci['fari'].append([[q.x, q.y, q.z + 0.45], [x, y, z0 + h * 0.6], list(col), 30.0, 40.0])
     condotta(c, (X0 + 0.5, y1 - 1.5, -11.0), (x1 - 0.5, y1 - 1.5, -11.0), 1.1, muro=('y', y1))
     condotta(c, (x1 - 1.5, y0 + 0.5, -13.0), (x1 - 1.5, y1 - 0.5, -13.0), 1.0, muro=('x', x1))
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y0 + 0.4, -17.0, 1)
     # i tralicci delle luci di scena, coi fari accesi puntati sul canale (il colore della giostra)
     for (x, y, mira, col) in ((56.0, 30.0, (65.0, 22.6, -22.2), (0.55, 1.0, 0.95)), (82.0, 14.0, (78.0, 14.0, -25.5), (1.0, 0.75, 0.4)),
                               (62.0, -4.0, (55.0, 4.5, -29.0), (1.0, 0.55, 0.85))):
-        c.cilindro((x, y, z0), (x, y, -10.0), 0.18, 'gioco_rosso', seg=12)
+        c.cilindro((x, y, z0), (x, y, -9.2), 0.18, 'gioco_rosso', seg=12)
+        c.scatola((x - 0.25, y - 0.25, -9.8), (x + 0.25, y + 0.25, -9.4), 'nero_opaco')
         c.anello((x, y, z0), (0, 0, 1), 0.0, 0.45, 0.05, 'metallo', seg=12)
         for k in range(3):
             q = Vector((x, y, -10.5 - k * 0.6))
             c.scatola((q.x - 0.25, q.y - 0.25, q.z - 0.2), (q.x + 0.25, q.y + 0.25, q.z + 0.2), 'nero_opaco')
             luci['fari'].append([[q.x, q.y, q.z], [mira[0] + (k - 1) * 2.5, mira[1], mira[2]], list(col)])
     # i gommoni tondi della giostra, rovesciati e abbandonati (tre colori)
-    props = [gommone(mats, 'ins_B_gommone_giallo', (60.8, 14.0, z0 + 0.64), 'gomma_gialla', (180.0, 0.0, 20.0)),
+    props = props_partenza + [gommone(mats, 'ins_B_gommone_giallo', (60.8, 14.0, z0 + 0.64), 'gomma_gialla', (180.0, 0.0, 20.0)),
              gommone(mats, 'ins_B_gommone_blu', (57.8, -3.4, z0 + 0.64), 'gomma_blu', (180.0, 0.0, 70.0)),
              gommone(mats, 'ins_B_gommone_rosso', (48.5, 26.0, z0), 'gomma_rossa', (0.0, 0.0, -35.0))]
     for (nome, x, y, z, rot) in (('salvagente_nave', 48.0, 0.0, zl + 0.2, 30), ('paperella_gigante', 70.5, 13.8, b1.z - 2.9 + 1.1, 200),
@@ -858,7 +931,7 @@ def versione_B(mats):
     luci['lei'] += [[57.0, 17.0, zr - 1.0 - D_B - 1.2, 50.0, 'insegue', 'nuota nel canale dietro di te'],
                     [69.0, 9.5, b2.z - D_B - 0.5, 60.0, 'insegue', 'sale sullo scoglio del bivio 2'],
                     [45.2, 6.6, fine.z - D_B - 0.6, 180.0, 'insegue', 'contro la saracinesca'],
-                    [45.9, -1.9, zl + 0.37, 300.0, 'affacciata', 'SB1: sbuca dal pozzo di scarico della laguna']]
+                    [45.9, -1.9, zl + 0.37 - 0.8, 300.0, 'affacciata', 'SB1: sbuca dal pozzo di scarico della laguna']]
 
     percorso = [('bocca', BOCCA), ('vasca di partenza', Vector(((VP[0] + VP[2]) / 2, 15.0, VP[4])))] + [('canale', p) for p in r0[::4]]
     percorso += [('bivio', b1)] + [('canale', p) for p in rG1[::4]] + [('canale', p) for p in r2[::4]]

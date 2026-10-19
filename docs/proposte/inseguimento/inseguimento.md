@@ -97,10 +97,10 @@ Dopo un tubo corto si arriva nella vasca di partenza, poi si scende nel **canale
 **In totale circa 6:30 senza errori.** La B è più d'azione e ha meno pause: lei la vedi quasi sempre, dietro di te nel canale, e i bivi si fanno con la corrente che spinge.
 
 ![partenza](inseguimento_B_1_partenza.jpg)
-*La vasca di partenza: il portale con l'insegna "LE RAPIDE" e l'inizio del canale.*
+*La partenza: la vasca d'imbarco, la pedana con le transenne della coda, la pila di gommoni, la cabina dell'operatore coi comandi accesi, i cartelli e il portale "LE RAPIDE" con le lucine (alcune rotte).*
 
-![rapide](inseguimento_B_1b_rapide.jpg)
-*Nel canale delle rapide, verso il primo bivio: senza torcia la strada si legge con la schiuma, i lampioncini sulle sponde, gli scogli illuminati dal basso e il bersaglio verde in fondo.*
+![muro nord](inseguimento_B_1b_muro_nord.jpg)
+*Dalla pedana d'imbarco verso il muro nord: gli scogli finti illuminati dal basso, il traliccio coi fari colorati e il murale.*
 
 ![lei ti raggiunge](inseguimento_B_2_lei_ti_raggiunge.jpg)
 *Lei nuota nel canale dietro di te.*
@@ -125,11 +125,13 @@ Un video per versione (circa 30 s): la camera segue la strada dalla bocca all'us
 
 - **A:**
   - Le vasche sono pozze scure: l'acqua torbida riflette poco. Nel gioco può schiarirsi un po' sotto le lampade da lavoro.
-  - Nel secondo bivio la bocca del tubo d'arrivo sta in mezzo alle due paratie e confonde un po'. Nel gioco conviene farla arrivare dal lato.
+  - Fatto: nel secondo bivio il tubo d'arrivo ora entra dal lato, e le due paratie restano libere.
+  - Fatto: in SB1 lei è in agguato, aggrappata al bordo del pozzo con l'occhio a pelo d'acqua (prima sembrava a braccia tese).
   - Nel video l'inizio della spirale resta scuro per circa un secondo.
 - **B:**
-  - Il fondo della sala è ancora scuro tra uno scoglio e l'altro: si leggono le sagome, non i dettagli.
-  - La schiuma è a chiazze e non a strisce che seguono la corrente. Nel gioco si orienta lungo il canale.
+  - Fatto: la schiuma ora fa strisce lunghe che corrono nel verso della corrente, più fitte nei salti e contro le sponde, e il pelo si muove.
+  - Fatto: la partenza è piena (pedana, coda, gommoni, cabina, cartelli, lucine).
+  - Il fondo della sala resta scuro tra uno scoglio e l'altro: gli scogli si leggono come sagome con i colori dei fari (meglio nel video e nella grata), meno nei dettagli.
   - Gli scogli sono massi lisci di vetroresina: nel gioco si possono dipingere meglio, con le crepe e le alghe finte.
 - **Tutte e due:** le pose di lei sono quelle del modello (insegue, affacciata). Le animazioni dell'inseguimento vero sono da fare.
 

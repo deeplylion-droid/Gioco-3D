@@ -42,7 +42,8 @@ var VERSIONI := {
 	"B": {
 		"fari": [[b(50.0, -3.9, -15.8), b(47.0, 15.0, -21.2)], [b(64.0, -3.9, -15.8), b(65.0, 22.6, -22.2)],
 				[b(74.0, -3.9, -15.8), b(72.5, 9.0, -26.3)], [b(45.0, -3.9, -15.8), b(47.8, 0.0, -35.0)]],
-		"1_partenza": [b(45.2, 14.4, -19.5), b(56.0, 15.6, -18.9), 74.0, []],
+		"1_partenza": [b(44.6, 12.3, -19.4), b(49.8, 20.6, -19.2), 80.0, []],
+		"1b_muro_nord": [b(46.6, 23.1, -18.4), b(57.0, 31.5, -21.0), 80.0, []],
 		"2_lei_ti_raggiunge": [b(63.0, 21.6, -20.5), b(57.0, 17.0, -23.0), 74.0, [0]],
 		"3_bivio_2": [b(76.6, 12.0, -24.0), b(70.0, 9.0, -25.8), 76.0, [1]],
 		"4_grata": [b(44.0, 0.9, -34.1), b(45.2, 4.6, -32.4), 76.0, [2]],
@@ -129,8 +130,13 @@ func _luci() -> void:
 		_neon(bv(ne))
 	for la in dati.get("lanterne", []):
 		_lanterna(bv(la))
+	var n_lucine := 0
+	for lu in dati.get("lucine", []):
+		_lucina(bv(lu), lu[3], int(lu[4]), n_lucine)
+		n_lucine += 1
 	for fa in dati.get("fari", []):
-		_faro(bv(fa[0]), bv(fa[1]), Color(fa[2][0], fa[2][1], fa[2][2]) if fa.size() > 2 else Color(1.0, 0.88, 0.72))
+		_faro(bv(fa[0]), bv(fa[1]), Color(fa[2][0], fa[2][1], fa[2][2]) if fa.size() > 2 else Color(1.0, 0.88, 0.72),
+				float(fa[3]) if fa.size() > 3 else 18.0, float(fa[4]) if fa.size() > 4 else 20.0)
 
 
 var _fonti := {}
@@ -353,7 +359,7 @@ func _uscita(p: Vector3) -> void:
 
 
 ## Faro da cantiere legato alla ringhiera: scatola nera col vetro acceso, luce bianca calda.
-func _faro(p: Vector3, mira: Vector3, col := Color(1.0, 0.88, 0.72)) -> void:
+func _faro(p: Vector3, mira: Vector3, col := Color(1.0, 0.88, 0.72), energia := 18.0, apertura := 20.0) -> void:
 	var corpo := MeshInstance3D.new()
 	var bx := BoxMesh.new()
 	bx.size = Vector3(0.45, 0.35, 0.2)
@@ -379,9 +385,9 @@ func _faro(p: Vector3, mira: Vector3, col := Color(1.0, 0.88, 0.72)) -> void:
 	mv.emission = col
 	var l := SpotLight3D.new()
 	l.light_color = col
-	l.light_energy = 18.0
+	l.light_energy = energia
 	l.spot_range = 40.0
-	l.spot_angle = 20.0
+	l.spot_angle = apertura
 	l.spot_attenuation = 0.5
 	l.shadow_enabled = true
 	l.light_volumetric_fog_energy = 0.8
@@ -403,6 +409,37 @@ func _lanterna(p: Vector3) -> void:
 	radice.add_child(l)
 
 
+## Una lucina della giostra (lampadina colorata sul traverso o sulla ringhiera): accesa o rotta. Una su tre
+## accese fa anche luce.
+func _lucina(p: Vector3, accesa: bool, tinta: int, k: int) -> void:
+	var colori := [Color(1.0, 0.75, 0.3), Color(1.0, 0.3, 0.25), Color(0.3, 0.95, 0.9)]
+	var col: Color = colori[tinta % 3]
+	var bulbo := MeshInstance3D.new()
+	var sf := SphereMesh.new()
+	sf.radius = 0.055
+	sf.height = 0.11
+	bulbo.mesh = sf
+	var m := StandardMaterial3D.new()
+	if accesa:
+		m.albedo_color = col
+		m.emission_enabled = true
+		m.emission = col
+		m.emission_energy_multiplier = 7.0
+	else:
+		m.albedo_color = Color(0.18, 0.17, 0.16)
+		m.roughness = 0.3
+	bulbo.material_override = m
+	bulbo.position = p
+	radice.add_child(bulbo)
+	if accesa and k % 3 == 0:
+		var l := OmniLight3D.new()
+		l.light_color = col
+		l.light_energy = 1.2
+		l.omni_range = 3.5
+		l.position = p
+		radice.add_child(l)
+
+
 ## L'acqua bianca delle rapide: schiuma che corre, a strisce e a chiazze, un po' luminosa per leggersi al buio.
 func _materiale_schiuma() -> ShaderMaterial:
 	var sh := Shader.new()
@@ -420,20 +457,26 @@ float rumore(vec2 p) {
 	return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
 varying vec3 mondo;
+varying float salto;
 void vertex() {
 	mondo = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	VERTEX.y += 0.05 * sin(mondo.x * 3.1 + TIME * 4.0) * cos(mondo.z * 2.7 + TIME * 3.3);
+	salto = UV2.x;
+	// il pelo increspato che corre col canale
+	VERTEX.y += (0.035 + 0.05 * salto) * sin(UV.y * 5.0 - TIME * 9.0 + UV.x * 2.0) * sin(UV.x * 9.0 + TIME * 3.0);
 }
 void fragment() {
-	vec2 q = mondo.xz * 2.4;
-	float n = rumore(q * 1.3 + vec2(TIME * 0.7, TIME * 1.1)) * 0.55 + rumore(q * 3.7 - vec2(TIME * 1.6, TIME * 0.4)) * 0.3
-		+ rumore(q * 9.0 + TIME * 2.0) * 0.15;
-	float bianco = smoothstep(0.5, 0.78, n) * 0.85 + smoothstep(0.62, 0.66, n) * 0.15;
-	vec3 acqua = vec3(0.05, 0.22, 0.24);
-	ALBEDO = mix(acqua, vec3(0.92, 0.97, 0.98), bianco);
-	ROUGHNESS = mix(0.08, 0.7, bianco);
-	EMISSION = vec3(0.12, 0.18, 0.2) * bianco;
-	NORMAL_MAP = normalize(vec3(rumore(q * 5.0 + TIME) - 0.5, rumore(q * 5.0 - TIME) - 0.5, 1.0)) * 0.5 + 0.5;
+	// UV.x attraverso il canale (0..1), UV.y lungo la corrente in metri: strisce allungate che scorrono veloci
+	float v = UV.y - TIME * 3.2;
+	float x = UV.x;
+	float strisce = rumore(vec2(x * 26.0, v * 1.1)) * 0.5 + rumore(vec2(x * 55.0, v * 2.6)) * 0.32 + rumore(vec2(x * 110.0, v * 5.0)) * 0.18;
+	float bordo = smoothstep(0.32, 0.0, x) + smoothstep(0.68, 1.0, x);
+	float soglia = mix(0.7, 0.36, clamp(salto * 1.2 + bordo * 0.6, 0.0, 1.0));
+	float bianco = smoothstep(soglia, soglia + 0.1, strisce);
+	vec3 acqua = mix(vec3(0.04, 0.2, 0.22), vec3(0.12, 0.36, 0.36), rumore(vec2(x * 4.0, v * 0.3)));
+	ALBEDO = mix(acqua, vec3(0.93, 0.97, 0.98), bianco);
+	ROUGHNESS = mix(0.06, 0.65, bianco);
+	EMISSION = vec3(0.1, 0.16, 0.17) * bianco;
+	NORMAL_MAP = normalize(vec3(rumore(vec2(x * 20.0, v * 3.0)) - 0.5, rumore(vec2(x * 20.0 + 7.0, v * 3.0)) - 0.5, 1.2)) * 0.5 + 0.5;
 }
 """
 	var m := ShaderMaterial.new()
@@ -532,6 +575,11 @@ func _video() -> void:
 			var r := Vector3(p.x - cs.x, 0, p.z - cs.z)
 			if r.length() < 6.5 and p.y < -26.0:
 				p = dove.call(s_ - 1.5) + r.normalized() * 2.8 + Vector3(0, 0.4, 0)
+		# vicino a lei la camera si alza: non le passa attraverso
+		for m in lei:
+			var dl := Vector2(p.x - m.position.x, p.z - m.position.z).length()
+			if dl < 3.0 and m != lei[lei.size() - 1]:
+				p.y = maxf(p.y, m.position.y + 4.8 + (3.0 - dl))
 		cam.position = cam.position.lerp(p, 0.5)
 		guarda = guarda.lerp(dove.call(s_ + 5.0), 0.12)
 		if guarda.distance_to(cam.position) > 0.2:
