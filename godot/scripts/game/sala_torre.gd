@@ -62,52 +62,219 @@ static func b(v: Array) -> Vector3:
 	return Vector3(v[0], v[2], -v[1])
 
 
+## I tre GLB della sala (struttura, scivoli, prop), nell'ordine: stanno qui e non come figli della scena
+## così si caricano col thread ma entrano nella sala uno per passo (un GLB intero fa un fotogramma lungo).
+## Vuoto: si caricano da DIR.
+@export var modelli: Array[PackedScene] = []
+## Vero quando la sala è costruita del tutto (vedi [method costruisci_a_pezzi]).
+var costruita := false
+## Se vero, _ready non costruisce niente: la costruisce chi la aggiunge, con [method costruisci_a_pezzi]
+## (la sala principale, mentre il giocatore è all'enigma degli acquari, senza fotogrammi lunghi).
+var costruzione_a_pezzi := false
+var _a_pezzi := false
+var _coda: Array = []
+signal pronta
+
+
 func _ready() -> void:
+	if not costruzione_a_pezzi:
+		for passo in _passi():
+			(passo as Callable).call()
+		costruita = true
+
+
+## La costruzione divisa in passi brevi, uno per fotogramma (al più [param ms_per_fotogramma] ms di fila).
+func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
+	_a_pezzi = true
+	var t0 := Time.get_ticks_usec()
+	var k := 0
+	_coda = _passi()
+	while not _coda.is_empty():
+		var passo: Callable = _coda.pop_front()
+		var tp := Time.get_ticks_usec()
+		passo.call()
+		if OS.has_environment("TORRE_TEMPI"):
+			print("passo %d: %.1f ms" % [k, (Time.get_ticks_usec() - tp) / 1000.0])
+		k += 1
+		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
+			await get_tree().process_frame
+			t0 = Time.get_ticks_usec()
+	costruita = true
+	pronta.emit()
+
+
+## Lo strato di disegno usato da [method prepara_materiali]: la camera del gioco non lo vede.
+const STRATO_PREPARA := 1 << 19
+
+
+## Disegna la sala una volta fuori vista (una camera sua in un SubViewport con le stesse impostazioni di
+## [param principale] e lo stesso mondo), così il motore compila adesso le pipeline dei suoi materiali e
+## al primo fotogramma vero non si ferma (riscontro sul primo spruzzo: l'utente nota ogni blocco).
+## Intanto la sala sta su uno strato che la camera del gioco non disegna, e le sue luci illuminano solo
+## quello strato. Alla fine torna com'era (nascosta, se lo era).
+func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
+	var visuali := find_children("*", "VisualInstance3D", true, false)
+	var aabb := AABB()
+	var primo := true
+	var strati := {}
+	var maschere := {}
+	for v in visuali:
+		var vi := v as VisualInstance3D
+		strati[vi] = vi.layers
+		vi.layers = STRATO_PREPARA
+		if vi is Light3D:
+			maschere[vi] = (vi as Light3D).light_cull_mask
+			(vi as Light3D).light_cull_mask = STRATO_PREPARA
+		elif vi is GeometryInstance3D:
+			var box := vi.global_transform * vi.get_aabb()
+			aabb = box if primo else aabb.merge(box)
+			primo = false
+	var era_visibile := visible
+	visible = true
+	var sv := SubViewport.new()
+	sv.name = "PreparaMateriali"
+	sv.size = Vector2i(320, 180)
+	sv.msaa_3d = principale.msaa_3d
+	sv.screen_space_aa = principale.screen_space_aa
+	sv.use_taa = principale.use_taa
+	sv.use_debanding = principale.use_debanding
+	sv.use_hdr_2d = principale.use_hdr_2d
+	sv.positional_shadow_atlas_size = principale.positional_shadow_atlas_size
+	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
+	sv.world_3d = principale.find_world_3d()
+	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var cam := Camera3D.new()
+	cam.cull_mask = STRATO_PREPARA
+	cam.fov = 100.0
+	cam.far = 500.0
+	sv.add_child(cam)
+	add_child(sv)
+	var centro := aabb.get_center()
+	var raggio := aabb.size.length() * 0.5
+	# da fuori, guardando il centro: tutta la sala nell'inquadratura (niente scartato dal frustum)
+	cam.look_at_from_position(centro + Vector3(0.6, 0.5, 0.8).normalized() * raggio * 1.3, centro, Vector3.UP)
+	cam.current = true
+	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
+	for i in fotogrammi + 1:
+		await get_tree().process_frame
+	sv.queue_free()
+	for vi in strati:
+		if is_instance_valid(vi):
+			(vi as VisualInstance3D).layers = strati[vi]
+	for l in maschere:
+		if is_instance_valid(l):
+			(l as Light3D).light_cull_mask = maschere[l]
+	visible = era_visibile
+
+
+## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
+func _passi() -> Array:
+	var out: Array = []
+	for i in 3:
+		out.append(func(): _modello(i))
+	out.append(_prepara_dati)
+	out.append_array(_passi_scivoli())
+	out.append_array([_prepara_imbocchi, _checkpoint, _caduta_sul_fondo, _polaroid])
+	out.append_array(_passi_balconata())
+	out.append(_vasca_fondo)
+	if crea_luci:
+		out.append_array(_passi_luci())
+	out.append(_luce_lei)
+	return out
+
+
+## Mette nella sala il GLB [param i] (0 struttura, 1 scivoli, 2 prop): da [member modelli] (caricati
+## col thread insieme alla scena) o, se la sala è creata da codice, da DIR.
+func _modello(i: int) -> void:
+	var nome: String = ["torre_struttura", "torre_scivoli", "torre_prop"][i]
+	var nodo: String = nome.capitalize().replace(" ", "")
+	if get_node_or_null(nodo) != null:
+		return
+	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else load(DIR + nome + ".glb")
+	var glb: Node3D = scena.instantiate()
+	glb.name = nodo
+	if not _a_pezzi:
+		add_child(glb)
+		return
+	# A pezzi: il GLB entra vuoto e i suoi nodi lo raggiungono uno per passo (ogni nodo entra senza
+	# figli, e i figli vengono dopo: una mesh grande con la sua collisione è già un passo lungo).
+	_coda = _passi_figli(glb, _stacca_figli(glb)) + _coda
+	add_child(glb)
+
+
+func _stacca_figli(n: Node) -> Array:
+	var figli := n.get_children()
+	for c in figli:
+		n.remove_child(c)
+	return figli
+
+
+## Un passo per ogni nodo di [param figli], da mettere sotto [param padre]: ognuno entra senza i suoi
+## figli, che entrano nei passi subito dopo.
+func _passi_figli(padre: Node, figli: Array) -> Array:
+	var passi: Array = []
+	for c in figli:
+		passi.append(func():
+			var nipoti := _stacca_figli(c)
+			var tp := Time.get_ticks_usec()
+			padre.add_child(c)
+			if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 5000:
+				print("  nodo %s (%s): %.1f ms" % [c.name, c.get_class(), (Time.get_ticks_usec() - tp) / 1000.0])
+			if not nipoti.is_empty():
+				_coda = _passi_figli(c, nipoti) + _coda)
+	return passi
+
+
+func _prepara_dati() -> void:
 	dati = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
 	var acqua: Material = load("res://assets/materials/sala/acqua_torbida.tres")
-	# i tre GLB sono figli della scena (scenes/sala/torre/sala_torre.tscn), così si caricano col thread;
-	# se la si crea da codice si caricano qui
-	for nome in ["torre_struttura", "torre_scivoli", "torre_prop"]:
-		var nodo: String = String(nome).capitalize().replace(" ", "")
-		if get_node_or_null(nodo) == null:
-			var glb: Node3D = (load(DIR + nome + ".glb") as PackedScene).instantiate()
-			glb.name = nodo
-			add_child(glb)
 	for m in find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = acqua
-	_scivoli()
-	_prepara_imbocchi()
-	_checkpoint()
-	_caduta_sul_fondo()
-	_polaroid()
-	_balconata()
-	_vasca_fondo()
-	if crea_luci:
-		_luci(JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_luci.json")))
-	_luce_lei()
 
 
 ## I corpi statici dei canali della discesa vanno nel gruppo "scivolo". Tutte le forme trimesh della sala
 ## collidono da tutte e due le facce (l'importatore le fa da una sola: dentro i canali e i tubi si passerebbe
 ## attraverso le sponde viste dall'altra parte).
 func _scivoli() -> void:
-	for f in find_children("*", "CollisionShape3D", true, false):
-		var forma := (f as CollisionShape3D).shape as ConcavePolygonShape3D
-		if forma:
-			forma.backface_collision = true
-	# i canali della discesa: un corpo per pezzo, costruito dalla linea del fondo come nella scena di prova
-	# degli scivoli di grafica (scenes/test/scivoli_prova.gd: canale a U tondo, sponde a 84 gradi)
-	var radice := Node3D.new()
-	radice.name = "CollisioniDiscesa"
-	add_child(radice)
-	for t in dati["tratti"]:
-		for j in (t["pezzi"] as Array).size():
-			var linea := PackedVector3Array()
-			for q in t["linee"][j]:
-				linea.append(b(q))
-			radice.add_child(_corpo_scivolo(String(t["pezzi"][j]), linea))
-			if j == 0:
-				radice.add_child(_rampa_imbocco(String(t["pezzi"][j]) + "_rampa", linea))
+	for passo in _passi_scivoli():
+		(passo as Callable).call()
+
+
+## I passi di [method _scivoli]: le sponde dalle due facce, poi un tratto della discesa per passo.
+func _passi_scivoli() -> Array:
+	# le sponde dalle due facce: cambiare backface_collision ricostruisce la forma (le più grandi
+	# costano decine di ms), una per passo
+	var forme: Array = []
+	var out: Array = [func():
+		for f in find_children("*", "CollisionShape3D", true, false):
+			var forma := (f as CollisionShape3D).shape as ConcavePolygonShape3D
+			if forma and not forma.backface_collision:
+				forme.append(forma)]
+	for i in 400:
+		out.append(func():
+			if i < forme.size():
+				(forme[i] as ConcavePolygonShape3D).backface_collision = true)
+	out.append(func():
+		# i canali della discesa: un corpo per pezzo, costruito dalla linea del fondo come nella scena di
+		# prova degli scivoli di grafica (scenes/test/scivoli_prova.gd: canale a U tondo, sponde a 84 gradi)
+		var radice := Node3D.new()
+		radice.name = "CollisioniDiscesa"
+		add_child(radice))
+	# quanti tratti ci sono si sa solo dopo _prepara_dati: i passi leggono dati quando partono
+	for i in 64:
+		out.append(func():
+			if i >= (dati["tratti"] as Array).size():
+				return
+			var radice := get_node(^"CollisioniDiscesa")
+			var t: Dictionary = dati["tratti"][i]
+			for j in (t["pezzi"] as Array).size():
+				var linea := PackedVector3Array()
+				for q in t["linee"][j]:
+					linea.append(b(q))
+				radice.add_child(_corpo_scivolo(String(t["pezzi"][j]), linea))
+				if j == 0:
+					radice.add_child(_rampa_imbocco(String(t["pezzi"][j]) + "_rampa", linea)))
+	return out
 
 
 const RAGGIO_CANALE := 1.05
@@ -367,19 +534,37 @@ func _polaroid() -> void:
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.
 func _balconata() -> void:
+	for passo in _passi_balconata():
+		(passo as Callable).call()
+
+
+## I passi di [method _balconata]: un bambino per passo (ognuno costa decine di ms), poi il lampo.
+func _passi_balconata() -> Array:
+	var out: Array = []
+	for i in 4:
+		out.append(func(): _bambino_balconata(i))
+	out.append(_lampo_balconata)
+	return out
+
+
+func _bambino_balconata(i: int) -> void:
 	var c := b(dati["balconata"]["centro"])
 	var salto := b(dati["balconata"]["primo_salto"])
-	for i in 4:
-		var bimbo: Node3D = (load(BAMBINI[i % 2]) as PackedScene).instantiate()
-		bimbo.name = "BambinoBalconata%d" % i
-		add_child(bimbo)
-		bimbo.global_position = c + Vector3(-1.8 + 1.2 * i, 0.0, -0.3)
-		var verso := Vector3(salto.x, bimbo.global_position.y, salto.z)
-		if verso.distance_to(bimbo.global_position) > 0.1:
-			bimbo.look_at(verso, Vector3.UP, true)
-		bimbo.visible = false
-		bimbo.process_mode = Node.PROCESS_MODE_DISABLED
-		_bambini.append(bimbo)
+	var bimbo: Node3D = (load(BAMBINI[i % 2]) as PackedScene).instantiate()
+	bimbo.name = "BambinoBalconata%d" % i
+	add_child(bimbo)
+	bimbo.global_position = c + Vector3(-1.8 + 1.2 * i, 0.0, -0.3)
+	var verso := Vector3(salto.x, bimbo.global_position.y, salto.z)
+	if verso.distance_to(bimbo.global_position) > 0.1:
+		bimbo.look_at(verso, Vector3.UP, true)
+	bimbo.visible = false
+	bimbo.process_mode = Node.PROCESS_MODE_DISABLED
+	_bambini.append(bimbo)
+
+
+func _lampo_balconata() -> void:
+	var c := b(dati["balconata"]["centro"])
+	var salto := b(dati["balconata"]["primo_salto"])
 	var area := Area3D.new()
 	area.name = "LampoBalconata"
 	area.collision_layer = 0
@@ -495,19 +680,30 @@ func _luce_lei() -> void:
 
 
 func _luci(d: Dictionary) -> void:
+	for passo in _passi_luci(d):
+		(passo as Callable).call()
+
+
+## I passi di [method _luci]: una lampada (o un faro, o un gocciolatoio) per passo.
+func _passi_luci(d: Dictionary = {}) -> Array:
+	if d.is_empty():
+		d = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_luci.json"))
 	var versi := {"e": Vector3.RIGHT, "o": Vector3.LEFT, "n": Vector3.FORWARD, "s": Vector3.BACK}
-	var radice := Node3D.new()
-	radice.name = "Luci"
-	add_child(radice)
+	var out: Array = [func():
+		var radice := Node3D.new()
+		radice.name = "Luci"
+		add_child(radice)]
+	var luci := func() -> Node3D: return get_node(^"Luci") as Node3D
 	for e in d["emergenza"]:
-		_emergenza(radice, b(e[0]), versi[e[1]])
+		out.append(func(): _emergenza(luci.call(), b(e[0]), versi[e[1]]))
 	for p in d["lavoro"]:
-		_lampada(radice, b(p), str(p[3]) if (p as Array).size() > 3 else "")
+		out.append(func(): _lampada(luci.call(), b(p), str(p[3]) if (p as Array).size() > 3 else ""))
 	for f in d["fari"]:
-		_faro(radice, b(f[0]), b(f[1]), b(f[2]) if (f as Array).size() > 2 else null)
+		out.append(func(): _faro(luci.call(), b(f[0]), b(f[1]), b(f[2]) if (f as Array).size() > 2 else null))
 	for g in d["gocce"]:
-		_gocce(radice, b(g))
-	_catena(radice, b(d["lei"]))
+		out.append(func(): _gocce(luci.call(), b(g)))
+	out.append(func(): _catena(luci.call(), b(d["lei"])))
+	return out
 
 
 static func _emissivo(colore: Color, energia: float) -> StandardMaterial3D:

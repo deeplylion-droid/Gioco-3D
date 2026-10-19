@@ -72,6 +72,10 @@ var _torre_in_caricamento := false
 var _torre_pronta: PackedScene
 var _torre_voluta := false
 var _torre_fallita := false
+# La torre costruita a pezzi e preparata (materiali già disegnati fuori vista) mentre si è all'enigma:
+# resta nascosta e ferma finché il portone non si apre.
+var _torre_nascosta: Node3D
+var _torre_preparata := false
 var _dentro_torre := false
 
 # Il bersaglio del getto sulla faccia della medusa (_faccia_bagnabile).
@@ -379,8 +383,12 @@ func _carica_torre() -> void:
 	_torre_voluta = true
 	if sala_torre:
 		return
-	if _torre_pronta:
-		_aggiungi_torre(_torre_pronta)
+	if _torre_preparata:
+		_mostra_torre()
+	elif _torre_nascosta:
+		return  # si sta preparando: entra appena è pronta
+	elif _torre_pronta:
+		_prepara_torre()
 	elif _torre_fallita:
 		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
 	elif not _torre_in_caricamento:
@@ -407,8 +415,7 @@ func _process(_delta: float) -> void:
 	if stato == ResourceLoader.THREAD_LOAD_LOADED:
 		_torre_in_caricamento = false
 		_torre_pronta = ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
-		if _torre_voluta:
-			_aggiungi_torre(_torre_pronta)
+		_prepara_torre()
 	elif stato == ResourceLoader.THREAD_LOAD_FAILED or stato == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 		# Riserva: se il thread non ce la fa, la torre si carica qui (un attimo di fermo), così il
 		# giocatore non resta mai davanti al portone aperto senza la sala.
@@ -419,11 +426,51 @@ func _process(_delta: float) -> void:
 			_aggiungi_torre(load(sala_torre_scena) as PackedScene)
 
 
+## La torre caricata entra nella sala nascosta e ferma, si costruisce un pezzo per fotogramma e si
+## disegna una volta fuori vista; all'apertura del portone basta mostrarla ([method _mostra_torre]).
+func _prepara_torre() -> void:
+	if sala_torre or _torre_nascosta or _torre_pronta == null:
+		return
+	var t := _torre_pronta.instantiate() as Node3D
+	t.set(&"costruzione_a_pezzi", true)
+	t.visible = false
+	t.process_mode = Node.PROCESS_MODE_DISABLED
+	_torre_nascosta = t
+	add_child(t)
+	await t.call(&"costruisci_a_pezzi")
+	if not is_instance_valid(t) or t != _torre_nascosta:
+		return
+	await t.call(&"prepara_materiali", get_viewport())
+	if not is_instance_valid(t) or t != _torre_nascosta:
+		return
+	_torre_preparata = true
+	if _torre_voluta:
+		_mostra_torre()
+
+
+func _mostra_torre() -> void:
+	if sala_torre or _torre_nascosta == null:
+		return
+	sala_torre = _torre_nascosta
+	_torre_nascosta = null
+	sala_torre.process_mode = Node.PROCESS_MODE_INHERIT
+	sala_torre.visible = true
+	_completa_torre()
+
+
+## Riserva e ripartenze dentro la torre: la torre si mette subito, costruita tutta in una volta.
 func _aggiungi_torre(scena: PackedScene) -> void:
 	if sala_torre or scena == null:
 		return
+	if _torre_nascosta and is_instance_valid(_torre_nascosta):
+		_torre_nascosta.queue_free()
+		_torre_nascosta = null
 	sala_torre = scena.instantiate()
 	add_child(sala_torre)
+	_completa_torre()
+
+
+func _completa_torre() -> void:
 	# il guscio provvisorio dietro il portone (sala_architettura.glb) lascia il posto alla sala vera
 	var guscio := find_child("sala_torre_guscio", true, false)
 	if guscio:
