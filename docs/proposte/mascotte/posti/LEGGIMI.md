@@ -1,9 +1,9 @@
 # Posti proposti per le statue (18 ottobre)
 
 Scatti dal motore (Godot, preset Alto, luce vera del gioco), dagli occhi del giocatore (1,7 m), **senza
-torcia** (tolta dal gioco nella v0.3.6, 19 ottobre). I primi scatti con la torcia sono in `con_torcia/`. Le statue sono montate al volo da `godot/proposte/mascotte/scatti_statue.gd` (escluso
+torcia**, sulla v0.3.6 (19 ottobre). I primi scatti con la torcia sono in `con_torcia/`. Le statue sono montate al volo da `godot/proposte/mascotte/scatti_statue.gd` (escluso
 dall'export): nel gioco non c'è niente. In ogni scatto si vede solo la statua di quel posto.
-`pianta_posti.jpg`: la sala vista dall'alto con i nove posti. Per ogni posto il motore ha controllato
+`pianta_posti.jpg`: la sala vista dall'alto (con una luce sua, solo per orientarsi) con i nove posti. Per ogni posto il motore ha controllato
 che il basamento poggi sul pavimento e che non tocchi niente.
 
 | Posto | Coordinate (x, z), rotazione | Dove |
@@ -23,3 +23,4 @@ Per rifare gli scatti: `godot/proposte/mascotte/giro2.sh <cartella>` (e `giro1.s
 Senza torcia: lo squalo S1 resta colorato nella luce rossa dell'ingresso; le altre statue si leggono come
 sagome scure in controluce sui muri illuminati. A1 (ingresso, a sinistra) si vede poco: piccola e scura.
 Nello scatto al buio di B1 (tappa 8) il polpo è quasi nascosto dietro la medusa della fossa.
+Negli scatti al buio la vasca centrale è vuota, come nel gioco dopo la tappa 7.
