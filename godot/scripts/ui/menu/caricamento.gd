@@ -33,6 +33,7 @@ var fase := Fase.CARICAMENTO
 var avanzamento := 0.0
 
 var _vero := 0.0
+var _pacchetto: PackedScene
 var _trascorso := 0.0
 var _barra: ProgressBar
 var _percento: Label
@@ -53,7 +54,7 @@ func _ready() -> void:
 	_costruisci()
 	var err := ResourceLoader.load_threaded_request(scena, "PackedScene")
 	if err != OK:
-		_errore("Non riesco a caricare la sala (%s)." % error_string(err))
+		_riserva()
 	if Dissolvenza.presente(get_tree()):
 		Dissolvenza.di(get_tree()).schiarisci(0.6)
 
@@ -83,8 +84,11 @@ func _process(delta: float) -> void:
 		ResourceLoader.THREAD_LOAD_LOADED:
 			_vero = 1.0
 		ResourceLoader.THREAD_LOAD_FAILED, ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
-			_errore("Il caricamento della sala non è riuscito.")
-			return
+			if _pacchetto == null:
+				_riserva()
+			if _pacchetto == null:
+				return
+			st = ResourceLoader.THREAD_LOAD_LOADED
 	# Al massimo il 60% al secondo: la barra scorre senza salti.
 	avanzamento = move_toward(avanzamento, _vero, delta * 0.6)
 	_barra.value = avanzamento
@@ -93,10 +97,21 @@ func _process(delta: float) -> void:
 		_entra()
 
 
+## Riserva: se il caricamento nel thread non parte o fallisce, la sala si carica qui, di seguito
+## (la barra si ferma un attimo). Solo se non riesce neanche così si mostra l'errore.
+func _riserva() -> void:
+	push_warning("Caricamento: il thread non ce la fa (%s), carico la sala subito" % scena)
+	_pacchetto = load(scena) as PackedScene
+	if _pacchetto == null:
+		_errore("Il caricamento della sala non è riuscito.")
+	else:
+		_vero = 1.0
+
+
 func _entra() -> void:
 	fase = Fase.INGRESSO
 	_stato.text = "Pronto"
-	var pacchetto := ResourceLoader.load_threaded_get(scena) as PackedScene
+	var pacchetto := _pacchetto if _pacchetto else ResourceLoader.load_threaded_get(scena) as PackedScene
 	if pacchetto == null:
 		_errore("Il caricamento della sala non è riuscito.")
 		return

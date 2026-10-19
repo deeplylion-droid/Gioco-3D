@@ -142,10 +142,10 @@ func _run() -> void:
 	check(level.get(&"sala_torre") == null, "prima che il portone si apra la torre non è caricata")
 	portone.apri()
 	var t0 := Time.get_ticks_msec()
-	for i in 3000:
+	# a tempo, non a fotogrammi: su una macchina lenta (renderer finto, CPU) il thread ci mette più di
+	# 3000 fotogrammi senza disegno
+	while level.get(&"sala_torre") == null and Time.get_ticks_msec() - t0 < 90000:
 		await get_tree().process_frame
-		if level.get(&"sala_torre") != null:
-			break
 	var sala: SalaTorre = level.get(&"sala_torre")
 	check(sala != null, "il portone fa caricare la torre in un thread (%.1f s)" % ((Time.get_ticks_msec() - t0) / 1000.0))
 	if sala == null:
@@ -153,6 +153,22 @@ func _run() -> void:
 		return
 	await _frames(5)
 	check(level.find_child("sala_torre_guscio", true, false) == null, "il guscio vecchio dietro il portone non c'è più")
+	# La riserva: se il thread fallisse la torre si caricherebbe subito (mai bloccati davanti al portone).
+	# Qui lo stato del thread è INVALID_RESOURCE perché il risultato è già stato preso.
+	var vecchia := sala
+	level.remove_child(vecchia)
+	level.set(&"sala_torre", null)
+	level.set(&"_torre_in_caricamento", true)
+	await _frames(3)
+	var riserva: Node = level.get(&"sala_torre")
+	check(riserva != null and riserva != vecchia and riserva.is_inside_tree(),
+		"se il caricamento nel thread fallisce la torre si carica subito lo stesso")
+	if riserva:
+		level.remove_child(riserva)
+		riserva.free()
+	level.add_child(vecchia)
+	level.set(&"sala_torre", vecchia)
+	await _frames(5)
 	for i in 900:
 		if portone.is_aperto():
 			break

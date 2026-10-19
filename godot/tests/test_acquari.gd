@@ -58,6 +58,14 @@ func _run() -> void:
 	_serranda().call(&"apri")
 	await _frames(5)
 	check(enigma.comparsi and giallo.visible and blu.visible and misto.visible, "gli acquari ci sono")
+	# Con gli acquari comincia il caricamento della sala della torre in un thread: all'apertura del
+	# portone è già pronta anche su un PC lento. Il guscio dietro il portone resta finché non si apre.
+	var sala_p := get_tree().current_scene
+	await _frames(2)
+	check(bool(sala_p.get(&"_torre_in_caricamento")) or sala_p.get(&"_torre_pronta") != null,
+		"compaiono gli acquari: la torre comincia a caricarsi in un thread")
+	check(sala_p.get(&"sala_torre") == null and sala_p.find_child("sala_torre_guscio", true, false) != null,
+		"ma non entra nella sala (il guscio dietro il portone resta)")
 	check(_lampade_accese(), "le lampade del portone sono accese")
 	check(not _collisioni_spente(), "e hanno le collisioni")
 	# L'acqua vera dell'addon sui tre acquari (la mette enigma-ambiente): con le 7 masse d'acqua che
