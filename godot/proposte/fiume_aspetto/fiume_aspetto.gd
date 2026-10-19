@@ -50,6 +50,7 @@ func _ready() -> void:
 	_bersaglio()
 	_cartelli()
 	_imbarco()
+	_arredo_comune()
 	if aspetto == "A":
 		_giungla()
 	else:
@@ -68,7 +69,7 @@ func _ambiente() -> void:
 	e.ambient_light_energy = 1.0
 	e.tonemap_mode = Environment.TONE_MAPPER_AGX
 	e.tonemap_exposure = 1.1
-	e.ssr_enabled = true
+	e.ssr_enabled = OS.get_environment("NO_SSR") == ""
 	e.ssao_enabled = true
 	e.glow_enabled = true
 	e.glow_intensity = 0.6
@@ -118,12 +119,21 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0) -> void:
 	l.rotation_degrees.y = rot_y
 	add_child(l)
 	var g := l.find_child("globo", true, false) as MeshInstance3D
+	if energia <= 0.0:
+		# rotta: il vetro spento e sporco, la gabbia storta
+		l.rotation_degrees.z = 9.0
+		if g:
+			var mr := StandardMaterial3D.new()
+			mr.albedo_color = Color(0.25, 0.24, 0.2)
+			mr.roughness = 0.3
+			g.material_override = mr
+		return
 	if g:
 		var m := StandardMaterial3D.new()
 		m.albedo_color = Color(1.0, 0.85, 0.55)
 		m.emission_enabled = true
 		m.emission = Color(1.0, 0.7, 0.35)
-		m.emission_energy_multiplier = 6.0
+		m.emission_energy_multiplier = 3.0
 		g.material_override = m
 	var dir := Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1)
 	_luce(pos + dir * 0.35, Color(1.0, 0.76, 0.5), energia, 11.0, false)
@@ -160,7 +170,8 @@ func _canale(punti: Array, bs: float, bd: float) -> void:
 	var st_v := SurfaceTool.new()
 	var st_b := SurfaceTool.new()
 	var st_a := SurfaceTool.new()
-	for s in [st_v, st_b, st_a]:
+	var st_l := SurfaceTool.new()
+	for s in [st_v, st_b, st_a, st_l]:
 		s.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var dist := 0.0
 	for i in pts.size() - 1:
@@ -179,6 +190,18 @@ func _canale(punti: Array, bs: float, bd: float) -> void:
 			_quad(st, q)
 		# acqua
 		var d1 := dist + p0.distance_to(p1)
+		# la riga di calcare e alghe sulle due pareti, a cavallo del pelo
+		for lato in [-1.0, 1.0]:
+			var o := W * 0.5 - 0.006
+			var a0: Vector3 = p0 + r0 * o * lato
+			var a1: Vector3 = p1 + r1 * o * lato
+			var lq := [a0 + Vector3(0, ACQUA + 0.25, 0), a1 + Vector3(0, ACQUA + 0.25, 0), a1 + Vector3(0, ACQUA - 0.1, 0), a0 + Vector3(0, ACQUA - 0.1, 0)]
+			var luv := [Vector2(dist / 2.0, 0), Vector2(d1 / 2.0, 0), Vector2(d1 / 2.0, 1), Vector2(dist / 2.0, 1)]
+			var ordine := [0, 1, 2, 0, 2, 3] if lato > 0 else [0, 2, 1, 0, 3, 2]
+			for idx in ordine:
+				st_l.set_normal(-r0 * lato)
+				st_l.set_uv(luv[idx])
+				st_l.add_vertex(lq[idx])
 		var w := W * 0.5 - 0.01
 		var aq := [p0 - r0 * w + Vector3(0, ACQUA, 0), p0 + r0 * w + Vector3(0, ACQUA, 0),
 				p1 + r1 * w + Vector3(0, ACQUA, 0), p1 - r1 * w + Vector3(0, ACQUA, 0)]
@@ -191,6 +214,12 @@ func _canale(punti: Array, bs: float, bd: float) -> void:
 	_mesh(st_v, mat_vasca, true)
 	_mesh(st_b, mat_banca, true)
 	_mesh(st_a, mat_acqua, false)
+	var ml := StandardMaterial3D.new()
+	ml.albedo_texture = load(DIR + "texture/linea_calcare.png")
+	ml.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ml.cull_mode = BaseMaterial3D.CULL_DISABLED
+	ml.roughness = 0.8
+	_mesh(st_l, ml, false)
 
 
 func _tangente(pts: PackedVector3Array, i: int) -> Vector3:
@@ -277,7 +306,10 @@ func _banchina_approdo() -> void:
 	muro.material_override = mat_banca
 	muro.position = Vector3(x1 + 5.1, 2.3, (z0 + z1) * 0.5)
 	add_child(muro)
-	_porta(Vector3(x1 + 4.9, 0, (z0 + z1) * 0.5), -90.0)
+	if aspetto == "A":
+		_porta(Vector3(x1 + 4.9, 0, (z0 + z1) * 0.5), -90.0)
+	else:
+		_metti("portello", Vector3(x1 + 5.0, 0, (z0 + z1) * 0.5), -90.0)
 	_lampada_rossa(Vector3(x1 + 4.85, 2.9, (z0 + z1) * 0.5 + 1.4), Vector3(-1, -0.6, 0))
 
 
@@ -460,8 +492,127 @@ func _imbarco() -> void:
 	# le luci subacquee nelle pareti del canale
 	for pts in [PUNTI_IMBARCO, PUNTI_GIUSTO, PUNTI_SBAGLIATO]:
 		for v in _lungo(pts, W * 0.5, 7.0, 1.5):
-			_faro_subacqueo(Vector3(v[0].x, FONDO + 0.35, v[0].z), v[1])
+			_faro_subacqueo(Vector3(v[0].x, FONDO + 0.25, v[0].z), v[1])
 	_lampada_calda(Vector3(APPRODO.end.x + 4.75, 3.0, APPRODO.position.y + 0.6), -90.0)
+
+
+# --- arredo comune: un fiume lento anni '90 abbandonato -----------------------------------------------
+
+func _arredo_comune() -> void:
+	# ciambelle alla deriva e incagliate (oltre alle due dell'imbarco)
+	for c in [[Vector3(2.3, ACQUA - 0.12, -19.0), 60.0], [Vector3(-2.6, ACQUA - 0.12, -22.0), 10.0],
+			[Vector3(5.6, ACQUA - 0.12, -30.4), 130.0], [Vector3(11.2, ACQUA - 0.12, -33.4), 80.0],
+			[Vector3(-4.0, ACQUA - 0.12, -30.0), 30.0], [Vector3(20.9, ACQUA - 0.12, -36.3), 15.0]]:
+		_metti("ciambella", c[0], c[1])
+	# la pila di ciambelle di ricambio accanto alla cabina
+	for i in 3:
+		_metti("ciambella", Vector3(-W * 0.5 - 1.9, 0.05 + i * 0.27, 1.6), i * 37.0)
+	# scalette d'emergenza lungo le pareti
+	_metti("scaletta_banchina", Vector3(-W * 0.5 + 0.05, FONDO + 0.05, -6.0), 90.0)
+	_metti("scaletta_banchina", Vector3(W * 0.5 - 0.05, FONDO + 0.05, -13.5), -90.0)
+	var k := 0
+	for v in _lungo(PUNTI_GIUSTO, W * 0.5 - 0.05, 9.0, 6.0):
+		k += 1
+		if k == 2:
+			_metti("scaletta_banchina", Vector3(v[0].x, FONDO + 0.05, v[0].z), v[1])
+	# le bocchette della corrente nelle pareti, appena sotto il pelo, alternate sui due lati
+	for pts in [PUNTI_IMBARCO, PUNTI_GIUSTO, PUNTI_SBAGLIATO]:
+		k = 0
+		for v in _lungo(pts, W * 0.5, 6.0, 4.5):
+			k += 1
+			if k % 3 == 0:
+				_metti("bocchetta", Vector3(v[0].x, ACQUA - 0.32, v[0].z), v[1])
+	# griglie di scolo sulle banchine, lungo il bordo
+	for pts in [PUNTI_IMBARCO, PUNTI_GIUSTO]:
+		k = 0
+		for v in _lungo(pts, W * 0.5 + 0.45, 8.0, 3.0):
+			k += 1
+			if k % 2 == 1:
+				var g := _metti("griglia_scolo", Vector3(v[0].x, -0.02, v[0].z), v[1])
+				g.scale = Vector3(0.45, 0.08, 0.7)   # incassata nella banchina: si vede solo la griglia
+				_tingi(g, Color(0.45, 0.45, 0.42))
+	# cartelli a pittogrammi sui pali, all'imbarco e all'approdo
+	_cartello_palo(Vector3(W * 0.5 + 0.7, 0, 6.2), -40.0, "cartello_tuffi")
+	_cartello_palo(Vector3(-W * 0.5 - 0.6, 0, -2.0), 90.0, "cartello_bimbi")
+	_cartello_palo(Vector3(APPRODO.end.x + 0.7, 0, APPRODO.end.y + 0.4), -90.0, "cartello_tuffi")
+	# il salvagente sul suo palo
+	_metti("salvagente", Vector3(W * 0.5 + 0.5, 0, 0.8), -90.0)
+	_metti("salvagente", Vector3(APPRODO.end.x + 1.2, 0, APPRODO.position.y - 0.4), 0.0)
+	# altoparlanti in alto sulle pareti, col cavo
+	var mx := W * 0.5 + 2.6 - (0.7 if aspetto == "A" else 0.05)
+	var ha := 3.9 if aspetto == "A" else 2.05
+	_metti("altoparlante", Vector3(mx, ha, 1.5), -90.0)
+	_metti("altoparlante", Vector3(-mx, ha, -11.0), 90.0)
+	# lampade rotte accanto a quelle accese
+	_lampada_calda(Vector3(mx, 3.0 if aspetto == "A" else 2.0, -11.5), -90.0, 0.0)
+	_lampada_calda(Vector3(-mx, 3.0 if aspetto == "A" else 2.0, 4.0), 90.0, 0.0)
+	# le cose perse dai bambini e i detriti, nei posti dove si fermano
+	_metti("ciabatta", Vector3(W * 0.5 + 0.9, 0, -3.4), 35.0)
+	_metti("ciabatta", Vector3(APPRODO.end.x + 0.6, 0, APPRODO.get_center().y + 0.9), 200.0)
+	_metti("paperella", Vector3(-1.1, ACQUA - 0.02, -20.6), 70.0)
+	_metti("paperella", Vector3(W * 0.5 + 0.35, 0.0, 3.4), 160.0)
+	_metti("secchiello", Vector3(-W * 0.5 - 0.9, 0, -9.6), 20.0)
+	_metti("pallone", Vector3(3.0, ACQUA - 0.15, -22.5), 0.0)
+	_metti("detriti", Vector3(-W * 0.5 - 1.4, 0, 3.6), 30.0)
+	_metti("detriti", Vector3(W * 0.5 + 1.5, 0, -16.8), 110.0)
+	_metti("detriti", Vector3(APPRODO.end.x + 3.8, 0, APPRODO.position.y + 0.7), 0.0)
+	_metti("detriti", Vector3(9.6, 0, -35.9), 200.0)
+	# il ramo giusto: un salvagente, un cartello, detriti e una lampada rotta anche qui
+	_metti("salvagente", Vector3(8.6, 0, -35.3), 10.0)
+	_cartello_palo(Vector3(9.6, 0, -30.9), -150.0, "cartello_bimbi")
+	_metti("detriti", Vector3(6.6, 0, -29.3), 70.0)
+	_metti("ciabatta", Vector3(11.0, 0, -31.8), 120.0)
+	_metti("transenna", Vector3(13.6, 0, -32.2), -8.0)
+
+
+## Moltiplica il colore dei materiali del modello.
+func _tingi(n: Node3D, c: Color) -> void:
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		for i in m.mesh.get_surface_count():
+			var s := m.mesh.surface_get_material(i) as StandardMaterial3D
+			if s:
+				s = s.duplicate()
+				s.albedo_color = c
+				m.set_surface_override_material(i, s)
+
+
+## Palo zincato con un cartello quadrato a pittogrammi (50 cm) in cima, verso [param rot_y].
+func _cartello_palo(pos: Vector3, rot_y: float, tex: String) -> void:
+	var n := Node3D.new()
+	n.position = pos
+	n.rotation_degrees.y = rot_y
+	add_child(n)
+	var palo := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.03
+	cm.bottom_radius = 0.035
+	cm.height = 2.2
+	palo.mesh = cm
+	var mz := StandardMaterial3D.new()
+	mz.albedo_color = Color(0.55, 0.56, 0.55)
+	mz.metallic = 0.8
+	mz.roughness = 0.5
+	palo.material_override = mz
+	palo.position = Vector3(0, 1.1, 0)
+	n.add_child(palo)
+	var lastra := MeshInstance3D.new()
+	var b := BoxMesh.new()
+	b.size = Vector3(0.52, 0.52, 0.015)
+	lastra.mesh = b
+	lastra.material_override = mz
+	lastra.position = Vector3(0, 1.85, 0.045)
+	n.add_child(lastra)
+	var f := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(0.5, 0.5)
+	f.mesh = q
+	var mf := StandardMaterial3D.new()
+	mf.albedo_texture = load(DIR + "texture/" + tex + ".jpg")
+	mf.roughness = 0.6
+	f.material_override = mf
+	f.position = Vector3(0, 1.85, 0.054)
+	n.add_child(f)
 
 
 ## Punti a passo [param passo] lungo il canale, dal tratto [param inizio] (m), a distanza [param d] dal
@@ -488,16 +639,15 @@ func _faro_subacqueo(pos: Vector3, rot_y: float) -> void:
 	var dir := Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1)
 	var f := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.14
-	cm.bottom_radius = 0.14
+	cm.top_radius = 0.1
+	cm.bottom_radius = 0.1
 	cm.height = 0.03
 	f.mesh = cm
 	var m := StandardMaterial3D.new()
 	var col := Color(0.75, 0.95, 1.0) if aspetto == "A" else Color(0.4, 0.8, 1.0)
-	m.albedo_color = col
-	m.emission_enabled = true
-	m.emission = col
-	m.emission_energy_multiplier = 0.8
+	# senza ombreggiatura e scuro: la sua stessa luce lo bruciava in una macchia bianca sotto il pelo
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = col * 0.45
 	f.material_override = m
 	f.position = pos + dir * 0.01
 	f.rotation_degrees = Vector3(90, rot_y, 0)
@@ -525,8 +675,130 @@ func _giungla() -> void:
 		_metti("palma_finta", p, randf() * 360.0)
 	_metti("totem_tiki", Vector3(W * 0.5 + 2.0, 0, 4.6), -100.0)
 	_metti("capanna_tiki", Vector3(-W * 0.5 - 1.2, 0, 9.4), 90.0)
+	_soffitto()
+	# la tettoia di paglia sopra la cabina dell'imbarco
+	var t := _metti("tettoia_paglia", Vector3(-W * 0.5 - 1.3, 0, 5.2), 90.0)
+	t.scale = Vector3.ONE * 0.8
+	# liane che pendono dalle rocce, fiori di plastica nelle fioriere
+	for p in [Vector3(-3.55, 4.6, 6.5), Vector3(3.55, 4.6, -2.5), Vector3(-3.55, 4.6, -6.5), Vector3(3.55, 4.6, -9.0),
+			Vector3(-3.55, 4.6, -16.0), Vector3(3.5, 4.6, -20.5)]:
+		_metti("liane", p, -90.0 if p.x > 0 else 90.0)
+	for v in _lungo(PUNTI_GIUSTO, W * 0.5 + 0.75, 7.0, 3.0):
+		if v[0].distance_to(Vector3(12.5, 0, -34.2)) > 2.0:
+			_metti("liane", Vector3(v[0].x, 4.4, v[0].z) + Basis(Vector3.UP, deg_to_rad(v[1])) * Vector3(0, 0, -0.2), v[1])
+	for p in [Vector3(-3.4, 0, -4.4), Vector3(3.4, 0, -6.4), Vector3(-3.4, 0, -13.0), Vector3(4.6, 0, -19.2), Vector3(-4.6, 0, -20.0)]:
+		_metti("fiori", p, randf() * 360.0)
+	# maschere tiki sui pali, il pappagallo e la scimmia di vetroresina
+	_maschera_palo(Vector3(W * 0.5 + 1.0, 0, -17.3), -90.0)
+	_maschera_palo(Vector3(-W * 0.5 - 1.1, 0, 2.6), 90.0)
+	_maschera_palo(Vector3(APPRODO.end.x + 0.8, 0, APPRODO.position.y + 0.3), -90.0)
+	_metti("pappagallo", Vector3(W * 0.5 + 1.3, 0, -4.6), -110.0)
+	_metti("scimmia", Vector3(-W * 0.5 - 1.5, 0, -11.2), 100.0)
+	_metti("pappagallo", Vector3(10.6, 0, -31.6), -160.0)
+	_metti("fiori", Vector3(7.6, 0, -29.6), 0.0)
+	_metti("fiori", Vector3(15.5, 0, -36.6), 90.0)
+	# corrimano di bambù lungo le banchine della conca e dell'approdo
+	for p in [[Vector3(3.6, 0, -19.6), 90.0], [Vector3(-3.6, 0, -19.6), 90.0], [Vector3(APPRODO.end.x + 0.25, 0, APPRODO.position.y - 0.9), 90.0]]:
+		_metti("corrimano_bambu", p[0], p[1])
 	# luci tiki calde, deboli, come fiaccole rimaste accese
 	_luce(Vector3(W * 0.5 + 1.9, 2.7, 4.6), Color(1.0, 0.55, 0.2), 1.2, 5.0)
+
+
+## Il soffitto del capannone sopra la giungla finta: lamiera grecata, capriate reticolari d'acciaio
+## ogni 5 m, arcarecci, il condotto dell'aria sopra il canale e le lampade a campana appese (due
+## accese deboli, le altre spente o rotte).
+const TETTO := 7.6
+const AREA_TETTO := Rect2(-10.0, -52.0, 38.0, 64.0)
+
+
+func _soffitto() -> void:
+	var ferro := StandardMaterial3D.new()
+	ferro.albedo_color = Color(0.2, 0.21, 0.2)
+	ferro.metallic = 0.7
+	ferro.roughness = 0.65
+	var lamiera := StandardMaterial3D.new()
+	lamiera.albedo_color = Color(0.17, 0.18, 0.18)
+	lamiera.metallic = 0.5
+	lamiera.roughness = 0.7
+	var a := AREA_TETTO
+	_scatola(Vector3(a.size.x, 0.06, a.size.y), Vector3(a.get_center().x, TETTO + 0.03, a.get_center().y), lamiera)
+	# capriate lungo X ogni 5 m: correnti sopra e sotto, montanti e diagonali
+	var z := a.position.y + 2.0
+	while z < a.end.y:
+		_scatola(Vector3(a.size.x, 0.18, 0.14), Vector3(a.get_center().x, TETTO - 0.12, z), ferro)
+		_scatola(Vector3(a.size.x, 0.14, 0.12), Vector3(a.get_center().x, TETTO - 1.1, z), ferro)
+		var x := a.position.x
+		while x < a.end.x:
+			_scatola(Vector3(0.08, 0.9, 0.08), Vector3(x, TETTO - 0.6, z), ferro)
+			var d := _scatola(Vector3(0.06, 1.35, 0.06), Vector3(x + 1.0, TETTO - 0.6, z), ferro)
+			d.rotation_degrees.z = 48.0 if int(x) % 4 == 0 else -48.0
+			x += 2.0
+		z += 5.0
+	# arcarecci lungo Z
+	var xa := a.position.x + 1.0
+	while xa < a.end.x:
+		_scatola(Vector3(0.1, 0.16, a.size.y), Vector3(xa, TETTO - 0.3, a.get_center().y), ferro)
+		xa += 3.0
+	# il condotto dell'aria sopra il canale dell'imbarco, con le staffe appese alle capriate
+	var zinco := StandardMaterial3D.new()
+	zinco.albedo_color = Color(0.45, 0.46, 0.45)
+	zinco.metallic = 0.85
+	zinco.roughness = 0.75
+	var cond := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.4
+	cm.bottom_radius = 0.4
+	cm.height = 30.0
+	cond.mesh = cm
+	cond.material_override = zinco
+	cond.position = Vector3(-2.6, TETTO - 1.75, -6.0)
+	cond.rotation_degrees.x = 90.0
+	add_child(cond)
+	z = -20.0
+	while z < 9.0:
+		_scatola(Vector3(0.04, 0.6, 0.04), Vector3(-2.6, TETTO - 1.2, z), ferro)
+		z += 5.0
+	# lampade a campana: appese alle capriate, su canale e approdo
+	var punti := [[Vector3(0.6, 0, 3.0), true], [Vector3(-0.4, 0, -8.0), false], [Vector3(0.8, 0, -18.0), false],
+			[Vector3(7.0, 0, -32.0), true], [Vector3(14.0, 0, -35.0), false], [Vector3(21.0, 0, -35.0), false]]
+	for pt in punti:
+		var p: Vector3 = pt[0]
+		var zc: float = a.position.y + 2.0 + roundf((p.z - a.position.y - 2.0) / 5.0) * 5.0
+		var catena := _scatola(Vector3(0.02, 1.9, 0.02), Vector3(p.x, TETTO - 2.05, zc), ferro)
+		catena.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var l := _metti("lampada_capannone", Vector3(p.x, TETTO - 3.0, zc))
+		if pt[1]:
+			_luce(Vector3(p.x, TETTO - 3.3, zc), Color(1.0, 0.8, 0.55), 2.5, 9.0, false)
+		else:
+			l.rotation_degrees.z = randf_range(-6.0, 6.0)
+
+
+func _scatola(size: Vector3, pos: Vector3, m: Material) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var b := BoxMesh.new()
+	b.size = size
+	mi.mesh = b
+	mi.material_override = m
+	mi.position = pos
+	add_child(mi)
+	return mi
+
+
+func _maschera_palo(pos: Vector3, rot_y: float) -> void:
+	var palo := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.09
+	cm.bottom_radius = 0.11
+	cm.height = 2.3
+	palo.mesh = cm
+	var mp := StandardMaterial3D.new()
+	mp.albedo_color = Color(0.38, 0.27, 0.17)
+	mp.roughness = 0.85
+	palo.material_override = mp
+	palo.position = pos + Vector3(0, 1.15, 0)
+	add_child(palo)
+	var dir := Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1)
+	_metti("maschera_tiki", pos + Vector3(0, 1.45, 0) + dir * 0.1, rot_y)
 
 
 ## Un pannello di roccia finta (4,2 x 3,2 m, alzato a 4,9) col retro sul muro; ruotato e specchiato a
@@ -541,6 +813,10 @@ func _roccia(pos: Vector3, rot: float) -> void:
 
 
 # --- aspetto B: viaggio sottomarino -------------------------------------------------------------------
+
+## Le tinte dei coralli di vetroresina (il modello è color sabbia).
+const CORALLI := [Color(1.0, 0.55, 0.6), Color(1.0, 0.62, 0.35), Color(0.8, 0.55, 1.0)]
+
 
 func _sottomarino() -> void:
 	var mat_tunnel: Material = load(DIR + "mat_mosaico_blu.tres")
@@ -561,6 +837,15 @@ func _sottomarino() -> void:
 	_metti("pesce_vetroresina", Vector3(3.3, 0, -1.0), -90.0, 0.8)
 	_appeso("tartaruga", Vector3(2.6, 2.6, -14.0), -100.0)
 	_metti("palombaro", Vector3(-W * 0.5 - 1.6, 0, 8.2), 60.0)
+	# coralli lungo le pareti, l'ancora, il forziere, le reti con le stelle marine
+	for p in [Vector3(-3.6, 0, 4.5), Vector3(3.6, 0, -4.0), Vector3(-3.6, 0, -13.5), Vector3(3.6, 0, -17.0), Vector3(4.8, 0, -20.0)]:
+		_tingi(_metti("corallo", p, randf() * 360.0), CORALLI[randi() % 3])
+	for v in _lungo(PUNTI_GIUSTO, W * 0.5 + 1.0, 8.0, 4.0):
+		_tingi(_metti("corallo", v[0], randf() * 360.0), CORALLI[randi() % 3])
+	_metti("forziere", Vector3(10.5, 0, -31.5), -150.0)
+	_metti("ancora", Vector3(8.0, 0, -35.6), 10.0)
+	_metti("ancora", Vector3(-3.75, 0, -2.6), 90.0)
+	_metti("forziere", Vector3(3.4, 0, -8.3), -100.0)
 
 
 ## Un pesce di vetroresina appeso con due cavi d'acciaio alla volta del tunnel dell'imbarco.

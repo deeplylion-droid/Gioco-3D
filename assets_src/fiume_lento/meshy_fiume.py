@@ -79,6 +79,86 @@ MODELLI = {
                'smiling face. Realistic.',
         texture='Faded green and yellow fiberglass, chipped paint, cracks, algae and limescale, grime.',
         polycount=20000),
+    # --- riempimento (richiesta del coordinatore del 19 ottobre: stanze piene da subito) ---
+    'bocchetta': dict(
+        prompt='Lazy river wall current jet nozzle: a round stainless steel grille 40 cm wide with a central '
+               'nozzle, set in a square tiled wall plate. Realistic.',
+        texture='Stainless steel with heavy limescale crust, green algae, rust streaks running down.', polycount=8000),
+    'griglia_scolo': dict(
+        prompt='Rectangular pool deck drain grate, 1 m long and 25 cm wide, slotted plastic grating in a '
+               'channel frame. Realistic.', texture='Dirty white plastic grate, limescale, black grime, leaves stuck.',
+        polycount=6000),
+    'altoparlante': dict(
+        prompt='Outdoor public address horn loudspeaker on a wall bracket with a cable hanging down. Realistic.',
+        texture='Faded grey painted metal horn, rust, dirt, black cable.', polycount=8000),
+    'salvagente': dict(
+        prompt='Ring life buoy hanging on a short wooden post with a hook and a coiled rope. Realistic.',
+        texture='Faded orange and white ring buoy, dirty, frayed rope, weathered wooden post.', polycount=10000),
+    'ciabatta': dict(
+        prompt='A single child flip-flop sandal lying on the ground, small. Realistic.',
+        texture='Faded pink rubber flip-flop, dirty, worn.', polycount=3000),
+    'paperella': dict(prompt='Classic yellow rubber duck toy, 12 cm. Realistic.',
+                      texture='Faded yellow rubber, dirty, orange beak, slightly moldy.', polycount=3000),
+    'secchiello': dict(
+        prompt='Child beach toy bucket with a handle and a small spade lying beside it. Realistic.',
+        texture='Faded blue and red plastic, scratched, dirty, sun-bleached.', polycount=5000),
+    'pallone': dict(prompt='Half-deflated inflatable beach ball, crumpled, 40 cm. Realistic.',
+                    texture='Faded colored panels red yellow blue white, dirty, wrinkled vinyl.', polycount=5000),
+    'detriti': dict(
+        prompt='Small pile of debris on a floor: crushed plastic cups, a soda can, wrappers, dead leaves and '
+               'pieces of broken plastic, 60 cm wide, flat. Realistic.',
+        texture='Faded dirty plastic, brown dead leaves, rusty can, grime.', polycount=10000),
+    'lampada_capannone': dict(
+        prompt='Industrial high-bay pendant lamp: a wide enamel reflector dome hanging from a chain, 50 cm wide. '
+               'Realistic.', texture='Faded green enamel outside, white inside, rust, dust, dirty glass bulb.',
+        polycount=8000),
+    # A: giungla finta
+    'liane': dict(
+        prompt='Bundle of artificial plastic jungle vines hanging down, 2.5 m long, with leaves, attached to a '
+               'small bracket at the top. Realistic.', texture='Faded green plastic leaves and brown vines, dusty, '
+               'some leaves bleached and torn.', polycount=20000),
+    'fiori': dict(
+        prompt='Artificial tropical plant in a fiberglass rock planter: big leaves and red hibiscus flowers, '
+               '1 m tall. Realistic.', texture='Faded plastic leaves and flowers, dusty, grimy planter.',
+        polycount=20000),
+    'maschera_tiki': dict(
+        prompt='Large carved tiki mask wall decoration, 80 cm tall, angry face with big teeth. Realistic.',
+        texture='Faded painted fiberglass imitating wood, orange teal and yellow, chipped, moldy.', polycount=12000),
+    'corrimano_bambu': dict(
+        prompt='Bamboo handrail fence section, 2 m long and 1 m tall, bamboo posts tied with rope. Realistic.',
+        texture='Faded fake bamboo, sun-bleached, frayed rope ties, grime.', polycount=10000),
+    'pappagallo': dict(
+        prompt='Fiberglass parrot statue perched on a branch stand, 1 m tall, cartoon water park style. '
+               'Realistic.', texture='Faded red blue and yellow paint, chipped, cracked, dirty.', polycount=15000),
+    'scimmia': dict(
+        prompt='Fiberglass cartoon monkey statue sitting and waving, 1 m tall, water park decoration. Realistic.',
+        texture='Faded brown and beige paint, chipped, cracked, algae stains.', polycount=15000),
+    'tettoia_paglia': dict(
+        prompt='Large thatched straw roof canopy on four bamboo poles over a ride boarding area, 4 m wide and '
+               '3 m long, 3 m tall. Realistic.', texture='Faded artificial straw thatch, holes, mold, grimy '
+               'bamboo poles.', polycount=30000),
+    'ponte_corda': dict(
+        prompt='Rope suspension footbridge 5 m long with wooden plank deck and rope handrails, slight sag, '
+               'jungle themed. Realistic.', texture='Weathered wooden planks, frayed ropes, grime, a few planks '
+               'missing.', polycount=25000),
+    # B: viaggio sottomarino
+    'corallo': dict(
+        prompt='Large fiberglass coral reef decoration cluster, 1.2 m tall, branching corals and sea fans. '
+               'Realistic.', texture='Faded pink, orange and purple paint, chipped, limescale, algae.',
+        polycount=20000),
+    'ancora': dict(prompt='Old ship anchor decoration, 1.5 m tall, with a chain. Realistic.',
+                   texture='Painted black iron with heavy rust and limescale.', polycount=10000),
+    'forziere': dict(
+        prompt='Pirate treasure chest decoration, half open, 80 cm wide, fake gold coins inside. Realistic.',
+        texture='Faded fiberglass wood with brass bands, chipped gold paint, grime.', polycount=15000),
+    'rete_stelle': dict(
+        prompt='Fishing net hanging on a wall with several starfish and shells caught in it, 2 m wide. '
+               'Realistic.', texture='Brown frayed net, faded orange starfish and white shells, dusty.',
+        polycount=20000),
+    'portello': dict(
+        prompt='Round submarine hatch door with a big handwheel in the center, riveted steel frame, set in a '
+               'flat wall panel, 1.9 m tall. Realistic.', texture='Painted steel, faded grey-green, rust, '
+               'brass wheel with patina.', polycount=15000),
 }
 
 
