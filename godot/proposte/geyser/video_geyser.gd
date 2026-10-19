@@ -16,6 +16,7 @@ extends Node
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 const V1 := preload("res://proposte/geyser/geyser_mesh.gd")
+const V2 := preload("res://proposte/geyser/geyser_flipbook.gd")
 const RISCALDA := 60
 
 var tipo := "geyser"
@@ -91,8 +92,8 @@ func _avvia() -> void:
 		var t := v as WaterTank
 		t.fill = clampf((lei.livello_pieno - t.get_floor_global_y()) / t.inner_size.y, 0.0, t.max_fill)
 	lei.distanza_presa = 0.0
-	if versione == "v1":
-		var g: Node3D = V1.new()
+	if versione in ["v1", "v2"]:
+		var g: Node3D = (V1 if versione == "v1" else V2).new()
 		g.name = "Geyser"
 		lei.add_child(g)
 		lei._geyser = g

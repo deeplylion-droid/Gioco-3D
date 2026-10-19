@@ -5,14 +5,14 @@ extends GeyserFossa
 ## intorno a lei, lei ci sparisce dentro, la colonna ricade come pioggia pesante. Acqua bianca di schiuma e
 ## piena: non si vede attraverso.
 ## - La massa d'acqua è una simulazione di liquido vera (Mantaflow, assets_src/geyser/simula.py): una mesh per
-##   fotogramma (30 al secondo) che si alternano con una dissolvenza retinata, senza scatti.
-## - Sopra: gocce bianche e piene (piccole capsule girate secondo la velocità e illuminate), la nebbiolina
+##   fotogramma (30 al secondo), senza goccioline staccate (le fanno le particelle).
+## - Sopra: gocce lucide e allungate nella direzione del moto, di misure diverse, la nebbiolina
 ##   d'acqua finissima, la pioggia che ricade e gli schizzi a terra, l'anello di schiuma e le onde sull'acqua
 ##   della fossa.
 ## Estende GeyserFossa (così LeiSbuca la usa al posto sua): stessa interfaccia, stesse onde sull'acqua
 ## (_tonfo, _spruzza); copre si calcola dalle mesh.
 
-const SEQUENZA := preload("res://proposte/geyser/geyser_sequenza.glb")
+const SEQUENZA := "res://proposte/geyser/geyser_sequenza.glb"   # caricata in _ready (la V2 che estende questa non la usa)
 const SHADER_SCHIUMA := preload("res://proposte/geyser/acqua_schiuma.gdshader")
 const RUMORE := preload("res://proposte/geyser/rumore_schiuma.png")
 const FPS := 30.0
@@ -22,9 +22,7 @@ const FPS := 30.0
 
 var _fotogrammi: Array[Mesh] = []
 var _a: MeshInstance3D
-var _b: MeshInstance3D
 var _ma: ShaderMaterial
-var _mb: ShaderMaterial
 var _fontana: GPUParticles3D
 var _corona: GPUParticles3D
 var _nebbia: GPUParticles3D
@@ -35,8 +33,8 @@ var _fatti := {}
 
 func _ready() -> void:
 	top_level = true
-	gocce = 420
-	var s := SEQUENZA.instantiate()
+	gocce = 170
+	var s := (load(SEQUENZA) as PackedScene).instantiate()
 	var figli := s.find_children("f*", "MeshInstance3D", true, false)
 	figli.sort_custom(func(x, y): return String(x.name) < String(y.name))
 	for mi in figli:
@@ -47,10 +45,7 @@ func _ready() -> void:
 			copre = i / FPS
 			break
 	_ma = _materiale()
-	_mb = _materiale()
-	_mb.set_shader_parameter(&"parte", 1.0)
 	_a = _istanza("Acqua", _ma)
-	_b = _istanza("AcquaDopo", _mb)
 	_crea_particelle()
 	_crea_anello()
 	set_process(false)
@@ -81,8 +76,8 @@ func scoppia(pavimento: Vector3, acque: Array = [], _punti := PackedVector3Array
 	global_position = pavimento
 	_t = 0.0
 	_fatti.clear()
-	_a.visible = true
-	_b.visible = true
+	if _a:   # la V2 (GeyserFlipbook) non ha le mesh
+		_a.visible = true
 	_anello.visible = true
 	_aggiorna()
 	_spruzza(1.0)
@@ -107,27 +102,25 @@ func _process(delta: float) -> void:
 
 
 func _aggiorna() -> void:
-	var x := _t * FPS
-	var i := int(floor(x))
-	var f := x - i
-	var n := _fotogrammi.size()
-	var dentro := i < n - 1
+	# un fotogramma alla volta, il più vicino (a 30 al secondo non scatta; la dissolvenza retinata si vedeva a pois)
+	var i := int(round(_t * FPS))
+	var dentro := i < _fotogrammi.size()
 	_a.visible = dentro
-	_b.visible = dentro
 	if dentro:
 		_a.mesh = _fotogrammi[i]
-		_b.mesh = _fotogrammi[i + 1]
-		_ma.set_shader_parameter(&"dissolvi", 1.0 - f)
-		_mb.set_shader_parameter(&"dissolvi", f)
-		var sv := clampf((_t - (durata() - 0.7)) / 0.6, 0.0, 1.0)
-		for m in [_ma, _mb]:
-			m.set_shader_parameter(&"tempo", _t)
-			m.set_shader_parameter(&"centro", global_position)
-			m.set_shader_parameter(&"svanisci", sv)
+		_ma.set_shader_parameter(&"tempo", _t)
+		_ma.set_shader_parameter(&"centro", global_position)
+		_ma.set_shader_parameter(&"affonda", _affonda() * 0.5)
 	var k := clampf(_t / 2.6, 0.0, 1.0)
 	_anello.scale = Vector3.ONE * (1.0 + 0.9 * sqrt(k))
 	_anello_mat.set_shader_parameter(&"vita", k)
 	_anello.visible = _t < 2.6
+
+
+## 0..1 nell'ultimo tratto: l'acqua ricaduta affonda nella fossa invece di restare lì e sparire di colpo.
+func _affonda() -> float:
+	var k := clampf((_t - (durata() - 1.1)) / 0.9, 0.0, 1.0)
+	return k * k
 
 
 func _una_volta(chiave: String, quando: float) -> bool:
@@ -165,14 +158,18 @@ func _goccia_mesh(raggio: float, lungo: float) -> Mesh:
 	var c := CapsuleMesh.new()
 	c.radius = raggio
 	c.height = lungo
-	c.radial_segments = 6
-	c.rings = 2
+	c.radial_segments = 8
+	c.rings = 3
+	# gocce d'acqua bagnate: lucide, col riflesso, allungate nella direzione del moto (align_y)
 	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.8, 0.84, 0.86)
-	m.roughness = 0.12
-	m.metallic_specular = 0.7
+	m.albedo_color = Color(0.55, 0.6, 0.63)
+	m.roughness = 0.04
+	m.metallic_specular = 0.9
+	m.clearcoat_enabled = true
+	m.clearcoat = 0.8
+	m.clearcoat_roughness = 0.05
 	m.rim_enabled = true
-	m.rim = 0.4
+	m.rim = 0.3
 	m.vertex_color_use_as_albedo = false
 	c.material = m
 	return c
@@ -192,6 +189,8 @@ func _particelle(nome: String, quante: int, vita: float, mesh: Mesh, esplosivo: 
 	var pm := ParticleProcessMaterial.new()
 	pm.gravity = Vector3(0, -9.8, 0)
 	pm.particle_flag_align_y = true   # la goccia allungata segue la velocità
+	pm.scale_min = 0.35   # misure molto diverse: qualche goccia grossa, tante piccole
+	pm.scale_max = 1.5
 	p.process_material = pm
 	add_child(p)
 	return p
@@ -199,7 +198,7 @@ func _particelle(nome: String, quante: int, vita: float, mesh: Mesh, esplosivo: 
 
 func _crea_particelle() -> void:
 	# la fontana: dal piede della colonna, verso l'alto e un po' verso fuori
-	_fontana = _particelle("Fontana", gocce, 1.6, _goccia_mesh(0.009, 0.07), 0.85)
+	_fontana = _particelle("Fontana", gocce, 1.6, _goccia_mesh(0.008, 0.075), 0.85)
 	var fm := _fontana.process_material as ParticleProcessMaterial
 	fm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
 	fm.emission_ring_axis = Vector3.UP
@@ -210,11 +209,9 @@ func _crea_particelle() -> void:
 	fm.spread = 18.0
 	fm.initial_velocity_min = 5.0
 	fm.initial_velocity_max = 11.0
-	fm.scale_min = 0.6
-	fm.scale_max = 1.6
 	_fontana.position = Vector3(0, 0.9, 0)
 	# la corona: dalla cima della colonna, gocce grosse che si aprono in fuori
-	_corona = _particelle("Corona", int(gocce * 0.4), 1.8, _goccia_mesh(0.016, 0.1), 0.6)
+	_corona = _particelle("Corona", int(gocce * 0.4), 1.8, _goccia_mesh(0.012, 0.07), 0.6)
 	var cm := _corona.process_material as ParticleProcessMaterial
 	cm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	cm.emission_sphere_radius = 0.8
@@ -222,11 +219,9 @@ func _crea_particelle() -> void:
 	cm.spread = 70.0
 	cm.initial_velocity_min = 1.5
 	cm.initial_velocity_max = 4.5
-	cm.scale_min = 0.6
-	cm.scale_max = 1.5
 	_corona.position = Vector3(0, 3.8, 0)
 	# la pioggia pesante che ricade
-	_pioggia = _particelle("Pioggia", gocce, 1.1, _goccia_mesh(0.008, 0.16), 0.35)
+	_pioggia = _particelle("Pioggia", gocce, 1.1, _goccia_mesh(0.006, 0.12), 0.35)
 	var pm := _pioggia.process_material as ParticleProcessMaterial
 	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
 	pm.emission_box_extents = Vector3(1.5, 1.2, 1.5)
@@ -237,7 +232,7 @@ func _crea_particelle() -> void:
 	pm.gravity = Vector3(0, -12.0, 0)
 	_pioggia.position = Vector3(0, 3.4, 0)
 	# gli schizzi a terra intorno alla vasca, dove arriva la pioggia
-	_schizzi = _particelle("Schizzi", 260, 0.5, _goccia_mesh(0.007, 0.04), 0.2)
+	_schizzi = _particelle("Schizzi", 120, 0.5, _goccia_mesh(0.005, 0.04), 0.2)
 	var zm := _schizzi.process_material as ParticleProcessMaterial
 	zm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
 	zm.emission_ring_axis = Vector3.UP
