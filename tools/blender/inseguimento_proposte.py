@@ -678,7 +678,7 @@ def gommone(mats, nome, centro, mat, rot=(0.0, 0.0, 0.0)):
 def insegna(c, nome_mat, centro, n, largo, alto):
     """Un pannello disegnato con la cornice, la faccia verso n (orizzontale)."""
     n = Vector((n[0], n[1], 0)).normalized()
-    lat = Vector((n.y, -n.x, 0))
+    lat = Vector((-n.y, n.x, 0))         # da davanti la scritta si legge da sinistra a destra
     o = Vector(centro)
     q = [o - lat * (largo / 2) + n * 0.03, o + lat * (largo / 2) + n * 0.03, o + lat * (largo / 2) + n * 0.03 + Vector((0, 0, alto)),
          o - lat * (largo / 2) + n * 0.03 + Vector((0, 0, alto))]
@@ -800,6 +800,7 @@ def versione_B(mats):
         c.cilindro(q, q + Vector((0, 0, 3.4)), 0.09, 'gioco_rosso', seg=10)
     c.scatola((51.3, 15.0 - W_B - 0.2, pz + 3.3), (51.5, 15.0 + W_B + 0.2, pz + 3.5), 'gioco_rosso')
     insegna(c, 'insegna_rapide', (51.25, 15.0, pz + 1.95), (-1, 0), 4.6, 1.26)
+    luci['fari'].append([[49.4, 15.0, pz + 3.9], [51.25, 15.0, pz + 2.5], [1.0, 0.85, 0.6]])
     for (x, y, z, rot, graf) in ((60.0, y1 - 0.02, -15.0, 0, 'p1'), (x1 - 0.02, 22.0, -16.0, 90, 'p3')):
         cart = K.cartellone(mats, 5.0, 2.8, nome=f'ins_B_cartellone_{graf}')
         cart.location = Vector((x, y, z))

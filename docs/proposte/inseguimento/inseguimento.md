@@ -57,13 +57,13 @@ Ogni oggetto compare una volta sola e tutto è appoggiato o appeso a qualcosa. S
 *Vasca 1: le due paratie del primo bivio. A sinistra la giusta, con la luce verde e l'anello di led; a destra la sbagliata, con la lampada rossa guasta.*
 
 ![lei ti raggiunge](inseguimento_A_2_lei_ti_raggiunge.jpg)
-*Vasca 1: lei sale accanto al tubo da cui sei arrivato. Sul bordo, la sua bava rosa.*
+*Vasca 1: lei sale accanto al tubo da cui sei arrivato. Sul bordo, la sua bava rosa; dietro, la condotta sul muro ovest e le lampade appese.*
 
 ![secondo bivio](inseguimento_A_3_secondo_bivio.jpg)
 *Vasca 2: il secondo bivio. In mezzo, la bocca del tubo da cui sei arrivato.*
 
 ![grata](inseguimento_A_4_grata.jpg)
-*Il bacino in fondo: la grata è calata e lei resta dietro.*
+*Il bacino in fondo: la grata è calata e lei resta dietro. Intorno, il filtro grande, il serbatoio e la spirale.*
 
 ![SB1](inseguimento_A_5_sb1.jpg)
 *SB1: vicino alla scaletta per uscire, lei sbuca dal bordo del pozzo di scarico, a pochi metri.*
@@ -96,8 +96,11 @@ Dopo un tubo corto si arriva nella vasca di partenza, poi si scende nel **canale
 
 **In totale circa 6:30 senza errori.** La B è più d'azione e ha meno pause: lei la vedi quasi sempre, dietro di te nel canale, e i bivi si fanno con la corrente che spinge.
 
-![rapide](inseguimento_B_1_rapide.jpg)
-*Nel canale delle rapide, verso il primo bivio: la schiuma, i lampioncini sulle sponde e in fondo le due paratie.*
+![partenza](inseguimento_B_1_partenza.jpg)
+*La vasca di partenza: il portale con l'insegna "LE RAPIDE" e l'inizio del canale.*
+
+![rapide](inseguimento_B_1b_rapide.jpg)
+*Nel canale delle rapide, verso il primo bivio: senza torcia la strada si legge con la schiuma, i lampioncini sulle sponde, gli scogli illuminati dal basso e il bersaglio verde in fondo.*
 
 ![lei ti raggiunge](inseguimento_B_2_lei_ti_raggiunge.jpg)
 *Lei nuota nel canale dietro di te.*
