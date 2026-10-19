@@ -84,6 +84,8 @@ const LIBERE := {
 
 
 func _ready() -> void:
+	# Negli scatti la torre non si precarica (memoria: la sala da sola arriva a 12-13 GB).
+	Engine.set_meta(&"precarica_torre_spento", true)
 	if FileAccess.file_exists("user://salta_screenshot"):
 		get_tree().quit()
 		return
