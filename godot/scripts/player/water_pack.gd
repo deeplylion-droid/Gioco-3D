@@ -21,6 +21,9 @@ signal suck_stopped
 ## Il getto ha colpito qualcosa in questo tick (per suoni ed effetti).
 signal jet_hit(collider: Object, point: Vector3, normal: Vector3)
 signal tank_changed(amount: float, capacity: float)
+## Il colore dell'acqua nel serbatoio è cambiato (vedi WaterMix): lo seguono la finestrella
+## della lancia e il getto.
+signal water_mix_changed(mix: Dictionary)
 ## Si è provato a spruzzare (o si sta spruzzando) con il serbatoio vuoto.
 signal tank_empty
 ## Si sta aspirando con il serbatoio pieno.
@@ -104,6 +107,17 @@ signal spray_charge_started
 @export var boost_max_up_speed := 2.5
 ## Secondi di spinta per ogni salto: si ricaricano toccando terra.
 @export var boost_air_time := 0.35
+## Dopo un salto dallo scivolo (sala della torre) la spinta dura di più e tiene su: allunga il salto.
+@export var slide_boost_time := 0.8
+## Dopo un salto dallo scivolo la spinta non fa salire: frena la caduta fino a questa velocità
+## verticale (m/s, negativa = si scende piano, come planando).
+@export var slide_boost_max_up_speed := -1.0
+## Accelerazione della spinta dopo un salto dallo scivolo (m/s², con la lancia dritta in basso).
+@export var slide_boost_acceleration := 19.0
+## Spinta in avanti, nel verso del volo, mentre si spinge dopo un salto dallo scivolo (m/s²).
+@export var slide_boost_forward := 1.5
+## Litri al secondo in più consumati dalla spinta dopo un salto dallo scivolo.
+@export var slide_boost_extra_flow := 7.0
 
 @export_group("Serbatoio")
 enum TankIndicator { HUD_BAR, LANCE, NONE }
@@ -119,6 +133,8 @@ enum TankIndicator { HUD_BAR, LANCE, NONE }
 
 ## Litri nel serbatoio.
 var tank_amount := 0.0
+## Il colore dell'acqua nel serbatoio (WaterMix): si mescola per litri aspirando.
+var water_mix := {}
 var _charge_t := 0.0
 var is_spraying := false
 var is_sucking := false
@@ -131,6 +147,8 @@ var hit_collider: Object = null
 ## Secondi di volo dell'acqua fino al punto d'impatto.
 var hit_time := 0.0
 var boost_left := 0.0
+## Vero nei passi in cui la spinta sta tenendo su il giocatore (dopo un salto dallo scivolo).
+var boosting := false
 ## Da dove si sta aspirando (un nodo del gruppo "water_sources") e il punto puntato.
 var suck_source = null
 var suck_point := Vector3.ZERO
@@ -353,6 +371,8 @@ func _physics_process(delta: float) -> void:
 	flow = move_toward(flow, 1.0 if is_spraying else 0.0, delta / maxf(spin_up_time, 0.001))
 	if player.is_on_floor() or player.is_on_ladder():
 		boost_left = boost_air_time
+	elif player.is_sliding:
+		boost_left = slide_boost_time
 	if is_spraying:
 		_front_time += delta
 		var m := get_muzzle_transform()
@@ -369,8 +389,10 @@ func _physics_process(delta: float) -> void:
 		if has_hit and _front_time >= hit_time:
 			_deliver(_in_flight)
 			_in_flight = 0.0
+		boosting = false
 		_apply_boost(dir, delta)
 	else:
+		boosting = false
 		has_hit = false
 		hit_collider = null
 	_update_suction(want_suck, delta)
@@ -462,16 +484,31 @@ func _deliver(liters: float) -> void:
 		body.apply_impulse(dir * push_impulse * liters, hit_point - body.global_position)
 	for c in get_tree().get_nodes_in_group(&"water_catchers"):
 		if c.catches_point(hit_point):
-			c.receive_water(liters, hit_point, dir)
+			if c is WaterTank:
+				(c as WaterTank).receive_water(liters, hit_point, dir, water_mix)
+			else:
+				c.receive_water(liters, hit_point, dir)
 
 
 func _apply_boost(dir: Vector3, delta: float) -> void:
-	if not boost_enabled or player.is_on_floor() or player.is_on_ladder():
+	if not boost_enabled or player.is_on_floor() or player.is_on_ladder() or player.is_sliding:
 		return
 	var down := -dir.y
 	if down < boost_min_down or boost_left <= 0.0:
 		return
 	var vy := player.velocity.y
+	if player.slide_launched:
+		# In volo dallo scivolo: la spinta tiene su e porta avanti, e beve molta acqua.
+		boost_left -= delta
+		if vy < slide_boost_max_up_speed:
+			player.velocity.y = minf(vy + slide_boost_acceleration * down * flow * delta, slide_boost_max_up_speed)
+		var hv := Vector3(player.velocity.x, 0.0, player.velocity.z)
+		if hv.length() > 0.1:
+			player.velocity += hv.normalized() * slide_boost_forward * flow * delta
+		if tank_enabled:
+			_set_amount(maxf(tank_amount - slide_boost_extra_flow * flow * delta, 0.0))
+		boosting = true
+		return
 	if vy < boost_max_up_speed:
 		boost_left -= delta
 		player.velocity.y = minf(vy + boost_acceleration * down * flow * delta, boost_max_up_speed)
@@ -482,12 +519,16 @@ func _apply_boost(dir: Vector3, delta: float) -> void:
 func _update_suction(want: bool, delta: float) -> void:
 	var source = null
 	if want:
+		source = find_suction_source()
+		# Aspirando un colore (gli acquari dell'enigma) lo zaino butta via da solo l'acqua chiara che
+		# aveva (scelta B dell'utente, 18 ottobre): restano solo i colori già dentro.
+		if source and tank_enabled and &"fill_pigment" in source and String(source.get(&"fill_pigment")) != "":
+			scarta_acqua_chiara()
 		if tank_enabled and tank_amount >= tank_capacity - 0.001:
+			source = null
 			if not _full_notified:
 				_full_notified = true
 				tank_full.emit()
-		else:
-			source = find_suction_source()
 	if source and not is_sucking:
 		is_sucking = true
 		suck_started.emit()
@@ -498,9 +539,10 @@ func _update_suction(want: bool, delta: float) -> void:
 	if source == null:
 		return
 	var room := tank_capacity - tank_amount if tank_enabled else suck_rate * delta
+	var source_mix: Dictionary = source.mix if &"mix" in source else {}
 	var got: float = source.take_water(minf(suck_rate * delta, room))
 	if tank_enabled and got > 0.0:
-		_set_amount(tank_amount + got)
+		_add_water(got, source_mix)
 
 
 ## Cerca da dove aspirare lungo lo sguardo: la superficie di una vasca o di un volume
@@ -559,11 +601,44 @@ func _refill_from_flowing_water(delta: float) -> void:
 
 ## Aggiunge acqua al serbatoio (litri).
 func refill(liters: float) -> void:
-	_set_amount(tank_amount + liters)
+	_add_water(liters, {})
 
 
+## Mette il serbatoio a [param liters] litri: l'acqua in più è chiara.
 func set_tank_amount(liters: float) -> void:
-	_set_amount(liters)
+	if liters > tank_amount:
+		_add_water(liters - tank_amount, {})
+	else:
+		_set_amount(liters)
+
+
+## Butta via la parte chiara dell'acqua nel serbatoio: restano solo i colori (vedi WaterMix).
+func scarta_acqua_chiara() -> void:
+	var k := WaterMix.intensita(water_mix)
+	if tank_amount <= 0.001 or k >= 0.9999:
+		return
+	var m := WaterMix.solo_colori(water_mix)
+	_set_amount(tank_amount * k)
+	set_water_mix(m)
+
+
+## Cambia il colore dell'acqua nel serbatoio (vedi WaterMix).
+func set_water_mix(m: Dictionary) -> void:
+	var v := {} if tank_amount <= 0.001 else m.duplicate()
+	if v == water_mix:
+		return
+	water_mix = v
+	water_mix_changed.emit(water_mix)
+
+
+## Aggiunge [param liters] litri d'acqua del colore [param m]: si mescola per litri.
+func _add_water(liters: float, m: Dictionary) -> void:
+	var v := clampf(tank_amount + liters, 0.0, tank_capacity)
+	if v <= tank_amount:
+		return
+	var mixed := WaterMix.mescola(water_mix, tank_amount, m, v - tank_amount)
+	_set_amount(v)
+	set_water_mix(mixed)
 
 
 func _set_amount(liters: float) -> void:
@@ -574,6 +649,8 @@ func _set_amount(liters: float) -> void:
 		_full_notified = false
 	tank_amount = v
 	tank_changed.emit(tank_amount, tank_capacity)
+	if tank_amount <= 0.001:
+		set_water_mix({})
 
 
 # --- Grafica -------------------------------------------------------------------------------

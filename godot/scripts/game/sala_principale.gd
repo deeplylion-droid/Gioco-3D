@@ -45,6 +45,12 @@ extends Node3D
 @export var lei_sbuca: Node
 ## Il portone della sala della torre (PortoneTorre): la demo finisce lì, dopo la tappa 8.
 @export var portone: Node
+## La sala della torre (scenes/sala/torre/sala_torre.tscn): si carica in un thread quando il portone
+## comincia ad aprirsi (dopo la tappa 8) e da lì in poi la demo finisce nella vasca del fondo della
+## torre, non più davanti al portone. Vuoto: niente torre (la demo finisce al portone, come prima).
+@export_file("*.tscn") var sala_torre_scena := "res://scenes/sala/torre/sala_torre.tscn"
+## Il testo sotto "FINE DELLA DEMO" in fondo alla discesa della torre.
+@export_multiline var fine_torre_testo := "La discesa continua nel buio.\nGrazie per aver giocato!"
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
 @export var show_controls_hint := true
@@ -54,6 +60,10 @@ extends Node3D
 @export var start_with_pack := false
 
 var demo_finished := false
+## La sala della torre, quando è caricata.
+var sala_torre: Node3D
+var _torre_in_caricamento := false
+var _dentro_torre := false
 
 # Il bersaglio del getto sulla faccia della medusa (_faccia_bagnabile).
 var _faccia: WaterHitbox
@@ -95,6 +105,7 @@ func _ready() -> void:
 	var interni := get_node_or_null(^"Interni")
 	if p and interni and interni.has_method(&"fai_risveglio") and not GameState.is_restoring():
 		interni.call(&"fai_risveglio", p)
+	_setup_torre()
 
 
 ## La struttura di gioco dell'area bimbi: lo scivolo giallo e i tre tetti a piramide non hanno
@@ -227,7 +238,7 @@ func _hud() -> Hud:
 func _show_hint() -> void:
 	var hud := _hud()
 	if hud:
-		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · F torcia · Esc pausa", 10.0)
+		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · Esc pausa", 10.0)
 
 
 ## Chiamato quando il giocatore prende lo zaino.
@@ -314,6 +325,8 @@ func _segui_faccia() -> void:
 func _on_fine_demo(body: Node3D) -> void:
 	if demo_finished or not body is Player:
 		return
+	if sala_torre_scena != "":
+		return  # con la sala della torre la demo finisce in fondo alla discesa (_on_fine_torre)
 	# Al portone della sala della torre la demo finisce solo dopo la tappa 8; se si apre all'arrivo
 	# (PortoneTorre.Apertura.ALL_ARRIVO) la scritta arriva quando è aperto.
 	if portone and portone.has_method(&"si_puo_aprire"):
@@ -328,3 +341,103 @@ func _on_fine_demo(body: Node3D) -> void:
 	var hud := _hud()
 	if hud:
 		hud.show_banner("FINE DELLA DEMO", fine_demo_testo, 9.0)
+
+
+# --- La sala della torre ------------------------------------------------------------------------
+
+func _setup_torre() -> void:
+	if sala_torre_scena == "" or portone == null:
+		return
+	portone.connect(&"apertura_iniziata", _carica_torre)
+	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaTorre"):
+		# si riparte da un checkpoint della torre: la si carica subito, si è già dentro
+		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
+		_entra_in_torre(false)
+	else:
+		# ripartendo da un checkpoint col portone già aperto (load_state non riapre) la torre va caricata
+		GameState.player_respawned.connect(func():
+			if sala_torre == null and portone.has_method(&"is_aperto") and bool(portone.call(&"is_aperto")):
+				_carica_torre())
+
+
+func _carica_torre() -> void:
+	if sala_torre or _torre_in_caricamento:
+		return
+	if ResourceLoader.load_threaded_request(sala_torre_scena) == OK:
+		_torre_in_caricamento = true
+	else:
+		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
+
+
+func _process(_delta: float) -> void:
+	if not _torre_in_caricamento:
+		return
+	var stato := ResourceLoader.load_threaded_get_status(sala_torre_scena)
+	if stato == ResourceLoader.THREAD_LOAD_LOADED:
+		_torre_in_caricamento = false
+		_aggiungi_torre(ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene)
+	elif stato == ResourceLoader.THREAD_LOAD_FAILED or stato == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+		_torre_in_caricamento = false
+		push_error("Sala della torre: caricamento fallito (%s)" % sala_torre_scena)
+
+
+func _aggiungi_torre(scena: PackedScene) -> void:
+	if sala_torre or scena == null:
+		return
+	sala_torre = scena.instantiate()
+	add_child(sala_torre)
+	# il guscio provvisorio dietro il portone (sala_architettura.glb) lascia il posto alla sala vera
+	var guscio := find_child("sala_torre_guscio", true, false)
+	if guscio:
+		guscio.queue_free()
+	if sala_torre.has_signal(&"discesa_finita"):
+		sala_torre.connect(&"discesa_finita", _on_fine_torre)
+	# appena oltre il portone, sulla passerella: si è entrati
+	var entrata := Area3D.new()
+	entrata.name = "EntrataTorre"
+	entrata.collision_layer = 0
+	entrata.collision_mask = Layers.PLAYER
+	entrata.monitorable = false
+	var forma := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(2.0, 3.0, 3.2)
+	forma.shape = box
+	entrata.add_child(forma)
+	sala_torre.add_child(entrata)
+	entrata.global_position = Vector3(22.4, 1.5, -15.0)
+	entrata.body_entered.connect(func(corpo):
+		if corpo is Player:
+			_entra_in_torre(true))
+
+
+## Dentro la torre: il portone si richiude alle spalle (niente ritorno) e gli ambienti che non servono più
+## (interni e tecnici, dopo la tappa 8) si scaricano per la memoria.
+func _entra_in_torre(chiudi: bool) -> void:
+	if _dentro_torre:
+		return
+	_dentro_torre = true
+	if chiudi and portone and portone.has_method(&"chiudi"):
+		portone.call(&"chiudi")
+	elif portone and portone.has_method(&"resta_chiuso"):
+		portone.call(&"resta_chiuso")
+	_scarica_ambienti.call_deferred()
+
+
+## Interni e tecnici via, qualche frame dopo (chi ha chiamate in sospeso sulle loro luci le finisce prima).
+func _scarica_ambienti() -> void:
+	for i in 3:
+		await get_tree().process_frame
+	for n in [tecnici, get_node_or_null(^"Interni")]:
+		if n and is_instance_valid(n):
+			n.queue_free()
+	tecnici = null
+	risveglio = null
+
+
+func _on_fine_torre() -> void:
+	if demo_finished:
+		return
+	demo_finished = true
+	var hud := _hud()
+	if hud:
+		hud.show_banner("FINE DELLA DEMO", fine_torre_testo, 9.0)

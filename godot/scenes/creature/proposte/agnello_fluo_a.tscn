@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/creature/bambino_agnello.tscn" id="1_agnello"]
+[ext_resource type="Script" path="res://scripts/creature/agnello_fluorescente.gd" id="2_fluo"]
+[ext_resource type="Texture2D" path="res://assets/models/bambini/proposte_fluo/calmo_cuciture.png" id="3_calmo"]
+[ext_resource type="Texture2D" path="res://assets/models/bambini/proposte_fluo/rivelato_cuciture.png" id="4_rivelato"]
+
+[node name="AgnelloFluoA" instance=ExtResource("1_agnello")]
+editor_description = "Proposta dell'agnellino fluorescente (i geni della medusa), variante A: brillano solo le cuciture e i bottoni-occhi (e, rivelato, il grande occhio), col rosa dei tentacoli della medusa. Nel gioco non c'è."
+
+[node name="Fluo" type="Node" parent="."]
+script = ExtResource("2_fluo")
+maschera_calmo = ExtResource("3_calmo")
+maschera_rivelato = ExtResource("4_rivelato")
+occhio_grande = true
+energia = 3.0
+pulsazione = 0.0
+luce = 0.0

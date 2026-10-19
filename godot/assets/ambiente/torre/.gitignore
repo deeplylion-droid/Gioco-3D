@@ -1,0 +1,5 @@
+# texture estratte da Godot all'import dei GLB (sono già dentro i GLB): si rigenerano da sole
+torre_*.jpg
+torre_*.jpg.import
+torre_*.png
+torre_*.png.import

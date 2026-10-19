@@ -9,6 +9,10 @@ extends CharacterBody3D
 ## invece di scivolare giù come una capsula, e sulle rampe e sotto gli architravi passa come lei.
 ## Tutti i valori di "feeling" sono esportati: si tarano con l'utente.
 ##
+## Scivoli (sala della torre): sui corpi del gruppo "scivolo" non si cammina, si scivola giù
+## seguendo la pendenza, come su un acquascivolo bagnato (vedi [method _move_on_slide]). A fine pezzo
+## si vola via con la velocità che si ha; in aria la spinta del getto allunga il salto (WaterPack).
+##
 ## La camera (Head) non è interpolata dalla fisica: ogni frame segue la posizione interpolata
 ## del corpo e ruota subito col mouse, così il movimento è fluido anche oltre i 60 Hz.
 
@@ -21,6 +25,8 @@ signal landed(surface: StringName, wet: bool, fall_speed: float)
 signal jumped
 signal crouch_changed(is_crouching: bool)
 signal ladder_changed(is_on_ladder: bool)
+## Si comincia a scivolare su uno scivolo, o si smette (alla fine del pezzo, o fermandosi).
+signal slide_changed(is_sliding: bool)
 signal item_added(item_id: StringName, item_name: String, total: int)
 ## L'oggetto interattivo guardato è cambiato (null = nessuno).
 signal interaction_target_changed(target: Interactable)
@@ -28,6 +34,15 @@ signal interaction_target_changed(target: Interactable)
 const SURFACE_DEFAULT := &"generico"
 const SURFACE_WATER := &"acqua"
 const SURFACE_LADDER := &"scala"
+const SURFACE_SLIDE := &"scivolo"
+## Gruppo dei corpi su cui si scivola (li mette chi costruisce la sala della torre).
+const SLIDE_GROUP := &"scivolo"
+## Le superfici dello scivolo più ripide di così (gradi) sono sponde, non fondo.
+const SLIDE_MAX_ANGLE := 75.0
+## Si comincia a scivolare solo appoggiandosi su una parte dello scivolo meno ripida di così (gradi).
+const SLIDE_START_ANGLE := 60.0
+## Quanto si resta attaccati al fondo dello scivolo quando si stacca un poco (m).
+const SLIDE_SNAP := 0.18
 ## Quanto avanzare ancora se, appena salito, il corpo è in bilico sullo spigolo del gradino (m).
 const STEP_FOOTING := 0.05
 ## Il corpo: raggio, raggio del fondo (e della cima) piatto, pendenza degli smussi in gradi
@@ -70,6 +85,23 @@ const BODY_SIDES := 16
 ## Quanto in fretta la camera recupera il dislivello di un gradino (più alto = più secco).
 @export var step_camera_speed := 13.0
 
+@export_group("Scivoli")
+## Attrito dell'acqua sullo scivolo: la velocità cala così per secondo (esponenziale, 1/s).
+@export var slide_friction := 0.06
+## Accelerazione di lato per sterzare (m/s²).
+@export var slide_steer := 10.0
+## Frenata tirando indietro (m/s²); non si scende mai sotto [member slide_min_speed].
+@export var slide_brake := 1.2
+@export var slide_min_speed := 3.0
+@export var slide_max_speed := 20.0
+## Spinta all'ingresso, se si arriva piano (m/s nella direzione della pendenza).
+@export var slide_entry_speed := 2.0
+## Controllo in aria dopo un salto dallo scivolo (m/s²): la velocità resta, si corregge appena.
+@export var slide_air_steer := 2.2
+## Inclinazione massima della camera in curva (gradi) e quanto conta la curva.
+@export var slide_tilt_max := 9.0
+@export var slide_tilt_per_turn := 0.6
+
 @export_group("Accovacciato")
 ## Vero: Ctrl accende/spegne. Falso: bisogna tenerlo premuto.
 @export var crouch_toggle := false
@@ -109,6 +141,12 @@ var ladder: Ladder = null
 var inventory: Dictionary = {}
 ## Falso durante pause, filmati, test...
 var input_enabled := true
+## Vero mentre si scivola su uno scivolo.
+var is_sliding := false
+## Il fondo dello scivolo sotto di te (normale), finché scivoli.
+var slide_normal := Vector3.UP
+## Vero dopo un salto dallo scivolo, fino a quando si tocca terra: la velocità resta quella.
+var slide_launched := false
 
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 var _eye_height := 1.6
@@ -135,6 +173,10 @@ var _ladder_cooldown := 0.0
 # vuol dire giù (se no si scavalcherebbe subito di nuovo il bordo).
 var _ladder_from_top := false
 var _body_height := 1.75
+var _roll := 0.0
+var _roll_prev := 0.0
+var _slide_heading := 0.0
+var _air_time := 0.0
 
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var head: Node3D = $Head
@@ -163,6 +205,7 @@ func _ready() -> void:
 		water_pack.setup(self)
 	if interactor:
 		interactor.setup(self)
+	add_child(SlideFx.new(self))
 	_update_head(1.0)
 	GameState.register_player(self)
 	# Sensibilità, asse Y invertito e oscillazione della camera dalla scheda Controlli delle
@@ -238,6 +281,10 @@ func look_at_point(target: Vector3) -> void:
 func teleport(pos: Vector3, new_yaw := yaw, new_pitch := 0.0) -> void:
 	global_position = pos
 	velocity = Vector3.ZERO
+	_stop_sliding(false)
+	slide_launched = false
+	_roll = 0.0
+	_roll_prev = 0.0
 	set_look(new_yaw, new_pitch)
 	rotation = Vector3(0.0, yaw, 0.0)
 	_leave_ladder()
@@ -269,7 +316,8 @@ func _update_head(fraction: float) -> void:
 	var bob_h := head_bob_horizontal * w * sin(PI * phase)
 	var side := Basis(Vector3.UP, yaw) * Vector3.RIGHT
 	var pos := origin + Vector3.UP * (eye + land + bob_v) + side * bob_h
-	head.global_transform = Transform3D(get_aim_basis(), pos)
+	var roll := lerpf(_roll_prev, _roll, fraction)
+	head.global_transform = Transform3D(get_aim_basis() * Basis(Vector3.BACK, roll), pos)
 
 
 # --- Movimento ------------------------------------------------------------------------------
@@ -280,6 +328,7 @@ func _physics_process(delta: float) -> void:
 	_bob_prev = _bob_weight
 	_land_prev = _land_offset
 	_step_prev = _step_offset
+	_roll_prev = _roll
 	rotation = Vector3(0.0, yaw, 0.0)
 	_update_crouch(delta)
 	_update_ladder()
@@ -288,11 +337,14 @@ func _physics_process(delta: float) -> void:
 	var pre_transform := global_transform
 	if ladder:
 		_move_on_ladder(delta)
+	elif is_sliding:
+		_move_on_slide(delta)
 	else:
 		_move_on_ground(delta)
 	var wish_velocity := velocity
 	move_and_slide()
-	if pre_floor and ladder == null and wish_velocity.y <= 0.01:
+	_update_slide(delta, pre_vy)
+	if pre_floor and ladder == null and wish_velocity.y <= 0.01 and not is_sliding:
 		_step_up_after_move(pre_transform, wish_velocity, delta)
 	_push_rigid_bodies(delta)
 	_follow_step_down(pre_floor, pre_transform.origin)
@@ -331,6 +383,15 @@ func _move_on_ground(delta: float) -> void:
 	var rate: float
 	if on_floor:
 		rate = ground_acceleration if target.length_squared() >= hv.length_squared() - 0.01 else ground_deceleration
+	elif slide_launched:
+		# In volo dallo scivolo: la velocità resta, il comando la corregge appena (senza frenare).
+		var speed := hv.length()
+		hv += wish * slide_air_steer * delta
+		if hv.length() > speed and speed > 0.1:
+			hv = hv.normalized() * speed
+		velocity.x = hv.x
+		velocity.z = hv.z
+		return
 	else:
 		rate = air_control if input != Vector2.ZERO else 0.1
 	hv = hv.lerp(target, 1.0 - exp(-rate * delta))
@@ -461,7 +522,13 @@ func _push_rigid_bodies(delta: float) -> void:
 
 
 func _after_move(delta: float, pre_vy: float) -> void:
-	var on_floor := is_on_floor()
+	# Appena arrivati su uno scivolo il passo l'ha ancora preso per pavimento: non conta.
+	var on_floor := is_on_floor() and not is_sliding
+	if on_floor or ladder:
+		slide_launched = false
+	_air_time = 0.0 if on_floor or is_sliding or ladder else _air_time + delta
+	if not is_sliding:
+		_roll *= exp(-4.0 * delta)
 	# Atterraggio: segnale e piccola molla sulla camera.
 	if on_floor and not _was_on_floor and ladder == null:
 		var fall := -pre_vy
@@ -520,6 +587,126 @@ func is_in_water(depth := 0.2) -> bool:
 		if area is WaterVolume and (area as WaterVolume).get_surface_height() > global_position.y + depth:
 			return true
 	return false
+
+
+# --- Scivoli -------------------------------------------------------------------------------
+
+## Velocità lungo lo scivolo (m/s), 0 se non si scivola.
+func get_slide_speed() -> float:
+	return velocity.length() if is_sliding else 0.0
+
+
+## Sullo scivolo: la gravità tira lungo la pendenza, l'acqua frena pochissimo. Di lato si sterza;
+## tirando indietro si rallenta un poco, ma non sotto slide_min_speed (fermi non si sta).
+func _move_on_slide(delta: float) -> void:
+	var n := slide_normal
+	var v := velocity
+	var g := Vector3.DOWN * _gravity * gravity_multiplier
+	v += (g - n * g.dot(n)) * delta
+	if v.dot(n) < 0.0:
+		v -= n * v.dot(n)
+	v *= exp(-slide_friction * delta)
+	var speed := v.length()
+	var dir := v / speed if speed > 0.01 else (g - n * g.dot(n)).normalized()
+	var input := _move_input()
+	var wish := Basis(Vector3.UP, yaw) * Vector3(input.x, 0.0, input.y)
+	wish -= n * wish.dot(n)
+	var side := wish - dir * wish.dot(dir)
+	v += side * slide_steer * delta
+	var back := -wish.dot(dir)
+	if back > 0.3 and speed > slide_min_speed:
+		v -= dir * minf(slide_brake * back * delta, speed - slide_min_speed)
+	if v.length() > slide_max_speed:
+		v = v.normalized() * slide_max_speed
+	# Una spinta piccola contro il fondo: così ogni passo lo tocca e se ne legge la normale.
+	velocity = v - n * 0.4
+
+
+## Dopo il passo: si comincia a scivolare toccando uno scivolo, si resta attaccati al fondo
+## anche quando si stacca appena, e si vola via quando il pezzo finisce.
+func _update_slide(delta: float, pre_vy: float) -> void:
+	if ladder:
+		_stop_sliding(false)
+		return
+	var n := _slide_contact()
+	if n == Vector3.ZERO and is_sliding:
+		var hit := KinematicCollision3D.new()
+		if test_move(global_transform, -slide_normal * SLIDE_SNAP, hit, safe_margin) \
+				and _is_slide_surface(hit.get_collider(), hit.get_normal()):
+			global_position += hit.get_travel()
+			n = hit.get_normal()
+	if n == Vector3.ZERO:
+		if is_sliding:
+			# Fine del pezzo: si vola con la velocità che si ha (senza la spinta contro il fondo).
+			velocity += slide_normal * 0.4
+			_stop_sliding(true)
+		return
+	if not is_sliding:
+		# Si comincia solo appoggiandosi sul fondo (non sfiorando una sponda o il bordo di un pezzo).
+		if n.angle_to(Vector3.UP) > deg_to_rad(SLIDE_START_ANGLE):
+			return
+		var hv := Vector3(velocity.x, 0.0, velocity.z)
+		var nh := Vector3(n.x, 0.0, n.z)
+		if hv.length() > 1.0 and nh.length() > 0.3 and nh.normalized().dot(hv.normalized()) < -0.6:
+			return  # lo spigolo dell'inizio di un pezzo, preso di fronte
+		var fall := -pre_vy
+		is_sliding = true
+		slide_launched = false
+		motion_mode = CharacterBody3D.MOTION_MODE_FLOATING
+		var downhill := (Vector3.DOWN - n * Vector3.DOWN.dot(n)).normalized()
+		velocity -= n * velocity.dot(n)
+		if velocity.dot(downhill) < slide_entry_speed:
+			velocity += downhill * (slide_entry_speed - velocity.dot(downhill))
+		_slide_heading = _heading(velocity)
+		if fall > 1.0 and _air_time > 0.15:
+			landed.emit(SURFACE_SLIDE, true, fall)
+			_land_vel -= minf((fall - 1.0) * 0.25, land_dip_max * 29.8)
+		slide_changed.emit(true)
+	slide_normal = n
+	velocity -= n * minf(velocity.dot(n), 0.0)
+	# La camera si inclina verso l'interno della curva.
+	var h := _heading(velocity)
+	var turn := wrapf(h - _slide_heading, -PI, PI) / maxf(delta, 0.0001)
+	_slide_heading = h
+	var target := clampf(turn * slide_tilt_per_turn, -1.0, 1.0) * deg_to_rad(slide_tilt_max)
+	_roll = lerpf(_roll, target, 1.0 - exp(-5.0 * delta))
+
+
+func _stop_sliding(launched: bool) -> void:
+	if not is_sliding:
+		return
+	is_sliding = false
+	slide_launched = launched
+	motion_mode = CharacterBody3D.MOTION_MODE_GROUNDED
+	slide_normal = Vector3.UP
+	slide_changed.emit(false)
+
+
+## La normale del fondo dello scivolo toccato nell'ultimo passo (il più in piano), o ZERO; anche
+## quello su cui si sta in piedi.
+func _slide_contact() -> Vector3:
+	var best := Vector3.ZERO
+	for i in get_slide_collision_count():
+		var c := get_slide_collision(i)
+		var nn := c.get_normal()
+		if _is_slide_surface(c.get_collider(), nn) and nn.y > best.y:
+			best = nn
+	if best == Vector3.ZERO and is_on_floor():
+		# Camminando su una pendenza dolce il pavimento non risulta tra gli urti del passo.
+		var hit := KinematicCollision3D.new()
+		if test_move(global_transform, Vector3.DOWN * 0.08, hit, safe_margin) \
+				and _is_slide_surface(hit.get_collider(), hit.get_normal()):
+			best = hit.get_normal()
+	return best
+
+
+func _is_slide_surface(collider: Object, normal: Vector3) -> bool:
+	return collider is Node and (collider as Node).is_in_group(SLIDE_GROUP) \
+			and normal.angle_to(Vector3.UP) <= deg_to_rad(SLIDE_MAX_ANGLE)
+
+
+static func _heading(v: Vector3) -> float:
+	return atan2(-v.x, -v.z) if Vector2(v.x, v.z).length_squared() > 0.01 else 0.0
 
 
 # --- Accovacciato ---------------------------------------------------------------------------
@@ -617,6 +804,15 @@ func _leave_ladder() -> void:
 	ladder_changed.emit(false)
 
 
+## Sulla scala, avanti (W) scende se si guarda in basso: si comincia a scendere sotto -20 gradi e si
+## continua finché non si guarda chiaramente in alto (sopra +10), così alzando un po' lo sguardo mentre si
+## scende non si risale. Indietro (S) scende sempre.
+const LADDER_GIU_DA := -20.0
+const LADDER_SU_DA := 10.0
+var _ladder_giu := false
+var _ladder_giu_su: Ladder = null
+
+
 func _move_on_ladder(delta: float) -> void:
 	var input := _move_input()
 	var n := ladder.get_climb_normal()
@@ -625,8 +821,17 @@ func _move_on_ladder(delta: float) -> void:
 		_leave_ladder()
 		jumped.emit()
 		return
+	if _ladder_giu_su != ladder:
+		_ladder_giu_su = ladder
+		_ladder_giu = pitch < deg_to_rad(LADDER_GIU_DA)
+	if pitch < deg_to_rad(LADDER_GIU_DA):
+		_ladder_giu = true
+	elif pitch > deg_to_rad(LADDER_SU_DA):
+		_ladder_giu = false
 	var climb := -input.y
-	if pitch < deg_to_rad(-40.0):
+	if input.y > 0.0:
+		climb = -absf(input.y)
+	elif _ladder_giu:
 		climb = -climb
 	if _ladder_from_top:
 		if is_zero_approx(input.y):

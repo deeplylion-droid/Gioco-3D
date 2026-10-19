@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/tecnici/tecnici.tscn" id="1_tec"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_architettura.glb" id="2_arc"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_oggetti.glb" id="3_ogg"]
+[ext_resource type="PackedScene" path="res://scenes/sala/luci_sala.tscn" id="4_luci"]
+[ext_resource type="PackedScene" path="res://scenes/creature/proposte/agnello_fluo_c.tscn" id="9_fluo"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/angoli_sala/angolo_palloni.gltf" id="7_pal"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/angoli_sala/angolo_scatoloni.gltf" id="8_sca"]
+
+[node name="AgnelloFluoC" type="Node3D"]
+editor_description = "Proposta dell'agnellino fluorescente, variante C, solo per gli scatti: la strada di risalita del gioco, l'agnellino in cima alla scala di C2 che non scappa (per lo scatto da vicino)."
+
+[node name="Tecnici" parent="." instance=ExtResource("1_tec")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, -9.05, 1.36)
+
+[node name="Sala" type="Node3D" parent="."]
+
+[node name="Architettura" parent="Sala" instance=ExtResource("2_arc")]
+
+[node name="Oggetti" parent="Sala" instance=ExtResource("3_ogg")]
+
+[node name="LuciSala" parent="." instance=ExtResource("4_luci")]
+
+[node name="AngoloPalloni" parent="Sala" instance=ExtResource("7_pal")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 19.85, 0, 19.85)
+
+[node name="AngoloScatoloni" parent="Sala" instance=ExtResource("8_sca")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.85, 0, 19.85)
+
+
+[node name="AgnellinoScala" parent="Tecnici"]
+distanza_fuga = 0.0
+scena = ExtResource("9_fluo")
