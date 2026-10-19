@@ -9,6 +9,8 @@ extends Node
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --resolution 1600x900 \
 ##        --script res://tests/run.gd -- res://proposte/inseguimento/scatti_inseguimento.gd <versione> <cartella> [scatti]
+## Con "video" al posto degli scatti (e --write-movie file.avi --fixed-fps 24) la camera percorre la strada
+## (inseguimento_<v>_percorso.json) dalla bocca all'uscita, con lei nelle sue pose.
 ## (con run.gd perché la medusa usa l'autoload GameState)
 
 const ROSSO := Color(1.0, 0.035, 0.02)
@@ -23,6 +25,7 @@ static func b(x: float, y: float, z: float) -> Vector3:
 ## Per versione, gli scatti: nome -> [camera, punto guardato, campo visivo, pose di lei visibili].
 var VERSIONI := {
 	"A": {
+		"spirale": b(60.0, 4.5, -30.0),
 		# fari da cantiere sulle ringhiere delle passerelle: [posizione, dove puntano]
 		"fari": [[b(48.0, 0.7, -18.8), b(50.5, 15.0, -22.6)], [b(60.0, 29.9, -22.8), b(65.5, 27.7, -25.6)],
 				[b(76.5, 0.7, -18.8), b(69.5, 5.0, -28.6)], [b(43.0, 0.7, -18.8), b(46.5, 6.0, -33.4)]],
@@ -87,7 +90,10 @@ func _ready() -> void:
 	cam = Camera3D.new()
 	radice.add_child(cam)
 	cam.current = true
-	_scatta.call_deferred(VERSIONI[versione])
+	if solo.has("video"):
+		_video.call_deferred()
+	else:
+		_scatta.call_deferred(VERSIONI[versione])
 	for f in VERSIONI[versione].get("fari", []):
 		_faro(f[0], f[1])
 	for bv_ in VERSIONI[versione].get("bava", []):
@@ -466,7 +472,7 @@ func _medusa(L: Array) -> Node3D:
 
 func _scatta(scatti: Dictionary) -> void:
 	for nome in scatti:
-		if nome in ["fari", "bava"]:
+		if nome in ["fari", "bava", "spirale"]:
 			continue
 		if solo.size() and not solo.has(nome):
 			continue
@@ -485,3 +491,58 @@ func _scatta(scatti: Dictionary) -> void:
 		img.save_jpg(cartella.path_join("inseguimento_%s_%s.jpg" % [versione, nome]), 0.92)
 		print("scatto ", nome)
 	OS.kill(OS.get_process_id())
+
+
+## Il video del percorso: la camera segue la strada 3 m dietro e 2 m sopra chi scivola (fuori dai tubi chiusi),
+## guardando qualche metro avanti; lei è in tutte le sue pose, girata verso la camera.
+func _video() -> void:
+	var pp: Array = JSON.parse_string(FileAccess.get_file_as_string("res://proposte/inseguimento/inseguimento_%s_percorso.json" % versione))
+	var punti := PackedVector3Array()
+	for q in pp:
+		var su := 0.25 if String(q["cosa"]) in ["tubo", "canale"] else 1.6
+		var p := b(q["x"], q["y"], q["z"] + su)
+		if punti.is_empty() or punti[punti.size() - 1].distance_to(p) > 0.3:
+			punti.append(p)
+	# lunghezze lungo il percorso
+	var lung := PackedFloat32Array([0.0])
+	for i in range(1, punti.size()):
+		lung.append(lung[i - 1] + punti[i].distance_to(punti[i - 1]))
+	var tot := lung[lung.size() - 1]
+	var dove := func(s_: float) -> Vector3:
+		s_ = clampf(s_, 0.0, tot)
+		var i := 1
+		while i < lung.size() - 1 and lung[i] < s_:
+			i += 1
+		var t := (s_ - lung[i - 1]) / maxf(lung[i] - lung[i - 1], 0.001)
+		return punti[i - 1].lerp(punti[i], t)
+	for m in lei:
+		m.visible = true
+	cam.fov = 78.0
+	var vel := 4.5
+	var s_ := 5.0       # la bocca è dentro il muro della torre: si parte poco dopo
+	var guarda: Vector3 = dove.call(9.0)
+	cam.position = dove.call(0.0) + Vector3(0, 2.0, 0)
+	while s_ < tot:
+		s_ += vel / 24.0
+		# un poco dietro e sopra chi scivola: fuori dai tubi chiusi, così si vede la sala
+		var p: Vector3 = dove.call(s_ - 3.0) + Vector3(0, 2.0, 0)
+		if VERSIONI[versione].has("spirale"):
+			# attorno al serbatoio la spirale ha i giri uno sopra l'altro: la camera sta di fuori, di lato
+			var cs: Vector3 = VERSIONI[versione]["spirale"]
+			var r := Vector3(p.x - cs.x, 0, p.z - cs.z)
+			if r.length() < 6.5 and p.y < -26.0:
+				p = dove.call(s_ - 1.5) + r.normalized() * 2.8 + Vector3(0, 0.4, 0)
+		cam.position = cam.position.lerp(p, 0.5)
+		guarda = guarda.lerp(dove.call(s_ + 5.0), 0.12)
+		if guarda.distance_to(cam.position) > 0.2:
+			cam.look_at(guarda)
+		for m in lei:
+			var d := cam.position - m.position
+			m.rotation = Vector3(0, atan2(d.x, d.z), 0)
+		await get_tree().process_frame
+	# l'ultima immagine: SB1, ferma due secondi verso lei che sbuca
+	var sb1 := lei[lei.size() - 1]
+	for i in 48:
+		cam.look_at(sb1.position + Vector3(0, 0.8, 0))
+		await get_tree().process_frame
+	get_tree().quit()

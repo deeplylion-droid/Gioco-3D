@@ -114,6 +114,25 @@ Dopo un tubo corto si arriva nella vasca di partenza, poi si scende nel **canale
 ![SB1](inseguimento_B_5_sb1.jpg)
 *SB1: dal pontile della porta, lei sbuca dal pozzo di scarico della laguna e si aggrappa al bordo.*
 
+## Video
+
+Un video per versione (circa 30 s): la camera segue la strada dalla bocca all'uscita, 3 m dietro e 2 m sopra chi scivola, così fuori dai tubi chiusi si vede la sala. Lei è in tutte le sue pose; alla fine c'è SB1.
+
+- [inseguimento_A.mp4](inseguimento_A.mp4), provini ogni 2 s: ![provini A](inseguimento_A_video_provini.jpg)
+- [inseguimento_B.mp4](inseguimento_B.mp4), provini ogni 2 s: ![provini B](inseguimento_B_video_provini.jpg)
+
+## Controllo critico degli scatti
+
+- **A:**
+  - Le vasche sono pozze scure: l'acqua torbida riflette poco. Nel gioco può schiarirsi un po' sotto le lampade da lavoro.
+  - Nel secondo bivio la bocca del tubo d'arrivo sta in mezzo alle due paratie e confonde un po'. Nel gioco conviene farla arrivare dal lato.
+  - Nel video l'inizio della spirale resta scuro per circa un secondo.
+- **B:**
+  - Il fondo della sala è ancora scuro tra uno scoglio e l'altro: si leggono le sagome, non i dettagli.
+  - La schiuma è a chiazze e non a strisce che seguono la corrente. Nel gioco si orienta lungo il canale.
+  - Gli scogli sono massi lisci di vetroresina: nel gioco si possono dipingere meglio, con le crepe e le alghe finte.
+- **Tutte e due:** le pose di lei sono quelle del modello (insegue, affacciata). Le animazioni dell'inseguimento vero sono da fare.
+
 ## Per scegliere
 
 - **A**: claustrofobica e a fasi (tubo, vasca, tubo), più vicina all'idea di "scivolata negli scivoli" del GDD. Si porta nel gioco riusando la tecnica dei tubi della torre. Stima: 10-12 ore.

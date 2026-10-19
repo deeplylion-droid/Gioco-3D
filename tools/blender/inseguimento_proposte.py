@@ -478,7 +478,7 @@ def versione_A(mats):
         arredo(luci, 'det/' + cat, nodo, p, ry=ry, appoggio='origine')
     # lampade industriali appese al soffitto sopra le macchine (cavo dal soffitto)
     luci['appese'] += [[51.5, 7.5, -16.5, True], [61.5, 17.5, -17.5, False], [70.5, 24.0, -18.5, True], [45.0, 22.5, -19.0, True],
-                       [43.8, 28.5, -17.0, False]]
+                       [43.8, 28.5, -17.0, False], [61.0, 9.9, -23.5, True]]
     # prop nell'acqua e sulle passerelle
     props = []
     for (nome, x, y, z, rot) in (('salvagente_nave', 47.0, 18.0, T - 0.05, 30), ('ciambella_gonfiabile', 68.0, 22.5, T - 0.1, 120),
