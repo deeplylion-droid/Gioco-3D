@@ -34,6 +34,7 @@ func _run() -> void:
 	await test_tank_transfer()
 	await test_drain_button()
 	await test_boost()
+	await test_slot_gorghi()
 	await test_knockback()
 	await test_checkpoint_death_respawn()
 	await test_platform_carries_player()
@@ -488,6 +489,40 @@ func test_drain_button() -> void:
 	var f := big.fill
 	await _frames(60)
 	check(absf(big.fill - f) < 0.001, "scarico chiuso: il livello resta fermo")
+
+
+## I due gorghi di una WaterBody (slot 0 e 1) funzionano allo stesso modo: stessi parametri allo
+## shader, stesso imbuto e stessa corrente (segnalazione di enigma-ambiente del 19 ottobre: lo slot 1
+## sembrava non fare niente; in realtà lo usa l'aspirazione dello zaino, che lo spegne quando smetti).
+func test_slot_gorghi() -> void:
+	print("Gorghi: slot 0 e slot 1 uguali")
+	var w := WaterBody.new()
+	w.size = Vector2(6, 6)
+	w.level = 0.0
+	w.bottom = -1.0
+	w.max_level = 0.0
+	w.simulate_ripples = false
+	w.capture_env_cubemap = false
+	level.add_child(w)
+	w.global_position = Vector3(30.0, 0.0, 30.0)
+	await _frames(2)
+	var risultati := []
+	for slot in 2:
+		w.clear_flow(0)
+		w.clear_flow(1)
+		w.set_flow(slot, w.global_position, 2.0, 1.0, 1.5, 0.3, 0.55, 1.0)
+		var m := w.material as ShaderMaterial
+		var fp: Vector4 = m.get_shader_parameter("flow_point_%d" % slot)
+		var fs: Vector4 = m.get_shader_parameter("flow_shape_%d" % slot)
+		var altro: Vector4 = m.get_shader_parameter("flow_point_%d" % (1 - slot))
+		check(fp.is_equal_approx(Vector4(30, 30, 2, 1)) and fs.is_equal_approx(Vector4(1.5, 0.3, 0.55, 1.0)) and altro.w == 0.0,
+			"slot %d: i parametri arrivano allo shader (e l'altro slot resta spento)" % slot)
+		risultati.append([w.call(&"_flow_dip", Vector2(30.0, 30.0)), w.get_flow_velocity(w.global_position + Vector3(0.6, 0, 0))])
+	check(is_equal_approx(risultati[0][0], risultati[1][0]) and risultati[0][0] > 0.2,
+		"stesso imbuto nei due slot (%.2f e %.2f m)" % [risultati[0][0], risultati[1][0]])
+	check((risultati[0][1] as Vector2).is_equal_approx(risultati[1][1]) and (risultati[0][1] as Vector2).length() > 0.1,
+		"stessa corrente nei due slot")
+	w.queue_free()
 
 
 func test_boost() -> void:
