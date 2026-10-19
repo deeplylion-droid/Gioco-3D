@@ -27,7 +27,14 @@ Tutte le immagini vengono da modelli veri: le piante e le viste di lato sono ren
 
 ## Versione A, "Le condotte"
 
-Una sala macchine allagata, con condotte, serbatoi e pompe. Si scivola in **tubi chiusi** da una vasca di smistamento all'altra: tre vasche sospese, tre bivi. Dalla bocca alla porta sono 125 m di percorso e 15 m di dislivello.
+Una sala macchine vera, allagata sul fondo. Ci sono:
+- le tre pompe della sala pompe (gialla, rossa e blu) sui loro basamenti, il filtro grande, i serbatoi, le condotte;
+- un ballatoio contro il muro est con il quadro elettrico e il volano della turbina;
+- un balcone di controllo sul muro sud con la scrivania, la sedia e il quadro strumenti;
+- valvole, manometri, cassette elettriche, cavi a festone sotto le passerelle, cartelli e lamiere cadute;
+- lampade industriali appese al soffitto e plafoniere al neon.
+
+Ogni oggetto compare una volta sola e tutto è appoggiato o appeso a qualcosa. Si scivola in **tubi chiusi** da una vasca di smistamento all'altra: tre vasche sospese, tre bivi. Dalla bocca alla porta sono 125 m di percorso e 15 m di dislivello.
 
 ![pianta](inseguimento_A_pianta.jpg)
 ![lato](inseguimento_A_lato.jpg)
@@ -63,7 +70,14 @@ Una sala macchine allagata, con condotte, serbatoi e pompe. Si scivola in **tubi
 
 ## Versione B, "Le rapide"
 
-Il letto asciutto del vecchio fiume lento, con scogli finti, murali e tralicci di fari spenti. Dopo un tubo corto si arriva in una vasca di partenza, poi si scende in un **canale aperto** con l'acqua che corre. Ci sono tre bivi, ognuno attorno a uno scoglio. Dalla bocca alla porta sono 108 m e 17 m di dislivello.
+Una giostra diversa dal fiume lento: **le rapide**, acqua bianca e schiuma in un canale tra scogli finti. Ci sono:
+- l'insegna "LE RAPIDE" sul portale della partenza e i cartelli della giostra ("Attenzione salto!", "Vietato alzarsi", l'uscita verde);
+- un canyon di scogli finti di vetroresina dipinta contro i muri, tutti diversi;
+- i gommoni tondi da sei posti rovesciati sul fondo e i murales;
+- tre tralicci di scena con i fari accesi, colorati, puntati sul canale;
+- i lampioncini del percorso sulle sponde ogni 6 m: la strada si legge anche senza torcia.
+
+Dopo un tubo corto si arriva nella vasca di partenza, poi si scende nel **canale aperto**, con tre bivi attorno a uno scoglio. Dalla bocca alla porta sono 108 m e 17 m di dislivello. Sotto il canale c'è il bacino di raccolta della giostra, con l'acqua ferma.
 
 ![pianta](inseguimento_B_pianta.jpg)
 ![lato](inseguimento_B_lato.jpg)
@@ -83,7 +97,7 @@ Il letto asciutto del vecchio fiume lento, con scogli finti, murali e tralicci d
 **In totale circa 6:30 senza errori.** La B è più d'azione e ha meno pause: lei la vedi quasi sempre, dietro di te nel canale, e i bivi si fanno con la corrente che spinge.
 
 ![rapide](inseguimento_B_1_rapide.jpg)
-*Nel canale delle rapide, verso il primo bivio: in fondo, le due paratie attorno allo scoglio.*
+*Nel canale delle rapide, verso il primo bivio: la schiuma, i lampioncini sulle sponde e in fondo le due paratie.*
 
 ![lei ti raggiunge](inseguimento_B_2_lei_ti_raggiunge.jpg)
 *Lei nuota nel canale dietro di te.*

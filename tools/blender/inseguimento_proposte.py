@@ -16,7 +16,7 @@ inseguimento_<v>_luci.json, il percorso per le viste in inseguimento_<v>_percors
      smistamento sospese sul vuoto; a ogni vasca due paratie (quella giusta ha la lampada verde e l'acqua
      che filtra sotto), la sbagliata porta a una vasca di scolo senza uscita; l'ultimo tubo scende a spirale
      attorno a un serbatoio fino al bacino di scarico, dove la grata cala sulla bocca del tubo.
-  B  "Le rapide": il fiume delle rapide abbandonato, un canale aperto largo 3,2 m con l'acqua che corre,
+  B  "Le rapide": la giostra delle rapide abbandonata (acqua bianca tra scogli finti, non il fiume lento), un canale aperto largo 3,2 m con l'acqua che corre,
      che scende a salti tra scogli finti; ai tre bivi due paratie a ghigliottina sopra il canale (si colpisce
      il bersaglio di quella giusta e si alza); lei nuota nel canale dietro di te; il canale finisce nella
      laguna d'arrivo, la saracinesca cala sull'arco del canale.
@@ -303,7 +303,25 @@ def porta_uscita(c, y, z, luci):
 
 
 def luci_nuove():
-    return dict(emergenza=[], lavoro=[], paratie=[], bersagli=[], uscita=[], lei=[], acqua_scorre=[])
+    return dict(emergenza=[], lavoro=[], paratie=[], bersagli=[], uscita=[], lei=[], acqua_scorre=[], arredi=[], appese=[],
+                neon=[], fari=[], lanterne=[], schiuma=[])
+
+
+def arredo(luci, fonte, nodo, p, ry=0.0, appoggio='base', normale=None, scala=1.0):
+    """Un oggetto vero del gioco messo dallo script degli scatti (non sta nei GLB della proposta):
+    fonte 'pompe' = un nodo di assets/ambienti_tecnici/sala_pompe.gltf (anche una lista di nodi che si
+    muovono insieme), fonte 'det/<categoria>' = un nodo del kit di dettagli (assets/ambiente/dettagli).
+    appoggio: 'base' (il fondo della scatola sul punto p), 'muro' (la scatola contro il muro: p sul muro
+    all'altezza del fondo, normale = verso la stanza), 'origine' (l'origine del nodo in p: i dettagli del kit
+    da muro e da soffitto hanno l'origine sull'attacco). ry: rotazione attorno alla verticale (gradi)."""
+    luci['arredi'].append(dict(f=fonte, n=nodo, p=[round(v, 3) for v in p], ry=ry, a=appoggio,
+                               nrm=list(normale) if normale else None, s=scala))
+
+
+def ry_muro(nx, ny):
+    """La rotazione (gradi, attorno alla verticale) che gira il +Z locale di Godot dei dettagli del kit da muro
+    verso la stanza, data la normale del muro (nx, ny) in coordinate di Blender."""
+    return math.degrees(math.atan2(nx, -ny))
 
 
 # --- versione A: le condotte -------------------------------------------------------------------------
@@ -388,13 +406,47 @@ def versione_A(mats):
     condotta(c, (X0 + 0.5, y0 + 1.7, -15.5), (x1 - 0.5, y0 + 1.7, -15.5), 1.1, muro=('y', y0))
     condotta(c, (x1 - 1.6, y0 + 0.5, -20.0), (x1 - 1.6, y1 - 0.5, -20.0), 1.2, muro=('x', x1))
     condotta(c, (46.0, 20.0, T + 1.2), (76.0, 20.0, T + 1.2), 1.0, z_terra=z0)
+    condotta(c, (X0 + 1.3, 17.2, -21.5), (X0 + 1.3, y1 - 0.5, -21.5), 0.9, 'metallo', muro=('x', X0))
     condotta(c, (64.0, -1.5, T + 1.0), (64.0, 31.5, T + 1.0), 0.8, z_terra=z0)
     for (x, y, h, r) in ((74.0, 27.0, 16.0, 2.2), (45.5, 26.5, 12.0, 2.4), (75.0, 4.0, 11.0, 1.8)):
         serbatoio(c, x, y, z0, h, r)
-    for (x, y, rot) in ((52.0, 24.5, 0.0), (55.5, 24.5, 0.0), (70.0, 14.0, math.pi / 2)):
-        P.piattaforma(c, x - 1.7, y - 1.1, x + 1.7, y + 1.1, T + 0.6, lati=(), pali=False)
-        gambe(c, x - 1.7, y - 1.1, x + 1.7, y + 1.1, T + 0.3, z0)
-        pompa(c, x, y, T + 0.55, rot)
+    # le pompe vere della sala pompe (una per tipo, niente doppioni), su basamenti sopra l'acqua
+    for (x, y, nodi) in ((50.0, 23.6, 'POMPA_1'), (54.4, 23.6, 'POMPA_2'), (67.0, 14.5, ['POMPA_3', 'POMPA_3_modello'])):
+        P.piattaforma(c, x - 2.1, y - 1.6, x + 2.1, y + 1.6, T + 0.6, lati=(), pali=False)
+        gambe(c, x - 2.1, y - 1.6, x + 2.1, y + 1.6, T + 0.3, z0)
+        arredo(luci, 'pompe', nodi, (x, y, T + 0.6), ry=90.0)
+    arredo(luci, 'det/detriti', 'det_pannello_lamiera', (48.6, 22.6, T + 0.6), ry=25.0, appoggio='origine')
+    # il filtro grande su un plinto di cemento, tra il bacino e la spirale
+    c.scatola((51.3, -0.6, z0), (54.3, 2.4, T + 0.3), 'cemento')
+    arredo(luci, 'pompe', 'FILTRO_1_modello', (52.8, 0.9, T + 0.3), ry=30.0)
+    # il ballatoio delle macchine contro il muro est: quadro elettrico, volano della turbina, attrezzi
+    BM = (72.6, 17.2, x1 - 0.1, 24.0, -29.0)
+    P.piattaforma(c, BM[0], BM[1], BM[2], BM[3], BM[4], lati=('o', 's'), pali=False)
+    gambe(c, BM[0], BM[1], BM[2], BM[3], BM[4] - 0.3, z0)
+    scala_pioli(c, BM[0] - 0.1, 20.6, z0, BM[4])
+    arredo(luci, 'pompe', 'QUADRO_elettrico', (x1, 22.6, BM[4]), ry=90.0, appoggio='muro', normale=(-1, 0))
+    arredo(luci, 'pompe', 'TURBINA_1', (75.4, 19.0, BM[4]), ry=90.0)
+    arredo(luci, 'det/detriti', 'det_griglia_caduta', (73.6, 21.8, BM[4]), ry=-20.0, appoggio='origine')
+    arredo(luci, 'det/elettrico', 'det_cassetta_aperta', (x1, 18.2, BM[4] + 1.3), ry=ry_muro(-1, 0), appoggio='origine')
+    # il palo della plafoniera, dal ballatoio, col braccio
+    c.cilindro((77.5, 20.6, BM[4]), (77.5, 20.6, BM[4] + 3.4), 0.05, 'metallo_grigio', seg=8)
+    c.cilindro((77.5, 20.6, BM[4] + 3.35), (74.6, 20.6, BM[4] + 3.35), 0.035, 'metallo_grigio', seg=8)
+    luci['neon'].append([75.4, 20.6, BM[4] + 3.25])
+    # la postazione di controllo sul muro sud: un balcone sulla passerella con la scrivania e gli strumenti
+    PC = (45.5, y0 + 1.8, 52.5, y0 + 3.6, -20.0)
+    P.piattaforma(c, PC[0], PC[1], PC[2], PC[3], PC[4], lati=('n', 'e', 'o'), pali=False)
+    for x in (PC[0] + 0.3, (PC[0] + PC[2]) / 2, PC[2] - 0.3):
+        c.cilindro((x, PC[3] - 0.2, PC[4] - 0.3), (x, y0 + 0.05, PC[4] - 2.2), 0.06, 'gioco_giallo', seg=8)
+        c.scatola((x - 0.12, y0, PC[4] - 2.35), (x + 0.12, y0 + 0.08, PC[4] - 2.05), 'metallo')
+    arredo(luci, 'pompe', 'SCRIVANIA', (48.0, PC[1] + 0.55, PC[4]), ry=180.0)
+    arredo(luci, 'pompe', 'SEDIA', (48.2, PC[1] + 1.35, PC[4]), ry=160.0)
+    arredo(luci, 'pompe', 'QUADRO_strumenti', (50.9, y0, PC[4] + 0.9), ry=0.0, appoggio='muro', normale=(0, 1))
+    arredo(luci, 'det/elettrico', 'det_quadro_elettrico', (46.2, y0, PC[4] + 1.4), ry=ry_muro(0, 1), appoggio='origine')
+    arredo(luci, 'det/detriti', 'det_vetri_rotti_1', (51.6, PC[1] + 1.0, PC[4]), ry=40.0, appoggio='origine')
+    arredo(luci, 'det/detriti', 'det_foglio_2', (49.4, PC[1] + 1.2, PC[4]), ry=-15.0, appoggio='origine')
+    c.cilindro((49.0, y0, PC[4] + 3.05), (49.0, PC[1] + 1.0, PC[4] + 3.05), 0.035, 'metallo_grigio', seg=8)
+    c.scatola((48.9, y0, PC[4] + 2.9), (49.1, y0 + 0.05, PC[4] + 3.2), 'metallo')
+    luci['neon'].append([49.0, PC[1] + 0.8, PC[4] + 2.95])
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y0 + 0.4, -20.0, 1)
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y1 - 0.4, -24.0, -1)
     for x in range(44, 78, 7):
@@ -402,6 +454,31 @@ def versione_A(mats):
     # catene appese dal soffitto (con il gancio)
     for (x, y) in ((58.0, 15.0), (66.0, 18.0), (48.0, 22.0)):
         c.cilindro((x, y, z1), (x, y, -17.0 - rnd.uniform(0, 3)), 0.03, 'metallo', seg=6)
+    # i dettagli del kit sui muri e sotto le passerelle: valvole, tubi, cavi, cartelli, lampade
+    for (cat, nodo, p, nrm) in (
+            ('tubi', 'det_tubo_valvola_T', (55.0, y1, -23.0), (0, -1)), ('tubi', 'det_tubi_paralleli_2m', (68.0, y1, -22.6), (0, -1)),
+            ('tubi', 'det_condotta_aria_4m', (42.0, y0, -18.4), (0, 1)), ('tubi', 'det_tubo_curva_su', (61.0, y0, -19.9), (0, 1)),
+            ('tubi', 'det_tubo_valvola_T', (X0, 11.8, -29.2), (1, 0)), ('elettrico', 'det_interruttore_stagno', (X0, 7.8, -28.9), (1, 0)),
+            ('cartelli', 'det_cartello_uscita', (X0, 3.2, -27.6), (1, 0)), ('cartelli', 'det_cartello_profondita', (X0, 9.6, -31.9), (1, 0)),
+            ('cartelli', 'det_cartello_salvagente', (57.0, y0, -18.3), (0, 1)), ('cartelli', 'det_cartello_non_correre_penzolante', (71.0, y1, -22.4), (0, -1)),
+            ('elettrico', 'det_cassetta_piccola', (x1, 9.0, -30.0), (-1, 0)), ('tubi', 'det_bocchetta_rettangolare_rotta', (x1, 27.0, -27.0), (-1, 0)),
+            ('lampade', 'det_applique_emergenza_rotta', (66.0, y0, -24.5), (0, 1)),
+            ('tubi', 'det_tubi_paralleli_2m', (X0, 19.0, -22.6), (1, 0)), ('tubi', 'det_condotta_aria_4m', (X0, 24.5, -19.6), (1, 0)),
+            ('elettrico', 'det_cassetta_aperta', (X0, 17.6, -24.0), (1, 0)), ('cartelli', 'det_cartello_non_tuffarsi', (X0, 22.0, -19.2), (1, 0)),
+            ('tubi', 'det_tubo_verticale_3m', (X0, 28.5, -25.0), (1, 0)), ('tubi', 'det_bocchetta_tonda', (X0, 26.0, -23.0), (1, 0))):
+        arredo(luci, 'det/' + cat, nodo, p, ry=ry_muro(*nrm), appoggio='origine')
+    # sotto le passerelle: fasci di cavi a festone (dall'attacco pendono in giù)
+    for (cat, nodo, p, ry) in (('cavi', 'det_fascio_cavi_4m', (46.0, y0 + 0.6, -20.32), 0.0), ('cavi', 'det_cavo_festone_3', (58.0, y0 + 1.2, -20.32), 0.0),
+                               ('cavi', 'det_cavo_festone_2', (52.0, y1 - 0.9, -24.32), 180.0), ('cavi', 'det_cavo_pendente_3', (64.5, y1 - 1.0, -24.32), 0.0),
+                               ('catene_corde', 'det_corda_pendente_2', (74.0, y0 + 1.0, -20.32), 0.0)):
+        arredo(luci, 'det/' + cat, nodo, p, ry=ry, appoggio='origine')
+    # sulla piattaforma della porta: corda, catena, la paletta di un bagnino
+    for (cat, nodo, p, ry) in (('catene_corde', 'det_corda_rotolo', (41.0, 6.2, porta[1]), 0.0), ('catene_corde', 'det_catena_a_terra', (42.3, 2.6, porta[1]), 60.0),
+                               ('detriti', 'det_pannello_lamiera_2', (41.4, 4.6, porta[1]), 12.0)):
+        arredo(luci, 'det/' + cat, nodo, p, ry=ry, appoggio='origine')
+    # lampade industriali appese al soffitto sopra le macchine (cavo dal soffitto)
+    luci['appese'] += [[51.5, 7.5, -16.5, True], [61.5, 17.5, -17.5, False], [70.5, 24.0, -18.5, True], [45.0, 22.5, -19.0, True],
+                       [43.8, 28.5, -17.0, False]]
     # prop nell'acqua e sulle passerelle
     props = []
     for (nome, x, y, z, rot) in (('salvagente_nave', 47.0, 18.0, T - 0.05, 30), ('ciambella_gonfiabile', 68.0, 22.5, T - 0.1, 120),
@@ -498,6 +575,127 @@ def scoglio(c, x, y, z0, h, r, rnd):
         rr *= rnd.uniform(0.7, 0.9)
 
 
+def materiali_rapide(mats):
+    """Vetroresina degli scogli finti, gomma dei gommoni, le insegne disegnate (inseguimento_insegne.py)."""
+    import inseguimento_insegne as INS
+    for nome, col, rough in (('roccia_finta', (0.42, 0.27, 0.15), 0.8), ('roccia_finta_scura', (0.22, 0.16, 0.12), 0.85),
+                             ('gomma_gialla', (0.85, 0.6, 0.02), 0.55), ('gomma_rossa', (0.62, 0.06, 0.03), 0.55),
+                             ('gomma_blu', (0.05, 0.2, 0.55), 0.55), ('gomma_nera_ins', (0.03, 0.03, 0.03), 0.7)):
+        if nome not in mats.cache:
+            mats.cache[nome] = mats._semplice(nome, col, rough)
+    for nome, file in INS.disegna_tutto().items():
+        if nome in mats.cache:
+            continue
+        m, nt, b = mats._base(nome)
+        uv = nt.nodes.new('ShaderNodeUVMap'); uv.uv_map = 'UVMap'
+        t = nt.nodes.new('ShaderNodeTexImage')
+        t.image = bpy.data.images.load(file, check_existing=True)
+        nt.links.new(uv.outputs['UV'], t.inputs['Vector'])
+        nt.links.new(t.outputs['Color'], b.inputs['Base Color'])
+        b.inputs['Roughness'].default_value = 0.6
+        mats.cache[nome] = m
+
+
+_ICO = None
+
+
+def _icosfera():
+    """I vertici e i triangoli di un'icosfera (2 suddivisioni), calcolati una volta."""
+    global _ICO
+    if _ICO:
+        return _ICO
+    t = (1 + 5 ** 0.5) / 2
+    vv = [Vector(v).normalized() for v in ((-1, t, 0), (1, t, 0), (-1, -t, 0), (1, -t, 0), (0, -1, t), (0, 1, t), (0, -1, -t), (0, 1, -t),
+                                           (t, 0, -1), (t, 0, 1), (-t, 0, -1), (-t, 0, 1))]
+    ff = [(0, 11, 5), (0, 5, 1), (0, 1, 7), (0, 7, 10), (0, 10, 11), (1, 5, 9), (5, 11, 4), (11, 10, 2), (10, 7, 6), (7, 1, 8),
+          (3, 9, 4), (3, 4, 2), (3, 2, 6), (3, 6, 8), (3, 8, 9), (4, 9, 5), (2, 4, 11), (6, 2, 10), (8, 6, 7), (9, 8, 1)]
+    for _ in range(2):
+        mezzi = {}
+        nuove = []
+        def m(a, b):
+            k = (min(a, b), max(a, b))
+            if k not in mezzi:
+                vv.append(((vv[a] + vv[b]) / 2).normalized())
+                mezzi[k] = len(vv) - 1
+            return mezzi[k]
+        for (a, b, c_) in ff:
+            ab, bc, ca = m(a, b), m(b, c_), m(c_, a)
+            nuove += [(a, ab, ca), (b, bc, ab), (c_, ca, bc), (ab, bc, ca)]
+        ff = nuove
+    _ICO = (vv, ff)
+    return _ICO
+
+
+def masso(c, centro, raggi, rnd, mat='roccia_finta'):
+    """Un masso di vetroresina: un'icosfera schiacciata e bitorzoluta (ognuno diverso)."""
+    vv, ff = _icosfera()
+    fase = [rnd.uniform(0, 6.28) for _ in range(6)]
+    def forma(d):
+        k = 1.0 + 0.16 * math.sin(3.1 * d.x + fase[0]) * math.sin(2.7 * d.y + fase[1]) + 0.1 * math.sin(5.3 * d.z + fase[2]) \
+            + 0.06 * math.sin(7.7 * d.x + 6.1 * d.y + fase[3])
+        return Vector((centro[0] + d.x * raggi[0] * k, centro[1] + d.y * raggi[1] * k, centro[2] + d.z * raggi[2] * k))
+    pp = [forma(d) for d in vv]
+    for (a, b, c_) in ff:
+        c.faccia([pp[a], pp[b], pp[c_]], mat, liscia=True)
+
+
+def scoglio(c, x, y, z0, h, r, rnd):
+    """Scoglio finto delle rapide: massi di vetroresina dipinta sovrapposti, il primo affondato nel pavimento."""
+    zz = z0 - 0.3
+    rr = r
+    k = 0
+    while zz < z0 + h - 0.3 and k < 9:
+        hh = max(rr * rnd.uniform(0.75, 1.05), h / 6.0)
+        dx, dy = rnd.uniform(-0.25, 0.25) * rr, rnd.uniform(-0.25, 0.25) * rr
+        masso(c, (x + dx, y + dy, zz + hh * 0.55), (rr, rr * rnd.uniform(0.75, 0.95), hh * 0.75), rnd,
+              'roccia_finta' if k % 3 != 2 else 'roccia_finta_scura')
+        zz += hh * 0.9
+        rr = max(rr * rnd.uniform(0.72, 0.88), r * 0.4)
+        k += 1
+
+
+def gommone(mats, nome, centro, mat, rot=(0.0, 0.0, 0.0)):
+    """Il gommone tondo delle rapide (sei posti): il tubolare, il fondo, i sedili a raggiera e le maniglie.
+    Un oggetto a parte, girato con rot (gradi) attorno al suo centro: anche rovesciato."""
+    c = K.Costruttore(mats)
+    R, r = 1.15, 0.32
+    c.toro((0, 0, r), (0, 0, 1), R, r, mat, seg=48, seg_r=12)
+    c.disco((0, 0, 0.04), (0, 0, 1), R, 'gomma_nera_ins', seg=40)
+    c.disco((0, 0, 0.03), (0, 0, -1), R, 'gomma_nera_ins', seg=40)
+    c.cilindro((0, 0, 0.0), (0, 0, 0.05), R + 0.02, 'gomma_nera_ins', seg=40, tappi=False)
+    for k in range(6):
+        a = 2 * math.pi * k / 6
+        d = Vector((math.cos(a), math.sin(a), 0))
+        c.scatola_assi(d * 0.55 + Vector((0, 0, 0.22)), [d, Vector((-d.y, d.x, 0)), Vector((0, 0, 1))], (0.42, 0.13, 0.18), mat)
+        q = d * (R + r * 0.9) + Vector((0, 0, r * 1.2))
+        c.toro(q, Vector((-d.y, d.x, 0)), 0.09, 0.018, 'gomma_nera_ins', seg=12, seg_r=6)
+    ob = c.crea(nome)
+    ob.location = Vector(centro)
+    ob.rotation_euler = tuple(math.radians(v) for v in rot)
+    return ob
+
+
+def insegna(c, nome_mat, centro, n, largo, alto):
+    """Un pannello disegnato con la cornice, la faccia verso n (orizzontale)."""
+    n = Vector((n[0], n[1], 0)).normalized()
+    lat = Vector((n.y, -n.x, 0))
+    o = Vector(centro)
+    q = [o - lat * (largo / 2) + n * 0.03, o + lat * (largo / 2) + n * 0.03, o + lat * (largo / 2) + n * 0.03 + Vector((0, 0, alto)),
+         o - lat * (largo / 2) + n * 0.03 + Vector((0, 0, alto))]
+    c.faccia(q, nome_mat, uv=[(0, 0), (1, 0), (1, 1), (0, 1)])
+    c.scatola_assi(o + Vector((0, 0, alto / 2)), [n, lat, Vector((0, 0, 1))], (0.025, largo / 2 + 0.05, alto / 2 + 0.05), 'metallo_grigio')
+
+
+def lanterna(c, luci, p, lat):
+    """Il lampioncino del percorso sulla sponda del canale: il palo dentro la sponda, la lampada a gabbia."""
+    b = Vector(p) + Vector(lat) * (W_B + 0.07)
+    c.cilindro(b - Vector((0, 0, 0.35)), b + Vector((0, 0, 1.25)), 0.035, 'nero_opaco', seg=8)
+    c.cilindro(b + Vector((0, 0, 1.25)), b + Vector((0, 0, 1.47)), 0.075, 'faro_giallo', seg=10)
+    c.disco(b + Vector((0, 0, 1.5)), (0, 0, 1), 0.11, 'nero_opaco', seg=10)
+    c.cilindro(b + Vector((0, 0, 1.47)), b + Vector((0, 0, 1.5)), 0.11, 'nero_opaco', seg=10)
+    luci['lanterne'].append([round(b.x, 2), round(b.y, 2), round(b.z + 1.36, 2)])
+
+
 def versione_B(mats):
     rnd = random.Random(31)
     c = K.Costruttore(mats)
@@ -508,8 +706,9 @@ def versione_B(mats):
     porta = (-3.0, -32.6)
     guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=(44.2, -3.6, 47.6, -0.2, 4.5, z0 + 0.9 + 0.25 + 0.12))
     canali = K.Costruttore(mats)
-    # il fondo della sala è il letto asciutto del vecchio fiume lento, con le pozze
-    acque.append(P.acqua_piano('acqua_pozze', X0 + 1.0, y0 + 1.0, x1 - 1.0, y1 - 1.0, z0 + 0.15))
+    materiali_rapide(mats)
+    # sotto il canale, il bacino di raccolta della giostra: acqua ferma e scura tra gli scogli
+    acque.append(P.acqua_piano('acqua_fondo', X0 + 1.0, y0 + 1.0, x1 - 1.0, y1 - 1.0, z0 + 0.15))
 
     # T0: corto tubo dalla bocca alla vasca di partenza delle rapide
     t0c = [(39.5, 15.0, -18.6), (42.0, 15.0, -19.2), (44.2, 15.0, -19.9)]
@@ -519,11 +718,26 @@ def versione_B(mats):
     acque.append(vasca_sospesa(c, VP[0], VP[1], VP[2], VP[3], VP[4], z0, 'acqua_partenza', alto=1.0))
 
     # il canale: tratti tra i bivi (punti del bordo del canale, z del bordo)
+    stato = {'lato': 1}
+
     def tratto(ctrl, nome):
         pts = curva(ctrl, 0.35)
         canale_rapide(canali, pts)
         sostieni_canale(c, pts, z0)
         acque.append(nastro_acqua(f'acqua_{nome}', pts, W_B * 0.82, D_B * 0.55))
+        luci['schiuma'].append(f'acqua_{nome}')
+        # i lampioncini del percorso, ogni 6 m sulla sponda, a lati alterni
+        s_ = 0.0
+        prossimo = 2.5
+        for i in range(1, len(pts) - 1):
+            s_ += (pts[i] - pts[i - 1]).length
+            if s_ < prossimo:
+                continue
+            prossimo += 6.0
+            d = (pts[i + 1] - pts[i - 1]).normalized()
+            lat = Vector((-d.y, d.x, 0)).normalized() * stato['lato']
+            stato['lato'] *= -1
+            lanterna(c, luci, pts[i], lat)
         return pts
 
     zr = VP[4] + 1.0
@@ -578,31 +792,61 @@ def versione_B(mats):
     gambe(c, X0 + 0.1, -4.5, LG[0] + 0.5, -1.5, porta[1] - 0.3, z0)
     porta_uscita(c, porta[0], porta[1], luci)
 
-    # --- ambiente pieno: murali, fari spenti, cartelli, condotte, scogli sparsi, tralicci delle luci -----
-    for (x, y, z, rot, graf) in ((60.0, y1 - 0.02, -14.0, 0, 'p1'), (72.0, y1 - 0.02, -16.0, 0, 'p3'), (x1 - 0.02, 20.0, -15.0, 90, 'p2'),
-                                 (55.0, y0 + 0.02, -16.0, 180, 'p2')):
-        cart = K.cartellone(mats, 5.0, 2.8, nome=f'ins_B_cartellone_{graf}_{int(x)}')
+    # --- ambiente pieno: la scenografia della giostra -------------------------------------------------------
+    # l'insegna grande sul portale della partenza, i murales (uno per tipo), i cartelli della giostra
+    pz = zr - 0.35
+    for sg in (-1, 1):
+        q = Vector((51.4, 15.0 + sg * (W_B + 0.07), pz))
+        c.cilindro(q, q + Vector((0, 0, 3.4)), 0.09, 'gioco_rosso', seg=10)
+    c.scatola((51.3, 15.0 - W_B - 0.2, pz + 3.3), (51.5, 15.0 + W_B + 0.2, pz + 3.5), 'gioco_rosso')
+    insegna(c, 'insegna_rapide', (51.25, 15.0, pz + 1.95), (-1, 0), 4.6, 1.26)
+    for (x, y, z, rot, graf) in ((60.0, y1 - 0.02, -15.0, 0, 'p1'), (x1 - 0.02, 22.0, -16.0, 90, 'p3')):
+        cart = K.cartellone(mats, 5.0, 2.8, nome=f'ins_B_cartellone_{graf}')
         cart.location = Vector((x, y, z))
         cart.rotation_euler = (0, 0, math.radians(rot))
         for j, m in enumerate(cart.data.materials):
             if m and m.name.startswith('M_amb_cartellone'):
                 cart.data.materials[j] = mats.get('cartellone_' + graf)
         acque.append(cart)
-    for (x, y, h, r) in ((58.0, 28.0, 6.0, 2.2), (78.0, 30.0, 9.0, 2.5), (80.0, 2.0, 7.0, 2.0), (56.0, -2.0, 5.0, 1.8), (64.0, 16.0, 4.0, 1.5)):
+    q = Vector((VP[0] + 0.09, 12.3, VP[4] + 1.0))
+    c.cilindro(q, q + Vector((0, 0, 1.9)), 0.04, 'nero_opaco', seg=8)
+    insegna(c, 'cartello_vietato', q + Vector((0.08, 0, 1.1)), (1, 0), 1.2, 0.75)
+    p2 = r2[len(r2) // 3]
+    q = p2 + Vector((W_B + 0.07, 0, -0.35))
+    c.cilindro(q, q + Vector((0, 0, 2.6)), 0.04, 'nero_opaco', seg=8)
+    insegna(c, 'cartello_tenersi', q + Vector((0.0, 0.0, 1.5)), (-1, 0.3), 1.2, 0.75)
+    insegna(c, 'cartello_uscita', (X0, porta[0] + 2.0, porta[1] + 1.4), (1, 0), 1.0, 0.62)
+    # gli scogli finti contro i muri (un canyon), tutti diversi
+    for (x, y, h, r) in ((58.0, 29.0, 6.0, 2.2), (78.0, 31.0, 9.0, 2.5), (80.5, 2.0, 7.0, 2.0), (56.0, -2.5, 5.0, 1.8), (63.5, 15.5, 4.0, 1.5),
+                         (47.0, 32.0, 10.0, 2.6), (52.5, 32.6, 7.0, 2.1), (81.6, 24.5, 12.0, 2.3), (70.0, 33.2, 6.0, 1.9), (66.5, -3.6, 6.0, 1.8),
+                         (75.0, -3.4, 8.0, 2.0), (42.5, 22.0, 8.0, 1.9)):
         scoglio(c, x, y, z0, h, r, rnd)
+    # i fari di scena a terra che illuminano gli scogli più grandi dal basso (colori della giostra)
+    for (x, y, h, r, d, col) in ((47.0, 32.0, 10.0, 2.6, (0, -1), (0.4, 0.9, 1.0)), (81.6, 24.5, 12.0, 2.3, (-1, 0), (1.0, 0.6, 0.3)),
+                                 (78.0, 31.0, 9.0, 2.5, (0, -1), (0.9, 0.45, 1.0)), (75.0, -3.4, 8.0, 2.0, (0, 1), (0.4, 1.0, 0.7)),
+                                 (42.5, 22.0, 8.0, 1.9, (1, 0), (1.0, 0.8, 0.4)), (58.0, 29.0, 6.0, 2.2, (0, -1), (1.0, 0.5, 0.6))):
+        q = Vector((x + d[0] * (r + 1.6), y + d[1] * (r + 1.6), z0))
+        c.scatola((q.x - 0.25, q.y - 0.25, q.z), (q.x + 0.25, q.y + 0.25, q.z + 0.18), 'nero_opaco')
+        c.cilindro(q + Vector((0, 0, 0.18)), q + Vector((0, 0, 0.42)), 0.17, 'nero_opaco', seg=12)
+        luci['fari'].append([[q.x, q.y, q.z + 0.45], [x, y, z0 + h * 0.6], list(col)])
     condotta(c, (X0 + 0.5, y1 - 1.5, -11.0), (x1 - 0.5, y1 - 1.5, -11.0), 1.1, muro=('y', y1))
     condotta(c, (x1 - 1.5, y0 + 0.5, -13.0), (x1 - 1.5, y1 - 0.5, -13.0), 1.0, muro=('x', x1))
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y0 + 0.4, -17.0, 1)
-    # tralicci delle luci di scena (spente) con i fari
-    for (x, y) in ((56.0, 30.0), (82.0, 14.0), (62.0, -4.0)):
+    # i tralicci delle luci di scena, coi fari accesi puntati sul canale (il colore della giostra)
+    for (x, y, mira, col) in ((56.0, 30.0, (65.0, 22.6, -22.2), (0.55, 1.0, 0.95)), (82.0, 14.0, (78.0, 14.0, -25.5), (1.0, 0.75, 0.4)),
+                              (62.0, -4.0, (55.0, 4.5, -29.0), (1.0, 0.55, 0.85))):
         c.cilindro((x, y, z0), (x, y, -10.0), 0.18, 'gioco_rosso', seg=12)
         c.anello((x, y, z0), (0, 0, 1), 0.0, 0.45, 0.05, 'metallo', seg=12)
         for k in range(3):
             q = Vector((x, y, -10.5 - k * 0.6))
             c.scatola((q.x - 0.25, q.y - 0.25, q.z - 0.2), (q.x + 0.25, q.y + 0.25, q.z + 0.2), 'nero_opaco')
-    props = []
-    for (nome, x, y, z, rot) in (('salvagente_nave', 48.0, 0.0, zl + 0.2, 30), ('ciambella_gonfiabile', 52.0, -3.0, zl + 0.15, 120),
-                                 ('paperella_gigante', 70.5, 13.8, b1.z - 2.9 + 1.1, 200), ('delfino_gonfiabile_sgonfio', 60.0, 26.0, z0 + 0.1, 80),
+            luci['fari'].append([[q.x, q.y, q.z], [mira[0] + (k - 1) * 2.5, mira[1], mira[2]], list(col)])
+    # i gommoni tondi della giostra, rovesciati e abbandonati (tre colori)
+    props = [gommone(mats, 'ins_B_gommone_giallo', (60.8, 14.0, z0 + 0.64), 'gomma_gialla', (180.0, 0.0, 20.0)),
+             gommone(mats, 'ins_B_gommone_blu', (57.8, -3.4, z0 + 0.64), 'gomma_blu', (180.0, 0.0, 70.0)),
+             gommone(mats, 'ins_B_gommone_rosso', (48.5, 26.0, z0), 'gomma_rossa', (0.0, 0.0, -35.0))]
+    for (nome, x, y, z, rot) in (('salvagente_nave', 48.0, 0.0, zl + 0.2, 30), ('paperella_gigante', 70.5, 13.8, b1.z - 2.9 + 1.1, 200),
+                                 ('delfino_gonfiabile_sgonfio', 60.0, 26.0, z0 + 0.1, 80),
                                  ('cartello_pavimento_bagnato', 41.0, -2.2, porta[1], 15), ('balena_gonfiabile_sgonfia', 74.0, 2.0, z0 + 0.1, 40)):
         props.append(P.prop(nome, (x, y, z), rot))
 
@@ -621,7 +865,7 @@ def versione_B(mats):
     percorso += [('bivio', b3)] + [('canale', p) for p in rG3[::4]] + [('grata', Vector((45.2, 4.6, fine.z)))]
     percorso += [('laguna', Vector(((LG[0] + LG[2]) / 2, 0.0, zl))), ('uscita', Vector((X0 + 0.5, porta[0], porta[1])))]
     gr = P.GRATE[0].crea('ins_B_grigliati')
-    ob = c.crea('ins_B_struttura', sporco=lambda co: 0.55 + 0.45 * min(1.0, max(0.0, (co.z + 31.0) / 10.0)))
+    ob = c.crea('ins_B_struttura', sporco=lambda co: 0.55 + 0.45 * min(1.0, max(0.0, (co.z + 36.0) / 10.0)))
     oc = canali.crea('ins_B_canali', sporco=lambda co: 0.7)
     gruppi = {'struttura': [ob, gr] + acque, 'tubi': tubi + [oc], 'prop': props}
     info = dict(sbagliate=[[p.x, p.y, p.z] for p in (rS1[-1], rS2[-1], rS3[-1])], laguna=list(LG), limiti=[X0, y0, x1, y1, z0, z1])

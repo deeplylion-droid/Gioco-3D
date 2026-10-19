@@ -30,7 +30,7 @@ var VERSIONI := {
 		# [punti, appoggiata (falso: in verticale giù per il muro)]
 		"bava": [[[b(53.5, 17.91, -21.49), b(50.09, 17.91, -21.49), b(50.09, 15.9, -21.49)], true],
 				[[b(49.96, 17.5, -21.5), b(49.96, 17.6, -22.3), b(49.96, 17.4, -22.95)], false]],
-		"1_primo_bivio": [b(51.0, 15.0, -20.6), b(55.0, 15.0, -20.4), 74.0, []],
+		"1_primo_bivio": [b(50.9, 17.4, -20.55), b(56.5, 12.6, -22.6), 78.0, []],
 		"2_lei_ti_raggiunge": [b(54.3, 12.9, -20.7), b(48.6, 17.6, -22.4), 52.0, [0]],
 		"3_secondo_bivio": [b(65.5, 29.6, -23.8), b(65.5, 25.0, -24.2), 76.0, []],
 		"4_grata": [b(44.6, 4.6, -32.3), b(51.0, 6.5, -32.4), 76.0, [2]],
@@ -39,7 +39,7 @@ var VERSIONI := {
 	"B": {
 		"fari": [[b(50.0, -3.9, -15.8), b(47.0, 15.0, -21.2)], [b(64.0, -3.9, -15.8), b(65.0, 22.6, -22.2)],
 				[b(74.0, -3.9, -15.8), b(72.5, 9.0, -26.3)], [b(45.0, -3.9, -15.8), b(47.8, 0.0, -35.0)]],
-		"1_rapide": [b(54.3, 15.1, -19.9), b(64.5, 22.3, -21.4), 72.0, []],
+		"1_partenza": [b(45.2, 14.4, -19.5), b(56.0, 15.6, -18.9), 74.0, []],
 		"2_lei_ti_raggiunge": [b(63.0, 21.6, -20.5), b(57.0, 17.0, -23.0), 74.0, [0]],
 		"3_bivio_2": [b(76.6, 12.0, -24.0), b(70.0, 9.0, -25.8), 76.0, [1]],
 		"4_grata": [b(44.0, 0.9, -34.1), b(45.2, 4.6, -32.4), 76.0, [2]],
@@ -65,17 +65,19 @@ func _ready() -> void:
 	radice = Node3D.new()
 	add_child(radice)
 	var acqua: Material = load("res://assets/materials/sala/acqua_torbida.tres")
+	dati = JSON.parse_string(FileAccess.get_file_as_string("res://proposte/inseguimento/inseguimento_%s_luci.json" % versione))
+	var schiuma := _materiale_schiuma()
 	for parte in ["struttura", "tubi", "prop"]:
 		var glb: Node3D = (load("res://proposte/inseguimento/inseguimento_%s_%s.glb" % [versione, parte]) as PackedScene).instantiate()
 		radice.add_child(glb)
 		for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
-			(m as MeshInstance3D).material_override = acqua
-	dati = JSON.parse_string(FileAccess.get_file_as_string("res://proposte/inseguimento/inseguimento_%s_luci.json" % versione))
+			# l'acqua bianca delle rapide nel canale, l'acqua torbida altrove
+			(m as MeshInstance3D).material_override = schiuma if dati.get("schiuma", []).has(String(m.name)) else acqua
 	var env := WorldEnvironment.new()
 	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
 	env.environment.sdfgi_enabled = true
 	env.environment.sdfgi_cascades = 3
-	env.environment.volumetric_fog_density = 0.014
+	env.environment.volumetric_fog_density = 0.009
 	env.environment.ambient_light_energy = 1.0
 	env.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
 	radice.add_child(env)
@@ -112,6 +114,139 @@ func _luci() -> void:
 		_paratia(bv(pa[0]), pa[1] == "verde", bv(dati["bersagli"][i]), bv(pa[2]))
 	for u in dati["uscita"]:
 		_uscita(bv(u))
+	for a in dati.get("arredi", []):
+		_arredo(a)
+	var soffitto: float = dati["info"]["limiti"][5]
+	for ap in dati.get("appese", []):
+		_appesa(bv(ap), ap[3], soffitto)
+	for ne in dati.get("neon", []):
+		_neon(bv(ne))
+	for la in dati.get("lanterne", []):
+		_lanterna(bv(la))
+	for fa in dati.get("fari", []):
+		_faro(bv(fa[0]), bv(fa[1]), Color(fa[2][0], fa[2][1], fa[2][2]) if fa.size() > 2 else Color(1.0, 0.88, 0.72))
+
+
+var _fonti := {}
+
+
+## Un oggetto vero del gioco (vedi arredo() in tools/blender/inseguimento_proposte.py): un nodo della sala
+## pompe o del kit di dettagli, copiato e messo al suo posto.
+func _arredo(a: Dictionary) -> void:
+	var fonte: String = a["f"]
+	if not _fonti.has(fonte):
+		var percorso := "res://assets/ambienti_tecnici/sala_pompe.gltf" if fonte == "pompe" \
+				else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
+		var sc: Node3D = (load(percorso) as PackedScene).instantiate()
+		add_child(sc)
+		sc.visible = false
+		_fonti[fonte] = sc
+	var src: Node3D = _fonti[fonte]
+	var nomi: Array = a["n"] if a["n"] is Array else [a["n"]]
+	var gruppo := Node3D.new()
+	radice.add_child(gruppo)
+	var scatola := AABB()
+	var prima := true
+	for nome in nomi:
+		var n := src.find_child(nome, true, false) as Node3D
+		if n == null:
+			push_warning("arredo mancante: %s" % nome)
+			continue
+		var copia := n.duplicate() as Node3D
+		gruppo.add_child(copia)
+		copia.transform = src.global_transform.affine_inverse() * n.global_transform
+		if String(a["a"]) == "origine":
+			# i nodi del kit nel loro GLB sono messi in fila: conta solo l'origine del nodo
+			copia.transform.origin = Vector3.ZERO
+		for m in [copia] + copia.find_children("*", "MeshInstance3D", true, false):
+			if m is MeshInstance3D:
+				var ab: AABB = copia.transform * ((m as MeshInstance3D).get_aabb()) if m == copia \
+						else copia.transform * ((m as MeshInstance3D).transform * (m as MeshInstance3D).get_aabb())
+				scatola = ab if prima else scatola.merge(ab)
+				prima = false
+	var giro := Basis(Vector3.UP, deg_to_rad(float(a["ry"]))).scaled(Vector3.ONE * float(a.get("s", 1.0)))
+	var p := bv(a["p"])
+	match String(a["a"]):
+		"origine":
+			gruppo.transform = Transform3D(giro, p)
+		_:
+			# la scatola girata: il centro del fondo sul punto (o contro il muro)
+			var sg := Transform3D(giro, Vector3.ZERO) * scatola
+			var fondo := Vector3(sg.get_center().x, sg.position.y, sg.get_center().z)
+			var t := p - fondo
+			if String(a["a"]) == "muro" and a["nrm"] != null:
+				var nrm := Vector3(a["nrm"][0], 0.0, -float(a["nrm"][1])).normalized()
+				t += nrm * (absf(nrm.x) * sg.size.x + absf(nrm.z) * sg.size.z) * 0.5
+			gruppo.transform = Transform3D(giro, t)
+
+
+## Lampada industriale appesa al soffitto: cavo, paralume smaltato, lampadina; calda (sodio) o fredda.
+func _appesa(p: Vector3, calda: bool, soffitto: float) -> void:
+	var col := CALDO if calda else Color(0.8, 1.0, 0.92)
+	var cavo := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.012
+	cm.bottom_radius = 0.012
+	cm.height = soffitto - p.y
+	cavo.mesh = cm
+	var nero := StandardMaterial3D.new()
+	nero.albedo_color = Color(0.05, 0.05, 0.05)
+	cavo.material_override = nero
+	cavo.position = Vector3(p.x, (soffitto + p.y) / 2.0, p.z)
+	radice.add_child(cavo)
+	var par := MeshInstance3D.new()
+	var cono := CylinderMesh.new()
+	cono.top_radius = 0.08
+	cono.bottom_radius = 0.34
+	cono.height = 0.24
+	par.mesh = cono
+	var smalto := StandardMaterial3D.new()
+	smalto.albedo_color = Color(0.16, 0.3, 0.24)
+	smalto.metallic = 0.6
+	smalto.roughness = 0.45
+	par.material_override = smalto
+	par.position = p
+	radice.add_child(par)
+	_bulbo(p + Vector3(0, -0.1, 0), col, 0.07, 10.0)
+	var l := SpotLight3D.new()
+	l.light_color = col
+	l.light_energy = 26.0
+	l.spot_range = 26.0
+	l.spot_angle = 64.0
+	l.shadow_enabled = true
+	l.light_volumetric_fog_energy = 1.2
+	l.position = p + Vector3(0, -0.15, 0)
+	l.rotation_degrees = Vector3(-90, 0, 0)
+	radice.add_child(l)
+	var o := OmniLight3D.new()
+	o.light_color = col
+	o.light_energy = 3.0
+	o.omni_range = 12.0
+	o.position = p + Vector3(0, -0.3, 0)
+	radice.add_child(o)
+
+
+## Plafoniera al neon (sotto un braccio o un balcone): la scatola col diffusore acceso e la sua luce.
+func _neon(p: Vector3) -> void:
+	var corpo := MeshInstance3D.new()
+	var bx := BoxMesh.new()
+	bx.size = Vector3(1.25, 0.09, 0.2)
+	corpo.mesh = bx
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.9, 0.95, 1.0)
+	m.emission_enabled = true
+	m.emission = Color(0.85, 1.0, 0.95)
+	m.emission_energy_multiplier = 5.0
+	corpo.material_override = m
+	corpo.position = p
+	radice.add_child(corpo)
+	var l := OmniLight3D.new()
+	l.light_color = Color(0.85, 1.0, 0.95)
+	l.light_energy = 3.5
+	l.omni_range = 9.0
+	l.shadow_enabled = true
+	l.position = p + Vector3(0, -0.3, 0)
+	radice.add_child(l)
 
 
 ## Il bulbo acceso e la sua luce.
@@ -212,7 +347,7 @@ func _uscita(p: Vector3) -> void:
 
 
 ## Faro da cantiere legato alla ringhiera: scatola nera col vetro acceso, luce bianca calda.
-func _faro(p: Vector3, mira: Vector3) -> void:
+func _faro(p: Vector3, mira: Vector3, col := Color(1.0, 0.88, 0.72)) -> void:
 	var corpo := MeshInstance3D.new()
 	var bx := BoxMesh.new()
 	bx.size = Vector3(0.45, 0.35, 0.2)
@@ -235,8 +370,9 @@ func _faro(p: Vector3, mira: Vector3) -> void:
 	corpo.add_child(vetro)
 	vetro.position = Vector3(0, 0, -0.11)
 	vetro.rotation_degrees = Vector3(0, 180, 0)
+	mv.emission = col
 	var l := SpotLight3D.new()
-	l.light_color = Color(1.0, 0.88, 0.72)
+	l.light_color = col
 	l.light_energy = 18.0
 	l.spot_range = 40.0
 	l.spot_angle = 20.0
@@ -246,6 +382,57 @@ func _faro(p: Vector3, mira: Vector3) -> void:
 	radice.add_child(l)
 	l.position = p
 	l.look_at(mira)
+
+
+## Il lampioncino del percorso sulla sponda (il palo e la gabbia sono nel GLB): la luce calda che fa leggere
+## il canale al buio.
+func _lanterna(p: Vector3) -> void:
+	var l := OmniLight3D.new()
+	l.light_color = Color(1.0, 0.7, 0.35)
+	l.light_energy = 2.2
+	l.omni_range = 6.0
+	l.omni_attenuation = 1.2
+	l.light_volumetric_fog_energy = 0.8
+	l.position = p
+	radice.add_child(l)
+
+
+## L'acqua bianca delle rapide: schiuma che corre, a strisce e a chiazze, un po' luminosa per leggersi al buio.
+func _materiale_schiuma() -> ShaderMaterial:
+	var sh := Shader.new()
+	sh.code = """
+shader_type spatial;
+render_mode cull_disabled, specular_schlick_ggx;
+float rumore(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	f = f * f * (3.0 - 2.0 * f);
+	float a = fract(sin(dot(i, vec2(127.1, 311.7))) * 43758.5453);
+	float b = fract(sin(dot(i + vec2(1.0, 0.0), vec2(127.1, 311.7))) * 43758.5453);
+	float c = fract(sin(dot(i + vec2(0.0, 1.0), vec2(127.1, 311.7))) * 43758.5453);
+	float d = fract(sin(dot(i + vec2(1.0, 1.0), vec2(127.1, 311.7))) * 43758.5453);
+	return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+varying vec3 mondo;
+void vertex() {
+	mondo = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	VERTEX.y += 0.05 * sin(mondo.x * 3.1 + TIME * 4.0) * cos(mondo.z * 2.7 + TIME * 3.3);
+}
+void fragment() {
+	vec2 q = mondo.xz * 2.4;
+	float n = rumore(q * 1.3 + vec2(TIME * 0.7, TIME * 1.1)) * 0.55 + rumore(q * 3.7 - vec2(TIME * 1.6, TIME * 0.4)) * 0.3
+		+ rumore(q * 9.0 + TIME * 2.0) * 0.15;
+	float bianco = smoothstep(0.5, 0.78, n) * 0.85 + smoothstep(0.62, 0.66, n) * 0.15;
+	vec3 acqua = vec3(0.05, 0.22, 0.24);
+	ALBEDO = mix(acqua, vec3(0.92, 0.97, 0.98), bianco);
+	ROUGHNESS = mix(0.08, 0.7, bianco);
+	EMISSION = vec3(0.12, 0.18, 0.2) * bianco;
+	NORMAL_MAP = normalize(vec3(rumore(q * 5.0 + TIME) - 0.5, rumore(q * 5.0 - TIME) - 0.5, 1.0)) * 0.5 + 0.5;
+}
+"""
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	return m
 
 
 ## Lei, la medusa vera (stessi materiali della sala grande), col bagliore rosa che si vede da lontano.
