@@ -8,7 +8,7 @@ macchie d'acqua, ruggine, scheggiature) e si mettono su modelli semplici. Escono
   targa_<s>.glb     targa smaltata 70 x 39 cm con quattro viti, da avvitare a una parete;
   manifesto_<s>.glb manifesto di carta 70 x 105 cm, ondulato e strappato (bordo irregolare, angolo
                     mancante), con due pezzi di nastro adesivo;
-  insegna_<s>.glb   insegna di lamiera dipinta 2,0 x 1,1 m in una cornice d'acciaio con quattro
+  insegna_<s>.glb   insegna di lamiera dipinta 1,8 x 1,0 m in una cornice d'acciaio con quattro
                     staffe a muro.
 Origine al centro del retro, il davanti guarda verso +Y in Blender (+Z... vedi export: -Y Blender
 diventa +Z glTF), cioè dopo l'export il davanti guarda verso +Z in Godot.
@@ -275,7 +275,10 @@ def manifesto(stile):
         d = min(u, 1 - u, v, 1 - v)
         n = nb[int((1 - v) * 383), int(u * 255)]
         strappo = d < 0.012 + 0.03 * n
-        angolo = (u > 0.78 and v < 0.20 and (u - 0.78) / 0.22 + (0.20 - v) / 0.20 > 0.9 + 0.3 * n)
+        if stile == 'a':   # angolo mancante in basso a destra (nel manifesto A il testo ci sta dentro)
+            angolo = (u > 0.78 and v < 0.20 and (u - 0.78) / 0.22 + (0.20 - v) / 0.20 > 0.9 + 0.3 * n)
+        else:              # nel B la riga degli orari arriva ai bordi: l'angolo va in alto a destra
+            angolo = (u > 0.84 and v > 0.86 and (u - 0.84) / 0.16 + (v - 0.86) / 0.14 > 0.9 + 0.3 * n)
         if strappo or angolo:
             via.append(f)
     bmesh.ops.delete(bm, geom=via, context='FACES')
@@ -309,7 +312,7 @@ def manifesto(stile):
 
 # ---------------------------------------------------------------- insegna
 def insegna(stile):
-    W, H = 2048, 1126
+    W, H = 2048, 1138
     logo = ritaglia_logo(os.path.join(GEN, f'logo_{stile}_gpt_0.png'))
     fondo = (30, 120, 150) if stile == 'a' else (246, 238, 214)
     im = su_fondo(logo, W, H, fondo, 0.07)
@@ -324,7 +327,7 @@ def insegna(stile):
     scena_vuota()
     mf = materiale(f'insegna_{stile}', pc, rug_png=pr)
     acc = tinta('acciaio_ruggine', (0.28, 0.2, 0.15), 0.75, 0.7)
-    w, h, sp = 2.0, 1.1, 0.03   # sta tra due oblò e sopra il tubo del muro ovest
+    w, h, sp = 1.8, 1.0, 0.03   # sta tra due oblò, con un margine sopra il neon del muro ovest
     lastra('pannello', w, h, sp, mf, acc)
     # cornice: quattro profilati davanti al pannello, staccata dal muro dalle staffe
     for nome, (x, z, sx, sz) in {'cornice_su': (0, h / 2, w + 0.1, 0.06), 'cornice_giu': (0, -h / 2, w + 0.1, 0.06),
@@ -332,7 +335,7 @@ def insegna(stile):
         bpy.ops.mesh.primitive_cube_add(size=1, location=(x, -sp - 0.02, z))
         c = bpy.context.active_object; c.name = nome; c.scale = (sx, 0.05, sz); c.data.materials.append(acc)
     # staffe a muro: il pannello sta 12 cm davanti alla parete
-    for i, (x, z) in enumerate(((-0.8, 0.35), (0.8, 0.35), (-0.8, -0.35), (0.8, -0.35))):
+    for i, (x, z) in enumerate(((-0.7, 0.32), (0.7, 0.32), (-0.7, -0.32), (0.7, -0.32))):
         bpy.ops.mesh.primitive_cube_add(size=1, location=(x, 0.06, z))
         s = bpy.context.active_object; s.name = f'staffa_{i}'; s.scale = (0.04, 0.12, 0.04)
         s.data.materials.append(acc)

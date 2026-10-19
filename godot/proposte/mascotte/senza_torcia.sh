@@ -14,6 +14,7 @@ ST="statua_squalo_A@7.2,15.6@-70;statua_squalo_A@10,1.5@-90;statua_squalo_A@3,-1
 ST+=";statua_polpo_A@-7.5,14.5@55;statua_polpo_A@-11.5,15@-39;statua_polpo_A@-5.5,-18@-12"
 ST+=";statua_polpo_B@-18.3,-8@90;statua_polpo_B@9.5,-15.5@-45;statua_polpo_B@14.5,1@-90"
 T=Tecnici; TT=Tecnici,Sala/TorreScivoli
+uno "$1" "$ST" $T "pianta:0,3.6,1:46,0,0"
 uno "$1" "$ST" $T "squalo_2_bordo_est:5.5,0,9.2:10,1.2,1.5:1"
 uno "$1" "$ST" $T "polpo_B_3_solarium:6.5,0,7:14.5,1.2,1:8"
 uno "$1" "$ST" $T "squalo_3_spiaggia:2,-0.15,-11:3,1.2,-16.8:2"
@@ -28,8 +29,8 @@ SCATTI_LUCI=BLACKOUT uno "$1" "$ST" $TT "polpo_B_1_bimbi_buio:-8.3,0,-4:-18.3,1.
 # i nomi: le stesse posizioni di giro_jilly.sh
 J=proposte/mascotte/jilly
 eval "$(sed -n '/^ST=/p;/^ST+=/p' "$D/giro_jilly.sh")"
-uno "$2" "$ST" $T "jilly_targa_a:-6.6,0,13.6:-3,0.8,10:0"
-uno "$2" "$ST" $T "jilly_targa_b:-6.6,0,13.6:-3,0.8,10:1"
+uno "$2" "$ST" $T "jilly_targa_a:-5.4,0,11.3:-2.95,0.8,10:0"
+uno "$2" "$ST" $T "jilly_targa_b:-5.4,0,11.3:-2.95,0.8,10:1"
 uno "$2" "$ST" $TT "jilly_manifesto_a:-15.6,0,12.2:-19.9,1.5,13.95:2"
 uno "$2" "$ST" $TT "jilly_manifesto_b:-15.6,0,12.2:-19.9,1.5,13.95:3"
 uno "$2" "$ST" $TT "jilly_insegna_a:-13.5,0,7.8:-19.9,4.1,5.35:4"

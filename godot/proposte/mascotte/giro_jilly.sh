@@ -7,8 +7,8 @@ D=$(dirname "$0")
 J=proposte/mascotte/jilly
 ST="muro=$J/targa_a.glb@-3.6,0.8,10@1,0,0;muro=$J/targa_b.glb@-3.6,0.8,10@1,0,0"
 ST+=";muro=$J/manifesto_a.glb@-17,1.4,13.95@-1,0,0@0.03;muro=$J/manifesto_b.glb@-17,1.4,13.95@-1,0,0@0.03"
-ST+=";muro=$J/insegna_a.glb@-17,4.55,5.35@-1,0,0;muro=$J/insegna_b.glb@-17,4.55,5.35@-1,0,0"
-for SC in "jilly_targa_a:-6.6,0,13.6:-3,0.8,10:0;jilly_targa_b:-6.6,0,13.6:-3,0.8,10:1" \
+ST+=";muro=$J/insegna_a.glb@-17,4.7,5.35@-1,0,0;muro=$J/insegna_b.glb@-17,4.7,5.35@-1,0,0"
+for SC in "jilly_targa_a:-5.4,0,11.3:-2.95,0.8,10:0;jilly_targa_b:-5.4,0,11.3:-2.95,0.8,10:1" \
 	"jilly_manifesto_a:-15.6,0,12.2:-19.9,1.5,13.95:2;jilly_manifesto_b:-15.6,0,12.2:-19.9,1.5,13.95:3" \
 	"jilly_insegna_a:-13.5,0,7.8:-19.9,4.1,5.35:4;jilly_insegna_b:-13.5,0,7.8:-19.9,4.1,5.35:5"; do
 	TOGLI=Tecnici
