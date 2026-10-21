@@ -36,6 +36,8 @@ signal uscito
 ## La ciambella ondeggia piano (m) e nelle curve gira un po' su sé stessa (giri per radiante di curva).
 @export var ondeggio := 0.04
 @export var giro_nelle_curve := 0.12
+## Il modello della ciambella (vuoto: un toro rosso provvisorio).
+@export var modello_ciambella: PackedScene
 
 var giocatore: Player
 var tratto: TrattoFiume
@@ -57,15 +59,18 @@ func _ready() -> void:
 	_ciambella = Node3D.new()
 	_ciambella.name = "Ciambella"
 	add_child(_ciambella)
-	var mi := MeshInstance3D.new()
-	var toro := TorusMesh.new()
-	toro.inner_radius = 0.35
-	toro.outer_radius = 0.75
-	mi.mesh = toro
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.95, 0.3, 0.25)
-	mi.material_override = mat
-	_ciambella.add_child(mi)
+	if modello_ciambella:
+		_ciambella.add_child(modello_ciambella.instantiate())
+	else:
+		var mi := MeshInstance3D.new()
+		var toro := TorusMesh.new()
+		toro.inner_radius = 0.35
+		toro.outer_radius = 0.75
+		mi.mesh = toro
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.95, 0.3, 0.25)
+		mi.material_override = mat
+		_ciambella.add_child(mi)
 	_sali = Interactable.new()
 	_sali.name = "Sali"
 	_sali.prompt = "Sali"
