@@ -534,8 +534,12 @@ func _polaroid() -> void:
 	foto.name = "Polaroid10"
 	if &"photo" in foto:
 		foto.set(&"photo", 10)
+	# Appoggiata sul sedile, lungo la stecca: con lo snap (raggio dall'alto) finiva in cima allo schienale,
+	# o 5 cm sopra il sedile se il lettino non era ancora costruito (tests/polaroid_libere.gd).
+	foto.set(&"snap_to_surface", false)
 	add_child(foto)
-	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.05, 0)
+	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.01, 0)
+	foto.global_rotation = Vector3(0.0, PI * 0.5, 0.0)
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.

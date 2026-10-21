@@ -17,6 +17,7 @@ extends Node
 const LEVEL := "res://scenes/sala_principale.tscn"
 const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
 const Camminatore := preload("res://tests/camminatore.gd")
+const POLAROID_LIBERE := preload("res://tests/polaroid_libere.gd")
 ## Ingressi nel canale spostati (m, di lato) e storti (gradi).
 const INGRESSI := [[0.45, 0.0], [-0.45, 0.0], [0.0, 22.0], [0.0, -22.0]]
 var _passed := 0
@@ -48,6 +49,14 @@ func _run() -> void:
 			and torre.checkpoint[i].global_position.y < torre.checkpoint[i - 1].global_position.y + 0.1
 	check(ordini_ok, "i checkpoint vanno in ordine e sempre più in basso")
 	check(torre.get_node_or_null("Polaroid10") != null, "c'è la Polaroid 10")
+	var p10 := torre.get_node_or_null("Polaroid10") as Node3D
+	if p10:
+		for i in 4:
+			await get_tree().physics_frame
+		var coperte: PackedStringArray = POLAROID_LIBERE.coperte(torre)
+		check(coperte.is_empty(), "la Polaroid 10 non è coperta né compenetrata %s" % str(coperte))
+		var h: float = POLAROID_LIBERE.appoggio(torre, p10)
+		check(h > -0.002 and h < 0.012, "la Polaroid 10 è appoggiata sul lettino (%.1f cm sopra)" % (h * 100.0))
 	check(torre.find_children("CadutaFondo*", "KillZone", false, false).size() == 4, "il fondo fuori dalla vasca è una zona di caduta")
 	var solidi := torre.find_children("*", "StaticBody3D", true, false).size()
 	check(solidi > n_pezzi + 20, "la struttura, i tubi e i prop sono solidi (%d corpi statici)" % solidi)
