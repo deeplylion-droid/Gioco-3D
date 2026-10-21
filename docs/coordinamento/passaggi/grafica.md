@@ -18,6 +18,7 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
   - Se lo cambi, cancella `.godot/imported/torre_*` per forzare il reimport.
 - Effetti dello zaino:
   - `water_pack.gd`, `slide_fx.gd`;
+  - `getto_potente.gd`: l'impatto si riduce da vicino (`vicino_da` 4 m, `vicino_pieno` 1,2 m, `VICINO`); gocce e nebbia dell'impatto hanno materiali loro che spariscono davanti alla camera (`vicino_camera` in `goccia_chiara`, `near_camera` in `water_mist`);
   - `prepara_effetti.gd`, che fa il warmup del primo spruzzo; si spegne con `Engine.set_meta(&"prepara_effetti_spento", true)`.
 - `addons/grafica/look_*.gd`: luci e look di sala, interni e tecnici.
 - Build:
@@ -36,7 +37,7 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
   - Il parametro `senza_preparazione` dimostra che il test se ne accorge.
   - Contano i monitor `PIPELINE_COMPILATIONS_SURFACE/DRAW`: devono restare a zero.
 - **Scatti**: script `tests/scatti_*.gd`, lanciati col comando xvfb di CLAUDE.md.
-- **Prove fuori dalla CI**: `tests/prova_*`, `misura_*`, `sonda_*`.
+- **Prove fuori dalla CI**: `tests/prova_*`, `misura_*`, `sonda_*`. `misura_impatto.gd` misura il costo dello spruzzo contro un muro a 0,8-6 m (ms, GPU, overdraw a schermo, particelle vive).
 - **Peso del pacchetto**:
   - `git worktree add` in `/home/user/wt/…`, non `git clone`: la copia di `.git` (5,7 GB) è lentissima;
   - poi i passi della CI e `godot --export-pack "Windows Desktop" x.pck`;
@@ -44,7 +45,10 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
 
 ## Trappole note
 
-- `pkill -f …` può colpire la propria shell (exit 144): usa i PID.
+- `pkill -f …` può colpire la propria shell (exit 144): usa i PID. Anche `while pgrep -f X` trova sé stesso e non finisce mai: usa `pgrep -x godot`.
+- Luci e blackout: alla ripartenza da un checkpoint `LuciRisveglio` rimette il blackout a tutte le luci della scena senza la meta `risveglio_ignora`. Le luci che devono restare accese dopo la tappa 6 vanno segnate (la torre lo fa in `_fuori_dal_blackout`, v0.3.8): al primo passaggio non si vede, perché arrivano dopo il blackout.
+- Le coroutine della torre a pezzi (`costruisci_a_pezzi`, `prepara_materiali`) si fermano se la torre esce dall'albero (una morte ricarica la sala).
+- Sala intera più torre disegnata non stanno nella memoria di llvmpipe (OOM, processo ucciso): gli scatti della torre si fanno con la torre da sola (`tests/scatti_torre_morte.gd`).
 - Il caricamento in thread della torre qui dura 9-15 s. Le attese nei test vanno a tempo, non a fotogrammi, se no il test esce a metà e Godot stampa un "Parse Error" falso.
 - In headless `RenderingServer.frame_post_draw` non arriva mai: usa `get_tree().process_frame`.
 - Creare istanze nel WorkerThreadPool si blocca, come per i bambini della balconata.
