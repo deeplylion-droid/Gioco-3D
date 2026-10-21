@@ -139,6 +139,18 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria.gd
 
+      - name: Test del fiume lento del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume_gioco.gd
+
+      - name: Test dell'infermeria del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
+
+      - name: Test della strada nuova della risalita
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita.gd
+
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'
         run: |
