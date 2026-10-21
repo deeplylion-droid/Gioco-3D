@@ -55,8 +55,15 @@ func _run() -> void:
 
 	print("2. Tappa 7: rientri dal magazzino, compaiono; prima della tappa 8 non funzionano")
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
-	_serranda().call(&"apri")
+	# la serranda si apre col lettore e la keycard dell'infermeria (strada nuova della risalita)
+	var lettore := level.get_node_or_null(^"Tecnici/Logica/LettoreTessera") as LettoreTessera
+	if lettore:
+		p.add_item(&"keycard", 1, "Keycard")
+		lettore.interact(p)
+	else:
+		_serranda().call(&"apri")
 	await _frames(5)
+	check(bool(_serranda().get(&"aperta")), "con la keycard nel lettore la serranda si apre")
 	check(enigma.comparsi and giallo.visible and blu.visible and misto.visible, "gli acquari ci sono")
 	# Con gli acquari comincia il caricamento della sala della torre in un thread: all'apertura del
 	# portone è già pronta anche su un PC lento. Il guscio dietro il portone resta finché non si apre.

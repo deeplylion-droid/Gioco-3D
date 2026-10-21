@@ -61,7 +61,7 @@ def sr(tipo, sid, **kw):
 # Le quantità di gioco non cambiano: i litri restano 80 e 62, cioè due zainate di giallo e una di blu.
 K = float(os.environ.get('ACQUARI_K', '2'))
 KX = float(os.environ.get('ACQUARI_KX', str(K)))
-KY = float(os.environ.get('ACQUARI_KY', str(K)))
+KY = float(os.environ.get('ACQUARI_KY', '1'))   # il miscuglio resta basso (opzione B, in attesa della scelta)
 KV = float(os.environ.get('ACQUARI_KV', str(K)))   # la valvola
 B_BASE, B_VETRO = 0.849 * K, 1.3 * K
 SC, R_B, B_BASSO_BASE, B_BASSO_VETRO = 1.45, 0.55 * 1.45 * KX, 0.40 * KY, 0.38 * KY

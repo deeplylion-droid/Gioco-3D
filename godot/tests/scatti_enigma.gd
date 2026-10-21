@@ -77,6 +77,10 @@ func _run() -> void:
 		lei.call(&"load_state", {"finita": true})
 	var enigma := level.find_children("*", "EnigmaAcquari", true, false)[0] as EnigmaAcquari
 	var serranda = enigma.serranda
+	var lettore := level.get_node_or_null(^"Tecnici/Logica/LettoreTessera") as LettoreTessera
+	if lettore:
+		GameState.player.add_item(&"keycard", 1, "Keycard")
+		lettore.interact(GameState.player)
 	if serranda:
 		serranda.call(&"apri")
 	await _frames(5)

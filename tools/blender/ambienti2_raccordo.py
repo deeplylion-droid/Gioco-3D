@@ -186,7 +186,16 @@ blocco('c2_architrave', (XC0, 3.6, H_T), (XC1, 3.9, H_C), M['lamiere'])
 blocco('c2_soffitto', (XC0 - SP, YC3_0 - SP, H_C), (XC1 + SP, 3.6, H_C + 0.3), M['cemento'], 2.5)
 # ------------------------------------------------------------------ tappa 7: corridoio C3 verso nord
 blocco('c3_pav', (XM1 + SP, YC3_0 - SP, Z_SALA - 0.3), (XC0, YC3_1 + SP, Z_SALA), M['cemento_bagnato'], 3.0)
-muro('c3_muro_o', (XM1 + SP, YC3_0 - SP, Z_SALA), (XC1 + SP, YC3_0, H_C))
+# la porta della scala di servizio che sale dall'infermeria (strada nuova della risalita, 21 ottobre):
+# nel muro ovest di C3, z globale da 37,95 a 38,95, tra i gonfiabili e gli oggetti appesi
+X_PS0, X_PS1, H_PS = 37.95 - 1.36, 38.95 - 1.36, 2.2
+muro('c3_muro_o', (XM1 + SP, YC3_0 - SP, Z_SALA), (X_PS0, YC3_0, H_C))
+muro('c3_muro_o_nord', (X_PS1, YC3_0 - SP, Z_SALA), (XC1 + SP, YC3_0, H_C))
+blocco('c3_muro_o_sopra_porta', (X_PS0, YC3_0 - SP, Z_SALA + H_PS), (X_PS1, YC3_0, H_C), M['lamiere'], 2.0)
+# il telaio d'acciaio della porta, dalla parte di C3
+for k, x in enumerate((X_PS0 + 0.03, X_PS1 - 0.03)):
+    S('dettagli', box(f'c3_porta_stipite{k}', (x, YC3_0 + 0.03, Z_SALA + H_PS / 2), (0.06, 0.06, H_PS), M['verde'], uv=1.0))
+S('dettagli', box('c3_porta_architrave', ((X_PS0 + X_PS1) / 2, YC3_0 + 0.03, Z_SALA + H_PS + 0.03), (X_PS1 - X_PS0, 0.06, 0.06), M['verde'], uv=1.0))
 muro('c3_muro_e', (XM1 + SP, YC3_1, Z_SALA), (XC0 - SP, YC3_1 + SP, H_C))
 blocco('c3_soffitto', (XM1 + SP, YC3_0 - SP, H_C), (XC0 - SP, YC3_1 + SP, H_C + 0.3), M['cemento'], 2.5)
 # ------------------------------------------------------------------ tappa 7: magazzino dei gonfiabili

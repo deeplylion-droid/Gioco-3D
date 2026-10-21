@@ -19,6 +19,10 @@ signal rifiutato
 @export var suono_no: StringName = &"maniglione_bloccato"
 ## Se falso non disegna la scatoletta provvisoria (quando c'è il modello vero).
 @export var mostra_segnaposto := true
+## L'aspetto vero (di solito un figlio con scripts/risalita/lettore_vero.gd): lo colora e lo fa
+## lampeggiare chiamando i suoi metodi colora(verde) e luce(k). Con l'aspetto vero la spia
+## provvisoria non si accende.
+@export var aspetto: Node
 
 var aperto := false
 
@@ -85,6 +89,9 @@ func _process(delta: float) -> void:
 		_lampo -= delta
 		var on := fmod(_lampo, 0.2) > 0.1
 		_spia.light_energy = 1.6 if on else 0.2
+		if aspetto and aspetto.has_method(&"luce"):
+			_spia.light_energy = 0.0
+			aspetto.call(&"luce", 1.0 if on else 0.15)
 		if _lampo <= 0.0:
 			_colora()
 
@@ -96,6 +103,10 @@ func _colora() -> void:
 	_mat.emission_energy_multiplier = 2.0
 	_spia.light_color = c
 	_spia.light_energy = 0.8
+	if aspetto and aspetto.has_method(&"colora"):
+		_spia.light_energy = 0.0
+		_spia.visible = false
+		aspetto.call(&"colora", aperto)
 
 
 func _suona(nome: StringName) -> void:

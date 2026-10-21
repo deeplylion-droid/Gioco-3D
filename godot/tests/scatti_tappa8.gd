@@ -274,6 +274,10 @@ func _serranda_si_alza() -> void:
 	p.teleport(Vector3(-15.0, 0.0, 25.2), 0.0, 0.0)
 	p.look_at_point(Vector3(-15.0, 1.1, 20.3))
 	await _frames(30)
+	var lettore := level.get_node_or_null(^"Tecnici/Logica/LettoreTessera") as LettoreTessera
+	if lettore:
+		p.add_item(&"keycard", 1, "Keycard")
+		lettore.interact(p)
 	if s:
 		s.call(&"apri")
 	await _frames(70)
