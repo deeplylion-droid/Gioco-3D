@@ -1,5 +1,21 @@
 # Passaggio: squadra "mascotte" (21 ottobre)
 
+## Aggiornamento del 21 ottobre sera (sessione session_01YWTG1mGq714ESVViUmQhYw)
+
+- **Statue e Jilly nel gioco** (v0.3.8, 2d32caf): nodo `Mascotte` della sala, `scripts/environment/mascotte_sala.gd`. Jilly stile B molto invecchiato da `assets_src/mascotte/jilly_gioco.py` (le grafiche originali si riscaricano da Meshy con i task_id del log, in `gen/jilly/`). Test in `test_sala` e `test_tappa7`.
+- **Bordi neri delle texture**: le texture cotte di statue e mostro avevano lo sfondo nero tra le isole UV (triangolini neri con le mipmap). `tools/glb_bordi_texture.py` riempie i vuoti dentro i GLB; `riduci_cuoci.py` ora lo chiama da solo.
+- **Inizio con il mostro-squalo**:
+  - bocca: `assets_src/mascotte/mostro_bocca.py` (linea delle labbra, taglio, sacca della bocca, gengiva, seconda fila di denti);
+  - scheletro e pesi: `mostro_rig.py`. Il calore di Blender fallisce su questa mesh: i pesi sono per distanza dalle ossa, lisciati sulla superficie. I doppioni del glTF vanno uniti a 0,8 mm, se no le cuciture UV si aprono in crepe nere quando si deforma;
+  - animazione: `mostro_anim.py`, tutta a funzioni del tempo, con gambe e braccia in IK fatte a mano e la radice che porta la corsa. Esce `godot/assets/models/mascotte/mostro_squalo_A_rig.glb` più un `.json` con i tempi, che legge `scripts/interni/risveglio_squalo.gd`;
+  - controlli in Blender: `mostro_rig.py anteprime <tempi> <cartella>` e `striscia <t0,t1,n> <cartella>`. Nel gioco: `godot/proposte/mascotte/video_risveglio.gd`;
+  - suoni: `assets_src/audio/genera_squalo.py`;
+  - il risveglio è a x 14,5, verso est (scelta a dell'utente). La porta tagliafuoco ora ha un cardine e una collisione: il vano era libero;
+  - nei test la scena dello squalo parte solo con `fai_risveglio(p, true)`, perché dura più di 13 secondi;
+  - test: `test_interni`.
+- Gli scatti con Vulkan si bloccavano a 3 GB (deadlock dei worker di Godot): serve un `godot/override.cfg` locale con `[threading]` `worker_pool/max_threads=12`.
+
+
 Branch `lavoro/mascotte` (base: main bd91d14, v0.3.6). Ultimo commit del lavoro: 38c2738.
 
 ## Scelte dell'utente da realizzare (lavori aperti)
