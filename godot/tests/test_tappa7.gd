@@ -159,6 +159,28 @@ func _run() -> void:
 	check(ok and _checkpoint() == CP + "CheckpointMagazzino", "nel magazzino dei gonfiabili: checkpoint (%s)" % _checkpoint())
 	check(serranda and serranda.open_amount == 0.0, "la serranda è ancora chiusa")
 	ok = await _cammina_verso(tec.to_global(Vector3(24.0, 9.05, 15.0)), 900)
+	# La serranda con il lettore della keycard (strada nuova della risalita, GDD "Allungare il
+	# capitolo"): senza keycard resta chiusa anche arrivandoci davanti; la keycard è nella cassaforte
+	# dell'infermeria (test_infermeria_gioco, test_risalita), qui la si dà al giocatore.
+	var lettore := tec.find_child("LettoreTessera", true, false) as LettoreTessera
+	check(lettore != null and not lettore.aperto, "accanto alla serranda c'è il lettore della keycard, rosso")
+	if lettore:
+		for i in 200:
+			var d0 := tec.to_global(Vector3(19.6, 9.05, 15.0)) - p.global_position
+			p.set_look(atan2(-d0.x, -d0.z), 0.0)
+			Input.action_press(&"move_forward")
+			await get_tree().physics_frame
+		Input.action_release(&"move_forward")
+		check(serranda.open_amount == 0.0, "senza keycard, davanti alla serranda resta chiusa")
+		p.add_item(&"keycard", 1, "Keycard")
+		await _cammina_verso(tec.to_global(Vector3(21.0, 9.05, 15.9)), 300)
+		p.look_at_point(lettore.global_position)
+		await _frames(6)
+		Input.action_press(&"interact")
+		await _frames(2)
+		Input.action_release(&"interact")
+		await _frames(2)
+		check(lettore.aperto, "guardando il lettore si passa la keycard col tasto E: diventa verde")
 	var alzata := -1
 	Input.action_press(&"move_forward")
 	for i in 400:
