@@ -8,7 +8,7 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 | ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2 | portone della torre, parete che lampeggia, strada nella torre (opzioni per iscritto), poi l'inseguimento A con SB1 |
 | ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | Polaroid sotto il foglio, geyser V1 nel gioco con il punto bianco da togliere, verifiche aperte |
 | enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | acquari doppi e valvola illuminata, poi fiume A, infermeria B, lettore 1 e keycard 1 nel gioco |
-| grafica | (da creare dopo il passaggio) | lavoro/grafica | torre buia dopo una morte, gocce dello spruzzo da vicino che fanno laggare |
+| grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | torre buia dopo una morte, gocce dello spruzzo da vicino che fanno laggare |
 
 Le sessioni vecchie (grafica session_01Q9PdaHCaFPsyZ4J69AtTTt, ambienti-1 session_01E1m21YyF95ZHLwLFM1yLCv, ambienti-2 session_01DHF6GjuPt1SH74CXxGYGC2, enigma-logica session_01RPrxxeJjwAgHgEzLWPXgsn, enigma-ambiente session_01Jn42hE4synLdT5YNKedMqv, mascotte session_01Ut6TnWfhFvUH1yfran7kFa) sono ferme dal 21 ottobre: avevano conversazioni lunghissime che costavano a ogni passo. Ognuna ha lasciato un passaggio di consegne in `docs/coordinamento/passaggi/<squadra>.md` sul suo branch.
 
