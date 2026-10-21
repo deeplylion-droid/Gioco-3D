@@ -221,6 +221,7 @@ Parole dell'utente: "ritocchiamo l'inizio. Quando ti alzi da terra. Mettiamo che
 
 Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel corridoio: la bocca aperta addosso alla camera, poi il boato dalla porta in fondo al corridoio; lui si gira, esita, corre via verso quella porta, che si chiude dietro di lui. I dettagli ancora aperti si chiedono all'utente per iscritto.
 - **La camera** (risposta dell'utente, 21 ottobre): "telecamera fissa che si muove come se fosse la faccia del personaggio spaventato". Il giocatore non la controlla durante la scena: la camera è guidata e si muove come la testa di chi è terrorizzato (sussulti, si ritrae dalla bocca, trema, segue lo squalo che si gira e scappa).
+- **Il boato** (risposta dell'utente, 21 ottobre: opzione b): è il verso lontano e profondo di lei, Jilly, che lo chiama dalla porta in fondo al corridoio. Lo squalo obbedisce: si gira, esita e corre da lei.
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
