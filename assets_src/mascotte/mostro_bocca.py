@@ -45,9 +45,15 @@ def carica():
     # facce e restano), così la superficie è un pezzo solo e le distanze sulla superficie hanno senso
     bm = bmesh.new(); bm.from_mesh(ob.data)
     prima = len(bm.verts)
-    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=8e-4)   # i doppioni del glTF arrivano a 0,5 mm
     print('VERTICI', prima, '->', len(bm.verts))
+    # dopo l'unione qualche faccia può avere il verso opposto alle vicine: si rimettono coerenti
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     bm.to_mesh(ob.data); bm.free()
+    # le normali personalizzate del glTF dopo l'unione non valgono più (triangoli neri): si ricalcolano
+    if ob.data.has_custom_normals:
+        bpy.ops.mesh.customdata_custom_splitnormals_clear()
+    ob.data.shade_smooth()
     return ob
 
 
