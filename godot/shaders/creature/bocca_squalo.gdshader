@@ -24,6 +24,7 @@ void fragment() {
 	float n = rumore_liscio(UV * vec2(40.0, 12.0)) * 0.6 + rumore_liscio(UV * vec2(110.0, 30.0)) * 0.4;
 	vec3 c = carne * (0.75 + 0.5 * n);
 	ALBEDO = mix(c, gola, fondo);
-	ROUGHNESS = mix(0.18, 0.5, n) + (1.0 - lucido) * 0.4;
-	SPECULAR = 0.6;
+	// bagnata vicino ai denti, opaca in fondo (lì non deve riflettere niente: la gola è buia)
+	ROUGHNESS = mix(mix(0.22, 0.5, n) + (1.0 - lucido) * 0.4, 1.0, fondo);
+	SPECULAR = mix(0.5, 0.0, fondo);
 }

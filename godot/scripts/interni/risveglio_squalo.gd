@@ -90,7 +90,7 @@ func _crea_squalo() -> void:
 	_anim = squalo.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	for s in squalo.find_children("*", "Skeleton3D", true, false):
 		_scheletro = s as Skeleton3D
-	for nome in ["bocca", "mento_punta", "testa", "spina", "radice"]:
+	for nome in ["bocca", "mento_punta", "testa", "spina", "radice", "collo", "petto", "mano.L", "mano.R", "coda2"]:
 		_ossa[nome] = _scheletro.find_bone(nome) if _scheletro else -1
 	# l'interno della bocca: carne bagnata che scurisce verso la gola
 	var mat := ShaderMaterial.new()
@@ -237,9 +237,12 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	var rapido := 9.0 if _t < R + 0.6 else 5.0
 	_sguardo = _sguardo.lerp(obiettivo, 1.0 - exp(-rapido * delta)) if delta > 0.0 else obiettivo
 	var occhio := occhio_base + Vector3.UP * (h - _p.stand_eye_height)
-	# si ritrae dalla bocca: sotto i 40 cm la testa va indietro e un po' giù
+	# si ritrae: dalla bocca sotto i 40 cm, e dal corpo che si gira e dalle mani sotto i 55 cm
 	var dist := occhio.distance_to(bocca)
 	var indietro := clampf(0.40 - dist, 0.0, 0.25) * 1.3 * (1.0 - _liscio(0.0, 1.0, R, R + 0.6))
+	if _t > R:
+		for osso in ["testa", "collo", "petto", "mano.L", "mano.R", "coda2"]:
+			indietro = maxf(indietro, clampf(0.55 - occhio.distance_to(_bone_mondo(osso)), 0.0, 0.3))
 	# tremore: forte nella minaccia, poi meno; sobbalzo al richiamo e alla porta
 	if _t > R and _t < R + 0.1:
 		_scossa = maxf(_scossa, 0.7)

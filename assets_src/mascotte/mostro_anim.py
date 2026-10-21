@@ -86,7 +86,7 @@ def tempo_alla_porta():
     t = FASI['CORSA']
     while True:
         s, _ = posizione_corsa(t)
-        if 0.35 + s >= PORTA_Y:
+        if radice(t)[1] >= PORTA_Y:
             return t
         t += 1.0 / FPS
 
@@ -102,6 +102,8 @@ def radice(t):
     else:
         avanti = chiavi(t, [(FASI['RICHIAMO'], -0.08), (FASI['GIRO'] + 0.8, 0.0)])
     passo = chiavi(t, [(FASI['ESITA'] + 0.15, 0.0), (FASI['ESITA'] + 0.55, 0.35)])
+    # girandosi si allontana dalla faccia del giocatore (se no il corpo e la coda gli passano addosso)
+    passo += chiavi(t, [(FASI['RICHIAMO'] + 0.25, 0.0), (FASI['GIRO'] + 0.85, 0.60)])
     s, _ = posizione_corsa(t)
     return 0.0, avanti + passo + s, yaw
 
@@ -137,8 +139,8 @@ class Piedi:
             self.appoggi[s].append((t0, fine, self._mondo(self.fermo[s], x, y, yaw), yaw))
         # mezzo passo dell'esitazione: prima il destro poi il sinistro raggiunge
         e = FASI['ESITA']
-        self.appoggi['R'].append((e + 0.42, FASI['CORSA'] + 0.05, self._mondo(self.fermo['R'], 0, 0.35, math.pi) + Vector((0, 0.18, 0)), math.pi))
-        self.appoggi['L'].append((e + 0.62, FASI['CORSA'] - 0.05, self._mondo(self.fermo['L'], 0, 0.35, math.pi), math.pi))
+        self.appoggi['R'].append((e + 0.42, FASI['CORSA'] + 0.05, self._mondo(self.fermo['R'], 0, radice(e + 0.6)[1], math.pi) + Vector((0, 0.18, 0)), math.pi))
+        self.appoggi['L'].append((e + 0.62, FASI['CORSA'] - 0.05, self._mondo(self.fermo['L'], 0, radice(e + 0.6)[1], math.pi), math.pi))
         # la corsa: passi alternati, ogni appoggio centrato sotto l'anca a metà appoggio
         t = FASI['CORSA'] + 0.12
         lato = 'L'
@@ -202,14 +204,17 @@ def posa(t, piedi):
     # --- bacino e busto
     p['bacino'] = [('x', 5 * chino + 5 * corsa), ('z', 6 * corsa * math.sin(fase)),
                    ('y', 4 * corsa * math.sin(fase))]
-    p['spina'] = [('x', 5 * chino + 4 * corsa + 1.5 * resp), ('z', -5 * corsa * math.sin(fase))]
-    p['petto'] = [('x', 4 * chino + 2 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase))]
+    # nell'esitazione si volta indietro con tutto il busto, non solo con la testa: dietro di lui il
+    # giocatore deve vedergli il muso e l'occhio
+    torsione = chiavi(t, [(E + 0.65, 0.0), (E + 0.85, 1.0), (E + 1.35, 1.0), (E + 1.55, 0.0)])
+    p['spina'] = [('x', 5 * chino + 4 * corsa + 1.5 * resp), ('z', -5 * corsa * math.sin(fase) + 26 * torsione)]
+    p['petto'] = [('x', 4 * chino + 2 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase) + 32 * torsione)]
     # alla porta il busto si piega di più
     p['spina'].append(('x', liscio(0, 10, tp - 0.45, tp - 0.15, t) - liscio(0, 10, tp + 0.25, tp + 0.55, t)))
     # --- collo e testa: giù verso la faccia del giocatore, poi lo scatto verso il richiamo (dietro a
     # sinistra, sopra la spalla), il giro, lo sguardo indietro al giocatore nell'esitazione
     guarda = chiavi(t, [(R + 0.08, 0.0), (R + 0.30, 75.0), (G + 0.2, 75.0), (G + 0.8, 0.0), (E + 0.7, 0.0),
-                        (E + 0.85, 100.0), (E + 1.35, 100.0), (E + 1.5, 70.0), (C - 0.15, 0.0)])
+                        (E + 0.85, 95.0), (E + 1.35, 95.0), (E + 1.5, 60.0), (C - 0.15, 0.0)])
     alza = chiavi(t, [(R + 0.08, 0.0), (R + 0.30, -18.0), (G + 0.8, -5.0), (C, 0.0)])
     scatti = 0.0
     if M < t < R:
@@ -253,7 +258,9 @@ def posa(t, piedi):
     # --- coda: ondeggia lenta, nella corsa fa da contrappeso (in ritardo sul bacino)
     amp = 6 + 14 * corsa
     for k, b in enumerate(('coda1', 'coda2', 'coda3')):
-        p[b] = [('z', amp * math.sin((fase if corsa > 0 else t * 1.3) - 0.9 * (k + 1)) * (1 + 0.3 * k)),
+        # quando si volta indietro la coda va dall'altra parte (contrappeso; e non copre il muso)
+        p[b] = [('z', amp * math.sin((fase if corsa > 0 else t * 1.3) - 0.9 * (k + 1)) * (1 + 0.3 * k)
+                 + 25 * torsione),
                 ('x', -4 * corsa)]
     return p
 
