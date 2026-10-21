@@ -23,11 +23,11 @@ giocatore_proprio = false
 
 Con questa traslazione l'uscita degli spogliatoi (`marker_uscita_sala_principale`, vano 1,2 × 2,2 m chiuso dalla saracinesca) finisce in (0; 0; 20,2), sul retro del vano sud della sala.
 
-**Spawn del giocatore**: il nodo `Player` della sala va spostato sul risveglio, in **(10,7; 0; 39,65)**, girato verso ovest (-X):
+**Spawn del giocatore**: il nodo `Player` della sala va spostato sul risveglio, in **(4,8; 0; 39,6)**, girato verso est (+X), verso la porta tagliafuoco (inizio con il mostro-squalo, 21 ottobre):
 
 ```
 [node name="Player" ...]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10.7, 0, 39.65)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4.8, 0, 39.6)
 ```
 
 Poi, nella sala:
@@ -35,7 +35,7 @@ Poi, nella sala:
 - lo zaino parte dallo stanzino: `start_with_pack = false` nello script della sala e `start_equipped = false` sul `WaterPack` del giocatore; il nodo `PostazioneBagnini` della sala non serve più (lo zaino vero è `Interni/Zaino`);
 - le Polaroid P1, P2 e P3 sono negli interni (`Interni/Polaroid`, stessi `entry_id` p01-p03): togliere `Polaroid01-03` dalla sala;
 - i checkpoint degli interni hanno `order` da -10 a -5, quindi vengono prima di quelli della sala (da 0 in su): non serve rinumerare;
-- la scena del risveglio: dallo script della sala, `$Interni.fai_risveglio(GameState.player)` all'inizio del livello (solo se non si riparte da un checkpoint);
+- la scena del risveglio: dallo script della sala, `$Interni.fai_risveglio(GameState.player)` all'inizio del livello (solo se non si riparte da un checkpoint). È la scena del mostro-squalo (`Gioco/RisveglioSqualo`, `scripts/interni/risveglio_squalo.gd`);
 - `Interni` non crea un WorldEnvironment quando `giocatore_proprio = false`: vale quello della sala.
 
 ## Cosa c'è dentro

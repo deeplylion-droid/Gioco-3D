@@ -56,6 +56,7 @@ const PER_CARTELLA := {
 	"lei": [BUS_EFFETTI, 0.0, 6.0, 50.0, 0.0],
 	"piscina": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 	"torre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
+	"squalo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -110,6 +111,8 @@ const TARATURA := {
 	&"zampette_condotto": [BUS_EFFETTI, 0.0, 3.0, 25.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
+	&"squalo_passo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.6],
+	&"jilly_richiamo": [BUS_EFFETTI, 2.0, 12.0, 60.0, 0.0],
 	# il suo urlo nel jumpscare (JumpscareGlitch): forte, scelto così dall'utente il 17 ottobre
 	&"lei_urlo": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 	# la piscina a onde (tappa 5): scelti dall'utente il 16 ottobre; le medusine appena percettibili

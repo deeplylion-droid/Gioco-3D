@@ -25,7 +25,8 @@ USCITA = os.path.join(REPO, 'godot', 'assets', 'models', 'mascotte', 'mostro_squ
 G = {
     'bacino': (0.0, 0.42, 1.10), 'spina': (0.0, 0.10, 1.40), 'petto': (0.0, -0.25, 1.55),
     'collo': (0.03, -0.50, 1.62), 'testa': (0.08, -0.70, 1.62), 'muso': (0.15, -1.18, 1.60),
-    'mento': (0.14, -1.05, 1.40),
+    'mento': (0.14, -1.05, 1.40), 'bocca': (0.14, -1.02, 1.50), 'bocca_avanti': (0.14, -1.22, 1.50),
+    'mento_avanti': (0.14, -1.20, 1.38),
     'coda1': (0.0, 0.70, 1.22), 'coda2': (0.03, 0.92, 1.24), 'coda3': (0.10, 1.12, 1.28), 'coda4': (0.18, 1.38, 1.36),
     'anca.L': (0.25, 0.40, 0.86), 'ginocchio.L': (0.36, 0.30, 0.48), 'caviglia.L': (0.37, 0.40, 0.20),
     'punta.L': (0.44, 0.06, 0.03),
@@ -38,13 +39,16 @@ G = {
 }
 # osso: (giuntura di partenza, giuntura d'arrivo, padre, deforma)
 OSSA = [
-    ('radice', None, None, None, False),
+    ('radice', None, None, None, True),    # senza pesi, ma "deforma" così il glTF lo esporta (il moto della corsa è suo)
     ('bacino', 'bacino', 'spina', 'radice', True),
     ('spina', 'spina', 'petto', 'bacino', True),
     ('petto', 'petto', 'collo', 'spina', True),
     ('collo', 'collo', 'testa', 'petto', True),
     ('testa', 'testa', 'muso', 'collo', True),
     ('mascella', 'testa', 'mento', 'testa', True),
+    # senza pesi: segna il centro della bocca per il gioco (la camera la guarda, il fiato parte da lì)
+    ('bocca', 'bocca', 'bocca_avanti', 'testa', True),
+    ('mento_punta', 'mento', 'mento_avanti', 'mascella', True),
     ('coda1', 'bacino', 'coda1', 'bacino', True),
     ('coda2', 'coda1', 'coda2', 'coda1', True),
     ('coda3', 'coda2', 'coda3', 'coda2', True),
@@ -146,7 +150,7 @@ def pesa(mesh, arm, bocca):
     peso della mascella di mostro_bocca."""
     me = mesh.data
     P = np.array([v.co[:] for v in me.vertices])
-    ossa = [b for b in arm.data.bones if b.use_deform]
+    ossa = [b for b in arm.data.bones if b.use_deform and b.name not in ('bocca', 'mento_punta', 'radice')]
     # raggio tipico di ogni osso (più grande = attira di più): il busto è un barile
     raggio = {'bacino': 0.45, 'spina': 0.55, 'petto': 0.50, 'collo': 0.40, 'testa': 0.40, 'mascella': 0.25,
               'coda1': 0.25, 'coda2': 0.20, 'coda3': 0.25}
@@ -306,11 +310,36 @@ def cuoci(arm, piedi, nome='risveglio'):
             bt = arm.matrix_world @ pbs['testa'].tail
             bm_ = arm.matrix_world @ pbs['mascella'].tail
             print(f'BOCCA t={t:.2f}: muso {tuple(round(c, 3) for c in bt)} mento {tuple(round(c, 3) for c in bm_)}')
+        # braccia: IK a due ossa verso la mano, il gomito in fuori e un po' indietro
+        for s in ('L', 'R'):
+            spalla = pbs[f'braccio.{s}'].head.copy()
+            off = posa['_mano.' + s].copy()
+            off.rotate(Matrix.Rotation(yaw, 3, 'Z'))
+            mano = spalla + off
+            l1, l2 = lung[f'braccio.{s}'], lung[f'avambraccio.{s}']
+            d = mano - spalla
+            dist = min(max(d.length, abs(l1 - l2) + 0.02), (l1 + l2) * 0.995)
+            u = d.normalized()
+            lato = Vector((1 if s == 'L' else -1, 0, 0)); lato.rotate(Matrix.Rotation(yaw, 3, 'Z'))
+            polo = lato * 0.8 - avanti * 0.4 + Vector((0, 0, -0.2))
+            polo = (polo - u * polo.dot(u)).normalized()
+            aa = (l1 * l1 - l2 * l2 + dist * dist) / (2 * dist)
+            hh = math.sqrt(max(l1 * l1 - aa * aa, 0.0))
+            gomito = spalla + u * aa + polo * hh
+            pbs[f'braccio.{s}'].matrix = _matrice_osso(pbs[f'braccio.{s}'].matrix.to_3x3(), gomito - spalla, spalla)
+            bpy.context.view_layer.update()
+            pbs[f'avambraccio.{s}'].matrix = _matrice_osso(pbs[f'avambraccio.{s}'].matrix.to_3x3(),
+                                                           spalla + u * dist - gomito, gomito)
+            bpy.context.view_layer.update()
+            if f == int(9.0 * A.FPS):
+                print('MANO', s, 'spalla', tuple(round(c, 2) for c in spalla), 'obiettivo', tuple(round(c, 2) for c in mano),
+                      'ottenuta', tuple(round(c, 2) for c in pbs[f'avambraccio.{s}'].tail))
         for pb in pbs:
             pb.keyframe_insert('rotation_quaternion', frame=f)
             pb.keyframe_insert('location', frame=f)
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.context.scene.frame_start = 0; bpy.context.scene.frame_end = n - 1
+    bpy.context.scene.render.fps = A.FPS; bpy.context.scene.render.fps_base = 1.0
     return dati
 
 
@@ -360,9 +389,41 @@ def anteprime(cartella, tempi, dati):
             bpy.ops.render.render(write_still=True)
 
 
+def striscia(cartella, t0, t1, n, nome='striscia'):
+    """n fotogrammi tra t0 e t1 visti di lato, con la camera che segue la radice, in una sola immagine."""
+    from PIL import Image
+    sc = bpy.context.scene
+    sc.render.engine = 'CYCLES'; sc.cycles.samples = 8; sc.cycles.use_denoising = True
+    sc.render.resolution_x = 400; sc.render.resolution_y = 500
+    sc.world = bpy.data.worlds.new('w'); sc.world.use_nodes = True
+    sc.world.node_tree.nodes['Background'].inputs[1].default_value = 3.5
+    cam = bpy.data.objects.new('cam', bpy.data.cameras.new('cam')); sc.collection.objects.link(cam); sc.camera = cam
+    cam.data.type = 'ORTHO'; cam.data.ortho_scale = 2.8
+    sole = bpy.data.objects.new('sole', bpy.data.lights.new('sole', 'SUN'))
+    sole.data.energy = 4.0; sole.rotation_euler = (math.radians(50), 0, math.radians(70))
+    sc.collection.objects.link(sole)
+    pezzi = []
+    for k in range(n):
+        t = t0 + (t1 - t0) * k / max(n - 1, 1)
+        sc.frame_set(int(round(t * A.FPS)))
+        x, y, _ = A.radice(t)
+        cam.location = (4.0, y, 1.1); cam.rotation_euler = (math.pi / 2, 0, math.pi / 2)
+        f = os.path.join(cartella, f'_s{k:02d}.png'); sc.render.filepath = f
+        bpy.ops.render.render(write_still=True)
+        pezzi.append(Image.open(f).convert('RGB'))
+    col = min(n, 4)
+    g = Image.new('RGB', (400 * col, 500 * ((n + col - 1) // col)))
+    for k, im in enumerate(pezzi):
+        g.paste(im, (400 * (k % col), 500 * (k // col)))
+    g.save(os.path.join(cartella, nome + '.jpg'))
+
+
 if __name__ == '__main__' and 'ossa' not in sys.argv:
     mesh, arm, dati = costruisci()
-    if 'anteprime' in sys.argv:
+    if 'striscia' in sys.argv:
+        a, b, n = sys.argv[sys.argv.index('striscia') + 1].split(',')
+        striscia(sys.argv[-1], float(a), float(b), int(n))
+    elif 'anteprime' in sys.argv:
         tempi = [float(x) for x in sys.argv[sys.argv.index('anteprime') + 1].split(',')]
         anteprime(sys.argv[-1], tempi, dati)
     else:

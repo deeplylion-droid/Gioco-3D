@@ -23,8 +23,11 @@ import numpy as np
 from mathutils import Vector, Matrix, Quaternion, Euler
 
 FPS = 30
-GIOCATORE_Y = -1.70      # la faccia del giocatore, davanti allo squalo
-PORTA_Y = 5.80           # la porta tagliafuoco, dietro di lui
+# spalle e mani nella posa di riposo (le stesse giunture di mostro_rig.G)
+SPALLE = {'L': (0.45, -0.58, 1.45), 'R': (-0.42, -0.52, 1.42)}
+MANI_RIPOSO = {'L': (0.71, -1.06, 0.86), 'R': (-0.58, -1.06, 1.44)}
+GIOCATORE_Y = -1.55      # la faccia del giocatore, davanti allo squalo
+PORTA_Y = 5.95           # la porta tagliafuoco, dietro di lui
 FASI = dict(MINACCIA=2.4, RICHIAMO=5.4, GIRO=5.85, ESITA=6.75, CORSA=7.75, PORTA=None, FINE=None)
 VEL_CORSA = 2.8          # m/s
 ACCEL = 0.9              # secondi per arrivare alla velocità di corsa
@@ -192,15 +195,15 @@ def posa(t, piedi):
     abbassa += liscio(0.0, 0.16, tp - 0.45, tp - 0.15, t) - liscio(0.0, 0.16, tp + 0.25, tp + 0.55, t)
     # la corsa: il bacino scende a ogni appoggio e risale nel volo
     if corsa > 0:
-        abbassa += corsa * (0.07 + 0.06 * math.cos(2 * fase))
+        abbassa += corsa * (0.03 + 0.04 * math.cos(2 * fase))
     p['_abbassa'] = abbassa
     # --- respiro (sempre): il petto si gonfia
     resp = math.sin(t * 2 * math.pi * (0.55 if t < R else 0.9))
     # --- bacino e busto
-    p['bacino'] = [('x', 5 * chino + 16 * corsa), ('z', 6 * corsa * math.sin(fase)),
+    p['bacino'] = [('x', 5 * chino + 5 * corsa), ('z', 6 * corsa * math.sin(fase)),
                    ('y', 4 * corsa * math.sin(fase))]
-    p['spina'] = [('x', 5 * chino + 8 * corsa + 1.5 * resp), ('z', -5 * corsa * math.sin(fase))]
-    p['petto'] = [('x', 4 * chino + 6 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase))]
+    p['spina'] = [('x', 5 * chino + 4 * corsa + 1.5 * resp), ('z', -5 * corsa * math.sin(fase))]
+    p['petto'] = [('x', 4 * chino + 2 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase))]
     # alla porta il busto si piega di più
     p['spina'].append(('x', liscio(0, 10, tp - 0.45, tp - 0.15, t) - liscio(0, 10, tp + 0.25, tp + 0.55, t)))
     # --- collo e testa: giù verso la faccia del giocatore, poi lo scatto verso il richiamo (dietro a
@@ -231,14 +234,21 @@ def posa(t, piedi):
     # --- braccia: nella minaccia aperte ai lati della faccia del giocatore, gli artigli in avanti; al
     # richiamo si fermano; nella corsa pompano (opposte alle gambe) con il gomito piegato
     braccia = chiavi(t, [(0.0, 1.0), (R + 0.1, 1.0), (G + 0.6, 0.3), (C, 0.0)])
-    pomp = corsa * 20 * math.sin(fase)
-    # il braccio +x (L) pende: si alza e va in avanti e in fuori
-    p['braccio.L'] = [('x', -22 * braccia - 10 * corsa + pomp), ('y', 10 * braccia)]
-    p['avambraccio.L'] = [('x', -15 * braccia - 20 * corsa - 0.4 * pomp)]
+    # le mani con una IK (in mostro_rig.cuoci): qui dove vanno, rispetto alla spalla, nello spazio della
+    # radice prima del giro (lo squalo guarda -Y). A riposo come nel modello; nella minaccia ai lati della
+    # faccia del giocatore, gli artigli aperti; nella corsa pompano davanti al petto, opposte alle gambe.
+    oscilla = math.sin(fase) if corsa > 0 else 0.0
+    for s, segno in (('L', 1.0), ('R', -1.0)):
+        spalla = Vector(SPALLE[s])
+        riposo = Vector(MANI_RIPOSO[s]) - spalla
+        minaccia = Vector((0.40 * segno, GIOCATORE_Y + 0.42, 1.12 + (0.08 if s == 'R' else 0.0))) - spalla
+        minaccia += Vector((0.0, 0.03, 0.03)) * rumore(t, 1.7, 2.0 + segno)
+        # nella corsa la mano che pende si tiene su, davanti al petto (non deve strisciare a terra)
+        su = Vector((-0.05, -0.10, 0.42)) if s == 'L' else Vector((0.0, 0.0, -0.05))
+        corsa_off = riposo + su + Vector((0.0, -0.13 * oscilla * segno, 0.06 * oscilla * segno))
+        resto = max(0.0, 1.0 - braccia - corsa)
+        p['_mano.' + s] = riposo * resto + minaccia * braccia + corsa_off * corsa
     p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia)]
-    # il braccio -x (R) è già alzato davanti al muso: si sposta di lato per non coprire la bocca
-    p['braccio.R'] = [('z', 15 * braccia), ('x', -6 * braccia + 25 * corsa - pomp), ('y', -8 * braccia)]
-    p['avambraccio.R'] = [('x', 6 * braccia - 15 * corsa + 0.4 * pomp)]
     p['mano.R'] = [('x', 4 * rumore(t, 2.2, 5.0) * braccia)]
     # --- coda: ondeggia lenta, nella corsa fa da contrappeso (in ritardo sul bacino)
     amp = 6 + 14 * corsa
