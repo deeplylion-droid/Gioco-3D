@@ -311,9 +311,8 @@ func _run() -> void:
 	check(ok and _checkpoint().ends_with("CheckpointTorre"), "fino davanti al portone: checkpoint (%s)" % _checkpoint())
 	# con la sala della torre la demo non finisce più qui ma in fondo alla discesa (test_torre.gd): il
 	# portone che si apre la fa caricare
-	for i in 600:
-		if level.get(&"sala_torre") != null:
-			break
+	var t0 := Time.get_ticks_msec()
+	while level.get(&"sala_torre") == null and Time.get_ticks_msec() - t0 < 90000:
 		await get_tree().process_frame
 	check(level.get(&"sala_torre") != null and not bool(level.get(&"demo_finished")),
 		"davanti al portone aperto c'è la sala della torre (la demo finisce in fondo alla discesa)")

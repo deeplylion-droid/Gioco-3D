@@ -18,6 +18,8 @@ var settle := 60
 
 
 func _ready() -> void:
+	# Negli scatti la torre non si precarica (memoria: la sala da sola arriva a 12-13 GB).
+	Engine.set_meta(&"precarica_torre_spento", true)
 	var args := OS.get_cmdline_user_args()
 	if args.size() > 1:
 		out_dir = args[1]
