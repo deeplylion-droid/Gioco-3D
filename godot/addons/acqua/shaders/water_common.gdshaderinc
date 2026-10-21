@@ -18,7 +18,7 @@ global uniform sampler2D water_glow_tex;
 global uniform int water_glow_count;
 
 const float WATER_IOR = 1.333;
-const int WATER_MAX_BODIES = 8;
+const int WATER_MAX_BODIES = 12;
 
 // Dati di una massa d'acqua letti dalla tabella globale (4 texel per vasca).
 struct WaterBody {
@@ -55,6 +55,11 @@ WaterBody water_body_at(vec3 wp, float margin) {
 			vec4 a = texelFetch(water_bodies_tex, ivec2(i * 4 + 1, 0), 0);
 			vec4 c = texelFetch(water_bodies_tex, ivec2(i * 4 + 2, 0), 0);
 			vec4 d = texelFetch(water_bodies_tex, ivec2(i * 4 + 3, 0), 0);
+			// sotto il fondo di una vasca rialzata (gli acquari dell'enigma) non si è dentro: il
+			// pavimento sotto e intorno non prende caustiche né colore
+			if (wp.y < d.a - 0.25) {
+				continue;
+			}
 			b.found = true;
 			b.rect = r;
 			b.level = a.x;

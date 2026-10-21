@@ -2,7 +2,7 @@ class_name ReservoirGauge
 extends Node3D
 ## Finestrella del serbatoio sulla pistola ad acqua: un cilindro di plastica trasparente con
 ## dentro l'acqua che sale e scende insieme al serbatoio dello zaino. Il pelo dell'acqua resta
-## orizzontale (shader liquid_fill). Va messo dentro la scena della lancia: trova da solo lo
+## orizzontale (shader liquid_fill) e ha il colore dell'acqua del serbatoio (WaterMix). Va messo dentro la scena della lancia: trova da solo lo
 ## zaino del giocatore. Il cilindro è lungo l'asse Z del nodo (orizzontale) o lungo Y.
 
 @export var length := 0.12
@@ -67,8 +67,14 @@ func _find_pack() -> void:
 		_pack = (n as Player).water_pack
 	if _pack:
 		_pack.tank_changed.connect(_on_tank_changed)
+		_pack.water_mix_changed.connect(_on_mix_changed)
+		_on_mix_changed(_pack.water_mix)
 		_on_tank_changed(_pack.tank_amount, _pack.tank_capacity)
 		_shown = fill
+
+
+func _on_mix_changed(m: Dictionary) -> void:
+	_water_mat.set_shader_parameter(&"color", WaterMix.colore(m, water_color))
 
 
 func _on_tank_changed(amount: float, capacity: float) -> void:

@@ -14,7 +14,6 @@ const RIGHE := [
 	["Correre", [&"sprint"], "tieni premuto"],
 	["Abbassarsi", [&"crouch"], "tieni premuto"],
 	["Saltare", [&"jump"], ""],
-	["Accendere la torcia", [&"torcia"], ""],
 	["Usare, raccogliere", [&"interact"], ""],
 	["Zaino: spruzzare", [&"spray"], "tieni premuto"],
 	["Zaino: aspirare l'acqua", [&"suck"], "tieni premuto"],
@@ -178,8 +177,9 @@ static func nome_evento(ev: InputEvent) -> String:
 static func _abbassarsi_a_scatto() -> bool:
 	var tree := Engine.get_main_loop() as SceneTree
 	var stato := tree.root.get_node_or_null(^"GameState") if tree else null
-	var p: Object = stato.get(&"player") if stato else null
-	return p != null and is_instance_valid(p) and bool(p.get(&"crouch_toggle"))
+	# Tornando al titolo il giocatore è già liberato: niente variabile tipizzata (darebbe errore).
+	var p: Variant = stato.get(&"player") if stato else null
+	return is_instance_valid(p) and bool((p as Object).get(&"crouch_toggle"))
 
 
 func _linea() -> Control:

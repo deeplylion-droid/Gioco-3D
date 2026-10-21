@@ -103,7 +103,8 @@ func _init() -> void:
 	_action("skip", [_key(KEY_SPACE), _key(KEY_E), _key(KEY_ENTER)])
 	if s.has_setting("input/flashlight"):
 		s.clear("input/flashlight")
-	_action("torcia", [_key(KEY_F)])
+	if s.has_setting("input/torcia"):
+		s.clear("input/torcia")  # la torcia non c'è più (18 ottobre)
 	# Esc mette in pausa (Game); il menu delle opzioni si apre dalla pausa.
 	_action("menu_opzioni", [])
 	_action("pause", [_key(KEY_ESCAPE)])

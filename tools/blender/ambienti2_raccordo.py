@@ -140,7 +140,47 @@ blocco('c2_pav_basso', (XC0, Y_SCALA2, Z_T - 0.3), (XC1, Y_T0, Z_T), M['cemento_
 blocco('c2_pav_alto', (XC0, YC3_0 - SP, Z_SALA - 0.3), (XC1, Y_SCALA2_FINE, Z_SALA), M['cemento_bagnato'], 3.0)
 blocco('c2_sotto_alto', (XC0, YC3_0 - SP, Z_T - 0.3), (XC1, Y_SCALA2_FINE, Z_SALA - 0.3), M['cemento'], 3.0)
 muro('c2_muro_n', (XC0 - SP, YC3_1, Z_T - 0.3), (XC0, Y_T0 - SP, H_C))          # lato verso gli interni
-muro('c2_muro_s', (XC1, YC3_0 - SP, Z_T - 0.3), (XC1 + SP, Y_T0 - SP, H_C))
+# muro sud di C2 con il buco dell'agnellino (v0.3.6): una grata di ventilazione sfondata alla base, larga BW e
+# alta BH, troppo bassa per il giocatore (accucciato è alto 1,05 m); dietro una cavità buia profonda BP.
+BY = -4.9                            # centro del buco (z = 4,9 nella scena dei tecnici; lì l'arredo lascia il varco)
+BW, BH, BP = 0.85, 0.9, 2.2
+BY0, BY1 = BY - BW / 2, BY + BW / 2
+ZC2 = Z_T - 0.3 + 1.0                # dove finisce lo zoccolo di cemento (sotto il pavimento alto di C2)
+blocco('c2_muro_s_basso', (XC1, YC3_0 - SP, Z_T - 0.3), (XC1 + SP, Y_T0 - SP, ZC2), M['cemento'], 2.5)
+blocco('c2_muro_s_alto', (XC1, YC3_0 - SP, ZC2), (XC1 + SP, BY0, H_C), M['lamiere'], 2.0)
+blocco('c2_muro_s_alto_b', (XC1, BY1, ZC2), (XC1 + SP, Y_T0 - SP, H_C), M['lamiere'], 2.0)
+blocco('c2_muro_s_sotto_buco', (XC1, BY0, ZC2), (XC1 + SP, BY1, Z_SALA), M['lamiere'], 2.0)
+blocco('c2_muro_s_sopra_buco', (XC1, BY0, Z_SALA + BH), (XC1 + SP, BY1, H_C), M['lamiere'], 2.0)
+M['buio'] = mat_pbr('buio_condotto', base=(0.012, 0.011, 0.01), roughness=0.9)
+XB0, XB1 = XC1 + SP, XC1 + SP + BP
+blocco('buco_pav', (XB0, BY0 - 0.1, Z_SALA - 0.3), (XB1 + 0.1, BY1 + 0.1, Z_SALA), M['buio'], 2.0)
+blocco('buco_cielo', (XB0, BY0 - 0.1, Z_SALA + BH), (XB1 + 0.1, BY1 + 0.1, Z_SALA + BH + 0.2), M['buio'], 2.0)
+blocco('buco_lato_a', (XB0, BY0 - 0.1, Z_SALA), (XB1, BY0, Z_SALA + BH), M['buio'], 2.0)
+blocco('buco_lato_b', (XB0, BY1, Z_SALA), (XB1, BY1 + 0.1, Z_SALA + BH), M['buio'], 2.0)
+blocco('buco_fondo', (XB1, BY0 - 0.1, Z_SALA), (XB1 + 0.1, BY1 + 0.1, Z_SALA + BH), M['buio'], 2.0)
+# dentro lo spessore del muro: le facce del taglio scure di sporco (la lamiera tagliata si vede solo sul bordo)
+for k, (y0, y1) in enumerate(((BY0, BY0 + 0.02), (BY1 - 0.02, BY1))):
+    S('dettagli', box(f'buco_spalla{k}', (XC1 + SP / 2 + 0.01, (y0 + y1) / 2, Z_SALA + BH / 2), (SP - 0.02, y1 - y0, BH), M['ruggine'], uv=1.0))
+# il telaio della grata, rimasto avvitato al muro, con il traverso alto piegato verso fuori
+for nome, c, d in (('buco_telaio_s', (XC1 - 0.012, BY0 - 0.025, Z_SALA + BH / 2), (0.025, 0.05, BH)),
+                   ('buco_telaio_d', (XC1 - 0.012, BY1 + 0.025, Z_SALA + BH / 2), (0.025, 0.05, BH)),
+                   ('buco_telaio_basso', (XC1 - 0.012, BY, Z_SALA + 0.025), (0.025, BW + 0.1, 0.05))):
+    S('dettagli', box(nome, c, d, M['ferro'], uv=1.0))
+S('dettagli', box('buco_telaio_alto', (XC1 - 0.05, BY + 0.06, Z_SALA + BH + 0.01), (0.025, BW - 0.05, 0.05), M['ferro'], uv=1.0,
+                  rot=(math.radians(14), math.radians(-35), 0)))
+# la grata sfondata: presa a calci, è caduta dentro e sta storta sul fondo della cavità
+gm = (Matrix.Translation((XB1 - 0.5, BY + 0.03, Z_SALA + 0.055)) @ Matrix.Rotation(math.radians(7), 4, 'Z')
+      @ Matrix.Rotation(math.radians(-84), 4, 'Y'))
+S('dettagli', box('grata_cornice_a', None, (0.025, 0.05, 0.8), M['ferro'], uv=1.0, matrice=gm @ Matrix.Translation((0, -0.37, 0))))
+S('dettagli', box('grata_cornice_b', None, (0.025, 0.05, 0.8), M['ferro'], uv=1.0, matrice=gm @ Matrix.Translation((0, 0.37, 0))))
+S('dettagli', box('grata_cornice_c', None, (0.025, 0.79, 0.05), M['ferro'], uv=1.0, matrice=gm @ Matrix.Translation((0, 0, -0.38))))
+S('dettagli', box('grata_cornice_d', None, (0.025, 0.79, 0.05), M['ferro'], uv=1.0, matrice=gm @ Matrix.Translation((0, 0, 0.38))))
+for k in range(6):
+    z = -0.3 + k * 0.12
+    piega = Matrix.Rotation(math.radians((0, 0, 14, 22, 0, -8)[k]), 4, 'Z')
+    lung = 0.72 if k != 3 else 0.45
+    S('dettagli', box(f'grata_lamella{k}', None, (0.035, lung, 0.012), M['ruggine'] if k % 3 == 0 else M['ferro'], uv=1.0,
+                      matrice=gm @ Matrix.Translation((0, -0.36 + lung / 2 + (0.0 if k != 3 else 0.25), z)) @ piega @ Matrix.Rotation(math.radians(30), 4, 'Y')))
 blocco('c2_soffitto_basso', (XC0 - SP, 3.6, H_T), (XC1 + SP, Y_T0 - SP, H_T + 0.3), M['cemento'], 2.5)
 blocco('c2_architrave', (XC0, 3.6, H_T), (XC1, 3.9, H_C), M['lamiere'])
 blocco('c2_soffitto', (XC0 - SP, YC3_0 - SP, H_C), (XC1 + SP, 3.6, H_C + 0.3), M['cemento'], 2.5)

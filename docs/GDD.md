@@ -151,6 +151,17 @@ Parole dell'utente in `docs/riscontri/2026-10-17_prova_v034.md`.
 - **Niente scatti al primo uso**: aspirazione, getto e geyser non devono bloccare il gioco la prima volta.
 - **La pila di palloni** all'entrata della sala va senza rete: un mucchio a piramide, con la base molto più larga, appoggiato nell'angolo.
 
+## Prova della v0.3.5 (18 ottobre)
+
+Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
+- **Niente scatti al primo uso**: per l'aspirazione e il geyser è risolto. Resta da risolvere per il primo spruzzo dello zaino.
+- **Suoni più bassi**: tutto il suono è 20 dB più basso, e il massimo ora suona come il 10% a cui l'utente teneva il volume generale. Gli equilibri tra i suoni non cambiano, e il volume generale del menu resta regolabile.
+- **Torcia**: un altro 50% di luce in meno, dopo il 20% del 17 ottobre.
+- **Niente torcia** (decisione dell'utente, 18 ottobre sera): "togliamo la torcia". Le luci in più le indica lui. Per ora sono due: una lampada bianca a soffitto sopra la pozza d'acqua davanti ai tornelli e una luce rossa lampeggiante prima del portone stagno n. 1. I bambini scappano solo se ti avvicini troppo.
+- **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
+- **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
+  - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
+
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
 Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.md`.
@@ -164,6 +175,77 @@ Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.
   - La discesa va fatta con **più salti**.
   - Le piattaforme stanno **solo dove servono**.
   - La luce resta com'è: rosso d'emergenza con fari e lampade da lavoro.
+
+**Scelte del 18 ottobre:** discesa e aspetto approvati. L'utente vuole provarla nel gioco prima di dire altro: "Lo devo vedere in gioco per dirti". Nei due salti col getto resta la carica del getto B: si impara a spruzzare prima del bordo.
+
+## L'enigma degli acquari (idea dell'utente, 18 ottobre)
+
+L'utente trova il capitolo corto e vuole un enigma in più nella sala principale. Le sue parole: "saranno tre acquari di acqua colorata, due pieni di due colori e uno vuoto, in quello vuoto bisognerà versare i due colori per formarne un terzo, per farlo serviranno due zaini di un colore e uno zaino dell'altro. Fare bene aprirà il cancello della torre degli scivoli, che a questo punto risulterà chiuso MA avrà lampade luminose prima spente che saranno invece accese quando rientriamo nella sala. Anche gli acquari saranno comparsi ora mentre prima, durante il primo accesso alla sala non c'erano. Se sbagli la combo dei colori devi poter resettare l'enigma. Deve esserci un riferimento al colore da creare."
+
+Risposte alle domande (18 ottobre):
+- **Colori**: giallo e blu; con due zainate di giallo e una di blu viene il verde.
+- **Indizio**: accanto agli acquari c'è un disegno a pastello dei bambini con quel verde.
+- **Quando**: gli acquari compaiono quando rientri nella sala dal magazzino (tappa 7), insieme alle lampade del portone della torre che si accendono. Si possono usare dopo la tappa 8, quando lei se n'è andata.
+- **Se sbagli**: sotto l'acquario c'è una grossa valvola rossa da colpire col getto. L'acquario si svuota col gorgo e i due acquari colorati tornano pieni.
+- **Cosa apre**: il portone della torre. Prende il posto della regola di prima ("si apre da solo dopo la tappa 8").
+- L'aspetto (acquari, posizione, disegno, lampade) si propone all'utente con scatti dal motore prima di metterlo nel gioco.
+
+**Scelte del 18 ottobre (pagina, risposte in `docs/riscontri/2026-10-18_scelte_acquari_torre_mascotte.md`):**
+- stile B: grandi cilindri di vetro tra una base e un coperchio di acciaio rosso, con tubi e manometri;
+- posizione 2: sul lato est, vicino al portone della torre. Dalla serranda non si vedono, si scoprono a metà sala;
+- il miscuglio è basso e largo, in mezzo ai due alti, perché con lo zaino si versa solo fino a circa 0,8 m. Sotto c'è la valvola rossa;
+- sul portone ci sono le lampadine da luna park, spente al primo passaggio e accese quando rientri dal magazzino;
+- l'indizio è un disegno a pastello attaccato al vetro dell'acquario giallo, retroilluminato dall'acquario, così si legge anche senza torcia;
+- i colori dell'acqua (giallo, blu, verde e torbido) sono approvati;
+- zaino: quando inizi ad aspirare un colore, l'acqua normale che avevi nel serbatoio viene buttata via da sola.
+
+## Nuove mascotte (idea dell'utente, 18 ottobre)
+
+Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
+- **Stile delle statue**: mascotte del parco, cioè vetroresina dipinta da acquapark, sorridenti e colorate, ora scolorite e crepate. Sono della stessa famiglia della medusa.
+- **Animali**: uno squalo e un polpo.
+- **Il mostro-squalo**: per ora solo il modello. Il ruolo nel gioco si decide dopo.
+- **Dove metterle**: si decide dopo aver visto i render, su scatti dal gioco.
+- I crediti Meshy del mese (circa 12.600) si perdono il 15 novembre: si possono usare.
+
+**Scelte del 18 ottobre:** statua dello squalo A (pollice in su, pantaloncini rossi, salvagente), tutte e due le statue del polpo (A rosa con le braccia aperte, B lilla con maschera, salvagente, pallone e gelato) e mostro-squalo A, quello vicino al disegno. Le posizioni si scelgono su scatti dal gioco.
+
+**Posizioni, scelte il 19 ottobre** (scatti in `docs/proposte/mascotte/posti/`, lavoro/mascotte 961a53a):
+- **squalo A in S2**: sul bordo est della piscina a onde, accanto alla sedia del bagnino e ai lettini, rivolto verso la piscina (x 10, z 1,5, -90°);
+- **polpo A in A3**: all'ingresso dell'area bimbi, vicino allo scivolo giallo (x -5,5, z -18, -12°);
+- **polpo B in B1**: nell'area bimbi contro il muro ovest, accanto al fungo (x -18,3, z -8, 90°). Nella tappa 8, al buio, resta quasi nascosto dietro la medusa della fossa: l'utente l'ha visto e l'ha scelto lo stesso.
+
+## L'inizio con il mostro-squalo (idea dell'utente, 21 ottobre)
+
+Parole dell'utente: "ritocchiamo l'inizio. Quando ti alzi da terra. Mettiamo che davanti a te c'è lo squalo mostro che abbiamo fatto, facciamo che vedi la bocca che ti sta per mangiare la faccia, addosso alla telecamera quindi, ma poi un boato dietro lo squalo, dove c'è la porta in fondo al corridoio lo fa scappare. Tu lo vedi proprio girarsi, esitare e poi correre via verso la porta che poi si chiude."
+
+Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel corridoio: la bocca aperta addosso alla camera, poi il boato dalla porta in fondo al corridoio; lui si gira, esita, corre via verso quella porta, che si chiude dietro di lui. Le risposte dell'utente sui dettagli (21 ottobre):
+- **La camera** (risposta dell'utente, 21 ottobre): "telecamera fissa che si muove come se fosse la faccia del personaggio spaventato". Il giocatore non la controlla durante la scena: la camera è guidata e si muove come la testa di chi è terrorizzato (sussulti, si ritrae dalla bocca, trema, segue lo squalo che si gira e scappa).
+- **Il boato** (risposta dell'utente, 21 ottobre: opzione b): è il verso lontano e profondo di lei, Jilly, che lo chiama dalla porta in fondo al corridoio. Lo squalo obbedisce: si gira, esita e corre da lei.
+- **La porta** (risposta dell'utente, 21 ottobre: sì): è la porta tagliafuoco del ponte inferiore che già si chiudeva da sola. Ora si chiude dietro lo squalo che scappa e resta chiusa: da lì non si passa.
+- **Niente video prima** (risposta dell'utente, 21 ottobre): la scena va direttamente nel gioco e l'utente la giudica giocando. "Mi raccomando di farla bene. Lo squalo si vede in primissimo piano con la bocca spalancata."
+
+## Allungare il capitolo (scelte dell'utente, 18 ottobre)
+
+L'utente: "al momento, arrivare alla porta della torre si impiegano 5 minuti". Con gli acquari e la torre per lui diventano circa 10 minuti, e per chi gioca la prima volta 20-25, mentre ne erano previsti 39-42. Per allungare, l'utente ha scelto:
+- **l'inseguimento e il finale**, già nella scaletta (I1 e SB1): dopo la torre lei ti insegue negli scivoli, e il capitolo finisce con lei che sbuca dal bordo;
+- **due stanze nuove con un enigma**: il **fiume lento**, un canale buio con la corrente che ti trascina, dove col getto colpisci le chiuse per deviare la corrente verso l'uscita giusta (se sbagli, il giro ti riporta all'inizio), e l'**infermeria**, la stanza del medico del parco con una cassaforte il cui codice è nascosto tra cartelle e Polaroid, e la storia delle pecore modificate con i geni della medusa.
+Le stanze sono due, in sequenza: prima il fiume lento, poi l'infermeria. Il posto l'ha scelto l'utente: "possiamo collocarle lungo il percorso in risalita da dopo la stanza dei generatori, evitando che si apra la serranda che riporta alla sala centrale, finché non hai preso una keycard dall'infermeria. Aggiungi una lettore per leggere la keycard a quella serranda e fallo illuminato." Quindi le stanze stanno lungo la strada di risalita, dopo la sala dei generatori. Nell'infermeria si prende una keycard, e la serranda del magazzino che riporta nella sala grande si apre solo passando la keycard in un lettore illuminato accanto alla serranda, che si vede anche al buio.
+Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che ci sono già, più esplorazione e Polaroid) si valutano dopo.
+
+**La logica, approvata dall'utente il 18 ottobre** (nota di enigma-logica in `docs/proposte/fiume_infermeria/nota_logica.md`):
+- **Fiume lento** (4-6 minuti la prima volta, 80 s un giro giusto). La corrente c'è perché le pompe sono ripartite dopo la tappa 6. Si sta su una ciambella del parco a 2,2 m/s. Ci si guarda intorno, si spruzza e si aspira; spruzzando all'indietro si accelera fino a 3,2 m/s, in avanti si frena fino a 1,2 m/s. Tre bivi su un anello: prima di ognuno, 12-15 m prima, col getto si colpisce un disco a strisce di 80 cm che gira la paratia. Al bivio 1 la paratia va girata; al 2 è già giusta, e se la colpisci la sbagli; al 3 il disco si vede solo dopo averlo passato, quindi si spara all'indietro. L'indizio sono i cartelli verdi d'uscita d'emergenza: dopo il blackout sono accesi solo sui rami giusti (scelta dell'utente). Se sbagli, un ramo corto e uno scivolo ti riportano all'imbarco, e le paratie restano come le hai lasciate. Non si cade e non si muore.
+- **Infermeria** (3-5 minuti, senza testi da leggere). 1) Col getto colpisci l'interruttore e si accende il negatoscopio. 2) Una Polaroid del medico mostra lo schedario con un cassetto segnato da un adesivo rosa, che al buio brilla. 3) Nel cassetto c'è la radiografia di un agnello: sul negatoscopio, nelle ossa brillano puntini rosa, 4 nella testa, 1 nel corpo e 7 nella coda. È anche la storia delle pecore modificate. 4) La cassaforte ha tre rotelle segnate testa, corpo e coda: il codice è 4-1-7. Dentro trovi la keycard per la serranda e una Polaroid della pecora che brilla.
+- **Dove**: tra la sala pompe e il magazzino, lungo la strada di risalita. Prima il fiume, poi l'infermeria, poi dalla scala di servizio il magazzino con la serranda e il lettore della keycard.
+
+**L'inseguimento e il finale, scelta del 19 ottobre** (proposta di ambienti-2 in `docs/proposte/inseguimento/inseguimento.md`, lavoro/ambienti-2 9aa6217): **versione A, "Le condotte"**. È una sala macchine piena e allagata, ricavata nello scafo dietro la bocca in fondo alla torre. Si scivola in tubi chiusi tra tre vasche sospese, con tre bivi. Ai bivi la paratia giusta ha la luce verde e l'anello di led verdi, la sbagliata una lampada rossa guasta; si colpisce il bersaglio col getto. Lei ti raggiunge nelle vasche, e un getto in faccia la respinge. Poi una spirale attorno al serbatoio, la grata che cala davanti a lei e, prima della porta, SB1: lei sbuca dal pozzo di scarico e ti guarda. Dura circa 5:40 senza errori. Le pose di lei sono provvisorie: le animazioni dell'inseguimento sono da fare.
+Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
+
+**L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
+- **fiume lento: A, "giungla finta"**. Rocce finte color ocra sotto il tetto del capannone, palme e liane di plastica, maschere tiki, pappagallo e scimmia di vetroresina, tettoia di paglia sull'imbarco, luce calda. La B, "viaggio sottomarino", non si butta. Parole dell'utente: "Però tieni anche l'altro, magari potrebbe essere il viaggio di ritorno, oppure una nuova sezione. Non è da buttare. Riproponimelo." Va riproposta più avanti;
+- **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle);
+- **lettore della serranda: 1**, a strisciata anni '90, di plastica beige, con la spia tonda in alto (rossa, poi verde). La luce verde va più debole che negli scatti;
+- **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
 
 ## Capitolo 1: scaletta (approvata)
 
@@ -209,6 +291,16 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
   - L'utente sceglie da proposte con video e suoni veri. Riferimenti: la pompa dei pompieri potenziata e il Grab Pack di Poppy Playtime.
 
 ## La mascotte del capitolo 1: la medusa
+
+**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il titolo del gioco è ancora da decidere: per ora resta "Splash Lagoon", che è anche il nome del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
+
+**Il nome nel parco, scelte del 19 ottobre** (render e scatti in `docs/proposte/mascotte/jilly/`, lavoro/mascotte 38c2738):
+- **logo stile B**, "spettacolo della nave": "Jilly" in corsivo corallo, "JUBILEE" in oro su un nastro blu, stelle e una piccola medusa. Nota dell'utente: "ma molto più invecchiati", quindi targa, manifesto e insegna vanno invecchiati molto di più di quelli proposti;
+- **la targa** smaltata (70 x 39 cm) sul lato ovest della vasca di Jilly, accanto al cordone: sì;
+- **il manifesto dello spettacolo** (70 x 105 cm) sul muro ovest vicino all'ingresso, tra il cartello giallo e l'oblò: sì;
+- **l'insegna** di lamiera (1,8 x 1 m) in alto sul muro ovest sopra la vasca d'arrivo: sì, **con le sue due lampade a collo d'oca**, luce calda e debole solo sul pannello.
+
+**Le scritte nel parco** (scelta dell'utente, 19 ottobre): **solo disegni, niente scritte**. Le scritte di Jilly Jubilee fanno eccezione. Parole dell'utente: "Togli la scritta le rapide, sostituiscila con un disegno. Le scritte di Jilly Jubilee fanno eccezione". Anche "LIVE SHOW" e gli orari del manifesto restano (scelta dell'utente, 19 ottobre).
 
 ### Riferimenti approvati
 

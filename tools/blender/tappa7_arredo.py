@@ -33,6 +33,7 @@ XC0, XC1 = 43.6, 45.5
 Y_SCALA2, N2, ALZ2, PED2 = 3.2, 10, 0.18, 0.28
 Z_SALA = 9.05
 YC3_0, YC3_1 = -16.0, -14.0
+BUCO_Y = -4.9                       # la grata sfondata nel muro sud di C2 (ambienti2_raccordo.py: BY)
 XM0, XM1 = 18.84, 28.84
 YM0, YM1 = -18.0, -12.0
 
@@ -505,6 +506,13 @@ def proposta_gioco():
                ('scatolone_giallo', 0.25, True), ('cestino', 0.4, False), ('casse_plastica', 0.3, True)]
     tubi = C.mat_pbr('tubi_B', base=(0.35, 0.38, 0.36), roughness=0.5, metallic=0.7)
     percorso_pieno('G', terra, muro, piccoli, obs, rnd, tubi=(tubi, 3))
+    # davanti alla grata sfondata del muro sud di C2 (il buco dell'agnellino, v0.3.6: centro in y = BUCO_Y, vedi
+    # ambienti2_raccordo.py) non resta niente a terra: è dove si infila, e dal lato da cui arriva il giocatore (+Y)
+    # niente nasconde il buco. Si tolgono dopo, così il resto non cambia.
+    for o in [o for o in obs if o.name.startswith('G_c2eb_')]:
+        lo, hi = _scatola(o)
+        if lo.y < BUCO_Y + 1.45 and hi.y > BUCO_Y - 0.6:
+            obs.remove(o); bpy.data.objects.remove(o)
     magazzino_pieno('G', [('gonfiabili_mucchio', 0.6, False), ('lettini_impilati', 1.0, True), ('materassini_arrotolati', 1.2, False),
                           ('scatolone_rosso', 0.5, True), ('scatolone_giallo', 0.45, True), ('scatolone_marrone', 0.55, True),
                           ('pallone_gonfio_a', 0.55, False), ('pallone_gonfio_b', 0.55, False), ('pallone_mezzo', 0.4, False),
