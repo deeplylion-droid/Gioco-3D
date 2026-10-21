@@ -220,6 +220,7 @@ Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare 
 Parole dell'utente: "ritocchiamo l'inizio. Quando ti alzi da terra. Mettiamo che davanti a te c'è lo squalo mostro che abbiamo fatto, facciamo che vedi la bocca che ti sta per mangiare la faccia, addosso alla telecamera quindi, ma poi un boato dietro lo squalo, dove c'è la porta in fondo al corridoio lo fa scappare. Tu lo vedi proprio girarsi, esitare e poi correre via verso la porta che poi si chiude."
 
 Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel corridoio: la bocca aperta addosso alla camera, poi il boato dalla porta in fondo al corridoio; lui si gira, esita, corre via verso quella porta, che si chiude dietro di lui. I dettagli ancora aperti si chiedono all'utente per iscritto.
+- **La camera** (risposta dell'utente, 21 ottobre): "telecamera fissa che si muove come se fosse la faccia del personaggio spaventato". Il giocatore non la controlla durante la scena: la camera è guidata e si muove come la testa di chi è terrorizzato (sussulti, si ritrae dalla bocca, trema, segue lo squalo che si gira e scappa).
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
