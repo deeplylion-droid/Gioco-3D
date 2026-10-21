@@ -219,10 +219,11 @@ Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare 
 
 Parole dell'utente: "ritocchiamo l'inizio. Quando ti alzi da terra. Mettiamo che davanti a te c'è lo squalo mostro che abbiamo fatto, facciamo che vedi la bocca che ti sta per mangiare la faccia, addosso alla telecamera quindi, ma poi un boato dietro lo squalo, dove c'è la porta in fondo al corridoio lo fa scappare. Tu lo vedi proprio girarsi, esitare e poi correre via verso la porta che poi si chiude."
 
-Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel corridoio: la bocca aperta addosso alla camera, poi il boato dalla porta in fondo al corridoio; lui si gira, esita, corre via verso quella porta, che si chiude dietro di lui. I dettagli ancora aperti si chiedono all'utente per iscritto.
+Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel corridoio: la bocca aperta addosso alla camera, poi il boato dalla porta in fondo al corridoio; lui si gira, esita, corre via verso quella porta, che si chiude dietro di lui. Le risposte dell'utente sui dettagli (21 ottobre):
 - **La camera** (risposta dell'utente, 21 ottobre): "telecamera fissa che si muove come se fosse la faccia del personaggio spaventato". Il giocatore non la controlla durante la scena: la camera è guidata e si muove come la testa di chi è terrorizzato (sussulti, si ritrae dalla bocca, trema, segue lo squalo che si gira e scappa).
 - **Il boato** (risposta dell'utente, 21 ottobre: opzione b): è il verso lontano e profondo di lei, Jilly, che lo chiama dalla porta in fondo al corridoio. Lo squalo obbedisce: si gira, esita e corre da lei.
 - **La porta** (risposta dell'utente, 21 ottobre: sì): è la porta tagliafuoco del ponte inferiore che già si chiudeva da sola. Ora si chiude dietro lo squalo che scappa e resta chiusa: da lì non si passa.
+- **Niente video prima** (risposta dell'utente, 21 ottobre): la scena va direttamente nel gioco e l'utente la giudica giocando. "Mi raccomando di farla bene. Lo squalo si vede in primissimo piano con la bocca spalancata."
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
