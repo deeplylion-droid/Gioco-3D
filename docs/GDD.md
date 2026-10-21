@@ -184,6 +184,7 @@ Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.
 L'utente: "nella torre degli scivoli non si capisce dove bisogna andare, le vie sbagliate non ti devono portare a morire a caso, devono avere senso (es cadi ecc)". Scelte del 21 ottobre:
 - **la strada giusta** si capisce in tutti e due i modi: segnali del parco (frecce disegnate, senza scritte, e luci verdi sulla via giusta) e l'ambiente (le vie sbagliate si vedono rotte o sbarrate);
 - **nelle vie sbagliate non si muore**: cadi in una vasca di raccolta e risali da una scaletta fino all'ultimo checkpoint.
+- **meno sostegni** (richiesta dell'utente, 21 ottobre): "togli un po' di barre di sostegno, vanno anche in mezzo ai percorsi dove devi scendere, sono brutti da vedere e fanno solo caos". Via quelli che attraversano i percorsi o la vista della strada; gli altri sfoltiti e ordinati, quanto basta perché nessun pezzo sembri sospeso.
 
 ## L'enigma degli acquari (idea dell'utente, 18 ottobre)
 
