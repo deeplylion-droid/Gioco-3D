@@ -161,6 +161,7 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
+  - **Riserva approvata dall'utente** (21 ottobre): "se non riusciamo a essere soddisfatti col geyser possiamo eliminarlo e fare un'animazione di tuffo verso il basso di Jilly". Se la V1 nel gioco non convince, al posto del geyser lei si tuffa verso il basso nella fossa.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
@@ -177,6 +178,13 @@ Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.
   - La luce resta com'è: rosso d'emergenza con fari e lampade da lavoro.
 
 **Scelte del 18 ottobre:** discesa e aspetto approvati. L'utente vuole provarla nel gioco prima di dire altro: "Lo devo vedere in gioco per dirti". Nei due salti col getto resta la carica del getto B: si impara a spruzzare prima del bordo.
+
+## La strada nella torre degli scivoli (prova del 19 ottobre, scelte del 21)
+
+L'utente: "nella torre degli scivoli non si capisce dove bisogna andare, le vie sbagliate non ti devono portare a morire a caso, devono avere senso (es cadi ecc)". Scelte del 21 ottobre:
+- **la strada giusta** si capisce in tutti e due i modi: segnali del parco (frecce disegnate, senza scritte, e luci verdi sulla via giusta) e l'ambiente (le vie sbagliate si vedono rotte o sbarrate);
+- **nelle vie sbagliate non si muore**: cadi in una vasca di raccolta e risali da una scaletta fino all'ultimo checkpoint.
+- **meno sostegni** (richiesta dell'utente, 21 ottobre): "togli un po' di barre di sostegno, vanno anche in mezzo ai percorsi dove devi scendere, sono brutti da vedere e fanno solo caos". Via quelli che attraversano i percorsi o la vista della strada; gli altri sfoltiti e ordinati, quanto basta perché nessun pezzo sembri sospeso.
 
 ## L'enigma degli acquari (idea dell'utente, 18 ottobre)
 
@@ -198,6 +206,9 @@ Risposte alle domande (18 ottobre):
 - l'indizio è un disegno a pastello attaccato al vetro dell'acquario giallo, retroilluminato dall'acquario, così si legge anche senza torcia;
 - i colori dell'acqua (giallo, blu, verde e torbido) sono approvati;
 - zaino: quando inizi ad aspirare un colore, l'acqua normale che avevi nel serbatoio viene buttata via da sola.
+
+
+**Acquari grandi il doppio** (prova del 19 ottobre e scelta del 21): gli acquari vanno ingranditi del doppio, tutta la struttura, e la valvola di reset va illuminata. Il miscuglio raddoppiato ha il bordo a circa 1,56 m, quindi davanti c'è una **pedana di servizio a gradini** (grigliato d'acciaio con parapetto), scelta dell'utente: "fai in modo che ci si possa arrampicare sulla bacinella su cui versare, è il modo più pratico per versare, farlo sotto i propri piedi". Le quantità restano uguali: 2 zaini di giallo e 1 di blu fanno il verde.
 
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
@@ -224,6 +235,7 @@ Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel
 - **Il boato** (risposta dell'utente, 21 ottobre: opzione b): è il verso lontano e profondo di lei, Jilly, che lo chiama dalla porta in fondo al corridoio. Lo squalo obbedisce: si gira, esita e corre da lei.
 - **La porta** (risposta dell'utente, 21 ottobre: sì): è la porta tagliafuoco del ponte inferiore che già si chiudeva da sola. Ora si chiude dietro lo squalo che scappa e resta chiusa: da lì non si passa.
 - **Niente video prima** (risposta dell'utente, 21 ottobre): la scena va direttamente nel gioco e l'utente la giudica giocando. "Mi raccomando di farla bene. Lo squalo si vede in primissimo piano con la bocca spalancata."
+- **Dove ti svegli** (risposta dell'utente, 21 ottobre: a): il risveglio si sposta di circa 6 m verso ovest (x 14-15), davanti alla porta chiusa della sala pompe, guardando a est. Lo squalo corre per circa 7 m fino alla porta tagliafuoco. Finita la scena si torna verso ovest, la strada di sempre. Il tratto di corridoio che prima restava alle spalle va rifinito come il resto.
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
@@ -246,6 +258,9 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle);
 - **lettore della serranda: 1**, a strisciata anni '90, di plastica beige, con la spia tonda in alto (rossa, poi verde). La luce verde va più debole che negli scatti;
 - **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
+- **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre);
+- **nei rami sbagliati del fiume** non c'è niente da vedere: solo il ramo con lo scivolo che riporta all'imbarco (scelta dell'utente, 21 ottobre).
+- **la Polaroid della pecora che brilla** nella cassaforte va direttamente nel gioco, fatta come le altre Polaroid (scelta dell'utente, 21 ottobre).
 
 ## Capitolo 1: scaletta (approvata)
 
