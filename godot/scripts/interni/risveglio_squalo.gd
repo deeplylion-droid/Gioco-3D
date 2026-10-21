@@ -18,6 +18,9 @@ signal finito
 const MODELLO := "res://assets/models/mascotte/mostro_squalo_A_rig.glb"
 const TEMPI := "res://assets/models/mascotte/mostro_squalo_A_rig.json"
 const SHADER_BOCCA := preload("res://shaders/creature/bocca_squalo.gdshader")
+## Livello di render solo dello squalo: la luce della corsa illumina lui e nient'altro (né il corridoio né
+## la nebbia).
+const STRATO_SQUALO := 1 << 16
 
 ## La porta tagliafuoco (il nodo del modello del corridoio) e il suo cardine, nello spazio degli interni.
 @export var porta: Node3D
@@ -43,6 +46,7 @@ var _yaw0 := 0.0
 var _sguardo := Vector3.ZERO
 var _scossa := 0.0          # sobbalzo della camera (si smorza)
 var _fine := 0.0
+var _luce_corsa: OmniLight3D
 
 
 func _ready() -> void:
@@ -101,6 +105,21 @@ func _crea_squalo() -> void:
 			var sm := m.surface_get_material(i)
 			if sm and (sm.resource_name.begins_with("bocca_interno") or sm.resource_name.begins_with("gengiva")):
 				(mi as MeshInstance3D).set_surface_override_material(i, mat)
+	# nella corsa il corridoio è buio e la nebbia rossa se lo mangia: una luce morbida, solo per lui, lo
+	# tiene leggibile fino alla porta (il corridoio resta com'è)
+	for vi in squalo.find_children("*", "VisualInstance3D", true, false):
+		(vi as VisualInstance3D).layers |= STRATO_SQUALO
+	_luce_corsa = OmniLight3D.new()
+	_luce_corsa.name = "LuceCorsa"
+	_luce_corsa.light_cull_mask = STRATO_SQUALO
+	_luce_corsa.light_color = Color(1.0, 0.45, 0.32)
+	_luce_corsa.light_energy = 0.0
+	_luce_corsa.omni_range = 3.2
+	_luce_corsa.omni_attenuation = 1.4
+	_luce_corsa.shadow_enabled = false
+	_luce_corsa.light_volumetric_fog_energy = 0.0
+	_luce_corsa.light_specular = 0.3
+	squalo.add_child(_luce_corsa)
 	if _anim:
 		_anim.play(_anim.get_animation_list()[0] if not _anim.has_animation("risveglio") else "risveglio")
 		_anim.seek(0.0, true)
@@ -164,6 +183,7 @@ func _process(delta: float) -> void:
 	var E: float = tempi.get("esita", 6.75)
 	var porta_t: float = tempi.get("porta", 10.15)
 	_suoni_e_porta(R, E, porta_t)
+	_aggiorna_luce_corsa(E, porta_t)
 	_camera(M, R, G, E, porta_t, delta)
 	if _t >= _fine:
 		_termina()
@@ -201,6 +221,18 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 		squalo.visible = false
 		if _anim:
 			_anim.pause()
+
+
+## La luce della corsa: dietro e sopra di lui, dalla parte del giocatore; si accende quando si gira verso la
+## porta e si spegne mentre ci passa.
+func _aggiorna_luce_corsa(E: float, porta_t: float) -> void:
+	if _luce_corsa == null or not is_instance_valid(_luce_corsa):
+		return
+	var schiena := _bone_mondo("spina")
+	var verso_giocatore := (_p.global_position - schiena) * Vector3(1, 0, 1)
+	verso_giocatore = verso_giocatore.normalized() if verso_giocatore.length() > 0.01 else Vector3.ZERO
+	_luce_corsa.global_position = schiena + Vector3.UP * 0.9 + verso_giocatore * 1.1
+	_luce_corsa.light_energy = 1.6 * (_liscio(0.0, 1.0, E, E + 0.8) - _liscio(0.0, 1.0, porta_t - 0.1, porta_t + 0.5))
 
 
 var _bocca_nodo: Node3D

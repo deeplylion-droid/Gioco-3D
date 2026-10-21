@@ -377,10 +377,17 @@ def anteprime(cartella, tempi, dati):
     cam.data.lens = 18
     l = bpy.data.objects.new('luce', bpy.data.lights.new('luce', 'POINT'))
     l.data.energy = 150; l.location = (0.8, -1.0, 2.5); sc.collection.objects.link(l)
+    # una luce rossa dietro la testa, come le lampade del corridoio: se la bocca ha buchi, passa
+    l2 = bpy.data.objects.new('dietro', bpy.data.lights.new('dietro', 'POINT'))
+    l2.data.energy = 300; l2.data.color = (1, 0.1, 0.05); l2.location = (0.1, 0.4, 1.9); sc.collection.objects.link(l2)
     for t in tempi:
         sc.frame_set(int(t * A.FPS))
         x, y, _ = A.radice(t)
+        bocca_c = (arm.matrix_world @ arm.pose.bones['bocca'].head).lerp(arm.matrix_world @ arm.pose.bones['mento_punta'].head, 0.45)
         for nome, pos, tgt in (('occhi', (0, A.GIOCATORE_Y, 1.05), (0, 2.0, 1.0)),
+                               ('vicino', (0.05, A.GIOCATORE_Y + 0.15, 1.02), tuple(bocca_c)),
+                               ('angolo', (0.65, A.GIOCATORE_Y + 0.35, 1.15), tuple(bocca_c)),
+                               ('angolo_sx', (-0.55, A.GIOCATORE_Y + 0.35, 1.2), tuple(bocca_c)),
                                ('lato', (3.2, 1.5, 1.4), (0, 1.5, 1.0)),
                                ('testa', (1.3, y - 1.6, 1.3), (0.1, y - 0.9, 1.0))):
             cam.location = pos

@@ -46,7 +46,12 @@ def carica():
     bm = bmesh.new(); bm.from_mesh(ob.data)
     prima = len(bm.verts)
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=8e-4)   # i doppioni del glTF arrivano a 0,5 mm
-    print('VERTICI', prima, '->', len(bm.verts))
+    # restano dei bordi aperti (cuciture con i due lati a 1-4 mm): si saldano solo i vertici di bordo,
+    # se no sotto la deformazione si aprono in crepe nere
+    bordo = list({v for e in bm.edges if e.is_boundary for v in e.verts})
+    bmesh.ops.remove_doubles(bm, verts=bordo, dist=0.004)
+    print('VERTICI', prima, '->', len(bm.verts), '; bordi aperti rimasti',
+          sum(1 for e in bm.edges if e.is_boundary))
     # dopo l'unione qualche faccia può avere il verso opposto alle vicine: si rimettono coerenti
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     bm.to_mesh(ob.data); bm.free()
@@ -160,6 +165,29 @@ def peso_mascella(P, lab, muso, xs, zs):
     return w
 
 
+def liscia_pesi(bm, P, w, muso):
+    """Il peso della mascella fuori dalla zona tagliata (angoli della bocca, guance, gola) diventa una
+    funzione armonica: ogni vertice è la media dei vicini, con fissi i vertici del muso (0 o 1) e quelli
+    lontani dalla testa (0). Così la pelle agli angoli si tende tutta insieme, senza linguette né righe
+    di texture stirate dove prima il peso cambiava di colpo."""
+    from scipy.sparse import coo_matrix, diags
+    n = len(P)
+    c0, c1 = np.array(TESTA_ASSE[0]), np.array(TESTA_ASSE[1])
+    ax = (c1 - c0) / np.linalg.norm(c1 - c0)
+    t_ax = np.clip((P - c0) @ ax, -0.3, None)
+    in_testa = (np.linalg.norm(P - c0 - np.outer(t_ax, ax), axis=1) < TESTA_RAGGIO) & (P[:, 1] < -0.30) & (P[:, 2] > 1.0)
+    libero = in_testa & ~muso
+    w = np.where(in_testa | muso, w, 0.0).astype(np.float64)
+    e = np.array([(ed.verts[0].index, ed.verts[1].index) for ed in bm.edges])
+    A = coo_matrix((np.ones(len(e) * 2), (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(n, n)).tocsr()
+    Lm = diags(1.0 / np.maximum(np.asarray(A.sum(1)).ravel(), 1)) @ A
+    for _ in range(400):
+        w2 = Lm @ w
+        w[libero] = w2[libero]
+    print('PESI LISCI: liberi', int(libero.sum()))
+    return w.astype(np.float32)
+
+
 def costruisci(ob, cartella=None):
     me = ob.data
     bm = bmesh.new(); bm.from_mesh(me)
@@ -170,6 +198,7 @@ def costruisci(ob, cartella=None):
     print('LINEA LABBRA', len(xs), 'punti; z', np.round(zs, 3).tolist())
     lab, muso = etichette(bm, P, xs, zs)
     w = peso_mascella(P, lab, muso, xs, zs)
+    w = liscia_pesi(bm, P, w, muso)
     # indice originale in un livello del bmesh: dopo le cancellazioni l'ordine dei vertici cambia
     orig = bm.verts.layers.int.new('orig')
     for v in bm.verts:
@@ -259,7 +288,9 @@ def interno(bm, w, lab, muso_t, me, orlo):
     B = np.concatenate([su, giu[::-1]])
     LB = np.array([1] * M + [-1] * M)
     WB = np.array([0.0] * M + [1.0] * M)
-    B = B + (B - cen) * 0.16 + np.array([0.0, 0.04, 0.0])
+    rad = B - cen
+    lat = np.outer(rad @ asse, asse)            # la parte lungo la cerniera (verso gli angoli)
+    B = B + (rad - lat) * 0.30 + lat * 0.04 + np.array([0.0, 0.06, 0.0])   # più alta, non più larga
     n = len(B)
     sopra, sotto = su.mean(0), giu.mean(0)
     gola = cen + np.array([0.0, 0.30, -0.02])          # la gola: indietro, dentro la testa
