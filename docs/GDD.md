@@ -261,7 +261,7 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle);
 - **lettore della serranda: 1**, a strisciata anni '90, di plastica beige, con la spia tonda in alto (rossa, poi verde). La luce verde va più debole che negli scatti;
 - **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
-- **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre);
+- **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre). Dove (scelta β, 21 ottobre): le scale del raccordo restano, l'agnellino compare e scappa nel buco come oggi, e subito dopo il buco c'è la grata; la porta di servizio sta nel tratto basso di C2, prima della grata, e da lì una scala scende all'imbarco del fiume;
 - **nei rami sbagliati del fiume** non c'è niente da vedere: solo il ramo con lo scivolo che riporta all'imbarco (scelta dell'utente, 21 ottobre).
 - **la Polaroid della pecora che brilla** nella cassaforte va direttamente nel gioco, fatta come le altre Polaroid (scelta dell'utente, 21 ottobre).
 
