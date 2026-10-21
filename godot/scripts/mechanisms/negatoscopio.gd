@@ -5,7 +5,7 @@ extends Interactable
 ## si accende fisso. Con E ci si appoggia la radiografia ([member oggetto], dall'inventario). Accesa e
 ## con la radiografia sopra, fa vedere i puntini rosa che brillano nelle ossa dell'agnello, in tre
 ## gruppi: testa, corpo e coda ([member puntini], il codice della cassaforte).
-## Grafica provvisoria: un pannello bianco e i puntini come sferette. Lo stato si salva.
+## Grafica provvisoria (un pannello bianco e i puntini come sferette) o quella vera. Lo stato si salva.
 
 signal acceso
 signal radiografia_appoggiata
@@ -16,6 +16,13 @@ signal radiografia_appoggiata
 ## Quanti puntini in testa, nel corpo e nella coda.
 @export var puntini := PackedInt32Array([4, 1, 7])
 @export var colore_puntini := Color(1.0, 0.35, 0.7)
+## Falso: invece del pannello e delle sferette provvisori, il pannello luminoso vero (davanti al
+## diffusore del modello, misura [member misura_pannello]) e la radiografia vera ([member lastra_tex],
+## con i puntini che brillano in [member puntini_tex], sopra solo quando è acceso).
+@export var mostra_segnaposto := true
+@export var misura_pannello := Vector2(0.84, 0.44)
+@export var lastra_tex: Texture2D
+@export var puntini_tex: Texture2D
 
 var con_radiografia := false
 
@@ -25,6 +32,8 @@ var _lastra: Node3D
 var _gruppi: Array[Node3D] = []
 var _t := 0.0
 var _era_acceso := false
+var _mat_lastra: StandardMaterial3D
+var _puntini_veri: MeshInstance3D
 
 
 func _init() -> void:
@@ -38,9 +47,15 @@ func _ready() -> void:
 	_mat.emission_enabled = true
 	_mat.emission = Color(0.9, 0.95, 1.0)
 	var mi := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(1.2, 0.8, 0.06)
-	mi.mesh = box
+	if mostra_segnaposto:
+		var box := BoxMesh.new()
+		box.size = Vector3(1.2, 0.8, 0.06)
+		mi.mesh = box
+	else:
+		var q := QuadMesh.new()
+		q.size = misura_pannello
+		mi.mesh = q
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.material_override = _mat
 	add_child(mi)
 	_luce = OmniLight3D.new()
@@ -53,7 +68,9 @@ func _ready() -> void:
 	_lastra = Node3D.new()
 	_lastra.name = "Lastra"
 	add_child(_lastra)
-	_lastra.position = Vector3(0.0, 0.0, 0.04)
+	_lastra.position = Vector3(0.0, 0.0, 0.04 if mostra_segnaposto else 0.004)
+	if not mostra_segnaposto:
+		_lastra_vera()
 	var mp := StandardMaterial3D.new()
 	mp.albedo_color = colore_puntini
 	mp.emission_enabled = true
@@ -66,6 +83,10 @@ func _ready() -> void:
 		_lastra.add_child(gruppo)
 		gruppo.position = centri[g] if g < centri.size() else Vector3.ZERO
 		for i in puntini[g]:
+			if not mostra_segnaposto:
+				# i puntini veri sono nella texture: qui restano solo per contarli
+				gruppo.add_child(Node3D.new())
+				continue
 			var sf := MeshInstance3D.new()
 			var sm := SphereMesh.new()
 			sm.radius = 0.018
@@ -76,6 +97,39 @@ func _ready() -> void:
 			sf.position = Vector3(cos(i * 2.4) * 0.05 * sqrt(i), sin(i * 2.4) * 0.05 * sqrt(i), 0.0)
 		_gruppi.append(gruppo)
 	_aggiorna(0.0)
+
+
+## La radiografia vera agganciata a sinistra sul pannello e, sopra, i puntini rosa che brillano.
+func _lastra_vera() -> void:
+	var r := StandardMaterial3D.new()
+	r.albedo_texture = lastra_tex
+	r.emission_enabled = true
+	r.emission_texture = lastra_tex
+	r.albedo_color = Color(0.5, 0.5, 0.5)
+	r.emission_energy_multiplier = 0.85
+	r.roughness = 0.95
+	r.metallic_specular = 0.0
+	_mat_lastra = r
+	var lq := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(0.32, 0.42)
+	lq.mesh = q
+	lq.material_override = r
+	lq.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	lq.position = Vector3(-0.15, 0.0, 0.0)
+	_lastra.add_child(lq)
+	var pm := StandardMaterial3D.new()
+	pm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pm.albedo_texture = puntini_tex
+	pm.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	pm.albedo_color = Color(1.6, 1.6, 1.6)
+	_puntini_veri = MeshInstance3D.new()
+	_puntini_veri.name = "Puntini"
+	_puntini_veri.mesh = q
+	_puntini_veri.material_override = pm
+	_puntini_veri.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_puntini_veri.position = Vector3(-0.15, 0.0, 0.002)
+	_lastra.add_child(_puntini_veri)
 
 
 func e_acceso() -> bool:
@@ -135,6 +189,9 @@ func _aggiorna(_delta: float) -> void:
 	_lastra.visible = con_radiografia
 	for g in _gruppi:
 		g.visible = puntini_visibili()
+	if _puntini_veri:
+		_puntini_veri.visible = puntini_visibili()
+		_mat_lastra.emission_energy_multiplier = 0.85 * k
 
 
 # --- Checkpoint -------------------------------------------------------------------------------
