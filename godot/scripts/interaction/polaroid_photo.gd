@@ -91,8 +91,16 @@ func _snap() -> void:
 	var from := global_position + Vector3(0, 0.6, 0)
 	var q := PhysicsRayQueryParameters3D.create(from, from + Vector3(0, -4.0, 0), Layers.WORLD | Layers.PROPS)
 	var hit := space.intersect_ray(q)
-	if not hit.is_empty():
-		global_position = hit.position + Vector3(0, 0.004, 0)
+	if hit.is_empty():
+		push_warning("Polaroid %d: niente sotto su cui appoggiarsi (%s)" % [photo, global_position])
+		return
+	# Su una superficie in pendenza (il fondo della piscina) si inclina con lei, se no un angolo affonda.
+	var n: Vector3 = hit.normal
+	if n.dot(Vector3.UP) > cos(deg_to_rad(25.0)):
+		global_basis = Basis(Quaternion(Vector3.UP, n)) * Basis(Vector3.UP, global_rotation.y)
+	else:
+		n = Vector3.UP
+	global_position = hit.position + n * 0.004
 
 
 func _on_interact(by: Node) -> void:
