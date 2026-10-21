@@ -253,6 +253,7 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
 - **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre);
 - **nei rami sbagliati del fiume** non c'è niente da vedere: solo il ramo con lo scivolo che riporta all'imbarco (scelta dell'utente, 21 ottobre).
+- **la Polaroid della pecora che brilla** nella cassaforte va direttamente nel gioco, fatta come le altre Polaroid (scelta dell'utente, 21 ottobre).
 
 ## Capitolo 1: scaletta (approvata)
 
