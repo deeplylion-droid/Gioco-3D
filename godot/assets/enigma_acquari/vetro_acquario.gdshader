@@ -9,6 +9,8 @@ uniform sampler2D streak_tex : filter_linear_mipmap, repeat_enable;
 uniform float grime : hint_range(0.0, 1.0) = 0.55;
 uniform float waterline_local = 0.0;
 uniform vec3 grime_color : source_color = vec3(0.52, 0.5, 0.42);
+// gli acquari vuoti del primo passaggio: vetro asciutto e opaco di polvere
+uniform float polvere : hint_range(0.0, 1.0) = 0.0;
 
 varying vec3 v_local;
 
@@ -24,7 +26,8 @@ void fragment() {
 	float streak = texture(streak_tex, vec2(uv.x * 2.5, uv.y * 0.15)).r;
 	streak = smoothstep(0.55, 0.9, streak) * smoothstep(-1.0, 0.6, -v_local.y + 0.4);
 	float band = exp(-pow((v_local.y - waterline_local) / 0.035, 2.0)) * 0.8;
-	float g = clamp((blot * 0.6 + streak * 0.5 + band) * grime, 0.0, 0.85);
+	float g = clamp((blot * 0.6 + streak * 0.5 + band * (1.0 - polvere)) * grime, 0.0, 0.85);
+	g = clamp(g + polvere * (0.42 + blot * 0.25 + streak * 0.15), 0.0, 0.9);
 	float fres = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 4.0);
 	ALBEDO = mix(tint.rgb, grime_color, g);
 	ALPHA = clamp(tint.a + g * 0.75 + fres * 0.35, 0.0, 0.95);

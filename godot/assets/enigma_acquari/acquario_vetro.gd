@@ -41,6 +41,7 @@ var _mix_visto = null
 # fotogrammi da quando l'acquario è visibile e lavora: la cubemap dei riflessi (se il pelo ne ha una)
 # si rifà dopo che è comparso, perché la prima cattura avviene quando è ancora nascosto e fermo
 var _f_visibile := 0
+var _polvere := 0.0
 
 
 func _ready() -> void:
@@ -135,10 +136,18 @@ func _costruisci() -> void:
 	_vetro_mat.set_shader_parameter("noise_tex", nt)
 	_vetro_mat.set_shader_parameter("streak_tex", st)
 	_vetro_mat.set_shader_parameter("grime", sporco)
+	_vetro_mat.set_shader_parameter("polvere", _polvere)
 	var mf: float = _tank.get(&"max_fill") if _tank and &"max_fill" in _tank else 0.94
 	_vetro_mat.set_shader_parameter("waterline_local", s.y * mf - s.y * 0.5)
 	_vetro.material_override = _vetro_mat
 	add_child(_vetro, false, Node.INTERNAL_MODE_FRONT)
+
+
+## Il vetro asciutto e opaco di polvere degli acquari vuoti (0 pulito, 1 polveroso).
+func imposta_polvere(k: float) -> void:
+	_polvere = k
+	if _vetro_mat:
+		_vetro_mat.set_shader_parameter("polvere", k)
 
 
 func _notification(what: int) -> void:

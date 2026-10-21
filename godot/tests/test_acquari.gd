@@ -44,13 +44,19 @@ func _run() -> void:
 	for n in ["AcquarioGiallo", "AcquarioBlu", "AcquarioMisto", "Valvola", "Disegno", "LampadePortone"]:
 		check(enigma.get_node_or_null(n) != null, "c'è il nodo %s" % n)
 
-	print("1. Primo passaggio: gli acquari non ci sono, le lampade sono spente")
+	print("1. Primo passaggio: gli acquari ci sono ma vuoti, le lampade sono spente")
 	await _frames(5)
-	check(not enigma.comparsi and not giallo.visible and not misto.visible, "gli acquari non ci sono")
+	check(not enigma.comparsi and giallo.is_visible_in_tree() and misto.is_visible_in_tree() and blu.is_visible_in_tree(), "gli acquari ci sono già (richiesta del 21 ottobre)")
+	check(giallo.fill < 0.001 and blu.fill < 0.001 and misto.fill < 0.001, "e sono vuoti")
+	check(_polvere(giallo) > 0.9 and _polvere(misto) > 0.9, "con i vetri impolverati")
+	check(not _luci_acquari_accese(), "con le luci di servizio spente")
 	check(not _lampade_accese(), "le lampade del portone sono spente")
 	check(not giallo.is_in_group(&"water_sources") and not misto.is_in_group(&"water_catchers"),
-		"nascosti non si aspirano e non prendono il getto")
-	check(_collisioni_spente(), "e non hanno collisioni")
+		"vuoti non si aspirano e non prendono il getto")
+	check(not _collisioni_spente(), "e si urtano (hanno le collisioni)")
+	var tocchi0 := _tocchi()
+	check(tocchi0.is_empty(), "gli acquari e la pedana non toccano niente della sala %s" % str(tocchi0))
+	check(_davanti_al_portone(), "stanno davanti al portone, lungo il muro nord, e il viale del portone è libero")
 	var cp_prima := _salva("TestPrimaTappa7")
 
 	print("2. Tappa 7: rientri dal magazzino, compaiono; prima della tappa 8 non funzionano")
@@ -64,7 +70,9 @@ func _run() -> void:
 		_serranda().call(&"apri")
 	await _frames(5)
 	check(bool(_serranda().get(&"aperta")), "con la keycard nel lettore la serranda si apre")
-	check(enigma.comparsi and giallo.visible and blu.visible and misto.visible, "gli acquari ci sono")
+	check(enigma.comparsi and giallo.fill > 0.9 and blu.fill > 0.9 and misto.fill < 0.001, "rientrando gli acquari colorati sono pieni, il miscuglio vuoto")
+	check(WaterMix.frazione(giallo.mix, WaterMix.GIALLO) > 0.99 and WaterMix.frazione(blu.mix, WaterMix.BLU) > 0.99, "giallo e blu")
+	check(_polvere(giallo) < 0.01 and _luci_acquari_accese(), "i vetri puliti e le luci di servizio accese")
 	# Con gli acquari comincia il caricamento della sala della torre in un thread: all'apertura del
 	# portone è già pronta anche su un PC lento. Il guscio dietro il portone resta finché non si apre.
 	var sala_p := get_tree().current_scene
@@ -75,9 +83,7 @@ func _run() -> void:
 		"ma non entra nella sala (il guscio dietro il portone resta)")
 	check(_lampade_accese(), "le lampade del portone sono accese")
 	check(not _collisioni_spente(), "e hanno le collisioni")
-	# Prova dell'utente del 19 ottobre: gli acquari sono il doppio. Ci devono stare senza toccare niente.
-	var tocchi := _tocchi()
-	check(tocchi.is_empty(), "gli acquari non toccano niente della sala %s" % str(tocchi))
+	# Prova dell'utente del 19 ottobre: gli acquari sono il doppio.
 	check(giallo.inner_size.y > 2.5 and misto.inner_size.x > 3.0, "e sono il doppio di prima (alti %.2f m, miscuglio largo %.2f m)" % [giallo.inner_size.y, misto.inner_size.x])
 	# L'acqua vera dell'addon sui tre acquari (la mette enigma-ambiente): con le 7 masse d'acqua che
 	# ci sono già fanno 10, e l'addon ne regge 12.
@@ -210,7 +216,8 @@ func _run() -> void:
 	print("8. Checkpoint")
 	await _riparti(cp_prima)
 	check(not enigma.comparsi and not _lampade_accese() and enigma.stato == EnigmaAcquari.Stato.APERTO,
-		"prima della tappa 7: niente acquari, lampade spente")
+		"prima della tappa 7: lampade spente")
+	check(giallo.fill < 0.001 and blu.fill < 0.001 and misto.fill < 0.001 and _polvere(giallo) > 0.9, "e acquari vuoti e impolverati")
 	check(not portone.is_aperto() and not portone.in_movimento, "e il portone chiuso")
 	await _riparti(cp_torbido)
 	check(enigma.comparsi and enigma.attivi and enigma.stato == EnigmaAcquari.Stato.TORBIDO, "torbido: gli acquari ci sono, funzionano e sono torbidi")
@@ -251,7 +258,8 @@ func _valuta(prova: Array) -> bool:
 func _aspira(t: WaterTank) -> void:
 	_zaino()
 	var c := t.global_position
-	p.teleport(Vector3(c.x - t.inner_size.x * 0.625 - 0.65, 0.0, c.z), PI * 0.5, 0.0)
+	var davanti := c + t.global_basis.z * (t.inner_size.x * 0.625 + 0.65)   # il davanti (+Z) guarda il viale
+	p.teleport(Vector3(davanti.x, 0.0, davanti.z), 0.0, 0.0)
 	await _frames(3)
 	p.look_at_point(c + Vector3(0.0, t.get_level() * 0.5, 0.0))
 	Input.action_press(&"suck")
@@ -263,17 +271,24 @@ func _aspira(t: WaterTank) -> void:
 	await _frames(3)
 
 
-## Davanti all'acquario del miscuglio, un poco di lato (davanti c'è la valvola), col getto dentro
-## finché il serbatoio è vuoto.
+## Sulla pedana davanti al miscuglio, salendo i gradini a piedi la prima volta (poi da sopra), col getto
+## dentro, verso il basso, finché il serbatoio è vuoto.
 func _versa() -> void:
 	_zaino()
 	var c := misto.global_position
-	var r := misto.inner_size.x * 0.5
-	var dir := Vector3(-1.0, 0.0, 0.0).rotated(Vector3.UP, deg_to_rad(-35.0))
-	var dove := c + dir * (r + 1.2)
-	p.teleport(Vector3(dove.x, 0.0, dove.z), PI * 0.5, 0.0)
+	var ped := enigma.get_node(^"Pedana") as Node3D
+	var piano := ped.get_node(^"PianoForma") as Node3D
+	var sopra := piano.global_position + Vector3(0.0, 0.1, 0.0)
+	if not _salito:
+		# dal pavimento, ai piedi della scala (a est), su per i gradini fino al piano
+		var piede := sopra + ped.global_basis.x * 2.6 + Vector3(0.0, -sopra.y, 0.0)
+		p.teleport(piede, 0.0, 0.0)
+		await _frames(3)
+		_salito = await _cammina_fino(sopra, 6.0)
+		check(_salito and p.global_position.y > 0.8, "i gradini della pedana si salgono a piedi (%s)" % str(p.global_position))
+	p.teleport(sopra, 0.0, 0.0)
 	await _frames(3)
-	var bersaglio := c - dir * r * 0.35 + Vector3(0.0, misto.inner_size.y * 0.6, 0.0)
+	var bersaglio := c + Vector3(0.0, misto.inner_size.y * 0.6, 0.0) - misto.global_basis.z * misto.inner_size.x * 0.15
 	var d := p.camera.global_position.distance_to(bersaglio)
 	p.look_at_point(bersaglio + Vector3.UP * 0.0067 * d * d)
 	Input.action_press(&"spray")
@@ -286,11 +301,34 @@ func _versa() -> void:
 	await _frames(10)
 
 
+var _salito := false
+
+
+## Cammina verso il punto (in pianta); vero se ci arriva entro 0,4 m.
+func _cammina_fino(dove: Vector3, secondi: float) -> bool:
+	for i in int(secondi * 60.0):
+		var dd := dove - p.global_position
+		dd.y = 0.0
+		if dd.length() < 0.4:
+			Input.action_release(&"move_forward")
+			return true
+		p.look_at_point(p.get_eye_position() + dd.normalized())
+		Input.action_press(&"move_forward")
+		await get_tree().physics_frame
+	Input.action_release(&"move_forward")
+	return false
+
+
 func _spruzza_valvola() -> void:
 	_zaino()
 	p.water_pack.set_tank_amount(20.0)
-	var v := (enigma.get_node(^"Valvola") as Node3D).global_position
-	p.teleport(Vector3(v.x - 2.5, 0.0, v.z), PI * 0.5, 0.0)
+	var vn := enigma.get_node(^"Valvola") as Node3D
+	var v := vn.global_position
+	# davanti al volantino, dalla parte di fuori (-X della valvola), a 2,5 m
+	var fuori := -vn.global_basis.x
+	fuori.y = 0.0
+	var da := v + fuori.normalized() * 2.5
+	p.teleport(Vector3(da.x, 0.0, da.z), 0.0, 0.0)
 	await _frames(3)
 	var d := p.camera.global_position.distance_to(v)
 	p.look_at_point(v + Vector3.UP * 0.0067 * d * d)
@@ -315,6 +353,9 @@ func _tocchi() -> Array:
 	for cs in enigma.find_children("*", "CollisionShape3D", true, false):
 		var f := cs as CollisionShape3D
 		if f.disabled or f.shape == null or not (f.get_parent() is StaticBody3D):
+			continue
+		# la rampa sotto i gradini della pedana arriva a terra apposta
+		if f.name == &"Rampa":
 			continue
 		var q := PhysicsShapeQueryParameters3D.new()
 		q.shape = f.shape
@@ -368,6 +409,43 @@ func _lampade_accese() -> bool:
 		if (l as Light3D).is_visible_in_tree():
 			return true
 	return false
+
+
+func _polvere(t: WaterTank) -> float:
+	var v := t.get_node_or_null(^"Vetro")
+	return float(v.get(&"_polvere")) if v else 0.0
+
+
+func _luci_acquari_accese() -> bool:
+	for t in [giallo, blu, misto]:
+		for l in t.find_children("LuceAcquario", "Light3D", false, false):
+			if not (l as Light3D).is_visible_in_tree():
+				return false
+	return true
+
+
+## Gli acquari e la pedana stanno nella fascia lungo il muro nord davanti al portone (posizione P1), e
+## il viale del portone (davanti al varco, fino a 10 m) e la sua corsa (il binario verso sud) sono liberi.
+func _davanti_al_portone() -> bool:
+	var space := enigma.get_world_3d().direct_space_state
+	var ok := true
+	for x in [11.0, 14.0, 17.0, 19.2]:
+		for z in [-18.0, -15.0, -12.0]:
+			var q := PhysicsShapeQueryParameters3D.new()
+			var b := BoxShape3D.new()
+			b.size = Vector3(0.6, 1.6, 0.6)
+			q.shape = b
+			q.transform = Transform3D(Basis.IDENTITY, Vector3(x, 1.0, z))
+			q.exclude = [p.get_rid()]
+			for r in space.intersect_shape(q, 4):
+				var n := r.get("collider") as Node
+				if n and enigma.is_ancestor_of(n):
+					ok = false
+					print("    nel viale: ", n.get_path())
+	for n in [giallo, misto, blu]:
+		var g := (n as Node3D).global_position
+		ok = ok and (g.z < -18.65 or g.z > -11.35) and g.x > 3.0 and g.x < 19.6   # fuori dal viale, prima del portone
+	return ok
 
 
 func _collisioni_spente() -> bool:

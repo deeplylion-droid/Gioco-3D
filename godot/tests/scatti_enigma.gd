@@ -22,6 +22,11 @@ const CAMERE := {
 	"lampada": [Vector3(10.8, 1.6, -5.0), Vector3(13.4, 1.5, -0.6)],   # la valvola e la sua lampada
 	"portone": [Vector3(8.6, 1.7, -14.2), Vector3(20.0, 3.0, -15.0)],
 	"gorgo": [Vector3(12.0, 2.3, -2.4), Vector3(14.7, 0.45, -3.6)],
+	# posizione P1 (21 ottobre), lungo il muro nord accanto al portone: giallo (16,9; -22,3), miscuglio
+	# con la pedana (11,3; -21,6), blu (5,7; -22,3), valvola (9,5; 0,9; -20,1)
+	"p1_vuoti": [Vector3(3.5, 1.7, -12.8), Vector3(13.5, 1.8, -20.5)],   # all'inizio del gioco: vuoti e impolverati
+	"p1_pieni": [Vector3(5.2, 1.7, -14.0), Vector3(11.8, 1.3, -21.0)],   # al rientro dal magazzino, con la pedana
+	"p1_valvola": [Vector3(8.3, 1.6, -16.6), Vector3(9.0, 0.95, -20.4)],
 }
 
 var out_dir := "user://scatti_enigma"
@@ -71,17 +76,19 @@ func _run() -> void:
 		hud.visible = false
 	for t in level.find_children("*", "Tempesta", true, false):
 		(t as Tempesta).automatica = false
-	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	var p1_vuoti := scatto == "p1_vuoti"
+	if not p1_vuoti:
+		GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	var lei := level.get_node_or_null(^"Gioco/LeiSbuca")
-	if lei:
+	if lei and not p1_vuoti:
 		lei.call(&"load_state", {"finita": true})
 	var enigma := level.find_children("*", "EnigmaAcquari", true, false)[0] as EnigmaAcquari
 	var serranda = enigma.serranda
 	var lettore := level.get_node_or_null(^"Tecnici/Logica/LettoreTessera") as LettoreTessera
-	if lettore:
+	if lettore and not p1_vuoti:
 		GameState.player.add_item(&"keycard", 1, "Keycard")
 		lettore.interact(GameState.player)
-	if serranda:
+	if serranda and not p1_vuoti:
 		serranda.call(&"apri")
 	await _frames(5)
 	p.teleport(Vector3(0.0, 0.0, 19.0), 0.0, 0.0)
