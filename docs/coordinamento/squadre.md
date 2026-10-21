@@ -1,15 +1,16 @@
-# Squadre e sessioni (aggiornato il 19 ottobre, mattina)
+# Squadre e sessioni (aggiornato il 21 ottobre)
 
 Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadre gli mandano i resoconti con send_message. Il passaggio del 16 ottobre è in `passaggio_2026-10-16.md`.
 
-| Squadra | Sessione cloud | Branch | Lavoro in corso |
+| Squadra | Sessione cloud | Branch | Lavoro |
 |---|---|---|---|
-| grafica | session_01Q9PdaHCaFPsyZ4J69AtTTt | lavoro/grafica | v0.3.7: torre precaricata e costruita a pezzi senza blocchi (c2c9afd), pacchetto più leggero 1658 -> 1240 MB (42a9d35). Ora la riserva in build.yml (exe unico solo sotto 1,95 GB) e docs/tecnico/peso_build.md; poi aspetta le risposte sui punti bui |
-| ambienti-1 | session_01E1m21YyF95ZHLwLFM1yLCv | lavoro/ambienti-1 | geyser: V2 flipbook rivista con la luce della sala (e642b91), toglie il punto bianco al centro; poi va nella pagina con la V1 come alternativa |
-| ambienti-2 | session_01DHF6GjuPt1SH74CXxGYGC2 | lavoro/ambienti-2 | monitor e fogli della scrivania nella v0.3.7. Inseguimento I1 + SB1, giro 2 con i video (9aa6217): ultimi ritocchi 2-3 h (schiuma delle rapide, partenza B, scogli visibili, posa di A_5), poi nella pagina |
-| enigma-logica | session_01RPrxxeJjwAgHgEzLWPXgsn | lavoro/enigma-logica | fiume lento e infermeria: nota e prototipi grigi fatti (8b08b31, logica approvata dall'utente). Aspetta la scelta dell'aspetto |
-| enigma-ambiente | session_01Jn42hE4synLdT5YNKedMqv | lavoro/enigma-ambiente | keycard e lettore, poi fiume (d6b959e da riempire, riflessi bianchi, soffitto della A), poi infermeria (71536c3 da rifare con oggetti veri, piena, B da bambini): 18-25 h |
-| mascotte | session_01Ut6TnWfhFvUH1yfran7kFa | lavoro/mascotte | rifà tutti gli scatti sulla v0.3.6 (posti delle statue e nome Jilly Jubilee) con le correzioni: testo del manifesto B, targa da vicino, insegna con le sue lampade |
+| mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/mascotte | statue nei posti scelti, Jilly Jubilee stile B invecchiato, poi l'inizio con il mostro-squalo |
+| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2 | portone della torre, parete che lampeggia, strada nella torre (opzioni per iscritto), poi l'inseguimento A con SB1 |
+| ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | Polaroid sotto il foglio, geyser V1 nel gioco con il punto bianco da togliere, verifiche aperte |
+| enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | acquari doppi e valvola illuminata, poi fiume A, infermeria B, lettore 1 e keycard 1 nel gioco |
+| grafica | (da creare dopo il passaggio) | lavoro/grafica | torre buia dopo una morte, gocce dello spruzzo da vicino che fanno laggare |
+
+Le sessioni vecchie (grafica session_01Q9PdaHCaFPsyZ4J69AtTTt, ambienti-1 session_01E1m21YyF95ZHLwLFM1yLCv, ambienti-2 session_01DHF6GjuPt1SH74CXxGYGC2, enigma-logica session_01RPrxxeJjwAgHgEzLWPXgsn, enigma-ambiente session_01Jn42hE4synLdT5YNKedMqv, mascotte session_01Ut6TnWfhFvUH1yfran7kFa) sono ferme dal 21 ottobre: avevano conversazioni lunghissime che costavano a ogni passo. Ognuna ha lasciato un passaggio di consegne in `docs/coordinamento/passaggi/<squadra>.md` sul suo branch.
 
 ## Come si fa una build
 
