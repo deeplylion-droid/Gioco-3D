@@ -158,6 +158,7 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Suoni più bassi**: tutto il suono è 20 dB più basso, e il massimo ora suona come il 10% a cui l'utente teneva il volume generale. Gli equilibri tra i suoni non cambiano, e il volume generale del menu resta regolabile.
 - **Torcia**: un altro 50% di luce in meno, dopo il 20% del 17 ottobre.
 - **Niente torcia** (decisione dell'utente, 18 ottobre sera): "togliamo la torcia". Le luci in più le indica lui. Per ora sono due: una lampada bianca a soffitto sopra la pozza d'acqua davanti ai tornelli e una luce rossa lampeggiante prima del portone stagno n. 1. I bambini scappano solo se ti avvicini troppo.
+- **La torcia torna** (richiesta dell'utente, 21 ottobre): "nella prossima build mettimi la flashlight ma riducila di intensità di un ulteriore 50% dopo l'ultima riduzione che avevamo fatto". Quindi torna il tasto F, con l'energia dimezzata da 2,8 a 1,4. Le due luci aggiunte il 18 ottobre restano. I bambini continuano a scappare solo se ti avvicini troppo, non dalla luce della torcia ("lascia come ora").
 - **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
@@ -210,6 +211,8 @@ Risposte alle domande (18 ottobre):
 
 **Acquari grandi il doppio** (prova del 19 ottobre e scelta del 21): gli acquari vanno ingranditi del doppio, tutta la struttura, e la valvola di reset va illuminata. Il miscuglio raddoppiato ha il bordo a circa 1,56 m, quindi davanti c'è una **pedana di servizio a gradini** (grigliato d'acciaio con parapetto), scelta dell'utente: "fai in modo che ci si possa arrampicare sulla bacinella su cui versare, è il modo più pratico per versare, farlo sotto i propri piedi". Le quantità restano uguali: 2 zaini di giallo e 1 di blu fanno il verde.
 
+**Davanti al portone, vuoti fin dall'inizio** (richiesta dell'utente, 21 ottobre): "le vasche dell'enigma di fronte al portone della torre degli scivoli: mettile proprio davanti al portone suddetto. Inoltre mettile fin dall'inizio del gioco, ma VUOTE. Si riempiranno quando ritorni nella sala." Quindi gli acquari (con la pedana) stanno proprio davanti al portone della torre, lasciando libero il passaggio, al posto della posizione 2 del 18 ottobre. Ci sono dal primo passaggio, vuoti e con le lampadine del portone spente; quando rientri nella sala dal magazzino sono pieni (le pompe sono ripartite nella tappa 6) e le lampadine sono accese.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
@@ -258,7 +261,7 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle);
 - **lettore della serranda: 1**, a strisciata anni '90, di plastica beige, con la spia tonda in alto (rossa, poi verde). La luce verde va più debole che negli scatti;
 - **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
-- **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre);
+- **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre). Dove (scelta β, 21 ottobre): le scale del raccordo restano, l'agnellino compare e scappa nel buco come oggi, e subito dopo il buco c'è la grata; la porta di servizio sta nel tratto basso di C2, prima della grata, e da lì una scala scende all'imbarco del fiume;
 - **nei rami sbagliati del fiume** non c'è niente da vedere: solo il ramo con lo scivolo che riporta all'imbarco (scelta dell'utente, 21 ottobre).
 - **la Polaroid della pecora che brilla** nella cassaforte va direttamente nel gioco, fatta come le altre Polaroid (scelta dell'utente, 21 ottobre).
 
