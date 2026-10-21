@@ -161,6 +161,7 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
+  - **Riserva approvata dall'utente** (21 ottobre): "se non riusciamo a essere soddisfatti col geyser possiamo eliminarlo e fare un'animazione di tuffo verso il basso di Jilly". Se la V1 nel gioco non convince, al posto del geyser lei si tuffa verso il basso nella fossa.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
