@@ -226,8 +226,12 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	var h := _liscio(0.25, occhi_a_terra, 1.2, 2.7)
 	h = lerpf(h, _p.stand_eye_height, _liscio(0.0, 1.0, alzati, alzati + 1.4))
 	# dove guarda: il soffitto, poi la bocca, poi lo squalo che si gira e scappa, poi davanti a sé
+	var occhio0 := occhio_base + Vector3.UP * (h - _p.stand_eye_height)
 	var su := occhio_base + Vector3.UP * 3.0 + _p.global_basis.z * -0.3
-	var obiettivo := su.lerp(bocca, _liscio(0.0, 1.0, 1.15, 2.3))
+	# dal soffitto alla bocca girando la testa (direzioni, non punti: se no resta al soffitto fino all'ultimo)
+	var d_su := (su - occhio0).normalized()
+	var d_bocca := (bocca - occhio0).normalized()
+	var obiettivo := occhio0 + d_su.slerp(d_bocca, _liscio(0.0, 1.0, 0.95, 2.15)) * occhio0.distance_to(bocca)
 	var corpo := _bone_mondo("spina").lerp(_bone_mondo("testa"), 0.5)
 	var segui := _liscio(0.0, 1.0, R + 0.15, R + 0.9) - _liscio(0.0, 1.0, porta_t + 0.6, porta_t + 2.2)
 	obiettivo = obiettivo.lerp(corpo, clampf(segui, 0.0, 1.0))
@@ -240,6 +244,9 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	# si ritrae: dalla bocca sotto i 40 cm, e dal corpo che si gira e dalle mani sotto i 55 cm
 	var dist := occhio.distance_to(bocca)
 	var indietro := clampf(0.40 - dist, 0.0, 0.25) * 1.3 * (1.0 - _liscio(0.0, 1.0, R, R + 0.6))
+	# mentre si rialza la faccia non deve passare dentro il mento o il muso
+	for osso in ["mento_punta", "bocca"]:
+		indietro = maxf(indietro, clampf(0.42 - occhio.distance_to(_bone_mondo(osso)), 0.0, 0.3) * 1.2)
 	if _t > R:
 		for osso in ["testa", "collo", "petto", "mano.L", "mano.R", "coda2"]:
 			indietro = maxf(indietro, clampf(0.55 - occhio.distance_to(_bone_mondo(osso)), 0.0, 0.3))
