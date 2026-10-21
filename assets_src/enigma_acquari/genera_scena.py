@@ -98,7 +98,8 @@ ANCORE = {'G': (XG, ZA), 'M': (XM, ZMI), 'B': (XB, ZA)}
 DISPOSIZIONI = {
     'P1': {},
     'P2': {'G': ((XG, -20.5), 0.0), 'B': ((XG, -9.5), math.pi)},
-    'P3': {'G': ((10.6, -20.5), -math.pi / 2), 'M': ((10.6 - 0.35 * KX, -8.4), -math.pi / 2), 'B': ((10.6, -8.4 + PASSO), -math.pi / 2)},
+    # nel P3 il varco è largo quanto il viale (z da -18,65 a -11,35): i tubi delle basi arrivano ai suoi bordi
+    'P3': {'G': ((10.6, -21.0), -math.pi / 2), 'M': ((10.6 - 0.35 * KX, -7.95), -math.pi / 2), 'B': ((10.6, -7.95 + PASSO), -math.pi / 2)},
 }
 DISP = DISPOSIZIONI[POSIZIONE]
 

@@ -390,9 +390,11 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
     if tubi:
         mat, quanti = tubi
-        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S0, Y_R0, 0), (0, 1), 2.45, mat, obs, quanti)
-        tubi_muro(f'{nome}_tubi_c2', (XC1, Y_T0, Z_SALA), (XC1, YC3_1, Z_SALA), (-1, 0), 2.5, mat, obs, quanti)
-        tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.5, mat, obs, quanti)
+        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S0, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)   # sotto il tubo grosso (2,45)
+        # a 2,2 m: più su entravano nel tubo grosso del raccordo (t7_tubo_c2, a 2,5); quelli di C2 arrivano al
+        # muro in fondo al corridoio invece di finire a metà dell'angolo
+        tubi_muro(f'{nome}_tubi_c2', (XC1, Y_T0, Z_SALA), (XC1, YC3_0, Z_SALA), (-1, 0), 2.2, mat, obs, quanti)
+        tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti)
 
 
 def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
@@ -519,6 +521,10 @@ def proposta_gioco():
                           ('sedie_impilate', 1.6, False), ('cassa_tubi', 0.9, True), ('fusti_cloro', 0.85, False),
                           ('sacchi_sale', 0.8, True), ('casse_plastica', 0.85, True), ('transpallet', 1.2, False)], obs, rnd,
                     liberi=[(TESTA_MAG[0] + 0.4, TESTA_MAG[1]), (TESTA_MAG[0] - 0.4, TESTA_MAG[1])])
+    # ai due lati della serranda (il cancello finale della risalita) resta solo il pezzo a terra: i lettini e gli
+    # scatoloni impilati sopra sembravano messi a caso (riscontro dell'utente del 21 ottobre)
+    for o in [o for o in obs if o.name.startswith('G_mag_') and o.location.x < XM0 + 1.6 and o.location.z > Z_SALA + 0.01]:
+        obs.remove(o); bpy.data.objects.remove(o)
     # la testa della mascotte (1,8 m di muso) nel corridoio C2 lo chiudeva: sta nel magazzino, contro il muro nord
     # accanto all'entrata, girata verso la corsia (lì intorno il magazzino resta libero)
     d = HQ.dimensioni('testa_mascotte')
