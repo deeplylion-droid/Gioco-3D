@@ -9,8 +9,12 @@ extends Node
 ## Senza tempi salva solo il video (se c'è --write-movie); con i tempi salva anche quei fotogrammi.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
+## Dal corridoio la sala non si vede: si tolgono le parti grosse, se no con il Movie Maker non entra
+## nella memoria della macchina (12,9 GB).
 const TOGLI := ["Tecnici", "Sala/TorreScivoli", "Gioco/BambiniBalconata", "Gioco/EnigmaAcquari",
-	"Gioco/MedusaFossa", "Gioco/LeiSbuca", "Mascotte"]
+	"Gioco/MedusaFossa", "Gioco/LeiSbuca", "Mascotte", "Sala/Cupola", "Sala/Piscina", "Sala/AreaBimbi",
+	"Sala/Oggetti", "Sala/VascaCentrale", "Sala/Dettagli", "Sala/AngoloPalloni", "Sala/AngoloScatoloni",
+	"Vasca", "Vasche"]
 
 var out_dir := "user://video_risveglio"
 var tempi: Array[float] = []
