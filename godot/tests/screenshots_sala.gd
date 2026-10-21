@@ -18,6 +18,8 @@ var p: Player
 
 
 func _ready() -> void:
+	# Negli scatti la torre non si precarica (memoria: la sala da sola arriva a 12-13 GB).
+	Engine.set_meta(&"precarica_torre_spento", true)
 	# Interruttore per fermare in fretta una serie di screenshot già in coda: basta creare il
 	# file user://salta_screenshot.
 	if FileAccess.file_exists("user://salta_screenshot"):

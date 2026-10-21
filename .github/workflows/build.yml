@@ -71,6 +71,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_mechanics.gd
 
+      - name: Test dell'esportazione (i file esclusi dal pacchetto non servono al gioco)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_esportazione.gd
+
       - name: Test della demo (sala principale)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
@@ -119,12 +123,13 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acquari.gd
 
-      - name: Test del primo uso (niente blocchi al primo spruzzo; renderer Vulkan software)
+      - name: Test del primo uso e dell'ingresso nella torre (niente blocchi; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq mesa-vulkan-drivers xvfb > /dev/null
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
+          xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
 
       - name: Test del prototipo del fiume lento
         if: steps.progetto.outputs.presente == 'si'
@@ -149,7 +154,26 @@ jobs:
           V="${{ steps.versione.outputs.versione }}"
           (cd build/windows && zip -9 -q "../SplashLagoon-windows-v$V.zip" SplashLagoon.exe SplashLagoon.pck)
           (cd build/linux && zip -9 -q "../SplashLagoon-linux-v$V.zip" SplashLagoon.x86_64 SplashLagoon.pck)
-          cp build/windows_unico/SplashLagoon.exe "build/SplashLagoon-windows-v$V.exe"
+          # GitHub non accetta file di Release sopra i 2 GiB: l'exe unico si pubblica solo sotto 1,95 GB,
+          # altrimenti resta solo lo zip (docs/tecnico/peso_build.md: cosa si può alleggerire).
+          LIMITE_EXE=1950000000
+          PESO_EXE=$(stat -c %s build/windows_unico/SplashLagoon.exe)
+          if [ "$PESO_EXE" -lt "$LIMITE_EXE" ]; then
+            cp build/windows_unico/SplashLagoon.exe "build/SplashLagoon-windows-v$V.exe"
+            echo "Exe unico: $((PESO_EXE / 1000000)) MB (pubblicato; limite $((LIMITE_EXE / 1000000)) MB)"
+          else
+            echo "::warning title=Exe unico non pubblicato::L'exe unico pesa $((PESO_EXE / 1000000)) MB, sopra il limite di $((LIMITE_EXE / 1000000)) MB: nella Release c'è solo lo zip di Windows. Vedi docs/tecnico/peso_build.md per alleggerire il pacchetto."
+          fi
+          for z in build/*.zip; do
+            if [ "$(stat -c %s "$z")" -ge 2147483648 ]; then
+              echo "::error title=Zip troppo grande::$z supera i 2 GiB, GitHub non lo accetta nella Release. Vedi docs/tecnico/peso_build.md."
+              exit 1
+            fi
+          done
+          # Pacchetti: i doppioni tolti da EsportaSenzaDoppioni rimandano a dati che ci sono; peso per cartella.
+          python3 tools/verifica_pck.py build/windows/SplashLagoon.pck 20
+          python3 tools/verifica_pck.py build/linux/SplashLagoon.pck 0
+          python3 tools/verifica_pck.py build/windows_unico/SplashLagoon.exe 0
           ls -la build
 
       - name: Carica la build Windows
@@ -193,7 +217,9 @@ jobs:
             else
               NOTE=(--notes "Demo giocabile della sala principale (build automatica del commit $GITHUB_SHA). Windows: scompatta lo zip e avvia SplashLagoon.exe (tieni SplashLagoon.pck nella stessa cartella).")
             fi
-            gh release create "$TAG" build/*.zip build/*.exe \
+            shopt -s nullglob
+            FILE=(build/*.zip build/*.exe)
+            gh release create "$TAG" "${FILE[@]}" \
               --target "$GITHUB_SHA" \
               --title "Splash Lagoon $TAG" \
               "${NOTE[@]}"

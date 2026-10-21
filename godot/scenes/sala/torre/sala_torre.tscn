@@ -7,9 +7,4 @@
 
 [node name="SalaTorre" type="Node3D"]
 script = ExtResource("1_torre")
-
-[node name="TorreStruttura" parent="." instance=ExtResource("2_strut")]
-
-[node name="TorreScivoli" parent="." instance=ExtResource("3_sciv")]
-
-[node name="TorreProp" parent="." instance=ExtResource("4_prop")]
+modelli = Array[PackedScene]([ExtResource("2_strut"), ExtResource("3_sciv"), ExtResource("4_prop")])

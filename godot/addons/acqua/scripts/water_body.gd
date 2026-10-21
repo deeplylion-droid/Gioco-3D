@@ -241,6 +241,9 @@ func get_flow_velocity(p: Vector3) -> Vector2:
 
 
 ## Imposta un gorgo o un punto di aspirazione (slot 0 o 1). `strength` 0 lo spegne.
+## I due slot sono uguali, ma nel gioco lo slot 1 è dell'aspirazione dello zaino (WaterPackFX,
+## GettoPotente, WaterSuction): lo riscrivono mentre aspiri e lo spengono quando smetti. I gorghi
+## della scena (lo scarico con vortex_on_drain, il gorgo degli acquari) usano lo slot 0.
 ## swirl: rotazione (segno = verso); funnel_depth: profondita' dell'imbuto (m);
 ## pull: richiamo verso il centro; foam: schiuma a spirale.
 func set_flow(slot: int, world_pos: Vector3, radius: float, strength: float, swirl := 1.0,
