@@ -280,8 +280,9 @@ func _arredi() -> void:
 	ct.scale = Vector3(1.0, 0.3, 1.0)
 	_metti("vetri_rotti", Vector3(2.75, 0.002, 0.15), 0.0)
 	_metti("vetri_rotti", Vector3(0.5, 0.002, -1.6), 70.0)
-	_metti("carrello", Vector3(1.9, 0, 2.35), -90.0)
-	_forma(Vector3(0.5, 0.9, 0.7), Vector3(1.9, 0.45, 2.35))
+	# il carrello accanto alla testa del lettino (la porta sud resta libera)
+	_metti("carrello", Vector3(1.85, 0, 0.45), -90.0)
+	_forma(Vector3(0.5, 0.9, 0.7), Vector3(1.85, 0.45, 0.45))
 	_metti("armadietto", Vector3(L, 1.2, 0.35), -90.0)
 	_metti("lavandino", Vector3(-0.6, 0.32, L), 180.0)
 

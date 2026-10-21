@@ -44,7 +44,7 @@ const TETTO := 7.6
 ## L'approdo in fondo al ramo d'uscita (centro della conca) e la porta di servizio nel muro ovest.
 const APPRODO := Vector2(-34.0, 0.0)
 ## La porta d'ingresso nel muro nord (x).
-const INGRESSO_X := -14.0
+const INGRESSO_X := -26.0
 ## Dove è ormeggiata la ciambella, nell'angolo nord-ovest della vasca: ci arrivano anche i rami sbagliati.
 const ORMEGGIO := Vector3(-2.9, 0, -2.9)
 ## I muri che chiudono la parte dove si cammina: a ovest l'approdo, a est la fascia lungo il muro nord
@@ -688,7 +688,7 @@ func _logica() -> void:
 	tratti["Giusto1"].paratia = _paratia("Paratia2", 180.0, tratti["Giusto2"], tratti["Sbagliato2"], false, 145.0, false)
 	tratti["Giusto2"].paratia = _paratia("Paratia3", 270.0, tratti["Uscita"], tratti["Sbagliato3"], true, 232.0, true)
 	# all'approdo si scende sulla banchina, oltre la conca
-	fiume.discesa = Vector3(-2.6, -GALLA + 0.05, 0.0)
+	fiume.discesa = global_basis * Vector3(-2.6, 0.0, 0.0) + Vector3(0.0, -GALLA + 0.05, 0.0)
 	fiume.modello_ciambella = load(DIR + "ciambella.glb")
 	add_child(fiume)
 
@@ -952,8 +952,8 @@ func _imbarco() -> void:
 			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
 		_metti("ciambella", c[0], c[1])
 	# la capanna tiki, il totem, i cartelli a pittogrammi
-	_metti("capanna_tiki", Vector3(-VASCA - 6.5, 0, -VASCA - 7.0), 30.0)
-	_ostacolo(Vector3(-VASCA - 6.5, 0, -VASCA - 7.0), 1.3, 2.1)
+	_metti("capanna_tiki", Vector3(-14.0, 0, -6.0), 60.0)
+	_ostacolo(Vector3(-14.0, 0, -6.0), 1.3, 2.1)
 	_metti("totem_tiki", Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 135.0)
 	_ostacolo(Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 0.4, 2.5)
 	_cartello_palo(Vector3(-VASCA - 0.6, 0, -VASCA - 2.4), 90.0, "cartello_tuffi")
