@@ -762,7 +762,8 @@ def versione_A(mats):
     cs = K.Costruttore(mats)           # canali aperti
     P.GRATE[0] = K.Costruttore(mats)
     sp = Spazio()
-    P.guscio_profondo(c)
+    # nel gioco il tubo dell'inseguimento passa nel muro est: lì il muro ha il foro (coperto dal collare)
+    P.guscio_profondo(c, buco_est=(14.0, 16.0, FONDO + 0.6, FONDO + 2.6) if GIOCO else None)
     luci = dict(lavoro=[], fari=[], gocce=[], emergenza=[])
     percorso = []
     aperture = {}                      # (torre, L) -> lista di aperture della ringhiera
@@ -1268,8 +1269,21 @@ def versione_A(mats):
             continue    # la vasca del fondo prende il suo posto
         acque.append(P.vasca(c, x0, y0, x1, y1, FONDO, alto=0.6, nome_acqua=f'acqua_vasca_{nome}'))
     # la bocca del tubo grande dell'inseguimento: dal muro est, sopra la vasca est
-    bocca = [(XI1 + 1.0, 15.0, FONDO + 1.4), (XI1 - 1.2, 15.0, FONDO + 1.6), (XI1 - 2.4, 15.0, FONDO + 1.6)]
+    # nel gioco scende già dall'imbocco (in piano si scivolerebbe fuori all'indietro)
+    bocca = [(XI1 + 1.0, 15.0, FONDO + 1.4), (XI1 - 1.2, 15.0, FONDO + 1.6), (XI1 - 2.4, 15.0, FONDO + 1.6)] if not GIOCO else \
+        [(XI1 + 1.0, 15.0, FONDO + 1.4), (XI1 - 1.2, 15.0, FONDO + 1.62), (XI1 - 2.4, 15.0, FONDO + 1.75)]
     oggetti_scivoli.append(K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06))
+    if GIOCO:
+        # il collare sul muro attorno al tubo (copre gli angoli del foro) e tre gradini di grata nella vasca
+        # sotto la bocca: dall'acqua si sale nel tubo (il fondo del tubo è 95 cm sopra il fondo della vasca)
+        cc = K.Costruttore(mats)       # solo da vedere: la collisione del tubo la fa il gioco
+        cc.anello((XI1 - 0.08, 15.0, FONDO + 1.6), (1, 0, 0), 0.86, 1.48, 0.08, 'metallo', seg=32)
+        oggetti_scivoli.append(cc.crea('torre_collare_inseguimento'))
+        for (xa, zt) in ((36.35, FONDO + 0.25), (36.8, FONDO + 0.5), (37.25, FONDO + 0.75)):
+            c.scatola((xa, 14.35, FONDO), (37.65, 15.65, zt), 'metallo_grigio')
+            q = [(xa, 14.35, zt + 0.002), (37.65, 14.35, zt + 0.002), (37.65, 15.65, zt + 0.002), (xa, 15.65, zt + 0.002)]
+            P.GRATE[0].faccia(q, 'alfa_grata')
+            P.GRATE[0].faccia(q[::-1], 'alfa_grata')
     # tubi di servizio sui muri
     for z in (-17.0, -7.5, 4.5, 10.5):
         P.tubo_muro(c, [(XI0 + 0.3, YI0 + 0.35, z), (XI1 - 0.35, YI0 + 0.35, z)], r=0.16)

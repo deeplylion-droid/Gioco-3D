@@ -234,11 +234,37 @@ func _run() -> void:
 	if sala:
 		check(p.global_position.distance_to(ultimo_pos) < 2.0, "dall'ultimo checkpoint (%s)" % ultimo_nome)
 		check((level.get(&"portone") as PortoneTorre).chiuso_dietro, "col portone chiuso alle spalle")
-		print("   La vasca del fondo")
+		print("   La vasca del fondo e la bocca dell'inseguimento")
 		var fondo := sala.get_node("VascaFondo") as Area3D
 		_metti(p, fondo.global_position + Vector3(0, 0.6, 0), fondo.global_position + Vector3(0, 0.6, 1))
 		await _frames(30)
-		check(bool(level.get(&"demo_finished")), "nella vasca del fondo la discesa finisce (per ora la demo)")
+		check(not bool(level.get(&"demo_finished")), "nella vasca del fondo la discesa non finisce più: c'è l'inseguimento")
+		var ins := sala.inseguimento as SalaInseguimento
+		check(ins != null and ins.costruita, "l'inseguimento è già nella sala, dietro il muro est")
+		if ins:
+			# dall'acqua sui gradini: dal lato sud si sale sul primo
+			_metti(p, SalaTorre.b([36.57, 13.75, -20.0]) + Vector3(0, 0.1, 0), SalaTorre.b([36.57, 16.0, -20.0]))
+			Input.action_press(&"move_forward")
+			await _frames(60)
+			Input.action_release(&"move_forward")
+			check(p.global_position.y > -20.0 + 0.2, "dall'acqua si sale sul primo gradino (%.2f)" % p.global_position.y)
+			# dall'ultimo gradino nella bocca: si scivola fino alla vasca 1 dell'inseguimento
+			_metti(p, SalaTorre.b([37.45, 15.0, -19.25]) + Vector3(0, 0.05, 0), SalaTorre.b([45.0, 15.0, -19.25]))
+			Input.action_press(&"move_forward")
+			var arrivato := false
+			for i in 900:
+				await _frames(1)
+				if p.is_sliding:
+					Input.action_release(&"move_forward")
+				if String(GameState.snapshot.get("checkpoint", "")).ends_with("Checkpoint_vasca_1"):
+					arrivato = true
+					break
+			Input.action_release(&"move_forward")
+			check(arrivato and not GameState.is_dying, "dalla bocca il tubo porta alla vasca 1 dell'inseguimento (checkpoint)")
+			# alla fine dell'inseguimento (SB1) finisce il capitolo: la scritta di fine della demo
+			ins.capitolo_finito.emit()
+			await _frames(5)
+			check(bool(level.get(&"demo_finished")), "alla fine dell'inseguimento finisce il capitolo (la demo)")
 	_fine()
 
 
