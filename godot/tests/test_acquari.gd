@@ -68,6 +68,10 @@ func _run() -> void:
 		"ma non entra nella sala (il guscio dietro il portone resta)")
 	check(_lampade_accese(), "le lampade del portone sono accese")
 	check(not _collisioni_spente(), "e hanno le collisioni")
+	# Prova dell'utente del 19 ottobre: gli acquari sono il doppio. Ci devono stare senza toccare niente.
+	var tocchi := _tocchi()
+	check(tocchi.is_empty(), "gli acquari non toccano niente della sala %s" % str(tocchi))
+	check(giallo.inner_size.y > 2.5 and misto.inner_size.x > 3.0, "e sono il doppio di prima (alti %.2f m, miscuglio largo %.2f m)" % [giallo.inner_size.y, misto.inner_size.x])
 	# L'acqua vera dell'addon sui tre acquari (la mette enigma-ambiente): con le 7 masse d'acqua che
 	# ci sono già fanno 10, e l'addon ne regge 12.
 	var wm := get_node_or_null(^"/root/WaterManager")
@@ -236,11 +240,11 @@ func _valuta(prova: Array) -> bool:
 # --- Azioni ---------------------------------------------------------------------------------
 
 ## Davanti all'acquario dal lato ovest, guardando dentro, col tasto destro finché il serbatoio è
-## pieno (o per 3 s).
+## pieno (o per 3 s). Un passo fuori dalla base, che sporge 1,25 volte il raggio del vetro.
 func _aspira(t: WaterTank) -> void:
 	_zaino()
 	var c := t.global_position
-	p.teleport(Vector3(c.x - 1.6, 0.0, c.z), PI * 0.5, 0.0)
+	p.teleport(Vector3(c.x - t.inner_size.x * 0.625 - 0.65, 0.0, c.z), PI * 0.5, 0.0)
 	await _frames(3)
 	p.look_at_point(c + Vector3(0.0, t.get_level() * 0.5, 0.0))
 	Input.action_press(&"suck")
@@ -252,13 +256,17 @@ func _aspira(t: WaterTank) -> void:
 	await _frames(3)
 
 
-## Davanti all'acquario del miscuglio, col getto dentro finché il serbatoio è vuoto.
+## Davanti all'acquario del miscuglio, un poco di lato (davanti c'è la valvola), col getto dentro
+## finché il serbatoio è vuoto.
 func _versa() -> void:
 	_zaino()
 	var c := misto.global_position
-	p.teleport(Vector3(c.x - 2.0, 0.0, c.z), PI * 0.5, 0.0)
+	var r := misto.inner_size.x * 0.5
+	var dir := Vector3(-1.0, 0.0, 0.0).rotated(Vector3.UP, deg_to_rad(-35.0))
+	var dove := c + dir * (r + 1.2)
+	p.teleport(Vector3(dove.x, 0.0, dove.z), PI * 0.5, 0.0)
 	await _frames(3)
-	var bersaglio := c + Vector3(0.3, 0.45, 0.0)
+	var bersaglio := c - dir * r * 0.35 + Vector3(0.0, misto.inner_size.y * 0.6, 0.0)
 	var d := p.camera.global_position.distance_to(bersaglio)
 	p.look_at_point(bersaglio + Vector3.UP * 0.0067 * d * d)
 	Input.action_press(&"spray")
@@ -286,6 +294,31 @@ func _spruzza_valvola() -> void:
 			break
 	Input.action_release(&"spray")
 	await _frames(5)
+
+
+## Le forme di collisione degli acquari che toccano qualcosa che non è degli acquari.
+func _tocchi() -> Array:
+	var propri: Array[RID] = []
+	for b in enigma.find_children("*", "CollisionObject3D", true, false):
+		propri.append((b as CollisionObject3D).get_rid())
+	if p:
+		propri.append(p.get_rid())
+	var space := enigma.get_world_3d().direct_space_state
+	var trovati := []
+	for cs in enigma.find_children("*", "CollisionShape3D", true, false):
+		var f := cs as CollisionShape3D
+		if f.disabled or f.shape == null or not (f.get_parent() is StaticBody3D):
+			continue
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = f.shape
+		# 2 cm più su: appoggiati al pavimento lo toccherebbero sempre
+		q.transform = f.global_transform.translated(Vector3(0.0, 0.02, 0.0))
+		q.exclude = propri
+		q.collide_with_areas = false
+		for r in space.intersect_shape(q, 8):
+			var n := r.get("collider") as Node
+			trovati.append("%s con %s" % [f.get_parent().get_parent().name + "/" + f.name, n.name if n else "?"])
+	return trovati
 
 
 func _zaino() -> void:
