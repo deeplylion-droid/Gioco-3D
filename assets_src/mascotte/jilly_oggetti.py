@@ -392,5 +392,6 @@ def collo_d_oca():
         e = bpy.data.objects.new(f'luce_{lato}', None); collega(e); e.location = bocca + d * 0.05
 
 
-for s in ('a', 'b'):
-    targa(s); manifesto(s); insegna(s); insegna(s, lampade=True)
+if __name__ == '__main__':
+    for s in ('a', 'b'):
+        targa(s); manifesto(s); insegna(s); insegna(s, lampade=True)
