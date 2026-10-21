@@ -215,6 +215,12 @@ Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare 
 - **polpo A in A3**: all'ingresso dell'area bimbi, vicino allo scivolo giallo (x -5,5, z -18, -12°);
 - **polpo B in B1**: nell'area bimbi contro il muro ovest, accanto al fungo (x -18,3, z -8, 90°). Nella tappa 8, al buio, resta quasi nascosto dietro la medusa della fossa: l'utente l'ha visto e l'ha scelto lo stesso.
 
+## L'inizio con il mostro-squalo (idea dell'utente, 21 ottobre)
+
+Parole dell'utente: "ritocchiamo l'inizio. Quando ti alzi da terra. Mettiamo che davanti a te c'è lo squalo mostro che abbiamo fatto, facciamo che vedi la bocca che ti sta per mangiare la faccia, addosso alla telecamera quindi, ma poi un boato dietro lo squalo, dove c'è la porta in fondo al corridoio lo fa scappare. Tu lo vedi proprio girarsi, esitare e poi correre via verso la porta che poi si chiude."
+
+Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel corridoio: la bocca aperta addosso alla camera, poi il boato dalla porta in fondo al corridoio; lui si gira, esita, corre via verso quella porta, che si chiude dietro di lui. I dettagli ancora aperti si chiedono all'utente per iscritto.
+
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
 L'utente: "al momento, arrivare alla porta della torre si impiegano 5 minuti". Con gli acquari e la torre per lui diventano circa 10 minuti, e per chi gioca la prima volta 20-25, mentre ne erano previsti 39-42. Per allungare, l'utente ha scelto:
