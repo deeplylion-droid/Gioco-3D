@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/game/sala_torre.gd" id="1_torre"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/torre/torre_struttura.glb" id="2_strut"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/torre/torre_scivoli.glb" id="3_sciv"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/torre/torre_prop.glb" id="4_prop"]
+
+[node name="SalaTorre" type="Node3D"]
+script = ExtResource("1_torre")
+modelli = Array[PackedScene]([ExtResource("2_strut"), ExtResource("3_sciv"), ExtResource("4_prop")])

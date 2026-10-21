@@ -3,7 +3,7 @@ extends Node
 ## Uso:
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_liberi.gd <scena.tscn> <cartella> \
-##        "nome:px,py,pz:lx,ly,lz[:lancia];nome2:..." [preset] [frame di attesa] [torcia 0/1] [luci: prima/blackout] [fisse: neon e luci rosse senza sfarfallio | neon: tutti i neon accesi, rosse spente]
+##        "nome:px,py,pz:lx,ly,lz[:lancia];nome2:..." [preset] [frame di attesa] [torcia 0/1] [luci: prima/blackout] [fisse: neon e luci rosse senza sfarfallio | neon: tutti i neon accesi, rosse spente] [togli: nodi della scena da togliere, separati da virgola, per stare nella memoria]
 ## Le coordinate sono globali nella scena (il giocatore viene messo coi piedi in p e guarda verso l).
 ## lancia (facoltativa): scena LanceRig da mettere in mano, percorso senza "res://" (per esempio scenes/player/lance/x.tscn).
 
@@ -16,9 +16,12 @@ var torcia := true
 var blackout := false
 var fisse := false
 var neon := false   # luce normale: tutti i neon accesi e fermi, luci rosse d'emergenza spente
+var togli := PackedStringArray()
 
 
 func _ready() -> void:
+	# Negli scatti la torre non si precarica (memoria: la sala da sola arriva a 12-13 GB).
+	Engine.set_meta(&"precarica_torre_spento", true)
 	var a := OS.get_cmdline_user_args()
 	scena = a[1]
 	out_dir = a[2]
@@ -36,6 +39,8 @@ func _ready() -> void:
 	if a.size() > 8:
 		fisse = a[8] == "fisse" or a[8] == "neon"
 		neon = a[8] == "neon"
+	if a.size() > 9 and a[9] != "":
+		togli = a[9].split(",")
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	_run.call_deferred()
 
@@ -49,12 +54,29 @@ func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset(preset)
-	get_tree().change_scene_to_file(scena)
+	if togli.is_empty():
+		get_tree().change_scene_to_file(scena)
+	else:
+		# La scena si istanzia a mano per togliere i nodi pesanti prima che entrino nell'albero
+		# (come scatti_sala.gd): così sta nella memoria.
+		var livello := (load(scena) as PackedScene).instantiate()
+		for percorso in togli:
+			var n := livello.get_node_or_null(NodePath(percorso))
+			if n:
+				n.get_parent().remove_child(n)
+				n.free()
+		get_tree().root.add_child(livello)
+		get_tree().current_scene = livello
 	for i in 300:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player):
 			break
 	get_tree().paused = false
+	# Si aspetta la fine del risveglio, se c'è (la camera è storta finché il giocatore si alza).
+	for i in 600:
+		if GameState.player.input_enabled:
+			break
+		await get_tree().process_frame
 	if blackout:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	if fisse:

@@ -39,6 +39,7 @@ static var _cache := {}
 
 func _ready() -> void:
 	_applica_materiali(ambienti)
+	_fogli()
 	_prepara_acqua()
 	_prepara_luci()
 	_decal()
@@ -106,6 +107,15 @@ func _applica_materiali(radice: Node) -> void:
 				lam.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
 				lam.cull_mode = BaseMaterial3D.CULL_BACK
 				nuovo = lam
+			elif nome == "carta_sporca":
+				# I fogli del glTF della sala pompe sono scatole piatte senza texture: sulla scrivania
+				# sembravano una forma grigia e di lato spuntavano dietro il monitor (riscontro della
+				# v0.3.7). Spariscono: al loro posto i fogli veri del kit di dettagli (_fogli).
+				var via := StandardMaterial3D.new()
+				via.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				via.albedo_color = Color(0, 0, 0, 0)
+				via.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				nuovo = via
 			elif nome.begins_with("ACQUA"):
 				var acqua := StandardMaterial3D.new()
 				acqua.albedo_color = Color(0.02, 0.025, 0.025, 0.85)
@@ -133,6 +143,37 @@ func _applica_materiali(radice: Node) -> void:
 		(n as MeshInstance3D).material_override = spento
 	for n in radice.find_children("*_vetro_spento", "MeshInstance3D", true, false):
 		(n as MeshInstance3D).material_override = spento
+
+
+# --- Fogli sulla scrivania e per terra (kit di dettagli) -------------------------------------------
+
+## [nodo del kit, posizione nella sala pompe (coordinate del glTF), rotazione in gradi, scala]: due
+## fogli e un appunto sul piano della scrivania, accanto al monitor; tre carte per terra.
+const FOGLI := [
+	["det_foglio_1", Vector3(4.98, 0.781, 5.43), 12.0, 0.8],
+	["det_foglio_3", Vector3(5.12, 0.783, 5.36), -28.0, 0.7],
+	["det_carta_accartocciata_2", Vector3(4.82, 0.78, 5.62), 0.0, 1.0],
+	["det_foglio_2", Vector3(-1.5, 0.004, 0.4), 30.0, 1.0],
+	["det_foglio_4", Vector3(1.1, 0.004, -0.4), -10.0, 1.0],
+	["det_carta_accartocciata_1", Vector3(-4.2, 0.0, 3.6), 0.0, 1.0],
+]
+
+
+func _fogli() -> void:
+	var sala := ambienti.get_node_or_null(^"SalaPompe") as Node3D
+	if sala == null or not ResourceLoader.exists("res://assets/ambiente/dettagli/gltf/detriti.gltf"):
+		return
+	var kit: Node3D = (load("res://assets/ambiente/dettagli/gltf/detriti.gltf") as PackedScene).instantiate()
+	for f in FOGLI:
+		var n := kit.find_child(f[0], true, false) as Node3D
+		if n == null:
+			continue
+		var copia := n.duplicate() as Node3D
+		copia.name = "Foglio_" + String(f[0])
+		# nel GLB del kit i nodi sono messi in fila: conta solo l'origine (alla base del foglio)
+		copia.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(f[2])).scaled(Vector3.ONE * f[3]), f[1])
+		sala.add_child(copia)
+	kit.free()
 
 
 # --- Acqua nera della vasca di raccolta (la disegna l'addon acqua: Acqua/AcquaVascaRaccolta) -----

@@ -5,7 +5,9 @@ extends Node3D
 ## la tappa 8. Poi si apre scorrendo di [member corsa] metri, in due modi ([member apertura]):
 ## - DOPO_TAPPA8 (di serie, scelto dall'utente il 16 ottobre): da solo, appena lei è andata via
 ##   (LeiSbuca.andata_via);
-## - ALL_ARRIVO: quando arrivi davanti ([method apri], lo chiama la sala con FineDemo).
+## - ALL_ARRIVO: quando arrivi davanti ([method apri], lo chiama la sala con FineDemo);
+## - SOLO_ENIGMA (GDD, 18 ottobre: prende il posto di DOPO_TAPPA8): lo apre solo l'enigma degli
+##   acquari (EnigmaAcquari chiama [method apri]); né la tappa 8 né l'arrivo lo aprono.
 ## Il movimento segue il suono del motore (portone_torre_apre, 8,5 s, lo suona l'addon audio su
 ## [signal apertura_iniziata]): la serratura a 0, l'anta parte a [member partenza] secondi,
 ## accelera per [member accelera] secondi, frena nell'ultimo [member frena] e sbatte a fine corsa
@@ -13,8 +15,9 @@ extends Node3D
 
 signal apertura_iniziata
 signal aperto
+signal chiuso
 
-enum Apertura { ALL_ARRIVO, DOPO_TAPPA8 }
+enum Apertura { ALL_ARRIVO, DOPO_TAPPA8, SOLO_ENIGMA }
 
 ## Quando si apre: di serie da solo dopo la tappa 8 (scelta dell'utente del 16 ottobre).
 @export var apertura := Apertura.DOPO_TAPPA8
@@ -44,8 +47,14 @@ enum Apertura { ALL_ARRIVO, DOPO_TAPPA8 }
 @export var raggio_luce := 9.0
 @export var periodo_lampeggio := 1.0
 
+## Secondi per richiudersi alle spalle di chi è entrato nella sala della torre.
+@export var durata_chiusura := 3.0
+
 ## 0 chiuso, 1 aperto del tutto.
 var quanto := 0.0
+## Vero quando si è richiuso alle spalle del giocatore (niente ritorno nella sala grande).
+var chiuso_dietro := false
+var _in_chiusura := false
 var in_movimento := false
 var _t := -1.0
 var _chiuso_xf := Transform3D.IDENTITY
@@ -89,7 +98,10 @@ func _ready() -> void:
 
 
 ## Vero se si può aprire: dopo la tappa 8 (o se non c'è).
+## Con SOLO_ENIGMA, solo dopo che l'enigma l'ha aperto.
 func si_puo_aprire() -> bool:
+	if apertura == Apertura.SOLO_ENIGMA:
+		return in_movimento or quanto >= 1.0
 	if tappa8 == null or not (&"fase" in tappa8):
 		return true
 	var s: Script = tappa8.get_script()
@@ -111,6 +123,29 @@ func is_aperto() -> bool:
 	return quanto >= 1.0
 
 
+## Si richiude (lentamente) alle spalle di chi è entrato nella sala della torre, e resta chiuso.
+func chiudi() -> void:
+	if chiuso_dietro:
+		return
+	chiuso_dietro = true
+	in_movimento = false
+	_in_chiusura = true
+	apertura_iniziata.emit()  # il suono del motore
+
+
+## Chiuso subito (ripartendo da un checkpoint dentro la torre).
+func resta_chiuso() -> void:
+	chiuso_dietro = true
+	_in_chiusura = false
+	in_movimento = false
+	quanto = 0.0
+	_lampeggia = false
+	if _luce:
+		_luce.visible = false
+	_accendi_vetro(0.0)
+	_metti(0.0)
+
+
 func _physics_process(delta: float) -> void:
 	if _lampeggia:
 		_tl += delta
@@ -120,6 +155,17 @@ func _physics_process(delta: float) -> void:
 		_luce.visible = true
 		_luce.light_energy = energia_luce * (0.05 + 0.95 * k)
 		_accendi_vetro(0.15 + 0.85 * k)
+	if _in_chiusura:
+		quanto = maxf(quanto - delta / durata_chiusura, 0.0)
+		_metti(smoothstep(0.0, 1.0, quanto))
+		if quanto <= 0.0:
+			_in_chiusura = false
+			_lampeggia = false
+			if _luce:
+				_luce.visible = false
+			_accendi_vetro(0.0)
+			chiuso.emit()
+		return
 	if not in_movimento:
 		return
 	_t += delta
@@ -169,12 +215,16 @@ func _accendi_vetro(k: float) -> void:
 # --- Checkpoint -------------------------------------------------------------------------------
 
 func save_state() -> Dictionary:
-	return {"aperto": quanto >= 1.0 or in_movimento}
+	return {"aperto": (quanto >= 1.0 or in_movimento) and not chiuso_dietro, "chiuso_dietro": chiuso_dietro}
 
 
 func load_state(data: Dictionary) -> void:
 	in_movimento = false
+	_in_chiusura = false
 	_t = -1.0
+	if bool(data.get("chiuso_dietro", false)):
+		resta_chiuso()
+		return
 	if bool(data.get("aperto", false)):
 		quanto = 1.0
 		_lampeggia = true

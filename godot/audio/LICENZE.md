@@ -193,6 +193,9 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `tecnici/porta_ponte_apre.ogg` | 3.4 s | Kenney RPG Audio (CC0) + sintesi | metalLatch, creak, doorClose |
 | `tecnici/tonfo_acqua_lontano.ogg` | 6.0 s | sintesi (originale) |  |
 | `tecnici/zampette_condotto.ogg` | 8.0 s | sintesi (originale) | l'agnellino che corre via dentro il condotto della grata di C2 (v0.3.6) |
+| `torre/atterraggio_scivolo_01.ogg` | 0.9 s | sintesi (originale) |  |
+| `torre/atterraggio_scivolo_02.ogg` | 0.9 s | sintesi (originale) |  |
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
+| `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 170 file, 6.6 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 173 file, 6.7 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
