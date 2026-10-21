@@ -8,7 +8,7 @@ extends Node
 ## - le particelle e le mesh del giocatore (zaino: aspirazione, getto, schizzi, gocce, colonna
 ##   aspirata, vortice; EffettiZaino: schizzi e nebbia dove il getto colpisce; SlideFx) e i due getti (WaterStream: il nastro del nucleo, e la sua aspirazione);
 ## - una macchia di bagnato (il primo Decal prepara l'atlante dei decal), un geyser della fossa
-##   (GeyserFossa) e lo schermo rotto del jumpscare (glitch_schermo);
+##   (GeyserMesh, con le mesh della simulazione già lette) e lo schermo rotto del jumpscare (glitch_schermo);
 ## - i suoni che partono in quei momenti (caricati in memoria, senza suonarli).
 ## Poi rimette tutto com'era: particelle spente e vuote, mesh nascoste, getti vuoti.
 ## La crea GettoPotente quando si aggancia allo zaino. Con Engine.set_meta(&"prepara_effetti_spento",
@@ -92,7 +92,7 @@ func _raccogli() -> void:
 		var bagnato: Array = getto.get(&"_bagnato")
 		if not bagnato.is_empty():
 			_macchia = bagnato[bagnato.size() - 1]
-	_geyser = GeyserFossa.new()
+	_geyser = GeyserMesh.new()
 	_geyser.name = "GeyserPreparato"
 	add_child(_geyser)
 	_glitch = CanvasLayer.new()
@@ -131,6 +131,8 @@ func _accendi(cam: Camera3D) -> void:
 			(s as Node3D).call(&"physics_step", 1.0 / 60.0, true, davanti, -cam.global_basis.z * 4.0 + Vector3.UP * 2.0)
 	if _f == 1:
 		_geyser.call(&"scoppia", davanti + Vector3.DOWN * 1.5, [])
+		if _geyser.has_method(&"prepara"):
+			_geyser.call(&"prepara")
 
 
 func _rimetti() -> void:

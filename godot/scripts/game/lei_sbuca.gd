@@ -11,7 +11,7 @@ extends Node3D
 ## - Resta affacciata finché il getto dello zaino non la colpisce (riscontro dell'utente sulla
 ##   v0.3.4: "devi semplicemente spruzzarla con la pistola e allora se ne va"): conta qualsiasi punto
 ##   di lei, testa, spalle, mani o tentacoli stesi oltre il bordo (un WaterHitbox che la segue).
-##   Appena la colpisci parte il geyser (GeyserFossa), lei sparisce lì dentro e la sua luce si
+##   Appena la colpisci parte il geyser (GeyserMesh, la V1 scelta il 19 ottobre), lei sparisce lì dentro e la sua luce si
 ##   allontana sott'acqua lungo il condotto in fondo alla fossa (concept medusa_sottacqua.jpg).
 ##   Prima andava via da sola: dopo che l'avevi vista bene per 2 s, passati altri 6 s. Quanto la
 ##   guardi lo conta ancora ([member vista_bene], segnale [signal vista]), ma non la manda più via.
@@ -92,9 +92,10 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var profondita := 2.3
 ## Falso finché la fossa non c'è: niente scena, niente acqua che sale.
 @export var abilitata := true
-## Quando scivola sotto, un geyser d'acqua (GeyserFossa) si alza dalla fossa e la copre tutta: lei
-## sparisce solo quando è coperta (scelta dell'utente del 17 ottobre). Falso: scivola e svanisce come
-## prima.
+## Quando scivola sotto, un geyser d'acqua (GeyserMesh: la colonna simulata, la V1 scelta il 19 ottobre)
+## si alza dalla fossa e la copre tutta: lei sparisce solo quando è coperta (scelta dell'utente del 17
+## ottobre). Si crea già all'avvio, così la prima volta non blocca il gioco. Falso: scivola e svanisce
+## come prima.
 @export var geyser := true
 
 var fase := Fase.ATTESA
@@ -117,6 +118,8 @@ func _ready() -> void:
 	_rng.seed = 8
 	GameState.luci_cambiate.connect(_on_luci)
 	_nascondi()
+	if geyser:
+		_crea_geyser()
 	if coperchio:
 		coperchio.collision_layer = Layers.WORLD
 	if medusa:
@@ -314,9 +317,7 @@ func _scivola() -> void:
 	_schizzo(0.8)
 	if geyser and punto_sbuca:
 		if _geyser == null:
-			_geyser = GeyserFossa.new()
-			_geyser.name = "Geyser"
-			add_child(_geyser)
+			_crea_geyser()
 		# Sul pavimento (l'origine della posa), al centro della fossa davanti al bordo.
 		# Getti più piccoli anche sui suoi tentacoli stesi oltre il bordo (i punti delle gocce).
 		var punti := PackedVector3Array()
@@ -327,6 +328,12 @@ func _scivola() -> void:
 		_suona(&"lei_esplosione")
 	else:
 		_suona(&"lei_scivola_sotto")
+
+
+func _crea_geyser() -> void:
+	_geyser = GeyserMesh.new()
+	_geyser.name = "Geyser"
+	add_child(_geyser)
 
 
 ## Sotto: la medusa sparisce e resta la sua luce, che si allontana lungo il condotto.

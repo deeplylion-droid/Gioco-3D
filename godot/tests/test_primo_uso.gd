@@ -109,9 +109,12 @@ func _run() -> void:
 	await _frames(10)
 	var asp := _conta()
 	print("  (aspirazione: surface %d, draw %d, in sottofondo %d)" % [asp.surface, asp.draw, asp.spec])
-	_azzera()
-	var g := GeyserFossa.new()
+	# Come nel gioco: il geyser lo crea LeiSbuca già al caricamento (qui prima di misurare); si misura il
+	# primo scoppio.
+	var g := GeyserMesh.new()
 	get_tree().current_scene.add_child(g)
+	await _frames(3)
+	_azzera()
 	g.scoppia(p.global_position + p.global_basis * Vector3(0.0, 0.0, -4.0), [])
 	await _frames(20)
 	_controlla("geyser", _conta())

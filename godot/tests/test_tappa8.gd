@@ -246,8 +246,11 @@ func _run() -> void:
 	var dopo := await _spruzzala(p.global_position, lei.medusa.call(&"get_eye_position"))
 	check(dopo >= 0.0 and dopo < 1.2, "la spruzzi in faccia dalla scia: se ne va subito (%.2f s dal primo getto)" % dopo)
 	check(lei.get_node_or_null(^"Geyser") != null and (lei.get_node(^"Geyser") as GeyserFossa).in_corso(), "parte il geyser")
+	var coperta := ""
 	for i in 900:
 		await get_tree().physics_frame
+		if coperta.is_empty() and lei.fase == LeiSbuca.Fase.FUGA:
+			coperta = _coperta_dal_geyser(punti, occhio_lei)
 		if lei.fase == LeiSbuca.Fase.SCIVOLA and lei.opacita() > 0.25:
 			scivolata = true
 			var ora := _dentro_pavimento(punti)
@@ -259,6 +262,7 @@ func _run() -> void:
 			luce_lontana = maxf(luce_lontana, luce.global_position.distance_to(lei.punto_sbuca.global_position))
 		if lei.fase == LeiSbuca.Fase.FINITA:
 			break
+	check(coperta == "tutta", "quando sparisce l'acqua del geyser la copre tutta: occhio, mani e tentacoli nascosti da ogni lato (%s)" % coperta)
 	check(scivolata and peggio < 0.05, "scivolando sotto, finché si vedono, mani e tentacoli non entrano nel pavimento (%.2f m)" % peggio)
 	check(fuga_vista and luce_lontana > 1.5, "scivola sotto e la sua luce si allontana sott'acqua (%.1f m)" % luce_lontana)
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
@@ -397,6 +401,27 @@ func _angolo_verso(punto: Vector3) -> float:
 
 ## Per ogni punto (coordinate della medusa) quanto sta sotto la superficie su cui poggia (bordo,
 ## pavimento, fondo della fossa senza il coperchio): positivo se ci è dentro.
+## Nel fotogramma in cui lei sparisce: quali suoi punti (l'occhio, le dita e le punte dei tentacoli) non
+## sono nascosti dall'acqua del geyser V1 (GeyserMesh.scoperto_da: le direzioni da cui la vede chi sta in
+## piedi nella sala). "tutta" se sono nascosti tutti.
+func _coperta_dal_geyser(punti: PackedVector3Array, occhio: Vector3) -> String:
+	var g := lei.get_node_or_null(^"Geyser") as GeyserMesh
+	if g == null:
+		return "niente geyser V1"
+	var tutti: Array[Vector3] = [occhio]
+	for q in punti:
+		tutti.append(lei.medusa.global_transform * q)
+	var fuori := PackedStringArray()
+	for k in tutti.size():
+		# l'occhio, le dita e le punte stese oltre il bordo del tutto; i tentacoli vicini al corpo, dentro la
+		# colonna, al più da 6 direzioni su 48 (spiragli nella parete d'acqua)
+		var n := g.scoperto_da(tutti[k])
+		var dentro := Vector2(tutti[k].x - g.global_position.x, tutti[k].z - g.global_position.z).length() < 0.6
+		if n > (6 if dentro and k > 0 else 0):
+			fuori.append("%s %s da %d direzioni" % ["occhio" if k == 0 else "punto %d" % (k - 1), str(tutti[k]), n])
+	return "tutta" if fuori.is_empty() else "scoperti: " + ", ".join(fuori)
+
+
 func _dentro_pavimento(punti: PackedVector3Array) -> PackedFloat32Array:
 	var out := PackedFloat32Array()
 	var space := p.get_world_3d().direct_space_state

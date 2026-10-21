@@ -1,7 +1,7 @@
 class_name GeyserMesh
 extends GeyserFossa
-## Proposta V1 del geyser della fossa (tappa 8), dopo la v0.3.5 ("l'effetto geyser che avvolge la medusa fa
-## schifo, è low quality"). Stessa idea scelta dall'utente il 17 ottobre: una colonna d'acqua spara dritta
+## Il geyser della fossa (tappa 8): la V1, scelta dall'utente il 19 ottobre (proposta nata dopo la v0.3.5:
+## "l'effetto geyser che avvolge la medusa fa schifo, è low quality"). Stessa idea scelta dall'utente il 17 ottobre: una colonna d'acqua spara dritta
 ## intorno a lei, lei ci sparisce dentro, la colonna ricade come pioggia pesante. Acqua bianca di schiuma e
 ## piena: non si vede attraverso.
 ## - La massa d'acqua è una simulazione di liquido vera (Mantaflow, assets_src/geyser/simula.py): una mesh per
@@ -10,20 +10,41 @@ extends GeyserFossa
 ##   d'acqua finissima, la pioggia che ricade e gli schizzi a terra, l'anello di schiuma e le onde sull'acqua
 ##   della fossa.
 ## Estende GeyserFossa (così LeiSbuca la usa al posto sua): stessa interfaccia, stesse onde sull'acqua
-## (_tonfo, _spruzza); copre si calcola dalle mesh.
+## (_tonfo, _spruzza); copre è il fotogramma della simulazione in cui la copre meglio (tests/sonda_geyser.gd).
 
-const SEQUENZA := "res://proposte/geyser/geyser_sequenza.glb"   # caricata in _ready (la V2 che estende questa non la usa)
-const SHADER_SCHIUMA := preload("res://proposte/geyser/acqua_schiuma.gdshader")
-const RUMORE := preload("res://proposte/geyser/rumore_schiuma.png")
+const SEQUENZA := "res://assets/geyser/geyser_sequenza.glb"   # caricata la prima volta in _ready (la V2 che estende questa non la usa)
+const SHADER_SCHIUMA := preload("res://addons/grafica/acqua_schiuma.gdshader")
+const RUMORE := preload("res://assets/geyser/rumore_schiuma.png")
 const FPS := 30.0
+## La base come nella simulazione, rispetto al punto del geyser: il pelo dell'acqua della fossa, il pavimento
+## intorno e il raggio della fossa (vanno allo shader).
+const Z_ACQUA := 0.85
+const Z_PAVIMENTO := 0.55
+const R_FOSSA := 1.35
 ## Il livello di render dell'acqua del geyser: le macchie di bagnato del getto (Decal) non ci si proiettano (sul
 ## cartellone della V2 la macchia di dove lei era stata colpita faceva un punto chiaro in mezzo alla colonna).
 const LIVELLO_ACQUA := 1 << 19
 
-## La colonna la copre tutta (copre, da qui lei può sparire) la prima volta che supera questa altezza (m).
-@export var altezza_copre := 2.6
+## Quanto sono piccoli i getti sulle punte dei tentacoli rispetto alla colonna (la stessa simulazione).
+const SCALA_GETTI := 0.4
+## Le punte di lei più lontane di così dall'asse (m) hanno un getto loro: la colonna non ci arriva.
+const RAGGIO_COLONNA := 0.95
+
+## Il fotogramma da cui lei può sparire (copre): misurato con tests/sonda_geyser.gd su lei affacciata, è quello
+## in mezzo ai fotogrammi in cui l'acqua la nasconde meglio da ogni lato (18-21: occhio, dita e punte dei
+## tentacoli; sui tentacoli vicini al corpo restano pochi spiragli nella parete), così un fotogramma prima o
+## dopo non cambia niente. Prima, al fotogramma 9 (la colonna a 2,6 m), le punte stese oltre il bordo erano
+## ancora scoperte, e dal 22 al 25 si vede l'occhio.
+@export var fotogramma_copre := 19
+
+## Le mesh della simulazione, una per fotogramma: si leggono una volta sola e le usano tutti i geyser
+## (quello di LeiSbuca e quello di PreparaEffetti).
+static var _sequenza: Array[Mesh] = []
+static var _shader_anello: Shader
 
 var _fotogrammi: Array[Mesh] = []
+# I getti piccoli sulle punte dei tentacoli stese oltre il bordo: [MeshInstance3D, ShaderMaterial].
+var _getti_v1: Array = []
 var _a: MeshInstance3D
 var _ma: ShaderMaterial
 var _fontana: GPUParticles3D
@@ -37,16 +58,8 @@ var _fatti := {}
 func _ready() -> void:
 	top_level = true
 	gocce = 110
-	var s := (load(SEQUENZA) as PackedScene).instantiate()
-	var figli := s.find_children("f*", "MeshInstance3D", true, false)
-	figli.sort_custom(func(x, y): return String(x.name) < String(y.name))
-	for mi in figli:
-		_fotogrammi.append((mi as MeshInstance3D).mesh)
-	s.free()
-	for i in _fotogrammi.size():
-		if _fotogrammi[i].get_aabb().end.y > altezza_copre:
-			copre = i / FPS
-			break
+	_fotogrammi = sequenza()
+	copre = fotogramma_copre / FPS
 	_ma = _materiale()
 	_a = _istanza("Acqua", _ma)
 	_crea_particelle()
@@ -54,10 +67,113 @@ func _ready() -> void:
 	set_process(false)
 
 
+static func sequenza() -> Array[Mesh]:
+	if _sequenza.is_empty():
+		var s := (load(SEQUENZA) as PackedScene).instantiate()
+		var figli := s.find_children("f*", "MeshInstance3D", true, false)
+		figli.sort_custom(func(x, y): return String(x.name) < String(y.name))
+		for mi in figli:
+			_sequenza.append((mi as MeshInstance3D).mesh)
+		s.free()
+	return _sequenza
+
+
+## Vero se l'acqua che si disegna adesso (la colonna e i getti piccoli) nasconde il punto [param w] (globale) da
+## tutte le direzioni da cui lo può vedere chi sta in piedi nella sala (gli occhi a 1,7 m, da 2,5 a 10 m:
+## da 3 a 30 gradi sopra l'orizzonte), 12 direzioni intorno. Conta solo l'acqua sopra le soglie dello
+## shader. Per i test (lei deve sparire solo quando è coperta tutta) e le sonde: è lento.
+func nascosto(w: Vector3) -> bool:
+	return scoperto_da(w) == 0
+
+
+## Da quante delle 48 direzioni di nascosto() il punto [param w] si vede.
+func scoperto_da(w: Vector3) -> int:
+	var liberi := 0
+	var acque: Array = []
+	for g in [[_a, _ma]] + _getti_v1:
+		var mi := g[0] as MeshInstance3D
+		if mi and mi.visible and mi.mesh:
+			var facce := mi.mesh.get_faces()
+			var t := mi.global_transform
+			var mondo := PackedVector3Array()
+			mondo.resize(facce.size())
+			for i in facce.size():
+				mondo[i] = t * facce[i]
+			acque.append([mondo, g[1]])
+	for k in 12:
+		var az := TAU * k / 12.0
+		for el in [3.0, 12.0, 21.0, 30.0]:
+			var e := deg_to_rad(el)
+			var d := Vector3(cos(az) * cos(e), sin(e), sin(az) * cos(e))
+			var preso := false
+			for acqua in acque:
+				var f: PackedVector3Array = acqua[0]
+				for i in range(0, f.size(), 3):
+					var h = Geometry3D.ray_intersects_triangle(w, d, f[i], f[i + 1], f[i + 2])
+					if h == null:
+						h = Geometry3D.ray_intersects_triangle(w, d, f[i], f[i + 2], f[i + 1])
+					if h != null and _si_disegna(h, acqua[1]):
+						preso = true
+						break
+				if preso:
+					break
+			if not preso:
+				liberi += 1
+	return liberi
+
+
+## Come il discard di acqua_schiuma.gdshader: sotto il pelo della fossa e appena sopra il pavimento
+## l'acqua non si disegna.
+static func _si_disegna(q: Vector3, m: ShaderMaterial) -> bool:
+	var c: Vector3 = m.get_shader_parameter(&"centro")
+	var rr := Vector2(q.x - c.x, q.z - c.z).length()
+	var soglia: float = float(m.get_shader_parameter(&"z_acqua")) + 0.06 if rr < float(m.get_shader_parameter(&"r_fossa")) \
+			else float(m.get_shader_parameter(&"z_pavimento")) + 0.16
+	return q.y - c.y >= soglia + float(m.get_shader_parameter(&"affonda"))
+
+
+## Un getto piccolo (la stessa simulazione, più piccola) per ogni gruppo di punte di lei fuori dalla
+## colonna: i tentacoli stesi oltre il bordo della fossa (come facevano i getti di GeyserFossa).
+## La base del getto è dove sta la punta; sotto, l'acqua non si disegna.
+func _crea_getti_v1(punti: PackedVector3Array) -> void:
+	for g in _getti_v1:
+		(g[0] as Node).queue_free()
+	_getti_v1.clear()
+	var centri: Array[Vector3] = []
+	for q in punti:
+		if Vector2(q.x - global_position.x, q.z - global_position.z).length() < RAGGIO_COLONNA:
+			continue
+		var vicino := false
+		for c in centri:
+			if Vector2(c.x - q.x, c.z - q.z).length() < 0.5:
+				vicino = true
+				break
+		if not vicino:
+			centri.append(q)
+	for c in centri:
+		var m := _materiale()
+		m.set_shader_parameter(&"r_fossa", 0.0)
+		m.set_shader_parameter(&"z_pavimento", -0.16)
+		var base := c - Vector3(0.0, 0.05, 0.0)
+		m.set_shader_parameter(&"centro", base)
+		var mi := _istanza("Getto", m)
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.scale = Vector3.ONE * SCALA_GETTI
+		# il pelo dell'acqua ferma della simulazione sotto la base: si vede solo il getto che sale
+		mi.global_position = base - Vector3(0.0, (Z_ACQUA + 0.06) * SCALA_GETTI, 0.0)
+		mi.visible = true
+		_getti_v1.append([mi, m])
+
+
 func _materiale() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = SHADER_SCHIUMA
 	m.set_shader_parameter(&"rumore", RUMORE)
+	# la base come nella simulazione (anche i test ci leggono dove l'acqua non si disegna)
+	m.set_shader_parameter(&"z_acqua", Z_ACQUA)
+	m.set_shader_parameter(&"z_pavimento", Z_PAVIMENTO)
+	m.set_shader_parameter(&"r_fossa", R_FOSSA)
+	m.set_shader_parameter(&"affonda", 0.0)
 	return m
 
 
@@ -74,7 +190,7 @@ func _istanza(nome: String, m: Material) -> MeshInstance3D:
 
 
 ## Fa partire il geyser dal punto [param pavimento] (la base, sotto il pelo dell'acqua della fossa).
-func scoppia(pavimento: Vector3, acque: Array = [], _punti := PackedVector3Array()) -> void:
+func scoppia(pavimento: Vector3, acque: Array = [], punti := PackedVector3Array()) -> void:
 	_acque = acque
 	_rng.seed = 41
 	global_position = pavimento
@@ -82,12 +198,21 @@ func scoppia(pavimento: Vector3, acque: Array = [], _punti := PackedVector3Array
 	_fatti.clear()
 	if _a:   # la V2 (GeyserFlipbook) non ha le mesh
 		_a.visible = true
+		_crea_getti_v1(punti)
 	_anello.visible = true
 	_aggiorna()
 	_spruzza(1.0)
 	for d in get_tree().root.find_children("*", "Decal", true, false):
 		(d as Decal).cull_mask &= ~LIVELLO_ACQUA
 	set_process(true)
+
+
+## Per PreparaEffetti, dopo scoppia(): accende subito anche le particelle che di solito partono dopo
+## (corona, pioggia, schizzi), così nei fotogrammi della preparazione si compilano tutte.
+func prepara() -> void:
+	for p in [_fontana, _corona, _nebbia, _pioggia, _schizzi]:
+		(p as GPUParticles3D).restart()
+		(p as GPUParticles3D).emitting = true
 
 
 func in_corso() -> bool:
@@ -117,6 +242,14 @@ func _aggiorna() -> void:
 		_ma.set_shader_parameter(&"tempo", _t)
 		_ma.set_shader_parameter(&"centro", global_position)
 		_ma.set_shader_parameter(&"affonda", _affonda() * 0.5)
+	for g in _getti_v1:
+		var mi := g[0] as MeshInstance3D
+		var m := g[1] as ShaderMaterial
+		mi.visible = dentro
+		if dentro:
+			mi.mesh = _fotogrammi[i]
+			m.set_shader_parameter(&"tempo", _t)
+			m.set_shader_parameter(&"affonda", _affonda() * 0.5 * SCALA_GETTI)
 	var k := clampf(_t / 2.6, 0.0, 1.0)
 	_anello.scale = Vector3.ONE * (1.0 + 0.9 * sqrt(k))
 	_anello_mat.set_shader_parameter(&"vita", k)
@@ -160,7 +293,15 @@ func _eventi() -> void:
 
 # --- particelle -----------------------------------------------------------------------------------------
 
+## Le mesh delle gocce e della nebbiolina sono le stesse per tutti i geyser: con mesh e materiali nuovi a ogni
+## istanza, quello di LeiSbuca ricompilava le loro pipeline al primo uso anche dopo PreparaEffetti.
+static var _mesh_particelle := {}
+
+
 func _goccia_mesh(raggio: float, lungo: float) -> Mesh:
+	var chiave := "goccia_%s_%s" % [raggio, lungo]
+	if _mesh_particelle.has(chiave):
+		return _mesh_particelle[chiave]
 	var c := CapsuleMesh.new()
 	c.radius = raggio
 	c.height = lungo
@@ -177,6 +318,7 @@ func _goccia_mesh(raggio: float, lungo: float) -> Mesh:
 	m.clearcoat_roughness = 0.02
 	m.vertex_color_use_as_albedo = false
 	c.material = m
+	_mesh_particelle[chiave] = c
 	return c
 
 
@@ -250,19 +392,10 @@ func _crea_particelle() -> void:
 	zm.initial_velocity_max = 2.6
 	_schizzi.position = Vector3(0, 0.57, 0)
 	# la nebbiolina: particelle morbide, grandi, chiare, che salgono piano e si allargano
-	var q := QuadMesh.new()
-	q.size = Vector2(1.6, 1.6)
-	var nm := StandardMaterial3D.new()
-	nm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	nm.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX   # la luce mediata sul quadratino: per pixel vicino alla luce di lei faceva un punto bianco
-	nm.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	nm.vertex_color_use_as_albedo = true
-	nm.albedo_color = Color(0.55, 0.57, 0.6, 1.0)   # presa dalle luci della sala (per pixel)
-	nm.albedo_texture = _morbida()
-	nm.proximity_fade_enabled = true
-	nm.proximity_fade_distance = 0.8
-	nm.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
-	q.material = nm
+	var q: QuadMesh = _mesh_particelle.get("nebbia", null)
+	if q == null:
+		q = _quad_nebbia()
+		_mesh_particelle["nebbia"] = q
 	_nebbia = _particelle("Nebbia", 30, 1.8, q, 0.5)
 	_nebbia.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var em := _nebbia.process_material as ParticleProcessMaterial
@@ -292,6 +425,23 @@ func _crea_particelle() -> void:
 	_nebbia.position = Vector3(0, 1.6, 0)
 
 
+func _quad_nebbia() -> QuadMesh:
+	var q := QuadMesh.new()
+	q.size = Vector2(1.6, 1.6)
+	var nm := StandardMaterial3D.new()
+	nm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	nm.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX   # la luce mediata sul quadratino: per pixel vicino alla luce di lei faceva un punto bianco
+	nm.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	nm.vertex_color_use_as_albedo = true
+	nm.albedo_color = Color(0.55, 0.57, 0.6, 1.0)   # presa dalle luci della sala (per pixel)
+	nm.albedo_texture = _morbida()
+	nm.proximity_fade_enabled = true
+	nm.proximity_fade_distance = 0.8
+	nm.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	q.material = nm
+	return q
+
+
 func _morbida() -> Texture2D:
 	var g := Gradient.new()
 	g.set_color(0, Color(1, 1, 1, 1))
@@ -316,8 +466,11 @@ func _crea_anello() -> void:
 	_anello.name = "AnelloSchiuma"
 	_anello.mesh = pm
 	_anello_mat = ShaderMaterial.new()
-	var sh := Shader.new()
-	sh.code = """
+	# uno shader solo per tutti i geyser: con uno nuovo per istanza quello di LeiSbuca si ricompilava al primo
+	# uso, anche dopo PreparaEffetti
+	if _shader_anello == null:
+		_shader_anello = Shader.new()
+		_shader_anello.code = """
 shader_type spatial;
 render_mode cull_disabled, depth_draw_opaque;
 uniform sampler2D rumore : filter_linear_mipmap, repeat_enable;
@@ -334,7 +487,7 @@ void fragment() {
 	ROUGHNESS = 0.5;
 }
 """
-	_anello_mat.shader = sh
+	_anello_mat.shader = _shader_anello
 	_anello_mat.set_shader_parameter(&"rumore", RUMORE)
 	_anello.material_override = _anello_mat
 	_anello.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

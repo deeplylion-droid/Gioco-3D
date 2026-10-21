@@ -15,7 +15,6 @@ extends Node
 ##     <jumpscare|geyser> [foto: t1,t2,... o "video"] [angolo in gradi rispetto a dove guarda lei] [cartella]
 
 const LEVEL := "res://scenes/sala_principale.tscn"
-const V1 := preload("res://proposte/geyser/geyser_mesh.gd")
 const V2 := preload("res://proposte/geyser/geyser_flipbook.gd")
 const RISCALDA := 60
 
@@ -97,11 +96,19 @@ func _avvia() -> void:
 		var t := v as WaterTank
 		t.fill = clampf((lei.livello_pieno - t.get_floor_global_y()) / t.inner_size.y, 0.0, t.max_fill)
 	lei.distanza_presa = 0.0
-	if versione in ["v1", "v2"]:
-		var g: Node3D = (V1 if versione == "v1" else V2).new()
+	if versione == "v1":
+		pass   # la V1 è il geyser del gioco: LeiSbuca la crea già da sola
+	elif versione in ["v2", "oggi"]:
+		var vecchio := lei.get_node_or_null(^"Geyser")
+		if vecchio:
+			lei.remove_child(vecchio)
+			vecchio.free()
+		var g: Node3D = V2.new() if versione == "v2" else GeyserFossa.new()
 		g.name = "Geyser"
 		lei.add_child(g)
 		lei._geyser = g
+	if versione in ["v1", "v2"]:
+		var g := lei.get_node(^"Geyser")
 		if OS.get_environment("SENZA_CARTELLONE") != "":   # prova: il punto bianco è dietro la colonna?
 			var c := g.get_node_or_null(^"Cartellone") as Node3D
 			if c:
@@ -189,6 +196,12 @@ func _process(_delta: float) -> void:
 	if durante and _geyser_da < 0:
 		_geyser_da = _f
 		print("GEYSER dal fotogramma ", _f)
+		if OS.get_environment("SENZA_EFFETTI_ZAINO") != "":   # prova: il punto bianco sono gli schizzi del getto?
+			for n in p.find_children("*", "GeometryInstance3D", true, false):
+				# tutto tranne la pistola e le mani (sotto la camera, ma non le particelle)
+				if n is GPUParticles3D or not _sotto_camera(n):
+					(n as GeometryInstance3D).visible = false
+			print("SENZA_EFFETTI_ZAINO: nascosti gli effetti del giocatore")
 	if orbita and _geyser_da >= 0:
 		var k := clampf((_f - _geyser_da) / 60.0, 0.0, 1.0)
 		var testa := _testa()
@@ -245,3 +258,12 @@ func _scatto(x: float) -> void:
 	var nome := "%s_%03d_%03.1f.jpg" % [tipo, int(angolo), x]
 	get_viewport().get_texture().get_image().save_jpg(cartella.path_join(nome), 0.9)
 	print("salvato ", nome)
+
+
+func _sotto_camera(n: Node) -> bool:
+	var c := n.get_parent()
+	while c:
+		if c is Camera3D:
+			return true
+		c = c.get_parent()
+	return false
