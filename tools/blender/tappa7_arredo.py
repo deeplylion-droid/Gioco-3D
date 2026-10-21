@@ -523,7 +523,7 @@ def proposta_gioco():
                     liberi=[(TESTA_MAG[0] + 0.4, TESTA_MAG[1]), (TESTA_MAG[0] - 0.4, TESTA_MAG[1])])
     # ai due lati della serranda (il cancello finale della risalita) resta solo il pezzo a terra: i lettini e gli
     # scatoloni impilati sopra sembravano messi a caso (riscontro dell'utente del 21 ottobre)
-    for o in [o for o in obs if o.name.startswith('G_mag_') and o.location.x < XM0 + 1.6 and o.location.z > Z_SALA + 0.01]:
+    for o in [o for o in obs if o.name.startswith('G_mag_') and o.location.x < XM0 + 3.0 and o.location.z > Z_SALA + 0.01]:
         obs.remove(o); bpy.data.objects.remove(o)
     # la testa della mascotte (1,8 m di muso) nel corridoio C2 lo chiudeva: sta nel magazzino, contro il muro nord
     # accanto all'entrata, girata verso la corsia (lì intorno il magazzino resta libero)
