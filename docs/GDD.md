@@ -179,6 +179,12 @@ Prende il posto della salita della tappa 9 descritta in `docs/livello/capitolo1.
 
 **Scelte del 18 ottobre:** discesa e aspetto approvati. L'utente vuole provarla nel gioco prima di dire altro: "Lo devo vedere in gioco per dirti". Nei due salti col getto resta la carica del getto B: si impara a spruzzare prima del bordo.
 
+## La strada nella torre degli scivoli (prova del 19 ottobre, scelte del 21)
+
+L'utente: "nella torre degli scivoli non si capisce dove bisogna andare, le vie sbagliate non ti devono portare a morire a caso, devono avere senso (es cadi ecc)". Scelte del 21 ottobre:
+- **la strada giusta** si capisce in tutti e due i modi: segnali del parco (frecce disegnate, senza scritte, e luci verdi sulla via giusta) e l'ambiente (le vie sbagliate si vedono rotte o sbarrate);
+- **nelle vie sbagliate non si muore**: cadi in una vasca di raccolta e risali da una scaletta fino all'ultimo checkpoint.
+
 ## L'enigma degli acquari (idea dell'utente, 18 ottobre)
 
 L'utente trova il capitolo corto e vuole un enigma in più nella sala principale. Le sue parole: "saranno tre acquari di acqua colorata, due pieni di due colori e uno vuoto, in quello vuoto bisognerà versare i due colori per formarne un terzo, per farlo serviranno due zaini di un colore e uno zaino dell'altro. Fare bene aprirà il cancello della torre degli scivoli, che a questo punto risulterà chiuso MA avrà lampade luminose prima spente che saranno invece accese quando rientriamo nella sala. Anche gli acquari saranno comparsi ora mentre prima, durante il primo accesso alla sala non c'erano. Se sbagli la combo dei colori devi poter resettare l'enigma. Deve esserci un riferimento al colore da creare."
