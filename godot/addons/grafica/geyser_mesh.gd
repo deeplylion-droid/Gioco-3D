@@ -134,7 +134,7 @@ static func _si_disegna(q: Vector3, m: ShaderMaterial) -> bool:
 
 ## Un getto piccolo (la stessa simulazione, più piccola) per ogni gruppo di punte di lei fuori dalla
 ## colonna: i tentacoli stesi oltre il bordo della fossa (come facevano i getti di GeyserFossa).
-## La base del getto è dove sta la punta; sotto, l'acqua non si disegna.
+## La base del getto è il pavimento sotto la punta; sotto, l'acqua non si disegna.
 func _crea_getti_v1(punti: PackedVector3Array) -> void:
 	for g in _getti_v1:
 		(g[0] as Node).queue_free()
@@ -154,7 +154,8 @@ func _crea_getti_v1(punti: PackedVector3Array) -> void:
 		var m := _materiale()
 		m.set_shader_parameter(&"r_fossa", 0.0)
 		m.set_shader_parameter(&"z_pavimento", -0.16)
-		var base := c - Vector3(0.0, 0.05, 0.0)
+		# dal pavimento intorno alla fossa: il tentacolo pende oltre il bordo fino a terra
+		var base := Vector3(c.x, global_position.y + Z_PAVIMENTO, c.z)
 		m.set_shader_parameter(&"centro", base)
 		var mi := _istanza("Getto", m)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
