@@ -37,7 +37,7 @@ func _run() -> void:
 	var imbarco := ris.get_node(^"Fiume/Marker/Imbarco") as Node3D
 	p.teleport(ingresso.global_position, 0.0, 0.0)
 	await _secondi(0.3)
-	check(await _cammina([imbarco.global_position], 30.0), "dall'ingresso si arriva all'imbarco (%s)" % str(p.global_position))
+	check(await _cammina([(ris.get_node(^"Fiume/Marker/FineFila") as Node3D).global_position, imbarco.global_position], 30.0), "dall'ingresso si arriva all'imbarco (%s)" % str(p.global_position))
 	fiume.sali(p)
 	check(fiume.a_bordo(), "si sale sulla ciambella")
 

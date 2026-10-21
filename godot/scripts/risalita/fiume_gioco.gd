@@ -52,6 +52,8 @@ const ORMEGGIO := Vector3(-2.9, 0, -2.9)
 const MURO_APPRODO := -30.5
 const MURO_PIAZZA := 3.6
 const Z_PIAZZA_NORD := -22.2
+## Dove finisce la fila delle transenne, davanti alla cabina dell'imbarco.
+const FINE_FILA := Vector3(-VASCA - 3.2, 0, -VASCA - 3.4)
 ## Velocità dei rami sbagliati (m/s).
 const VELOCITA_RITORNO := 3.0
 
@@ -400,7 +402,46 @@ func _capannone() -> void:
 	_muro_box(Vector3(sp, h - 2.3, vano * 2.0), Vector3(X0 - sp * 0.5, 2.3 + (h - 2.3) * 0.5, zp), muro)
 	# il muro che chiude la piazza a est, lungo il muro nord, fino al canale del raggio d'imbarco
 	_muro_box(Vector3(0.3, TETTO, Z_PIAZZA_NORD - Z0), Vector3(MURO_PIAZZA, TETTO * 0.5, (Z0 + Z_PIAZZA_NORD) * 0.5), muro)
+	# le due porte: il telaio d'acciaio e l'anta spalancata verso dentro
+	_porta_aperta(Vector3(INGRESSO_X, 0, Z0), 0.0)
+	_porta_aperta(Vector3(X0, 0, APPRODO.y), 90.0)
 	_tetto()
+
+
+## Il telaio di una porta di servizio nel vano del muro (largo 1,4 m, alto 2,3) e l'anta spalancata
+## contro il muro, dalla parte del capannone: la porta guarda verso +Z girata di [param rot] gradi.
+func _porta_aperta(pos: Vector3, rot: float) -> void:
+	var n := Node3D.new()
+	n.position = pos
+	n.rotation_degrees.y = rot
+	add_child(n)
+	var telaio := StandardMaterial3D.new()
+	telaio.albedo_color = Color(0.3, 0.33, 0.31)
+	telaio.metallic = 0.6
+	telaio.roughness = 0.5
+	var anta := StandardMaterial3D.new()
+	anta.albedo_color = Color(0.42, 0.45, 0.43)
+	anta.metallic = 0.5
+	anta.roughness = 0.6
+	for lato in [-1.0, 1.0]:
+		_scatola_in(n, Vector3(0.08, 2.3, 0.36), Vector3(lato * 0.66, 1.15, 0.0), telaio)
+	_scatola_in(n, Vector3(1.4, 0.1, 0.36), Vector3(0, 2.28, 0.0), telaio)
+	var cardine := Node3D.new()
+	cardine.position = Vector3(0.62, 0, 0.2)
+	cardine.rotation_degrees.y = 95.0
+	n.add_child(cardine)
+	_scatola_in(cardine, Vector3(1.22, 2.2, 0.05), Vector3(-0.61, 1.1, 0.03), anta)
+	_scatola_in(cardine, Vector3(0.16, 0.04, 0.06), Vector3(-1.08, 1.05, 0.09), telaio)
+
+
+func _scatola_in(padre: Node3D, size: Vector3, pos: Vector3, m: Material) -> void:
+	var mi := MeshInstance3D.new()
+	var b := BoxMesh.new()
+	b.size = size
+	mi.mesh = b
+	mi.material_override = m
+	mi.position = pos
+	padre.add_child(mi)
 
 
 func _muro_box(size: Vector3, pos: Vector3, m: Material) -> void:
@@ -717,7 +758,7 @@ func _marker() -> void:
 	var m := Node3D.new()
 	m.name = "Marker"
 	add_child(m)
-	for d in [["Ingresso", Vector3(INGRESSO_X, 0, Z0 + 1.2), 0.0], ["Imbarco", Vector3(-VASCA - 0.45, 0, -VASCA - 0.45), -135.0],
+	for d in [["Ingresso", Vector3(INGRESSO_X, 0, Z0 + 1.2), 0.0], ["FineFila", FINE_FILA, 0.0], ["Imbarco", Vector3(-VASCA - 0.45, 0, -VASCA - 0.45), -135.0],
 			["Approdo", Vector3(APPRODO.x - 3.2, 0, APPRODO.y), -90.0], ["PortaPersonale", Vector3(X0, 0, APPRODO.y), -90.0]]:
 		var k := Marker3D.new()
 		k.name = d[0]
@@ -941,9 +982,37 @@ func _imbarco() -> void:
 	var tet := _metti("tettoia_paglia", cab + Vector3(-0.4, 0, -0.4), 45.0)
 	tet.scale = Vector3.ONE * 0.8
 	_luce(cab + Vector3(0, 1.9, 0), Color(1.0, 0.6, 0.25), 2.5, 7.0, true)
-	for i in 3:
-		var tp := Vector3(-VASCA - 3.6 - i * 1.5, 0, -VASCA - 1.4 - i * 1.5)
-		_metti("transenna", tp, 45.0)
+	# la fila dell'imbarco: due file di transenne dall'ingresso alla cabina, che guidano alla vasca
+	var da := Vector3(INGRESSO_X, 0, Z0 + 1.0)
+	var a := FINE_FILA
+	var dir := (a - da).normalized()
+	var lato := dir.cross(Vector3.UP).normalized()
+	var rot := rad_to_deg(atan2(-dir.z, dir.x))   # il lato lungo della transenna lungo la fila
+	var lungo := da.distance_to(a)
+	var k := 0
+	while k * 2.1 + 1.0 < lungo:
+		var c := da + dir * (k * 2.1 + 1.0)
+		for sgn in [-1.0, 1.0]:
+			var tp: Vector3 = c + lato * sgn * 0.85
+			if randf() < 0.12:
+				# una transenna caduta
+				var t := _metti("transenna", tp + lato * sgn * 0.5, rot + randf_range(-20.0, 20.0))
+				t.rotation_degrees.x = 88.0
+				t.position.y = 0.27
+			else:
+				_metti("transenna", tp, rot)
+				var f := CollisionShape3D.new()
+				var bx := BoxShape3D.new()
+				bx.size = Vector3(2.0, 1.2, 0.2)
+				f.shape = bx
+				f.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(rot)), tp + Vector3(0, 0.6, 0))
+				_collisioni.add_child(f)
+		k += 1
+	# la luce lungo la fila: lampade calde sul muro nord e sul muro dell'approdo
+	for x in [INGRESSO_X + 6.0, -12.0, -2.0]:
+		_lampada_calda(Vector3(x, 3.0, Z0 + 0.02), 0.0, 3.0)
+	for z in [-18.0, -9.0]:
+		_lampada_calda(Vector3(MURO_APPRODO + 0.17, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
 	for i in 3:
 		_metti("ciambella", Vector3(-VASCA - 1.0, 0.05 + i * 0.27, -VASCA - 5.6), i * 37.0)

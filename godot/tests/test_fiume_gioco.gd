@@ -62,7 +62,8 @@ func _run() -> void:
 	var imbarco := level.get_node(^"Fiume/Marker/Imbarco") as Node3D
 	p.teleport(ingresso.global_position, 0.0, 0.0)
 	await _secondi(0.3)
-	var arrivato := await _cammina_verso(imbarco.global_position, 25.0)
+	var arrivato := await _cammina_verso((level.get_node(^"Fiume/Marker/FineFila") as Node3D).global_position, 25.0)
+	arrivato = arrivato and await _cammina_verso(imbarco.global_position, 10.0)
 	check(arrivato, "dall'ingresso si arriva a piedi all'imbarco (%s)" % str(p.global_position))
 	# verso l'acqua: la barriera ferma
 	await _cammina_verso(imbarco.global_position + (fiume.imbarco.punto(0.0) - imbarco.global_position) * 3.0, 3.0)
