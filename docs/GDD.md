@@ -210,6 +210,8 @@ Risposte alle domande (18 ottobre):
 
 **Acquari grandi il doppio** (prova del 19 ottobre e scelta del 21): gli acquari vanno ingranditi del doppio, tutta la struttura, e la valvola di reset va illuminata. Il miscuglio raddoppiato ha il bordo a circa 1,56 m, quindi davanti c'è una **pedana di servizio a gradini** (grigliato d'acciaio con parapetto), scelta dell'utente: "fai in modo che ci si possa arrampicare sulla bacinella su cui versare, è il modo più pratico per versare, farlo sotto i propri piedi". Le quantità restano uguali: 2 zaini di giallo e 1 di blu fanno il verde.
 
+**Davanti al portone, vuoti fin dall'inizio** (richiesta dell'utente, 21 ottobre): "le vasche dell'enigma di fronte al portone della torre degli scivoli: mettile proprio davanti al portone suddetto. Inoltre mettile fin dall'inizio del gioco, ma VUOTE. Si riempiranno quando ritorni nella sala." Quindi gli acquari (con la pedana) stanno proprio davanti al portone della torre, lasciando libero il passaggio, al posto della posizione 2 del 18 ottobre. Ci sono dal primo passaggio, vuoti e con le lampadine del portone spente; quando rientri nella sala dal magazzino sono pieni (le pompe sono ripartite nella tappa 6) e le lampadine sono accese.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
