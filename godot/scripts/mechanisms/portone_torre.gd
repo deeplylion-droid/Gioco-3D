@@ -23,9 +23,10 @@ enum Apertura { ALL_ARRIVO, DOPO_TAPPA8, SOLO_ENIGMA }
 @export var apertura := Apertura.DOPO_TAPPA8
 ## L'anta che scorre (sala_portone_torre del GLB della sala; la collisione è sua figlia).
 @export var anta: Node3D
-## Dove scorre (direzione globale) e di quanto (m).
+## Dove scorre (direzione globale) e di quanto (m). Di serie si apre del tutto (prova del 19 ottobre):
+## l'anta è larga 6,3 m e scorre fino alla fine del binario (CORSA_PORTONE di ambiente_sala.py).
 @export var direzione := Vector3(0.0, 0.0, 1.0)
-@export var corsa := 2.0
+@export var corsa := 6.4
 ## Tempi del movimento (s), sincronizzati col suono: parte, accelera, frena e sbatte a
 ## partenza + durata.
 @export var partenza := 0.7

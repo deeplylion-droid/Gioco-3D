@@ -97,6 +97,10 @@ PULSANTE_BOTOLA = dict(x=2.25, y=-5.0, z=-1.12)
 # sala della torre (versione 2, 16 ottobre): dietro la parete est, varco con il portone scorrevole.
 # Per ora solo il guscio della sala; torre e scivoli nuovi si propongono a parte.
 SALA_TORRE = dict(cy=15.0, largo=6.0, alto=5.0, x1=X1 + 20.0, y0=4.0, y1=26.0, h=14.0)
+# il portone della sala della torre si apre del tutto (prova del 19 ottobre): scorre verso sud di tutta la sua
+# larghezza (6,3 m) più 10 cm. Lungo la corsa il muro est resta libero: panca, plafoniera calda, luce d'emergenza
+# e il neon che c'erano sono stati spostati (vedi corsa_portone).
+CORSA_PORTONE = 6.4
 # telecamera di sorveglianza del monitor della sala pompe (sul muro sud, prima era sul soppalco)
 TELECAMERA_MONITOR = dict(x=-5.0, z=5.3, mira=(0.0, -11.0, 1.1))
 TORRE = dict(cx=13.5, cy=17.5, lato=6.0, piani=(3.0, 6.0, 8.6))
@@ -351,6 +355,13 @@ def varco_torre():
     return T['cy'] - T['largo'] / 2, T['cy'] + T['largo'] / 2, T['alto']
 
 
+def corsa_portone():
+    """Il tratto del muro est (y iniziale, y finale) che il portone aperto occupa, con il suo binario."""
+    T = SALA_TORRE
+    ya = T['cy'] - T['largo'] / 2 - 0.15
+    return ya - CORSA_PORTONE - 0.1, ya
+
+
 def pulsante_botola(mats):
     """Pulsante della botola, versione A (scelta dall'utente il 16 ottobre): cassetta gialla sulla parete
     sud della piscina (tra due bocchette), fungo rosso grosso (Ø 50 cm, sporge 48 cm dalla parete) e sopra
@@ -420,14 +431,15 @@ def portone_torre(mats):
     lampeggiante rosso sopra. Senza l'insegna sopra (nota dell'utente: "basta il cancello con il suo
     disegno"). Restituisce i tre nodi e i dati per il gioco:
       sala_portone_torre          l'anta con i carrelli e il maniglione; perno al centro della base. Si apre
-                                  scorrendo verso sud (-y qui, +Z in Godot) fino a 2,0 m, la fine del binario
+                                  scorrendo verso sud (-y qui, +Z in Godot) di CORSA_PORTONE (6,4 m: del tutto),
+                                  fino alla fine del binario
       sala_portone_torre_telaio   fisso: binario con le staffe, bande a strisce sugli stipiti, base del lampeggiante
       sala_lampeggiante_torre     il vetro rosso del lampeggiante, perno alla sua base"""
     T = SALA_TORRE
     cy, w, h = T['cy'], T['largo'], T['alto']
     x = X1 - 0.12                                   # retro dell'anta (verso il muro)
     ya, yb = cy - w / 2 - 0.15, cy + w / 2 + 0.15
-    corsa = 2.0
+    corsa = CORSA_PORTONE
     c = K.Costruttore(mats)
     c.scatola((x - 0.08, ya, 0.06), (x, yb, h + 0.1), 'acciaio_portone')
     # faccia dipinta verso la sala (-x); u da y alto a y basso (chi guarda verso +x ha +y a sinistra)
@@ -443,7 +455,7 @@ def portone_torre(mats):
     anta = con_perno(c.crea('sala_portone_torre'), perno)
     K.collisione_scatola('portone_torre', (-0.04, ya - cy, 0.0), (0.04, yb - cy, h + 0.1), padre=anta)
     p = K.Costruttore(mats)
-    y0r, y1r = ya - corsa, yb + 0.6
+    y0r, y1r = ya - corsa - 0.1, yb + 0.6
     p.scatola((x - 0.2, y0r, h + 0.25), (x - 0.02, y1r, h + 0.4), 'acciaio_portone')   # binario
     n = int(math.ceil((y1r - y0r) / 1.6))
     for k in range(n + 1):   # staffe del binario fino al muro
@@ -472,7 +484,7 @@ def portone_torre(mats):
         varco_godot=dict(x=X1, z=[-vb, -va], altezza=vh),
         anta=dict(nodo='sala_portone_torre', perno_godot=a_godot(perno), larghezza=round(yb - ya, 3), altezza=round(h + 0.04, 3),
                   apertura=dict(tipo='scorre', verso_godot=[0, 0, 1], corsa_massima=corsa,
-                                nota="scorre verso sud lungo il muro (+Z in Godot), al massimo di 2,0 m: dove finisce il binario"),
+                                nota="scorre verso sud lungo il muro (+Z in Godot) di 6,4 m, fino alla fine del binario: si apre del tutto"),
                   collisione='portone_torre (figlia: scorre con l\'anta)'),
         telaio=dict(nodo='sala_portone_torre_telaio', nota='binario con le staffe, bande a strisce, base del lampeggiante (fisso)'),
         lampeggiante=dict(nodo='sala_lampeggiante_torre', vetro_centro_godot=a_godot((X1 - 0.2, cy, zl + 0.2)),
@@ -2600,6 +2612,13 @@ def lampade(mats):
     va, vb, vh = varco_torre()
     def nel_varco(p):   # parete est, nel varco o accanto al portone
         return abs(p[0] - X1) < 0.5 and va - 1.4 < p[1] < vb + 1.4 and p[2] < vh + 3.0
+    c0, c1 = corsa_portone()
+    def sopra_binario(p):
+        """Il neon che cade nella corsa del portone aperto sale sopra il binario, a metà tra i due oblò
+        alti (y 7: gli oblò alti sono in y 5 e 9): stesso numero e stessa luce."""
+        if abs(p[0] - (X1 - D_)) < 0.01 and c0 - 0.7 < p[1] < c1 and p[2] < vh + 0.6:
+            return (p[0], 7.0, vh + 1.0)
+        return p
     stati = []
     # lato est e ovest: plafoniere orientate lungo y; nord e sud lungo x (verso: dalla lampada al muro)
     for y in range(int(Y0) + 4, 21, 4):
@@ -2611,6 +2630,7 @@ def lampade(mats):
         stati.append(((x + 0.0, Y0 + D_, zl), 0, (0, -1)))
         stati.append(((x + 0.0, Y1 - D_, zl), 0, (0, 1)))
     for i, (pos, rot, verso) in enumerate(stati):
+        pos = sopra_binario(pos)
         r = rnd.random()
         acc = (True, True) if r < 0.5 else ((True, False) if r < 0.75 else (False, False))
         via = nel_varco(pos)
@@ -2622,12 +2642,12 @@ def lampade(mats):
         c = K.Costruttore(mats)
         lungo = Vector((0, 1, 0)) if rot == 90 else Vector((1, 0, 0))
         n = Vector((verso[0], verso[1], 0))
-        muro = Vector((pos[0] + verso[0] * D_, pos[1] + verso[1] * D_, zl))
+        muro = Vector((pos[0] + verso[0] * D_, pos[1] + verso[1] * D_, pos[2]))
         for s_ in (-0.42, 0.42):
             a = muro + lungo * s_
             b = Vector(pos) + lungo * s_
-            lo = Vector((min(a.x, b.x), min(a.y, b.y), zl - 0.005))
-            hi = Vector((max(a.x, b.x), max(a.y, b.y), zl + 0.035))
+            lo = Vector((min(a.x, b.x), min(a.y, b.y), pos[2] - 0.005))
+            hi = Vector((max(a.x, b.x), max(a.y, b.y), pos[2] + 0.035))
             if rot == 90:
                 lo.y -= 0.02; hi.y += 0.02
             else:
@@ -2636,7 +2656,8 @@ def lampade(mats):
             c.scatola_assi(tuple(muro + lungo * s_ - n * 0.005), (tuple(lungo), (0, 0, 1), tuple(n)), (0.05, 0.07, 0.008), 'metallo')   # piastra
         obs.append(c.crea(f'staffe_{i}'))
     # luci d'emergenza rosse sulle pareti (in basso e in alto)
-    emerg = [((X1, -6.0, 2.9), -90), ((X1, 6.0, 2.9), -90), ((X1, 18.0, 2.9), -90),
+    # (quella in y 6 era nella corsa del portone aperto: ora è in y 5)
+    emerg = [((X1, -6.0, 2.9), -90), ((X1, 5.0, 2.9), -90), ((X1, 18.0, 2.9), -90),
              ((X0, -4.0, 2.9), 90), ((X0, 8.0, 2.9), 90), ((X0, 20.0, 2.9), 90),
              ((-6.0, Y1, 2.9), 0), ((8.0, Y1, 2.9), 0), ((-5.0, Y0, 2.9), 180), ((5.0, Y0, 2.9), 180),
              ((X1, 0.0, 8.6), -90), ((X0, 12.0, 8.6), 90), ((-12.0, Y1, 8.6), 0), ((12.0, Y0, 8.6), 180),
@@ -2976,8 +2997,9 @@ def arredi(metti_ogg):
     metti_ogg('panca', (6.0, yp, 0.0), 0)
     metti_ogg('panca', (X0 + 0.42, -12.0, 0.0), 90)
     metti_ogg('panca', (X1 - 0.42, -14.0, 0.0), 90)
-    # (era in y 10: dal 16 ottobre lì scorre il portone della sala della torre, aprendosi verso sud)
-    metti_ogg('panca', (X1 - 0.42, 6.6, 0.0), 90)
+    # (era in y 10, poi in y 6,6: lì scorre il portone della sala della torre, che si apre del tutto verso sud;
+    # ora sta sotto la plafoniera calda del muro est)
+    metti_ogg('panca', (X1 - 0.42, 2.0, 0.0), 90)
     metti_ogg('cestino_pesce', (-4.5, Y0 + 0.5, 0.0), 180 + 8)
     metti_ogg('cestino_pesce', (7.6, Y0 + 0.5, 0.0), 180 - 12)
     metti_ogg('cestino_pesce', (13.2, 10.6, 0.0), -90 + 15)
@@ -3511,10 +3533,30 @@ def esporta_luci(cartella, sorgenti, lampadina):
     print('luci e dati ->', cartella)
 
 
+def controlla_corsa_portone():
+    """Nomi degli oggetti con vertici nel volume che il portone della sala della torre attraversa aprendosi
+    (davanti al muro est, da corsa_portone()[0] al varco, fino a sopra il binario). Deve essere vuoto."""
+    c0, c1 = corsa_portone()
+    vh = varco_torre()[2]
+    lo, hi = Vector((X1 - 0.45, c0, 0.02)), Vector((X1 - 0.1, c1, vh + 0.5))
+    propri = ('sala_portone_torre', 'sala_lampeggiante_torre', 'sala_pavimento', 'sala_pozzanghere')
+    trovati = []
+    for o in bpy.context.scene.objects:
+        if o.type != 'MESH' or o.name.startswith(propri) or 'colonly' in o.name:
+            continue
+        mw = o.matrix_world
+        if any(lo.x < p.x < hi.x and lo.y < p.y < hi.y and lo.z < p.z < hi.z for p in (mw @ v.co for v in o.data.vertices)):
+            trovati.append(o.name)
+    return trovati
+
+
 def esporta_glb(cartella):
     """Un GLB per pezzo della sala, tutti con lo stesso riferimento (origine della sala): in Godot si
     istanziano tutti in (0, 0, 0). Collisioni come nodi '-colonly'/'-convcolonly' (Godot le converte)."""
     os.makedirs(cartella, exist_ok=True)
+    nella_corsa = controlla_corsa_portone()
+    if nella_corsa:
+        print(f'ATTENZIONE: nella corsa del portone della sala della torre ci sono {nella_corsa}')
     for nome, obs in GRUPPI.items():
         obs = [o for o in obs if o.name in bpy.data.objects]
         if not obs:

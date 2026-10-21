@@ -53,6 +53,31 @@ func _run() -> void:
 	check(solidi > n_pezzi + 20, "la struttura, i tubi e i prop sono solidi (%d corpi statici)" % solidi)
 	var spazio := torre.get_world_3d().direct_space_state
 
+	# la parete ovest non sta nel piano del retro della parete est della sala grande (x 20,2), né dietro le
+	# cornici degli oblò che ne sporgono (fino a 20,225): due facce nello stesso piano lampeggiano (prova
+	# del 19 ottobre). Si guardano i triangoli grandi (le celle della parete, non i pezzi piccoli appoggiati al
+	# muro), verticali e rivolti verso ovest/est, delle collisioni della struttura.
+	var x_ovest := INF
+	var nel_piano := 0
+	for cs in torre.get_node("TorreStruttura").find_children("*", "CollisionShape3D", true, false):
+		var forma := (cs as CollisionShape3D).shape as ConcavePolygonShape3D
+		if forma == null:
+			continue
+		var xf := (cs as CollisionShape3D).global_transform
+		var f := forma.get_faces()
+		for i in range(0, f.size(), 3):
+			var a := xf * f[i]
+			var b_ := xf * f[i + 1]
+			var c := xf * f[i + 2]
+			var nrm := (b_ - a).cross(c - a)
+			if nrm.length() < 3.0 or absf(nrm.normalized().x) < 0.999 or maxf(a.x, maxf(b_.x, c.x)) > 20.6:
+				continue
+			x_ovest = minf(x_ovest, a.x)
+			if absf(a.x - 20.2) < 0.03:
+				nel_piano += 1
+	check(nel_piano == 0 and x_ovest > 20.23 and x_ovest < 20.3,
+		"la parete ovest sta in x %.3f, davanti al retro della sala grande (%d facce nel suo piano)" % [x_ovest, nel_piano])
+
 	# i checkpoint stanno sopra qualcosa di solido
 	var appoggiati := 0
 	for cp in torre.checkpoint:
