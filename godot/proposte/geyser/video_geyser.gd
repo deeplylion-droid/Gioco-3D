@@ -68,7 +68,7 @@ func _avvia() -> void:
 	var level := (load(LEVEL) as PackedScene).instantiate()
 	# Come tests/scatti_tappa8.gd con SCATTI_TOGLI=Interni,Tecnici: con tutto la memoria non basta (qui anche
 	# le polaroid e la medusa della vasca centrale, fuori inquadratura: col geyser in più si arrivava a 13,4 GB).
-	for percorso in ["Interni", "Tecnici", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa"]:
+	for percorso in ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa"]:
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
 			n.get_parent().remove_child(n)
