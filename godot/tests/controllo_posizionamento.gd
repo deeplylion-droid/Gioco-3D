@@ -62,6 +62,9 @@ const OGGETTO_MAX := 4.0
 ## sopra OGGETTO_MAX_SEVERO), il controllo "staccato" a pochi millimetri, le compenetrazioni anche fra oggetti della
 ## stessa scena .tscn e con gli spigoli, le parti nascoste rese visibili, la CI rossa con un solo caso da correggere.
 const SEVERO := true
+## La CI rossa anche con un solo caso "da correggere" (non solo con i casi nuovi): si accende per ultimo, quando le
+## squadre hanno i loro elenchi (accordo col coordinatore del 22 ottobre).
+const BLOCCA_DA_CORREGGERE := false
 const OGGETTO_MAX_SEVERO := 30.0
 ## Architettura (pavimenti, muri, soffitti, strutture dei modelli d'ambiente): non è un oggetto da appoggiare.
 const ARCHITETTURA := ["architettura", "struttura", "pavimento", "pavimenti", "muro", "muri", "parete", "pareti",
@@ -901,8 +904,9 @@ func _confronta() -> void:
 	_scrivi_rapporto(nuovi, noti, spariti)
 	check(nuovi.is_empty(), "nessun caso nuovo di posizionamento (%d nuovi, %d già noti, %d eccezioni non più trovate)" % [
 			nuovi.size(), noti.size(), spariti.size()])
-	if SEVERO:
-		var da_fare := noti.filter(func(t): return t.get("stato", "") != "voluto")
+	var da_fare := noti.filter(func(t): return t.get("stato", "") != "voluto")
+	print("  casi da correggere (non \"voluto\"): %d" % da_fare.size())
+	if BLOCCA_DA_CORREGGERE:
 		check(da_fare.is_empty(), "nessun caso da correggere (%d da correggere; passano solo i casi \"voluto\", decisi dall'utente)" % da_fare.size())
 	for t in nuovi.slice(0, 40):
 		print("    NUOVO %s · %s · %s · %s · %s" % [t["zona"], t["problema"], t["nodo"], str(t["pos"]), t["dettaglio"]])
