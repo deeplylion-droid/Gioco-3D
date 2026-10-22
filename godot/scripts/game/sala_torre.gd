@@ -978,7 +978,9 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 		_asta(radice, p + Vector3(0, 0.18, 0), giu, 0.03, metallo)
 	elif appoggio.begins_with("muro_"):
 		var verso: Vector3 = {"muro_n": Vector3.FORWARD, "muro_s": Vector3.BACK, "muro_e": Vector3.RIGHT, "muro_o": Vector3.LEFT}[appoggio]
-		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, 0.18, 0) + verso * 0.4, 0.025, metallo)
+		# il braccio fino al muro vero (a 0,4 m fissi restava 5 cm prima: collaudo del 22 sera)
+		var da := p + Vector3(0, 0.18, 0)
+		_asta(radice, da, _fino_al_sostegno(da, da + verso * 0.4), 0.025, metallo)
 	var l := OmniLight3D.new()
 	l.light_color = CALDO
 	l.light_energy = 4.0
@@ -1030,8 +1032,10 @@ func _faro(radice: Node3D, p: Vector3, mira: Vector3, attacco = null) -> void:
 		_asta(corpo, Vector3(sg * 0.25, 0, 0), Vector3(sg * 0.16, 0, 0), 0.025, metallo, false)
 	_asta(corpo, Vector3(-0.24, -0.26, 0), Vector3(0.24, -0.26, 0), 0.02, metallo, false)
 	if attacco != null:
-		var a: Vector3 = attacco
-		_asta(radice, corpo.to_global(Vector3(0, -0.26, 0)), a, 0.04, metallo)
+		# il braccio fino alla superficie della colonna (fino all'asse restava dentro la colonna, senza toccarne la
+		# superficie: collaudo del 22 sera)
+		var da := corpo.to_global(Vector3(0, -0.26, 0))
+		_asta(radice, da, _fino_al_sostegno(da, attacco), 0.04, metallo)
 	var l := SpotLight3D.new()
 	l.light_color = Color(1.0, 0.88, 0.72)
 	l.light_energy = 16.0
@@ -1113,6 +1117,18 @@ static func _griglia() -> ImageTexture:
 
 
 ## Un'asta tonda da a a b (in coordinate del padre se globale = false).
+## Il punto dove un braccio che va da [param da] verso [param verso_punto] incontra il sostegno vero (muro, colonna:
+## la loro collisione), 5 mm dentro; se non c'è niente, [param verso_punto].
+func _fino_al_sostegno(da: Vector3, verso_punto: Vector3) -> Vector3:
+	var dir := (verso_punto - da).normalized()
+	var sp := get_world_3d().direct_space_state if is_inside_tree() else null
+	if sp == null:
+		return verso_punto
+	var q := PhysicsRayQueryParameters3D.create(da + dir * 0.05, verso_punto + dir * 0.3, Layers.WORLD)
+	var h := sp.intersect_ray(q)
+	return (h.position as Vector3) + dir * 0.005 if not h.is_empty() else verso_punto
+
+
 func _asta(padre: Node3D, a: Vector3, b_: Vector3, r: float, m: Material, globale := true) -> void:
 	var mi := MeshInstance3D.new()
 	var cm := CylinderMesh.new()

@@ -2949,7 +2949,9 @@ def disponi_oggetti(zf_piscina):
     else:
         V = VASCA_CENTRALE
         yf = V['cy'] - V['ly'] / 2 + (V['coping'] / 2 - 0.12)
-        metti_ogg('salvagente_nave', (V['cx'] - 1.75, yf - 0.1, 0.0), 0, 1.0, (75, 0))          # appoggiato al muro davanti
+        # appoggiato al muro davanti, dove non scendono i tentacoli di Jilly (da x -2,2 a -1,4 e intorno a -0,4 e 0,3
+        # arrivano a terra o lungo il muro: a -1,75 ci entrava, controllo del 22 ottobre sera)
+        metti_ogg('salvagente_nave', (V['cx'] + 1.0, yf - 0.1, 0.0), 0, 1.0, (75, 0))
         metti_ogg('orsacchiotto_grande', (V['cx'] + 1.9, yf - 0.35, 0.0), 160, 0.38)          # seduto a terra, guarda l'ingresso
         metti_ogg('paperella_gigante', (V['cx'] - 2.62, V['cy'] + V['ly'] / 2 - 0.16, V['h']), 210, 0.2)
         metti_ogg('paperella_gigante', (V['cx'] + 2.85, V['cy'] + 0.4, V['h']), 120, 0.18)   # sul bordo (a 2,6 era sospesa sull'acqua)

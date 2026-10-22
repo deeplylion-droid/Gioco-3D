@@ -29,7 +29,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 ## Trama (decisa)
 
 - Il giocatore **si sveglia a bordo**, senza spiegazioni e senza prologhi lunghi. Il mistero resta.
-- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises* e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+- I nomi sono la nave *Jubilee*, la compagnia *Wonderwave Cruises* e l'acquapark *Splash Lagoon*: **confermati dall'utente il 22 ottobre** per lo spot della crociera, dove li dice lo speaker. Nei cartelli del parco resta la regola: solo disegni, e per scritto solo il nome di Jilly Jubilee.
 
 ### Lore nascosta (decisa dall'utente)
 
@@ -264,7 +264,8 @@ Parole dell'utente: "su poppy playtime all'inizio parte un video stile VHS enigm
 - **il finale**: lo spot va liscio e allegro, poi si guasta e arriva l'occhio di Jilly "con un effetto come ipnotico aggressivo crescente. Molto horror";
 - **la voce**: a, uno speaker in inglese come una vera pubblicità americana anni '90; se non convince, c, solo la sigla e il logo.
 Da fare dopo la v0.3.9. Prima si propongono all'utente per iscritto il testo dello spot e l'elenco delle inquadrature.
-- **Bozza** (ambienti-2, 22 ottobre sera): `docs/proposte/spot/bozza.md`, circa 43 s in 9 inquadrature, 7 frasi dello speaker, stima 4-5 giornate di lavoro. Mandata all'utente con la pagina https://claude.ai/artifact/QdGpcHr3MvEKEHtMnFshfw (testo, nomi provvisori detti dallo speaker, inquadrature, piscina e torre, logo all'inizio, finale dell'occhio): in attesa di risposta.
+- **Bozza** (ambienti-2, 22 ottobre sera): `docs/proposte/spot/bozza.md`, circa 43 s in 9 inquadrature, 7 frasi dello speaker, stima 4-5 giornate di lavoro. Mandata all'utente con la pagina https://claude.ai/artifact/QdGpcHr3MvEKEHtMnFshfw (testo, nomi provvisori detti dallo speaker, inquadrature, piscina e torre, logo all'inizio, finale dell'occhio).
+- **Risposte dell'utente (22 ottobre, sera)**: approvati il testo dello speaker (le 7 frasi), le 9 inquadrature e il finale dell'occhio; **confermati i nomi** detti dallo speaker (la nave *Jubilee*, la compagnia *Wonderwave Cruises*, l'acquapark *Splash Lagoon*); piscina a onde **e** torre, tutte e due; all'inizio **b**: subito il logo di Jilly da nuovo, senza ruggine (resta la scritta «PLAY» del videoregistratore). La produzione comincia la notte del 22 su rami a parte e si unisce dopo la v0.3.9. Per la sala dello spot (risposta dell'utente "A a"): **nessun giocattolo**, la sala tutta in ordine come prima dell'apertura (a, invece della b consigliata); **fari della vasca di Jilly rosa e viola** come i suoi tentacoli (a).
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
