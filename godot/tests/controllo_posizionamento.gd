@@ -88,6 +88,8 @@ const CONTATTO := 0.05
 const PASSO_GRIGLIA := 0.25
 const TESTA_DA := 0.35
 const TESTA_A := 2.0
+## Dove si sta accovacciati per forza, lo spazio libero arriva fin qui (crouch_height del giocatore, player.gd).
+const ACCOVACCIATO := 1.05
 const GRADINO := 0.4
 const OCCHI := 1.6
 
@@ -626,17 +628,33 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 					continue
 				raggiunte[k2] = true
 				coda.append(k2)
+	# le zone dove si sta accovacciati per forza (i tubi dell'inseguimento: SalaInseguimento.in_tubo, la stessa
+	# funzione che usa il gioco): lì lo spazio da tenere libero arriva solo all'altezza da accovacciati
+	var accovacciati: Array[Node] = []
+	for n in _radice.find_children("*", "", true, false):
+		if n.has_method(&"in_tubo"):
+			accovacciati.append(n)
+	var n_accov := 0
 	print("  %d celle raggiungibili a piedi" % raggiunte.size())
 	# nello spazio sopra ogni cella, a meno di 10 cm dall'asse del giocatore: tutto quello che si vede (anche con la collisione)
 	var forma := BoxShape3D.new()
 	forma.size = Vector3(0.2, TESTA_A - TESTA_DA, 0.2)
+	var forma_accov := BoxShape3D.new()
+	forma_accov.size = Vector3(0.2, ACCOVACCIATO - TESTA_DA, 0.2)
 	var q := PhysicsShapeQueryParameters3D.new()
-	q.shape = forma
 	q.collide_with_areas = false
 	var visti := {}
 	for k in raggiunte:
 		var y: float = colonne[Vector2i(k.x, k.z)][k.y]
-		var centro := Vector3(limiti.position.x + k.x * PASSO_GRIGLIA, y + (TESTA_DA + TESTA_A) * 0.5, limiti.position.z + k.z * PASSO_GRIGLIA)
+		var piedi := Vector3(limiti.position.x + k.x * PASSO_GRIGLIA, y, limiti.position.z + k.z * PASSO_GRIGLIA)
+		var testa := TESTA_A
+		for n in accovacciati:
+			if n.call(&"in_tubo", piedi):
+				testa = ACCOVACCIATO
+				n_accov += 1
+				break
+		q.shape = forma if testa == TESTA_A else forma_accov
+		var centro := piedi + Vector3(0, (TESTA_DA + testa) * 0.5, 0)
 		q.transform = Transform3D(Basis(), centro)
 		q.collision_mask = STRATO
 		var r := _spazio.intersect_shape(q, 16)
@@ -649,14 +667,15 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 			if mi == null or _acqua.has(mi):
 				continue
 			if not visti.has(mi):
-				visti[mi] = [centro - Vector3(0, (TESTA_DA + TESTA_A) * 0.5, 0), 0, 9.0, 0.0, false]
+				visti[mi] = [piedi, 0, 9.0, 0.0, false]
 			visti[mi][1] += 1
 			visti[mi][4] = visti[mi][4] or solido
 			# fin dove arriva sopra il pavimento (le gambe o la testa)
 			var bb := _box(mi)
-			var pav: float = centro.y - (TESTA_DA + TESTA_A) * 0.5
-			visti[mi][2] = minf(visti[mi][2], maxf(bb.position.y - pav, TESTA_DA))
-			visti[mi][3] = maxf(visti[mi][3], minf(bb.end.y - pav, TESTA_A))
+			visti[mi][2] = minf(visti[mi][2], maxf(bb.position.y - y, TESTA_DA))
+			visti[mi][3] = maxf(visti[mi][3], minf(bb.end.y - y, testa))
+	if not accovacciati.is_empty():
+		print("  %d celle dove si sta accovacciati per forza (spazio libero fino a %.2f m)" % [n_accov, ACCOVACCIATO])
 	for mi in visti:
 		var p: Vector3 = visti[mi][0]
 		var alto: float = visti[mi][3]

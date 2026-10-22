@@ -1372,7 +1372,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (393 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (15 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
 		"pos": [
@@ -1386,7 +1386,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2537 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
 		"pos": [
@@ -1400,7 +1400,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3746 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (47 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_2",
 		"pos": [
@@ -1414,7 +1414,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2647 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (89 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_1",
 		"pos": [
@@ -1428,69 +1428,13 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1679 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (45 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_0",
 		"pos": [
 			50.5,
 			-22.58,
 			-14.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (151 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
-		"nodo": "TorreScivoli/torre_tubo_inseguimento",
-		"pos": [
-			41.0,
-			-19.46,
-			-17.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (22 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
-		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_collare",
-		"pos": [
-			40.5,
-			-19.32,
-			-17.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "il bordo del foro nel muro est dove passa il tubo dell'inseguimento: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
-		"nodo": "TorreStruttura/torre_A",
-		"pos": [
-			40.0,
-			-19.19,
-			-17.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (33 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
-		"nodo": "TorreScivoli/torre_collare_inseguimento",
-		"pos": [
-			40.0,
-			-19.19,
-			-17.75
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -1505,6 +1449,20 @@
 			38.0,
 			-19.98,
 			-16.25
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.40 e 2.00 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa)",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"pos": [
+			38.0,
+			-19.98,
+			-16.5
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -1638,21 +1596,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (20 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (20 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2",
-		"pos": [
-			67.0,
-			-25.58,
-			-25.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.89 m sopra il pavimento (144 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (192 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
 		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.89 m sopra il pavimento (144 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
 		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20172",
 		"pos": [
@@ -1666,35 +1610,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (32 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (32 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_3",
-		"pos": [
-			64.5,
-			-25.58,
-			-25.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.87 m sopra il pavimento (150 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.87 m sopra il pavimento (150 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_scolo_1",
-		"pos": [
-			64.25,
-			-25.6,
-			-25.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (67 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (75 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
 		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (67 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
 		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20180",
 		"pos": [
@@ -1708,97 +1624,13 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (8 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (8 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimen (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4",
-		"pos": [
-			66.75,
-			-28.58,
-			-4.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (24 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (24 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_5",
-		"pos": [
-			72.25,
-			-28.58,
-			-6.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.77 m sopra il pavimento (20 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.77 m sopra il pavimento (20 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_scolo_2",
-		"pos": [
-			72.5,
-			-28.6,
-			-6.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.92 m sopra il pavimento (149 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (200 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
 		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.92 m sopra il pavimento (149 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
 		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20164",
 		"pos": [
 			54.5,
 			-22.58,
 			-16.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (28 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (28 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
-		"pos": [
-			54.75,
-			-22.58,
-			-16.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (24 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.73 e 2.00 m sopra il pavimento (24 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_1",
-		"pos": [
-			54.75,
-			-22.58,
-			-13.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (667 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (667 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_scolo_0",
-		"pos": [
-			54.75,
-			-22.58,
-			-13.75
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
