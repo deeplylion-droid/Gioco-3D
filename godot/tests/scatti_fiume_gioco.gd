@@ -3,7 +3,7 @@ extends Node
 ## d'ambiente come quella della proposta (nel gioco la dà la sala). Più scatti per processo.
 ## Uso: xvfb-run ... godot --path godot --rendering-driver vulkan --resolution 1600x900 --script res://tests/run.gd \
 ##        -- res://tests/scatti_fiume_gioco.gd <cartella> [camere separate da virgole]
-## Con SCATTI_GIRATE=1 le tre paratie sono girate (i file finiscono in "_girate").
+## I file: fiume_arrivo_<camera>.jpg; con SCATTI_GIRATE=1 le tre paratie sono girate (fiume_girate_<camera>.jpg).
 
 const F := preload("res://scripts/risalita/fiume_gioco.gd")
 
@@ -76,6 +76,6 @@ func _run() -> void:
 		for i in 30:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_jpg(out.path_join("fiume_gioco_%s%s.jpg" % [nome, "_girate" if girate else ""]), 0.9)
+		get_viewport().get_texture().get_image().save_jpg(out.path_join("fiume_%s_%s.jpg" % ["girate" if girate else "arrivo", nome]), 0.9)
 		print("salvato fiume_gioco_", nome)
 	get_tree().quit()
