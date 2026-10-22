@@ -164,7 +164,7 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
   - **Riserva approvata dall'utente** (21 ottobre): "se non riusciamo a essere soddisfatti col geyser possiamo eliminarlo e fare un'animazione di tuffo verso il basso di Jilly". Se la V1 nel gioco non convince, al posto del geyser lei si tuffa verso il basso nella fossa.
   - **Si passa al tuffo** (decisione del coordinatore, 22 ottobre notte, come autorizzato dall'utente). Nel gioco la V1 ha dei buchi da cui si vedono l'occhio e il viso di lei proprio mentre sparisce, ed è rosa a grumi, più gelatina che acqua. Chiuderli vorrebbe dire rifare la simulazione, giorni di lavoro con un risultato incerto. La V1 resta da parte nel branch lavoro/ambienti-1. Fino al tuffo resta il geyser di prima (GeyserFossa).
-  - **Il tuffo**, da scegliere (proposta di ambienti-1, 22 ottobre): A di testa, B "da medusa" (la campana la spinge giù), C all'indietro, guardandoti fino all'ultimo. Le parti comuni sono già fatte: schizzo all'entrata, onde, tonfo, e lei che sparisce solo quando è tutta sotto. Lo schizzo su misura si fa insieme all'animazione.
+  - **Il tuffo: scelta A, di testa** (scelta dell'utente, 22 ottobre). Si spinge sulle mani sul bordo, ti guarda un'ultima volta, si inarca e si tuffa di testa nella fossa; i tentacoli entrano per ultimi, come una frusta. Le parti comuni sono già fatte: schizzo all'entrata, onde, tonfo, e lei che sparisce solo quando è tutta sotto. Lo schizzo su misura (corona alta, gocce grosse, schiuma bianca) si fa insieme all'animazione. Scartate: B "da medusa" e C all'indietro.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
@@ -189,7 +189,7 @@ L'utente: "nella torre degli scivoli non si capisce dove bisogna andare, le vie 
 - **nelle vie sbagliate non si muore**: cadi in una vasca di raccolta e risali da una scaletta fino all'ultimo checkpoint.
 - **meno sostegni** (richiesta dell'utente, 21 ottobre): "togli un po' di barre di sostegno, vanno anche in mezzo ai percorsi dove devi scendere, sono brutti da vedere e fanno solo caos". Via quelli che attraversano i percorsi o la vista della strada; gli altri sfoltiti e ordinati, quanto basta perché nessun pezzo sembri sospeso.
 
-**Come è fatta nella v0.3.8** (ambienti-2):
+**Come è fatta nella v0.3.8** (ambienti-2; approvata dall'utente il 22 ottobre, compresa la fascia liscia sul portale giusto):
 - l'imbocco giusto di ogni discesa ha un portale con una fila di led verdi e una lampada verde. La fascia del portale è liscia: le strisce gialle e nere vogliono dire "chiuso";
 - gli imbocchi sbagliati vicino alle pedane sono chiusi da un cancelletto a strisce, con una lampada rossa guasta che sfarfalla oppure spenta;
 - sotto i salti ci sono vasche di raccolta, e una scaletta di servizio riporta alla pedana di partenza. Si muore solo per una caduta libera di più di 8 m;
@@ -226,6 +226,8 @@ Risposte alle domande (18 ottobre):
 - P2: giallo e blu ai due lati del portone come colonne d'ingresso, il miscuglio con la pedana staccato, a circa 6 m;
 - P3: fila a 9 m davanti al portone con un varco largo quanto il portone in mezzo, e i tubi che passano sopra il varco a 3,2 m.
 
+**Scelta dell'utente (22 ottobre): P1**, quella costruita. È nella v0.3.8.
+
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
 Parole dell'utente: "su meshy abbiamo ancora troppi crediti. Vogliamo preparare qualche altra mascotte, tipo statue di animali marini personificati, da mettere in giro? Magari anche un mostro tipo questo" (con un acquerello di uno squalo-mostro in piedi su due zampe; è il disegno di un artista, quindi ci si ispira ma non lo si copia). Le sue risposte:
@@ -252,6 +254,7 @@ Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel
 - **La porta** (risposta dell'utente, 21 ottobre: sì): è la porta tagliafuoco del ponte inferiore che già si chiudeva da sola. Ora si chiude dietro lo squalo che scappa e resta chiusa: da lì non si passa.
 - **Niente video prima** (risposta dell'utente, 21 ottobre): la scena va direttamente nel gioco e l'utente la giudica giocando. "Mi raccomando di farla bene. Lo squalo si vede in primissimo piano con la bocca spalancata."
 - **Dove ti svegli** (risposta dell'utente, 21 ottobre: a): il risveglio si sposta di circa 6 m verso ovest (x 14-15), davanti alla porta chiusa della sala pompe, guardando a est. Lo squalo corre per circa 7 m fino alla porta tagliafuoco. Finita la scena si torna verso ovest, la strada di sempre. Il tratto di corridoio che prima restava alle spalle va rifinito come il resto.
+- **I dettagli della scena** (decisi da mascotte, approvati dall'utente il 22 ottobre): lo squalo scatta tre volte con la testa come per mordere; nell'esitazione si volta a guardarti con uno sbuffo; alla porta si abbassa per passare; durante la scena sei in ginocchio, con gli occhi a circa 1 m; dura circa 13 secondi, poi riprendi i comandi. La torcia e la riga dei comandi aspettano la fine della scena. È nella v0.3.8.
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
@@ -271,6 +274,8 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 **Nel gioco** (ambienti-2, 22 ottobre, branch lavoro/ambienti-2-inseguimento, non ancora unito): la sala c'è dietro il muro est della torre, con i tubi in cui si scivola accovacciati, le sei paratie col bersaglio, lei che sale nelle vasche, la grata, SB1 e i checkpoint. Due scelte da fare per l'utente:
 - vasche ancora scure, l'acqua quasi nera: a) acqua meno torbida, verde-azzurra, col fondo che si intravede; b) una lampada da lavoro sopra ogni vasca; c) tutte e due (consigliata);
 - strisce delle paratie: nella torre le strisce vogliono dire "chiuso". a) sulla paratia giusta la trave diventa liscia (consigliata); b) restano tutte a strisce, perché finché non colpisci il bersaglio sono chiuse.
+
+**Scelte dell'utente (22 ottobre):** vasche **c**, cioè acqua meno torbida e verde-azzurra col fondo che si intravede, più una lampada da lavoro sopra ogni vasca; strisce **a**, la trave della paratia giusta diventa liscia e sulla sbagliata le strisce restano.
 Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
@@ -279,7 +284,8 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **lettore della serranda: 1**, a strisciata anni '90, di plastica beige, con la spia tonda in alto (rossa, poi verde). La luce verde va più debole che negli scatti;
 - **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
 - **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre). Dove (scelta β, 21 ottobre): le scale del raccordo restano, l'agnellino compare e scappa nel buco come oggi, e subito dopo il buco c'è la grata; la porta di servizio sta nel tratto basso di C2, prima della grata, e da lì una scala scende all'imbarco del fiume;
-- **nei rami sbagliati del fiume** non c'è niente da vedere: solo il ramo con lo scivolo che riporta all'imbarco (scelta dell'utente, 21 ottobre).
+- **nei rami sbagliati del fiume** non c'è niente da vedere: solo il ramo con lo scivolo che riporta all'imbarco (scelta dell'utente, 21 ottobre). Lo scivolo (scelta B, 22 ottobre): il fiume resta tutto alla stessa altezza, e la fine del ramo sbagliato è un canale stretto e veloce di vetroresina colorata, come uno scivolo, con una discesa di circa 20 cm, che sbocca nella vasca dell'imbarco. Scartate: A, vasca più bassa con nastro trasportatore; C, rapida d'acqua bianca;
+- **le frecce gialle dipinte a terra in C2**, che puntavano al magazzino ora chiuso dalla grata, si tolgono (scelta dell'utente, 22 ottobre).
 - **la Polaroid della pecora che brilla** nella cassaforte va direttamente nel gioco, fatta come le altre Polaroid (scelta dell'utente, 21 ottobre).
 
 ## Capitolo 1: scaletta (approvata)
