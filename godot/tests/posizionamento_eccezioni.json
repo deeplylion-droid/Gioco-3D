@@ -1388,20 +1388,7 @@
 			-18.8
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "TorreStruttura/torre_A_scalette",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			33.76,
-			-6.01,
-			-10.55
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"motivo": "all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8)"
 	},
 	{
 		"zona": "torre",
@@ -1413,7 +1400,7 @@
 			-6.01,
 			-11.55
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)"
 	}
 ]
