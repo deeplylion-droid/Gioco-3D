@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 19:35:27. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 20:05:56. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 332. Eccezioni non più trovate: 0.
+Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 331. Eccezioni non più trovate: 0.
 
 ## Già noti
 
@@ -38,12 +38,6 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 332. Eccez
 | ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_06_vetro` | 3.35, 2.29, 24.89 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 69.8 cm. (stato: interni_dopo) | da correggere: controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 69.8 cm. (stato: interni_dopo) |
 | ambienti-1 | staccato | `Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01` | 1.63, 2.30, 31.30 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_stanzino_01_vetro. | da correggere: controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_stanzino_01_vetro. |
 | ambienti-1 | staccato | `Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01_vetro` | 1.65, 2.29, 31.31 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.8 cm. (stato: interni_dopo) | da correggere: controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.8 cm. (stato: interni_dopo) |
-
-### mascotte
-
-| Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
-|---|---|---|---|---|---|
-| mascotte | staccato | `Mascotte/TargaJilly/targa` | -3.01, 0.62, 10.00 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 42.5 cm. | da correggere: controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 42.5 cm. |
 
 ### risalita
 
@@ -677,7 +671,7 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 
 ### MultiMesh non controllati
 
-Senza le trasformazioni nel meta "trasformazioni" (vedi `_espandi_multimesh`):
+Senza le trasformazioni nel meta "trasformazioni" del nodo o della risorsa MultiMesh (vedi `_espandi_multimesh`):
 
 - `sala_principale · Gioco/EnigmaAcquari/LampadePortone/Spente/Portalampade`
 - `sala_principale · Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine`

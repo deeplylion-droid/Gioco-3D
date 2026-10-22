@@ -64,6 +64,33 @@ func _run() -> void:
 	Posa.fissa_al_muro(dentro, Vector3.LEFT, 0.0)
 	check(is_equal_approx(dentro.global_position.x, 5.0), "un oggetto già un po' dentro il muro torna a filo (x %.3f)" % dentro.global_position.x)
 
+	print("la superficie che si vede, non la collisione")
+	# come il muro della vasca centrale (mascotte, 22 ottobre): la collisione sporge 3 cm oltre le piastrelle
+	_corpo("MuroVasca", Vector3(-5.5, 2, 0), Vector3(1, 4, 20))                        # collisione: faccia a x -5
+	var piastrelle := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(1, 4, 20)
+	piastrelle.mesh = bm
+	add_child(piastrelle)
+	piastrelle.global_position = Vector3(-5.53, 2, 0)                                  # si vede: faccia a x -5,03
+	var targa := Node3D.new()
+	add_child(targa)
+	targa.global_position = Vector3(-4.6, 1.6, 0)
+	check(Posa.fissa_al_muro(targa, Vector3.RIGHT, 0.02, true) and is_equal_approx(snappedf(targa.global_position.x, 0.0001), -5.01),
+		"la targa va sulle piastrelle, non sulla collisione 3 cm più avanti (x %.3f)" % targa.global_position.x)
+	check(targa.get_parent() == piastrelle, "con lega diventa figlia della mesh che la regge")
+	var tappeto := MeshInstance3D.new()
+	var tm := BoxMesh.new()
+	tm.size = Vector3(2, 0.02, 2)
+	tappeto.mesh = tm
+	add_child(tappeto)
+	tappeto.global_position = Vector3(-3, 0.01, 4)                                     # un tappeto senza collisione sul pavimento
+	var vaso2 := Node3D.new()
+	add_child(vaso2)
+	vaso2.global_position = Vector3(-3, 1.0, 4)
+	check(Posa.appoggia_a_terra(vaso2) and is_equal_approx(snappedf(vaso2.global_position.y, 0.0001), 0.02),
+		"un vaso va sul tappeto che si vede, anche se il tappeto non ha collisione (y %.3f)" % vaso2.global_position.y)
+
 	print("fissa_al_soffitto e appendi_a")
 	var plafoniera := Node3D.new()
 	add_child(plafoniera)
