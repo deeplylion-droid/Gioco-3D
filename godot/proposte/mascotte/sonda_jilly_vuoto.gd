@@ -19,6 +19,7 @@ const PROFONDO := 0.01          # sotto 1 cm non conta (sfiora)
 var level: Node
 var spazio: PhysicsDirectSpaceState3D
 var escludi: Array[RID] = []
+var osso_di: PackedStringArray = []      # per ogni vertice di _vertici: l'osso col peso più grande
 
 
 func _ready() -> void:
@@ -35,6 +36,10 @@ func _run() -> void:
 	ls.call(&"_affaccia")
 	for i in 10:
 		await get_tree().physics_frame
+	# un altro momento del respiro: "-- <fotogrammi>" dopo lo script li lascia passare prima di fermarla
+	var args := OS.get_cmdline_user_args()
+	for i in (int(args[1]) if args.size() > 1 else 0):
+		await get_tree().process_frame
 	for n in level.find_children("*", "AnimationPlayer", true, false):
 		(n as AnimationPlayer).pause()
 	spazio = level.get_viewport().world_3d.direct_space_state
@@ -87,8 +92,10 @@ func _controlla(lei: Node3D, contenitore: MeshInstance3D, ls: Node) -> void:
 		var prof_max := 0.0
 		var dove := Vector3.ZERO
 		var chi := {}
+		var esempi := {}
 		var gambe := []
-		for v in vv:
+		for iv in vv.size():
+			var v := vv[iv]
 			var d := _dentro_pieno(occhio, v)
 			if d == 1:
 				vuoti += 1
@@ -101,6 +108,10 @@ func _controlla(lei: Node3D, contenitore: MeshInstance3D, ls: Node) -> void:
 				continue
 			pieni += 1
 			chi[c.name] = maxf(float(chi.get(c.name, 0.0)), p)
+			if not esempi.has(c.name):
+				esempi[c.name] = []
+			if (esempi[c.name] as Array).size() < 6 and p >= 0.03:
+				(esempi[c.name] as Array).append("%s %.0fcm %s" % [_v(v), p * 100.0, osso_di[iv] if iv < osso_di.size() else "?"])
 			if p > prof_max:
 				prof_max = p
 				dove = v
@@ -111,7 +122,7 @@ func _controlla(lei: Node3D, contenitore: MeshInstance3D, ls: Node) -> void:
 		print("   %s: %d vertici, %d per la mesh nel vuoto o nell'acqua, %d nel pieno delle collisioni%s" % [m.name, vv.size(),
 			vuoti, pieni, "" if pieni == 0 else " fino a %.1f cm, il più profondo a %s" % [prof_max * 100.0, _v(dove)]])
 		for k in chi:
-			print("      in %s fino a %.1f cm" % [k, float(chi[k]) * 100.0])
+			print("      in %s fino a %.1f cm  %s" % [k, float(chi[k]) * 100.0, ", ".join(esempi.get(k, []))])
 		if not gambe.is_empty():
 			gambe.sort()
 			print("      tentacoli all'altezza delle gambe: %d vertici, in pianta da %.2f a %.2f m dall'occhio (lei prende sotto %.2f m)" % [
@@ -166,6 +177,7 @@ func _uscita(v: Vector3, occhio: Vector3) -> float:
 
 func _vertici(mi: MeshInstance3D) -> PackedVector3Array:
 	var out := PackedVector3Array()
+	osso_di = PackedStringArray()
 	var sk := mi.get_node(mi.skeleton) as Skeleton3D
 	# la posa con i modificatori (sguardo, tentacoli contro i muri) c'è solo a fine aggiornamento dello scheletro
 	await sk.skeleton_updated
@@ -190,6 +202,11 @@ func _vertici(mi: MeshInstance3D) -> PackedVector3Array:
 					q += (pose[b[i * k + j]] as Transform3D) * v[i] * w[i * k + j]
 					tw += w[i * k + j]
 			out.append(q / tw if tw > 0.0 else mi.global_transform * v[i])
+			var jm := 0
+			for j in k:
+				if w[i * k + j] > w[i * k + jm]:
+					jm = j
+			osso_di.append(mi.skin.get_bind_name(b[i * k + jm]))
 	return out
 
 

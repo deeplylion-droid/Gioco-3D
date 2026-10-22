@@ -191,8 +191,8 @@
 			0.0,
 			-7.75
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)"
+		"stato": "voluto",
+		"motivo": "i tentacoli di lei affacciata alla fossa (tappa 8) stanno tutti fra 0,3 e 2 m in pianta dal suo occhio, e LeiSbuca prende il giocatore a 2,4 m (distanza_presa) appena lei è visibile: da vivo non ci si arriva (deciso dal coordinatore, 22 ottobre)"
 	},
 	{
 		"zona": "sala",

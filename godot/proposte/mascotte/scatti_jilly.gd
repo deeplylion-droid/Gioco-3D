@@ -15,6 +15,8 @@ const SCATTI := {
 	"fossa_tentacoli": [Vector3(-11.2, 1.2, -5.6), Vector3(-12.4, -0.2, -6.8), 60.0],
 	"fossa_campana": [Vector3(-13.9, 1.6, -9.3), Vector3(-13.9, -0.9, -7.6), 60.0],
 	"fossa_passaggio": [Vector3(-16.8, 1.0, -8.8), Vector3(-15.3, 0.3, -7.7), 60.0],
+	"fossa_passaggio_nord": [Vector3(-15.6, 1.5, -10.6), Vector3(-14.4, 0.0, -7.4), 60.0],
+	"fossa_terra_ovest": [Vector3(-16.9, 0.35, -8.6), Vector3(-14.9, 0.2, -6.4), 60.0],
 }
 
 var out_dir := ""
@@ -28,6 +30,14 @@ func _ready() -> void:
 	_run.call_deferred()
 
 
+## Solo scatti della vasca centrale: si toglie anche la fossa dei bimbi (con tutta la sala non entra nella memoria).
+func _solo_vasca() -> bool:
+	for n in nomi:
+		if not n.begins_with("vasca"):
+			return false
+	return true
+
+
 func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
@@ -36,7 +46,7 @@ func _run() -> void:
 	# le parti lontane dalle mie cose: con tutta la sala non entra nella memoria della macchina
 	for percorso in ["Risalita", "Piscina", "Polaroid", "BambiniBalconata", "Interni", "Tecnici", "Sala/TorreScivoli", "Gioco/BambiniBalconata", "Gioco/EnigmaAcquari",
 			"Sala/Cupola", "Sala/Oggetti", "Sala/Dettagli", "Sala/AngoloPalloni", "Sala/AngoloScatoloni",
-			"Gioco/MedusaFossa"]:
+			"Gioco/MedusaFossa"] + (["Gioco/LeiSbuca", "Sala/AreaBimbi", "Vasche"] if _solo_vasca() else []):
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
 			n.get_parent().remove_child(n)
@@ -47,12 +57,13 @@ func _run() -> void:
 		await get_tree().process_frame
 	# Jilly alla fossa: dopo il blackout, affacciata (come la vede il giocatore)
 	GameState.luci = GameState.Luci.BLACKOUT
-	var ls := level.get_node("Gioco/LeiSbuca")
-	ls.call(&"_affaccia")
-	# ferma la logica della tappa 8 (senza il giocatore vicino la rimetterebbe via); lei resta viva (scheletro e
-	# modificatori come nel gioco)
-	ls.set_process(false)
-	ls.set_physics_process(false)
+	var ls := level.get_node_or_null("Gioco/LeiSbuca")
+	if ls:
+		ls.call(&"_affaccia")
+		# ferma la logica della tappa 8 (senza il giocatore vicino la rimetterebbe via); lei resta viva (scheletro e
+		# modificatori come nel gioco)
+		ls.set_process(false)
+		ls.set_physics_process(false)
 	if OS.get_cmdline_user_args().size() > 3 and OS.get_cmdline_user_args()[3] == "senza":
 		for t in level.find_children("TentacoliControIMuri", "", true, false):
 			(t as SkeletonModifier3D).active = false
