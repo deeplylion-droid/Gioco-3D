@@ -550,7 +550,7 @@ def versione_A(mats):
               if not GIOCO else [(67.0, C2[1] + 0.08, zc2 - 0.1), (67.0, C2[1] - 0.4, zc2 - 0.13), (67.15, 24.0, -25.1), (67.6, 23.1, -25.45), (68.1, 22.25, -25.75), (68.5, 21.5, -26.0), (71.5, 17.0, -26.8), (72.0, 12.0, -27.3), (70.5, 8.6, -27.6), (69.5, 7.6, zc3)],
               ['tsc_turchese', 'tsc_rosa'])
     tubo('ins_A_scolo_1', [(64.0, C2[1] + 0.3, zc2 - 0.1), (62.0, 23.0, -26.6), (59.5, 25.0, -27.6), (58.0, 27.0, D[1][4] + 0.9)]
-         if not GIOCO else [(64.0, C2[1] + 0.08, zc2 - 0.1), (64.0, C2[1] - 0.4, zc2 - 0.13), (64.0, C2[1] - 0.8, zc2 - 0.16), (62.0, 23.0, -25.9), (59.5, 25.0, -27.2), (58.0, 27.0, D[1][4] + 0.9)], ['tsc_turchese'])
+         if not GIOCO else [(64.0, C2[1] + 0.08, zc2 - 0.1), (64.0, C2[1] - 0.4, zc2 - 0.13), (63.75, 23.95, -25.2), (63.0, 23.35, -25.55), (62.0, 23.0, -25.9), (59.5, 25.0, -27.2), (58.0, 27.0, D[1][4] + 0.9)], ['tsc_turchese'])
     # bivio 3 (lato ovest della vasca 3): a sud la giusta (la spirale finale), a nord la sbagliata (scolo 2)
     paratia(c, (C3[0] + 0.2, 3.6, zc3), (-1, 0), True, luci)
     # la sbagliata: il suo tubo (scolo 2) parte dal muro est, quindi nel gioco la paratia sta lì
