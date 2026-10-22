@@ -39,71 +39,6 @@
 		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui"
 	},
 	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			-6.03,
-			0.96,
-			36.8
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_1",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			2.1,
-			1.26,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_2",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			2.4,
-			1.22,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_4",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			3.0,
-			1.14,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_5",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			3.3,
-			1.1,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
 		"zona": "sala",
 		"nodo": "Sala/Dettagli/@MeshInstance3D@40",
 		"squadra": "ambienti-1",
@@ -115,188 +50,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/estintore",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-0.1,
-			1.15,
-			40.69
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 84.0 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/porta_servizio",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-9.66,
-			1.02,
-			39.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.64,
-			0.96,
-			36.88
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_07_anta",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.73,
-			0.96,
-			34.56
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.63,
-			0.96,
-			33.59
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_05_anta",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-6.14,
-			0.96,
-			35.44
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-6.03,
-			0.96,
-			33.24
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_15_anta",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-6.18,
-			0.96,
-			31.43
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.81,
-			0.96,
-			35.77
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/braccioli_stanzino",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			5.2,
-			2.07,
-			31.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			4.9,
-			1.13,
-			34.49
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 82.0 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_1",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			4.82,
-			1.0,
-			33.35
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_2",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			4.82,
-			1.0,
-			31.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Zaino/Modello/Zaino",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			4.78,
-			1.03,
-			32.47
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm) (ambienti-1)"
 	},
 	{
 		"zona": "mascotte",
@@ -339,188 +92,6 @@
 	},
 	{
 		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/estintore",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.03,
-			0.0,
-			40.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-1.22,
-			0.0,
-			40.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/secchio_mocio",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-2.22,
-			0.0,
-			29.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-3.22,
-			0.0,
-			36.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/cestino",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-4.47,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/pallone",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-7.47,
-			0.0,
-			40.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-5.97,
-			0.0,
-			36.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-5.97,
-			0.0,
-			33.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/cestino_spogliatoi",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-5.97,
-			0.0,
-			30.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			37.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			33.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/porta_stanzino",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			32.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			30.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/cartello_bagnato",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			29.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -529,8 +100,8 @@
 			0.0,
 			25.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta"
 	},
 	{
 		"zona": "interni",
@@ -542,73 +113,8 @@
 			0.0,
 			25.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/sedia",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			2.78,
-			0.0,
-			33.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.78,
-			0.0,
-			34.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.53,
-			0.0,
-			39.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-17.97,
-			0.0,
-			16.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-18.97,
-			0.0,
-			16.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta"
 	},
 	{
 		"zona": "sala",
@@ -620,8 +126,8 @@
 			0.0,
 			-17.5
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre)"
 	},
 	{
 		"zona": "sala",
@@ -833,19 +339,6 @@
 	},
 	{
 		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/stanzino_statico",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			2.37,
-			1.3,
-			32.5
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm (ambienti-1)"
-	},
-	{
-		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla",
 		"squadra": "ambienti-1",
 		"problema": "compenetra",
@@ -856,19 +349,6 @@
 		],
 		"stato": "voluto",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			-0.91,
-			2.35,
-			21.5
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm (ambienti-1)"
 	},
 	{
 		"zona": "interni",
