@@ -191,6 +191,7 @@ func _run() -> void:
 		await _frames(1)
 	await _frames(100)
 	check(sala.lei.visible and sala.lei_stato == SalaInseguimento.Lei.SU, "dopo un po' lei sale dall'acqua")
+	check(sala.lei.animazione == &"inseguimento/incombe", "e incombe (%s)" % sala.lei.animazione)
 	var viso := sala.lei.get_eye_position()
 	p.look_at_point(viso)
 	p.water_pack.set_tank_amount(20.0)
@@ -198,6 +199,7 @@ func _run() -> void:
 	await _frames(90)
 	Input.action_release(&"spray")
 	check(sala.lei_stato == SalaInseguimento.Lei.SCENDE or sala.lei_stato == SalaInseguimento.Lei.VIA, "un getto in faccia la ricaccia sotto")
+	check(sala.lei.animazione == &"inseguimento/respinta", "si copre il viso e torna sotto (%s)" % sala.lei.animazione)
 	await _frames(120)
 	check(not sala.lei.visible, "torna sott'acqua")
 	t0 = Time.get_ticks_msec()
@@ -208,6 +210,7 @@ func _run() -> void:
 	while not GameState.is_dying and Time.get_ticks_msec() - t0 < 20000:
 		await _frames(1)
 	check(GameState.is_dying and GameState.last_death_cause == &"medusa", "se la lasci, ti prende")
+	check(sala.lei.animazione == &"inseguimento/presa", "con la presa (%s)" % sala.lei.animazione)
 	await _salta_morte()
 	check(sala._vasca_di(p.global_position) == 0, "si riparte nella vasca 1")
 
@@ -257,7 +260,7 @@ func _run() -> void:
 	check(sala._sb1, "andando verso la scaletta parte SB1")
 	check(not p.input_enabled, "il giocatore si ferma")
 	await _frames(240)
-	check(sala.lei.visible and sala.lei.animazione == &"affacciata", "lei sbuca dal pozzo, affacciata")
+	check(sala.lei.visible and sala.lei.animazione == &"inseguimento/affacciata_sb1", "lei sbuca dal pozzo, affacciata")
 	var dir := (sala.lei.get_eye_position() - p.camera.global_position).normalized()
 	check(dir.dot(-p.camera.global_basis.z) > 0.9, "e la camera la guarda (%.2f)" % dir.dot(-p.camera.global_basis.z))
 	t0 = Time.get_ticks_msec()

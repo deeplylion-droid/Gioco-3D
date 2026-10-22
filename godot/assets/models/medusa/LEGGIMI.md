@@ -245,7 +245,7 @@ e portano anche lo spostamento in alto e in basso (osso `radice`): il nodo di le
 `presa`, `respinta` e `scende` partono dalla posa iniziale di `incombe` (si possono far partire con una fusione corta,
 0,15-0,2 s). Le due zampe incrociate sul petto restano sul petto in tutte (regola del GDD).
 
-Cose da fare nel gioco (sala_inseguimento.gd, ambienti-2):
+Come sono agganciate nel gioco (sala_inseguimento.gd, `_lei_*`, `_anima`, `_scendi`, `_posto_sb1`):
 - `lei.animazioni_inseguimento = true` in `_lei_crea()`;
 - salita: `global_position = _lei_su` subito e `ap.play("inseguimento/sale_dall_acqua")` (o `_veloce`), senza
   muovere la posizione: lo spostamento e' nell'animazione; poi `incombe` in coda (`ap.queue`);
@@ -254,7 +254,15 @@ Cose da fare nel gioco (sala_inseguimento.gd, ambienti-2):
 - presa: `lei.attacca(0.7, &"inseguimento/presa")` (vene nell'occhio e la presa al posto di `fauce_apre`);
 - respinta e scende: l'animazione e poi `visible = false` alla fine (1,2 s e 1,0 s);
 - grata: `sale_dall_acqua_veloce` e poi `colpo_grata` per 1,5 s (tre colpi), poi `scende`;
-- SB1: `affacciata_sb1` al posto di `affacciata` e della salita a mano.
+- SB1: `affacciata_sb1` al posto di `affacciata` e della salita a mano, sullo spigolo del pozzo dalla parte del
+  giocatore (`_posto_sb1`);
+- suoni (quelli che c'erano gia', solo i fatti fisici): l'acqua che si apre quando sale (`tuffo`), quando torna
+  sotto (`atterraggio_acqua`), il metallo della grata a ogni colpo (`cancello_fine`). La voce di lei qui non c'e'.
+
+Dove sta rispetto alla sala, posto per posto: `godot/proposte/mascotte/sonda_lei_inseguimento.gd` (le ossa che
+attraversano pareti, fondi e grigliati durante le animazioni, e i punti piu' alto e piu' basso). All'inizio della
+salita lei va da 4,8 m sotto la sua origine a 0,2 m sotto; da su, i tentacoli arrivano all'altezza dell'origine e
+la testa a 5,3 m sopra.
 
 Controlli: `godot/tests/test_lei_animazioni.gd` (durate, raccordi, presa, grata, bordo del pozzo, zampe sul petto,
 nessun salto tra un fotogramma e l'altro). Video di controllo nella sala dell'inseguimento:

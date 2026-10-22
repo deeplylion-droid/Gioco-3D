@@ -430,7 +430,9 @@ func _lei_crea() -> void:
 		"M_pelle": load("res://assets/models/medusa/medusa_pelle_bagnata.tres"),
 		"M_tentacoli": load("res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
 	}
-	lei.animazione = &"insegue"
+	# le animazioni dell'inseguimento (tools/blender/medusa_inseguimento.py): portano anche il su e giù
+	lei.animazioni_inseguimento = true
+	lei.animazione = &"inseguimento/incombe"
 	lei.visible = false
 	add_child(lei)
 	_lei_luce = OmniLight3D.new()
@@ -468,6 +470,18 @@ func _posa(nome: StringName) -> void:
 		ap.play(nome)
 
 
+## Fa partire un'animazione dell'inseguimento ("inseguimento/<nome>"), con una fusione di [param fondi]
+## secondi da quella di prima. Ritorna la durata.
+func _anima(nome: String, fondi := 0.0) -> float:
+	var n := StringName("inseguimento/" + nome)
+	lei.animazione = n
+	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap == null or not ap.has_animation(n):
+		return 1.0
+	ap.play(n, fondi)
+	return ap.get_animation(n).length
+
+
 func _dove_scolo() -> bool:
 	return _lei_dove.begins_with("scolo")
 
@@ -495,29 +509,50 @@ func _posto_scolo(k: int) -> Vector3:
 	return b([c.x + verso.x * mezzo, c.y + verso.y * mezzo, float(v["fondo"]) - 2.4])
 
 
-## Lei sale dall'acqua del fondo fino a [param su], in [param durata] secondi.
+## Lei sale dall'acqua del fondo fino a [param su]: in 1,6 s, o in 1 s ([param durata] sotto 1,3).
+## Il nodo sta già lassù: la salita (da 5 m sotto) è nell'animazione.
 func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	_lei_dove = dove
 	_lei_su = su
 	_lei_giu = su + Vector3.DOWN * 5.0
-	lei.global_position = _lei_giu
+	lei.global_position = su
 	lei.visible = true
 	_getto_preso = 0.0
 	lei_stato = Lei.SALE
 	_lei_t = 0.0
-	set_meta(&"durata_salita", durata)
-	_girala_verso_giocatore()
+	lei.segui_con_la_testa(0.0, 0.01)
+	if dove == "sb1":
+		_anima("affacciata_sb1")     # sbuca in 1,3 s, si aggrappa, gira la testa e ti fissa
+		set_meta(&"durata_salita", 1.3)
+	else:
+		set_meta(&"durata_salita", _anima("sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce"))
+	if dove != "sb1":
+		_girala_verso_giocatore()
+	# l'acqua che si apre quando sbuca (verso metà della salita)
+	get_tree().create_timer(float(get_meta(&"durata_salita")) * 0.45, false).timeout.connect(func():
+		if lei_stato == Lei.SALE and _lei_dove == dove:
+			Audio.suona(&"tuffo", lei.global_position + Vector3.UP * 3.0, 0.0, 0.7))
 	lei_compare.emit(dove)
 
 
-## Un getto in faccia: si ritrae sotto e tornerà.
+## Un getto in faccia: si copre il viso, si ritrae sotto e tornerà.
 func respingi() -> void:
 	if lei_stato != Lei.SU and lei_stato != Lei.SALE:
 		return
-	lei_stato = Lei.SCENDE
-	_lei_t = 0.0
+	_scendi(true)
 	_ritorno = ritorno_dopo
 	lei_respinta.emit()
+
+
+## Torna sotto: respinta (il getto in faccia, 1,2 s) o da sola (1 s).
+func _scendi(respinta := false) -> void:
+	lei_stato = Lei.SCENDE
+	_lei_t = 0.0
+	lei.segui_con_la_testa(0.0, 0.15)
+	set_meta(&"durata_discesa", _anima("respinta" if respinta else "scende", 0.15))
+	get_tree().create_timer(float(get_meta(&"durata_discesa")) * 0.6, false).timeout.connect(func():
+		if lei_stato == Lei.SCENDE:
+			Audio.suona(&"atterraggio_acqua", lei.global_position + Vector3.UP * 3.0, 2.0, 0.6))
 
 
 func _girala_verso_giocatore() -> void:
@@ -535,7 +570,10 @@ func _prendi() -> void:
 		return
 	lei_stato = Lei.PRESA
 	_girala_verso_giocatore()
-	lei.attacca()
+	lei.segui_con_la_testa(0.0, 0.1)
+	# la presa (si tira indietro, scatta e afferra, la fauce si apre) e le vene nell'occhio
+	_anima("presa", 0.15)
+	lei.attacca(0.7, &"")
 	lei.add_to_group(&"medusa_che_prende")
 	GameState.kill_player(&"medusa")
 
@@ -548,12 +586,18 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 	match lei_stato:
 		Lei.SALE:
 			var dur := float(get_meta(&"durata_salita", 1.6))
-			lei.global_position = _lei_giu.lerp(_lei_su, smoothstep(0.0, 1.0, minf(_lei_t / dur, 1.0)))
-			_girala_verso_giocatore()
+			if _lei_dove != "sb1" and _lei_dove != "grata":
+				_girala_verso_giocatore()
 			if _lei_t >= dur:
 				lei_stato = Lei.SU
 				_lei_t = 0.0
+				if _lei_dove != "sb1" and _lei_dove != "grata":
+					# su: incombe (la salita finisce nella sua posa) e la testa ti segue
+					_anima("incombe")
+					lei.segui_con_la_testa(1.0, 0.5)
 		Lei.SU:
+			if _lei_dove == "sb1" or _lei_dove == "grata":
+				return      # la sua scena: non ti prende
 			_girala_verso_giocatore()
 			var limite := 2.5 if _dove_scolo() else tempo_presa
 			var scappato := p != null and in_tubo(p.global_position) and _vasca_di(p.global_position) < 0
@@ -561,31 +605,38 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 				_prendi()
 			elif scappato and not _dove_scolo():
 				# sei scappato nel tubo: lei non ci entra, torna sotto
-				lei_stato = Lei.SCENDE
-				_lei_t = 0.0
+				_scendi()
 				_ritorno = -1.0
 		Lei.SCENDE:
-			lei.global_position = _lei_su.lerp(_lei_giu, smoothstep(0.0, 1.0, minf(_lei_t / 1.4, 1.0)))
-			if _lei_t >= 1.4:
+			if _lei_t >= float(get_meta(&"durata_discesa", 1.0)):
 				lei_stato = Lei.VIA
 				lei.visible = false
 
 
-## La grata è calata: lei arriva dietro e ci sbatte contro, poi se ne va (lei C).
+## La grata è calata: lei arriva dietro (sale di colpo, 1 s) e ci sbatte contro tre volte, poi se ne va
+## (lei C). Girata verso la grata: i palmi la colpiscono a 2,3 m davanti a lei (colpo_grata).
 func _lei_alla_grata() -> void:
 	var L: Array = dati["lei"]
 	_lei_sale("grata", b(L[2]["pos"]), 1.0)
 	_ritorno = -1.0
+	var g: Dictionary = dati["grata"]
+	var verso := b(g["perno"])
+	verso.y = lei.global_position.y
+	lei.look_at(verso, Vector3.UP, true)
 	var tw := create_tween()
-	tw.tween_interval(1.2)
-	for i in 3:   # sbatte contro la grata
-		tw.tween_property(lei, "global_position", b(L[2]["pos"]) + Vector3(-0.5, 0, 0), 0.18)
-		tw.tween_property(lei, "global_position", b(L[2]["pos"]), 0.3)
 	tw.tween_interval(1.0)
 	tw.tween_callback(func():
+		if _lei_dove == "grata" and lei_stato != Lei.PRESA:
+			_anima("colpo_grata"))
+	for i in 3:   # il metallo, quando i palmi la colpiscono (0,27 s di ogni colpo da 0,5 s)
+		tw.tween_interval(0.27 if i == 0 else 0.5)
+		tw.tween_callback(func():
+			if _lei_dove == "grata" and lei_stato != Lei.PRESA:
+				Audio.suona(&"cancello_fine", verso + Vector3.UP * 2.0, 2.0, 0.85 + 0.08 * i))
+	tw.tween_interval(0.23)
+	tw.tween_callback(func():
 		if lei_stato != Lei.PRESA and _lei_dove == "grata":
-			lei_stato = Lei.SCENDE
-			_lei_t = 0.0)
+			_scendi())
 
 
 # --- SB1 --------------------------------------------------------------------------------------------
@@ -597,10 +648,7 @@ func inizia_sb1() -> void:
 		return
 	_sb1 = true
 	sb1_iniziato.emit()
-	var L: Array = dati["lei"]
-	var pos := b(L[3]["pos"])
-	_posa(&"affacciata")
-	_lei_sale("sb1", pos, 1.3)
+	_lei_sale("sb1", _posto_sb1(), 1.3)
 	var p := GameState.player
 	if p and is_instance_valid(p):
 		p.input_enabled = false
@@ -619,6 +667,28 @@ func inizia_sb1() -> void:
 			pl.set_look(lerp_angle(pl.yaw, yaw, k), lerpf(pl.pitch, pitch, k)), 0.0, 1.0, 1.4)
 	tw.tween_interval(2.6)
 	tw.tween_callback(_nero)
+
+
+## SB1: lo spigolo del pozzo dalla parte del giocatore; lei 1 m dietro lo spigolo e 0,8 m sotto il bordo,
+## girata verso il giocatore (le misure di affacciata_sb1: le mani sul bordo, la testa sopra).
+func _posto_sb1() -> Vector3:
+	var pz: Dictionary = dati["pozzo"]
+	var r: Array = pz["rett"]
+	var c := Vector2((r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0)
+	var mezzo := Vector2((r[2] - r[0]) / 2.0, (r[3] - r[1]) / 2.0)
+	var p := GameState.player
+	var da := Vector2(c.x, c.y - 5.0)
+	if p and is_instance_valid(p):
+		da = Vector2(p.global_position.x, -p.global_position.z)
+	var d := da - c
+	# il lato del pozzo verso il giocatore
+	var fuori := Vector2(signf(d.x), 0.0) if absf(d.x) / mezzo.x > absf(d.y) / mezzo.y else Vector2(0.0, signf(d.y))
+	var spigolo := c + fuori * (mezzo.x if fuori.x != 0.0 else mezzo.y)
+	var o := spigolo - fuori * 1.0
+	var pos := b([o.x, o.y, float(pz["bordo"]) - 0.8])
+	lei.global_position = pos
+	lei.look_at(b([o.x + fuori.x, o.y + fuori.y, float(pz["bordo"]) - 0.8]), Vector3.UP, true)
+	return pos
 
 
 func _nero() -> void:

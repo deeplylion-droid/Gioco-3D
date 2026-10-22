@@ -79,7 +79,8 @@ func _run() -> void:
 	get_tree().quit()
 
 
-## Lei nella posa che serve, ferma, girata verso la camera.
+## Lei nella posa che serve (le animazioni dell'inseguimento, ferme a un istante), girata verso la camera; alla
+## grata girata verso la grata, a SB1 sullo spigolo del pozzo dalla parte della camera (come in gioco).
 func _lei(sala: SalaInseguimento, cosa: String, camera: Vector3) -> void:
 	var lei := sala.lei
 	if cosa == "":
@@ -87,18 +88,28 @@ func _lei(sala: SalaInseguimento, cosa: String, camera: Vector3) -> void:
 		return
 	var L: Array = sala.dati["lei"]
 	var pos: Vector3
+	var guarda := camera
+	var anim := &"inseguimento/incombe"
+	var t := 0.6
 	match cosa:
 		"vasca_0":
 			pos = SalaInseguimento.b(L[0]["pos"])
-			sala._posa(&"insegue")
 		"grata":
 			pos = SalaInseguimento.b(L[2]["pos"])
-			sala._posa(&"insegue")
+			guarda = SalaInseguimento.b(sala.dati["grata"]["perno"])
+			anim = &"inseguimento/colpo_grata"
+			t = 0.27
 		"sb1":
-			pos = SalaInseguimento.b(L[3]["pos"])
-			sala._posa(&"affacciata")
+			pos = sala._posto_sb1()
+			guarda = Vector3.INF
+			anim = &"inseguimento/affacciata_sb1"
+			t = 3.0
 	lei.global_position = pos
 	lei.visible = true
-	var g := camera
-	g.y = pos.y
-	lei.look_at(g, Vector3.UP, true)
+	if guarda != Vector3.INF:
+		guarda.y = pos.y
+		lei.look_at(guarda, Vector3.UP, true)
+	var ap := lei.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
+	ap.play(anim)
+	ap.seek(t, true)
+	ap.pause()
