@@ -21,8 +21,8 @@ const SCATTI := {
 	"vista_giu": [[22.5, 15.0, 1.7], [31.0, 15.0, -14.0], 90.0],
 	# la strada (21 ottobre): l'imbocco giusto col portale verde, una bocca chiusa con la lampada rossa, una
 	# vasca di raccolta con la scaletta
-	"s1_imbocco_giusto": [[24.6, 20.6, 1.65], [30.5, 22.4, 0.2], 75.0],
-	"s1b_imbocco_giusto": [[36.6, 21.2, -1.35], [38.4, 15.6, -2.6], 75.0],
+	"s1_imbocco_giusto": [[31.5, 19.0, 2.2], [28.2, 22.0, 1.0], 75.0],
+	"s1b_imbocco_giusto": [[39.0, 14.6, -1.0], [37.8, 17.9, -1.8], 75.0],
 	"s2_imbocco_chiuso": [[22.6, 13.4, -1.35], [25.6, 11.4, -2.6], 70.0],
 	"s2b_imbocco_chiuso": [[30.4, 12.4, 4.65], [27.4, 9.9, 3.4], 70.0],
 	"s2c_imbocco_chiuso": [[24.0, 15.2, -1.35], [25.6, 18.6, -2.6], 70.0],
