@@ -52,6 +52,7 @@ var _scossa := 0.0          # sobbalzo della camera (si smorza)
 var _passo_t := -1.0        # quando ha toccato terra l'ultimo passo (per la scossa della camera)
 var _passo_forza := 0.0     # quanto forte la scossa di quel passo (0-1)
 var _passo_lato := 1.0      # da che parte rolla la camera (si alterna a ogni passo)
+var _tetti: Array = []      # [player 3D, il suo max_db di prima, quando rimetterlo]
 var _fine := 0.0
 var _luce_corsa: OmniLight3D
 var _torcia_accesa = null    # com'era la torcia prima della scena (null: niente torcia)
@@ -293,6 +294,7 @@ func _process(delta: float) -> void:
 	var E: float = tempi.get("esita", 6.75)
 	var porta_t: float = tempi.get("porta", 10.15)
 	_suoni_e_porta(R, E, porta_t)
+	_rimetti_tetti(false)
 	_aggiorna_luce_corsa(E, porta_t)
 	_camera(M, R, G, E, porta_t, delta)
 	if _t >= _fine:
@@ -305,14 +307,37 @@ func _suona(chiave: String, nome: StringName, dove: Variant, tono := 1.0, volume
 	_suoni[chiave] = true
 	var a := get_node_or_null(^"/root/Audio")
 	if a:
-		a.call(&"suona", nome, dove, volume, tono)
+		var piu := float(PIU_FORTE.get(nome, 0.0))
+		var p = a.call(&"suona", nome, dove, volume + piu, tono)
+		# i suoni nello spazio hanno un tetto (max_db 0): vicino a lui il guadagno in più si perderebbe. Il tetto
+		# si alza solo per questo suono e torna com'era quando finisce (i player sono di tutti)
+		if p is AudioStreamPlayer3D and piu > 0.0:
+			var p3 := p as AudioStreamPlayer3D
+			_tetti.append([p3, p3.max_db, _t + (p3.stream.get_length() if p3.stream else 2.0) + 0.1])
+			p3.max_db = piu
+
+
+## Quanto più forti dei loro file suonano qui (dB): è il primo spavento del gioco (riscontro dell'utente sulla
+## v0.3.8, "aggiungiamo anche i suoni": prima la scena stava circa 7 dB sotto l'urlo di lei).
+const PIU_FORTE := {&"squalo_minaccia": 6.0, &"jilly_richiamo": 3.0, &"squalo_sbuffo": 6.0, &"squalo_passo": 5.0,
+	&"squalo_denti": 5.0, &"squalo_ringhio": 6.0}
 
 
 func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
+	var M: float = tempi.get("minaccia", 2.4)
+	var G: float = tempi.get("giro", 5.85)
 	if _t > 0.8:
 		_suona("minaccia", &"squalo_minaccia", _nodo_bocca())
+	# i denti che scattano a ogni morso nell'aria (gli scatti della testa: mostro_anim.posa, MINACCIA + 0,7,
+	# 1,6 e 2,5 s; le fauci si chiudono appena dopo il picco)
+	for k in 3:
+		if _t > M + [0.7, 1.6, 2.5][k] + 0.08:
+			_suona("denti%d" % k, &"squalo_denti", _nodo_bocca())
 	if _t > R:
 		_suona("richiamo", &"jilly_richiamo", to_global(Vector3(0, 1.3, -8.5)))
+	# il ringhio quando si gira verso la porta
+	if _t > G - 0.1:
+		_suona("ringhio", &"squalo_ringhio", _nodo_bocca())
 	if _t > float(tempi.get("sbuffo", E + 1.0)) - 0.07:
 		_suona("sbuffo", &"squalo_sbuffo", _nodo_bocca())
 	var passi: Array = tempi.get("passi", [])
@@ -450,7 +475,17 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	cam.global_position = base + _spinta
 
 
+func _rimetti_tetti(tutti: bool) -> void:
+	for i in range(_tetti.size() - 1, -1, -1):
+		var tt: Array = _tetti[i]
+		if tutti or _t >= float(tt[2]):
+			if is_instance_valid(tt[0]):
+				(tt[0] as AudioStreamPlayer3D).max_db = float(tt[1])
+			_tetti.remove_at(i)
+
+
 func _termina() -> void:
+	_rimetti_tetti(true)
 	_attivo = false
 	set_process(false)
 	var cam := _p.camera

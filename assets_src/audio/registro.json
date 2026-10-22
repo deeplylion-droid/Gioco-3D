@@ -1699,6 +1699,36 @@
   "lufs": -20.0,
   "lufs_max": -15.2
  },
+ "squalo/squalo_denti_01": {
+  "file": "res://audio/squalo/squalo_denti_01.ogg",
+  "canali": 1,
+  "durata": 1.352,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "i denti che scattano a ogni morso nell'aria",
+  "lufs": -28.9,
+  "lufs_max": -21.1
+ },
+ "squalo/squalo_denti_02": {
+  "file": "res://audio/squalo/squalo_denti_02.ogg",
+  "canali": 1,
+  "durata": 1.352,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "i denti che scattano a ogni morso nell'aria",
+  "lufs": -28.9,
+  "lufs_max": -20.8
+ },
+ "squalo/squalo_denti_03": {
+  "file": "res://audio/squalo/squalo_denti_03.ogg",
+  "canali": 1,
+  "durata": 1.352,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "i denti che scattano a ogni morso nell'aria",
+  "lufs": -29.0,
+  "lufs_max": -21.1
+ },
  "squalo/squalo_minaccia": {
   "file": "res://audio/squalo/squalo_minaccia.ogg",
   "canali": 1,
@@ -1706,48 +1736,58 @@
   "loop": false,
   "fonte": "sintesi",
   "nota": "fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file)",
-  "lufs": -17.2,
-  "lufs_max": -10.7
+  "lufs": -16.9,
+  "lufs_max": -10.6
  },
  "squalo/squalo_passo_01": {
   "file": "res://audio/squalo/squalo_passo_01.ogg",
   "canali": 1,
-  "durata": 0.6,
+  "durata": 0.8,
   "loop": false,
   "fonte": "sintesi + Kenney Impact Sounds (CC0)",
-  "nota": "passo pesante e bagnato con gli artigli",
-  "lufs": -23.0,
-  "lufs_max": -15.6
+  "nota": "passo pesante e bagnato con gli artigli, con il colpo grave sotto",
+  "lufs": -23.7,
+  "lufs_max": -15.8
  },
  "squalo/squalo_passo_02": {
   "file": "res://audio/squalo/squalo_passo_02.ogg",
   "canali": 1,
-  "durata": 0.6,
+  "durata": 0.8,
   "loop": false,
   "fonte": "sintesi + Kenney Impact Sounds (CC0)",
-  "nota": "passo pesante e bagnato con gli artigli",
-  "lufs": -24.4,
-  "lufs_max": -16.9
+  "nota": "passo pesante e bagnato con gli artigli, con il colpo grave sotto",
+  "lufs": -23.4,
+  "lufs_max": -15.5
  },
  "squalo/squalo_passo_03": {
   "file": "res://audio/squalo/squalo_passo_03.ogg",
   "canali": 1,
-  "durata": 0.6,
+  "durata": 0.8,
   "loop": false,
   "fonte": "sintesi + Kenney Impact Sounds (CC0)",
-  "nota": "passo pesante e bagnato con gli artigli",
-  "lufs": -22.9,
-  "lufs_max": -15.7
+  "nota": "passo pesante e bagnato con gli artigli, con il colpo grave sotto",
+  "lufs": -23.3,
+  "lufs_max": -15.2
  },
  "squalo/squalo_passo_04": {
   "file": "res://audio/squalo/squalo_passo_04.ogg",
   "canali": 1,
-  "durata": 0.6,
+  "durata": 0.8,
   "loop": false,
   "fonte": "sintesi + Kenney Impact Sounds (CC0)",
-  "nota": "passo pesante e bagnato con gli artigli",
-  "lufs": -24.2,
-  "lufs_max": -17.3
+  "nota": "passo pesante e bagnato con gli artigli, con il colpo grave sotto",
+  "lufs": -23.5,
+  "lufs_max": -15.2
+ },
+ "squalo/squalo_ringhio": {
+  "file": "res://audio/squalo/squalo_ringhio.ogg",
+  "canali": 1,
+  "durata": 2.302,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "il ringhio quando si gira verso la porta",
+  "lufs": -16.4,
+  "lufs_max": -14.0
  },
  "squalo/squalo_sbuffo": {
   "file": "res://audio/squalo/squalo_sbuffo.ogg",
