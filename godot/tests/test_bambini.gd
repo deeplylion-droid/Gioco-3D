@@ -111,13 +111,14 @@ func _test_statua_e_fuga() -> void:
 	check(torce.size() == 1 and bool(torce[0].get(&"accesa")) and InputMap.has_action(&"torcia"),
 		"il giocatore ha la torcia accesa (tasto F)")
 	if torce.size() == 1:
-		# richiesta dell'utente del 21 ottobre: la metà dell'ultima (energia 2,8 -> 1,4, nebbia 0,12 -> 0,06)
+		# richieste dell'utente: il 21 ottobre la metà dell'ultima (energia 2,8 -> 1,4, nebbia 0,12 -> 0,06),
+		# il 22 ottobre un altro -25% (energia 1,4 -> 1,05, nebbia 0,06 -> 0,045)
 		var luce := torce[0].get(&"luce") as SpotLight3D
-		check(is_equal_approx(float(torce[0].get(&"energia")), 1.4) and luce != null
-				and is_equal_approx(luce.light_volumetric_fog_energy, 0.06) and is_equal_approx(luce.spot_angle, 40.0),
-			"torcia: energia 1,4, fascio nella nebbia 0,06, cono di 40 gradi")
+		check(is_equal_approx(float(torce[0].get(&"energia")), 1.05) and luce != null
+				and is_equal_approx(luce.light_volumetric_fog_energy, 0.045) and is_equal_approx(luce.spot_angle, 40.0),
+			"torcia: energia 1,05, fascio nella nebbia 0,045, cono di 40 gradi")
 		await _frames(2)
-		check(luce != null and luce.light_energy <= 1.4 + 0.001 and luce.light_energy > 0.0
+		check(luce != null and luce.light_energy <= 1.05 + 0.001 and luce.light_energy > 0.0
 				and (-luce.global_basis.z).dot(-p.camera.global_basis.z) > 0.999,
 			"la luce della torcia è accesa e segue lo sguardo (%.2f)" % (luce.light_energy if luce else 0.0))
 	var b := (load(CUBO) as PackedScene).instantiate() as Bambino
