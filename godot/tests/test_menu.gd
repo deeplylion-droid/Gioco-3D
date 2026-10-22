@@ -259,7 +259,7 @@ func _test_riserva_caricamento() -> void:
 func _fine() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
-	get_tree().quit(1 if _failed > 0 else 0)
+	Game.esci(1 if _failed > 0 else 0)  # aspetta i caricamenti nel thread
 
 
 func check(cond: bool, what: String) -> void:

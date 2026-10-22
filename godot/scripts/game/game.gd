@@ -21,6 +21,10 @@ const SCENE_CONTROLS := "res://scenes/ui/comandi.tscn"
 @export var first_run_preset := "alto"
 
 var _overlay: CanvasLayer
+## I caricamenti nel thread chiesti con carica_in_thread(): all'uscita si aspetta che finiscano.
+var _caricamenti: PackedStringArray = []
+## Vero da quando esci() è partito: chi aspetta un caricamento nel thread non lo rifà.
+var uscendo := false
 var _had_focus := false
 var _menu_layer: CanvasLayer
 var _resume_button: Button
@@ -28,6 +32,8 @@ var _resume_button: Button
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# La X della finestra passa da esci() (NOTIFICATION_WM_CLOSE_REQUEST in _notification).
+	get_tree().auto_accept_quit = false
 	_build_overlay()
 	capture_mouse()
 	var first_run := not FileAccess.file_exists("user://settings.cfg")
@@ -46,6 +52,48 @@ func _ready() -> void:
 	# La qualità dell'acqua segue il preset grafico.
 	Grafica.impostazione_cambiata.connect(func(_k, _v): _sync_water_quality())
 	_sync_water_quality()
+
+
+## ResourceLoader.load_threaded_request, ricordando il percorso, per esci().
+func carica_in_thread(percorso: String, tipo := "") -> Error:
+	var err := ResourceLoader.load_threaded_request(percorso, tipo)
+	if err == OK and not _caricamenti.has(percorso):
+		_caricamenti.append(percorso)
+	return err
+
+
+## Chiude il gioco. Se un caricamento nel thread è ancora in corso (la torre in precarica subito dopo un
+## checkpoint, il livello dalla schermata di caricamento) prima lo aspetta e lo lascia andare in un
+## fotogramma normale: una risorsa grande che finisce di caricare, o si libera, mentre Godot smonta
+## tutto fa fermare o abortire il gioco all'uscita (CI di lavoro/godot 58cc633: "Aborted" 12 s dopo la
+## fine di test_acquari; in prova: fermo per sempre).
+func esci(codice := 0) -> void:
+	if uscendo:
+		return
+	uscendo = true
+	var t0 := Time.get_ticks_msec()
+	var n := 0
+	for percorso in _caricamenti:
+		if ResourceLoader.load_threaded_get_status(percorso) != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			continue
+		n += 1
+		# Si aspetta fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get()
+		# (in prova bloccare non bastava: Godot si fermava lo stesso all'uscita).
+		while ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			await get_tree().process_frame
+		ResourceLoader.load_threaded_get(percorso)
+	_caricamenti.clear()
+	if n > 0:
+		print("Uscita: aspettati %d caricamenti nel thread (%.1f s)" % [n, (Time.get_ticks_msec() - t0) / 1000.0])
+		# Dopo la fine del caricamento i lavori che si porta dietro vanno avanti ancora qualche
+		# fotogramma: uscire subito blocca o fa abortire Godot (in prova: 2 fotogrammi no, 30 sì).
+		var t1 := Time.get_ticks_msec()
+		var f := 0
+		while f < 30 or Time.get_ticks_msec() - t1 < 1000:
+			await get_tree().process_frame
+			f += 1
+	await get_tree().process_frame
+	get_tree().quit(codice)
 
 
 func _sync_water_quality() -> void:
@@ -167,7 +215,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		esci()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		_had_focus = true
 	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT and pause_on_focus_loss and _had_focus:
 		if is_inside_tree() and not get_tree().paused and DisplayServer.get_name() != "headless":
@@ -199,7 +249,7 @@ func _build_overlay() -> void:
 	_menu_button(col, "Opzioni", open_options)
 	_menu_button(col, "Comandi", open_controls)
 	_menu_button(col, "Torna al titolo", return_to_title)
-	_menu_button(col, "Esci dal gioco", func(): get_tree().quit())
+	_menu_button(col, "Esci dal gioco", func(): esci())
 
 
 func _menu_button(parent: Control, text: String, action: Callable) -> Button:

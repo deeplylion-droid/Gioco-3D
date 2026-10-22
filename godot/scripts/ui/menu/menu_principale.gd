@@ -108,7 +108,7 @@ func apri_comandi() -> void:
 
 
 func esci() -> void:
-	get_tree().quit()
+	Game.esci()
 
 
 ## Chiama l'autoload Audio (addons/audio) se c'è: il titolo funziona anche senza.
