@@ -7,8 +7,9 @@ extends Node3D
 ##   (scenes/risalita/infermeria.tscn);
 ## - dalla porta nord dell'infermeria la scala di servizio, che sale di 5,4 m e arriva nel corridoio C3,
 ##   davanti al magazzino dei gonfiabili (il punto dove arrivava il corridoio di prima).
-## Coordinate della sala principale (questo nodo sta nell'origine). Il collegamento dal raccordo
-## all'ingresso del capannone lo fa [method _corridoio_ingresso].
+## Coordinate della sala principale (questo nodo sta nell'origine). Dal raccordo si arriva al capannone
+## con [method _scala_fiume] (scelta β dell'utente, 21 ottobre): dalla porta di servizio nel tratto basso
+## del corridoio C2 una scala scende di 3,6 m e un corridoio porta all'ingresso del capannone.
 ## Per non disegnare il capannone (quasi 3 milioni di triangoli e una sessantina di luci) quando non si
 ## vede, le stanze sono visibili solo col giocatore dentro la strada nuova o vicino alle sue porte.
 
@@ -25,6 +26,15 @@ const CENTRO_FIUME := Vector3(-35.0, Y, 92.0)
 const CENTRO_INFERMERIA := Vector3(-35.0 - I.PORTA_SUD, Y, 51.0 - 3.0 - I.L)
 ## La porta nel muro ovest del corridoio C3 (z da 37,95 a 38,95, tra i gonfiabili e gli oggetti appesi).
 const PORTA_C3 := Vector3(-16.15, 0.0, 38.45)
+## La porta di servizio nel muro est del tratto basso di C2 (x da 4,6 a 5,6, pavimento a -1,8; la fa
+## tools/blender/ambienti2_raccordo.py) e la faccia esterna di quel muro.
+const PORTA_C2 := Vector3(5.1, -1.8, 47.16)
+## La fascia della scala verso il fiume (z): oltre il muro est della sala pompe (z 48) e prima del vano
+## scala del raccordo (z 51,7); in basso passa sopra il corridoio R1 (soffitto a -6).
+const SCALA_FIUME_Z := 48.2
+## Il corridoio che sale verso nord fino all'ingresso del capannone, tra il suo muro (x -6,1) e il
+## raccordo (x -2,7).
+const CORRIDOIO_FIUME_X := -5.9
 ## La scala di servizio: larga 2 m, corre verso est lungo z = PORTA_C3.z.
 const SCALA_LARGA := 2.0
 const ALZATA := 0.18
@@ -56,9 +66,11 @@ func _ready() -> void:
 	add_child(infermeria)
 	_zona_personale()
 	_scala_di_servizio()
+	_scala_fiume()
 	# le zone dove le stanze si vedono: il capannone, l'infermeria con i corridoi, e un margine
 	_zone.append(AABB(Vector3(-64.0, Y - 2.0, 50.0), Vector3(58.5, 12.0, 71.0)))
 	_zone.append(AABB(Vector3(-41.0, Y - 2.0, 36.5), Vector3(26.0, 11.0, 15.0)))
+	_zone.append(AABB(Vector3(CORRIDOIO_FIUME_X, Y - 1.0, 46.0), Vector3(13.0, 7.0, 22.0)))
 
 
 # --- pezzi di corridoio --------------------------------------------------------------------------------
@@ -154,6 +166,46 @@ func _scala_di_servizio() -> void:
 	m.name = "Marker"
 	add_child(m)
 	for d in [["CimaScala", Vector3(x + 1.0, 0.0, PORTA_C3.z)], ["PortaC3", PORTA_C3 + Vector3(-0.6, 0, 0)]]:
+		var k := Marker3D.new()
+		k.name = d[0]
+		k.position = d[1]
+		m.add_child(k)
+
+
+## Dalla porta di servizio di C2 all'ingresso del capannone: un pianerottolo dietro la porta, la scala
+## di 20 gradini che scende verso ovest (sopra il corridoio R1), un pianerottolo in fondo e il corridoio
+## verso nord fino alla porta del capannone (z da 65,3 a 66,7 nel suo muro est, x -6,1).
+func _scala_fiume() -> void:
+	var z0 := SCALA_FIUME_Z
+	var z1 := z0 + SCALA_LARGA
+	var y0 := PORTA_C2.y
+	var x_cima := PORTA_C2.x - 1.0              # dove comincia la scala (in cima)
+	var x_fondo := x_cima - 20 * PEDATA          # dove finisce, in basso
+	var xc := CORRIDOIO_FIUME_X
+	# il pianerottolo dietro la porta: dal muro di C2 fino alla scala, chiuso a est e a nord
+	_corridoio(Vector3(x_cima, y0, PORTA_C2.z), Vector3(x_cima + 2.0, y0, z1), 2.6, "se")
+	_box(Vector3(0.2, 2.6, z0 - PORTA_C2.z), Vector3(x_cima - 0.1, y0 + 1.3, (PORTA_C2.z + z0) * 0.5), _mat_cemento)
+	# la scala (sale verso est: la si costruisce dal fondo)
+	_rampa(Vector3(x_fondo, Y, z0), 20)
+	# in fondo: il pianerottolo che gira verso nord, poi il corridoio fino al capannone
+	_corridoio(Vector3(xc, Y, z0), Vector3(x_fondo, Y, z1), 2.6, "no")
+	var porta0 := 65.3
+	var porta1 := 66.7
+	var fine := porta1 + 0.6
+	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es")
+	_box(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), _mat_cemento)
+	# il muro ovest, aperto davanti alla porta del capannone (alta 2,3 m come la sua)
+	_box(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), _mat_cemento)
+	_box(Vector3(0.2, 2.6, fine - porta1), Vector3(xc - 0.1, Y + 1.3, (porta1 + fine) * 0.5), _mat_cemento)
+	_box(Vector3(0.2, 0.3, porta1 - porta0), Vector3(xc - 0.1, Y + 2.45, (porta0 + porta1) * 0.5), _mat_cemento)
+	# tra il nostro muro e quello del capannone (x -6,1): il pavimento sotto la porta
+	_box(Vector3(0.5, 0.2, porta1 - porta0), Vector3(xc - 0.25, Y - 0.1, (porta0 + porta1) * 0.5), _mat_pav)
+	_lampada_rossa(Vector3(x_cima + 1.95, y0 + 2.2, (z0 + z1) * 0.5), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(xc + 1.95, Y + 2.2, z1 + 1.0), Vector3(-1, -0.5, 0))
+	_lampada_rossa(Vector3(xc + 1.95, Y + 2.2, porta0 - 3.0), Vector3(-1, -0.5, 0))
+	var m := get_node("Marker") as Node3D
+	for d in [["PortaC2", Vector3(PORTA_C2.x, y0, PORTA_C2.z - 0.8)], ["CimaScalaFiume", Vector3(x_cima + 1.0, y0, (z0 + z1) * 0.5)],
+			["FondoScalaFiume", Vector3(xc + 1.0, Y, (z0 + z1) * 0.5)], ["PortaFiume", Vector3(xc + 1.0, Y, (porta0 + porta1) * 0.5)]]:
 		var k := Marker3D.new()
 		k.name = d[0]
 		k.position = d[1]

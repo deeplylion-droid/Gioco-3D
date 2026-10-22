@@ -650,7 +650,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 10
+order = 15
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -666,7 +666,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 11
+order = 16
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -927,7 +927,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 12
+order = 17
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -943,7 +943,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 13
+order = 18
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -959,7 +959,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 14
+order = 19
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 

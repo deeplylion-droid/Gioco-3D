@@ -151,11 +151,36 @@ func _run() -> void:
 	grata.exclude = [p.get_rid()]
 	check(not space.intersect_ray(grata).is_empty(), "la grata chiude la scala degli interni")
 
-	print("Il corridoio, il magazzino dei gonfiabili e la serranda")
+	print("Il corridoio C2: la grata dopo il buco, la porta di servizio e la scala verso il fiume")
+	# Scelta β dell'utente (21 ottobre): C2 si sale come prima fino al buco dell'agnellino, subito dopo
+	# c'è una grata chiusa; la strada va per la porta di servizio nel tratto basso di C2, giù fino al
+	# capannone del fiume lento. Dall'infermeria la scala di servizio riporta in C3 (test_risalita).
 	ok = true
-	for loc in [Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 15.0), Vector3(30.0, 9.05, 15.0)]:
+	for loc in [Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 4.4)]:
 		ok = ok and await _cammina_verso(tec.to_global(loc), 1200)
-	check(ok and absf(p.global_position.y) < 0.1, "per il corridoio e su per la scala, al livello della sala (y %.2f)" % p.global_position.y)
+	check(ok and absf(p.global_position.y) < 0.1, "su per la scala di C2 fino al buco dell'agnellino (y %.2f)" % p.global_position.y)
+	await _cammina_verso(tec.to_global(Vector3(44.55, 9.05, 9.0)), 300)
+	check(p.global_position.x > -6.0, "la grata dopo il buco non si passa (x %.2f)" % p.global_position.x)
+	var grata_c2 := PhysicsRayQueryParameters3D.create(tec.to_global(Vector3(44.55, 10.05, 5.0)), tec.to_global(Vector3(44.55, 10.05, 7.0)))
+	grata_c2.exclude = [p.get_rid()]
+	check(not space.intersect_ray(grata_c2).is_empty(), "la grata chiude C2 subito dopo il buco")
+	var ris := level.get_node("Risalita")
+	ok = true
+	for loc in [tec.to_global(Vector3(44.55, 9.05, 2.0)), tec.to_global(Vector3(44.55, 7.25, -5.1)),
+			_mr(ris, "PortaC2"), _mr(ris, "CimaScalaFiume"), _mr(ris, "FondoScalaFiume"), _mr(ris, "PortaFiume"),
+			(ris.get_node("Fiume/Marker/Ingresso") as Node3D).global_position]:
+		ok = ok and await _cammina_verso(loc, 1200)
+	await _frames(5)
+	check(ok and absf(p.global_position.y + 5.4) < 0.1, "dalla porta di servizio giù per la scala fino al capannone del fiume (%s)" % str(p.global_position))
+	check(_checkpoint() == "Risalita/Fiume/Checkpoint/CheckpointIngresso", "checkpoint: all'ingresso del capannone (%s)" % _checkpoint())
+
+	print("Dalla scala di servizio dell'infermeria, il corridoio C3, il magazzino e la serranda")
+	p.teleport(_mr(ris, "PortaC3"), 0.0, 0.0)
+	await _frames(5)
+	ok = true
+	for loc in [tec.to_global(Vector3(37.09, 9.05, 15.0)), tec.to_global(Vector3(30.0, 9.05, 15.0))]:
+		ok = ok and await _cammina_verso(loc, 1200)
+	check(ok and absf(p.global_position.y) < 0.1, "dalla porta di C3 al magazzino, al livello della sala (y %.2f)" % p.global_position.y)
 	ok = await _cammina_verso(tec.to_global(Vector3(26.5, 9.05, 15.0)), 900)
 	await _frames(5)
 	check(ok and _checkpoint() == CP + "CheckpointMagazzino", "nel magazzino dei gonfiabili: checkpoint (%s)" % _checkpoint())
@@ -248,6 +273,10 @@ func _run() -> void:
 	await _frames(3)
 	check(medusa.visible and not ritorno.attivo and ritorno.metri_scia() == 0.0, "la medusa torna nella vasca e la scia sparisce")
 	_fine()
+
+
+func _mr(ris: Node, nome: String) -> Vector3:
+	return (ris.get_node("Marker/" + nome) as Node3D).global_position
 
 
 func _m(tec: Node3D, nome: String) -> Vector3:

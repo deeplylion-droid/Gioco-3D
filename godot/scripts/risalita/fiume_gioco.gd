@@ -62,6 +62,9 @@ var mat_banca: Material
 var mat_acqua: Material
 var mat_roccia: Material
 
+## L'order del checkpoint dell'ingresso; quello dell'approdo è il successivo (prima dell'infermeria, 12).
+@export var ordine_checkpoint := 10
+
 var fiume: FiumeLento
 var tratti := {}
 ## L'acqua: le strisce dei canali ([punti 2D, larghezza]) e le conche (poligoni 2D).
@@ -105,6 +108,7 @@ func _ready() -> void:
 	_imbarco()
 	_approdo()
 	_marker()
+	_checkpoint()
 
 
 # --- il tracciato -----------------------------------------------------------------------------------
@@ -765,6 +769,32 @@ func _marker() -> void:
 		k.position = d[1]
 		k.rotation_degrees.y = d[2]
 		m.add_child(k)
+
+
+## I checkpoint della strada nuova: appena entrati dall'ingresso e all'approdo (si riparte lì, girati
+## verso dentro). Senza, morendo nel capannone si ripartiva dal pianerottolo del raccordo.
+func _checkpoint() -> void:
+	var n := Node3D.new()
+	n.name = "Checkpoint"
+	add_child(n)
+	for i in 2:
+		var dove := get_node("Marker/" + ["Ingresso", "Approdo"][i]) as Node3D
+		var cp := Checkpoint.new()
+		cp.name = ["CheckpointIngresso", "CheckpointApprodo"][i]
+		cp.order = ordine_checkpoint + i
+		cp.position = dove.position + Vector3(0, 1.5, 0)
+		n.add_child(cp)
+		var f := CollisionShape3D.new()
+		var b := BoxShape3D.new()
+		b.size = Vector3(3.0, 3.0, 3.0)
+		f.shape = b
+		cp.add_child(f)
+		var spawn := Marker3D.new()
+		spawn.name = "Ripartenza"
+		spawn.position = Vector3(0, -1.5, 0)
+		spawn.rotation_degrees.y = [180.0, 90.0][i]   # verso il capannone; all'approdo verso la porta del personale
+		cp.add_child(spawn)
+		cp.spawn_point = spawn
 
 
 # --- i bivi: chiuse, pilastri, travi e cartelli d'uscita --------------------------------------------------

@@ -532,6 +532,14 @@ def proposta_gioco():
         lo, hi = _scatola(o)
         if lo.y < BUCO_Y + 1.45 and hi.y > BUCO_Y - 0.6:
             obs.remove(o); bpy.data.objects.remove(o)
+    # la porta di servizio verso il fiume nel tratto basso di C2 (y 4,6..5,6, muro est) e la grata dopo il buco
+    # dell'agnellino (y = BUCO_Y - 1,025): lì non resta niente (scelta β, 21 ottobre)
+    for o in [o for o in obs if o.name.startswith(('G_c2e', 'G_c2o'))]:
+        lo, hi = _scatola(o)
+        porta = o.name.startswith('G_c2e') and lo.y < 5.9 and hi.y > 4.3 and lo.z < Z_T + 2.4
+        grata = lo.y < BUCO_Y - 1.025 + 0.35 and hi.y > BUCO_Y - 1.025 - 0.35
+        if porta or grata:
+            obs.remove(o); bpy.data.objects.remove(o)
     magazzino_pieno('G', [('gonfiabili_mucchio', 0.6, False), ('lettini_impilati', 1.0, True), ('materassini_arrotolati', 1.2, False),
                           ('scatolone_rosso', 0.5, True), ('scatolone_giallo', 0.45, True), ('scatolone_marrone', 0.55, True),
                           ('pallone_gonfio_a', 0.55, False), ('pallone_gonfio_b', 0.55, False), ('pallone_mezzo', 0.4, False),
