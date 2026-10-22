@@ -11,13 +11,14 @@ extends Node3D
 ##   pallone che galleggiano; in fondo, sulla parete, l'insegna di Jilly Jubilee che sfarfalla;
 ## - C, la sala del parco: sulla parete di fondo, sfocate nella nebbia, le ghirlande di lampadine mezze
 ##   spente (agganciate al muro), i neon sopra i manifesti e la cornice di lampadine del portone della torre.
-## Sono solo prove: nel menu del gioco gli strati sono spenti finché l'utente non sceglie.
+## Nel gioco ci sono A e B (scelta dell'utente del 22 ottobre); C resta spento.
 ## Il menu la istanzia come figlio "Sfondo" (scenes/ui/menu_principale.tscn); la parte sinistra
 ## dell'inquadratura resta scura (lì vanno il logo e le voci).
 
-## Gli strati.
-@export var cupola := false
-@export var acqua := false
+## Gli strati: nel gioco A e B (scelta dell'utente del 22 ottobre: la cupola nella tempesta e l'acqua ai suoi
+## piedi); C resta nel codice, spento, e non si carica.
+@export var cupola := true
+@export var acqua := true
 @export var sala := false
 ## La tempesta del menu: i suoi lampi accendono il vetro della cupola e il cielo.
 @export var tempesta: Tempesta
@@ -41,7 +42,7 @@ const LIVELLO := 0.5
 const CUPOLA_GLB := "res://assets/ambiente/sala/sala_cupola.glb"
 const VETRO_CUPOLA := "res://assets/materials/sala/vetro_cupola.tres"
 const CIELO := "res://addons/grafica/cielo_tempesta.gdshader"
-const TORRE_GLB := "res://assets/ambiente/torre/torre_struttura.glb"
+const SAGOMA_TORRE := "res://assets/menu/sagoma_torre.res"
 const ACQUA_SHADER := "res://shaders/water_murky.gdshader"
 const PAPERELLA := "res://assets/fiume_lento/paperella.glb"
 const PALLONE := "res://assets/fiume_lento/pallone.glb"
@@ -211,25 +212,20 @@ func _cupola() -> void:
 	if tempesta:
 		tempesta.cielo = cielo
 		tempesta.materiali.append(vetro)
-	# la sagoma della torre degli scivoli oltre il vetro, nera: si vede solo contro il cielo del lampo
-	var torre: Node3D = (load(TORRE_GLB) as PackedScene).instantiate()
+	# la sagoma della torre degli scivoli oltre il vetro: nera e fuori dalla nebbia, si vede solo contro il cielo
+	# del lampo (una mesh sola, senza texture: tools/sagoma_torre.gd la fa dai GLB della torre)
+	var torre := MeshInstance3D.new()
+	torre.name = "SagomaTorre"
+	torre.mesh = load(SAGOMA_TORRE)
 	var nero := StandardMaterial3D.new()
 	nero.albedo_color = Color(0.0, 0.0, 0.0)
 	nero.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	for mi in torre.find_children("*", "MeshInstance3D", true, false):
-		var m := mi as MeshInstance3D
-		var nome := String(m.name)
-		if nome.begins_with("acqua"):
-			m.visible = false
-		m.material_override = nero
-		m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# (le mesh "-col" sono figlie dei loro corpi: si spengono le collisioni, non si tolgono)
-	for n in torre.find_children("*", "CollisionObject3D", true, false):
-		(n as CollisionObject3D).collision_layer = 0
-		(n as CollisionObject3D).collision_mask = 0
+	nero.disable_fog = true
+	torre.material_override = nero
+	torre.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	radice.add_child(torre)
-	# (nel GLB la torre sta fra x 20 e 40, z -26 e -4, con la cima a 14)
-	torre.position = Vector3(-2.0, 13.0, -16.0)
+	# (nella torre del gioco la struttura sta fra x 20 e 40, z -26 e -4, con la cima a 14)
+	torre.position = Vector3(0.0, 18.0, -30.0)
 
 
 func _ambiente() -> Environment:
