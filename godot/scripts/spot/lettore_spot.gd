@@ -19,12 +19,14 @@ const VIDEO := "res://assets/spot/spot.ogv"
 
 ## Il video dello spot (null: [constant VIDEO]).
 @export var video: VideoStream
-## Lo shader del filtro VHS di enigmi (null: niente filtro). Riceve i parametri [member parametro_guasto] e
-## [member parametro_occhio] (0..1, dalle chiavi "filtro" del JSON) e [member parametro_tempo] (secondi dello spot).
-@export var filtro: Shader
-@export var parametro_guasto := &"guasto"
-@export var parametro_occhio := &"occhio"
-@export var parametro_tempo := &"tempo_spot"
+## Gli effetti di enigmi (lavoro/spot-enigmi, docs/proposte/spot/effetti/LEGGIMI.md), dal vivo sopra il video:
+## l'occhio ipnotico (OcchioIpnotico, mosso con "occhio" = progresso) e sopra tutto, dopo un BackBufferCopy, il filtro
+## VHS. Le altre chiavi di "filtro" nel JSON (guasto, schermo_blu, play...) sono uniform del filtro VHS.
+const SHADER_VHS := "res://shaders/spot/vhs.gdshader"
+const SHADER_OCCHIO := "res://shaders/spot/occhio_ipnotico.gdshader"
+const SCRIPT_OCCHIO := "res://scripts/spot/occhio_ipnotico.gd"
+## Dove sta la pupilla nel video, nell'inquadratura 8 (UV dello schermo).
+@export var centro_occhio := Vector2(0.5, 0.5)
 @export var tenere_per_saltare := 1.0
 @export_file("*.tscn") var scena_dopo := ""
 @export var bus := &"Musica"
@@ -39,7 +41,8 @@ var _premuto := 0.0
 var _tenuto := false
 var _finito := false
 @onready var _video: VideoStreamPlayer = $Video
-@onready var _filtro: ColorRect = $Filtro
+@onready var _occhio: ColorRect = $Occhio
+@onready var _vhs: ColorRect = $Vhs
 @onready var _anello: Control = $Anello
 
 
@@ -58,12 +61,13 @@ func _ready() -> void:
 	if video == null and ResourceLoader.exists(VIDEO):
 		video = load(VIDEO)
 	_video.stream = video
-	if filtro:
-		var m := ShaderMaterial.new()
-		m.shader = filtro
-		_filtro.material = m
+	_vhs.visible = _effetto(_vhs, SHADER_VHS, "")
+	if _effetto(_occhio, SHADER_OCCHIO, SCRIPT_OCCHIO):
+		_occhio.set(&"centro", centro_occhio)
+		# i fotogrammi saltati dell'occhio fermano anche il video
+		_occhio.connect(&"fermo", func(acceso: bool): _video.paused = acceso)
 	else:
-		_filtro.visible = false
+		_occhio.visible = false
 	for a in _dati["audio"]:
 		var file := String(a["file"]).replace("{voce}", voce)
 		if not ResourceLoader.exists(file):
@@ -93,13 +97,15 @@ func _process(delta: float) -> void:
 		_video.visible = _t < float(_dati["durata_video"])
 	for e in _audio:
 		_suona(e, _t)
-	if _filtro.material:
-		var m := _filtro.material as ShaderMaterial
-		m.set_shader_parameter(parametro_guasto, _chiave("guasto"))
-		m.set_shader_parameter(parametro_occhio, _chiave("occhio"))
-		m.set_shader_parameter(parametro_tempo, _t)
-		# dopo il video (inquadratura 9) il filtro resta sul nero: solo il disturbo della TV
-		_filtro.visible = _t < float(_dati["durata"])
+	for chiave in (_dati["filtro"][0] as Dictionary).keys():
+		if chiave == "t":
+			continue
+		var v := _chiave(chiave)
+		if chiave == "occhio":
+			if _occhio.visible:
+				_occhio.set(&"progresso", v)
+		elif _vhs.visible:
+			(_vhs.material as ShaderMaterial).set_shader_parameter(chiave, v)
 	if _tenuto:
 		_premuto += delta
 		if _premuto >= tenere_per_saltare:
@@ -131,6 +137,20 @@ func _suona(e: Dictionary, t: float) -> void:
 		p.volume_db = v + linear_to_db(maxf(sfuma, 0.0001))
 	elif p.playing:
 		p.stop()
+
+
+## Mette sul ColorRect [param r] lo shader (letto dallo schermo) e lo script, se ci sono. Falso se manca lo shader.
+func _effetto(r: ColorRect, shader: String, script: String) -> bool:
+	if not ResourceLoader.exists(shader):
+		push_warning("spot: manca l'effetto " + shader)
+		return false
+	var m := ShaderMaterial.new()
+	m.shader = load(shader)
+	m.set_shader_parameter(&"dallo_schermo", true)
+	r.material = m
+	if script != "" and ResourceLoader.exists(script):
+		r.set_script(load(script))
+	return true
 
 
 ## Il valore di [param campo] nelle chiavi "filtro" al tempo dello spot (lineare tra le chiavi).

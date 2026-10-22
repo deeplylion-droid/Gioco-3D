@@ -10,7 +10,7 @@
 			"nome": "1_apertura",
 			"scena": "res://scenes/spot/apertura_spot.tscn",
 			"inquadrature": [
-				{"n": 1, "inizio": 0.0, "durata": 3.0, "cosa": "schermo blu VHS, PLAY, poi il logo di Jilly da nuovo"}
+				{"n": 1, "inizio": 0.0, "durata": 3.0, "cosa": "logo di Jilly da nuovo; lo schermo blu e il PLAY li mette dal vivo il filtro VHS (schermo_blu, play)"}
 			]
 		},
 		{
@@ -79,7 +79,7 @@
 	"audio": [
 		{"nome": "sigla_pulita", "file": "res://audio/musica/sigla_pulita.ogg", "da": 0.3, "a": 32.4, "volume_db": -9.0, "sfuma_fine": 0.4},
 		{"nome": "sigla_rovinata", "file": "res://audio/musica/sigla_rovinata.ogg", "da": 32.0, "a": 43.0, "volume_db": -8.0, "sfuma_inizio": 0.4, "taglio_fine": true},
-		{"nome": "ronzio", "file": "res://audio/ambiente/neon_ronzio_loop.ogg", "da": 37.5, "a": 44.6, "volume_db": -20.0, "sale_a_db": -6.0, "sfuma_fine": 0.6, "da_rivedere": true},
+		{"nome": "ronzio", "file": "res://assets/spot/ronzio_spot.ogg", "da": 37.5, "a": 44.6, "volume_db": -6.0, "sfuma_fine": 0.6},
 		{"nome": "voce_1", "file": "res://assets/spot/voce/{voce}/frase_1.wav", "da": 0.9, "volume_db": 0.0},
 		{"nome": "voce_2", "file": "res://assets/spot/voce/{voce}/frase_2.wav", "da": 3.6, "volume_db": 0.0},
 		{"nome": "voce_3", "file": "res://assets/spot/voce/{voce}/frase_3.wav", "da": 8.4, "volume_db": 0.0},
@@ -89,12 +89,15 @@
 		{"nome": "voce_7", "file": "res://assets/spot/voce/{voce}/frase_7.wav", "da": 33.0, "volume_db": 0.0}
 	],
 	"filtro": [
-		{"t": 0.0, "guasto": 0.0, "occhio": 0.0},
-		{"t": 31.5, "guasto": 0.0, "occhio": 0.0},
-		{"t": 34.0, "guasto": 0.35, "occhio": 0.0},
-		{"t": 38.0, "guasto": 0.8, "occhio": 0.0},
-		{"t": 38.2, "guasto": 0.6, "occhio": 0.15},
-		{"t": 42.8, "guasto": 1.0, "occhio": 1.0},
-		{"t": 43.0, "guasto": 0.0, "occhio": 0.0}
+		{"t": 0.0, "schermo_blu": 1.0, "play": 1.0, "guasto": 0.0, "occhio": 0.0},
+		{"t": 1.1, "schermo_blu": 1.0, "play": 1.0, "guasto": 0.0, "occhio": 0.0},
+		{"t": 1.5, "schermo_blu": 0.0, "play": 1.0, "guasto": 0.0, "occhio": 0.0},
+		{"t": 3.0, "schermo_blu": 0.0, "play": 1.0, "guasto": 0.0, "occhio": 0.0},
+		{"t": 3.05, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.0, "occhio": 0.0},
+		{"t": 31.5, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.0, "occhio": 0.0},
+		{"t": 34.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.35, "occhio": 0.0},
+		{"t": 38.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.8, "occhio": 0.0},
+		{"t": 38.2, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 0.0},
+		{"t": 43.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 1.0}
 	]
 }
