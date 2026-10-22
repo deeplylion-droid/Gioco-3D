@@ -116,8 +116,10 @@ node('LuceZaino', 'SpotLight3D', '.', props={
 # Polaroid P1 (a terra vicino al risveglio), P2 (armadietto aperto), P3 (bacheca dello stanzino)
 node('Polaroid', 'Node3D', '.')
 for nome, foto, pos, rot, snap in [('Polaroid01', 1, (20.9, 0.02, -0.55), (0, 0.35, 0), True),
-                                   ('Polaroid02', 2, (3.38, 1.6, -7.9), (0, H, 0), False),
-                                   ('Polaroid03', 3, (12.65, 1.3, -6.245), (-H, 0, 0.05), False)]:
+                                   ('Polaroid02', 2, (3.38, 1.555, -7.9), (0, H, 0), False),
+                                   ('Polaroid03', 3, (12.65, 1.3, -6.257), (-H, 0, 0), False)]:
+    # (P2 appoggiata sul ripiano dell'armadietto, prima galleggiava 5 cm sopra; P3 sul sughero della
+    # bacheca e parallela, prima ci affondava di 1-2 cm: tests/polaroid_libere.gd)
     pr = {'position': V(*pos), 'rotation': V(*rot), 'collision_layer': '16', 'collision_mask': '0', 'monitoring': 'false',
           'script': 'ExtResource("s_pol")', 'photo': str(foto), 'entry_id': f'&"p0{foto}"', 'prompt': '"Raccogli"',
           'one_shot': 'true'}

@@ -15,7 +15,7 @@ extends Node3D
 ##   CAMMINA  cammina piano lungo "percorso", poi osserva (o sparisce, se richiesto).
 ##   SCAPPA   corre lungo "punti_fuga" (l'ultimo dietro un angolo) e sparisce.
 ## Dalla statua, dall'osservazione e dalla camminata scappa se il giocatore si avvicina troppo
-## (prima scappava anche dalla torcia: tolta il 18 ottobre). È nel gruppo "bambini". I segnali servono per l'audio.
+## (non dalla luce della torcia: scelta dell'utente del 21 ottobre, "lascia come ora"). È nel gruppo "bambini". I segnali servono per l'audio.
 
 signal visto      ## il giocatore lo ha guardato (fine della modalità statua)
 signal si_gira    ## comincia a girarsi verso il giocatore

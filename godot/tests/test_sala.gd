@@ -9,6 +9,7 @@ extends Node
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
+const POLAROID_LIBERE := preload("res://tests/polaroid_libere.gd")
 
 var level: Node
 var p: Player
@@ -52,6 +53,14 @@ func _run() -> void:
 	var p10 := polaroid.filter(func(n): return int(n.get(&"photo")) == 10)
 	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == 9,
 		"nella demo ci sono 9 Polaroid: P10 torna con la sala della torre (%d)" % polaroid.size())
+	var coperte: PackedStringArray = POLAROID_LIBERE.coperte(level)
+	check(coperte.is_empty(), "nessuna Polaroid è coperta o compenetrata da un'altra mesh %s" % str(coperte))
+	var sospese := PackedStringArray()
+	for f in polaroid:
+		var h: float = POLAROID_LIBERE.appoggio(level, f)
+		if h < -0.002 or h > 0.012:
+			sospese.append("%s: %.1f cm" % [f.name, h * 100.0])
+	check(sospese.is_empty(), "le Polaroid sono appoggiate (da 0 a 1 cm sopra quello che hanno sotto) %s" % str(sospese))
 	var medusa := level.get_node("Vasca/Medusa") as MedusaAffacciata
 	check(medusa != null and medusa.get_model_instance() != null, "la medusa è affacciata alla vasca")
 	var strappo := medusa.get_model_instance().find_child("Medusa_Strappo", true, false) as MeshInstance3D

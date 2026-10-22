@@ -11,7 +11,7 @@ extends Node
 ##  - suona i fondi (pioggia sulla cupola, vento, nave) e ogni tanto scricchiolii, gemiti
 ##    metallici, colpi lontani e la sirena d'allarme, intorno al giocatore;
 ##  - a ogni cambio di scena cerca i nodi che conosce e si collega ai loro segnali (o ne
-##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce (addon grafica), effetto
+##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
 ##    portelli, vasche, Polaroid, statua della medusa, bambini, morte, la piscina a onde con
 ##    il pulsante della botola e le micro medusine (tappa 5), monitor a tubo e paratie della
@@ -883,6 +883,7 @@ func _esamina(n: Node) -> void:
 		"Neon": _collega_neon(n)
 		"LuceEmergenza": _collega_emergenza(n)
 		"Gocce": _collega_gocce(n)
+		"Torcia": _collega_torcia(n)
 		"UnderwaterEffect": _collega_sottacqua(n)
 		"WaterDripEmitter": _attivi.append(Gocciolatoio.new(self, n))
 		"WaterInlet": _attivi.append(Bocchetta.new(self, n))
@@ -1020,6 +1021,10 @@ func _nome_goccia(pos: Vector3) -> StringName:
 	if pavimento_bagnato or _bagnato_scena:
 		return &"goccia_acqua" if randf() < 0.55 else &"goccia_pavimento"
 	return &"goccia_pavimento"
+
+
+func _collega_torcia(n: Node) -> void:
+	n.connect(&"accesa_cambiata", func(accesa: bool): suona(&"torcia_accesa" if accesa else &"torcia_spenta"))
 
 
 # --- addon acqua -----------------------------------------------------------------------------
