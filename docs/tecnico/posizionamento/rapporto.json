@@ -238,20 +238,6 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Sala/Piscina/sala_piscina_onde per 13 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1)",
-		"nodo": "Piscina/LucePortellone/Anello",
-		"pos": [
-			0.0,
-			-2.17,
-			2.02
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "il 87% dei suoi vertici è dentro Interni/Ambienti/Corridoio/neon_corridoio_2",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera",
 		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",

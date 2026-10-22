@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 18:13:35. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 18:24:46. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 7. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 144. Eccezioni non più trovate: 5.
+Nuovi: 7. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 143. Eccezioni non più trovate: 6.
 
 ## Nuovi
 
@@ -171,7 +171,6 @@ Nuovi: 7. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 144. Eccez
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| ambienti-1 | compenetra | `Piscina/LucePortellone/Anello` | 0.00, -2.17, 2.02 | passa dentro Sala/Piscina/sala_piscina_onde per 13 cm | da correggere: controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1) |
 | ambienti-1 | compenetrato | `Polaroid/Polaroid05` | 1.20, -2.17, 2.90 | entra dentro Sala/Piscina/sala_piscina_onde | da correggere: controllo severo del 22 ottobre: entra dentro Sala/Piscina/sala_piscina_onde (ambienti-1) |
 | ambienti-1 | ingombro | `Sala/AreaBimbi/sala_struttura_gioco` | -15.50, 0.00, -19.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (74 celle da 25 cm) (pavimento a y -0.00), con la collisione (ci si sbatte contro) | voluto: struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre) |
 
@@ -445,6 +444,7 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 
 - sala · staccato · `Sala/Dettagli/@MeshInstance3D@40`
 - sala · compenetra · `Sala/Interattivi/sala_portello_scarico`
+- sala · compenetra · `Piscina/LucePortellone/Anello`
 - sala · estremita_libera · `Sala/Dettagli/det_tubo_muro_7cm_2m`
 - risalita · compenetra · `Risalita/Infermeria/lampada_emergenza/Mesh_0`
 - risalita · compenetra · `Risalita/Infermeria/@MeshInstance3D@15669`
