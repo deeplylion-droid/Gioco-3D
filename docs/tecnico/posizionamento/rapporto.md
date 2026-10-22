@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 08:07:48. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 08:21:29. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 51. Eccezioni non più trovate: 0.
+Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 50. Eccezioni non più trovate: 0.
 
 ## Già noti
 
@@ -70,10 +70,4 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 51. Eccezi
 | ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_elettrico` | -3.25, -9.05, 33.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.90 e 2.00 m sopra il pavimento (48 celle da 25 cm), con la collisione (ci si sbatte contro) | voluto: quadro elettrico appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala |
 | ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_strumenti` | -3.50, -9.05, 36.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.30 e 2.00 m sopra il pavimento (64 celle da 25 cm), con la collisione (ci si sbatte contro) | voluto: pannello degli strumenti appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala |
 | ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_ringhiera` | -2.75, -9.05, 36.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (68 celle da 25 cm), senza collisione (si attraversa) | voluto: i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione |
-
-### torre
-
-| Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
-|---|---|---|---|---|---|
-| ambienti-2 | ingombro | `TorreScivoli/discesa_5_0` | 37.50, -15.01, -18.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.20 m sopra il pavimento (81 celle da 25 cm), senza collisione (si attraversa) | da correggere: all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8) |
 
