@@ -30,6 +30,7 @@ func _run() -> void:
 	await test_ladder_scendere()
 	await test_pickup_and_polaroid()
 	await test_turbine_door()
+	await test_impatto_vicino()
 	await test_suction_and_flowing_water()
 	await test_tank_transfer()
 	await test_drain_button()
@@ -379,6 +380,70 @@ func test_turbine_door() -> void:
 	p.water_pack.tank_empty.connect(func() -> void: empty_signals[0] += 1)
 	await _hold(&"spray", 20)
 	check(not p.water_pack.is_spraying and empty_signals[0] > 0, "serbatoio vuoto: niente getto")
+
+
+## Riscontro sulla v0.3.7: "se spruzzi da vicino contro un muro, le particle delle gocce degli spruzzi
+## danno fastidio e fanno laggare". Da vicino le particelle dell'impatto calano (meno, più brevi, più
+## piccole, più lente) e gocce e nebbia spariscono prima di arrivare alla camera; da lontano restano com'erano.
+func test_impatto_vicino() -> void:
+	print("Spruzzo contro un muro, da vicino e da lontano")
+	var g := p.water_pack.get_node(^"GettoPotente")
+	var impatto: Array = [g.get(&"_schizzi"), g.get(&"_lame"), g.get(&"_goccioloni"), g.get(&"_rivoli"), g.get(&"_nebbia_impatto")]
+	var base := {}
+	for gp in impatto:
+		var pm := (gp as GPUParticles3D).process_material as ParticleProcessMaterial
+		base[gp] = [gp.amount, gp.amount_ratio, pm.lifetime_randomness, pm.scale_min, pm.scale_max, pm.initial_velocity_max]
+	# un muro davanti, a più di 6 m: il primo che si trova girando attorno al punto di partenza
+	p.teleport(Vector3(0, 0, 0), 0.0)
+	await _frames(3)
+	var occhio := p.get_eye_position()
+	var verso := Vector3.ZERO
+	var muro := Vector3.ZERO
+	for i in 16:
+		var v := Vector3.FORWARD.rotated(Vector3.UP, TAU * i / 16.0)
+		var hit := p.get_world_3d().direct_space_state.intersect_ray(
+			PhysicsRayQueryParameters3D.create(occhio, occhio + v * 15.0, 1))
+		if not hit.is_empty() and occhio.distance_to(hit.position) > 6.5 and absf((hit.normal as Vector3).y) < 0.3:
+			verso = v
+			muro = hit.position
+			break
+	check(verso != Vector3.ZERO, "c'è un muro a più di 6 m")
+	if verso == Vector3.ZERO:
+		return
+	var esiti := {}
+	for d in [6.0, 0.8]:
+		p.teleport(Vector3(muro.x, 0, muro.z) - verso * d, 0.0)
+		p.look_at_point(muro)
+		p.water_pack.set_tank_amount(20.0)
+		await _frames(3)
+		Input.action_press(&"spray")
+		await _frames(50 + int(p.water_pack.spray_delay * 60.0))
+		var r := {"colpisce": p.water_pack.has_hit and p.water_pack.hit_point.distance_to(muro) < 1.0,
+			"k": float(g.get(&"lontananza_impatto")), "uguali": true, "ridotte": true}
+		for gp in impatto:
+			var pm := (gp as GPUParticles3D).process_material as ParticleProcessMaterial
+			var b: Array = base[gp]
+			var ora := [gp.amount, gp.amount_ratio, pm.lifetime_randomness, pm.scale_min, pm.scale_max, pm.initial_velocity_max]
+			r.uguali = r.uguali and ora == b
+			r.ridotte = r.ridotte and gp.amount == b[0] and gp.amount_ratio <= 0.35 and pm.lifetime_randomness >= 0.5 \
+				and pm.scale_max <= b[4] * 0.65 and pm.initial_velocity_max <= b[5] * 0.75
+		esiti[d] = r
+		Input.action_release(&"spray")
+		await _frames(20)
+	check(esiti[6.0].colpisce and esiti[6.0].k == 1.0 and esiti[6.0].uguali,
+		"da 6 m l'impatto è com'era (lontananza %.2f)" % esiti[6.0].k)
+	check(esiti[0.8].colpisce and esiti[0.8].k == 0.0 and esiti[0.8].ridotte,
+		"da 0,8 m meno particelle d'impatto, più brevi, più piccole e più lente (lontananza %.2f)" % esiti[0.8].k)
+	# gocce e nebbia dell'impatto spariscono vicino alla camera; quelle lungo il getto e all'ugello no
+	var par := func(gp, nome: StringName) -> float:
+		var v = (((gp as GPUParticles3D).draw_pass_1 as QuadMesh).material as ShaderMaterial).get_shader_parameter(nome)
+		return float(v) if v != null else 0.0
+	var spariscono: bool = impatto.slice(0, 4).all(func(gp): return par.call(gp, &"vicino_camera") > 0.0) \
+		and par.call(impatto[4], &"near_camera") > 0.0
+	var getto: Array = (g.get(&"_spruzzi") as Array) + [g.get(&"_bocca")]
+	var restano: bool = getto.all(func(gp): return par.call(gp, &"vicino_camera") == 0.0) \
+		and (g.get(&"_nebbie") as Array).all(func(gp): return par.call(gp, &"near_camera") == 0.0)
+	check(spariscono and restano, "gocce e nebbia dell'impatto spariscono davanti alla camera, quelle del getto no")
 
 
 func test_suction_and_flowing_water() -> void:

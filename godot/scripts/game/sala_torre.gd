@@ -107,6 +107,9 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 			if OS.has_environment("TORRE_TEMPI"):
 				print("-- fine fotogramma dopo il passo %d (%.0f ms di passi)" % [k - 1, (Time.get_ticks_usec() - t0) / 1000.0])
 			await get_tree().process_frame
+			# tolta dall'albero mentre si costruiva (una morte ricarica la sala): non serve più
+			if not is_inside_tree():
+				return
 			t0 = Time.get_ticks_usec()
 	fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
 	costruita = true
@@ -123,6 +126,8 @@ const STRATO_PREPARA := 1 << 19
 ## Intanto la sala sta su uno strato che la camera del gioco non disegna, e le sue luci illuminano solo
 ## quello strato. Alla fine torna com'era (nascosta, se lo era).
 func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
+	if principale == null or not is_inside_tree():
+		return
 	var visuali := find_children("*", "VisualInstance3D", true, false)
 	var aabb := AABB()
 	var primo := true
@@ -167,6 +172,8 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
 	for i in fotogrammi + 1:
 		await get_tree().process_frame
+		if not is_inside_tree():
+			break
 	sv.queue_free()
 	for vi in strati:
 		if is_instance_valid(vi):
@@ -190,6 +197,7 @@ func _passi() -> Array:
 	if crea_luci:
 		out.append_array(_passi_luci())
 	out.append(_luce_lei)
+	out.append(_fuori_dal_blackout)
 	return out
 
 
@@ -544,8 +552,12 @@ func _polaroid() -> void:
 	foto.name = "Polaroid10"
 	if &"photo" in foto:
 		foto.set(&"photo", 10)
+	# Appoggiata sul sedile, lungo la stecca: con lo snap (raggio dall'alto) finiva in cima allo schienale,
+	# o 5 cm sopra il sedile se il lettino non era ancora costruito (tests/polaroid_libere.gd).
+	foto.set(&"snap_to_surface", false)
 	add_child(foto)
-	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.05, 0)
+	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.01, 0)
+	foto.global_rotation = Vector3(0.0, PI * 0.5, 0.0)
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.
@@ -693,6 +705,14 @@ func _luce_lei() -> void:
 	s.global_position = p + Vector3(0, -2.5, 0)
 	s.rotation_degrees = Vector3(90, 0, 0)
 	_lei.append(s)
+
+
+## Le luci della torre restano accese col blackout (dopo la tappa 6 la torre è illuminata così).
+## LuciRisveglio, alla ripartenza da un checkpoint nella torre, spegne tutte le luci della scena che non
+## hanno risveglio_ignora: e la torre, che lì si costruisce subito, diventava tutta buia.
+func _fuori_dal_blackout() -> void:
+	for l in find_children("*", "Light3D", true, false):
+		l.set_meta(&"risveglio_ignora", true)
 
 
 func _luci(d: Dictionary) -> void:

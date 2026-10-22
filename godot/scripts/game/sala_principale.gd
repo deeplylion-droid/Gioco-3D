@@ -438,10 +438,11 @@ func _prepara_torre() -> void:
 	_torre_nascosta = t
 	add_child(t)
 	await t.call(&"costruisci_a_pezzi")
-	if not is_instance_valid(t) or t != _torre_nascosta:
+	# (fuori dall'albero: una morte ha ricaricato la sala mentre la torre si preparava)
+	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
 	await t.call(&"prepara_materiali", get_viewport())
-	if not is_instance_valid(t) or t != _torre_nascosta:
+	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
 	_torre_preparata = true
 	if _torre_voluta:
