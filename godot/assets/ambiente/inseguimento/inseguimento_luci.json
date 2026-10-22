@@ -431,19 +431,6 @@
   },
   {
    "f": "det/tubi",
-   "n": "det_tubo_valvola_T",
-   "p": [
-    55.0,
-    32.0,
-    -23.0
-   ],
-   "ry": 0.0,
-   "a": "origine",
-   "nrm": null,
-   "s": 1.0
-  },
-  {
-   "f": "det/tubi",
    "n": "det_tubo_curva_su",
    "p": [
     61.0,
@@ -451,19 +438,6 @@
     -19.9
    ],
    "ry": 180.0,
-   "a": "origine",
-   "nrm": null,
-   "s": 1.0
-  },
-  {
-   "f": "det/tubi",
-   "n": "det_tubo_valvola_T",
-   "p": [
-    40.365,
-    11.8,
-    -29.2
-   ],
-   "ry": 90.0,
    "a": "origine",
    "nrm": null,
    "s": 1.0

@@ -1551,13 +1551,16 @@ def versione_A(mats):
     # la Polaroid 10 sul lettino della piattaforma NO a -12, nell'angolo fuori dal passaggio
     cno = centro('NO')
     pl = angoli_prop[('NO', -12.0)]
-    props.append(P.prop('lettino_plastica', (pl.x, pl.y, -12.0), 90))
-    polaroid_pos = Vector((pl.x, pl.y, -12.0 + 0.36))
+    # nel gioco il lettino sul grigliato (1 cm sotto il piano) e la Polaroid sul lettino (prima 2,1 cm sopra)
+    z_let = -12.0 - (0.0104 if GIOCO else 0.0)
+    z_pol = -12.0 + 0.36 - (0.0104 + 0.0206 if GIOCO else 0.0)
+    props.append(P.prop('lettino_plastica', (pl.x, pl.y, z_let), 90))
+    polaroid_pos = Vector((pl.x, pl.y, z_pol))
     c2 = K.Costruttore(mats)
-    P.polaroid(c2, Vector((pl.x, pl.y, -12.0 + 0.36)), Vector((1, 0, 0)))
+    P.polaroid(c2, Vector((pl.x, pl.y, z_pol)), Vector((1, 0, 0)))
     pol = c2.crea('torre_polaroid_10')
     cart = angoli_prop[('NO', 0.0)]
-    props += [P.prop('cartello_pavimento_bagnato', (cart.x, cart.y, 0.0), 30)]
+    props += [P.prop('cartello_pavimento_bagnato', (cart.x, cart.y, -(0.0103 if GIOCO else 0.0)), 30)]
     fondo = [('sedia_bagnino', (29.4, 9.9), 0), ('lettino_plastica', (21.2, 9.0), 90), ('lettino_plastica', (21.2, 10.8), 95),
              ('balena_gonfiabile_sgonfia', (30.0, 21.6), 15), ('delfino_gonfiabile_sgonfio', (25.6, 4.9), 120),
              ('pallone_spiaggia', (27.0, 12.6), 0), ('secchio_gigante', (32.6, 9.6), 30),
@@ -1618,9 +1621,10 @@ def versione_A(mats):
             dv = Vector((m_.x - col.x, m_.y - col.y, 0)).normalized()
             p = col + dv * 0.55
             luci['fari'].append([[p.x, p.y, p.z], [m_.x, m_.y, m_.z], [col.x, col.y, col.z]])
-    luci['emergenza'] = [[[XI0 + 0.1, 20.5, 6.0], 'e'], [[XI1 - 0.1, 15.0, 1.5], 'o'], [[31.0, YI0 + 0.1, -2.5], 'n'],
-                         [[31.0, YI1 - 0.1, -8.0], 's'], [[XI0 + 0.1, 10.0, -12.0], 'e'], [[XI1 - 0.1, 15.0, -16.5], 'o'],
-                         [[27.0, YI1 - 0.1, 9.0], 's']]
+    em_ = 0.08 if GIOCO else 0.1      # (nel gioco il retto della scatola, 8 cm dietro il centro, sul muro)
+    luci['emergenza'] = [[[XI0 + em_, 20.5, 6.0], 'e'], [[XI1 - em_, 15.0, 1.5], 'o'], [[31.0, YI0 + em_, -2.5], 'n'],
+                         [[31.0, YI1 - em_, -8.0], 's'], [[XI0 + em_, 10.0, -12.0], 'e'], [[XI1 - em_, 15.0, -16.5], 'o'],
+                         [[27.0, YI1 - em_, 9.0], 's']]
     for cand, pts, capi in scelti[::3]:
         luci['gocce'].append([pts[-1].x, pts[-1].y, pts[-1].z - 0.4])
     luci['lei'] = [C[0], C[1], FONDO]
