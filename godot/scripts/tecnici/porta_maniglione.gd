@@ -14,8 +14,10 @@ signal scossa_bloccata
 @export var porta_path: NodePath
 ## Cardine: un punto sul bordo della porta (coordinate globali al momento del _ready, prese dal
 ## nodo indicato) e l'angolo d'apertura (gradi intorno a +Y; positivo = verso la sala).
+## La porta del ponte si spinge col maniglione e si apre verso il corridoio del raccordo, lungo il suo
+## fianco (aperta verso la sala sporgeva 1 m sulla strada del ritorno: collaudo del 22 ottobre).
 @export var cardine_path: NodePath
-@export var angolo_apertura := 95.0
+@export var angolo_apertura := -95.0
 @export var durata := 1.4
 ## Se la porta del modello non ha una collisione sua, ne crea una (scatola come la mesh).
 @export var collisione_propria := false
