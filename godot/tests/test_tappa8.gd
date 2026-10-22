@@ -476,7 +476,7 @@ func _prepara() -> void:
 func _fine() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
-	get_tree().quit(1 if _failed > 0 else 0)
+	Game.esci(1 if _failed > 0 else 0)  # aspetta i caricamenti nel thread
 
 
 ## Vero se l'anta del portone, in 11 posizioni dalla chiusa all'aperta, non tocca nessun altro corpo

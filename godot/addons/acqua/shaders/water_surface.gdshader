@@ -1,4 +1,4 @@
-// Superficie dell'acqua delle vasche (Splash Lagoon).
+// Superficie dell'acqua delle vasche (Jilly Jubilee).
 //
 // Sopra l'acqua: rifrazione dello schermo con assorbimento e diffusione che dipendono dallo spessore
 // d'acqua attraversato, riflessi (SSR fatto a mano, riflesso planare o cubemap di riserva) passati

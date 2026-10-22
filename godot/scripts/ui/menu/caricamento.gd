@@ -53,7 +53,7 @@ func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	_costruisci()
-	var err := ResourceLoader.load_threaded_request(scena, "PackedScene")
+	var err := Game.carica_in_thread(scena, "PackedScene")
 	if err != OK:
 		_riserva()
 	if Dissolvenza.presente(get_tree()):
@@ -75,7 +75,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	_trascorso += delta
-	if fase != Fase.CARICAMENTO:
+	if fase != Fase.CARICAMENTO or Game.uscendo:
 		return
 	var p := []
 	var st := ResourceLoader.load_threaded_get_status(scena, p)

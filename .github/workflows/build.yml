@@ -75,6 +75,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_esportazione.gd
 
+      - name: Test del nome nuovo (Jilly Jubilee) e dei dati della cartella di Splash Lagoon
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_nome_nuovo.gd
+
       - name: Test della demo (sala principale)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
@@ -135,6 +139,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acquari.gd
 
+      - name: Test dell'uscita dal gioco con un caricamento nel thread in corso
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_uscita.gd
+
       - name: Test della Polaroid 4 (si raggiunge e si raccoglie col controller vero)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_polaroid.gd
@@ -151,6 +159,26 @@ jobs:
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
 
+      - name: Test del prototipo del fiume lento
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume.gd
+
+      - name: Test del prototipo dell'infermeria
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria.gd
+
+      - name: Test del fiume lento del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume_gioco.gd
+
+      - name: Test dell'infermeria del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
+
+      - name: Test della strada nuova della risalita
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita.gd
+
       - name: Test del blocco del pool di thread (la sala al primo fotogramma con 4 worker; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
         timeout-minutes: 20
@@ -166,23 +194,23 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: |
           mkdir -p build/windows build/linux
-          godot --headless --path godot --export-release "Windows Desktop" ../build/windows/SplashLagoon.exe
-          godot --headless --path godot --export-release "Linux" ../build/linux/SplashLagoon.x86_64
-          test -f build/windows/SplashLagoon.exe -a -f build/windows/SplashLagoon.pck
-          test -f build/linux/SplashLagoon.x86_64 -a -f build/linux/SplashLagoon.pck
+          godot --headless --path godot --export-release "Windows Desktop" ../build/windows/JillyJubilee.exe
+          godot --headless --path godot --export-release "Linux" ../build/linux/JillyJubilee.x86_64
+          test -f build/windows/JillyJubilee.exe -a -f build/windows/JillyJubilee.pck
+          test -f build/linux/JillyJubilee.x86_64 -a -f build/linux/JillyJubilee.pck
           # Windows in un solo file: il .pck è dentro l'eseguibile (si avvia con un doppio clic, senza scompattare).
           mkdir -p build/windows_unico
-          godot --headless --path godot --export-release "Windows Portatile" ../build/windows_unico/SplashLagoon.exe
-          test "$(stat -c %s build/windows_unico/SplashLagoon.exe)" -gt 100000000
+          godot --headless --path godot --export-release "Windows Portatile" ../build/windows_unico/JillyJubilee.exe
+          test "$(stat -c %s build/windows_unico/JillyJubilee.exe)" -gt 100000000
           V="${{ steps.versione.outputs.versione }}"
-          (cd build/windows && zip -9 -q "../SplashLagoon-windows-v$V.zip" SplashLagoon.exe SplashLagoon.pck)
-          (cd build/linux && zip -9 -q "../SplashLagoon-linux-v$V.zip" SplashLagoon.x86_64 SplashLagoon.pck)
+          (cd build/windows && zip -9 -q "../JillyJubilee-windows-v$V.zip" JillyJubilee.exe JillyJubilee.pck)
+          (cd build/linux && zip -9 -q "../JillyJubilee-linux-v$V.zip" JillyJubilee.x86_64 JillyJubilee.pck)
           # GitHub non accetta file di Release sopra i 2 GiB: l'exe unico si pubblica solo sotto 1,95 GB,
           # altrimenti resta solo lo zip (docs/tecnico/peso_build.md: cosa si può alleggerire).
           LIMITE_EXE=1950000000
-          PESO_EXE=$(stat -c %s build/windows_unico/SplashLagoon.exe)
+          PESO_EXE=$(stat -c %s build/windows_unico/JillyJubilee.exe)
           if [ "$PESO_EXE" -lt "$LIMITE_EXE" ]; then
-            cp build/windows_unico/SplashLagoon.exe "build/SplashLagoon-windows-v$V.exe"
+            cp build/windows_unico/JillyJubilee.exe "build/JillyJubilee-windows-v$V.exe"
             echo "Exe unico: $((PESO_EXE / 1000000)) MB (pubblicato; limite $((LIMITE_EXE / 1000000)) MB)"
           else
             echo "::warning title=Exe unico non pubblicato::L'exe unico pesa $((PESO_EXE / 1000000)) MB, sopra il limite di $((LIMITE_EXE / 1000000)) MB: nella Release c'è solo lo zip di Windows. Vedi docs/tecnico/peso_build.md per alleggerire il pacchetto."
@@ -194,23 +222,23 @@ jobs:
             fi
           done
           # Pacchetti: i doppioni tolti da EsportaSenzaDoppioni rimandano a dati che ci sono; peso per cartella.
-          python3 tools/verifica_pck.py build/windows/SplashLagoon.pck 20
-          python3 tools/verifica_pck.py build/linux/SplashLagoon.pck 0
-          python3 tools/verifica_pck.py build/windows_unico/SplashLagoon.exe 0
+          python3 tools/verifica_pck.py build/windows/JillyJubilee.pck 20
+          python3 tools/verifica_pck.py build/linux/JillyJubilee.pck 0
+          python3 tools/verifica_pck.py build/windows_unico/JillyJubilee.exe 0
           ls -la build
 
       - name: Carica la build Windows
         if: steps.progetto.outputs.presente == 'si'
         uses: actions/upload-artifact@v4
         with:
-          name: SplashLagoon-windows-v${{ steps.versione.outputs.versione }}
+          name: JillyJubilee-windows-v${{ steps.versione.outputs.versione }}
           path: build/windows/
 
       - name: Carica la build Linux
         if: steps.progetto.outputs.presente == 'si'
         uses: actions/upload-artifact@v4
         with:
-          name: SplashLagoon-linux-v${{ steps.versione.outputs.versione }}
+          name: JillyJubilee-linux-v${{ steps.versione.outputs.versione }}
           path: build/linux/
 
       - name: Release (solo su main; crea la Release o aggiunge i file che mancano)
@@ -238,12 +266,12 @@ jobs:
             if [ -f "docs/release/$TAG.md" ]; then
               NOTE=(--notes-file "docs/release/$TAG.md")
             else
-              NOTE=(--notes "Demo giocabile della sala principale (build automatica del commit $GITHUB_SHA). Windows: scompatta lo zip e avvia SplashLagoon.exe (tieni SplashLagoon.pck nella stessa cartella).")
+              NOTE=(--notes "Demo giocabile della sala principale (build automatica del commit $GITHUB_SHA). Windows: scompatta lo zip e avvia JillyJubilee.exe (tieni JillyJubilee.pck nella stessa cartella).")
             fi
             shopt -s nullglob
             FILE=(build/*.zip build/*.exe)
             gh release create "$TAG" "${FILE[@]}" \
               --target "$GITHUB_SHA" \
-              --title "Splash Lagoon $TAG" \
+              --title "Jilly Jubilee $TAG" \
               "${NOTE[@]}"
           fi

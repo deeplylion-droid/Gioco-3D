@@ -1,18 +1,5 @@
 [
 	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			-2.75,
-			-9.05,
-			36.5
-		],
-		"stato": "voluto",
-		"motivo": "i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione"
-	},
-	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
 		"squadra": "ambienti-1",
@@ -430,6 +417,19 @@
 	},
 	{
 		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			-2.75,
+			-9.05,
+			36.5
+		],
+		"stato": "voluto",
+		"motivo": "i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione"
+	},
+	{
+		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_elettrico",
 		"squadra": "ambienti-2",
 		"problema": "ingombro",
@@ -622,32 +622,6 @@
 		],
 		"stato": "voluto",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.65,
-			2.42,
-			30.2
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.65,
-			2.42,
-			30.2
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",

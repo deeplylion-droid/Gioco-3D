@@ -59,10 +59,14 @@ func _run() -> void:
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
-	var polaroid := level.find_children("*", "PolaroidPhoto", true, false)
+	# la P11, la pecora che brilla, sta nella cassaforte dell'infermeria della risalita: la controlla
+	# test_infermeria_gioco (qui l'infermeria è nascosta, lontana dal giocatore)
+	var risalita := level.get_node_or_null(^"Risalita")
+	var polaroid := level.find_children("*", "PolaroidPhoto", true, false).filter(func(n): return risalita == null or not risalita.is_ancestor_of(n))
 	var p10 := polaroid.filter(func(n): return int(n.get(&"photo")) == 10)
-	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == 9,
-		"nella demo ci sono 9 Polaroid: P10 torna con la sala della torre (%d)" % polaroid.size())
+	var totale := 9 + (1 if risalita else 0)
+	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == totale,
+		"nella sala ci sono 9 Polaroid (P10 torna con la sala della torre, P11 è nell'infermeria): %d, in tutto %d" % [polaroid.size(), GameState.get_total(&"polaroid")])
 	var coperte: PackedStringArray = POLAROID_LIBERE.coperte(level)
 	check(coperte.is_empty(), "nessuna Polaroid è coperta o compenetrata da un'altra mesh %s" % str(coperte))
 	var sospese := PackedStringArray()

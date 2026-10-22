@@ -1,6 +1,6 @@
 # Documento di progetto (GDD)
 
-Titolo provvisorio: **Splash Lagoon**. Finché l'utente non sceglie il nome, nel gioco non si scrive: il titolo mostra solo la statua e "Capitolo 1 · demo". Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
+Titolo: **Jilly Jubilee** (scelta dell'utente, 22 ottobre: "Sì, chiamiamolo Jilly Jubilee"), come la mascotte. Prima era "Splash Lagoon", che resta il nome provvisorio del parco nel gioco. Il logo è **A, l'insegna del parco rovinata** (scelta dell'utente, 22 ottobre: "Senti usiamo l'A di prima", dopo il secondo giro D/E/F): "Jilly" in corsivo corallo e "JUBILEE" in oro su un nastro blu, con stelle e una piccola medusa, come insegna, targa e manifesto del parco, ma con lo smalto saltato fino alla ruggine, colature e crepe. Va nella schermata del titolo com'era nella prova che ha visto (`titolo_a.jpg`, in alto a sinistra sopra "Capitolo 1 · demo" e il menu). Scartati: B anni '90 e C horror del primo giro, D neon, E titolo da film e F disegno a pastelli del secondo giro. Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
 
 ## Regola d'oro
 
@@ -276,6 +276,8 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 - strisce delle paratie: nella torre le strisce vogliono dire "chiuso". a) sulla paratia giusta la trave diventa liscia (consigliata); b) restano tutte a strisce, perché finché non colpisci il bersaglio sono chiuse.
 
 **Scelte dell'utente (22 ottobre):** vasche **c**, cioè acqua meno torbida e verde-azzurra col fondo che si intravede, più una lampada da lavoro sopra ogni vasca; strisce **a**, la trave della paratia giusta diventa liscia e sulla sbagliata le strisce restano.
+
+**Lei nell'inseguimento** (22 ottobre): animazioni fatte da mascotte (sale dall'acqua, incombe con la testa che ti segue, presa, respinta quando il getto la colpisce in faccia, scende, colpi alla grata, affacciata in SB1 che ti fissa). **La voce: scelta B dell'utente** ("B", 22 ottobre): versi nuovi fatti apposta, nello stesso stile dei suoi suoni di adesso (un verso quando sale e incombe, un grido quando ti prende, un lamento quando la colpisci, un rantolo mentre ti fissa dal pozzo, versi di rabbia contro la grata), da far sentire all'utente prima di metterli nel gioco. Scartata A (riusare i versi che ha già).
 Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
@@ -333,7 +335,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 
 ## La mascotte del capitolo 1: la medusa
 
-**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il titolo del gioco è ancora da decidere: per ora resta "Splash Lagoon", che è anche il nome del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
+**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il gioco si chiama come lei: **Jilly Jubilee** (scelta dell'utente, 22 ottobre); "Splash Lagoon" resta il nome provvisorio del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
 
 **Il nome nel parco, scelte del 19 ottobre** (render e scatti in `docs/proposte/mascotte/jilly/`, lavoro/mascotte 38c2738):
 - **logo stile B**, "spettacolo della nave": "Jilly" in corsivo corallo, "JUBILEE" in oro su un nastro blu, stelle e una piccola medusa. Nota dell'utente: "ma molto più invecchiati", quindi targa, manifesto e insegna vanno invecchiati molto di più di quelli proposti;

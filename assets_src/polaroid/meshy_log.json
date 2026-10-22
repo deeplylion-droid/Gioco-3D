@@ -578,5 +578,33 @@
   "status": "SUCCEEDED",
   "error": null,
   "time": "2026-10-14 22:15:16"
+ },
+ {
+  "job": "P11_gpt",
+  "kind": "image-to-image",
+  "task_id": "01a1616e-36cc-7598-81b3-622d33037b86",
+  "model": "gpt-image-2-5-flare",
+  "aspect": "1:1",
+  "refs": [
+   "docs/proposte/agnello_fluo/b/3_vicino.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Taken in near darkness without flash, a long handheld exposure, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night, a small makeshift animal pen behind the door of a ship's infirmary, in a dark service room of an abandoned shipwrecked cruise ship: a low fence of wooden pallets and chicken wire, a scatter of dirty straw on a wet metal floor, a dented metal water bucket. Inside the pen stands a real adult sheep with a thick dirty fleece. Its wool glows faintly from within with soft blotchy patches of pink light, like the glow of a jellyfish, brightest on its muzzle and around its eyes, the same pink glow as the plush lamb of the reference image. The sheep's own glow is the only real light: it softly lights the straw and the wire fence around it, everything else falls into darkness. The sheep stands still and looks toward the camera. Underexposed, heavy grain, slight motion blur, eerie and quiet. No people. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-22 02:26:40"
+ },
+ {
+  "job": "P11_nbp",
+  "kind": "image-to-image",
+  "task_id": "01a1616e-329b-7043-ba93-86807df32cec",
+  "model": "nano-banana-pro",
+  "aspect": "1:1",
+  "refs": [
+   "docs/proposte/agnello_fluo/b/3_vicino.jpg"
+  ],
+  "prompt": "An authentic amateur instant photograph taken in 1997 with a Polaroid 600 camera, square format. Taken in near darkness without flash, a long handheld exposure, slightly soft focus, a little motion blur, typical instant-film colors: cyan-green shadows, warm creamy faded highlights, slightly milky blacks, visible film grain, a few dust specks. The photo fills the entire square frame edge to edge: do not draw the white Polaroid border, a frame, a table or hands holding it, only the picture itself. Night, a small makeshift animal pen behind the door of a ship's infirmary, in a dark service room of an abandoned shipwrecked cruise ship: a low fence of wooden pallets and chicken wire, a scatter of dirty straw on a wet metal floor, a dented metal water bucket. Inside the pen stands a real adult sheep with a thick dirty fleece. Its wool glows faintly from within with soft blotchy patches of pink light, like the glow of a jellyfish, brightest on its muzzle and around its eyes, the same pink glow as the plush lamb of the reference image. The sheep's own glow is the only real light: it softly lights the straw and the wire fence around it, everything else falls into darkness. The sheep stands still and looks toward the camera. Underexposed, heavy grain, slight motion blur, eerie and quiet. No people. Absolutely no text, letters, numbers, logos, captions, name labels or writing anywhere in the image: no words on signs, no words or letters on clothes. No blood, no wounds, no violence. Everyone is fully clothed.",
+  "status": "SUCCEEDED",
+  "error": null,
+  "time": "2026-10-22 02:26:46"
  }
 ]

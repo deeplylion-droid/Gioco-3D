@@ -672,34 +672,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"pos": [
-			-15.65,
-			2.12,
-			30.2
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"pos": [
-			-15.65,
-			2.12,
-			44.96
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (393 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",

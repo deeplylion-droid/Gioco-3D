@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/risalita/fiume.tscn" id="1_fiume"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+
+[node name="FiumeGiocoProva" type="Node3D"]
+
+[node name="Fiume" parent="." instance=ExtResource("1_fiume")]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -4.05, 0, -4.05)

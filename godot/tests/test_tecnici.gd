@@ -180,11 +180,21 @@ func _run() -> void:
 	await _frames(5)
 	ok = true
 	var salita := 0.0
-	for loc in [Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 15.0), Vector3(30.0, 9.05, 15.0),
-			Vector3(24.0, 9.05, 15.0), Vector3(19.3, 9.05, 15.0)]:
+	# scelta β (21 ottobre): nel tratto basso di C2 la porta di servizio verso il fiume (aperta), e subito
+	# dopo il buco dell'agnellino una grata chiusa; di là C2 continua fino al magazzino
+	var sp := p.get_world_3d().direct_space_state
+	check(_ray(sp, lv * Vector3(44.9, 8.25, -5.1), lv * Vector3(46.5, 8.25, -5.1)).is_empty(), "nel tratto basso di C2 la porta di servizio è aperta")
+	check(not _ray(sp, lv * Vector3(44.9, 8.25, -4.0), lv * Vector3(46.5, 8.25, -4.0)).is_empty(), "accanto alla porta c'è il muro")
+	for loc in [Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 4.4)]:
 		ok = ok and await _cammina_verso(lv * loc, 900)
 		salita = maxf(salita, p.global_position.y)
-	check(ok, "dal pianerottolo T si va per il corridoio, su per la scala, nel magazzino fino alla serranda")
+	check(ok, "dal pianerottolo T su per la scala di C2 fino al buco dell'agnellino")
+	check(not await _cammina_verso(lv * Vector3(44.55, 9.05, 9.0), 240, false), "subito dopo il buco la grata non si passa")
+	p.teleport(lv * Vector3(44.55, 9.10, 7.0), p.yaw, 0.0)
+	await _frames(5)
+	for loc in [Vector3(44.55, 9.05, 15.0), Vector3(30.0, 9.05, 15.0), Vector3(24.0, 9.05, 15.0), Vector3(19.3, 9.05, 15.0)]:
+		ok = ok and await _cammina_verso(lv * loc, 900)
+	check(ok, "di là dalla grata il corridoio va nel magazzino fino alla serranda")
 	check(absf(p.global_position.y) < 0.1, "il magazzino è al livello della sala grande (y = %.2f)" % p.global_position.y)
 	var serr: Node3D = level.get_node("Marker/marker_t7_serranda")
 	check(serr.global_position.distance_to(Vector3(-15.0, 0, 19.3)) < 0.1, "il marker della serranda è appena dentro la sala, angolo sud-ovest (%s)" % str(serr.global_position))

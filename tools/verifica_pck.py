@@ -5,7 +5,7 @@
   (il plugin EsportaSenzaDoppioni fa rimandare i doppioni alla copia che resta: qui si vede che c'è).
 - Stampa il peso per tipo di file e le cartelle più pesanti.
 
-Uso: python3 tools/verifica_pck.py build/windows/SplashLagoon.pck [quante cartelle stampare]
+Uso: python3 tools/verifica_pck.py build/windows/JillyJubilee.pck [quante cartelle stampare]
 Esce con 1 se un rimando non trova i suoi dati.
 """
 import collections

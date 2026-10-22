@@ -1,4 +1,4 @@
-"""La sigla della mascotte di Splash Lagoon e gli stinger.
+"""La sigla della mascotte di Jilly Jubilee e gli stinger.
 
 - sigla_pulita: carillon e organetto da acquapark anni '90, allegra, 120 BPM (per il titolo).
 - sigla_rovinata: la stessa musica dal vecchio altoparlante del piedistallo: rallentata

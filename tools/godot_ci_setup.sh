@@ -8,7 +8,7 @@ BIN_DIR="${GODOT_BIN_DIR:-$HOME/godot-bin}"
 mkdir -p "$BIN_DIR"
 if [ ! -x "$BIN_DIR/godot" ]; then
   TMP="$(mktemp -d)"
-  curl -sSL -A "splash-lagoon-build/1.0" -o "$TMP/godot.zip" \
+  curl -sSL -A "jilly-jubilee-build/1.0" -o "$TMP/godot.zip" \
     "https://downloads.godotengine.org/?version=${VER}&flavor=stable&slug=linux.x86_64.zip&platform=linux.64"
   unzip -q -o "$TMP/godot.zip" -d "$TMP"
   mv "$TMP/Godot_v${VER}-stable_linux.x86_64" "$BIN_DIR/godot"

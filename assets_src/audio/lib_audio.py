@@ -1,4 +1,4 @@
-"""Libreria di sintesi e trattamento audio per Splash Lagoon (numpy + scipy + ffmpeg).
+"""Libreria di sintesi e trattamento audio per Jilly Jubilee (numpy + scipy + ffmpeg).
 
 Tutto lavora a 44100 Hz, in float32. I segnali mono sono array 1D, quelli stereo (n, 2).
 Strumenti: rumori, filtri (anche variabili nel tempo), risonatori e sintesi modale,
