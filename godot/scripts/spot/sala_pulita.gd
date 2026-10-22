@@ -13,6 +13,12 @@ const SHADER_ONDE := preload("res://shaders/spot/acqua_onde_spot.gdshader")
 ## Le parti della sala che sono sporco o rovina: nella nave nuova non ci sono.
 const ROVINE: Array[String] = ["sala_colature", "sala_piastrelle_mancanti", "sala_pozzanghere", "sala_schegge_cupola",
 		"sala_vasca_centrale_calcare", "sala_vasca_offerte"]
+## I giocattoli lasciati in giro nel gioco: nella sala nuova non ci sono (scelta dell'utente, 22 ottobre: "a", la sala
+## tutta in ordine come prima dell'apertura). Restano gli arredi fissi: lettini, panche, sedia del bagnino, cestini,
+## funghi fontana e i salvagenti appesi ai muri.
+const GIOCATTOLI: Array[String] = ["ogg_paperella_gigante", "ogg_pallone_spiaggia", "ogg_ciambella_gonfiabile",
+		"ogg_tubi_galleggianti", "ogg_delfino_gonfiabile_sgonfio", "ogg_orsacchiotto_grande",
+		"ogg_cartello_pavimento_bagnato", "ogg_salvagente_nave"]
 const GLB_SALA := ["architettura", "cupola", "piscina", "vasca_centrale", "area_bimbi", "interattivi", "torre_scivoli",
 		"oggetti", "monumento"]
 
@@ -58,8 +64,13 @@ func _pulisci(radice: Node) -> void:
 func _rovina(n: Node) -> bool:
 	var p := n
 	while p != null and p != self:
-		if String(p.name) in ROVINE:
+		var nome := String(p.name)
+		if nome in ROVINE:
 			return true
+		for g in GIOCATTOLI:
+			# i salvagenti appesi ai muri (a 1,15 m) sono arredo: restano
+			if nome.begins_with(g) and not (g == "ogg_salvagente_nave" and (p as Node3D).global_position.y > 0.8):
+				return true
 		p = p.get_parent()
 	return false
 
