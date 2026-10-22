@@ -279,7 +279,9 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     n = Vector((n[0], n[1], 0)).normalized()
     lat = Vector((-n.y, n.x, 0))
     base = Vector(centro) - Vector((0, 0, alto / 2))
-    top = base.z + alto * 2 + 0.3
+    # nel gioco i montanti sono 10 cm più alti e il pannello sale di 2,25 m: aperto, il suo bordo sta 2,05 m sopra il
+    # fondo della vasca, fuori dai 2 m di chi ci sta in piedi accanto al muro (controllo del 22 ottobre)
+    top = base.z + alto * 2 + (0.4 if GIOCO else 0.3)
     for sg in (-1, 1):
         q = base + lat * (sg * (largo / 2 + 0.12))
         c.scatola_assi(Vector((q.x, q.y, (base.z + top) / 2)), [n, lat, Vector((0, 0, 1))], (0.1, 0.1, (top - base.z) / 2), 'giallo_sicurezza')
@@ -309,7 +311,7 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
             col.data.transform(Matrix.Rotation(math.pi / 2, 4, 'Z'))
         MOBILI.append(ob)
         GIOCO_DATI['paratie'].append(dict(nodo=ob.name, giusta=giusta, pannello=list(pann), verso=[n.x, n.y, 0.0],
-                                          bersaglio=list(t_centro), corsa=alto + 0.05, largo=largo, alto=alto))
+                                          bersaglio=list(t_centro), corsa=alto + 0.35, largo=largo, alto=alto))
     # lampada di servizio sopra la trave (nel gioco appoggiata: la sua scatola stava 5 cm sopra la trave)
     lamp = Vector((base.x, base.y, top + (0.5 if GIOCO else 0.55))) - n * 0.25
     c.scatola_assi(lamp + n * (0.08 if GIOCO else 0.12), [n, lat, Vector((0, 0, 1))], (0.08, 0.12, 0.2), 'nero_opaco')   # (la lente la tocca)
