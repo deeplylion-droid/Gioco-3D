@@ -39,6 +39,32 @@ def posa(nome, file, centro_base, k, rz, obs, rot=(0, 0, 0)):
     return o
 
 
+def assesta(oggetti, passo=7):
+    """Dal più basso al più alto, ogni oggetto scende finché tocca quello che ha sotto (un altro oggetto della pila) o
+    il pavimento (z = 0): raggi in giù da un vertice ogni 'passo'. Dopo, ogni oggetto poggia su qualcosa che a sua
+    volta arriva a terra (controllo di posizionamento del 22 ottobre: in fondo alle pile c'erano scatoloni 1-2 cm sopra
+    il pavimento, e palloni del nucleo appoggiati solo al cono di sostegno della simulazione, che non c'è più)."""
+    bpy.context.view_layer.update()
+    def fondo(o):
+        return min((o.matrix_world @ v.co).z for v in o.data.vertices)
+    giu = Vector((0, 0, -1))
+    mossi = 0
+    for o in sorted(oggetti, key=fondo):
+        bpy.context.view_layer.update()
+        dg = bpy.context.evaluated_depsgraph_get()
+        mw = o.matrix_world
+        vicino = None
+        for v in o.data.vertices[::passo]:
+            p = mw @ v.co
+            ok, loc, _n, _i, colpito, _m = bpy.context.scene.ray_cast(dg, p + giu * 0.0005, giu, distance=p.z + 0.01)
+            d = (p - loc).length if ok and colpito.name != o.name else p.z
+            vicino = d if vicino is None else min(vicino, d)
+        if vicino is not None and vicino > 0.001:
+            o.location.z -= vicino - 0.001
+            mossi += 1
+    print('assestati', mossi, 'di', len(oggetti), flush=True)
+
+
 def catasta_scatoloni():
     reset()
     rnd = random.Random(7)
@@ -70,6 +96,7 @@ def catasta_scatoloni():
                 z += hz + 0.003
                 lato_sotto = lato
                 k_obj += 1
+    assesta(list(obs))
     # qualche scatolone caduto alla base, girato e schiacciato contro la catasta
     for k_obj in range(7):
         a = rnd.uniform(0.15, 1.42)
@@ -356,6 +383,7 @@ def pila_piramide():
     for o in cont:
         bpy.data.objects.remove(o)
     bpy.ops.rigidbody.world_remove()
+    assesta(finali + dentro)
     alto = max((o.matrix_world.translation.z for o in finali + dentro), default=PIR_H)
     print('palloni nella pila:', len(finali), 'quota del più alto:', round(alto, 2), flush=True)
     col = _quarto_di_cono('angolo_palloni-convcolonly', PIR_X - 0.2, PIR_Y - 0.2, alto + 0.5)
