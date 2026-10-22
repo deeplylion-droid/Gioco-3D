@@ -5,7 +5,9 @@ extends Node
 ## disegnare i primi fotogrammi. Senza la cache degli shader (nella CI è sempre vuota: tutto da compilare,
 ## come alla prima partita di un giocatore). Un thread di guardia fa fallire il test se il thread
 ## principale resta fermo per [constant FERMO_MASSIMO] s con la CPU ferma.
-## Per la memoria della CI: senza le parti di [constant TOGLI], e si esce dopo [constant FOTOGRAMMI] fotogrammi.
+## Per la memoria della CI (16 GB; col renderer software ogni pipeline compilata occupa memoria): senza le parti di
+## [constant TOGLI] e si esce dopo il primo fotogramma, quello in cui il blocco succedeva. Picco circa 9 GB, stampato
+## nel log. Senza la correzione si blocca lo stesso (a 3,2 GB).
 ## Il processo esce senza aspettare il pool (vedi la fine di _run): il passo della CI controlla la riga RISULTATO.
 ## Con l'argomento senza_shader_avanzati la correzione è spenta e il test si blocca (prova che se ne accorge).
 ## Serve il renderer vero e 4 worker (nella CI: override.cfg con threading/worker_pool/max_threads=4).
@@ -13,11 +15,12 @@ extends Node
 ##        --script res://tests/run.gd -- res://tests/test_pool_sala.gd [senza_shader_avanzati]
 
 const LEVEL := "res://scenes/sala_principale.tscn"
-const FOTOGRAMMI := 3
-## Le parti della sala che non servono al caso (per la memoria della CI: col renderer software ogni pipeline
-## compilata occupa memoria). Restano l'architettura della sala, le sue luci e il GI, il giocatore.
-const TOGLI := ["Interni", "Tecnici", "Piscina", "Vasche", "Vasca", "BambiniBalconata", "Polaroid"]
-## Il primo fotogramma della sala su llvmpipe, con tutti gli shader da compilare, dura 2-3 minuti.
+const FOTOGRAMMI := 1
+## Le parti della sala che non servono al caso. Restano l'architettura, le luci e il GI della sala, il giocatore.
+const TOGLI := ["Interni", "Tecnici", "Piscina", "Vasche", "Vasca", "BambiniBalconata", "Polaroid", "Mascotte",
+		"Sala/AngoloPalloni", "Sala/AngoloScatoloni", "Sala/Oggetti", "Sala/Dettagli", "Sala/AreaBimbi", "Sala/VascaCentrale",
+		"Sala/Cupola", "Sala/Piscina", "LuciSala/LuciAreaBimbi"]
+## Il primo fotogramma della sala su llvmpipe, con tutti gli shader da compilare, dura 1-2 minuti.
 const FERMO_MASSIMO := 600.0
 
 var _passed := 0
@@ -79,11 +82,25 @@ func _run() -> void:
 			(Time.get_ticks_msec() - t0) / 1000.0])
 	_fine = true
 	_guardia.wait_to_finish()
+	print("picco di memoria del processo: %s" % _picco_memoria())
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	# Uscendo con quit() Godot aspetta che il pool finisca tutte le pipeline in coda: col renderer software
 	# della CI sono più di 12 GB. Il risultato è già stampato: si esce subito (la CI legge la riga RISULTATO).
 	OS.kill(OS.get_process_id())
+
+
+## Il picco di memoria del processo (VmHWM di Linux): nella CI la macchina ha 16 GB.
+static func _picco_memoria() -> String:
+	var f := FileAccess.open("/proc/self/status", FileAccess.READ)
+	if f == null:
+		return "non disponibile"
+	# (i file di /proc hanno lunghezza zero: si leggono a righe)
+	while not f.eof_reached():
+		var riga := f.get_line()
+		if riga.begins_with("VmHWM:"):
+			return "%.1f GB" % (riga.get_slice(":", 1).strip_edges().to_int() / 1048576.0)
+	return "non disponibile"
 
 
 func check(cond: bool, what: String) -> void:
