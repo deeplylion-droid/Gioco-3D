@@ -13,6 +13,8 @@ Dal 22 ottobre è **severo** (processo approvato dall'utente "per evitare questi
 
 Gli elenchi per squadra del primo giro severo sono in `elenchi/`.
 
+In fondo al rapporto, la sezione **Copertura** dice per ogni giro (zona e stato) quanti oggetti ha controllato in ogni parte: una parte con 0 è una zona che il controllo non ha guardato. Poi elenca le parti nascoste all'inizio e se un giro con stato le ha viste. Quelle "mai controllate" vanno guardate: o si aggiunge uno stato che le mostra (come `risalita_arrivo` per il fiume e l'infermeria, che `risalita_gioco.gd` disegna solo col giocatore vicino), o, se non si vedono mai, si tolgono dalla scena. Le creature, gli effetti, l'acqua e le varianti nello stesso posto di una parte controllata (lampada accesa e spenta) sono segnati a parte.
+
 ## Lanciarlo in locale
 
 Da `godot/`, con il lock come ogni Godot:

@@ -254,21 +254,27 @@ empty('PUNTO_t7_inizio_scia', (XM0 - 1.6, (SERR_Y0 + SERR_Y1) / 2, Z_SALA))
 
 # ------------------------------------------------------------------ gradini (pieni, con il naso a strisce)
 usa_collezione('scale')
-def rampa(nome, origine, avanti, lato, larghezza, base_z):
-    """N gradini pieni: origine = centro del filo del primo gradino a terra; avanti = direzione di salita."""
+def rampa(nome, origine, avanti, lato, larghezza, base_z, fondo=None):
+    """N gradini pieni: origine = centro del filo del primo gradino a terra; avanti = direzione di salita.
+    fondo(lo): la quota del fondo del gradino (se no base_z)."""
     o = Vector(origine); a = Vector(avanti); l = Vector(lato)
     for i in range(N):
         z = base_z + (i + 1) * ALZ
         p0 = o + a * i * PED - l * larghezza / 2
         p1 = o + a * (i + 1) * PED + l * larghezza / 2
         lo = Vector((min(p0.x, p1.x), min(p0.y, p1.y), base_z)); hi = Vector((max(p0.x, p1.x), max(p0.y, p1.y), z))
+        if fondo:
+            lo.z = fondo(lo)
         S('scale', box(f'{nome}_gradino{i}', (lo + hi) / 2, hi - lo, M['cemento'], uv=1.5))
         naso = o + a * (i * PED + 0.03); naso.z = z - 0.0145
         d = Vector((abs(a.x) * 0.06 + abs(l.x) * larghezza, abs(a.y) * 0.06 + abs(l.y) * larghezza, 0.035))
         S('scale', box(f'{nome}_naso{i}', naso, d, M['pericolo'], uv=0.6))
 
 rampa('f1', ((X_S0 + X_S1) / 2, Y_F1, 0), (0, 1, 0), (1, 0, 0), X_S1 - X_S0, 0.0)
-rampa('f2', (X_S0, (Y_G0 + Y_G1) / 2, Z_L1), (-1, 0, 0), (0, 1, 0), Y_T1 - Y_T0, Z_L1)
+# gli ultimi gradini di F2 (x < XR) sono sopra la sala pompe: pieni fino a Z_L1 entravano nel suo angolo nord-est
+# per 70 cm, col collettore dentro (controllo severo del 22 ottobre); lì il fondo è sopra il suo soffitto (5,8)
+rampa('f2', (X_S0, (Y_G0 + Y_G1) / 2, Z_L1), (-1, 0, 0), (0, 1, 0), Y_T1 - Y_T0, Z_L1,
+      fondo=lambda lo: max(Z_L1, 5.8) if lo.x < XR else Z_L1)
 # collisione: rampe lisce sul filo dei nasi (come la scala degli interni)
 usa_collezione('collisioni')
 def rampa_col(nome, inizio, fine, larghezza, asse):

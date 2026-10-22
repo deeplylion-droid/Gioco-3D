@@ -263,8 +263,10 @@ func _prepara_luci() -> void:
 
 
 func _nascondi_lampada_addon(le: Node) -> void:
+	# la lampada c'è già nel modello: quella dell'addon si toglie (nascosta restava un doppione per il controllo
+	# di posizionamento); il suo materiale, che pulsa, lo tiene l'addon
 	for m in le.find_children("*", "MeshInstance3D", false, false):
-		(m as MeshInstance3D).visible = false
+		m.queue_free()
 
 
 # --- Decal: macchie, colature di ruggine e crepe in punti scelti ------------------------------

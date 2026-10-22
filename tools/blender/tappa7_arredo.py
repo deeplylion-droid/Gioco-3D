@@ -82,7 +82,7 @@ def corrimano_c2(obs, mat):
         obs.append(C.cilindro(f'c2_corrimano_staffa{k}', (XC0 + 0.035, y, z), 0.012, 0.07, mat, asse=(1, 0, 0), seg=8, uv=None))
 
 
-def festone(nome, a, b, n, obs, pendenza=0.35, seme=1):
+def festone(nome, a, b, n, obs, pendenza=0.35, seme=1, ma=None, mb=None):
     """Fila di bandierine triangolari sbiadite su un filo che pende tra a e b (festa finita da anni)."""
     rnd = random.Random(seme)
     colori = [(0.75, 0.2, 0.15), (0.95, 0.75, 0.15), (0.1, 0.55, 0.6), (0.9, 0.45, 0.6), (0.25, 0.6, 0.25)]
@@ -94,6 +94,13 @@ def festone(nome, a, b, n, obs, pendenza=0.35, seme=1):
         p = a.lerp(b, u); p.z -= pendenza * 4 * u * (1 - u)
         pts.append(p)
     obs.append(C.tubo(nome + '_filo', pts, 0.004, mats[0], rc=0.01, seg=6, uv=None))
+    # i due capi sono sulla faccia del muro (normale ma, mb verso la stanza): una piastrina col gancio
+    # (prima finivano a 5-40 cm dal muro, nel vuoto)
+    for k, (q, nm) in enumerate(((a, ma), (b, mb))):
+        if nm is None:
+            continue
+        nm = Vector((nm[0], nm[1], 0)).normalized()
+        obs.append(C.box(f'{nome}_gancio{k}', q + nm * 0.005, (0.01 + abs(nm.y) * 0.04, 0.01 + abs(nm.x) * 0.04, 0.04), _acciaio(), uv=None))
     for k in range(n):
         if rnd.random() < 0.12:
             continue   # qualcuna è caduta
@@ -261,6 +268,7 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
                 if d2.x > dm.x * 1.05:
                     k2 *= dm.x / d2.x; d2 = _dim(f2, k2)
                 o2 = posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz + rnd.uniform(-0.2, 0.2), obs)
+                _appoggia(o2, obs[-2])
                 # il pesante sotto: sul cartone solo altro cartone; sopra un pezzo tolto non resta niente
                 tolto = tolto or h + d2.z > PILA_MAX or (sotto.startswith('scatolone') and not f2.startswith('scatolone'))
                 if tolto:
@@ -269,6 +277,37 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
                 k_obj += 1
                 h += d2.z
         u += dm.x + rnd.uniform(*passo)
+
+
+def _appoggia(o, sotto):
+    """Abbassa (o alza) o finché tocca l'oggetto sotto: raggi verso il basso dai vertici più bassi di o contro le
+    facce di sotto (prima i pezzi impilati stavano 4 mm sopra la scatola di quello sotto, cioè sopra il suo punto più
+    alto, e spesso non lo toccavano)."""
+    from mathutils.bvhtree import BVHTree
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    def facce(ob):
+        e = ob.evaluated_get(dg)
+        m = e.to_mesh()
+        vs = [ob.matrix_world @ v.co for v in m.vertices]
+        ps = [tuple(p.vertices) for p in m.polygons]
+        e.to_mesh_clear()
+        return vs, ps
+    vs_s, ps_s = facce(sotto)
+    albero = BVHTree.FromPolygons(vs_s, ps_s)
+    vs_o, _ = facce(o)
+    zmin = min(v.z for v in vs_o)
+    meglio = None
+    for v in vs_o:
+        if v.z > zmin + 0.06:
+            continue
+        hit = albero.ray_cast(v + Vector((0, 0, 0.3)), Vector((0, 0, -1)), 1.0)
+        if hit[0] is not None:
+            d = v.z - hit[0].z
+            meglio = d if meglio is None else min(meglio, d)
+    if meglio is not None:
+        o.location.z -= meglio
+        bpy.context.view_layer.update()
 
 
 def _scatola(o):
@@ -334,26 +373,39 @@ def _acciaio():
     return _ACC[0]
 
 
-def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False):
+def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False, nel_muro_a=False, vuoti=()):
     """Fascio di tubi lungo il muro, sotto il soffitto, con le staffe. Con nel_muro_b in fondo ogni tubo piega e
-    rientra nel muro (dove il muro finisce in un'apertura): prima quello vicino al muro, poi gli altri, 15 cm più
-    avanti l'uno dall'altro, così non si incrociano."""
+    rientra nel muro (dove il muro finisce in un'apertura, o prima di una lampada): prima quello vicino al muro, poi
+    gli altri, 15 cm più avanti l'uno dall'altro, così non si incrociano; con nel_muro_a escono dal muro all'inizio,
+    allo stesso modo. Tutti i tubi poggiano sulle staffe (prima i due più vicini al muro restavano 3 e 6 cm sopra)."""
     a, b, n = Vector(a), Vector(b), Vector((n[0], n[1], 0)).normalized()
     d = (b - a).normalized()
+    L = (b - a).length
+    # le staffe ogni 1,6 m, dove ci sono tutti i tubi (non nei tratti dove piegano verso il muro) e dove c'è il muro
+    # (vuoti: tratti (u0, u1) da a senza muro dietro, come il vano di una porta)
+    staffe = []
+    for j in range(int(L / 1.6) + 1):
+        u = min(max(j * 1.6 + 0.3, (quanti - 1) * 0.15 + 0.1 if nel_muro_a else 0.0), L - 0.1 - ((quanti - 1) * 0.15 if nel_muro_b else 0.0))
+        for v0, v1 in vuoti:
+            if v0 - 0.05 <= u <= v1 + 0.05:
+                u = v0 - 0.1 if u - v0 < v1 - u else v1 + 0.1
+        if not staffe or u - staffe[-1] > 0.3:
+            staffe.append(u)
     for k in range(quanti):
+        rk = r * (1 - 0.2 * k)
         o = n * (0.09 + k * 0.13)
-        h = Vector((0, 0, z - k * 0.04))
-        pts = [a + o + h, b + o + h]
-        if nel_muro_b:
-            fine = b - d * (quanti - 1 - k) * 0.15
-            pts = [a + o + h, fine + o + h, fine - n * 0.1 + h]
-        obs.append(C.tubo(f'{nome}_{k}', pts, r * (1 - 0.2 * k), mat, rc=0.12, seg=12, uv=None))
-    L = (b - a).length; d = (b - a).normalized()
+        h = Vector((0, 0, z - r + rk))
+        inizio = a + d * (quanti - 1 - k) * 0.15 if nel_muro_a else a
+        fine = b - d * (quanti - 1 - k) * 0.15 if nel_muro_b else b
+        # anche un punto sopra ogni staffa, così il tubo ha i vertici dove poggia
+        sopra = [a + d * u + o + h for u in staffe if (inizio - a).length < u < (fine - a).length]
+        pts = ([inizio - n * 0.1 + h] if nel_muro_a else []) + [inizio + o + h] + sopra + [fine + o + h] + ([fine - n * 0.1 + h] if nel_muro_b else [])
+        obs.append(C.tubo(f'{nome}_{k}', pts, rk, mat, rc=0.12, seg=12, uv=None))
     # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
     lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))
-    zs = z - (quanti - 1) * 0.04 - r * (1 - 0.2 * (quanti - 1)) - 0.015
-    for j in range(int(L / 1.6) + 1):
-        p = a + d * min(j * 1.6 + 0.3, L - 0.1)
+    zs = z - r - 0.015
+    for j, u in enumerate(staffe):
+        p = a + d * u
         obs.append(C.box(f'{nome}_staffa{j}', p + n * lung / 2 + Vector((0, 0, zs)), (0.04 + abs(n.x) * (lung - 0.04), 0.04 + abs(n.y) * (lung - 0.04), 0.03), mat, uv=None))
 
 
@@ -414,10 +466,18 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
     if tubi:
         mat, quanti = tubi
         # R1: sotto il tubo grosso (2,45), fino al muro est del vano scala (prima finivano nel vuoto all'entrata)
-        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)
+        # (la lampada rc1 del raccordo è sullo stesso muro, a x 48,5 e 2,1 m: i tubi le passavano dentro; il fascio
+        # rientra nel muro prima e ne esce dopo)
+        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (48.5 - 0.4, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti, nel_muro_b=True)
+        tubi_muro(f'{nome}_tubi_r1b', (48.5 + 0.4, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti, nel_muro_a=True)
         # in C2 no: sullo stesso muro c'è già il tubo grosso del raccordo (t7_tubo_c2) e non c'è posto sopra i 2 m
         # C3: dal muro est di C2 (dove il corridoio gira) fin quasi al magazzino, dove rientrano nel muro sud
-        tubi_muro(f'{nome}_tubi_c3', (XC1, YC3_0, Z_SALA), (XM1 + 0.8, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti, nel_muro_b=True)
+        # (e così attorno alla lampada t7_c3b, a x 33,5)
+        # (a 2,35 m: a 2,2 passavano davanti all'architrave della porta della scala di servizio, x 36,59..37,59, e una
+        # staffa restava nel vano, senza muro dietro)
+        tubi_muro(f'{nome}_tubi_c3', (XC1, YC3_0, Z_SALA), (33.5 + 0.4, YC3_0, Z_SALA), (0, 1), 2.35, mat, obs, quanti, nel_muro_b=True,
+                  vuoti=((XC1 - 37.59, XC1 - 36.59),))
+        tubi_muro(f'{nome}_tubi_c3b', (33.5 - 0.4, YC3_0, Z_SALA), (XM1 + 0.8, YC3_0, Z_SALA), (0, 1), 2.35, mat, obs, quanti, nel_muro_a=True, nel_muro_b=True)
 
 
 def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
@@ -449,6 +509,7 @@ def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
                     if d2.x > dm.x:
                         k2 *= dm.x / d2.x; d2 = _dim(f2, k2)
                     posa(f'{nome}_mag_{k_obj}', f2, (x - dm.x / 2, yc, Z_SALA + h + 0.004), k2, rnd.uniform(-0.4, 0.4), obs)
+                    _appoggia(obs[-1], obs[-2])
                     k_obj += 1
                     h += d2.z
             x -= dm.x + rnd.uniform(0.02, 0.15)
@@ -568,10 +629,11 @@ def proposta_gioco():
     d = HQ.dimensioni('testa_mascotte')
     metti('G_testa_mascotte', 'testa_mascotte', (TESTA_MAG[0], YM1 - 0.05 - d.y * 0.7 / d.z / 2, Z_SALA), alto=0.7, rz=0, obs=obs)
     metti('G_coccodrillo_l1', 'coccodrillo_sgonfio', (51.4, 6.2, Z_L1), largo=1.2, rz=170, obs=obs)
-    festone('G_festone_s1', (X_S0 + 0.1, 0.3, 3.6), (X_S1 - 0.1, 4.2, 6.3), 16, obs, seme=1)   # sopra i 2 m dai gradini di F1
-    festone('G_festone_s2', (X_S1 - 0.1, 6.8, 6.6), (X_S0 - 3.0, 8.8, 9.2), 16, obs, seme=2)
-    festone('G_festone_c2', (XC0 + 0.05, 1.5, Z_SALA + 2.6), (XC1 - 0.05, -2.0, Z_SALA + 2.6), 10, obs, seme=3)
-    festone('G_festone_mag', (XM1 - 0.5, YM0 + 0.4, Z_SALA + 3.1), (XM0 + 1.0, YM1 - 0.4, Z_SALA + 3.1), 22, obs, pendenza=0.6, seme=4)
+    # (i capi sulla faccia dei muri, col gancio: controllo di posizionamento severo del 22 ottobre)
+    festone('G_festone_s1', (X_S0, 0.3, 3.6), (X_S1, 4.2, 6.3), 16, obs, seme=1, ma=(1, 0), mb=(-1, 0))   # sopra i 2 m dai gradini di F1
+    festone('G_festone_s2', (X_S1, 6.8, 6.6), (X_S0 - 3.0, Y_T1, 9.2), 16, obs, seme=2, ma=(-1, 0), mb=(0, -1))
+    festone('G_festone_c2', (XC0, 1.5, Z_SALA + 2.6), (XC1, -2.0, Z_SALA + 2.6), 10, obs, seme=3, ma=(1, 0), mb=(-1, 0))
+    festone('G_festone_mag', (XM1 - 0.5, YM0, Z_SALA + 3.1), (XM0 + 1.0, YM1, Z_SALA + 3.1), 22, obs, pendenza=0.6, seme=4, ma=(0, 1), mb=(0, -1))
     giallo = C.mat_pbr('vernice_frecce', base=(0.85, 0.65, 0.05), roughness=0.7)
     for k, (p, d) in enumerate((((48.0, YD, 0), (1, 0, 0)), ((51.6, -1.2, 0), (0, 1, 0)), ((51.6, 7.8, Z_L1), (-1, 0, 0)),
                                 ((44.55, 6.0, Z_T), (0, -1, 0)), ((44.55, -3.0, Z_SALA), (0, -1, 0)), ((44.55, -13.0, Z_SALA), (0, -1, 0)),

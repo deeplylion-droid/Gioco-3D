@@ -7,7 +7,7 @@ scatoloni di diversi colori". Il soffitto è a 11,5 m: le pile arrivano a circa 
     starebbero su): i palloni gonfi si sistemano con la simulazione fisica di Blender dentro la rete, gli sgonfi sono
     schiacciati tra quelli in cima e sparsi alla base.
 Ogni pila è fatta con l'angolo nell'origine, contro i muri x = 0 e y = 0, e si allarga verso +x e +y (base massima
-3,4 m: nell'angolo sud-ovest non copre la serranda, che comincia a 4,1 m). Collisione semplice: una scatola per pila.
+3,4 m: nell'angolo sud-ovest non copre la serranda, che comincia a 4,1 m). Collisione semplice: una scatola per pila (e una per ogni scatolone caduto).
 Modelli Meshy in assets_src/sala_angoli/ (genera_angoli.py).
 Uso: /home/user/tools/blender-venv/bin/python tools/blender/sala_angoli.py [palloni|scatoloni ...]
 Uscita: godot/assets/ambiente/proposte_angoli/angolo_<palloni|scatoloni>.gltf"""
@@ -82,7 +82,12 @@ def catasta_scatoloni():
         # cade niente, la serranda resta libera
         if GIOCO and r * math.cos(a) > LATO - 0.3:
             continue
-        posa(f'scat_caduto_{k_obj}', f, (r * math.cos(a), r * math.sin(a), 0.0), k, rz, obs)
+        o = posa(f'scat_caduto_{k_obj}', f, (r * math.cos(a), r * math.sin(a), 0.0), k, rz, obs)
+        # ognuno con la sua collisione: si urta come la catasta (controllo di posizionamento del 22 ottobre: si
+        # attraversavano)
+        bpy.context.view_layer.update()
+        ws = [o.matrix_world @ v.co for v in o.data.vertices]
+        C.collisione_box(f'scat_caduto_{k_obj}', tuple(min(p[i] for p in ws) for i in range(3)), tuple(max(p[i] for p in ws) for i in range(3)))
     C.collisione_box('angolo_scatoloni', (0, 0, 0), (LATO, LATO, ALTEZZA))
     return obs
 

@@ -6,6 +6,8 @@ extends Node
 ##        "nome:px,py,pz:lx,ly,lz[:lancia];nome2:..." [preset] [frame di attesa] [torcia 0/1] [luci: prima/blackout] [fisse: neon e luci rosse senza sfarfallio | neon: tutti i neon accesi, rosse spente] [togli: nodi della scena da togliere, separati da virgola, per stare nella memoria]
 ## Le coordinate sono globali nella scena (il giocatore viene messo coi piedi in p e guarda verso l).
 ## lancia (facoltativa): scena LanceRig da mettere in mano, percorso senza "res://" (per esempio scenes/player/lance/x.tscn).
+## Variabili d'ambiente: SCATTI_LUCE=1 (una luce sulla camera), SCATTI_ACQUARI=comparsi|risolti (lo stato
+## degli acquari davanti al portone).
 
 var scena := ""
 var out_dir := "user://scatti"
@@ -90,6 +92,31 @@ func _run() -> void:
 				n.set(&"modalita", 0)
 			elif neon and n is LuceEmergenza:
 				n.set(&"modalita", 3)   # SPENTA
+	# SCATTI_ACQUARI=comparsi|risolti: gli acquari davanti al portone come al rientro dal magazzino (la
+	# serranda aperta: pieni e con le lampadine accese) o a enigma risolto (miscuglio verde, portone aperto
+	# del tutto); senza, come al primo passaggio (vuoti e impolverati)
+	var acquari := OS.get_environment("SCATTI_ACQUARI")
+	if acquari in ["comparsi", "risolti"]:
+		var livello := get_tree().current_scene
+		var lei := livello.get_node_or_null(^"Gioco/LeiSbuca")
+		if lei:
+			lei.call(&"load_state", {"finita": true})
+		var lettore := livello.get_node_or_null(^"Tecnici/Logica/LettoreTessera") as LettoreTessera
+		if lettore:
+			GameState.player.add_item(&"keycard", 1, "Keycard")
+			lettore.interact(GameState.player)
+		var enigma := livello.find_children("*", "EnigmaAcquari", true, false)[0] as EnigmaAcquari
+		if enigma.serranda:
+			enigma.serranda.call(&"apri")
+		if acquari == "risolti":
+			var misto := enigma.get_node(^"AcquarioMisto") as WaterTank
+			enigma.stato = EnigmaAcquari.Stato.RISOLTO
+			misto.set_mix(WaterMix.pura(WaterMix.VERDE))
+			misto.fill = misto.max_fill
+			if enigma.portone:
+				enigma.portone.call(&"load_state", {"aperto": true})
+		for i in 30:
+			await get_tree().process_frame
 	var p: Player = GameState.player
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
