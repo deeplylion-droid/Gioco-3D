@@ -743,7 +743,7 @@ func _passi_luci(d: Dictionary = {}) -> Array:
 	return out
 
 
-const VERDE := Color(0.25, 1.0, 0.45)
+const VERDE := Color(0.1, 1.0, 0.3)
 
 
 ## La strada che si legge (S1, S2): sul portale di ogni imbocco della discesa i led verdi lungo i montanti e la
@@ -755,7 +755,7 @@ func _segnali_strada(radice: Node3D) -> void:
 	led.height = 0.07
 	led.radial_segments = 8
 	led.rings = 4
-	var m_led := _emissivo(VERDE, 6.0)
+	var m_led := _emissivo(VERDE, 1.8)   # più forte si brucia in bianco e il verde non si legge
 	for im in dati.get("imbocchi", []):
 		var base := b(im["base"])
 		var v := Vector3(float(im["verso"][0]), 0.0, -float(im["verso"][1])).normalized()
@@ -833,7 +833,7 @@ func _lampada_segnale(radice: Node3D, p: Vector3, colore: Color, accesa: bool) -
 	vm.bottom_radius = 0.09
 	vm.height = 0.16
 	vetro.mesh = vm
-	vetro.material_override = _emissivo(colore, 5.0 if accesa else 0.0)
+	vetro.material_override = _emissivo(colore, 2.2 if accesa else 0.0)
 	vetro.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	radice.add_child(vetro)
 	vetro.global_position = p + Vector3.UP * 0.16
@@ -859,9 +859,11 @@ func _sfarfalla(l: OmniLight3D, seme: int) -> void:
 	var tw := create_tween().set_loops()
 	for i in ritmo.size():
 		var d: float = ritmo[(i + seme) % ritmo.size()]
+		# l'energia, non visible: accendere e spegnere la luce rifà gli abbinamenti luce-geometria del renderer
 		tw.tween_callback(func():
-			l.visible = not l.visible
-			mat.emission_energy_multiplier = 5.0 if l.visible else 0.3)
+			var accesa := l.light_energy < 0.5
+			l.light_energy = 1.6 if accesa else 0.0
+			mat.emission_energy_multiplier = 2.2 if accesa else 0.3)
 		tw.tween_interval(d)
 
 
