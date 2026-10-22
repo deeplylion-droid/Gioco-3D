@@ -9,8 +9,8 @@
 			0.0,
 			25.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta"
 	},
 	{
 		"zona": "interni",
@@ -22,8 +22,8 @@
 			0.0,
 			25.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta"
 	},
 	{
 		"zona": "sala",
@@ -35,8 +35,8 @@
 			0.0,
 			-17.5
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre)"
 	},
 	{
 		"zona": "sala",
