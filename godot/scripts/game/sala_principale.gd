@@ -295,13 +295,12 @@ func _setup_tecnici() -> void:
 	if tecnici == null:
 		return
 	# Il coperchio in cima al pozzo nel modello della camera è un doppione del portello della
-	# sala (LEGGIMI degli ambienti tecnici): via, collisione compresa.
+	# sala (LEGGIMI degli ambienti tecnici): via, collisione compresa (tolto, non nascosto: il controllo di
+	# posizionamento rende visibile quello che è nascosto e lo trovava dentro il fondo della piscina).
 	var doppione := tecnici.get_node_or_null(^"Ambienti/CameraOnde/PORTELLO") as Node3D
 	if doppione:
-		doppione.visible = false
-		for c in doppione.find_children("*", "CollisionObject3D", true, false):
-			(c as CollisionObject3D).collision_layer = 0
-			(c as CollisionObject3D).collision_mask = 0
+		doppione.get_parent().remove_child(doppione)
+		doppione.queue_free()
 
 
 ## Il bersaglio del getto sulla faccia della medusa (easter egg dell'occhio che si chiude). Segue

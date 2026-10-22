@@ -36,6 +36,8 @@ ext = [
     ('Material', 'res://assets/materials/sala/metallo_verniciato.tres', 'm_tiranti'),
     ('Material', 'res://assets/enigma_acquari/metallo_rosso.tres', 'm_rosso'),
     ('Material', 'res://assets/enigma_acquari/metallo_giallo.tres', 'm_giallo'),
+    ('Material', 'res://assets/enigma_acquari/metallo_tubi.tres', 'm_tubi'),
+    ('Material', 'res://assets/enigma_acquari/metallo_basi.tres', 'm_basi'),
     ('Material', 'res://assets/enigma_acquari/griglia_scarico.tres', 'm_griglia'),
     ('ArrayMesh', 'res://assets/enigma_acquari/disegno_curvo.res', 'disegno'),
     ('MultiMesh', 'res://assets/enigma_acquari/portalampade_portone.res', 'mm_porta'),
@@ -199,14 +201,91 @@ RACCORDI = {'Pompa': ((-1.156, -0.721), (-0.184, 0.236), (0.214, 0.809)),
             'Tubo': ((0.72, 1.138), (-0.194, 0.0), (0.196, 0.849))}
 RACCORDI_BASSO = {'Pompa': ((-1.156, -0.721), (-0.183, 0.236), (0.214, 0.4)),
                   'Tubo': ((0.81, 1.129), (-0.184, -0.008), (0.196, 0.4))}
+# (dal 22 ottobre la pompa poggia sullo zoccolo e le gambe del tubo arrivano a terra: le collisioni
+# partono dal pavimento; il tubo della pompa che scende a terra ha la sua)
+SCARICO_POMPA = 0.13    # quanto esce in fuori, in metri, il tubo della pompa prima della curva verso terra
 
 def raccordi(nome, sx, sy, sz, y0, basso=False):
     for k, ((x0, x1), (z0, z1), (h0, h1)) in (RACCORDI_BASSO if basso else RACCORDI).items():
+        h0 = 0.0
         sid = 'raccordo_%s_%s' % (nome, k)
         sr_tardi('BoxShape3D', sid, size='Vector3(%.3f, %.3f, %.3f)' % ((x1 - x0) * sx, (h1 - h0) * sy, (z1 - z0) * sz))
         node(k, 'CollisionShape3D', nome + '/Collisione',
              transform=tr(ID, ((x0 + x1) * 0.5 * sx, y0 + (h0 + h1) * 0.5 * sy, (z0 + z1) * 0.5 * sz)),
              shape='SubResource("%s")' % sid)
+
+
+def cilindro(nome, parent, a, b, r, mat='ExtResource("m_tubi")', seg=12):
+    """Un cilindro da a a b (coordinate del genitore)."""
+    d = tuple(b[i] - a[i] for i in range(3))
+    l = math.sqrt(sum(c * c for c in d))
+    sid = 'cil_%s_%s' % (parent.replace('/', '_'), nome)
+    sr_tardi('CylinderMesh', sid, top_radius='%.4f' % r, bottom_radius='%.4f' % r, height='%.4f' % l, radial_segments=str(seg), rings='1')
+    y = tuple(c / l for c in d)
+    x = (y[1], -y[0], 0.0) if abs(y[2]) < 0.9 else (1.0, 0.0, 0.0)
+    nx = math.sqrt(sum(c * c for c in x)); x = tuple(c / nx for c in x)
+    z = (x[1] * y[2] - x[2] * y[1], x[2] * y[0] - x[0] * y[2], x[0] * y[1] - x[1] * y[0])
+    rows = '%.6g, %.6g, %.6g, %.6g, %.6g, %.6g, %.6g, %.6g, %.6g' % (x[0], y[0], z[0], x[1], y[1], z[1], x[2], y[2], z[2])
+    node(nome, 'MeshInstance3D', parent, transform=tr(rows, tuple((a[i] + b[i]) / 2 for i in range(3))), mesh='SubResource("%s")' % sid, material_override=mat)
+
+
+def allacci(nome, sx, sy, sz, y0, basso):
+    """I tubi delle basi chiusi tutti (riscontro dell'utente del 22 ottobre: "è tutto compenetrato o
+    fluttuante"). Dal GLB della base (misure in unità del modello, prese sulle facce): la pompa stava a
+    21 cm dal pavimento staccata dal serbatoio, le due gambe del gruppo col tubo finivano a 20 cm da terra
+    e il becco a flangia sopra il corpo restava aperto in aria. Ora: la pompa poggia su uno zoccolo ed è
+    allacciata al serbatoio, il suo tubo curva e scende a una flangia a terra, le gambe arrivano a terra
+    con la flangia, il becco scende nel corpo; nel basso (tagliato a 0,4) la pompa ha il coperchio e il
+    gruppo del tubo è allacciato al serbatoio."""
+    G = nome + '/Allacci'
+    node('Allacci', 'Node3D', nome)
+    def p(mx, my, mz):
+        return (mx * sx, y0 + my * sy, mz * sz)
+    def flangia(k, x, z, r):
+        cilindro('Flangia' + k, G, (x, y0, z), (x, y0 + 0.03, z), r, seg=16)
+    # lo zoccolo sotto la piastra della pompa (la piastra va da x -1,155 a -0,703, z da -0,184 a 0,082)
+    sid = 'zoccolo_' + nome
+    zx0, zx1, zz0, zz1, zh = -1.12, -0.72, -0.17, 0.07, 0.214
+    sr_tardi('BoxMesh', sid, size='Vector3(%.3f, %.3f, %.3f)' % ((zx1 - zx0) * sx, zh * sy, (zz1 - zz0) * sz))
+    node('Zoccolo', 'MeshInstance3D', G, transform=tr(ID, p((zx0 + zx1) / 2, zh / 2, (zz0 + zz1) / 2)),
+         mesh='SubResource("%s")' % sid, material_override='ExtResource("m_basi")')
+    # la pompa allacciata al serbatoio (fianco della pompa a x -0,73, parete del serbatoio a -0,57)
+    ya = 0.30 if basso else 0.47
+    ra = 0.04 * min(sy, sz)
+    cilindro('PompaSerbatoio', G, p(-0.74, ya, -0.074), p(-0.555, ya, -0.074), ra)
+    cilindro('PompaSerbatoioCollare', G, p(-0.585, ya, -0.074), p(-0.555, ya, -0.074), ra * 1.5, seg=16)
+    # il tubo della pompa (punta a x -1,156, y 0,278, z -0,074): esce, curva e scende a terra
+    rp = 0.034 * max(sy, sz)
+    xt, yt, zt = p(-1.15, 0.278, -0.074)
+    xc = xt - SCARICO_POMPA
+    cilindro('PompaFuori', G, (xt + 0.01, yt, zt), (xc, yt, zt), rp)
+    node('PompaCurva', 'MeshInstance3D', G, transform=tr(ID, (xc, yt, zt)), mesh='SubResource("curva_%s")' % nome, material_override='ExtResource("m_tubi")')
+    sr_tardi('SphereMesh', 'curva_' + nome, radius='%.4f' % (rp * 1.15), height='%.4f' % (rp * 2.3), radial_segments='12', rings='6')
+    cilindro('PompaGiu', G, (xc, y0 + 0.02, zt), (xc, yt, zt), rp)
+    flangia('Pompa', xc, zt, rp * 1.9)
+    sid = 'raccordo_%s_scarico' % nome
+    sr_tardi('BoxShape3D', sid, size='Vector3(%.3f, %.3f, %.3f)' % (xt - xc + rp * 2, yt + rp - y0, rp * 2))
+    node('TuboPompa', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, ((xt + xc) / 2 - rp / 2, (y0 + yt + rp) / 2, zt)),
+         shape='SubResource("%s")' % sid)
+    # le gambe del gruppo col tubo fino a terra: la gamba (x 0,847, z -0,072, r 0,038, fondo a 0,196)
+    # e la spina sotto il corpo (x 1,061, z -0,113, r 0,029, fondo a 0,223)
+    for k, (gx, gz, gr, gf) in (('Gamba', (0.847, -0.072, 0.037, 0.196)), ('Spina', (1.061, -0.113, 0.028, 0.223))):
+        x, _, z = p(gx, 0, gz)
+        cilindro(k, G, (x, y0 + 0.02, z), p(gx, gf + 0.03, gz), gr * sx)
+        flangia(k, x, z, gr * sx * 1.9)
+    if basso:
+        # il coperchio della pompa tagliata (bordo da x -1,002 a -0,765, z da -0,159 a 0,152)
+        sid = 'coperchio_pompa_' + nome
+        cx0, cx1, cz0, cz1 = -1.012, -0.755, -0.169, 0.162
+        sr_tardi('BoxMesh', sid, size='Vector3(%.3f, 0.03, %.3f)' % ((cx1 - cx0) * sx, (cz1 - cz0) * sz))
+        node('CoperchioPompa', 'MeshInstance3D', G, transform=tr(ID, (((cx0 + cx1) / 2) * sx, y0 + 0.4 * sy + 0.015, ((cz0 + cz1) / 2) * sz)),
+             mesh='SubResource("%s")' % sid, material_override='ExtResource("m_basi")')
+        # il gruppo col tubo allacciato al serbatoio (nell'alto lo tiene il tubo che sale all'anello)
+        cilindro('TuboSerbatoio', G, p(0.555, 0.30, -0.072), p(0.83, 0.30, -0.072), 0.03 * min(sy, sz))
+        cilindro('TuboSerbatoioCollare', G, p(0.555, 0.30, -0.072), p(0.59, 0.30, -0.072), 0.045 * min(sy, sz), seg=16)
+    else:
+        # il becco a flangia (x 1,06, z -0,129, fondo a 0,626) scende nel corpo (cima a 0,53)
+        cilindro('BeccoCorpo', G, p(1.06, 0.515, -0.122), p(1.06, 0.64, -0.122), 0.033 * sx)
 
 
 def acquario(nome, gruppo, pos, alto, pigmento=None):
@@ -229,6 +308,7 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
         node('Forma', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASE + 1.475 * K, 0)), shape='SubResource("forma_alto")')
         raccordi(nome, K, K, K, -B_BASE)
+        allacci(nome, K, K, K, -B_BASE, False)
     else:
         node('Base', parent=nome, inst='base_bassa', transform=tr(sc3(SC * KX, KY, SC * KX), (0, -B_BASSO_BASE, 0)))
         node('Anello', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.6 * KY / KX, 1), (0, B_BASSO_VETRO + 0.006 * KY, 0)),
@@ -236,6 +316,7 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
         node('Base', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASSO_BASE * 0.5, 0)), shape='SubResource("forma_base_bassa")')
         raccordi(nome, SC * KX, KY, SC * KX, -B_BASSO_BASE, basso=True)
+        allacci(nome, SC * KX, KY, SC * KX, -B_BASSO_BASE, True)
         # il vetro: dodici pareti in tondo, aperto sopra (il getto ci deve entrare)
         for k in range(12):
             a = 2 * math.pi * k / 12
@@ -305,7 +386,8 @@ sr_tardi('BoxShape3D', 'rampa_forma', size='Vector3(%.3f, 0.1, %.3f)' % (ls, pp)
 ca, sa = math.cos(-ang), math.sin(-ang)
 rz = '%g, %g, 0, %g, %g, 0, 0, 0, 1' % (ca, -sa, sa, ca)   # rotazione attorno a Z, per righe: scende verso +X
 for k, z in enumerate((PEDANA_Z0 + 0.02, PEDANA_Z1 - 0.02)):
-    node('Cosciale%d' % (k + 1), 'MeshInstance3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 - 0.05, z)), mesh='SubResource("cosciale")', material_override='ExtResource("m_tiranti")')
+    # i cosciali sotto i gradini, fianchi della scala: il fondo appoggia al pavimento (prima entrava di 12 cm)
+    node('Cosciale%d' % (k + 1), 'MeshInstance3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 + 0.08 * math.cos(ang) + 0.002, z)), mesh='SubResource("cosciale")', material_override='ExtResource("m_tiranti")')
 node('Rampa', 'CollisionShape3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 - 0.05 / math.cos(ang), pc[2])), shape='SubResource("rampa_forma")')
 # il parapetto giallo: montanti, corrimano e corrente a metà, sul davanti (anche lungo la scala) e a ovest
 sr_tardi('CylinderMesh', 'montante', top_radius='0.022', bottom_radius='0.022', height='1.0', radial_segments='10')
@@ -351,19 +433,23 @@ TV = math.radians(50.0)                                   # da sud verso ovest
 DV = (-math.sin(TV), math.cos(TV))                        # dal centro verso fuori (x, z)
 RV = R_B - 0.02 * KX + 0.55 * 0.7 * KV
 VX, VZ = XM + DV[0] * RV, ZMI + DV[1] * RV
-VY = 0.45 * KV
+# il modello (alto 1,02 m, a scala 0,7 KV) deve poggiare a terra: prima affondava di 29 cm nel pavimento
+ALZA_V = 0.509 * 0.7 * KV - 0.21 * KV
+VY = 0.45 * KV + ALZA_V
 # il +X del modello verso il centro del miscuglio, il +Z (davanti, il volantino) verso fuori a destra
 _vx = (-DV[0], 0.0, -DV[1])
 _vz = (_vx[2] * -1.0, 0.0, _vx[0])   # +Z = X ruotato di -90 gradi attorno a Y
 _vz = (-_vx[2], 0.0, _vx[0])
 VB = '%g, 0, %g, 0, 1, 0, %g, 0, %g' % (_vx[0], _vz[0], _vx[2], _vz[2])
 node('Valvola', 'Node3D', '.', transform=piazza('M', VB, (VX, VY, VZ)))
-node('Modello', parent='Valvola', inst='valvola', transform=tr(sc3(0.7 * KV, 0.7 * KV, 0.7 * KV), (0, 0.21 * KV - VY, 0)))
+node('Modello', parent='Valvola', inst='valvola', transform=tr(sc3(0.7 * KV, 0.7 * KV, 0.7 * KV), (0, 0.21 * KV + ALZA_V - VY, 0)))
 node('Collisione', 'StaticBody3D', 'Valvola', collision_mask='0')
-node('Forma', 'CollisionShape3D', 'Valvola/Collisione', transform=tr(ID, (0, 0.17 * KV - VY, 0)), shape='SubResource("forma_valvola")')
+node('Forma', 'CollisionShape3D', 'Valvola/Collisione', transform=tr(ID, (0, 0.17 * KV + ALZA_V - VY, 0)), shape='SubResource("forma_valvola")')
 node('Bersaglio', 'Area3D', 'Valvola', transform=tr(ID, (-0.4 * KV, 0, 0)), script='ExtResource("hitbox")')   # dalla parte di fuori del modello
 node('Forma', 'CollisionShape3D', 'Valvola/Bersaglio', shape='SubResource("forma_bersaglio")')
-gx = -(1.1 * 0.7 + 0.12) * KV + 0.55 * 0.7 * KV
+# la bocca dello scarico davanti alla flangia aperta, a 2 cm dal modello (la valvola che poggia a terra ci
+# entrava di 16 cm: controllo severo del 22 ottobre)
+gx = -(0.55 * 0.7 + 0.26 + 0.02) * KV
 node('Scarico', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.004 - VY, 0)), mesh='SubResource("griglia")',
      material_override='ExtResource("m_griglia")')
 node('Buco', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.002 - VY, 0)), mesh='SubResource("buco")')
@@ -390,6 +476,7 @@ def _coperta(a, b):
     return False
 
 
+cand = []
 if POSIZIONE != 'P1':
     # Negli altri posti il tirante del P1 è lontano o il miscuglio è in mezzo: il tirante più vicino da cui
     # si vede la valvola, se no il montante ovest della pedana (a 80 cm, con lo spot più largo).
@@ -409,9 +496,29 @@ if POSIZIONE != 'P1':
 _d = (VOL[0] - TIR[0], VOL[2] - TIR[1])
 _l = math.hypot(*_d)
 _ang = math.atan2(_d[0], _d[1])      # +Z della lampada verso la valvola
-LP = (TIR[0] + _d[0] / _l * R_TIR, LY, TIR[1] + _d[1] / _l * R_TIR)
+# la piastra della lampada appoggiata a due collari stretti sul tirante (prima toccava il tirante solo lungo
+# una riga, senza niente che la tenesse)
+COLLARE = 0.003
+LP = (TIR[0] + _d[0] / _l * (R_TIR + COLLARE), LY, TIR[1] + _d[1] / _l * (R_TIR + COLLARE))
 node('LampadaValvola', 'Node3D', '.', transform=tr(roty(_ang), LP), script='ExtResource("lampada_valvola")')
 node('Modello', parent='LampadaValvola', inst='gabbia')
+sr_tardi('CylinderMesh', 'collare_lampada', top_radius='%.4f' % (R_TIR + COLLARE), bottom_radius='%.4f' % (R_TIR + COLLARE), height='0.025', radial_segments='16')
+for k, dy in enumerate((0.12, -0.15)):   # dentro l'altezza della piastra (da -0,21 a 0,175)
+    node('Collare%d' % (k + 1), 'MeshInstance3D', '.', transform=tr(ID, (TIR[0], LY + dy, TIR[1])), mesh='SubResource("collare_lampada")',
+         material_override='SubResource("nero")')
+# il cavo della lampada: dal morsetto scende lungo il tirante (o il montante della pedana) fino alla base
+# dell'acquario (o al piano della pedana), con due fascette; prima la lampada non era collegata a niente
+CAVO_FINE = B_BASE if cand or POSIZIONE == 'P1' else PEDANA_H
+CR = R_TIR + 0.012
+CX, CZ = TIR[0] + _d[0] / _l * CR, TIR[1] + _d[1] / _l * CR
+cavo_l = (LY - 0.12) - CAVO_FINE
+sr_tardi('CylinderMesh', 'cavo_lampada', top_radius='0.007', bottom_radius='0.007', height='%.3f' % cavo_l, radial_segments='6')
+node('Cavo', 'MeshInstance3D', '.', transform=tr(ID, (CX, CAVO_FINE + cavo_l / 2, CZ)), mesh='SubResource("cavo_lampada")',
+     material_override='SubResource("nero")')
+sr_tardi('BoxMesh', 'fascetta', size='Vector3(0.06, 0.012, 0.06)')
+for k, f in enumerate((0.3, 0.7)):
+    node('Fascetta%d' % (k + 1), 'MeshInstance3D', 'Cavo', transform=tr(ID, ((TIR[0] - CX) * 0.5, (f - 0.5) * cavo_l, (TIR[1] - CZ) * 0.5)),
+         mesh='SubResource("fascetta")', material_override='SubResource("nero")')
 # lo spot sul globo (0,36 m davanti al tirante), puntato sul volantino: la base nel sistema della
 # lampada, che è girata di _ang attorno a Y
 _v = (VOL[0] - (LP[0] + _d[0] / _l * 0.36), VOL[1] - LY, VOL[2] - (LP[2] + _d[1] / _l * 0.36))
@@ -440,6 +547,12 @@ node('GuidaSinistra', 'MeshInstance3D', G, transform=tr(ID, (X, (YT + 0.06) / 2,
      material_override='ExtResource("m_giallo")')
 node('GuidaDestra', 'MeshInstance3D', G, transform=tr(ID, (X, (YT + 0.06) / 2, Z1)), mesh='SubResource("guida_lato_terra")',
      material_override='ExtResource("m_giallo")')
+# le due guide che arrivano a terra sono montanti veri, ai lati del varco: con la loro collisione (prima ci si
+# passava attraverso, a meno di 10 cm dalla testa)
+sr_tardi('BoxShape3D', 'forma_guida', size='Vector3(0.05, %.2f, 0.09)' % (YT + 0.06))
+node('Collisione', 'StaticBody3D', G, collision_mask='0')
+for k, z in enumerate((Z0, Z1)):
+    node('Guida%d' % (k + 1), 'CollisionShape3D', G + '/Collisione', transform=tr(ID, (X, (YT + 0.06) / 2, z)), shape='SubResource("forma_guida")')
 node('GuidaSopra', 'MeshInstance3D', G, transform=tr(ID, (X, YT, (Z0 + Z1) / 2)), mesh='SubResource("guida_sopra")',
      material_override='ExtResource("m_giallo")')
 for k, z in enumerate((Z0, Z1)):
@@ -448,7 +561,7 @@ for k, z in enumerate((Z0, Z1)):
 for k, z in enumerate((-18.2, -16.3, -13.7, -11.8)):
     node('StaffaMuro%d' % (k + 1), 'MeshInstance3D', G, transform=tr(ID, (19.8465, YT, z)), mesh='SubResource("staffa_muro")',
          material_override='ExtResource("m_tiranti")')
-    node('PiastraMuro%d' % (k + 1), 'MeshInstance3D', G, transform=tr(ID, (20.034, YT, z)), mesh='SubResource("piastra_muro")',
+    node('PiastraMuro%d' % (k + 1), 'MeshInstance3D', G, transform=tr(ID, (20.028, YT, z)), mesh='SubResource("piastra_muro")',   # a filo del muro, non dentro
          material_override='ExtResource("m_tiranti")')
 node('Portalampade', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_porta")')
 node('Lampadine', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_spente")')

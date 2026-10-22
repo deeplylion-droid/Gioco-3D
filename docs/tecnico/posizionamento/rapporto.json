@@ -1,75 +1,5 @@
 [
 	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.18 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
-		"pos": [
-			-6.03,
-			0.96,
-			36.8
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.50 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_1",
-		"pos": [
-			2.1,
-			1.26,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.46 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_2",
-		"pos": [
-			2.4,
-			1.22,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.96 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_4",
-		"pos": [
-			3.0,
-			1.14,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.34 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_5",
-		"pos": [
-			3.3,
-			1.1,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) (ambienti-1)",
 		"nodo": "Sala/Dettagli/@MeshInstance3D@40",
@@ -82,202 +12,6 @@
 		"squadra": "ambienti-1",
 		"stato": "da correggere",
 		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 84.0 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 84.0 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Corridoio/estintore",
-		"pos": [
-			-0.1,
-			1.15,
-			40.69
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Corridoio/porta_servizio",
-		"pos": [
-			-9.66,
-			1.02,
-			39.6
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
-		"pos": [
-			0.64,
-			0.96,
-			36.88
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_07_anta",
-		"pos": [
-			0.73,
-			0.96,
-			34.56
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
-		"pos": [
-			0.63,
-			0.96,
-			33.59
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_05_anta",
-		"pos": [
-			-6.14,
-			0.96,
-			35.44
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
-		"pos": [
-			-6.03,
-			0.96,
-			33.24
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_15_anta",
-		"pos": [
-			-6.18,
-			0.96,
-			31.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta",
-		"pos": [
-			0.81,
-			0.96,
-			35.77
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Stanzino/braccioli_stanzino",
-		"pos": [
-			5.2,
-			2.07,
-			31.9
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 82.0 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 82.0 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
-		"pos": [
-			4.9,
-			1.13,
-			34.49
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_1",
-		"pos": [
-			4.82,
-			1.0,
-			33.35
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1)",
-		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_2",
-		"pos": [
-			4.82,
-			1.0,
-			31.6
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm) (ambienti-1)",
-		"nodo": "Interni/Zaino/Modello/Zaino",
-		"pos": [
-			4.78,
-			1.03,
-			32.47
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
 	},
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 189.0 cm)",
@@ -322,302 +56,36 @@
 		"zona": "mascotte"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.84 e 1.46 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/estintore",
-		"pos": [
-			0.0,
-			0.0,
-			40.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
-		"pos": [
-			-1.25,
-			0.0,
-			40.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 0.95 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/secchio_mocio",
-		"pos": [
-			-2.25,
-			0.0,
-			29.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
-		"pos": [
-			-3.0,
-			0.0,
-			36.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (4 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/cestino",
-		"pos": [
-			-4.25,
-			0.0,
-			38.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.42 m sopra il pavimento (4 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/pallone",
-		"pos": [
-			-7.25,
-			0.0,
-			40.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
-		"pos": [
-			-6.0,
-			0.0,
-			36.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
-		"pos": [
-			-6.0,
-			0.0,
-			33.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.50 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/cestino_spogliatoi",
-		"pos": [
-			-6.0,
-			0.0,
-			30.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
-		"pos": [
-			0.5,
-			0.0,
-			37.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
-		"pos": [
-			0.5,
-			0.0,
-			33.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/porta_stanzino",
-		"pos": [
-			0.5,
-			0.0,
-			32.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.40 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
-		"pos": [
-			0.5,
-			0.0,
-			30.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/cartello_bagnato",
-		"pos": [
-			0.5,
-			0.0,
-			29.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
-		"pos": [
-			0.5,
-			0.0,
-			25.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_rotore",
 		"pos": [
 			0.0,
 			0.0,
+			25.25
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"stato": "voluto",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta",
+		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
+		"pos": [
+			-0.75,
+			0.0,
 			25.0
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
-		"stato": "da correggere",
+		"stato": "voluto",
 		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.88 m sopra il pavimento (6 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/sedia",
-		"pos": [
-			2.75,
-			0.0,
-			33.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.82 e 1.44 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
-		"pos": [
-			5.0,
-			0.0,
-			34.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
-		"pos": [
-			6.5,
-			0.0,
-			39.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
-		"pos": [
-			-18.5,
-			0.0,
-			16.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (7 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
-		"pos": [
-			-19.0,
-			0.0,
-			16.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (74 celle da 25 cm) (pavimento a y -0.00), con la collisione (ci si sbatte contro)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"motivo": "struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre)",
 		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
 		"pos": [
 			-15.5,
@@ -626,7 +94,7 @@
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
-		"stato": "da correggere",
+		"stato": "voluto",
 		"zona": "sala"
 	},
 	{
@@ -910,20 +378,6 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm (ambienti-1)",
-		"nodo": "Interni/Ambienti/Stanzino/stanzino_statico",
-		"pos": [
-			2.37,
-			1.3,
-			32.5
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
 		"dettaglio": "il 68% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/neon_spogliatoi_1",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera",
 		"nodo": "Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla",
@@ -935,20 +389,6 @@
 		"problema": "compenetra",
 		"squadra": "ambienti-1",
 		"stato": "voluto",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm (ambienti-1)",
-		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
-		"pos": [
-			-0.91,
-			2.35,
-			21.5
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
 		"zona": "interni"
 	},
 	{
@@ -2940,6 +2380,202 @@
 		"zona": "risalita"
 	},
 	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.05 e 1.30 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21212",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21205",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21199",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21193",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.93 e 1.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.93 e 1.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@21210",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.5
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.82 e 0.83 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.82 e 0.83 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21184",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.5
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto25/Frontale/Tirato/@MeshInstance3D@21245",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.81 e 0.82 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.81 e 0.82 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto24/Frontale/Tirato/@MeshInstance3D@21239",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto23/Frontale/Tirato/@MeshInstance3D@21232",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.06 e 1.23 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.06 e 1.23 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21214",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.80 e 0.97 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.80 e 0.97 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21207",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.58 e 0.72 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.58 e 0.72 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21201",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.37 e 0.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto22/Frontale/Tirato/@MeshInstance3D@21226",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21195",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.28 e 1.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.28 e 1.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@21261",
@@ -3010,9 +2646,23 @@
 		"zona": "risalita"
 	},
 	{
+		"dettaglio": "passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21206 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@6075 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21184",
+		"pos": [
+			-39.24,
+			-4.58,
+			43.5
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (12 celle da 25 cm) (pavimenti fra y -25.78 e -25.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
 		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26449",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26559",
 		"pos": [
 			67.0,
 			-25.58,
@@ -3026,7 +2676,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -28.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
 		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26457",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26567",
 		"pos": [
 			67.0,
 			-28.58,
@@ -3040,7 +2690,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (13 celle da 25 cm) (pavimenti fra y -22.80 e -22.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
 		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26441",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26551",
 		"pos": [
 			54.5,
 			-22.58,

@@ -523,12 +523,10 @@ func _tessera(padre: Node3D) -> void:
 
 func _luci() -> void:
 	# la lampada d'emergenza rossa sopra la porta d'ingresso e una sul muro est, sopra la cassaforte
-	for p in [[Vector3(PORTA_SUD, 2.55, L - 0.12), Vector3(0, -0.5, -1)], [Vector3(L - 0.12, 2.5, -1.05), Vector3(-1, -0.7, 0)]]:
-		var l := (load("res://assets/fiume_lento/lampada_emergenza.glb") as PackedScene).instantiate() as Node3D
-		add_child(l)
-		l.position = p[0]
-		l.look_at(global_transform * (p[0] + p[1]), Vector3.UP)
-		_luce(p[0] + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 1.6, 6.0, true)
+	# (i punti sono sulla faccia dei muri: la staffa si appoggia al muro)
+	for p in [[Vector3(PORTA_SUD, 2.55, L), Vector3(0, -0.5, -1)], [Vector3(L, 2.5, -1.05), Vector3(-1, -0.7, 0)]]:
+		var l := LampadaMuro.monta(self, p[0], p[1])
+		_luce(l.position + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 1.6, 6.0, true)
 	# il cartello d'uscita verde sopra la porta della scala, acceso (luce d'emergenza a batteria)
 	var mf := StandardMaterial3D.new()
 	mf.albedo_texture = load("res://assets/fiume_lento/texture/uscita_faccia.jpg")

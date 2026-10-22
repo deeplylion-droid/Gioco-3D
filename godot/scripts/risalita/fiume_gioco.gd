@@ -748,11 +748,11 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0) -> void:
 	_luce(pos + dir * 0.35, Color(1.0, 0.76, 0.5), energia, 11.0)
 
 
-## Lampada d'emergenza rossa (modello Meshy + luce), che guarda verso [param verso].
+## Lampada d'emergenza rossa (modello Meshy + luce), che guarda verso [param verso]: [param pos] è sulla faccia
+## del muro (o della roccia), dove la staffa si appoggia con la sua piastra.
 func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
-	var l := _metti("lampada_emergenza", pos)
-	l.look_at(global_transform * (pos + verso), Vector3.UP)
-	_luce(pos + verso.normalized() * 0.4, Color(1.0, 0.18, 0.12), 2.6, 9.0)
+	var l := LampadaMuro.monta(self, pos, verso)
+	_luce(l.position + verso.normalized() * 0.3, Color(1.0, 0.18, 0.12), 2.6, 9.0)
 
 
 ## Faro subacqueo nella parete del canale: oblò sotto il pelo e luce nell'acqua. Senza ombreggiatura e
@@ -776,7 +776,7 @@ func _faro_subacqueo(pos: Vector3, rot_y: float) -> void:
 
 ## Un pannello di roccia finta (4,2 x 3,2 m, alzato fino a 4,9) col retro verso [param rot] + 180: girato
 ## e specchiato a caso perché non si veda che è sempre lo stesso. Ha la sua collisione.
-func _roccia(pos: Vector3, rot: float) -> void:
+func _roccia(pos: Vector3, rot: float) -> Node3D:
 	var r := _metti("roccia_parete", pos, rot)
 	for mi in r.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = mat_roccia
@@ -789,6 +789,29 @@ func _roccia(pos: Vector3, rot: float) -> void:
 	f.shape = b
 	f.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(rot)), pos + Basis(Vector3.UP, deg_to_rad(rot)) * Vector3(0, 3.24 * sy * 0.5, 0.25))
 	_collisioni.add_child(f)
+	return r
+
+
+## Il punto della faccia di [param roccia] davanti a [param dove] (a quota, sull'asse della roccia), guardando da
+## [param davanti] verso la roccia: un raggio contro i triangoli del modello. Entra di 1 cm, così la piastra della
+## lampada non resta sospesa dove la roccia è irregolare.
+func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3) -> Vector3:
+	var da := dove + davanti * 2.0
+	var meglio := INF
+	for mi in roccia.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D()
+		var k: Node = mi
+		while k != self and k != null:
+			xf = (k as Node3D).transform * xf
+			k = k.get_parent()
+		var f := (mi as MeshInstance3D).mesh.get_faces()
+		for i in range(0, f.size(), 3):
+			var h = Geometry3D.ray_intersects_triangle(da, -davanti, xf * f[i], xf * f[i + 1], xf * f[i + 2])
+			if h != null:
+				meglio = minf(meglio, da.distance_to(h))
+	if meglio == INF:
+		return dove + davanti * 0.62
+	return da - davanti * (meglio + 0.01)
 
 
 ## Punti a passo [param passo] lungo i punti, dal metro [param inizio], a distanza [param d] dall'asse sui
@@ -1091,15 +1114,16 @@ func _giungla() -> void:
 			var dietro := p - Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK * 1.0
 			if in_piazza(dietro):
 				continue
-			_roccia(p, rot)
+			var roccia := _roccia(p, rot)
 			n += 1
 			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
+			# le lampade sulla faccia vera della roccia (prima a 62 cm dal suo centro: a volte staccate, a volte dentro)
 			if n % 3 == 0:
-				_lampada_calda(p + davanti * 0.62 + Vector3(0, 3.0, 0), rot, 3.0)
+				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 3.0)
 			elif n % 11 == 5:
-				_lampada_rossa(p + davanti * 0.62 + Vector3(0, 3.2, 0), davanti + Vector3(0, -0.5, 0))
+				_lampada_rossa(_su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0))
 			elif n % 13 == 7:
-				_lampada_calda(p + davanti * 0.62 + Vector3(0, 3.0, 0), rot, 0.0)
+				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0)
 			elif n % 4 == 1 and randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
 	# i fari subacquei nelle pareti dei canali, alternati
@@ -1172,9 +1196,9 @@ func _imbarco() -> void:
 		k += 1
 	# la luce lungo la fila: lampade calde sul muro nord e sul muro dell'approdo
 	for x in [INGRESSO_X + 6.0, -12.0, -2.0]:
-		_lampada_calda(Vector3(x, 3.0, Z0 + 0.02), 0.0, 3.0)
+		_lampada_calda(Vector3(x, 3.0, Z0), 0.0, 3.0)
 	for z in [-18.0, -9.0]:
-		_lampada_calda(Vector3(MURO_APPRODO + 0.17, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
+		_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
 	for i in 3:
 		_metti("ciambella", Vector3(-VASCA - 1.0, 0.05 + i * 0.27, -VASCA - 5.6), i * 37.0)
@@ -1190,8 +1214,8 @@ func _imbarco() -> void:
 	_cartello_palo(Vector3(-VASCA - 0.6, 0, -VASCA - 2.4), 90.0, "cartello_tuffi")
 	_cartello_palo(Vector3(INGRESSO_X + 1.6, 0, Z0 + 1.6), 160.0, "cartello_bimbi")
 	_metti("salvagente", Vector3(-2.6, 0, -8.5), -90.0)
-	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0 + 0.02), 0.0, 3.0)
-	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0 + 0.1), Vector3(0, -0.4, 1))
+	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
+	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
 	for p in [Vector3(-11.0, 0, -12.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 0.8, 0, -VASCA - 10.5)]:
 		_metti("palma_finta", p, randf() * 360.0)
 		_ostacolo(p, 0.35, 1.2)
@@ -1256,10 +1280,10 @@ func _approdo() -> void:
 	_metti("corrimano_bambu", Vector3(x1 - 0.25, 0, APPRODO.y - 1.9), 90.0)
 	_metti("detriti", Vector3(X0 + 1.0, 0, APPRODO.y + 1.8), 0.0)
 	_metti("ciabatta", Vector3(x1 - 1.6, 0, APPRODO.y + 0.9), 200.0)
-	_lampada_calda(Vector3(X0 + 0.02, 3.0, APPRODO.y - 1.6), 90.0, 3.0)
-	_lampada_rossa(Vector3(X0 + 0.15, 2.9, APPRODO.y + 1.4), Vector3(1, -0.6, 0))
+	_lampada_calda(Vector3(X0, 3.0, APPRODO.y - 1.6), 90.0, 3.0)
+	_lampada_rossa(Vector3(X0, 2.9, APPRODO.y + 1.4), Vector3(1, -0.6, 0))
 	for z in [-14.0, 14.0]:
-		_lampada_calda(Vector3(xm - 0.17, 3.0, z), -90.0, 2.5 if z < 0.0 else 0.0)
+		_lampada_calda(Vector3(xm - 0.15, 3.0, z), -90.0, 2.5 if z < 0.0 else 0.0)
 
 
 
