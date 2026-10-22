@@ -9,6 +9,12 @@ extends Node3D
 const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 const SCENA_COMANDI := "res://scenes/ui/comandi.tscn"
 const SCENA_OPZIONI := "res://addons/grafica/menu_opzioni.tscn"
+## Il logo del gioco, la A: l'insegna del parco rovinata (scelta dell'utente del 22 ottobre;
+## originale in docs/concept/logo/, disegnato da assets_src/logo/logo_jilly.py).
+const LOGO := preload("res://assets/ui/logo/logo_jilly_jubilee.png")
+## Dove sta il logo, nelle coordinate dell'interfaccia (1280x720): in alto a sinistra, sopra capitolo e
+## voci, come nella prova vista dall'utente (docs/concept/logo/titolo_a.jpg).
+const LOGO_RETTANGOLO := Rect2(91, 30, 431, 225)
 
 @export var camera: Camera3D
 @export var statua: Node3D
@@ -36,6 +42,7 @@ var _avviato := false
 var _menu: VBoxContainer
 var _voci: Array[Button] = []
 var _testata: Control
+var _logo: TextureRect
 var _sottomenu: CanvasLayer
 var _pausa_fuoco := true
 
@@ -108,7 +115,7 @@ func apri_comandi() -> void:
 
 
 func esci() -> void:
-	get_tree().quit()
+	Game.esci()
 
 
 ## Chiama l'autoload Audio (addons/audio) se c'è: il titolo funziona anche senza.
@@ -126,10 +133,12 @@ func _apri(scena: String, controllo: NodePath, voce: Button) -> void:
 	# Sotto opzioni e comandi restano solo la statua e la nebbia.
 	_menu.visible = false
 	_testata.visible = false
+	_logo.visible = false
 	_sottomenu.get_node(controllo).connect(&"chiuso", func():
 		_sottomenu = null
 		_menu.visible = true
 		_testata.visible = true
+		_logo.visible = true
 		voce.grab_focus.call_deferred())
 
 
@@ -187,6 +196,18 @@ func _costruisci_interfaccia() -> void:
 	ombra.anchor_bottom = 1.0
 	ombra.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fondo.add_child(ombra)
+
+	# Il logo, sotto il post-processing come la scritta piccola: prende la grana della pellicola.
+	_logo = TextureRect.new()
+	_logo.name = "Logo"
+	_logo.texture = LOGO
+	_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_logo.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	_logo.position = LOGO_RETTANGOLO.position
+	_logo.size = LOGO_RETTANGOLO.size
+	_logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fondo.add_child(_logo)
 
 	# Capitolo e versione, in piccolo, appena sopra le voci (allineati al loro testo).
 	var testata := HBoxContainer.new()

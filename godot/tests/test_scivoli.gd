@@ -61,7 +61,7 @@ func _fine() -> void:
 	_lascia()
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
-	get_tree().quit(1 if _failed > 0 else 0)
+	Game.esci(1 if _failed > 0 else 0)  # aspetta i caricamenti nel thread
 
 
 func _lascia() -> void:

@@ -409,7 +409,7 @@ func _carica_torre() -> void:
 func _precarica_torre() -> void:
 	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "":
 		return
-	if ResourceLoader.load_threaded_request(sala_torre_scena, "PackedScene") == OK:
+	if Game.carica_in_thread(sala_torre_scena, "PackedScene") == OK:
 		_torre_in_caricamento = true
 		_torre_fallita = false
 	else:
@@ -417,7 +417,7 @@ func _precarica_torre() -> void:
 
 
 func _process(_delta: float) -> void:
-	if not _torre_in_caricamento:
+	if not _torre_in_caricamento or Game.uscendo:
 		return
 	var stato := ResourceLoader.load_threaded_get_status(sala_torre_scena)
 	if stato == ResourceLoader.THREAD_LOAD_LOADED:
