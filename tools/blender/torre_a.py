@@ -1619,6 +1619,10 @@ def versione_A(mats):
             col = min((Vector((cc.x + sx * NUCLEO, cc.y + sy * NUCLEO, zf)) for sx in (-1, 1) for sy in (-1, 1)),
                       key=lambda q: math.hypot(q.x - m_.x, q.y - m_.y))
             dv = Vector((m_.x - col.x, m_.y - col.y, 0)).normalized()
+            if GIOCO and zf < H - 1.0:
+                # nel gioco i fari dei piani bassi stanno sopra i 2 m di chi cammina sulle pedane (a 1,5 m sopra il
+                # piano passavano davanti alla faccia: collaudo del 22 sera)
+                col = col + Vector((0, 0, 0.8))
             p = col + dv * 0.55
             luci['fari'].append([[p.x, p.y, p.z], [m_.x, m_.y, m_.z], [col.x, col.y, col.z]])
     em_ = 0.08 if GIOCO else 0.1      # (nel gioco il retto della scatola, 8 cm dietro il centro, sul muro)

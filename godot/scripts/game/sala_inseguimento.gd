@@ -869,14 +869,18 @@ func _luci() -> void:
 		radice.add_child(s)
 		s.global_position = b(f[0])
 		s.look_at(b(f[1]), Vector3.UP)
-	# la scia rosa sul bordo della vasca 1, dalla parte da cui lei arriva
+	# la scia rosa sul bordo della vasca 1, dalla parte da cui lei arriva: stretta come il bordo (18 cm, smussato) e
+	# appoggiata sopra, così non pende nel vuoto ai lati (collaudo del 22 sera)
 	var bava := BavaRosa.new()
-	# (sul bordo vero della vasca: a -21,49 restava 2 cm sopra, collaudo del 22 sera)
-	bava.punti = PackedVector3Array([b([53.5, 17.91, -21.512]), b([50.09, 17.91, -21.512]), b([50.09, 15.9, -21.512])])
-	bava.larghezza = 0.2
+	bava.punti = PackedVector3Array([b([53.5, 17.91, -21.49]), b([50.09, 17.91, -21.49]), b([50.09, 15.9, -21.49])])
+	bava.larghezza = 0.08
+	bava.variazione = 0.25
 	bava.emissione = 2.5
 	bava.opacita = 0.9
-	bava.appoggia = false
+	bava.sollevamento = 0.003
+	bava.ricerca_su = 0.1
+	bava.ricerca_giu = 0.03
+	bava.appoggia = true
 	radice.add_child(bava)
 
 

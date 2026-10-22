@@ -590,7 +590,9 @@ def versione_A(mats):
     scala_pioli(c, BX[0] + 0.15, 3.2, T - 0.3, porta[1])
     GIOCO_DATI['scale'].append(dict(x=BX[0] + 0.3, y=3.2, z0=z0, z1=porta[1], verso=[1.0, 0.0, 0.0]))
     P.piattaforma(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1], lati=('s', 'n'), pali=False)
-    gambe(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1] - SOTTO_PEDANA, z0)
+    # nel gioco le gambe dal lato del bacino stanno fuori dal suo muro (prima ci passavano dentro, e la croce di quel
+    # lato scendeva sul bordo accanto ai piedi della scaletta: collaudo del 22 sera)
+    gambe(c, X0 + 0.1, 2.0, BX[0] if GIOCO else BX[0] + 0.4, 7.0, porta[1] - SOTTO_PEDANA, z0)
     porta_uscita(c, porta[0], porta[1], luci)
 
     for pts in da_appendere:
