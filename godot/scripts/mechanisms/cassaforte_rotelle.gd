@@ -27,6 +27,10 @@ signal aperta
 ## La faccia dello sportello vero (z nel nodo dello sportello), dietro le rotelle: il loro supporto ci arriva e i
 ## simboli ci stanno sopra (prima restavano 3,4 cm davanti, staccati). 0: come prima.
 @export var faccia_sportello := 0.0
+## Quanto sta il pavimento sotto l'origine (m). Aperto, lo sportello sporge nella stanza all'altezza del petto: con
+## un valore, sotto lo sportello aperto c'è una barriera fino a terra e non ci si passa (come sotto i cassetti tirati).
+## 0: niente barriera.
+@export var barriera_fino_a_terra := 0.0
 
 var cifre := PackedInt32Array([0, 0, 0])
 var aperta_ora := false
@@ -35,6 +39,7 @@ var _rotelle: Array[Interactable] = []
 var _scritte: Array[Label3D] = []
 var _sportello: Node3D
 var _cilindri: Array[MeshInstance3D] = []
+var _barriera: StaticBody3D
 
 
 func _ready() -> void:
@@ -76,7 +81,38 @@ func _ready() -> void:
 		r.interacted.connect(gira.bind(i).unbind(1))
 		_rotelle.append(r)
 		_scritte.append(scritta)
+	if barriera_fino_a_terra > 0.0:
+		_metti_barriera()
 	_metti()
+
+
+## La barriera sotto lo sportello aperto: dal pavimento al suo bordo di sopra, larga quanto lo sportello aperto.
+func _metti_barriera() -> void:
+	var giro := _sportello.rotation
+	_sportello.rotation = Vector3(0.0, -1.9, 0.0)
+	var b := AABB()
+	var primo := true
+	for mi in _sportello.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D()
+		var k: Node = mi
+		while k != self:
+			xf = (k as Node3D).transform * xf
+			k = k.get_parent()
+		var bb: AABB = xf * (mi as MeshInstance3D).get_aabb()
+		b = bb if primo else b.merge(bb)
+		primo = false
+	_sportello.rotation = giro
+	_barriera = StaticBody3D.new()
+	_barriera.name = "BarrieraSportello"
+	_barriera.collision_layer = Layers.BARRIERS
+	_barriera.collision_mask = 0
+	var f := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(b.size.x, b.end.y + barriera_fino_a_terra, b.size.z)
+	f.shape = bs
+	f.position = Vector3(b.get_center().x, (b.end.y - barriera_fino_a_terra) * 0.5, b.get_center().z)
+	_barriera.add_child(f)
+	add_child(_barriera)
 
 
 ## Il cilindro con le cifre (asse lungo X, la cifra davanti verso +Z) e il simbolo sopra.
@@ -144,6 +180,9 @@ func _metti() -> void:
 		if is_instance_valid(c):
 			c.enabled = aperta_ora
 			c.visible = aperta_ora
+	if _barriera:
+		for c in _barriera.get_children():
+			(c as CollisionShape3D).set_deferred(&"disabled", not aperta_ora)
 
 
 # --- Checkpoint -------------------------------------------------------------------------------

@@ -22,10 +22,12 @@ const STATUE := [
 ]
 ## Oggetti da parete: il retro (z = 0 del modello) sulla parete, il davanti verso [code]normale[/code]; la posizione è
 ## quella di partenza, poi Posa.fissa_al_muro li mette a filo del muro vero (il manifesto stava 3 cm staccato: il
-## muro visibile lì è dove c'è la collisione).
+## muro visibile lì è dove c'è la collisione). Posa si appoggia alla superficie che si vede, anche dove la collisione
+## sporge (la vasca centrale: 3 cm oltre le piastrelle); [code]affondo[/code] (di quanto spingere ancora dentro il
+## muro) non serve più.
 const JILLY := [
 	{nome = &"TargaJilly", modello = "res://assets/models/mascotte/jilly/targa.glb",
-		pos = Vector3(-3.003, 0.62, 10.0), normale = Vector3(-1, 0, 0)},
+		pos = Vector3(-2.97, 0.62, 10.0), normale = Vector3(-1, 0, 0)},
 	{nome = &"ManifestoJilly", modello = "res://assets/models/mascotte/jilly/manifesto.glb",
 		pos = Vector3(-20.0, 1.4, 13.95), normale = Vector3(1, 0, 0)},
 	{nome = &"InsegnaJilly", modello = "res://assets/models/mascotte/jilly/insegna.glb",
@@ -48,7 +50,7 @@ func _ready() -> void:
 		ob.name = j.nome
 		add_child(ob)
 		ob.transform = Transform3D(Basis.looking_at(-j.normale, Vector3.UP), j.pos)
-		Posa.fissa_al_muro(ob, j.normale)
+		Posa.fissa_al_muro(ob, j.normale, -float(j.get("affondo", 0.0)))
 		_accendi_lampade(ob)
 	GameState.luci_cambiate.connect(func(_f): _aggiorna_lampade())
 	_aggiorna_lampade()

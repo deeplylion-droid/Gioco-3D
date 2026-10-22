@@ -128,9 +128,11 @@ func _disco_vero() -> void:
 	_mat_bersaglio = StandardMaterial3D.new()
 	if modello_lampada:
 		# la lampada sul palo, sopra il disco, con la staffa sul davanti del palo e un collare
-		var attacco := Vector3(palo.global_position.x, posizione_bersaglio.y + raggio_bersaglio + 0.3, palo.global_position.z) + verso * 0.047
+		var attacco := Vector3(palo.global_position.x, posizione_bersaglio.y + raggio_bersaglio + 0.3, palo.global_position.z)
 		var dir := verso + Vector3(0, -0.6, 0)
-		LampadaMuro.monta(self, to_local(attacco), global_basis.inverse() * dir, false)
+		# il palo si stringe verso la cima: il suo raggio a quell'altezza
+		var r_palo := lerpf(pm.bottom_radius, pm.top_radius, clampf((attacco.y - piede.y) / pm.height, 0.0, 1.0))
+		LampadaMuro.monta(self, to_local(attacco), global_basis.inverse() * dir, false, r_palo)
 		var collare := MeshInstance3D.new()
 		collare.name = "Collare"
 		var cm := CylinderMesh.new()

@@ -10,6 +10,12 @@ class_name Posa
 const PORTATA := 3.0
 ## Strati su cui si appoggia: il mondo e le cose con la loro collisione.
 const STRATI := Layers.WORLD
+## Oltre il punto della collisione, fin dove si cerca la superficie che si vede (m): la collisione di un muro può
+## sporgere qualche centimetro oltre le piastrelle (vasca centrale: 3 cm), o stare dietro.
+const OLTRE := 0.3
+
+## Le TriangleMesh delle mesh già usate (per il raggio sulle facce vere): mesh -> TriangleMesh.
+static var _triangoli := {}
 
 
 ## Appoggia [param nodo] sul primo sostegno sotto: il punto più basso dell'oggetto ([param fondo], metri sotto
@@ -67,13 +73,58 @@ static func fissa_al_soffitto(nodo: Node3D, cima := 0.0, lega := false, escludi:
 	return true
 
 
+## Il sostegno lungo il raggio da [param da] ad [param a]: la superficie che si vede, non la collisione (riscontro di
+## mascotte, 22 ottobre: la collisione del muro della vasca sporge 3 cm oltre le piastrelle, e la targa restava
+## staccata di 3 cm). Prima il raggio della fisica trova il sostegno; poi, sullo stesso raggio fino a OLTRE dopo
+## quel punto, la prima faccia di una mesh visibile (il nodo stesso e i suoi figli esclusi). Se nessuna mesh è lì
+## (un sostegno di sola collisione), vale la collisione. Restituisce {position, normal, collider}: collider è la
+## mesh colpita (per lega) o il corpo della collisione.
 static func _raggio(nodo: Node3D, da: Vector3, a: Vector3, escludi: Array[RID]) -> Dictionary:
 	if not nodo.is_inside_tree():
 		push_warning("Posa: %s non è ancora nella scena (serve la fisica)" % nodo.name)
 		return {}
 	var q := PhysicsRayQueryParameters3D.create(da, a, STRATI, escludi)
 	q.hit_back_faces = false
-	return nodo.get_world_3d().direct_space_state.intersect_ray(q)
+	var h := nodo.get_world_3d().direct_space_state.intersect_ray(q)
+	var dir := (a - da).normalized()
+	var fine := a if h.is_empty() else (h.position as Vector3) + dir * OLTRE
+	if da.distance_to(fine) > da.distance_to(a):
+		fine = a
+	var m := _raggio_mesh(nodo, da, fine)
+	return h if m.is_empty() else m
+
+
+## La prima faccia di una mesh visibile sul segmento [param da]-[param a] ({} se nessuna).
+static func _raggio_mesh(nodo: Node3D, da: Vector3, a: Vector3) -> Dictionary:
+	var meglio := {}
+	var d_min := INF
+	for n in nodo.get_tree().root.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or mi == nodo or nodo.is_ancestor_of(mi) or not mi.is_visible_in_tree():
+			continue
+		if mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
+			continue
+		var gt := mi.global_transform
+		if not (gt * mi.get_aabb()).grow(0.01).intersects_segment(da, a):
+			continue
+		var tm: TriangleMesh = _triangoli.get(mi.mesh)
+		if tm == null:
+			if _triangoli.size() > 256:
+				_triangoli.clear()
+			tm = mi.mesh.generate_triangle_mesh()
+			_triangoli[mi.mesh] = tm
+		if tm == null:
+			continue
+		var inv := gt.affine_inverse()
+		var r := tm.intersect_segment(inv * da, inv * a)
+		if r.is_empty():
+			continue
+		var p: Vector3 = gt * (r.position as Vector3)
+		var d := da.distance_to(p)
+		if d < d_min:
+			d_min = d
+			meglio = {"position": p, "normal": (gt.basis.inverse().transposed() * (r.normal as Vector3)).normalized(), "collider": mi}
+	return meglio
 
 
 ## L'oggetto diventa figlio del sostegno (il nodo del corpo colpito o, per i corpi importati, il suo genitore

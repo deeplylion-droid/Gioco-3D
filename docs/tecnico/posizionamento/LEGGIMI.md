@@ -13,7 +13,7 @@ Dal 22 ottobre è **severo** (processo approvato dall'utente "per evitare questi
 
 Gli elenchi per squadra del primo giro severo sono in `elenchi/`.
 
-I MultiMesh (i dettagli della sala con 6 o più copie, i led, le lamelle) si controllano una copia alla volta. Senza schermo il MultiMesh non conserva le trasformazioni: chi lo crea da codice le lascia anche nel meta `trasformazioni` (`mmi.set_meta(&"trasformazioni", array_di_Transform3D)`, vedi `dettagli_sala.gd`). Quelli senza sono elencati nel rapporto.
+I MultiMesh (i dettagli della sala con 6 o più copie, i led, le lamelle) si controllano una copia alla volta. Senza schermo il MultiMesh non conserva le trasformazioni: chi lo crea da codice le lascia anche nel meta `trasformazioni` (`mmi.set_meta(&"trasformazioni", array_di_Transform3D)`, vedi `dettagli_sala.gd`). Per un MultiMesh salvato in un `.res`, il meta va sulla risorsa (`mm.set_meta(...)` prima di `ResourceSaver.save`): si salva con lei. Quelli senza sono elencati nel rapporto.
 
 Per capire perché un oggetto risulta appoggiato o staccato: `POSIZ_TOCCA=pezzo_del_nome` prima del comando stampa, per ogni oggetto col nome che lo contiene, le mesh che tocca.
 
@@ -57,13 +57,13 @@ Se un caso è voluto, per esempio una porta aperta dove non si passa o il tubo d
  "motivo": "la porta resta aperta contro il muro, il giocatore non ci passa"}
 ```
 
-Un caso si riconosce da zona, nodo e problema. I nodi creati da codice hanno nomi automatici, come `@MeshInstance3D@217`: per loro conta anche la posizione, arrotondata a mezzo metro. Le voci con stato `"da correggere"` sono casi noti, già assegnati: la CI non fallisce per loro.
+Un caso si riconosce da zona, nodo e problema. I nodi creati da codice hanno nomi automatici, come `@MeshInstance3D@217`, che cambiano quando cambia il numero di nodi creati prima: per loro il numero non conta, e al suo posto contano la posizione, arrotondata a mezzo metro, e la `firma`, cioè il modello da cui vengono e la mesh (il file, o la classe e la misura per le mesh fatte da codice). Copia la voce dal `rapporto.json` con la sua `firma`. Le voci con stato `"da correggere"` sono casi noti, già assegnati: la CI non fallisce per loro.
 
 ## Mettere gli oggetti
 
 Per non creare casi nuovi, gli oggetti si mettono **con un raggio sul loro sostegno vero**, non a occhio con le coordinate. Lo strumento comune è Posa, in due versioni con le stesse funzioni: una per gli script del gioco e una per i generatori Blender. Ogni funzione trova il sostegno (pavimento, muro, soffitto, gancio), mette l'oggetto a contatto e, con `lega`, lo fa figlio del sostegno, così lo segue se il sostegno si sposta. Se non trova niente, lascia l'oggetto dov'è e avvisa: il controllo lo segnalerà.
 
-**Nel gioco**: `godot/scripts/posizionamento/posa.gd` (classe `Posa`). L'oggetto deve essere già nella scena, perché serve la fisica, e il sostegno deve avere la collisione sullo strato WORLD.
+**Nel gioco**: `godot/scripts/posizionamento/posa.gd` (classe `Posa`). L'oggetto deve essere già nella scena, perché serve la fisica. Posa si appoggia alla **superficie che si vede**, non alla collisione: il raggio della fisica trova il sostegno, poi sullo stesso raggio (fino a 30 cm oltre) si cerca la prima faccia di una mesh visibile. La collisione di un muro può sporgere qualche centimetro oltre le piastrelle (nella vasca centrale 3 cm: la targa restava staccata). Se lì non c'è nessuna mesh, vale la collisione. Con `lega` l'oggetto diventa figlio della mesh colpita.
 
 ```gdscript
 Posa.appoggia_a_terra(vaso)                        # l'origine del vaso sul pavimento sotto
@@ -87,7 +87,7 @@ posa.appendi_a(lampada, gancio)                    # la cima della lampada sul g
 assert posa.tocca(sedia)                           # controllo nel generatore: tocca qualcosa entro 5 mm?
 ```
 
-Restituiscono il sostegno colpito, oppure `None`. `tocca(obj)` serve per controllare il risultato già nel generatore, prima di esportare. Test: `tools/blender/test/test_posa.py`, da lanciare con il venv di Blender sotto il lock.
+Restituiscono il sostegno colpito, oppure `None`. Gli oggetti di sola collisione (nome con `-col`, `_col`, `colonly`, o spenti nel render) non contano come sostegno: Posa va sulla superficie che si vede. `tocca(obj)` serve per controllare il risultato già nel generatore, prima di esportare. Test: `tools/blender/test/test_posa.py`, da lanciare con il venv di Blender sotto il lock.
 
 **Regole pratiche**:
 
