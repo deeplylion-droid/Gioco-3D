@@ -1,18 +1,651 @@
 [
 	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)",
-		"firma": "|detriti.gltf::ArrayMesh_wqqqh",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) (ambienti-1)",
-		"nodo": "Sala/Dettagli/@MeshInstance3D@40",
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 9 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/BasamentoVetro",
 		"pos": [
-			-17.43,
-			0.06,
-			3.24
+			5.7,
+			1.55,
+			-22.3
 		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
+		"problema": "compenetra",
+		"squadra": "enigmi",
 		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 23% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_9",
+		"nodo": "Sala/Dettagli/det_foglio_2_8",
+		"pos": [
+			14.0,
+			0.02,
+			18.06
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 40% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_3_0_0",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_6_7",
+		"pos": [
+			-17.06,
+			0.01,
+			19.28
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 9 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/BasamentoVetro",
+		"pos": [
+			16.9,
+			1.55,
+			-22.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Vetri per 3 cm",
+		"nodo": "Gioco/EnigmaAcquari/Disegno/Modello",
+		"pos": [
+			17.4,
+			2.9,
+			-21.36
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/AnelloVetro",
+		"pos": [
+			16.9,
+			4.31,
+			-22.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/AnelloVetro",
+		"pos": [
+			5.7,
+			4.31,
+			-22.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_35 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_35",
+		"pos": [
+			19.48,
+			5.5,
+			-15.73
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_36 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_36",
+		"pos": [
+			19.48,
+			5.5,
+			-15.39
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_37 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_37",
+		"pos": [
+			19.48,
+			5.5,
+			-15.05
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_38 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_38",
+		"pos": [
+			19.48,
+			5.5,
+			-14.71
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_39 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_39",
+		"pos": [
+			19.48,
+			5.5,
+			-14.37
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_40 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_40",
+		"pos": [
+			19.48,
+			5.5,
+			-14.03
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_0 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_0",
+		"pos": [
+			19.48,
+			0.9,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_2 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_2",
+		"pos": [
+			19.48,
+			1.24,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4",
+		"pos": [
+			19.48,
+			1.58,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
+		"pos": [
+			19.48,
+			1.92,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_1 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_1",
+		"pos": [
+			19.48,
+			0.9,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_3 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_3",
+		"pos": [
+			19.48,
+			1.24,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_5",
+		"pos": [
+			19.48,
+			1.58,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_7",
+		"pos": [
+			19.48,
+			1.92,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_8 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_8",
+		"pos": [
+			19.48,
+			2.26,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_10 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_10",
+		"pos": [
+			19.48,
+			2.6,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_12 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_12",
+		"pos": [
+			19.48,
+			2.94,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_14 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_14",
+		"pos": [
+			19.48,
+			3.28,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_16 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_16",
+		"pos": [
+			19.48,
+			3.62,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_18 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_18",
+		"pos": [
+			19.48,
+			3.96,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_9 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_9",
+		"pos": [
+			19.48,
+			2.26,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_11 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_11",
+		"pos": [
+			19.48,
+			2.6,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_13 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_13",
+		"pos": [
+			19.48,
+			2.94,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_15 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_15",
+		"pos": [
+			19.48,
+			3.28,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_17 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_17",
+		"pos": [
+			19.48,
+			3.62,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_19 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_19",
+		"pos": [
+			19.48,
+			3.96,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_20 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_20",
+		"pos": [
+			19.48,
+			4.3,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_22 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_22",
+		"pos": [
+			19.48,
+			4.64,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_24 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_24",
+		"pos": [
+			19.48,
+			4.98,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_26 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_26",
+		"pos": [
+			19.48,
+			5.32,
+			-18.45
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_28 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_28",
+		"pos": [
+			19.48,
+			5.5,
+			-18.11
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_29 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_29",
+		"pos": [
+			19.48,
+			5.5,
+			-17.77
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_30 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_30",
+		"pos": [
+			19.48,
+			5.5,
+			-17.43
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_31 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_31",
+		"pos": [
+			19.48,
+			5.5,
+			-17.09
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_32 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_32",
+		"pos": [
+			19.48,
+			5.5,
+			-16.75
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_33 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_33",
+		"pos": [
+			19.48,
+			5.5,
+			-16.41
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_34 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_34",
+		"pos": [
+			19.48,
+			5.5,
+			-16.07
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_41 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_41",
+		"pos": [
+			19.48,
+			5.5,
+			-13.69
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_42 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_42",
+		"pos": [
+			19.48,
+			5.5,
+			-13.35
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_43 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_43",
+		"pos": [
+			19.48,
+			5.5,
+			-13.01
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_44 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_44",
+		"pos": [
+			19.48,
+			5.5,
+			-12.67
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_45 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_45",
+		"pos": [
+			19.48,
+			5.5,
+			-12.33
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_46 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_46",
+		"pos": [
+			19.48,
+			5.5,
+			-11.99
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_21 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_21",
+		"pos": [
+			19.48,
+			4.3,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_23 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_23",
+		"pos": [
+			19.48,
+			4.64,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_25 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_25",
+		"pos": [
+			19.48,
+			4.98,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_27 (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_27",
+		"pos": [
+			19.48,
+			5.32,
+			-11.55
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "acquari"
 	},
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)",
@@ -211,90 +844,6 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_0",
-		"pos": [
-			19.43,
-			0.4,
-			19.46
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.8 cm)",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.8 cm)",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_36",
-		"pos": [
-			18.68,
-			1.68,
-			19.48
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.4 cm)",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.4 cm)",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_51",
-		"pos": [
-			19.09,
-			2.32,
-			18.29
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 155.5 cm)",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 155.5 cm)",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_55",
-		"pos": [
-			19.45,
-			2.96,
-			18.69
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.7 cm)",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.7 cm)",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_56",
-		"pos": [
-			18.66,
-			2.96,
-			18.64
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
-		"nodo": "Interni/Ambienti/Corridoio/PernoPortaTagliafuoco/porta_tagliafuoco",
-		"pos": [
-			12.27,
-			1.04,
-			39.6
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.5 cm)",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.5 cm)",
 		"nodo": "Tecnici/Ambienti/SalaPompe/LEVA",
@@ -335,314 +884,6 @@
 		"squadra": "ambienti-2",
 		"stato": "da correggere",
 		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante2",
-		"pos": [
-			16.05,
-			3.0,
-			-21.45
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante4",
-		"pos": [
-			17.75,
-			3.0,
-			-23.15
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante2",
-		"pos": [
-			4.85,
-			3.0,
-			-21.45
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante4",
-		"pos": [
-			6.55,
-			3.0,
-			-23.15
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 38.0 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_60, pallone_62.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 38.0 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_60, pallone_62.",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_58",
-		"pos": [
-			19.08,
-			3.6,
-			19.09
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 146.7 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_59, pallone_66.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 146.7 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_59, pallone_66.",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_54",
-		"pos": [
-			17.1,
-			2.96,
-			19.44
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 23.7 cm.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 23.7 cm.",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_35",
-		"pos": [
-			19.45,
-			1.68,
-			19.47
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 29.5 cm.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 29.5 cm.",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_47",
-		"pos": [
-			19.07,
-			2.32,
-			19.09
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 27.1 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: pallone_dentro_52, pallone_dentro_48, pallone_dentro_49, pallone_dentro_57.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 27.1 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: pallone_dentro_52, pallone_dentro_48, pallone_dentro_49, pallone_dentro_57.",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_53",
-		"pos": [
-			17.5,
-			2.32,
-			18.28
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.6 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_0_0_2, scat_0_0_3.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.6 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_0_0_2, scat_0_0_3.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_0_1",
-		"pos": [
-			-19.44,
-			0.64,
-			19.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.4 cm. Con lui, staccati insieme, 6 oggetti che si reggono solo fra loro: scat_0_0_5, scat_0_0_6, scat_0_0_7, scat_0_0_8, scat_0_0_9, scat_0_0_10.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.4 cm. Con lui, staccati insieme, 6 oggetti che si reggono solo fra loro: scat_0_0_5, scat_0_0_6, scat_0_0_7, scat_0_0_8, scat_0_0_9, scat_0_0_10.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_0_4",
-		"pos": [
-			-19.43,
-			1.55,
-			19.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_0_11",
-		"pos": [
-			-19.43,
-			4.28,
-			19.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.6 cm.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.6 cm.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_0_12",
-		"pos": [
-			-19.43,
-			4.8,
-			19.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.6 cm. Con lui, staccati insieme, 8 oggetti che si reggono solo fra loro: scat_0_0_14, scat_0_0_15, scat_0_0_16, scat_0_0_17, scat_0_0_18, scat_0_0_19, scat_0_0_20, scat_0_0_21.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.6 cm. Con lui, staccati insieme, 8 oggetti che si reggono solo fra loro: scat_0_0_14, scat_0_0_15, scat_0_0_16, scat_0_0_17, scat_0_0_18, scat_0_0_19, scat_0_0_20, scat_0_0_21.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_0_13",
-		"pos": [
-			-19.43,
-			5.33,
-			19.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_0_1_17, scat_0_1_18.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_0_1_17, scat_0_1_18.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_1_16",
-		"pos": [
-			-19.43,
-			7.16,
-			18.58
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_1_19",
-		"pos": [
-			-19.43,
-			8.45,
-			18.58
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_0_2_6, scat_0_2_7, scat_0_2_8, scat_0_2_9.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_0_2_6, scat_0_2_7, scat_0_2_8, scat_0_2_9.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_2_5",
-		"pos": [
-			-19.43,
-			2.19,
-			17.73
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: scat_0_2_11.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: scat_0_2_11.",
-		"nodo": "Sala/AngoloScatoloni/scat_0_2_10",
-		"pos": [
-			-19.43,
-			4.36,
-			17.73
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_1_0_13, scat_1_0_14, scat_1_0_15, scat_1_0_16.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_1_0_13, scat_1_0_14, scat_1_0_15, scat_1_0_16.",
-		"nodo": "Sala/AngoloScatoloni/scat_1_0_12",
-		"pos": [
-			-18.58,
-			5.82,
-			19.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_1_2_8, scat_1_2_9.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_1_2_8, scat_1_2_9.",
-		"nodo": "Sala/AngoloScatoloni/scat_1_2_7",
-		"pos": [
-			-18.58,
-			3.93,
-			17.73
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_2_1_5, scat_2_1_6, scat_2_1_7, scat_2_1_8.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_2_1_5, scat_2_1_6, scat_2_1_7, scat_2_1_8.",
-		"nodo": "Sala/AngoloScatoloni/scat_2_1_4",
-		"pos": [
-			-17.72,
-			2.63,
-			18.58
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_3_0_4, scat_3_0_5.",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_3_0_4, scat_3_0_5.",
-		"nodo": "Sala/AngoloScatoloni/scat_3_0_3",
-		"pos": [
-			-16.87,
-			1.77,
-			19.43
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
 	},
 	{
 		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 288.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l2_vetro_spento.",
@@ -813,10 +1054,10 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1119. [modello: tecnici.tscn]",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1125. [modello: tecnici.tscn]",
 		"firma": "tecnici.tscn|CylinderMesh 0.22x0.06x0.22",
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1116. [modello: tecnici.tscn]",
-		"nodo": "Tecnici/LampeggianteParatia1/@MeshInstance3D@1118",
+		"nodo": "Tecnici/LampeggianteParatia1/@MeshInstance3D@1124",
 		"pos": [
 			2.12,
 			-6.05,
@@ -856,7 +1097,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (7 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"pos": [
@@ -870,44 +1111,16 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"nodo": "Sala/Dettagli/det_cassetta_aperta_0",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (7 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"pos": [
-			-1.5,
+			6.75,
 			0.0,
-			19.5
+			-21.5
 		],
 		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"nodo": "Sala/Dettagli/det_pannello_lamiera_7",
-		"pos": [
-			-3.5,
-			0.0,
-			16.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"nodo": "Sala/Dettagli/det_cassetta_aperta_3",
-		"pos": [
-			-13.25,
-			0.0,
-			19.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
+		"squadra": "enigmi",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
@@ -940,16 +1153,44 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_3",
 		"pos": [
-			4.75,
+			-13.25,
 			0.0,
-			-23.25
+			19.5
 		],
 		"problema": "ingombro",
-		"squadra": "enigmi",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"nodo": "Sala/Dettagli/det_pannello_lamiera_7",
+		"pos": [
+			-3.75,
+			0.0,
+			17.0
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_0",
+		"pos": [
+			-1.5,
+			0.0,
+			19.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
@@ -1052,20 +1293,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "entra dentro Sala/Piscina/sala_piscina_onde",
-		"motivo": "controllo severo del 22 ottobre: entra dentro Sala/Piscina/sala_piscina_onde (ambienti-1)",
-		"nodo": "Polaroid/Polaroid05",
-		"pos": [
-			1.2,
-			-2.17,
-			2.9
-		],
-		"problema": "compenetrato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "il 35% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde",
 		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 35% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde",
 		"nodo": "Sala/Dettagli/det_foglio_1_28",
@@ -1090,20 +1317,6 @@
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Sala/Piscina/sala_piscina_onde per 38 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 130 cm (ambienti-1)",
-		"nodo": "Sala/Interattivi/sala_portello_scarico",
-		"pos": [
-			0.0,
-			-2.19,
-			2.02
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
@@ -1146,20 +1359,6 @@
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Sala/Interattivi/sala_portello_scarico per 83 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1)",
-		"nodo": "Piscina/LucePortellone/Anello",
-		"pos": [
-			0.0,
-			-2.17,
-			2.02
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
@@ -1332,7 +1531,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 65% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 71% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 65% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_vetri_rotti_1_6",
 		"pos": [
@@ -1350,9 +1549,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo per 53 cm",
 		"nodo": "Sala/Dettagli/det_griglia_caduta_4",
 		"pos": [
-			3.84,
+			3.83,
 			0.04,
-			-22.4
+			-22.33
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -1364,9 +1563,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo",
 		"pos": [
-			3.86,
+			3.79,
 			0.21,
-			-22.4
+			-22.33
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1374,7 +1573,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 81% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_piastrella_rotta_3_12",
 		"pos": [
@@ -1388,7 +1587,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 90% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_barchetta_4",
 		"pos": [
@@ -1420,9 +1619,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoio",
 		"pos": [
-			4.4,
+			4.34,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1434,9 +1633,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoioCollare",
 		"pos": [
-			4.56,
+			4.49,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1448,9 +1647,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 3 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Gamba",
 		"pos": [
-			7.39,
+			7.33,
 			0.24,
-			-22.44
+			-22.37
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1462,9 +1661,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 4 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Spina",
 		"pos": [
-			7.82,
+			7.75,
 			0.26,
-			-22.53
+			-22.45
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1476,9 +1675,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/BeccoCorpo",
 		"pos": [
-			7.82,
+			7.75,
 			1.15,
-			-22.54
+			-22.47
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1486,7 +1685,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 47% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_maschera_sub_13",
 		"pos": [
@@ -1505,7 +1704,7 @@
 		"nodo": "Gioco/EnigmaAcquari/Cavo/Fascetta1",
 		"pos": [
 			6.57,
-			1.83,
+			1.72,
 			-21.44
 		],
 		"problema": "compenetra",
@@ -1519,7 +1718,7 @@
 		"nodo": "Gioco/EnigmaAcquari/Cavo/Fascetta2",
 		"pos": [
 			6.57,
-			2.0,
+			1.95,
 			-21.44
 		],
 		"problema": "compenetra",
@@ -1543,7 +1742,7 @@
 	},
 	{
 		"dettaglio": "passa dentro Sala/AngoloPalloni/pallone_26 per 7 cm",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_91 per 6 cm",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_26 per 7 cm",
 		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_3_5",
 		"pos": [
 			13.22,
@@ -1557,7 +1756,7 @@
 	},
 	{
 		"dettaglio": "passa dentro Sala/AngoloPalloni/pallone_91 per 6 cm",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_91 per 6 cm",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_26 per 7 cm",
 		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_3_5",
 		"pos": [
 			13.52,
@@ -1668,13 +1867,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Sala/AngoloScatoloni/scat_0_0_0 per 5 cm",
+		"dettaglio": "passa dentro Sala/AngoloScatoloni/scat_0_1_0 per 5 cm",
 		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloScatoloni/scat_0_0_0 per 5 cm",
 		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_1_0",
 		"pos": [
-			-19.34,
+			-19.32,
 			0.02,
-			19.21
+			18.84
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -1710,7 +1909,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Sala/AngoloScatoloni/scat_2_1_0 per 5 cm",
+		"dettaglio": "passa dentro Sala/AngoloScatoloni/scat_2_1_0 per 4 cm",
 		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloScatoloni/scat_2_1_0 per 5 cm",
 		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_3_8",
 		"pos": [
@@ -1734,6 +1933,20 @@
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/Dettagli/det_pannello_lamiera_0 per 4 cm",
+		"motivo": "il pannello det_pannello_lamiera_0 e la piastrella det_piastrella_rotta_6_7 del kit stanno sotto la pila: li toglie ambienti-2",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_0",
+		"pos": [
+			-16.63,
+			0.17,
+			19.38
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
@@ -1781,7 +1994,7 @@
 	},
 	{
 		"dettaglio": "il 23% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 68% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaGamba",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 23% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
 		"nodo": "Sala/Dettagli/det_foglio_2_15",
 		"pos": [
 			13.74,
@@ -1795,7 +2008,7 @@
 	},
 	{
 		"dettaglio": "il 68% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaGamba",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 68% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaGamba",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 23% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
 		"nodo": "Sala/Dettagli/det_foglio_2_15",
 		"pos": [
 			13.74,
@@ -1892,7 +2105,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 63% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_3_1_0",
+		"dettaglio": "il 60% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_3_1_0",
 		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 63% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_3_1_0",
 		"nodo": "Sala/Dettagli/det_carta_accartocciata_3_10",
 		"pos": [
@@ -1906,13 +2119,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 94% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 94% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
 		"nodo": "Sala/Dettagli/det_foglio_2_14",
 		"pos": [
 			14.93,
 			0.02,
-			-22.32
+			-22.29
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -1924,9 +2137,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
 		"pos": [
-			15.06,
+			14.99,
 			0.21,
-			-22.4
+			-22.33
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1938,9 +2151,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoio",
 		"pos": [
-			15.6,
+			15.54,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1952,9 +2165,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoioCollare",
 		"pos": [
-			15.76,
+			15.69,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1962,13 +2175,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"dettaglio": "il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_pannello_lamiera_2_0",
 		"pos": [
 			17.7,
 			0.06,
-			-23.0
+			-22.98
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -1976,7 +2189,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 58% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"dettaglio": "il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 58% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_foglio_2_33",
 		"pos": [
@@ -1990,7 +2203,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 84% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"dettaglio": "il 81% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 84% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_foglio_3_9",
 		"pos": [
@@ -2008,9 +2221,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 3 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Gamba",
 		"pos": [
-			18.59,
+			18.53,
 			0.24,
-			-22.44
+			-22.37
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2022,9 +2235,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 4 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Spina",
 		"pos": [
-			19.02,
+			18.95,
 			0.26,
-			-22.53
+			-22.45
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2036,9 +2249,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/BeccoCorpo",
 		"pos": [
-			19.02,
+			18.95,
 			1.15,
-			-22.54
+			-22.47
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2046,13 +2259,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 40% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina",
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 40% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina",
 		"nodo": "Sala/Dettagli/det_piastrella_rotta_5_8",
 		"pos": [
-			18.95,
+			18.92,
 			0.01,
-			-22.46
+			-22.44
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -2212,48 +2425,6 @@
 		"squadra": "enigmi",
 		"stato": "voluto",
 		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante1",
-		"pos": [
-			17.75,
-			4.4,
-			-21.45
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante1",
-		"pos": [
-			6.55,
-			4.4,
-			-21.45
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-1)",
-		"nodo": "Sala/Dettagli/det_tubo_muro_7cm_2m",
-		"pos": [
-			-2.18,
-			3.56,
-			-23.92
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "sala"
 	},
 	{
 		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
@@ -2774,7 +2945,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@38697. (stato: inseguimento_dopo)",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@39524. (stato: inseguimento_dopo)",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)",
 		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
 		"pos": [
@@ -2788,7 +2959,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@38705. (stato: inseguimento_dopo)",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@39532. (stato: inseguimento_dopo)",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)",
 		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2",
 		"pos": [
@@ -2802,7 +2973,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@38713. (stato: inseguimento_dopo)",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@39540. (stato: inseguimento_dopo)",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)",
 		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4",
 		"pos": [
