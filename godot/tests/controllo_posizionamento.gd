@@ -20,6 +20,7 @@ extends Node
 ## Scrive docs/tecnico/posizionamento/rapporto.md (e rapporto.json) e confronta con le eccezioni in
 ## tests/posizionamento_eccezioni.json (casi voluti, con il motivo, o già assegnati a una squadra):
 ## RISULTATO con 0 falliti se non ci sono casi nuovi.
+## Le zone che cambiano più avanti nel gioco (gli acquari comparsi e risolti) si controllano anche in quello stato.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_posizionamento.gd [zona]
 
 ## Le zone: la scena e, per le scene grandi, i nodi di primo livello che fanno da sotto-zone.
@@ -28,6 +29,13 @@ const ZONE := [
 			"Tecnici": "tecnici", "Piscina": "sala", "Vasche": "sala", "Vasca": "sala", "Gioco": "sala",
 			"Polaroid": "sala", "LuciSala": "sala", "BambiniBalconata": "sala", "Atmosfera": "sala"}},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre"},
+	# Le zone che cambiano dopo l'inizio, come le vede il giocatore (riscontro dell'utente sulla v0.3.8: gli
+	# acquari davanti al portone "tutto compenetrato o fluttuante"). Si prepara lo stato ([method _prepara]) e
+	# si controllano solo le parti elencate; i casi già trovati nello stato iniziale non si ripetono.
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
+			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
+			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 ]
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
@@ -100,6 +108,8 @@ func _controlla_scena(z: Dictionary) -> void:
 			_semi.append((sp as Node3D).global_position)
 	for g in _radice.find_children("*", "Player", true, false):
 		_semi.append((g as Node3D).global_position)
+	if z.has("stato"):
+		await _prepara(String(z["stato"]))
 	for i in 20:
 		await get_tree().physics_frame
 	# poi ferma, come la lasciano gli script dopo l'ingresso (niente animazioni durante il controllo); i corpi
@@ -141,6 +151,34 @@ func _controlla_scena(z: Dictionary) -> void:
 	_acqua.clear()
 	for i in 5:
 		await get_tree().process_frame
+
+
+## Mette la zona nello stato in cui la vede il giocatore più avanti nel gioco.
+##  acquari_comparsi: rientrato dal magazzino (tappa 7), gli acquari pieni e le lampade del portone accese;
+##  acquari_risolti: il verde giusto, il portone della torre aperto fino in fondo.
+func _prepara(stato: String) -> void:
+	print("  stato: %s" % stato)
+	var enigma := _radice.find_child("EnigmaAcquari", true, false)
+	if enigma == null:
+		push_warning("controllo: EnigmaAcquari non trovato per lo stato %s" % stato)
+		return
+	match stato:
+		"acquari_comparsi":
+			var serranda = enigma.get(&"serranda")
+			if serranda:
+				serranda.set(&"aperta", true)
+		"acquari_risolti":
+			enigma.set(&"stato", EnigmaAcquari.Stato.RISOLTO)
+			var portone = enigma.get(&"portone")
+			if portone and portone.has_method(&"apri"):
+				portone.call(&"apri")
+				for i in 900:
+					if bool(portone.call(&"is_aperto")) and not bool(portone.get(&"in_movimento")):
+						break
+					await get_tree().physics_frame
+	for i in 10:
+		await get_tree().physics_frame
+	print("  acquari comparsi: %s, stato %s" % [enigma.get(&"comparsi"), enigma.get(&"stato")])
 
 
 ## Le mesh visibili della scena, senza il giocatore, le creature e le gocce che cadono (si muovono); le superfici
@@ -232,6 +270,14 @@ func _nodo(n: Node) -> String:
 
 
 func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: String) -> void:
+	if z.has("parti"):
+		var nodo := _nodo(n)
+		if not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
+			return
+		# già trovato nello stato iniziale (stesso nodo, stesso problema): non si ripete
+		if _trovati.any(func(t): return t["nodo"] == nodo and t["problema"] == problema):
+			return
+		dettaglio += " (stato: %s)" % z["stato"]
 	var k := {"zona": _zona(z, n), "nodo": _nodo(n), "squadra": _squadra(_zona(z, n), _nodo(n)), "problema": problema,
 			"pos": [snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(pos.z, 0.01)], "dettaglio": dettaglio}
 	_trovati.append(k)
