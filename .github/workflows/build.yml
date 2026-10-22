@@ -139,6 +139,26 @@ jobs:
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
 
+      - name: Test del prototipo del fiume lento
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume.gd
+
+      - name: Test del prototipo dell'infermeria
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria.gd
+
+      - name: Test del fiume lento del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume_gioco.gd
+
+      - name: Test dell'infermeria del gioco
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
+
+      - name: Test della strada nuova della risalita
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita.gd
+
       - name: Test del blocco del pool di thread (la sala al primo fotogramma con 4 worker; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
         timeout-minutes: 20

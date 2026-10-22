@@ -84,6 +84,9 @@
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_cubo.tscn" id="80_xkett"]
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_agnello.tscn" id="81_ccseb"]
 [ext_resource type="PackedScene" path="res://scenes/sala/enigma_acquari.tscn" id="82_enigma"]
+[ext_resource type="PackedScene" path="res://scenes/risalita/risalita.tscn" id="83_risalita"]
+[ext_resource type="Script" path="res://scripts/mechanisms/lettore_tessera.gd" id="84_lettore"]
+[ext_resource type="Script" path="res://scripts/risalita/lettore_vero.gd" id="85_lettore_vero"]
 [ext_resource type="Script" path="res://scripts/environment/mascotte_sala.gd" id="83_mascotte"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5tb5"]
@@ -177,6 +180,9 @@ size = Vector3(1.6, 3, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ymajg"]
 size = Vector3(7, 4, 9)
+
+[sub_resource type="BoxShape3D" id="forma_lettore"]
+size = Vector3(0.2, 0.28, 0.14)
 
 [node name="SalaPrincipale" type="Node3D" unique_id=142626749 node_paths=PackedStringArray("statue_lamp", "lamp_trigger", "statue", "jingle_button", "hatch", "checkpoint_pozza", "tecnici", "risveglio", "fine_demo_trigger", "ritorno", "lei_sbuca", "portone")]
 script = ExtResource("1_hjbnl")
@@ -314,6 +320,9 @@ base_emission = 6.0
 flicker_rate = 0.05
 min_level = 0.35
 start_off = true
+
+[node name="Risalita" parent="." instance=ExtResource("83_risalita")]
+editor_description = "La strada nuova della tappa 7 (GDD, Allungare il capitolo): fiume lento A, zona del personale, infermeria B e scala di servizio fino al corridoio C3."
 
 [node name="Interni" type="Node3D" parent="." unique_id=733921069 instance=ExtResource("44_m5tr2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.7, 0, 40.9)
@@ -641,7 +650,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 10
+order = 15
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -657,7 +666,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 11
+order = 16
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -667,13 +676,28 @@ shape = SubResource("BoxShape3D_albqy")
 [node name="Ripartenza" type="Marker3D" parent="Tecnici/Logica/Checkpoint/CheckpointSerranda" unique_id=1919741319]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, -1.5, 0)
 
-[node name="SerrandaMagazzino" type="Node3D" parent="Tecnici/Logica" unique_id=343527874]
+[node name="SerrandaMagazzino" type="Node3D" parent="Tecnici/Logica" unique_id=343527874 node_paths=PackedStringArray("lettore")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 18.99, 9.05, 15)
 script = ExtResource("68_g1qgu")
 modello = NodePath("../../Ambienti/Raccordo/RACCORDO_dettagli")
 size = Vector3(1.8, 2.5, 0.2)
 open_offset = Vector3(0, 1.95, 0)
 open_speed = 0.4
+lettore = NodePath("../LettoreTessera")
+
+[node name="LettoreTessera" type="Area3D" parent="Tecnici/Logica" node_paths=PackedStringArray("aspetto")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 19.1, 10.35, 16.3)
+script = ExtResource("84_lettore")
+mostra_segnaposto = false
+aspetto = NodePath("Aspetto")
+editor_description = "Il lettore della keycard (scelta dell'utente del 19 ottobre: il lettore 1), sul muro del magazzino a destra della serranda: la serranda si apre solo passando la keycard dell'infermeria."
+
+[node name="Forma" type="CollisionShape3D" parent="Tecnici/Logica/LettoreTessera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.07)
+shape = SubResource("forma_lettore")
+
+[node name="Aspetto" type="Node3D" parent="Tecnici/Logica/LettoreTessera"]
+script = ExtResource("85_lettore_vero")
 
 [node name="Polaroid" type="Node3D" parent="." unique_id=1600288938]
 
@@ -903,7 +927,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 12
+order = 17
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -919,7 +943,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 13
+order = 18
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 
@@ -935,7 +959,7 @@ collision_layer = 0
 collision_mask = 2
 monitorable = false
 script = ExtResource("51_6p6f5")
-order = 14
+order = 19
 spawn_point = NodePath("Ripartenza")
 solo_al_buio = true
 

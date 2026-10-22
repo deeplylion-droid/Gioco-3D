@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://addons/acqua/shaders/wet_surface.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://assets/fiume_lento/texture/graniglia_col.jpg" id="2"]
+[ext_resource type="Texture2D" path="res://assets/fiume_lento/texture/graniglia_nrm.jpg" id="3"]
+[ext_resource type="Texture2D" path="res://assets/fiume_lento/texture/graniglia_orh.jpg" id="4"]
+
+[resource]
+resource_name = "graniglia"
+shader = ExtResource("1")
+shader_parameter/albedo_tex = ExtResource("2")
+shader_parameter/normal_tex = ExtResource("3")
+shader_parameter/orh_tex = ExtResource("4")
+shader_parameter/albedo_tint = Color(0.8, 0.8, 0.78, 1)
+shader_parameter/use_triplanar = true
+shader_parameter/uv_scale = 0.5
+shader_parameter/roughness_scale = 0.9
+shader_parameter/base_wetness = 0.35
+shader_parameter/wetness_variation = 0.6

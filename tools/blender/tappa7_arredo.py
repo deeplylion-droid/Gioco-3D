@@ -334,12 +334,20 @@ def _acciaio():
     return _ACC[0]
 
 
-def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045):
-    """Fascio di tubi lungo il muro, sotto il soffitto, con le staffe."""
+def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False):
+    """Fascio di tubi lungo il muro, sotto il soffitto, con le staffe. Con nel_muro_b in fondo ogni tubo piega e
+    rientra nel muro (dove il muro finisce in un'apertura): prima quello vicino al muro, poi gli altri, 15 cm più
+    avanti l'uno dall'altro, così non si incrociano."""
     a, b, n = Vector(a), Vector(b), Vector((n[0], n[1], 0)).normalized()
+    d = (b - a).normalized()
     for k in range(quanti):
         o = n * (0.09 + k * 0.13)
-        obs.append(C.tubo(f'{nome}_{k}', [a + o + Vector((0, 0, z - k * 0.04)), b + o + Vector((0, 0, z - k * 0.04))], r * (1 - 0.2 * k), mat, seg=12, uv=None))
+        h = Vector((0, 0, z - k * 0.04))
+        pts = [a + o + h, b + o + h]
+        if nel_muro_b:
+            fine = b - d * (quanti - 1 - k) * 0.15
+            pts = [a + o + h, fine + o + h, fine - n * 0.1 + h]
+        obs.append(C.tubo(f'{nome}_{k}', pts, r * (1 - 0.2 * k), mat, rc=0.12, seg=12, uv=None))
     L = (b - a).length; d = (b - a).normalized()
     # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
     lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))
@@ -408,7 +416,8 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         # R1: sotto il tubo grosso (2,45), fino al muro est del vano scala (prima finivano nel vuoto all'entrata)
         tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)
         # in C2 no: sullo stesso muro c'è già il tubo grosso del raccordo (t7_tubo_c2) e non c'è posto sopra i 2 m
-        tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti)
+        # C3: dal muro est di C2 (dove il corridoio gira) fin quasi al magazzino, dove rientrano nel muro sud
+        tubi_muro(f'{nome}_tubi_c3', (XC1, YC3_0, Z_SALA), (XM1 + 0.8, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti, nel_muro_b=True)
 
 
 def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
@@ -532,6 +541,18 @@ def proposta_gioco():
         lo, hi = _scatola(o)
         if lo.y < BUCO_Y + 1.45 and hi.y > BUCO_Y - 0.6:
             obs.remove(o); bpy.data.objects.remove(o)
+    # in C3, di fronte alla porta della scala di servizio, il rullo col tubo (44 cm di sporgenza) stava all'altezza
+    # della testa: si toglie (regola del posizionamento, 21 ottobre)
+    for o in [o for o in obs if o.name == 'G_c3n_m_3']:
+        obs.remove(o); bpy.data.objects.remove(o)
+    # la porta di servizio verso il fiume nel tratto basso di C2 (y 4,6..5,6, muro est) e la grata dopo il buco
+    # dell'agnellino (y = BUCO_Y - 1,025): lì non resta niente (scelta β, 21 ottobre)
+    for o in [o for o in obs if o.name.startswith(('G_c2e', 'G_c2o'))]:
+        lo, hi = _scatola(o)
+        porta = o.name.startswith('G_c2e') and lo.y < 5.9 and hi.y > 4.3 and lo.z < Z_T + 2.4
+        grata = lo.y < BUCO_Y - 1.025 + 0.35 and hi.y > BUCO_Y - 1.025 - 0.35
+        if porta or grata:
+            obs.remove(o); bpy.data.objects.remove(o)
     magazzino_pieno('G', [('gonfiabili_mucchio', 0.6, False), ('lettini_impilati', 1.0, True), ('materassini_arrotolati', 1.2, False),
                           ('scatolone_rosso', 0.5, True), ('scatolone_giallo', 0.45, True), ('scatolone_marrone', 0.55, True),
                           ('pallone_gonfio_a', 0.55, False), ('pallone_gonfio_b', 0.55, False), ('pallone_mezzo', 0.4, False),
@@ -555,7 +576,9 @@ def proposta_gioco():
     for k, (p, d) in enumerate((((48.0, YD, 0), (1, 0, 0)), ((51.6, -1.2, 0), (0, 1, 0)), ((51.6, 7.8, Z_L1), (-1, 0, 0)),
                                 ((44.55, 6.0, Z_T), (0, -1, 0)), ((44.55, -3.0, Z_SALA), (0, -1, 0)), ((44.55, -13.0, Z_SALA), (0, -1, 0)),
                                 ((42.0, -15.0, Z_SALA), (-1, 0, 0)), ((33.0, -15.0, Z_SALA), (-1, 0, 0)), ((24.0, -15.0, Z_SALA), (-1, 0, 0)))):
-        freccia_terra(f'G_freccia_{k}', p, d, obs, giallo)
+        # in C2 (3, 4, 5) no: puntavano al magazzino, che ora la grata chiude (scelta dell'utente, 22 ottobre)
+        if k not in (3, 4, 5):
+            freccia_terra(f'G_freccia_{k}', p, d, obs, giallo)
     comuni(obs, C.mat_pbr('corrimano_A', base=(0.85, 0.65, 0.12), roughness=0.5, metallic=0.5))
     for o in [o for o in obs if o.name in TROPPO_ALTI]:
         obs.remove(o); bpy.data.objects.remove(o)
