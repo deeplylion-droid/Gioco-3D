@@ -14,6 +14,10 @@ signal fermo(acceso: bool)
 @export var bpm_fine := 200.0
 @export var camera: Camera3D
 @export var bersaglio: Node3D
+## L'occhio vero di Jilly (la MeshInstance del bulbo): con [member usa_pupilla] la pupilla si allarga a ogni colpo,
+## con l'instance uniform "pupilla" dello shader dell'occhio di mascotte (1 = com'è, da 0,5 a 2,0).
+@export var occhio: GeometryInstance3D
+@export var usa_pupilla := false
 @export var centro := Vector2(0.5, 0.5)
 ## Quando arrivano il lampo in negativo e lo scatto in avanti (in progresso).
 @export var negativo_a := 0.72
@@ -51,6 +55,8 @@ func _process(delta: float) -> void:
 	_fase = fmod(_fase + delta * bpm / 60.0, 1.0)
 	var colpo := exp(-_fase * 14.0) + 0.6 * exp(-absf(_fase - 0.28) * 18.0) * float(_fase > 0.22)
 	_tempo += delta
+	if occhio and usa_pupilla:
+		occhio.set_instance_shader_parameter(&"pupilla", minf(2.0, 1.0 + 0.8 * colpo * (0.4 + 0.6 * p)))
 	_mat.set_shader_parameter(&"tempo", _tempo)
 	_mat.set_shader_parameter(&"battito", clampf(colpo, 0.0, 1.0))
 	_mat.set_shader_parameter(&"intensita", p)
