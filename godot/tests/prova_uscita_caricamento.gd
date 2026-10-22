@@ -5,6 +5,8 @@ extends Node
 ##   cambio     la sala, la precarica della torre e subito il ritorno al titolo (la sala esce dall'albero);
 ##   riparti    come la fine di test_acquari: la sala si ricarica mentre la torre carica, poi l'uscita;
 ##   livello [s] la schermata di caricamento del livello e l'uscita dopo s secondi.
+##   pieno      controprova: il livello caricato fino in fondo controllando lo stato, 60 fotogrammi, quit();
+##   pieno_esci il livello chiesto con Game.carica_in_thread, 1 s, poi Game.esci().
 ## Con "diretto" alla fine esce con get_tree().quit() senza aspettare (com'era prima di Game.esci).
 ## La usa test_uscita.gd. Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/prova_uscita_caricamento.gd <modo>
 
