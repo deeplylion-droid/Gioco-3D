@@ -10,6 +10,7 @@
 [ext_resource type="Material" path="res://assets/materials/graybox_target.tres" id="8_acc"]
 [ext_resource type="Shader" path="res://shaders/water_suction_particles.gdshader" id="9_suck"]
 [ext_resource type="PackedScene" path="res://scenes/player/lance/lancia_c1.tscn" id="10_lance"]
+[ext_resource type="PackedScene" path="res://addons/grafica/torcia.tscn" id="11_torch"]
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetto_sottacqua.tscn" id="12_under"]
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/effetti_zaino.tscn" id="13_fx"]
 [ext_resource type="Script" path="res://addons/grafica/getto_potente.gd" id="14_getto"]
@@ -107,6 +108,9 @@ position = Vector3(0, 1.6, 0)
 current = true
 fov = 62.0
 near = 0.03
+
+[node name="Torcia" parent="Head/Camera3D" instance=ExtResource("11_torch")]
+dimensione_sorgente = 0.012
 
 [node name="EffettoSottacqua" parent="Head/Camera3D" instance=ExtResource("12_under")]
 

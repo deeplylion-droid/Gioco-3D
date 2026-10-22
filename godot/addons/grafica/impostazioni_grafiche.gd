@@ -577,6 +577,7 @@ func _salva_dopo() -> void:
 
 
 func _assicura_azioni_input() -> void:
+	_azione("torcia", KEY_F)
 	_azione("menu_opzioni", KEY_ESCAPE)
 
 

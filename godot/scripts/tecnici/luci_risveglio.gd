@@ -3,7 +3,7 @@ extends Node
 ## Luci di riserva del risveglio (tappa 6): le luci di tutto il livello seguono GameState.luci.
 ## - prima del risveglio: come sono;
 ## - flash: per un secondo tutte le luci molto più forti (le pompe ripartono, torna la corrente);
-## - blackout: si spengono tutte, tranne le rosse d'emergenza (e i lampi, la luna e il
+## - blackout: si spengono tutte, tranne le rosse d'emergenza (e la torcia, i lampi, la luna e il
 ##   monitor della sala pompe, che va a batteria).
 ## Le luci finali le fa l'addon grafica (LookSala, LookTecnici, LookInterni) agganciandosi allo
 ## stesso stato: quando le sue gestiscono il risveglio, questo nodo si spegne con [member attivo].
@@ -77,7 +77,7 @@ func _ricorda(l: Light3D) -> void:
 		_originali[l] = [l.light_energy, l.visible]
 
 
-## Le luci del livello che seguono il risveglio: niente luci del giocatore, niente luci
+## Le luci del livello che seguono il risveglio: niente torcia del giocatore, niente luci
 ## direzionali (luna e lampi), niente monitor della sala pompe.
 func _luci() -> Array[Light3D]:
 	var out: Array[Light3D] = []
