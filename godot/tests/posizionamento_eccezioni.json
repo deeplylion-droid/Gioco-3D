@@ -400,7 +400,7 @@
 			-22.3
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte: il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
+		"motivo": "controllo del 22 ottobre notte, coi modelli nuovi: il 100% dei suoi vertici è dentro il coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Correzione proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
 	},
 	{
 		"zona": "sala",
@@ -413,6 +413,6 @@
 			-22.3
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte: il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
+		"motivo": "controllo del 22 ottobre notte, coi modelli nuovi: il 100% dei suoi vertici è dentro il coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Correzione proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
 	}
 ]
