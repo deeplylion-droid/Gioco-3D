@@ -183,6 +183,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita.gd
 
+      - name: Test luci bianche al 40% (variante di prova)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche.gd
+
       - name: Test del blocco del pool di thread (la sala al primo fotogramma con 4 worker; renderer Vulkan software)
         if: steps.progetto.outputs.presente == 'si'
         timeout-minutes: 20
