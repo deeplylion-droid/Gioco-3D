@@ -417,7 +417,7 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)
         # in C2 no: sullo stesso muro c'è già il tubo grosso del raccordo (t7_tubo_c2) e non c'è posto sopra i 2 m
         # C3: dal muro est di C2 (dove il corridoio gira) fin quasi al magazzino, dove rientrano nel muro sud
-        tubi_muro(f'{nome}_tubi_c3', (XC1, YC3_0, Z_SALA), (XM1 + SP + 0.5, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti, nel_muro_b=True)
+        tubi_muro(f'{nome}_tubi_c3', (XC1, YC3_0, Z_SALA), (XM1 + 0.8, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti, nel_muro_b=True)
 
 
 def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
