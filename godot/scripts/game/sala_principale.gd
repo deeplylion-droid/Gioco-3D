@@ -251,6 +251,11 @@ func _hud() -> Hud:
 
 
 func _show_hint() -> void:
+	# durante le scene (il risveglio con lo squalo) i comandi sono bloccati: la riga arriva quando il
+	# giocatore li riprende, non sopra la scena
+	var p := GameState.player
+	while p and is_instance_valid(p) and not p.input_enabled and is_inside_tree():
+		await get_tree().process_frame
 	var hud := _hud()
 	if hud:
 		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · F torcia · Esc pausa", 10.0)
