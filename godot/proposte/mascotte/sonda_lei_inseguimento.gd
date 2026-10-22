@@ -18,6 +18,7 @@ var lei: MedusaAffacciata
 var ap: AnimationPlayer
 var sk: Skeleton3D
 var spazio: PhysicsDirectSpaceState3D
+var mani := {}       ## colpo_grata: la distanza minima delle mani dalle sbarre (L, R)
 
 
 func _ready() -> void:
@@ -35,6 +36,10 @@ func _run() -> void:
 	ap = lei.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
 	sk = lei.get_model_instance().find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
 	spazio = get_viewport().world_3d.direct_space_state
+	# la grata calata, com'è quando lei ci sbatte contro
+	sala.grata.global_position += Vector3.DOWN * float(sala.dati["grata"]["corsa"])
+	for i in 3:
+		await get_tree().physics_frame
 	var a := OS.get_cmdline_user_args()
 	var posti := _posti()
 	if a.size() > 4 and a[1] == "prova":
@@ -42,7 +47,9 @@ func _run() -> void:
 			if posto[0] == a[2]:
 				var d := Vector3(float(a[3]), float(a[5]) if a.size() > 5 else 0.0, -float(a[4]))
 				posto[1] = (posto[1] as Vector3) + d
-				if posto[2] != Vector3.INF:
+				if posto[0] == "grata":
+					posto[2] = sala.mira_grata(posto[1])
+				elif posto[2] != Vector3.INF:
 					posto[2] = (posto[2] as Vector3) + d
 				_controlla(posto)
 	elif a.size() > 2 and a[1] == "cerca":
@@ -71,8 +78,9 @@ func _posti() -> Array:
 		var centro := SalaInseguimento.b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, float(d["scolo"][k]["fondo"]) + 1.0])
 		out.append(["scolo_%d" % k, sala._posto_scolo(k), centro, ["sale_dall_acqua_veloce", "incombe", "presa"],
 			float(d["scolo"][k]["fondo"])])
-	out.append(["grata", SalaInseguimento.b(d["lei"][2]["pos"]), SalaInseguimento.b(d["grata"]["perno"]),
-		["sale_dall_acqua_veloce", "colpo_grata", "scende"], float(d["allagato"]["acqua"])])
+	var pg := SalaInseguimento.b(d["lei"][2]["pos"])
+	out.append(["grata", pg, sala.mira_grata(pg),
+		["sale_dall_acqua_veloce", "colpo_grata_sbieco", "scende"], float(d["allagato"]["acqua"])])
 	var pos := sala._posto_sb1()
 	out.append(["sb1", pos, Vector3.INF, ["affacciata_sb1"], float(d["bacino"]["acqua"])])
 	return out
@@ -93,6 +101,7 @@ func _metti(pos: Vector3, guarda: Vector3, basis_sb1: Basis) -> void:
 func _incroci(nome: String, anims: Array, primo := false, nascosto_sotto := -INF) -> Array:
 	var dentro := {}
 	var estremi := [-999.0, 999.0]
+	mani.clear()
 	var sotto: float = sala._profondita(nome)
 	for an: String in anims:
 		var n := StringName("inseguimento/" + an)
@@ -115,6 +124,19 @@ func _incroci(nome: String, anims: Array, primo := false, nascosto_sotto := -INF
 				if k == 0 and an in SALE:
 					estremi[0] = maxf(estremi[0], (glob[i] as Vector3).y)
 					estremi[1] = minf(estremi[1], (glob[i] as Vector3).y)
+			if an.begins_with("colpo_grata"):
+				# quanto le mani arrivano vicino alla grata (davanti alle sbarre +, dentro -)
+				var g := sala.grata.global_position
+				var nn := SalaInseguimento.b(sala.dati["grata"]["verso"])
+				for i in sk.get_bone_count():
+					var bn := sk.get_bone_name(i)
+					if bn.ends_with(".L") or bn.ends_with(".R"):
+						var dd := ((glob[i] as Vector3) - g).dot(nn) - 0.08
+						if bn.begins_with("mano") or bn.contains("_3"):
+							var lato := bn.right(1)
+							mani[lato] = minf(float(mani.get(lato, 9.0)), dd)
+						if OS.get_environment("SONDA_MANI") != "" and dd < 0.0:
+							print("      %s %.2f s: %+.2f" % [bn, t, dd])
 			for i in sk.get_bone_count():
 				var pa := sk.get_bone_parent(i)
 				if pa < 0 or (glob[pa] as Vector3).distance_to(glob[i]) < 0.005:
@@ -125,6 +147,9 @@ func _incroci(nome: String, anims: Array, primo := false, nascosto_sotto := -INF
 				if not hit.is_empty() and (hit["position"] as Vector3).y >= nascosto_sotto:
 					var bn := sk.get_bone_name(i)
 					var nodo := hit["collider"] as Node
+					# i palmi sulle sbarre: toccare la grata va bene (entrano al più 6 cm nel suo spessore)
+					if nodo.name == "ins_grata_col" and (glob[i] as Vector3).distance_to(hit["position"]) < 0.06:
+						continue
 					var chi := String(nodo.get_parent().name) + "/" + String(nodo.name) if nodo.get_parent() else String(nodo.name)
 					var key := "%s %s attraversa %s" % [an, bn.substr(0, 12) if bn.begins_with("tentacolo") else bn, chi]
 					if not dentro.has(key):
@@ -149,8 +174,11 @@ func _controlla(posto: Array) -> void:
 	if dentro.is_empty():
 		print("   niente attraversato")
 	for key in dentro:
-		print("   %s (%.2f s, %s)%s" % [key, dentro[key][0], _bl(dentro[key][1]), "" if visibili.has(key) else " nascosto"])
+		var v: Array = visibili[key] if visibili.has(key) else dentro[key]
+		print("   %s (%.2f s, %s)%s" % [key, v[0], _bl(v[1]), "" if visibili.has(key) else " nascosto"])
 	print("   %s: %d incroci, %d visibili (sopra quota %.2f)" % [nome, dentro.size(), visibili.size(), posto[4]])
+	if not mani.is_empty():
+		print("   le mani dalle sbarre al più vicino: sinistra %+.2f m, destra %+.2f m (meno: dentro)" % [mani.get("L", 9.0), mani.get("R", 9.0)])
 
 
 func _cerca(posto: Array, raggio := 2.0, passo := 0.25) -> void:
@@ -169,7 +197,8 @@ func _cerca(posto: Array, raggio := 2.0, passo := 0.25) -> void:
 	# prima i più piccoli (alzarla conta il doppio)
 	prove.sort_custom(func(x: Vector3, y: Vector3): return Vector2(x.x, x.z).length() + 2.0 * x.y < Vector2(y.x, y.z).length() + 2.0 * y.y)
 	for d: Vector3 in prove:
-		_metti(base + d, posto[2], basis)    # guarda sempre lo stesso punto (il giocatore nella vasca)
+		# guarda sempre lo stesso punto (il giocatore nella vasca); alla grata il punto che colpisce da lì
+		_metti(base + d, sala.mira_grata(base + d) if nome == "grata" else posto[2], basis)
 		var r := _incroci(nome, posto[3], true, posto[4])
 		if (r[0] as Dictionary).is_empty():
 			buoni.append(d)

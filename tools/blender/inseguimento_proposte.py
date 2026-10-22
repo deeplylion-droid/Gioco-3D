@@ -39,6 +39,10 @@ import torre_a as TA  # noqa: E402
 USCITA = os.path.normpath(os.path.join(QUI, '..', '..', 'godot', 'proposte', 'inseguimento'))
 GIOCO_USCITA = os.path.normpath(os.path.join(QUI, '..', '..', 'godot', 'assets', 'ambiente', 'inseguimento'))
 BOCCA = Vector((40.0, 17.4, -18.4))      # la bocca del tubo dell'inseguimento sul muro est della torre
+# il pozzetto dietro la grata (x0, y0, x1, y1, profondità, quota del bordo): fuori dal bacino, dove il giocatore non
+# arriva, tra il muro del bacino e la spirale; profondo 6,7 m: lei sta 1,5 m sotto il pavimento (è più alta della
+# grata: così i palmi battono sulle sbarre e i tentacoli restano sott'acqua) e sale da 5 m sotto
+POZZETTO_GRATA = (50.75, 7.6, 53.4, 10.2, 6.7, -33.4 + 0.12)
 R_TUBO = 0.8                             # il tubo dell'inseguimento (come la bocca)
 X0 = 40.0                                # il muro in comune con la sala della torre
 # Nel gioco (--gioco) la sala sta nel mondo accanto alla torre, quindi:
@@ -94,13 +98,22 @@ def curva(ctrl, passo=0.35):
 def guscio(c, x1, y0, y1, z0, z1, buco=None, porta=None, fossa=None):
     """La sala dietro la torre: muri di lamiera e cemento dello scafo con le costole, soffitto con le travi,
     pavimento. Nel muro ovest (x = X0) il buco della bocca; porta = (y, z) della porta d'uscita nel muro ovest;
-    fossa = (x0, y0, x1, y1, profondità, quota del bordo): il pozzo di scarico nel pavimento (dove lei si nasconde per SB1)."""
-    if fossa is None:
-        c.faccia_griglia([(X0, y0, z0), (x1, y0, z0), (x1, y1, z0), (X0, y1, z0)], 'pavimento', 2.0)
-    else:
-        fx0, fy0, fx1, fy1, fp, zb = fossa
-        for (a0, b0, a1, b1) in ((X0, y0, fx0, y1), (fx1, y0, x1, y1), (fx0, y0, fx1, fy0), (fx0, fy1, fx1, y1)):
-            c.faccia_griglia([(a0, b0, z0), (a1, b0, z0), (a1, b1, z0), (a0, b1, z0)], 'pavimento', 2.0)
+    fossa = (x0, y0, x1, y1, profondità, quota del bordo): il pozzo di scarico nel pavimento (dove lei si nasconde per SB1);
+    anche una lista di pozzi (il secondo: il pozzetto dietro la grata, da cui lei sale)."""
+    fosse = [] if fossa is None else ([fossa] if not isinstance(fossa[0], (list, tuple)) else list(fossa))
+    # il pavimento: ogni pozzo divide in quattro il rettangolo che lo contiene (con un pozzo solo come prima)
+    pezzi = [(X0, y0, x1, y1)]
+    for (fx0, fy0, fx1, fy1, _fp, _zb) in fosse:
+        nuovi = []
+        for (a0, b0, a1, b1) in pezzi:
+            if a0 <= fx0 and fx1 <= a1 and b0 <= fy0 and fy1 <= b1:
+                nuovi += [(a0, b0, fx0, b1), (fx1, b0, a1, b1), (fx0, b0, fx1, fy0), (fx0, fy1, fx1, b1)]
+            else:
+                nuovi.append((a0, b0, a1, b1))
+        pezzi = [q for q in nuovi if q[2] - q[0] > 1e-6 and q[3] - q[1] > 1e-6]
+    for (a0, b0, a1, b1) in pezzi:
+        c.faccia_griglia([(a0, b0, z0), (a1, b0, z0), (a1, b1, z0), (a0, b1, z0)], 'pavimento', 2.0)
+    for (fx0, fy0, fx1, fy1, fp, zb) in fosse:
         zf = z0 - fp
         c.faccia_griglia([(fx0, fy0, zf), (fx1, fy0, zf), (fx1, fy1, zf), (fx0, fy1, zf)], 'vasca', 1.0)
         for (p, q) in (((fx1, fy0), (fx0, fy0)), ((fx0, fy1), (fx1, fy1)), ((fx0, fy0), (fx0, fy1)), ((fx1, fy1), (fx1, fy0))):
@@ -455,7 +468,12 @@ def versione_A(mats):
     x1, y0, y1, z0, z1 = 78.0, -2.0, 32.0, -34.0, -6.0
     T = -33.4                                       # pelo dell'acqua che allaga il fondo
     porta = (5.0, -30.0)
-    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=(43.6, 7.9, 45.8, 10.1, 4.5, -33.4 + 0.12))
+    # i pozzi di scarico nel pavimento: quello di SB1 nel bacino e (nel gioco) il pozzetto dietro la grata, a nord
+    # della bocca della spirale, da cui lei sale e sbatte contro la grata (scelta dell'utente del 22 ottobre, a)
+    fosse = [(43.6, 7.9, 45.8, 10.1, 4.5, -33.4 + 0.12)]
+    if GIOCO:
+        fosse.append(POZZETTO_GRATA)
+    guscio(c, x1, y0, y1, z0, z1, buco=BOCCA, porta=porta, fossa=fosse)
     collare = None
     if GIOCO:   # il collare attorno al tubo della bocca, sul muro ovest (copre gli angoli del foro), solo da vedere
         cc = K.Costruttore(mats)
@@ -677,7 +695,8 @@ def versione_A(mats):
     luci['lei'] += [[47.5, 18.3, -25.0, 200.0, 'insegue', 'raggiunge la vasca 1 dal basso'],
                     ([70.8, 27.6, -21.0, 270.0, 'insegue', 'sale accanto alla vasca 2, dal lato est'] if GIOCO else
                      [62.0, 31.0, -21.0, 160.0, 'insegue', 'arriva sulla condotta nord alla vasca 2']),
-                    [BX[2] + 2.2, 6.5, -34.0, 270.0, 'insegue', 'sbatte contro la grata'],
+                    ([51.95, 8.55, -35.5, 230.0, 'insegue', 'sale dal pozzetto dietro la grata e ci sbatte contro'] if GIOCO else
+                     [BX[2] + 2.2, 6.5, -34.0, 270.0, 'insegue', 'sbatte contro la grata']),
                     [44.7, 9.0, T + 0.12 - 0.8, 120.0, 'affacciata', 'SB1: sbuca dal pozzo di scarico del bacino']]
 
     percorso = [('bocca', BOCCA)] + [('tubo', p) for p in t0[::4]] + [('vasca 1', Vector(((C1[0] + C1[2]) / 2, (C1[1] + C1[3]) / 2, C1[4])))]
@@ -716,6 +735,7 @@ def versione_A(mats):
             bacino=dict(rett=list(BX), fondo=z0, acqua=T + 0.35),
             allagato=dict(acqua=T, fondo=z0),
             pozzo=dict(rett=[43.6, 7.9, 45.8, 10.1], fondo=z0 - 4.5, bordo=T + 0.12),
+            pozzetto_grata=dict(rett=list(POZZETTO_GRATA[:4]), fondo=z0 - POZZETTO_GRATA[4], bordo=POZZETTO_GRATA[5]),
             porta=dict(pos=[X0, porta[0], porta[1]], uscita=[X0 + 1.2, porta[0], porta[1]]),
             piattaforma_porta=[X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1]],
             limiti=[X0, y0, x1, y1, z0, z1],
