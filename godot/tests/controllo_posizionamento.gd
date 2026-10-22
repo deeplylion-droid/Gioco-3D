@@ -52,6 +52,7 @@ const SQUADRE := [
 	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"],
 	["SalaInseguimento", "ambienti-2"],   # sala_inseguimento.gd mette anche i dettagli sotto il suo nodo Luci
 	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
+	["Sala/Dettagli", "ambienti-2"],   # il kit dei dettagli (dettagli_sala.gd)
 	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
 	["ArredoRisalita", "enigmi"],
 ]
@@ -116,6 +117,8 @@ var _nascoste_radici := {}
 ## ogni scena le parti nascoste nel giro iniziale e i percorsi visti in tutti i giri (vedi _segna_copertura).
 var _copertura: Array = []
 var _nascoste_ora := {}
+var _tocca := {}
+var _multimesh_senza: Array[String] = []   # MultiMesh senza le trasformazioni: non controllati (vedi _espandi_multimesh)           # MeshInstance3D -> le mesh che tocca (vedi _segna_tocchi)
 var _nascoste_base := {}   # scena -> {percorso del nodo nascosto: mesh}
 var _visti := {}           # scena -> {percorso di una mesh controllata: true}
 
@@ -172,6 +175,7 @@ func _controlla_scena(z: Dictionary) -> void:
 	for i in 3:
 		await get_tree().physics_frame
 	_spazio = (_radice as Node3D).get_world_3d().direct_space_state if _radice is Node3D else get_viewport().get_world_3d().direct_space_state
+	_espandi_multimesh()
 	var mesh := _mesh_visibili()
 	print("  %d mesh visibili" % mesh.size())
 	_elenca_nascoste()
@@ -187,8 +191,10 @@ func _controlla_scena(z: Dictionary) -> void:
 	print("  a) sospesi: %d" % (_trovati.size() - prima))
 	if SEVERO:
 		prima = _trovati.size()
+		_tocca.clear()
 		for mi in oggetti:
 			_staccato(z, mi)
+		_gruppi_staccati(z, oggetti)
 		print("  a2) staccati (niente entro %d mm): %d" % [roundi(STACCO * 1000.0), _trovati.size() - prima])
 	prima = _trovati.size()
 	_ingombri(z, mesh)
@@ -324,9 +330,11 @@ func _prepara(stato: String) -> void:
 func _tipo_nascosta(n: Node) -> String:
 	var percorso := _nodo(n).to_lower()
 	for pezzo in percorso.split("/"):
-		if pezzo == "lei" or pezzo.contains("medusa") or pezzo.contains("bambino"):
+		if pezzo == "lei" or pezzo.contains("medusa") or pezzo.contains("medusin") or pezzo.contains("bambino"):
 			return "creatura, si muove (la guarda il collaudo)"
-	if EFFETTI.any(func(e): return percorso.contains(e)) or percorso.contains("acqua"):
+	# l'acqua dal nome dei pezzi del percorso ("acqua", "acqua_..."), non da "acquari"
+	var acqua := Array(percorso.split("/")).any(func(x): return x == "acqua" or x.begins_with("acqua_") or x.ends_with("_acqua"))
+	if EFFETTI.any(func(e): return percorso.contains(e)) or acqua:
 		return "effetto o acqua, esclusi"
 	if percorso.split("/").has("graybox"):
 		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
@@ -351,6 +359,38 @@ func _tipo_nascosta(n: Node) -> String:
 	if trovato and vicini.grow(0.05).encloses(mio):
 		return "variante nello stesso posto di una parte controllata"
 	return ""
+
+
+## I MultiMesh (i dettagli della sala con 6 o più copie, le lamelle della serranda, la struttura della cupola)
+## diventano una mesh per istanza, così si controllano come le altre. Senza schermo il MultiMesh non conserva le
+## trasformazioni: chi lo crea le lascia nel meta "trasformazioni". Quelli senza finiscono nel rapporto, fra i non
+## controllati.
+func _espandi_multimesh() -> void:
+	var n_istanze := 0
+	for n in _radice.find_children("*", "MultiMeshInstance3D", true, false):
+		var mmi := n as MultiMeshInstance3D
+		var mm := mmi.multimesh
+		if mm == null or mm.mesh == null or not _visibile(mmi):
+			continue
+		if not mmi.has_meta(&"trasformazioni"):
+			if not _tipo_nascosta(mmi).is_empty():
+				continue   # una creatura (le medusine) o un effetto: esclusi come le loro mesh
+			_multimesh_senza.append("%s · %s" % [String(_radice.scene_file_path).get_file().get_basename(), _nodo(mmi)])
+			continue
+		var tr: Array = mmi.get_meta(&"trasformazioni")
+		var quante := mm.visible_instance_count if mm.visible_instance_count >= 0 else mm.instance_count
+		for i in mini(quante, tr.size()):
+			var copia := MeshInstance3D.new()
+			copia.name = "%s_%d" % [mmi.name, i]
+			copia.mesh = mm.mesh
+			copia.material_override = mmi.material_override
+			copia.cast_shadow = mmi.cast_shadow
+			copia.transform = mmi.transform * (tr[i] as Transform3D)
+			mmi.get_parent().add_child(copia)
+			n_istanze += 1
+		mmi.visible = false
+	if n_istanze > 0:
+		print("  MultiMesh: %d istanze controllate come mesh" % n_istanze)
 
 
 ## Le stanze della Risalita (fiume e infermeria) come col giocatore dentro: visibili, e il loro script fermo (se no
@@ -621,8 +661,10 @@ func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
 		me.append((_corpo_di[mi] as StaticBody3D).get_rid())
 	# la forma convessa della mesh, allargata di STACCO: se tocca o entra in un altro corpo, è retto (anche un pezzo
 	# infilato in un altro, come un bulbo sul portalampada)
+	# solo le mesh vere (STRATO), non le collisioni del gioco: una collisione è spesso più grande della mesh (un muro
+	# a 2 cm sembrava toccato) o è dell'oggetto stesso (l'anta toccava la sua collisione)
 	var qp := PhysicsShapeQueryParameters3D.new()
-	qp.collision_mask = STRATO | Layers.WORLD
+	qp.collision_mask = STRATO
 	qp.exclude = me
 	var conv := mi.mesh.create_convex_shape(true, false) as ConvexPolygonShape3D
 	if conv == null or conv.points.size() < 8 or _piatta(mi):
@@ -632,7 +674,7 @@ func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
 		bf.size = bx.size + Vector3.ONE * STACCO * 2.0
 		qp.shape = bf
 		qp.transform = Transform3D(Basis(), bx.get_center())
-		if not _spazio.intersect_shape(qp, 1).is_empty():
+		if _segna_tocchi(mi, qp):
 			return
 		_trova_staccato(z, mi, me)
 		return
@@ -650,9 +692,87 @@ func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
 	forma.points = punti
 	qp.shape = forma
 	qp.transform = Transform3D.IDENTITY
-	if not _spazio.intersect_shape(qp, 1).is_empty():
+	if _segna_tocchi(mi, qp):
 		return
 	_trova_staccato(z, mi, me)
+
+
+## Le mesh che la forma allargata di mi tocca (per i gruppi, vedi _gruppi_staccati): vero se ne tocca almeno una.
+func _segna_tocchi(mi: MeshInstance3D, qp: PhysicsShapeQueryParameters3D) -> bool:
+	var altri := []
+	for h in _tutti_i_corpi(qp):
+		var m: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
+		if m:
+			altri.append(m)
+	_tocca[mi] = altri
+	# diagnosi: POSIZ_TOCCA=pezzo_del_nome stampa cosa tocca ogni oggetto che lo contiene
+	var cerca := OS.get_environment("POSIZ_TOCCA")
+	if not cerca.is_empty() and _nodo(mi).contains(cerca):
+		print("    TOCCA %s -> %s" % [_nodo(mi), ", ".join(altri.map(func(m): return "%s (%.1f m)" % [_nodo(m), _box(m).size.length()]))])
+	return not altri.is_empty()
+
+
+## Gli oggetti che si toccano solo fra loro: la lampada e il suo vetro, a 2 cm dal muro, si reggevano a vicenda.
+## Ogni gruppo di oggetti che si toccano deve toccare almeno una cosa fissa: l'architettura (pavimenti, muri,
+## soffitti), un pezzo grande oltre i 4 m, o l'acqua (ciò che galleggia).
+func _gruppi_staccati(z: Dictionary, oggetti: Array) -> void:
+	var sono := {}
+	for mi in oggetti:
+		sono[mi] = true
+	var fisso := func(m: MeshInstance3D) -> bool:
+		# un pezzo grande (oltre OGGETTO_MAX, 4 m: le strutture, le stanze fatte in un pezzo) regge come un muro; se è
+		# staccato lui, lo dice il suo controllo
+		var d := _box(m).size.length()
+		return _acqua.has(m) or d >= OGGETTO_MAX or (not sono.has(m) and d > OGGETTO_MIN)
+	# retto: tocca un sostegno fisso, o un oggetto retto; si ripete finché non cambia niente. Si guarda solo ciò che
+	# ogni oggetto tocca (ciò che lo regge): la forma convessa di una stanza fatta in un pezzo (corridoio_statico,
+	# 27 m) contiene tutto quello che c'è dentro, e prendendo i contatti nei due sensi le lampade staccate dal muro
+	# risultavano rette
+	var retti := {}
+	var cambiato := true
+	while cambiato:
+		cambiato = false
+		for mi in _tocca:
+			if retti.has(mi) or fisso.call(mi):
+				continue
+			for m in _tocca[mi]:
+				if fisso.call(m) or retti.has(m):
+					retti[mi] = true
+					cambiato = true
+					break
+	# i gruppi non retti, per il dettaglio: gli oggetti non retti che si toccano fra loro
+	var visto := {}
+	for mi in _tocca:
+		if visto.has(mi) or retti.has(mi) or fisso.call(mi):
+			continue
+		var gruppo := [mi]
+		visto[mi] = true
+		var i := 0
+		while i < gruppo.size():
+			for m in _tocca.get(gruppo[i], []):
+				if sono.has(m) and not visto.has(m) and not retti.has(m) and not fisso.call(m):
+					visto[m] = true
+					gruppo.append(m)
+			i += 1
+		# un caso per gruppo, sull'oggetto più in basso (di solito è lui che non appoggia: lo scatolone in fondo alla pila,
+		# 1 cm sopra il pavimento), con gli altri nel dettaglio
+		gruppo = gruppo.filter(func(m): return not _trovati.any(func(t): return t["nodo"] == _nodo(m) and t["problema"] in ["sospeso", "staccato"]))
+		if gruppo.is_empty():
+			continue
+		gruppo.sort_custom(func(a, b): return _box(a).position.y < _box(b).position.y)
+		var m: MeshInstance3D = gruppo[0]
+		var b := _box(m)
+		var c := b.get_center()
+		var me: Array[RID] = []
+		for g in gruppo:
+			if _corpo_di.has(g):
+				me.append((_corpo_di[g] as StaticBody3D).get_rid())
+		var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO, me)
+		var vuoto := "più di 5 m" if giu.is_empty() else "%.1f cm" % ((b.position.y - (giu.position as Vector3).y) * 100.0)
+		var altri := gruppo.slice(1).map(func(x): return String(x.name))
+		var con := "" if altri.is_empty() else " Con lui, staccati insieme, %d oggetti che si reggono solo fra loro: %s%s." % [
+				altri.size(), ", ".join(altri.slice(0, 8)), "..." if altri.size() > 8 else ""]
+		_trova(z, m, "staccato", c, "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a %s.%s" % [vuoto, con])
 
 
 ## Una mesh con un lato del box quasi nullo (meno di 1 mm): la forma convessa non si costruisce.
@@ -785,7 +905,7 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 			solido = not _spazio.intersect_shape(q, 1).is_empty()
 		for h in r:
 			var mi: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
-			if mi == null or _acqua.has(mi):
+			if mi == null or _acqua.has(mi) or _aperta_dal_giocatore(mi):
 				continue
 			if not visti.has(mi):
 				visti[mi] = [piedi, 0, 9.0, 0.0, false, y, y]
@@ -824,6 +944,18 @@ func _mobile(n: Node) -> bool:
 	return false
 
 
+## Una parte che il giocatore apre da sé (un cassetto, lo sportello della cassaforte, un'anta o una porta che apre
+## lui): sporge come in una stanza vera e non conta come ingombro (coordinatore, 22 ottobre). Compenetrazioni, distacchi
+## e sospesi si controllano lo stesso. Si riconosce dall'Interactable sopra di lei con uno stato di apertura.
+func _aperta_dal_giocatore(mi: Node) -> bool:
+	var a := mi.get_parent()
+	while a and a != _radice:
+		if (a is Interactable and (&"aperto" in a or &"open" in a or &"is_open" in a)) or &"aperta_ora" in a:
+			return true
+		a = a.get_parent()
+	return false
+
+
 ## Tutti i corpi diversi che la forma tocca, uno per corpo. Jolt dà un risultato per ogni triangolo di una forma
 ## concava toccato: con un limite fisso, una mesh fitta riempiva la lista (e le celle si contavano più volte) e gli
 ## altri oggetti nello stesso punto sparivano. Si richiede escludendo quelli già trovati, finché la lista non è piena.
@@ -852,7 +984,12 @@ func _libero(c: Vector2i, y: float, limiti: AABB) -> bool:
 	var x := limiti.position.x + c.x * PASSO_GRIGLIA
 	var zz := limiti.position.z + c.y * PASSO_GRIGLIA
 	_q_corpo.transform = Transform3D(Basis(), Vector3(x, y + 0.3 + 0.35, zz))
-	return _spazio.intersect_shape(_q_corpo, 1).is_empty()
+	if not _spazio.intersect_shape(_q_corpo, 1).is_empty():
+		return false
+	# dentro un muro spesso fatto a trimesh il cilindro non tocca nessuna superficie: un raggio verso l'alto che
+	# colpisce per prima una faccia rivolta in su (vista da sotto, da dentro) vuol dire che la cella è nel pieno
+	var su := _raggio(Vector3(x, y + 0.1, zz), Vector3(x, y + 3.0, zz), Layers.WORLD)
+	return su.is_empty() or (su.normal as Vector3).y < 0.5
 
 
 # --- c) interattivi ------------------------------------------------------------------------------------
@@ -1285,6 +1422,11 @@ func _testo_copertura() -> String:
 				mai += 1
 			t += "| %s | `%s` | %d | %s |\n" % [String(scena).get_file().get_basename(), g, gruppi[g][0], come]
 	print("  parti nascoste all'inizio mai controllate: %d (vedi il rapporto, \"Copertura\")" % mai)
+	if not _multimesh_senza.is_empty():
+		t += "\n### MultiMesh non controllati\n\nSenza le trasformazioni nel meta \"trasformazioni\" (vedi `_espandi_multimesh`):\n\n"
+		for m in _multimesh_senza:
+			t += "- `%s`\n" % m
+		print("  MultiMesh non controllati: %d" % _multimesh_senza.size())
 	return t + "\n"
 
 

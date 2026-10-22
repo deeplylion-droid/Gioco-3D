@@ -1262,45 +1262,6 @@
 	},
 	{
 		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella2/Cilindro",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-33.75,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.27 e 1.39 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella3/Cilindro",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-33.75,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.27 e 1.39 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella1/Cilindro",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-33.75,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.27 e 1.39 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo)"
-	},
-	{
-		"zona": "risalita",
 		"nodo": "Risalita/Infermeria/armadietto_B/Mesh_0",
 		"squadra": "enigmi",
 		"problema": "ingombro",
@@ -2172,253 +2133,6 @@
 	},
 	{
 		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@21261",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-34.0,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.28 e 1.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/sportello_cassaforte_N/Mesh_0",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-34.0,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.99 e 1.61 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella1/@MeshInstance3D@21264",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-33.75,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella2/@MeshInstance3D@21267",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-33.75,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella3/@MeshInstance3D@21270",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-33.75,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@6082",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@6074",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@6068",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@6062",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@6079",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.5
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.93 e 1.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@6053",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.5
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.82 e 0.83 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto25/Frontale/Tirato/@MeshInstance3D@6114",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto24/Frontale/Tirato/@MeshInstance3D@6108",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.81 e 0.82 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto23/Frontale/Tirato/@MeshInstance3D@6101",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@6083",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.06 e 1.23 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@6076",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.80 e 0.97 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@6070",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.58 e 0.72 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto22/Frontale/Tirato/@MeshInstance3D@6096",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.37 e 0.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@6064",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-39.0,
-			-5.4,
-			43.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]"
-	},
-	{
-		"zona": "risalita",
 		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@6053",
 		"squadra": "enigmi",
 		"problema": "compenetra",
@@ -2429,5 +2143,3073 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@6075 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_2_10",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-12.48,
+			0.02,
+			-22.56
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_pannello_lamiera_7",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-3.14,
+			0.19,
+			17.17
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_pistola_acqua_11",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			8.89,
+			0.08,
+			-21.26
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_3_28",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			5.43,
+			0.03,
+			17.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_maschera_sub_0",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-19.33,
+			0.08,
+			4.66
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_pesce_gomma_9",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-17.67,
+			0.03,
+			4.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_1_10",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			4.5,
+			0.01,
+			12.7
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_griglia_caduta_6",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			11.13,
+			0.04,
+			14.35
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_alghe_secche_mucchio_2_8",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			0.35,
+			-2.06,
+			3.56
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 10.1 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_3_11",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-15.8,
+			0.06,
+			18.65
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_3_21",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			5.42,
+			0.06,
+			15.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_3_24",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-9.58,
+			0.06,
+			17.98
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_barchetta_7",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			4.55,
+			0.11,
+			12.95
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_alghe_secche_mucchio_1_11",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-1.87,
+			-2.06,
+			2.26
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 8.0 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_21",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			15.86,
+			2.49,
+			19.22
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 3.6 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_0",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			19.43,
+			0.4,
+			19.46
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_36",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			18.68,
+			1.68,
+			19.48
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.8 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_51",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			19.09,
+			2.32,
+			18.29
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.4 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_55",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			19.45,
+			2.96,
+			18.69
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 155.5 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_56",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			18.66,
+			2.96,
+			18.64
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.7 cm)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/PernoPortaTagliafuoco/porta_tagliafuoco",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			12.27,
+			1.04,
+			39.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/LEVA",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			5.1,
+			-5.04,
+			47.46
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.5 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_elettrico",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-3.51,
+			-7.27,
+			32.46
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 90.0 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_strumenti",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-3.61,
+			-7.27,
+			37.06
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 130.0 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			1.55,
+			0.82,
+			46.73
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 107.8 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_3",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-0.05,
+			1.56,
+			46.74
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 121.0 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2o_m_1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			4.06,
+			-0.25,
+			45.08
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 120.4 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2o_m_6",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-7.88,
+			1.57,
+			45.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 81.6 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2o_m_8",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-12.05,
+			1.49,
+			45.08
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 87.6 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-14.13,
+			1.54,
+			44.56
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 98.5 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-14.04,
+			1.52,
+			42.78
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 119.7 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-14.12,
+			1.55,
+			40.99
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 79.4 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_5",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-14.04,
+			1.49,
+			35.28
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 63.9 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_6",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-14.13,
+			1.53,
+			33.27
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 97.8 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3s_m_2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-15.88,
+			1.49,
+			39.27
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 114.1 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3s_m_4",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-15.88,
+			1.55,
+			34.76
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 78.8 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f1e_m_2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			2.43,
+			-5.36,
+			53.83
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 17.8 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f1o_m_1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			2.04,
+			-5.66,
+			52.09
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 115.3 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f2n_m_1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			8.97,
+			-1.71,
+			49.18
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.6 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f2n_m_2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			8.87,
+			-0.84,
+			47.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 115.6 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f2s_m_1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			6.63,
+			-1.85,
+			49.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 122.7 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_l1_m_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			5.21,
+			-3.92,
+			53.83
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 17.4 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_r1s_m_1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-2.27,
+			-7.48,
+			51.19
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.9 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_69",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			18.73,
+			0.82,
+			16.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 11.9 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: pallone_47."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_58",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			19.08,
+			3.6,
+			19.09
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 38.0 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_60, pallone_62."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_54",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			17.1,
+			2.96,
+			19.44
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 146.7 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_59, pallone_66."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_35",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			19.45,
+			1.68,
+			19.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 23.7 cm."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_47",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			19.07,
+			2.32,
+			19.09
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 29.5 cm."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_53",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			17.5,
+			2.32,
+			18.28
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 27.1 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: pallone_dentro_52, pallone_dentro_48, pallone_dentro_49, pallone_dentro_57."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_50",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			16.7,
+			2.32,
+			19.08
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 41.3 cm."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_1",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.44,
+			0.64,
+			19.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.6 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_0_0_2, scat_0_0_3."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_4",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			1.55,
+			19.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.4 cm. Con lui, staccati insieme, 6 oggetti che si reggono solo fra loro: scat_0_0_5, scat_0_0_6, scat_0_0_7, scat_0_0_8, scat_0_0_9, scat_0_0_10."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_11",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			4.28,
+			19.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_12",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			4.8,
+			19.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.6 cm."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_13",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			5.33,
+			19.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.6 cm. Con lui, staccati insieme, 8 oggetti che si reggono solo fra loro: scat_0_0_14, scat_0_0_15, scat_0_0_16, scat_0_0_17, scat_0_0_18, scat_0_0_19, scat_0_0_20, scat_0_0_21."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_16",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			7.16,
+			18.58
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_0_1_17, scat_0_1_18."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_19",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			8.45,
+			18.58
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_5",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			2.19,
+			17.73
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_0_2_6, scat_0_2_7, scat_0_2_8, scat_0_2_9."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_10",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-19.43,
+			4.36,
+			17.73
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 0.3 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: scat_0_2_11."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_12",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-18.58,
+			5.82,
+			19.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_1_0_13, scat_1_0_14, scat_1_0_15, scat_1_0_16."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_7",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-18.58,
+			3.93,
+			17.73
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_1_2_8, scat_1_2_9."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_1_3_1",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-18.57,
+			0.83,
+			16.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_1_3_2, scat_1_3_3."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_4",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-17.72,
+			2.63,
+			18.58
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_2_1_5, scat_2_1_6, scat_2_1_7, scat_2_1_8."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_3",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-16.87,
+			1.77,
+			19.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_3_0_4, scat_3_0_5."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_02",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			1.1,
+			2.2,
+			38.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_02_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_03",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			9.5,
+			2.2,
+			38.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_03_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_05",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			12.17,
+			2.4,
+			39.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 229.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_05_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_06",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-9.57,
+			2.35,
+			39.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 224.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_06_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_01",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-2.9,
+			2.45,
+			37.77
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 234.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_01_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_02",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-6.57,
+			2.4,
+			33.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 37.6 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_02_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_03",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-4.1,
+			2.55,
+			26.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 27.9 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_03_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_04",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.97,
+			2.3,
+			22.7
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_04_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_05",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.0,
+			2.5,
+			29.57
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_05_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_06",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			3.37,
+			2.3,
+			24.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 69.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_06_vetro."
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			1.63,
+			2.3,
+			31.3
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_stanzino_01_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/lampada_l2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-2.06,
+			-6.05,
+			9.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 288.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l2_vetro_spento."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/lampada_l3",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-2.06,
+			-6.05,
+			13.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 288.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l3_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/lampada_l4",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			2.06,
+			-6.05,
+			17.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 288.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l4_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/plafoniera_0",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-0.6,
+			-4.92,
+			5.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 408.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/plafoniera_1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-0.6,
+			-4.92,
+			11.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 408.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_1_tubo_sfarfalla."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/lampada_l1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			3.2,
+			-5.75,
+			29.8
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 318.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l1_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/lampada_l2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-1.4,
+			-5.95,
+			47.52
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 298.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l2_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/lampada_l3",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			8.06,
+			-6.65,
+			35.46
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 229.3 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l3_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/lampada_l4",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-3.66,
+			-5.85,
+			39.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 308.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l4_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/lampada_l5",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			8.06,
+			-6.65,
+			44.46
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 228.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l5_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/lampada_l6",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-2.6,
+			-6.05,
+			29.8
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 288.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_l6_vetro_spento."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/PORTA_ponte",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-1.4,
+			-7.95,
+			47.61
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: PORTA_ponte_maniglione."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			7.0,
+			-3.43,
+			53.82
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 91.6 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_rc2_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc3",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			8.96,
+			0.5,
+			45.96
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 121.6 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_rc3_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c2a",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			5.0,
+			0.2,
+			45.1
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 169.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_c2a_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c2b",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-3.5,
+			2.2,
+			46.72
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 208.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_c2b_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3a",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-14.14,
+			2.2,
+			41.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 208.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_c3a_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_mag_a",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-17.0,
+			2.4,
+			30.06
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 228.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_mag_a_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_mag_b",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-12.14,
+			2.6,
+			24.2
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.2 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_mag_b_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_serranda",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-13.5,
+			2.2,
+			20.64
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 120.4 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_serranda_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/plafoniera_rc",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-0.9,
+			-6.32,
+			49.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 268.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_rc_tubo_sfarfalla."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/uscita_r1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-1.4,
+			-6.57,
+			51.94
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 235.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: uscita_r1_luce."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/LampeggianteParatia1/@MeshInstance3D@1115",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			2.12,
+			-6.05,
+			17.76
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1116. [modello: tecnici.tscn]"
+	},
+	{
+		"zona": "mascotte",
+		"nodo": "Mascotte/TargaJilly/targa",
+		"squadra": "mascotte",
+		"problema": "staccato",
+		"pos": [
+			-3.01,
+			0.62,
+			10.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 42.5 cm."
+	},
+	{
+		"zona": "mascotte",
+		"nodo": "Mascotte/ManifestoJilly/manifesto",
+		"squadra": "mascotte",
+		"problema": "staccato",
+		"pos": [
+			-19.93,
+			1.39,
+			13.95
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 89.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: manifesto_001, Plane."
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_0",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			-1.5,
+			0.0,
+			19.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_pannello_lamiera_7",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			-3.5,
+			0.0,
+			16.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_3",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			-13.25,
+			0.0,
+			19.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_4",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			-11.5,
+			0.0,
+			-23.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.76 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_1",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			19.5,
+			0.0,
+			12.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.95 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_5",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			19.5,
+			0.0,
+			-5.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.71 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_1_28",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-4.56,
+			-1.97,
+			-1.13
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 35% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_2_37",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-0.98,
+			-0.33,
+			-10.92
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 23% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_1_27",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			1.7,
+			-0.71,
+			-8.66
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 42% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_4_20",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			0.94,
+			-1.97,
+			-1.24
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 23% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_1_19",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			5.95,
+			-0.03,
+			-12.77
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 29% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_6_20",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-8.85,
+			0.01,
+			-2.34
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 21% dei suoi vertici è dentro Sala/TorreScivoli/arrivo_bordi"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_1_17",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-8.81,
+			0.01,
+			1.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 21% dei suoi vertici è dentro Sala/TorreScivoli/arrivo_bordi"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_ciabatta_6",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-4.09,
+			0.03,
+			12.8
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 100% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_colonnina_7"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_5_21",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			12.88,
+			0.01,
+			18.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 100% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_29"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_3_5",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			13.22,
+			0.02,
+			19.41
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_26 per 7 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_3_5",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			13.52,
+			0.02,
+			19.19
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_91 per 6 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_3_13",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			12.01,
+			0.02,
+			18.58
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 60% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_116"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_2_5",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			12.97,
+			0.01,
+			19.66
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 100% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_26"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_4_2",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			12.66,
+			0.01,
+			19.22
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 36% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_26"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_barchetta_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			13.1,
+			0.11,
+			18.27
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 73% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_34"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_1_13",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			13.03,
+			0.01,
+			17.73
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 29% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_29"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_1_14",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			12.38,
+			0.01,
+			17.81
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_29 per 3 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_secchiello_1",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			14.19,
+			0.08,
+			19.57
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 33% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_dentro_6"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_1_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-19.34,
+			0.02,
+			19.21
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloScatoloni/scat_0_0_0 per 5 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_paletta_1",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-18.63,
+			0.04,
+			18.67
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 50% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_1_1_0"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_1_3",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-18.0,
+			0.04,
+			19.38
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 97% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_2_0_0"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_3_8",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-17.61,
+			0.02,
+			18.62
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloScatoloni/scat_2_1_0 per 5 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_2_7",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			14.88,
+			0.02,
+			18.67
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 45% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_dentro_12"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_vetri_rotti_3_3",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			18.49,
+			0.0,
+			16.15
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 23% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_28"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_1_15",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			14.9,
+			0.02,
+			15.09
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): passa dentro Sala/AngoloPalloni/pallone_65 per 6 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_3_10",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-16.77,
+			0.06,
+			18.37
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 63% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_3_1_0"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_0",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.87,
+			3.05,
+			12.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_4",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.87,
+			3.05,
+			2.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_5",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			15.29,
+			3.59,
+			-23.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_6",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			19.29,
+			3.59,
+			-23.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_7",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			13.81,
+			3.0,
+			19.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_10",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			5.81,
+			3.0,
+			19.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_11",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			19.86,
+			3.07,
+			5.78
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_11",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			19.86,
+			3.07,
+			7.78
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_12",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-12.3,
+			3.36,
+			-23.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_16cm_2m_14",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-6.3,
+			3.36,
+			-23.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubi_paralleli_2m_0",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.88,
+			3.09,
+			1.19
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubi_paralleli_2m_4",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.88,
+			3.09,
+			-8.81
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubi_paralleli_2m_5",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.87,
+			3.46,
+			-17.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubi_paralleli_2m_7",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.87,
+			3.46,
+			-23.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubi_paralleli_2m_8",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-14.32,
+			3.16,
+			19.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubi_paralleli_2m_10",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			14.85,
+			3.18,
+			19.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubi_paralleli_2m_10",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			16.85,
+			3.18,
+			19.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_10cm_2m_0",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			19.89,
+			3.59,
+			8.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_10cm_2m_0",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			19.89,
+			3.59,
+			10.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_10cm_2m_1",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			19.89,
+			3.24,
+			13.74
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_10cm_2m_4",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.9,
+			3.07,
+			-9.32
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_10cm_2m_7",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-19.89,
+			3.07,
+			-17.32
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_10cm_2m_8",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-2.58,
+			3.03,
+			19.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_10cm_2m_12",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			-12.58,
+			3.03,
+			19.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreProp/prop_paperella_gigante_1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			38.41,
+			-14.73,
+			-22.41
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreProp/prop_paperella_gigante_2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			38.41,
+			-5.72,
+			-7.59
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreProp/prop_salvagente_nave_1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			23.59,
+			-8.92,
+			-7.59
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7198/TURBINA_1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			75.4,
+			-28.25,
+			-19.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) [modello: sala_inseguimento.tscn]"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_02_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			1.09,
+			2.19,
+			38.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_03_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			9.49,
+			2.19,
+			38.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_05_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			12.15,
+			2.39,
+			39.59
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 229.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_06_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-9.55,
+			2.34,
+			39.61
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 224.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_01_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-2.89,
+			2.44,
+			37.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 234.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_02_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-6.55,
+			2.39,
+			33.91
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 37.9 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_03_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-4.11,
+			2.54,
+			26.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 28.4 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_04_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.95,
+			2.29,
+			22.69
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_05_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.01,
+			2.49,
+			29.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_06_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			3.35,
+			2.29,
+			24.89
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 69.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01_vetro",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			1.65,
+			2.29,
+			31.31
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.8 cm. (stato: interni_dopo)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/@Node3D@16363/@MeshInstance3D@16364",
+		"squadra": "ambienti-1",
+		"problema": "sospeso",
+		"pos": [
+			-14.05,
+			0.55,
+			-6.22
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (trovato col controllo nuovo): niente a meno di 5 cm (sotto, il primo appoggio è a 0.08 m) (stato: lei_fossa)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello1Sx/Cassa",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.58,
+			-2.15,
+			116.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 325.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Faccia. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello1Dx/Cassa",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.15,
+			113.42
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 325.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Faccia. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello2Sx/Cassa",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-59.0,
+			-2.15,
+			89.42
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 325.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Faccia. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello2Dx/Cassa",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-56.42,
+			-2.15,
+			92.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 325.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Faccia. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello3Sx/Cassa",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.15,
+			65.42
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 325.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Faccia. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello3Dx/Cassa",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.15,
+			70.58
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 325.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Faccia. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/lampada_gabbia/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-19.47,
+			-2.4,
+			94.37
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22043/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-11.08,
+			-2.4,
+			100.95
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22047/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-12.84,
+			-2.4,
+			105.84
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22052/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-14.86,
+			-2.4,
+			108.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22060/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-26.56,
+			-2.4,
+			112.21
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22068/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-43.13,
+			-2.4,
+			116.82
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22078/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-48.07,
+			-2.4,
+			109.57
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22084/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-50.87,
+			-2.4,
+			107.09
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22087/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-53.01,
+			-2.4,
+			104.44
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22095/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-55.83,
+			-2.4,
+			85.21
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22104/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-58.11,
+			-2.4,
+			79.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22113/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-52.95,
+			-2.4,
+			73.03
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22121/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-46.06,
+			-2.4,
+			68.34
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22129/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.11,
+			-2.4,
+			108.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22139/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-32.89,
+			-2.4,
+			100.78
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22148/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-51.43,
+			-2.4,
+			89.89
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22156/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-43.78,
+			-2.4,
+			94.11
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22160/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-43.78,
+			-2.4,
+			89.89
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22165/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.11,
+			-2.4,
+			79.37
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22225/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-6.69,
+			-2.4,
+			72.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22227/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-6.69,
+			-2.4,
+			80.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22229/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-6.69,
+			-2.4,
+			90.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22231/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-17.0,
+			-2.4,
+			61.94
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22233/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-26.0,
+			-2.4,
+			61.94
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/ciambella/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-25.8,
+			-5.18,
+			87.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 5.0 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: Mesh_0, Mesh_0. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22244/@MeshInstance3D@22246",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-29.0,
+			-3.55,
+			87.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 159.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@22247. (stato: risalita_arrivo) [modello: fiume.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22252/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-6.69,
+			-2.4,
+			67.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22270/@MeshInstance3D@22272",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.9,
+			-3.55,
+			55.14
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 159.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@22273. (stato: risalita_arrivo) [modello: fiume.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22276/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-33.4,
+			-2.4,
+			51.29
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22280/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-21.0,
+			-2.4,
+			61.06
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22282/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-49.0,
+			-2.4,
+			61.06
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/sportello_cassaforte_N/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-33.54,
+			-4.1,
+			43.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 99.3 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: Cilindro, Cilindro, Cilindro, @MeshInstance3D@22445. (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella1/@MeshInstance3D@22448",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-33.57,
+			-3.94,
+			43.66
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 3.5 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: @MeshInstance3D@22451, @MeshInstance3D@22454. (stato: risalita_arrivo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello1Sx/Faccia",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.53,
+			-2.15,
+			116.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 327.8 cm. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello1Dx/Faccia",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.15,
+			113.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 327.8 cm. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello2Sx/Faccia",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-59.0,
+			-2.15,
+			89.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 327.8 cm. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello2Dx/Faccia",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-56.47,
+			-2.15,
+			92.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 327.8 cm. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello3Sx/Faccia",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.15,
+			65.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 327.8 cm. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Cartello3Dx/Faccia",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.15,
+			70.53
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 327.8 cm. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/lampada_gabbia/globo",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-19.46,
+			-2.37,
+			94.35
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 12.1 cm. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@29784/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-25.8,
+			-4.91,
+			87.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 16.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Mesh_0. (stato: risalita_dopo) [modello: ciambella.glb]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto11/Frontale/Tirato/@MeshInstance3D@29921",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-5.21,
+			43.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 6.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29923, @MeshInstance3D@29924, @MeshInstance3D@29922, @MeshInstance3D@29925. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@29927",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.95,
+			43.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29929, @MeshInstance3D@29930, @MeshInstance3D@29928, @MeshInstance3D@29931. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@29933",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.73,
+			43.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29935, @MeshInstance3D@29936, @MeshInstance3D@29934, @MeshInstance3D@29937. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@29939",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.49,
+			43.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 6 oggetti che si reggono solo fra loro: @MeshInstance3D@29941, @MeshInstance3D@29942, @MeshInstance3D@29940, @MeshInstance3D@29918, @MeshInstance3D@29944, @MeshInstance3D@29943. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@29946",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.23,
+			43.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29948, @MeshInstance3D@29949, @MeshInstance3D@29947, @MeshInstance3D@29950. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto21/Frontale/Tirato/@MeshInstance3D@29954",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-5.21,
+			43.96
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 6.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29956, @MeshInstance3D@29957, @MeshInstance3D@29955, @MeshInstance3D@29958. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto22/Frontale/Tirato/@MeshInstance3D@29960",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.95,
+			43.96
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29962, @MeshInstance3D@29963, @MeshInstance3D@29961, @MeshInstance3D@29964. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto23/Frontale/Tirato/@MeshInstance3D@29966",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.73,
+			43.96
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29968, @MeshInstance3D@29969, @MeshInstance3D@29967, @MeshInstance3D@29970. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto24/Frontale/Tirato/@MeshInstance3D@29972",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.49,
+			43.96
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29974, @MeshInstance3D@29975, @MeshInstance3D@29973, @MeshInstance3D@29976. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto25/Frontale/Tirato/@MeshInstance3D@29978",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.04,
+			-4.23,
+			43.96
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29980, @MeshInstance3D@29981, @MeshInstance3D@29979, @MeshInstance3D@29982. (stato: risalita_dopo) [modello: infermeria.tscn]"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella2/Cilindro",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-33.73,
+			-4.07,
+			43.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 124.6 cm. Con lui, staccati insieme, 3 oggetti che si reggono solo fra loro: Cilindro, Cilindro, @MeshInstance3D@29995. (stato: risalita_dopo)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			54.72,
+			-19.9,
+			-16.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			54.72,
+			-19.9,
+			-13.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			67.0,
+			-22.9,
+			-25.28
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_3",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			64.0,
+			-22.9,
+			-25.28
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			66.78,
+			-25.9,
+			-3.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_5",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			72.22,
+			-25.9,
+			-6.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
 	}
 ]

@@ -155,9 +155,13 @@ func _prepara_modello() -> void:
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.mesh = mesh_lamella
 	mm.instance_count = lamelle
+	var tr: Array[Transform3D] = []
 	for k in lamelle:
-		mm.set_instance_transform(k, Transform3D(Basis.IDENTITY, Vector3(0.0, k * passo, 0.0)))
+		tr.append(Transform3D(Basis.IDENTITY, Vector3(0.0, k * passo, 0.0)))
+		mm.set_instance_transform(k, tr[k])
 	_lamelle = MultiMeshInstance3D.new()
+	# per il controllo di posizionamento: senza schermo il MultiMesh non conserva le trasformazioni
+	_lamelle.set_meta(&"trasformazioni", tr)
 	_lamelle.name = "Lamelle"
 	_lamelle.multimesh = mm
 	_lamelle.material_override = materiale_lamelle
