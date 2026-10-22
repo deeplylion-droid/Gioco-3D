@@ -211,6 +211,11 @@ def controlla_tubi(oggetti, linee, r):
     return trovati
 
 
+## Quanto sotto il piano di una pedana (P.piattaforma) arrivano le gambe: al fondo del suo telaio (26 cm). Nelle
+## proposte erano 30 cm, e la pedana restava staccata di 4 cm.
+SOTTO_PEDANA = 0.3
+
+
 def gambe(c, x0, y0, x1, y1, z_alto, z_basso, mat='metallo_grigio', r=0.16):
     """Quattro colonne dagli angoli fino a terra, con le croci sui lati."""
     angoli = [(x0 + 0.2, y0 + 0.2), (x1 - 0.2, y0 + 0.2), (x1 - 0.2, y1 - 0.2), (x0 + 0.2, y1 - 0.2)]
@@ -305,9 +310,9 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
         MOBILI.append(ob)
         GIOCO_DATI['paratie'].append(dict(nodo=ob.name, giusta=giusta, pannello=list(pann), verso=[n.x, n.y, 0.0],
                                           bersaglio=list(t_centro), corsa=alto + 0.05, largo=largo, alto=alto))
-    # lampada di servizio sopra la trave
-    lamp = Vector((base.x, base.y, top + 0.55)) - n * 0.25
-    c.scatola_assi(lamp + n * 0.12, [n, lat, Vector((0, 0, 1))], (0.08, 0.12, 0.2), 'nero_opaco')
+    # lampada di servizio sopra la trave (nel gioco appoggiata: la sua scatola stava 5 cm sopra la trave)
+    lamp = Vector((base.x, base.y, top + (0.5 if GIOCO else 0.55))) - n * 0.25
+    c.scatola_assi(lamp + n * (0.08 if GIOCO else 0.12), [n, lat, Vector((0, 0, 1))], (0.08, 0.12, 0.2), 'nero_opaco')   # (la lente la tocca)
     c.cilindro(lamp, lamp - n * 0.08, 0.13, 'faro_giallo' if giusta else 'faro_rosso', seg=16)
     luci['paratie'].append([[lamp.x, lamp.y, lamp.z], 'verde' if giusta else 'rossa', [-n.x, -n.y, 0.0]])
     luci['bersagli'].append([t.x, t.y, t.z])
@@ -341,10 +346,17 @@ def grata(c, centro, n, chiusa, largo=2.4, alto=2.4):
             ob.children[-1].data.transform(Matrix.Rotation(math.pi / 2, 4, 'Z'))
         MOBILI.append(ob)
         GIOCO_DATI['grata'] = dict(nodo=ob.name, perno=list(perno), corsa=alto, chiusa=chiusa, verso=[n.x, n.y, 0.0], largo=largo)
-    # catena e contrappeso
-    cp = Vector((base.x, base.y, top + 0.4)) + lat * (largo / 2 + 0.5)
-    c.cilindro(cp, cp + Vector((0, 0, 1.2)), 0.02, 'metallo', seg=6)
-    c.scatola((cp.x - 0.2, cp.y - 0.2, cp.z - 0.5), (cp.x + 0.2, cp.y + 0.2, cp.z), 'nero_opaco')
+    # catena e contrappeso: nel gioco appesi sotto la testa della trave, fuori dal montante (prima la catena
+    # saliva nel vuoto e il contrappeso entrava nella trave)
+    if GIOCO:
+        ap = Vector((base.x, base.y, top)) + lat * (largo / 2 + 0.33)
+        c.cilindro(ap, ap - Vector((0, 0, 1.2)), 0.02, 'metallo', seg=6)
+        q = ap - Vector((0, 0, 1.2)) + lat * 0.12
+        c.scatola_assi(q - Vector((0, 0, 0.25)), [n, lat, Vector((0, 0, 1))], (0.15, 0.15, 0.25), 'nero_opaco')
+    else:
+        cp = Vector((base.x, base.y, top + 0.4)) + lat * (largo / 2 + 0.5)
+        c.cilindro(cp, cp + Vector((0, 0, 1.2)), 0.02, 'metallo', seg=6)
+        c.scatola((cp.x - 0.2, cp.y - 0.2, cp.z - 0.5), (cp.x + 0.2, cp.y + 0.2, cp.z), 'nero_opaco')
 
 
 def serbatoio(c, x, y, z0, h, r, mat='metallo_grigio', scala=True):
@@ -431,8 +443,9 @@ def porta_uscita(c, y, z, luci):
     c.scatola((X0 + 0.02, y + 0.7, z), (X0 + 0.15, y + 0.85, z + 2.3), 'metallo_grigio')
     c.scatola((X0 + 0.02, y - 0.85, z + 2.2), (X0 + 0.15, y + 0.85, z + 2.35), 'metallo_grigio')
     c.scatola_assi(Vector((X0 + 0.55, y + 0.25, z + 1.1)), [Vector((0.8, 0.6, 0)).normalized(), Vector((-0.6, 0.8, 0)).normalized(), Vector((0, 0, 1))], (0.03, 0.72, 1.08), 'portone')
-    c.scatola((X0 + 0.05, y - 0.4, z + 2.5), (X0 + 0.12, y + 0.4, z + 2.8), 'faro_giallo')
-    luci['uscita'].append([X0 + 0.24, y, z + 2.65])      # (la lampadina tocca la plafoniera)
+    s_ = 0.0 if GIOCO else 0.05        # (nel gioco contro il muro: stava 5 cm staccata)
+    c.scatola((X0 + s_, y - 0.4, z + 2.5), (X0 + s_ + 0.07, y + 0.4, z + 2.8), 'faro_giallo')
+    luci['uscita'].append([X0 + s_ + 0.19, y, z + 2.65])      # (la lampadina tocca la plafoniera)
 
 
 def luci_nuove():
@@ -572,20 +585,26 @@ def versione_A(mats):
     scala_pioli(c, BX[0] + 0.15, 3.2, T - 0.3, porta[1])
     GIOCO_DATI['scale'].append(dict(x=BX[0] + 0.3, y=3.2, z0=z0, z1=porta[1], verso=[1.0, 0.0, 0.0]))
     P.piattaforma(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1], lati=('s', 'n'), pali=False)
-    gambe(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1] - 0.3, z0)
+    gambe(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1] - SOTTO_PEDANA, z0)
     porta_uscita(c, porta[0], porta[1], luci)
 
     for pts in da_appendere:
         appendi_tubo(c, pts, R_TUBO, z1 - 0.6, pedane=pedane, altri=da_appendere)
 
     # --- l'ambiente pieno: condotte, serbatoi, pompe, passerelle lungo i muri ----------------------------
-    condotta(c, (X0 + 0.5, y1 - 1.6, -12.0), (x1 - 0.5, y1 - 1.6, -12.0), 1.3, muro=('y', y1))
-    condotta(c, (X0 + 0.5, y0 + 1.7, -15.5), (x1 - 0.5, y0 + 1.7, -15.5), 1.1, muro=('y', y0))
-    condotta(c, (x1 - 1.6, y0 + 0.5, -20.0), (x1 - 1.6, y1 - 0.5, -20.0), 1.2, muro=('x', x1))
-    condotta(c, (46.0, 20.0, T + 1.2), (76.0, 20.0, T + 1.2), 1.0, z_terra=z0)
-    condotta(c, (X0 + 1.3, 17.2, -21.5), (X0 + 1.3, y1 - 0.5, -21.5), 0.9, 'metallo', muro=('x', X0))
+    # nel gioco le condotte arrivano da qualche parte: entrano nei muri (prima finivano 50 cm prima), quella a
+    # terra va da muro a muro, quella sul muro ovest scende a terra dove finisce (regola del 21 ottobre)
+    m_ = 0.2 if GIOCO else -0.5
+    condotta(c, (X0 - m_, y1 - 1.6, -12.0), (x1 + m_, y1 - 1.6, -12.0), 1.3, muro=('y', y1))
+    condotta(c, (X0 - m_, y0 + 1.7, -15.5), (x1 + m_, y0 + 1.7, -15.5), 1.1, muro=('y', y0))
+    condotta(c, (x1 - 1.6, y0 - m_, -20.0), (x1 - 1.6, y1 + m_, -20.0), 1.2, muro=('x', x1))
+    condotta(c, (X0 - 0.2, 20.0, T + 1.2) if GIOCO else (46.0, 20.0, T + 1.2), (x1 + 0.2 if GIOCO else 76.0, 20.0, T + 1.2),
+             1.0, z_terra=z0)
+    condotta(c, (X0 + 1.3, 17.2, -21.5), (X0 + 1.3, y1 + m_, -21.5), 0.9, 'metallo', muro=('x', X0))
+    if GIOCO:
+        c.cilindro((X0 + 1.3, 17.2, -21.5), (X0 + 1.3, 17.2, z0), 0.9, 'metallo', seg=28)
     if GIOCO:   # nel gioco la spirale ci passerebbe dentro: la condotta sale dal pavimento a nord della spirale
-        condotta(c, (64.0, 10.6, T + 1.0), (64.0, 31.5, T + 1.0), 0.8, z_terra=z0)
+        condotta(c, (64.0, 10.6, T + 1.0), (64.0, y1 + 0.2, T + 1.0), 0.8, z_terra=z0)
         c.cilindro((64.0, 10.6, z0), (64.0, 10.6, T + 1.0), 0.8, 'metallo_grigio', seg=28)
         c.disco((64.0, 10.6, T + 1.0), (0, 0, 1), 0.8, 'metallo_grigio', seg=28)
         c.anello((64.0, 10.6, T + 0.3), (0, 0, 1), 0.8, 0.9, 0.16, 'metallo', seg=28)
@@ -597,7 +616,7 @@ def versione_A(mats):
     # le pompe vere della sala pompe (una per tipo, niente doppioni), su basamenti sopra l'acqua
     for (x, y, nodi) in ((50.0, 23.6, 'POMPA_1'), (54.4, 23.6, 'POMPA_2'), (67.0, 14.5, ['POMPA_3', 'POMPA_3_modello'])):
         P.piattaforma(c, x - 2.1, y - 1.6, x + 2.1, y + 1.6, T + 0.6, lati=(), pali=False)
-        gambe(c, x - 2.1, y - 1.6, x + 2.1, y + 1.6, T + 0.3, z0)
+        gambe(c, x - 2.1, y - 1.6, x + 2.1, y + 1.6, T + 0.6 - SOTTO_PEDANA, z0)
         arredo(luci, 'pompe', nodi, (x, y, T + 0.6), ry=90.0)
     arredo(luci, 'det/detriti', 'det_pannello_lamiera', (48.6, 22.6, T + 0.6), ry=25.0, appoggio='origine')
     # il filtro grande su un plinto di cemento, tra il bacino e la spirale
@@ -606,7 +625,7 @@ def versione_A(mats):
     # il ballatoio delle macchine contro il muro est: quadro elettrico, volano della turbina, attrezzi
     BM = (72.6, 17.2, x1 - 0.1, 24.0, -29.0)
     P.piattaforma(c, BM[0], BM[1], BM[2], BM[3], BM[4], lati=('o', 's'), pali=False)
-    gambe(c, BM[0], BM[1], BM[2], BM[3], BM[4] - 0.3, z0)
+    gambe(c, BM[0], BM[1], BM[2], BM[3], BM[4] - SOTTO_PEDANA, z0)
     scala_pioli(c, BM[0] - 0.1, 20.6, z0, BM[4])
     arredo(luci, 'pompe', 'QUADRO_elettrico', (x1, 22.6, BM[4]), ry=90.0, appoggio='muro', normale=(-1, 0))
     arredo(luci, 'pompe', 'TURBINA_1', (75.4, 19.0, BM[4]), ry=90.0)
@@ -634,7 +653,7 @@ def versione_A(mats):
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y0 + 0.4, -20.0, 1)
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y1 - 0.4, -24.0, -1)
     for x in range(44, 78, 7):
-        P.tubo_muro(c, [(x, y0 + 0.35, z0 + 0.4), (x, y0 + 0.35, z1 - 0.5)], r=0.12)
+        P.tubo_muro(c, [(x, y0 + 0.35, z0 if GIOCO else z0 + 0.4), (x, y0 + 0.35, z1 + 0.2 if GIOCO else z1 - 0.5)], r=0.12)
     # catene appese dal soffitto (con il gancio)
     for (x, y) in ((58.0, 15.0), (66.0, 18.0), (48.0, 22.0)):
         c.cilindro((x, y, z1), (x, y, -17.0 - rnd.uniform(0, 3)), 0.03, 'metallo', seg=6)
@@ -1200,8 +1219,8 @@ def main():
     uscita, prefisso = USCITA, f'inseguimento_{nome}'
     if gioco:
         assert nome == 'A', "nel gioco c'è solo la A (scelta dell'utente del 19 ottobre)"
-        global GIOCO, X0
-        GIOCO, X0 = True, X0_GIOCO
+        global GIOCO, X0, SOTTO_PEDANA
+        GIOCO, X0, SOTTO_PEDANA = True, X0_GIOCO, 0.26
         uscita, prefisso = GIOCO_USCITA, 'inseguimento'
     gruppi, percorso, luci, info = VERSIONI[nome](mats)
     os.makedirs(uscita, exist_ok=True)

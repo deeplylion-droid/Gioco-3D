@@ -377,7 +377,9 @@ def scala_servizio(c, sp, x0, y0, lungo, asse, verso_ponte, mat='gioco_giallo'):
                 a_, b_ = P_(lp, vv, L), P_(lp + corsa, vv, L + 1.5)
             else:
                 a_, b_ = P_(lp + corsa, vv, L + 1.5), P_(lp, vv, L + 3.0)
-            c.cilindro(a_ - Vector((0, 0, 0.12)), b_ - Vector((0, 0, 0.12)), 0.05, mat, seg=6)
+            # (nel gioco 3 cm più su: i gradini ci appoggiano, prima restavano 2 cm sopra)
+            sc_ = 0.09 if GIOCO else 0.12
+            c.cilindro(a_ - Vector((0, 0, sc_)), b_ - Vector((0, 0, sc_)), 0.05, mat, seg=6)
         # corrimano sul lato esterno (lontano dal ponte) e in testa
         lato = largo if verso_ponte < 0 else 0.0
         P.ringhiera_dritta(c, P_(lp + corsa, lato, L + 1.5), P_(tot, lato, L + 1.5))
@@ -1493,8 +1495,10 @@ def versione_A(mats):
             c.scatola((xs - 0.12, yb_ - 0.55, zs - 0.08), (xs + 0.12, yb_ + 0.55, zs - 0.02), 'metallo')
     # tubi di servizio sui muri
     for z in (-17.0, -7.5, 4.5, 10.5):
-        P.tubo_muro(c, [(XI0 + 0.3, YI0 + 0.35, z), (XI1 - 0.35, YI0 + 0.35, z)], r=0.16)
-        P.tubo_muro(c, [(XI1 - 0.35, YI0 + 0.35, z + 0.6), (XI1 - 0.35, YI1 - 0.35, z + 0.6)], r=0.12)
+        # (nel gioco da muro a muro: prima finivano 30 cm prima degli angoli, nel vuoto)
+        e_ = 0.1 if GIOCO else -0.3
+        P.tubo_muro(c, [(XI0 - e_, YI0 + 0.35, z), (XI1 + (e_ if GIOCO else -0.35), YI0 + 0.35, z)], r=0.16)
+        P.tubo_muro(c, [(XI1 - 0.35, YI0 - e_ if GIOCO else YI0 + 0.35, z + 0.6), (XI1 - 0.35, YI1 + e_ if GIOCO else YI1 - 0.35, z + 0.6)], r=0.12)
 
     # --- sostegni: ogni pezzo retto ogni pochi metri e vicino ai capi liberi -------------------------------
     cv = K.Costruttore(mats)           # solo da vedere (nessuna collisione): non cambiano i salti
