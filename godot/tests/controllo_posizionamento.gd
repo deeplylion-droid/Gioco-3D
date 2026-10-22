@@ -32,6 +32,11 @@ const ZONE := [
 	# Le zone che cambiano dopo l'inizio, come le vede il giocatore (riscontro dell'utente sulla v0.3.8: gli
 	# acquari davanti al portone "tutto compenetrato o fluttuante"). Si prepara lo stato ([method _prepara]) e
 	# si controllano solo le parti elencate; i casi già trovati nello stato iniziale non si ripetono.
+	# tutto quello che compare più avanti (le parti nascoste all'inizio, rese visibili)
+	{"scena": "res://scenes/sala_principale.tscn", "stato": "tutto_visibile", "sotto": {"Sala": "sala",
+			"Interni": "interni", "Tecnici": "tecnici", "Piscina": "sala", "Vasche": "sala", "Vasca": "sala",
+			"Gioco": "sala", "Polaroid": "sala", "LuciSala": "sala", "BambiniBalconata": "sala", "Atmosfera": "sala"}},
+	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "tutto_visibile"},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
@@ -46,12 +51,25 @@ const SQUADRE := [
 	["ArredoRisalita", "enigmi"],
 ]
 const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2"}   # tecnici: tools/blender/ambienti2_*.py
-const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo"]
+const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
 ## Un oggetto di scena: una mesh con la diagonale del box fra questi due valori (m). Più grande è architettura.
 const OGGETTO_MIN := 0.04
 const OGGETTO_MAX := 4.0
+## Controllo severo (processo nuovo approvato dall'utente il 22 ottobre, "per evitare questi errori una volta per
+## tutte"): niente esenzione per gli oggetti grandi (solo l'architettura, riconosciuta dal nome, e i pezzi enormi
+## sopra OGGETTO_MAX_SEVERO), il controllo "staccato" a pochi millimetri, le compenetrazioni anche fra oggetti della
+## stessa scena .tscn e con gli spigoli, le parti nascoste rese visibili, la CI rossa con un solo caso da correggere.
+const SEVERO := true
+const OGGETTO_MAX_SEVERO := 30.0
+## Architettura (pavimenti, muri, soffitti, strutture dei modelli d'ambiente): non è un oggetto da appoggiare.
+const ARCHITETTURA := ["architettura", "struttura", "pavimento", "pavimenti", "muro", "muri", "parete", "pareti",
+	"soffitto", "cupola"]
+## Staccato: ogni oggetto deve toccare entro tanto (m) qualcosa che lo regge.
+const STACCO := 0.005
+## Quanti vertici per oggetto si provano per lo staccato.
+const STACCO_VERTICI := 48
 ## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
 ## gli acquari (riscontro dell'utente: lì sotto i 4 m il controllo non vedeva niente).
 const OGGETTO_MAX_PARTI := 15.0
@@ -77,6 +95,9 @@ var _radice: Node
 var _oggetto_max := OGGETTO_MAX
 ## Nelle zone con stato il controllo delle compenetrazioni è più fino (vedi _compenetrazioni).
 var _fino := false
+## Le parti nascoste all'inizio rese visibili dallo stato "tutto_visibile" (per non contare come compenetrate fra loro
+## le due versioni della stessa cosa, per esempio le lampade Spente e Accese).
+var _nascoste_radici := {}
 
 
 func _ready() -> void:
@@ -116,8 +137,9 @@ func _controlla_scena(z: Dictionary) -> void:
 			_semi.append((sp as Node3D).global_position)
 	for g in _radice.find_children("*", "Player", true, false):
 		_semi.append((g as Node3D).global_position)
-	_oggetto_max = OGGETTO_MAX_PARTI if z.has("parti") else OGGETTO_MAX
-	_fino = z.has("parti")
+	_oggetto_max = OGGETTO_MAX_SEVERO if SEVERO else (OGGETTO_MAX_PARTI if z.has("parti") else OGGETTO_MAX)
+	_fino = SEVERO or z.has("parti")
+	_nascoste_radici.clear()
 	if z.has("stato"):
 		await _prepara(String(z["stato"]))
 	for i in 20:
@@ -142,6 +164,11 @@ func _controlla_scena(z: Dictionary) -> void:
 	for mi in oggetti:
 		_sospeso(z, mi)
 	print("  a) sospesi: %d" % (_trovati.size() - prima))
+	if SEVERO:
+		prima = _trovati.size()
+		for mi in oggetti:
+			_staccato(z, mi)
+		print("  a2) staccati (niente entro %d mm): %d" % [roundi(STACCO * 1000.0), _trovati.size() - prima])
 	prima = _trovati.size()
 	_ingombri(z, mesh)
 	print("  b) ingombri nello spazio di chi cammina: %d" % (_trovati.size() - prima))
@@ -169,6 +196,14 @@ func _controlla_scena(z: Dictionary) -> void:
 ##  acquari_risolti: il verde giusto, il portone della torre aperto fino in fondo.
 func _prepara(stato: String) -> void:
 	print("  stato: %s" % stato)
+	if stato == "tutto_visibile":
+		# tutto quello che compare più avanti (nascosto all'inizio), luci a parte
+		for n in _radice.find_children("*", "Node3D", true, false):
+			if not (n as Node3D).visible and not n is Light3D:
+				_nascoste_radici[n] = true
+				(n as Node3D).visible = true
+		print("  parti nascoste rese visibili: %d" % _nascoste_radici.size())
+		return
 	var enigma := _radice.find_child("EnigmaAcquari", true, false)
 	if enigma == null:
 		push_warning("controllo: EnigmaAcquari non trovato per lo stato %s" % stato)
@@ -286,7 +321,13 @@ func _e_oggetto(mi: MeshInstance3D) -> bool:
 	if _acqua.has(mi):
 		return false
 	var d := _box(mi).size.length()
-	return d > OGGETTO_MIN and d < _oggetto_max
+	if d <= OGGETTO_MIN or d >= _oggetto_max:
+		return false
+	if SEVERO:
+		var percorso := String(_radice.get_path_to(mi)).to_lower()
+		if ARCHITETTURA.any(func(a): return percorso.contains(a)):
+			return false
+	return true
 
 
 func _zona(z: Dictionary, n: Node) -> String:
@@ -308,9 +349,9 @@ func _nodo(n: Node) -> String:
 
 
 func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: String) -> void:
-	if z.has("parti"):
+	if z.has("stato"):
 		var nodo := _nodo(n)
-		if not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
+		if z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
 			return
 		# già trovato nello stato iniziale (stesso nodo, stesso problema): non si ripete
 		if _trovati.any(func(t): return t["nodo"] == nodo and t["problema"] == problema):
@@ -349,6 +390,35 @@ func _sospeso(z: Dictionary, mi: MeshInstance3D) -> void:
 	var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO | Layers.WORLD, me)
 	var vuoto := "più di 5 m" if giu.is_empty() else "%.2f m" % (b.position.y - (giu.position as Vector3).y)
 	_trova(z, mi, "sospeso", c, "niente a meno di 5 cm (sotto, il primo appoggio è a %s)" % vuoto)
+
+
+## Staccato: l'oggetto deve toccare, entro STACCO, qualcosa che lo regge (pavimento, muro, soffitto, l'oggetto a cui è
+## attaccato). Per un campione di vertici, raggi corti nelle sei direzioni: basta che uno colpisca un altro corpo.
+## Gli oggetti già "sospesi" (niente entro 5 cm) non si ripetono.
+func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
+	if _trovati.any(func(t): return t["nodo"] == _nodo(mi) and t["problema"] == "sospeso"):
+		return
+	var facce := mi.mesh.get_faces()
+	if facce.is_empty():
+		return
+	var me: Array[RID] = []
+	if _corpo_di.has(mi):
+		me.append((_corpo_di[mi] as StaticBody3D).get_rid())
+	var passo := maxi(1, facce.size() / STACCO_VERTICI)
+	var dirs := [Vector3.DOWN, Vector3.UP, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]
+	var i := 0
+	while i < facce.size():
+		var p := mi.global_transform * facce[i]
+		for d in dirs:
+			if not _raggio(p - d * 0.001, p + d * STACCO, STRATO | Layers.WORLD, me).is_empty():
+				return
+		i += passo
+	var b := _box(mi)
+	var c := b.get_center()
+	var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO | Layers.WORLD, me)
+	var vuoto := "più di 5 m" if giu.is_empty() else "%.1f cm" % ((b.position.y - (giu.position as Vector3).y) * 100.0)
+	_trova(z, mi, "staccato", c, "non tocca niente entro %d mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a %s)" % [
+			roundi(STACCO * 1000.0), vuoto])
 
 
 # --- b) ingombri nello spazio di chi cammina -----------------------------------------------------------
@@ -601,15 +671,17 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 				box = AABB(p, Vector3.ZERO) if primo else box.expand(p)
 				primo = false
 		var forma := BoxShape3D.new()
-		forma.size = box.size + Vector3.ONE * CONTATTO * 2.0
+		# severo: il capo deve essere collegato (1 cm), non solo vicino a qualcosa
+		forma.size = box.size + Vector3.ONE * (0.01 if SEVERO else CONTATTO) * 2.0
 		var q := PhysicsShapeQueryParameters3D.new()
 		q.shape = forma
 		q.transform = Transform3D(Basis(), box.get_center())
 		q.collision_mask = STRATO | Layers.WORLD
 		q.exclude = me
 		if _spazio.intersect_shape(q, 1).is_empty():
-			_trova(z, mi, "estremita_libera", box.get_center(), "un capo del %s non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)" % (
-					"tubo" if not nome.contains("cav") and not nome.contains("filo") and not nome.contains("cable") else "cavo"))
+			_trova(z, mi, "estremita_libera", box.get_center(), "un capo del %s non è collegato a niente entro %s (né muro, pavimento, soffitto, né un altro tubo o un macchinario)" % [
+					"catena" if nome.contains("caten") or nome.contains("chain") else ("tubo" if not nome.contains("cav")
+					and not nome.contains("filo") and not nome.contains("cable") else "cavo"), "1 cm" if SEVERO else "5 cm"])
 
 
 # --- d) compenetrazioni fra oggetti di scena -----------------------------------------------------------
@@ -647,6 +719,8 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 				fatte[[a, b]] = true
 				if _stesso_modello(a, b) or (a as Node).get_parent() == (b as Node).get_parent():
 					continue   # pezzi dello stesso modello, o dello stesso oggetto fatto da codice (lampade, fari)
+				if _alternative(a, b):
+					continue   # due versioni della stessa cosa (una nascosta all'inizio): non si vedono insieme
 				var ba: AABB = boxes[a]
 				var bb: AABB = boxes[b]
 				var i := ba.intersection(bb)
@@ -668,6 +742,37 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 					var altro: MeshInstance3D = b if chi == a else a
 					_trova(z, chi, "compenetra", i.get_center(), "il %d%% dei suoi vertici è dentro %s" % [roundi(dentro * 100.0), _nodo(altro)])
+
+
+## Vero se una delle due sta sotto una parte nascosta all'inizio che è sorella di un antenato dell'altra (o dell'altra
+## parte nascosta): le lampade Spente e Accese, i vetri puliti e impolverati.
+func _alternative(a: Node, b: Node) -> bool:
+	if _nascoste_radici.is_empty():
+		return false
+	var ra := _radice_nascosta(a)
+	var rb := _radice_nascosta(b)
+	if ra == rb:
+		return false
+	for coppia in [[ra, b], [rb, a]]:
+		var r: Node = coppia[0]
+		if r == null:
+			continue
+		var k: Node = coppia[1]
+		while k and k != _radice:
+			if k.get_parent() == r.get_parent() and k != r:
+				return true
+			k = k.get_parent()
+	return false
+
+
+func _radice_nascosta(n: Node) -> Node:
+	var trovata: Node = null
+	var k := n
+	while k and k != _radice:
+		if _nascoste_radici.has(k):
+			trovata = k
+		k = k.get_parent()
+	return trovata
 
 
 ## Due mesh dello stesso modello importato (.glb, .gltf): i suoi pezzi si toccano per costruzione. Nelle zone con
@@ -796,6 +901,9 @@ func _confronta() -> void:
 	_scrivi_rapporto(nuovi, noti, spariti)
 	check(nuovi.is_empty(), "nessun caso nuovo di posizionamento (%d nuovi, %d già noti, %d eccezioni non più trovate)" % [
 			nuovi.size(), noti.size(), spariti.size()])
+	if SEVERO:
+		var da_fare := noti.filter(func(t): return t.get("stato", "") != "voluto")
+		check(da_fare.is_empty(), "nessun caso da correggere (%d da correggere; passano solo i casi \"voluto\", decisi dall'utente)" % da_fare.size())
 	for t in nuovi.slice(0, 40):
 		print("    NUOVO %s · %s · %s · %s · %s" % [t["zona"], t["problema"], t["nodo"], str(t["pos"]), t["dettaglio"]])
 
