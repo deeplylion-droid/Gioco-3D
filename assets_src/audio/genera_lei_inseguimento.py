@@ -16,9 +16,9 @@ Cinque suoni, quelli che si ripetono in tre varianti (semi diversi):
 - lei_insegue_grata_1..3 (0,6 s): un verso di rabbia corto per ogni colpo contro la grata (colpo_grata,
   ciclo di 0,5 s: il palmo tocca a 0,25 s).
 
-Uso: /home/user/tools/blender-venv/bin/python assets_src/audio/genera_lei_inseguimento.py [cartella]
-Senza cartella scrive le proposte in docs/proposte/voce_lei/ (non nel gioco: entrano solo dopo l'ok
-dell'utente, con salva() in godot/audio/lei/).
+Uso: /home/user/tools/blender-venv/bin/python assets_src/audio/genera_lei_inseguimento.py [cartella | gioco]
+Senza argomenti scrive le proposte in docs/proposte/voce_lei/; con "gioco" scrive i file del gioco in
+godot/audio/lei/ (lei_insegue_*_01..) e li registra; poi catalogo.py e licenze.py.
 """
 import os
 import sys
@@ -147,13 +147,39 @@ def genera():
             rng = np.random.default_rng(2210 + 37 * i + v)
             x = f(rng)
             x = reverb(x, ir, wet=0.16, dry=1.0, tail=False)
+            if x.ndim == 2:
+                x = x.mean(axis=1)   # mono: nel gioco è un suono posizionato, sulla sua testa
             x = normalize_lufs(x, loud, -1.0, short=corto)
             x = limiter(x, -1.0)
             tutti[nome if var == 1 else '%s_%d' % (nome, v + 1)] = f32(x)
     return tutti
 
 
+def gioco():
+    """Nel gioco (dopo l'ok dell'utente): godot/audio/lei/lei_insegue_*_01.. (varianti per il catalogo),
+    registrati per catalogo.py e licenze.py."""
+    from comune import salva
+    note = {'lei_insegue_sale': 'sale dall\'acqua e incombe: gola sott\'acqua, fiato umido, ringhio che cresce',
+            'lei_insegue_presa': 'ti afferra: risucchio, grido-ringhio, sotto la voce rotta del suo urlo',
+            'lei_insegue_respinta': 'il getto in faccia: lamento che si spezza, gorgoglio mentre torna sotto',
+            'lei_insegue_sb1': 'ti fissa dal pozzo SB1: fiato lento e umido, rantolo trattenuto',
+            'lei_insegue_grata': 'un verso di rabbia per ogni colpo contro la grata'}
+    for nome, x in genera().items():
+        base = nome.rsplit('_', 1)
+        if base[0] in note:
+            file = '%s_%02d' % (base[0], int(base[1]))
+            chiave = base[0]
+        else:
+            file = chiave = nome
+        _, _, loud, corto = SUONI[chiave]
+        salva('lei', file, x, loudness=loud, corto=corto, qualita=5,
+              nota='inseguimento, voce (22 ottobre): ' + note[chiave])
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == 'gioco':
+        gioco()
+        return
     cartella = sys.argv[1] if len(sys.argv) > 1 else USCITA
     os.makedirs(cartella, exist_ok=True)
     for nome, x in genera().items():
