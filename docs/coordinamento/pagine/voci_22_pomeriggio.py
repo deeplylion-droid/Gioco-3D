@@ -11,8 +11,8 @@ CARTELLA = os.environ.get("MEDIA_POMERIGGIO", "")
 def c_e(*nomi):
     return CARTELLA and all(os.path.exists(os.path.join(CARTELLA, n)) for n in nomi)
 
-INTRO = ("Jilly nell'inseguimento, con le animazioni e la voce nuova. Gli scatti dello sfondo del menu e il tuffo "
-         "li aggiungo su questa pagina appena arrivano.")
+INTRO = ("Animazioni e voce di Jilly le hai approvate. Restano due posti dell'inseguimento da decidere. Gli scatti dello "
+         "sfondo del menu e il tuffo li aggiungo su questa pagina appena arrivano.")
 
 SEZIONI = [
     ("Inseguimento", [
@@ -36,9 +36,26 @@ SEZIONI = [
     ]),
 ]
 
+SEZIONI.append(("Inseguimento, due posti da decidere", [
+    V("VAS2", "3. Da dove sale Jilly nella seconda vasca",
+      "Lì sale sopra la condotta, ma così attraversa la grata di metallo sotto di lei, proprio all'altezza dei tuoi occhi."
+      "\na: un buco nella grata, da cui sale."
+      "\nb: sale accanto alla vasca, come nella prima. Consigliata."
+      "\nc: non sale, si cala dall'alto scavalcando la condotta. Serve un'animazione nuova.",
+      [],
+      [("a", "a"), ("b", "b"), ("c", "c"), ("vedere", "Fammi vedere")]),
+    V("GRATA", "4. Jilly dietro la grata",
+      "Dietro la grata il pavimento ha solo 60 cm d'acqua, e ora lei sale attraversandolo."
+      "\na: un pozzetto nel pavimento dietro la grata, come quello della fine, da cui sale."
+      "\nb: la grata cala davanti a un'apertura più grande, da cui lei arriva avanzando invece di salire. Serve un passaggio nuovo."
+      "\nc: è già lì, ferma al buio dietro la grata: la vedi quando la luce la prende, poi sbatte. Consigliata.",
+      [("img", "grata_adesso.jpg", "La grata adesso")],
+      [("a", "a"), ("b", "b"), ("c", "c"), ("vedere", "Fammi vedere")]),
+]))
+
 if c_e("menu_bc.jpg", "menu_ab.jpg", "menu_ab_lampo.jpg"):
     SEZIONI.append(("Menu", [
-        V("MENU", "3. Sfondo della schermata del titolo",
+        V("MENU", "5. Sfondo della schermata del titolo",
           "Scatti dal menu vero, col logo A."
           "\nB+C: lei esce da una vasca allagata che la riflette, con le luci rosse d'emergenza; dietro, sfocati nella "
           "nebbia, le ghirlande di lampadine, i neon e la cornice del portone della torre."
@@ -52,7 +69,7 @@ if c_e("menu_bc.jpg", "menu_ab.jpg", "menu_ab_lampo.jpg"):
 
 if c_e("tuffo_griglia.jpg"):
     SEZIONI.append(("Tuffo", [
-        V("TUF", "4. Il tuffo di Jilly",
+        V("TUF", "6. Il tuffo di Jilly",
           "Al posto del geyser: si spinge sul bordo, ti guarda un'ultima volta e si tuffa di testa nella fossa. I "
           "tentacoli entrano per ultimi. Lo schizzo è stato ritoccato: acqua bianca, più spruzzi, gocce grosse.",
           [("img", "tuffo_griglia.jpg", "Il tuffo, un fotogramma ogni decimo di secondo circa", 1200)],
