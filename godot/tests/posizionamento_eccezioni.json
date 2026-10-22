@@ -1,7 +1,8 @@
 [
 	{
 		"zona": "sala",
-		"nodo": "LuciSala/@Node3D@569/@MeshInstance3D@570",
+		"nodo": "LuciSala/@Node3D@572/@MeshInstance3D@573",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			1.23,
@@ -9,11 +10,12 @@
 			5.97
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
+		"squadra": "ambienti-1",
 		"problema": "sospeso",
 		"pos": [
 			-6.03,
@@ -21,11 +23,12 @@
 			36.8
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/fischietto_1",
+		"squadra": "ambienti-1",
 		"problema": "sospeso",
 		"pos": [
 			2.1,
@@ -33,11 +36,12 @@
 			30.4
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/fischietto_2",
+		"squadra": "ambienti-1",
 		"problema": "sospeso",
 		"pos": [
 			2.4,
@@ -45,11 +49,12 @@
 			30.4
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/fischietto_4",
+		"squadra": "ambienti-1",
 		"problema": "sospeso",
 		"pos": [
 			3.0,
@@ -57,11 +62,12 @@
 			30.4
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/fischietto_5",
+		"squadra": "ambienti-1",
 		"problema": "sospeso",
 		"pos": [
 			3.3,
@@ -69,11 +75,12 @@
 			30.4
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_luci",
+		"squadra": "da assegnare",
 		"problema": "sospeso",
 		"pos": [
 			-1.4,
@@ -81,23 +88,12 @@
 			47.58
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Polaroid/Polaroid04/Modello/Polaroid",
-		"problema": "sospeso",
-		"pos": [
-			-12.9,
-			6.4,
-			-21.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			6.78,
@@ -105,11 +101,12 @@
 			38.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			6.53,
@@ -117,11 +114,12 @@
 			39.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_2",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			6.28,
@@ -129,11 +127,12 @@
 			38.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/estintore",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.03,
@@ -141,11 +140,12 @@
 			40.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-1.22,
@@ -153,11 +153,12 @@
 			40.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/secchio_mocio",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-2.22,
@@ -165,11 +166,12 @@
 			29.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-3.22,
@@ -177,11 +179,12 @@
 			36.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/cestino",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-4.47,
@@ -189,11 +192,12 @@
 			38.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/pallone",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-7.47,
@@ -201,11 +205,12 @@
 			40.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-5.97,
@@ -213,11 +218,12 @@
 			36.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-5.97,
@@ -225,11 +231,12 @@
 			33.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/cestino_spogliatoi",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-5.97,
@@ -237,11 +244,12 @@
 			30.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.53,
@@ -249,11 +257,12 @@
 			37.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.53,
@@ -261,11 +270,12 @@
 			33.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/porta_stanzino",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.53,
@@ -273,11 +283,12 @@
 			32.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.53,
@@ -285,11 +296,12 @@
 			30.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/cartello_bagnato",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.53,
@@ -297,11 +309,12 @@
 			29.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.53,
@@ -309,11 +322,12 @@
 			25.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_rotore",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-0.22,
@@ -321,11 +335,12 @@
 			25.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/sedia",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			2.78,
@@ -333,11 +348,12 @@
 			33.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			4.78,
@@ -345,11 +361,12 @@
 			34.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/porta_tagliafuoco",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			12.03,
@@ -357,11 +374,12 @@
 			39.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_cordone",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-4.22,
@@ -369,11 +387,12 @@
 			7.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_18",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			2.78,
@@ -381,11 +400,12 @@
 			6.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_17",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			4.03,
@@ -393,11 +413,12 @@
 			7.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_13",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			4.03,
@@ -405,11 +426,12 @@
 			12.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_11",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			1.53,
@@ -417,11 +439,12 @@
 			13.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_10",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			0.03,
@@ -429,11 +452,12 @@
 			13.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_14",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			4.28,
@@ -441,11 +465,12 @@
 			11.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_15",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			4.28,
@@ -453,11 +478,12 @@
 			10.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_16",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			4.28,
@@ -465,11 +491,12 @@
 			8.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-17.97,
@@ -477,11 +504,12 @@
 			16.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
 			-18.97,
@@ -489,23 +517,25 @@
 			16.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
+		"squadra": "ambienti-1",
 		"problema": "ingombro",
 		"pos": [
-			-15.47,
+			-12.22,
 			0.0,
-			-19.0
+			-17.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			19.53,
@@ -513,11 +543,12 @@
 			-11.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			19.53,
@@ -525,11 +556,38 @@
 			-18.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_5",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-3.97,
+			0.0,
+			46.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-14.47,
+			0.0,
+			39.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_dettagli",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			6.78,
@@ -537,11 +595,12 @@
 			46.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2es_0",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			3.03,
@@ -549,11 +608,12 @@
 			46.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc3",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			8.78,
@@ -561,23 +621,25 @@
 			46.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_filo",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
-			1.78,
-			-7.3,
+			1.53,
+			-7.48,
 			52.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_4",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			1.53,
@@ -585,11 +647,12 @@
 			52.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_7",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			2.03,
@@ -597,47 +660,12 @@
 			53.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_11",
-		"problema": "ingombro",
-		"pos": [
-			3.03,
-			-6.4,
-			53.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_12",
-		"problema": "ingombro",
-		"pos": [
-			3.28,
-			-6.22,
-			53.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_13",
-		"problema": "ingombro",
-		"pos": [
-			3.53,
-			-6.04,
-			53.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_9",
+		"squadra": "enigmi",
 		"problema": "ingombro",
 		"pos": [
 			2.53,
@@ -645,11 +673,38 @@
 			53.25
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_12",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			3.28,
+			-6.22,
+			53.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_13",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			3.53,
+			-6.04,
+			53.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
+		"squadra": "da assegnare",
 		"problema": "ingombro",
 		"pos": [
 			-2.72,
@@ -657,11 +712,12 @@
 			36.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_elettrico",
+		"squadra": "da assegnare",
 		"problema": "ingombro",
 		"pos": [
 			-3.22,
@@ -669,11 +725,12 @@
 			33.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_strumenti",
+		"squadra": "da assegnare",
 		"problema": "ingombro",
 		"pos": [
 			-3.47,
@@ -681,11 +738,12 @@
 			36.75
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_arredo",
+		"squadra": "da assegnare",
 		"problema": "ingombro",
 		"pos": [
 			1.28,
@@ -693,11 +751,12 @@
 			36.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_tubi",
+		"squadra": "da assegnare",
 		"problema": "ingombro",
 		"pos": [
 			1.78,
@@ -705,11 +764,12 @@
 			30.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
+		"squadra": "da assegnare",
 		"problema": "ingombro",
 		"pos": [
 			0.03,
@@ -717,11 +777,12 @@
 			1.5
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_bocchette",
+		"squadra": "da assegnare",
 		"problema": "ingombro",
 		"pos": [
 			-1.72,
@@ -729,35 +790,12 @@
 			7.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Polaroid/Polaroid03",
-		"problema": "coperto",
-		"pos": [
-			2.95,
-			1.3,
-			34.65
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "sala",
-		"nodo": "Polaroid/Polaroid07",
-		"problema": "compenetrato",
-		"pos": [
-			-3.23,
-			-8.26,
-			43.66
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "sala",
-		"nodo": "LuciSala/LuciAreaBimbi/@MeshInstance3D@633",
+		"nodo": "LuciSala/LuciAreaBimbi/@MeshInstance3D@636",
+		"squadra": "grafica",
 		"problema": "compenetra",
 		"pos": [
 			-14.42,
@@ -765,11 +803,12 @@
 			-19.65
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
+		"squadra": "ambienti-1",
 		"problema": "compenetra",
 		"pos": [
 			0.3,
@@ -782,6 +821,7 @@
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla",
+		"squadra": "ambienti-1",
 		"problema": "compenetra",
 		"pos": [
 			-2.7,
@@ -794,6 +834,7 @@
 	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Stanzino/neon_stanzino_neon/neon_stanzino_tubo_sfarfalla",
+		"squadra": "ambienti-1",
 		"problema": "compenetra",
 		"pos": [
 			3.5,
@@ -806,6 +847,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/neon_0_neon/neon_0_tubi",
+		"squadra": "da assegnare",
 		"problema": "compenetra",
 		"pos": [
 			-0.6,
@@ -818,6 +860,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/neon_1_neon/neon_1_tubo_sfarfalla",
+		"squadra": "da assegnare",
 		"problema": "compenetra",
 		"pos": [
 			-0.6,
@@ -830,6 +873,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/neon_2_neon/neon_2_tubi",
+		"squadra": "da assegnare",
 		"problema": "compenetra",
 		"pos": [
 			-0.6,
@@ -840,20 +884,9 @@
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
 	},
 	{
-		"zona": "sala",
-		"nodo": "Polaroid/Polaroid07/Modello/Polaroid",
-		"problema": "compenetra",
-		"pos": [
-			-3.23,
-			-8.26,
-			43.66
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
+		"squadra": "da assegnare",
 		"problema": "compenetra",
 		"pos": [
 			1.2,
@@ -866,6 +899,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla",
+		"squadra": "da assegnare",
 		"problema": "compenetra",
 		"pos": [
 			1.2,
@@ -878,6 +912,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi",
+		"squadra": "da assegnare",
 		"problema": "compenetra",
 		"pos": [
 			1.2,
@@ -890,6 +925,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi",
+		"squadra": "da assegnare",
 		"problema": "compenetra",
 		"pos": [
 			5.7,
@@ -902,6 +938,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/neon_rc_neon/neon_rc_tubo_sfarfalla",
+		"squadra": "enigmi",
 		"problema": "compenetra",
 		"pos": [
 			-0.9,
@@ -912,8 +949,334 @@
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
 	},
 	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_2",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			6.5,
+			2.42,
+			46.51
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa0",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			6.2,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa1",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			4.6,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa2",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			3.0,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa3",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			1.4,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa4",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-0.2,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa5",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-1.8,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa6",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-3.4,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa7",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-5.0,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa8",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-6.6,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa9",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-8.2,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa10",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-9.8,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa11",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-11.4,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa12",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-13.0,
+			2.56,
+			46.42
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.65,
+			2.42,
+			30.2
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa0",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			44.66
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa1",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			43.06
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa2",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			41.46
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa3",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			39.86
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa4",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			38.26
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa5",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			36.66
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa6",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			35.06
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa7",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			33.46
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa8",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			31.86
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa9",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.56,
+			2.56,
+			30.3
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3712",
+		"nodo": "Luci/@MeshInstance3D@3816",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.55,
@@ -921,11 +1284,12 @@
 			-15.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3713",
+		"nodo": "Luci/@MeshInstance3D@3817",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.03,
@@ -933,11 +1297,12 @@
 			-14.7
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3714",
+		"nodo": "Luci/@MeshInstance3D@3818",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.03,
@@ -945,11 +1310,12 @@
 			-15.3
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3716",
+		"nodo": "Luci/@MeshInstance3D@3820",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.55,
@@ -957,11 +1323,12 @@
 			-15.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3717",
+		"nodo": "Luci/@MeshInstance3D@3821",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.03,
@@ -969,11 +1336,12 @@
 			-14.7
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3718",
+		"nodo": "Luci/@MeshInstance3D@3822",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.03,
@@ -981,11 +1349,12 @@
 			-15.3
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3720",
+		"nodo": "Luci/@MeshInstance3D@3824",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.55,
@@ -993,11 +1362,12 @@
 			-15.0
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3721",
+		"nodo": "Luci/@MeshInstance3D@3825",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.03,
@@ -1005,11 +1375,12 @@
 			-14.7
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3722",
+		"nodo": "Luci/@MeshInstance3D@3826",
+		"squadra": "grafica",
 		"problema": "sospeso",
 		"pos": [
 			32.03,
@@ -1017,35 +1388,12 @@
 			-15.3
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "torre",
-		"nodo": "TorreStruttura/torre_A_sostegni",
-		"problema": "ingombro",
-		"pos": [
-			35.01,
-			-6.01,
-			-8.55
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "torre",
-		"nodo": "TorreScivoli/torre_tubo_inseguimento",
-		"problema": "ingombro",
-		"pos": [
-			38.01,
-			-19.98,
-			-14.05
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
 		"nodo": "TorreScivoli/discesa_5_0",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
 			37.51,
@@ -1053,42 +1401,32 @@
 			-18.8
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@Node3D@3633/@MeshInstance3D@3637",
+		"nodo": "TorreStruttura/torre_A_scalette",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
-			27.01,
-			-12.01,
-			-19.8
+			33.76,
+			-6.01,
+			-10.55
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "torre",
-		"nodo": "Luci/@Node3D@3633/@MeshInstance3D@3636",
+		"nodo": "TorreScivoli/discesa_1_1",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
-			27.01,
-			-12.01,
-			-19.55
+			38.76,
+			-6.01,
+			-11.55
 		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@Node3D@3633/@MeshInstance3D@3638",
-		"problema": "ingombro",
-		"pos": [
-			27.01,
-			-12.01,
-			-19.3
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	}
 ]

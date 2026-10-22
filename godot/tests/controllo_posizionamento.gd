@@ -4,12 +4,16 @@ extends Node
 ## Apre ogni zona del gioco ([constant ZONE]) e cerca:
 ##  a) SOSPESO: oggetti di scena con niente a meno di 5 cm dal loro box (né pavimento, né parete o soffitto, né un
 ##     altro oggetto o un filo a cui siano attaccati);
-##  b) INGOMBRO: mesh visibili che chi cammina attraversa: a meno di 10 cm dall'asse del giocatore, da 35 cm a
-##     1,95 m sopra i pavimenti dove sta in piedi (il suo cilindro non tocca il mondo), raggiungibili a piedi dai
-##     checkpoint; per esempio un tubo davanti alla faccia sulle scale;
+##  b) INGOMBRO: mesh visibili, con o senza collisione, a meno di 10 cm dall'asse del giocatore, da 35 cm a 2 m
+##     sopra i pavimenti dove passa (le gambe non toccano il mondo), raggiungibili a piedi dai checkpoint; per
+##     esempio un tubo davanti alla faccia sulle scale;
 ##  c) COPRE / COPERTO: oggetti che compenetrano Polaroid, pulsanti, porte, cancelli e oggetti da raccogliere, e
 ##     quelli che li nascondono a ogni punto di vista vicino all'altezza degli occhi;
-##  d) COMPENETRA: oggetti di scena che entrano l'uno nell'altro.
+##  d) COMPENETRA: oggetti di scena che entrano l'uno nell'altro;
+##  e) ESTREMITA_LIBERA: tubi, cavi e condotte (dal nome, mesh allungate) con un capo che non tocca niente (muro,
+##     pavimento, soffitto, un altro tubo o un macchinario): la richiesta dell'utente è partita da un tubo davanti alla
+##     faccia sulle scale che non si collegava a nulla.
+## Ogni caso ha la squadra a cui va (vedi [constant SQUADRE]).
 ## Le mesh si misurano con la loro forma vera: ogni mesh visibile ha per il controllo una collisione temporanea
 ## (trimesh) su uno strato suo, anche quelle che nel gioco non ne hanno. I pavimenti e i muri sono quelli del
 ## gioco (strato WORLD).
@@ -26,6 +30,15 @@ const ZONE := [
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre"},
 ]
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
+## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
+const SQUADRE := [
+	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"],
+	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
+	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
+	["ArredoRisalita", "enigmi"],
+]
+const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "da assegnare"}
+const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
 ## Un oggetto di scena: una mesh con la diagonale del box fra questi due valori (m). Più grande è architettura.
@@ -34,7 +47,7 @@ const OGGETTO_MAX := 4.0
 const CONTATTO := 0.05
 const PASSO_GRIGLIA := 0.25
 const TESTA_DA := 0.35
-const TESTA_A := 1.95
+const TESTA_A := 2.0
 const GRADINO := 0.4
 const OCCHI := 1.6
 
@@ -105,6 +118,10 @@ func _controlla_scena(z: Dictionary) -> void:
 	prima = _trovati.size()
 	_compenetrazioni(z, oggetti)
 	print("  d) compenetrazioni fra oggetti: %d" % (_trovati.size() - prima))
+	prima = _trovati.size()
+	for mi in mesh:
+		_estremita(z, mi)
+	print("  e) tubi e cavi con un capo libero: %d" % (_trovati.size() - prima))
 	print("  (%.0f s)" % ((Time.get_ticks_msec() - t0) / 1000.0))
 	_radice.queue_free()
 	_corpi.clear()
@@ -188,12 +205,19 @@ func _zona(z: Dictionary, n: Node) -> String:
 	return String((z["sotto"] as Dictionary).get(String(p.get_name(0)), String(p.get_name(0)).to_lower()))
 
 
+static func _squadra(zona: String, nodo: String) -> String:
+	for r in SQUADRE:
+		if nodo.begins_with(r[0]) or nodo.contains("/" + r[0]):
+			return r[1]
+	return SQUADRE_ZONA.get(zona, "da assegnare")
+
+
 func _nodo(n: Node) -> String:
 	return String(_radice.get_path_to(n))
 
 
 func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: String) -> void:
-	var k := {"zona": _zona(z, n), "nodo": _nodo(n), "problema": problema,
+	var k := {"zona": _zona(z, n), "nodo": _nodo(n), "squadra": _squadra(_zona(z, n), _nodo(n)), "problema": problema,
 			"pos": [snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(pos.z, 0.01)], "dettaglio": dettaglio}
 	_trovati.append(k)
 
@@ -241,7 +265,7 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		primo = false
 	var cil := CylinderShape3D.new()
 	cil.radius = 0.3
-	cil.height = 1.45
+	cil.height = 0.7
 	_q_corpo = PhysicsShapeQueryParameters3D.new()
 	_q_corpo.shape = cil
 	_q_corpo.collision_mask = Layers.WORLD
@@ -309,7 +333,7 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 				raggiunte[k2] = true
 				coda.append(k2)
 	print("  %d celle raggiungibili a piedi" % raggiunte.size())
-	# nello spazio sopra ogni cella, a meno di 10 cm dall'asse del giocatore: mesh che si attraversano
+	# nello spazio sopra ogni cella, a meno di 10 cm dall'asse del giocatore: tutto quello che si vede (anche con la collisione)
 	var forma := BoxShape3D.new()
 	forma.size = Vector3(0.2, TESTA_A - TESTA_DA, 0.2)
 	var q := PhysicsShapeQueryParameters3D.new()
@@ -337,17 +361,18 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 	for mi in visti:
 		var p: Vector3 = visti[mi][0]
 		var alto: float = visti[mi][3]
-		var dove := "all'altezza della testa" if alto > 1.4 else ("del busto" if alto > 0.9 else "delle gambe")
-		_trova(z, mi, "ingombro", p, "si attraversa camminando, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)" % [
+		var dove := "all'altezza della testa" if alto > 1.4 else ("all'altezza del busto" if alto > 0.9 else "all'altezza delle gambe")
+		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)" % [
 				dove, visti[mi][2], alto, visti[mi][1]])
 
 
-## Una cella dove sta in piedi il giocatore: ci entra il suo cilindro (raggio 30 cm, fra 0,3 e 1,75 m sopra il
-## pavimento) senza toccare niente del mondo.
+## Una cella dove passa il giocatore: ci entrano le sue gambe (un cilindro di raggio 30 cm fra 0,3 e 1 m sopra il
+## pavimento) senza toccare niente del mondo. Più in alto conta tutto quello che si vede, anche con la collisione
+## (un tubo a 1,7 m sopra una scala è un difetto anche se ci si sbatte contro).
 func _libero(c: Vector2i, y: float, limiti: AABB) -> bool:
 	var x := limiti.position.x + c.x * PASSO_GRIGLIA
 	var zz := limiti.position.z + c.y * PASSO_GRIGLIA
-	_q_corpo.transform = Transform3D(Basis(), Vector3(x, y + 0.3 + 0.725, zz))
+	_q_corpo.transform = Transform3D(Basis(), Vector3(x, y + 0.3 + 0.35, zz))
 	return _spazio.intersect_shape(_q_corpo, 1).is_empty()
 
 
@@ -437,6 +462,50 @@ func _interattivi(z: Dictionary) -> void:
 			nomi.sort_custom(func(a, b): return ostacoli[a] > ostacoli[b])
 			_trova(z, n, "coperto", bersaglio, "non si vede da nessuno dei %d punti di vista vicini (1-1,8 m, altezza degli occhi); lo coprono: %s (la superficie più vicina è a %.0f cm dal suo centro)" % [
 					punti, ", ".join(nomi.slice(0, 3)), distanza * 100.0])
+
+
+# --- e) tubi e cavi con un capo libero ---------------------------------------------------------------
+
+func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
+	if _acqua.has(mi):
+		return
+	var nome := String(mi.name).to_lower()
+	if not NOMI_TUBI.any(func(t): return nome.contains(t)):
+		return
+	var b := _box(mi)
+	var lati := [b.size.x, b.size.y, b.size.z]
+	var asse := lati.find(lati.max())
+	var ordinati := lati.duplicate()
+	ordinati.sort()
+	# un pezzo solo e allungato (le mesh con tanti tubi insieme non si controllano così)
+	if float(ordinati[2]) < 0.4 or float(ordinati[2]) < 3.0 * float(ordinati[1]):
+		return
+	var v := mi.global_transform * mi.mesh.get_faces()
+	var lo := INF
+	var hi := -INF
+	for p in v:
+		lo = minf(lo, p[asse])
+		hi = maxf(hi, p[asse])
+	var me: Array[RID] = []
+	if _corpo_di.has(mi):
+		me.append((_corpo_di[mi] as StaticBody3D).get_rid())
+	for capo in [lo, hi]:
+		var box := AABB()
+		var primo := true
+		for p in v:
+			if absf(p[asse] - capo) <= 0.08:
+				box = AABB(p, Vector3.ZERO) if primo else box.expand(p)
+				primo = false
+		var forma := BoxShape3D.new()
+		forma.size = box.size + Vector3.ONE * CONTATTO * 2.0
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = forma
+		q.transform = Transform3D(Basis(), box.get_center())
+		q.collision_mask = STRATO | Layers.WORLD
+		q.exclude = me
+		if _spazio.intersect_shape(q, 1).is_empty():
+			_trova(z, mi, "estremita_libera", box.get_center(), "un capo del %s non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)" % (
+					"tubo" if not nome.contains("cav") and not nome.contains("filo") and not nome.contains("cable") else "cavo"))
 
 
 # --- d) compenetrazioni fra oggetti di scena -----------------------------------------------------------
@@ -557,7 +626,7 @@ func _scrivi_rapporto(nuovi: Array, noti: Array, spariti: Array) -> void:
 	var cartella := ProjectSettings.globalize_path("res://").path_join("../docs/tecnico/posizionamento").simplify_path()
 	DirAccess.make_dir_recursive_absolute(cartella)
 	var testo := "# Controllo di posizionamento\n\n"
-	testo += "Scritto da `godot/tests/controllo_posizionamento.gd` il %s. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (si attraversa camminando: a meno di 10 cm dall'asse del giocatore, fra %.2f e %.2f m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro).\n\n" % [
+	testo += "Scritto da `godot/tests/controllo_posizionamento.gd` il %s. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra %.2f e %.2f m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.\n\n" % [
 			Time.get_datetime_string_from_system(false, true), TESTA_DA, TESTA_A]
 	testo += "Nuovi: %d. Già noti (in `godot/tests/posizionamento_eccezioni.json`): %d. Eccezioni non più trovate: %d.\n\n" % [nuovi.size(), noti.size(), spariti.size()]
 	for sezione in [["Nuovi", nuovi], ["Già noti", noti]]:
@@ -571,12 +640,12 @@ func _scrivi_rapporto(nuovi: Array, noti: Array, spariti: Array) -> void:
 		var nomi := zone.keys()
 		nomi.sort()
 		for zn in nomi:
-			testo += "### %s\n\n| Problema | Nodo | Posizione | Dettaglio |%s\n|---|---|---|---|%s\n" % [zn,
+			testo += "### %s\n\n| Squadra | Problema | Nodo | Posizione | Dettaglio |%s\n|---|---|---|---|---|%s\n" % [zn,
 					" Stato |" if sezione[0] != "Nuovi" else "", "---|" if sezione[0] != "Nuovi" else ""]
 			var lista: Array = zone[zn]
 			lista.sort_custom(func(a, b): return String(a["problema"]) + String(a["nodo"]) < String(b["problema"]) + String(b["nodo"]))
 			for t in lista:
-				testo += "| %s | `%s` | %s | %s |%s\n" % [t["problema"], t["nodo"], "%.2f, %.2f, %.2f" % t["pos"], t["dettaglio"],
+				testo += "| %s | %s | `%s` | %s | %s |%s\n" % [t["squadra"], t["problema"], t["nodo"], "%.2f, %.2f, %.2f" % t["pos"], t["dettaglio"],
 						(" %s: %s |" % [t.get("stato", ""), t.get("motivo", "")]) if sezione[0] != "Nuovi" else ""]
 			testo += "\n"
 	if not spariti.is_empty():
