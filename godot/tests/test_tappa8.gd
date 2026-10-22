@@ -7,9 +7,10 @@ extends Node
 ##    morte (saltata) e si riparte dal checkpoint con lei di nuovo affacciata.
 ## 2. Se non la spruzzi resta affacciata a lungo: anche se ti allontani e anche dopo che l'hai vista
 ##    bene (riscontro sulla v0.3.4: va via solo se la spruzzi).
-## 3. La spruzzi col getto dello zaino: parte subito il geyser, lei sparisce lì dentro solo quando è
-##    coperta (finché si vede, mani e tentacoli non entrano nel bordo né nel pavimento) e la sua luce
-##    si allontana lungo il condotto.
+## 3. La spruzzi col getto dello zaino: si tuffa subito nella fossa (22 ottobre, al posto del geyser), con
+##    lo schizzo grande quando entra la testa e quello piccolo quando entrano i tentacoli; sparisce solo
+##    quando è tutta sotto il pelo dell'acqua (finché si vede, mani e tentacoli non entrano nel bordo né
+##    nel pavimento) e la sua luce si allontana lungo il condotto.
 ## 4. La spruzzi da altre distanze e da altri lati, sulla testa, su una mano, su un tentacolo: se ne
 ##    va subito ogni volta.
 ## 5. Quando lei se ne va il portone della sala della torre sulla parete est NON si apre da solo: lo
@@ -245,12 +246,17 @@ func _run() -> void:
 	var scivolata := false
 	var dopo := await _spruzzala(p.global_position, lei.medusa.call(&"get_eye_position"))
 	check(dopo >= 0.0 and dopo < 1.2, "la spruzzi in faccia dalla scia: se ne va subito (%.2f s dal primo getto)" % dopo)
-	check(lei.get_node_or_null(^"Geyser") != null and (lei.get_node(^"Geyser") as GeyserFossa).in_corso(), "parte il geyser")
-	var coperta := ""
+	check(lei.tuffo and lei.fase == LeiSbuca.Fase.SCIVOLA and lei.get_node_or_null(^"Geyser") == null, "si tuffa (niente geyser)")
+	var sotto_quando_sparisce := ""
+	var testa_in_acqua := -1.0
+	var fotogrammi := 0
 	for i in 900:
 		await get_tree().physics_frame
-		if coperta.is_empty() and lei.fase == LeiSbuca.Fase.FUGA:
-			coperta = _coperta_dal_geyser(punti, occhio_lei)
+		fotogrammi += 1
+		if testa_in_acqua < 0.0 and bool(lei.get(&"_testa_entrata")):
+			testa_in_acqua = fotogrammi / 60.0
+		if sotto_quando_sparisce.is_empty() and lei.fase == LeiSbuca.Fase.FUGA:
+			sotto_quando_sparisce = "tutta" if lei.tutta_sotto() else "no: " + str(lei.punti_corpo())
 		if lei.fase == LeiSbuca.Fase.SCIVOLA and lei.opacita() > 0.25:
 			scivolata = true
 			var ora := _dentro_pavimento(punti)
@@ -262,13 +268,18 @@ func _run() -> void:
 			luce_lontana = maxf(luce_lontana, luce.global_position.distance_to(lei.punto_sbuca.global_position))
 		if lei.fase == LeiSbuca.Fase.FINITA:
 			break
-	check(coperta == "tutta", "quando sparisce l'acqua del geyser la copre tutta: occhio, mani e tentacoli nascosti da ogni lato (%s)" % coperta)
+	check(testa_in_acqua > 0.0 and testa_in_acqua < 1.3, "la testa entra in acqua presto, con lo schizzo grande (%.2f s)" % testa_in_acqua)
+	check(bool(lei.get(&"_coda_entrata")), "poi entrano i tentacoli, con lo schizzo piccolo")
+	check(sotto_quando_sparisce == "tutta", "sparisce solo quando è tutta sotto il pelo dell'acqua: testa, mani e punte dei tentacoli (%s)" % sotto_quando_sparisce)
 	check(scivolata and peggio < 0.05, "scivolando sotto, finché si vedono, mani e tentacoli non entrano nel pavimento (%.2f m)" % peggio)
 	check(fuga_vista and luce_lontana > 1.5, "scivola sotto e la sua luce si allontana sott'acqua (%.1f m)" % luce_lontana)
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
 
 	print("4. La spruzzi da altre distanze e da altri lati: se ne va subito ogni volta")
 	var testa5: Vector3 = lei.punto_sbuca.global_transform * Vector3(0.0, 1.63, 1.8)
+	# Mani e tentacoli si prendono con lei di nuovo affacciata: dopo il tuffo la medusa è ancora giù nella fossa.
+	lei.load_state({"finita": false})
+	await _frames(5)
 	var dita: Vector3 = lei.medusa.global_transform * punti[0]
 	var tentacolo := dita
 	for q in punti:
@@ -401,27 +412,6 @@ func _angolo_verso(punto: Vector3) -> float:
 
 ## Per ogni punto (coordinate della medusa) quanto sta sotto la superficie su cui poggia (bordo,
 ## pavimento, fondo della fossa senza il coperchio): positivo se ci è dentro.
-## Nel fotogramma in cui lei sparisce: quali suoi punti (l'occhio, le dita e le punte dei tentacoli) non
-## sono nascosti dall'acqua del geyser V1 (GeyserMesh.scoperto_da: le direzioni da cui la vede chi sta in
-## piedi nella sala). "tutta" se sono nascosti tutti.
-func _coperta_dal_geyser(punti: PackedVector3Array, occhio: Vector3) -> String:
-	var g := lei.get_node_or_null(^"Geyser") as GeyserMesh
-	if g == null:
-		return "niente geyser V1"
-	var tutti: Array[Vector3] = [occhio]
-	for q in punti:
-		tutti.append(lei.medusa.global_transform * q)
-	var fuori := PackedStringArray()
-	for k in tutti.size():
-		# l'occhio, le dita e le punte stese oltre il bordo del tutto; i tentacoli vicini al corpo, dentro la
-		# colonna, al più da 6 direzioni su 48 (spiragli nella parete d'acqua)
-		var n := g.scoperto_da(tutti[k])
-		var dentro := Vector2(tutti[k].x - g.global_position.x, tutti[k].z - g.global_position.z).length() < 0.6
-		if n > (6 if dentro and k > 0 else 0):
-			fuori.append("%s %s da %d direzioni" % ["occhio" if k == 0 else "punto %d" % (k - 1), str(tutti[k]), n])
-	return "tutta" if fuori.is_empty() else "scoperti: " + ", ".join(fuori)
-
-
 func _dentro_pavimento(punti: PackedVector3Array) -> PackedFloat32Array:
 	var out := PackedFloat32Array()
 	var space := p.get_world_3d().direct_space_state

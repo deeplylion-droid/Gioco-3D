@@ -92,11 +92,19 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 @export var profondita := 2.3
 ## Falso finché la fossa non c'è: niente scena, niente acqua che sale.
 @export var abilitata := true
-## Quando scivola sotto, un geyser d'acqua (GeyserMesh: la colonna simulata, la V1 scelta il 19 ottobre)
-## si alza dalla fossa e la copre tutta: lei sparisce solo quando è coperta (scelta dell'utente del 17
-## ottobre). Si crea già all'avvio, così la prima volta non blocca il gioco. Falso: scivola e svanisce
-## come prima.
-@export var geyser := true
+## Quando la spruzzi si tuffa nella fossa (decisione del coordinatore con l'utente del 22 ottobre, al posto
+## del geyser): uno schizzo grande quando la testa entra in acqua e uno più piccolo quando entrano i
+## tentacoli, le onde sulla fossa, il tonfo; sparisce solo quando è tutta sotto il pelo dell'acqua.
+## L'entrata per ora è semplice (la discesa di _scivola_a, che svanisce scendendo): l'animazione del tuffo
+## arriva dopo la scelta dell'utente tra le versioni A, B e C.
+@export var tuffo := true
+## Quanto dura la discesa del tuffo (s) e quanto scende in tutto (m sotto il punto in cui sbuca).
+@export var durata_tuffo := 1.3
+@export var profondita_tuffo := 3.0
+## Il geyser V1 (GeyserMesh, la colonna simulata scelta il 19 ottobre): messo da parte il 22 ottobre (si
+## vedeva lei dai buchi della colonna). Vero (e tuffo falso): si alza dalla fossa e lei sparisce quando è
+## coperta, come nella proposta.
+@export var geyser := false
 
 var fase := Fase.ATTESA
 var _t := 0.0
@@ -110,6 +118,9 @@ var _tocco: Area3D
 var _prossima_bolla := 0.0
 var _rng := RandomNumberGenerator.new()
 var _geyser: GeyserFossa
+# Il tuffo: la testa e i tentacoli sono già entrati in acqua (lo schizzo una volta sola).
+var _testa_entrata := false
+var _coda_entrata := false
 var _colpibile: WaterHitbox
 
 
@@ -184,6 +195,19 @@ func _physics_process(delta: float) -> void:
 			# Resta lì finché non la spruzzi (_on_spruzzata); quanto la guardi si conta ancora.
 			_conta_vista(p, delta)
 		Fase.SCIVOLA:
+			if tuffo:
+				var kt := clampf(_t / durata_tuffo, 0.0, 1.0)
+				# Entrata provvisoria (finché non c'è l'animazione del tuffo): la discesa di oggi, con la
+				# dissolvenza che nasconde i tentacoli stesi oltre il bordo mentre scendono (un corpo rigido non
+				# può tirarli dentro la fossa senza attraversare il bordo).
+				_scivola_a(kt, true, profondita_tuffo)
+				if kt < 0.35:
+					_controlla_presa(p)
+				_schizzi_tuffo()
+				# Sparisce solo quando è tutta sotto il pelo (rete di sicurezza: un secondo dopo la fine).
+				if tutta_sotto() or _t > durata_tuffo + 1.0:
+					_fuga()
+				return
 			if _geyser and _geyser.in_corso():
 				# Col geyser resta ferma e si vede tutta finché l'acqua non la copre, poi sparisce lì dentro.
 				if _t >= _geyser.copre:
@@ -315,7 +339,10 @@ func _scivola() -> void:
 	fase = Fase.SCIVOLA
 	_t = 0.0
 	_schizzo(0.8)
-	if geyser and punto_sbuca:
+	if tuffo:
+		_testa_entrata = false
+		_coda_entrata = false
+	elif geyser and punto_sbuca:
 		if _geyser == null:
 			_crea_geyser()
 		# Sul pavimento (l'origine della posa), al centro della fossa davanti al bordo.
@@ -402,17 +429,77 @@ func _metti_a(giu: float) -> void:
 ## verso il centro della fossa, così mani e tentacoli passano sopra il bordo; poi scende sempre più in
 ## fretta e intanto svanisce: è trasparente del tutto a [member scivola_svanisce] della discesa, quando
 ## i tentacoli stesi oltre il bordo sono ancora sopra il pavimento.
-func _scivola_a(k: float) -> void:
+func _scivola_a(k: float, svanisce := true, fondo := -1.0) -> void:
 	if medusa == null or punto_sbuca == null:
 		return
+	if fondo < 0.0:
+		fondo = profondita
 	var a := clampf(k / maxf(scivola_stacco, 0.01), 0.0, 1.0)
 	var b := clampf((k - scivola_stacco) / maxf(1.0 - scivola_stacco, 0.01), 0.0, 1.0)
 	var su := scivola_su * smoothstep(0.0, 0.35, a)
 	var indietro := scivola_indietro * smoothstep(0.35, 1.0, a)
-	var giu := profondita * b * b
+	var giu := fondo * b * b
 	var xf := punto_sbuca.global_transform
 	medusa.global_transform = Transform3D(xf.basis, xf.origin + Vector3.UP * (su - giu) - xf.basis.z.normalized() * indietro)
-	_svanisci(smoothstep(0.0, maxf(scivola_svanisce, 0.01), b))
+	if svanisce:
+		_svanisci(smoothstep(0.0, maxf(scivola_svanisce, 0.01), b))
+
+
+## I punti di lei che devono finire sotto l'acqua prima che sparisca (globali): la cima della testa (35 cm
+## sopra l'occhio), le dita e le punte dei tentacoli (i punti delle gocce della MedusaAffacciata).
+func punti_corpo() -> PackedVector3Array:
+	var out := PackedVector3Array()
+	if medusa == null:
+		return out
+	if medusa.has_method(&"get_eye_position"):
+		out.append((medusa.call(&"get_eye_position") as Vector3) + Vector3(0.0, 0.35, 0.0))
+	if "punti_gocce" in medusa:
+		for q in medusa.get(&"punti_gocce"):
+			out.append(medusa.global_transform * q)
+	return out
+
+
+## Vero quando è tutta sotto il pelo dell'acqua della fossa (testa, mani e punte dei tentacoli).
+func tutta_sotto() -> bool:
+	var pelo := _pelo() - 0.05
+	for q in punti_corpo():
+		if q.y >= pelo:
+			return false
+	return true
+
+
+## Gli schizzi del tuffo: grande quando la testa entra in acqua, più piccolo quando ci entrano gli ultimi
+## tentacoli; con le onde sulla fossa e il tonfo.
+func _schizzi_tuffo() -> void:
+	var punti := punti_corpo()
+	if punti.is_empty():
+		return
+	var pelo := _pelo()
+	if not _testa_entrata and punti[0].y < pelo:
+		_testa_entrata = true
+		_schizzo_in(punti[0], 3.0)
+		_suona(&"tuffo", 4.0, 0.8)
+	if _testa_entrata and not _coda_entrata:
+		var tutti := true
+		var centro := Vector3.ZERO
+		for i in range(1, punti.size()):
+			tutti = tutti and punti[i].y < pelo
+			centro += punti[i]
+		if tutti:
+			_coda_entrata = true
+			_schizzo_in(centro / maxf(punti.size() - 1, 1), 1.2)
+			_suona(&"tuffo", -4.0, 1.25)
+
+
+## Uno schizzo dell'acqua della fossa nel punto [param dove] (la superficie sopra di lui), di forza
+## [param forza] (WaterBody.splash: 2-3 è un tuffo), con onde larghe su tutta la fossa.
+func _schizzo_in(dove: Vector3, forza: float) -> void:
+	for a in acque:
+		if a and a.has_method(&"splash"):
+			a.call(&"splash", dove, forza)
+			if a.has_method(&"add_impulse"):
+				a.call(&"add_impulse", Vector3(dove.x, _pelo(), dove.z), 0.9 * forza, 0.02 * forza, 0.3)
+			break
 
 
 ## Quanto è trasparente (0 si vede tutta, 1 non si vede più): GeometryInstance3D.transparency delle
