@@ -426,19 +426,20 @@ func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
 			return
 		_trova_staccato(z, mi, me)
 		return
+	# i punti nel mondo (la scala del nodo, nella query, non si applica alla forma), allargati di STACCO in tutte le
+	# direzioni (ogni punto spostato di ±STACCO sui tre assi: anche un foglio sottile si allarga sotto e sopra)
+	var gt := mi.global_transform
 	var punti := PackedVector3Array()
-	var centro := Vector3.ZERO
+	var spinte := [Vector3(STACCO, 0, 0), Vector3(-STACCO, 0, 0), Vector3(0, STACCO, 0), Vector3(0, -STACCO, 0),
+		Vector3(0, 0, STACCO), Vector3(0, 0, -STACCO)]
 	for q in conv.points:
-		centro += q
-	centro /= conv.points.size()
-	var scala := mi.global_transform.basis.get_scale()
-	for q in conv.points:
-		var d := (q - centro) * scala
-		punti.append(q + (d.normalized() * STACCO) / scala if d.length() > 0.0001 else q)
+		var w := gt * q
+		for sp in spinte:
+			punti.append(w + sp)
 	var forma := ConvexPolygonShape3D.new()
 	forma.points = punti
 	qp.shape = forma
-	qp.transform = mi.global_transform
+	qp.transform = Transform3D.IDENTITY
 	if not _spazio.intersect_shape(qp, 1).is_empty():
 		return
 	_trova_staccato(z, mi, me)
