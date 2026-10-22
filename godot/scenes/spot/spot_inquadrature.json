@@ -98,6 +98,6 @@
 		{"t": 34.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.35, "occhio": 0.0},
 		{"t": 38.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.8, "occhio": 0.0},
 		{"t": 38.2, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 0.0},
-		{"t": 43.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 1.0}
+		{"t": 42.8, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 1.0}
 	]
 }
