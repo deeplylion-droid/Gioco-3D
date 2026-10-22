@@ -37,7 +37,7 @@ const SQUADRE := [
 	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
 	["ArredoRisalita", "enigmi"],
 ]
-const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "da assegnare"}
+const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2"}   # tecnici: tools/blender/ambienti2_*.py
 const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
@@ -57,6 +57,7 @@ var _trovati: Array = []        # {zona, nodo, problema, pos, dettaglio}
 var _corpi := {}                # RID del corpo temporaneo -> MeshInstance3D
 var _corpo_di := {}             # MeshInstance3D -> StaticBody3D
 var _acqua := {}                # MeshInstance3D delle superfici dell'acqua
+var _semi: Array[Vector3] = []   # da dove parte il riempimento (vedi _controlla_scena)
 var _q_corpo: PhysicsShapeQueryParameters3D   # il cilindro del giocatore (vedi _libero)
 var _spazio: PhysicsDirectSpaceState3D
 var _radice: Node
@@ -88,6 +89,17 @@ func _controlla_scena(z: Dictionary) -> void:
 	print("Scena %s" % z["scena"])
 	_radice = (load(z["scena"]) as PackedScene).instantiate()
 	get_tree().root.add_child(_radice)
+	# i punti da cui parte il riempimento delle celle, subito, prima che qualcosa si muova: solo punti fissi
+	# (checkpoint, i loro punti di ripartenza, il giocatore dove comincia), niente bambini o altri corpi che
+	# camminano (con loro i casi cambiavano da un giro all'altro)
+	_semi.clear()
+	for cp in _radice.find_children("*", "Checkpoint", true, false):
+		_semi.append((cp as Node3D).global_position)
+		var sp = cp.get(&"spawn_point")
+		if sp is Node3D:
+			_semi.append((sp as Node3D).global_position)
+	for g in _radice.find_children("*", "Player", true, false):
+		_semi.append((g as Node3D).global_position)
 	for i in 20:
 		await get_tree().physics_frame
 	# poi ferma, come la lasciano gli script dopo l'ingresso (niente animazioni durante il controllo); i corpi
@@ -131,7 +143,8 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().process_frame
 
 
-## Le mesh visibili della scena, senza il giocatore e le creature (si muovono); le superfici dell'acqua a parte.
+## Le mesh visibili della scena, senza il giocatore, le creature e le gocce che cadono (si muovono); le superfici
+## dell'acqua a parte.
 func _mesh_visibili() -> Array:
 	var out := []
 	var esclusi := []
@@ -139,6 +152,8 @@ func _mesh_visibili() -> Array:
 		esclusi.append(n)
 	for n in get_tree().get_nodes_in_group(&"bambini"):
 		esclusi.append(n)
+	for n in _radice.find_children("*", "Gocce", true, false):
+		esclusi.append(n)   # le gocce che cadono dal soffitto: in volo, non sono messe male
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or not _visibile(mi) or mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
@@ -263,12 +278,18 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 			continue
 		limiti = b if primo else limiti.merge(b)
 		primo = false
+	# la griglia ancorata al mondo (multipli di PASSO_GRIGLIA), non all'angolo della scena: se la scena si allarga
+	# le celle restano dove sono, e i casi vicino agli oggetti non cambiano da un branch all'altro
+	var angolo := Vector3(floorf(limiti.position.x / PASSO_GRIGLIA), limiti.position.y, floorf(limiti.position.z / PASSO_GRIGLIA))
+	angolo.x *= PASSO_GRIGLIA
+	angolo.z *= PASSO_GRIGLIA
+	limiti = AABB(angolo, limiti.end - angolo)
 	var cil := CylinderShape3D.new()
 	cil.radius = 0.3
 	cil.height = 0.7
 	_q_corpo = PhysicsShapeQueryParameters3D.new()
 	_q_corpo.shape = cil
-	_q_corpo.collision_mask = Layers.WORLD
+	_q_corpo.collision_mask = Layers.WORLD | Layers.BARRIERS   # anche i muri invisibili fermano il giocatore
 	# i pavimenti: per ogni colonna della griglia tutti i piani calpestabili, dall'alto in basso
 	var celle := {}   # Vector3i(ix, piano, iz) -> y
 	var nx := int(limiti.size.x / PASSO_GRIGLIA) + 1
@@ -290,15 +311,8 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 				y = hp.y - 0.05
 			if not piani.is_empty():
 				colonne[Vector2i(ix, iz)] = piani
-	# raggiungibili a piedi: dai checkpoint (e dai loro punti di ripartenza), con gradini fino a GRADINO
-	var semi := []
-	for cp in _radice.find_children("*", "Checkpoint", true, false):
-		semi.append((cp as Node3D).global_position)
-		var sp = cp.get(&"spawn_point")
-		if sp is Node3D:
-			semi.append((sp as Node3D).global_position)
-	for g in _radice.find_children("*", "CharacterBody3D", true, false):
-		semi.append((g as Node3D).global_position)
+	# raggiungibili a piedi dai punti fissi (_semi), con gradini fino a GRADINO
+	var semi := _semi
 	var coda: Array[Vector3i] = []
 	var raggiunte := {}
 	for s in semi:
@@ -346,13 +360,18 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		q.transform = Transform3D(Basis(), centro)
 		q.collision_mask = STRATO
 		var r := _spazio.intersect_shape(q, 16)
+		var solido := false
+		if not r.is_empty():
+			q.collision_mask = Layers.WORLD | Layers.BARRIERS
+			solido = not _spazio.intersect_shape(q, 1).is_empty()
 		for h in r:
 			var mi: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
 			if mi == null or _acqua.has(mi):
 				continue
 			if not visti.has(mi):
-				visti[mi] = [centro - Vector3(0, (TESTA_DA + TESTA_A) * 0.5, 0), 0, 9.0, 0.0]
+				visti[mi] = [centro - Vector3(0, (TESTA_DA + TESTA_A) * 0.5, 0), 0, 9.0, 0.0, false]
 			visti[mi][1] += 1
+			visti[mi][4] = visti[mi][4] or solido
 			# fin dove arriva sopra il pavimento (le gambe o la testa)
 			var bb := _box(mi)
 			var pav: float = centro.y - (TESTA_DA + TESTA_A) * 0.5
@@ -362,8 +381,9 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		var p: Vector3 = visti[mi][0]
 		var alto: float = visti[mi][3]
 		var dove := "all'altezza della testa" if alto > 1.4 else ("all'altezza del busto" if alto > 0.9 else "all'altezza delle gambe")
-		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)" % [
-				dove, visti[mi][2], alto, visti[mi][1]])
+		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm), %s" % [
+				dove, visti[mi][2], alto, visti[mi][1],
+				"con la collisione (ci si sbatte contro)" if visti[mi][4] else "senza collisione (si attraversa)"])
 
 
 ## Una cella dove passa il giocatore: ci entrano le sue gambe (un cilindro di raggio 30 cm fra 0,3 e 1 m sopra il

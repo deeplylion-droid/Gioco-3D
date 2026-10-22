@@ -497,12 +497,13 @@ func _metti(p: Player, pos: Vector3, guarda: Vector3) -> void:
 		p.look_at(g, Vector3.UP)
 
 
-## I nomi (col percorso nella torre) delle luci della torre accese: visibili e con energia.
+## I nomi (col percorso nella torre) delle luci della torre accese, cioè visibili: il blackout le spegne
+## nascondendole. L'energia non conta: le lampade guaste (_sfarfalla) vanno a 0 e tornano su in ogni momento.
 func _luci_accese(sala: Node) -> Array:
 	var out := []
 	for n in sala.find_children("*", "Light3D", true, false):
 		var l := n as Light3D
-		if l.is_visible_in_tree() and (l.light_energy > 0.01 or l.has_meta(&"base") or l.has_meta(&"sfarfalla")):
+		if l.is_visible_in_tree():
 			# (le luci senza nome hanno nomi automatici diversi dopo la ricarica della sala: il posto le distingue)
 			var nome := String(l.name)
 			out.append(nome if not nome.begins_with("@") else "%s %s" % [l.get_class(), str(l.global_position.snapped(Vector3.ONE * 0.01))])

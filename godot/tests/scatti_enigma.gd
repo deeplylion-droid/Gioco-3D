@@ -7,17 +7,26 @@ extends Node
 ##   xvfb-run -a -s "-screen 0 1600x900x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_enigma.gd <cartella> <scatto>
 ## Scatti: meta (la fila da metà sala), vicino, pieni (da vicino, col verde riuscito), verde (il
-## miscuglio riuscito da vicino), portone (le lampadine
+## miscuglio riuscito da vicino), valvola (la valvola rossa del gorgo), portone (le lampadine
 ## accese), gorgo (a metà del gorgo che svuota il miscuglio torbido).
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 const CAMERE := {
-	"meta": [Vector3(4.0, 1.7, 3.5), Vector3(15.6, 1.1, -3.6)],
-	"vicino": [Vector3(11.8, 1.7, -2.6), Vector3(15.6, 1.25, -3.6)],
-	"pieni": [Vector3(11.8, 1.7, -2.6), Vector3(15.6, 1.25, -3.6)],   # come vicino, col verde riuscito
-	"verde": [Vector3(13.4, 1.5, -2.9), Vector3(15.1, 0.95, -3.5)],
+	# acquari doppi (prova dell'utente del 19 ottobre): giallo (15,4; -9,2), miscuglio (14,7; -3,6),
+	# blu (15,4; 2), valvola (12,4; 0,9; -3,6)
+	"meta": [Vector3(2.0, 1.7, 6.5), Vector3(15.4, 2.2, -3.6)],
+	"vicino": [Vector3(9.4, 1.7, -0.2), Vector3(15.0, 1.7, -3.6)],
+	"pieni": [Vector3(9.4, 1.7, -0.2), Vector3(15.0, 1.7, -3.6)],   # come vicino, col verde riuscito
+	"verde": [Vector3(11.4, 1.6, -1.6), Vector3(14.4, 0.6, -3.4)],
+	"valvola": [Vector3(9.4, 1.6, -1.6), Vector3(12.4, 0.75, -3.6)],
+	"lampada": [Vector3(10.8, 1.6, -5.0), Vector3(13.4, 1.5, -0.6)],   # la valvola e la sua lampada
 	"portone": [Vector3(8.6, 1.7, -14.2), Vector3(20.0, 3.0, -15.0)],
-	"gorgo": [Vector3(13.7, 1.85, -3.0), Vector3(15.25, 0.55, -3.6)],
+	"gorgo": [Vector3(12.0, 2.3, -2.4), Vector3(14.7, 0.45, -3.6)],
+	# posizione P1 (21 ottobre), lungo il muro nord accanto al portone: giallo (16,9; -22,3), miscuglio
+	# con la pedana (11,3; -21,6), blu (5,7; -22,3), valvola (9,5; 0,9; -20,1)
+	"p1_vuoti": [Vector3(3.5, 1.7, -12.8), Vector3(13.5, 1.8, -20.5)],   # all'inizio del gioco: vuoti e impolverati
+	"p1_pieni": [Vector3(5.2, 1.7, -14.0), Vector3(11.8, 1.3, -21.0)],   # al rientro dal magazzino, con la pedana
+	"p1_valvola": [Vector3(8.3, 1.6, -16.6), Vector3(9.0, 0.95, -20.4)],
 }
 
 var out_dir := "user://scatti_enigma"
@@ -67,13 +76,15 @@ func _run() -> void:
 		hud.visible = false
 	for t in level.find_children("*", "Tempesta", true, false):
 		(t as Tempesta).automatica = false
-	GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	var p1_vuoti := scatto == "p1_vuoti"
+	if not p1_vuoti:
+		GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	var lei := level.get_node_or_null(^"Gioco/LeiSbuca")
-	if lei:
+	if lei and not p1_vuoti:
 		lei.call(&"load_state", {"finita": true})
 	var enigma := level.find_children("*", "EnigmaAcquari", true, false)[0] as EnigmaAcquari
 	var serranda = enigma.serranda
-	if serranda:
+	if serranda and not p1_vuoti:
 		serranda.call(&"apri")
 	await _frames(5)
 	p.teleport(Vector3(0.0, 0.0, 19.0), 0.0, 0.0)

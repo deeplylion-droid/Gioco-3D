@@ -94,6 +94,13 @@ func _run() -> void:
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
+	# SCATTI_LUCE=1: una luce bianca sulla camera, per controllare la geometria nei posti bui
+	if OS.get_environment("SCATTI_LUCE") != "":
+		var o := OmniLight3D.new()
+		o.omni_range = 30.0
+		o.light_energy = 2.5
+		o.omni_attenuation = 0.6
+		p.camera.add_child(o)
 	for s in scatti:
 		if s[3] != "":
 			var pack := p.get_node_or_null(^"WaterPack") as WaterPack

@@ -295,8 +295,16 @@ S('dettagli', tubo('tubo_piccolo', [(XR, Y_R1 - 0.18, 2.3), (X_S0 - 0.15, Y_R1 -
 for k, x in enumerate((47.5, 49.5)):
     for o in flangia(f'tubo_piccolo_fl{k}', (x, Y_R1 - 0.18, 2.3), (1, 0, 0), 0.09, M['ferro'], 0.03, 6, M['ruggine']):
         S('dettagli', o)
-# tubo lungo il fianco di F2, parallelo alla rampa
-S('dettagli', tubo('tubo_f2', [(X_S0 - 0.2, Y_T0 + 0.15, Z_L1 + 1.9), (X_F2, Y_T0 + 0.15, Z_T + 1.9), (X_T0 + 0.5, Y_T0 + 0.15, Z_T + 1.9)], 0.08, M['tubi'], rc=0.3, seg=20))
+# tubo lungo il fianco di F2, parallelo alla rampa: esce dal muro sud in fondo alla rampa e ci rientra prima
+# di T, 2,25 m sopra i gradini (sotto il soffitto inclinato, a 2,6). Prima arrivava a 1,9 m e attraversava
+# T davanti all'entrata di C2, finendo nel vuoto (riscontro dell'utente del 21 ottobre).
+def z_tubo_f2(x):
+    return Z_L1 + 2.35 + (X_S0 - x) * PEND
+xa, xb = X_S0 - 0.55, XC1 + SP + 0.35
+tf2 = [(xa, Y_T0 - 0.12, z_tubo_f2(xa)), (xa, Y_T0 + 0.15, z_tubo_f2(xa)), (xb, Y_T0 + 0.15, z_tubo_f2(xb)), (xb, Y_T0 - 0.12, z_tubo_f2(xb))]
+S('dettagli', tubo('tubo_f2', tf2, 0.08, M['tubi'], rc=0.14, seg=20))
+for k, x in enumerate((48.9, 47.2)):
+    S('dettagli', box(f'tubo_f2_staffa{k}', (x, Y_T0 + 0.04, z_tubo_f2(x)), (0.05, 0.08, 0.06), M['ferro'], uv=None))
 # costole d'acciaio nel corridoio
 for k, x in enumerate((47.6, 49.4)):
     S('dettagli', box(f'costola{k}_s', (x, Y_R0 + 0.08, H_R1 / 2), (0.2, 0.16, H_R1), M['ferro'], uv=1.0))
@@ -320,7 +328,7 @@ def lampada(nome, pos, normale, accesa=True):
 
 lampada('rc1', (48.5, Y_R0 + 0.02, 2.1), (0, 1, 0))
 lampada('rc2', (X_S1 - 0.02, 7.0, Z_L1 + 2.0), (-1, 0, 0))
-lampada('rc3', (44.6, Y_T1 - 0.02, Z_T + 2.0), (0, -1, 0))
+lampada('rc3', (44.6, Y_T1 - 0.02, Z_T + 2.3), (0, -1, 0))   # sopra i 2 m: si passa sotto, verso C2
 giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
 HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
 HQ.metti('plafoniera_rc', 'plafoniera_neon', (48.5, -0.9, H_R1 - 0.12), (1.4, 0.32, 0.1))
