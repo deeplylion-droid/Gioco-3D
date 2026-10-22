@@ -728,19 +728,6 @@
 		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1)"
 	},
 	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_scale",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			3.83,
-			-6.2,
-			46.31
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/SalaPompe/SALA_tubi per 50 cm (enigmi)"
-	},
-	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
 		"squadra": "ambienti-1",
