@@ -27,7 +27,7 @@ const JILLY := [
 	{nome = &"TargaJilly", modello = "res://assets/models/mascotte/jilly/targa.glb",
 		pos = Vector3(-3.003, 0.62, 10.0), normale = Vector3(-1, 0, 0)},
 	{nome = &"ManifestoJilly", modello = "res://assets/models/mascotte/jilly/manifesto.glb",
-		pos = Vector3(-19.97, 1.4, 13.95), normale = Vector3(1, 0, 0)},
+		pos = Vector3(-20.0, 1.4, 13.95), normale = Vector3(1, 0, 0)},
 	{nome = &"InsegnaJilly", modello = "res://assets/models/mascotte/jilly/insegna.glb",
 		pos = Vector3(-19.997, 4.7, 5.35), normale = Vector3(1, 0, 0)},
 ]
