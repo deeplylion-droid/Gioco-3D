@@ -134,9 +134,16 @@ func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "") -> void:
 	var c := (lo + hi) * 0.5
 	var s := hi - lo
 	_box(Vector3(s.x, 0.2, s.z), Vector3(c.x, lo.y - 0.1, c.z), _mat_pav)
-	_box(Vector3(s.x + 0.4, 0.2, s.z + 0.4), Vector3(c.x, lo.y + alto + 0.1, c.z), _mat_cemento)
 	if muri == "":
 		muri = "ns" if s.x >= s.z else "oe"
+	# il soffitto copre i muri fino alla loro faccia di fuori (quelli a nord e a sud sporgono di 20 cm anche ai
+	# lati); dove non c'è muro finisce col corridoio (prima sporgeva di 20 cm anche lì, senza niente sotto)
+	var ns := "n" in muri or "s" in muri
+	var x0 := lo.x - (0.2 if ns or "o" in muri else 0.0)
+	var x1 := hi.x + (0.2 if ns or "e" in muri else 0.0)
+	var z0 := lo.z - (0.2 if "n" in muri else 0.0)
+	var z1 := hi.z + (0.2 if "s" in muri else 0.0)
+	_box(Vector3(x1 - x0, 0.2, z1 - z0), Vector3((x0 + x1) * 0.5, lo.y + alto + 0.1, (z0 + z1) * 0.5), _mat_cemento)
 	if "n" in muri:
 		_muro(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, lo.z - 0.1), lo.y)
 	if "s" in muri:
@@ -147,13 +154,12 @@ func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "") -> void:
 		_muro(Vector3(0.2, alto, s.z), Vector3(hi.x + 0.1, lo.y + alto * 0.5, c.z), lo.y)
 
 
+## [param pos]: 5 cm davanti al muro, all'altezza della lampada; la lampada si appoggia al muro con la staffa.
 func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
-	var l := (load("res://assets/fiume_lento/lampada_emergenza.glb") as PackedScene).instantiate() as Node3D
-	add_child(l)
-	l.position = pos
-	l.look_at(pos + verso, Vector3.UP)
+	var n := Vector3(verso.x, 0.0, verso.z).normalized()
+	var l := LampadaMuro.monta(self, pos - n * 0.05, verso)
 	var o := OmniLight3D.new()
-	o.position = pos + verso.normalized() * 0.35
+	o.position = l.position + verso.normalized() * 0.3
 	o.light_color = Color(1.0, 0.18, 0.12)
 	o.light_energy = 1.8
 	o.omni_range = 7.0
@@ -258,22 +264,42 @@ func _rampa(lo: Vector3, n: int) -> void:
 		# il bordo del gradino a strisce di pericolo, come le scale del raccordo
 		_box(Vector3(0.06, 0.035, SCALA_LARGA), Vector3(lo.x + PEDATA * i + 0.03, lo.y + ALZATA * (i + 1) - 0.0165, zc), _mat_pericolo, false)
 	# il corrimano giallo lungo il muro nord, 95 cm sopra i bordi dei gradini, con le staffe al muro
+	# (un oggetto solo: il tubo passa nei collari delle staffe, e ogni staffa va dal collare al muro; gli anelli
+	# del tubo cadono sui collari, a 1/6, 1/2 e 5/6)
 	var ra := Vector3(lo.x, lo.y + ALZATA + 0.95, lo.z + SCALA_LARGA - 0.07)
 	var rb := Vector3(lo.x + lungo - PEDATA, lo.y + su + 0.95, ra.z)
+	var corrimano := Node3D.new()
+	corrimano.name = "Corrimano"
+	add_child(corrimano)
+	var asse := Basis(Vector3.BACK, atan2(rb.y - ra.y, rb.x - ra.x) - PI * 0.5)
 	var tubo := MeshInstance3D.new()
+	tubo.name = "Tubo"
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.025
 	cm.bottom_radius = 0.025
 	cm.height = ra.distance_to(rb)
 	cm.radial_segments = 12
+	cm.rings = 5
 	tubo.mesh = cm
 	tubo.material_override = _mat_giallo
-	tubo.transform = Transform3D(Basis(Vector3.BACK, atan2(rb.y - ra.y, rb.x - ra.x) - PI * 0.5), (ra + rb) * 0.5)
-	add_child(tubo)
+	tubo.transform = Transform3D(asse, (ra + rb) * 0.5)
+	corrimano.add_child(tubo)
+	var collare := CylinderMesh.new()
+	collare.top_radius = 0.028
+	collare.bottom_radius = 0.028
+	collare.height = 0.03
+	collare.radial_segments = 12
+	var braccio := BoxMesh.new()
+	braccio.size = Vector3(0.03, 0.03, 0.06)
 	for k in 3:
-		var t := (k + 0.5) / 3.0
-		var pk := ra.lerp(rb, t)
-		_box(Vector3(0.03, 0.03, 0.07), Vector3(pk.x, pk.y - 0.02, pk.z + 0.035), _mat_giallo, false)
+		var pk := ra.lerp(rb, (k + 0.5) / 3.0)
+		for d in [[collare, Transform3D(asse, pk), "Collare"], [braccio, Transform3D(Basis(), pk + Vector3(0, 0, 0.04)), "Braccio"]]:
+			var mi := MeshInstance3D.new()
+			mi.name = "%s%d" % [d[2], k + 1]
+			mi.mesh = d[0]
+			mi.material_override = _mat_giallo
+			mi.transform = d[1]
+			corrimano.add_child(mi)
 	# la rampa liscia (36 gradi circa): ci si sale camminando
 	var ang := atan2(su, lungo)
 	var l := sqrt(lungo * lungo + su * su)
