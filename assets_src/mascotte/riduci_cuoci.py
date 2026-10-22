@@ -105,3 +105,7 @@ bpy.ops.export_scene.gltf(filepath=A.uscita, export_format='GLB', use_selection=
                           export_image_format='JPEG', export_jpeg_quality=90,
                           export_yup=True, export_apply=True)
 print('ESPORTATO', A.uscita, tri_basso, flush=True)
+# lo sfondo nero tra le isole UV entra nei bordi con le mipmap (triangolini neri sul modello): si riempie
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'tools'))
+import glb_bordi_texture  # noqa: E402
+glb_bordi_texture.main([A.uscita])

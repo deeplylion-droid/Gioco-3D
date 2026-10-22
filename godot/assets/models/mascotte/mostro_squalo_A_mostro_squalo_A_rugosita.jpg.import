@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3mdt2ndeu228"
+uid="uid://dsoehpmyk85sa"
 path.s3tc="res://.godot/imported/mostro_squalo_A_mostro_squalo_A_rugosita.jpg-03d919803dabfaeae4efab9e4286f442.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "376bf4f002702b9ca7a2ecdf8af569a5"
+"md5": "25b47831694c723d4f7b2ff93acb05f3"
 }
 
 [deps]

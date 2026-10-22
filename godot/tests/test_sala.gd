@@ -36,16 +36,26 @@ func _run() -> void:
 	await _frames(5)
 	level = get_tree().current_scene
 	p = GameState.player
-	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca.
+	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca. Durante la scena la
+	# riga dei comandi non compare: arriva quando il giocatore li riprende.
+	var riga_nella_scena := false
+	var bloccato := false
 	for i in 400:
 		if p.input_enabled:
 			break
+		bloccato = true
+		riga_nella_scena = riga_nella_scena or _riga_comandi()
 		await get_tree().process_frame
+	await _frames(3)
 	var puddle: WaterTank = level.get_node("Piscina/Pozza")
 	var svuota: PiscinaOnde = level.get_node("Piscina/SvuotaPiscina")
 	var hatch_button: WaterButton = level.get_node("Piscina/PulsantePortello")
 	var hatch: HingedHatch = level.get_node("Piscina/Portello")
 	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
+
+	print("La riga dei comandi")
+	check(bloccato and not riga_nella_scena, "durante il risveglio non c'è la riga dei comandi sopra la scena")
+	check(_riga_comandi(), "compare quando il giocatore riprende i comandi")
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
@@ -532,3 +542,10 @@ func _svuota_piscina(vasca: WaterTank, dove: Vector3, acqua: Vector3, fuori: Vec
 		Input.action_release(&"spray")
 		fotogrammi += k
 	return [pieni, fotogrammi / 60.0]
+
+
+## La riga dei comandi ("WASD muoviti · ...") è sullo schermo.
+func _riga_comandi() -> bool:
+	var hud := p.get_node_or_null(^"HUD")
+	var l: Label = hud.get(&"_hint") if hud else null
+	return l != null and l.visible and l.modulate.a > 0.01 and l.text.contains("WASD")

@@ -11,7 +11,7 @@ extends Node
 ##  - suona i fondi (pioggia sulla cupola, vento, nave) e ogni tanto scricchiolii, gemiti
 ##    metallici, colpi lontani e la sirena d'allarme, intorno al giocatore;
 ##  - a ogni cambio di scena cerca i nodi che conosce e si collega ai loro segnali (o ne
-##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce (addon grafica), effetto
+##    legge lo stato): Tempesta, Neon, LuceEmergenza, Gocce, Torcia (addon grafica), effetto
 ##    sott'acqua e gocciolatoi (addon acqua), giocatore, zaino, pulsanti, turbine, porte,
 ##    portelli, vasche, Polaroid, statua della medusa, bambini, morte, la piscina a onde con
 ##    il pulsante della botola e le micro medusine (tappa 5), monitor a tubo e paratie della
@@ -56,6 +56,7 @@ const PER_CARTELLA := {
 	"lei": [BUS_EFFETTI, 0.0, 6.0, 50.0, 0.0],
 	"piscina": [BUS_EFFETTI, 0.0, 5.0, 50.0, 0.0],
 	"torre": [BUS_EFFETTI, 2.0, 8.0, 90.0, 0.0],
+	"squalo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
@@ -110,6 +111,8 @@ const TARATURA := {
 	&"zampette_condotto": [BUS_EFFETTI, 0.0, 3.0, 25.0, 0.0],
 	# lei (tappa 8): il morso è da vicino, sul bus che durante la morte non si abbassa
 	&"morso": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
+	&"squalo_passo": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.6],
+	&"jilly_richiamo": [BUS_EFFETTI, 2.0, 12.0, 60.0, 0.0],
 	# il suo urlo nel jumpscare (JumpscareGlitch): forte, scelto così dall'utente il 17 ottobre
 	&"lei_urlo": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.0],
 	# la piscina a onde (tappa 5): scelti dall'utente il 16 ottobre; le medusine appena percettibili
@@ -880,6 +883,7 @@ func _esamina(n: Node) -> void:
 		"Neon": _collega_neon(n)
 		"LuceEmergenza": _collega_emergenza(n)
 		"Gocce": _collega_gocce(n)
+		"Torcia": _collega_torcia(n)
 		"UnderwaterEffect": _collega_sottacqua(n)
 		"WaterDripEmitter": _attivi.append(Gocciolatoio.new(self, n))
 		"WaterInlet": _attivi.append(Bocchetta.new(self, n))
@@ -1017,6 +1021,10 @@ func _nome_goccia(pos: Vector3) -> StringName:
 	if pavimento_bagnato or _bagnato_scena:
 		return &"goccia_acqua" if randf() < 0.55 else &"goccia_pavimento"
 	return &"goccia_pavimento"
+
+
+func _collega_torcia(n: Node) -> void:
+	n.connect(&"accesa_cambiata", func(accesa: bool): suona(&"torcia_accesa" if accesa else &"torcia_spenta"))
 
 
 # --- addon acqua -----------------------------------------------------------------------------

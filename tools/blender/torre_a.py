@@ -816,7 +816,9 @@ def vasche_raccolta(c, cl, sp, salti, tappe, aperture):
         # (solo da vedere, in cl: a salire ci pensa la Ladder del gioco, e i pioli non fanno inciampare in cima)
         for sg in (-0.25, 0.25):
             q = Vector((sx, sy, 0)) + lat * sg
-            cl.cilindro((q.x, q.y, fondo), (q.x, q.y, L0 + 1.0), 0.03, 'giallo_sicurezza', seg=8)
+            # i montanti finiscono al bordo della pedana: sopra sarebbero nello spazio di chi cammina (non hanno
+            # collisione, e con la collisione tra i due non si passa)
+            cl.cilindro((q.x, q.y, fondo), (q.x, q.y, L0 - 0.02), 0.03, 'giallo_sicurezza', seg=8)
             cl.cilindro((q.x, q.y, L0 - 0.2), (q.x - 0.12 * nx, q.y - 0.12 * ny, L0 - 0.2), 0.025, 'metallo', seg=6)
         zz = fondo + 0.3
         while zz < L0 + 0.05:

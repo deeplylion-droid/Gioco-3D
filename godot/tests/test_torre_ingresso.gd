@@ -74,6 +74,8 @@ func _run() -> void:
 		n.set(&"visible", false)
 		add_child(n)
 		await _frames(1)
+	# e gli shader dei materiali che la torre crea da codice, che la sala crea entrando (sala_principale.gd)
+	var campioni := SalaTorre.materiali_campione()
 	var scena := load(TORRE) as PackedScene
 	await _frames(10)
 

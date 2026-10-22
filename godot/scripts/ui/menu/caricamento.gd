@@ -20,6 +20,7 @@ const CONSIGLI := [
 	"Serbatoio vuoto? Cerca una pozza o una vasca e aspira l'acqua.",
 	"Cerca lo zaino-pompa alla postazione dei bagnini.",
 	"Le Polaroid sparse per l'acquapark raccontano un pezzo di quello che è successo a bordo.",
+	"Con {torcia} accendi e spegni la torcia.",
 	"Non serve salvare: il gioco lo fa da solo, spesso, mentre avanzi.",
 	"La scena della morte si salta tenendo premuto {skip}.",
 	"Con {pause} metti in pausa: da lì cambi la grafica e rivedi i comandi.",
