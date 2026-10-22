@@ -49,7 +49,7 @@ const ZONE := [
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
 const SQUADRE := [
-	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"],
+	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"], ["Medusa", "mascotte"],
 	["SalaInseguimento", "ambienti-2"],   # sala_inseguimento.gd mette anche i dettagli sotto il suo nodo Luci
 	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
 	["Sala/Dettagli", "ambienti-2"],   # il kit dei dettagli (dettagli_sala.gd)
@@ -119,6 +119,7 @@ var _nascoste_radici := {}
 var _copertura: Array = []
 var _nascoste_ora := {}
 var _tocca := {}
+var _box_nascoste: Array[AABB] = []   # le mesh nascoste in questo giro (vedi _gruppi_staccati)
 var _multimesh_senza: Array[String] = []   # MultiMesh senza le trasformazioni: non controllati (vedi _espandi_multimesh)           # MeshInstance3D -> le mesh che tocca (vedi _segna_tocchi)
 var _nascoste_base := {}   # scena -> {percorso del nodo nascosto: mesh}
 var _visti := {}           # scena -> {percorso di una mesh controllata: true}
@@ -177,6 +178,7 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().physics_frame
 	_spazio = (_radice as Node3D).get_world_3d().direct_space_state if _radice is Node3D else get_viewport().get_world_3d().direct_space_state
 	_espandi_multimesh()
+	_congela_scheletri()
 	var mesh := _mesh_visibili()
 	print("  %d mesh visibili" % mesh.size())
 	_elenca_nascoste()
@@ -325,6 +327,14 @@ func _prepara(stato: String) -> void:
 	print("  acquari comparsi: %s, stato %s" % [enigma.get(&"comparsi"), enigma.get(&"stato")])
 
 
+## L'acqua, dai pezzi del percorso (minuscolo): quelli che cominciano con "acqua" (Acqua, acqua_pozze,
+## AcquaFossaBimbi) ma non con "acquari", o finiscono con "_acqua". Non basta "contiene acqua": prendeva anche gli
+## acquari (AcquarioGiallo...), e basi, coperchi, tiranti e vetri degli acquari non si controllavano mai (collaudo,
+## 22 ottobre).
+static func _e_acqua(percorso: String) -> bool:
+	return Array(percorso.split("/")).any(func(x): return (x.begins_with("acqua") and not x.begins_with("acquari")) or x.ends_with("_acqua"))
+
+
 ## Perché una parte nascosta può non essere controllata: una creatura (si muove: la guarda il collaudo), un effetto o
 ## l'acqua (esclusi sempre), o la variante di una cosa controllata nello stesso posto (la lampada accesa e quella
 ## spenta, il cassetto chiuso e tirato). Vuoto: nessun motivo, va controllata con uno stato.
@@ -333,9 +343,7 @@ func _tipo_nascosta(n: Node) -> String:
 	for pezzo in percorso.split("/"):
 		if pezzo == "lei" or pezzo.contains("medusa") or pezzo.contains("medusin") or pezzo.contains("bambino"):
 			return "creatura, si muove (la guarda il collaudo)"
-	# l'acqua dal nome dei pezzi del percorso ("acqua", "acqua_..."), non da "acquari"
-	var acqua := Array(percorso.split("/")).any(func(x): return x == "acqua" or x.begins_with("acqua_") or x.ends_with("_acqua"))
-	if EFFETTI.any(func(e): return percorso.contains(e)) or acqua:
+	if EFFETTI.any(func(e): return percorso.contains(e)) or _e_acqua(percorso):
 		return "effetto o acqua, esclusi"
 	if percorso.split("/").has("graybox"):
 		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
@@ -373,12 +381,15 @@ func _espandi_multimesh() -> void:
 		var mm := mmi.multimesh
 		if mm == null or mm.mesh == null or not _visibile(mmi):
 			continue
-		if not mmi.has_meta(&"trasformazioni"):
+		# il meta sul nodo (MultiMesh fatti da codice) o sulla risorsa (MultiMesh salvati in un .res, come le lampadine
+		# del portone: il meta si salva con la risorsa)
+		var fonte: Object = mmi if mmi.has_meta(&"trasformazioni") else mm
+		if not fonte.has_meta(&"trasformazioni"):
 			if not _tipo_nascosta(mmi).is_empty():
 				continue   # una creatura (le medusine) o un effetto: esclusi come le loro mesh
 			_multimesh_senza.append("%s · %s" % [String(_radice.scene_file_path).get_file().get_basename(), _nodo(mmi)])
 			continue
-		var tr: Array = mmi.get_meta(&"trasformazioni")
+		var tr: Array = fonte.get_meta(&"trasformazioni")
 		var quante := mm.visible_instance_count if mm.visible_instance_count >= 0 else mm.instance_count
 		for i in mini(quante, tr.size()):
 			var copia := MeshInstance3D.new()
@@ -392,6 +403,67 @@ func _espandi_multimesh() -> void:
 		mmi.visible = false
 	if n_istanze > 0:
 		print("  MultiMesh: %d istanze controllate come mesh" % n_istanze)
+
+
+## Le mesh con lo scheletro si misurano nella posa del momento, non in quella di riposo (collaudo, 22 ottobre): la mesh
+## diventa quella messa in posa e lo scheletro si stacca (il controllo non anima niente). Senza schermo
+## bake_mesh_from_current_skeleton_pose non funziona (la skin si registra col renderer): lo skinning si fa qui.
+func _congela_scheletri() -> void:
+	var n_cotte := 0
+	for n in _radice.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or mi.skeleton.is_empty() or mi.skin == null or not _visibile(mi):
+			continue
+		var sk := mi.get_node_or_null(mi.skeleton) as Skeleton3D
+		if sk == null:
+			continue
+		var cotta := _in_posa(mi, sk)
+		if cotta == null:
+			continue
+		mi.skin = null
+		mi.skeleton = NodePath()
+		mi.mesh = cotta
+		n_cotte += 1
+	if n_cotte > 0:
+		print("  mesh con scheletro nella posa del momento: %d" % n_cotte)
+
+
+## La mesh di mi messa nella posa corrente di sk (nello spazio di mi), solo i triangoli (per le misure).
+static func _in_posa(mi: MeshInstance3D, sk: Skeleton3D) -> ArrayMesh:
+	var skin := mi.skin
+	var a_mi := mi.global_transform.affine_inverse() * sk.global_transform
+	var ossa: Array[Transform3D] = []
+	for b in skin.get_bind_count():
+		var osso := skin.get_bind_bone(b)
+		if osso < 0:
+			osso = sk.find_bone(skin.get_bind_name(b))
+		ossa.append(a_mi * (sk.get_bone_global_pose(osso) if osso >= 0 else Transform3D()) * skin.get_bind_pose(b))
+	var out := ArrayMesh.new()
+	for si in mi.mesh.get_surface_count():
+		var arr := mi.mesh.surface_get_arrays(si)
+		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var ix = arr[Mesh.ARRAY_BONES]
+		var w = arr[Mesh.ARRAY_WEIGHTS]
+		if ix == null or w == null or (ix as PackedInt32Array).is_empty():
+			return null
+		var per := (ix as PackedInt32Array).size() / v.size()   # 4 o 8 ossa per vertice
+		var nv := PackedVector3Array()
+		nv.resize(v.size())
+		for k in v.size():
+			var p := Vector3.ZERO
+			for q in per:
+				var peso: float = w[k * per + q]
+				if peso > 0.0:
+					var b: int = ix[k * per + q]
+					if b < ossa.size():
+						p += (ossa[b] * v[k]) * peso
+			nv[k] = p
+		var nuovi := []
+		nuovi.resize(Mesh.ARRAY_MAX)
+		nuovi[Mesh.ARRAY_VERTEX] = nv
+		nuovi[Mesh.ARRAY_INDEX] = arr[Mesh.ARRAY_INDEX]
+		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, nuovi)
+	return out
 
 
 ## Le stanze della Risalita (fiume e infermeria) come col giocatore dentro: visibili, e il loro script fermo (se no
@@ -431,7 +503,7 @@ func _mesh_visibili() -> Array:
 		if _effetto(mi):
 			continue
 		var percorso := String(_radice.get_path_to(mi)).to_lower()
-		if percorso.begins_with("acqua") or percorso.contains("/acqua") or String(mi.name).to_lower() in ["superficie", "surface"]:
+		if _e_acqua(percorso) or String(mi.name).to_lower() in ["superficie", "surface"]:
 			_acqua[mi] = true   # le superfici dell'acqua reggono quello che galleggia, ma non sono oggetti
 		out.append(mi)
 	return out
@@ -441,6 +513,7 @@ func _mesh_visibili() -> Array:
 ## con stato che le mostri. Le stampa raggruppate per il primo nodo nascosto, con quante mesh hanno sotto.
 func _elenca_nascoste() -> void:
 	var gruppi := {}
+	_box_nascoste.clear()
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or _visibile(mi):
@@ -455,6 +528,7 @@ func _elenca_nascoste() -> void:
 		if nascosto:
 			var nome := String(_radice.get_path_to(nascosto))
 			gruppi[nome] = int(gruppi.get(nome, 0)) + 1
+			_box_nascoste.append(_box(mi))
 	_nascoste_ora = {}
 	for nome in gruppi:
 		_nascoste_ora[nome] = [gruppi[nome], _tipo_nascosta(_radice.get_node(NodePath(nome)))]
@@ -542,9 +616,15 @@ func _e_oggetto(mi: MeshInstance3D) -> bool:
 
 
 func _zona(z: Dictionary, n: Node) -> String:
+	var p := _radice.get_path_to(n)
+	if z.has("parti") and not (z["parti"] as Array).any(func(x): return String(p).begins_with(x)):
+		# negli stati, un caso fuori dalle parti (un ingombro di quello che si è aperto): la zona del giro iniziale
+		for b in ZONE:
+			if b["scena"] == z["scena"] and not b.has("stato"):
+				z = b
+				break
 	if z.has("zona"):
 		return z["zona"]
-	var p := _radice.get_path_to(n)
 	return String((z["sotto"] as Dictionary).get(String(p.get_name(0)), String(p.get_name(0)).to_lower()))
 
 
@@ -600,7 +680,10 @@ func _nodo(n: Node) -> String:
 func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: String) -> void:
 	if z.has("stato"):
 		var nodo := _nodo(n)
-		if z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
+		# negli stati si guardano le parti dello stato; l'ingombro in tutta la scena (la serranda, il portello o il
+		# portone aperti finiscono nel passaggio: collaudo, 22 ottobre). I casi già trovati nel giro iniziale non si
+		# ripetono (sotto).
+		if problema != "ingombro" and z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
 			return
 		dettaglio += " (stato: %s)" % z["stato"]
 	var firma := ""
@@ -813,6 +896,10 @@ func _gruppi_staccati(z: Dictionary, oggetti: Array) -> void:
 		# 1 cm sopra il pavimento), con gli altri nel dettaglio
 		gruppo = gruppo.filter(func(m): return not _trovati.any(func(t): return t["nodo"] == _nodo(m) and t["problema"] in ["sospeso", "staccato"]))
 		if gruppo.is_empty():
+			continue
+		# un gruppo appoggiato a una parte nascosta in questo giro (il corridoio della Risalita sulle stanze, che il gioco
+		# nasconde col giocatore lontano) si guarda nel giro che la mostra, non qui (enigmi, 22 ottobre)
+		if gruppo.any(func(g): return _box_nascoste.any(func(bn): return bn.intersects(_box(g).grow(CONTATTO)))):
 			continue
 		gruppo.sort_custom(func(a, b): return _box(a).position.y < _box(b).position.y)
 		var m: MeshInstance3D = gruppo[0]
@@ -1486,7 +1573,7 @@ func _testo_copertura() -> String:
 			t += "| %s | `%s` | %d | %s |\n" % [String(scena).get_file().get_basename(), g, gruppi[g][0], come]
 	print("  parti nascoste all'inizio mai controllate: %d (vedi il rapporto, \"Copertura\")" % mai)
 	if not _multimesh_senza.is_empty():
-		t += "\n### MultiMesh non controllati\n\nSenza le trasformazioni nel meta \"trasformazioni\" (vedi `_espandi_multimesh`):\n\n"
+		t += "\n### MultiMesh non controllati\n\nSenza le trasformazioni nel meta \"trasformazioni\" del nodo o della risorsa MultiMesh (vedi `_espandi_multimesh`):\n\n"
 		for m in _multimesh_senza:
 			t += "- `%s`\n" % m
 		print("  MultiMesh non controllati: %d" % _multimesh_senza.size())

@@ -103,7 +103,7 @@ node('Saracinesca', 'Node3D', 'Meccanismi', np=['sources'], props={
     'modello': 'NodePath("../../Ambienti/Spogliatoi/saracinesca")'})
 
 # zaino-pompa sulla rastrelliera dello stanzino (marker_zaino_pompa)
-node('Zaino', 'Node3D', '.', props={'position': V(14.53, 0.72, -8.43), 'rotation': V(0, -H, 0)})
+node('Zaino', 'Node3D', '.', props={'position': V(14.537, 0.72, -8.43), 'rotation': V(0, -H, 0)})
 node('Modello', None, 'Zaino', inst='m_zaino')
 node('Prendi', 'Area3D', 'Zaino', np=['remove_node'], props={
     'collision_layer': '16', 'collision_mask': '0', 'monitoring': 'false', 'script': 'ExtResource("s_pack")',
@@ -115,7 +115,7 @@ node('LuceZaino', 'SpotLight3D', '.', props={
 
 # Polaroid P1 (a terra vicino al risveglio), P2 (armadietto aperto), P3 (bacheca dello stanzino)
 node('Polaroid', 'Node3D', '.')
-for nome, foto, pos, rot, snap in [('Polaroid01', 1, (20.9, 0.02, -0.55), (0, 0.35, 0), True),
+for nome, foto, pos, rot, snap in [('Polaroid01', 1, (20.9, 0.004, -0.55), (0, 0.35, 0), True),
                                    ('Polaroid02', 2, (3.38, 1.555, -7.9), (0, H, 0), False),
                                    ('Polaroid03', 3, (12.65, 1.3, -6.257), (-H, 0, 0), False)]:
     # (P2 appoggiata sul ripiano dell'armadietto, prima galleggiava 5 cm sopra; P3 sul sughero della

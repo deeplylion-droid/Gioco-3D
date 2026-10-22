@@ -27,6 +27,7 @@ WaterManager="*res://addons/acqua/scripts/water_manager.gd"
 Game="*res://scripts/game/game.gd"
 GameState="*res://scripts/game/game_state.gd"
 Audio="*res://addons/audio/audio.gd"
+LuciBianche="*res://scripts/game/luci_bianche.gd"
 
 [display]
 
@@ -34,6 +35,11 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[gioco]
+
+luci_bianche=1.0
+luci_bianche.luci40=0.4
 
 [input]
 

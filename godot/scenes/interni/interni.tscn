@@ -137,7 +137,7 @@ open_speed = 0.12
 modello = NodePath("../../Ambienti/Spogliatoi/saracinesca")
 
 [node name="Zaino" type="Node3D" parent="."]
-position = Vector3(14.53, 0.72, -8.43)
+position = Vector3(14.537, 0.72, -8.43)
 rotation = Vector3(0, -1.5708, 0)
 
 [node name="Modello" parent="Zaino" instance=ExtResource("m_zaino")]
@@ -167,7 +167,7 @@ spot_angle = 28.0
 [node name="Polaroid" type="Node3D" parent="."]
 
 [node name="Polaroid01" parent="Polaroid" instance=ExtResource("p_pol")]
-position = Vector3(20.9, 0.02, -0.55)
+position = Vector3(20.9, 0.004, -0.55)
 rotation = Vector3(0, 0.35, 0)
 collision_layer = 16
 collision_mask = 0

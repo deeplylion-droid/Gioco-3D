@@ -290,7 +290,8 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     zp = base.z + alto / 2 + (alto + 0.05 if aperta else 0.0)
     pann = Vector((base.x, base.y, zp)) - n * 0.05
     cp = K.Costruttore(c.mats) if GIOCO else c          # nel gioco il pannello è un nodo a parte
-    cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2, alto / 2), 'acciaio_portone')
+    # nel gioco il pannello va da un montante all'altro e scorre nelle loro guide (alzato, a 2 cm, restava sospeso)
+    cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2 + (0.02 if GIOCO else 0.0), alto / 2), 'acciaio_portone')
     for k in (-1, 1):       # nervature
         cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) - n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
     # bersaglio: tre anelli concentrici, verso la vasca
@@ -453,15 +454,16 @@ def luci_nuove():
                 neon=[], fari=[], lanterne=[], schiuma=[])
 
 
-def arredo(luci, fonte, nodo, p, ry=0.0, appoggio='base', normale=None, scala=1.0):
+def arredo(luci, fonte, nodo, p, ry=0.0, appoggio='base', normale=None, scala=1.0, rx=0.0):
     """Un oggetto vero del gioco messo dallo script degli scatti (non sta nei GLB della proposta):
     fonte 'pompe' = un nodo di assets/ambienti_tecnici/sala_pompe.gltf (anche una lista di nodi che si
     muovono insieme), fonte 'det/<categoria>' = un nodo del kit di dettagli (assets/ambiente/dettagli).
     appoggio: 'base' (il fondo della scatola sul punto p), 'muro' (la scatola contro il muro: p sul muro
     all'altezza del fondo, normale = verso la stanza), 'origine' (l'origine del nodo in p: i dettagli del kit
-    da muro e da soffitto hanno l'origine sull'attacco). ry: rotazione attorno alla verticale (gradi)."""
+    da muro e da soffitto hanno l'origine sull'attacco). ry: rotazione attorno alla verticale (gradi); rx: prima,
+    attorno all'asse X dell'oggetto (gradi; per stendere a terra un pezzo che starebbe in piedi)."""
     luci['arredi'].append(dict(f=fonte, n=nodo, p=[round(v, 3) for v in p], ry=ry, a=appoggio,
-                               nrm=list(normale) if normale else None, s=scala))
+                               nrm=list(normale) if normale else None, s=scala, **({'rx': rx} if rx else {})))
 
 
 def ry_muro(nx, ny):
@@ -633,7 +635,8 @@ def versione_A(mats):
     gambe(c, BM[0], BM[1], BM[2], BM[3], BM[4] - SOTTO_PEDANA, z0)
     scala_pioli(c, BM[0] - 0.1, 20.6, z0, BM[4])
     arredo(luci, 'pompe', 'QUADRO_elettrico', (x1, 22.6, BM[4]), ry=90.0, appoggio='muro', normale=(-1, 0))
-    arredo(luci, 'pompe', 'TURBINA_1', (75.4, 19.0, BM[4] - gr_), ry=90.0)
+    # il volano della turbina, smontato: steso sul ballatoio (in piedi sul bordo, senza asse né telaio, cadrebbe)
+    arredo(luci, 'pompe', 'TURBINA_1', (75.4, 19.0, BM[4] - gr_), ry=90.0, rx=90.0 if GIOCO else 0.0)
     arredo(luci, 'det/detriti', 'det_griglia_caduta', (73.6, 21.8, BM[4] - gr_), ry=-20.0, appoggio='origine')
     arredo(luci, 'det/elettrico', 'det_cassetta_aperta', (x1, 18.2, BM[4] + 1.3), ry=ry_muro(-1, 0), appoggio='origine')
     # il palo della plafoniera, dal ballatoio, col braccio

@@ -26,6 +26,7 @@ var SCATTI := {
 	"7_nel_tubo": [b(57.6, 17.7, -22.4), b(60.5, 21.0, -23.1), 80.0, "", [], false],
 	"8_lampada_vasca": [b(65.4, 27.2, -24.2), b(63.3, 29.7, -23.3), 70.0, "", [], false],
 	"8b_lei_vasca_2": [b(64.6, 26.4, -24.1), b(70.6, 28.0, -19.5), 70.0, "vasca_1", [], false],
+	"t_turbina": [b(73.3, 17.9, -27.6), b(75.4, 19.0, -28.95), 60.0, "", [], false],
 }
 
 var cartella := "user://scatti_inseguimento"
@@ -70,6 +71,14 @@ func _run() -> void:
 			SCATTI[q[0]] = [lei_pos + via * 5.0 + Vector3.UP * 4.5, (occhi + lei_pos) / 2.0 + Vector3.UP * 1.5, 70.0, q[3], [], false]
 		else:
 			SCATTI[q[0]] = [occhi, lei_pos + Vector3.UP * 4.0, 70.0, q[3], [], false]
+	# ogni paratia alzata, da vicino: il pannello fra i montanti, nelle loro guide ("p<k>_aperta")
+	for k in sala.paratie.size():
+		var d: Dictionary = sala.paratie[k]
+		var v: Array = d["verso"]
+		var n := Vector3(v[0], 0.0, -v[1]).normalized()      # dalla vasca verso il tubo
+		var lato := n.cross(Vector3.UP).normalized()
+		var su := (d["chiuso"] as Vector3) + Vector3.UP * float(d["corsa"])
+		SCATTI["p%d_aperta" % k] = [su - n * 1.7 + lato * 0.7 - Vector3.UP * 0.6, su + lato * 0.75, 62.0, "", [k], false]
 	for nome in SCATTI:
 		if not solo.is_empty() and not solo.has(nome):
 			continue

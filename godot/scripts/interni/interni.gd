@@ -215,10 +215,11 @@ func _prepara_luci() -> void:
 		i += 1
 
 
-## La LuceEmergenza crea una sua lampada: qui c'è già quella a gabbia del modello.
+## La LuceEmergenza crea una sua lampada: qui c'è già quella a gabbia del modello. Si toglie (non solo nascosta:
+## così non resta in memoria e il controllo di posizionamento non la conta).
 func _nascondi_lampada_addon(le: Node) -> void:
 	for m in le.find_children("*", "MeshInstance3D", false, false):
-		(m as MeshInstance3D).visible = false
+		m.queue_free()
 
 
 # --- Docce ---------------------------------------------------------------------------------

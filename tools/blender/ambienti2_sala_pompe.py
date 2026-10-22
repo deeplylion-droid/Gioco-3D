@@ -341,7 +341,8 @@ imposta_origine(pt, (XE - 0.05, PORTA_Y - PORTA_W / 2, 0))
 if HQ.disponibile('porta_servizio'):
     # anta Meshy (come la porta della sala pompe vista dal corridoio) e maniglione dal lato della sala
     bpy.data.objects.remove(pt)
-    pt = HQ.metti('PORTA_ponte', 'porta_servizio', (XE - 0.05, PORTA_Y - PORTA_W / 2 + 0.02, 0.01), (PORTA_W - 0.04, None, PORTA_H - 0.03),
+    pt = HQ.metti('PORTA_ponte', 'porta_servizio', (XE - 0.05, PORTA_Y - PORTA_W / 2 + 0.02, 0.0),   # (poggia sulla soglia)
+                  (PORTA_W - 0.04, None, PORTA_H - 0.03),
                   rot_z=R_(-90), perno=((PORTA_W - 0.04) / 2, 0, 0))
     man = tubo('PORTA_ponte_maniglione', [(XE - 0.12, PORTA_Y - 0.4, 1.0), (XE - 0.24, PORTA_Y - 0.35, 1.0), (XE - 0.24, PORTA_Y + 0.35, 1.0), (XE - 0.12, PORTA_Y + 0.4, 1.0)], 0.025, M['pericolo'], rc=0.05, seg=16)
     applica_trasf(man)
@@ -394,6 +395,13 @@ if LEVA_NUOVA:
     lv = HQ.metti('LEVA', 'leva_maniglia', MOZZO + Vector((-db.y * kb - 0.045, 0, 0)), tuple(dm * km), rot=(0, R_(-25), 0),
                   rot_z=R_(90), perno=(-0.84 * km, 0, 0.148 * km))
     allinea_occhio(base_leva, lv)
+    # il braccio contro il perno della base (a 4,5 cm restava staccato): lo si avvicina finché tocca
+    bpy.context.view_layer.update()
+    from mathutils.bvhtree import BVHTree
+    mb = base_leva.matrix_world
+    tb = BVHTree.FromPolygons([mb @ v.co for v in base_leva.data.vertices], [list(p.vertices) for p in base_leva.data.polygons])
+    gap = min((h[3] for h in (tb.ray_cast(lv.matrix_world @ v.co, Vector((1, 0, 0)), 0.2) for v in lv.data.vertices) if h[0] is not None), default=0.0)
+    lv.matrix_world = Matrix.Translation((gap - 0.002, 0, 0)) @ lv.matrix_world
     lv['alzata'] = 'braccio verso nord e in alto (63 gradi); abbassata: -70 gradi attorno a X globale'
 else:
     MOZZO = LV + Vector((0, -0.4, -0.2))   # il mozzo della leva Meshy: piastra e perno a muro dietro di lui
@@ -486,7 +494,8 @@ S('parete_est', quad('pericolo_leva', (XE - 0.02, 2.9, 3.05), 1.3, 0.2, (-1, 0, 
 for nome, file, x, z, w in (('QUADRO_elettrico', 'quadro_elettrico', -6.2, 0.9, 1.1), ('QUADRO_strumenti', 'quadro_strumenti', -1.6, 1.3, 1.2)):
     if HQ.disponibile(file):
         d = HQ.dimensioni(file); k = w / d.x
-        HQ.metti(nome, file, (x, Y0 + d.y * k / 2 + 0.01, z), (w, d.y * k, d.z * k), rot_z=R_(180))
+        HQ.metti(nome, file, (x, Y0 + d.y * k / 2 - 0.002, z),   # (col retro sul muro: a 1 cm restava staccato)
+                 (w, d.y * k, d.z * k), rot_z=R_(180))
 
 # ------------------------------------------------------------------ scrivania, CRT, sedia (Meshy)
 usa_collezione('arredo')
@@ -580,13 +589,14 @@ def lampada_rossa(nome, pos, normale, accesa=True):
     if accesa:
         luce(f'LUCE_rossa_{nome}', 'POINT', pos + n * 0.25, 60, (1.0, 0.08, 0.04), raggio=0.08)
 
-lampada_rossa('l1', (X0 + 0.02, 1.0, 3.3), (1, 0, 0))
-lampada_rossa('l2', (XE - 0.02, PORTA_Y, PORTA_H + 0.9), (-1, 0, 0))
-lampada_rossa('l3', (-3.2, Y1 - 0.02, 2.4), (0, -1, 0))
-lampada_rossa('l4', (1.2, Y0 + 0.02, 3.2), (0, 1, 0))
-lampada_rossa('l5', (5.8, Y1 - 0.02, 2.4), (0, -1, 0))
-lampada_rossa('l6', (X0 + 0.02, -4.8, 3.0), (1, 0, 0), accesa=False)
-lampada_rossa('l7', (XE - 0.02, 4.0, 4.7), (-1, 0, 0))   # sopra la leva
+# le lampade col retro a filo del muro (a 2 cm restavano staccate)
+lampada_rossa('l1', (X0 - 0.002, 1.0, 3.3), (1, 0, 0))
+lampada_rossa('l2', (XE + 0.002, PORTA_Y, PORTA_H + 0.9), (-1, 0, 0))
+lampada_rossa('l3', (-3.2, Y1 + 0.002, 2.4), (0, -1, 0))
+lampada_rossa('l4', (1.2, Y0 - 0.002, 3.2), (0, 1, 0))
+lampada_rossa('l5', (5.8, Y1 + 0.002, 2.4), (0, -1, 0))
+lampada_rossa('l6', (X0 - 0.002, -4.8, 3.0), (1, 0, 0), accesa=False)
+lampada_rossa('l7', (XE + 0.002, 4.0, 4.7), (-1, 0, 0))   # sopra la leva
 # neon sul soffitto: uno solo funziona (azzurro freddo), gli altri spenti
 for k, (x, y, acceso) in enumerate(((-4.5, -1.0, False), (0.5, -1.0, True), (5.0, -1.0, False), (0.5, 3.5, False))):
     if HQ.disponibile('plafoniera_neon'):

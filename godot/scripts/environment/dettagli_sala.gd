@@ -19,6 +19,16 @@ extends Node3D
 @export var distanza_pezzi_piccoli := 30.0
 @export var ombre_pezzi_grandi := false
 
+## I tubi delle corse lungo i muri (per i gomiti che rientrano nel muro ai due capi, posti "det_tubo_rientro_inizio" e
+## "_fine" con la "sorgente"): raggio e quota di ogni tubo nel pezzo (y in alto, z fuori dal muro), e quanto sta
+## lontano dal muro il loro asse. Come nel kit (tools/blender/dettagli_kit.py).
+const TUBI_CORSE := {
+	"det_tubo_muro_7cm_2m": [0.085, [[0.035, 0.0]]],
+	"det_tubo_muro_10cm_2m": [0.1, [[0.05, 0.0]]],
+	"det_tubo_muro_16cm_2m": [0.13, [[0.08, 0.0]]],
+	"det_tubi_paralleli_2m": [0.12, [[0.05, 0.0], [0.035, 0.14], [0.06, -0.17]]],
+}
+
 const PICCOLI := ["det_piastrella", "det_foglio", "det_carta", "det_vetri", "det_paperella", "det_secchiello", "det_paletta",
 	"det_barchetta", "det_pistola", "det_pesce", "det_maschera", "det_ciabatta", "det_macchia", "det_incrostazione", "det_alghe"]
 
@@ -54,6 +64,9 @@ func _ready() -> void:
 				# I materiali del kit sullo stesso shader dove si può (stesso aspetto, meno pipeline).
 				UnificaMateriali.unifica(scene[glb])
 		if scene[glb] == null:
+			continue
+		if nome.begins_with("det_tubo_rientro"):
+			_gomiti(scene[glb], nome, per_nodo[k])
 			continue
 		var src := (scene[glb] as Node).get_node_or_null(NodePath(nome)) as MeshInstance3D
 		if src == null:
@@ -92,6 +105,103 @@ func _ready() -> void:
 	for s in scene.values():
 		if s:
 			(s as Node).free()
+
+
+## I gomiti ai capi delle corse di tubi: il tubo della corsa va avanti 8 cm, gira di 90 gradi verso il muro e ci entra,
+## con un rosone sul muro (prima le corse finivano a mezz'aria: controllo di posizionamento del 22 ottobre sera).
+## "_fine" sta dopo la fine dell'ultimo pezzo (verso +X), "_inizio" prima del primo (verso -X).
+func _gomiti(scena: Node, nome: String, posti: Array) -> void:
+	var cache := {}
+	for p in posti:
+		var sorgente := String(p.get("sorgente", ""))
+		if not TUBI_CORSE.has(sorgente):
+			push_warning("gomito senza tubo: " + sorgente)
+			continue
+		if not cache.has(sorgente):
+			var src := scena.get_node_or_null(NodePath(sorgente)) as MeshInstance3D
+			if src == null:
+				continue
+			cache[sorgente] = _mesh_gomito(src.mesh, TUBI_CORSE[sorgente], nome.ends_with("_inizio"))
+		var g := MeshInstance3D.new()
+		g.name = nome
+		g.mesh = cache[sorgente]
+		g.transform = _trasformazione(p)
+		_regola(g, false)
+		add_child(g)
+
+
+static func _mesh_gomito(src: Mesh, dati: Array, inizio: bool) -> ArrayMesh:
+	var c: float = dati[0]
+	var am := ArrayMesh.new()
+	for t in dati[1]:
+		var r: float = t[0]
+		var yv: float = t[1]
+		# il materiale: la superficie del pezzo più piccola in altezza che contiene la quota del tubo
+		var mat: Material = null
+		var alto := INF
+		for s in src.get_surface_count():
+			var vs: PackedVector3Array = src.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]
+			var lo := INF
+			var hi := -INF
+			for v in vs:
+				lo = minf(lo, v.y)
+				hi = maxf(hi, v.y)
+			if lo - 0.005 <= yv and yv <= hi + 0.005 and hi - lo < alto:
+				alto = hi - lo
+				mat = src.surface_get_material(s)
+		# l'asse: dritto 8 cm, poi un quarto di cerchio di raggio c verso il muro, fino al muro
+		var a := 0.08
+		var asse := PackedVector3Array([Vector3(0.0, yv, c)])
+		for i in range(0, 13):
+			var th := PI / 2.0 * i / 12.0
+			asse.append(Vector3(a + c * sin(th), yv, c * cos(th)))
+		asse.append(Vector3(a + c, yv, -0.004))
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		_tubo(st, asse, r, inizio)
+		# il rosone sul muro
+		var ros := PackedVector3Array([Vector3(a + c, yv, 0.012), Vector3(a + c, yv, -0.002)])
+		_tubo(st, ros, r + 0.025, inizio, true)
+		st.generate_normals()
+		st.set_material(mat)
+		st.commit(am)
+	return am
+
+
+## Un tubo di raggio [param r] lungo [param asse] (che sta in un piano orizzontale), con i tappi se [param tappi].
+## [param specchio]: specchiato in X (il gomito dell'inizio della corsa).
+static func _tubo(st: SurfaceTool, asse: PackedVector3Array, r: float, specchio: bool, tappi := false) -> void:
+	const SEG := 14
+	var anelli: Array[PackedVector3Array] = []
+	for i in asse.size():
+		var tg := (asse[mini(i + 1, asse.size() - 1)] - asse[maxi(i - 1, 0)]).normalized()
+		var lato := tg.cross(Vector3.UP).normalized()
+		var anello := PackedVector3Array()
+		for k in SEG:
+			var ang := TAU * k / SEG
+			anello.append(asse[i] + lato * cos(ang) * r + Vector3.UP * sin(ang) * r)
+		anelli.append(anello)
+	var tri := func(p0: Vector3, p1: Vector3, p2: Vector3):
+		# (Godot: davanti in senso orario; specchiato, il verso si inverte)
+		if specchio:
+			for q in [p0, p1, p2]:
+				st.add_vertex(Vector3(-q.x, q.y, q.z))
+		else:
+			for q in [p0, p2, p1]:
+				st.add_vertex(q)
+	for i in anelli.size() - 1:
+		for k in SEG:
+			var k2 := (k + 1) % SEG
+			tri.call(anelli[i][k], anelli[i + 1][k], anelli[i][k2])
+			tri.call(anelli[i][k2], anelli[i + 1][k], anelli[i + 1][k2])
+	if tappi:
+		for i in [0, anelli.size() - 1]:
+			for k in SEG:
+				var k2 := (k + 1) % SEG
+				if i == 0:
+					tri.call(asse[i], anelli[i][k2], anelli[i][k])
+				else:
+					tri.call(asse[i], anelli[i][k], anelli[i][k2])
 
 
 func _trasformazione(p: Dictionary) -> Transform3D:
