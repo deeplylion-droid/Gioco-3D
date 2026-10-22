@@ -7,7 +7,7 @@ extends Node
 ##       --resolution 640x360 --script res://tests/run.gd -- res://tests/collaudo/giro.gd \
 ##       <scena.tscn> <stato> <cartella> <lista dei punti> [nodi da togliere, separati da virgola] [fov]
 ## La lista (scritta da tools/collaudo/punti_giro.py, o a mano) ha una riga per scatto:
-##   nome px py pz yaw pitch      (camera in p, yaw e pitch in gradi; yaw 0 guarda verso -z)
+##   nome px py pz yaw pitch [fov]      (camera in p, yaw e pitch in gradi; yaw 0 guarda verso -z)
 ## Le righe che cominciano con "luce" cambiano l'energia della luce sulla camera (luce 0 la spegne).
 ## La riga "origine x y z" dice dove sta la scena dentro sala_principale (per esempio gli interni da soli:
 ## origine -9.7 0 40.9): le coordinate delle righe dopo restano quelle del mondo della sala.
@@ -50,7 +50,9 @@ func _run() -> void:
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("basso")
 	Grafica.imposta("scala_rendering", 1.0)
-	Grafica.imposta("ombre", 1)
+	# COLLAUDO_OMBRE=0: niente ombre (meno pipeline sul renderer software: la sala intera non entra in memoria)
+	var ombre := OS.get_environment("COLLAUDO_OMBRE") != "0"
+	Grafica.imposta("ombre", 1 if ombre else 0)
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		wm.set(&"quality", 0)
@@ -60,14 +62,29 @@ func _run() -> void:
 		if n:
 			n.get_parent().remove_child(n)
 			n.free()
+	# per la memoria: GI, sonde dei riflessi, particelle e volumi di nebbia non servono a vedere dove stanno gli
+	# oggetti (la sala intera sul renderer software se no supera i 15 GB della macchina)
+	var tolti := 0
+	for classe in ["VoxelGI", "LightmapGI", "ReflectionProbe", "GPUParticles3D", "CPUParticles3D", "FogVolume"]:
+		for n in livello.find_children("*", classe, true, false):
+			n.get_parent().remove_child(n)
+			n.free()
+			tolti += 1
+	print("COLLAUDO: tolti %d nodi di GI, riflessi, particelle e nebbia" % tolti)
+	if OS.get_environment("COLLAUDO_SEMPLICE") == "1":
+		_materiali_semplici(livello)
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
 	for i in 30:
 		await get_tree().process_frame
 	get_tree().paused = false
 	var p = GameState.player
+	if not togli.is_empty() and p and is_instance_valid(p):
+		# senza gli interni il giocatore (che parte nel corridoio) cadrebbe nel vuoto e morirebbe: si ferma subito
+		p.process_mode = Node.PROCESS_MODE_DISABLED
+		p.visible = false
 	for i in 900:
-		if p == null or not is_instance_valid(p) or p.input_enabled:
+		if p == null or not is_instance_valid(p) or p.input_enabled or p.process_mode == Node.PROCESS_MODE_DISABLED:
 			break
 		await get_tree().process_frame
 	STATI.applica(livello, stato)
@@ -95,7 +112,7 @@ func _run() -> void:
 	luce.omni_range = 18.0
 	luce.light_energy = 1.6
 	luce.omni_attenuation = 0.8
-	luce.shadow_enabled = true
+	luce.shadow_enabled = ombre
 	cam.add_child(luce)
 	var righe := FileAccess.get_file_as_string(lista).split("\n", false)
 	var fatti := 0
@@ -124,6 +141,7 @@ func _run() -> void:
 		var pos := Vector3(float(c[1]), float(c[2]), float(c[3])) - origine
 		cam.global_position = pos
 		cam.rotation_degrees = Vector3(float(c[5]) if c.size() > 5 else 0.0, float(c[4]), 0.0)
+		cam.fov = float(c[6]) if c.size() > 6 else fov
 		for i in settle:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
@@ -200,3 +218,84 @@ func _spazio(cam: Camera3D, nome: String, p: Vector3, q: Vector3) -> void:
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s_%s.jpg" % [nome, "v" if k == 0 else "l"]), 0.85)
 	cam.fov = fov
+
+
+var _colori := {}      # texture -> colore medio
+var _semplici := {}    # colore (quantizzato) -> materiale
+
+
+## COLLAUDO_SEMPLICE=1: ogni superficie prende un materiale semplice del colore medio del suo (albedo per la
+## texture), e le texture si liberano. Così la sala intera entra nella memoria del renderer software: per vedere
+## dove stanno gli oggetti bastano le forme e i colori.
+func _materiali_semplici(radice: Node) -> void:
+	var fatti := 0
+	for n in radice.find_children("*", "GeometryInstance3D", true, false):
+		var g := n as GeometryInstance3D
+		if g is MeshInstance3D and (g as MeshInstance3D).mesh:
+			var mi := g as MeshInstance3D
+			for i in mi.mesh.get_surface_count():
+				var m: Material = mi.get_surface_override_material(i)
+				if m == null:
+					m = mi.mesh.surface_get_material(i)
+				if g.material_override:
+					m = g.material_override
+				mi.set_surface_override_material(i, _semplice(m))
+				mi.mesh.surface_set_material(i, null)
+				fatti += 1
+			g.material_override = null
+		elif g is MultiMeshInstance3D and (g as MultiMeshInstance3D).multimesh and (g as MultiMeshInstance3D).multimesh.mesh:
+			var mesh := (g as MultiMeshInstance3D).multimesh.mesh
+			var m: Material = g.material_override if g.material_override else (mesh.surface_get_material(0) if mesh.get_surface_count() > 0 else null)
+			g.material_override = _semplice(m)
+			for i in mesh.get_surface_count():
+				mesh.surface_set_material(i, null)
+			fatti += 1
+	print("COLLAUDO: %d superfici con materiale semplice, %d colori" % [fatti, _semplici.size()])
+
+
+func _semplice(m: Material) -> Material:
+	var c := Color(0.6, 0.6, 0.6)
+	var trasp := false
+	if m is BaseMaterial3D:
+		var b := m as BaseMaterial3D
+		c = b.albedo_color
+		var t := b.albedo_texture
+		if t:
+			c *= _medio(t)
+		trasp = b.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and c.a < 0.95
+		if b.emission_enabled:
+			c = c.lerp(b.emission, 0.5)
+	elif m is ShaderMaterial:
+		c = Color(0.35, 0.55, 0.7, 0.6)   # acqua e simili
+		trasp = true
+	var k := Color(snappedf(c.r, 0.04), snappedf(c.g, 0.04), snappedf(c.b, 0.04), 0.6 if trasp else 1.0)
+	if not _semplici.has(k):
+		var s := StandardMaterial3D.new()
+		s.albedo_color = k
+		s.roughness = 0.8
+		if trasp:
+			s.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		s.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_semplici[k] = s
+	return _semplici[k]
+
+
+func _medio(t: Texture2D) -> Color:
+	if _colori.has(t):
+		return _colori[t]
+	var c := Color(0.6, 0.6, 0.6)
+	var img := t.get_image()
+	if img:
+		if img.is_compressed():
+			img.decompress()
+		img.clear_mipmaps()
+		while img.get_width() > 4 and img.get_height() > 4:
+			img.shrink_x2()
+		var somma := Color(0, 0, 0, 0)
+		for y in img.get_height():
+			for x in img.get_width():
+				somma += img.get_pixel(x, y)
+		c = somma / float(img.get_width() * img.get_height())
+		c.a = 1.0
+	_colori[t] = c
+	return c
