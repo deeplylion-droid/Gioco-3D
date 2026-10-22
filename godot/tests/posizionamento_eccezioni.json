@@ -534,32 +534,6 @@
 	},
 	{
 		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_5",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-3.97,
-			0.0,
-			46.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-14.47,
-			0.0,
-			39.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
 		"squadra": "da assegnare",
 		"problema": "ingombro",
@@ -793,19 +767,6 @@
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
 	},
 	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.65,
-			2.42,
-			30.2
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
 		"zona": "torre",
 		"nodo": "TorreScivoli/discesa_5_0",
 		"squadra": "ambienti-2",
@@ -830,5 +791,83 @@
 		],
 		"stato": "voluto",
 		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)"
+	},
+	{
+		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_1",
+		"pos": [
+			-4.75,
+			0.0,
+			38.75
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "interni",
+		"stato": "da correggere",
+		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) si passa a meno di 10 cm, all'altezza della testa"
+	},
+	{
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_9",
+		"pos": [
+			-1.25,
+			0.0,
+			13.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala",
+		"stato": "da correggere",
+		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione"
+	},
+	{
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_6",
+		"pos": [
+			-4.25,
+			0.0,
+			11.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala",
+		"stato": "da correggere",
+		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione"
+	},
+	{
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_7",
+		"pos": [
+			-4.0,
+			0.0,
+			12.75
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala",
+		"stato": "da correggere",
+		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione"
+	},
+	{
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_8",
+		"pos": [
+			-3.0,
+			0.0,
+			13.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala",
+		"stato": "da correggere",
+		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione"
+	},
+	{
+		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
+		"pos": [
+			-0.75,
+			0.0,
+			21.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "interni",
+		"stato": "da correggere",
+		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) si passa a meno di 10 cm, all'altezza della testa"
 	}
 ]
