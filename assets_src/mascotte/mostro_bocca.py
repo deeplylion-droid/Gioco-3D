@@ -165,25 +165,37 @@ def peso_mascella(P, lab, muso, xs, zs):
     return w
 
 
-def liscia_pesi(bm, P, w, muso):
+ANGOLO = 0.08   # verso gli angoli della bocca, per tanto così il peso del labbro non è fisso
+
+
+def liscia_pesi(bm, P, w, muso, lab, xs):
     """Il peso della mascella fuori dalla zona tagliata (angoli della bocca, guance, gola) diventa una
     funzione armonica: ogni vertice è la media dei vicini, con fissi i vertici del muso (0 o 1) e quelli
     lontani dalla testa (0). Così la pelle agli angoli si tende tutta insieme, senza linguette né righe
-    di texture stirate dove prima il peso cambiava di colpo."""
+    di texture stirate dove prima il peso cambiava di colpo. Anche le labbra negli ultimi ANGOLO metri
+    verso gli angoli sono libere, e i lati tagliati (tra sopra e sotto) non contano: così il taglio si
+    apre piano piano verso gli angoli, come una bocca vera, invece di avere agli angoli un vertice a 0
+    accanto a uno a 1 (le linguette tirate tra le due labbra)."""
     from scipy.sparse import coo_matrix, diags
     n = len(P)
     c0, c1 = np.array(TESTA_ASSE[0]), np.array(TESTA_ASSE[1])
     ax = (c1 - c0) / np.linalg.norm(c1 - c0)
     t_ax = np.clip((P - c0) @ ax, -0.3, None)
-    in_testa = (np.linalg.norm(P - c0 - np.outer(t_ax, ax), axis=1) < TESTA_RAGGIO) & (P[:, 1] < -0.30) & (P[:, 2] > 1.0)
-    libero = in_testa & ~muso
+    in_testa = (np.linalg.norm(P - c0 - np.outer(t_ax, ax), axis=1) < TESTA_RAGGIO + 0.08) & (P[:, 1] < -0.15) & (P[:, 2] > 0.95)
+    fisso = muso & (P[:, 0] > xs[0] + ANGOLO) & (P[:, 0] < xs[-1] - ANGOLO)
+    libero = in_testa & ~fisso
     w = np.where(in_testa | muso, w, 0.0).astype(np.float64)
     e = np.array([(ed.verts[0].index, ed.verts[1].index) for ed in bm.edges])
+    e = e[lab[e[:, 0]].astype(int) * lab[e[:, 1]] >= 0]       # niente lati attraverso il taglio
     A = coo_matrix((np.ones(len(e) * 2), (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(n, n)).tocsr()
-    Lm = diags(1.0 / np.maximum(np.asarray(A.sum(1)).ravel(), 1)) @ A
-    for _ in range(400):
-        w2 = Lm @ w
-        w[libero] = w2[libero]
+    # soluzione esatta dell'equazione di Laplace (le iterazioni non arrivavano in fondo: restava una piega
+    # netta sotto il mento)
+    from scipy.sparse.linalg import spsolve
+    L = (diags(np.asarray(A.sum(1)).ravel()) - A).tocsr()
+    f = np.where(libero)[0]
+    c = np.where(~libero)[0]
+    w[f] = spsolve(L[f][:, f].tocsc(), -(L[f][:, c] @ w[c]))
+    w = np.clip(w, 0.0, 1.0)
     print('PESI LISCI: liberi', int(libero.sum()))
     return w.astype(np.float32)
 
@@ -198,7 +210,7 @@ def costruisci(ob, cartella=None):
     print('LINEA LABBRA', len(xs), 'punti; z', np.round(zs, 3).tolist())
     lab, muso = etichette(bm, P, xs, zs)
     w = peso_mascella(P, lab, muso, xs, zs)
-    w = liscia_pesi(bm, P, w, muso)
+    w = liscia_pesi(bm, P, w, muso, lab, xs)
     # indice originale in un livello del bmesh: dopo le cancellazioni l'ordine dei vertici cambia
     orig = bm.verts.layers.int.new('orig')
     for v in bm.verts:
@@ -267,27 +279,28 @@ def interno(bm, w, lab, muso_t, me, orlo):
     asse = np.array((a1 - a0).normalized())
     Psu = np.array([v.co[:] for v in bordo if lab[v.index] > 0])
     Pgiu = np.array([v.co[:] for v in bordo if lab[v.index] < 0])
+    Wsu = np.array([w[v.index] for v in bordo if lab[v.index] > 0])
+    Wgiu = np.array([w[v.index] for v in bordo if lab[v.index] < 0])
     print('BORDO', len(Psu), 'sopra', len(Pgiu), 'sotto')
     tutti = np.concatenate([Psu, Pgiu])
     s_min, s_max = (tutti @ asse).min(), (tutti @ asse).max()
     M = 36
-    def ricampiona(Q):
+    def ricampiona(Q, W):
         sq = Q @ asse
-        out = []
+        out, pesi = [], []
         for k in range(M):
             c = s_min + (s_max - s_min) * (k + 0.5) / M
             sel = np.abs(sq - c) < (s_max - s_min) / M
-            if sel.any():
-                out.append(Q[sel].mean(0))
-            else:
-                out.append(Q[np.argmin(np.abs(sq - c))])
-        return np.array(out)
-    su = ricampiona(Psu)
-    giu = ricampiona(Pgiu)
+            if not sel.any():
+                sel = np.argmin(np.abs(sq - c))
+            out.append(np.atleast_2d(Q[sel]).mean(0)); pesi.append(float(np.mean(W[sel])))
+        return np.array(out), np.array(pesi)
+    su, wsu = ricampiona(Psu, Wsu)
+    giu, wgiu = ricampiona(Pgiu, Wgiu)
     cen = np.concatenate([su, giu]).mean(0)
     B = np.concatenate([su, giu[::-1]])
     LB = np.array([1] * M + [-1] * M)
-    WB = np.array([0.0] * M + [1.0] * M)
+    WB = np.concatenate([wsu, wgiu[::-1]])     # il peso delle labbra lì accanto (verso gli angoli sfuma)
     rad = B - cen
     lat = np.outer(rad @ asse, asse)            # la parte lungo la cerniera (verso gli angoli)
     B = B + (rad - lat) * 0.30 + lat * 0.04 + np.array([0.0, 0.06, 0.0])   # più alta, non più larga
@@ -320,7 +333,7 @@ def interno(bm, w, lab, muso_t, me, orlo):
             p = b + (fine - b) * t + radiale * gonfio * (1 - t) * 0.6
             v = bm.verts.new(p)
             v.index = len(w)   # indice provvisorio nelle liste w e lab
-            w.append(float(WB[i] * (1 - t) + 0.3 * t * (1 if WB[i] > 0.5 else 0.6)))
+            w.append(float(WB[i] * (1 - t) + 0.3 * t * (0.6 + 0.4 * WB[i])))
             lab.append(int(LB[i]))
             anello.append(v); nuovi.append(v)
         anelli_v.append(anello)
@@ -338,29 +351,76 @@ def interno(bm, w, lab, muso_t, me, orlo):
             for l, (ui, vi) in zip(f.loops, ((i, k), (i + 1, k), (i + 1, k + 1), (i, k + 1))):
                 l[uv].uv = (ui / n, vi / K)
             facce.append(f)
-    # la gengiva: dal bordo vero del buco all'anello d'ingresso della sacca, a ventaglio (ogni lato di
-    # bordo verso il vertice dell'anello più vicino), così tra le labbra e la sacca non resta una fessura
+    # la gengiva: dal bordo vero del buco all'anello d'ingresso della sacca. I due anelli si cuciono a
+    # cerniera (lampo): il bordo si divide nei due angoli (gli estremi lungo la cerniera) in labbro di
+    # sopra e di sotto, e ogni metà si cuce con la sua metà dell'anello, avanzando su quello dei due che
+    # è più indietro in lunghezza. Così non resta nessuna fessura tra le labbra e la sacca (prima, a
+    # ventaglio verso il vertice più vicino, agli angoli restavano lati scoperti e si vedeva il
+    # corridoio attraverso la bocca)
     s_gengiva = slot('gengiva', (0.45, 0.12, 0.12), 0.35)
-    R0 = np.array([v.co[:] for v in anelli_v[0]])
-    def vicino(v):
-        # sopra con la metà di sopra dell'anello, sotto con quella di sotto
-        meta = slice(0, M) if lab[v.index] > 0 else slice(M, 2 * M)
-        k = int(np.argmin(np.linalg.norm(R0[meta] - np.array(v.co[:]), axis=1)))
-        return anelli_v[0][k + (0 if lab[v.index] > 0 else M)]
+    lati_b = [e for e in bm.edges if e.is_boundary and e.verts[0][orlo] and e.verts[1][orlo]]
+    vic = {}
+    for e in lati_b:
+        x_, y_ = e.verts
+        vic.setdefault(x_, []).append(y_); vic.setdefault(y_, []).append(x_)
+    # l'anello più lungo: il bordo del buco
+    fatti, anelli_h = set(), []
+    for v0 in vic:
+        if v0 in fatti:
+            continue
+        an, prec, v = [v0], None, v0
+        fatti.add(v0)
+        while True:
+            succ = [x for x in vic[v] if x is not prec and x not in fatti]
+            if not succ:
+                break
+            prec, v = v, succ[0]
+            an.append(v); fatti.add(v)
+        anelli_h.append(an)
+    H = max(anelli_h, key=len)
+    print('BUCO', len(H), 'vertici; altri anelli', sorted(len(x) for x in anelli_h)[:-1])
+    sH = np.array([np.array(v.co[:]) @ asse for v in H])
+    i_min, i_max = int(np.argmin(sH)), int(np.argmax(sH))
+    def tratto_h(i, j):
+        out = [H[i]]
+        while i != j:
+            i = (i + 1) % len(H); out.append(H[i])
+        return out
+    c1, c2 = tratto_h(i_min, i_max), tratto_h(i_max, i_min)
+    z1 = np.mean([v.co.z for v in c1]); z2 = np.mean([v.co.z for v in c2])
+    h_su, h_giu = (c1, c2[::-1]) if z1 > z2 else (c2, c1[::-1])   # tutte e due da sinistra a destra
+    def param(vs):
+        P_ = np.array([v.co[:] for v in vs])
+        l = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(P_, axis=0), axis=1))]
+        return l / max(l[-1], 1e-9)
     gengive = 0
-    for e in [e for e in bm.edges if e.is_boundary and e.verts[0][orlo] and e.verts[1][orlo]
-              and lab[e.verts[0].index] == lab[e.verts[1].index] != 0]:
-        a_, b_ = e.verts
-        ra, rb = vicino(a_), vicino(b_)
-        for tri in ((a_, b_, ra), (b_, rb, ra)) if ra is not rb else ((a_, b_, ra),):
-            try:
-                f = bm.faces.new(tri)
-            except ValueError:
-                continue
-            f.material_index = s_gengiva
-            for l in f.loops:
-                l[uv].uv = (0.5, 0.0)
-            facce.append(f); gengive += 1
+    def tri(t_):
+        nonlocal gengive
+        if len(set(t_)) < 3:
+            return
+        try:
+            f = bm.faces.new(t_)
+        except ValueError:
+            return
+        f.material_index = s_gengiva
+        for l in f.loops:
+            l[uv].uv = (0.5, 0.0)
+        facce.append(f); gengive += 1
+    def cerniera(A_, B_):
+        ta, tb = param(A_), param(B_)
+        i = j = 0
+        while i < len(A_) - 1 or j < len(B_) - 1:
+            if j == len(B_) - 1 or (i < len(A_) - 1 and ta[i + 1] <= tb[j + 1]):
+                tri((A_[i], A_[i + 1], B_[j])); i += 1
+            else:
+                tri((A_[i], B_[j + 1], B_[j])); j += 1
+    r_su = anelli_v[0][:M]                 # da sinistra a destra
+    r_giu = anelli_v[0][M:][::-1]          # anche questa da sinistra a destra
+    cerniera(h_su, r_su)
+    cerniera(h_giu, r_giu)
+    # gli angoli: il vertice d'angolo del buco con i due capi dell'anello
+    tri((h_su[0], r_su[0], r_giu[0]))
+    tri((h_su[-1], r_su[-1], r_giu[-1]))
     print('GENGIVA', gengive, 'triangoli')
     try:
         fondo = bm.faces.new(anelli_v[-1]); fondo.material_index = s_carne; facce.append(fondo)
@@ -369,14 +429,40 @@ def interno(bm, w, lab, muso_t, me, orlo):
     except ValueError:
         pass
     bm.normal_update()
-    for f in facce:   # le normali guardano dentro la bocca (verso l'asse della sacca)
+    for f in facce:   # le normali guardano dentro la bocca (verso l'asse della sacca); carne liscia
         c = f.calc_center_median()
         if f.normal.dot(Vector(asse_c) - c) < 0:
             f.normal_flip()
-    # denti: due file dietro il bordo, ogni 3 cm circa
+        f.smooth = True
+    # il fondo scuro: un ellissoide nero dentro la testa, dietro la bocca. Qualunque fessura rimasta tra
+    # le labbra, i denti e la sacca mostra il buio della testa, non la luce del corridoio dietro di lui
+    s_buio = slot('gola_buio', (0.01, 0.0, 0.0), 1.0)
+    centro_b = Vector(gola) + Vector((0.0, -0.08, 0.02))
+    r_b = Vector((0.22, 0.14, 0.13))
+    nb_u, nb_v = 16, 10
+    anelli_b = []
+    for j in range(1, nb_v):
+        th = math.pi * j / nb_v
+        anello = []
+        for i in range(nb_u):
+            ph = 2 * math.pi * i / nb_u
+            p = centro_b + Vector((r_b.x * math.sin(th) * math.cos(ph), r_b.y * math.sin(th) * math.sin(ph), r_b.z * math.cos(th)))
+            v = bm.verts.new(p); v.index = len(w); w.append(0.15); lab.append(1)
+            anello.append(v)
+        anelli_b.append(anello)
+    polo_su = bm.verts.new(centro_b + Vector((0, 0, r_b.z))); polo_su.index = len(w); w.append(0.15); lab.append(1)
+    polo_giu = bm.verts.new(centro_b - Vector((0, 0, r_b.z))); polo_giu.index = len(w); w.append(0.15); lab.append(1)
+    for j in range(len(anelli_b) - 1):
+        for i in range(nb_u):
+            f = bm.faces.new((anelli_b[j][i], anelli_b[j][(i + 1) % nb_u], anelli_b[j + 1][(i + 1) % nb_u], anelli_b[j + 1][i]))
+            f.material_index = s_buio
+    for i in range(nb_u):
+        bm.faces.new((polo_su, anelli_b[0][(i + 1) % nb_u], anelli_b[0][i])).material_index = s_buio
+        bm.faces.new((polo_giu, anelli_b[-1][i], anelli_b[-1][(i + 1) % nb_u])).material_index = s_buio
+    # denti: una fila dietro il bordo, ogni 3 cm circa (con due, da sotto si vedevano lastre bianche)
     rng = np.random.default_rng(4)
     passo = 0.03
-    for fila, (t_f, scala) in enumerate(((0.07, 1.0), (0.16, 0.8))):
+    for fila, (t_f, scala) in enumerate(((0.07, 0.85),)):
         lung = 0.0
         for i in range(n):
             j = (i + 1) % n
@@ -396,7 +482,7 @@ def interno(bm, w, lab, muso_t, me, orlo):
             r = float(rng.uniform(0.014, 0.022)) * scala
             nuovi_t = _dente(bm, base, d, h, r, Vector(B[j]) - Vector(B[i]), s_denti, uv)
             for v in nuovi_t:
-                v.index = len(w); w.append(float(1.0 if LB[i] < 0 else 0.0)); lab.append(int(LB[i]))
+                v.index = len(w); w.append(float(WB[i])); lab.append(int(LB[i]))
     return len(nuovi)
 
 
@@ -470,7 +556,8 @@ if __name__ == '__main__':
     if 'pesi' in sys.argv:
         vecchi = colora_pesi(ob, r['peso'])
         render(cartella, 'pesi', {'fronte': ((0.15, -2.2, 1.45), (0.12, -0.8, 1.4)),
-                                  'lato': ((1.4, -1.6, 1.5), (0.1, -0.85, 1.35))})
+                                  'lato': ((1.4, -1.6, 1.5), (0.1, -0.85, 1.35)),
+                                  'sotto': ((0.2, -1.5, 0.75), (0.12, -0.85, 1.35))})
         ob.data.materials.clear()
         for m in vecchi:
             ob.data.materials.append(m)

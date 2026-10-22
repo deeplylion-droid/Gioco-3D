@@ -213,9 +213,11 @@ def posa(t, piedi):
     p['spina'].append(('x', liscio(0, 10, tp - 0.45, tp - 0.15, t) - liscio(0, 10, tp + 0.25, tp + 0.55, t)))
     # --- collo e testa: giù verso la faccia del giocatore, poi lo scatto verso il richiamo (dietro a
     # sinistra, sopra la spalla), il giro, lo sguardo indietro al giocatore nell'esitazione
-    guarda = chiavi(t, [(R + 0.08, 0.0), (R + 0.30, 75.0), (G + 0.2, 75.0), (G + 0.8, 0.0), (E + 0.7, 0.0),
-                        (E + 0.85, 95.0), (E + 1.35, 95.0), (E + 1.5, 60.0), (C - 0.15, 0.0)])
-    alza = chiavi(t, [(R + 0.08, 0.0), (R + 0.30, -18.0), (G + 0.8, -5.0), (C, 0.0)])
+    # (lo scatto dura mezzo secondo: più svelto la pelle della bocca si strappava tra un fotogramma e
+    # l'altro e nel gioco sembrava un salto)
+    guarda = chiavi(t, [(R + 0.08, 0.0), (R + 0.55, 75.0), (G + 0.3, 75.0), (G + 0.85, 0.0), (E + 0.5, 0.0),
+                        (E + 0.95, 95.0), (E + 1.35, 95.0), (E + 1.5, 60.0), (C - 0.15, 0.0)])
+    alza = chiavi(t, [(R + 0.08, 0.0), (R + 0.55, -18.0), (G + 0.8, -5.0), (C, 0.0)])
     scatti = 0.0
     if M < t < R:
         # piccoli scatti in avanti della testa, come per mordere
@@ -224,12 +226,12 @@ def posa(t, piedi):
     tremito = rumore(t, 3.0, 1.0) * (1.0 if t < R else 0.4)
     p['collo'] = [('x', 6 * chino + 0.5 * tremito - 4 * corsa), ('z', guarda * 0.45), ('x', alza * 0.5)]
     # con la bocca spalancata il muso si alza: l'apertura guarda in avanti, verso la faccia del giocatore
-    muso_su = chiavi(t, [(0.0, 0.0), (1.2, -4.0), (M, -24.0), (R + 0.05, -24.0), (R + 0.30, 0.0)])
+    muso_su = chiavi(t, [(0.0, 0.0), (1.2, -4.0), (M, -24.0), (R + 0.05, -24.0), (R + 0.50, 0.0)])
     p['testa'] = [('x', 4 * chino + muso_su + scatti - 6 * corsa - 3 * corsa * math.cos(2 * fase)),
                   ('z', guarda * 0.55 + 1.5 * tremito), ('x', alza * 0.5), ('y', 6 * chino * math.sin(t * 0.9))]
     # --- mascella: si apre piano al risveglio, spalancata nella minaccia, mezza chiusa al richiamo, sbuffo
     # nell'esitazione, ansima nella corsa
-    apri = chiavi(t, [(0.0, 8.0), (1.2, 12.0), (M, 52.0), (R + 0.05, 55.0), (R + 0.30, 30.0), (G + 0.8, 12.0),
+    apri = chiavi(t, [(0.0, 8.0), (1.2, 12.0), (M, 52.0), (R + 0.05, 55.0), (R + 0.50, 30.0), (G + 0.8, 12.0),
                       (E + 0.85, 10.0), (E + 1.0, 32.0), (E + 1.3, 6.0), (C, 14.0)])
     if M < t < R:
         apri += 3.0 * math.sin(t * 2 * math.pi * 0.55)

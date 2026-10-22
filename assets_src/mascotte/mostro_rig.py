@@ -175,6 +175,24 @@ def pesa(mesh, arm, bocca):
     idx = np.argsort(W, 1)[:, :-4]
     np.put_along_axis(W, idx, 0.0, 1)
     W /= np.maximum(W.sum(1, keepdims=True), 1e-9)
+    # testa e mascella con il peso della mascella di mostro_bocca. La parte del vertice che segue la testa
+    # (testa + mascella) è almeno quella data dai pesi per distanza; nel muso, nella sacca e nei denti è
+    # tutta; tra le due una sfumatura liscia sulla superficie (se no sotto il mento, dove il peso della
+    # mascella si spegne, la pelle passava di colpo dal collo alla testa: un gradino quando la testa gira)
+    nomi = [b.name for b in ossa]
+    kt, km = nomi.index('testa'), nomi.index('mascella')
+    pm = np.asarray(bocca['peso'], np.float64)
+    tutta = (np.asarray(bocca['lab']) != 0) | (pm > 0.9)
+    a = tutta.astype(np.float64)
+    for _ in range(60):
+        a = np.maximum(Lm @ a, tutta)
+    ht = np.maximum(W[:, kt] + W[:, km], a)
+    altre = W.copy(); altre[:, [kt, km]] = 0.0
+    s_alt = altre.sum(1, keepdims=True)
+    altre = np.where(s_alt > 1e-9, altre / np.maximum(s_alt, 1e-9), 0.0) * (1.0 - ht)[:, None]
+    W = altre
+    W[:, kt] = ht * (1.0 - pm)
+    W[:, km] = ht * pm
     for o in bpy.context.selected_objects:
         o.select_set(False)
     gruppi = {}
@@ -187,26 +205,6 @@ def pesa(mesh, arm, bocca):
     mod = mesh.modifiers.new('Scheletro', 'ARMATURE'); mod.object = arm
     mesh.parent = arm
     vuoti = []
-    gt, gm = gruppi['testa'], gruppi['mascella']
-    pm = bocca['peso']
-    tutti = list(gruppi.values())
-    for v in mesh.data.vertices:
-        i = v.index
-        if pm[i] > 0.01 or bocca['lab'][i] != 0:
-            # muso, mascella, guance, sacca e denti: solo testa e mascella
-            for g in tutti:
-                g.remove([i])
-            gt.add([i], 1.0 - float(pm[i]), 'REPLACE')
-            gm.add([i], float(pm[i]), 'REPLACE')
-        else:
-            # altrove la mascella del calore torna alla testa
-            wm = 0.0
-            for g in v.groups:
-                if g.group == gm.index:
-                    wm = g.weight
-            if wm > 0:
-                gm.remove([i])
-                gt.add([i], wm, 'ADD')
     somme = np.zeros(len(me.vertices))
     for v in me.vertices:
         somme[v.index] = sum(g.weight for g in v.groups)
