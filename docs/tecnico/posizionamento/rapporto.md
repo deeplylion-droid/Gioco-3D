@@ -1,16 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 16:32:06. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 17:13:31. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 1. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 105. Eccezioni non più trovate: 1.
-
-## Nuovi
-
-### interni
-
-| Squadra | Problema | Nodo | Posizione | Dettaglio |
-|---|---|---|---|---|
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta` | -6.08, 0.96, 36.74 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) |
+Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 90. Eccezioni non più trovate: 16.
 
 ## Già noti
 
@@ -21,26 +13,11 @@ Nuovi: 1. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 105. Eccez
 | ambienti-1 | compenetra | `Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla` | 0.30, 2.48, 39.60 | il 87% dei suoi vertici è dentro Interni/Ambienti/Corridoio/neon_corridoio_2 | voluto: il tubo del neon sta dentro la sua plafoniera |
 | ambienti-1 | compenetra | `Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla` | -2.70, 2.85, 35.90 | il 68% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/neon_spogliatoi_1 | voluto: il tubo del neon sta dentro la sua plafoniera |
 | ambienti-1 | compenetra | `Interni/Ambienti/Stanzino/neon_stanzino_neon/neon_stanzino_tubo_sfarfalla` | 3.50, 2.39, 32.50 | il 68% dei suoi vertici è dentro Interni/Ambienti/Stanzino/neon_stanzino | voluto: il tubo del neon sta dentro la sua plafoniera |
-| ambienti-1 | compenetra | `Interni/Ambienti/Stanzino/stanzino_statico` | 2.37, 1.30, 32.50 | passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm | da correggere: controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm (ambienti-1) |
 | ambienti-1 | compenetra | `Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6880` | 0.00, 1.10, 20.30 | il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) | da correggere: controllo severo del 22 ottobre: il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) (ambienti-1) |
 | ambienti-1 | compenetra | `Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6882` | 0.00, 1.65, 20.30 | il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) | da correggere: controllo severo del 22 ottobre: il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) (ambienti-1) |
 | ambienti-1 | compenetrato | `Interni/Meccanismi/Saracinesca` | 0.17, 1.10, 20.35 | entra dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) | da correggere: controllo severo del 22 ottobre: entra dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) (ambienti-1) |
 | ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_rotore` | 0.00, 0.00, 25.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
 | ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_telaio` | -0.75, 0.00, 25.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
-| ambienti-1 | staccato | `Interni/Ambienti/Corridoio/estintore` | -0.10, 1.15, 40.69 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 84.0 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 84.0 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Corridoio/porta_servizio` | -9.66, 1.02, 39.60 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietti_est_01_anta` | 0.69, 0.96, 36.91 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietti_est_07_anta` | 0.75, 0.96, 34.56 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta` | 0.68, 0.96, 33.65 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietti_ovest_05_anta` | -6.16, 0.96, 35.43 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta` | -6.08, 0.96, 33.18 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietti_ovest_15_anta` | -6.19, 0.96, 31.43 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta` | 0.81, 0.96, 35.77 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.0 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Stanzino/braccioli_stanzino` | 5.20, 2.07, 31.90 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Stanzino/estintore_stanzino` | 4.90, 1.13, 34.49 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 82.0 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 82.0 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Stanzino/salvagente_rastrelliera_1` | 4.82, 1.00, 33.35 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Ambienti/Stanzino/salvagente_rastrelliera_2` | 4.82, 1.00, 31.60 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1) |
-| ambienti-1 | staccato | `Interni/Zaino/Modello/Zaino` | 4.78, 1.03, 32.47 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm) | da correggere: controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm) (ambienti-1) |
 
 ### mascotte
 
@@ -151,4 +128,19 @@ Nuovi: 1. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 105. Eccez
 
 ## Eccezioni non più trovate (si possono togliere dal file)
 
+- interni · staccato · `Interni/Ambienti/Corridoio/estintore`
+- interni · staccato · `Interni/Ambienti/Corridoio/porta_servizio`
+- interni · staccato · `Interni/Ambienti/Spogliatoi/armadietti_est_01_anta`
+- interni · staccato · `Interni/Ambienti/Spogliatoi/armadietti_est_07_anta`
+- interni · staccato · `Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta`
+- interni · staccato · `Interni/Ambienti/Spogliatoi/armadietti_ovest_05_anta`
+- interni · staccato · `Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta`
+- interni · staccato · `Interni/Ambienti/Spogliatoi/armadietti_ovest_15_anta`
+- interni · staccato · `Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta`
+- interni · staccato · `Interni/Ambienti/Stanzino/braccioli_stanzino`
+- interni · staccato · `Interni/Ambienti/Stanzino/estintore_stanzino`
+- interni · staccato · `Interni/Ambienti/Stanzino/salvagente_rastrelliera_1`
+- interni · staccato · `Interni/Ambienti/Stanzino/salvagente_rastrelliera_2`
+- interni · staccato · `Interni/Zaino/Modello/Zaino`
 - interni · compenetra · `Interni/Meccanismi/PernoTurbina/turbina_saracinesca`
+- interni · compenetra · `Interni/Ambienti/Stanzino/stanzino_statico`

@@ -477,8 +477,8 @@ CERNIERE = []   # le cerniere delle ante aperte, nella parte fissa degli spoglia
 
 
 def cerniere(nome, cern, faccia, yy):
-    """Due cerniere tra il telaio dell'armadietto e l'anta aperta: una piastrina sul fronte del telaio e il perno
-    sull'asse dell'anta (il perno è sull'asse, quindi resta giusto anche per l'anta che sbatte). Prima l'anta
+    """La cerniera tra il telaio dell'armadietto e l'anta aperta: due piastrine sul fronte del telaio e il perno
+    continuo sull'asse dell'anta (è sull'asse, quindi resta giusto anche per l'anta che sbatte). Prima l'anta
     girava nel vuoto, 1-3 cm davanti al telaio (controllo di posizionamento severo del 22 ottobre)."""
     fx, py = cern[0], cern[1]
     telaio = yy + 0.01 if faccia > 0 else yy + 0.39
@@ -487,8 +487,9 @@ def cerniere(nome, cern, faccia, yy):
         y0, y1 = sorted((telaio, py + 0.006 * (1 if faccia > 0 else -1)))
         x0, x1 = sorted((fx, fx - 0.012 * faccia))
         parti.append(L.scatola(nome + '_cerniera', (x0, y0, z), (x1, y1, z + 0.1), MAT_CERNIERA[0]))
-        # il perno è grosso 3 cm: lo spigolo dell'anta (smussato) passa a 1,8 cm dall'asse, a ogni apertura
-        parti.append(L.cilindro(nome + '_perno', (fx, py, z - 0.01), (fx, py, z + 0.11), 0.015, MAT_CERNIERA[0], seg=12))
+    # cerniera continua (a pianoforte) lungo tutta l'anta: lo spigolo dell'anta, smussato, passa a 1,8 cm
+    # dall'asse, a ogni apertura
+    parti.append(L.cilindro(nome + '_perno', (fx, py, 0.2), (fx, py, 1.72), 0.016, MAT_CERNIERA[0], seg=12))
     return parti
 
 
