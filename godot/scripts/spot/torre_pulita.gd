@@ -81,11 +81,28 @@ func _pulisci(radice: Node) -> void:
 ## triangoli d'acciaio e rossi che stanno tutti nel disco della grata.
 func _togli_grate(radice: Node) -> void:
 	var dati: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
-	var dischi: Array = []      # [centro, verso orizzontale]
+	# il disco di ogni grata: centro e asse dalla linea del tubo più vicina (il tubo pende: l'asse non è orizzontale)
+	var linee: Array = []
+	for e in JSON.parse_string(FileAccess.get_file_as_string(LINEE)):
+		var l := PackedVector3Array()
+		for q in e["punti"]:
+			l.append(SalaTorre.b(q))
+		linee.append(l)
+	var dischi: Array = []      # [centro, asse]
 	for bc in dati["bocche_chiuse"]:
-		if bc["tubo"]:
-			var v := Vector3(bc["verso"][0], 0.0, -bc["verso"][1]).normalized()
-			dischi.append([Vector3(bc["pos"][0], float(bc["pos"][2]) + 0.55, -bc["pos"][1]), v])
+		if not bc["tubo"]:
+			continue
+		var p := Vector3(bc["pos"][0], float(bc["pos"][2]) + 0.55, -bc["pos"][1])
+		var migliore := INF
+		var disco := []
+		for l in linee:
+			for i in (l as PackedVector3Array).size() - 1:
+				var c := Geometry3D.get_closest_point_to_segment(p, l[i], l[i + 1])
+				if c.distance_to(p) < migliore:
+					migliore = c.distance_to(p)
+					disco = [c, (l[i + 1] - l[i]).normalized()]
+		if migliore < 0.5:
+			dischi.append(disco)
 	var tolti := 0
 	for n in radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
@@ -135,7 +152,7 @@ static func _nel_disco(q: Vector3, d: Array) -> bool:
 	var r := q - c
 	var lungo := r.dot(v)
 	var lato := (r - v * lungo).length()
-	return absf(lungo) < 0.16 and lato < 0.62
+	return absf(lungo) < 0.1 and lato < 0.62
 
 
 func _pulito(m: BaseMaterial3D, acqua: bool) -> BaseMaterial3D:
