@@ -2940,6 +2940,202 @@
 		"zona": "risalita"
 	},
 	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.05 e 1.30 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21212",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21205",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21199",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21193",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.25
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.93 e 1.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.93 e 1.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@21210",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.5
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.82 e 0.83 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.82 e 0.83 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21184",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.5
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto25/Frontale/Tirato/@MeshInstance3D@21245",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.81 e 0.82 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.81 e 0.82 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto24/Frontale/Tirato/@MeshInstance3D@21239",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto23/Frontale/Tirato/@MeshInstance3D@21232",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.06 e 1.23 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.06 e 1.23 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21214",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.80 e 0.97 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.80 e 0.97 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21207",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.58 e 0.72 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.58 e 0.72 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21201",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.37 e 0.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto22/Frontale/Tirato/@MeshInstance3D@21226",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21195",
+		"pos": [
+			-39.0,
+			-5.4,
+			43.75
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.28 e 1.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.28 e 1.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@21261",
@@ -3010,9 +3206,23 @@
 		"zona": "risalita"
 	},
 	{
+		"dettaglio": "passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21206 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@6075 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21184",
+		"pos": [
+			-39.24,
+			-4.58,
+			43.5
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "risalita"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (12 celle da 25 cm) (pavimenti fra y -25.78 e -25.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
 		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26449",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26559",
 		"pos": [
 			67.0,
 			-25.58,
@@ -3026,7 +3236,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -28.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
 		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26457",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26567",
 		"pos": [
 			67.0,
 			-28.58,
@@ -3040,7 +3250,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (13 celle da 25 cm) (pavimenti fra y -22.80 e -22.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
 		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26441",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26551",
 		"pos": [
 			54.5,
 			-22.58,
