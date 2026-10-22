@@ -1443,7 +1443,9 @@ def versione_A(mats):
             c.cilindro(ap, ap + Vector((0, 0, 2.6)), 0.07, 'gioco_rosso', seg=12)
         c.cilindro(base - t0v * (LARGO_D + 0.45) + Vector((0, 0, 2.6)), base + t0v * (LARGO_D + 0.45) + Vector((0, 0, 2.6)), 0.07,
                    'gioco_rosso', seg=12)
-        c.scatola_assi(base + Vector((0, 0, 2.85)), [v0, t0v, Vector((0, 0, 1))], (0.03, LARGO_D + 0.55, 0.22), 'strisce')
+        # nel gioco la fascia è liscia, del colore del portale: le strisce gialle e nere vogliono dire "chiuso" (S2)
+        c.scatola_assi(base + Vector((0, 0, 2.85)), [v0, t0v, Vector((0, 0, 1))], (0.03, LARGO_D + 0.55, 0.22),
+                       'gioco_rosso' if GIOCO else 'strisce')
         imbocchi.append(dict(base=[round(v, 3) for v in base], verso=[round(v0.x, 4), round(v0.y, 4)], mezza=LARGO_D + 0.45, alto=2.6))
     P.balconata(c, 28.6, 33.4, YI1, -1.5)
     # il fondo: pozzo, vasche, la bocca del tubo dell'inseguimento sul muro nord
