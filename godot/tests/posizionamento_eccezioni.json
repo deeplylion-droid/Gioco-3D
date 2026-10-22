@@ -730,32 +730,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/AngoloScatoloni/scat_3_0_0",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			-16.63,
-			0.17,
-			19.38
-		],
-		"stato": "da correggere",
-		"motivo": "il pannello det_pannello_lamiera_0 e la piastrella det_piastrella_rotta_6_7 del kit stanno sotto la pila: li toglie ambienti-2"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			-1.75,
-			0.37,
-			12.4
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
 		"squadra": "mascotte",
 		"problema": "compenetra",
