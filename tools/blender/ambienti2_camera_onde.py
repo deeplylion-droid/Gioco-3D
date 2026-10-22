@@ -125,7 +125,16 @@ PHM = PH - 0.23
 for k, (c, d) in enumerate((((px - PZ / 2 - 0.1, py, H + PHM / 2), (0.2, PZ + 0.4, PHM)), ((px + PZ / 2 + 0.1, py, H + PHM / 2), (0.2, PZ + 0.4, PHM)),
                             ((px, py - PZ / 2 - 0.1, H + PHM / 2), (PZ, 0.2, PHM)), ((px, py + PZ / 2 + 0.1, H + PHM / 2), (PZ, 0.2, PHM)))):
     S('pozzo', box(f'pozzo_{k}', c, d, M['piastrelle'], uv=2.0))
+    # sopra, fino al fondo della piscina, la collisione continua (lì il collare della sala è solo da vedere: senza,
+    # scendendo dal buco ci si incastrava sul bordo delle pareti)
+    lo_ = Vector(c) - Vector(d) / 2
+    hi_ = Vector(c) + Vector(d) / 2
+    collisione_box(f'pozzo_{k}_su', (lo_.x, lo_.y, H + PHM), (hi_.x, hi_.y, H + PH))
 R_P = 0.5
+# della piastra col foro tondo resta solo la collisione, come prima (la strada giù e su dalla scala è provata così)
+for k, (c, d) in enumerate((((px - (PZ / 2 + R_P) / 2, py, H + PH + 0.05), (PZ / 2 - R_P, PZ, 0.1)), ((px + (PZ / 2 + R_P) / 2, py, H + PH + 0.05), (PZ / 2 - R_P, PZ, 0.1)),
+                            ((px, py - (PZ / 2 + R_P) / 2, H + PH + 0.05), (2 * R_P, PZ / 2 - R_P, 0.1)), ((px, py + (PZ / 2 + R_P) / 2, H + PH + 0.05), (2 * R_P, PZ / 2 - R_P, 0.1)))):
+    collisione_box(f'piastra_portello_{k}', Vector(c) - Vector(d) / 2, Vector(c) + Vector(d) / 2)
 # portello aperto (cardine sul lato +X, ruotato di 110 gradi)
 port = [cilindro('PORTELLO_disco', (px, py, H + PH + 0.12), R_P + 0.04, 0.08, M['ferro'], seg=32, uv=1.0)]
 port += [o for o in [toro('PORTELLO_volantino', (px, py, H + PH + 0.22), 0.22, 0.02, M['giallo'], seg=24, seg2=6)]]
@@ -140,10 +149,10 @@ portello['cardine'] = 'asse Y Blender (-Z Godot); chiuso = 0, aperto = -110 grad
 # luce fredda che scende dal portello (la piscina sotto la cupola)
 luce('LUCE_portello', 'SPOT', (px, py, H + PH + 1.5), 300, (0.55, 0.7, 0.9), spot=60, mira=(px, py, 0), raggio=0.3)
 # scala alla marinara dal pozzo al pavimento (contro la parete -X del pozzo)
-LX = px - PZ / 2 + 0.18
+LX = px - 0.47                # (la scala del gioco, Gioco/ScalaPozzo, sta in x 0,17)
 for s in (-0.22, 0.22):
-    S('pozzo', tubo(f'scala_montante{s}', [(LX, py + s, 0.0), (LX, py + s, H + PHM)], 0.025, M['verde'], seg=8))
-for k in range(int((H + PHM) / 0.3)):
+    S('pozzo', tubo(f'scala_montante{s}', [(LX, py + s, 0.0), (LX, py + s, H + PH)], 0.025, M['verde'], seg=8))
+for k in range(int((H + PH) / 0.3)):
     S('pozzo', cilindro(f'scala_piolo{k}', (LX, py, 0.3 + k * 0.3), 0.018, 0.44, M['ferro'], asse=(0, 1, 0), seg=8, uv=None))
 empty('PUNTO_portello', (px, py, H + PH))
 empty('PUNTO_arrivo_scala', (px + 0.6, py, 0))

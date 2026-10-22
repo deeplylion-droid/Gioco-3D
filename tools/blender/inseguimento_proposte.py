@@ -526,28 +526,31 @@ def versione_A(mats):
         return pts
 
     zc1 = C1[4] + 0.75                    # centro delle bocche nelle pareti delle vasche
+    # (nel gioco i tubi partono con 80 cm dritti, perpendicolari al muro: così l'imbocco e la sua flangia stanno
+    # dritti e non entrano nella paratia; il tubo 0 continua dritto quello della torre)
     zc2 = C2[4] + 0.75
     zc3 = C3[4] + 0.75
     # T0: dalla bocca alla vasca 1 (entra dal lato ovest)
-    # (nel gioco continua il tubo della bocca della torre, che finisce in x 41)
-    t0 = tubo('ins_A_tubo_0', [(41.0 if GIOCO else 39.5, 17.4, -18.6), (43.0, 17.2, -19.6), (46.5, 15.2, -20.9), (49.0, 15.0, zc1 + 0.3), (50.4, 15.0, zc1)], ['tsc_giallo'])
+    # (nel gioco continua il tubo della bocca della torre, che finisce in x 41: le due flange si toccano, i bulloni
+    # passano dall'una all'altra)
+    t0 = tubo('ins_A_tubo_0', [(41.06, 17.4, -18.606) if GIOCO else (39.5, 17.4, -18.6)] + ([(41.6, 17.4, -18.66), (42.2, 17.4, -18.72)] if GIOCO else []) + [(43.0, 17.2, -19.6), (46.5, 15.2, -20.9), (49.0, 15.0, zc1 + 0.3), (50.4, 15.0, zc1)], ['tsc_giallo'])
     # bivio 1 (lato est della vasca 1): a nord la giusta (verso la vasca 2), a sud la sbagliata (scolo 0)
     paratia(c, (C1[2] - 0.2, 16.4, zc1), (1, 0), True, luci)
     paratia(c, (C1[2] - 0.2, 13.6, zc1), (1, 0), False, luci)
     t1 = tubo('ins_A_tubo_1', [(C1[2] - 0.3, 16.4, zc1 - 0.1), (57.5, 17.5, -23.4), (60.5, 21.0, -24.2), (61.3, 25.0, zc2 + 0.5), (61.9, 27.6, zc2 + 0.2), (C2[0] + 0.3, 27.8, zc2)]
               if not GIOCO else   # nel gioco la discesa è distribuita meglio (al 3 % ci si fermava)
-              [(C1[2] - 0.165, 16.4, zc1 - 0.1), (57.5, 17.5, -22.9), (60.5, 21.0, -23.6), (61.3, 25.0, -24.25), (61.9, 27.6, -24.6), (C2[0] + 0.3, 27.8, zc2)],
+              [(C1[2] - 0.08, 16.4, zc1 - 0.1), (C1[2] + 0.4, 16.4, zc1 - 0.13), (C1[2] + 0.8, 16.4, zc1 - 0.16), (57.5, 17.5, -22.9), (60.5, 21.0, -23.6), (61.3, 25.0, -24.25), (61.9, 27.6, -24.6), (C2[0] + 0.3, 27.8, zc2)],
               ['tsc_rosso', 'tsc_bianco'])
     tubo('ins_A_scolo_0', [(C1[2] - 0.3, 13.6, zc1 - 0.1), (56.6, 13.9, -23.5), (58.2, 13.0, -24.4), (59.0, 11.8, D[0][4] + 0.9)]
-         if not GIOCO else [(C1[2] - 0.165, 13.6, zc1 - 0.1), (56.6, 13.9, -22.6), (58.2, 13.0, -23.8), (59.0, 11.8, D[0][4] + 0.9)], ['tsc_rosso'])
+         if not GIOCO else [(C1[2] - 0.08, 13.6, zc1 - 0.1), (C1[2] + 0.4, 13.6, zc1 - 0.13), (C1[2] + 0.8, 13.6, zc1 - 0.16), (56.6, 13.9, -22.6), (58.2, 13.0, -23.8), (59.0, 11.8, D[0][4] + 0.9)], ['tsc_rosso'])
     # bivio 2 (lato sud della vasca 2): a est la giusta (verso la vasca 3), a ovest la sbagliata (scolo 1)
     paratia(c, (67.0, C2[1] + 0.2, zc2), (0, -1), True, luci)
     paratia(c, (64.0, C2[1] + 0.2, zc2), (0, -1), False, luci)
     t2 = tubo('ins_A_tubo_2', [(67.0, C2[1] + 0.3, zc2 - 0.1), (68.5, 21.5, -26.4), (71.5, 17.0, -27.3), (72.0, 12.0, -27.9), (70.5, 8.6, zc3 + 0.3), (69.5, 7.6, zc3)]
-              if not GIOCO else [(67.0, C2[1] + 0.165, zc2 - 0.1), (68.5, 21.5, -26.0), (71.5, 17.0, -26.8), (72.0, 12.0, -27.3), (70.5, 8.6, -27.6), (69.5, 7.6, zc3)],
+              if not GIOCO else [(67.0, C2[1] + 0.08, zc2 - 0.1), (67.0, C2[1] - 0.4, zc2 - 0.13), (67.15, 24.0, -25.1), (67.6, 23.1, -25.45), (68.1, 22.25, -25.75), (68.5, 21.5, -26.0), (71.5, 17.0, -26.8), (72.0, 12.0, -27.3), (70.5, 8.6, -27.6), (69.5, 7.6, zc3)],
               ['tsc_turchese', 'tsc_rosa'])
     tubo('ins_A_scolo_1', [(64.0, C2[1] + 0.3, zc2 - 0.1), (62.0, 23.0, -26.6), (59.5, 25.0, -27.6), (58.0, 27.0, D[1][4] + 0.9)]
-         if not GIOCO else [(64.0, C2[1] + 0.165, zc2 - 0.1), (62.0, 23.0, -25.9), (59.5, 25.0, -27.2), (58.0, 27.0, D[1][4] + 0.9)], ['tsc_turchese'])
+         if not GIOCO else [(64.0, C2[1] + 0.08, zc2 - 0.1), (64.0, C2[1] - 0.4, zc2 - 0.13), (64.0, C2[1] - 0.8, zc2 - 0.16), (62.0, 23.0, -25.9), (59.5, 25.0, -27.2), (58.0, 27.0, D[1][4] + 0.9)], ['tsc_turchese'])
     # bivio 3 (lato ovest della vasca 3): a sud la giusta (la spirale finale), a nord la sbagliata (scolo 2)
     paratia(c, (C3[0] + 0.2, 3.6, zc3), (-1, 0), True, luci)
     # la sbagliata: il suo tubo (scolo 2) parte dal muro est, quindi nel gioco la paratia sta lì
@@ -556,11 +559,11 @@ def versione_A(mats):
     else:
         paratia(c, (C3[0] + 0.2, 6.6, zc3), (-1, 0), False, luci)
     tubo('ins_A_scolo_2', [(C3[2] - 0.2, 6.6, zc3 - 0.1), (74.5, 9.0, -29.6), (75.5, 12.5, -30.3), (75.2, 14.0, D[2][4] + 0.9)]
-         if not GIOCO else [(C3[2] - 0.165, 6.6, zc3 - 0.1), (74.8, 7.4, -29.0), (75.6, 11.5, -29.7), (75.2, 14.0, D[2][4] + 0.9)], ['tsc_viola'])
+         if not GIOCO else [(C3[2] - 0.08, 6.6, zc3 - 0.1), (C3[2] + 0.4, 6.6, zc3 - 0.13), (C3[2] + 0.8, 6.6, zc3 - 0.16), (74.8, 7.4, -29.0), (75.6, 11.5, -29.7), (75.2, 14.0, D[2][4] + 0.9)], ['tsc_viola'])
     # T3: la spirale finale attorno al serbatoio grande, giù fino al bacino di scarico
     sx, sy = 60.0, 4.5
     serbatoio(c, sx, sy, z0, 13.0, 2.6)
-    spir = [(C3[0] + (0.165 if GIOCO else -0.3), 3.6, zc3 - 0.1), (64.5, 2.0, -28.8 if GIOCO else -29.6)]
+    spir = [(C3[0] + (0.08 if GIOCO else -0.3), 3.6, zc3 - 0.1)] + ([(C3[0] - 0.4, 3.6, zc3 - 0.13), (C3[0] - 0.8, 3.6, zc3 - 0.16)] if GIOCO else []) + [ (64.5, 2.0, -28.8 if GIOCO else -29.6)]
     for k in range(1, 9):
         a = math.radians(-60 - k * 52)
         spir.append((sx + math.cos(a) * 4.2, sy + math.sin(a) * 4.2 + 0.0, -29.8 - k * (0.33 if GIOCO else 0.42)))
