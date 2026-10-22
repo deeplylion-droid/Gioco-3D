@@ -2,11 +2,24 @@ extends Node
 ## Test della voce di lei nell'inseguimento (addon audio, classe Statua; suoni di
 ## assets_src/audio/genera_lei_inseguimento.py): con le animazioni "inseguimento/<nome>" di MedusaAffacciata
 ## partono i versi giusti, sulla sua testa; colpo_grata dà un verso per colpo (tre in 1,5 s); il nuovo
-## verso taglia quello prima.
+## verso taglia quello prima; sulla statua del menu (un nodo senza animazioni_inseguimento) la classe
+## Statua parte senza errori di script (CI 467: bool(null) in Statua._init).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_lei_voce.gd
 
 const SUONI := [&"lei_insegue_sale", &"lei_insegue_presa", &"lei_insegue_respinta", &"lei_insegue_sb1",
 	&"lei_insegue_grata"]
+
+## Raccoglie gli errori (anche quelli di script) mentre il test gira.
+class Errori extends Logger:
+	var righe: PackedStringArray = []
+
+	func _log_error(function: String, file: String, line: int, code: String, rationale: String,
+			_editor_notify: bool, _error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
+		righe.append("%s:%d %s %s %s" % [file, line, function, code, rationale])
+
+	func _log_message(_message: String, _error: bool) -> void:
+		pass
+
 
 var lei: MedusaAffacciata
 var ap: AnimationPlayer
@@ -19,6 +32,20 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	print("La statua del menu")
+	var errori := Errori.new()
+	OS.add_logger(errori)
+	var statua := Node3D.new()
+	statua.name = "StatuaSenzaInseguimento"
+	add_child(statua)
+	var classe_statua = (Audio.get_script() as GDScript).get(&"Statua")
+	var st = classe_statua.new(Audio, statua)
+	OS.remove_logger(errori)
+	check(errori.righe.is_empty(), "la Statua su un nodo senza animazioni_inseguimento parte senza errori %s" % [errori.righe])
+	check(st.get(&"inseguimento") == false and statua.get_node_or_null(^"VoceLei") == null,
+		"e senza la voce dell'inseguimento")
+	statua.queue_free()
+
 	print("I suoni")
 	for s: StringName in SUONI:
 		check(Audio.stream_di(s) != null, "%s c'è nel catalogo" % s)
