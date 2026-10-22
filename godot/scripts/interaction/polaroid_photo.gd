@@ -101,6 +101,16 @@ func _snap() -> void:
 	else:
 		n = Vector3.UP
 	global_position = hit.position + n * 0.004
+	# Su un fondo curvo (la conca dello scarico) la pendenza del centro non basta: se un angolo entra, si alza
+	# quanto serve (controllo di posizionamento del 22 ottobre, Polaroid05).
+	var alza := 0.0
+	for a in [Vector3(0.07, 0, 0.07), Vector3(-0.07, 0, 0.07), Vector3(0.07, 0, -0.07), Vector3(-0.07, 0, -0.07)]:
+		var angolo := global_transform * a
+		var qa := PhysicsRayQueryParameters3D.create(angolo + Vector3(0, 0.3, 0), angolo + Vector3(0, -0.3, 0), Layers.WORLD | Layers.PROPS)
+		var ha := space.intersect_ray(qa)
+		if not ha.is_empty():
+			alza = maxf(alza, (ha.position as Vector3).y + 0.002 - angolo.y)
+	global_position.y += alza
 
 
 func _on_interact(by: Node) -> void:
