@@ -326,32 +326,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/AngoloScatoloni/scat_3_0_0",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			-16.63,
-			0.17,
-			19.38
-		],
-		"stato": "da correggere",
-		"motivo": "il pannello det_pannello_lamiera_0 e la piastrella det_piastrella_rotta_6_7 del kit stanno sotto la pila: li toglie ambienti-2"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			-1.75,
-			0.37,
-			12.4
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
 		"squadra": "mascotte",
 		"problema": "compenetra",
@@ -426,7 +400,7 @@
 			-22.3
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte: il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
+		"motivo": "controllo del 22 ottobre notte, coi modelli nuovi: il 100% dei suoi vertici è dentro il coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Correzione proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
 	},
 	{
 		"zona": "sala",
@@ -439,6 +413,6 @@
 			-22.3
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte: il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
+		"motivo": "controllo del 22 ottobre notte, coi modelli nuovi: il 100% dei suoi vertici è dentro il coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Correzione proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
 	}
 ]
