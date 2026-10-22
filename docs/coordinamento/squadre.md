@@ -5,7 +5,7 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 | Squadra | Sessione cloud | Branch | Lavoro |
 |---|---|---|---|
 | mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/lei-inseguimento | le 7 animazioni di lei per l'inseguimento (stima 6-8 ore); poi le aggancia ambienti-2 |
-| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1 fatto, con vasche c e strisce a (593d6bf); discesa_5_0 unita. Aspetta le animazioni di mascotte |
+| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1 fatto, con vasche c e strisce a (593d6bf); discesa_5_0 unita. Aspetta le animazioni di mascotte; intanto le prove dello sfondo del titolo su lavoro/ambienti-2-menu (strati A cupola e tempesta, B acqua ai suoi piedi, C pezzi della sala; scatti di B+C, A+B, A, B) |
 | ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | tuffo A consegnato (3df43ba); ritocco della corona (meno lamina, acqua bianca, gocce che sembrino acqua), geyser V1 fuori dall'esportazione; poi valvola_corridoio_1 e turbina_saracinesca |
 | enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | fiume A con lo scivolo B, infermeria B, lettore, keycard, strada β, Polaroid della pecora: uniti per la v0.3.9 (6271159) |
 | grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | nome Jilly Jubilee unito (58cc633); prima il crash all'uscita mentre la torre si carica nel thread (CI rossa su 58cc633), poi il logo A scelto dall'utente nella schermata del titolo, com'era nella prova |
@@ -53,4 +53,5 @@ In lavoro/godot finora: griglia del controllo di posizionamento e collisioni dei
 
 ## Da chiedere all'utente
 
+- Sfondo del titolo (ora "tutto nero"): l'utente ha chiesto B+C (acqua ai suoi piedi e pezzi della sala dietro) e le prove anche di A+B, A e B. Quando arrivano gli scatti di ambienti-2, pagina con le quattro prove; nel gioco niente finché non sceglie.
 - I promemoria di Steam parlano ancora di «Splashland»: proposto di aggiornarli, nessuna risposta. Su itch l'utente deve rinominare la bozza.
