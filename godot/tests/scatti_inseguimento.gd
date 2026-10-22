@@ -56,6 +56,18 @@ func _run() -> void:
 	cam.current = true
 	for i in 40:
 		await get_tree().process_frame
+	# lei nella vasca 3 (dal giocatore dentro la vasca) e nelle vasche di scolo 0 e 1
+	for q in [["9_vasca_3", "vasche", 2, "vasca_2"], ["9b_scolo_0", "scolo", 0, "scolo_0"], ["9c_scolo_1", "scolo", 1, "scolo_1"]]:
+		var v: Dictionary = sala.dati[q[1]][q[2]]
+		var r: Array = v["rett"]
+		var occhi := b((r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, float(v["fondo"]) + 1.6)
+		var lei_pos := sala._posto_vasca(q[2]) if q[1] == "vasche" else sala._posto_scolo(q[2])
+		if q[1] == "scolo":
+			# le vasche di scolo sono chiuse e buie: da fuori, 5 m dietro di lei, con la vasca davanti
+			var via := Vector3(lei_pos.x - occhi.x, 0.0, lei_pos.z - occhi.z).normalized()
+			SCATTI[q[0]] = [lei_pos + via * 5.0 + Vector3.UP * 4.5, (occhi + lei_pos) / 2.0 + Vector3.UP * 1.5, 70.0, q[3], [], false]
+		else:
+			SCATTI[q[0]] = [occhi, lei_pos + Vector3.UP * 4.0, 70.0, q[3], [], false]
 	for nome in SCATTI:
 		if not solo.is_empty() and not solo.has(nome):
 			continue
@@ -94,6 +106,12 @@ func _lei(sala: SalaInseguimento, cosa: String, camera: Vector3) -> void:
 	match cosa:
 		"vasca_0":
 			pos = SalaInseguimento.b(L[0]["pos"])
+		"vasca_2":
+			pos = sala._posto_vasca(2)
+		"scolo_0", "scolo_1":
+			pos = sala._posto_scolo(int(cosa.right(1)))
+			var r: Array = sala.dati["scolo"][int(cosa.right(1))]["rett"]
+			guarda = b((r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, 0.0)   # verso chi è nella vasca
 		"grata":
 			pos = SalaInseguimento.b(L[2]["pos"])
 			guarda = SalaInseguimento.b(sala.dati["grata"]["perno"])

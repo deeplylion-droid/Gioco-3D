@@ -43,3 +43,23 @@ Le misure: all'inizio della salita lei va da 4,8 m sotto la sua origine a 0,2 m 
 tentacoli arrivano all'altezza dell'origine e la testa a 5,3 m sopra. Perche' salga dall'acqua senza vedersi
 all'inizio e senza toccare il fondo servono circa 5 m d'acqua sotto il suo posto: la superficie almeno all'altezza
 della sua origine "su" e il fondo almeno 5 m piu' giu'.
+
+## Compenetrazioni corrette (22 ottobre, sera)
+
+Controllo con la sonda (`godot/proposte/mascotte/sonda_lei_inseguimento.gd`), contando solo quello che il
+giocatore puo' vedere: sopra il fondo della vasca dove sta lui (vasche e scolo) o sopra il pelo dell'acqua scura
+(grata, SB1).
+
+| Posto | Prima | Ora | Cosa ho fatto |
+| --- | --- | --- | --- |
+| vasca 1 | 0 | 0 | niente |
+| vasca 2 | tentacoli nel muro nord e nei grigliati | uguale | da decidere (vedi sotto) |
+| vasca 3 | tentacoli nel muro sud, punte sotto il pavimento | 0 visibili | sale da 2,9 m invece che da 5 (l'inizio resta dietro la vasca); tentacoli piu' raccolti nella presa, nella respinta e alla grata. Restano 10 incroci sotto il fondo della vasca, che da dentro non si vedono |
+| scolo 0 | dita nel bordo nella presa | 0 | 25 cm piu' lontana dalla vasca |
+| scolo 1 | braccia e petto nella parete e nel tubo | 0 visibili | sale da 2,7 m (l'inizio resta sotto il fondo della vasca) e 1,6 m piu' indietro dallo stesso lato; restano 2 incroci sotto il fondo della vasca |
+| scolo 2 | sale da sotto il pavimento | 0 visibili | niente: tutto sotto il fondo della vasca, da dentro non si vede |
+| grata | sale da sotto il pavimento, sta nello sbocco del tubo 3 | uguale | da decidere (vedi sotto) |
+| SB1 | attraversa il fondo del pozzo all'inizio | 0 visibili | sale da 1,25 m: parte gia' sott'acqua nel pozzo (0,5 m sotto il pelo) |
+
+Scatti dei posti cambiati in `giro/`: `9_vasca_3` (dal giocatore nella vasca), `9b_scolo_0` e `9c_scolo_1` (da
+fuori: le vasche di scolo sono chiuse e buie dentro).
