@@ -590,7 +590,9 @@ def versione_A(mats):
     scala_pioli(c, BX[0] + 0.15, 3.2, T - 0.3, porta[1])
     GIOCO_DATI['scale'].append(dict(x=BX[0] + 0.3, y=3.2, z0=z0, z1=porta[1], verso=[1.0, 0.0, 0.0]))
     P.piattaforma(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1], lati=('s', 'n'), pali=False)
-    gambe(c, X0 + 0.1, 2.0, BX[0] + 0.4, 7.0, porta[1] - SOTTO_PEDANA, z0)
+    # nel gioco le gambe dal lato del bacino stanno fuori dal suo muro (prima ci passavano dentro, e la croce di quel
+    # lato scendeva sul bordo accanto ai piedi della scaletta: collaudo del 22 sera)
+    gambe(c, X0 + 0.1, 2.0, BX[0] if GIOCO else BX[0] + 0.4, 7.0, porta[1] - SOTTO_PEDANA, z0)
     porta_uscita(c, porta[0], porta[1], luci)
 
     for pts in da_appendere:
@@ -674,7 +676,7 @@ def versione_A(mats):
             c.toro((x, y, zb_ - 0.4), (1, 0, 0), 0.1, 0.025, 'metallo', seg=16, seg_r=6)
     # i dettagli del kit sui muri e sotto le passerelle: valvole, tubi, cavi, cartelli, lampade
     for (cat, nodo, p, nrm) in (
-            ('tubi', 'det_tubo_valvola_T', (55.0, y1, -23.0), (0, -1)),
+            ('tubi', 'det_tubo_valvola_T', (55.0, y1 + (0.035 if GIOCO else 0.0), -23.0), (0, -1)),   # (nel gioco il retro della valvola contro il muro)
             ('tubi', 'det_tubo_curva_su', (61.0, y0, -19.9), (0, 1)),
             ('tubi', 'det_tubo_valvola_T', (X0 - (0.035 if GIOCO else 0.0), 11.8, -29.2), (1, 0)), ('elettrico', 'det_interruttore_stagno', (X0, 7.8, -28.9), (1, 0)),
             ('cartelli', 'det_cartello_uscita', (X0, 3.2, -27.6), (1, 0)), ('cartelli', 'det_cartello_profondita', (X0, 9.6, -31.9), (1, 0)),
@@ -684,8 +686,8 @@ def versione_A(mats):
             ('tubi', 'det_condotta_aria_4m', (X0, 24.5, -19.6), (1, 0)),
             ('elettrico', 'det_cassetta_aperta', (X0, 17.6, -24.0), (1, 0)), ('cartelli', 'det_cartello_non_tuffarsi', (X0, 22.0, -19.2), (1, 0)),
             ('tubi', 'det_tubo_verticale_3m', (X0, 28.5, -25.0), (1, 0)), ('tubi', 'det_bocchetta_tonda', (X0, 26.0, -23.0), (1, 0))):
-        if GIOCO and nodo == 'det_tubo_verticale_3m':
-            continue        # (finiva nel vuoto ai due capi)
+        if GIOCO and nodo in ('det_tubo_verticale_3m', 'det_tubo_valvola_T'):
+            continue        # (finivano nel vuoto ai due capi: il tubo della T si vedeva aperto da tutte e due le parti)
         arredo(luci, 'det/' + cat, nodo, p, ry=ry_muro(*nrm), appoggio='origine')
     # sotto le passerelle: fasci di cavi a festone (dall'attacco pendono in giù), legati alla trave di mezzo
     # (passerella_muro: in mezzo alla larghezza, sotto la trave che finisce 16 cm sotto il piano)
@@ -703,7 +705,7 @@ def versione_A(mats):
     # prop nell'acqua e sulle passerelle
     props = []
     for (nome, x, y, z, rot) in (('salvagente_nave', 47.0, 18.0, T - 0.05, 30), ('ciambella_gonfiabile', 68.0, 22.5, T - 0.1, 120),
-                                 ('paperella_gigante', 48.5, 4.0, T + 0.2, 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1], 15),
+                                 ('paperella_gigante', 48.5, 4.0, T + 0.2, 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1] - (0.0101 if GIOCO else 0.0), 15),
                                  ('pallone_spiaggia', 72.0, 30.0, T - 0.15, 0)):
         props.append(P.prop(nome, (x, y, z), rot))
 

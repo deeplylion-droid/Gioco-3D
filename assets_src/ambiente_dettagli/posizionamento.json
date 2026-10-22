@@ -1849,35 +1849,6 @@
    ]
   },
   {
-   "nodo": "det_foglio_2",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_019",
-   "posizione": [
-    14.004,
-    0.001,
-    18.058
-   ],
-   "rotazione_y_gradi": -160.0,
-   "basis": [
-    [
-     -0.9396,
-     0.0,
-     0.3422
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.3422,
-     0.0,
-     -0.9396
-    ]
-   ]
-  },
-  {
    "nodo": "det_alghe_secche_mucchio_2",
    "glb": "glb/organico.glb",
    "zona": "base dei muri",

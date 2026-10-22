@@ -869,13 +869,18 @@ func _luci() -> void:
 		radice.add_child(s)
 		s.global_position = b(f[0])
 		s.look_at(b(f[1]), Vector3.UP)
-	# la scia rosa sul bordo della vasca 1, dalla parte da cui lei arriva
+	# la scia rosa sul bordo della vasca 1, dalla parte da cui lei arriva: stretta come il bordo (18 cm, smussato) e
+	# appoggiata sopra, così non pende nel vuoto ai lati (collaudo del 22 sera)
 	var bava := BavaRosa.new()
 	bava.punti = PackedVector3Array([b([53.5, 17.91, -21.49]), b([50.09, 17.91, -21.49]), b([50.09, 15.9, -21.49])])
-	bava.larghezza = 0.2
+	bava.larghezza = 0.08
+	bava.variazione = 0.25
 	bava.emissione = 2.5
 	bava.opacita = 0.9
-	bava.appoggia = false
+	bava.sollevamento = 0.003
+	bava.ricerca_su = 0.1
+	bava.ricerca_giu = 0.03
+	bava.appoggia = true
 	radice.add_child(bava)
 
 
@@ -984,14 +989,16 @@ func _sfarfalla(o: OmniLight3D, s: SpotLight3D) -> void:
 
 func _appesa(radice: Node3D, p: Vector3, calda: bool, soffitto: float) -> void:
 	var col := CALDO if calda else Color(0.8, 1.0, 0.92)
+	# il cavo dal soffitto alla cima del paralume (fino al centro restava dentro il paralume, senza toccarlo)
+	var cima := p.y + 0.11
 	var cavo := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.012
 	cm.bottom_radius = 0.012
-	cm.height = soffitto - p.y
+	cm.height = soffitto - cima
 	cavo.mesh = cm
 	radice.add_child(cavo)
-	cavo.global_position = Vector3(p.x, (soffitto + p.y) / 2.0, p.z)
+	cavo.global_position = Vector3(p.x, (soffitto + cima) / 2.0, p.z)
 	var paralume := MeshInstance3D.new()
 	var pm := CylinderMesh.new()
 	pm.top_radius = 0.08

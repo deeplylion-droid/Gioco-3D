@@ -5,7 +5,7 @@ Uso (dalla radice): python3 tools/togli_eccezioni.py <squadra>"""
 import json, re, sys
 
 squadra = sys.argv[1]
-md = open('docs/tecnico/posizionamento/rapporto.md').read().split('## Eccezioni non più trovate')[1]
+md = (open('docs/tecnico/posizionamento/rapporto.md').read().split('## Eccezioni non più trovate') + [''])[1]
 non_trovate = {m.groups() for m in (re.match(r'- (\w+) · (\w+) · `(.+)`', l) for l in md.splitlines()) if m}
 trovate = {(x['zona'], x['problema'], x['nodo']) for x in json.load(open('docs/tecnico/posizionamento/rapporto.json'))}
 P = 'godot/tests/posizionamento_eccezioni.json'
