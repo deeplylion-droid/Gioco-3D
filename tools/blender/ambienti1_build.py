@@ -730,10 +730,12 @@ def spogliatoi(M):
     statico.append(cornice_porta('telaio_uscita', 'N', UX0, UX1, UH, CY1, M, M['vernice_gialla'], entrambi=True))
     L.vuoto('marker_uscita_sala_principale', ((UX0 + UX1) / 2, CY1 + 0.2, 0), (0, 0, 0), 'SINGLE_ARROW', 0.5)
     # turbina: carcassa sulla parete, ruota a pale separata (asse lungo x), ingranaggio e catena verso il cassonetto
-    # alzata di 30 cm (scelta dell'utente del 22 ottobre, opzione A): col centro a 2,05 m il bordo della ruota
-    # scendeva a 1,75, all'altezza della testa di chi cammina; ora il bordo basso è a 2,05 e la cima a 2,65
-    # (soffitto a 2,70). Il centro deve restare uguale a quello di PernoTurbina in godot/scenes/interni/interni.tscn.
-    TBy, TBz = 19.4, 2.35
+    # alzata (scelta dell'utente del 22 ottobre, opzione A): col centro a 2,05 m il bordo della ruota scendeva a
+    # 1,75, all'altezza della testa di chi cammina; ora il bordo basso è a 2,02 e la cima a 2,62, sotto i pannelli
+    # del soffitto (2,63). 20 cm più verso la saracinesca, così sta tra le travi del soffitto (una è a y 19,17 e
+    # scende a 2,54: con y 19,4 la ruota ci entrava). Il centro deve restare uguale a quello di PernoTurbina in
+    # godot/scenes/interni/interni.tscn.
+    TBy, TBz = 19.6, 2.32
     statico.append(L.cilindro('turbina_carcassa', (CX0, TBy, TBz), (CX0 + 0.08, TBy, TBz), 0.3, M['metallo_grezzo'], seg=28))
     statico.append(L.cilindro('turbina_mozzo', (CX0, TBy, TBz), (CX0 + 0.2, TBy, TBz), 0.05, M['ruggine']))
     pale = [L.cilindro('turbina', (CX0 + 0.12, TBy, TBz), (CX0 + 0.26, TBy, TBz), 0.07, M['vernice_gialla'], seg=16)]
