@@ -1545,7 +1545,8 @@ def versione_A(mats):
         angoli_prop[(t, L)] = p
         if (t, L) in (('NO', -12.0), ('NO', 0.0)):
             continue        # lì ci sono il lettino della Polaroid e il cartello
-        props.append(P.prop(rnd.choice(scelta_prop), (p.x, p.y, L), rnd.uniform(0, 360)))
+        # (nel gioco sul grigliato della pedana, 1 cm sotto il suo piano: a L restavano sospesi)
+        props.append(P.prop(rnd.choice(scelta_prop), (p.x, p.y, L - (0.01 if GIOCO else 0.0)), rnd.uniform(0, 360)))
         usati_ponti.add((t, L))
     # la Polaroid 10 sul lettino della piattaforma NO a -12, nell'angolo fuori dal passaggio
     cno = centro('NO')

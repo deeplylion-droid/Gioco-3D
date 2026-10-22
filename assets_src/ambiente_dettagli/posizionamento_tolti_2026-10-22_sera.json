@@ -1,0 +1,1652 @@
+[
+ {
+  "posto": {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_024",
+   "posizione": [
+    13.103,
+    0.005,
+    18.268
+   ],
+   "rotazione_y_gradi": -172.2,
+   "basis": [
+    [
+     -0.9906,
+     0.0,
+     0.1366
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1366,
+     0.0,
+     -0.9906
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio (angolo dei palloni)",
+  "chiave": "det_barchetta 0"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_067",
+   "posizione": [
+    -18.001,
+    0.001,
+    19.383
+   ],
+   "rotazione_y_gradi": 72.7,
+   "basis": [
+    [
+     0.2979,
+     0.0,
+     -0.9546
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9546,
+     0.0,
+     0.2979
+    ]
+   ]
+  },
+  "motivo": "dentro uno scatolone",
+  "chiave": "det_carta_accartocciata_1 3"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_067",
+   "posizione": [
+    -16.772,
+    0.005,
+    18.376
+   ],
+   "rotazione_y_gradi": -22.6,
+   "basis": [
+    [
+     0.923,
+     0.0,
+     0.3848
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.3848,
+     0.0,
+     0.923
+    ]
+   ]
+  },
+  "motivo": "dentro uno scatolone",
+  "chiave": "det_carta_accartocciata_3 10"
+ },
+ {
+  "posto": {
+   "nodo": "det_ciabatta",
+   "glb": "glb/detriti.glb",
+   "zona": "ingresso",
+   "gruppo": "mucchio_147",
+   "posizione": [
+    -4.085,
+    0.001,
+    12.8
+   ],
+   "rotazione_y_gradi": 143.2,
+   "basis": [
+    [
+     -0.8012,
+     0.0,
+     -0.5984
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5984,
+     0.0,
+     -0.8012
+    ]
+   ]
+  },
+  "motivo": "dentro una colonnina del cordone della vasca",
+  "chiave": "det_ciabatta 6"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "ingresso",
+   "gruppo": "mucchio_162",
+   "posizione": [
+    13.048,
+    0.005,
+    17.731
+   ],
+   "rotazione_y_gradi": -127.9,
+   "basis": [
+    [
+     -0.614,
+     0.0,
+     0.7893
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.7893,
+     0.0,
+     -0.614
+    ]
+   ]
+  },
+  "motivo": "sotto un pallone del mucchio",
+  "chiave": "det_foglio_1 13"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "ingresso",
+   "gruppo": "mucchio_176",
+   "posizione": [
+    12.381,
+    0.001,
+    17.808
+   ],
+   "rotazione_y_gradi": -89.0,
+   "basis": [
+    [
+     0.0172,
+     0.0,
+     0.9999
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9999,
+     0.0,
+     0.0172
+    ]
+   ]
+  },
+  "motivo": "sotto un pallone del mucchio",
+  "chiave": "det_foglio_1 14"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_019",
+   "posizione": [
+    14.876,
+    0.001,
+    18.668
+   ],
+   "rotazione_y_gradi": 174.4,
+   "basis": [
+    [
+     -0.9953,
+     0.0,
+     -0.0968
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0968,
+     0.0,
+     -0.9953
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio",
+  "chiave": "det_foglio_2 7"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_1",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_001",
+   "posizione": [
+    -19.1,
+    0.001,
+    19.1
+   ],
+   "rotazione_y_gradi": 115.0,
+   "basis": [
+    [
+     -0.4228,
+     0.0,
+     -0.9062
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9062,
+     0.0,
+     -0.4228
+    ]
+   ]
+  },
+  "motivo": "dentro uno scatolone",
+  "chiave": "det_mucchio_piastrelle_1 0"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_1",
+   "glb": "glb/detriti.glb",
+   "zona": "ingresso",
+   "gruppo": "mucchio_157",
+   "posizione": [
+    14.891,
+    0.001,
+    15.161
+   ],
+   "rotazione_y_gradi": 78.4,
+   "basis": [
+    [
+     0.2005,
+     0.0,
+     -0.9797
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9797,
+     0.0,
+     0.2005
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio",
+  "chiave": "det_mucchio_piastrelle_1 15"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_3",
+   "glb": "glb/detriti.glb",
+   "zona": "ingresso",
+   "gruppo": "mucchio_162",
+   "posizione": [
+    12.023,
+    0.001,
+    18.623
+   ],
+   "rotazione_y_gradi": -163.4,
+   "basis": [
+    [
+     -0.9584,
+     0.0,
+     0.2855
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.2855,
+     0.0,
+     -0.9584
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio",
+  "chiave": "det_mucchio_piastrelle_3 13"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_024",
+   "posizione": [
+    13.513,
+    0.001,
+    19.315
+   ],
+   "rotazione_y_gradi": 117.6,
+   "basis": [
+    [
+     -0.463,
+     0.0,
+     -0.8864
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8864,
+     0.0,
+     -0.463
+    ]
+   ]
+  },
+  "motivo": "dentro due palloni del mucchio",
+  "chiave": "det_mucchio_piastrelle_3 5"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_067",
+   "posizione": [
+    -17.382,
+    0.001,
+    18.763
+   ],
+   "rotazione_y_gradi": 104.8,
+   "basis": [
+    [
+     -0.2553,
+     0.0,
+     -0.9669
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9669,
+     0.0,
+     -0.2553
+    ]
+   ]
+  },
+  "motivo": "dentro uno scatolone",
+  "chiave": "det_mucchio_piastrelle_3 8"
+ },
+ {
+  "posto": {
+   "nodo": "det_paletta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_067",
+   "posizione": [
+    -18.634,
+    0.001,
+    18.7
+   ],
+   "rotazione_y_gradi": 154.4,
+   "basis": [
+    [
+     -0.902,
+     0.0,
+     -0.4317
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4317,
+     0.0,
+     -0.902
+    ]
+   ]
+  },
+  "motivo": "dentro uno scatolone",
+  "chiave": "det_paletta 1"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_255",
+   "posizione": [
+    -8.803,
+    0.004,
+    1.467
+   ],
+   "rotazione_y_gradi": -85.1,
+   "basis": [
+    [
+     0.0851,
+     0.0,
+     0.9964
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9964,
+     0.0,
+     0.0851
+    ]
+   ]
+  },
+  "motivo": "dentro il bordo dell'arrivo dello scivolo",
+  "chiave": "det_piastrella_rotta_1 17"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_024",
+   "posizione": [
+    12.964,
+    0.001,
+    19.658
+   ],
+   "rotazione_y_gradi": 97.5,
+   "basis": [
+    [
+     -0.1308,
+     0.0,
+     -0.9914
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9914,
+     0.0,
+     -0.1308
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio",
+  "chiave": "det_piastrella_rotta_2 5"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_4",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_024",
+   "posizione": [
+    12.655,
+    0.001,
+    19.251
+   ],
+   "rotazione_y_gradi": 13.2,
+   "basis": [
+    [
+     0.9735,
+     0.0,
+     -0.2286
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.2286,
+     0.0,
+     0.9735
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio",
+  "chiave": "det_piastrella_rotta_4 2"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_5",
+   "glb": "glb/detriti.glb",
+   "zona": "ingresso",
+   "gruppo": "mucchio_162",
+   "posizione": [
+    12.886,
+    0.005,
+    18.001
+   ],
+   "rotazione_y_gradi": -2.5,
+   "basis": [
+    [
+     0.9991,
+     0.0,
+     0.0428
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.0428,
+     0.0,
+     0.9991
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio",
+  "chiave": "det_piastrella_rotta_5 21"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_6",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_301",
+   "posizione": [
+    -8.84,
+    0.006,
+    -2.331
+   ],
+   "rotazione_y_gradi": -141.7,
+   "basis": [
+    [
+     -0.7842,
+     0.0,
+     0.6205
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.6205,
+     0.0,
+     -0.7842
+    ]
+   ]
+  },
+  "motivo": "dentro il bordo dell'arrivo dello scivolo",
+  "chiave": "det_piastrella_rotta_6 20"
+ },
+ {
+  "posto": {
+   "nodo": "det_secchiello",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_024",
+   "posizione": [
+    14.193,
+    0.001,
+    19.572
+   ],
+   "rotazione_y_gradi": 61.5,
+   "basis": [
+    [
+     0.4775,
+     0.0,
+     -0.8787
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8787,
+     0.0,
+     0.4775
+    ]
+   ]
+  },
+  "motivo": "dentro un pallone del mucchio",
+  "chiave": "det_secchiello 1"
+ },
+ {
+  "posto": {
+   "nodo": "det_vetri_rotti_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_030",
+   "posizione": [
+    18.341,
+    0.001,
+    16.147
+   ],
+   "rotazione_y_gradi": -71.9,
+   "basis": [
+    [
+     0.3102,
+     0.0,
+     0.9507
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9507,
+     0.0,
+     0.3102
+    ]
+   ]
+  },
+  "motivo": "sotto un pallone del mucchio",
+  "chiave": "det_vetri_rotti_3 3"
+ },
+ {
+  "posto": {
+   "nodo": "det_pannello_lamiera",
+   "glb": "glb/detriti.glb",
+   "zona": "ingresso",
+   "gruppo": "mucchio_185",
+   "posizione": [
+    -3.14,
+    0.021,
+    17.173
+   ],
+   "rotazione_y_gradi": 143.9,
+   "basis": [
+    [
+     -0.8081,
+     0.0,
+     -0.5891
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5891,
+     0.0,
+     -0.8081
+    ]
+   ]
+  },
+  "motivo": "lamiera alzata da terra in mezzo al passaggio dell'ingresso",
+  "chiave": "det_pannello_lamiera 7"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "fondo piscina",
+   "gruppo": "fondo_piscina_430",
+   "posizione": [
+    -4.562,
+    -1.977,
+    -1.132
+   ],
+   "rotazione_y_gradi": -21.2,
+   "basis": [
+    [
+     0.9324,
+     0.0,
+     0.3613
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.3613,
+     0.0,
+     0.9324
+    ]
+   ]
+  },
+  "motivo": "a cavallo del punto dove il fondo della piscina comincia a salire: non poggia tutto",
+  "chiave": "det_foglio_1 28"
+ },
+ {
+  "posto": {
+   "nodo": "det_alghe_secche_mucchio_1",
+   "glb": "glb/organico.glb",
+   "zona": "fondo piscina",
+   "gruppo": "fondo_piscina_413",
+   "posizione": [
+    -1.9,
+    -2.069,
+    2.2
+   ],
+   "rotazione_y_gradi": -98.9,
+   "basis": [
+    [
+     -0.1544,
+     0.0,
+     0.988
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.988,
+     0.0,
+     -0.1544
+    ]
+   ]
+  },
+  "motivo": "nella conca dello scarico: il mucchio, piatto sotto, o restava sollevato o entrava nel fondo curvo",
+  "chiave": "det_alghe_secche_mucchio_1 11"
+ },
+ {
+  "posto": {
+   "nodo": "det_alghe_secche_mucchio_2",
+   "glb": "glb/organico.glb",
+   "zona": "fondo piscina",
+   "gruppo": "fondo_piscina_413",
+   "posizione": [
+    0.358,
+    -2.069,
+    3.556
+   ],
+   "rotazione_y_gradi": -54.5,
+   "basis": [
+    [
+     0.5805,
+     0.0,
+     0.8142
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8142,
+     0.0,
+     0.5805
+    ]
+   ]
+  },
+  "motivo": "nella conca dello scarico: il mucchio, piatto sotto, o restava sollevato o entrava nel fondo curvo",
+  "chiave": "det_alghe_secche_mucchio_2 8"
+ },
+ {
+  "posto": {
+   "nodo": "det_pannello_lamiera",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_009",
+   "posizione": [
+    -16.18,
+    0.001,
+    19.11
+   ],
+   "rotazione_y_gradi": 67.4,
+   "basis": [
+    [
+     0.3844,
+     0.0,
+     -0.9232
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9232,
+     0.0,
+     0.3844
+    ]
+   ]
+  },
+  "motivo": "sotto la pila di scatoloni (lo scatolone in fondo ci entrava)",
+  "chiave": "det_pannello_lamiera 0"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_6",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_067",
+   "posizione": [
+    -17.057,
+    0.001,
+    19.271
+   ],
+   "rotazione_y_gradi": -7.7,
+   "basis": [
+    [
+     0.9911,
+     0.0,
+     0.1335
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1335,
+     0.0,
+     0.9911
+    ]
+   ]
+  },
+  "motivo": "sotto la pila di scatoloni",
+  "chiave": "det_piastrella_rotta_6 7"
+ },
+ {
+  "posto": {
+   "nodo": "det_applique_emergenza_spenta",
+   "glb": "glb/lampade.glb",
+   "zona": "muri",
+   "gruppo": "luci_muro_755",
+   "posizione": [
+    17.705,
+    3.02,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  "motivo": "sommersa dal mucchio di palloni: non si vedeva (collaudo, punto 9)",
+  "chiave": "det_applique_emergenza_spenta 1"
+ },
+ {
+  "posto": {
+   "nodo": "det_applique_emergenza_rotta",
+   "glb": "glb/lampade.glb",
+   "zona": "muri",
+   "gruppo": "luci_muro_744",
+   "posizione": [
+    20.0,
+    2.716,
+    -0.587
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ]
+  },
+  "motivo": "a 20 cm da un'altra applique: sembrava un doppione (collaudo, punto 11)",
+  "chiave": "det_applique_emergenza_rotta 0"
+ },
+ {
+  "posto": {
+   "nodo": "det_cassetta_aperta",
+   "glb": "glb/elettrico.glb",
+   "zona": "muri",
+   "gruppo": "impianto_524",
+   "posizione": [
+    -11.437,
+    1.511,
+    -24.0
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  "motivo": "sportello aperto all'altezza della testa e, sopra, la corsa di tubi: non si può alzare",
+  "chiave": "det_cassetta_aperta 4"
+ },
+ {
+  "posto": {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    5.473,
+    0.001,
+    -23.404
+   ],
+   "rotazione_y_gradi": -172.3,
+   "basis": [
+    [
+     -0.9909,
+     0.0,
+     0.1345
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1345,
+     0.0,
+     -0.9909
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_barchetta 5.473,-23.404"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    12.965,
+    0.001,
+    -21.383
+   ],
+   "rotazione_y_gradi": -25.2,
+   "basis": [
+    [
+     0.9052,
+     0.0,
+     0.425
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.425,
+     0.0,
+     0.9052
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_carta_accartocciata_1 12.965,-21.383"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    5.098,
+    0.001,
+    -22.642
+   ],
+   "rotazione_y_gradi": -58.0,
+   "basis": [
+    [
+     0.5298,
+     0.0,
+     0.8481
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8481,
+     0.0,
+     0.5298
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_carta_accartocciata_1 5.098,-22.642"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    11.271,
+    0.001,
+    -21.755
+   ],
+   "rotazione_y_gradi": 62.9,
+   "basis": [
+    [
+     0.4562,
+     0.0,
+     -0.8899
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8899,
+     0.0,
+     0.4562
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_carta_accartocciata_3 11.271,-21.755"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    11.486,
+    0.001,
+    -21.047
+   ],
+   "rotazione_y_gradi": -89.4,
+   "basis": [
+    [
+     0.0112,
+     0.0,
+     0.9999
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9999,
+     0.0,
+     0.0112
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_foglio_1 11.486,-21.047"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    13.742,
+    0.001,
+    -21.942
+   ],
+   "rotazione_y_gradi": -89.8,
+   "basis": [
+    [
+     0.0039,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0039
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_foglio_2 13.742,-21.942"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    14.929,
+    0.001,
+    -22.291
+   ],
+   "rotazione_y_gradi": -18.3,
+   "basis": [
+    [
+     0.9494,
+     0.0,
+     0.3139
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.3139,
+     0.0,
+     0.9494
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_foglio_2 14.929,-22.291"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_314",
+   "posizione": [
+    16.537,
+    0.001,
+    -21.333
+   ],
+   "rotazione_y_gradi": 124.9,
+   "basis": [
+    [
+     -0.5724,
+     0.0,
+     -0.82
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.82,
+     0.0,
+     -0.5724
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_foglio_2 16.537,-21.333"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_060",
+   "posizione": [
+    17.564,
+    0.001,
+    -21.527
+   ],
+   "rotazione_y_gradi": -174.2,
+   "basis": [
+    [
+     -0.9948,
+     0.0,
+     0.1014
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1014,
+     0.0,
+     -0.9948
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_foglio_3 17.564,-21.527"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_4",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_051",
+   "posizione": [
+    11.353,
+    0.001,
+    -22.011
+   ],
+   "rotazione_y_gradi": -73.6,
+   "basis": [
+    [
+     0.283,
+     0.0,
+     0.9591
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9591,
+     0.0,
+     0.283
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_foglio_4 11.353,-22.011"
+ },
+ {
+  "posto": {
+   "nodo": "det_griglia_caduta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    3.839,
+    0.001,
+    -22.184
+   ],
+   "rotazione_y_gradi": 71.4,
+   "basis": [
+    [
+     0.3197,
+     0.0,
+     -0.9475
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9475,
+     0.0,
+     0.3197
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_griglia_caduta 3.839,-22.184"
+ },
+ {
+  "posto": {
+   "nodo": "det_maschera_sub",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_388",
+   "posizione": [
+    6.173,
+    0.001,
+    -21.461
+   ],
+   "rotazione_y_gradi": -107.0,
+   "basis": [
+    [
+     -0.2931,
+     0.0,
+     0.9561
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9561,
+     0.0,
+     -0.2931
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_maschera_sub 6.173,-21.461"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_051",
+   "posizione": [
+    10.052,
+    0.001,
+    -22.777
+   ],
+   "rotazione_y_gradi": 165.9,
+   "basis": [
+    [
+     -0.97,
+     0.0,
+     -0.243
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.243,
+     0.0,
+     -0.97
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_mucchio_piastrelle_2 10.052,-22.777"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    10.342,
+    0.01,
+    -20.506
+   ],
+   "rotazione_y_gradi": -116.4,
+   "basis": [
+    [
+     -0.4446,
+     0.0,
+     0.8957
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8957,
+     0.0,
+     -0.4446
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_mucchio_piastrelle_2 10.342,-20.506"
+ },
+ {
+  "posto": {
+   "nodo": "det_pannello_lamiera_2",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_004",
+   "posizione": [
+    17.695,
+    0.001,
+    -23.003
+   ],
+   "rotazione_y_gradi": 156.3,
+   "basis": [
+    [
+     -0.9158,
+     0.0,
+     -0.4016
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4016,
+     0.0,
+     -0.9158
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_pannello_lamiera_2 17.695,-23.003"
+ },
+ {
+  "posto": {
+   "nodo": "det_pesce_gomma",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_051",
+   "posizione": [
+    11.0,
+    0.001,
+    -23.161
+   ],
+   "rotazione_y_gradi": 35.5,
+   "basis": [
+    [
+     0.8144,
+     0.0,
+     -0.5804
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5804,
+     0.0,
+     0.8144
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_pesce_gomma 11.000,-23.161"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    10.172,
+    0.001,
+    -21.109
+   ],
+   "rotazione_y_gradi": -120.5,
+   "basis": [
+    [
+     -0.5069,
+     0.0,
+     0.862
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.862,
+     0.0,
+     -0.5069
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_1 10.172,-21.109"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    12.295,
+    0.001,
+    -22.648
+   ],
+   "rotazione_y_gradi": 32.9,
+   "basis": [
+    [
+     0.8392,
+     0.0,
+     -0.5438
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5438,
+     0.0,
+     0.8392
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_1 12.295,-22.648"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    4.574,
+    0.001,
+    -22.328
+   ],
+   "rotazione_y_gradi": 92.8,
+   "basis": [
+    [
+     -0.0492,
+     0.0,
+     -0.9988
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9988,
+     0.0,
+     -0.0492
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_3 4.574,-22.328"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_5",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_060",
+   "posizione": [
+    18.924,
+    0.001,
+    -22.44
+   ],
+   "rotazione_y_gradi": -33.2,
+   "basis": [
+    [
+     0.837,
+     0.0,
+     0.5473
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.5473,
+     0.0,
+     0.837
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_5 18.924,-22.440"
+ },
+ {
+  "posto": {
+   "nodo": "det_vetri_rotti_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    4.938,
+    0.001,
+    -22.0
+   ],
+   "rotazione_y_gradi": 151.5,
+   "basis": [
+    [
+     -0.8791,
+     0.0,
+     -0.4766
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4766,
+     0.0,
+     -0.8791
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_vetri_rotti_1 4.938,-22.000"
+ }
+]

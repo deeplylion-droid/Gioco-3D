@@ -18,12 +18,19 @@ func _ready() -> void:
 	_modello = get_node_or_null(modello) as Node3D
 	if _modello:
 		_base = _modello.position
-		# Si vede solo il modello: il graybox (pannello e spia) resta per la collisione.
-		for m in find_children("*", "MeshInstance3D", true, false):
-			(m as MeshInstance3D).visible = false
+		# Si vede solo il modello: del graybox resta solo la collisione del pannello. Le sue mesh si tolgono (non solo
+		# nascoste: niente in memoria e niente nel controllo di posizionamento); la spia la usa PoweredDoor, al suo
+		# posto una mesh vuota.
+		var finta := MeshInstance3D.new()
+		finta.name = "SpiaVuota"
+		add_child(finta)
+		var mesh_graybox: Array[Node] = find_children("*", "MeshInstance3D", true, false)
 		for c in get_children(true):
-			for m in c.find_children("*", "MeshInstance3D", true, false):
-				(m as MeshInstance3D).visible = false
+			mesh_graybox.append_array(c.find_children("*", "MeshInstance3D", true, false))
+		for m in mesh_graybox:
+			if m != finta and not m.is_queued_for_deletion():
+				m.queue_free()
+		_lamp_mesh = finta
 
 
 func _physics_process(delta: float) -> void:
