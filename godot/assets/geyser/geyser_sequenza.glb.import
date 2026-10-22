@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bp01sx1ap7uv3"
-path="res://.godot/imported/geyser_sequenza.glb-d1a6a602966805921c2aa50b1f8897ce.scn"
+path="res://.godot/imported/geyser_sequenza.glb-744e2f9028b480ca724729f427e0a5fe.scn"
 
 [deps]
 
-source_file="res://proposte/geyser/geyser_sequenza.glb"
-dest_files=["res://.godot/imported/geyser_sequenza.glb-d1a6a602966805921c2aa50b1f8897ce.scn"]
+source_file="res://assets/geyser/geyser_sequenza.glb"
+dest_files=["res://.godot/imported/geyser_sequenza.glb-744e2f9028b480ca724729f427e0a5fe.scn"]
 
 [params]
 
@@ -23,10 +23,10 @@ nodes/root_scale=1.0
 nodes/import_as_skeleton_bones=false
 nodes/use_name_suffixes=true
 nodes/use_node_type_suffixes=true
-meshes/ensure_tangents=true
-meshes/generate_lods=true
-meshes/create_shadow_meshes=true
-meshes/light_baking=1
+meshes/ensure_tangents=false
+meshes/generate_lods=false
+meshes/create_shadow_meshes=false
+meshes/light_baking=0
 meshes/lightmap_texel_size=0.2
 meshes/force_disable_compression=false
 skins/use_named_skins=true

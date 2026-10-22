@@ -7,7 +7,7 @@ extends Node
 ## seconda volta, e il fotogramma normale (mediana) per confronto. Se la prima volta è molto più
 ## lunga della seconda, il primo uso compila shader o pipeline (che non dipendono dalla scena).
 ##   aspirazione: aspiri dalla vasca lava-piedi; getto: spari verso il tornello; geyser: un
-##   GeyserFossa davanti a te; jumpscare: lo schermo rotto (lo shader di JumpscareGlitch).
+##   GeyserMesh (il geyser V1) davanti a te; jumpscare: lo schermo rotto (lo shader di JumpscareGlitch).
 ## Uso (sotto flock /home/user/tools/render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##     --script res://tests/run.gd -- res://tests/misura_primo_uso.gd [senza_preparazione]
@@ -71,7 +71,7 @@ func _run() -> void:
 		await _frames(20)
 	p.look_at_point(POZZA)
 	for volta in ["prima", "seconda"]:
-		var g := GeyserFossa.new()
+		var g := GeyserMesh.new()
 		get_tree().current_scene.add_child(g)
 		_durate.clear()
 		_registra = true
