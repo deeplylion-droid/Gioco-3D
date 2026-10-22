@@ -29,8 +29,22 @@ const IMPOSTAZIONE := "gioco/luci_bianche"
 const SAT_BIANCA := 0.30
 const SAT_CALDA := 0.76
 const TINTA_CALDA := Vector2(0.045, 0.17)
-## Emissione: i materiali con l'emissione accesa (almeno questa energia) e di colore bianco o bianco-caldo.
+## Emissione: i materiali con l'emissione accesa (almeno questa energia) e di colore bianco o bianco-caldo, solo
+## delle lampade vere (vedi _lampada).
 const EMISSIONE_MINIMA := 0.3
+## Jilly, le creature, le statue e gli oggetti di gioco (indizi, Polaroid, keycard, lettori, pulsanti, schermi)
+## restano com'erano, luci comprese: un nodo con un antenato che ha questi pezzi nel nome (minuscolo), o che è un
+## Interactable o una Polaroid.
+const ESCLUSI := ["medusa", "jilly_", "bambin", "agnello", "squalo", "mostro", "statua", "polpo", "creatur",
+	"polaroid", "keycard", "tessera", "lettore", "pulsante", "schermo", "monitor", "crt", "disegno", "indizio",
+	"negatoscopio", "geyser"]
+## Una lampada: mesh o materiale con uno di questi pezzi nel nome, o una mesh piccola (al più LAMPADA_MAX m) vicina a una
+## Light3D (la luce è sua figlia o sorella, o figlia di uno dei due antenati sopra).
+const NOMI_LAMPADA := ["lamp", "neon", "plafon", "globo", "bulb", "applique", "faro", "fanale", "lantern", "luce",
+	"light", "bulbo", "tubo_t8", "insegna_lumin", "cartello_lumin"]
+const LAMPADA_MAX := 2.5
+## Un nome con un colore vince sulla tinta: il neon giallo delle insegne è un'insegna colorata, non una lampada bianca.
+const NOMI_COLORATI := ["giallo", "gialla", "rosa", "rosso", "rossa", "verde", "azzurr", "blu", "viola", "arancio"]
 
 ## Il fattore delle luci bianche (1 = normale).
 var fattore := 1.0
@@ -140,7 +154,7 @@ func applica() -> void:
 		if not is_instance_valid(l):
 			_luci.remove_at(i)
 			continue
-		if not is_bianca(l.light_color) or _della_torcia(l):
+		if not is_bianca(l.light_color) or _della_torcia(l) or _esclusa(l) or _nome_colorato(l.name):
 			continue
 		_base_luci.append([l, l.light_energy])
 		l.light_energy *= fattore
@@ -217,29 +231,104 @@ func _raccogli(radice: Node) -> void:
 
 
 func _materiali_di(g: GeometryInstance3D) -> void:
-	_aggiungi_materiale(g.material_override)
-	_aggiungi_materiale(g.material_overlay)
+	if _esclusa(g):
+		return
+	var mats: Array = [g.material_override, g.material_overlay]
 	if g is MeshInstance3D:
 		var mi := g as MeshInstance3D
 		if mi.mesh:
 			for s in mi.mesh.get_surface_count():
-				_aggiungi_materiale(mi.get_surface_override_material(s))
-				_aggiungi_materiale(mi.mesh.surface_get_material(s))
+				mats.append(mi.get_surface_override_material(s))
+				mats.append(mi.mesh.surface_get_material(s))
+	var di_lampada := -1          # -1: non ancora guardato (si guarda solo se c'è un materiale che si accende)
+	for m in mats:
+		var b := m as BaseMaterial3D
+		if b == null or _visti.has(b.get_instance_id()):
+			continue
+		if not b.emission_enabled or b.emission_energy_multiplier < EMISSIONE_MINIMA:
+			continue
+		if di_lampada < 0:
+			di_lampada = 1 if _lampada(g) else 0
+		if _nome_colorato(b.resource_name):
+			continue
+		if di_lampada == 1 or _nome_da_lampada(b.resource_name):
+			_visti[b.get_instance_id()] = true
+			_materiali.append(b)
+
+
+var _esclusi_cache := {}
+
+
+## Jilly, una creatura, una statua o un oggetto di gioco (vedi ESCLUSI)?
+func _esclusa(n: Node) -> bool:
+	var id := n.get_instance_id()
+	if _esclusi_cache.has(id):
+		return _esclusi_cache[id]
+	var r := false
+	var p: Node = n
+	while p and p != get_tree().root:
+		if p is Interactable or p is PolaroidPhoto:
+			r = true
+			break
+		var nome := String(p.name).to_lower()
+		if nome == "lei" or nome.begins_with("lei_") or nome == "leisbuca":
+			r = true
+			break
+		for parola in ESCLUSI:
+			if nome.contains(parola):
+				r = true
+				break
+		if r:
+			break
+		p = p.get_parent()
+	_esclusi_cache[id] = r
+	return r
+
+
+static func _nome_colorato(nome: String) -> bool:
+	nome = nome.to_lower()
+	for parola in NOMI_COLORATI:
+		if nome.contains(parola):
+			return true
+	return false
+
+
+static func _nome_da_lampada(nome: String) -> bool:
+	nome = nome.to_lower()
+	for parola in NOMI_LAMPADA:
+		if nome.contains(parola):
+			return true
+	return false
+
+
+## Una lampada vera: il nome della mesh (o dei due antenati sopra) da lampada, o una mesh piccola vicino a una Light3D.
+func _lampada(g: GeometryInstance3D) -> bool:
+	var p: Node = g
+	for k in 3:
+		if p == null:
+			break
+		if _nome_da_lampada(String(p.name)):
+			return true
+		p = p.get_parent()
+	if g.get_aabb().size.length() * g.global_basis.get_scale().length() / sqrt(3.0) > LAMPADA_MAX:
+		return false
+	p = g
+	for k in 3:
+		if p == null:
+			break
+		if p is Light3D:
+			return true
+		for c in p.get_children():
+			if c is Light3D:
+				return true
+		p = p.get_parent()
+	return false
 
 
 func _aggiungi(lista: Array, o: Object) -> void:
 	if not _visti.has(o.get_instance_id()):
 		_visti[o.get_instance_id()] = true
 		lista.append(o)
-
-
-func _aggiungi_materiale(m: Material) -> void:
-	var b := m as BaseMaterial3D
-	if b == null or _visti.has(b.get_instance_id()):
-		return
-	if b.emission_enabled and b.emission_energy_multiplier >= EMISSIONE_MINIMA:
-		_visti[b.get_instance_id()] = true
-		_materiali.append(b)
 
 
 ## Per i test e per l'elenco: le luci raccolte, divise in bianche e colorate.

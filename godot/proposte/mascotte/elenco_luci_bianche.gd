@@ -23,7 +23,8 @@ func _run() -> void:
 	righe.append("")
 	righe.append(("Scritto da `godot/proposte/mascotte/elenco_luci_bianche.gd`. Regola (`scripts/game/luci_bianche.gd`): bianca se la " +
 		"saturazione è al più %.2f; bianco-calda se la tinta è fra %.3f e %.2f (arancio-giallo) e la saturazione al più %.2f. " +
-		"Tutto il resto è colorato e resta com'è. Materiali: emissione accesa (almeno %.1f) dello stesso colore. " +
+		"Tutto il resto è colorato e resta com'è. Jilly, le creature, le statue e gli oggetti di gioco restano com'erano. " +
+		"Materiali: solo delle lampade vere (nome da lampada, o mesh piccola vicino a una luce), emissione accesa (almeno %.1f) dello stesso colore. " +
 		"Fra parentesi il colore (tinta, saturazione) e l'energia piena.") % [VarianteLuci.SAT_BIANCA, VarianteLuci.TINTA_CALDA.x,
 		VarianteLuci.TINTA_CALDA.y, VarianteLuci.SAT_CALDA, VarianteLuci.EMISSIONE_MINIMA])
 	for scena in SCENE:
@@ -62,12 +63,17 @@ func _scrivi_scena(scena: String, level: Node, lb: Node) -> void:
 			continue
 		var z := _zona(level, l)
 		if not per_zona.has(z):
-			per_zona[z] = {"bianche": [], "colorate": [], "materiali": []}
+			per_zona[z] = {"bianche": [], "colorate": [], "escluse": [], "materiali": []}
 		var c := l.light_color
 		var torcia := VarianteLuci._della_torcia(l)
 		var testo := "`%s` (%.2f, %.2f; %.2f)%s" % [String(level.get_path_to(l)).trim_prefix(z + "/"), c.h, c.s, l.light_energy,
 			" — torcia: resta com'è" if torcia else ""]
-		per_zona[z]["bianche" if VarianteLuci.is_bianca(c) else "colorate"].append(testo)
+		var cat := "colorate"
+		if lb._esclusa(l):
+			cat = "escluse"
+		elif VarianteLuci.is_bianca(c) and not VarianteLuci._nome_colorato(l.name):
+			cat = "bianche"
+		per_zona[z][cat].append(testo)
 	# i materiali: una mesh per materiale
 	var mesh_di := {}
 	for g in level.find_children("*", "GeometryInstance3D", true, false):
@@ -79,13 +85,14 @@ func _scrivi_scena(scena: String, level: Node, lb: Node) -> void:
 		for m in mats:
 			if m and not mesh_di.has(m.get_instance_id()):
 				mesh_di[m.get_instance_id()] = g
+	# i materiali delle lampade vere (gli altri emissivi bianchi non scendono e non sono nell'elenco)
 	for m: BaseMaterial3D in lb.materiali_raccolti():
 		var g: Node = mesh_di.get(m.get_instance_id())
 		if g == null or not level.is_ancestor_of(g):
 			continue
 		var z := _zona(level, g)
 		if not per_zona.has(z):
-			per_zona[z] = {"bianche": [], "colorate": [], "materiali": []}
+			per_zona[z] = {"bianche": [], "colorate": [], "escluse": [], "materiali": []}
 		var c := m.emission
 		per_zona[z]["materiali"].append("%s `%s` su `%s` (%.2f, %.2f; %.1f)" % ["scende" if VarianteLuci.is_bianca(c) else "resta",
 			m.resource_name if m.resource_name != "" else "senza nome", String(level.get_path_to(g)).trim_prefix(z + "/"), c.h, c.s,
@@ -118,6 +125,11 @@ func _scrivi_scena(scena: String, level: Node, lb: Node) -> void:
 			righe.append("")
 			righe.append("Colorate (restano com'erano):")
 			for t in d["colorate"]:
+				righe.append("- " + t)
+		if not d["escluse"].is_empty():
+			righe.append("")
+			righe.append("Di Jilly, delle creature o degli oggetti di gioco (restano com'erano anche se bianche):")
+			for t in d["escluse"]:
 				righe.append("- " + t)
 		if not d["bianche"].is_empty():
 			righe.append("")

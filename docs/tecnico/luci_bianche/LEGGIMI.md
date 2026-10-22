@@ -10,10 +10,14 @@ non si tocca.
   prova). F1, F2 e F3 sono già usati (scene di prova, contatore FPS); F7 no.
 - Partire già al 40%: l'opzione d'avvio `-- --luci-40`, o l'impostazione di progetto `gioco/luci_bianche` (0,4 con la
   feature `luci40`). Non si esportano.
+- Cosa resta sempre com'era (riscontro del coordinatore): Jilly e le creature (la Medusa in tutti i suoi posti, Lei
+  nell'inseguimento, bambini, agnello, squalo, statue), gli oggetti di gioco (Interactable, Polaroid, keycard, lettori,
+  pulsanti, schermi, il disegno dell'indizio) e le insegne con un colore nel nome (il neon giallo, rosa, azzurro).
 - Cosa scende: le Light3D bianche e bianco-calde (saturazione al più 0,30; oppure tinta fra 0,045 e 0,17, cioè fra
   arancio e giallo, e saturazione al più 0,76: le lampade da lavoro, le "luci calde", le lampadine); l'emissione dei
-  materiali bianchi delle lampade (BaseMaterial3D con l'emissione accesa, almeno 0,3, dello stesso colore: i
-  materiali sono condivisi, uno per materiale); l'energia dei VoxelGI cotti (la sala, gli interni, i tecnici). La
+  materiali bianchi delle lampade vere (BaseMaterial3D con l'emissione accesa, almeno 0,3, dello stesso colore, su
+  una mesh con un nome da lampada - lampada, neon, plafoniera, globo, lampadina, faro, luce... - o piccola, al più 2,5
+  m, vicino a una Light3D; i materiali sono condivisi, uno per materiale); l'energia dei VoxelGI cotti (la sala, gli interni, i tecnici). La
   torcia mai.
 - Come: il fattore si mette solo per il disegno. Prima di ogni fotogramma (RenderingServer.frame_pre_draw) energia =
   base × fattore, dopo il disegno (frame_post_draw) torna la base. Gli script che scrivono o leggono light_energy ed

@@ -3,7 +3,8 @@ extends Node
 ## 1. di base il fattore è 1 e non tocca niente (la build normale resta identica);
 ## 2. al 40%, nel disegno, le luci bianche e bianco-calde scendono al 40%, le rosse e le colorate no; dopo il
 ##    disegno tornano i valori pieni (gli script li ritrovano);
-## 3. l'emissione dei materiali bianchi delle lampade e l'energia del VoxelGI scendono anche loro, le colorate no;
+## 3. l'emissione dei materiali bianchi delle lampade e l'energia del VoxelGI scendono anche loro, le colorate no; Jilly
+##    (la Medusa), gli indizi (il disegno) e gli emissivi che non sono lampade restano com'erano;
 ## 4. una luce che cambia da sola (FlickerLight, che scrive light_energy a ogni fotogramma) tiene il fattore;
 ## 5. la torcia resta com'è; F7 passa dal 100% al 40% e indietro.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche.gd
@@ -52,9 +53,53 @@ func _run() -> void:
 	mat_rosso.emission_energy_multiplier = 3.0
 	for m in [mat_bianco, mat_rosso]:
 		var mi := MeshInstance3D.new()
+		mi.name = "Lampadina" if m == mat_bianco else "LampadinaRossa"
 		mi.mesh = BoxMesh.new()
 		mi.material_override = m
 		radice.add_child(mi)
+	# Jilly (la Medusa: il suo bagliore è il personaggio) e un indizio di gioco (il disegno sul vetro): restano
+	var medusa := Node3D.new()
+	medusa.name = "Medusa"
+	radice.add_child(medusa)
+	var mat_medusa := StandardMaterial3D.new()
+	mat_medusa.resource_name = "M_tentacoli"
+	mat_medusa.emission_enabled = true
+	mat_medusa.emission = Color(0.95, 0.9, 1.0)
+	mat_medusa.emission_energy_multiplier = 2.0
+	var tent := MeshInstance3D.new()
+	tent.mesh = BoxMesh.new()
+	tent.material_override = mat_medusa
+	medusa.add_child(tent)
+	var luce_medusa := OmniLight3D.new()
+	luce_medusa.light_color = Color(1, 1, 1)
+	luce_medusa.light_energy = 2.0
+	medusa.add_child(luce_medusa)
+	var mat_disegno := StandardMaterial3D.new()
+	mat_disegno.resource_name = "disegno_carta"
+	mat_disegno.emission_enabled = true
+	mat_disegno.emission = Color(1.0, 0.97, 0.9)
+	mat_disegno.emission_energy_multiplier = 0.6
+	var disegno := MeshInstance3D.new()
+	disegno.name = "disegno_carta"
+	disegno.mesh = QuadMesh.new()
+	disegno.material_override = mat_disegno
+	radice.add_child(disegno)
+	# un materiale emissivo bianco qualsiasi (non una lampada, grande e lontano dalle luci): resta
+	var mat_muro := StandardMaterial3D.new()
+	mat_muro.emission_enabled = true
+	mat_muro.emission = Color(1, 1, 1)
+	mat_muro.emission_energy_multiplier = 1.0
+	var muro := MeshInstance3D.new()
+	muro.name = "Muro"
+	var bm := BoxMesh.new()
+	bm.size = Vector3(6, 3, 0.2)
+	muro.mesh = bm
+	muro.material_override = mat_muro
+	var stanza := Node3D.new()
+	stanza.name = "Stanza"
+	stanza.position = Vector3(50, 0, 0)
+	radice.add_child(stanza)
+	stanza.add_child(muro)
 	var gi := VoxelGI.new()
 	gi.data = VoxelGIData.new()
 	gi.data.energy = 1.5
@@ -92,6 +137,10 @@ func _run() -> void:
 		_visto["mat_bianco"] = mat_bianco.emission_energy_multiplier
 		_visto["mat_rosso"] = mat_rosso.emission_energy_multiplier
 		_visto["gi"] = gi.data.energy
+		_visto["medusa"] = mat_medusa.emission_energy_multiplier
+		_visto["luce_medusa"] = luce_medusa.light_energy
+		_visto["disegno"] = mat_disegno.emission_energy_multiplier
+		_visto["muro"] = mat_muro.emission_energy_multiplier
 		if luce_torcia:
 			_visto["torcia"] = luce_torcia.light_energy
 		var nel_disegno := fl_luce.light_energy
@@ -108,6 +157,10 @@ func _run() -> void:
 	check(absf(float(_visto.get("mat_bianco", -1.0)) - 1.2) < 0.01 and absf(float(_visto.get("mat_rosso", -1.0)) - 3.0) < 0.01,
 		"l'emissione bianca scende al 40%%, la rossa no (%.2f, %.2f)" % [float(_visto.get("mat_bianco", -1.0)), float(_visto.get("mat_rosso", -1.0))])
 	check(absf(float(_visto.get("gi", -1.0)) - 0.6) < 0.01, "il VoxelGI scende al 40%% (%.2f)" % float(_visto.get("gi", -1.0)))
+	check(absf(float(_visto.get("medusa", -1.0)) - 2.0) < 0.01 and absf(float(_visto.get("luce_medusa", -1.0)) - 2.0) < 0.01,
+		"Jilly (la Medusa) resta com'era: il bagliore dei tentacoli e la sua luce bianca (%.2f, %.2f)" % [float(_visto.get("medusa", -1.0)), float(_visto.get("luce_medusa", -1.0))])
+	check(absf(float(_visto.get("disegno", -1.0)) - 0.6) < 0.01, "il disegno dell'indizio resta com'era (%.2f)" % float(_visto.get("disegno", -1.0)))
+	check(absf(float(_visto.get("muro", -1.0)) - 1.0) < 0.01, "un emissivo bianco che non è una lampada resta com'era (%.2f)" % float(_visto.get("muro", -1.0)))
 	check(fl_ok and fl_max_rapporto > 0.3, "la luce che sfarfalla da sola tiene il fattore, e dopo il disegno ritrova il suo valore (rapporto %.2f)" % fl_max_rapporto)
 	if luce_torcia:
 		check(absf(float(_visto.get("torcia", -1.0)) - torcia_piena) < 0.01, "la torcia resta com'è")
