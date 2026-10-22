@@ -25,8 +25,7 @@ static func camere() -> Dictionary:
 		"paratia1": [F.anello(45.0) + Vector3(0, 0.6, 0), F.anello(55.0) + Vector3(0, 1.0, 0)],
 		"paratia2": [F.anello(135.0) + Vector3(0, 0.6, 0), F.anello(145.0) + Vector3(0, 1.0, 0)],
 		"paratia3": [F.anello(222.0) + Vector3(0, 0.6, 0), F.anello(232.0) + Vector3(0, 1.0, 0)],
-		# da vicino, per il collaudo: la colonna di roccia del bivio 3, la pila di ciambelle, il cartello dei tuffi
-		"colonna": [Vector3(-13.6, 1.6, 15.8), Vector3(-16.3, 1.6, 14.2)],
+		# da vicino, per il collaudo: la pila di ciambelle, il cartello dei tuffi
 		"pila_ciambelle": [Vector3(-2.7, 1.6, -7.7), Vector3(-4.6, 0.4, -9.2)],
 		"cartello_tuffi": [Vector3(-2.7, 1.7, -5.3), Vector3(-4.2, 1.6, -6.0)],
 	}
