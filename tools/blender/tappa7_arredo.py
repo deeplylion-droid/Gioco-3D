@@ -214,7 +214,10 @@ def posa(nome, file, centro_base, k, rz, obs):
     return o
 
 
-PILA_MAX = 1.3   # le pile contro il muro non superano 1,3 m: più alte e strette non starebbero in piedi
+# Le pile contro il muro non superano 1,3 m: più alte e strette non starebbero in piedi. I pezzi di troppo si
+# mettono lo stesso e si tolgono alla fine (TROPPO_ALTI): così i numeri a caso, e il resto della strada, non cambiano.
+PILA_MAX = 1.3
+TROPPO_ALTI = []
 
 
 def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo=(0.05, 0.35), zfun=None):
@@ -256,10 +259,9 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
                 d2 = _dim(f2, k2)
                 if d2.x > dm.x * 1.05:
                     k2 *= dm.x / d2.x; d2 = _dim(f2, k2)
-                rz2 = rz + rnd.uniform(-0.2, 0.2)
+                o2 = posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz + rnd.uniform(-0.2, 0.2), obs)
                 if h + d2.z > PILA_MAX:
-                    continue   # (i numeri a caso si consumano lo stesso: il resto della strada non cambia)
-                posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz2, obs)
+                    TROPPO_ALTI.append(o2.name)
                 k_obj += 1
                 h += d2.z
         u += dm.x + rnd.uniform(*passo)
@@ -549,6 +551,8 @@ def proposta_gioco():
                                 ((42.0, -15.0, Z_SALA), (-1, 0, 0)), ((33.0, -15.0, Z_SALA), (-1, 0, 0)), ((24.0, -15.0, Z_SALA), (-1, 0, 0)))):
         freccia_terra(f'G_freccia_{k}', p, d, obs, giallo)
     comuni(obs, C.mat_pbr('corrimano_A', base=(0.85, 0.65, 0.12), roughness=0.5, metallic=0.5))
+    for o in [o for o in obs if o.name in TROPPO_ALTI]:
+        obs.remove(o); bpy.data.objects.remove(o)
     # collisioni: una scatola (allineata agli assi) per ogni modello più alto di 25 cm
     sorgenti = {o.data for o in HQ._base.values()}
     for o in list(obs):
