@@ -26,6 +26,8 @@ const ANIMAZIONI_INSEGUIMENTO := "res://assets/models/medusa/medusa_inseguimento
 @export var angolo_testa := 35.0
 ## Da dove cadono le gocce (coordinate locali del nodo): dita, mento, punte dei capelli, tentacoli.
 @export var punti_gocce := PackedVector3Array()
+## Se falso, ai punti_gocce non cadono gocce (i punti servono lo stesso, per esempio a LeiSbuca).
+@export var gocce := true
 
 var _bersaglio: Node3D
 var _occhio: LookAtModifier3D
@@ -111,7 +113,7 @@ func _dopo_rebuild() -> void:
 			var pose := sk.get_bone_global_pose(bone)
 			_pos_occhio = sk.global_transform * pose.origin
 			_dir_occhio = (sk.global_basis * pose.basis).y.normalized())
-	for p in punti_gocce:
+	for p in (punti_gocce if gocce else PackedVector3Array()):
 		var g := WaterDripEmitter.new()
 		g.name = "Gocce"
 		g.interval_min = 1.4
