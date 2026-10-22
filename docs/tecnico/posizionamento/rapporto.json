@@ -378,6 +378,48 @@
 		"zona": "interni"
 	},
 	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (912 celle da 25 cm)",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
+		"pos": [
+			-12.72,
+			0.0,
+			-18.75
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (64 celle da 25 cm)",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
+		"pos": [
+			-17.97,
+			0.0,
+			16.0
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (107 celle da 25 cm)",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
+		"pos": [
+			-18.97,
+			0.0,
+			16.0
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.70 e 0.91 m sopra il pavimento (1618 celle da 25 cm)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Sala/VascaCentrale/sala_vasca_cordone",
@@ -504,49 +546,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (64 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
-		"pos": [
-			-17.97,
-			0.0,
-			16.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (107 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
-		"pos": [
-			-18.97,
-			0.0,
-			16.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (912 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
-		"pos": [
-			-12.22,
-			0.0,
-			-17.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (8 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
 		"pos": [
@@ -560,7 +560,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (8 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
 		"pos": [
@@ -595,132 +595,6 @@
 			-14.47,
 			0.0,
 			39.5
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (224 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_dettagli",
-		"pos": [
-			6.78,
-			-1.8,
-			46.75
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.37 m sopra il pavimento (3 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2es_0",
-		"pos": [
-			3.03,
-			-1.51,
-			46.5
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.88 e 2.00 m sopra il pavimento (16 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc3",
-		"pos": [
-			8.78,
-			-1.8,
-			46.0
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (136 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_filo",
-		"pos": [
-			1.53,
-			-7.48,
-			52.75
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.71 e 1.96 m sopra il pavimento (4 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_4",
-		"pos": [
-			1.53,
-			-7.48,
-			52.5
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.60 e 1.86 m sopra il pavimento (8 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_7",
-		"pos": [
-			2.03,
-			-7.12,
-			53.0
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.46 e 1.74 m sopra il pavimento (6 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_9",
-		"pos": [
-			2.53,
-			-6.76,
-			53.25
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.16 e 1.63 m sopra il pavimento (14 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_12",
-		"pos": [
-			3.28,
-			-6.22,
-			53.5
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.32 e 1.61 m sopra il pavimento (8 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_13",
-		"pos": [
-			3.53,
-			-6.04,
-			53.5
 		],
 		"problema": "ingombro",
 		"squadra": "enigmi",
@@ -982,193 +856,11 @@
 	{
 		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_2",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
 		"pos": [
-			6.5,
-			2.42,
-			46.51
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa0",
-		"pos": [
-			6.2,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa1",
-		"pos": [
-			4.6,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa2",
-		"pos": [
-			3.0,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa3",
-		"pos": [
-			1.4,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa4",
-		"pos": [
-			-0.2,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa5",
-		"pos": [
-			-1.8,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa6",
-		"pos": [
-			-3.4,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa7",
-		"pos": [
-			-5.0,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa8",
-		"pos": [
-			-6.6,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa9",
-		"pos": [
-			-8.2,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa10",
-		"pos": [
-			-9.8,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa11",
-		"pos": [
-			-11.4,
-			2.56,
-			46.42
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa12",
-		"pos": [
-			-13.0,
-			2.56,
-			46.42
+			-15.65,
+			2.12,
+			30.2
 		],
 		"problema": "estremita_libera",
 		"squadra": "enigmi",
@@ -1181,148 +873,8 @@
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
 		"pos": [
 			-15.65,
-			2.42,
-			30.2
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa0",
-		"pos": [
-			-15.56,
-			2.56,
-			44.66
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa1",
-		"pos": [
-			-15.56,
-			2.56,
-			43.06
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa2",
-		"pos": [
-			-15.56,
-			2.56,
-			41.46
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa3",
-		"pos": [
-			-15.56,
-			2.56,
-			39.86
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa4",
-		"pos": [
-			-15.56,
-			2.56,
-			38.26
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa5",
-		"pos": [
-			-15.56,
-			2.56,
-			36.66
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa6",
-		"pos": [
-			-15.56,
-			2.56,
-			35.06
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa7",
-		"pos": [
-			-15.56,
-			2.56,
-			33.46
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa8",
-		"pos": [
-			-15.56,
-			2.56,
-			31.86
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa9",
-		"pos": [
-			-15.56,
-			2.56,
-			30.3
+			2.12,
+			44.96
 		],
 		"problema": "estremita_libera",
 		"squadra": "enigmi",
