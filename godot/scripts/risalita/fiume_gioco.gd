@@ -720,6 +720,17 @@ func _a_terra(n: Node3D, y := 0.0) -> void:
 	n.position.y += y + 0.001 - basso
 
 
+## La quota del punto più alto di [param n] (figlio della scena), coi vertici veri.
+func _cima(n: Node3D) -> float:
+	var alto := -INF
+	var io := global_transform.affine_inverse()
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var xf := io * (mi as MeshInstance3D).global_transform
+		for v in (mi as MeshInstance3D).mesh.get_faces():
+			alto = maxf(alto, (xf * v).y)
+	return alto
+
+
 ## Una forma di collisione (cilindro) per un oggetto grande sulle banchine.
 func _ostacolo(pos: Vector3, raggio: float, alto: float) -> void:
 	var f := CollisionShape3D.new()
@@ -770,8 +781,17 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0) -> void:
 
 ## Lampada d'emergenza rossa (modello Meshy + luce), che guarda verso [param verso]: [param pos] è sulla faccia
 ## del muro (o della roccia), dove la staffa si appoggia con la sua piastra.
-func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
+func _lampada_rossa(pos: Vector3, verso: Vector3, roccia: Node3D = null) -> void:
 	var l := LampadaMuro.monta(self, pos, verso)
+	if roccia:
+		# sulla roccia la piastra non sta dove [param pos] (il centro della staffa è più su o più giù): si misura la
+		# sporgenza della roccia proprio sotto la sua impronta, e la lampada va avanti o indietro finché la piastra la
+		# tocca (prima a volte restava a più di 5 mm dal rilievo)
+		var n := Vector3(verso.x, 0.0, verso.z).normalized()
+		var pi := l.get_node("Piastra") as Node3D
+		var dietro := to_local(pi.global_position) - n * LampadaMuro.PIASTRA.z * 0.5
+		var punto := _su_roccia(roccia, dietro, n, LampadaMuro.PIASTRA.x * 0.5 - 0.01, LampadaMuro.PIASTRA.y * 0.5 - 0.01)
+		l.position += n * ((punto - dietro).dot(n) + 0.001)
 	_luce(l.position + verso.normalized() * 0.3, Color(1.0, 0.18, 0.12), 2.6, 9.0)
 
 
@@ -796,13 +816,14 @@ func _faro_subacqueo(pos: Vector3, rot_y: float) -> void:
 
 ## Un pannello di roccia finta (4,2 x 3,2 m, alzato fino a 4,9) col retro verso [param rot] + 180: girato
 ## e specchiato a caso perché non si veda che è sempre lo stesso. Ha la sua collisione.
-func _roccia(pos: Vector3, rot: float) -> Node3D:
+func _roccia(pos: Vector3, rot: float, specchio = null) -> Node3D:
 	var r := _metti("roccia_parete", pos, rot)
 	for mi in r.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = mat_roccia
-	var sx := 1.0 if randf() < 0.5 else -1.0
-	var sy := randf_range(1.4, 1.6)
-	r.scale = Vector3(sx * randf_range(0.95, 1.1), sy, 1.0)
+	# (quelli doppi, dietro: specchiati o no come dice [param specchio], senza toccare la sequenza casuale degli altri)
+	var sx := (-1.0 if specchio else 1.0) if specchio != null else (1.0 if randf() < 0.5 else -1.0)
+	var sy := 1.5 if specchio != null else randf_range(1.4, 1.6)
+	r.scale = Vector3(sx * (1.0 if specchio != null else randf_range(0.95, 1.1)), sy, 1.0)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
 	b.size = Vector3(4.2, 3.24 * sy, 0.5)
@@ -812,10 +833,41 @@ func _roccia(pos: Vector3, rot: float) -> Node3D:
 	return r
 
 
+## Il retro piatto dei pannelli si vedeva dalle banchine e dai canali degli altri rami: dietro ogni pannello
+## [param rocce] ([posizione, rotazione]) un secondo pannello girato, schiena contro schiena, così da tutte e due le
+## parti c'è roccia. Non serve dove dietro c'è già il retro di un altro pannello; non va dove non ci sta.
+func _rocce_doppie(rocce: Array) -> void:
+	var fatte := 0
+	var coperte := 0
+	var senza := []
+	for i in rocce.size():
+		var p: Vector3 = rocce[i][0]
+		var rot: float = rocce[i][1]
+		var b := Basis(Vector3.UP, deg_to_rad(rot))
+		var dietro := -(b * Vector3.BACK)
+		var lato := b * Vector3.RIGHT
+		var coperta := false
+		for j in rocce.size():
+			var w: Vector3 = rocce[j][0] - p
+			if j != i and w.dot(dietro) > -0.1 and w.dot(dietro) < 1.5 and absf(w.dot(lato)) < 2.5 \
+					and (Basis(Vector3.UP, deg_to_rad(rocce[j][1])) * Vector3.BACK).dot(dietro) > 0.7:
+				coperta = true
+				break
+		if coperta:
+			coperte += 1
+			continue
+		if not _ci_sta(p + dietro * 0.002, rot + 180.0, 4.0, 0.6):
+			senza.append(p)
+			continue
+		_roccia(p + dietro * 0.002, rot + 180.0, i % 2 == 0)
+		fatte += 1
+	print("rocce: %d, doppie %d, già coperte %d, senza posto %d %s" % [rocce.size(), fatte, coperte, senza.size(), senza])
+
+
 ## Il punto della faccia di [param roccia] davanti a [param dove] (a quota, sull'asse della roccia), guardando da
 ## [param davanti] verso la roccia: raggi contro i triangoli del modello su tutta l'impronta della piastra (28 x 20
 ## cm); vale la sporgenza più avanti, così la piastra poggia sul rilievo e non entra nella roccia.
-func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3) -> Vector3:
+func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3, mezzo_largo := 0.14, mezzo_alto := 0.1) -> Vector3:
 	var lato := davanti.cross(Vector3.UP).normalized()
 	var tri := PackedVector3Array()
 	for mi in roccia.find_children("*", "MeshInstance3D", true, false):
@@ -832,8 +884,8 @@ func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3) -> Vector3:
 			if absf(w.dot(lato)) < 0.45 and absf(w.y) < 0.4:
 				tri.append_array([a, xf * f[i + 1], xf * f[i + 2]])
 	var meglio := INF
-	for du in [-0.14, 0.0, 0.14]:
-		for dv in [-0.1, 0.0, 0.1]:
+	for du in [-mezzo_largo, 0.0, mezzo_largo]:
+		for dv in [-mezzo_alto, 0.0, mezzo_alto]:
 			var da: Vector3 = dove + lato * du + Vector3(0, dv, 0) + davanti * 2.0
 			for i in range(0, tri.size(), 3):
 				var h = Geometry3D.ray_intersects_triangle(da, -davanti, tri[i], tri[i + 1], tri[i + 2])
@@ -1063,6 +1115,7 @@ func _bivi() -> void:
 	colonna.material_override = mat_banca
 	colonna.position = col + Vector3(0, 2.3, 0)
 	add_child(colonna)
+	_colonna_di_roccia(colonna.position - Vector3(0, 2.3, 0), cm.size)
 	var fc := CollisionShape3D.new()
 	var bc := BoxShape3D.new()
 	bc.size = cm.size
@@ -1071,6 +1124,21 @@ func _bivi() -> void:
 	_collisioni.add_child(fc)
 	if b3 == Vector3.ZERO or verso_monte == Vector3.ZERO:
 		push_warning("bivio 3 senza disco")
+
+
+## La colonna rivestita di roccia sulle quattro facce (prima cemento grigio piatto, da finire): un pannello di roccia
+## stretto per faccia, la schiena sulla colonna, alto quanto lei, col rilievo basso (8 cm: il disco del bivio 3 è a
+## 12 cm da una faccia).
+func _colonna_di_roccia(base: Vector3, size: Vector3) -> void:
+	for k in 4:
+		var rot := 90.0 * k
+		var d := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
+		var largo := size.x if k % 2 == 0 else size.z
+		var mezzo := (size.z if k % 2 == 0 else size.x) * 0.5
+		var r := _metti("roccia_parete", base + d * (mezzo + 0.001), rot)
+		for mi in r.find_children("*", "MeshInstance3D", true, false):
+			(mi as MeshInstance3D).material_override = mat_roccia
+		r.scale = Vector3((largo + 0.13) / 4.2 * (-1.0 if k % 2 == 1 else 1.0), size.y / 3.24, 0.08 / 0.656)
 
 
 ## Un pezzo del telaio della chiusa (size: lungo e, alto, lungo d), con la collisione se [param solido].
@@ -1158,6 +1226,7 @@ func _giungla() -> void:
 	_zone_libere.append([Vector2(col.x, col.z), 2.4])
 	# pareti di roccia finta lungo i canali, dietro le banchine, con le lampade calde e le rosse
 	var n := 0
+	var rocce := []
 	for s in _strisce:
 		for v in _lungo(s, W * 0.5 + BANCA, 3.9, 1.0):
 			var p: Vector3 = v[0]
@@ -1169,17 +1238,19 @@ func _giungla() -> void:
 			if in_piazza(dietro):
 				continue
 			var roccia := _roccia(p, rot)
+			rocce.append([p, rot])
 			n += 1
 			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
 			# le lampade sulla faccia vera della roccia (prima a 62 cm dal suo centro: a volte staccate, a volte dentro)
 			if n % 3 == 0:
 				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 3.0)
 			elif n % 11 == 5:
-				_lampada_rossa(_su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0))
+				_lampada_rossa(_su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0), roccia)
 			elif n % 13 == 7:
 				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0)
 			elif n % 4 == 1 and randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
+	_rocce_doppie(rocce)
 	# i fari subacquei nelle pareti dei canali, alternati
 	for s in _strisce:
 		var k := 0
@@ -1210,7 +1281,8 @@ func _giungla() -> void:
 	for s in _strisce:
 		for v in _lungo(s, W * 0.5 - 0.05, 13.0, 6.5, 3.0):
 			k2 += 1
-			if k2 % 3 == 0:
+			# (non vicino ai dischi, alle bocche dei bivi e alla colonna: chi esce dalla scaletta trovava il palo del disco)
+			if k2 % 3 == 0 and not _zone_libere.any(func(z): return Vector2(v[0].x, v[0].z).distance_to(z[0]) < z[1]):
 				_metti("scaletta_banchina", v[0] + Vector3(0, FONDO + 0.05, 0), v[1])
 
 
@@ -1275,9 +1347,13 @@ func _imbarco() -> void:
 	for z in [-18.0, -9.0]:
 		_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
+	# (ognuna appoggiata a quella sotto coi vertici veri: prima la prima stava 5 cm sopra il pavimento)
+	var sotto := 0.0
 	for i in 3:
-		_metti("ciambella", Vector3(-VASCA - 1.0, 0.05 + i * 0.27, -VASCA - 5.6), i * 37.0)
-	_ostacolo(Vector3(-VASCA - 1.0, 0, -VASCA - 5.6), 0.6, 0.9)
+		var ci := _metti("ciambella", Vector3(-VASCA - 1.0, 0.0, -VASCA - 5.6), i * 37.0)
+		_a_terra(ci, sotto)
+		sotto = _cima(ci)
+	_ostacolo(Vector3(-VASCA - 1.0, 0, -VASCA - 5.6), 0.6, sotto)
 	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa)
 	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
 			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
@@ -1328,7 +1404,7 @@ func _cartello_palo(pos: Vector3, rot_y: float, tex: String) -> void:
 	b.size = Vector3(0.52, 0.52, 0.015)
 	lastra.mesh = b
 	lastra.material_override = mz
-	lastra.position = Vector3(0, 1.85, 0.045)
+	lastra.position = Vector3(0, 1.85, 0.03 + 0.0075 + 0.001)   # appoggiata al palo (prima 7,5 mm davanti)
 	n.add_child(lastra)
 	var f := MeshInstance3D.new()
 	var q := QuadMesh.new()
@@ -1338,7 +1414,7 @@ func _cartello_palo(pos: Vector3, rot_y: float, tex: String) -> void:
 	mf.albedo_texture = load(DIR + "texture/" + tex + ".jpg")
 	mf.roughness = 0.6
 	f.material_override = mf
-	f.position = Vector3(0, 1.85, 0.054)
+	f.position = Vector3(0, 1.85, 0.03 + 0.015 + 0.002)
 	n.add_child(f)
 	# il palo e la lastra all'altezza della testa: una collisione da terra, così non ci si passa sotto
 	var fc := CollisionShape3D.new()

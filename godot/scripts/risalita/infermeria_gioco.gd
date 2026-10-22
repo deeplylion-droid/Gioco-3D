@@ -474,7 +474,7 @@ func _schedari() -> void:
 			var cas := CassettoSchedario.new()
 			cas.name = "Cassetto%d%d" % [i + 1, k + 1]
 			cas.mostra_segnaposto = false
-			cas.misura = Vector3(0.36, y1 - y0 - 0.02, 0.4)
+			cas.misura = Vector3(0.36, y1 - y0 - 0.02, 0.38)   # tirato, il fondo arriva alla faccia dello schedario
 			cas.tinta = tinta
 			cas.corsa = 0.38
 			cas.fino_a_terra = (y0 + y1) * 0.5
@@ -486,13 +486,16 @@ func _schedari() -> void:
 			f.shape = b
 			cas.add_child(f)
 			# il frontale guarda verso +X (dentro la stanza): +Z del cassetto verso +X
-			cas.transform = Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(x + 0.177, (y0 + y1) * 0.5, z))
+			# l'origine sulla faccia vera dei cassetti del modello (15,1-15,3 cm dal centro, misurata coi raggi;
+			# prima a 17,7, sul bordo delle maniglie: l'adesivo restava 2,6 cm davanti al cassetto chiuso, e quello tirato,
+			# fuori di 38 cm, non entrava più nello schedario)
+			cas.transform = Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(x + 0.1535, (y0 + y1) * 0.5, z))
 			add_child(cas)
 			if giusto:
 				cas.contenuto = radiografia
 				var ad := _adesivo()
 				cas.get_node("Frontale").add_child(ad)
-				ad.position = Vector3(-0.08, (y1 - y0) * 0.5 - 0.075, 0.0)   # sul frontale (prima 1,2 cm davanti)
+				ad.position = Vector3(-0.08, (y1 - y0) * 0.5 - 0.075, 0.0015)   # sul frontale, 0,5 mm davanti (spesso 2 mm)
 				# dentro il cassetto: esce con lui
 				cas.get_node("Frontale").add_child(radiografia)
 				radiografia.position = Vector3(0, -(y1 - y0) * 0.5 + 0.051, -0.2)   # sul fondo del cassetto, 1 mm sopra (a filo le facce coincidevano)
@@ -590,8 +593,10 @@ func _cassaforte() -> void:
 		var cd := MeshInstance3D.new()
 		cd.name = "Cardine"
 		var cm := CylinderMesh.new()
-		cm.top_radius = 0.012
-		cm.bottom_radius = 0.012
+		# (il perno arriva allo spigolo smussato dello sportello, a 2,5 cm dall'asse: prima, sottile, lo sportello aperto
+		# non toccava niente)
+		cm.top_radius = 0.0235
+		cm.bottom_radius = 0.0235
 		cm.height = 0.1
 		cd.mesh = cm
 		cd.material_override = scuro

@@ -19,11 +19,16 @@ static func camere() -> Dictionary:
 		"alto": [Vector3(-6.0, 70.0, 0.1), Vector3(-6.0, 0.0, 0.0)],
 		# lo scivolo in fondo al ramo sbagliato 2 (scelta B): dalla ciambella e dalla banchina
 		"scivolo_ciambella": [Vector3(0.0, 0.75, 11.0), Vector3(0.0, 0.0, 2.0)],
-		"scivolo_banchina": [Vector3(3.0, 1.7, 9.5), Vector3(0.0, 0.0, 4.6)],
+		# (prima la camera era a x 3,0, dentro la faccia di un pannello di roccia: ora sulla banchina davanti)
+		"scivolo_banchina": [Vector3(1.95, 1.6, 12.0), Vector3(0.0, 0.2, 5.0)],
 		# le tre paratie dalla barca, poco prima di arrivarci
 		"paratia1": [F.anello(45.0) + Vector3(0, 0.6, 0), F.anello(55.0) + Vector3(0, 1.0, 0)],
 		"paratia2": [F.anello(135.0) + Vector3(0, 0.6, 0), F.anello(145.0) + Vector3(0, 1.0, 0)],
 		"paratia3": [F.anello(222.0) + Vector3(0, 0.6, 0), F.anello(232.0) + Vector3(0, 1.0, 0)],
+		# da vicino, per il collaudo: la colonna di roccia del bivio 3, la pila di ciambelle, il cartello dei tuffi
+		"colonna": [Vector3(-13.6, 1.6, 15.8), Vector3(-16.3, 1.6, 14.2)],
+		"pila_ciambelle": [Vector3(-2.7, 1.6, -7.7), Vector3(-4.6, 0.4, -9.2)],
+		"cartello_tuffi": [Vector3(-2.7, 1.7, -5.3), Vector3(-4.2, 1.6, -6.0)],
 	}
 
 
