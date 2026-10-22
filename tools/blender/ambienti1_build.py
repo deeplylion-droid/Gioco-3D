@@ -845,7 +845,8 @@ def stanzino(M):
     L.usa_collezione('stanzino')
     X0, X1, Y0, Y1, H = 11.2, 15.2, 6.2, 10.6, 2.6
     mats = dict(pav=M['piastrelle_pavimento'], sof=M['soffitto_lamiera'], muro=M['lamiera_crema'], muro_basso=M['lamiera_petrolio'], battiscopa=M['battiscopa'])
-    statico = L.stanza('stanzino', X0, Y0, X1, Y1, H, mats, {'W': [(Y0 - 0.2, Y1 + 0.2, 0, H)]}, zoccolo=1.0)
+    # a ovest è addossato alla parete est degli spogliatoi (x 11,0-11,2): niente pareti, pavimento e soffitto oltre
+    statico = L.stanza('stanzino', X0, Y0, X1, Y1, H, mats, {}, zoccolo=1.0, attaccata='W')
     # porta (aperta verso l'interno, cardine sul lato nord del vano)
     pt = [L.scatola('porta_stanzino', (11.02, 8.02, 0.01), (11.07, 8.88, 2.03), M['porta_lamiera'])]
     pt.append(L.cilindro('porta_stanzino', (11.07, 8.1, 1.0), (11.14, 8.1, 1.0), 0.02, M['cromo']))

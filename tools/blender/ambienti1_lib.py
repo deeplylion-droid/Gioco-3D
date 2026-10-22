@@ -309,23 +309,26 @@ def figlio(ob, padre):
 
 # ---------------------------------------------------------------- stanze
 
-def stanza(nome, x0, y0, x1, y1, h, mats, aperture=None, t=0.2, soffitto=True, pavimento=True, zoccolo=1.1):
+def stanza(nome, x0, y0, x1, y1, h, mats, aperture=None, t=0.2, soffitto=True, pavimento=True, zoccolo=1.1, attaccata=''):
     """Pavimento, soffitto e 4 pareti attorno al rettangolo interno.
     aperture: {'N'|'S'|'E'|'W': [(da, a, z_basso, z_alto), ...]} lungo la parete (coordinate x per N/S, y per E/W).
-    mats: dict con 'pav', 'sof', 'muro', 'muro_basso' (zoccolo)."""
+    mats: dict con 'pav', 'sof', 'muro', 'muro_basso' (zoccolo).
+    attaccata: i lati ('N', 'S', 'E', 'W') addossati a un'altra stanza: lì pavimento, soffitto e pareti non vanno
+    oltre il rettangolo interno (lo spessore lo dà la parete dell'altra stanza; prima ci entravano)."""
     aperture = aperture or {}
     parti = []
     prima = _RACCOGLI[0]; raccogli(True)
     try:
-        return _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti)
+        return _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti, attaccata)
     finally:
         raccogli(prima)
 
-def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti):
+def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti, attaccata=''):
+    tw, te, ts, tn = (0 if l in attaccata else t for l in 'WESN')
     if pavimento:
-        parti.append(scatola(nome + '_pav', (x0 - t, y0 - t, -0.2), (x1 + t, y1 + t, 0), mats['pav']))
+        parti.append(scatola(nome + '_pav', (x0 - tw, y0 - ts, -0.2), (x1 + te, y1 + tn, 0), mats['pav']))
     if soffitto:
-        parti.append(scatola(nome + '_sof', (x0 - t, y0 - t, h), (x1 + t, y1 + t, h + 0.2), mats['sof']))
+        parti.append(scatola(nome + '_sof', (x0 - tw, y0 - ts, h), (x1 + te, y1 + tn, h + 0.2), mats['sof']))
     lati = {
         'S': ('x', x0, x1, lambda a, b: ((a, y0 - t), (b, y0))),
         'N': ('x', x0, x1, lambda a, b: ((a, y1), (b, y1 + t))),
@@ -335,7 +338,10 @@ def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoc
     for lato, (asse, a0, a1, rett) in lati.items():
         ap = sorted(aperture.get(lato, []))
         # segmenti pieni tra le aperture, e sopra/sotto ogni apertura
-        tagli = [a0 - t] + [v for (da, a, zb, za) in ap for v in (da, a)] + [a1 + t]
+        if lato in attaccata:
+            continue
+        inizio, fine = (a0 - (tw if asse == 'x' else ts)), (a1 + (te if asse == 'x' else tn))
+        tagli = [inizio] + [v for (da, a, zb, za) in ap for v in (da, a)] + [fine]
         segmenti = [(tagli[i], tagli[i + 1]) for i in range(0, len(tagli), 2)]
         for (da, a) in segmenti:
             if a - da > 1e-4:
