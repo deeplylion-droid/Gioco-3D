@@ -11,7 +11,7 @@ flock /home/user/tools/render.lock godot --headless --path godot --fixed-fps 60 
     res://tests/collaudo/geometria.gd res://scenes/sala_principale.tscn <stato> <uscita> [nodi da togliere]
 ```
 
-Scrive tutti i triangoli delle mesh nel mondo (`<uscita>.bin`), l'elenco delle mesh (`<uscita>.json`) e le celle raggiungibili a piedi dai checkpoint (`<uscita>_celle.json`). Conta anche le istanze dei MultiMesh (i dettagli della sala con 6 o più copie), gli oggetti grandi e quelli nascosti all'inizio, che il controllo della CI salta.
+Scrive tutti i triangoli delle mesh nel mondo (`<uscita>.bin`), l'elenco delle mesh (`<uscita>.json`) e le celle raggiungibili a piedi dai checkpoint (`<uscita>_celle.json`). Conta anche le istanze dei MultiMesh (i dettagli della sala con 6 o più copie, e quelli che lasciano le trasformazioni nel meta `trasformazioni` del nodo o della risorsa), gli oggetti grandi e quelli nascosti all'inizio, che il controllo della CI salta.
 
 Gli stati (`stati.gd`): `inizio`, `aperto` (porte, portelli, paratie e serrande aperte), `ritorno` (blackout della tappa 7, acquari pieni e lampadine del portone accese, tappa 8 finita), `risolto` (enigma risolto, portone della torre aperto).
 

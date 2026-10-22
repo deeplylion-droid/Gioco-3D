@@ -137,7 +137,10 @@ func _scrivi_mesh() -> void:
 			if mm == null:
 				continue
 			mesh = mm.mesh
-			var locali := _istanze_dettagli(g as MultiMeshInstance3D)
+			# chi crea il MultiMesh può lasciare le trasformazioni nel meta "trasformazioni", del nodo o della risorsa
+			var locali: Array = g.get_meta(&"trasformazioni", mm.get_meta(&"trasformazioni", []))
+			if locali.size() != mm.instance_count:
+				locali = _istanze_dettagli(g as MultiMeshInstance3D)
 			if locali.is_empty():
 				print("COLLAUDO: MultiMesh saltato (istanze non leggibili senza renderer): ", percorso)
 				continue
