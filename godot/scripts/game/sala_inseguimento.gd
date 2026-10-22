@@ -1042,7 +1042,9 @@ func _arredo(radice: Node3D, a: Dictionary) -> void:
 						else copia.transform * ((m as MeshInstance3D).transform * (m as MeshInstance3D).get_aabb())
 				scatola = ab if prima else scatola.merge(ab)
 				prima = false
-	var giro := Basis(Vector3.UP, deg_to_rad(float(a["ry"]))).scaled(Vector3.ONE * float(a.get("s", 1.0)))
+	# rx: prima attorno all'asse X del pezzo (un pezzo steso a terra), poi ry attorno alla verticale
+	var giro := (Basis(Vector3.UP, deg_to_rad(float(a["ry"]))) * Basis(Vector3.RIGHT, deg_to_rad(float(a.get("rx", 0.0))))) \
+			.scaled(Vector3.ONE * float(a.get("s", 1.0)))
 	var p := b(a["p"])
 	match String(a["a"]):
 		"origine":
