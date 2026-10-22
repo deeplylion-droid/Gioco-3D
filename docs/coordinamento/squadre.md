@@ -5,10 +5,10 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 | Squadra | Sessione cloud | Branch | Lavoro |
 |---|---|---|---|
 | mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/lei-inseguimento | le 7 animazioni di lei per l'inseguimento (stima 6-8 ore); poi le aggancia ambienti-2 |
-| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1 fatto, con vasche c e strisce a (593d6bf); discesa_5_0 unita. Aspetta le animazioni di mascotte |
+| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1 fatto, con vasche c e strisce a (593d6bf); discesa_5_0 unita. Aspetta le animazioni di mascotte; intanto le prove dello sfondo del titolo su lavoro/ambienti-2-menu (strati A cupola e tempesta, B acqua ai suoi piedi, C pezzi della sala; scatti di B+C, A+B, A, B) |
 | ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | tuffo A consegnato (3df43ba); ritocco della corona (meno lamina, acqua bianca, gocce che sembrino acqua), geyser V1 fuori dall'esportazione; poi valvola_corridoio_1 e turbina_saracinesca |
 | enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | fiume A con lo scivolo B, infermeria B, lettore, keycard, strada β, Polaroid della pecora: uniti per la v0.3.9 (6271159) |
-| grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | nome Jilly Jubilee unito (58cc633); proposte del logo D/E/F in attesa della scelta; ora il crash all'uscita mentre la torre si carica nel thread (CI rossa su 58cc633) |
+| grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | nome Jilly Jubilee unito (58cc633); prima il crash all'uscita mentre la torre si carica nel thread (CI rossa su 58cc633), poi il logo A scelto dall'utente nella schermata del titolo, com'era nella prova |
 
 Le sessioni vecchie (grafica session_01Q9PdaHCaFPsyZ4J69AtTTt, ambienti-1 session_01E1m21YyF95ZHLwLFM1yLCv, ambienti-2 session_01DHF6GjuPt1SH74CXxGYGC2, enigma-logica session_01RPrxxeJjwAgHgEzLWPXgsn, enigma-ambiente session_01Jn42hE4synLdT5YNKedMqv, mascotte session_01Ut6TnWfhFvUH1yfran7kFa) sono ferme dal 21 ottobre: avevano conversazioni lunghissime che costavano a ogni passo. Ognuna ha lasciato un passaggio di consegne in `docs/coordinamento/passaggi/<squadra>.md` sul suo branch.
 
@@ -21,7 +21,7 @@ Le sessioni vecchie (grafica session_01Q9PdaHCaFPsyZ4J69AtTTt, ambienti-1 sessio
 ## Cose da sapere
 
 - Le pagine di scelta si fanno con `tools/questionario/genera_pagina.py`. Le risposte si leggono con ArtifactData, collezione `risposte`.
-- Pagina aperta: il logo, secondo giro D/E/F (https://claude.ai/artifact/9yswiYCFBj2TfBvVSwEQjh, voce LOGO2), risposta non ancora arrivata. Le proposte sono in lavoro/grafica-nome 98304dc, `docs/proposte/logo/`; le prime tre (scartate dall'utente, "Fanne altre tre") in `docs/proposte/logo/scartati/`.
+- Logo: l'utente ha scelto in chat la A del primo giro ("Senti usiamo l'A di prima"); la pagina del secondo giro D/E/F (https://claude.ai/artifact/9yswiYCFBj2TfBvVSwEQjh) è chiusa. Le proposte sono in lavoro/grafica-nome 98304dc, `docs/proposte/logo/`.
 - L'exe Windows pesa circa 1,44 GB. Le proposte sono escluse dall'export con `exclude_filter` in `godot/export_presets.cfg`.
 - Unione della torre (ambienti-2) con enigma-logica: i conflitti sono solo in `.github/workflows/build.yml`, dove vanno tenute le righe dei test di tutti e due, e nel commento del punto 5 in cima a `godot/tests/test_tappa8.gd`. Il codice si unisce da solo: il portone non si apre da solo (enigma), lo apre `apri()` e la torre si carica.
 
@@ -49,10 +49,9 @@ Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD
 
 ## In lavorazione: v0.3.9
 
-In lavoro/godot finora: griglia del controllo di posizionamento e collisioni dei tecnici (a87a7d0), fiume, infermeria, keycard, strada β e P11 (6271159), discesa_5_0 della torre (a871c43), nome Jilly Jubilee (58cc633). Da unire: il tuffo A (ambienti-1, dopo il ritocco), l'inseguimento (ambienti-2, dopo le animazioni di mascotte), la correzione del crash all'uscita (grafica). Le note della Release useranno i nomi nuovi dei file (JillyJubilee-windows-v0.3.9.exe e gli zip).
+In lavoro/godot finora: griglia del controllo di posizionamento e collisioni dei tecnici (a87a7d0), fiume, infermeria, keycard, strada β e P11 (6271159), discesa_5_0 della torre (a871c43), nome Jilly Jubilee (58cc633). Da unire: il tuffo A (ambienti-1, dopo il ritocco), l'inseguimento (ambienti-2, dopo le animazioni di mascotte), la correzione del crash all'uscita e il logo A nella schermata del titolo (grafica). Le note della Release useranno i nomi nuovi dei file (JillyJubilee-windows-v0.3.9.exe e gli zip).
 
 ## Da chiedere all'utente
 
-- Il logo: la scelta tra D, E e F sulla pagina aperta. Poi grafica rifinisce quello scelto e lo mette nella schermata del titolo, con la sua approvazione.
-- La scritta del titolo nella schermata iniziale si propone prima per iscritto (GDD).
+- Sfondo del titolo (ora "tutto nero"): l'utente ha chiesto B+C (acqua ai suoi piedi e pezzi della sala dietro) e le prove anche di A+B, A e B. Quando arrivano gli scatti di ambienti-2, pagina con le quattro prove; nel gioco niente finché non sceglie.
 - I promemoria di Steam parlano ancora di «Splashland»: proposto di aggiornarli, nessuna risposta. Su itch l'utente deve rinominare la bozza.

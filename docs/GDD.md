@@ -1,6 +1,6 @@
 # Documento di progetto (GDD)
 
-Titolo: **Jilly Jubilee** (scelta dell'utente, 22 ottobre: "Sì, chiamiamolo Jilly Jubilee"), come la mascotte. Prima era "Splash Lagoon", che resta il nome provvisorio del parco nel gioco. La scritta del titolo nella schermata iniziale si propone prima all'utente per iscritto; finché non sceglie, il titolo mostra solo la statua e "Capitolo 1 · demo". Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
+Titolo: **Jilly Jubilee** (scelta dell'utente, 22 ottobre: "Sì, chiamiamolo Jilly Jubilee"), come la mascotte. Prima era "Splash Lagoon", che resta il nome provvisorio del parco nel gioco. Il logo è **A, l'insegna del parco rovinata** (scelta dell'utente, 22 ottobre: "Senti usiamo l'A di prima", dopo il secondo giro D/E/F): "Jilly" in corsivo corallo e "JUBILEE" in oro su un nastro blu, con stelle e una piccola medusa, come insegna, targa e manifesto del parco, ma con lo smalto saltato fino alla ruggine, colature e crepe. Va nella schermata del titolo com'era nella prova che ha visto (`titolo_a.jpg`, in alto a sinistra sopra "Capitolo 1 · demo" e il menu). Scartati: B anni '90 e C horror del primo giro, D neon, E titolo da film e F disegno a pastelli del secondo giro. Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
 
 ## Regola d'oro
 
