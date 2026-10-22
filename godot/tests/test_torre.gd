@@ -197,6 +197,9 @@ func _run() -> void:
 	var p := GameState.player
 	var portone := level.get(&"portone") as PortoneTorre
 	check(level.get(&"sala_torre") == null, "prima che il portone si apra la torre non è caricata")
+	var campioni: Array = level.get(&"_materiali_torre")
+	check(campioni.size() == SalaTorre.materiali_campione().size() and campioni.all(func(m): return m is Material),
+		"la sala tiene pronti gli shader dei materiali che la torre crea da codice (%d)" % campioni.size())
 	# come nel gioco: alla torre si arriva dopo il risveglio (tappa 6), col blackout
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	portone.apri()

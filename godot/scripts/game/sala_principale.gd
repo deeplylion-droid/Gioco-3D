@@ -77,6 +77,8 @@ var _torre_fallita := false
 var _torre_nascosta: Node3D
 var _torre_preparata := false
 var _dentro_torre := false
+# Gli shader dei materiali che la torre crea da codice, pronti dall'ingresso nella sala (SalaTorre.materiali_campione).
+var _materiali_torre: Array[Material] = []
 
 # Il bersaglio del getto sulla faccia della medusa (_faccia_bagnabile).
 var _faccia: WaterHitbox
@@ -361,6 +363,7 @@ func _on_fine_demo(body: Node3D) -> void:
 func _setup_torre() -> void:
 	if sala_torre_scena == "" or portone == null:
 		return
+	_materiali_torre = SalaTorre.materiali_campione()
 	portone.connect(&"apertura_iniziata", _carica_torre)
 	var enigma := get_node_or_null(^"Gioco/EnigmaAcquari")
 	if enigma and enigma.has_signal(&"comparso") and precarica_torre and not Engine.has_meta(&"precarica_torre_spento"):

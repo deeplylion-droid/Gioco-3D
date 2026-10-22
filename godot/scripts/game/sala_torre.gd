@@ -241,7 +241,7 @@ func _passi_figli(padre: Node, figli: Array) -> Array:
 
 func _prepara_dati() -> void:
 	dati = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
-	var acqua: Material = load("res://assets/materials/sala/acqua_torbida.tres")
+	var acqua: Material = load(ACQUA)
 	for m in find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = acqua
 
@@ -660,13 +660,7 @@ func _luce_lei() -> void:
 	cil.bottom_radius = 1.7
 	cil.height = 0.05
 	fondo.mesh = cil
-	var m := StandardMaterial3D.new()
-	m.albedo_color = ROSA
-	m.emission_enabled = true
-	m.emission = ROSA
-	m.emission_energy_multiplier = 3.0
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	fondo.material_override = m
+	fondo.material_override = _materiale_fondo_pozzo()
 	add_child(fondo)
 	fondo.global_position = p + Vector3(0, -5.0, 0)
 	for d in [[Vector3(0, -0.8, 0), 14.0, 10.0, false], [Vector3(0, -3.5, 0), 10.0, 4.0, false]]:
@@ -773,11 +767,7 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 	gm.radial_segments = 8
 	gm.rings = 2
 	gabbia.mesh = gm
-	var mg := _metallo_scuro()
-	mg.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	mg.albedo_texture = _griglia()
-	mg.cull_mode = BaseMaterial3D.CULL_DISABLED
-	gabbia.material_override = mg
+	gabbia.material_override = _materiale_gabbia()
 	radice.add_child(gabbia)
 	gabbia.global_position = p
 	var cappello := MeshInstance3D.new()
@@ -858,6 +848,50 @@ func _faro(radice: Node3D, p: Vector3, mira: Vector3, attacco = null) -> void:
 	l.look_at(mira)
 
 
+static func _materiale_gabbia() -> StandardMaterial3D:
+	var mg := _metallo_scuro()
+	mg.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	mg.albedo_texture = _griglia()
+	mg.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return mg
+
+
+static func _materiale_gocce() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.7, 0.8, 0.85, 0.6)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.roughness = 0.05
+	return m
+
+
+static func _materiale_fondo_pozzo() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = ROSA
+	m.emission_enabled = true
+	m.emission = ROSA
+	m.emission_energy_multiplier = 3.0
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return m
+
+
+## L'acqua torbida delle vasche (la stessa della sala principale).
+const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
+
+
+## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo), più
+## l'acqua torbida. Godot fa uno shader per tipo di materiale e lo condivide, ma la prima volta lo crea sul
+## thread principale: con il gruppo di shader avanzato acceso (nel gioco lo è sempre, vedi
+## Grafica._attiva_shader_avanzati) costa 100-150 ms sulla CPU della CI, troppo per un passo della
+## costruzione a pezzi. La sala principale li crea entrando (a schermo nero) e li tiene finché c'è: i passi
+## ritrovano gli shader pronti. Chi li chiama deve tenere l'array (gli shader vivono finché c'è un materiale).
+static func materiali_campione() -> Array[Material]:
+	var out: Array[Material] = [_emissivo(Color.WHITE, 1.0), _metallo_scuro(), _materiale_gabbia(),
+			_materiale_gocce(), _materiale_fondo_pozzo(), load(ACQUA) as Material]
+	for m in out:
+		m.get_rid()   # lo shader si crea adesso, non al primo uso
+	return out
+
+
 static func _metallo_scuro() -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = Color(0.32, 0.31, 0.29)
@@ -912,11 +946,7 @@ func _gocce(radice: Node3D, p: Vector3) -> void:
 	sf.radius = 0.012
 	sf.height = 0.05
 	g.mesh = sf
-	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.7, 0.8, 0.85, 0.6)
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.roughness = 0.05
-	g.material_override = m
+	g.material_override = _materiale_gocce()
 	g.amount = 40
 	g.lifetime = 2.0
 	g.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
