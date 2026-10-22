@@ -24,6 +24,15 @@ const GLB_SALA := ["architettura", "cupola", "piscina", "vasca_centrale", "area_
 
 @export var percorso_sala := NodePath("Sala")
 @export var piscina_onde: NodePath = ^"Piscina/AcquaOnde"
+@export_group("Fari da spettacolo")
+## Fari della vasca di Jilly: rosa e viola come i suoi tentacoli (scelta dell'utente, 22 ottobre: "a").
+@export var colore_faro_rosa := Color(1.0, 0.38, 0.72)
+@export var colore_faro_viola := Color(0.62, 0.36, 1.0)
+@export var energia_fari := 7.0
+@export_group("Onde")
+@export var onda_altezza := 0.4
+@export var onda_lunghezza := 6.0
+@export var onda_punta := 2.2
 @export_group("Sole")
 ## Direzione del sole (gradi): alto da sud-ovest, così entra dalla cupola e cade sulla piscina.
 @export var sole_rotazione := Vector3(-58.0, -150.0, 0.0)
@@ -39,7 +48,11 @@ func _ready() -> void:
 	_pulisci(sala)
 	var onde := get_node_or_null(piscina_onde)
 	if onde and "material" in onde and onde.get(&"material") is ShaderMaterial:
-		(onde.get(&"material") as ShaderMaterial).shader = SHADER_ONDE
+		var m := onde.get(&"material") as ShaderMaterial
+		m.shader = SHADER_ONDE
+		m.set_shader_parameter(&"onda_altezza", onda_altezza)
+		m.set_shader_parameter(&"onda_lunghezza", onda_lunghezza)
+		m.set_shader_parameter(&"onda_punta", onda_punta)
 	# Dopo le luci della sala (look_sala.gd regola tutto in differita, dopo il suo _ready).
 	_accendi.call_deferred.call_deferred()
 
@@ -116,6 +129,12 @@ func _accendi() -> void:
 		var nome := String(luce.name)
 		if nome.begins_with("luce_emergenza"):
 			luce.visible = false
+		elif nome.begins_with("luce_faro") or nome.begins_with("luce_vasca"):
+			# a coppie: quello a ovest (x < 0) rosa, quello a est viola
+			luce.light_color = colore_faro_rosa if luce.global_position.x < 0.0 else colore_faro_viola
+			if nome.begins_with("luce_faro"):
+				luce.light_energy = energia_fari
+				(luce as SpotLight3D).spot_angle = 18.0
 		elif luce is DirectionalLight3D:
 			var d := luce as DirectionalLight3D
 			d.rotation_degrees = sole_rotazione
