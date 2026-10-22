@@ -69,11 +69,16 @@ func _ready() -> void:
 			mm.transform_format = MultiMesh.TRANSFORM_3D
 			mm.mesh = src.mesh
 			mm.instance_count = posti.size()
+			var tr: Array[Transform3D] = []
 			for i in posti.size():
-				mm.set_instance_transform(i, _trasformazione(posti[i]))
+				tr.append(_trasformazione(posti[i]))
+				mm.set_instance_transform(i, tr[i])
 			var mmi := MultiMeshInstance3D.new()
 			mmi.name = nome
 			mmi.multimesh = mm
+			# le trasformazioni anche qui: senza schermo (il renderer finto) il MultiMesh non le conserva, e il controllo
+			# di posizionamento le legge da qui
+			mmi.set_meta(&"trasformazioni", tr)
 			_regola(mmi, piccolo)
 			add_child(mmi)
 		else:
