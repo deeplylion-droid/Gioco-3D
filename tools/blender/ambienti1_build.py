@@ -354,33 +354,7 @@ def corridoio(M):
     prop('cestino', 'cestino', (5.3, 2.3, 0), 30, 0.55, 'z')
     prop('paperella', 'paperella', (13.9, 1.2, 0.0), 140, 0.09)
     prop('pallone', 'pallone', (2.2, 0.6, 0), 0, 0.42)
-    if HQ.disponibile('valvola_volantino'):
-        # valvola in linea su un bypass del tubo grande: scende, passa dalle flange della valvola e risale
-        # (prima pendeva da un tubicino con le flange libere: "valvole appese al nulla")
-        # (la prima ora è in linea sul tubo grande del soffitto: tubo_grande_con_valvola)
-        for k, x in ((1, 15.9),):
-            v = HQ.metti(f'valvola_corridoio_{k + 1}', 'valvola_volantino', (x, 2.32, 1.58), (None, None, 0.42), rot_z=R(180))
-            bpy.context.view_layer.update()
-            ws = [v.matrix_world @ p.co for p in v.data.vertices]
-            x0, x1 = min(p.x for p in ws), max(p.x for p in ws)
-            # misure prese solo sulla faccia della flangia (prima contavano anche il volantino: tubo storto e sottile)
-            faccia = [p for p in ws if p.x > x1 - 0.004]
-            zf = (min(p.z for p in faccia) + max(p.z for p in faccia)) / 2
-            yf = (min(p.y for p in faccia) + max(p.y for p in faccia)) / 2
-            r_tubo = (max(p.y for p in faccia) - min(p.y for p in faccia)) / 2          # foro della valvola
-            corona = [p for p in ws if p.x > x1 - 0.012]
-            r_fl = (max(p.y for p in corona) - min(p.y for p in corona)) / 2           # flangia della valvola
-            for lato, xa in ((-1, x0), (1, x1)):
-                xb = x + lato * 0.5
-                statico.append(L.tubo_percorso(f'bypass_valvola_{k + 1}_{lato + 1}', [(xa, yf, zf), (xb, yf, zf), (xb, yf, 2.3), (xb, 2.32, 2.36)],
-                                               r_tubo, M['ruggine'], flange=False))
-                # controflangia del tubo, appoggiata a quella della valvola, con i bulloni
-                fl = [L.cilindro('bypass_flangia', (xa, yf, zf), (xa + lato * 0.025, yf, zf), r_fl, M['metallo_grezzo'], seg=32)]
-                for j in range(8):
-                    t = 2 * math.pi * j / 8
-                    py, pz = yf + math.cos(t) * r_fl * 0.8, zf + math.sin(t) * r_fl * 0.8
-                    fl.append(L.cilindro('bypass_bullone', (xa - lato * 0.01, py, pz), (xa + lato * 0.04, py, pz), 0.008, M['ruggine'], seg=8))
-                statico.append(L.unisci(f'bypass_flangia_{k + 1}_{lato + 1}', fl))
+    # le due valvole del corridoio sono in linea sul tubo grande del soffitto: tubo_grande_con_valvola
     if HQ.disponibile('cartello_pericolo'):
         HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60))
     prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.7, 0), 75, 0.8)
@@ -938,14 +912,14 @@ def neon_sotto_il_soffitto(margine=0.004):
 
 # tubo grande del soffitto del corridoio: asse a y 2,32, z 2,38, raggio 8,5 cm, flange ogni 2,2 m
 TUBO_GRANDE = (2.32, 2.38, 0.085)
-VALVOLA_1_X = 4.8   # non sopra il passaggio degli spogliatoi (x 6..7,6), lontana dallo sprinkler (x 5,2) e dalle staffe
+VALVOLE_X = (4.9, 15.9)   # dov'erano; la prima non sopra il passaggio degli spogliatoi (x 6..7,6)
 
 
 def tubo_grande_con_valvola(M):
-    """Il tubo grande del soffitto del corridoio con la valvola 1 in linea (scelta dell'utente del 22 ottobre,
-    opzione A): prima la valvola stava su un bypass che scendeva a 1,58 m, all'altezza della testa di chi
-    cammina. Ora il tubo passa dalle sue flange (foro grande come il tubo), con le controflange e i bulloni;
-    il volantino guarda in basso verso il corridoio (45 gradi), tutto sopra i 2 m. Ritorna le parti statiche."""
+    """Il tubo grande del soffitto del corridoio con le due valvole in linea (scelta dell'utente del 22 ottobre,
+    opzione A): prima stavano su un bypass che scendeva a 1,58 m, all'altezza della testa di chi cammina. Ora
+    il tubo passa dalle loro flange (foro grande come il tubo), con le controflange e i bulloni; il volantino
+    guarda in basso verso il corridoio (45 gradi), tutto sopra i 2 m. Ritorna le parti statiche."""
     y, z, r = TUBO_GRANDE
     fine = 22.0
     tagli = []
@@ -963,10 +937,11 @@ def tubo_grande_con_valvola(M):
         corona = [p for p in ws if p.x > x1 - 0.0286]
         r_fl = (max(p.y for p in corona) - min(p.y for p in corona)) / 2
         alt = r / r_foro                     # foro grande come il tubo
-        HQ.metti('valvola_corridoio_1', 'valvola_volantino', (VALVOLA_1_X, y, z), (None, None, alt), rot_z=R(180),
-                 perno=(0, 0, zf * alt), rot=(R(-135), 0, 0))
-        xa, xb = VALVOLA_1_X - x1 * alt, VALVOLA_1_X + x1 * alt
-        tagli.append((xa, xb))
+        for n, vx in enumerate(VALVOLE_X):
+            HQ.metti(f'valvola_corridoio_{n + 1}', 'valvola_volantino', (vx, y, z), (None, None, alt), rot_z=R(180),
+                     perno=(0, 0, zf * alt), rot=(R(-135), 0, 0))
+            tagli.append((vx - x1 * alt, vx + x1 * alt))
+    for n, (xa, xb) in enumerate(tagli):
         for lato, xf in ((-1, xa), (1, xb)):
             # controflangia del tubo appoggiata a quella della valvola, con i bulloni
             fl = [L.cilindro('valvola_controflangia', (xf, y, z), (xf + lato * 0.025, y, z), r_fl * alt, M['metallo_grezzo'], seg=32)]
@@ -974,11 +949,11 @@ def tubo_grande_con_valvola(M):
                 t = 2 * math.pi * j / 8
                 py, pz = y + math.cos(t) * r_fl * alt * 0.8, z + math.sin(t) * r_fl * alt * 0.8
                 fl.append(L.cilindro('valvola_bullone', (xf - lato * 0.01, py, pz), (xf + lato * 0.04, py, pz), 0.008, M['ruggine'], seg=8))
-            parti.append(L.unisci(f'flangia_valvola_1_{lato + 1}', fl))
+            parti.append(L.unisci(f'flangia_valvola_{n + 1}_{lato + 1}', fl))
     # il tubo, interrotto dove c'è la valvola; le flange del tubo restano dov'erano (ogni 2,2 m)
-    pezzi = [L.cilindro('tubo_grande_0', (0, y, z), (tagli[0][0] if tagli else fine, y, z), r, M['ruggine'], seg=28, tappi=False)]
-    if tagli:
-        pezzi.append(L.cilindro('tubo_grande_1', (tagli[0][1], y, z), (fine, y, z), r, M['ruggine'], seg=28, tappi=False))
+    estremi = [0.0] + [v for t in tagli for v in t] + [fine]
+    pezzi = [L.cilindro(f'tubo_grande_{i}', (estremi[2 * i], y, z), (estremi[2 * i + 1], y, z), r, M['ruggine'], seg=28, tappi=False)
+             for i in range(len(estremi) // 2)]
     k = 1
     while k * 2.2 < fine - 0.2:
         c = k * 2.2
