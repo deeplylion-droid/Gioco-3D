@@ -54,7 +54,7 @@ def assesta(oggetti, passo=7):
         dg = bpy.context.evaluated_depsgraph_get()
         mw = o.matrix_world
         vicino = None
-        for v in o.data.vertices[::passo]:
+        for v in list(o.data.vertices)[::passo]:
             p = mw @ v.co
             ok, loc, _n, _i, colpito, _m = bpy.context.scene.ray_cast(dg, p + giu * 0.0005, giu, distance=p.z + 0.01)
             d = (p - loc).length if ok and colpito.name != o.name else p.z
