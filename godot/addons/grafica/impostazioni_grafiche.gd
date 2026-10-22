@@ -112,8 +112,38 @@ func _ready() -> void:
 	carica()
 	_assicura_azioni_input()
 	_crea_post_processing()
+	_attiva_shader_avanzati()
 	get_tree().node_added.connect(_su_nodo_aggiunto)
 	applica_tutto.call_deferred()
+
+
+## Blocco del pool di thread (21 ottobre, sulle macchine a 4 core): in Godot 4.7, la prima volta che si
+## disegna con GI, TAA, SSS o vettori di movimento, il renderer attiva il gruppo di shader "avanzato"
+## (ShaderRD::enable_group) e mette in coda la sua compilazione per tutti gli shader che esistono già, in
+## fondo al WorkerThreadPool. Al primo fotogramma della sala la coda è piena delle pipeline dei suoi
+## materiali: il thread principale aspetta la compilazione di uno shader tenendone il mutex
+## (version_get_shader), e i worker, che compilano pipeline dello stesso shader, si fermano su quel mutex.
+## Con 4 worker si blocca tutto per sempre (con la cache degli shader già piena no: niente da compilare).
+## Qui il gruppo si attiva subito, all'avvio, con pochi shader e la coda vuota: un fotogramma in una
+## SubViewport minuscola col TAA (vettori di movimento). Da lì ogni shader nuovo compila anche il gruppo
+## avanzato insieme agli altri, prima delle sue pipeline.
+func _attiva_shader_avanzati() -> void:
+	if DisplayServer.get_name() == "headless" or RenderingServer.get_rendering_device() == null:
+		return
+	if OS.get_cmdline_user_args().has("senza_shader_avanzati"):
+		return   # solo per i test: prova che senza questo il blocco c'è (test_pool_shader.gd)
+	var sv := SubViewport.new()
+	sv.name = "AttivaShaderAvanzati"
+	sv.size = Vector2i(8, 8)
+	sv.own_world_3d = true
+	sv.use_taa = true
+	sv.render_target_update_mode = SubViewport.UPDATE_ONCE
+	var cam := Camera3D.new()
+	sv.add_child(cam)
+	add_child(sv)
+	cam.current = true
+	RenderingServer.force_draw(false)
+	sv.queue_free()
 
 
 # --- API ---------------------------------------------------------------------
