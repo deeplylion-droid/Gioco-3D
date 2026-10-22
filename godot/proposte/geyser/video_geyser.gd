@@ -335,7 +335,7 @@ func _memoria(delta: float) -> void:
 	for riga in FileAccess.get_file_as_string("/proc/self/status").split("\n"):
 		if riga.begins_with("VmRSS"):
 			rss = riga.get_slice(":", 1).strip_edges()
-	print("MEMORIA rss %s, _f %d, " % [rss, _f], "statica %d MB, texture %d MB, buffer %d MB, video %d MB, fotogrammi %d" % [
+	printerr("MEMORIA rss %s, _f %d, fase %s, " % [rss, _f, str(lei.fase) if lei else "-"], "statica %d MB, texture %d MB, buffer %d MB, video %d MB, fotogrammi %d" % [
 		OS.get_static_memory_usage() >> 20,
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TEXTURE_MEM_USED) >> 20,
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_BUFFER_MEM_USED) >> 20,
