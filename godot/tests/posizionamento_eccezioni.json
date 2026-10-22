@@ -924,149 +924,6 @@
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_3_0_4, scat_3_0_5."
 	},
 	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_02",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			1.1,
-			2.2,
-			38.43
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_02_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_03",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			9.5,
-			2.2,
-			38.43
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_03_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_05",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			12.17,
-			2.4,
-			39.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 229.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_05_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_06",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-9.57,
-			2.35,
-			39.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 224.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_06_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_01",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-2.9,
-			2.45,
-			37.77
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 234.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_01_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_02",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-6.57,
-			2.4,
-			33.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 37.6 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_02_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_03",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-4.1,
-			2.55,
-			26.43
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 27.9 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_03_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_04",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.97,
-			2.3,
-			22.7
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_04_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_05",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.0,
-			2.5,
-			29.57
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_05_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_06",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			3.37,
-			2.3,
-			24.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 69.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_spogliatoi_06_vetro."
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			1.63,
-			2.3,
-			31.3
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: luce_emergenza_stanzino_01_vetro."
-	},
-	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/lampada_l2",
 		"squadra": "ambienti-2",
@@ -2004,149 +1861,6 @@
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)"
 	},
 	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_02_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			1.09,
-			2.19,
-			38.45
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_03_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			9.49,
-			2.19,
-			38.45
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 209.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_05_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			12.15,
-			2.39,
-			39.59
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 229.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_06_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-9.55,
-			2.34,
-			39.61
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 224.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_01_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-2.89,
-			2.44,
-			37.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 234.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_02_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-6.55,
-			2.39,
-			33.91
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 37.9 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_03_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-4.11,
-			2.54,
-			26.45
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 28.4 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_04_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.95,
-			2.29,
-			22.69
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_05_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			0.01,
-			2.49,
-			29.55
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_06_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			3.35,
-			2.29,
-			24.89
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 69.8 cm. (stato: interni_dopo)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01_vetro",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			1.65,
-			2.29,
-			31.31
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.8 cm. (stato: interni_dopo)"
-	},
-	{
 		"zona": "torre",
 		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
 		"squadra": "ambienti-2",
@@ -2223,5 +1937,681 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			16.05,
+			3.0,
+			-21.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante4",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			17.75,
+			3.0,
+			-23.15
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante2",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			4.85,
+			3.0,
+			-21.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante4",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			6.55,
+			3.0,
+			-23.15
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			16.75,
+			0.0,
+			-21.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			4.75,
+			0.0,
+			-23.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante3",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			4.75,
+			0.0,
+			-23.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.50 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_2_7",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			10.08,
+			0.01,
+			-22.64
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 29% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/Zoccolo",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			8.63,
+			0.21,
+			-21.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/PompaSerbatoioCollare",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			9.65,
+			0.6,
+			-21.81
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 5 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_4_7",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			11.35,
+			0.04,
+			-22.01
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_pesce_gomma_1",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			11.0,
+			0.03,
+			-23.16
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_1_20",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			10.17,
+			0.01,
+			-21.11
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_mucchio_piastrelle_2_16",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			10.48,
+			0.02,
+			-20.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_1_26",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			11.49,
+			0.01,
+			-21.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_3_31",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			11.27,
+			0.06,
+			-21.76
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_vetri_rotti_1_6",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			4.89,
+			0.0,
+			-22.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 65% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_griglia_caduta_4",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			3.84,
+			0.04,
+			-22.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo per 53 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			3.86,
+			0.21,
+			-22.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_3_12",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			4.58,
+			0.01,
+			-22.34
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_barchetta_4",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			5.47,
+			0.1,
+			-23.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_1_6",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			5.1,
+			0.04,
+			-22.64
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoio",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			4.4,
+			0.94,
+			-22.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoioCollare",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			4.56,
+			0.94,
+			-22.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Gamba",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			7.39,
+			0.24,
+			-22.44
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 3 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Spina",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			7.82,
+			0.26,
+			-22.53
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 4 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/BeccoCorpo",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			7.82,
+			1.15,
+			-22.54
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_maschera_sub_13",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			6.17,
+			0.07,
+			-21.46
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/Cavo/Fascetta1",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			6.57,
+			1.83,
+			-21.44
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Tirante1"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/Cavo/Fascetta2",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			6.57,
+			2.0,
+			-21.44
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Tirante1"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_1_6",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			12.3,
+			0.01,
+			-22.64
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_2_15",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			13.74,
+			0.02,
+			-21.94
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 23% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_2_15",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			13.74,
+			0.02,
+			-21.92
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 68% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaGamba"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaGamba",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			13.76,
+			0.01,
+			-21.81
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 41% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_carta_accartocciata_1_4",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			12.96,
+			0.04,
+			-21.39
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 67% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/Gamba",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			13.76,
+			0.24,
+			-21.81
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 3 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/TuboSerbatoio",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			13.31,
+			0.6,
+			-21.81
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 16 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaSpina",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			14.38,
+			0.01,
+			-21.93
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/Spina",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			14.38,
+			0.26,
+			-21.93
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 4 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_2_14",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			14.93,
+			0.02,
+			-22.32
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 94% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			15.06,
+			0.21,
+			-22.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoio",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			15.6,
+			0.94,
+			-22.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoioCollare",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			15.76,
+			0.94,
+			-22.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_pannello_lamiera_2_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			17.7,
+			0.06,
+			-23.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_2_33",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			16.54,
+			0.02,
+			-21.33
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 58% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_foglio_3_9",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			17.56,
+			0.02,
+			-21.53
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 84% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Gamba",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			18.59,
+			0.24,
+			-22.44
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 3 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Spina",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			19.02,
+			0.26,
+			-22.53
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 4 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/BeccoCorpo",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			19.02,
+			1.15,
+			-22.54
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_piastrella_rotta_5_8",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			18.95,
+			0.01,
+			-22.46
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 40% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante1",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			17.75,
+			4.4,
+			-21.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante1",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			6.55,
+			4.4,
+			-21.45
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm"
 	}
 ]
