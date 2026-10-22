@@ -64,6 +64,8 @@ func _avvia() -> void:
 	Engine.set_meta(&"precarica_torre_spento", true)
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("alto")
+	if OS.get_environment("SENZA_GI") == "1":
+		Grafica.imposta("gi", 0)
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		wm.set(&"quality", 1)
