@@ -173,7 +173,8 @@ func _guarda() -> void:
 		p.look_at_point(_testa() + Vector3(0.0, 0.6, 0.0))
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_memoria(delta)
 	if p == null:
 		return
 	_f += 1
@@ -313,3 +314,23 @@ func _scena_senza(scena: String, rami: Array) -> PackedScene:
 	f.store_string("\n".join(finali))
 	f.close()
 	return ResourceLoader.load(copia, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+
+
+
+var _memoria_t := 0.0
+
+
+## MEMORIA=1: ogni 5 s stampa la memoria (statica, texture, buffer) e i fotogrammi disegnati.
+func _memoria(delta: float) -> void:
+	if OS.get_environment("MEMORIA") != "1":
+		return
+	_memoria_t += delta
+	if _memoria_t < 5.0:
+		return
+	_memoria_t = 0.0
+	print("MEMORIA statica %d MB, texture %d MB, buffer %d MB, video %d MB, fotogrammi %d" % [
+		OS.get_static_memory_usage() >> 20,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TEXTURE_MEM_USED) >> 20,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_BUFFER_MEM_USED) >> 20,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_VIDEO_MEM_USED) >> 20,
+		Engine.get_frames_drawn()])
