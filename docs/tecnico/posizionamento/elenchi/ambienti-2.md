@@ -139,3 +139,32 @@ Dopo il collaudo il controllo guarda meglio: "staccato" misura le mesh vere e no
 | torre | staccato | `TorreProp/prop_paperella_gigante_1` | 38.41, -14.73, -22.41 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) |
 | torre | staccato | `TorreProp/prop_paperella_gigante_2` | 38.41, -5.72, -7.59 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) |
 | torre | staccato | `TorreProp/prop_salvagente_nave_1` | 23.59, -8.92, -7.59 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) |
+
+## Acquari, 22 ottobre sera: 22 casi in più
+
+Il controllo prendeva per acqua tutto quello che aveva "acqua" nel percorso, anche AcquarioGiallo, AcquarioBlu e AcquarioMisto: basi, coperchi, tiranti e vetri non si controllavano. Ora sì. Tutti "da correggere".
+
+| Zona | Problema | Nodo | Posizione | Dettaglio |
+|---|---|---|---|---|
+| sala | compenetra | `Sala/Dettagli/det_barchetta_4` | 5.47, 0.10, -23.40 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Sala/Dettagli/det_carta_accartocciata_1_4` | 12.96, 0.04, -21.39 | il 67% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_carta_accartocciata_1_6` | 5.10, 0.04, -22.64 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Sala/Dettagli/det_carta_accartocciata_3_31` | 11.27, 0.06, -21.76 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_foglio_1_26` | 11.49, 0.01, -21.05 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_foglio_2_14` | 14.93, 0.02, -22.32 | il 94% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo |
+| sala | compenetra | `Sala/Dettagli/det_foglio_2_15` | 13.74, 0.02, -21.94 | il 23% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_foglio_2_15` | 13.74, 0.02, -21.92 | il 68% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaGamba |
+| sala | compenetra | `Sala/Dettagli/det_foglio_2_33` | 16.54, 0.02, -21.33 | il 58% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base |
+| sala | compenetra | `Sala/Dettagli/det_foglio_3_9` | 17.56, 0.02, -21.53 | il 84% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base |
+| sala | compenetra | `Sala/Dettagli/det_foglio_4_7` | 11.35, 0.04, -22.01 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_griglia_caduta_4` | 3.84, 0.04, -22.40 | passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo per 53 cm |
+| sala | compenetra | `Sala/Dettagli/det_maschera_sub_13` | 6.17, 0.07, -21.46 | il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Sala/Dettagli/det_mucchio_piastrelle_2_16` | 10.48, 0.02, -20.50 | il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_mucchio_piastrelle_2_7` | 10.08, 0.01, -22.64 | il 29% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_pannello_lamiera_2_0` | 17.70, 0.06, -23.00 | il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base |
+| sala | compenetra | `Sala/Dettagli/det_pesce_gomma_1` | 11.00, 0.03, -23.16 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_piastrella_rotta_1_20` | 10.17, 0.01, -21.11 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_piastrella_rotta_1_6` | 12.30, 0.01, -22.64 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Sala/Dettagli/det_piastrella_rotta_3_12` | 4.58, 0.01, -22.34 | il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Sala/Dettagli/det_piastrella_rotta_5_8` | 18.95, 0.01, -22.46 | il 40% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina |
+| sala | compenetra | `Sala/Dettagli/det_vetri_rotti_1_6` | 4.89, 0.00, -22.05 | il 65% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |

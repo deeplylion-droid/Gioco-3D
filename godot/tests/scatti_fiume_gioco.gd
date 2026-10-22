@@ -3,6 +3,7 @@ extends Node
 ## d'ambiente come quella della proposta (nel gioco la dà la sala). Più scatti per processo.
 ## Uso: xvfb-run ... godot --path godot --rendering-driver vulkan --resolution 1600x900 --script res://tests/run.gd \
 ##        -- res://tests/scatti_fiume_gioco.gd <cartella> [camere separate da virgole]
+## I file: fiume_arrivo_<camera>.jpg; con SCATTI_GIRATE=1 le tre paratie sono girate (fiume_girate_<camera>.jpg).
 
 const F := preload("res://scripts/risalita/fiume_gioco.gd")
 
@@ -18,7 +19,20 @@ static func camere() -> Dictionary:
 		"alto": [Vector3(-6.0, 70.0, 0.1), Vector3(-6.0, 0.0, 0.0)],
 		# lo scivolo in fondo al ramo sbagliato 2 (scelta B): dalla ciambella e dalla banchina
 		"scivolo_ciambella": [Vector3(0.0, 0.75, 11.0), Vector3(0.0, 0.0, 2.0)],
-		"scivolo_banchina": [Vector3(3.0, 1.7, 9.5), Vector3(0.0, 0.0, 4.6)],
+		# (prima la camera era a x 3,0, dentro la faccia di un pannello di roccia: ora sulla banchina davanti)
+		"scivolo_banchina": [Vector3(1.95, 1.6, 12.0), Vector3(0.0, 0.2, 5.0)],
+		# le tre paratie dalla barca, poco prima di arrivarci
+		"paratia1": [F.anello(45.0) + Vector3(0, 0.6, 0), F.anello(55.0) + Vector3(0, 1.0, 0)],
+		"paratia2": [F.anello(135.0) + Vector3(0, 0.6, 0), F.anello(145.0) + Vector3(0, 1.0, 0)],
+		"paratia3": [F.anello(222.0) + Vector3(0, 0.6, 0), F.anello(232.0) + Vector3(0, 1.0, 0)],
+		# da vicino, per il collaudo: la pila di ciambelle, il cartello dei tuffi, la catena di una lampada del capannone
+		# col suo attacco, il disco e il collare della paratia 1, il portale del cartello d'uscita 1Sx
+		"catena": [Vector3(-3.0, 6.0, -5.6), Vector3(-4.0, 6.42, -6.6)],
+		"collare1": [Vector3(22.1, 2.9, -14.4), Vector3(21.49, 2.75, -14.96)],
+		"disco1": [Vector3(22.2, 2.1, -14.3), Vector3(21.42, 2.0, -15.0)],
+		"portale1": [Vector3(24.0, 0.6, 7.5), Vector3(24.0, 1.2, 2.7)],
+		"pila_ciambelle": [Vector3(-2.7, 1.6, -7.7), Vector3(-4.6, 0.4, -9.2)],
+		"cartello_tuffi": [Vector3(-2.7, 1.7, -5.3), Vector3(-4.2, 1.6, -6.0)],
 	}
 
 
@@ -50,6 +64,13 @@ func _run() -> void:
 	get_tree().root.add_child(we)
 	var f: Node3D = (load("res://scenes/risalita/fiume.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(f)
+	var girate := OS.get_environment("SCATTI_GIRATE") == "1"
+	if girate:
+		await get_tree().process_frame
+		for pf in f.find_children("*", "ParatiaFiume", true, false):
+			(pf as ParatiaFiume).gira()
+		for i in 240:
+			await get_tree().physics_frame
 	var cam := Camera3D.new()
 	cam.fov = 62.0
 	cam.near = 0.05
@@ -64,6 +85,6 @@ func _run() -> void:
 		for i in 30:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_jpg(out.path_join("fiume_gioco_%s.jpg" % nome), 0.9)
+		get_viewport().get_texture().get_image().save_jpg(out.path_join("fiume_%s_%s.jpg" % ["girate" if girate else "arrivo", nome]), 0.9)
 		print("salvato fiume_gioco_", nome)
 	get_tree().quit()

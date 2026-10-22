@@ -67,6 +67,21 @@ KY = float(os.environ.get('ACQUARI_KY', str(K)))   # tutto doppio, anche il misc
 KV = float(os.environ.get('ACQUARI_KV', str(K)))   # la valvola
 B_BASE, B_VETRO = 0.849 * K, 1.3 * K
 SC, R_B, B_BASSO_BASE, B_BASSO_VETRO = 1.45, 0.55 * 1.45 * KX, 0.40 * KY, 0.38 * KY
+# il centro dell'anello della base e del coperchio degli acquari alti, in unità del modello (misurato sulle facce dei
+# GLB, che non sono centrati): il vetro, i tiranti e il disegno stanno sul centro dell'acquario, e base e coperchio
+# ci si spostano sopra. Prima stavano 10 cm fuori centro: due tiranti su quattro finivano fuori dalla base e sotto il
+# coperchio (collaudo del 22 ottobre)
+BASE_C, COP_C = (0.0339, -0.0357), (0.0409, -0.0330)
+# Il telaio del vetro degli acquari alti (riscontro del 22 ottobre sera: il fondo del vetro stava 15-30 cm sopra la
+# base, sopra il suo incavo, e il coperchio 18 cm sopra la cima del vetro, retto solo dai tiranti). Misure sulle
+# facce dei GLB centrati: nell'incavo, fra 1,10 e 1,16 m dal centro (K 2), un gradino 0,297 m sotto il fondo del
+# vetro; il bordo del coperchio, il suo punto più basso, 0,121-0,176 m sopra la cima del vetro fra 1,16 e 1,22 m.
+# Sotto: un basamento di metallo pieno (fino a 1,135 m, appena fuori dal vetro) che scende fino ai sei appoggi che la
+# base ha nell'incavo (a 30 + 60 k gradi, piccoli: una gamba per appoggio non ci stava); dentro quel raggio la base non
+# ha niente più in alto. Sopra: un anello piatto sul bordo del vetro, e il coperchio abbassato fino a poggiarci. Nel basso il fondo sta su cinque gambe sul piano interno della base, 0,29 KY sotto il vetro, dove è
+# libero (misurato: niente che sporga nell'impronta delle gambe).
+GRADINO = 0.1485            # quanto il gradino dell'incavo sta sotto il fondo del vetro (unità del modello)
+ABBASSA_COP = 0.0505        # il coperchio scende di tanto (unità del modello) fino all'anello
 
 
 # le luci: con spot_attenuation 0,8 a distanza doppia arriva 2^-0,8 della luce, e si compensa
@@ -142,7 +157,17 @@ def sc3(x, y, z):
 def rot_sc(k):
     """ROT (-90 gradi attorno a Y) con la scala k."""
     return '%g, 0, %g, 0, %g, 0, %g, 0, %g' % (-4.371139e-08 * k, -k, k, k, -4.371139e-08 * k)
-sr('CylinderMesh', 'tirante', top_radius='%.3f' % (0.022 * K), bottom_radius='%.3f' % (0.022 * K), height='%.3f' % (B_VETRO + 0.2 * K), radial_segments='12')
+# i tiranti: da 0,1 K dentro la base (la cima della base sotto di loro è 0,075 K sotto il vetro) a 2 cm dentro il
+# coperchio abbassato; il fondo del coperchio sopra ognuno (il punto più basso nella sua impronta, misurato) non è
+# uguale per tutti: un tirante più lungo ci entrava per 7 cm
+SOPRA_TIR = (0.0375, 0.0375, 0.013, 0.0345)   # unità del modello sopra la cima del vetro, col coperchio abbassato
+TIR_SU = B_VETRO + max(SOPRA_TIR) * K + 0.02
+TIR_GIU = -0.1 * K
+sr('CylinderMesh', 'tirante', top_radius='%.3f' % (0.022 * K), bottom_radius='%.3f' % (0.022 * K), height='%.3f' % (TIR_SU - TIR_GIU), radial_segments='12')
+sr('CylinderMesh', 'basamento_vetro', top_radius='%.4f' % (0.5675 * K), bottom_radius='%.4f' % (0.5675 * K), height='%.4f' % (GRADINO * K), radial_segments='64')
+sr('CylinderMesh', 'fondo_vetro_basso', top_radius='%.4f' % (R_B + 0.02), bottom_radius='%.4f' % (R_B + 0.02), height='0.02', radial_segments='64')
+sr('CylinderMesh', 'gamba_vetro_basso', top_radius='0.025', bottom_radius='0.025', height='%.4f' % (0.29 * KY - 0.02), radial_segments='12')
+sr('TorusMesh', 'anello_vetro', inner_radius='%.4f' % (0.5475 * K), outer_radius='%.4f' % (0.61 * K), rings='64', ring_segments='12')
 sr('CylinderShape3D', 'forma_alto', radius='%.3f' % (0.5 * K), height='%.3f' % (2.95 * K))
 sr('TorusMesh', 'anello', inner_radius='%.4f' % (R_B - 0.025 * KX), outer_radius='%.4f' % (R_B + 0.045 * KX), rings='64')
 sr('CylinderShape3D', 'forma_base_bassa', radius='%.3f' % (R_B + 0.02 * KX), height='%.3f' % B_BASSO_BASE)
@@ -205,13 +230,13 @@ RACCORDI_BASSO = {'Pompa': ((-1.156, -0.721), (-0.183, 0.236), (0.214, 0.4)),
 # partono dal pavimento; il tubo della pompa che scende a terra ha la sua)
 SCARICO_POMPA = 0.13    # quanto esce in fuori, in metri, il tubo della pompa prima della curva verso terra
 
-def raccordi(nome, sx, sy, sz, y0, basso=False):
+def raccordi(nome, sx, sy, sz, y0, basso=False, ox=0.0, oz=0.0):
     for k, ((x0, x1), (z0, z1), (h0, h1)) in (RACCORDI_BASSO if basso else RACCORDI).items():
         h0 = 0.0
         sid = 'raccordo_%s_%s' % (nome, k)
         sr_tardi('BoxShape3D', sid, size='Vector3(%.3f, %.3f, %.3f)' % ((x1 - x0) * sx, (h1 - h0) * sy, (z1 - z0) * sz))
         node(k, 'CollisionShape3D', nome + '/Collisione',
-             transform=tr(ID, ((x0 + x1) * 0.5 * sx, y0 + (h0 + h1) * 0.5 * sy, (z0 + z1) * 0.5 * sz)),
+             transform=tr(ID, ((x0 + x1) * 0.5 * sx + ox, y0 + (h0 + h1) * 0.5 * sy, (z0 + z1) * 0.5 * sz + oz)),
              shape='SubResource("%s")' % sid)
 
 
@@ -229,7 +254,7 @@ def cilindro(nome, parent, a, b, r, mat='ExtResource("m_tubi")', seg=12):
     node(nome, 'MeshInstance3D', parent, transform=tr(rows, tuple((a[i] + b[i]) / 2 for i in range(3))), mesh='SubResource("%s")' % sid, material_override=mat)
 
 
-def allacci(nome, sx, sy, sz, y0, basso):
+def allacci(nome, sx, sy, sz, y0, basso, ox=0.0, oz=0.0):
     """I tubi delle basi chiusi tutti (riscontro dell'utente del 22 ottobre: "è tutto compenetrato o
     fluttuante"). Dal GLB della base (misure in unità del modello, prese sulle facce): la pompa stava a
     21 cm dal pavimento staccata dal serbatoio, le due gambe del gruppo col tubo finivano a 20 cm da terra
@@ -238,7 +263,7 @@ def allacci(nome, sx, sy, sz, y0, basso):
     con la flangia, il becco scende nel corpo; nel basso (tagliato a 0,4) la pompa ha il coperchio e il
     gruppo del tubo è allacciato al serbatoio."""
     G = nome + '/Allacci'
-    node('Allacci', 'Node3D', nome)
+    node('Allacci', 'Node3D', nome, transform=tr(ID, (ox, 0, oz)))   # (con la base, se è spostata)
     def p(mx, my, mz):
         return (mx * sx, y0 + my * sy, mz * sz)
     def flangia(k, x, z, r):
@@ -265,7 +290,7 @@ def allacci(nome, sx, sy, sz, y0, basso):
     flangia('Pompa', xc, zt, rp * 1.9)
     sid = 'raccordo_%s_scarico' % nome
     sr_tardi('BoxShape3D', sid, size='Vector3(%.3f, %.3f, %.3f)' % (xt - xc + rp * 2, yt + rp - y0, rp * 2))
-    node('TuboPompa', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, ((xt + xc) / 2 - rp / 2, (y0 + yt + rp) / 2, zt)),
+    node('TuboPompa', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, ((xt + xc) / 2 - rp / 2 + ox, (y0 + yt + rp) / 2, zt + oz)),
          shape='SubResource("%s")' % sid)
     # le gambe del gruppo col tubo fino a terra: la gamba (x 0,847, z -0,072, r 0,038, fondo a 0,196)
     # e la spina sotto il corpo (x 1,061, z -0,113, r 0,029, fondo a 0,223)
@@ -299,20 +324,36 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
                  suckable='false')
     node(nome, 'Node3D', '.', **p)
     if alto:
-        node('Base', parent=nome, inst='base', transform=tr(sc3(K, K, K), (0, -B_BASE, 0)))
-        node('Coperchio', parent=nome, inst='coperchio', transform=tr(sc3(K, K, K), (0, B_VETRO, 0)))
+        bx, bz = -BASE_C[0] * K, -BASE_C[1] * K
+        node('Base', parent=nome, inst='base', transform=tr(sc3(K, K, K), (bx, -B_BASE, bz)))
+        node('Coperchio', parent=nome, inst='coperchio', transform=tr(sc3(K, K, K), (-COP_C[0] * K, B_VETRO - ABBASSA_COP * K, -COP_C[1] * K)))
         for k in range(4):
             a = math.radians(45 + 90 * k)
-            node('Tirante%d' % (k + 1), 'MeshInstance3D', nome, transform=tr(ID, (math.cos(a) * 0.6 * K, B_VETRO * 0.5, math.sin(a) * 0.6 * K)),
+            su = B_VETRO + SOPRA_TIR[k] * K + 0.02
+            node('Tirante%d' % (k + 1), 'MeshInstance3D', nome, transform=tr(sc3(1, (su - TIR_GIU) / (TIR_SU - TIR_GIU), 1), (math.cos(a) * 0.6 * K, (su + TIR_GIU) * 0.5, math.sin(a) * 0.6 * K)),
                  mesh='SubResource("tirante")', material_override='ExtResource("m_tiranti")')
+        # il telaio del vetro: il basamento dal fondo del vetro agli appoggi dell'incavo della base; l'anello piatto
+        # (2 cm) sul bordo del vetro, sotto il bordo del coperchio
+        node('BasamentoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, -GRADINO * K * 0.5, 0)), mesh='SubResource("basamento_vetro")',
+             material_override='ExtResource("m_tiranti")')
+        node('AnelloVetro', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.02 / (0.0625 * K), 1), (0, B_VETRO + 0.01, 0)),
+             mesh='SubResource("anello_vetro")', material_override='ExtResource("m_tiranti")')
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
         node('Forma', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASE + 1.475 * K, 0)), shape='SubResource("forma_alto")')
-        raccordi(nome, K, K, K, -B_BASE)
-        allacci(nome, K, K, K, -B_BASE, False)
+        raccordi(nome, K, K, K, -B_BASE, ox=bx, oz=bz)
+        allacci(nome, K, K, K, -B_BASE, False, bx, bz)
     else:
         node('Base', parent=nome, inst='base_bassa', transform=tr(sc3(SC * KX, KY, SC * KX), (0, -B_BASSO_BASE, 0)))
         node('Anello', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.6 * KY / KX, 1), (0, B_BASSO_VETRO + 0.006 * KY, 0)),
              mesh='SubResource("anello")', material_override='ExtResource("m_rosso")')
+        # il fondo del vetro sulle sue gambe (prima il vetro e l'acqua stavano 0,58 m sopra il piano della base)
+        node('FondoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, -0.01, 0)), mesh='SubResource("fondo_vetro_basso")',
+             material_override='ExtResource("m_tiranti")')
+        hg = 0.29 * KY - 0.02
+        for k, ga in enumerate((20, 80, 200, 260, 320)):
+            a = math.radians(ga)
+            node('GambaVetro%d' % (k + 1), 'MeshInstance3D', nome, transform=tr(ID, (math.cos(a) * 0.5 * KX * SC, -0.02 - hg * 0.5, math.sin(a) * 0.5 * KX * SC)),
+                 mesh='SubResource("gamba_vetro_basso")', material_override='ExtResource("m_tiranti")')
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
         node('Base', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASSO_BASE * 0.5, 0)), shape='SubResource("forma_base_bassa")')
         raccordi(nome, SC * KX, KY, SC * KX, -B_BASSO_BASE, basso=True)
@@ -508,7 +549,7 @@ for k, dy in enumerate((0.12, -0.15)):   # dentro l'altezza della piastra (da -0
          material_override='SubResource("nero")')
 # il cavo della lampada: dal morsetto scende lungo il tirante (o il montante della pedana) fino alla base
 # dell'acquario (o al piano della pedana), con due fascette; prima la lampada non era collegata a niente
-CAVO_FINE = B_BASE if cand or POSIZIONE == 'P1' else PEDANA_H
+CAVO_FINE = B_BASE - 0.075 * K - 0.01 if cand or POSIZIONE == 'P1' else PEDANA_H   # (la cima della base sotto i tiranti è 0,075 sotto il vetro)
 CR = R_TIR + 0.012
 CX, CZ = TIR[0] + _d[0] / _l * CR, TIR[1] + _d[1] / _l * CR
 cavo_l = (LY - 0.12) - CAVO_FINE
@@ -534,7 +575,10 @@ node('Luce', 'SpotLight3D', 'LampadaValvola', transform='Transform3D(%s, 0, 0, 0
      spot_range='%.2f' % (_lv + 2.0), spot_attenuation='0.8', spot_angle='%.1f' % ANGOLO_SPOT)
 
 # il disegno sul vetro del giallo, verso il viale (stesse coordinate dell'acquario giallo)
-node('Disegno', 'Node3D', '.', transform=piazza('G', sc3(K, K, K), (XG, B_BASE, ZA)))
+# (il foglio è curvo col raggio 0,576 del vetro della proposta: in orizzontale si scala fino alla faccia di fuori del
+# vetro, 0,55 K + 1,2 cm, più 1 mm; prima, scalato per K come il resto, restava 4 cm fuori dal vetro)
+SD = (0.55 * K + 0.012 + 0.001) / 0.576
+node('Disegno', 'Node3D', '.', transform=piazza('G', sc3(SD, K, SD), (XG, B_BASE, ZA)))
 node('Modello', 'MeshInstance3D', 'Disegno', mesh='ExtResource("disegno")', cast_shadow='0')
 
 # le lampadine del portone (contratto con enigma-logica): LampadePortone sempre visibile; in Spente la

@@ -23,6 +23,7 @@ from mathutils import Vector, Matrix
 from ambienti2_comune import *
 import ambienti2_comune as C
 import ambienti1_hq as HQ
+import posa
 HQ.LINK[0] = C._link
 
 ARGS = argomenti()
@@ -361,19 +362,36 @@ def lampada(nome, pos, normale, accesa=True):
     rosso = lambda c, nrm: c[0] > 0.25 and c[0] > c[1] * 2.2 and c[0] > c[2] * 2.0
     HQ.dividi('lampada_muro', 'lampada_muro_vetro', rosso, (1, 0.05, 0.02), 14.0)
     Rm = n.to_track_quat('Z', 'Y').to_matrix().to_4x4()
-    for o in (HQ.metti(f'lampada_{nome}', 'lampada_muro', (0, 0, 0), (0.34, None, None)),
-              HQ.metti(f'lampada_{nome}_vetro' if accesa else f'lampada_{nome}_vetro_spento', 'lampada_muro', (0, 0, 0), (0.34, None, None), parte='lampada_muro_vetro')):
+    corpo = HQ.metti(f'lampada_{nome}', 'lampada_muro', (0, 0, 0), (0.34, None, None))
+    vetro = HQ.metti(f'lampada_{nome}_vetro' if accesa else f'lampada_{nome}_vetro_spento', 'lampada_muro', (0, 0, 0), (0.34, None, None), parte='lampada_muro_vetro')
+    for o in (corpo, vetro):
         o.matrix_world = Matrix.Translation(pos) @ Rm @ o.matrix_world
+    # il retro vero del modello sul muro (prima il centro a 2 cm dal muro: la lampada restava staccata e toccava solo
+    # il suo vetro, controllo di posizionamento del 22 ottobre sera); il vetro, nascosto mentre si misura, la segue
+    prima = corpo.matrix_world.translation.copy()
+    vetro.hide_viewport = True
+    posa.fissa_al_muro(corpo, n)
+    vetro.hide_viewport = False
+    sposta = corpo.matrix_world.translation - prima
+    vetro.matrix_world.translation += sposta
+    bpy.context.view_layer.update()
     if accesa:
-        luce(f'LUCE_rossa_{nome}', 'POINT', pos + n * 0.25, 60, (1.0, 0.08, 0.04), raggio=0.08)
+        luce(f'LUCE_rossa_{nome}', 'POINT', pos + sposta + n * 0.25, 60, (1.0, 0.08, 0.04), raggio=0.08)
 
 lampada('rc1', (48.5, Y_R0 + 0.02, 2.1), (0, 1, 0))
 lampada('rc2', (X_S1 - 0.02, 7.0, Z_L1 + 2.0), (-1, 0, 0))
 lampada('rc3', (44.6, Y_T1 - 0.02, Z_T + 2.3), (0, -1, 0))   # sopra i 2 m: si passa sotto, verso C2
 giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
 HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
-HQ.metti('plafoniera_rc', 'plafoniera_neon', (48.5, -0.9, H_R1 - 0.12), (1.4, 0.32, 0.1))
-HQ.metti('neon_rc_tubo_sfarfalla', 'plafoniera_neon', (48.5, -0.9, H_R1 - 0.12), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
+_pl = HQ.metti('plafoniera_rc', 'plafoniera_neon', (48.5, -0.9, H_R1 - 0.12), (1.4, 0.32, 0.1))
+_ne = HQ.metti('neon_rc_tubo_sfarfalla', 'plafoniera_neon', (48.5, -0.9, H_R1 - 0.12), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
+# la cima vera della plafoniera sul soffitto (prima 7 cm sotto, staccata col suo tubo); il tubo la segue
+_prima = _pl.matrix_world.translation.copy()
+_ne.hide_viewport = True
+posa.fissa_al_soffitto(_pl)
+_ne.hide_viewport = False
+_ne.matrix_world.translation += _pl.matrix_world.translation - _prima
+bpy.context.view_layer.update()
 luce('LUCE_neon_rc', 'AREA', (48.5, -0.9, H_R1 - 0.17), 60, (0.45, 0.9, 1.0), size=1.3)
 
 # ------------------------------------------------------------------ tappa 7: dettagli, luci e oggetti

@@ -97,13 +97,16 @@ func _disco_vero() -> void:
 	var verso := dove - posizione_bersaglio
 	verso.y = 0.0
 	verso = verso.normalized() if verso.length_squared() > 0.0001 else Vector3.BACK
+	# il palo sale fino alla lampada sopra il disco (prima finiva 20 cm sopra il centro del disco e la lampada,
+	# 50 cm sopra, restava appesa nel vuoto appoggiata al bordo del disco)
 	var alto := posizione_bersaglio.y - piede.y
+	var sopra := raggio_bersaglio + 0.48
 	var palo := MeshInstance3D.new()
 	palo.name = "Palo"
 	var pm := CylinderMesh.new()
 	pm.top_radius = 0.045
 	pm.bottom_radius = 0.05
-	pm.height = alto + 0.2
+	pm.height = alto + sopra
 	palo.mesh = pm
 	var mp := StandardMaterial3D.new()
 	mp.albedo_color = Color(0.85, 0.7, 0.1)
@@ -111,7 +114,10 @@ func _disco_vero() -> void:
 	mp.roughness = 0.5
 	palo.material_override = mp
 	add_child(palo)
-	palo.global_position = piede + Vector3(0, (alto + 0.2) * 0.5, 0) - verso * 0.08
+	# il retro del disco (spesso 4 cm) appoggiato al palo: prima il palo stava 8 cm dietro il centro del disco e il disco
+	# restava 1,2-1,3 cm staccato (collaudo del 22 ottobre)
+	var r_disco := lerpf(pm.bottom_radius, pm.top_radius, clampf(alto / pm.height, 0.0, 1.0))
+	palo.global_position = piede + Vector3(0, (alto + sopra) * 0.5, 0) - verso * (0.02 + r_disco + 0.001)
 	var disco := MeshInstance3D.new()
 	disco.name = "Disco"
 	var dm := CylinderMesh.new()
@@ -124,10 +130,26 @@ func _disco_vero() -> void:
 	disco.global_transform = Transform3D(Basis.looking_at(verso, Vector3.UP) * Basis(Vector3.RIGHT, PI * 0.5), posizione_bersaglio)
 	_mat_bersaglio = StandardMaterial3D.new()
 	if modello_lampada:
-		var l := modello_lampada.instantiate() as Node3D
-		add_child(l)
-		l.global_position = posizione_bersaglio + Vector3(0, 0.5, 0) - verso * 0.12
-		l.look_at(posizione_bersaglio + verso * 0.6, Vector3.UP)
+		# la lampada sul palo, sopra il disco, con la staffa sul davanti del palo e un collare
+		var attacco := Vector3(palo.global_position.x, posizione_bersaglio.y + raggio_bersaglio + 0.3, palo.global_position.z)
+		var dir := verso + Vector3(0, -0.6, 0)
+		# il palo si stringe verso la cima: il suo raggio a quell'altezza
+		var r_palo := lerpf(pm.bottom_radius, pm.top_radius, clampf((attacco.y - piede.y) / pm.height, 0.0, 1.0))
+		var lam := LampadaMuro.monta(self, to_local(attacco), global_basis.inverse() * dir, false, r_palo)
+		# il collare dove la staffa tocca il palo (lo dice LampadaMuro), 2 mm più largo del palo: stringe la staffa
+		# (prima stava più su, a 1,7 cm dalla lampada)
+		var yc := (global_transform * Vector3(0, float(lam.get_meta(&"y_contatto", to_local(attacco).y)), 0)).y
+		var collare := MeshInstance3D.new()
+		collare.name = "Collare"
+		var cm := CylinderMesh.new()
+		var r_col := lerpf(pm.bottom_radius, pm.top_radius, clampf((yc - piede.y) / pm.height, 0.0, 1.0)) + 0.002
+		cm.top_radius = r_col
+		cm.bottom_radius = r_col
+		cm.height = 0.06
+		collare.mesh = cm
+		collare.material_override = mp
+		add_child(collare)
+		collare.global_position = Vector3(palo.global_position.x, yc, palo.global_position.z)
 	var s := SpotLight3D.new()
 	s.name = "LuceDisco"
 	add_child(s)

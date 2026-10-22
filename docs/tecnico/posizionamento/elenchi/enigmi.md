@@ -242,3 +242,40 @@ Dopo il collaudo il controllo guarda meglio: "staccato" misura le mesh vere e no
 | tecnici | staccato | `Tecnici/Ambienti/Raccordo/lampada_t7_mag_b` | -12.14, 2.60, 24.20 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.2 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_mag_b_vetro. |
 | tecnici | staccato | `Tecnici/Ambienti/Raccordo/lampada_t7_serranda` | -13.50, 2.20, 20.64 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 120.4 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_serranda_vetro. |
 | tecnici | staccato | `Tecnici/Ambienti/Raccordo/plafoniera_rc` | -0.90, -6.32, 49.86 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 268.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_rc_tubo_sfarfalla. |
+
+## Acquari, 22 ottobre sera: 30 casi in più
+
+Il controllo prendeva per acqua tutto quello che aveva "acqua" nel percorso, anche AcquarioGiallo, AcquarioBlu e AcquarioMisto: basi, coperchi, tiranti e vetri non si controllavano. Ora sì. Tutti "da correggere".
+
+| Zona | Problema | Nodo | Posizione | Dettaglio |
+|---|---|---|---|---|
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioBlu/Allacci/BeccoCorpo` | 7.82, 1.15, -22.54 | il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Gamba` | 7.39, 0.24, -22.44 | passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 3 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoio` | 4.40, 0.94, -22.45 | il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoioCollare` | 4.56, 0.94, -22.45 | il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Spina` | 7.82, 0.26, -22.53 | passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 4 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo` | 3.86, 0.21, -22.40 | il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioBlu/Tirante1` | 6.55, 4.40, -21.45 | passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/BeccoCorpo` | 19.02, 1.15, -22.54 | il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Gamba` | 18.59, 0.24, -22.44 | passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 3 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoio` | 15.60, 0.94, -22.45 | il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoioCollare` | 15.76, 0.94, -22.45 | il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Spina` | 19.02, 0.26, -22.53 | passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 4 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo` | 15.06, 0.21, -22.40 | il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioGiallo/Tirante1` | 17.75, 4.40, -21.45 | passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaGamba` | 13.76, 0.01, -21.81 | il 41% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/FlangiaSpina` | 14.38, 0.01, -21.93 | il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/Gamba` | 13.76, 0.24, -21.81 | passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 3 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/PompaSerbatoioCollare` | 9.65, 0.60, -21.81 | passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 5 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/Spina` | 14.38, 0.26, -21.93 | passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 4 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/TuboSerbatoio` | 13.31, 0.60, -21.81 | passa dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa per 16 cm |
+| sala | compenetra | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/Zoccolo` | 8.63, 0.21, -21.75 | il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa |
+| sala | compenetra | `Gioco/EnigmaAcquari/Cavo/Fascetta1` | 6.57, 1.83, -21.44 | il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Tirante1 |
+| sala | compenetra | `Gioco/EnigmaAcquari/Cavo/Fascetta2` | 6.57, 2.00, -21.44 | il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Tirante1 |
+| sala | ingombro | `Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base` | 4.75, 0.00, -23.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) |
+| sala | ingombro | `Gioco/EnigmaAcquari/AcquarioBlu/Tirante3` | 4.75, 0.00, -23.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.50 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) |
+| sala | ingombro | `Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base` | 16.75, 0.00, -21.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) |
+| sala | staccato | `Gioco/EnigmaAcquari/AcquarioBlu/Tirante2` | 4.85, 3.00, -21.45 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm) |
+| sala | staccato | `Gioco/EnigmaAcquari/AcquarioBlu/Tirante4` | 6.55, 3.00, -23.15 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm) |
+| sala | staccato | `Gioco/EnigmaAcquari/AcquarioGiallo/Tirante2` | 16.05, 3.00, -21.45 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm) |
+| sala | staccato | `Gioco/EnigmaAcquari/AcquarioGiallo/Tirante4` | 17.75, 3.00, -23.15 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm) |
