@@ -1,29 +1,16 @@
 [
 	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_1",
-		"squadra": "ambienti-1",
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
-			-4.75,
-			0.0,
-			38.75
+			-2.75,
+			-9.05,
+			36.5
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-0.75,
-			0.0,
-			21.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
+		"stato": "voluto",
+		"motivo": "i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione"
 	},
 	{
 		"zona": "interni",
@@ -86,19 +73,6 @@
 			3.3,
 			1.1,
 			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_luci",
-		"squadra": "da assegnare",
-		"problema": "sospeso",
-		"pos": [
-			-1.4,
-			-6.4,
-			47.58
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
@@ -180,6 +154,19 @@
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_1",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			-4.75,
+			0.0,
+			38.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
 	},
 	{
 		"zona": "interni",
@@ -378,97 +365,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_cordone",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-4.22,
-			0.0,
-			7.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_13",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.03,
-			0.0,
-			12.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_14",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.28,
-			0.0,
-			11.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_15",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.28,
-			0.0,
-			10.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_16",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.28,
-			0.0,
-			8.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_17",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.03,
-			0.0,
-			7.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_10",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.03,
-			0.0,
-			13.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -508,32 +404,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_18",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			2.78,
-			0.0,
-			6.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_11",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			1.53,
-			0.0,
-			13.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
 		"squadra": "enigmi",
 		"problema": "ingombro",
@@ -560,94 +430,55 @@
 	},
 	{
 		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			-2.72,
-			-9.05,
-			36.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_elettrico",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
 			-3.22,
 			-9.05,
 			33.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "quadro elettrico appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_strumenti",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
 			-3.47,
 			-9.05,
 			36.75
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_arredo",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			1.28,
-			-9.05,
-			36.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_tubi",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			1.78,
-			-9.05,
-			30.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			0.03,
-			-9.05,
-			1.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "pannello degli strumenti appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_bocchette",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
 			-1.72,
 			-9.05,
 			7.0
 		],
+		"stato": "voluto",
+		"motivo": "bocchette dell'aria sul muro sud della camera delle onde (da 1,65 m), ora con la collisione: ci si ferma contro come contro il muro. Se non va bene: alzarle di 40 cm in ambienti2_camera_onde.py"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			-0.75,
+			0.0,
+			21.5
+		],
 		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
 	},
 	{
 		"zona": "interni",
@@ -691,7 +522,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/neon_0_neon/neon_0_tubi",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "compenetra",
 		"pos": [
 			-0.6,
@@ -704,7 +535,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/neon_1_neon/neon_1_tubo_sfarfalla",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "compenetra",
 		"pos": [
 			-0.6,
@@ -717,7 +548,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/CameraOnde/neon_2_neon/neon_2_tubi",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "compenetra",
 		"pos": [
 			-0.6,
@@ -730,7 +561,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "compenetra",
 		"pos": [
 			1.2,
@@ -743,7 +574,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "compenetra",
 		"pos": [
 			1.2,
@@ -756,7 +587,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "compenetra",
 		"pos": [
 			1.2,
@@ -769,7 +600,7 @@
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "compenetra",
 		"pos": [
 			5.7,
@@ -791,6 +622,19 @@
 		],
 		"stato": "voluto",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-15.65,
+			2.42,
+			30.2
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
 		"zona": "tecnici",
