@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 02:35:54. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 03:36:57. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezioni non più trovate: 35.
+Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 60. Eccezioni non più trovate: 48.
 
 ## Nuovi
 
@@ -62,7 +62,7 @@ Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| grafica | compenetra | `LuciSala/LuciAreaBimbi/@MeshInstance3D@1413` | -14.42, 6.81, -19.65 | il 33% dei suoi vertici è dentro Sala/AreaBimbi/sala_secchio_gigante | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | compenetra | `LuciSala/LuciAreaBimbi/@MeshInstance3D@1475` | -14.42, 6.81, -19.65 | il 33% dei suoi vertici è dentro Sala/AreaBimbi/sala_secchio_gigante | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra` | 19.50, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra` | 19.50, 0.00, -18.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | ambienti-1 | ingombro | `Sala/AngoloScatoloni/scat_caduto_0` | -19.00, 0.00, 16.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (112 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
@@ -90,11 +90,8 @@ Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 | da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla` | 1.20, -4.22, 39.16 | il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_1 | voluto: il tubo del neon sta dentro la sua plafoniera |
 | da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi` | 1.20, -4.22, 43.66 | il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_2 | voluto: il tubo del neon sta dentro la sua plafoniera |
 | da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi` | 5.70, -4.22, 39.16 | il 68% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_3 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2` | -15.65, 2.12, 44.96 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2` | -15.65, 2.12, 30.20 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/CameraOnde/CAMERA_bocchette` | -1.75, -9.05, 7.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (192 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/CameraOnde/CAMERA_pozzo` | 0.00, -9.05, 1.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3` | -14.50, 0.00, 39.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.25 e 1.85 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_elettrico` | -3.25, -9.05, 33.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.90 e 2.00 m sopra il pavimento (160 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_strumenti` | -3.50, -9.05, 36.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.30 e 2.00 m sopra il pavimento (64 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_arredo` | 1.25, -9.05, 36.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (46 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
@@ -102,26 +99,11 @@ Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 | da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_tubi` | 1.75, -9.05, 30.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | sospeso | `Tecnici/Ambienti/SalaPompe/SALA_luci` | -1.40, -6.40, 47.58 | niente a meno di 5 cm (sotto, il primo appoggio è a 0.23 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 
-### torre
-
-| Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
-|---|---|---|---|---|---|
-| ambienti-2 | ingombro | `TorreScivoli/discesa_1_1` | 38.76, -6.01, -11.55 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.96 m sopra il pavimento (40 celle da 25 cm) | voluto: la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre) |
-| ambienti-2 | ingombro | `TorreScivoli/discesa_5_0` | 37.51, -15.01, -18.80 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm) | da correggere: all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8) |
-| grafica | sospeso | `Luci/@MeshInstance3D@4848` | 32.55, 9.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4849` | 32.03, 8.90, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4850` | 32.03, 8.80, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4852` | 32.55, -3.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4853` | 32.03, -3.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4854` | 32.03, -3.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4856` | 32.55, -14.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4857` | 32.03, -14.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4858` | 32.03, -14.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-
 ## Eccezioni non più trovate (si possono togliere dal file)
 
 - sala · sospeso · `LuciSala/@Node3D@572/@MeshInstance3D@573`
 - tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_5`
+- tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3`
 - tecnici · ingombro · `Tecnici/Ambienti/Raccordo/RACCORDO_dettagli`
 - tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2es_0`
 - tecnici · ingombro · `Tecnici/Ambienti/Raccordo/lampada_rc3`
@@ -145,6 +127,7 @@ Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa10`
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa11`
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa12`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2`
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa0`
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa1`
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa2`
@@ -155,3 +138,14 @@ Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa7`
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa8`
 - tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa9`
+- torre · sospeso · `Luci/@MeshInstance3D@3816`
+- torre · sospeso · `Luci/@MeshInstance3D@3817`
+- torre · sospeso · `Luci/@MeshInstance3D@3818`
+- torre · sospeso · `Luci/@MeshInstance3D@3820`
+- torre · sospeso · `Luci/@MeshInstance3D@3821`
+- torre · sospeso · `Luci/@MeshInstance3D@3822`
+- torre · sospeso · `Luci/@MeshInstance3D@3824`
+- torre · sospeso · `Luci/@MeshInstance3D@3825`
+- torre · sospeso · `Luci/@MeshInstance3D@3826`
+- torre · ingombro · `TorreScivoli/discesa_5_0`
+- torre · ingombro · `TorreScivoli/discesa_1_1`
