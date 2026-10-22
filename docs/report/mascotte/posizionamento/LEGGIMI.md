@@ -9,7 +9,7 @@ Misura al centimetro: `godot/proposte/mascotte/sonda_mascotte_posizioni.gd` (per
 | --- | --- | --- | --- |
 | Lampade dell'insegna | lampadina e paralume a mezz'aria (1-3 cm dal braccio) | il braccio entra nel portalampada di ferro, il paralume ci si appoggia, la lampadina e' avvitata sotto | `insegna_lampada_sx.jpg`, `insegna_lampade.jpg` |
 | Manifesto | 3-4 cm staccato dal muro (il muro visibile li' e' dove c'e' la collisione) | a filo del muro (Posa.fissa_al_muro): il retro a 1-11 mm per le onde della carta, la colla a 1,5 mm | `manifesto.jpg`, `manifesto_bordo.jpg` |
-| Targa | a filo (3 mm) | a filo, con Posa | `targa.jpg` |
+| Targa | a filo della collisione, ma la collisione della vasca sporge 3 cm oltre le piastrelle: 3 cm staccata (controllo severo, sera) | sulle piastrelle vere (Posa con l'affondo di 3 cm) | `targa.jpg` |
 | Insegna (pannello, staffe, piastre) | a filo (3-13 mm) | a filo, con Posa | `insegna_lampade.jpg` |
 | Statue (squalo, polpo A, polpo B) | appoggiate: la base tocca il pavimento | uguale | `statua_*_base.jpg` |
 | Cornice dell'insegna | i listelli su e giu' si sovrappongono a quelli di lato (la sonda, che guarda i vertici, li dava staccati: sono scatole con 8 vertici) | uguale | - |
@@ -18,3 +18,7 @@ Misura al centimetro: `godot/proposte/mascotte/sonda_mascotte_posizioni.gd` (per
 Il "pezzo della medusa della vasca a 1 cm" del controllo severo (`Vasca/Medusa/@Node3D@.../@MeshInstance3D@...`, e lo
 stesso alla fossa) e' una goccia d'acqua che cade dalle dita (WaterDripEmitter, addons/acqua): si vede solo mentre
 cade, e nello stato "tutto visibile" resta ferma a mezz'aria. Non e' un oggetto da fissare.
+
+Controllo severo della sera (gruppi che si reggono solo fra loro): il manifesto era gia' a posto con la correzione
+del pomeriggio (il rapporto di grafica era fatto prima che fosse unita); la targa era vera: corretta come sopra.
+Controllo ufficiale sul ramo, dopo aver unito lavoro/godot 9628ee5: 0 casi di mascotte.

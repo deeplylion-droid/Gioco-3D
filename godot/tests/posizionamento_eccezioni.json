@@ -2886,32 +2886,6 @@
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1116. [modello: tecnici.tscn]"
 	},
 	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/TargaJilly/targa",
-		"squadra": "mascotte",
-		"problema": "staccato",
-		"pos": [
-			-3.01,
-			0.62,
-			10.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 42.5 cm."
-	},
-	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/ManifestoJilly/manifesto",
-		"squadra": "mascotte",
-		"problema": "staccato",
-		"pos": [
-			-19.93,
-			1.39,
-			13.95
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 89.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: manifesto_001, Plane."
-	},
-	{
 		"zona": "sala",
 		"nodo": "Sala/Dettagli/det_cassetta_aperta_0",
 		"squadra": "ambienti-2",
