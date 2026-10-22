@@ -2908,7 +2908,8 @@ def disponi_oggetti(zf_piscina):
     # salvagenti appesi ai muri (in piedi, con il retro contro le piastrelle: appoggia_muro li porta a toccarle)
     appoggia_muro(metti_ogg('salvagente_nave', (X1 - 0.04, -7.6, 1.15), -90, 1.0, (90, 0)))
     appoggia_muro(metti_ogg('salvagente_nave', (X1 - 0.04, 4.0, 1.15), -90, 1.0, (88, 0)))
-    appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, -1.0, 1.15), 90, 1.0, (88, 0)))
+    # accanto all'oblò basso (in y -1), non sopra: lo copriva a metà (collaudo della sala, 22 ottobre)
+    appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, -2.2, 1.15), 90, 1.0, (88, 0)))
     appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, 11.0, 1.15), 90, 1.0, (92, 0)))
     appoggia_muro(metti_ogg('salvagente_nave', (-3.2, Y0 + 0.04, 1.25), 180, 1.0, (90, 0)))
     # --- bordo piscina: sedia del bagnino, lettini in fila (uno rovesciato)
@@ -2948,7 +2949,9 @@ def disponi_oggetti(zf_piscina):
     else:
         V = VASCA_CENTRALE
         yf = V['cy'] - V['ly'] / 2 + (V['coping'] / 2 - 0.12)
-        metti_ogg('salvagente_nave', (V['cx'] - 1.75, yf - 0.1, 0.0), 0, 1.0, (75, 0))          # appoggiato al muro davanti
+        # appoggiato al muro davanti, dove non scendono i tentacoli di Jilly (da x -2,2 a -1,4 e intorno a -0,4 e 0,3
+        # arrivano a terra o lungo il muro: a -1,75 ci entrava, controllo del 22 ottobre sera)
+        metti_ogg('salvagente_nave', (V['cx'] + 1.0, yf - 0.1, 0.0), 0, 1.0, (75, 0))
         metti_ogg('orsacchiotto_grande', (V['cx'] + 1.9, yf - 0.35, 0.0), 160, 0.38)          # seduto a terra, guarda l'ingresso
         metti_ogg('paperella_gigante', (V['cx'] - 2.62, V['cy'] + V['ly'] / 2 - 0.16, V['h']), 210, 0.2)
         metti_ogg('paperella_gigante', (V['cx'] + 2.85, V['cy'] + 0.4, V['h']), 120, 0.18)   # sul bordo (a 2,6 era sospesa sull'acqua)

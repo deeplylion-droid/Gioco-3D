@@ -152,6 +152,7 @@ def tieni(obj, nome, zmin, zmax):
 
 base = tieni(o, 'cilindro_base', None, z_base)
 base_bassa = tieni(o, 'cilindro_base_bassa', None, 0.40)   # per l'acquario basso del miscuglio
+# (holes_fill qui non chiude i tagli: il modello ha i vertici doppi. Dopo, chiudi_tagli.py chiude quelli della base bassa)
 cop = tieni(o, 'cilindro_coperchio', z_cop, None)
 # il coperchio scende sopra il vetro: lo si porta con il taglio a z = 0 (in Godot lo si mette alla
 # quota giusta), la base resta a terra

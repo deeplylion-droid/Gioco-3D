@@ -315,6 +315,7 @@ def corridoio(M):
     vtf = L.scatola('porta_tagliafuoco_vetro', (21.915, 1.17, 1.37), (21.925, 1.43, 1.73), M['vetro_sporco'], uv=False)
     L.figlio(vtf, porta_tf)
     porta_tf = porta_hq(porta_tf, 'porta_tagliafuoco', (21.965, 0.72, 0.01), 1.16, 2.07, R(-90), +1)
+    attacca(porta_tf, (0, 0, -1))   # poggia sul pavimento (stava 1 cm sopra, controllo del 22 ottobre)
     # oltre la porta: un tratto di corridoio buio da cui si e' arrivati
     statico += L.stanza('corridoio_oltre', 22.2, 0.4, 25.0, 2.2, 2.4, mats, {'W': [(0.4, 2.2, 0, 2.4)]})
 

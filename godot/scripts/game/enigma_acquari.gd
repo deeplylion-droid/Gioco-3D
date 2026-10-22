@@ -135,6 +135,11 @@ func _mostra(on: bool) -> void:
 		var accese := n3.get_node_or_null(^"Accese") as Node3D if n3.name == &"LampadePortone" else null
 		if accese:
 			accese.visible = on
+			# le lampadine accese sono un poco più grandi delle spente, nello stesso posto: accese, le spente si
+			# tolgono (prima restavano dentro le accese, due lampadine una nell'altra)
+			var spente := n3.get_node_or_null(^"Spente/Lampadine") as Node3D
+			if spente:
+				spente.visible = not on
 	for t in [_giallo, _blu, _misto]:
 		if not on:
 			t.fill = 0.0

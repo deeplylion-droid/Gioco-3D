@@ -713,7 +713,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid05" type="Area3D" parent="Polaroid" unique_id=647491652 instance=ExtResource("69_7hdua")]
-transform = Transform3D(-0.41614684, 0, 0.9092974, 0, 1, 0, -0.9092974, 0, -0.41614684, 1.19978, -2.164, 2.899858)
+transform = Transform3D(-0.41614684, 0, 0.9092974, 0, 1, 0, -0.9092974, 0, -0.41614684, 1.19978, -2.17, 2.899858)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -857,7 +857,7 @@ acqua_vasca = NodePath("../../Vasca/AcquaVascaCentrale")
 pulsante_sigla = NodePath("../../Vasca/PulsanteSigla")
 scia = PackedVector3Array(-0.5, 0, 12.45, -1, 0, 12.75, -1.8, 0, 13, -2.8, 0, 12.95, -3.6, 0, 12.7, -4.6, 0, 12.55, -6, 0, 12.5, -7.5, 0, 12.55, -9, 0, 12.5, -10.5, 0, 12.45, -12, 0, 12.5, -13.5, 0, 12.45, -15, 0, 12.4, -16.3, 0, 12.2, -17.4, 0, 11.7, -18.2, 0, 10.8, -18.3, 0, 9.25, -18.3, 0, 7.8, -18.3, 0, 6, -18.3, 0, 4.3, -18.3, 0, 2.9, -18.3, 0, 1.3, -18.3, 0, -0.5, -18.3, 0, -2.3, -18.3, 0, -4.1, -17.3, 0, -4.9, -16.3, 0, -5.5, -15.3, 0, -5.95, -14.7, 0, -6.1)
 bordo_vasca = PackedVector3Array(-0.95, 1, 12.15, -0.35, 1, 12.13, 0.45, 1, 12.17)
-muro_vasca = PackedVector3Array(-0.5, 0.99, 12.39, -0.5, 0.5, 12.39, -0.5, 0.02, 12.39)
+muro_vasca = PackedVector3Array(-0.5, 0.99, 12.374, -0.5, 0.5, 12.374, -0.5, 0.02, 12.374)
 gocciolatoi = PackedVector3Array(-0.55, 0.97, 12.4, 0.45, 0.97, 12.4)
 bordo_fossa = PackedVector3Array(-12.15, 0.455, -7.7, -12.15, 0.455, -5.85, -13.8, 0.455, -5.85, -14.95, 0.455, -7)
 intorno_fossa = PackedVector3Array(-11.7, 0, -7.8, -11.7, 0, -5.4, -13.95, 0, -5.4, -15.4, 0, -6.9, -15.4, 0, -8.4)
@@ -910,6 +910,7 @@ transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70
 visible = false
 script = ExtResource("31_v6kdf")
 punti_gocce = PackedVector3Array(-0.6, 0.91, 2.1600008, 0.6, 0.91, 2.1600008, 0, 1.42, 1.8700008, -0.35, 1.3, 1.8299999, 0.38, 1.28, 1.8299999, -1.48, 1, 2.1500006, 1.48, 1, 2.1500006)
+gocce = false
 model = ExtResource("32_lfyp4")
 bell_material = ExtResource("33_sgyl4")
 material_map = {
