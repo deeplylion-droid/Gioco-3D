@@ -369,7 +369,7 @@ node('Buco', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.002 - VY, 0)),
 # lampada di servizio a gabbia, la stessa del fiume lento, stretta al tirante davanti a est del blu,
 # appena sopra la base, girata verso la valvola. Spot caldo e stretto, senza ombre della gabbia.
 TIR = sposta('B', XB + 0.6 * K * math.cos(math.radians(45)), ZA + 0.6 * K * math.sin(math.radians(45)))
-LY = B_BASE + 0.25                  # appena sopra la base: la gabbia sporge 21 cm sotto il perno
+LY = 2.25                           # la gabbia sporge 21 cm sotto il perno: resta sopra i 2 m, fuori dalla testa
 R_TIR = 0.022 * K
 ANGOLO_SPOT = 16.0
 VOL = sposta('M', VX, VZ)

@@ -629,17 +629,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.01, -0.898, 0)
 mesh = SubResource("buco")
 
 [node name="LampadaValvola" type="Node3D" parent="."]
-transform = Transform3D(0.412726, 0, 0.910855, 0, 1, 0, -0.910855, 0, 0.412726, 6.5886, 1.948, -21.4333)
+transform = Transform3D(0.412726, 0, 0.910855, 0, 1, 0, -0.910855, 0, 0.412726, 6.5886, 2.25, -21.4333)
 script = ExtResource("lampada_valvola")
 
 [node name="Modello" parent="LampadaValvola" instance=ExtResource("gabbia")]
 
 [node name="Luce" type="SpotLight3D" parent="LampadaValvola"]
-transform = Transform3D(1, 4.6605e-17, 1.4828e-16, 0, -0.95399, 0.29984, 1.5543e-16, -0.29984, -0.95399, 0, 0, 0.36)
+transform = Transform3D(1, 6.0188e-17, 1.4331e-16, 0, -0.92198, 0.38723, 1.5543e-16, -0.38723, -0.92198, 0, 0, 0.36)
 light_color = Color(1, 0.86, 0.66, 1)
 light_energy = 6.00
 light_volumetric_fog_energy = 0.6
-spot_range = 4.99
+spot_range = 5.10
 spot_attenuation = 0.8
 spot_angle = 16.0
 

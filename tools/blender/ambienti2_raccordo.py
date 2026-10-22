@@ -328,7 +328,7 @@ def lampada(nome, pos, normale, accesa=True):
 
 lampada('rc1', (48.5, Y_R0 + 0.02, 2.1), (0, 1, 0))
 lampada('rc2', (X_S1 - 0.02, 7.0, Z_L1 + 2.0), (-1, 0, 0))
-lampada('rc3', (44.6, Y_T1 - 0.02, Z_T + 2.0), (0, -1, 0))
+lampada('rc3', (44.6, Y_T1 - 0.02, Z_T + 2.3), (0, -1, 0))   # sopra i 2 m: si passa sotto, verso C2
 giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
 HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
 HQ.metti('plafoniera_rc', 'plafoniera_neon', (48.5, -0.9, H_R1 - 0.12), (1.4, 0.32, 0.1))

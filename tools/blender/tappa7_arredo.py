@@ -341,9 +341,12 @@ def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045):
         o = n * (0.09 + k * 0.13)
         obs.append(C.tubo(f'{nome}_{k}', [a + o + Vector((0, 0, z - k * 0.04)), b + o + Vector((0, 0, z - k * 0.04))], r * (1 - 0.2 * k), mat, seg=12, uv=None))
     L = (b - a).length; d = (b - a).normalized()
+    # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
+    lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))
+    zs = z - (quanti - 1) * 0.04 - r * (1 - 0.2 * (quanti - 1)) - 0.015
     for j in range(int(L / 1.6) + 1):
         p = a + d * min(j * 1.6 + 0.3, L - 0.1)
-        obs.append(C.box(f'{nome}_staffa{j}', p + n * 0.22 + Vector((0, 0, z + 0.06)), (0.04 + abs(n.x) * 0.4, 0.04 + abs(n.y) * 0.4, 0.03), mat, uv=None))
+        obs.append(C.box(f'{nome}_staffa{j}', p + n * lung / 2 + Vector((0, 0, zs)), (0.04 + abs(n.x) * (lung - 0.04), 0.04 + abs(n.y) * (lung - 0.04), 0.03), mat, uv=None))
 
 
 def z_f1(p):
@@ -402,10 +405,9 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
     if tubi:
         mat, quanti = tubi
-        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S0, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)   # sotto il tubo grosso (2,45)
-        # a 2,2 m: più su entravano nel tubo grosso del raccordo (t7_tubo_c2, a 2,5); quelli di C2 arrivano al
-        # muro in fondo al corridoio invece di finire a metà dell'angolo
-        tubi_muro(f'{nome}_tubi_c2', (XC1, Y_T0, Z_SALA), (XC1, YC3_0, Z_SALA), (-1, 0), 2.2, mat, obs, quanti)
+        # R1: sotto il tubo grosso (2,45), fino al muro est del vano scala (prima finivano nel vuoto all'entrata)
+        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)
+        # in C2 no: sullo stesso muro c'è già il tubo grosso del raccordo (t7_tubo_c2) e non c'è posto sopra i 2 m
         tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti)
 
 
@@ -545,7 +547,7 @@ def proposta_gioco():
     d = HQ.dimensioni('testa_mascotte')
     metti('G_testa_mascotte', 'testa_mascotte', (TESTA_MAG[0], YM1 - 0.05 - d.y * 0.7 / d.z / 2, Z_SALA), alto=0.7, rz=0, obs=obs)
     metti('G_coccodrillo_l1', 'coccodrillo_sgonfio', (51.4, 6.2, Z_L1), largo=1.2, rz=170, obs=obs)
-    festone('G_festone_s1', (X_S0 + 0.1, 0.3, 3.3), (X_S1 - 0.1, 4.2, 5.0), 16, obs, seme=1)
+    festone('G_festone_s1', (X_S0 + 0.1, 0.3, 3.6), (X_S1 - 0.1, 4.2, 6.3), 16, obs, seme=1)   # sopra i 2 m dai gradini di F1
     festone('G_festone_s2', (X_S1 - 0.1, 6.8, 6.6), (X_S0 - 3.0, 8.8, 9.2), 16, obs, seme=2)
     festone('G_festone_c2', (XC0 + 0.05, 1.5, Z_SALA + 2.6), (XC1 - 0.05, -2.0, Z_SALA + 2.6), 10, obs, seme=3)
     festone('G_festone_mag', (XM1 - 0.5, YM0 + 0.4, Z_SALA + 3.1), (XM0 + 1.0, YM1 - 0.4, Z_SALA + 3.1), 22, obs, pendenza=0.6, seme=4)
