@@ -1115,7 +1115,6 @@ func _bivi() -> void:
 	colonna.material_override = mat_banca
 	colonna.position = col + Vector3(0, 2.3, 0)
 	add_child(colonna)
-	_colonna_di_roccia(colonna.position - Vector3(0, 2.3, 0), cm.size)
 	var fc := CollisionShape3D.new()
 	var bc := BoxShape3D.new()
 	bc.size = cm.size
@@ -1124,21 +1123,6 @@ func _bivi() -> void:
 	_collisioni.add_child(fc)
 	if b3 == Vector3.ZERO or verso_monte == Vector3.ZERO:
 		push_warning("bivio 3 senza disco")
-
-
-## La colonna rivestita di roccia sulle quattro facce (prima cemento grigio piatto, da finire): un pannello di roccia
-## stretto per faccia, la schiena sulla colonna, alto quanto lei, col rilievo basso (8 cm: il disco del bivio 3 è a
-## 12 cm da una faccia).
-func _colonna_di_roccia(base: Vector3, size: Vector3) -> void:
-	for k in 4:
-		var rot := 90.0 * k
-		var d := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
-		var largo := size.x if k % 2 == 0 else size.z
-		var mezzo := (size.z if k % 2 == 0 else size.x) * 0.5
-		var r := _metti("roccia_parete", base + d * (mezzo + 0.001), rot)
-		for mi in r.find_children("*", "MeshInstance3D", true, false):
-			(mi as MeshInstance3D).material_override = mat_roccia
-		r.scale = Vector3((largo + 0.13) / 4.2 * (-1.0 if k % 2 == 1 else 1.0), size.y / 3.24, 0.08 / 0.656)
 
 
 ## Un pezzo del telaio della chiusa (size: lungo e, alto, lungo d), con la collisione se [param solido].
@@ -1281,8 +1265,7 @@ func _giungla() -> void:
 	for s in _strisce:
 		for v in _lungo(s, W * 0.5 - 0.05, 13.0, 6.5, 3.0):
 			k2 += 1
-			# (non vicino ai dischi, alle bocche dei bivi e alla colonna: chi esce dalla scaletta trovava il palo del disco)
-			if k2 % 3 == 0 and not _zone_libere.any(func(z): return Vector2(v[0].x, v[0].z).distance_to(z[0]) < z[1]):
+			if k2 % 3 == 0:
 				_metti("scaletta_banchina", v[0] + Vector3(0, FONDO + 0.05, 0), v[1])
 
 
