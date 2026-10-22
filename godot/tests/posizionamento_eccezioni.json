@@ -1940,58 +1940,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante2",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			16.05,
-			3.0,
-			-21.45
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante4",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			17.75,
-			3.0,
-			-23.15
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante2",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			4.85,
-			3.0,
-			-21.45
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante4",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			6.55,
-			3.0,
-			-23.15
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"squadra": "enigmi",
 		"problema": "ingombro",
@@ -2590,32 +2538,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante1",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			17.75,
-			4.4,
-			-21.45
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante1",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			6.55,
-			4.4,
-			-21.45
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
 		"squadra": "ambienti-1",
 		"problema": "compenetra",
@@ -2691,5 +2613,70 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/BasamentoVetro",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			5.7,
+			1.55,
+			-22.3
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 9 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/BasamentoVetro",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			16.9,
+			1.55,
+			-22.3
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 9 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/Disegno/Modello",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			17.4,
+			2.9,
+			-21.36
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Vetri per 3 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/AnelloVetro",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			16.9,
+			4.31,
+			-22.3
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/AnelloVetro",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			5.7,
+			4.31,
+			-22.3
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm"
 	}
 ]

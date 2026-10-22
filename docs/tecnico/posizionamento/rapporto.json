@@ -337,62 +337,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante2",
-		"pos": [
-			16.05,
-			3.0,
-			-21.45
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante4",
-		"pos": [
-			17.75,
-			3.0,
-			-23.15
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante2",
-		"pos": [
-			4.85,
-			3.0,
-			-21.45
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante4",
-		"pos": [
-			6.55,
-			3.0,
-			-23.15
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 38.0 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_60, pallone_62.",
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 38.0 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: pallone_dentro_60, pallone_62.",
 		"nodo": "Sala/AngoloPalloni/pallone_dentro_58",
@@ -813,10 +757,10 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1119. [modello: tecnici.tscn]",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1127. [modello: tecnici.tscn]",
 		"firma": "tecnici.tscn|CylinderMesh 0.22x0.06x0.22",
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1116. [modello: tecnici.tscn]",
-		"nodo": "Tecnici/LampeggianteParatia1/@MeshInstance3D@1118",
+		"nodo": "Tecnici/LampeggianteParatia1/@MeshInstance3D@1126",
 		"pos": [
 			2.12,
 			-6.05,
@@ -856,7 +800,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (7 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"pos": [
@@ -870,44 +814,16 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"nodo": "Sala/Dettagli/det_cassetta_aperta_0",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (7 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"pos": [
-			-1.5,
+			6.75,
 			0.0,
-			19.5
+			-21.5
 		],
 		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"nodo": "Sala/Dettagli/det_pannello_lamiera_7",
-		"pos": [
-			-3.5,
-			0.0,
-			16.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"nodo": "Sala/Dettagli/det_cassetta_aperta_3",
-		"pos": [
-			-13.25,
-			0.0,
-			19.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
+		"squadra": "enigmi",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
@@ -940,16 +856,44 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.70 m sopra il pavimento (9 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.89 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_3",
 		"pos": [
-			4.75,
+			-13.25,
 			0.0,
-			-23.25
+			19.5
 		],
 		"problema": "ingombro",
-		"squadra": "enigmi",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.36 m sopra il pavimento (2 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
+		"nodo": "Sala/Dettagli/det_pannello_lamiera_7",
+		"pos": [
+			-3.75,
+			0.0,
+			17.0
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.72 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"nodo": "Sala/Dettagli/det_cassetta_aperta_0",
+		"pos": [
+			-1.5,
+			0.0,
+			19.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
@@ -1374,7 +1318,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 65% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 71% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 65% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_vetri_rotti_1_6",
 		"pos": [
@@ -1392,9 +1336,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo per 53 cm",
 		"nodo": "Sala/Dettagli/det_griglia_caduta_4",
 		"pos": [
-			3.84,
+			3.83,
 			0.04,
-			-22.4
+			-22.33
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -1406,9 +1350,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Zoccolo",
 		"pos": [
-			3.86,
+			3.79,
 			0.21,
-			-22.4
+			-22.33
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1416,7 +1360,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 81% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 50% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_piastrella_rotta_3_12",
 		"pos": [
@@ -1430,7 +1374,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 90% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_barchetta_4",
 		"pos": [
@@ -1458,13 +1402,27 @@
 		"zona": "sala"
 	},
 	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 9 cm",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 9 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/BasamentoVetro",
+		"pos": [
+			5.7,
+			1.55,
+			-22.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
 		"dettaglio": "il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoio",
 		"pos": [
-			4.4,
+			4.34,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1476,9 +1434,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/PompaSerbatoioCollare",
 		"pos": [
-			4.56,
+			4.49,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1490,9 +1448,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 3 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Gamba",
 		"pos": [
-			7.39,
+			7.33,
 			0.24,
-			-22.44
+			-22.37
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1504,9 +1462,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base per 4 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/Spina",
 		"pos": [
-			7.82,
+			7.75,
 			0.26,
-			-22.53
+			-22.45
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1518,9 +1476,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Allacci/BeccoCorpo",
 		"pos": [
-			7.82,
+			7.75,
 			1.15,
-			-22.54
+			-22.47
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1528,7 +1486,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"dettaglio": "il 47% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_maschera_sub_13",
 		"pos": [
@@ -1547,7 +1505,7 @@
 		"nodo": "Gioco/EnigmaAcquari/Cavo/Fascetta1",
 		"pos": [
 			6.57,
-			1.83,
+			1.72,
 			-21.44
 		],
 		"problema": "compenetra",
@@ -1561,7 +1519,7 @@
 		"nodo": "Gioco/EnigmaAcquari/Cavo/Fascetta2",
 		"pos": [
 			6.57,
-			2.0,
+			1.95,
 			-21.44
 		],
 		"problema": "compenetra",
@@ -1948,13 +1906,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 94% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 94% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
 		"nodo": "Sala/Dettagli/det_foglio_2_14",
 		"pos": [
 			14.93,
 			0.02,
-			-22.32
+			-22.29
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -1966,9 +1924,23 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 25% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Zoccolo",
 		"pos": [
-			15.06,
+			14.99,
 			0.21,
-			-22.4
+			-22.33
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 9 cm",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 9 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/BasamentoVetro",
+		"pos": [
+			16.9,
+			1.55,
+			-22.3
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1980,9 +1952,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoio",
 		"pos": [
-			15.6,
+			15.54,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -1994,9 +1966,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 22% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/PompaSerbatoioCollare",
 		"pos": [
-			15.76,
+			15.69,
 			0.94,
-			-22.45
+			-22.38
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2004,13 +1976,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"dettaglio": "il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_pannello_lamiera_2_0",
 		"pos": [
 			17.7,
 			0.06,
-			-23.0
+			-22.98
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -2018,7 +1990,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 58% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"dettaglio": "il 87% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 58% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_foglio_2_33",
 		"pos": [
@@ -2032,7 +2004,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 84% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"dettaglio": "il 81% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 84% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Sala/Dettagli/det_foglio_3_9",
 		"pos": [
@@ -2046,13 +2018,27 @@
 		"zona": "sala"
 	},
 	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Vetri per 3 cm",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Vetri per 3 cm",
+		"nodo": "Gioco/EnigmaAcquari/Disegno/Modello",
+		"pos": [
+			17.4,
+			2.9,
+			-21.36
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
 		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 3 cm",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 3 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Gamba",
 		"pos": [
-			18.59,
+			18.53,
 			0.24,
-			-22.44
+			-22.37
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2064,9 +2050,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base per 4 cm",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/Spina",
 		"pos": [
-			19.02,
+			18.95,
 			0.26,
-			-22.53
+			-22.45
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2078,9 +2064,9 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 45% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/BeccoCorpo",
 		"pos": [
-			19.02,
+			18.95,
 			1.15,
-			-22.54
+			-22.47
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2088,13 +2074,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "il 40% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina",
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina",
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): il 40% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Allacci/FlangiaSpina",
 		"nodo": "Sala/Dettagli/det_piastrella_rotta_5_8",
 		"pos": [
-			18.95,
+			18.92,
 			0.01,
-			-22.46
+			-22.44
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -2257,12 +2243,12 @@
 	},
 	{
 		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/Tirante1",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio per 4 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/AnelloVetro",
 		"pos": [
-			17.75,
-			4.4,
-			-21.45
+			16.9,
+			4.31,
+			-22.3
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2271,12 +2257,12 @@
 	},
 	{
 		"dettaglio": "passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm",
-		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/Tirante1",
+		"motivo": "controllo del 22 ottobre sera, acquari corretti da enigmi: passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/AnelloVetro",
 		"pos": [
-			6.55,
-			4.4,
-			-21.45
+			5.7,
+			4.31,
+			-22.3
 		],
 		"problema": "compenetra",
 		"squadra": "enigmi",
@@ -2778,9 +2764,9 @@
 		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)",
 		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
 		"pos": [
-			-15.5,
+			-13.0,
 			0.0,
-			-7.75
+			-5.25
 		],
 		"problema": "ingombro",
 		"squadra": "mascotte",
@@ -2858,7 +2844,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@38697. (stato: inseguimento_dopo)",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@39859. (stato: inseguimento_dopo)",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)",
 		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
 		"pos": [
@@ -2872,7 +2858,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@38705. (stato: inseguimento_dopo)",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@39867. (stato: inseguimento_dopo)",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)",
 		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2",
 		"pos": [
@@ -2886,7 +2872,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@38713. (stato: inseguimento_dopo)",
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 77.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@39875. (stato: inseguimento_dopo)",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)",
 		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4",
 		"pos": [

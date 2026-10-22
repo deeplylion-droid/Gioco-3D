@@ -166,7 +166,12 @@ func _controlla_scena(z: Dictionary) -> void:
 	_fino = SEVERO or z.has("parti")
 	_nascoste_radici.clear()
 	if z.has("stato"):
+		# quello che lo stato fa comparire: nascosto prima, visibile dopo (per le varianti, vedi _alternative)
+		var prima_nascosti := _radice.find_children("*", "Node3D", true, false).filter(func(n): return not (n as Node3D).visible and not n is Light3D)
 		await _prepara(String(z["stato"]))
+		for n in prima_nascosti:
+			if is_instance_valid(n) and (n as Node3D).visible:
+				_nascoste_radici[n] = true
 	for i in 20:
 		await get_tree().physics_frame
 	# poi ferma, come la lasciano gli script dopo l'ingresso (niente animazioni durante il controllo); i corpi
@@ -664,6 +669,20 @@ func _segna_copertura(z: Dictionary, mesh: Array, oggetti: Array) -> void:
 	for g in _nascoste_ora:
 		if dentro.call(String(g)) and not nascoste.has(g):
 			nascoste[g] = _nascoste_ora[g]
+	# negli stati: ogni parte deve essere visibile almeno per metà delle sue mesh. Se no lo stato non l'ha mostrata
+	# (fiume e infermeria, rinascosti dal _process della Risalita, non si controllavano): il controllo fallisce
+	for p in parti:
+		var nodo_p := _radice.get_node_or_null(NodePath(p))
+		if nodo_p == null:
+			check(false, "stato %s: la parte %s non esiste" % [z.get("stato", ""), p])
+			continue
+		# le stesse esclusioni di _mesh_visibili (effetti, solo ombra), tranne la visibilità
+		var tutte := nodo_p.find_children("*", "MeshInstance3D", true, false).filter(func(m): return (m as MeshInstance3D).mesh != null \
+				and (m as MeshInstance3D).cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY and not _effetto(m))
+		var viste := mesh.filter(func(m): return _nodo(m) == p or _nodo(m).begins_with(p + "/"))
+		if tutte.size() >= 4 and viste.size() * 2 < tutte.size():
+			check(false, "stato %s: della parte %s si vedono solo %d mesh su %d (lo stato non la mostra?)" % [
+					z.get("stato", ""), p, viste.size(), tutte.size()])
 	for p in parti:
 		if not per_parte.keys().any(func(k): return k == p or String(k).begins_with(p + "/") or String(p).begins_with(k + "/")):
 			# una parte dello stato senza nessun oggetto visibile: si vede subito nel rapporto (-1: non ha mesh, è solo
@@ -1344,9 +1363,30 @@ func _alternative(a: Node, b: Node) -> bool:
 		var k: Node = coppia[1]
 		while k and k != _radice:
 			if k.get_parent() == r.get_parent() and k != r:
-				return true
+				# la versione accesa e quella spenta occupano lo stesso spazio; una stanza che compare accanto a un
+				# corridoio no (il fiume della Risalita)
+				return _stesso_spazio(r, k)
 			k = k.get_parent()
 	return false
+
+
+## I box delle mesh sotto a e sotto b si sovrappongono per più del 70% del più piccolo.
+func _stesso_spazio(a: Node, b: Node) -> bool:
+	var ba := _box_di(a)
+	var bb := _box_di(b)
+	var i := ba.intersection(bb)
+	var minore := minf(ba.get_volume(), bb.get_volume())
+	return minore > 0.0 and i.get_volume() > 0.7 * minore
+
+
+func _box_di(n: Node) -> AABB:
+	var out := AABB()
+	var primo := true
+	for m in ([n] if n is MeshInstance3D else []) + n.find_children("*", "MeshInstance3D", true, false):
+		if (m as MeshInstance3D).mesh:
+			out = _box(m) if primo else out.merge(_box(m))
+			primo = false
+	return out
 
 
 func _radice_nascosta(n: Node) -> Node:
