@@ -684,8 +684,8 @@ def versione_A(mats):
             ('tubi', 'det_condotta_aria_4m', (X0, 24.5, -19.6), (1, 0)),
             ('elettrico', 'det_cassetta_aperta', (X0, 17.6, -24.0), (1, 0)), ('cartelli', 'det_cartello_non_tuffarsi', (X0, 22.0, -19.2), (1, 0)),
             ('tubi', 'det_tubo_verticale_3m', (X0, 28.5, -25.0), (1, 0)), ('tubi', 'det_bocchetta_tonda', (X0, 26.0, -23.0), (1, 0))):
-        if GIOCO and nodo == 'det_tubo_verticale_3m':
-            continue        # (finiva nel vuoto ai due capi)
+        if GIOCO and nodo in ('det_tubo_verticale_3m', 'det_tubo_valvola_T'):
+            continue        # (finivano nel vuoto ai due capi: il tubo della T si vedeva aperto da tutte e due le parti)
         arredo(luci, 'det/' + cat, nodo, p, ry=ry_muro(*nrm), appoggio='origine')
     # sotto le passerelle: fasci di cavi a festone (dall'attacco pendono in giù), legati alla trave di mezzo
     # (passerella_muro: in mezzo alla larghezza, sotto la trave che finisce 16 cm sotto il piano)
