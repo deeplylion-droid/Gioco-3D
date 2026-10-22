@@ -955,5 +955,698 @@
   },
   "motivo": "sportello aperto all'altezza della testa e, sopra, la corsa di tubi: non si può alzare",
   "chiave": "det_cassetta_aperta 4"
+ },
+ {
+  "posto": {
+   "nodo": "det_barchetta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    5.473,
+    0.001,
+    -23.404
+   ],
+   "rotazione_y_gradi": -172.3,
+   "basis": [
+    [
+     -0.9909,
+     0.0,
+     0.1345
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1345,
+     0.0,
+     -0.9909
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_barchetta 5.473,-23.404"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    12.965,
+    0.001,
+    -21.383
+   ],
+   "rotazione_y_gradi": -25.2,
+   "basis": [
+    [
+     0.9052,
+     0.0,
+     0.425
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.425,
+     0.0,
+     0.9052
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_carta_accartocciata_1 12.965,-21.383"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    5.098,
+    0.001,
+    -22.642
+   ],
+   "rotazione_y_gradi": -58.0,
+   "basis": [
+    [
+     0.5298,
+     0.0,
+     0.8481
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8481,
+     0.0,
+     0.5298
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_carta_accartocciata_1 5.098,-22.642"
+ },
+ {
+  "posto": {
+   "nodo": "det_carta_accartocciata_3",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    11.271,
+    0.001,
+    -21.755
+   ],
+   "rotazione_y_gradi": 62.9,
+   "basis": [
+    [
+     0.4562,
+     0.0,
+     -0.8899
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.8899,
+     0.0,
+     0.4562
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_carta_accartocciata_3 11.271,-21.755"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    11.486,
+    0.001,
+    -21.047
+   ],
+   "rotazione_y_gradi": -89.4,
+   "basis": [
+    [
+     0.0112,
+     0.0,
+     0.9999
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9999,
+     0.0,
+     0.0112
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_foglio_1 11.486,-21.047"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    13.742,
+    0.001,
+    -21.942
+   ],
+   "rotazione_y_gradi": -89.8,
+   "basis": [
+    [
+     0.0039,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     0.0039
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_foglio_2 13.742,-21.942"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    14.929,
+    0.001,
+    -22.291
+   ],
+   "rotazione_y_gradi": -18.3,
+   "basis": [
+    [
+     0.9494,
+     0.0,
+     0.3139
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.3139,
+     0.0,
+     0.9494
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_foglio_2 14.929,-22.291"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_314",
+   "posizione": [
+    16.537,
+    0.001,
+    -21.333
+   ],
+   "rotazione_y_gradi": 124.9,
+   "basis": [
+    [
+     -0.5724,
+     0.0,
+     -0.82
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.82,
+     0.0,
+     -0.5724
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_foglio_2 16.537,-21.333"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_060",
+   "posizione": [
+    17.564,
+    0.001,
+    -21.527
+   ],
+   "rotazione_y_gradi": -174.2,
+   "basis": [
+    [
+     -0.9948,
+     0.0,
+     0.1014
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.1014,
+     0.0,
+     -0.9948
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_foglio_3 17.564,-21.527"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_4",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_051",
+   "posizione": [
+    11.353,
+    0.001,
+    -22.011
+   ],
+   "rotazione_y_gradi": -73.6,
+   "basis": [
+    [
+     0.283,
+     0.0,
+     0.9591
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9591,
+     0.0,
+     0.283
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_foglio_4 11.353,-22.011"
+ },
+ {
+  "posto": {
+   "nodo": "det_griglia_caduta",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    3.839,
+    0.001,
+    -22.184
+   ],
+   "rotazione_y_gradi": 71.4,
+   "basis": [
+    [
+     0.3197,
+     0.0,
+     -0.9475
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9475,
+     0.0,
+     0.3197
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_griglia_caduta 3.839,-22.184"
+ },
+ {
+  "posto": {
+   "nodo": "det_maschera_sub",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "spiaggia_388",
+   "posizione": [
+    6.173,
+    0.001,
+    -21.461
+   ],
+   "rotazione_y_gradi": -107.0,
+   "basis": [
+    [
+     -0.2931,
+     0.0,
+     0.9561
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.9561,
+     0.0,
+     -0.2931
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_maschera_sub 6.173,-21.461"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_051",
+   "posizione": [
+    10.052,
+    0.001,
+    -22.777
+   ],
+   "rotazione_y_gradi": 165.9,
+   "basis": [
+    [
+     -0.97,
+     0.0,
+     -0.243
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.243,
+     0.0,
+     -0.97
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_mucchio_piastrelle_2 10.052,-22.777"
+ },
+ {
+  "posto": {
+   "nodo": "det_mucchio_piastrelle_2",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    10.342,
+    0.01,
+    -20.506
+   ],
+   "rotazione_y_gradi": -116.4,
+   "basis": [
+    [
+     -0.4446,
+     0.0,
+     0.8957
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.8957,
+     0.0,
+     -0.4446
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_mucchio_piastrelle_2 10.342,-20.506"
+ },
+ {
+  "posto": {
+   "nodo": "det_pannello_lamiera_2",
+   "glb": "glb/detriti.glb",
+   "zona": "angolo",
+   "gruppo": "mucchio_004",
+   "posizione": [
+    17.695,
+    0.001,
+    -23.003
+   ],
+   "rotazione_y_gradi": 156.3,
+   "basis": [
+    [
+     -0.9158,
+     0.0,
+     -0.4016
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4016,
+     0.0,
+     -0.9158
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_pannello_lamiera_2 17.695,-23.003"
+ },
+ {
+  "posto": {
+   "nodo": "det_pesce_gomma",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_051",
+   "posizione": [
+    11.0,
+    0.001,
+    -23.161
+   ],
+   "rotazione_y_gradi": 35.5,
+   "basis": [
+    [
+     0.8144,
+     0.0,
+     -0.5804
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5804,
+     0.0,
+     0.8144
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_pesce_gomma 11.000,-23.161"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_280",
+   "posizione": [
+    10.172,
+    0.001,
+    -21.109
+   ],
+   "rotazione_y_gradi": -120.5,
+   "basis": [
+    [
+     -0.5069,
+     0.0,
+     0.862
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.862,
+     0.0,
+     -0.5069
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_1 10.172,-21.109"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_076",
+   "posizione": [
+    12.295,
+    0.001,
+    -22.648
+   ],
+   "rotazione_y_gradi": 32.9,
+   "basis": [
+    [
+     0.8392,
+     0.0,
+     -0.5438
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.5438,
+     0.0,
+     0.8392
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario misto (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_1 12.295,-22.648"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_3",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    4.574,
+    0.001,
+    -22.328
+   ],
+   "rotazione_y_gradi": 92.8,
+   "basis": [
+    [
+     -0.0492,
+     0.0,
+     -0.9988
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.9988,
+     0.0,
+     -0.0492
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_3 4.574,-22.328"
+ },
+ {
+  "posto": {
+   "nodo": "det_piastrella_rotta_5",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_060",
+   "posizione": [
+    18.924,
+    0.001,
+    -22.44
+   ],
+   "rotazione_y_gradi": -33.2,
+   "basis": [
+    [
+     0.837,
+     0.0,
+     0.5473
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.5473,
+     0.0,
+     0.837
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario giallo (enigma degli acquari)",
+  "chiave": "det_piastrella_rotta_5 18.924,-22.440"
+ },
+ {
+  "posto": {
+   "nodo": "det_vetri_rotti_1",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_119",
+   "posizione": [
+    4.938,
+    0.001,
+    -22.0
+   ],
+   "rotazione_y_gradi": 151.5,
+   "basis": [
+    [
+     -0.8791,
+     0.0,
+     -0.4766
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.4766,
+     0.0,
+     -0.8791
+    ]
+   ]
+  },
+  "motivo": "nella base dell'acquario blu (enigma degli acquari)",
+  "chiave": "det_vetri_rotti_1 4.938,-22.000"
  }
 ]
