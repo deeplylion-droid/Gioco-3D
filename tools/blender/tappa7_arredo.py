@@ -14,6 +14,7 @@ import bpy
 from mathutils import Vector, Matrix
 import ambienti2_comune as C
 import ambienti1_hq as HQ
+import posa
 
 HQ.LINK[0] = C._link
 for _c in (('tappa7_arredo',), ('sala_angoli',), ('ambienti_interni', 'meshy')):
@@ -53,6 +54,18 @@ def metti(nome, file, pos, alto=None, largo=None, rz=0.0, obs=None):
     return o
 
 
+def _al_muro(objs, punto, n):
+    """Porta il retro vero di objs (il loro vertice più indietro, contro n) a 1 mm dal muro che passa per punto con
+    normale n (fuori dal muro), tutti insieme: qui il muro del raccordo non c'è, se ne conosce il piano. Prima la
+    roba appesa stava col box a 5 mm dal muro e il modello vero a volte di più (controllo del 22 ottobre sera)."""
+    n = Vector(n).normalized()
+    retro = min(v.dot(n) for o in objs for v in posa._punti_mondo(o))
+    d = n * (Vector(punto).dot(n) + 0.001 - retro)
+    for o in objs:
+        o.matrix_world.translation += d
+    bpy.context.view_layer.update()
+
+
 def cartello(nome, pos, normale, obs, freccia_a_destra=True):
     """Cartello verde d'uscita acceso, appeso al muro con la faccia lungo 'normale'. La freccia del modello va verso
     destra guardandolo: con freccia_a_destra=False lo si specchia."""
@@ -61,10 +74,13 @@ def cartello(nome, pos, normale, obs, freccia_a_destra=True):
     n = Vector(normale).normalized()
     Rm = (-n).to_track_quat('Y', 'Z').to_matrix().to_4x4()   # il fronte del modello (-Y) verso la stanza
     S = Matrix.Diagonal((1 if freccia_a_destra else -1, 1, 1, 1))
+    pezzi = []
     for parte, nm in ((None, nome), ('cartello_uscita_luce', nome + '_luce')):
         o = HQ.metti(nm, 'cartello_uscita', (0, 0, 0), (0.45, None, None), parte=parte)
         o.matrix_world = Matrix.Translation(Vector(pos)) @ Rm @ S @ o.matrix_world
         obs.append(o)
+        pezzi.append(o)
+    _al_muro(pezzi, Vector(pos) - n * 0.02, n)   # (il muro è 2 cm dietro pos)
     # la luce verde che fa il cartello la mettono le scene di prova (OmniLight piccole): quelle del glTF in Godot
     # escono fortissime
 
@@ -354,6 +370,7 @@ def appendi_muro(nome, a, b, n, z0, tavolozza, obs, rnd, passo=(0.9, 1.8), vuoti
             continue
         obs.append(o)
         ultimo = file
+        _al_muro([o], c - n * (dm.y / 2 + 0.005), n)
         if file == 'salvagente_anulare':   # piolo nel muro, dentro l'anello in alto
             muro = c - n * (dm.y / 2 + 0.005)
             obs.append(C.box(f'{nome}_{k_obj}_piolo', muro + n * (dm.y * 0.5) + Vector((0, 0, zz + dm.z * 0.8)),
