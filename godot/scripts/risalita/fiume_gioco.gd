@@ -709,6 +709,17 @@ func _metti(nome: String, pos: Vector3, rot_y := 0.0, scala := 1.0) -> Node3D:
 	return n
 
 
+## Porta [param n] (figlio della scena) a terra: il suo punto più basso 1 mm sopra la quota [param y].
+func _a_terra(n: Node3D, y := 0.0) -> void:
+	var basso := INF
+	var io := global_transform.affine_inverse()
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var xf := io * (mi as MeshInstance3D).global_transform
+		for v in (mi as MeshInstance3D).mesh.get_faces():
+			basso = minf(basso, (xf * v).y)
+	n.position.y += y + 0.001 - basso
+
+
 ## Una forma di collisione (cilindro) per un oggetto grande sulle banchine.
 func _ostacolo(pos: Vector3, raggio: float, alto: float) -> void:
 	var f := CollisionShape3D.new()
@@ -1241,7 +1252,7 @@ func _imbarco() -> void:
 				# una transenna caduta
 				var t := _metti("transenna", tp + lato * sgn * 0.5, rot + randf_range(-20.0, 20.0))
 				t.rotation_degrees.x = 88.0
-				t.position.y = 0.27
+				_a_terra(t)   # (prima a 27 cm a occhio: restava 5 mm sopra il pavimento)
 				# a terra anche lei ferma i piedi (prima ci si passava attraverso)
 				var fc := CollisionShape3D.new()
 				var bc := BoxShape3D.new()

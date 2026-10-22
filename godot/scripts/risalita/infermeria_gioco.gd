@@ -42,7 +42,6 @@ var keycard: Pickup
 ## I listelli a metà muro (dimensione, centro, materiale): si mettono alla fine, interrotti dove sul muro c'è
 ## appeso qualcosa (prima passavano dentro la giraffa, il pulsante, la cassetta del pronto soccorso, il cartellone)
 var _listelli := []
-var _barriera_cassa: StaticBody3D
 var radiografia: Pickup
 
 var _collisioni: StaticBody3D
@@ -496,7 +495,7 @@ func _schedari() -> void:
 				ad.position = Vector3(-0.08, (y1 - y0) * 0.5 - 0.075, 0.0)   # sul frontale (prima 1,2 cm davanti)
 				# dentro il cassetto: esce con lui
 				cas.get_node("Frontale").add_child(radiografia)
-				radiografia.position = Vector3(0, -(y1 - y0) * 0.5 + 0.05, -0.2)   # sul fondo del cassetto, non dentro
+				radiografia.position = Vector3(0, -(y1 - y0) * 0.5 + 0.051, -0.2)   # sul fondo del cassetto, 1 mm sopra (a filo le facce coincidevano)
 				cas.call(&"_metti")
 			cassetti.append(cas)
 
@@ -582,6 +581,7 @@ func _cassaforte() -> void:
 	# spigolo davanti ma lo sportello gli stava davanti: chiuso restava 7,5 cm staccato dalla cornice)
 	cassaforte.spessore_sportello = 0.075
 	cassaforte.faccia_sportello = -0.075 + 0.037   # la faccia del modello è a 3,7 cm dal retro (il bordo a 7,5): misurata coi raggi
+	cassaforte.barriera_fino_a_terra = c.y   # (prima la metteva _process, che nel controllo è fermo)
 	cassaforte.transform = Transform3D(Basis(Vector3.UP, -PI * 0.5), Vector3(c.x - 0.03 - 0.075, c.y, c.z - h - 0.03))
 	add_child(cassaforte)
 	# i cardini: la piastra sulla cornice fino all'asse, e il perno
@@ -718,20 +718,6 @@ func _marker() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	# lo sportello della cassaforte aperto sporge nella stanza all'altezza del petto: sotto non si passa
-	if _barriera_cassa == null and cassaforte.aperta_ora:
-		var b := _box_di(cassaforte.get_node("Sportello"))
-		_barriera_cassa = StaticBody3D.new()
-		_barriera_cassa.name = "BarrieraSportello"
-		_barriera_cassa.collision_layer = Layers.BARRIERS
-		_barriera_cassa.collision_mask = 0
-		var f := CollisionShape3D.new()
-		var bs := BoxShape3D.new()
-		bs.size = Vector3(b.size.x, b.end.y, b.size.z)
-		f.shape = bs
-		f.position = Vector3(b.get_center().x, b.end.y * 0.5, b.get_center().z)
-		_barriera_cassa.add_child(f)
-		add_child(_barriera_cassa)
 	# il lampeggiante: lampi gialli finché non lo colpisci, poi verde fisso
 	var on := interruttore.powered
 	var k := 1.0 if on else (1.0 if fmod(_t, 1.6) < 0.25 else 0.0)
