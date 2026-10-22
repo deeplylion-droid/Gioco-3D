@@ -515,5 +515,18 @@
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_4, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
 		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			8.75,
+			0.0,
+			42.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte, stato tappa7 (porte della sala pompe e portello aperti): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7)"
 	}
 ]

@@ -39,6 +39,11 @@ const ZONE := [
 	# come quando ci arriva (enigmi non risolti) e dopo (risolti)
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_arrivo", "parti": ["Risalita"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_dopo", "parti": ["Risalita"]},
+	# la tappa 7 (il ritorno): le porte col maniglione (sala pompe, ponte) e il portello sul fondo della piscina aperti
+	# (coordinatore, 22 ottobre; collaudo: la porta della sala pompe aperta sporgeva sulla strada del ritorno). Senza
+	# "zona": ogni caso prende la zona del giro iniziale
+	{"scena": "res://scenes/sala_principale.tscn", "stato": "tappa7", "parti": ["Interni/Ambienti/Corridoio/porta_sala_pompe",
+			"Tecnici/Ambienti/SalaPompe/PORTA_ponte", "Sala/Interattivi/sala_portello_scarico"]},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "inseguimento_dopo",
 			"parti": ["SalaInseguimento"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
@@ -141,7 +146,7 @@ func _run() -> void:
 	var solo := OS.get_cmdline_user_args().slice(1)
 	for z in ZONE:
 		var nome_scena := String(z["scena"]).get_file().get_basename()
-		if not solo.is_empty() and not solo.has(nome_scena) and not solo.has(z.get("zona", "")):
+		if not solo.is_empty() and not solo.has(nome_scena) and not solo.has(z.get("zona", "")) and not solo.has(z.get("stato", "")):
 			continue
 		await _controlla_scena(z)
 	_confronta()
@@ -262,6 +267,14 @@ func _prepara(stato: String) -> void:
 			var lei := _radice.find_child("LeiSbuca", true, false)
 			if lei and lei.has_method(&"_affaccia"):
 				lei.call(&"_affaccia")
+			for i in 30:
+				await get_tree().physics_frame
+			return
+		"tappa7":
+			for porta in _radice.find_children("*", "PortaManiglione", true, false):
+				porta.call(&"load_state", {"aperta": true, "bloccata": false})
+			for portello in _radice.find_children("*", "HingedHatch", true, false):
+				portello.call(&"load_state", {"open": true})
 			for i in 30:
 				await get_tree().physics_frame
 			return
@@ -629,7 +642,8 @@ func _e_oggetto(mi: MeshInstance3D) -> bool:
 
 func _zona(z: Dictionary, n: Node) -> String:
 	var p := _radice.get_path_to(n)
-	if z.has("parti") and not (z["parti"] as Array).any(func(x): return String(p).begins_with(x)):
+	if (z.has("parti") and not (z["parti"] as Array).any(func(x): return String(p).begins_with(x))) \
+			or (not z.has("zona") and not z.has("sotto")):
 		# negli stati, un caso fuori dalle parti (un ingombro di quello che si è aperto): la zona del giro iniziale
 		for b in ZONE:
 			if b["scena"] == z["scena"] and not b.has("stato"):
