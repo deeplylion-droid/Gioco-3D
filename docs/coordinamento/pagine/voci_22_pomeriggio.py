@@ -11,8 +11,8 @@ CARTELLA = os.environ.get("MEDIA_POMERIGGIO", "")
 def c_e(*nomi):
     return CARTELLA and all(os.path.exists(os.path.join(CARTELLA, n)) for n in nomi)
 
-INTRO = ("Animazioni e voce di Jilly le hai approvate. Restano due posti dell'inseguimento e lo sfondo del menu. Il "
-         "tuffo lo aggiungo su questa pagina appena arriva.")
+INTRO = ("Grazie: seconda vasca b, grata a e menu A+B sono già in lavorazione per stasera. Restano il tuffo ritoccato e "
+         "due piccole cose degli interni, in fondo alla pagina.")
 
 SEZIONI = [
     ("Inseguimento", [
@@ -80,12 +80,29 @@ if c_e("menu_bc.jpg", "menu_ab.jpg", "menu_ab_lampo.jpg"):
     ]))
 
 if c_e("tuffo_griglia.jpg"):
-    SEZIONI.append(("Tuffo", [
-        V("TUF", "7. Il tuffo di Jilly",
-          "Al posto del geyser: si spinge sul bordo, ti guarda un'ultima volta e si tuffa di testa nella fossa. I "
-          "tentacoli entrano per ultimi. Lo schizzo è stato ritoccato: acqua bianca, più spruzzi, gocce grosse.",
+    SEZIONI.append(("Tuffo e interni", [
+        V("TUF", "7. Il tuffo di Jilly, ritoccato",
+          "Al posto del geyser: si spinge sul bordo, ti guarda un'ultima volta e si tuffa di testa nella fossa, con i "
+          "tentacoli che restano dietro di lei ed entrano per ultimi. Lo schizzo ora è acqua bianca che si rompe in fili e "
+          "spruzzi, con gocce chiare."
+          "\nAlla fine le gocce bianche sono tante e luminose, quasi neve (ultimi due fotogrammi): ti consiglio di ridurle."
+          "\nGli scatti sono fatti con una luce più semplice di quella del gioco.",
           [("img", "tuffo_griglia.jpg", "Il tuffo, un fotogramma ogni decimo di secondo circa", 1200)],
-          OK),
+          [("ok", "Approvo così"), ("gocce", "Sì, ma meno gocce"), ("cambia", "Da cambiare")]),
+        V("VALV", "8. La valvola nel corridoio degli interni",
+          "È sul muro all'altezza della testa e sporge di 30 cm: ci passi attraverso."
+          "\nA: la sposto in alto, sul tubo grande del soffitto, tutta sopra i 2 m. La vedi alzando lo sguardo. Consigliata."
+          "\nB: resta dov'è, ma ci sbatti contro come contro un muro."
+          "\nC: più piccola e più vicina al muro, ma resta all'altezza della testa.",
+          [("img", "valvola_adesso.jpg", "La valvola adesso")],
+          [("A", "A"), ("B", "B"), ("C", "C"), ("vedere", "Fammi vedere")]),
+        V("TURB", "9. La turbina prima della saracinesca",
+          "La ruota di 60 cm sul muro scende fino a 1,75 m: ci passi attraverso con la testa."
+          "\nA: la alzo di 30 cm, fin sotto il soffitto. Stessa ruota, che gira quando arriva l'acqua. Consigliata."
+          "\nB: resta dov'è, ma ci sbatti contro."
+          "\nC: una ruota più piccola, alzata di poco: si legge meno.",
+          [("img", "turbina_adesso.jpg", "La turbina adesso, al buio")],
+          [("A", "A"), ("B", "B"), ("C", "C"), ("vedere", "Fammi vedere")]),
     ]))
 
 CORRETTI = [
