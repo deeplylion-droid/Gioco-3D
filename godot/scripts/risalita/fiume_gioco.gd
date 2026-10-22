@@ -331,6 +331,22 @@ func _scivoli() -> void:
 				_faccia(st_g, [pt.call(da, lato * (a + T), ya + SOPRA), pt.call(da, lato * b, 0.0), pt.call(db, lato * b, 0.0), pt.call(db, lato * (a + T), yb + SOPRA)], Vector3.UP + r * lato)
 			# l'acqua dello scivolo
 			_faccia(st_a, [pt.call(da, -a + 0.02, ya), pt.call(da, a - 0.02, ya), pt.call(db, a - 0.02, yb), pt.call(db, -a + 0.02, yb)], Vector3.UP)
+		# il bordo arrotondato della vasca a U, come i bordi degli scivoli del parco
+		for lato in [-1.0, 1.0]:
+			var ra: Vector3 = pt.call(d0, lato * (a + T * 0.5), ACQUA + SOPRA + 0.02)
+			var rb: Vector3 = pt.call(d1, lato * (a + T * 0.5), ACQUA + quota_raggio(d1) + SOPRA + 0.02)
+			var bordo := MeshInstance3D.new()
+			var cm := CylinderMesh.new()
+			cm.top_radius = 0.045
+			cm.bottom_radius = 0.045
+			cm.height = ra.distance_to(rb)
+			cm.radial_segments = 12
+			bordo.mesh = cm
+			bordo.material_override = giallo
+			var asse := (rb - ra).normalized()
+			var x := asse.cross(Vector3.UP).normalized()
+			bordo.transform = Transform3D(Basis(x, asse, x.cross(asse)), (ra + rb) * 0.5)
+			add_child(bordo)
 		# le teste delle falde: in cima verso il canale, in fondo verso la vasca, fin sotto il pelo
 		for lato in [-1.0, 1.0]:
 			var y1 := ACQUA + quota_raggio(d1)
@@ -348,6 +364,10 @@ func _vetroresina(c: Color) -> StandardMaterial3D:
 	m.normal_enabled = true
 	m.normal_texture = load("res://assets/ambiente/torre/torre_scivoli_vetroresina_nrm.jpg")
 	m.normal_scale = 0.5
+	# la vetroresina vecchia: lucida a chiazze (la rugosità della torre degli scivoli)
+	m.roughness = 1.0
+	m.roughness_texture = load("res://assets/ambiente/torre/torre_scivoli_vetroresina_orm.jpg")
+	m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true
 	m.uv1_scale = Vector3.ONE * 0.5
