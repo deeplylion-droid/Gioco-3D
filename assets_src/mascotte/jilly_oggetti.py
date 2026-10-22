@@ -371,25 +371,35 @@ def collo_d_oca():
         cu = bpy.data.curves.new(f'braccio_{lato}', 'CURVE'); cu.dimensions = '3D'
         cu.bevel_depth = 0.011; cu.bevel_resolution = 3; cu.resolution_u = 12
         sp = cu.splines.new('BEZIER')
-        punti = [(x, -0.012, 0.72), (x, -0.16, 0.86), (x, -0.36, 0.85), (x, -0.46, 0.76)]
+        bocca = Vector((x, -0.48, 0.72))
+        d = (centro + Vector((x * 0.6, 0, 0)) - bocca).normalized()
+        q = Vector((0, 0, -1)).rotation_difference(d)
+        # la cima del paralume (la bocca stretta): lì il portalampada, e lì arriva il braccio (ci entra di 1 cm)
+        cima = bocca - d * 0.06
+        punti = [(x, -0.012, 0.72), (x, -0.16, 0.86), (x, -0.36, 0.85), tuple(cima - d * 0.03), tuple(cima + d * 0.01)]
         sp.bezier_points.add(len(punti) - 1)
         for bp, pt in zip(sp.bezier_points, punti):
             bp.co = pt; bp.handle_left_type = bp.handle_right_type = 'AUTO'
         br = collega(bpy.data.objects.new(f'lampada_{lato}_braccio', cu)); br.data.materials.append(ferro)
         bpy.context.view_layer.objects.active = br; br.select_set(True)
         bpy.ops.object.convert(target='MESH'); br.select_set(False)
-        bocca = Vector((x, -0.48, 0.72))
-        d = (centro + Vector((x * 0.6, 0, 0)) - bocca).normalized()
-        q = Vector((0, 0, -1)).rotation_difference(d)
+        # il portalampada: un cilindro di ferro dalla cima del paralume in giù, appena più largo della bocca
+        # stretta (il paralume ci si appoggia); la lampadina avvitata sotto
+        lungo = 0.045
+        bpy.ops.mesh.primitive_cylinder_add(vertices=16, radius=0.024, depth=lungo, location=cima + d * (lungo / 2 - 0.005))
+        po = bpy.context.active_object; po.name = f'lampada_{lato}_portalampada'
+        po.rotation_mode = 'QUATERNION'; po.rotation_quaternion = q
+        po.data.materials.append(ferro)
         bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=0.075, radius2=0.022, depth=0.12, end_fill_type='NOTHING',
                                         location=bocca)
         pa = bpy.context.active_object; pa.name = f'lampada_{lato}_paralume'
         pa.rotation_mode = 'QUATERNION'; pa.rotation_quaternion = q
         sol = pa.modifiers.new('spessore', 'SOLIDIFY'); sol.thickness = 0.004
         pa.data.materials.append(smalto)
-        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.025, location=bocca + d * 0.035)
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.025,
+                                             location=cima + d * (lungo - 0.005 + 0.022))
         lb = bpy.context.active_object; lb.name = f'lampada_{lato}_lampadina'; lb.data.materials.append(vetro)
-        e = bpy.data.objects.new(f'luce_{lato}', None); collega(e); e.location = bocca + d * 0.05
+        e = bpy.data.objects.new(f'luce_{lato}', None); collega(e); e.location = cima + d * (lungo + 0.03)
 
 
 if __name__ == '__main__':

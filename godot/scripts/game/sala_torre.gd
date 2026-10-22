@@ -786,18 +786,37 @@ func _segnali_strada(radice: Node3D) -> void:
 				punti.append(base + lat * (sg * mezza) + Vector3.UP * y - v * 0.08)
 				y += 0.25
 		var x := -mezza + 0.2
+		var sp := get_world_3d().direct_space_state if is_inside_tree() else null
 		while x < mezza - 0.1:
-			punti.append(base + lat * x + Vector3.UP * (alto - 0.09) - v * 0.06)
+			var q := base + lat * x + Vector3.UP * (alto - 0.09) - v * 0.06
+			if sp:
+				# appoggiato alla traversa: il led va a contatto con la cosa più vicina sopra o dietro (dai dati restava
+				# staccato di qualche centimetro), infilato di 5 mm
+				var meglio := INF
+				var spinta := Vector3.ZERO
+				for dir in [Vector3.UP, v]:
+					var h := sp.intersect_ray(PhysicsRayQueryParameters3D.create(q, q + dir * 0.2, Layers.WORLD))
+					if not h.is_empty():
+						var d := q.distance_to(h.position as Vector3)
+						if d < meglio:
+							meglio = d
+							spinta = dir * maxf(d - led.radius + 0.005, 0.0)
+				q += spinta
+			punti.append(q)
 			x += 0.25
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = led
 		mm.instance_count = punti.size()
+		var tr: Array[Transform3D] = []
 		for i in punti.size():
-			mm.set_instance_transform(i, Transform3D(Basis.IDENTITY, punti[i]))
+			tr.append(Transform3D(Basis.IDENTITY, punti[i]))
+			mm.set_instance_transform(i, tr[i])
 		var mi := MultiMeshInstance3D.new()
 		mi.name = "LedImbocco"
 		mi.multimesh = mm
+		# per il controllo di posizionamento: senza schermo il MultiMesh non conserva le trasformazioni
+		mi.set_meta(&"trasformazioni", tr)
 		mi.material_override = m_led
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		radice.add_child(mi)
@@ -948,7 +967,15 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 	# il portalampada: il bulbo è avvitato sotto il cappello (senza, galleggiava dentro la gabbia)
 	_asta(radice, p + Vector3(0, 0.05, 0), p + Vector3(0, 0.13, 0), 0.028, metallo)
 	if appoggio == "palo":
-		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, -1.25, 0), 0.03, metallo)
+		# il palo fino alla pedana vera sotto (dai dati finiva 1 cm sopra), piantato 2 cm
+		var giu := p + Vector3(0, -1.25, 0)
+		var sp := get_world_3d().direct_space_state if is_inside_tree() else null
+		if sp:
+			var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, -0.2, 0), p + Vector3(0, -3.0, 0), Layers.WORLD)
+			var h := sp.intersect_ray(q)
+			if not h.is_empty():
+				giu = (h.position as Vector3) + Vector3(0, -0.02, 0)
+		_asta(radice, p + Vector3(0, 0.18, 0), giu, 0.03, metallo)
 	elif appoggio.begins_with("muro_"):
 		var verso: Vector3 = {"muro_n": Vector3.FORWARD, "muro_s": Vector3.BACK, "muro_e": Vector3.RIGHT, "muro_o": Vector3.LEFT}[appoggio]
 		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, 0.18, 0) + verso * 0.4, 0.025, metallo)
@@ -996,9 +1023,11 @@ func _faro(radice: Node3D, p: Vector3, mira: Vector3, attacco = null) -> void:
 	corpo.add_child(lente)
 	lente.rotation_degrees = Vector3(90, 0, 0)
 	lente.position = Vector3(0, 0, -0.145)
-	# staffa a U attorno al corpo e braccio fino alla colonna
+	# staffa a U attorno al corpo e braccio fino alla colonna; i due perni reggono il corpo nella staffa (senza, il
+	# corpo stava sospeso a 4 cm dai bracci)
 	for sg in [-1.0, 1.0]:
 		_asta(corpo, Vector3(sg * 0.24, 0, 0), Vector3(sg * 0.24, -0.26, 0), 0.02, metallo, false)
+		_asta(corpo, Vector3(sg * 0.25, 0, 0), Vector3(sg * 0.16, 0, 0), 0.025, metallo, false)
 	_asta(corpo, Vector3(-0.24, -0.26, 0), Vector3(0.24, -0.26, 0), 0.02, metallo, false)
 	if attacco != null:
 		var a: Vector3 = attacco
@@ -1134,14 +1163,17 @@ func _catena(radice: Node3D, fondo: Vector3) -> void:
 	cm.top_radius = 0.02
 	cm.bottom_radius = 0.02
 	var basso := fondo.y + 6.0
-	cm.height = 14.0 - basso
+	# il cavo arriva 30 cm sotto l'ultimo grappolo: i braccetti delle lampadine più basse (fino a 20 cm sotto)
+	# partivano dal vuoto
+	var fine := basso - 0.3
+	cm.height = 14.0 - fine
 	cavo.mesh = cm
 	var nero := StandardMaterial3D.new()
 	nero.albedo_color = Color(0.06, 0.06, 0.06)
 	nero.metallic = 0.8
 	cavo.material_override = nero
 	radice.add_child(cavo)
-	cavo.global_position = Vector3(fondo.x + 1.2, (14.0 + basso) / 2.0, fondo.z)
+	cavo.global_position = Vector3(fondo.x + 1.2, (14.0 + fine) / 2.0, fondo.z)
 	for y in [9.0, -3.0, basso]:
 		for k in 3:
 			var a := TAU * k / 3.0
