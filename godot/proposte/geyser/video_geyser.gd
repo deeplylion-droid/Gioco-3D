@@ -73,7 +73,8 @@ func _avvia() -> void:
 	# le polaroid e la medusa della vasca centrale, fuori inquadratura: col geyser in più si arrivava a 13,4 GB).
 	# Con la Risalita anche toglierli dopo non basta più (si caricano comunque): si carica una copia della
 	# scena senza i rami grossi e le loro risorse.
-	var togli := ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa", "Mascotte"]
+	var togli: Array = ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa", "Mascotte"]
+	togli.append_array(OS.get_environment("TOGLI").split(",", false))   # prove: altri rami da togliere
 	var level := _scena_senza(LEVEL, togli).instantiate()
 	for percorso in togli:
 		var n := level.get_node_or_null(NodePath(percorso))
