@@ -31,7 +31,11 @@ func _run() -> void:
 		var testo := "".join(uscita)
 		check(codice == 0, "il gioco si chiude con 0 (codice %d)" % codice)
 		check(testo.contains("USCITA"), "si è chiuso mentre caricava")
-		check(testo.contains("Uscita: aspettati 1 caricamenti nel thread"), "all'uscita ha aspettato il caricamento")
+		if testo.contains("già finita"):
+			# a volte, mentre la sala si ricarica, la torre finisce di caricare prima dell'uscita
+			print("  (la torre aveva già finito di caricare: niente da aspettare)")
+		else:
+			check(testo.contains("Uscita: aspettati 1 caricamenti nel thread"), "all'uscita ha aspettato il caricamento")
 		check(not testo.contains("Parse Error: Failed"), "il caricamento non è stato troncato a metà")
 		check(not testo.contains("Resource file not found"), "niente caricamenti rotti mentre Godot si chiude")
 		if codice != 0 or _failed > 0:

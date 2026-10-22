@@ -80,7 +80,8 @@ func _run() -> void:
 		for i in 5:
 			await get_tree().process_frame
 		print("sala uscita, ora quit")
-	print("USCITA con la torre in caricamento")
+	var in_corso: bool = get_tree().current_scene.get(&"_torre_in_caricamento")
+	print("USCITA con la torre in caricamento: %s" % ("IN CORSO" if in_corso else "già finita"))
 	_esci()
 
 
