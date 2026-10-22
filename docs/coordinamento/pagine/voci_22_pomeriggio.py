@@ -40,15 +40,18 @@ SEZIONI.append(("Inseguimento, due posti da decidere", [
     V("VAS2", "3. Da dove sale Jilly nella seconda vasca",
       "Lì sale sopra la condotta, ma così attraversa la grata di metallo sotto di lei, proprio all'altezza dei tuoi occhi."
       "\na: un buco nella grata, da cui sale."
-      "\nb: sale accanto alla vasca, come nella prima. Consigliata."
+      "\nb: sale accanto alla vasca, come nella prima. Consigliata. È già provata nel gioco (scatto qui sotto): per farle "
+      "posto, il serbatoio grande lì accanto si sposta di 1,5 m verso il muro."
       "\nc: non sale, si cala dall'alto scavalcando la condotta. Serve un'animazione nuova.",
-      [],
+      [("img", "vasca2_b.jpg", "b, provata nel gioco: lei sale accanto alla vasca, vista da dentro")],
       [("a", "a"), ("b", "b"), ("c", "c"), ("vedere", "Fammi vedere")]),
     V("GRATA", "4. Jilly dietro la grata",
-      "Dietro la grata il pavimento ha solo 60 cm d'acqua, e ora lei sale attraversandolo."
-      "\na: un pozzetto nel pavimento dietro la grata, come quello della fine, da cui sale."
-      "\nb: la grata cala davanti a un'apertura più grande, da cui lei arriva avanzando invece di salire. Serve un passaggio nuovo."
-      "\nc: è già lì, ferma al buio dietro la grata: la vedi quando la luce la prende, poi sbatte. Consigliata.",
+      "Dietro la grata il pavimento ha solo 60 cm d'acqua, e lei è più alta dello sbocco del tubo: ora sale attraversando "
+      "il pavimento e il tubo. Ogni soluzione cambia un po' quel punto."
+      "\na: un pozzetto nel pavimento dietro la grata, come quello della fine, da cui sale. Consigliata: è la più semplice."
+      "\nb: un'apertura più grande accanto al tubo, da cui lei arriva avanzando invece di salire. Serve anche una piccola animazione nuova."
+      "\nc: è già lì, ferma al buio dietro la grata, e la vedi quando la luce la prende; poi sbatte. Per farle posto, lo "
+      "sbocco del tubo va allargato di molto.",
       [("img", "grata_adesso.jpg", "La grata adesso")],
       [("a", "a"), ("b", "b"), ("c", "c"), ("vedere", "Fammi vedere")]),
 ]))
