@@ -34,6 +34,32 @@ func _run() -> void:
 			var r: Dictionary = sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(x, 1.0, z), Vector3(x, -5.0, z)))
 			riga += " %.3f" % ((r["position"] as Vector3).y if not r.is_empty() else 99.0)
 		printerr("SONDA fondo x %.2f:%s" % [x, riga])
+	var base := 0.0
+	var por := s.get_node("Sala/Interattivi/sala_portello_scarico") as MeshInstance3D
+	var pab := por.global_transform * por.get_aabb()
+	base = pab.position.y
+	var c := pab.get_center()
+	for rr in [1.0, 1.045, 1.09]:
+		var massimo := -INF
+		for k in 64:
+			var a := TAU * k / 64.0
+			var q := Vector3(c.x + cos(a) * rr, 1.0, c.z + sin(a) * rr)
+			var pq := PhysicsRayQueryParameters3D.create(q, q + Vector3(0, -6, 0))
+			var h: Dictionary = sp.intersect_ray(pq)
+			while not h.is_empty() and not String((h["collider"] as Node).get_path()).contains("piscina"):
+				pq.exclude = pq.exclude + [(h["collider"] as CollisionObject3D).get_rid()]
+				h = sp.intersect_ray(pq)
+			if not h.is_empty():
+				if (h["position"] as Vector3).y > base + 0.03 and rr == 1.0:
+					printerr("SONDA alto a %.0f gradi: %.3f %s" % [rad_to_deg(a), (h["position"] as Vector3).y, (h["collider"] as Node).get_path()])
+				massimo = maxf(massimo, (h["position"] as Vector3).y)
+		printerr("SONDA anello r %.3f: fondo massimo %.4f, base del portellone %.4f" % [rr, massimo, base])
+	var duck := s.get_node_or_null("Sala/Oggetti/ogg_paperella_gigante_0") as Node3D
+	if duck:
+		var dab := AABB()
+		for m in duck.find_children("*", "MeshInstance3D", true, false) + ([duck] if duck is MeshInstance3D else []):
+			dab = (m as MeshInstance3D).global_transform * (m as MeshInstance3D).get_aabb() if dab.size == Vector3.ZERO else dab.merge((m as MeshInstance3D).global_transform * (m as MeshInstance3D).get_aabb())
+		printerr("SONDA paperella ", dab, " centro portellone ", c)
 	var r2: Dictionary = sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(1.2, 1.0, 2.9), Vector3(1.2, -5.0, 2.9)))
 	printerr("SONDA sotto la Polaroid05: ", r2.get("position"), " ", r2.get("collider"))
 	get_tree().quit()

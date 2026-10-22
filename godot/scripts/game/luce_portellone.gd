@@ -57,7 +57,8 @@ func _ready() -> void:
 	_anello.mesh = toro
 	_anello.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(_anello)
-	_anello.global_position = Vector3(centro.x, _fondo_portellone() + spessore_anello * 0.5 + 0.001, centro.z)
+	# il fondo sotto l'anello è al massimo 1,2 cm sopra la base del portellone (fondo a conca, misurato il 22 ottobre)
+	_anello.global_position = Vector3(centro.x, _fondo_portellone() + 0.013 + spessore_anello * 0.5, centro.z)
 	# La luce dentro l'acqua: l'addon la usa anche per far brillare il volume d'acqua.
 	var glow_script := load("res://addons/acqua/scripts/water_glow_light.gd") as Script
 	_luce = OmniLight3D.new() if glow_script == null else glow_script.new() as OmniLight3D

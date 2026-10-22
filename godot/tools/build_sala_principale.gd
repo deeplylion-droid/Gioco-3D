@@ -688,7 +688,7 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 		[2, Vector3(-6.0, 0.6, 8.0), 1.2],      # su un lettino
 		[3, p3, rack_yaw + 0.35],                # sulla rastrelliera dei bagnini, accanto allo zaino
 		[4, Vector3(-16.03, 1.2416, -15.35), 0.2],  # sulla struttura di gioco: in cima alla scala, dove ci si arriva a piedi
-		[5, Vector3(1.2, -2.1744, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
+		[5, Vector3(1.2, -2.1684, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
 		[6, Vector3(-4.6, -1.9, 4.2), 0.9],     # vicino alle bocchette della camera delle onde
 		[7, Vector3(8.2, 1.2, -2.4), 1.6],      # sulla sedia del bagnino
 		[8, Vector3(-8.9, 0.016, 6.6), 0.7],      # sul bordo della vasca d'arrivo (sulla copertina: non sotto il pannello caduto)

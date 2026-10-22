@@ -1,17 +1,87 @@
 [
 	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) (ambienti-1)",
-		"nodo": "Sala/Dettagli/@MeshInstance3D@40",
+		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.25 m)",
+		"nodo": "Vasca/Medusa/@Node3D@76/@MeshInstance3D@77",
 		"pos": [
-			-17.43,
-			0.06,
-			3.24
+			-0.35,
+			1.27,
+			11.98
+		],
+		"problema": "sospeso",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/SalaPompe/SALA_tubi per 50 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_scale",
+		"pos": [
+			3.83,
+			-6.2,
+			46.31
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 52.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16313",
+		"pos": [
+			-37.8,
+			-3.05,
+			41.61
 		],
 		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15978/Mesh_0 per 11 cm (stato: risalita_arrivo) [modello: lampada_emergenza.glb]",
+		"nodo": "Risalita/Fiume/@Node3D@15980/Piastra",
+		"pos": [
+			-37.45,
+			-2.17,
+			104.6
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@16012/Mesh_0 per 8 cm (stato: risalita_arrivo) [modello: lampada_emergenza.glb]",
+		"nodo": "Risalita/Fiume/@Node3D@16014/Piastra",
+		"pos": [
+			-37.51,
+			-2.17,
+			83.19
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15915/Mesh_0 per 7 cm (stato: risalita_arrivo) [modello: lampada_emergenza.glb]",
+		"nodo": "Risalita/Fiume/@Node3D@15917/Piastra",
+		"pos": [
+			-44.99,
+			-2.17,
+			111.05
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15883/Mesh_0 per 5 cm (stato: risalita_arrivo)",
+		"nodo": "Risalita/Fiume/lampada_emergenza/Piastra",
+		"pos": [
+			-15.68,
+			-2.17,
+			100.68
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "risalita"
 	},
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 189.0 cm)",
@@ -98,34 +168,6 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
-		"pos": [
-			19.5,
-			0.0,
-			-11.5
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
-		"pos": [
-			19.5,
-			0.0,
-			-18.5
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (6 celle da 25 cm) (pavimenti fra y -9.05 e -8.89), senza collisione (si attraversa)",
 		"motivo": "i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
@@ -196,49 +238,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Sala/Piscina/sala_piscina_onde per 38 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 130 cm (ambienti-1)",
-		"nodo": "Sala/Interattivi/sala_portello_scarico",
-		"pos": [
-			0.0,
-			-2.19,
-			2.02
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Sala/Piscina/sala_piscina_onde per 30 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Sala/Piscina/sala_piscina_onde per 30 cm (ambienti-2)",
-		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
-		"pos": [
-			0.0,
-			-2.32,
-			2.0
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 130 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 130 cm (ambienti-1)",
-		"nodo": "Sala/Interattivi/sala_portello_scarico",
-		"pos": [
-			0.0,
-			-2.2,
-			2.02
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Sala/Interattivi/sala_portello_scarico per 83 cm",
+		"dettaglio": "passa dentro Sala/Piscina/sala_piscina_onde per 13 cm",
 		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1)",
 		"nodo": "Piscina/LucePortellone/Anello",
 		"pos": [
@@ -250,118 +250,6 @@
 		"squadra": "ambienti-1",
 		"stato": "da correggere",
 		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1)",
-		"nodo": "Piscina/LucePortellone/Anello",
-		"pos": [
-			0.0,
-			-2.18,
-			2.02
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/Valvola/Scarico",
-		"pos": [
-			9.07,
-			0.0,
-			-19.74
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@764 per 20 cm [modello: lampada_emergenza.glb]",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Risalita/@MeshInstance3D@764 per 20 cm (enigmi)",
-		"nodo": "Risalita/@Node3D@841/Mesh_0",
-		"pos": [
-			-37.77,
-			-3.2,
-			37.35
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0 per 34 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b",
-		"pos": [
-			-15.92,
-			2.2,
-			34.86
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0 per 27 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b_vetro",
-		"pos": [
-			-15.89,
-			2.2,
-			34.87
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b",
-		"pos": [
-			-15.86,
-			2.16,
-			34.86
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b_vetro",
-		"pos": [
-			-15.83,
-			2.16,
-			34.87
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/SalaPompe/SALA_tubi per 50 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/SalaPompe/SALA_tubi per 50 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_scale",
-		"pos": [
-			3.83,
-			-6.2,
-			46.31
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
 	},
 	{
 		"dettaglio": "il 87% dei suoi vertici è dentro Interni/Ambienti/Corridoio/neon_corridoio_2",
@@ -448,62 +336,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0 per 34 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 20 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1",
-		"pos": [
-			-2.31,
-			-6.9,
-			49.86
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0 per 26 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 25 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1_vetro",
-		"pos": [
-			-2.29,
-			-6.9,
-			49.87
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 20 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 20 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1",
-		"pos": [
-			-2.18,
-			-6.94,
-			49.86
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 25 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 25 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1_vetro",
-		"pos": [
-			-2.18,
-			-6.94,
-			49.87
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
 		"dettaglio": "il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_0",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
@@ -560,20 +392,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/lampada_rc1 per 23 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/lampada_rc1 per 23 cm (enigmi)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_staffa1",
-		"pos": [
-			-2.26,
-			-7.02,
-			49.86
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
 		"dettaglio": "il 81% dei suoi vertici è dentro Tecnici/Ambienti/Raccordo/plafoniera_rc",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera",
 		"nodo": "Tecnici/Ambienti/Raccordo/neon_rc_neon/neon_rc_tubo_sfarfalla",
@@ -586,230 +404,6 @@
 		"squadra": "enigmi",
 		"stato": "voluto",
 		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
-		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-1)",
-		"nodo": "Sala/Dettagli/det_tubo_muro_7cm_2m",
-		"pos": [
-			-2.18,
-			3.56,
-			-23.92
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 297.5 cm)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 297.5 cm) (ambienti-2)",
-		"nodo": "FondoPozzo",
-		"pos": [
-			31.0,
-			-25.0,
-			-15.0
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 333.5 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 333.5 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5012",
-		"pos": [
-			40.55,
-			-16.0,
-			-25.0
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5014",
-		"pos": [
-			77.85,
-			-22.0,
-			-10.0
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5016",
-		"pos": [
-			60.0,
-			-18.0,
-			-31.85
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5018",
-		"pos": [
-			50.0,
-			-26.0,
-			1.85
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5020",
-		"pos": [
-			70.0,
-			-14.0,
-			1.85
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5092/POMPA_2",
-		"pos": [
-			54.4,
-			-30.27,
-			-23.6
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5098/det_griglia_caduta",
-		"pos": [
-			73.6,
-			-28.96,
-			-21.8
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5100/SCRIVANIA",
-		"pos": [
-			48.0,
-			-19.61,
-			-0.35
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5101/SEDIA",
-		"pos": [
-			48.2,
-			-19.52,
-			-1.15
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5104/det_vetri_rotti_1",
-		"pos": [
-			51.67,
-			-20.0,
-			-0.83
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5105/det_foglio_2",
-		"pos": [
-			49.4,
-			-19.98,
-			-1.0
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 360.0 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 360.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5108/det_tubo_valvola_T",
-		"pos": [
-			40.58,
-			-29.42,
-			-12.4
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5126/det_corda_pendente_2",
-		"pos": [
-			74.01,
-			-21.7,
-			0.9
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.9 cm) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.9 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5127/det_corda_rotolo",
-		"pos": [
-			41.0,
-			-29.94,
-			-6.2
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -34.00), con la collisione (ci si sbatte contro)",
@@ -840,7 +434,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimenti fra y -28.58 e -25.58), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -28.58), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_2",
 		"pos": [
@@ -910,135 +504,9 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_0 per 11 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_0 per 11 cm (ambienti-2)",
-		"nodo": "TorreScivoli/torre_tubo_inseguimento",
-		"pos": [
-			40.82,
-			-18.66,
-			-17.4
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_0 per 170 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_0 per 170 cm (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_1",
-		"pos": [
-			54.72,
-			-21.89,
-			-13.6
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_1 per 169 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_1 per 169 cm (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
-		"pos": [
-			54.72,
-			-21.91,
-			-16.41
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_1 per 117 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_1 per 117 cm (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_3",
-		"pos": [
-			63.92,
-			-24.9,
-			-25.28
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_2 per 148 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_2 per 148 cm (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_5",
-		"pos": [
-			72.22,
-			-27.93,
-			-6.6
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_3 per 17 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_3 per 17 cm (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4",
-		"pos": [
-			66.78,
-			-27.92,
-			-3.6
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_2 per 182 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_2 per 182 cm (ambienti-2)",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2",
-		"pos": [
-			67.02,
-			-24.9,
-			-25.28
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5120/det_tubo_verticale_3m",
-		"pos": [
-			40.49,
-			-25.0,
-			-28.5
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5120/det_tubo_verticale_3m",
-		"pos": [
-			40.49,
-			-22.0,
-			-28.5
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15333/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15833/Mesh_0",
 		"pos": [
 			-35.0,
 			-2.69,
@@ -1052,7 +520,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15341/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15841/Mesh_0",
 		"pos": [
 			-59.0,
 			-2.69,
@@ -1066,7 +534,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15365/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15865/Mesh_0",
 		"pos": [
 			-35.0,
 			-2.69,
@@ -1080,7 +548,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 103.0 cm) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 103.0 cm) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15287/@Node3D@15291/@MeshInstance3D@15293",
+		"nodo": "Risalita/Fiume/@Node3D@15787/@Node3D@15791/@MeshInstance3D@15793",
 		"pos": [
 			-7.67,
 			-4.35,
@@ -1094,7 +562,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 103.0 cm) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 103.0 cm) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15294/@Node3D@15298/@MeshInstance3D@15300",
+		"nodo": "Risalita/Fiume/@Node3D@15794/@Node3D@15798/@MeshInstance3D@15800",
 		"pos": [
 			-34.2,
 			-4.35,
@@ -1108,7 +576,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm) (stato: risalita_arrivo) [modello: transenna.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm) (stato: risalita_arrivo) [modello: transenna.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15551/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16051/Mesh_0",
 		"pos": [
 			-20.2,
 			-5.11,
@@ -1122,7 +590,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 93.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 93.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@15739",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@16239",
 		"pos": [
 			-39.41,
 			-4.44,
@@ -1136,7 +604,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 51.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 51.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15809",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16309",
 		"pos": [
 			-39.79,
 			-3.05,
@@ -1150,7 +618,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 42.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 42.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15810",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16310",
 		"pos": [
 			-37.5,
 			-3.15,
@@ -1164,7 +632,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 195.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 195.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15811",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16311",
 		"pos": [
 			-33.41,
 			-3.1,
@@ -1178,7 +646,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 65.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 65.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15812",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16312",
 		"pos": [
 			-35.6,
 			-2.95,
@@ -1192,7 +660,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 65.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 65.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15814",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16314",
 		"pos": [
 			-33.41,
 			-4.5,
@@ -1206,7 +674,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 52.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 52.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15815",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16315",
 		"pos": [
 			-39.79,
 			-4.65,
@@ -1218,9 +686,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.03 e 1.07 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15287/@Node3D@15291/@MeshInstance3D@15292",
+		"nodo": "Risalita/Fiume/@Node3D@15787/@Node3D@15791/@MeshInstance3D@15793",
 		"pos": [
 			-7.75,
 			-5.4,
@@ -1234,7 +702,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (14 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (14 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15539/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16039/Mesh_0",
 		"pos": [
 			-13.25,
 			-5.4,
@@ -1248,7 +716,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (20 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (20 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15544/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16044/Mesh_0",
 		"pos": [
 			-16.5,
 			-5.4,
@@ -1262,7 +730,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (21 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (21 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15551/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16051/Mesh_0",
 		"pos": [
 			-19.0,
 			-5.4,
@@ -1276,7 +744,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (14 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (14 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15562/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16062/Mesh_0",
 		"pos": [
 			-24.25,
 			-5.4,
@@ -1304,7 +772,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.59 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.59 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15589/@MeshInstance3D@15591",
+		"nodo": "Risalita/Fiume/@Node3D@16089/@MeshInstance3D@16091",
 		"pos": [
 			-29.25,
 			-5.4,
@@ -1318,7 +786,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (18 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (18 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15567/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16067/Mesh_0",
 		"pos": [
 			-26.0,
 			-5.4,
@@ -1332,7 +800,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: palma_finta.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: palma_finta.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15604/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16104/Mesh_0",
 		"pos": [
 			-20.0,
 			-5.4,
@@ -1346,7 +814,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@Node3D@15661/@Node3D@15665/@MeshInstance3D@15666",
+		"nodo": "Risalita/Infermeria/@Node3D@16161/@Node3D@16165/@MeshInstance3D@16166",
 		"pos": [
 			-35.5,
 			-5.4,
@@ -1360,7 +828,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@Node3D@15644/@Node3D@15648/@MeshInstance3D@15649",
+		"nodo": "Risalita/Infermeria/@Node3D@16144/@Node3D@16148/@MeshInstance3D@16149",
 		"pos": [
 			-38.25,
 			-5.4,
@@ -1374,7 +842,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.03 e 1.06 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.03 e 1.06 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@Node3D@15644/@Node3D@15648/@MeshInstance3D@15650",
+		"nodo": "Risalita/Infermeria/@Node3D@16144/@Node3D@16148/@MeshInstance3D@16150",
 		"pos": [
 			-38.25,
 			-5.4,
@@ -1456,9 +924,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.59 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.60 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.59 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15615/@MeshInstance3D@15617",
+		"nodo": "Risalita/Fiume/@Node3D@16115/@MeshInstance3D@16118",
 		"pos": [
 			-37.75,
 			-5.4,
@@ -1472,7 +940,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15615/@MeshInstance3D@15616",
+		"nodo": "Risalita/Fiume/@Node3D@16115/@MeshInstance3D@16116",
 		"pos": [
 			-38.0,
 			-5.4,
@@ -1486,7 +954,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15294/@Node3D@15298/@MeshInstance3D@15299",
+		"nodo": "Risalita/Fiume/@Node3D@15794/@Node3D@15798/@MeshInstance3D@15799",
 		"pos": [
 			-34.25,
 			-5.4,
@@ -1514,7 +982,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.40 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: salvagente.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.40 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: salvagente.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15614/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16114/Mesh_0",
 		"pos": [
 			-32.5,
 			-5.4,
@@ -1526,7 +994,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 (stato: risalita_arrivo)",
+		"dettaglio": "entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@16290 (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 (stato: risalita_arrivo)",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella1",
 		"pos": [
@@ -1540,7 +1008,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 (stato: risalita_arrivo)",
+		"dettaglio": "entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@16290 (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 (stato: risalita_arrivo)",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella2",
 		"pos": [
@@ -1554,7 +1022,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 (stato: risalita_arrivo)",
+		"dettaglio": "entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@16290 (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: entra dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 (stato: risalita_arrivo)",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella3",
 		"pos": [
@@ -1568,9 +1036,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15586/Mesh_0 per 115 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@16086/Mesh_0 per 115 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15586/Mesh_0 per 115 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@MeshInstance3D@15251",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15751",
 		"pos": [
 			-35.6,
 			-5.62,
@@ -1582,9 +1050,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15613/Mesh_0 per 93 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@16113/Mesh_0 per 93 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15613/Mesh_0 per 93 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@MeshInstance3D@15259",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15759",
 		"pos": [
 			-33.6,
 			-5.62,
@@ -1596,9 +1064,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15357/Mesh_0 per 245 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15857/Mesh_0 per 245 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15357/Mesh_0 per 245 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@MeshInstance3D@15251",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15751",
 		"pos": [
 			-35.0,
 			-5.62,
@@ -1610,9 +1078,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15252 per 5 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15752 per 5 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15252 per 5 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15520/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16020/Mesh_0",
 		"pos": [
 			-36.39,
 			-5.52,
@@ -1624,9 +1092,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15584/Mesh_0 per 117 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@16084/Mesh_0 per 117 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15584/Mesh_0 per 117 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@MeshInstance3D@15255",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15755",
 		"pos": [
 			-37.58,
 			-5.62,
@@ -1638,9 +1106,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15253 per 245 cm (stato: risalita_arrivo) [modello: paratia.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15753 per 245 cm (stato: risalita_arrivo) [modello: paratia.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15253 per 245 cm (stato: risalita_arrivo) [modello: paratia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15349/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15849/Mesh_0",
 		"pos": [
 			-55.75,
 			-5.52,
@@ -1652,9 +1120,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15254 per 3 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15754 per 3 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15254 per 3 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15521/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@16021/Mesh_0",
 		"pos": [
 			-36.39,
 			-5.52,
@@ -1668,7 +1136,7 @@
 	{
 		"dettaglio": "passa dentro Risalita/Fiume/Scaletta/Mesh_0 per 50 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/Scaletta/Mesh_0 per 50 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@MeshInstance3D@15259",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15759",
 		"pos": [
 			-36.2,
 			-5.62,
@@ -1682,7 +1150,7 @@
 	{
 		"dettaglio": "passa dentro Risalita/Fiume/transenna/Mesh_0 per 50 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/transenna/Mesh_0 per 50 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15287/@Node3D@15291/@MeshInstance3D@15292",
+		"nodo": "Risalita/Fiume/@Node3D@15787/@Node3D@15791/@MeshInstance3D@15792",
 		"pos": [
 			-7.23,
 			-4.79,
@@ -1696,7 +1164,7 @@
 	{
 		"dettaglio": "passa dentro Risalita/Fiume/transenna/Mesh_0 per 35 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/transenna/Mesh_0 per 35 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@15593/@MeshInstance3D@15594",
+		"nodo": "Risalita/Fiume/@Node3D@16093/@MeshInstance3D@16094",
 		"pos": [
 			-8.0,
 			-4.79,
@@ -1708,9 +1176,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15279 per 37 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15779 per 20 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15279 per 37 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15821",
+		"nodo": "Risalita/@MeshInstance3D@16321",
 		"pos": [
 			-34.05,
 			-2.7,
@@ -1722,9 +1190,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15279 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15779 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15279 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15827",
+		"nodo": "Risalita/@MeshInstance3D@16327",
 		"pos": [
 			-33.9,
 			-4.9,
@@ -1736,9 +1204,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15281 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15781 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15281 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15823",
+		"nodo": "Risalita/@MeshInstance3D@16323",
 		"pos": [
 			-36.1,
 			-4.9,
@@ -1750,9 +1218,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15281 per 37 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15781 per 20 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15281 per 37 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15821",
+		"nodo": "Risalita/@MeshInstance3D@16321",
 		"pos": [
 			-35.95,
 			-2.7,
@@ -1764,9 +1232,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@15630 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@16130 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15630 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15819",
+		"nodo": "Risalita/@MeshInstance3D@16319",
 		"pos": [
 			-35.0,
 			-5.45,
@@ -1778,9 +1246,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@15651 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@16151 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15651 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15823",
+		"nodo": "Risalita/@MeshInstance3D@16323",
 		"pos": [
 			-36.1,
 			-4.9,
@@ -1792,9 +1260,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15825 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16325 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15825 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15651",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16151",
 		"pos": [
 			-36.1,
 			-4.15,
@@ -1806,9 +1274,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15825 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16325 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15825 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15652",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16152",
 		"pos": [
 			-36.1,
 			-3.35,
@@ -1820,9 +1288,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15283 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Fiume/@MeshInstance3D@15783 per 140 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15283 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15821",
+		"nodo": "Risalita/@MeshInstance3D@16321",
 		"pos": [
 			-35.0,
 			-2.7,
@@ -1834,9 +1302,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15821 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16321 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15821 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15652",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16152",
 		"pos": [
 			-35.85,
 			-2.7,
@@ -1848,9 +1316,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15821 per 26 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16321 per 26 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15821 per 26 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15656",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16156",
 		"pos": [
 			-34.15,
 			-2.7,
@@ -1862,9 +1330,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15821 per 31 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16321 per 100 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15821 per 31 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15659",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16159",
 		"pos": [
 			-35.0,
 			-2.7,
@@ -1876,23 +1344,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15821 per 20 cm (stato: risalita_arrivo)",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15821 per 20 cm (stato: risalita_arrivo)",
-		"nodo": "Risalita/Infermeria/lampada_emergenza/Mesh_0",
-		"pos": [
-			-35.0,
-			-2.72,
-			47.97
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
-	},
-	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15827 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16327 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15827 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15655",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16155",
 		"pos": [
 			-33.9,
 			-4.9,
@@ -1904,9 +1358,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15829 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16329 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15829 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15655",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16155",
 		"pos": [
 			-33.9,
 			-4.15,
@@ -1918,9 +1372,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15829 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16329 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15829 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15656",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16156",
 		"pos": [
 			-33.9,
 			-3.35,
@@ -1932,9 +1386,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15421/Mesh_0 per 7 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15921/Mesh_0 per 7 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15421/Mesh_0 per 7 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15415/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15915/Mesh_0",
 		"pos": [
 			-46.43,
 			-3.0,
@@ -1988,9 +1442,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15395/Mesh_0 per 78 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15895/Mesh_0 per 78 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15395/Mesh_0 per 78 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15390/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15890/Mesh_0",
 		"pos": [
 			-13.48,
 			-2.98,
@@ -2002,7 +1456,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15419/Mesh_0 per 8 cm (stato: risalita_arrivo)",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15919/Mesh_0 per 8 cm (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15419/Mesh_0 per 8 cm (stato: risalita_arrivo)",
 		"nodo": "Risalita/Fiume/liane/Mesh_0",
 		"pos": [
@@ -2016,9 +1470,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15425/Mesh_0 per 5 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15925/Mesh_0 per 5 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15425/Mesh_0 per 5 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15419/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15919/Mesh_0",
 		"pos": [
 			-49.14,
 			-3.1,
@@ -2030,9 +1484,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "il 61% dei suoi vertici è dentro Risalita/Fiume/@Node3D@15442/Mesh_0 (stato: risalita_arrivo) [modello: liane.glb]",
+		"dettaglio": "il 61% dei suoi vertici è dentro Risalita/Fiume/@Node3D@15942/Mesh_0 (stato: risalita_arrivo) [modello: liane.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: il 61% dei suoi vertici è dentro Risalita/Fiume/@Node3D@15442/Mesh_0 (stato: risalita_arrivo) [modello: liane.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15444/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15944/Mesh_0",
 		"pos": [
 			-60.24,
 			-2.15,
@@ -2044,9 +1498,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15453/Mesh_0 per 11 cm (stato: risalita_arrivo) [modello: liane.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15953/Mesh_0 per 11 cm (stato: risalita_arrivo) [modello: liane.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15453/Mesh_0 per 11 cm (stato: risalita_arrivo) [modello: liane.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15455/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15955/Mesh_0",
 		"pos": [
 			-56.35,
 			-2.15,
@@ -2058,9 +1512,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15488/Mesh_0 per 4 cm (stato: risalita_arrivo) [modello: liane.glb]",
+		"dettaglio": "passa dentro Risalita/Fiume/@Node3D@15988/Mesh_0 per 4 cm (stato: risalita_arrivo) [modello: liane.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15488/Mesh_0 per 4 cm (stato: risalita_arrivo) [modello: liane.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@15490/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@15990/Mesh_0",
 		"pos": [
 			-51.43,
 			-2.15,
@@ -2086,9 +1540,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@15630 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@16130 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15630 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15832",
+		"nodo": "Risalita/@MeshInstance3D@16332",
 		"pos": [
 			-38.8,
 			-5.45,
@@ -2100,9 +1554,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@15638 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@16138 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15638 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15840",
+		"nodo": "Risalita/@MeshInstance3D@16340",
 		"pos": [
 			-37.7,
 			-4.9,
@@ -2114,9 +1568,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@15638 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@16138 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15638 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15842",
+		"nodo": "Risalita/@MeshInstance3D@16342",
 		"pos": [
 			-37.7,
 			-4.15,
@@ -2128,9 +1582,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@Node3D@15644/@Node3D@15648/@MeshInstance3D@15649 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@Node3D@16144/@Node3D@16148/@MeshInstance3D@16149 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@Node3D@15644/@Node3D@15648/@MeshInstance3D@15649 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@Node3D@15644/@MeshInstance3D@15646",
+		"nodo": "Risalita/Infermeria/@Node3D@16144/@MeshInstance3D@16146",
 		"pos": [
 			-38.33,
 			-4.37,
@@ -2142,9 +1596,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@15639 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@16139 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15639 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
-		"nodo": "Risalita/@MeshInstance3D@15842",
+		"nodo": "Risalita/@MeshInstance3D@16342",
 		"pos": [
 			-37.7,
 			-3.35,
@@ -2158,7 +1612,7 @@
 	{
 		"dettaglio": "passa dentro Risalita/Infermeria/Pulsante/PulsanteParco/sala_pulsante_portello_cassetta per 64 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/Pulsante/PulsanteParco/sala_pulsante_portello_cassetta per 64 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15640",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16140",
 		"pos": [
 			-35.25,
 			-3.9,
@@ -2172,7 +1626,7 @@
 	{
 		"dettaglio": "passa dentro Risalita/Infermeria/giraffa_metro_B/Mesh_0 per 27 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/giraffa_metro_B/Mesh_0 per 27 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15640",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16140",
 		"pos": [
 			-34.15,
 			-3.9,
@@ -2212,9 +1666,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@Node3D@15661/@Node3D@15665/@MeshInstance3D@15666 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/@Node3D@16161/@Node3D@16165/@MeshInstance3D@16166 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@Node3D@15661/@Node3D@15665/@MeshInstance3D@15666 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@Node3D@15661/@MeshInstance3D@15663",
+		"nodo": "Risalita/Infermeria/@Node3D@16161/@MeshInstance3D@16163",
 		"pos": [
 			-35.47,
 			-4.37,
@@ -2226,7 +1680,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 per 9 cm (stato: risalita_arrivo)",
+		"dettaglio": "passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@16290 per 9 cm (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 per 9 cm (stato: risalita_arrivo)",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella1/Cilindro",
 		"pos": [
@@ -2240,7 +1694,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 per 9 cm (stato: risalita_arrivo)",
+		"dettaglio": "passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@16290 per 9 cm (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 per 9 cm (stato: risalita_arrivo)",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella2/Cilindro",
 		"pos": [
@@ -2254,7 +1708,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 per 9 cm (stato: risalita_arrivo)",
+		"dettaglio": "passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@16290 per 9 cm (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@15790 per 9 cm (stato: risalita_arrivo)",
 		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella3/Cilindro",
 		"pos": [
@@ -2268,9 +1722,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15834 per 22 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16334 per 60 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15834 per 22 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15635",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16135",
 		"pos": [
 			-39.6,
 			-2.7,
@@ -2282,9 +1736,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15834 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16334 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15834 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15639",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16139",
 		"pos": [
 			-37.95,
 			-2.7,
@@ -2296,9 +1750,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15834 per 31 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@16334 per 100 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15834 per 31 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15642",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@16142",
 		"pos": [
 			-38.8,
 			-2.7,
@@ -2310,21 +1764,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/@MeshInstance3D@15834 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15834 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/@MeshInstance3D@15669",
-		"pos": [
-			-39.85,
-			-2.7,
-			41.7
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
-	},
-	{
-		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@15670 per 37 cm (stato: risalita_arrivo)",
+		"dettaglio": "passa dentro Risalita/Infermeria/@MeshInstance3D@16170 per 37 cm (stato: risalita_arrivo)",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15670 per 37 cm (stato: risalita_arrivo)",
 		"nodo": "Risalita/Infermeria/pronto_soccorso_N/Mesh_0",
 		"pos": [
@@ -2340,7 +1780,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 161.6 cm) (stato: risalita_dopo) [modello: paratia.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 161.6 cm) (stato: risalita_dopo) [modello: paratia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@20804/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@21485/Mesh_0",
 		"pos": [
 			-35.0,
 			-2.69,
@@ -2354,7 +1794,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 162.0 cm) (stato: risalita_dopo) [modello: paratia.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 162.0 cm) (stato: risalita_dopo) [modello: paratia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@20812/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@21493/Mesh_0",
 		"pos": [
 			-59.0,
 			-2.69,
@@ -2368,7 +1808,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 161.6 cm) (stato: risalita_dopo) [modello: paratia.glb]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 161.6 cm) (stato: risalita_dopo) [modello: paratia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@20836/Mesh_0",
+		"nodo": "Risalita/Fiume/@Node3D@21517/Mesh_0",
 		"pos": [
 			-35.0,
 			-2.69,
@@ -2382,7 +1822,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.05 e 1.30 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21212",
+		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21893",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2396,7 +1836,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21205",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21886",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2410,7 +1850,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21199",
+		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21880",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2422,9 +1862,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21193",
+		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21877",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2438,7 +1878,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.93 e 1.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.93 e 1.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@21210",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@21891",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2452,7 +1892,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.82 e 0.83 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.82 e 0.83 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21184",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21865",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2466,7 +1906,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.07 e 1.09 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto25/Frontale/Tirato/@MeshInstance3D@21245",
+		"nodo": "Risalita/Infermeria/Cassetto25/Frontale/Tirato/@MeshInstance3D@21926",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2478,9 +1918,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.81 e 0.82 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.79 e 1.03 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.81 e 0.82 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto24/Frontale/Tirato/@MeshInstance3D@21239",
+		"nodo": "Risalita/Infermeria/Cassetto24/Frontale/Tirato/@MeshInstance3D@21919",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2494,7 +1934,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.57 e 0.77 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto23/Frontale/Tirato/@MeshInstance3D@21232",
+		"nodo": "Risalita/Infermeria/Cassetto23/Frontale/Tirato/@MeshInstance3D@21913",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2508,7 +1948,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.06 e 1.23 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.06 e 1.23 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21214",
+		"nodo": "Risalita/Infermeria/Cassetto15/Frontale/Tirato/@MeshInstance3D@21895",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2522,7 +1962,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.80 e 0.97 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.80 e 0.97 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21207",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21888",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2536,7 +1976,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.58 e 0.72 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.58 e 0.72 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21201",
+		"nodo": "Risalita/Infermeria/Cassetto13/Frontale/Tirato/@MeshInstance3D@21882",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2550,7 +1990,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.37 e 0.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto22/Frontale/Tirato/@MeshInstance3D@21226",
+		"nodo": "Risalita/Infermeria/Cassetto22/Frontale/Tirato/@MeshInstance3D@21907",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2564,7 +2004,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): il cassetto tirato sporge nel passaggio; se è voluto lo decide l'utente. nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.49 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21195",
+		"nodo": "Risalita/Infermeria/Cassetto12/Frontale/Tirato/@MeshInstance3D@21876",
 		"pos": [
 			-39.0,
 			-5.4,
@@ -2578,7 +2018,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.28 e 1.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.28 e 1.38 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@21261",
+		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/@MeshInstance3D@21942",
 		"pos": [
 			-34.0,
 			-5.4,
@@ -2606,7 +2046,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella1/@MeshInstance3D@21264",
+		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella1/@MeshInstance3D@21945",
 		"pos": [
 			-33.75,
 			-5.4,
@@ -2620,7 +2060,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella2/@MeshInstance3D@21267",
+		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella2/@MeshInstance3D@21948",
 		"pos": [
 			-33.75,
 			-5.4,
@@ -2634,7 +2074,7 @@
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.41 e 1.51 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella3/@MeshInstance3D@21270",
+		"nodo": "Risalita/Infermeria/Cassaforte/Sportello/Rotella3/@MeshInstance3D@21951",
 		"pos": [
 			-33.75,
 			-5.4,
@@ -2646,9 +2086,9 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21206 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"dettaglio": "passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@21887 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
 		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@6075 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
-		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21184",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@21865",
 		"pos": [
 			-39.24,
 			-4.58,
@@ -2658,47 +2098,5 @@
 		"squadra": "enigmi",
 		"stato": "da correggere",
 		"zona": "risalita"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (12 celle da 25 cm) (pavimenti fra y -25.78 e -25.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26559",
-		"pos": [
-			67.0,
-			-25.58,
-			-25.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -28.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26567",
-		"pos": [
-			67.0,
-			-28.58,
-			-4.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (13 celle da 25 cm) (pavimenti fra y -22.80 e -22.58), senza collisione (si attraversa) (stato: inseguimento_dopo) [modello: sala_inseguimento.tscn]",
-		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@26551",
-		"pos": [
-			54.5,
-			-22.58,
-			-16.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
 	}
 ]

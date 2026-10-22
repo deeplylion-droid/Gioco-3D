@@ -2888,7 +2888,8 @@ def disponi_oggetti(zf_piscina):
         dest[0].append(o)
         return o
     # --- fondo della piscina e pozza (S06): giocattoli trascinati verso lo scarico
-    metti_ogg('paperella_gigante', (0.9, -1.4, None), 40, 0.45, (8, 0))
+    # fuori dall'anello di luce intorno al portellone (raggio 1-1,09 m): prima ci stava sopra (22 ottobre)
+    metti_ogg('paperella_gigante', (1.6, -1.25, None), 40, 0.45, (8, 0))
     metti_ogg('paperella_gigante', (-1.6, -2.9, None), 200, 0.4, (-12, 6))
     metti_ogg('pallone_spiaggia', (1.9, -3.4, None), 30)
     metti_ogg('pallone_spiaggia', (-3.8, 2.6, None), 80, 0.9)
