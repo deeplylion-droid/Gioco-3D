@@ -241,7 +241,7 @@ def corridoio(M):
 
     # tubi sul soffitto, lato nord, per tutta la lunghezza; uno scende vicino al passaggio
     tubi = [
-        L.tubo_percorso('tubo_grande', [(0, 2.32, 2.38), (22, 2.32, 2.38)], 0.085, M['ruggine'], passo_flange=2.2),
+        *tubo_grande_con_valvola(M),
         L.tubo_percorso('tubo_rosso', [(0, 2.12, 2.48), (22, 2.12, 2.48)], 0.05, M['vernice_rossa'], passo_flange=3.0),
         L.tubo_percorso('tubo_piccolo', [(0, 2.48, 2.12), (8.2, 2.48, 2.12), (8.2, 2.48, 0.25), (8.2, 2.2, 0.25), (8.2, 2.2, -0.05)], 0.035, M['metallo_grezzo'], passo_flange=1.5),
         L.tubo_percorso('tubo_sud', [(0, 0.22, 2.45), (16.4, 0.22, 2.45), (16.4, 0.22, 2.3), (22, 0.22, 2.3)], 0.06, M['metallo_grezzo'], passo_flange=2.5),
@@ -357,7 +357,8 @@ def corridoio(M):
     if HQ.disponibile('valvola_volantino'):
         # valvola in linea su un bypass del tubo grande: scende, passa dalle flange della valvola e risale
         # (prima pendeva da un tubicino con le flange libere: "valvole appese al nulla")
-        for k, x in enumerate((4.9, 15.9)):   # la prima non più sopra il passaggio degli spogliatoi (x 6..7,6)
+        # (la prima ora è in linea sul tubo grande del soffitto: tubo_grande_con_valvola)
+        for k, x in ((1, 15.9),):
             v = HQ.metti(f'valvola_corridoio_{k + 1}', 'valvola_volantino', (x, 2.32, 1.58), (None, None, 0.42), rot_z=R(180))
             bpy.context.view_layer.update()
             ws = [v.matrix_world @ p.co for p in v.data.vertices]
@@ -740,7 +741,10 @@ def spogliatoi(M):
     statico.append(cornice_porta('telaio_uscita', 'N', UX0, UX1, UH, CY1, M, M['vernice_gialla'], entrambi=True))
     L.vuoto('marker_uscita_sala_principale', ((UX0 + UX1) / 2, CY1 + 0.2, 0), (0, 0, 0), 'SINGLE_ARROW', 0.5)
     # turbina: carcassa sulla parete, ruota a pale separata (asse lungo x), ingranaggio e catena verso il cassonetto
-    TBy, TBz = 19.4, 2.05
+    # alzata di 30 cm (scelta dell'utente del 22 ottobre, opzione A): col centro a 2,05 m il bordo della ruota
+    # scendeva a 1,75, all'altezza della testa di chi cammina; ora il bordo basso è a 2,05 e la cima a 2,65
+    # (soffitto a 2,70). Il centro deve restare uguale a quello di PernoTurbina in godot/scenes/interni/interni.tscn.
+    TBy, TBz = 19.4, 2.35
     statico.append(L.cilindro('turbina_carcassa', (CX0, TBy, TBz), (CX0 + 0.08, TBy, TBz), 0.3, M['metallo_grezzo'], seg=28))
     statico.append(L.cilindro('turbina_mozzo', (CX0, TBy, TBz), (CX0 + 0.2, TBy, TBz), 0.05, M['ruggine']))
     pale = [L.cilindro('turbina', (CX0 + 0.12, TBy, TBz), (CX0 + 0.26, TBy, TBz), 0.07, M['vernice_gialla'], seg=16)]
@@ -758,7 +762,9 @@ def spogliatoi(M):
         dt = HQ.dimensioni('turbina_cancello'); kt = 0.6 / max(dt.x, dt.z)
         turb = HQ.metti('turbina_saracinesca', 'turbina_cancello', (CX0 + 0.19, TBy, TBz), tuple(dt * kt), rot_z=R(90),
                         perno=(0, 0, dt.z * kt / 2))
-    statico.append(L.tubo_percorso('catena_turbina', [(CX0 + 0.05, TBy, TBz + 0.3), (CX0 + 0.05, TBy, 2.45), (CX0 + 0.05, SY - 0.2, 2.45), (UX0 - 0.1, SY - 0.2, 2.45)], 0.03, M['metallo_grezzo'], flange=False))
+    # la catena parte dal bordo della carcassa verso la saracinesca e va dritta, alla quota del mozzo, fino al
+    # fianco del cassonetto (z da UH a UH + 0,4): con la turbina alzata è più corta e non sale più
+    statico.append(L.tubo_percorso('catena_turbina', [(CX0 + 0.05, TBy + 0.3, TBz), (CX0 + 0.05, SY - 0.2, TBz), (UX0 - 0.1, SY - 0.2, TBz)], 0.03, M['metallo_grezzo'], flange=False))
 
     # ---- luci
     for i, (p, n) in enumerate([((6.8, 3.02, 2.45), (0, 1, 0)), ((3.02, 7.0, 2.4), (1, 0, 0)), ((5.6, 14.58, 2.55), (0, -1, 0)),
@@ -928,6 +934,61 @@ def neon_sotto_il_soffitto(margine=0.004):
             if o.name == nome or o.name.startswith(nome + '_'):
                 o.location.z -= giu
         print(f'{nome}: abbassata di {giu * 100:.1f} cm (soffitto a {cielo:.3f}: {cosa})')
+
+
+# tubo grande del soffitto del corridoio: asse a y 2,32, z 2,38, raggio 8,5 cm, flange ogni 2,2 m
+TUBO_GRANDE = (2.32, 2.38, 0.085)
+VALVOLA_1_X = 4.8   # non sopra il passaggio degli spogliatoi (x 6..7,6), lontana dallo sprinkler (x 5,2) e dalle staffe
+
+
+def tubo_grande_con_valvola(M):
+    """Il tubo grande del soffitto del corridoio con la valvola 1 in linea (scelta dell'utente del 22 ottobre,
+    opzione A): prima la valvola stava su un bypass che scendeva a 1,58 m, all'altezza della testa di chi
+    cammina. Ora il tubo passa dalle sue flange (foro grande come il tubo), con le controflange e i bulloni;
+    il volantino guarda in basso verso il corridoio (45 gradi), tutto sopra i 2 m. Ritorna le parti statiche."""
+    y, z, r = TUBO_GRANDE
+    fine = 22.0
+    tagli = []
+    parti = []
+    if HQ.disponibile('valvola_volantino'):
+        # misure del modello (alto 1 m, asse del foro lungo x): metà lunghezza, centro e raggio del foro, flangia
+        prova = HQ.metti('valvola_prova', 'valvola_volantino', (0, 0, 0), (None, None, 1.0), rot_z=R(180))
+        bpy.context.view_layer.update()
+        ws = [prova.matrix_world @ p.co for p in prova.data.vertices]
+        bpy.data.objects.remove(prova)
+        x1 = max(p.x for p in ws)
+        faccia = [p for p in ws if p.x > x1 - 0.0095]
+        zf = (min(p.z for p in faccia) + max(p.z for p in faccia)) / 2
+        r_foro = (max(p.y for p in faccia) - min(p.y for p in faccia)) / 2
+        corona = [p for p in ws if p.x > x1 - 0.0286]
+        r_fl = (max(p.y for p in corona) - min(p.y for p in corona)) / 2
+        alt = r / r_foro                     # foro grande come il tubo
+        HQ.metti('valvola_corridoio_1', 'valvola_volantino', (VALVOLA_1_X, y, z), (None, None, alt), rot_z=R(180),
+                 perno=(0, 0, zf * alt), rot=(R(-135), 0, 0))
+        xa, xb = VALVOLA_1_X - x1 * alt, VALVOLA_1_X + x1 * alt
+        tagli.append((xa, xb))
+        for lato, xf in ((-1, xa), (1, xb)):
+            # controflangia del tubo appoggiata a quella della valvola, con i bulloni
+            fl = [L.cilindro('valvola_controflangia', (xf, y, z), (xf + lato * 0.025, y, z), r_fl * alt, M['metallo_grezzo'], seg=32)]
+            for j in range(8):
+                t = 2 * math.pi * j / 8
+                py, pz = y + math.cos(t) * r_fl * alt * 0.8, z + math.sin(t) * r_fl * alt * 0.8
+                fl.append(L.cilindro('valvola_bullone', (xf - lato * 0.01, py, pz), (xf + lato * 0.04, py, pz), 0.008, M['ruggine'], seg=8))
+            parti.append(L.unisci(f'flangia_valvola_1_{lato + 1}', fl))
+    # il tubo, interrotto dove c'è la valvola; le flange del tubo restano dov'erano (ogni 2,2 m)
+    pezzi = [L.cilindro('tubo_grande_0', (0, y, z), (tagli[0][0] if tagli else fine, y, z), r, M['ruggine'], seg=28, tappi=False)]
+    if tagli:
+        pezzi.append(L.cilindro('tubo_grande_1', (tagli[0][1], y, z), (fine, y, z), r, M['ruggine'], seg=28, tappi=False))
+    k = 1
+    while k * 2.2 < fine - 0.2:
+        c = k * 2.2
+        if not any(a - 0.1 < c < b + 0.1 for a, b in tagli):
+            pezzi.append(L.cilindro('tubo_grande_fl', (c - 0.03, y, z), (c + 0.03, y, z), r * 1.35, M['ruggine'], seg=28))
+        k += 1
+    tubo = L.unisci('tubo_grande', pezzi)
+    for p in tubo.data.polygons:
+        p.use_smooth = True
+    return [tubo] + parti
 
 
 def costruisci():
