@@ -102,13 +102,19 @@ func _run() -> void:
 	check(not cassa.aperta_ora, "4-1-6 non la apre")
 	_imposta(cassa, [4, 1, 7])
 	check(cassa.aperta_ora, "4-1-7 la apre")
-	var polaroid := inf.get_node(^"PolaroidPecora") as Pickup
+	var polaroid := inf.get_node(^"PolaroidPecora") as PolaroidPhoto
 	check(keycard.can_interact(p) and polaroid.can_interact(p), "dentro ci sono la keycard e la Polaroid")
 	check(not cassa.rotella(0).can_interact(p), "aperta, le rotelle non girano più")
 	await _secondi(0.5)
 	check(await _usa(keycard), "guardando la keycard la si prende con E")
+	check(polaroid.photo == 11 and polaroid.get_texture() != null, "è la Polaroid vera della pecora (P11)")
 	polaroid.interact(p)
-	check(p.has_item(&"keycard") and p.has_item(&"polaroid_pecora"), "prese la keycard e la Polaroid")
+	await _secondi(0.1)
+	for v in get_tree().root.get_children():
+		if v is CanvasLayer and v.get_script() == PolaroidPhoto.VIEWER:
+			v.queue_free()
+	get_tree().paused = false
+	check(p.has_item(&"keycard") and GameState.has_collectible(&"polaroid", &"PolaroidPecora"), "prese la keycard e la Polaroid, che va nella collezione")
 
 	print("6. Checkpoint")
 	GameState.capture_snapshot("TestInfermeria", 900, Transform3D(Basis.IDENTITY, Vector3(0, 0, 1.5)))

@@ -9,8 +9,8 @@ extends Collectible
 const TEX_DIR := "res://assets/models/polaroid/texture/"
 const VIEWER := preload("res://scripts/ui/photo_viewer.gd")
 
-## Numero della foto (1-10): texture Pxx.jpg.
-@export_range(1, 10) var photo := 1:
+## Numero della foto (1-10, 11 la pecora che brilla dell'infermeria): texture Pxx.jpg.
+@export_range(1, 11) var photo := 1:
 	set(value):
 		photo = value
 		_apply()

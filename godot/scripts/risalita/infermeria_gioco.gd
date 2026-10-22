@@ -484,22 +484,15 @@ func _cassaforte() -> void:
 	add_child(keycard)
 	keycard.position = Vector3(c.x + 0.12, fondo, c.z + 0.08)
 	keycard.rotation_degrees.y = 18.0
-	var polaroid := Pickup.new()
+	# la Polaroid della pecora che brilla (P11, scelta dell'utente del 21 ottobre): la stessa delle altre,
+	# appoggiata sul fondo accanto alla keycard; si raccoglie e va nella collezione
+	var polaroid := (load("res://scenes/props/polaroid.tscn") as PackedScene).instantiate() as PolaroidPhoto
 	polaroid.name = "PolaroidPecora"
-	polaroid.item_id = &"polaroid_pecora"
-	polaroid.item_name = "Polaroid"
-	var fp := CollisionShape3D.new()
-	var bp := BoxShape3D.new()
-	bp.size = Vector3(0.12, 0.06, 0.14)
-	fp.shape = bp
-	polaroid.add_child(fp)
-	# girata: la foto della pecora la fa chi fa le Polaroid
-	var retro := StandardMaterial3D.new()
-	retro.albedo_texture = load("res://assets/models/polaroid/texture/retro.jpg")
-	retro.roughness = 0.7
-	_quad(Vector2(0.088, 0.107), Vector3(0, 0.001, 0), Vector3(-90, 75, 0), retro, polaroid)
+	polaroid.photo = 11
+	polaroid.snap_to_surface = false
 	add_child(polaroid)
 	polaroid.position = Vector3(c.x + 0.2, fondo, c.z - 0.1)
+	polaroid.rotation_degrees.y = 75.0
 	cassaforte = CassaforteRotelle.new()
 	cassaforte.name = "Cassaforte"
 	cassaforte.mostra_segnaposto = false
