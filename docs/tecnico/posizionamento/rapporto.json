@@ -1597,7 +1597,7 @@
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (192 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.89 m sopra il pavimento (144 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
+		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
 		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20172",
 		"pos": [
 			67.0,
@@ -1611,7 +1611,7 @@
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (75 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (67 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
+		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
 		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20180",
 		"pos": [
 			67.0,
@@ -1625,7 +1625,7 @@
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (200 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.92 m sopra il pavimento (149 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
+		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui",
 		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20164",
 		"pos": [
 			54.5,

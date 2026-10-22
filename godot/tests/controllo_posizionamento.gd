@@ -588,7 +588,7 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 				if h.is_empty():
 					break
 				var hp: Vector3 = h.position
-				if (h.normal as Vector3).y >= 0.7:
+				if (h.normal as Vector3).y >= 0.7 and not _mobile(h.collider as Node):
 					piani.append(hp.y)
 				y = hp.y - 0.05
 			if not piani.is_empty():
@@ -683,6 +683,21 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm), %s" % [
 				dove, visti[mi][2], alto, visti[mi][1],
 				"con la collisione (ci si sbatte contro)" if visti[mi][4] else "senza collisione (si attraversa)"])
+
+
+## Le parti che si muovono (paratie, grate, portoni, saracinesche...) non fanno mai da pavimento: il bordo alto di
+## una paratia alzata non è un posto dove si arriva.
+const MOBILI := ["inseguimentomobili", "paratia", "ins_grata", "portone", "saracinesca", "serranda", "cancello"]
+
+
+func _mobile(n: Node) -> bool:
+	while n != null and n != _radice:
+		var nome := String(n.name).to_lower()
+		for m in MOBILI:
+			if nome.contains(m):
+				return true
+		n = n.get_parent()
+	return false
 
 
 ## Una cella dove passa il giocatore: ci entrano le sue gambe (un cilindro di raggio 30 cm fra 0,3 e 1 m sopra il
