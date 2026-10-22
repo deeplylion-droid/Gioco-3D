@@ -15,6 +15,8 @@
 [ext_resource type="Material" path="res://assets/materials/sala/metallo_verniciato.tres" id="m_tiranti"]
 [ext_resource type="Material" path="res://assets/enigma_acquari/metallo_rosso.tres" id="m_rosso"]
 [ext_resource type="Material" path="res://assets/enigma_acquari/metallo_giallo.tres" id="m_giallo"]
+[ext_resource type="Material" path="res://assets/enigma_acquari/metallo_tubi.tres" id="m_tubi"]
+[ext_resource type="Material" path="res://assets/enigma_acquari/metallo_basi.tres" id="m_basi"]
 [ext_resource type="Material" path="res://assets/enigma_acquari/griglia_scarico.tres" id="m_griglia"]
 [ext_resource type="ArrayMesh" path="res://assets/enigma_acquari/disegno_curvo.res" id="disegno"]
 [ext_resource type="MultiMesh" path="res://assets/enigma_acquari/portalampade_portone.res" id="mm_porta"]
@@ -82,22 +84,278 @@ size = Vector3(0.012, 0.12, 0.1)
 size = Vector3(0.05, 0.09, 6.990)
 
 [sub_resource type="BoxShape3D" id="raccordo_AcquarioGiallo_Pompa"]
-size = Vector3(0.870, 1.190, 0.840)
+size = Vector3(0.870, 1.618, 0.840)
 
 [sub_resource type="BoxShape3D" id="raccordo_AcquarioGiallo_Tubo"]
-size = Vector3(0.836, 1.306, 0.388)
+size = Vector3(0.836, 1.698, 0.388)
+
+[sub_resource type="BoxMesh" id="zoccolo_AcquarioGiallo"]
+size = Vector3(0.800, 0.428, 0.480)
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_PompaSerbatoio"]
+top_radius = 0.0800
+bottom_radius = 0.0800
+height = 0.3700
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_PompaSerbatoioCollare"]
+top_radius = 0.1200
+bottom_radius = 0.1200
+height = 0.0600
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_PompaFuori"]
+top_radius = 0.0680
+bottom_radius = 0.0680
+height = 0.1400
+radial_segments = 12
+rings = 1
+
+[sub_resource type="SphereMesh" id="curva_AcquarioGiallo"]
+radius = 0.0782
+height = 0.1564
+radial_segments = 12
+rings = 6
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_PompaGiu"]
+top_radius = 0.0680
+bottom_radius = 0.0680
+height = 0.5360
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_FlangiaPompa"]
+top_radius = 0.1292
+bottom_radius = 0.1292
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxShape3D" id="raccordo_AcquarioGiallo_scarico"]
+size = Vector3(0.266, 0.624, 0.136)
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_Gamba"]
+top_radius = 0.0720
+bottom_radius = 0.0720
+height = 0.4320
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_FlangiaGamba"]
+top_radius = 0.1368
+bottom_radius = 0.1368
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_Spina"]
+top_radius = 0.0540
+bottom_radius = 0.0540
+height = 0.4860
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_FlangiaSpina"]
+top_radius = 0.1026
+bottom_radius = 0.1026
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioGiallo_Allacci_BeccoCorpo"]
+top_radius = 0.0660
+bottom_radius = 0.0660
+height = 0.2500
+radial_segments = 12
+rings = 1
 
 [sub_resource type="BoxShape3D" id="raccordo_AcquarioMisto_Pompa"]
-size = Vector3(1.261, 0.372, 1.215)
+size = Vector3(1.261, 0.800, 1.215)
 
 [sub_resource type="BoxShape3D" id="raccordo_AcquarioMisto_Tubo"]
-size = Vector3(0.925, 0.408, 0.510)
+size = Vector3(0.925, 0.800, 0.510)
+
+[sub_resource type="BoxMesh" id="zoccolo_AcquarioMisto"]
+size = Vector3(1.160, 0.428, 0.696)
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_PompaSerbatoio"]
+top_radius = 0.0800
+bottom_radius = 0.0800
+height = 0.5365
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_PompaSerbatoioCollare"]
+top_radius = 0.1200
+bottom_radius = 0.1200
+height = 0.0870
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_PompaFuori"]
+top_radius = 0.0986
+bottom_radius = 0.0986
+height = 0.1400
+radial_segments = 12
+rings = 1
+
+[sub_resource type="SphereMesh" id="curva_AcquarioMisto"]
+radius = 0.1134
+height = 0.2268
+radial_segments = 12
+rings = 6
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_PompaGiu"]
+top_radius = 0.0986
+bottom_radius = 0.0986
+height = 0.5360
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_FlangiaPompa"]
+top_radius = 0.1873
+bottom_radius = 0.1873
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxShape3D" id="raccordo_AcquarioMisto_scarico"]
+size = Vector3(0.327, 0.655, 0.197)
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_Gamba"]
+top_radius = 0.1044
+bottom_radius = 0.1044
+height = 0.4320
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_FlangiaGamba"]
+top_radius = 0.1984
+bottom_radius = 0.1984
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_Spina"]
+top_radius = 0.0783
+bottom_radius = 0.0783
+height = 0.4860
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_FlangiaSpina"]
+top_radius = 0.1488
+bottom_radius = 0.1488
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxMesh" id="coperchio_pompa_AcquarioMisto"]
+size = Vector3(0.745, 0.03, 0.960)
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_TuboSerbatoio"]
+top_radius = 0.0600
+bottom_radius = 0.0600
+height = 0.7975
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioMisto_Allacci_TuboSerbatoioCollare"]
+top_radius = 0.0900
+bottom_radius = 0.0900
+height = 0.1015
+radial_segments = 16
+rings = 1
 
 [sub_resource type="BoxShape3D" id="raccordo_AcquarioBlu_Pompa"]
-size = Vector3(0.870, 1.190, 0.840)
+size = Vector3(0.870, 1.618, 0.840)
 
 [sub_resource type="BoxShape3D" id="raccordo_AcquarioBlu_Tubo"]
-size = Vector3(0.836, 1.306, 0.388)
+size = Vector3(0.836, 1.698, 0.388)
+
+[sub_resource type="BoxMesh" id="zoccolo_AcquarioBlu"]
+size = Vector3(0.800, 0.428, 0.480)
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_PompaSerbatoio"]
+top_radius = 0.0800
+bottom_radius = 0.0800
+height = 0.3700
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_PompaSerbatoioCollare"]
+top_radius = 0.1200
+bottom_radius = 0.1200
+height = 0.0600
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_PompaFuori"]
+top_radius = 0.0680
+bottom_radius = 0.0680
+height = 0.1400
+radial_segments = 12
+rings = 1
+
+[sub_resource type="SphereMesh" id="curva_AcquarioBlu"]
+radius = 0.0782
+height = 0.1564
+radial_segments = 12
+rings = 6
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_PompaGiu"]
+top_radius = 0.0680
+bottom_radius = 0.0680
+height = 0.5360
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_FlangiaPompa"]
+top_radius = 0.1292
+bottom_radius = 0.1292
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxShape3D" id="raccordo_AcquarioBlu_scarico"]
+size = Vector3(0.266, 0.624, 0.136)
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_Gamba"]
+top_radius = 0.0720
+bottom_radius = 0.0720
+height = 0.4320
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_FlangiaGamba"]
+top_radius = 0.1368
+bottom_radius = 0.1368
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_Spina"]
+top_radius = 0.0540
+bottom_radius = 0.0540
+height = 0.4860
+radial_segments = 12
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_FlangiaSpina"]
+top_radius = 0.1026
+bottom_radius = 0.1026
+height = 0.0300
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="cil_AcquarioBlu_Allacci_BeccoCorpo"]
+top_radius = 0.0660
+bottom_radius = 0.0660
+height = 0.2500
+radial_segments = 12
+rings = 1
 
 [sub_resource type="BoxMesh" id="pedana_piano"]
 size = Vector3(2.400, 0.05, 1.000)
@@ -230,12 +488,78 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.252, 0)
 shape = SubResource("forma_alto")
 
 [node name="Pompa" type="CollisionShape3D" parent="AcquarioGiallo/Collisione"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.877, -0.675, 0.052)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.877, -0.889, 0.052)
 shape = SubResource("raccordo_AcquarioGiallo_Pompa")
 
 [node name="Tubo" type="CollisionShape3D" parent="AcquarioGiallo/Collisione"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.858, -0.653, -0.194)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.858, -0.849, -0.194)
 shape = SubResource("raccordo_AcquarioGiallo_Tubo")
+
+[node name="Allacci" type="Node3D" parent="AcquarioGiallo"]
+
+[node name="Zoccolo" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.84, -1.484, -0.1)
+mesh = SubResource("zoccolo_AcquarioGiallo")
+material_override = ExtResource("m_basi")
+
+[node name="PompaSerbatoio" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, -1.295, -0.758, -0.148)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_PompaSerbatoio")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaSerbatoioCollare" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, -1.14, -0.758, -0.148)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_PompaSerbatoioCollare")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaFuori" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(0, -1, 0, 1, 0, -0, 0, 0, 1, -2.36, -1.142, -0.148)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_PompaFuori")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaCurva" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.43, -1.142, -0.148)
+mesh = SubResource("curva_AcquarioGiallo")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaGiu" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, -2.43, -1.41, -0.148)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_PompaGiu")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaPompa" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, -2.43, -1.683, -0.148)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_FlangiaPompa")
+material_override = ExtResource("m_tubi")
+
+[node name="Scarico" type="CollisionShape3D" parent="AcquarioGiallo/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.399, -1.386, -0.148)
+shape = SubResource("raccordo_AcquarioGiallo_scarico")
+
+[node name="Gamba" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 1.694, -1.462, -0.144)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_Gamba")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaGamba" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 1.694, -1.683, -0.144)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_FlangiaGamba")
+material_override = ExtResource("m_tubi")
+
+[node name="Spina" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.122, -1.435, -0.226)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_Spina")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaSpina" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.122, -1.683, -0.226)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_FlangiaSpina")
+material_override = ExtResource("m_tubi")
+
+[node name="BeccoCorpo" type="MeshInstance3D" parent="AcquarioGiallo/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.12, -0.543, -0.244)
+mesh = SubResource("cil_AcquarioGiallo_Allacci_BeccoCorpo")
+material_override = ExtResource("m_tubi")
 
 [node name="LuceAcquario" type="SpotLight3D" parent="AcquarioGiallo"]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 2.5, 0)
@@ -279,12 +603,88 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 shape = SubResource("forma_base_bassa")
 
 [node name="Pompa" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7216, -0.186, 0.0768)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7216, -0.4, 0.0768)
 shape = SubResource("raccordo_AcquarioMisto_Pompa")
 
 [node name="Tubo" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8115, -0.204, -0.2784)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8115, -0.4, -0.2784)
 shape = SubResource("raccordo_AcquarioMisto_Tubo")
+
+[node name="Allacci" type="Node3D" parent="AcquarioMisto"]
+
+[node name="Zoccolo" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.668, -0.586, -0.145)
+mesh = SubResource("zoccolo_AcquarioMisto")
+material_override = ExtResource("m_basi")
+
+[node name="PompaSerbatoio" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, -1.8778, -0.2, -0.2146)
+mesh = SubResource("cil_AcquarioMisto_Allacci_PompaSerbatoio")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaSerbatoioCollare" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, -1.653, -0.2, -0.2146)
+mesh = SubResource("cil_AcquarioMisto_Allacci_PompaSerbatoioCollare")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaFuori" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(0, -1, 0, 1, 0, -0, 0, 0, 1, -3.395, -0.244, -0.2146)
+mesh = SubResource("cil_AcquarioMisto_Allacci_PompaFuori")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaCurva" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.465, -0.244, -0.2146)
+mesh = SubResource("curva_AcquarioMisto")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaGiu" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, -3.465, -0.512, -0.2146)
+mesh = SubResource("cil_AcquarioMisto_Allacci_PompaGiu")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaPompa" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, -3.465, -0.785, -0.2146)
+mesh = SubResource("cil_AcquarioMisto_Allacci_FlangiaPompa")
+material_override = ExtResource("m_tubi")
+
+[node name="Scarico" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4493, -0.4727, -0.2146)
+shape = SubResource("raccordo_AcquarioMisto_scarico")
+
+[node name="Gamba" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.4563, -0.564, -0.2088)
+mesh = SubResource("cil_AcquarioMisto_Allacci_Gamba")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaGamba" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.4563, -0.785, -0.2088)
+mesh = SubResource("cil_AcquarioMisto_Allacci_FlangiaGamba")
+material_override = ExtResource("m_tubi")
+
+[node name="Spina" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 3.0769, -0.537, -0.3277)
+mesh = SubResource("cil_AcquarioMisto_Allacci_Spina")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaSpina" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 3.0769, -0.785, -0.3277)
+mesh = SubResource("cil_AcquarioMisto_Allacci_FlangiaSpina")
+material_override = ExtResource("m_tubi")
+
+[node name="CoperchioPompa" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5621, 0.015, -0.0102)
+mesh = SubResource("coperchio_pompa_AcquarioMisto")
+material_override = ExtResource("m_basi")
+
+[node name="TuboSerbatoio" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, 2.0083, -0.2, -0.2088)
+mesh = SubResource("cil_AcquarioMisto_Allacci_TuboSerbatoio")
+material_override = ExtResource("m_tubi")
+
+[node name="TuboSerbatoioCollare" type="MeshInstance3D" parent="AcquarioMisto/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, 1.6603, -0.2, -0.2088)
+mesh = SubResource("cil_AcquarioMisto_Allacci_TuboSerbatoioCollare")
+material_override = ExtResource("m_tubi")
 
 [node name="Parete1" type="CollisionShape3D" parent="AcquarioMisto/Collisione"]
 transform = Transform3D(6.12323e-17, 0, 1, 0, 1, 0, -1, 0, 6.12323e-17, 1.635, 0.4, 0)
@@ -396,12 +796,78 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.252, 0)
 shape = SubResource("forma_alto")
 
 [node name="Pompa" type="CollisionShape3D" parent="AcquarioBlu/Collisione"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.877, -0.675, 0.052)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.877, -0.889, 0.052)
 shape = SubResource("raccordo_AcquarioBlu_Pompa")
 
 [node name="Tubo" type="CollisionShape3D" parent="AcquarioBlu/Collisione"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.858, -0.653, -0.194)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.858, -0.849, -0.194)
 shape = SubResource("raccordo_AcquarioBlu_Tubo")
+
+[node name="Allacci" type="Node3D" parent="AcquarioBlu"]
+
+[node name="Zoccolo" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.84, -1.484, -0.1)
+mesh = SubResource("zoccolo_AcquarioBlu")
+material_override = ExtResource("m_basi")
+
+[node name="PompaSerbatoio" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, -1.295, -0.758, -0.148)
+mesh = SubResource("cil_AcquarioBlu_Allacci_PompaSerbatoio")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaSerbatoioCollare" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(0, 1, -0, -1, 0, 0, 0, 0, 1, -1.14, -0.758, -0.148)
+mesh = SubResource("cil_AcquarioBlu_Allacci_PompaSerbatoioCollare")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaFuori" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(0, -1, 0, 1, 0, -0, 0, 0, 1, -2.36, -1.142, -0.148)
+mesh = SubResource("cil_AcquarioBlu_Allacci_PompaFuori")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaCurva" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.43, -1.142, -0.148)
+mesh = SubResource("curva_AcquarioBlu")
+material_override = ExtResource("m_tubi")
+
+[node name="PompaGiu" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, -2.43, -1.41, -0.148)
+mesh = SubResource("cil_AcquarioBlu_Allacci_PompaGiu")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaPompa" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, -2.43, -1.683, -0.148)
+mesh = SubResource("cil_AcquarioBlu_Allacci_FlangiaPompa")
+material_override = ExtResource("m_tubi")
+
+[node name="Scarico" type="CollisionShape3D" parent="AcquarioBlu/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.399, -1.386, -0.148)
+shape = SubResource("raccordo_AcquarioBlu_scarico")
+
+[node name="Gamba" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 1.694, -1.462, -0.144)
+mesh = SubResource("cil_AcquarioBlu_Allacci_Gamba")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaGamba" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 1.694, -1.683, -0.144)
+mesh = SubResource("cil_AcquarioBlu_Allacci_FlangiaGamba")
+material_override = ExtResource("m_tubi")
+
+[node name="Spina" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.122, -1.435, -0.226)
+mesh = SubResource("cil_AcquarioBlu_Allacci_Spina")
+material_override = ExtResource("m_tubi")
+
+[node name="FlangiaSpina" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.122, -1.683, -0.226)
+mesh = SubResource("cil_AcquarioBlu_Allacci_FlangiaSpina")
+material_override = ExtResource("m_tubi")
+
+[node name="BeccoCorpo" type="MeshInstance3D" parent="AcquarioBlu/Allacci"]
+transform = Transform3D(1, 0, -0, -0, 1, 0, 0, 0, 1, 2.12, -0.543, -0.244)
+mesh = SubResource("cil_AcquarioBlu_Allacci_BeccoCorpo")
+material_override = ExtResource("m_tubi")
 
 [node name="LuceAcquario" type="SpotLight3D" parent="AcquarioBlu"]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 2.5, 0)

@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/metallo_ruggine/green_metal_rust_nor_gl.jpg" id="1_nor"]
+[ext_resource type="Texture2D" path="res://assets/textures/metallo_ruggine/green_metal_rust_rough.jpg" id="2_rough"]
+
+[resource]
+albedo_color = Color(0.49, 0.27, 0.21, 1)
+metallic = 0.1
+roughness_texture = ExtResource("2_rough")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("1_nor")
+uv1_scale = Vector3(1.6, 1.6, 1.6)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5
