@@ -115,7 +115,7 @@ node('LuceZaino', 'SpotLight3D', '.', props={
 
 # Polaroid P1 (a terra vicino al risveglio), P2 (armadietto aperto), P3 (bacheca dello stanzino)
 node('Polaroid', 'Node3D', '.')
-for nome, foto, pos, rot, snap in [('Polaroid01', 1, (20.9, 0.02, -0.55), (0, 0.35, 0), True),
+for nome, foto, pos, rot, snap in [('Polaroid01', 1, (20.9, 0.004, -0.55), (0, 0.35, 0), True),
                                    ('Polaroid02', 2, (3.38, 1.555, -7.9), (0, H, 0), False),
                                    ('Polaroid03', 3, (12.65, 1.3, -6.257), (-H, 0, 0), False)]:
     # (P2 appoggiata sul ripiano dell'armadietto, prima galleggiava 5 cm sopra; P3 sul sughero della
