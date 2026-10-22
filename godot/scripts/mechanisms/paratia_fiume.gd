@@ -114,7 +114,10 @@ func _disco_vero() -> void:
 	mp.roughness = 0.5
 	palo.material_override = mp
 	add_child(palo)
-	palo.global_position = piede + Vector3(0, (alto + sopra) * 0.5, 0) - verso * 0.08
+	# il retro del disco (spesso 4 cm) appoggiato al palo: prima il palo stava 8 cm dietro il centro del disco e il disco
+	# restava 1,2-1,3 cm staccato (collaudo del 22 ottobre)
+	var r_disco := lerpf(pm.bottom_radius, pm.top_radius, clampf(alto / pm.height, 0.0, 1.0))
+	palo.global_position = piede + Vector3(0, (alto + sopra) * 0.5, 0) - verso * (0.02 + r_disco + 0.001)
 	var disco := MeshInstance3D.new()
 	disco.name = "Disco"
 	var dm := CylinderMesh.new()
@@ -132,17 +135,21 @@ func _disco_vero() -> void:
 		var dir := verso + Vector3(0, -0.6, 0)
 		# il palo si stringe verso la cima: il suo raggio a quell'altezza
 		var r_palo := lerpf(pm.bottom_radius, pm.top_radius, clampf((attacco.y - piede.y) / pm.height, 0.0, 1.0))
-		LampadaMuro.monta(self, to_local(attacco), global_basis.inverse() * dir, false, r_palo)
+		var lam := LampadaMuro.monta(self, to_local(attacco), global_basis.inverse() * dir, false, r_palo)
+		# il collare dove la staffa tocca il palo (lo dice LampadaMuro), 2 mm più largo del palo: stringe la staffa
+		# (prima stava più su, a 1,7 cm dalla lampada)
+		var yc := (global_transform * Vector3(0, float(lam.get_meta(&"y_contatto", to_local(attacco).y)), 0)).y
 		var collare := MeshInstance3D.new()
 		collare.name = "Collare"
 		var cm := CylinderMesh.new()
-		cm.top_radius = 0.052
-		cm.bottom_radius = 0.052
-		cm.height = 0.12
+		var r_col := lerpf(pm.bottom_radius, pm.top_radius, clampf((yc - piede.y) / pm.height, 0.0, 1.0)) + 0.002
+		cm.top_radius = r_col
+		cm.bottom_radius = r_col
+		cm.height = 0.06
 		collare.mesh = cm
 		collare.material_override = mp
 		add_child(collare)
-		collare.global_position = Vector3(palo.global_position.x, attacco.y - 0.03, palo.global_position.z)
+		collare.global_position = Vector3(palo.global_position.x, yc, palo.global_position.z)
 	var s := SpotLight3D.new()
 	s.name = "LuceDisco"
 	add_child(s)
