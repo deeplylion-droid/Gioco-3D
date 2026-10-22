@@ -1,44 +1,5 @@
 [
 	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20172",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			67.0,
-			-25.58,
-			-25.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20180",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			67.0,
-			-28.58,
-			-4.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20164",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			54.5,
-			-22.58,
-			-16.5
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui"
-	},
-	{
 		"zona": "sala",
 		"nodo": "Sala/Dettagli/@MeshInstance3D@40",
 		"squadra": "ambienti-1",
