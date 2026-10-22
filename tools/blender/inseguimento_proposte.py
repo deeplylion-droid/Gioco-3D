@@ -265,7 +265,10 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     for sg in (-1, 1):
         q = base + lat * (sg * (largo / 2 + 0.12))
         c.scatola_assi(Vector((q.x, q.y, (base.z + top) / 2)), [n, lat, Vector((0, 0, 1))], (0.1, 0.1, (top - base.z) / 2), 'giallo_sicurezza')
-    c.scatola_assi(Vector((base.x, base.y, top + 0.15)), [n, lat, Vector((0, 0, 1))], (0.14, largo / 2 + 0.3, 0.15), 'strisce')
+    # nel gioco la trave a strisce gialle e nere vuol dire "chiuso" (come nella torre, scelta dell'utente del 22
+    # ottobre): sulla paratia giusta è liscia, gialla come i montanti
+    trave = 'giallo_sicurezza' if (GIOCO and giusta) else 'strisce'
+    c.scatola_assi(Vector((base.x, base.y, top + 0.15)), [n, lat, Vector((0, 0, 1))], (0.14, largo / 2 + 0.3, 0.15), trave)
     zp = base.z + alto / 2 + (alto + 0.05 if aperta else 0.0)
     pann = Vector((base.x, base.y, zp)) - n * 0.05
     cp = K.Costruttore(c.mats) if GIOCO else c          # nel gioco il pannello è un nodo a parte
@@ -651,13 +654,23 @@ def versione_A(mats):
 
     # --- luci (le mette lo script degli scatti) ------------------------------------------------------------
     luci['emergenza'] += [[X0 + 0.15, 25.0, -16.0], [x1 - 0.15, 10.0, -22.0], [60.0, y1 - 0.15, -18.0], [50.0, y0 + 0.15, -26.0], [70.0, y0 + 0.15, -14.0]]
-    luci['lavoro'] += [[C1[0] + 0.3, C1[1] + 0.3, C1[4] + 1.6], [C2[0] + 0.3, C2[3] - 0.3, C2[4] + 1.6], [C3[2] - 0.3, C3[3] - 0.3, C3[4] + 1.6],
-                       [BX[0] + 0.6, BX[1] + 0.6, T + 2.0]]
-    if GIOCO:
-        # le lampade da lavoro stanno su un palo dal fondo (la lampadina, 9 cm, sopra la sua testa)
-        for (lx, ly, lz), zb in zip(luci['lavoro'][-4:], (C1[4], C2[4], C3[4], z0)):
-            c.cilindro((lx, ly, zb), (lx, ly, lz - 0.09), 0.03, 'metallo_grigio', seg=8)
-            c.cilindro((lx, ly, lz - 0.13), (lx, ly, lz - 0.08), 0.06, 'metallo', seg=10)
+    if not GIOCO:
+        luci['lavoro'] += [[C1[0] + 0.3, C1[1] + 0.3, C1[4] + 1.6], [C2[0] + 0.3, C2[3] - 0.3, C2[4] + 1.6], [C3[2] - 0.3, C3[3] - 0.3, C3[4] + 1.6],
+                           [BX[0] + 0.6, BX[1] + 0.6, T + 2.0]]
+    else:
+        # una lampada da lavoro su ogni vasca e sul bacino (scelta dell'utente del 22 ottobre): un palo nell'angolo,
+        # un braccio verso il mezzo della vasca e la testa con la lampadina sotto, sopra i 2 m di chi cammina
+        for (ax, ay, zb, zv), (vx, vy) in (((C1[0] + 0.25, C1[1] + 0.25, C1[4], C1[4]), (1, 1)),
+                                         ((C2[0] + 0.25, C2[3] - 0.25, C2[4], C2[4]), (1, -1)),
+                                         ((C3[2] - 0.25, C3[3] - 0.25, C3[4], C3[4]), (-1, -1)),
+                                         ((BX[0] + 0.55, BX[1] + 0.55, z0, T), (1, 1))):
+            d = Vector((vx, vy, 0)).normalized()
+            zt = zv + 2.55
+            testa = Vector((ax, ay, zt - 0.1)) + d * 0.8
+            c.cilindro((ax, ay, zb), (ax, ay, zt), 0.035, 'metallo_grigio', seg=8)
+            c.cilindro((ax, ay, zt - 0.05), (testa.x, testa.y, zt - 0.05), 0.025, 'metallo_grigio', seg=8)
+            c.cilindro((testa.x, testa.y, zt - 0.04), (testa.x, testa.y, zt - 0.26), 0.13, 'gioco_giallo', seg=14)
+            luci['lavoro'].append([round(testa.x, 3), round(testa.y, 3), round(zt - 0.3, 3)])
     luci['acqua_scorre'] += [[x, y, z] for (x, y, z) in ((50.8, 15.0, zc1), (62.8, 27.8, zc2), (69.6, 7.4, zc3), (50.8, 6.5, -33.4))]
     # lei: dove ti raggiunge (le pose per gli scatti)
     luci['lei'] += [[47.5, 18.3, -25.0, 200.0, 'insegue', 'raggiunge la vasca 1 dal basso'],

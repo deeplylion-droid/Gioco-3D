@@ -139,7 +139,8 @@ func _modello(i: int) -> void:
 	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else load(DIR + "inseguimento_%s.glb" % nome)
 	var glb: Node3D = scena.instantiate()
 	glb.name = "Inseguimento" + nome.capitalize()
-	var acqua: Material = load("res://assets/materials/sala/acqua_torbida.tres")
+	# l'acqua meno torbida, verde-azzurra, col fondo che si intravede (scelta dell'utente del 22 ottobre)
+	var acqua: Material = load("res://assets/materials/inseguimento/acqua_inseguimento.tres")
 	for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = acqua
 	if _a_pezzi:
