@@ -4,7 +4,7 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 
 | Squadra | Sessione cloud | Branch | Lavoro |
 |---|---|---|---|
-| mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/lei-inseguimento | le 7 animazioni di lei per l'inseguimento (stima 6-8 ore); poi le aggancia ambienti-2 |
+| mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/lei-inseguimento | animazioni di lei per l'inseguimento fatte (88ae2ba, scatti e video in docs/report/mascotte/lei_inseguimento/); ora le aggancia lui nell'inseguimento partendo da 593d6bf, poi le rivede ambienti-2 |
 | ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1 fatto, con vasche c e strisce a (593d6bf); discesa_5_0 unita. Aspetta le animazioni di mascotte; intanto le prove dello sfondo del titolo su lavoro/ambienti-2-menu (strati A cupola e tempesta, B acqua ai suoi piedi, C pezzi della sala; scatti di B+C, A+B, A, B) |
 | ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | tuffo A consegnato (3df43ba); ritocco della corona (meno lamina, acqua bianca, gocce che sembrino acqua), geyser V1 fuori dall'esportazione; poi valvola_corridoio_1 e turbina_saracinesca |
 | enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | fiume A con lo scivolo B, infermeria B, lettore, keycard, strada β, Polaroid della pecora: uniti per la v0.3.9 (6271159) |
@@ -53,5 +53,6 @@ In lavoro/godot finora: griglia del controllo di posizionamento e collisioni dei
 
 ## Da chiedere all'utente
 
-- Sfondo del titolo (ora "tutto nero"): l'utente ha chiesto B+C (acqua ai suoi piedi e pezzi della sala dietro) e le prove anche di A+B, A e B. Quando arrivano gli scatti di ambienti-2, pagina con le quattro prove; nel gioco niente finché non sceglie.
+- Sfondo del titolo (ora "tutto nero"): l'utente ha chiesto B+C (acqua ai suoi piedi e pezzi della sala dietro) e le prove anche di A+B, A e B. Poi ha chiesto solo le due combinazioni: B+C e A+B (anche durante il lampo). Quando arrivano gli scatti di ambienti-2, pagina con le prove; nel gioco niente finché non sceglie.
+- Inseguimento: nella vasca 1 la campana di lei poggia sul fondo e i tentacoli lo attraversano (salendo da -5 m passa il fondo); con l'acqua più chiara si vede. Da chiedere: pozzo di scarico nel fondo come in SB1, oppure vasca più profonda in quel punto. Poi lo fa ambienti-2. Anche le animazioni di lei vanno mostrate (scatti già fatti).
 - I promemoria di Steam parlano ancora di «Splashland»: proposto di aggiornarli, nessuna risposta. Su itch l'utente deve rinominare la bozza.
