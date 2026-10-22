@@ -42,6 +42,7 @@ M_DISCESA = LARGO_D + SPONDA + 0.05
 R_SPIRALE = 4.6                            # raggio della spirale finale attorno al pozzo
 M_CHIUSO = R_GROVIGLIO + 0.1               # mezza larghezza di un tubo chiuso
 QUANTI = 38                                # scivoli decorativi da tenere
+BOCCA_Y = 17.4                             # nel gioco: y della bocca del tubo dell'inseguimento sul muro est
 GIOCO = False                              # True: GLB per il gioco (collisioni -col, prop solidi) e torre_gioco.json
 COLORI = {'tsc_giallo': '#f0b414', 'tsc_rosso': '#d22a1e', 'tsc_blu': '#1f62c4', 'tsc_verde': '#35a63a',
           'tsc_arancio': '#f06a14', 'tsc_viola': '#7e36b4', 'tsc_turchese': '#14a8b0', 'tsc_rosa': '#e0507e',
@@ -498,8 +499,11 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
 
     perche = {}
 
+    ultimo = ['']
+
     def no(motivo):
         perche[motivo] = perche.get(motivo, 0) + 1
+        ultimo[0] = motivo
         return False
 
     def libero(a, b, proprio, raggio=0.12, fine_su=None):
@@ -511,9 +515,11 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
             for (pts, m) in altri_tutti:
                 if pts is proprio:
                     continue
+                # sopra la discesa restano liberi 2,4 m: chi scivola non deve trovarsi una barra davanti
+                su = 2.4 if m == M_DISCESA else m + 0.1
                 for t in pts[::2]:
                     if abs(t.x - q.x) < 2.5 and abs(t.y - q.y) < 2.5 and \
-                            math.hypot(t.x - q.x, t.y - q.y) < m + raggio + 0.05 and -0.6 - m < q.z - t.z < m + 0.1:
+                            math.hypot(t.x - q.x, t.y - q.y) < m + raggio + 0.05 and -0.6 - m < q.z - t.z < su:
                         return no('pezzo')
             for (x0, y0, z0, x1, y1, z1, nome) in sp.scatole:
                 if nome.startswith(('ponte_', 'vasca_', 'pozzo', 'nucleo_')) or nome == fine_su:
@@ -524,7 +530,8 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
                 for j in range(13):
                     f = j / 12
                     v = da.lerp(aa, f) + Vector((0, 0, 1.6 * 4 * f * (1 - f)))
-                    if math.hypot(v.x - q.x, v.y - q.y) < 1.1 and -1.0 < q.z - v.z < 1.6:
+                    # il corpo di chi salta: dai piedi (la traiettoria) a 2 m sopra
+                    if math.hypot(v.x - q.x, v.y - q.y) < 1.1 and -0.3 < q.z - v.z < 2.0:
                         return no('volo')
         return True
 
@@ -542,8 +549,10 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
             if dentro_rett(Vector((x, y, 0)), r, -0.15) and best < L < z:
                 best = L - 0.02
         for (x0, y0, z0, x1, y1, z1, nome) in sp.scatole:
-            if nome.startswith(('vasca_', 'pozzo')) and x0 < x < x1 and y0 < y < y1 and best < z1 < z:
-                best = z1
+            # (in una vasca di raccolta il palo arriva sul fondo, nell'acqua)
+            z_ = z0 + 0.35 if nome.startswith('vasca_raccolta') else z1
+            if nome.startswith(('vasca_', 'pozzo')) and x0 < x < x1 and y0 < y < y1 and best < z_ < z:
+                best = z_
         return best
 
     def sella(u, d, lat, w):
@@ -566,7 +575,7 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         """La staffa tra il collare e il tirante (un braccetto corto verso l'esterno)."""
         c.cilindro(q - lat * (sg_lat * 0.08), q, 0.04, 'metallo', seg=8)
 
-    def prova(pts, mezza, chiuso, largo, prof, p, d):
+    def prova(pts, mezza, chiuso, largo, prof, p, d, discesa=False):
         d3 = d.normalized()
         d = Vector((d.x, d.y, 0))
         if d.length < 1e-6:
@@ -581,8 +590,9 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         t_col, col = min(colonne, key=lambda tq: math.hypot(tq[1].x - u.x, tq[1].y - u.y))
         vernice = VERNICI_TORRI[t_col]
         dist = math.hypot(col.x - u.x, col.y - u.y)
-        # 1) puntone dalla colonna più vicina di un traliccio
-        if 0.6 < dist < 3.6:
+        # 1) puntone dalla colonna più vicina di un traliccio (per la discesa anche più lungo: sta sotto il
+        # canale, fuori dalla vista, al posto dei tiranti inclinati)
+        if 0.6 < dist < (5.5 if discesa else 3.6):
             a1 = Vector((col.x, col.y, u.z - 0.1))
             a2 = Vector((col.x, col.y, u.z - 0.1 - max(1.0, 0.8 * dist)))
             if libero(a1, u, pts) and libero(a2, u, pts):
@@ -606,8 +616,9 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
                 m = (q.z + z1) / 2
                 c.cilindro(Vector((q.x, q.y, m - 0.18)), Vector((q.x, q.y, m + 0.18)), 0.08, 'gioco_rosso', seg=8)
             return 'tiranti'
-        # 3) tiranti inclinati fino alla colonna più vicina, più in alto (del colore della torre)
-        if dist < 7.5:
+        # 3) tiranti inclinati fino alla colonna più vicina, più in alto (del colore della torre). Non per la
+        # discesa: passerebbero davanti alla faccia di chi scivola (prova del 19 ottobre)
+        if dist < 7.5 and not discesa:
             alto = Vector((col.x, col.y, max(capi_alti[0].z, capi_alti[1].z) + max(1.6, 0.55 * dist)))
             if alto.z < H - 0.5 and all(libero(q + (alto - q).normalized() * 0.3, alto, pts, 0.06) for q in capi_alti):
                 collare(p, d3, lat, chiuso, largo, prof)
@@ -660,7 +671,7 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
                 if not (0.25 <= s_ <= tot - 0.25) or abs(s_obiettivo - s_) > spazio:
                     continue
                 p, d = a_s(pts, lung, s_)
-                tipo = prova(pts, mezza, chiuso, largo, prof, p, d)
+                tipo = prova(pts, mezza, chiuso, largo, prof, p, d, nome.startswith('discesa'))
                 if tipo:
                     conta[tipo] = conta.get(tipo, 0) + 1
                     nuovi.append(s_)
@@ -688,6 +699,134 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         if r_[2] is None or r_[2] > sbalzo + 0.6 or r_[3] > sbalzo + 0.6 or r_[4] > campata + 1.5:
             print('  sostegni scarsi:', r_)
     return rapporto
+
+
+def vasche_raccolta(c, cl, sp, salti, tappe, aperture):
+    """Sotto i salti dei tratti 0-4 (scelta dell'utente del 21 ottobre, V1): chi sbaglia il salto cade in una
+    vasca di raccolta, senza morire, e una scaletta di servizio lo riporta sulla pedana da cui era partito (in
+    cima la ringhiera è aperta). La vasca sta accanto al lato della pedana di partenza che guarda il salto e
+    copre la zona dove si cade (il punto in mezzo al salto, 1,5 m avanti e indietro, 1,2 m di lato). Tra le
+    quote e le misure possibili si prende la prima in cui la vasca non tocca nessuno scivolo e sopra la zona
+    dove si cade, fino al salto, non passa niente. È retta da due puntoni dal traliccio della torre di partenza.
+    Il salto dell'ultimo tratto finisce sul fondo. Restituisce i dati per il gioco e le acque."""
+    dati, acque = [], []
+    tutti = [(pz, M_DISCESA) for pz in sp.discesa] + list(sp.deco)
+
+    def ingombro(m_):
+        """Quanto un pezzo occupa sopra e sotto i punti della sua linea: la discesa ha il canale profondo e la
+        travatura sotto, i canali aperti le sponde sopra e il canale sotto, i tubi il loro raggio."""
+        if m_ == M_DISCESA:
+            return 0.35, PROF_D + 0.5
+        if m_ == M_CHIUSO:
+            return m_, m_
+        return 0.35, PROF + 0.45
+
+    def tocca(x0, y0, z0, x1, y1, z1, marg):
+        for pts_, m_ in tutti:
+            su_, giu_ = ingombro(m_)
+            for q in pts_:
+                if x0 - m_ - marg < q.x < x1 + m_ + marg and y0 - m_ - marg < q.y < y1 + m_ + marg and \
+                        z0 - su_ - marg < q.z < z1 + giu_ + marg:
+                    return True
+        return False
+    for k in range(min(5, len(tappe))):
+        t0, L0, t1, L1 = tappe[k]
+        s_ = salti[k]
+        da, a = s_['da'], s_['a']
+        m = (da + a) / 2
+        dv = Vector((a.x - da.x, a.y - da.y, 0)).normalized()
+        dl = Vector((-dv.y, dv.x, 0))
+        zona = [m + dv * 1.5 + dl * 1.2, m + dv * 1.5 - dl * 1.2, m - dv * 1.5 + dl * 1.2, m - dv * 1.5 - dl * 1.2]
+        zx0, zx1 = min(q.x for q in zona), max(q.x for q in zona)
+        zy0, zy1 = min(q.y for q in zona), max(q.y for q in zona)
+        z_salto = min(da.z, a.z)
+        x0, y0, x1, y1 = ponte(t0, L0)
+        lati = {'e': (x1, (1, 0)), 'o': (x0, (-1, 0)), 'n': (y1, (0, 1)), 's': (y0, (0, -1))}
+        lato = max(lati, key=lambda l_: (m.x - x1) if l_ == 'e' else (x0 - m.x) if l_ == 'o' else (m.y - y1) if l_ == 'n' else (y0 - m.y))
+        bordo, (nx, ny) = lati[lato]
+        lungo_x = lato in 'ns'
+        lo_side, hi_side = (x0, x1) if lungo_x else (y0, y1)
+        ap = [x for x in aperture.get((t0, L0), []) if x[0] == lato]
+        posti = []
+        u = lo_side + 0.7
+        while u < hi_side - 0.7:
+            if all(u - lo_side < a0 - 0.6 or u - lo_side > a1 + 0.6 for (_, a0, a1) in ap):
+                posti.append(u)
+            u += 0.1
+        assert posti, f'nessun posto per la scaletta della vasca {k}'
+        # la zona di caduta, lungo il lato (u) e verso fuori (n)
+        zu0, zu1 = (zx0, zx1) if lungo_x else (zy0, zy1)
+        zn = [zy0, zy1] if lungo_x else [zx0, zx1]
+        zn_lontano = max(zn) if (nx + ny) > 0 else min(zn)
+        prof = min(abs(zn_lontano - bordo) + 0.3, (R_TORRE * math.sqrt(2) - 2 * PONTE) - 0.35)
+        scelta = None
+        # la colonna sopra la zona di caduta deve essere libera fino al salto (a parte la discesa che atterra)
+        for u_scala in sorted(posti, key=lambda q: abs(q - (zu0 + zu1) / 2)):
+            u0, u1 = min(zu0, u_scala - 0.6), max(zu1, u_scala + 0.6)
+            if u1 - u0 > 7.0:
+                continue
+            n0, n1 = sorted((bordo + 0.15 * (nx + ny), bordo + (0.15 + prof) * (nx + ny)))
+            rx0, ry0, rx1, ry1 = (u0, n0, u1, n1) if lungo_x else (n0, u0, n1, u1)
+            rx0, ry0, rx1, ry1 = max(rx0, XI0 + 0.25), max(ry0, YI0 + 0.25), min(rx1, XI1 - 0.25), min(ry1, YI1 - 0.25)
+            alto = 0.8
+            for discesa_cm in range(100 if s_['tipo'] == 'getto' else 120, 420, 5):
+                bordo_su = z_salto - discesa_cm / 100.0
+                fondo = bordo_su - alto
+                # la vasca e le sue travi (35 cm sotto il fondo) non toccano niente; la colonna di caduta è libera
+                if tocca(rx0, ry0, fondo - 0.35, rx1, ry1, bordo_su + 0.2, 0.05):
+                    continue
+                if any(zx0 - 0.4 < q.x < zx1 + 0.4 and zy0 - 0.4 < q.y < zy1 + 0.4 and bordo_su < q.z < z_salto - 0.4
+                       for pts_, m_ in sp.deco for q in pts_):
+                    continue
+                scelta = (u_scala, rx0, ry0, rx1, ry1, bordo_su, fondo)
+                break
+            if scelta:
+                break
+        if scelta is None:
+            print(f'ATTENZIONE: nessun posto libero per la vasca di raccolta {k} (salto a {z_salto:.1f}), lato {lato}, zona {[round(v,1) for v in (zx0, zy0, zx1, zy1)]}, prof {prof:.1f}')
+            u_scala = min(posti, key=lambda q: abs(q - (zu0 + zu1) / 2))
+            u0, u1 = min(zu0, u_scala - 0.6), max(zu1, u_scala + 0.6)
+            n0, n1 = sorted((bordo + 0.15 * (nx + ny), bordo + (0.15 + prof) * (nx + ny)))
+            rx0, ry0, rx1, ry1 = (u0, n0, u1, n1) if lungo_x else (n0, u0, n1, u1)
+            for pts_, m_ in tutti:
+                zs_ = [round(q.z, 1) for q in pts_ if rx0 - m_ - 0.1 < q.x < rx1 + m_ + 0.1 and ry0 - m_ - 0.1 < q.y < ry1 + m_ + 0.1 and q.z < z_salto + 1]
+                if zs_:
+                    print(f'   pezzo (mezza {m_:.2f}) nella pianta della vasca a quote {min(zs_)}..{max(zs_)}, xy es. {[round(v,1) for v in pts_[len(pts_)//2]]}')
+            continue
+        u, rx0, ry0, rx1, ry1, bordo_su, fondo = scelta
+        acque.append(P.vasca(c, rx0, ry0, rx1, ry1, fondo, alto=bordo_su - fondo, nome_acqua=f'acqua_raccolta_{k}'))
+        c.scatola((rx0 - 0.1, ry0 - 0.1, fondo - 0.3), (rx1 + 0.1, ry1 + 0.1, fondo), 'metallo_grigio')
+        sp.scatola(rx0, ry0, fondo - 0.35, rx1, ry1, bordo_su, f'vasca_raccolta_{k}')
+        # due puntoni dal traliccio della torre di partenza, sotto la vasca dalla parte della pedana
+        cc = centro(t0)
+        for f_ in (0.25, 0.75):
+            q = Vector((rx0 + (rx1 - rx0) * f_, ry0 + (ry1 - ry0) * f_, fondo - 0.3))
+            if lungo_x:
+                q.y = ry0 + 0.4 if ny > 0 else ry1 - 0.4
+            else:
+                q.x = rx0 + 0.4 if nx > 0 else rx1 - 0.4
+            col = Vector((min(max(q.x, cc.x - NUCLEO), cc.x + NUCLEO), min(max(q.y, cc.y - NUCLEO), cc.y + NUCLEO), q.z - 1.6))
+            c.cilindro(col, q, 0.1, VERNICI_TORRI[t0], seg=10)
+            c.anello(col, (0, 0, 1), 0.17, 0.26, 0.14, 'metallo', seg=12)
+            c.scatola((q.x - 0.15, q.y - 0.15, q.z - 0.04), (q.x + 0.15, q.y + 0.15, q.z), 'metallo')
+        # la scaletta di servizio, dalla vasca alla pedana
+        aperture.setdefault((t0, L0), []).append((lato, u - lo_side - 0.95, u - lo_side + 0.95))   # (largo: si sale anche un po' di lato)
+        sx, sy = (u, bordo + 0.12 * ny) if lungo_x else (bordo + 0.12 * nx, u)
+        lat = Vector((1, 0, 0)) if lungo_x else Vector((0, 1, 0))
+        # (solo da vedere, in cl: a salire ci pensa la Ladder del gioco, e i pioli non fanno inciampare in cima)
+        for sg in (-0.25, 0.25):
+            q = Vector((sx, sy, 0)) + lat * sg
+            cl.cilindro((q.x, q.y, fondo), (q.x, q.y, L0 + 1.0), 0.03, 'giallo_sicurezza', seg=8)
+            cl.cilindro((q.x, q.y, L0 - 0.2), (q.x - 0.12 * nx, q.y - 0.12 * ny, L0 - 0.2), 0.025, 'metallo', seg=6)
+        zz = fondo + 0.3
+        while zz < L0 + 0.05:
+            cl.cilindro(Vector((sx, sy, zz)) - lat * 0.25, Vector((sx, sy, zz)) + lat * 0.25, 0.022, 'giallo_sicurezza', seg=6)
+            zz += 0.3
+        dati.append(dict(rett=[rx0, ry0, rx1, ry1], fondo=fondo, acqua=bordo_su - 0.12, torre=t0, livello=L0,
+                         scala=dict(x=sx, y=sy, z0=fondo, z1=L0, verso=[float(nx), float(ny), 0.0])))
+        print(f'vasca di raccolta {k}: {t0} {L0:g}, lato {lato}, rett {[round(v, 2) for v in (rx0, ry0, rx1, ry1)]}, '
+              f'bordo {bordo_su:.2f} ({z_salto - bordo_su:.1f} m sotto il salto), scaletta in {u:.2f}')
+    return dati, acque
 
 
 IMBUTO_L, IMBUTO_BOCCA, IMBUTO_H = 1.6, 0.6, 0.95      # lunghezza, quanto si allarga per lato, altezza
@@ -730,6 +869,9 @@ def imbuto(c, pz, t, L, mat, ostacoli):
             ostacoli.append([round(q.x, 2), round(q.y, 2), L, 0.12])
 
 
+BOCCHE_CHIUSE = []        # (punto, verso, chiuso): per le lampade rosse guaste (nel gioco)
+
+
 def chiusa_bocca(c, dal_capo, chiuso, L):
     """Chiude la bocca di uno scivolo decorativo sulla sua pedana: una grata tonda dentro il tubo, o un
     cancello a sbarre davanti al canale aperto (con la collisione: non ci si entra)."""
@@ -740,6 +882,7 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
         i += 1
     p = dal_capo[i]
     d = (dal_capo[i + 1] - dal_capo[i - 1]).normalized()
+    BOCCHE_CHIUSE.append(([round(v, 3) for v in (p.x, p.y, L)], [round(d.x, 3), round(d.y, 3)], chiuso))
     if chiuso:
         r = R_GROVIGLIO - 0.04
         lat = d.cross(Vector((0, 0, 1))).normalized()
@@ -755,7 +898,7 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
 
 
 def versione_A(mats):
-    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear()
+    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear(); BOCCHE_CHIUSE.clear()
     materiali_scivoli(mats)
     rnd = random.Random(17)
     c = K.Costruttore(mats)            # guscio, torri, piattaforme, travature
@@ -1044,6 +1187,39 @@ def versione_A(mats):
     scelti = []
     conta = {}
     TETTO = {'spirale': 4, 'vasca': 4, 'muro': 7}
+
+    def nella_caduta(pts, mezza):
+        """Vero se il pezzo passa sotto un salto, nei 5 m dove cade chi lo sbaglia: lì c'è la vasca di
+        raccolta (V1, scelta dell'utente del 21 ottobre) e nessuno scivolo deve fermare la caduta prima."""
+        for k_, s_ in enumerate(salti[:5]):
+            da, a = s_['da'], s_['a']
+            m = (da + a) / 2
+            dv = Vector((a.x - da.x, a.y - da.y, 0)).normalized()
+            dl = Vector((-dv.y, dv.x, 0))
+            z_s = min(da.z, a.z)
+            # la zona dove si cade e, fino al lato della pedana di partenza, dove va la vasca con la scaletta
+            zona = [m + dv * 1.5 + dl * 1.2, m + dv * 1.5 - dl * 1.2, m - dv * 1.5 + dl * 1.2, m - dv * 1.5 - dl * 1.2]
+            t0_, L0_ = tappe[k_][0], tappe[k_][1]
+            x0_, y0_, x1_, y1_ = ponte(t0_, L0_)
+            # (fino al posto della scaletta sul lato della pedana di partenza: il primo libero dalle aperture,
+            # come in vasche_raccolta)
+            fuori = {'e': m.x - x1_, 'o': x0_ - m.x, 'n': m.y - y1_, 's': y0_ - m.y}
+            lato_ = max(fuori, key=fuori.get)
+            lungo_x_ = lato_ in 'ns'
+            lo_, hi_ = (x0_, x1_) if lungo_x_ else (y0_, y1_)
+            bordo_ = {'e': x1_, 'o': x0_, 'n': y1_, 's': y0_}[lato_]
+            ap_ = [x for x in aperture.get((t0_, L0_), []) if x[0] == lato_]
+            posti_ = [lo_ + 0.7 + 0.1 * i for i in range(int((hi_ - lo_ - 1.4) / 0.1) + 1)
+                      if all(0.7 + 0.1 * i < a0 - 0.6 or 0.7 + 0.1 * i > a1 + 0.6 for (_, a0, a1) in ap_)]
+            u_m_ = m.x if lungo_x_ else m.y
+            u_s = min(posti_, key=lambda q: abs(q - u_m_)) if posti_ else u_m_
+            scala_ = [(u_s - 0.6, bordo_), (u_s + 0.6, bordo_)] if lungo_x_ else [(bordo_, u_s - 0.6), (bordo_, u_s + 0.6)]
+            xs_ = [q.x for q in zona] + [p_[0] for p_ in scala_]
+            ys_ = [q.y for q in zona] + [p_[1] for p_ in scala_]
+            for q in pts:
+                if min(xs_) - mezza < q.x < max(xs_) + mezza and min(ys_) - mezza < q.y < max(ys_) + mezza and z_s - 5.0 < q.z < z_s:
+                    return True
+        return False
     for cand in candidati:
         if len(scelti) >= QUANTI:
             break
@@ -1115,6 +1291,8 @@ def versione_A(mats):
         pend = abs(pend)
         if not (0.07 < pend < (0.6 if chiuso else 0.45)) or lung < 4.0:
             _no(f'pendenza {tipo}'); continue
+        if nella_caduta(pts, mezza):
+            _no('zona di caduta di un salto'); continue
         if not sp.libero(pts, mezza, esenti, muro_fine):
             continue
         sp.deco.append((pts, mezza))
@@ -1193,6 +1371,10 @@ def versione_A(mats):
                 c.anello((p.x, p.y, FONDO), (0, 0, 1), 0.0, 0.36, 0.04, 'metallo', seg=14)
                 c.scatola((p.x - 0.4, p.y - 0.4, z1 - 0.06), (p.x + 0.4, p.y + 0.4, z1), 'metallo')
 
+    # --- vasche di raccolta sotto i salti, con la scaletta di servizio (V1) ------------------------------
+    cl = K.Costruttore(mats)           # scalette di servizio delle vasche: solo da vedere
+    raccolta, acque_raccolta = vasche_raccolta(c, cl, sp, salti, tappe, aperture)
+
     # --- torri, piattaforme, ringhiere, scale ---------------------------------------------------------
     # piattaforme solo dove parte o arriva uno scivolo (scelta dell'utente del 18 ottobre: "solo dove servono")
     servono = set(DISCESA_PONTI)
@@ -1245,19 +1427,24 @@ def versione_A(mats):
     P.piattaforma(c, rno[0] - 2.4, 16.6, rno[0] + 0.05, rno[1] + 0.05, 0.0, lati=('o',), pali=False)
     P.ringhiera_dritta(c, (XI0 + 0.3, 16.6, 0.0), (rno[0] - 2.4, 16.6, 0.0))
     P.mensola(c, 13.6, 16.4, XI0, 0.0, 'o')
-    # il portale di partenza (senza le sbarre: il cancello è aperto, si entra camminando nel canale)
-    b0 = discesa[0][1][0][0]
-    v0 = discesa[0][1][0][3] - b0
-    v0.z = 0
-    v0.normalize()
-    t0v = Vector((-v0.y, v0.x, 0))
-    base = Vector((b0.x, b0.y, 0.0))
-    for s_ in (-1, 1):
-        ap = base + t0v * (s_ * (LARGO_D + 0.45))
-        c.cilindro(ap, ap + Vector((0, 0, 2.6)), 0.07, 'gioco_rosso', seg=12)
-    c.cilindro(base - t0v * (LARGO_D + 0.45) + Vector((0, 0, 2.6)), base + t0v * (LARGO_D + 0.45) + Vector((0, 0, 2.6)), 0.07,
-               'gioco_rosso', seg=12)
-    c.scatola_assi(base + Vector((0, 0, 2.85)), [v0, t0v, Vector((0, 0, 1))], (0.03, LARGO_D + 0.55, 0.22), 'strisce')
+    # il portale di partenza su ogni imbocco della discesa (senza le sbarre: si entra camminando nel canale).
+    # Nel gioco ci sono su i led verdi e la lampada verde (S1, scelta dell'utente del 21 ottobre): li mette
+    # SalaTorre dai dati in gioco['imbocchi']. Prima del 21 ottobre c'era solo sul primo.
+    imbocchi = []
+    for k_, (_, pezzi_, _m_) in enumerate(discesa if GIOCO else discesa[:1]):
+        b0 = pezzi_[0][0]
+        v0 = pezzi_[0][3] - b0
+        v0.z = 0
+        v0.normalize()
+        t0v = Vector((-v0.y, v0.x, 0))
+        base = Vector((b0.x, b0.y, tappe[k_][1] if k_ else 0.0))
+        for s_ in (-1, 1):
+            ap = base + t0v * (s_ * (LARGO_D + 0.45))
+            c.cilindro(ap, ap + Vector((0, 0, 2.6)), 0.07, 'gioco_rosso', seg=12)
+        c.cilindro(base - t0v * (LARGO_D + 0.45) + Vector((0, 0, 2.6)), base + t0v * (LARGO_D + 0.45) + Vector((0, 0, 2.6)), 0.07,
+                   'gioco_rosso', seg=12)
+        c.scatola_assi(base + Vector((0, 0, 2.85)), [v0, t0v, Vector((0, 0, 1))], (0.03, LARGO_D + 0.55, 0.22), 'strisce')
+        imbocchi.append(dict(base=[round(v, 3) for v in base], verso=[round(v0.x, 4), round(v0.y, 4)], mezza=LARGO_D + 0.45, alto=2.6))
     P.balconata(c, 28.6, 33.4, YI1, -1.5)
     # il fondo: pozzo, vasche, la bocca del tubo dell'inseguimento sul muro nord
     P.pozzo_lei(c, C)
@@ -1267,8 +1454,10 @@ def versione_A(mats):
         if nome != 'fondo' and x0 < vf[2] + 0.5 and vf[0] < x1 + 0.5 and y0 < vf[3] + 0.5 and vf[1] < y1 + 0.5:
             continue    # la vasca del fondo prende il suo posto
         acque.append(P.vasca(c, x0, y0, x1, y1, FONDO, alto=0.6, nome_acqua=f'acqua_vasca_{nome}'))
-    # la bocca del tubo grande dell'inseguimento: dal muro est, sopra la vasca est
-    bocca = [(XI1 + 1.0, 15.0, FONDO + 1.4), (XI1 - 1.2, 15.0, FONDO + 1.6), (XI1 - 2.4, 15.0, FONDO + 1.6)]
+    # la bocca del tubo grande dell'inseguimento: dal muro est, accanto alla vasca del fondo. Nel gioco sta a
+    # nord dell'ultimo salto (in y 15 il salto le passava attraverso)
+    yb_ = BOCCA_Y if GIOCO else 15.0
+    bocca = [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.6), (XI1 - 2.4, yb_, FONDO + 1.6)]
     oggetti_scivoli.append(K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06))
     # tubi di servizio sui muri
     for z in (-17.0, -7.5, 4.5, 10.5):
@@ -1403,9 +1592,10 @@ def versione_A(mats):
     ob = c.crea('torre_A' + suff, sporco=sporco)
     ob_t = ct.crea('torre_A_travi' + suff, sporco=sporco)
     ob_v = cv.crea('torre_A_sostegni', sporco=sporco)
+    ob_l = cl.crea('torre_A_scalette', sporco=sporco)
     bpy.context.scene['linee_pezzi'] = json.dumps(linee_pezzi)
     ob_s = cs.crea('torre_A_canali' + suff, sporco=lambda co: 0.75)
-    gruppi = {'struttura': [ob, ob_t, ob_v, gr, pol] + acque, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
+    gruppi = {'struttura': [ob, ob_t, ob_v, ob_l, gr, pol] + acque + acque_raccolta, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
     # per il gioco: checkpoint, salti, Polaroid, balconata, pozzo e vasca del fondo (coordinate di Blender)
     gioco = dict(checkpoint=[], salti=[], tratti=[])
     passerella = Vector((XI0 + 1.2, 15.0, 0.0))
@@ -1460,6 +1650,9 @@ def versione_A(mats):
     gioco['balconata'] = dict(centro=[31.0, YI1 - 0.8, -1.5], primo_salto=list(salti[0]['da']))
     gioco['pozzo'] = [C[0], C[1], FONDO]
     gioco['vasca_fondo'] = dict(rett=[xv0, yv0, xv1, yv1], acqua=FONDO + 0.6 - 0.12)
+    gioco['raccolta'] = raccolta
+    gioco['imbocchi'] = imbocchi
+    gioco['bocche_chiuse'] = [dict(pos=p_, verso=d_, tubo=ch_) for p_, d_, ch_ in BOCCHE_CHIUSE]
     gioco['passerella'] = list(passerella)
     gioco['pedane'] = [[round(v, 2) for v in r] + [L] for (t, L), r in sorted(costruite.items(), key=lambda kv: (kv[0][1], kv[0][0]))]
     # i pianerottoli delle due scale di servizio (alla quota di ogni livello, accanto alle pedane)
