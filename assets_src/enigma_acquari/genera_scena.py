@@ -305,7 +305,8 @@ sr_tardi('BoxShape3D', 'rampa_forma', size='Vector3(%.3f, 0.1, %.3f)' % (ls, pp)
 ca, sa = math.cos(-ang), math.sin(-ang)
 rz = '%g, %g, 0, %g, %g, 0, 0, 0, 1' % (ca, -sa, sa, ca)   # rotazione attorno a Z, per righe: scende verso +X
 for k, z in enumerate((PEDANA_Z0 + 0.02, PEDANA_Z1 - 0.02)):
-    node('Cosciale%d' % (k + 1), 'MeshInstance3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 - 0.05, z)), mesh='SubResource("cosciale")', material_override='ExtResource("m_tiranti")')
+    # i cosciali sotto i gradini, fianchi della scala: il fondo appoggia al pavimento (prima entrava di 12 cm)
+    node('Cosciale%d' % (k + 1), 'MeshInstance3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 + 0.08 * math.cos(ang) + 0.002, z)), mesh='SubResource("cosciale")', material_override='ExtResource("m_tiranti")')
 node('Rampa', 'CollisionShape3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 - 0.05 / math.cos(ang), pc[2])), shape='SubResource("rampa_forma")')
 # il parapetto giallo: montanti, corrimano e corrente a metà, sul davanti (anche lungo la scala) e a ovest
 sr_tardi('CylinderMesh', 'montante', top_radius='0.022', bottom_radius='0.022', height='1.0', radial_segments='10')
@@ -351,16 +352,18 @@ TV = math.radians(50.0)                                   # da sud verso ovest
 DV = (-math.sin(TV), math.cos(TV))                        # dal centro verso fuori (x, z)
 RV = R_B - 0.02 * KX + 0.55 * 0.7 * KV
 VX, VZ = XM + DV[0] * RV, ZMI + DV[1] * RV
-VY = 0.45 * KV
+# il modello (alto 1,02 m, a scala 0,7 KV) deve poggiare a terra: prima affondava di 29 cm nel pavimento
+ALZA_V = 0.509 * 0.7 * KV - 0.21 * KV
+VY = 0.45 * KV + ALZA_V
 # il +X del modello verso il centro del miscuglio, il +Z (davanti, il volantino) verso fuori a destra
 _vx = (-DV[0], 0.0, -DV[1])
 _vz = (_vx[2] * -1.0, 0.0, _vx[0])   # +Z = X ruotato di -90 gradi attorno a Y
 _vz = (-_vx[2], 0.0, _vx[0])
 VB = '%g, 0, %g, 0, 1, 0, %g, 0, %g' % (_vx[0], _vz[0], _vx[2], _vz[2])
 node('Valvola', 'Node3D', '.', transform=piazza('M', VB, (VX, VY, VZ)))
-node('Modello', parent='Valvola', inst='valvola', transform=tr(sc3(0.7 * KV, 0.7 * KV, 0.7 * KV), (0, 0.21 * KV - VY, 0)))
+node('Modello', parent='Valvola', inst='valvola', transform=tr(sc3(0.7 * KV, 0.7 * KV, 0.7 * KV), (0, 0.21 * KV + ALZA_V - VY, 0)))
 node('Collisione', 'StaticBody3D', 'Valvola', collision_mask='0')
-node('Forma', 'CollisionShape3D', 'Valvola/Collisione', transform=tr(ID, (0, 0.17 * KV - VY, 0)), shape='SubResource("forma_valvola")')
+node('Forma', 'CollisionShape3D', 'Valvola/Collisione', transform=tr(ID, (0, 0.17 * KV + ALZA_V - VY, 0)), shape='SubResource("forma_valvola")')
 node('Bersaglio', 'Area3D', 'Valvola', transform=tr(ID, (-0.4 * KV, 0, 0)), script='ExtResource("hitbox")')   # dalla parte di fuori del modello
 node('Forma', 'CollisionShape3D', 'Valvola/Bersaglio', shape='SubResource("forma_bersaglio")')
 gx = -(1.1 * 0.7 + 0.12) * KV + 0.55 * 0.7 * KV
@@ -448,7 +451,7 @@ for k, z in enumerate((Z0, Z1)):
 for k, z in enumerate((-18.2, -16.3, -13.7, -11.8)):
     node('StaffaMuro%d' % (k + 1), 'MeshInstance3D', G, transform=tr(ID, (19.8465, YT, z)), mesh='SubResource("staffa_muro")',
          material_override='ExtResource("m_tiranti")')
-    node('PiastraMuro%d' % (k + 1), 'MeshInstance3D', G, transform=tr(ID, (20.034, YT, z)), mesh='SubResource("piastra_muro")',
+    node('PiastraMuro%d' % (k + 1), 'MeshInstance3D', G, transform=tr(ID, (20.028, YT, z)), mesh='SubResource("piastra_muro")',   # a filo del muro, non dentro
          material_override='ExtResource("m_tiranti")')
 node('Portalampade', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_porta")')
 node('Lampadine', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_spente")')

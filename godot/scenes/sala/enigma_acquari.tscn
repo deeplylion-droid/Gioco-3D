@@ -526,12 +526,12 @@ mesh = SubResource("gradino")
 material_override = ExtResource("m_griglia")
 
 [node name="Cosciale1" type="MeshInstance3D" parent="Pedana"]
-transform = Transform3D(0.841178, 0.540758, 0, -0.540758, 0.841178, 0, 0, 0, 1, 13.2, 0.4, -19.73)
+transform = Transform3D(0.841178, 0.540758, 0, -0.540758, 0.841178, 0, 0, 0, 1, 13.2, 0.5193, -19.73)
 mesh = SubResource("cosciale")
 material_override = ExtResource("m_tiranti")
 
 [node name="Cosciale2" type="MeshInstance3D" parent="Pedana"]
-transform = Transform3D(0.841178, 0.540758, 0, -0.540758, 0.841178, 0, 0, 0, 1, 13.2, 0.4, -18.77)
+transform = Transform3D(0.841178, 0.540758, 0, -0.540758, 0.841178, 0, 0, 0, 1, 13.2, 0.5193, -18.77)
 mesh = SubResource("cosciale")
 material_override = ExtResource("m_tiranti")
 
@@ -607,7 +607,7 @@ transform = Transform3D(0.841178, 0.540758, 0, -0.540758, 0.841178, 0, 0, 0, 1, 
 shape = SubResource("parapetto_scala_forma")
 
 [node name="Valvola" type="Node3D" parent="."]
-transform = Transform3D(0.766044, 0, 0.642788, 0, 1, 0, -0.642788, 0, 0.766044, 9.5189, 0.9, -20.1055)
+transform = Transform3D(0.766044, 0, 0.642788, 0, 1, 0, -0.642788, 0, 0.766044, 9.5189, 1.1926, -20.1055)
 
 [node name="Modello" parent="Valvola" instance=ExtResource("valvola")]
 transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 0, -0.48, 0)
@@ -627,12 +627,12 @@ script = ExtResource("hitbox")
 shape = SubResource("forma_bersaglio")
 
 [node name="Scarico" type="MeshInstance3D" parent="Valvola"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.01, -0.896, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.01, -1.1886, 0)
 mesh = SubResource("griglia")
 material_override = ExtResource("m_griglia")
 
 [node name="Buco" type="MeshInstance3D" parent="Valvola"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.01, -0.898, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.01, -1.1906, 0)
 mesh = SubResource("buco")
 
 [node name="LampadaValvola" type="Node3D" parent="."]
@@ -642,11 +642,11 @@ script = ExtResource("lampada_valvola")
 [node name="Modello" parent="LampadaValvola" instance=ExtResource("gabbia")]
 
 [node name="Luce" type="SpotLight3D" parent="LampadaValvola"]
-transform = Transform3D(1, 6.0188e-17, 1.4331e-16, 0, -0.92198, 0.38723, 1.5543e-16, -0.38723, -0.92198, 0, 0, 0.36)
+transform = Transform3D(1, 4.7048e-17, 1.4814e-16, 0, -0.95309, 0.30269, 1.5543e-16, -0.30269, -0.95309, 0, 0, 0.36)
 light_color = Color(1, 0.86, 0.66, 1)
 light_energy = 6.00
 light_volumetric_fog_energy = 0.6
-spot_range = 5.10
+spot_range = 5.00
 spot_attenuation = 0.8
 spot_angle = 16.0
 
@@ -693,7 +693,7 @@ mesh = SubResource("staffa_muro")
 material_override = ExtResource("m_tiranti")
 
 [node name="PiastraMuro1" type="MeshInstance3D" parent="LampadePortone/Spente"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -18.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.028, 5.5, -18.2)
 mesh = SubResource("piastra_muro")
 material_override = ExtResource("m_tiranti")
 
@@ -703,7 +703,7 @@ mesh = SubResource("staffa_muro")
 material_override = ExtResource("m_tiranti")
 
 [node name="PiastraMuro2" type="MeshInstance3D" parent="LampadePortone/Spente"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -16.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.028, 5.5, -16.3)
 mesh = SubResource("piastra_muro")
 material_override = ExtResource("m_tiranti")
 
@@ -713,7 +713,7 @@ mesh = SubResource("staffa_muro")
 material_override = ExtResource("m_tiranti")
 
 [node name="PiastraMuro3" type="MeshInstance3D" parent="LampadePortone/Spente"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -13.7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.028, 5.5, -13.7)
 mesh = SubResource("piastra_muro")
 material_override = ExtResource("m_tiranti")
 
@@ -723,7 +723,7 @@ mesh = SubResource("staffa_muro")
 material_override = ExtResource("m_tiranti")
 
 [node name="PiastraMuro4" type="MeshInstance3D" parent="LampadePortone/Spente"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -11.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.028, 5.5, -11.8)
 mesh = SubResource("piastra_muro")
 material_override = ExtResource("m_tiranti")
 
