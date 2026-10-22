@@ -102,6 +102,9 @@ const CONTATTO := 0.05
 const PASSO_GRIGLIA := 0.25
 const TESTA_DA := 0.35
 const TESTA_A := 2.0
+## All'altezza della testa (da TESTA_LARGA_DA a TESTA_A) l'ingombro si cerca fino a TESTA_LARGA dall'asse, non 10 cm.
+const TESTA_LARGA_DA := 1.2
+const TESTA_LARGA := 0.2
 ## Dove si sta accovacciati per forza, lo spazio libero arriva fin qui (crouch_height del giocatore, player.gd).
 const ACCOVACCIATO := 1.05
 const GRADINO := 0.4
@@ -194,7 +197,7 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().physics_frame
 	_spazio = (_radice as Node3D).get_world_3d().direct_space_state if _radice is Node3D else get_viewport().get_world_3d().direct_space_state
 	_espandi_multimesh()
-	_congela_scheletri()
+	await _congela_scheletri()
 	var mesh := _mesh_visibili()
 	print("  %d mesh visibili" % mesh.size())
 	_elenca_nascoste()
@@ -434,23 +437,47 @@ func _espandi_multimesh() -> void:
 ## diventa quella messa in posa e lo scheletro si stacca (il controllo non anima niente). Senza schermo
 ## bake_mesh_from_current_skeleton_pose non funziona (la skin si registra col renderer): lo skinning si fa qui.
 func _congela_scheletri() -> void:
-	var n_cotte := 0
+	# la posa con i modificatori dello scheletro (i tentacoli spinti fuori dai muri, lo sguardo: mascotte, 22 ottobre)
+	# c'è solo subito dopo un aggiornamento dello scheletro: lo si fa girare un momento, si aspetta skeleton_updated e
+	# lì si mettono in posa le sue mesh
+	var per_scheletro := {}
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or mi.skeleton.is_empty() or mi.skin == null or not _visibile(mi):
 			continue
 		var sk := mi.get_node_or_null(mi.skeleton) as Skeleton3D
-		if sk == null:
-			continue
-		var cotta := _in_posa(mi, sk)
-		if cotta == null:
-			continue
-		mi.skin = null
-		mi.skeleton = NodePath()
-		mi.mesh = cotta
-		n_cotte += 1
+		if sk:
+			per_scheletro.get_or_add(sk, []).append(mi)
+	var n_cotte := 0
+	for sk in per_scheletro:
+		var cotte := {}
+		var fatto := [false]
+		var cuoci := func():
+			if fatto[0]:
+				return
+			fatto[0] = true
+			for mi in per_scheletro[sk]:
+				cotte[mi] = _in_posa(mi, sk)
+		(sk as Skeleton3D).skeleton_updated.connect(cuoci)
+		(sk as Node).process_mode = Node.PROCESS_MODE_ALWAYS
+		for i in 10:
+			await get_tree().process_frame
+			if fatto[0]:
+				break
+		(sk as Node).process_mode = Node.PROCESS_MODE_INHERIT
+		(sk as Skeleton3D).skeleton_updated.disconnect(cuoci)
+		if not fatto[0]:
+			push_warning("controllo: lo scheletro %s non si è aggiornato, posa senza modificatori" % _nodo(sk))
+			cuoci.call()
+		for mi in cotte:
+			if cotte[mi] == null:
+				continue
+			(mi as MeshInstance3D).skin = null
+			(mi as MeshInstance3D).skeleton = NodePath()
+			(mi as MeshInstance3D).mesh = cotte[mi]
+			n_cotte += 1
 	if n_cotte > 0:
-		print("  mesh con scheletro nella posa del momento: %d" % n_cotte)
+		print("  mesh con scheletro nella posa del momento (modificatori compresi): %d" % n_cotte)
 
 
 ## La mesh di mi messa nella posa corrente di sk (nello spazio di mi), solo i triangoli (per le misure).
@@ -1165,6 +1192,9 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 	forma.size = Vector3(0.2, TESTA_A - TESTA_DA, 0.2)
 	var forma_accov := BoxShape3D.new()
 	forma_accov.size = Vector3(0.2, ACCOVACCIATO - TESTA_DA, 0.2)
+	var forma_testa := CylinderShape3D.new()
+	forma_testa.radius = TESTA_LARGA
+	forma_testa.height = TESTA_A - TESTA_LARGA_DA
 	var q := PhysicsShapeQueryParameters3D.new()
 	q.collide_with_areas = false
 	var visti := {}
@@ -1186,6 +1216,16 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		if not r.is_empty():
 			q.collision_mask = Layers.WORLD | Layers.BARRIERS
 			solido = not _spazio.intersect_shape(q, 1).is_empty()
+		# all'altezza della testa (da TESTA_LARGA_DA) lo spazio è più largo: una lampada che sporge dal muro a 10-30 cm
+		# da dove si cammina finisce in faccia (collaudo, 22 ottobre: i fari della torre, le lampade del raccordo)
+		if testa == TESTA_A:
+			q.shape = forma_testa
+			q.transform = Transform3D(Basis(), piedi + Vector3(0, (TESTA_LARGA_DA + TESTA_A) * 0.5, 0))
+			q.collision_mask = STRATO
+			var gia := r.map(func(h): return (h.collider as CollisionObject3D).get_rid())
+			for h in _tutti_i_corpi(q):
+				if not gia.has((h.collider as CollisionObject3D).get_rid()):
+					r.append(h)
 		for h in r:
 			var mi: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
 			if mi == null or _acqua.has(mi) or _aperta_dal_giocatore(mi):
@@ -1207,7 +1247,7 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		var alto: float = visti[mi][3]
 		var dove := "all'altezza della testa" if alto > 1.4 else ("all'altezza del busto" if alto > 0.9 else "all'altezza delle gambe")
 		var quote := " (pavimento a y %.2f)" % visti[mi][5] if visti[mi][6] - visti[mi][5] < 0.05 else " (pavimenti fra y %.2f e %.2f)" % [visti[mi][5], visti[mi][6]]
-		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)%s, %s" % [
+		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)%s, %s" % [
 				dove, visti[mi][2], alto, visti[mi][1], quote,
 				"con la collisione (ci si sbatte contro)" if visti[mi][4] else "senza collisione (si attraversa)"])
 
