@@ -95,12 +95,11 @@ enum Fase {ATTESA, SBUCA, GUARDA, SCIVOLA, FUGA, FINITA, PRESA}
 ## Quando la spruzzi si tuffa nella fossa (decisione del coordinatore con l'utente del 22 ottobre, al posto
 ## del geyser): uno schizzo grande quando la testa entra in acqua e uno più piccolo quando entrano i
 ## tentacoli, le onde sulla fossa, il tonfo; sparisce solo quando è tutta sotto il pelo dell'acqua.
-## L'entrata per ora è semplice (la discesa di _scivola_a, che svanisce scendendo): l'animazione del tuffo
-## arriva dopo la scelta dell'utente tra le versioni A, B e C.
+## Il tuffo è la versione A scelta dall'utente (22 ottobre), di testa: si spinge sulle mani, salta, si gira
+## verso la fossa ed entra di testa; i tentacoli la seguono (TuffoLei, un modificatore dello scheletro).
 @export var tuffo := true
-## Quanto dura la discesa del tuffo (s) e quanto scende in tutto (m sotto il punto in cui sbuca).
-@export var durata_tuffo := 1.3
-@export var profondita_tuffo := 3.0
+## Entro quanto (s) deve essere tutta sotto: dopo, sparisce comunque (rete di sicurezza).
+@export var durata_tuffo := 2.6
 ## Il geyser V1 (GeyserMesh, la colonna simulata scelta il 19 ottobre): messo da parte il 22 ottobre (si
 ## vedeva lei dai buchi della colonna). Vero (e tuffo falso): si alza dalla fossa e lei sparisce quando è
 ## coperta, come nella proposta.
@@ -121,6 +120,7 @@ var _geyser: GeyserFossa
 # Il tuffo: la testa e i tentacoli sono già entrati in acqua (lo schizzo una volta sola).
 var _testa_entrata := false
 var _coda_entrata := false
+var _tuffo: TuffoLei
 var _colpibile: WaterHitbox
 
 
@@ -196,16 +196,13 @@ func _physics_process(delta: float) -> void:
 			_conta_vista(p, delta)
 		Fase.SCIVOLA:
 			if tuffo:
-				var kt := clampf(_t / durata_tuffo, 0.0, 1.0)
-				# Entrata provvisoria (finché non c'è l'animazione del tuffo): la discesa di oggi, con la
-				# dissolvenza che nasconde i tentacoli stesi oltre il bordo mentre scendono (un corpo rigido non
-				# può tirarli dentro la fossa senza attraversare il bordo).
-				_scivola_a(kt, true, profondita_tuffo)
-				if kt < 0.35:
+				if _tuffo:
+					_tuffo.t = _t
+				if _t < 0.3:
 					_controlla_presa(p)
 				_schizzi_tuffo()
-				# Sparisce solo quando è tutta sotto il pelo (rete di sicurezza: un secondo dopo la fine).
-				if tutta_sotto() or _t > durata_tuffo + 1.0:
+				# Sparisce solo quando è tutta sotto il pelo (rete di sicurezza: durata_tuffo).
+				if (_t > 0.5 and tutta_sotto()) or _t > durata_tuffo:
 					_fuga()
 				return
 			if _geyser and _geyser.in_corso():
@@ -315,6 +312,7 @@ func _affaccia() -> void:
 	_non_vista_t = 0.0
 	medusa.visible = true
 	medusa.process_mode = Node.PROCESS_MODE_INHERIT
+	_azzera_tuffo()
 	_metti_a(0.0)
 	_svanisci(0.0)
 	medusa.reset_physics_interpolation()
@@ -328,6 +326,7 @@ func _sbuca() -> void:
 	_non_vista_t = 0.0
 	medusa.visible = true
 	medusa.process_mode = Node.PROCESS_MODE_INHERIT
+	_azzera_tuffo()
 	_metti_a(1.0)
 	_svanisci(0.0)
 	_schizzo(1.4)
@@ -342,6 +341,7 @@ func _scivola() -> void:
 	if tuffo:
 		_testa_entrata = false
 		_coda_entrata = false
+		_avvia_tuffo()
 	elif geyser and punto_sbuca:
 		if _geyser == null:
 			_crea_geyser()
@@ -361,6 +361,35 @@ func _crea_geyser() -> void:
 	_geyser = GeyserMesh.new()
 	_geyser.name = "Geyser"
 	add_child(_geyser)
+
+
+## Il tuffo (TuffoLei) sullo scheletro di lei: ferma l'animazione "affacciata" (la posa di partenza) e parte.
+func _avvia_tuffo() -> void:
+	if medusa == null:
+		return
+	var sks := medusa.find_children("*", "Skeleton3D", true, false)
+	if sks.is_empty():
+		return
+	var sk := sks[0] as Skeleton3D
+	if _tuffo == null or not is_instance_valid(_tuffo):
+		_tuffo = TuffoLei.new()
+		_tuffo.name = "Tuffo"
+		sk.add_child(_tuffo)
+	for ap in medusa.find_children("*", "AnimationPlayer", true, false):
+		(ap as AnimationPlayer).pause()
+	var esclusi: Array[RID] = []
+	if coperchio:
+		esclusi.append(coperchio.get_rid())
+	_tuffo.avvia(medusa, esclusi)
+
+
+## Di nuovo affacciata (ripartenza, salvataggio): niente tuffo, l'animazione "affacciata" riparte.
+func _azzera_tuffo() -> void:
+	if _tuffo and is_instance_valid(_tuffo):
+		_tuffo.ferma()
+	if medusa:
+		for ap in medusa.find_children("*", "AnimationPlayer", true, false):
+			(ap as AnimationPlayer).play()
 
 
 ## Sotto: la medusa sparisce e resta la sua luce, che si allontana lungo il condotto.
@@ -451,6 +480,8 @@ func punti_corpo() -> PackedVector3Array:
 	var out := PackedVector3Array()
 	if medusa == null:
 		return out
+	if _tuffo and _tuffo.active and not _tuffo.punti().is_empty():
+		return _tuffo.punti()
 	if medusa.has_method(&"get_eye_position"):
 		out.append((medusa.call(&"get_eye_position") as Vector3) + Vector3(0.0, 0.35, 0.0))
 	if "punti_gocce" in medusa:

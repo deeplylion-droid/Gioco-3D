@@ -248,6 +248,9 @@ func _run() -> void:
 	check(dopo >= 0.0 and dopo < 1.2, "la spruzzi in faccia dalla scia: se ne va subito (%.2f s dal primo getto)" % dopo)
 	check(lei.tuffo and lei.fase == LeiSbuca.Fase.SCIVOLA and lei.get_node_or_null(^"Geyser") == null, "si tuffa (niente geyser)")
 	var sotto_quando_sparisce := ""
+	var base_tuffo := PackedFloat32Array()
+	var base_punti := PackedVector3Array()
+	var peggio_dove := ""
 	var testa_in_acqua := -1.0
 	var fotogrammi := 0
 	for i in 900:
@@ -259,9 +262,21 @@ func _run() -> void:
 			sotto_quando_sparisce = "tutta" if lei.tutta_sotto() else "no: " + str(lei.punti_corpo())
 		if lei.fase == LeiSbuca.Fase.SCIVOLA and lei.opacita() > 0.25:
 			scivolata = true
-			var ora := _dentro_pavimento(punti)
-			for j in ora.size():
-				peggio = maxf(peggio, ora[j] - maxf(dentro0[j], 0.0))
+			# nel tuffo i punti veri (testa, dita, punte dei tentacoli) si muovono con lo scheletro: rispetto a
+			# come erano al primo fotogramma del tuffo
+			var veri := lei.punti_corpo()
+			var ora := _dentro_pavimento(veri, false)
+			if base_tuffo.is_empty() and veri.size() > 10:
+				base_tuffo = ora
+				base_punti = veri
+			var pelo: float = lei.call(&"_pelo")
+			for j in mini(ora.size(), base_tuffo.size()):
+				# sotto l'acqua torbida della fossa, oltre 60 cm, non si vede più niente
+				if veri[j].y < pelo - 0.6:
+					continue
+				if ora[j] - maxf(base_tuffo[j], 0.0) > peggio:
+					peggio = ora[j] - maxf(base_tuffo[j], 0.0)
+					peggio_dove = "punto %d in %s a %.2f s, era in %s" % [j, str(veri[j]), fotogrammi / 60.0, str(base_punti[j])]
 		var luce := lei.get_node_or_null(^"LuceSottacqua") as OmniLight3D
 		if luce:
 			fuga_vista = true
@@ -271,7 +286,8 @@ func _run() -> void:
 	check(testa_in_acqua > 0.0 and testa_in_acqua < 1.3, "la testa entra in acqua presto, con lo schizzo grande (%.2f s)" % testa_in_acqua)
 	check(bool(lei.get(&"_coda_entrata")), "poi entrano i tentacoli, con lo schizzo piccolo")
 	check(sotto_quando_sparisce == "tutta", "sparisce solo quando è tutta sotto il pelo dell'acqua: testa, mani e punte dei tentacoli (%s)" % sotto_quando_sparisce)
-	check(scivolata and peggio < 0.05, "scivolando sotto, finché si vedono, mani e tentacoli non entrano nel pavimento (%.2f m)" % peggio)
+	# (le punte sono sottili, 3-5 cm: misurando la linea di mezzo, chi striscia lungo una parete ci entra di qualche cm)
+	check(scivolata and peggio < 0.1, "tuffandosi, finché si vedono (fuori dall'acqua o appena sotto), mani e tentacoli non entrano nel bordo né nel pavimento (%.2f m %s)" % [peggio, peggio_dove])
 	check(fuga_vista and luce_lontana > 1.5, "scivola sotto e la sua luce si allontana sott'acqua (%.1f m)" % luce_lontana)
 	check(lei.fase == LeiSbuca.Fase.FINITA and not lei.medusa.visible and not GameState.is_dying, "poi non c'è più, e tu sei vivo")
 
@@ -412,18 +428,22 @@ func _angolo_verso(punto: Vector3) -> float:
 
 ## Per ogni punto (coordinate della medusa) quanto sta sotto la superficie su cui poggia (bordo,
 ## pavimento, fondo della fossa senza il coperchio): positivo se ci è dentro.
-func _dentro_pavimento(punti: PackedVector3Array) -> PackedFloat32Array:
+func _dentro_pavimento(punti: PackedVector3Array, locali := true) -> PackedFloat32Array:
 	var out := PackedFloat32Array()
 	var space := p.get_world_3d().direct_space_state
 	var esclusi: Array[RID] = [p.get_rid()]
 	if lei.coperchio:
 		esclusi.append(lei.coperchio.get_rid())
 	for q in punti:
-		var g: Vector3 = lei.medusa.global_transform * q
-		var giu := PhysicsRayQueryParameters3D.create(Vector3(g.x, 2.5, g.z), Vector3(g.x, -4.0, g.z), Layers.WORLD)
-		giu.exclude = esclusi
-		var r := space.intersect_ray(giu)
-		out.append(float(r.position.y) - g.y if not r.is_empty() else -10.0)
+		var g: Vector3 = lei.medusa.global_transform * q if locali else q
+		# la colonna più bassa tra il punto e quattro vicini a 3 cm: chi striscia lungo una parete non la attraversa
+		var meglio := INF
+		for o in [Vector2.ZERO, Vector2(0.03, 0), Vector2(-0.03, 0), Vector2(0, 0.03), Vector2(0, -0.03)]:
+			var giu := PhysicsRayQueryParameters3D.create(Vector3(g.x + o.x, 2.5, g.z + o.y), Vector3(g.x + o.x, -4.0, g.z + o.y), Layers.WORLD)
+			giu.exclude = esclusi
+			var r := space.intersect_ray(giu)
+			meglio = minf(meglio, float(r.position.y) - g.y if not r.is_empty() else -10.0)
+		out.append(meglio)
 	return out
 
 
