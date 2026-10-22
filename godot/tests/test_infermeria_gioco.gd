@@ -108,6 +108,8 @@ func _run() -> void:
 	await _secondi(0.5)
 	check(await _usa(keycard), "guardando la keycard la si prende con E")
 	check(polaroid.photo == 11 and polaroid.get_texture() != null, "è la Polaroid vera della pecora (P11)")
+	var h: float = preload("res://tests/polaroid_libere.gd").appoggio(get_tree().current_scene, polaroid)
+	check(h >= -0.002 and h <= 0.012, "appoggiata sul fondo della cassaforte (%.1f cm)" % (h * 100.0))
 	polaroid.interact(p)
 	await _secondi(0.1)
 	for v in get_tree().root.get_children():

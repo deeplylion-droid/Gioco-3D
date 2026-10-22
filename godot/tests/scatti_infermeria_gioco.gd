@@ -10,6 +10,7 @@ const CAMERE := {
 	"negatoscopio": [Vector3(0.5, 1.6, -1.2), Vector3(0.5, 1.4, -3.2)],
 	"schedario": [Vector3(-1.4, 1.6, -0.4), Vector3(-3.0, 0.8, -1.1)],
 	"cassaforte": [Vector3(2.0, 1.55, -0.6), Vector3(3.2, 1.3, -1.05)],
+	"dentro": [Vector3(2.55, 1.5, -0.7), Vector3(3.25, 1.15, -1.05)],   # la keycard e la Polaroid della pecora
 }
 
 
