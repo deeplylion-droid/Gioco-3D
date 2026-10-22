@@ -65,7 +65,7 @@ func _process(delta: float) -> void:
 	var lv: float = acqua_misto.get(&"level")
 	var fondo: float = acqua_misto.get(&"bottom")
 	var profondo := clampf((lv - fondo) / 0.12, 0.0, 1.0)
-	var r: float = minf((acqua_misto.get(&"size") as Vector2).x * 0.45, 0.75)
+	var r: float = minf((acqua_misto.get(&"size") as Vector2).x * 0.45, 1.5)
 	acqua_misto.call(&"set_flow", 0, c, r, forza, verso * (1.2 + k), 0.0, 0.55, 0.0)
 	_imbuto(c, lv, r, forza * profondo, delta)
 	if randf() < 0.3 * forza:

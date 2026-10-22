@@ -214,6 +214,9 @@ def posa(nome, file, centro_base, k, rz, obs):
     return o
 
 
+PILA_MAX = 1.3   # le pile contro il muro non superano 1,3 m: più alte e strette non starebbero in piedi
+
+
 def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo=(0.05, 0.35), zfun=None):
     """Lungo il muro da a a b (faccia del muro, in pianta), con la stanza dalla parte di n: gruppi di oggetti in fila.
     tavolozza: lista di (file, alto, impilabile). vuoti: tratti (u0, u1) in metri da a dove non si mette niente
@@ -253,7 +256,10 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
                 d2 = _dim(f2, k2)
                 if d2.x > dm.x * 1.05:
                     k2 *= dm.x / d2.x; d2 = _dim(f2, k2)
-                posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz + rnd.uniform(-0.2, 0.2), obs)
+                rz2 = rz + rnd.uniform(-0.2, 0.2)
+                if h + d2.z > PILA_MAX:
+                    continue   # (i numeri a caso si consumano lo stesso: il resto della strada non cambia)
+                posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz2, obs)
                 k_obj += 1
                 h += d2.z
         u += dm.x + rnd.uniform(*passo)
@@ -390,9 +396,11 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
     if tubi:
         mat, quanti = tubi
-        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S0, Y_R0, 0), (0, 1), 2.45, mat, obs, quanti)
-        tubi_muro(f'{nome}_tubi_c2', (XC1, Y_T0, Z_SALA), (XC1, YC3_1, Z_SALA), (-1, 0), 2.5, mat, obs, quanti)
-        tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.5, mat, obs, quanti)
+        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S0, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)   # sotto il tubo grosso (2,45)
+        # a 2,2 m: più su entravano nel tubo grosso del raccordo (t7_tubo_c2, a 2,5); quelli di C2 arrivano al
+        # muro in fondo al corridoio invece di finire a metà dell'angolo
+        tubi_muro(f'{nome}_tubi_c2', (XC1, Y_T0, Z_SALA), (XC1, YC3_0, Z_SALA), (-1, 0), 2.2, mat, obs, quanti)
+        tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti)
 
 
 def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
@@ -509,6 +517,9 @@ def proposta_gioco():
     # davanti alla grata sfondata del muro sud di C2 (il buco dell'agnellino, v0.3.6: centro in y = BUCO_Y, vedi
     # ambienti2_raccordo.py) non resta niente a terra: è dove si infila, e dal lato da cui arriva il giocatore (+Y)
     # niente nasconde il buco. Si tolgono dopo, così il resto non cambia.
+    # le scale restano libere (regola del posizionamento, 21 ottobre): niente roba piccola sui gradini di F1, F2 e C2
+    for o in [o for o in obs if o.name.startswith(('G_f1_', 'G_f2_', 'G_c2os_', 'G_c2es_'))]:
+        obs.remove(o); bpy.data.objects.remove(o)
     for o in [o for o in obs if o.name.startswith('G_c2eb_')]:
         lo, hi = _scatola(o)
         if lo.y < BUCO_Y + 1.45 and hi.y > BUCO_Y - 0.6:
@@ -519,6 +530,10 @@ def proposta_gioco():
                           ('sedie_impilate', 1.6, False), ('cassa_tubi', 0.9, True), ('fusti_cloro', 0.85, False),
                           ('sacchi_sale', 0.8, True), ('casse_plastica', 0.85, True), ('transpallet', 1.2, False)], obs, rnd,
                     liberi=[(TESTA_MAG[0] + 0.4, TESTA_MAG[1]), (TESTA_MAG[0] - 0.4, TESTA_MAG[1])])
+    # ai due lati della serranda (il cancello finale della risalita) resta solo il pezzo a terra: i lettini e gli
+    # scatoloni impilati sopra sembravano messi a caso (riscontro dell'utente del 21 ottobre)
+    for o in [o for o in obs if o.name.startswith('G_mag_') and o.location.x < XM0 + 3.0 and o.location.z > Z_SALA + 0.01]:
+        obs.remove(o); bpy.data.objects.remove(o)
     # la testa della mascotte (1,8 m di muso) nel corridoio C2 lo chiudeva: sta nel magazzino, contro il muro nord
     # accanto all'entrata, girata verso la corsia (lì intorno il magazzino resta libero)
     d = HQ.dimensioni('testa_mascotte')
