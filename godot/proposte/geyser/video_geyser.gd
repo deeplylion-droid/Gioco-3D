@@ -60,6 +60,8 @@ func _ready() -> void:
 
 func _avvia() -> void:
 	Game.pause_on_focus_loss = false
+	# Come tests/scatti_tappa8.gd: la torre non si precarica (memoria).
+	Engine.set_meta(&"precarica_torre_spento", true)
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("alto")
 	var wm := get_node_or_null(^"/root/WaterManager")
