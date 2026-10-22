@@ -479,14 +479,12 @@ func _controlla_mascotte() -> void:
 	for j in MascotteSala.JILLY:
 		var ob := m.get_node_or_null(NodePath(j.nome)) as Node3D
 		check(ob != null and ob.global_position.distance_to(j.pos) < 0.01, "%s è sul muro" % j.nome)
-		# a filo del muro vero (Posa.fissa_al_muro): il retro (l'origine) a meno di 5 mm dal muro visibile dietro
-		# (la collisione, meno l'affondo dove il muro visibile sta più indietro)
+		# a filo del muro che si vede (Posa.fissa_al_muro): il retro (l'origine) a meno di 5 mm dalla prima mesh
+		# visibile dietro (non la collisione: sulla vasca centrale sporge 3 cm oltre le piastrelle)
 		if ob:
 			var n: Vector3 = j.normale
-			var rm := PhysicsRayQueryParameters3D.create(ob.global_position + n * 0.2, ob.global_position - n * 0.3)
-			rm.exclude = [p.get_rid()]
-			var hm := space.intersect_ray(rm)
-			check(not hm.is_empty() and absf((ob.global_position - (hm.position as Vector3)).dot(n) + float(j.get("affondo", 0.0))) < 0.005,
+			var hm := Posa._raggio_mesh(ob, ob.global_position + n * 0.2, ob.global_position - n * 0.3)
+			check(not hm.is_empty() and absf((ob.global_position - (hm.position as Vector3)).dot(n)) < 0.005,
 				"%s è a filo del muro (%.3f m)" % [j.nome, (ob.global_position - (hm.position as Vector3)).dot(n) if hm else -1.0])
 		if ob == null:
 			continue

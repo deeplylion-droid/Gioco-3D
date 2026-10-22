@@ -119,6 +119,7 @@ var _nascoste_radici := {}
 var _copertura: Array = []
 var _nascoste_ora := {}
 var _tocca := {}
+var _box_nascoste: Array[AABB] = []   # le mesh nascoste in questo giro (vedi _gruppi_staccati)
 var _multimesh_senza: Array[String] = []   # MultiMesh senza le trasformazioni: non controllati (vedi _espandi_multimesh)           # MeshInstance3D -> le mesh che tocca (vedi _segna_tocchi)
 var _nascoste_base := {}   # scena -> {percorso del nodo nascosto: mesh}
 var _visti := {}           # scena -> {percorso di una mesh controllata: true}
@@ -325,6 +326,14 @@ func _prepara(stato: String) -> void:
 	print("  acquari comparsi: %s, stato %s" % [enigma.get(&"comparsi"), enigma.get(&"stato")])
 
 
+## L'acqua, dai pezzi del percorso (minuscolo): quelli che cominciano con "acqua" (Acqua, acqua_pozze,
+## AcquaFossaBimbi) ma non con "acquari", o finiscono con "_acqua". Non basta "contiene acqua": prendeva anche gli
+## acquari (AcquarioGiallo...), e basi, coperchi, tiranti e vetri degli acquari non si controllavano mai (collaudo,
+## 22 ottobre).
+static func _e_acqua(percorso: String) -> bool:
+	return Array(percorso.split("/")).any(func(x): return (x.begins_with("acqua") and not x.begins_with("acquari")) or x.ends_with("_acqua"))
+
+
 ## Perché una parte nascosta può non essere controllata: una creatura (si muove: la guarda il collaudo), un effetto o
 ## l'acqua (esclusi sempre), o la variante di una cosa controllata nello stesso posto (la lampada accesa e quella
 ## spenta, il cassetto chiuso e tirato). Vuoto: nessun motivo, va controllata con uno stato.
@@ -333,9 +342,7 @@ func _tipo_nascosta(n: Node) -> String:
 	for pezzo in percorso.split("/"):
 		if pezzo == "lei" or pezzo.contains("medusa") or pezzo.contains("medusin") or pezzo.contains("bambino"):
 			return "creatura, si muove (la guarda il collaudo)"
-	# l'acqua dal nome dei pezzi del percorso ("acqua", "acqua_..."), non da "acquari"
-	var acqua := Array(percorso.split("/")).any(func(x): return x == "acqua" or x.begins_with("acqua_") or x.ends_with("_acqua"))
-	if EFFETTI.any(func(e): return percorso.contains(e)) or acqua:
+	if EFFETTI.any(func(e): return percorso.contains(e)) or _e_acqua(percorso):
 		return "effetto o acqua, esclusi"
 	if percorso.split("/").has("graybox"):
 		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
@@ -434,7 +441,7 @@ func _mesh_visibili() -> Array:
 		if _effetto(mi):
 			continue
 		var percorso := String(_radice.get_path_to(mi)).to_lower()
-		if percorso.begins_with("acqua") or percorso.contains("/acqua") or String(mi.name).to_lower() in ["superficie", "surface"]:
+		if _e_acqua(percorso) or String(mi.name).to_lower() in ["superficie", "surface"]:
 			_acqua[mi] = true   # le superfici dell'acqua reggono quello che galleggia, ma non sono oggetti
 		out.append(mi)
 	return out
@@ -444,6 +451,7 @@ func _mesh_visibili() -> Array:
 ## con stato che le mostri. Le stampa raggruppate per il primo nodo nascosto, con quante mesh hanno sotto.
 func _elenca_nascoste() -> void:
 	var gruppi := {}
+	_box_nascoste.clear()
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or _visibile(mi):
@@ -458,6 +466,7 @@ func _elenca_nascoste() -> void:
 		if nascosto:
 			var nome := String(_radice.get_path_to(nascosto))
 			gruppi[nome] = int(gruppi.get(nome, 0)) + 1
+			_box_nascoste.append(_box(mi))
 	_nascoste_ora = {}
 	for nome in gruppi:
 		_nascoste_ora[nome] = [gruppi[nome], _tipo_nascosta(_radice.get_node(NodePath(nome)))]
@@ -816,6 +825,10 @@ func _gruppi_staccati(z: Dictionary, oggetti: Array) -> void:
 		# 1 cm sopra il pavimento), con gli altri nel dettaglio
 		gruppo = gruppo.filter(func(m): return not _trovati.any(func(t): return t["nodo"] == _nodo(m) and t["problema"] in ["sospeso", "staccato"]))
 		if gruppo.is_empty():
+			continue
+		# un gruppo appoggiato a una parte nascosta in questo giro (il corridoio della Risalita sulle stanze, che il gioco
+		# nasconde col giocatore lontano) si guarda nel giro che la mostra, non qui (enigmi, 22 ottobre)
+		if gruppo.any(func(g): return _box_nascoste.any(func(bn): return bn.intersects(_box(g).grow(CONTATTO)))):
 			continue
 		gruppo.sort_custom(func(a, b): return _box(a).position.y < _box(b).position.y)
 		var m: MeshInstance3D = gruppo[0]

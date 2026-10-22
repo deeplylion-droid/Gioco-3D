@@ -48,27 +48,38 @@ static func monta(padre: Node3D, muro: Vector3, verso: Vector3, piastra := true,
 		var dietro := PackedFloat32Array()
 		dietro.resize(N + 1)
 		dietro.fill(INF)
+		var quota := PackedFloat32Array()   # l'altezza del punto più arretrato, per ogni posizione di lato
+		quota.resize(N + 1)
 		var avanti := -INF
+		var y_contatto := 0.0
 		for i in range(0, _vertici.size(), 3):
 			for e in 3:
 				var p := b * _vertici[i + e] + o - muro
 				var q := b * _vertici[i + (e + 1) % 3] + o - muro
 				var lp := p.dot(t)
 				var lq := q.dot(t)
-				if absf(lp) < r:
-					avanti = maxf(avanti, sqrt(r * r - lp * lp) - p.dot(n))
+				if absf(lp) < r and sqrt(r * r - lp * lp) - p.dot(n) > avanti:
+					avanti = sqrt(r * r - lp * lp) - p.dot(n)
+					y_contatto = p.y
 				if maxf(lp, lq) < -r or minf(lp, lq) > r or absf(lq - lp) < 1e-6:
 					continue
 				var j0 := maxi(0, ceili((minf(lp, lq) + r) / (2.0 * r) * N))
 				var j1 := mini(N, floori((maxf(lp, lq) + r) / (2.0 * r) * N))
 				for j in range(j0, j1 + 1):
 					var f := (-r + 2.0 * r * j / N - lp) / (lq - lp)
-					dietro[j] = minf(dietro[j], lerpf(p.dot(n), q.dot(n), f))
+					var a := lerpf(p.dot(n), q.dot(n), f)
+					if a < dietro[j]:
+						dietro[j] = a
+						quota[j] = lerpf(p.y, q.y, f)
 		for j in N + 1:
 			if dietro[j] < INF:
 				var lat := -r + 2.0 * r * j / N
-				avanti = maxf(avanti, sqrt(maxf(r * r - lat * lat, 0.0)) - dietro[j])
+				if sqrt(maxf(r * r - lat * lat, 0.0)) - dietro[j] > avanti:
+					avanti = sqrt(maxf(r * r - lat * lat, 0.0)) - dietro[j]
+					y_contatto = quota[j]
 		l.transform = Transform3D(b, o + n * avanti)
+		# dove la lampada tocca il palo (l'altezza, nelle coordinate di padre): lì va il collare
+		l.set_meta(&"y_contatto", o.y + y_contatto)
 		padre.add_child(l)
 		return l
 	var pos := muro + n * (verso_muro + (PIASTRA.z if piastra else 0.0) + 0.001)
