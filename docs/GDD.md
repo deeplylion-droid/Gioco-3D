@@ -1,6 +1,6 @@
 # Documento di progetto (GDD)
 
-Titolo provvisorio: **Splash Lagoon**. Finché l'utente non sceglie il nome, nel gioco non si scrive: il titolo mostra solo la statua e "Capitolo 1 · demo". Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
+Titolo: **Jilly Jubilee** (scelta dell'utente, 22 ottobre: "Sì, chiamiamolo Jilly Jubilee"), come la mascotte. Prima era "Splash Lagoon", che resta il nome provvisorio del parco nel gioco. La scritta del titolo nella schermata iniziale si propone prima all'utente per iscritto; finché non sceglie, il titolo mostra solo la statua e "Capitolo 1 · demo". Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
 
 ## Regola d'oro
 
@@ -333,7 +333,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 
 ## La mascotte del capitolo 1: la medusa
 
-**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il titolo del gioco è ancora da decidere: per ora resta "Splash Lagoon", che è anche il nome del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
+**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il gioco si chiama come lei: **Jilly Jubilee** (scelta dell'utente, 22 ottobre); "Splash Lagoon" resta il nome provvisorio del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
 
 **Il nome nel parco, scelte del 19 ottobre** (render e scatti in `docs/proposte/mascotte/jilly/`, lavoro/mascotte 38c2738):
 - **logo stile B**, "spettacolo della nave": "Jilly" in corsivo corallo, "JUBILEE" in oro su un nastro blu, stelle e una piccola medusa. Nota dell'utente: "ma molto più invecchiati", quindi targa, manifesto e insegna vanno invecchiati molto di più di quelli proposti;
