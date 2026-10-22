@@ -20,6 +20,7 @@ extends Node
 ## Scrive docs/tecnico/posizionamento/rapporto.md (e rapporto.json) e confronta con le eccezioni in
 ## tests/posizionamento_eccezioni.json (casi voluti, con il motivo, o già assegnati a una squadra):
 ## RISULTATO con 0 falliti se non ci sono casi nuovi.
+## Le zone che cambiano più avanti nel gioco (gli acquari comparsi e risolti) si controllano anche in quello stato.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_posizionamento.gd [zona]
 
 ## Le zone: la scena e, per le scene grandi, i nodi di primo livello che fanno da sotto-zone.
@@ -28,22 +29,57 @@ const ZONE := [
 			"Tecnici": "tecnici", "Piscina": "sala", "Vasche": "sala", "Vasca": "sala", "Gioco": "sala",
 			"Polaroid": "sala", "LuciSala": "sala", "BambiniBalconata": "sala", "Atmosfera": "sala"}},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre"},
+	# Le zone che cambiano dopo l'inizio, come le vede il giocatore (riscontro dell'utente sulla v0.3.8: gli
+	# acquari davanti al portone "tutto compenetrato o fluttuante"). Si prepara lo stato ([method _prepara]) e
+	# si controllano solo le parti elencate; i casi già trovati nello stato iniziale non si ripetono.
+	# tutto quello che compare più avanti (le parti nascoste all'inizio, rese visibili)
+	{"scena": "res://scenes/sala_principale.tscn", "stato": "tutto_visibile", "sotto": {"Sala": "sala",
+			"Interni": "interni", "Tecnici": "tecnici", "Piscina": "sala", "Vasche": "sala", "Vasca": "sala",
+			"Gioco": "sala", "Polaroid": "sala", "LuciSala": "sala", "BambiniBalconata": "sala", "Atmosfera": "sala"}},
+	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "tutto_visibile"},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
+			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
+			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 ]
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
 const SQUADRE := [
 	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"],
+	["SalaInseguimento", "ambienti-2"],   # sala_inseguimento.gd mette anche i dettagli sotto il suo nodo Luci
 	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
 	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
 	["ArredoRisalita", "enigmi"],
 ]
-const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2"}   # tecnici: tools/blender/ambienti2_*.py
-const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo"]
+const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2",
+	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
+const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
 ## Un oggetto di scena: una mesh con la diagonale del box fra questi due valori (m). Più grande è architettura.
 const OGGETTO_MIN := 0.04
 const OGGETTO_MAX := 4.0
+## Controllo severo (processo nuovo approvato dall'utente il 22 ottobre, "per evitare questi errori una volta per
+## tutte"): niente esenzione per gli oggetti grandi (solo l'architettura, riconosciuta dal nome, e i pezzi enormi
+## sopra OGGETTO_MAX_SEVERO), il controllo "staccato" a pochi millimetri, le compenetrazioni anche fra oggetti della
+## stessa scena .tscn e con gli spigoli, le parti nascoste rese visibili, la CI rossa con un solo caso da correggere.
+const SEVERO := true
+## La CI rossa anche con un solo caso "da correggere" (non solo con i casi nuovi): si accende per ultimo, quando le
+## squadre hanno i loro elenchi (accordo col coordinatore del 22 ottobre).
+const BLOCCA_DA_CORREGGERE := false
+const OGGETTO_MAX_SEVERO := 30.0
+## Architettura (pavimenti, muri, soffitti, strutture dei modelli d'ambiente): non è un oggetto da appoggiare.
+const ARCHITETTURA := ["architettura", "struttura", "pavimento", "pavimenti", "muro", "muri", "parete", "pareti",
+	"soffitto", "cupola"]
+## Staccato: ogni oggetto deve toccare entro tanto (m) qualcosa che lo regge.
+const STACCO := 0.005
+## Quanti vertici per oggetto si provano per lo staccato.
+const STACCO_VERTICI := 48
+## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
+## gli acquari (riscontro dell'utente: lì sotto i 4 m il controllo non vedeva niente).
+const OGGETTO_MAX_PARTI := 15.0
+## Nelle zone con stato: uno spigolo che passa dentro un altro oggetto per più di tanto (m) è una compenetrazione.
+const ATTRAVERSA_MIN := 0.03
 const CONTATTO := 0.05
 const PASSO_GRIGLIA := 0.25
 const TESTA_DA := 0.35
@@ -61,6 +97,12 @@ var _semi: Array[Vector3] = []   # da dove parte il riempimento (vedi _controlla
 var _q_corpo: PhysicsShapeQueryParameters3D   # il cilindro del giocatore (vedi _libero)
 var _spazio: PhysicsDirectSpaceState3D
 var _radice: Node
+var _oggetto_max := OGGETTO_MAX
+## Nelle zone con stato il controllo delle compenetrazioni è più fino (vedi _compenetrazioni).
+var _fino := false
+## Le parti nascoste all'inizio rese visibili dallo stato "tutto_visibile" (per non contare come compenetrate fra loro
+## le due versioni della stessa cosa, per esempio le lampade Spente e Accese).
+var _nascoste_radici := {}
 
 
 func _ready() -> void:
@@ -100,6 +142,11 @@ func _controlla_scena(z: Dictionary) -> void:
 			_semi.append((sp as Node3D).global_position)
 	for g in _radice.find_children("*", "Player", true, false):
 		_semi.append((g as Node3D).global_position)
+	_oggetto_max = OGGETTO_MAX_SEVERO if SEVERO else (OGGETTO_MAX_PARTI if z.has("parti") else OGGETTO_MAX)
+	_fino = SEVERO or z.has("parti")
+	_nascoste_radici.clear()
+	if z.has("stato"):
+		await _prepara(String(z["stato"]))
 	for i in 20:
 		await get_tree().physics_frame
 	# poi ferma, come la lasciano gli script dopo l'ingresso (niente animazioni durante il controllo); i corpi
@@ -112,6 +159,7 @@ func _controlla_scena(z: Dictionary) -> void:
 	_spazio = (_radice as Node3D).get_world_3d().direct_space_state if _radice is Node3D else get_viewport().get_world_3d().direct_space_state
 	var mesh := _mesh_visibili()
 	print("  %d mesh visibili" % mesh.size())
+	_elenca_nascoste()
 	_crea_corpi(mesh)
 	for i in 3:
 		await get_tree().physics_frame
@@ -121,6 +169,11 @@ func _controlla_scena(z: Dictionary) -> void:
 	for mi in oggetti:
 		_sospeso(z, mi)
 	print("  a) sospesi: %d" % (_trovati.size() - prima))
+	if SEVERO:
+		prima = _trovati.size()
+		for mi in oggetti:
+			_staccato(z, mi)
+		print("  a2) staccati (niente entro %d mm): %d" % [roundi(STACCO * 1000.0), _trovati.size() - prima])
 	prima = _trovati.size()
 	_ingombri(z, mesh)
 	print("  b) ingombri nello spazio di chi cammina: %d" % (_trovati.size() - prima))
@@ -141,6 +194,42 @@ func _controlla_scena(z: Dictionary) -> void:
 	_acqua.clear()
 	for i in 5:
 		await get_tree().process_frame
+
+
+## Mette la zona nello stato in cui la vede il giocatore più avanti nel gioco.
+##  acquari_comparsi: rientrato dal magazzino (tappa 7), gli acquari pieni e le lampade del portone accese;
+##  acquari_risolti: il verde giusto, il portone della torre aperto fino in fondo.
+func _prepara(stato: String) -> void:
+	print("  stato: %s" % stato)
+	if stato == "tutto_visibile":
+		# tutto quello che compare più avanti (nascosto all'inizio), luci a parte
+		for n in _radice.find_children("*", "Node3D", true, false):
+			if not (n as Node3D).visible and not n is Light3D:
+				_nascoste_radici[n] = true
+				(n as Node3D).visible = true
+		print("  parti nascoste rese visibili: %d" % _nascoste_radici.size())
+		return
+	var enigma := _radice.find_child("EnigmaAcquari", true, false)
+	if enigma == null:
+		push_warning("controllo: EnigmaAcquari non trovato per lo stato %s" % stato)
+		return
+	match stato:
+		"acquari_comparsi":
+			var serranda = enigma.get(&"serranda")
+			if serranda:
+				serranda.set(&"aperta", true)
+		"acquari_risolti":
+			enigma.set(&"stato", EnigmaAcquari.Stato.RISOLTO)
+			var portone = enigma.get(&"portone")
+			if portone and portone.has_method(&"apri"):
+				portone.call(&"apri")
+				for i in 900:
+					if bool(portone.call(&"is_aperto")) and not bool(portone.get(&"in_movimento")):
+						break
+					await get_tree().physics_frame
+	for i in 10:
+		await get_tree().physics_frame
+	print("  acquari comparsi: %s, stato %s" % [enigma.get(&"comparsi"), enigma.get(&"stato")])
 
 
 ## Le mesh visibili della scena, senza il giocatore, le creature e le gocce che cadono (si muovono); le superfici
@@ -165,6 +254,33 @@ func _mesh_visibili() -> Array:
 			_acqua[mi] = true   # le superfici dell'acqua reggono quello che galleggia, ma non sono oggetti
 		out.append(mi)
 	return out
+
+
+## Le parti nascoste all'inizio (che compaiono più avanti nel gioco): il controllo non le guarda, a meno di una zona
+## con stato che le mostri. Le stampa raggruppate per il primo nodo nascosto, con quante mesh hanno sotto.
+func _elenca_nascoste() -> void:
+	var gruppi := {}
+	for n in _radice.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or _visibile(mi):
+			continue
+		# il nodo nascosto più in alto
+		var k: Node = mi
+		var nascosto: Node = null
+		while k and k != _radice:
+			if k is Node3D and not (k as Node3D).visible and not k is Light3D:
+				nascosto = k
+			k = k.get_parent()
+		if nascosto:
+			var nome := String(_radice.get_path_to(nascosto))
+			gruppi[nome] = int(gruppi.get(nome, 0)) + 1
+	if gruppi.is_empty():
+		return
+	var nomi := gruppi.keys()
+	nomi.sort()
+	print("  nascoste all'inizio (non controllate): %d parti, %d mesh" % [nomi.size(), gruppi.values().reduce(func(x, y): return x + y, 0)])
+	for nome in nomi:
+		print("    NASCOSTA %s · %d mesh" % [nome, gruppi[nome]])
 
 
 ## Visibile, senza contare le luci sopra la mesh: quelle che sfarfallano si accendono e spengono a caso (LookSala),
@@ -210,7 +326,13 @@ func _e_oggetto(mi: MeshInstance3D) -> bool:
 	if _acqua.has(mi):
 		return false
 	var d := _box(mi).size.length()
-	return d > OGGETTO_MIN and d < OGGETTO_MAX
+	if d <= OGGETTO_MIN or d >= _oggetto_max:
+		return false
+	if SEVERO:
+		var percorso := String(_radice.get_path_to(mi)).to_lower()
+		if ARCHITETTURA.any(func(a): return percorso.contains(a)):
+			return false
+	return true
 
 
 func _zona(z: Dictionary, n: Node) -> String:
@@ -232,8 +354,19 @@ func _nodo(n: Node) -> String:
 
 
 func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: String) -> void:
+	if z.has("stato"):
+		var nodo := _nodo(n)
+		if z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
+			return
+		dettaglio += " (stato: %s)" % z["stato"]
 	var k := {"zona": _zona(z, n), "nodo": _nodo(n), "squadra": _squadra(_zona(z, n), _nodo(n)), "problema": problema,
 			"pos": [snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(pos.z, 0.01)], "dettaglio": dettaglio}
+	if z.has("stato"):
+		# già trovato nello stato iniziale (stesso nodo, stesso problema; i nodi fatti da codice, @Classe@N, cambiano
+		# numero da un'istanza all'altra: si confrontano con la posizione, come le eccezioni): non si ripete
+		var mia := _chiave_senza_zona(k)
+		if _trovati.any(func(t): return _chiave_senza_zona(t) == mia):
+			return
 	_trovati.append(k)
 
 
@@ -265,6 +398,66 @@ func _sospeso(z: Dictionary, mi: MeshInstance3D) -> void:
 	var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO | Layers.WORLD, me)
 	var vuoto := "più di 5 m" if giu.is_empty() else "%.2f m" % (b.position.y - (giu.position as Vector3).y)
 	_trova(z, mi, "sospeso", c, "niente a meno di 5 cm (sotto, il primo appoggio è a %s)" % vuoto)
+
+
+## Staccato: l'oggetto deve toccare, entro STACCO, qualcosa che lo regge (pavimento, muro, soffitto, l'oggetto a cui è
+## attaccato): la sua forma convessa allargata di STACCO deve toccare o entrare in un altro corpo.
+## Gli oggetti già "sospesi" (niente entro 5 cm) non si ripetono.
+func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
+	if _trovati.any(func(t): return t["nodo"] == _nodo(mi) and t["problema"] == "sospeso"):
+		return
+	var me: Array[RID] = []
+	if _corpo_di.has(mi):
+		me.append((_corpo_di[mi] as StaticBody3D).get_rid())
+	# la forma convessa della mesh, allargata di STACCO: se tocca o entra in un altro corpo, è retto (anche un pezzo
+	# infilato in un altro, come un bulbo sul portalampada)
+	var qp := PhysicsShapeQueryParameters3D.new()
+	qp.collision_mask = STRATO | Layers.WORLD
+	qp.exclude = me
+	var conv := mi.mesh.create_convex_shape(true, false) as ConvexPolygonShape3D
+	if conv == null or conv.points.size() < 8 or _piatta(mi):
+		# una mesh piatta (un foglio, una scritta): il suo box allargato di STACCO
+		var bx := _box(mi)
+		var bf := BoxShape3D.new()
+		bf.size = bx.size + Vector3.ONE * STACCO * 2.0
+		qp.shape = bf
+		qp.transform = Transform3D(Basis(), bx.get_center())
+		if not _spazio.intersect_shape(qp, 1).is_empty():
+			return
+		_trova_staccato(z, mi, me)
+		return
+	# i punti nel mondo (la scala del nodo, nella query, non si applica alla forma), allargati di STACCO in tutte le
+	# direzioni (ogni punto spostato di ±STACCO sui tre assi: anche un foglio sottile si allarga sotto e sopra)
+	var gt := mi.global_transform
+	var punti := PackedVector3Array()
+	var spinte := [Vector3(STACCO, 0, 0), Vector3(-STACCO, 0, 0), Vector3(0, STACCO, 0), Vector3(0, -STACCO, 0),
+		Vector3(0, 0, STACCO), Vector3(0, 0, -STACCO)]
+	for q in conv.points:
+		var w := gt * q
+		for sp in spinte:
+			punti.append(w + sp)
+	var forma := ConvexPolygonShape3D.new()
+	forma.points = punti
+	qp.shape = forma
+	qp.transform = Transform3D.IDENTITY
+	if not _spazio.intersect_shape(qp, 1).is_empty():
+		return
+	_trova_staccato(z, mi, me)
+
+
+## Una mesh con un lato del box quasi nullo (meno di 1 mm): la forma convessa non si costruisce.
+func _piatta(mi: MeshInstance3D) -> bool:
+	var a := mi.get_aabb().size * mi.global_transform.basis.get_scale().abs()
+	return minf(a.x, minf(a.y, a.z)) < 0.001
+
+
+func _trova_staccato(z: Dictionary, mi: MeshInstance3D, me: Array[RID]) -> void:
+	var b := _box(mi)
+	var c := b.get_center()
+	var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO | Layers.WORLD, me)
+	var vuoto := "più di 5 m" if giu.is_empty() else "%.1f cm" % ((b.position.y - (giu.position as Vector3).y) * 100.0)
+	_trova(z, mi, "staccato", c, "non tocca niente entro %d mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a %s)" % [
+			roundi(STACCO * 1000.0), vuoto])
 
 
 # --- b) ingombri nello spazio di chi cammina -----------------------------------------------------------
@@ -517,15 +710,17 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 				box = AABB(p, Vector3.ZERO) if primo else box.expand(p)
 				primo = false
 		var forma := BoxShape3D.new()
-		forma.size = box.size + Vector3.ONE * CONTATTO * 2.0
+		# severo: il capo deve essere collegato (1 cm), non solo vicino a qualcosa
+		forma.size = box.size + Vector3.ONE * (0.01 if SEVERO else CONTATTO) * 2.0
 		var q := PhysicsShapeQueryParameters3D.new()
 		q.shape = forma
 		q.transform = Transform3D(Basis(), box.get_center())
 		q.collision_mask = STRATO | Layers.WORLD
 		q.exclude = me
 		if _spazio.intersect_shape(q, 1).is_empty():
-			_trova(z, mi, "estremita_libera", box.get_center(), "un capo del %s non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)" % (
-					"tubo" if not nome.contains("cav") and not nome.contains("filo") and not nome.contains("cable") else "cavo"))
+			_trova(z, mi, "estremita_libera", box.get_center(), "un capo del %s non è collegato a niente entro %s (né muro, pavimento, soffitto, né un altro tubo o un macchinario)" % [
+					"catena" if nome.contains("caten") or nome.contains("chain") else ("tubo" if not nome.contains("cav")
+					and not nome.contains("filo") and not nome.contains("cable") else "cavo"), "1 cm" if SEVERO else "5 cm"])
 
 
 # --- d) compenetrazioni fra oggetti di scena -----------------------------------------------------------
@@ -537,8 +732,18 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 	# a celle di 2 m per non confrontare tutte le coppie
 	var celle := {}
 	for mi in oggetti:
-		var c := Vector3i((boxes[mi] as AABB).get_center() / 2.0)
-		celle.get_or_add(c, []).append(mi)
+		var bx: AABB = boxes[mi]
+		if _fino:
+			# in tutte le celle che il box tocca: un corrimano lungo 6 m ha il centro lontano dalla valvola che
+			# attraversa
+			var da := Vector3i((bx.position / 2.0).floor())
+			var a_ := Vector3i((bx.end / 2.0).floor())
+			for x in range(da.x, a_.x + 1):
+				for y in range(da.y, a_.y + 1):
+					for zz in range(da.z, a_.z + 1):
+						celle.get_or_add(Vector3i(x, y, zz), []).append(mi)
+		else:
+			celle.get_or_add(Vector3i(bx.get_center() / 2.0), []).append(mi)
 	var fatte := {}
 	for c in celle:
 		var vicini := []
@@ -551,13 +756,23 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 				if a == b or fatte.has([b, a]) or fatte.has([a, b]):
 					continue
 				fatte[[a, b]] = true
-				if ((a as Node).owner != null and (a as Node).owner == (b as Node).owner) or (a as Node).get_parent() == (b as Node).get_parent():
+				if _stesso_modello(a, b) or (a as Node).get_parent() == (b as Node).get_parent():
 					continue   # pezzi dello stesso modello, o dello stesso oggetto fatto da codice (lampade, fari)
+				if _alternative(a, b):
+					continue   # due versioni della stessa cosa (una nascosta all'inizio): non si vedono insieme
 				var ba: AABB = boxes[a]
 				var bb: AABB = boxes[b]
 				var i := ba.intersection(bb)
 				if i.size == Vector3.ZERO:
 					continue
+				if _fino:
+					# una sbarra che passa dentro un oggetto senza avere vertici dentro: gli spigoli che lo attraversano
+					var p := _attraversa(a, b)
+					if p > ATTRAVERSA_MIN:
+						var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
+						var altro: MeshInstance3D = b if chi == a else a
+						_trova(z, chi, "compenetra", i.get_center(), "passa dentro %s per %d cm" % [_nodo(altro), roundi(p * 100.0)])
+						continue
 				var piccolo := minf(ba.get_volume(), bb.get_volume())
 				if piccolo <= 0.0 or i.get_volume() < 0.3 * piccolo:
 					continue
@@ -566,6 +781,93 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 					var altro: MeshInstance3D = b if chi == a else a
 					_trova(z, chi, "compenetra", i.get_center(), "il %d%% dei suoi vertici è dentro %s" % [roundi(dentro * 100.0), _nodo(altro)])
+
+
+## Vero se una delle due sta sotto una parte nascosta all'inizio che è sorella di un antenato dell'altra (o dell'altra
+## parte nascosta): le lampade Spente e Accese, i vetri puliti e impolverati.
+func _alternative(a: Node, b: Node) -> bool:
+	if _nascoste_radici.is_empty():
+		return false
+	var ra := _radice_nascosta(a)
+	var rb := _radice_nascosta(b)
+	if ra == rb:
+		return false
+	for coppia in [[ra, b], [rb, a]]:
+		var r: Node = coppia[0]
+		if r == null:
+			continue
+		var k: Node = coppia[1]
+		while k and k != _radice:
+			if k.get_parent() == r.get_parent() and k != r:
+				return true
+			k = k.get_parent()
+	return false
+
+
+func _radice_nascosta(n: Node) -> Node:
+	var trovata: Node = null
+	var k := n
+	while k and k != _radice:
+		if _nascoste_radici.has(k):
+			trovata = k
+		k = k.get_parent()
+	return trovata
+
+
+## Due mesh dello stesso modello importato (.glb, .gltf): i suoi pezzi si toccano per costruzione. Nelle zone con
+## stato solo questo: gli oggetti di una scena .tscn hanno tutti lo stesso owner (la radice della scena), ma sono
+## oggetti diversi messi a mano (gli acquari: la valvola nella ringhiera della pedana non si vedeva).
+func _stesso_modello(a: Node, b: Node) -> bool:
+	if a.owner == null or a.owner != b.owner:
+		return false
+	if not _fino:
+		return true
+	var f := a.owner.scene_file_path.get_extension().to_lower()
+	return f == "glb" or f == "gltf"
+
+
+## Quanto (m) gli spigoli di una mesh passano dentro l'altra, il massimo fra le due direzioni: per ogni spigolo
+## (un campione) un raggio dall'inizio alla fine e uno dalla fine all'inizio contro l'altra; se colpiscono tutti e
+## due, il tratto fra i due punti colpiti è dentro (gli spigoli che toccano solo la superficie non contano).
+func _attraversa(a: MeshInstance3D, b: MeshInstance3D) -> float:
+	return maxf(_spigoli_dentro(a, b), _spigoli_dentro(b, a))
+
+
+func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
+	if not _corpo_di.has(b):
+		return 0.0
+	var facce := a.mesh.get_faces()
+	if facce.is_empty():
+		return 0.0
+	var corpo := _corpo_di[b] as StaticBody3D
+	corpo.collision_layer = STRATO_SOLO
+	var tri := facce.size() / 3
+	var passo := maxi(1, tri / 80)
+	var massimo := 0.0
+	var centro := _box(a).get_center()
+	var t := 0
+	while t < tri:
+		for e in 3:
+			var p0 := a.global_transform * facce[t * 3 + e]
+			var p1 := a.global_transform * facce[t * 3 + (e + 1) % 3]
+			# 5 mm verso il centro dell'oggetto: uno spigolo appoggiato su una superficie (una scatola su uno
+			# scaffale) non la deve sfiorare
+			p0 += (centro - p0).normalized() * 0.005
+			p1 += (centro - p1).normalized() * 0.005
+			var l := p0.distance_to(p1)
+			if l < 0.03:
+				continue
+			var d := (p1 - p0) / l
+			var h0 := _raggio(p0 + d * 0.005, p1 - d * 0.005, STRATO_SOLO)
+			if h0.is_empty():
+				continue
+			var h1 := _raggio(p1 - d * 0.005, p0 + d * 0.005, STRATO_SOLO)
+			if h1.is_empty():
+				continue
+			massimo = maxf(massimo, (h0.position as Vector3).distance_to(h1.position))
+		t += passo
+	corpo.collision_layer = STRATO
+	return massimo
 
 
 ## Quanti vertici della mesh più piccola fra a e b stanno dentro l'altra (raggi verso l'alto: dispari = dentro).
@@ -605,6 +907,12 @@ func _frazione_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 
 ## La chiave di un caso: zona, nodo e problema; i nodi fatti da codice hanno nomi automatici (@MeshInstance3D@217)
 ## che cambiano: per loro conta il tipo e la posizione arrotondata a mezzo metro.
+static func _chiave_senza_zona(e: Dictionary) -> String:
+	var c := e.duplicate()
+	c["zona"] = ""
+	return chiave_caso(c)
+
+
 static func chiave_caso(e: Dictionary) -> String:
 	var nodo := String(e["nodo"])
 	var re := RegEx.create_from_string("@([A-Za-z0-9]+)@[0-9]+")
@@ -638,6 +946,10 @@ func _confronta() -> void:
 	_scrivi_rapporto(nuovi, noti, spariti)
 	check(nuovi.is_empty(), "nessun caso nuovo di posizionamento (%d nuovi, %d già noti, %d eccezioni non più trovate)" % [
 			nuovi.size(), noti.size(), spariti.size()])
+	var da_fare := noti.filter(func(t): return t.get("stato", "") != "voluto")
+	print("  casi da correggere (non \"voluto\"): %d" % da_fare.size())
+	if BLOCCA_DA_CORREGGERE:
+		check(da_fare.is_empty(), "nessun caso da correggere (%d da correggere; passano solo i casi \"voluto\", decisi dall'utente)" % da_fare.size())
 	for t in nuovi.slice(0, 40):
 		print("    NUOVO %s · %s · %s · %s · %s" % [t["zona"], t["problema"], t["nodo"], str(t["pos"]), t["dettaglio"]])
 
