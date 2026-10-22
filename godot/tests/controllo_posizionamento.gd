@@ -131,7 +131,8 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().process_frame
 
 
-## Le mesh visibili della scena, senza il giocatore e le creature (si muovono); le superfici dell'acqua a parte.
+## Le mesh visibili della scena, senza il giocatore, le creature e le gocce che cadono (si muovono); le superfici
+## dell'acqua a parte.
 func _mesh_visibili() -> Array:
 	var out := []
 	var esclusi := []
@@ -139,6 +140,8 @@ func _mesh_visibili() -> Array:
 		esclusi.append(n)
 	for n in get_tree().get_nodes_in_group(&"bambini"):
 		esclusi.append(n)
+	for n in _radice.find_children("*", "Gocce", true, false):
+		esclusi.append(n)   # le gocce che cadono dal soffitto: in volo, non sono messe male
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or not _visibile(mi) or mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
