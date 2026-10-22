@@ -24,6 +24,7 @@ var SCATTI := {
 	"6_sala_dall_alto": [b(44.0, 30.0, -17.0), b(62.0, 12.0, -27.0), 80.0, "", [], false],
 	"7_nel_tubo": [b(57.6, 17.7, -22.4), b(60.5, 21.0, -23.1), 80.0, "", [], false],
 	"8_lampada_vasca": [b(65.4, 27.2, -24.2), b(63.3, 29.7, -23.3), 70.0, "", [], false],
+	"8b_lei_vasca_2": [b(64.6, 26.4, -24.1), b(70.6, 28.0, -19.5), 70.0, "vasca_1", [], false],
 }
 
 var cartella := "user://scatti_inseguimento"
@@ -106,6 +107,8 @@ func _lei(sala: SalaInseguimento, cosa: String, camera: Vector3) -> void:
 	match cosa:
 		"vasca_0":
 			pos = SalaInseguimento.b(L[0]["pos"])
+		"vasca_1":
+			pos = sala._posto_vasca(1)
 		"vasca_2":
 			pos = sala._posto_vasca(2)
 		"scolo_0", "scolo_1":

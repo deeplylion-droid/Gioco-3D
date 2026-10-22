@@ -573,7 +573,8 @@ def versione_A(mats):
         c.anello((64.0, 10.6, T + 0.3), (0, 0, 1), 0.8, 0.9, 0.16, 'metallo', seg=28)
     else:
         condotta(c, (64.0, -1.5, T + 1.0), (64.0, 31.5, T + 1.0), 0.8, z_terra=z0)
-    for (x, y, h, r) in ((74.0, 27.0, 16.0, 2.2), (45.5, 26.5, 12.0, 2.4), (75.0, 4.0, 11.0, 1.8)):
+    # (nel gioco il primo sta 1,5 m più verso il muro est: fra lui e la vasca 2 sale lei)
+    for (x, y, h, r) in ((75.5 if GIOCO else 74.0, 27.0, 16.0, 2.2), (45.5, 26.5, 12.0, 2.4), (75.0, 4.0, 11.0, 1.8)):
         serbatoio(c, x, y, z0, h, r)
     # le pompe vere della sala pompe (una per tipo, niente doppioni), su basamenti sopra l'acqua
     for (x, y, nodi) in ((50.0, 23.6, 'POMPA_1'), (54.4, 23.6, 'POMPA_2'), (67.0, 14.5, ['POMPA_3', 'POMPA_3_modello'])):
@@ -674,7 +675,8 @@ def versione_A(mats):
     luci['acqua_scorre'] += [[x, y, z] for (x, y, z) in ((50.8, 15.0, zc1), (62.8, 27.8, zc2), (69.6, 7.4, zc3), (50.8, 6.5, -33.4))]
     # lei: dove ti raggiunge (le pose per gli scatti)
     luci['lei'] += [[47.5, 18.3, -25.0, 200.0, 'insegue', 'raggiunge la vasca 1 dal basso'],
-                    [62.0, 31.0, -21.0, 160.0, 'insegue', 'arriva sulla condotta nord alla vasca 2'],
+                    ([70.8, 27.6, -21.0, 270.0, 'insegue', 'sale accanto alla vasca 2, dal lato est'] if GIOCO else
+                     [62.0, 31.0, -21.0, 160.0, 'insegue', 'arriva sulla condotta nord alla vasca 2']),
                     [BX[2] + 2.2, 6.5, -34.0, 270.0, 'insegue', 'sbatte contro la grata'],
                     [44.7, 9.0, T + 0.12 - 0.8, 120.0, 'affacciata', 'SB1: sbuca dal pozzo di scarico del bacino']]
 
