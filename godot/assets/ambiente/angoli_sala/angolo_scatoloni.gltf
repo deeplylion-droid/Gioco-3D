@@ -156,7 +156,11 @@
 				145,
 				146,
 				147,
-				148
+				148,
+				149,
+				150,
+				151,
+				152
 			]
 		}
 	],
@@ -3071,6 +3075,15 @@
 			]
 		},
 		{
+			"mesh":6,
+			"name":"scat_caduto_0-convcolonly",
+			"translation":[
+				0.630855917930603,
+				0.27824515104293823,
+				-3.905853509902954
+			]
+		},
+		{
 			"mesh":5,
 			"name":"scat_caduto_2",
 			"rotation":[
@@ -3088,6 +3101,15 @@
 				3.045208215713501,
 				0,
 				-2.8537237644195557
+			]
+		},
+		{
+			"mesh":7,
+			"name":"scat_caduto_2-convcolonly",
+			"translation":[
+				3.044086217880249,
+				0.27041053771972656,
+				-2.8515753746032715
 			]
 		},
 		{
@@ -3111,6 +3133,15 @@
 			]
 		},
 		{
+			"mesh":8,
+			"name":"scat_caduto_4-convcolonly",
+			"translation":[
+				2.5552754402160645,
+				0.27824515104293823,
+				-3.3065805435180664
+			]
+		},
+		{
 			"mesh":3,
 			"name":"scat_caduto_6",
 			"rotation":[
@@ -3128,6 +3159,15 @@
 				1.7188791036605835,
 				0,
 				-3.684067487716675
+			]
+		},
+		{
+			"mesh":9,
+			"name":"scat_caduto_6-convcolonly",
+			"translation":[
+				1.718667984008789,
+				0.23797643184661865,
+				-3.6832525730133057
 			]
 		}
 	],
@@ -3288,6 +3328,54 @@
 					},
 					"indices":22,
 					"material":4
+				}
+			]
+		},
+		{
+			"name":"scat_caduto_0-convcolonly",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":23,
+						"NORMAL":24
+					},
+					"indices":2
+				}
+			]
+		},
+		{
+			"name":"scat_caduto_2-convcolonly",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":25,
+						"NORMAL":26
+					},
+					"indices":2
+				}
+			]
+		},
+		{
+			"name":"scat_caduto_4-convcolonly",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":27,
+						"NORMAL":28
+					},
+					"indices":2
+				}
+			]
+		},
+		{
+			"name":"scat_caduto_6-convcolonly",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":29,
+						"NORMAL":30
+					},
+					"indices":2
 				}
 			]
 		}
@@ -3629,6 +3717,94 @@
 			"componentType":5123,
 			"count":11448,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":23,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				0.36061012744903564,
+				0.27824515104293823,
+				0.36017346382141113
+			],
+			"min":[
+				-0.36061012744903564,
+				-0.27824515104293823,
+				-0.36017346382141113
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":24,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":25,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				0.32767701148986816,
+				0.27041053771972656,
+				0.3169788122177124
+			],
+			"min":[
+				-0.32767701148986816,
+				-0.27041053771972656,
+				-0.3169788122177124
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":26,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":27,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				0.3214426040649414,
+				0.27824515104293823,
+				0.32197999954223633
+			],
+			"min":[
+				-0.3214426040649414,
+				-0.27824515104293823,
+				-0.32197999954223633
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":28,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":29,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				0.33528250455856323,
+				0.23797643184661865,
+				0.33537793159484863
+			],
+			"min":[
+				-0.33528250455856323,
+				-0.23797643184661865,
+				-0.33537793159484863
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":30,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
 		}
 	],
 	"bufferViews":[
@@ -3769,6 +3945,54 @@
 			"byteLength":22896,
 			"byteOffset":1037344,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1060240,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1060528,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1060816,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1061104,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1061392,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1061680,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1061968,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":1062256,
+			"target":34962
 		}
 	],
 	"samplers":[
@@ -3779,7 +4003,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":1060240,
+			"byteLength":1062544,
 			"uri":"angolo_scatoloni.bin"
 		}
 	]

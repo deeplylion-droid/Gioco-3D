@@ -35,6 +35,9 @@ const ZONE := [
 	# gli stati indicati dalle squadre (22 ottobre): quello che cambia più avanti nel gioco
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "interni", "stato": "interni_dopo", "parti": ["Interni"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "sala", "stato": "lei_fossa", "parti": ["Gioco/LeiSbuca"]},
+	# le stanze della Risalita si disegnano solo col giocatore vicino (risalita_gioco.gd): nei due stati si mostrano,
+	# come quando ci arriva (enigmi non risolti) e dopo (risolti)
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_arrivo", "parti": ["Risalita"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_dopo", "parti": ["Risalita"]},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "inseguimento_dopo",
 			"parti": ["SalaInseguimento"]},
@@ -109,6 +112,12 @@ var _fino := false
 ## Le parti nascoste all'inizio rese visibili dallo stato "tutto_visibile" (per non contare come compenetrate fra loro
 ## le due versioni della stessa cosa, per esempio le lampade Spente e Accese).
 var _nascoste_radici := {}
+## La copertura, per il rapporto: per ogni giro (zona e stato) quanti oggetti si sono controllati in ogni parte; per
+## ogni scena le parti nascoste nel giro iniziale e i percorsi visti in tutti i giri (vedi _segna_copertura).
+var _copertura: Array = []
+var _nascoste_ora := {}
+var _nascoste_base := {}   # scena -> {percorso del nodo nascosto: mesh}
+var _visti := {}           # scena -> {percorso di una mesh controllata: true}
 
 
 func _ready() -> void:
@@ -171,6 +180,7 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().physics_frame
 	var oggetti := mesh.filter(func(mi): return _e_oggetto(mi))
 	print("  %d oggetti di scena" % oggetti.size())
+	_segna_copertura(z, mesh, oggetti)
 	var prima := _trovati.size()
 	for mi in oggetti:
 		_sospeso(z, mi)
@@ -234,15 +244,29 @@ func _prepara(stato: String) -> void:
 			for i in 30:
 				await get_tree().physics_frame
 			return
+		"risalita_arrivo":
+			_mostra_risalita()
+			for i in 10:
+				await get_tree().physics_frame
+			return
 		"risalita_dopo":
 			# enigmi: le paratie del fiume girate, la cassaforte aperta, il negatoscopio con la radiografia
+			# (come li prepara enigmi, 22 ottobre): la luce dell'infermeria accesa, tutti i cassetti tirati (ognuno si apre
+			# una volta e resta aperto: il 14 con la radiografia), la cassaforte aperta col codice
+			_mostra_risalita()
 			for par in _radice.find_children("*", "ParatiaFiume", true, false):
 				par.call(&"gira")
+			var inf := _radice.get_node_or_null(^"Risalita/Infermeria")
+			var interruttore := inf.get_node_or_null(^"Interruttore") if inf else null
+			if interruttore:
+				interruttore.set(&"powered", true)
+			for c in _radice.find_children("*", "CassettoSchedario", true, false):
+				c.call(&"load_state", {"aperto": true})
 			for c in _radice.find_children("*", "CassaforteRotelle", true, false):
-				c.call(&"load_state", {"aperta": true})
+				c.call(&"load_state", {"cifre": [4, 1, 7], "aperta": true})
 			for n in _radice.find_children("*", "Negatoscopio", true, false):
 				n.call(&"load_state", {"con_radiografia": true})
-			for i in 10:
+			for i in 240:
 				await get_tree().physics_frame
 			return
 		"inseguimento_dopo":
@@ -294,6 +318,55 @@ func _prepara(stato: String) -> void:
 	print("  acquari comparsi: %s, stato %s" % [enigma.get(&"comparsi"), enigma.get(&"stato")])
 
 
+## Perché una parte nascosta può non essere controllata: una creatura (si muove: la guarda il collaudo), un effetto o
+## l'acqua (esclusi sempre), o la variante di una cosa controllata nello stesso posto (la lampada accesa e quella
+## spenta, il cassetto chiuso e tirato). Vuoto: nessun motivo, va controllata con uno stato.
+func _tipo_nascosta(n: Node) -> String:
+	var percorso := _nodo(n).to_lower()
+	for pezzo in percorso.split("/"):
+		if pezzo == "lei" or pezzo.contains("medusa") or pezzo.contains("bambino"):
+			return "creatura, si muove (la guarda il collaudo)"
+	if EFFETTI.any(func(e): return percorso.contains(e)) or percorso.contains("acqua"):
+		return "effetto o acqua, esclusi"
+	if percorso.split("/").has("graybox"):
+		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
+		# collisione, non si vede mai
+		return "segnaposto graybox, al suo posto si vede il modello vero"
+	# la variante: il suo box sta dentro quello delle mesh visibili accanto (stesso genitore)
+	var mio := AABB()
+	var primo := true
+	for m in ([n] if n is MeshInstance3D else []) + n.find_children("*", "MeshInstance3D", true, false):
+		if (m as MeshInstance3D).mesh:
+			mio = _box(m) if primo else mio.merge(_box(m))
+			primo = false
+	var padre := n.get_parent()
+	if primo or padre == null:
+		return ""
+	var vicini := AABB()
+	var trovato := false
+	for m in padre.find_children("*", "MeshInstance3D", true, false):
+		if (m as MeshInstance3D).mesh and _visibile(m) and not n.is_ancestor_of(m) and m != n:
+			vicini = _box(m) if not trovato else vicini.merge(_box(m))
+			trovato = true
+	if trovato and vicini.grow(0.05).encloses(mio):
+		return "variante nello stesso posto di una parte controllata"
+	return ""
+
+
+## Le stanze della Risalita (fiume e infermeria) come col giocatore dentro: visibili, e il loro script fermo (se no
+## le rinasconde, col giocatore lontano).
+func _mostra_risalita() -> void:
+	var r := _radice.get_node_or_null(^"Risalita")
+	if r == null:
+		push_warning("controllo: Risalita non trovata")
+		return
+	r.process_mode = Node.PROCESS_MODE_DISABLED
+	for nome in ["fiume", "infermeria"]:
+		var n = r.get(nome)
+		if n is Node3D:
+			(n as Node3D).visible = true
+
+
 ## Le mesh visibili della scena, senza il giocatore, le creature e le gocce che cadono (si muovono); le superfici
 ## dell'acqua a parte.
 func _mesh_visibili() -> Array:
@@ -341,6 +414,9 @@ func _elenca_nascoste() -> void:
 		if nascosto:
 			var nome := String(_radice.get_path_to(nascosto))
 			gruppi[nome] = int(gruppi.get(nome, 0)) + 1
+	_nascoste_ora = {}
+	for nome in gruppi:
+		_nascoste_ora[nome] = [gruppi[nome], _tipo_nascosta(_radice.get_node(NodePath(nome)))]
 	if gruppi.is_empty():
 		return
 	var nomi := gruppi.keys()
@@ -438,6 +514,44 @@ static func _squadra(zona: String, nodo: String) -> String:
 	return SQUADRE_ZONA.get(zona, "da assegnare")
 
 
+## Cosa ha guardato questo giro: gli oggetti per parte (i primi due livelli del percorso), e quali mesh erano visibili
+## (dentro le parti, nei giri con stato). Così il rapporto dice di ogni zona se è stata controllata e con quanti oggetti,
+## e quali parti nascoste all'inizio non le ha guardate nessun giro.
+func _segna_copertura(z: Dictionary, mesh: Array, oggetti: Array) -> void:
+	var scena: String = z["scena"]
+	var parti: Array = z.get("parti", [])
+	var dentro := func(percorso: String) -> bool:
+		return parti.is_empty() or parti.any(func(p): return percorso == p or percorso.begins_with(p + "/"))
+	var visti: Dictionary = _visti.get_or_add(scena, {})
+	for mi in mesh:
+		var percorso := _nodo(mi)
+		if dentro.call(percorso):
+			visti[percorso] = true
+	var per_parte := {}
+	for mi in oggetti:
+		var percorso := _nodo(mi)
+		if not dentro.call(percorso):
+			continue
+		var pezzi := percorso.split("/")
+		var parte := "/".join(pezzi.slice(0, mini(2, pezzi.size() - 1))) if pezzi.size() > 1 else percorso
+		if parte.contains("@"):
+			parte = pezzi[0]   # i nodi con nomi automatici con la loro parte, non una riga ciascuno
+		per_parte[parte] = int(per_parte.get(parte, 0)) + 1
+	# le parti nascoste: quelle del giro iniziale, più quelle nascoste anche dentro le parti di uno stato (per esempio i
+	# cassetti tirati dell'infermeria, che nel giro iniziale non si vedevano perché era nascosta tutta la stanza)
+	var nascoste: Dictionary = _nascoste_base.get_or_add(scena, {})
+	for g in _nascoste_ora:
+		if dentro.call(String(g)) and not nascoste.has(g):
+			nascoste[g] = _nascoste_ora[g]
+	for p in parti:
+		if not per_parte.keys().any(func(k): return k == p or String(k).begins_with(p + "/") or String(p).begins_with(k + "/")):
+			# una parte dello stato senza nessun oggetto visibile: si vede subito nel rapporto (-1: non ha mesh, è solo
+			# logica, come PortoneTorre, i cui pezzi stanno in un'altra parte)
+			var nodo := _radice.get_node_or_null(NodePath(p))
+			per_parte[p] = -1 if nodo and nodo.find_children("*", "MeshInstance3D", true, false).is_empty() else 0
+	_copertura.append({"giro": "%s · %s" % [scena.get_file().get_basename(), z.get("stato", "inizio")], "parti": per_parte})
+
+
 func _nodo(n: Node) -> String:
 	return String(_radice.get_path_to(n))
 
@@ -448,6 +562,13 @@ func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: S
 		if z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
 			return
 		dettaglio += " (stato: %s)" % z["stato"]
+	if _nodo(n).contains("@"):
+		# i nodi fatti da codice hanno nomi automatici: il modello da cui vengono aiuta a riconoscerli
+		var a := n
+		while a and a != _radice and a.scene_file_path.is_empty():
+			a = a.get_parent()
+		if a and a != _radice:
+			dettaglio += " [modello: %s]" % a.scene_file_path.get_file()
 	var k := {"zona": _zona(z, n), "nodo": _nodo(n), "squadra": _squadra(_zona(z, n), _nodo(n)), "problema": problema,
 			"pos": [snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(pos.z, 0.01)], "dettaglio": dettaglio}
 	if z.has("stato"):
@@ -657,7 +778,7 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		var centro := piedi + Vector3(0, (TESTA_DA + testa) * 0.5, 0)
 		q.transform = Transform3D(Basis(), centro)
 		q.collision_mask = STRATO
-		var r := _spazio.intersect_shape(q, 16)
+		var r := _tutti_i_corpi(q)
 		var solido := false
 		if not r.is_empty():
 			q.collision_mask = Layers.WORLD | Layers.BARRIERS
@@ -667,21 +788,24 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 			if mi == null or _acqua.has(mi):
 				continue
 			if not visti.has(mi):
-				visti[mi] = [piedi, 0, 9.0, 0.0, false]
+				visti[mi] = [piedi, 0, 9.0, 0.0, false, y, y]
 			visti[mi][1] += 1
 			visti[mi][4] = visti[mi][4] or solido
 			# fin dove arriva sopra il pavimento (le gambe o la testa)
 			var bb := _box(mi)
 			visti[mi][2] = minf(visti[mi][2], maxf(bb.position.y - y, TESTA_DA))
 			visti[mi][3] = maxf(visti[mi][3], minf(bb.end.y - y, testa))
+			visti[mi][5] = minf(visti[mi][5], y)
+			visti[mi][6] = maxf(visti[mi][6], y)
 	if not accovacciati.is_empty():
 		print("  %d celle dove si sta accovacciati per forza (spazio libero fino a %.2f m)" % [n_accov, ACCOVACCIATO])
 	for mi in visti:
 		var p: Vector3 = visti[mi][0]
 		var alto: float = visti[mi][3]
 		var dove := "all'altezza della testa" if alto > 1.4 else ("all'altezza del busto" if alto > 0.9 else "all'altezza delle gambe")
-		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm), %s" % [
-				dove, visti[mi][2], alto, visti[mi][1],
+		var quote := " (pavimento a y %.2f)" % visti[mi][5] if visti[mi][6] - visti[mi][5] < 0.05 else " (pavimenti fra y %.2f e %.2f)" % [visti[mi][5], visti[mi][6]]
+		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)%s, %s" % [
+				dove, visti[mi][2], alto, visti[mi][1], quote,
 				"con la collisione (ci si sbatte contro)" if visti[mi][4] else "senza collisione (si attraversa)"])
 
 
@@ -698,6 +822,27 @@ func _mobile(n: Node) -> bool:
 				return true
 		n = n.get_parent()
 	return false
+
+
+## Tutti i corpi diversi che la forma tocca, uno per corpo. Jolt dà un risultato per ogni triangolo di una forma
+## concava toccato: con un limite fisso, una mesh fitta riempiva la lista (e le celle si contavano più volte) e gli
+## altri oggetti nello stesso punto sparivano. Si richiede escludendo quelli già trovati, finché la lista non è piena.
+func _tutti_i_corpi(q: PhysicsShapeQueryParameters3D) -> Array:
+	var esclusi_prima := q.exclude
+	var out := []
+	var trovati: Array[RID] = esclusi_prima.duplicate()
+	for giro in 64:
+		q.exclude = trovati
+		var r := _spazio.intersect_shape(q, 32)
+		for h in r:
+			var rid: RID = (h.collider as CollisionObject3D).get_rid()
+			if not trovati.has(rid):
+				trovati.append(rid)
+				out.append(h)
+		if r.size() < 32:
+			break
+	q.exclude = esclusi_prima
+	return out
 
 
 ## Una cella dove passa il giocatore: ci entrano le sue gambe (un cilindro di raggio 30 cm fra 0,3 e 1 m sopra il
@@ -755,7 +900,7 @@ func _interattivi(z: Dictionary) -> void:
 		q.collision_mask = STRATO
 		q.exclude = esclusi
 		var gia := {}
-		for h in _spazio.intersect_shape(q, 8):
+		for h in _tutti_i_corpi(q):
 			var altro: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
 			if altro and _e_oggetto(altro) and not gia.has(altro):
 				gia[altro] = true
@@ -1101,6 +1246,7 @@ func _scrivi_rapporto(nuovi: Array, noti: Array, spariti: Array) -> void:
 				testo += "| %s | %s | `%s` | %s | %s |%s\n" % [t["squadra"], t["problema"], t["nodo"], "%.2f, %.2f, %.2f" % t["pos"], t["dettaglio"],
 						(" %s: %s |" % [t.get("stato", ""), t.get("motivo", "")]) if sezione[0] != "Nuovi" else ""]
 			testo += "\n"
+	testo += _testo_copertura()
 	if not spariti.is_empty():
 		testo += "## Eccezioni non più trovate (si possono togliere dal file)\n\n"
 		for e in spariti:
@@ -1112,6 +1258,34 @@ func _scrivi_rapporto(nuovi: Array, noti: Array, spariti: Array) -> void:
 	f.store_string(JSON.stringify(nuovi + noti, "\t"))
 	f.close()
 	print("rapporto: %s" % cartella.path_join("rapporto.md"))
+
+
+## La sezione "Copertura" del rapporto: per ogni giro gli oggetti controllati per parte, poi le parti nascoste nel giro
+## iniziale e se un altro giro (uno stato) le ha guardate.
+func _testo_copertura() -> String:
+	var t := "## Copertura\n\nPer ogni giro, quanti oggetti di scena si sono controllati in ogni parte. Una parte con 0 è una zona che il controllo non ha guardato.\n\n| Giro | Parte | Oggetti controllati |\n|---|---|---|\n"
+	for c in _copertura:
+		var pp: Dictionary = c["parti"]
+		var nomi := pp.keys()
+		nomi.sort()
+		for n in nomi:
+			t += "| %s | `%s` | %s |\n" % [c["giro"], n, ("**0: non controllata**" if int(pp[n]) == 0 else ("nessuna mesh (solo logica)" if int(pp[n]) < 0 else str(pp[n])))]
+	t += "\n### Parti nascoste all'inizio\n\nLe parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni spente o accese di una luce, o effetti). \"Controllata nello stato\" vuol dire che un giro con stato le ha viste visibili; \"mai controllata\" va guardato.\n\n| Scena | Parte nascosta | Mesh | Controllata |\n|---|---|---|---|\n"
+	var mai := 0
+	for scena in _nascoste_base:
+		var visti: Dictionary = _visti.get(scena, {})
+		var gruppi: Dictionary = _nascoste_base[scena]
+		var nomi := gruppi.keys()
+		nomi.sort()
+		for g in nomi:
+			var vista := visti.has(g) or visti.keys().any(func(k): return String(k).begins_with(g + "/"))
+			var tipo: String = gruppi[g][1]
+			var come := "sì, in uno stato" if vista else ("no: " + tipo if not tipo.is_empty() else "**mai controllata**")
+			if not vista and tipo.is_empty():
+				mai += 1
+			t += "| %s | `%s` | %d | %s |\n" % [String(scena).get_file().get_basename(), g, gruppi[g][0], come]
+	print("  parti nascoste all'inizio mai controllate: %d (vedi il rapporto, \"Copertura\")" % mai)
+	return t + "\n"
 
 
 func check(cond: bool, what: String) -> void:

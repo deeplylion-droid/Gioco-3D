@@ -7,8 +7,6 @@ Come si rifà il controllo sul vostro ramo, dopo aver unito lavoro/godot: `godot
 | Zona | Problema | Nodo | Posizione | Dettaglio |
 |---|---|---|---|---|
 | tecnici | compenetra | `Tecnici/Ambienti/CameraOnde/CAMERA_pozzo` | 0.00, -2.32, 2.00 | passa dentro Sala/Piscina/sala_piscina_onde per 30 cm |
-| tecnici | compenetra | `Tecnici/Ambienti/CameraOnde/PORTELLO` | 0.00, -2.32, 2.74 | il 70% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde (stato: tutto_visibile) |
-| tecnici | compenetra | `Tecnici/Logica/SerrandaMagazzino/Barra` | -15.00, 0.02, 20.35 | passa dentro Tecnici/Logica/SerrandaMagazzino/Graybox/Pannello/@MeshInstance3D@7054 per 180 cm (stato: tutto_visibile) |
 | torre | compenetra | `SalaInseguimento/InseguimentoMobili/ins_paratia_0` | 54.72, -21.91, -16.41 | passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_1 per 169 cm |
 | torre | compenetra | `SalaInseguimento/InseguimentoMobili/ins_paratia_1` | 54.72, -21.89, -13.60 | passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_0 per 170 cm |
 | torre | compenetra | `SalaInseguimento/InseguimentoMobili/ins_paratia_2` | 67.02, -24.90, -25.28 | passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_2 per 182 cm |
