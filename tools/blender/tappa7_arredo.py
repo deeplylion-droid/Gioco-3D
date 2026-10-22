@@ -253,6 +253,7 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
         k_obj += 1
         if pila:   # 1-3 piani, ognuno un po' girato e più piccolo di quello sotto
             h = dm.z
+            sotto, tolto = file, False
             for piano in range(rnd.choice((0, 1, 1, 2))):
                 f2, a2, _ = rnd.choice([t for t in tavolozza if t[2]])
                 k2 = _scala_per(f2, alto=a2 * rnd.uniform(0.75, 0.95), prof_max=prof_max * 0.9)
@@ -260,8 +261,11 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
                 if d2.x > dm.x * 1.05:
                     k2 *= dm.x / d2.x; d2 = _dim(f2, k2)
                 o2 = posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz + rnd.uniform(-0.2, 0.2), obs)
-                if h + d2.z > PILA_MAX:
+                # il pesante sotto: sul cartone solo altro cartone; sopra un pezzo tolto non resta niente
+                tolto = tolto or h + d2.z > PILA_MAX or (sotto.startswith('scatolone') and not f2.startswith('scatolone'))
+                if tolto:
                     TROPPO_ALTI.append(o2.name)
+                sotto = f2
                 k_obj += 1
                 h += d2.z
         u += dm.x + rnd.uniform(*passo)
