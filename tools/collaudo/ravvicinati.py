@@ -55,10 +55,15 @@ for o in ogg:
         elenco.append([o["nodo"], o["istanza"], *c, *d, o.get("distanza"), o.get("vicino"), o.get("sotto"),
                        None if alto_da_terra is None else round(alto_da_terra, 3), "sì" if sul_pavimento else "no",
                        "sì" if o["retto"] else "NO", o.get("stacco"), o.get("stacco_da")])
+    nome = (f"{a.prefisso}_{o['nodo'].split('/')[-1]}" + (f"_{o['istanza']}" if o["istanza"] >= 0 else "")).replace(" ", "_")
     if (o["piccolo"] and not sul_pavimento) or not o["retto"]:
-        nome = f"{a.prefisso}_{o['nodo'].split('/')[-1]}" + (f"_{o['istanza']}" if o["istanza"] >= 0 else "")
         dist = min(2.0, max(0.45, 2.2 * max(d)))
-        righe.append(f"mira {nome.replace(' ', '_')} {c[0]:.3f} {c[1]:.3f} {c[2]:.3f} {dist:.2f}")
+        righe.append(f"mira {nome} {c[0]:.3f} {c[1]:.3f} {c[2]:.3f} {dist:.2f}")
+    # lo stacco da vicino: dal resto per chi non arriva all'architettura, dal suo pezzo gemello (anta e corpo)
+    coppia = o.get("stacco_coppia") if not o["retto"] else o.get("fratelli_coppia")
+    if coppia:
+        p, q = coppia
+        righe.append(f"spazio {nome}_stacco {p[0]:.4f} {p[1]:.4f} {p[2]:.4f} {q[0]:.4f} {q[1]:.4f} {q[2]:.4f}")
 open(a.uscita, "w").write("\n".join(righe) + "\n")
 with open(a.elenco, "w", newline="") as f:
     w = csv.writer(f)

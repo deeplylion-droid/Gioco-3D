@@ -14,6 +14,8 @@ extends Node
 ## Le righe "mira nome cx cy cz distanza" fanno due scatti ravvicinati di un oggetto (nome_a e nome_b): la camera
 ## sta a quella distanza dal centro, dalla parte più libera (raggi sul mondo, 30 gradi più in alto), e di lato
 ## (70 gradi più in là), guardando il centro.
+## Le righe "spazio nome px py pz qx qy qz" fanno due scatti dello spazio fra un oggetto (p) e la cosa più vicina
+## (q), di traverso rispetto a p-q: uno da vicino (nome_v, 35 cm, campo di 40 gradi) e uno più largo (nome_l, 1,2 m).
 
 const STATI := preload("res://tests/collaudo/stati.gd")
 
@@ -109,6 +111,12 @@ func _run() -> void:
 		if c[0] == "origine":
 			origine = Vector3(float(c[1]), float(c[2]), float(c[3]))
 			continue
+		if c[0] == "spazio":
+			var pp := Vector3(float(c[2]), float(c[3]), float(c[4])) - origine
+			var qq := Vector3(float(c[5]), float(c[6]), float(c[7])) - origine
+			await _spazio(cam, c[1], pp, qq)
+			fatti += 2
+			continue
 		if c[0] == "mira":
 			await _mira(cam, c[1], Vector3(float(c[2]), float(c[3]), float(c[4])) - origine, float(c[5]))
 			fatti += 2
@@ -129,8 +137,7 @@ func _run() -> void:
 
 func _mira(cam: Camera3D, nome: String, centro: Vector3, dist: float) -> void:
 	var spazio := cam.get_world_3d().direct_space_state
-	var migliore := -1.0
-	var dir := Vector3.FORWARD
+	var dirs := []   # [libero, direzione]
 	for i in 16:
 		var ang := TAU * i / 16.0
 		for alto in [0.5, 0.15, 0.9]:
@@ -138,12 +145,19 @@ func _mira(cam: Camera3D, nome: String, centro: Vector3, dist: float) -> void:
 			var q := PhysicsRayQueryParameters3D.create(centro + d * 0.05, centro + d * (dist + 0.3), Layers.WORLD)
 			var h := spazio.intersect_ray(q)
 			var libero: float = dist + 0.3 if h.is_empty() else centro.distance_to(h.position)
-			if libero > migliore + 0.01:
-				migliore = libero
-				dir = d
+			dirs.append([libero + alto * 0.05, d])
+	dirs.sort_custom(func(x, y): return x[0] > y[0])
+	var prima: Array = dirs[0]
+	var seconda: Array = prima
+	# di lato: la più libera fra quelle ad almeno 60 gradi dalla prima
+	for x in dirs:
+		if Vector2(x[1].x, x[1].z).angle_to(Vector2(prima[1].x, prima[1].z)) > deg_to_rad(60.0) or Vector2(x[1].x, x[1].z).angle_to(Vector2(prima[1].x, prima[1].z)) < -deg_to_rad(60.0):
+			seconda = x
+			break
 	for k in 2:
-		var d := dir if k == 0 else dir.rotated(Vector3.UP, deg_to_rad(70.0))
-		var dd := minf(dist, maxf(migliore - 0.1, 0.25)) if k == 0 else dist
+		var scelta: Array = prima if k == 0 else seconda
+		var d: Vector3 = scelta[1]
+		var dd := minf(dist, maxf(float(scelta[0]) - 0.1, 0.25))
 		cam.global_position = centro + d * dd
 		cam.look_at(centro, Vector3.UP if absf(d.y) < 0.95 else Vector3.FORWARD)
 		cam.fov = 50.0
@@ -151,4 +165,38 @@ func _mira(cam: Camera3D, nome: String, centro: Vector3, dist: float) -> void:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s_%s.jpg" % [nome, "a" if k == 0 else "b"]), 0.85)
+	cam.fov = fov
+
+
+func _spazio(cam: Camera3D, nome: String, p: Vector3, q: Vector3) -> void:
+	var spazio := cam.get_world_3d().direct_space_state
+	var centro := (p + q) * 0.5
+	var g := q - p
+	g = g.normalized() if g.length() > 0.0001 else Vector3.UP
+	# direzioni di traverso rispetto allo stacco, un po' dall'alto: la più libera
+	var base := g.cross(Vector3.UP)
+	if base.length() < 0.1:
+		base = g.cross(Vector3.RIGHT)
+	base = base.normalized()
+	var migliore := -1.0
+	var dir := base
+	for i in 24:
+		var d := base.rotated(g, TAU * i / 24.0)
+		var q_ := PhysicsRayQueryParameters3D.create(centro + d * 0.03, centro + d * 1.5, Layers.WORLD)
+		var h := spazio.intersect_ray(q_)
+		var libero: float = 1.5 if h.is_empty() else centro.distance_to(h.position)
+		libero += d.y * 0.2   # a parità, da sopra (come il giocatore)
+		if libero > migliore:
+			migliore = libero
+			dir = d
+	for k in 2:
+		var dist := 0.35 if k == 0 else 1.2
+		dist = minf(dist, maxf(migliore - 0.05, 0.12))
+		cam.global_position = centro + dir * dist
+		cam.look_at(centro, Vector3.UP if absf(dir.y) < 0.95 else Vector3.FORWARD)
+		cam.fov = 40.0 if k == 0 else 60.0
+		for i in settle:
+			await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s_%s.jpg" % [nome, "v" if k == 0 else "l"]), 0.85)
 	cam.fov = fov

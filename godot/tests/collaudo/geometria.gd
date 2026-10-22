@@ -5,6 +5,9 @@ extends Node
 ## A differenza di tests/controllo_posizionamento.gd conta anche le istanze dei MultiMesh (i dettagli della
 ## sala, DettagliSala, con 6 o più copie diventano MultiMesh), gli oggetti grandi e quelli che compaiono dopo
 ## (vedi stati.gd).
+## Con --headless i MultiMesh non tengono le trasformazioni delle istanze (il renderer finto le butta): quelle dei
+## dettagli della sala si rifanno da posizionamento.json come fa DettagliSala, gli altri MultiMesh (lampadine del
+## portone, lamelle della serranda, medusine) si saltano e si guardano negli scatti.
 ## Uso (sotto il render.lock):
 ##   godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/collaudo/geometria.gd \
 ##       <scena.tscn> <stato> <file di uscita senza estensione> [nodi di primo livello da togliere, separati da virgola]
@@ -129,8 +132,12 @@ func _scrivi_mesh() -> void:
 			if mm == null:
 				continue
 			mesh = mm.mesh
-			for i in mm.visible_instance_count if mm.visible_instance_count >= 0 else mm.instance_count:
-				trasformazioni.append(g.global_transform * mm.get_instance_transform(i))
+			var locali := _istanze_dettagli(g as MultiMeshInstance3D)
+			if locali.is_empty():
+				print("COLLAUDO: MultiMesh saltato (istanze non leggibili senza renderer): ", percorso)
+				continue
+			for t in locali:
+				trasformazioni.append(g.global_transform * (t as Transform3D))
 		if mesh == null:
 			continue
 		var facce := mesh.get_faces()
@@ -156,6 +163,28 @@ func _scrivi_mesh() -> void:
 	f.store_string(JSON.stringify({"scena": scena, "stato": stato, "mesh": voci}))
 	f.close()
 	print("COLLAUDO: %d mesh, %d triangoli" % [voci.size(), tri])
+
+
+var _posti_dettagli := {}
+
+
+## Le istanze di un MultiMesh di DettagliSala, rifatte da posizionamento.json nello stesso ordine.
+func _istanze_dettagli(mmi: MultiMeshInstance3D) -> Array:
+	var padre := mmi.get_parent()
+	if padre == null or not padre is DettagliSala:
+		return []
+	var cartella: String = padre.get(&"cartella")
+	if not _posti_dettagli.has(cartella):
+		var dati = JSON.parse_string(FileAccess.get_file_as_string(cartella.path_join("posizionamento.json")))
+		_posti_dettagli[cartella] = dati.posti if dati is Dictionary else []
+	var out := []
+	for p in _posti_dettagli[cartella]:
+		if p.nodo == String(mmi.name):
+			out.append(padre.call(&"_trasformazione", p))
+	if out.size() != mmi.multimesh.instance_count:
+		print("COLLAUDO: istanze diverse per ", mmi.name, ": ", out.size(), " invece di ", mmi.multimesh.instance_count)
+		return []
+	return out
 
 
 func _raggio(da: Vector3, a: Vector3, maschera: int) -> Dictionary:
@@ -207,9 +236,14 @@ func _celle(cps: Array) -> Array:
 				y = (h.position as Vector3).y - 0.05
 			if not piani.is_empty():
 				colonne[Vector2i(ix, iz)] = piani
+	# libera: le gambe non toccano niente e sopra c'è spazio per la testa (1,8 m); il raggio verso l'alto vede anche
+	# le collisioni a trimesh da dentro (un muro spesso, dove il cilindro non tocca nessuna superficie)
 	var libero := func(c: Vector2i, yy: float) -> bool:
-		q.transform = Transform3D(Basis(), Vector3(x0 + c.x * PASSO, yy + 0.65, z0 + c.y * PASSO))
-		return _spazio.intersect_shape(q, 1).is_empty()
+		var centro := Vector3(x0 + c.x * PASSO, yy, z0 + c.y * PASSO)
+		q.transform = Transform3D(Basis(), centro + Vector3(0, 0.65, 0))
+		if not _spazio.intersect_shape(q, 1).is_empty():
+			return false
+		return _raggio(centro + Vector3(0, 0.1, 0), centro + Vector3(0, 1.8, 0), Layers.WORLD).is_empty()
 	var raggiunte := {}
 	var coda := []
 	for cp in cps:

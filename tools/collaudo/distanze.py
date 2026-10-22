@@ -14,6 +14,7 @@ minima, oggetto più vicino, punto di contatto, spazio sotto (fra i punti più b
 """
 import json
 import sys
+import time
 from collections import deque
 
 import numpy as np
@@ -159,9 +160,10 @@ def misura(punti, mio, tri, own, lo, hi, soglia, blocco=1500):
         pezzo = ordine[k:k + blocco]
         pezzo = pezzo[lb[pezzo] <= max(soglia, best)]
         d, idx = min_per_triangolo(punti, tri[pezzo])
-        for j, dj in zip(own[pezzo], d):
-            if dj < per.get(j, np.inf):
-                per[j] = dj
+        for t_i, j, dj, pi in zip(pezzo, own[pezzo], d, idx):
+            if dj < per.get(j, (np.inf,))[0]:
+                _, q = _coppie(punti[pi][None], tri[t_i][None], True)
+                per[j] = (float(dj), punti[pi], q[0])
         m = int(np.argmin(d))
         if d[m] < best:
             best, punto = float(d[m]), punti[idx[m]].round(3).tolist()
@@ -170,7 +172,7 @@ def misura(punti, mio, tri, own, lo, hi, soglia, blocco=1500):
     # solo per i vicini non ancora a contatto, contro i 24 triangoli dell'oggetto più vicini a ciascun vertice
     vt = tri.reshape(-1, 3)
     vo = np.repeat(own, 3)
-    gia = np.array([per.get(j, np.inf) <= soglia for j in vo]) if len(vo) else np.zeros(0, bool)
+    gia = np.array([per.get(j, (np.inf,))[0] <= soglia for j in vo]) if len(vo) else np.zeros(0, bool)
     sel = (vt >= lo - soglia).all(1) & (vt <= hi + soglia).all(1) & ~gia
     vp, vo = vt[sel], vo[sel]
     if len(vp):
@@ -186,10 +188,14 @@ def misura(punti, mio, tri, own, lo, hi, soglia, blocco=1500):
         _, vic = cKDTree(cm).query(vp, k=kk)
         vic = vic.reshape(len(vp), kk)
         t = mio[vic]                       # (n, k, 3, 3)
-        dd = np.sqrt(punto_triangolo_coppie(np.repeat(vp, kk, 0), t.reshape(-1, 3, 3)).reshape(len(vp), kk).min(1))
-        for j, dj in zip(vo, dd):
-            if dj < per.get(j, np.inf):
-                per[j] = dj
+        d2, q2 = _coppie(np.repeat(vp, kk, 0), t.reshape(-1, 3, 3), True)
+        d2 = d2.reshape(len(vp), kk)
+        km = d2.argmin(1)
+        dd = np.sqrt(d2[np.arange(len(vp)), km])
+        q2 = q2.reshape(len(vp), kk, 3)[np.arange(len(vp)), km]
+        for j, dj, pv, qv in zip(vo, dd, vp, q2):
+            if dj < per.get(j, (np.inf,))[0]:
+                per[j] = (float(dj), qv, pv)
     return per, punto
 
 
@@ -210,7 +216,7 @@ def punto_triangolo_coppie(p, t):
     return out
 
 
-def _coppie(p, t):
+def _coppie(p, t, con_punto=False):
     a, b, c = t[:, 0], t[:, 1], t[:, 2]
     ab, ac, ap = b - a, c - a, p - a
     d1, d2 = (ab * ap).sum(-1), (ac * ap).sum(-1)
@@ -232,6 +238,8 @@ def _coppie(p, t):
     q = np.where(((d6 >= 0) & (d5 <= d6))[:, None], c, q)
     q = np.where(((d3 >= 0) & (d4 <= d3))[:, None], b, q)
     q = np.where(((d1 <= 0) & (d2 <= 0))[:, None], a, q)
+    if con_punto:
+        return ((p - q) ** 2).sum(-1), q
     return ((p - q) ** 2).sum(-1)
 
 
@@ -260,6 +268,7 @@ def main():
     for conta, i in enumerate(np.nonzero(oggetto)[0]):
         if conta % 100 == 0:
             print(f"  {conta}/{oggetto.sum()}", flush=True)
+        t0 = time.time()
         v = voci[i]
         mio = tutti[v["da"]:v["da"] + v["n"]]
         lo, hi = box_min[i] - MARGINE, box_max[i] + MARGINE
@@ -287,16 +296,19 @@ def main():
             risultati.append(r)
             contatti[int(i)] = []
             continue
-        jbest = min(per, key=per.get)
-        r["distanza"] = round(float(per[jbest]), 4)
+        jbest = min(per, key=lambda j: per[j][0])
+        r["distanza"] = round(float(per[jbest][0]), 4)
+        r["coppia"] = [np.round(per[jbest][1], 4).tolist(), np.round(per[jbest][2], 4).tolist()]
         r["vicino"] = voci[jbest]["nodo"] + ("" if voci[jbest]["istanza"] < 0 else f"#{voci[jbest]['istanza']}")
         r["punto"] = punto
         s_ = sotto(punti, tri, box_min[i], box_max[i])
         r["sotto"] = None if s_ is None else round(s_, 4)
-        contatti[int(i)] = [int(j) for j, d in per.items() if d <= soglia]
-        distanze_di[int(i)] = {int(j): float(d) for j, d in per.items() if d <= MARGINE}
+        contatti[int(i)] = [int(j) for j, d in per.items() if d[0] <= soglia]
+        distanze_di[int(i)] = {int(j): d for j, d in per.items() if d[0] <= MARGINE}
         r["tocca"] = [voci[j]["nodo"] for j in contatti[int(i)]][:6]
         risultati.append(r)
+        if time.time() - t0 > 5:
+            print(f"  lento: {v['nodo']} {v['n']} triangoli, {len(tri)} vicini, {time.time() - t0:.0f} s", flush=True)
     # chi arriva all'architettura
     retto = set(int(i) for i in np.nonzero(architettura)[0])
     vicini_di = {}
@@ -311,6 +323,39 @@ def main():
             if j not in retto:
                 retto.add(j)
                 coda.append(j)
+    # i pezzi di una stessa cosa (armadietti_x_anta e armadietti_x_corpo, luce_x e luce_x_vetro, neon_x e
+    # neon_x_cavo): devono toccarsi fra loro, non solo toccare qualcos'altro
+    PARTI = {"anta", "corpo", "telaio", "rotore", "vetro", "cavo", "cavi", "tubi", "tubo", "supporto", "staffa", "gancio",
+             "catena", "cordino", "base", "coperchio", "braccio", "paralume"}
+
+    def fratelli_di(nodo, altro):
+        if nodo.rsplit("/", 1)[0] != altro.rsplit("/", 1)[0]:
+            return False
+        a_, b_ = nodo.split("/")[-1], altro.split("/")[-1]
+        if a_.startswith("@") or b_.startswith("@"):
+            return False
+        if b_.startswith(a_ + "_") or a_.startswith(b_ + "_"):
+            resto = (b_[len(a_) + 1:] if b_.startswith(a_ + "_") else a_[len(b_) + 1:])
+            return not resto.isdigit()   # asciugamano e asciugamano_2 sono due cose diverse
+        if "_" in a_ and "_" in b_:
+            (ra, sa), (rb, sb) = a_.rsplit("_", 1), b_.rsplit("_", 1)
+            return ra == rb and sa in PARTI and sb in PARTI
+        return False
+
+    per_padre = {}
+    for k, v in enumerate(voci):
+        if vis[k]:
+            per_padre.setdefault(v["nodo"].rsplit("/", 1)[0], []).append(k)
+    for r in risultati:
+        cand = per_padre.get(r["nodo"].rsplit("/", 1)[0], [])
+        fratelli = [k for k in cand if voci[k]["nodo"] != r["nodo"] and fratelli_di(r["nodo"], voci[k]["nodo"])]
+        if fratelli:
+            vic = distanze_di.get(r["i"], {})
+            r["fratelli"] = {voci[k]["nodo"]: (round(vic[k][0], 4) if k in vic else ">0.15") for k in fratelli}
+            stacchi = [(vic[k][0], k) for k in fratelli if k in vic]
+            if stacchi and all(f == ">0.15" or f > soglia for f in r["fratelli"].values()):
+                d, k = min(stacchi)
+                r["fratelli_coppia"] = [np.round(vic[k][1], 4).tolist(), np.round(vic[k][2], 4).tolist()]
     for r in risultati:
         r["retto"] = r["i"] in retto
         if not r["retto"]:
@@ -324,10 +369,11 @@ def main():
                         coda.append(j)
             r["catena"] = len(gruppo)
             # quanto manca al gruppo per toccare qualcos'altro, e cosa
-            fuori = [(d, j) for g in gruppo for j, d in distanze_di.get(g, {}).items() if j not in gruppo]
+            fuori = [(d[0], j, d) for g in gruppo for j, d in distanze_di.get(g, {}).items() if j not in gruppo]
             if fuori:
-                d, j = min(fuori)
-                r["stacco"] = round(d, 4)
+                _, j, d = min(fuori, key=lambda f: f[0])
+                r["stacco"] = round(d[0], 4)
+                r["stacco_coppia"] = [np.round(d[1], 4).tolist(), np.round(d[2], 4).tolist()]
                 r["stacco_da"] = voci[j]["nodo"] + ("" if voci[j]["istanza"] < 0 else f"#{voci[j]['istanza']}")
             else:
                 r["stacco"] = None
