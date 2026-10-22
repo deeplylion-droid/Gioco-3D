@@ -34,9 +34,19 @@ def _punti_mondo(obj):
         ev.to_mesh_clear()
 
 
+def solo_collisione(o):
+    """Un oggetto che non si vede: la collisione da esportare (nome con -col, _col, -colonly, -convcolonly, come le
+    usa l'importazione di Godot) o uno spento nel render. Posa non ci si appoggia: la collisione può sporgere qualche
+    centimetro oltre la superficie che si vede (riscontro di mascotte, 22 ottobre)."""
+    n = o.name.lower()
+    return o.hide_render or any(s in n for s in ('-col', '_col', 'colonly'))
+
+
 def _raggio(obj, origine, direzione, distanza=PORTATA):
-    """Il primo oggetto colpito, escludendo obj e i suoi figli: (posizione, normale, oggetto) o None."""
+    """Il primo oggetto visibile colpito, escludendo obj, i suoi figli e le collisioni: (posizione, normale, oggetto)
+    o None."""
     nascosti = [obj] + list(obj.children_recursive)
+    nascosti += [o for o in bpy.context.scene.objects if o not in nascosti and o.type == 'MESH' and not o.hide_viewport and solo_collisione(o)]
     stati = [(o, o.hide_viewport) for o in nascosti]
     for o in nascosti:
         o.hide_viewport = True
@@ -136,7 +146,8 @@ def tocca(obj, toll=STACCO, altri=None):
     p = _punti_mondo(obj)
     lo = Vector((min(v.x for v in p), min(v.y for v in p), min(v.z for v in p))) - Vector((toll,) * 3)
     hi = Vector((max(v.x for v in p), max(v.y for v in p), max(v.z for v in p))) + Vector((toll,) * 3)
-    candidati = altri if altri is not None else [o for o in bpy.context.scene.objects if o.type == 'MESH' and o != obj]
+    candidati = altri if altri is not None else [o for o in bpy.context.scene.objects
+                                                 if o.type == 'MESH' and o != obj and not solo_collisione(o)]
     dg = bpy.context.evaluated_depsgraph_get()
     for o in candidati:
         bb = [o.matrix_world @ Vector(c) for c in o.bound_box]

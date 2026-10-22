@@ -373,12 +373,15 @@ func _espandi_multimesh() -> void:
 		var mm := mmi.multimesh
 		if mm == null or mm.mesh == null or not _visibile(mmi):
 			continue
-		if not mmi.has_meta(&"trasformazioni"):
+		# il meta sul nodo (MultiMesh fatti da codice) o sulla risorsa (MultiMesh salvati in un .res, come le lampadine
+		# del portone: il meta si salva con la risorsa)
+		var fonte: Object = mmi if mmi.has_meta(&"trasformazioni") else mm
+		if not fonte.has_meta(&"trasformazioni"):
 			if not _tipo_nascosta(mmi).is_empty():
 				continue   # una creatura (le medusine) o un effetto: esclusi come le loro mesh
 			_multimesh_senza.append("%s · %s" % [String(_radice.scene_file_path).get_file().get_basename(), _nodo(mmi)])
 			continue
-		var tr: Array = mmi.get_meta(&"trasformazioni")
+		var tr: Array = fonte.get_meta(&"trasformazioni")
 		var quante := mm.visible_instance_count if mm.visible_instance_count >= 0 else mm.instance_count
 		for i in mini(quante, tr.size()):
 			var copia := MeshInstance3D.new()
@@ -1486,7 +1489,7 @@ func _testo_copertura() -> String:
 			t += "| %s | `%s` | %d | %s |\n" % [String(scena).get_file().get_basename(), g, gruppi[g][0], come]
 	print("  parti nascoste all'inizio mai controllate: %d (vedi il rapporto, \"Copertura\")" % mai)
 	if not _multimesh_senza.is_empty():
-		t += "\n### MultiMesh non controllati\n\nSenza le trasformazioni nel meta \"trasformazioni\" (vedi `_espandi_multimesh`):\n\n"
+		t += "\n### MultiMesh non controllati\n\nSenza le trasformazioni nel meta \"trasformazioni\" del nodo o della risorsa MultiMesh (vedi `_espandi_multimesh`):\n\n"
 		for m in _multimesh_senza:
 			t += "- `%s`\n" % m
 		print("  MultiMesh non controllati: %d" % _multimesh_senza.size())
