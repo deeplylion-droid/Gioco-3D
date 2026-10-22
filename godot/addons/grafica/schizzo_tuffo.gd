@@ -2,9 +2,12 @@ class_name SchizzoTuffo
 extends Node3D
 ## Lo schizzo di lei che si tuffa di testa nella fossa (tappa 8, tuffo A del 22 ottobre): fatto su misura per
 ## una creatura di 4,5 m, perché lo schizzo generico dell'acqua (WaterSplash) è fatto per il giocatore.
-## - una corona d'acqua: una lamina a calice che sale (fino a circa 1,6 m con forza 1), si apre, si rompe in
-##   fili dal bordo frastagliato e ricade (shader opaco, bianco di schiuma, niente trasparenze);
-## - gocce grosse che partono dall'anello verso l'alto e in fuori, e uno spruzzo fine più veloce;
+## - una corona d'acqua che sale (fino a circa 1,5 m con forza 1) con altezze diverse lungo il giro e si apre
+##   subito in fili verticali (intera resta solo in basso), poi ricade: acqua bianca e trasparente, più chiara
+##   di taglio e dove fa schiuma, con la luce rosa di lei solo vicino alla base (ritocco del 22 ottobre:
+##   "sembra plastica rosa o gelatina");
+## - gocce grosse che partono dall'anello verso l'alto e in fuori (chiare, lucide e un po' trasparenti), e uno
+##   spruzzo fine più veloce;
 ## - il rimbalzo: un getto stretto che sale dal centro poco dopo;
 ## - la schiuma bianca sull'acqua, a chiazze, che si allarga e sparisce in 3 secondi.
 ## Shader, mesh e materiali sono gli stessi per tutti gli schizzi (statici): niente compilazioni al primo
@@ -48,8 +51,8 @@ func _ready() -> void:
 	_schiuma.position = Vector3(0.0, 0.015, 0.0)
 	_schiuma.visible = false
 	add_child(_schiuma)
-	_gocce = _particelle("Gocce", 170, 1.4, _goccia(0.022, 0.08), 0.95)
-	_spruzzo = _particelle("Spruzzo", 240, 0.9, _goccia(0.008, 0.05), 0.97)
+	_gocce = _particelle("Gocce", 220, 1.4, _goccia(0.02, 0.08), 0.95)
+	_spruzzo = _particelle("Spruzzo", 420, 0.9, _goccia(0.008, 0.05), 0.97)
 	_rimbalzo = _particelle("Rimbalzo", 70, 1.1, _goccia(0.018, 0.1), 0.6)
 	set_process(false)
 
@@ -117,8 +120,8 @@ func _aggiorna() -> void:
 	var k := forza
 	# la corona: sale in 0,25 s, poi si rompe e ricade entro 1 s
 	var sale := 1.0 - pow(1.0 - clampf(_t / 0.25, 0.0, 1.0), 3.0)
-	var vita := clampf((_t - 0.2) / 0.8, 0.0, 1.0)
-	var alta := 1.6 * sqrt(k) * sale * (1.0 - 0.6 * vita * vita)
+	var vita := clampf((_t - 0.08) / 0.75, 0.0, 1.0)
+	var alta := 1.5 * sqrt(k) * sale * (1.0 - 0.5 * vita * vita)
 	var larga := sqrt(k) * (1.0 + 0.5 * sale + 0.6 * vita)
 	_corona.visible = _t < 1.0 and alta > 0.02
 	_corona.scale = Vector3(larga, maxf(alta, 0.01), larga)
@@ -171,10 +174,17 @@ static func _goccia(raggio: float, lungo: float) -> Mesh:
 		c.radial_segments = 8
 		c.rings = 3
 		var m := StandardMaterial3D.new()
-		# acqua piena d'aria: chiara e lucida (come la schiuma della corona), si vede anche al buio
-		m.albedo_color = Color(0.78, 0.83, 0.86)
-		m.roughness = 0.12
-		m.metallic_specular = 0.8
+		# acqua: chiara, lucidissima e un po' trasparente, con un filo di luce propria bianca (al buio, grigie
+		# e opache, sembravano sassolini)
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.albedo_color = Color(0.85, 0.9, 0.95, 0.6)
+		m.roughness = 0.04
+		m.metallic_specular = 1.0
+		m.emission_enabled = true
+		m.emission = Color(0.75, 0.8, 0.85)
+		m.emission_energy_multiplier = 0.35
+		m.rim_enabled = true
+		m.rim = 0.6
 		c.material = m
 		_risorse[chiave] = c
 	return _risorse[chiave]
@@ -213,36 +223,48 @@ func _particelle(nome: String, quante: int, vita: float, mesh: Mesh, esplosivo: 
 
 const CORONA := """
 shader_type spatial;
-// La corona d'acqua del tuffo: una lamina bianca di schiuma, opaca, che si apre a calice; il bordo in alto è
-// frastagliato e col tempo (vita) la lamina si rompe in fili dal basso verso l'alto.
-render_mode cull_disabled, depth_draw_opaque;
+// La corona d'acqua del tuffo: acqua bianca e trasparente, più chiara di taglio e dove fa schiuma (non prende
+// le luci della sala: la luce rosa di lei la tingerebbe tutta); un filo di rosa solo vicino alla base, la sua
+// luce da sotto. Le altezze cambiano lungo il giro e la lamina si apre subito in fili verticali (vita da 0 a
+// 1): intera resta solo in basso. Niente coppa liscia.
+render_mode unshaded, cull_disabled, depth_draw_never, blend_mix;
 uniform sampler2D rumore : filter_linear_mipmap, repeat_enable;
 uniform float vita = 0.0;
+uniform vec3 base_rosa = vec3(0.55, 0.22, 0.42);
 varying float alt;
+varying float giro;
 void vertex() {
 	alt = VERTEX.y + 0.5;
-	VERTEX.xz *= 1.0 + alt * alt * (0.6 + 0.8 * vita);
+	giro = UV.x;
+	// altezze irregolari lungo il giro: fili alti e bassi
+	float h = 0.45 + 0.9 * textureLod(rumore, vec2(UV.x * 5.0, 0.37), 0.0).r;
+	VERTEX.y = alt * h - 0.5;
+	VERTEX.xz *= 1.0 + alt * alt * (0.7 + 0.9 * vita);
 }
 void fragment() {
-	float n = texture(rumore, vec2(UV.x * 3.0, alt * 0.7 - vita * 0.5)).r;
-	float fili = texture(rumore, vec2(UV.x * 11.0 + 0.37, alt * 1.6 + vita)).r;
-	float cima = 1.0 - smoothstep(0.6, 1.0, alt + (n - 0.5) * 0.6);
-	float intera = step(vita * 0.85, fili * 0.65 + n * 0.35);
-	if (cima * intera < 0.5) {
+	float n = texture(rumore, vec2(giro * 3.0, alt * 0.7 - vita * 0.5)).r;
+	float fili = texture(rumore, vec2(giro * 17.0 + 0.37, alt * 0.35 + vita * 0.3)).r;
+	// la lamina si rompe in fili subito, sempre di più in alto e col tempo
+	float soglia = 0.22 + 0.45 * vita + 0.35 * alt;
+	if (fili < soglia) {
 		discard;
 	}
-	ALBEDO = mix(vec3(0.62, 0.68, 0.72), vec3(0.88, 0.91, 0.93), smoothstep(0.3, 0.8, n));
-	ROUGHNESS = 0.3;
-	SPECULAR = 0.6;
-	BACKLIGHT = vec3(0.35);
-	RIM = 0.25;
+	float cima = 1.0 - smoothstep(0.75, 1.0, alt + (n - 0.5) * 0.4);
+	if (cima < 0.5) {
+		discard;
+	}
+	float schiuma = smoothstep(0.45, 0.8, n);
+	float taglio = pow(1.0 - abs(dot(NORMAL, VIEW)), 2.0);
+	ALBEDO = vec3(0.62, 0.66, 0.7) * (0.55 + 0.45 * schiuma + 0.4 * taglio) + base_rosa * pow(1.0 - alt, 4.0) * 0.35;
+	ALPHA = clamp(0.28 + 0.45 * schiuma + 0.35 * taglio, 0.0, 0.92) * (1.0 - 0.6 * vita);
 }
 """
 
 const SCHIUMA := """
 shader_type spatial;
-// La schiuma bianca sull'acqua dopo il tuffo: chiazze opache che si allargano e si diradano (vita da 0 a 1).
-render_mode cull_disabled, depth_draw_opaque;
+// La schiuma bianca sull'acqua dopo il tuffo: chiazze che si allargano e si diradano (vita da 0 a 1). Non prende
+// le luci (la luce rosa di lei la tingerebbe): bianco smorzato, come la corona.
+render_mode unshaded, cull_disabled, depth_draw_opaque;
 uniform sampler2D rumore : filter_linear_mipmap, repeat_enable;
 uniform float vita = 0.0;
 void fragment() {
@@ -254,7 +276,6 @@ void fragment() {
 	if (n * k < 0.28) {
 		discard;
 	}
-	ALBEDO = vec3(0.8, 0.84, 0.86);
-	ROUGHNESS = 0.55;
+	ALBEDO = vec3(0.5, 0.53, 0.55) * (0.7 + 0.3 * n);
 }
 """

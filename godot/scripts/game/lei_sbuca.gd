@@ -393,7 +393,11 @@ func _avvia_tuffo() -> void:
 	var esclusi: Array[RID] = []
 	if coperchio:
 		esclusi.append(coperchio.get_rid())
-	_tuffo.avvia(medusa, esclusi)
+	var fossa := Rect2()
+	if superficie_fossa and superficie_fossa.mesh:
+		var a := superficie_fossa.global_transform * superficie_fossa.mesh.get_aabb()
+		fossa = Rect2(a.position.x, a.position.z, a.size.x, a.size.z)
+	_tuffo.avvia(medusa, esclusi, fossa)
 
 
 ## Di nuovo affacciata (ripartenza, salvataggio): niente tuffo, l'animazione "affacciata" riparte.

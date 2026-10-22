@@ -45,13 +45,16 @@ var _mesh_campana: Array[MeshInstance3D] = []
 var _ultimi_punti := PackedVector3Array()
 var _asse_segue := Basis.IDENTITY       # rotazione del corpo a SEGUE_DA
 var _esclusi: Array[RID] = []
+var _fossa := Rect2()                   # la pianta dell'acqua della fossa (x, z)
+var _bordo_y := -INF                    # la cima del bordo intorno alla fossa
 var _inclinazione := 0.0                # quanto è chinata in avanti la posa affacciata (rad, intorno a X)
 
 
 ## Fotografa la posa di partenza (lei affacciata) e accende il tuffo. [param esclusi]: corpi da non contare
 ## come pavimento (il coperchio della fossa).
-func avvia(medusa: Node3D, esclusi: Array[RID] = []) -> void:
+func avvia(medusa: Node3D, esclusi: Array[RID] = [], fossa := Rect2()) -> void:
 	_esclusi = esclusi
+	_fossa = fossa
 	_sk = get_skeleton()
 	if _sk == null:
 		return
@@ -81,6 +84,16 @@ func avvia(medusa: Node3D, esclusi: Array[RID] = []) -> void:
 			_mesh_campana.append(mi)
 		# Si sposta di qualche metro dentro lo scheletro: niente tagli dal culling.
 		(mi as MeshInstance3D).extra_cull_margin = 8.0
+	# la cima del bordo: la superficie più alta appena fuori dalla fossa, tutto intorno
+	_bordo_y = -INF
+	if _fossa.has_area():
+		var cf := _fossa.get_center()
+		for i in 16:
+			var ang := TAU * i / 16.0
+			var d := Vector2(cos(ang), sin(ang))
+			var fuori := cf + Vector2(d.x * (_fossa.size.x * 0.5 + 0.12), d.y * (_fossa.size.y * 0.5 + 0.12))
+			var q := _sopra_il_pavimento(Vector3(fuori.x, -2.0, fuori.y))
+			_bordo_y = maxf(_bordo_y, q.y - 0.03)
 	var a_loc := _m.basis.inverse() * _asse0()
 	_inclinazione = atan2(a_loc.z, a_loc.y)
 	_asse_segue = _rotazione_salto(SEGUE_DA)
@@ -342,10 +355,28 @@ func _tentacolo(k: Dictionary, mondo: Array[Transform3D], c: Vector3, r: Basis) 
 	for i in range(1, strada.size()):
 		cum.append(cum[i - 1] + strada[i].distance_to(strada[i - 1]))
 	var totale := cum[cum.size() - 1]
+	# Nel salto restano dietro di lei (dalla parte opposta alla testa), un po' aperti a ventaglio e in ritardo
+	# sul corpo come una frusta; poi tornano alla corda, che entra in acqua dove è entrata lei. Seguendo solo
+	# la scia, nel salto pendevano in giù lungo il busto (la scia viene dall'acqua, sotto di lei).
+	var w := smoothstep(0.25, 0.5, t) * (1.0 - smoothstep(0.75, 1.15, t))
+	var radice := c + r * (radice_0 - _c0)
+	var asse := r * _asse0()
+	var aperto := radice - (c + asse * asse.dot(radice - c))
+	aperto = aperto.normalized() if aperto.length_squared() > 1e-6 else Vector3.ZERO
 	var giunti := PackedVector3Array()
 	var dist := 0.0
 	for i in ossa.size() + 1:
-		giunti.append(_su_strada(strada, cum, totale - dist))
+		var q := _su_strada(strada, cum, totale - dist)
+		if w > 0.0:
+			var asse_prima := _rotazione(maxf(t - 0.02 * dist, 0.0)) * _asse0()
+			var verso := (-asse_prima + aperto * 0.25).normalized()
+			verso.y = maxf(verso.y, 0.25)   # mai verso il basso: si alzano dietro di lei, non sul pavimento
+			var dietro := radice + verso.normalized() * dist
+			q = q.lerp(dietro, w)
+			# fuori dalla fossa, passando verso "dietro", non scende sotto la cima del bordo
+			if _bordo_y > -INF and not _fossa.grow(-0.05).has_point(Vector2(q.x, q.z)):
+				q.y = maxf(q.y, _bordo_y + 0.06)
+		giunti.append(q)
 		if i < lung.size():
 			dist += lung[i]
 	for i in ossa.size():
