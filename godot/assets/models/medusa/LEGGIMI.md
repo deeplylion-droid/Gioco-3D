@@ -254,6 +254,8 @@ Come sono agganciate nel gioco (sala_inseguimento.gd, `_lei_*`, `_anima`, `_scen
 - presa: `lei.attacca(0.7, &"inseguimento/presa")` (vene nell'occhio e la presa al posto di `fauce_apre`);
 - respinta e scende: l'animazione e poi `visible = false` alla fine (1,2 s e 1,0 s);
 - grata: `sale_dall_acqua_veloce` e poi `colpo_grata` per 1,5 s (tre colpi), poi `scende`;
+- grata: dal pozzetto dietro la grata, `colpo_grata_sbieco` (la grata di sbieco, i palmi lungo il piano; il punto
+  dove guarda: `SalaInseguimento.mira_grata`);
 - SB1: `affacciata_sb1` al posto di `affacciata` e della salita a mano, sullo spigolo del pozzo dalla parte del
   giocatore (`_posto_sb1`);
 - suoni (quelli che c'erano gia', solo i fatti fisici): l'acqua che si apre quando sale (`tuffo`), quando torna

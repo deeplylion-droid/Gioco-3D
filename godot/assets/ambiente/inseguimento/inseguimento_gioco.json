@@ -2218,6 +2218,16 @@
   "fondo": -38.5,
   "bordo": -33.28
  },
+ "pozzetto_grata": {
+  "rett": [
+   50.75,
+   7.6,
+   53.4,
+   10.2
+  ],
+  "fondo": -40.7,
+  "bordo": -33.28
+ },
  "porta": {
   "pos": [
    40.4,
@@ -2268,13 +2278,13 @@
   },
   {
    "pos": [
-    52.7,
-    6.5,
-    -34.0
+    51.95,
+    8.55,
+    -35.5
    ],
-   "ry": 270.0,
+   "ry": 230.0,
    "posa": "insegue",
-   "nota": "sbatte contro la grata"
+   "nota": "sale dal pozzetto dietro la grata e ci sbatte contro"
   },
   {
    "pos": [

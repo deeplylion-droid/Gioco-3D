@@ -675,21 +675,19 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 				lei.visible = false
 
 
-## La grata è calata: lei arriva dietro (sale di colpo, 1 s) e ci sbatte contro tre volte, poi se ne va
-## (lei C). Girata verso la grata: i palmi la colpiscono a 2,3 m davanti a lei (colpo_grata).
+## La grata è calata: lei sale di colpo (1 s) dal pozzetto dietro la grata, a nord della bocca della spirale,
+## ci sbatte contro tre volte, poi se ne va (lei C).
 func _lei_alla_grata() -> void:
 	var L: Array = dati["lei"]
 	_lei_sale("grata", b(L[2]["pos"]), 1.0)
 	_ritorno = -1.0
-	var g: Dictionary = dati["grata"]
-	var verso := b(g["perno"])
-	verso.y = lei.global_position.y
+	var verso := mira_grata(lei.global_position)
 	lei.look_at(verso, Vector3.UP, true)
 	var tw := create_tween()
 	tw.tween_interval(1.0)
 	tw.tween_callback(func():
 		if _lei_dove == "grata" and lei_stato != Lei.PRESA:
-			_anima("colpo_grata"))
+			_anima("colpo_grata_sbieco"))
 	for i in 3:   # il metallo, quando i palmi la colpiscono (0,27 s di ogni colpo da 0,5 s)
 		tw.tween_interval(0.27 if i == 0 else 0.5)
 		tw.tween_callback(func():
@@ -699,6 +697,24 @@ func _lei_alla_grata() -> void:
 	tw.tween_callback(func():
 		if lei_stato != Lei.PRESA and _lei_dove == "grata":
 			_scendi())
+
+
+## Il punto della grata (alla quota di [param da]) dove lei guarda: a 2,3 m davanti a lei, il più vicino alla bocca
+## della spirale. Dal pozzetto (1,5 m dalla grata) la colpisce di sbieco: colpo_grata_sbieco.
+func mira_grata(da: Vector3) -> Vector3:
+	var g: Dictionary = dati["grata"]
+	var perno := b(g["perno"])
+	var n := b(g["verso"])                  # la normale della grata (verso lei)
+	var lat := Vector3(-n.z, 0.0, n.x).normalized()
+	var d := da - perno
+	var dist := absf(d.dot(n))
+	var lungo := d.dot(lat)
+	var resto := sqrt(maxf(2.3 * 2.3 - dist * dist, 0.0))
+	# di sbieco: colpo_grata_sbieco porta i palmi lungo il piano girato (dal pozzetto, circa 51 gradi)
+	var s := lungo - signf(lungo) * resto
+	var p := perno + lat * s
+	p.y = da.y
+	return p
 
 
 # --- SB1 --------------------------------------------------------------------------------------------

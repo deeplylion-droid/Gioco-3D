@@ -12,9 +12,9 @@ extends Node
 
 const DURATE := {
 	&"sale_dall_acqua": 1.6, &"sale_dall_acqua_veloce": 1.0, &"incombe": 2.4, &"presa": 1.2,
-	&"respinta": 1.2, &"scende": 1.0, &"colpo_grata": 0.5, &"affacciata_sb1": 5.4,
+	&"respinta": 1.2, &"scende": 1.0, &"colpo_grata": 0.5, &"colpo_grata_sbieco": 0.5, &"affacciata_sb1": 5.4,
 }
-const IN_CICLO := [&"incombe", &"colpo_grata"]
+const IN_CICLO := [&"incombe", &"colpo_grata", &"colpo_grata_sbieco"]
 ## Gli stessi valori di tools/blender/medusa_inseguimento.py (lei guarda verso +Z).
 const GRAB := Vector3(0.0, 3.85, 2.4)
 const GRATA := 2.3
@@ -72,20 +72,21 @@ func _run() -> void:
 	for nome in [&"presa", &"respinta", &"scende"]:
 		var sc := _scarto(_ossa(nome, 0.0), su)
 		check(sc < 0.03, "%s parte dalla posa di incombe (scarto %.3f m, %s)" % [nome, sc, peggiore])
-	check(_scarto(_ossa(&"incombe", 2.4 - 0.001), su) < 0.02 and _scarto(_ossa(&"colpo_grata", 0.5 - 0.001), _ossa(&"colpo_grata", 0.0)) < 0.02,
-		"incombe e colpo_grata finiscono come cominciano (ciclo senza scatti)")
+	check(_scarto(_ossa(&"incombe", 2.4 - 0.001), su) < 0.02 and _scarto(_ossa(&"colpo_grata", 0.5 - 0.001), _ossa(&"colpo_grata", 0.0)) < 0.02
+			and _scarto(_ossa(&"colpo_grata_sbieco", 0.5 - 0.001), _ossa(&"colpo_grata_sbieco", 0.0)) < 0.02,
+		"incombe e colpo_grata (anche di sbieco) finiscono come cominciano (ciclo senza scatti)")
 	check(su["occhio"].y > 3.38 + 0.8, "da su l'occhio è ben sopra l'acqua della vasca (%.2f m)" % su["occhio"].y)
 	var salto := 0.0
 	var dove := ""
 	for nome: StringName in DURATE:
-		if nome == &"colpo_grata":
+		if nome == &"colpo_grata" or nome == &"colpo_grata_sbieco":
 			continue    # lo schiaffo è veloce di proposito: sotto
 		var v := _salto_massimo(nome)
 		if v > salto:
 			salto = v
 			dove = "%s, %s" % [nome, peggiore]
 	check(salto < 0.35, "nessun osso salta di colpo tra un fotogramma e l'altro (al massimo %.2f m: %s)" % [salto, dove])
-	var schiaffo := _salto_massimo(&"colpo_grata")
+	var schiaffo := maxf(_salto_massimo(&"colpo_grata"), _salto_massimo(&"colpo_grata_sbieco"))
 	check(schiaffo < 0.5, "lo schiaffo alla grata è secco ma senza scatti (al massimo %.2f m in un fotogramma: %s)" % [schiaffo, peggiore])
 
 	print("La presa")

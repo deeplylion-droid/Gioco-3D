@@ -63,3 +63,16 @@ giocatore puo' vedere: sopra il fondo della vasca dove sta lui (vasche e scolo) 
 
 Scatti dei posti cambiati in `giro/`: `9_vasca_3` (dal giocatore nella vasca), `9b_scolo_0` e `9c_scolo_1` (da
 fuori: le vasche di scolo sono chiuse e buie dentro).
+
+## Il pozzetto dietro la grata (22 ottobre, scelta dell'utente: a)
+
+- Il pozzetto (`tools/blender/inseguimento_proposte.py`, `POZZETTO_GRATA`, stesso codice e materiali del pozzo di SB1:
+  bordo piastrellato con la fascia gialla, griglia di scarico sul fondo): 2,65 x 2,6 m, profondo 6,7 m, sul fondo
+  allagato a nord della bocca della spirale, tra il muro del bacino e la spirale. Il giocatore non ci arriva (sta
+  nel bacino) e non copre ne' la grata ne' il passaggio.
+- Lei sta nel pozzetto 1,5 m sotto il pavimento (e' piu' alta della grata: cosi' i palmi battono sulle sbarre e i
+  tentacoli restano sott'acqua), sale con `sale_dall_acqua_veloce` e sbatte tre volte con `colpo_grata_sbieco`:
+  dal pozzetto la grata e' di sbieco, e i palmi la colpiscono lungo il piano girato (0-2 cm dalle sbarre).
+- Sonda (con la grata calata): 0 incroci visibili in tutti i posti. Restano incroci solo sott'acqua o sotto il
+  fondo delle vasche, che il giocatore non vede.
+- Scatti: `giro/4_grata.jpg` (dal bacino), `giro/4b_grata_vicino.jpg` (davanti alla grata).

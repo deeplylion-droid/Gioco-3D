@@ -27,6 +27,7 @@ Animazioni (30 fps):
   respinta (1,2 s): getto in faccia, la testa scatta indietro, si copre il viso e torna sotto (-5 m);
   scende (1,0 s): torna sotto senza essere respinta;
   colpo_grata (0,5 s, in ciclo): carica e sbatte i palmi contro la grata, a GRATA metri davanti;
+  colpo_grata_sbieco (0,5 s, in ciclo): lo stesso con la grata girata di SBIECO gradi (dal pozzetto dietro la grata);
   affacciata_sb1 (5,4 s): sbuca dal pozzo in 1,3 s e si aggrappa al bordo (BORDO_SB1: a tanto davanti e
       tanto in alto rispetto all'origine), la testa girata di lato, poi la gira verso di te e ti fissa.
 
@@ -58,6 +59,8 @@ FPS_AZIONI = 24                     # le azioni del GLB
 GIU = -5.0                          # sparita sott'acqua (m, rispetto a "su")
 GRAB = (0.0, -2.4, 3.85)           # dove afferra (spazio del modello, m): davanti, testa di chi e' nella vasca
 GRATA = 2.3                         # la grata: piano verticale a tanti metri davanti all'origine
+SBIECO = 75.0                       # colpo_grata_sbieco: la grata girata (più vicina a destra): dal pozzetto dietro la grata,
+                                    # a 51 gradi; 75 nel modello perché lo slancio del busto la porta avanti a destra
 BORDO_SB1 = (1.0, 0.8)              # SB1: lo spigolo del pozzo a tanto davanti e tanto sopra l'origine (m)
 
 # la vasca 1 dell'inseguimento rispetto all'origine di lei (inseguimento_gioco.json: lei a -25,0, fondo
@@ -527,8 +530,10 @@ def pose_scende(arm, C, Z, t, T=1.0):
     Z.segui()
 
 
-def pose_grata(arm, C, Z, t, T=0.5):
-    """Ciclo di 0,5 s: carica (0-0,15), sbatte i palmi sulla grata a GRATA m davanti (0,2), rimbalza."""
+def pose_grata(arm, C, Z, t, T=0.5, sbieco=0.0):
+    """Ciclo di 0,5 s: carica (0-0,15), sbatte i palmi sulla grata a GRATA m davanti (0,2), rimbalza.
+    Con [sbieco] (gradi) la grata è girata: i palmi la colpiscono lungo il piano girato, la destra più vicina."""
+    fi = math.radians(sbieco)
     u = t / T
     tent = tent_incombe(C, t * 4.8)     # un ciclo di incombe ogni colpo
     dita = mix(campiona(C, 'statua', 0.0, False), campiona(C, 'insegue', 0.0), 0.3, DITA_OSSA)
@@ -542,9 +547,11 @@ def pose_grata(arm, C, Z, t, T=0.5):
         pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
         alto = pc + rot_giro(arm) @ Vector((s * 0.45, -0.70, 0.62))
         # i palmi piatti sulla grata, ai lati della testa
-        contatto = Vector((s * 0.55, -GRATA + 0.10, pc.z + 0.35))
+        contatto = Vector((s * 0.55 * math.cos(fi), -GRATA + 0.10 - s * 0.55 * math.sin(fi), pc.z + 0.35))
         polso = alto.lerp(contatto, liscio(0.0, 1.0, 0.0, 1.0, colpo))
-        braccio_mondo(arm, suf, polso, (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
+        # i palmi piatti sul piano (girato di sbieco: il dorso verso di lei lungo la sua normale)
+        sn, cs = math.sin(fi), math.cos(fi)
+        braccio_mondo(arm, suf, polso, (0.8, 0.3, -0.5), (s * -0.25 * sn, -0.25 * cs, 1.0), (s * sn, cs, 0.0))
     Z.segui()
 
 
@@ -588,6 +595,7 @@ ANIMAZIONI = {
     'respinta': (1.2, False, pose_respinta),
     'scende': (1.0, False, lambda a, C, Z, t: pose_scende(a, C, Z, t)),
     'colpo_grata': (0.5, True, lambda a, C, Z, t: pose_grata(a, C, Z, t)),
+    'colpo_grata_sbieco': (0.5, True, lambda a, C, Z, t: pose_grata(a, C, Z, t, sbieco=SBIECO)),
     'affacciata_sb1': (5.4, False, pose_sb1),
 }
 
@@ -692,6 +700,9 @@ def _scena_anteprima(nome):
         o.data.materials.append(m)
     if nome == 'colpo_grata':
         scatola('grata', (0, -GRATA - 0.03, 3.5), (3.0, 0.06, 5.0), (0.25, 0.27, 0.3))
+    elif nome == 'colpo_grata_sbieco':
+        scatola('grata', (0, -GRATA - 0.03, 3.5), (3.0, 0.06, 5.0), (0.25, 0.27, 0.3))
+        bpy.data.objects['rif_grata'].rotation_euler = (0.0, 0.0, -math.radians(SBIECO))
     elif nome == 'affacciata_sb1':
         d, h = BORDO_SB1
         scatola('pavimento', (0, -d - 1.5, h - 0.1), (4.0, 3.0, 0.2), (0.3, 0.3, 0.32))

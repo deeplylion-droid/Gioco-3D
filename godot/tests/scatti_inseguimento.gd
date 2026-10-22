@@ -20,6 +20,7 @@ var SCATTI := {
 	"3b_terzo_bivio": [b(69.6, 7.0, -26.9), b(66.5, 4.6, -28.0), 76.0, "", [], false],
 	"3c_paratia_aperta": [b(51.6, 16.4, -21.0), b(56.0, 16.4, -21.9), 70.0, "", [0], false],
 	"4_grata": [b(44.6, 4.6, -32.3), b(51.0, 6.5, -32.4), 76.0, "grata", [], true],
+	"4b_grata_vicino": [b(48.0, 5.6, -32.4), b(51.2, 8.5, -31.4), 70.0, "grata", [], true],
 	"5_sb1": [b(43.4, 4.4, -32.4), b(44.7, 9.0, -32.6), 66.0, "sb1", [], true],
 	"6_sala_dall_alto": [b(44.0, 30.0, -17.0), b(62.0, 12.0, -27.0), 80.0, "", [], false],
 	"7_nel_tubo": [b(57.6, 17.7, -22.4), b(60.5, 21.0, -23.1), 80.0, "", [], false],
@@ -117,8 +118,8 @@ func _lei(sala: SalaInseguimento, cosa: String, camera: Vector3) -> void:
 			guarda = b((r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, 0.0)   # verso chi è nella vasca
 		"grata":
 			pos = SalaInseguimento.b(L[2]["pos"])
-			guarda = SalaInseguimento.b(sala.dati["grata"]["perno"])
-			anim = &"inseguimento/colpo_grata"
+			guarda = sala.mira_grata(pos)
+			anim = &"inseguimento/colpo_grata_sbieco"
 			t = 0.27
 		"sb1":
 			pos = sala._posto_sb1()
