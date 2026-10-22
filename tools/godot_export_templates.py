@@ -23,7 +23,7 @@ URL = (f'https://downloads.godotengine.org/?version={VERSION}&flavor=stable'
 WANTED = ['version.txt', 'windows_release_x86_64.exe', 'linux_release.x86_64']
 BLOCK = 8 * 1024 * 1024
 # Il server rifiuta lo User-Agent predefinito di Python.
-UA = {'User-Agent': 'splash-lagoon-build/1.0'}
+UA = {'User-Agent': 'jilly-jubilee-build/1.0'}
 
 
 class HttpRangeFile(io.RawIOBase):
