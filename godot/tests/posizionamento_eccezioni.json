@@ -2223,5 +2223,19 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@703",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-5.5,
+			49.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera: il corridoio della zona del personale fra il fiume e l'infermeria (pavimento, muri, soffitto e lampada) tocca solo le due stanze, e nel giro iniziale risalita_gioco.gd le tiene nascoste (col giocatore lontano): lì non poggia su niente. Negli stati risalita_arrivo e risalita_dopo, con le stanze visibili, non esce. In attesa della decisione di grafica sul controllo (enigmi)",
+		"firma": "risalita.tscn|BoxMesh 2.00x0.20x2.60"
 	}
 ]
