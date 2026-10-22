@@ -4,7 +4,7 @@ extends Node
 ## 2. al 40%, nel disegno, le luci bianche e bianco-calde scendono al 40%, le rosse e le colorate no; dopo il
 ##    disegno tornano i valori pieni (gli script li ritrovano);
 ## 3. l'emissione dei materiali bianchi delle lampade e l'energia del VoxelGI scendono anche loro, le colorate no; Jilly
-##    (la Medusa), gli indizi (il disegno) e gli emissivi che non sono lampade restano com'erano;
+##    (la Medusa) e gli emissivi che non sono lampade restano com'erano; il disegno sull'acquario scende;
 ## 4. una luce che cambia da sola (FlickerLight, che scrive light_energy a ogni fotogramma) tiene il fattore;
 ## 5. la torcia resta com'è; F7 passa dal 100% al 40% e indietro.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche.gd
@@ -57,7 +57,7 @@ func _run() -> void:
 		mi.mesh = BoxMesh.new()
 		mi.material_override = m
 		radice.add_child(mi)
-	# Jilly (la Medusa: il suo bagliore è il personaggio) e un indizio di gioco (il disegno sul vetro): restano
+	# Jilly (la Medusa: il suo bagliore è il personaggio) resta; il disegno sul vetro dell'acquario scende (l'utente)
 	var medusa := Node3D.new()
 	medusa.name = "Medusa"
 	radice.add_child(medusa)
@@ -159,7 +159,7 @@ func _run() -> void:
 	check(absf(float(_visto.get("gi", -1.0)) - 0.6) < 0.01, "il VoxelGI scende al 40%% (%.2f)" % float(_visto.get("gi", -1.0)))
 	check(absf(float(_visto.get("medusa", -1.0)) - 2.0) < 0.01 and absf(float(_visto.get("luce_medusa", -1.0)) - 2.0) < 0.01,
 		"Jilly (la Medusa) resta com'era: il bagliore dei tentacoli e la sua luce bianca (%.2f, %.2f)" % [float(_visto.get("medusa", -1.0)), float(_visto.get("luce_medusa", -1.0))])
-	check(absf(float(_visto.get("disegno", -1.0)) - 0.6) < 0.01, "il disegno dell'indizio resta com'era (%.2f)" % float(_visto.get("disegno", -1.0)))
+	check(absf(float(_visto.get("disegno", -1.0)) - 0.24) < 0.01, "il disegno sull'acquario scende anche lui al 40%% (%.2f)" % float(_visto.get("disegno", -1.0)))
 	check(absf(float(_visto.get("muro", -1.0)) - 1.0) < 0.01, "un emissivo bianco che non è una lampada resta com'era (%.2f)" % float(_visto.get("muro", -1.0)))
 	check(fl_ok and fl_max_rapporto > 0.3, "la luce che sfarfalla da sola tiene il fattore, e dopo il disegno ritrova il suo valore (rapporto %.2f)" % fl_max_rapporto)
 	if luce_torcia:

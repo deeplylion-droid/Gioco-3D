@@ -12,7 +12,9 @@ non si tocca.
   feature `luci40`). Non si esportano.
 - Cosa resta sempre com'era (riscontro del coordinatore): Jilly e le creature (la Medusa in tutti i suoi posti, Lei
   nell'inseguimento, bambini, agnello, squalo, statue), gli oggetti di gioco (Interactable, Polaroid, keycard, lettori,
-  pulsanti, schermi, il disegno dell'indizio) e le insegne con un colore nel nome (il neon giallo, rosa, azzurro).
+  pulsanti, schermi) e le insegne con un colore nel nome (il neon giallo, rosa, azzurro).
+- Cosa scende anche se non è una lampada: il disegno sul vetro dell'acquario (`disegno_carta`; l'utente: "abbassalo
+  pure"). Le lampade del portone dell'enigma acquari scendono (si leggono lo stesso accese o spente).
 - Cosa scende: le Light3D bianche e bianco-calde (saturazione al più 0,30; oppure tinta fra 0,045 e 0,17, cioè fra
   arancio e giallo, e saturazione al più 0,76: le lampade da lavoro, le "luci calde", le lampadine); l'emissione dei
   materiali bianchi delle lampade vere (BaseMaterial3D con l'emissione accesa, almeno 0,3, dello stesso colore, su

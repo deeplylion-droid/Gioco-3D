@@ -4,11 +4,11 @@ Scritto da `godot/proposte/mascotte/elenco_luci_bianche.gd`. Regola (`scripts/ga
 
 ## sala_principale
 
-Costo con questa scena caricata: 0.59 ms per fotogramma (applica e ripristina, su questa macchina lenta), per 99 luci bianche e 69 materiali delle lampade (condivisi: uno per materiale, non uno per lampada).
+Costo con questa scena caricata: 0.68 ms per fotogramma (applica e ripristina, su questa macchina lenta), per 99 luci bianche e 70 materiali delle lampade (condivisi: uno per materiale, non uno per lampada).
 
 VoxelGI con i dati cotti raccolti finora (tutte le scene): 7, scendono tutti al 40%.
 
-### Gioco/EnigmaAcquari — 7 bianche, 0 colorate, 1 materiali
+### Gioco/EnigmaAcquari — 7 bianche, 0 colorate, 2 materiali
 
 Bianche (scendono al 40%):
 - `AcquarioGiallo/LuceAcquario` (0.11, 0.14; 6.96)
@@ -21,6 +21,7 @@ Bianche (scendono al 40%):
 
 Materiali delle lampade:
 - scende `senza nome` su `LampadaValvola/Modello/globo` (0.10, 0.40; 8.0)
+- scende `disegno_carta` su `Disegno/Modello` (0.13, 0.45; 0.6)
 
 ### Gioco/PortoneTorre — 0 bianche, 1 colorate, 0 materiali
 
@@ -313,21 +314,21 @@ Materiali delle lampade:
 
 Colorate (restano com'erano):
 - `luce_emergenza_30` (0.00, 0.98; 5.50)
-- `luce_emergenza_31` (0.00, 0.98; 1.56)
+- `luce_emergenza_31` (0.00, 0.98; 3.96)
 - `luce_emergenza_33` (0.00, 0.98; 5.50)
 - `luce_emergenza_34` (0.00, 0.98; 5.50)
 - `luce_emergenza_35` (0.00, 0.98; 5.50)
-- `luce_emergenza_36` (0.00, 0.98; 1.56)
+- `luce_emergenza_36` (0.00, 0.98; 3.96)
 - `luce_emergenza_37` (0.00, 0.98; 5.50)
 - `luce_emergenza_38` (0.00, 0.98; 5.50)
 - `luce_emergenza_39` (0.00, 0.98; 5.50)
 - `luce_emergenza_40` (0.00, 0.98; 5.50)
-- `luce_emergenza_41` (0.00, 0.98; 1.56)
+- `luce_emergenza_41` (0.00, 0.98; 3.96)
 - `luce_emergenza_42` (0.00, 0.98; 5.50)
 - `luce_emergenza_43` (0.00, 0.98; 5.50)
 - `luce_emergenza_44` (0.00, 0.98; 5.50)
 - `luce_emergenza_45` (0.00, 0.98; 5.50)
-- `luce_emergenza_46` (0.00, 0.98; 1.56)
+- `luce_emergenza_46` (0.00, 0.98; 3.96)
 - `luce_emergenza_47` (0.00, 0.98; 5.50)
 - `luce_emergenza_48` (0.00, 0.98; 5.50)
 - `luce_emergenza_49` (0.00, 0.98; 5.50)
@@ -551,7 +552,7 @@ Bianche (scendono al 40%):
 
 ## sala_torre
 
-Costo con questa scena caricata: 0.33 ms per fotogramma (applica e ripristina, su questa macchina lenta), per 38 luci bianche e 141 materiali delle lampade (condivisi: uno per materiale, non uno per lampada).
+Costo con questa scena caricata: 0.33 ms per fotogramma (applica e ripristina, su questa macchina lenta), per 38 luci bianche e 142 materiali delle lampade (condivisi: uno per materiale, non uno per lampada).
 
 VoxelGI con i dati cotti raccolti finora (tutte le scene): 7, scendono tutti al 40%.
 
@@ -805,7 +806,7 @@ Materiali delle lampade:
 
 ## menu_principale
 
-Costo con questa scena caricata: 0.17 ms per fotogramma (applica e ripristina, su questa macchina lenta), per 10 luci bianche e 143 materiali delle lampade (condivisi: uno per materiale, non uno per lampada).
+Costo con questa scena caricata: 0.27 ms per fotogramma (applica e ripristina, su questa macchina lenta), per 10 luci bianche e 144 materiali delle lampade (condivisi: uno per materiale, non uno per lampada).
 
 VoxelGI con i dati cotti raccolti finora (tutte le scene): 7, scendono tutti al 40%.
 

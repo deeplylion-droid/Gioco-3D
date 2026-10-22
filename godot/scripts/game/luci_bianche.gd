@@ -36,8 +36,9 @@ const EMISSIONE_MINIMA := 0.3
 ## restano com'erano, luci comprese: un nodo con un antenato che ha questi pezzi nel nome (minuscolo), o che è un
 ## Interactable o una Polaroid.
 const ESCLUSI := ["medusa", "jilly_", "bambin", "agnello", "squalo", "mostro", "statua", "polpo", "creatur",
-	"polaroid", "keycard", "tessera", "lettore", "pulsante", "schermo", "monitor", "crt", "disegno", "indizio",
-	"negatoscopio", "geyser"]
+	"polaroid", "keycard", "tessera", "lettore", "pulsante", "schermo", "monitor", "crt", "negatoscopio", "geyser"]
+## Non sono lampade ma scendono anche loro (l'utente: "il disegno sull'acquario abbassalo pure").
+const ANCHE := ["disegno_carta"]
 ## Una lampada: mesh o materiale con uno di questi pezzi nel nome, o una mesh piccola (al più LAMPADA_MAX m) vicina a una
 ## Light3D (la luce è sua figlia o sorella, o figlia di uno dei due antenati sopra).
 const NOMI_LAMPADA := ["lamp", "neon", "plafon", "globo", "bulb", "applique", "faro", "fanale", "lantern", "luce",
@@ -251,7 +252,7 @@ func _materiali_di(g: GeometryInstance3D) -> void:
 			di_lampada = 1 if _lampada(g) else 0
 		if _nome_colorato(b.resource_name):
 			continue
-		if di_lampada == 1 or _nome_da_lampada(b.resource_name):
+		if di_lampada == 1 or _nome_da_lampada(b.resource_name) or _anche(b.resource_name) or _anche(g.name):
 			_visti[b.get_instance_id()] = true
 			_materiali.append(b)
 
@@ -283,6 +284,14 @@ func _esclusa(n: Node) -> bool:
 		p = p.get_parent()
 	_esclusi_cache[id] = r
 	return r
+
+
+static func _anche(nome: String) -> bool:
+	nome = nome.to_lower()
+	for parola in ANCHE:
+		if nome.contains(parola):
+			return true
+	return false
 
 
 static func _nome_colorato(nome: String) -> bool:
