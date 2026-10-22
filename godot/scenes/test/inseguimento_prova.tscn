@@ -19,4 +19,4 @@ environment = SubResource("env")
 [node name="SalaInseguimento" parent="." instance=ExtResource("1_ins")]
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 38.2, -18.9, -15)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 38.2, -18.9, -17.4)

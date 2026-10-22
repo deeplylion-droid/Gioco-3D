@@ -37,6 +37,11 @@ Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD
 - **grafica**: aspetta le risposte della pagina dei punti bui (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb).
 - **Regola nuova per tutti**: nei cartelli del parco solo disegni, niente scritte; fa eccezione il nome di Jilly Jubilee.
 
+## Autorizzazioni dell'utente (21 ottobre, sera)
+
+- Il coordinatore può pubblicare la v0.3.8 da solo, quando le correzioni sono pronte e tutti i test passano.
+- Il coordinatore decide se il geyser V1 nel gioco va bene o se passare al tuffo di Jilly, e poi lo spiega all'utente.
+
 ## Ultima versione
 
 - **v0.3.7** pubblicata il 19 ottobre alle 07:48 UTC su richiesta dell'utente (main 3abc887; exe unico 1,35 GB): schermo del monitor, fogli della scrivania, torre senza blocchi all'ingresso, riserve dei caricamenti, pacchetto più leggero.

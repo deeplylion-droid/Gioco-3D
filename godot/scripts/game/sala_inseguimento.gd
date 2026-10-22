@@ -806,12 +806,18 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 
 ## La lampada rossa guasta: si spegne e riaccende a scatti.
 func _sfarfalla(o: OmniLight3D, s: SpotLight3D) -> void:
+	# l'energia, non visible: accendere e spegnere la luce rifà gli abbinamenti luce-geometria del renderer
+	# (con visible Godot andava in crash all'uscita, come nella torre)
+	var e_o := o.light_energy
+	var e_s := s.light_energy
+	o.set_meta(&"sfarfalla", true)
+	s.set_meta(&"sfarfalla", true)
 	var tw := create_tween().set_loops()
 	for d in [0.9, 0.06, 0.12, 0.05, 1.6, 0.08, 0.4]:
 		tw.tween_callback(func():
-			var acceso := not o.visible
-			o.visible = acceso
-			s.visible = acceso)
+			var acceso := o.light_energy < 0.01
+			o.light_energy = e_o if acceso else 0.0
+			s.light_energy = e_s if acceso else 0.0)
 		tw.tween_interval(d)
 
 

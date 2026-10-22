@@ -38,7 +38,7 @@ import torre_a as TA  # noqa: E402
 
 USCITA = os.path.normpath(os.path.join(QUI, '..', '..', 'godot', 'proposte', 'inseguimento'))
 GIOCO_USCITA = os.path.normpath(os.path.join(QUI, '..', '..', 'godot', 'assets', 'ambiente', 'inseguimento'))
-BOCCA = Vector((40.0, 15.0, -18.4))      # la bocca del tubo dell'inseguimento sul muro est della torre
+BOCCA = Vector((40.0, 17.4, -18.4))      # la bocca del tubo dell'inseguimento sul muro est della torre
 R_TUBO = 0.8                             # il tubo dell'inseguimento (come la bocca)
 X0 = 40.0                                # il muro in comune con la sala della torre
 # Nel gioco (--gioco) la sala sta nel mondo accanto alla torre, quindi:
@@ -51,7 +51,7 @@ X0 = 40.0                                # il muro in comune con la sala della t
 # - inseguimento_gioco.json: linee dei tubi, vasche, paratie, grata, checkpoint, pozzo di SB1, scale, uscita.
 GIOCO = False
 X0_GIOCO = 40.4
-BOCCA_TORRE = [(37.6, 15.0, -18.25), (38.8, 15.0, -18.38), (41.0, 15.0, -18.6)]   # come in torre_a.py (GIOCO), nel verso della discesa
+BOCCA_TORRE = [(37.6, 17.4, -18.15), (38.8, 17.4, -18.38), (41.0, 17.4, -18.6)]   # come in torre_a.py (GIOCO), nel verso della discesa
 MOBILI = []                              # i pezzi che si muovono (pannelli delle paratie, sbarre della grata)
 GIOCO_DATI = dict(paratie=[], grata=None, tubi={}, scale=[])
 
@@ -496,7 +496,7 @@ def versione_A(mats):
     zc3 = C3[4] + 0.75
     # T0: dalla bocca alla vasca 1 (entra dal lato ovest)
     # (nel gioco continua il tubo della bocca della torre, che finisce in x 41)
-    t0 = tubo('ins_A_tubo_0', [(41.0 if GIOCO else 39.5, 15.0, -18.6), (43.0, 15.2, -19.6), (46.5, 13.8, -20.9), (49.0, 15.0, zc1 + 0.3), (50.4, 15.0, zc1)], ['tsc_giallo'])
+    t0 = tubo('ins_A_tubo_0', [(41.0 if GIOCO else 39.5, 17.4, -18.6), (43.0, 17.2, -19.6), (46.5, 15.2, -20.9), (49.0, 15.0, zc1 + 0.3), (50.4, 15.0, zc1)], ['tsc_giallo'])
     # bivio 1 (lato est della vasca 1): a nord la giusta (verso la vasca 2), a sud la sbagliata (scolo 0)
     paratia(c, (C1[2] - 0.2, 16.4, zc1), (1, 0), True, luci)
     paratia(c, (C1[2] - 0.2, 13.6, zc1), (1, 0), False, luci)
