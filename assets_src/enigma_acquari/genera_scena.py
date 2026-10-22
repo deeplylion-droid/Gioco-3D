@@ -340,6 +340,9 @@ sr_tardi('BoxShape3D', 'parapetto_forma', size='Vector3(%.3f, 1.0, 0.06)' % pl)
 sr_tardi('BoxShape3D', 'parapetto_ovest_forma', size='Vector3(0.06, 1.0, %.3f)' % pp)
 node('ParapettoForma', 'CollisionShape3D', P, transform=tr(ID, (pc[0], PEDANA_H + 0.5, zf)), shape='SubResource("parapetto_forma")')
 node('ParapettoOvestForma', 'CollisionShape3D', P, transform=tr(ID, (PEDANA_X0 + 0.03, PEDANA_H + 0.5, pc[2])), shape='SubResource("parapetto_ovest_forma")')
+# e lungo la scala, inclinata come i gradini: senza, dal viale si passava attraverso il corrimano
+sr_tardi('BoxShape3D', 'parapetto_scala_forma', size='Vector3(%.3f, 1.0, 0.06)' % ls)
+node('ParapettoScalaForma', 'CollisionShape3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 + 0.5, zf)), shape='SubResource("parapetto_scala_forma")')
 
 # La valvola rossa del gorgo, spostata di lato rispetto alla pedana: sul davanti-ovest del miscuglio,
 # col tubo che entra nella base verso il centro. Il nodo sta sul volantino (lo mira il getto), il modello

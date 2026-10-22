@@ -168,6 +168,9 @@ size = Vector3(2.400, 1.0, 0.06)
 [sub_resource type="BoxShape3D" id="parapetto_ovest_forma"]
 size = Vector3(0.06, 1.0, 1.000)
 
+[sub_resource type="BoxShape3D" id="parapetto_scala_forma"]
+size = Vector3(1.664, 1.0, 0.06)
+
 [node name="EnigmaAcquari" type="Node3D"]
 script = ExtResource("enigma")
 
@@ -598,6 +601,10 @@ shape = SubResource("parapetto_forma")
 [node name="ParapettoOvestForma" type="CollisionShape3D" parent="Pedana"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.13, 1.4, -19.25)
 shape = SubResource("parapetto_ovest_forma")
+
+[node name="ParapettoScalaForma" type="CollisionShape3D" parent="Pedana"]
+transform = Transform3D(0.841178, 0.540758, 0, -0.540758, 0.841178, 0, 0, 0, 1, 13.2, 0.95, -18.78)
+shape = SubResource("parapetto_scala_forma")
 
 [node name="Valvola" type="Node3D" parent="."]
 transform = Transform3D(0.766044, 0, 0.642788, 0, 1, 0, -0.642788, 0, 0.766044, 9.5189, 0.9, -20.1055)

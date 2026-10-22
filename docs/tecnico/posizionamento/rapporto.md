@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 01:37:37. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 01:42:09. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 14. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 107. Eccezioni non più trovate: 4.
+Nuovi: 1. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 78. Eccezioni non più trovate: 33.
 
 ## Nuovi
 
@@ -10,30 +10,7 @@ Nuovi: 14. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 107. Ecce
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio |
 |---|---|---|---|---|
-| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadaValvola/Modello/lampada` | 7.03, 0.00, -21.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.74 e 2.00 m sopra il pavimento (32 celle da 25 cm) |
-| enigmi | ingombro | `Gioco/EnigmaAcquari/Pedana/CorrimanoScala1` | 13.78, 0.08, -18.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.42 e 1.92 m sopra il pavimento (80 celle da 25 cm) |
-
-### tecnici
-
-| Squadra | Problema | Nodo | Posizione | Dettaglio |
-|---|---|---|---|---|
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa13` | -14.60, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa14` | -15.90, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_2` | -2.05, -6.98, 51.96 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_staffa0` | -1.96, -6.84, 48.26 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_staffa1` | -1.96, -6.84, 49.86 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_staffa2` | -1.96, -6.84, 51.46 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_10` | 3.03, -6.40, 53.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.23 e 1.69 m sopra il pavimento (14 celle da 25 cm) |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_11` | 3.03, -6.40, 53.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.19 e 1.65 m sopra il pavimento (12 celle da 25 cm) |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_2` | -0.72, 0.27, 46.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.83 e 1.88 m sopra il pavimento (16 celle da 25 cm) |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/lampada_rc3_vetro` | 8.78, -1.80, 46.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.88 e 2.00 m sopra il pavimento (16 celle da 25 cm) |
-
-### torre
-
-| Squadra | Problema | Nodo | Posizione | Dettaglio |
-|---|---|---|---|---|
-| ambienti-2 | ingombro | `TorreScivoli/torre_tubo_inseguimento` | 38.01, -19.98, -14.05 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.40 e 2.00 m sopra il pavimento (461 celle da 25 cm) |
-| ambienti-2 | ingombro | `TorreStruttura/torre_A_sostegni` | 37.51, -3.01, -19.05 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (870 celle da 25 cm) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/Pedana/CorrimanoScala2` | 13.78, 0.08, -18.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.42 m sopra il pavimento (80 celle da 25 cm) |
 
 ## Già noti
 
@@ -105,42 +82,12 @@ Nuovi: 14. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 107. Ecce
 | da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla` | 1.20, -4.22, 39.16 | il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_1 | voluto: il tubo del neon sta dentro la sua plafoniera |
 | da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi` | 1.20, -4.22, 43.66 | il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_2 | voluto: il tubo del neon sta dentro la sua plafoniera |
 | da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi` | 5.70, -4.22, 39.16 | il 68% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_3 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_2` | 6.50, 2.12, 46.51 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa0` | 6.20, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa1` | 4.60, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa10` | -9.80, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa11` | -11.40, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa12` | -13.00, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa2` | 3.00, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa3` | 1.40, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa4` | -0.20, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa5` | -1.80, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa6` | -3.40, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa7` | -5.00, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa8` | -6.60, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa9` | -8.20, 2.26, 46.42 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2` | -15.65, 2.12, 30.20 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2` | -15.65, 2.12, 44.96 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa0` | -15.56, 2.26, 44.66 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa1` | -15.56, 2.26, 43.06 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa2` | -15.56, 2.26, 41.46 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa3` | -15.56, 2.26, 39.86 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa4` | -15.56, 2.26, 38.26 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa5` | -15.56, 2.26, 36.66 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa6` | -15.56, 2.26, 35.06 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa7` | -15.56, 2.26, 33.46 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa8` | -15.56, 2.26, 31.86 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa9` | -15.56, 2.26, 30.30 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2` | -15.65, 2.12, 30.20 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/CameraOnde/CAMERA_bocchette` | -1.72, -9.05, 7.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (192 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/CameraOnde/CAMERA_pozzo` | 0.03, -9.05, 1.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_5` | -3.97, 0.00, 46.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.22 e 2.00 m sopra il pavimento (64 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3` | -14.47, 0.00, 39.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.25 e 1.85 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_12` | 3.28, -6.22, 53.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.16 e 1.63 m sopra il pavimento (14 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_13` | 3.53, -6.04, 53.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.32 e 1.61 m sopra il pavimento (8 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_4` | 1.28, -7.66, 52.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.71 e 2.00 m sopra il pavimento (8 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_7` | 2.03, -7.12, 53.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.42 e 1.86 m sopra il pavimento (14 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_9` | 2.53, -6.76, 53.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.28 e 1.74 m sopra il pavimento (18 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_filo` | 1.53, -7.48, 52.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (92 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_elettrico` | -3.22, -9.05, 33.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.90 e 2.00 m sopra il pavimento (160 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_strumenti` | -3.47, -9.05, 36.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.30 e 2.00 m sopra il pavimento (64 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_arredo` | 1.28, -9.05, 36.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (50 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
@@ -153,20 +100,50 @@ Nuovi: 14. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 107. Ecce
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
 | ambienti-2 | ingombro | `TorreScivoli/discesa_1_1` | 38.76, -6.01, -11.55 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.96 m sopra il pavimento (40 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-2 | ingombro | `TorreScivoli/discesa_5_0` | 37.51, -15.01, -18.80 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.20 m sopra il pavimento (20 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3862` | 32.55, 9.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3863` | 32.03, 8.90, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3864` | 32.03, 8.80, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3866` | 32.55, -3.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3867` | 32.03, -3.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3868` | 32.03, -3.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3870` | 32.55, -14.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3871` | 32.03, -14.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@3872` | 32.03, -14.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| ambienti-2 | ingombro | `TorreScivoli/discesa_5_0` | 37.51, -15.01, -18.80 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| ambienti-2 | ingombro | `TorreStruttura/torre_A_scalette` | 33.76, -6.01, -10.55 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (8 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3828` | 32.55, 9.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3829` | 32.03, 8.90, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3830` | 32.03, 8.80, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3832` | 32.55, -3.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3833` | 32.03, -3.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3834` | 32.03, -3.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3836` | 32.55, -14.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3837` | 32.03, -14.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@3838` | 32.03, -14.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 
 ## Eccezioni non più trovate (si possono togliere dal file)
 
 - tecnici · ingombro · `Tecnici/Ambienti/Raccordo/RACCORDO_dettagli`
 - tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2es_0`
 - tecnici · ingombro · `Tecnici/Ambienti/Raccordo/lampada_rc3`
-- torre · ingombro · `TorreStruttura/torre_A_scalette`
+- tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_filo`
+- tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_4`
+- tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_7`
+- tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_9`
+- tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_12`
+- tecnici · ingombro · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_13`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_2`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa0`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa1`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa2`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa3`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa4`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa5`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa6`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa7`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa8`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa9`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa10`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa11`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c2_staffa12`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa0`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa1`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa2`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa3`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa4`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa5`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa6`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa7`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa8`
+- tecnici · estremita_libera · `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa9`
