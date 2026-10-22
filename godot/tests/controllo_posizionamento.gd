@@ -46,6 +46,7 @@ const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
 const SQUADRE := [
 	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"],
+	["SalaInseguimento", "ambienti-2"],   # sala_inseguimento.gd mette anche i dettagli sotto il suo nodo Luci
 	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
 	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
 	["ArredoRisalita", "enigmi"],
@@ -400,26 +401,56 @@ func _sospeso(z: Dictionary, mi: MeshInstance3D) -> void:
 
 
 ## Staccato: l'oggetto deve toccare, entro STACCO, qualcosa che lo regge (pavimento, muro, soffitto, l'oggetto a cui è
-## attaccato). Per un campione di vertici, raggi corti nelle sei direzioni: basta che uno colpisca un altro corpo.
+## attaccato): la sua forma convessa allargata di STACCO deve toccare o entrare in un altro corpo.
 ## Gli oggetti già "sospesi" (niente entro 5 cm) non si ripetono.
 func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
 	if _trovati.any(func(t): return t["nodo"] == _nodo(mi) and t["problema"] == "sospeso"):
 		return
-	var facce := mi.mesh.get_faces()
-	if facce.is_empty():
-		return
 	var me: Array[RID] = []
 	if _corpo_di.has(mi):
 		me.append((_corpo_di[mi] as StaticBody3D).get_rid())
-	var passo := maxi(1, facce.size() / STACCO_VERTICI)
-	var dirs := [Vector3.DOWN, Vector3.UP, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]
-	var i := 0
-	while i < facce.size():
-		var p := mi.global_transform * facce[i]
-		for d in dirs:
-			if not _raggio(p - d * 0.001, p + d * STACCO, STRATO | Layers.WORLD, me).is_empty():
-				return
-		i += passo
+	# la forma convessa della mesh, allargata di STACCO: se tocca o entra in un altro corpo, è retto (anche un pezzo
+	# infilato in un altro, come un bulbo sul portalampada)
+	var qp := PhysicsShapeQueryParameters3D.new()
+	qp.collision_mask = STRATO | Layers.WORLD
+	qp.exclude = me
+	var conv := mi.mesh.create_convex_shape(true, false) as ConvexPolygonShape3D
+	if conv == null or conv.points.size() < 8 or _piatta(mi):
+		# una mesh piatta (un foglio, una scritta): il suo box allargato di STACCO
+		var bx := _box(mi)
+		var bf := BoxShape3D.new()
+		bf.size = bx.size + Vector3.ONE * STACCO * 2.0
+		qp.shape = bf
+		qp.transform = Transform3D(Basis(), bx.get_center())
+		if not _spazio.intersect_shape(qp, 1).is_empty():
+			return
+		_trova_staccato(z, mi, me)
+		return
+	var punti := PackedVector3Array()
+	var centro := Vector3.ZERO
+	for q in conv.points:
+		centro += q
+	centro /= conv.points.size()
+	var scala := mi.global_transform.basis.get_scale()
+	for q in conv.points:
+		var d := (q - centro) * scala
+		punti.append(q + (d.normalized() * STACCO) / scala if d.length() > 0.0001 else q)
+	var forma := ConvexPolygonShape3D.new()
+	forma.points = punti
+	qp.shape = forma
+	qp.transform = mi.global_transform
+	if not _spazio.intersect_shape(qp, 1).is_empty():
+		return
+	_trova_staccato(z, mi, me)
+
+
+## Una mesh con un lato del box quasi nullo (meno di 1 mm): la forma convessa non si costruisce.
+func _piatta(mi: MeshInstance3D) -> bool:
+	var a := mi.get_aabb().size * mi.global_transform.basis.get_scale().abs()
+	return minf(a.x, minf(a.y, a.z)) < 0.001
+
+
+func _trova_staccato(z: Dictionary, mi: MeshInstance3D, me: Array[RID]) -> void:
 	var b := _box(mi)
 	var c := b.get_center()
 	var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO | Layers.WORLD, me)
