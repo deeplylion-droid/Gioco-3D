@@ -15,6 +15,7 @@ Gioco horror 3D in prima persona fatto con Claude per deeplylion-droid. L'utente
   - niente copre o blocca porte, cancelli, Polaroid, pulsanti e oggetti da raccogliere;
   - le pile e i mucchi stanno come starebbero davvero (il pesante sotto, appoggiati al muro, con un perché), e ogni oggetto ha un motivo per stare lì;
   - alla fine si fa il giro dagli occhi del giocatore lungo tutta la strada della zona, e il controllo automatico di posizionamento della CI deve passare (`godot/tests/controllo_posizionamento.gd`; come si lancia e come si segna un caso "voluto" è in `docs/tecnico/posizionamento/LEGGIMI.md`).
+  - **nessuna build esce con casi "da correggere" aperti** nel controllo di posizionamento, e il controllo guarda anche gli stati che compaiono o cambiano dopo, come gli acquari comparsi, il portone aperto o la grata calata (richiesta dell'utente, 22 ottobre: "basta con queste robe volanti o staccate dal resto").
 - **Quando serve una risposta dall'utente si fa un questionario** (sua richiesta, 15 ottobre): una pagina con le immagini e, per ogni voce, i pulsanti per approvare o far cambiare, più una nota. Gli agenti non chiedono direttamente all'utente: mandano al coordinatore le domande e le immagini.
 - **Non cancellare niente** di quello che l'utente ha approvato: concept, modelli, Release, tag. Per le cose scartate, spostale in una cartella a parte senza eliminarle.
 - Il repository è **pubblico**, e l'utente è d'accordo. Non metterci mai chiavi o segreti: la chiave di Meshy sta nella variabile d'ambiente `MESHY_API_KEY`.
