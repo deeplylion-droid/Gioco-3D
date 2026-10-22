@@ -21,7 +21,7 @@ func _ready() -> void:
 func _run() -> void:
 	torre = (load(TORRE) as PackedScene).instantiate()
 	torre.crea_luci = DisplayServer.get_name() != "headless"
-	torre.margine_caduta = 1000.0
+	torre.caduta_mortale = 1000.0
 	get_tree().root.add_child(torre)
 	for z in torre.find_children("CadutaFondo*", "KillZone", false, false):
 		z.queue_free()

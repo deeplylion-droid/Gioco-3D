@@ -24,7 +24,9 @@ extends Node3D
 ## - la Polaroid 10 sul lettino della pedana NO a -12;
 ## - la balconata dei bambini: al primo salto, un lampo e per un attimo si vede la fila di bambini;
 ## - la luce di lei che sale dal pozzo, più forte man mano che scendi;
-## - la vasca del fondo: entrandoci la discesa è finita ([signal discesa_finita]).
+## - la vasca del fondo: da lì la bocca del tubo porta all'inseguimento (SalaInseguimento, figlia di
+##   questa sala: [member inseguimento_scena]); il capitolo finisce con SB1, alla sua fine
+##   ([signal discesa_finita]). Senza inseguimento la discesa finisce entrando nella vasca.
 
 signal discesa_finita
 
@@ -70,6 +72,9 @@ static func b(v: Array) -> Vector3:
 ## così si caricano col thread ma entrano nella sala uno per passo (un GLB intero fa un fotogramma lungo).
 ## Vuoto: si caricano da DIR.
 @export var modelli: Array[PackedScene] = []
+## L'inseguimento I1 e il finale SB1, dietro il muro est (vuoto: niente inseguimento).
+@export var inseguimento_scena: PackedScene
+var inseguimento: Node3D
 ## Vero quando la sala è costruita del tutto (vedi [method costruisci_a_pezzi]).
 var costruita := false
 ## Se vero, _ready non costruisce niente: la costruisce chi la aggiunge, con [method costruisci_a_pezzi]
@@ -112,6 +117,8 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 				return
 			t0 = Time.get_ticks_usec()
 	fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
+	if inseguimento and inseguimento.has_method(&"costruisci_a_pezzi"):
+		await inseguimento.call(&"costruisci_a_pezzi", ms_per_fotogramma)
 	costruita = true
 	pronta.emit()
 
@@ -197,8 +204,23 @@ func _passi() -> Array:
 	if crea_luci:
 		out.append_array(_passi_luci())
 	out.append(_luce_lei)
+	out.append(_aggiungi_inseguimento)
 	out.append(_fuori_dal_blackout)
 	return out
+
+
+func _aggiungi_inseguimento() -> void:
+	if inseguimento_scena == null or inseguimento:
+		return
+	inseguimento = inseguimento_scena.instantiate() as Node3D
+	inseguimento.set(&"costruzione_a_pezzi", _a_pezzi)
+	inseguimento.set(&"crea_luci", crea_luci)
+	add_child(inseguimento)
+	if inseguimento.has_signal(&"capitolo_finito"):
+		inseguimento.connect(&"capitolo_finito", func():
+			if not _finita:
+				_finita = true
+				discesa_finita.emit())
 
 
 ## Mette nella sala il GLB [param i] (0 struttura, 1 scivoli, 2 prop): da [member modelli] (caricati
@@ -658,7 +680,7 @@ func _vasca_fondo() -> void:
 	add_child(area)
 	area.global_position = b([(v[0] + v[2]) / 2.0, (v[1] + v[3]) / 2.0, float(dati["vasca_fondo"]["acqua"]) - 0.2])
 	area.body_entered.connect(func(corpo):
-		if corpo is Player and not _finita:
+		if corpo is Player and not _finita and inseguimento_scena == null:
 			_finita = true
 			discesa_finita.emit())
 
@@ -850,6 +872,7 @@ func _sfarfalla(l: OmniLight3D, seme: int) -> void:
 	var vetro := l.get_meta(&"vetro") as MeshInstance3D
 	var mat := vetro.material_override as StandardMaterial3D
 	var ritmo := [0.9, 0.06, 0.12, 0.05, 1.6, 0.08, 0.4, 0.07]
+	l.set_meta(&"sfarfalla", true)      # guasta, ma accesa (per i controlli delle luci)
 	var tw := create_tween().set_loops()
 	for i in ritmo.size():
 		var d: float = ritmo[(i + seme) % ritmo.size()]

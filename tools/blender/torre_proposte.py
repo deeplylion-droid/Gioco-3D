@@ -153,14 +153,18 @@ def palo(c, p, z0, z1, mat=PALO, r=0.14):
     c.anello((p[0], p[1], z0), (0, 0, 1), 0.0, r + 0.1, 0.025, 'inox', seg=14)
 
 
-def guscio_profondo(c):
+def guscio_profondo(c, buco_est=None):
     """La sala dal fondo (FONDO) al soffitto (H): muri di cemento verniciato sopra lo zoccolo, piastrelle
-    nel fondo dove c'è l'acqua, il varco del portone nella parete ovest (alla quota della sala grande)."""
+    nel fondo dove c'è l'acqua, il varco del portone nella parete ovest (alla quota della sala grande).
+    buco_est = (y0, y1, z0, z1): il foro nel muro est dove passa il tubo dell'inseguimento (nel gioco)."""
     x0, x1, y0, y1 = XI0, XI1, YI0, YI1
     c.faccia_griglia([(x0, y0, FONDO), (x1, y0, FONDO), (x1, y1, FONDO), (x0, y1, FONDO)], 'pavimento', 2.0)
     c.faccia_griglia([(x0, y1, H), (x1, y1, H), (x1, y0, H), (x0, y0, H)], 'stanza_soffitto', 4.0)
     muri = {'s': [(x1, y0), (x0, y0)], 'n': [(x0, y1), (x1, y1)], 'e': [(x1, y1), (x1, y0)]}
-    for p, q in muri.values():
+    for lato, (p, q) in muri.items():
+        if lato == 'e' and buco_est:
+            _muro_est_bucato(c, x1, y0, y1, buco_est)
+            continue
         c.faccia_griglia([(p[0], p[1], FONDO), (q[0], q[1], FONDO), (q[0], q[1], FONDO + 1.5), (p[0], p[1], FONDO + 1.5)], 'vasca', 1.0)
         c.faccia_griglia([(p[0], p[1], FONDO + 1.5), (q[0], q[1], FONDO + 1.5), (q[0], q[1], H), (p[0], p[1], H)], 'stanza_muro', 2.0)
     # parete ovest: sotto la sala grande tutta piena, sopra con il varco del portone. Sta SCOSTA_OVEST più
@@ -181,6 +185,23 @@ def guscio_profondo(c):
     for x in range(22, 40, 4):
         for y, s in ((y0, 1), (y1, -1)):
             c.scatola((x - 0.15, min(y, y + s * 0.35), FONDO), (x + 0.15, max(y, y + s * 0.35), H - 0.3), 'metallo_grigio')
+
+
+def _muro_est_bucato(c, x, y0, y1, buco):
+    """Il muro est (piastrelle fino a FONDO + 1,5, poi cemento) con un foro rettangolare: fasce intere a
+    sinistra e a destra del foro, sopra e sotto il foro solo il tratto in mezzo."""
+    by0, by1, bz0, bz1 = buco
+    zs = [FONDO, FONDO + 1.5, H]
+    def fascia(ya, yb, za, zb):
+        for zl, zh in zip(zs[:-1], zs[1:]):
+            lo, hi = max(za, zl), min(zb, zh)
+            if hi - lo > 0.005:
+                mat, passo = ('vasca', 1.0) if zh <= FONDO + 1.5 + 1e-6 else ('stanza_muro', 2.0)
+                c.faccia_griglia([(x, yb, lo), (x, ya, lo), (x, ya, hi), (x, yb, hi)], mat, passo)
+    fascia(y0, by0, FONDO, H)
+    fascia(by1, y1, FONDO, H)
+    fascia(by0, by1, FONDO, bz0)
+    fascia(by0, by1, bz1, H)
 
 
 def scivolo(c, punti, mat):

@@ -39,8 +39,7 @@ func _run() -> void:
 	prova = DisplayServer.get_name() == "headless"
 	torre = (load(TORRE) as PackedScene).instantiate()
 	torre.crea_luci = not prova
-	torre.margine_caduta = 1000.0     # niente ripartenze: se si cade, la prova lo dice
-	torre.tempo_bloccato = 1000.0
+	torre.caduta_mortale = 1000.0     # niente ripartenze: se si cade, la prova lo dice
 	get_tree().root.add_child(torre)
 	for z in torre.find_children("CadutaFondo*", "KillZone", false, false):
 		z.queue_free()

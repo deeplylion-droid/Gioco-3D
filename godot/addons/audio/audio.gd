@@ -379,6 +379,21 @@ func ferma_musica(dissolvenza := 1.0) -> void:
 		_musica.set_meta(&"ripeti", false)
 
 
+## Abbassa e ferma un suono partito con suona() (per esempio un verso interrotto da quello dopo). Se
+## intanto il player è stato ripreso per un altro suono (il pool), lo lascia stare.
+func dissolvi(p: Node, secondi := 0.3) -> void:
+	if not is_instance_valid(p) or not p.get(&"playing"):
+		return
+	var partito: float = p.get_meta(&"partito", 0.0)
+	var tw := create_tween()
+	tw.tween_method(func(v: float) -> void:
+		if is_instance_valid(p) and float(p.get_meta(&"partito", 0.0)) == partito:
+			p.set(&"volume_db", v), float(p.get(&"volume_db")), -60.0, maxf(secondi, 0.01))
+	tw.tween_callback(func() -> void:
+		if is_instance_valid(p) and float(p.get_meta(&"partito", 0.0)) == partito:
+			p.call(&"stop"))
+
+
 ## Un suono di prova per il cursore di un volume (suona anche a gioco in pausa).
 func prova_volume(chiave: String) -> void:
 	var nome: StringName = {"generale": &"pulsante_premuto", "effetti": &"pulsante_premuto",
@@ -1561,13 +1576,35 @@ class Lampada:
 
 ## La statua della medusa: un respiro umido appena udibile da vicino; il risveglio.
 class Statua:
+	## La voce di lei nell'inseguimento (22 ottobre), sulle animazioni "inseguimento/<nome>" di
+	## MedusaAffacciata (animazioni_inseguimento): animazione -> suono.
+	const VOCE_INSEGUIMENTO := {
+		&"inseguimento/sale_dall_acqua": &"lei_insegue_sale",
+		&"inseguimento/sale_dall_acqua_veloce": &"lei_insegue_sale",
+		&"inseguimento/presa": &"lei_insegue_presa",
+		&"inseguimento/respinta": &"lei_insegue_respinta",
+		&"inseguimento/affacciata_sb1": &"lei_insegue_sb1",
+	}
+	## colpo_grata: un verso per ogni colpo, quando il palmo tocca la grata (0,25 s di ogni ciclo di 0,5 s).
+	const GRATA := &"inseguimento/colpo_grata"
+	const GRATA_CICLO := 0.5
+	const GRATA_COLPO := 0.25
+	## Quanto più presto parte il verso rispetto al colpo (l'attacco del verso).
+	const GRATA_ANTICIPO := 0.06
+
+	var audio
 	var n: Node
 	var l: AudioLoop
 	var sveglia := false
 	var ap: AnimationPlayer
 	var cerca_t := 0.0
+	var inseguimento := false
+	var bocca: Node3D
+	var voce: Node
+	var grata_prima := -1.0
 
 	func _init(a, nodo: Node) -> void:
+		audio = a
 		n = nodo
 		var holder := Node3D.new()
 		holder.name = "AudioMedusa"
@@ -1576,12 +1613,21 @@ class Statua:
 		l = a.crea_loop(&"medusa_presenza_loop", holder)
 		if l:
 			l.volume = 1.0
+		inseguimento = bool(nodo.get(&"animazioni_inseguimento"))
+		if inseguimento:
+			# la voce viene dalla testa: in alto quando incombe (la presa arriva a 3,85 m sopra l'origine)
+			bocca = Node3D.new()
+			bocca.name = "VoceLei"
+			bocca.position = Vector3(0, 3.6, 0)
+			nodo.add_child(bocca)
 
 	func aggiorna(a, delta: float) -> bool:
 		if not is_instance_valid(n):
 			return false
 		if not n.is_inside_tree():
 			return true
+		if inseguimento:
+			return _inseguimento(a)
 		if not sveglia:
 			if not is_instance_valid(ap):
 				cerca_t -= delta
@@ -1597,6 +1643,44 @@ class Statua:
 				if l:
 					l.volume = 0.0
 		return true
+
+
+	## Nell'inseguimento: cerca l'AnimationPlayer a ogni fotogramma finché c'è (la prima salita può partire
+	## subito), poi segue le animazioni.
+	func _inseguimento(a) -> bool:
+		if not is_instance_valid(ap):
+			ap = n.find_child("AnimationPlayer", true, false) as AnimationPlayer
+			if ap == null:
+				return true
+			ap.animation_started.connect(_su_animazione)
+			if ap.is_playing():
+				_su_animazione(ap.current_animation)
+		if ap.is_playing() and ap.current_animation == GRATA:
+			var pos := fposmod(ap.current_animation_position, GRATA_CICLO)
+			var soglia := GRATA_COLPO - GRATA_ANTICIPO
+			if grata_prima >= 0.0 and ((grata_prima < soglia and pos >= soglia) or (pos < grata_prima and pos >= soglia)):
+				_voce(a, &"lei_insegue_grata")
+			grata_prima = pos
+		else:
+			grata_prima = -1.0
+		return true
+
+	func _su_animazione(nome: StringName) -> void:
+		if VOCE_INSEGUIMENTO.has(nome):
+			_voce(audio, VOCE_INSEGUIMENTO[nome])
+		elif nome == &"inseguimento/scende" and is_instance_valid(voce) and voce.get(&"stream") \
+				== audio.stream_di(&"lei_insegue_sale"):
+			# torna sotto da sola: il ringhio della salita si spegne con lei
+			audio.dissolvi(voce, 0.6)
+		if nome == GRATA:
+			# il primo ciclo comincia ora: il primo colpo va contato anche se la posizione parte da 0
+			grata_prima = 0.0
+
+	## Un verso alla volta: il nuovo taglia quello prima (la presa e la respinta interrompono il ringhio).
+	func _voce(a, nome: StringName) -> void:
+		if is_instance_valid(voce) and voce.get(&"playing") and nome != &"lei_insegue_grata":
+			a.dissolvi(voce, 0.12)
+		voce = a.suona(nome, bocca)
 
 
 ## Gocciolatoio dell'addon acqua: niente segnale, si guarda quando una goccia sparisce.

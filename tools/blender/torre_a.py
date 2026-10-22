@@ -907,7 +907,8 @@ def versione_A(mats):
     cs = K.Costruttore(mats)           # canali aperti
     P.GRATE[0] = K.Costruttore(mats)
     sp = Spazio()
-    P.guscio_profondo(c)
+    # nel gioco il tubo dell'inseguimento passa nel muro est: lì il muro ha il foro (coperto dal collare)
+    P.guscio_profondo(c, buco_est=(BOCCA_Y - 1.0, BOCCA_Y + 1.0, FONDO + 0.6, FONDO + 2.6) if GIOCO else None)
     luci = dict(lavoro=[], fari=[], gocce=[], emergenza=[])
     percorso = []
     aperture = {}                      # (torre, L) -> lista di aperture della ringhiera
@@ -1127,7 +1128,9 @@ def versione_A(mats):
             if t1 is None:
                 # la vasca del fondo dove si atterra col getto (senza, si cade sul pavimento prima)
                 c0 = s_['da'] + tg * 3.0
-                VASCHE['fondo'] = (max(c0.x - 2.8, 30.0), max(c0.y - 2.8, 11.1), min(c0.x + 2.8, XI1 - 0.3), min(c0.y + 2.8, 18.6))
+                # nel gioco arriva a nord fin sotto la bocca dell'inseguimento: dall'acqua si sale nel tubo
+                VASCHE['fondo'] = (max(c0.x - 2.8, 30.0), max(c0.y - 2.8, 11.1), min(c0.x + 2.8, XI1 - 0.3),
+                                   min(max(c0.y + 2.8, BOCCA_Y + 1.2) if GIOCO else c0.y + 2.8, 18.6))
                 x0, y0, x1, y1 = VASCHE['fondo']
                 sp.scatola(x0, y0, FONDO, x1, y1, FONDO + 0.7, 'vasca_fondo')
         else:
@@ -1459,10 +1462,35 @@ def versione_A(mats):
             continue    # la vasca del fondo prende il suo posto
         acque.append(P.vasca(c, x0, y0, x1, y1, FONDO, alto=0.6, nome_acqua=f'acqua_vasca_{nome}'))
     # la bocca del tubo grande dell'inseguimento: dal muro est, accanto alla vasca del fondo. Nel gioco sta a
-    # nord dell'ultimo salto (in y 15 il salto le passava attraverso)
+    # nord dell'ultimo salto (in y 15 il salto le passava attraverso) e scende già dall'imbocco, di 11 gradi (meno
+    # ripido, lasciando l'avanti, si scivola fuori all'indietro)
     yb_ = BOCCA_Y if GIOCO else 15.0
-    bocca = [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.6), (XI1 - 2.4, yb_, FONDO + 1.6)]
-    oggetti_scivoli.append(K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06))
+    bocca = [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.6), (XI1 - 2.4, yb_, FONDO + 1.6)] if not GIOCO else \
+        [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.62), (XI1 - 2.4, yb_, FONDO + 1.85)]
+    tubo_ins = K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06)
+    oggetti_scivoli.append(tubo_ins)
+    if GIOCO:
+        # il collare sul muro attorno al tubo (copre gli angoli del foro) e quattro gradini di grata nella vasca
+        # sotto la bocca: dall'acqua si sale nel tubo
+        cc = K.Costruttore(mats)       # solo da vedere: la collisione del tubo la fa il gioco
+        cc.anello((XI1 - 0.08, BOCCA_Y, FONDO + 1.6), (1, 0, 0), 0.86, 1.48, 0.08, 'metallo', seg=32)
+        oggetti_scivoli.append(cc.crea('torre_collare_inseguimento'))
+        # (salgono verso nord, da sud; l'ultimo, largo quanto la bocca, arriva alla bocca 4 cm sopra il fondo del
+        # tubo: si entra scendendo, senza il labbro del tubo che fa scivolare indietro)
+        x0_, x1_, y1_ = 36.35, XI1 - 2.4, BOCCA_Y + 0.65
+        for (y0_, zt) in ((BOCCA_Y - 2.4, FONDO + 0.28), (BOCCA_Y - 1.85, FONDO + 0.56), (BOCCA_Y - 1.3, FONDO + 0.84),
+                          (BOCCA_Y - 0.75, FONDO + 1.12)):
+            c.scatola((x0_, y0_, FONDO), (x1_, y1_, zt), 'metallo_grigio')
+            q = [(x0_, y0_, zt + 0.002), (x1_, y0_, zt + 0.002), (x1_, y1_, zt + 0.002), (x0_, y1_, zt + 0.002)]
+            P.GRATE[0].faccia(q, 'alfa_grata')
+            P.GRATE[0].faccia(q[::-1], 'alfa_grata')
+        # due selle dal fondo della vasca reggono il tubo dove esce dal muro (non sta a sbalzo)
+        mw = tubo_ins.matrix_world
+        fondo_tubo = [mw @ v.co for v in tubo_ins.data.vertices]
+        for xs in (XI1 - 1.2, XI1 - 0.45):
+            zs = min(q.z for q in fondo_tubo if abs(q.x - xs) < 0.15 and abs(q.y - yb_) < 0.6)
+            c.scatola((xs - 0.1, yb_ - 0.3, FONDO), (xs + 0.1, yb_ + 0.3, zs - 0.08), 'metallo')
+            c.scatola((xs - 0.12, yb_ - 0.55, zs - 0.08), (xs + 0.12, yb_ + 0.55, zs - 0.02), 'metallo')
     # tubi di servizio sui muri
     for z in (-17.0, -7.5, 4.5, 10.5):
         P.tubo_muro(c, [(XI0 + 0.3, YI0 + 0.35, z), (XI1 - 0.35, YI0 + 0.35, z)], r=0.16)

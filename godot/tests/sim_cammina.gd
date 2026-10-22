@@ -13,7 +13,7 @@ func _run() -> void:
 	var m := float(a[2]) if a.size() > 2 else 0.5
 	var torre: SalaTorre = (load("res://scenes/sala/torre/sala_torre.tscn") as PackedScene).instantiate()
 	torre.crea_luci = false
-	torre.margine_caduta = 1000.0
+	torre.caduta_mortale = 1000.0
 	get_tree().root.add_child(torre)
 	var p: Player = (load("res://scenes/player/player.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(p)

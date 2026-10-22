@@ -143,6 +143,9 @@ var inventory: Dictionary = {}
 var input_enabled := true
 ## Vero mentre si scivola su uno scivolo.
 var is_sliding := false
+## Se vero si sta accovacciati anche senza il tasto (nei tubi chiusi dell'inseguimento, alti 1,6 m: lo
+## mette SalaInseguimento).
+var accovacciato_forzato := false
 ## Il fondo dello scivolo sotto di te (normale), finché scivoli.
 var slide_normal := Vector3.UP
 ## Vero dopo un salto dallo scivolo, fino a quando si tocca terra: la velocità resta quella.
@@ -722,6 +725,8 @@ func _update_crouch(delta: float) -> void:
 			wants = Input.is_action_pressed("crouch")
 	if ladder:
 		wants = false
+	if accovacciato_forzato:
+		wants = true
 	if wants and not is_crouching:
 		_set_crouching(true)
 	elif not wants and is_crouching and can_stand_up():
