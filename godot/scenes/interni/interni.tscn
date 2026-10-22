@@ -137,7 +137,7 @@ open_speed = 0.12
 modello = NodePath("../../Ambienti/Spogliatoi/saracinesca")
 
 [node name="Zaino" type="Node3D" parent="."]
-position = Vector3(14.48, 0.72, -8.43)
+position = Vector3(14.53, 0.72, -8.43)
 rotation = Vector3(0, -1.5708, 0)
 
 [node name="Modello" parent="Zaino" instance=ExtResource("m_zaino")]

@@ -103,7 +103,7 @@ node('Saracinesca', 'Node3D', 'Meccanismi', np=['sources'], props={
     'modello': 'NodePath("../../Ambienti/Spogliatoi/saracinesca")'})
 
 # zaino-pompa sulla rastrelliera dello stanzino (marker_zaino_pompa)
-node('Zaino', 'Node3D', '.', props={'position': V(14.48, 0.72, -8.43), 'rotation': V(0, -H, 0)})
+node('Zaino', 'Node3D', '.', props={'position': V(14.53, 0.72, -8.43), 'rotation': V(0, -H, 0)})
 node('Modello', None, 'Zaino', inst='m_zaino')
 node('Prendi', 'Area3D', 'Zaino', np=['remove_node'], props={
     'collision_layer': '16', 'collision_mask': '0', 'monitoring': 'false', 'script': 'ExtResource("s_pack")',

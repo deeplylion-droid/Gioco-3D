@@ -487,7 +487,8 @@ def cerniere(nome, cern, faccia, yy):
         y0, y1 = sorted((telaio, py + 0.006 * (1 if faccia > 0 else -1)))
         x0, x1 = sorted((fx, fx - 0.012 * faccia))
         parti.append(L.scatola(nome + '_cerniera', (x0, y0, z), (x1, y1, z + 0.1), MAT_CERNIERA[0]))
-        parti.append(L.cilindro(nome + '_perno', (fx, py, z - 0.01), (fx, py, z + 0.11), 0.007, MAT_CERNIERA[0], seg=10))
+        # il perno è grosso 3 cm: lo spigolo dell'anta (smussato) passa a 1,8 cm dall'asse, a ogni apertura
+        parti.append(L.cilindro(nome + '_perno', (fx, py, z - 0.01), (fx, py, z + 0.11), 0.015, MAT_CERNIERA[0], seg=12))
     return parti
 
 
