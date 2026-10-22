@@ -140,8 +140,13 @@ func _lampadine() -> void:
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = parte[1]
 		mm.instance_count = punti.size()
+		# le stesse trasformazioni anche in un meta, che si salva con la risorsa: senza schermo il buffer del MultiMesh
+		# arriva vuoto (tutte le istanze nell'origine), e il controllo di posizionamento le legge da qui
+		var tr: Array[Transform3D] = []
 		for i in punti.size():
-			mm.set_instance_transform(i, Transform3D(b, punti[i] + Vector3(parte[2], 0, 0)))
+			tr.append(Transform3D(b, punti[i] + Vector3(parte[2], 0, 0)))
+			mm.set_instance_transform(i, tr[i])
+		mm.set_meta(&"trasformazioni", tr)
 		ResourceSaver.save(mm, DIR + parte[0] + ".res")
 
 
