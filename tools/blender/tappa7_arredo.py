@@ -203,7 +203,9 @@ def proposta_B():
 
 def comuni(obs, mat_corrimano):
     """Dove andare, in tutte e due: cartelli d'uscita accesi alle svolte e il corrimano sulla scala di C2."""
-    cartello('uscita_r1', (X_S0 - 0.02, YD, 2.35), (-1, 0, 0), obs)                 # in fondo a R1: si gira a sinistra (+Y)
+    # in fondo a R1, sul muro est del vano scala (x 52,6): si gira a sinistra (+Y). Prima era a x 50,6, dove R1 si apre
+    # sul vano scala e non c'è muro: restava appeso nel vuoto
+    cartello('uscita_r1', (X_S1 - 0.02, YD, 2.35), (-1, 0, 0), obs)
     cartello('uscita_l1', (X_S1 - 0.02, 7.8, Z_L1 + 2.35), (-1, 0, 0), obs)          # sul pianerottolo: su per F2
     cartello('uscita_t', (XC1 - 0.02, 4.8, Z_T + 2.2), (-1, 0, 0), obs)              # in cima: giù per il corridoio C2
     cartello('uscita_c3', (XC0 + 0.02, YC3_1 + 0.6, Z_SALA + 2.25), (1, 0, 0), obs)  # in fondo a C2: a destra in C3
