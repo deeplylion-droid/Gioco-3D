@@ -42,6 +42,15 @@ def prop(nome, file, loc, rot_z=0.0, dim=None, asse='max', rot=(0, 0, 0)):
     return L.importa_prop(nome, os.path.join(MESHY, file + '.glb'), loc, R(rot_z), dim, asse, rot)
 
 
+def col_ob(ob, sopra=0.0):
+    """Collisione a scatola grande come l'oggetto (nel mondo): si urta come un oggetto vero. Da chiamare nella
+    zona dell'oggetto (la scatola va nella collisione della collezione attiva)."""
+    bpy.context.view_layer.update()
+    ws = [ob.matrix_world @ v.co for v in ob.data.vertices]
+    L.col_scatola(tuple(min(p[i] for p in ws) for i in range(3)), tuple(max(p[i] for p in ws) + (sopra if i == 2 else 0.0) for i in range(3)))
+    return ob
+
+
 def copia(ob, nome, loc, rot_z=None, rot=None):
     o = ob.copy(); o.name = nome
     L._link(o); o.location = loc
@@ -350,14 +359,16 @@ def corridoio(M):
     # ---- oggetti
     # estintore appeso con la staffa (16 ottobre): il modello di prima aveva una tavola di legno dietro, che nel
     # gioco stava davanti. Questo non ha tavole: la staffa (lato +x del modello) va contro il muro, il tubo di lato.
-    HQ.metti('estintore', 'estintore_staffa', (9.6, 0.21, 0.84), (None, None, 0.62), rot_z=R(-90))
-    prop('cestino', 'cestino', (5.3, 2.3, 0), 30, 0.55, 'z')
+    # gli oggetti dove si passa hanno la collisione (controllo di posizionamento del 22 ottobre: si attraversavano)
+    col_ob(HQ.metti('estintore', 'estintore_staffa', (9.6, 0.21, 0.84), (None, None, 0.62), rot_z=R(-90)))
+    col_ob(prop('cestino', 'cestino', (5.3, 2.3, 0), 30, 0.55, 'z'))
     prop('paperella', 'paperella', (13.9, 1.2, 0.0), 140, 0.09)
-    prop('pallone', 'pallone', (2.2, 0.6, 0), 0, 0.42)
+    col_ob(prop('pallone', 'pallone', (2.2, 0.6, 0), 0, 0.42))
     # le due valvole del corridoio sono in linea sul tubo grande del soffitto: tubo_grande_con_valvola
     if HQ.disponibile('cartello_pericolo'):
-        HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60))
-    prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.7, 0), 75, 0.8)
+        col_ob(HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60)))
+    # l'asciugamano per terra, più vicino al muro sud (stava in mezzo alla strada)
+    col_ob(prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.45, 0), 75, 0.8))
 
     # ---- punti per il gioco
     L.vuoto('marker_risveglio', (20.4, 1.25, 0.0), (0, 0, R(90)), 'ARROWS', 0.5)    # sdraiato, guarda verso ovest (-X)
@@ -456,9 +467,13 @@ def fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme=0):
         HQ.metti(nome + '_corpo', 'armadietto_corpo', c, (0.4, 0.5, 1.92), rot_z=rz)
         if st == 'mancante':
             continue
-        cern = (x + 0.5, yy, 0) if faccia > 0 else (x - 0.5, yy + 0.4, 0)
+        # cardine sul bordo dell'anta (5 cm dentro lo spigolo del corpo, sul telaio): prima girava intorno allo
+        # spigolo e da aperta stava 5 cm staccata dal corpo (controllo di posizionamento, 22 ottobre)
+        cern = (x + 0.5, yy + 0.05, 0) if faccia > 0 else (x - 0.5, yy + 0.35, 0)
         anta = HQ.metti(nome + '_anta', 'armadietto_anta', cern, (0.4, 0.5, 1.92), rot_z=rz - R(ang),
-                        perno=(-0.2, -0.25, 0), parte='armadietto_sportello')
+                        perno=(-0.15, -0.25, 0), parte='armadietto_sportello')
+        if st != 'speciale':
+            col_ob(anta)   # l'anta aperta si urta (prima si attraversava)
         if st == 'speciale':
             speciali[i] = anta
     return None, None, speciali
@@ -597,7 +612,7 @@ def spogliatoi(M):
     for yb in (VY0, VY1):
         statico.append(L.cilindro('vasca_lavapiedi_bordo', (CX0, yb, -0.01), (CX1, yb, -0.01), 0.035, M['piastrelle_doccia'], seg=24))
     if HQ.disponibile('cartello_pericolo'):
-        HQ.metti('cartello_bagnato', 'cartello_pericolo', (10.3, 11.75, 0), (None, None, 0.62), rot_z=R(160))
+        col_ob(HQ.metti('cartello_bagnato', 'cartello_pericolo', (10.3, 11.75, 0), (None, None, 0.62), rot_z=R(160)))
     L.raccogli(False)
     acqua_lp = L.scatola('acqua_lavapiedi', (CX0, VY0, VZ), (CX1, VY1, -0.05), M['acqua'], uv=False)
     L.uv_scatola(acqua_lp, 1.0); acqua_lp.visible_shadow = False
@@ -755,11 +770,11 @@ def spogliatoi(M):
     br = prop('braccioli', 'braccioli', (4.65, 7.2, 0.45), 20, 0.3)
     copia(br, 'braccioli_2', (7.6, 9.9, 0), 110)
     prop('asciugamano', 'asciugamano', (9.35, 5.2, 0.45), 90, 0.9)
-    prop('asciugamano_2', 'asciugamano', (6.4, 4.3, 0), 20, 0.8)
+    col_ob(prop('asciugamano_2', 'asciugamano', (6.4, 4.3, 0), 20, 0.8))
     prop('paperella_spogliatoi', 'paperella', (7.9, 13.3, 0), 200, 0.09)
-    prop('secchio_mocio', 'secchio_mocio', (7.6, 11.6, 0), 210, 0.95, 'z')
-    prop('pallone_spogliatoi', 'pallone', (10.2, 10.2, 0), 0, 0.4)
-    prop('cestino_spogliatoi', 'cestino', (3.5, 10.6, 0), 0, 0.5, 'z')
+    col_ob(prop('secchio_mocio', 'secchio_mocio', (7.6, 11.6, 0), 210, 0.95, 'z'))
+    col_ob(prop('pallone_spogliatoi', 'pallone', (10.2, 10.2, 0), 0, 0.4))
+    col_ob(prop('cestino_spogliatoi', 'cestino', (3.5, 10.6, 0), 0, 0.5, 'z'))
     pz = [pozza('pozza_spogliatoi_1', (6.8, 9.2, 0), 1.2, 0.8, M, 11), pozza('pozza_spogliatoi_2', (5.5, 13.0, 0), 1.8, 1.0, M, 12),
           pozza('pozza_spogliatoi_3', (7.4, 5.4, 0), 0.6, 0.4, M, 13), pozza('pozza_spogliatoi_4', (9.7, 15.8, 0), 0.8, 0.6, M, 14)]
     L.unisci('acqua_pozze_spogliatoi', pz)
@@ -787,6 +802,7 @@ def stanzino(M):
     porta = L.unisci('porta_stanzino', pt); L.ammacca(porta, 0.004, 2.0, 12.0, 3)
     L.origine(porta, (11.05, 8.88, 0)); porta.rotation_euler = (0, 0, R(-75))
     porta = porta_hq(porta, 'porta_servizio', (11.05, 8.88, 0.01), 0.86, 2.02, R(-90 - 75), -1)
+    col_ob(porta)   # la porta aperta si urta (prima si attraversava)
     # costole
     for y in (7.4, 9.4):
         statico.append(L.scatola('costola', (X1 - 0.07, y - 0.06, 0), (X1, y + 0.06, H), M['lamiera_crema']))
@@ -801,9 +817,12 @@ def stanzino(M):
         if k in (0, 1, 3, 4):
             statico.append(L.cilindro('cordino', (x, Y1 - 0.1, 1.67), (x, Y1 - 0.1, 1.35 - 0.04 * k), 0.003, M['vernice_rossa'] if k % 2 else M['gomma'], seg=5))
             if fis is None:
-                fis = prop('fischietto_1', 'fischietto', (x, Y1 - 0.1, 1.3 - 0.04 * k - 0.05), 0, 0.07)
+                f = fis = prop('fischietto_1', 'fischietto', (x, Y1 - 0.1, 1.3 - 0.04 * k - 0.05), 0, 0.07)
             else:
-                copia(fis, f'fischietto_{k + 1}', (x, Y1 - 0.1, 1.3 - 0.04 * k - 0.05), random.uniform(-30, 30))
+                f = copia(fis, f'fischietto_{k + 1}', (x, Y1 - 0.1, 1.3 - 0.04 * k - 0.05), random.uniform(-30, 30))
+            # appeso al capo del cordino (prima stava 5-10 cm più in basso, staccato)
+            bpy.context.view_layer.update()
+            f.location.z += (1.35 - 0.04 * k) - max((f.matrix_world @ v.co).z for v in f.data.vertices)
     rad = [L.scatola('radiatore', (11.7, Y1 - 0.12, 0.15), (13.1, Y1 - 0.1, 0.17), M['metallo_grezzo'])]
     x = 11.72
     while x < 13.1:
@@ -849,8 +868,8 @@ def stanzino(M):
     L.col_scatola((11.8, Y0, 0), (13.2, Y0 + 0.6, 0.78))
     prop('radio', 'radio', (12.95, Y0 + 0.3, 0.78), 190, 0.32)
     prop('ricetrasmittente', 'radio_ricetrasmittente', (12.35, Y0 + 0.35, 0.78), 0, 0.2, rot=(R(90), 0, 0))
-    prop('sedia', 'sedia', (12.4, Y0 + 1.05, 0), 160, 0.88, 'z')
-    HQ.metti('estintore_stanzino', 'estintore_staffa', (14.6, Y0 + 0.21, 0.82), (None, None, 0.62), rot_z=R(-90))
+    col_ob(prop('sedia', 'sedia', (12.4, Y0 + 1.05, 0), 160, 0.88, 'z'))
+    col_ob(HQ.metti('estintore_stanzino', 'estintore_staffa', (14.6, Y0 + 0.21, 0.82), (None, None, 0.62), rot_z=R(-90)))
     prop('ciabatta_stanzino', 'ciabatta', (14.2, 9.5, 0), 250, 0.27)
 
     # ---- luci
