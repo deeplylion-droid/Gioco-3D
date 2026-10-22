@@ -135,6 +135,17 @@ jobs:
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_primo_uso.gd
           xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_torre_ingresso.gd
 
+      - name: Test del blocco del pool di thread (la sala al primo fotogramma con 4 worker; renderer Vulkan software)
+        if: steps.progetto.outputs.presente == 'si'
+        timeout-minutes: 20
+        run: |
+          # 4 worker, come sulle macchine dei giocatori con 4 core. Il test esce senza aspettare il pool
+          # (le pipeline in coda col renderer software occupano più di 12 GB): conta la riga RISULTATO.
+          printf '[threading]\nworker_pool/max_threads=4\n' > godot/override.cfg
+          xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 --script res://tests/run.gd -- res://tests/test_pool_sala.gd 2>&1 | tee pool_sala.log || true
+          rm -f godot/override.cfg
+          grep -q "RISULTATO: [0-9]* controlli ok, 0 falliti" pool_sala.log
+
       - name: Esporta Windows e Linux
         if: steps.progetto.outputs.presente == 'si'
         run: |

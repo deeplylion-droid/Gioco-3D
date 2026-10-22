@@ -1,7 +1,7 @@
 extends Node
 ## Test dei bambini (creature minori): le due scene si caricano, i modelli hanno lo scheletro e
 ## tutte le animazioni, e le modalità funzionano nella scena di prova: statua che reagisce allo
-## sguardo, osserva con la testa, si rivela, scappa se ti avvicini (la torcia non c'è più), sparisce.
+## sguardo, osserva con la testa, si rivela, scappa se ti avvicini (non dalla luce della torcia: scelta dell'utente), sparisce.
 ## Uso:
 ##   godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_bambini.gd
 ## Esce con codice 0 se tutto va bene, 1 se qualche controllo fallisce.
@@ -107,8 +107,19 @@ func _test_scene() -> void:
 func _test_statua_e_fuga() -> void:
 	print("Testa a cubo: statua, sguardo, rivelazione, fuga")
 	p.teleport(Vector3(0.5, 0, 5.2), 0.0, 0.0)
-	check(p.find_children("*", "Torcia", true, false).is_empty() and not InputMap.has_action(&"torcia"),
-		"il giocatore non ha la torcia (e il tasto F non c'è più)")
+	var torce := p.find_children("*", "Torcia", true, false)
+	check(torce.size() == 1 and bool(torce[0].get(&"accesa")) and InputMap.has_action(&"torcia"),
+		"il giocatore ha la torcia accesa (tasto F)")
+	if torce.size() == 1:
+		# richiesta dell'utente del 21 ottobre: la metà dell'ultima (energia 2,8 -> 1,4, nebbia 0,12 -> 0,06)
+		var luce := torce[0].get(&"luce") as SpotLight3D
+		check(is_equal_approx(float(torce[0].get(&"energia")), 1.4) and luce != null
+				and is_equal_approx(luce.light_volumetric_fog_energy, 0.06) and is_equal_approx(luce.spot_angle, 40.0),
+			"torcia: energia 1,4, fascio nella nebbia 0,06, cono di 40 gradi")
+		await _frames(2)
+		check(luce != null and luce.light_energy <= 1.4 + 0.001 and luce.light_energy > 0.0
+				and (-luce.global_basis.z).dot(-p.camera.global_basis.z) > 0.999,
+			"la luce della torcia è accesa e segue lo sguardo (%.2f)" % (luce.light_energy if luce else 0.0))
 	var b := (load(CUBO) as PackedScene).instantiate() as Bambino
 	b.modalita = Bambino.Modalita.STATUA
 	b.reazione = Bambino.Reazione.SI_GIRA
@@ -127,7 +138,7 @@ func _test_statua_e_fuga() -> void:
 	p.look_at_point(b.punto_testa())
 	await _frames(60)
 	check(ev.has(&"visto") and ev.has(&"si_gira"), "quando lo guardi si gira (segnali visto e si_gira)")
-	check(b.modalita == Bambino.Modalita.OSSERVA, "poi osserva")
+	check(b.modalita == Bambino.Modalita.OSSERVA, "poi osserva, anche con la torcia puntata addosso (non scappa dalla luce)")
 	await _frames(240)
 	check(_anim(b).current_animation == &"fermo", "finito di girarsi respira fermo")
 	var sguardo := b.find_children("SguardoTesta", "LookAtModifier3D", true, false)
