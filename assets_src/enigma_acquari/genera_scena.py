@@ -443,6 +443,12 @@ node('GuidaSinistra', 'MeshInstance3D', G, transform=tr(ID, (X, (YT + 0.06) / 2,
      material_override='ExtResource("m_giallo")')
 node('GuidaDestra', 'MeshInstance3D', G, transform=tr(ID, (X, (YT + 0.06) / 2, Z1)), mesh='SubResource("guida_lato_terra")',
      material_override='ExtResource("m_giallo")')
+# le due guide che arrivano a terra sono montanti veri, ai lati del varco: con la loro collisione (prima ci si
+# passava attraverso, a meno di 10 cm dalla testa)
+sr_tardi('BoxShape3D', 'forma_guida', size='Vector3(0.05, %.2f, 0.09)' % (YT + 0.06))
+node('Collisione', 'StaticBody3D', G, collision_mask='0')
+for k, z in enumerate((Z0, Z1)):
+    node('Guida%d' % (k + 1), 'CollisionShape3D', G + '/Collisione', transform=tr(ID, (X, (YT + 0.06) / 2, z)), shape='SubResource("forma_guida")')
 node('GuidaSopra', 'MeshInstance3D', G, transform=tr(ID, (X, YT, (Z0 + Z1) / 2)), mesh='SubResource("guida_sopra")',
      material_override='ExtResource("m_giallo")')
 for k, z in enumerate((Z0, Z1)):

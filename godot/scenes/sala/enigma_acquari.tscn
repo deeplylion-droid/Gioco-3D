@@ -171,6 +171,9 @@ size = Vector3(0.06, 1.0, 1.000)
 [sub_resource type="BoxShape3D" id="parapetto_scala_forma"]
 size = Vector3(1.664, 1.0, 0.06)
 
+[sub_resource type="BoxShape3D" id="forma_guida"]
+size = Vector3(0.05, 5.56, 0.09)
+
 [node name="EnigmaAcquari" type="Node3D"]
 script = ExtResource("enigma")
 
@@ -671,6 +674,17 @@ material_override = ExtResource("m_giallo")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.645, 2.78, -11.55)
 mesh = SubResource("guida_lato_terra")
 material_override = ExtResource("m_giallo")
+
+[node name="Collisione" type="StaticBody3D" parent="LampadePortone/Spente"]
+collision_mask = 0
+
+[node name="Guida1" type="CollisionShape3D" parent="LampadePortone/Spente/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.645, 2.78, -18.45)
+shape = SubResource("forma_guida")
+
+[node name="Guida2" type="CollisionShape3D" parent="LampadePortone/Spente/Collisione"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.645, 2.78, -11.55)
+shape = SubResource("forma_guida")
 
 [node name="GuidaSopra" type="MeshInstance3D" parent="LampadePortone/Spente"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.645, 5.5, -15)
