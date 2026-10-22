@@ -9,6 +9,7 @@ extends Node
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sala.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
+const POLAROID_LIBERE := preload("res://tests/polaroid_libere.gd")
 
 var level: Node
 var p: Player
@@ -35,16 +36,26 @@ func _run() -> void:
 	await _frames(5)
 	level = get_tree().current_scene
 	p = GameState.player
-	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca.
+	# Con gli interni si parte dal risveglio nel corridoio: si aspetta che finisca. Durante la scena la
+	# riga dei comandi non compare: arriva quando il giocatore li riprende.
+	var riga_nella_scena := false
+	var bloccato := false
 	for i in 400:
 		if p.input_enabled:
 			break
+		bloccato = true
+		riga_nella_scena = riga_nella_scena or _riga_comandi()
 		await get_tree().process_frame
+	await _frames(3)
 	var puddle: WaterTank = level.get_node("Piscina/Pozza")
 	var svuota: PiscinaOnde = level.get_node("Piscina/SvuotaPiscina")
 	var hatch_button: WaterButton = level.get_node("Piscina/PulsantePortello")
 	var hatch: HingedHatch = level.get_node("Piscina/Portello")
 	var lamp: FlickerLight = level.get_node("Vasca/Sfarfallio")
+
+	print("La riga dei comandi")
+	check(bloccato and not riga_nella_scena, "durante il risveglio non c'è la riga dei comandi sopra la scena")
+	check(_riga_comandi(), "compare quando il giocatore riprende i comandi")
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
@@ -52,6 +63,14 @@ func _run() -> void:
 	var p10 := polaroid.filter(func(n): return int(n.get(&"photo")) == 10)
 	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == 9,
 		"nella demo ci sono 9 Polaroid: P10 torna con la sala della torre (%d)" % polaroid.size())
+	var coperte: PackedStringArray = POLAROID_LIBERE.coperte(level)
+	check(coperte.is_empty(), "nessuna Polaroid è coperta o compenetrata da un'altra mesh %s" % str(coperte))
+	var sospese := PackedStringArray()
+	for f in polaroid:
+		var h: float = POLAROID_LIBERE.appoggio(level, f)
+		if h < -0.002 or h > 0.012:
+			sospese.append("%s: %.1f cm" % [f.name, h * 100.0])
+	check(sospese.is_empty(), "le Polaroid sono appoggiate (da 0 a 1 cm sopra quello che hanno sotto) %s" % str(sospese))
 	var medusa := level.get_node("Vasca/Medusa") as MedusaAffacciata
 	check(medusa != null and medusa.get_model_instance() != null, "la medusa è affacciata alla vasca")
 	var strappo := medusa.get_model_instance().find_child("Medusa_Strappo", true, false) as MeshInstance3D
@@ -71,6 +90,7 @@ func _run() -> void:
 	if det:
 		# (Il 16 ottobre l'ambiente ne ha tolti un po', compenetrati o al posto del soppalco.)
 		check(det.get_child_count() >= 80, "i dettagli della sala sono montati (%d nodi)" % det.get_child_count())
+	await _controlla_mascotte()
 	var space := p.get_world_3d().direct_space_state
 	var wall := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(-3, 1, 18), Vector3(-3, 1, 22)))
 	check(not wall.is_empty() and absf(wall.position.z - 20.0) < 0.3, "il muro sud ha la collisione")
@@ -422,6 +442,55 @@ func _run() -> void:
 	get_tree().quit(1 if _failed > 0 else 0)
 
 
+## Le statue-mascotte e il nome di Jilly Jubilee (scelte del 19 ottobre): ai loro posti, appoggiate,
+## con la collisione; gli oggetti di Jilly sul muro, con le lampade dell'insegna accese.
+func _controlla_mascotte() -> void:
+	print("Le statue-mascotte e Jilly Jubilee")
+	var m := level.get_node_or_null("Mascotte") as MascotteSala
+	check(m != null, "c'è il nodo delle mascotte")
+	if m == null:
+		return
+	var space := p.get_world_3d().direct_space_state
+	for s in MascotteSala.STATUE:
+		var st := m.get_node_or_null(NodePath(s.nome)) as Node3D
+		check(st != null and st.global_position.distance_to(s.pos) < 0.01, "%s è al suo posto" % s.nome)
+		if st == null:
+			continue
+		var x: float = s.pos.x
+		var z: float = s.pos.z
+		# il pavimento sotto (senza la statua): la base ci poggia, né sospesa né affondata
+		var q := PhysicsRayQueryParameters3D.create(Vector3(x, 3.0, z), Vector3(x, -3.0, z))
+		var corpo := st.get_node(^"Collisione") as StaticBody3D
+		q.exclude = [corpo.get_rid(), p.get_rid()]
+		var pav := space.intersect_ray(q)
+		check(not pav.is_empty() and absf(pav.position.y - st.global_position.y) < 0.03,
+			"%s poggia sul pavimento (%.3f / %.3f)" % [s.nome, st.global_position.y, pav.position.y if pav else -99.0])
+		# la collisione: un raggio a 1 m d'altezza, dal davanti verso il centro, si ferma sulla statua
+		var davanti := st.global_basis.z.normalized()
+		var centro := Vector3(x, st.global_position.y + 1.0, z)
+		var r := PhysicsRayQueryParameters3D.create(centro + davanti * 1.5, centro)
+		r.exclude = [p.get_rid()]
+		var h := space.intersect_ray(r)
+		check(not h.is_empty() and h.collider == corpo, "%s ha la collisione (%s)" % [s.nome, str(h.get("collider", "niente"))])
+	for j in MascotteSala.JILLY:
+		var ob := m.get_node_or_null(NodePath(j.nome)) as Node3D
+		check(ob != null and ob.global_position.distance_to(j.pos) < 0.01, "%s è sul muro" % j.nome)
+		if ob == null:
+			continue
+		# il muro è subito dietro: un raggio dal davanti dell'oggetto verso il muro lo trova entro 5 cm
+		var dietro := space.intersect_ray(PhysicsRayQueryParameters3D.create(j.pos + j.normale * 0.3, j.pos - j.normale * 0.3))
+		check(not dietro.is_empty() and dietro.position.distance_to(j.pos) < 0.05,
+			"%s è appoggiato al muro (%.3f m)" % [j.nome, dietro.position.distance_to(j.pos) if dietro else 99.0])
+	check(m.lampade_accese() == 2, "le due lampade a collo d'oca dell'insegna sono accese (%d)" % m.lampade_accese())
+	# contro lo squalo si va a sbattere: camminando verso di lui ci si ferma davanti al basamento
+	p.teleport(Vector3(8.0, 0.0, 1.5), -PI / 2.0, 0.0)
+	await _frames(5)
+	await _hold(&"move_forward", 150)
+	await _frames(10)
+	check(p.global_position.x > 8.5 and p.global_position.x < 9.65,
+		"camminando verso lo squalo ci si ferma davanti a lui (x %.2f)" % p.global_position.x)
+
+
 func check(cond: bool, what: String) -> void:
 	if cond:
 		_passed += 1
@@ -473,3 +542,10 @@ func _svuota_piscina(vasca: WaterTank, dove: Vector3, acqua: Vector3, fuori: Vec
 		Input.action_release(&"spray")
 		fotogrammi += k
 	return [pieni, fotogrammi / 60.0]
+
+
+## La riga dei comandi ("WASD muoviti · ...") è sullo schermo.
+func _riga_comandi() -> bool:
+	var hud := p.get_node_or_null(^"HUD")
+	var l: Label = hud.get(&"_hint") if hud else null
+	return l != null and l.visible and l.modulate.a > 0.01 and l.text.contains("WASD")

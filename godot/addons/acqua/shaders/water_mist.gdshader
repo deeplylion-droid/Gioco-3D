@@ -10,6 +10,9 @@ uniform sampler2D depth_tex : hint_depth_texture, filter_nearest, repeat_disable
 uniform vec3 tint : source_color = vec3(0.8, 0.85, 0.88);
 uniform float density : hint_range(0.0, 2.0) = 0.5;
 uniform float soft_distance = 0.4;
+/** Distanza dalla camera (m) sotto cui lo sbuffo sparisce: si rimpicciolisce da 2 volte questa
+ *  distanza fino a zero (niente sbuffi a tutto schermo davanti alla camera). 0: spento. */
+uniform float near_camera = 0.0;
 
 varying float v_seed;
 
@@ -18,6 +21,9 @@ void vertex() {
 	// billboard con la scala della particella
 	mat4 mv = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
 	float s = length(MODEL_MATRIX[0].xyz);
+	if (near_camera > 0.0) {
+		s *= smoothstep(near_camera, near_camera * 2.0, distance(CAMERA_POSITION_WORLD, MODEL_MATRIX[3].xyz));
+	}
 	mv = mv * mat4(vec4(s, 0.0, 0.0, 0.0), vec4(0.0, s, 0.0, 0.0), vec4(0.0, 0.0, s, 0.0), vec4(0.0, 0.0, 0.0, 1.0));
 	MODELVIEW_MATRIX = mv;
 }

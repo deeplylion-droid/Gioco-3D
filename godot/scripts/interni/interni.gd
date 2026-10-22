@@ -34,6 +34,7 @@ const LUCE_EMERGENZA_SCRIPT := preload("res://addons/grafica/luce_emergenza.gd")
 @onready var passaggio_tornello: Area3D = $Meccanismi/PassaggioTornello
 @onready var perno_turbina: Node3D = $Meccanismi/PernoTurbina
 @onready var risveglio: Marker3D = $Gioco/Risveglio
+@onready var risveglio_squalo: RisveglioSqualo = $Gioco/RisveglioSqualo
 @onready var trigger_docce: Area3D = $Gioco/DocceDaSole
 @onready var trigger_armadietto: Area3D = $Gioco/ArmadiettoSbatte
 
@@ -351,8 +352,19 @@ func _crea_giocatore() -> void:
 		fai_risveglio(p)
 
 
-## Il giocatore si sveglia per terra: la camera parte sdraiata, guarda il soffitto e si rialza.
-func fai_risveglio(p: Player) -> void:
+## Il risveglio: il giocatore si sveglia per terra con il mostro-squalo addosso (GDD, "L'inizio con il
+## mostro-squalo"; scripts/interni/risveglio_squalo.gd). Senza la scena dello squalo: la camera parte
+## sdraiata, guarda il soffitto e si rialza. Nelle prove automatiche (test, scatti) la scena dello squalo
+## parte solo con [param con_squalo]: dura più di 13 secondi.
+func fai_risveglio(p: Player, con_squalo := not Game.is_automated()) -> void:
+	var squalo := get_node_or_null(^"Gioco/RisveglioSqualo") as RisveglioSqualo
+	if squalo and con_squalo:
+		squalo.avvia(p)
+		return
+	_risveglio_semplice(p)
+
+
+func _risveglio_semplice(p: Player) -> void:
 	p.input_enabled = false
 	var cam := p.camera
 	var yaw := p.yaw

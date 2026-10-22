@@ -63,6 +63,9 @@ extends Node3D
 ## che illumina il fronte e il secchio gigante.
 @export var festone_punti: PackedVector3Array = [Vector3(-20.0, 4.2, -13.0), Vector3(-15.9, 7.35, -19.65), Vector3(-12.9, 7.35, -19.65), Vector3(-8.0, 4.2, -24.0)]
 @export var festone_cala := 0.55          # quanto scende il filo a metà campata
+## Per campata (se c'è, al posto di festone_cala): quella in cima alla struttura passa sopra il secchio gigante,
+## e col filo lento le lampadine ci entravano dentro (controllo di posizionamento del 22 ottobre).
+@export var festone_cala_campate: PackedFloat32Array = [0.55, 0.08, 0.55]
 @export var festone_passo := 0.42
 @export var energia_festone := 1.1
 ## Lampadine spente (rotte) e lampadine che sfarfallano, contate lungo il festone.
@@ -153,7 +156,8 @@ func _crea_area_bimbi() -> void:
 		var prec := a
 		for i in passi + 1:
 			var t := float(i) / passi
-			var p := a.lerp(b, t) - Vector3.UP * festone_cala * 4.0 * t * (1.0 - t)
+			var cala := festone_cala_campate[c] if c < festone_cala_campate.size() else festone_cala
+			var p := a.lerp(b, t) - Vector3.UP * cala * 4.0 * t * (1.0 - t)
 			if i > 0:
 				var pezzo := MeshInstance3D.new()
 				pezzo.mesh = tubo

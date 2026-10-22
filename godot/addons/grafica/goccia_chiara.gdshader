@@ -13,6 +13,10 @@ uniform vec3 tint : source_color = vec3(0.75, 0.82, 0.85);
 uniform float opacity : hint_range(0.0, 1.0) = 0.75;
 uniform float refraction = 0.012;
 uniform float rim_light = 0.25;
+/** Distanza dalla camera (m) sotto cui la goccia sparisce: si rimpicciolisce da 2 volte questa
+ *  distanza fino a zero, cosi' non copre lo schermo e non costa pixel. 0: spento (schizzi
+ *  d'impatto da vicino, riscontro sulla v0.3.7). */
+uniform float vicino_camera = 0.0;
 
 varying vec3 v_axis_x;
 varying vec3 v_axis_y;
@@ -29,6 +33,11 @@ void vertex() {
 	}
 	x = normalize(x);
 	float sx = length(MODEL_MATRIX[0].xyz);
+	if (vicino_camera > 0.0) {
+		float f = smoothstep(vicino_camera, vicino_camera * 2.0, distance(CAMERA_POSITION_WORLD, center));
+		sx *= f;
+		ylen *= f;
+	}
 	vec3 wp = center + x * VERTEX.x * sx + y * VERTEX.y * ylen;
 	v_axis_x = x;
 	v_axis_y = y;

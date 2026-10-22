@@ -84,6 +84,7 @@
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_cubo.tscn" id="80_xkett"]
 [ext_resource type="PackedScene" path="res://scenes/creature/bambino_agnello.tscn" id="81_ccseb"]
 [ext_resource type="PackedScene" path="res://scenes/sala/enigma_acquari.tscn" id="82_enigma"]
+[ext_resource type="Script" path="res://scripts/environment/mascotte_sala.gd" id="83_mascotte"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5tb5"]
 resource_name = "M_acqua_vasca"
@@ -677,7 +678,7 @@ open_speed = 0.4
 [node name="Polaroid" type="Node3D" parent="." unique_id=1600288938]
 
 [node name="Polaroid04" type="Area3D" parent="Polaroid" unique_id=982921701 instance=ExtResource("69_7hdua")]
-transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -12.9, 6.4, -21)
+transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -16.03, 1.5, -15.35)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -710,7 +711,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid07" type="Area3D" parent="Polaroid" unique_id=604288535 instance=ExtResource("69_7hdua")]
-transform = Transform3D(0.21978361, 0, 0.97554865, 0, 1, 0, -0.97554865, 0, 0.21978361, -3.23, -8.26, 43.66)
+transform = Transform3D(0.21978361, 0, 0.97554865, 0, 1, 0, -0.97554865, 0, 0.21978361, -3.23, -8.26, 43.36)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -721,7 +722,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid08" type="Area3D" parent="Polaroid" unique_id=1710405987 instance=ExtResource("69_7hdua")]
-transform = Transform3D(0.7648422, 0, 0.64421767, 0, 1, 0, -0.64421767, 0, 0.7648422, -8.5, 0, 6.6)
+transform = Transform3D(0.7648422, 0, 0.64421767, 0, 1, 0, -0.64421767, 0, 0.7648422, -8.9, 0, 6.6)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -747,6 +748,9 @@ one_shot = true
 [node name="GocceNellaPozza" type="Node3D" parent="Atmosfera" unique_id=1817755570 instance=ExtResource("71_fgg13")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 4.5, 2.6)
 script = ExtResource("72_jvw6a")
+
+[node name="Mascotte" type="Node3D" parent="." unique_id=1843270517]
+script = ExtResource("83_mascotte")
 
 [node name="Gioco" type="Node3D" parent="." unique_id=845353221]
 
@@ -964,7 +968,7 @@ monitorable = false
 shape = SubResource("BoxShape3D_ymajg")
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=202201667 instance=ExtResource("77_6lyoo")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 10.7, 0, 39.65)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 4.8, 0, 39.6)
 collision_layer = 2
 collision_mask = 13
 floor_snap_length = 0.3

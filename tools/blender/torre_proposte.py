@@ -32,6 +32,7 @@ GIOCO_USCITA = os.path.normpath(os.path.join(QUI, '..', '..', 'godot', 'assets',
 T = S.SALA_TORRE
 XI0, XI1, YI0, YI1, H = S.X1 + K.SPESSORE_PARETE, T['x1'], T['y0'], T['y1'], T['h']   # interno della sala
 FONDO = -20.0                                   # il fondo della sala, nello scafo
+SCOSTA_OVEST = 0.04                             # la faccia della parete ovest sta in XI0 + 4 cm (vedi guscio_profondo)
 PORTONE = dict(x=S.X1, y=T['cy'], largo=T['largo'], alto=T['alto'])
 
 PALO, RINGHIERA, BALAUSTRA = 'gioco_blu', 'gioco_rosso', 'gioco_blu'
@@ -162,15 +163,20 @@ def guscio_profondo(c):
     for p, q in muri.values():
         c.faccia_griglia([(p[0], p[1], FONDO), (q[0], q[1], FONDO), (q[0], q[1], FONDO + 1.5), (p[0], p[1], FONDO + 1.5)], 'vasca', 1.0)
         c.faccia_griglia([(p[0], p[1], FONDO + 1.5), (q[0], q[1], FONDO + 1.5), (q[0], q[1], H), (p[0], p[1], H)], 'stanza_muro', 2.0)
-    # parete ovest: sotto la sala grande tutta piena, sopra con il varco del portone
+    # parete ovest: sotto la sala grande tutta piena, sopra con il varco del portone. Sta SCOSTA_OVEST più
+    # dentro la sala: in XI0 c'è il retro della parete est della sala grande (con le cornici degli oblò, che
+    # sporgono di 2,5 cm), e due facce nello stesso piano lampeggiano (prova del 19 ottobre).
     P = PORTONE
     ya, yb = P['y'] - P['largo'] / 2, P['y'] + P['largo'] / 2
-    w = [(x0, y1), (x0, y0)]
-    c.faccia_griglia([(x0, y1, FONDO), (x0, y0, FONDO), (x0, y0, 0), (x0, y1, 0)], 'stanza_muro', 2.0)
-    c.faccia_griglia([(x0, y1, 0), (x0, yb, 0), (x0, yb, H), (x0, y1, H)], 'stanza_muro', 2.0)
-    c.faccia_griglia([(x0, ya, 0), (x0, y0, 0), (x0, y0, H), (x0, ya, H)], 'stanza_muro', 2.0)
-    c.faccia_griglia([(x0, yb, P['alto']), (x0, ya, P['alto']), (x0, ya, H), (x0, yb, H)], 'stanza_muro', 2.0)
-    del w
+    xw = x0 + SCOSTA_OVEST
+    c.faccia_griglia([(xw, y1, FONDO), (xw, y0, FONDO), (xw, y0, 0), (xw, y1, 0)], 'stanza_muro', 2.0)
+    c.faccia_griglia([(xw, y1, 0), (xw, yb, 0), (xw, yb, H), (xw, y1, H)], 'stanza_muro', 2.0)
+    c.faccia_griglia([(xw, ya, 0), (xw, y0, 0), (xw, y0, H), (xw, ya, H)], 'stanza_muro', 2.0)
+    c.faccia_griglia([(xw, yb, P['alto']), (xw, ya, P['alto']), (xw, ya, H), (xw, yb, H)], 'stanza_muro', 2.0)
+    # nel varco le spallette continuano quelle della sala fino alla parete scostata (niente fessura)
+    c.faccia_verso([(x0, ya, 0), (xw, ya, 0), (xw, ya, P['alto']), (x0, ya, P['alto'])], 'stanza_muro', (0, 1, 0))
+    c.faccia_verso([(x0, yb, 0), (xw, yb, 0), (xw, yb, P['alto']), (x0, yb, P['alto'])], 'stanza_muro', (0, -1, 0))
+    c.faccia_verso([(x0, ya, P['alto']), (xw, ya, P['alto']), (xw, yb, P['alto']), (x0, yb, P['alto'])], 'stanza_muro', (0, 0, -1))
     # le costole dello scafo sui muri lunghi, ogni 4 m (come nei corridoi della nave)
     for x in range(22, 40, 4):
         for y, s in ((y0, 1), (y1, -1)):

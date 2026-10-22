@@ -21,6 +21,7 @@
 [ext_resource type="Script" path="res://scripts/game/checkpoint.gd" id="s_cp"]
 [ext_resource type="PackedScene" path="res://scenes/interni/luci_interni.tscn" id="p_luci"]
 [ext_resource type="Script" path="res://scripts/mechanisms/ricarica_vasca.gd" id="s_ricarica"]
+[ext_resource type="Script" path="res://scripts/interni/risveglio_squalo.gd" id="s_squalo"]
 
 [sub_resource type="BoxShape3D" id="blocco_tornello"]
 size = Vector3(1.25, 2.25, 0.3)
@@ -178,7 +179,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid02" parent="Polaroid" instance=ExtResource("p_pol")]
-position = Vector3(3.38, 1.6, -7.9)
+position = Vector3(3.38, 1.555, -7.9)
 rotation = Vector3(0, 1.5708, 0)
 collision_layer = 16
 collision_mask = 0
@@ -191,8 +192,8 @@ one_shot = true
 snap_to_surface = false
 
 [node name="Polaroid03" parent="Polaroid" instance=ExtResource("p_pol")]
-position = Vector3(12.65, 1.3, -6.245)
-rotation = Vector3(-1.5708, 0, 0.05)
+position = Vector3(12.65, 1.3, -6.257)
+rotation = Vector3(-1.5708, 0, 0)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -206,12 +207,17 @@ snap_to_surface = false
 [node name="Gioco" type="Node3D" parent="."]
 
 [node name="Risveglio" type="Marker3D" parent="Gioco"]
-position = Vector3(20.4, 0, -1.25)
-rotation = Vector3(0, 1.5708, 0)
+position = Vector3(14.5, 0, -1.3)
+rotation = Vector3(0, -1.5708, 0)
 gizmo_extents = 0.6
 
+[node name="RisveglioSqualo" type="Node3D" parent="Gioco"]
+position = Vector3(16.05, 0, -1.3)
+rotation = Vector3(0, -1.5708, 0)
+script = ExtResource("s_squalo")
+
 [node name="CheckpointRisveglio" type="Area3D" parent="Gioco" node_paths=PackedStringArray("spawn_point")]
-position = Vector3(19.6, 1.5, -1.3)
+position = Vector3(14, 1.5, -1.3)
 collision_layer = 0
 collision_mask = 2
 monitorable = false

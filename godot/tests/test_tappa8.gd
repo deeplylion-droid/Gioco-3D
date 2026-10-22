@@ -304,6 +304,42 @@ func _run() -> void:
 	var anta := portone.anta.global_position
 	check(absf(anta.z - (PORTONE.z + portone.corsa)) < 0.05 and absf(anta.x - PORTONE.x) < 0.05,
 		"l'anta è scorsa di %.1f m verso sud (%s)" % [portone.corsa, str(anta)])
+	# prova del 19 ottobre: si apre del tutto, e lungo la corsa non attraversa niente
+	var forme := portone.anta.find_children("*", "CollisionShape3D", true, false)
+	var box := AABB()
+	for f in forme:
+		var fb := (f as CollisionShape3D).global_transform * (f as CollisionShape3D).shape.get_debug_mesh().get_aabb()
+		box = fb if box.size == Vector3.ZERO else box.merge(fb)
+	check(not forme.is_empty() and box.position.z > -12.0,
+		"aperto lascia libero tutto il varco (l'anta va da z %.2f a %.2f, il varco finisce a -12)" % [box.position.z, box.end.z])
+	check(await _corsa_sgombra(portone), "lungo la corsa l'anta non tocca nient'altro")
+	# la cornice di lampadine davanti al portone (enigma degli acquari) non è appesa al nulla: i montanti
+	# arrivano a terra, la traversa è legata al muro sopra il binario, e l'anta le scorre dietro senza toccarla
+	var spente := level.get_node_or_null(^"Gioco/EnigmaAcquari/LampadePortone/Spente")
+	if spente == null:
+		check(false, "c'è la cornice di lampadine del portone")
+	else:
+		var anta_vis := AABB()
+		for vi in portone.anta.find_children("*", "MeshInstance3D", true, false) + [portone.anta]:
+			if vi is MeshInstance3D:
+				var mb := (vi as MeshInstance3D).global_transform * (vi as MeshInstance3D).get_aabb()
+				anta_vis = mb if anta_vis.size == Vector3.ZERO else anta_vis.merge(mb)
+		var montanti_a_terra := true
+		var davanti := true
+		for nome in ["GuidaSinistra", "GuidaDestra", "GuidaSopra"]:
+			var g := spente.get_node(NodePath(nome)) as MeshInstance3D
+			var gb := g.global_transform * g.get_aabb()
+			if nome != "GuidaSopra":
+				montanti_a_terra = montanti_a_terra and gb.position.y < 0.02
+			davanti = davanti and gb.end.x < anta_vis.position.x - 0.01
+		var staffe := spente.find_children("StaffaMuro*", "MeshInstance3D", false, false)
+		var al_muro := staffe.size() >= 3
+		for st in staffe:
+			var sb := (st as MeshInstance3D).global_transform * (st as MeshInstance3D).get_aabb()
+			al_muro = al_muro and sb.end.x > 19.98 and sb.position.y > 5.43
+		check(montanti_a_terra and al_muro and davanti,
+			"cornice di lampadine: a terra %s, legata al muro sopra il binario %s, davanti all'anta (x %.3f) %s" \
+			% [montanti_a_terra, al_muro, anta_vis.position.x, davanti])
 	ok = true
 	for t in [Vector3(8.0, 0, -12.75), Vector3(15.0, 0, -14.0), Vector3(16.5, 0, -15.0)]:
 		ok = ok and await _cammina_verso(t, 900)
@@ -441,6 +477,33 @@ func _fine() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
+
+
+## Vero se l'anta del portone, in 11 posizioni dalla chiusa all'aperta, non tocca nessun altro corpo
+## (panche, lampade, cornici: la corsa lungo il muro est è libera). Alla fine la lascia aperta.
+func _corsa_sgombra(portone: PortoneTorre) -> bool:
+	var forme := portone.anta.find_children("*", "CollisionShape3D", true, false)
+	var propri: Array[RID] = []
+	for f in forme:
+		var corpo := (f as Node).get_parent() as CollisionObject3D
+		if corpo:
+			propri.append(corpo.get_rid())
+	var sgombra := not forme.is_empty()
+	for i in 11:
+		portone.call(&"_metti", i / 10.0)
+		await get_tree().physics_frame
+		var spazio := portone.get_world_3d().direct_space_state
+		for f in forme:
+			var q := PhysicsShapeQueryParameters3D.new()
+			q.shape = (f as CollisionShape3D).shape
+			# 3 cm più su: la base dell'anta sfiora il pavimento
+			q.transform = (f as CollisionShape3D).global_transform.translated(Vector3(0.0, 0.03, 0.0))
+			q.exclude = propri
+			for r in spazio.intersect_shape(q, 8):
+				sgombra = false
+				printerr("    a %d%% l'anta tocca %s" % [i * 10, str(r.get("collider"))])
+	portone.call(&"_metti", 1.0)
+	return sgombra
 
 
 func _checkpoint() -> String:

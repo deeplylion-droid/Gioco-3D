@@ -75,6 +75,8 @@ func _run() -> void:
 	await _frames(3)
 	check(ritorno.attivo, "parte il ritorno al buio")
 	check(not medusa.visible, "la medusa non c'è più")
+	var masc := level.get_node_or_null("Mascotte") as MascotteSala
+	check(masc != null and masc.lampade_accese() == 0, "le lampade dell'insegna di Jilly si spengono")
 	check(ritorno.metri_scia() >= 8.0, "una scia di bava rosa a terra (%.1f m)" % ritorno.metri_scia())
 	# Riscontro sulla v0.3.1: la scia parte dalla vasca, da dove lei era affacciata.
 	var occhio_vasca: Vector3 = medusa.call(&"get_eye_position")
