@@ -27,9 +27,18 @@ func _run() -> void:
 	for t in OS.get_environment("TAPPE").split(";", false):
 		var a := t.split(",")
 		var w := Vector3(float(a[0]), 0.0, float(a[1]))
-		var salta := a.size() > 2
+		var salta := a.size() > 2 and a[2] == "s"
+		var giu := a.size() > 2 and a[2] == "c"
+		if giu:
+			Input.action_press(&"crouch")
 		var ok := await _cammina(w, 300, salta)
-		print("TAPPA %s salta %s: %s, arrivato in %s" % [t, salta, ok, p.global_position])
+		if giu:
+			Input.action_release(&"crouch")
+		var sp := p.get_world_3d().direct_space_state
+		var q := PhysicsRayQueryParameters3D.create(p.global_position + Vector3(0, 0.1, 0), p.global_position + Vector3(0, 3.0, 0), Layers.WORLD)
+		q.exclude = [p.get_rid()]
+		var h := sp.intersect_ray(q)
+		print("TAPPA %s salta %s accovacciato %s: %s, arrivato in %s, soffitto %s" % [t, salta, giu, ok, p.global_position, ("%.2f m sopra (%s)" % [h.position.y - p.global_position.y, h.collider.name]) if not h.is_empty() else "niente"])
 	get_tree().quit()
 
 func _cammina(t: Vector3, max_frames: int, salta: bool) -> bool:

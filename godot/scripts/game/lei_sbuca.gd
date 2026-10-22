@@ -459,13 +459,39 @@ func punti_corpo() -> PackedVector3Array:
 	return out
 
 
-## Vero quando è tutta sotto il pelo dell'acqua della fossa (testa, mani e punte dei tentacoli).
+## Vero quando è tutta sotto il pelo dell'acqua della fossa (testa, mani e punte dei tentacoli), o sotto il
+## pavimento e il bordo. Conta solo dentro l'acqua: le punte stese sul pavimento fuori dalla fossa stanno più
+## in basso del pelo, ma all'asciutto.
 func tutta_sotto() -> bool:
-	var pelo := _pelo() - 0.05
 	for q in punti_corpo():
-		if q.y >= pelo:
+		if not sott_acqua(q) and not sotto_il_pavimento(q):
 			return false
 	return true
+
+
+## Vero se sopra il punto [param q] c'è il pavimento o il bordo (la collisione del mondo): da sopra non si vede.
+func sotto_il_pavimento(q: Vector3) -> bool:
+	if not is_inside_tree():
+		return false
+	var giu := PhysicsRayQueryParameters3D.create(Vector3(q.x, q.y + 3.0, q.z), q, Layers.WORLD)
+	if coperchio:
+		giu.exclude = [coperchio.get_rid()]
+	var r := get_world_3d().direct_space_state.intersect_ray(giu)
+	return not r.is_empty() and float(r.position.y) > q.y + 0.02
+
+
+## Vero se il punto [param q] (globale) è sotto il pelo dell'acqua, dentro la fossa o una delle vasche.
+func sott_acqua(q: Vector3) -> bool:
+	if q.y >= _pelo() - 0.05:
+		return false
+	var dentro := false
+	if superficie_fossa and superficie_fossa.mesh:
+		var a := superficie_fossa.global_transform * superficie_fossa.mesh.get_aabb()
+		dentro = q.x > a.position.x and q.x < a.end.x and q.z > a.position.z and q.z < a.end.z
+	for w in acque:
+		if not dentro and w and w.has_method(&"get_rect"):
+			dentro = (w.call(&"get_rect") as Rect2).has_point(Vector2(q.x, q.z))
+	return dentro
 
 
 ## Gli schizzi del tuffo: grande quando la testa entra in acqua, più piccolo quando ci entrano gli ultimi
@@ -474,30 +500,40 @@ func _schizzi_tuffo() -> void:
 	var punti := punti_corpo()
 	if punti.is_empty():
 		return
-	var pelo := _pelo()
-	if not _testa_entrata and punti[0].y < pelo:
+	if not _testa_entrata and sott_acqua(punti[0]):
 		_testa_entrata = true
+		# Lei è grande (4,5 m): uno schizzo al centro e una corona di schizzi intorno, dove entrano le spalle.
 		_schizzo_in(punti[0], 3.0)
+		for i in 5:
+			var ang := TAU * i / 5.0 + 0.3
+			_schizzo_in(punti[0] + Vector3(cos(ang), 0.0, sin(ang)) * 0.7, 2.0, false)
 		_suona(&"tuffo", 4.0, 0.8)
 	if _testa_entrata and not _coda_entrata:
 		var tutti := true
-		var centro := Vector3.ZERO
 		for i in range(1, punti.size()):
-			tutti = tutti and punti[i].y < pelo
-			centro += punti[i]
+			tutti = tutti and (sott_acqua(punti[i]) or sotto_il_pavimento(punti[i]))
 		if tutti:
 			_coda_entrata = true
-			_schizzo_in(centro / maxf(punti.size() - 1, 1), 1.2)
+			# uno schizzo piccolo per ogni tentacolo (le punte più vicine di 40 cm fanno uno schizzo solo)
+			var fatti: Array[Vector3] = []
+			for i in range(1, punti.size()):
+				var vicino := false
+				for f in fatti:
+					if Vector2(f.x - punti[i].x, f.z - punti[i].z).length() < 0.4:
+						vicino = true
+				if not vicino and sott_acqua(punti[i]):
+					fatti.append(punti[i])
+					_schizzo_in(punti[i], 1.0, false)
 			_suona(&"tuffo", -4.0, 1.25)
 
 
 ## Uno schizzo dell'acqua della fossa nel punto [param dove] (la superficie sopra di lui), di forza
 ## [param forza] (WaterBody.splash: 2-3 è un tuffo), con onde larghe su tutta la fossa.
-func _schizzo_in(dove: Vector3, forza: float) -> void:
+func _schizzo_in(dove: Vector3, forza: float, onde := true) -> void:
 	for a in acque:
 		if a and a.has_method(&"splash"):
 			a.call(&"splash", dove, forza)
-			if a.has_method(&"add_impulse"):
+			if onde and a.has_method(&"add_impulse"):
 				a.call(&"add_impulse", Vector3(dove.x, _pelo(), dove.z), 0.9 * forza, 0.02 * forza, 0.3)
 			break
 
