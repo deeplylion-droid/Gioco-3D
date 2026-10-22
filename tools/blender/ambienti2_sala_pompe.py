@@ -232,7 +232,7 @@ for i, (px, col, _) in enumerate(POMPE):
         S(g, o)
     # fascia colorata sulla mandata (si legge da lontano)
     S(g, cilindro(f'{g}_fascia', (m0.x, m0.y, 3.25), 0.225, 0.35, vern, seg=24, uv=0.8))
-    for o in manometro(f'{g}_manometro', (m0.x - 0.34, m0.y - 0.2, 2.25), (0, -1, 0)):
+    for o in manometro(f'{g}_manometro', (m0.x - 0.34, m0.y - 0.185, 2.25), (0, -1, 0)):   # (sulla presa: a -0,2 restava 1,5 cm staccato)
         S(g, o)
     S(g, tubo(f'{g}_presa_man', [(m0.x - 0.18, m0.y, 2.25), (m0.x - 0.34, m0.y, 2.25), (m0.x - 0.34, m0.y - 0.17, 2.25)], 0.02, M['tubi'], seg=8, rc=0.05))
     # aspirazione: dal fianco della chiocciola giu' nel pavimento
@@ -303,7 +303,9 @@ for i, (fx, fy) in enumerate(((-7.6, 4.4), (-7.6, 1.8))):
     g = f'FILTRO_{i + 1}'
     c = Vector((fx, fy, 0))
     if HQ.disponibile('filtro_tondo'):
-        HQ.metti(f'{g}_modello', 'filtro_tondo', c, (None, None, 3.45), rot_z=R_(-45 + 90 * i))
+        fm = HQ.metti(f'{g}_modello', 'filtro_tondo', c, (None, None, 3.45), rot_z=R_(-45 + 90 * i))
+        if i == 1:      # girato così, il modello restava 1,1 cm dentro le flange: largo quanto loro
+            fm.matrix_world = fm.matrix_world @ Matrix.Diagonal((1.0105, 1.0105, 1.0, 1.0))
         S(g, tubo(f'{g}_uscita', [c + Vector((0, 0, 3.4)), Vector((fx, fy, 4.0)), Vector((fx, HEADER_Y, 4.0)), Vector((fx, HEADER_Y, HEADER_Z - 0.3))], 0.16, M['tubi'], rc=0.4, uv=1.2, seg=28))
         continue
     for k in range(4):
@@ -424,7 +426,8 @@ else:
                       perno=(-0.41 * dl.x * kl, 0, 0.17 * dl.z * kl))
 lv['asse_rotazione'] = 'X (Blender e Godot), perpendicolare al muro; abbassata = -70 gradi'
 # gabbia con rete metallica (la grata davanti si puo' aprire: oggetto separato)
-GC = LV + Vector((-0.45, 0, 0.1)); GW, GH, GD = 1.1, 1.3, 0.9
+# (profonda fino al muro: a 0,9 restava 5 cm staccata, collaudo del 22 sera)
+GC = LV + Vector((-0.425, 0, 0.1)); GW, GH, GD = 1.1, 1.3, 0.95
 for k, (c, d) in enumerate(((GC + Vector((0, -GW / 2, 0)), (GD, 0.02, GH)), (GC + Vector((0, GW / 2, 0)), (GD, 0.02, GH)),
                             (GC + Vector((0, 0, GH / 2)), (GD, GW, 0.02)), (GC + Vector((0, 0, -GH / 2)), (GD, GW, 0.02)))):
     S('gabbia', box(f'gabbia_{k}', c, d, M['rete'], uv=0.6))

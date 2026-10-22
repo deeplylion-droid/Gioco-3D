@@ -1648,5 +1648,38 @@
   },
   "motivo": "nella base dell'acquario blu (enigma degli acquari)",
   "chiave": "det_vetri_rotti_1 4.938,-22.000"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_2",
+   "glb": "glb/detriti.glb",
+   "zona": "base dei muri",
+   "gruppo": "mucchio_019",
+   "posizione": [
+    14.004,
+    0.001,
+    18.058
+   ],
+   "rotazione_y_gradi": -160.0,
+   "basis": [
+    [
+     -0.9396,
+     0.0,
+     0.3422
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -0.3422,
+     0.0,
+     -0.9396
+    ]
+   ]
+  },
+  "motivo": "sotto la pila di palloni, assestata fino al pavimento",
+  "chiave": "det_foglio_2 14.004,18.058"
  }
 ]
