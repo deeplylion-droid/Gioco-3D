@@ -354,9 +354,13 @@ func _crea_giocatore() -> void:
 
 ## Il risveglio: il giocatore si sveglia per terra con il mostro-squalo addosso (GDD, "L'inizio con il
 ## mostro-squalo"; scripts/interni/risveglio_squalo.gd). Senza la scena dello squalo: la camera parte
-## sdraiata, guarda il soffitto e si rialza. Nelle prove automatiche (test, scatti) la scena dello squalo
+## sdraiata, guarda il soffitto e si rialza. Si parte a torcia spenta. Nelle prove automatiche (test, scatti) la scena dello squalo
 ## parte solo con [param con_squalo]: dura più di 13 secondi.
 func fai_risveglio(p: Player, con_squalo := not Game.is_automated()) -> void:
+	# il gioco inizia a torcia spenta (scelta dell'utente del 22 ottobre): si accende con F dopo il risveglio
+	for t in p.find_children("*", "Node3D", true, false):
+		if t is Torcia:
+			(t as Torcia).imposta_accesa(false)
 	var squalo := get_node_or_null(^"Gioco/RisveglioSqualo") as RisveglioSqualo
 	if squalo and con_squalo:
 		squalo.avvia(p)
