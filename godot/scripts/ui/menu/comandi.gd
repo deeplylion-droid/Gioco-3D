@@ -14,6 +14,7 @@ const RIGHE := [
 	["Correre", [&"sprint"], "tieni premuto"],
 	["Abbassarsi", [&"crouch"], "tieni premuto"],
 	["Saltare", [&"jump"], ""],
+	["Accendere la torcia", [&"torcia"], ""],
 	["Usare, raccogliere", [&"interact"], ""],
 	["Zaino: spruzzare", [&"spray"], "tieni premuto"],
 	["Zaino: aspirare l'acqua", [&"suck"], "tieni premuto"],

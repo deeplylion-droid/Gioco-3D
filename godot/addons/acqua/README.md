@@ -1,4 +1,4 @@
-# Acqua (addon per Splash Lagoon)
+# Acqua (addon per Jilly Jubilee)
 
 Acqua per Godot 4.7 (renderer **Forward+**): superficie delle vasche con rifrazione, riflessi,
 schiuma e gorghi, caustiche su fondo e pareti, effetto sott'acqua, pavimenti bagnati con pozzanghere

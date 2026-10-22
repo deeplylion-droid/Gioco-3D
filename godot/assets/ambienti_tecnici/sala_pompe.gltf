@@ -1751,7 +1751,12 @@
 				"scatola":true
 			},
 			"mesh":67,
-			"name":"SALA_luci"
+			"name":"SALA_luci",
+			"translation":[
+				0.05,
+				0,
+				0
+			]
 		},
 		{
 			"mesh":68,

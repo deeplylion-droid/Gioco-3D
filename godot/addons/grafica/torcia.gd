@@ -14,13 +14,13 @@ signal batteria_esaurita
 
 @export var accesa := true
 @export_group("Luce")
-@export var energia := 2.8   # richieste dell'utente: -20% il 17 ottobre (era 7.0), poi un altro -50% il 18 ottobre (era 5.6)
+@export var energia := 1.4   # richieste dell'utente: -20% il 17 ottobre (era 7.0), -50% il 18 ottobre (era 5.6), un altro -50% il 21 ottobre (era 2.8)
 @export var colore := Color(1.0, 0.86, 0.68)  # bianco caldo (circa 4000 K)
 @export var angolo := 40.0   # fascio ampio (l'utente: "troppo concentrata verso il centro")
 @export var portata := 26.0
 @export var attenuazione := 0.75   # calo più lento: illumina anche lontano senza bruciare vicino
 @export var dimensione_sorgente := 0.02        # ombre morbide (PCSS)
-@export var energia_nebbia := 0.12             # fascio appena accennato nella nebbia
+@export var energia_nebbia := 0.06             # fascio appena accennato nella nebbia (dimezzato con l'energia il 21 ottobre)
 @export var cookie: Texture2D = preload("res://addons/grafica/texture/torcia_cookie.png")
 ## Posizione della luce rispetto alla camera (a destra e in basso, come in mano):
 ## lo scarto fa vedere le ombre degli oggetti vicini.
@@ -95,8 +95,22 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("torcia") and not event.is_echo():
+		# con i comandi del giocatore bloccati (le scene, per esempio il risveglio con lo squalo) il tasto
+		# non fa niente
+		if not _comandi_attivi():
+			return
 		commuta()
 		get_viewport().set_input_as_handled()
+
+
+## Falso se il giocatore che tiene la torcia ha i comandi bloccati (Player.input_enabled).
+func _comandi_attivi() -> bool:
+	var p := get_parent()
+	while p:
+		if p is Player:
+			return (p as Player).input_enabled
+		p = p.get_parent()
+	return true
 
 
 func commuta() -> void:

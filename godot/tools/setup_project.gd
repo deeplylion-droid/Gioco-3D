@@ -19,19 +19,21 @@ func _action(name: String, events: Array) -> void:
 
 func _init() -> void:
 	var s := ProjectSettings
-	s.set_setting("application/config/name", "Splash Lagoon")
-	s.set_setting("application/config/description", "Horror in prima persona (mascot horror) sull'acquapark di una nave da crociera abbandonata. Titolo provvisorio.")
+	s.set_setting("application/config/name", "Jilly Jubilee")
+	s.set_setting("application/config/description", "Jilly Jubilee: horror in prima persona (mascot horror) sull'acquapark di una nave da crociera abbandonata.")
 	s.set_setting("application/config/version", "0.3.0")
 	s.set_setting("application/run/main_scene", "res://scenes/ui/menu_principale.tscn")
 	s.set_setting("application/config/icon", "res://icon.svg")
 	s.set_setting("application/boot_splash/bg_color", Color(0, 0, 0, 1))
 	s.set_setting("application/boot_splash/show_image", false)
-	# Autoload: prima la grafica (impostazioni, preset, post-processing), poi il gioco.
-	for a in ["Grafica", "Game", "GameState", "Audio"]:
+	# Autoload: prima i dati del vecchio nome (copia impostazioni e salvataggio), poi la grafica
+	# (impostazioni, preset, post-processing), poi il gioco.
+	for a in ["DatiVecchi", "Grafica", "Game", "GameState", "Audio"]:
 		if s.has_setting("autoload/" + a):
 			s.clear("autoload/" + a)
 	if s.has_setting("autoload/WaterManager"):
 		s.clear("autoload/WaterManager")
+	s.set_setting("autoload/DatiVecchi", "*res://scripts/game/dati_vecchi.gd")
 	s.set_setting("autoload/Grafica", "*res://addons/grafica/impostazioni_grafiche.gd")
 	s.set_setting("autoload/WaterManager", "*res://addons/acqua/scripts/water_manager.gd")
 	s.set_setting("autoload/Game", "*res://scripts/game/game.gd")
@@ -103,8 +105,7 @@ func _init() -> void:
 	_action("skip", [_key(KEY_SPACE), _key(KEY_E), _key(KEY_ENTER)])
 	if s.has_setting("input/flashlight"):
 		s.clear("input/flashlight")
-	if s.has_setting("input/torcia"):
-		s.clear("input/torcia")  # la torcia non c'è più (18 ottobre)
+	_action("torcia", [_key(KEY_F)])
 	# Esc mette in pausa (Game); il menu delle opzioni si apre dalla pausa.
 	_action("menu_opzioni", [])
 	_action("pause", [_key(KEY_ESCAPE)])

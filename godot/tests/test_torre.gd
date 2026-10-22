@@ -3,14 +3,17 @@ extends Node
 ## 18 ottobre): la struttura di torri e scivoli che si SCENDE, dal portone alla vasca del fondo.
 ## 1. Da sola: i canali della discesa sono solidi e nel gruppo "scivolo" (l'accordo con grafica per il
 ##    movimento dello scivolare), lungo tutta la discesa c'è il canale sotto e 2 m liberi sopra, i
-##    checkpoint sono sulle pedane d'arrivo, la Polaroid 10 è sul lettino, il fondo fuori dalla vasca uccide.
+##    checkpoint sono sulle pedane d'arrivo, la Polaroid 10 è sul lettino; niente zone che uccidono, le cinque
+##    vasche di raccolta sotto i salti con l'acqua e la scaletta, un portale su ogni imbocco (21 ottobre).
 ## 2. La discesa col movimento vero sugli scivoli (Player di grafica): ogni tratto si scende dalla sua pedana
 ##    alla pedana dopo (sulla pedana, non sul pianerottolo della scala), anche entrando spostati di 45 cm o
 ##    storti di 22 gradi; nei due tratti che finiscono col getto, senza getto si cade. Dall'arrivo si cammina
-##    fino all'imbocco dopo con un passaggio libero di 1 m, senza scavalcare niente.
+##    fino all'imbocco dopo con un passaggio libero di 1 m, senza scavalcare niente. Chi sbaglia un salto cade
+##    nella vasca di raccolta sotto, senza morire, e risale dalla scaletta fino alla pedana da cui era partito.
 ## 3. Nella sala grande: il portone (aperto qui senza la tappa 8) fa caricare la torre in un thread, il guscio
 ##    vecchio sparisce, sulla passerella si entra (il portone si richiude, interni e tecnici si scaricano);
-##    cadendo dalla discesa si muore e si riparte dall'ultimo checkpoint, con la torre di nuovo lì; le pedane
+##    cadendo nel vuoto per 12 m si muore, ma solo toccando il fondo (caduta vera), e si riparte dall'ultimo
+##    checkpoint, con la torre di nuovo lì; le pedane
 ##    d'arrivo sono checkpoint in ordine; nella vasca del fondo la demo finisce.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre.gd
 
@@ -22,6 +25,30 @@ const POLAROID_LIBERE := preload("res://tests/polaroid_libere.gd")
 const INGRESSI := [[0.45, 0.0], [-0.45, 0.0], [0.0, 22.0], [0.0, -22.0]]
 var _passed := 0
 var _failed := 0
+var _errori := RaccoltaErrori.new()
+
+
+## Gli errori degli script (un Logger li raccoglie tutti).
+class RaccoltaErrori extends Logger:
+	var errori: Array = []
+	var _mutex := Mutex.new()
+
+	func _log_error(_function: String, file: String, line: int, _code: String, rationale: String,
+			_editor_notify: bool, error_type: int, _script_backtraces: Array[ScriptBacktrace]) -> void:
+		if error_type != Logger.ERROR_TYPE_SCRIPT:
+			return
+		_mutex.lock()
+		errori.append("%s:%d %s" % [file, line, rationale])
+		_mutex.unlock()
+
+	func _log_message(_message: String, _error: bool) -> void:
+		pass
+
+	func copia() -> Array:
+		_mutex.lock()
+		var c := errori.duplicate()
+		_mutex.unlock()
+		return c
 
 
 func _ready() -> void:
@@ -29,6 +56,39 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	OS.add_logger(_errori)
+	print("0. Costruita a pezzi e tolta a metà (una morte ricarica la sala mentre la torre si prepara)")
+	for quando in ["costruzione", "preparazione"]:
+		var genitore := Node3D.new()
+		get_tree().root.add_child(genitore)
+		var tp: SalaTorre = (load(TORRE) as PackedScene).instantiate()
+		tp.costruzione_a_pezzi = true
+		tp.visible = false
+		genitore.add_child(tp)
+		var prima := _errori.copia().size()
+		var finita := [false]
+		var prepara := func():
+			await tp.costruisci_a_pezzi(1.0)
+			if quando == "preparazione" and tp.is_inside_tree():
+				await tp.prepara_materiali(get_viewport(), 30)
+			finita[0] = true
+		prepara.call()
+		if quando == "costruzione":
+			await _frames(3)
+		else:
+			while not tp.costruita and Time.get_ticks_msec() < 600000:
+				await _frames(1)
+			await _frames(2)
+		var a_meta: bool = not finita[0]
+		get_tree().root.remove_child(genitore)
+		await _frames(10)
+		var errori := _errori.copia().slice(prima)
+		check(a_meta and errori.is_empty(), "tolta a metà della %s: nessun errore (%s)" % [quando, "; ".join(errori)])
+		check(quando == "costruzione" or tp.find_children("*", "VisualInstance3D", true, false).all(
+				func(v): return (v as VisualInstance3D).layers != SalaTorre.STRATO_PREPARA),
+			"   e la torre torna sui suoi strati")
+		genitore.free()
+
 	print("1. La sala da sola")
 	var torre: SalaTorre = (load(TORRE) as PackedScene).instantiate()
 	torre.crea_luci = false
@@ -57,10 +117,40 @@ func _run() -> void:
 		check(coperte.is_empty(), "la Polaroid 10 non è coperta né compenetrata %s" % str(coperte))
 		var h: float = POLAROID_LIBERE.appoggio(torre, p10)
 		check(h > -0.002 and h < 0.012, "la Polaroid 10 è appoggiata sul lettino (%.1f cm sopra)" % (h * 100.0))
-	check(torre.find_children("CadutaFondo*", "KillZone", false, false).size() == 4, "il fondo fuori dalla vasca è una zona di caduta")
+	check(torre.find_children("*", "KillZone", true, false).is_empty(), "niente zone che uccidono senza una caduta vera (V1)")
+	var raccolta: Array = dati.get("raccolta", [])
+	check(raccolta.size() == 5 and torre.find_children("Raccolta*", "WaterVolume", false, false).size() == 5 \
+			and torre.find_children("ScalaRaccolta*", "Ladder", false, false).size() == 5,
+		"sotto i cinque salti le vasche di raccolta, con l'acqua e la scaletta di servizio")
+	check((dati.get("imbocchi", []) as Array).size() == (dati["tratti"] as Array).size(), "un portale su ogni imbocco della discesa")
 	var solidi := torre.find_children("*", "StaticBody3D", true, false).size()
 	check(solidi > n_pezzi + 20, "la struttura, i tubi e i prop sono solidi (%d corpi statici)" % solidi)
 	var spazio := torre.get_world_3d().direct_space_state
+
+	# la parete ovest non sta nel piano del retro della parete est della sala grande (x 20,2), né dietro le
+	# cornici degli oblò che ne sporgono (fino a 20,225): due facce nello stesso piano lampeggiano (prova
+	# del 19 ottobre). Si guardano i triangoli grandi (le celle della parete, non i pezzi piccoli appoggiati al
+	# muro), verticali e rivolti verso ovest/est, delle collisioni della struttura.
+	var x_ovest := INF
+	var nel_piano := 0
+	for cs in torre.get_node("TorreStruttura").find_children("*", "CollisionShape3D", true, false):
+		var forma := (cs as CollisionShape3D).shape as ConcavePolygonShape3D
+		if forma == null:
+			continue
+		var xf := (cs as CollisionShape3D).global_transform
+		var f := forma.get_faces()
+		for i in range(0, f.size(), 3):
+			var a := xf * f[i]
+			var b_ := xf * f[i + 1]
+			var c := xf * f[i + 2]
+			var nrm := (b_ - a).cross(c - a)
+			if nrm.length() < 3.0 or absf(nrm.normalized().x) < 0.999 or maxf(a.x, maxf(b_.x, c.x)) > 20.6:
+				continue
+			x_ovest = minf(x_ovest, a.x)
+			if absf(a.x - 20.2) < 0.03:
+				nel_piano += 1
+	check(nel_piano == 0 and x_ovest > 20.23 and x_ovest < 20.3,
+		"la parete ovest sta in x %.3f, davanti al retro della sala grande (%d facce nel suo piano)" % [x_ovest, nel_piano])
 
 	# i checkpoint stanno sopra qualcosa di solido
 	var appoggiati := 0
@@ -114,9 +204,7 @@ func _run() -> void:
 			crescono = crescono and float(x["larghezza"]) >= l_prec
 			l_prec = float(x["larghezza"])
 	check(crescono and float(salti[0]["larghezza"]) <= 1.0, "i salti normali sono sempre più lunghi e il primo è corto")
-	for z in torre.find_children("CadutaFondo*", "KillZone", false, false):
-		z.queue_free()
-	torre.margine_caduta = 1000.0
+	torre.caduta_mortale = 1000.0
 	var pl: Player = (load("res://scenes/player/player.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(pl)
 	await _frames(5)
@@ -138,6 +226,45 @@ func _run() -> void:
 		if col_getto:
 			var senza := await _scendi(torre, pl, k, false)
 			check(senza.begins_with("caduto"), "   senza il getto non si arriva (%s)" % senza)
+	print("   Chi sbaglia il salto cade nella vasca di raccolta e la scaletta lo riporta alla pedana di partenza")
+	for k in raccolta.size():
+		var v: Dictionary = raccolta[k]
+		var s_: Dictionary = salti[k]
+		var da := SalaTorre.b(s_["da"])
+		var a := SalaTorre.b(s_["a"])
+		var r: Array = v["rett"]
+		# cade dal salto: fermo a metà del salto, appena sopra
+		pl.teleport((da + a) / 2.0 + Vector3.UP * 0.4)
+		var in_vasca := false
+		for i in 300:
+			await _frames(1)
+			var q := pl.global_position
+			if pl.is_in_water() and pl.is_on_floor():
+				in_vasca = r[0] < q.x and q.x < r[2] and r[1] < -q.z and -q.z < r[3]
+				break
+		check(in_vasca, "salto %d sbagliato: si cade nella vasca di raccolta (%s)" % [k, str(pl.global_position)])
+		var sc: Dictionary = v["scala"]
+		var piede := SalaTorre.b([sc["x"], sc["y"], sc["z0"]])
+		var davanti := piede + Vector3(float(sc["verso"][0]), 0.0, -float(sc["verso"][1])) * 1.0
+		var su := false
+		var di_fronte := false
+		for i in 60 * 20:
+			# prima davanti alla scaletta, poi dritti verso di lei (come chi gioca)
+			var meta := piede if di_fronte else davanti
+			var dir := meta - pl.global_position
+			if not di_fronte and Vector2(dir.x, dir.z).length() < 0.3:
+				di_fronte = true
+			if not pl.is_on_ladder():
+				pl.set_look(atan2(-dir.x, -dir.z), 0.0)
+			Input.action_press(&"move_forward")
+			await _frames(1)
+			if not pl.is_on_ladder() and pl.is_on_floor() and pl.global_position.y > float(v["livello"]) - 0.2:
+				su = true
+				break
+		Input.action_release(&"move_forward")
+		await _frames(10)
+		check(su and _su_pedana(torre, pl.global_position) == "pedana" and absf(pl.global_position.y - float(v["livello"])) < 0.3,
+			"   e la scaletta lo riporta sulla pedana di partenza (%s %.0f, %s)" % [v["torre"], float(v["livello"]), str(pl.global_position)])
 	pl.queue_free()
 	torre.queue_free()
 	await _frames(2)
@@ -149,6 +276,11 @@ func _run() -> void:
 	var p := GameState.player
 	var portone := level.get(&"portone") as PortoneTorre
 	check(level.get(&"sala_torre") == null, "prima che il portone si apra la torre non è caricata")
+	var campioni: Array = level.get(&"_materiali_torre")
+	check(campioni.size() == SalaTorre.materiali_campione().size() and campioni.all(func(m): return m is Material),
+		"la sala tiene pronti gli shader dei materiali che la torre crea da codice (%d)" % campioni.size())
+	# come nel gioco: alla torre si arriva dopo il risveglio (tappa 6), col blackout
+	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	portone.apri()
 	var t0 := Time.get_ticks_msec()
 	# a tempo, non a fotogrammi: su una macchina lenta (renderer finto, CPU) il thread ci mette più di
@@ -198,16 +330,22 @@ func _run() -> void:
 		check(String(GameState.snapshot.get("checkpoint", "")).ends_with(cp.name) and not GameState.is_dying,
 			"pedana %s: checkpoint" % cp.name)
 
+	var accese_prima := _luci_accese(sala)
+	check(accese_prima.size() > 20, "col blackout le luci della torre sono accese (%d)" % accese_prima.size())
+
 	print("   Una caduta")
 	var ultimo := sala.checkpoint[sala.checkpoint.size() - 2]
 	var ultimo_pos := ultimo.get_spawn_transform().origin
 	var ultimo_nome := String(ultimo.name)
-	_metti(p, Vector3(31.0, ultimo.global_position.y - 1.0, -15.0), Vector3(31.0, 0, -10.0))   # nel vuoto sopra il pozzo
+	_metti(p, Vector3(31.0, -8.0, -15.0), Vector3(31.0, 0, -10.0))   # nel vuoto sopra il pozzo, 12 m sopra il fondo
+	var y_morte := 0.0
 	for i in 400:
 		await _frames(1)
 		if GameState.is_dying:
+			y_morte = p.global_position.y
 			break
-	check(GameState.is_dying, "cadendo dalla discesa si muore")
+	check(GameState.is_dying, "cadendo nel vuoto fino in fondo si muore (caduta vera)")
+	check(y_morte < -19.5, "   ma solo toccando il fondo, dopo una caduta lunga (a %.1f m)" % y_morte)
 	await _salta_morte()
 	await _aspetta_livello()
 	await _frames(10)
@@ -218,11 +356,18 @@ func _run() -> void:
 	if sala:
 		check(p.global_position.distance_to(ultimo_pos) < 2.0, "dall'ultimo checkpoint (%s)" % ultimo_nome)
 		check((level.get(&"portone") as PortoneTorre).chiuso_dietro, "col portone chiuso alle spalle")
+		# riscontro del 19 ottobre: "dopo che sono morto una volta, è diventata tutta buia"
+		await _frames(30)
+		var accese_dopo := _luci_accese(sala)
+		check(GameState.luci == GameState.Luci.BLACKOUT and accese_dopo.size() == accese_prima.size(),
+			"dopo la morte le luci della torre sono ancora accese (%d su %d)" % [accese_dopo.size(), accese_prima.size()])
 		print("   La vasca del fondo")
 		var fondo := sala.get_node("VascaFondo") as Area3D
 		_metti(p, fondo.global_position + Vector3(0, 0.6, 0), fondo.global_position + Vector3(0, 0.6, 1))
 		await _frames(30)
 		check(bool(level.get(&"demo_finished")), "nella vasca del fondo la discesa finisce (per ora la demo)")
+	var errori_script := _errori.copia()
+	check(errori_script.is_empty(), "nessun errore degli script (%s)" % "; ".join(errori_script))
 	_fine()
 
 
@@ -261,6 +406,14 @@ func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool, spostato := 0.0, 
 		if pos.y < dopo.global_position.y - 3.0:
 			esito = "caduto a %.1f m" % pos.y
 			break
+		if p.is_on_floor() and not p.is_sliding:
+			# nell'acqua della vasca di raccolta, o in piedi sul suo bordo
+			for v in torre.dati.get("raccolta", []):
+				var r: Array = v["rett"]
+				if r[0] < pos.x and pos.x < r[2] and r[1] < -pos.z and -pos.z < r[3] and pos.y < float(v["acqua"]) + 0.4 and pos.y > float(v["fondo"]) - 0.3:
+					esito = "caduto nella vasca di raccolta"
+			if esito.begins_with("caduto"):
+				break
 		# fermi su qualcosa nel vuoto, lontano dalla pedana dopo (SalaTorre la conta come caduta)
 		if p.is_on_floor() and not p.is_sliding and pos.y < torre.checkpoint[k].global_position.y - 1.0 \
 				and pos.distance_to(dopo.global_position) > 4.0:
@@ -285,6 +438,8 @@ func _scendi(torre: SalaTorre, p: Player, k: int, getto: bool, spostato := 0.0, 
 	Input.action_release(&"move_forward")
 	Input.action_release(&"spray")
 	p.set_look(p.yaw, 0.0)
+	if esito == "tempo scaduto":
+		esito += " (a %s)" % str(p.global_position)
 	return esito
 
 
@@ -302,6 +457,17 @@ func _metti(p: Player, pos: Vector3, guarda: Vector3) -> void:
 	var g := Vector3(guarda.x, pos.y, guarda.z)
 	if g.distance_to(pos) > 0.01:
 		p.look_at(g, Vector3.UP)
+
+
+## I nomi (col percorso nella torre) delle luci della torre accese, cioè visibili: il blackout le spegne
+## nascondendole. L'energia non conta: le lampade guaste (_sfarfalla) vanno a 0 e tornano su in ogni momento.
+func _luci_accese(sala: Node) -> Array:
+	var out := []
+	for n in sala.find_children("*", "Light3D", true, false):
+		var l := n as Light3D
+		if l.is_visible_in_tree():
+			out.append(String(sala.get_path_to(l)))
+	return out
 
 
 func _aspetta_livello() -> void:

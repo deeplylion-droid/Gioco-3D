@@ -30,6 +30,8 @@ EXT = [
     ('Script', 'res://scripts/interaction/polaroid_photo.gd', 's_pol'),
     ('Script', 'res://scripts/game/checkpoint.gd', 's_cp'),
     ('PackedScene', 'res://scenes/interni/luci_interni.tscn', 'p_luci'),
+    ('Script', 'res://scripts/mechanisms/ricarica_vasca.gd', 's_ricarica'),
+    ('Script', 'res://scripts/interni/risveglio_squalo.gd', 's_squalo'),
 ]
 
 subs, nodes = [], []
@@ -78,6 +80,7 @@ node('Acqua', 'Node3D', '.')
 node('VascaLavapiedi', 'Node3D', 'Acqua', inst='p_tank', props={
     'position': V(9.7, -0.2, -13.4), 'script': 'ExtResource("s_tank")', 'inner_size': V(2.2, 0.2, 2.0),
     'build_walls': 'false', 'fill': '0.75', 'max_fill': '0.9', 'capacity_liters': '30.0'})
+node('Ricarica', 'Node', 'Acqua/VascaLavapiedi', props={'script': 'ExtResource("s_ricarica")'})
 node('AcquaLavapiedi', 'Node3D', 'Acqua', inst='p_link', np=['tank'], props={
     'script': 'ExtResource("s_link")', 'tank': 'NodePath("../VascaLavapiedi")', 'style': 'ExtResource("r_stile")',
     'env_box_min': V(8.4, -0.5, -21), 'env_box_max': V(11, 3, -11)})
@@ -126,9 +129,13 @@ for nome, foto, pos, rot, snap in [('Polaroid01', 1, (20.9, 0.02, -0.55), (0, 0.
 
 # risveglio, checkpoint (order negativi: vengono prima di quelli della sala) e trigger
 node('Gioco', 'Node3D', '.')
-node('Risveglio', 'Marker3D', 'Gioco', props={'position': V(20.4, 0, -1.25), 'rotation': V(0, H, 0), 'gizmo_extents': '0.6'})
+# il risveglio (scelta dell'utente del 21 ottobre): a x 14,5, girati verso est, con il mostro-squalo addosso
+# e la porta tagliafuoco in fondo; lo squalo parte 1,55 m più in là e guarda il giocatore
+node('Risveglio', 'Marker3D', 'Gioco', props={'position': V(14.5, 0, -1.3), 'rotation': V(0, -H, 0), 'gizmo_extents': '0.6'})
+node('RisveglioSqualo', 'Node3D', 'Gioco', props={'position': V(16.05, 0, -1.3), 'rotation': V(0, -H, 0),
+                                                   'script': 'ExtResource("s_squalo")'})
 for nome, ordine, pos, size, yaw in [
-        ('CheckpointRisveglio', -10, (19.6, 1.5, -1.3), (1.6, 3, 2.6), H),
+        ('CheckpointRisveglio', -10, (14.0, 1.5, -1.3), (1.6, 3, 2.6), H),
         ('CheckpointIngressoSpogliatoi', -9, (6.8, 1.5, -3.5), (1.6, 3, 0.8), 0.0),
         ('CheckpointStanzino', -8, (12.2, 1.5, -8.45), (1.0, 3, 1.0), -H),
         ('CheckpointLavapiedi', -7, (9.7, 1.5, -11.7), (2.2, 3, 0.8), 0.0),

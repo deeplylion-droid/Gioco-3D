@@ -418,8 +418,8 @@
      0,
      1
     ],
-    "corsa_massima": 2.0,
-    "nota": "scorre verso sud lungo il muro (+Z in Godot), al massimo di 2,0 m: dove finisce il binario"
+    "corsa_massima": 6.4,
+    "nota": "scorre verso sud lungo il muro (+Z in Godot) di 6,4 m, fino alla fine del binario: si apre del tutto"
    },
    "collisione": "portone_torre (figlia: scorre con l'anta)"
   },
@@ -781,13 +781,13 @@
    "tipo": "neon (OmniLight3D o SpotLight3D verso il basso)",
    "blender": [
     19.68,
-    8.0,
-    3.88
+    7.0,
+    6.0
    ],
    "godot": [
     19.68,
-    3.88,
-    -8.0
+    6.0,
+    -7.0
    ],
    "colore": [
     0.8,
@@ -1180,13 +1180,13 @@
    "tipo": "emergenza rossa (OmniLight3D, raggio 6-8 m)",
    "blender": [
     19.8799991607666,
-    6.0,
+    5.0,
     2.9000000953674316
    ],
    "godot": [
     19.88,
     2.9,
-    -6.0
+    -5.0
    ],
    "colore": [
     1.0,
@@ -1617,13 +1617,13 @@
    "tipo": "OmniLight3D calda (plafoniera navale accesa)",
    "blender": [
     19.75,
-    9.0,
+    2.0,
     2.7
    ],
    "godot": [
     19.75,
     2.7,
-    -9.0
+    -2.0
    ],
    "colore": [
     1.0,

@@ -331,6 +331,27 @@ job('P10_gpt2', 'gpt-image-2-5-flare', FOTO + FOTO_P['P10'][1].replace(
     'At the top, the long dark silhouette of the bottom of a big ship\'s hull, with a huge propeller '
     'and rudder at one end, against the faint green-grey light of the surface.') + VIETATO, [SOTTO])
 
+# ---------------------------------------------------------------- P11: la pecora che brilla (infermeria, 21 ottobre)
+# Nella cassaforte dell'infermeria (GDD, "Infermeria"): una pecora vera, modificata coi geni della medusa,
+# che brilla al buio nel recinto dietro l'infermeria. La foto l'ha fatta il medico, senza flash: altrimenti
+# il bagliore non si vedrebbe. Il rosa è quello dell'agnellino fluorescente (variante B scelta il 18 ottobre).
+FLUO_B = 'docs/proposte/agnello_fluo/b/3_vicino.jpg'
+FOTO_BUIO = FOTO.replace(
+    'Direct on-camera flash that brightens the nearest subjects and falls off quickly into the '
+    'background, ', 'Taken in near darkness without flash, a long handheld exposure, ')
+P11 = (
+    'Night, a small makeshift animal pen behind the door of a ship\'s infirmary, in a dark service '
+    'room of an abandoned shipwrecked cruise ship: a low fence of wooden pallets and chicken wire, a '
+    'scatter of dirty straw on a wet metal floor, a dented metal water bucket. Inside the pen stands a '
+    'real adult sheep with a thick dirty fleece. Its wool glows faintly from within with soft blotchy '
+    'patches of pink light, like the glow of a jellyfish, brightest on its muzzle and around its eyes, '
+    'the same pink glow as the plush lamb of the reference image. The sheep\'s own glow is the only '
+    'real light: it softly lights the straw and the wire fence around it, everything else falls into '
+    'darkness. The sheep stands still and looks toward the camera. Underexposed, heavy grain, slight '
+    'motion blur, eerie and quiet. No people. ')
+for m, tag in MODELLI:
+    job(f'P11_{tag}', m, FOTO_BUIO + P11 + VIETATO, [FLUO_B])
+
 # ---------------------------------------------------------------- esecuzione
 def _carica(r):
     """Un riferimento: percorso, '@job', oppure (percorso, ritaglio, [riquadri da cancellare]).

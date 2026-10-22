@@ -32,7 +32,7 @@ func _run() -> void:
 	check(p != null, "il giocatore è stato creato")
 	var start: Marker3D = level.get_node("Gioco/Risveglio")
 	check(p.global_position.distance_to(start.global_position) < 0.3, "il giocatore parte dal marker del risveglio")
-	check(absf(wrapf(p.yaw - PI / 2.0, -PI, PI)) < 0.2, "e guarda verso ovest, lungo il corridoio")
+	check(absf(wrapf(p.yaw + PI / 2.0, -PI, PI)) < 0.2, "e guarda verso est, verso la porta tagliafuoco (inizio con il mostro-squalo)")
 	var space := p.get_world_3d().direct_space_state
 	var floor_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(15, 1, -1.3), Vector3(15, -1, -1.3)))
 	check(not floor_hit.is_empty() and absf(floor_hit.position.y) < 0.05, "il pavimento del corridoio ha la collisione")
@@ -45,6 +45,9 @@ func _run() -> void:
 	check(rosse.size() >= 10, "le luci rosse sono LuceEmergenza (%d)" % rosse.size())
 
 	print("Si cammina")
+	await _scena_squalo(start)
+	p.teleport(start.global_position, PI / 2.0, 0.0)
+	await _frames(3)
 	Input.action_press(&"move_forward")
 	await _frames(40)
 	Input.action_release(&"move_forward")
@@ -142,6 +145,101 @@ func _run() -> void:
 	get_tree().quit(1 if _failed > 0 else 0)
 
 
+## L'inizio con il mostro-squalo (scripts/interni/risveglio_squalo.gd), fatto girare davvero: la bocca
+## spalancata davanti alla faccia, lui che corre dentro il corridoio e passa la porta, la porta che si
+## chiude e resta chiusa, il giocatore che riprende il controllo dov'era.
+func _scena_squalo(start: Marker3D) -> void:
+	print("L'inizio con il mostro-squalo")
+	var s := level.get_node_or_null("Gioco/RisveglioSqualo") as RisveglioSqualo
+	check(s != null and not s.tempi.is_empty(), "c'è la scena dello squalo, con i tempi dell'animazione")
+	if s == null:
+		return
+	var pos0 := p.global_position
+	var fatto := [false]
+	s.finito.connect(func(): fatto[0] = true)
+	# la torcia: spenta prima della scena, il tasto F durante la scena non deve toccarla
+	var torcia: Torcia = null
+	for n in p.find_children("*", "Node3D", true, false):
+		if n is Torcia:
+			torcia = n
+	var torcia_prima := true
+	if torcia:
+		torcia_prima = torcia.accesa
+		torcia.imposta_accesa(false)
+	var torcia_toccata := false
+	var premute := 0
+	level.call(&"fai_risveglio", p, true)
+	await _frames(2)
+	check(not p.input_enabled and s.in_corso() and s.squalo != null, "il giocatore non si muove: la camera è guidata")
+	var perno := level.find_child("PernoPortaTagliafuoco", true, false) as Node3D
+	check(perno != null and absf(perno.rotation_degrees.y - 100.0) < 1.0, "la porta tagliafuoco è aperta")
+	var min_dist := 99.0
+	var max_apertura := 0.0
+	var max_angolo_in_minaccia := 0.0
+	var dentro := true
+	var alla_porta_y := 0.0
+	var porta_t: float = s.tempi.get("porta", 10.0)
+	var t := 0.0
+	var corsa_x := -99.0
+	while not fatto[0] and t < 16.0:
+		await get_tree().process_frame
+		t += 1.0 / 60.0
+		if torcia and premute < 2 and t > [3.0, 7.0][premute]:   # nella minaccia e nella fuga
+			premute += 1
+			await _tasto_torcia()
+			t += 2.0 / 60.0
+			torcia_toccata = torcia_toccata or torcia.accesa
+		if s.squalo == null or not s.squalo.visible:
+			continue
+		var occhio := p.camera.global_position
+		var bocca: Vector3 = s.call(&"_punto_bocca")
+		var apertura: float = s.call(&"_bone_mondo", "bocca").distance_to(s.call(&"_bone_mondo", "mento_punta"))
+		if t > 2.6 and t < 5.3:
+			min_dist = minf(min_dist, occhio.distance_to(bocca))
+			max_apertura = maxf(max_apertura, apertura)
+			var avanti := -p.camera.global_basis.z
+			max_angolo_in_minaccia = maxf(max_angolo_in_minaccia, rad_to_deg(avanti.angle_to(bocca - occhio)))
+		for osso in ["spina", "testa", "radice"]:
+			var b: Vector3 = s.call(&"_bone_mondo", osso)
+			if b.x > 22.3:
+				continue
+			if b.z < -2.5 or b.z > -0.1 or b.y > 2.4:
+				dentro = false
+		var spina: Vector3 = s.call(&"_bone_mondo", "spina")
+		if absf(spina.x - 21.97) < 0.3:
+			alla_porta_y = maxf(alla_porta_y, spina.y)
+		corsa_x = maxf(corsa_x, s.call(&"_bone_mondo", "radice").x)
+	check(min_dist < 0.55, "la bocca arriva addosso alla camera (%.2f m)" % min_dist)
+	check(max_apertura > 0.28, "ed è spalancata (%.2f m tra il labbro e il mento)" % max_apertura)
+	check(max_angolo_in_minaccia < 22.0, "la camera la guarda in faccia (al massimo %.0f° di lato)" % max_angolo_in_minaccia)
+	check(dentro, "lo squalo resta dentro il corridoio (niente muri attraversati)")
+	check(corsa_x > 22.2, "corre fino oltre la porta tagliafuoco (x %.2f)" % corsa_x)
+	check(alla_porta_y > 0.0 and alla_porta_y < 1.35, "alla porta si abbassa per passare (schiena a %.2f m)" % alla_porta_y)
+	check(fatto[0] and t < porta_t + 4.5, "la scena finisce (%.1f s)" % t)
+	var audio := get_node_or_null(^"/root/Audio")
+	if audio:
+		var c: Dictionary = audio.get(&"conteggio")
+		check(int(c.get(&"squalo_minaccia", 0)) == 1 and int(c.get(&"jilly_richiamo", 0)) == 1
+				and int(c.get(&"squalo_sbuffo", 0)) == 1 and int(c.get(&"porta_chiusa", 0)) >= 1,
+			"si sentono il fiato, il richiamo di Jilly, lo sbuffo e la porta che sbatte")
+		check(int(c.get(&"squalo_passo", 0)) >= 8, "e i passi pesanti (%d)" % int(c.get(&"squalo_passo", 0)))
+	check(p.input_enabled and p.camera.position.is_zero_approx() and is_zero_approx(p.camera.rotation.z),
+		"il giocatore riprende il controllo, la camera torna normale")
+	check(p.global_position.distance_to(pos0) < 0.05, "ed è ancora dove si è svegliato")
+	if torcia:
+		check(premute == 2 and not torcia_toccata and not torcia.accesa, "il tasto F non accende la torcia durante la scena, e alla fine è com'era")
+		await _tasto_torcia()
+		check(torcia.accesa, "dopo la scena il tasto F la riaccende")
+		torcia.imposta_accesa(torcia_prima)
+	check(s.squalo == null, "lo squalo non c'è più")
+	check(perno != null and is_zero_approx(perno.rotation.y), "la porta tagliafuoco è chiusa")
+	var space := p.get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(Vector3(21.0, 1.0, -1.3), Vector3(23.5, 1.0, -1.3))
+	q.exclude = [p.get_rid()]
+	var muro := space.intersect_ray(q)
+	check(not muro.is_empty() and absf(muro.position.x - 21.95) < 0.1, "e da lì non si passa")
+
+
 func check(cond: bool, what: String) -> void:
 	if cond:
 		_passed += 1
@@ -154,6 +252,21 @@ func check(cond: bool, what: String) -> void:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().physics_frame
+
+
+func _tasto_torcia() -> void:
+	var e := InputEventAction.new()
+	e.action = &"torcia"
+	e.pressed = true
+	Input.parse_input_event(e)
+	Input.flush_buffered_events()
+	await get_tree().process_frame
+	e = InputEventAction.new()
+	e.action = &"torcia"
+	e.pressed = false
+	Input.parse_input_event(e)
+	Input.flush_buffered_events()
+	await get_tree().process_frame
 
 
 func _hold(action: StringName, frames: int) -> void:

@@ -1,4 +1,4 @@
-// Effetto sott'acqua a schermo intero (Splash Lagoon). Un quad davanti alla camera, disegnato per
+// Effetto sott'acqua a schermo intero (Jilly Jubilee). Un quad davanti alla camera, disegnato per
 // primo tra gli oggetti trasparenti (render_priority minima): legge l'immagine della scena opaca e
 // la profondita', e dove il punto vicino alla camera e' sott'acqua applica:
 //  - assorbimento e diffusione in base alla distanza (le luci lontane si spengono nel blu/verde);

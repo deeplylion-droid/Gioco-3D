@@ -1,4 +1,4 @@
-# Splash Lagoon (titolo provvisorio)
+# Jilly Jubilee
 
 Gioco horror in prima persona, del genere "mascot horror": ti svegli a bordo di una nave da crociera per famiglie degli anni '90, abbandonata, e nell'acquapark coperto ti aspetta la sua mascotte.
 

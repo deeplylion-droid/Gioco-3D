@@ -75,6 +75,8 @@ func _run() -> void:
 	await _frames(3)
 	check(ritorno.attivo, "parte il ritorno al buio")
 	check(not medusa.visible, "la medusa non c'è più")
+	var masc := level.get_node_or_null("Mascotte") as MascotteSala
+	check(masc != null and masc.lampade_accese() == 0, "le lampade dell'insegna di Jilly si spengono")
 	check(ritorno.metri_scia() >= 8.0, "una scia di bava rosa a terra (%.1f m)" % ritorno.metri_scia())
 	# Riscontro sulla v0.3.1: la scia parte dalla vasca, da dove lei era affacciata.
 	var occhio_vasca: Vector3 = medusa.call(&"get_eye_position")
@@ -149,16 +151,63 @@ func _run() -> void:
 	grata.exclude = [p.get_rid()]
 	check(not space.intersect_ray(grata).is_empty(), "la grata chiude la scala degli interni")
 
-	print("Il corridoio, il magazzino dei gonfiabili e la serranda")
+	print("Il corridoio C2: la grata dopo il buco, la porta di servizio e la scala verso il fiume")
+	# Scelta β dell'utente (21 ottobre): C2 si sale come prima fino al buco dell'agnellino, subito dopo
+	# c'è una grata chiusa; la strada va per la porta di servizio nel tratto basso di C2, giù fino al
+	# capannone del fiume lento. Dall'infermeria la scala di servizio riporta in C3 (test_risalita).
 	ok = true
-	for loc in [Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 15.0), Vector3(30.0, 9.05, 15.0)]:
+	for loc in [Vector3(44.55, 7.25, -4.0), Vector3(44.55, 9.05, 2.0), Vector3(44.55, 9.05, 4.4)]:
 		ok = ok and await _cammina_verso(tec.to_global(loc), 1200)
-	check(ok and absf(p.global_position.y) < 0.1, "per il corridoio e su per la scala, al livello della sala (y %.2f)" % p.global_position.y)
+	check(ok and absf(p.global_position.y) < 0.1, "su per la scala di C2 fino al buco dell'agnellino (y %.2f)" % p.global_position.y)
+	await _cammina_verso(tec.to_global(Vector3(44.55, 9.05, 9.0)), 300)
+	check(p.global_position.x > -6.0, "la grata dopo il buco non si passa (x %.2f)" % p.global_position.x)
+	var grata_c2 := PhysicsRayQueryParameters3D.create(tec.to_global(Vector3(44.55, 10.05, 5.0)), tec.to_global(Vector3(44.55, 10.05, 7.0)))
+	grata_c2.exclude = [p.get_rid()]
+	check(not space.intersect_ray(grata_c2).is_empty(), "la grata chiude C2 subito dopo il buco")
+	var ris := level.get_node("Risalita")
+	ok = true
+	for loc in [tec.to_global(Vector3(44.55, 9.05, 2.0)), tec.to_global(Vector3(44.55, 7.25, -5.1)),
+			_mr(ris, "PortaC2"), _mr(ris, "CimaScalaFiume"), _mr(ris, "FondoScalaFiume"), _mr(ris, "PortaFiume"),
+			(ris.get_node("Fiume/Marker/Ingresso") as Node3D).global_position]:
+		ok = ok and await _cammina_verso(loc, 1200)
+	await _frames(5)
+	check(ok and absf(p.global_position.y + 5.4) < 0.1, "dalla porta di servizio giù per la scala fino al capannone del fiume (%s)" % str(p.global_position))
+	check(_checkpoint() == "Risalita/Fiume/Checkpoint/CheckpointIngresso", "checkpoint: all'ingresso del capannone (%s)" % _checkpoint())
+
+	print("Dalla scala di servizio dell'infermeria, il corridoio C3, il magazzino e la serranda")
+	p.teleport(_mr(ris, "PortaC3"), 0.0, 0.0)
+	await _frames(5)
+	ok = true
+	for loc in [tec.to_global(Vector3(37.09, 9.05, 15.0)), tec.to_global(Vector3(30.0, 9.05, 15.0))]:
+		ok = ok and await _cammina_verso(loc, 1200)
+	check(ok and absf(p.global_position.y) < 0.1, "dalla porta di C3 al magazzino, al livello della sala (y %.2f)" % p.global_position.y)
 	ok = await _cammina_verso(tec.to_global(Vector3(26.5, 9.05, 15.0)), 900)
 	await _frames(5)
 	check(ok and _checkpoint() == CP + "CheckpointMagazzino", "nel magazzino dei gonfiabili: checkpoint (%s)" % _checkpoint())
 	check(serranda and serranda.open_amount == 0.0, "la serranda è ancora chiusa")
 	ok = await _cammina_verso(tec.to_global(Vector3(24.0, 9.05, 15.0)), 900)
+	# La serranda con il lettore della keycard (strada nuova della risalita, GDD "Allungare il
+	# capitolo"): senza keycard resta chiusa anche arrivandoci davanti; la keycard è nella cassaforte
+	# dell'infermeria (test_infermeria_gioco, test_risalita), qui la si dà al giocatore.
+	var lettore := tec.find_child("LettoreTessera", true, false) as LettoreTessera
+	check(lettore != null and not lettore.aperto, "accanto alla serranda c'è il lettore della keycard, rosso")
+	if lettore:
+		for i in 200:
+			var d0 := tec.to_global(Vector3(19.6, 9.05, 15.0)) - p.global_position
+			p.set_look(atan2(-d0.x, -d0.z), 0.0)
+			Input.action_press(&"move_forward")
+			await get_tree().physics_frame
+		Input.action_release(&"move_forward")
+		check(serranda.open_amount == 0.0, "senza keycard, davanti alla serranda resta chiusa")
+		p.add_item(&"keycard", 1, "Keycard")
+		await _cammina_verso(tec.to_global(Vector3(21.0, 9.05, 15.9)), 300)
+		p.look_at_point(lettore.global_position)
+		await _frames(6)
+		Input.action_press(&"interact")
+		await _frames(2)
+		Input.action_release(&"interact")
+		await _frames(2)
+		check(lettore.aperto, "guardando il lettore si passa la keycard col tasto E: diventa verde")
 	var alzata := -1
 	Input.action_press(&"move_forward")
 	for i in 400:
@@ -224,6 +273,10 @@ func _run() -> void:
 	await _frames(3)
 	check(medusa.visible and not ritorno.attivo and ritorno.metri_scia() == 0.0, "la medusa torna nella vasca e la scia sparisce")
 	_fine()
+
+
+func _mr(ris: Node, nome: String) -> Vector3:
+	return (ris.get_node("Marker/" + nome) as Node3D).global_position
 
 
 func _m(tec: Node3D, nome: String) -> Vector3:

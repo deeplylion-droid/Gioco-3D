@@ -127,7 +127,7 @@ func _run() -> void:
 	check(SchermataComandi.nomi_tasti([&"sprint"]) == PackedStringArray(["Maiusc"]), "correre: Maiusc")
 	check(SchermataComandi.nomi_tasti([&"crouch"]) == PackedStringArray(["Ctrl"]), "abbassarsi: Ctrl")
 	check(SchermataComandi.nomi_tasti([&"jump"]) == PackedStringArray(["Spazio"]), "saltare: Spazio")
-	check(not InputMap.has_action(&"torcia"), "la torcia non c'è più: niente tasto F")
+	check(SchermataComandi.nomi_tasti([&"torcia"]) == PackedStringArray(["F"]), "torcia: F")
 	check(SchermataComandi.nomi_tasti([&"interact"]) == PackedStringArray(["E"]), "usare: E")
 	check(SchermataComandi.nomi_tasti([&"spray"]) == PackedStringArray(["Tasto sinistro"]), "spruzzare: tasto sinistro")
 	check(SchermataComandi.nomi_tasti([&"suck"]) == PackedStringArray(["Tasto destro"]), "aspirare: tasto destro")

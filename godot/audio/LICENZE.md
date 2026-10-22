@@ -1,4 +1,4 @@
-# Suoni di Splash Lagoon: fonti e licenze
+# Suoni di Jilly Jubilee: fonti e licenze
 
 Tutti i suoni di questa cartella sono **generati dagli script** in `assets_src/audio/` (`python genera_tutto.py` con il venv di Blender: numpy, scipy e ffmpeg). Sono di due tipi:
 
@@ -181,6 +181,13 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `piscina/pulsante_botola_attiva.ogg` | 1.4 s | sintesi (originale) | richiamo (B, scelto il 16 ottobre): scatto del contattore e jingle che cala |
 | `piscina/pulsante_botola_bibu.ogg` | 0.4 s | sintesi (originale) | un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s) |
 | `piscina/pulsante_botola_lampeggiante_loop.ogg` | 3.2 s | sintesi (originale) | il lampeggiante giallo che gira |
+| `squalo/jilly_richiamo.ogg` | 10.8 s | sintesi (originale) | il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco |
+| `squalo/squalo_minaccia.ogg` | 6.0 s | sintesi (originale) | fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file) |
+| `squalo/squalo_passo_01.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
+| `squalo/squalo_passo_02.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
+| `squalo/squalo_passo_03.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
+| `squalo/squalo_passo_04.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
+| `squalo/squalo_sbuffo.ogg` | 1.9 s | sintesi (originale) | sbuffo di gola quando si volta a guardarti |
 | `tecnici/cancello_stagno_apre_01.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
 | `tecnici/cancello_stagno_apre_02.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
 | `tecnici/corrente_salta.ogg` | 5.5 s | sintesi (originale) |  |
@@ -198,4 +205,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 173 file, 6.7 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 180 file, 6.8 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

@@ -77,6 +77,8 @@ var _torre_fallita := false
 var _torre_nascosta: Node3D
 var _torre_preparata := false
 var _dentro_torre := false
+# Gli shader dei materiali che la torre crea da codice, pronti dall'ingresso nella sala (SalaTorre.materiali_campione).
+var _materiali_torre: Array[Material] = []
 
 # Il bersaglio del getto sulla faccia della medusa (_faccia_bagnabile).
 var _faccia: WaterHitbox
@@ -249,9 +251,14 @@ func _hud() -> Hud:
 
 
 func _show_hint() -> void:
+	# durante le scene (il risveglio con lo squalo) i comandi sono bloccati: la riga arriva quando il
+	# giocatore li riprende, non sopra la scena
+	var p := GameState.player
+	while p and is_instance_valid(p) and not p.input_enabled and is_inside_tree():
+		await get_tree().process_frame
 	var hud := _hud()
 	if hud:
-		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · Esc pausa", 10.0)
+		hud.show_hint("WASD muoviti · Shift corri · Ctrl abbassati · Spazio salta · E usa · F torcia · Esc pausa", 10.0)
 
 
 ## Chiamato quando il giocatore prende lo zaino.
@@ -361,6 +368,7 @@ func _on_fine_demo(body: Node3D) -> void:
 func _setup_torre() -> void:
 	if sala_torre_scena == "" or portone == null:
 		return
+	_materiali_torre = SalaTorre.materiali_campione()
 	portone.connect(&"apertura_iniziata", _carica_torre)
 	var enigma := get_node_or_null(^"Gioco/EnigmaAcquari")
 	if enigma and enigma.has_signal(&"comparso") and precarica_torre and not Engine.has_meta(&"precarica_torre_spento"):
@@ -438,10 +446,11 @@ func _prepara_torre() -> void:
 	_torre_nascosta = t
 	add_child(t)
 	await t.call(&"costruisci_a_pezzi")
-	if not is_instance_valid(t) or t != _torre_nascosta:
+	# (fuori dall'albero: una morte ha ricaricato la sala mentre la torre si preparava)
+	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
 	await t.call(&"prepara_materiali", get_viewport())
-	if not is_instance_valid(t) or t != _torre_nascosta:
+	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
 	_torre_preparata = true
 	if _torre_voluta:

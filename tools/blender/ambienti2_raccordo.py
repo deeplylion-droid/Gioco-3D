@@ -146,9 +146,19 @@ BY = -4.9                            # centro del buco (z = 4,9 nella scena dei 
 BW, BH, BP = 0.85, 0.9, 2.2
 BY0, BY1 = BY - BW / 2, BY + BW / 2
 ZC2 = Z_T - 0.3 + 1.0                # dove finisce lo zoccolo di cemento (sotto il pavimento alto di C2)
-blocco('c2_muro_s_basso', (XC1, YC3_0 - SP, Z_T - 0.3), (XC1 + SP, Y_T0 - SP, ZC2), M['cemento'], 2.5)
+# la porta di servizio verso il fiume (scelta β dell'utente, 21 ottobre): nel tratto basso di C2, prima della
+# scala; dietro una scala scende all'imbarco del fiume lento (la fa scripts/risalita/risalita_gioco.gd)
+DY0, DY1, DH = 4.6, 5.6, 2.2
+blocco('c2_muro_s_basso', (XC1, YC3_0 - SP, Z_T - 0.3), (XC1 + SP, DY0, ZC2), M['cemento'], 2.5)
+blocco('c2_muro_s_basso_b', (XC1, DY1, Z_T - 0.3), (XC1 + SP, Y_T0 - SP, ZC2), M['cemento'], 2.5)
+blocco('c2_muro_s_soglia', (XC1, DY0, Z_T - 0.3), (XC1 + SP, DY1, Z_T), M['cemento'], 2.5)
 blocco('c2_muro_s_alto', (XC1, YC3_0 - SP, ZC2), (XC1 + SP, BY0, H_C), M['lamiere'], 2.0)
-blocco('c2_muro_s_alto_b', (XC1, BY1, ZC2), (XC1 + SP, Y_T0 - SP, H_C), M['lamiere'], 2.0)
+blocco('c2_muro_s_alto_b', (XC1, BY1, ZC2), (XC1 + SP, DY0, H_C), M['lamiere'], 2.0)
+blocco('c2_muro_s_alto_c', (XC1, DY1, ZC2), (XC1 + SP, Y_T0 - SP, H_C), M['lamiere'], 2.0)
+blocco('c2_muro_s_sopra_porta', (XC1, DY0, Z_T + DH), (XC1 + SP, DY1, H_C), M['lamiere'], 2.0)
+for k, y in enumerate((DY0 + 0.03, DY1 - 0.03)):
+    S('dettagli', box(f'c2_porta_stipite{k}', (XC1 - 0.03, y, Z_T + DH / 2), (0.06, 0.06, DH), M['verde'], uv=1.0))
+S('dettagli', box('c2_porta_architrave', (XC1 - 0.03, (DY0 + DY1) / 2, Z_T + DH + 0.03), (0.06, DY1 - DY0, 0.06), M['verde'], uv=1.0))
 blocco('c2_muro_s_sotto_buco', (XC1, BY0, ZC2), (XC1 + SP, BY1, Z_SALA), M['lamiere'], 2.0)
 blocco('c2_muro_s_sopra_buco', (XC1, BY0, Z_SALA + BH), (XC1 + SP, BY1, H_C), M['lamiere'], 2.0)
 M['buio'] = mat_pbr('buio_condotto', base=(0.012, 0.011, 0.01), roughness=0.9)
@@ -181,12 +191,37 @@ for k in range(6):
     lung = 0.72 if k != 3 else 0.45
     S('dettagli', box(f'grata_lamella{k}', None, (0.035, lung, 0.012), M['ruggine'] if k % 3 == 0 else M['ferro'], uv=1.0,
                       matrice=gm @ Matrix.Translation((0, -0.36 + lung / 2 + (0.0 if k != 3 else 0.25), z)) @ piega @ Matrix.Rotation(math.radians(30), 4, 'Y')))
+# la grata chiusa subito dopo il buco dell'agnellino (scelta β): la stessa della scala degli interni, verde con
+# catena e lucchetto; di là il corridoio continua verso il magazzino, ma da qui non si passa
+GY = BY0 - 0.6
+for k in range(14):
+    x = XC0 + 0.1 + k * (XC1 - XC0 - 0.2) / 13
+    # le sbarre sotto i due tubi del corridoio (t7_tubo_c2 e t7_tubo_piccolo) si fermano prima di toccarli
+    top = Z_SALA + 2.15 if abs(x - (XC1 - 0.25)) < 0.13 or abs(x - (XC0 + 0.15)) < 0.07 else H_C
+    S('dettagli', cilindro(f'grata_c2_sbarra{k}', (x, GY, (Z_SALA + top) / 2), 0.012, top - Z_SALA, M['ferro'], seg=8, uv=None))
+for z in (Z_SALA + 0.1, Z_SALA + 1.1, H_C - 0.08):
+    S('dettagli', box(f'grata_c2_traverso{z:.1f}', ((XC0 + XC1) / 2, GY, z), (XC1 - XC0, 0.05, 0.05), M['verde'], uv=None))
+for k in range(5):
+    S('dettagli', toro(f'grata_c2_catena{k}', ((XC0 + XC1) / 2 - 0.2 + k * 0.08, GY + 0.05, Z_SALA + 1.1), 0.035, 0.008, M['ferro'],
+                      asse=(1, 0, 0) if k % 2 else (0, 0, 1), seg=12, seg2=6, uv=None))
+S('dettagli', box('grata_c2_lucchetto', ((XC0 + XC1) / 2 + 0.22, GY + 0.08, Z_SALA + 1.0), (0.07, 0.04, 0.09), M['giallo'], uv=None))
+ob = box('c2_grata-convcolonly', ((XC0 + XC1) / 2, GY, (Z_SALA + H_C) / 2), (XC1 - XC0, 0.06, H_C - Z_SALA), None, uv=None)
+ob['collisione'] = True; ob.hide_render = True
 blocco('c2_soffitto_basso', (XC0 - SP, 3.6, H_T), (XC1 + SP, Y_T0 - SP, H_T + 0.3), M['cemento'], 2.5)
 blocco('c2_architrave', (XC0, 3.6, H_T), (XC1, 3.9, H_C), M['lamiere'])
 blocco('c2_soffitto', (XC0 - SP, YC3_0 - SP, H_C), (XC1 + SP, 3.6, H_C + 0.3), M['cemento'], 2.5)
 # ------------------------------------------------------------------ tappa 7: corridoio C3 verso nord
 blocco('c3_pav', (XM1 + SP, YC3_0 - SP, Z_SALA - 0.3), (XC0, YC3_1 + SP, Z_SALA), M['cemento_bagnato'], 3.0)
-muro('c3_muro_o', (XM1 + SP, YC3_0 - SP, Z_SALA), (XC1 + SP, YC3_0, H_C))
+# la porta della scala di servizio che sale dall'infermeria (strada nuova della risalita, 21 ottobre):
+# nel muro ovest di C3, z globale da 37,95 a 38,95, tra i gonfiabili e gli oggetti appesi
+X_PS0, X_PS1, H_PS = 37.95 - 1.36, 38.95 - 1.36, 2.2
+muro('c3_muro_o', (XM1 + SP, YC3_0 - SP, Z_SALA), (X_PS0, YC3_0, H_C))
+muro('c3_muro_o_nord', (X_PS1, YC3_0 - SP, Z_SALA), (XC1 + SP, YC3_0, H_C))
+blocco('c3_muro_o_sopra_porta', (X_PS0, YC3_0 - SP, Z_SALA + H_PS), (X_PS1, YC3_0, H_C), M['lamiere'], 2.0)
+# il telaio d'acciaio della porta, dalla parte di C3
+for k, x in enumerate((X_PS0 + 0.03, X_PS1 - 0.03)):
+    S('dettagli', box(f'c3_porta_stipite{k}', (x, YC3_0 + 0.03, Z_SALA + H_PS / 2), (0.06, 0.06, H_PS), M['verde'], uv=1.0))
+S('dettagli', box('c3_porta_architrave', ((X_PS0 + X_PS1) / 2, YC3_0 + 0.03, Z_SALA + H_PS + 0.03), (X_PS1 - X_PS0, 0.06, 0.06), M['verde'], uv=1.0))
 muro('c3_muro_e', (XM1 + SP, YC3_1, Z_SALA), (XC0 - SP, YC3_1 + SP, H_C))
 blocco('c3_soffitto', (XM1 + SP, YC3_0 - SP, H_C), (XC0 - SP, YC3_1 + SP, H_C + 0.3), M['cemento'], 2.5)
 # ------------------------------------------------------------------ tappa 7: magazzino dei gonfiabili
@@ -295,8 +330,16 @@ S('dettagli', tubo('tubo_piccolo', [(XR, Y_R1 - 0.18, 2.3), (X_S0 - 0.15, Y_R1 -
 for k, x in enumerate((47.5, 49.5)):
     for o in flangia(f'tubo_piccolo_fl{k}', (x, Y_R1 - 0.18, 2.3), (1, 0, 0), 0.09, M['ferro'], 0.03, 6, M['ruggine']):
         S('dettagli', o)
-# tubo lungo il fianco di F2, parallelo alla rampa
-S('dettagli', tubo('tubo_f2', [(X_S0 - 0.2, Y_T0 + 0.15, Z_L1 + 1.9), (X_F2, Y_T0 + 0.15, Z_T + 1.9), (X_T0 + 0.5, Y_T0 + 0.15, Z_T + 1.9)], 0.08, M['tubi'], rc=0.3, seg=20))
+# tubo lungo il fianco di F2, parallelo alla rampa: esce dal muro sud in fondo alla rampa e ci rientra prima
+# di T, 2,25 m sopra i gradini (sotto il soffitto inclinato, a 2,6). Prima arrivava a 1,9 m e attraversava
+# T davanti all'entrata di C2, finendo nel vuoto (riscontro dell'utente del 21 ottobre).
+def z_tubo_f2(x):
+    return Z_L1 + 2.35 + (X_S0 - x) * PEND
+xa, xb = X_S0 - 0.55, XC1 + SP + 0.35
+tf2 = [(xa, Y_T0 - 0.12, z_tubo_f2(xa)), (xa, Y_T0 + 0.15, z_tubo_f2(xa)), (xb, Y_T0 + 0.15, z_tubo_f2(xb)), (xb, Y_T0 - 0.12, z_tubo_f2(xb))]
+S('dettagli', tubo('tubo_f2', tf2, 0.08, M['tubi'], rc=0.14, seg=20))
+for k, x in enumerate((48.9, 47.2)):
+    S('dettagli', box(f'tubo_f2_staffa{k}', (x, Y_T0 + 0.04, z_tubo_f2(x)), (0.05, 0.08, 0.06), M['ferro'], uv=None))
 # costole d'acciaio nel corridoio
 for k, x in enumerate((47.6, 49.4)):
     S('dettagli', box(f'costola{k}_s', (x, Y_R0 + 0.08, H_R1 / 2), (0.2, 0.16, H_R1), M['ferro'], uv=1.0))
@@ -320,7 +363,7 @@ def lampada(nome, pos, normale, accesa=True):
 
 lampada('rc1', (48.5, Y_R0 + 0.02, 2.1), (0, 1, 0))
 lampada('rc2', (X_S1 - 0.02, 7.0, Z_L1 + 2.0), (-1, 0, 0))
-lampada('rc3', (44.6, Y_T1 - 0.02, Z_T + 2.0), (0, -1, 0))
+lampada('rc3', (44.6, Y_T1 - 0.02, Z_T + 2.3), (0, -1, 0))   # sopra i 2 m: si passa sotto, verso C2
 giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
 HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
 HQ.metti('plafoniera_rc', 'plafoniera_neon', (48.5, -0.9, H_R1 - 0.12), (1.4, 0.32, 0.1))

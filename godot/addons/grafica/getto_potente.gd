@@ -43,6 +43,17 @@ const STILI := {
 }
 
 @export var stile := "B"
+## Impatto da vicino (riscontro sulla v0.3.7: "se spruzzi da vicino contro un muro, le gocce degli
+## spruzzi danno fastidio e fanno laggare"): con il punto colpito più vicino di [member vicino_da] m alla
+## camera gli schizzi, le lame, i goccioloni, i rivoli e la nebbia dell'impatto calano, fino ai valori di
+## [constant VICINO] sotto [member vicino_pieno] m. Da [member vicino_da] m in su l'impatto resta com'era.
+@export var vicino_da := 4.0
+@export var vicino_pieno := 1.2
+## Da vicino: la frazione di particelle (amount_ratio), quanto si accorcia a caso la vita di ognuna
+## (lifetime_randomness: in media del 30%), la grandezza e la velocità. Più la distanza dalla camera
+## (m) sotto cui gocce e nebbia dell'impatto spariscono rimpicciolendo (gli shader, vedi vicino_camera).
+const VICINO := {"quanti": 0.3, "vita": 0.6, "grandezza": 0.6, "velocita": 0.7,
+		"sparisce_gocce": 0.3, "sparisce_nebbia": 0.6}
 
 var pack: Node
 var s: Dictionary
@@ -56,6 +67,10 @@ var _lame: GPUParticles3D
 var _goccioloni: GPUParticles3D
 var _rivoli: GPUParticles3D
 var _nebbia_impatto: GPUParticles3D
+# particelle dell'impatto -> [scale_min, scale_max, velocità min, velocità max] di quando sono create
+var _base_impatto := {}
+## Quanto è lontano l'impatto, da 0 (vicino, effetti ridotti) a 1 (da [member vicino_da] m in su, pieni).
+var lontananza_impatto := 1.0
 var _bagnato: Array[Decal] = []
 var _bagnato_t := 0.0
 var _colonna: MeshInstance3D
@@ -160,15 +175,28 @@ func aggancia(p_pack: Node) -> void:
 	chiara.set_shader_parameter(&"tint", Color(0.88, 0.94, 1.0))
 	chiara.set_shader_parameter(&"opacity", 0.9)
 	chiara.set_shader_parameter(&"rim_light", 0.8)
-	for p in _spruzzi + [_schizzi, _lame, _goccioloni, _rivoli, _bocca]:
+	for p in _spruzzi + [_bocca]:
 		(p.draw_pass_1 as QuadMesh).material = chiara
 	_tinte.append([chiara, Color(0.88, 0.94, 1.0)])
+	# Quelle dell'impatto, che rimbalzano verso chi spara, spariscono prima di arrivare alla camera.
+	var chiara_impatto := chiara.duplicate() as ShaderMaterial
+	chiara_impatto.set_shader_parameter(&"vicino_camera", VICINO.sparisce_gocce)
+	for p in [_schizzi, _lame, _goccioloni, _rivoli]:
+		(p.draw_pass_1 as QuadMesh).material = chiara_impatto
+	_tinte.append([chiara_impatto, Color(0.88, 0.94, 1.0)])
 	# La nebbia ha il suo materiale (quello dell'addon è in comune con le altre nebbie).
 	var nebbia := WaterParticles.mist_material().duplicate() as ShaderMaterial
-	for nb in _nebbie + [_nebbia_impatto]:
+	for nb in _nebbie:
 		((nb as GPUParticles3D).draw_pass_1 as QuadMesh).material = nebbia
 	var tn = nebbia.get_shader_parameter(&"tint")
 	_tinte.append([nebbia, tn if tn is Color else Color(0.8, 0.85, 0.88)])
+	var nebbia_impatto := nebbia.duplicate() as ShaderMaterial
+	nebbia_impatto.set_shader_parameter(&"near_camera", VICINO.sparisce_nebbia)
+	(_nebbia_impatto.draw_pass_1 as QuadMesh).material = nebbia_impatto
+	_tinte.append([nebbia_impatto, tn if tn is Color else Color(0.8, 0.85, 0.88)])
+	for p in [_schizzi, _lame, _goccioloni, _rivoli, _nebbia_impatto]:
+		var pm := (p as GPUParticles3D).process_material as ParticleProcessMaterial
+		_base_impatto[p] = [pm.scale_min, pm.scale_max, pm.initial_velocity_min, pm.initial_velocity_max]
 	_crea_colonna()
 	_colore_getto = m.get_shader_parameter(&"colore")
 	_colore_colonna = _colonna_mat.get_shader_parameter(&"colore")
@@ -393,6 +421,7 @@ func _aggiorna_impatto(colpisce: bool, delta: float) -> void:
 		return
 	var punto: Vector3 = pack.get(&"hit_point")
 	var normale: Vector3 = (pack.get(&"hit_normal") as Vector3).normalized()
+	_impatto_da_vicino(punto)
 	var stream = pack.get(&"stream")
 	var arrivo := _punto_getto(stream, 0.95)
 	var dentro := Vector3.ZERO
@@ -423,6 +452,24 @@ func _aggiorna_impatto(colpisce: bool, delta: float) -> void:
 			d.size.x = minf(d.size.x + delta * 1.2, s.bagnato)
 			d.size.z = d.size.x
 			d.modulate.a = minf(d.modulate.a + delta * 2.0, 1.0)
+
+
+## Da vicino meno particelle d'impatto, più brevi, più piccole e più lente (vedi [constant VICINO]).
+func _impatto_da_vicino(punto: Vector3) -> void:
+	var cam := _cam if _cam and _cam.is_inside_tree() else get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	lontananza_impatto = smoothstep(vicino_pieno, vicino_da, cam.global_position.distance_to(punto))
+	var k := lontananza_impatto
+	for p in _base_impatto:
+		var b: Array = _base_impatto[p]
+		var pm := (p as GPUParticles3D).process_material as ParticleProcessMaterial
+		(p as GPUParticles3D).amount_ratio = lerpf(VICINO.quanti, 1.0, k)
+		pm.lifetime_randomness = lerpf(VICINO.vita, 0.0, k)
+		pm.scale_min = b[0] * lerpf(VICINO.grandezza, 1.0, k)
+		pm.scale_max = b[1] * lerpf(VICINO.grandezza, 1.0, k)
+		pm.initial_velocity_min = b[2] * lerpf(VICINO.velocita, 1.0, k)
+		pm.initial_velocity_max = b[3] * lerpf(VICINO.velocita, 1.0, k)
 
 
 func _pavimento_sotto(punto: Vector3) -> Array:

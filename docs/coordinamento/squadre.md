@@ -4,11 +4,11 @@ Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadr
 
 | Squadra | Sessione cloud | Branch | Lavoro |
 |---|---|---|---|
-| mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/mascotte | statue nei posti scelti, Jilly Jubilee stile B invecchiato, poi l'inizio con il mostro-squalo |
-| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2 | portone della torre, parete che lampeggia, strada nella torre (opzioni per iscritto), poi l'inseguimento A con SB1 |
-| ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | Polaroid sotto il foglio, geyser V1 nel gioco con il punto bianco da togliere, verifiche aperte |
-| enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | acquari doppi e valvola illuminata, poi fiume A, infermeria B, lettore 1 e keycard 1 nel gioco |
-| grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | torre buia dopo una morte, gocce dello spruzzo da vicino che fanno laggare |
+| mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/mascotte | fatti: statue, Jilly, inizio con il mostro-squalo (v0.3.8). In attesa di un compito nuovo |
+| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1: vasche c (acqua più chiara e lampade) e strisce a; poi discesa_5_0 della torre |
+| ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | tuffo di testa di Jilly (scelta A) con lo schizzo su misura, al posto del geyser; poi i casi di posizionamento di interni e sala |
+| enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | fiume A con lo scivolo B, infermeria B, lettore, keycard, strada β (frecce di C2 tolte), Polaroid della pecora |
+| grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | griglia del controllo di posizionamento ancorata al mondo, poi rapporto e casi da distribuire |
 
 Le sessioni vecchie (grafica session_01Q9PdaHCaFPsyZ4J69AtTTt, ambienti-1 session_01E1m21YyF95ZHLwLFM1yLCv, ambienti-2 session_01DHF6GjuPt1SH74CXxGYGC2, enigma-logica session_01RPrxxeJjwAgHgEzLWPXgsn, enigma-ambiente session_01Jn42hE4synLdT5YNKedMqv, mascotte session_01Ut6TnWfhFvUH1yfran7kFa) sono ferme dal 21 ottobre: avevano conversazioni lunghissime che costavano a ogni passo. Ognuna ha lasciato un passaggio di consegne in `docs/coordinamento/passaggi/<squadra>.md` sul suo branch.
 
@@ -37,8 +37,14 @@ Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD
 - **grafica**: aspetta le risposte della pagina dei punti bui (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb).
 - **Regola nuova per tutti**: nei cartelli del parco solo disegni, niente scritte; fa eccezione il nome di Jilly Jubilee.
 
+## Autorizzazioni dell'utente (21 ottobre, sera)
+
+- Il coordinatore può pubblicare la v0.3.8 da solo, quando le correzioni sono pronte e tutti i test passano.
+- Il coordinatore decide se il geyser V1 nel gioco va bene o se passare al tuffo di Jilly, e poi lo spiega all'utente.
+
 ## Ultima versione
 
+- **v0.3.8** pubblicata il 22 ottobre mattina, come autorizzato dall'utente: le correzioni della prova del 19 ottobre, l'inizio con il mostro-squalo, la torcia (F, energia 1,4), statue e Jilly, la strada nella torre con le vasche, acquari doppi in P1, il controllo automatico di posizionamento nella CI. Scelte del 22 ottobre in `docs/riscontri/2026-10-22_scelte.md`.
 - **v0.3.7** pubblicata il 19 ottobre alle 07:48 UTC su richiesta dell'utente (main 3abc887; exe unico 1,35 GB): schermo del monitor, fogli della scrivania, torre senza blocchi all'ingresso, riserve dei caricamenti, pacchetto più leggero.
 
 ## Da chiedere all'utente

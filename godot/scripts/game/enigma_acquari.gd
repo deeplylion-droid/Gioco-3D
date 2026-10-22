@@ -8,9 +8,10 @@ extends Node3D
 ## con il colore sbagliato diventa torbido: la valvola rossa sotto, colpita col getto, lo svuota col
 ## gorgo e riempie di nuovo i due colorati. I colorati non si esauriscono (WaterTank.min_fill).
 ## I momenti:
-## - al primo passaggio nella sala gli acquari non ci sono e le lampade del portone sono spente;
-## - rientrando dal magazzino (tappa 7, la [member serranda] si è aperta) compaiono e le lampade si
-##   accendono;
+## - al primo passaggio nella sala gli acquari ci sono ma vuoti, coi vetri impolverati, e le lampade del
+##   portone sono spente (richiesta dell'utente del 21 ottobre);
+## - rientrando dal magazzino (tappa 7, la [member serranda] si è aperta) sono pieni ([signal comparso])
+##   e le lampade si accendono;
 ## - funzionano solo dopo la tappa 8 ([member tappa8] FINITA), quando lei se n'è andata.
 ## Lo stato si salva con i checkpoint; i livelli e i colori li salvano gli acquari stessi.
 ## I nodi figli hanno nomi fissi (vedi scenes/sala/LEGGIMI_enigma_acquari.md): i modelli veri li mette
@@ -120,22 +121,32 @@ func _aggiorna() -> void:
 
 func _mostra(on: bool) -> void:
 	comparsi = on
+	# Gli acquari ci sono dal primo passaggio, ma vuoti (richiesta dell'utente del 21 ottobre): vetri
+	# asciutti e impolverati, le luci di servizio spente, le lampadine del portone spente. Rientrando
+	# dal magazzino (le pompe sono ripartite nella tappa 6) si sono riempiti e le lampadine si accendono.
 	for n in get_children():
 		var n3 := n as Node3D
 		if n3 == null:
 			continue
+		n3.visible = true
+		n3.process_mode = Node.PROCESS_MODE_INHERIT
 		# Le lampade del portone con le versioni spenta e accesa: le spente si vedono sempre ("prima
 		# spente, poi accese"), si accendono solo quelle di Accese.
 		var accese := n3.get_node_or_null(^"Accese") as Node3D if n3.name == &"LampadePortone" else null
 		if accese:
-			n3.visible = true
-			n3.process_mode = Node.PROCESS_MODE_INHERIT
 			accese.visible = on
-			continue
-		n3.visible = on
-		# Nascosti non hanno collisioni né bersagli.
-		n3.process_mode = Node.PROCESS_MODE_INHERIT if on else Node.PROCESS_MODE_DISABLED
 	for t in [_giallo, _blu, _misto]:
+		if not on:
+			t.fill = 0.0
+			t.set_mix({})
+		elif t != _misto and t.fill < 0.01:
+			t.fill = t.max_fill
+			t.set_mix(WaterMix.pura(t.fill_pigment))
+		for l in t.find_children("LuceAcquario", "Light3D", false, false):
+			(l as Light3D).visible = on
+		var v: Node = t.get_node_or_null(^"Vetro")
+		if v and v.has_method(&"imposta_polvere"):
+			v.call(&"imposta_polvere", 0.0 if on else 1.0)
 		for g in [&"water_catchers", &"water_sources"]:
 			if on and (g != &"water_sources" or t != _misto):
 				t.add_to_group(g)
