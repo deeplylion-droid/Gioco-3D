@@ -121,6 +121,10 @@ var _geyser: GeyserFossa
 var _testa_entrata := false
 var _coda_entrata := false
 var _tuffo: TuffoLei
+# Gli schizzi su misura del tuffo (creati all'avvio: niente blocchi al primo tuffo) e dove è entrata la testa.
+var _schizzo_testa: SchizzoTuffo
+var _schizzo_coda: SchizzoTuffo
+var _entrata := Vector3.ZERO
 var _colpibile: WaterHitbox
 
 
@@ -131,6 +135,15 @@ func _ready() -> void:
 	_nascondi()
 	if geyser:
 		_crea_geyser()
+	if tuffo:
+		_schizzo_testa = SchizzoTuffo.new()
+		_schizzo_testa.name = "SchizzoTesta"
+		_schizzo_testa.top_level = true
+		add_child(_schizzo_testa)
+		_schizzo_coda = SchizzoTuffo.new()
+		_schizzo_coda.name = "SchizzoCoda"
+		_schizzo_coda.top_level = true
+		add_child(_schizzo_coda)
 	if coperchio:
 		coperchio.collision_layer = Layers.WORLD
 	if medusa:
@@ -533,28 +546,22 @@ func _schizzi_tuffo() -> void:
 		return
 	if not _testa_entrata and sott_acqua(punti[0]):
 		_testa_entrata = true
-		# Lei è grande (4,5 m): uno schizzo al centro e una corona di schizzi intorno, dove entrano le spalle.
-		_schizzo_in(punti[0], 3.0)
-		for i in 5:
-			var ang := TAU * i / 5.0 + 0.3
-			_schizzo_in(punti[0] + Vector3(cos(ang), 0.0, sin(ang)) * 0.7, 2.0, false)
+		_entrata = Vector3(punti[0].x, _pelo(), punti[0].z)
+		# lo schizzo su misura (corona alta, gocce grosse, schiuma) e quello dell'acqua (increspature, nebbia)
+		if _schizzo_testa:
+			_schizzo_testa.schizza(_entrata, 1.0)
+		_schizzo_in(_entrata, 1.5)
 		_suona(&"tuffo", 4.0, 0.8)
 	if _testa_entrata and not _coda_entrata:
 		var tutti := true
 		for i in range(1, punti.size()):
 			tutti = tutti and (sott_acqua(punti[i]) or sotto_il_pavimento(punti[i]))
 		if tutti:
+			# gli ultimi tentacoli entrano dove è entrata lei: uno schizzo più piccolo
 			_coda_entrata = true
-			# uno schizzo piccolo per ogni tentacolo (le punte più vicine di 40 cm fanno uno schizzo solo)
-			var fatti: Array[Vector3] = []
-			for i in range(1, punti.size()):
-				var vicino := false
-				for f in fatti:
-					if Vector2(f.x - punti[i].x, f.z - punti[i].z).length() < 0.4:
-						vicino = true
-				if not vicino and sott_acqua(punti[i]):
-					fatti.append(punti[i])
-					_schizzo_in(punti[i], 1.0, false)
+			if _schizzo_coda:
+				_schizzo_coda.schizza(_entrata, 0.45)
+			_schizzo_in(_entrata, 0.8, false)
 			_suona(&"tuffo", -4.0, 1.25)
 
 

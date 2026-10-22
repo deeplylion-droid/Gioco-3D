@@ -7,8 +7,8 @@ extends Node
 ## per [constant FOTOGRAMMI] fotogrammi accende davanti alla camera, una volta sola:
 ## - le particelle e le mesh del giocatore (zaino: aspirazione, getto, schizzi, gocce, colonna
 ##   aspirata, vortice; EffettiZaino: schizzi e nebbia dove il getto colpisce; SlideFx) e i due getti (WaterStream: il nastro del nucleo, e la sua aspirazione);
-## - una macchia di bagnato (il primo Decal prepara l'atlante dei decal), lo schizzo grande d'acqua del tuffo
-##   di lei nella fossa (WaterSplash, forza 3) e lo schermo rotto del jumpscare (glitch_schermo);
+## - una macchia di bagnato (il primo Decal prepara l'atlante dei decal), gli schizzi del tuffo di lei nella
+##   fossa (WaterSplash e SchizzoTuffo) e lo schermo rotto del jumpscare (glitch_schermo);
 ## - i suoni che partono in quei momenti (caricati in memoria, senza suonarli).
 ## Poi rimette tutto com'era: particelle spente e vuote, mesh nascoste, getti vuoti.
 ## La crea GettoPotente quando si aggancia allo zaino. Con Engine.set_meta(&"prepara_effetti_spento",
@@ -126,11 +126,16 @@ func _accendi(cam: Camera3D) -> void:
 		for k in 3:
 			(s as Node3D).call(&"physics_step", 1.0 / 60.0, true, davanti, -cam.global_basis.z * 4.0 + Vector3.UP * 2.0)
 	if _f == 1:
-		# Lo schizzo del tuffo (si libera da solo quando finisce).
+		# Gli schizzi del tuffo di lei: quello dell'acqua (si libera da solo) e quello su misura (corona, gocce,
+		# schiuma; le sue risorse sono condivise con quelli di LeiSbuca).
 		var schizzo := WaterSplash.new()
 		add_child(schizzo)
 		schizzo.global_position = davanti + Vector3.DOWN * 0.8
-		schizzo.play(3.0)
+		schizzo.play(1.5)
+		var tuffo := SchizzoTuffo.new()
+		add_child(tuffo)
+		tuffo.schizza(davanti + Vector3.DOWN * 1.2, 1.0)
+		tuffo.prepara()
 
 
 func _rimetti() -> void:

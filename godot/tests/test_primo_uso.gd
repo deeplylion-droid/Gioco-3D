@@ -109,13 +109,20 @@ func _run() -> void:
 	await _frames(10)
 	var asp := _conta()
 	print("  (aspirazione: surface %d, draw %d, in sottofondo %d)" % [asp.surface, asp.draw, asp.spec])
-	# Lo schizzo grande del tuffo di lei nella fossa (WaterSplash, forza 3).
+	# Gli schizzi del tuffo di lei nella fossa: quello su misura (SchizzoTuffo, creato prima come fa LeiSbuca
+	# all'avvio) e quello dell'acqua (WaterSplash).
+	var st := SchizzoTuffo.new()
+	st.top_level = true
+	get_tree().current_scene.add_child(st)
+	await _frames(3)
 	_azzera()
+	var dove := p.global_position + p.global_basis * Vector3(0.0, 0.0, -4.0)
+	st.schizza(dove, 1.0)
 	var s := WaterSplash.new()
 	get_tree().current_scene.add_child(s)
-	s.global_position = p.global_position + p.global_basis * Vector3(0.0, 0.0, -4.0)
-	s.play(3.0)
-	await _frames(20)
+	s.global_position = dove
+	s.play(1.5)
+	await _frames(40)
 	_controlla("schizzo del tuffo", _conta())
 	_fine()
 
