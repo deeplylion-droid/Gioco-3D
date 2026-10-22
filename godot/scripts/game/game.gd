@@ -12,6 +12,8 @@ signal paused_changed(is_paused: bool)
 ## Solo nelle build di debug (editor e prove): nella Release si passa dal menu.
 @export var debug_scene_keys := OS.is_debug_build()
 
+## Secondi massimi che esci() aspetta un caricamento nel thread (se il pool di thread si blocca).
+const ATTESA_MASSIMA := 30.0
 const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
 const SCENE_TITLE := "res://scenes/ui/menu_principale.tscn"
@@ -21,7 +23,8 @@ const SCENE_CONTROLS := "res://scenes/ui/comandi.tscn"
 @export var first_run_preset := "alto"
 
 var _overlay: CanvasLayer
-## I caricamenti nel thread chiesti con carica_in_thread(): all'uscita si aspetta che finiscano.
+## I caricamenti nel thread chiesti con carica_in_thread() in questa partita: all'uscita si aspetta che
+## finiscano, e poi ancora un po'.
 var _caricamenti: PackedStringArray = []
 ## Vero da quando esci() è partito: chi aspetta un caricamento nel thread non lo rifà.
 var uscendo := false
@@ -62,31 +65,35 @@ func carica_in_thread(percorso: String, tipo := "") -> Error:
 	return err
 
 
-## Chiude il gioco. Se un caricamento nel thread è ancora in corso (la torre in precarica subito dopo un
-## checkpoint, il livello dalla schermata di caricamento) prima lo aspetta e lo lascia andare in un
-## fotogramma normale: una risorsa grande che finisce di caricare, o si libera, mentre Godot smonta
-## tutto fa fermare o abortire il gioco all'uscita (CI di lavoro/godot 58cc633: "Aborted" 12 s dopo la
-## fine di test_acquari; in prova: fermo per sempre).
+## Chiude il gioco. Se in questa partita c'è stato un caricamento nel thread (la torre in precarica, il
+## livello dalla schermata di caricamento), prima ne aspetta la fine e poi lascia girare il gioco ancora
+## almeno 30 fotogrammi e 1 s: una risorsa grande che ha appena finito di caricare, se Godot smonta tutto
+## subito, lo fa fermare per sempre o abortire (CI di lavoro/godot 58cc633: "Aborted" 12 s dopo la fine
+## di test_acquari; in prova: 2 fotogrammi dopo la fine no, 30 sì). Se un caricamento non finisce mai,
+## dopo ATTESA_MASSIMA esce lo stesso; una seconda richiesta (la X di nuovo) esce subito.
 func esci(codice := 0) -> void:
 	if uscendo:
+		get_tree().quit(codice)
 		return
 	uscendo = true
-	var t0 := Time.get_ticks_msec()
-	var n := 0
-	for percorso in _caricamenti:
-		if ResourceLoader.load_threaded_get_status(percorso) != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-			continue
-		n += 1
-		# Si aspetta fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get()
-		# (in prova bloccare non bastava: Godot si fermava lo stesso all'uscita).
-		while ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-			await get_tree().process_frame
-		ResourceLoader.load_threaded_get(percorso)
-	_caricamenti.clear()
-	if n > 0:
-		print("Uscita: aspettati %d caricamenti nel thread (%.1f s)" % [n, (Time.get_ticks_msec() - t0) / 1000.0])
-		# Dopo la fine del caricamento i lavori che si porta dietro vanno avanti ancora qualche
-		# fotogramma: uscire subito blocca o fa abortire Godot (in prova: 2 fotogrammi no, 30 sì).
+	if not _caricamenti.is_empty():
+		var t0 := Time.get_ticks_msec()
+		var n := 0
+		for percorso in _caricamenti:
+			if ResourceLoader.load_threaded_get_status(percorso) != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+				continue
+			n += 1
+			# Fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get()
+			# (in prova bloccare non bastava: Godot si fermava lo stesso all'uscita).
+			while ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS \
+					and Time.get_ticks_msec() - t0 < ATTESA_MASSIMA * 1000.0:
+				await get_tree().process_frame
+			if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_LOADED:
+				ResourceLoader.load_threaded_get(percorso)
+		if n > 0:
+			print("Uscita: aspettati %d caricamenti nel thread (%.1f s)" % [n, (Time.get_ticks_msec() - t0) / 1000.0])
+		# Anche se il caricamento era già finito (magari da pochi fotogrammi): i lavori che si porta dietro
+		# vanno avanti ancora un po'.
 		var t1 := Time.get_ticks_msec()
 		var f := 0
 		while f < 30 or Time.get_ticks_msec() - t1 < 1000:
