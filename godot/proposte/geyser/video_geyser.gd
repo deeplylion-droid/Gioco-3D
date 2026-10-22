@@ -67,10 +67,13 @@ func _avvia() -> void:
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		wm.set(&"quality", 1)
-	var level := (load(LEVEL) as PackedScene).instantiate()
 	# Come tests/scatti_tappa8.gd con SCATTI_TOGLI=Interni,Tecnici: con tutto la memoria non basta (qui anche
 	# le polaroid e la medusa della vasca centrale, fuori inquadratura: col geyser in più si arrivava a 13,4 GB).
-	for percorso in ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa"]:
+	# Con la Risalita anche toglierli dopo non basta più (si caricano comunque): si carica una copia della
+	# scena senza i rami grossi e le loro risorse.
+	var togli := ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa"]
+	var level := _scena_senza(LEVEL, ["Interni", "Tecnici", "Risalita"]).instantiate()
+	for percorso in togli:
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
 			n.get_parent().remove_child(n)
@@ -269,3 +272,44 @@ func _sotto_camera(n: Node) -> bool:
 			return true
 		c = c.get_parent()
 	return false
+
+
+## Una copia di [param scena] senza i nodi in [param rami] (con i figli, le connessioni e le risorse
+## esterne che usavano solo loro), così le loro risorse non si caricano neanche.
+func _scena_senza(scena: String, rami: Array) -> PackedScene:
+	var righe := FileAccess.get_file_as_string(scena).split("\n")
+	var dentro := func(percorso: String) -> bool:
+		for r in rami:
+			if percorso == r or percorso.begins_with(r + "/"):
+				return true
+		return false
+	var tenute: PackedStringArray = []
+	var salta := false
+	for riga in righe:
+		if riga.begins_with("["):
+			salta = false
+			if riga.begins_with("[node "):
+				var nome := riga.get_slice("name=\"", 1).get_slice("\"", 0)
+				var padre := riga.get_slice("parent=\"", 1).get_slice("\"", 0) if riga.contains("parent=\"") else ""
+				var percorso := nome if padre == "." else padre + "/" + nome
+				salta = padre != "" and (dentro.call(percorso) or dentro.call(padre))
+			elif riga.begins_with("[connection") or riga.begins_with("[editable"):
+				for chiave in ["from=\"", "to=\"", "path=\""]:
+					if riga.contains(chiave) and dentro.call(riga.get_slice(chiave, 1).get_slice("\"", 0)):
+						salta = true
+		if not salta:
+			tenute.append(riga)
+	var testo := "\n".join(tenute)
+	# Via le risorse esterne non più usate.
+	var finali: PackedStringArray = []
+	for riga in testo.split("\n"):
+		if riga.begins_with("[ext_resource"):
+			var id := riga.get_slice(" id=\"", 1).get_slice("\"", 0)
+			if testo.count("ExtResource(\"" + id + "\")") == 0:
+				continue
+		finali.append(riga)
+	var copia := "user://scatti_livello.tscn"
+	var f := FileAccess.open(copia, FileAccess.WRITE)
+	f.store_string("\n".join(finali))
+	f.close()
+	return ResourceLoader.load(copia, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
