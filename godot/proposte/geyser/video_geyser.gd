@@ -72,7 +72,7 @@ func _avvia() -> void:
 	# Con la Risalita anche toglierli dopo non basta più (si caricano comunque): si carica una copia della
 	# scena senza i rami grossi e le loro risorse.
 	var togli := ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa"]
-	var level := _scena_senza(LEVEL, ["Interni", "Tecnici", "Risalita"]).instantiate()
+	var level := _scena_senza(LEVEL, togli).instantiate()
 	for percorso in togli:
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
