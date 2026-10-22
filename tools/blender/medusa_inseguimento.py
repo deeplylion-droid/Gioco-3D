@@ -366,6 +366,13 @@ def dita_incombe(C, u=0.0):
                DITA_OSSA)
 
 
+def tent_incombe(C, t, T=2.4):
+    """I tentacoli di incombe: quelli che pendono di fluttua con un poco della scia di insegue (piu' raccolti:
+    vicino ai muri la scia piena di insegue li faceva entrare nelle pareti)."""
+    u = (t / T) % 1.0
+    return mix(campiona(C, 'fluttua', u * 2.0), campiona(C, 'insegue', u), 0.35, TENTACOLI)
+
+
 def pose_incombe(arm, C, Z, t, T=2.4):
     """Ciclo: sporta in avanti sopra il giocatore, braccia tese che ondeggiano a turno, dita che si aprono e
     si chiudono, testa bassa verso il giocatore."""
@@ -417,7 +424,7 @@ def pose_sale(arm, C, Z, t, T):
 
 def pose_presa(arm, C, Z, t):
     """1,2 s: si tira indietro (0-0,25), scatta in avanti e afferra in GRAB (0,25-0,55), tira verso di se'."""
-    tent = campiona(C, 'insegue', t * 1.5)
+    tent = tent_incombe(C, t)
     dita = mix(dita_incombe(C), campiona(C, 'fauce_apre', 1.0, False), liscio(0.0, 1.0, 0.3, 0.55, t), DITA_OSSA)
     applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, dita))
     Z.leggi()
@@ -454,7 +461,7 @@ def pose_presa(arm, C, Z, t):
 
 def pose_respinta(arm, C, Z, t):
     """1,2 s: il getto in faccia (0), la testa indietro, si copre il viso (0,1-0,4) e torna sotto (0,45-1,2)."""
-    tent = mix(campiona(C, 'insegue', t), campiona(C, 'fluttua', t), liscio(0.0, 1.0, 0.2, 0.8, t), TENTACOLI)
+    tent = mix(tent_incombe(C, t), campiona(C, 'fluttua', t), liscio(0.0, 1.0, 0.2, 0.8, t), TENTACOLI)
     dita = mix(dita_incombe(C), campiona(C, 'statua', 0.0, False), liscio(0.0, 1.0, 0.05, 0.3, t), DITA_OSSA)
     applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, dita))
     Z.leggi()
@@ -500,7 +507,7 @@ def pose_respinta(arm, C, Z, t):
 def pose_scende(arm, C, Z, t, T=1.0):
     """1 s: abbassa le braccia, si raddrizza e torna sotto (piano all'inizio, poi sempre piu' in fretta)."""
     u = t / T
-    tent = mix(campiona(C, 'insegue', t), campiona(C, 'fluttua', t), liscio(0.0, 1.0, 0.0, 0.6, u), TENTACOLI)
+    tent = mix(tent_incombe(C, t), campiona(C, 'fluttua', t), liscio(0.0, 1.0, 0.0, 0.6, u), TENTACOLI)
     dita = mix(dita_incombe(C), campiona(C, 'statua', 0.0, False), liscio(0.0, 1.0, 0.1, 0.6, u), DITA_OSSA)
     applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, dita))
     Z.leggi()
@@ -523,7 +530,7 @@ def pose_scende(arm, C, Z, t, T=1.0):
 def pose_grata(arm, C, Z, t, T=0.5):
     """Ciclo di 0,5 s: carica (0-0,15), sbatte i palmi sulla grata a GRATA m davanti (0,2), rimbalza."""
     u = t / T
-    tent = campiona(C, 'insegue', t * 2)
+    tent = tent_incombe(C, t * 4.8)     # un ciclo di incombe ogni colpo
     dita = mix(campiona(C, 'statua', 0.0, False), campiona(C, 'insegue', 0.0), 0.3, DITA_OSSA)
     applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, dita))
     Z.leggi()

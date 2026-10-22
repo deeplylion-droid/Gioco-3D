@@ -506,7 +506,13 @@ func _posto_scolo(k: int) -> Vector3:
 	var c := Vector2((r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0)
 	var verso := (Vector2(60.0, 15.0) - c).normalized()
 	var mezzo := maxf(r[2] - r[0], r[3] - r[1]) / 2.0 + 1.6
-	return b([c.x + verso.x * mezzo, c.y + verso.y * mezzo, float(v["fondo"]) - 2.4])
+	var rit: Array = RITOCCHI.get("scolo_%d" % k, [0.0, 0.0])
+	return b([c.x + verso.x * mezzo + rit[0], c.y + verso.y * mezzo + rit[1], float(v["fondo"]) - 2.4])
+
+
+## Piccoli spostamenti (metri, assi di Blender) perché mentre incombe e prende non entri nella vasca di scolo e
+## nel tubo accanto (sonda: proposte/mascotte/sonda_lei_inseguimento.gd).
+const RITOCCHI := {"scolo_0": [0.0, 0.25], "scolo_1": [-1.0, -1.25]}
 
 
 ## Lei sale dall'acqua del fondo fino a [param su]: in 1,6 s, o in 1 s ([param durata] sotto 1,3).
@@ -521,11 +527,20 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	lei_stato = Lei.SALE
 	_lei_t = 0.0
 	lei.segui_con_la_testa(0.0, 0.01)
+	# le animazioni salgono da 5 m sotto; dove sotto di lei c'è meno spazio partono più su, già a metà
+	# salita (sempre con l'inizio nascosto: sott'acqua o dietro la vasca)
+	var sotto := _profondita(dove)
 	if dove == "sb1":
 		_anima("affacciata_sb1")     # sbuca in 1,3 s, si aggrappa, gira la testa e ti fissa
-		set_meta(&"durata_salita", 1.3)
+		var t0 := _quando_radice(&"inseguimento/affacciata_sb1", sotto, true)
+		_salta_a(t0)
+		set_meta(&"durata_salita", 1.3 - t0)
 	else:
-		set_meta(&"durata_salita", _anima("sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce"))
+		var nome := "sale_dall_acqua" if durata >= 1.3 else "sale_dall_acqua_veloce"
+		var dur := _anima(nome)
+		var t0 := _quando_radice(StringName("inseguimento/" + nome), sotto, true)
+		_salta_a(t0)
+		set_meta(&"durata_salita", dur - t0)
 	if dove != "sb1":
 		_girala_verso_giocatore()
 	# l'acqua che si apre quando sbuca (verso metà della salita)
@@ -533,6 +548,48 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 		if lei_stato == Lei.SALE and _lei_dove == dove:
 			Audio.suona(&"tuffo", lei.global_position + Vector3.UP * 3.0, 0.0, 0.7))
 	lei_compare.emit(dove)
+
+
+## Quanto può scendere sotto il suo posto "su" senza toccare niente (le animazioni scendono di 5 m): SB1 nel
+## pozzo pieno d'acqua, la vasca 3 accanto alla vasca, sopra il pavimento della sala (sonda:
+## proposte/mascotte/sonda_lei_inseguimento.gd).
+const PROFONDITA := {"sb1": 1.25, "vasca_2": 2.9, "scolo_1": 2.7}
+
+
+func _profondita(dove: String) -> float:
+	return float(PROFONDITA.get(dove, 5.0))
+
+
+## Il tempo dell'animazione in cui la radice è [param sotto] metri sotto la sua quota alla fine (salita, il primo
+## istante sopra) o all'inizio (discesa, il primo istante sotto). Con 5 m: l'inizio o la fine.
+func _quando_radice(anim: StringName, sotto: float, salita: bool) -> float:
+	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	var a := ap.get_animation(anim) if ap else null
+	if a == null:
+		return 0.0
+	var tr := -1
+	for i in a.get_track_count():
+		if a.track_get_type(i) == Animation.TYPE_POSITION_3D and String(a.track_get_path(i)).ends_with(":radice"):
+			tr = i
+	if tr < 0 or sotto >= 4.99:
+		return 0.0 if salita else a.length
+	var n := a.track_get_key_count(tr)
+	var rif: float = (a.track_get_key_value(tr, n - 1 if salita else 0) as Vector3).y
+	for k in n:
+		var y: float = (a.track_get_key_value(tr, k) as Vector3).y
+		if salita and y >= rif - sotto:
+			return a.track_get_key_time(tr, k)
+		if not salita and y <= rif - sotto:
+			return a.track_get_key_time(tr, k)
+	return 0.0 if salita else a.length
+
+
+func _salta_a(t: float) -> void:
+	if t <= 0.0:
+		return
+	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap:
+		ap.seek(t, true)
 
 
 ## Un getto in faccia: si copre il viso, si ritrae sotto e tornerà.
@@ -549,7 +606,10 @@ func _scendi(respinta := false) -> void:
 	lei_stato = Lei.SCENDE
 	_lei_t = 0.0
 	lei.segui_con_la_testa(0.0, 0.15)
-	set_meta(&"durata_discesa", _anima("respinta" if respinta else "scende", 0.15))
+	var nome := "respinta" if respinta else "scende"
+	_anima(nome, 0.15)
+	# sparisce quando è scesa di quanto c'è spazio sotto di lei (vedi _lei_sale)
+	set_meta(&"durata_discesa", _quando_radice(StringName("inseguimento/" + nome), _profondita(_lei_dove), false))
 	get_tree().create_timer(float(get_meta(&"durata_discesa")) * 0.6, false).timeout.connect(func():
 		if lei_stato == Lei.SCENDE:
 			Audio.suona(&"atterraggio_acqua", lei.global_position + Vector3.UP * 3.0, 2.0, 0.6))
