@@ -1,0 +1,100 @@
+{
+	"_nota": "Lo spot VHS della crociera (GDD, 'Lo spot della crociera Jubilee'; docs/proposte/spot/bozza.md). Tempi in secondi dall'inizio dello spot. Lo legge la regia (scripts/spot/regia_spot.gd, per registrare il video) e il lettore (scripts/spot/lettore_spot.gd, per l'audio e il filtro dal vivo). Le camere sono in coordinate del mondo di ogni scena. 'da_rivedere': posizioni provvisorie, da fissare con chi ha fatto la scena.",
+	"fps": 30,
+	"larghezza": 1280,
+	"altezza": 720,
+	"durata_video": 43.0,
+	"durata": 44.6,
+	"segmenti": [
+		{
+			"nome": "1_apertura",
+			"scena": "res://scenes/spot/apertura_spot.tscn",
+			"inquadrature": [
+				{"n": 1, "inizio": 0.0, "durata": 3.0, "cosa": "schermo blu VHS, PLAY, poi il logo di Jilly da nuovo"}
+			]
+		},
+		{
+			"nome": "2_3_sala",
+			"scena": "res://scenes/spot/sala_spot.tscn",
+			"inquadrature": [
+				{"n": 2, "inizio": 3.0, "durata": 5.0, "cosa": "la cupola col cielo, poi giù sulla sala accesa", "da_rivedere": true,
+					"camera": [
+						{"t": 0.0, "pos": [0.0, 3.0, 4.0], "guarda": [0.0, 30.0, -2.0], "fov": 70.0},
+						{"t": 2.2, "pos": [0.0, 4.0, 6.0], "guarda": [0.0, 18.0, -6.0], "fov": 70.0},
+						{"t": 5.0, "pos": [0.0, 6.0, 12.0], "guarda": [0.0, 0.0, -6.0], "fov": 60.0}
+					]},
+				{"n": 3, "inizio": 8.0, "durata": 5.0, "cosa": "panoramica sulla piscina a onde piena", "da_rivedere": true,
+					"camera": [
+						{"t": 0.0, "pos": [-10.0, 3.0, 10.0], "guarda": [-4.0, 0.0, 2.0], "fov": 60.0},
+						{"t": 5.0, "pos": [-4.0, 3.0, 12.0], "guarda": [2.0, 0.0, 2.0], "fov": 60.0}
+					]}
+			]
+		},
+		{
+			"nome": "4_torre",
+			"scena": "res://scenes/spot/torre_spot.tscn",
+			"inquadrature": [
+				{"n": 4, "inizio": 13.0, "durata": 6.0, "cosa": "la discesa nel tubo, con gli schizzi",
+					"discesa": [
+						{"t": 0.0, "s": -2.2},
+						{"t": 1.0, "s": -0.3},
+						{"t": 4.0, "s": 12.43},
+						{"t": 6.0, "s": 16.6}
+					],
+					"fov": 78.0}
+			]
+		},
+		{
+			"nome": "5_8_jilly",
+			"scena": "res://scenes/spot/sala_spot.tscn",
+			"inquadrature": [
+				{"n": 5, "inizio": 19.0, "durata": 7.0, "cosa": "Jilly sul piedistallo, luci da spettacolo, logo e insegna nuovi", "da_rivedere": true,
+					"camera": [
+						{"t": 0.0, "pos": [0.0, 2.0, 14.0], "guarda": [0.0, 3.0, 0.0], "fov": 55.0},
+						{"t": 7.0, "pos": [0.0, 2.5, 9.0], "guarda": [0.0, 3.5, 0.0], "fov": 50.0}
+					],
+					"azioni": [{"t": 1.5, "nodo": "Jilly", "metodo": "saluta"}]},
+				{"n": 6, "inizio": 26.0, "durata": 6.0, "cosa": "primo piano di Jilly che sorride e fa ciao; la camera si avvicina troppo", "da_rivedere": true,
+					"camera": [
+						{"t": 0.0, "pos": [0.0, 3.5, 6.0], "guarda": [0.0, 4.0, 0.0], "fov": 45.0},
+						{"t": 6.0, "pos": [0.0, 4.0, 2.5], "guarda": [0.0, 4.2, 0.0], "fov": 40.0}
+					],
+					"azioni": [{"t": 0.5, "nodo": "Jilly", "metodo": "saluta"}]},
+				{"n": 7, "inizio": 32.0, "durata": 6.0, "cosa": "stessa inquadratura, il nastro si guasta", "da_rivedere": true,
+					"camera": [
+						{"t": 0.0, "pos": [0.0, 4.0, 2.5], "guarda": [0.0, 4.2, 0.0], "fov": 40.0},
+						{"t": 6.0, "pos": [0.0, 4.1, 1.6], "guarda": [0.0, 4.2, 0.0], "fov": 35.0}
+					]},
+				{"n": 8, "inizio": 38.0, "durata": 5.0, "cosa": "l'occhio di Jilly riempie lo schermo e pulsa; alla fine si avvicina di colpo", "da_rivedere": true,
+					"camera": [
+						{"t": 0.0, "pos": [0.0, 4.2, 0.9], "guarda": [0.0, 4.2, 0.0], "fov": 30.0},
+						{"t": 4.6, "pos": [0.0, 4.2, 0.7], "guarda": [0.0, 4.2, 0.0], "fov": 28.0},
+						{"t": 5.0, "pos": [0.0, 4.2, 0.35], "guarda": [0.0, 4.2, 0.0], "fov": 22.0}
+					],
+					"azioni": [{"t": 0.0, "nodo": "Jilly", "metodo": "pupilla_battito", "argomenti": [5.0]}]}
+			]
+		}
+	],
+	"nero": {"inizio": 43.0, "durata": 1.6, "cosa": "inquadratura 9: taglio al nero, ronzio della TV, poi il risveglio"},
+	"audio": [
+		{"nome": "sigla_pulita", "file": "res://audio/musica/sigla_pulita.ogg", "da": 0.3, "a": 32.4, "volume_db": -9.0, "sfuma_fine": 0.4},
+		{"nome": "sigla_rovinata", "file": "res://audio/musica/sigla_rovinata.ogg", "da": 32.0, "a": 43.0, "volume_db": -8.0, "sfuma_inizio": 0.4, "taglio_fine": true},
+		{"nome": "ronzio", "file": "res://audio/ambiente/neon_ronzio_loop.ogg", "da": 37.5, "a": 44.6, "volume_db": -20.0, "sale_a_db": -6.0, "sfuma_fine": 0.6, "da_rivedere": true},
+		{"nome": "voce_1", "file": "res://assets/spot/voce/frase_1.wav", "da": 0.9, "volume_db": 0.0},
+		{"nome": "voce_2", "file": "res://assets/spot/voce/frase_2.wav", "da": 3.6, "volume_db": 0.0},
+		{"nome": "voce_3", "file": "res://assets/spot/voce/frase_3.wav", "da": 8.4, "volume_db": 0.0},
+		{"nome": "voce_4", "file": "res://assets/spot/voce/frase_4.wav", "da": 13.8, "volume_db": 0.0},
+		{"nome": "voce_5", "file": "res://assets/spot/voce/frase_5.wav", "da": 19.8, "volume_db": 0.0},
+		{"nome": "voce_6", "file": "res://assets/spot/voce/frase_6.wav", "da": 26.6, "volume_db": 0.0},
+		{"nome": "voce_7", "file": "res://assets/spot/voce/frase_7.wav", "da": 33.0, "volume_db": 0.0}
+	],
+	"filtro": [
+		{"t": 0.0, "guasto": 0.0, "occhio": 0.0},
+		{"t": 31.5, "guasto": 0.0, "occhio": 0.0},
+		{"t": 34.0, "guasto": 0.35, "occhio": 0.0},
+		{"t": 38.0, "guasto": 0.8, "occhio": 0.0},
+		{"t": 38.2, "guasto": 0.6, "occhio": 0.15},
+		{"t": 42.8, "guasto": 1.0, "occhio": 1.0},
+		{"t": 43.0, "guasto": 0.0, "occhio": 0.0}
+	]
+}

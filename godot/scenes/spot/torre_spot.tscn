@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/spot/torre_pulita.gd" id="1_pulita"]
+[ext_resource type="Environment" path="res://scenes/spot/ambiente_torre_spot.tres" id="2_amb"]
+
+[node name="TorreSpot" type="Node3D"]
+script = ExtResource("1_pulita")
+editor_description = "La torre degli scivoli da nuova, per lo spot VHS della crociera (inquadratura 4, la discesa nel tubo). Solo per lo spot: il gioco non la usa. Le scene del gioco non si toccano."
+
+[node name="Ambiente" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_amb")
+
+[node name="Camera" type="Camera3D" parent="."]
+fov = 75.0
