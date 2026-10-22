@@ -15,8 +15,12 @@ extends Node3D
 ## "scivolo" (accordo con grafica: chi ci sta sopra scivola seguendo la pendenza, il salto a fine pezzo
 ## viene dalla velocità, il getto verso il basso in aria dà la spinta). Qui ci sono:
 ## - un checkpoint su ogni pedana d'arrivo (e all'ingresso);
-## - la caduta: se il giocatore finisce 3 m sotto la pedana del prossimo checkpoint, o sul fondo fuori
-##   dalla vasca, muore e riparte dall'ultimo checkpoint;
+## - la strada si legge (S1 e S2, scelte dell'utente del 21 ottobre): sopra ogni imbocco della discesa il
+##   portale ha i led verdi e la lampada verde; le bocche degli scivoli che non si fanno sono chiuse dal
+##   cancello a strisce, e sopra i cancelli la lampada è rossa e guasta (sfarfalla) o spenta;
+## - chi sbaglia un salto cade nella vasca di raccolta sotto, senza morire, e la scaletta di servizio lo
+##   riporta sulla pedana da cui era partito (V1); si muore solo per una caduta vera, lunga e visibile:
+##   toccando qualcosa dopo [member caduta_mortale] metri di caduta libera;
 ## - la Polaroid 10 sul lettino della pedana NO a -12;
 ## - la balconata dei bambini: al primo salto, un lampo e per un attimo si vede la fila di bambini;
 ## - la luce di lei che sale dal pozzo, più forte man mano che scendi;
@@ -32,10 +36,9 @@ const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creat
 
 ## Ordine del primo checkpoint della torre (dopo quelli della sala grande e del ritorno).
 @export var ordine_base := 20
-## Metri sotto la pedana del prossimo checkpoint oltre i quali si è caduti.
-@export var margine_caduta := 3.0
-## Secondi fermi su qualcosa nel vuoto (lontano dalle pedane) dopo i quali si è caduti.
-@export var tempo_bloccato := 1.5
+## Metri di caduta libera oltre i quali si muore toccando qualcosa (V1: niente regole invisibili, si muore
+## solo per una caduta vera, lunga e visibile).
+@export var caduta_mortale := 8.0
 ## Luce di lei: energia in cima e in fondo alla discesa.
 @export var lei_in_cima := 1.5
 @export var lei_in_fondo := 14.0
@@ -54,7 +57,8 @@ var _lei: Array[Light3D] = []
 var _lampo_fatto := false
 var _bambini: Array[Node3D] = []
 var _finita := false
-var _fermo := 0.0
+var _in_aria := false
+var _quota_stacco := 0.0
 var _imbocchi: Array[PackedVector3Array] = []   ## i primi metri della linea di fondo di ogni tratto
 
 
@@ -187,7 +191,7 @@ func _passi() -> Array:
 		out.append(func(): _modello(i))
 	out.append(_prepara_dati)
 	out.append_array(_passi_scivoli())
-	out.append_array([_prepara_imbocchi, _checkpoint, _caduta_sul_fondo, _polaroid])
+	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _polaroid])
 	out.append_array(_passi_balconata())
 	out.append(_vasca_fondo)
 	if crea_luci:
@@ -241,7 +245,7 @@ func _passi_figli(padre: Node, figli: Array) -> Array:
 
 func _prepara_dati() -> void:
 	dati = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
-	var acqua: Material = load("res://assets/materials/sala/acqua_torbida.tres")
+	var acqua: Material = load(ACQUA)
 	for m in find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = acqua
 
@@ -420,28 +424,34 @@ func _checkpoint() -> void:
 
 
 ## Il fondo della sala fuori dalla vasca d'arrivo è una zona di caduta (cadere da 5-20 m non perdona).
-func _caduta_sul_fondo() -> void:
-	var v: Array = dati["vasca_fondo"]["rett"]
-	var y := float(dati["pozzo"][2])
-	var x0 := 20.2
-	var x1 := 40.0
-	var y0 := 4.0
-	var y1 := 26.0
-	# quattro fasce attorno alla vasca (coordinate di Blender: x, y)
-	var fasce := [[x0, y0, x1, v[1]], [x0, v[3], x1, y1], [x0, v[1], v[0], v[3]], [v[2], v[1], x1, v[3]]]
-	for k in fasce.size():
-		var f: Array = fasce[k]
-		if f[2] - f[0] < 0.05 or f[3] - f[1] < 0.05:
-			continue
-		var z := KillZone.new()
-		z.name = "CadutaFondo%d" % k
-		var forma := CollisionShape3D.new()
+## Le vasche di raccolta sotto i salti (V1): l'acqua (ci si cade dentro senza farsi niente) e la scaletta di
+## servizio che riporta sulla pedana da cui si era partiti.
+func _raccolta() -> void:
+	var k := 0
+	for v in dati.get("raccolta", []):
+		var r: Array = v["rett"]
+		var w := WaterVolume.new()
+		w.name = "Raccolta%d" % k
+		var cs := CollisionShape3D.new()
 		var box := BoxShape3D.new()
-		box.size = Vector3(f[2] - f[0], 1.2, f[3] - f[1])
-		forma.shape = box
-		z.add_child(forma)
-		add_child(z)
-		z.global_position = b([(f[0] + f[2]) / 2.0, (f[1] + f[3]) / 2.0, y + 0.3])
+		var alto: float = float(v["acqua"]) - float(v["fondo"])
+		box.size = Vector3(r[2] - r[0] - 0.36, alto, r[3] - r[1] - 0.36)
+		cs.shape = box
+		w.add_child(cs)
+		add_child(w)
+		w.global_position = b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0, float(v["fondo"]) + alto / 2.0])
+		var sc: Dictionary = v["scala"]
+		var l := Ladder.new()
+		l.name = "ScalaRaccolta%d" % k
+		l.show_model = false
+		l.width = 0.6
+		l.height = float(sc["z1"]) - float(sc["z0"])
+		add_child(l)
+		l.global_position = b([sc["x"], sc["y"], sc["z0"]])
+		# il lato -Z della scala sta contro la pedana: il +Z (chi sale) guarda verso la vasca
+		var verso := Vector3(float(sc["verso"][0]), 0.0, -float(sc["verso"][1]))
+		l.look_at(l.global_position - verso, Vector3.UP)
+		k += 1
 
 
 func _physics_process(_delta: float) -> void:
@@ -449,23 +459,23 @@ func _physics_process(_delta: float) -> void:
 	if p == null or not is_instance_valid(p) or GameState.is_dying:
 		return
 	var y := p.global_position.y
-	# caduta: più giù della pedana del prossimo checkpoint, oltre il margine
-	var i := checkpoint_raggiunto()
-	if i >= 0 and i + 1 < _quote_cp.size() and _in_sala(p.global_position):
-		if y < _quote_cp[i + 1] - margine_caduta:
-			GameState.kill_player(&"caduta")
-			return
-		# fermi su qualcosa nel vuoto (un tubo, una trave), lontano dalle pedane e sotto l'ultimo checkpoint:
-		# da lì non si riparte, quindi conta come caduta
-		if p.is_on_floor() and not p.is_sliding and y < _quote_cp[i] - 1.0 \
-				and p.global_position.distance_to(checkpoint[i + 1].global_position) > 4.0:
-			_fermo += _delta
-			if _fermo > tempo_bloccato:
-				_fermo = 0.0
+	# la caduta vera: da quando si stacca da tutto (non scivolando, non sulla scala, non nell'acqua) a quando
+	# tocca di nuovo qualcosa; oltre caduta_mortale metri si muore lì
+	var appoggiato := p.is_on_floor() or p.is_sliding or p.is_on_ladder() or p.is_in_water()
+	if _in_sala(p.global_position):
+		if appoggiato:
+			if _in_aria and _quota_stacco - y > caduta_mortale:
+				_in_aria = false
 				GameState.kill_player(&"caduta")
 				return
+			_in_aria = false
+		elif not _in_aria:
+			_in_aria = true
+			_quota_stacco = y
 		else:
-			_fermo = 0.0
+			_quota_stacco = maxf(_quota_stacco, y)
+	else:
+		_in_aria = false
 	_guida_imbocchi(p, _delta)
 	# la luce di lei sale dal pozzo: più forte man mano che scendi
 	var k := clampf((_quote_cp[0] - y) / maxf(_quote_cp[0] - _quote_cp[-1], 1.0), 0.0, 1.0)
@@ -664,13 +674,7 @@ func _luce_lei() -> void:
 	cil.bottom_radius = 1.7
 	cil.height = 0.05
 	fondo.mesh = cil
-	var m := StandardMaterial3D.new()
-	m.albedo_color = ROSA
-	m.emission_enabled = true
-	m.emission = ROSA
-	m.emission_energy_multiplier = 3.0
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	fondo.material_override = m
+	fondo.material_override = _materiale_fondo_pozzo()
 	add_child(fondo)
 	fondo.global_position = p + Vector3(0, -5.0, 0)
 	for d in [[Vector3(0, -0.8, 0), 14.0, 10.0, false], [Vector3(0, -3.5, 0), 10.0, 4.0, false]]:
@@ -729,7 +733,132 @@ func _passi_luci(d: Dictionary = {}) -> Array:
 	for g in d["gocce"]:
 		out.append(func(): _gocce(luci.call(), b(g)))
 	out.append(func(): _catena(luci.call(), b(d["lei"])))
+	out.append(func(): _segnali_strada(luci.call()))
 	return out
+
+
+const VERDE := Color(0.1, 1.0, 0.3)
+
+
+## La strada che si legge (S1, S2): sul portale di ogni imbocco della discesa i led verdi lungo i montanti e la
+## traversa e la lampada verde che illumina il canale; sopra i cancelli delle bocche chiuse una lampada
+## rossa, guasta che sfarfalla o spenta (una sì e una no). Dai dati di torre_gioco.json.
+func _segnali_strada(radice: Node3D) -> void:
+	var led := SphereMesh.new()
+	led.radius = 0.035
+	led.height = 0.07
+	led.radial_segments = 8
+	led.rings = 4
+	var m_led := _emissivo(VERDE, 1.8)   # più forte si brucia in bianco e il verde non si legge
+	for im in dati.get("imbocchi", []):
+		var base := b(im["base"])
+		var v := Vector3(float(im["verso"][0]), 0.0, -float(im["verso"][1])).normalized()
+		var lat := v.cross(Vector3.UP).normalized()
+		var mezza: float = im["mezza"]
+		var alto: float = im["alto"]
+		var punti := PackedVector3Array()
+		for sg in [-1.0, 1.0]:
+			var y := 0.35
+			while y < alto - 0.05:
+				punti.append(base + lat * (sg * mezza) + Vector3.UP * y - v * 0.08)
+				y += 0.25
+		var x := -mezza + 0.2
+		while x < mezza - 0.1:
+			punti.append(base + lat * x + Vector3.UP * (alto - 0.09) - v * 0.06)
+			x += 0.25
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = led
+		mm.instance_count = punti.size()
+		for i in punti.size():
+			mm.set_instance_transform(i, Transform3D(Basis.IDENTITY, punti[i]))
+		var mi := MultiMeshInstance3D.new()
+		mi.name = "LedImbocco"
+		mi.multimesh = mm
+		mi.material_override = m_led
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		radice.add_child(mi)
+		# la lampada verde sopra la traversa, puntata sull'imbocco
+		var lampada := base + Vector3.UP * (alto + 0.47)
+		_lampada_segnale(radice, lampada, VERDE, true)
+		var s_ := SpotLight3D.new()
+		s_.light_color = VERDE
+		s_.light_energy = 9.0
+		s_.spot_range = 7.0
+		s_.spot_angle = 32.0
+		s_.light_volumetric_fog_energy = 1.5
+		s_.set_meta(&"risveglio_ignora", true)
+		radice.add_child(s_)
+		s_.global_position = lampada - v * 0.2
+		s_.look_at(base + v * 1.6, Vector3.UP)
+		var o := OmniLight3D.new()
+		o.light_color = VERDE
+		o.light_energy = 1.2
+		o.omni_range = 4.0
+		o.set_meta(&"risveglio_ignora", true)
+		radice.add_child(o)
+		o.global_position = base + Vector3.UP * (alto - 0.4) - v * 0.5
+	var k := 0
+	for bc in dati.get("bocche_chiuse", []):
+		if bool(bc["tubo"]):
+			continue     # i tubi chiusi dalla grata restano al buio
+		var p := b(bc["pos"]) + Vector3.UP * 2.45
+		var accesa := k % 2 == 0
+		var luce := _lampada_segnale(radice, p, ROSSO, accesa)
+		if accesa:
+			_sfarfalla(luce, k)
+		k += 1
+
+
+## Una lampada di segnalazione appoggiata sotto (base nera, vetro colorato). Torna la sua luce (null se spenta).
+func _lampada_segnale(radice: Node3D, p: Vector3, colore: Color, accesa: bool) -> OmniLight3D:
+	var base := MeshInstance3D.new()
+	var bm := CylinderMesh.new()
+	bm.top_radius = 0.11
+	bm.bottom_radius = 0.13
+	bm.height = 0.08
+	base.mesh = bm
+	base.material_override = _metallo_scuro()
+	radice.add_child(base)
+	base.global_position = p + Vector3.UP * 0.04
+	var vetro := MeshInstance3D.new()
+	var vm := CylinderMesh.new()
+	vm.top_radius = 0.07
+	vm.bottom_radius = 0.09
+	vm.height = 0.16
+	vetro.mesh = vm
+	vetro.material_override = _emissivo(colore, 2.2 if accesa else 0.0)
+	vetro.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	radice.add_child(vetro)
+	vetro.global_position = p + Vector3.UP * 0.16
+	if not accesa:
+		(vetro.material_override as StandardMaterial3D).albedo_color = colore.darkened(0.6)
+		return null
+	var l := OmniLight3D.new()
+	l.light_color = colore
+	l.light_energy = 1.6
+	l.omni_range = 3.5
+	l.set_meta(&"risveglio_ignora", true)
+	radice.add_child(l)
+	l.global_position = p + Vector3.UP * 0.2
+	l.set_meta(&"vetro", vetro)
+	return l
+
+
+## La lampada rossa guasta: si spegne e riaccende a scatti (ognuna col suo ritmo).
+func _sfarfalla(l: OmniLight3D, seme: int) -> void:
+	var vetro := l.get_meta(&"vetro") as MeshInstance3D
+	var mat := vetro.material_override as StandardMaterial3D
+	var ritmo := [0.9, 0.06, 0.12, 0.05, 1.6, 0.08, 0.4, 0.07]
+	var tw := create_tween().set_loops()
+	for i in ritmo.size():
+		var d: float = ritmo[(i + seme) % ritmo.size()]
+		# l'energia, non visible: accendere e spegnere la luce rifà gli abbinamenti luce-geometria del renderer
+		tw.tween_callback(func():
+			var accesa := l.light_energy < 0.5
+			l.light_energy = 1.6 if accesa else 0.0
+			mat.emission_energy_multiplier = 2.2 if accesa else 0.3)
+		tw.tween_interval(d)
 
 
 static func _emissivo(colore: Color, energia: float) -> StandardMaterial3D:
@@ -777,11 +906,7 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 	gm.radial_segments = 8
 	gm.rings = 2
 	gabbia.mesh = gm
-	var mg := _metallo_scuro()
-	mg.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	mg.albedo_texture = _griglia()
-	mg.cull_mode = BaseMaterial3D.CULL_DISABLED
-	gabbia.material_override = mg
+	gabbia.material_override = _materiale_gabbia()
 	radice.add_child(gabbia)
 	gabbia.global_position = p
 	var cappello := MeshInstance3D.new()
@@ -862,6 +987,50 @@ func _faro(radice: Node3D, p: Vector3, mira: Vector3, attacco = null) -> void:
 	l.look_at(mira)
 
 
+static func _materiale_gabbia() -> StandardMaterial3D:
+	var mg := _metallo_scuro()
+	mg.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	mg.albedo_texture = _griglia()
+	mg.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return mg
+
+
+static func _materiale_gocce() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.7, 0.8, 0.85, 0.6)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.roughness = 0.05
+	return m
+
+
+static func _materiale_fondo_pozzo() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = ROSA
+	m.emission_enabled = true
+	m.emission = ROSA
+	m.emission_energy_multiplier = 3.0
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return m
+
+
+## L'acqua torbida delle vasche (la stessa della sala principale).
+const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
+
+
+## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo), più
+## l'acqua torbida. Godot fa uno shader per tipo di materiale e lo condivide, ma la prima volta lo crea sul
+## thread principale: con il gruppo di shader avanzato acceso (nel gioco lo è sempre, vedi
+## Grafica._attiva_shader_avanzati) costa 100-150 ms sulla CPU della CI, troppo per un passo della
+## costruzione a pezzi. La sala principale li crea entrando (a schermo nero) e li tiene finché c'è: i passi
+## ritrovano gli shader pronti. Chi li chiama deve tenere l'array (gli shader vivono finché c'è un materiale).
+static func materiali_campione() -> Array[Material]:
+	var out: Array[Material] = [_emissivo(Color.WHITE, 1.0), _metallo_scuro(), _materiale_gabbia(),
+			_materiale_gocce(), _materiale_fondo_pozzo(), load(ACQUA) as Material]
+	for m in out:
+		m.get_rid()   # lo shader si crea adesso, non al primo uso
+	return out
+
+
 static func _metallo_scuro() -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = Color(0.32, 0.31, 0.29)
@@ -916,11 +1085,7 @@ func _gocce(radice: Node3D, p: Vector3) -> void:
 	sf.radius = 0.012
 	sf.height = 0.05
 	g.mesh = sf
-	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0.7, 0.8, 0.85, 0.6)
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.roughness = 0.05
-	g.material_override = m
+	g.material_override = _materiale_gocce()
 	g.amount = 40
 	g.lifetime = 2.0
 	g.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX

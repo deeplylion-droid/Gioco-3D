@@ -214,6 +214,12 @@ def posa(nome, file, centro_base, k, rz, obs):
     return o
 
 
+# Le pile contro il muro non superano 1,3 m: più alte e strette non starebbero in piedi. I pezzi di troppo si
+# mettono lo stesso e si tolgono alla fine (TROPPO_ALTI): così i numeri a caso, e il resto della strada, non cambiano.
+PILA_MAX = 1.3
+TROPPO_ALTI = []
+
+
 def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo=(0.05, 0.35), zfun=None):
     """Lungo il muro da a a b (faccia del muro, in pianta), con la stanza dalla parte di n: gruppi di oggetti in fila.
     tavolozza: lista di (file, alto, impilabile). vuoti: tratti (u0, u1) in metri da a dove non si mette niente
@@ -247,13 +253,19 @@ def riempi_muro(nome, a, b, n, z, tavolozza, obs, prof_max, rnd, vuoti=(), passo
         k_obj += 1
         if pila:   # 1-3 piani, ognuno un po' girato e più piccolo di quello sotto
             h = dm.z
+            sotto, tolto = file, False
             for piano in range(rnd.choice((0, 1, 1, 2))):
                 f2, a2, _ = rnd.choice([t for t in tavolozza if t[2]])
                 k2 = _scala_per(f2, alto=a2 * rnd.uniform(0.75, 0.95), prof_max=prof_max * 0.9)
                 d2 = _dim(f2, k2)
                 if d2.x > dm.x * 1.05:
                     k2 *= dm.x / d2.x; d2 = _dim(f2, k2)
-                posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz + rnd.uniform(-0.2, 0.2), obs)
+                o2 = posa(f'{nome}_{k_obj}', f2, (c.x, c.y, zz + h + 0.004), k2, rz + rnd.uniform(-0.2, 0.2), obs)
+                # il pesante sotto: sul cartone solo altro cartone; sopra un pezzo tolto non resta niente
+                tolto = tolto or h + d2.z > PILA_MAX or (sotto.startswith('scatolone') and not f2.startswith('scatolone'))
+                if tolto:
+                    TROPPO_ALTI.append(o2.name)
+                sotto = f2
                 k_obj += 1
                 h += d2.z
         u += dm.x + rnd.uniform(*passo)
@@ -329,9 +341,12 @@ def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045):
         o = n * (0.09 + k * 0.13)
         obs.append(C.tubo(f'{nome}_{k}', [a + o + Vector((0, 0, z - k * 0.04)), b + o + Vector((0, 0, z - k * 0.04))], r * (1 - 0.2 * k), mat, seg=12, uv=None))
     L = (b - a).length; d = (b - a).normalized()
+    # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
+    lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))
+    zs = z - (quanti - 1) * 0.04 - r * (1 - 0.2 * (quanti - 1)) - 0.015
     for j in range(int(L / 1.6) + 1):
         p = a + d * min(j * 1.6 + 0.3, L - 0.1)
-        obs.append(C.box(f'{nome}_staffa{j}', p + n * 0.22 + Vector((0, 0, z + 0.06)), (0.04 + abs(n.x) * 0.4, 0.04 + abs(n.y) * 0.4, 0.03), mat, uv=None))
+        obs.append(C.box(f'{nome}_staffa{j}', p + n * lung / 2 + Vector((0, 0, zs)), (0.04 + abs(n.x) * (lung - 0.04), 0.04 + abs(n.y) * (lung - 0.04), 0.03), mat, uv=None))
 
 
 def z_f1(p):
@@ -390,10 +405,9 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
     if tubi:
         mat, quanti = tubi
-        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S0, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)   # sotto il tubo grosso (2,45)
-        # a 2,2 m: più su entravano nel tubo grosso del raccordo (t7_tubo_c2, a 2,5); quelli di C2 arrivano al
-        # muro in fondo al corridoio invece di finire a metà dell'angolo
-        tubi_muro(f'{nome}_tubi_c2', (XC1, Y_T0, Z_SALA), (XC1, YC3_0, Z_SALA), (-1, 0), 2.2, mat, obs, quanti)
+        # R1: sotto il tubo grosso (2,45), fino al muro est del vano scala (prima finivano nel vuoto all'entrata)
+        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti)
+        # in C2 no: sullo stesso muro c'è già il tubo grosso del raccordo (t7_tubo_c2) e non c'è posto sopra i 2 m
         tubi_muro(f'{nome}_tubi_c3', (XC0, YC3_0, Z_SALA), (XM1, YC3_0, Z_SALA), (0, 1), 2.2, mat, obs, quanti)
 
 
@@ -511,6 +525,9 @@ def proposta_gioco():
     # davanti alla grata sfondata del muro sud di C2 (il buco dell'agnellino, v0.3.6: centro in y = BUCO_Y, vedi
     # ambienti2_raccordo.py) non resta niente a terra: è dove si infila, e dal lato da cui arriva il giocatore (+Y)
     # niente nasconde il buco. Si tolgono dopo, così il resto non cambia.
+    # le scale restano libere (regola del posizionamento, 21 ottobre): niente roba piccola sui gradini di F1, F2 e C2
+    for o in [o for o in obs if o.name.startswith(('G_f1_', 'G_f2_', 'G_c2os_', 'G_c2es_'))]:
+        obs.remove(o); bpy.data.objects.remove(o)
     for o in [o for o in obs if o.name.startswith('G_c2eb_')]:
         lo, hi = _scatola(o)
         if lo.y < BUCO_Y + 1.45 and hi.y > BUCO_Y - 0.6:
@@ -530,7 +547,7 @@ def proposta_gioco():
     d = HQ.dimensioni('testa_mascotte')
     metti('G_testa_mascotte', 'testa_mascotte', (TESTA_MAG[0], YM1 - 0.05 - d.y * 0.7 / d.z / 2, Z_SALA), alto=0.7, rz=0, obs=obs)
     metti('G_coccodrillo_l1', 'coccodrillo_sgonfio', (51.4, 6.2, Z_L1), largo=1.2, rz=170, obs=obs)
-    festone('G_festone_s1', (X_S0 + 0.1, 0.3, 3.3), (X_S1 - 0.1, 4.2, 5.0), 16, obs, seme=1)
+    festone('G_festone_s1', (X_S0 + 0.1, 0.3, 3.6), (X_S1 - 0.1, 4.2, 6.3), 16, obs, seme=1)   # sopra i 2 m dai gradini di F1
     festone('G_festone_s2', (X_S1 - 0.1, 6.8, 6.6), (X_S0 - 3.0, 8.8, 9.2), 16, obs, seme=2)
     festone('G_festone_c2', (XC0 + 0.05, 1.5, Z_SALA + 2.6), (XC1 - 0.05, -2.0, Z_SALA + 2.6), 10, obs, seme=3)
     festone('G_festone_mag', (XM1 - 0.5, YM0 + 0.4, Z_SALA + 3.1), (XM0 + 1.0, YM1 - 0.4, Z_SALA + 3.1), 22, obs, pendenza=0.6, seme=4)
@@ -540,6 +557,8 @@ def proposta_gioco():
                                 ((42.0, -15.0, Z_SALA), (-1, 0, 0)), ((33.0, -15.0, Z_SALA), (-1, 0, 0)), ((24.0, -15.0, Z_SALA), (-1, 0, 0)))):
         freccia_terra(f'G_freccia_{k}', p, d, obs, giallo)
     comuni(obs, C.mat_pbr('corrimano_A', base=(0.85, 0.65, 0.12), roughness=0.5, metallic=0.5))
+    for o in [o for o in obs if o.name in TROPPO_ALTI]:
+        obs.remove(o); bpy.data.objects.remove(o)
     # collisioni: una scatola (allineata agli assi) per ogni modello più alto di 25 cm
     sorgenti = {o.data for o in HQ._base.values()}
     for o in list(obs):

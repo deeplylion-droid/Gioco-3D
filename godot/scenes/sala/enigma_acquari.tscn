@@ -168,6 +168,9 @@ size = Vector3(2.400, 1.0, 0.06)
 [sub_resource type="BoxShape3D" id="parapetto_ovest_forma"]
 size = Vector3(0.06, 1.0, 1.000)
 
+[sub_resource type="BoxShape3D" id="parapetto_scala_forma"]
+size = Vector3(1.664, 1.0, 0.06)
+
 [node name="EnigmaAcquari" type="Node3D"]
 script = ExtResource("enigma")
 
@@ -599,6 +602,10 @@ shape = SubResource("parapetto_forma")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.13, 1.4, -19.25)
 shape = SubResource("parapetto_ovest_forma")
 
+[node name="ParapettoScalaForma" type="CollisionShape3D" parent="Pedana"]
+transform = Transform3D(0.841178, 0.540758, 0, -0.540758, 0.841178, 0, 0, 0, 1, 13.2, 0.95, -18.78)
+shape = SubResource("parapetto_scala_forma")
+
 [node name="Valvola" type="Node3D" parent="."]
 transform = Transform3D(0.766044, 0, 0.642788, 0, 1, 0, -0.642788, 0, 0.766044, 9.5189, 0.9, -20.1055)
 
@@ -629,17 +636,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.01, -0.898, 0)
 mesh = SubResource("buco")
 
 [node name="LampadaValvola" type="Node3D" parent="."]
-transform = Transform3D(0.412726, 0, 0.910855, 0, 1, 0, -0.910855, 0, 0.412726, 6.5886, 1.948, -21.4333)
+transform = Transform3D(0.412726, 0, 0.910855, 0, 1, 0, -0.910855, 0, 0.412726, 6.5886, 2.25, -21.4333)
 script = ExtResource("lampada_valvola")
 
 [node name="Modello" parent="LampadaValvola" instance=ExtResource("gabbia")]
 
 [node name="Luce" type="SpotLight3D" parent="LampadaValvola"]
-transform = Transform3D(1, 4.6605e-17, 1.4828e-16, 0, -0.95399, 0.29984, 1.5543e-16, -0.29984, -0.95399, 0, 0, 0.36)
+transform = Transform3D(1, 6.0188e-17, 1.4331e-16, 0, -0.92198, 0.38723, 1.5543e-16, -0.38723, -0.92198, 0, 0, 0.36)
 light_color = Color(1, 0.86, 0.66, 1)
 light_energy = 6.00
 light_volumetric_fog_energy = 0.6
-spot_range = 4.99
+spot_range = 5.10
 spot_attenuation = 0.8
 spot_angle = 16.0
 

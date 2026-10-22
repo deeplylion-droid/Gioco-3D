@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dt4eu4x7xiebl"
+uid="uid://8h1gvple0cbw"
 path.s3tc="res://.godot/imported/statua_polpo_B_statua_polpo_B_colore.jpg-28f12fc31308e4fcca8e1aae800c881f.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "f4e49c53448fd6c1e709aad7ceea7871"
+"md5": "08d6f1763d369ecc5da61ec76c7c92ce"
 }
 
 [deps]

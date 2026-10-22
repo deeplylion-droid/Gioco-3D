@@ -144,7 +144,7 @@ func _run() -> void:
 	var sguardo_partenza := p.yaw
 	var c: Dictionary = audio.get(&"collegati")
 	print("  collegati: ", c)
-	for tipo in ["Tempesta", "Player", "WaterPack", "UnderwaterEffect", "Turbine", "HingedHatch",
+	for tipo in ["Tempesta", "Player", "WaterPack", "Torcia", "UnderwaterEffect", "Turbine", "HingedHatch",
 			"KidSighting", "FlickerLight", "WaterDripEmitter", "sigla", "GameState", "PiscinaOnde"]:
 		check(int(c.get(tipo, 0)) >= 1, "collegato: %s" % tipo)
 	check(int(c.get("MedusaStatue", 0)) + int(c.get("MedusaAffacciata", 0)) >= 1, "collegata la medusa")
@@ -195,6 +195,12 @@ func _run() -> void:
 		lamp.turn_on()
 	await _frames(3)
 	check(_conta(&"faro_acceso") >= 1, "il faro della statua si accende con il suo colpo")
+	var torcia := p.find_children("*", "Torcia", true, false)
+	if not torcia.is_empty():
+		var clic := _conta(&"torcia_accesa") + _conta(&"torcia_spenta")
+		torcia[0].call(&"commuta")
+		torcia[0].call(&"commuta")
+		check(_conta(&"torcia_accesa") + _conta(&"torcia_spenta") >= clic + 2, "la torcia fa clic")
 	p.water_pack.set_equipped(true, false)
 	p.water_pack.set_tank_amount(20.0)
 	# davanti al pulsante della sigla (guarda verso +Z), a 3,5 m, sul pavimento

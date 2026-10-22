@@ -340,6 +340,9 @@ sr_tardi('BoxShape3D', 'parapetto_forma', size='Vector3(%.3f, 1.0, 0.06)' % pl)
 sr_tardi('BoxShape3D', 'parapetto_ovest_forma', size='Vector3(0.06, 1.0, %.3f)' % pp)
 node('ParapettoForma', 'CollisionShape3D', P, transform=tr(ID, (pc[0], PEDANA_H + 0.5, zf)), shape='SubResource("parapetto_forma")')
 node('ParapettoOvestForma', 'CollisionShape3D', P, transform=tr(ID, (PEDANA_X0 + 0.03, PEDANA_H + 0.5, pc[2])), shape='SubResource("parapetto_ovest_forma")')
+# e lungo la scala, inclinata come i gradini: senza, dal viale si passava attraverso il corrimano
+sr_tardi('BoxShape3D', 'parapetto_scala_forma', size='Vector3(%.3f, 1.0, 0.06)' % ls)
+node('ParapettoScalaForma', 'CollisionShape3D', P, transform=tr(rz, (PEDANA_X1 + lung / 2, PEDANA_H / 2 + 0.5, zf)), shape='SubResource("parapetto_scala_forma")')
 
 # La valvola rossa del gorgo, spostata di lato rispetto alla pedana: sul davanti-ovest del miscuglio,
 # col tubo che entra nella base verso il centro. Il nodo sta sul volantino (lo mira il getto), il modello
@@ -369,7 +372,7 @@ node('Buco', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.002 - VY, 0)),
 # lampada di servizio a gabbia, la stessa del fiume lento, stretta al tirante davanti a est del blu,
 # appena sopra la base, girata verso la valvola. Spot caldo e stretto, senza ombre della gabbia.
 TIR = sposta('B', XB + 0.6 * K * math.cos(math.radians(45)), ZA + 0.6 * K * math.sin(math.radians(45)))
-LY = B_BASE + 0.25                  # appena sopra la base: la gabbia sporge 21 cm sotto il perno
+LY = 2.25                           # la gabbia sporge 21 cm sotto il perno: resta sopra i 2 m, fuori dalla testa
 R_TIR = 0.022 * K
 ANGOLO_SPOT = 16.0
 VOL = sposta('M', VX, VZ)

@@ -37,6 +37,7 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
   - Il parametro `senza_preparazione` dimostra che il test se ne accorge.
   - Contano i monitor `PIPELINE_COMPILATIONS_SURFACE/DRAW`: devono restare a zero.
 - **Scatti**: script `tests/scatti_*.gd`, lanciati col comando xvfb di CLAUDE.md.
+- **Controllo di posizionamento** (`tests/controllo_posizionamento.gd`, nella CI, con `--fixed-fps 60`): rapporto in `docs/tecnico/posizionamento/rapporto.md`, eccezioni e casi assegnati in `tests/posizionamento_eccezioni.json`. Le zone nuove vanno nella lista `ZONE`.
 - **Prove fuori dalla CI**: `tests/prova_*`, `misura_*`, `sonda_*`. `misura_impatto.gd` misura il costo dello spruzzo contro un muro a 0,8-6 m (ms, GPU, overdraw a schermo, particelle vive).
 - **Peso del pacchetto**:
   - `git worktree add` in `/home/user/wt/…`, non `git clone`: la copia di `.git` (5,7 GB) è lentissima;
@@ -48,6 +49,8 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
 - `pkill -f …` può colpire la propria shell (exit 144): usa i PID. Anche `while pgrep -f X` trova sé stesso e non finisce mai: usa `pgrep -x godot`.
 - Luci e blackout: alla ripartenza da un checkpoint `LuciRisveglio` rimette il blackout a tutte le luci della scena senza la meta `risveglio_ignora`. Le luci che devono restare accese dopo la tappa 6 vanno segnate (la torre lo fa in `_fuori_dal_blackout`, v0.3.8): al primo passaggio non si vede, perché arrivano dopo il blackout.
 - Le coroutine della torre a pezzi (`costruisci_a_pezzi`, `prepara_materiali`) si fermano se la torre esce dall'albero (una morte ricarica la sala).
+- Blocco del pool di thread (v0.3.8): in Godot 4.7 l'attivazione del gruppo di shader avanzato con la coda del pool piena di pipeline blocca tutto con 4 worker (solo a cache degli shader vuota). Lo evita `Grafica._attiva_shader_avanzati` all'avvio; test `test_pool_sala.gd` nella CI con override.cfg a 4 worker (esce da solo dopo il RISULTATO: le pipeline in coda su llvmpipe superano i 12 GB). La prova a mano è `tests/prova_blocco_pool.gd`; per riprodurre serve la cache vuota (`user://shader_cache`).
+- Ogni shader nuovo costa 100-190 ms sul thread principale col gruppo avanzato acceso: i materiali creati da codice dentro passi a budget vanno preparati prima (`SalaTorre.materiali_campione`, tenuti dalla sala).
 - Sala intera più torre disegnata non stanno nella memoria di llvmpipe (OOM, processo ucciso): gli scatti della torre si fanno con la torre da sola (`tests/scatti_torre_morte.gd`).
 - Il caricamento in thread della torre qui dura 9-15 s. Le attese nei test vanno a tempo, non a fotogrammi, se no il test esce a metà e Godot stampa un "Parse Error" falso.
 - In headless `RenderingServer.frame_post_draw` non arriva mai: usa `get_tree().process_frame`.
