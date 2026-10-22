@@ -27,3 +27,12 @@ spenta. Strumento: `godot/proposte/mascotte/video_risveglio.gd`. Il video e' sen
 | `4_corsa_7.7s.jpg` | la corsa |
 | `5_porta_8.5s.jpg` | alla porta |
 | `risveglio_squalo_senza_audio.mp4` | la scena intera (12 s) |
+
+## La scossa dei passi (richiesta dell'utente del 22 ottobre, sera)
+
+A ogni passo dal giro alla porta la camera trema, nello stesso istante del suono del passo (`squalo_passo`):
+scende di colpo (fino a 4,5 cm in 35 ms), beccheggia (fino a 1,6 gradi) e rolla (fino a 1,1 gradi, alternando il
+lato), poi torna su smorzata in circa 0,2 s. La forza dipende dalla distanza: piena nel giro, addosso al
+giocatore, poi sempre più debole mentre corre via (test_interni: da 0,83 a 0,22). La camera resta comunque ad
+almeno 22 cm dalla sua pelle (sonda_camera_squalo, mesh intera). Il video `risveglio_squalo_senza_audio.mp4` è
+rifatto con la scossa.

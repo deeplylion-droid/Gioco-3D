@@ -13,6 +13,8 @@ Dal 22 ottobre è **severo** (processo approvato dall'utente "per evitare questi
 
 Gli elenchi per squadra del primo giro severo sono in `elenchi/`.
 
+In fondo al rapporto, la sezione **Copertura** dice per ogni giro (zona e stato) quanti oggetti ha controllato in ogni parte: una parte con 0 è una zona che il controllo non ha guardato. Poi elenca le parti nascoste all'inizio e se un giro con stato le ha viste. Quelle "mai controllate" vanno guardate: o si aggiunge uno stato che le mostra (come `risalita_arrivo` per il fiume e l'infermeria, che `risalita_gioco.gd` disegna solo col giocatore vicino), o, se non si vedono mai, si tolgono dalla scena. Le creature, gli effetti, l'acqua e le varianti nello stesso posto di una parte controllata (lampada accesa e spenta) sono segnati a parte.
+
 ## Lanciarlo in locale
 
 Da `godot/`, con il lock come ogni Godot:
@@ -29,7 +31,7 @@ Il controllo riscrive `docs/tecnico/posizionamento/rapporto.md`, con una tabella
 
 - **sospeso**: l'oggetto non ha niente a meno di 5 cm. Nessun pavimento, parete o soffitto, nessun altro oggetto o filo a cui sia attaccato.
 - **staccato**: l'oggetto ha qualcosa a meno di 5 cm, ma non lo tocca: la sua forma convessa, allargata di 5 mm in tutte le direzioni, non tocca né entra in nessun altro corpo. Per esempio una sedia 1 cm sopra il pavimento, un cartello a 2 cm dal muro, una lampadina senza portalampada. Il dettaglio dice a che distanza è il primo appoggio sotto.
-- **ingombro**: qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0,35 e 2 m sopra un pavimento dove si passa a piedi partendo dai checkpoint. Il dettaglio dice se è all'altezza delle gambe, del busto o della testa.
+- **ingombro**: qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0,35 e 2 m sopra un pavimento dove si passa a piedi partendo dai checkpoint. Dove si sta accovacciati per forza (i tubi dell'inseguimento: i nodi con il metodo `in_tubo(piedi)`, lo stesso che usa il gioco) lo spazio controllato arriva solo a 1,05 m, l'altezza da accovacciati. Le parti che si muovono (paratie, la grata dell'inseguimento, portoni, saracinesche, serrande, cancelli: `MOBILI` nel controllo) non fanno mai da pavimento. Il dettaglio dice se è all'altezza delle gambe, del busto o della testa.
 - **compenetrato**: una Polaroid, un pulsante, una porta, un cancello o un oggetto da raccogliere entra dentro un altro oggetto.
 - **coperto**: lo stesso tipo di oggetto non si vede da nessuno dei punti di vista vicini, a 1-1,8 m all'altezza degli occhi. Conta anche un foglio appoggiato sopra. Il dettaglio dice cosa lo copre.
 - **compenetra**: un oggetto di scena ne attraversa un altro.
