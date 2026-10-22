@@ -901,6 +901,9 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	corpo.material_override = _emissivo(ROSSO, 6.0)
 	radice.add_child(corpo)
 	corpo.global_position = p
+	# appoggiata al muro dietro (il retro della scatola, 8 cm dietro il centro): dai dati restava a 1-3 cm
+	Posa.fissa_al_muro(corpo, verso, 0.08)
+	p = corpo.global_position
 	var l := OmniLight3D.new()
 	l.light_color = ROSSO
 	l.light_energy = 3.5
@@ -941,6 +944,8 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 	cappello.material_override = metallo
 	radice.add_child(cappello)
 	cappello.global_position = p + Vector3(0, 0.15, 0)
+	# il portalampada: il bulbo è avvitato sotto il cappello (senza, galleggiava dentro la gabbia)
+	_asta(radice, p + Vector3(0, 0.05, 0), p + Vector3(0, 0.13, 0), 0.028, metallo)
 	if appoggio == "palo":
 		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, -1.25, 0), 0.03, metallo)
 	elif appoggio.begins_with("muro_"):
