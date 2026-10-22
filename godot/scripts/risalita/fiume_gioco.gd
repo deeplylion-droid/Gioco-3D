@@ -354,7 +354,7 @@ func _scivoli() -> void:
 			_faccia(st_g, [pt.call(d0, lato * a, ACQUA + SOPRA), pt.call(d0, lato * b, 0.0), pt.call(d0, lato * b, ACQUA - 0.15), pt.call(d0, lato * a, ACQUA - 0.15)], -u)
 	_mesh(st_g, giallo, true, false, false).name = "ScivoliFalde"
 	_mesh(st_b, blu, true, false, false).name = "ScivoliVasca"
-	_mesh(st_a, mat_acqua, false, false, false).name = "ScivoliAcqua"
+	_mesh(st_a, mat_acqua, false, false, false).name = "AcquaScivoli"   # "acqua...": il controllo di posizionamento lo riconosce
 
 
 func _vetroresina(c: Color) -> StandardMaterial3D:
@@ -456,7 +456,7 @@ func _nastro(pts: PackedVector2Array, raggio := false) -> void:
 			st.set_uv(uv[idx])
 			st.add_vertex(aq[idx])
 		dist = d1
-	_mesh(st, mat_acqua, false, false)
+	_mesh(st, mat_acqua, false, false).name = "acqua_nastro"   # il pelo dell'acqua (il controllo di posizionamento lo riconosce dal nome)
 
 
 func _lastra(c: PackedVector2Array) -> void:
@@ -471,7 +471,7 @@ func _lastra(c: PackedVector2Array) -> void:
 			st.add_vertex(Vector3(v.x, ACQUA + 0.002, v.y))
 	var m := (mat_acqua as ShaderMaterial).duplicate() as ShaderMaterial
 	m.set_shader_parameter(&"flow_speed", 0.25)
-	_mesh(st, m, false, false)
+	_mesh(st, m, false, false).name = "acqua_lastra"
 
 
 static func _tangente2(pts: PackedVector2Array, i: int) -> Vector3:
@@ -561,12 +561,20 @@ func _porta_aperta(pos: Vector3, rot: float) -> void:
 	for lato in [-1.0, 1.0]:
 		_scatola_in(n, Vector3(0.08, 2.3, 0.36), Vector3(lato * 0.66, 1.15, 0.0), telaio)
 	_scatola_in(n, Vector3(1.4, 0.1, 0.36), Vector3(0, 2.28, 0.0), telaio)
+	# l'anta spalancata fin contro il muro (175 gradi: lo stipite non la lascia andare oltre; a 95 gradi quella
+	# dell'ingresso entrava nella prima transenna), con la sua collisione
 	var cardine := Node3D.new()
 	cardine.position = Vector3(0.62, 0, 0.2)
-	cardine.rotation_degrees.y = 95.0
+	cardine.rotation_degrees.y = 175.0
 	n.add_child(cardine)
-	_scatola_in(cardine, Vector3(1.22, 2.2, 0.05), Vector3(-0.61, 1.1, 0.03), anta)
-	_scatola_in(cardine, Vector3(0.16, 0.04, 0.06), Vector3(-1.08, 1.05, 0.09), telaio)
+	_scatola_in(cardine, Vector3(1.22, 2.2, 0.05), Vector3(-0.61, 1.1, -0.03), anta)
+	_scatola_in(cardine, Vector3(0.16, 0.04, 0.06), Vector3(-1.08, 1.05, -0.085), telaio)
+	var f := CollisionShape3D.new()
+	var b := BoxShape3D.new()
+	b.size = Vector3(1.22, 2.2, 0.05)
+	f.shape = b
+	f.transform = n.transform * cardine.transform * Transform3D(Basis(), Vector3(-0.61, 1.1, -0.03))
+	_collisioni.add_child(f)
 
 
 func _scatola_in(padre: Node3D, size: Vector3, pos: Vector3, m: Material) -> void:
@@ -666,12 +674,21 @@ func _tetto() -> void:
 	for pt in punti:
 		var p: Vector3 = pt[0]
 		var zc: float = Z0 + 2.0 + roundf((p.z - Z0 - 2.0) / 5.0) * 5.0
+		# la catena dalla lampada all'attacco, una piastrina sotto il corrente basso della capriata (fondo a TETTO - 1,17):
+		# prima la catena entrava 7 cm nel corrente, senza attacco (collaudo del 22 ottobre)
+		var attacco := MeshInstance3D.new()
+		var ab := BoxMesh.new()
+		ab.size = Vector3(0.08, 0.02, 0.08)
+		attacco.mesh = ab
+		attacco.material_override = ferro
+		attacco.position = Vector3(p.x, TETTO - 1.18, zc)
+		tetto.add_child(attacco)
 		var catena := MeshInstance3D.new()
 		var cb := BoxMesh.new()
-		cb.size = Vector3(0.02, 1.9, 0.02)
+		cb.size = Vector3(0.02, 1.81, 0.02)
 		catena.mesh = cb
 		catena.material_override = ferro
-		catena.position = Vector3(p.x, TETTO - 2.05, zc)
+		catena.position = Vector3(p.x, TETTO - 3.0 + 0.905, zc)
 		catena.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		tetto.add_child(catena)
 		var l := _metti("lampada_capannone", Vector3(p.x, TETTO - 3.0, zc))
@@ -693,11 +710,34 @@ func _glb(nome: String) -> Node3D:
 
 func _metti(nome: String, pos: Vector3, rot_y := 0.0, scala := 1.0) -> Node3D:
 	var n := _glb(nome)
+	n.name = nome
 	n.position = pos
 	n.rotation_degrees.y = rot_y
 	n.scale = Vector3.ONE * scala
-	add_child(n)
+	add_child(n, true)   # nomi leggibili (palma_finta2...) anche nei rapporti del controllo di posizionamento
 	return n
+
+
+## Porta [param n] (figlio della scena) a terra: il suo punto più basso 1 mm sopra la quota [param y].
+func _a_terra(n: Node3D, y := 0.0) -> void:
+	var basso := INF
+	var io := global_transform.affine_inverse()
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var xf := io * (mi as MeshInstance3D).global_transform
+		for v in (mi as MeshInstance3D).mesh.get_faces():
+			basso = minf(basso, (xf * v).y)
+	n.position.y += y + 0.001 - basso
+
+
+## La quota del punto più alto di [param n] (figlio della scena), coi vertici veri.
+func _cima(n: Node3D) -> float:
+	var alto := -INF
+	var io := global_transform.affine_inverse()
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var xf := io * (mi as MeshInstance3D).global_transform
+		for v in (mi as MeshInstance3D).mesh.get_faces():
+			alto = maxf(alto, (xf * v).y)
+	return alto
 
 
 ## Una forma di collisione (cilindro) per un oggetto grande sulle banchine.
@@ -750,8 +790,17 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0) -> void:
 
 ## Lampada d'emergenza rossa (modello Meshy + luce), che guarda verso [param verso]: [param pos] è sulla faccia
 ## del muro (o della roccia), dove la staffa si appoggia con la sua piastra.
-func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
+func _lampada_rossa(pos: Vector3, verso: Vector3, roccia: Node3D = null) -> void:
 	var l := LampadaMuro.monta(self, pos, verso)
+	if roccia:
+		# sulla roccia la piastra non sta dove [param pos] (il centro della staffa è più su o più giù): si misura la
+		# sporgenza della roccia proprio sotto la sua impronta, e la lampada va avanti o indietro finché la piastra la
+		# tocca (prima a volte restava a più di 5 mm dal rilievo)
+		var n := Vector3(verso.x, 0.0, verso.z).normalized()
+		var pi := l.get_node("Piastra") as Node3D
+		var dietro := to_local(pi.global_position) - n * LampadaMuro.PIASTRA.z * 0.5
+		var punto := _su_roccia(roccia, dietro, n, LampadaMuro.PIASTRA.x * 0.5 - 0.01, LampadaMuro.PIASTRA.y * 0.5 - 0.01)
+		l.position += n * ((punto - dietro).dot(n) + 0.001)
 	_luce(l.position + verso.normalized() * 0.3, Color(1.0, 0.18, 0.12), 2.6, 9.0)
 
 
@@ -776,13 +825,14 @@ func _faro_subacqueo(pos: Vector3, rot_y: float) -> void:
 
 ## Un pannello di roccia finta (4,2 x 3,2 m, alzato fino a 4,9) col retro verso [param rot] + 180: girato
 ## e specchiato a caso perché non si veda che è sempre lo stesso. Ha la sua collisione.
-func _roccia(pos: Vector3, rot: float) -> Node3D:
+func _roccia(pos: Vector3, rot: float, specchio = null) -> Node3D:
 	var r := _metti("roccia_parete", pos, rot)
 	for mi in r.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = mat_roccia
-	var sx := 1.0 if randf() < 0.5 else -1.0
-	var sy := randf_range(1.4, 1.6)
-	r.scale = Vector3(sx * randf_range(0.95, 1.1), sy, 1.0)
+	# (quelli doppi, dietro: specchiati o no come dice [param specchio], senza toccare la sequenza casuale degli altri)
+	var sx := (-1.0 if specchio else 1.0) if specchio != null else (1.0 if randf() < 0.5 else -1.0)
+	var sy := 1.5 if specchio != null else randf_range(1.4, 1.6)
+	r.scale = Vector3(sx * (1.0 if specchio != null else randf_range(0.95, 1.1)), sy, 1.0)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
 	b.size = Vector3(4.2, 3.24 * sy, 0.5)
@@ -792,12 +842,43 @@ func _roccia(pos: Vector3, rot: float) -> Node3D:
 	return r
 
 
+## Il retro piatto dei pannelli si vedeva dalle banchine e dai canali degli altri rami: dietro ogni pannello
+## [param rocce] ([posizione, rotazione]) un secondo pannello girato, schiena contro schiena, così da tutte e due le
+## parti c'è roccia. Non serve dove dietro c'è già il retro di un altro pannello; non va dove non ci sta.
+func _rocce_doppie(rocce: Array) -> void:
+	var fatte := 0
+	var coperte := 0
+	var senza := []
+	for i in rocce.size():
+		var p: Vector3 = rocce[i][0]
+		var rot: float = rocce[i][1]
+		var b := Basis(Vector3.UP, deg_to_rad(rot))
+		var dietro := -(b * Vector3.BACK)
+		var lato := b * Vector3.RIGHT
+		var coperta := false
+		for j in rocce.size():
+			var w: Vector3 = rocce[j][0] - p
+			if j != i and w.dot(dietro) > -0.1 and w.dot(dietro) < 1.5 and absf(w.dot(lato)) < 2.5 \
+					and (Basis(Vector3.UP, deg_to_rad(rocce[j][1])) * Vector3.BACK).dot(dietro) > 0.7:
+				coperta = true
+				break
+		if coperta:
+			coperte += 1
+			continue
+		if not _ci_sta(p + dietro * 0.002, rot + 180.0, 4.0, 0.6):
+			senza.append(p)
+			continue
+		_roccia(p + dietro * 0.002, rot + 180.0, i % 2 == 0)
+		fatte += 1
+	print("rocce: %d, doppie %d, già coperte %d, senza posto %d %s" % [rocce.size(), fatte, coperte, senza.size(), senza])
+
+
 ## Il punto della faccia di [param roccia] davanti a [param dove] (a quota, sull'asse della roccia), guardando da
-## [param davanti] verso la roccia: un raggio contro i triangoli del modello. Entra di 1 cm, così la piastra della
-## lampada non resta sospesa dove la roccia è irregolare.
-func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3) -> Vector3:
-	var da := dove + davanti * 2.0
-	var meglio := INF
+## [param davanti] verso la roccia: raggi contro i triangoli del modello su tutta l'impronta della piastra (28 x 20
+## cm); vale la sporgenza più avanti, così la piastra poggia sul rilievo e non entra nella roccia.
+func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3, mezzo_largo := 0.14, mezzo_alto := 0.1) -> Vector3:
+	var lato := davanti.cross(Vector3.UP).normalized()
+	var tri := PackedVector3Array()
 	for mi in roccia.find_children("*", "MeshInstance3D", true, false):
 		var xf := Transform3D()
 		var k: Node = mi
@@ -806,12 +887,22 @@ func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3) -> Vector3:
 			k = k.get_parent()
 		var f := (mi as MeshInstance3D).mesh.get_faces()
 		for i in range(0, f.size(), 3):
-			var h = Geometry3D.ray_intersects_triangle(da, -davanti, xf * f[i], xf * f[i + 1], xf * f[i + 2])
-			if h != null:
-				meglio = minf(meglio, da.distance_to(h))
+			# solo i triangoli davanti all'impronta della piastra (la roccia ne ha 40 mila)
+			var a := xf * f[i]
+			var w := a - dove
+			if absf(w.dot(lato)) < 0.45 and absf(w.y) < 0.4:
+				tri.append_array([a, xf * f[i + 1], xf * f[i + 2]])
+	var meglio := INF
+	for du in [-mezzo_largo, 0.0, mezzo_largo]:
+		for dv in [-mezzo_alto, 0.0, mezzo_alto]:
+			var da: Vector3 = dove + lato * du + Vector3(0, dv, 0) + davanti * 2.0
+			for i in range(0, tri.size(), 3):
+				var h = Geometry3D.ray_intersects_triangle(da, -davanti, tri[i], tri[i + 1], tri[i + 2])
+				if h != null:
+					meglio = minf(meglio, da.distance_to(h))
 	if meglio == INF:
 		return dove + davanti * 0.62
-	return da - davanti * (meglio + 0.01)
+	return dove + davanti * (2.0 - meglio)
 
 
 ## Punti a passo [param passo] lungo i punti, dal metro [param inizio], a distanza [param d] dall'asse sui
@@ -987,6 +1078,11 @@ func _bivi() -> void:
 			# i due pali ai lati della bocca, la trave in alto e il cartello d'uscita sotto la trave
 			for lato in [-1.0, 1.0]:
 				_palo_trave(bocca + e * lato * (W * 0.5 + 0.4) - d * 0.3, mferro)
+			# le guide della chiusa: ai due lati, nel suo piano, dal fondo del canale fin sopra la chiusa alzata (che
+			# prima restava sospesa fra i pali, senza toccare niente), con la traversa in cima
+			for lato in [-1.0, 1.0]:
+				_guida_chiusa(Vector3(0.1, 4.05 - FONDO, 0.62), bocca + d * 0.25 + e * lato * 1.75 + Vector3(0, (FONDO + 4.05) * 0.5, 0), e, d, mferro, true)
+			_guida_chiusa(Vector3(3.6, 0.14, 0.62), bocca + d * 0.25 + Vector3(0, 4.05 + 0.07, 0), e, d, mferro, false)
 			var trave := MeshInstance3D.new()
 			var tb := BoxMesh.new()
 			tb.size = Vector3(W + 0.8 + 0.3, 0.22, 0.18)
@@ -1001,7 +1097,8 @@ func _bivi() -> void:
 			cart.faccia = faccia
 			add_child(cart)
 			# la faccia guarda dentro la conca, verso chi arriva
-			cart.transform = Transform3D(Basis.looking_at(d, Vector3.UP), bocca - d * 0.42 + Vector3(0, 3.25, 0))
+			# appeso sotto la trave, a contatto (prima stava 3 cm più giù e 12 cm più avanti, nel vuoto)
+			cart.transform = Transform3D(Basis.looking_at(d, Vector3.UP), bocca - d * 0.3 + Vector3(0, 3.6 - 0.11 - 0.21, 0))
 			# la luce sul lato aperto (dove va la corrente)
 			var sp := SpotLight3D.new()
 			add_child(sp)
@@ -1037,13 +1134,33 @@ func _bivi() -> void:
 		push_warning("bivio 3 senza disco")
 
 
+## Un pezzo del telaio della chiusa (size: lungo e, alto, lungo d), con la collisione se [param solido].
+func _guida_chiusa(size: Vector3, centro: Vector3, e: Vector3, d: Vector3, m: Material, solido: bool) -> void:
+	var mi := MeshInstance3D.new()
+	var b := BoxMesh.new()
+	b.size = size
+	mi.mesh = b
+	mi.material_override = m
+	add_child(mi)
+	mi.transform = Transform3D(Basis(e, Vector3.UP, d), centro)
+	if solido:
+		var f := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = size
+		f.shape = bs
+		f.transform = mi.transform
+		_collisioni.add_child(f)
+
+
 func _palo_trave(p: Vector3, m: Material) -> void:
+	# dal fondo del canale (la bocca della conca è acqua: prima i pali finivano a quota 0, 22 cm sopra il pelo, e il
+	# portale non toccava niente) fino a 3,8 m
 	var pil := MeshInstance3D.new()
 	var cm := BoxMesh.new()
-	cm.size = Vector3(0.3, 3.8, 0.3)
+	cm.size = Vector3(0.3, 3.8 - FONDO, 0.3)
 	pil.mesh = cm
 	pil.material_override = m
-	pil.position = p + Vector3(0, 1.9, 0)
+	pil.position = p + Vector3(0, (3.8 + FONDO) * 0.5, 0)
 	add_child(pil)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
@@ -1104,6 +1221,7 @@ func _giungla() -> void:
 	_zone_libere.append([Vector2(col.x, col.z), 2.4])
 	# pareti di roccia finta lungo i canali, dietro le banchine, con le lampade calde e le rosse
 	var n := 0
+	var rocce := []
 	for s in _strisce:
 		for v in _lungo(s, W * 0.5 + BANCA, 3.9, 1.0):
 			var p: Vector3 = v[0]
@@ -1115,17 +1233,19 @@ func _giungla() -> void:
 			if in_piazza(dietro):
 				continue
 			var roccia := _roccia(p, rot)
+			rocce.append([p, rot])
 			n += 1
 			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
 			# le lampade sulla faccia vera della roccia (prima a 62 cm dal suo centro: a volte staccate, a volte dentro)
 			if n % 3 == 0:
 				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 3.0)
 			elif n % 11 == 5:
-				_lampada_rossa(_su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0))
+				_lampada_rossa(_su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0), roccia)
 			elif n % 13 == 7:
 				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0)
 			elif n % 4 == 1 and randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
+	_rocce_doppie(rocce)
 	# i fari subacquei nelle pareti dei canali, alternati
 	for s in _strisce:
 		var k := 0
@@ -1162,11 +1282,25 @@ func _giungla() -> void:
 
 func _imbarco() -> void:
 	# la cabina dell'imbarco con la tettoia di paglia e la luce ambra, la fila con le transenne
-	var cab := Vector3(-VASCA - 2.6, 0, -VASCA - 0.6)
+	# (70 cm più in là di prima, lontano dalla strada fra la fine della fila e l'imbarco: la gronda della tettoia,
+	# a 1,1-1,6 m, ci passava sopra all'altezza della testa)
+	var cab := Vector3(-VASCA - 2.6 - 0.5, 0, -VASCA - 0.6 + 0.48)
 	_metti("tornello_imbarco", cab, 45.0)
 	_ostacolo(cab, 0.45, 1.35)
 	var tet := _metti("tettoia_paglia", cab + Vector3(-0.4, 0, -0.4), 45.0)
 	tet.scale = Vector3.ONE * 0.8
+	# la gronda di paglia scende fino a 1,1 m: sotto la tettoia non si passa (barriera, non ferma il getto)
+	var bt := StaticBody3D.new()
+	bt.name = "BarrieraTettoia"
+	bt.collision_layer = Layers.BARRIERS
+	bt.collision_mask = 0
+	var ft := CollisionShape3D.new()
+	var bxt := BoxShape3D.new()
+	bxt.size = Vector3(4.0 * 0.8, 2.4, 3.42 * 0.8)
+	ft.shape = bxt
+	ft.transform = tet.transform.orthonormalized() * Transform3D(Basis(), Vector3(0, 1.2, 0))
+	bt.add_child(ft)
+	add_child(bt)
 	_luce(cab + Vector3(0, 1.9, 0), Color(1.0, 0.6, 0.25), 2.5, 7.0, true)
 	# la fila dell'imbarco: due file di transenne dall'ingresso alla cabina, che guidano alla vasca
 	var da := Vector3(INGRESSO_X, 0, Z0 + 1.0)
@@ -1184,7 +1318,14 @@ func _imbarco() -> void:
 				# una transenna caduta
 				var t := _metti("transenna", tp + lato * sgn * 0.5, rot + randf_range(-20.0, 20.0))
 				t.rotation_degrees.x = 88.0
-				t.position.y = 0.27
+				_a_terra(t)   # (prima a 27 cm a occhio: restava 5 mm sopra il pavimento)
+				# a terra anche lei ferma i piedi (prima ci si passava attraverso)
+				var fc := CollisionShape3D.new()
+				var bc := BoxShape3D.new()
+				bc.size = Vector3(2.0, 1.2, 0.2)
+				fc.shape = bc
+				fc.transform = t.transform * Transform3D(Basis(), Vector3(0, 0.6, 0))
+				_collisioni.add_child(fc)
 			else:
 				_metti("transenna", tp, rot)
 				var f := CollisionShape3D.new()
@@ -1200,10 +1341,15 @@ func _imbarco() -> void:
 	for z in [-18.0, -9.0]:
 		_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
+	# (ognuna appoggiata a quella sotto coi vertici veri: prima la prima stava 5 cm sopra il pavimento)
+	var sotto := 0.0
 	for i in 3:
-		_metti("ciambella", Vector3(-VASCA - 1.0, 0.05 + i * 0.27, -VASCA - 5.6), i * 37.0)
-	_ostacolo(Vector3(-VASCA - 1.0, 0, -VASCA - 5.6), 0.6, 0.9)
-	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(22.6, GALLA, 3.0), 130.0],
+		var ci := _metti("ciambella", Vector3(-VASCA - 1.0, 0.0, -VASCA - 5.6), i * 37.0)
+		_a_terra(ci, sotto)
+		sotto = _cima(ci)
+	_ostacolo(Vector3(-VASCA - 1.0, 0, -VASCA - 5.6), 0.6, sotto)
+	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa)
+	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
 			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
 		_metti("ciambella", c[0], c[1])
 	# la capanna tiki, il totem, i cartelli a pittogrammi
@@ -1212,13 +1358,16 @@ func _imbarco() -> void:
 	_metti("totem_tiki", Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 135.0)
 	_ostacolo(Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 0.4, 2.5)
 	_cartello_palo(Vector3(-VASCA - 0.6, 0, -VASCA - 2.4), 90.0, "cartello_tuffi")
-	_cartello_palo(Vector3(INGRESSO_X + 1.6, 0, Z0 + 1.6), 160.0, "cartello_bimbi")
+	_cartello_palo(Vector3(INGRESSO_X + 2.2, 0, Z0 + 1.05), 160.0, "cartello_bimbi")   # (prima il palo stava dentro la prima transenna)
 	_metti("salvagente", Vector3(-2.6, 0, -8.5), -90.0)
+	_ostacolo(Vector3(-2.6, 0, -8.5), 0.5, 1.4)
 	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
 	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
-	for p in [Vector3(-11.0, 0, -12.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 0.8, 0, -VASCA - 10.5)]:
+	# (la prima stava fra le transenne della fila, a 67 cm dal suo asse: ora 2,2 m fuori, sullo stesso lato)
+	for p in [Vector3(-9.9, 0, -13.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 0.8, 0, -VASCA - 10.5)]:
 		_metti("palma_finta", p, randf() * 360.0)
-		_ostacolo(p, 0.35, 1.2)
+		# le foglie cominciano a 1,75 m e arrivano a 93 cm dal tronco: non ci si passa sotto con la testa
+		_ostacolo(p, 0.95, 2.0)
 	_metti("ciabatta", Vector3(-VASCA - 2.2, 0, -VASCA - 1.8), 35.0)
 	_metti("paperella", Vector3(1.0, ACQUA - 0.02, 0.6), 70.0)
 	_metti("secchiello", Vector3(-VASCA - 5.0, 0, -VASCA - 4.2), 20.0)
@@ -1249,7 +1398,7 @@ func _cartello_palo(pos: Vector3, rot_y: float, tex: String) -> void:
 	b.size = Vector3(0.52, 0.52, 0.015)
 	lastra.mesh = b
 	lastra.material_override = mz
-	lastra.position = Vector3(0, 1.85, 0.045)
+	lastra.position = Vector3(0, 1.85, 0.03 + 0.0075 + 0.001)   # appoggiata al palo (prima 7,5 mm davanti)
 	n.add_child(lastra)
 	var f := MeshInstance3D.new()
 	var q := QuadMesh.new()
@@ -1259,8 +1408,15 @@ func _cartello_palo(pos: Vector3, rot_y: float, tex: String) -> void:
 	mf.albedo_texture = load(DIR + "texture/" + tex + ".jpg")
 	mf.roughness = 0.6
 	f.material_override = mf
-	f.position = Vector3(0, 1.85, 0.054)
+	f.position = Vector3(0, 1.85, 0.03 + 0.015 + 0.002)
 	n.add_child(f)
+	# il palo e la lastra all'altezza della testa: una collisione da terra, così non ci si passa sotto
+	var fc := CollisionShape3D.new()
+	var bc := BoxShape3D.new()
+	bc.size = Vector3(0.55, 2.3, 0.12)
+	fc.shape = bc
+	fc.transform = n.transform * Transform3D(Basis(), Vector3(0, 1.15, 0))
+	_collisioni.add_child(fc)
 
 
 ## L'approdo: la stanza a ovest separata dal resto da due muri (il canale passa in mezzo), la conca con
@@ -1276,8 +1432,15 @@ func _approdo() -> void:
 	sc.name = "Scaletta"
 	_metti("ciambella", Vector3(APPRODO.x + 0.8, GALLA, APPRODO.y - 1.4), 15.0)
 	_metti("salvagente", Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 90.0)
+	_ostacolo(Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 0.5, 1.4)
 	_cartello_palo(Vector3(x1 - 0.7, 0, APPRODO.y + 2.9), 90.0, "cartello_tuffi")
-	_metti("corrimano_bambu", Vector3(x1 - 0.25, 0, APPRODO.y - 1.9), 90.0)
+	var cb := _metti("corrimano_bambu", Vector3(x1 - 0.25, 0, APPRODO.y - 1.9), 90.0)
+	var fcb := CollisionShape3D.new()
+	var bcb := BoxShape3D.new()
+	bcb.size = Vector3(2.0, 1.0, 0.12)
+	fcb.shape = bcb
+	fcb.transform = cb.transform * Transform3D(Basis(), Vector3(0, 0.5, 0))
+	_collisioni.add_child(fcb)
 	_metti("detriti", Vector3(X0 + 1.0, 0, APPRODO.y + 1.8), 0.0)
 	_metti("ciabatta", Vector3(x1 - 1.6, 0, APPRODO.y + 0.9), 200.0)
 	_lampada_calda(Vector3(X0, 3.0, APPRODO.y - 1.6), 90.0, 3.0)

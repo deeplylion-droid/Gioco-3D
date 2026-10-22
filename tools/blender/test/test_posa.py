@@ -53,6 +53,14 @@ dentro = scatola('Dentro', (2, 5.1, 1.0), (0.3, 0.3, 0.3))
 posa.fissa_al_muro(dentro, (0, -1, 0))
 check(abs(max((dentro.matrix_world @ Vector(c)).y for c in dentro.bound_box) - 5.0) < 1e-4, 'un oggetto un po\' dentro il muro torna a filo')
 
+# la collisione esportata (-col) sporge 3 cm oltre il muro che si vede: Posa va sul muro vero
+muro2 = scatola('MuroVasca', (0, -5.53, 2), (20, 1, 4))   # si vede: faccia a y -5,03
+scatola('MuroVasca-col', (0, -5.5, 2), (20, 1, 4))        # collisione: faccia a y -5
+targa = scatola('Targa', (0, -4.0, 1.6), (0.6, 0.04, 0.4))
+check(posa.fissa_al_muro(targa, (0, 1, 0)) == muro2 and abs(min((targa.matrix_world @ Vector(c)).y for c in targa.bound_box) + 5.03) < 1e-4,
+      'la targa va sul muro che si vede, non sulla collisione -col 3 cm più avanti')
+check(posa.tocca(targa), 'tocca(): la targa tocca il muro vero')
+
 plaf = scatola('Plafoniera', (-2, 0, 3.0), (0.5, 0.5, 0.1))
 posa.fissa_al_soffitto(plaf)
 check(abs(max((plaf.matrix_world @ Vector(c)).z for c in plaf.bound_box) - 4.0) < 1e-4, 'la plafoniera sale al soffitto')
