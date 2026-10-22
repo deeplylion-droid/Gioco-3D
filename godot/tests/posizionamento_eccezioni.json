@@ -1,0 +1,1094 @@
+[
+	{
+		"zona": "sala",
+		"nodo": "LuciSala/@Node3D@569/@MeshInstance3D@570",
+		"problema": "sospeso",
+		"pos": [
+			1.23,
+			11.3,
+			5.97
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
+		"problema": "sospeso",
+		"pos": [
+			-6.03,
+			0.96,
+			36.8
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/fischietto_1",
+		"problema": "sospeso",
+		"pos": [
+			2.1,
+			1.26,
+			30.4
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/fischietto_2",
+		"problema": "sospeso",
+		"pos": [
+			2.4,
+			1.22,
+			30.4
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/fischietto_4",
+		"problema": "sospeso",
+		"pos": [
+			3.0,
+			1.14,
+			30.4
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/fischietto_5",
+		"problema": "sospeso",
+		"pos": [
+			3.3,
+			1.1,
+			30.4
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_luci",
+		"problema": "sospeso",
+		"pos": [
+			-1.4,
+			-6.4,
+			47.58
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Polaroid/Polaroid04/Modello/Polaroid",
+		"problema": "sospeso",
+		"pos": [
+			-12.9,
+			6.4,
+			-21.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
+		"problema": "ingombro",
+		"pos": [
+			6.78,
+			0.0,
+			38.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
+		"problema": "ingombro",
+		"pos": [
+			6.53,
+			0.0,
+			39.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_2",
+		"problema": "ingombro",
+		"pos": [
+			6.28,
+			0.0,
+			38.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/estintore",
+		"problema": "ingombro",
+		"pos": [
+			0.03,
+			0.0,
+			40.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
+		"problema": "ingombro",
+		"pos": [
+			-1.22,
+			0.0,
+			40.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/secchio_mocio",
+		"problema": "ingombro",
+		"pos": [
+			-2.22,
+			0.0,
+			29.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
+		"problema": "ingombro",
+		"pos": [
+			-3.22,
+			0.0,
+			36.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/cestino",
+		"problema": "ingombro",
+		"pos": [
+			-4.47,
+			0.0,
+			38.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/pallone",
+		"problema": "ingombro",
+		"pos": [
+			-7.47,
+			0.0,
+			40.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
+		"problema": "ingombro",
+		"pos": [
+			-5.97,
+			0.0,
+			36.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
+		"problema": "ingombro",
+		"pos": [
+			-5.97,
+			0.0,
+			33.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/cestino_spogliatoi",
+		"problema": "ingombro",
+		"pos": [
+			-5.97,
+			0.0,
+			30.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
+		"problema": "ingombro",
+		"pos": [
+			0.53,
+			0.0,
+			37.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
+		"problema": "ingombro",
+		"pos": [
+			0.53,
+			0.0,
+			33.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/porta_stanzino",
+		"problema": "ingombro",
+		"pos": [
+			0.53,
+			0.0,
+			32.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
+		"problema": "ingombro",
+		"pos": [
+			0.53,
+			0.0,
+			30.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/cartello_bagnato",
+		"problema": "ingombro",
+		"pos": [
+			0.53,
+			0.0,
+			29.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
+		"problema": "ingombro",
+		"pos": [
+			0.53,
+			0.0,
+			25.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/tornello_rotore",
+		"problema": "ingombro",
+		"pos": [
+			-0.22,
+			0.0,
+			25.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/sedia",
+		"problema": "ingombro",
+		"pos": [
+			2.78,
+			0.0,
+			33.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
+		"problema": "ingombro",
+		"pos": [
+			4.78,
+			0.0,
+			34.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/porta_tagliafuoco",
+		"problema": "ingombro",
+		"pos": [
+			12.03,
+			0.0,
+			39.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_cordone",
+		"problema": "ingombro",
+		"pos": [
+			-4.22,
+			0.0,
+			7.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_18",
+		"problema": "ingombro",
+		"pos": [
+			2.78,
+			0.0,
+			6.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_17",
+		"problema": "ingombro",
+		"pos": [
+			4.03,
+			0.0,
+			7.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_13",
+		"problema": "ingombro",
+		"pos": [
+			4.03,
+			0.0,
+			12.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_11",
+		"problema": "ingombro",
+		"pos": [
+			1.53,
+			0.0,
+			13.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_10",
+		"problema": "ingombro",
+		"pos": [
+			0.03,
+			0.0,
+			13.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_14",
+		"problema": "ingombro",
+		"pos": [
+			4.28,
+			0.0,
+			11.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_15",
+		"problema": "ingombro",
+		"pos": [
+			4.28,
+			0.0,
+			10.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_16",
+		"problema": "ingombro",
+		"pos": [
+			4.28,
+			0.0,
+			8.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
+		"problema": "ingombro",
+		"pos": [
+			-17.97,
+			0.0,
+			16.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
+		"problema": "ingombro",
+		"pos": [
+			-18.97,
+			0.0,
+			16.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
+		"problema": "ingombro",
+		"pos": [
+			-15.47,
+			0.0,
+			-19.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
+		"problema": "ingombro",
+		"pos": [
+			19.53,
+			0.0,
+			-11.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
+		"problema": "ingombro",
+		"pos": [
+			19.53,
+			0.0,
+			-18.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_dettagli",
+		"problema": "ingombro",
+		"pos": [
+			6.78,
+			-1.8,
+			46.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2es_0",
+		"problema": "ingombro",
+		"pos": [
+			3.03,
+			-1.51,
+			46.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc3",
+		"problema": "ingombro",
+		"pos": [
+			8.78,
+			-1.8,
+			46.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_filo",
+		"problema": "ingombro",
+		"pos": [
+			1.78,
+			-7.3,
+			52.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_4",
+		"problema": "ingombro",
+		"pos": [
+			1.53,
+			-7.48,
+			52.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_7",
+		"problema": "ingombro",
+		"pos": [
+			2.03,
+			-7.12,
+			53.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_11",
+		"problema": "ingombro",
+		"pos": [
+			3.03,
+			-6.4,
+			53.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_12",
+		"problema": "ingombro",
+		"pos": [
+			3.28,
+			-6.22,
+			53.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_13",
+		"problema": "ingombro",
+		"pos": [
+			3.53,
+			-6.04,
+			53.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_9",
+		"problema": "ingombro",
+		"pos": [
+			2.53,
+			-6.76,
+			53.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
+		"problema": "ingombro",
+		"pos": [
+			-2.72,
+			-9.05,
+			36.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_elettrico",
+		"problema": "ingombro",
+		"pos": [
+			-3.22,
+			-9.05,
+			33.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_strumenti",
+		"problema": "ingombro",
+		"pos": [
+			-3.47,
+			-9.05,
+			36.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_arredo",
+		"problema": "ingombro",
+		"pos": [
+			1.28,
+			-9.05,
+			36.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_tubi",
+		"problema": "ingombro",
+		"pos": [
+			1.78,
+			-9.05,
+			30.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
+		"problema": "ingombro",
+		"pos": [
+			0.03,
+			-9.05,
+			1.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_bocchette",
+		"problema": "ingombro",
+		"pos": [
+			-1.72,
+			-9.05,
+			7.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Polaroid/Polaroid03",
+		"problema": "coperto",
+		"pos": [
+			2.95,
+			1.3,
+			34.65
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Polaroid/Polaroid07",
+		"problema": "compenetrato",
+		"pos": [
+			-3.23,
+			-8.26,
+			43.66
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "sala",
+		"nodo": "LuciSala/LuciAreaBimbi/@MeshInstance3D@633",
+		"problema": "compenetra",
+		"pos": [
+			-14.42,
+			6.81,
+			-19.65
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
+		"problema": "compenetra",
+		"pos": [
+			0.3,
+			2.48,
+			39.6
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla",
+		"problema": "compenetra",
+		"pos": [
+			-2.7,
+			2.85,
+			35.9
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/neon_stanzino_neon/neon_stanzino_tubo_sfarfalla",
+		"problema": "compenetra",
+		"pos": [
+			3.5,
+			2.39,
+			32.5
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/neon_0_neon/neon_0_tubi",
+		"problema": "compenetra",
+		"pos": [
+			-0.6,
+			-4.92,
+			5.36
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/neon_1_neon/neon_1_tubo_sfarfalla",
+		"problema": "compenetra",
+		"pos": [
+			-0.6,
+			-4.92,
+			11.36
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/neon_2_neon/neon_2_tubi",
+		"problema": "compenetra",
+		"pos": [
+			-0.6,
+			-4.92,
+			21.21
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Polaroid/Polaroid07/Modello/Polaroid",
+		"problema": "compenetra",
+		"pos": [
+			-3.23,
+			-8.26,
+			43.66
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
+		"problema": "compenetra",
+		"pos": [
+			1.2,
+			-4.22,
+			34.16
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla",
+		"problema": "compenetra",
+		"pos": [
+			1.2,
+			-4.22,
+			39.16
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi",
+		"problema": "compenetra",
+		"pos": [
+			1.2,
+			-4.22,
+			43.66
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi",
+		"problema": "compenetra",
+		"pos": [
+			5.7,
+			-4.22,
+			39.16
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/neon_rc_neon/neon_rc_tubo_sfarfalla",
+		"problema": "compenetra",
+		"pos": [
+			-0.9,
+			-6.32,
+			49.86
+		],
+		"stato": "voluto",
+		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3712",
+		"problema": "sospeso",
+		"pos": [
+			32.55,
+			9.0,
+			-15.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3713",
+		"problema": "sospeso",
+		"pos": [
+			32.03,
+			8.9,
+			-14.7
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3714",
+		"problema": "sospeso",
+		"pos": [
+			32.03,
+			8.8,
+			-15.3
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3716",
+		"problema": "sospeso",
+		"pos": [
+			32.55,
+			-3.0,
+			-15.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3717",
+		"problema": "sospeso",
+		"pos": [
+			32.03,
+			-3.1,
+			-14.7
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3718",
+		"problema": "sospeso",
+		"pos": [
+			32.03,
+			-3.2,
+			-15.3
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3720",
+		"problema": "sospeso",
+		"pos": [
+			32.55,
+			-14.0,
+			-15.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3721",
+		"problema": "sospeso",
+		"pos": [
+			32.03,
+			-14.1,
+			-14.7
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@MeshInstance3D@3722",
+		"problema": "sospeso",
+		"pos": [
+			32.03,
+			-14.2,
+			-15.3
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreStruttura/torre_A_sostegni",
+		"problema": "ingombro",
+		"pos": [
+			35.01,
+			-6.01,
+			-8.55
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"problema": "ingombro",
+		"pos": [
+			38.01,
+			-19.98,
+			-14.05
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreScivoli/discesa_5_0",
+		"problema": "ingombro",
+		"pos": [
+			37.51,
+			-15.01,
+			-18.8
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@Node3D@3633/@MeshInstance3D@3637",
+		"problema": "ingombro",
+		"pos": [
+			27.01,
+			-12.01,
+			-19.8
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@Node3D@3633/@MeshInstance3D@3636",
+		"problema": "ingombro",
+		"pos": [
+			27.01,
+			-12.01,
+			-19.55
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Luci/@Node3D@3633/@MeshInstance3D@3638",
+		"problema": "ingombro",
+		"pos": [
+			27.01,
+			-12.01,
+			-19.3
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre, da assegnare alla squadra della zona"
+	}
+]
