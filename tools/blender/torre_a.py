@@ -816,7 +816,9 @@ def vasche_raccolta(c, cl, sp, salti, tappe, aperture):
         # (solo da vedere, in cl: a salire ci pensa la Ladder del gioco, e i pioli non fanno inciampare in cima)
         for sg in (-0.25, 0.25):
             q = Vector((sx, sy, 0)) + lat * sg
-            cl.cilindro((q.x, q.y, fondo), (q.x, q.y, L0 + 1.0), 0.03, 'giallo_sicurezza', seg=8)
+            # i montanti finiscono al bordo della pedana: sopra sarebbero nello spazio di chi cammina (non hanno
+            # collisione, e con la collisione tra i due non si passa)
+            cl.cilindro((q.x, q.y, fondo), (q.x, q.y, L0 - 0.02), 0.03, 'giallo_sicurezza', seg=8)
             cl.cilindro((q.x, q.y, L0 - 0.2), (q.x - 0.12 * nx, q.y - 0.12 * ny, L0 - 0.2), 0.025, 'metallo', seg=6)
         zz = fondo + 0.3
         while zz < L0 + 0.05:
@@ -1528,8 +1530,10 @@ def versione_A(mats):
              ('pallone_spiaggia', (27.0, 12.6), 0), ('secchio_gigante', (32.6, 9.6), 30),
              ('cestino_pesce', (39.4, 11.6), 200), ('cannoncino_acqua', (24.2, 11.5), 300), ('salvagente_nave', (24.4, 4.6), 80),
              ('cartello_pavimento_bagnato', (28.0, 18.2), 140), ('tubi_galleggianti', (27.4, 24.8), 10),
-             ('ciambella_gonfiabile', (38.6, 16.6, FONDO + 0.6 - 0.2), 70), ('ciambella_gonfiabile', (30.0, 5.8, FONDO + 0.6 - 0.2), 10),
+             ('ciambella_gonfiabile', (36.9, 11.9, FONDO + 0.6 - 0.2) if GIOCO else (38.6, 16.6, FONDO + 0.6 - 0.2), 70), ('ciambella_gonfiabile', (30.0, 5.8, FONDO + 0.6 - 0.2), 10),
              ('orsacchiotto_grande', (20.9, 19.0), 100)]
+    # (nel gioco la ciambella galleggia nella vasca del fondo, in un angolo lontano dall'atterraggio e dal tubo:
+    # in (38,6, 16,6) era per la vasca est, che lì non c'è, e restava sospesa)
     for nome, pos, rot in fondo:
         z = pos[2] if len(pos) > 2 else FONDO
         props.append(P.prop(nome, (pos[0], pos[1], z), rot))

@@ -1485,7 +1485,7 @@
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"motivo": "all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8)",
 		"nodo": "TorreScivoli/discesa_5_0",
 		"pos": [
 			37.51,
@@ -1498,22 +1498,8 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (8 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "TorreStruttura/torre_A_scalette",
-		"pos": [
-			33.76,
-			-6.01,
-			-10.55
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.96 m sopra il pavimento (40 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)",
 		"nodo": "TorreScivoli/discesa_1_1",
 		"pos": [
 			38.76,
@@ -1522,7 +1508,7 @@
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
-		"stato": "da correggere",
+		"stato": "voluto",
 		"zona": "torre"
 	}
 ]
