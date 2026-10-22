@@ -674,12 +674,21 @@ func _tetto() -> void:
 	for pt in punti:
 		var p: Vector3 = pt[0]
 		var zc: float = Z0 + 2.0 + roundf((p.z - Z0 - 2.0) / 5.0) * 5.0
+		# la catena dalla lampada all'attacco, una piastrina sotto il corrente basso della capriata (fondo a TETTO - 1,17):
+		# prima la catena entrava 7 cm nel corrente, senza attacco (collaudo del 22 ottobre)
+		var attacco := MeshInstance3D.new()
+		var ab := BoxMesh.new()
+		ab.size = Vector3(0.08, 0.02, 0.08)
+		attacco.mesh = ab
+		attacco.material_override = ferro
+		attacco.position = Vector3(p.x, TETTO - 1.18, zc)
+		tetto.add_child(attacco)
 		var catena := MeshInstance3D.new()
 		var cb := BoxMesh.new()
-		cb.size = Vector3(0.02, 1.9, 0.02)
+		cb.size = Vector3(0.02, 1.81, 0.02)
 		catena.mesh = cb
 		catena.material_override = ferro
-		catena.position = Vector3(p.x, TETTO - 2.05, zc)
+		catena.position = Vector3(p.x, TETTO - 3.0 + 0.905, zc)
 		catena.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		tetto.add_child(catena)
 		var l := _metti("lampada_capannone", Vector3(p.x, TETTO - 3.0, zc))
@@ -1144,12 +1153,14 @@ func _guida_chiusa(size: Vector3, centro: Vector3, e: Vector3, d: Vector3, m: Ma
 
 
 func _palo_trave(p: Vector3, m: Material) -> void:
+	# dal fondo del canale (la bocca della conca è acqua: prima i pali finivano a quota 0, 22 cm sopra il pelo, e il
+	# portale non toccava niente) fino a 3,8 m
 	var pil := MeshInstance3D.new()
 	var cm := BoxMesh.new()
-	cm.size = Vector3(0.3, 3.8, 0.3)
+	cm.size = Vector3(0.3, 3.8 - FONDO, 0.3)
 	pil.mesh = cm
 	pil.material_override = m
-	pil.position = p + Vector3(0, 1.9, 0)
+	pil.position = p + Vector3(0, (3.8 + FONDO) * 0.5, 0)
 	add_child(pil)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
