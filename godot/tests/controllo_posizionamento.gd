@@ -55,6 +55,8 @@ const OGGETTO_MAX := 4.0
 ## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
 ## gli acquari (riscontro dell'utente: lì sotto i 4 m il controllo non vedeva niente).
 const OGGETTO_MAX_PARTI := 15.0
+## Nelle zone con stato: uno spigolo che passa dentro un altro oggetto per più di tanto (m) è una compenetrazione.
+const ATTRAVERSA_MIN := 0.03
 const CONTATTO := 0.05
 const PASSO_GRIGLIA := 0.25
 const TESTA_DA := 0.35
@@ -73,6 +75,8 @@ var _q_corpo: PhysicsShapeQueryParameters3D   # il cilindro del giocatore (vedi 
 var _spazio: PhysicsDirectSpaceState3D
 var _radice: Node
 var _oggetto_max := OGGETTO_MAX
+## Nelle zone con stato il controllo delle compenetrazioni è più fino (vedi _compenetrazioni).
+var _fino := false
 
 
 func _ready() -> void:
@@ -113,6 +117,7 @@ func _controlla_scena(z: Dictionary) -> void:
 	for g in _radice.find_children("*", "Player", true, false):
 		_semi.append((g as Node3D).global_position)
 	_oggetto_max = OGGETTO_MAX_PARTI if z.has("parti") else OGGETTO_MAX
+	_fino = z.has("parti")
 	if z.has("stato"):
 		await _prepara(String(z["stato"]))
 	for i in 20:
@@ -127,6 +132,7 @@ func _controlla_scena(z: Dictionary) -> void:
 	_spazio = (_radice as Node3D).get_world_3d().direct_space_state if _radice is Node3D else get_viewport().get_world_3d().direct_space_state
 	var mesh := _mesh_visibili()
 	print("  %d mesh visibili" % mesh.size())
+	_elenca_nascoste()
 	_crea_corpi(mesh)
 	for i in 3:
 		await get_tree().physics_frame
@@ -208,6 +214,33 @@ func _mesh_visibili() -> Array:
 			_acqua[mi] = true   # le superfici dell'acqua reggono quello che galleggia, ma non sono oggetti
 		out.append(mi)
 	return out
+
+
+## Le parti nascoste all'inizio (che compaiono più avanti nel gioco): il controllo non le guarda, a meno di una zona
+## con stato che le mostri. Le stampa raggruppate per il primo nodo nascosto, con quante mesh hanno sotto.
+func _elenca_nascoste() -> void:
+	var gruppi := {}
+	for n in _radice.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or _visibile(mi):
+			continue
+		# il nodo nascosto più in alto
+		var k: Node = mi
+		var nascosto: Node = null
+		while k and k != _radice:
+			if k is Node3D and not (k as Node3D).visible and not k is Light3D:
+				nascosto = k
+			k = k.get_parent()
+		if nascosto:
+			var nome := String(_radice.get_path_to(nascosto))
+			gruppi[nome] = int(gruppi.get(nome, 0)) + 1
+	if gruppi.is_empty():
+		return
+	var nomi := gruppi.keys()
+	nomi.sort()
+	print("  nascoste all'inizio (non controllate): %d parti, %d mesh" % [nomi.size(), gruppi.values().reduce(func(x, y): return x + y, 0)])
+	for nome in nomi:
+		print("    NASCOSTA %s · %d mesh" % [nome, gruppi[nome]])
 
 
 ## Visibile, senza contare le luci sopra la mesh: quelle che sfarfallano si accendono e spengono a caso (LookSala),
@@ -588,8 +621,18 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 	# a celle di 2 m per non confrontare tutte le coppie
 	var celle := {}
 	for mi in oggetti:
-		var c := Vector3i((boxes[mi] as AABB).get_center() / 2.0)
-		celle.get_or_add(c, []).append(mi)
+		var bx: AABB = boxes[mi]
+		if _fino:
+			# in tutte le celle che il box tocca: un corrimano lungo 6 m ha il centro lontano dalla valvola che
+			# attraversa
+			var da := Vector3i((bx.position / 2.0).floor())
+			var a_ := Vector3i((bx.end / 2.0).floor())
+			for x in range(da.x, a_.x + 1):
+				for y in range(da.y, a_.y + 1):
+					for zz in range(da.z, a_.z + 1):
+						celle.get_or_add(Vector3i(x, y, zz), []).append(mi)
+		else:
+			celle.get_or_add(Vector3i(bx.get_center() / 2.0), []).append(mi)
 	var fatte := {}
 	for c in celle:
 		var vicini := []
@@ -602,13 +645,21 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 				if a == b or fatte.has([b, a]) or fatte.has([a, b]):
 					continue
 				fatte[[a, b]] = true
-				if ((a as Node).owner != null and (a as Node).owner == (b as Node).owner) or (a as Node).get_parent() == (b as Node).get_parent():
+				if _stesso_modello(a, b) or (a as Node).get_parent() == (b as Node).get_parent():
 					continue   # pezzi dello stesso modello, o dello stesso oggetto fatto da codice (lampade, fari)
 				var ba: AABB = boxes[a]
 				var bb: AABB = boxes[b]
 				var i := ba.intersection(bb)
 				if i.size == Vector3.ZERO:
 					continue
+				if _fino:
+					# una sbarra che passa dentro un oggetto senza avere vertici dentro: gli spigoli che lo attraversano
+					var p := _attraversa(a, b)
+					if p > ATTRAVERSA_MIN:
+						var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
+						var altro: MeshInstance3D = b if chi == a else a
+						_trova(z, chi, "compenetra", i.get_center(), "passa dentro %s per %d cm" % [_nodo(altro), roundi(p * 100.0)])
+						continue
 				var piccolo := minf(ba.get_volume(), bb.get_volume())
 				if piccolo <= 0.0 or i.get_volume() < 0.3 * piccolo:
 					continue
@@ -617,6 +668,62 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 					var altro: MeshInstance3D = b if chi == a else a
 					_trova(z, chi, "compenetra", i.get_center(), "il %d%% dei suoi vertici è dentro %s" % [roundi(dentro * 100.0), _nodo(altro)])
+
+
+## Due mesh dello stesso modello importato (.glb, .gltf): i suoi pezzi si toccano per costruzione. Nelle zone con
+## stato solo questo: gli oggetti di una scena .tscn hanno tutti lo stesso owner (la radice della scena), ma sono
+## oggetti diversi messi a mano (gli acquari: la valvola nella ringhiera della pedana non si vedeva).
+func _stesso_modello(a: Node, b: Node) -> bool:
+	if a.owner == null or a.owner != b.owner:
+		return false
+	if not _fino:
+		return true
+	var f := a.owner.scene_file_path.get_extension().to_lower()
+	return f == "glb" or f == "gltf"
+
+
+## Quanto (m) gli spigoli di una mesh passano dentro l'altra, il massimo fra le due direzioni: per ogni spigolo
+## (un campione) un raggio dall'inizio alla fine e uno dalla fine all'inizio contro l'altra; se colpiscono tutti e
+## due, il tratto fra i due punti colpiti è dentro (gli spigoli che toccano solo la superficie non contano).
+func _attraversa(a: MeshInstance3D, b: MeshInstance3D) -> float:
+	return maxf(_spigoli_dentro(a, b), _spigoli_dentro(b, a))
+
+
+func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
+	if not _corpo_di.has(b):
+		return 0.0
+	var facce := a.mesh.get_faces()
+	if facce.is_empty():
+		return 0.0
+	var corpo := _corpo_di[b] as StaticBody3D
+	corpo.collision_layer = STRATO_SOLO
+	var tri := facce.size() / 3
+	var passo := maxi(1, tri / 80)
+	var massimo := 0.0
+	var centro := _box(a).get_center()
+	var t := 0
+	while t < tri:
+		for e in 3:
+			var p0 := a.global_transform * facce[t * 3 + e]
+			var p1 := a.global_transform * facce[t * 3 + (e + 1) % 3]
+			# 5 mm verso il centro dell'oggetto: uno spigolo appoggiato su una superficie (una scatola su uno
+			# scaffale) non la deve sfiorare
+			p0 += (centro - p0).normalized() * 0.005
+			p1 += (centro - p1).normalized() * 0.005
+			var l := p0.distance_to(p1)
+			if l < 0.03:
+				continue
+			var d := (p1 - p0) / l
+			var h0 := _raggio(p0 + d * 0.005, p1 - d * 0.005, STRATO_SOLO)
+			if h0.is_empty():
+				continue
+			var h1 := _raggio(p1 - d * 0.005, p0 + d * 0.005, STRATO_SOLO)
+			if h1.is_empty():
+				continue
+			massimo = maxf(massimo, (h0.position as Vector3).distance_to(h1.position))
+		t += passo
+	corpo.collision_layer = STRATO
+	return massimo
 
 
 ## Quanti vertici della mesh più piccola fra a e b stanno dentro l'altra (raggi verso l'alto: dispari = dentro).
