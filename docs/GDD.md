@@ -163,6 +163,8 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
   - **Riserva approvata dall'utente** (21 ottobre): "se non riusciamo a essere soddisfatti col geyser possiamo eliminarlo e fare un'animazione di tuffo verso il basso di Jilly". Se la V1 nel gioco non convince, al posto del geyser lei si tuffa verso il basso nella fossa.
+  - **Si passa al tuffo** (decisione del coordinatore, 22 ottobre notte, come autorizzato dall'utente). Nel gioco la V1 ha dei buchi da cui si vedono l'occhio e il viso di lei proprio mentre sparisce, ed è rosa a grumi, più gelatina che acqua. Chiuderli vorrebbe dire rifare la simulazione, giorni di lavoro con un risultato incerto. La V1 resta da parte nel branch lavoro/ambienti-1. Fino al tuffo resta il geyser di prima (GeyserFossa).
+  - **Il tuffo**, da scegliere (proposta di ambienti-1, 22 ottobre): A di testa, B "da medusa" (la campana la spinge giù), C all'indietro, guardandoti fino all'ultimo. Le parti comuni sono già fatte: schizzo all'entrata, onde, tonfo, e lei che sparisce solo quando è tutta sotto. Lo schizzo su misura si fa insieme all'animazione.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
@@ -186,6 +188,12 @@ L'utente: "nella torre degli scivoli non si capisce dove bisogna andare, le vie 
 - **la strada giusta** si capisce in tutti e due i modi: segnali del parco (frecce disegnate, senza scritte, e luci verdi sulla via giusta) e l'ambiente (le vie sbagliate si vedono rotte o sbarrate);
 - **nelle vie sbagliate non si muore**: cadi in una vasca di raccolta e risali da una scaletta fino all'ultimo checkpoint.
 - **meno sostegni** (richiesta dell'utente, 21 ottobre): "togli un po' di barre di sostegno, vanno anche in mezzo ai percorsi dove devi scendere, sono brutti da vedere e fanno solo caos". Via quelli che attraversano i percorsi o la vista della strada; gli altri sfoltiti e ordinati, quanto basta perché nessun pezzo sembri sospeso.
+
+**Come è fatta nella v0.3.8** (ambienti-2):
+- l'imbocco giusto di ogni discesa ha un portale con una fila di led verdi e una lampada verde. La fascia del portale è liscia: le strisce gialle e nere vogliono dire "chiuso";
+- gli imbocchi sbagliati vicino alle pedane sono chiusi da un cancelletto a strisce, con una lampada rossa guasta che sfarfalla oppure spenta;
+- sotto i salti ci sono vasche di raccolta, e una scaletta di servizio riporta alla pedana di partenza. Si muore solo per una caduta libera di più di 8 m;
+- nessuna barra di sostegno nei 2,4 m sopra i canali di discesa.
 
 ## L'enigma degli acquari (idea dell'utente, 18 ottobre)
 
@@ -212,6 +220,11 @@ Risposte alle domande (18 ottobre):
 **Acquari grandi il doppio** (prova del 19 ottobre e scelta del 21): gli acquari vanno ingranditi del doppio, tutta la struttura, e la valvola di reset va illuminata. Il miscuglio raddoppiato ha il bordo a circa 1,56 m, quindi davanti c'è una **pedana di servizio a gradini** (grigliato d'acciaio con parapetto), scelta dell'utente: "fai in modo che ci si possa arrampicare sulla bacinella su cui versare, è il modo più pratico per versare, farlo sotto i propri piedi". Le quantità restano uguali: 2 zaini di giallo e 1 di blu fanno il verde.
 
 **Davanti al portone, vuoti fin dall'inizio** (richiesta dell'utente, 21 ottobre): "le vasche dell'enigma di fronte al portone della torre degli scivoli: mettile proprio davanti al portone suddetto. Inoltre mettile fin dall'inizio del gioco, ma VUOTE. Si riempiranno quando ritorni nella sala." Quindi gli acquari (con la pedana) stanno proprio davanti al portone della torre, lasciando libero il passaggio, al posto della posizione 2 del 18 ottobre. Ci sono dal primo passaggio, vuoti e con le lampadine del portone spente; quando rientri nella sala dal magazzino sono pieni (le pompe sono ripartite nella tappa 6) e le lampadine sono accese.
+
+**Posizione davanti al portone** (enigmi, 22 ottobre). Raddoppiati sono lunghi quasi 16 m in fila e il portone è largo 6,3 m: una fila dritta davanti lo chiuderebbe. Tre modi, in attesa della scelta dell'utente:
+- P1: in fila lungo il muro nord, accanto al viale del portone, con il giallo subito a sinistra del portone. È quella costruita, e la consiglia la squadra;
+- P2: giallo e blu ai due lati del portone come colonne d'ingresso, il miscuglio con la pedana staccato, a circa 6 m;
+- P3: fila a 9 m davanti al portone con un varco largo quanto il portone in mezzo, e i tubi che passano sopra il varco a 3,2 m.
 
 ## Nuove mascotte (idea dell'utente, 18 ottobre)
 
@@ -254,6 +267,10 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 - **Dove**: tra la sala pompe e il magazzino, lungo la strada di risalita. Prima il fiume, poi l'infermeria, poi dalla scala di servizio il magazzino con la serranda e il lettore della keycard.
 
 **L'inseguimento e il finale, scelta del 19 ottobre** (proposta di ambienti-2 in `docs/proposte/inseguimento/inseguimento.md`, lavoro/ambienti-2 9aa6217): **versione A, "Le condotte"**. È una sala macchine piena e allagata, ricavata nello scafo dietro la bocca in fondo alla torre. Si scivola in tubi chiusi tra tre vasche sospese, con tre bivi. Ai bivi la paratia giusta ha la luce verde e l'anello di led verdi, la sbagliata una lampada rossa guasta; si colpisce il bersaglio col getto. Lei ti raggiunge nelle vasche, e un getto in faccia la respinge. Poi una spirale attorno al serbatoio, la grata che cala davanti a lei e, prima della porta, SB1: lei sbuca dal pozzo di scarico e ti guarda. Dura circa 5:40 senza errori. Le pose di lei sono provvisorie: le animazioni dell'inseguimento sono da fare.
+
+**Nel gioco** (ambienti-2, 22 ottobre, branch lavoro/ambienti-2-inseguimento, non ancora unito): la sala c'è dietro il muro est della torre, con i tubi in cui si scivola accovacciati, le sei paratie col bersaglio, lei che sale nelle vasche, la grata, SB1 e i checkpoint. Due scelte da fare per l'utente:
+- vasche ancora scure, l'acqua quasi nera: a) acqua meno torbida, verde-azzurra, col fondo che si intravede; b) una lampada da lavoro sopra ogni vasca; c) tutte e due (consigliata);
+- strisce delle paratie: nella torre le strisce vogliono dire "chiuso". a) sulla paratia giusta la trave diventa liscia (consigliata); b) restano tutte a strisce, perché finché non colpisci il bersaglio sono chiuse.
 Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):

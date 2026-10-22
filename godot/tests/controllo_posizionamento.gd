@@ -57,6 +57,7 @@ var _trovati: Array = []        # {zona, nodo, problema, pos, dettaglio}
 var _corpi := {}                # RID del corpo temporaneo -> MeshInstance3D
 var _corpo_di := {}             # MeshInstance3D -> StaticBody3D
 var _acqua := {}                # MeshInstance3D delle superfici dell'acqua
+var _semi: Array[Vector3] = []   # da dove parte il riempimento (vedi _controlla_scena)
 var _q_corpo: PhysicsShapeQueryParameters3D   # il cilindro del giocatore (vedi _libero)
 var _spazio: PhysicsDirectSpaceState3D
 var _radice: Node
@@ -88,6 +89,17 @@ func _controlla_scena(z: Dictionary) -> void:
 	print("Scena %s" % z["scena"])
 	_radice = (load(z["scena"]) as PackedScene).instantiate()
 	get_tree().root.add_child(_radice)
+	# i punti da cui parte il riempimento delle celle, subito, prima che qualcosa si muova: solo punti fissi
+	# (checkpoint, i loro punti di ripartenza, il giocatore dove comincia), niente bambini o altri corpi che
+	# camminano (con loro i casi cambiavano da un giro all'altro)
+	_semi.clear()
+	for cp in _radice.find_children("*", "Checkpoint", true, false):
+		_semi.append((cp as Node3D).global_position)
+		var sp = cp.get(&"spawn_point")
+		if sp is Node3D:
+			_semi.append((sp as Node3D).global_position)
+	for g in _radice.find_children("*", "Player", true, false):
+		_semi.append((g as Node3D).global_position)
 	for i in 20:
 		await get_tree().physics_frame
 	# poi ferma, come la lasciano gli script dopo l'ingresso (niente animazioni durante il controllo); i corpi
@@ -131,7 +143,8 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().process_frame
 
 
-## Le mesh visibili della scena, senza il giocatore e le creature (si muovono); le superfici dell'acqua a parte.
+## Le mesh visibili della scena, senza il giocatore, le creature e le gocce che cadono (si muovono); le superfici
+## dell'acqua a parte.
 func _mesh_visibili() -> Array:
 	var out := []
 	var esclusi := []
@@ -139,6 +152,8 @@ func _mesh_visibili() -> Array:
 		esclusi.append(n)
 	for n in get_tree().get_nodes_in_group(&"bambini"):
 		esclusi.append(n)
+	for n in _radice.find_children("*", "Gocce", true, false):
+		esclusi.append(n)   # le gocce che cadono dal soffitto: in volo, non sono messe male
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or not _visibile(mi) or mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
@@ -290,15 +305,8 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 				y = hp.y - 0.05
 			if not piani.is_empty():
 				colonne[Vector2i(ix, iz)] = piani
-	# raggiungibili a piedi: dai checkpoint (e dai loro punti di ripartenza), con gradini fino a GRADINO
-	var semi := []
-	for cp in _radice.find_children("*", "Checkpoint", true, false):
-		semi.append((cp as Node3D).global_position)
-		var sp = cp.get(&"spawn_point")
-		if sp is Node3D:
-			semi.append((sp as Node3D).global_position)
-	for g in _radice.find_children("*", "CharacterBody3D", true, false):
-		semi.append((g as Node3D).global_position)
+	# raggiungibili a piedi dai punti fissi (_semi), con gradini fino a GRADINO
+	var semi := _semi
 	var coda: Array[Vector3i] = []
 	var raggiunte := {}
 	for s in semi:

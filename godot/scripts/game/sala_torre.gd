@@ -1124,6 +1124,8 @@ func _catena(radice: Node3D, fondo: Vector3) -> void:
 			bulbo.material_override = _emissivo(CALDO, 9.0)
 			radice.add_child(bulbo)
 			bulbo.global_position = Vector3(fondo.x + 1.2 + cos(a) * 0.35, y - 0.1 * k, fondo.z + sin(a) * 0.35)
+			# il braccetto dal cavo alla lampadina (senza, le lampadine galleggiavano intorno al cavo)
+			_asta(radice, Vector3(fondo.x + 1.2, y - 0.1 * k, fondo.z), bulbo.global_position, 0.012, nero)
 		var l := OmniLight3D.new()
 		l.light_color = Color(1.0, 0.82, 0.62)
 		l.light_energy = 6.0
