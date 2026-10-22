@@ -10,7 +10,13 @@ squalo che si gira, esita e scappa. I tempi sono quelli dell'animazione
   stessa gola gutturale di lei (genera_lei: gola(), tratto()) ma lunga e lenta, un richiamo che sale e
   scende due volte, attutito dalla porta e dai corridoi di lamiera (riverbero della nave);
 - squalo_sbuffo: lo sbuffo di gola quando si volta a guardarti prima di scappare;
-- squalo_passo: i passi pesanti e bagnati sulle piastrelle, con il ticchettio degli artigli.
+- squalo_passo: i passi pesanti e bagnati sulle piastrelle, con il ticchettio degli artigli; dal 22 ottobre
+  più pesanti (un tonfo grave lungo, sotto: la camera trema insieme);
+- squalo_denti (22 ottobre): i denti che scattano a ogni morso nell'aria (i tre scatti della testa), secchi;
+- squalo_ringhio (22 ottobre): il ringhio quando si gira verso la porta.
+Riscontro dell'utente sulla v0.3.8 ("aggiungiamo anche i suoni"): il respiro nella minaccia è più presente
+(più umido e più forte rispetto al brontolio). Ogni suono ha il suo seme: rifarne uno non cambia gli altri.
+Uso: python genera_squalo.py [nomi dei suoni da rifare] (senza nomi, tutti).
 La porta che sbatte usa il suono che c'è già (porta_chiusa, più grave). Tutti mono: nel gioco suonano
 nello spazio (la bocca, la porta, i piedi).
 Uscita: godot/audio/squalo/.
@@ -56,9 +62,10 @@ def squalo_minaccia(rng):
         cicli.append((t, lungo * 0.45, 'insp', 0.55))
         cicli.append((t + lungo * 0.45, lungo * 0.55, 'esp', 1.0))
         t += lungo + rng.uniform(0.02, 0.12)
-    mix_into(out, respiro(rng, dur, cicli, umido=1.4, rauco=0.5), 0)
+    # il respiro davanti a tutto: è la prima cosa che si sente svegliandosi (riscontro del 22 ottobre)
+    mix_into(out, respiro(rng, dur, cicli, umido=2.2, rauco=0.6) * 1.5, 0)
     # sotto, la gola che brontola sempre
-    mix_into(out, lp(ringhio(rng, dur, f0=(46.0, 52.0), sporco=2.0, rullo=18.0, sub=0.4), 900) * 0.35, 0)
+    mix_into(out, lp(ringhio(rng, dur, f0=(46.0, 52.0), sporco=2.0, rullo=18.0, sub=0.4), 900) * 0.28, 0)
     # i ringhi corti degli scatti
     for tc in SCATTI:
         r = ringhio(rng, 0.55, f0=(62.0, 48.0), sporco=3.5, rullo=26.0, bocca=1.3)
@@ -101,12 +108,20 @@ def squalo_sbuffo(rng):
 
 
 def squalo_passo(rng, i):
-    """Un piede enorme e bagnato sulle piastrelle: il tonfo, lo splat e gli artigli che ticchettano."""
-    out = np.zeros(n_of(0.6))
+    """Un piede enorme e bagnato sulle piastrelle: il tonfo, lo splat e gli artigli che ticchettano. Sotto, un
+    colpo grave e lungo che fa tremare il pavimento (e la camera)."""
+    out = np.zeros(n_of(0.8))
     k = n_of(0.3)
     tonfo = lp(white(k, rng), 260, 2) * env_points([(0, 0), (0.006, 1), (0.12, 0.25), (0.3, 0)], k)
     tonfo += np.sin(2 * np.pi * np.cumsum(np.linspace(75, 45, k)) / SR) * env_ad(k, 0.003, 0.18) * 0.8
     mix_into(out, tonfo * 1.2, 0)
+    kg = n_of(0.55)
+    grave = np.sin(2 * np.pi * np.cumsum(np.linspace(58, 34, kg)) / SR) * env_ad(kg, 0.004, 0.42)
+    grave += lp(white(kg, rng), 90, 2) * env_ad(kg, 0.002, 0.25) * 2.5
+    mix_into(out, grave * 1.6, 0)
+    # il pavimento di lamiera sotto le piastrelle che vibra un attimo
+    lam = resonator_bank(impulso(0.3), rng.uniform(0.95, 1.05) * np.array([110, 173, 260]), [0.35, 0.25, 0.18], [1, 0.6, 0.4])
+    mix_into(out, lp(lam, 600) * 0.25, n_of(0.004))
     mix_into(out, pitch(tacco_piastrella(rng, i), -7) * 0.6, n_of(0.005))
     mix_into(out, strato_bagnato(rng, forza=1.4), n_of(0.01))
     # tre artigli che toccano la ceramica, appena dopo
@@ -117,18 +132,56 @@ def squalo_passo(rng, i):
     return f32(fade(out, 0.0, 0.08))
 
 
+def squalo_denti(rng, i):
+    """I denti che scattano nell'aria: due file di denti che si chiudono di colpo (due scatti a 12 ms), osso
+    secco e duro, poi la saliva."""
+    out = np.zeros(n_of(0.35))
+    for j, ritardo in enumerate((0.0, 0.012 + rng.uniform(0, 0.006))):
+        f = rng.uniform(0.92, 1.08) * np.array([1900, 3100, 4700, 7200])
+        c = resonator_bank(impulso(0.06), f, [0.018, 0.012, 0.008, 0.005], [1, 0.8, 0.5, 0.3])
+        c += hp(white(n_of(0.06), rng), 2500) * env_ad(n_of(0.06), 0.0005, 0.012) * 0.8
+        mix_into(out, c * (1.0 if j == 0 else 0.7), n_of(ritardo))
+    # il colpo sordo della mascella
+    k = n_of(0.12)
+    mix_into(out, np.sin(2 * np.pi * np.cumsum(np.linspace(160, 90, k)) / SR) * env_ad(k, 0.001, 0.06) * 0.6, 0)
+    sal = bp(white(n_of(0.3), rng), 1200, 5000, 2) * env_points([(0, 0), (0.02, 0.5), (0.3, 0)], n_of(0.3))
+    mix_into(out, sal * 0.15, n_of(0.02))
+    return f32(fade(reverb(out, ir_piccola(), wet=0.1), 0.0, 0.06))
+
+
+def squalo_ringhio(rng):
+    """Si gira verso la porta: un ringhio che monta e si chiude, la gola enorme che rulla."""
+    d = 1.3
+    r = ringhio(rng, d, f0=(50.0, 64.0), sporco=3.2, rullo=24.0, bocca=1.2, aspira=0.7, sub=0.5)
+    r *= env_points([(0, 0), (0.12, 0.8), (0.55, 1.0), (1.0, 0.6), (d, 0)], len(r))
+    return f32(fade(reverb(r, ir_piccola(), wet=0.15), 0.02, 0.2))
+
+
+SUONI = {
+    'squalo_minaccia': lambda: salva(CART, 'squalo_minaccia', mono(squalo_minaccia(np.random.default_rng(2110))),
+                                     loudness=-15, qualita=5,
+                                     nota="fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file)"),
+    'jilly_richiamo': lambda: salva(CART, 'jilly_richiamo', mono(jilly_richiamo(np.random.default_rng(2111))), loudness=-20,
+                                    qualita=5, nota='il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco'),
+    'squalo_sbuffo': lambda: salva(CART, 'squalo_sbuffo', mono(squalo_sbuffo(np.random.default_rng(2112))), loudness=-16,
+                                   corto=True, qualita=4, nota='sbuffo di gola quando si volta a guardarti'),
+    'squalo_passo': lambda: [salva(CART, f'squalo_passo_{i + 1:02d}', squalo_passo(np.random.default_rng(2113 + i), i),
+                                   loudness=-12, corto=True, qualita=4, fonte='sintesi + Kenney Impact Sounds (CC0)',
+                                   nota='passo pesante e bagnato con gli artigli, con il colpo grave sotto') for i in range(4)],
+    'squalo_denti': lambda: [salva(CART, f'squalo_denti_{i + 1:02d}', mono(squalo_denti(np.random.default_rng(2120 + i), i)),
+                                   loudness=-11, corto=True, qualita=5, nota='i denti che scattano a ogni morso nell\'aria')
+                             for i in range(3)],
+    'squalo_ringhio': lambda: salva(CART, 'squalo_ringhio', mono(squalo_ringhio(np.random.default_rng(2130))), loudness=-14,
+                                    corto=True, qualita=5, nota='il ringhio quando si gira verso la porta'),
+}
+
+
 def main():
-    rng = np.random.default_rng(2110)
+    import sys
     print('Squalo (inizio)')
-    salva(CART, 'squalo_minaccia', mono(squalo_minaccia(rng)), loudness=-15, qualita=5,
-          nota="fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file)")
-    salva(CART, 'jilly_richiamo', mono(jilly_richiamo(rng)), loudness=-20, qualita=5,
-          nota='il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco')
-    salva(CART, 'squalo_sbuffo', mono(squalo_sbuffo(rng)), loudness=-16, corto=True, qualita=4,
-          nota='sbuffo di gola quando si volta a guardarti')
-    for i in range(4):
-        salva(CART, f'squalo_passo_{i + 1:02d}', squalo_passo(rng, i), loudness=-14, corto=True, qualita=4,
-              fonte='sintesi + Kenney Impact Sounds (CC0)', nota='passo pesante e bagnato con gli artigli')
+    scelti = [a for a in sys.argv[1:] if a in SUONI] or list(SUONI)
+    for nome in scelti:
+        SUONI[nome]()
 
 
 if __name__ == '__main__':
