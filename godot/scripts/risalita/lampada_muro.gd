@@ -12,8 +12,9 @@ static var _vertici := PackedVector3Array()
 
 ## Mette la lampada in [param padre]: [param muro] è un punto della faccia del muro all'altezza della
 ## lampada, [param verso] dove guarda il vetro (in fuori dal muro, un po' in giù), tutto nelle coordinate di
-## [param padre]. Ritorna la lampada; la piastra è sua figlia (un oggetto solo).
-static func monta(padre: Node3D, muro: Vector3, verso: Vector3) -> Node3D:
+## [param padre]. Ritorna la lampada; la piastra è sua figlia (un oggetto solo). Senza [param piastra] la staffa
+## poggia direttamente su [param muro] (su un palo, col suo collare).
+static func monta(padre: Node3D, muro: Vector3, verso: Vector3, piastra := true) -> Node3D:
 	var n := Vector3(verso.x, 0.0, verso.z).normalized()   # dal muro verso la stanza
 	var b := Basis.looking_at(verso.normalized(), Vector3.UP)
 	var l := (load(MODELLO) as PackedScene).instantiate() as Node3D
@@ -32,9 +33,11 @@ static func monta(padre: Node3D, muro: Vector3, verso: Vector3) -> Node3D:
 			c += b * v
 			k += 1
 	c /= maxf(k, 1)
-	var pos := muro + n * (verso_muro + PIASTRA.z + 0.001)
+	var pos := muro + n * (verso_muro + (PIASTRA.z if piastra else 0.0) + 0.001)
 	l.transform = Transform3D(b, pos)
 	padre.add_child(l)
+	if not piastra:
+		return l
 	c += pos
 	c += n * ((muro - c).dot(n) + PIASTRA.z * 0.5)
 	var mi := MeshInstance3D.new()

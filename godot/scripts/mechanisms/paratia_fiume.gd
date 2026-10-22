@@ -97,13 +97,16 @@ func _disco_vero() -> void:
 	var verso := dove - posizione_bersaglio
 	verso.y = 0.0
 	verso = verso.normalized() if verso.length_squared() > 0.0001 else Vector3.BACK
+	# il palo sale fino alla lampada sopra il disco (prima finiva 20 cm sopra il centro del disco e la lampada,
+	# 50 cm sopra, restava appesa nel vuoto appoggiata al bordo del disco)
 	var alto := posizione_bersaglio.y - piede.y
+	var sopra := raggio_bersaglio + 0.48
 	var palo := MeshInstance3D.new()
 	palo.name = "Palo"
 	var pm := CylinderMesh.new()
 	pm.top_radius = 0.045
 	pm.bottom_radius = 0.05
-	pm.height = alto + 0.2
+	pm.height = alto + sopra
 	palo.mesh = pm
 	var mp := StandardMaterial3D.new()
 	mp.albedo_color = Color(0.85, 0.7, 0.1)
@@ -111,7 +114,7 @@ func _disco_vero() -> void:
 	mp.roughness = 0.5
 	palo.material_override = mp
 	add_child(palo)
-	palo.global_position = piede + Vector3(0, (alto + 0.2) * 0.5, 0) - verso * 0.08
+	palo.global_position = piede + Vector3(0, (alto + sopra) * 0.5, 0) - verso * 0.08
 	var disco := MeshInstance3D.new()
 	disco.name = "Disco"
 	var dm := CylinderMesh.new()
@@ -124,10 +127,20 @@ func _disco_vero() -> void:
 	disco.global_transform = Transform3D(Basis.looking_at(verso, Vector3.UP) * Basis(Vector3.RIGHT, PI * 0.5), posizione_bersaglio)
 	_mat_bersaglio = StandardMaterial3D.new()
 	if modello_lampada:
-		var l := modello_lampada.instantiate() as Node3D
-		add_child(l)
-		l.global_position = posizione_bersaglio + Vector3(0, 0.5, 0) - verso * 0.12
-		l.look_at(posizione_bersaglio + verso * 0.6, Vector3.UP)
+		# la lampada sul palo, sopra il disco, con la staffa sul davanti del palo e un collare
+		var attacco := Vector3(palo.global_position.x, posizione_bersaglio.y + raggio_bersaglio + 0.3, palo.global_position.z) + verso * 0.047
+		var dir := verso + Vector3(0, -0.6, 0)
+		LampadaMuro.monta(self, to_local(attacco), global_basis.inverse() * dir, false)
+		var collare := MeshInstance3D.new()
+		collare.name = "Collare"
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.052
+		cm.bottom_radius = 0.052
+		cm.height = 0.12
+		collare.mesh = cm
+		collare.material_override = mp
+		add_child(collare)
+		collare.global_position = Vector3(palo.global_position.x, attacco.y - 0.03, palo.global_position.z)
 	var s := SpotLight3D.new()
 	s.name = "LuceDisco"
 	add_child(s)

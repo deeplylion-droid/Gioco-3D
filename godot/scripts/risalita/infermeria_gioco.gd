@@ -39,6 +39,10 @@ var negatoscopio: Negatoscopio
 var cassaforte: CassaforteRotelle
 var cassetti: Array[CassettoSchedario] = []
 var keycard: Pickup
+## I listelli a metà muro (dimensione, centro, materiale): si mettono alla fine, interrotti dove sul muro c'è
+## appeso qualcosa (prima passavano dentro la giraffa, il pulsante, la cassetta del pronto soccorso, il cartellone)
+var _listelli := []
+var _barriera_cassa: StaticBody3D
 var radiografia: Pickup
 
 var _collisioni: StaticBody3D
@@ -63,6 +67,7 @@ func _ready() -> void:
 	_cassaforte()
 	_luci()
 	_bambini()
+	_metti_listelli()
 	_checkpoint()
 	_marker()
 
@@ -126,6 +131,61 @@ func _quad(size: Vector2, pos: Vector3, rot: Vector3, m: Material, padre: Node3D
 	return mi
 
 
+## I listelli lungo i muri, interrotti (2 cm di margine) dove li attraversa qualcosa appeso o appoggiato al muro.
+func _metti_listelli() -> void:
+	var altri: Array[AABB] = []
+	for c in get_children():
+		if c is CollisionObject3D or c is Light3D:
+			continue
+		var b := _box_di(c)
+		if b.size != Vector3.ZERO:
+			altri.append(b)
+	for li in _listelli:
+		var size: Vector3 = li[0]
+		var centro: Vector3 = li[1]
+		var asse := 0 if size.x > size.z else 2   # lungo x (muri nord e sud) o lungo z (ovest ed est)
+		var box := AABB(centro - size * 0.5, size)
+		var tagli := []
+		for b in altri:
+			var i := box.grow(-0.002).intersection(b)
+			if i.size.x > 0.0 and i.size.y > 0.0 and i.size.z > 0.0:
+				tagli.append([b.position[asse] - 0.02, b.end[asse] + 0.02])
+		tagli.sort_custom(func(p, q): return p[0] < q[0])
+		var da := box.position[asse]
+		for t in tagli + [[box.end[asse], box.end[asse]]]:
+			var a: float = da
+			var fine: float = minf(t[0], box.end[asse])
+			if fine - a > 0.03:
+				var s := size
+				var c := centro
+				s[asse] = fine - a
+				c[asse] = (a + fine) * 0.5
+				_box(s, c, li[2]).name = "Listello"
+			da = maxf(da, t[1])
+
+
+## La collisione (una scatola) di un modello messo con _metti: il box delle sue mesh, nelle coordinate della stanza.
+func _forma_di(n: Node3D) -> void:
+	var b := _box_di(n)
+	_forma(b.size, b.get_center())
+
+
+## Il box delle mesh di [param n] nelle coordinate della stanza.
+func _box_di(n: Node) -> AABB:
+	var b := AABB()
+	var primo := true
+	for mi in ([n] if n is MeshInstance3D else []) + n.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D()
+		var k: Node = mi
+		while k != self and k != null:
+			xf = (k as Node3D).transform * xf
+			k = k.get_parent()
+		var bb: AABB = xf * (mi as MeshInstance3D).get_aabb()
+		b = bb if primo else b.merge(bb)
+		primo = false
+	return b
+
+
 ## Un modello dell'infermeria nell'aspetto B (o quello uguale nei due aspetti).
 func _metti(nome: String, pos: Vector3, rot_y := 0.0) -> Node3D:
 	var p := DIR + nome + "_B.glb"
@@ -181,18 +241,18 @@ func _stanza() -> void:
 			var cx: float = (seg[0] + seg[1]) * 0.5
 			_box(Vector3(w, FASCIA, 0.1), Vector3(cx, FASCIA * 0.5, z), mat_piastrelle)
 			_box(Vector3(w, H - FASCIA, 0.1), Vector3(cx, FASCIA + (H - FASCIA) * 0.5, z), mat_muro)
-			_box(Vector3(w, 0.05, 0.04), Vector3(cx, FASCIA, z - lato * 0.07), listello)
+			_listelli.append([Vector3(w, 0.05, 0.04), Vector3(cx, FASCIA, z - lato * 0.07), listello])
 			_forma(Vector3(w, H, 0.1), Vector3(cx, H * 0.5, z))
 		# sopra la porta
 		_box(Vector3(LARGO_PORTA, H - 2.15, 0.1), Vector3(xp, 2.15 + (H - 2.15) * 0.5, z), mat_muro, self, true)
 		_telaio(Vector3(xp, 0, z - lato * 0.05), 0.0 if lato < 0.0 else 180.0)
 	_box(Vector3(0.1, FASCIA, 2 * L), Vector3(-L - 0.05, FASCIA * 0.5, 0), mat_piastrelle)
 	_box(Vector3(0.1, H - FASCIA, 2 * L), Vector3(-L - 0.05, FASCIA + (H - FASCIA) * 0.5, 0), mat_muro)
-	_box(Vector3(0.04, 0.05, 2 * L), Vector3(-L + 0.02, FASCIA, 0), listello)
+	_listelli.append([Vector3(0.04, 0.05, 2 * L), Vector3(-L + 0.02, FASCIA, 0), listello])
 	_forma(Vector3(0.1, H, 2 * L), Vector3(-L - 0.05, H * 0.5, 0))
 	_muro_col_vano(L + 0.05, 0.0, FASCIA, mat_piastrelle)
 	_muro_col_vano(L + 0.05, FASCIA, H, mat_muro)
-	_muro_col_vano(L + 0.03, FASCIA - 0.025, FASCIA + 0.025, listello, 0.04)
+	_muro_col_vano(L + 0.03, FASCIA - 0.025, FASCIA + 0.025, listello, 0.04, true)
 	_forma(Vector3(0.1, H, 2 * L), Vector3(L + 0.05 + 0.31, H * 0.5, 0))   # dietro al vano: il fondo è a 30 cm
 	for z in [[-L, CASSA.z - VANO * 0.5], [CASSA.z + VANO * 0.5, L]]:
 		_forma(Vector3(0.1, H, z[1] - z[0]), Vector3(L + 0.05, H * 0.5, (z[0] + z[1]) * 0.5))
@@ -202,7 +262,7 @@ func _stanza() -> void:
 	_box(Vector3(1.18, 0.01, 0.26), Vector3(0.0, H - 0.085, -0.4), _colore(Color(0.6, 0.62, 0.6), 0.0, 0.3))
 
 
-func _muro_col_vano(x: float, y0: float, y1: float, m: Material, spessore := 0.1) -> void:
+func _muro_col_vano(x: float, y0: float, y1: float, m: Material, spessore := 0.1, listello := false) -> void:
 	var z0 := CASSA.z - VANO * 0.5
 	var z1 := CASSA.z + VANO * 0.5
 	var v0 := CASSA.y - VANO * 0.5
@@ -218,7 +278,10 @@ func _muro_col_vano(x: float, y0: float, y1: float, m: Material, spessore := 0.1
 		var lo: float = p[2]
 		var hi: float = p[3]
 		if b - a > 0.001 and hi - lo > 0.001:
-			_box(Vector3(spessore, hi - lo, b - a), Vector3(x, (lo + hi) * 0.5, (a + b) * 0.5), m)
+			if listello:
+				_listelli.append([Vector3(spessore, hi - lo, b - a), Vector3(x, (lo + hi) * 0.5, (a + b) * 0.5), m])
+			else:
+				_box(Vector3(spessore, hi - lo, b - a), Vector3(x, (lo + hi) * 0.5, (a + b) * 0.5), m)
 
 
 ## Il telaio della porta di servizio e l'anta aperta, appoggiata al muro dentro la stanza.
@@ -232,13 +295,20 @@ func _telaio(pos: Vector3, rot: float) -> void:
 	for lato in [-1.0, 1.0]:
 		_box(Vector3(0.06, 2.15, 0.14), Vector3(lato * (LARGO_PORTA * 0.5 - 0.03), 1.075, 0.0), telaio, n)
 	_box(Vector3(LARGO_PORTA, 0.06, 0.14), Vector3(0, 2.12, 0.0), telaio, n)
-	# l'anta spalancata di 100 gradi verso dentro, sui cardini a destra
+	# l'anta spalancata di 100 gradi verso dentro, sui cardini a destra: lo spessore dalla parte che non entra
+	# nello stipite (prima ci passava dentro per tutta l'altezza), la maniglia sull'anta, e la sua collisione
+	# (prima ci si passava attraverso)
 	var cardine := Node3D.new()
 	cardine.position = Vector3(LARGO_PORTA * 0.5 - 0.06, 0, 0.07)
 	cardine.rotation_degrees.y = 100.0
 	n.add_child(cardine)
-	_box(Vector3(0.88, 2.04, 0.05), Vector3(-0.44, 1.03, 0.025), anta, cardine)
-	_box(Vector3(0.14, 0.03, 0.05), Vector3(-0.78, 1.05, 0.07), _colore(Color(0.7, 0.7, 0.7), 0.9, 0.3), cardine)
+	_box(Vector3(0.88, 2.04, 0.05), Vector3(-0.44, 1.03, -0.025), anta, cardine)
+	_box(Vector3(0.14, 0.03, 0.05), Vector3(-0.78, 1.05, 0.02), _colore(Color(0.7, 0.7, 0.7), 0.9, 0.3), cardine)
+	var xf := n.transform * cardine.transform
+	_forma(Vector3(0.88, 2.04, 0.05), xf * Vector3(-0.44, 1.03, -0.025), rot + 100.0)
+	# i cardini: due perni sull'asse, nello spigolo dell'anta, davanti allo stipite (non dentro)
+	for y in [0.35, 1.75]:
+		_box(Vector3(0.025, 0.1, 0.025), Vector3(-0.0126, y, -0.0063), telaio, cardine)
 
 
 # --- arredi --------------------------------------------------------------------------------------
@@ -267,15 +337,17 @@ func _arredi() -> void:
 	_metti("lettino", Vector3(L - 0.45, 0, 1.95), 0.0)
 	_forma(Vector3(0.8, 0.65, 1.9), Vector3(L - 0.45, 0.325, 1.95))
 	_metti("tenda_binario", Vector3(2.3, H, 1.55), 90.0)
-	var lz := _metti("lenzuolo", Vector3(2.75, 0.64, 2.25), 20.0)
-	lz.scale = Vector3(0.8, 0.35, 0.8)
+	# il materasso è piano a 0,686 (da z -0,3 a 0,7 del lettino, dietro sale lo schienale): il lenzuolo ci appoggia
+	# verso i piedi e l'orsetto davanti allo schienale (prima stavano 5 cm dentro il materasso)
+	var lz := _metti("lenzuolo", Vector3(2.75, 0.686, 1.95 + 0.405), 0.0)
+	lz.scale = Vector3(0.8, 0.35, 0.6)
 	_metti("asciugamani", Vector3(2.7, 0.64, 2.75), 5.0)
 	_metti("asta_flebo", Vector3(2.2, 0, 1.05), 0.0)
 	_metti("sedia_rotelle", Vector3(0.35, 0, 2.55), 160.0)
 	_forma(Vector3(0.7, 0.9, 0.9), Vector3(0.35, 0.45, 2.55), 160.0)
 	_metti("bilancia", Vector3(-L + 0.35, 0, 2.55), 90.0)
 	_forma(Vector3(0.5, 1.2, 0.5), Vector3(-L + 0.35, 0.6, 2.55))
-	_metti("pronto_soccorso", Vector3(-L, 1.45, 0.35), 90.0)
+	_forma_di(_metti("pronto_soccorso", Vector3(-L, 1.45, 0.35), 90.0))
 	var ct := _metti("cartelle_terra", Vector3(-2.1, 0, -0.55), 30.0)
 	ct.scale = Vector3(1.0, 0.3, 1.0)
 	_metti("vetri_rotti", Vector3(2.75, 0.002, 0.15), 0.0)
@@ -283,8 +355,11 @@ func _arredi() -> void:
 	# il carrello accanto alla testa del lettino (la porta sud resta libera)
 	_metti("carrello", Vector3(1.85, 0, 0.45), -90.0)
 	_forma(Vector3(0.5, 0.9, 0.7), Vector3(1.85, 0.45, 0.45))
-	_metti("armadietto", Vector3(L, 1.2, 0.35), -90.0)
-	_metti("lavandino", Vector3(-0.6, 0.32, L), 180.0)
+	# l'armadietto a muro e il lavandino sporgono all'altezza della testa e del busto: con la loro collisione
+	var arm := _metti("armadietto", Vector3(L, 1.2, 0.35), -90.0)
+	var ba := _box_di(arm)
+	_forma(Vector3(ba.size.x, ba.end.y, ba.size.z), Vector3(ba.get_center().x, ba.end.y * 0.5, ba.get_center().z))   # fino a terra
+	_forma_di(_metti("lavandino", Vector3(-0.6, 0.32, L), 180.0))
 
 
 ## Il negatoscopio sul muro nord sopra la scrivania (modello Meshy, pannello e lastra della logica) e
@@ -403,6 +478,7 @@ func _schedari() -> void:
 			cas.misura = Vector3(0.36, y1 - y0 - 0.02, 0.4)
 			cas.tinta = tinta
 			cas.corsa = 0.38
+			cas.fino_a_terra = (y0 + y1) * 0.5
 			var giusto := i == 0 and k == 3
 			cas.adesivo = giusto
 			var f := CollisionShape3D.new()
@@ -417,10 +493,10 @@ func _schedari() -> void:
 				cas.contenuto = radiografia
 				var ad := _adesivo()
 				cas.get_node("Frontale").add_child(ad)
-				ad.position = Vector3(-0.08, (y1 - y0) * 0.5 - 0.075, 0.012)
+				ad.position = Vector3(-0.08, (y1 - y0) * 0.5 - 0.075, 0.0)   # sul frontale (prima 1,2 cm davanti)
 				# dentro il cassetto: esce con lui
 				cas.get_node("Frontale").add_child(radiografia)
-				radiografia.position = Vector3(0, -(y1 - y0) * 0.5 + 0.045, -0.2)
+				radiografia.position = Vector3(0, -(y1 - y0) * 0.5 + 0.05, -0.2)   # sul fondo del cassetto, non dentro
 				cas.call(&"_metti")
 			cassetti.append(cas)
 
@@ -499,11 +575,28 @@ func _cassaforte() -> void:
 	cassaforte.modello_sportello = load(DIR + "sportello_cassaforte_N.glb")
 	cassaforte.cifre_tex = load(TEX + "rotella_cifre.jpg")
 	cassaforte.simboli = [load(TEX + "simbolo_testa.png"), load(TEX + "simbolo_corpo.png"), load(TEX + "simbolo_coda.png")]
-	cassaforte.passo = 0.09
+	cassaforte.passo = 0.13   # (rotelle di 9 cm, 4 cm fra l'una e l'altra: con lo sportello aperto non si toccano)
 	cassaforte.contenuto = [keycard, polaroid]
 	# lo sportello guarda verso -X (la stanza), i cardini dal lato -Z del vano
+	# lo sportello gira sullo spigolo davanti, coi cardini; dietro appoggia sulla cornice (prima il nodo era sullo
+	# spigolo davanti ma lo sportello gli stava davanti: chiuso restava 7,5 cm staccato dalla cornice)
+	cassaforte.spessore_sportello = 0.075
+	cassaforte.faccia_sportello = -0.075 + 0.037   # la faccia del modello è a 3,7 cm dal retro (il bordo a 7,5): misurata coi raggi
 	cassaforte.transform = Transform3D(Basis(Vector3.UP, -PI * 0.5), Vector3(c.x - 0.03 - 0.075, c.y, c.z - h - 0.03))
 	add_child(cassaforte)
+	# i cardini: la piastra sulla cornice fino all'asse, e il perno
+	for dy in [-0.2, 0.2]:
+		_box(Vector3(0.075, 0.08, 0.03), Vector3(c.x - 0.03 - 0.0375, c.y + dy, c.z - h - 0.045), scuro)
+		var cd := MeshInstance3D.new()
+		cd.name = "Cardine"
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.012
+		cm.bottom_radius = 0.012
+		cm.height = 0.1
+		cd.mesh = cm
+		cd.material_override = scuro
+		cd.position = Vector3(c.x - 0.03 - 0.075, c.y + dy, c.z - h - 0.03)
+		add_child(cd)
 	# la luce che entra nel vano (si accende con lo sportello aperto)
 	var lv := _luce(Vector3(c.x + 0.05, c.y + 0.18, c.z), Color(1.0, 0.6, 0.5), 0.7, 1.0, false)
 	lv.name = "LuceVano"
@@ -545,10 +638,11 @@ func _bambini() -> void:
 	mp.roughness = 0.7
 	_box(Vector3(0.02, 1.04, 0.79), Vector3(-L + 0.01, 1.85, 1.45), _colore(Color(0.95, 0.75, 0.85)))
 	_quad(Vector2(0.75, 1.0), Vector3(-L + 0.022, 1.85, 1.45), Vector3(0, 90, 0), mp)
-	var posti := [[Vector3(-L + 0.012, 2.35, -0.3), 90.0, 0.62], [Vector3(-0.9, 2.25, L - 0.012), 180.0, 0.6],
-			[Vector3(L - 0.012, 2.3, 1.75), -90.0, 0.7], [Vector3(1.0, 2.45, -L + 0.012), 0.0, 0.55],
-			[Vector3(-1.2, 2.35, -L + 0.012), 0.0, 0.6], [Vector3(L - 0.012, 0.9, 0.55), -90.0, 0.5],
-			[Vector3(-L + 0.012, 0.75, 0.6), 90.0, 0.45]]
+	# (a 3 mm dal muro: a 12 mm sembravano staccati)
+	var posti := [[Vector3(-L + 0.003, 2.35, -0.3), 90.0, 0.62], [Vector3(-0.9, 2.25, L - 0.003), 180.0, 0.6],
+			[Vector3(L - 0.003, 2.3, 1.75), -90.0, 0.7], [Vector3(1.0, 2.45, -L + 0.003), 0.0, 0.55],
+			[Vector3(-1.2, 2.35, -L + 0.003), 0.0, 0.6], [Vector3(L - 0.003, 0.9, 0.55), -90.0, 0.5],
+			[Vector3(-L + 0.003, 0.75, 0.6), 90.0, 0.45]]
 	for i in posti.size():
 		var t := load(TEX + "adesivo_%d.png" % (i % 5)) as Texture2D
 		var m := StandardMaterial3D.new()
@@ -558,7 +652,7 @@ func _bambini() -> void:
 		var h: float = posti[i][2]
 		var w := h * float(t.get_width()) / float(t.get_height())
 		_quad(Vector2(w, h), posti[i][0], Vector3(0, posti[i][1], 0), m)
-	_metti("orsetto", Vector3(2.8, 0.64, 1.55), -120.0)
+	_metti("orsetto", Vector3(2.75, 0.686, 1.95 - 0.08), 180.0)
 	_metti("trenino", Vector3(-0.9, 0, 1.3), 35.0)
 	_metti("cavallo_dondolo", Vector3(-2.45, 0, 0.95), 60.0)
 	_forma(Vector3(0.4, 0.8, 1.0), Vector3(-2.45, 0.4, 0.95), 60.0)
@@ -624,6 +718,20 @@ func _marker() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	# lo sportello della cassaforte aperto sporge nella stanza all'altezza del petto: sotto non si passa
+	if _barriera_cassa == null and cassaforte.aperta_ora:
+		var b := _box_di(cassaforte.get_node("Sportello"))
+		_barriera_cassa = StaticBody3D.new()
+		_barriera_cassa.name = "BarrieraSportello"
+		_barriera_cassa.collision_layer = Layers.BARRIERS
+		_barriera_cassa.collision_mask = 0
+		var f := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(b.size.x, b.end.y, b.size.z)
+		f.shape = bs
+		f.position = Vector3(b.get_center().x, b.end.y * 0.5, b.get_center().z)
+		_barriera_cassa.add_child(f)
+		add_child(_barriera_cassa)
 	# il lampeggiante: lampi gialli finché non lo colpisci, poi verde fisso
 	var on := interruttore.powered
 	var k := 1.0 if on else (1.0 if fmod(_t, 1.6) < 0.25 else 0.0)

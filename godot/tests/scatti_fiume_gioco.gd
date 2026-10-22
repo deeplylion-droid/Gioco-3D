@@ -3,6 +3,7 @@ extends Node
 ## d'ambiente come quella della proposta (nel gioco la dà la sala). Più scatti per processo.
 ## Uso: xvfb-run ... godot --path godot --rendering-driver vulkan --resolution 1600x900 --script res://tests/run.gd \
 ##        -- res://tests/scatti_fiume_gioco.gd <cartella> [camere separate da virgole]
+## Con SCATTI_GIRATE=1 le tre paratie sono girate (i file finiscono in "_girate").
 
 const F := preload("res://scripts/risalita/fiume_gioco.gd")
 
@@ -19,6 +20,10 @@ static func camere() -> Dictionary:
 		# lo scivolo in fondo al ramo sbagliato 2 (scelta B): dalla ciambella e dalla banchina
 		"scivolo_ciambella": [Vector3(0.0, 0.75, 11.0), Vector3(0.0, 0.0, 2.0)],
 		"scivolo_banchina": [Vector3(3.0, 1.7, 9.5), Vector3(0.0, 0.0, 4.6)],
+		# le tre paratie dalla barca, poco prima di arrivarci
+		"paratia1": [F.anello(45.0) + Vector3(0, 0.6, 0), F.anello(55.0) + Vector3(0, 1.0, 0)],
+		"paratia2": [F.anello(135.0) + Vector3(0, 0.6, 0), F.anello(145.0) + Vector3(0, 1.0, 0)],
+		"paratia3": [F.anello(222.0) + Vector3(0, 0.6, 0), F.anello(232.0) + Vector3(0, 1.0, 0)],
 	}
 
 
@@ -50,6 +55,13 @@ func _run() -> void:
 	get_tree().root.add_child(we)
 	var f: Node3D = (load("res://scenes/risalita/fiume.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(f)
+	var girate := OS.get_environment("SCATTI_GIRATE") == "1"
+	if girate:
+		await get_tree().process_frame
+		for pf in f.find_children("*", "ParatiaFiume", true, false):
+			(pf as ParatiaFiume).gira()
+		for i in 240:
+			await get_tree().physics_frame
 	var cam := Camera3D.new()
 	cam.fov = 62.0
 	cam.near = 0.05
@@ -64,6 +76,6 @@ func _run() -> void:
 		for i in 30:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_jpg(out.path_join("fiume_gioco_%s.jpg" % nome), 0.9)
+		get_viewport().get_texture().get_image().save_jpg(out.path_join("fiume_gioco_%s%s.jpg" % [nome, "_girate" if girate else ""]), 0.9)
 		print("salvato fiume_gioco_", nome)
 	get_tree().quit()
