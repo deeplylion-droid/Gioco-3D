@@ -848,7 +848,7 @@ func _luci() -> void:
 		_omni(radice, b(q), CALDO, 6.5, 10.0, 0.09, 8.0, true)
 	for i in luci_dati["paratie"].size():
 		var pa: Array = luci_dati["paratie"][i]
-		_lampada_paratia(radice, b(pa[0]), pa[1] == "verde", b(luci_dati["bersagli"][i]), b(pa[2]))
+		_lampada_paratia(radice, b(pa[0]), pa[1] == "verde", b(luci_dati["bersagli"][i]), b(pa[2]), _pannello(i))
 	for u in luci_dati["uscita"]:
 		_omni(radice, b(u), VERDE, 3.0, 7.0, 0.12, 8.0, false)
 	var soffitto: float = luci_dati["info"]["limiti"][5]
@@ -912,7 +912,15 @@ func _omni(radice: Node3D, p: Vector3, col: Color, energia: float, raggio: float
 
 ## La lampada sopra la paratia: verde sulla giusta (fascio pieno sul bersaglio, anello di led), rossa
 ## guasta che sfarfalla sulla sbagliata.
-func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3) -> void:
+## Il pannello della paratia [param k] (InseguimentoMobili), o null.
+func _pannello(k: int) -> Node3D:
+	var mobili := get_node_or_null("InseguimentoMobili")
+	if mobili == null or k >= (dati.get("paratie", []) as Array).size():
+		return null
+	return mobili.find_child(String(dati["paratie"][k]["nodo"]), true, false) as Node3D
+
+
+func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vector3, verso: Vector3, pannello: Node3D = null) -> void:
 	var col := VERDE if giusta else ROSSO
 	var o := _omni(radice, p, col, 2.0 if giusta else 1.0, 4.5, 0.1, 9.0 if giusta else 4.0, false)
 	var s := SpotLight3D.new()
@@ -949,6 +957,10 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 		o2.set_meta(&"risveglio_ignora", true)
 		radice.add_child(o2)
 		o2.global_position = bersaglio + verso * 0.6
+		# l'anello è sul bersaglio del pannello: sale con lui quando la paratia si apre (restava a mezz'aria)
+		if pannello:
+			anello.reparent(pannello)
+			o2.reparent(pannello)
 	else:
 		_sfarfalla(o, s)
 
