@@ -120,7 +120,12 @@ func _scrivi_mesh() -> void:
 		if g.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
 			continue
 		var percorso := String(livello.get_path_to(g))
-		var acqua := percorso.to_lower().begins_with("acqua") or percorso.to_lower().contains("/acqua") or String(g.name).to_lower() in ["superficie", "surface"]
+		# le superfici dell'acqua: un pezzo del percorso che comincia con "acqua", ma non gli acquari dell'enigma
+		# (nel controllo della CI "/acqua" prende anche "/AcquarioGiallo": gli acquari restano fuori)
+		var acqua := String(g.name).to_lower() in ["superficie", "surface"]
+		for pezzo in percorso.to_lower().split("/"):
+			if pezzo.begins_with("acqua") and not pezzo.begins_with("acquari"):
+				acqua = true
 		var vis := _visibile(g)
 		var trasformazioni := []
 		var mesh: Mesh = null
