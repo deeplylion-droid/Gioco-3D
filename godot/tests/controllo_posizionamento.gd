@@ -32,11 +32,12 @@ const ZONE := [
 	# Le zone che cambiano dopo l'inizio, come le vede il giocatore (riscontro dell'utente sulla v0.3.8: gli
 	# acquari davanti al portone "tutto compenetrato o fluttuante"). Si prepara lo stato ([method _prepara]) e
 	# si controllano solo le parti elencate; i casi già trovati nello stato iniziale non si ripetono.
-	# tutto quello che compare più avanti (le parti nascoste all'inizio, rese visibili)
-	{"scena": "res://scenes/sala_principale.tscn", "stato": "tutto_visibile", "sotto": {"Sala": "sala",
-			"Interni": "interni", "Tecnici": "tecnici", "Piscina": "sala", "Vasche": "sala", "Vasca": "sala",
-			"Gioco": "sala", "Polaroid": "sala", "LuciSala": "sala", "BambiniBalconata": "sala", "Atmosfera": "sala"}},
-	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "tutto_visibile"},
+	# gli stati indicati dalle squadre (22 ottobre): quello che cambia più avanti nel gioco
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "interni", "stato": "interni_dopo", "parti": ["Interni"]},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "sala", "stato": "lei_fossa", "parti": ["Gioco/LeiSbuca"]},
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_dopo", "parti": ["Risalita"]},
+	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "inseguimento_dopo",
+			"parti": ["SalaInseguimento"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
@@ -53,6 +54,9 @@ const SQUADRE := [
 ]
 const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2",
 	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
+## Effetti a tempo (schizzi, getti, vapore, particelle): durano pochi secondi e si sovrappongono per natura, non sono
+## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dal nome nel percorso o dalla classe.
+const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "splash", "gocce", "bolle"]
 const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
@@ -201,6 +205,62 @@ func _controlla_scena(z: Dictionary) -> void:
 ##  acquari_risolti: il verde giusto, il portone della torre aperto fino in fondo.
 func _prepara(stato: String) -> void:
 	print("  stato: %s" % stato)
+	match stato:
+		"interni_dopo":
+			# ambienti-1: docce aperte, armadietto sbattuto (92°), tornello girato (120°), saracinesca aperta
+			var interni := _radice.get_node_or_null(^"Interni")
+			if interni:
+				interni.call(&"apri_docce", true)
+				var anta := interni.find_child("armadietto_sbatte_anta", true, false) as Node3D
+				if anta:
+					anta.rotation.y -= deg_to_rad(92.0)
+				var rotore := interni.find_child("tornello_rotore", true, false) as Node3D
+				if rotore:
+					rotore.rotation.y -= TAU / 3.0
+				var saracinesca := interni.find_child("Saracinesca", true, false)
+				if saracinesca and saracinesca.has_method(&"load_state"):
+					saracinesca.call(&"load_state", {"latched": true, "open": 1.0})
+			for i in 10:
+				await get_tree().physics_frame
+			return
+		"lei_fossa":
+			# mascotte: dopo il blackout lei affacciata alla fossa (fase GUARDA); le luci non si toccano (il blackout
+			# di GameState resterebbe anche per le scene dopo), conta solo dove sta lei
+			var lei := _radice.find_child("LeiSbuca", true, false)
+			if lei and lei.has_method(&"_affaccia"):
+				lei.call(&"_affaccia")
+			for i in 30:
+				await get_tree().physics_frame
+			return
+		"risalita_dopo":
+			# enigmi: le paratie del fiume girate, la cassaforte aperta, il negatoscopio con la radiografia
+			for par in _radice.find_children("*", "ParatiaFiume", true, false):
+				par.call(&"gira")
+			for c in _radice.find_children("*", "CassaforteRotelle", true, false):
+				c.call(&"load_state", {"aperta": true})
+			for n in _radice.find_children("*", "Negatoscopio", true, false):
+				n.call(&"load_state", {"con_radiografia": true})
+			for i in 10:
+				await get_tree().physics_frame
+			return
+		"inseguimento_dopo":
+			# ambienti-2: la grata calata e le paratie aperte
+			var ins := _radice.find_child("SalaInseguimento", true, false)
+			if ins:
+				var grata = ins.get(&"grata")
+				var dati = ins.get(&"dati")
+				if grata is Node3D and dati is Dictionary and (dati as Dictionary).has("grata"):
+					(grata as Node3D).global_position += Vector3.DOWN * float(dati["grata"]["corsa"])
+					ins.set(&"grata_giu", true)
+				var paratie = ins.get(&"paratie")
+				if paratie is Array:
+					for d in paratie:
+						var pn = d.get("pannello_nodo")
+						if pn is Node3D:
+							(pn as Node3D).global_position = (d["chiuso"] as Vector3) + Vector3.UP * float(d["corsa"])
+			for i in 10:
+				await get_tree().physics_frame
+			return
 	if stato == "tutto_visibile":
 		# tutto quello che compare più avanti (nascosto all'inizio), luci a parte
 		for n in _radice.find_children("*", "Node3D", true, false):
@@ -243,11 +303,16 @@ func _mesh_visibili() -> Array:
 		esclusi.append(n)
 	for n in _radice.find_children("*", "Gocce", true, false):
 		esclusi.append(n)   # le gocce che cadono dal soffitto: in volo, non sono messe male
+	for classe in ["GPUParticles3D", "CPUParticles3D"]:
+		for n in _radice.find_children("*", classe, true, false):
+			esclusi.append(n)
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or not _visibile(mi) or mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY:
 			continue
 		if esclusi.any(func(e): return (e as Node).is_ancestor_of(mi)):
+			continue
+		if _effetto(mi):
 			continue
 		var percorso := String(_radice.get_path_to(mi)).to_lower()
 		if percorso.begins_with("acqua") or percorso.contains("/acqua") or String(mi.name).to_lower() in ["superficie", "surface"]:
@@ -281,6 +346,28 @@ func _elenca_nascoste() -> void:
 	print("  nascoste all'inizio (non controllate): %d parti, %d mesh" % [nomi.size(), gruppi.values().reduce(func(x, y): return x + y, 0)])
 	for nome in nomi:
 		print("    NASCOSTA %s · %d mesh" % [nome, gruppi[nome]])
+
+
+## Un effetto a tempo (vedi EFFETTI): il nome di un nodo del percorso o la classe del suo script.
+func _effetto(mi: Node) -> bool:
+	var k := mi
+	while k and k != _radice:
+		var nome := String(k.name).to_lower()
+		var classe := classe_di(k).to_lower()
+		if EFFETTI.any(func(e): return nome.contains(e) or classe.contains(e)):
+			return true
+		k = k.get_parent()
+	return false
+
+
+static func classe_di(n: Node) -> String:
+	var sc: Script = n.get_script()
+	while sc:
+		var g := String(sc.get_global_name())
+		if g != "":
+			return g
+		sc = sc.get_base_script()
+	return ""
 
 
 ## Visibile, senza contare le luci sopra la mesh: quelle che sfarfallano si accendono e spengono a caso (LookSala),
