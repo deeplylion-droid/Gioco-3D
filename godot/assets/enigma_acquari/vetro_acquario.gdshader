@@ -27,7 +27,9 @@ void fragment() {
 	streak = smoothstep(0.55, 0.9, streak) * smoothstep(-1.0, 0.6, -v_local.y + 0.4);
 	float band = exp(-pow((v_local.y - waterline_local) / 0.035, 2.0)) * 0.8;
 	float g = clamp((blot * 0.6 + streak * 0.5 + band * (1.0 - polvere)) * grime, 0.0, 0.85);
-	g = clamp(g + polvere * (0.42 + blot * 0.25 + streak * 0.15), 0.0, 0.9);
+	// (più coprente dal 22 ottobre: col vetro vuoto quasi invisibile l'anello, i tiranti e il disegno
+	// sembravano sospesi nel vuoto)
+	g = clamp(g + polvere * (0.62 + blot * 0.2 + streak * 0.12), 0.0, 0.92);
 	float fres = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 4.0);
 	ALBEDO = mix(tint.rgb, grime_color, g);
 	ALPHA = clamp(tint.a + g * 0.75 + fres * 0.35, 0.0, 0.95);
