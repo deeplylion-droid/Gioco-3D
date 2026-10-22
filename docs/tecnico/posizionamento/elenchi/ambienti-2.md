@@ -33,3 +33,8 @@ Come si rifà il controllo sul vostro ramo, dopo aver unito lavoro/godot: `godot
 | torre | staccato | `SalaInseguimento/Luci/@Node3D@5252/det_tubo_valvola_T` | 40.58, -29.42, -12.40 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 360.0 cm) |
 | torre | staccato | `SalaInseguimento/Luci/@Node3D@5270/det_corda_pendente_2` | 74.01, -21.70, 0.90 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) |
 | torre | staccato | `SalaInseguimento/Luci/@Node3D@5271/det_corda_rotolo` | 41.00, -29.94, -6.20 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.9 cm) |
+| torre | ingombro | `SalaInseguimento/Luci/@MeshInstance3D` (anello di led della paratia giusta, vasca 1) | 54.50, -22.58, -16.50 | stato inseguimento_dopo, paratia alzata: l'anello è figlio di Luci e non del pannello, quindi resta a mezz'aria nel passaggio verso il tubo (fra 0,60 e 1,05 m, dove si passa accovacciati). Va legato al pannello |
+| torre | ingombro | `SalaInseguimento/Luci/@MeshInstance3D` (anello, vasca 2) | 67.00, -25.58, -25.25 | come sopra |
+| torre | ingombro | `SalaInseguimento/Luci/@MeshInstance3D` (anello, vasca 3) | 67.00, -28.58, -4.00 | come sopra (fra 0,60 e 1,70 m) |
+
+Dal 22 ottobre sera il controllo sa dove si sta accovacciati per forza (`SalaInseguimento.in_tubo`, la stessa funzione del gioco): lì lo spazio libero da controllare arriva a 1,05 m, l'altezza del giocatore accovacciato, e non a 2 m. Così i 9 ingombri di paratie e scoli nello stato `inseguimento_dopo` non ci sono più; restano solo i tre anelli qui sopra.

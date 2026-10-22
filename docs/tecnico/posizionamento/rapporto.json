@@ -798,20 +798,6 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm (ambienti-1)",
-		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
-		"pos": [
-			-0.91,
-			2.35,
-			21.5
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
 		"dettaglio": "passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm",
 		"motivo": "controllo severo del 22 ottobre: passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm (enigmi)",
 		"nodo": "Gioco/EnigmaAcquari/Valvola/Scarico",
@@ -949,6 +935,20 @@
 		"problema": "compenetra",
 		"squadra": "ambienti-1",
 		"stato": "voluto",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm (ambienti-1)",
+		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
+		"pos": [
+			-0.91,
+			2.35,
+			21.5
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"stato": "da correggere",
 		"zona": "interni"
 	},
 	{
@@ -1178,7 +1178,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 333.5 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 333.5 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5156",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5012",
 		"pos": [
 			40.55,
 			-16.0,
@@ -1192,7 +1192,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5158",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5014",
 		"pos": [
 			77.85,
 			-22.0,
@@ -1206,7 +1206,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5160",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5016",
 		"pos": [
 			60.0,
 			-18.0,
@@ -1220,7 +1220,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5162",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5018",
 		"pos": [
 			50.0,
 			-26.0,
@@ -1234,7 +1234,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5164",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5020",
 		"pos": [
 			70.0,
 			-14.0,
@@ -1248,7 +1248,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5236/POMPA_2",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5092/POMPA_2",
 		"pos": [
 			54.4,
 			-30.27,
@@ -1262,7 +1262,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5242/det_griglia_caduta",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5098/det_griglia_caduta",
 		"pos": [
 			73.6,
 			-28.96,
@@ -1276,7 +1276,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5244/SCRIVANIA",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5100/SCRIVANIA",
 		"pos": [
 			48.0,
 			-19.61,
@@ -1290,7 +1290,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5245/SEDIA",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5101/SEDIA",
 		"pos": [
 			48.2,
 			-19.52,
@@ -1304,7 +1304,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5248/det_vetri_rotti_1",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5104/det_vetri_rotti_1",
 		"pos": [
 			51.67,
 			-20.0,
@@ -1318,7 +1318,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5249/det_foglio_2",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5105/det_foglio_2",
 		"pos": [
 			49.4,
 			-19.98,
@@ -1332,7 +1332,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 360.0 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 360.0 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5252/det_tubo_valvola_T",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5108/det_tubo_valvola_T",
 		"pos": [
 			40.58,
 			-29.42,
@@ -1346,7 +1346,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5270/det_corda_pendente_2",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5126/det_corda_pendente_2",
 		"pos": [
 			74.01,
 			-21.7,
@@ -1360,7 +1360,7 @@
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.9 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.9 cm) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5271/det_corda_rotolo",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5127/det_corda_rotolo",
 		"pos": [
 			41.0,
 			-29.94,
@@ -1372,7 +1372,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (393 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (15 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
 		"pos": [
@@ -1386,7 +1386,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2537 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
 		"pos": [
@@ -1400,7 +1400,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3746 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (47 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_2",
 		"pos": [
@@ -1414,7 +1414,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2647 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (89 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_1",
 		"pos": [
@@ -1428,69 +1428,13 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1679 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (45 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_0",
 		"pos": [
 			50.5,
 			-22.58,
 			-14.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (151 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
-		"nodo": "TorreScivoli/torre_tubo_inseguimento",
-		"pos": [
-			41.0,
-			-19.46,
-			-17.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (22 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
-		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_collare",
-		"pos": [
-			40.5,
-			-19.32,
-			-17.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "il bordo del foro nel muro est dove passa il tubo dell'inseguimento: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
-		"nodo": "TorreStruttura/torre_A",
-		"pos": [
-			40.0,
-			-19.19,
-			-17.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (33 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
-		"nodo": "TorreScivoli/torre_collare_inseguimento",
-		"pos": [
-			40.0,
-			-19.19,
-			-17.75
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -1505,6 +1449,20 @@
 			38.0,
 			-19.98,
 			-16.25
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.40 e 2.00 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa)",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"pos": [
+			38.0,
+			-19.98,
+			-16.5
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -1612,7 +1570,7 @@
 	{
 		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
 		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5264/det_tubo_verticale_3m",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5120/det_tubo_verticale_3m",
 		"pos": [
 			40.49,
 			-25.0,
@@ -1626,7 +1584,7 @@
 	{
 		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
 		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-2)",
-		"nodo": "SalaInseguimento/Luci/@Node3D@5264/det_tubo_verticale_3m",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5120/det_tubo_verticale_3m",
 		"pos": [
 			40.49,
 			-22.0,
@@ -1638,185 +1596,45 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (stato: tutto_visibile) (ambienti-1)",
-		"nodo": "Vasca/Medusa/@Node3D@6003/@MeshInstance3D@6004",
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (192 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
+		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.89 m sopra il pavimento (144 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20172",
 		"pos": [
-			0.38,
-			1.03,
-			11.99
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione  (ambienti-1)",
-		"nodo": "Gioco/LeiSbuca/SchizzoCoda/Schiuma",
-		"pos": [
-			1.5,
-			-1.94,
-			-1.5
+			67.0,
+			-25.58,
+			-25.25
 		],
 		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione  (ambienti-1)",
-		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Schiuma",
-		"pos": [
-			1.5,
-			-1.94,
-			-1.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.45 e 2.00 m sopra il pavimento (248 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.45 e 2.00 m sopra il pavimento (248 celle da 25 cm), senza collisione (ambienti-1)",
-		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Corona",
-		"pos": [
-			0.5,
-			-2.17,
-			0.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.60 e 2.00 m sopra il pavimento (22 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.60 e 2.00 m sopra il pavimento (22 celle da 25 cm), senza collisione  (ambienti-1)",
-		"nodo": "Gioco/LeiSbuca/SchizzoCoda/Corona",
-		"pos": [
-			0.5,
-			-2.17,
-			0.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "entra dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: entra dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) (ambienti-1)",
-		"nodo": "Interni/Meccanismi/Saracinesca",
-		"pos": [
-			0.17,
-			1.1,
-			20.35
-		],
-		"problema": "compenetrato",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "il 70% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: il 70% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde (stato: tutto_visibile) (ambienti-2)",
-		"nodo": "Tecnici/Ambienti/CameraOnde/PORTELLO",
-		"pos": [
-			0.0,
-			-2.32,
-			2.74
-		],
-		"problema": "compenetra",
 		"squadra": "ambienti-2",
 		"stato": "da correggere",
-		"zona": "tecnici"
+		"zona": "torre"
 	},
 	{
-		"dettaglio": "il 43% dei suoi vertici è dentro Gioco/LeiSbuca/SchizzoCoda/Corona (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: il 43% dei suoi vertici è dentro Gioco/LeiSbuca/SchizzoCoda/Corona (stato: tutto_visibile) (ambienti-1)",
-		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Corona",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (75 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
+		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.70 m sopra il pavimento (67 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguime (ambienti-2)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20180",
 		"pos": [
-			0.0,
-			0.0,
-			0.0
+			67.0,
+			-28.58,
+			-4.0
 		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Gioco/LeiSbuca/SchizzoTesta/Corona per 131 cm (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Gioco/LeiSbuca/SchizzoTesta/Corona per 131 cm (stato: tutto_visibile) (ambienti-1)",
-		"nodo": "Gioco/LeiSbuca/SchizzoCoda/Schiuma",
-		"pos": [
-			0.0,
-			0.01,
-			0.0
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Gioco/LeiSbuca/SchizzoCoda/Corona per 131 cm (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Gioco/LeiSbuca/SchizzoCoda/Corona per 131 cm (stato: tutto_visibile) (ambienti-1)",
-		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Schiuma",
-		"pos": [
-			0.0,
-			0.01,
-			0.0
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) (ambienti-1)",
-		"nodo": "Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6880",
-		"pos": [
-			0.0,
-			1.1,
-			20.3
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) (ambienti-1)",
-		"nodo": "Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6882",
-		"pos": [
-			0.0,
-			1.65,
-			20.3
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "passa dentro Tecnici/Logica/SerrandaMagazzino/Graybox/Pannello/@MeshInstance3D@7054 per 180 cm (stato: tutto_visibile)",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Logica/SerrandaMagazzino/Graybox/Pannello/@MeshInstance3D@7054 per 180 cm (stato: tutto_visibile) (ambienti-2)",
-		"nodo": "Tecnici/Logica/SerrandaMagazzino/Barra",
-		"pos": [
-			-15.0,
-			0.02,
-			20.35
-		],
-		"problema": "compenetra",
+		"problema": "ingombro",
 		"squadra": "ambienti-2",
 		"stato": "da correggere",
-		"zona": "tecnici"
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.60 e 1.05 m sopra il pavimento (200 celle da 25 cm), senza collisione (si attraversa) (stato: inseguimento_dopo)",
+		"motivo": "controllo severo del 22 ottobre: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.60 e 1.92 m sopra il pavimento (149 celle da 25 cm), con la collisione (ci si sbatte contro) (stato: inseguim (ambienti-2)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20164",
+		"pos": [
+			54.5,
+			-22.58,
+			-16.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "torre"
 	}
 ]
