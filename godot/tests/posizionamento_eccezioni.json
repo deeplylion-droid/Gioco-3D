@@ -299,45 +299,6 @@
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm) (ambienti-1)"
 	},
 	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/ManifestoJilly/Plane_001",
-		"squadra": "mascotte",
-		"problema": "staccato",
-		"pos": [
-			-19.97,
-			1.93,
-			14.24
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 189.0 cm) (mascotte)"
-	},
-	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/InsegnaJilly/lampada_dx_lampadina",
-		"squadra": "mascotte",
-		"problema": "staccato",
-		"pos": [
-			-19.53,
-			5.39,
-			4.86
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (mascotte)"
-	},
-	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/InsegnaJilly/lampada_sx_lampadina",
-		"squadra": "mascotte",
-		"problema": "staccato",
-		"pos": [
-			-19.53,
-			5.39,
-			5.84
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (mascotte)"
-	},
-	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/estintore",
 		"squadra": "ambienti-1",

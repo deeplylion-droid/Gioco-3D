@@ -20,8 +20,9 @@ const STATUE := [
 	{nome = &"StatuaPolpoB", modello = "res://assets/models/mascotte/statua_polpo_B.glb",
 		pos = Vector3(-18.3, 0.0, -8.0), gradi = 90.0},
 ]
-## Oggetti da parete: il retro (z = 0 del modello) sulla parete, il davanti verso [code]normale[/code]. Il
-## manifesto sta 3 cm fuori dalla collisione: le piastrelle visibili sporgono.
+## Oggetti da parete: il retro (z = 0 del modello) sulla parete, il davanti verso [code]normale[/code]; la posizione è
+## quella di partenza, poi Posa.fissa_al_muro li mette a filo del muro vero (il manifesto stava 3 cm staccato: il
+## muro visibile lì è dove c'è la collisione).
 const JILLY := [
 	{nome = &"TargaJilly", modello = "res://assets/models/mascotte/jilly/targa.glb",
 		pos = Vector3(-3.003, 0.62, 10.0), normale = Vector3(-1, 0, 0)},
@@ -47,6 +48,7 @@ func _ready() -> void:
 		ob.name = j.nome
 		add_child(ob)
 		ob.transform = Transform3D(Basis.looking_at(-j.normale, Vector3.UP), j.pos)
+		Posa.fissa_al_muro(ob, j.normale)
 		_accendi_lampade(ob)
 	GameState.luci_cambiate.connect(func(_f): _aggiorna_lampade())
 	_aggiorna_lampade()
