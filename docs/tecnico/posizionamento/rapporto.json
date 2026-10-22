@@ -1,72 +1,14 @@
 [
 	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.18 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
 		"pos": [
-			-6.03,
+			-6.08,
 			0.96,
-			36.8
+			36.74
 		],
-		"problema": "sospeso",
+		"problema": "staccato",
 		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.50 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_1",
-		"pos": [
-			2.1,
-			1.26,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.46 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_2",
-		"pos": [
-			2.4,
-			1.22,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.96 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_4",
-		"pos": [
-			3.0,
-			1.14,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.34 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_5",
-		"pos": [
-			3.3,
-			1.1,
-			30.4
-		],
-		"problema": "sospeso",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
 		"zona": "interni"
 	},
 	{
@@ -116,9 +58,9 @@
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
 		"pos": [
-			0.64,
+			0.69,
 			0.96,
-			36.88
+			36.91
 		],
 		"problema": "staccato",
 		"squadra": "ambienti-1",
@@ -130,7 +72,7 @@
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_07_anta",
 		"pos": [
-			0.73,
+			0.75,
 			0.96,
 			34.56
 		],
@@ -144,9 +86,9 @@
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
 		"pos": [
-			0.63,
+			0.68,
 			0.96,
-			33.59
+			33.65
 		],
 		"problema": "staccato",
 		"squadra": "ambienti-1",
@@ -158,9 +100,9 @@
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_05_anta",
 		"pos": [
-			-6.14,
+			-6.16,
 			0.96,
-			35.44
+			35.43
 		],
 		"problema": "staccato",
 		"squadra": "ambienti-1",
@@ -172,9 +114,9 @@
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
 		"pos": [
-			-6.03,
+			-6.08,
 			0.96,
-			33.24
+			33.18
 		],
 		"problema": "staccato",
 		"squadra": "ambienti-1",
@@ -186,7 +128,7 @@
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_15_anta",
 		"pos": [
-			-6.18,
+			-6.19,
 			0.96,
 			31.43
 		],
@@ -196,7 +138,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm)",
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.0 cm)",
 		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm) (ambienti-1)",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta",
 		"pos": [
@@ -322,302 +264,36 @@
 		"zona": "mascotte"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.84 e 1.46 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/estintore",
-		"pos": [
-			0.0,
-			0.0,
-			40.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (125 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
-		"pos": [
-			-1.25,
-			0.0,
-			40.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 0.95 m sopra il pavimento (132 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/secchio_mocio",
-		"pos": [
-			-2.25,
-			0.0,
-			29.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (82 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
-		"pos": [
-			-3.0,
-			0.0,
-			36.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (56 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/cestino",
-		"pos": [
-			-4.25,
-			0.0,
-			38.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.42 m sopra il pavimento (47 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/pallone",
-		"pos": [
-			-7.25,
-			0.0,
-			40.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
-		"pos": [
-			-6.0,
-			0.0,
-			36.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
-		"pos": [
-			-6.0,
-			0.0,
-			33.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.50 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/cestino_spogliatoi",
-		"pos": [
-			-6.0,
-			0.0,
-			30.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
-		"pos": [
-			0.5,
-			0.0,
-			37.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
-		"pos": [
-			0.5,
-			0.0,
-			33.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (64 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/porta_stanzino",
-		"pos": [
-			0.5,
-			0.0,
-			32.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.40 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
-		"pos": [
-			0.5,
-			0.0,
-			30.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (48 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/cartello_bagnato",
-		"pos": [
-			0.5,
-			0.0,
-			29.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
-		"pos": [
-			0.5,
-			0.0,
-			25.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_rotore",
 		"pos": [
 			0.0,
 			0.0,
+			25.25
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"stato": "voluto",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm), senza collisione (si attraversa)",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta",
+		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
+		"pos": [
+			-0.75,
+			0.0,
 			25.0
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
-		"stato": "da correggere",
+		"stato": "voluto",
 		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.88 m sopra il pavimento (96 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/sedia",
-		"pos": [
-			2.75,
-			0.0,
-			33.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.82 e 1.44 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
-		"pos": [
-			5.0,
-			0.0,
-			34.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
-		"pos": [
-			6.5,
-			0.0,
-			39.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (64 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
-		"pos": [
-			-18.5,
-			0.0,
-			16.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (112 celle da 25 cm), senza collisione (si attraversa)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
-		"pos": [
-			-19.0,
-			0.0,
-			16.0
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (902 celle da 25 cm), con la collisione (ci si sbatte contro)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"motivo": "struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre)",
 		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
 		"pos": [
 			-15.5,
@@ -626,7 +302,7 @@
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
-		"stato": "da correggere",
+		"stato": "voluto",
 		"zona": "sala"
 	},
 	{
@@ -796,20 +472,6 @@
 		"squadra": "ambienti-1",
 		"stato": "da correggere",
 		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm (ambienti-1)",
-		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
-		"pos": [
-			-0.91,
-			2.35,
-			21.5
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
 	},
 	{
 		"dettaglio": "passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm",

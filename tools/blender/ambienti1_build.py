@@ -51,6 +51,30 @@ def col_ob(ob, sopra=0.0):
     return ob
 
 
+def attacca(ob, d, gioco=0.001, massimo=0.2):
+    """Sposta ob lungo la direzione d finché tocca quello che c'è (muro, pavimento, rastrelliera): raggi dai suoi
+    punti più avanti in quella direzione; si ferma a 'gioco' dal sostegno. Come posa.gd in Godot (controllo di
+    posizionamento severo del 22 ottobre: niente oggetti staccati di pochi centimetri)."""
+    bpy.context.view_layer.update()
+    d = Vector(d).normalized()
+    ws = [ob.matrix_world @ v.co for v in ob.data.vertices]
+    fronte = max(p.dot(d) for p in ws)
+    punti = [p for p in ws if p.dot(d) > fronte - 0.003]
+    dg = bpy.context.evaluated_depsgraph_get()
+    vicino = None
+    for p in punti[::max(1, len(punti) // 200)]:
+        ok, loc, _n, _i, colpito, _m = bpy.context.scene.ray_cast(dg, p + d * 0.0005, d, distance=massimo)
+        if ok and colpito.name != ob.name:
+            t = (loc - p).dot(d)
+            vicino = t if vicino is None else min(vicino, t)
+    if vicino is None:
+        print(f'ATTENZIONE: {ob.name}: niente entro {massimo} m verso {tuple(d)}')
+        return ob
+    ob.location += d * (vicino - gioco)
+    print(f'attacca {ob.name}: spostato di {(vicino - gioco) * 100:.1f} cm')
+    return ob
+
+
 def copia(ob, nome, loc, rot_z=None, rot=None):
     o = ob.copy(); o.name = nome
     L._link(o); o.location = loc
@@ -323,6 +347,7 @@ def corridoio(M):
     ps.append(L.cilindro('ps_maniglia', (0.06, 1.65, 1.0), (0.13, 1.65, 1.0), 0.02, M['cromo']))
     porta_s = L.unisci('porta_servizio', ps); L.ammacca(porta_s, 0.005, 2.0, 9.0, 3)
     porta_s = porta_hq(porta_s, 'porta_servizio', (0.04, 0.82, 0.01), 0.96, 2.02, R(90), -1)
+    attacca(porta_s, (0, 0, -1))   # chiusa, poggia sulla soglia (stava 1 cm sopra)
     L.col_scatola((0.0, 0.8, 0.0), (0.08, 1.8, 2.05))
     if not HQ.disponibile('porta_servizio'):
         statico.append(L.scatola('porta_servizio_vetro', (0.074, 1.13, 1.38), (0.078, 1.47, 1.77), M['vetro_sporco'], uv=False))
@@ -360,7 +385,7 @@ def corridoio(M):
     # estintore appeso con la staffa (16 ottobre): il modello di prima aveva una tavola di legno dietro, che nel
     # gioco stava davanti. Questo non ha tavole: la staffa (lato +x del modello) va contro il muro, il tubo di lato.
     # gli oggetti dove si passa hanno la collisione (controllo di posizionamento del 22 ottobre: si attraversavano)
-    col_ob(HQ.metti('estintore', 'estintore_staffa', (9.6, 0.21, 0.84), (None, None, 0.62), rot_z=R(-90)))
+    col_ob(attacca(HQ.metti('estintore', 'estintore_staffa', (9.6, 0.21, 0.84), (None, None, 0.62), rot_z=R(-90)), (0, -1, 0)))
     col_ob(prop('cestino', 'cestino', (5.3, 2.3, 0), 30, 0.55, 'z'))
     prop('paperella', 'paperella', (13.9, 1.2, 0.0), 140, 0.09)
     col_ob(prop('pallone', 'pallone', (2.2, 0.6, 0), 0, 0.42))
@@ -448,6 +473,27 @@ def fila_armadietti(prefisso, x, y0, n, faccia, M, stati, seme=0):
     return L.unisci(prefisso + '_corpi', corpi), (L.unisci(prefisso + '_ante', ante) if ante else None), speciali
 
 
+CERNIERE = []   # le cerniere delle ante aperte, nella parte fissa degli spogliatoi
+
+
+def cerniere(nome, cern, faccia, yy):
+    """Due cerniere tra il telaio dell'armadietto e l'anta aperta: una piastrina sul fronte del telaio e il perno
+    sull'asse dell'anta (il perno è sull'asse, quindi resta giusto anche per l'anta che sbatte). Prima l'anta
+    girava nel vuoto, 1-3 cm davanti al telaio (controllo di posizionamento severo del 22 ottobre)."""
+    fx, py = cern[0], cern[1]
+    telaio = yy + 0.01 if faccia > 0 else yy + 0.39
+    parti = []
+    for z in (0.32, 1.42):
+        y0, y1 = sorted((telaio, py + 0.006 * (1 if faccia > 0 else -1)))
+        x0, x1 = sorted((fx, fx - 0.012 * faccia))
+        parti.append(L.scatola(nome + '_cerniera', (x0, y0, z), (x1, y1, z + 0.1), MAT_CERNIERA[0]))
+        parti.append(L.cilindro(nome + '_perno', (fx, py, z - 0.01), (fx, py, z + 0.11), 0.007, MAT_CERNIERA[0], seg=10))
+    return parti
+
+
+MAT_CERNIERA = [None]
+
+
 def fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme=0):
     """Armadietti Meshy: quelli chiusi sono il modello intero, quelli aperti sono il corpo vuoto
     più l'anta (ricavata dal modello chiuso) con l'origine sul cardine. Alcune ante sono colorate
@@ -474,6 +520,7 @@ def fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme=0):
                         perno=(-0.15, -0.25, 0), parte='armadietto_sportello')
         if st != 'speciale':
             col_ob(anta)   # l'anta aperta si urta (prima si attraversava)
+        CERNIERE.extend(cerniere(nome, cern, faccia, yy))
         if st == 'speciale':
             speciali[i] = anta
     return None, None, speciali
@@ -536,6 +583,7 @@ def spogliatoi(M):
     statico.append(cornice_porta('telaio_spogliatoi_S', 'S', 6.0, 7.6, 2.2, Y0, M, entrambi=False))
 
     # ---- armadietti: fila ovest (18) ed est (11 + 3), ante ammaccate, qualcuna aperta
+    MAT_CERNIERA[0] = M['metallo_grezzo']
     random.seed(11)
     cw, aw, sw = fila_armadietti('armadietti_ovest', X0, 3.3, 18, +1, M,
                                  {2: ('aperto', 95), 5: ('aperto', 25), 8: ('mancante', 0), 11: ('aperto', 110), 15: ('aperto', 12)}, seme=0)
@@ -546,6 +594,7 @@ def spogliatoi(M):
     L.col_scatola((X0, 3.3, 0), (X0 + 0.3, 3.3 + 18 * 0.4, 1.94))
     L.col_scatola((X1 - 0.3, 3.3, 0), (X1, 3.3 + 11 * 0.4, 1.94))
     L.col_scatola((X1 - 0.3, 9.3, 0), (X1, 9.3 + 4 * 0.4, 1.94))
+    statico.extend(CERNIERE)
     # l'armadietto che sbatte (anta separata, cardine come origine; dentro un salvagente colorato)
     anta_sb = se[4]; anta_sb.name = 'armadietto_sbatte_anta'
     if not HQ.disponibile('armadietto_corpo'):
@@ -846,8 +895,9 @@ def stanzino(M):
     L.vuoto('marker_zaino_pompa', (FR - 0.12, 8.425, 1.25), (0, 0, R(90)), 'ARROWS', 0.4)
     for k, y in enumerate((7.55, 9.3)):
         s = L.toro(f'salvagente_rastrelliera_{k + 1}', Vector((FR - 0.1, y, 1.0)), 0.28, 0.08, M['salvagente'], rot=(R(90), R(8 * (k * 2 - 1)), R(90)))
+        attacca(s, (1, 0, 0))   # appoggiato alla rastrelliera
     sal_ripiano = L.toro('salvagente_ripiano', Vector((X1 - 0.3, 7.9, 2.06)), 0.27, 0.075, M['salvagente'], rot=(0, R(4), 0))
-    prop('braccioli_stanzino', 'braccioli', (X1 - 0.3, 9.0, 2.02), 70, 0.3)
+    attacca(prop('braccioli_stanzino', 'braccioli', (X1 - 0.3, 9.0, 2.02), 70, 0.3), (0, 0, -1))   # sul ripiano
 
     # ---- parete sud: bacheca di sughero con cartello, poster e foglietti; scrivania con radio; sedia
     BY = Y0 + 0.03
@@ -871,7 +921,7 @@ def stanzino(M):
     prop('radio', 'radio', (12.95, Y0 + 0.3, 0.78), 190, 0.32)
     prop('ricetrasmittente', 'radio_ricetrasmittente', (12.35, Y0 + 0.35, 0.78), 0, 0.2, rot=(R(90), 0, 0))
     col_ob(prop('sedia', 'sedia', (12.4, Y0 + 1.05, 0), 160, 0.88, 'z'))
-    col_ob(HQ.metti('estintore_stanzino', 'estintore_staffa', (14.6, Y0 + 0.21, 0.82), (None, None, 0.62), rot_z=R(-90)))
+    col_ob(attacca(HQ.metti('estintore_stanzino', 'estintore_staffa', (14.6, Y0 + 0.21, 0.82), (None, None, 0.62), rot_z=R(-90)), (0, -1, 0)))
     prop('ciabatta_stanzino', 'ciabatta', (14.2, 9.5, 0), 250, 0.27)
 
     # ---- luci
