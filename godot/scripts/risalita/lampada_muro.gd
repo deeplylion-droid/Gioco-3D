@@ -4,12 +4,10 @@ class_name LampadaMuro
 ## dal muro e la staffa ci entrava fino a 16 cm (controllo di posizionamento severo del 22 ottobre).
 
 const MODELLO := "res://assets/fiume_lento/lampada_emergenza.glb"
-## La barra della staffa sul retro del modello (coordinate del modello, misurate sul GLB): larga 22 cm, da
-## y -0,071 a -0,03, il retro a z 0,21. Il davanti col vetro guarda verso -Z.
-const BARRA: Array[Vector3] = [Vector3(-0.11, -0.071, 0.21), Vector3(0.11, -0.071, 0.21),
-		Vector3(-0.11, -0.03, 0.21), Vector3(0.11, -0.03, 0.21)]
-const CENTRO_BARRA := Vector3(0.0, -0.05, 0.21)
+## Il davanti col vetro guarda verso -Z; sul retro (+Z) la barra della staffa, larga 22 cm.
 const PIASTRA := Vector3(0.28, 0.1, 0.012)
+## I vertici del modello (si leggono una volta).
+static var _vertici := PackedVector3Array()
 
 
 ## Mette la lampada in [param padre]: [param muro] è un punto della faccia del muro all'altezza della
@@ -18,16 +16,26 @@ const PIASTRA := Vector3(0.28, 0.1, 0.012)
 static func monta(padre: Node3D, muro: Vector3, verso: Vector3) -> Node3D:
 	var n := Vector3(verso.x, 0.0, verso.z).normalized()   # dal muro verso la stanza
 	var b := Basis.looking_at(verso.normalized(), Vector3.UP)
-	# quanto la barra va verso il muro, per la lampada inclinata: la si appoggia alla piastra
-	var verso_muro := 0.0
-	for p in BARRA:
-		verso_muro = maxf(verso_muro, (b * p).dot(-n))
-	var pos := muro + n * (verso_muro + PIASTRA.z + 0.001)
 	var l := (load(MODELLO) as PackedScene).instantiate() as Node3D
+	if _vertici.is_empty():
+		for mi in l.find_children("*", "MeshInstance3D", true, false):
+			_vertici.append_array((mi as MeshInstance3D).mesh.get_faces())
+	# il punto del modello più verso il muro (con la lampada inclinata è uno spigolo della barra): lì si appoggia
+	# alla piastra, 1 mm davanti; la piastra sta dietro quel punto
+	var verso_muro := -INF
+	for v in _vertici:
+		verso_muro = maxf(verso_muro, (b * v).dot(-n))
+	var c := Vector3.ZERO
+	var k := 0
+	for v in _vertici:
+		if (b * v).dot(-n) > verso_muro - 0.01:
+			c += b * v
+			k += 1
+	c /= maxf(k, 1)
+	var pos := muro + n * (verso_muro + PIASTRA.z + 0.001)
 	l.transform = Transform3D(b, pos)
 	padre.add_child(l)
-	# la piastra sul muro, dietro il centro della barra
-	var c := pos + b * CENTRO_BARRA
+	c += pos
 	c += n * ((muro - c).dot(n) + PIASTRA.z * 0.5)
 	var mi := MeshInstance3D.new()
 	mi.name = "Piastra"

@@ -728,58 +728,6 @@
 		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1)"
 	},
 	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/Valvola/Scarico",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			9.07,
-			0.0,
-			-19.74
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm (enigmi)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/@Node3D@841/Mesh_0",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-37.77,
-			-3.2,
-			37.35
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Risalita/@MeshInstance3D@764 per 20 cm (enigmi)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-15.86,
-			2.16,
-			34.86
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b_vetro",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-15.83,
-			2.16,
-			34.87
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)"
-	},
-	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_scale",
 		"squadra": "enigmi",
@@ -898,32 +846,6 @@
 	},
 	{
 		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-2.18,
-			-6.94,
-			49.86
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 20 cm (enigmi)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1_vetro",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-2.18,
-			-6.94,
-			49.87
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 25 cm (enigmi)"
-	},
-	{
-		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
 		"squadra": "ambienti-2",
 		"problema": "compenetra",
@@ -973,19 +895,6 @@
 		],
 		"stato": "voluto",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_staffa1",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-2.26,
-			-7.02,
-			49.86
-		],
-		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/lampada_rc1 per 23 cm (enigmi)"
 	},
 	{
 		"zona": "tecnici",
