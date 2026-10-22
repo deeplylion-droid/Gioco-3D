@@ -172,7 +172,9 @@ func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
 ## dell'infermeria, con una lampada d'emergenza.
 func _zona_personale() -> void:
 	var x := -35.0
-	_corridoio(Vector3(x - 1.0, Y, 48.0), Vector3(x + 1.0, Y, 51.0))
+	# dalla faccia di fuori del muro sud dell'infermeria (z 48,1) a quella del muro ovest del capannone (z 50,7,
+	# spesso 30 cm): prima il corridoio andava da 48 a 51 ed entrava di 10 e 30 cm nei due muri
+	_corridoio(Vector3(x - 1.0, Y, CENTRO_INFERMERIA.z + I.L + 0.1), Vector3(x + 1.0, Y, CENTRO_FIUME.z + F.X0 - 0.3))
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
 	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0))
 
@@ -182,7 +184,7 @@ func _zona_personale() -> void:
 ## fino alla porta nel muro ovest di C3.
 func _scala_di_servizio() -> void:
 	var xp := CENTRO_INFERMERIA.x + I.PORTA_NORD           # la porta nord dell'infermeria
-	var zn := CENTRO_INFERMERIA.z - I.L                     # il suo muro nord
+	var zn := CENTRO_INFERMERIA.z - I.L - 0.1               # la faccia di fuori del suo muro nord (spesso 10 cm)
 	var z0 := PORTA_C3.z - SCALA_LARGA * 0.5
 	var z1 := PORTA_C3.z + SCALA_LARGA * 0.5
 	# dalla porta al corridoio della scala

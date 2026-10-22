@@ -21,6 +21,16 @@ signal aperta
 @export var cifre_tex: Texture2D
 @export var simboli: Array[Texture2D] = []
 @export var largo_sportello := 0.56
+## Lo spessore dello sportello vero: il nodo gira sullo spigolo davanti (i cardini), lo sportello sta dietro, così
+## aprendosi non entra nella cornice del vano.
+@export var spessore_sportello := 0.0
+## La faccia dello sportello vero (z nel nodo dello sportello), dietro le rotelle: il loro supporto ci arriva e i
+## simboli ci stanno sopra (prima restavano 3,4 cm davanti, staccati). 0: come prima.
+@export var faccia_sportello := 0.0
+## Quanto sta il pavimento sotto l'origine (m). Aperto, lo sportello sporge nella stanza all'altezza del petto: con
+## un valore, sotto lo sportello aperto c'è una barriera fino a terra e non ci si passa (come sotto i cassetti tirati).
+## 0: niente barriera.
+@export var barriera_fino_a_terra := 0.0
 
 var cifre := PackedInt32Array([0, 0, 0])
 var aperta_ora := false
@@ -29,6 +39,7 @@ var _rotelle: Array[Interactable] = []
 var _scritte: Array[Label3D] = []
 var _sportello: Node3D
 var _cilindri: Array[MeshInstance3D] = []
+var _barriera: StaticBody3D
 
 
 func _ready() -> void:
@@ -42,14 +53,9 @@ func _ready() -> void:
 		Graybox.box(_sportello, Vector3(0.6, 0.5, 0.05), Vector3(0.3, 0.0, 0.0), mat)
 	else:
 		var porta := modello_sportello.instantiate() as Node3D
-		porta.position = Vector3(largo_sportello * 0.5, 0.0, 0.0)
+		porta.position = Vector3(largo_sportello * 0.5, 0.0, -spessore_sportello)
 		_sportello.add_child(porta)
-		# il supporto delle rotelle
-		var sm := StandardMaterial3D.new()
-		sm.albedo_color = Color(0.15, 0.15, 0.15)
-		sm.metallic = 0.8
-		sm.roughness = 0.4
-		Graybox.box(_sportello, Vector3(0.34, 0.1, 0.06), Vector3(largo_sportello * 0.5, 0.03, 0.1), sm)
+		# il supporto delle rotelle: un pezzo per rotella, suo figlio (_rotella_vera), la rotella mezza dentro
 	cifre.resize(codice.size())
 	var segni := ["testa", "corpo", "coda"]
 	for i in codice.size():
@@ -58,7 +64,7 @@ func _ready() -> void:
 		r.prompt = "Gira la rotella (%s)" % (segni[i] if i < segni.size() else str(i + 1))
 		var forma := CollisionShape3D.new()
 		var sfera := SphereShape3D.new()
-		sfera.radius = 0.06
+		sfera.radius = 0.06 if mostra_segnaposto else 0.044   # (vera: non entra nel supporto della rotella accanto)
 		forma.shape = sfera
 		r.add_child(forma)
 		var scritta := Label3D.new()
@@ -70,12 +76,43 @@ func _ready() -> void:
 		r.position = Vector3(0.3 + (i - (codice.size() - 1) * 0.5) * passo, 0.0, 0.04)
 		if not mostra_segnaposto:
 			scritta.visible = false
-			r.position = Vector3(largo_sportello * 0.5 + (i - (codice.size() - 1) * 0.5) * passo, 0.03, 0.135)
+			r.position = Vector3(largo_sportello * 0.5 + (i - (codice.size() - 1) * 0.5) * passo, 0.03, 0.135 - spessore_sportello)
 			_rotella_vera(r, i)
 		r.interacted.connect(gira.bind(i).unbind(1))
 		_rotelle.append(r)
 		_scritte.append(scritta)
+	if barriera_fino_a_terra > 0.0:
+		_metti_barriera()
 	_metti()
+
+
+## La barriera sotto lo sportello aperto: dal pavimento al suo bordo di sopra, larga quanto lo sportello aperto.
+func _metti_barriera() -> void:
+	var giro := _sportello.rotation
+	_sportello.rotation = Vector3(0.0, -1.9, 0.0)
+	var b := AABB()
+	var primo := true
+	for mi in _sportello.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D()
+		var k: Node = mi
+		while k != self:
+			xf = (k as Node3D).transform * xf
+			k = k.get_parent()
+		var bb: AABB = xf * (mi as MeshInstance3D).get_aabb()
+		b = bb if primo else b.merge(bb)
+		primo = false
+	_sportello.rotation = giro
+	_barriera = StaticBody3D.new()
+	_barriera.name = "BarrieraSportello"
+	_barriera.collision_layer = Layers.BARRIERS
+	_barriera.collision_mask = 0
+	var f := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(b.size.x, b.end.y + barriera_fino_a_terra, b.size.z)
+	f.shape = bs
+	f.position = Vector3(b.get_center().x, (b.end.y - barriera_fino_a_terra) * 0.5, b.get_center().z)
+	_barriera.add_child(f)
+	add_child(_barriera)
 
 
 ## Il cilindro con le cifre (asse lungo X, la cifra davanti verso +Z) e il simbolo sopra.
@@ -89,11 +126,18 @@ func _rotella_vera(r: Interactable, i: int) -> void:
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.06
 	cm.bottom_radius = 0.06
-	cm.height = passo * 0.95
+	cm.height = minf(passo, 0.09) * 0.95
 	cil.mesh = cm
 	cil.material_override = m
 	r.add_child(cil)
 	_cilindri.append(cil)
+	var ms := StandardMaterial3D.new()
+	ms.albedo_color = Color(0.15, 0.15, 0.15)
+	ms.metallic = 0.8
+	ms.roughness = 0.4
+	var zr := r.position.z
+	var dietro := faccia_sportello - zr + 0.001 if faccia_sportello != 0.0 else -0.065   # 1 mm davanti alla faccia
+	Graybox.box(r, Vector3(minf(passo, 0.09) - 0.01, 0.1, -0.005 - dietro), Vector3(0, 0, (dietro - 0.005) * 0.5), ms)   # 1 cm fra un pezzo e l'altro
 	if i < simboli.size() and simboli[i]:
 		var sm := StandardMaterial3D.new()
 		sm.albedo_texture = simboli[i]
@@ -103,7 +147,7 @@ func _rotella_vera(r: Interactable, i: int) -> void:
 		qm.size = Vector2(0.09, 0.09)
 		q.mesh = qm
 		q.material_override = sm
-		q.position = Vector3(0, 0.13, -0.065)
+		q.position = Vector3(0, 0.13, (faccia_sportello - zr + 0.002) if faccia_sportello != 0.0 else -0.065)
 		r.add_child(q)
 
 
@@ -136,6 +180,9 @@ func _metti() -> void:
 		if is_instance_valid(c):
 			c.enabled = aperta_ora
 			c.visible = aperta_ora
+	if _barriera:
+		for c in _barriera.get_children():
+			(c as CollisionShape3D).set_deferred(&"disabled", not aperta_ora)
 
 
 # --- Checkpoint -------------------------------------------------------------------------------
