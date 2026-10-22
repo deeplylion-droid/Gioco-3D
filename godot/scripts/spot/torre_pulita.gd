@@ -43,6 +43,8 @@ func _ready() -> void:
 		var glb := (load(DIR + nome + ".glb") as PackedScene).instantiate()
 		add_child(glb)
 		_pulisci(glb)
+		if nome == "torre_struttura":
+			_togli_grate(glb)
 	_linea()
 	_acqua()
 	_luci()
@@ -74,6 +76,68 @@ func _pulisci(radice: Node) -> void:
 			mi.set_surface_override_material(i, _materiali[m])
 
 
+## Le grate tonde che nel gioco chiudono le bocche dei tubi decorativi (torre_a.py, chiusa_bocca: un anello rosso e
+## sbarre d'acciaio, fusi nella mesh della struttura): il giorno dell'apertura i tubi sono aperti. Si tolgono i
+## triangoli d'acciaio e rossi che stanno tutti nel disco della grata.
+func _togli_grate(radice: Node) -> void:
+	var dati: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
+	var dischi: Array = []      # [centro, verso orizzontale]
+	for bc in dati["bocche_chiuse"]:
+		if bc["tubo"]:
+			var v := Vector3(bc["verso"][0], 0.0, -bc["verso"][1]).normalized()
+			dischi.append([Vector3(bc["pos"][0], float(bc["pos"][2]) + 0.55, -bc["pos"][1]), v])
+	var tolti := 0
+	for n in radice.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		var mesh := mi.mesh as ArrayMesh
+		if mesh == null:
+			continue
+		var nuova := ArrayMesh.new()
+		var cambiata := false
+		for i in mesh.get_surface_count():
+			var m := mesh.surface_get_material(i)
+			var nome_m := String(m.resource_name).to_lower() if m else ""
+			var arr := mesh.surface_get_arrays(i)
+			if (nome_m.ends_with("inox") or nome_m.ends_with("gioco_rosso")) and arr[Mesh.ARRAY_INDEX] != null:
+				var vert: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+				var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
+				var tieni := PackedInt32Array()
+				for t in range(0, idx.size(), 3):
+					var dentro := false
+					for d in dischi:
+						if _nel_disco(mi.global_transform * vert[idx[t]], d) and _nel_disco(mi.global_transform * vert[idx[t + 1]], d) \
+								and _nel_disco(mi.global_transform * vert[idx[t + 2]], d):
+							dentro = true
+							break
+					if dentro:
+						tolti += 1
+					else:
+						tieni.append_array([idx[t], idx[t + 1], idx[t + 2]])
+				if tieni.size() != idx.size():
+					cambiata = true
+					arr[Mesh.ARRAY_INDEX] = tieni
+			nuova.add_surface_from_arrays(mesh.surface_get_primitive_type(i), arr)
+			nuova.surface_set_material(i, m)
+			nuova.surface_set_name(i, mesh.surface_get_name(i))
+		if cambiata:
+			var over: Array = []
+			for i in mesh.get_surface_count():
+				over.append(mi.get_surface_override_material(i))
+			mi.mesh = nuova
+			for i in over.size():
+				mi.set_surface_override_material(i, over[i])
+	print("spot torre: triangoli delle grate tolti ", tolti)
+
+
+static func _nel_disco(q: Vector3, d: Array) -> bool:
+	var c: Vector3 = d[0]
+	var v: Vector3 = d[1]
+	var r := q - c
+	var lungo := r.dot(v)
+	var lato := (r - v * lungo).length()
+	return absf(lungo) < 0.09 and lato < 0.62
+
+
 func _pulito(m: BaseMaterial3D, acqua: bool) -> BaseMaterial3D:
 	var n := m.duplicate() as BaseMaterial3D
 	n.vertex_color_use_as_albedo = false
@@ -91,14 +155,31 @@ func _pulito(m: BaseMaterial3D, acqua: bool) -> BaseMaterial3D:
 	elif nome.begins_with("tsc_") or nome.begins_with("scivolo"):
 		# la vetroresina nuova: lucida, e un po' di luce passa dalla parete (dentro il tubo non è buio)
 		n.roughness = 0.18
+		n.albedo_color = _vivo(n.albedo_color, n.albedo_texture)
 		n.emission_enabled = true
 		n.emission = n.albedo_color
 		n.emission_texture = n.albedo_texture
-		n.emission_energy_multiplier = 0.22
+		n.emission_energy_multiplier = 0.1
 	# le lampade rosse d'emergenza spente: la torre è aperta, è giorno
 	if n.emission_enabled and m.emission.r > 0.6 and m.emission.g < 0.3 and m.emission.b < 0.3:
 		n.emission_enabled = false
 	return n
+
+
+## La vetroresina nuova ha i colori pieni: il colore medio della texture, più saturo, diventa la tinta del materiale.
+static func _vivo(base: Color, tex: Texture2D) -> Color:
+	if tex == null:
+		return base
+	var img := tex.get_image()
+	if img == null:
+		return base
+	if img.is_compressed():
+		img.decompress()
+	img.resize(1, 1, Image.INTERPOLATE_BILINEAR)
+	var medio := img.get_pixel(0, 0)
+	var vivo := Color.from_hsv(medio.h, minf(medio.s * 2.2 + 0.15, 0.9), minf(medio.v, 0.95))
+	# la tinta moltiplica la texture: si divide per il medio, così il risultato ha il colore vivo
+	return Color(vivo.r / maxf(medio.r, 0.05), vivo.g / maxf(medio.g, 0.05), vivo.b / maxf(medio.b, 0.05)).clamp(Color.BLACK, Color(4, 4, 4))
 
 
 func _texture_pulita(t: Texture2D) -> Texture2D:
@@ -246,7 +327,7 @@ func _acqua() -> void:
 
 func _goccia() -> QuadMesh:
 	var q := QuadMesh.new()
-	q.size = Vector2(0.025, 0.025)
+	q.size = Vector2(0.012, 0.012)
 	var m := StandardMaterial3D.new()
 	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
