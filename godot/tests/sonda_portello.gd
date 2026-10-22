@@ -11,7 +11,7 @@ func _run() -> void:
 	printerr("SONDA caricata")
 	for i in 10:
 		await get_tree().process_frame
-	var sp := s.get_world_3d().direct_space_state
+	var sp: PhysicsDirectSpaceState3D = s.get_world_3d().direct_space_state
 	for n in ["Sala/Interattivi/sala_portello_scarico", "Piscina/LucePortellone", "Polaroid/Polaroid05", "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo"]:
 		var nodo := s.get_node_or_null(NodePath(n)) as Node3D
 		if nodo == null:
@@ -31,9 +31,9 @@ func _run() -> void:
 	for x in [-1.2, -0.9, -0.71, -0.5, 0.0, 0.5, 0.71, 0.9, 1.2]:
 		var riga := ""
 		for z in [1.2, 1.36, 1.6, 2.0, 2.4, 2.64, 2.7, 2.9, 3.2]:
-			var r := sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(x, 1.0, z), Vector3(x, -5.0, z)))
+			var r: Dictionary = sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(x, 1.0, z), Vector3(x, -5.0, z)))
 			riga += " %.3f" % ((r["position"] as Vector3).y if not r.is_empty() else 99.0)
 		printerr("SONDA fondo x %.2f:%s" % [x, riga])
-	var r2 := sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(1.2, 1.0, 2.9), Vector3(1.2, -5.0, 2.9)))
+	var r2: Dictionary = sp.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(1.2, 1.0, 2.9), Vector3(1.2, -5.0, 2.9)))
 	printerr("SONDA sotto la Polaroid05: ", r2.get("position"), " ", r2.get("collider"))
 	get_tree().quit()
