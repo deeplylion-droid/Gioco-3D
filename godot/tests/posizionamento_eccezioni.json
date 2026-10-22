@@ -91,136 +91,6 @@
 		"motivo": "bocchette dell'aria sul muro sud della camera delle onde (da 1,65 m), ora con la collisione: ci si ferma contro come contro il muro. Se non va bene: alzarle di 40 cm in ambienti2_camera_onde.py"
 	},
 	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			0.3,
-			2.48,
-			39.6
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			-2.7,
-			2.85,
-			35.9
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/neon_stanzino_neon/neon_stanzino_tubo_sfarfalla",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			3.5,
-			2.39,
-			32.5
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/neon_0_neon/neon_0_tubi",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			-0.6,
-			-4.92,
-			5.36
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/neon_1_neon/neon_1_tubo_sfarfalla",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			-0.6,
-			-4.92,
-			11.36
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/neon_2_neon/neon_2_tubi",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			-0.6,
-			-4.92,
-			21.21
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			1.2,
-			-4.22,
-			34.16
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			1.2,
-			-4.22,
-			39.16
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			1.2,
-			-4.22,
-			43.66
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			5.7,
-			-4.22,
-			39.16
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
 		"zona": "torre",
 		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
 		"squadra": "ambienti-2",
@@ -313,32 +183,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
-		"squadra": "mascotte",
-		"problema": "compenetra",
-		"pos": [
-			0.0,
-			0.5,
-			11.26
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): il 35% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Interno",
-		"squadra": "mascotte",
-		"problema": "compenetra",
-		"pos": [
-			0.0,
-			0.15,
-			11.19
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): il 77% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
 		"squadra": "mascotte",
 		"problema": "ingombro",
@@ -377,19 +221,6 @@
 		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)"
 	},
 	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/neon_rc_neon/neon_rc_tubo_sfarfalla",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-0.9,
-			-6.32,
-			49.86
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
 		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/AnelloVetro",
 		"squadra": "enigmi",
@@ -414,5 +245,249 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte, coi modelli nuovi: il 100% dei suoi vertici è dentro il coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Correzione proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/ATTUATORE_stagno",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			-2.65,
+			-7.67,
+			47.51
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/SALA_meccanismi, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 120.0 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/POMPA_1_manometro",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			4.15,
+			-6.83,
+			33.27
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_1, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/POMPA_2_manometro",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			4.15,
+			-6.83,
+			37.77
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/CoperchioPompa",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			8.74,
+			0.81,
+			-21.61
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			1.2,
+			-4.22,
+			34.16
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			1.2,
+			-4.22,
+			39.16
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_1_tubo_sfarfalla."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			1.2,
+			-4.22,
+			43.66
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_2_tubi."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_3",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			5.7,
+			-4.22,
+			39.16
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_3_tubi."
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7530/Nastro",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			51.59,
+			-21.48,
+			-17.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoTubi/ins_A_tubo_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 14.2 cm) [modello: sala_inseguimento.tscn]",
+		"firma": "sala_inseguimento.tscn|ArrayMesh 3.82x0.00x2.32"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7535/POMPA_3_modello",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			67.2,
+			-31.25,
+			-14.77
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/Luci/@Node3D@7535/POMPA_3, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) [modello: sala_inseguimento.tscn]",
+		"firma": "sala_inseguimento.tscn|sala_pompe.gltf::ArrayMesh_1y626"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@23106/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-11.05,
+			-2.4,
+			100.95
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@23140/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-55.79,
+			-2.4,
+			85.23
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@23160/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.14,
+			-2.4,
+			108.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@23180/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-43.78,
+			-2.4,
+			89.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@23183/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.14,
+			-2.4,
+			79.37
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0/@MeshInstance3D@39474",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			54.61,
+			-19.48,
+			-16.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
+		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2/@MeshInstance3D@39482",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			67.0,
+			-22.48,
+			-25.39
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
+		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4/@MeshInstance3D@39490",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			66.89,
+			-25.48,
+			-3.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_4, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
+		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
 	}
 ]
