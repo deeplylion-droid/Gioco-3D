@@ -713,11 +713,12 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid05" type="Area3D" parent="Polaroid" unique_id=647491652 instance=ExtResource("69_7hdua")]
-transform = Transform3D(-0.414627, -0.055057, 0.908324, -0.055147, 0.997854, 0.03531, -0.908319, -0.035451, -0.416773, 1.19978, -2.16842, 2.89986)
+transform = Transform3D(-0.41614684, 0, 0.9092974, 0, 1, 0, -0.9092974, 0, -0.41614684, 1.19978, -2.164, 2.899858)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
 script = ExtResource("70_s2j42")
+snap_to_surface = false
 photo = 5
 entry_id = &"p05"
 prompt = "Raccogli"
