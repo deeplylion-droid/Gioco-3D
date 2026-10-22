@@ -24,7 +24,7 @@ from scipy.spatial import cKDTree
 QUI = os.path.dirname(os.path.abspath(__file__))
 FONT = os.path.join(QUI, 'font')
 REPO = os.path.dirname(os.path.dirname(QUI))
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(REPO, 'docs', 'proposte', 'logo')
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(REPO, 'docs', 'proposte', 'logo', 'scartati')  # scartate dall'utente il 22 ottobre
 
 # I colori del parco (insegna e targa del gioco, stile B)
 NAVY = (38, 52, 92)
@@ -38,7 +38,7 @@ ROSA_CHIARO = (250, 206, 220)
 def font(nome, px, peso=None, larghezza=None):
     f = ImageFont.truetype(os.path.join(FONT, nome), px)
     if peso:
-        f.set_variation_by_axes([peso, larghezza or 100])
+        f.set_variation_by_axes([peso] + ([larghezza] if larghezza else []))
     return f
 
 
