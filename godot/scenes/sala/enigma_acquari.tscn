@@ -171,6 +171,15 @@ size = Vector3(0.06, 1.0, 1.000)
 [sub_resource type="BoxShape3D" id="parapetto_scala_forma"]
 size = Vector3(1.664, 1.0, 0.06)
 
+[sub_resource type="CylinderMesh" id="cavo_lampada"]
+top_radius = 0.007
+bottom_radius = 0.007
+height = 0.432
+radial_segments = 6
+
+[sub_resource type="BoxMesh" id="fascetta"]
+size = Vector3(0.06, 0.012, 0.06)
+
 [sub_resource type="BoxShape3D" id="forma_guida"]
 size = Vector3(0.05, 5.56, 0.09)
 
@@ -643,6 +652,21 @@ transform = Transform3D(0.412726, 0, 0.910855, 0, 1, 0, -0.910855, 0, 0.412726, 
 script = ExtResource("lampada_valvola")
 
 [node name="Modello" parent="LampadaValvola" instance=ExtResource("gabbia")]
+
+[node name="Cavo" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5995, 1.914, -21.4284)
+mesh = SubResource("cavo_lampada")
+material_override = SubResource("nero")
+
+[node name="Fascetta1" type="MeshInstance3D" parent="Cavo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0255, -0.0864, -0.0116)
+mesh = SubResource("fascetta")
+material_override = SubResource("nero")
+
+[node name="Fascetta2" type="MeshInstance3D" parent="Cavo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0255, 0.0864, -0.0116)
+mesh = SubResource("fascetta")
+material_override = SubResource("nero")
 
 [node name="Luce" type="SpotLight3D" parent="LampadaValvola"]
 transform = Transform3D(1, 4.7048e-17, 1.4814e-16, 0, -0.95309, 0.30269, 1.5543e-16, -0.30269, -0.95309, 0, 0, 0.36)

@@ -393,6 +393,7 @@ def _coperta(a, b):
     return False
 
 
+cand = []
 if POSIZIONE != 'P1':
     # Negli altri posti il tirante del P1 è lontano o il miscuglio è in mezzo: il tirante più vicino da cui
     # si vede la valvola, se no il montante ovest della pedana (a 80 cm, con lo spot più largo).
@@ -415,6 +416,19 @@ _ang = math.atan2(_d[0], _d[1])      # +Z della lampada verso la valvola
 LP = (TIR[0] + _d[0] / _l * R_TIR, LY, TIR[1] + _d[1] / _l * R_TIR)
 node('LampadaValvola', 'Node3D', '.', transform=tr(roty(_ang), LP), script='ExtResource("lampada_valvola")')
 node('Modello', parent='LampadaValvola', inst='gabbia')
+# il cavo della lampada: dal morsetto scende lungo il tirante (o il montante della pedana) fino alla base
+# dell'acquario (o al piano della pedana), con due fascette; prima la lampada non era collegata a niente
+CAVO_FINE = B_BASE if cand or POSIZIONE == 'P1' else PEDANA_H
+CR = R_TIR + 0.012
+CX, CZ = TIR[0] + _d[0] / _l * CR, TIR[1] + _d[1] / _l * CR
+cavo_l = (LY - 0.12) - CAVO_FINE
+sr_tardi('CylinderMesh', 'cavo_lampada', top_radius='0.007', bottom_radius='0.007', height='%.3f' % cavo_l, radial_segments='6')
+node('Cavo', 'MeshInstance3D', '.', transform=tr(ID, (CX, CAVO_FINE + cavo_l / 2, CZ)), mesh='SubResource("cavo_lampada")',
+     material_override='SubResource("nero")')
+sr_tardi('BoxMesh', 'fascetta', size='Vector3(0.06, 0.012, 0.06)')
+for k, f in enumerate((0.3, 0.7)):
+    node('Fascetta%d' % (k + 1), 'MeshInstance3D', 'Cavo', transform=tr(ID, ((TIR[0] - CX) * 0.5, (f - 0.5) * cavo_l, (TIR[1] - CZ) * 0.5)),
+         mesh='SubResource("fascetta")', material_override='SubResource("nero")')
 # lo spot sul globo (0,36 m davanti al tirante), puntato sul volantino: la base nel sistema della
 # lampada, che è girata di _ang attorno a Y
 _v = (VOL[0] - (LP[0] + _d[0] / _l * 0.36), VOL[1] - LY, VOL[2] - (LP[2] + _d[1] / _l * 0.36))
