@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://kqylf8ihs58y"
+uid="uid://c1lderjr0r023"
 path.s3tc="res://.godot/imported/mostro_squalo_A_mostro_squalo_A_colore.jpg-f7536946a8d0045a324f355b1b7b93dd.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "6a33aab0906a7c6baaa2716291644ae6"
+"md5": "0758344b5f9f55db1ad5082b295f7a2c"
 }
 
 [deps]

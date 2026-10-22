@@ -95,8 +95,22 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("torcia") and not event.is_echo():
+		# con i comandi del giocatore bloccati (le scene, per esempio il risveglio con lo squalo) il tasto
+		# non fa niente
+		if not _comandi_attivi():
+			return
 		commuta()
 		get_viewport().set_input_as_handled()
+
+
+## Falso se il giocatore che tiene la torcia ha i comandi bloccati (Player.input_enabled).
+func _comandi_attivi() -> bool:
+	var p := get_parent()
+	while p:
+		if p is Player:
+			return (p as Player).input_enabled
+		p = p.get_parent()
+	return true
 
 
 func commuta() -> void:

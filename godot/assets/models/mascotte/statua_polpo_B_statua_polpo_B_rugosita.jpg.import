@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bd5b4roi0ivvj"
+uid="uid://w6pc65l1trc1"
 path.s3tc="res://.godot/imported/statua_polpo_B_statua_polpo_B_rugosita.jpg-557fa16309a39240c08ef6f97b9821d1.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "b7543fd56265fca59285cc277fb199d0"
+"md5": "5de25b041c51bdf58d5d4fa14468f48f"
 }
 
 [deps]

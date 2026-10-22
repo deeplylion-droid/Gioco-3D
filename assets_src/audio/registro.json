@@ -1569,6 +1569,76 @@
   "lufs": -24.0,
   "lufs_max": -22.5
  },
+ "squalo/jilly_richiamo": {
+  "file": "res://audio/squalo/jilly_richiamo.ogg",
+  "canali": 1,
+  "durata": 10.76,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco",
+  "lufs": -20.0,
+  "lufs_max": -15.2
+ },
+ "squalo/squalo_minaccia": {
+  "file": "res://audio/squalo/squalo_minaccia.ogg",
+  "canali": 1,
+  "durata": 6.002,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file)",
+  "lufs": -17.2,
+  "lufs_max": -10.7
+ },
+ "squalo/squalo_passo_01": {
+  "file": "res://audio/squalo/squalo_passo_01.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi + Kenney Impact Sounds (CC0)",
+  "nota": "passo pesante e bagnato con gli artigli",
+  "lufs": -23.0,
+  "lufs_max": -15.6
+ },
+ "squalo/squalo_passo_02": {
+  "file": "res://audio/squalo/squalo_passo_02.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi + Kenney Impact Sounds (CC0)",
+  "nota": "passo pesante e bagnato con gli artigli",
+  "lufs": -24.4,
+  "lufs_max": -16.9
+ },
+ "squalo/squalo_passo_03": {
+  "file": "res://audio/squalo/squalo_passo_03.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi + Kenney Impact Sounds (CC0)",
+  "nota": "passo pesante e bagnato con gli artigli",
+  "lufs": -22.9,
+  "lufs_max": -15.7
+ },
+ "squalo/squalo_passo_04": {
+  "file": "res://audio/squalo/squalo_passo_04.ogg",
+  "canali": 1,
+  "durata": 0.6,
+  "loop": false,
+  "fonte": "sintesi + Kenney Impact Sounds (CC0)",
+  "nota": "passo pesante e bagnato con gli artigli",
+  "lufs": -24.2,
+  "lufs_max": -17.3
+ },
+ "squalo/squalo_sbuffo": {
+  "file": "res://audio/squalo/squalo_sbuffo.ogg",
+  "canali": 1,
+  "durata": 1.902,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "sbuffo di gola quando si volta a guardarti",
+  "lufs": -23.5,
+  "lufs_max": -16.0
+ },
  "tecnici/cancello_stagno_apre_01": {
   "file": "res://audio/tecnici/cancello_stagno_apre_01.ogg",
   "canali": 1,

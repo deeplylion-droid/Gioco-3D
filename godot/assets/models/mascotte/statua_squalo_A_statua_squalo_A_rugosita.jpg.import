@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://fpdr2kb610mb"
+uid="uid://bef0fii6eattc"
 path.s3tc="res://.godot/imported/statua_squalo_A_statua_squalo_A_rugosita.jpg-074326db8446be0c81654708769a4c79.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "2c463bf14f9d104c4a74ec0ecfd101f8"
+"md5": "5b1fd57c9d8f88b13e782c0980c91e55"
 }
 
 [deps]

@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdtqmcpmxcoev"
+uid="uid://cah83vjk3a54g"
 path.s3tc="res://.godot/imported/statua_squalo_A_statua_squalo_A_colore.jpg-05b2fbe5eb7b6731774bc040a1e67aef.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "485bce6b9e7b845daccaebc92b597260"
+"md5": "e1a83f2199fe81779ea4d3be564de7c3"
 }
 
 [deps]

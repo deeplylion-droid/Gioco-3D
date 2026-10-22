@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://byjdxk62rv5jx"
+uid="uid://clc83uf7w6kpn"
 path.s3tc="res://.godot/imported/statua_polpo_B_statua_polpo_B_normali.jpg-74edb787e94918ed82efe0449c38d62b.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "1d9be51d67d4f270d55fc7e9a2178450"
+"md5": "ad085f558894374b39bcb7ae4b61c353"
 }
 
 [deps]
