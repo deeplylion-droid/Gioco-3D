@@ -681,16 +681,18 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 	var p3 := PACK_STATION + Basis(Vector3.UP, rack_yaw) * Vector3(0.5, 0.83, 0.02)
 	# Le zone del documento del livello che non sono ancora modellate (corridoio, spogliatoi,
 	# stanzino, camera delle onde, sala pompe, ponte inferiore) hanno un posto provvisorio in sala.
+	# Le quote sono quelle dopo l'appoggio (snap_to_surface), così le Polaroid stanno già sul loro sostegno anche
+	# prima che lo snap parta (controllo di posizionamento del 22 ottobre).
 	var spots := [
 		[1, Vector3(-1.6, 0.0, 18.4), 0.4],     # vicino a dove si entra
 		[2, Vector3(-6.0, 0.6, 8.0), 1.2],      # su un lettino
 		[3, p3, rack_yaw + 0.35],                # sulla rastrelliera dei bagnini, accanto allo zaino
-		[4, Vector3(-16.03, 1.5, -15.35), 0.2],  # sulla struttura di gioco: in cima alla scala, dove ci si arriva a piedi
-		[5, Vector3(1.2, -2.0, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
+		[4, Vector3(-16.03, 1.2416, -15.35), 0.2],  # sulla struttura di gioco: in cima alla scala, dove ci si arriva a piedi
+		[5, Vector3(1.19978, -2.164, 2.899858), 2.0],   # sul fondo della piscina, sotto la pozza: piatta, senza snap (fondo a conca)
 		[6, Vector3(-4.6, -1.9, 4.2), 0.9],     # vicino alle bocchette della camera delle onde
 		[7, Vector3(8.2, 1.2, -2.4), 1.6],      # sulla sedia del bagnino
-		[8, Vector3(-8.9, 0.0, 6.6), 0.7],      # sul bordo della vasca d'arrivo (sulla copertina: non sotto il pannello caduto)
-		[9, Vector3(-9.9, 0.0, -9.4), 2.4],     # accanto alle vasche basse
+		[8, Vector3(-8.9, 0.016, 6.6), 0.7],      # sul bordo della vasca d'arrivo (sulla copertina: non sotto il pannello caduto)
+		[9, Vector3(-9.9, 0.004, -9.4), 2.4],     # accanto alle vasche basse
 		[10, Vector3(13.5, 9.0, -17.5), 0.6],   # in cima alla torre degli scivoli (fuori dalla demo)
 	]
 	if tecnici:
@@ -698,7 +700,7 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 		# onde, a terra contro il muro sud tra le bocchette; P7 sulla scrivania accanto al monitor, nello
 		# spazio libero dietro lo schermo, tutta dentro il piano (prima era sul bordo, mezza fuori) e
 		# fuori dai fogli della scrivania (ci stava sotto: prova del 19 ottobre).
-		for t in [[6, Vector3(9.2, 0.01, 1.75), 0.4], [7, Vector3(42.0, 0.79, 3.23), 2.92]]:
+		for t in [[6, Vector3(9.2, 0.004, 1.75), 0.4], [7, Vector3(42.0, 0.7839, 3.23), 2.92]]:
 			var i := spots.find_custom(func(x): return int(x[0]) == int(t[0]))
 			spots[i] = [t[0], TECNICI_XF * (t[1] as Vector3), float(t[2]) - PI * 0.5]
 	for s in spots:
@@ -711,6 +713,10 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 		p.rotation = Vector3(0, s[2], 0)
 		p.set(&"photo", s[0])
 		p.set(&"entry_id", StringName("p%02d" % s[0]))
+		if int(s[0]) == 5:
+			# sul fondo a conca lo snap la inclinava su un punto solo e un angolo entrava nel fondo: piatta, poggia
+			# sull'angolo più alto (fondo visibile misurato da tests/sonda_p05.gd)
+			p.set(&"snap_to_surface", false)
 		own(p, g)
 
 
@@ -813,7 +819,8 @@ func _tappa7(has_interiors: bool) -> void:
 		var porta: Area3D = load("res://scripts/tecnici/porta_maniglione.gd").new()
 		porta.name = "PortaSalaPompeInterni"
 		porta.position = INTERNI_OFFSET + Vector3(bb.get_center().x, 1.0, bb.end.z + 0.35)
-		porta.set(&"angolo_apertura", -95.0)
+		# aperta contro il muro del corridoio (collaudo del 22 ottobre: a 95 gradi sporgeva 1 m sulla strada del ritorno)
+		porta.set(&"angolo_apertura", -172.0)
 		porta.set(&"collisione_propria", true)
 		own(porta, gp)
 		shape_box(porta, Vector3(1.0, 1.6, 0.5))
