@@ -157,6 +157,17 @@ func _scena_squalo(start: Marker3D) -> void:
 	var pos0 := p.global_position
 	var fatto := [false]
 	s.finito.connect(func(): fatto[0] = true)
+	# la torcia: spenta prima della scena, il tasto F durante la scena non deve toccarla
+	var torcia: Torcia = null
+	for n in p.find_children("*", "Node3D", true, false):
+		if n is Torcia:
+			torcia = n
+	var torcia_prima := true
+	if torcia:
+		torcia_prima = torcia.accesa
+		torcia.imposta_accesa(false)
+	var torcia_toccata := false
+	var premute := 0
 	level.call(&"fai_risveglio", p, true)
 	await _frames(2)
 	check(not p.input_enabled and s.in_corso() and s.squalo != null, "il giocatore non si muove: la camera è guidata")
@@ -173,6 +184,11 @@ func _scena_squalo(start: Marker3D) -> void:
 	while not fatto[0] and t < 16.0:
 		await get_tree().process_frame
 		t += 1.0 / 60.0
+		if torcia and premute < 2 and t > [3.0, 7.0][premute]:   # nella minaccia e nella fuga
+			premute += 1
+			await _tasto_torcia()
+			t += 2.0 / 60.0
+			torcia_toccata = torcia_toccata or torcia.accesa
 		if s.squalo == null or not s.squalo.visible:
 			continue
 		var occhio := p.camera.global_position
@@ -210,6 +226,11 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(p.input_enabled and p.camera.position.is_zero_approx() and is_zero_approx(p.camera.rotation.z),
 		"il giocatore riprende il controllo, la camera torna normale")
 	check(p.global_position.distance_to(pos0) < 0.05, "ed è ancora dove si è svegliato")
+	if torcia:
+		check(premute == 2 and not torcia_toccata and not torcia.accesa, "il tasto F non accende la torcia durante la scena, e alla fine è com'era")
+		await _tasto_torcia()
+		check(torcia.accesa, "dopo la scena il tasto F la riaccende")
+		torcia.imposta_accesa(torcia_prima)
 	check(s.squalo == null, "lo squalo non c'è più")
 	check(perno != null and is_zero_approx(perno.rotation.y), "la porta tagliafuoco è chiusa")
 	var space := p.get_world_3d().direct_space_state
@@ -231,6 +252,21 @@ func check(cond: bool, what: String) -> void:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().physics_frame
+
+
+func _tasto_torcia() -> void:
+	var e := InputEventAction.new()
+	e.action = &"torcia"
+	e.pressed = true
+	Input.parse_input_event(e)
+	Input.flush_buffered_events()
+	await get_tree().process_frame
+	e = InputEventAction.new()
+	e.action = &"torcia"
+	e.pressed = false
+	Input.parse_input_event(e)
+	Input.flush_buffered_events()
+	await get_tree().process_frame
 
 
 func _hold(action: StringName, frames: int) -> void:
