@@ -168,13 +168,15 @@ func wake_up() -> void:
 ## Ti prende: la fauce si apre (animazione "fauce_apre": la pelle si strappa sotto l'occhio, gola e
 ## denti) e l'occhio si riempie di vene (parametro "venatura" del suo materiale, da 0 a 1, su una
 ## copia: le altre medusa restano calme).
-func attacca(durata_vene := 0.7) -> void:
+## Con [param animazione] un'altra animazione al posto di "fauce_apre" (per esempio "inseguimento/presa", che
+## apre già la fauce), o vuota per lasciare quella che c'è e fare solo le vene.
+func attacca(durata_vene := 0.7, animazione := &"fauce_apre") -> void:
 	if _instance == null:
 		return
 	_mostra_bocca(true)
 	var ap := _instance.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	if ap and ap.has_animation(&"fauce_apre"):
-		ap.play(&"fauce_apre", 0.25)
+	if ap and animazione != &"" and ap.has_animation(animazione):
+		ap.play(animazione, 0.25)
 	var occhio := _instance.find_child("Medusa_Occhio", true, false) as MeshInstance3D
 	var m := occhio.get_active_material(0) as ShaderMaterial if occhio else null
 	if m == null:

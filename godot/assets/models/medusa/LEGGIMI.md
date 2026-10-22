@@ -221,3 +221,41 @@ una texture di `tex/` c'e' gia' ed e' diversa dalla nuova, si ferma con un messa
 - `MEDUSA_RISCRIVI_TEXTURE=0`: tiene le texture approvate e finisce il passo (per rifare il modello senza cambiare
   le texture);
 - `MEDUSA_RISCRIVI_TEXTURE=1`: sostituisce le texture approvate con quelle nuove, solo se l'utente le ha approvate.
+
+## Animazioni dell'inseguimento (`medusa_inseguimento.res`)
+
+Libreria di animazioni a parte, sullo stesso scheletro: medusa.glb non cambia. Si fa con
+`tools/blender/medusa_inseguimento.py` (le pose, in `assets_src/medusa/build/inseguimento.json`) e poi
+`godot/tools/medusa_inseguimento_libreria.gd` (la libreria). Con `MedusaAffacciata.animazioni_inseguimento = true`
+(prima di metterla nella scena) le animazioni sono nell'AnimationPlayer come `inseguimento/<nome>`. Sono a 30 fps
+e portano anche lo spostamento in alto e in basso (osso `radice`): il nodo di lei resta fermo nel suo posto "su"
+(quello dei dati di ambienti-2, pensato per la posa `insegue`) e non va piu' spostato a mano.
+
+| Animazione | Durata | Cosa fa |
+| --- | --- | --- |
+| `sale_dall_acqua` | 1,6 s | da 5 m sotto sale, la testa per prima e le braccia lungo i fianchi; in cima apre le braccia e si sporge. Finisce nella posa iniziale di `incombe` |
+| `sale_dall_acqua_veloce` | 1,0 s | uguale, piu' secca (la grata) |
+| `incombe` | ciclo di 2,4 s | si sporge verso di te con le braccia tese che ondeggiano a turno, le dita si aprono e si chiudono |
+| `presa` | 1,2 s | si tira indietro, scatta in avanti e afferra a 2,4 m davanti, all'altezza della testa di chi e' nella vasca (3,85 m sopra la sua origine), poi tira verso di se' e apre la fauce (blend shape di `fauce_apre`) |
+| `respinta` | 1,2 s | il getto in faccia: la testa scatta indietro, si copre il viso con le mani e torna sotto (finisce 5 m sotto) |
+| `scende` | 1,0 s | torna sotto senza essere respinta (finisce 5 m sotto) |
+| `colpo_grata` | ciclo di 0,5 s | carica e sbatte i palmi contro la grata, che deve stare a 2,3 m davanti alla sua origine (piano verticale) |
+| `affacciata_sb1` | 5,4 s | SB1: sbuca dal pozzo in 1,3 s e si aggrappa al bordo, con la testa girata di lato; tra 1,7 e 2,5 s la gira verso di te e poi ti fissa. Lo spigolo del pozzo deve stare 1,0 m davanti all'origine e 0,8 m sopra |
+
+`presa`, `respinta` e `scende` partono dalla posa iniziale di `incombe` (si possono far partire con una fusione corta,
+0,15-0,2 s). Le due zampe incrociate sul petto restano sul petto in tutte (regola del GDD).
+
+Cose da fare nel gioco (sala_inseguimento.gd, ambienti-2):
+- `lei.animazioni_inseguimento = true` in `_lei_crea()`;
+- salita: `global_position = _lei_su` subito e `ap.play("inseguimento/sale_dall_acqua")` (o `_veloce`), senza
+  muovere la posizione: lo spostamento e' nell'animazione; poi `incombe` in coda (`ap.queue`);
+- mentre incombe: `lei.segui_con_la_testa(1.0)` (la testa segue il giocatore, al massimo 35 gradi; l'occhio lo
+  segue gia' da solo); prima di presa, respinta, scende e SB1: `lei.segui_con_la_testa(0.0, 0.2)`;
+- presa: `lei.attacca(0.7, &"inseguimento/presa")` (vene nell'occhio e la presa al posto di `fauce_apre`);
+- respinta e scende: l'animazione e poi `visible = false` alla fine (1,2 s e 1,0 s);
+- grata: `sale_dall_acqua_veloce` e poi `colpo_grata` per 1,5 s (tre colpi), poi `scende`;
+- SB1: `affacciata_sb1` al posto di `affacciata` e della salita a mano.
+
+Controlli: `godot/tests/test_lei_animazioni.gd` (durate, raccordi, presa, grata, bordo del pozzo, zampe sul petto,
+nessun salto tra un fotogramma e l'altro). Video di controllo nella sala dell'inseguimento:
+`godot/proposte/mascotte/video_lei_inseguimento.gd`.
