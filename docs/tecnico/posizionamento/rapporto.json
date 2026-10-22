@@ -1,19 +1,5 @@
 [
 	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "LuciSala/@Node3D@572/@MeshInstance3D@573",
-		"pos": [
-			1.23,
-			11.3,
-			5.97
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.18 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
@@ -840,20 +826,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "il 33% dei suoi vertici è dentro Sala/AreaBimbi/sala_secchio_gigante",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "LuciSala/LuciAreaBimbi/@MeshInstance3D@636",
-		"pos": [
-			-14.42,
-			6.81,
-			-19.65
-		],
-		"problema": "compenetra",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "il 87% dei suoi vertici è dentro Interni/Ambienti/Corridoio/neon_corridoio_2",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera",
 		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
@@ -1356,132 +1328,6 @@
 		"squadra": "enigmi",
 		"stato": "da correggere",
 		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3817",
-		"pos": [
-			32.55,
-			9.0,
-			-15.0
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3818",
-		"pos": [
-			32.03,
-			8.9,
-			-14.7
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3819",
-		"pos": [
-			32.03,
-			8.8,
-			-15.3
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3821",
-		"pos": [
-			32.55,
-			-3.0,
-			-15.0
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3822",
-		"pos": [
-			32.03,
-			-3.1,
-			-14.7
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3823",
-		"pos": [
-			32.03,
-			-3.2,
-			-15.3
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3825",
-		"pos": [
-			32.55,
-			-14.0,
-			-15.0
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3826",
-		"pos": [
-			32.03,
-			-14.1,
-			-14.7
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@3827",
-		"pos": [
-			32.03,
-			-14.2,
-			-15.3
-		],
-		"problema": "sospeso",
-		"squadra": "grafica",
-		"stato": "da correggere",
-		"zona": "torre"
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm)",

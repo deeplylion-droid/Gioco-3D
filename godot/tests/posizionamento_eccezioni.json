@@ -1,18 +1,5 @@
 [
 	{
-		"zona": "sala",
-		"nodo": "LuciSala/@Node3D@572/@MeshInstance3D@573",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			1.23,
-			11.3,
-			5.97
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
 		"squadra": "ambienti-1",
@@ -780,19 +767,6 @@
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
-		"zona": "sala",
-		"nodo": "LuciSala/LuciAreaBimbi/@MeshInstance3D@636",
-		"squadra": "grafica",
-		"problema": "compenetra",
-		"pos": [
-			-14.42,
-			6.81,
-			-19.65
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
 		"squadra": "ambienti-1",
@@ -1256,123 +1230,6 @@
 			-15.56,
 			2.56,
 			30.3
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3816",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.55,
-			9.0,
-			-15.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3817",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.03,
-			8.9,
-			-14.7
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3818",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.03,
-			8.8,
-			-15.3
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3820",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.55,
-			-3.0,
-			-15.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3821",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.03,
-			-3.1,
-			-14.7
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3822",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.03,
-			-3.2,
-			-15.3
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3824",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.55,
-			-14.0,
-			-15.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3825",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.03,
-			-14.1,
-			-14.7
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Luci/@MeshInstance3D@3826",
-		"squadra": "grafica",
-		"problema": "sospeso",
-		"pos": [
-			32.03,
-			-14.2,
-			-15.3
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
