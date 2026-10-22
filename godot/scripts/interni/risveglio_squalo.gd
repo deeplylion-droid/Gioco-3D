@@ -49,6 +49,9 @@ var _suoni := {}
 var _yaw0 := 0.0
 var _sguardo := Vector3.ZERO
 var _scossa := 0.0          # sobbalzo della camera (si smorza)
+var _passo_t := -1.0        # quando ha toccato terra l'ultimo passo (per la scossa della camera)
+var _passo_forza := 0.0     # quanto forte la scossa di quel passo (0-1)
+var _passo_lato := 1.0      # da che parte rolla la camera (si alterna a ogni passo)
 var _fine := 0.0
 var _luce_corsa: OmniLight3D
 var _torcia_accesa = null    # com'era la torcia prima della scena (null: niente torcia)
@@ -315,6 +318,7 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 	var passi: Array = tempi.get("passi", [])
 	while _passi_fatti < passi.size() and _t >= float(passi[_passi_fatti]):
 		_suona("passo%d" % _passi_fatti, &"squalo_passo", _bone_mondo("radice"))
+		_passo_della_camera()
 		_passi_fatti += 1
 	# la porta: lui ci passa, poi sbatte e resta chiusa; lui non si vede più
 	if _perno and not _porta_chiusa:
@@ -328,6 +332,32 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 		squalo.visible = false
 		if _anim:
 			_anim.pause()
+
+
+## Ogni passo dal giro alla porta scuote la camera, insieme al suono: forte vicino (e nel giro, addosso al
+## giocatore), sempre più debole mentre si allontana (richiesta dell'utente del 22 ottobre: "un bel tremolio della
+## camera in corrispondenza dei suoi passi").
+func _passo_della_camera() -> void:
+	if _p == null:
+		return
+	var d := _p.camera.global_position.distance_to(_bone_mondo("radice"))
+	_passo_forza = clampf(1.8 / maxf(d, 0.1), 0.0, 1.0)
+	_passo_forza *= _passo_forza * 0.5 + 0.5     # cala più in fretta lontano
+	_passo_t = _t
+	_passo_lato = -_passo_lato
+
+
+## La scossa del passo adesso: [scesa della camera (m), beccheggio (radianti), rollio (radianti)]. Breve e
+## marcata: giù di colpo in 35 ms, poi torna su smorzata in 0,2 s con un piccolo rimbalzo.
+func _scossa_passo() -> Vector3:
+	if _passo_t < 0.0:
+		return Vector3.ZERO
+	var x := _t - _passo_t
+	if x > 0.35:
+		return Vector3.ZERO
+	var botta := x / 0.035 if x < 0.035 else exp(-(x - 0.035) / 0.07) * cos((x - 0.035) * 28.0)
+	var f := _passo_forza * botta
+	return Vector3(0.045 * f, deg_to_rad(1.6) * f, deg_to_rad(1.1) * f * _passo_lato)
 
 
 ## La luce della corsa: dietro e sopra di lui, dalla parte del giocatore; si accende quando si gira verso la
@@ -397,13 +427,15 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	paura *= 1.0 - _liscio(0.0, 1.0, alzati, alzati + 1.4) * 0.8
 	var tr := Vector3(_rumore(_t, 7.0, 1.0), _rumore(_t, 6.0, 2.0), _rumore(_t, 5.0, 3.0)) * 0.012 * paura
 	tr += Vector3(_rumore(_t, 21.0, 4.0), _rumore(_t, 19.0, 5.0), 0.0) * 0.03 * _scossa
+	var sp := _scossa_passo()
 	var d := _sguardo - occhio
 	var yaw := atan2(-d.x, -d.z) + tr.x
-	var pitch := atan2(d.y, Vector2(d.x, d.z).length()) + tr.y
+	var pitch := atan2(d.y, Vector2(d.x, d.z).length()) + tr.y - sp.y
 	_p.set_look(yaw, pitch)
 	# la testa sdraiata è girata su un fianco e si raddrizza mentre si rialza
-	cam.rotation.z = deg_to_rad(_liscio(70.0, 0.0, 1.1, 2.4)) + tr.z
-	cam.position = Vector3(0.0, h - _p.stand_eye_height - indietro * 0.3, indietro)
+	cam.rotation.z = deg_to_rad(_liscio(70.0, 0.0, 1.1, 2.4)) + tr.z + sp.z
+	# (la scossa del passo prima della distanza dalla pelle: anche scossa resta fuori da lui)
+	cam.position = Vector3(0.0, h - _p.stand_eye_height - indietro * 0.3 - sp.x, indietro)
 	# mai dentro lo squalo: fuori dalla sua pelle (la spinta sale subito e cala piano, senza scatti)
 	# la testa del giocatore subito con lo sguardo di adesso (lo rifà lui dopo, uguale): così la posizione
 	# della camera nel mondo è già quella che si vedrà
