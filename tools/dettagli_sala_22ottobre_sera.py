@@ -136,6 +136,12 @@ def ruota_su(B, n):
 
 def trova(per, nodo, i, xz, chiave):
     lst = per.get(nodo, [])
+    if i is None:
+        # (riconosciuto dalla sua posizione esatta)
+        for q in lst:
+            if math.hypot(q['posizione'][0] - xz[0], q['posizione'][2] - xz[1]) < 0.02:
+                return q
+        raise SystemExit(f'{nodo} in {xz} non c\'è')
     # già corretto in un giro prima: riconosciuto dal segno lasciato
     for q in lst:
         if q.get('corretto_22_sera') == chiave:
@@ -162,6 +168,12 @@ def main():
         # 1. i posti da togliere (prima di tutto si trovano, poi si toglie: gli indici restano quelli del controllo)
         via = []
         for nodo, i, xz, motivo in TOGLI:
+            if i is None:
+                i = f'{xz[0]:.3f},{xz[1]:.3f}'
+                if any(t.get('chiave') == f'{nodo} {i}' for t in tolti):
+                    continue
+                via.append((trova(per, nodo, None, xz, ''), motivo, f'{nodo} {i}'))
+                continue
             if any(t.get('chiave') == f'{nodo} {i}' for t in tolti):
                 continue        # tolto in un giro prima
             via.append((trova(per, nodo, i, xz, f'via {nodo} {i}'), motivo, f'{nodo} {i}'))
