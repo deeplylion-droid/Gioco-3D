@@ -57,7 +57,7 @@ Se un caso è voluto, per esempio una porta aperta dove non si passa o il tubo d
  "motivo": "la porta resta aperta contro il muro, il giocatore non ci passa"}
 ```
 
-Un caso si riconosce da zona, nodo e problema. I nodi creati da codice hanno nomi automatici, come `@MeshInstance3D@217`: per loro conta anche la posizione, arrotondata a mezzo metro. Le voci con stato `"da correggere"` sono casi noti, già assegnati: la CI non fallisce per loro.
+Un caso si riconosce da zona, nodo e problema. I nodi creati da codice hanno nomi automatici, come `@MeshInstance3D@217`, che cambiano quando cambia il numero di nodi creati prima: per loro il numero non conta, e al suo posto contano la posizione, arrotondata a mezzo metro, e la `firma`, cioè il modello da cui vengono e la mesh (il file, o la classe e la misura per le mesh fatte da codice). Copia la voce dal `rapporto.json` con la sua `firma`. Le voci con stato `"da correggere"` sono casi noti, già assegnati: la CI non fallisce per loro.
 
 ## Mettere gli oggetti
 
