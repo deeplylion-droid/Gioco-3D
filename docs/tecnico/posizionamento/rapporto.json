@@ -1,5 +1,4781 @@
 [
 	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/Piscina/sala_piscina_rosa_venti",
+		"pos": [
+			0.0,
+			-1.58,
+			-3.6
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 140.3 cm)",
+		"nodo": "Sala/AreaBimbi/sala_secchio_gigante",
+		"pos": [
+			-15.2,
+			6.28,
+			-19.76
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/Oggetti/ogg_cestino_pesce_88",
+		"pos": [
+			-19.3,
+			0.51,
+			9.03
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 10.7 cm)",
+		"nodo": "Sala/Oggetti/ogg_delfino_gonfiabile_sgonfio_8",
+		"pos": [
+			-4.2,
+			-0.63,
+			-6.5
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)",
+		"nodo": "Sala/Oggetti/ogg_salvagente_nave_6",
+		"pos": [
+			2.9,
+			-1.94,
+			1.0
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 4.5 cm)",
+		"nodo": "Sala/Oggetti/ogg_tubi_galleggianti_7",
+		"pos": [
+			-2.6,
+			-1.87,
+			0.9
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/Oggetti/ogg_tubi_galleggianti_52",
+		"pos": [
+			-8.21,
+			0.24,
+			5.51
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/Oggetti/ogg_tubi_galleggianti_58",
+		"pos": [
+			8.93,
+			0.28,
+			5.75
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.3 cm)",
+		"nodo": "Sala/Oggetti/ogg_tubi_galleggianti_64",
+		"pos": [
+			-4.9,
+			-0.4,
+			-8.87
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/Oggetti/ogg_tubi_galleggianti_70",
+		"pos": [
+			5.65,
+			0.25,
+			17.02
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)",
+		"nodo": "Sala/Dettagli/@MeshInstance3D@40",
+		"pos": [
+			-17.43,
+			0.06,
+			3.24
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 276.6 cm)",
+		"nodo": "Sala/Dettagli/det_faro_spento",
+		"pos": [
+			5.38,
+			3.31,
+			19.83
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 266.8 cm)",
+		"nodo": "Sala/Dettagli/@MeshInstance3D@50",
+		"pos": [
+			7.24,
+			2.81,
+			-23.83
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 327.2 cm)",
+		"nodo": "Sala/Dettagli/@MeshInstance3D@51",
+		"pos": [
+			19.81,
+			3.42,
+			-3.4
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 319.6 cm)",
+		"nodo": "Sala/Dettagli/det_faro",
+		"pos": [
+			-3.75,
+			3.33,
+			-23.81
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 328.9 cm)",
+		"nodo": "Sala/Dettagli/@MeshInstance3D@52",
+		"pos": [
+			-18.19,
+			3.42,
+			-23.81
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 3.2 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_1",
+		"pos": [
+			17.98,
+			1.25,
+			16.8
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.9 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_3",
+		"pos": [
+			14.73,
+			0.74,
+			17.88
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_19",
+		"pos": [
+			12.38,
+			0.43,
+			18.92
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_23",
+		"pos": [
+			18.3,
+			0.38,
+			15.47
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_30",
+		"pos": [
+			14.37,
+			0.36,
+			15.05
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_31",
+		"pos": [
+			10.43,
+			0.44,
+			19.39
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_34",
+		"pos": [
+			13.28,
+			0.46,
+			18.29
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 100.3 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_38",
+		"pos": [
+			19.01,
+			1.49,
+			16.93
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_39",
+		"pos": [
+			19.6,
+			0.11,
+			15.44
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 10.6 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_47",
+		"pos": [
+			19.46,
+			0.82,
+			15.6
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_48",
+		"pos": [
+			14.05,
+			0.35,
+			15.81
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 50.9 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_54",
+		"pos": [
+			14.87,
+			1.76,
+			19.13
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 33.2 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_62",
+		"pos": [
+			19.41,
+			4.35,
+			19.09
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_67",
+		"pos": [
+			17.56,
+			0.47,
+			14.49
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 11.9 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_69",
+		"pos": [
+			18.73,
+			0.82,
+			16.0
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_70",
+		"pos": [
+			18.69,
+			0.25,
+			16.49
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.2 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_71",
+		"pos": [
+			13.66,
+			0.47,
+			16.46
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 20.8 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_72",
+		"pos": [
+			17.09,
+			0.85,
+			16.49
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 109.4 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_80",
+		"pos": [
+			16.17,
+			1.62,
+			17.75
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 40.7 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_83",
+		"pos": [
+			13.99,
+			1.01,
+			17.41
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_93",
+		"pos": [
+			18.39,
+			0.4,
+			14.69
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.4 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_96",
+		"pos": [
+			15.09,
+			1.59,
+			17.44
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 75.3 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_101",
+		"pos": [
+			15.13,
+			1.35,
+			18.31
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_0",
+		"pos": [
+			19.43,
+			0.4,
+			19.46
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_7",
+		"pos": [
+			19.43,
+			0.4,
+			18.67
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_11",
+		"pos": [
+			16.34,
+			0.4,
+			18.69
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_12",
+		"pos": [
+			14.75,
+			0.4,
+			18.66
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_17",
+		"pos": [
+			19.45,
+			0.4,
+			17.11
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 47.7 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_20",
+		"pos": [
+			19.07,
+			1.04,
+			19.04
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 37.0 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_21",
+		"pos": [
+			18.25,
+			1.04,
+			19.09
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 47.0 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_27",
+		"pos": [
+			18.27,
+			1.04,
+			18.29
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 43.9 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_28",
+		"pos": [
+			17.47,
+			1.04,
+			18.24
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 34.2 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_30",
+		"pos": [
+			15.91,
+			1.04,
+			18.29
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 45.3 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_31",
+		"pos": [
+			19.08,
+			1.04,
+			17.5
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 43.8 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_34",
+		"pos": [
+			16.68,
+			1.04,
+			17.52
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.7 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_35",
+		"pos": [
+			19.45,
+			1.68,
+			19.47
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.8 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_36",
+		"pos": [
+			18.68,
+			1.68,
+			19.48
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 37.4 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_37",
+		"pos": [
+			16.34,
+			1.68,
+			19.45
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 28.5 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_38",
+		"pos": [
+			15.58,
+			1.68,
+			19.42
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.1 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_39",
+		"pos": [
+			18.64,
+			1.68,
+			18.66
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 38.9 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_40",
+		"pos": [
+			17.86,
+			1.68,
+			18.69
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 29.5 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_47",
+		"pos": [
+			19.07,
+			2.32,
+			19.09
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.5 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_48",
+		"pos": [
+			18.24,
+			2.32,
+			19.06
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 39.5 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_49",
+		"pos": [
+			17.52,
+			2.32,
+			19.05
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 41.3 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_50",
+		"pos": [
+			16.7,
+			2.32,
+			19.08
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.4 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_51",
+		"pos": [
+			19.09,
+			2.32,
+			18.29
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 31.4 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_52",
+		"pos": [
+			18.27,
+			2.32,
+			18.31
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 27.1 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_53",
+		"pos": [
+			17.5,
+			2.32,
+			18.28
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 146.7 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_54",
+		"pos": [
+			17.1,
+			2.96,
+			19.44
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 155.5 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_55",
+		"pos": [
+			19.45,
+			2.96,
+			18.69
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.7 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_56",
+		"pos": [
+			18.66,
+			2.96,
+			18.64
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 38.0 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_58",
+		"pos": [
+			19.08,
+			3.6,
+			19.09
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 31.9 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_59",
+		"pos": [
+			18.26,
+			3.6,
+			19.02
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 162.7 cm)",
+		"nodo": "Sala/AngoloPalloni/pallone_dentro_60",
+		"pos": [
+			18.7,
+			4.24,
+			19.47
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_0",
+		"pos": [
+			-19.52,
+			0.3,
+			19.36
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_3",
+		"pos": [
+			-19.43,
+			1.22,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_4",
+		"pos": [
+			-19.43,
+			1.55,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_6",
+		"pos": [
+			-19.43,
+			2.35,
+			19.42
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_7",
+		"pos": [
+			-19.43,
+			2.66,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_10",
+		"pos": [
+			-19.43,
+			3.75,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_11",
+		"pos": [
+			-19.43,
+			4.28,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_12",
+		"pos": [
+			-19.43,
+			4.8,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_13",
+		"pos": [
+			-19.43,
+			5.33,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_14",
+		"pos": [
+			-19.43,
+			5.87,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_15",
+		"pos": [
+			-19.43,
+			6.41,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_16",
+		"pos": [
+			-19.43,
+			6.94,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_17",
+		"pos": [
+			-19.43,
+			7.48,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_20",
+		"pos": [
+			-19.43,
+			8.57,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_0_21",
+		"pos": [
+			-19.43,
+			9.1,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_0",
+		"pos": [
+			-19.46,
+			0.27,
+			18.68
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_1",
+		"pos": [
+			-19.43,
+			0.59,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_2",
+		"pos": [
+			-19.43,
+			0.91,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_3",
+		"pos": [
+			-19.43,
+			1.46,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_4",
+		"pos": [
+			-19.43,
+			1.99,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_7",
+		"pos": [
+			-19.43,
+			2.87,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_8",
+		"pos": [
+			-19.43,
+			3.19,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_10",
+		"pos": [
+			-19.43,
+			4.2,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_11",
+		"pos": [
+			-19.43,
+			4.75,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_12",
+		"pos": [
+			-19.43,
+			5.29,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_13",
+		"pos": [
+			-19.43,
+			5.83,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_15",
+		"pos": [
+			-19.43,
+			6.84,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_18",
+		"pos": [
+			-19.43,
+			7.93,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_1_19",
+		"pos": [
+			-19.43,
+			8.45,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_0",
+		"pos": [
+			-19.4,
+			0.33,
+			17.69
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.7 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_1",
+		"pos": [
+			-19.42,
+			0.7,
+			17.68
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_2",
+		"pos": [
+			-19.43,
+			1.03,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_3",
+		"pos": [
+			-19.43,
+			1.35,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_4",
+		"pos": [
+			-19.43,
+			1.68,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_6",
+		"pos": [
+			-19.43,
+			2.71,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_8",
+		"pos": [
+			-19.43,
+			3.34,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_9",
+		"pos": [
+			-19.43,
+			3.85,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_10",
+		"pos": [
+			-19.43,
+			4.36,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_2_11",
+		"pos": [
+			-19.43,
+			4.91,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_3_0",
+		"pos": [
+			-19.51,
+			0.3,
+			16.9
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.5 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_3_1",
+		"pos": [
+			-19.43,
+			0.88,
+			16.88
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_3_2",
+		"pos": [
+			-19.43,
+			1.42,
+			16.88
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_3_3",
+		"pos": [
+			-19.41,
+			1.94,
+			16.89
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.7 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_0_3_4",
+		"pos": [
+			-19.43,
+			2.46,
+			16.88
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_1",
+		"pos": [
+			-18.58,
+			0.85,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_2",
+		"pos": [
+			-18.52,
+			1.39,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_4",
+		"pos": [
+			-18.58,
+			2.38,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_5",
+		"pos": [
+			-18.58,
+			2.91,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_7",
+		"pos": [
+			-18.58,
+			3.91,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_8",
+		"pos": [
+			-18.58,
+			4.22,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_9",
+		"pos": [
+			-18.58,
+			4.52,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_11",
+		"pos": [
+			-18.58,
+			5.51,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_0_16",
+		"pos": [
+			-18.58,
+			7.48,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_0",
+		"pos": [
+			-18.46,
+			0.28,
+			18.49
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.5 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_1",
+		"pos": [
+			-18.58,
+			0.82,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_7",
+		"pos": [
+			-18.58,
+			2.7,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_8",
+		"pos": [
+			-18.58,
+			3.01,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_9",
+		"pos": [
+			-18.58,
+			3.55,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_12",
+		"pos": [
+			-18.58,
+			5.0,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_15",
+		"pos": [
+			-18.58,
+			6.08,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_1_16",
+		"pos": [
+			-18.58,
+			6.62,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_0",
+		"pos": [
+			-18.64,
+			0.29,
+			17.63
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_1",
+		"pos": [
+			-18.58,
+			0.87,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_3",
+		"pos": [
+			-18.58,
+			1.91,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_4",
+		"pos": [
+			-18.58,
+			2.45,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.7 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_5",
+		"pos": [
+			-18.58,
+			3.02,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.7 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_6",
+		"pos": [
+			-18.58,
+			3.59,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_7",
+		"pos": [
+			-18.58,
+			3.93,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_8",
+		"pos": [
+			-18.58,
+			4.03,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_2_9",
+		"pos": [
+			-18.58,
+			4.37,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_3_0",
+		"pos": [
+			-18.56,
+			0.29,
+			16.9
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_3_2",
+		"pos": [
+			-18.58,
+			1.35,
+			16.88
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_1_3_3",
+		"pos": [
+			-18.58,
+			1.9,
+			16.88
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_1",
+		"pos": [
+			-17.73,
+			0.38,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_2",
+		"pos": [
+			-17.73,
+			0.94,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_5",
+		"pos": [
+			-17.73,
+			2.42,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_6",
+		"pos": [
+			-17.73,
+			2.96,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_7",
+		"pos": [
+			-17.73,
+			3.49,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_9",
+		"pos": [
+			-17.72,
+			4.26,
+			19.42
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_10",
+		"pos": [
+			-17.73,
+			4.57,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_0_12",
+		"pos": [
+			-17.73,
+			5.57,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_0",
+		"pos": [
+			-17.77,
+			0.31,
+			18.53
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.8 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_1",
+		"pos": [
+			-17.73,
+			0.93,
+			18.57
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.2 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_2",
+		"pos": [
+			-17.71,
+			1.52,
+			18.59
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.1 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_3",
+		"pos": [
+			-17.73,
+			2.1,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_5",
+		"pos": [
+			-17.73,
+			3.16,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_6",
+		"pos": [
+			-17.73,
+			3.73,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_7",
+		"pos": [
+			-17.73,
+			4.29,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_1_8",
+		"pos": [
+			-17.73,
+			4.8,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_2_0",
+		"pos": [
+			-17.67,
+			0.3,
+			17.76
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_2_1",
+		"pos": [
+			-17.73,
+			0.85,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_2_2",
+		"pos": [
+			-17.73,
+			1.39,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_2_4",
+		"pos": [
+			-17.73,
+			2.44,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_2_2_5",
+		"pos": [
+			-17.73,
+			2.99,
+			17.73
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_0",
+		"pos": [
+			-16.88,
+			0.32,
+			19.38
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_1",
+		"pos": [
+			-16.88,
+			0.9,
+			19.47
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.5 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_2",
+		"pos": [
+			-16.87,
+			1.45,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_4",
+		"pos": [
+			-16.87,
+			2.09,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_5",
+		"pos": [
+			-16.87,
+			2.63,
+			19.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.3 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_3_1_1",
+		"pos": [
+			-16.87,
+			0.88,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_3_1_2",
+		"pos": [
+			-16.88,
+			1.44,
+			18.58
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Sala/AngoloScatoloni/scat_caduto_2",
+		"pos": [
+			-16.8,
+			0.27,
+			17.0
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "LuciSala/LuciAreaBimbi/PlafonieraBimbi/@MeshInstance3D@1533",
+		"pos": [
+			-11.92,
+			9.17,
+			-14.74
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "LuciSala/LuciAreaBimbi/PlafonieraBimbi/@MeshInstance3D@1534",
+		"pos": [
+			-11.97,
+			9.07,
+			-14.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 364.5 cm)",
+		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Bordo",
+		"pos": [
+			0.0,
+			4.89,
+			10.14
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 203.1 cm)",
+		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"pos": [
+			0.02,
+			3.96,
+			10.06
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 260.0 cm)",
+		"nodo": "Risalita/@MeshInstance3D@692",
+		"pos": [
+			-35.0,
+			-2.7,
+			49.5
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 198.0 cm)",
+		"nodo": "Risalita/lampada_emergenza/Mesh_0",
+		"pos": [
+			-34.05,
+			-3.2,
+			49.5
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 110.9 cm)",
+		"nodo": "Risalita/@MeshInstance3D@757",
+		"pos": [
+			-35.84,
+			-3.01,
+			39.38
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 110.9 cm)",
+		"nodo": "Risalita/@MeshInstance3D@813",
+		"pos": [
+			-30.14,
+			-0.31,
+			39.38
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 198.0 cm)",
+		"nodo": "Risalita/@Node3D@839/Mesh_0",
+		"pos": [
+			-27.4,
+			2.2,
+			39.4
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 198.0 cm)",
+		"nodo": "Risalita/@Node3D@841/Mesh_0",
+		"pos": [
+			-37.9,
+			-3.2,
+			37.5
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 110.9 cm)",
+		"nodo": "Risalita/@MeshInstance3D@899",
+		"pos": [
+			1.16,
+			-2.56,
+			50.13
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 198.0 cm)",
+		"nodo": "Risalita/@Node3D@953/Mesh_0",
+		"pos": [
+			6.05,
+			0.4,
+			49.2
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 198.0 cm)",
+		"nodo": "Risalita/@Node3D@955/Mesh_0",
+		"pos": [
+			-3.95,
+			-3.2,
+			51.2
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 198.0 cm)",
+		"nodo": "Risalita/@Node3D@957/Mesh_0",
+		"pos": [
+			-3.95,
+			-3.2,
+			62.3
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
+		"pos": [
+			-1.3,
+			0.26,
+			40.2
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/cestino",
+		"pos": [
+			-4.4,
+			0.27,
+			38.6
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 84.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/estintore",
+		"pos": [
+			-0.1,
+			1.15,
+			40.69
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/pallone",
+		"pos": [
+			-7.5,
+			0.21,
+			40.3
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 224.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/sprinkler_corridoio_1",
+		"pos": [
+			-7.9,
+			2.29,
+			38.78
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 174.3 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/sprinkler_corridoio_2",
+		"pos": [
+			-4.5,
+			2.29,
+			38.78
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 224.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/sprinkler_corridoio_3",
+		"pos": [
+			-1.1,
+			2.29,
+			38.78
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 224.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/sprinkler_corridoio_4",
+		"pos": [
+			2.4,
+			2.29,
+			38.78
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 224.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/sprinkler_corridoio_5",
+		"pos": [
+			5.9,
+			2.29,
+			38.78
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 224.0 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/sprinkler_corridoio_6",
+		"pos": [
+			9.3,
+			2.29,
+			38.78
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est2_02_anta",
+		"pos": [
+			0.69,
+			0.96,
+			30.53
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
+		"pos": [
+			0.64,
+			0.96,
+			36.88
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_07_anta",
+		"pos": [
+			0.73,
+			0.96,
+			34.56
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
+		"pos": [
+			0.63,
+			0.96,
+			33.59
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_05_anta",
+		"pos": [
+			-6.14,
+			0.96,
+			35.44
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
+		"pos": [
+			-6.03,
+			0.96,
+			33.24
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_15_anta",
+		"pos": [
+			-6.18,
+			0.96,
+			31.43
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta",
+		"pos": [
+			0.81,
+			0.96,
+			35.77
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
+		"pos": [
+			-3.3,
+			0.26,
+			36.6
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
+		"pos": [
+			0.5,
+			0.2,
+			30.7
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 244.0 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/sprinkler_lavapiedi_1",
+		"pos": [
+			0.7,
+			2.49,
+			28.9
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 244.0 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/sprinkler_lavapiedi_2",
+		"pos": [
+			0.7,
+			2.49,
+			24.1
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 244.0 cm)",
+		"nodo": "Interni/Ambienti/Spogliatoi/sprinkler_lavapiedi_3",
+		"pos": [
+			0.7,
+			2.49,
+			21.9
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm)",
+		"nodo": "Interni/Ambienti/Stanzino/braccioli_stanzino",
+		"pos": [
+			5.2,
+			2.07,
+			31.9
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 82.0 cm)",
+		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
+		"pos": [
+			4.9,
+			1.13,
+			34.49
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm)",
+		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_1",
+		"pos": [
+			4.82,
+			1.0,
+			33.35
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm)",
+		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_2",
+		"pos": [
+			4.82,
+			1.0,
+			31.6
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 141.0 cm)",
+		"nodo": "Interni/Ambienti/Stanzino/sprinkler_stanzino_1",
+		"pos": [
+			2.2,
+			2.24,
+			34.45
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm)",
+		"nodo": "Interni/Zaino/Modello/Zaino",
+		"pos": [
+			4.78,
+			1.03,
+			32.47
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 321.3 cm)",
+		"nodo": "Tecnici/Ambienti/CameraOnde/ALBERO_pale",
+		"pos": [
+			3.0,
+			-5.6,
+			11.36
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 175.9 cm)",
+		"nodo": "Tecnici/Ambienti/CameraOnde/BIELLA_3",
+		"pos": [
+			2.9,
+			-6.8,
+			15.36
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm)",
+		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pale_supporti",
+		"pos": [
+			2.95,
+			-5.23,
+			11.66
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.0 cm)",
+		"nodo": "Tecnici/Ambienti/SalaPompe/FILTRO_1_modello",
+		"pos": [
+			6.6,
+			-7.33,
+			31.06
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.0 cm)",
+		"nodo": "Tecnici/Ambienti/SalaPompe/FILTRO_2_modello",
+		"pos": [
+			4.0,
+			-7.33,
+			31.06
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.5 cm)",
+		"nodo": "Tecnici/Ambienti/SalaPompe/LEVA",
+		"pos": [
+			5.1,
+			-5.04,
+			47.46
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/SalaPompe/POMPA_3_modello",
+		"pos": [
+			5.05,
+			-7.79,
+			42.16
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "Tecnici/Ambienti/SalaPompe/PORTA_ponte",
+		"pos": [
+			-1.4,
+			-7.95,
+			47.61
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 135.0 cm)",
+		"nodo": "Tecnici/Ambienti/SalaPompe/SCHEMA_pompe",
+		"pos": [
+			2.6,
+			-7.05,
+			47.63
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/SalaPompe/Foglio_det_carta_accartocciata_2",
+		"pos": [
+			-3.42,
+			-8.22,
+			43.48
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2oa_3",
+		"pos": [
+			4.48,
+			-1.52,
+			45.2
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2ob_10",
+		"pos": [
+			-4.39,
+			0.33,
+			45.2
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2ob_17",
+		"pos": [
+			-9.38,
+			0.28,
+			45.2
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_5",
+		"pos": [
+			-14.23,
+			0.27,
+			41.8
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_9",
+		"pos": [
+			-14.23,
+			0.27,
+			35.3
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3s_7",
+		"pos": [
+			-15.77,
+			0.27,
+			41.05
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3s_14",
+		"pos": [
+			-15.77,
+			0.27,
+			33.88
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 224.7 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_c2_filo",
+		"pos": [
+			-0.25,
+			2.42,
+			45.91
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 249.3 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_mag_filo",
+		"pos": [
+			-15.0,
+			2.8,
+			25.45
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 150.5 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s1_filo",
+		"pos": [
+			2.25,
+			-4.1,
+			52.96
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 239.4 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_festone_s2_filo",
+		"pos": [
+			7.8,
+			-1.15,
+			51.41
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_l1e_2",
+		"pos": [
+			6.11,
+			-4.99,
+			53.7
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_l1e_7",
+		"pos": [
+			8.68,
+			-4.99,
+			53.7
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_mag_4",
+		"pos": [
+			-16.49,
+			0.63,
+			24.2
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_mag_5",
+		"pos": [
+			-16.21,
+			0.41,
+			23.12
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_mag_12",
+		"pos": [
+			-13.69,
+			0.28,
+			29.51
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 70.6 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_mag_14",
+		"pos": [
+			-13.69,
+			1.48,
+			29.51
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_mag_18",
+		"pos": [
+			-13.51,
+			0.35,
+			22.56
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_r1n_2",
+		"pos": [
+			-0.66,
+			-8.75,
+			51.06
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_t_1",
+		"pos": [
+			8.89,
+			-0.76,
+			45.37
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 206.3 cm)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_staffa5",
+		"pos": [
+			-15.81,
+			2.08,
+			38.56
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 189.0 cm)",
+		"nodo": "Mascotte/ManifestoJilly/Plane_001",
+		"pos": [
+			-19.97,
+			1.93,
+			14.24
+		],
+		"problema": "staccato",
+		"squadra": "mascotte",
+		"zona": "mascotte"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 417.0 cm)",
+		"nodo": "Mascotte/InsegnaJilly/cornice_giu",
+		"pos": [
+			-19.83,
+			4.2,
+			5.35
+		],
+		"problema": "staccato",
+		"squadra": "mascotte",
+		"zona": "mascotte"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 94.0 cm)",
+		"nodo": "Mascotte/InsegnaJilly/cornice_su",
+		"pos": [
+			-19.83,
+			5.2,
+			5.35
+		],
+		"problema": "staccato",
+		"squadra": "mascotte",
+		"zona": "mascotte"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Mascotte/InsegnaJilly/lampada_dx_lampadina",
+		"pos": [
+			-19.53,
+			5.39,
+			4.86
+		],
+		"problema": "staccato",
+		"squadra": "mascotte",
+		"zona": "mascotte"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Mascotte/InsegnaJilly/lampada_dx_paralume",
+		"pos": [
+			-19.52,
+			5.42,
+			4.85
+		],
+		"problema": "staccato",
+		"squadra": "mascotte",
+		"zona": "mascotte"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Mascotte/InsegnaJilly/lampada_sx_lampadina",
+		"pos": [
+			-19.53,
+			5.39,
+			5.84
+		],
+		"problema": "staccato",
+		"squadra": "mascotte",
+		"zona": "mascotte"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Mascotte/InsegnaJilly/lampada_sx_paralume",
+		"pos": [
+			-19.52,
+			5.42,
+			5.85
+		],
+		"problema": "staccato",
+		"squadra": "mascotte",
+		"zona": "mascotte"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 204.0 cm)",
+		"nodo": "Gioco/EnigmaAcquari/LampadaValvola/Modello/lampada",
+		"pos": [
+			6.84,
+			2.25,
+			-21.32
+		],
+		"problema": "staccato",
+		"squadra": "enigmi",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "entra dentro Sala/Piscina/sala_piscina_onde",
+		"nodo": "Polaroid/Polaroid05",
+		"pos": [
+			1.2,
+			-2.17,
+			2.9
+		],
+		"problema": "compenetrato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/Piscina/sala_piscina_onde per 38 cm",
+		"nodo": "Sala/Interattivi/sala_portello_scarico",
+		"pos": [
+			0.0,
+			-2.19,
+			2.02
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/Piscina/sala_piscina_onde per 30 cm",
+		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
+		"pos": [
+			0.0,
+			-2.32,
+			2.0
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 130 cm",
+		"nodo": "Sala/Interattivi/sala_portello_scarico",
+		"pos": [
+			0.0,
+			-2.2,
+			2.02
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/Interattivi/sala_portello_scarico per 83 cm",
+		"nodo": "Piscina/LucePortellone/Anello",
+		"pos": [
+			0.0,
+			-2.17,
+			2.02
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm",
+		"nodo": "Piscina/LucePortellone/Anello",
+		"pos": [
+			0.0,
+			-2.18,
+			2.02
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm",
+		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
+		"pos": [
+			-0.91,
+			2.35,
+			21.5
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm",
+		"nodo": "Gioco/EnigmaAcquari/Valvola/Scarico",
+		"pos": [
+			9.07,
+			0.0,
+			-19.74
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Risalita/@MeshInstance3D@764 per 20 cm",
+		"nodo": "Risalita/@Node3D@841/Mesh_0",
+		"pos": [
+			-37.77,
+			-3.2,
+			37.35
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0 per 34 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b",
+		"pos": [
+			-15.92,
+			2.2,
+			34.86
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0 per 27 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b_vetro",
+		"pos": [
+			-15.89,
+			2.2,
+			34.87
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b",
+		"pos": [
+			-15.86,
+			2.16,
+			34.86
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b_vetro",
+		"pos": [
+			-15.83,
+			2.16,
+			34.87
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/SalaPompe/SALA_tubi per 50 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_scale",
+		"pos": [
+			3.83,
+			-6.2,
+			46.31
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm",
+		"nodo": "Interni/Ambienti/Stanzino/stanzino_statico",
+		"pos": [
+			2.37,
+			1.3,
+			32.5
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0 per 34 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1",
+		"pos": [
+			-2.31,
+			-6.9,
+			49.86
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0 per 26 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1_vetro",
+		"pos": [
+			-2.29,
+			-6.9,
+			49.87
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 20 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1",
+		"pos": [
+			-2.18,
+			-6.94,
+			49.86
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 25 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1_vetro",
+		"pos": [
+			-2.18,
+			-6.94,
+			49.87
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Ambienti/Raccordo/lampada_rc1 per 23 cm",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_staffa1",
+		"pos": [
+			-2.26,
+			-7.02,
+			49.86
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
+		"nodo": "Sala/Dettagli/det_tubo_muro_7cm_2m",
+		"pos": [
+			-2.18,
+			3.56,
+			-23.92
+		],
+		"problema": "estremita_libera",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 76.4 cm)",
+		"nodo": "TorreScivoli/discesa_0_1",
+		"pos": [
+			32.64,
+			-2.14,
+			-21.97
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 16.6 cm)",
+		"nodo": "TorreScivoli/discesa_2_0",
+		"pos": [
+			32.99,
+			-5.86,
+			-8.06
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 31.4 cm)",
+		"nodo": "TorreScivoli/discesa_5_0",
+		"pos": [
+			38.11,
+			-15.44,
+			-16.98
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "TorreProp/prop_salvagente_nave_1",
+		"pos": [
+			23.59,
+			-8.92,
+			-7.59
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "TorreProp/prop_secchio_gigante_1",
+		"pos": [
+			32.6,
+			-19.2,
+			-9.6
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "TorreProp/prop_tubi_galleggianti_1",
+		"pos": [
+			38.41,
+			-2.83,
+			-22.41
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 191.3 cm)",
+		"nodo": "Luci/@MeshInstance3D@4885",
+		"pos": [
+			20.3,
+			6.0,
+			-20.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@4887",
+		"pos": [
+			39.9,
+			1.5,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@4889",
+		"pos": [
+			31.0,
+			-2.5,
+			-4.1
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@4891",
+		"pos": [
+			31.0,
+			-8.0,
+			-25.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@4893",
+		"pos": [
+			20.3,
+			-12.0,
+			-10.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 335.0 cm)",
+		"nodo": "Luci/@MeshInstance3D@4895",
+		"pos": [
+			39.9,
+			-16.5,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@4897",
+		"pos": [
+			27.0,
+			9.0,
+			-25.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.0 cm)",
+		"nodo": "Luci/@MeshInstance3D@4934",
+		"pos": [
+			31.0,
+			0.95,
+			-25.65
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 260.5 cm)",
+		"nodo": "Luci/@MeshInstance3D@4937",
+		"pos": [
+			31.0,
+			1.13,
+			-25.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm)",
+		"nodo": "Luci/@Node3D@4939/@MeshInstance3D@4940",
+		"pos": [
+			26.95,
+			13.4,
+			-19.35
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 412.9 cm)",
+		"nodo": "Luci/@Node3D@4939/@MeshInstance3D@4941",
+		"pos": [
+			27.07,
+			13.31,
+			-19.31
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 126.3 cm)",
+		"nodo": "Luci/@Node3D@4948/@MeshInstance3D@4949",
+		"pos": [
+			26.71,
+			1.5,
+			-19.08
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 123.3 cm)",
+		"nodo": "Luci/@Node3D@4948/@MeshInstance3D@4950",
+		"pos": [
+			26.78,
+			1.43,
+			-18.96
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 126.4 cm)",
+		"nodo": "Luci/@Node3D@4957/@MeshInstance3D@4958",
+		"pos": [
+			26.66,
+			-10.5,
+			-19.05
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 123.5 cm)",
+		"nodo": "Luci/@Node3D@4957/@MeshInstance3D@4959",
+		"pos": [
+			26.71,
+			-10.57,
+			-18.93
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)",
+		"nodo": "Luci/@Node3D@4966/@MeshInstance3D@4967",
+		"pos": [
+			35.06,
+			13.4,
+			-19.33
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@Node3D@4966/@MeshInstance3D@4968",
+		"pos": [
+			34.95,
+			13.31,
+			-19.28
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 426.4 cm)",
+		"nodo": "Luci/@Node3D@4975/@MeshInstance3D@4976",
+		"pos": [
+			35.05,
+			1.5,
+			-19.35
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 423.5 cm)",
+		"nodo": "Luci/@Node3D@4975/@MeshInstance3D@4977",
+		"pos": [
+			34.92,
+			1.43,
+			-19.3
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm)",
+		"nodo": "Luci/@Node3D@4984/@MeshInstance3D@4985",
+		"pos": [
+			35.34,
+			13.4,
+			-10.95
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 412.9 cm)",
+		"nodo": "Luci/@Node3D@4984/@MeshInstance3D@4986",
+		"pos": [
+			35.3,
+			13.31,
+			-11.06
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 126.2 cm)",
+		"nodo": "Luci/@Node3D@4993/@MeshInstance3D@4994",
+		"pos": [
+			35.39,
+			1.5,
+			-10.97
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 123.2 cm)",
+		"nodo": "Luci/@Node3D@4993/@MeshInstance3D@4995",
+		"pos": [
+			35.35,
+			1.42,
+			-11.09
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@Node3D@5002/@MeshInstance3D@5003",
+		"pos": [
+			26.62,
+			13.4,
+			-10.96
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@Node3D@5002/@MeshInstance3D@5004",
+		"pos": [
+			26.66,
+			13.32,
+			-11.09
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 426.3 cm)",
+		"nodo": "Luci/@Node3D@5011/@MeshInstance3D@5012",
+		"pos": [
+			26.98,
+			1.5,
+			-10.57
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 423.3 cm)",
+		"nodo": "Luci/@Node3D@5011/@MeshInstance3D@5013",
+		"pos": [
+			27.11,
+			1.43,
+			-10.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@Node3D@5020/@MeshInstance3D@5021",
+		"pos": [
+			26.93,
+			-10.5,
+			-10.7
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@Node3D@5020/@MeshInstance3D@5022",
+		"pos": [
+			27.05,
+			-10.55,
+			-10.77
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5027",
+		"pos": [
+			26.65,
+			-10.62,
+			-10.55
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5035",
+		"pos": [
+			32.55,
+			9.0,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5036",
+		"pos": [
+			32.38,
+			9.0,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5037",
+		"pos": [
+			32.03,
+			8.9,
+			-14.7
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5038",
+		"pos": [
+			32.11,
+			8.9,
+			-14.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5039",
+		"pos": [
+			32.03,
+			8.8,
+			-15.3
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5040",
+		"pos": [
+			32.11,
+			8.8,
+			-15.15
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5042",
+		"pos": [
+			32.55,
+			-3.0,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5043",
+		"pos": [
+			32.38,
+			-3.0,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5044",
+		"pos": [
+			32.03,
+			-3.1,
+			-14.7
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5045",
+		"pos": [
+			32.11,
+			-3.1,
+			-14.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5046",
+		"pos": [
+			32.03,
+			-3.2,
+			-15.3
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5047",
+		"pos": [
+			32.11,
+			-3.2,
+			-15.15
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5049",
+		"pos": [
+			32.55,
+			-14.0,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5051",
+		"pos": [
+			32.03,
+			-14.1,
+			-14.7
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5052",
+		"pos": [
+			32.11,
+			-14.1,
+			-14.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5053",
+		"pos": [
+			32.03,
+			-14.2,
+			-15.3
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "Luci/@MeshInstance3D@5054",
+		"pos": [
+			32.11,
+			-14.2,
+			-15.15
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 297.5 cm)",
+		"nodo": "FondoPozzo",
+		"pos": [
+			31.0,
+			-25.0,
+			-15.0
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_0",
+		"pos": [
+			45.55,
+			-20.23,
+			-16.19
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_1",
+		"pos": [
+			58.64,
+			-23.37,
+			-22.09
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
+		"pos": [
+			58.8,
+			-30.56,
+			-4.44
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 333.5 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5148",
+		"pos": [
+			40.55,
+			-16.0,
+			-25.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5150",
+		"pos": [
+			77.85,
+			-22.0,
+			-10.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5152",
+		"pos": [
+			60.0,
+			-18.0,
+			-31.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5154",
+		"pos": [
+			50.0,
+			-26.0,
+			1.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5156",
+		"pos": [
+			70.0,
+			-14.0,
+			1.85
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 59.8 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5169",
+		"pos": [
+			54.61,
+			-21.43,
+			-16.4
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 59.8 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5177",
+		"pos": [
+			67.0,
+			-24.43,
+			-25.39
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 59.8 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5185",
+		"pos": [
+			66.89,
+			-27.43,
+			-3.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 254.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5190",
+		"pos": [
+			40.64,
+			-27.35,
+			-5.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5193",
+		"pos": [
+			51.5,
+			-16.5,
+			-7.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5197",
+		"pos": [
+			61.5,
+			-17.5,
+			-17.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5201",
+		"pos": [
+			70.5,
+			-18.5,
+			-24.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5205",
+		"pos": [
+			45.0,
+			-19.0,
+			-22.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5209",
+		"pos": [
+			43.8,
+			-17.0,
+			-28.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5213",
+		"pos": [
+			61.0,
+			-23.5,
+			-9.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5227/POMPA_1",
+		"pos": [
+			50.0,
+			-30.27,
+			-23.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5228/POMPA_2",
+		"pos": [
+			54.4,
+			-30.27,
+			-23.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5229/POMPA_3",
+		"pos": [
+			67.0,
+			-30.27,
+			-14.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5229/POMPA_3_modello",
+		"pos": [
+			67.2,
+			-31.24,
+			-14.77
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5230/det_pannello_lamiera",
+		"pos": [
+			48.6,
+			-32.63,
+			-22.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5231/FILTRO_1_modello",
+		"pos": [
+			52.8,
+			-31.37,
+			-0.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5232/QUADRO_elettrico",
+		"pos": [
+			77.72,
+			-28.12,
+			-22.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5233/TURBINA_1",
+		"pos": [
+			75.4,
+			-28.25,
+			-19.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5234/det_griglia_caduta",
+		"pos": [
+			73.6,
+			-28.96,
+			-21.8
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5236/SCRIVANIA",
+		"pos": [
+			48.0,
+			-19.61,
+			-0.35
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5237/SEDIA",
+		"pos": [
+			48.2,
+			-19.52,
+			-1.15
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5240/det_vetri_rotti_1",
+		"pos": [
+			51.67,
+			-20.0,
+			-0.83
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5241/det_foglio_2",
+		"pos": [
+			49.4,
+			-19.98,
+			-1.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5242/det_tubo_valvola_T",
+		"pos": [
+			55.6,
+			-23.22,
+			-31.82
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5243/det_tubo_curva_su",
+		"pos": [
+			60.47,
+			-19.18,
+			1.92
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 360.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5244/det_tubo_valvola_T",
+		"pos": [
+			40.58,
+			-29.42,
+			-12.4
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5258/det_fascio_cavi_4m",
+		"pos": [
+			48.0,
+			-20.65,
+			0.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5259/det_cavo_festone_3",
+		"pos": [
+			61.0,
+			-20.66,
+			0.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5261/det_cavo_festone_3",
+		"pos": [
+			61.5,
+			-24.66,
+			-30.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5262/det_corda_pendente_2",
+		"pos": [
+			74.01,
+			-21.7,
+			0.9
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.9 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5263/det_corda_rotolo",
+		"pos": [
+			41.0,
+			-29.94,
+			-6.2
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.0 cm)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5264/det_catena_a_terra",
+		"pos": [
+			42.31,
+			-29.98,
+			-2.61
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_0 per 11 cm",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"pos": [
+			40.82,
+			-18.66,
+			-17.4
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_0 per 170 cm",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_1",
+		"pos": [
+			54.72,
+			-21.89,
+			-13.6
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_1 per 169 cm",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
+		"pos": [
+			54.72,
+			-21.91,
+			-16.41
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_1 per 117 cm",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_3",
+		"pos": [
+			63.92,
+			-24.9,
+			-25.28
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_2 per 148 cm",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_5",
+		"pos": [
+			72.22,
+			-27.93,
+			-6.6
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_3 per 17 cm",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4",
+		"pos": [
+			66.78,
+			-27.92,
+			-3.6
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_2 per 182 cm",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2",
+		"pos": [
+			67.02,
+			-24.9,
+			-25.28
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5256/det_tubo_verticale_3m",
+		"pos": [
+			40.49,
+			-25.0,
+			-28.5
+		],
+		"problema": "estremita_libera",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5256/det_tubo_verticale_3m",
+		"pos": [
+			40.49,
+			-22.0,
+			-28.5
+		],
+		"problema": "estremita_libera",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 6.9 cm) (stato: tutto_visibile)",
+		"nodo": "Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6858",
+		"pos": [
+			0.0,
+			1.65,
+			20.3
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 62.0 cm) (stato: tutto_visibile)",
+		"nodo": "Interni/Meccanismi/Saracinesca/Graybox/Spia",
+		"pos": [
+			0.85,
+			1.9,
+			20.41
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 177.5 cm) (stato: tutto_visibile)",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Graybox/Pannello/@MeshInstance3D@7032",
+		"pos": [
+			-15.0,
+			1.88,
+			20.35
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 214.0 cm) (stato: tutto_visibile)",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Graybox/Spia",
+		"pos": [
+			-13.85,
+			2.2,
+			20.51
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 368.5 cm) (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Bordo",
+		"pos": [
+			-13.03,
+			4.34,
+			-7.78
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 207.2 cm) (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"pos": [
+			-12.95,
+			3.41,
+			-7.82
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/SchizzoCoda/Schiuma",
+		"pos": [
+			1.5,
+			-1.94,
+			-1.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Schiuma",
+		"pos": [
+			1.5,
+			-1.94,
+			-1.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.45 e 2.00 m sopra il pavimento (248 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Corona",
+		"pos": [
+			0.5,
+			-2.17,
+			0.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.60 e 2.00 m sopra il pavimento (22 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/SchizzoCoda/Corona",
+		"pos": [
+			0.5,
+			-2.17,
+			0.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "entra dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile)",
+		"nodo": "Interni/Meccanismi/Saracinesca",
+		"pos": [
+			0.17,
+			1.1,
+			20.35
+		],
+		"problema": "compenetrato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "il 70% dei suoi vertici è dentro Sala/Piscina/sala_piscina_onde (stato: tutto_visibile)",
+		"nodo": "Tecnici/Ambienti/CameraOnde/PORTELLO",
+		"pos": [
+			0.0,
+			-2.32,
+			2.74
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "il 43% dei suoi vertici è dentro Gioco/LeiSbuca/SchizzoCoda/Corona (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Corona",
+		"pos": [
+			0.0,
+			0.0,
+			0.0
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/LeiSbuca/SchizzoTesta/Corona per 131 cm (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/SchizzoCoda/Schiuma",
+		"pos": [
+			0.0,
+			0.01,
+			0.0
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Gioco/LeiSbuca/SchizzoCoda/Corona per 131 cm (stato: tutto_visibile)",
+		"nodo": "Gioco/LeiSbuca/SchizzoTesta/Schiuma",
+		"pos": [
+			0.0,
+			0.01,
+			0.0
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile)",
+		"nodo": "Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6856",
+		"pos": [
+			0.0,
+			1.1,
+			20.3
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile)",
+		"nodo": "Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6858",
+		"pos": [
+			0.0,
+			1.65,
+			20.3
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "passa dentro Tecnici/Logica/SerrandaMagazzino/Graybox/Pannello/@MeshInstance3D@7030 per 180 cm (stato: tutto_visibile)",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Barra",
+		"pos": [
+			-15.0,
+			0.02,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (stato: tutto_visibile)",
+		"nodo": "SalaInseguimento/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Bordo",
+		"pos": [
+			0.0,
+			4.89,
+			-0.01
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (stato: tutto_visibile)",
+		"nodo": "SalaInseguimento/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"pos": [
+			0.02,
+			3.96,
+			-0.09
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-2",
+		"zona": "torre"
+	},
+	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.18 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",

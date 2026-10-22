@@ -50,7 +50,8 @@ const SQUADRE := [
 	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
 	["ArredoRisalita", "enigmi"],
 ]
-const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2"}   # tecnici: tools/blender/ambienti2_*.py
+const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2",
+	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
 const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
@@ -356,12 +357,15 @@ func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: S
 		var nodo := _nodo(n)
 		if z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
 			return
-		# già trovato nello stato iniziale (stesso nodo, stesso problema): non si ripete
-		if _trovati.any(func(t): return t["nodo"] == nodo and t["problema"] == problema):
-			return
 		dettaglio += " (stato: %s)" % z["stato"]
 	var k := {"zona": _zona(z, n), "nodo": _nodo(n), "squadra": _squadra(_zona(z, n), _nodo(n)), "problema": problema,
 			"pos": [snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(pos.z, 0.01)], "dettaglio": dettaglio}
+	if z.has("stato"):
+		# già trovato nello stato iniziale (stesso nodo, stesso problema; i nodi fatti da codice, @Classe@N, cambiano
+		# numero da un'istanza all'altra: si confrontano con la posizione, come le eccezioni): non si ripete
+		var mia := _chiave_senza_zona(k)
+		if _trovati.any(func(t): return _chiave_senza_zona(t) == mia):
+			return
 	_trovati.append(k)
 
 
@@ -871,6 +875,12 @@ func _frazione_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 
 ## La chiave di un caso: zona, nodo e problema; i nodi fatti da codice hanno nomi automatici (@MeshInstance3D@217)
 ## che cambiano: per loro conta il tipo e la posizione arrotondata a mezzo metro.
+static func _chiave_senza_zona(e: Dictionary) -> String:
+	var c := e.duplicate()
+	c["zona"] = ""
+	return chiave_caso(c)
+
+
 static func chiave_caso(e: Dictionary) -> String:
 	var nodo := String(e["nodo"])
 	var re := RegEx.create_from_string("@([A-Za-z0-9]+)@[0-9]+")
