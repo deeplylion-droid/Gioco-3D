@@ -21,6 +21,10 @@ const SHADER_BOCCA := preload("res://shaders/creature/bocca_squalo.gdshader")
 ## Livello di render solo dello squalo: la luce della corsa illumina lui e nient'altro (né il corridoio né
 ## la nebbia).
 const STRATO_SQUALO := 1 << 16
+## La camera non entra mai nello squalo: resta almeno a tanto dalla sua superficie (i vertici della mesh
+## deformati dallo scheletro, presi uno ogni CELLA di spazio nella posa di riposo).
+const DISTANZA_PELLE := 0.24
+const CELLA := 0.08
 
 ## La porta tagliafuoco (il nodo del modello del corridoio) e il suo cardine, nello spazio degli interni.
 @export var porta: Node3D
@@ -45,9 +49,16 @@ var _suoni := {}
 var _yaw0 := 0.0
 var _sguardo := Vector3.ZERO
 var _scossa := 0.0          # sobbalzo della camera (si smorza)
+var _passo_t := -1.0        # quando ha toccato terra l'ultimo passo (per la scossa della camera)
+var _passo_forza := 0.0     # quanto forte la scossa di quel passo (0-1)
+var _passo_lato := 1.0      # da che parte rolla la camera (si alterna a ogni passo)
 var _fine := 0.0
 var _luce_corsa: OmniLight3D
 var _torcia_accesa = null    # com'era la torcia prima della scena (null: niente torcia)
+var _pelle: Array = []       # [posizione a riposo, PackedInt32Array ossa della skin, PackedFloat32Array pesi]
+var _pelle_mi: MeshInstance3D
+var _pelle_bind: Array = []  # per ogni bind della skin: [osso dello scheletro, matrice di bind]
+var _spinta := Vector3.ZERO  # di quanto la camera è spostata fuori dalla pelle (nello spazio del mondo)
 
 
 func _ready() -> void:
@@ -125,8 +136,101 @@ func _crea_squalo() -> void:
 	_luce_corsa.light_specular = 0.3
 	squalo.add_child(_luce_corsa)
 	if _anim:
+		# l'animazione avanza qui, prima della camera: la camera la sposta fuori dalla posa di questo fotogramma
+		_anim.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
 		_anim.play(_anim.get_animation_list()[0] if not _anim.has_animation("risveglio") else "risveglio")
 		_anim.seek(0.0, true)
+	_prepara_pelle()
+
+
+## I punti della pelle per tenere fuori la camera: un vertice per ogni cella di CELLA metri.
+func _prepara_pelle() -> void:
+	_pelle.clear()
+	_pelle_bind.clear()
+	_spinta = Vector3.ZERO
+	for n in squalo.find_children("*", "MeshInstance3D", true, false):
+		if (n as MeshInstance3D).skin:
+			_pelle_mi = n as MeshInstance3D
+	if _pelle_mi == null or _scheletro == null:
+		return
+	var skin := _pelle_mi.skin
+	for i in skin.get_bind_count():
+		var osso := skin.get_bind_bone(i)
+		if osso < 0:
+			osso = _scheletro.find_bone(skin.get_bind_name(i))
+		_pelle_bind.append([osso, skin.get_bind_pose(i)])
+	var visti := {}
+	var m := _pelle_mi.mesh
+	for sup in m.get_surface_count():
+		var a := m.surface_get_arrays(sup)
+		var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+		var b: PackedInt32Array = a[Mesh.ARRAY_BONES]
+		var w: PackedFloat32Array = a[Mesh.ARRAY_WEIGHTS]
+		var k := b.size() / maxi(v.size(), 1)
+		for i in v.size():
+			var c := Vector3i((v[i] / CELLA).floor())
+			if visti.has(c):
+				continue
+			visti[c] = true
+			_pelle.append([v[i], b.slice(i * k, i * k + k), w.slice(i * k, i * k + k)])
+
+
+## Quanto spostare la camera (nel mondo) perché stia almeno a DISTANZA_PELLE dalla pelle dello squalo: indietro,
+## via da lui (in orizzontale, dal suo corpo verso la camera), del minimo che basta.
+func _fuori_dalla_pelle(occhio: Vector3) -> Vector3:
+	var punti := _pelle_vicina(occhio)
+	if punti.is_empty():
+		return Vector3.ZERO
+	var via := occhio - _bone_mondo("spina")
+	via.y = 0.0
+	via = via.normalized() if via.length() > 0.01 else _p.global_basis.z
+	var d2 := DISTANZA_PELLE * DISTANZA_PELLE
+	var t := 0.0
+	while t <= 1.2:
+		var q := occhio + via * t
+		var libera := true
+		for pt in punti:
+			if q.distance_squared_to(pt) < d2:
+				libera = false
+				break
+		if libera:
+			return via * t
+		t += 0.02
+	return via * 1.2
+
+
+## I punti della pelle (deformati) che possono stare vicino alla camera: quelli delle ossa entro 1,5 m, e di
+## questi quelli entro 1,5 m dalla camera.
+func _pelle_vicina(occhio: Vector3) -> PackedVector3Array:
+	var out := PackedVector3Array()
+	if _pelle.is_empty() or squalo == null or not squalo.visible:
+		return out
+	var pose: Array = []
+	var vicino: Array = []
+	for bd in _pelle_bind:
+		var gp := _scheletro.global_transform * _scheletro.get_bone_global_pose(int(bd[0]))
+		pose.append(gp * (bd[1] as Transform3D))
+		vicino.append(gp.origin.distance_squared_to(occhio) < 2.25)
+	for pv in _pelle:
+		var ossa: PackedInt32Array = pv[1]
+		var pesi: PackedFloat32Array = pv[2]
+		var serve := false
+		for j in ossa.size():
+			if pesi[j] > 0.0 and vicino[ossa[j]]:
+				serve = true
+		if not serve:
+			continue
+		var q := Vector3.ZERO
+		var tot := 0.0
+		for j in ossa.size():
+			if pesi[j] > 0.0:
+				q += (pose[ossa[j]] as Transform3D) * (pv[0] as Vector3) * pesi[j]
+				tot += pesi[j]
+		if tot > 0.0:
+			q /= tot
+			if q.distance_squared_to(occhio) < 2.25:
+				out.append(q)
+	return out
 
 
 func _prepara_porta() -> void:
@@ -181,6 +285,8 @@ func _process(delta: float) -> void:
 	if not _attivo:
 		return
 	_t += delta
+	if _anim and _anim.is_playing():
+		_anim.advance(delta)
 	var M: float = tempi.get("minaccia", 2.4)
 	var R: float = tempi.get("richiamo", 5.4)
 	var G: float = tempi.get("giro", 5.85)
@@ -207,11 +313,12 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 		_suona("minaccia", &"squalo_minaccia", _nodo_bocca())
 	if _t > R:
 		_suona("richiamo", &"jilly_richiamo", to_global(Vector3(0, 1.3, -8.5)))
-	if _t > E + 0.92:
+	if _t > float(tempi.get("sbuffo", E + 1.0)) - 0.07:
 		_suona("sbuffo", &"squalo_sbuffo", _nodo_bocca())
 	var passi: Array = tempi.get("passi", [])
 	while _passi_fatti < passi.size() and _t >= float(passi[_passi_fatti]):
 		_suona("passo%d" % _passi_fatti, &"squalo_passo", _bone_mondo("radice"))
+		_passo_della_camera()
 		_passi_fatti += 1
 	# la porta: lui ci passa, poi sbatte e resta chiusa; lui non si vede più
 	if _perno and not _porta_chiusa:
@@ -225,6 +332,32 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 		squalo.visible = false
 		if _anim:
 			_anim.pause()
+
+
+## Ogni passo dal giro alla porta scuote la camera, insieme al suono: forte vicino (e nel giro, addosso al
+## giocatore), sempre più debole mentre si allontana (richiesta dell'utente del 22 ottobre: "un bel tremolio della
+## camera in corrispondenza dei suoi passi").
+func _passo_della_camera() -> void:
+	if _p == null:
+		return
+	var d := _p.camera.global_position.distance_to(_bone_mondo("radice"))
+	_passo_forza = clampf(1.8 / maxf(d, 0.1), 0.0, 1.0)
+	_passo_forza *= _passo_forza * 0.5 + 0.5     # cala più in fretta lontano
+	_passo_t = _t
+	_passo_lato = -_passo_lato
+
+
+## La scossa del passo adesso: [scesa della camera (m), beccheggio (radianti), rollio (radianti)]. Breve e
+## marcata: giù di colpo in 35 ms, poi torna su smorzata in 0,2 s con un piccolo rimbalzo.
+func _scossa_passo() -> Vector3:
+	if _passo_t < 0.0:
+		return Vector3.ZERO
+	var x := _t - _passo_t
+	if x > 0.35:
+		return Vector3.ZERO
+	var botta := x / 0.035 if x < 0.035 else exp(-(x - 0.035) / 0.07) * cos((x - 0.035) * 28.0)
+	var f := _passo_forza * botta
+	return Vector3(0.045 * f, deg_to_rad(1.6) * f, deg_to_rad(1.1) * f * _passo_lato)
 
 
 ## La luce della corsa: dietro e sopra di lui, dalla parte del giocatore; si accende quando si gira verso la
@@ -294,13 +427,27 @@ func _camera(M: float, R: float, G: float, E: float, porta_t: float, delta: floa
 	paura *= 1.0 - _liscio(0.0, 1.0, alzati, alzati + 1.4) * 0.8
 	var tr := Vector3(_rumore(_t, 7.0, 1.0), _rumore(_t, 6.0, 2.0), _rumore(_t, 5.0, 3.0)) * 0.012 * paura
 	tr += Vector3(_rumore(_t, 21.0, 4.0), _rumore(_t, 19.0, 5.0), 0.0) * 0.03 * _scossa
+	var sp := _scossa_passo()
 	var d := _sguardo - occhio
 	var yaw := atan2(-d.x, -d.z) + tr.x
-	var pitch := atan2(d.y, Vector2(d.x, d.z).length()) + tr.y
+	var pitch := atan2(d.y, Vector2(d.x, d.z).length()) + tr.y - sp.y
 	_p.set_look(yaw, pitch)
 	# la testa sdraiata è girata su un fianco e si raddrizza mentre si rialza
-	cam.rotation.z = deg_to_rad(_liscio(70.0, 0.0, 1.1, 2.4)) + tr.z
-	cam.position = Vector3(0.0, h - _p.stand_eye_height - indietro * 0.3, indietro)
+	cam.rotation.z = deg_to_rad(_liscio(70.0, 0.0, 1.1, 2.4)) + tr.z + sp.z
+	# (la scossa del passo prima della distanza dalla pelle: anche scossa resta fuori da lui)
+	cam.position = Vector3(0.0, h - _p.stand_eye_height - indietro * 0.3 - sp.x, indietro)
+	# mai dentro lo squalo: fuori dalla sua pelle (la spinta sale subito e cala piano, senza scatti)
+	# la testa del giocatore subito con lo sguardo di adesso (lo rifà lui dopo, uguale): così la posizione
+	# della camera nel mondo è già quella che si vedrà
+	_p.call(&"_update_head", Engine.get_physics_interpolation_fraction())
+	var base := cam.global_position
+	var serve := _fuori_dalla_pelle(base)
+	if serve.length() >= _spinta.length():
+		_spinta = serve
+	else:
+		_spinta = _spinta.lerp(serve, 1.0 - exp(-6.0 * delta)) if delta > 0.0 else serve
+		_spinta += _fuori_dalla_pelle(base + _spinta)
+	cam.global_position = base + _spinta
 
 
 func _termina() -> void:

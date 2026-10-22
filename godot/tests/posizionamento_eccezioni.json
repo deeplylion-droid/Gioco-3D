@@ -1,5 +1,44 @@
 [
 	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20172",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			67.0,
+			-25.58,
+			-25.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20180",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			67.0,
+			-28.58,
+			-4.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@20164",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			54.5,
+			-22.58,
+			-16.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre (stato: inseguimento_dopo): l'anello di led verdi della paratia giusta è figlio di Luci, non del pannello; quando il pannello sale resta a mezz'aria nel passaggio verso il tubo, dove si passa accovacciati. Va legato al pannello, così sale con lui"
+	},
+	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
 		"squadra": "ambienti-1",
@@ -63,6 +102,240 @@
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/@MeshInstance3D@40",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-17.43,
+			0.06,
+			3.24
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/estintore",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-0.1,
+			1.15,
+			40.69
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 84.0 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/porta_servizio",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-9.66,
+			1.02,
+			39.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.64,
+			0.96,
+			36.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_07_anta",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.73,
+			0.96,
+			34.56
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.63,
+			0.96,
+			33.59
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_05_anta",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-6.14,
+			0.96,
+			35.44
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-6.03,
+			0.96,
+			33.24
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_15_anta",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			-6.18,
+			0.96,
+			31.43
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 18.3 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Spogliatoi/armadietto_sbatte_anta",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			0.81,
+			0.96,
+			35.77
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 5.2 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/braccioli_stanzino",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			5.2,
+			2.07,
+			31.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.0 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			4.9,
+			1.13,
+			34.49
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 82.0 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_1",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			4.82,
+			1.0,
+			33.35
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/salvagente_rastrelliera_2",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			4.82,
+			1.0,
+			31.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) (ambienti-1)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Zaino/Modello/Zaino",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			4.78,
+			1.03,
+			32.47
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm) (ambienti-1)"
+	},
+	{
+		"zona": "mascotte",
+		"nodo": "Mascotte/ManifestoJilly/Plane_001",
+		"squadra": "mascotte",
+		"problema": "staccato",
+		"pos": [
+			-19.97,
+			1.93,
+			14.24
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 189.0 cm) (mascotte)"
+	},
+	{
+		"zona": "mascotte",
+		"nodo": "Mascotte/InsegnaJilly/lampada_dx_lampadina",
+		"squadra": "mascotte",
+		"problema": "staccato",
+		"pos": [
+			-19.53,
+			5.39,
+			4.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (mascotte)"
+	},
+	{
+		"zona": "mascotte",
+		"nodo": "Mascotte/InsegnaJilly/lampada_sx_lampadina",
+		"squadra": "mascotte",
+		"problema": "staccato",
+		"pos": [
+			-19.53,
+			5.39,
+			5.84
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (mascotte)"
 	},
 	{
 		"zona": "interni",
@@ -403,6 +676,123 @@
 		"motivo": "bocchette dell'aria sul muro sud della camera delle onde (da 1,65 m), ora con la collisione: ci si ferma contro come contro il muro. Se non va bene: alzarle di 40 cm in ambienti2_camera_onde.py"
 	},
 	{
+		"zona": "sala",
+		"nodo": "Polaroid/Polaroid05",
+		"squadra": "ambienti-1",
+		"problema": "compenetrato",
+		"pos": [
+			1.2,
+			-2.17,
+			2.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: entra dentro Sala/Piscina/sala_piscina_onde (ambienti-1)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Interattivi/sala_portello_scarico",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			0.0,
+			-2.2,
+			2.02
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 130 cm (ambienti-1)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			0.0,
+			-2.32,
+			2.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Sala/Piscina/sala_piscina_onde per 30 cm (ambienti-2)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Piscina/LucePortellone/Anello",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			0.0,
+			-2.18,
+			2.02
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm (ambienti-1)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/Valvola/Scarico",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			9.07,
+			0.0,
+			-19.74
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Gioco/EnigmaAcquari/Valvola/Modello/Mesh_0 per 16 cm (enigmi)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@Node3D@841/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.77,
+			-3.2,
+			37.35
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Risalita/@MeshInstance3D@764 per 20 cm (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-15.86,
+			2.16,
+			34.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b_vetro",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-15.83,
+			2.16,
+			34.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1 per 24 cm (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_scale",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			3.83,
+			-6.2,
+			46.31
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/SalaPompe/SALA_tubi per 50 cm (enigmi)"
+	},
+	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
 		"squadra": "ambienti-1",
@@ -417,6 +807,19 @@
 	},
 	{
 		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/stanzino_statico",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			2.37,
+			1.3,
+			32.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm (ambienti-1)"
+	},
+	{
+		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla",
 		"squadra": "ambienti-1",
 		"problema": "compenetra",
@@ -427,6 +830,19 @@
 		],
 		"stato": "voluto",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-0.91,
+			2.35,
+			21.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm (ambienti-1)"
 	},
 	{
 		"zona": "interni",
@@ -482,6 +898,32 @@
 	},
 	{
 		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-2.18,
+			-6.94,
+			49.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 20 cm (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1_vetro",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-2.18,
+			-6.94,
+			49.87
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1 per 25 cm (enigmi)"
+	},
+	{
+		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
 		"squadra": "ambienti-2",
 		"problema": "compenetra",
@@ -534,6 +976,19 @@
 	},
 	{
 		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_staffa1",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-2.26,
+			-7.02,
+			49.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro Tecnici/Ambienti/Raccordo/lampada_rc1 per 23 cm (enigmi)"
+	},
+	{
+		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/neon_rc_neon/neon_rc_tubo_sfarfalla",
 		"squadra": "enigmi",
 		"problema": "compenetra",
@@ -544,6 +999,214 @@
 		],
 		"stato": "voluto",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_tubo_muro_7cm_2m",
+		"squadra": "ambienti-1",
+		"problema": "estremita_libera",
+		"pos": [
+			-2.18,
+			3.56,
+			-23.92
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-1)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "FondoPozzo",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			31.0,
+			-25.0,
+			-15.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 297.5 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5156",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			40.55,
+			-16.0,
+			-25.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 333.5 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5158",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			77.85,
+			-22.0,
+			-10.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5160",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			60.0,
+			-18.0,
+			-31.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5162",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			50.0,
+			-26.0,
+			1.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@MeshInstance3D@5164",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			70.0,
+			-14.0,
+			1.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5236/POMPA_2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			54.4,
+			-30.27,
+			-23.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5242/det_griglia_caduta",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			73.6,
+			-28.96,
+			-21.8
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5244/SCRIVANIA",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			48.0,
+			-19.61,
+			-0.35
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5245/SEDIA",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			48.2,
+			-19.52,
+			-1.15
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5248/det_vetri_rotti_1",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			51.67,
+			-20.0,
+			-0.83
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.6 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5249/det_foglio_2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			49.4,
+			-19.98,
+			-1.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5252/det_tubo_valvola_T",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			40.58,
+			-29.42,
+			-12.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 360.0 cm) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5270/det_corda_pendente_2",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			74.01,
+			-21.7,
+			0.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a più di 5 m) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5271/det_corda_rotolo",
+		"squadra": "ambienti-2",
+		"problema": "staccato",
+		"pos": [
+			41.0,
+			-29.94,
+			-6.2
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.9 cm) (ambienti-2)"
 	},
 	{
 		"zona": "torre",
@@ -625,45 +1288,6 @@
 	},
 	{
 		"zona": "torre",
-		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_collare",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			40.51,
-			-19.32,
-			-17.53
-		],
-		"stato": "voluto",
-		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)"
-	},
-	{
-		"zona": "torre",
-		"nodo": "TorreStruttura/torre_A",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			40.01,
-			-19.18,
-			-17.78
-		],
-		"stato": "voluto",
-		"motivo": "il bordo del foro nel muro est dove passa il tubo dell'inseguimento: le celle sono dentro il tubo (ambienti-2, 22 ottobre)"
-	},
-	{
-		"zona": "torre",
-		"nodo": "TorreScivoli/torre_collare_inseguimento",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			40.01,
-			-19.18,
-			-17.78
-		],
-		"stato": "voluto",
-		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)"
-	},
-	{
-		"zona": "torre",
 		"nodo": "TorreStruttura/torre_A_sostegni",
 		"squadra": "ambienti-2",
 		"problema": "ingombro",
@@ -676,16 +1300,120 @@
 		"motivo": "celle dentro il tubo dell'inseguimento, e il collare sotto la coda del tratto 5, 1,93 m sopra il terzo gradino della bocca, sul bordo est della salita (ambienti-2, 22 ottobre)"
 	},
 	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/LampadaValvola/Modello/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
+		"zona": "torre",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
 		"pos": [
-			6.84,
-			2.25,
-			-21.32
+			40.82,
+			-18.66,
+			-17.4
 		],
-		"stato": "voluto",
-		"motivo": "la piastra della lampada poggia sui due collari stretti al tirante (Collare1 e Collare2, che il controllo trova attaccati); il controllo prova 48 dei 45 mila vertici del modello e nessuno cade sul retro della piastra, che è lo 0,2% dei vertici; visto nello scatto ravvicinato"
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_0 per 11 cm (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_1",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			54.72,
+			-21.89,
+			-13.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_0 per 170 cm (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			54.72,
+			-21.91,
+			-16.41
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_1 per 169 cm (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_3",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			63.92,
+			-24.9,
+			-25.28
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_1 per 117 cm (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_5",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			72.22,
+			-27.93,
+			-6.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_scolo_2 per 148 cm (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			66.78,
+			-27.92,
+			-3.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_3 per 17 cm (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			67.02,
+			-24.9,
+			-25.28
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: passa dentro SalaInseguimento/InseguimentoTubi/ins_A_tubo_2 per 182 cm (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5264/det_tubo_verticale_3m",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			40.49,
+			-25.0,
+			-28.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-2)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/Luci/@Node3D@5264/det_tubo_verticale_3m",
+		"squadra": "ambienti-2",
+		"problema": "estremita_libera",
+		"pos": [
+			40.49,
+			-22.0,
+			-28.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo severo del 22 ottobre: un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) (ambienti-2)"
 	}
 ]

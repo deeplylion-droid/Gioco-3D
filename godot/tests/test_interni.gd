@@ -165,11 +165,13 @@ func _scena_squalo(start: Marker3D) -> void:
 	var torcia_prima := true
 	if torcia:
 		torcia_prima = torcia.accesa
-		torcia.imposta_accesa(false)
+		torcia.imposta_accesa(true)
 	var torcia_toccata := false
 	var premute := 0
 	level.call(&"fai_risveglio", p, true)
 	await _frames(2)
+	if torcia:
+		check(not torcia.accesa, "il gioco inizia a torcia spenta")
 	check(not p.input_enabled and s.in_corso() and s.squalo != null, "il giocatore non si muove: la camera è guidata")
 	var perno := level.find_child("PernoPortaTagliafuoco", true, false) as Node3D
 	check(perno != null and absf(perno.rotation_degrees.y - 100.0) < 1.0, "la porta tagliafuoco è aperta")
@@ -181,6 +183,11 @@ func _scena_squalo(start: Marker3D) -> void:
 	var porta_t: float = s.tempi.get("porta", 10.0)
 	var t := 0.0
 	var corsa_x := -99.0
+	var pelle_min := 99.0
+	var scosse := 0
+	var scossa_prima := 0.0
+	var scossa_forte := 0.0
+	var scossa_ultima := 0.0
 	while not fatto[0] and t < 16.0:
 		await get_tree().process_frame
 		t += 1.0 / 60.0
@@ -189,9 +196,17 @@ func _scena_squalo(start: Marker3D) -> void:
 			await _tasto_torcia()
 			t += 2.0 / 60.0
 			torcia_toccata = torcia_toccata or torcia.accesa
+		var sp: Vector3 = s.call(&"_scossa_passo")
+		if sp.x > 0.008 and scossa_prima <= 0.008:
+			scosse += 1
+			scossa_forte = maxf(scossa_forte, float(s.get(&"_passo_forza")))
+			scossa_ultima = float(s.get(&"_passo_forza"))
+		scossa_prima = sp.x
 		if s.squalo == null or not s.squalo.visible:
 			continue
 		var occhio := p.camera.global_position
+		for q: Vector3 in s.call(&"_pelle_vicina", occhio):
+			pelle_min = minf(pelle_min, q.distance_to(occhio))
 		var bocca: Vector3 = s.call(&"_punto_bocca")
 		var apertura: float = s.call(&"_bone_mondo", "bocca").distance_to(s.call(&"_bone_mondo", "mento_punta"))
 		if t > 2.6 and t < 5.3:
@@ -213,6 +228,9 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(max_apertura > 0.28, "ed è spalancata (%.2f m tra il labbro e il mento)" % max_apertura)
 	check(max_angolo_in_minaccia < 22.0, "la camera la guarda in faccia (al massimo %.0f° di lato)" % max_angolo_in_minaccia)
 	check(dentro, "lo squalo resta dentro il corridoio (niente muri attraversati)")
+	check(pelle_min > 0.18, "la camera non entra mai nello squalo, anche con le scosse (al più vicino %.2f m dalla sua pelle)" % pelle_min)
+	check(scosse >= 8 and scossa_forte > 0.8 and scossa_ultima < scossa_forte * 0.5,
+		"la camera trema a ogni passo, forte vicino e sempre meno lontano (%d scosse, da %.2f a %.2f)" % [scosse, scossa_forte, scossa_ultima])
 	check(corsa_x > 22.2, "corre fino oltre la porta tagliafuoco (x %.2f)" % corsa_x)
 	check(alla_porta_y > 0.0 and alla_porta_y < 1.35, "alla porta si abbassa per passare (schiena a %.2f m)" % alla_porta_y)
 	check(fatto[0] and t < porta_t + 4.5, "la scena finisce (%.1f s)" % t)
