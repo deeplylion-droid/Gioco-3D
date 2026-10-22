@@ -43,6 +43,9 @@ ext = [
     ('MultiMesh', 'res://assets/enigma_acquari/portalampade_portone.res', 'mm_porta'),
     ('MultiMesh', 'res://assets/enigma_acquari/lampadine_spente.res', 'mm_spente'),
     ('MultiMesh', 'res://assets/enigma_acquari/lampadine_accese.res', 'mm_accese'),
+    ('Script', 'res://assets/enigma_acquari/multimesh_da_meta.gd', 'mm_da_meta'),
+    ('ArrayMesh', 'res://assets/enigma_acquari/raccordo_becco.res', 'raccordo_becco'),
+    ('ArrayMesh', 'res://assets/enigma_acquari/raccordo_staffa_bassa.res', 'raccordo_staffa_bassa'),
 ]
 L = ['[gd_scene format=3]', '']
 for t, p, i in ext:
@@ -80,8 +83,13 @@ BASE_C, COP_C = (0.0339, -0.0357), (0.0409, -0.0330)
 # base ha nell'incavo (a 30 + 60 k gradi, piccoli: una gamba per appoggio non ci stava); dentro quel raggio la base non
 # ha niente più in alto. Sopra: un anello piatto sul bordo del vetro, e il coperchio abbassato fino a poggiarci. Nel basso il fondo sta su cinque gambe sul piano interno della base, 0,29 KY sotto il vetro, dove è
 # libero (misurato: niente che sporga nell'impronta delle gambe).
-GRADINO = 0.1485            # quanto il gradino dell'incavo sta sotto il fondo del vetro (unità del modello)
+# (controllo di posizionamento del 22 ottobre sera) Il gradino non è piano: fra -0,295 e -0,298 m, e il basamento lo
+# passava di 1-2 mm per 9 cm; ora finisce 0,5 mm sopra il punto più alto (-0,29496). Il coperchio ha una gonna sottile
+# (un foglio solo) che scende fino alla sua origine, da 1,1397 m dal centro in fuori: abbassato, scende 10 cm intorno
+# alla cima del vetro, e l'anello largo fino a 1,22 m la passava; ora l'anello arriva a 1,136 m, dentro la gonna.
+GRADINO = 0.14725           # quanto il fondo del basamento sta sotto il fondo del vetro (unità del modello)
 ABBASSA_COP = 0.0505        # il coperchio scende di tanto (unità del modello) fino all'anello
+R_ANELLO = (0.5475 * K, 1.136)   # l'anello sul bordo del vetro (dentro e fuori, m)
 
 
 # le luci: con spot_attenuation 0,8 a distanza doppia arriva 2^-0,8 della luce, e si compensa
@@ -167,8 +175,13 @@ sr('CylinderMesh', 'tirante', top_radius='%.3f' % (0.022 * K), bottom_radius='%.
 sr('CylinderMesh', 'basamento_vetro', top_radius='%.4f' % (0.5675 * K), bottom_radius='%.4f' % (0.5675 * K), height='%.4f' % (GRADINO * K), radial_segments='64')
 sr('CylinderMesh', 'fondo_vetro_basso', top_radius='%.4f' % (R_B + 0.02), bottom_radius='%.4f' % (R_B + 0.02), height='0.02', radial_segments='64')
 sr('CylinderMesh', 'gamba_vetro_basso', top_radius='0.025', bottom_radius='0.025', height='%.4f' % (0.29 * KY - 0.02), radial_segments='12')
-sr('TorusMesh', 'anello_vetro', inner_radius='%.4f' % (0.5475 * K), outer_radius='%.4f' % (0.61 * K), rings='64', ring_segments='12')
+sr('TorusMesh', 'anello_vetro', inner_radius='%.4f' % R_ANELLO[0], outer_radius='%.4f' % R_ANELLO[1], rings='64', ring_segments='12')
 sr('CylinderShape3D', 'forma_alto', radius='%.3f' % (0.5 * K), height='%.3f' % (2.95 * K))
+# la base è più larga del vetro: fino a 1,25 m dal centro, 1,36-1,44 dove sporgono costole e attacchi (misurato fuori
+# dai raccordi), e i tiranti a 1,24 m; con la collisione del vetro (1 m) ci si entrava dentro fin quasi a metà (controllo
+# di posizionamento del 22 ottobre sera: la base e i tiranti a meno di 10 cm dalla testa)
+R_FORMA_BASE, H_FORMA_BASE = 1.3, B_BASE + 0.45
+sr('CylinderShape3D', 'forma_base_alta', radius='%.3f' % R_FORMA_BASE, height='%.3f' % H_FORMA_BASE)
 sr('TorusMesh', 'anello', inner_radius='%.4f' % (R_B - 0.025 * KX), outer_radius='%.4f' % (R_B + 0.045 * KX), rings='64')
 sr('CylinderShape3D', 'forma_base_bassa', radius='%.3f' % (R_B + 0.02 * KX), height='%.3f' % B_BASSO_BASE)
 sr('BoxShape3D', 'forma_parete', size='Vector3(%.3f, %.3f, %.3f)' % (0.45 * KX, 0.4 * KY, 0.06 * KX))
@@ -254,31 +267,59 @@ def cilindro(nome, parent, a, b, r, mat='ExtResource("m_tubi")', seg=12):
     node(nome, 'MeshInstance3D', parent, transform=tr(rows, tuple((a[i] + b[i]) / 2 for i in range(3))), mesh='SubResource("%s")' % sid, material_override=mat)
 
 
+# Gli allacci misurati sulle facce dei GLB scalati (K 2 per gli alti; 2,9 in pianta e 2 in altezza per il basso), in
+# metri nel sistema della base, y dal pavimento (controllo di posizionamento del 22 ottobre sera: i tubi entravano 2-16 cm
+# nella pompa, nel serbatoio e nelle gambe, e la flangia della pompa non sta davanti al bocchettone del serbatoio). Valgono
+# per K 2, la scala scelta.
+ALLACCI = {
+    # alto: la flangia della pompa (centro z -0,143, y 0,948; la faccia a x -1,471..-1,4755, un perno in mezzo che esce
+    # fino a -1,445, dentro il tubo) e il bocchettone sulla costola del serbatoio (centro z -0,068, y 0,9915, raggio
+    # 0,037-0,043, faccia a x -1,1465..-1,152): 8 cm di scarto, il tubo fa due curve. Le gambe: il centro, il raggio e la
+    # cima, 1 mm sotto il fondo della gamba vera (la gamba 0,3931, la spina 0,4469-0,4524)
+    False: dict(pompa=[(-1.4699, 0.9476, -0.1429), (-1.31, 0.9476, -0.1429), (-1.31, 0.9915, -0.0684), (-1.1497, 0.9915, -0.0684)],
+                r_pompa=0.035, gamba=((1.6971, -0.1421), 0.068, 0.392), spina=((2.1201, -0.224), 0.042, 0.4459)),
+    # basso: dalla faccia della pompa tagliata (x -2,240) alla costola del serbatoio (x -1,638..-1,642), dove è piana (fra
+    # y 0,61 e 0,72), di lato ai due bulloni che ha sopra e sotto (z -0,14..-0,06; quello di sopra è tagliato in cima, e
+    # per il controllo di posizionamento quello che gli sta sotto risultava dentro la base); le gambe come negli alti
+    True: dict(pompa=[(-2.239, 0.665, -0.18), (-1.643, 0.665, -0.18)], r_pompa=0.028,
+               gamba=((2.4608, -0.2061), 0.10, 0.392), spina=((3.0742, -0.3248), 0.062, 0.4459)),
+}
+
+
 def allacci(nome, sx, sy, sz, y0, basso, ox=0.0, oz=0.0):
     """I tubi delle basi chiusi tutti (riscontro dell'utente del 22 ottobre: "è tutto compenetrato o
     fluttuante"). Dal GLB della base (misure in unità del modello, prese sulle facce): la pompa stava a
     21 cm dal pavimento staccata dal serbatoio, le due gambe del gruppo col tubo finivano a 20 cm da terra
     e il becco a flangia sopra il corpo restava aperto in aria. Ora: la pompa poggia su uno zoccolo ed è
     allacciata al serbatoio, il suo tubo curva e scende a una flangia a terra, le gambe arrivano a terra
-    con la flangia, il becco scende nel corpo; nel basso (tagliato a 0,4) la pompa ha il coperchio e il
-    gruppo del tubo è allacciato al serbatoio."""
+    con la flangia, il becco scende sul corpo; nel basso (tagliato a 0,4) la pompa ha il coperchio e il
+    gruppo del tubo è legato al serbatoio con una staffa. Le misure in metri sono in ALLACCI; il raccordo
+    del becco e la staffa hanno i capi sagomati sulle facce vere (genera_risorse.gd)."""
     G = nome + '/Allacci'
+    M = ALLACCI[basso]
     node('Allacci', 'Node3D', nome, transform=tr(ID, (ox, 0, oz)))   # (con la base, se è spostata)
     def p(mx, my, mz):
         return (mx * sx, y0 + my * sy, mz * sz)
+    def q(x, y, z):
+        return (x, y0 + y, z)
     def flangia(k, x, z, r):
         cilindro('Flangia' + k, G, (x, y0, z), (x, y0 + 0.03, z), r, seg=16)
-    # lo zoccolo sotto la piastra della pompa (la piastra va da x -1,155 a -0,703, z da -0,184 a 0,082)
+    # lo zoccolo sotto la piastra della pompa (la piastra va da x -1,155 a -0,703, z da -0,184 a 0,082; i suoi piedini
+    # poggiano a 0,429-0,434 m)
     sid = 'zoccolo_' + nome
-    zx0, zx1, zz0, zz1, zh = -1.12, -0.72, -0.17, 0.07, 0.214
+    zx0, zx1, zz0, zz1, zh = -1.12, -0.72, -0.17, 0.06, 0.214
     sr_tardi('BoxMesh', sid, size='Vector3(%.3f, %.3f, %.3f)' % ((zx1 - zx0) * sx, zh * sy, (zz1 - zz0) * sz))
     node('Zoccolo', 'MeshInstance3D', G, transform=tr(ID, p((zx0 + zx1) / 2, zh / 2, (zz0 + zz1) / 2)),
          mesh='SubResource("%s")' % sid, material_override='ExtResource("m_basi")')
-    # la pompa allacciata al serbatoio (fianco della pompa a x -0,73, parete del serbatoio a -0,57)
-    ya = 0.30 if basso else 0.47
-    ra = 0.04 * min(sy, sz)
-    cilindro('PompaSerbatoio', G, p(-0.74, ya, -0.074), p(-0.555, ya, -0.074), ra)
-    cilindro('PompaSerbatoioCollare', G, p(-0.585, ya, -0.074), p(-0.555, ya, -0.074), ra * 1.5, seg=16)
+    # la pompa allacciata al serbatoio: i tratti dritti e le curve
+    pt = [q(*c) for c in M['pompa']]
+    for i in range(len(pt) - 1):
+        cilindro('PompaSerbatoio' + ('' if len(pt) == 2 else str(i + 1)), G, pt[i], pt[i + 1], M['r_pompa'])
+    for i in range(1, len(pt) - 1):
+        sid = 'curva_serbatoio_' + nome
+        if i == 1:
+            sr_tardi('SphereMesh', sid, radius='%.4f' % (M['r_pompa'] * 1.08), height='%.4f' % (M['r_pompa'] * 2.16), radial_segments='12', rings='6')
+        node('PompaSerbatoioCurva%d' % i, 'MeshInstance3D', G, transform=tr(ID, pt[i]), mesh='SubResource("%s")' % sid, material_override='ExtResource("m_tubi")')
     # il tubo della pompa (punta a x -1,156, y 0,278, z -0,074): esce, curva e scende a terra
     rp = 0.034 * max(sy, sz)
     xt, yt, zt = p(-1.15, 0.278, -0.074)
@@ -292,12 +333,11 @@ def allacci(nome, sx, sy, sz, y0, basso, ox=0.0, oz=0.0):
     sr_tardi('BoxShape3D', sid, size='Vector3(%.3f, %.3f, %.3f)' % (xt - xc + rp * 2, yt + rp - y0, rp * 2))
     node('TuboPompa', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, ((xt + xc) / 2 - rp / 2 + ox, (y0 + yt + rp) / 2, zt + oz)),
          shape='SubResource("%s")' % sid)
-    # le gambe del gruppo col tubo fino a terra: la gamba (x 0,847, z -0,072, r 0,038, fondo a 0,196)
-    # e la spina sotto il corpo (x 1,061, z -0,113, r 0,029, fondo a 0,223)
-    for k, (gx, gz, gr, gf) in (('Gamba', (0.847, -0.072, 0.037, 0.196)), ('Spina', (1.061, -0.113, 0.028, 0.223))):
-        x, _, z = p(gx, 0, gz)
-        cilindro(k, G, (x, y0 + 0.02, z), p(gx, gf + 0.03, gz), gr * sx)
-        flangia(k, x, z, gr * sx * 1.9)
+    # le gambe del gruppo col tubo fino a terra, sotto la gamba e la spina vere, con la flangia
+    for k in ('Gamba', 'Spina'):
+        (x, z), r, cima = M[k.lower()]
+        cilindro(k, G, (x, y0 + 0.02, z), q(x, cima, z), r)
+        flangia(k, x, z, r * 1.9)
     if basso:
         # il coperchio della pompa tagliata (bordo da x -1,002 a -0,765, z da -0,159 a 0,152)
         sid = 'coperchio_pompa_' + nome
@@ -305,12 +345,15 @@ def allacci(nome, sx, sy, sz, y0, basso, ox=0.0, oz=0.0):
         sr_tardi('BoxMesh', sid, size='Vector3(%.3f, 0.03, %.3f)' % ((cx1 - cx0) * sx, (cz1 - cz0) * sz))
         node('CoperchioPompa', 'MeshInstance3D', G, transform=tr(ID, (((cx0 + cx1) / 2) * sx, y0 + 0.4 * sy + 0.015, ((cz0 + cz1) / 2) * sz)),
              mesh='SubResource("%s")' % sid, material_override='ExtResource("m_basi")')
-        # il gruppo col tubo allacciato al serbatoio (nell'alto lo tiene il tubo che sale all'anello)
-        cilindro('TuboSerbatoio', G, p(0.555, 0.30, -0.072), p(0.83, 0.30, -0.072), 0.03 * min(sy, sz))
-        cilindro('TuboSerbatoioCollare', G, p(0.555, 0.30, -0.072), p(0.59, 0.30, -0.072), 0.045 * min(sy, sz), seg=16)
+        # il gruppo col tubo legato al serbatoio (nell'alto lo tiene il tubo che sale all'anello): una staffa tonda dalla
+        # costola (x 1,867) alla gamba, nella fascia dove la gamba è larga (y 0,55-0,60), dentro la larghezza della costola
+        node('StaffaSerbatoio', 'MeshInstance3D', G, transform=tr(ID, (0, y0, 0)), mesh='ExtResource("raccordo_staffa_bassa")',
+             material_override='ExtResource("m_tubi")')
     else:
-        # il becco a flangia (x 1,06, z -0,129, fondo a 0,626) scende nel corpo (cima a 0,53)
-        cilindro('BeccoCorpo', G, p(1.06, 0.515, -0.122), p(1.06, 0.64, -0.122), 0.033 * sx)
+        # il becco a flangia (fondo piano a 1,253-1,256 m, al centro x 2,14, z -0,255) scende sul corpo, che lì sotto è
+        # inclinato (1,026-1,042): un raccordo coi capi sagomati
+        node('BeccoCorpo', 'MeshInstance3D', G, transform=tr(ID, (0, y0, 0)), mesh='ExtResource("raccordo_becco")',
+             material_override='ExtResource("m_tubi")')
 
 
 def acquario(nome, gruppo, pos, alto, pigmento=None):
@@ -336,10 +379,11 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
         # (2 cm) sul bordo del vetro, sotto il bordo del coperchio
         node('BasamentoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, -GRADINO * K * 0.5, 0)), mesh='SubResource("basamento_vetro")',
              material_override='ExtResource("m_tiranti")')
-        node('AnelloVetro', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.02 / (0.0625 * K), 1), (0, B_VETRO + 0.01, 0)),
+        node('AnelloVetro', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.02 / (R_ANELLO[1] - R_ANELLO[0]), 1), (0, B_VETRO + 0.01, 0)),
              mesh='SubResource("anello_vetro")', material_override='ExtResource("m_tiranti")')
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
         node('Forma', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASE + 1.475 * K, 0)), shape='SubResource("forma_alto")')
+        node('FormaBase', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASE + H_FORMA_BASE * 0.5, 0)), shape='SubResource("forma_base_alta")')
         raccordi(nome, K, K, K, -B_BASE, ox=bx, oz=bz)
         allacci(nome, K, K, K, -B_BASE, False, bx, bz)
     else:
@@ -556,9 +600,18 @@ cavo_l = (LY - 0.12) - CAVO_FINE
 sr_tardi('CylinderMesh', 'cavo_lampada', top_radius='0.007', bottom_radius='0.007', height='%.3f' % cavo_l, radial_segments='6')
 node('Cavo', 'MeshInstance3D', '.', transform=tr(ID, (CX, CAVO_FINE + cavo_l / 2, CZ)), mesh='SubResource("cavo_lampada")',
      material_override='SubResource("nero")')
-sr_tardi('BoxMesh', 'fascetta', size='Vector3(0.06, 0.012, 0.06)')
+# le fascette stringono insieme il tirante e il cavo: un anello ovale (un cilindro schiacciato) che li gira intorno
+# tutti e due, 2 mm fuori (prima un cubetto fra i due, mezzo dentro il tirante)
+_fa = (CR + 0.007 + R_TIR) * 0.5 + 0.002                 # mezzo asse lungo, verso il cavo
+_fc = (CR + 0.007 - R_TIR) * 0.5                          # il centro, dall'asse del tirante
+_fb = max(abs(R_TIR * math.sin(t)) / math.sqrt(max(1e-9, 1.0 - ((R_TIR * math.cos(t) - _fc) / _fa) ** 2))
+          for t in (math.radians(g) for g in range(0, 360, 5)) if abs(R_TIR * math.cos(t) - _fc) < _fa) + 0.002
+_fx, _fz = _d[0] / _l, _d[1] / _l                         # verso il cavo
+sr_tardi('CylinderMesh', 'fascetta', top_radius='1', bottom_radius='1', height='0.012', radial_segments='24', rings='1')
 for k, f in enumerate((0.3, 0.7)):
-    node('Fascetta%d' % (k + 1), 'MeshInstance3D', 'Cavo', transform=tr(ID, ((TIR[0] - CX) * 0.5, (f - 0.5) * cavo_l, (TIR[1] - CZ) * 0.5)),
+    node('Fascetta%d' % (k + 1), 'MeshInstance3D', 'Cavo',
+         transform=tr('%.6g, 0, %.6g, 0, 1, 0, %.6g, 0, %.6g' % (_fx * _fa, -_fz * _fb, _fz * _fa, _fx * _fb),
+                      (TIR[0] + _fx * _fc - CX, (f - 0.5) * cavo_l, TIR[1] + _fz * _fc - CZ)),
          mesh='SubResource("fascetta")', material_override='SubResource("nero")')
 # lo spot sul globo (0,36 m davanti al tirante), puntato sul volantino: la base nel sistema della
 # lampada, che è girata di _ang attorno a Y
@@ -576,8 +629,9 @@ node('Luce', 'SpotLight3D', 'LampadaValvola', transform='Transform3D(%s, 0, 0, 0
 
 # il disegno sul vetro del giallo, verso il viale (stesse coordinate dell'acquario giallo)
 # (il foglio è curvo col raggio 0,576 del vetro della proposta: in orizzontale si scala fino alla faccia di fuori del
-# vetro, 0,55 K + 1,2 cm, più 1 mm; prima, scalato per K come il resto, restava 4 cm fuori dal vetro)
-SD = (0.55 * K + 0.012 + 0.001) / 0.576
+# vetro, 0,55 K + 1,2 cm, più 3 mm; prima, scalato per K come il resto, restava 4 cm fuori dal vetro. Con 1 mm le
+# diagonali del foglio, corde fra due spicchi, sfioravano il vetro, che è un poligono di 64 lati)
+SD = (0.55 * K + 0.012 + 0.003) / 0.576
 node('Disegno', 'Node3D', '.', transform=piazza('G', sc3(SD, K, SD), (XG, B_BASE, ZA)))
 node('Modello', 'MeshInstance3D', 'Disegno', mesh='ExtResource("disegno")', cast_shadow='0')
 
@@ -607,15 +661,15 @@ for k, z in enumerate((-18.2, -16.3, -13.7, -11.8)):
          material_override='ExtResource("m_tiranti")')
     node('PiastraMuro%d' % (k + 1), 'MeshInstance3D', G, transform=tr(ID, (20.028, YT, z)), mesh='SubResource("piastra_muro")',   # a filo del muro, non dentro
          material_override='ExtResource("m_tiranti")')
-node('Portalampade', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_porta")')
-node('Lampadine', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_spente")')
+node('Portalampade', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_porta")', script='ExtResource("mm_da_meta")')
+node('Lampadine', 'MultiMeshInstance3D', G, cast_shadow='0', multimesh='ExtResource("mm_spente")', script='ExtResource("mm_da_meta")')
 node('Accese', 'Node3D', 'LampadePortone')
 luci = [('Lampada1', (X - 0.55, 3.0, Z0)), ('Lampada2', (X - 0.55, 3.0, Z1)), ('Lampada3', (X - 0.55, YT - 0.2, (Z0 + Z1) / 2))]
 for i, (nome, p) in enumerate(luci):
     node(nome, 'Node3D', 'LampadePortone/Accese')
     if i == 0:
         # tutte le lampadine accese (poco più grandi delle spente, che coprono)
-        node('Modello', 'MultiMeshInstance3D', 'LampadePortone/Accese/' + nome, cast_shadow='0', multimesh='ExtResource("mm_accese")')
+        node('Modello', 'MultiMeshInstance3D', 'LampadePortone/Accese/' + nome, cast_shadow='0', multimesh='ExtResource("mm_accese")', script='ExtResource("mm_da_meta")')
     node('Luce', 'OmniLight3D', 'LampadePortone/Accese/' + nome, transform=tr(ID, p), light_color='Color(1, 0.75, 0.45, 1)',
          light_energy='2.2', light_volumetric_fog_energy='1.0', omni_range='7.0', omni_attenuation='1.2')
 

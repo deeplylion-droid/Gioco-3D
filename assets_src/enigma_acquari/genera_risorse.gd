@@ -6,15 +6,30 @@ extends SceneTree
 ##   di nastro di carta; coordinate dell'acquario (origine al centro del fondo interno);
 ## - lampadine_portone.res e portalampade_portone.res: le lampadine da luna park intorno al portone
 ##   della torre (MultiMesh), coordinate della sala; lampadine_accese / lampadine_spente: i materiali.
-## Uso: godot --headless --path godot --script res://../assets_src/enigma_acquari/genera_risorse.gd
-## (oppure copiato in godot/ e lanciato da lì).
+## - raccordo_becco.res e raccordo_staffa_bassa.res: due raccordi delle basi coi capi sagomati sulle facce vere del
+##   modello (vedi [constant RACCORDI]).
+## Uso: godot --headless --path godot --script res://../assets_src/enigma_acquari/genera_risorse.gd [-- raccordi]
+## (oppure copiato in godot/ e lanciato da lì); con "-- raccordi" fa solo i raccordi.
 
 const DIR := "res://assets/enigma_acquari/"
+## I raccordi sagomati (controllo di posizionamento del 22 ottobre sera): tubi i cui capi seguono la faccia vera del
+## modello della base, a 1 mm, dove un tubo coi capi piani lascerebbe 1-4 cm di vuoto da un lato. Il becco a flangia
+## sopra il corpo del gruppo col tubo degli alti: il fondo del becco è piano, la cima del corpo lì sotto scende di 2 cm;
+## la staffa del basso, dalla costola del serbatoio alla gamba tonda del gruppo col tubo. Per ognuno: nome, modello,
+## scala (quella della scena: K 2; 2,9 e 2 per il basso), un punto nel vuoto fra le due facce (sistema del modello
+## scalato, y dal pavimento), la direzione dell'asse, il raggio.
+const RACCORDI := [
+	["raccordo_becco", "cilindro_base.glb", Vector3(2, 2, 2), Vector3(2.14, 1.15, -0.255), Vector3.UP, 0.035],
+	["raccordo_staffa_bassa", "cilindro_base_bassa.glb", Vector3(2.9, 2, 2.9), Vector3(2.1, 0.575, -0.183), Vector3.RIGHT, 0.02],
+]
+const LATI := 16
 
 
 func _initialize() -> void:
-	_disegno()
-	_lampadine()
+	if not (OS.get_cmdline_user_args().has("raccordi") or OS.get_cmdline_args().has("raccordi")):
+		_disegno()
+		_lampadine()
+	_raccordi()
 	print("risorse salvate in ", DIR)
 	quit()
 
@@ -156,3 +171,80 @@ func _bulbo(r: float, m: Material) -> SphereMesh:
 	s.height = r * 2.25
 	s.material = m
 	return s
+
+
+func _raccordi() -> void:
+	for r in RACCORDI:
+		var facce := _facce(DIR + String(r[1]), r[2])
+		var p: Vector3 = r[3]
+		var d: Vector3 = (r[4] as Vector3).normalized()
+		var raggio: float = r[5]
+		var u := d.cross(Vector3.RIGHT if absf(d.x) < 0.9 else Vector3.UP).normalized()
+		var w := d.cross(u)
+		# i due anelli dei capi: per ogni lato la prima faccia lungo l'asse, indietro e avanti, meno 1 mm
+		var anelli := [PackedVector3Array(), PackedVector3Array()]
+		var normali := PackedVector3Array()
+		for k in LATI:
+			var a := TAU * k / LATI
+			var n := u * cos(a) + w * sin(a)
+			var o := p + n * raggio
+			normali.append(n)
+			for j in 2:
+				var verso := d * (-1.0 if j == 0 else 1.0)
+				var t := _primo(facce, o, verso)
+				if t < 0.0:
+					push_error("raccordo %s: il lato %d non trova la faccia" % [r[0], k])
+					t = 0.1
+				anelli[j].append(o + verso * (t - 0.001))
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for k in LATI:
+			var k2 := (k + 1) % LATI
+			# il fianco: due triangoli per lato, col davanti verso fuori
+			for c in [[k, 0], [k, 1], [k2, 1], [k, 0], [k2, 1], [k2, 0]]:
+				st.set_normal(normali[c[0]])
+				st.set_uv(Vector2(float(c[0]) / LATI, float(c[1])))
+				st.add_vertex(anelli[c[1]][c[0]])
+		var mesh := st.commit()
+		ResourceSaver.save(mesh, DIR + String(r[0]) + ".res")
+		var l0 := 9.0
+		var l1 := 0.0
+		for k in LATI:
+			var l: float = (anelli[0][k] as Vector3).distance_to(anelli[1][k])
+			l0 = minf(l0, l)
+			l1 = maxf(l1, l)
+		print("%s: lungo da %.3f a %.3f m" % [r[0], l0, l1])
+
+
+## I triangoli del modello (tutte le sue mesh), scalati, nel sistema del modello.
+func _facce(percorso: String, scala: Vector3) -> PackedVector3Array:
+	var radice := (load(percorso) as PackedScene).instantiate()
+	var out := PackedVector3Array()
+	for mi in radice.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D()
+		var k: Node = mi
+		while k != radice:
+			xf = (k as Node3D).transform * xf
+			k = k.get_parent()
+		xf = Transform3D(Basis.from_scale(scala), Vector3.ZERO) * xf
+		for v in (mi as MeshInstance3D).mesh.get_faces():
+			out.append(xf * v)
+	radice.free()
+	return out
+
+
+## La distanza della prima faccia lungo il raggio da [param o] verso [param d] (entro 1 m), o -1.
+func _primo(facce: PackedVector3Array, o: Vector3, d: Vector3) -> float:
+	var migliore := -1.0
+	var i := 0
+	while i < facce.size():
+		var a := facce[i]
+		# solo i triangoli vicini al raggio
+		if (a - o).length() < 1.5:
+			var h = Geometry3D.ray_intersects_triangle(o, d, a, facce[i + 1], facce[i + 2])
+			if h != null:
+				var t := (h as Vector3 - o).dot(d)
+				if t > 0.0 and t < 1.0 and (migliore < 0.0 or t < migliore):
+					migliore = t
+		i += 3
+	return migliore
