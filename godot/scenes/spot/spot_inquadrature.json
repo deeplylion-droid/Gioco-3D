@@ -36,8 +36,8 @@
 			"inquadrature": [
 				{"n": 4, "inizio": 13.0, "durata": 6.0, "cosa": "la discesa nel tubo, con gli schizzi",
 					"discesa": [
-						{"t": 0.0, "s": 2.0},
-						{"t": 0.3, "s": 2.3},
+						{"t": 0.0, "s": 3.0},
+						{"t": 0.3, "s": 3.27},
 						{"t": 5.7, "s": 12.2},
 						{"t": 6.0, "s": 12.5}
 					],
