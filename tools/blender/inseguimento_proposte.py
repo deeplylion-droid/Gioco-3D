@@ -656,7 +656,14 @@ def versione_A(mats):
         P.tubo_muro(c, [(x, y0 + 0.35, z0 if GIOCO else z0 + 0.4), (x, y0 + 0.35, z1 + 0.2 if GIOCO else z1 - 0.5)], r=0.12)
     # catene appese dal soffitto (con il gancio)
     for (x, y) in ((58.0, 15.0), (66.0, 18.0), (48.0, 22.0)):
-        c.cilindro((x, y, z1), (x, y, -17.0 - rnd.uniform(0, 3)), 0.03, 'metallo', seg=6)
+        zb_ = -17.0 - rnd.uniform(0, 3)
+        c.cilindro((x, y, z1), (x, y, zb_), 0.03, 'metallo', seg=6)
+        if GIOCO:
+            # catene di paranco: l'occhiello al soffitto, in fondo il bozzello col gancio (molto sopra chi cammina)
+            c.scatola((x - 0.12, y - 0.12, z1 - 0.03), (x + 0.12, y + 0.12, z1), 'metallo')
+            c.anello((x, y, z1 - 0.1), (1, 0, 0), 0.04, 0.08, 0.02, 'metallo', seg=12)
+            c.scatola((x - 0.09, y - 0.06, zb_ - 0.28), (x + 0.09, y + 0.06, zb_ + 0.02), 'giallo_sicurezza')
+            c.toro((x, y, zb_ - 0.4), (1, 0, 0), 0.1, 0.025, 'metallo', seg=16, seg_r=6)
     # i dettagli del kit sui muri e sotto le passerelle: valvole, tubi, cavi, cartelli, lampade
     for (cat, nodo, p, nrm) in (
             ('tubi', 'det_tubo_valvola_T', (55.0, y1, -23.0), (0, -1)),
