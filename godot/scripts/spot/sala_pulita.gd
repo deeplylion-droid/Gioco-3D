@@ -110,6 +110,7 @@ func _texture_pulita(t: Texture2D) -> Texture2D:
 
 
 func _accendi() -> void:
+	_camera_spot()
 	for l in get_tree().root.find_children("*", "Light3D", true, false):
 		var luce := l as Light3D
 		var nome := String(luce.name)
@@ -134,3 +135,21 @@ func _accendi() -> void:
 				var spenta := m.duplicate() as BaseMaterial3D
 				spenta.emission_enabled = false
 				mi.set_surface_override_material(i, spenta)
+
+
+## Lo spot non è la vista del giocatore: niente profondità di campo e niente correzione di colore del gioco (Grafica
+## le mette a tutte le camere e all'ambiente), FOV deciso dall'inquadratura. Le impostazioni del giocatore non si toccano.
+func _camera_spot() -> void:
+	for we in get_tree().root.find_children("*", "WorldEnvironment", true, false):
+		var env := (we as WorldEnvironment).environment
+		if env:
+			env.adjustment_color_correction = null
+			env.adjustment_contrast = 1.0
+			env.adjustment_saturation = 1.12
+	for c in find_children("*", "Camera3D", true, false):
+		var cam := c as Camera3D
+		cam.set_meta(&"grafica_fov_fisso", true)
+		var a := CameraAttributesPractical.new()
+		a.dof_blur_far_enabled = false
+		a.dof_blur_near_enabled = false
+		cam.attributes = a

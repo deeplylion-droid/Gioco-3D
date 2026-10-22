@@ -46,11 +46,10 @@ editor_description = "La sala principale da nuova, per lo spot VHS della crocier
 
 [node name="LuciSala" parent="." instance=ExtResource("11_look")]
 percorso_trigger = NodePath("")
-dati_gi = ""
+dati_gi = "res://scenes/spot/gi/sala_spot.res"
 ambiente = ExtResource("12_amb")
 energia_emergenza = 0.0
 energia_fari = 2.0
-crea_gi = false
 crea_tempesta = false
 crea_effetti = false
 crea_controluce = false
