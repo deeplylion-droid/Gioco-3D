@@ -265,11 +265,11 @@ def allacci(nome, sx, sy, sz, y0, basso):
     flangia('Pompa', xc, zt, rp * 1.9)
     sid = 'raccordo_%s_scarico' % nome
     sr_tardi('BoxShape3D', sid, size='Vector3(%.3f, %.3f, %.3f)' % (xt - xc + rp * 2, yt + rp - y0, rp * 2))
-    node('Scarico', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, ((xt + xc) / 2 - rp / 2, (y0 + yt + rp) / 2, zt)),
+    node('TuboPompa', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, ((xt + xc) / 2 - rp / 2, (y0 + yt + rp) / 2, zt)),
          shape='SubResource("%s")' % sid)
     # le gambe del gruppo col tubo fino a terra: la gamba (x 0,847, z -0,072, r 0,038, fondo a 0,196)
     # e la spina sotto il corpo (x 1,061, z -0,113, r 0,029, fondo a 0,223)
-    for k, (gx, gz, gr, gf) in (('Gamba', (0.847, -0.072, 0.036, 0.196)), ('Spina', (1.061, -0.113, 0.027, 0.223))):
+    for k, (gx, gz, gr, gf) in (('Gamba', (0.847, -0.072, 0.037, 0.196)), ('Spina', (1.061, -0.113, 0.028, 0.223))):
         x, _, z = p(gx, 0, gz)
         cilindro(k, G, (x, y0 + 0.02, z), p(gx, gf + 0.03, gz), gr * sx)
         flangia(k, x, z, gr * sx * 1.9)
@@ -447,7 +447,9 @@ node('Collisione', 'StaticBody3D', 'Valvola', collision_mask='0')
 node('Forma', 'CollisionShape3D', 'Valvola/Collisione', transform=tr(ID, (0, 0.17 * KV + ALZA_V - VY, 0)), shape='SubResource("forma_valvola")')
 node('Bersaglio', 'Area3D', 'Valvola', transform=tr(ID, (-0.4 * KV, 0, 0)), script='ExtResource("hitbox")')   # dalla parte di fuori del modello
 node('Forma', 'CollisionShape3D', 'Valvola/Bersaglio', shape='SubResource("forma_bersaglio")')
-gx = -(1.1 * 0.7 + 0.12) * KV + 0.55 * 0.7 * KV
+# la bocca dello scarico davanti alla flangia aperta, a 2 cm dal modello (la valvola che poggia a terra ci
+# entrava di 16 cm: controllo severo del 22 ottobre)
+gx = -(0.55 * 0.7 + 0.26 + 0.02) * KV
 node('Scarico', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.004 - VY, 0)), mesh='SubResource("griglia")',
      material_override='ExtResource("m_griglia")')
 node('Buco', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.002 - VY, 0)), mesh='SubResource("buco")')
@@ -494,9 +496,16 @@ if POSIZIONE != 'P1':
 _d = (VOL[0] - TIR[0], VOL[2] - TIR[1])
 _l = math.hypot(*_d)
 _ang = math.atan2(_d[0], _d[1])      # +Z della lampada verso la valvola
-LP = (TIR[0] + _d[0] / _l * R_TIR, LY, TIR[1] + _d[1] / _l * R_TIR)
+# la piastra della lampada appoggiata a due collari stretti sul tirante (prima toccava il tirante solo lungo
+# una riga, senza niente che la tenesse)
+COLLARE = 0.003
+LP = (TIR[0] + _d[0] / _l * (R_TIR + COLLARE), LY, TIR[1] + _d[1] / _l * (R_TIR + COLLARE))
 node('LampadaValvola', 'Node3D', '.', transform=tr(roty(_ang), LP), script='ExtResource("lampada_valvola")')
 node('Modello', parent='LampadaValvola', inst='gabbia')
+sr_tardi('CylinderMesh', 'collare_lampada', top_radius='%.4f' % (R_TIR + COLLARE), bottom_radius='%.4f' % (R_TIR + COLLARE), height='0.025', radial_segments='16')
+for k, dy in enumerate((0.12, -0.15)):   # dentro l'altezza della piastra (da -0,21 a 0,175)
+    node('Collare%d' % (k + 1), 'MeshInstance3D', '.', transform=tr(ID, (TIR[0], LY + dy, TIR[1])), mesh='SubResource("collare_lampada")',
+         material_override='SubResource("nero")')
 # il cavo della lampada: dal morsetto scende lungo il tirante (o il montante della pedana) fino alla base
 # dell'acquario (o al piano della pedana), con due fascette; prima la lampada non era collegata a niente
 CAVO_FINE = B_BASE if cand or POSIZIONE == 'P1' else PEDANA_H

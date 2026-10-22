@@ -351,32 +351,6 @@
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			19.53,
-			0.0,
-			-11.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			19.53,
-			0.0,
-			-18.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
 		"squadra": "ambienti-2",
@@ -700,5 +674,18 @@
 		],
 		"stato": "voluto",
 		"motivo": "celle dentro il tubo dell'inseguimento, e il collare sotto la coda del tratto 5, 1,93 m sopra il terzo gradino della bocca, sul bordo est della salita (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadaValvola/Modello/lampada",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			6.84,
+			2.25,
+			-21.32
+		],
+		"stato": "voluto",
+		"motivo": "la piastra della lampada poggia sui due collari stretti al tirante (Collare1 e Collare2, che il controllo trova attaccati); il controllo prova 48 dei 45 mila vertici del modello e nessuno cade sul retro della piastra, che è lo 0,2% dei vertici; visto nello scatto ravvicinato"
 	}
 ]
