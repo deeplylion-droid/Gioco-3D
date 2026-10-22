@@ -290,7 +290,8 @@ def paratia(c, centro, n, giusta, luci, aperta=False, largo=1.9, alto=1.9):
     zp = base.z + alto / 2 + (alto + 0.05 if aperta else 0.0)
     pann = Vector((base.x, base.y, zp)) - n * 0.05
     cp = K.Costruttore(c.mats) if GIOCO else c          # nel gioco il pannello è un nodo a parte
-    cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2, alto / 2), 'acciaio_portone')
+    # nel gioco il pannello va da un montante all'altro e scorre nelle loro guide (alzato, a 2 cm, restava sospeso)
+    cp.scatola_assi(pann, [n, lat, Vector((0, 0, 1))], (0.05, largo / 2 + (0.02 if GIOCO else 0.0), alto / 2), 'acciaio_portone')
     for k in (-1, 1):       # nervature
         cp.scatola_assi(pann + Vector((0, 0, k * alto * 0.3)) - n * 0.06, [n, lat, Vector((0, 0, 1))], (0.03, largo / 2, 0.05), 'metallo_grigio')
     # bersaglio: tre anelli concentrici, verso la vasca

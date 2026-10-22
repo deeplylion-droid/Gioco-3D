@@ -316,18 +316,20 @@ def lampada(nome, pos, normale, accesa=True):
     if accesa:
         luce(f'LUCE_rossa_{nome}', 'POINT', pos + n * 0.25, 45, (1.0, 0.08, 0.04), raggio=0.08)
 
+# (l1 e l5 stanno sulle costole; le altre sul muro, col retro a filo: a 2 cm restavano staccate)
 lampada('l1', (3.0, YS + 0.02, 3.0), (0, 1, 0))
-lampada('l2', (8.0, YS + 0.02, 3.0), (0, 1, 0), accesa=False)
-lampada('l3', (12.0, YS + 0.02, 3.0), (0, 1, 0))
-lampada('l4', (16.0, YN - 0.02, 3.0), (0, -1, 0))
+lampada('l2', (8.0, YS - 0.002, 3.0), (0, 1, 0), accesa=False)
+lampada('l3', (12.0, YS - 0.002, 3.0), (0, 1, 0))
+lampada('l4', (16.0, YN + 0.002, 3.0), (0, -1, 0))
 lampada('l5', (23.0, YS + 0.02, 3.0), (0, 1, 0))
 # fra le costole (ogni 2 m da x = -1) e lontano dai cassoni delle paratie
 for k, (x, acceso) in enumerate(((4.0, False), (10.0, True), (19.85, False))):
     if HQ.disponibile('plafoniera_neon'):
         giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
         HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
-        HQ.metti(f'plafoniera_{k}', 'plafoniera_neon', (x, -0.6, H - 0.12), (1.4, 0.32, 0.1))
-        HQ.metti(f'neon_{k}_tubo_sfarfalla' if acceso else f'neon_{k}_tubi', 'plafoniera_neon', (x, -0.6, H - 0.12), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
+        # (la plafoniera alta 10 cm col dorso sul soffitto: a H - 0,12 restava 2 cm sotto)
+        HQ.metti(f'plafoniera_{k}', 'plafoniera_neon', (x, -0.6, H - 0.1), (1.4, 0.32, 0.1))
+        HQ.metti(f'neon_{k}_tubo_sfarfalla' if acceso else f'neon_{k}_tubi', 'plafoniera_neon', (x, -0.6, H - 0.1), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
     else:
         S('lampade', box(f'plafoniera_{k}', (x, -0.6, H - 0.06), (1.5, 0.22, 0.08), M['ferro'], uv=None))
         S('lampade', cilindro(f'neon_{k}', (x, -0.6, H - 0.13), 0.025, 1.35, M['neon'] if acceso else M['neon_spento'], asse=(1, 0, 0), seg=10, uv=None))
