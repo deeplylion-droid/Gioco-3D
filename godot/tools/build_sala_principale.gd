@@ -921,8 +921,9 @@ func _tappa8() -> void:
 		break
 	var medusa := _medusa_bagnata("MedusaFossa")
 	# niente gocce: i punti sono misurati sulla medusa della vasca centrale, e con la posa della fossa finivano in
-	# aria (controllo di posizionamento del 22 ottobre, stato lei_fossa)
-	medusa.set(&"punti_gocce", PackedVector3Array())
+	# aria (controllo di posizionamento del 22 ottobre, stato lei_fossa). I punti restano: servono a LeiSbuca
+	# (getti del geyser, punti da colpire, quando è tutta sotto).
+	medusa.set(&"gocce", false)
 	medusa.transform = sbuca.transform
 	medusa.visible = false
 	own(medusa, lei)

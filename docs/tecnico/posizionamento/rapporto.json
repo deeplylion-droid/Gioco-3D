@@ -12,18 +12,6 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Sala/Dettagli/det_pannello_lamiera_0 per 4 cm",
-		"nodo": "Sala/AngoloScatoloni/scat_3_0_0",
-		"pos": [
-			-16.63,
-			0.17,
-			19.38
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "il 40% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_3_0_0",
 		"nodo": "Sala/Dettagli/det_piastrella_rotta_6_7",
 		"pos": [
@@ -1378,6 +1366,20 @@
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/Dettagli/det_pannello_lamiera_0 per 4 cm",
+		"motivo": "il pannello det_pannello_lamiera_0 e la piastrella det_piastrella_rotta_6_7 del kit stanno sotto la pila: li toglie ambienti-2",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_0",
+		"pos": [
+			-16.63,
+			0.17,
+			19.38
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
 		"stato": "da correggere",
 		"zona": "sala"
 	},
