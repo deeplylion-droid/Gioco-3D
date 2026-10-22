@@ -775,35 +775,6 @@
    ]
   },
   {
-   "nodo": "det_pannello_lamiera",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_009",
-   "posizione": [
-    -16.18,
-    0.001,
-    19.11
-   ],
-   "rotazione_y_gradi": 67.4,
-   "basis": [
-    [
-     0.3844,
-     0.0,
-     -0.9232
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9232,
-     0.0,
-     0.3844
-    ]
-   ]
-  },
-  {
    "nodo": "det_ciabatta",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
@@ -5329,35 +5300,6 @@
     ]
    ],
    "corretto_22_sera": "giu det_carta_accartocciata_3 11"
-  },
-  {
-   "nodo": "det_piastrella_rotta_6",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_067",
-   "posizione": [
-    -17.057,
-    0.001,
-    19.271
-   ],
-   "rotazione_y_gradi": -7.7,
-   "basis": [
-    [
-     0.9911,
-     0.0,
-     0.1335
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.1335,
-     0.0,
-     0.9911
-    ]
-   ]
   },
   {
    "nodo": "det_foglio_3",
@@ -17264,7 +17206,7 @@
    "gruppo": "spiaggia_373",
    "posizione": [
     -17.434,
-    0.001,
+    -0.016,
     3.24
    ],
    "rotazione_y_gradi": -67.2,
@@ -17284,7 +17226,8 @@
      0.0,
      0.2901
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_asciugamano_3 2"
   },
   {
    "nodo": "det_secchiello",
@@ -21472,7 +21415,7 @@
    "zona": "colatura sotto un tubo",
    "gruppo": "corsa_445",
    "posizione": [
-    19.988,
+    20.0025,
     3.089,
     15.006
    ],
@@ -21493,7 +21436,8 @@
      0.0,
      -0.0
     ]
-   ]
+   ],
+   "corretto_22_sera": "sposta det_macchia_ruggine_colata_muro 12"
   },
   {
    "nodo": "det_tubo_muro_10cm_2m",
@@ -27938,35 +27882,6 @@
    ]
   },
   {
-   "nodo": "det_applique_emergenza_rotta",
-   "glb": "glb/lampade.glb",
-   "zona": "muri",
-   "gruppo": "luci_muro_744",
-   "posizione": [
-    20.0,
-    2.716,
-    -0.587
-   ],
-   "rotazione_y_gradi": -90.0,
-   "basis": [
-    [
-     -0.0,
-     0.0,
-     1.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ]
-   ]
-  },
-  {
    "nodo": "det_applique_emergenza_spenta",
    "glb": "glb/lampade.glb",
    "zona": "muri",
@@ -28061,7 +27976,7 @@
    "posizione": [
     20.0,
     3.161,
-    4.446
+    5.046
    ],
    "rotazione_y_gradi": -90.0,
    "basis": [
@@ -28080,36 +27995,8 @@
      0.0,
      -0.0
     ]
-   ]
-  },
-  {
-   "nodo": "det_applique_emergenza_spenta",
-   "glb": "glb/lampade.glb",
-   "zona": "muri",
-   "gruppo": "luci_muro_755",
-   "posizione": [
-    17.705,
-    3.02,
-    20.0
    ],
-   "rotazione_y_gradi": 180.0,
-   "basis": [
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     -1.0
-    ]
-   ]
+   "corretto_22_sera": "sposta det_applique_emergenza_rotta 1"
   },
   {
    "nodo": "det_faro_spento",

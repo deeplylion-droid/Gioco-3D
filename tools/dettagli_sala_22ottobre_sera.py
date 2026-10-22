@@ -46,6 +46,10 @@ TOGLI = [
     ('det_foglio_1', 28, (-4.56, -1.13), 'a cavallo del punto dove il fondo della piscina comincia a salire: non poggia tutto'),
     ('det_alghe_secche_mucchio_1', 11, (-1.87, 2.26), 'nella conca dello scarico: il mucchio, piatto sotto, o restava sollevato o entrava nel fondo curvo'),
     ('det_alghe_secche_mucchio_2', 8, (0.35, 3.56), 'nella conca dello scarico: il mucchio, piatto sotto, o restava sollevato o entrava nel fondo curvo'),
+    ('det_pannello_lamiera', 0, (-16.18, 19.11), 'sotto la pila di scatoloni (lo scatolone in fondo ci entrava)'),
+    ('det_piastrella_rotta_6', 7, (-17.06, 19.27), 'sotto la pila di scatoloni'),
+    ('det_applique_emergenza_spenta', 1, (17.70, 20.0), 'sommersa dal mucchio di palloni: non si vedeva (collaudo, punto 9)'),
+    ('det_applique_emergenza_rotta', 0, (20.0, -0.59), 'a 20 cm da un\'altra applique: sembrava un doppione (collaudo, punto 11)'),
     ('det_cassetta_aperta', 4, (-11.44, -24.0), 'sportello aperto all\'altezza della testa e, sopra, la corsa di tubi: non si può alzare'),
 ]
 # sul fondo in pendenza della piscina a onde: inclinati come il fondo e appoggiati
@@ -57,7 +61,11 @@ ABBASSA = [('det_barchetta', 7, (4.55, 12.95), 0.006), ('det_carta_accartocciata
            ('det_foglio_1', 10, (4.50, 12.70), 0.005), ('det_foglio_2', 10, (-12.48, -22.56), 0.005),
            ('det_foglio_3', 28, (5.43, 17.25), 0.005), ('det_griglia_caduta', 6, (11.13, 14.35), 0.005),
            ('det_maschera_sub', 0, (-19.33, 4.66), 0.005), ('det_pesce_gomma', 9, (-17.67, 4.00), 0.006),
-           ('det_pistola_acqua', 11, (8.89, -21.26), 0.021)]
+           ('det_pistola_acqua', 11, (8.89, -21.26), 0.021),
+           ('det_asciugamano_3', 2, (-17.43, 3.24), 0.018)]    # (sopra la pozzanghera: collaudo, punto 14)
+# spostati (nodo, indice, posizione attesa x z, spostamento x y z)
+SPOSTA = [('det_applique_emergenza_rotta', 1, (20.0, 4.45), (0.0, 0.0, 0.6)),   # stava sopra la bocchetta tonda (collaudo, punto 10)
+          ('det_macchia_ruggine_colata_muro', 12, (19.99, 15.01), (0.0145, 0.0, 0.0))]   # 1,5 cm staccata dal muro (punto 15)
 # cassette aperte sui muri: lo sportello aperto (fino a 0,75 m sotto l'origine) sopra i 2 m
 ALZA = [('det_cassetta_aperta', i, xz) for i, xz in ((0, (-1.67, 20.0)), (1, (20.0, 12.59)), (3, (-13.39, 20.0)), (5, (20.0, -5.42)))]
 Y_CASSETTA = 2.78
@@ -183,6 +191,12 @@ def main():
                 continue
             q['posizione'][1] = round(q['posizione'][1] - dy + 0.001, 4)
             q['corretto_22_sera'] = f'giu {nodo} {i}'
+        for nodo, i, xz, dp in SPOSTA:
+            q = trova(per, nodo, i, xz, f'sposta {nodo} {i}')
+            if q.get('corretto_22_sera'):
+                continue
+            q['posizione'] = [round(q['posizione'][k] + dp[k], 4) for k in range(3)]
+            q['corretto_22_sera'] = f'sposta {nodo} {i}'
         # 4. cassette aperte sopra i 2 m
         for nodo, i, xz in ALZA:
             q = trova(per, nodo, i, xz, f'su {nodo} {i}')
