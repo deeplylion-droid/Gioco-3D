@@ -37,7 +37,7 @@ const SQUADRE := [
 	["Gioco/EnigmaAcquari", "enigmi"], ["LampadePortone", "enigmi"], ["Tecnici/Ambienti/Raccordo", "enigmi"],
 	["ArredoRisalita", "enigmi"],
 ]
-const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "da assegnare"}
+const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2"}   # tecnici: tools/blender/ambienti2_*.py
 const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
@@ -278,12 +278,18 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 			continue
 		limiti = b if primo else limiti.merge(b)
 		primo = false
+	# la griglia ancorata al mondo (multipli di PASSO_GRIGLIA), non all'angolo della scena: se la scena si allarga
+	# le celle restano dove sono, e i casi vicino agli oggetti non cambiano da un branch all'altro
+	var angolo := Vector3(floorf(limiti.position.x / PASSO_GRIGLIA), limiti.position.y, floorf(limiti.position.z / PASSO_GRIGLIA))
+	angolo.x *= PASSO_GRIGLIA
+	angolo.z *= PASSO_GRIGLIA
+	limiti = AABB(angolo, limiti.end - angolo)
 	var cil := CylinderShape3D.new()
 	cil.radius = 0.3
 	cil.height = 0.7
 	_q_corpo = PhysicsShapeQueryParameters3D.new()
 	_q_corpo.shape = cil
-	_q_corpo.collision_mask = Layers.WORLD
+	_q_corpo.collision_mask = Layers.WORLD | Layers.BARRIERS   # anche i muri invisibili fermano il giocatore
 	# i pavimenti: per ogni colonna della griglia tutti i piani calpestabili, dall'alto in basso
 	var celle := {}   # Vector3i(ix, piano, iz) -> y
 	var nx := int(limiti.size.x / PASSO_GRIGLIA) + 1
@@ -354,13 +360,18 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		q.transform = Transform3D(Basis(), centro)
 		q.collision_mask = STRATO
 		var r := _spazio.intersect_shape(q, 16)
+		var solido := false
+		if not r.is_empty():
+			q.collision_mask = Layers.WORLD | Layers.BARRIERS
+			solido = not _spazio.intersect_shape(q, 1).is_empty()
 		for h in r:
 			var mi: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
 			if mi == null or _acqua.has(mi):
 				continue
 			if not visti.has(mi):
-				visti[mi] = [centro - Vector3(0, (TESTA_DA + TESTA_A) * 0.5, 0), 0, 9.0, 0.0]
+				visti[mi] = [centro - Vector3(0, (TESTA_DA + TESTA_A) * 0.5, 0), 0, 9.0, 0.0, false]
 			visti[mi][1] += 1
+			visti[mi][4] = visti[mi][4] or solido
 			# fin dove arriva sopra il pavimento (le gambe o la testa)
 			var bb := _box(mi)
 			var pav: float = centro.y - (TESTA_DA + TESTA_A) * 0.5
@@ -370,8 +381,9 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		var p: Vector3 = visti[mi][0]
 		var alto: float = visti[mi][3]
 		var dove := "all'altezza della testa" if alto > 1.4 else ("all'altezza del busto" if alto > 0.9 else "all'altezza delle gambe")
-		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)" % [
-				dove, visti[mi][2], alto, visti[mi][1]])
+		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm), %s" % [
+				dove, visti[mi][2], alto, visti[mi][1],
+				"con la collisione (ci si sbatte contro)" if visti[mi][4] else "senza collisione (si attraversa)"])
 
 
 ## Una cella dove passa il giocatore: ci entrano le sue gambe (un cilindro di raggio 30 cm fra 0,3 e 1 m sopra il
