@@ -63,7 +63,7 @@ func _avvia() -> void:
 	# Come tests/scatti_tappa8.gd: la torre non si precarica (memoria).
 	Engine.set_meta(&"precarica_torre_spento", true)
 	Grafica.salva_su_disco = false
-	Grafica.applica_preset("alto")
+	Grafica.applica_preset(OS.get_environment("PRESET") if OS.get_environment("PRESET") != "" else "alto")
 	if OS.get_environment("SENZA_GI") == "1":
 		Grafica.imposta("gi", 0)
 	var wm := get_node_or_null(^"/root/WaterManager")
