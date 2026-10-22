@@ -14,7 +14,7 @@ import bpy
 from mathutils import Vector, Matrix
 import ambienti2_comune as C
 import ambienti1_hq as HQ
-import posa
+import posa as Posa   # (il modulo comune: qui "posa" è già una funzione)
 
 HQ.LINK[0] = C._link
 for _c in (('tappa7_arredo',), ('sala_angoli',), ('ambienti_interni', 'meshy')):
@@ -59,7 +59,7 @@ def _al_muro(objs, punto, n):
     normale n (fuori dal muro), tutti insieme: qui il muro del raccordo non c'è, se ne conosce il piano. Prima la
     roba appesa stava col box a 5 mm dal muro e il modello vero a volte di più (controllo del 22 ottobre sera)."""
     n = Vector(n).normalized()
-    retro = min(v.dot(n) for o in objs for v in posa._punti_mondo(o))
+    retro = min(v.dot(n) for o in objs for v in Posa._punti_mondo(o))
     d = n * (Vector(punto).dot(n) + 0.001 - retro)
     for o in objs:
         o.matrix_world.translation += d
