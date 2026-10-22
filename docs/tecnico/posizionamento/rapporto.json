@@ -1,17 +1,5 @@
 [
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.42 m sopra il pavimento (80 celle da 25 cm)",
-		"nodo": "Gioco/EnigmaAcquari/Pedana/CorrimanoScala2",
-		"pos": [
-			13.78,
-			0.08,
-			-18.75
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "LuciSala/@Node3D@572/@MeshInstance3D@573",
