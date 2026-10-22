@@ -416,7 +416,7 @@ def porta_uscita(c, y, z, luci):
     c.scatola((X0 + 0.02, y - 0.85, z + 2.2), (X0 + 0.15, y + 0.85, z + 2.35), 'metallo_grigio')
     c.scatola_assi(Vector((X0 + 0.55, y + 0.25, z + 1.1)), [Vector((0.8, 0.6, 0)).normalized(), Vector((-0.6, 0.8, 0)).normalized(), Vector((0, 0, 1))], (0.03, 0.72, 1.08), 'portone')
     c.scatola((X0 + 0.05, y - 0.4, z + 2.5), (X0 + 0.12, y + 0.4, z + 2.8), 'faro_giallo')
-    luci['uscita'].append([X0 + 0.4, y, z + 2.65])
+    luci['uscita'].append([X0 + 0.24, y, z + 2.65])      # (la lampadina tocca la plafoniera)
 
 
 def luci_nuove():
@@ -537,8 +537,9 @@ def versione_A(mats):
     BX = (42.5, 1.0, 50.5, 11.0)
     muri_bacino = [((BX[0], BX[1]), (BX[2], BX[1] + 0.3)), ((BX[0], BX[3] - 0.3), (BX[2], BX[3])),
                    ((BX[0], BX[1]), (BX[0] + 0.3, BX[3]))]
-    if GIOCO:       # il muro est aperto dove arriva la spirale (lì cala la grata)
-        muri_bacino += [((BX[2] - 0.3, BX[1]), (BX[2], 6.5 - 1.6)), ((BX[2] - 0.3, 6.5 + 1.6), (BX[2], BX[3]))]
+    if GIOCO:       # il muro est aperto dove arriva la spirale (lì cala la grata), largo quanto il tubo: dai lati
+        # non si esce sul fondo allagato della sala
+        muri_bacino += [((BX[2] - 0.3, BX[1]), (BX[2], 6.5 - 0.95)), ((BX[2] - 0.3, 6.5 + 0.95), (BX[2], BX[3]))]
     else:
         muri_bacino.append(((BX[2] - 0.3, BX[1]), (BX[2], BX[3])))
     for (a, b) in muri_bacino:
@@ -592,7 +593,7 @@ def versione_A(mats):
     # il palo della plafoniera, dal ballatoio, col braccio
     c.cilindro((77.5, 20.6, BM[4]), (77.5, 20.6, BM[4] + 3.4), 0.05, 'metallo_grigio', seg=8)
     c.cilindro((77.5, 20.6, BM[4] + 3.35), (74.6, 20.6, BM[4] + 3.35), 0.035, 'metallo_grigio', seg=8)
-    luci['neon'].append([75.4, 20.6, BM[4] + 3.25])
+    luci['neon'].append([75.4, 20.6, BM[4] + 3.365])     # (il tubo, 10 cm sotto, tocca il braccio)
     # la postazione di controllo sul muro sud: un balcone sulla passerella con la scrivania e gli strumenti
     PC = (45.5, y0 + 1.8, 52.5, y0 + 3.6, -20.0)
     P.piattaforma(c, PC[0], PC[1], PC[2], PC[3], PC[4], lati=('n', 'e', 'o'), pali=False)
@@ -607,7 +608,7 @@ def versione_A(mats):
     arredo(luci, 'det/detriti', 'det_foglio_2', (49.4, PC[1] + 1.2, PC[4]), ry=-15.0, appoggio='origine')
     c.cilindro((49.0, y0, PC[4] + 3.05), (49.0, PC[1] + 1.0, PC[4] + 3.05), 0.035, 'metallo_grigio', seg=8)
     c.scatola((48.9, y0, PC[4] + 2.9), (49.1, y0 + 0.05, PC[4] + 3.2), 'metallo')
-    luci['neon'].append([49.0, PC[1] + 0.8, PC[4] + 2.95])
+    luci['neon'].append([49.0, PC[1] + 0.8, PC[4] + 3.065])     # (il tubo, 10 cm sotto, tocca il braccio)
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y0 + 0.4, -20.0, 1)
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y1 - 0.4, -24.0, -1)
     for x in range(44, 78, 7):
@@ -617,21 +618,22 @@ def versione_A(mats):
         c.cilindro((x, y, z1), (x, y, -17.0 - rnd.uniform(0, 3)), 0.03, 'metallo', seg=6)
     # i dettagli del kit sui muri e sotto le passerelle: valvole, tubi, cavi, cartelli, lampade
     for (cat, nodo, p, nrm) in (
-            ('tubi', 'det_tubo_valvola_T', (55.0, y1, -23.0), (0, -1)), ('tubi', 'det_tubi_paralleli_2m', (68.0, y1, -22.6), (0, -1)),
-            ('tubi', 'det_condotta_aria_4m', (42.0, y0, -18.4), (0, 1)), ('tubi', 'det_tubo_curva_su', (61.0, y0, -19.9), (0, 1)),
+            ('tubi', 'det_tubo_valvola_T', (55.0, y1, -23.0), (0, -1)),
+            ('tubi', 'det_tubo_curva_su', (61.0, y0, -19.9), (0, 1)),
             ('tubi', 'det_tubo_valvola_T', (X0, 11.8, -29.2), (1, 0)), ('elettrico', 'det_interruttore_stagno', (X0, 7.8, -28.9), (1, 0)),
             ('cartelli', 'det_cartello_uscita', (X0, 3.2, -27.6), (1, 0)), ('cartelli', 'det_cartello_profondita', (X0, 9.6, -31.9), (1, 0)),
             ('cartelli', 'det_cartello_salvagente', (57.0, y0, -18.3), (0, 1)), ('cartelli', 'det_cartello_non_correre_penzolante', (71.0, y1, -22.4), (0, -1)),
             ('elettrico', 'det_cassetta_piccola', (x1, 9.0, -30.0), (-1, 0)), ('tubi', 'det_bocchetta_rettangolare_rotta', (x1, 27.0, -27.0), (-1, 0)),
             ('lampade', 'det_applique_emergenza_rotta', (66.0, y0, -24.5), (0, 1)),
-            ('tubi', 'det_tubi_paralleli_2m', (X0, 19.0, -22.6), (1, 0)), ('tubi', 'det_condotta_aria_4m', (X0, 24.5, -19.6), (1, 0)),
+            ('tubi', 'det_condotta_aria_4m', (X0, 24.5, -19.6), (1, 0)),
             ('elettrico', 'det_cassetta_aperta', (X0, 17.6, -24.0), (1, 0)), ('cartelli', 'det_cartello_non_tuffarsi', (X0, 22.0, -19.2), (1, 0)),
             ('tubi', 'det_tubo_verticale_3m', (X0, 28.5, -25.0), (1, 0)), ('tubi', 'det_bocchetta_tonda', (X0, 26.0, -23.0), (1, 0))):
         arredo(luci, 'det/' + cat, nodo, p, ry=ry_muro(*nrm), appoggio='origine')
-    # sotto le passerelle: fasci di cavi a festone (dall'attacco pendono in giù)
-    for (cat, nodo, p, ry) in (('cavi', 'det_fascio_cavi_4m', (46.0, y0 + 0.6, -20.32), 0.0), ('cavi', 'det_cavo_festone_3', (58.0, y0 + 1.2, -20.32), 0.0),
-                               ('cavi', 'det_cavo_festone_2', (52.0, y1 - 0.9, -24.32), 180.0), ('cavi', 'det_cavo_pendente_3', (64.5, y1 - 1.0, -24.32), 0.0),
-                               ('catene_corde', 'det_corda_pendente_2', (74.0, y0 + 1.0, -20.32), 0.0)):
+    # sotto le passerelle: fasci di cavi a festone (dall'attacco pendono in giù), legati alla trave di mezzo
+    # (passerella_muro: in mezzo alla larghezza, sotto la trave che finisce 16 cm sotto il piano)
+    for (cat, nodo, p, ry) in (('cavi', 'det_fascio_cavi_4m', (46.0, y0 + 1.1, -20.17), 0.0), ('cavi', 'det_cavo_festone_3', (58.0, y0 + 1.1, -20.17), 0.0),
+                               ('cavi', 'det_cavo_festone_2', (52.0, y1 - 1.1, -24.17), 180.0), ('cavi', 'det_cavo_festone_3', (64.5, y1 - 1.1, -24.17), 180.0),
+                               ('catene_corde', 'det_corda_pendente_2', (74.0, y0 + 1.1, -20.17), 0.0)):
         arredo(luci, 'det/' + cat, nodo, p, ry=ry, appoggio='origine')
     # sulla piattaforma della porta: corda, catena, la paletta di un bagnino
     for (cat, nodo, p, ry) in (('catene_corde', 'det_corda_rotolo', (41.0, 6.2, porta[1]), 0.0), ('catene_corde', 'det_catena_a_terra', (42.3, 2.6, porta[1]), 60.0),
@@ -651,6 +653,11 @@ def versione_A(mats):
     luci['emergenza'] += [[X0 + 0.15, 25.0, -16.0], [x1 - 0.15, 10.0, -22.0], [60.0, y1 - 0.15, -18.0], [50.0, y0 + 0.15, -26.0], [70.0, y0 + 0.15, -14.0]]
     luci['lavoro'] += [[C1[0] + 0.3, C1[1] + 0.3, C1[4] + 1.6], [C2[0] + 0.3, C2[3] - 0.3, C2[4] + 1.6], [C3[2] - 0.3, C3[3] - 0.3, C3[4] + 1.6],
                        [BX[0] + 0.6, BX[1] + 0.6, T + 2.0]]
+    if GIOCO:
+        # le lampade da lavoro stanno su un palo dal fondo (la lampadina, 9 cm, sopra la sua testa)
+        for (lx, ly, lz), zb in zip(luci['lavoro'][-4:], (C1[4], C2[4], C3[4], z0)):
+            c.cilindro((lx, ly, zb), (lx, ly, lz - 0.09), 0.03, 'metallo_grigio', seg=8)
+            c.cilindro((lx, ly, lz - 0.13), (lx, ly, lz - 0.08), 0.06, 'metallo', seg=10)
     luci['acqua_scorre'] += [[x, y, z] for (x, y, z) in ((50.8, 15.0, zc1), (62.8, 27.8, zc2), (69.6, 7.4, zc3), (50.8, 6.5, -33.4))]
     # lei: dove ti raggiunge (le pose per gli scatti)
     luci['lei'] += [[47.5, 18.3, -25.0, 200.0, 'insegue', 'raggiunge la vasca 1 dal basso'],

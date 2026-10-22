@@ -1484,13 +1484,139 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (195 celle da 25 cm)",
+		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
+		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
+		"pos": [
+			44.01,
+			-34.0,
+			-4.03
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2601 celle da 25 cm)",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
+		"pos": [
+			50.76,
+			-34.0,
+			-6.78
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3843 celle da 25 cm)",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_2",
+		"pos": [
+			69.51,
+			-28.58,
+			-7.28
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2782 celle da 25 cm)",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_1",
+		"pos": [
+			63.01,
+			-25.58,
+			-27.53
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1614 celle da 25 cm)",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_0",
+		"pos": [
+			50.51,
+			-22.58,
+			-14.78
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (539 celle da 25 cm)",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"pos": [
+			41.01,
+			-19.48,
+			-17.28
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (29 celle da 25 cm)",
+		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
+		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_collare",
+		"pos": [
+			40.51,
+			-19.32,
+			-17.53
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm)",
+		"motivo": "il bordo del foro nel muro est dove passa il tubo dell'inseguimento: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
+		"nodo": "TorreStruttura/torre_A",
+		"pos": [
+			40.01,
+			-19.18,
+			-17.78
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm)",
+		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)",
+		"nodo": "TorreScivoli/torre_collare_inseguimento",
+		"pos": [
+			40.01,
+			-19.18,
+			-17.78
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (75 celle da 25 cm)",
 		"motivo": "all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8)",
 		"nodo": "TorreScivoli/discesa_5_0",
 		"pos": [
-			37.51,
-			-15.01,
-			-18.8
+			38.76,
+			-19.06,
+			-17.03
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -1498,13 +1624,27 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.96 m sopra il pavimento (40 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (41 celle da 25 cm)",
+		"motivo": "celle dentro il tubo dell'inseguimento, e il collare sotto la coda del tratto 5, 1,93 m sopra il terzo gradino della bocca, sul bordo est della salita (ambienti-2, 22 ottobre)",
+		"nodo": "TorreStruttura/torre_A_sostegni",
+		"pos": [
+			38.26,
+			-19.06,
+			-17.53
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm)",
 		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)",
 		"nodo": "TorreScivoli/discesa_1_1",
 		"pos": [
 			38.76,
 			-6.01,
-			-11.55
+			-11.53
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",

@@ -1402,5 +1402,135 @@
 		],
 		"stato": "voluto",
 		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			44.01,
+			-34.0,
+			-4.03
+		],
+		"stato": "voluto",
+		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			50.76,
+			-34.0,
+			-6.78
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_2",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			69.51,
+			-28.58,
+			-7.28
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_1",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			63.01,
+			-25.58,
+			-27.53
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_0",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			50.51,
+			-22.58,
+			-14.78
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			41.01,
+			-19.48,
+			-17.28
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_collare",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			40.51,
+			-19.32,
+			-17.53
+		],
+		"stato": "voluto",
+		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreStruttura/torre_A",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			40.01,
+			-19.18,
+			-17.78
+		],
+		"stato": "voluto",
+		"motivo": "il bordo del foro nel muro est dove passa il tubo dell'inseguimento: le celle sono dentro il tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreScivoli/torre_collare_inseguimento",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			40.01,
+			-19.18,
+			-17.78
+		],
+		"stato": "voluto",
+		"motivo": "il collare attorno al tubo dove passa il muro: le celle sono dentro il tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreStruttura/torre_A_sostegni",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			38.26,
+			-19.06,
+			-17.53
+		],
+		"stato": "voluto",
+		"motivo": "celle dentro il tubo dell'inseguimento, e il collare sotto la coda del tratto 5, 1,93 m sopra il terzo gradino della bocca, sul bordo est della salita (ambienti-2, 22 ottobre)"
 	}
 ]
