@@ -328,6 +328,10 @@ func _tipo_nascosta(n: Node) -> String:
 			return "creatura, si muove (la guarda il collaudo)"
 	if EFFETTI.any(func(e): return percorso.contains(e)) or percorso.contains("acqua"):
 		return "effetto o acqua, esclusi"
+	if percorso.split("/").has("graybox"):
+		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
+		# collisione, non si vede mai
+		return "segnaposto graybox, al suo posto si vede il modello vero"
 	# la variante: il suo box sta dentro quello delle mesh visibili accanto (stesso genitore)
 	var mio := AABB()
 	var primo := true
