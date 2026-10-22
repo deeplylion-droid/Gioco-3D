@@ -320,12 +320,12 @@ func _scena_senza(scena: String, rami: Array) -> PackedScene:
 var _memoria_t := 0.0
 
 
-## MEMORIA=1: ogni 5 s stampa la memoria (statica, texture, buffer) e i fotogrammi disegnati.
+## MEMORIA=1: ogni 10 fotogrammi stampa la memoria (statica, texture, buffer) e i fotogrammi disegnati.
 func _memoria(delta: float) -> void:
 	if OS.get_environment("MEMORIA") != "1":
 		return
-	_memoria_t += delta
-	if _memoria_t < 5.0:
+	_memoria_t += 1.0
+	if _memoria_t < 10.0:
 		return
 	_memoria_t = 0.0
 	print("MEMORIA statica %d MB, texture %d MB, buffer %d MB, video %d MB, fotogrammi %d" % [
