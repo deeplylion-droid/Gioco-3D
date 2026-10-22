@@ -93,9 +93,9 @@ node('PulsanteTornello', 'Node3D', 'Meccanismi', inst='p_button', props={
 node('BloccoTornello', 'StaticBody3D', 'Meccanismi', props={'position': V(9.5, 1.125, -16.4)})
 node('CollisionShape3D', 'CollisionShape3D', 'Meccanismi/BloccoTornello', props={'shape': box('blocco_tornello', (1.25, 2.25, 0.3))})
 area('PassaggioTornello', 'Meccanismi', (9.5, 1.0, -16.4), (1.2, 2.0, 1.4))
-node('PernoTurbina', 'Node3D', 'Meccanismi', props={'position': V(8.79, 2.05, -19.4), 'rotation': V(0, H, 0)})
+node('PernoTurbina', 'Node3D', 'Meccanismi', props={'position': V(8.79, 2.35, -19.4), 'rotation': V(0, H, 0)})
 node('TurbinaSaracinesca', 'Node3D', 'Meccanismi', inst='p_turb', props={
-    'position': V(8.79, 2.05, -19.4), 'rotation': V(0, H, 0), 'script': 'ExtResource("s_turb")', 'radius': '0.3',
+    'position': V(8.79, 2.35, -19.4), 'rotation': V(0, H, 0), 'script': 'ExtResource("s_turb")', 'radius': '0.3',
     'show_model': 'false', 'external_rotor': 'NodePath("../PernoTurbina")', 'spin_per_liter': '14.0'})
 node('Saracinesca', 'Node3D', 'Meccanismi', np=['sources'], props={
     'position': V(9.7, 0, -20.6), 'script': 'ExtResource("s_sar")', 'sources': '[NodePath("../TurbinaSaracinesca")]',

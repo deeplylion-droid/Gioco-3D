@@ -118,19 +118,6 @@
 	},
 	{
 		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.78,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/cestino",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -141,19 +128,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_1",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-4.75,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
 	},
 	{
 		"zona": "interni",
@@ -326,19 +300,6 @@
 	},
 	{
 		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_2",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.28,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -466,19 +427,6 @@
 		],
 		"stato": "voluto",
 		"motivo": "bocchette dell'aria sul muro sud della camera delle onde (da 1,65 m), ora con la collisione: ci si ferma contro come contro il muro. Se non va bene: alzarle di 40 cm in ambienti2_camera_onde.py"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-0.75,
-			0.0,
-			21.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
 	},
 	{
 		"zona": "interni",
