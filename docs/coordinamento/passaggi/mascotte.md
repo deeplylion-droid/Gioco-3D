@@ -13,6 +13,7 @@
   - il risveglio è a x 14,5, verso est (scelta a dell'utente). La porta tagliafuoco ora ha un cardine e una collisione: il vano era libero;
   - nei test la scena dello squalo parte solo con `fai_risveglio(p, true)`, perché dura più di 13 secondi;
   - test: `test_interni`.
+- **Correzioni del 22 ottobre** (b928e50): la gengiva cuce il taglio alla sacca a cerniera (bocca a tenuta, niente corridoio visto attraverso); peso della mascella armonico esatto con le labbra libere verso gli angoli; nel rig testa+mascella sfumano lisce verso il collo; scatto della testa al richiamo in mezzo secondo. Dettagli in `docs/report/mascotte/risveglio_squalo/LEGGIMI.md`. Per rifare: `mostro_rig.py` (esporta), `tools/godot_importa.sh godot`, `test_interni`.
 - Gli scatti con Vulkan si bloccavano a 3 GB (deadlock dei worker di Godot): serve un `godot/override.cfg` locale con `[threading]` `worker_pool/max_threads=12`.
 
 
