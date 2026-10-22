@@ -536,18 +536,18 @@ def versione_A(mats):
     paratia(c, (C1[2] - 0.2, 13.6, zc1), (1, 0), False, luci)
     t1 = tubo('ins_A_tubo_1', [(C1[2] - 0.3, 16.4, zc1 - 0.1), (57.5, 17.5, -23.4), (60.5, 21.0, -24.2), (61.3, 25.0, zc2 + 0.5), (61.9, 27.6, zc2 + 0.2), (C2[0] + 0.3, 27.8, zc2)]
               if not GIOCO else   # nel gioco la discesa è distribuita meglio (al 3 % ci si fermava)
-              [(C1[2] - 0.3, 16.4, zc1 - 0.1), (57.5, 17.5, -22.9), (60.5, 21.0, -23.6), (61.3, 25.0, -24.25), (61.9, 27.6, -24.6), (C2[0] + 0.3, 27.8, zc2)],
+              [(C1[2] - 0.165, 16.4, zc1 - 0.1), (57.5, 17.5, -22.9), (60.5, 21.0, -23.6), (61.3, 25.0, -24.25), (61.9, 27.6, -24.6), (C2[0] + 0.3, 27.8, zc2)],
               ['tsc_rosso', 'tsc_bianco'])
     tubo('ins_A_scolo_0', [(C1[2] - 0.3, 13.6, zc1 - 0.1), (56.6, 13.9, -23.5), (58.2, 13.0, -24.4), (59.0, 11.8, D[0][4] + 0.9)]
-         if not GIOCO else [(C1[2] - 0.3, 13.6, zc1 - 0.1), (56.6, 13.9, -22.6), (58.2, 13.0, -23.8), (59.0, 11.8, D[0][4] + 0.9)], ['tsc_rosso'])
+         if not GIOCO else [(C1[2] - 0.165, 13.6, zc1 - 0.1), (56.6, 13.9, -22.6), (58.2, 13.0, -23.8), (59.0, 11.8, D[0][4] + 0.9)], ['tsc_rosso'])
     # bivio 2 (lato sud della vasca 2): a est la giusta (verso la vasca 3), a ovest la sbagliata (scolo 1)
     paratia(c, (67.0, C2[1] + 0.2, zc2), (0, -1), True, luci)
     paratia(c, (64.0, C2[1] + 0.2, zc2), (0, -1), False, luci)
     t2 = tubo('ins_A_tubo_2', [(67.0, C2[1] + 0.3, zc2 - 0.1), (68.5, 21.5, -26.4), (71.5, 17.0, -27.3), (72.0, 12.0, -27.9), (70.5, 8.6, zc3 + 0.3), (69.5, 7.6, zc3)]
-              if not GIOCO else [(67.0, C2[1] + 0.3, zc2 - 0.1), (68.5, 21.5, -26.0), (71.5, 17.0, -26.8), (72.0, 12.0, -27.3), (70.5, 8.6, -27.6), (69.5, 7.6, zc3)],
+              if not GIOCO else [(67.0, C2[1] + 0.165, zc2 - 0.1), (68.5, 21.5, -26.0), (71.5, 17.0, -26.8), (72.0, 12.0, -27.3), (70.5, 8.6, -27.6), (69.5, 7.6, zc3)],
               ['tsc_turchese', 'tsc_rosa'])
     tubo('ins_A_scolo_1', [(64.0, C2[1] + 0.3, zc2 - 0.1), (62.0, 23.0, -26.6), (59.5, 25.0, -27.6), (58.0, 27.0, D[1][4] + 0.9)]
-         if not GIOCO else [(64.0, C2[1] + 0.3, zc2 - 0.1), (62.0, 23.0, -25.9), (59.5, 25.0, -27.2), (58.0, 27.0, D[1][4] + 0.9)], ['tsc_turchese'])
+         if not GIOCO else [(64.0, C2[1] + 0.165, zc2 - 0.1), (62.0, 23.0, -25.9), (59.5, 25.0, -27.2), (58.0, 27.0, D[1][4] + 0.9)], ['tsc_turchese'])
     # bivio 3 (lato ovest della vasca 3): a sud la giusta (la spirale finale), a nord la sbagliata (scolo 2)
     paratia(c, (C3[0] + 0.2, 3.6, zc3), (-1, 0), True, luci)
     # la sbagliata: il suo tubo (scolo 2) parte dal muro est, quindi nel gioco la paratia sta lì
@@ -556,11 +556,11 @@ def versione_A(mats):
     else:
         paratia(c, (C3[0] + 0.2, 6.6, zc3), (-1, 0), False, luci)
     tubo('ins_A_scolo_2', [(C3[2] - 0.2, 6.6, zc3 - 0.1), (74.5, 9.0, -29.6), (75.5, 12.5, -30.3), (75.2, 14.0, D[2][4] + 0.9)]
-         if not GIOCO else [(C3[2] - 0.2, 6.6, zc3 - 0.1), (74.8, 7.4, -29.0), (75.6, 11.5, -29.7), (75.2, 14.0, D[2][4] + 0.9)], ['tsc_viola'])
+         if not GIOCO else [(C3[2] - 0.165, 6.6, zc3 - 0.1), (74.8, 7.4, -29.0), (75.6, 11.5, -29.7), (75.2, 14.0, D[2][4] + 0.9)], ['tsc_viola'])
     # T3: la spirale finale attorno al serbatoio grande, giù fino al bacino di scarico
     sx, sy = 60.0, 4.5
     serbatoio(c, sx, sy, z0, 13.0, 2.6)
-    spir = [(C3[0] - 0.3, 3.6, zc3 - 0.1), (64.5, 2.0, -28.8 if GIOCO else -29.6)]
+    spir = [(C3[0] + (0.165 if GIOCO else -0.3), 3.6, zc3 - 0.1), (64.5, 2.0, -28.8 if GIOCO else -29.6)]
     for k in range(1, 9):
         a = math.radians(-60 - k * 52)
         spir.append((sx + math.cos(a) * 4.2, sy + math.sin(a) * 4.2 + 0.0, -29.8 - k * (0.33 if GIOCO else 0.42)))
@@ -613,12 +613,14 @@ def versione_A(mats):
     # (nel gioco il primo sta 1,5 m più verso il muro est: fra lui e la vasca 2 sale lei)
     for (x, y, h, r) in ((75.5 if GIOCO else 74.0, 27.0, 16.0, 2.2), (45.5, 26.5, 12.0, 2.4), (75.0, 4.0, 11.0, 1.8)):
         serbatoio(c, x, y, z0, h, r)
+    # nel gioco quello che sta su una pedana poggia sul grigliato, 1 cm sotto il piano (piattaforma in torre_proposte)
+    gr_ = 0.01 if GIOCO else 0.0
     # le pompe vere della sala pompe (una per tipo, niente doppioni), su basamenti sopra l'acqua
     for (x, y, nodi) in ((50.0, 23.6, 'POMPA_1'), (54.4, 23.6, 'POMPA_2'), (67.0, 14.5, ['POMPA_3', 'POMPA_3_modello'])):
         P.piattaforma(c, x - 2.1, y - 1.6, x + 2.1, y + 1.6, T + 0.6, lati=(), pali=False)
         gambe(c, x - 2.1, y - 1.6, x + 2.1, y + 1.6, T + 0.6 - SOTTO_PEDANA, z0)
-        arredo(luci, 'pompe', nodi, (x, y, T + 0.6), ry=90.0)
-    arredo(luci, 'det/detriti', 'det_pannello_lamiera', (48.6, 22.6, T + 0.6), ry=25.0, appoggio='origine')
+        arredo(luci, 'pompe', nodi, (x, y, T + 0.6 - gr_), ry=90.0)
+    arredo(luci, 'det/detriti', 'det_pannello_lamiera', (48.6, 22.6, T + 0.6 - gr_), ry=25.0, appoggio='origine')
     # il filtro grande su un plinto di cemento, tra il bacino e la spirale
     c.scatola((51.3, -0.6, z0), (54.3, 2.4, T + 0.3), 'cemento')
     arredo(luci, 'pompe', 'FILTRO_1_modello', (52.8, 0.9, T + 0.3), ry=30.0)
@@ -628,8 +630,8 @@ def versione_A(mats):
     gambe(c, BM[0], BM[1], BM[2], BM[3], BM[4] - SOTTO_PEDANA, z0)
     scala_pioli(c, BM[0] - 0.1, 20.6, z0, BM[4])
     arredo(luci, 'pompe', 'QUADRO_elettrico', (x1, 22.6, BM[4]), ry=90.0, appoggio='muro', normale=(-1, 0))
-    arredo(luci, 'pompe', 'TURBINA_1', (75.4, 19.0, BM[4]), ry=90.0)
-    arredo(luci, 'det/detriti', 'det_griglia_caduta', (73.6, 21.8, BM[4]), ry=-20.0, appoggio='origine')
+    arredo(luci, 'pompe', 'TURBINA_1', (75.4, 19.0, BM[4] - gr_), ry=90.0)
+    arredo(luci, 'det/detriti', 'det_griglia_caduta', (73.6, 21.8, BM[4] - gr_), ry=-20.0, appoggio='origine')
     arredo(luci, 'det/elettrico', 'det_cassetta_aperta', (x1, 18.2, BM[4] + 1.3), ry=ry_muro(-1, 0), appoggio='origine')
     # il palo della plafoniera, dal ballatoio, col braccio
     c.cilindro((77.5, 20.6, BM[4]), (77.5, 20.6, BM[4] + 3.4), 0.05, 'metallo_grigio', seg=8)
@@ -641,12 +643,12 @@ def versione_A(mats):
     for x in (PC[0] + 0.3, (PC[0] + PC[2]) / 2, PC[2] - 0.3):
         c.cilindro((x, PC[3] - 0.2, PC[4] - 0.3), (x, y0 + 0.05, PC[4] - 2.2), 0.06, 'gioco_giallo', seg=8)
         c.scatola((x - 0.12, y0, PC[4] - 2.35), (x + 0.12, y0 + 0.08, PC[4] - 2.05), 'metallo')
-    arredo(luci, 'pompe', 'SCRIVANIA', (48.0, PC[1] + 0.55, PC[4]), ry=180.0)
-    arredo(luci, 'pompe', 'SEDIA', (48.2, PC[1] + 1.35, PC[4]), ry=160.0)
+    arredo(luci, 'pompe', 'SCRIVANIA', (48.0, PC[1] + 0.55, PC[4] - gr_), ry=180.0)
+    arredo(luci, 'pompe', 'SEDIA', (48.2, PC[1] + 1.35, PC[4] - gr_), ry=160.0)
     arredo(luci, 'pompe', 'QUADRO_strumenti', (50.9, y0, PC[4] + 0.9), ry=0.0, appoggio='muro', normale=(0, 1))
     arredo(luci, 'det/elettrico', 'det_quadro_elettrico', (46.2, y0, PC[4] + 1.4), ry=ry_muro(0, 1), appoggio='origine')
-    arredo(luci, 'det/detriti', 'det_vetri_rotti_1', (51.6, PC[1] + 1.0, PC[4]), ry=40.0, appoggio='origine')
-    arredo(luci, 'det/detriti', 'det_foglio_2', (49.4, PC[1] + 1.2, PC[4]), ry=-15.0, appoggio='origine')
+    arredo(luci, 'det/detriti', 'det_vetri_rotti_1', (51.6, PC[1] + 1.0, PC[4] - gr_), ry=40.0, appoggio='origine')
+    arredo(luci, 'det/detriti', 'det_foglio_2', (49.4, PC[1] + 1.2, PC[4] - gr_), ry=-15.0, appoggio='origine')
     c.cilindro((49.0, y0, PC[4] + 3.05), (49.0, PC[1] + 1.0, PC[4] + 3.05), 0.035, 'metallo_grigio', seg=8)
     c.scatola((48.9, y0, PC[4] + 2.9), (49.1, y0 + 0.05, PC[4] + 3.2), 'metallo')
     luci['neon'].append([49.0, PC[1] + 0.8, PC[4] + 3.065])     # (il tubo, 10 cm sotto, tocca il braccio)
@@ -668,7 +670,7 @@ def versione_A(mats):
     for (cat, nodo, p, nrm) in (
             ('tubi', 'det_tubo_valvola_T', (55.0, y1, -23.0), (0, -1)),
             ('tubi', 'det_tubo_curva_su', (61.0, y0, -19.9), (0, 1)),
-            ('tubi', 'det_tubo_valvola_T', (X0, 11.8, -29.2), (1, 0)), ('elettrico', 'det_interruttore_stagno', (X0, 7.8, -28.9), (1, 0)),
+            ('tubi', 'det_tubo_valvola_T', (X0 - (0.035 if GIOCO else 0.0), 11.8, -29.2), (1, 0)), ('elettrico', 'det_interruttore_stagno', (X0, 7.8, -28.9), (1, 0)),
             ('cartelli', 'det_cartello_uscita', (X0, 3.2, -27.6), (1, 0)), ('cartelli', 'det_cartello_profondita', (X0, 9.6, -31.9), (1, 0)),
             ('cartelli', 'det_cartello_salvagente', (57.0, y0, -18.3), (0, 1)), ('cartelli', 'det_cartello_non_correre_penzolante', (71.0, y1, -22.4), (0, -1)),
             ('elettrico', 'det_cassetta_piccola', (x1, 9.0, -30.0), (-1, 0)), ('tubi', 'det_bocchetta_rettangolare_rotta', (x1, 27.0, -27.0), (-1, 0)),
@@ -676,16 +678,18 @@ def versione_A(mats):
             ('tubi', 'det_condotta_aria_4m', (X0, 24.5, -19.6), (1, 0)),
             ('elettrico', 'det_cassetta_aperta', (X0, 17.6, -24.0), (1, 0)), ('cartelli', 'det_cartello_non_tuffarsi', (X0, 22.0, -19.2), (1, 0)),
             ('tubi', 'det_tubo_verticale_3m', (X0, 28.5, -25.0), (1, 0)), ('tubi', 'det_bocchetta_tonda', (X0, 26.0, -23.0), (1, 0))):
+        if GIOCO and nodo == 'det_tubo_verticale_3m':
+            continue        # (finiva nel vuoto ai due capi)
         arredo(luci, 'det/' + cat, nodo, p, ry=ry_muro(*nrm), appoggio='origine')
     # sotto le passerelle: fasci di cavi a festone (dall'attacco pendono in giù), legati alla trave di mezzo
     # (passerella_muro: in mezzo alla larghezza, sotto la trave che finisce 16 cm sotto il piano)
     for (cat, nodo, p, ry) in (('cavi', 'det_fascio_cavi_4m', (46.0, y0 + 1.1, -20.17), 0.0), ('cavi', 'det_cavo_festone_3', (58.0, y0 + 1.1, -20.17), 0.0),
                                ('cavi', 'det_cavo_festone_2', (52.0, y1 - 1.1, -24.17), 180.0), ('cavi', 'det_cavo_festone_3', (64.5, y1 - 1.1, -24.17), 180.0),
-                               ('catene_corde', 'det_corda_pendente_2', (74.0, y0 + 1.1, -20.17), 0.0)):
+                               ('catene_corde', 'det_corda_pendente_2', (74.0, y0 + 1.1, -20.155 if GIOCO else -20.17), 0.0)):
         arredo(luci, 'det/' + cat, nodo, p, ry=ry, appoggio='origine')
     # sulla piattaforma della porta: corda, catena, la paletta di un bagnino
-    for (cat, nodo, p, ry) in (('catene_corde', 'det_corda_rotolo', (41.0, 6.2, porta[1]), 0.0), ('catene_corde', 'det_catena_a_terra', (42.3, 2.6, porta[1]), 60.0),
-                               ('detriti', 'det_pannello_lamiera_2', (41.4, 4.6, porta[1]), 12.0)):
+    for (cat, nodo, p, ry) in (('catene_corde', 'det_corda_rotolo', (41.0, 6.2, porta[1] - gr_), 0.0), ('catene_corde', 'det_catena_a_terra', (42.3, 2.6, porta[1] - gr_), 60.0),
+                               ('detriti', 'det_pannello_lamiera_2', (41.4, 4.6, porta[1] - gr_), 12.0)):
         arredo(luci, 'det/' + cat, nodo, p, ry=ry, appoggio='origine')
     # lampade industriali appese al soffitto sopra le macchine (cavo dal soffitto)
     luci['appese'] += [[51.5, 7.5, -16.5, True], [61.5, 17.5, -17.5, False], [70.5, 24.0, -18.5, True], [45.0, 22.5, -19.0, True],
@@ -698,7 +702,8 @@ def versione_A(mats):
         props.append(P.prop(nome, (x, y, z), rot))
 
     # --- luci (le mette lo script degli scatti) ------------------------------------------------------------
-    luci['emergenza'] += [[X0 + 0.15, 25.0, -16.0], [x1 - 0.15, 10.0, -22.0], [60.0, y1 - 0.15, -18.0], [50.0, y0 + 0.15, -26.0], [70.0, y0 + 0.15, -14.0]]
+    e_ = 0.13 if GIOCO else 0.15      # (il bulbo, r 14 cm, nel gioco tocca il muro)
+    luci['emergenza'] += [[X0 + e_, 25.0, -16.0], [x1 - e_, 10.0, -22.0], [60.0, y1 - e_, -18.0], [50.0, y0 + e_, -26.0], [70.0, y0 + e_, -14.0]]
     if not GIOCO:
         luci['lavoro'] += [[C1[0] + 0.3, C1[1] + 0.3, C1[4] + 1.6], [C2[0] + 0.3, C2[3] - 0.3, C2[4] + 1.6], [C3[2] - 0.3, C3[3] - 0.3, C3[4] + 1.6],
                            [BX[0] + 0.6, BX[1] + 0.6, T + 2.0]]
