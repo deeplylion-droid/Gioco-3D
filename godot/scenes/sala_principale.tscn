@@ -702,7 +702,7 @@ script = ExtResource("85_lettore_vero")
 [node name="Polaroid" type="Node3D" parent="." unique_id=1600288938]
 
 [node name="Polaroid04" type="Area3D" parent="Polaroid" unique_id=982921701 instance=ExtResource("69_7hdua")]
-transform = Transform3D(0.9800666, 0, 0.19866933, 0, 1, 0, -0.19866933, 0, 0.9800666, -16.03, 1.5, -15.35)
+transform = Transform3D(0.980033, 0.009703, 0.198599, -0.006981, 0.999872, -0.014401, -0.198714, 0.012727, 0.979975, -16.03, 1.2416, -15.3499)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -713,7 +713,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid05" type="Area3D" parent="Polaroid" unique_id=647491652 instance=ExtResource("69_7hdua")]
-transform = Transform3D(-0.41614684, 0, 0.9092974, 0, 1, 0, -0.9092974, 0, -0.41614684, 1.2, -2, 2.9)
+transform = Transform3D(-0.414627, -0.055057, 0.908324, -0.055147, 0.997854, 0.03531, -0.908319, -0.035451, -0.416773, 1.19978, -2.17442, 2.89986)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -724,7 +724,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid06" type="Area3D" parent="Polaroid" unique_id=1317803162 instance=ExtResource("69_7hdua")]
-transform = Transform3D(0.3894184, 0, -0.921061, 0, 1, 0, 0.921061, 0, 0.3894184, -1.7500004, -9.04, 10.559999)
+transform = Transform3D(0.389418, 0, -0.921061, 0, 1, 0, 0.921061, 0, 0.389418, -1.75, -9.046, 10.56)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -735,7 +735,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid07" type="Area3D" parent="Polaroid" unique_id=604288535 instance=ExtResource("69_7hdua")]
-transform = Transform3D(0.21978361, 0, 0.97554865, 0, 1, 0, -0.97554865, 0, 0.21978361, -3.23, -8.26, 43.36)
+transform = Transform3D(0.219784, 0, 0.975549, 0, 1, 0, -0.975549, 0, 0.219784, -3.23, -8.26608, 43.36)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -746,7 +746,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid08" type="Area3D" parent="Polaroid" unique_id=1710405987 instance=ExtResource("69_7hdua")]
-transform = Transform3D(0.7648422, 0, 0.64421767, 0, 1, 0, -0.64421767, 0, 0.7648422, -8.9, 0, 6.6)
+transform = Transform3D(0.764842, 0, 0.644218, 0, 1, 0, -0.644218, 0, 0.764842, -8.9, 0.016, 6.6)
 collision_layer = 16
 collision_mask = 0
 monitoring = false
@@ -757,7 +757,7 @@ prompt = "Raccogli"
 one_shot = true
 
 [node name="Polaroid09" type="Area3D" parent="Polaroid" unique_id=599395677 instance=ExtResource("69_7hdua")]
-transform = Transform3D(-0.7373938, 0, 0.67546314, 0, 1, 0, -0.67546314, 0, -0.7373938, -9.9, 0, -9.4)
+transform = Transform3D(-0.737394, 0, 0.675463, 0, 1, 0, -0.675463, 0, -0.737394, -9.9, 0.004, -9.4)
 collision_layer = 16
 collision_mask = 0
 monitoring = false

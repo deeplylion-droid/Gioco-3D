@@ -105,9 +105,9 @@ func _snap() -> void:
 	# quanto serve (controllo di posizionamento del 22 ottobre, Polaroid05).
 	var alza := 0.0
 	for a in [Vector3(0.07, 0, 0.07), Vector3(-0.07, 0, 0.07), Vector3(0.07, 0, -0.07), Vector3(-0.07, 0, -0.07)]:
-		var angolo := global_transform * a
+		var angolo: Vector3 = global_transform * (a as Vector3)
 		var qa := PhysicsRayQueryParameters3D.create(angolo + Vector3(0, 0.3, 0), angolo + Vector3(0, -0.3, 0), Layers.WORLD | Layers.PROPS)
-		var ha := space.intersect_ray(qa)
+		var ha: Dictionary = space.intersect_ray(qa)
 		if not ha.is_empty():
 			alza = maxf(alza, (ha.position as Vector3).y + 0.002 - angolo.y)
 	global_position.y += alza
