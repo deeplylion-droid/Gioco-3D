@@ -276,6 +276,8 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 - strisce delle paratie: nella torre le strisce vogliono dire "chiuso". a) sulla paratia giusta la trave diventa liscia (consigliata); b) restano tutte a strisce, perché finché non colpisci il bersaglio sono chiuse.
 
 **Scelte dell'utente (22 ottobre):** vasche **c**, cioè acqua meno torbida e verde-azzurra col fondo che si intravede, più una lampada da lavoro sopra ogni vasca; strisce **a**, la trave della paratia giusta diventa liscia e sulla sbagliata le strisce restano.
+
+**Lei nell'inseguimento** (22 ottobre): animazioni fatte da mascotte (sale dall'acqua, incombe con la testa che ti segue, presa, respinta quando il getto la colpisce in faccia, scende, colpi alla grata, affacciata in SB1 che ti fissa). **La voce: scelta B dell'utente** ("B", 22 ottobre): versi nuovi fatti apposta, nello stesso stile dei suoi suoni di adesso (un verso quando sale e incombe, un grido quando ti prende, un lamento quando la colpisci, un rantolo mentre ti fissa dal pozzo, versi di rabbia contro la grata), da far sentire all'utente prima di metterli nel gioco. Scartata A (riusare i versi che ha già).
 Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
