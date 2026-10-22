@@ -56,6 +56,13 @@ const Z_PIAZZA_NORD := -22.2
 const FINE_FILA := Vector3(-VASCA - 3.2, 0, -VASCA - 3.4)
 ## Velocità dei rami sbagliati (m/s).
 const VELOCITA_RITORNO := 3.0
+## Lo scivolo in fondo ai rami sbagliati (scelta B dell'utente, 22 ottobre): negli ultimi SCIVOLO_L metri
+## prima della vasca dell'imbarco un canale stretto (largo 2 x SCIVOLO_A) di vetroresina colorata, con
+## l'acqua veloce che scende di SCIVOLO_DISCESA e sbocca nella vasca. Il fiume resta alla stessa altezza:
+## lungo il raggio, prima dello scivolo, il pelo sale piano (1,4%, non si nota) di quanto poi scende.
+const SCIVOLO_L := 4.0
+const SCIVOLO_A := 0.7
+const SCIVOLO_DISCESA := 0.2
 
 var mat_vasca: Material
 var mat_banca: Material
@@ -274,10 +281,91 @@ func _acqua_e_banchine() -> void:
 	_quad(fondo, [Vector3(X0, FONDO, Z1), Vector3(X1, FONDO, Z1), Vector3(X1, FONDO, Z0), Vector3(X0, FONDO, Z0)])
 	_mesh(fondo, mat_vasca, false, true, false)
 	# il pelo dell'acqua: nastri lungo le strisce (scorrono), lastre ferme nelle conche
-	for s in _strisce:
-		_nastro(s)
+	for i in _strisce.size():
+		_nastro(_strisce[i], i >= _strisce.size() - 3)   # le ultime tre sono i raggi dei rami sbagliati
 	for c in _conche:
 		_lastra(c)
+	_scivoli()
+
+
+## Gli scivoli dei rami sbagliati: in ogni raggio, dall'inizio dello scivolo al bordo della vasca, la vasca
+## a U di vetroresina (blu dentro, con l'acqua che scende), il bordo e due falde gialle che la raccordano alle
+## banchine, chiuse in testa e in fondo.
+func _scivoli() -> void:
+	var giallo := _vetroresina(Color(0.89, 0.66, 0.06))
+	var blu := _vetroresina(Color(0.12, 0.31, 0.63))
+	var st_g := SurfaceTool.new()
+	st_g.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_b := SurfaceTool.new()
+	st_b.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_a := SurfaceTool.new()
+	st_a.begin(Mesh.PRIMITIVE_TRIANGLES)
+	const T := 0.06          # spessore del bordo
+	const SOPRA := 0.3       # il bordo sopra il pelo
+	const SOTTO := 0.14      # il fondo sotto il pelo
+	var a := SCIVOLO_A
+	var b := W * 0.5
+	var d0 := VASCA
+	var d1 := VASCA + SCIVOLO_L
+	for g in [90.0, 180.0, 270.0]:
+		var u := anello(g).normalized()
+		var r := u.cross(Vector3.UP).normalized()
+		var pt := func(d: float, s: float, y: float) -> Vector3: return u * d + r * s + Vector3.UP * y
+		var n := 16
+		for i in n:
+			var da := lerpf(d0, d1, float(i) / n)
+			var db := lerpf(d0, d1, float(i + 1) / n)
+			var ya := ACQUA + quota_raggio(da)
+			var yb := ACQUA + quota_raggio(db)
+			# dentro: il profilo a U, da sinistra a destra
+			var prof := [Vector2(-a, SOPRA), Vector2(-a, -SOTTO + 0.08), Vector2(-a + 0.08, -SOTTO), Vector2(a - 0.08, -SOTTO),
+					Vector2(a, -SOTTO + 0.08), Vector2(a, SOPRA)]
+			for k in prof.size() - 1:
+				var p0: Vector2 = prof[k]
+				var p1: Vector2 = prof[k + 1]
+				var verso := Vector3.UP * (1.0 if p0.y < 0.0 and p1.y < 0.0 else 0.3) - r * signf(p0.x + p1.x)
+				_faccia(st_b, [pt.call(da, p0.x, ya + p0.y), pt.call(da, p1.x, ya + p1.y), pt.call(db, p1.x, yb + p1.y), pt.call(db, p0.x, yb + p0.y)], verso)
+			for lato in [-1.0, 1.0]:
+				# il bordo e la falda fino alla banchina (quota 0)
+				_faccia(st_g, [pt.call(da, lato * a, ya + SOPRA), pt.call(da, lato * (a + T), ya + SOPRA), pt.call(db, lato * (a + T), yb + SOPRA), pt.call(db, lato * a, yb + SOPRA)], Vector3.UP)
+				_faccia(st_g, [pt.call(da, lato * (a + T), ya + SOPRA), pt.call(da, lato * b, 0.0), pt.call(db, lato * b, 0.0), pt.call(db, lato * (a + T), yb + SOPRA)], Vector3.UP + r * lato)
+			# l'acqua dello scivolo
+			_faccia(st_a, [pt.call(da, -a + 0.02, ya), pt.call(da, a - 0.02, ya), pt.call(db, a - 0.02, yb), pt.call(db, -a + 0.02, yb)], Vector3.UP)
+		# le teste delle falde: in cima verso il canale, in fondo verso la vasca, fin sotto il pelo
+		for lato in [-1.0, 1.0]:
+			var y1 := ACQUA + quota_raggio(d1)
+			_faccia(st_g, [pt.call(d1, lato * a, y1 + SOPRA), pt.call(d1, lato * b, 0.0), pt.call(d1, lato * b, y1 - 0.1), pt.call(d1, lato * a, y1 - 0.1)], u)
+			_faccia(st_g, [pt.call(d0, lato * a, ACQUA + SOPRA), pt.call(d0, lato * b, 0.0), pt.call(d0, lato * b, ACQUA - 0.15), pt.call(d0, lato * a, ACQUA - 0.15)], -u)
+	_mesh(st_g, giallo, true, false, false).name = "ScivoliFalde"
+	_mesh(st_b, blu, true, false, false).name = "ScivoliVasca"
+	_mesh(st_a, mat_acqua, false, false, false).name = "ScivoliAcqua"
+
+
+func _vetroresina(c: Color) -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = c
+	m.roughness = 0.35
+	m.normal_enabled = true
+	m.normal_texture = load("res://assets/ambiente/torre/torre_scivoli_vetroresina_nrm.jpg")
+	m.normal_scale = 0.5
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3.ONE * 0.5
+	return m
+
+
+## Un quadrilatero con la faccia verso [param verso] (in Godot la faccia davanti gira in senso orario).
+func _faccia(st: SurfaceTool, q: Array, verso: Vector3) -> void:
+	var g: Vector3 = (q[1] - q[0]).cross(q[2] - q[0])
+	if g.length() < 0.000001:
+		g = (q[2] - q[0]).cross(q[3] - q[0])
+	var idx := [0, 1, 2, 0, 2, 3]
+	if g.dot(verso) > 0.0:
+		idx = [0, 2, 1, 0, 3, 2]
+	var nn := g.normalized() * (-1.0 if g.dot(verso) > 0.0 else 1.0) * -1.0
+	for k in idx:
+		st.set_normal(nn)
+		st.add_vertex(q[k])
 
 
 ## Vero se il lato a-b sta su un bordo del quadrotto (non è bordo d'acqua).
@@ -305,14 +393,37 @@ func _parete(st: SurfaceTool, a: Vector2, b: Vector2, n: Vector3) -> void:
 		st.add_vertex(q[idx])
 
 
-func _nastro(pts: PackedVector2Array) -> void:
+## Quanto sta più su il pelo lungo un raggio sbagliato, a distanza [param d] dal centro: sale piano dalla
+## conca del bivio fino all'inizio dello scivolo, poi scende di SCIVOLO_DISCESA fino alla vasca.
+static func quota_raggio(d: float) -> float:
+	var cima := VASCA + SCIVOLO_L
+	if d >= R - CONCA or d <= VASCA:
+		return 0.0
+	if d >= cima:
+		return SCIVOLO_DISCESA * (R - CONCA - d) / (R - CONCA - cima)
+	return SCIVOLO_DISCESA * (d - VASCA) / SCIVOLO_L
+
+
+func _nastro(pts: PackedVector2Array, raggio := false) -> void:
+	if raggio:
+		# il pelo del canale finisce dove comincia lo scivolo (l'acqua dello scivolo la fa _scivoli)
+		var corti := PackedVector2Array()
+		var cima := VASCA + SCIVOLO_L
+		for i in pts.size():
+			if pts[i].length() >= cima:
+				corti.append(pts[i])
+			elif i > 0 and pts[i - 1].length() > cima:
+				corti.append(pts[i].normalized() * cima)
+		pts = corti
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var dist := 0.0
 	var w := W * 0.5 - 0.01
 	for i in pts.size() - 1:
-		var p0 := Vector3(pts[i].x, ACQUA, pts[i].y)
-		var p1 := Vector3(pts[i + 1].x, ACQUA, pts[i + 1].y)
+		var y0 := ACQUA + (quota_raggio(pts[i].length()) if raggio else 0.0)
+		var y1 := ACQUA + (quota_raggio(pts[i + 1].length()) if raggio else 0.0)
+		var p0 := Vector3(pts[i].x, y0, pts[i].y)
+		var p1 := Vector3(pts[i + 1].x, y1, pts[i + 1].y)
 		var t0 := _tangente2(pts, i)
 		var t1 := _tangente2(pts, i + 1)
 		var r0 := t0.cross(Vector3.UP).normalized()
@@ -718,7 +829,8 @@ func _logica() -> void:
 		t.name = nome
 		t.curve = Curve3D.new()
 		for v in _campiona(p[nome]):
-			t.curve.add_point(Vector3(v.x, GALLA, v.z))
+			var q := quota_raggio(Vector2(v.x, v.z).length()) if nome.begins_with("Sbagliato") else 0.0
+			t.curve.add_point(Vector3(v.x, GALLA + q, v.z))
 		if nome.begins_with("Sbagliato"):
 			t.ramo_sbagliato = true
 			t.velocita = VELOCITA_RITORNO

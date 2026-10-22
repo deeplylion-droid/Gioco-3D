@@ -16,6 +16,9 @@ static func camere() -> Dictionary:
 		"bivio3": [F.anello(238.0) + Vector3(0, 0.6, 0), F.anello(229.0, F.R - 2.2) + Vector3(0, 1.8, 0)],
 		"approdo": [Vector3(-29.6, 0.6, 0.0), Vector3(-40.0, 0.8, 0.0)],
 		"alto": [Vector3(-6.0, 70.0, 0.1), Vector3(-6.0, 0.0, 0.0)],
+		# lo scivolo in fondo al ramo sbagliato 2 (scelta B): dalla ciambella e dalla banchina
+		"scivolo_ciambella": [Vector3(0.0, 0.75, 11.0), Vector3(0.0, 0.0, 2.0)],
+		"scivolo_banchina": [Vector3(3.0, 1.7, 9.5), Vector3(0.0, 0.0, 4.6)],
 	}
 
 

@@ -576,7 +576,9 @@ def proposta_gioco():
     for k, (p, d) in enumerate((((48.0, YD, 0), (1, 0, 0)), ((51.6, -1.2, 0), (0, 1, 0)), ((51.6, 7.8, Z_L1), (-1, 0, 0)),
                                 ((44.55, 6.0, Z_T), (0, -1, 0)), ((44.55, -3.0, Z_SALA), (0, -1, 0)), ((44.55, -13.0, Z_SALA), (0, -1, 0)),
                                 ((42.0, -15.0, Z_SALA), (-1, 0, 0)), ((33.0, -15.0, Z_SALA), (-1, 0, 0)), ((24.0, -15.0, Z_SALA), (-1, 0, 0)))):
-        freccia_terra(f'G_freccia_{k}', p, d, obs, giallo)
+        # in C2 (3, 4, 5) no: puntavano al magazzino, che ora la grata chiude (scelta dell'utente, 22 ottobre)
+        if k not in (3, 4, 5):
+            freccia_terra(f'G_freccia_{k}', p, d, obs, giallo)
     comuni(obs, C.mat_pbr('corrimano_A', base=(0.85, 0.65, 0.12), roughness=0.5, metallic=0.5))
     for o in [o for o in obs if o.name in TROPPO_ALTI]:
         obs.remove(o); bpy.data.objects.remove(o)
