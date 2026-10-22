@@ -70,21 +70,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a 0.23 m)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_luci",
-		"pos": [
-			-1.4,
-			-6.4,
-			47.58
-		],
-		"problema": "sospeso",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.84 e 1.46 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.84 e 1.46 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/estintore",
 		"pos": [
@@ -98,7 +84,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (125 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (125 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
 		"pos": [
@@ -112,7 +98,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 0.95 m sopra il pavimento (132 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 0.95 m sopra il pavimento (132 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/secchio_mocio",
 		"pos": [
@@ -126,7 +112,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (82 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (82 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
 		"pos": [
@@ -140,7 +126,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
 		"pos": [
@@ -154,7 +140,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (8 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (8 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/cestino",
 		"pos": [
@@ -168,8 +154,8 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (16 celle da 25 cm)",
-		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) si passa a meno di 10 cm, all'altezza della testa",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
+		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_1",
 		"pos": [
 			-4.75,
@@ -182,7 +168,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.42 m sopra il pavimento (47 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.42 m sopra il pavimento (47 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/pallone",
 		"pos": [
@@ -196,7 +182,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
 		"pos": [
@@ -210,7 +196,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
 		"pos": [
@@ -224,7 +210,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.50 m sopra il pavimento (32 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.50 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/cestino_spogliatoi",
 		"pos": [
@@ -238,7 +224,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
 		"pos": [
@@ -252,7 +238,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
 		"pos": [
@@ -266,7 +252,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (64 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (64 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Stanzino/porta_stanzino",
 		"pos": [
@@ -280,7 +266,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.40 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.40 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
 		"pos": [
@@ -294,7 +280,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (48 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (48 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/cartello_bagnato",
 		"pos": [
@@ -308,7 +294,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
 		"pos": [
@@ -322,7 +308,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (32 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_rotore",
 		"pos": [
@@ -336,7 +322,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.88 m sopra il pavimento (96 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.88 m sopra il pavimento (96 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Stanzino/sedia",
 		"pos": [
@@ -350,7 +336,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.82 e 1.44 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.82 e 1.44 m sopra il pavimento (16 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
 		"pos": [
@@ -364,7 +350,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (32 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_2",
 		"pos": [
@@ -378,7 +364,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (32 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
 		"pos": [
@@ -392,95 +378,11 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (902 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
-		"pos": [
-			-12.25,
-			0.0,
-			-18.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
-		"pos": [
-			19.5,
-			0.0,
-			-18.5
-		],
-		"problema": "ingombro",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_10",
-		"pos": [
-			0.0,
-			0.0,
-			13.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.70 e 0.91 m sopra il pavimento (1490 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_cordone",
-		"pos": [
-			0.25,
-			0.0,
-			13.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
-		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_9",
-		"pos": [
-			-1.25,
-			0.0,
-			13.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
-		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_6",
-		"pos": [
-			-4.25,
-			0.0,
-			11.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (64 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (64 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
 		"pos": [
-			-18.0,
+			-18.5,
 			0.0,
 			16.0
 		],
@@ -490,7 +392,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (112 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (112 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
 		"pos": [
@@ -504,13 +406,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (902 celle da 25 cm), con la collisione (ci si sbatte contro)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_15",
+		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
 		"pos": [
-			4.25,
+			-15.5,
 			0.0,
-			10.0
+			-19.0
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
@@ -518,91 +420,7 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_16",
-		"pos": [
-			4.25,
-			0.0,
-			8.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_17",
-		"pos": [
-			4.0,
-			0.0,
-			7.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_14",
-		"pos": [
-			4.25,
-			0.0,
-			11.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_13",
-		"pos": [
-			4.0,
-			0.0,
-			12.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_18",
-		"pos": [
-			3.0,
-			0.0,
-			6.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_11",
-		"pos": [
-			1.25,
-			0.0,
-			13.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
 		"pos": [
@@ -616,36 +434,22 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm)",
-		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_7",
-		"pos": [
-			-4.0,
-			0.0,
-			12.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
-		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) dal checkpoint della statua si arriva a meno di 10 cm dalla colonnina, all'altezza del busto; da vedere se ha la collisione",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_8",
-		"pos": [
-			-3.0,
-			0.0,
-			13.5
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (68 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
+		"pos": [
+			19.5,
+			0.0,
+			-18.5
+		],
+		"problema": "ingombro",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (68 celle da 25 cm), senza collisione (si attraversa)",
+		"motivo": "i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
 		"pos": [
 			-2.75,
@@ -653,13 +457,13 @@
 			36.5
 		],
 		"problema": "ingombro",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.90 e 2.00 m sopra il pavimento (160 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.90 e 2.00 m sopra il pavimento (48 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"motivo": "quadro elettrico appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_elettrico",
 		"pos": [
 			-3.25,
@@ -667,13 +471,13 @@
 			33.0
 		],
 		"problema": "ingombro",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.30 e 2.00 m sopra il pavimento (64 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.30 e 2.00 m sopra il pavimento (64 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"motivo": "pannello degli strumenti appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_strumenti",
 		"pos": [
 			-3.5,
@@ -681,69 +485,27 @@
 			36.75
 		],
 		"problema": "ingombro",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (46 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_arredo",
-		"pos": [
-			1.25,
-			-9.05,
-			36.0
-		],
-		"problema": "ingombro",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (16 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_tubi",
-		"pos": [
-			1.75,
-			-9.05,
-			30.0
-		],
-		"problema": "ingombro",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
-		"pos": [
-			0.0,
-			-9.05,
-			1.5
-		],
-		"problema": "ingombro",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (192 celle da 25 cm)",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (192 celle da 25 cm), con la collisione (ci si sbatte contro)",
+		"motivo": "bocchette dell'aria sul muro sud della camera delle onde (da 1,65 m), ora con la collisione: ci si ferma contro come contro il muro. Se non va bene: alzarle di 40 cm in ambienti2_camera_onde.py",
 		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_bocchette",
 		"pos": [
 			-1.75,
 			-9.05,
-			7.0
+			15.75
 		],
 		"problema": "ingombro",
-		"squadra": "da assegnare",
-		"stato": "da correggere",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.75 e 2.00 m sopra il pavimento (15 celle da 25 cm)",
-		"motivo": "emerso sul branch della risalita (enigmi, 22 ottobre): con la griglia del controllo spostata di qualche cm (la scena è più grande) si passa a meno di 10 cm, all'altezza della testa",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.75 e 2.00 m sopra il pavimento (15 celle da 25 cm), senza collisione (si attraversa)",
+		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare",
 		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
 		"pos": [
 			-0.75,
@@ -807,7 +569,7 @@
 			5.36
 		],
 		"problema": "compenetra",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
 	},
@@ -821,7 +583,7 @@
 			11.36
 		],
 		"problema": "compenetra",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
 	},
@@ -835,7 +597,7 @@
 			21.21
 		],
 		"problema": "compenetra",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
 	},
@@ -849,7 +611,7 @@
 			34.16
 		],
 		"problema": "compenetra",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
 	},
@@ -863,7 +625,7 @@
 			39.16
 		],
 		"problema": "compenetra",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
 	},
@@ -877,7 +639,7 @@
 			43.66
 		],
 		"problema": "compenetra",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
 	},
@@ -891,7 +653,7 @@
 			39.16
 		],
 		"problema": "compenetra",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
 	},
@@ -910,31 +672,45 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm)",
+		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
+		"pos": [
+			-15.65,
+			2.12,
+			30.2
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario)",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
+		"pos": [
+			-15.65,
+			2.12,
+			44.96
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.20 m sopra il pavimento (81 celle da 25 cm), senza collisione (si attraversa)",
 		"motivo": "all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8)",
 		"nodo": "TorreScivoli/discesa_5_0",
 		"pos": [
-			37.51,
+			37.5,
 			-15.01,
-			-18.8
+			-18.75
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
 		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.96 m sopra il pavimento (40 celle da 25 cm)",
-		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)",
-		"nodo": "TorreScivoli/discesa_1_1",
-		"pos": [
-			38.76,
-			-6.01,
-			-11.55
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
 		"zona": "torre"
 	}
 ]

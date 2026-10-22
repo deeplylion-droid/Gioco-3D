@@ -354,7 +354,7 @@ for k, (c, d) in enumerate((((XE - 0.02, PORTA_Y, PORTA_H + 0.1), (0.14, PORTA_W
 # di la' dalla porta c'è il raccordo verso gli interni (tools/blender/ambienti2_raccordo.py)
 empty('PUNTO_porta_ponte_inferiore', (XE - 1.0, PORTA_Y, 0))
 # neon azzurro sopra la porta e lampada rossa
-S('luci', box('neon_porta', (XE - 0.08, PORTA_Y, PORTA_H + 0.45), (0.05, 1.3, 0.05), M['neon'], uv=None))
+S('luci', box('neon_porta', (XE - 0.03, PORTA_Y, PORTA_H + 0.45), (0.05, 1.3, 0.05), M['neon'], uv=None))
 
 # schema a colori sul muro (senza testo)
 SC_Y, SC_Z = 0.4, 2.0
