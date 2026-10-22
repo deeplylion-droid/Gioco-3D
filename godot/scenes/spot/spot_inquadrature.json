@@ -80,13 +80,13 @@
 		{"nome": "sigla_pulita", "file": "res://audio/musica/sigla_pulita.ogg", "da": 0.3, "a": 32.4, "volume_db": -9.0, "sfuma_fine": 0.4},
 		{"nome": "sigla_rovinata", "file": "res://audio/musica/sigla_rovinata.ogg", "da": 32.0, "a": 43.0, "volume_db": -8.0, "sfuma_inizio": 0.4, "taglio_fine": true},
 		{"nome": "ronzio", "file": "res://audio/ambiente/neon_ronzio_loop.ogg", "da": 37.5, "a": 44.6, "volume_db": -20.0, "sale_a_db": -6.0, "sfuma_fine": 0.6, "da_rivedere": true},
-		{"nome": "voce_1", "file": "res://assets/spot/voce/frase_1.wav", "da": 0.9, "volume_db": 0.0},
-		{"nome": "voce_2", "file": "res://assets/spot/voce/frase_2.wav", "da": 3.6, "volume_db": 0.0},
-		{"nome": "voce_3", "file": "res://assets/spot/voce/frase_3.wav", "da": 8.4, "volume_db": 0.0},
-		{"nome": "voce_4", "file": "res://assets/spot/voce/frase_4.wav", "da": 13.8, "volume_db": 0.0},
-		{"nome": "voce_5", "file": "res://assets/spot/voce/frase_5.wav", "da": 19.8, "volume_db": 0.0},
-		{"nome": "voce_6", "file": "res://assets/spot/voce/frase_6.wav", "da": 26.6, "volume_db": 0.0},
-		{"nome": "voce_7", "file": "res://assets/spot/voce/frase_7.wav", "da": 33.0, "volume_db": 0.0}
+		{"nome": "voce_1", "file": "res://assets/spot/voce/{voce}/frase_1.wav", "da": 0.9, "volume_db": 0.0},
+		{"nome": "voce_2", "file": "res://assets/spot/voce/{voce}/frase_2.wav", "da": 3.6, "volume_db": 0.0},
+		{"nome": "voce_3", "file": "res://assets/spot/voce/{voce}/frase_3.wav", "da": 8.4, "volume_db": 0.0},
+		{"nome": "voce_4", "file": "res://assets/spot/voce/{voce}/frase_4.wav", "da": 13.8, "volume_db": 0.0},
+		{"nome": "voce_5", "file": "res://assets/spot/voce/{voce}/frase_5.wav", "da": 19.8, "volume_db": 0.0},
+		{"nome": "voce_6", "file": "res://assets/spot/voce/{voce}/frase_6.wav", "da": 26.6, "volume_db": 0.0},
+		{"nome": "voce_7", "file": "res://assets/spot/voce/{voce}/frase_7.wav", "da": 33.0, "volume_db": 0.0}
 	],
 	"filtro": [
 		{"t": 0.0, "guasto": 0.0, "occhio": 0.0},

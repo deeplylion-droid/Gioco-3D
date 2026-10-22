@@ -2,7 +2,7 @@ extends Control
 ## L'inquadratura 1 dello spot VHS (0-3 s): lo schermo blu del videoregistratore con la scritta PLAY (resta, scelta
 ## dell'utente del 22 ottobre), poi il logo di Jilly da nuovo. La regia la gira come le altre (a_tempo).
 
-const LOGO_NUOVO := "res://assets/spot/logo_jilly_nuovo.png"
+const LOGO_NUOVO := "res://assets/models/mascotte/jilly_nuova/logo_jilly.png"   # di mascotte, senza ruggine
 const LOGO_GIOCO := "res://assets/ui/logo/logo_jilly_jubilee.png"
 
 ## Secondi di schermo blu prima del logo, e durata della sua comparsa.
@@ -15,7 +15,7 @@ const LOGO_GIOCO := "res://assets/ui/logo/logo_jilly_jubilee.png"
 
 
 func _ready() -> void:
-	# il logo senza ruggine (da fare); finché manca, quello del gioco
+	# il logo senza ruggine di mascotte (lavoro/spot-mascotte); finché il ramo non è unito, quello del gioco
 	_logo.texture = load(LOGO_NUOVO if ResourceLoader.exists(LOGO_NUOVO) else LOGO_GIOCO)
 	a_tempo(0.0, 1)
 

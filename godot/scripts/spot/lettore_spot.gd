@@ -28,6 +28,9 @@ const VIDEO := "res://assets/spot/spot.ogv"
 @export var tenere_per_saltare := 1.0
 @export_file("*.tscn") var scena_dopo := ""
 @export var bus := &"Musica"
+## La voce dello speaker (cartella in res://assets/spot/voce/, al posto di {voce} nei file dell'audio): la sceglie
+## l'utente fra le tre di enigmi.
+@export var voce := "A_uomo_caldo"
 
 var _dati: Dictionary
 var _t := 0.0
@@ -62,11 +65,12 @@ func _ready() -> void:
 	else:
 		_filtro.visible = false
 	for a in _dati["audio"]:
-		if not ResourceLoader.exists(String(a["file"])):
-			push_warning("spot: manca l'audio " + String(a["file"]))
+		var file := String(a["file"]).replace("{voce}", voce)
+		if not ResourceLoader.exists(file):
+			push_warning("spot: manca l'audio " + file)
 			continue
 		var p := AudioStreamPlayer.new()
-		p.stream = load(String(a["file"]))
+		p.stream = load(file)
 		p.bus = bus if AudioServer.get_bus_index(bus) >= 0 else &"Master"
 		p.volume_db = float(a.get("volume_db", 0.0))
 		add_child(p)
