@@ -8,9 +8,6 @@ Come si rifà il controllo sul vostro ramo, dopo aver unito lavoro/godot: `godot
 |---|---|---|---|---|
 | interni | compenetra | `Interni/Ambienti/Stanzino/stanzino_statico` | 2.37, 1.30, 32.50 | passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 90 cm |
 | interni | compenetra | `Interni/Meccanismi/PernoTurbina/turbina_saracinesca` | -0.91, 2.35, 21.50 | passa dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico per 8 cm |
-| interni | compenetra | `Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6880` | 0.00, 1.10, 20.30 | il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) |
-| interni | compenetra | `Interni/Meccanismi/Saracinesca/Graybox/Pannello/@MeshInstance3D@6882` | 0.00, 1.65, 20.30 | il 50% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) |
-| interni | compenetrato | `Interni/Meccanismi/Saracinesca` | 0.17, 1.10, 20.35 | entra dentro Interni/Ambienti/Spogliatoi/spogliatoi_statico (stato: tutto_visibile) |
 | interni | ingombro | `Interni/Ambienti/Corridoio/asciugamano_corridoio` | -1.25, 0.00, 40.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (125 celle da 25 cm), senza collisione (si attraversa) |
 | interni | ingombro | `Interni/Ambienti/Corridoio/cartello_corridoio` | 6.50, 0.00, 39.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (32 celle da 25 cm), senza collisione (si attraversa) |
 | interni | ingombro | `Interni/Ambienti/Corridoio/cestino` | -4.25, 0.00, 38.75 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (56 celle da 25 cm), senza collisione (si attraversa) |
@@ -49,21 +46,13 @@ Come si rifà il controllo sul vostro ramo, dopo aver unito lavoro/godot: `godot
 | interni | staccato | `Interni/Ambienti/Stanzino/salvagente_rastrelliera_1` | 4.82, 1.00, 33.35 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) |
 | interni | staccato | `Interni/Ambienti/Stanzino/salvagente_rastrelliera_2` | 4.82, 1.00, 31.60 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 64.1 cm) |
 | interni | staccato | `Interni/Zaino/Modello/Zaino` | 4.78, 1.03, 32.47 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 72.0 cm) |
-| sala | compenetra | `Gioco/LeiSbuca/SchizzoCoda/Schiuma` | 0.00, 0.01, 0.00 | passa dentro Gioco/LeiSbuca/SchizzoTesta/Corona per 131 cm (stato: tutto_visibile) |
-| sala | compenetra | `Gioco/LeiSbuca/SchizzoTesta/Corona` | 0.00, 0.00, 0.00 | il 43% dei suoi vertici è dentro Gioco/LeiSbuca/SchizzoCoda/Corona (stato: tutto_visibile) |
-| sala | compenetra | `Gioco/LeiSbuca/SchizzoTesta/Schiuma` | 0.00, 0.01, 0.00 | passa dentro Gioco/LeiSbuca/SchizzoCoda/Corona per 131 cm (stato: tutto_visibile) |
 | sala | compenetra | `Piscina/LucePortellone/Anello` | 0.00, -2.17, 2.02 | passa dentro Sala/Interattivi/sala_portello_scarico per 83 cm |
 | sala | compenetra | `Piscina/LucePortellone/Anello` | 0.00, -2.18, 2.02 | passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 119 cm |
 | sala | compenetra | `Sala/Interattivi/sala_portello_scarico` | 0.00, -2.19, 2.02 | passa dentro Sala/Piscina/sala_piscina_onde per 38 cm |
 | sala | compenetra | `Sala/Interattivi/sala_portello_scarico` | 0.00, -2.20, 2.02 | passa dentro Tecnici/Ambienti/CameraOnde/CAMERA_pozzo per 130 cm |
 | sala | compenetrato | `Polaroid/Polaroid05` | 1.20, -2.17, 2.90 | entra dentro Sala/Piscina/sala_piscina_onde |
 | sala | estremita_libera | `Sala/Dettagli/det_tubo_muro_7cm_2m` | -2.18, 3.56, -23.92 | un capo del tubo non è collegato a niente entro 1 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) |
-| sala | ingombro | `Gioco/LeiSbuca/SchizzoCoda/Corona` | 0.50, -2.17, 0.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.60 e 2.00 m sopra il pavimento (22 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile) |
-| sala | ingombro | `Gioco/LeiSbuca/SchizzoCoda/Schiuma` | 1.50, -1.94, -1.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile) |
-| sala | ingombro | `Gioco/LeiSbuca/SchizzoTesta/Corona` | 0.50, -2.17, 0.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.45 e 2.00 m sopra il pavimento (248 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile) |
-| sala | ingombro | `Gioco/LeiSbuca/SchizzoTesta/Schiuma` | 1.50, -1.94, -1.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.91 e 1.98 m sopra il pavimento (30 celle da 25 cm), senza collisione (si attraversa) (stato: tutto_visibile) |
 | sala | ingombro | `Sala/AngoloScatoloni/scat_caduto_0` | -19.00, 0.00, 16.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (112 celle da 25 cm), senza collisione (si attraversa) |
 | sala | ingombro | `Sala/AngoloScatoloni/scat_caduto_6` | -18.50, 0.00, 16.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (64 celle da 25 cm), senza collisione (si attraversa) |
 | sala | ingombro | `Sala/AreaBimbi/sala_struttura_gioco` | -15.50, 0.00, -19.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (902 celle da 25 cm), con la collisione (ci si sbatte contro) |
 | sala | staccato | `Sala/Dettagli/@MeshInstance3D@40` | -17.43, 0.06, 3.24 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) |
-| sala | staccato | `Vasca/Medusa/@Node3D@6003/@MeshInstance3D@6004` | 0.38, 1.03, 11.99 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) (stato: tutto_visibile) |

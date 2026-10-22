@@ -251,14 +251,22 @@ func _prepara(stato: String) -> void:
 			return
 		"risalita_dopo":
 			# enigmi: le paratie del fiume girate, la cassaforte aperta, il negatoscopio con la radiografia
+			# (come li prepara enigmi, 22 ottobre): la luce dell'infermeria accesa, tutti i cassetti tirati (ognuno si apre
+			# una volta e resta aperto: il 14 con la radiografia), la cassaforte aperta col codice
 			_mostra_risalita()
 			for par in _radice.find_children("*", "ParatiaFiume", true, false):
 				par.call(&"gira")
+			var inf := _radice.get_node_or_null(^"Risalita/Infermeria")
+			var interruttore := inf.get_node_or_null(^"Interruttore") if inf else null
+			if interruttore:
+				interruttore.set(&"powered", true)
+			for c in _radice.find_children("*", "CassettoSchedario", true, false):
+				c.call(&"load_state", {"aperto": true})
 			for c in _radice.find_children("*", "CassaforteRotelle", true, false):
-				c.call(&"load_state", {"aperta": true})
+				c.call(&"load_state", {"cifre": [4, 1, 7], "aperta": true})
 			for n in _radice.find_children("*", "Negatoscopio", true, false):
 				n.call(&"load_state", {"con_radiografia": true})
-			for i in 10:
+			for i in 240:
 				await get_tree().physics_frame
 			return
 		"inseguimento_dopo":
@@ -320,6 +328,10 @@ func _tipo_nascosta(n: Node) -> String:
 			return "creatura, si muove (la guarda il collaudo)"
 	if EFFETTI.any(func(e): return percorso.contains(e)) or percorso.contains("acqua"):
 		return "effetto o acqua, esclusi"
+	if percorso.split("/").has("graybox"):
+		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
+		# collisione, non si vede mai
+		return "segnaposto graybox, al suo posto si vede il modello vero"
 	# la variante: il suo box sta dentro quello delle mesh visibili accanto (stesso genitore)
 	var mio := AABB()
 	var primo := true
