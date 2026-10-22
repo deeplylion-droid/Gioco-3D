@@ -118,19 +118,6 @@
 	},
 	{
 		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.78,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/cestino",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
