@@ -1192,6 +1192,48 @@
 		"zona": "sala"
 	},
 	{
+		"dettaglio": "passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm",
+		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
+		"pos": [
+			-1.75,
+			0.37,
+			12.4
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-1",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 35% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): il 35% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale",
+		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
+		"pos": [
+			0.0,
+			0.5,
+			11.26
+		],
+		"problema": "compenetra",
+		"squadra": "mascotte",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 77% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): il 77% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale",
+		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Interno",
+		"pos": [
+			0.0,
+			0.15,
+			11.19
+		],
+		"problema": "compenetra",
+		"squadra": "mascotte",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
 		"dettaglio": "il 100% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_colonnina_7",
 		"motivo": "controllo del 22 ottobre sera (dettaglio della sala in MultiMesh, prima non controllato): il 100% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_colonnina_7",
 		"nodo": "Sala/Dettagli/det_ciabatta_6",
@@ -2730,6 +2772,48 @@
 		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"pos": [
+			-15.5,
+			0.0,
+			-7.75
+		],
+		"problema": "ingombro",
+		"squadra": "mascotte",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 116 cm (stato: lei_fossa)",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 116 cm (stato: lei_fossa)",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"pos": [
+			-13.24,
+			-0.06,
+			-6.85
+		],
+		"problema": "compenetra",
+		"squadra": "mascotte",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
+		"pos": [
+			-13.82,
+			-0.28,
+			-6.9
+		],
+		"problema": "compenetra",
+		"squadra": "mascotte",
+		"stato": "da correggere",
+		"zona": "sala"
 	},
 	{
 		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)",

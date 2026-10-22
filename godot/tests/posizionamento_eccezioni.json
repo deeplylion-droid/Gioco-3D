@@ -2615,6 +2615,84 @@
 		"motivo": "controllo del 22 ottobre sera (gli acquari prima erano presi per acqua e non si controllavano): passa dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio per 4 cm"
 	},
 	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-1.75,
+			0.37,
+			12.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
+		"squadra": "mascotte",
+		"problema": "compenetra",
+		"pos": [
+			0.0,
+			0.5,
+			11.26
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): il 35% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Interno",
+		"squadra": "mascotte",
+		"problema": "compenetra",
+		"pos": [
+			0.0,
+			0.15,
+			11.19
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): il 77% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"squadra": "mascotte",
+		"problema": "ingombro",
+		"pos": [
+			-15.5,
+			0.0,
+			-7.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"squadra": "mascotte",
+		"problema": "compenetra",
+		"pos": [
+			-13.24,
+			-0.06,
+			-6.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 116 cm (stato: lei_fossa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
+		"squadra": "mascotte",
+		"problema": "compenetra",
+		"pos": [
+			-13.82,
+			-0.28,
+			-6.9
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)"
+	},
+	{
 		"zona": "risalita",
 		"nodo": "Risalita/@MeshInstance3D@703",
 		"squadra": "enigmi",

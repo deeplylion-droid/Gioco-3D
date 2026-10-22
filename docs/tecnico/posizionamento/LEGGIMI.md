@@ -13,6 +13,8 @@ Dal 22 ottobre è **severo** (processo approvato dall'utente "per evitare questi
 
 Gli elenchi per squadra del primo giro severo sono in `elenchi/`.
 
+Le mesh con lo scheletro (la medusa) si misurano nella posa in cui sono in quel giro, non in quella di riposo. Negli stati preparati (`interni_dopo`, `acquari_risolti`...) l'ingombro si guarda in tutta la scena, non solo nelle parti dello stato: così esce quello che, aprendosi, finisce nel passaggio. I casi già trovati nel giro iniziale non si ripetono.
+
 I MultiMesh (i dettagli della sala con 6 o più copie, i led, le lamelle) si controllano una copia alla volta. Senza schermo il MultiMesh non conserva le trasformazioni: chi lo crea da codice le lascia anche nel meta `trasformazioni` (`mmi.set_meta(&"trasformazioni", array_di_Transform3D)`, vedi `dettagli_sala.gd`). Per un MultiMesh salvato in un `.res`, il meta va sulla risorsa (`mm.set_meta(...)` prima di `ResourceSaver.save`): si salva con lei. Quelli senza sono elencati nel rapporto.
 
 Per capire perché un oggetto risulta appoggiato o staccato: `POSIZ_TOCCA=pezzo_del_nome` prima del comando stampa, per ogni oggetto col nome che lo contiene, le mesh che tocca.

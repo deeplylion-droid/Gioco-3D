@@ -18,3 +18,15 @@ Dopo il collaudo il controllo guarda meglio: "staccato" misura le mesh vere e no
 |---|---|---|---|---|
 | mascotte | staccato | `Mascotte/ManifestoJilly/manifesto` | -19.93, 1.39, 13.95 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 89.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: manifesto_001, Plane. |
 | mascotte | staccato | `Mascotte/TargaJilly/targa` | -3.01, 0.62, 10.00 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 42.5 cm. |
+
+## La medusa in posa, 22 ottobre sera
+
+Le mesh con lo scheletro ora si misurano nella posa del momento (prima in quella di riposo). Da correggere, o da proporre all'utente come voluti se lei deve stare così:
+
+| Zona | Problema | Nodo | Posizione | Dettaglio |
+|---|---|---|---|---|
+| sala | compenetra | `Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa` | 0.00, 0.50, 11.26 | il 35% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale |
+| sala | compenetra | `Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Interno` | 0.00, 0.15, 11.19 | il 77% dei suoi vertici è dentro Sala/VascaCentrale/sala_vasca_centrale |
+| sala | ingombro | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli` | -15.50, 0.00, -7.75 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa) |
+| sala | compenetra | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli` | -13.24, -0.06, -6.85 | passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 116 cm (stato: lei_fossa) |
+| sala | compenetra | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa` | -13.82, -0.28, -6.90 | passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa) |

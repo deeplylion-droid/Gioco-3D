@@ -49,7 +49,7 @@ const ZONE := [
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
 const SQUADRE := [
-	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"],
+	["Mascotte", "mascotte"], ["statua", "mascotte"], ["Jilly", "mascotte"], ["Medusa", "mascotte"],
 	["SalaInseguimento", "ambienti-2"],   # sala_inseguimento.gd mette anche i dettagli sotto il suo nodo Luci
 	["LuciSala", "grafica"], ["LuciInterni", "grafica"], ["LuciTecnici", "grafica"], ["Luci/", "grafica"],
 	["Sala/Dettagli", "ambienti-2"],   # il kit dei dettagli (dettagli_sala.gd)
@@ -178,6 +178,7 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().physics_frame
 	_spazio = (_radice as Node3D).get_world_3d().direct_space_state if _radice is Node3D else get_viewport().get_world_3d().direct_space_state
 	_espandi_multimesh()
+	_congela_scheletri()
 	var mesh := _mesh_visibili()
 	print("  %d mesh visibili" % mesh.size())
 	_elenca_nascoste()
@@ -404,6 +405,67 @@ func _espandi_multimesh() -> void:
 		print("  MultiMesh: %d istanze controllate come mesh" % n_istanze)
 
 
+## Le mesh con lo scheletro si misurano nella posa del momento, non in quella di riposo (collaudo, 22 ottobre): la mesh
+## diventa quella messa in posa e lo scheletro si stacca (il controllo non anima niente). Senza schermo
+## bake_mesh_from_current_skeleton_pose non funziona (la skin si registra col renderer): lo skinning si fa qui.
+func _congela_scheletri() -> void:
+	var n_cotte := 0
+	for n in _radice.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or mi.skeleton.is_empty() or mi.skin == null or not _visibile(mi):
+			continue
+		var sk := mi.get_node_or_null(mi.skeleton) as Skeleton3D
+		if sk == null:
+			continue
+		var cotta := _in_posa(mi, sk)
+		if cotta == null:
+			continue
+		mi.skin = null
+		mi.skeleton = NodePath()
+		mi.mesh = cotta
+		n_cotte += 1
+	if n_cotte > 0:
+		print("  mesh con scheletro nella posa del momento: %d" % n_cotte)
+
+
+## La mesh di mi messa nella posa corrente di sk (nello spazio di mi), solo i triangoli (per le misure).
+static func _in_posa(mi: MeshInstance3D, sk: Skeleton3D) -> ArrayMesh:
+	var skin := mi.skin
+	var a_mi := mi.global_transform.affine_inverse() * sk.global_transform
+	var ossa: Array[Transform3D] = []
+	for b in skin.get_bind_count():
+		var osso := skin.get_bind_bone(b)
+		if osso < 0:
+			osso = sk.find_bone(skin.get_bind_name(b))
+		ossa.append(a_mi * (sk.get_bone_global_pose(osso) if osso >= 0 else Transform3D()) * skin.get_bind_pose(b))
+	var out := ArrayMesh.new()
+	for si in mi.mesh.get_surface_count():
+		var arr := mi.mesh.surface_get_arrays(si)
+		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var ix = arr[Mesh.ARRAY_BONES]
+		var w = arr[Mesh.ARRAY_WEIGHTS]
+		if ix == null or w == null or (ix as PackedInt32Array).is_empty():
+			return null
+		var per := (ix as PackedInt32Array).size() / v.size()   # 4 o 8 ossa per vertice
+		var nv := PackedVector3Array()
+		nv.resize(v.size())
+		for k in v.size():
+			var p := Vector3.ZERO
+			for q in per:
+				var peso: float = w[k * per + q]
+				if peso > 0.0:
+					var b: int = ix[k * per + q]
+					if b < ossa.size():
+						p += (ossa[b] * v[k]) * peso
+			nv[k] = p
+		var nuovi := []
+		nuovi.resize(Mesh.ARRAY_MAX)
+		nuovi[Mesh.ARRAY_VERTEX] = nv
+		nuovi[Mesh.ARRAY_INDEX] = arr[Mesh.ARRAY_INDEX]
+		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, nuovi)
+	return out
+
+
 ## Le stanze della Risalita (fiume e infermeria) come col giocatore dentro: visibili, e il loro script fermo (se no
 ## le rinasconde, col giocatore lontano).
 func _mostra_risalita() -> void:
@@ -554,9 +616,15 @@ func _e_oggetto(mi: MeshInstance3D) -> bool:
 
 
 func _zona(z: Dictionary, n: Node) -> String:
+	var p := _radice.get_path_to(n)
+	if z.has("parti") and not (z["parti"] as Array).any(func(x): return String(p).begins_with(x)):
+		# negli stati, un caso fuori dalle parti (un ingombro di quello che si è aperto): la zona del giro iniziale
+		for b in ZONE:
+			if b["scena"] == z["scena"] and not b.has("stato"):
+				z = b
+				break
 	if z.has("zona"):
 		return z["zona"]
-	var p := _radice.get_path_to(n)
 	return String((z["sotto"] as Dictionary).get(String(p.get_name(0)), String(p.get_name(0)).to_lower()))
 
 
@@ -612,7 +680,10 @@ func _nodo(n: Node) -> String:
 func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: String) -> void:
 	if z.has("stato"):
 		var nodo := _nodo(n)
-		if z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
+		# negli stati si guardano le parti dello stato; l'ingombro in tutta la scena (la serranda, il portello o il
+		# portone aperti finiscono nel passaggio: collaudo, 22 ottobre). I casi già trovati nel giro iniziale non si
+		# ripetono (sotto).
+		if problema != "ingombro" and z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
 			return
 		dettaglio += " (stato: %s)" % z["stato"]
 	var firma := ""
