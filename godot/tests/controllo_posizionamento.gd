@@ -60,7 +60,8 @@ const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "
 	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
 ## Effetti a tempo (schizzi, getti, vapore, particelle): durano pochi secondi e si sovrappongono per natura, non sono
 ## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dal nome nel percorso o dalla classe.
-const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "splash", "gocce", "bolle"]
+const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "splash", "gocce", "bolle",
+	"drip"]   # drip: le gocce che cadono dalle dita della medusa (WaterDripEmitter), si vedono solo mentre cadono
 const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain"]
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
@@ -602,15 +603,21 @@ func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: S
 		if z.has("parti") and not (z["parti"] as Array).any(func(p): return nodo.begins_with(p)):
 			return
 		dettaglio += " (stato: %s)" % z["stato"]
+	var firma := ""
 	if _nodo(n).contains("@"):
-		# i nodi fatti da codice hanno nomi automatici: il modello da cui vengono aiuta a riconoscerli
+		# i nodi fatti da codice hanno nomi automatici, che cambiano col numero di nodi creati prima: il caso si
+		# riconosce anche dal modello da cui vengono e dalla mesh (la "firma"), oltre che dalla posizione
 		var a := n
 		while a and a != _radice and a.scene_file_path.is_empty():
 			a = a.get_parent()
-		if a and a != _radice:
-			dettaglio += " [modello: %s]" % a.scene_file_path.get_file()
+		var modello := a.scene_file_path.get_file() if a and a != _radice else ""
+		if not modello.is_empty():
+			dettaglio += " [modello: %s]" % modello
+		firma = "%s|%s" % [modello, _firma_mesh(n)]
 	var k := {"zona": _zona(z, n), "nodo": _nodo(n), "squadra": _squadra(_zona(z, n), _nodo(n)), "problema": problema,
 			"pos": [snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(pos.z, 0.01)], "dettaglio": dettaglio}
+	if not firma.is_empty():
+		k["firma"] = firma
 	if z.has("stato"):
 		# già trovato nello stato iniziale (stesso nodo, stesso problema; i nodi fatti da codice, @Classe@N, cambiano
 		# numero da un'istanza all'altra: si confrontano con la posizione, come le eccezioni): non si ripete
@@ -618,6 +625,18 @@ func _trova(z: Dictionary, n: Node, problema: String, pos: Vector3, dettaglio: S
 		if _trovati.any(func(t): return _chiave_senza_zona(t) == mia):
 			return
 	_trovati.append(k)
+
+
+## La mesh di un nodo, in un modo che non cambia da un avvio all'altro: il file della risorsa, o la classe e la
+## misura (per le mesh fatte da codice: SphereMesh, BoxMesh...).
+static func _firma_mesh(n: Node) -> String:
+	var mi := n as MeshInstance3D
+	if mi == null or mi.mesh == null:
+		return classe_di(n) if not classe_di(n).is_empty() else n.get_class()
+	if not mi.mesh.resource_path.is_empty():
+		return mi.mesh.resource_path.get_file()
+	var a := mi.mesh.get_aabb().size
+	return "%s %.2fx%.2fx%.2f" % [mi.mesh.get_class(), a.x, a.y, a.z]
 
 
 func _raggio(da: Vector3, a: Vector3, maschera: int, esclusi: Array[RID] = []) -> Dictionary:
@@ -688,13 +707,49 @@ func _staccato(z: Dictionary, mi: MeshInstance3D) -> void:
 		var w := gt * q
 		for sp in spinte:
 			punti.append(w + sp)
-	var forma := ConvexPolygonShape3D.new()
-	forma.points = punti
+	# i punti puliti dal ConvexHullComputer di Godot prima di darli a Jolt: con troppi punti quasi allineati Jolt
+	# non costruiva la forma ("Hull building failed"), la query non trovava niente e l'oggetto risultava staccato
+	# anche se poggiava (enigmi, transenna16 del fiume). Senza semplificare: semplificata la forma si rimpicciolisce.
+	var nuvola := ArrayMesh.new()
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = punti
+	nuvola.add_surface_from_arrays(Mesh.PRIMITIVE_POINTS, arr)
+	var forma := nuvola.create_convex_shape(true, false) as ConvexPolygonShape3D
+	if forma == null or forma.points.size() < 4:
+		forma = ConvexPolygonShape3D.new()
+		forma.points = punti
 	qp.shape = forma
 	qp.transform = Transform3D.IDENTITY
+	if not _forma_buona(mi, qp):
+		# Jolt non l'ha costruita lo stesso: il box allargato, come per le mesh piatte
+		var bx := _box(mi)
+		var bf := BoxShape3D.new()
+		bf.size = bx.size + Vector3.ONE * STACCO * 2.0
+		qp.shape = bf
+		qp.transform = Transform3D(Basis(), bx.get_center())
 	if _segna_tocchi(mi, qp):
 		return
 	_trova_staccato(z, mi, me)
+
+
+## Vero se la forma della query è stata costruita: deve almeno toccare il corpo della mesh stessa (che contiene), messo
+## per un attimo sullo strato STRATO_SOLO. Una forma che Jolt non riesce a costruire ("Hull building failed") non
+## tocca niente, e l'oggetto risultava staccato.
+func _forma_buona(mi: MeshInstance3D, qp: PhysicsShapeQueryParameters3D) -> bool:
+	var corpo := _corpo_di.get(mi) as StaticBody3D
+	if corpo == null:
+		return true
+	var maschera := qp.collision_mask
+	var esclusi := qp.exclude
+	corpo.collision_layer = STRATO | STRATO_SOLO
+	qp.collision_mask = STRATO_SOLO
+	qp.exclude = []
+	var ok := not _spazio.intersect_shape(qp, 1).is_empty()
+	corpo.collision_layer = STRATO
+	qp.collision_mask = maschera
+	qp.exclude = esclusi
+	return ok
 
 
 ## Le mesh che la forma allargata di mi tocca (per i gruppi, vedi _gruppi_staccati): vero se ne tocca almeno una.
@@ -1316,13 +1371,18 @@ static func _chiave_senza_zona(e: Dictionary) -> String:
 	return chiave_caso(c)
 
 
-static func chiave_caso(e: Dictionary) -> String:
+## Un caso si riconosce da zona, nodo e problema. Per i nodi con nomi automatici (@Classe@N) il numero non conta: al
+## suo posto la posizione arrotondata a mezzo metro e la firma (modello e mesh, vedi _trova). Con firma := false la
+## chiave vecchia, senza firma (per le eccezioni scritte prima del 22 ottobre sera).
+static func chiave_caso(e: Dictionary, con_firma := true) -> String:
 	var nodo := String(e["nodo"])
 	var re := RegEx.create_from_string("@([A-Za-z0-9]+)@[0-9]+")
 	var k := "%s|%s|%s" % [e["zona"], re.sub(nodo, "@$1", true), e["problema"]]
 	if nodo.contains("@"):
 		var p: Array = e["pos"]
 		k += "|%s,%s,%s" % [snappedf(float(p[0]), 0.5), snappedf(float(p[1]), 0.5), snappedf(float(p[2]), 0.5)]
+		if con_firma and e.has("firma"):
+			k += "|" + String(e["firma"])
 	return k
 
 
@@ -1332,16 +1392,19 @@ func _confronta() -> void:
 		eccezioni = JSON.parse_string(FileAccess.get_file_as_string(ECCEZIONI))
 	var note := {}
 	for e in eccezioni:
-		note[chiave_caso(e)] = e
+		note[chiave_caso(e)] = e   # con la firma, se l'eccezione ce l'ha
 	var nuovi := []
 	var noti := []
 	var trovate := {}
 	for t in _trovati:
 		var k: String = chiave_caso(t)
+		var k_vecchia: String = chiave_caso(t, false)
 		trovate[k] = true
-		if note.has(k):
-			t["stato"] = note[k].get("stato", "")
-			t["motivo"] = note[k].get("motivo", "")
+		trovate[k_vecchia] = true
+		var e = note.get(k, note.get(k_vecchia))
+		if e != null:
+			t["stato"] = e.get("stato", "")
+			t["motivo"] = e.get("motivo", "")
 			noti.append(t)
 		else:
 			nuovi.append(t)

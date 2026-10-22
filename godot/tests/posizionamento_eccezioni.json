@@ -10,7 +10,8 @@
 			3.24
 		],
 		"stato": "da correggere",
-		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) (ambienti-1)"
+		"motivo": "controllo severo del 22 ottobre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 2.1 cm) (ambienti-1)",
+		"firma": "|detriti.gltf::ArrayMesh_wqqqh"
 	},
 	{
 		"zona": "interni",
@@ -390,6 +391,1028 @@
 		"motivo": "celle dentro il tubo dell'inseguimento, e il collare sotto la coda del tratto 5, 1,93 m sopra il terzo gradino della bocca, sul bordo est della salita (ambienti-2, 22 ottobre)"
 	},
 	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15333/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "sospeso",
+		"pos": [
+			-35.0,
+			-2.69,
+			112.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
+		"firma": "paratia.glb|paratia.glb::ArrayMesh_644ft"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15341/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "sospeso",
+		"pos": [
+			-59.0,
+			-2.69,
+			88.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
+		"firma": "paratia.glb|paratia.glb::ArrayMesh_644ft"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15365/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "sospeso",
+		"pos": [
+			-35.0,
+			-2.69,
+			71.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: niente a meno di 5 cm (sotto, il primo appoggio è a 1.62 m) (stato: risalita_arrivo) [modello: paratia.glb]",
+		"firma": "paratia.glb|paratia.glb::ArrayMesh_644ft"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15287/@Node3D@15291/@MeshInstance3D@15293",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-7.67,
+			-4.35,
+			66.8
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 103.0 cm) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.16x0.04x0.06"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15294/@Node3D@15298/@MeshInstance3D@15300",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-34.2,
+			-4.35,
+			52.27
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 103.0 cm) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.16x0.04x0.06"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Adesivo/@MeshInstance3D@15739",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.41,
+			-4.44,
+			43.58
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 93.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|CylinderMesh 0.07x0.00x0.07"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15809",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.79,
+			-3.05,
+			44.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 51.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.99x0.62x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15810",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.5,
+			-3.15,
+			47.99
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 42.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.60x0.60x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15811",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-33.41,
+			-3.1,
+			46.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 195.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.82x0.70x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15812",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.6,
+			-2.95,
+			41.61
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 65.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.29x0.55x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15814",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-33.41,
+			-4.5,
+			45.35
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 65.0 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.80x0.50x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15815",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-39.79,
+			-4.65,
+			45.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 52.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.45x0.45x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15287/@Node3D@15291/@MeshInstance3D@15292",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-7.75,
+			-5.4,
+			66.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 1.22x2.20x0.05"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15539/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-13.25,
+			-5.4,
+			72.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (14 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
+		"firma": "transenna.glb|transenna.glb::ArrayMesh_6ffoj"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15544/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-16.5,
+			-5.4,
+			72.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (20 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
+		"firma": "transenna.glb|transenna.glb::ArrayMesh_6ffoj"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15551/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-19.0,
+			-5.4,
+			75.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (21 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
+		"firma": "transenna.glb|transenna.glb::ArrayMesh_6ffoj"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15562/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-24.25,
+			-5.4,
+			78.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (14 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
+		"firma": "transenna.glb|transenna.glb::ArrayMesh_6ffoj"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15589/@MeshInstance3D@15591",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-29.25,
+			-5.4,
+			87.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.59 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|CylinderMesh 0.07x2.20x0.07"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15567/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-26.0,
+			-5.4,
+			83.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.58 m sopra il pavimento (18 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: transenna.glb]",
+		"firma": "transenna.glb|transenna.glb::ArrayMesh_6ffoj"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15604/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-20.0,
+			-5.4,
+			88.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: palma_finta.glb]",
+		"firma": "palma_finta.glb|palma_finta.glb::ArrayMesh_hmba6"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@Node3D@15661/@Node3D@15665/@MeshInstance3D@15666",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-35.5,
+			-5.4,
+			47.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.88x2.04x0.05"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@Node3D@15644/@Node3D@15648/@MeshInstance3D@15649",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-38.25,
+			-5.4,
+			42.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.88x2.04x0.05"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@Node3D@15644/@Node3D@15648/@MeshInstance3D@15650",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-38.25,
+			-5.4,
+			42.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.03 e 1.06 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.14x0.03x0.05"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15615/@MeshInstance3D@15617",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-37.75,
+			-5.4,
+			55.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.59 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.52x0.52x0.01"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15615/@MeshInstance3D@15616",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-38.0,
+			-5.4,
+			55.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|CylinderMesh 0.07x2.20x0.07"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15294/@Node3D@15298/@MeshInstance3D@15299",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-34.25,
+			-5.4,
+			52.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 1.22x2.20x0.05"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15614/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-32.5,
+			-5.4,
+			54.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.40 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: salvagente.glb]",
+		"firma": "salvagente.glb|salvagente.glb::ArrayMesh_mr8tb"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15251",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.6,
+			-5.62,
+			62.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15586/Mesh_0 per 115 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|ArrayMesh 5.20x0.00x3.18"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15259",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-33.6,
+			-5.62,
+			58.8
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15613/Mesh_0 per 93 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|ArrayMesh 4.40x0.00x4.80"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15251",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.0,
+			-5.62,
+			64.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15357/Mesh_0 per 245 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|ArrayMesh 5.20x0.00x3.18"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15520/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-36.39,
+			-5.52,
+			106.88
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15252 per 5 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
+		"firma": "scaletta_banchina.glb|scaletta_banchina.glb::ArrayMesh_dx1j7"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15255",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.58,
+			-5.62,
+			114.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15584/Mesh_0 per 117 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|ArrayMesh 6.00x0.00x6.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15349/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-55.75,
+			-5.52,
+			92.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15253 per 245 cm (stato: risalita_arrivo) [modello: paratia.glb]",
+		"firma": "paratia.glb|paratia.glb::ArrayMesh_644ft"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15521/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-36.39,
+			-5.52,
+			77.12
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15254 per 3 cm (stato: risalita_arrivo) [modello: scaletta_banchina.glb]",
+		"firma": "scaletta_banchina.glb|scaletta_banchina.glb::ArrayMesh_dx1j7"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@MeshInstance3D@15259",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-36.2,
+			-5.62,
+			56.01
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/Scaletta/Mesh_0 per 50 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|ArrayMesh 4.40x0.00x4.80"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15287/@Node3D@15291/@MeshInstance3D@15292",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-7.23,
+			-4.79,
+			66.7
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/transenna/Mesh_0 per 50 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 1.22x2.20x0.05"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15593/@MeshInstance3D@15594",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-8.0,
+			-4.79,
+			67.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/transenna/Mesh_0 per 35 cm (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|CylinderMesh 0.07x2.20x0.07"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15821",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-34.05,
+			-2.7,
+			50.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15279 per 37 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 2.40x0.20x3.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15827",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-33.9,
+			-4.9,
+			50.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15279 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 0.20x1.00x3.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15823",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-36.1,
+			-4.9,
+			50.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15281 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 0.20x1.00x3.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15821",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.95,
+			-2.7,
+			50.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15281 per 37 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 2.40x0.20x3.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15819",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.0,
+			-5.45,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15630 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 2.00x0.20x3.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15823",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-36.1,
+			-4.9,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15651 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 0.20x1.00x3.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15651",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-36.1,
+			-4.15,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15825 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 4.40x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15652",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-36.1,
+			-3.35,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15825 per 21 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 4.40x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15821",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.0,
+			-2.7,
+			50.85
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@MeshInstance3D@15283 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 2.40x0.20x3.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15652",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.85,
+			-2.7,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15821 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 4.40x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15656",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-34.15,
+			-2.7,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15821 per 26 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 1.20x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15659",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.0,
+			-2.7,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15821 per 31 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 1.00x0.85x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15655",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-33.9,
+			-4.9,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15827 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 1.20x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15655",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-33.9,
+			-4.15,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15829 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 1.20x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15656",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-33.9,
+			-3.35,
+			48.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15829 per 32 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 1.20x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15415/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-46.43,
+			-3.0,
+			110.09
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15421/Mesh_0 per 7 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
+		"firma": "roccia_parete.glb|roccia_parete.glb::ArrayMesh_msegk"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15390/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-13.48,
+			-2.98,
+			107.42
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15395/Mesh_0 per 78 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
+		"firma": "roccia_parete.glb|roccia_parete.glb::ArrayMesh_msegk"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15419/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-49.14,
+			-3.1,
+			114.67
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15425/Mesh_0 per 5 cm (stato: risalita_arrivo) [modello: roccia_parete.glb]",
+		"firma": "roccia_parete.glb|roccia_parete.glb::ArrayMesh_msegk"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15444/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-60.24,
+			-2.15,
+			83.72
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: il 61% dei suoi vertici è dentro Risalita/Fiume/@Node3D@15442/Mesh_0 (stato: risalita_arrivo) [modello: liane.glb]",
+		"firma": "liane.glb|liane.glb::ArrayMesh_cnf8k"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15455/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-56.35,
+			-2.15,
+			76.21
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15453/Mesh_0 per 11 cm (stato: risalita_arrivo) [modello: liane.glb]",
+		"firma": "liane.glb|liane.glb::ArrayMesh_cnf8k"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@15490/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-51.43,
+			-2.15,
+			94.67
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Fiume/@Node3D@15488/Mesh_0 per 4 cm (stato: risalita_arrivo) [modello: liane.glb]",
+		"firma": "liane.glb|liane.glb::ArrayMesh_cnf8k"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15832",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-38.8,
+			-5.45,
+			41.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15630 per 200 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 2.00x0.20x2.15"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15840",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.7,
+			-4.9,
+			41.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15638 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 0.20x1.00x2.15"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15842",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.7,
+			-4.15,
+			41.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15638 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 0.20x1.60x2.15"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@Node3D@15644/@MeshInstance3D@15646",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-38.33,
+			-4.37,
+			41.67
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@Node3D@15644/@Node3D@15648/@MeshInstance3D@15649 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.06x2.15x0.14"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@15842",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.7,
+			-3.35,
+			41.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@MeshInstance3D@15639 per 21 cm (stato: risalita_arrivo) [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 0.20x1.60x2.15"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15640",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.25,
+			-3.9,
+			41.62
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/Pulsante/PulsanteParco/sala_pulsante_portello_cassetta per 64 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 5.00x0.05x0.04"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15640",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-34.15,
+			-3.9,
+			41.62
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/giraffa_metro_B/Mesh_0 per 27 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 5.00x0.05x0.04"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@Node3D@15661/@MeshInstance3D@15663",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-35.47,
+			-4.37,
+			47.93
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/Infermeria/@Node3D@15661/@Node3D@15665/@MeshInstance3D@15666 per 175 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.06x2.15x0.14"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15635",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-39.6,
+			-2.7,
+			41.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15834 per 22 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.60x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15639",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.95,
+			-2.7,
+			41.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15834 per 20 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 5.00x1.50x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@15642",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-38.8,
+			-2.7,
+			41.55
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: passa dentro Risalita/@MeshInstance3D@15834 per 31 cm (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 1.00x0.85x0.10"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@20804/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.69,
+			112.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 161.6 cm) (stato: risalita_dopo) [modello: paratia.glb]",
+		"firma": "paratia.glb|paratia.glb::ArrayMesh_644ft"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@20812/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-59.0,
+			-2.69,
+			88.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 162.0 cm) (stato: risalita_dopo) [modello: paratia.glb]",
+		"firma": "paratia.glb|paratia.glb::ArrayMesh_644ft"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@20836/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-2.69,
+			71.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, stanze della Risalita controllate per la prima volta: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 161.6 cm) (stato: risalita_dopo) [modello: paratia.glb]",
+		"firma": "paratia.glb|paratia.glb::ArrayMesh_644ft"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/Cassetto14/Frontale/Radiografia/@MeshInstance3D@6053",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-39.24,
+			-4.58,
+			43.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, cassetti dell'infermeria aperti (stato risalita_dopo): passa dentro Risalita/Infermeria/Cassetto14/Frontale/Tirato/@MeshInstance3D@6075 per 39 cm (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.25x0.01x0.32"
+	},
+	{
 		"zona": "sala",
 		"nodo": "Sala/Dettagli/det_foglio_2_10",
 		"squadra": "ambienti-2",
@@ -573,19 +1596,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/AngoloPalloni/pallone_21",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			15.86,
-			2.49,
-			19.22
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 3.6 cm)"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Sala/AngoloPalloni/pallone_dentro_0",
 		"squadra": "ambienti-1",
 		"problema": "staccato",
@@ -716,19 +1726,6 @@
 	},
 	{
 		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_3",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-0.05,
-			1.56,
-			46.74
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 121.0 cm)"
-	},
-	{
-		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2o_m_1",
 		"squadra": "enigmi",
 		"problema": "staccato",
@@ -833,32 +1830,6 @@
 	},
 	{
 		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3s_m_2",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-15.88,
-			1.49,
-			39.27
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 114.1 cm)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3s_m_4",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-15.88,
-			1.55,
-			34.76
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 78.8 cm)"
-	},
-	{
-		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f1e_m_2",
 		"squadra": "enigmi",
 		"problema": "staccato",
@@ -950,19 +1921,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/AngoloPalloni/pallone_69",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			18.73,
-			0.82,
-			16.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 11.9 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: pallone_47."
-	},
-	{
-		"zona": "sala",
 		"nodo": "Sala/AngoloPalloni/pallone_dentro_58",
 		"squadra": "ambienti-1",
 		"problema": "staccato",
@@ -1025,19 +1983,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 27.1 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: pallone_dentro_52, pallone_dentro_48, pallone_dentro_49, pallone_dentro_57."
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/AngoloPalloni/pallone_dentro_50",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			16.7,
-			2.32,
-			19.08
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 41.3 cm."
 	},
 	{
 		"zona": "sala",
@@ -1181,19 +2126,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_1_2_8, scat_1_2_9."
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/AngoloScatoloni/scat_1_3_1",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			-18.57,
-			0.83,
-			16.88
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_1_3_2, scat_1_3_3."
 	},
 	{
 		"zona": "sala",
@@ -1661,33 +2593,8 @@
 			17.76
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1116. [modello: tecnici.tscn]"
-	},
-	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/TargaJilly/targa",
-		"squadra": "mascotte",
-		"problema": "staccato",
-		"pos": [
-			-3.01,
-			0.62,
-			10.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 42.5 cm."
-	},
-	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/ManifestoJilly/manifesto",
-		"squadra": "mascotte",
-		"problema": "staccato",
-		"pos": [
-			-19.93,
-			1.39,
-			13.95
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 89.3 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: manifesto_001, Plane."
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@1116. [modello: tecnici.tscn]",
+		"firma": "tecnici.tscn|CylinderMesh 0.22x0.06x0.22"
 	},
 	{
 		"zona": "sala",
@@ -2457,19 +3364,6 @@
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm)"
 	},
 	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7198/TURBINA_1",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			75.4,
-			-28.25,
-			-19.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.0 cm) [modello: sala_inseguimento.tscn]"
-	},
-	{
 		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/luce_emergenza_02_vetro",
 		"squadra": "ambienti-1",
@@ -2613,19 +3507,6 @@
 		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 219.8 cm. (stato: interni_dopo)"
 	},
 	{
-		"zona": "sala",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/@Node3D@16363/@MeshInstance3D@16364",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			-14.05,
-			0.55,
-			-6.22
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (trovato col controllo nuovo): niente a meno di 5 cm (sotto, il primo appoggio è a 0.08 m) (stato: lei_fossa)"
-	},
-	{
 		"zona": "risalita",
 		"nodo": "Risalita/Fiume/Cartello1Sx/Cassa",
 		"squadra": "enigmi",
@@ -2705,318 +3586,6 @@
 	},
 	{
 		"zona": "risalita",
-		"nodo": "Risalita/Fiume/lampada_gabbia/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-19.47,
-			-2.4,
-			94.37
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22043/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-11.08,
-			-2.4,
-			100.95
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22047/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-12.84,
-			-2.4,
-			105.84
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22052/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-14.86,
-			-2.4,
-			108.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22060/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-26.56,
-			-2.4,
-			112.21
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22068/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-43.13,
-			-2.4,
-			116.82
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22078/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-48.07,
-			-2.4,
-			109.57
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22084/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-50.87,
-			-2.4,
-			107.09
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22087/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-53.01,
-			-2.4,
-			104.44
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22095/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-55.83,
-			-2.4,
-			85.21
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22104/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-58.11,
-			-2.4,
-			79.85
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22113/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-52.95,
-			-2.4,
-			73.03
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22121/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-46.06,
-			-2.4,
-			68.34
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22129/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-37.11,
-			-2.4,
-			108.43
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22139/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-32.89,
-			-2.4,
-			100.78
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22148/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-51.43,
-			-2.4,
-			89.89
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22156/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-43.78,
-			-2.4,
-			94.11
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22160/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-43.78,
-			-2.4,
-			89.89
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22165/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-37.11,
-			-2.4,
-			79.37
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22225/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-6.69,
-			-2.4,
-			72.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22227/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-6.69,
-			-2.4,
-			80.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22229/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-6.69,
-			-2.4,
-			90.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22231/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-17.0,
-			-2.4,
-			61.94
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22233/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-26.0,
-			-2.4,
-			61.94
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
 		"nodo": "Risalita/Fiume/ciambella/Mesh_0",
 		"squadra": "enigmi",
 		"problema": "staccato",
@@ -3039,20 +3608,8 @@
 			87.85
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 159.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@22247. (stato: risalita_arrivo) [modello: fiume.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22252/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-6.69,
-			-2.4,
-			67.4
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 159.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@22247. (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.52x0.52x0.01"
 	},
 	{
 		"zona": "risalita",
@@ -3065,46 +3622,8 @@
 			55.14
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 159.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@22273. (stato: risalita_arrivo) [modello: fiume.tscn]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22276/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-33.4,
-			-2.4,
-			51.29
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22280/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-21.0,
-			-2.4,
-			61.06
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22282/lampada",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-49.0,
-			-2.4,
-			61.06
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 159.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@22273. (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.52x0.52x0.01"
 	},
 	{
 		"zona": "risalita",
@@ -3130,7 +3649,8 @@
 			43.66
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 3.5 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: @MeshInstance3D@22451, @MeshInstance3D@22454. (stato: risalita_arrivo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 3.5 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: @MeshInstance3D@22451, @MeshInstance3D@22454. (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.09x0.09x0.00"
 	},
 	{
 		"zona": "risalita",
@@ -3212,19 +3732,6 @@
 	},
 	{
 		"zona": "risalita",
-		"nodo": "Risalita/Fiume/lampada_gabbia/globo",
-		"squadra": "enigmi",
-		"problema": "staccato",
-		"pos": [
-			-19.46,
-			-2.37,
-			94.35
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 12.1 cm. (stato: risalita_dopo)"
-	},
-	{
-		"zona": "risalita",
 		"nodo": "Risalita/Fiume/@Node3D@29784/Mesh_0",
 		"squadra": "enigmi",
 		"problema": "staccato",
@@ -3234,7 +3741,8 @@
 			87.4
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 16.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Mesh_0. (stato: risalita_dopo) [modello: ciambella.glb]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 16.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: Mesh_0. (stato: risalita_dopo) [modello: ciambella.glb]",
+		"firma": "ciambella.glb|ciambella.glb::ArrayMesh_yeq1h"
 	},
 	{
 		"zona": "risalita",
@@ -3247,7 +3755,8 @@
 			43.5
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 6.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29923, @MeshInstance3D@29924, @MeshInstance3D@29922, @MeshInstance3D@29925. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 6.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29923, @MeshInstance3D@29924, @MeshInstance3D@29922, @MeshInstance3D@29925. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.26x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3260,7 +3769,8 @@
 			43.5
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29929, @MeshInstance3D@29930, @MeshInstance3D@29928, @MeshInstance3D@29931. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29929, @MeshInstance3D@29930, @MeshInstance3D@29928, @MeshInstance3D@29931. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.21x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3273,7 +3783,8 @@
 			43.5
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29935, @MeshInstance3D@29936, @MeshInstance3D@29934, @MeshInstance3D@29937. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29935, @MeshInstance3D@29936, @MeshInstance3D@29934, @MeshInstance3D@29937. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.20x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3286,7 +3797,8 @@
 			43.5
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 6 oggetti che si reggono solo fra loro: @MeshInstance3D@29941, @MeshInstance3D@29942, @MeshInstance3D@29940, @MeshInstance3D@29918, @MeshInstance3D@29944, @MeshInstance3D@29943. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 6 oggetti che si reggono solo fra loro: @MeshInstance3D@29941, @MeshInstance3D@29942, @MeshInstance3D@29940, @MeshInstance3D@29918, @MeshInstance3D@29944, @MeshInstance3D@29943. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.24x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3299,7 +3811,8 @@
 			43.5
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29948, @MeshInstance3D@29949, @MeshInstance3D@29947, @MeshInstance3D@29950. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29948, @MeshInstance3D@29949, @MeshInstance3D@29947, @MeshInstance3D@29950. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.25x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3312,7 +3825,8 @@
 			43.96
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 6.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29956, @MeshInstance3D@29957, @MeshInstance3D@29955, @MeshInstance3D@29958. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 6.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29956, @MeshInstance3D@29957, @MeshInstance3D@29955, @MeshInstance3D@29958. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.26x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3325,7 +3839,8 @@
 			43.96
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29962, @MeshInstance3D@29963, @MeshInstance3D@29961, @MeshInstance3D@29964. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29962, @MeshInstance3D@29963, @MeshInstance3D@29961, @MeshInstance3D@29964. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.21x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3338,7 +3853,8 @@
 			43.96
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29968, @MeshInstance3D@29969, @MeshInstance3D@29967, @MeshInstance3D@29970. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29968, @MeshInstance3D@29969, @MeshInstance3D@29967, @MeshInstance3D@29970. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.20x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3351,7 +3867,8 @@
 			43.96
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29974, @MeshInstance3D@29975, @MeshInstance3D@29973, @MeshInstance3D@29976. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29974, @MeshInstance3D@29975, @MeshInstance3D@29973, @MeshInstance3D@29976. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.24x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3364,7 +3881,8 @@
 			43.96
 		],
 		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29980, @MeshInstance3D@29981, @MeshInstance3D@29979, @MeshInstance3D@29982. (stato: risalita_dopo) [modello: infermeria.tscn]"
+		"motivo": "controllo del 22 ottobre sera (gruppo di oggetti che si reggono solo fra loro, staccato dal sostegno vero): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 2.0 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: @MeshInstance3D@29980, @MeshInstance3D@29981, @MeshInstance3D@29979, @MeshInstance3D@29982. (stato: risalita_dopo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|BoxMesh 0.36x0.25x0.02"
 	},
 	{
 		"zona": "risalita",
@@ -3456,5 +3974,196 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (staccato dalla mesh vera (prima contava anche la collisione del gioco, spesso più grande)): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 77.0 cm) (stato: inseguimento_dopo)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_f2s_m_0",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			6.54,
+			-3.11,
+			51.17
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 124.2 cm)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/@MeshInstance3D@690",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-35.0,
+			-5.5,
+			49.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a più di 5 m. Con lui, staccati insieme, 7 oggetti che si reggono solo fra loro: @MeshInstance3D@694, @MeshInstance3D@698, @MeshInstance3D@696, @MeshInstance3D@700, Mesh_0, Piastra, @MeshInstance3D@692. [modello: risalita.tscn]",
+		"firma": "risalita.tscn|BoxMesh 2.00x0.20x3.00"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_rc1",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-2.26,
+			-6.95,
+			49.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 128.5 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_rc1_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/lampada_t7_c3b",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-15.86,
+			2.2,
+			34.86
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 18.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: lampada_t7_c3b_vetro."
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/RACCORDO_scale",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			3.83,
+			-6.2,
+			46.31
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: passa dentro Tecnici/Ambienti/SalaPompe/SALA_tubi per 50 cm"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Infermeria/@MeshInstance3D@22998",
+		"squadra": "enigmi",
+		"problema": "staccato",
+		"pos": [
+			-37.8,
+			-3.05,
+			41.61
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 52.5 cm) (stato: risalita_arrivo) [modello: infermeria.tscn]",
+		"firma": "infermeria.tscn|QuadMesh 0.85x0.60x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22665/Piastra",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.45,
+			-2.17,
+			104.6
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: passa dentro Risalita/Fiume/@Node3D@22663/Mesh_0 per 11 cm (stato: risalita_arrivo) [modello: lampada_emergenza.glb]",
+		"firma": "lampada_emergenza.glb|BoxMesh 0.28x0.10x0.01"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22699/Piastra",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-37.51,
+			-2.17,
+			83.19
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: passa dentro Risalita/Fiume/@Node3D@22697/Mesh_0 per 8 cm (stato: risalita_arrivo) [modello: lampada_emergenza.glb]",
+		"firma": "lampada_emergenza.glb|BoxMesh 0.28x0.10x0.01"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22602/Piastra",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-44.99,
+			-2.17,
+			111.05
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: passa dentro Risalita/Fiume/@Node3D@22600/Mesh_0 per 7 cm (stato: risalita_arrivo) [modello: lampada_emergenza.glb]",
+		"firma": "lampada_emergenza.glb|BoxMesh 0.28x0.10x0.01"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/lampada_emergenza/Piastra",
+		"squadra": "enigmi",
+		"problema": "compenetra",
+		"pos": [
+			-15.68,
+			-2.17,
+			100.68
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera, dopo l'unione delle squadre: passa dentro Risalita/Fiume/@Node3D@22568/Mesh_0 per 5 cm (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22472/@Node3D@22476/@MeshInstance3D@22478",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-7.75,
+			-5.4,
+			66.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (prima nascosto da un'altra mesh dello stesso cartello nella stessa cella): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.03 e 1.07 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.16x0.04x0.06"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22774/@MeshInstance3D@22776",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-29.25,
+			-5.4,
+			87.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (prima nascosto da un'altra mesh dello stesso cartello nella stessa cella): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.59 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.52x0.52x0.01"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22800/@MeshInstance3D@22803",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-37.75,
+			-5.4,
+			55.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (prima nascosto da un'altra mesh dello stesso cartello nella stessa cella): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.60 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|QuadMesh 0.50x0.50x0.00"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22479/@Node3D@22483/@MeshInstance3D@22485",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-34.25,
+			-5.4,
+			52.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre sera (prima nascosto da un'altra mesh dello stesso cartello nella stessa cella): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.03 e 1.07 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.16x0.04x0.06"
 	}
 ]
