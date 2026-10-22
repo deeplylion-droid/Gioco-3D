@@ -44,14 +44,16 @@ var fiume: Node3D
 var infermeria: Node3D
 var _corpo: StaticBody3D
 var _mat_cemento: StandardMaterial3D
+var _mat_lamiere: StandardMaterial3D
 var _mat_pav: Material
 var _zone: Array[AABB] = []
 
 
 func _ready() -> void:
-	_mat_cemento = StandardMaterial3D.new()
-	_mat_cemento.albedo_color = Color(0.42, 0.41, 0.39)
-	_mat_cemento.roughness = 0.9
+	# gli stessi materiali dei muri del raccordo (tools/blender/ambienti2_raccordo.py): zoccolo e soffitto di
+	# cemento, sopra lamiere rivettate; in proiezione dal mondo, così i pezzi si continuano
+	_mat_cemento = _materiale("Concrete042C", 2.5)
+	_mat_lamiere = _materiale("MetalPlates013", 2.0)
 	_mat_pav = load("res://assets/fiume_lento/mat_cemento.tres")
 	_corpo = StaticBody3D.new()
 	_corpo.name = "Corridoi"
@@ -74,6 +76,34 @@ func _ready() -> void:
 
 
 # --- pezzi di corridoio --------------------------------------------------------------------------------
+
+func _materiale(nome: String, metri: float) -> StandardMaterial3D:
+	const T := "res://assets/ambienti_tecnici/texture/"
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = load(T + nome + "_Color.jpg")
+	m.normal_enabled = true
+	m.normal_texture = load(T + nome + "_NormalGL.jpg")
+	m.roughness_texture = load(T + nome + "_Metalness-" + nome + "_Roughness.jpg")
+	m.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
+	m.metallic_texture = m.roughness_texture
+	m.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE
+	m.metallic = 1.0
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3.ONE / metri
+	return m
+
+
+## Un muro come quelli del raccordo: zoccolo di cemento alto 1 m sopra [param base], lamiere sopra.
+func _muro(size: Vector3, pos: Vector3, base: float) -> void:
+	var y0 := pos.y - size.y * 0.5
+	var zc := minf(base + 1.0, y0 + size.y)
+	if zc > y0 + 0.01:
+		_box(Vector3(size.x, zc - y0, size.z), Vector3(pos.x, (y0 + zc) * 0.5, pos.z), _mat_cemento)
+	var y1 := y0 + size.y
+	if y1 > zc + 0.01:
+		_box(Vector3(size.x, y1 - zc, size.z), Vector3(pos.x, (zc + y1) * 0.5, pos.z), _mat_lamiere)
+
 
 func _box(size: Vector3, pos: Vector3, m: Material, collisione := true) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
@@ -103,13 +133,13 @@ func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "") -> void:
 	if muri == "":
 		muri = "ns" if s.x >= s.z else "oe"
 	if "n" in muri:
-		_box(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, lo.z - 0.1), _mat_cemento)
+		_muro(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, lo.z - 0.1), lo.y)
 	if "s" in muri:
-		_box(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, hi.z + 0.1), _mat_cemento)
+		_muro(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, hi.z + 0.1), lo.y)
 	if "o" in muri:
-		_box(Vector3(0.2, alto, s.z), Vector3(lo.x - 0.1, lo.y + alto * 0.5, c.z), _mat_cemento)
+		_muro(Vector3(0.2, alto, s.z), Vector3(lo.x - 0.1, lo.y + alto * 0.5, c.z), lo.y)
 	if "e" in muri:
-		_box(Vector3(0.2, alto, s.z), Vector3(hi.x + 0.1, lo.y + alto * 0.5, c.z), _mat_cemento)
+		_muro(Vector3(0.2, alto, s.z), Vector3(hi.x + 0.1, lo.y + alto * 0.5, c.z), lo.y)
 
 
 func _lampada_rossa(pos: Vector3, verso: Vector3) -> void:
@@ -184,7 +214,7 @@ func _scala_fiume() -> void:
 	var xc := CORRIDOIO_FIUME_X
 	# il pianerottolo dietro la porta: dal muro di C2 fino alla scala, chiuso a est e a nord
 	_corridoio(Vector3(x_cima, y0, PORTA_C2.z), Vector3(x_cima + 2.0, y0, z1), 2.6, "se")
-	_box(Vector3(0.2, 2.6, z0 - PORTA_C2.z), Vector3(x_cima - 0.1, y0 + 1.3, (PORTA_C2.z + z0) * 0.5), _mat_cemento)
+	_muro(Vector3(0.2, 2.6, z0 - PORTA_C2.z), Vector3(x_cima - 0.1, y0 + 1.3, (PORTA_C2.z + z0) * 0.5), y0)
 	# la scala (sale verso est: la si costruisce dal fondo)
 	_rampa(Vector3(x_fondo, Y, z0), 20)
 	# in fondo: il pianerottolo che gira verso nord, poi il corridoio fino al capannone
@@ -193,11 +223,11 @@ func _scala_fiume() -> void:
 	var porta1 := 66.7
 	var fine := porta1 + 0.6
 	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es")
-	_box(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), _mat_cemento)
+	_muro(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), Y)
 	# il muro ovest, aperto davanti alla porta del capannone (alta 2,3 m come la sua)
-	_box(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), _mat_cemento)
-	_box(Vector3(0.2, 2.6, fine - porta1), Vector3(xc - 0.1, Y + 1.3, (porta1 + fine) * 0.5), _mat_cemento)
-	_box(Vector3(0.2, 0.3, porta1 - porta0), Vector3(xc - 0.1, Y + 2.45, (porta0 + porta1) * 0.5), _mat_cemento)
+	_muro(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), Y)
+	_muro(Vector3(0.2, 2.6, fine - porta1), Vector3(xc - 0.1, Y + 1.3, (porta1 + fine) * 0.5), Y)
+	_box(Vector3(0.2, 0.3, porta1 - porta0), Vector3(xc - 0.1, Y + 2.45, (porta0 + porta1) * 0.5), _mat_lamiere)
 	# tra il nostro muro e quello del capannone (x -6,1): il pavimento sotto la porta
 	_box(Vector3(0.5, 0.2, porta1 - porta0), Vector3(xc - 0.25, Y - 0.1, (porta0 + porta1) * 0.5), _mat_pav)
 	_lampada_rossa(Vector3(x_cima + 1.95, y0 + 2.2, (z0 + z1) * 0.5), Vector3(-1, -0.5, 0))
@@ -230,7 +260,7 @@ func _rampa(lo: Vector3, n: int) -> void:
 	f.transform = Transform3D(Basis(Vector3.BACK, ang), Vector3(lo.x + lungo * 0.5, lo.y + su * 0.5 - 0.05 / cos(ang), zc))
 	_corpo.add_child(f)
 	for z in [lo.z - 0.1, lo.z + SCALA_LARGA + 0.1]:
-		_box(Vector3(lungo, su + 2.6, 0.2), Vector3(lo.x + lungo * 0.5, lo.y + (su + 2.6) * 0.5, z), _mat_cemento)
+		_muro(Vector3(lungo, su + 2.6, 0.2), Vector3(lo.x + lungo * 0.5, lo.y + (su + 2.6) * 0.5, z), lo.y)
 	var soff := MeshInstance3D.new()
 	var b := BoxMesh.new()
 	b.size = Vector3(l, 0.2, SCALA_LARGA + 0.4)
