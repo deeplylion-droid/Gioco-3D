@@ -320,15 +320,19 @@ func _scena_senza(scena: String, rami: Array) -> PackedScene:
 var _memoria_t := 0.0
 
 
-## MEMORIA=1: ogni 10 fotogrammi stampa la memoria (statica, texture, buffer) e i fotogrammi disegnati.
+## MEMORIA=1: ogni 5 fotogrammi stampa la memoria (residente, statica, texture, buffer) e i fotogrammi disegnati.
 func _memoria(delta: float) -> void:
 	if OS.get_environment("MEMORIA") != "1":
 		return
 	_memoria_t += 1.0
-	if _memoria_t < 10.0:
+	if _memoria_t < 5.0:
 		return
 	_memoria_t = 0.0
-	print("MEMORIA statica %d MB, texture %d MB, buffer %d MB, video %d MB, fotogrammi %d" % [
+	var rss := "?"
+	for riga in FileAccess.get_file_as_string("/proc/self/status").split("\n"):
+		if riga.begins_with("VmRSS"):
+			rss = riga.get_slice(":", 1).strip_edges()
+	print("MEMORIA rss %s, _f %d, " % [rss, _f], "statica %d MB, texture %d MB, buffer %d MB, video %d MB, fotogrammi %d" % [
 		OS.get_static_memory_usage() >> 20,
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TEXTURE_MEM_USED) >> 20,
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_BUFFER_MEM_USED) >> 20,
