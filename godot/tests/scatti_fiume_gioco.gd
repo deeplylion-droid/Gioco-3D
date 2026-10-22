@@ -25,7 +25,12 @@ static func camere() -> Dictionary:
 		"paratia1": [F.anello(45.0) + Vector3(0, 0.6, 0), F.anello(55.0) + Vector3(0, 1.0, 0)],
 		"paratia2": [F.anello(135.0) + Vector3(0, 0.6, 0), F.anello(145.0) + Vector3(0, 1.0, 0)],
 		"paratia3": [F.anello(222.0) + Vector3(0, 0.6, 0), F.anello(232.0) + Vector3(0, 1.0, 0)],
-		# da vicino, per il collaudo: la pila di ciambelle, il cartello dei tuffi
+		# da vicino, per il collaudo: la pila di ciambelle, il cartello dei tuffi, la catena di una lampada del capannone
+		# col suo attacco, il disco e il collare della paratia 1, il portale del cartello d'uscita 1Sx
+		"catena": [Vector3(-3.0, 6.0, -5.6), Vector3(-4.0, 6.42, -6.6)],
+		"collare1": [Vector3(22.1, 2.9, -14.4), Vector3(21.49, 2.75, -14.96)],
+		"disco1": [Vector3(22.2, 2.1, -14.3), Vector3(21.42, 2.0, -15.0)],
+		"portale1": [Vector3(24.0, 0.6, 7.5), Vector3(24.0, 1.2, 2.7)],
 		"pila_ciambelle": [Vector3(-2.7, 1.6, -7.7), Vector3(-4.6, 0.4, -9.2)],
 		"cartello_tuffi": [Vector3(-2.7, 1.7, -5.3), Vector3(-4.2, 1.6, -6.0)],
 	}
