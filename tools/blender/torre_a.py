@@ -1465,7 +1465,8 @@ def versione_A(mats):
     yb_ = BOCCA_Y if GIOCO else 15.0
     bocca = [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.6), (XI1 - 2.4, yb_, FONDO + 1.6)] if not GIOCO else \
         [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.62), (XI1 - 2.4, yb_, FONDO + 1.85)]
-    oggetti_scivoli.append(K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06))
+    tubo_ins = K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06)
+    oggetti_scivoli.append(tubo_ins)
     if GIOCO:
         # il collare sul muro attorno al tubo (copre gli angoli del foro) e quattro gradini di grata nella vasca
         # sotto la bocca: dall'acqua si sale nel tubo
@@ -1481,6 +1482,13 @@ def versione_A(mats):
             q = [(x0_, y0_, zt + 0.002), (x1_, y0_, zt + 0.002), (x1_, y1_, zt + 0.002), (x0_, y1_, zt + 0.002)]
             P.GRATE[0].faccia(q, 'alfa_grata')
             P.GRATE[0].faccia(q[::-1], 'alfa_grata')
+        # due selle dal fondo della vasca reggono il tubo dove esce dal muro (non sta a sbalzo)
+        mw = tubo_ins.matrix_world
+        fondo_tubo = [mw @ v.co for v in tubo_ins.data.vertices]
+        for xs in (XI1 - 1.2, XI1 - 0.45):
+            zs = min(q.z for q in fondo_tubo if abs(q.x - xs) < 0.15 and abs(q.y - yb_) < 0.6)
+            c.scatola((xs - 0.1, yb_ - 0.3, FONDO), (xs + 0.1, yb_ + 0.3, zs - 0.08), 'metallo')
+            c.scatola((xs - 0.12, yb_ - 0.55, zs - 0.08), (xs + 0.12, yb_ + 0.55, zs - 0.02), 'metallo')
     # tubi di servizio sui muri
     for z in (-17.0, -7.5, 4.5, 10.5):
         P.tubo_muro(c, [(XI0 + 0.3, YI0 + 0.35, z), (XI1 - 0.35, YI0 + 0.35, z)], r=0.16)
