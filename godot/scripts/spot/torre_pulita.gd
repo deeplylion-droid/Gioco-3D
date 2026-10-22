@@ -43,7 +43,7 @@ func _ready() -> void:
 		var glb := (load(DIR + nome + ".glb") as PackedScene).instantiate()
 		add_child(glb)
 		_pulisci(glb)
-		if nome == "torre_struttura":
+		if nome == "torre_struttura" and not OS.has_environment("SPOT_PROVA_GRATE"):
 			_togli_grate(glb)
 	_linea()
 	_acqua()
@@ -135,7 +135,7 @@ static func _nel_disco(q: Vector3, d: Array) -> bool:
 	var r := q - c
 	var lungo := r.dot(v)
 	var lato := (r - v * lungo).length()
-	return absf(lungo) < 0.09 and lato < 0.62
+	return absf(lungo) < 0.16 and lato < 0.62
 
 
 func _pulito(m: BaseMaterial3D, acqua: bool) -> BaseMaterial3D:
