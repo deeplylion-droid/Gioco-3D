@@ -11,8 +11,8 @@ CARTELLA = os.environ.get("MEDIA_POMERIGGIO", "")
 def c_e(*nomi):
     return CARTELLA and all(os.path.exists(os.path.join(CARTELLA, n)) for n in nomi)
 
-INTRO = ("Animazioni e voce di Jilly le hai approvate. Restano due posti dell'inseguimento da decidere. Gli scatti dello "
-         "sfondo del menu e il tuffo li aggiungo su questa pagina appena arrivano.")
+INTRO = ("Animazioni e voce di Jilly le hai approvate. Restano due posti dell'inseguimento e lo sfondo del menu. Il "
+         "tuffo lo aggiungo su questa pagina appena arriva.")
 
 SEZIONI = [
     ("Inseguimento", [
@@ -56,20 +56,29 @@ SEZIONI.append(("Inseguimento, due posti da decidere", [
 if c_e("menu_bc.jpg", "menu_ab.jpg", "menu_ab_lampo.jpg"):
     SEZIONI.append(("Menu", [
         V("MENU", "5. Sfondo della schermata del titolo",
-          "Scatti dal menu vero, col logo A."
-          "\nB+C: lei esce da una vasca allagata che la riflette, con le luci rosse d'emergenza; dietro, sfocati nella "
-          "nebbia, le ghirlande di lampadine, i neon e la cornice del portone della torre."
-          "\nA+B: la stessa acqua, e dietro la cupola di vetro con la pioggia: a ogni lampo si vedono le travi e la torre "
-          "degli scivoli.",
+          "Scatti dal menu vero, col logo A, all'inizio della salita della camera. La parte sinistra resta scura, per il menu."
+          "\nB+C: dietro di lei la parete della sala, con il portone della torre e la sua cornice di lampadine, due "
+          "ghirlande mezze spente e i manifesti di Jilly col neon."
+          "\nA+B: sopra di lei la cupola di vetro con la pioggia. A ogni lampo si accendono il vetro e le travi, e dietro "
+          "si intravede la torre degli scivoli."
+          "\nSi possono anche mettere tutte e tre insieme: di questa non c'è lo scatto, se la scegli te la faccio vedere prima."
+          "\nIl menu ci mette uno o due secondi in più a partire.",
           [("img", "menu_bc.jpg", "B+C"),
            ("img", "menu_ab.jpg", "A+B, tra un lampo e l'altro"),
            ("img", "menu_ab_lampo.jpg", "A+B, durante il lampo")],
-          [("BC", "B+C"), ("AB", "A+B"), ("cambia", "Nessuna: rifalle")]),
+          [("BC", "B+C"), ("AB", "A+B"), ("ABC", "Tutte e tre"), ("cambia", "Nessuna: rifalle")]),
+        V("ACQM", "6. L'acqua ai suoi piedi, nel menu",
+          "In tutte e due le prove l'acqua c'è, ma quasi non si vede: la camera parte bassa e guarda in su, verso di lei, "
+          "così lo specchio d'acqua e i riflessi restano sotto l'inquadratura."
+          "\na: all'inizio abbasso un po' lo sguardo della camera, così si vedono l'acqua e i riflessi; il viso resta sempre dentro."
+          "\nb: la camera resta com'è.",
+          [],
+          [("a", "a"), ("b", "b"), ("vedere", "Fammi vedere")]),
     ]))
 
 if c_e("tuffo_griglia.jpg"):
     SEZIONI.append(("Tuffo", [
-        V("TUF", "6. Il tuffo di Jilly",
+        V("TUF", "7. Il tuffo di Jilly",
           "Al posto del geyser: si spinge sul bordo, ti guarda un'ultima volta e si tuffa di testa nella fossa. I "
           "tentacoli entrano per ultimi. Lo schizzo è stato ritoccato: acqua bianca, più spruzzi, gocce grosse.",
           [("img", "tuffo_griglia.jpg", "Il tuffo, un fotogramma ogni decimo di secondo circa", 1200)],
