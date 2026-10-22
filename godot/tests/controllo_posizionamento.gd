@@ -278,6 +278,12 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 			continue
 		limiti = b if primo else limiti.merge(b)
 		primo = false
+	# la griglia ancorata al mondo (multipli di PASSO_GRIGLIA), non all'angolo della scena: se la scena si allarga
+	# le celle restano dove sono, e i casi vicino agli oggetti non cambiano da un branch all'altro
+	var angolo := Vector3(floorf(limiti.position.x / PASSO_GRIGLIA), limiti.position.y, floorf(limiti.position.z / PASSO_GRIGLIA))
+	angolo.x *= PASSO_GRIGLIA
+	angolo.z *= PASSO_GRIGLIA
+	limiti = AABB(angolo, limiti.end - angolo)
 	var cil := CylinderShape3D.new()
 	cil.radius = 0.3
 	cil.height = 0.7

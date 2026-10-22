@@ -1,6 +1,32 @@
 [
 	{
 		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_1",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			-4.75,
+			0.0,
+			38.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Meccanismi/PernoTurbina/turbina_saracinesca",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			-0.75,
+			0.0,
+			21.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre (griglia ancorata al mondo), da assegnare"
+	},
+	{
+		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
 		"squadra": "ambienti-1",
 		"problema": "sospeso",
@@ -79,45 +105,6 @@
 	},
 	{
 		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.78,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.53,
-			0.0,
-			39.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_2",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.28,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
 		"nodo": "Interni/Ambienti/Corridoio/estintore",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -164,6 +151,19 @@
 			-3.22,
 			0.0,
 			36.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			6.78,
+			0.0,
+			38.75
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
@@ -351,6 +351,32 @@
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
 	},
 	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_2",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			6.28,
+			0.0,
+			38.75
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			6.53,
+			0.0,
+			39.0
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
 		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_cordone",
 		"squadra": "ambienti-1",
@@ -365,32 +391,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_18",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			2.78,
-			0.0,
-			6.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_17",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.03,
-			0.0,
-			7.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_13",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -398,32 +398,6 @@
 			4.03,
 			0.0,
 			12.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_11",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			1.53,
-			0.0,
-			13.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_10",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.03,
-			0.0,
-			13.5
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
@@ -469,6 +443,32 @@
 	},
 	{
 		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_17",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			4.03,
+			0.0,
+			7.25
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_10",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			0.03,
+			0.0,
+			13.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "sala",
 		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -508,6 +508,32 @@
 	},
 	{
 		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_18",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			2.78,
+			0.0,
+			6.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_11",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			1.53,
+			0.0,
+			13.5
+		],
+		"stato": "da correggere",
+		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+	},
+	{
+		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
 		"squadra": "enigmi",
 		"problema": "ingombro",
@@ -528,32 +554,6 @@
 			19.53,
 			0.0,
 			-18.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_5",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-3.97,
-			0.0,
-			46.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-14.47,
-			0.0,
-			39.5
 		],
 		"stato": "da correggere",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
@@ -817,18 +817,5 @@
 		],
 		"stato": "da correggere",
 		"motivo": "all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8)"
-	},
-	{
-		"zona": "torre",
-		"nodo": "TorreScivoli/discesa_1_1",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			38.76,
-			-6.01,
-			-11.55
-		],
-		"stato": "voluto",
-		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)"
 	}
 ]
