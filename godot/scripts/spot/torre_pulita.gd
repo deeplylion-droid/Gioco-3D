@@ -78,7 +78,7 @@ func _pulisci(radice: Node) -> void:
 
 ## Le grate tonde che nel gioco chiudono le bocche dei tubi decorativi (torre_a.py, chiusa_bocca: un anello rosso e
 ## sbarre d'acciaio, fusi nella mesh della struttura): il giorno dell'apertura i tubi sono aperti. Si tolgono i
-## triangoli d'acciaio e rossi che stanno tutti nel disco della grata.
+## triangoli (tutti, tranne la vetroresina dei tubi) che stanno tutti nel disco della grata.
 func _togli_grate(radice: Node) -> void:
 	var dati: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(DIR + "torre_gioco.json"))
 	# il disco di ogni grata: centro e asse dalla linea del tubo più vicina (il tubo pende: l'asse non è orizzontale)
@@ -115,7 +115,8 @@ func _togli_grate(radice: Node) -> void:
 			var m := mesh.surface_get_material(i)
 			var nome_m := String(m.resource_name).to_lower() if m else ""
 			var arr := mesh.surface_get_arrays(i)
-			if (nome_m.ends_with("inox") or nome_m.ends_with("gioco_rosso")) and arr[Mesh.ARRAY_INDEX] != null:
+			# tutto tranne la vetroresina dei tubi (la grata, il suo anello e quel che la reggeva)
+			if not nome_m.contains("tsc_") and arr[Mesh.ARRAY_INDEX] != null:
 				var vert: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 				var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
 				var tieni := PackedInt32Array()
@@ -152,7 +153,7 @@ static func _nel_disco(q: Vector3, d: Array) -> bool:
 	var r := q - c
 	var lungo := r.dot(v)
 	var lato := (r - v * lungo).length()
-	return absf(lungo) < 0.1 and lato < 0.62
+	return absf(lungo) < 0.15 and lato < 0.8
 
 
 func _pulito(m: BaseMaterial3D, acqua: bool) -> BaseMaterial3D:
