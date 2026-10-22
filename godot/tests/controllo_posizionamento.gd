@@ -82,6 +82,10 @@ const ARCHITETTURA := ["architettura", "struttura", "pavimento", "pavimenti", "m
 	"soffitto", "cupola"]
 ## Staccato: ogni oggetto deve toccare entro tanto (m) qualcosa che lo regge.
 const STACCO := 0.005
+## Sotto questa misura (diagonale del box, m) un oggetto si misura anche con la distanza vera fra le mesh, non solo con
+## la forma convessa (vedi _contatto_vero); oltre, solo se ha un appoggio solo.
+const PICCOLO := 0.4
+const VERTICI_VERI := 300
 ## Quanti vertici per oggetto si provano per lo staccato.
 const STACCO_VERTICI := 48
 ## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
@@ -119,6 +123,8 @@ var _nascoste_radici := {}
 var _copertura: Array = []
 var _nascoste_ora := {}
 var _tocca := {}
+var _staccati_veri := {}   # oggetto -> le mesh che la forma convessa toccava ma la mesh vera no
+var _sferetta: PhysicsShapeQueryParameters3D
 var _box_nascoste: Array[AABB] = []   # le mesh nascoste in questo giro (vedi _gruppi_staccati)
 var _multimesh_senza: Array[String] = []   # MultiMesh senza le trasformazioni: non controllati (vedi _espandi_multimesh)           # MeshInstance3D -> le mesh che tocca (vedi _segna_tocchi)
 var _nascoste_base := {}   # scena -> {percorso del nodo nascosto: mesh}
@@ -200,6 +206,7 @@ func _controlla_scena(z: Dictionary) -> void:
 	if SEVERO:
 		prima = _trovati.size()
 		_tocca.clear()
+		_staccati_veri.clear()
 		for mi in oggetti:
 			_staccato(z, mi)
 		_gruppi_staccati(z, oggetti)
@@ -861,12 +868,108 @@ func _segna_tocchi(mi: MeshInstance3D, qp: PhysicsShapeQueryParameters3D) -> boo
 		var m: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
 		if m:
 			altri.append(m)
+	# gli oggetti piccoli (sotto PICCOLO) o con un solo appoggio: la distanza vera fra le mesh, vertice contro faccia
+	# come il collaudo. La forma convessa riempie i vuoti (fra il braccio di una lampada e il muro) e "toccava" anche
+	# a 1-5 cm (collaudo, 22 ottobre: lampade della torre e dell'inseguimento, Polaroid10 sul lettino)
+	# e, per tutti, i sostegni fissi (muri, strutture, pezzi oltre i 4 m): il braccio di una lampada "toccava" la
+	# struttura della torre con la forma, a 5 cm con la mesh vera
+	if not altri.is_empty():
+		var tutti := _box(mi).size.length() < PICCOLO or altri.size() == 1
+		var veri := altri.filter(func(m): return not (tutti or _box(m).size.length() >= OGGETTO_MAX) or _contatto_vero(mi, m, qp))
+		if veri.is_empty():
+			_staccati_veri[mi] = altri
+		altri = veri
 	_tocca[mi] = altri
 	# diagnosi: POSIZ_TOCCA=pezzo_del_nome stampa cosa tocca ogni oggetto che lo contiene
 	var cerca := OS.get_environment("POSIZ_TOCCA")
 	if not cerca.is_empty() and _nodo(mi).contains(cerca):
-		print("    TOCCA %s -> %s" % [_nodo(mi), ", ".join(altri.map(func(m): return "%s (%.1f m)" % [_nodo(m), _box(m).size.length()]))])
+		print("    TOCCA %s %s -> %s" % [_nodo(mi), _box(mi).get_center().snappedf(0.01), ", ".join(altri.map(func(m): return "%s (%.1f m)" % [_nodo(m), _box(m).size.length()]))])
 	return not altri.is_empty()
+
+
+## Vero se le mesh vere di a e b sono a meno di STACCO: una sferetta di STACCO su un vertice di a (fino a VERTICI_VERI,
+## quelli nel box di b allargato) tocca il corpo di b; e, se b è piccolo, il contrario.
+## Si provano per primi i vertici vicini ai punti dove la forma convessa allargata (qp) tocca b.
+func _contatto_vero(a: MeshInstance3D, b: MeshInstance3D, qp: PhysicsShapeQueryParameters3D) -> bool:
+	var corpo := _corpo_di.get(b) as StaticBody3D
+	if corpo == null:
+		return true
+	corpo.collision_layer = STRATO_SOLO
+	var maschera := qp.collision_mask
+	qp.collision_mask = STRATO_SOLO
+	var contatti := _spazio.collide_shape(qp, 16)
+	qp.collision_mask = maschera
+	corpo.collision_layer = STRATO
+	var su_b := PackedVector3Array()
+	for i in range(1, contatti.size(), 2):
+		su_b.append(contatti[i])
+	return _vertici_su(a, b, su_b) or (_box(b).size.length() < PICCOLO * 4.0 and _vertici_su(b, a, su_b))
+
+
+func _vertici_su(a: MeshInstance3D, b: MeshInstance3D, vicino_a: PackedVector3Array) -> bool:
+	var corpo := _corpo_di.get(b) as StaticBody3D
+	if corpo == null:
+		return true
+	var vicino := _box(b).grow(STACCO * 2.0)
+	var gt := a.global_transform
+	var punti := []
+	var visti := {}
+	for v in a.mesh.get_faces():
+		var w := gt * v
+		if not vicino.has_point(w) or visti.has(w):
+			continue
+		visti[w] = true
+		# la distanza dal punto di contatto più vicino (per provare prima quelli)
+		var d := 0.0
+		if not vicino_a.is_empty():
+			d = INF
+			for c in vicino_a:
+				d = minf(d, w.distance_squared_to(c))
+		punti.append([d, w])
+	if punti.is_empty():
+		return false
+	punti.sort_custom(func(x, y): return x[0] < y[0])
+	if _sferetta == null:
+		_sferetta = PhysicsShapeQueryParameters3D.new()
+		var sf := SphereShape3D.new()
+		sf.radius = STACCO
+		_sferetta.shape = sf
+		_sferetta.collision_mask = STRATO_SOLO
+	corpo.collision_layer = STRATO_SOLO
+	var tocca := false
+	for i in mini(punti.size(), VERTICI_VERI):
+		_sferetta.transform = Transform3D(Basis(), punti[i][1])
+		if not _spazio.intersect_shape(_sferetta, 1).is_empty():
+			tocca = true
+			break
+	if not tocca:
+		# infilato più di 5 mm (lo stelo di un manometro nella pompa, un capo nel muro): i vertici vicini al contatto
+		# stanno dentro b, lontani dalla sua superficie
+		for i in mini(punti.size(), 40):
+			if _attraversamenti(punti[i][1], Vector3.UP) % 2 == 1 and _attraversamenti(punti[i][1], Vector3.DOWN) % 2 == 1:
+				tocca = true
+				break
+	if not tocca:
+		# o uno spigolo che passa una faccia di b (un braccio infilato in un muro fatto di una faccia sola: i vertici
+		# del cilindro sono solo sulle due basi, lontani dalla faccia)
+		var facce := a.mesh.get_faces()
+		var provati := 0
+		var t := 0
+		while t < facce.size() and provati < 400:
+			var p0 := gt * facce[t]
+			var p1 := gt * facce[t + 1]
+			var p2 := gt * facce[t + 2]
+			if vicino.has_point(p0) or vicino.has_point(p1) or vicino.has_point(p2):
+				for coppia in [[p0, p1], [p1, p2], [p2, p0]]:
+					provati += 1
+					if not _raggio(coppia[0], coppia[1], STRATO_SOLO).is_empty():
+						tocca = true
+						break
+				if tocca:
+					break
+			t += 3
+	corpo.collision_layer = STRATO
+	return tocca
 
 
 ## Gli oggetti che si toccano solo fra loro: la lampada e il suo vetro, a 2 cm dal muro, si reggevano a vicenda.
@@ -947,6 +1050,11 @@ func _trova_staccato(z: Dictionary, mi: MeshInstance3D, me: Array[RID]) -> void:
 	var c := b.get_center()
 	var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO | Layers.WORLD, me)
 	var vuoto := "più di 5 m" if giu.is_empty() else "%.1f cm" % ((b.position.y - (giu.position as Vector3).y) * 100.0)
+	if _staccati_veri.has(mi):
+		var vicini: Array = _staccati_veri[mi]
+		_trova(z, mi, "staccato", c, "la sua forma sfiora %s, ma la mesh vera non lo tocca: fra i due più di %d mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a %s)" % [
+				", ".join(vicini.slice(0, 3).map(func(m): return _nodo(m))), roundi(STACCO * 1000.0), vuoto])
+		return
 	_trova(z, mi, "staccato", c, "non tocca niente entro %d mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a %s)" % [
 			roundi(STACCO * 1000.0), vuoto])
 
@@ -1449,6 +1557,11 @@ func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 			var h1 := _raggio(p1 - d * 0.005, p0 + d * 0.005, STRATO_SOLO)
 			if h1.is_empty():
 				continue
+			# conta solo se fra le due facce c'è il pieno (un muro, un bordo, il fondo), non il vuoto di una fossa o di
+			# una vasca aperte (coordinatore, 22 ottobre: un tentacolo che scende nella fossa non è una compenetrazione)
+			var medio := ((h0.position as Vector3) + (h1.position as Vector3)) * 0.5
+			if not _nel_pieno(medio):
+				continue
 			massimo = maxf(massimo, (h0.position as Vector3).distance_to(h1.position))
 		t += passo
 	corpo.collision_layer = STRATO
@@ -1472,20 +1585,42 @@ func _frazione_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 	var i := 0
 	while i < vertici.size():
 		var p := piccola.global_transform * vertici[i]
-		var n := 0
-		var da := p
-		for k in 16:
-			var h := _raggio(da, da + Vector3(0, 50, 0), STRATO_SOLO)
-			if h.is_empty():
-				break
-			n += 1
-			da = (h.position as Vector3) + Vector3(0, 0.001, 0)
 		tot += 1
-		if n % 2 == 1:
+		if _nel_pieno(p):
 			dentro += 1
 		i += passo
 	corpo.collision_layer = STRATO
 	return float(dentro) / maxf(tot, 1)
+
+
+## Vero se p sta nel pieno della mesh sullo strato STRATO_SOLO: dispari verso l'alto, e dispari anche verso il basso
+## o in almeno 3 delle 4 direzioni orizzontali. Una fossa o una vasca aperte sopra danno pari verso l'alto (il vuoto
+## dove scende un tentacolo non è "dentro"); un oggetto appoggiato a terra di solito non ha la faccia di sotto, ma i
+## lati sì (un foglio nascosto dentro una base aperta in basso resta "dentro"). Un raggio solo verso l'alto dava
+## dentro anche il vuoto sotto un foglio o una cupola.
+func _nel_pieno(p: Vector3) -> bool:
+	if _attraversamenti(p, Vector3.UP) % 2 == 0:
+		return false
+	if _attraversamenti(p, Vector3.DOWN) % 2 == 1:
+		return true
+	var lati := 0
+	for d in [Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]:
+		if _attraversamenti(p, d) % 2 == 1:
+			lati += 1
+	return lati >= 3
+
+
+## Quante volte il raggio da p verso dir passa le facce del corpo sullo strato STRATO_SOLO.
+func _attraversamenti(p: Vector3, dir: Vector3) -> int:
+	var n := 0
+	var da := p
+	for k in 16:
+		var h := _raggio(da, da + dir * 50.0, STRATO_SOLO)
+		if h.is_empty():
+			break
+		n += 1
+		da = (h.position as Vector3) + dir * 0.001
+	return n
 
 
 # --- rapporto e eccezioni ------------------------------------------------------------------------------

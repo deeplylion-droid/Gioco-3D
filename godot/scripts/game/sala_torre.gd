@@ -978,7 +978,13 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 		_asta(radice, p + Vector3(0, 0.18, 0), giu, 0.03, metallo)
 	elif appoggio.begins_with("muro_"):
 		var verso: Vector3 = {"muro_n": Vector3.FORWARD, "muro_s": Vector3.BACK, "muro_e": Vector3.RIGHT, "muro_o": Vector3.LEFT}[appoggio]
-		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, 0.18, 0) + verso * 0.4, 0.025, metallo)
+		# il braccio fino al muro che si vede (dai dati finiva 5 cm prima), infilato 2 cm
+		var da := p + Vector3(0, 0.18, 0)
+		var fine := da + verso * 0.4
+		var h := Posa._raggio(radice, da, da + verso * 1.5, []) if radice.is_inside_tree() else {}
+		if not h.is_empty():
+			fine = (h.position as Vector3) + verso * 0.02
+		_asta(radice, da, fine, 0.025, metallo)
 	var l := OmniLight3D.new()
 	l.light_color = CALDO
 	l.light_energy = 4.0
