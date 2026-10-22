@@ -52,6 +52,9 @@ const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
 ## Un oggetto di scena: una mesh con la diagonale del box fra questi due valori (m). Più grande è architettura.
 const OGGETTO_MIN := 0.04
 const OGGETTO_MAX := 4.0
+## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
+## gli acquari (riscontro dell'utente: lì sotto i 4 m il controllo non vedeva niente).
+const OGGETTO_MAX_PARTI := 15.0
 const CONTATTO := 0.05
 const PASSO_GRIGLIA := 0.25
 const TESTA_DA := 0.35
@@ -69,6 +72,7 @@ var _semi: Array[Vector3] = []   # da dove parte il riempimento (vedi _controlla
 var _q_corpo: PhysicsShapeQueryParameters3D   # il cilindro del giocatore (vedi _libero)
 var _spazio: PhysicsDirectSpaceState3D
 var _radice: Node
+var _oggetto_max := OGGETTO_MAX
 
 
 func _ready() -> void:
@@ -108,6 +112,7 @@ func _controlla_scena(z: Dictionary) -> void:
 			_semi.append((sp as Node3D).global_position)
 	for g in _radice.find_children("*", "Player", true, false):
 		_semi.append((g as Node3D).global_position)
+	_oggetto_max = OGGETTO_MAX_PARTI if z.has("parti") else OGGETTO_MAX
 	if z.has("stato"):
 		await _prepara(String(z["stato"]))
 	for i in 20:
@@ -248,7 +253,7 @@ func _e_oggetto(mi: MeshInstance3D) -> bool:
 	if _acqua.has(mi):
 		return false
 	var d := _box(mi).size.length()
-	return d > OGGETTO_MIN and d < OGGETTO_MAX
+	return d > OGGETTO_MIN and d < _oggetto_max
 
 
 func _zona(z: Dictionary, n: Node) -> String:
