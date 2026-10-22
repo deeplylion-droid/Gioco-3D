@@ -10,7 +10,7 @@ Si aggiungono le mappe delle normali (rilievo delle scaglie, delle crepe e della
 vera sulla cornice e sulle lampade.
 
 Uso: flock /home/user/tools/render.lock /home/user/tools/blender-venv/bin/python \
-        assets_src/mascotte/jilly_gioco.py [solo_texture]
+        assets_src/mascotte/jilly_gioco.py [solo_texture | riusa_texture] [targa] [manifesto] [insegna]
 Servono le grafiche originali in gen/jilly/ (logo_b_gpt_0.png, manifesto_b_gpt_0.png: si riscaricano
 da Meshy con i task_id di meshy_log.json). Escono in godot/assets/models/mascotte/jilly/:
 targa.glb, manifesto.glb, insegna.glb (con le lampade e gli empty luce_sx / luce_dx).
@@ -345,6 +345,15 @@ def tutte_le_texture():
                 ferro=tex_ruggine('ferro', 303))
 
 
+def texture_salvate():
+    """Le texture già fatte in jilly_tex/gioco/ (senza le grafiche originali di gen/jilly/)."""
+    out = {}
+    for nome in ('targa', 'insegna', 'manifesto', 'cornice', 'lampada', 'ferro'):
+        out[nome] = {k: os.path.join(TEX, f'{nome}_{k}.{e}') for k, e in (('col', 'jpg'), ('rug', 'jpg'), ('nor', 'png'))
+                     if os.path.exists(os.path.join(TEX, f'{nome}_{k}.{e}'))}
+    return out
+
+
 # ---------------------------------------------------------------- modelli (Blender)
 def materiale(nome, t, rug=None, met=0.0, nor_forza=1.0):
     import bpy
@@ -506,6 +515,10 @@ def insegna(t):
 
 
 if __name__ == '__main__':
-    t = tutte_le_texture()
+    # riusa_texture: le texture già fatte (servono se mancano le grafiche originali); con i nomi dei modelli
+    # (targa, manifesto, insegna) rifà solo quelli
+    t = texture_salvate() if 'riusa_texture' in sys.argv else tutte_le_texture()
+    scelti = [m for m in ('targa', 'manifesto', 'insegna') if m in sys.argv] or ['targa', 'manifesto', 'insegna']
     if 'solo_texture' not in sys.argv:
-        targa(t); manifesto(t); insegna(t)
+        for m in scelti:
+            {'targa': targa, 'manifesto': manifesto, 'insegna': insegna}[m](t)

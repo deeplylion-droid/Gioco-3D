@@ -39,10 +39,11 @@ func _ready() -> void:
 	stay_open = true
 	safety_check = false
 	super._ready()
-	# Si vede solo il modello: il pannello del graybox resta per la collisione.
+	# Si vede solo il modello: del pannello del graybox resta solo la collisione (via la mesh, non nascosta:
+	# nascosta, il controllo di posizionamento la rendeva visibile e la trovava dentro la barra)
 	for c in get_children(true):
 		for m in c.find_children("*", "MeshInstance3D", true, false):
-			(m as MeshInstance3D).visible = false
+			(m as MeshInstance3D).mesh = null
 	var zona := Area3D.new()
 	zona.name = "ZonaApertura"
 	zona.collision_layer = 0

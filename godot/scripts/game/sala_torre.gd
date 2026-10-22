@@ -692,8 +692,9 @@ func _luce_lei() -> void:
 	var fondo := MeshInstance3D.new()
 	fondo.name = "FondoPozzo"
 	var cil := CylinderMesh.new()
-	cil.top_radius = 1.7
-	cil.bottom_radius = 1.7
+	# largo quanto il pozzo dentro (r 1,75 in torre_proposte.pozzo_lei): incastrato tra le pareti, non sospeso
+	cil.top_radius = 1.75
+	cil.bottom_radius = 1.75
 	cil.height = 0.05
 	fondo.mesh = cil
 	fondo.material_override = _materiale_fondo_pozzo()

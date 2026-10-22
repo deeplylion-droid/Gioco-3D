@@ -264,6 +264,7 @@ Parole dell'utente: "su poppy playtime all'inizio parte un video stile VHS enigm
 - **il finale**: lo spot va liscio e allegro, poi si guasta e arriva l'occhio di Jilly "con un effetto come ipnotico aggressivo crescente. Molto horror";
 - **la voce**: a, uno speaker in inglese come una vera pubblicità americana anni '90; se non convince, c, solo la sigla e il logo.
 Da fare dopo la v0.3.9. Prima si propongono all'utente per iscritto il testo dello spot e l'elenco delle inquadrature.
+- **Bozza** (ambienti-2, 22 ottobre sera): `docs/proposte/spot/bozza.md`, circa 43 s in 9 inquadrature, 7 frasi dello speaker, stima 4-5 giornate di lavoro. Mandata all'utente con la pagina https://claude.ai/artifact/QdGpcHr3MvEKEHtMnFshfw (testo, nomi provvisori detti dallo speaker, inquadrature, piscina e torre, logo all'inizio, finale dell'occhio): in attesa di risposta.
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
