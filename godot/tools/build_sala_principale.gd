@@ -858,6 +858,9 @@ func _medusa_bagnata(nome: String) -> Node3D:
 			["M_occhio_bulbo", "medusa_occhio"]]:
 		bagnata[coppia[0]] = load(MEDUSA_DIR + coppia[1] + ".tres")
 	medusa.set(&"material_map", bagnata)
+	# i tentacoli si piegano contro bordi e pareti invece di entrarci (controllo di posizionamento del 22 ottobre:
+	# nella fossa passavano dentro le pareti fino a 12 cm, nella vasca centrale dentro il muro sud fino a 6 cm)
+	medusa.set(&"tentacoli_contro_i_muri", true)
 	# Gocce (coordinate della medusa, misurate sulla vasca centrale).
 	var o := MEDUSA_AFFACCIATA
 	medusa.set(&"punti_gocce", PackedVector3Array([
