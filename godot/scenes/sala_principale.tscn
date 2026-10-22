@@ -872,7 +872,7 @@ monitoring = false
 script = ExtResource("63_ru2e7")
 porta_path = NodePath("../../Interni/Ambienti/Corridoio/porta_sala_pompe")
 cardine_path = NodePath("../CardinePortaSalaPompe")
-angolo_apertura = -95.0
+angolo_apertura = -172.0
 collisione_propria = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/PortaSalaPompeInterni" unique_id=1353464787]

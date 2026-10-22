@@ -813,7 +813,8 @@ func _tappa7(has_interiors: bool) -> void:
 		var porta: Area3D = load("res://scripts/tecnici/porta_maniglione.gd").new()
 		porta.name = "PortaSalaPompeInterni"
 		porta.position = INTERNI_OFFSET + Vector3(bb.get_center().x, 1.0, bb.end.z + 0.35)
-		porta.set(&"angolo_apertura", -95.0)
+		# aperta contro il muro del corridoio (collaudo del 22 ottobre: a 95 gradi sporgeva 1 m sulla strada del ritorno)
+		porta.set(&"angolo_apertura", -172.0)
 		porta.set(&"collisione_propria", true)
 		own(porta, gp)
 		shape_box(porta, Vector3(1.0, 1.6, 0.5))

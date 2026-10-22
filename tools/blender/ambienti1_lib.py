@@ -469,7 +469,6 @@ def neon_soffitto(nome, centro, lung, M, h_soffitto, stato='acceso', watt=60, ap
         T = Matrix.Translation((x, y, h_soffitto - 0.1 - appeso)) @ Matrix.Rotation(rot_z, 4, 'Z')
         if appeso:
             T = T @ Matrix.Rotation(math.radians(18), 4, 'X')
-            cilindro(nome + '_cavo', (x, y, h_soffitto), (x, y, z + 0.05), 0.004, M['gomma'], seg=6)
         corpo = HQ.metti(nome, 'plafoniera_neon', (0, 0, 0), (lung, 0.3, 0.1))
         suff = '_tubo_sfarfalla' if stato == 'sfarfalla' else ('_tubi_accesi' if stato == 'acceso' else '_tubi')
         tubo = HQ.metti(nome + suff, 'plafoniera_neon', (0, 0, 0), (lung, 0.3, 0.1), parte='plafoniera_neon_diffusore')
@@ -477,6 +476,12 @@ def neon_soffitto(nome, centro, lung, M, h_soffitto, stato='acceso', watt=60, ap
             tubo.data = tubo.data  # stessa mesh: il materiale spento lo mette Godot (vedi interni.gd)
         for o in (corpo, tubo):
             o.matrix_world = T @ o.matrix_world
+        if appeso:
+            # il cavo scende fino al dorso della plafoniera (inclinata): prima finiva 5-6 cm sopra e non la reggeva
+            bpy.context.view_layer.update()
+            ws = [corpo.matrix_world @ v.co for v in corpo.data.vertices]
+            dorso = max((p.z for p in ws if abs(p.x - x) < 0.08 and abs(p.y - y) < 0.08), default=z + 0.05)
+            cilindro(nome + '_cavo', (x, y, h_soffitto), (x, y, dorso - 0.004), 0.004, M['gomma'], seg=6)
         luce = luce_area(nome + '_luce', (x, y, z - 0.05), NEON, watt, lung, 0.12, (0, 0, rot_z)) if stato != 'spento' else None
         return corpo, tubo, luce
     parti = [scatola(nome + '_corpo', (-lung / 2, -0.09, 0.0), (lung / 2, 0.09, 0.06), M['metallo_grezzo'], uv=False)]

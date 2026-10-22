@@ -75,6 +75,18 @@ def attacca(ob, d, gioco=0.001, massimo=0.2):
     return ob
 
 
+def lampada(nome, p, n, M, watt):
+    """Luce d'emergenza a muro, a contatto con la parete (prima stavano 2 cm staccate, collaudo del 22 ottobre)."""
+    c, v, l = L.lampada_emergenza(nome, p, n, M, watt=watt)
+    prima = c.location.copy()
+    attacca(c, tuple(-k for k in n))
+    d = c.location - prima
+    for o in (v, l):
+        if o is not None:
+            o.location += d
+    return c, v, l
+
+
 def copia(ob, nome, loc, rot_z=None, rot=None):
     o = ob.copy(); o.name = nome
     L._link(o); o.location = loc
@@ -364,10 +376,13 @@ def corridoio(M):
 
     # ---- luci: rosse d'emergenza e neon quasi tutti spenti
     luci = []
-    for i, (p, n) in enumerate([((3.0, 2.58, 2.2), (0, -1, 0)), ((10.8, 2.58, 2.2), (0, -1, 0)), ((19.2, 2.58, 2.2), (0, -1, 0)),
-                                ((17.5, 0.02, 2.35), (0, 1, 0)), ((21.98, 1.3, 2.4), (-1, 0, 0)), ((0.02, 1.3, 2.35), (1, 0, 0)),
-                                ((7.5, 0.02, 2.2), (0, 1, 0)), ((17.5, 2.58, 2.25), (0, -1, 0))]):
-        c, v, l = L.lampada_emergenza(f'luce_emergenza_{i + 1:02d}', p, n, M, watt=32 if i != 4 else 22)
+    # (collaudo del 22 ottobre) a muro, a contatto; quelle a nord sotto il tubo grande (bordo basso 2,30 m) e sopra i
+    # 2 m; la 01 sul muro sud (a nord, fino a x 8,2, c'è anche il tubo piccolo a 2,12 m), sopra la canalina dei cavi
+    # (2,10 m) come la 07; la 04, sopra la porta della sala pompe, più in alto del tubo sud (lì scende a 2,30 m)
+    for i, (p, n) in enumerate([((3.0, 0.02, 2.21), (0, 1, 0)), ((10.8, 2.58, 2.11), (0, -1, 0)), ((19.2, 2.58, 2.11), (0, -1, 0)),
+                                ((17.5, 0.02, 2.48), (0, 1, 0)), ((21.98, 1.3, 2.4), (-1, 0, 0)), ((0.02, 1.3, 2.35), (1, 0, 0)),
+                                ((7.5, 0.02, 2.21), (0, 1, 0)), ((17.5, 2.58, 2.11), (0, -1, 0))]):
+        c, v, l = lampada(f'luce_emergenza_{i + 1:02d}', p, n, M, watt=32 if i != 4 else 22)
         luci += [c, v]
     for i, (x, stato, app) in enumerate([(4.2, 'spento', 0), (10.0, 'sfarfalla', 0), (15.5, 'spento', 0.35), (20.0, 'spento', 0)]):
         c, t, l = L.neon_soffitto(f'neon_corridoio_{i + 1}', (x, 1.3, 0), 1.2, M, H, stato, watt=90, appeso=app, rot_z=0)
@@ -684,6 +699,10 @@ def spogliatoi(M):
     dr = HQ.dimensioni('tornello_rotore'); kxy = 1.2 / dr.x; kz = 2.2 / dr.z
     asse = HQ.asse_rotore('tornello_rotore')
     HQ.metti('tornello_rotore', 'tornello_rotore', (TX, TY, 0.04), (dr.x * kxy, dr.y * kxy, 2.2), perno=(asse.x * kxy, asse.y * kxy, 0))
+    # i due cuscinetti sull'asse del rotore: sotto sul pavimento, sopra nel tetto del telaio (prima il rotore girava
+    # a 1 cm dal telaio senza toccarlo, collaudo del 22 ottobre); sull'asse, quindi il rotore che gira resta giusto
+    statico.append(L.cilindro('tornello_cuscinetto', (TX, TY, 0.0), (TX, TY, 0.07), 0.035, M['cromo'], seg=16))
+    statico.append(L.cilindro('tornello_cuscinetto', (TX, TY, 2.21), (TX, TY, 2.32), 0.035, M['cromo'], seg=16))
     # grata fissa tra il telaio e la parete est
     fisso = []
     for x in [10.42 + 0.095 * j for j in range(4)]:
@@ -811,7 +830,7 @@ def spogliatoi(M):
     # ---- luci
     for i, (p, n) in enumerate([((6.8, 3.02, 2.45), (0, 1, 0)), ((3.02, 7.0, 2.4), (1, 0, 0)), ((5.6, 14.58, 2.55), (0, -1, 0)),
                                 ((10.78, 18.2, 2.3), (-1, 0, 0)), ((9.7, 11.22, 2.5), (0, 1, 0)), ((13.18, 16.0, 2.3), (-1, 0, 0))]):
-        L.lampada_emergenza(f'luce_emergenza_spogliatoi_{i + 1:02d}', p, n, M, watt=40)
+        lampada(f'luce_emergenza_spogliatoi_{i + 1:02d}', p, n, M, watt=40)
     for i, (x, y, stato, rz) in enumerate([(7.0, 5.0, 'sfarfalla', 90), (7.0, 8.8, 'spento', 90), (5.6, 12.6, 'spento', 0), (9.7, 17.5, 'spento', 90)]):
         L.neon_soffitto(f'neon_spogliatoi_{i + 1}', (x, y, 0), 1.2, M, H if y < 15 else CH, stato, watt=90, rot_z=R(rz))
 
@@ -928,8 +947,8 @@ def stanzino(M):
     prop('ciabatta_stanzino', 'ciabatta', (14.2, 9.5, 0), 250, 0.27)
 
     # ---- luci
-    L.lampada_emergenza('luce_emergenza_stanzino_01', (11.22, 9.6, 2.3), (1, 0, 0), M, watt=30)
-    L.lampada_emergenza('luce_emergenza_stanzino_02', (15.18, 7.6, 2.3), (-1, 0, 0), M, watt=22)
+    lampada('luce_emergenza_stanzino_01', (11.22, 9.6, 2.3), (1, 0, 0), M, watt=30)
+    lampada('luce_emergenza_stanzino_02', (15.18, 7.6, 2.3), (-1, 0, 0), M, watt=22)
     L.neon_soffitto('neon_stanzino', (13.2, 8.4, 0), 1.2, M, H, 'sfarfalla', watt=60, rot_z=R(90))
     pozza('acqua_pozza_stanzino', (12.0, 8.6, 0), 0.6, 0.45, M, 21)
     # soffitto da nave: un pannello manca, uno pende vicino alla rastrelliera
