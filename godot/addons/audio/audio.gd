@@ -1613,7 +1613,8 @@ class Statua:
 		l = a.crea_loop(&"medusa_presenza_loop", holder)
 		if l:
 			l.volume = 1.0
-		inseguimento = bool(nodo.get(&"animazioni_inseguimento"))
+		# la statua del menu (MedusaStatue) la proprietà non ce l'ha: get() dà null
+		inseguimento = nodo.get(&"animazioni_inseguimento") == true
 		if inseguimento:
 			# la voce viene dalla testa: in alto quando incombe (la presa arriva a 3,85 m sopra l'origine)
 			bocca = Node3D.new()
