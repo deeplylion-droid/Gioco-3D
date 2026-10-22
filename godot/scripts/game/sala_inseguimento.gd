@@ -953,7 +953,14 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 		m.emission_energy_multiplier = 6.0
 		anello.material_override = m
 		radice.add_child(anello)
-		anello.global_position = bersaglio + verso * 0.02
+		# appoggiato alla faccia vera del pannello (il bersaglio può stare qualche cm davanti o dietro): metà dello
+		# spessore dell'anello fuori, meno 1 mm dentro
+		var faccia := bersaglio
+		if pannello:
+			var su_pannello: Variant = _faccia_mesh(pannello, bersaglio + verso.normalized() * 0.5, -verso.normalized())
+			if su_pannello != null:
+				faccia = su_pannello
+		anello.global_position = faccia + verso.normalized() * ((t.outer_radius - t.inner_radius) * 0.5 - 0.001)
 		anello.global_basis = Basis(Quaternion(Vector3.UP, verso.normalized()))
 		var o2 := OmniLight3D.new()
 		o2.light_color = VERDE
@@ -968,6 +975,24 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 			o2.reparent(pannello)
 	else:
 		_sfarfalla(o, s)
+
+
+## Il primo punto delle mesh di [param radice] colpito dal raggio da [param da] verso [param dir] (null: niente).
+static func _faccia_mesh(radice: Node3D, da: Vector3, dir: Vector3) -> Variant:
+	var migliore: Variant = null
+	var d_min := INF
+	for n in radice.find_children("*", "MeshInstance3D", true, false) + ([radice] if radice is MeshInstance3D else []):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var f := mi.mesh.get_faces()
+		for i in range(0, f.size(), 3):
+			var c: Variant = Geometry3D.ray_intersects_triangle(da, dir, mi.global_transform * f[i],
+					mi.global_transform * f[i + 1], mi.global_transform * f[i + 2])
+			if c != null and da.distance_to(c) < d_min:
+				d_min = da.distance_to(c)
+				migliore = c
+	return migliore
 
 
 ## La lampada rossa guasta: si spegne e riaccende a scatti.
