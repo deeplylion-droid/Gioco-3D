@@ -45,6 +45,8 @@ var infermeria: Node3D
 var _corpo: StaticBody3D
 var _mat_cemento: StandardMaterial3D
 var _mat_lamiere: StandardMaterial3D
+var _mat_pericolo: StandardMaterial3D
+var _mat_giallo: StandardMaterial3D
 var _mat_pav: Material
 var _zone: Array[AABB] = []
 
@@ -54,6 +56,9 @@ func _ready() -> void:
 	# cemento, sopra lamiere rivettate; in proiezione dal mondo, così i pezzi si continuano
 	_mat_cemento = _materiale("Concrete042C", 2.5)
 	_mat_lamiere = _materiale("MetalPlates013", 2.0)
+	_mat_pericolo = _materiale("PaintedMetal016", 0.6)
+	_mat_giallo = _materiale("PaintedMetal006", 1.0)
+	_mat_giallo.albedo_texture = load("res://assets/ambienti_tecnici/texture/vernice_giallo_Color.jpg")
 	_mat_pav = load("res://assets/fiume_lento/mat_cemento.tres")
 	_corpo = StaticBody3D.new()
 	_corpo.name = "Corridoi"
@@ -250,6 +255,25 @@ func _rampa(lo: Vector3, n: int) -> void:
 	var zc := lo.z + SCALA_LARGA * 0.5
 	for i in n:
 		_box(Vector3(PEDATA, ALZATA * (i + 1), SCALA_LARGA), Vector3(lo.x + PEDATA * (i + 0.5), lo.y + ALZATA * (i + 1) * 0.5, zc), _mat_pav, false)
+		# il bordo del gradino a strisce di pericolo, come le scale del raccordo
+		_box(Vector3(0.06, 0.035, SCALA_LARGA), Vector3(lo.x + PEDATA * i + 0.03, lo.y + ALZATA * (i + 1) - 0.0165, zc), _mat_pericolo, false)
+	# il corrimano giallo lungo il muro nord, 95 cm sopra i bordi dei gradini, con le staffe al muro
+	var a := Vector3(lo.x, lo.y + ALZATA + 0.95, lo.z + SCALA_LARGA - 0.07)
+	var b := Vector3(lo.x + lungo - PEDATA, lo.y + su + 0.95, a.z)
+	var tubo := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.025
+	cm.bottom_radius = 0.025
+	cm.height = a.distance_to(b)
+	cm.radial_segments = 12
+	tubo.mesh = cm
+	tubo.material_override = _mat_giallo
+	tubo.transform = Transform3D(Basis(Vector3.BACK, atan2(b.y - a.y, b.x - a.x) - PI * 0.5), (a + b) * 0.5)
+	add_child(tubo)
+	for k in 3:
+		var t := (k + 0.5) / 3.0
+		var pk := a.lerp(b, t)
+		_box(Vector3(0.03, 0.03, 0.07), Vector3(pk.x, pk.y - 0.02, pk.z + 0.035), _mat_giallo, false)
 	# la rampa liscia (36 gradi circa): ci si sale camminando
 	var ang := atan2(su, lungo)
 	var l := sqrt(lungo * lungo + su * su)
