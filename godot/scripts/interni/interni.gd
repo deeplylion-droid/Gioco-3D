@@ -279,6 +279,27 @@ func _on_trigger_armadietto(body: Node3D) -> void:
 	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(105.0), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(85.0), 0.25).set_trans(Tween.TRANS_SINE)
 	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(92.0), 0.4).set_trans(Tween.TRANS_SINE)
+	# aperta sporge nello spogliatoio: si urta come le altre ante aperte (controllo di posizionamento). La
+	# collisione arriva a fine corsa, così l'anta che si apre non spinge il giocatore.
+	t.tween_callback(_collisione_anta.bind(anta))
+
+
+func _collisione_anta(anta: Node3D) -> void:
+	var mi := anta as MeshInstance3D
+	if mi == null or mi.mesh == null or anta.has_node(^"Collisione"):
+		return
+	var corpo := StaticBody3D.new()
+	corpo.name = "Collisione"
+	corpo.collision_layer = Layers.WORLD
+	corpo.collision_mask = 0
+	var forma := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	var a := mi.mesh.get_aabb()
+	box.size = a.size
+	forma.shape = box
+	forma.position = a.get_center()
+	corpo.add_child(forma)
+	anta.add_child(corpo)
 
 
 # --- Tornello ------------------------------------------------------------------------------
