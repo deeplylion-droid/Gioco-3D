@@ -499,8 +499,9 @@ def plafoniere_calde(mats):
     (vicino alla porta, sul muro est, sul muro ovest sopra il salvagente e sulla parete nord). Dal 16
     ottobre la 3 non c'è più (era sulla torre degli scivoli, tolta dalla sala) e la 4, che era su una
     colonna del soppalco nord, è sulla parete nord: i nomi delle luci restano gli stessi.
-    Restituisce (oggetto, luci)."""
-    posti = [((1.75, S.Y0, 2.5), (0, 1, 0)), ((S.X1, 9.0, 2.7), (-1, 0, 0)), ((S.X0, -1.0, 2.7), (1, 0, 0)),
+    La 1, sul muro est, era in y 9: lì ora scorre il portone della sala della torre aperto del tutto, quindi è
+    in y 2, sopra la panca. Restituisce (oggetto, luci)."""
+    posti = [((1.75, S.Y0, 2.5), (0, 1, 0)), ((S.X1, 2.0, 2.7), (-1, 0, 0)), ((S.X0, -1.0, 2.7), (1, 0, 0)),
              None, ((-4.6, S.Y1, 3.0), (0, -1, 0))]
     c = K.Costruttore(mats)
     luci = []

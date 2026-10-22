@@ -61,11 +61,20 @@ bottom_radius = 0.24
 height = 0.004
 material = SubResource("nero")
 
-[sub_resource type="BoxMesh" id="guida_lato"]
-size = Vector3(0.05, 4.720, 0.09)
-
 [sub_resource type="BoxMesh" id="guida_sopra"]
 size = Vector3(0.05, 0.09, 6.990)
+
+[sub_resource type="BoxMesh" id="guida_lato_terra"]
+size = Vector3(0.05, 5.56, 0.09)
+
+[sub_resource type="BoxMesh" id="piastra_terra"]
+size = Vector3(0.12, 0.012, 0.14)
+
+[sub_resource type="BoxMesh" id="staffa_muro"]
+size = Vector3(0.363, 0.05, 0.05)
+
+[sub_resource type="BoxMesh" id="piastra_muro"]
+size = Vector3(0.012, 0.12, 0.1)
 
 [node name="EnigmaAcquari" type="Node3D"]
 script = ExtResource("enigma")
@@ -318,23 +327,74 @@ mesh = ExtResource("disegno")
 cast_shadow = 0
 
 [node name="LampadePortone" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04, 0, 0)
 
 [node name="Spente" type="Node3D" parent="LampadePortone"]
 
 [node name="GuidaSinistra" type="MeshInstance3D" parent="LampadePortone/Spente"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 3.2, -18.45)
-mesh = SubResource("guida_lato")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 2.78, -18.45)
+mesh = SubResource("guida_lato_terra")
 material_override = ExtResource("m_giallo")
 
 [node name="GuidaDestra" type="MeshInstance3D" parent="LampadePortone/Spente"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 3.2, -11.55)
-mesh = SubResource("guida_lato")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 2.78, -11.55)
+mesh = SubResource("guida_lato_terra")
 material_override = ExtResource("m_giallo")
 
 [node name="GuidaSopra" type="MeshInstance3D" parent="LampadePortone/Spente"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.64, 5.5, -15)
 mesh = SubResource("guida_sopra")
 material_override = ExtResource("m_giallo")
+
+[node name="PiastraTerra1" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.62, 0.006, -18.45)
+mesh = SubResource("piastra_terra")
+material_override = ExtResource("m_tiranti")
+
+[node name="PiastraTerra2" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.62, 0.006, -11.55)
+mesh = SubResource("piastra_terra")
+material_override = ExtResource("m_tiranti")
+
+[node name="StaffaMuro1" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8465, 5.5, -18.2)
+mesh = SubResource("staffa_muro")
+material_override = ExtResource("m_tiranti")
+
+[node name="PiastraMuro1" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -18.2)
+mesh = SubResource("piastra_muro")
+material_override = ExtResource("m_tiranti")
+
+[node name="StaffaMuro2" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8465, 5.5, -16.3)
+mesh = SubResource("staffa_muro")
+material_override = ExtResource("m_tiranti")
+
+[node name="PiastraMuro2" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -16.3)
+mesh = SubResource("piastra_muro")
+material_override = ExtResource("m_tiranti")
+
+[node name="StaffaMuro3" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8465, 5.5, -13.7)
+mesh = SubResource("staffa_muro")
+material_override = ExtResource("m_tiranti")
+
+[node name="PiastraMuro3" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -13.7)
+mesh = SubResource("piastra_muro")
+material_override = ExtResource("m_tiranti")
+
+[node name="StaffaMuro4" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.8465, 5.5, -11.8)
+mesh = SubResource("staffa_muro")
+material_override = ExtResource("m_tiranti")
+
+[node name="PiastraMuro4" type="MeshInstance3D" parent="LampadePortone/Spente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.034, 5.5, -11.8)
+mesh = SubResource("piastra_muro")
+material_override = ExtResource("m_tiranti")
 
 [node name="Portalampade" type="MultiMeshInstance3D" parent="LampadePortone/Spente"]
 cast_shadow = 0
