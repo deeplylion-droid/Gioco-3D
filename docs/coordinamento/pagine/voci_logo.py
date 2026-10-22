@@ -3,10 +3,9 @@
 def V(vid, titolo, testo, media, scelte):
     return dict(id=vid, titolo=titolo, testo=testo, media=list(media), scelte=scelte)
 
-INTRO = ("Le tre proposte per il logo di Jilly Jubilee. Nessuna è un'immagine generata: sono fatte con caratteri veri "
-         "e grafica disegnata da codice, con font liberi anche per la vendita. Per ognuna c'è il logo, il logo sulla "
-         "schermata del titolo vera e la prova in piccolo, grande come la copertina di Steam (qui ingrandita). Tocca "
-         "una foto per ingrandirla.")
+INTRO = ("Tre loghi nuovi, molto diversi dai primi e meno da cartone animato. Anche questi sono fatti con caratteri "
+         "veri e grafica disegnata da codice, niente immagini generate. Per ognuno c'è il logo, il logo sulla schermata "
+         "del titolo vera e la prova in piccolo, grande come la copertina di Steam (qui ingrandita).")
 
 def tre(x, nome):
     return [("img", f"logo_{x}_scuro.jpg", f"{nome}: il logo"),
@@ -14,18 +13,16 @@ def tre(x, nome):
             ("img", f"steam_{x}_x3.png", f"{nome}: grande come la copertina di Steam")]
 
 SEZIONI = [
-    ("Il logo", [
-        V("LOGO", "Quale logo",
-          "A, l'insegna del parco: \"Jilly\" in corsivo corallo e \"JUBILEE\" in oro su un nastro blu, con stelle e "
-          "medusa, come insegna, targa e manifesto del gioco, ma rovinato: smalto saltato fino alla ruggine, colature, "
-          "crepe. È la più fitta di dettagli."
-          "\nB, lo show per bambini anni '90 com'era da nuovo: lettere tonde e lucide, rosa e gialle, con le bolle. La "
-          "medusa fa il puntino della i, e l'unica cosa che stona è il suo occhio vero, umido, che ti guarda. È la più "
-          "leggibile."
-          "\nC, la versione horror: la B rovinata dall'acqua, con colori spenti, crepe, muffa e colature, e dietro il "
-          "bagliore rosa di lei che passa anche dai buchi.",
-          tre("a", "A") + tre("b", "B") + tre("c", "C"),
-          [("A", "A, insegna"), ("B", "B, anni '90"), ("C", "C, horror"), ("cambia", "Nessuna: rifalle")]),
+    ("Il logo, secondo giro", [
+        V("LOGO2", "Quale logo",
+          "D, l'insegna al neon del parco, di notte: \"Jilly\" in tubo rosa e \"JUBILEE\" in tubo azzurro su lamiera "
+          "scura, con la medusa in neon lilla. Una l è mezza accesa e l'ultima E è spenta, ma il nome si legge sempre."
+          "\nE, il titolo da film horror: maiuscole sottili e spaziate, avorio su nero. Un solo segno di lei: la coda "
+          "della J di JUBILEE scende e diventa un tentacolo rosa. È la più pulita da piccola."
+          "\nF, il disegno dei bambini: il nome a pastelli a cera su un foglio ingiallito con lo scotch. Sotto, la "
+          "medusa sorridente tiene per mano un bambino, che ha la faccia cancellata col pastello nero.",
+          tre("d", "D") + tre("e", "E") + tre("f", "F"),
+          [("D", "D, neon"), ("E", "E, film"), ("F", "F, disegno"), ("cambia", "Nessuno: rifalli")]),
     ]),
 ]
 
