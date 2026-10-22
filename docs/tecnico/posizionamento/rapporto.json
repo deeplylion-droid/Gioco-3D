@@ -1,5 +1,17 @@
 [
 	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (16 celle da 25 cm)",
+		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_1",
+		"pos": [
+			-4.75,
+			0.0,
+			38.75
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm)",
 		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_9",
 		"pos": [
@@ -214,7 +226,7 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (24 celle da 25 cm)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (8 celle da 25 cm)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
 		"nodo": "Interni/Ambienti/Corridoio/cestino",
 		"pos": [
@@ -748,7 +760,7 @@
 	{
 		"dettaglio": "il 33% dei suoi vertici è dentro Sala/AreaBimbi/sala_secchio_gigante",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "LuciSala/LuciAreaBimbi/@MeshInstance3D@1363",
+		"nodo": "LuciSala/LuciAreaBimbi/@MeshInstance3D@1413",
 		"pos": [
 			-14.42,
 			6.81,
@@ -944,7 +956,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4746",
+		"nodo": "Luci/@MeshInstance3D@4848",
 		"pos": [
 			32.55,
 			9.0,
@@ -958,7 +970,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4747",
+		"nodo": "Luci/@MeshInstance3D@4849",
 		"pos": [
 			32.03,
 			8.9,
@@ -972,7 +984,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4748",
+		"nodo": "Luci/@MeshInstance3D@4850",
 		"pos": [
 			32.03,
 			8.8,
@@ -986,7 +998,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4750",
+		"nodo": "Luci/@MeshInstance3D@4852",
 		"pos": [
 			32.55,
 			-3.0,
@@ -1000,7 +1012,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4751",
+		"nodo": "Luci/@MeshInstance3D@4853",
 		"pos": [
 			32.03,
 			-3.1,
@@ -1014,7 +1026,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4752",
+		"nodo": "Luci/@MeshInstance3D@4854",
 		"pos": [
 			32.03,
 			-3.2,
@@ -1028,7 +1040,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4754",
+		"nodo": "Luci/@MeshInstance3D@4856",
 		"pos": [
 			32.55,
 			-14.0,
@@ -1042,7 +1054,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4755",
+		"nodo": "Luci/@MeshInstance3D@4857",
 		"pos": [
 			32.03,
 			-14.1,
@@ -1056,7 +1068,7 @@
 	{
 		"dettaglio": "niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m)",
 		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare",
-		"nodo": "Luci/@MeshInstance3D@4756",
+		"nodo": "Luci/@MeshInstance3D@4858",
 		"pos": [
 			32.03,
 			-14.2,

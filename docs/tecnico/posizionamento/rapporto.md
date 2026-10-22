@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 02:23:46. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 02:35:54. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 5. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezioni non più trovate: 35.
+Nuovi: 6. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezioni non più trovate: 35.
 
 ## Nuovi
 
@@ -10,6 +10,7 @@ Nuovi: 5. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio |
 |---|---|---|---|---|
+| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/valvola_corridoio_1` | -4.75, 0.00, 38.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (16 celle da 25 cm) |
 | ambienti-1 | ingombro | `Interni/Meccanismi/PernoTurbina/turbina_saracinesca` | -0.75, 0.00, 21.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.75 e 2.00 m sopra il pavimento (15 celle da 25 cm) |
 
 ### sala
@@ -32,7 +33,7 @@ Nuovi: 5. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 | ambienti-1 | compenetra | `Interni/Ambienti/Stanzino/neon_stanzino_neon/neon_stanzino_tubo_sfarfalla` | 3.50, 2.39, 32.50 | il 68% dei suoi vertici è dentro Interni/Ambienti/Stanzino/neon_stanzino | voluto: il tubo del neon sta dentro la sua plafoniera |
 | ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/asciugamano_corridoio` | -1.25, 0.00, 40.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (125 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/cartello_corridoio` | 6.50, 0.00, 39.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/cestino` | -4.50, 0.00, 39.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (24 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/cestino` | -4.50, 0.00, 39.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (8 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/corridoio_statico` | -4.25, 0.00, 38.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/estintore` | 0.00, 0.00, 40.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.84 e 1.46 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/pallone` | -7.25, 0.00, 40.25 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.42 m sopra il pavimento (47 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
@@ -61,7 +62,7 @@ Nuovi: 5. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| grafica | compenetra | `LuciSala/LuciAreaBimbi/@MeshInstance3D@1363` | -14.42, 6.81, -19.65 | il 33% dei suoi vertici è dentro Sala/AreaBimbi/sala_secchio_gigante | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | compenetra | `LuciSala/LuciAreaBimbi/@MeshInstance3D@1413` | -14.42, 6.81, -19.65 | il 33% dei suoi vertici è dentro Sala/AreaBimbi/sala_secchio_gigante | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra` | 19.50, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra` | 19.50, 0.00, -18.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (5 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 | ambienti-1 | ingombro | `Sala/AngoloScatoloni/scat_caduto_0` | -19.00, 0.00, 16.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (112 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
@@ -107,15 +108,15 @@ Nuovi: 5. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 74. Eccezi
 |---|---|---|---|---|---|
 | ambienti-2 | ingombro | `TorreScivoli/discesa_1_1` | 38.76, -6.01, -11.55 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.96 m sopra il pavimento (40 celle da 25 cm) | voluto: la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre) |
 | ambienti-2 | ingombro | `TorreScivoli/discesa_5_0` | 37.51, -15.01, -18.80 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm) | da correggere: all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8) |
-| grafica | sospeso | `Luci/@MeshInstance3D@4746` | 32.55, 9.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4747` | 32.03, 8.90, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4748` | 32.03, 8.80, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4750` | 32.55, -3.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4751` | 32.03, -3.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4752` | 32.03, -3.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4754` | 32.55, -14.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4755` | 32.03, -14.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| grafica | sospeso | `Luci/@MeshInstance3D@4756` | 32.03, -14.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4848` | 32.55, 9.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4849` | 32.03, 8.90, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4850` | 32.03, 8.80, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4852` | 32.55, -3.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4853` | 32.03, -3.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4854` | 32.03, -3.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4856` | 32.55, -14.00, -15.00 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4857` | 32.03, -14.10, -14.70 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| grafica | sospeso | `Luci/@MeshInstance3D@4858` | 32.03, -14.20, -15.30 | niente a meno di 5 cm (sotto, il primo appoggio è a più di 5 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
 
 ## Eccezioni non più trovate (si possono togliere dal file)
 
