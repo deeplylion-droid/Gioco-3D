@@ -674,7 +674,7 @@ def versione_A(mats):
             c.toro((x, y, zb_ - 0.4), (1, 0, 0), 0.1, 0.025, 'metallo', seg=16, seg_r=6)
     # i dettagli del kit sui muri e sotto le passerelle: valvole, tubi, cavi, cartelli, lampade
     for (cat, nodo, p, nrm) in (
-            ('tubi', 'det_tubo_valvola_T', (55.0, y1, -23.0), (0, -1)),
+            ('tubi', 'det_tubo_valvola_T', (55.0, y1 + (0.035 if GIOCO else 0.0), -23.0), (0, -1)),   # (nel gioco il retro della valvola contro il muro)
             ('tubi', 'det_tubo_curva_su', (61.0, y0, -19.9), (0, 1)),
             ('tubi', 'det_tubo_valvola_T', (X0 - (0.035 if GIOCO else 0.0), 11.8, -29.2), (1, 0)), ('elettrico', 'det_interruttore_stagno', (X0, 7.8, -28.9), (1, 0)),
             ('cartelli', 'det_cartello_uscita', (X0, 3.2, -27.6), (1, 0)), ('cartelli', 'det_cartello_profondita', (X0, 9.6, -31.9), (1, 0)),
@@ -703,7 +703,7 @@ def versione_A(mats):
     # prop nell'acqua e sulle passerelle
     props = []
     for (nome, x, y, z, rot) in (('salvagente_nave', 47.0, 18.0, T - 0.05, 30), ('ciambella_gonfiabile', 68.0, 22.5, T - 0.1, 120),
-                                 ('paperella_gigante', 48.5, 4.0, T + 0.2, 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1], 15),
+                                 ('paperella_gigante', 48.5, 4.0, T + 0.2, 200), ('cartello_pavimento_bagnato', 41.3, 5.8, porta[1] - (0.0101 if GIOCO else 0.0), 15),
                                  ('pallone_spiaggia', 72.0, 30.0, T - 0.15, 0)):
         props.append(P.prop(nome, (x, y, z), rot))
 
