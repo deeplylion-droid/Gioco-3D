@@ -241,6 +241,8 @@ func _scena_squalo(start: Marker3D) -> void:
 				and int(c.get(&"squalo_sbuffo", 0)) == 1 and int(c.get(&"porta_chiusa", 0)) >= 1,
 			"si sentono il fiato, il richiamo di Jilly, lo sbuffo e la porta che sbatte")
 		check(int(c.get(&"squalo_passo", 0)) >= 8, "e i passi pesanti (%d)" % int(c.get(&"squalo_passo", 0)))
+		check(int(c.get(&"squalo_denti", 0)) == 3 and int(c.get(&"squalo_ringhio", 0)) == 1,
+			"i denti ai tre morsi e il ringhio quando si gira")
 	check(p.input_enabled and p.camera.position.is_zero_approx() and is_zero_approx(p.camera.rotation.z),
 		"il giocatore riprende il controllo, la camera torna normale")
 	check(p.global_position.distance_to(pos0) < 0.05, "ed è ancora dove si è svegliato")
