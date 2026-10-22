@@ -28,10 +28,26 @@ SPALLE = {'L': (0.45, -0.58, 1.45), 'R': (-0.42, -0.52, 1.42)}
 MANI_RIPOSO = {'L': (0.71, -1.06, 0.86), 'R': (-0.58, -1.06, 1.44)}
 GIOCATORE_Y = -1.55      # la faccia del giocatore, davanti allo squalo
 PORTA_Y = 5.95           # la porta tagliafuoco, dietro di lui
-FASI = dict(MINACCIA=2.4, RICHIAMO=5.4, GIRO=5.85, ESITA=6.75, CORSA=7.75, PORTA=None, FINE=None)
-VEL_CORSA = 2.8          # m/s
-ACCEL = 0.9              # secondi per arrivare alla velocità di corsa
-CADENZA = 2.2            # passi al secondo
+# Il giro e l'esitazione sono scritti nei tempi di prima (giro 0,9 s, esitazione 1,0 s) e accorciati di KG e KE:
+# l'utente (22 ottobre, v0.3.8) lo trovava troppo lento e goffo quando si gira e se ne va.
+KG = 0.65                # il giro: 0,9 s -> 0,59 s
+KE = 0.72                # l'esitazione (lo sguardo indietro e lo sbuffo): 1,0 s -> 0,72 s
+FASI = dict(MINACCIA=2.4, RICHIAMO=5.4, GIRO=5.85)
+FASI.update(ESITA=round(FASI['GIRO'] + 0.9 * KG, 3))
+FASI.update(CORSA=round(FASI['ESITA'] + 1.0 * KE, 3), PORTA=None, FINE=None)
+VEL_CORSA = 4.4          # m/s (era 2,8)
+ACCEL = 0.42             # secondi per arrivare alla velocità di corsa (era 0,9: lo scatto deciso)
+CADENZA = 3.0            # passi al secondo (era 2,2)
+
+
+def g_(a):
+    """Un istante del giro scritto nei tempi di prima (a secondi dopo GIRO)."""
+    return FASI['GIRO'] + a * KG
+
+
+def e_(a):
+    """Un istante dell'esitazione scritto nei tempi di prima (a secondi dopo ESITA)."""
+    return FASI['ESITA'] + a * KE
 FINE_Y = PORTA_Y + 1.6   # dove si ferma il conto (oltre la porta, ormai chiusa)
 
 
@@ -93,17 +109,17 @@ def tempo_alla_porta():
 
 def radice(t):
     """(x, y, yaw) della radice: fermo, il giro di 180° sul posto, mezzo passo, la corsa."""
-    yaw = chiavi(t, [(FASI['GIRO'] + 0.05, 0.0), (FASI['GIRO'] + 0.80, math.pi)])
+    yaw = chiavi(t, [(g_(0.05), 0.0), (g_(0.80), math.pi)])
     # mentre minaccia si sporge in avanti e indietro di qualche centimetro
     avanti = 0.0
     if t < FASI['RICHIAMO']:
         avanti = chiavi(t, [(0.0, 0.0), (FASI['MINACCIA'], -0.10), (FASI['MINACCIA'] + 0.6, -0.04),
                             (FASI['MINACCIA'] + 1.4, -0.12), (FASI['MINACCIA'] + 2.0, -0.06), (FASI['RICHIAMO'], -0.08)])
     else:
-        avanti = chiavi(t, [(FASI['RICHIAMO'], -0.08), (FASI['GIRO'] + 0.8, 0.0)])
-    passo = chiavi(t, [(FASI['ESITA'] + 0.15, 0.0), (FASI['ESITA'] + 0.55, 0.35)])
+        avanti = chiavi(t, [(FASI['RICHIAMO'], -0.08), (g_(0.8), 0.0)])
+    passo = chiavi(t, [(e_(0.15), 0.0), (e_(0.55), 0.35)])
     # girandosi si allontana dalla faccia del giocatore (se no il corpo e la coda gli passano addosso)
-    passo += chiavi(t, [(FASI['RICHIAMO'] + 0.25, 0.0), (FASI['GIRO'] + 0.85, 0.60)])
+    passo += chiavi(t, [(FASI['RICHIAMO'] + 0.25, 0.0), (g_(0.85), 0.60)])
     s, _ = posizione_corsa(t)
     return 0.0, avanti + passo + s, yaw
 
@@ -129,31 +145,31 @@ class Piedi:
         g = FASI['GIRO']
         # fermi fino al giro
         for s in 'LR':
-            self.appoggi[s].append((0.0, g + 0.10 + (0.0 if s == 'L' else 0.3), self.fermo[s].copy(), 0.0))
+            self.appoggi[s].append((0.0, g_(0.10 + (0.0 if s == 'L' else 0.3)), self.fermo[s].copy(), 0.0))
         # il giro: tre passi (L, R, L) mentre la radice gira di 180°
-        for k, (s, t0) in enumerate((('L', g + 0.32), ('R', g + 0.62), ('L', g + 0.90))):
-            dur_fine = FASI['ESITA'] + (0.15 if s == 'L' else 0.45)
-            fine = dur_fine if (s == 'R' or k == 2) else g + 0.90 - 0.18
-            yaw = math.pi * min(1.0, (t0 - g) / 0.8)
+        for k, (s, t0) in enumerate((('L', g_(0.32)), ('R', g_(0.62)), ('L', g_(0.90)))):
+            dur_fine = e_(0.15 if s == 'L' else 0.45)
+            fine = dur_fine if (s == 'R' or k == 2) else g_(0.90 - 0.18)
+            yaw = math.pi * min(1.0, (t0 - g) / (0.8 * KG))
             x, y, _ = radice(t0)
             self.appoggi[s].append((t0, fine, self._mondo(self.fermo[s], x, y, yaw), yaw))
         # mezzo passo dell'esitazione: prima il destro poi il sinistro raggiunge
         e = FASI['ESITA']
-        self.appoggi['R'].append((e + 0.42, FASI['CORSA'] + 0.05, self._mondo(self.fermo['R'], 0, radice(e + 0.6)[1], math.pi) + Vector((0, 0.18, 0)), math.pi))
-        self.appoggi['L'].append((e + 0.62, FASI['CORSA'] - 0.05, self._mondo(self.fermo['L'], 0, radice(e + 0.6)[1], math.pi), math.pi))
+        self.appoggi['R'].append((e_(0.42), FASI['CORSA'] + 0.05, self._mondo(self.fermo['R'], 0, radice(e_(0.6))[1], math.pi) + Vector((0, 0.18, 0)), math.pi))
+        self.appoggi['L'].append((e_(0.62), FASI['CORSA'] - 0.05, self._mondo(self.fermo['L'], 0, radice(e_(0.6))[1], math.pi), math.pi))
         # la corsa: passi alternati, ogni appoggio centrato sotto l'anca a metà appoggio
         t = FASI['CORSA'] + 0.12
         lato = 'L'
         while t < FASI['CORSA'] + 6.0:
             _, v = posizione_corsa(t)
             v = max(v, 0.9)
-            appoggio = min(0.32, 0.78 / v)
+            appoggio = min(0.30, 0.70 / v)
             tm = t + appoggio / 2
             x, y, yaw = radice(tm)
             off = Vector((0.26 if lato == 'L' else -0.26, 0.0, 0.20))
             pos = self._mondo(off, x, y, yaw)
             self.appoggi[lato].append((t, t + appoggio, pos, yaw))
-            t += 1.0 / CADENZA * (1.0 if v > 2.0 else 1.25)
+            t += 1.0 / CADENZA * (1.0 if v > 2.5 else 1.2)
             lato = 'R' if lato == 'L' else 'L'
 
     def caviglia(self, s, t):
@@ -187,37 +203,38 @@ def posa(t, piedi):
     M, R, G, E, C = FASI['MINACCIA'], FASI['RICHIAMO'], FASI['GIRO'], FASI['ESITA'], FASI['CORSA']
     tp = tempo_alla_porta()
     p = {}
-    corsa = liscio(0.0, 1.0, C - 0.1, C + 0.5, t)
+    corsa = liscio(0.0, 1.0, C - 0.12, C + 0.3, t)
     _, v = posizione_corsa(t)
     fase = (t - C) * CADENZA * math.pi            # mezzo giro per passo
     # --- quanto è chino: addosso al giocatore (testa giù), poi si raddrizza al richiamo
-    chino = chiavi(t, [(0.0, 1.0), (R + 0.05, 1.0), (R + 0.45, 0.25), (G + 0.8, 0.1), (E + 0.6, 0.15), (C, 0.35)])
+    chino = chiavi(t, [(0.0, 1.0), (R + 0.05, 1.0), (R + 0.45, 0.25), (g_(0.8), 0.1), (e_(0.6), 0.15), (C, 0.35)])
     abbassa = 0.14 * chino
     # alla porta: si abbassa ancora per passare sotto l'architrave
-    abbassa += liscio(0.0, 0.16, tp - 0.45, tp - 0.15, t) - liscio(0.0, 0.16, tp + 0.25, tp + 0.55, t)
-    # la corsa: il bacino scende a ogni appoggio e risale nel volo
+    abbassa += liscio(0.0, 0.16, tp - 0.32, tp - 0.10, t) - liscio(0.0, 0.16, tp + 0.16, tp + 0.38, t)
+    # la corsa: il bacino scende a ogni appoggio e risale nel volo (poco: la corsa è fluida, non saltellata)
     if corsa > 0:
-        abbassa += corsa * (0.03 + 0.04 * math.cos(2 * fase))
+        abbassa += corsa * (0.03 + 0.022 * math.cos(2 * fase))
     p['_abbassa'] = abbassa
     # --- respiro (sempre): il petto si gonfia
     resp = math.sin(t * 2 * math.pi * (0.55 if t < R else 0.9))
     # --- bacino e busto
-    p['bacino'] = [('x', 5 * chino + 5 * corsa), ('z', 6 * corsa * math.sin(fase)),
-                   ('y', 4 * corsa * math.sin(fase))]
+    # nella corsa più piegato in avanti (deciso) e con meno rollio (fluido)
+    p['bacino'] = [('x', 5 * chino + 9 * corsa), ('z', 4 * corsa * math.sin(fase)),
+                   ('y', 2.5 * corsa * math.sin(fase))]
     # nell'esitazione si volta indietro con tutto il busto, non solo con la testa: dietro di lui il
     # giocatore deve vedergli il muso e l'occhio
-    torsione = chiavi(t, [(E + 0.65, 0.0), (E + 0.85, 1.0), (E + 1.35, 1.0), (E + 1.55, 0.0)])
-    p['spina'] = [('x', 5 * chino + 4 * corsa + 1.5 * resp), ('z', -5 * corsa * math.sin(fase) + 26 * torsione)]
+    torsione = chiavi(t, [(e_(0.65), 0.0), (e_(0.85), 1.0), (e_(1.35), 1.0), (e_(1.55), 0.0)])
+    p['spina'] = [('x', 5 * chino + 9 * corsa + 1.5 * resp), ('z', -4 * corsa * math.sin(fase) + 26 * torsione)]
     p['petto'] = [('x', 4 * chino + 2 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase) + 32 * torsione)]
     # alla porta il busto si piega di più
-    p['spina'].append(('x', liscio(0, 10, tp - 0.45, tp - 0.15, t) - liscio(0, 10, tp + 0.25, tp + 0.55, t)))
+    p['spina'].append(('x', liscio(0, 10, tp - 0.32, tp - 0.10, t) - liscio(0, 10, tp + 0.16, tp + 0.38, t)))
     # --- collo e testa: giù verso la faccia del giocatore, poi lo scatto verso il richiamo (dietro a
     # sinistra, sopra la spalla), il giro, lo sguardo indietro al giocatore nell'esitazione
     # (lo scatto dura mezzo secondo: più svelto la pelle della bocca si strappava tra un fotogramma e
     # l'altro e nel gioco sembrava un salto)
-    guarda = chiavi(t, [(R + 0.08, 0.0), (R + 0.55, 75.0), (G + 0.3, 75.0), (G + 0.85, 0.0), (E + 0.5, 0.0),
-                        (E + 0.95, 95.0), (E + 1.35, 95.0), (E + 1.5, 60.0), (C - 0.15, 0.0)])
-    alza = chiavi(t, [(R + 0.08, 0.0), (R + 0.55, -18.0), (G + 0.8, -5.0), (C, 0.0)])
+    guarda = chiavi(t, [(R + 0.08, 0.0), (R + 0.55, 75.0), (g_(0.3), 75.0), (g_(0.85), 0.0), (e_(0.5), 0.0),
+                        (e_(0.95), 95.0), (e_(1.35), 95.0), (e_(1.5), 60.0), (C - 0.12, 0.0)])
+    alza = chiavi(t, [(R + 0.08, 0.0), (R + 0.55, -18.0), (g_(0.8), -5.0), (C, 0.0)])
     scatti = 0.0
     if M < t < R:
         # piccoli scatti in avanti della testa, come per mordere
@@ -231,8 +248,8 @@ def posa(t, piedi):
                   ('z', guarda * 0.55 + 1.5 * tremito), ('x', alza * 0.5), ('y', 6 * chino * math.sin(t * 0.9))]
     # --- mascella: si apre piano al risveglio, spalancata nella minaccia, mezza chiusa al richiamo, sbuffo
     # nell'esitazione, ansima nella corsa
-    apri = chiavi(t, [(0.0, 8.0), (1.2, 12.0), (M, 52.0), (R + 0.05, 55.0), (R + 0.50, 30.0), (G + 0.8, 12.0),
-                      (E + 0.85, 10.0), (E + 1.0, 32.0), (E + 1.3, 6.0), (C, 14.0)])
+    apri = chiavi(t, [(0.0, 8.0), (1.2, 12.0), (M, 52.0), (R + 0.05, 55.0), (R + 0.50, 30.0), (g_(0.8), 12.0),
+                      (e_(0.85), 10.0), (e_(1.0), 32.0), (e_(1.3), 6.0), (C, 14.0)])
     if M < t < R:
         apri += 3.0 * math.sin(t * 2 * math.pi * 0.55)
     if corsa > 0:
@@ -240,7 +257,7 @@ def posa(t, piedi):
     p['mascella'] = [('_apri', apri)]
     # --- braccia: nella minaccia aperte ai lati della faccia del giocatore, gli artigli in avanti; al
     # richiamo si fermano; nella corsa pompano (opposte alle gambe) con il gomito piegato
-    braccia = chiavi(t, [(0.0, 1.0), (R + 0.1, 1.0), (G + 0.6, 0.3), (C, 0.0)])
+    braccia = chiavi(t, [(0.0, 1.0), (R + 0.1, 1.0), (g_(0.6), 0.3), (C, 0.0)])
     # le mani con una IK (in mostro_rig.cuoci): qui dove vanno, rispetto alla spalla, nello spazio della
     # radice prima del giro (lo squalo guarda -Y). A riposo come nel modello; nella minaccia ai lati della
     # faccia del giocatore, gli artigli aperti; nella corsa pompano davanti al petto, opposte alle gambe.
@@ -252,7 +269,7 @@ def posa(t, piedi):
         minaccia += Vector((0.0, 0.03, 0.03)) * rumore(t, 1.7, 2.0 + segno)
         # nella corsa la mano che pende si tiene su, davanti al petto (non deve strisciare a terra)
         su = Vector((-0.05, -0.10, 0.42)) if s == 'L' else Vector((0.0, 0.0, -0.05))
-        corsa_off = riposo + su + Vector((0.0, -0.13 * oscilla * segno, 0.06 * oscilla * segno))
+        corsa_off = riposo + su + Vector((0.0, -0.18 * oscilla * segno, 0.07 * oscilla * segno))
         resto = max(0.0, 1.0 - braccia - corsa)
         p['_mano.' + s] = riposo * resto + minaccia * braccia + corsa_off * corsa
     p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia)]
@@ -275,5 +292,5 @@ def dati_per_godot(piedi):
         for a, b in piedi.tempi_appoggio(s):
             if a > 0.05 and a < tp + 0.8:
                 passi.append(round(a, 3))
-    return dict(fps=FPS, durata=round(tp + 0.9, 3), porta=round(tp, 3), passi=sorted(passi),
+    return dict(fps=FPS, durata=round(tp + 0.9, 3), porta=round(tp, 3), passi=sorted(passi), sbuffo=round(e_(1.0), 3),
                 giocatore_y=GIOCATORE_Y, porta_y=PORTA_Y, **{k.lower(): v for k, v in FASI.items() if v is not None})

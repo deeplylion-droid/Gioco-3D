@@ -257,6 +257,14 @@ Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel
 - **Dove ti svegli** (risposta dell'utente, 21 ottobre: a): il risveglio si sposta di circa 6 m verso ovest (x 14-15), davanti alla porta chiusa della sala pompe, guardando a est. Lo squalo corre per circa 7 m fino alla porta tagliafuoco. Finita la scena si torna verso ovest, la strada di sempre. Il tratto di corridoio che prima restava alle spalle va rifinito come il resto.
 - **I dettagli della scena** (decisi da mascotte, approvati dall'utente il 22 ottobre): lo squalo scatta tre volte con la testa come per mordere; nell'esitazione si volta a guardarti con uno sbuffo; alla porta si abbassa per passare; durante la scena sei in ginocchio, con gli occhi a circa 1 m; dura circa 13 secondi, poi riprendi i comandi. La torcia e la riga dei comandi aspettano la fine della scena. È nella v0.3.8.
 
+## Lo spot della crociera Jubilee (idea dell'utente, 22 ottobre)
+
+Parole dell'utente: "su poppy playtime all'inizio parte un video stile VHS enigmatico. Noi potremmo avere uno spot pubblicitario, sempre stile tv a tubo catodico, della crociera Jubilee." Uno spot anni '90 della crociera per famiglie, girato nel gioco vero: l'acquapark acceso e pulito com'era, gli scivoli, Jilly star del suo show, il suo logo da nuovo e la sigla pulita, con il filtro della TV a tubo catodico e della VHS (righe, colori sbavati, tracking che salta). Scelte dell'utente (22 ottobre):
+- **dove**: b, dopo "Nuova partita", subito prima del risveglio;
+- **il finale**: lo spot va liscio e allegro, poi si guasta e arriva l'occhio di Jilly "con un effetto come ipnotico aggressivo crescente. Molto horror";
+- **la voce**: a, uno speaker in inglese come una vera pubblicità americana anni '90; se non convince, c, solo la sigla e il logo.
+Da fare dopo la v0.3.9. Prima si propongono all'utente per iscritto il testo dello spot e l'elenco delle inquadrature.
+
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
 L'utente: "al momento, arrivare alla porta della torre si impiegano 5 minuti". Con gli acquari e la torre per lui diventano circa 10 minuti, e per chi gioca la prima volta 20-25, mentre ne erano previsti 39-42. Per allungare, l'utente ha scelto:
