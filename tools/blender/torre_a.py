@@ -1079,16 +1079,16 @@ def versione_A(mats):
                 break
         z_fine = (verso_pedana[1] if verso_pedana else FONDO + 0.6) + h + PROF_D + 0.06
         pz = liscia(arco(BANDA, BANDA, a0, a, z0, z_fine), 2)
-        # la pendenza cresce piano nel primo metro e 20 (si entra camminando: niente spigolo che fa decollare)
-        Ls = 1.2 if tipo == 'getto' else 0.0
+        # la pendenza cresce piano nel primo metro e 20 (si entra camminando: niente spigolo che fa decollare).
+        # Anche l'ultimo tratto, che finisce con un salto: partendo subito ripido, le sponde del canale si
+        # piegavano all'indietro fino a 85 cm dietro l'imbocco (controllo di posizionamento, discesa_5_0)
+        Ls = 1.2
         lung_ = [0.0]
         for i in range(1, len(pz)):
             lung_.append(lung_[-1] + math.hypot(pz[i].x - pz[i - 1].x, pz[i].y - pz[i - 1].y))
         m_ = (z0 - z_fine) / max(lung_[-1] - Ls / 2, 0.1)
         for i, s_l in enumerate(lung_):
             pz[i].z = z0 - (m_ * s_l * s_l / (2 * Ls) if s_l < Ls else m_ * (s_l - Ls / 2))
-        if Ls == 0.0:
-            pz = liscia(arco(BANDA, BANDA, a0, a, z0, z_fine), 2)
         fine = pz[-1]
         tg = pz[-1] - pz[-2]
         tg.z = 0

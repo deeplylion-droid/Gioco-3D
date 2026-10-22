@@ -622,18 +622,5 @@
 		],
 		"stato": "voluto",
 		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "torre",
-		"nodo": "TorreScivoli/discesa_5_0",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			37.51,
-			-15.01,
-			-18.8
-		],
-		"stato": "da correggere",
-		"motivo": "all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8)"
 	}
 ]
