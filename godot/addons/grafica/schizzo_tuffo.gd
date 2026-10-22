@@ -51,8 +51,8 @@ func _ready() -> void:
 	_schiuma.position = Vector3(0.0, 0.015, 0.0)
 	_schiuma.visible = false
 	add_child(_schiuma)
-	_gocce = _particelle("Gocce", 220, 1.4, _goccia(0.02, 0.08), 0.95)
-	_spruzzo = _particelle("Spruzzo", 420, 0.9, _goccia(0.008, 0.05), 0.97)
+	_gocce = _particelle("Gocce", 120, 1.2, _goccia(0.02, 0.08), 0.95)
+	_spruzzo = _particelle("Spruzzo", 280, 0.9, _goccia(0.008, 0.05), 0.97)
 	_rimbalzo = _particelle("Rimbalzo", 70, 1.1, _goccia(0.018, 0.1), 0.6)
 	set_process(false)
 
@@ -175,14 +175,14 @@ static func _goccia(raggio: float, lungo: float) -> Mesh:
 		c.rings = 3
 		var m := StandardMaterial3D.new()
 		# acqua: chiara, lucidissima e un po' trasparente, con un filo di luce propria bianca (al buio, grigie
-		# e opache, sembravano sassolini)
+		# e opache, sembravano sassolini). Poca luce propria e non troppe: con di più, alla fine sembravano neve.
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		m.albedo_color = Color(0.85, 0.9, 0.95, 0.6)
+		m.albedo_color = Color(0.85, 0.9, 0.95, 0.45)
 		m.roughness = 0.04
 		m.metallic_specular = 1.0
 		m.emission_enabled = true
 		m.emission = Color(0.75, 0.8, 0.85)
-		m.emission_energy_multiplier = 0.35
+		m.emission_energy_multiplier = 0.1
 		m.rim_enabled = true
 		m.rim = 0.6
 		c.material = m
