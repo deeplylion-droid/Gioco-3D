@@ -1,0 +1,7 @@
+# Camere delle inquadrature 2 e 3 dello spot (ambienti-1): nome cx cy cz mx my mz fov
+# 2: la cupola col cielo azzurro, poi giù sulla sala accesa (5 s)
+2_inizio 0 1.7 14 0 16 -5 70
+2_fine 0 2.6 15.5 0 0.8 -4 65
+# 3: panoramica sulla piscina a onde piena, lungo il lato est (5 s)
+3_inizio 10 3.0 8 0 -0.3 0 60
+3_fine 8.5 3.0 -2 -1 -0.3 -9 60

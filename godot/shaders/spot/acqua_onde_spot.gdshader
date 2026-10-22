@@ -281,6 +281,8 @@ uniform float onda_lunghezza = 7.0;
 uniform float onda_velocita = 3.2;
 /** Quanto sono appuntite le creste (0 = sinusoide). */
 uniform float onda_punta = 1.6;
+/** Schiuma bianca sulle creste. */
+uniform float onda_schiuma : hint_range(0.0, 2.0) = 0.8;
 /** Lungo onda_dir: dove partono piene (d0) e dove si sono spente sulla spiaggia (d1). */
 uniform float onda_d0 = -5.0;
 uniform float onda_d1 = 11.0;
@@ -362,7 +364,8 @@ void fragment() {
 	vec2 dip_slope = vec2(flow_dip(wp.xz + vec2(e, 0.0)) - flow_dip(wp.xz - vec2(e, 0.0)),
 			flow_dip(wp.xz + vec2(0.0, e)) - flow_dip(wp.xz - vec2(0.0, e))) / (2.0 * e);
 	s -= dip_slope;
-	s += onda_lunga(wp.xz, water_time).yz;
+	vec3 ol = onda_lunga(wp.xz, water_time);
+	s += ol.yz;
 	vec4 rip = water_ripple_sample_tex(ripple_tex, ripple_rect, wp.xz);
 	s += rip.xy * ripple_normal_strength;
 	if (any(isnan(s)) || any(isinf(s))) {
@@ -458,6 +461,9 @@ void fragment() {
 		foam += smoothstep(0.08, 0.6, rip.w * foam_ripple_amount * (0.4 + fpat));
 		foam += flow_foam_one(wp.xz, flow_point_0, flow_shape_0, water_time, fpat);
 		foam += flow_foam_one(wp.xz, flow_point_1, flow_shape_1, water_time, fpat);
+		// schiuma sulle creste delle onde lunghe
+		float cresta = smoothstep(0.5, 0.95, ol.x / max(onda_altezza * 1.2, 1e-3));
+		foam += cresta * (0.25 + 0.75 * fpat) * onda_schiuma;
 		foam = clamp(foam, 0.0, 1.0);
 		float scum = 0.0;
 		if (scum_amount > 0.0) {
