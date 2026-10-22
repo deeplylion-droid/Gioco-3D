@@ -3735,5 +3735,18 @@
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (prima nascosto da un'altra mesh dello stesso cartello nella stessa cella): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 1.03 e 1.07 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.16x0.04x0.06"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/AngoloScatoloni/scat_3_0_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-16.63,
+			0.17,
+			19.38
+		],
+		"stato": "da correggere",
+		"motivo": "il pannello det_pannello_lamiera_0 e la piastrella det_piastrella_rotta_6_7 del kit stanno sotto la pila: li toglie ambienti-2"
 	}
 ]

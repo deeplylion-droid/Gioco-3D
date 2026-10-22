@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 19:54:32. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 20:03:02. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 4. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 280. Eccezioni non più trovate: 51.
+Nuovi: 3. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 280. Eccezioni non più trovate: 0.
 
 ## Nuovi
 
@@ -13,7 +13,6 @@ Nuovi: 4. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 280. Eccez
 | ambienti-1 | compenetra | `Sala/AngoloScatoloni/scat_3_0_0` | -16.63, 0.17, 19.38 | passa dentro Sala/Dettagli/det_pannello_lamiera_0 per 4 cm |
 | ambienti-2 | compenetra | `Sala/Dettagli/det_foglio_2_8` | 14.00, 0.02, 18.06 | il 23% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_9 |
 | ambienti-2 | compenetra | `Sala/Dettagli/det_piastrella_rotta_6_7` | -17.06, 0.01, 19.28 | il 40% dei suoi vertici è dentro Sala/AngoloScatoloni/scat_3_0_0 |
-| ambienti-1 | staccato | `Polaroid/Polaroid05/Modello/Polaroid` | 1.20, -2.16, 2.90 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.4 cm) |
 
 ## Già noti
 
@@ -540,56 +539,3 @@ Senza le trasformazioni nel meta "trasformazioni" (vedi `_espandi_multimesh`):
 - `sala_principale · Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine`
 - `sala_principale · Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello`
 
-## Eccezioni non più trovate (si possono togliere dal file)
-
-- sala · staccato · `Sala/Dettagli/@MeshInstance3D@40`
-- sala · compenetrato · `Polaroid/Polaroid05`
-- sala · compenetra · `Sala/Interattivi/sala_portello_scarico`
-- sala · compenetra · `Piscina/LucePortellone/Anello`
-- sala · estremita_libera · `Sala/Dettagli/det_tubo_muro_7cm_2m`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_0`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_36`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_51`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_55`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_56`
-- interni · staccato · `Interni/Ambienti/Corridoio/PernoPortaTagliafuoco/porta_tagliafuoco`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_58`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_54`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_35`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_47`
-- sala · staccato · `Sala/AngoloPalloni/pallone_dentro_53`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_0_1`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_0_4`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_0_11`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_0_12`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_0_13`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_1_16`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_1_19`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_2_5`
-- sala · staccato · `Sala/AngoloScatoloni/scat_0_2_10`
-- sala · staccato · `Sala/AngoloScatoloni/scat_1_0_12`
-- sala · staccato · `Sala/AngoloScatoloni/scat_1_2_7`
-- sala · staccato · `Sala/AngoloScatoloni/scat_2_1_4`
-- sala · staccato · `Sala/AngoloScatoloni/scat_3_0_3`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_02`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_03`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_05`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_06`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_01`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_02`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_03`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_04`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_05`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_06`
-- interni · staccato · `Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_02_vetro`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_03_vetro`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_05_vetro`
-- interni · staccato · `Interni/Ambienti/Corridoio/luce_emergenza_06_vetro`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_01_vetro`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_02_vetro`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_03_vetro`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_04_vetro`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_05_vetro`
-- interni · staccato · `Interni/Ambienti/Spogliatoi/luce_emergenza_spogliatoi_06_vetro`
-- interni · staccato · `Interni/Ambienti/Stanzino/luce_emergenza_stanzino_01_vetro`

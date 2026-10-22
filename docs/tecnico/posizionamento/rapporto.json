@@ -1,17 +1,5 @@
 [
 	{
-		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 1.4 cm)",
-		"nodo": "Polaroid/Polaroid05/Modello/Polaroid",
-		"pos": [
-			1.2,
-			-2.16,
-			2.9
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-1",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "il 23% dei suoi vertici è dentro Sala/AngoloPalloni/pallone_9",
 		"nodo": "Sala/Dettagli/det_foglio_2_8",
 		"pos": [
