@@ -18,7 +18,8 @@ const VARCHI := [
 	["interni: dal corridoio del risveglio agli spogliatoi", "inizio",
 		[Vector3(4.3, 0, 39.6), Vector3(-2.9, 0, 39.6), Vector3(-2.9, 0, 37.45)]],
 	["interni: dagli spogliatoi allo stanzino del bagnino", "inizio",
-		[Vector3(-1.0, 0, 32.45), Vector3(2.5, 0, 32.45)]],
+		# (arrivando un po' da nord: l'anta aperta, a 165 gradi, sta di sbieco davanti alla metà sud del vano)
+		[Vector3(-1.0, 0, 32.85), Vector3(0.6, 0, 32.85), Vector3(1.1, 0, 32.53), Vector3(1.6, 0, 32.5), Vector3(2.5, 0, 32.45)]],
 	["interni: dagli spogliatoi al lavapiedi, fino al tornello", "inizio",
 		[Vector3(-1.0, 0, 32.45), Vector3(-0.45, 0, 31.2), Vector3(-0.45, 0, 28.5), Vector3(0, 0, 26.6)]],
 	["interni: il tornello (sbloccato col getto)", "aperte",
