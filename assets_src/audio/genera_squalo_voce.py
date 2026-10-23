@@ -224,7 +224,7 @@ def proposte():
     return nuovi
 
 
-def mix_scena(nuovi, v_min, v_ring, nome):
+def mix_scena(nuovi, v_min, v_ring, nome, piu=None, guadagno=None):
     """La scena intera con i tempi del gioco (main: animazione di prima), ai livelli del gioco (file + PIU_FORTE),
     senza la distanza: indicativo."""
     import json
@@ -237,19 +237,29 @@ def mix_scena(nuovi, v_min, v_ring, nome):
     def metti(x, t, loud, piu):
         x = normalize_lufs(f32(x), loud, -1.0, short=len(x) < SR * 2)
         mix_into(out, x * 10 ** (piu / 20), n_of(t))
-    piu_nuovo = 3.0 if v_min != 'prima' else 6.0
+    piu_nuovo = piu if piu is not None else (3.0 if v_min != 'prima' else 6.0)
     metti(nuovi[('minaccia', v_min)], 0.8, -15, piu_nuovo)
     for k, tc in enumerate(SCATTI):
         metti(read_audio(os.path.join(A, 'squalo', f'squalo_denti_{k + 1:02d}.ogg')), tc + 0.08, -11, 5)
     metti(read_audio(os.path.join(A, 'squalo', 'jilly_richiamo.ogg')), tempi['richiamo'], -20, 3)
-    metti(nuovi[('ringhio', v_ring)], tempi['giro'] - 0.1, -14, 3.0 if v_ring != 'prima' else 6.0)
+    metti(nuovi[('ringhio', v_ring)], tempi['giro'] - 0.1, -14, piu_nuovo)
     metti(read_audio(os.path.join(A, 'squalo', 'squalo_sbuffo.ogg')), tempi['sbuffo'] - 0.07, -16, 6)
     for i, tp in enumerate(tempi['passi']):
         metti(read_audio(os.path.join(A, 'squalo', f'squalo_passo_{i % 4 + 1:02d}.ogg')), tp, -12, 5 - 1.5 * i)
-    _mp3(_pronto(out, -16.0), nome)
+    # guadagno: quello di un'altra scena (per confrontare i livelli), se no a -16 LUFS
+    g = guadagno if guadagno is not None else 10 ** ((-16.0 - lufs(out)) / 20)
+    _mp3(f32(limiter(out * g, -1.0)), nome)
+    return g
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == 'scena_bassa':
+        # la scena con i suoni B nel gioco senza guadagno in più (scelta dell'utente: "tienila bassa"), con lo
+        # stesso guadagno complessivo della scena_B a +3 dB: si sente quanto sta sotto
+        nuovi = {('minaccia', 'B'): _pronto(minaccia('B')), ('ringhio', 'B'): _pronto(ringhio('B'))}
+        g = mix_scena(nuovi, 'B', 'B', 'scena_B')
+        mix_scena(nuovi, 'B', 'B', 'scena_B_bassa', piu=0.0, guadagno=g)
+        return
     if len(sys.argv) > 1 and sys.argv[1] == 'gioco':
         from comune import salva
         salva('squalo', 'squalo_minaccia', minaccia(sys.argv[2]), loudness=-15, qualita=5,

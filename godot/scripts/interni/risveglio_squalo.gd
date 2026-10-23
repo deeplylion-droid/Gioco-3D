@@ -319,8 +319,10 @@ func _suona(chiave: String, nome: StringName, dove: Variant, tono := 1.0, volume
 
 ## Quanto più forti dei loro file suonano qui (dB): è il primo spavento del gioco (riscontro dell'utente sulla
 ## v0.3.8, "aggiungiamo anche i suoni": prima la scena stava circa 7 dB sotto l'urlo di lei).
-const PIU_FORTE := {&"squalo_minaccia": 6.0, &"jilly_richiamo": 3.0, &"squalo_sbuffo": 6.0, &"squalo_passo": 5.0,
-	&"squalo_denti": 5.0, &"squalo_ringhio": 6.0}
+## Dal 23 ottobre la minaccia e il ringhio sono quelli nuovi (B, "coccodrillo") e restano bassi, senza guadagno in
+## più: l'utente, "ma tienila bassa".
+const PIU_FORTE := {&"squalo_minaccia": 0.0, &"jilly_richiamo": 3.0, &"squalo_sbuffo": 6.0, &"squalo_passo": 5.0,
+	&"squalo_denti": 5.0, &"squalo_ringhio": 0.0}
 
 
 func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:

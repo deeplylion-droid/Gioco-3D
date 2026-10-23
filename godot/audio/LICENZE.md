@@ -197,12 +197,12 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `squalo/squalo_denti_01.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_02.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_03.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
-| `squalo/squalo_minaccia.ogg` | 6.0 s | sintesi (originale) | fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file) |
+| `squalo/squalo_minaccia.ogg` | 6.0 s | sintesi (originale) | fiato a 30 cm, gola che brontola sotto e tre ringhi corti con il risucchio della saliva (2,3 s, 3,2 s, 4,1 s dall'inizio del file); versione B del 23 ottobre |
 | `squalo/squalo_passo_01.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
 | `squalo/squalo_passo_02.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
 | `squalo/squalo_passo_03.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
 | `squalo/squalo_passo_04.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
-| `squalo/squalo_ringhio.ogg` | 2.3 s | sintesi (originale) | il ringhio quando si gira verso la porta |
+| `squalo/squalo_ringhio.ogg` | 2.3 s | sintesi (originale) | il ringhio corto e aggressivo verso la porta; versione B del 23 ottobre |
 | `squalo/squalo_sbuffo.ogg` | 1.9 s | sintesi (originale) | sbuffo di gola quando si volta a guardarti |
 | `tecnici/cancello_stagno_apre_01.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
 | `tecnici/cancello_stagno_apre_02.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
