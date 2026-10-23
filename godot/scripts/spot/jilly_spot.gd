@@ -11,11 +11,16 @@ extends MedusaAffacciata
 ##   vene); il progresso lo fa salire la regia (chiave "occhio" del JSON, la stessa del lettore: così l'effetto sullo
 ##   schermo e l'occhio vero battono insieme). Se non c'è, un battito semplice che accelera in [param durata] secondi,
 ##   sulla pupilla e sulle vene (instance uniform di medusa_occhio.gdshader).
+## Per le camere (ambienti-2) c'è il figlio "CentroOcchio" (Marker3D): a ogni fotogramma sta al centro dell'occhio, con
+## -Z verso dove guarda lei (il +Z del nodo); l'occhio ha un raggio di 0,24 m. Lo sguardo che segue il giocatore è spento
+## (nello spot non c'è un giocatore: girerebbe l'occhio di lato).
 ## Tutto va col tempo del motore (AnimationPlayer, Tween, _process): con il Movie Maker a 30 fps fissi torna giusto.
 
 const SPOT := "res://assets/models/medusa/medusa_spot.res"
 ## Il materiale dell'occhio con pupilla, vene e sorriso (instance uniform): sempre, anche senza material_map.
 const OCCHIO := "res://assets/models/medusa/medusa_occhio.tres"
+## Il raggio dell'occhio (m), per la distanza delle camere.
+const RAGGIO_OCCHIO := 0.24
 
 var _battito_t := -1.0
 var _battito_durata := 0.0
@@ -26,6 +31,7 @@ var _sorriso := 0.0          # 0..1: l'occhio a mezzaluna e la campana che pulsa
 var _campana_t := 0.0
 var _campana: Array[MeshInstance3D] = []
 var _contrai_scritto := false
+var _centro: Marker3D
 
 
 func _init() -> void:
@@ -36,6 +42,13 @@ func _init() -> void:
 func _dopo_rebuild() -> void:
 	super._dopo_rebuild()
 	_campana.clear()
+	for m in find_children("SguardoOcchio", "", true, false):
+		(m as SkeletonModifier3D).active = false
+	if _centro == null:
+		_centro = Marker3D.new()
+		_centro.name = "CentroOcchio"
+		_centro.top_level = true
+		add_child(_centro)
 	var o := occhio() as MeshInstance3D
 	if o and o.mesh and not o.get_active_material(0) is ShaderMaterial:
 		for i in o.mesh.get_surface_count():
@@ -110,6 +123,8 @@ func _occhio_ipnotico() -> Node:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	if _centro and is_inside_tree():
+		_centro.global_transform = Transform3D(Basis.looking_at(global_basis.z, Vector3.UP), get_eye_position())
 	# il sorriso: l'occhio a mezzaluna e la campana che pulsa (si contrae appena, due volte al secondo)
 	var o := occhio()
 	if o:
