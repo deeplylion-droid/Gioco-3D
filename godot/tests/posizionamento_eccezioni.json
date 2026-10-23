@@ -62,7 +62,7 @@
 			33.0
 		],
 		"stato": "voluto",
-		"motivo": "quadro elettrico appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala"
+		"motivo": "quadro elettrico appeso al muro sud della sala pompe, da 0,9 a 2,65 m: sporge 24 cm dal muro (era 56; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
 	},
 	{
 		"zona": "tecnici",
@@ -75,20 +75,7 @@
 			36.75
 		],
 		"stato": "voluto",
-		"motivo": "pannello degli strumenti appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_bocchette",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			-1.72,
-			-9.05,
-			7.0
-		],
-		"stato": "voluto",
-		"motivo": "bocchette dell'aria sul muro sud della camera delle onde (da 1,65 m), ora con la collisione: ci si ferma contro come contro il muro. Se non va bene: alzarle di 40 cm in ambienti2_camera_onde.py"
+		"motivo": "pannello degli strumenti appeso al muro sud della sala pompe, da 1,3 a 2,25 m: sporge 24 cm dal muro (era 36; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
 	},
 	{
 		"zona": "torre",
@@ -169,19 +156,6 @@
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
 	},
 	{
-		"zona": "torre",
-		"nodo": "TorreStruttura/torre_A_sostegni",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			38.26,
-			-19.06,
-			-17.53
-		],
-		"stato": "voluto",
-		"motivo": "celle dentro il tubo dell'inseguimento, e il collare sotto la coda del tratto 5, 1,93 m sopra il terzo gradino della bocca, sul bordo est della salita (ambienti-2, 22 ottobre)"
-	},
-	{
 		"zona": "sala",
 		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
 		"squadra": "mascotte",
@@ -219,100 +193,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			1.2,
-			-4.22,
-			34.16
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi."
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_1",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			1.2,
-			-4.22,
-			39.16
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_1_tubo_sfarfalla."
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_2",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			1.2,
-			-4.22,
-			43.66
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_2_tubi."
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_3",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			5.7,
-			-4.22,
-			39.16
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_3_tubi."
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0/@MeshInstance3D@39474",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			54.61,
-			-19.48,
-			-16.4
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2/@MeshInstance3D@39482",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			67.0,
-			-22.48,
-			-25.39
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4/@MeshInstance3D@39490",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			66.89,
-			-25.48,
-			-3.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_4, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
 	},
 	{
 		"zona": "sala",
@@ -677,19 +557,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Sala/Dettagli/det_foglio_1_17",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			5.95,
-			-0.03,
-			-12.78
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 32% dei suoi vertici è dentro Sala/Piscina/piscina_bordi"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/FondoVetro",
 		"squadra": "enigmi",
 		"problema": "compenetra",
@@ -949,76 +816,6 @@
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
 	},
 	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			40.55,
-			-19.6,
-			-28.51
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			40.55,
-			-19.6,
-			-24.49
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			57.98,
-			-20.16,
-			0.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			64.02,
-			-20.16,
-			0.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7563/det_corda_pendente_2",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			74.03,
-			-23.21,
-			0.89
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|catene_corde.gltf::ArrayMesh_vmoi6"
-	},
-	{
 		"zona": "sala",
 		"nodo": "Sala/Oggetti/ogg_lettino_plastica_23",
 		"squadra": "ambienti-1",
@@ -1030,18 +827,5 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/Dettagli/det_cartello_non_tuffarsi_6",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			-3.34,
-			1.52,
-			19.99
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): passa dentro Sala/Oggetti/ogg_salvagente_nave_19 per 9 cm (nel pieno, per esempio, in (-3.37, 1.44, 19.99))"
 	}
 ]
