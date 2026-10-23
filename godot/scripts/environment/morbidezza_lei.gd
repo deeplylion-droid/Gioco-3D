@@ -52,7 +52,7 @@ extends SkeletonModifier3D
 @export var pulsa_hz := 0.9
 @export var allunga := 0.05
 @export var schiaccia := 0.035
-## Il pavimento per le collisioni: una lastra con la cima a questa quota (-INF: niente), tranne nella pianta
+## Il pavimento per le collisioni: una lastra spessa 1 m con la cima a questa quota (-INF: niente), tranne nella pianta
 ## [member buco_pavimento].
 var pavimento_y := -INF
 var buco_pavimento := Rect2()
@@ -79,7 +79,6 @@ var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle oss
 var _v: Array[PackedVector3Array] = []     # le loro velocità
 var _fase: PackedFloat32Array = []
 var _pronte := false
-var _assesta := false                      # al prossimo calcolo, mezzo secondo di assestamento (comparsa)
 var _t := 0.0
 var _verso := 1.0                          # 1: si accende, -1: si spegne
 var _peso := 0.0                            # quanto ora (dissolvenza)
@@ -89,7 +88,6 @@ var _bers: Array = []                      # per catena: i bersagli della molla 
 var _bers_posa: Array = []
 var _dt_acc := PackedFloat32Array()        # per catena: il tempo da quando si è simulata l'ultima volta
 var _fotogrammi := 0
-var _assestando := false
 var _vp: Array[PackedVector3Array] = []     # la velocità della posa, media
 var _campana := -1
 var _campana_v := Vector3.ZERO
@@ -124,7 +122,6 @@ func accendi(subito := false) -> void:
 		_pronte = false
 	if subito:
 		_peso = 1.0
-		_assesta = true
 
 
 ## Si spegne piano: torna la posa che arriva.
@@ -237,14 +234,7 @@ func _process_modification() -> void:
 	# a passi di al più 1/30 s (la fisica dei punti resta stabile anche a pochi fotogrammi al secondo)
 	var passi := maxi(1, ceili(dt / PASSO_MAX - 0.01))     # (- 0,01: 1/30 diviso 1/30 a volte fa 1,0000001)
 	var h := dt / passi
-	# appena comparsa: i punti si assestano fuori dal mondo prima del primo fotogramma che si vede (mezzo secondo
-	# di simulazione in un colpo, sulla posa ferma)
-	_assestando = _assesta
 	_fotogrammi += 1
-	if _assesta:
-		_assesta = false
-		passi = 15
-		h = PASSO_MAX
 	_t += dt
 	if not _pronte or _radici_prima.size() != _catene.size():
 		_x.clear()
@@ -302,7 +292,7 @@ func _process_modification() -> void:
 		_dt_acc[k] = 0.0
 		var passi_k := passi
 		var h_k := h
-		if passi == 1 and not _assestando:
+		if passi == 1:
 			passi_k = maxi(1, ceili(dt_k / PASSO_LENTO - 0.01))
 			h_k = dt_k / passi_k
 		# le forme vicine a questo tentacolo (le altre non si guardano)
@@ -321,21 +311,28 @@ func _process_modification() -> void:
 		# partenza dalla posa, o la posa è saltata (ripartenza, teletrasporto)
 		if not _pronte or tg[0].distance_to(_radici_prima[k]) > 1.0:
 			if _x.size() <= k:
-				_x.append(_bersagli(tg, n, forme))
+				_x.append(_partenza(tg, n, forme))
 				var zero := PackedVector3Array()
 				zero.resize(n + 1)
 				_v.append(zero)
 			else:
-				_x[k] = _bersagli(tg, n, forme)
+				_x[k] = _partenza(tg, n, forme)
 				var zero := PackedVector3Array()
 				zero.resize(n + 1)
 				_v[k] = zero
+			# (in questo fotogramma solo la partenza: così quando lei compare non c'è un fotogramma lungo)
+			_radici_prima[k] = tg[0]
+			_dt_acc[k] = 0.0
+			var u_p := Time.get_ticks_usec()
+			_scrivi_ossa(sk, sg, catena, n, g, tg, _x[k], w, [])
+			parti_usec["ossa"] += Time.get_ticks_usec() - u_p
+			continue
 		_radici_prima[k] = tg[0]
 		var x: PackedVector3Array = _x[k]
 		var v: PackedVector3Array = _v[k]
 		# vicino al mondo, nei movimenti veloci (lo strappo del tuffo) un passo non deve portare un punto più in là di
 		# 12 cm: se no passerebbe il bordo da parte a parte (è largo 30 cm). Lì il fotogramma si divide, fino a 3 passi
-		if not forme.is_empty() and not _assestando:
+		if not forme.is_empty():
 			# (solo i punti veloci la cui strada in questo fotogramma tocca una forma)
 			var vmax := 0.0
 			for i in range(1, n + 1):
@@ -442,7 +439,7 @@ func _process_modification() -> void:
 			# (solo le forme che toccano davvero il tentacolo adesso: lontano dai muri niente giri)
 			var tocca := _vicine(pred, forme)
 			if not tocca.is_empty():
-				for giro in 2:
+				for giro in 3:
 					parti_usec["conta_giri"] += 1
 					var prima_giro := pred.duplicate()
 					for i in range(1, n + 1):
@@ -463,7 +460,8 @@ func _process_modification() -> void:
 					var mosso := 0.0
 					for i in range(1, n + 1):
 						mosso = maxf(mosso, prima_giro[i].distance_squared_to(pred[i]))
-					if mosso < 1e-6:
+					# (il terzo giro solo se il secondo ha mosso ancora più di 5 mm: lo strappo del tuffo sul bordo)
+					if mosso < (1e-6 if giro == 0 else 2.5e-5):
 						break
 			parti_usec["giri"] += Time.get_ticks_usec() - ug
 			for i in range(1, n + 1):
@@ -484,6 +482,18 @@ func _process_modification() -> void:
 	_pronte = true
 	_campana_forme(sk, sg, dt, w)
 	durata_usec = Time.get_ticks_usec() - t0
+
+
+## Da dove partono i punti quando lei compare: i bersagli (la posa fuori dal mondo, sopra il bordo dove ci passa
+## sotto), poi due giri come in un passo (lunghezze, tratti, punti): già il primo fotogramma è pulito, senza un
+## assestamento lungo (sarebbe uno scatto proprio quando sbuca).
+func _partenza(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Array:
+	var pt := _bersagli(tg, n, _vicine(tg, forme))
+	for giro in 2:
+		_tratti_fuori(pt, n, forme, PackedVector3Array())
+		for i in range(1, n + 1):
+			pt[i] = _fuori(pt[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme)
+	return pt
 
 
 ## Le forme di [param forme] la cui scatola (allargata del raggio) tocca quella dei punti [param pt].
@@ -688,7 +698,7 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 			return p
 	for giro in 2:
 		var mosso := false
-		if p.y < pavimento_y + r and p.y > pavimento_y - 0.3 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
+		if p.y < pavimento_y + r and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
 			p.y = pavimento_y + r
 			mosso = true
 		for fo in forme:
