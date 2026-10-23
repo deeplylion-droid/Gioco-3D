@@ -318,6 +318,10 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
   - ai lati del percorso fra le transenne ci vanno **pile di scatoloni altissime**, senza spazi aperti, che portano fino al salvagente, e dopo il giro fino alla porta successiva;
   - il **salvagente è fosforescente** (glow in the dark);
   - le rocce ai bordi sono continue.
+  - Scelte del 23 ottobre sera, "1 A 2 C 3 A":
+    - le pile sono scatoloni su bancali avvolti nel film, impilati 3-4 (4-5,4 m), due file di profondità, i pesanti sotto, con un corridoio largo circa 4,5 m;
+    - niente luci nuove: il corridoio resta più buio;
+    - la ciambella su cui si sale è verde chiaro fosforescente, con un alone tenue.
 
   L'aspetto scelto il 19 ottobre: Rocce finte color ocra sotto il tetto del capannone, palme e liane di plastica, maschere tiki, pappagallo e scimmia di vetroresina, tettoia di paglia sull'imbarco, luce calda. La B, "viaggio sottomarino", non si butta. Parole dell'utente: "Però tieni anche l'altro, magari potrebbe essere il viaggio di ritorno, oppure una nuova sezione. Non è da buttare. Riproponimelo." Va riproposta più avanti;
 - **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle); **Riscontro dell'utente sulla v0.3.11 (23 ottobre)**: la lucina sul cassetto giusto "fa cagare": si toglie, e al suo posto c'è **uno schizzo della melma viola di Jilly**. Le rotelle della cassaforte devono mostrare la cifra vera, dritta, e i tappi non devono avere cifre: "le rotelle con i numeri sono orribili, hanno le cifre anche di lato, e sono pure capovolte".
