@@ -294,6 +294,7 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
             f0 = next(f for f in tagliare.faces if f.normal.z > 0.5 and abs(f.loops[0].vert.co.x - f.loops[1].vert.co.x) > 0.1)
             l0, l1 = f0.loops[0], f0.loops[1]
             k_uv = (l1[uv].uv.x - l0[uv].uv.x) / (l1.vert.co.x - l0.vert.co.x)
+            piani = {round(v.co.z, 4) for v in tagliare.verts}
             _chiudi_lastre(tagliare)
         me_t = b_.data.copy()
         tagliare.to_mesh(me_t)
@@ -317,7 +318,10 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
             bm = bmesh.new()
             bm.from_mesh(pezzo.data)
             bm.normal_update()
-            bmesh.ops.delete(bm, geom=[f for f in bm.faces if abs(f.normal.z) < 0.5], context='FACES')
+            # (solo le facce sui piani di partenza: quelle del taglio, anche dove il fondo di un canale corre quasi in
+            # piano dentro la lastra, si toglievano male col verso della normale)
+            bmesh.ops.delete(bm, geom=[f for f in bm.faces if abs(f.normal.z) < 0.5
+                                       or not all(any(abs(v.co.z - q) < 5e-4 for q in piani) for v in f.verts)], context='FACES')
             # le UV in piano come le fa il Costruttore (u = x, v = ±y, in lati della texture): il booleano le
             # interpolava storte sulle facce nuove
             uv = bm.loops.layers.uv.active
