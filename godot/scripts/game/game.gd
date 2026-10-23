@@ -57,8 +57,11 @@ func _ready() -> void:
 	_sync_water_quality()
 
 
-## ResourceLoader.load_threaded_request, ricordando il percorso, per esci().
+## ResourceLoader.load_threaded_request, ricordando il percorso, per esci(). Mentre si esce non comincia niente
+## (ERR_UNAVAILABLE): un caricamento partito durante l'attesa di esci() resterebbe a metà all'uscita.
 func carica_in_thread(percorso: String, tipo := "") -> Error:
+	if uscendo:
+		return ERR_UNAVAILABLE
 	var err := ResourceLoader.load_threaded_request(percorso, tipo)
 	if err == OK and not _caricamenti.has(percorso):
 		_caricamenti.append(percorso)
@@ -66,8 +69,8 @@ func carica_in_thread(percorso: String, tipo := "") -> Error:
 
 
 ## Chiude il gioco. Se in questa partita c'è stato un caricamento nel thread (la torre in precarica, il
-## livello dalla schermata di caricamento), prima ne aspetta la fine e poi lascia girare il gioco ancora
-## almeno 30 fotogrammi e 1 s: una risorsa grande che ha appena finito di caricare, se Godot smonta tutto
+## livello dalla schermata di caricamento), prima ne aspetta la fine (di tutti, ricontrollati a ogni fotogramma)
+## e poi lascia girare il gioco ancora almeno 30 fotogrammi e 1 s: una risorsa grande che ha appena finito di caricare, se Godot smonta tutto
 ## subito, lo fa fermare per sempre o abortire (CI di lavoro/godot 58cc633: "Aborted" 12 s dopo la fine
 ## di test_acquari; in prova: 2 fotogrammi dopo la fine no, 30 sì). Se un caricamento non finisce mai,
 ## dopo ATTESA_MASSIMA esce lo stesso; una seconda richiesta (la X di nuovo) esce subito.
@@ -77,28 +80,33 @@ func esci(codice := 0) -> void:
 		return
 	uscendo = true
 	if not _caricamenti.is_empty():
+		# Fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get() (in prova
+		# bloccare non bastava: Godot si fermava lo stesso all'uscita). Si riguardano tutti i caricamenti a ogni
+		# giro, finché nessuno è in corso da almeno 30 fotogrammi e 1 s: anche quelli partiti durante l'attesa
+		# (CI di lavoro/godot 2a4f4a8a: test_tappa8, lei ti prende, la sala ripartiva mentre si usciva e
+		# richiedeva la torre; ora carica_in_thread e il respawn non partono più, ma si aspetta lo stesso).
 		var t0 := Time.get_ticks_msec()
-		var n := 0
-		for percorso in _caricamenti:
-			if ResourceLoader.load_threaded_get_status(percorso) != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-				continue
-			n += 1
-			# Fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get()
-			# (in prova bloccare non bastava: Godot si fermava lo stesso all'uscita).
-			while ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS \
-					and Time.get_ticks_msec() - t0 < ATTESA_MASSIMA * 1000.0:
-				await get_tree().process_frame
-			if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_LOADED:
-				ResourceLoader.load_threaded_get(percorso)
-		if n > 0:
-			print("Uscita: aspettati %d caricamenti nel thread (%.1f s)" % [n, (Time.get_ticks_msec() - t0) / 1000.0])
-		# Anche se il caricamento era già finito (magari da pochi fotogrammi): i lavori che si porta dietro
-		# vanno avanti ancora un po'.
-		var t1 := Time.get_ticks_msec()
+		var aspettati := {}
+		var t1 := t0
 		var f := 0
-		while f < 30 or Time.get_ticks_msec() - t1 < 1000:
+		while Time.get_ticks_msec() - t0 < ATTESA_MASSIMA * 1000.0:
+			var in_corso := false
+			for percorso in _caricamenti:
+				var stato := ResourceLoader.load_threaded_get_status(percorso)
+				if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+					in_corso = true
+					aspettati[percorso] = true
+				elif stato == ResourceLoader.THREAD_LOAD_LOADED:
+					ResourceLoader.load_threaded_get(percorso)
+			if in_corso:
+				t1 = Time.get_ticks_msec()
+				f = 0
+			elif f >= 30 and Time.get_ticks_msec() - t1 >= 1000:
+				break
 			await get_tree().process_frame
 			f += 1
+		if not aspettati.is_empty():
+			print("Uscita: aspettati %d caricamenti nel thread (%.1f s)" % [aspettati.size(), (Time.get_ticks_msec() - t0) / 1000.0])
 	await get_tree().process_frame
 	get_tree().quit(codice)
 
