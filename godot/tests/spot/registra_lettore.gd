@@ -20,4 +20,6 @@ func _via() -> void:
 		v.file = String(args[0])
 		l.video = v
 	l.finito.connect(func(): get_tree().quit())
+	# il volume generale del gioco (impostazioni, -20 dB di serie) non conta per il video da far vedere
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(&"Master"), 0.0)
 	get_tree().root.add_child(l)

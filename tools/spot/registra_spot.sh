@@ -25,13 +25,16 @@ for s in $SEGMENTI; do
 		--script res://tests/run.gd -- res://scripts/spot/regia_spot.gd "$s" "$PREP" 2>&1 | grep -v ALSA | tail -5
 done
 # montaggio: ogni segmento senza la preparazione, poi tutti di fila
-: > "$OUT/lista.txt"
+INGRESSI=""; FILTRO=""; N=0
 for s in $TUTTI; do
 	# alla durata esatta del segmento (la regia si ferma un fotogramma dopo: senza, lo spot andava avanti all'audio)
 	DUR=$(python3 -c "import json,sys;d=json.load(open(sys.argv[1]));g=[x for x in d['segmenti'] if x['nome']==sys.argv[2]][0]['inquadrature'];print(g[-1]['inizio']+g[-1]['durata']-g[0]['inizio'])" "$JSON" "$s")
 	ffmpeg -y -loglevel error -ss "$PREP" -i "$OUT/$s.avi" -t "$DUR" -an -c:v mjpeg -q:v 2 "$OUT/${s}_tagliato.avi"
-	echo "file '$OUT/${s}_tagliato.avi'" >> "$OUT/lista.txt"
+	INGRESSI="$INGRESSI -i $OUT/${s}_tagliato.avi"; FILTRO="$FILTRO[$N:v]"; N=$((N + 1))
 done
 mkdir -p "$(dirname "$FILE")"
-ffmpeg -y -loglevel error -f concat -safe 0 -i "$OUT/lista.txt" -an -r $FPS -c:v libtheora -q:v 8 "$FILE"
+# un filo di grana (sotto il filtro VHS non si vede): senza, Theora salta i fotogrammi uguali (il logo fermo) e il
+# lettore di Godot mostrava in anticipo l'inquadratura dopo
+ffmpeg -y -loglevel error $INGRESSI -filter_complex "${FILTRO}concat=n=$N:v=1:a=0,noise=alls=2:allf=t[v]" -map "[v]" -an -r $FPS \
+	-c:v libtheora -q:v 8 "$FILE"
 ls -la "$FILE"
