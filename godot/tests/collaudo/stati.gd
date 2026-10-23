@@ -6,7 +6,8 @@ extends RefCounted
 ##  - "aperto": tutte le porte, i portelli, le paratie e le serrande aperte, le luci di prima;
 ##  - "ritorno": il ritorno al buio (tappa 7): blackout, porte aperte, serranda del magazzino aperta (acquari
 ##    pieni e lampadine del portone accese), tappa 8 finita;
-##  - "risolto": come "ritorno", con l'enigma degli acquari risolto e il portone della torre aperto.
+##  - "risolto": come "ritorno", con l'enigma degli acquari risolto e il portone della torre aperto;
+##  - "lei_fossa": lei affacciata alla fossa dell'area bimbi, come lo stato omonimo del controllo della CI.
 ## Le chiavi di save_state() dei nodi "persist" che vogliono dire "fatto" o "aperto" diventano vere; i
 ## Pickup restano dove sono (sono oggetti da controllare anche loro).
 
@@ -17,6 +18,12 @@ const FALSE := ["chiusa", "bloccata", "chiuso_dietro"]
 static func applica(livello: Node, stato: String) -> void:
 	mostra_nascosti(livello)
 	if stato == "inizio":
+		return
+	if stato == "lei_fossa":
+		# lei affacciata alla fossa dopo il blackout (fase GUARDA), come nel controllo della CI
+		var lei := livello.find_child("LeiSbuca", true, false)
+		if lei and lei.has_method(&"_affaccia"):
+			lei.call(&"_affaccia")
 		return
 	if stato in ["ritorno", "risolto"]:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
