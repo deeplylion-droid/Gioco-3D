@@ -56,6 +56,10 @@ extends SkeletonModifier3D
 ## [member buco_pavimento].
 var pavimento_y := -INF
 var buco_pavimento := Rect2()
+## Tiene i tentacoli dentro la fossa ([member buco_pavimento]) dove la posa li porta sotto il pavimento fuori dalla
+## fossa: mentre lei sbuca (la posa sale da 2,3 m sotto, e i tentacoli stesi sul pavimento salirebbero attraverso il
+## pavimento). Escono dal bordo man mano che la posa arriva su; quando si spegne il trattenere cala in mezzo secondo.
+var trattieni := false
 ## Tubi ([da, a, raggio]) dove le forme non contano: per esempio il condotto, chiuso dalla parete di collisione.
 var tunnel: Array = []
 ## Le vasche (WaterTank) il cui pelo conta; vuoto: quelle entro 8 m, cercate all'inizio.
@@ -86,6 +90,7 @@ var _radici_prima := PackedVector3Array()
 var _tg_prima: Array[PackedVector3Array] = []
 var _bers: Array = []                      # per catena: i bersagli della molla fatti l'ultima volta, e la posa di allora
 var _bers_posa: Array = []
+var _trattieni_k := 0.0
 var _dt_acc := PackedFloat32Array()        # per catena: il tempo da quando si è simulata l'ultima volta
 var _fotogrammi := 0
 var _vp: Array[PackedVector3Array] = []     # la velocità della posa, media
@@ -235,6 +240,7 @@ func _process_modification() -> void:
 	var passi := maxi(1, ceili(dt / PASSO_MAX - 0.01))     # (- 0,01: 1/30 diviso 1/30 a volte fa 1,0000001)
 	var h := dt / passi
 	_fotogrammi += 1
+	_trattieni_k = move_toward(_trattieni_k, 1.0 if trattieni else 0.0, dt * 2.0) if _pronte else (1.0 if trattieni else 0.0)
 	_t += dt
 	if not _pronte or _radici_prima.size() != _catene.size():
 		# (un posto per catena; vuoto: da fare)
@@ -368,7 +374,7 @@ func _process_modification() -> void:
 		# (rifatti solo se la posa ha cambiato forma di più di 5 cm da quando si sono fatti; se no quelli di prima,
 		# spostati come la posa: con lei affacciata la posa si muove appena, nel tuffo si sposta quasi tutta insieme)
 		var tgf: PackedVector3Array
-		var rifai := (_bers_posa[k] as PackedVector3Array).size() != n + 1
+		var rifai := (_bers_posa[k] as PackedVector3Array).size() != n + 1 or (_trattieni_k > 0.0 and _trattieni_k < 1.0)
 		if not rifai:
 			var cp: PackedVector3Array = _bers_posa[k]
 			# (spostati come la posa, rispetto alla radice: valgono finché nessun punto si è mosso più di 5 cm così)
@@ -563,8 +569,20 @@ func _scrivi_ossa(sk: Skeleton3D, sg: Transform3D, catena: PackedInt32Array, n: 
 ## pavimento) i suoi due capi salgono sopra la forma, così la molla porta il tentacolo sul bordo invece che dentro.
 func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Array:
 	var out := tg.duplicate()
+	# trattenuti nella fossa (mentre lei sale): i punti della posa sotto il pavimento fuori dalla fossa si cercano dentro
+	# la fossa, alla stessa quota; avvicinandosi al pavimento (negli ultimi 50 cm) tornano piano al loro posto
+	if _trattieni_k > 0.0 and buco_pavimento.has_area():
+		var dentro := buco_pavimento.grow(-(raggio_radice + 0.05))
+		for i in range(1, n + 1):
+			var q := out[i]
+			var sotto := pavimento_y - q.y
+			if sotto <= 0.0 or buco_pavimento.has_point(Vector2(q.x, q.z)):
+				continue
+			var c := Vector2(clampf(q.x, dentro.position.x, dentro.end.x), clampf(q.z, dentro.position.y, dentro.end.y))
+			var k := clampf(sotto / 0.5, 0.0, 1.0) * _trattieni_k
+			out[i] = Vector3(lerpf(q.x, c.x, k), q.y, lerpf(q.z, c.y, k))
 	for i in range(1, n + 1):
-		out[i] = _fuori(tg[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true)
+		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true)
 	for i in range(1, n + 1):
 		for fo in forme:
 			var su: int = fo[2]

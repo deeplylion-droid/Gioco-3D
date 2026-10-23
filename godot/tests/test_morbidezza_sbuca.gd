@@ -1,12 +1,12 @@
 extends Node
 ## Test dei tentacoli morbidi di lei che sbuca dalla fossa (tappa 8, LeiSbuca._sbuca):
-## - mentre sale la morbidezza è spenta (la posa scende tutta di 2,3 m e i tentacoli stesi sul pavimento salgono
-##   attraverso il pavimento: com'era; si misura e si stampa);
-## - su, si accende piano (0,4 s) senza scatti; poi, affacciata:
+## - la morbidezza accesa da quando compare: la posa sale tutta da 2,3 m sotto e i tentacoli stesi sul pavimento
+##   salirebbero attraverso il pavimento; la morbidezza li tiene dentro la fossa e li fa uscire dal bordo mentre lei
+##   emerge. Dalla salita a 1,5 s dopo, affacciata:
 ## - nessun punto o tratto dei tentacoli dentro il bordo, il pavimento, le pareti, il fondo o la griglia, né attraverso
 ##   la collisione vera, con 1 cm di tolleranza sull'asse;
 ## - niente scatti, tratti vicini alla lunghezza di riposo;
-## - costo: 2 ms in media e 4 nel 95% dei fotogrammi; quando si accende nessun fotogramma sopra i 5 ms.
+## - costo: 2 ms in media e 4 nel 95% dei fotogrammi; quando compare nessun fotogramma sopra i 5 ms.
 ## Due volte (la seconda dopo un checkpoint: ricomincia e sbuca di nuovo).
 ## Uso: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_sbuca.gd
 
@@ -56,30 +56,22 @@ func _run() -> void:
 		var m := MorbidezzaLei.su(lei.medusa)
 		var sk := m.get_parent() as Skeleton3D
 		var mis = Misura.new(sk, m)
-		# la salita: la morbidezza spenta (la posa com'era: si misura e basta)
 		mis.inizia()
 		lei.call(&"_sbuca")
-		while lei.fase == LeiSbuca.Fase.SBUCA:
-			await get_tree().process_frame
-		mis.ferma()
-		var rs: Dictionary = mis.risultati("%s, la salita (morbidezza spenta, la posa com'era)" % nome)
-		_check(rs["scarto"] < 1e-4, "%s: mentre sale la posa resta quella di prima (%.5f m)" % [nome, rs["scarto"]])
-		# su: si accende piano (0,4 s), poi affacciata
-		mis.inizia()
+		var durata := lei.durata_sbuca + 1.5
 		var t := 0.0
-		while t < 1.5:
+		while t < durata:
 			await get_tree().process_frame
 			t += get_process_delta_time()
 		mis.ferma()
-		_check(m.quanto == 1.0 and lei.fase == LeiSbuca.Fase.GUARDA, "%s: la morbidezza accesa, e lei affacciata" % nome)
-		var r: Dictionary = mis.risultati("%s, su (dalla dissolvenza)" % nome)
-		_check(r["salto"] < 25.0, "%s: niente scatti quando si accende (%.1f m/s più della posa)" % [nome, r["salto"]])
-		_check(r["primi"] < 5.0, "%s: quando si accende nessun fotogramma sopra i 5 ms (%.2f)" % [nome, r["primi"]])
-		var dopo := int(round(0.45 / maxf(get_process_delta_time(), 1.0 / 240.0)))
-		var r2: Dictionary = mis.risultati("%s, affacciata (dopo la dissolvenza)" % nome, dopo)
-		_check(r2["dentro"] == 0 and r2["attraversa"] == 0, "%s: affacciata, tentacoli fuori dal mondo (%d punti dentro, %d tratti)" % [nome, r2["dentro"], r2["attraversa"]])
-		_check(r2["scarto"] > 0.05, "%s: i tentacoli si muovono davvero (al più %.2f m dalla posa)" % [nome, r2["scarto"]])
-		_check(r2["stira_min"] > 0.15 and r2["stira_max"] < 2.0, "%s: tratti vicini alla lunghezza di riposo (%.2f-%.2f)" % [nome, r2["stira_min"], r2["stira_max"]])
+		_check(m.quanto == 1.0 and not m.trattieni and lei.fase == LeiSbuca.Fase.GUARDA, "%s: la morbidezza accesa, e lei su, affacciata" % nome)
+		var r: Dictionary = mis.risultati(nome)
+		_check(r["fotogrammi"] > 40, "%s: registrati %d fotogrammi" % [nome, r["fotogrammi"]])
+		_check(r["dentro"] == 0 and r["attraversa"] == 0, "%s: tentacoli fuori dal mondo, anche mentre sale (%d punti dentro, %d tratti)" % [nome, r["dentro"], r["attraversa"]])
+		_check(r["salto"] < 25.0, "%s: niente scatti (%.1f m/s più della posa)" % [nome, r["salto"]])
+		_check(r["scarto"] > 0.05, "%s: i tentacoli si muovono davvero (al più %.2f m dalla posa)" % [nome, r["scarto"]])
+		_check(r["stira_min"] > 0.15 and r["stira_max"] < 2.0, "%s: tratti vicini alla lunghezza di riposo (%.2f-%.2f)" % [nome, r["stira_min"], r["stira_max"]])
 		_check(r["medio"] < 2.0 and r["p95"] < 4.0, "%s: costo sotto 2 ms in media e 4 nel 95%% (%.2f e %.2f)" % [nome, r["medio"], r["p95"]])
+		_check(r["primi"] < 5.0, "%s: quando compare nessun fotogramma sopra i 5 ms (%.2f)" % [nome, r["primi"]])
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)

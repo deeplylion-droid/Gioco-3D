@@ -204,7 +204,8 @@ func _physics_process(delta: float) -> void:
 			if k >= 1.0:
 				fase = Fase.GUARDA
 				_t = 0.0
-				_accendi_morbidezza(false)
+				if _morbidezza and is_instance_valid(_morbidezza):
+					_morbidezza.trattieni = false
 		Fase.GUARDA:
 			_controlla_presa(p)
 			if fase != Fase.GUARDA:
@@ -347,10 +348,11 @@ func _sbuca() -> void:
 	_azzera_tuffo()
 	_metti_a(1.0)
 	_svanisci(0.0)
-	# mentre sale la morbidezza è spenta: la posa scende tutta di 2,3 m e i tentacoli stesi sul pavimento salgono
-	# attraverso il pavimento (com'era); si accende piano quando è su (Fase.SBUCA, alla fine)
+	# la posa sale tutta da 2,3 m sotto: i tentacoli stesi sul pavimento salirebbero attraverso il pavimento; la
+	# morbidezza, accesa da subito, li tiene dentro la fossa e li fa uscire dal bordo mentre lei emerge
+	_accendi_morbidezza()
 	if _morbidezza and is_instance_valid(_morbidezza):
-		_morbidezza.azzera()
+		_morbidezza.trattieni = true
 	_schizzo(1.4)
 	_suona(&"lei_sbuca")
 	sbucata.emit()
@@ -418,8 +420,7 @@ func _avvia_tuffo() -> void:
 
 
 ## Il movimento secondario di tentacoli e campana (MorbidezzaLei): acceso tutto e subito quando lei compare già
-## affacciata, così i tentacoli poggiano e scivolano sul bordo da subito; il tuffo parte da lì. Quando sbuca, piano
-## ([param subito] falso) alla fine della salita.
+## affacciata o quando sbuca, così i tentacoli poggiano e scivolano sul bordo da subito; il tuffo parte da lì.
 func _accendi_morbidezza(subito := true) -> void:
 	if Engine.has_meta(&"morbidezza_spenta") or medusa == null:
 		return
@@ -438,6 +439,7 @@ func _accendi_morbidezza(subito := true) -> void:
 	_morbidezza.acqua_pelo = _pelo()
 	if subito:
 		_morbidezza.azzera()
+	_morbidezza.trattieni = false
 	_morbidezza.accendi(subito)
 
 
