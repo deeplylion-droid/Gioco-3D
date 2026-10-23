@@ -482,7 +482,7 @@ def _intaglia_grata(gr, tagli):
             if tri.area < 1e-7:
                 continue
             nuove.append((c_, z1, z0, mat))
-    bmesh.ops.delete(bm, geom=via, context='FACES')
+    bmesh.ops.delete(bm, geom=list(set(via)), context='FACES')
     for (c_, z1, z0, mat) in nuove:
         a_ = (c_[1][0] - c_[0][0]) * (c_[2][1] - c_[0][1]) - (c_[1][1] - c_[0][1]) * (c_[2][0] - c_[0][0])
         giro = c_ if a_ > 0 else c_[::-1]
