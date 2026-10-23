@@ -15,16 +15,7 @@
 [ext_resource type="Resource" path="res://addons/acqua/presets/stile_1_limpida.tres" id="18_limpida"]
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/vasca_acqua.tscn" id="19_vasca_acqua"]
 
-[ext_resource type="Script" path="res://scripts/spot/jilly_spot.gd" id="20_jilly"]
-[ext_resource type="PackedScene" path="res://assets/models/medusa/medusa.glb" id="21_medusa"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_campana.tres" id="22_campana"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_pelle_bagnata.tres" id="23_pelle"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_capelli_bagnata.tres" id="24_capelli"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_orbita_bagnata.tres" id="25_orbita"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_mani_bagnata.tres" id="26_mani"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_ciocche_bagnata.tres" id="27_ciocche"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_tentacoli_bagnata.tres" id="28_tentacoli"]
-[ext_resource type="Material" path="res://assets/models/medusa/medusa_occhio.tres" id="29_occhio"]
+[ext_resource type="PackedScene" path="res://scenes/spot/jilly_spot.tscn" id="20_jilly"]
 [node name="SalaSpot" type="Node3D"]
 script = ExtResource("1_pulita")
 editor_description = "La sala principale da nuova, per lo spot VHS della crociera (inquadrature 2, 3, 5-6). Solo per lo spot: il gioco non la usa. Le scene del gioco non si toccano."
@@ -66,21 +57,9 @@ festone_punti = PackedVector3Array(-20, 4.2, -13, -15.9, 7.35, -19.65, -12.9, 7.
 festone_rotte = PackedInt32Array()
 festone_sfarfallano = PackedInt32Array()
 
-[node name="Jilly" type="Node3D" parent="."]
+[node name="Jilly" parent="." instance=ExtResource("20_jilly")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 10)
-editor_description = "Jilly in piedi sul piano del monumento (centro (0; 1,15; 10), raggio 1,88), rivolta verso +z (l'ingresso). Posa e saluto: mascotte (jilly_spot.gd); la regia la cerca col nome Jilly."
-script = ExtResource("20_jilly")
-model = ExtResource("21_medusa")
-bell_material = ExtResource("22_campana")
-material_map = {
-"M_capelli": ExtResource("24_capelli"),
-"M_ciocche": ExtResource("27_ciocche"),
-"M_mani": ExtResource("26_mani"),
-"M_occhio_bulbo": ExtResource("29_occhio"),
-"M_orbita": ExtResource("25_orbita"),
-"M_pelle": ExtResource("23_pelle"),
-"M_tentacoli": ExtResource("28_tentacoli")
-}
+editor_description = "Jilly in piedi sul piano del monumento (centro (0; 1,15; 10), raggio 1,88), rivolta verso +z (l'ingresso). La scena è di mascotte (jilly_spot.tscn); la regia la cerca col nome Jilly."
 
 [node name="Piscina" type="Node3D" parent="."]
 
