@@ -789,27 +789,13 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 6 cm (nel pieno, per esempio, in (-14.73, -0.3, -7.6)) (stato: lei_fossa)",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 116 cm (stato: lei_fossa)",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
+		"dettaglio": "passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 3 cm (nel pieno, per esempio, in (-13.99, 0.45, -5.78)) (stato: lei_fossa)",
+		"motivo": "controllo del 23 ottobre, stato lei_fossa: le mani di lei affacciata entrano 3 cm nel bordo a scacchi della fossa (per esempio in (-13,99; 0,45; -5,78)); è uscito spostando la griglia di scarico sul fondo (ambienti-1), che col bordo non c'entra: la posa delle mani la sistema mascotte",
+		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Mani",
 		"pos": [
-			-13.37,
-			-0.05,
-			-6.85
-		],
-		"problema": "compenetra",
-		"squadra": "mascotte",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 32 cm (nel pieno, per esempio, in (-14.1, -0.55, -7.52)) (stato: lei_fossa)",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
-		"pos": [
-			-13.82,
-			-0.28,
-			-6.9
+			-14.41,
+			0.4,
+			-6.39
 		],
 		"problema": "compenetra",
 		"squadra": "mascotte",
