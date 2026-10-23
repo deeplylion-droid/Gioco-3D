@@ -8,8 +8,9 @@ cilindro pieno senza coperchio: per il controllo di posizionamento, che decide i
 tutto quello che sta sotto il taglio è dentro la base (le gambe del vetro del miscuglio e il basamento del vetro
 degli alti, 23 ottobre). Qui si trovano gli anelli del taglio su una copia coi vertici uniti e si aggiungono al
 modello vero le facce che li chiudono, tutte, verso l'alto: la cima della base diventa un piano al livello del fondo
-del vetro, e il vetro ci poggia sopra. Le facce nuove prendono il colore della cima della base: tutte le coordinate
-UV su un punto del bordo del taglio col colore più comune lì (la mediana dei punti del bordo).
+del vetro, e il vetro ci poggia sopra. Le facce nuove hanno un materiale loro, "cima_base": nel gioco è il metallo dei
+tiranti (metallo_verniciato.tres, nell'import del GLB), come i fondi del vetro di prima; nel GLB ha il colore della cima
+della base (la mediana dei punti del bordo del taglio), e le coordinate UV su un punto del bordo con quel colore.
 Si può rilanciare: un taglio già chiuso non ha più anelli aperti.
 Uso: /home/user/tools/blender-venv/bin/python assets_src/enigma_acquari/chiudi_tagli.py"""
 import os
@@ -63,18 +64,28 @@ for nome, taglio in BASI:
                 img = img or n.image
     cand = [l[uvl].uv.copy() for f in bm.faces for l in f.loops if abs(l.vert.co.z - taglio) < 1e-4]
     uv_cima = cand[0] if cand else (0.5, 0.5)
+    med = None
     if img and cand:
         px = pixel(img)
         col = np.array([colore_uv(px, uv) for uv in cand])
         med = np.median(col, axis=0)
         uv_cima = cand[int(np.argmin(((col - med) ** 2).sum(1)))]
         print('  colore della cima', np.round(med, 3), 'uv', tuple(round(c, 4) for c in uv_cima))
-    # le facce nuove nel modello vero, coi vertici loro, verso l'alto
+    # le facce nuove nel modello vero, coi vertici loro, verso l'alto, col materiale loro
+    mat = bpy.data.materials.new('cima_base')
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes.get('Principled BSDF')
+    if img and cand:
+        bsdf.inputs['Base Color'].default_value = (*med, 1.0)
+    bsdf.inputs['Metallic'].default_value = 0.45
+    o.data.materials.append(mat)
+    indice = len(o.data.materials) - 1
     for punti in tappi:
         f = bm.faces.new([bm.verts.new(p) for p in punti])
         f.normal_update()
         if f.normal.z < 0:
             f.normal_flip()
+        f.material_index = indice
         for l in f.loops:
             l[uvl].uv = uv_cima
         bmesh.ops.triangulate(bm, faces=[f])
