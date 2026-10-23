@@ -4,7 +4,7 @@ extends Node
 ##   camera "giocatore": dalla camera del giocatore, a 6,5 m da lei, che la spruzza;
 ##   camera "vicino": una camera ferma a 3,6 m di lato dalla fossa, all'altezza di lei, che guarda il tuffo.
 ##   "prima": senza il movimento secondario (Engine meta morbidezza_spenta); "dopo": com'è nel gioco.
-## Stampa "INIZIO frame N" quando parte la scaletta. Durata 5 s (la spruzzi a 1 s).
+## Stampa "INIZIO frame N" quando parte la scaletta. Durata 6,5 s (la spruzzi a 2,5 s).
 ## Uso (sotto /home/user/tools/render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
 ##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://tests/video_tuffo.gd <prima|dopo> <giocatore|vicino> [preset]
@@ -12,7 +12,9 @@ extends Node
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 const RISCALDA := 60
-const DURATA := 5.0
+const DURATA := 6.5
+## Quando la spruzzi (s): prima un paio di secondi di lei affacciata.
+const SPRUZZO := 2.5
 
 var versione := "dopo"
 var camera := "giocatore"
@@ -119,7 +121,7 @@ func _process(_delta: float) -> void:
 	var t := _f / 30.0
 	if not _partito:
 		p.look_at_point(_testa() + Vector3(0.0, 0.6, 0.0))
-	if t >= 1.0 and not _partito:
+	if t >= SPRUZZO and not _partito:
 		_partito = true
 		Input.action_press(&"spray")
 	elif _partito:

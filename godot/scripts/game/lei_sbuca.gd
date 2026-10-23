@@ -332,6 +332,7 @@ func _affaccia() -> void:
 	_metti_a(0.0)
 	_svanisci(0.0)
 	medusa.reset_physics_interpolation()
+	_accendi_morbidezza()
 
 
 func _sbuca() -> void:
@@ -345,6 +346,7 @@ func _sbuca() -> void:
 	_azzera_tuffo()
 	_metti_a(1.0)
 	_svanisci(0.0)
+	_accendi_morbidezza()
 	_schizzo(1.4)
 	_suona(&"lei_sbuca")
 	sbucata.emit()
@@ -391,6 +393,9 @@ func _avvia_tuffo() -> void:
 		_tuffo = TuffoLei.new()
 		_tuffo.name = "Tuffo"
 		sk.add_child(_tuffo)
+	# la morbidezza (se c'è già, accesa da quando è comparsa) resta l'ultima, dopo il tuffo, già da questo fotogramma
+	if _morbidezza and is_instance_valid(_morbidezza) and _morbidezza.get_parent() == sk:
+		sk.move_child(_morbidezza, -1)
 	for ap in medusa.find_children("*", "AnimationPlayer", true, false):
 		(ap as AnimationPlayer).pause()
 	var esclusi: Array[RID] = []
@@ -401,16 +406,34 @@ func _avvia_tuffo() -> void:
 		var a := superficie_fossa.global_transform * superficie_fossa.mesh.get_aabb()
 		fossa = Rect2(a.position.x, a.position.z, a.size.x, a.size.z)
 	_tuffo.avvia(medusa, esclusi, fossa)
-	# il movimento secondario di tentacoli e campana (MorbidezzaLei), sopra il tuffo
-	if not Engine.has_meta(&"morbidezza_spenta"):
-		if _morbidezza == null or not is_instance_valid(_morbidezza):
-			_morbidezza = MorbidezzaLei.new()
-			_morbidezza.name = "Morbidezza"
-			sk.add_child(_morbidezza)
-			_forme_morbidezza(fossa)
-		_morbidezza.acqua_pianta = fossa
+	# il movimento secondario di tentacoli e campana (MorbidezzaLei) è già acceso da quando è comparsa: continua
+	if _morbidezza and is_instance_valid(_morbidezza):
 		_morbidezza.acqua_pelo = _pelo()
-		_morbidezza.accendi()
+	else:
+		_accendi_morbidezza()
+
+
+## Il movimento secondario di tentacoli e campana (MorbidezzaLei): acceso tutto e subito quando lei compare (sbuca o
+## è già affacciata), così i tentacoli poggiano e scivolano sul bordo da subito; il tuffo parte da lì.
+func _accendi_morbidezza() -> void:
+	if Engine.has_meta(&"morbidezza_spenta") or medusa == null:
+		return
+	var sks := medusa.find_children("*", "Skeleton3D", true, false)
+	if sks.is_empty():
+		return
+	var fossa := Rect2()
+	if superficie_fossa and superficie_fossa.mesh:
+		var a := superficie_fossa.global_transform * superficie_fossa.mesh.get_aabb()
+		fossa = Rect2(a.position.x, a.position.z, a.size.x, a.size.z)
+	if _morbidezza == null or not is_instance_valid(_morbidezza):
+		_morbidezza = MorbidezzaLei.new()
+		_morbidezza.name = "Morbidezza"
+		(sks[0] as Skeleton3D).add_child(_morbidezza)
+		_forme_morbidezza(fossa)
+	_morbidezza.acqua_pianta = fossa
+	_morbidezza.acqua_pelo = _pelo()
+	_morbidezza.azzera()
+	_morbidezza.accendi(true)
 
 
 ## Le collisioni dei tentacoli morbidi: le forme di collisione della fossa e del bordo intorno (senza il coperchio), il

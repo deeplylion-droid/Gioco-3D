@@ -70,11 +70,12 @@ const PASSO_MAX := 1.0 / 60.0
 
 var _catene: Array[PackedInt32Array] = []
 var _lunghezze: Array[PackedFloat32Array] = []   # per catena: la lunghezza di riposo di ogni tratto (mondo)
-var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB]
+var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB, indice della faccia di sopra o -1]
 var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle ossa e la punta
 var _v: Array[PackedVector3Array] = []     # le loro velocità
 var _fase: PackedFloat32Array = []
 var _pronte := false
+var _assesta := false                      # al prossimo calcolo, mezzo secondo di assestamento (comparsa)
 var _t := 0.0
 var _verso := 1.0                          # 1: si accende, -1: si spegne
 var _peso := 0.0                            # quanto ora (dissolvenza)
@@ -106,11 +107,15 @@ func _in_fondo() -> void:
 		sk.move_child(self, -1)
 
 
-## Si accende piano (da dove sono le ossa adesso).
-func accendi() -> void:
+## Si accende piano (da dove sono le ossa adesso); [param subito]: tutta e subito (quando lei compare: prima non si
+## vedeva, e i tentacoli devono già poggiare sul bordo).
+func accendi(subito := false) -> void:
 	_verso = 1.0
 	if _peso <= 0.0:
 		_pronte = false
+	if subito:
+		_peso = 1.0
+		_assesta = true
 
 
 ## Si spegne piano: torna la posa che arriva.
@@ -223,6 +228,12 @@ func _process_modification() -> void:
 	# a passi di al più 1/60 s (la fisica dei punti resta stabile anche a pochi fotogrammi al secondo)
 	var passi := maxi(1, ceili(dt / PASSO_MAX))
 	var h := dt / passi
+	# appena comparsa: i punti si assestano fuori dal mondo prima del primo fotogramma che si vede (mezzo secondo
+	# di simulazione in un colpo, sulla posa ferma)
+	if _assesta:
+		_assesta = false
+		passi = 30
+		h = PASSO_MAX
 	_t += dt
 	if not _pronte or _radici_prima.size() != _catene.size():
 		_x.clear()
@@ -245,19 +256,6 @@ func _process_modification() -> void:
 		var lung: PackedFloat32Array = _lunghezze[k]
 		# la punta: lungo l'asse dell'ultimo osso (Y)
 		tg.append(tg[n - 1] + g[n - 1].basis.y.normalized() * lung[n])
-		# partenza dalla posa, o la posa è saltata (ripartenza, teletrasporto)
-		if not _pronte or tg[0].distance_to(_radici_prima[k]) > 1.0:
-			if _x.size() <= k:
-				_x.append(tg.duplicate())
-				var zero := PackedVector3Array()
-				zero.resize(n + 1)
-				_v.append(zero)
-			else:
-				_x[k] = tg.duplicate()
-				var zero := PackedVector3Array()
-				zero.resize(n + 1)
-				_v[k] = zero
-		_radici_prima[k] = tg[0]
 		# la velocità della posa, punto per punto
 		var vp := PackedVector3Array()
 		vp.resize(n + 1)
@@ -270,22 +268,37 @@ func _process_modification() -> void:
 		elif (_tg_prima[k] as PackedVector3Array).size() == n + 1 and dt > 0.0:
 			var media := 1.0 - exp(-dt / 0.05)
 			for i in n + 1:
-				_vp[k][i] = _vp[k][i].lerp((tg[i] - _tg_prima[k][i]) / dt, media)
+				# (al più 15 m/s: quando la posa salta, all'inizio del tuffo, la media non deve lanciare i punti)
+				_vp[k][i] = _vp[k][i].lerp((tg[i] - _tg_prima[k][i]) / dt, media).limit_length(15.0)
 			_tg_prima[k] = tg
 		vp = _vp[k]
-		var x: PackedVector3Array = _x[k]
-		var v: PackedVector3Array = _v[k]
 		# le forme vicine a questo tentacolo (le altre non si guardano)
 		var zona := AABB(tg[0], Vector3.ZERO)
 		for q in tg:
 			zona = zona.expand(q)
-		for q in x:
-			zona = zona.expand(q)
+		if _x.size() > k and (_x[k] as PackedVector3Array).size() == n + 1:
+			for q in _x[k]:
+				zona = zona.expand(q)
 		zona = zona.grow(distacco_massimo + raggio_radice + 0.3)
 		var forme: Array = []
 		for fo in _forme:
 			if (fo[1] as AABB).intersects(zona):
 				forme.append(fo)
+		# partenza dalla posa, o la posa è saltata (ripartenza, teletrasporto)
+		if not _pronte or tg[0].distance_to(_radici_prima[k]) > 1.0:
+			if _x.size() <= k:
+				_x.append(_bersagli(tg, n, forme))
+				var zero := PackedVector3Array()
+				zero.resize(n + 1)
+				_v.append(zero)
+			else:
+				_x[k] = _bersagli(tg, n, forme)
+				var zero := PackedVector3Array()
+				zero.resize(n + 1)
+				_v[k] = zero
+		_radici_prima[k] = tg[0]
+		var x: PackedVector3Array = _x[k]
+		var v: PackedVector3Array = _v[k]
 		# l'onda: di traverso al tentacolo, che scorre verso la punta
 		var asse := (tg[n] - tg[0]).normalized()
 		var lato := asse.cross(Vector3.UP)
@@ -293,6 +306,7 @@ func _process_modification() -> void:
 			lato = asse.cross(Vector3.RIGHT)
 		lato = lato.normalized()
 		var lato2 := asse.cross(lato).normalized()
+		var tgf := _bersagli(tg, n, forme)
 		for passo in passi:
 			var pred := PackedVector3Array()
 			pred.resize(n + 1)
@@ -302,7 +316,8 @@ func _process_modification() -> void:
 				var acqua := clampf((_pelo(x[i]) - x[i].y) / 0.2 + 0.5, 0.0, 1.0)
 				var giri := lerpf(onda_aria, onda_acqua, acqua)
 				var fase := TAU * (giri * _t - onde * f) + _fase[k]
-				var bersaglio := tg[i] + (lato * sin(fase) + lato2 * 0.5 * cos(fase * 0.7)) * onda_ampiezza * f * f
+				var bersaglio := tgf[i] + (lato * sin(fase) + lato2 * 0.5 * cos(fase * 0.7)) * onda_ampiezza * f * f
+				bersaglio = _fuori(bersaglio, lerpf(raggio_radice, raggio_punta, f), forme)
 				var k_molla := lerpf(molla_radice, molla_punta, pow(f, 0.6))
 				var smorza := lerpf(smorza_aria, smorza_acqua, acqua)
 				var grav := lerpf(gravita_aria, gravita_acqua, acqua) * f
@@ -331,8 +346,35 @@ func _process_modification() -> void:
 				voluto = _fuori(voluto, lerpf(raggio_radice, raggio_punta, f), forme, x[i])
 				corr[i] = voluto - pred[i]
 				pred[i] = voluto
-			# i tratti: anche il loro mezzo resta fuori dalle forme (non tagliano lo spigolo del bordo)
-			_tratti_fuori(pred, n, forme, corr)
+			# poi, dove tocca il mondo, a giri: le lunghezze (i due capi di ogni tratto si vengono incontro, la
+			# radice resta), i punti fuori dalle forme, i tratti fuori dalle forme (non tagliano lo spigolo del bordo); fino a
+			# quattro giri, finché qualcosa si muove.
+			# Così un tentacolo sul bordo trova da solo come starci sopra con le sue lunghezze
+			if not forme.is_empty():
+				for giro in 4:
+					var prima_giro := pred.duplicate()
+					for i in range(1, n + 1):
+						var d := pred[i] - pred[i - 1]
+						var l := d.length()
+						if l < 1e-6:
+							continue
+						var e := d * ((l - lung[i]) / l)
+						if i == 1:
+							pred[i] -= e
+						else:
+							pred[i - 1] += e * 0.5
+							pred[i] -= e * 0.5
+					for i in range(1, n + 1):
+						pred[i] = _fuori(pred[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme)
+					_tratti_fuori(pred, n, forme, PackedVector3Array())
+					for i in range(1, n + 1):
+						pred[i] = _fuori(pred[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme)
+					# fermo: nessun tocco e lunghezze giuste, gli altri giri non servono
+					var mosso := 0.0
+					for i in range(1, n + 1):
+						mosso = maxf(mosso, prima_giro[i].distance_squared_to(pred[i]))
+					if mosso < 1e-8:
+						break
 			for i in range(1, n + 1):
 				var nv := (pred[i] - x[i]) / h
 				if i < n:
@@ -378,6 +420,50 @@ func _process_modification() -> void:
 	durata_usec = Time.get_ticks_usec() - t0
 
 
+## I bersagli della molla: la posa fuori dal mondo, punto per punto (la radice resta dov'è); e dove un tratto della posa
+## passa attraverso una forma bassa (il bordo: nella posa affacciata alcuni tentacoli ci passano sotto, a filo del
+## pavimento) i suoi due capi salgono sopra la forma, così la molla porta il tentacolo sul bordo invece che dentro.
+func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Array:
+	var out := tg.duplicate()
+	for i in range(1, n + 1):
+		out[i] = _fuori(tg[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true)
+	for i in range(1, n + 1):
+		for fo in forme:
+			var su: int = fo[2]
+			if su < 0:
+				continue
+			var cima: Plane = fo[0][su]
+			if not _tratto_dentro(out[i - 1], out[i], fo[0], 0.0):
+				continue
+			var y := cima.d / cima.normal.y      # la quota della cima (normale in su: y = d)
+			var r := lerpf(raggio_radice, raggio_punta, float(i) / n)
+			if i - 1 > 0:
+				out[i - 1].y = maxf(out[i - 1].y, y + r)
+			out[i].y = maxf(out[i].y, y + r)
+	return out
+
+
+## Vero se il tratto da [param a] a [param b] passa dentro la forma convessa (piani [param piani]) allargata di [param r].
+func _tratto_dentro(a: Vector3, b: Vector3, piani: Array, r: float) -> bool:
+	var t0 := 0.0
+	var t1 := 1.0
+	for pl: Plane in piani:
+		var da := pl.distance_to(a) - r
+		var db := pl.distance_to(b) - r
+		if da >= 0.0 and db >= 0.0:
+			return false
+		if da < 0.0 and db < 0.0:
+			continue
+		var tc := da / (da - db)
+		if da >= 0.0:
+			t0 = maxf(t0, tc)
+		else:
+			t1 = minf(t1, tc)
+		if t0 >= t1:
+			return false
+	return t0 < t1
+
+
 ## Aggiunge una forma convessa del mondo (punti nel mondo) contro cui i tentacoli non entrano.
 func aggiungi_convesso(punti: PackedVector3Array) -> void:
 	var piani: Array[Plane] = []
@@ -413,7 +499,13 @@ func aggiungi_convesso(punti: PackedVector3Array) -> void:
 	var bb := AABB(punti[0], Vector3.ZERO)
 	for q in punti:
 		bb = bb.expand(q)
-	_forme.append([piani, bb])
+	# la faccia di sopra, se c'è (orizzontale): da lì si esce dalle forme basse, come il bordo
+	var sopra := -1
+	if bb.size.y < 0.6:                    # solo le forme basse (il bordo), non le pareti alte della fossa
+		for i in piani.size():
+			if piani[i].normal.y > 0.99:
+				sopra = i
+	_forme.append([piani, bb, sopra])
 
 
 ## Aggiunge una scatola (il suo centro e i suoi assi in [param xf], mezze misure [param mezzo]).
@@ -454,7 +546,7 @@ func aggiungi_forme_da(radice: Node, zona: AABB, salta: Array = []) -> void:
 ## fuori da [member buco_pavimento]) e le forme. Si spinge fuori dalla faccia da cui è entrato (dov'era, [param da]:
 ## così da una parete sottile non esce dall'altra parte), o se non si sa dalla più vicina: continuo, e il punto
 ## scivola. Nei [member tunnel] resta dentro il tubo, e alla bocca le forme non contano.
-func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF) -> Vector3:
+func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false) -> Vector3:
 	for t in tunnel:
 		var a: Vector3 = t[0]
 		var asse: Vector3 = (t[1] as Vector3) - a
@@ -498,11 +590,28 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF) -> Vector3:
 							meglio = pl
 				if dprima >= r - 1e-4:
 					dm = meglio.distance_to(p)
+			if alto:
+				meglio = _da_sopra(fo, p, meglio)
+				dm = meglio.distance_to(p)
 			p += meglio.normal * (r - dm)
 			mosso = true
 		if not mosso:
 			break
 	return p
+
+
+## Le forme basse (il bordo, alto 45 cm) si lasciano da sopra: un punto a meno di mezzo metro sotto la cima esce in
+## alto, così un tentacolo che nella posa passa sotto il bordo ci si appoggia sopra (spingendo di lato resterebbe
+## a cavallo, da tutte e due le parti). Vale per i bersagli della molla e per la partenza, non per i punti: la molla
+## li porta su piano, senza salti.
+func _da_sopra(fo: Array, p: Vector3, meglio: Plane) -> Plane:
+	var i: int = fo[2]
+	if i < 0:
+		return meglio
+	var cima: Plane = fo[0][i]
+	if cima.distance_to(p) > -0.5:
+		return cima
+	return meglio
 
 
 ## I tratti fuori dalle forme: dove un tratto entra in una forma (allargata del raggio: il tratto tagliato contro le
@@ -536,12 +645,10 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 					t1 = minf(t1, tc)
 				if t0 >= t1:
 					break
-			# solo se entra ed esce in mezzo (un capo dentro: ci pensa il punto, o è la radice che segue la posa)
-			if t0 >= t1 or t0 <= 0.0 or t1 >= 1.0:
+			# (tutti e due i capi dentro: ci pensano i punti)
+			if t0 >= t1 or (t0 <= 0.0 and t1 >= 1.0):
 				continue
-			var t := (t0 + t1) * 0.5
-			if t < 0.02 or t > 0.98:
-				continue                       # ai capi ci pensa il punto stesso
+			var t := clampf((t0 + t1) * 0.5, 0.05, 0.95)
 			var m := a.lerp(b, t)
 			var nel_tubo := false
 			for tu in tunnel:
