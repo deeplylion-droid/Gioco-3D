@@ -65,6 +65,15 @@ Se un caso è voluto, per esempio una porta aperta dove non si passa o il tubo d
 
 Un caso si riconosce da zona, nodo e problema. I nodi creati da codice hanno nomi automatici, come `@MeshInstance3D@217`, che cambiano quando cambia il numero di nodi creati prima: per loro il numero non conta, e al suo posto contano la posizione, arrotondata a mezzo metro, e la `firma`, cioè il modello da cui vengono e la mesh (il file, o la classe e la misura per le mesh fatte da codice). Copia la voce dal `rapporto.json` con la sua `firma`. Le voci con stato `"da correggere"` sono casi noti, già assegnati: la CI non fallisce per loro.
 
+### Cose fissate a un muro, all'altezza della testa (regola del coordinatore, 23 ottobre)
+
+Da 1,2 m in su l'ingombro guarda un cilindro di 20 cm intorno a chi cammina, quindi escono anche estintori, lampade, cassette e salvagenti appesi ai muri dei corridoi. Un oggetto fissato a un muro o a uno stipite non è un ingombro, e si segna `"voluto"`, se:
+- sporge al massimo 25 cm dal muro;
+- non pende in mezzo al passaggio;
+- all'altezza della testa il passaggio resta libero per almeno 80 cm.
+
+Nel `motivo` vanno le misure, per esempio "a muro, sporge 18 cm, passaggio libero 1,10 m". Se una delle tre non vale, l'oggetto si sposta o si alza. Tettoie, lampade appese, fari e tutto quello che sta sopra dove si cammina sotto i 2 m restano difetti da correggere.
+
 ## Mettere gli oggetti
 
 Per non creare casi nuovi, gli oggetti si mettono **con un raggio sul loro sostegno vero**, non a occhio con le coordinate. Lo strumento comune è Posa, in due versioni con le stesse funzioni: una per gli script del gioco e una per i generatori Blender. Ogni funzione trova il sostegno (pavimento, muro, soffitto, gancio), mette l'oggetto a contatto e, con `lega`, lo fa figlio del sostegno, così lo segue se il sostegno si sposta. Se non trova niente, lascia l'oggetto dov'è e avvisa: il controllo lo segnalerà.
