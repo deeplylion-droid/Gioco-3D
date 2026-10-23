@@ -51,6 +51,7 @@ func _run() -> void:
 	check(_polvere(giallo) > 0.9 and _polvere(misto) > 0.9, "con i vetri impolverati")
 	check(not _luci_acquari_accese(), "con le luci di servizio spente")
 	check(not _lampade_accese(), "le lampade del portone sono spente")
+	check(not _gocciola(), "la valvola non gocciola")
 	check(not giallo.is_in_group(&"water_sources") and not misto.is_in_group(&"water_catchers"),
 		"vuoti non si aspirano e non prendono il getto")
 	check(not _collisioni_spente(), "e si urtano (hanno le collisioni)")
@@ -172,6 +173,7 @@ func _run() -> void:
 	await _frames(10)
 	check(enigma.stato == EnigmaAcquari.Stato.TORBIDO, "pieno di colore sbagliato: torbido (giallo %.2f, pieno %.2f)" % [enigma.parte_di_giallo(), misto.fill])
 	check(WaterMix.frazione(misto.mix, WaterMix.TORBIDA) > 0.99, "l'acqua è torbida")
+	await _gocce_a_terra()
 	var c0 := colori[0] as Color
 	# Colori tolleranti: i valori esatti li sceglie enigma-ambiente con l'utente.
 	check(c0.r > 0.6 and c0.g > 0.5 and c0.b < 0.4 and not (colori[1] as Color).is_equal_approx(c0),
@@ -186,6 +188,7 @@ func _run() -> void:
 	await _frames(int((enigma.durata_gorgo + 1.0) * 60.0))
 	check(enigma.stato == EnigmaAcquari.Stato.APERTO and misto.fill < 0.001 and misto.mix.is_empty(), "l'acquario del miscuglio è vuoto")
 	check(giallo.fill >= giallo.max_fill - 0.001 and blu.fill >= blu.max_fill - 0.001, "i colorati sono di nuovo pieni")
+	check(not _gocciola(), "e la valvola non gocciola più")
 
 	print("6. Il giro dopo: 2 giallo + 1 blu, partendo con l'acqua chiara nello zaino")
 	p.water_pack.set_tank_amount(0.0)
@@ -222,6 +225,7 @@ func _run() -> void:
 	await _riparti(cp_torbido)
 	check(enigma.comparsi and enigma.attivi and enigma.stato == EnigmaAcquari.Stato.TORBIDO, "torbido: gli acquari ci sono, funzionano e sono torbidi")
 	check(WaterMix.frazione(misto.mix, WaterMix.TORBIDA) > 0.99 and misto.fill > 0.9, "con l'acqua torbida dentro")
+	check(_gocciola(), "e la valvola che gocciola")
 	check(not portone.is_aperto(), "e il portone chiuso")
 	await _spruzza_valvola()
 	await _frames(int((enigma.durata_gorgo + 1.0) * 60.0))
@@ -229,6 +233,7 @@ func _run() -> void:
 	await _riparti(cp_risolto)
 	check(enigma.comparsi and enigma.stato == EnigmaAcquari.Stato.RISOLTO and portone.is_aperto(), "risolto: il portone resta aperto")
 	check(WaterMix.frazione(misto.mix, WaterMix.VERDE) > 0.99, "e l'acqua verde")
+	check(not _gocciola(), "e la valvola che non gocciola")
 	_fine()
 
 
@@ -317,6 +322,55 @@ func _cammina_fino(dove: Vector3, secondi: float) -> bool:
 		await get_tree().physics_frame
 	Input.action_release(&"move_forward")
 	return false
+
+
+## Le gocce della valvola (l'indizio del torbido) ci sono e cadono.
+func _gocciola() -> bool:
+	var g := enigma.get_node_or_null(^"Valvola/GocceValvola") as Node3D
+	return g != null and g.is_visible_in_tree() and g.can_process()
+
+
+## Col miscuglio torbido la valvola gocciola: le gocce escono dalla bocca della flangia e cadono fino al pavimento
+## (la prima cosa che il loro raggio trova sotto) senza passare dentro nessuna mesh, nemmeno quelle senza collisione
+## (la griglia dello scarico, il modello).
+func _gocce_a_terra() -> void:
+	var g := enigma.get_node_or_null(^"Valvola/GocceValvola") as WaterDripEmitter
+	check(g != null and _gocciola(), "torbido: la valvola gocciola (l'indizio che va girata)")
+	if g == null:
+		return
+	var in_volo := {}
+	var cadute := 0
+	var quota := -99.0
+	for i in 300:
+		await get_tree().physics_frame
+		for d in g.get(&"_drops"):
+			var mi: MeshInstance3D = d[0]
+			if mi.visible:
+				in_volo[mi] = float(d[2])
+			elif in_volo.has(mi):
+				cadute += 1
+				quota = maxf(quota, float(in_volo[mi]))
+				in_volo.erase(mi)
+	check(cadute >= 2, "in 5 s cadono %d gocce" % cadute)
+	check(absf(quota) < 0.01, "e arrivano a terra (la più alta si ferma a %.3f m)" % quota)
+	var da := g.global_position
+	var mesh := _mesh_attraversata(da + Vector3(0, -0.005, 0), Vector3(da.x, 0.003, da.z), g)
+	check(mesh == "", "dalla bocca a terra (%.2f m) non attraversano niente %s" % [da.y, mesh])
+
+
+## La prima mesh visibile del livello che il segmento attraversa ("" se nessuna), senza quelle di [param tranne].
+func _mesh_attraversata(da: Vector3, a: Vector3, tranne: Node) -> String:
+	var box := AABB(da, Vector3.ZERO).expand(a).grow(0.002)
+	for n in level.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or not mi.is_visible_in_tree() or tranne.is_ancestor_of(mi) \
+				or not (mi.global_transform * mi.get_aabb()).intersects(box):
+			continue
+		var f := mi.global_transform * mi.mesh.get_faces()
+		for k in range(0, f.size(), 3):
+			if Geometry3D.segment_intersects_triangle(da, a, f[k], f[k + 1], f[k + 2]) != null:
+				return str(level.get_path_to(mi))
+	return ""
 
 
 func _spruzza_valvola() -> void:

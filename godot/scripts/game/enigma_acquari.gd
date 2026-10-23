@@ -6,7 +6,8 @@ extends Node3D
 ## mentre lo riempi. Pieno con giallo e blu circa 2 a 1 (due zainate di giallo e una di blu) diventa
 ## verde e il portone della torre si apre ([member portone], PortoneTorre con SOLO_ENIGMA). Pieno
 ## con il colore sbagliato diventa torbido: la valvola rossa sotto, colpita col getto, lo svuota col
-## gorgo e riempie di nuovo i due colorati. I colorati non si esauriscono (WaterTank.min_fill).
+## gorgo e riempie di nuovo i due colorati. I colorati non si esauriscono (WaterTank.min_fill). Finché è torbido la
+## valvola gocciola (l'indizio).
 ## I momenti:
 ## - al primo passaggio nella sala gli acquari ci sono ma vuoti, coi vetri impolverati, e le lampade del
 ##   portone sono spente (richiesta dell'utente del 21 ottobre);
@@ -58,6 +59,10 @@ var _blu: WaterTank
 var _misto: WaterTank
 var _valvola_presa := 0.0
 var _parti_giallo := 0.0
+## Le gocce della valvola (scelta dell'utente del 23 ottobre: "la valvola falla gocciolare"): col miscuglio torbido
+## dalla bocca della flangia aperta, verso lo scarico, cade una goccia ogni tanto, col suo suono. È l'indizio che la
+## valvola va girata (col getto). All'inizio, limpido, nel gorgo e risolto, niente gocce.
+var _gocce: WaterDripEmitter
 
 
 func _ready() -> void:
@@ -71,6 +76,19 @@ func _ready() -> void:
 	var bersaglio := get_node_or_null(^"Valvola/Bersaglio") as WaterHitbox
 	if bersaglio:
 		bersaglio.water_hit.connect(_on_valvola)
+	var modello := get_node_or_null(^"Valvola/Modello") as Node3D
+	if modello:
+		_gocce = WaterDripEmitter.new()
+		_gocce.name = "GocceValvola"
+		# sotto il labbro basso del foro, 1 cm fuori dalla faccia della flangia (nel modello la faccia è a x -0,55 e il
+		# foro, largo 13,8 cm di raggio, ha il centro a y -0,241): cadono a terra fra la flangia e la griglia dello scarico
+		_gocce.position = modello.transform * Vector3(-0.561, -0.388, 0.0)
+		_gocce.interval_min = 0.5
+		_gocce.interval_max = 1.8
+		_gocce.jitter = 0.004
+		_gocce.visible = false
+		_gocce.process_mode = Node.PROCESS_MODE_DISABLED
+		modello.get_parent().add_child(_gocce)
 	for l in find_children("*", "Light3D", true, false):
 		# Le lampade del portone si accendono al buio: il blackout non le deve spegnere.
 		l.set_meta(&"risveglio_ignora", true)
@@ -117,6 +135,11 @@ func _aggiorna() -> void:
 	_giallo.suckable = attivi and stato != Stato.GORGO
 	_blu.suckable = attivi and stato != Stato.GORGO
 	_misto.accepts_water = attivi and stato == Stato.APERTO
+	if _gocce:
+		var gocciola := attivi and stato == Stato.TORBIDO
+		if gocciola != _gocce.visible:
+			_gocce.visible = gocciola
+			_gocce.process_mode = Node.PROCESS_MODE_INHERIT if gocciola else Node.PROCESS_MODE_DISABLED
 
 
 func _mostra(on: bool) -> void:
