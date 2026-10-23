@@ -4,7 +4,8 @@ l'umidità", bicchiere "fragile"), senza scritte. Una texture per le sei facce d
 3 x 2 (ogni cella una faccia, con l'alto della faccia in alto: vedi CELLE). Il colore lo dà il MultiMesh (un marrone
 diverso per ogni scatolone), quindi qui il cartone è chiaro.
 Uso: /home/user/tools/blender-venv/bin/python assets_src/fiume_lento/scatoloni/genera_texture.py
-Uscita: godot/assets/fiume_lento/texture/scatolone_pile.jpg (1536 x 1024)"""
+Uscita: godot/assets/fiume_lento/texture/scatolone_pile.jpg e cassa_pile.jpg (le casse di plastica blu del piano di
+sotto, i pesanti sotto), 1536 x 1024"""
 import os, random
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
@@ -12,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFilter
 QUI = os.path.dirname(os.path.abspath(__file__))
 RADICE = os.path.abspath(os.path.join(QUI, '..', '..', '..'))
 USCITA = os.path.join(RADICE, 'godot', 'assets', 'fiume_lento', 'texture', 'scatolone_pile.jpg')
+USCITA_CASSE = os.path.join(RADICE, 'godot', 'assets', 'fiume_lento', 'texture', 'cassa_pile.jpg')
 C = 512                       # lato di una cella
 # per ogni cella (colonna, riga): quale faccia è e di quanti gradi va girato il disegno (0 = l'alto in alto)
 CELLE = {(0, 0): ('lato', 0), (1, 0): ('lato', 0), (2, 0): ('sopra', 0),
@@ -24,9 +26,9 @@ def cartone(w, h):
     base = np.full((h, w, 3), (205, 168, 120), dtype=np.float32)
     righe = np.sin(np.arange(w) / w * np.pi * 2 * 90)[None, :, None] * 3.0
     rumore = np.random.default_rng(7).normal(0, 6, (h, w, 1))
-    macchie = np.array(Image.fromarray(np.random.default_rng(3).integers(0, 255, (h // 16, w // 16), dtype=np.uint8))
+    macchie = np.array(Image.fromarray(np.random.default_rng(3).integers(0, 255, (h // 32, w // 32), dtype=np.uint8))
                        .resize((w, h), Image.BICUBIC), dtype=np.float32)[:, :, None]
-    img = base + righe + rumore - (macchie - 128) * 0.12
+    img = base + righe + rumore - (macchie - 128) * 0.05
     return Image.fromarray(np.clip(img, 0, 255).astype(np.uint8))
 
 
@@ -91,9 +93,41 @@ def faccia(tipo):
     return img
 
 
+def cassa(tipo):
+    """Una cassa di plastica blu: costole in rilievo e le feritoie (lato), il bordo e la griglia (sopra)."""
+    img = Image.new('RGB', (C, C), (38, 86, 160))
+    d = ImageDraw.Draw(img)
+    rum = np.random.default_rng(11).normal(0, 4, (C, C, 1))
+    img = Image.fromarray(np.clip(np.array(img, dtype=np.float32) + rum, 0, 255).astype(np.uint8))
+    d = ImageDraw.Draw(img)
+    scuro, chiaro = (20, 48, 98), (70, 120, 196)
+    d.rectangle((0, 0, C - 1, C - 1), outline=scuro, width=14)
+    if tipo == 'sopra':
+        for k in range(1, 8):
+            d.line((k * C // 8, 20, k * C // 8, C - 20), fill=scuro, width=6)
+            d.line((20, k * C // 8, C - 20, k * C // 8), fill=scuro, width=6)
+        return img
+    d.rectangle((0, 0, C - 1, int(C * 0.12)), fill=chiaro)          # il bordo alto della cassa
+    for k in range(1, 6):                                           # le costole verticali
+        x = k * C // 6
+        d.rectangle((x - 7, int(C * 0.12), x + 7, C - 1), fill=chiaro)
+    for r in range(3):                                              # le feritoie
+        for k in range(6):
+            x0 = k * C // 6 + 16
+            y0 = int(C * 0.22) + r * int(C * 0.24)
+            d.rounded_rectangle((x0, y0, x0 + C // 6 - 32, y0 + int(C * 0.14)), radius=8, fill=scuro)
+    d.rounded_rectangle((C * 0.35, C * 0.03, C * 0.65, C * 0.09), radius=10, fill=scuro)   # la maniglia
+    return img
+
+
 tex = Image.new('RGB', (C * 3, C * 2))
 for (cx, cy), (tipo, gradi) in CELLE.items():
     tex.paste(faccia(tipo).rotate(gradi), (cx * C, cy * C))
 os.makedirs(os.path.dirname(USCITA), exist_ok=True)
 tex.save(USCITA, quality=90)
 print('scritta', USCITA)
+tex = Image.new('RGB', (C * 3, C * 2))
+for (cx, cy), (tipo, gradi) in CELLE.items():
+    tex.paste(cassa(tipo).rotate(gradi), (cx * C, cy * C))
+tex.save(USCITA_CASSE, quality=90)
+print('scritta', USCITA_CASSE)

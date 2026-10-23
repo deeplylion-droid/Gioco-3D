@@ -443,8 +443,8 @@ def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False, n
             ([fine + h, fine - n * 0.1 + h] if nel_muro_b else [])
         obs.append(C.tubo(f'{nome}_{k}', pts, rk, mat, rc=0.12, seg=12, uv=None))
         # dove il tubo passa in una costola del muro (sporge 16 cm): un collare di passaggio su ciascuna faccia della
-        # costola, così si legge come il foro di un'ordinata di nave (scelta del coordinatore, 23 ottobre). Spesso 12 mm,
-        # 1 mm dentro la costola
+        # costola, così si legge come il foro di un'ordinata di nave (scelta del coordinatore, 23 ottobre). Un anello
+        # (toro) spesso 16 mm, 1 mm dentro la costola
         if (0.09 + k * 0.13) - rk < 0.16:
             u_da, u_a = (inizio - a).length, (fine - a).length
             for j, (clo, chi, _ax) in enumerate(costole()):
@@ -456,9 +456,11 @@ def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False, n
                 if u1 < u_da or u0 > u_a:
                     continue
                 for faccia, verso in ((u0, -1.0), (u1, 1.0)):
-                    c = a + d * (faccia + verso * 0.005) + o + h
-                    obs.append(C.cilindro(f'{nome}_{k}_collare{j}{"a" if verso < 0 else "b"}', tuple(c), rk * 1.45, 0.012, mat,
-                                          asse=tuple(d), seg=16, uv=None))
+                    # un anello che stringe il tubo (dentro tocca il tubo) e appoggia sulla faccia della costola
+                    rr = 0.008
+                    c = a + d * (faccia + verso * (rr - 0.001)) + o + h
+                    obs.append(C.toro(f'{nome}_{k}_collare{j}{"a" if verso < 0 else "b"}', tuple(c), rk + rr, rr, mat,
+                                      asse=tuple(d), seg=20, seg2=8, uv=None))
     # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
     lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))
     zs = z - r - 0.015

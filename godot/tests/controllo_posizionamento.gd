@@ -1613,10 +1613,12 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 				fatte[[a, b]] = true
 				if _stesso_modello(a, b) or (a as Node).get_parent() == (b as Node).get_parent():
 					# pezzi dello stesso modello, o dello stesso oggetto fatto da codice (lampade, fari): non si
-					# confrontano, tranne un corrimano o un tubo con le altre cose di un glTF d'arredo (l'arredo della
-					# risalita: il carrello nel corrimano di C2, riscontro dell'utente sulla v0.3.11). Solo gli spigoli
-					# che lo attraversano: le staffe entrano apposta 1 mm nel tubo
-					if _fino and (_lungo_sottile(a) or _lungo_sottile(b)) and boxes[a].intersects(boxes[b]):
+					# confrontano, tranne un corrimano o un tubo con le altre cose di un glTF d'arredo, cioè fatto di
+					# tanti oggetti diversi (l'arredo della risalita: il carrello nel corrimano di C2, riscontro dell'utente
+					# sulla v0.3.11). Solo gli spigoli che lo attraversano: le staffe entrano apposta 1 mm nel tubo. Nei
+					# modelli normali i pezzi si incastrano apposta (bielle, montanti, cornici)
+					if _fino and _stesso_modello(a, b) and _arredo(a) and (_lungo_sottile(a) or _lungo_sottile(b)) \
+							and boxes[a].intersects(boxes[b]):
 						var pp := _attraversa(a, b)
 						if pp > ATTRAVERSA_MIN:
 							var chi2: MeshInstance3D = b if _lungo_sottile(a) else a
@@ -1646,6 +1648,21 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 					var altro: MeshInstance3D = b if chi == a else a
 					_trova(z, chi, "compenetra", i.get_center(), "il %d%% dei suoi vertici è dentro %s" % [roundi(dentro * 100.0), _nodo(altro)])
+
+
+## Un glTF d'arredo: tanti oggetti diversi messi in un modello solo (più di [constant ARREDO_MESH] mesh), come l'arredo
+## della risalita (480).
+const ARREDO_MESH := 100
+var _arredi := {}
+
+
+func _arredo(mi: Node) -> bool:
+	var o := mi.owner
+	if o == null:
+		return false
+	if not _arredi.has(o):
+		_arredi[o] = o.find_children("*", "MeshInstance3D", true, false).size() > ARREDO_MESH
+	return _arredi[o]
 
 
 ## Una mesh lunga e sottile (un corrimano, un tubo, una sbarra): il lato più corto del box sotto 12 cm, il più lungo

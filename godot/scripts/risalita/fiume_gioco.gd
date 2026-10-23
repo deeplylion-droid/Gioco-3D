@@ -153,6 +153,7 @@ func _costruisci() -> void:
 	await _pausa()
 	_approdo()
 	await _rocce_imbarco()
+	await _pile()
 	_marker()
 	_checkpoint()
 	costruita = true
@@ -1128,6 +1129,7 @@ func _logica() -> void:
 	# (il fiume entra coi suoi tratti, poi le paratie una per pezzo, al loro posto fra i figli: dopo i tratti, prima
 	# della ciambella. Tutto insieme era il pezzo più lungo della costruzione a pezzi, 70 ms)
 	add_child(fiume)
+	_ciambella_fosforescente(fiume.get_node_or_null(^"Ciambella"))
 	# A ogni bivio la destra è il raggio verso l'imbarco (il ramo sbagliato), la sinistra continua.
 	var bivi := [["Imbarco", "Paratia1", 90.0, "Giusto1", "Sbagliato1", true, 55.0, false],
 		["Giusto1", "Paratia2", 180.0, "Giusto2", "Sbagliato2", false, 145.0, false],
@@ -1439,6 +1441,303 @@ func _giungla() -> void:
 				_metti("scaletta_banchina", v[0] + Vector3(0, FONDO + 0.05, 0), v[1])
 
 
+## La ciambella su cui si sale, fosforescente verde chiaro (riscontro dell'utente sulla v0.3.11: "il salvagente è troppo
+## poco visibile. Va reso glow in the dark"; scelta A del 23 ottobre): i suoi materiali con l'emissione verde chiara (la
+## texture resta: si riconosce come le altre ciambelle) e un alone tenue, come gli adesivi fosforescenti. Solo questa:
+## quelle alla deriva e la pila di ricambio restano come sono.
+func _ciambella_fosforescente(c: Node3D) -> void:
+	if c == null:
+		return
+	for mi in c.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		for s in m.mesh.get_surface_count():
+			var orig := m.get_active_material(s) as BaseMaterial3D
+			var nuovo: StandardMaterial3D = orig.duplicate() if orig is StandardMaterial3D else StandardMaterial3D.new()
+			nuovo.albedo_color = Color(0.82, 1.0, 0.84)
+			nuovo.emission_enabled = true
+			nuovo.emission = Color(0.5, 1.0, 0.58)
+			nuovo.emission_energy_multiplier = 1.4
+			if orig is BaseMaterial3D and orig.albedo_texture:
+				# la fosforescenza dove la vernice è chiara (le strisce gialle e azzurre del modello)
+				nuovo.emission_texture = orig.albedo_texture
+				nuovo.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+				nuovo.emission_energy_multiplier = 2.2
+			m.set_surface_override_material(s, nuovo)
+	var alone := OmniLight3D.new()
+	alone.name = "AloneFosforescente"
+	alone.light_color = Color(0.5, 1.0, 0.58)
+	alone.light_energy = 0.35
+	alone.omni_range = 2.0
+	alone.position = Vector3(0, 0.25, 0)
+	alone.set_meta(&"risveglio_ignora", true)
+	c.add_child(alone)
+
+
+# --- le pile di scatoloni ----------------------------------------------------------------------------------
+
+## Le pile di scatoloni su bancali che chiudono la piazza e l'approdo (riscontro dell'utente sulla v0.3.11, punti 4 e 7:
+## "a destra e a sinistra del percorso delimitato dalle transennine è tutto vuoto ed enorme, bisogna chiudere la stanza
+## magari con delle pile di scatoloni altissime, che non lascino spazi aperti, conducendoti fino al salvagente"; "finito
+## il percorso, nuovamente ci vogliono le scatole che non lasciano vedere oltre il percorso giusto, verso la porta
+## seguente"; scelta A del 23 ottobre). Ogni unità è un bancale con un blocco di 12 scatoloni avvolto nel film, alta
+## 1,35 m; le colonne sono di 3 o 4 unità (4-5,4 m, cime sfalsate), su due file di profondità; sotto le casse di
+## plastica (le più pesanti), sopra il cartone. MultiMesh (pochi nodi), con una collisione per colonna.
+const PILA_LUNGO := 1.2
+const PILA_PROFONDO := 1.0
+const PILA_BANCALE := 0.15
+const PILA_BLOCCO := 1.2
+const PILA_STACCO := 0.02
+
+
+## I muri di pile: [inizio, fine (la faccia verso la strada), verso dentro la pila]. Quelli con x oltre il muro
+## dell'approdo (MURO_APPRODO) stanno nell'approdo, gli altri nella piazza.
+func _muri_pile() -> Array:
+	var da := Vector2(INGRESSO_X, Z0 + 1.0)
+	var dir := (Vector2(FINE_FILA.x, FINE_FILA.z) - da).normalized()
+	var lato := Vector2(-dir.y, dir.x)      # a sinistra di chi va verso la vasca (sud-ovest)
+	# la strada larga 6 m (le transenne a 0,85 dall'asse; le transenne cadute, stese a terra, arrivano a 2,9 m)
+	var largo := 3.0
+	var fine_destra := da + dir * 18.0 - lato * largo
+	# la pila di sinistra arriva fino a x -9,4, davanti alla tettoia della cabina, poi scende al ramo ovest
+	var fine_sinistra := (-9.4 - da.x + lato.x * -largo) / dir.x
+	var angolo := da + dir * fine_sinistra + lato * largo
+	return [
+		# lungo il muro nord, a chiudere l'angolo fra il muro e la pila di destra
+		[Vector2(INGRESSO_X + 2.4, Z0 + 0.32), Vector2(INGRESSO_X + 7.4, Z0 + 0.32), Vector2(0, 1)],
+		# a destra della fila, fino a 18 m, poi verso est fino alla roccia della riva
+		[da + dir * -3.0 - lato * largo, fine_destra, -lato],
+		[Vector2(fine_destra.x - 1.6, fine_destra.y), Vector2(-3.62, fine_destra.y), Vector2(0, -1)],
+		# a sinistra della fila fino alla cabina dell'imbarco, poi verso sud fino al ramo ovest
+		[da + dir * -7.0 + lato * largo, angolo, lato],
+		# (dalla riva verso nord: la prima unità arriva al bordo dell'acqua, quello che avanza resta nell'angolo)
+		[Vector2(-9.4, -W * 0.5 - 0.2), Vector2(-9.4, angolo.y), Vector2(-1, 0)],
+		# l'approdo: a nord e a sud della conca, dal muro ovest al muro dell'approdo
+		[Vector2(X0 + 0.32, APPRODO.y - 3.55), Vector2(MURO_APPRODO - 0.25, APPRODO.y - 3.55), Vector2(0, -1)],
+		[Vector2(X0 + 0.32, APPRODO.y + 3.55), Vector2(MURO_APPRODO - 0.25, APPRODO.y + 3.55), Vector2(0, 1)],
+	]
+
+
+func _pile() -> void:
+	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1023
+	# gli ingombri già a terra: le forme di collisione (transenne, rocce, pali, cabina, tettoia) in pianta
+	var ingombri: Array[PackedVector2Array] = []
+	for corpo in [_collisioni, _barriere] + get_children().filter(func(c): return c is StaticBody3D and c != _collisioni and c != _barriere):
+		for cs in (corpo as Node).get_children():
+			var f := cs as CollisionShape3D
+			if f == null or f.shape == null:
+				continue
+			if f.shape is BoxShape3D:
+				var h := (f.shape as BoxShape3D).size * 0.5
+				var pts := PackedVector2Array()
+				for sx in [-1.0, 1.0]:
+					for sy in [-1.0, 1.0]:
+						for sz in [-1.0, 1.0]:
+							var w: Vector3 = f.transform * Vector3(h.x * sx, h.y * sy, h.z * sz)
+							pts.append(Vector2(w.x, w.z))
+				ingombri.append(Geometry2D.convex_hull(pts))
+			elif f.shape is CylinderShape3D:
+				var r := (f.shape as CylinderShape3D).radius
+				var cerchio := PackedVector2Array()
+				for k in 12:
+					cerchio.append(Vector2(f.transform.origin.x, f.transform.origin.z) + Vector2.from_angle(TAU * k / 12.0) * r)
+				ingombri.append(cerchio)
+	# le lampade sui muri (e quello che sta in alto): le pile ci passano sotto
+	var lampade: Array[Vector3] = []
+	for c in get_children():
+		if c is Node3D and (c as Node3D).position.y > 1.0 and not c is Light3D:
+			lampade.append((c as Node3D).position)
+	var cartone: Array[Transform3D] = []
+	var tinte: Array[Color] = []
+	var casse: Array[Transform3D] = []
+	var messe: Array[PackedVector2Array] = []
+	var colonne := 0
+	for m in _muri_pile():
+		var a: Vector2 = m[0]
+		var b: Vector2 = m[1]
+		var n: Vector2 = m[2]
+		var nell_approdo := (a.x + b.x) * 0.5 < MURO_APPRODO
+		var d := (b - a).normalized()
+		var lungo := a.distance_to(b)
+		var u := 0.0
+		while u + PILA_LUNGO <= lungo + PILA_LUNGO * 0.5 + 0.001:
+			await _pausa()
+			for fila in 2:
+				# la fila di dietro sfalsata di mezza unità (a mattoni): le fessure fra le unità non si allineano
+				var uu := u + fila * PILA_LUNGO * 0.5
+				if uu + PILA_LUNGO > lungo + 0.001:
+					continue
+				var c := a + d * (uu + PILA_LUNGO * 0.5) + n * (PILA_STACCO + fila * (PILA_PROFONDO + PILA_STACCO) + PILA_PROFONDO * 0.5)
+				var e := d * (PILA_LUNGO * 0.5)
+				var f := n * (PILA_PROFONDO * 0.5)
+				var impronta := PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f])
+				if ((c.x < MURO_APPRODO) != nell_approdo) or not _pila_ci_sta(impronta, ingombri, messe):
+					continue
+				messe.append(impronta)
+				colonne += 1
+				var piani := 3 if rng.randf() < 0.45 else 4
+				# sotto una lampada sul muro la pila si ferma 15 cm sotto
+				for l in lampade:
+					if Geometry2D.is_point_in_polygon(Vector2(l.x, l.z), _allarga(impronta, 0.6)):
+						piani = mini(piani, int((l.y - 0.3) / (PILA_BANCALE + PILA_BLOCCO)))
+				if piani < 1:
+					messe.pop_back()
+					colonne -= 1
+					continue
+				var asse_x := Vector3(d.x, 0, d.y)
+				var asse_z := Vector3(n.x, 0, n.y)
+				for p in piani:
+					var yaw := 0.0 if p == 0 else rng.randf_range(-0.012, 0.012)
+					var base := Basis(asse_x, Vector3.UP, asse_z) * Basis(Vector3.UP, yaw)
+					var y := p * (PILA_BANCALE + PILA_BLOCCO)
+					var t := Transform3D(base, Vector3(c.x, y, c.y))
+					if p == 0:
+						casse.append(t)
+					else:
+						cartone.append(t)
+						var k := rng.randf()
+						tinte.append(Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), k))
+				var alto := piani * (PILA_BANCALE + PILA_BLOCCO)
+				var fc := CollisionShape3D.new()
+				var bc := BoxShape3D.new()
+				bc.size = Vector3(PILA_LUNGO, alto, PILA_PROFONDO)
+				fc.shape = bc
+				fc.transform = Transform3D(Basis(asse_x, Vector3.UP, asse_z), Vector3(c.x, alto * 0.5, c.y))
+				_collisioni.add_child(fc)
+			u += PILA_LUNGO + PILA_STACCO
+	await _pausa()
+	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
+	await _pausa()
+	_multimesh_pile("PileCartone", _unita_pila(false), cartone, tinte)
+	print("pile di scatoloni: %d colonne, %d unità" % [colonne, casse.size() + cartone.size()])
+
+
+## Il rettangolo allargato di [param m] da ogni parte.
+static func _allarga(r: PackedVector2Array, m: float) -> PackedVector2Array:
+	var c := (r[0] + r[2]) * 0.5
+	var out := PackedVector2Array()
+	for q in r:
+		out.append(q + (q - c).normalized() * m * sqrt(2.0))
+	return out
+
+
+## Vero se l'impronta (un rettangolo in pianta) sta tutta sulla banchina, lontana dai muri e dall'acqua, e non tocca le
+## collisioni già messe né le altre colonne.
+func _pila_ci_sta(impronta: PackedVector2Array, ingombri: Array[PackedVector2Array], messe: Array[PackedVector2Array]) -> bool:
+	var centro := (impronta[0] + impronta[2]) * 0.5
+	for q in impronta:
+		if not _sulla_banchina(Vector3(q.x, 0, q.y), 0.15):
+			return false
+		# i due muri dell'approdo (spessi 30 cm): la pila sta da una parte o dall'altra
+		if absf(q.x - MURO_APPRODO) < 0.25 or (q.x < MURO_APPRODO) != (centro.x < MURO_APPRODO):
+			return false
+	for g in ingombri + messe:
+		if g.is_empty() or (g[0] as Vector2).distance_to(centro) > 6.0:
+			continue
+		if not Geometry2D.intersect_polygons(impronta, g).is_empty():
+			return false
+	return true
+
+
+func _multimesh_pile(nome: String, mesh: Mesh, trasformazioni: Array[Transform3D], tinte: Array[Color]) -> void:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = not tinte.is_empty()
+	mm.mesh = mesh
+	mm.instance_count = trasformazioni.size()
+	for i in trasformazioni.size():
+		mm.set_instance_transform(i, trasformazioni[i])
+		if mm.use_colors:
+			mm.set_instance_color(i, tinte[i])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = nome
+	mmi.multimesh = mm
+	# per il controllo di posizionamento: le trasformazioni delle istanze (vedi _espandi_multimesh)
+	mmi.set_meta(&"trasformazioni", trasformazioni)
+	add_child(mmi)
+
+
+## Un'unità della pila (origine sotto il bancale, al centro; x lungo il muro, z in profondità): il bancale di legno, il
+## blocco di 2 x 2 x 3 scatoloni (o casse di plastica) e il film trasparente intorno al blocco.
+func _unita_pila(di_casse: bool) -> ArrayMesh:
+	var am := ArrayMesh.new()
+	# il bancale: tre longheroni, sette assi sopra e tre sotto
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for z in [-0.45, 0.0, 0.45]:
+		_scatola_uv(st, Vector3(PILA_LUNGO, 0.1, 0.1), Vector3(0, 0.075, z), false)
+		_scatola_uv(st, Vector3(PILA_LUNGO, 0.024, 0.1), Vector3(0, 0.012, z), false)
+	for k in 7:
+		_scatola_uv(st, Vector3(0.12, 0.025, PILA_PROFONDO), Vector3(-0.54 + k * 0.18, 0.1375, 0), false)
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+	var legno := StandardMaterial3D.new()
+	legno.albedo_color = Color(0.55, 0.43, 0.3)
+	legno.roughness = 0.9
+	am.surface_set_material(0, legno)
+	# gli scatoloni: 0,6 x 0,4 x 0,5 m (2 mm più piccoli, così le facce non coincidono)
+	st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in 2:
+		for j in 2:
+			for k in 3:
+				_scatola_uv(st, Vector3(0.598, 0.398, 0.498), Vector3(-0.3 + i * 0.6, PILA_BANCALE + 0.2 + k * 0.4, -0.25 + j * 0.5), true)
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+	var mb := StandardMaterial3D.new()
+	if di_casse:
+		mb.albedo_texture = load(DIR + "texture/cassa_pile.jpg")
+		mb.roughness = 0.55
+	else:
+		mb.albedo_texture = load(DIR + "texture/scatolone_pile.jpg")
+		mb.roughness = 0.85
+		mb.vertex_color_use_as_albedo = true   # la tinta di ogni unità (MultiMesh)
+	am.surface_set_material(1, mb)
+	# il film: appena più grande del blocco, lucido e quasi trasparente
+	st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_scatola_uv(st, Vector3(PILA_LUNGO + 0.008, PILA_BLOCCO + 0.004, PILA_PROFONDO + 0.008), Vector3(0, PILA_BANCALE + PILA_BLOCCO * 0.5 + 0.002, 0), false)
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+	var film := StandardMaterial3D.new()
+	film.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	film.albedo_color = Color(0.85, 0.9, 0.95, 0.12)
+	film.roughness = 0.12
+	film.metallic_specular = 0.8
+	am.surface_set_material(2, film)
+	return am
+
+
+## Una scatola (centro, misure) nella SurfaceTool, con le facce verso fuori. Con [param uv_scatolone] le UV della texture
+## degli scatoloni (genera_texture.py: i lati nelle celle (0..1, 0..1), sopra e sotto nella colonna 2, griglia 3 x 2).
+func _scatola_uv(st: SurfaceTool, size: Vector3, c: Vector3, uv_scatolone: bool) -> void:
+	var h := size * 0.5
+	var facce := [
+		[Vector3.RIGHT, Vector3.BACK, Vector3.UP, Vector2(0, 0)], [Vector3.LEFT, Vector3.FORWARD, Vector3.UP, Vector2(1, 0)],
+		[Vector3.BACK, Vector3.LEFT, Vector3.UP, Vector2(0, 1)], [Vector3.FORWARD, Vector3.RIGHT, Vector3.UP, Vector2(1, 1)],
+		[Vector3.UP, Vector3.RIGHT, Vector3.FORWARD, Vector2(2, 0)], [Vector3.DOWN, Vector3.RIGHT, Vector3.BACK, Vector2(2, 1)],
+	]
+	for fc in facce:
+		var nrm: Vector3 = fc[0]
+		var dx: Vector3 = fc[1]
+		var dy: Vector3 = fc[2]
+		var cella: Vector2 = fc[3]
+		var centro := c + nrm * absf(nrm.dot(h))
+		var ex := dx * absf(dx.dot(h))
+		var ey := dy * absf(dy.dot(h))
+		var q := [centro - ex - ey, centro + ex - ey, centro + ex + ey, centro - ex + ey]
+		var uv := [Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)]
+		# il verso dei triangoli: in Godot la faccia davanti gira in senso orario vista da fuori (col prodotto vettoriale
+		# dei lati contro la normale)
+		var g: Vector3 = ((q[1] as Vector3) - q[0]).cross((q[2] as Vector3) - q[0])
+		var ordine := [0, 1, 2, 0, 2, 3] if g.dot(nrm) > 0.0 else [0, 2, 1, 0, 3, 2]
+		for idx in ordine:
+			st.set_normal(nrm)
+			if uv_scatolone:
+				st.set_uv((cella + (uv[idx] as Vector2)) / Vector2(3, 2))
+			else:
+				st.set_uv(uv[idx])
+			st.add_vertex(q[idx])
+
+
 ## La riva ovest del primo tratto, dalla vasca dell'imbarco verso nord, restava senza roccia: [method _giungla] salta i
 ## pannelli col retro verso la piazza e quelli vicino alla vasca (riscontro dell'utente sulla v0.3.11: "all'inizio del
 ## percorso in salvagente ci sono delle parti dove manca la roccia ai bordi, deve essere continua"). Qui, dopo tutto il
@@ -1575,10 +1874,11 @@ func _imbarco() -> void:
 		_metti("ciambella", c[0], c[1])
 	await _pausa()
 	# la capanna tiki, il totem, i cartelli a pittogrammi
-	_metti("capanna_tiki", Vector3(-14.0, 0, -6.0), 60.0)
+	# (1,5 m più in là, a sud-ovest, dietro il muro di pile di sinistra: dov'era c'è il muro)
+	_metti("capanna_tiki", Vector3(-15.1, 0, -4.98), 60.0)
 	# (la collisione fin dove arriva la tettoia di paglia, 1,55 m dal centro fra 1 e 1,5 m d'altezza: con 1,3 m ci si
 	# entrava con la testa, controllo del 23 ottobre)
-	_ostacolo(Vector3(-14.0, 0, -6.0), 1.6, 2.1)
+	_ostacolo(Vector3(-15.1, 0, -4.98), 1.6, 2.1)
 	# (il totem, la pila di ciambelle e la palma un metro più in là dalla riva: lì ora c'è la roccia)
 	_metti("totem_tiki", Vector3(-VASCA - 1.9, 0, -VASCA - 7.4), 135.0)
 	_ostacolo(Vector3(-VASCA - 1.9, 0, -VASCA - 7.4), 0.4, 2.5)
@@ -1596,14 +1896,16 @@ func _imbarco() -> void:
 	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
 	# (la prima stava fra le transenne della fila, a 67 cm dal suo asse: ora 2,2 m fuori, sullo stesso lato)
 	await _pausa()
-	for p in [Vector3(-9.9, 0, -13.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 2.0, 0, -VASCA - 10.5)]:
+	# (la prima 26 cm verso la fila e la seconda 1,5 m dietro il muro di pile di sinistra: le pile, 23 ottobre)
+	for p in [Vector3(-10.09, 0, -13.32), Vector3(-13.7, 0, -5.08), Vector3(-VASCA - 2.0, 0, -VASCA - 10.5)]:
 		_metti("palma_finta", p, _randf() * 360.0)
 		# le foglie cominciano a 1,75 m e arrivano a 93 cm dal tronco: non ci si passa sotto con la testa
 		_ostacolo(p, 0.95, 2.0)
 	_metti("ciabatta", Vector3(-VASCA - 2.2, 0, -VASCA - 1.8), 35.0)
 	_metti("paperella", Vector3(1.0, ACQUA - 0.02, 0.6), 70.0)
 	_metti("secchiello", Vector3(-VASCA - 5.0, 0, -VASCA - 4.2), 20.0)
-	_metti("detriti", Vector3(-VASCA - 7.6, 0, -VASCA - 1.2), 30.0)
+	# (davanti alla riva del ramo ovest, nella piazzetta dell'imbarco: dov'era ora c'è il muro di pile)
+	_metti("detriti", Vector3(-8.6, 0, -3.0), 30.0)
 
 
 ## La rotazione (gradi intorno a +Y) che porta il +Z di un nodo in [param da] a guardare verso [param a].
