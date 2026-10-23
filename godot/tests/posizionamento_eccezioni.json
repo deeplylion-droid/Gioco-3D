@@ -355,19 +355,6 @@
 		"motivo": "controllo del 22 ottobre notte, stato tappa7 (porte della sala pompe e portello aperti): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7)"
 	},
 	{
-		"zona": "mascotte",
-		"nodo": "Mascotte/StatuaPolpoA/statua_polpo_A",
-		"squadra": "mascotte",
-		"problema": "ingombro",
-		"pos": [
-			-4.5,
-			0.0,
-			-17.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
-	},
-	{
 		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
 		"squadra": "enigmi",
