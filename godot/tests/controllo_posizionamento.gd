@@ -104,6 +104,14 @@ const STACCO_VERTICI := 48
 ## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
 ## gli acquari (riscontro dell'utente: lì sotto i 4 m il controllo non vedeva niente).
 const OGGETTO_MAX_PARTI := 15.0
+## Gli scivoli (e i canali e i tubi della torre): pezzi enormi e sotto la struttura, quindi fuori dagli "oggetti"; si
+## controllano a parte contro tutto quello che li tocca (riscontro dell'utente sulla v0.3.11: "gli scivoli sono
+## leggermente compenetrati con le piattaforme su cui si appoggiano, quasi tutti"). Uno spigolo che passa dentro per
+## più di SCIVOLO_DENTRO, o che attraversa una grata, è un caso.
+const SCIVOLI := ["scivolo", "discesa", "canali", "tubo_inseguimento", "collare_inseguimento"]
+const SCIVOLO_DENTRO := 0.01
+## Le grate (due facce sottili, senza pieno in mezzo): basta che uno spigolo le attraversi.
+const GRATE := ["grigliat", "grata", "grate"]
 ## Nelle zone con stato: uno spigolo che passa dentro un altro oggetto per più di tanto (m) è una compenetrazione.
 const ATTRAVERSA_MIN := 0.03
 const CONTATTO := 0.05
@@ -254,6 +262,9 @@ func _controlla_scena(z: Dictionary) -> void:
 	for mi in mesh:
 		_estremita(z, mi)
 	print("  e) tubi e cavi con un capo libero: %d" % (_trovati.size() - prima))
+	prima = _trovati.size()
+	_scivoli_dentro(z, mesh)
+	print("  f) scivoli che entrano in pedane, travi o sostegni: %d" % (_trovati.size() - prima))
 	print("  (%.0f s)" % ((Time.get_ticks_msec() - t0) / 1000.0))
 	_radice.queue_free()
 	_corpi.clear()
@@ -1891,6 +1902,80 @@ func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 				massimo = l_dentro
 				_punto_dentro = medio
 		t += passo
+	corpo.collision_layer = STRATO
+	return massimo
+
+
+## f) Gli scivoli contro quello che li tocca (pedane, grate, travi, sostegni, tralicci): gli spigoli dello scivolo che
+## passano nell'altro e quelli dell'altro che passano nello scivolo, solo nel box in comune (gli scivoli sono lunghi
+## decine di metri: si guardano tutti i triangoli lì, non un campione).
+func _scivoli_dentro(z: Dictionary, mesh: Array) -> void:
+	var scivoli := mesh.filter(func(mi): return _e_scivolo(mi))
+	for s_ in scivoli:
+		var bs := _box(s_).grow(0.02)
+		for m in mesh:
+			if m == s_ or _e_scivolo(m) or _acqua.has(m) or not bs.intersects(_box(m)):
+				continue
+			var comune := bs.intersection(_box(m).grow(0.02))
+			var grata := GRATE.any(func(g): return String(_nodo(m)).to_lower().contains(g))
+			var d1 := _spigoli_nel_box(s_, m, comune, grata)
+			var p1 := _punto_dentro
+			var d2 := _spigoli_nel_box(m, s_, comune, false)
+			if d1 >= d2:
+				_punto_dentro = p1
+			var d := maxf(d1, d2)
+			if d > SCIVOLO_DENTRO:
+				_trova(z, s_, "compenetra", _punto_dentro, "entra in %s per %d cm (per esempio in %s)" % [_nodo(m), maxi(roundi(d * 100.0), 1), _punto_dentro.snappedf(0.01)])
+
+
+static func _parole_scivolo(nome: String) -> bool:
+	return SCIVOLI.any(func(p): return nome.contains(p))
+
+
+func _e_scivolo(mi: MeshInstance3D) -> bool:
+	return _parole_scivolo(String(mi.name).to_lower())
+
+
+## Il tratto più lungo di uno spigolo di [param a] (dentro [param box]) che sta nel pieno di [param b]. Con
+## [param grata] basta che lo spigolo attraversi una faccia di b (una grata non ha pieno): conta come 1 m.
+func _spigoli_nel_box(a: MeshInstance3D, b: MeshInstance3D, box: AABB, grata: bool) -> float:
+	if not _corpo_di.has(b):
+		return 0.0
+	var facce := a.global_transform * a.mesh.get_faces()
+	var corpo := _corpo_di[b] as StaticBody3D
+	corpo.collision_layer = STRATO_SOLO
+	var massimo := 0.0
+	for t in facce.size() / 3:
+		var t0 := facce[t * 3]
+		var t1 := facce[t * 3 + 1]
+		var t2 := facce[t * 3 + 2]
+		if not box.intersects(AABB(t0, Vector3.ZERO).expand(t1).expand(t2)):
+			continue
+		for e in 3:
+			var p0 := facce[t * 3 + e]
+			var p1 := facce[t * 3 + (e + 1) % 3]
+			var l := p0.distance_to(p1)
+			if l < 0.004:
+				continue
+			var d := (p1 - p0) / l
+			var h0 := _raggio(p0 + d * 0.001, p1 - d * 0.001, STRATO_SOLO)
+			if h0.is_empty():
+				continue
+			if grata:
+				# uno spigolo che passa da una parte all'altra della grata (non uno che ci finisce sopra)
+				var q0 := (h0.position as Vector3)
+				if p0.distance_to(q0) > 0.004 and p1.distance_to(q0) > 0.004:
+					massimo = 1.0
+					_punto_dentro = q0
+				continue
+			var h1 := _raggio(p1 - d * 0.001, p0 + d * 0.001, STRATO_SOLO)
+			if h1.is_empty():
+				continue
+			var medio := ((h0.position as Vector3) + (h1.position as Vector3)) * 0.5
+			var l_dentro := (h0.position as Vector3).distance_to(h1.position)
+			if l_dentro > massimo and _nel_pieno(medio):
+				massimo = l_dentro
+				_punto_dentro = medio
 	corpo.collision_layer = STRATO
 	return massimo
 
