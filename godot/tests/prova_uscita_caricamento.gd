@@ -4,6 +4,9 @@ extends Node
 ##   torre [s]  la sala, la precarica della torre e l'uscita dopo s secondi (0: subito);
 ##   cambio     la sala, la precarica della torre e subito il ritorno al titolo (la sala esce dall'albero);
 ##   riparti    come la fine di test_acquari: la sala si ricarica mentre la torre carica, poi l'uscita;
+##   riparti_dopo come la fine di test_tappa8 (CI di lavoro/godot 2a4f4a8a): la torre ha finito di caricare,
+##              parte Game.esci() e, mentre aspetta, la morte fa ripartire il livello (GameState.respawn): la sala
+##              nuova richiede la torre nel thread;
 ##   livello [s] la schermata di caricamento del livello e l'uscita dopo s secondi.
 ##   pieno      controprova: il livello caricato fino in fondo controllando lo stato, 60 fotogrammi, quit();
 ##   pieno_esci il livello chiesto con Game.carica_in_thread, 1 s, poi Game.esci().
@@ -57,6 +60,7 @@ func _run() -> void:
 	for i in 30:
 		await get_tree().process_frame
 	var sala := get_tree().current_scene
+	var torre: String = sala.get(&"sala_torre_scena")
 	sala.call(&"_precarica_torre")
 	print("torre in caricamento: %s" % sala.get(&"_torre_in_caricamento"))
 	var attesa := float(OS.get_cmdline_user_args()[2]) if OS.get_cmdline_user_args().size() > 2 else 0.0
@@ -66,6 +70,24 @@ func _run() -> void:
 		await get_tree().process_frame
 	print("dopo %.1f s: stato %d" % [(Time.get_ticks_msec() - t0) / 1000.0,
 			ResourceLoader.load_threaded_get_status(sala.get(&"sala_torre_scena"))])
+	if modo == "riparti_dopo":
+		# la torre finisce di caricare, poi l'uscita; subito dopo il respawn come quando lei ti prende
+		while sala.get(&"_torre_in_caricamento"):
+			await get_tree().process_frame
+		print("torre caricata, ora Game.esci() e subito il respawn")
+		print("USCITA con il respawn durante l'attesa")
+		Game.esci()
+		await get_tree().process_frame
+		GameState.respawn()
+		for i in 3:
+			await get_tree().process_frame
+		var nuova := get_tree().current_scene
+		if nuova != sala and nuova and nuova.has_method(&"_precarica_torre"):
+			nuova.call(&"_precarica_torre")
+			print("sala ricaricata, torre di nuovo in caricamento: %s" % nuova.get(&"_torre_in_caricamento"))
+		else:
+			print("sala non ricaricata (si sta uscendo)")
+		return
 	if modo == "riparti":
 		# come la fine di test_acquari: la sala si ricarica (la vecchia esce con la torre in caricamento,
 		# la nuova la richiede di nuovo), 10 fotogrammi e quit()
@@ -80,7 +102,9 @@ func _run() -> void:
 		for i in 5:
 			await get_tree().process_frame
 		print("sala uscita, ora quit")
-	var in_corso: bool = get_tree().current_scene.get(&"_torre_in_caricamento")
+	# la stessa misura di Game.esci (lo stato nel ResourceLoader), non il flag della sala: la torre può essere già
+	# caricata prima che la sala la ritiri (CI di lavoro/godot 2a7ac4d9: "torre 0.3", "aspettati" mancava)
+	var in_corso := ResourceLoader.load_threaded_get_status(torre) == ResourceLoader.THREAD_LOAD_IN_PROGRESS
 	print("USCITA con la torre in caricamento: %s" % ("IN CORSO" if in_corso else "già finita"))
 	_esci()
 

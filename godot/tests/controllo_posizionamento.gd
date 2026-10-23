@@ -39,6 +39,11 @@ const ZONE := [
 	# come quando ci arriva (enigmi non risolti) e dopo (risolti)
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_arrivo", "parti": ["Risalita"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_dopo", "parti": ["Risalita"]},
+	# la tappa 7 (il ritorno): le porte col maniglione (sala pompe, ponte) e il portello sul fondo della piscina aperti
+	# (coordinatore, 22 ottobre; collaudo: la porta della sala pompe aperta sporgeva sulla strada del ritorno). Senza
+	# "zona": ogni caso prende la zona del giro iniziale
+	{"scena": "res://scenes/sala_principale.tscn", "stato": "tappa7", "parti": ["Interni/Ambienti/Corridoio/porta_sala_pompe",
+			"Tecnici/Ambienti/SalaPompe/PORTA_ponte", "Sala/Interattivi/sala_portello_scarico"]},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "inseguimento_dopo",
 			"parti": ["SalaInseguimento"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
@@ -59,10 +64,17 @@ const SQUADRE := [
 const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2",
 	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
 ## Effetti a tempo (schizzi, getti, vapore, particelle): durano pochi secondi e si sovrappongono per natura, non sono
-## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dal nome nel percorso o dalla classe.
-const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "splash", "gocce", "bolle",
+## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dalle parole del nome di un nodo
+## del percorso o della classe del suo script: una parola che comincia con una di queste (vedi _parole). Non basta
+## "contiene": "oggetti" contiene "getti", e tutto Sala/Oggetti restava fuori come uno schizzo (collaudo, 23 ottobre).
+const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "gocce", "bolle",
 	"drip"]   # drip: le gocce che cadono dalle dita della medusa (WaterDripEmitter), si vedono solo mentre cadono
-const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain"]
+## Solo nella classe dello script, non nei nomi (nei nomi può essere l'insegna o il logo del parco).
+const EFFETTI_CLASSE := ["splash"]
+const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain",
+	"asta", "aste", "corda", "corde", "fune", "funi", "rope", "gancio", "ganci"]
+## Il capo di un tubo, un cavo, un'asta... deve stare a meno di questo da una superficie vera (o infilato in un pieno).
+const CAPO := 0.005
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
 ## Un oggetto di scena: una mesh con la diagonale del box fra questi due valori (m). Più grande è architettura.
@@ -75,13 +87,18 @@ const OGGETTO_MAX := 4.0
 const SEVERO := true
 ## La CI rossa anche con un solo caso "da correggere" (non solo con i casi nuovi): si accende per ultimo, quando le
 ## squadre hanno i loro elenchi (accordo col coordinatore del 22 ottobre).
-const BLOCCA_DA_CORREGGERE := false
+const BLOCCA_DA_CORREGGERE := true
 const OGGETTO_MAX_SEVERO := 30.0
 ## Architettura (pavimenti, muri, soffitti, strutture dei modelli d'ambiente): non è un oggetto da appoggiare.
 const ARCHITETTURA := ["architettura", "struttura", "pavimento", "pavimenti", "muro", "muri", "parete", "pareti",
 	"soffitto", "cupola"]
 ## Staccato: ogni oggetto deve toccare entro tanto (m) qualcosa che lo regge.
 const STACCO := 0.005
+## Sotto questa misura (diagonale del box, m) un oggetto si misura anche con la distanza vera fra le mesh, non solo con
+## la forma convessa (vedi _contatto_vero); oltre, solo se ha un appoggio solo.
+const PICCOLO := 0.4
+const VERTICI_VERI := 300
+const VERTICI_TUTTI := 3000
 ## Quanti vertici per oggetto si provano per lo staccato.
 const STACCO_VERTICI := 48
 ## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
@@ -93,6 +110,9 @@ const CONTATTO := 0.05
 const PASSO_GRIGLIA := 0.25
 const TESTA_DA := 0.35
 const TESTA_A := 2.0
+## All'altezza della testa (da TESTA_LARGA_DA a TESTA_A) l'ingombro si cerca fino a TESTA_LARGA dall'asse, non 10 cm.
+const TESTA_LARGA_DA := 1.2
+const TESTA_LARGA := 0.2
 ## Dove si sta accovacciati per forza, lo spazio libero arriva fin qui (crouch_height del giocatore, player.gd).
 const ACCOVACCIATO := 1.05
 const GRADINO := 0.4
@@ -119,6 +139,9 @@ var _nascoste_radici := {}
 var _copertura: Array = []
 var _nascoste_ora := {}
 var _tocca := {}
+var _punto_dentro := Vector3.ZERO   # dove _spigoli_dentro ha trovato il tratto più lungo nel pieno
+var _staccati_veri := {}   # oggetto -> le mesh che la forma convessa toccava ma la mesh vera no
+var _sferetta: PhysicsShapeQueryParameters3D
 var _box_nascoste: Array[AABB] = []   # le mesh nascoste in questo giro (vedi _gruppi_staccati)
 var _multimesh_senza: Array[String] = []   # MultiMesh senza le trasformazioni: non controllati (vedi _espandi_multimesh)           # MeshInstance3D -> le mesh che tocca (vedi _segna_tocchi)
 var _nascoste_base := {}   # scena -> {percorso del nodo nascosto: mesh}
@@ -135,7 +158,7 @@ func _run() -> void:
 	var solo := OS.get_cmdline_user_args().slice(1)
 	for z in ZONE:
 		var nome_scena := String(z["scena"]).get_file().get_basename()
-		if not solo.is_empty() and not solo.has(nome_scena) and not solo.has(z.get("zona", "")):
+		if not solo.is_empty() and not solo.has(nome_scena) and not solo.has(z.get("zona", "")) and not solo.has(z.get("stato", "")):
 			continue
 		await _controlla_scena(z)
 	_confronta()
@@ -183,7 +206,7 @@ func _controlla_scena(z: Dictionary) -> void:
 		await get_tree().physics_frame
 	_spazio = (_radice as Node3D).get_world_3d().direct_space_state if _radice is Node3D else get_viewport().get_world_3d().direct_space_state
 	_espandi_multimesh()
-	_congela_scheletri()
+	await _congela_scheletri()
 	var mesh := _mesh_visibili()
 	print("  %d mesh visibili" % mesh.size())
 	_elenca_nascoste()
@@ -200,6 +223,7 @@ func _controlla_scena(z: Dictionary) -> void:
 	if SEVERO:
 		prima = _trovati.size()
 		_tocca.clear()
+		_staccati_veri.clear()
 		for mi in oggetti:
 			_staccato(z, mi)
 		_gruppi_staccati(z, oggetti)
@@ -255,6 +279,14 @@ func _prepara(stato: String) -> void:
 			var lei := _radice.find_child("LeiSbuca", true, false)
 			if lei and lei.has_method(&"_affaccia"):
 				lei.call(&"_affaccia")
+			for i in 30:
+				await get_tree().physics_frame
+			return
+		"tappa7":
+			for porta in _radice.find_children("*", "PortaManiglione", true, false):
+				porta.call(&"load_state", {"aperta": true, "bloccata": false})
+			for portello in _radice.find_children("*", "HingedHatch", true, false):
+				portello.call(&"load_state", {"open": true})
 			for i in 30:
 				await get_tree().physics_frame
 			return
@@ -348,7 +380,7 @@ func _tipo_nascosta(n: Node) -> String:
 	for pezzo in percorso.split("/"):
 		if pezzo == "lei" or pezzo.contains("medusa") or pezzo.contains("medusin") or pezzo.contains("bambino"):
 			return "creatura, si muove (la guarda il collaudo)"
-	if EFFETTI.any(func(e): return percorso.contains(e)) or _e_acqua(percorso):
+	if Array(percorso.split("/")).any(func(x): return _e_effetto(x)) or _e_acqua(percorso):
 		return "effetto o acqua, esclusi"
 	if percorso.split("/").has("graybox"):
 		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
@@ -414,23 +446,47 @@ func _espandi_multimesh() -> void:
 ## diventa quella messa in posa e lo scheletro si stacca (il controllo non anima niente). Senza schermo
 ## bake_mesh_from_current_skeleton_pose non funziona (la skin si registra col renderer): lo skinning si fa qui.
 func _congela_scheletri() -> void:
-	var n_cotte := 0
+	# la posa con i modificatori dello scheletro (i tentacoli spinti fuori dai muri, lo sguardo: mascotte, 22 ottobre)
+	# c'è solo subito dopo un aggiornamento dello scheletro: lo si fa girare un momento, si aspetta skeleton_updated e
+	# lì si mettono in posa le sue mesh
+	var per_scheletro := {}
 	for n in _radice.find_children("*", "MeshInstance3D", true, false):
 		var mi := n as MeshInstance3D
 		if mi.mesh == null or mi.skeleton.is_empty() or mi.skin == null or not _visibile(mi):
 			continue
 		var sk := mi.get_node_or_null(mi.skeleton) as Skeleton3D
-		if sk == null:
-			continue
-		var cotta := _in_posa(mi, sk)
-		if cotta == null:
-			continue
-		mi.skin = null
-		mi.skeleton = NodePath()
-		mi.mesh = cotta
-		n_cotte += 1
+		if sk:
+			per_scheletro.get_or_add(sk, []).append(mi)
+	var n_cotte := 0
+	for sk in per_scheletro:
+		var cotte := {}
+		var fatto := [false]
+		var cuoci := func():
+			if fatto[0]:
+				return
+			fatto[0] = true
+			for mi in per_scheletro[sk]:
+				cotte[mi] = _in_posa(mi, sk)
+		(sk as Skeleton3D).skeleton_updated.connect(cuoci)
+		(sk as Node).process_mode = Node.PROCESS_MODE_ALWAYS
+		for i in 10:
+			await get_tree().process_frame
+			if fatto[0]:
+				break
+		(sk as Node).process_mode = Node.PROCESS_MODE_INHERIT
+		(sk as Skeleton3D).skeleton_updated.disconnect(cuoci)
+		if not fatto[0]:
+			push_warning("controllo: lo scheletro %s non si è aggiornato, posa senza modificatori" % _nodo(sk))
+			cuoci.call()
+		for mi in cotte:
+			if cotte[mi] == null:
+				continue
+			(mi as MeshInstance3D).skin = null
+			(mi as MeshInstance3D).skeleton = NodePath()
+			(mi as MeshInstance3D).mesh = cotte[mi]
+			n_cotte += 1
 	if n_cotte > 0:
-		print("  mesh con scheletro nella posa del momento: %d" % n_cotte)
+		print("  mesh con scheletro nella posa del momento (modificatori compresi): %d" % n_cotte)
 
 
 ## La mesh di mi messa nella posa corrente di sk (nello spazio di mi), solo i triangoli (per le misure).
@@ -550,12 +606,39 @@ func _elenca_nascoste() -> void:
 func _effetto(mi: Node) -> bool:
 	var k := mi
 	while k and k != _radice:
-		var nome := String(k.name).to_lower()
-		var classe := classe_di(k).to_lower()
-		if EFFETTI.any(func(e): return nome.contains(e) or classe.contains(e)):
+		if _e_effetto(String(k.name), classe_di(k)):
 			return true
 		k = k.get_parent()
 	return false
+
+
+static func _e_effetto(nome: String, classe := "") -> bool:
+	var parole := _parole(nome) + _parole(classe)
+	var di_classe := _parole(classe)
+	return parole.any(func(w): return EFFETTI.any(func(e): return w.begins_with(e))) \
+			or di_classe.any(func(w): return EFFETTI_CLASSE.any(func(e): return w.begins_with(e)))
+
+
+## Le parole di un nome, minuscole: si divide a ogni carattere che non è una lettera e dove una minuscola è seguita da
+## una maiuscola (SchizzoCoda -> schizzo, coda; det_getto_2 -> det, getto; WaterDripEmitter -> water, drip, emitter).
+static func _parole(nome: String) -> Array:
+	var out := []
+	var w := ""
+	for i in nome.length():
+		var ch := nome[i]
+		var lettera := ch.to_lower() != ch.to_upper()
+		if not lettera:
+			if not w.is_empty():
+				out.append(w.to_lower())
+			w = ""
+			continue
+		if not w.is_empty() and ch == ch.to_upper() and w[w.length() - 1] == w[w.length() - 1].to_lower():
+			out.append(w.to_lower())
+			w = ""
+		w += ch
+	if not w.is_empty():
+		out.append(w.to_lower())
+	return out
 
 
 static func classe_di(n: Node) -> String:
@@ -622,7 +705,8 @@ func _e_oggetto(mi: MeshInstance3D) -> bool:
 
 func _zona(z: Dictionary, n: Node) -> String:
 	var p := _radice.get_path_to(n)
-	if z.has("parti") and not (z["parti"] as Array).any(func(x): return String(p).begins_with(x)):
+	if (z.has("parti") and not (z["parti"] as Array).any(func(x): return String(p).begins_with(x))) \
+			or (not z.has("zona") and not z.has("sotto")):
 		# negli stati, un caso fuori dalle parti (un ingombro di quello che si è aperto): la zona del giro iniziale
 		for b in ZONE:
 			if b["scena"] == z["scena"] and not b.has("stato"):
@@ -861,12 +945,119 @@ func _segna_tocchi(mi: MeshInstance3D, qp: PhysicsShapeQueryParameters3D) -> boo
 		var m: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
 		if m:
 			altri.append(m)
+	# gli oggetti piccoli (sotto PICCOLO) o con un solo appoggio: la distanza vera fra le mesh, vertice contro faccia
+	# come il collaudo. La forma convessa riempie i vuoti (fra il braccio di una lampada e il muro) e "toccava" anche
+	# a 1-5 cm (collaudo, 22 ottobre: lampade della torre e dell'inseguimento, Polaroid10 sul lettino)
+	# e, per tutti, i sostegni fissi (muri, strutture, pezzi oltre i 4 m): il braccio di una lampada "toccava" la
+	# struttura della torre con la forma, a 5 cm con la mesh vera
+	if not altri.is_empty():
+		var tutti := _box(mi).size.length() < PICCOLO or altri.size() == 1
+		var veri := altri.filter(func(m): return not (tutti or _box(m).size.length() >= OGGETTO_MAX) or _contatto_vero(mi, m, qp))
+		if veri.is_empty():
+			_staccati_veri[mi] = altri
+		altri = veri
 	_tocca[mi] = altri
 	# diagnosi: POSIZ_TOCCA=pezzo_del_nome stampa cosa tocca ogni oggetto che lo contiene
 	var cerca := OS.get_environment("POSIZ_TOCCA")
 	if not cerca.is_empty() and _nodo(mi).contains(cerca):
-		print("    TOCCA %s -> %s" % [_nodo(mi), ", ".join(altri.map(func(m): return "%s (%.1f m)" % [_nodo(m), _box(m).size.length()]))])
+		print("    TOCCA %s %s -> %s" % [_nodo(mi), _box(mi).get_center().snappedf(0.01), ", ".join(altri.map(func(m): return "%s (%.1f m)" % [_nodo(m), _box(m).size.length()]))])
 	return not altri.is_empty()
+
+
+## Vero se le mesh vere di a e b sono a meno di STACCO: una sferetta di STACCO su un vertice di a (fino a VERTICI_VERI,
+## quelli nel box di b allargato) tocca il corpo di b; e, se b è piccolo, il contrario.
+## Si provano per primi i vertici vicini ai punti dove la forma convessa allargata (qp) tocca b.
+func _contatto_vero(a: MeshInstance3D, b: MeshInstance3D, qp: PhysicsShapeQueryParameters3D) -> bool:
+	var corpo := _corpo_di.get(b) as StaticBody3D
+	if corpo == null:
+		return true
+	corpo.collision_layer = STRATO_SOLO
+	var maschera := qp.collision_mask
+	qp.collision_mask = STRATO_SOLO
+	var contatti := _spazio.collide_shape(qp, 16)
+	qp.collision_mask = maschera
+	corpo.collision_layer = STRATO
+	var su_b := PackedVector3Array()
+	for i in range(1, contatti.size(), 2):
+		su_b.append(contatti[i])
+	return _vertici_su(a, b, su_b) or (_box(b).size.length() < PICCOLO * 4.0 and _vertici_su(b, a, su_b))
+
+
+func _vertici_su(a: MeshInstance3D, b: MeshInstance3D, vicino_a: PackedVector3Array) -> bool:
+	var corpo := _corpo_di.get(b) as StaticBody3D
+	if corpo == null:
+		return true
+	var vicino := _box(b).grow(STACCO * 2.0)
+	var gt := a.global_transform
+	var punti := []
+	var visti := {}
+	for v in a.mesh.get_faces():
+		var w := gt * v
+		if not vicino.has_point(w) or visti.has(w):
+			continue
+		visti[w] = true
+		# la distanza dal punto di contatto più vicino (per provare prima quelli)
+		var d := 0.0
+		if not vicino_a.is_empty():
+			d = INF
+			for c in vicino_a:
+				d = minf(d, w.distance_squared_to(c))
+		punti.append([d, w])
+	if punti.is_empty():
+		return false
+	punti.sort_custom(func(x, y): return x[0] < y[0])
+	if _sferetta == null:
+		_sferetta = PhysicsShapeQueryParameters3D.new()
+		var sf := SphereShape3D.new()
+		sf.radius = STACCO
+		_sferetta.shape = sf
+		_sferetta.collision_mask = STRATO_SOLO
+	corpo.collision_layer = STRATO_SOLO
+	var tocca := false
+	for i in mini(punti.size(), VERTICI_VERI):
+		_sferetta.transform = Transform3D(Basis(), punti[i][1])
+		if not _spazio.intersect_shape(_sferetta, 1).is_empty():
+			tocca = true
+			break
+	if not tocca and punti.size() > VERTICI_VERI:
+		# i punti di contatto della forma possono stare tutti altrove (la mandata di una pompa, mentre il fondo poggia
+		# sul basamento: ambienti-2, 23 ottobre): anche gli altri vertici nel box di b, fino a VERTICI_TUTTI
+		var passo := maxi(1, (punti.size() - VERTICI_VERI) / VERTICI_TUTTI)
+		var i := VERTICI_VERI
+		while i < punti.size():
+			_sferetta.transform = Transform3D(Basis(), punti[i][1])
+			if not _spazio.intersect_shape(_sferetta, 1).is_empty():
+				tocca = true
+				break
+			i += passo
+	if not tocca:
+		# infilato più di 5 mm (lo stelo di un manometro nella pompa, un capo nel muro): i vertici vicini al contatto
+		# stanno dentro b, lontani dalla sua superficie
+		for i in mini(punti.size(), 40):
+			if _nel_pieno(punti[i][1]):
+				tocca = true
+				break
+	if not tocca:
+		# o uno spigolo che passa una faccia di b (un braccio infilato in un muro fatto di una faccia sola: i vertici
+		# del cilindro sono solo sulle due basi, lontani dalla faccia)
+		var facce := a.mesh.get_faces()
+		var provati := 0
+		var t := 0
+		while t < facce.size() and provati < 400:
+			var p0 := gt * facce[t]
+			var p1 := gt * facce[t + 1]
+			var p2 := gt * facce[t + 2]
+			if vicino.has_point(p0) or vicino.has_point(p1) or vicino.has_point(p2):
+				for coppia in [[p0, p1], [p1, p2], [p2, p0]]:
+					provati += 1
+					if not _raggio(coppia[0], coppia[1], STRATO_SOLO).is_empty():
+						tocca = true
+						break
+				if tocca:
+					break
+			t += 3
+	corpo.collision_layer = STRATO
+	return tocca
 
 
 ## Gli oggetti che si toccano solo fra loro: la lampada e il suo vetro, a 2 cm dal muro, si reggevano a vicenda.
@@ -947,6 +1138,11 @@ func _trova_staccato(z: Dictionary, mi: MeshInstance3D, me: Array[RID]) -> void:
 	var c := b.get_center()
 	var giu := _raggio(Vector3(c.x, b.position.y, c.z), Vector3(c.x, b.position.y - 5.0, c.z), STRATO | Layers.WORLD, me)
 	var vuoto := "più di 5 m" if giu.is_empty() else "%.1f cm" % ((b.position.y - (giu.position as Vector3).y) * 100.0)
+	if _staccati_veri.has(mi):
+		var vicini: Array = _staccati_veri[mi]
+		_trova(z, mi, "staccato", c, "la sua forma sfiora %s, ma la mesh vera non lo tocca: fra i due più di %d mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a %s)" % [
+				", ".join(vicini.slice(0, 3).map(func(m): return _nodo(m))), roundi(STACCO * 1000.0), vuoto])
+		return
 	_trova(z, mi, "staccato", c, "non tocca niente entro %d mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a %s)" % [
 			roundi(STACCO * 1000.0), vuoto])
 
@@ -1043,6 +1239,9 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 	forma.size = Vector3(0.2, TESTA_A - TESTA_DA, 0.2)
 	var forma_accov := BoxShape3D.new()
 	forma_accov.size = Vector3(0.2, ACCOVACCIATO - TESTA_DA, 0.2)
+	var forma_testa := CylinderShape3D.new()
+	forma_testa.radius = TESTA_LARGA
+	forma_testa.height = TESTA_A - TESTA_LARGA_DA
 	var q := PhysicsShapeQueryParameters3D.new()
 	q.collide_with_areas = false
 	var visti := {}
@@ -1064,6 +1263,16 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		if not r.is_empty():
 			q.collision_mask = Layers.WORLD | Layers.BARRIERS
 			solido = not _spazio.intersect_shape(q, 1).is_empty()
+		# all'altezza della testa (da TESTA_LARGA_DA) lo spazio è più largo: una lampada che sporge dal muro a 10-30 cm
+		# da dove si cammina finisce in faccia (collaudo, 22 ottobre: i fari della torre, le lampade del raccordo)
+		if testa == TESTA_A:
+			q.shape = forma_testa
+			q.transform = Transform3D(Basis(), piedi + Vector3(0, (TESTA_LARGA_DA + TESTA_A) * 0.5, 0))
+			q.collision_mask = STRATO
+			var gia := r.map(func(h): return (h.collider as CollisionObject3D).get_rid())
+			for h in _tutti_i_corpi(q):
+				if not gia.has((h.collider as CollisionObject3D).get_rid()):
+					r.append(h)
 		for h in r:
 			var mi: MeshInstance3D = _corpi.get((h.collider as CollisionObject3D).get_rid())
 			if mi == null or _acqua.has(mi) or _aperta_dal_giocatore(mi):
@@ -1085,7 +1294,7 @@ func _ingombri(z: Dictionary, mesh: Array) -> void:
 		var alto: float = visti[mi][3]
 		var dove := "all'altezza della testa" if alto > 1.4 else ("all'altezza del busto" if alto > 0.9 else "all'altezza delle gambe")
 		var quote := " (pavimento a y %.2f)" % visti[mi][5] if visti[mi][6] - visti[mi][5] < 0.05 else " (pavimenti fra y %.2f e %.2f)" % [visti[mi][5], visti[mi][6]]
-		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dal giocatore, fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)%s, %s" % [
+		_trova(z, mi, "ingombro", p, "nello spazio di chi cammina, %s: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra %.2f e %.2f m sopra il pavimento (%d celle da 25 cm)%s, %s" % [
 				dove, visti[mi][2], alto, visti[mi][1], quote,
 				"con la collisione (ci si sbatte contro)" if visti[mi][4] else "senza collisione (si attraversa)"])
 
@@ -1247,7 +1456,9 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 	if _acqua.has(mi):
 		return
 	var nome := String(mi.name).to_lower()
-	if not NOMI_TUBI.any(func(t): return nome.contains(t)):
+	# per nome, o un pezzo fatto da codice (nome automatico) lungo e sottile: le aste e i cavi delle lampade
+	var da_codice := String(mi.name).begins_with("@") and (mi.mesh is CylinderMesh or mi.mesh is BoxMesh)
+	if not da_codice and not NOMI_TUBI.any(func(t): return nome.contains(t)):
 		return
 	var b := _box(mi)
 	var lati := [b.size.x, b.size.y, b.size.z]
@@ -1255,7 +1466,7 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 	var ordinati := lati.duplicate()
 	ordinati.sort()
 	# un pezzo solo e allungato (le mesh con tanti tubi insieme non si controllano così)
-	if float(ordinati[2]) < 0.4 or float(ordinati[2]) < 3.0 * float(ordinati[1]):
+	if float(ordinati[2]) < (0.3 if da_codice else 0.4) or float(ordinati[2]) < (6.0 if da_codice else 3.0) * float(ordinati[1]):
 		return
 	var v := mi.global_transform * mi.mesh.get_faces()
 	var lo := INF
@@ -1266,25 +1477,89 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 	var me: Array[RID] = []
 	if _corpo_di.has(mi):
 		me.append((_corpo_di[mi] as StaticBody3D).get_rid())
+	if _sferetta == null:
+		_sferetta = PhysicsShapeQueryParameters3D.new()
+		var sf := SphereShape3D.new()
+		sf.radius = STACCO
+		_sferetta.shape = sf
+	var centro := b.get_center()
+	var attaccati := {}
 	for capo in [lo, hi]:
-		var box := AABB()
-		var primo := true
+		# i vertici del capo (entro 1 cm dall'estremità lungo l'asse)
+		var punti := {}
 		for p in v:
-			if absf(p[asse] - capo) <= 0.08:
-				box = AABB(p, Vector3.ZERO) if primo else box.expand(p)
-				primo = false
-		var forma := BoxShape3D.new()
-		# severo: il capo deve essere collegato (1 cm), non solo vicino a qualcosa
-		forma.size = box.size + Vector3.ONE * (0.01 if SEVERO else CONTATTO) * 2.0
-		var q := PhysicsShapeQueryParameters3D.new()
-		q.shape = forma
-		q.transform = Transform3D(Basis(), box.get_center())
-		q.collision_mask = STRATO | Layers.WORLD
-		q.exclude = me
-		if _spazio.intersect_shape(q, 1).is_empty():
-			_trova(z, mi, "estremita_libera", box.get_center(), "un capo del %s non è collegato a niente entro %s (né muro, pavimento, soffitto, né un altro tubo o un macchinario)" % [
-					"catena" if nome.contains("caten") or nome.contains("chain") else ("tubo" if not nome.contains("cav")
-					and not nome.contains("filo") and not nome.contains("cable") else "cavo"), "1 cm" if SEVERO else "5 cm"])
+			if absf(p[asse] - capo) <= 0.01:
+				punti[p] = true
+		attaccati[capo] = _capo_attaccato(punti.keys(), me, centro)
+	for capo in [lo, hi]:
+		if attaccati[capo]:
+			continue
+		# un pezzo verticale che poggia col capo di sotto (un palo) può avere libero quello di sopra; il capo di sotto
+		# (un cavo appeso) no
+		if asse == 1 and capo == hi and attaccati[lo]:
+			continue
+		var punti := {}
+		for p in v:
+			if absf(p[asse] - capo) <= 0.01:
+				punti[p] = true
+		var c := Vector3.ZERO
+		for p in punti:
+			c += p
+		c /= maxf(punti.size(), 1)
+		var cosa := "catena" if nome.contains("caten") or nome.contains("chain") else ("asta" if da_codice or nome.contains("asta") or nome.contains("aste") \
+				else ("cavo" if nome.contains("cav") or nome.contains("filo") or nome.contains("cable") or nome.contains("cord") or nome.contains("fun") \
+				else ("gancio" if nome.contains("ganci") else "tubo")))
+		_trova(z, mi, "estremita_libera", c, "un capo del pezzo (%s) finisce nel vuoto: nessuna superficie vera a meno di %d mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)" % [
+				cosa, roundi(CAPO * 1000.0)])
+
+
+## Vero se il capo tocca una mesh vera: un suo vertice a meno di CAPO da una faccia (sferetta sullo strato delle
+## mesh, se stesso escluso), o il suo centro nel pieno di una mesh vicina (un capo infilato in un muro o in un attacco).
+func _capo_attaccato(punti: Array, me: Array[RID], centro_pezzo: Vector3) -> bool:
+	if punti.is_empty():
+		return true
+	_sferetta.collision_mask = STRATO
+	_sferetta.exclude = me
+	var passo := maxi(1, punti.size() / 64)
+	var i := 0
+	while i < punti.size():
+		_sferetta.transform = Transform3D(Basis(), punti[i])
+		if not _spazio.intersect_shape(_sferetta, 1).is_empty():
+			_sferetta.collision_mask = STRATO_SOLO
+			_sferetta.exclude = []
+			return true
+		i += passo
+	_sferetta.collision_mask = STRATO_SOLO
+	_sferetta.exclude = []
+	var c := Vector3.ZERO
+	for p in punti:
+		c += p
+	c /= punti.size()
+	# passato di poco attraverso una faccia (un braccio infilato 1 cm in un muro fatto di una faccia sola): un raggio dal
+	# capo verso il pezzo, per 5 cm, colpisce la faccia
+	if not _raggio(c, c + (centro_pezzo - c).normalized() * 0.05, STRATO, me).is_empty():
+		return true
+	# infilato: le mesh vicine (5 cm), una per volta sullo strato STRATO_SOLO
+	var vicine := BoxShape3D.new()
+	vicine.size = Vector3.ONE * 0.1
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = vicine
+	q.transform = Transform3D(Basis(), c)
+	q.collision_mask = STRATO
+	q.exclude = me
+	var diagnosi := not OS.get_environment("POSIZ_CAPO").is_empty() and c.distance_to(str_to_var(OS.get_environment("POSIZ_CAPO"))) < 0.1
+	for h in _tutti_i_corpi(q):
+		var corpo := h.collider as StaticBody3D
+		corpo.collision_layer = STRATO_SOLO
+		var dentro := _nel_pieno(c)
+		if diagnosi:
+			print("    CAPO %s vicino a %s: nel pieno %s" % [c, _nodo(_corpi.get(corpo.get_rid())), dentro])
+		corpo.collision_layer = STRATO
+		if dentro:
+			return true
+	if diagnosi:
+		print("    CAPO %s: %d punti, nessuno a meno di 5 mm" % [c, punti.size()])
+	return false
 
 
 # --- d) compenetrazioni fra oggetti di scena -----------------------------------------------------------
@@ -1335,7 +1610,7 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					if p > ATTRAVERSA_MIN:
 						var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 						var altro: MeshInstance3D = b if chi == a else a
-						_trova(z, chi, "compenetra", i.get_center(), "passa dentro %s per %d cm" % [_nodo(altro), roundi(p * 100.0)])
+						_trova(z, chi, "compenetra", i.get_center(), "passa dentro %s per %d cm (nel pieno, per esempio, in %s)" % [_nodo(altro), roundi(p * 100.0), _punto_dentro.snappedf(0.01)])
 						continue
 				var piccolo := minf(ba.get_volume(), bb.get_volume())
 				if piccolo <= 0.0 or i.get_volume() < 0.3 * piccolo:
@@ -1415,7 +1690,12 @@ func _stesso_modello(a: Node, b: Node) -> bool:
 ## (un campione) un raggio dall'inizio alla fine e uno dalla fine all'inizio contro l'altra; se colpiscono tutti e
 ## due, il tratto fra i due punti colpiti è dentro (gli spigoli che toccano solo la superficie non contano).
 func _attraversa(a: MeshInstance3D, b: MeshInstance3D) -> float:
-	return maxf(_spigoli_dentro(a, b), _spigoli_dentro(b, a))
+	var m1 := _spigoli_dentro(a, b)
+	var p1 := _punto_dentro
+	var m2 := _spigoli_dentro(b, a)
+	if m1 >= m2:
+		_punto_dentro = p1
+	return maxf(m1, m2)
 
 
 func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
@@ -1449,7 +1729,15 @@ func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 			var h1 := _raggio(p1 - d * 0.005, p0 + d * 0.005, STRATO_SOLO)
 			if h1.is_empty():
 				continue
-			massimo = maxf(massimo, (h0.position as Vector3).distance_to(h1.position))
+			# conta solo se fra le due facce c'è il pieno (un muro, un bordo, il fondo), non il vuoto di una fossa o di
+			# una vasca aperte (coordinatore, 22 ottobre: un tentacolo che scende nella fossa non è una compenetrazione)
+			var medio := ((h0.position as Vector3) + (h1.position as Vector3)) * 0.5
+			if not _nel_pieno(medio):
+				continue
+			var l_dentro := (h0.position as Vector3).distance_to(h1.position)
+			if l_dentro > massimo:
+				massimo = l_dentro
+				_punto_dentro = medio
 		t += passo
 	corpo.collision_layer = STRATO
 	return massimo
@@ -1472,20 +1760,57 @@ func _frazione_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 	var i := 0
 	while i < vertici.size():
 		var p := piccola.global_transform * vertici[i]
-		var n := 0
-		var da := p
-		for k in 16:
-			var h := _raggio(da, da + Vector3(0, 50, 0), STRATO_SOLO)
-			if h.is_empty():
-				break
-			n += 1
-			da = (h.position as Vector3) + Vector3(0, 0.001, 0)
 		tot += 1
-		if n % 2 == 1:
+		if _nel_pieno(p):
 			dentro += 1
 		i += passo
 	corpo.collision_layer = STRATO
 	return float(dentro) / maxf(tot, 1)
+
+
+## Vero se p sta nel pieno della mesh sullo strato STRATO_SOLO: dispari verso l'alto, e dispari anche verso il basso
+## o in almeno 3 delle 4 direzioni orizzontali. Una fossa o una vasca aperte sopra danno pari verso l'alto (il vuoto
+## dove scende un tentacolo non è "dentro"); un oggetto appoggiato a terra di solito non ha la faccia di sotto, ma i
+## lati sì (un foglio nascosto dentro una base aperta in basso resta "dentro"). Un raggio solo verso l'alto dava
+## dentro anche il vuoto sotto un foglio o una cupola.
+func _nel_pieno(p: Vector3) -> bool:
+	# dal verso delle facce, non dalla parità: in 6 direzioni, se la prima faccia colpita è vista dal retro (lo stesso
+	# raggio senza le facce dal retro non la colpisce, o colpisce più lontano) vuol dire "dentro". Con pareti a faccia
+	# singola e bordi senza fondo (la fossa dell'area bimbi) la parità dava pieno anche il vuoto fra il fondo e un
+	# bordo che sporge (mascotte, 23 ottobre)
+	var dentro := 0
+	for d in [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]:
+		var h := _raggio(p, p + d * 50.0, STRATO_SOLO)
+		if h.is_empty():
+			continue
+		var q := PhysicsRayQueryParameters3D.create(p, p + d * 50.0, STRATO_SOLO)
+		q.hit_back_faces = false
+		var davanti := _spazio.intersect_ray(q)
+		var retro: bool = davanti.is_empty() or p.distance_to(davanti.position) > p.distance_to(h.position) + 0.0005
+		if retro:
+			dentro += 1
+		if _diagnosi_pieno(p):
+			print("    PIENO %s %s: colpita a %.3f m, %s" % [p.snappedf(0.01), d, p.distance_to(h.position), "dal retro" if retro else "davanti"])
+	return dentro >= 4
+
+
+## Diagnosi: POSIZ_PIENO=Vector3(x, y, z) stampa i raggi di _nel_pieno per i punti a meno di 30 cm.
+func _diagnosi_pieno(p: Vector3) -> bool:
+	var e := OS.get_environment("POSIZ_PIENO")
+	return not e.is_empty() and p.distance_to(str_to_var(e)) < 1.5
+
+
+## Quante volte il raggio da p verso dir passa le facce del corpo sullo strato STRATO_SOLO.
+func _attraversamenti(p: Vector3, dir: Vector3) -> int:
+	var n := 0
+	var da := p
+	for k in 16:
+		var h := _raggio(da, da + dir * 50.0, STRATO_SOLO)
+		if h.is_empty():
+			break
+		n += 1
+		da = (h.position as Vector3) + dir * 0.001
+	return n
 
 
 # --- rapporto e eccezioni ------------------------------------------------------------------------------
@@ -1541,7 +1866,8 @@ func _confronta() -> void:
 			nuovi.size(), noti.size(), spariti.size()])
 	var da_fare := noti.filter(func(t): return t.get("stato", "") != "voluto")
 	print("  casi da correggere (non \"voluto\"): %d" % da_fare.size())
-	if BLOCCA_DA_CORREGGERE:
+	# POSIZ_BLOCCA=1 prova il blocco senza accenderlo nella CI (per il giro sul commit candidato)
+	if BLOCCA_DA_CORREGGERE or OS.get_environment("POSIZ_BLOCCA") == "1":
 		check(da_fare.is_empty(), "nessun caso da correggere (%d da correggere; passano solo i casi \"voluto\", decisi dall'utente)" % da_fare.size())
 	for t in nuovi.slice(0, 40):
 		print("    NUOVO %s · %s · %s · %s · %s" % [t["zona"], t["problema"], t["nodo"], str(t["pos"]), t["dettaglio"]])

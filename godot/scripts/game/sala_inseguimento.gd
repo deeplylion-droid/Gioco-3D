@@ -117,6 +117,9 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 		(_coda.pop_front() as Callable).call()
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			await get_tree().process_frame
+			# tolta dall'albero mentre si costruiva (una morte ricarica la sala): non serve più, come nella torre
+			if not is_inside_tree():
+				return
 			t0 = Time.get_ticks_usec()
 	costruita = true
 
@@ -869,14 +872,18 @@ func _luci() -> void:
 		radice.add_child(s)
 		s.global_position = b(f[0])
 		s.look_at(b(f[1]), Vector3.UP)
-	# la scia rosa sul bordo della vasca 1, dalla parte da cui lei arriva
+	# la scia rosa sul bordo della vasca 1, dalla parte da cui lei arriva: stretta come il bordo (18 cm, smussato) e
+	# appoggiata sopra, così non pende nel vuoto ai lati (collaudo del 22 sera)
 	var bava := BavaRosa.new()
-	# (sul bordo vero della vasca: a -21,49 restava 2 cm sopra, collaudo del 22 sera)
-	bava.punti = PackedVector3Array([b([53.5, 17.91, -21.512]), b([50.09, 17.91, -21.512]), b([50.09, 15.9, -21.512])])
-	bava.larghezza = 0.2
+	bava.punti = PackedVector3Array([b([53.5, 17.91, -21.49]), b([50.09, 17.91, -21.49]), b([50.09, 15.9, -21.49])])
+	bava.larghezza = 0.08
+	bava.variazione = 0.25
 	bava.emissione = 2.5
 	bava.opacita = 0.9
-	bava.appoggia = false
+	bava.sollevamento = 0.003
+	bava.ricerca_su = 0.1
+	bava.ricerca_giu = 0.03
+	bava.appoggia = true
 	radice.add_child(bava)
 
 
@@ -949,7 +956,25 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 		m.emission_energy_multiplier = 6.0
 		anello.material_override = m
 		radice.add_child(anello)
-		anello.global_position = bersaglio + verso * 0.02
+		# appoggiato al piano del pannello sotto l'anello, non al bersaglio rialzato del centro (1-2 cm più avanti):
+		# la faccia si cerca lungo il cerchio dell'anello e conta la più avanti (sotto ci sono due piani: sul più
+		# arretrato l'anello passava dentro l'altro); 1 mm dentro
+		var v := verso.normalized()
+		var faccia := bersaglio
+		if pannello:
+			var l1 := v.cross(Vector3.UP if absf(v.y) < 0.9 else Vector3.RIGHT).normalized()
+			var l2 := v.cross(l1)
+			var fondo := -INF
+			for r in [t.inner_radius, (t.inner_radius + t.outer_radius) * 0.5, t.outer_radius]:
+				for k in 32:
+					var a := TAU * k / 32.0
+					var q := bersaglio + (l1 * cos(a) + l2 * sin(a)) * float(r)
+					var su: Variant = _faccia_mesh(pannello, q + v * 0.5, -v)
+					if su != null:
+						fondo = maxf(fondo, ((su as Vector3) - bersaglio).dot(v))
+			if fondo > -INF:
+				faccia = bersaglio + v * fondo
+		anello.global_position = faccia + v * ((t.outer_radius - t.inner_radius) * 0.5 - 0.001)
 		anello.global_basis = Basis(Quaternion(Vector3.UP, verso.normalized()))
 		var o2 := OmniLight3D.new()
 		o2.light_color = VERDE
@@ -964,6 +989,24 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 			o2.reparent(pannello)
 	else:
 		_sfarfalla(o, s)
+
+
+## Il primo punto delle mesh di [param radice] colpito dal raggio da [param da] verso [param dir] (null: niente).
+static func _faccia_mesh(radice: Node3D, da: Vector3, dir: Vector3) -> Variant:
+	var migliore: Variant = null
+	var d_min := INF
+	for n in radice.find_children("*", "MeshInstance3D", true, false) + ([radice] if radice is MeshInstance3D else []):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var f := mi.mesh.get_faces()
+		for i in range(0, f.size(), 3):
+			var c: Variant = Geometry3D.ray_intersects_triangle(da, dir, mi.global_transform * f[i],
+					mi.global_transform * f[i + 1], mi.global_transform * f[i + 2])
+			if c != null and da.distance_to(c) < d_min:
+				d_min = da.distance_to(c)
+				migliore = c
+	return migliore
 
 
 ## La lampada rossa guasta: si spegne e riaccende a scatti.

@@ -6,10 +6,12 @@ extends Node
 ## Avvia tre Godot di prova (tests/prova_uscita_caricamento.gd) che chiudono il gioco mentre caricano:
 ## la torre appena chiesta, la sala che si ricarica a un checkpoint con la torre in caricamento (come la
 ## fine di test_acquari) e il livello dalla schermata di caricamento. Per ognuno: esce con 0, all'uscita
-## Game ha aspettato il caricamento (non l'ha lasciato a metà mentre Godot smonta tutto).
+## Game ha aspettato il caricamento (non l'ha lasciato a metà mentre Godot smonta tutto). In più il respawn
+## durante l'attesa di Game.esci() (la fine di test_tappa8, CI di lavoro/godot 2a4f4a8a: lei ti prende, la sala
+## ripartiva e richiedeva la torre mentre si usciva): la sala non riparte e niente si carica a metà.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_uscita.gd
 
-const MODI := [["torre", "0.3"], ["riparti", "0"], ["livello", "1"]]
+const MODI := [["torre", "0.3"], ["riparti", "0"], ["livello", "1"], ["riparti_dopo"]]
 
 var _passed := 0
 var _failed := 0
@@ -31,7 +33,9 @@ func _run() -> void:
 		var testo := "".join(uscita)
 		check(codice == 0, "il gioco si chiude con 0 (codice %d)" % codice)
 		check(testo.contains("USCITA"), "si è chiuso mentre caricava")
-		if testo.contains("già finita"):
+		if modo[0] == "riparti_dopo":
+			check(testo.contains("sala non ricaricata (si sta uscendo)"), "mentre si esce il respawn non ricarica la sala")
+		elif testo.contains("già finita"):
 			# a volte, mentre la sala si ricarica, la torre finisce di caricare prima dell'uscita
 			print("  (la torre aveva già finito di caricare: niente da aspettare)")
 		else:

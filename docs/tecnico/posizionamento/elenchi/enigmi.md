@@ -279,3 +279,16 @@ Il controllo prendeva per acqua tutto quello che aveva "acqua" nel percorso, anc
 | sala | staccato | `Gioco/EnigmaAcquari/AcquarioBlu/Tirante4` | 6.55, 3.00, -23.15 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm) |
 | sala | staccato | `Gioco/EnigmaAcquari/AcquarioGiallo/Tirante2` | 16.05, 3.00, -21.45 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 149.8 cm) |
 | sala | staccato | `Gioco/EnigmaAcquari/AcquarioGiallo/Tirante4` | 17.75, 3.00, -23.15 | non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 128.0 cm) |
+
+## Distanza vera, 22 ottobre notte: 6 casi in più
+
+Il controllo misura anche la distanza vera fra le mesh, vertice contro faccia come il collaudo, per gli oggetti piccoli, per quelli con un appoggio solo e, per tutti, contro muri e strutture: la forma convessa "toccava" anche a 1-5 cm (il braccio di una lampada, il cavo che si ferma sotto il tetto). Tutti "da correggere".
+
+| Zona | Problema | Nodo | Posizione | Dettaglio |
+|---|---|---|---|---|
+| risalita | staccato | `Risalita/Fiume/@Node3D@23106/lampada` | -11.05, -2.40, 100.95 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb] |
+| risalita | staccato | `Risalita/Fiume/@Node3D@23140/lampada` | -55.79, -2.40, 85.23 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb] |
+| risalita | staccato | `Risalita/Fiume/@Node3D@23160/lampada` | -37.14, -2.40, 108.43 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb] |
+| risalita | staccato | `Risalita/Fiume/@Node3D@23180/lampada` | -43.78, -2.40, 89.86 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb] |
+| risalita | staccato | `Risalita/Fiume/@Node3D@23183/lampada` | -37.14, -2.40, 79.37 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb] |
+| sala | staccato | `Gioco/EnigmaAcquari/AcquarioMisto/Allacci/CoperchioPompa` | 8.74, 0.81, -21.61 | la sua forma sfiora Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) |

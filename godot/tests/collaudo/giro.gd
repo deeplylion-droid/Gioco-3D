@@ -67,6 +67,8 @@ func _run() -> void:
 	var tolti := 0
 	for classe in ["VoxelGI", "LightmapGI", "ReflectionProbe", "GPUParticles3D", "CPUParticles3D", "FogVolume"]:
 		for n in livello.find_children("*", classe, true, false):
+			if _nel_giocatore(n):
+				continue   # le particelle dello zaino: il giocatore le usa nel suo _ready
 			n.get_parent().remove_child(n)
 			n.free()
 			tolti += 1
@@ -299,3 +301,11 @@ func _medio(t: Texture2D) -> Color:
 		c.a = 1.0
 	_colori[t] = c
 	return c
+
+
+func _nel_giocatore(n: Node) -> bool:
+	while n:
+		if n is CharacterBody3D:
+			return true
+		n = n.get_parent()
+	return false

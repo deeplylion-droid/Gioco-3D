@@ -9,7 +9,7 @@ const F := preload("res://scripts/risalita/fiume_gioco.gd")
 
 
 static func camere() -> Dictionary:
-	return {
+	var d := {
 		"piazza": [Vector3(F.INGRESSO_X, 1.7, F.Z0 + 1.0), Vector3(-3.6, 0.6, -3.6)],
 		"imbarco": [Vector3(-2.3, 0.6, -2.3), Vector3(0.0, 0.9, -13.0)],
 		"bivio1": [F.anello(62.0) + Vector3(0, 0.6, 0), F.anello(90.0) + Vector3(0, 1.6, 0)],
@@ -33,7 +33,22 @@ static func camere() -> Dictionary:
 		"portale1": [Vector3(24.0, 0.6, 7.5), Vector3(24.0, 1.2, 2.7)],
 		"pila_ciambelle": [Vector3(-2.7, 1.6, -7.7), Vector3(-4.6, 0.4, -9.2)],
 		"cartello_tuffi": [Vector3(-2.7, 1.7, -5.3), Vector3(-4.2, 1.6, -6.0)],
+		# dagli occhi del giocatore (1,6 m): la capanna tiki (da lontano e dal punto più vicino dove si arriva, a
+		# 1,9 m dal centro) e le due porte, attraverso il vano e da vicino su uno stipite
+		"tiki": [Vector3(-11.0, 1.6, -2.5), Vector3(-14.0, 1.2, -6.0)],
+		"tiki_vicino": [Vector3(-13.15, 1.6, -4.3), Vector3(-14.0, 1.3, -6.0)],
+		"porta_ingresso": [Vector3(F.INGRESSO_X, 1.6, F.Z0 + 2.5), Vector3(F.INGRESSO_X, 1.4, F.Z0 - 2.0)],
+		"stipite_ingresso": [Vector3(F.INGRESSO_X + 0.4, 1.75, F.Z0 + 1.1), Vector3(F.INGRESSO_X - 0.66, 1.5, F.Z0)],
+		"porta_approdo": [Vector3(F.X0 + 2.5, 1.6, F.APPRODO.y), Vector3(F.X0 - 2.0, 1.4, F.APPRODO.y)],
+		# il capo di sotto della catena nell'occhiello della lampada del capannone (una dritta e una storta)
+		"catena_lampada": [Vector3(-3.6, 4.45, -6.25), Vector3(-4.0, 4.6, -6.6)],
+		"catena_lampada_storta": [Vector3(13.6, 4.45, -16.25), Vector3(14.0, 4.6, -16.6)],
+		# di lato, all'altezza dell'aggancio fra la catenella e il cappello della lampada (prima e dopo, 23 ottobre)
+		"gancio_lampada": [Vector3(-3.75, 4.5, -6.3), Vector3(-4.0, 4.5, -6.6)],
+		"gancio_lampada_fronte": [Vector3(-4.0, 4.5, -6.22), Vector3(-4.0, 4.5, -6.6)],
+		"gancio_lampada_storta": [Vector3(13.75, 4.5, -16.3), Vector3(14.0, 4.5, -16.6)],
 	}
+	return d
 
 
 func _ready() -> void:
@@ -77,6 +92,29 @@ func _run() -> void:
 	cam.far = 200.0
 	get_tree().root.add_child(cam)
 	cam.make_current()
+	# "gabbie": tutte le lampade a gabbia (la stessa del portone), da vicino dai due lati del loro retro, per vedere che
+	# poggiano sulla roccia o sul muro (controllo con la distanza vera, 22 ottobre notte)
+	if lista.has("gabbie"):
+		lista.remove_at(lista.find("gabbie"))
+		var k := 0
+		for g in f.find_children("globo", "MeshInstance3D", true, false):
+			var l := (g as Node3D).get_parent() as Node3D
+			while l.get_parent() != f and l.get_parent() != null:
+				l = l.get_parent() as Node3D
+			var b := AABB()
+			var primo := true
+			for mi in l.find_children("*", "MeshInstance3D", true, false):
+				var bb := (mi as MeshInstance3D).global_transform * (mi as MeshInstance3D).get_aabb()
+				b = bb if primo else b.merge(bb)
+				primo = false
+			var c := b.get_center()
+			var avanti := (l.global_basis.z * Vector3(1, 0, 1)).normalized()
+			var lato := avanti.cross(Vector3.UP).normalized()
+			k += 1
+			for j in 2:
+				var nome_g := "gabbia%02d_%s" % [k, "ab"[j]]
+				cam_tutte[nome_g] = [c + avanti * 0.45 + lato * (0.4 if j == 0 else -0.4) + Vector3(0, 0.15, 0), c - avanti * 0.08]
+				lista.append(nome_g)
 	for nome in lista:
 		var c: Array = cam_tutte[nome]
 		f.get_node("Tetto").visible = nome != "alto"

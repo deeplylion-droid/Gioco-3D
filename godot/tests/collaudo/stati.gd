@@ -10,11 +10,12 @@ extends RefCounted
 ## Le chiavi di save_state() dei nodi "persist" che vogliono dire "fatto" o "aperto" diventano vere; i
 ## Pickup restano dove sono (sono oggetti da controllare anche loro).
 
-const VERE := ["latched", "aperto", "aperta", "finita", "finito", "fatto", "tornello", "docce", "armadietto", "avviate", "open"]
+const VERE := ["latched", "aperto", "aperta", "finita", "finito", "fatto", "tornello", "docce", "armadietto", "avviate", "open", "con_radiografia"]
 const FALSE := ["chiusa", "bloccata", "chiuso_dietro"]
 
 
 static func applica(livello: Node, stato: String) -> void:
+	mostra_nascosti(livello)
 	if stato == "inizio":
 		return
 	if stato in ["ritorno", "risolto"]:
@@ -48,5 +49,19 @@ static func applica(livello: Node, stato: String) -> void:
 				cambiato = true
 		if cambiato:
 			n.call(&"load_state", d)
+	# l'inseguimento: la grata calata davanti a lei
+	for n in livello.find_children("*", "Node", true, false):
+		if n.has_method(&"cala_grata"):
+			n.call(&"cala_grata")
 	if stato in ["ritorno", "risolto"]:
 		GameState.luci_cambiate.emit(GameState.luci)
+
+
+## Le zone che il gioco tiene nascoste finché il giocatore non ci arriva (per la memoria): la risalita mostra
+## fiume e infermeria solo col giocatore vicino. Per il collaudo si mostrano sempre.
+static func mostra_nascosti(livello: Node) -> void:
+	for n in livello.find_children("*", "Node", true, false):
+		if n.get(&"fiume") is Node3D and n.get(&"infermeria") is Node3D:
+			n.set_process(false)
+			(n.get(&"fiume") as Node3D).visible = true
+			(n.get(&"infermeria") as Node3D).visible = true
