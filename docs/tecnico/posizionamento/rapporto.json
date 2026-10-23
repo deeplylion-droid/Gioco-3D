@@ -1,5 +1,121 @@
 [
 	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 258.3 cm.",
+		"nodo": "Interni/Polaroid/Polaroid02/Modello/Polaroid",
+		"pos": [
+			3.56,
+			1.65,
+			-7.08
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7721.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7720",
+		"pos": [
+			25.71,
+			8.49,
+			-23.02
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7724.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7723",
+		"pos": [
+			36.29,
+			5.49,
+			-23.02
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.9 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7726.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7725",
+		"pos": [
+			34.34,
+			8.49,
+			-11.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7729.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7728",
+		"pos": [
+			27.66,
+			5.49,
+			-11.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7731.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7730",
+		"pos": [
+			25.42,
+			-0.51,
+			-11.64
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7734.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7733",
+		"pos": [
+			25.42,
+			-3.51,
+			-18.36
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7736.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7735",
+		"pos": [
+			27.64,
+			-12.51,
+			-9.42
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7739.",
+		"firma": "|CylinderMesh 0.26x0.08x0.26",
+		"nodo": "Luci/@MeshInstance3D@7738",
+		"pos": [
+			34.36,
+			-15.51,
+			-9.42
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "torre"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
 		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_rotore",
@@ -20,7 +136,7 @@
 		"pos": [
 			-0.75,
 			0.0,
-			25.0
+			25.25
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
@@ -182,6 +298,202 @@
 		"zona": "tecnici"
 	},
 	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 4 cm sotto la sua superficie (per esempio in (-16.0, 2.35, 31.3), lo spigolo da (-16.0, 0.01, 31.45) a (-16.0, 2.79, 31.27))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0",
+		"pos": [
+			-16.0,
+			2.35,
+			31.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 3 cm sotto la sua superficie (per esempio in (-16.0, 2.34, 34.3), lo spigolo da (-16.0, 0.01, 34.45) a (-16.0, 2.79, 34.27))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1",
+		"pos": [
+			-16.0,
+			2.34,
+			34.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 3 cm sotto la sua superficie (per esempio in (-15.99, 2.33, 34.46), lo spigolo da (-15.99, 2.79, 34.46) a (-15.99, 0.01, 34.46))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2",
+		"pos": [
+			-15.99,
+			2.33,
+			34.46
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-2.28, -6.9, 48.86), lo spigolo da (-2.39, -9.04, 48.86) a (-2.25, -6.26, 48.86))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0",
+		"pos": [
+			-2.28,
+			-6.9,
+			48.86
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 0.95, 20.34), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_13",
+		"pos": [
+			-15.9,
+			0.95,
+			20.34
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.01, 20.34), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_14",
+		"pos": [
+			-15.9,
+			1.01,
+			20.34
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.08, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_15",
+		"pos": [
+			-15.9,
+			1.08,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.15, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_16",
+		"pos": [
+			-15.9,
+			1.15,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.22, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_17",
+		"pos": [
+			-15.9,
+			1.22,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.29, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_18",
+		"pos": [
+			-15.9,
+			1.29,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.37, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_19",
+		"pos": [
+			-15.9,
+			1.37,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.43, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_20",
+		"pos": [
+			-15.9,
+			1.43,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.5, 20.36), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_21",
+		"pos": [
+			-15.9,
+			1.5,
+			20.36
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.57, 20.36), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_22",
+		"pos": [
+			-15.9,
+			1.57,
+			20.36
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (9 celle da 25 cm) (pavimenti fra y -34.00 e -25.58), con la collisione (ci si sbatte contro)",
 		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
@@ -266,9 +578,51 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24150, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo)",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
+		"nodo": "Risalita/Fiume/paratia/Mesh_0",
+		"pos": [
+			-38.16,
+			-5.4,
+			117.17
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24150, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo)",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
+		"nodo": "Risalita/Fiume/paratia4/Mesh_0",
+		"pos": [
+			-55.75,
+			-5.4,
+			93.6
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24150, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo)",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
+		"nodo": "Risalita/Fiume/paratia5/Mesh_0",
+		"pos": [
+			-33.4,
+			-5.4,
+			64.75
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
 		"pos": [
 			19.25,
 			0.0,
@@ -280,9 +634,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
 		"pos": [
 			19.25,
 			0.0,
@@ -308,9 +662,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5",
 		"pos": [
 			19.25,
 			0.0,
@@ -322,9 +676,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7",
 		"pos": [
 			19.25,
 			0.0,

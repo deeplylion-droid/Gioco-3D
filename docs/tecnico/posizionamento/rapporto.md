@@ -1,8 +1,29 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 04:09:33. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 22:39:39. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 25. Eccezioni non più trovate: 0.
+Nuovi: 9. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 42. Eccezioni non più trovate: 0.
+
+## Nuovi
+
+### interni
+
+| Squadra | Problema | Nodo | Posizione | Dettaglio |
+|---|---|---|---|---|
+| ambienti-1 | staccato | `Interni/Polaroid/Polaroid02/Modello/Polaroid` | 3.56, 1.65, -7.08 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 258.3 cm. |
+
+### torre
+
+| Squadra | Problema | Nodo | Posizione | Dettaglio |
+|---|---|---|---|---|
+| grafica | staccato | `Luci/@MeshInstance3D@7720` | 25.71, 8.49, -23.02 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7721. |
+| grafica | staccato | `Luci/@MeshInstance3D@7723` | 36.29, 5.49, -23.02 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7724. |
+| grafica | staccato | `Luci/@MeshInstance3D@7725` | 34.34, 8.49, -11.00 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.9 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7726. |
+| grafica | staccato | `Luci/@MeshInstance3D@7728` | 27.66, 5.49, -11.00 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7729. |
+| grafica | staccato | `Luci/@MeshInstance3D@7730` | 25.42, -0.51, -11.64 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7731. |
+| grafica | staccato | `Luci/@MeshInstance3D@7733` | 25.42, -3.51, -18.36 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7734. |
+| grafica | staccato | `Luci/@MeshInstance3D@7735` | 27.64, -12.51, -9.42 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 239.1 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7736. |
+| grafica | staccato | `Luci/@MeshInstance3D@7738` | 34.36, -15.51, -9.42 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 246.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: @MeshInstance3D@7739. |
 
 ## Già noti
 
@@ -22,7 +43,15 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 25. Eccezi
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
 | ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_rotore` | -0.25, 0.00, 25.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_telaio` | -0.75, 0.00, 25.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (12 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
+| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_telaio` | -0.75, 0.00, 25.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (12 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
+
+### risalita
+
+| Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
+|---|---|---|---|---|---|
+| enigmi | compenetra | `Risalita/Fiume/paratia/Mesh_0` | -38.16, -5.40, 117.17 | dentro ci passa Risalita/Fiume/@MeshInstance3D@24150, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
+| enigmi | compenetra | `Risalita/Fiume/paratia4/Mesh_0` | -55.75, -5.40, 93.60 | dentro ci passa Risalita/Fiume/@MeshInstance3D@24150, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
+| enigmi | compenetra | `Risalita/Fiume/paratia5/Mesh_0` | -33.40, -5.40, 64.75 | dentro ci passa Risalita/Fiume/@MeshInstance3D@24150, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo) | voluto: il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera |
 
 ### sala
 
@@ -40,6 +69,20 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 25. Eccezi
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
+| enigmi | compenetra | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0` | -16.00, 2.35, 31.30 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 4 cm sotto la sua superficie (per esempio in (-16.0, 2.35, 31.3), lo spigolo da (-16.0, 0.01, 31.45) a (-16.0, 2.79, 31.27)) | voluto: i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole |
+| enigmi | compenetra | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1` | -16.00, 2.34, 34.30 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 3 cm sotto la sua superficie (per esempio in (-16.0, 2.34, 34.3), lo spigolo da (-16.0, 0.01, 34.45) a (-16.0, 2.79, 34.27)) | voluto: i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole |
+| enigmi | compenetra | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2` | -15.99, 2.33, 34.46 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 3 cm sotto la sua superficie (per esempio in (-15.99, 2.33, 34.46), lo spigolo da (-15.99, 2.79, 34.46) a (-15.99, 0.01, 34.46)) | voluto: i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole |
+| enigmi | compenetra | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0` | -2.28, -6.90, 48.86 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-2.28, -6.9, 48.86), lo spigolo da (-2.39, -9.04, 48.86) a (-2.25, -6.26, 48.86)) | voluto: i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_13` | -15.90, 0.95, 20.34 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 0.95, 20.34), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_14` | -15.90, 1.01, 20.34 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.01, 20.34), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_15` | -15.90, 1.08, 20.35 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.08, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_16` | -15.90, 1.15, 20.35 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.15, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_17` | -15.90, 1.22, 20.35 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.22, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_18` | -15.90, 1.29, 20.35 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.29, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_19` | -15.90, 1.37, 20.35 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.37, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_20` | -15.90, 1.43, 20.35 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.43, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_21` | -15.90, 1.50, 20.36 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.5, 20.36), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
+| ambienti-2 | compenetra | `Tecnici/Logica/SerrandaMagazzino/Lamelle_22` | -15.90, 1.57, 20.36 | dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.57, 20.36), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38)) | voluto: le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera |
 | ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/ATTUATORE_stagno` | -2.50, -9.05, 47.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.52 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -9.05), senza collisione (si attraversa) | voluto: fissato al muro est della sala pompe accanto alla porta, a 1,2-1,52 m da terra: sporge 24,2 cm dal muro, staffa compresa (al più 25); non pende nel passaggio (staffa a muro); davanti, alla testa, 17,6 m liberi fino al muro ovest (almeno 80 cm). Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2) |
 | ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_elettrico` | -3.50, -9.05, 31.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.90 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -9.05), con la collisione (ci si sbatte contro) | voluto: quadro elettrico appeso al muro sud della sala pompe, da 0,9 a 2,65 m: sporge 24 cm dal muro (era 56; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2) |
 | ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_strumenti` | -3.50, -9.05, 36.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.30 e 2.00 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -9.05), con la collisione (ci si sbatte contro) | voluto: pannello degli strumenti appeso al muro sud della sala pompe, da 1,3 a 2,25 m: sporge 24 cm dal muro (era 36; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2) |
@@ -115,13 +158,13 @@ Per ogni giro, quanti oggetti di scena si sono controllati in ogni parte. Una pa
 | sala_principale · lei_fossa | `Gioco/LeiSbuca` | 9 |
 | sala_principale · risalita_arrivo | `Risalita` | 197 |
 | sala_principale · risalita_arrivo | `Risalita/Corrimano` | 7 |
-| sala_principale · risalita_arrivo | `Risalita/Fiume` | 259 |
-| sala_principale · risalita_arrivo | `Risalita/Infermeria` | 121 |
+| sala_principale · risalita_arrivo | `Risalita/Fiume` | 664 |
+| sala_principale · risalita_arrivo | `Risalita/Infermeria` | 154 |
 | sala_principale · risalita_arrivo | `Risalita/lampada_emergenza` | 2 |
 | sala_principale · risalita_dopo | `Risalita` | 197 |
 | sala_principale · risalita_dopo | `Risalita/Corrimano` | 7 |
-| sala_principale · risalita_dopo | `Risalita/Fiume` | 259 |
-| sala_principale · risalita_dopo | `Risalita/Infermeria` | 177 |
+| sala_principale · risalita_dopo | `Risalita/Fiume` | 664 |
+| sala_principale · risalita_dopo | `Risalita/Infermeria` | 210 |
 | sala_principale · risalita_dopo | `Risalita/lampada_emergenza` | 2 |
 | sala_principale · tappa7 | `Interni/Ambienti` | 2 |
 | sala_principale · tappa7 | `Sala/Interattivi` | 1 |
@@ -143,12 +186,12 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 
 | Scena | Parte nascosta | Mesh | Controllata |
 |---|---|---|---|
-| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1345` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1346` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1347` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1348` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1349` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1350` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1480` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1481` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1482` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1483` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1484` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1485` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface` | 1 | sì, in uno stato |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie` | 1 | sì, in uno stato |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume` | 1 | sì, in uno stato |
@@ -158,6 +201,7 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie` | 1 | no: segnaposto graybox, al suo posto si vede il modello vero |
 | sala_principale | `Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume` | 1 | no: variante nello stesso posto di una parte controllata |
+| sala_principale | `Gioco/EnigmaAcquari/Valvola/GocceValvola` | 6 | no: effetto o acqua, esclusi |
 | sala_principale | `Gioco/LeiSbuca/MedusaFossa` | 12 | sì, in uno stato |
 | sala_principale | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti` | 1 | no: creatura, si muove (la guarda il collaudo) |
 | sala_principale | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola` | 1 | no: creatura, si muove (la guarda il collaudo) |
@@ -170,28 +214,28 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 | sala_principale | `Interni/Ambienti/Spogliatoi/acqua_lavapiedi` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi` | 1 | no: effetto o acqua, esclusi |
 | sala_principale | `Interni/Ambienti/Stanzino/acqua_pozza_stanzino` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1393` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1394` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1395` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1396` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1399` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1400` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1401` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1402` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1405` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1406` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1407` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1408` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1411` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1412` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1413` | 1 | **mai controllata** |
-| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1414` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1534/@MeshInstance3D@1535` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1534/@MeshInstance3D@1536` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1534/@MeshInstance3D@1537` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1534/@MeshInstance3D@1538` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1540/@MeshInstance3D@1541` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1540/@MeshInstance3D@1542` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1540/@MeshInstance3D@1543` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1540/@MeshInstance3D@1544` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1546/@MeshInstance3D@1547` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1546/@MeshInstance3D@1548` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1546/@MeshInstance3D@1549` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1546/@MeshInstance3D@1550` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1552/@MeshInstance3D@1553` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1552/@MeshInstance3D@1554` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1552/@MeshInstance3D@1555` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1552/@MeshInstance3D@1556` | 1 | **mai controllata** |
 | sala_principale | `Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad` | 1 | **mai controllata** |
 | sala_principale | `Player/Head/Camera3D/ViewModel` | 13 | **mai controllata** |
 | sala_principale | `Player/WaterPack/Aspirazione` | 2 | **mai controllata** |
-| sala_principale | `Player/WaterPack/GettoPotente/@MeshInstance3D@1682` | 1 | no: effetto o acqua, esclusi |
-| sala_principale | `Risalita/Fiume` | 378 | sì, in uno stato |
-| sala_principale | `Risalita/Infermeria` | 177 | sì, in uno stato |
+| sala_principale | `Player/WaterPack/GettoPotente/@MeshInstance3D@1830` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Risalita/Fiume` | 384 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria` | 222 | sì, in uno stato |
 | sala_principale | `Risalita/Infermeria/Cassetto11/Frontale/Tirato` | 5 | sì, in uno stato |
 | sala_principale | `Risalita/Infermeria/Cassetto12/Frontale/Tirato` | 5 | sì, in uno stato |
 | sala_principale | `Risalita/Infermeria/Cassetto13/Frontale/Tirato` | 5 | sì, in uno stato |

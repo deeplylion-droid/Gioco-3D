@@ -185,7 +185,10 @@ func _polaroid_sportello() -> void:
 	if not is_instance_valid(pol) or not pol.is_inside_tree():
 		return
 	# la faccia della foto (Y locale) verso +X, la cima (Z locale) in alto
-	pol.global_transform = Transform3D(Basis(Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(0, 1, 0)), POLAROID_SPORTELLO)
+	# (coordinate degli interni: dentro la sala principale sono spostati)
+	pol.global_transform = global_transform * Transform3D(Basis(Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(0, 1, 0)),
+		POLAROID_SPORTELLO)
+	var fuori_verso := global_basis * Vector3.RIGHT
 	# il retro della foto è 0,8 mm sotto l'origine: a contatto con l'aletta più sporgente fra nove punti del retro
 	var punto := Node3D.new()
 	add_child(punto)
@@ -194,14 +197,14 @@ func _polaroid_sportello() -> void:
 	for u in [-0.04, 0.0, 0.04]:
 		for v in [-0.05, 0.0, 0.05]:
 			punto.global_position = pol.global_transform * Vector3(u, 0.0, v)
-			if Posa.fissa_al_muro(punto, Vector3.RIGHT, 0.0):
-				fuori = maxf(fuori, punto.global_position.x)
+			if Posa.fissa_al_muro(punto, fuori_verso, 0.0):
+				fuori = maxf(fuori, punto.global_position.dot(fuori_verso))
 	punto.queue_free()
 	pol.visible = true
 	if fuori == -INF:
 		push_warning("Polaroid 2: lo sportello dell'armadietto non si trova")
 	else:
-		pol.global_position.x = fuori + 0.0008
+		pol.global_position += fuori_verso * (fuori + 0.0008 - pol.global_position.dot(fuori_verso))
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = SCOTCH_COLORE
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
