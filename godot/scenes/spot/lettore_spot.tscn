@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/spot/lettore_spot.gd" id="1_lettore"]
+
+[node name="LettoreSpot" type="CanvasLayer"]
+layer = 110
+script = ExtResource("1_lettore")
+
+[node name="Nero" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Video" type="VideoStreamPlayer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+expand = true
+
+[node name="Fermo" type="TextureRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Occhio" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="CopiaSchermo" type="BackBufferCopy" parent="."]
+copy_mode = 2
+
+[node name="Vhs" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Sottotitolo" type="Label" parent="."]
+visible = false
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -150.0
+offset_right = -120.0
+offset_bottom = -48.0
+grow_vertical = 0
+mouse_filter = 2
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 3
+
+[node name="Anello" type="Control" parent="."]
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -76.0
+offset_top = -76.0
+offset_right = -28.0
+offset_bottom = -28.0
+mouse_filter = 2
