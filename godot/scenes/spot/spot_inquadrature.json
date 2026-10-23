@@ -17,16 +17,15 @@
 			"nome": "2_3_sala",
 			"scena": "res://scenes/spot/sala_spot.tscn",
 			"inquadrature": [
-				{"n": 2, "inizio": 3.0, "durata": 5.0, "cosa": "la cupola col cielo, poi giù sulla sala accesa", "da_rivedere": true,
+				{"n": 2, "inizio": 3.0, "durata": 5.0, "cosa": "la cupola col cielo, poi giù sulla sala accesa (camere di ambienti-1, 23 ottobre)",
 					"camera": [
-						{"t": 0.0, "pos": [0.0, 3.0, 4.0], "guarda": [0.0, 30.0, -2.0], "fov": 70.0},
-						{"t": 2.2, "pos": [0.0, 4.0, 6.0], "guarda": [0.0, 18.0, -6.0], "fov": 70.0},
-						{"t": 5.0, "pos": [0.0, 6.0, 12.0], "guarda": [0.0, 0.0, -6.0], "fov": 60.0}
+						{"t": 0.0, "pos": [0.0, 1.7, 14.0], "guarda": [0.0, 16.0, -5.0], "fov": 70.0},
+						{"t": 5.0, "pos": [0.0, 2.6, 15.5], "guarda": [0.0, 0.8, -4.0], "fov": 65.0}
 					]},
-				{"n": 3, "inizio": 8.0, "durata": 5.0, "cosa": "panoramica sulla piscina a onde piena", "da_rivedere": true,
+				{"n": 3, "inizio": 8.0, "durata": 5.0, "cosa": "carrellata lungo il lato est della piscina a onde piena (camere di ambienti-1, 23 ottobre)",
 					"camera": [
-						{"t": 0.0, "pos": [-10.0, 3.0, 10.0], "guarda": [-4.0, 0.0, 2.0], "fov": 60.0},
-						{"t": 5.0, "pos": [-4.0, 3.0, 12.0], "guarda": [2.0, 0.0, 2.0], "fov": 60.0}
+						{"t": 0.0, "pos": [10.0, 3.0, 8.0], "guarda": [0.0, -0.3, 0.0], "fov": 60.0},
+						{"t": 5.0, "pos": [8.5, 3.0, -2.0], "guarda": [-1.0, -0.3, -9.0], "fov": 60.0}
 					]}
 			]
 		},
