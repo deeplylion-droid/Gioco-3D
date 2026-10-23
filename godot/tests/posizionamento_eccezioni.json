@@ -614,5 +614,117 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@201",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-28.4,
+			-0.8,
+			88.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@204",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-18.4,
+			-0.8,
+			106.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@206",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-43.4,
+			-0.8,
+			114.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@209",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-58.4,
+			-0.8,
+			100.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@211",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-53.4,
+			-0.8,
+			76.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@214",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-33.4,
+			-0.8,
+			65.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@217",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-18.4,
+			-0.8,
+			82.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@219",
+		"squadra": "enigmi",
+		"problema": "estremita_libera",
+		"pos": [
+			-43.4,
+			-0.8,
+			96.0
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
 	}
 ]
