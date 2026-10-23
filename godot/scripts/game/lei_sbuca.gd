@@ -121,6 +121,7 @@ var _geyser: GeyserFossa
 var _testa_entrata := false
 var _coda_entrata := false
 var _tuffo: TuffoLei
+var _morbidezza: MorbidezzaLei
 # Gli schizzi su misura del tuffo (creati all'avvio: niente blocchi al primo tuffo) e dove è entrata la testa.
 var _schizzo_testa: SchizzoTuffo
 var _schizzo_coda: SchizzoTuffo
@@ -400,12 +401,24 @@ func _avvia_tuffo() -> void:
 		var a := superficie_fossa.global_transform * superficie_fossa.mesh.get_aabb()
 		fossa = Rect2(a.position.x, a.position.z, a.size.x, a.size.z)
 	_tuffo.avvia(medusa, esclusi, fossa)
+	# il movimento secondario di tentacoli e campana (MorbidezzaLei), sopra il tuffo
+	if not Engine.has_meta(&"morbidezza_spenta"):
+		if _morbidezza == null or not is_instance_valid(_morbidezza):
+			_morbidezza = MorbidezzaLei.new()
+			_morbidezza.name = "Morbidezza"
+			sk.add_child(_morbidezza)
+		_morbidezza.esclusi = esclusi
+		_morbidezza.acqua_pianta = fossa
+		_morbidezza.acqua_pelo = _pelo()
+		_morbidezza.accendi()
 
 
 ## Di nuovo affacciata (ripartenza, salvataggio): niente tuffo, l'animazione "affacciata" riparte.
 func _azzera_tuffo() -> void:
 	if _tuffo and is_instance_valid(_tuffo):
 		_tuffo.ferma()
+	if _morbidezza and is_instance_valid(_morbidezza):
+		_morbidezza.azzera()
 	if medusa:
 		for ap in medusa.find_children("*", "AnimationPlayer", true, false):
 			(ap as AnimationPlayer).play()
