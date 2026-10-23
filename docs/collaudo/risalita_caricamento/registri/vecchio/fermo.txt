@@ -1,0 +1,10 @@
+COMMIT 12d9c79
+RIGA fermo_stanze_pronte_tempo_vero_s = 8.0
+RIGA fermo_prima_peggiore_ms = 19
+RIGA fermo_prima_mediano_ms = 16.7
+RIGA fermo_dopo_peggiore_ms = 20
+RIGA fermo_dopo_mediano_ms = 16.7
+RIGA fermo_dopo_sopra_50ms = 0
+RIGA fermo_dopo_sopra_100ms = 0
+RIGA fermo_stanze_pronte_s = 0.02
+RISULTATO: 0 controlli ok, 0 falliti

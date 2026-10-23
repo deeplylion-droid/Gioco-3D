@@ -1,0 +1,8 @@
+COMMIT 7a47e60
+RIGA serranda_stato_messo = { "Risalita/Fiume/FiumeLento/Paratia1": { "a_destra": false }, "Risalita/Fiume/FiumeLento/Paratia2": { "a_destra": false }, "Risalita/Fiume/FiumeLento/Paratia3": { "a_destra": false }, "Risalita/Infermeria/Negatoscopio": { "con_radiografia": true }, "Risalita/Infermeria/Cassaforte": { "cifre": [0, 0, 0], "aperta": true }, "Risalita/Infermeria/Cassetto11": { "aperto": true }, "Risalita/Infermeria/Cassetto12": { "aperto": false }, "Risalita/Infermeria/Cassetto23": { "aperto": true }, "Risalita/Infermeria/Interruttore": { "powered": false }, "Risalita/Infermeria/Keycard": "no", "Risalita/Infermeria/Cassetto14/Frontale/Radiografia": "no", "Risalita/Infermeria/PolaroidPecora": "c\'è" }
+RIGA serranda_lontano_caricate = false
+RIGA serranda_stato_al_ritorno = { "Risalita/Fiume/FiumeLento/Paratia1": { "a_destra": false }, "Risalita/Fiume/FiumeLento/Paratia2": { "a_destra": false }, "Risalita/Fiume/FiumeLento/Paratia3": { "a_destra": false }, "Risalita/Infermeria/Negatoscopio": { "con_radiografia": true }, "Risalita/Infermeria/Cassaforte": { "cifre": [0, 0, 0], "aperta": true }, "Risalita/Infermeria/Cassetto11": { "aperto": true }, "Risalita/Infermeria/Cassetto12": { "aperto": false }, "Risalita/Infermeria/Cassetto23": { "aperto": true }, "Risalita/Infermeria/Interruttore": { "powered": false }, "Risalita/Infermeria/Keycard": "no", "Risalita/Infermeria/Cassetto14/Frontale/Radiografia": "no", "Risalita/Infermeria/PolaroidPecora": "c\'è" }
+  ok   tornando per C3 e la scala di servizio le stanze sono come le avevo lasciate
+RIGA serranda_keycard_ricomparsa = false
+RIGA serranda_radiografia_ricomparsa = false
+RISULTATO: 1 controlli ok, 0 falliti
