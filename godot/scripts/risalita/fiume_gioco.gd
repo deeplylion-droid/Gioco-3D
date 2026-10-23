@@ -1887,9 +1887,10 @@ func _imbarco() -> void:
 		_a_terra(ci, sotto)
 		sotto = _cima(ci)
 	_ostacolo(Vector3(-VASCA - 2.0, 0, -VASCA - 5.6), 0.6, sotto)
-	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa)
+	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa; quella fra il bivio 2 e il 3 mezzo
+	# metro verso il centro del canale: entrava nella parete, controllo del 23 ottobre)
 	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
-			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
+			[Vector3(-11.73, GALLA, 21.51), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
 		await _pausa()
 		_metti("ciambella", c[0], c[1])
 	await _pausa()

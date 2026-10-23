@@ -505,5 +505,44 @@
 		],
 		"stato": "voluto",
 		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/paratia/Mesh_0",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-38.16,
+			-5.4,
+			117.17
+		],
+		"stato": "voluto",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/paratia4/Mesh_0",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-55.75,
+			-5.4,
+			93.6
+		],
+		"stato": "voluto",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/paratia5/Mesh_0",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-33.4,
+			-5.4,
+			64.75
+		],
+		"stato": "voluto",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera"
 	}
 ]
