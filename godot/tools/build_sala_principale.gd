@@ -820,13 +820,18 @@ func _tappa7(has_interiors: bool) -> void:
 		var bb := porta_mi.transform * porta_mi.get_aabb()
 		var cardine := Marker3D.new()
 		cardine.name = "CardinePortaSalaPompe"
-		cardine.position = INTERNI_OFFSET + Vector3(bb.end.x, 0.0, bb.get_center().z)
+		# Il cardine sulla faccia del muro dalla parte del corridoio (z locale 0), non a metà dello spessore: girata di
+		# 180 gradi la porta resta appoggiata al muro (6 mm) invece di entrarci (collaudo del 23 ottobre: col cardine
+		# a z 41,0 e 172 gradi l'anta finiva dentro il muro, che va da z 40,9 a 41,1). Dal cardine a metà fra la faccia
+		# del muro e quella della porta, la faccia della porta verso il muro, ruotata, cade 6 mm prima del muro.
+		cardine.position = INTERNI_OFFSET + Vector3(bb.end.x, 0.0, bb.position.z * 0.5 - 0.003)
 		own(cardine, gp)
 		var porta: Area3D = load("res://scripts/tecnici/porta_maniglione.gd").new()
 		porta.name = "PortaSalaPompeInterni"
 		porta.position = INTERNI_OFFSET + Vector3(bb.get_center().x, 1.0, bb.end.z + 0.35)
-		# aperta contro il muro del corridoio (collaudo del 22 ottobre: a 95 gradi sporgeva 1 m sulla strada del ritorno)
-		porta.set(&"angolo_apertura", -172.0)
+		# aperta contro il muro del corridoio (collaudo del 22 ottobre: a 95 gradi sporgeva 1 m sulla strada del ritorno),
+		# parallela al muro
+		porta.set(&"angolo_apertura", -180.0)
 		porta.set(&"collisione_propria", true)
 		own(porta, gp)
 		shape_box(porta, Vector3(1.0, 1.6, 0.5))
