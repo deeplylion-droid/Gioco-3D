@@ -277,9 +277,11 @@ func _on_trigger_armadietto(body: Node3D) -> void:
 	_armadietto_fatto = true
 	var chiusa := anta.rotation.y
 	var t := create_tween()
-	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(105.0), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(85.0), 0.25).set_trans(Tween.TRANS_SINE)
-	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(92.0), 0.4).set_trans(Tween.TRANS_SINE)
+	# (parte già socchiusa di 4 gradi; l'anta larga quanto il vano gira sullo spigolo del fronte: oltre i 90 gradi
+	# entrerebbe nell'armadietto accanto, quindi sbatte fino a 88 e si ferma a 85)
+	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(84.0), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(70.0), 0.25).set_trans(Tween.TRANS_SINE)
+	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(81.0), 0.4).set_trans(Tween.TRANS_SINE)
 	# aperta sporge nello spogliatoio: si urta come le altre ante aperte (controllo di posizionamento). La
 	# collisione arriva a fine corsa, così l'anta che si apre non spinge il giocatore.
 	t.tween_callback(_collisione_anta.bind(anta))

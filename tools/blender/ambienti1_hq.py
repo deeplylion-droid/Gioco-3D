@@ -153,9 +153,11 @@ def pulisci_sorgenti():
     return list(_base.values())
 
 
-def sportello_da_chiuso(file, chiave, frazione=0.07):
+def sportello_da_chiuso(file, chiave, frazione=0.07, chiudi=True):
     """Dal modello dell'armadietto chiuso ricava solo l'anta: taglia la fetta anteriore (fronte -Y)
-    e chiude il retro. La sorgente nuova ha le stesse dimensioni di riferimento del modello intero."""
+    e (con chiudi) chiude il retro. La sorgente nuova ha le stesse dimensioni di riferimento del modello intero.
+    Senza chiudi il retro resta aperto: col materiale a due facce si vede l'interno del fronte, come il retro di
+    un'anta di lamiera (la chiusura riempita aveva le UV a caso: schegge nere sul retro dell'anta aperta)."""
     if chiave in _base:
         return _base[chiave]
     src = _carica(file)
@@ -166,7 +168,8 @@ def sportello_da_chiuso(file, chiave, frazione=0.07):
     bm = bmesh.new(); bm.from_mesh(me)
     geom = bm.verts[:] + bm.edges[:] + bm.faces[:]
     r = bmesh.ops.bisect_plane(bm, geom=geom, plane_co=(0, taglio, 0), plane_no=(0, 1, 0), clear_outer=True)
-    bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
+    if chiudi:
+        bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
     bm.to_mesh(me); bm.free()
     o = bpy.data.objects.new('hq_' + chiave, me)
     bpy.context.scene.collection.objects.link(o)
