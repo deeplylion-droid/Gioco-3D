@@ -152,6 +152,7 @@ func _costruisci() -> void:
 	await _imbarco()
 	await _pausa()
 	_approdo()
+	await _rocce_imbarco()
 	_marker()
 	_checkpoint()
 	costruita = true
@@ -1438,6 +1439,56 @@ func _giungla() -> void:
 				_metti("scaletta_banchina", v[0] + Vector3(0, FONDO + 0.05, 0), v[1])
 
 
+## La riva ovest del primo tratto, dalla vasca dell'imbarco verso nord, restava senza roccia: [method _giungla] salta i
+## pannelli col retro verso la piazza e quelli vicino alla vasca (riscontro dell'utente sulla v0.3.11: "all'inizio del
+## percorso in salvagente ci sono delle parti dove manca la roccia ai bordi, deve essere continua"). Qui, dopo tutto il
+## resto (così il generatore casuale, e quindi la giungla, non cambiano), i pannelli che mancano, doppi schiena contro
+## schiena (dalla piazza si vede roccia, non il retro piatto), lontani dalla strada fra la fila e la ciambella e dalle
+## cose già messe sulla banchina.
+func _rocce_imbarco() -> void:
+	var gia: Array[Vector3] = []
+	var cose: Array[Vector3] = []
+	for c in get_children():
+		if c is Node3D and String(c.name).begins_with("roccia_parete"):
+			gia.append((c as Node3D).position)
+		elif c is Node3D and not c is MeshInstance3D and not c is Light3D and c != _collisioni and c != _barriere:
+			cose.append((c as Node3D).position)
+	var fila_a := Vector2(FINE_FILA.x, FINE_FILA.z)
+	var fila_b := Vector2(ORMEGGIO.x, ORMEGGIO.z)
+	var messe := 0
+	var k := 0
+	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.9, 1.0):
+		var p: Vector3 = v[0]
+		var rot: float = v[1]
+		# solo la riva dalla parte della piazza, fino a dove l'anello comincia a girare
+		if not in_piazza(p) or p.z < Z_PIAZZA_NORD:
+			continue
+		if gia.any(func(q: Vector3) -> bool: return Vector2(q.x, q.z).distance_to(Vector2(p.x, p.z)) < 2.2):
+			continue
+		var b := Basis(Vector3.UP, deg_to_rad(rot))
+		var lato := b * Vector3.RIGHT
+		var dietro := -(b * Vector3.BACK)
+		var ok := true
+		for u in [-2.1, 0.0, 2.1]:
+			for w in [0.0, 0.6, 1.2]:
+				var q: Vector3 = p + lato * u + dietro * w
+				if Geometry2D.get_closest_point_to_segment(Vector2(q.x, q.z), fila_a, fila_b).distance_to(Vector2(q.x, q.z)) < 1.4:
+					ok = false
+				if not _sulla_banchina(q, 0.2):
+					ok = false
+				for c in cose:
+					if Vector2(c.x, c.z).distance_to(Vector2(q.x, q.z)) < 0.7:
+						ok = false
+		if not ok:
+			continue
+		await _pausa()
+		_roccia(p, rot, k % 2 == 0)
+		_roccia(p + dietro * 0.002, rot + 180.0, k % 2 == 1)
+		k += 1
+		messe += 1
+	print("rocce della riva dell'imbarco: %d" % messe)
+
+
 func _imbarco() -> void:
 	# la cabina dell'imbarco con la tettoia di paglia e la luce ambra, la fila con le transenne
 	# (70 cm più in là di prima, lontano dalla strada fra la fine della fila e l'imbarco: la gronda della tettoia,
@@ -1524,8 +1575,13 @@ func _imbarco() -> void:
 	_ostacolo(Vector3(-14.0, 0, -6.0), 1.6, 2.1)
 	_metti("totem_tiki", Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 135.0)
 	_ostacolo(Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 0.4, 2.5)
-	_cartello_palo(Vector3(-VASCA - 0.6, 0, -VASCA - 2.4), 90.0, "cartello_tuffi")
-	_cartello_palo(Vector3(INGRESSO_X + 2.2, 0, Z0 + 1.05), 160.0, "cartello_bimbi")   # (prima il palo stava dentro la prima transenna)
+	# i cartelli guardano chi arriva (riscontro dell'utente sulla v0.3.11: "i cartelli sono girati a cazzo di cane,
+	# devono essere rivolti verso la direzione da cui arriva il giocatore"): quello dei tuffi verso la fine della fila,
+	# quello dei bambini verso la porta d'ingresso (prima: verso la vasca e di taglio dalla porta)
+	var tuffi := Vector3(-VASCA - 0.6, 0, -VASCA - 2.4)
+	_cartello_palo(tuffi, _verso(tuffi, FINE_FILA), "cartello_tuffi")
+	var bimbi := Vector3(INGRESSO_X + 2.2, 0, Z0 + 1.05)   # (prima il palo stava dentro la prima transenna)
+	_cartello_palo(bimbi, _verso(bimbi, Vector3(INGRESSO_X, 0, Z0 + 0.5)), "cartello_bimbi")
 	_metti("salvagente", Vector3(-2.6, 0, -8.5), -90.0)
 	_ostacolo(Vector3(-2.6, 0, -8.5), 0.5, 1.4)
 	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
@@ -1540,6 +1596,11 @@ func _imbarco() -> void:
 	_metti("paperella", Vector3(1.0, ACQUA - 0.02, 0.6), 70.0)
 	_metti("secchiello", Vector3(-VASCA - 5.0, 0, -VASCA - 4.2), 20.0)
 	_metti("detriti", Vector3(-VASCA - 7.6, 0, -VASCA - 1.2), 30.0)
+
+
+## La rotazione (gradi intorno a +Y) che porta il +Z di un nodo in [param da] a guardare verso [param a].
+static func _verso(da: Vector3, a: Vector3) -> float:
+	return rad_to_deg(atan2(a.x - da.x, a.z - da.z))
 
 
 ## Palo zincato con un cartello quadrato a pittogrammi (50 cm) in cima, verso [param rot_y].
@@ -1601,7 +1662,9 @@ func _approdo() -> void:
 	_metti("ciambella", Vector3(APPRODO.x + 0.8, GALLA, APPRODO.y - 1.4), 15.0)
 	_metti("salvagente", Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 90.0)
 	_ostacolo(Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 0.5, 1.4)
-	_cartello_palo(Vector3(x1 - 0.7, 0, APPRODO.y + 2.9), 90.0, "cartello_tuffi")
+	# verso la ciambella che arriva dal ramo d'uscita
+	var cartello := Vector3(x1 - 0.7, 0, APPRODO.y + 2.9)
+	_cartello_palo(cartello, _verso(cartello, Vector3(-29.0, 0, 0.0)), "cartello_tuffi")
 	var cb := _metti("corrimano_bambu", Vector3(x1 - 0.25, 0, APPRODO.y - 1.9), 90.0)
 	var fcb := CollisionShape3D.new()
 	var bcb := BoxShape3D.new()
