@@ -3,9 +3,9 @@
   corpo, coda); la seconda è solo la luce dei puntini (emissione).
 - simbolo_testa/corpo/coda.png: l'agnello in grigio con la parte della rotella in bianco.
 - adesivo_<n>.png: gli adesivi da cartone dei muri del B (balena, stella, pesce, cavalluccio, tartaruga).
-- rotella_cifre.jpg: le cifre 0-9 intorno alla rotella (lato del cilindro).
+- rotella_cifre.jpg: le cifre 0-9 intorno alla rotella (lato del tamburo di metallo).
 - polaroid_medico.jpg, polaroid_medico_B.jpg: la Polaroid sulla scrivania (aspetti A e B).
-Uso: blender-venv/bin/python prepara_texture.py"""
+Uso: blender-venv/bin/python prepara_texture.py [funzioni da rifare, per esempio rotella]"""
 import os
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
@@ -51,19 +51,25 @@ def simboli():
 
 
 def rotella():
-    # le cifre stanno in fila lungo la circonferenza (U del cilindro), ognuna con l'alto lungo U: si
-    # leggono dritte di fronte con la rotella ad asse orizzontale. Le celle sono alte (in V) quanto la
-    # rotella è larga: 128 px di circonferenza (3,8 cm) per 292 px di larghezza (8,6 cm).
+    # le cifre stanno in fila lungo la circonferenza (U del cilindro), la cifra n nella cella n, con l'alto verso la U che
+    # cala: col tamburo ad asse orizzontale (CassaforteRotelle.giro_rotella) si leggono dritte di fronte. Le celle sono
+    # alte (in V) quanto la rotella è larga: 128 px di circonferenza (3,8 cm) per 292 px di larghezza (8,6 cm).
+    # Il tamburo è di metallo spazzolato (righe lungo la circonferenza) con le cifre stampate scure (23 ottobre: prima
+    # crema con le righe fra le celle; ora nella finestrella della forcella si vede una cifra sola)
     cw, h = 128, 292
-    im = Image.new('RGB', (cw * 10, h), (232, 226, 210))
+    rng = np.random.default_rng(417)
+    righe = rng.normal(0.0, 1.0, (h, 1)) * 7.0 + rng.normal(0.0, 1.0, (h, cw * 10)) * 2.5
+    fondo = np.clip(np.array([176.0, 178.0, 181.0])[None, None, :] + righe[:, :, None], 0, 255)
+    im = Image.fromarray(fondo.astype(np.uint8))
     f = ImageFont.truetype(FONT, 104)
     for i in range(10):
-        c = Image.new('RGB', (h, cw), (232, 226, 210))
-        ImageDraw.Draw(c).text((h / 2, cw / 2), str(i), font=f, fill=(25, 25, 25), anchor='mm')
-        im.paste(c.rotate(90, expand=True), (i * cw, 0))
-    d = ImageDraw.Draw(im)
-    for i in range(10):
-        d.line((i * cw, 0, i * cw, h), fill=(150, 145, 130), width=3)
+        c = Image.new('L', (h, cw), 0)
+        ImageDraw.Draw(c).text((h / 2, cw / 2), str(i), font=f, fill=255, anchor='mm')
+        m = c.rotate(90, expand=True)
+        luce = Image.new('L', m.size, 0)
+        luce.paste(m, (2, 2))            # il bordo chiaro della stampa, appena spostato: un poco di rilievo
+        im.paste((212, 214, 216), (i * cw, 0), luce)
+        im.paste((28, 28, 30), (i * cw, 0), m)
     im.save(os.path.join(OUT, 'rotella_cifre.jpg'), quality=92)
 
 
@@ -98,5 +104,10 @@ def decalcomanie():
 
 
 if __name__ == '__main__':
+    import sys
+    if sys.argv[1:]:
+        for nome in sys.argv[1:]:
+            globals()[nome]()
+        raise SystemExit
     os.makedirs(OUT, exist_ok=True)
     radiografia(); simboli(); rotella(); polaroid(); decalcomanie()

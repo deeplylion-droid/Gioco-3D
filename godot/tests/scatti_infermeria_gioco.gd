@@ -19,6 +19,9 @@ const CAMERE := {
 	"lavandino": [Vector3(-0.6, 1.6, 1.0), Vector3(-0.6, 0.6, 3.2)],
 	"pronto_soccorso": [Vector3(-1.0, 1.6, 0.6), Vector3(-3.2, 1.2, 0.35)],
 	"porta_nord": [Vector3(-1.0, 1.6, -0.5), Vector3(-2.2, 1.0, -3.2)],
+	# le rotelle della cassaforte davanti, da vicino come quando si girano (23 ottobre: la cifra davanti non era quella vera)
+	"rotelle": [Vector3(2.45, 1.5, -1.05), Vector3(3.2, 1.3, -1.05)],
+	"rotelle_fianco": [Vector3(2.55, 1.45, -0.55), Vector3(3.15, 1.3, -1.05)],
 	# le porte con le ante aperte fino al muro (23 ottobre): la sud da dentro, la nord mentre ci si passa, e l'adesivo
 	# sopra l'anta della nord da dove ci si può avvicinare di più (contro l'anta)
 	"porta_sud": [Vector3(0.9, 1.6, 1.3), Vector3(1.7, 1.0, 3.2)],
@@ -61,6 +64,13 @@ func _run() -> void:
 	if passo >= 2:
 		for c in f.find_children("*", "CassettoSchedario", true, false):
 			c.call(&"load_state", {"aperto": true})
+	# SCATTI_ROTELLE="4,1,7": le rotelle su quelle cifre, senza aprire (per vedere che davanti c'è proprio quella cifra)
+	var rot := OS.get_environment("SCATTI_ROTELLE")
+	if rot != "" and passo < 3:
+		var cifre := []
+		for c in rot.split(","):
+			cifre.append(int(c))
+		(f.get_node("Cassaforte") as CassaforteRotelle).load_state({"cifre": cifre, "aperta": false})
 	if passo >= 3:
 		(f.get_node("Negatoscopio") as Negatoscopio).con_radiografia = true
 		var cassa := f.get_node("Cassaforte") as CassaforteRotelle
