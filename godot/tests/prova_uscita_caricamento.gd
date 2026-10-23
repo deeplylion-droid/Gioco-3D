@@ -4,6 +4,9 @@ extends Node
 ##   torre [s]  la sala, la precarica della torre e l'uscita dopo s secondi (0: subito);
 ##   cambio     la sala, la precarica della torre e subito il ritorno al titolo (la sala esce dall'albero);
 ##   riparti    come la fine di test_acquari: la sala si ricarica mentre la torre carica, poi l'uscita;
+##   riparti_dopo come la fine di test_tappa8 (CI di lavoro/godot 2a4f4a8a): la torre ha finito di caricare,
+##              parte Game.esci() e, mentre aspetta, la morte fa ripartire il livello (GameState.respawn): la sala
+##              nuova richiede la torre nel thread;
 ##   livello [s] la schermata di caricamento del livello e l'uscita dopo s secondi.
 ##   pieno      controprova: il livello caricato fino in fondo controllando lo stato, 60 fotogrammi, quit();
 ##   pieno_esci il livello chiesto con Game.carica_in_thread, 1 s, poi Game.esci().
@@ -66,6 +69,24 @@ func _run() -> void:
 		await get_tree().process_frame
 	print("dopo %.1f s: stato %d" % [(Time.get_ticks_msec() - t0) / 1000.0,
 			ResourceLoader.load_threaded_get_status(sala.get(&"sala_torre_scena"))])
+	if modo == "riparti_dopo":
+		# la torre finisce di caricare, poi l'uscita; subito dopo il respawn come quando lei ti prende
+		while sala.get(&"_torre_in_caricamento"):
+			await get_tree().process_frame
+		print("torre caricata, ora Game.esci() e subito il respawn")
+		print("USCITA con il respawn durante l'attesa")
+		Game.esci()
+		await get_tree().process_frame
+		GameState.respawn()
+		for i in 3:
+			await get_tree().process_frame
+		var nuova := get_tree().current_scene
+		if nuova != sala and nuova and nuova.has_method(&"_precarica_torre"):
+			nuova.call(&"_precarica_torre")
+			print("sala ricaricata, torre di nuovo in caricamento: %s" % nuova.get(&"_torre_in_caricamento"))
+		else:
+			print("sala non ricaricata (si sta uscendo)")
+		return
 	if modo == "riparti":
 		# come la fine di test_acquari: la sala si ricarica (la vecchia esce con la torre in caricamento,
 		# la nuova la richiede di nuovo), 10 fotogrammi e quit()
