@@ -48,3 +48,17 @@ Con il giro "goofy" già bocciato dall'utente, lo segno come difetto. La soluzio
 - con le braccia raccolte e senza scala, a 9,3-9,6 s, lo squalo è largo 1,37-1,40 m nella fascia del busto (da 0,6 a 1,6 m d'altezza);
 - girando tutto il corpo diventa più largo, perché testa e coda sono lunghe 2,3 m;
 - quindi deve girare solo il busto, le spalle, e la nuova posa va rimisurata sullo stesso vano.
+
+## Sul ramo unito (lavoro/godot ff9860bb)
+
+Rifatte le stesse misure dopo l'unione (con niente torcia, tentacoli e il resto della v0.3.12):
+- tutto identico a 221c8ecf: bava 0,8-7,6 mm, nessuno scivolamento, pavimento 0,4 cm, muri, vano, anta e cartello a posto;
+- camera a 20,6 cm minimo, denti entro 4 mm;
+- dopo la scena il giocatore com'era (la torcia non c'è più).
+
+Negli scatti dagli occhi del giocatore senza torcia (`fogli/sq_risveglio_ff9860bb.jpg`):
+- la faccia si vede bene da 2,4 a 4,2 s;
+- lo squalo nel corridoio si vede da 6,6 a 10 s;
+- il buio a 4,8-5,4 s è lo sfarfallio della luce, come prima.
+
+S7 resta così per scelta dell'utente (D).
