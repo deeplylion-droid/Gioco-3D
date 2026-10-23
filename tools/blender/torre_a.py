@@ -283,7 +283,9 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=(), tu
             _intaglia_grata(b_, list(coll.objects))
             continue
         raccolta = coll_t if b_.name in tubi_su else coll
-        alberi = [BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get()) for o in raccolta.objects]
+        # (dai vertici: un oggetto appena creato non è ancora nel depsgraph)
+        alberi = [BVHTree.FromPolygons([o.matrix_world @ v.co for v in o.data.vertices], [tuple(f.vertices) for f in o.data.polygons])
+                  for o in raccolta.objects]
         # solo i pezzi (isole) toccati da uno scivolo passano dal booleano: il resto resta com'è (il booleano esatto
         # rifà fitte le facce che taglia; su tutta la torre i triangoli si quintuplicavano)
         albero = BVHTree.FromObject(b_, bpy.context.evaluated_depsgraph_get())
@@ -474,7 +476,11 @@ def _intaglia_grata(gr, tagli):
     giu = [f for f in bm.faces if f.normal.z < -0.5]
     from mathutils.bvhtree import BVHTree
     dg = bpy.context.evaluated_depsgraph_get()
-    alberi = [(t, BVHTree.FromObject(t, dg), t.matrix_world.inverted()) for t in tagli]
+    alberi = [(t, None, None) for t in tagli]
+    scatole = {}
+    for t in tagli:
+        co = [t.matrix_world @ v.co for v in t.data.vertices]
+        scatole[t.name] = [Vector(map(min, *co)), Vector(map(max, *co))]
     nuove, via, n_buchi = [], [], 0
     for f in sopra:
         z1 = f.verts[0].co.z
@@ -486,7 +492,8 @@ def _intaglia_grata(gr, tagli):
         lo, hi = pianta.bounds[:2], pianta.bounds[2:]
         buchi = []
         for t, albero, inv in alberi:
-            bb = [t.matrix_world @ Vector(c_) for c_ in t.bound_box]
+            # (il box dai vertici: bound_box di un oggetto appena creato è vuoto finché la scena non si aggiorna)
+            bb = scatole[t.name]
             if max(v.z for v in bb) < z0 or min(v.z for v in bb) > z1 or max(v.x for v in bb) < lo[0] or min(v.x for v in bb) > hi[0] \
                     or max(v.y for v in bb) < lo[1] or min(v.y for v in bb) > hi[1]:
                 continue
