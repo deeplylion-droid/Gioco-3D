@@ -7,16 +7,11 @@
 [ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_area_bimbi.glb" id="5_bimbi"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_torre_scivoli.glb" id="6_torre"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_oggetti.glb" id="7_oggetti"]
-[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_interattivi.glb" id="8_interattivi"]
-[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_vasca_centrale.glb" id="9_vasca"]
-[ext_resource type="PackedScene" path="res://assets/ambiente/sala/sala_luci.glb" id="10_luci"]
+[ext_resource type="PackedScene" path="res://assets/spot/sala_interattivi_monumento.glb" id="8_interattivi"]
+[ext_resource type="PackedScene" path="res://assets/spot/sala_monumento.glb" id="9_monumento"]
+[ext_resource type="PackedScene" path="res://assets/spot/sala_luci_monumento.glb" id="10_luci"]
 [ext_resource type="PackedScene" path="res://scenes/sala/luci_sala.tscn" id="11_look"]
 [ext_resource type="Environment" path="res://scenes/spot/ambiente_spot.tres" id="12_amb"]
-[ext_resource type="PackedScene" path="res://scenes/props/water_tank.tscn" id="13_tank"]
-[ext_resource type="Script" path="res://scripts/mechanisms/water_tank.gd" id="14_tank_gd"]
-[ext_resource type="Material" path="res://assets/materials/sala/acqua_vasche.tres" id="15_acqua_mat"]
-[ext_resource type="PackedScene" path="res://addons/acqua/scenes/acqua_per_vasca.tscn" id="16_link"]
-[ext_resource type="Script" path="res://addons/acqua/scripts/water_tank_link.gd" id="17_link_gd"]
 [ext_resource type="Resource" path="res://addons/acqua/presets/stile_1_limpida.tres" id="18_limpida"]
 [ext_resource type="PackedScene" path="res://addons/acqua/scenes/vasca_acqua.tscn" id="19_vasca_acqua"]
 
@@ -40,7 +35,8 @@ editor_description = "La sala principale da nuova, per lo spot VHS della crocier
 
 [node name="Interattivi" parent="Sala" instance=ExtResource("8_interattivi")]
 
-[node name="VascaCentrale" parent="Sala" instance=ExtResource("9_vasca")]
+[node name="Monumento" parent="Sala" instance=ExtResource("9_monumento")]
+editor_description = "Il monumento a gradoni delle prime versioni al posto della vasca a scacchi (scelta b dell'utente, 23 ottobre), solo nello spot. Da ambiente_sala_bimbi_hq.py --monumento --glb; luci e interattivi della stessa versione."
 
 [node name="Luci" parent="Sala" instance=ExtResource("10_luci")]
 
@@ -59,31 +55,6 @@ neon_difettosi = PackedInt32Array()
 festone_punti = PackedVector3Array(-20, 4.2, -13, -15.9, 7.35, -19.65, -12.9, 7.35, -19.65, -8, 4.2, -24)
 festone_rotte = PackedInt32Array()
 festone_sfarfallano = PackedInt32Array()
-
-[node name="Vasca" type="Node3D" parent="."]
-
-[node name="VascaCentrale" parent="Vasca" instance=ExtResource("13_tank")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
-script = ExtResource("14_tank_gd")
-inner_size = Vector3(5.4, 1, 3.9)
-build_walls = false
-water_material = ExtResource("15_acqua_mat")
-fill = 0.88
-max_fill = 0.88
-capacity_liters = 600.0
-suckable = false
-
-[node name="AcquaVascaCentrale" parent="Vasca" node_paths=PackedStringArray("tank") instance=ExtResource("16_link")]
-script = ExtResource("17_link_gd")
-tank = NodePath("../VascaCentrale")
-style = ExtResource("18_limpida")
-env_box_min = Vector3(-20, -2.5, -24)
-env_box_max = Vector3(20, 11.5, 20)
-
-[node name="SondaVasca" type="ReflectionProbe" parent="Vasca"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 11)
-size = Vector3(8, 5, 7)
-box_projection = true
 
 [node name="Piscina" type="Node3D" parent="."]
 

@@ -12,15 +12,16 @@ const TEXTURE_PULITE := "res://assets/spot/texture/"
 const SHADER_ONDE := preload("res://shaders/spot/acqua_onde_spot.gdshader")
 ## Le parti della sala che sono sporco o rovina: nella nave nuova non ci sono.
 const ROVINE: Array[String] = ["sala_colature", "sala_piastrelle_mancanti", "sala_pozzanghere", "sala_schegge_cupola",
-		"sala_vasca_centrale_calcare", "sala_vasca_offerte"]
+		"sala_vasca_centrale_calcare", "sala_vasca_offerte", "sala_monumento_offerte"]
 ## I giocattoli lasciati in giro nel gioco: nella sala nuova non ci sono (scelta dell'utente, 22 ottobre: "a", la sala
 ## tutta in ordine come prima dell'apertura). Restano gli arredi fissi: lettini, panche, sedia del bagnino, cestini,
 ## funghi fontana e i salvagenti appesi ai muri.
 const GIOCATTOLI: Array[String] = ["ogg_paperella_gigante", "ogg_pallone_spiaggia", "ogg_ciambella_gonfiabile",
 		"ogg_tubi_galleggianti", "ogg_delfino_gonfiabile_sgonfio", "ogg_orsacchiotto_grande",
 		"ogg_cartello_pavimento_bagnato", "ogg_salvagente_nave"]
-const GLB_SALA := ["architettura", "cupola", "piscina", "vasca_centrale", "area_bimbi", "interattivi", "torre_scivoli",
-		"oggetti", "monumento"]
+## Prefissi dei GLB della sala (i loro nomi danno quelli delle texture estratte); i più lunghi prima.
+const GLB_SALA := ["interattivi_monumento", "architettura", "cupola", "piscina", "vasca_centrale", "area_bimbi",
+		"interattivi", "torre_scivoli", "oggetti", "monumento"]
 
 @export var percorso_sala := NodePath("Sala")
 @export var piscina_onde: NodePath = ^"Piscina/AcquaOnde"
@@ -129,7 +130,7 @@ func _accendi() -> void:
 		var nome := String(luce.name)
 		if nome.begins_with("luce_emergenza"):
 			luce.visible = false
-		elif nome.begins_with("luce_faro") or nome.begins_with("luce_vasca"):
+		elif nome.begins_with("luce_faro") or nome.begins_with("luce_vasca") or nome.begins_with("luce_monumento_basso"):
 			# a coppie: quello a ovest (x < 0) rosa, quello a est viola
 			luce.light_color = colore_faro_rosa if luce.global_position.x < 0.0 else colore_faro_viola
 			if nome.begins_with("luce_faro"):
