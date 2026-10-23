@@ -705,7 +705,9 @@ def spogliatoi(M):
     for yb in (VY0, VY1):
         statico.append(L.cilindro('vasca_lavapiedi_bordo', (CX0, yb, -0.01), (CX1, yb, -0.01), 0.035, M['piastrelle_doccia'], seg=24))
     if HQ.disponibile('cartello_pericolo'):
-        col_ob(HQ.metti('cartello_bagnato', 'cartello_pericolo', (10.3, 11.75, 0), (None, None, 0.62), rot_z=R(160)))
+        # contro il muro est, fuori dalla ripartenza del checkpoint (x 9,7, y 11,7): a x 10,3 la capsula di chi
+        # rinasceva lo toccava (collaudo del 23 ottobre)
+        col_ob(HQ.metti('cartello_bagnato', 'cartello_pericolo', (10.5, 11.55, 0), (None, None, 0.62), rot_z=R(160)))
     L.raccogli(False)
     acqua_lp = L.scatola('acqua_lavapiedi', (CX0, VY0, VZ), (CX1, VY1, -0.05), M['acqua'], uv=False)
     L.uv_scatola(acqua_lp, 1.0); acqua_lp.visible_shadow = False
@@ -903,8 +905,18 @@ def stanzino(M):
     pt.append(L.scatola('porta_stanzino', (11.0, 8.3, 1.35), (11.09, 8.6, 1.75), M['metallo_grezzo']))
     porta = L.unisci('porta_stanzino', pt); L.ammacca(porta, 0.004, 2.0, 12.0, 3)
     L.origine(porta, (11.05, 8.88, 0)); porta.rotation_euler = (0, 0, R(-75))
-    porta = porta_hq(porta, 'porta_servizio', (11.05, 8.88, 0.01), 0.86, 2.02, R(-90 - 75), -1)
-    col_ob(porta)   # la porta aperta si urta (prima si attraversava)
+    # aperta del tutto, a 180 gradi, parallela al muro dalla parte dello stanzino: il vano (y 8,0-8,9) resta tutto
+    # libero. Il cardine sta sul telaio (che sporge 4 cm dal muro, x 11,20-11,24), così l'anta aperta appoggia
+    # sul telaio e resta 4 cm davanti al muro; il fermaporta di gomma fissato al muro la tiene ferma in fondo.
+    # (Aperta a 165 gradi stava di sbieco davanti a metà vano: il giocatore passava con 4,5 cm per lato.)
+    dpo = HQ.dimensioni('porta_servizio') if HQ.disponibile('porta_servizio') else None
+    sp_porta = dpo.y * 2.02 / dpo.z if dpo else 0.05
+    xc = 11.24 + sp_porta / 2 + 0.001
+    porta = porta_hq(porta, 'porta_servizio', (xc, 8.9, 0.01), 0.86, 2.02, R(-90 - 180), -1)
+    col_ob(porta)   # la porta aperta si urta
+    statico.append(L.unisci('fermaporta_stanzino', [
+        L.cilindro('fermaporta_stanzino', (11.2, 9.62, 0.12), (11.24, 9.62, 0.12), 0.012, M['metallo_grezzo'], seg=10),
+        L.cilindro('fermaporta_stanzino', (11.24, 9.62, 0.12), (xc - sp_porta / 2 - 0.001, 9.62, 0.12), 0.02, M['gomma'], seg=14)]))
     # costole
     for y in (7.4, 9.4):
         statico.append(L.scatola('costola', (X1 - 0.07, y - 0.06, 0), (X1, y + 0.06, H), M['lamiera_crema']))

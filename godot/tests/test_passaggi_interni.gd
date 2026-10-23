@@ -56,6 +56,8 @@ func _run() -> void:
 	var sar := level.get_node("Meccanismi/Saracinesca") as Node
 	sar.call(&"load_state", {"latched": true, "open": 1.0})
 	await _frames(10)
+	print("Le ripartenze dei checkpoint sono libere (la capsula del giocatore non tocca niente)")
+	await _ripartenze_libere()
 	print("Si passa da ogni porta e varco, col giocatore vero")
 	for s in STRADE:
 		var punti: Array = s[1]
@@ -97,6 +99,32 @@ func _cammina(w: Vector3) -> bool:
 			prima = p.global_position
 	Input.action_release(&"move_forward")
 	return false
+
+
+## La capsula del giocatore (la sua forma vera), messa su ogni ripartenza degli interni, non deve toccare niente:
+## si rinascerebbe dentro qualcosa (collaudo del 23 ottobre: la ripartenza della vasca lava-piedi era nel cartello).
+func _ripartenze_libere() -> void:
+	var forma: CollisionShape3D = null
+	for c in p.find_children("*", "CollisionShape3D", true, false):
+		if (c as CollisionShape3D).shape is CapsuleShape3D:
+			forma = c
+			break
+	check(forma != null, "il giocatore ha la capsula")
+	if forma == null:
+		return
+	var spazio := p.get_world_3d().direct_space_state
+	var ripartenze := level.find_children("Ripartenza", "Node3D", true, false)
+	check(ripartenze.size() >= 6, "ci sono le ripartenze degli interni (%d)" % ripartenze.size())
+	for r in ripartenze:
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = forma.shape
+		# la capsula come sta sul giocatore, coi piedi sulla ripartenza (2 cm sopra, per non contare il pavimento)
+		q.transform = Transform3D(forma.global_basis, (r as Node3D).global_position + (forma.global_position - p.global_position) + Vector3.UP * 0.02)
+		q.exclude = [p.get_rid()]
+		q.collision_mask = p.collision_mask
+		var tocchi := spazio.intersect_shape(q, 8)
+		var cosa := ", ".join(tocchi.map(func(t): return String((t.collider as Node).name)))
+		check(tocchi.is_empty(), "%s libera%s" % [String(r.get_parent().name), (" (tocca " + cosa + ")") if cosa != "" else ""])
 
 
 func _frames(n: int) -> void:
