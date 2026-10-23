@@ -368,19 +368,6 @@
 		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
 	},
 	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			8.75,
-			0.0,
-			42.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte, stato tappa7 (porte della sala pompe e portello aperti): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7)"
-	},
-	{
 		"zona": "mascotte",
 		"nodo": "Mascotte/StatuaPolpoA/statua_polpo_A",
 		"squadra": "mascotte",
@@ -472,19 +459,6 @@
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
 	},
 	{
-		"zona": "sala",
-		"nodo": "Sala/Interattivi/sala_portone_torre",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			19.5,
-			0.0,
-			-12.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
-	},
-	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_2",
 		"squadra": "enigmi",
@@ -522,19 +496,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.56 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -9.05), senza collisione (si attraversa)"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/cassetta_pronto_soccorso",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.5,
-			0.0,
-			30.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
 	},
 	{
 		"zona": "tecnici",

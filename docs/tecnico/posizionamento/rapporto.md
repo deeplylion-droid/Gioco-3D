@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 00:16:16. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 01:18:28. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 49. Eccezioni non più trovate: 6.
+Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 46. Eccezioni non più trovate: 8.
 
 ## Già noti
 
@@ -21,10 +21,8 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 49. Eccezi
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/corridoio_statico` | 8.75, 0.00, 42.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7) | da correggere: controllo del 22 ottobre notte, stato tappa7 (porte della sala pompe e portello aperti): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7) |
 | ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_rotore` | -0.25, 0.00, 25.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
 | ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_telaio` | -0.75, 0.00, 25.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (12 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
-| ambienti-1 | ingombro | `Interni/Ambienti/Stanzino/cassetta_pronto_soccorso` | 4.50, 0.00, 30.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) | da correggere: controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) |
 
 ### mascotte
 
@@ -54,7 +52,6 @@ Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 49. Eccezi
 | enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_7` | 19.25, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) | da correggere: controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) |
 | mascotte | ingombro | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli` | -13.00, 0.00, -5.25 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa) | voluto: i tentacoli di lei affacciata alla fossa (tappa 8) stanno tutti fra 0,3 e 2 m in pianta dal suo occhio, e LeiSbuca prende il giocatore a 2,4 m (distanza_presa) appena lei è visibile: da vivo non ci si arriva (deciso dal coordinatore, 22 ottobre) |
 | ambienti-1 | ingombro | `Sala/AreaBimbi/sala_struttura_gioco` | -15.50, 0.00, -19.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (85 celle da 25 cm) (pavimento a y -0.00), con la collisione (ci si sbatte contro) | voluto: struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre) |
-| ambienti-1 | ingombro | `Sala/Interattivi/sala_portone_torre` | 19.50, 0.00, -12.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | da correggere: controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) |
 
 ### tecnici
 
@@ -295,7 +292,9 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 
 - tecnici · staccato · `Tecnici/Ambienti/SalaPompe/POMPA_1_manometro`
 - tecnici · staccato · `Tecnici/Ambienti/SalaPompe/POMPA_2_manometro`
-- sala · compenetra · `Sala/VascaCentrale/ogg_salvagente_nave_36`
+- interni · ingombro · `Interni/Ambienti/Corridoio/corridoio_statico`
+- sala · ingombro · `Sala/Interattivi/sala_portone_torre`
+- interni · ingombro · `Interni/Ambienti/Stanzino/cassetta_pronto_soccorso`
 - torre · compenetrato · `Polaroid10`
 - torre · coperto · `Polaroid10`
 - torre · compenetra · `Polaroid10/Modello/Polaroid`
