@@ -200,6 +200,10 @@ func _cupola() -> void:
 	# il cielo della tempesta, dietro il vetro
 	var cielo := ShaderMaterial.new()
 	cielo.shader = load(CIELO)
+	# fra un lampo e l'altro il cielo è quasi nero (richiesta dell'utente del 23 ottobre: lo sfondo più buio);
+	# il lampo si somma sopra e resta forte
+	cielo.set_shader_parameter(&"colore_alto", Color(0.035, 0.045, 0.07))
+	cielo.set_shader_parameter(&"colore_orizzonte", Color(0.06, 0.07, 0.095))
 	var env := _ambiente()
 	if env:
 		var sky := Sky.new()
