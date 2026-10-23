@@ -230,7 +230,7 @@ func _pulito(m: BaseMaterial3D, acqua: bool) -> BaseMaterial3D:
 		n.metallic = 0.0
 	elif nome.begins_with("tsc_") or nome.begins_with("scivolo"):
 		# la vetroresina nuova: lucida, e un po' di luce passa dalla parete (dentro il tubo non è buio)
-		n.roughness = 0.18
+		n.roughness = 0.35
 		n.albedo_color = _vivo(n.albedo_color, n.albedo_texture)
 		n.emission_enabled = true
 		n.emission = n.albedo_color
@@ -406,7 +406,7 @@ func _acqua() -> void:
 ## e una luce che entra nel tubo e illumina gli ultimi metri.
 func _luce_uscita() -> void:
 	var fine := lunghezza()
-	var t := _tangente(fine)
+	var t := _tangente(fine - 0.6)
 	var disco := MeshInstance3D.new()
 	disco.name = "LuceUscita"
 	var cm := CylinderMesh.new()
@@ -425,13 +425,14 @@ func _luce_uscita() -> void:
 	disco.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(disco)
 	# il cilindro ha l'asse Y: lo si gira lungo il tubo
-	disco.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, t)), punto(fine - 0.03))
+	# (60 cm prima della bocca: lì sotto c'è la culla su cui il tubo poggia alla pedana, che entra nel tubo)
+	disco.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, t)), punto(fine - 0.6))
 	var o := OmniLight3D.new()
 	o.light_color = Color(1.0, 0.96, 0.88)
 	o.light_energy = 6.0
 	o.omni_range = 7.0
 	add_child(o)
-	o.global_position = punto(fine - 0.3)
+	o.global_position = punto(fine - 0.8)
 
 
 # --- schizzi -------------------------------------------------------------------------------------------------
