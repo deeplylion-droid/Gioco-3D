@@ -107,20 +107,9 @@ func _test_scene() -> void:
 func _test_statua_e_fuga() -> void:
 	print("Testa a cubo: statua, sguardo, rivelazione, fuga")
 	p.teleport(Vector3(0.5, 0, 5.2), 0.0, 0.0)
-	var torce := p.find_children("*", "Torcia", true, false)
-	check(torce.size() == 1 and bool(torce[0].get(&"accesa")) and InputMap.has_action(&"torcia"),
-		"il giocatore ha la torcia accesa (tasto F)")
-	if torce.size() == 1:
-		# richieste dell'utente: il 21 ottobre la metà dell'ultima (energia 2,8 -> 1,4, nebbia 0,12 -> 0,06),
-		# il 22 ottobre un altro -25% (energia 1,4 -> 1,05, nebbia 0,06 -> 0,045)
-		var luce := torce[0].get(&"luce") as SpotLight3D
-		check(is_equal_approx(float(torce[0].get(&"energia")), 1.05) and luce != null
-				and is_equal_approx(luce.light_volumetric_fog_energy, 0.045) and is_equal_approx(luce.spot_angle, 40.0),
-			"torcia: energia 1,05, fascio nella nebbia 0,045, cono di 40 gradi")
-		await _frames(2)
-		check(luce != null and luce.light_energy <= 1.05 + 0.001 and luce.light_energy > 0.0
-				and (-luce.global_basis.z).dot(-p.camera.global_basis.z) > 0.999,
-			"la luce della torcia è accesa e segue lo sguardo (%.2f)" % (luce.light_energy if luce else 0.0))
+	# la torcia non c'è più (scelta dell'utente del 23 ottobre)
+	check(p.find_children("*", "Torcia", true, false).is_empty() and not InputMap.has_action(&"torcia"),
+		"il giocatore non ha la torcia, e niente tasto F")
 	var b := (load(CUBO) as PackedScene).instantiate() as Bambino
 	b.modalita = Bambino.Modalita.STATUA
 	b.reazione = Bambino.Reazione.SI_GIRA
@@ -139,7 +128,7 @@ func _test_statua_e_fuga() -> void:
 	p.look_at_point(b.punto_testa())
 	await _frames(60)
 	check(ev.has(&"visto") and ev.has(&"si_gira"), "quando lo guardi si gira (segnali visto e si_gira)")
-	check(b.modalita == Bambino.Modalita.OSSERVA, "poi osserva, anche con la torcia puntata addosso (non scappa dalla luce)")
+	check(b.modalita == Bambino.Modalita.OSSERVA, "poi osserva (non scappa dalla luce)")
 	await _frames(240)
 	check(_anim(b).current_animation == &"fermo", "finito di girarsi respira fermo")
 	var sguardo := b.find_children("SguardoTesta", "LookAtModifier3D", true, false)
