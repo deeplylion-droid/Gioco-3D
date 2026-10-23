@@ -442,6 +442,25 @@ def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False, n
         pts = ([inizio - n * 0.1 + h, inizio + h] if nel_muro_a else []) + [inizio + o + h] + sopra + [fine + o + h] + \
             ([fine + h, fine - n * 0.1 + h] if nel_muro_b else [])
         obs.append(C.tubo(f'{nome}_{k}', pts, rk, mat, rc=0.12, seg=12, uv=None))
+        # dove il tubo passa in una costola del muro (sporge 16 cm): un collare di passaggio su ciascuna faccia della
+        # costola, così si legge come il foro di un'ordinata di nave (scelta del coordinatore, 23 ottobre). Un anello
+        # (toro) spesso 16 mm, 1 mm dentro la costola
+        if (0.09 + k * 0.13) - rk < 0.16:
+            u_da, u_a = (inizio - a).length, (fine - a).length
+            for j, (clo, chi, _ax) in enumerate(costole()):
+                centro = (clo + chi) / 2
+                if abs((centro - a).dot(n) - 0.08) > 0.02 or not clo.z <= a.z + z <= chi.z:
+                    continue   # non è una costola di questo muro
+                u0, u1 = sorted((min((Vector((clo.x, clo.y, 0)) - a).dot(d), (Vector((chi.x, chi.y, 0)) - a).dot(d)),
+                                 max((Vector((clo.x, clo.y, 0)) - a).dot(d), (Vector((chi.x, chi.y, 0)) - a).dot(d))))
+                if u1 < u_da or u0 > u_a:
+                    continue
+                for faccia, verso in ((u0, -1.0), (u1, 1.0)):
+                    # un anello che stringe il tubo (dentro tocca il tubo) e appoggia sulla faccia della costola
+                    rr = 0.008
+                    c = a + d * (faccia + verso * (rr - 0.001)) + o + h
+                    obs.append(C.toro(f'{nome}_{k}_collare{j}{"a" if verso < 0 else "b"}', tuple(c), rk + rr, rr, mat,
+                                      asse=tuple(d), seg=20, seg2=8, uv=None))
     # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
     lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))
     zs = z - r - 0.015
@@ -512,16 +531,20 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         # R1: sotto il tubo grosso (2,45), fino al muro est del vano scala (prima finivano nel vuoto all'entrata)
         # (la lampada rc1 del raccordo è sullo stesso muro, a x 48,5 e 2,1 m: i tubi le passavano dentro; il fascio
         # rientra nel muro prima e ne esce dopo)
-        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (48.5 - 0.4, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti, nel_muro_b=True)
-        tubi_muro(f'{nome}_tubi_r1b', (48.5 + 0.4, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti, nel_muro_a=True)
+        # (le staffe non sulle costole del muro: vuoti dove passano, vedi COSTOLE)
+        tubi_muro(f'{nome}_tubi_r1', (XR, Y_R0, 0), (48.5 - 0.4, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti, nel_muro_b=True,
+                  vuoti=_vuoti_costole(XR, 1))
+        tubi_muro(f'{nome}_tubi_r1b', (48.5 + 0.4, Y_R0, 0), (X_S1, Y_R0, 0), (0, 1), 2.15, mat, obs, quanti, nel_muro_a=True,
+                  vuoti=_vuoti_costole(48.5 + 0.4, 1))
         # in C2 no: sullo stesso muro c'è già il tubo grosso del raccordo (t7_tubo_c2) e non c'è posto sopra i 2 m
         # C3: dal muro est di C2 (dove il corridoio gira) fin quasi al magazzino, dove rientrano nel muro sud
         # (e così attorno alla lampada t7_c3b, a x 33,5)
         # (a 2,35 m: a 2,2 passavano davanti all'architrave della porta della scala di servizio, x 36,59..37,59, e una
         # staffa restava nel vano, senza muro dietro)
         tubi_muro(f'{nome}_tubi_c3', (XC1, YC3_0, Z_SALA), (33.5 + 0.4, YC3_0, Z_SALA), (0, 1), 2.35, mat, obs, quanti, nel_muro_b=True,
-                  vuoti=((XC1 - 37.59, XC1 - 36.59),))
-        tubi_muro(f'{nome}_tubi_c3b', (33.5 - 0.4, YC3_0, Z_SALA), (XM1 + 0.8, YC3_0, Z_SALA), (0, 1), 2.35, mat, obs, quanti, nel_muro_a=True, nel_muro_b=True)
+                  vuoti=((XC1 - 37.59, XC1 - 36.59),) + _vuoti_costole(XC1, -1))
+        tubi_muro(f'{nome}_tubi_c3b', (33.5 - 0.4, YC3_0, Z_SALA), (XM1 + 0.8, YC3_0, Z_SALA), (0, 1), 2.35, mat, obs, quanti, nel_muro_a=True, nel_muro_b=True,
+                  vuoti=_vuoti_costole(33.5 - 0.4, -1))
 
 
 def magazzino_pieno(nome, tav_cumuli, obs, rnd, liberi=()):
@@ -688,6 +711,8 @@ def proposta_gioco():
     comuni(obs, C.mat_pbr('corrimano_A', base=(0.85, 0.65, 0.12), roughness=0.5, metallic=0.5))
     for o in [o for o in obs if o.name in TROPPO_ALTI]:
         obs.remove(o); bpy.data.objects.remove(o)
+    lontano_dai_corrimano(obs)
+    lontano_dalle_costole(obs)
     # collisioni: una scatola (allineata agli assi) per ogni modello più alto di 25 cm
     sorgenti = {o.data for o in HQ._base.values()}
     for o in list(obs):
@@ -695,6 +720,279 @@ def proposta_gioco():
             lo, hi = _scatola(o)
             obs.append(C.collisione_box(o.name + '_col', lo, hi))
     return obs
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# I corrimano del raccordo (ambienti2_raccordo.py: F1 sul muro est del vano scala, F2 sul muro nord) e quello di C2
+# (corrimano_c2): asse e raggio. Riscontro dell'utente sulla v0.3.11: "1 scatola e 1 estintore e 1 pompa antincendio
+# arrotolata compenetrati con il corrimano". Con la regola dei 25 cm (23 ottobre) la roba appesa più sporgente scende
+# con la cima a 1,15 m, cioè all'altezza del corrimano (95 cm sui gradini), e le pile a muro arrivano a 1,3 m.
+
+N_F, PED_F = 20, 0.2515
+
+
+def corrimano_assi():
+    yc = X_S1 - 0.12
+    f1 = [(yc, Y_R1 - 0.3, 0.95), (yc, Y_R1 + (N_F - 1) * PED_F, Z_L1 + 0.95), (yc, Y_T1 - 0.3, Z_L1 + 0.95)]
+    xc = Y_T1 - 0.12
+    f2 = [(X_S0 + 0.3, xc, Z_L1 + 0.95), (X_S0 - (N_F - 1) * PED_F, xc, Z_T + 0.95), (X_T0 + 0.4, xc, Z_T + 0.95)]
+    x = XC0 + 0.07
+    c2 = [(x, Y_SCALA2 + 0.6, Z_T + 0.95), (x, Y_SCALA2, Z_T + 0.95), (x, Y_SCALA2 - N2 * PED2, Z_SALA + 0.95),
+          (x, Y_SCALA2 - N2 * PED2 - 0.6, Z_SALA + 0.95)]
+    return {'f1': C._arrotonda(f1, 0.15), 'f2': C._arrotonda(f2, 0.15), 'c2': C._arrotonda(c2, 0.15)}
+
+
+def _punti_asse(asse, passo=0.02):
+    out = []
+    for a, b in zip(asse, asse[1:]):
+        a, b = Vector(a), Vector(b)
+        n = max(1, int((b - a).length / passo))
+        out += [a.lerp(b, i / n) for i in range(n + 1)]
+    return out
+
+
+def distanza_corrimano(o):
+    """La distanza più piccola fra la mesh vera di o e l'asse dei corrimano (None se lontano), e quale corrimano."""
+    from mathutils.bvhtree import BVHTree
+    lo, hi = _scatola(o)
+    vicini = {k: [p for p in _punti_asse(a) if all(lo[i] - 0.1 < p[i] < hi[i] + 0.1 for i in range(3))]
+              for k, a in corrimano_assi().items()}
+    vicini = {k: v for k, v in vicini.items() if v}
+    if not vicini:
+        return None, None
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    e = o.evaluated_get(dg)
+    m = e.to_mesh()
+    vs = [o.matrix_world @ v.co for v in m.vertices]
+    ps = [tuple(p.vertices) for p in m.polygons]
+    e.to_mesh_clear()
+    if not ps:
+        return None, None
+    t = BVHTree.FromPolygons(vs, ps)
+    meglio = (None, None)
+    for k, pts in vicini.items():
+        d = min(t.find_nearest(p)[3] for p in pts)
+        if meglio[0] is None or d < meglio[0]:
+            meglio = (d, k)
+    return meglio
+
+
+R_CORR, STACCO = 0.025, 0.02
+
+# Le costole d'acciaio dei corridoi (ambienti2_raccordo.py): larghe 20 cm, sporgono 16 cm dal muro, dal pavimento al
+# soffitto. La roba a muro (a 3 cm) ci entrava di 6-13 cm: il controllo di posizionamento non le vedeva, perché i
+# dettagli del raccordo sono una mesh sola di 44 m (trovato col controllo corretto, 23 ottobre).
+H_R1 = 2.8
+H_C = Z_SALA + 2.8
+
+
+def costole():
+    """Le scatole (lo, hi) delle costole, e per ognuna l'asse lungo il muro (0 = x, 1 = y)."""
+    out = []
+    for x in (47.6, 49.4):
+        out.append(((x - 0.1, Y_R0, 0.0), (x + 0.1, Y_R0 + 0.16, H_R1), 0))
+        out.append(((x - 0.1, Y_R1 - 0.16, 0.0), (x + 0.1, Y_R1, H_R1), 0))
+    for y in (-1.0, -4.0, -7.0, -10.0, -13.0):
+        out.append(((XC0, y - 0.1, Z_SALA), (XC0 + 0.16, y + 0.1, H_C), 1))
+        out.append(((XC1 - 0.16, y - 0.1, Z_SALA), (XC1, y + 0.1, H_C), 1))
+    for x in (42.0, 39.0, 36.0, 33.0, 30.0):
+        out.append(((x - 0.1, YC3_0, Z_SALA), (x + 0.1, YC3_0 + 0.16, H_C), 0))
+        out.append(((x - 0.1, YC3_1 - 0.16, Z_SALA), (x + 0.1, YC3_1, H_C), 0))
+    return [(Vector(lo), Vector(hi), ax) for lo, hi, ax in out]
+
+
+def _vuoti_costole(x_da, verso):
+    """I tratti (u0, u1) lungo un muro di R1 o di C3 che parte da x_da e va verso x crescente (verso 1) o
+    decrescente (-1) dove ci sono le costole."""
+    out = []
+    for lo, hi, ax in costole():
+        if ax == 0:
+            u0, u1 = sorted(((lo.x - x_da) * verso, (hi.x - x_da) * verso))
+            if u1 > 0:
+                out.append((u0, u1))
+    return tuple(sorted(set(out)))
+
+
+# dove la roba spostata lungo il muro non può andare: la porta della scala di servizio in C3, la porta verso il fiume
+# e il buco dell'agnellino con la grata in C2 (vedi proposta_gioco)
+VIETATI = [((36.39, YC3_0, Z_SALA), (37.79, YC3_0 + 0.8, H_C)), ((XC1 - 0.8, 4.3, Z_T), (XC1, 5.9, Z_T + 2.4)),
+           ((XC1 - 0.8, BUCO_Y - 1.4, Z_SALA), (XC1, BUCO_Y + 1.45, H_C))]
+
+
+def _bvh(o):
+    from mathutils.bvhtree import BVHTree
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    e = o.evaluated_get(dg)
+    m = e.to_mesh()
+    vs = [o.matrix_world @ v.co for v in m.vertices]
+    ps = [tuple(p.vertices) for p in m.polygons]
+    e.to_mesh_clear()
+    return BVHTree.FromPolygons(vs, ps) if ps else None
+
+
+def _bvh_scatola(lo, hi):
+    from mathutils.bvhtree import BVHTree
+    vs = [Vector((x, y, z)) for x in (lo.x, hi.x) for y in (lo.y, hi.y) for z in (lo.z, hi.z)]
+    facce = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+    return BVHTree.FromPolygons(vs, facce)
+
+
+def nella_costola(o):
+    """La costola che la mesh vera di o attraversa (le facce si incrociano), o None."""
+    lo, hi = _scatola(o)
+    for c in costole():
+        clo, chi, ax = c
+        if not all(lo[i] < chi[i] + 0.005 and hi[i] > clo[i] - 0.005 for i in range(3)):
+            continue
+        t = _bvh(o)
+        if t and t.overlap(_bvh_scatola(clo - Vector((0.005,) * 3), chi + Vector((0.005,) * 3))):
+            return c
+    return None
+
+
+def _pila(o, obs):
+    """o e i pezzi impilati con lui (sopra o sotto, con l'impronta che si sovrappone), dal basso."""
+    lo, hi = _scatola(o)
+    gruppo = []
+    for x in obs:
+        if x.type != 'MESH':
+            continue
+        a, b = _scatola(x)
+        ox = min(hi.x, b.x) - max(lo.x, a.x)
+        oy = min(hi.y, b.y) - max(lo.y, a.y)
+        if ox > 0.05 and oy > 0.05 and not x.name.startswith(('G_tubi', 'G_festone', 'G_freccia', 'uscita_')) \
+                and 'corrimano' not in x.name and '_m_' not in x.name:
+            gruppo.append(x)
+    return sorted(gruppo, key=lambda x: _scatola(x)[0].z)
+
+
+def _dentro_vietati(gruppo):
+    for x in gruppo:
+        lo, hi = _scatola(x)
+        for vlo, vhi in VIETATI:
+            if all(lo[i] < vhi[i] and hi[i] > vlo[i] for i in range(3)):
+                return True
+    return False
+
+
+def lontano_dalle_costole(obs):
+    """La roba che entra in una costola si sposta lungo il muro quanto basta (2 cm di stacco), dalla parte più vicina;
+    le pile si spostano tutte insieme. Se dall'una e dall'altra parte tocca altra roba o finisce davanti a una porta,
+    si toglie. I tubi lungo i muri passano nelle costole come nelle ordinate di una nave (le staffe no: vuoti in
+    tubi_muro). Alla fine si ricontrolla tutto e, se resta qualcosa, l'esportazione si ferma."""
+    fatti = set()
+    tolti = set()
+    for o in list(obs):
+        if id(o) in tolti:
+            continue
+        if o.name in fatti or o.type != 'MESH':
+            continue
+        if o.name.startswith(('G_tubi', 'G_festone', 'G_freccia', 'c2_corrimano', 'uscita_')) or o.name.endswith(('_piolo', '_piastra')):
+            continue
+        c = nella_costola(o)
+        if c is None:
+            continue
+        clo, chi, ax = c
+        gruppo = [o] if '_m_' in o.name else _pila(o, obs)
+        lo = Vector([min(_scatola(x)[0][i] for x in gruppo) for i in range(3)])
+        hi = Vector([max(_scatola(x)[1][i] for x in gruppo) for i in range(3)])
+        prove = sorted([chi[ax] + STACCO - lo[ax], clo[ax] - STACCO - hi[ax]], key=abs)
+        altri = [x for x in obs if x not in gruppo and x.type == 'MESH' and not x.name.startswith(('G_festone', 'G_freccia'))]
+        messo = False
+        for d in prove:
+            v = Vector((0, 0, 0))
+            v[ax] = d
+            for x in gruppo:
+                x.location += v
+            bpy.context.view_layer.update()
+            if not any(_tocca(x, altri) for x in gruppo) and not _dentro_vietati(gruppo) and not any(nella_costola(x) for x in gruppo):
+                messo = True
+                break
+            for x in gruppo:
+                x.location -= v
+            bpy.context.view_layer.update()
+        nomi = ', '.join(x.name for x in gruppo)
+        if messo:
+            print('costole: %s spostato di %.2f m lungo il muro' % (nomi, d), flush=True)
+        else:
+            print('costole: %s tolto (non c\'è posto accanto alla costola)' % nomi, flush=True)
+            for x in gruppo:
+                tolti.add(id(x))
+                obs.remove(x); bpy.data.objects.remove(x)
+        fatti.update(x for x in nomi.split(', '))
+    resta = [o.name for o in obs if o.type == 'MESH' and not o.name.startswith(('G_tubi', 'G_festone', 'G_freccia', 'c2_corrimano', 'uscita_'))
+             and not o.name.endswith(('_piolo', '_piastra')) and nella_costola(o)]
+    if resta:
+        raise SystemExit('ancora nelle costole: ' + ', '.join(resta))
+
+
+def lontano_dai_corrimano(obs):
+    """Niente a meno di 2 cm dalla faccia dei corrimano (si sistemano dopo, così il resto della strada non cambia):
+    la roba appesa sul muro del corrimano va sul muro di fronte della stessa scala, alla stessa quota (lì il corrimano
+    non c'è); dalle pile si toglie il pezzo che ci arriva (il pesante sotto resta); i pezzi a terra si scostano dal
+    muro quanto serve. Alla fine si ricontrolla tutto e, se resta qualcosa, l'esportazione si ferma."""
+    # per ogni corrimano: la faccia del muro dove sta, quella del muro di fronte, e l'asse (x o y) fra i due
+    muri = {'f1': (X_S1, X_S0, 0), 'f2': (Y_T1, Y_T0, 1), 'c2': (XC0, XC1, 0)}
+    for o in list(obs):
+        if o.type != 'MESH' or o.name.endswith(('_piolo', '_piastra')) or 'corrimano' in o.name:
+            continue
+        d, k = distanza_corrimano(o)
+        if d is None or d >= R_CORR + STACCO:
+            continue
+        da, di_fronte, ax = muri[k]
+        lo, hi = _scatola(o)
+        c0 = (lo + hi) / 2
+        if '_m_' in o.name:
+            # appesa: sul muro di fronte, girata di 180 gradi, col retro a 1 mm dal muro
+            o.rotation_euler.z += math.pi
+            bpy.context.view_layer.update()
+            lo2, hi2 = _scatola(o)
+            sposta = c0 - (lo2 + hi2) / 2
+            sposta[ax] += da + di_fronte - 2 * c0[ax]
+            sposta.z = 0.0
+            o.location += sposta
+            bpy.context.view_layer.update()
+            n = Vector((0, 0, 0))
+            n[ax] = 1.0 if da > di_fronte else -1.0     # dal muro di fronte verso la stanza
+            p = c0.copy()
+            p[ax] = di_fronte
+            _al_muro([o], p, n)
+            altri = [x for x in obs if x is not o and x.type == 'MESH']
+            if _tocca(o, altri):
+                print('corrimano: %s non ci sta sul muro di fronte, tolto' % o.name, flush=True)
+                obs.remove(o); bpy.data.objects.remove(o)
+            else:
+                print('corrimano: %s spostato sul muro di fronte' % o.name, flush=True)
+            continue
+        # sopra un altro pezzo (una pila): si toglie
+        sotto = [x for x in obs if x is not o and x.type == 'MESH' and not x.name.endswith('_col-convcolonly')
+                 and abs(_scatola(x)[1].z - lo.z) < 0.03 and _scatola(x)[0].x < hi.x and _scatola(x)[1].x > lo.x
+                 and _scatola(x)[0].y < hi.y and _scatola(x)[1].y > lo.y]
+        if sotto:
+            print('corrimano: %s (in cima alla pila, sopra %s) tolto' % (o.name, sotto[0].name), flush=True)
+            obs.remove(o); bpy.data.objects.remove(o)
+            continue
+        # a terra: si scosta dal muro del corrimano quanto serve
+        n = Vector((0, 0, 0))
+        n[ax] = 1.0 if di_fronte > da else -1.0
+        partito = o.location.copy()
+        for _ in range(40):
+            o.location += n * 0.01
+            bpy.context.view_layer.update()
+            d, _k = distanza_corrimano(o)
+            if d is None or d >= R_CORR + STACCO:
+                break
+        print('corrimano: %s scostato dal muro di %.2f m' % (o.name, (o.location - partito).length), flush=True)
+    resta = []
+    for o in obs:
+        if o.type == 'MESH' and not o.name.endswith(('_piolo', '_piastra')) and 'corrimano' not in o.name:
+            d, k = distanza_corrimano(o)
+            if d is not None and d < R_CORR + STACCO:
+                resta.append('%s (%s, %.3f)' % (o.name, k, d))
+    if resta:
+        raise SystemExit('ancora vicino ai corrimano: ' + ', '.join(resta))
 
 
 def esporta(nome, obs, percorso=None):

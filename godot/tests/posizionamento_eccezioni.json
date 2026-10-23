@@ -323,5 +323,226 @@
 		],
 		"stato": "voluto",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			47.5,
+			2.15,
+			2.28
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			29.94,
+			11.4,
+			16.0
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			32.94,
+			11.39,
+			16.0
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			33.1,
+			11.38,
+			15.99
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_13",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			0.95,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_14",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.02,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_15",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.09,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_16",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.16,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_17",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.23,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_18",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.3,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_19",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.37,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_20",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.44,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_21",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.51,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_22",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-15.9,
+			1.58,
+			20.35
+		],
+		"stato": "voluto",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/paratia/Mesh_0",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-38.16,
+			-5.4,
+			117.17
+		],
+		"stato": "voluto",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/paratia4/Mesh_0",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-55.75,
+			-5.4,
+			93.6
+		],
+		"stato": "voluto",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/paratia5/Mesh_0",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-33.4,
+			-5.4,
+			64.75
+		],
+		"stato": "voluto",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera"
 	}
 ]

@@ -359,8 +359,12 @@ func _rampa(lo: Vector3, n: int) -> void:
 	f.shape = s
 	f.transform = Transform3D(Basis(Vector3.BACK, ang), Vector3(lo.x + lungo * 0.5, lo.y + su * 0.5 - 0.05 / cos(ang), zc))
 	_corpo.add_child(f)
+	# i muri dei lati finiscono 20 cm prima della cima: lì ci sono già i muri del pianerottolo di sopra (che sporgono di
+	# 20 cm), con lo zoccolo di cemento alla loro quota. Arrivando fino in cima le facce erano le stesse, una di lamiera
+	# e una di cemento, e lampeggiavano (z-fighting; riscontro dell'utente sulla v0.3.11, "subito oltre il nuovo
+	# ingresso la texture del cemento si glitcha con il muro"). Sotto quei 20 cm c'è l'ultimo gradino.
 	for z in [lo.z - 0.1, lo.z + SCALA_LARGA + 0.1]:
-		_muro(Vector3(lungo, su + 2.6, 0.2), Vector3(lo.x + lungo * 0.5, lo.y + (su + 2.6) * 0.5, z), lo.y)
+		_muro(Vector3(lungo - 0.2, su + 2.6, 0.2), Vector3(lo.x + (lungo - 0.2) * 0.5, lo.y + (su + 2.6) * 0.5, z), lo.y)
 	var soff := MeshInstance3D.new()
 	var b := BoxMesh.new()
 	b.size = Vector3(l, 0.2, SCALA_LARGA + 0.4)

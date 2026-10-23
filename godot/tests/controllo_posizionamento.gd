@@ -159,6 +159,15 @@ func _run() -> void:
 	# iniziale il corridoio della zona del personale poggia su di loro, e lì si guarda nel giro che le mostra
 	Engine.set_meta(&"risalita_subito", true)
 	var solo := OS.get_cmdline_user_args().slice(1)
+	# una scena da sola (res://...tscn) come argomento: la si controlla come una zona sua (per le prove)
+	for arg in solo:
+		if String(arg).begins_with("res://"):
+			await _controlla_scena({"scena": arg, "zona": String(arg).get_file().get_basename()})
+			_confronta()
+			print("")
+			print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
+			get_tree().quit(1 if _failed > 0 else 0)
+			return
 	for z in ZONE:
 		var nome_scena := String(z["scena"]).get_file().get_basename()
 		if not solo.is_empty() and not solo.has(nome_scena) and not solo.has(z.get("zona", "")) and not solo.has(z.get("stato", "")):
@@ -239,6 +248,7 @@ func _controlla_scena(z: Dictionary) -> void:
 	print("  c) interattivi coperti o compenetrati: %d" % (_trovati.size() - prima))
 	prima = _trovati.size()
 	_compenetrazioni(z, oggetti)
+	_dentro_dettagli(z, mesh, oggetti)
 	print("  d) compenetrazioni fra oggetti: %d" % (_trovati.size() - prima))
 	prima = _trovati.size()
 	for mi in mesh:
@@ -1602,7 +1612,19 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					continue
 				fatte[[a, b]] = true
 				if _stesso_modello(a, b) or (a as Node).get_parent() == (b as Node).get_parent():
-					continue   # pezzi dello stesso modello, o dello stesso oggetto fatto da codice (lampade, fari)
+					# pezzi dello stesso modello, o dello stesso oggetto fatto da codice (lampade, fari): non si
+					# confrontano, tranne un corrimano o un tubo con le altre cose di un glTF d'arredo, cioè fatto di
+					# tanti oggetti diversi (l'arredo della risalita: il carrello nel corrimano di C2, riscontro dell'utente
+					# sulla v0.3.11). Solo gli spigoli che lo attraversano: le staffe entrano apposta 1 mm nel tubo. Nei
+					# modelli normali i pezzi si incastrano apposta (bielle, montanti, cornici)
+					if _fino and _stesso_modello(a, b) and _arredo(a) and (_lungo_sottile(a) or _lungo_sottile(b)) \
+							and boxes[a].intersects(boxes[b]):
+						var pp := _attraversa(a, b)
+						if pp > ATTRAVERSA_MIN:
+							var chi2: MeshInstance3D = b if _lungo_sottile(a) else a
+							var altro2: MeshInstance3D = a if chi2 == b else b
+							_trova(z, chi2, "compenetra", boxes[a].intersection(boxes[b]).get_center(), "passa dentro %s per %d cm (nel pieno, per esempio, in %s)" % [_nodo(altro2), roundi(pp * 100.0), _punto_dentro.snappedf(0.01)])
+					continue
 				if _alternative(a, b):
 					continue   # due versioni della stessa cosa (una nascosta all'inizio): non si vedono insieme
 				var ba: AABB = boxes[a]
@@ -1626,6 +1648,130 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 					var altro: MeshInstance3D = b if chi == a else a
 					_trova(z, chi, "compenetra", i.get_center(), "il %d%% dei suoi vertici è dentro %s" % [roundi(dentro * 100.0), _nodo(altro)])
+
+
+## Un glTF d'arredo: tanti oggetti diversi messi in un modello solo (più di [constant ARREDO_MESH] mesh), come l'arredo
+## della risalita (480).
+const ARREDO_MESH := 100
+var _arredi := {}
+
+
+func _arredo(mi: Node) -> bool:
+	var o := mi.owner
+	if o == null:
+		return false
+	if not _arredi.has(o):
+		_arredi[o] = o.find_children("*", "MeshInstance3D", true, false).size() > ARREDO_MESH
+	return _arredi[o]
+
+
+## Una mesh lunga e sottile (un corrimano, un tubo, una sbarra): il lato più corto del box sotto 12 cm, il più lungo
+## sopra 80 cm.
+func _lungo_sottile(mi: MeshInstance3D) -> bool:
+	var s := _box(mi).size
+	return minf(s.x, minf(s.y, s.z)) < 0.12 and maxf(s.x, maxf(s.y, s.z)) > 0.8
+
+
+## Le mesh grandi di dettagli (RACCORDO_dettagli, 44 m: i corrimano, i tubi e le staffe di tutto il raccordo fusi
+## insieme) non sono oggetti di scena (troppo grandi) e prima non si confrontavano con niente: l'estintore, il rullo col
+## tubo e lo scatolone dell'arredo della risalita passavano dentro i corrimano senza che il controllo li vedesse
+## (riscontro dell'utente sulla v0.3.11). Per ogni oggetto vicino si prendono solo i triangoli della mesh grande attorno
+## al suo box, e si guarda quanto i loro spigoli passano nel pieno dell'oggetto. L'architettura (pavimenti, muri, scale)
+## resta fuori: lì le cose si appoggiano.
+const NON_DETTAGLI := ["scale", "scala", "gradin", "rampa", "terreno", "tetto"]
+## Una mesh di dettagli che passa dentro un oggetto più di tanto sotto la sua superficie (m) è una compenetrazione.
+const PROFONDO_MIN := 0.012
+
+
+func _dentro_dettagli(z: Dictionary, mesh: Array, oggetti: Array) -> void:
+	var ogg := {}
+	for o in oggetti:
+		ogg[o] = true
+	for g in mesh:
+		var mg := g as MeshInstance3D
+		if ogg.has(mg) or _acqua.has(mg) or _box(mg).size.length() < _oggetto_max:
+			continue
+		var percorso := String(_radice.get_path_to(mg)).to_lower()
+		if ARCHITETTURA.any(func(a): return percorso.contains(a)) or NON_DETTAGLI.any(func(a): return percorso.contains(a)):
+			continue
+		var facce: PackedVector3Array = mg.global_transform * mg.mesh.get_faces()
+		# i triangoli in celle da 1 m
+		var celle := {}
+		for t in facce.size() / 3:
+			# i triangoli orizzontali (pavimenti, soffitti, la cima delle costole) no: lì le cose si appoggiano, e i loro
+			# spigoli corrono sulla faccia di sotto di quello che ci sta sopra (le pile del fiume, i telai delle chiuse)
+			var nt := (facce[t * 3 + 1] - facce[t * 3]).cross(facce[t * 3 + 2] - facce[t * 3])
+			if nt.length() < 1e-9 or absf(nt.normalized().y) > 0.9:
+				continue
+			var bt := AABB(facce[t * 3], Vector3.ZERO).expand(facce[t * 3 + 1]).expand(facce[t * 3 + 2])
+			var da := Vector3i(bt.position.floor())
+			var a_ := Vector3i(bt.end.floor())
+			for x in range(da.x, a_.x + 1):
+				for y in range(da.y, a_.y + 1):
+					for zz in range(da.z, a_.z + 1):
+						celle.get_or_add(Vector3i(x, y, zz), []).append(t)
+		var bg := _box(mg)
+		for o in oggetti:
+			var mo := o as MeshInstance3D
+			var bo := _box(mo).grow(0.02)
+			if not bo.intersects(bg) or not _corpo_di.has(mo) or _stesso_modello(mo, mg):
+				continue
+			var vicini := {}
+			var da := Vector3i(bo.position.floor())
+			var a_ := Vector3i(bo.end.floor())
+			for x in range(da.x, a_.x + 1):
+				for y in range(da.y, a_.y + 1):
+					for zz in range(da.z, a_.z + 1):
+						for t in celle.get(Vector3i(x, y, zz), []):
+							vicini[t] = true
+			if vicini.is_empty():
+				continue
+			var corpo := _corpo_di[mo] as StaticBody3D
+			corpo.collision_layer = STRATO_SOLO
+			var massimo := 0.0
+			var punto := Vector3.ZERO
+			var spigolo := ""
+			for t in vicini:
+				for e in 3:
+					var p0 := facce[t * 3 + e]
+					var p1 := facce[t * 3 + (e + 1) % 3]
+					if not bo.has_point(p0) and not bo.has_point(p1) and not bo.intersects_segment(p0, p1):
+						continue
+					var l := p0.distance_to(p1)
+					if l < 0.03:
+						continue
+					var d := (p1 - p0) / l
+					var h0 := _raggio(p0 + d * 0.005, p1 - d * 0.005, STRATO_SOLO)
+					if h0.is_empty():
+						continue
+					var h1 := _raggio(p1 - d * 0.005, p0 + d * 0.005, STRATO_SOLO)
+					if h1.is_empty():
+						continue
+					var medio := ((h0.position as Vector3) + (h1.position as Vector3)) * 0.5
+					if not _nel_pieno(medio):
+						continue
+					# quanto è dentro, non quanto è lungo il tratto: una piastra di 1 cm sul pavimento sotto uno
+					# scatolone ha spigoli lunghi tutti dentro la sua base, ma solo di 1 cm
+					var prof := _profondita(medio)
+					if prof > massimo:
+						massimo = prof
+						punto = medio
+						spigolo = "da %s a %s" % [p0.snappedf(0.01), p1.snappedf(0.01)]
+			corpo.collision_layer = STRATO
+			if massimo > PROFONDO_MIN:
+				_trova(z, mo, "compenetra", punto, "dentro ci passa %s, %d cm sotto la sua superficie (per esempio in %s, lo spigolo %s)" % [_nodo(mg), roundi(massimo * 100.0), punto.snappedf(0.01), spigolo])
+
+
+## Quanto p sta sotto la superficie della mesh sullo strato STRATO_SOLO: la distanza più corta in 14 direzioni.
+func _profondita(p: Vector3) -> float:
+	var minimo := 1.0
+	for d in [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK,
+			Vector3(1, 1, 1), Vector3(1, 1, -1), Vector3(1, -1, 1), Vector3(1, -1, -1), Vector3(-1, 1, 1),
+			Vector3(-1, 1, -1), Vector3(-1, -1, 1), Vector3(-1, -1, -1)]:
+		var h := _raggio(p, p + (d as Vector3).normalized() * minimo, STRATO_SOLO)
+		if not h.is_empty():
+			minimo = minf(minimo, p.distance_to(h.position))
+	return minimo
 
 
 ## Vero se una delle due sta sotto una parte nascosta all'inizio che è sorella di un antenato dell'altra (o dell'altra
