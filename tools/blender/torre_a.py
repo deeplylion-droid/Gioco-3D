@@ -1405,6 +1405,11 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
         i += 1
     p = dal_capo[i]
     d = (dal_capo[i + 1] - dal_capo[i - 1]).normalized()
+    if not chiuso:
+        # il cancello sta sulla pedana davanti alla bocca, 15 cm prima della testata: 35 cm dentro, le sbarre
+        # entravano nel canale (e l'intaglio le lasciava appese al corrimano; l'utente, 23 ottobre: niente sbarre appese)
+        dh = Vector((d.x, d.y, 0)).normalized()
+        p = dal_capo[0] - dh * 0.15
     BOCCHE_CHIUSE.append(([round(v, 3) for v in (p.x, p.y, L)], [round(d.x, 3), round(d.y, 3)], chiuso))
     if chiuso:
         # dentro il tubo (18 lati: il piano di un lato è a R*cos(10°) dall'asse), 4 mm dalla parete: col raggio pieno
