@@ -47,6 +47,10 @@ const EXTRA := {
 	"n_scia_serranda": [Vector3(-15.0, 0.0, 19.0), Vector3(-18.0, 0.3, 9.0)],  # tappa 7: appena usciti dalla serranda, la scia lungo il muro ovest
 	# tappa 5: dal bordo est con lo zaino, mentre aspira la micro medusina più vicina (due scatti di fila)
 	"l_aspira_medusine": [Vector3(7.35, 0.0, 2.0), Vector3(5.6, -1.5, 2.4)],
+	# la Polaroid05 sul fondo della piscina vuota (1,2, -2,17, 2,9): dal fondo a circa 2 m, dalla scaletta est
+	"o_p05_fondo_est": [Vector3(3.3, -2.0, 3.0), Vector3(1.2, -2.17, 2.9)],
+	"p_p05_fondo_sud": [Vector3(1.6, -2.0, 4.5), Vector3(1.2, -2.17, 2.9)],
+	"q_p05_scaletta": [Vector3(6.3, -1.95, 3.2), Vector3(1.2, -2.17, 2.9)],
 }
 
 var out_dir := "user://scatti_sala"
