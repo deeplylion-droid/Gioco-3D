@@ -12,6 +12,9 @@ uniform vec3 tint : source_color = vec3(0.75, 0.82, 0.85);
 uniform float opacity : hint_range(0.0, 1.0) = 0.75;
 uniform float refraction = 0.012;
 uniform float rim_light = 0.25;
+/** Un poco di luce propria su tutta la goccia (0 = solo quella che riflette): per le gocce che devono vedersi anche
+    al buio, come quelle della valvola degli acquari. */
+uniform float bagliore = 0.0;
 
 varying vec3 v_axis_x;
 varying vec3 v_axis_y;
@@ -46,7 +49,7 @@ void fragment() {
 	vec3 bg = textureLod(screen_tex, SCREEN_UV - p * refraction, 0.0).rgb;
 	float fres = pow(1.0 - z, 3.0);
 	ALBEDO = tint * 0.04;
-	EMISSION = bg * 0.85 * (1.0 - fres) + tint * fres * rim_light * 0.1;
+	EMISSION = bg * 0.85 * (1.0 - fres) + tint * fres * rim_light * 0.1 + tint * bagliore * (0.6 + 0.4 * fres);
 	ROUGHNESS = 0.05;
 	SPECULAR = 0.5;
 	METALLIC = 0.0;

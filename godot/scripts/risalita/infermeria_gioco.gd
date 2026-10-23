@@ -6,7 +6,7 @@ extends Node3D
 ## 1. il pulsante del parco sotto il negatoscopio, colpito col getto (WaterButton, il lampeggiante
 ##    giallo lampeggia finché non lo colpisci, poi verde fisso): il negatoscopio smette di sfarfallare;
 ## 2. la Polaroid del medico sulla scrivania mostra lo schedario col cassetto dall'adesivo rosa; quel
-##    cassetto (CassettoSchedario) ha l'adesivo fosforescente e dentro la radiografia;
+##    cassetto (CassettoSchedario) ha l'adesivo e uno schizzo della melma viola di Jilly, e dentro la radiografia;
 ## 3. la radiografia sul negatoscopio (E): i puntini rosa nelle ossa dell'agnello, 4, 1 e 7;
 ## 4. la cassaforte nel muro est (CassaforteRotelle, rotelle testa, corpo, coda): dentro la keycard 1 e
 ##    la Polaroid della pecora.
@@ -446,9 +446,11 @@ func _pulsante_parco(muro: Vector3) -> void:
 
 
 ## Due schedari da cinque cassetti contro il muro ovest; nel secondo dall'alto di quello a destra
-## (guardandoli; il primo, a nord) l'adesivo rosa che brilla al buio, come nella Polaroid, e dentro la
-## radiografia.
+## (guardandoli; il primo, a nord) l'adesivo rosa, come nella Polaroid, con sopra uno schizzo della melma viola di
+## Jilly che cola sulla maniglia, sul cassetto sotto e per terra, e dentro la radiografia.
 const CASSETTI_Y := [[0.05, 0.33], [0.33, 0.56], [0.56, 0.78], [0.78, 1.04], [1.04, 1.31]]
+## Il centro della maniglia di ogni cassetto del modello, dal centro del cassetto (misurato sui vertici del modello).
+const MANIGLIE_Y := [-0.0016, 0.0141, -0.0163, 0.001, -0.0062]
 
 
 func _schedari() -> void:
@@ -479,6 +481,7 @@ func _schedari() -> void:
 			cas.mostra_segnaposto = false
 			cas.misura = Vector3(0.36, y1 - y0 - 0.02, 0.38)   # tirato, il fondo arriva alla faccia dello schedario
 			cas.tinta = tinta
+			cas.maniglia_y = MANIGLIE_Y[k]
 			cas.corsa = 0.38
 			cas.fino_a_terra = (y0 + y1) * 0.5
 			var giusto := i == 0 and k == 3
@@ -504,17 +507,17 @@ func _schedari() -> void:
 				radiografia.position = Vector3(0, -(y1 - y0) * 0.5 + 0.051, -0.2)   # sul fondo del cassetto, 1 mm sopra (a filo le facce coincidevano)
 				cas.call(&"_metti")
 			cassetti.append(cas)
+	_melma_schedario()
 
 
-## L'adesivo rosa fosforescente (un disco di 7 cm) col suo alone.
+## L'adesivo rosa (un disco di 7 cm), di carta. Prima brillava al buio con una lucina accanto: all'utente non piaceva
+## (riscontro sulla v0.3.11), al suo posto c'è la melma di Jilly ([method _melma_schedario]).
 func _adesivo() -> Node3D:
 	var n := Node3D.new()
 	n.name = "Adesivo"
 	var ad := StandardMaterial3D.new()
 	ad.albedo_color = Color(1.0, 0.35, 0.78)
-	ad.emission_enabled = true
-	ad.emission = Color(1.0, 0.3, 0.75)
-	ad.emission_energy_multiplier = 2.2
+	ad.roughness = 0.6
 	var d := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.035
@@ -524,15 +527,131 @@ func _adesivo() -> Node3D:
 	d.material_override = ad
 	d.rotation_degrees = Vector3(90, 0, 0)
 	n.add_child(d)
-	var g := OmniLight3D.new()
-	g.name = "AloneAdesivo"
-	g.light_color = Color(1.0, 0.3, 0.75)
-	g.light_energy = 0.25
-	g.omni_range = 1.2
-	g.position = Vector3(0, 0, 0.12)
-	g.set_meta(&"risveglio_ignora", true)
-	n.add_child(g)
 	return n
+
+
+## La melma viola di Jilly sul cassetto giusto (riscontro dell'utente sulla v0.3.11: "toglila e piuttosto metti uno
+## schizzo di melma viola di jilly"), la stessa della sua scia (BavaRosa: il materiale e il colore). Lo schizzo ha
+## colpito il frontale in alto a destra (l'adesivo, a sinistra, resta pulito come nella Polaroid), e cola: una colatura
+## fino in fondo al frontale, una a destra della maniglia e una che passa sulla maniglia, che resta da vedere, e continua
+## sotto; qualche goccia sul cassetto sotto e per terra. Tutto 1-2 mm davanti alla faccia vera del modello (misurata coi raggi: il frontale del
+## cassetto fra 15,2 e 15,3 cm dal centro dello schedario, il davanti piatto della maniglia a 17,3 cm a x 0,02, fra
+## 0,902 e 0,920 m d'altezza); le colature sul frontale vanno col cassetto quando si apre.
+func _melma_schedario() -> void:
+	# la melma sul cassetto giusto (Cassetto14) non è un pezzo del cassetto: il suo ingombro (quello del tasto E e del
+	# controllo di posizionamento) resta l'adesivo, se no prenderebbe dentro la maniglia del modello. Sta nella stanza e
+	# segue il frontale quando il cassetto si apre.
+	var su := Node3D.new()
+	su.name = "MelmaCassetto"
+	add_child(su)
+	var segui := RemoteTransform3D.new()
+	segui.name = "SeguiMelma"
+	cassetti[3].get_node("Frontale").add_child(segui)
+	segui.remote_path = segui.get_path_to(su)
+	var giu := cassetti[2].get_node("Frontale") as Node3D  # Cassetto13, quello sotto
+	var f := 0.001       # davanti al frontale (la faccia del modello è 0,5-2 mm dietro l'origine del frontale)
+	var m := 0.0207      # davanti alla maniglia, a x 0,02
+	var avanti := Vector3(0, 0, 1)
+	# lo schizzo: chiazze tonde che si sovrappongono, e qualche spruzzo intorno
+	# (fino a 11,8 cm dal centro: il frontale del cassetto tirato arriva a 12)
+	for c in [[0.075, 0.076, 0.042], [0.115, 0.064, 0.03], [0.045, 0.095, 0.022], [0.15, 0.096, 0.008], [0.136, 0.106, 0.006],
+			[0.028, 0.06, 0.007], [0.16, 0.07, 0.005]]:
+		_melma_chiazza(su, "MelmaSchizzo", Vector3(c[0], c[1], f), c[2], avanti)
+	# le colature, con la goccia in fondo: una lunga fino in fondo al frontale, una a destra della maniglia, e una che
+	# passa sulla maniglia e continua sotto
+	_melma(su, "MelmaColatura", [Vector3(0.11, 0.05, f), Vector3(0.111, 0.0, f), Vector3(0.113, -0.05, f), Vector3(0.112, -0.092, f)],
+			[0.018, 0.014, 0.012, 0.011], avanti)
+	_melma_chiazza(su, "MelmaGocciaColatura", Vector3(0.112, -0.096, f), 0.011, avanti)
+	_melma(su, "MelmaColatura2", [Vector3(0.07, 0.045, f), Vector3(0.069, 0.0, f), Vector3(0.07, -0.042, f)], [0.014, 0.01, 0.008], avanti)
+	_melma_chiazza(su, "MelmaGocciaColatura2", Vector3(0.07, -0.046, f), 0.008, avanti)
+	_melma(su, "MelmaVersoManiglia", [Vector3(0.045, 0.075, f), Vector3(0.03, 0.04, f), Vector3(0.023, 0.015, f)], [0.02, 0.014, 0.011], avanti)
+	_melma(su, "MelmaManiglia", [Vector3(0.022, 0.0095, m), Vector3(0.022, 0.002, m), Vector3(0.023, -0.0065, m)], [0.012, 0.011, 0.009], avanti)
+	_melma(su, "MelmaSottoManiglia", [Vector3(0.023, -0.012, f), Vector3(0.022, -0.035, f), Vector3(0.023, -0.055, f)], [0.009, 0.008, 0.007], avanti)
+	_melma_chiazza(su, "MelmaGocciaManiglia", Vector3(0.023, -0.059, f), 0.008, avanti)
+	# gocce sul cassetto sotto (in alto, sotto la colatura lunga, lontano dalla sua maniglia)
+	_melma_chiazza(giu, "MelmaGoccia", Vector3(0.112, 0.088, f), 0.012, avanti)
+	_melma_chiazza(giu, "MelmaGoccia", Vector3(0.106, 0.058, f), 0.006, avanti)
+	# e per terra davanti allo schedario, sotto le colature
+	var x := -L + 0.2 + 0.1535
+	var z := -1.3
+	for c in [[0.06, 0.11, 0.045], [0.15, 0.09, 0.025], [0.24, 0.12, 0.018], [0.04, 0.045, 0.012]]:
+		_melma_chiazza(self, "MelmaTerra", Vector3(x + c[0], 0.0015, z - c[1]), c[2], Vector3.UP)
+
+
+var _mat_melma: ShaderMaterial
+
+
+## Un nastro di melma lungo [param punti] (nel sistema di [param padre]), largo [param larghe] (una larghezza per punto: 0
+## alle punte), steso sulla faccia che guarda verso [param normale]. Il materiale è quello della scia di Jilly
+## (BavaRosa): la U lungo il nastro in metri, la V di traverso, coi bordi irregolari.
+func _melma(padre: Node3D, nome: String, punti: Array, larghe: Array, normale: Vector3) -> MeshInstance3D:
+	if _mat_melma == null:
+		var b := BavaRosa.new()
+		_mat_melma = b.call(&"_materiale")
+		b.free()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.set_normal(normale)
+	var lungo := 0.0
+	var prec_s := Vector3.ZERO
+	var prec_d := Vector3.ZERO
+	var prec_u := 0.0
+	for i in punti.size():
+		var p: Vector3 = punti[i]
+		var dir: Vector3 = (punti[mini(i + 1, punti.size() - 1)] as Vector3) - (punti[maxi(i - 1, 0)] as Vector3)
+		var lato := normale.cross(dir).normalized()
+		var w: float = larghe[i]
+		if i > 0:
+			lungo += (punti[i - 1] as Vector3).distance_to(p)
+		var s := p - lato * w * 0.5
+		var d := p + lato * w * 0.5
+		if i > 0:
+			for v in [[prec_s, prec_u, 0.0], [s, lungo, 0.0], [d, lungo, 1.0], [prec_s, prec_u, 0.0], [d, lungo, 1.0], [prec_d, prec_u, 1.0]]:
+				st.set_uv(Vector2(v[1], v[2]))
+				st.add_vertex(v[0])
+		prec_s = s
+		prec_d = d
+		prec_u = lungo
+	var mi := MeshInstance3D.new()
+	mi.name = nome
+	mi.mesh = st.commit()
+	mi.material_override = _mat_melma
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	padre.add_child(mi)
+	return mi
+
+
+## Una chiazza tonda di melma, larga [param raggio] col bordo irregolare, al centro [param centro] (nel sistema di
+## [param padre]), stesa sulla faccia che guarda verso [param normale]. È un ventaglio di triangoli: la V va da 0,5 al
+## centro a 1 sul bordo, dove il materiale della scia fa il contorno frastagliato; la U gira lungo il bordo, in metri.
+func _melma_chiazza(padre: Node3D, nome: String, centro: Vector3, raggio: float, normale: Vector3) -> MeshInstance3D:
+	if _mat_melma == null:
+		var b := BavaRosa.new()
+		_mat_melma = b.call(&"_materiale")
+		b.free()
+	var a := (Vector3.RIGHT if absf(normale.x) < 0.9 else Vector3.UP).cross(normale).normalized()
+	var b2 := normale.cross(a)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.set_normal(normale)
+	var lati := 18
+	var giro := TAU * raggio
+	for k in lati:
+		var t0 := TAU * k / lati
+		var t1 := TAU * (k + 1) / lati
+		var u0 := giro * k / lati + centro.x * 7.0 + centro.y * 3.0 + centro.z * 5.0   # un po' diverse fra loro
+		var u1 := giro * (k + 1) / lati + centro.x * 7.0 + centro.y * 3.0 + centro.z * 5.0
+		for v in [[centro, (u0 + u1) * 0.5, 0.5], [centro + (a * cos(t0) + b2 * sin(t0)) * raggio, u0, 1.0],
+				[centro + (a * cos(t1) + b2 * sin(t1)) * raggio, u1, 1.0]]:
+			st.set_uv(Vector2(v[1], v[2]))
+			st.add_vertex(v[0])
+	var mi := MeshInstance3D.new()
+	mi.name = nome
+	mi.mesh = st.commit()
+	mi.material_override = _mat_melma
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	padre.add_child(mi)
+	return mi
 
 
 ## La cassaforte nel muro est: il vano d'acciaio con la cornice, e la CassaforteRotelle col suo
@@ -580,7 +699,11 @@ func _cassaforte() -> void:
 	cassaforte.modello_sportello = load(DIR + "sportello_cassaforte_N.glb")
 	cassaforte.cifre_tex = load(TEX + "rotella_cifre.jpg")
 	cassaforte.simboli = [load(TEX + "simbolo_testa.png"), load(TEX + "simbolo_corpo.png"), load(TEX + "simbolo_coda.png")]
-	cassaforte.passo = 0.13   # (rotelle di 9 cm, 4 cm fra l'una e l'altra: con lo sportello aperto non si toccano)
+	# (custodie delle rotelle larghe 11 cm, 2,5 cm fra l'una e l'altra: con lo sportello aperto e girato di 19° gli ingombri
+	# non arrivano alla custodia accanto; il gruppo spostato di 4 cm verso i cardini, così la custodia della terza rotella
+	# non entra nella manopola dello sportello, che va da 16,3 a 21 cm dal centro)
+	cassaforte.passo = 0.135
+	cassaforte.spostamento_rotelle = -0.04
 	cassaforte.contenuto = [keycard, polaroid]
 	# lo sportello guarda verso -X (la stanza), i cardini dal lato -Z del vano
 	# lo sportello gira sullo spigolo davanti, coi cardini; dietro appoggia sulla cornice (prima il nodo era sullo
