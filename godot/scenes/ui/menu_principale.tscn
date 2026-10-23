@@ -21,7 +21,7 @@ background_mode = 1
 background_color = Color(0.006, 0.009, 0.014, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.3, 0.38, 0.5, 1)
-ambient_light_energy = 0.14
+ambient_light_energy = 0.05
 reflected_light_source = 1
 tonemap_mode = 4
 tonemap_exposure = 1.3
@@ -44,7 +44,7 @@ volumetric_fog_albedo = Color(0.62, 0.68, 0.76, 1)
 volumetric_fog_anisotropy = 0.55
 volumetric_fog_length = 40.0
 volumetric_fog_detail_spread = 1.6
-volumetric_fog_ambient_inject = 0.3
+volumetric_fog_ambient_inject = 0.1
 volumetric_fog_sky_affect = 0.0
 volumetric_fog_temporal_reprojection_amount = 0.85
 
@@ -67,13 +67,13 @@ environment = SubResource("Environment_titolo")
 script = ExtResource("2_temp")
 intervallo_min = 8.0
 intervallo_max = 16.0
-energia_lampo = 6.0
+energia_lampo = 2.4
 
 [node name="Luna" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.584305, 0.775568, -0.23892, 0, 0.294405, 0.955681, 0.811534, 0.558409, -0.172023, 0, 12, 0)
 light_color = Color(0.55, 0.66, 1, 1)
-light_energy = 0.12
-light_volumetric_fog_energy = 2.5
+light_energy = 0.05
+light_volumetric_fog_energy = 1.0
 shadow_enabled = true
 metadata/grafica_priorita_ombra = 1
 
@@ -109,8 +109,8 @@ omni_attenuation = 1.4
 [node name="FaroGalleriaSinistro" type="SpotLight3D" parent="Statua"]
 transform = Transform3D(0.956735, 0.0416032, -0.287971, 0, 0.989725, 0.142986, 0.290961, -0.136799, 0.946904, -2.014, 5.547, 6.616)
 light_color = Color(1, 0.9, 0.76, 1)
-light_energy = 7.0
-light_volumetric_fog_energy = 1.6
+light_energy = 2.0
+light_volumetric_fog_energy = 0.7
 shadow_enabled = true
 spot_range = 16.0
 spot_angle = 13.0
@@ -120,8 +120,8 @@ metadata/grafica_priorita_ombra = 0
 [node name="FaroGalleriaDestro" type="SpotLight3D" parent="Statua"]
 transform = Transform3D(0.956735, -0.0416032, 0.287971, 0, 0.989725, 0.142986, -0.290961, -0.136799, 0.946904, 2.014, 5.547, 6.616)
 light_color = Color(1, 0.9, 0.76, 1)
-light_energy = 7.0
-light_volumetric_fog_energy = 1.6
+light_energy = 2.0
+light_volumetric_fog_energy = 0.7
 shadow_enabled = true
 spot_range = 16.0
 spot_angle = 13.0
@@ -163,7 +163,7 @@ spot_angle = 26.0
 [node name="Controluce" type="SpotLight3D" parent="Statua"]
 transform = Transform3D(-1, 6.721456e-08, -5.5901207e-08, 0, 0.6394353, 0.7688449, 8.742278e-08, 0.7688449, -0.6394353, 0, 9.6, -4.2)
 light_color = Color(0.68, 0.82, 1, 1)
-light_energy = 5.0
+light_energy = 4.0
 light_volumetric_fog_energy = 1.6
 shadow_enabled = true
 spot_range = 14.0
@@ -174,7 +174,7 @@ metadata/grafica_priorita_ombra = 1
 [node name="LuceViso" type="SpotLight3D" parent="Statua"]
 transform = Transform3D(1, 0, 0, 0, 0.9346418, 0.35559076, 0, -0.35559076, 0.9346418, 0, 7.4, 6.6)
 light_color = Color(1, 0.95, 0.88, 1)
-light_energy = 3.2
+light_energy = 0.8
 light_volumetric_fog_energy = 0.25
 spot_range = 12.0
 spot_angle = 4.5
