@@ -49,7 +49,7 @@ func _run() -> void:
 	print("Gli interni: corridoio, spogliatoi, lo stanzino del bagnino con lo zaino")
 	await _vai("dal corridoio del risveglio agli spogliatoi", [Vector3(4.3, 0, 39.6), Vector3(-2.9, 0, 39.6), Vector3(-2.9, 0, 37.0)])
 	await _vai("dagli spogliatoi dentro lo stanzino", [Vector3(-1.5, 0, 34.0), Vector3(-1.0, 0, 32.45), Vector3(2.5, 0, 32.45), Vector3(3.6, 0, 32.47)])
-	var zaino := level.get_node_or_null(^"Zaino") as Node3D
+	var zaino: Node3D = level.find_children("*", "PackPickup", true, false).front() as Node3D if not level.find_children("*", "PackPickup", true, false).is_empty() else null
 	if zaino:
 		p.look_at_point(zaino.global_position + Vector3(0, 0.35, 0))
 		await _frames(3)
