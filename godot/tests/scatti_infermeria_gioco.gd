@@ -22,6 +22,9 @@ const CAMERE := {
 	# le rotelle della cassaforte davanti, da vicino come quando si girano (23 ottobre: la cifra davanti non era quella vera)
 	"rotelle": [Vector3(2.45, 1.5, -1.05), Vector3(3.2, 1.3, -1.05)],
 	"rotelle_fianco": [Vector3(2.55, 1.45, -0.55), Vector3(3.15, 1.3, -1.05)],
+	# lo schedario col cassetto giusto: entrando dalla porta sud e da vicino (23 ottobre: la melma di Jilly sul cassetto)
+	"schedario_lontano": [Vector3(0.9, 1.6, 2.3), Vector3(-2.85, 0.9, -1.3)],
+	"cassetto_vicino": [Vector3(-2.05, 1.45, -1.2), Vector3(-2.85, 0.88, -1.33)],
 	# le porte con le ante aperte fino al muro (23 ottobre): la sud da dentro, la nord mentre ci si passa, e l'adesivo
 	# sopra l'anta della nord da dove ci si può avvicinare di più (contro l'anta)
 	"porta_sud": [Vector3(0.9, 1.6, 1.3), Vector3(1.7, 1.0, 3.2)],
@@ -80,6 +83,15 @@ func _run() -> void:
 	cam.near = 0.05
 	get_tree().root.add_child(cam)
 	cam.make_current()
+	# SCATTI_TORCIA=1: una luce sulla camera come la torcia del giocatore
+	if OS.get_environment("SCATTI_TORCIA") == "1":
+		var torcia := SpotLight3D.new()
+		torcia.spot_angle = 24.0
+		torcia.spot_range = 14.0
+		torcia.light_energy = 2.5
+		torcia.light_color = Color(1.0, 0.95, 0.85)
+		torcia.shadow_enabled = true
+		cam.add_child(torcia)
 	for nome in lista:
 		var c: Array = CAMERE[nome]
 		cam.global_position = c[0]
