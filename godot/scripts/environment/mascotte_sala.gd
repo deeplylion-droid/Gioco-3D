@@ -34,6 +34,9 @@ const JILLY := [
 		pos = Vector3(-19.997, 4.7, 5.35), normale = Vector3(1, 0, 0)},
 ]
 
+## Fin dove (m) sotto le statue non si passa (lo spazio di chi cammina arriva a 2 m).
+const ALTEZZA_SGOMBRA := 2.0
+
 ## Energia delle due lampade dell'insegna (come negli scatti approvati).
 @export var energia_lampade := 1.4
 
@@ -76,6 +79,35 @@ func _metti_statua(s: Dictionary) -> void:
 		cs.shape = m.create_trimesh_shape()
 		corpo.add_child(cs)
 		cs.global_transform = (mi as MeshInstance3D).global_transform
+	# Sotto le braccia alzate non si passa: un cilindro largo quanto la parte che sporge di più fino a 2 m
+	# (il polpo A apre i tentacoli a 1,5-2 m d'altezza 29 cm oltre la base: senza, la testa del giocatore ci
+	# finiva dentro; controllo di posizionamento del 22 ottobre notte, ingombro alla testa).
+	var r := _raggio_sotto(st, ALTEZZA_SGOMBRA)
+	if r > 0.0:
+		var cil := CollisionShape3D.new()
+		cil.name = "SottoLeBraccia"
+		var forma := CylinderShape3D.new()
+		forma.radius = r + 0.02
+		forma.height = ALTEZZA_SGOMBRA
+		cil.shape = forma
+		corpo.add_child(cil)
+		cil.position = Vector3(0.0, ALTEZZA_SGOMBRA * 0.5, 0.0)
+
+
+## Quanto si allarga la statua dal suo asse (in pianta) fino a [param altezza] metri.
+func _raggio_sotto(st: Node3D, altezza: float) -> float:
+	var r := 0.0
+	for mi in st.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		if m == null:
+			continue
+		var t := st.global_transform.affine_inverse() * (mi as MeshInstance3D).global_transform
+		for sfc in m.get_surface_count():
+			for v: Vector3 in m.surface_get_arrays(sfc)[Mesh.ARRAY_VERTEX]:
+				var q := t * v
+				if q.y < altezza:
+					r = maxf(r, Vector2(q.x, q.z).length())
+	return r
 
 
 ## Le lampade a collo d'oca dell'insegna: gli empty luce_* del modello diventano faretti caldi e deboli
