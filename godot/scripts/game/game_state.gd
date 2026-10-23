@@ -210,8 +210,11 @@ func _on_death_sequence_finished(_skipped: bool) -> void:
 	respawn()
 
 
-## Ricarica il livello e riparte dall'ultimo checkpoint.
+## Ricarica il livello e riparte dall'ultimo checkpoint. Non mentre si esce dal gioco (Game.esci): la sala
+## ricaricata richiederebbe di nuovo la torre nel thread, e l'uscita la troverebbe a metà.
 func respawn() -> void:
+	if Game.uscendo:
+		return
 	if not keep_collectibles_on_death:
 		_collected = _lists_to_collected(snapshot.get("collectibles", {}))
 	# Gli oggetti raccolti dopo il checkpoint tornano al loro posto.
