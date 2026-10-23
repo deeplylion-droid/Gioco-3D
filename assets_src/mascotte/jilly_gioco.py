@@ -10,10 +10,14 @@ Si aggiungono le mappe delle normali (rilievo delle scaglie, delle crepe e della
 vera sulla cornice e sulle lampade.
 
 Uso: flock /home/user/tools/render.lock /home/user/tools/blender-venv/bin/python \
-        assets_src/mascotte/jilly_gioco.py [solo_texture | riusa_texture] [targa] [manifesto] [insegna]
+        assets_src/mascotte/jilly_gioco.py [solo_texture | riusa_texture] [targa] [manifesto] [insegna] [nuova]
 Servono le grafiche originali in gen/jilly/ (logo_b_gpt_0.png, manifesto_b_gpt_0.png: si riscaricano
 da Meshy con i task_id di meshy_log.json). Escono in godot/assets/models/mascotte/jilly/:
 targa.glb, manifesto.glb, insegna.glb (con le lampade e gli empty luce_sx / luce_dx).
+Con "nuova" (lo spot della crociera, GDD: il logo, l'insegna e la targa da nuovi, come prima di invecchiarli):
+stesse forme e stesse grafiche, smalto e vernice puliti e lucidi, cornice e lampade verniciate senza ruggine;
+texture in jilly_tex/nuova/, modelli in godot/assets/models/mascotte/jilly_nuova/ (targa e insegna: il
+manifesto nuovo non è richiesto), più il logo pulito su fondo trasparente (logo_jilly.png) per lo schermo.
 """
 import math, os, random, sys
 import numpy as np
@@ -26,8 +30,9 @@ sys.path.insert(0, QUI)
 import jilly_oggetti as J  # noqa: E402  (solo funzioni: il giro delle proposte è sotto __main__)
 from jilly_oggetti import rumore, ritaglia_logo, su_fondo, bordo  # noqa: E402
 
-TEX = os.path.join(QUI, 'jilly_tex', 'gioco')
-OUT = os.path.join(J.REPO, 'godot', 'assets', 'models', 'mascotte', 'jilly')
+NUOVA = 'nuova' in sys.argv
+TEX = os.path.join(QUI, 'jilly_tex', 'nuova' if NUOVA else 'gioco')
+OUT = os.path.join(J.REPO, 'godot', 'assets', 'models', 'mascotte', 'jilly_nuova' if NUOVA else 'jilly')
 os.makedirs(TEX, exist_ok=True); os.makedirs(OUT, exist_ok=True)
 
 
@@ -345,6 +350,63 @@ def tutte_le_texture():
                 ferro=tex_ruggine('ferro', 303))
 
 
+# ---------------------------------------------------------------- da nuova (lo spot)
+def vernice_nuova(im, seme, rug_base, buccia=0.12):
+    """Smalto o vernice appena dati: il colore com'è, lucido, con appena la buccia d'arancia del pennello."""
+    w, h = im.size
+    a = f32(im) * (0.985 + 0.015 * rumore(w, h, 40, 2, seme))[..., None]
+    alt = 0.5 + 0.5 * rumore(w, h, 160, 2, seme + 1)
+    rug = np.clip(rug_base + 0.05 * rumore(w, h, 25, 3, seme + 2), 0, 1)
+    return a, rug, normali(sfoca(alt, 1.5), buccia)
+
+
+def tex_targa_nuova():
+    W, H = 1400, 780
+    logo = ritaglia_logo(os.path.join(GEN, 'logo_b_gpt_0.png'))
+    im = su_fondo(logo, W, H, (24, 38, 82), 0.09)
+    im = bordo(im, (200, 160, 60), 14, 60)
+    a, rug, nor = vernice_nuova(im, 412, 0.18)
+    return salva('targa', a, rug, nor)
+
+
+def tex_insegna_nuova():
+    W, H = 2048, 1138
+    logo = ritaglia_logo(os.path.join(GEN, 'logo_b_gpt_0.png'))
+    im = su_fondo(logo, W, H, (246, 238, 214), 0.07)
+    im = bordo(im, (24, 38, 82), 26, 0)
+    a, rug, nor = vernice_nuova(im, 442, 0.32)
+    return salva('insegna', a, rug, nor)
+
+
+def tex_tinta_nuova(nome, rgb, rug_base, seme, w=512, h=512):
+    """Vernice pulita di un colore solo (la cornice, il paralume, il ferro zincato)."""
+    a = np.ones((h, w, 3), np.float32) * np.array(rgb, np.float32)
+    a, rug, nor = vernice_nuova(img(a), seme, rug_base, 0.1)
+    return salva(nome, a, rug, nor)
+
+
+def logo_pulito():
+    """Il logo B ritagliato su fondo trasparente (il bianco del fondo diventa trasparenza), per lo schermo."""
+    logo = ritaglia_logo(os.path.join(GEN, 'logo_b_gpt_0.png'))
+    a = np.asarray(su_fondo(logo, logo.width, logo.height, (255, 0, 255), 0.0), np.float32)
+    # quanto è lontano dal magenta del fondo: 0 = fondo, 1 = disegno
+    d = np.clip(np.abs(a - np.array([255, 0, 255], np.float32)).sum(-1) / 180.0, 0, 1)
+    # il colore senza il fondo mescolato sui bordi (niente alone chiaro o magenta)
+    k = np.maximum(d, 1e-3)[..., None]
+    c = (a - (1 - k) * np.array([255, 0, 255], np.float32)) / k
+    rgba = np.dstack([c, d * 255])
+    p = os.path.join(OUT, 'logo_jilly.png')
+    Image.fromarray(np.clip(rgba, 0, 255).astype(np.uint8), 'RGBA').save(p)
+    return p
+
+
+def tutte_le_texture_nuove():
+    return dict(targa=tex_targa_nuova(), insegna=tex_insegna_nuova(),
+                cornice=tex_tinta_nuova('cornice', (52, 46, 40), 0.35, 501),
+                lampada=tex_tinta_nuova('lampada', (26, 44, 34), 0.25, 502),
+                ferro=tex_tinta_nuova('ferro', (150, 152, 156), 0.35, 503))
+
+
 def texture_salvate():
     """Le texture già fatte in jilly_tex/gioco/ (senza le grafiche originali di gen/jilly/)."""
     out = {}
@@ -517,8 +579,14 @@ def insegna(t):
 if __name__ == '__main__':
     # riusa_texture: le texture già fatte (servono se mancano le grafiche originali); con i nomi dei modelli
     # (targa, manifesto, insegna) rifà solo quelli
-    t = texture_salvate() if 'riusa_texture' in sys.argv else tutte_le_texture()
-    scelti = [m for m in ('targa', 'manifesto', 'insegna') if m in sys.argv] or ['targa', 'manifesto', 'insegna']
+    if 'riusa_texture' in sys.argv:
+        t = texture_salvate()
+    else:
+        t = tutte_le_texture_nuove() if NUOVA else tutte_le_texture()
+    scelti = [m for m in ('targa', 'manifesto', 'insegna') if m in sys.argv] or \
+        (['targa', 'insegna'] if NUOVA else ['targa', 'manifesto', 'insegna'])
+    if NUOVA:
+        print('logo ->', logo_pulito())
     if 'solo_texture' not in sys.argv:
         for m in scelti:
             {'targa': targa, 'manifesto': manifesto, 'insegna': insegna}[m](t)

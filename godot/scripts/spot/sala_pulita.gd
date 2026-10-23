@@ -12,23 +12,31 @@ const TEXTURE_PULITE := "res://assets/spot/texture/"
 const SHADER_ONDE := preload("res://shaders/spot/acqua_onde_spot.gdshader")
 ## Le parti della sala che sono sporco o rovina: nella nave nuova non ci sono.
 const ROVINE: Array[String] = ["sala_colature", "sala_piastrelle_mancanti", "sala_pozzanghere", "sala_schegge_cupola",
-		"sala_vasca_centrale_calcare", "sala_vasca_offerte"]
+		"sala_vasca_centrale_calcare", "sala_vasca_offerte", "sala_monumento_offerte"]
 ## I giocattoli lasciati in giro nel gioco: nella sala nuova non ci sono (scelta dell'utente, 22 ottobre: "a", la sala
 ## tutta in ordine come prima dell'apertura). Restano gli arredi fissi: lettini, panche, sedia del bagnino, cestini,
 ## funghi fontana e i salvagenti appesi ai muri.
 const GIOCATTOLI: Array[String] = ["ogg_paperella_gigante", "ogg_pallone_spiaggia", "ogg_ciambella_gonfiabile",
 		"ogg_tubi_galleggianti", "ogg_delfino_gonfiabile_sgonfio", "ogg_orsacchiotto_grande",
 		"ogg_cartello_pavimento_bagnato", "ogg_salvagente_nave"]
-const GLB_SALA := ["architettura", "cupola", "piscina", "vasca_centrale", "area_bimbi", "interattivi", "torre_scivoli",
-		"oggetti", "monumento"]
+## Prefissi dei GLB della sala (i loro nomi danno quelli delle texture estratte); i più lunghi prima.
+const GLB_SALA := ["interattivi_monumento", "architettura", "cupola", "piscina", "vasca_centrale", "area_bimbi",
+		"interattivi", "torre_scivoli", "oggetti", "monumento"]
 
 @export var percorso_sala := NodePath("Sala")
 @export var piscina_onde: NodePath = ^"Piscina/AcquaOnde"
+@export_group("Jilly")
+## L'insegna di Jilly da nuova (mascotte, lavoro/spot-mascotte): dove sta nel gioco (MascotteSala.JILLY), a filo del muro.
+@export var insegna: PackedScene = preload("res://assets/models/mascotte/jilly_nuova/insegna.glb")
+@export var insegna_pos := Vector3(-19.997, 4.7, 5.35)
+@export var insegna_normale := Vector3(1, 0, 0)
 @export_group("Fari da spettacolo")
 ## Fari della vasca di Jilly: rosa e viola come i suoi tentacoli (scelta dell'utente, 22 ottobre: "a").
 @export var colore_faro_rosa := Color(1.0, 0.38, 0.72)
 @export var colore_faro_viola := Color(0.62, 0.36, 1.0)
-@export var energia_fari := 7.0
+@export var energia_fari := 16.0
+## I quattro faretti bassi intorno al monumento (di giorno, con il sole, vanno forti per vedersi).
+@export var energia_faretti := 4.0
 @export_group("Onde")
 @export var onda_altezza := 0.4
 @export var onda_lunghezza := 6.0
@@ -46,6 +54,7 @@ var _texture := {}
 func _ready() -> void:
 	var sala := get_node(percorso_sala)
 	_pulisci(sala)
+	_metti_insegna()
 	var onde := get_node_or_null(piscina_onde)
 	if onde and "material" in onde and onde.get(&"material") is ShaderMaterial:
 		var m := onde.get(&"material") as ShaderMaterial
@@ -129,12 +138,14 @@ func _accendi() -> void:
 		var nome := String(luce.name)
 		if nome.begins_with("luce_emergenza"):
 			luce.visible = false
-		elif nome.begins_with("luce_faro") or nome.begins_with("luce_vasca"):
+		elif nome.begins_with("luce_faro") or nome.begins_with("luce_vasca") or nome.begins_with("luce_monumento_basso"):
 			# a coppie: quello a ovest (x < 0) rosa, quello a est viola
 			luce.light_color = colore_faro_rosa if luce.global_position.x < 0.0 else colore_faro_viola
 			if nome.begins_with("luce_faro"):
 				luce.light_energy = energia_fari
 				(luce as SpotLight3D).spot_angle = 18.0
+			elif nome.begins_with("luce_monumento_basso"):
+				luce.light_energy = energia_faretti
 		elif luce is DirectionalLight3D:
 			var d := luce as DirectionalLight3D
 			d.rotation_degrees = sole_rotazione
@@ -172,3 +183,26 @@ func _camera_spot() -> void:
 		a.dof_blur_far_enabled = false
 		a.dof_blur_near_enabled = false
 		cam.attributes = a
+
+
+## L'insegna nuova sul muro ovest, come nel gioco (mascotte_sala.gd), con le due lampade a collo d'oca accese.
+func _metti_insegna() -> void:
+	if insegna == null:
+		return
+	var ob := insegna.instantiate() as Node3D
+	ob.name = "InsegnaJilly"
+	add_child(ob)
+	ob.transform = Transform3D(Basis.looking_at(-insegna_normale, Vector3.UP), insegna_pos)
+	Posa.fissa_al_muro(ob, insegna_normale)
+	for e in ob.find_children("luce_*", "Node3D", true, false):
+		var l := SpotLight3D.new()
+		l.name = "Faretto"
+		l.light_color = Color(1.0, 0.72, 0.42)
+		l.light_energy = 1.4
+		l.spot_range = 2.0
+		l.spot_angle = 40.0
+		l.spot_attenuation = 1.2
+		l.shadow_enabled = true
+		(e as Node3D).add_child(l)
+		var loc := ob.to_local((e as Node3D).global_position)
+		l.look_at(ob.to_global(Vector3(loc.x * 0.4, -0.05, 0.15)), ob.global_basis.y)

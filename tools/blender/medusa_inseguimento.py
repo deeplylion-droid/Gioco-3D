@@ -53,6 +53,7 @@ RADICE = os.path.abspath(os.path.join(QUI, '..', '..'))
 GLB = os.path.join(RADICE, 'assets_src', 'medusa', 'medusa.glb')
 BUILD = os.path.join(RADICE, 'assets_src', 'medusa', 'build')
 USCITA = os.path.join(BUILD, 'inseguimento.json')
+CARTELLA_ANTEPRIME = 'inseguimento_anteprime'       # in BUILD (medusa_spot.py usa la sua)
 FPS = 30
 FPS_AZIONI = 24                     # le azioni del GLB
 
@@ -779,7 +780,7 @@ def main():
     if os.path.exists(USCITA) and solo:
         with open(USCITA) as f:
             out['animazioni'] = json.load(f).get('animazioni', {})
-    cartella = os.path.join(BUILD, 'inseguimento_anteprime')
+    cartella = os.path.join(BUILD, CARTELLA_ANTEPRIME)
     os.makedirs(cartella, exist_ok=True)
     for nome, (durata, ciclo, fn) in ANIMAZIONI.items():
         if solo and nome not in solo:
