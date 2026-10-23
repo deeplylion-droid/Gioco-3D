@@ -1866,7 +1866,8 @@ func _confronta() -> void:
 			nuovi.size(), noti.size(), spariti.size()])
 	var da_fare := noti.filter(func(t): return t.get("stato", "") != "voluto")
 	print("  casi da correggere (non \"voluto\"): %d" % da_fare.size())
-	if BLOCCA_DA_CORREGGERE:
+	# POSIZ_BLOCCA=1 prova il blocco senza accenderlo nella CI (per il giro sul commit candidato)
+	if BLOCCA_DA_CORREGGERE or OS.get_environment("POSIZ_BLOCCA") == "1":
 		check(da_fare.is_empty(), "nessun caso da correggere (%d da correggere; passano solo i casi \"voluto\", decisi dall'utente)" % da_fare.size())
 	for t in nuovi.slice(0, 40):
 		print("    NUOVO %s · %s · %s · %s · %s" % [t["zona"], t["problema"], t["nodo"], str(t["pos"]), t["dettaglio"]])
