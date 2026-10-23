@@ -140,6 +140,10 @@ static func _acquari(livello: Node, stato: String) -> void:
 			misto.fill = misto.max_fill
 			misto.set_mix(WaterMix.pura(WaterMix.VERDE))
 			e.set(&"stato", EnigmaAcquari.Stato.RISOLTO)
+			# COLLAUDO_SENZA_TORRE=1: il portone si apre ma la sala della torre non si carica (la sala intera
+			# con la torre non entra nella memoria del renderer software; la torre ha il suo collaudo)
+			if OS.get_environment("COLLAUDO_SENZA_TORRE") == "1" and &"sala_torre_scena" in livello:
+				livello.set(&"sala_torre_scena", "")
 			var portone = e.get(&"portone")
 			if portone and portone.has_method(&"apri"):
 				portone.call(&"apri")
