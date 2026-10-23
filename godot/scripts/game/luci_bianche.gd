@@ -151,8 +151,13 @@ static func is_bianca(c: Color) -> bool:
 
 
 func _su_nodo(n: Node) -> void:
-	# dopo il _ready del nodo: molti creano i loro materiali lì
-	_raccogli.call_deferred(n)
+	# dopo il _ready del nodo: molti creano i loro materiali lì. Passa l'id e non il nodo: un nodo liberato prima
+	# della chiamata darebbe un errore nella coda dei messaggi ("Cannot convert argument 1 from Object to Object")
+	_raccogli_id.call_deferred(n.get_instance_id())
+
+
+func _raccogli_id(id: int) -> void:
+	_raccogli(instance_from_id(id) as Node)
 
 
 func _raccogli(radice: Node) -> void:
