@@ -454,6 +454,8 @@ def portone_torre(mats):
     perno = (x - 0.04, cy, 0.0)
     anta = con_perno(c.crea('sala_portone_torre'), perno)
     K.collisione_scatola('portone_torre', (-0.04, ya - cy, 0.0), (0.04, yb - cy, h + 0.1), padre=anta)
+    # il maniglione sporge 15 cm dall'anta: con la sua collisione ci si urta, non lo si attraversa (controllo del 23 ottobre)
+    K.collisione_scatola('portone_maniglione', (-0.19, ya + 0.35 - cy - 0.035, 0.97), (-0.04, ya + 0.35 - cy + 0.035, 1.63), padre=anta)
     p = K.Costruttore(mats)
     y0r, y1r = ya - corsa - 0.1, yb + 0.6
     p.scatola((x - 0.2, y0r, h + 0.25), (x - 0.02, y1r, h + 0.4), 'acciaio_portone')   # binario

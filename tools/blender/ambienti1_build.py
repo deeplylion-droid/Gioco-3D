@@ -352,7 +352,15 @@ def corridoio(M):
     for i in range(10):
         y = -1.4 - i * 0.25; z = -0.18 * (i + 1)
         pian.append(L.scatola('gradino', (16.4, y - 0.25, z - 0.2), (18.6, y, z), M['lamiera_grata']))
-    pian.append(L.tubo_percorso('corrimano_scala', [(18.55, -1.3, 0.95), (18.55, -3.9, -0.95)], 0.025, M['vernice_gialla'], flange=False))
+    # corrimano fissato al muro est del vano (x 18,8): a 8 cm dal muro con tre staffe (prima stava a 25 cm, senza
+    # sostegni, in mezzo a chi scende: controllo di posizionamento del 23 ottobre, stato tappa7)
+    CX, CA, CB = 18.72, (-1.3, 0.95), (-3.9, -0.95)
+    pian.append(L.tubo_percorso('corrimano_scala', [(CX, CA[0], CA[1]), (CX, CB[0], CB[1])], 0.025, M['vernice_gialla'], flange=False))
+    for t in (0.1, 0.5, 0.9):
+        yy, zz = CA[0] + (CB[0] - CA[0]) * t, CA[1] + (CB[1] - CA[1]) * t
+        pian.append(L.cilindro('corrimano_staffa', (CX, yy, zz - 0.02), (CX, yy, zz - 0.07), 0.012, M['vernice_gialla'], seg=10))
+        pian.append(L.cilindro('corrimano_staffa', (CX, yy, zz - 0.07), (18.8, yy, zz - 0.07), 0.012, M['vernice_gialla'], seg=10))
+        pian.append(L.cilindro('corrimano_rosetta', (18.79, yy, zz - 0.07), (18.8, yy, zz - 0.07), 0.035, M['vernice_gialla'], seg=16))
     statico += pian
     # porta di servizio in fondo, chiusa a chiave
     ps = [L.scatola('porta_servizio', (0.0, 0.82, 0.01), (0.06, 1.78, 2.03), M['porta_lamiera'])]
@@ -903,7 +911,11 @@ def stanzino(M):
         rad.append(L.scatola('radiatore', (x, Y1 - 0.14, 0.12), (x + 0.04, Y1 - 0.05, 0.75), M['metallo_grezzo']))
         x += 0.07
     statico.append(L.unisci('radiatore', rad))
-    prop('cassetta_pronto_soccorso', 'cassetta_pronto_soccorso', (14.1, Y1 - 0.15, 1.05), 180, 0.6, 'z')
+    # cassetta del pronto soccorso a muro: alta 42 cm, così sporge 24 cm (con 60 cm sporgeva 34 cm, oltre i 25 della
+    # regola per le cose a muro: controllo del 23 ottobre), appoggiata al muro e con la sua collisione
+    cps = prop('cassetta_pronto_soccorso', 'cassetta_pronto_soccorso', (14.25, Y1 - 0.15, 1.15), 180, 0.42, 'z')   # accanto al salvagente, non contro
+    attacca(cps, (0, 1, 0))
+    col_ob(cps)
     L.toro('salvagente_parete', Vector((13.6, Y1 - 0.08, 1.75)), 0.27, 0.075, M['salvagente'], rot=(R(90), 0, 0))
 
     # ---- parete est: rastrelliera dello zaino-pompa (posto libero al centro) e salvagenti

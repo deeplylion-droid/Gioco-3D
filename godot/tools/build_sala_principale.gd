@@ -775,7 +775,7 @@ func _gameplay(has_interiors := false) -> void:
 ## muro ovest; poi lungo il muro, tra il muro e la vasca d'arrivo, come la strada B approvata il 16
 ## ottobre, fino alla fossa dell'area bimbi dove lei è affacciata (tappa 8). Uscendo dalla serranda
 ## (angolo sud-ovest) la si vede davanti, 7 m a nord, che attraversa la sala.
-const SCIA := [Vector3(-0.5, 0.0, 12.45), Vector3(-1.0, 0.0, 12.75), Vector3(-1.8, 0.0, 13.0),
+const SCIA := [Vector3(-0.62, 0.0, 12.33), Vector3(-1.0, 0.0, 12.75), Vector3(-1.8, 0.0, 13.0),
 	Vector3(-2.8, 0.0, 12.95), Vector3(-3.6, 0.0, 12.7), Vector3(-4.6, 0.0, 12.55), Vector3(-6.0, 0.0, 12.5),
 	Vector3(-7.5, 0.0, 12.55), Vector3(-9.0, 0.0, 12.5), Vector3(-10.5, 0.0, 12.45), Vector3(-12.0, 0.0, 12.5),
 	Vector3(-13.5, 0.0, 12.45), Vector3(-15.0, 0.0, 12.4), Vector3(-16.3, 0.0, 12.2), Vector3(-17.4, 0.0, 11.7),
@@ -800,9 +800,15 @@ func _tappa7(has_interiors: bool) -> void:
 	var muro_z := VASCA.z + VASCA_INTERNO.y * 0.5 + 0.42
 	r.set(&"bordo_vasca", PackedVector3Array([Vector3(-0.95, VASCA_BORDO, muro_z - 0.22), Vector3(-0.35, VASCA_BORDO, muro_z - 0.24),
 		Vector3(0.45, VASCA_BORDO, muro_z - 0.2)]))
-	r.set(&"muro_vasca", PackedVector3Array([Vector3(-0.5, VASCA_BORDO - 0.01, muro_z + 0.02), Vector3(-0.5, 0.5, muro_z + 0.02),
-		Vector3(-0.5, 0.02, muro_z + 0.02)]))
-	r.set(&"gocciolatoi", PackedVector3Array([Vector3(-0.55, VASCA_BORDO - 0.03, muro_z + 0.03), Vector3(0.45, VASCA_BORDO - 0.03, muro_z + 0.03)]))
+	# giù per il muro vero (la faccia esterna è a z 12,22, 15 cm più indietro di muro_z): a 2 mm, sopra il toro del coping
+	# (centro a y 0,9625 e z 12,205, raggio 3,75 cm) e poi dritta fino a terra; a x -0,62, così il nastro (largo 26 cm)
+	# resta fuori dalla scatola del pulsante (x da -0,2 a 0,2). Collaudo del 23 ottobre: era a 15 cm dal muro.
+	const MURO_X := -0.62
+	const MURO := 12.222
+	r.set(&"muro_vasca", PackedVector3Array([Vector3(MURO_X, 0.997, 12.226), Vector3(MURO_X, 0.982, 12.240),
+		Vector3(MURO_X, 0.9625, 12.2445), Vector3(MURO_X, 0.943, 12.240), Vector3(MURO_X, 0.930, 12.226),
+		Vector3(MURO_X, 0.92, MURO), Vector3(MURO_X, 0.5, MURO), Vector3(MURO_X, 0.0, MURO)]))
+	r.set(&"gocciolatoi", PackedVector3Array([Vector3(MURO_X, 0.91, MURO + 0.015), Vector3(0.45, 0.91, MURO + 0.015)]))
 	own(r, gp)
 	level.set(&"ritorno", r)
 	if has_interiors:
