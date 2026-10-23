@@ -13,6 +13,9 @@ viso), il sinistro resta sul fianco; sorride con il corpo (scelta dell'utente de
 inclinata verso la mano (l'occhio a mezzaluna e la campana che pulsa li mette JillySpot).
 
 Animazioni (30 fps):
+  ferma (ciclo 1,0 s): la posa d'inizio del saluto, ferma (le mani sui fianchi, le zampe sul petto): è la posa di
+    JillySpot prima e dopo il saluto, così il saluto parte e finisce senza scatti (dalla statua, le mani giunte e le
+    zampe sul piano, il passaggio alle zampe sul petto sarebbe un salto);
   saluta_su (0,8 s): dalle mani sui fianchi alza il braccio destro e piega la testa;
   saluta (ciclo 1,0 s): la mano va a destra e a sinistra, il busto ondeggia appena;
   saluta_giu (0,8 s): abbassa il braccio e torna dritta, le mani sui fianchi (la posa d'inizio di saluta_su).
@@ -75,6 +78,12 @@ def spalle(arm, gradi):
     M.ruota(arm, 'clavicola.R', (0, 1, 0), gradi)
 
 
+def pose_ferma(arm, C, Z, t, T=1.0):
+    _posa_sveglia(arm, C, Z)
+    _braccia(arm, 0.0, 0.0)
+    Z.segui()
+
+
 def pose_saluta_su(arm, C, Z, t, T=0.8):
     _posa_sveglia(arm, C, Z)
     k = M.liscio(0.0, 1.0, 0.0, T, t)
@@ -107,6 +116,7 @@ def pose_saluta_giu(arm, C, Z, t, T=0.8):
 
 
 M.ANIMAZIONI = {
+    'ferma': (1.0, True, pose_ferma),
     'saluta_su': (0.8, False, pose_saluta_su),
     'saluta': (1.0, True, pose_saluta),
     'saluta_giu': (0.8, False, pose_saluta_giu),

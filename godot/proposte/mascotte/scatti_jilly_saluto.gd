@@ -67,7 +67,6 @@ func _run() -> void:
 	var lei: Node3D = load("res://scripts/spot/jilly_spot.gd").new()
 	lei.set(&"model", load("res://assets/models/medusa/medusa.glb"))
 	lei.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
-	lei.set(&"animazione", &"statua")
 	radice.add_child(lei)
 	for i in 5:
 		await get_tree().process_frame

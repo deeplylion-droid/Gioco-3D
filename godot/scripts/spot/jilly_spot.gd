@@ -1,7 +1,9 @@
 class_name JillySpot
 extends MedusaAffacciata
 ## Jilly nello spot della crociera (GDD, "Lo spot della crociera Jubilee"): in piedi sui tentacoli sul piedistallo
-## (posa "statua": il piano del piedistallo è all'origine del nodo), saluta e, nel finale, l'occhio pulsa.
+## (il piano del piedistallo è all'origine del nodo), saluta e, nel finale, l'occhio pulsa. Ferma sta in "spot/ferma"
+## (i tentacoli della statua, le zampe sul petto, le mani sui fianchi: la posa d'inizio e di fine del saluto, niente
+## scatti quando comincia e finisce).
 ## La regia (ambienti-2, scenes/spot/spot_inquadrature.json) la cerca per nome ("Jilly") e chiama, a tempi fissi:
 ## - saluta(durata): il saluto (tools/blender/medusa_spot.py, libreria medusa_spot.res: spot/saluta_su, spot/saluta
 ##   in ciclo per [param durata] secondi, spot/saluta_giu), poi di nuovo ferma. Mentre saluta sorride (scelta
@@ -35,11 +37,17 @@ var _centro: Marker3D
 
 
 func _init() -> void:
-	animazione = &"statua"
+	animazione = &"spot/ferma"
 	gocce = false
 
 
 func _dopo_rebuild() -> void:
+	# la libreria prima di super: lì parte la posa (spot/ferma)
+	var ap := _player()
+	if ap and not ap.has_animation_library(&"spot") and ResourceLoader.exists(SPOT):
+		ap.add_animation_library(&"spot", load(SPOT) as AnimationLibrary)
+	if ap and not ap.has_animation(animazione):
+		animazione = &"statua"
 	super._dopo_rebuild()
 	_campana.clear()
 	for m in find_children("SguardoOcchio", "", true, false):
@@ -53,9 +61,6 @@ func _dopo_rebuild() -> void:
 	if o and o.mesh and not o.get_active_material(0) is ShaderMaterial:
 		for i in o.mesh.get_surface_count():
 			o.set_surface_override_material(i, load(OCCHIO))
-	var ap := _player()
-	if ap and not ap.has_animation_library(&"spot") and ResourceLoader.exists(SPOT):
-		ap.add_animation_library(&"spot", load(SPOT) as AnimationLibrary)
 
 
 func _player() -> AnimationPlayer:

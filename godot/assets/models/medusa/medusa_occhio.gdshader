@@ -42,9 +42,10 @@ void fragment() {
 	// la palpebra di sotto: sopra il bordo l'occhio, sotto la pelle; il bordo sale col sorriso ed e' piu' basso ai lati
 	float s = clamp(sorriso, 0.0, 1.0);
 	float du = UV.x - CENTRO_PUPILLA.x;
-	// arco di cerchio (raggio 0,42 nella texture): la cima tonda al centro, che scende ai lati
-	float arco = 0.42 - sqrt(max(0.42 * 0.42 - du * du, 0.0));
-	float bordo = mix(1.15, CENTRO_PUPILLA.y - 0.04, s) + arco * 1.6 * s;
+	// arco di cerchio largo (raggio 0,9 nella texture): una mezzaluna morbida, bassa (sotto la pupilla: sopra resta
+	// quasi tutto l'occhio), che scende appena ai lati (l'utente, 23 ottobre: "sale troppo appunta quella palpebra")
+	float arco = 0.9 - sqrt(max(0.9 * 0.9 - du * du, 0.0));
+	float bordo = mix(1.15, CENTRO_PUPILLA.y + 0.12, s) + arco * 1.0 * s;
 	float palpebra = smoothstep(bordo - 0.004, bordo + 0.004, UV.y);
 	float ciglia = (1.0 - smoothstep(0.0, 0.03, bordo - UV.y)) * step(0.001, s);
 	vec3 c = mix(texture(tex_calmo, uv).rgb, texture(tex_venato, uv).rgb, max(venatura, vene));
