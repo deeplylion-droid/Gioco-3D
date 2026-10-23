@@ -464,9 +464,16 @@ func _forme_morbidezza(fossa: Rect2) -> void:
 	# la griglia: appoggiata al muro nord, in cima a y -1,84 contro il muro, il piede sul fondo 35 cm più in là
 	var cima := Vector3(-14.325, -1.844, -7.98)
 	var piede := Vector3(-14.325, -2.992, -7.63)
+	# (un cuneo pieno dalla faccia della griglia fino dentro il muro: dietro la griglia i tentacoli non ci vanno, e una
+	# lastra di 5 cm di sbieco si passerebbe da parte a parte)
 	var lungo := (piede - cima).normalized()
-	var base := Basis(Vector3.RIGHT, lungo, Vector3.RIGHT.cross(lungo))
-	_morbidezza.aggiungi_scatola(Transform3D(base, (cima + piede) * 0.5), Vector3(0.425, cima.distance_to(piede) * 0.5, 0.025))
+	var davanti := lungo.cross(Vector3.RIGHT).normalized() * 0.025
+	var cuneo := PackedVector3Array()
+	# (a ovest fin dentro il muro della fossa, x -14,8: fra la griglia e il muro resta una fessura di 5 cm)
+	for x in [-14.85, cima.x + 0.425]:
+		var dx := Vector3(x - cima.x, 0.0, 0.0)
+		cuneo.append_array([cima + davanti + dx, piede + davanti + dx, Vector3(x, piede.y, -8.3), Vector3(x, cima.y, -8.3)])
+	_morbidezza.aggiungi_convesso(cuneo)
 	# la parete est (x -12,3..-12,1, y -3..0, z -8..-6) col buco del condotto (centro y -2,3, z -7) e il canale fino
 	# a x -8,8; mezzo lato del buco 0,43 (il quadrato dentro il cerchio di raggio 0,6)
 	var yc := -2.3

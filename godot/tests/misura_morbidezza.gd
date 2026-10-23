@@ -100,6 +100,17 @@ func punti() -> Array:
 	return out
 
 
+## La scatola della forma in cui sta [param q] (o il pavimento), per gli esempi.
+func _forma_di(q: Vector3) -> String:
+	for fo in m.get(&"_forme"):
+		var dm := -INF
+		for pl: Plane in fo[0]:
+			dm = maxf(dm, pl.distance_to(q))
+		if dm < 0.0:
+			return str(fo[1])
+	return "pavimento"
+
+
 func dentro(q: Vector3) -> float:
 	return (m.call(&"_fuori", q, 0.0, m.get(&"_forme")) as Vector3).distance_to(q)
 
@@ -131,6 +142,7 @@ func risultati(nome: String, da := 0) -> Dictionary:
 	var stira_max := 0.0
 	var scarto := 0.0
 	var esempi := []
+	var dove_min := ""
 	for f in range(da, nf):
 		var u: Array = uscita[f]
 		for k in u.size():
@@ -149,7 +161,7 @@ func risultati(nome: String, da := 0) -> Dictionary:
 					if d > 0.01:
 						n_dentro += 1
 						if esempi.size() < 3:
-							esempi.append("dentro f%d k%d i%d %s di %.3f" % [f, k, i, q, d])
+							esempi.append("dentro f%d k%d i%d %s di %.3f, in %s" % [f, k, i, q, d, _forma_di(q)])
 				if _attraversa(pu[i - 1], pu[i]) and _profondo(pu[i - 1], pu[i]):
 					n_attr += 1
 					if esempi.size() < 6:
@@ -158,6 +170,12 @@ func risultati(nome: String, da := 0) -> Dictionary:
 					var lr := lung_riposo(k, i)
 					if lr > 0.02:
 						var rap := pu[i].distance_to(pu[i - 1]) / lr
+						if rap < stira_min:
+							var rp := -1.0
+							if not entrata.is_empty() and f < entrata.size():
+								var pe2: PackedVector3Array = entrata[f][k]
+								rp = pe2[i].distance_to(pe2[i - 1]) / lr
+							dove_min = "tratto più corto f%d k%d i%d %.2f (nella posa %.2f) %s -> %s" % [f, k, i, rap, rp, pu[i - 1], pu[i]]
 						stira_min = minf(stira_min, rap)
 						stira_max = maxf(stira_max, rap)
 				if f > da and not entrata.is_empty():
@@ -184,4 +202,6 @@ func risultati(nome: String, da := 0) -> Dictionary:
 		nome, r["fotogrammi"], n_dentro, n_attr, radice_dentro, salto, stira_min, stira_max, scarto, r["medio"], r["p95"], r["massimo"], r["primi"]])
 	for e in esempi:
 		print("    ", e)
+	if dove_min != "":
+		print("    ", dove_min)
 	return r

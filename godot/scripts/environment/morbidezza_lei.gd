@@ -336,7 +336,7 @@ func _process_modification() -> void:
 				_x[k] = PackedVector3Array()
 				continue
 			partite += 1
-			_x[k] = _partenza(tg, n, forme)
+			_x[k] = _partenza(tg, n, forme, lung)
 			var zero := PackedVector3Array()
 			zero.resize(n + 1)
 			_v[k] = zero
@@ -504,14 +504,28 @@ func _process_modification() -> void:
 
 
 ## Da dove partono i punti quando lei compare: i bersagli (la posa fuori dal mondo, sopra il bordo dove ci passa
-## sotto), poi due giri come in un passo (lunghezze, tratti, punti): già il primo fotogramma è pulito, senza un
+## sotto), poi tre giri come in un passo (lunghezze, tratti, punti): già il primo fotogramma è pulito, senza un
 ## assestamento lungo (sarebbe uno scatto proprio quando sbuca).
-func _partenza(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Array:
+func _partenza(tg: PackedVector3Array, n: int, forme: Array, lung: PackedFloat32Array) -> PackedVector3Array:
 	var pt := _bersagli(tg, n, _vicine(tg, forme))
-	for giro in 2:
+	# tre giri come in un passo: le lunghezze (i bersagli possono avvicinare due punti, trattenuti nella fossa sullo
+	# stesso bordo), i tratti e i punti fuori dal mondo, dalla parte dov'erano prima del giro (un muro sottile non si passa)
+	for giro in 3:
+		var prima := pt.duplicate()
+		for i in range(1, n + 1):
+			var d := pt[i] - pt[i - 1]
+			var l := d.length()
+			if l < 1e-6:
+				continue
+			var e := d * ((l - lung[i]) / l)
+			if i == 1:
+				pt[i] -= e
+			else:
+				pt[i - 1] += e * 0.5
+				pt[i] -= e * 0.5
 		_tratti_fuori(pt, n, forme, PackedVector3Array())
 		for i in range(1, n + 1):
-			pt[i] = _fuori(pt[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme)
+			pt[i] = _fuori(pt[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, prima[i])
 	return pt
 
 
@@ -834,11 +848,24 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 					t1 = minf(t1, tc)
 				if t0 >= t1:
 					break
-			# (tutti e due i capi dentro: ci pensano i punti)
-			if t0 >= t1 or (t0 <= 0.0 and t1 >= 1.0):
+			if t0 >= t1:
 				continue
 			var t := clampf((t0 + t1) * 0.5, 0.05, 0.95)
 			var m := a.lerp(b, t)
+			# (tutti e due i capi dentro, a meno del raggio: ci pensano i punti, a meno che il mezzo non sia più dentro
+			# di tutti e due, cioè il tratto taglia lo spigolo, come la punta fra la cima del bordo e la fossa)
+			if t0 <= 0.0 and t1 >= 1.0:
+				t = 0.5
+				m = a.lerp(b, 0.5)
+				var dma := -INF
+				var dmb := -INF
+				var dmm := -INF
+				for pl: Plane in fo[0]:
+					dma = maxf(dma, pl.distance_to(a))
+					dmb = maxf(dmb, pl.distance_to(b))
+					dmm = maxf(dmm, pl.distance_to(m))
+				if dmm > minf(dma, dmb) - 0.005:
+					continue
 			var nel_tubo := false
 			for tu in tunnel:
 				if Geometry3D.get_closest_point_to_segment(m, tu[0], tu[1]).distance_to(m) < float(tu[2]):
