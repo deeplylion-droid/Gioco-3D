@@ -56,13 +56,9 @@ float vene(vec2 polare, float spessore) {
 	return v;
 }
 
-vec3 leggi(sampler2D tex, vec2 uv) {
-	uv = clamp(uv, vec2(0.001), vec2(0.999));
-	if (dallo_schermo) {
-		return textureLod(schermo, uv, 0.0).rgb;
-	}
-	return texture(tex, uv).rgb;
-}
+// lo schermo o la texture del nodo, dentro i bordi. È una macro e non una funzione: le texture dello schermo e TEXTURE
+// non si possono passare come argomento (Godot stampa "custom_samplers.has(...tex_builtin)")
+#define LEGGI(uv) (dallo_schermo ? textureLod(schermo, clamp((uv), vec2(0.001), vec2(0.999)), 0.0).rgb : texture(TEXTURE, clamp((uv), vec2(0.001), vec2(0.999))).rgb)
 
 void fragment() {
 	vec2 base = dallo_schermo ? SCREEN_UV : UV;
@@ -92,9 +88,9 @@ void fragment() {
 	for (int i = 0; i < 6; i++) {
 		float f = float(i) / 5.0;
 		vec2 scia = -dir * f * (b * 0.05 * k + avanti * 0.12) * r;
-		col.r += leggi(TEXTURE, uv + scia + dir * s).r;
-		col.g += leggi(TEXTURE, uv + scia).g;
-		col.b += leggi(TEXTURE, uv + scia - dir * s * 1.4).b;
+		col.r += LEGGI(uv + scia + dir * s).r;
+		col.g += LEGGI(uv + scia).g;
+		col.b += LEGGI(uv + scia - dir * s * 1.4).b;
 	}
 	col /= 6.0;
 
