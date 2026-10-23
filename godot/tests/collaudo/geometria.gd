@@ -101,8 +101,11 @@ func _esclusi() -> Array:
 		esclusi.append(n)
 	for n in get_tree().get_nodes_in_group(&"bambini"):
 		esclusi.append(n)
-	for n in livello.find_children("*", "Gocce", true, false):
-		esclusi.append(n)
+	# le gocce in volo: quelle dal soffitto (Gocce) e quelle dalle dita della medusa (WaterDripEmitter), come nel
+	# controllo della CI
+	for classe in ["Gocce", "WaterDripEmitter"]:
+		for n in livello.find_children("*", classe, true, false):
+			esclusi.append(n)
 	return esclusi
 
 
@@ -137,7 +140,10 @@ func _scrivi_mesh() -> void:
 			if mm == null:
 				continue
 			mesh = mm.mesh
-			var locali := _istanze_dettagli(g as MultiMeshInstance3D)
+			# chi crea il MultiMesh può lasciare le trasformazioni nel meta "trasformazioni", del nodo o della risorsa
+			var locali: Array = g.get_meta(&"trasformazioni", mm.get_meta(&"trasformazioni", []))
+			if locali.size() != mm.instance_count:
+				locali = _istanze_dettagli(g as MultiMeshInstance3D)
 			if locali.is_empty():
 				print("COLLAUDO: MultiMesh saltato (istanze non leggibili senza renderer): ", percorso)
 				continue
