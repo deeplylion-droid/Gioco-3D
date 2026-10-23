@@ -430,8 +430,8 @@ def corridoio(M):
     if HQ.disponibile('cartello_pericolo'):
         col_ob(HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60)))
     # l'asciugamano per terra, più vicino al muro sud (stava in mezzo alla strada)
-    # per terra: ci si cammina sopra (con la scatola di collisione il giocatore ci restava fermo contro)
-    prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.45, 0), 75, 0.8)
+    # mucchio alto 52 cm contro il muro sud: si urta (scatola orientata), il corridoio resta libero per 1,3 m
+    col_ob(prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.45, 0), 75, 0.8))
 
     # ---- punti per il gioco
     L.vuoto('marker_risveglio', (20.4, 1.25, 0.0), (0, 0, R(90)), 'ARROWS', 0.5)    # sdraiato, guarda verso ovest (-X)
@@ -865,8 +865,9 @@ def spogliatoi(M):
     br = prop('braccioli', 'braccioli', (4.65, 7.2, 0.45), 20, 0.3)
     copia(br, 'braccioli_2', (7.6, 9.9, 0), 110)
     prop('asciugamano', 'asciugamano', (9.35, 5.2, 0.45), 90, 0.9)
-    # per terra all'ingresso degli spogliatoi: ci si cammina sopra (la sua scatola bloccava il passaggio dal corridoio)
-    prop('asciugamano_2', 'asciugamano', (6.4, 4.3, 0), 20, 0.8)
+    # mucchio alto 52 cm contro il muro sud, a ovest dell'ingresso dal corridoio (x 6..7,6): davanti all'ingresso
+    # bloccava il passaggio (prova coi passaggi del 23 ottobre); si urta (scatola orientata)
+    col_ob(prop('asciugamano_2', 'asciugamano', (5.0, 3.45, 0), 20, 0.8))
     prop('paperella_spogliatoi', 'paperella', (7.9, 13.3, 0), 200, 0.09)
     col_ob(prop('secchio_mocio', 'secchio_mocio', (7.6, 11.6, 0), 210, 0.95, 'z'))
     col_ob(prop('pallone_spogliatoi', 'pallone', (10.2, 10.2, 0), 0, 0.4))
