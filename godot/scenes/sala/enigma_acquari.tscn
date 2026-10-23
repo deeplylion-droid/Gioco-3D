@@ -33,18 +33,6 @@ bottom_radius = 0.044
 height = 3.017
 radial_segments = 12
 
-[sub_resource type="CylinderMesh" id="basamento_vetro"]
-top_radius = 1.0970
-bottom_radius = 1.0970
-height = 0.0100
-radial_segments = 64
-
-[sub_resource type="CylinderMesh" id="fondo_vetro_basso"]
-top_radius = 1.5920
-bottom_radius = 1.5920
-height = 0.0100
-radial_segments = 64
-
 [sub_resource type="TorusMesh" id="anello_vetro"]
 inner_radius = 1.0950
 outer_radius = 1.1550
@@ -504,11 +492,6 @@ transform = Transform3D(1, 0, 0, 0, 0.998011, 0, 0, 0, 1, 0.8485, 1.3053, -0.848
 mesh = SubResource("tirante")
 material_override = ExtResource("m_tiranti")
 
-[node name="BasamentoVetro" type="MeshInstance3D" parent="AcquarioGiallo"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0055, 0)
-mesh = SubResource("basamento_vetro")
-material_override = ExtResource("m_tiranti")
-
 [node name="AnelloVetro" type="MeshInstance3D" parent="AcquarioGiallo"]
 transform = Transform3D(1, 0, 0, 0, 0.333333, 0, 0, 0, 1, 0, 2.61, 0)
 mesh = SubResource("anello_vetro")
@@ -648,11 +631,6 @@ transform = Transform3D(2.9, 0, 0, 0, 2, 0, 0, 0, 2.9, 0, -0.8, 0)
 transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 1, 0, 0.8025, 0)
 mesh = SubResource("anello")
 material_override = ExtResource("m_rosso")
-
-[node name="FondoVetro" type="MeshInstance3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0055, 0)
-mesh = SubResource("fondo_vetro_basso")
-material_override = ExtResource("m_tiranti")
 
 [node name="Collisione" type="StaticBody3D" parent="AcquarioMisto"]
 collision_mask = 0
@@ -836,11 +814,6 @@ material_override = ExtResource("m_tiranti")
 [node name="Tirante4" type="MeshInstance3D" parent="AcquarioBlu"]
 transform = Transform3D(1, 0, 0, 0, 0.998011, 0, 0, 0, 1, 0.8485, 1.3053, -0.8485)
 mesh = SubResource("tirante")
-material_override = ExtResource("m_tiranti")
-
-[node name="BasamentoVetro" type="MeshInstance3D" parent="AcquarioBlu"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0055, 0)
-mesh = SubResource("basamento_vetro")
 material_override = ExtResource("m_tiranti")
 
 [node name="AnelloVetro" type="MeshInstance3D" parent="AcquarioBlu"]

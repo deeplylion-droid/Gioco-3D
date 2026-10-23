@@ -175,12 +175,10 @@ SOPRA_TIR = tuple(v + 0.0505 - ABBASSA_COP for v in (0.0375, 0.0375, 0.013, 0.03
 TIR_SU = B_VETRO + max(SOPRA_TIR) * K + 0.02
 TIR_GIU = -0.1 * K
 sr('CylinderMesh', 'tirante', top_radius='%.3f' % (0.022 * K), bottom_radius='%.3f' % (0.022 * K), height='%.3f' % (TIR_SU - TIR_GIU), radial_segments='12')
-# i fondi del vetro: piastre di 1 cm appoggiate sulla cima chiusa delle basi (chiudi_tagli.py), dentro il vetro.
-# Prima le basi erano aperte in cima e il basamento degli alti e il fondo del miscuglio con le sue cinque gambe stavano
-# dentro la base, che Meshy ha fatto piena (controllo del 23 ottobre, dentro dal verso delle facce)
-FONDO_H = 0.01
-sr('CylinderMesh', 'basamento_vetro', top_radius='%.4f' % (0.55 * K - 0.003), bottom_radius='%.4f' % (0.55 * K - 0.003), height='%.4f' % FONDO_H, radial_segments='64')
-sr('CylinderMesh', 'fondo_vetro_basso', top_radius='%.4f' % (R_B - 0.003), bottom_radius='%.4f' % (R_B - 0.003), height='%.4f' % FONDO_H, radial_segments='64')
+# Niente fondi del vetro: il vetro (un tubo, AcquarioVetro) poggia sulla cima delle basi, chiusa da chiudi_tagli.py, che
+# fa da fondo. Prima le basi erano aperte in cima, e il basamento degli alti e il fondo del miscuglio con le sue cinque
+# gambe stavano dentro la base, che Meshy ha fatto piena; una piastra sopra la cima stava dentro il tubo di vetro
+# (controllo del 23 ottobre, dentro dal verso delle facce)
 sr('TorusMesh', 'anello_vetro', inner_radius='%.4f' % R_ANELLO[0], outer_radius='%.4f' % R_ANELLO[1], rings='64', ring_segments='12')
 sr('CylinderShape3D', 'forma_alto', radius='%.3f' % (0.5 * K), height='%.3f' % (2.95 * K))
 # la base è più larga del vetro: fino a 1,25 m dal centro, 1,36-1,44 dove sporgono costole e attacchi (misurato fuori
@@ -387,10 +385,7 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
             su = B_VETRO + SOPRA_TIR[k] * K + 0.02
             node('Tirante%d' % (k + 1), 'MeshInstance3D', nome, transform=tr(sc3(1, (su - TIR_GIU) / (TIR_SU - TIR_GIU), 1), (math.cos(a) * 0.6 * K, (su + TIR_GIU) * 0.5, math.sin(a) * 0.6 * K)),
                  mesh='SubResource("tirante")', material_override='ExtResource("m_tiranti")')
-        # il telaio del vetro: il fondo, appoggiato sulla cima della base (mezzo millimetro sopra); l'anello piatto
-        # (2 cm) sul bordo del vetro, sotto il bordo del coperchio
-        node('BasamentoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, 0.0005 + FONDO_H * 0.5, 0)), mesh='SubResource("basamento_vetro")',
-             material_override='ExtResource("m_tiranti")')
+        # il telaio del vetro: l'anello piatto (2 cm) sul bordo del vetro, sotto il bordo del coperchio
         node('AnelloVetro', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.02 / (R_ANELLO[1] - R_ANELLO[0]), 1), (0, B_VETRO + 0.01, 0)),
              mesh='SubResource("anello_vetro")', material_override='ExtResource("m_tiranti")')
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
@@ -402,10 +397,6 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
         node('Base', parent=nome, inst='base_bassa', transform=tr(sc3(SC * KX, KY, SC * KX), (0, -B_BASSO_BASE, 0)))
         node('Anello', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.6 * KY / KX, 1), (0, B_BASSO_VETRO + MEZZO_ANELLO_BASSO * 0.6 * KY / KX + 0.0005, 0)),
              mesh='SubResource("anello")', material_override='ExtResource("m_rosso")')
-        # il fondo del vetro, appoggiato sulla cima chiusa della base (prima stava un centimetro sotto, dentro la base,
-        # su cinque gambe nascoste dentro la base)
-        node('FondoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, 0.0005 + FONDO_H * 0.5, 0)), mesh='SubResource("fondo_vetro_basso")',
-             material_override='ExtResource("m_tiranti")')
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
         node('Base', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASSO_BASE * 0.5, 0)), shape='SubResource("forma_base_bassa")')
         raccordi(nome, SC * KX, KY, SC * KX, -B_BASSO_BASE, basso=True)
