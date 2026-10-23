@@ -47,6 +47,9 @@ func _run() -> void:
 		if n:
 			n.get_parent().remove_child(n)
 			n.free()
+	# le stanze della Risalita subito, come nel giro (COLLAUDO_RISALITA=1)
+	if OS.get_environment("COLLAUDO_RISALITA") == "1":
+		Engine.set_meta(&"risalita_subito", true)
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
 	for i in 30:
