@@ -6,12 +6,13 @@ extends SceneTree
 ## Senza "video" salva scatti a vari punti del progresso; con "video" il progresso va da 0 a 1 in 5 s (dopo 1 s fermo),
 ## da registrare col Movie Maker. Con "vhs" sopra c'è anche il filtro del nastro (shaders/spot/vhs.gdshader).
 
-const SCATTI := [0.0, 0.3, 0.6, 0.72, 0.9, 0.96]
+const SCATTI := [0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 0.96]
 
 var occhio: ColorRect
 var video := false
 var t := 0.0
 var cartella := ""
+var _audio: AudioStreamPlayer
 
 
 func _initialize() -> void:
@@ -101,12 +102,24 @@ func _prepara(con_vhs: bool) -> void:
 		strato.add_child(vhs)
 	if video:
 		process_frame.connect(_passo)
+		# il ronzio del finale, allineato: il nero dell'occhio (progresso 0,995, a 5,975 s) cade sul suo colpo (5,3 s)
+		var ronzio := "res://assets/spot/ronzio_spot.ogg"
+		for x in OS.get_cmdline_user_args():
+			if x.begins_with("audio="):
+				ronzio = x.substr(6)
+		var st: AudioStream = AudioStreamOggVorbis.load_from_file(ronzio) if not ronzio.begins_with("res://") else load(ronzio)
+		if st:
+			_audio = AudioStreamPlayer.new()
+			_audio.stream = st
+			root.add_child(_audio)
 	else:
 		_scatti()
 
 
 func _passo() -> void:
 	t += 1.0 / 30.0
+	if _audio and not _audio.playing and t >= 0.675 and t < 1.0:
+		_audio.play()
 	occhio.set(&"progresso", clampf((t - 1.0) / 5.0, 0.0, 1.0))
 
 

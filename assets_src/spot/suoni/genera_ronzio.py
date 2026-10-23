@@ -3,7 +3,8 @@ ambienti-2). Bozza: "L'audio è un ronzio basso che sale, più la sigla al contr
 - 0-5,3 s (fino al nero, 42,8 s): un ronzio di rete basso che sale (da 55 a 85 Hz, con le armoniche, un poco saturato)
   e cresce; sotto, la sigla pulita al contrario e rallentata, che cresce anche lei, con un battito che accelera
   (lo stesso dell'occhio, da 72 a 200 bpm);
-- 5,3 s: taglio netto;
+- 4,98-5,3 s: lo scatto in avanti dell'occhio (progresso 0,93-1 su 4,6 s): un soffio che sale;
+- 5,3 s: il colpo forte (un tonfo basso e uno schiocco) e il taglio netto;
 - 5,3-7,1 s: il ronzio della TV accesa senza segnale (fruscio e il fischio del tubo), che sfuma.
 Uso: /home/user/tools/tts-venv/bin/python assets_src/spot/suoni/genera_ronzio.py"""
 import os
@@ -48,6 +49,16 @@ colpo = np.exp(-f * 22.0) + 0.6 * np.exp(-np.abs(f - 0.28) * 26.0) * (f > 0.22)
 battito = np.sin(2 * np.pi * 48.0 * t) * colpo * (0.15 + 0.45 * su)
 
 prima = (ronzio + sigla + battito) * (t < T_NERO)
+# lo scatto in avanti: un soffio di rumore che sale (filtrato dal basso verso l'alto) fino al colpo
+T_SCATTO = T_NERO - 0.32
+w = np.clip((t - T_SCATTO) / (T_NERO - T_SCATTO), 0.0, 1.0) * (t < T_NERO)
+soffio = np.cumsum(rng.standard_normal(n)) * 0.002
+soffio = (soffio - np.convolve(soffio, np.ones(200) / 200, mode='same')) * 6.0 * w ** 2
+# il colpo forte al nero: un tonfo basso che cala e uno schiocco di rumore
+dt = np.maximum(t - T_NERO, 0.0) * (t >= T_NERO)
+tonfo = np.sin(2 * np.pi * (70.0 * dt - 30.0 * dt * dt)) * np.exp(-dt * 5.0) * (t >= T_NERO) * 1.4
+schiocco = rng.standard_normal(n) * np.exp(-dt * 40.0) * (t >= T_NERO) * 0.9
+prima = prima + soffio + np.tanh((tonfo + schiocco) * 1.5)
 # dopo il nero: la TV senza segnale, fruscio e fischio del tubo, che sfuma
 dopo = (t >= T_NERO)
 sfuma = np.clip(1.0 - (t - T_NERO) / (T_FINE - T_NERO), 0.0, 1.0) ** 1.5

@@ -27,21 +27,32 @@ Prove:
 
 ## Occhio ipnotico (`godot/shaders/spot/occhio_ipnotico.gdshader` e `godot/scripts/spot/occhio_ipnotico.gd`)
 
-È per le inquadrature 8-9, sopra l'immagine dell'occhio: va su una camera o su un video, come il filtro. Lo script `OcchioIpnotico` (un `ColorRect`) lo muove tutto. Il montaggio fa salire solo `progresso` da 0 a 1, in circa 5 s; il resto lo fa lo script:
-- il battito che accelera da `bpm_inizio` (72) a `bpm_fine` (200), con due colpi per battito;
-- a ogni colpo la pupilla si allarga, l'immagine fa un balzo verso chi guarda, i colori si separano e c'è una scia verso il centro;
-- spirali e anelli rosa e viola girano nella pupilla e nell'iride, sempre più forti e più larghi;
-- fuori dall'iride l'immagine si scurisce e pulsa di viola;
-- i fotogrammi saltano: l'effetto si ferma 2-4 fotogrammi e poi riparte avanti. Lo script manda il segnale `fermo(acceso)`, così il montaggio ferma anche l'animazione dell'occhio di mascotte;
-- il lampo in negativo (a `negativo_a`, 0,72), più qualche lampo corto verso la fine;
-- alla fine lo scatto in avanti dentro la pupilla (da `scatto_da`, 0,93) e il nero;
-- con `camera` e `bersaglio` (l'occhio) la pupilla resta al centro dell'effetto anche se la camera si muove; su un video si mette `centro` a mano.
+È per le inquadrature 8-9, sopra l'immagine dell'occhio: va su una camera o su un video, come il filtro. Lo script `OcchioIpnotico` (un `ColorRect`) lo muove tutto. Il montaggio fa salire solo `progresso` da 0 a 1, in circa 5 s; il resto lo fa lo script.
 
-Prove sul modello vero di Jilly, come nel menu, con la camera davanti all'occhio:
-- `occhio_scatti.jpg`, a progresso 0, 0,3, 0,6, 0,72 (il negativo), 0,9 e 0,96;
+Seconda versione (coordinatore, 23 ottobre: "più forza"; l'utente aveva chiesto "ipnotico aggressivo crescente, molto horror"). La crescita deve vedersi:
+- **all'inizio**: l'occhio dello spot allegro, quasi carino;
+- **poi l'occhio si guasta**:
+  - le vene compaiono sul bianco e si gonfiano a ogni colpo. Qui le disegna lo shader; nello spot, se mascotte aggiunge l'instance uniform `vene` al materiale dell'occhio, si usano quelle vere, col bulbo venato (`usa_vene`);
+  - i colori virano a un viola e a un rosso cupi e saturi;
+  - la vignetta si chiude verso il nero;
+- **a ogni battito** (da 72 a 200 bpm, due colpi per battito):
+  - la spirale nella pupilla (bande nette rosa acceso e nero) gira più veloce;
+  - lo schermo trema, sempre di più;
+  - i colori si separano molto, e la pupilla si allarga (anche quella vera, con `usa_pupilla`);
+- **i fotogrammi saltati** sono sempre più frequenti e lunghi, da 2 a 5 fotogrammi. Ogni volta parte il segnale `fermo(acceso)` per il montaggio;
+- **i lampi in negativo**:
+  - quelli fissi di `lampi` (0,55, 0,7, 0,8, 0,86, 0,9 del progresso), sempre più fitti e lunghi, da 1 a 3 fotogrammi;
+  - più qualcuno a caso verso la fine;
+- **alla fine** lo scatto in avanti dentro la pupilla (da `scatto_da`, 0,93), pulito, senza salti né lampi, e il nero. Il ronzio (`godot/assets/spot/ronzio_spot.ogg`) ha lì un soffio che sale e il colpo forte.
+
+Con `camera` e `bersaglio` (l'occhio) la pupilla resta al centro dell'effetto anche se la camera si muove; su un video si mette `centro` a mano.
+
+Prove sul modello vero di Jilly, come nel menu, con la camera davanti all'occhio e col ronzio:
 - `occhio_prova.mp4`, 6,7 s: 1 s fermo, poi progresso da 0 a 1;
-- `occhio_vhs_prova.mp4`, lo stesso col filtro VHS sopra, come sarà nello spot;
-- `occhio_vhs_fotogrammi.jpg`, fotogrammi presi dal video col filtro.
+- `occhio_vhs_prova.mp4`, lo stesso col filtro VHS sopra, come nello spot;
+- `occhio_vhs_fotogrammi.jpg`, 8 fotogrammi lungo il tempo: l'occhio carino, la spirale, le vene e il rosso, un lampo in negativo, il buio che si chiude, lo scatto, la spirale a tutto schermo prima del nero.
+
+La prima versione, rosa pastello e morbida, è in `docs/proposte/spot/scartati/`.
 
 L'animazione dell'occhio, cioè la pupilla vera che si muove e la palpebra, è di mascotte. Qui l'occhio è fermo, e si muovono solo gli effetti.
 

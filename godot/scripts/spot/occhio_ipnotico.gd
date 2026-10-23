@@ -18,15 +18,21 @@ signal fermo(acceso: bool)
 ## con l'instance uniform "pupilla" dello shader dell'occhio di mascotte (1 = com'è, da 0,5 a 2,0).
 @export var occhio: GeometryInstance3D
 @export var usa_pupilla := false
+## Con l'instance uniform "vene" del materiale dell'occhio (0-1, il bulbo venato di mascotte): le vene vere al posto di
+## quelle disegnate dallo shader.
+@export var usa_vene := false
 @export var centro := Vector2(0.5, 0.5)
-## Quando arrivano il lampo in negativo e lo scatto in avanti (in progresso).
-@export var negativo_a := 0.72
+## Quando arrivano i lampi in negativo e lo scatto in avanti (in progresso): i lampi sempre più fitti, e più lunghi
+## (1, 1, 2, 2, 3 fotogrammi).
+@export var lampi := PackedFloat32Array([0.55, 0.7, 0.8, 0.86, 0.9])
 @export var scatto_da := 0.93
 @export var seme := 20261022
 
 var _fase := 0.0
 var _tempo := 0.0
 var _fermo := 0
+var _negativo := 0
+var _lampo := 0
 var _rng := RandomNumberGenerator.new()
 var _mat: ShaderMaterial
 
@@ -40,31 +46,49 @@ func _process(delta: float) -> void:
 	if _mat == null:
 		return
 	var p := clampf(progresso, 0.0, 1.0)
-	# i fotogrammi saltati: ogni tanto l'effetto (e il montaggio, col segnale) si ferma 2-4 fotogrammi, poi riparte avanti
+	# i fotogrammi saltati: ogni tanto l'effetto (e il montaggio, col segnale) si ferma 2-5 fotogrammi, poi riparte avanti;
+	# sempre più spesso verso la fine
+	# (nello scatto finale niente salti né lampi: lo scatto e poi il nero, puliti)
+	if _fermo > 0 and p >= scatto_da:
+		_fermo = 0
+		_negativo = 0
+		fermo.emit(false)
 	if _fermo > 0:
 		_fermo -= 1
 		if _fermo == 0:
-			_tempo += delta * 3.0
+			_tempo += delta * 4.0
 			fermo.emit(false)
 		return
-	if p > 0.25 and _rng.randf() < 0.012 + 0.05 * p:
-		_fermo = _rng.randi_range(2, 4)
+	if p > 0.2 and p < scatto_da and _rng.randf() < 0.008 + 0.12 * p * p:
+		_fermo = _rng.randi_range(2, 2 + roundi(3.0 * p))
 		fermo.emit(true)
 	# il battito che accelera: due colpi (lub-dub) per battito
 	var bpm := lerpf(bpm_inizio, bpm_fine, p * p)
 	_fase = fmod(_fase + delta * bpm / 60.0, 1.0)
 	var colpo := exp(-_fase * 14.0) + 0.6 * exp(-absf(_fase - 0.28) * 18.0) * float(_fase > 0.22)
-	_tempo += delta
+	colpo = clampf(colpo, 0.0, 1.0)
+	# la spirale gira più forte a ogni colpo
+	_tempo += delta * (1.0 + 3.0 * colpo * p)
 	if occhio and usa_pupilla:
 		occhio.set_instance_shader_parameter(&"pupilla", minf(2.0, 1.0 + 0.8 * colpo * (0.4 + 0.6 * p)))
+	if occhio and usa_vene:
+		occhio.set_instance_shader_parameter(&"vene", smoothstep(0.12, 0.75, p) * (0.85 + 0.15 * colpo))
 	_mat.set_shader_parameter(&"tempo", _tempo)
-	_mat.set_shader_parameter(&"battito", clampf(colpo, 0.0, 1.0))
+	_mat.set_shader_parameter(&"battito", colpo)
 	_mat.set_shader_parameter(&"intensita", p)
-	# il lampo in negativo: un attimo (e qualche altro più corto verso la fine)
-	var neg := 1.0 if absf(p - negativo_a) < 0.012 else 0.0
-	if p > 0.8 and _rng.randf() < 0.03:
-		neg = 1.0
-	_mat.set_shader_parameter(&"negativo", neg)
+	_mat.set_shader_parameter(&"vene_finte", 0.0 if (occhio and usa_vene) else 1.0)
+	# i lampi in negativo: quelli fissi di [member lampi] (sempre più fitti e lunghi), più qualcuno a caso verso la fine
+	if p >= scatto_da:
+		_negativo = 0
+	elif _negativo > 0:
+		_negativo -= 1
+	else:
+		while _lampo < lampi.size() and p >= lampi[_lampo]:
+			_negativo = 1 + _lampo / 2
+			_lampo += 1
+		if _negativo == 0 and p > 0.6 and p < scatto_da - 0.01 and _rng.randf() < 0.05 * (p - 0.6) / 0.3:
+			_negativo = _rng.randi_range(1, 2)
+	_mat.set_shader_parameter(&"negativo", 1.0 if _negativo > 0 else 0.0)
 	# lo scatto in avanti, poi il nero
 	var av := clampf((p - scatto_da) / (0.99 - scatto_da), 0.0, 1.0)
 	_mat.set_shader_parameter(&"avanti", av)
