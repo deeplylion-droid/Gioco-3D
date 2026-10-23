@@ -143,7 +143,8 @@ func _run() -> void:
 	check(SchermataComandi.nomi_tasti([&"sprint"]) == PackedStringArray(["Maiusc"]), "correre: Maiusc")
 	check(SchermataComandi.nomi_tasti([&"crouch"]) == PackedStringArray(["Ctrl"]), "abbassarsi: Ctrl")
 	check(SchermataComandi.nomi_tasti([&"jump"]) == PackedStringArray(["Spazio"]), "saltare: Spazio")
-	check(SchermataComandi.nomi_tasti([&"torcia"]) == PackedStringArray(["F"]), "torcia: F")
+	check(not InputMap.has_action(&"torcia") and not SchermataComandi.RIGHE.any(func(r): return (r[1] as Array).has(&"torcia")),
+		"la torcia non c'è più: niente tasto F, niente riga nei comandi (scelta dell'utente del 23 ottobre)")
 	check(SchermataComandi.nomi_tasti([&"interact"]) == PackedStringArray(["E"]), "usare: E")
 	check(SchermataComandi.nomi_tasti([&"spray"]) == PackedStringArray(["Tasto sinistro"]), "spruzzare: tasto sinistro")
 	check(SchermataComandi.nomi_tasti([&"suck"]) == PackedStringArray(["Tasto destro"]), "aspirare: tasto destro")
