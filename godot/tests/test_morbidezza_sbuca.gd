@@ -22,6 +22,14 @@ func _ready() -> void:
 	_run.call_deferred()
 
 
+## Il costo dipende dalla macchina: in CI (variabile CI) si stampa e basta, le collisioni invece bloccano.
+func _check_costo(cond: bool, msg: String) -> void:
+	if OS.has_environment("CI"):
+		print("  (CI: solo stampato) %s  %s" % ["ok" if cond else "oltre", msg])
+	else:
+		_check(cond, msg)
+
+
 func _check(cond: bool, msg: String) -> void:
 	if cond:
 		_ok += 1
@@ -72,7 +80,7 @@ func _run() -> void:
 		_check(r["scarto"] > 0.05, "%s: i tentacoli si muovono davvero (al più %.2f m dalla posa)" % [nome, r["scarto"]])
 		_check(r["stira_min"] > 0.15 and r["stira_max"] < 2.0, "%s: tratti vicini alla lunghezza di riposo (%.2f-%.2f)" % [nome, r["stira_min"], r["stira_max"]])
 		# (la salita dura 2 s, come il tuffo: lo stesso limite del tuffo)
-		_check(r["medio"] < 3.0 and r["p95"] < 8.0, "%s: costo sotto 3 ms in media e 8 nel 95%% (%.2f e %.2f)" % [nome, r["medio"], r["p95"]])
-		_check(r["primi"] < 5.0, "%s: quando compare nessun fotogramma sopra i 5 ms (%.2f)" % [nome, r["primi"]])
+		_check_costo(r["medio"] < 3.0 and r["p95"] < 8.0, "%s: costo sotto 3 ms in media e 8 nel 95%% (%.2f e %.2f)" % [nome, r["medio"], r["p95"]])
+		_check_costo(r["primi"] < 5.0, "%s: quando compare nessun fotogramma sopra i 5 ms (%.2f)" % [nome, r["primi"]])
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)
