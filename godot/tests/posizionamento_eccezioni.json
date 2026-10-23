@@ -313,20 +313,6 @@
 	},
 	{
 		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7530/Nastro",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			51.59,
-			-21.48,
-			-17.05
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoTubi/ins_A_tubo_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 14.2 cm) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|ArrayMesh 3.82x0.00x2.32"
-	},
-	{
-		"zona": "torre",
 		"nodo": "SalaInseguimento/Luci/@Node3D@7535/POMPA_3_modello",
 		"squadra": "ambienti-2",
 		"problema": "staccato",
@@ -380,5 +366,358 @@
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_4, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
 		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			8.75,
+			0.0,
+			42.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte, stato tappa7 (porte della sala pompe e portello aperti): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7)"
+	},
+	{
+		"zona": "mascotte",
+		"nodo": "Mascotte/StatuaPolpoA/statua_polpo_A",
+		"squadra": "mascotte",
+		"problema": "ingombro",
+		"pos": [
+			-4.5,
+			0.0,
+			-17.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_2",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_5",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_7",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_3",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Interattivi/sala_portone_torre",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			19.5,
+			0.0,
+			-12.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_2",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			1.5,
+			-0.53,
+			46.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.53), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_r1s_m_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-2.0,
+			-9.05,
+			48.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.24 e 1.84 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -9.05), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/ATTUATORE_stagno",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			-2.5,
+			-9.05,
+			47.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.56 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -9.05), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "interni",
+		"nodo": "Interni/Ambienti/Stanzino/cassetta_pronto_soccorso",
+		"squadra": "ambienti-1",
+		"problema": "ingombro",
+		"pos": [
+			4.5,
+			0.0,
+			30.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_7",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-7.5,
+			0.0,
+			46.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimenti fra y -0.30 e -0.00), senza collisione (si attraversa)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
+		"squadra": "ambienti-1",
+		"problema": "compenetra",
+		"pos": [
+			-1.75,
+			0.37,
+			12.4
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte, dopo l'unione: passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Polaroid10",
+		"squadra": "ambienti-2",
+		"problema": "compenetrato",
+		"pos": [
+			23.59,
+			-11.66,
+			-22.41
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte, dopo l'unione: entra dentro TorreProp/prop_lettino_plastica_1"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Polaroid10",
+		"squadra": "ambienti-2",
+		"problema": "coperto",
+		"pos": [
+			23.59,
+			-11.66,
+			-22.41
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte, dopo l'unione: non si vede da nessuno dei 12 punti di vista vicini (1-1,8 m, altezza degli occhi); lo coprono: TorreStruttura/torre_polaroid_10, TorreStruttura/torre_A, TorreProp/prop_lettino_plastica_1 (la superficie più vicina è a 3 cm dal suo centro)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "Polaroid10/Modello/Polaroid",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			23.59,
+			-11.66,
+			-22.41
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte, dopo l'unione: il 48% dei suoi vertici è dentro TorreProp/prop_lettino_plastica_1"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22970/@MeshInstance3D@22971",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-6.75,
+			-5.4,
+			65.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.08x2.30x0.36"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/capanna_tiki/Mesh_0",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-30.5,
+			-5.4,
+			78.75
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo)"
+	},
+	{
+		"zona": "risalita",
+		"nodo": "Risalita/Fiume/@Node3D@22978/@MeshInstance3D@22979",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			-35.5,
+			-5.4,
+			51.25
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
+		"firma": "fiume.tscn|BoxMesh 0.08x2.30x0.36"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_2",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_3",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
 	}
 ]

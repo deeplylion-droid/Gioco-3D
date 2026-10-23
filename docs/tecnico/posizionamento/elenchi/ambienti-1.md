@@ -114,3 +114,11 @@ Dopo il collaudo il controllo guarda meglio: "staccato" misura le mesh vere e no
 | sala | staccato | `Sala/AngoloScatoloni/scat_1_3_1` | -18.57, 0.83, 16.88 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_1_3_2, scat_1_3_3. |
 | sala | staccato | `Sala/AngoloScatoloni/scat_2_1_4` | -17.72, 2.63, 18.58 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.3 cm. Con lui, staccati insieme, 4 oggetti che si reggono solo fra loro: scat_2_1_5, scat_2_1_6, scat_2_1_7, scat_2_1_8. |
 | sala | staccato | `Sala/AngoloScatoloni/scat_3_0_3` | -16.87, 1.77, 19.43 | tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 1.2 cm. Con lui, staccati insieme, 2 oggetti che si reggono solo fra loro: scat_3_0_4, scat_3_0_5. |
+
+## Stato tappa7, 22 ottobre notte
+
+Con le porte della sala pompe e il portello aperti (il ritorno):
+
+| Zona | Problema | Nodo | Dettaglio |
+|---|---|---|---|
+| interni | ingombro | `Interni/Ambienti/Corridoio/corridoio_statico` | intorno a 8,75, 0, 42,25: una parte senza collisione a meno di 10 cm da dove si cammina, all'altezza della testa (pavimenti fra y -1,58 e 0: oltre la porta della sala pompe aperta) |
