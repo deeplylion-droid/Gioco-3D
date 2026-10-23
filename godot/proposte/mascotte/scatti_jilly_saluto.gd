@@ -1,5 +1,5 @@
 extends Node
-## Scatti dal motore del saluto di Jilly per lo spot (inquadrature 5-6, tools/blender/medusa_spot.py,
+## Scatti dal motore del saluto di Jilly (JillySpot.saluta: col sorriso, l'occhio a mezzaluna) per lo spot (inquadrature 5-6, tools/blender/medusa_spot.py,
 ## libreria res://assets/models/medusa/medusa_spot.res, animazioni "spot/<nome>"): lei in piedi su un
 ## piedistallo di prova (quello vero lo fa la sala dello spot), luce da spettacolo con i fari rosa e viola
 ## (scelta dell'utente), da davanti e in primo piano, in quattro momenti.
@@ -14,6 +14,7 @@ const SCATTI := [
 	["saluta_a", 1.05, Vector3(0.9, -0.6, 4.6), Vector3(0, -0.9, 0), 40.0],
 	["saluta_b", 1.3, Vector3(0.9, -0.6, 4.6), Vector3(0, -0.9, 0), 40.0],
 	["primo_piano", 1.8, Vector3(0.35, -0.05, 1.5), Vector3(0, -0.15, 0), 40.0],
+	["primo_piano_davanti", 2.3, Vector3(0.0, -0.1, 1.3), Vector3(0, -0.2, 0), 45.0],
 ]
 
 var out_dir := ""
@@ -63,7 +64,7 @@ func _run() -> void:
 	pav.position = Vector3(0, -1.05, 0)
 	radice.add_child(pav)
 	# lei
-	var lei: Node3D = load("res://scripts/environment/medusa_affacciata.gd").new()
+	var lei: Node3D = load("res://scripts/spot/jilly_spot.gd").new()
 	lei.set(&"model", load("res://assets/models/medusa/medusa.glb"))
 	lei.set(&"bell_material", load("res://assets/models/medusa/medusa_campana.tres"))
 	lei.set(&"animazione", &"statua")
@@ -71,7 +72,9 @@ func _run() -> void:
 	for i in 5:
 		await get_tree().process_frame
 	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	ap.add_animation_library(&"spot", load(SPOT) as AnimationLibrary)
+	# l'occhio dritto in camera (lo sguardo che segue il giocatore qui non ha un giocatore)
+	for m in lei.find_children("SguardoOcchio", "", true, false):
+		(m as SkeletonModifier3D).active = false
 	var occhio: Vector3 = lei.call(&"get_eye_position")
 	print("occhio ", occhio)
 	# luci da spettacolo: chiave bianca davanti in alto, fari rosa e viola dai lati, controluce
@@ -92,8 +95,7 @@ func _run() -> void:
 	radice.add_child(cam)
 	cam.current = true
 	cam.near = 0.05
-	ap.play(&"spot/saluta_su")
-	ap.queue(&"spot/saluta")
+	lei.call(&"saluta", 6.0)
 	var t0 := Time.get_ticks_msec()
 	var tempo := 0.0
 	for s in SCATTI:

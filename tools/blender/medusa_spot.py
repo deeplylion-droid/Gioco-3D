@@ -9,7 +9,8 @@ res://assets/models/medusa/medusa_spot.res, animazioni "spot/<nome>".
 La posa parte dalla statua (in piedi sui tentacoli, appoggiati al piedistallo: restano quelli della statua,
 così non scivolano), sveglia: le due zampe incrociate sul petto di "insegue" (regola del GDD: il seno resta
 coperto) seguono il busto. Parte con le mani sui fianchi; il braccio destro saluta di lato (la mano resta fuori dal
-viso), il sinistro resta sul fianco, la testa si piega appena verso la mano.
+viso), il sinistro resta sul fianco; sorride con il corpo (scelta dell'utente del 23 ottobre): le spalle su, la testa
+inclinata verso la mano (l'occhio a mezzaluna e la campana che pulsa li mette JillySpot).
 
 Animazioni (30 fps):
   saluta_su (0,8 s): dalle mani sui fianchi alza il braccio destro e piega la testa;
@@ -37,6 +38,8 @@ M.CARTELLA_ANTEPRIME = 'spot_anteprime'
 SU = (0.50, -0.10, 0.42)
 GIU = (0.10, -0.12, -0.42)          # lungo il fianco (inizio e fine)
 FIANCO = (0.16, -0.06, -0.38)       # il sinistro, appoggiato al fianco
+SPALLE = 8.0                        # gradi: le spalle su mentre saluta (il sorriso con il corpo)
+PIEGA = 9.0                         # gradi: la testa inclinata verso la mano
 
 
 def _posa_sveglia(arm, C, Z):
@@ -66,11 +69,18 @@ def _braccia(arm, k_su, onda):
     braccio(arm, '.L', FIANCO, (0.7, 0.4, -0.3), (0.05, -0.15, -1.0), (1.0, 0.1, 0.0))
 
 
+def spalle(arm, gradi):
+    """Le spalle su (le clavicole che salgono): il sorriso con il corpo (scelta dell'utente del 23 ottobre)."""
+    M.ruota(arm, 'clavicola.L', (0, 1, 0), -gradi)
+    M.ruota(arm, 'clavicola.R', (0, 1, 0), gradi)
+
+
 def pose_saluta_su(arm, C, Z, t, T=0.8):
     _posa_sveglia(arm, C, Z)
     k = M.liscio(0.0, 1.0, 0.0, T, t)
     busto(arm, avanti=-3.0 * k, lato=-4.0 * k)
-    testa(arm, su=5.0 * k, giro=0.0, piega=-5.0 * k)
+    spalle(arm, SPALLE * k)
+    testa(arm, su=5.0 * k, giro=0.0, piega=-PIEGA * k)
     _braccia(arm, k, -1.0 * M.liscio(0.0, 1.0, T * 0.5, T, t))
     Z.segui()
 
@@ -80,7 +90,8 @@ def pose_saluta(arm, C, Z, t, T=1.0):
     u = (t / T) % 1.0
     onda = -math.cos(2 * math.pi * u)        # da -1 (inizio, come la fine di saluta_su) a 1 e indietro
     busto(arm, avanti=-3.0, lato=-4.0 + 1.5 * onda, giro=2.0 * onda)
-    testa(arm, su=5.0, piega=-5.0 + 2.0 * onda)
+    spalle(arm, SPALLE + 2.0 * math.sin(4 * math.pi * u))
+    testa(arm, su=5.0, piega=-PIEGA + 2.0 * onda)
     _braccia(arm, 1.0, onda)
     Z.segui()
 
@@ -89,7 +100,8 @@ def pose_saluta_giu(arm, C, Z, t, T=0.8):
     _posa_sveglia(arm, C, Z)
     k = 1.0 - M.liscio(0.0, 1.0, 0.0, T, t)
     busto(arm, avanti=-3.0 * k, lato=-4.0 * k)
-    testa(arm, su=5.0 * k, piega=-5.0 * k)
+    spalle(arm, SPALLE * k)
+    testa(arm, su=5.0 * k, piega=-PIEGA * k)
     _braccia(arm, k, -1.0 * k)
     Z.segui()
 
