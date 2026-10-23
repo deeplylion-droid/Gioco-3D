@@ -10,7 +10,7 @@ extends Node3D
 ## I punti dei fili sul bordo della bocca chiusa, nello spazio del modello in Blender (x di lato, -y avanti, z su:
 ## mostro_rig.G, "bocca" a (0,14; -1,02; 1,50)): x lungo la bocca, quanto più lunghi possono diventare (m).
 const FILI := [[0.0, 0.17], [0.07, 0.24], [0.14, 0.2], [0.2, 0.27], [0.29, 0.19]]
-const SPESSORE := 0.0035
+const SPESSORE := 0.003
 const SEGMENTI := 10
 
 var attivo := true
@@ -33,13 +33,8 @@ func prepara(scheletro: Skeleton3D) -> void:
 	if _testa < 0 or _mascella < 0:
 		push_warning("BavaSqualo: mancano gli ossi testa o mascella")
 		return
-	var mat := StandardMaterial3D.new()
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.albedo_color = Color(0.86, 0.88, 0.8, 0.5)
-	mat.roughness = 0.05
-	mat.metallic_specular = 0.9
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mat.vertex_color_use_as_albedo = true
+	var mat := ShaderMaterial.new()
+	mat.shader = preload("res://shaders/creature/bava_squalo.gdshader")
 	_mi.mesh = _mesh
 	_mi.material_override = mat
 	_mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -137,7 +132,7 @@ func _process(delta: float) -> void:
 			# il filo: pende in mezzo (meno quando è tirato) e si assottiglia prima di spezzarsi
 			var tiro := clampf(d / lmax, 0.0, 1.0)
 			var pende := (0.012 + 0.03 * (1.0 - tiro)) * (1.0 + 0.15 * sin(Time.get_ticks_msec() * 0.004 + f["fase"]))
-			_nastro(a, b, pende, SPESSORE * _forza, 0.75 * tiro, occhio)
+			_nastro(a, b, pende, SPESSORE * _forza, 0.85 * tiro, occhio)
 			vuoto = false
 		else:
 			# il pezzo rotto pende dal labbro di sopra, si allunga un poco e si accorcia mentre gocciola
@@ -155,22 +150,27 @@ func _process(delta: float) -> void:
 	_mesh.surface_end()
 
 
-## Un nastro da a a b che pende di [param pende] m nel mezzo, largo [param largo], più sottile nel mezzo di
-## [param collo] (0..1), girato verso l'occhio.
+## Un nastro da a a b che pende di [param pende] m nel mezzo, largo [param largo] (mezza larghezza) ai capi, dove
+## si attacca, e più sottile nel mezzo di [param collo] (0..1), girato verso l'occhio. uv: x lungo, y di traverso.
 func _nastro(a: Vector3, b: Vector3, pende: float, largo: float, collo: float, occhio: Vector3) -> void:
 	var prima_s := Vector3.ZERO
 	var prima_d := Vector3.ZERO
+	var prima_u := 0.0
 	for k in SEGMENTI + 1:
 		var u := float(k) / SEGMENTI
 		var p := a.lerp(b, u) + Vector3.DOWN * pende * sin(PI * u)
 		var tang := (b - a).normalized()
 		var lato := tang.cross(occhio - p).normalized()
-		var w := largo * (1.0 - collo * sin(PI * u))
+		# più spesso dove si attacca alle labbra, sottilissimo in mezzo quando è tirato
+		var w := largo * (1.0 + 0.6 * pow(absf(u * 2.0 - 1.0), 4.0)) * (1.0 - collo * sin(PI * u))
 		var s := p + lato * w
 		var dd := p - lato * w
 		if k > 0:
-			for v in [prima_s, prima_d, s, s, prima_d, dd]:
-				_mesh.surface_set_color(Color(1, 1, 1, 0.55 + 0.3 * (1.0 - sin(PI * u))))
-				_mesh.surface_add_vertex(v)
+			for q in [[prima_s, prima_u, 0.0], [prima_d, prima_u, 1.0], [s, u, 0.0],
+					[s, u, 0.0], [prima_d, prima_u, 1.0], [dd, u, 1.0]]:
+				_mesh.surface_set_color(Color(1, 1, 1, _forza))
+				_mesh.surface_set_uv(Vector2(q[1], q[2]))
+				_mesh.surface_add_vertex(q[0])
 		prima_s = s
 		prima_d = dd
+		prima_u = u

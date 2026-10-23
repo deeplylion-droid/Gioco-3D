@@ -317,7 +317,10 @@ def interno(bm, w, lab, muso_t, me, orlo):
             me.materials.append(m); mats[nome] = len(me.materials) - 1
         return mats[nome]
     s_carne = slot('bocca_interno', (0.35, 0.06, 0.07), 0.3)
+    nuovo_denti = 'denti' not in mats
     s_denti = slot('denti', (0.62, 0.55, 0.42), 0.4)
+    if nuovo_denti:
+        materiale_denti(me.materials[s_denti])
     uv = bm.loops.layers.uv.active
     K = 6
     anelli_v = []
@@ -459,100 +462,145 @@ def interno(bm, w, lab, muso_t, me, orlo):
     for i in range(nb_u):
         bm.faces.new((polo_su, anelli_b[0][(i + 1) % nb_u], anelli_b[0][i])).material_index = s_buio
         bm.faces.new((polo_giu, anelli_b[-1][i], anelli_b[-1][(i + 1) % nb_u])).material_index = s_buio
-    # denti: una fila dietro il bordo, ogni 3 cm circa (con due, da sotto si vedevano lastre bianche)
+    # denti in più (l'utente, 23 ottobre: "più file di denti, 3D"; riscontro del coordinatore: non triangoli di
+    # carta sparsi): denti di squalo veri (_dente_squalo: lama seghettata con spessore, piegata verso la gola, base
+    # affondata), in file regolari lungo la curva della gengiva, fitti, ognuno un po' diverso. L'uv dice al
+    # materiale (Godot: denti_squalo.gdshader) quanto è dentro la fila (x: 0 davanti, 1 in gola: più in ombra) e
+    # dove si è sul dente (y: 0 la base nella gengiva, 1 la punta)
     rng = np.random.default_rng(4)
-    passo = 0.03
-    def fila_denti(t_f, scala, sotto_anche, piega, rng, passo, solo_sotto=False):
-        """Una fila di denti sulla sacca a t_f della sua profondità (0 il bordo, 1 la gola): le basi affondate
-        nella carne, le punte verso l'asse della bocca, piegate verso la gola di [param piega]."""
-        lung = 0.0
-        quanti = 0
+
+    def curva(P):
+        """Una polilinea: (punto, tangente) a una frazione della lunghezza."""
+        P = [Vector(p[:]) for p in P]
+        l = [0.0]
+        for a_, b_ in zip(P, P[1:]):
+            l.append(l[-1] + (b_ - a_).length)
+        def a(s_):
+            x = s_ * l[-1]
+            for k in range(len(P) - 1):
+                if x <= l[k + 1] or k == len(P) - 2:
+                    f = (x - l[k]) / max(l[k + 1] - l[k], 1e-9)
+                    return P[k].lerp(P[k + 1], min(max(f, 0.0), 1.0)), (P[k + 1] - P[k]).normalized(), k + f
+        return a, l[-1]
+
+    def fila(P, pesi, alto, profondo, scala, piega, sopra_fila, largo_r=0.016):
+        """Una fila lungo la polilinea P (con i pesi della mascella dei suoi punti), dagli angoli esclusi."""
+        a, lung = curva(P)
+        largo = 0.034 * scala                       # passo tra un dente e l'altro: fitti
+        quanti = max(int(lung * 0.9 / largo), 3)
+        fatti = 0
+        for k in range(quanti):
+            s_ = 0.05 + 0.9 * (k + 0.5) / quanti
+            base, tang, ik = a(s_)
+            i_ = min(int(ik), len(pesi) - 1)
+            verso = Vector((sotto - sopra) if sopra_fila else (sopra - sotto)).normalized()
+            dentro = (Vector(gola) - base).normalized()
+            if sopra_fila:
+                d = (verso * 0.85 + dentro * (0.3 + piega)).normalized()
+            else:
+                d = (verso * 0.7 + dentro * (0.55 + piega)).normalized()
+            # ognuno un po' diverso, ma ordinati: grandezza e inclinazione di poco, verso gli angoli più piccoli
+            ai_lati = 1.0 - 0.35 * abs(s_ - 0.5) * 2
+            h = alto * scala * ai_lati * float(rng.uniform(0.88, 1.1))
+            r = largo_r * scala * ai_lati * float(rng.uniform(0.92, 1.08))
+            d = (d + tang * float(rng.uniform(-0.06, 0.06))).normalized()
+            nuovi_t = _dente_squalo(bm, base, d, h, r, tang, dentro, profondo, s_denti, uv)
+            for v in nuovi_t:
+                v.index = len(w); w.append(float(pesi[i_])); lab.append(1 if sopra_fila else -1)
+            fatti += 1
+        return fatti
+    def anello_tra(k0, f, metà):
+        idx = list(range(M)) if metà == 'su' else list(range(M, n))
+        P = [Vector(anelli_v[k0][i].co).lerp(Vector(anelli_v[k0 + 1][i].co), f) for i in idx]
+        pesi = [w[anelli_v[k0][i].index] * (1 - f) + w[anelli_v[k0 + 1][i].index] * f for i in idx]
+        return P, pesi
+    # di sopra: tre file sulla sacca, dietro i denti del modello, sempre più piccole, piegate e in ombra
+    for t_f, scala, piega, prof in ((0.07, 0.95, 0.0, 0.15), (0.2, 0.85, 0.2, 0.5), (0.34, 0.72, 0.4, 0.85)):
         kf = t_f * K
         k0 = min(int(kf), K - 1)
-        for i in range(n):
-            j = (i + 1) % n
-            lung += float(np.linalg.norm(B[j] - B[i]))
-            if lung < passo or (LB[i] <= 0 and not sotto_anche) or (LB[i] > 0 and solo_sotto):
-                continue
-            lung = 0.0
-            if i % M < 3 or i % M > M - 4:     # niente denti negli angoli della bocca
-                continue
-            base = Vector(anelli_v[k0][i].co).lerp(Vector(anelli_v[k0 + 1][i].co), kf - k0)
-            verso = Vector((sotto - sopra) if LB[i] > 0 else (sopra - sotto)).normalized()
-            dentro = (Vector(gola) - base).normalized()
-            # di sopra pendono giù, di sotto sono più corti e piegati verso la gola
-            if LB[i] > 0:
-                d = (verso * 0.85 + dentro * (0.3 + piega)).normalized()
-            elif not sotto_anche:
-                d = (verso * 0.55 + dentro * 0.7).normalized()
-            else:
-                # le file in più di sotto stanno dritte dietro i denti del modello (stese verso la gola, dal davanti
-                # sembravano schegge sul fondo della bocca)
-                d = (verso * 0.85 + dentro * (0.25 + piega * 0.5)).normalized()
-            h = float(rng.uniform(0.05, 0.085)) * scala * (1.0 if LB[i] > 0 else (0.85 if sotto_anche else 0.6))
-            r = float(rng.uniform(0.014, 0.022)) * scala
-            # la base affonda nella gengiva (un terzo del raggio sotto la carne): non resta sospesa
-            base = base - d * r * 0.35
-            nuovi_t = _dente(bm, base, d, h, r, Vector(B[j]) - Vector(B[i]), s_denti, uv)
-            for v in nuovi_t:
-                v.index = len(w); w.append(float(w[anelli_v[k0][i].index])); lab.append(int(LB[i]))
-            quanti += 1
-        return quanti
-    fila_denti(0.07, 0.85, False, 0.0, rng, passo)
-    # le file in più dietro la prima, come uno squalo (l'utente, 23 ottobre: "più file di denti, 3D"): di
-    # sopra e di sotto, più piccole e più piegate verso la gola man mano che vanno dentro
-    rng2 = np.random.default_rng(5)
-    for t_f, scala, piega in ((0.2, 0.78, 0.25), (0.34, 0.66, 0.45)):
-        print('FILA', t_f, fila_denti(t_f, scala, False, piega, rng2, passo * 1.1), 'denti')
-    # di sotto, sulla gengiva tra il labbro (i denti del modello) e l'ingresso della sacca: due file dritte, una
-    # subito dietro i denti del modello e una più dentro (sulla sacca stavano troppo in alto, staccate dal labbro)
-    P_lab = np.array([v.co[:] for v in h_giu])
-    for f_g, scala in ((0.3, 0.62), (0.65, 0.52)):
-        lung, quanti = 0.0, 0
-        for i in range(M, n):
-            j = (i + 1) % n
-            lung += float(np.linalg.norm(B[j] - B[i]))
-            if lung < passo * 1.1:
-                continue
-            lung = 0.0
-            if i % M < 4 or i % M > M - 5:
-                continue
-            anello = Vector(anelli_v[0][i].co)
-            lab_p = Vector(P_lab[int(np.argmin(np.linalg.norm(P_lab - np.array(anello[:]), axis=1)))])
-            base = lab_p.lerp(anello, f_g)
-            verso = Vector(sopra - sotto).normalized()
-            dentro = (Vector(gola) - base).normalized()
-            # piegati verso la gola: a bocca aperta la mascella gira in avanti e così restano dritti
-            d = (verso * 0.7 + dentro * 0.65).normalized()
-            h = float(rng2.uniform(0.04, 0.065)) * scala
-            r = float(rng2.uniform(0.013, 0.02)) * scala
-            base = base - d * r * 0.35
-            # piatti lungo la cerniera (la direzione del bordo dell'anello qui li girava a caso)
-            nuovi_t = _dente(bm, base, d, h, r, Vector(asse[:]), s_denti, uv)
-            peso = float(WB[i])
-            for v in nuovi_t:
-                v.index = len(w); w.append(peso); lab.append(-1)
-            quanti += 1
-        print('FILA SOTTO', f_g, quanti, 'denti')
+        P, pesi = anello_tra(k0, kf - k0, 'su')
+        P = P[3:M - 3]; pesi = pesi[3:M - 3]
+        print('FILA SOPRA', t_f, fila(P, pesi, 0.075, prof, scala, piega, True), 'denti')
+    # di sotto: due file sulla gengiva tra il labbro (i denti del modello) e l'ingresso della sacca; i due bordi
+    # si prendono alla stessa frazione della loro lunghezza (non il punto più vicino: le file venivano storte)
+    a_lab, _ = curva([v.co for v in h_giu])
+    a_ane, _ = curva([anelli_v[0][i].co for i in range(M, n)][::-1])
+    pesi_giu = [w[anelli_v[0][i].index] for i in range(M, n)][::-1]
+    for f_g, scala, prof in ((0.35, 0.8, 0.3), (0.7, 0.7, 0.65)):
+        P = [a_lab(s_)[0].lerp(a_ane(s_)[0], f_g) for s_ in np.linspace(0.1, 0.9, 30)]
+        pesi = [pesi_giu[min(int(s_ * len(pesi_giu)), len(pesi_giu) - 1)] for s_ in np.linspace(0.1, 0.9, 30)]
+        print('FILA SOTTO', f_g, fila(P, pesi, 0.048, prof, scala, 0.1, False, largo_r=0.02), 'denti')
     return len(nuovi)
 
 
-def _dente(bm, base, d, h, r, lato, s_denti, uv):
-    """Dente di squalo: una lama triangolare spessa, appiattita lungo il bordo della bocca."""
+def _dente_squalo(bm, base, d, h, r, lato, dentro, profondo, s_denti, uv):
+    """Un dente di squalo: lama triangolare seghettata con spessore, larga alla base (affondata per un quarto nella
+    gengiva), piegata verso la gola. uv: x = [param profondo] (0 davanti, 1 in gola), y = 0 la base, 1 la punta."""
     lato = (lato - d * lato.dot(d)).normalized()
     sp = d.cross(lato).normalized()
-    pts = [base + lato * r, base + sp * r * 0.45, base - lato * r, base - sp * r * 0.45]
-    punta = base + d * h
-    vs = [bm.verts.new(p) for p in pts]
-    vp = bm.verts.new(punta)
+    piega = dentro - d * dentro.dot(d)
+    piega = piega.normalized() if piega.length > 1e-6 else sp
+    inizio = base - d * h * 0.25
+    LIV = 9
+    livelli = []
+    for k in range(LIV):
+        u = k / LIV
+        c = inizio + d * h * u + piega * h * 0.22 * u * u
+        # i bordi seghettati: un dentino ogni livello (largo, un poco più stretto, largo...)
+        w_ = r * (1.0 - u) ** 0.85 * (1.0 if k % 2 == 0 else 0.86)
+        t_ = r * 0.38 * (1.0 - u) ** 0.9
+        livelli.append(([bm.verts.new(c - lato * w_), bm.verts.new(c + sp * t_), bm.verts.new(c + lato * w_),
+                         bm.verts.new(c - sp * t_)], u))
+    punta = bm.verts.new(inizio + d * h + piega * h * 0.22)
+    tutti = [punta]
+    for (vs, u), (vs2, u2) in zip(livelli, livelli[1:]):
+        for i in range(4):
+            f = bm.faces.new((vs[i], vs[(i + 1) % 4], vs2[(i + 1) % 4], vs2[i]))
+            f.material_index = s_denti
+            for l_, uu in zip(f.loops, (u, u, u2, u2)):
+                l_[uv].uv = (profondo, uu)
+    vs, u = livelli[-1]
     for i in range(4):
-        f = bm.faces.new((vs[i], vs[(i + 1) % 4], vp))
+        f = bm.faces.new((vs[i], vs[(i + 1) % 4], punta))
         f.material_index = s_denti
-        if f.calc_center_median().__sub__(base).dot(f.normal) < 0:
+        for l_, uu in zip(f.loops, (u, u, 1.0)):
+            l_[uv].uv = (profondo, uu)
+    for vs, _ in livelli:
+        tutti += vs
+    # le normali verso fuori dal dente
+    asse_d = d
+    for f in {f for v in tutti for f in v.link_faces}:
+        c = f.calc_center_median()
+        centro = inizio + asse_d * asse_d.dot(c - inizio)
+        if f.normal.dot(c - centro) < 0:
             f.normal_flip()
-        for l in f.loops:
-            l[uv].uv = (0.5, 0.5)
-    return vs + [vp]
+        f.smooth = True
+    return tutti
+
+
+def materiale_denti(m):
+    """Il materiale dei denti in più per i render di Blender, come denti_squalo.gdshader di Godot: avorio sporco,
+    la punta più chiara, la base scura e rosata nella gengiva, le file più dentro in ombra (uv x)."""
+    nt = m.node_tree
+    bs = nt.nodes['Principled BSDF']
+    uvn = nt.nodes.new('ShaderNodeUVMap')
+    sep = nt.nodes.new('ShaderNodeSeparateXYZ')
+    nt.links.new(uvn.outputs['UV'], sep.inputs[0])
+    ramp = nt.nodes.new('ShaderNodeValToRGB')
+    e = ramp.color_ramp.elements
+    e[0].position = 0.0; e[0].color = (0.30, 0.10, 0.09, 1)
+    e[1].position = 0.38; e[1].color = (0.44, 0.37, 0.29, 1)
+    e.new(1.0).color = (0.62, 0.56, 0.46, 1)
+    nt.links.new(sep.outputs['Y'], ramp.inputs[0])
+    ombra = nt.nodes.new('ShaderNodeMapRange')
+    ombra.inputs['To Min'].default_value = 1.0; ombra.inputs["To Max"].default_value = 0.42
+    nt.links.new(sep.outputs['X'], ombra.inputs['Value'])
+    mul = nt.nodes.new('ShaderNodeMix'); mul.data_type = 'RGBA'; mul.blend_type = 'MULTIPLY'
+    mul.inputs['Factor'].default_value = 1.0
+    nt.links.new(ramp.outputs['Color'], mul.inputs[6])
+    nt.links.new(ombra.outputs['Result'], mul.inputs[7])
+    nt.links.new(mul.outputs[2], bs.inputs['Base Color'])
+    bs.inputs['Roughness'].default_value = 0.38
 
 
 def anteprima_aperta(ob, peso, gradi):

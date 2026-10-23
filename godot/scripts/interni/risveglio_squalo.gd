@@ -18,6 +18,8 @@ signal finito
 const MODELLO := "res://assets/models/mascotte/mostro_squalo_A_rig.glb"
 const TEMPI := "res://assets/models/mascotte/mostro_squalo_A_rig.json"
 const SHADER_BOCCA := preload("res://shaders/creature/bocca_squalo.gdshader")
+## I denti in più (file di squalo dietro quelli del modello): avorio sporco, le file dentro in ombra.
+const SHADER_DENTI := preload("res://shaders/creature/denti_squalo.gdshader")
 ## Livello di render solo dello squalo: la luce della corsa illumina lui e nient'altro (né il corridoio né
 ## la nebbia).
 const STRATO_SQUALO := 1 << 16
@@ -119,12 +121,16 @@ func _crea_squalo() -> void:
 	# l'interno della bocca: carne bagnata che scurisce verso la gola
 	var mat := ShaderMaterial.new()
 	mat.shader = SHADER_BOCCA
+	var mat_denti := ShaderMaterial.new()
+	mat_denti.shader = SHADER_DENTI
 	for mi in squalo.find_children("*", "MeshInstance3D", true, false):
 		var m := (mi as MeshInstance3D).mesh
 		for i in m.get_surface_count():
 			var sm := m.surface_get_material(i)
 			if sm and (sm.resource_name.begins_with("bocca_interno") or sm.resource_name.begins_with("gengiva")):
 				(mi as MeshInstance3D).set_surface_override_material(i, mat)
+			elif sm and sm.resource_name.begins_with("denti"):
+				(mi as MeshInstance3D).set_surface_override_material(i, mat_denti)
 	# la bava: fili tra le labbra e gocce dal mento (si spegne quando si gira)
 	if _scheletro:
 		_bava = BAVA.new()
