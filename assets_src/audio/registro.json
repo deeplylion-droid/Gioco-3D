@@ -1692,12 +1692,12 @@
  "squalo/jilly_richiamo": {
   "file": "res://audio/squalo/jilly_richiamo.ogg",
   "canali": 1,
-  "durata": 11.56,
+  "durata": 10.76,
   "loop": false,
   "fonte": "sintesi",
   "nota": "il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco",
   "lufs": -20.0,
-  "lufs_max": -15.0
+  "lufs_max": -15.2
  },
  "squalo/squalo_denti_01": {
   "file": "res://audio/squalo/squalo_denti_01.ogg",

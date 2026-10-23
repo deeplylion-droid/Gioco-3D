@@ -6,12 +6,10 @@ squalo che si gira, esita e scappa. I tempi sono quelli dell'animazione
 - squalo_minaccia: dal risveglio al richiamo, attaccato alla bocca: il fiato pesante e umido a pochi
   centimetri dalla faccia, la gola che raschia e, a ogni scatto in avanti della testa, un ringhio corto
   con lo schiocco umido delle fauci (scatti a MINACCIA + 0,7, 1,6 e 2,5 s dell'animazione);
-- jilly_richiamo: il verso di lei, lontano e profondo, che arriva da dietro la porta tagliafuoco. Dal 23 ottobre
-  (l'utente: "il suono che si sente sotto è strano, corrotto e non si capisce cosa sia... doveva essere il
-  richiamo di Jilly") è fatto con la sua voce B dell'inseguimento (genera_lei_inseguimento.grido(), con sopra
-  piano la sua voce stridula): due chiamate lunghe che salgono e scendono, chiare (poco sporche) e lontane
-  dietro la porta (il riverbero della nave, gli acuti appena tagliati). La prima versione (la gola a 30-47 Hz,
-  sporcata e chiusa sotto 650 Hz: un brontolio che non si capiva) resta in jilly_richiamo_v1();
+- jilly_richiamo: il verso di lei, lontano e profondo, che arriva da dietro la porta tagliafuoco: la
+  stessa gola gutturale di lei (genera_lei: gola(), tratto()) ma lunga e lenta, un richiamo che sale e
+  scende due volte, attutito dalla porta e dai corridoi di lamiera (riverbero della nave). Una versione con la
+  voce B dell'inseguimento (jilly_richiamo_v2, 23 ottobre) è stata scartata: all'utente piace di più questa;
 - squalo_sbuffo: lo sbuffo di gola quando si volta a guardarti prima di scappare;
 - squalo_passo: i passi pesanti e bagnati sulle piastrelle, con il ticchettio degli artigli; dal 22 ottobre
   più pesanti (un tonfo grave lungo, sotto: la camera trema insieme);
@@ -79,8 +77,9 @@ def squalo_minaccia(rng):
     return f32(fade(reverb(out, ir_piccola(), wet=0.12), 0.05, 0.3))
 
 
-def jilly_richiamo(rng):
-    """Il richiamo con la voce B di lei (l'inseguimento): due chiamate lunghe, la prima che sale e scende, la seconda
+def jilly_richiamo_v2(rng):
+    """(Scartata il 23 ottobre: all'utente piace di più la prima, "forse il suono fastidioso non era quello".)
+    Il richiamo con la voce B di lei (l'inseguimento): due chiamate lunghe, la prima che sale e scende, la seconda
     più corta che ricade; sotto il petto (la subarmonica), sopra piano la sua voce stridula; lontana dietro la porta."""
     import os
     import sys
@@ -106,8 +105,8 @@ def jilly_richiamo(rng):
     return f32(fade(out, 0.1, 1.2))
 
 
-def jilly_richiamo_v1(rng):
-    """(Scartata il 23 ottobre.) Il richiamo: due lunghi versi di gola che salgono e scendono, il secondo più corto."""
+def jilly_richiamo(rng):
+    """Il richiamo: due lunghi versi di gola che salgono e scendono, il secondo più corto."""
     dur = 5.2
     n = n_of(dur)
     voce = np.zeros(n)

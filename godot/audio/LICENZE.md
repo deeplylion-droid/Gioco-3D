@@ -193,7 +193,7 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `piscina/pulsante_botola_attiva.ogg` | 1.4 s | sintesi (originale) | richiamo (B, scelto il 16 ottobre): scatto del contattore e jingle che cala |
 | `piscina/pulsante_botola_bibu.ogg` | 0.4 s | sintesi (originale) | un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s) |
 | `piscina/pulsante_botola_lampeggiante_loop.ogg` | 3.2 s | sintesi (originale) | il lampeggiante giallo che gira |
-| `squalo/jilly_richiamo.ogg` | 11.6 s | sintesi (originale) | il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco |
+| `squalo/jilly_richiamo.ogg` | 10.8 s | sintesi (originale) | il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco |
 | `squalo/squalo_denti_01.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_02.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_denti_03.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
