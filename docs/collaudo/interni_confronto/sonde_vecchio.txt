@@ -1,0 +1,9 @@
+SONDA 10.4 0.0 -8.45 vano_stanzino_centro -> libero punto -
+SONDA 10.9 0.0 -8.45 vano_stanzino_soglia -> libero punto -
+SONDA 11.4 0.0 -8.45 vano_stanzino_dentro -> libero punto -
+SONDA 14.0 0.0 -1.3 CheckpointRisveglio -> libero punto -
+SONDA 6.8 0.0 -3.5 CheckpointIngressoSpogliatoi -> libero punto -
+SONDA 12.2 0.0 -8.45 CheckpointStanzino -> libero punto -
+SONDA 9.7 0.0 -11.7 CheckpointLavapiedi -> libero punto -
+SONDA 9.7 0.0 -15.3 CheckpointTornello -> libero punto -
+SONDA 9.7 0.0 -18.2 CheckpointSaracinesca -> libero punto -
