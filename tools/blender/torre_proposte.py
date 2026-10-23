@@ -396,14 +396,20 @@ def cancello_partenza(c, base, verso):
     b = Vector(base)
     for s in (-1, 1):
         ap = b + t * (s * (LARGO + 0.2))
-        c.cilindro(ap, ap + Vector((0, 0, 2.0)), 0.06, 'gioco_rosso', seg=12)
+        c.cilindro(ap - Vector((0, 0, 0.01)), ap + Vector((0, 0, 2.0)), 0.06, 'gioco_rosso', seg=12)   # dalla grata
     c.cilindro(b + t * -(LARGO + 0.2) + Vector((0, 0, 2.0)), b + t * (LARGO + 0.2) + Vector((0, 0, 2.0)), 0.06,
                'gioco_rosso', seg=12)
     c.scatola_assi(b + Vector((0, 0, 2.25)), [v, t, Vector((0, 0, 1))], (0.03, LARGO + 0.3, 0.2), 'strisce')
+    # il pannello di sbarre fra due correnti che vanno da un palo all'altro (ci entrano): quello di sotto poggia sulla
+    # grata della pedana (il piano è 1 cm sotto la base), le sbarre partono da lì (collaudo della v0.3.12: le sbarre
+    # finivano 5 cm sopra la grata e il corrimano 14 cm prima dei pali, un pannello sospeso)
+    w = LARGO + 0.2
+    giu = Vector((0, 0, -0.01 + 0.025))
+    c.cilindro(b + t * -w + giu, b + t * w + giu, 0.025, 'inox', seg=8)
     for k in range(-3, 4):
         g = b + t * (k * (LARGO / 3.2))
-        c.cilindro(g + Vector((0, 0, 0.05)), g + Vector((0, 0, 1.3)), 0.02, 'inox', seg=8, tappi=False)
-    c.cilindro(b + t * -LARGO + Vector((0, 0, 1.3)), b + t * LARGO + Vector((0, 0, 1.3)), 0.025, 'inox', seg=8)
+        c.cilindro(g + giu, g + Vector((0, 0, 1.3)), 0.02, 'inox', seg=8, tappi=False)
+    c.cilindro(b + t * -w + Vector((0, 0, 1.3)), b + t * w + Vector((0, 0, 1.3)), 0.025, 'inox', seg=8)
 
 
 def polaroid(c, p, verso):

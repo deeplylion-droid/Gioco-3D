@@ -76,6 +76,8 @@ var _lei_su := Vector3.ZERO
 var _lei_giu := Vector3.ZERO
 var _lei_luce: OmniLight3D
 var _lei_testa: WaterHitbox
+## Il movimento secondario di tentacoli e campana di lei (MorbidezzaLei).
+var _morbidezza: MorbidezzaLei
 var _getto_preso := 0.0
 var _vasca := -1                       ## la vasca dove sei (-1 fuori)
 var _in_vasca_t := 0.0
@@ -459,6 +461,8 @@ func _lei_crea() -> void:
 	_lei_testa.add_child(cs)
 	_lei_testa.position = Vector3(0, 3.4, 0.6)
 	lei.add_child(_lei_testa)
+	if not Engine.has_meta(&"morbidezza_spenta"):
+		_morbidezza = MorbidezzaLei.su(lei)
 	_lei_testa.water_hit.connect(func(litri: float, _p: Vector3, _d: Vector3):
 		if lei_stato == Lei.SU or lei_stato == Lei.SALE:
 			_getto_preso += litri
@@ -520,6 +524,22 @@ func _posto_scolo(k: int) -> Vector3:
 const RITOCCHI := {"scolo_0": [0.0, 0.25], "scolo_1": [-1.0, -1.25]}
 
 
+## Quando lei sale: l'acqua (la sala allagata, o il bacino per la grata e SB1) e la morbidezza accesa tutta e subito.
+## Senza forme di collisione: la sala è una mesh sola, e le animazioni dell'inseguimento tengono già i tentacoli fuori
+## dai muri; la morbidezza non li porta dentro (tests/test_morbidezza_inseguimento.gd lo controlla coi raggi sulla
+## collisione vera, in ogni posto dove sale).
+func _morbidezza_qui(dove: String) -> void:
+	if _morbidezza == null or not is_instance_valid(_morbidezza):
+		return
+	_morbidezza.pavimento_y = -INF
+	_morbidezza.acqua_pianta = Rect2(-1e4, -1e4, 2e4, 2e4)
+	var acqua: Dictionary = dati["bacino"] if dove == "sb1" or dove == "grata" else dati["allagato"]
+	_morbidezza.acqua_pelo = float(acqua["acqua"])
+	_morbidezza.quanto = 1.0
+	_morbidezza.azzera()
+	_morbidezza.accendi(true)
+
+
 ## Lei sale dall'acqua del fondo fino a [param su]: in 1,6 s, o in 1 s ([param durata] sotto 1,3).
 ## Il nodo sta già lassù: la salita (da 5 m sotto) è nell'animazione.
 func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
@@ -528,6 +548,7 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	_lei_giu = su + Vector3.DOWN * 5.0
 	lei.global_position = su
 	lei.visible = true
+	_morbidezza_qui(dove)
 	_getto_preso = 0.0
 	lei_stato = Lei.SALE
 	_lei_t = 0.0
