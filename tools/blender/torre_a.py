@@ -428,11 +428,13 @@ def _pulisci_attraversati(bersagli, scivoli, aperti):
                 spigoli.append((a_, b_))
     for b_ in bersagli:
         for giro in range(3):
+            # (l'albero come lo fa la prova: dall'oggetto aggiornato, con le facce come le esporta)
+            bpy.context.view_layer.update()
+            albero = BVHTree.FromObject(b_, bpy.context.evaluated_depsgraph_get())
             bm = bmesh.new()
             bm.from_mesh(b_.data)
             bm.transform(b_.matrix_world)
             bm.faces.ensure_lookup_table()
-            albero = BVHTree.FromBMesh(bm)
             colpite = set()
             for a_, c_ in spigoli:
                 d = c_ - a_
@@ -550,8 +552,8 @@ def _intaglia_grata(gr, tagli):
                 buchi.append(sez)
         if not buchi:
             continue
-        # (3 mm in più: senza, ai bordi restavano triangoli di pochi millimetri che toccavano lo scivolo)
-        resto = pianta.difference(unary_union(buchi).buffer(0.003))
+        # (5 mm in più: senza, ai bordi restavano triangoli di pochi millimetri che toccavano lo scivolo)
+        resto = pianta.difference(unary_union(buchi).buffer(0.005))
         if resto.equals(pianta):
             continue
         n_buchi += 1
