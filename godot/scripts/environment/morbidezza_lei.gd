@@ -63,14 +63,18 @@ var vasche: Array = []
 ## Un'acqua in più, data da chi la conosce (la fossa dei bimbi): la pianta (x, z) e il pelo.
 var acqua_pianta := Rect2()
 var acqua_pelo := -INF
-## Quanto è durato l'ultimo calcolo (microsecondi), per misurarlo.
+## Quanto è durato l'ultimo calcolo (microsecondi), per misurarlo; e per parti (bersagli, passi, ossa), sommate.
 var durata_usec := 0
+var parti_usec := {"bersagli": 0, "passi": 0, "ossa": 0, "giri": 0, "conta_passi": 0, "conta_giri": 0}
 
-const PASSO_MAX := 1.0 / 60.0
+const PASSO_MAX := 1.0 / 30.0
+## Il passo più lungo per un tentacolo simulato a fotogrammi alterni (posa quasi ferma).
+const PASSO_LENTO := 1.0 / 15.0
 
 var _catene: Array[PackedInt32Array] = []
 var _lunghezze: Array[PackedFloat32Array] = []   # per catena: la lunghezza di riposo di ogni tratto (mondo)
-var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB, indice della faccia di sopra o -1]
+var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB, indice della faccia di sopra o -1,
+                                           #  AABB allargata del raggio]
 var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle ossa e la punta
 var _v: Array[PackedVector3Array] = []     # le loro velocità
 var _fase: PackedFloat32Array = []
@@ -81,6 +85,11 @@ var _verso := 1.0                          # 1: si accende, -1: si spegne
 var _peso := 0.0                            # quanto ora (dissolvenza)
 var _radici_prima := PackedVector3Array()
 var _tg_prima: Array[PackedVector3Array] = []
+var _bers: Array = []                      # per catena: i bersagli della molla fatti l'ultima volta, e la posa di allora
+var _bers_posa: Array = []
+var _dt_acc := PackedFloat32Array()        # per catena: il tempo da quando si è simulata l'ultima volta
+var _fotogrammi := 0
+var _assestando := false
 var _vp: Array[PackedVector3Array] = []     # la velocità della posa, media
 var _campana := -1
 var _campana_v := Vector3.ZERO
@@ -225,14 +234,16 @@ func _process_modification() -> void:
 	if _lunghezze.size() != _catene.size():
 		_lunghezze_di(sk)
 	var sg := sk.global_transform
-	# a passi di al più 1/60 s (la fisica dei punti resta stabile anche a pochi fotogrammi al secondo)
-	var passi := maxi(1, ceili(dt / PASSO_MAX))
+	# a passi di al più 1/30 s (la fisica dei punti resta stabile anche a pochi fotogrammi al secondo)
+	var passi := maxi(1, ceili(dt / PASSO_MAX - 0.01))     # (- 0,01: 1/30 diviso 1/30 a volte fa 1,0000001)
 	var h := dt / passi
 	# appena comparsa: i punti si assestano fuori dal mondo prima del primo fotogramma che si vede (mezzo secondo
 	# di simulazione in un colpo, sulla posa ferma)
+	_assestando = _assesta
+	_fotogrammi += 1
 	if _assesta:
 		_assesta = false
-		passi = 30
+		passi = 15
 		h = PASSO_MAX
 	_t += dt
 	if not _pronte or _radici_prima.size() != _catene.size():
@@ -240,6 +251,8 @@ func _process_modification() -> void:
 		_v.clear()
 		_tg_prima.clear()
 		_vp.clear()
+		_bers.clear()
+		_bers_posa.clear()
 		_radici_prima.resize(_catene.size())
 	for k in _catene.size():
 		var catena: PackedInt32Array = _catene[k]
@@ -272,6 +285,26 @@ func _process_modification() -> void:
 				_vp[k][i] = _vp[k][i].lerp((tg[i] - _tg_prima[k][i]) / dt, media).limit_length(15.0)
 			_tg_prima[k] = tg
 		vp = _vp[k]
+		# con la posa quasi ferma (lei affacciata) ogni tentacolo si simula un fotogramma sì e uno no, a turno (metà dei
+		# tentacoli per fotogramma), col tempo di tutti e due: le ossa si scrivono sempre, dai punti dell'ultima volta
+		if _dt_acc.size() != _catene.size():
+			_dt_acc.resize(_catene.size())
+		_dt_acc[k] += dt
+		var dt_k: float = _dt_acc[k]
+		if _pronte and passi == 1 and _x.size() > k and _bers_posa.size() > k \
+				and (k + _fotogrammi) % 2 == 1 and dt_k < 0.1 and _quasi_ferma(tg, _bers_posa[k]):
+			var xs: PackedVector3Array = (_x[k] as PackedVector3Array).duplicate()
+			xs[0] = tg[0]
+			var us := Time.get_ticks_usec()
+			_scrivi_ossa(sk, sg, catena, n, g, tg, xs, w, [])
+			parti_usec["ossa"] += Time.get_ticks_usec() - us
+			continue
+		_dt_acc[k] = 0.0
+		var passi_k := passi
+		var h_k := h
+		if passi == 1 and not _assestando:
+			passi_k = maxi(1, ceili(dt_k / PASSO_LENTO - 0.01))
+			h_k = dt_k / passi_k
 		# le forme vicine a questo tentacolo (le altre non si guardano)
 		var zona := AABB(tg[0], Vector3.ZERO)
 		for q in tg:
@@ -279,7 +312,8 @@ func _process_modification() -> void:
 		if _x.size() > k and (_x[k] as PackedVector3Array).size() == n + 1:
 			for q in _x[k]:
 				zona = zona.expand(q)
-		zona = zona.grow(distacco_massimo + raggio_radice + 0.3)
+		# (le punte in un fotogramma si muovono al più qualche decina di cm: oltre non serve guardare)
+		zona = zona.grow(raggio_radice * 1.5 + 0.25)
 		var forme: Array = []
 		for fo in _forme:
 			if (fo[1] as AABB).intersects(zona):
@@ -299,6 +333,24 @@ func _process_modification() -> void:
 		_radici_prima[k] = tg[0]
 		var x: PackedVector3Array = _x[k]
 		var v: PackedVector3Array = _v[k]
+		# vicino al mondo, nei movimenti veloci (lo strappo del tuffo) un passo non deve portare un punto più in là di
+		# 12 cm: se no passerebbe il bordo da parte a parte (è largo 30 cm). Lì il fotogramma si divide, fino a 3 passi
+		if not forme.is_empty() and not _assestando:
+			# (solo i punti veloci la cui strada in questo fotogramma tocca una forma)
+			var vmax := 0.0
+			for i in range(1, n + 1):
+				var vi := maxf(vp[i].length(), v[i].length())
+				if vi * dt_k <= 0.12 or vi <= vmax:
+					continue
+				var strada := AABB(x[i], Vector3.ZERO).expand(x[i] + (v[i] if v[i].length() > vp[i].length() else vp[i]) * dt_k)
+				for fo in forme:
+					if (fo[3] as AABB).intersects(strada):
+						vmax = vi
+						break
+			var servono := mini(3, ceili(vmax * dt_k / 0.12 - 0.01))
+			if servono > passi_k:
+				passi_k = servono
+				h_k = dt_k / passi_k
 		# l'onda: di traverso al tentacolo, che scorre verso la punta
 		var asse := (tg[n] - tg[0]).normalized()
 		var lato := asse.cross(Vector3.UP)
@@ -306,18 +358,54 @@ func _process_modification() -> void:
 			lato = asse.cross(Vector3.RIGHT)
 		lato = lato.normalized()
 		var lato2 := asse.cross(lato).normalized()
-		var tgf := _bersagli(tg, n, forme)
-		for passo in passi:
+		# i bersagli e quanto è in acqua ogni punto: una volta per fotogramma (non cambiano fra un passo e l'altro)
+		var u0 := Time.get_ticks_usec()
+		# (rifatti solo se la posa ha cambiato forma di più di 5 cm da quando si sono fatti; se no quelli di prima,
+		# spostati come la posa: con lei affacciata la posa si muove appena, nel tuffo si sposta quasi tutta insieme)
+		var tgf: PackedVector3Array
+		var rifai := _bers.size() <= k or (_bers_posa[k] as PackedVector3Array).size() != n + 1
+		if not rifai:
+			var cp: PackedVector3Array = _bers_posa[k]
+			# (spostati come la posa, rispetto alla radice: valgono finché nessun punto si è mosso più di 5 cm così)
+			var spost := tg[0] - cp[0]
+			for i in n + 1:
+				if (cp[i] + spost).distance_squared_to(tg[i]) > 0.0025:
+					rifai = true
+					break
+		if rifai:
+			tgf = _bersagli(tg, n, _vicine(tg, forme))
+			if _bers.size() <= k:
+				_bers.append(tgf.duplicate())
+				_bers_posa.append(tg.duplicate())
+			else:
+				_bers[k] = tgf.duplicate()
+				_bers_posa[k] = tg.duplicate()
+		else:
+			tgf = (_bers[k] as PackedVector3Array).duplicate()
+			var cp: PackedVector3Array = _bers_posa[k]
+			for i in n + 1:
+				tgf[i] += tg[i] - cp[i]
+			tgf[0] = tg[0]
+		var in_acqua := PackedFloat32Array()
+		in_acqua.resize(n + 1)
+		for i in range(1, n + 1):
+			var f := float(i) / n
+			var acqua := clampf((_pelo(x[i]) - x[i].y) / 0.2 + 0.5, 0.0, 1.0)
+			in_acqua[i] = acqua
+			var giri := lerpf(onda_aria, onda_acqua, acqua)
+			var fase := TAU * (giri * _t - onde * f) + _fase[k]
+			tgf[i] += (lato * sin(fase) + lato2 * 0.5 * cos(fase * 0.7)) * onda_ampiezza * f * f
+		var u1 := Time.get_ticks_usec()
+		parti_usec["bersagli"] += u1 - u0
+		parti_usec["conta_passi"] += passi_k
+		for passo in passi_k:
 			var pred := PackedVector3Array()
 			pred.resize(n + 1)
 			pred[0] = tg[0]
 			for i in range(1, n + 1):
 				var f := float(i) / n
-				var acqua := clampf((_pelo(x[i]) - x[i].y) / 0.2 + 0.5, 0.0, 1.0)
-				var giri := lerpf(onda_aria, onda_acqua, acqua)
-				var fase := TAU * (giri * _t - onde * f) + _fase[k]
-				var bersaglio := tgf[i] + (lato * sin(fase) + lato2 * 0.5 * cos(fase * 0.7)) * onda_ampiezza * f * f
-				bersaglio = _fuori(bersaglio, lerpf(raggio_radice, raggio_punta, f), forme)
+				var acqua := in_acqua[i]
+				var bersaglio := tgf[i]
 				var k_molla := lerpf(molla_radice, molla_punta, pow(f, 0.6))
 				var smorza := lerpf(smorza_aria, smorza_acqua, acqua)
 				var grav := lerpf(gravita_aria, gravita_acqua, acqua) * f
@@ -327,10 +415,10 @@ func _process_modification() -> void:
 				var lim := distacco_massimo * f
 				if fuori.length() > lim:
 					a -= fuori.normalized() * (fuori.length() - lim) * 400.0
-				var vi := v[i] + a * h
+				var vi := v[i] + a * h_k
 				# non più veloce della posa di velocita_massima (la molla dura, a passi corti, lo lancerebbe)
 				vi = vp[i] + (vi - vp[i]).limit_length(velocita_massima)
-				pred[i] = x[i] + vi * h
+				pred[i] = x[i] + vi * h_k
 			# la catena: ogni punto alla sua distanza dal punto prima (dalla radice), e fuori dai muri
 			var corr := PackedVector3Array()
 			corr.resize(n + 2)
@@ -348,10 +436,14 @@ func _process_modification() -> void:
 				pred[i] = voluto
 			# poi, dove tocca il mondo, a giri: le lunghezze (i due capi di ogni tratto si vengono incontro, la
 			# radice resta), i punti fuori dalle forme, i tratti fuori dalle forme (non tagliano lo spigolo del bordo); fino a
-			# quattro giri, finché qualcosa si muove.
+			# tre giri, finché qualcosa si muove di più di un millimetro.
 			# Così un tentacolo sul bordo trova da solo come starci sopra con le sue lunghezze
-			if not forme.is_empty():
-				for giro in 4:
+			var ug := Time.get_ticks_usec()
+			# (solo le forme che toccano davvero il tentacolo adesso: lontano dai muri niente giri)
+			var tocca := _vicine(pred, forme)
+			if not tocca.is_empty():
+				for giro in 2:
+					parti_usec["conta_giri"] += 1
 					var prima_giro := pred.duplicate()
 					for i in range(1, n + 1):
 						var d := pred[i] - pred[i - 1]
@@ -364,21 +456,20 @@ func _process_modification() -> void:
 						else:
 							pred[i - 1] += e * 0.5
 							pred[i] -= e * 0.5
+					_tratti_fuori(pred, n, tocca, PackedVector3Array())
 					for i in range(1, n + 1):
-						pred[i] = _fuori(pred[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme)
-					_tratti_fuori(pred, n, forme, PackedVector3Array())
-					for i in range(1, n + 1):
-						pred[i] = _fuori(pred[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme)
+						pred[i] = _fuori(pred[i], lerpf(raggio_radice, raggio_punta, float(i) / n), tocca)
 					# fermo: nessun tocco e lunghezze giuste, gli altri giri non servono
 					var mosso := 0.0
 					for i in range(1, n + 1):
 						mosso = maxf(mosso, prima_giro[i].distance_squared_to(pred[i]))
-					if mosso < 1e-8:
+					if mosso < 1e-6:
 						break
+			parti_usec["giri"] += Time.get_ticks_usec() - ug
 			for i in range(1, n + 1):
-				var nv := (pred[i] - x[i]) / h
+				var nv := (pred[i] - x[i]) / h_k
 				if i < n:
-					nv -= corr[i + 1] / h * resa
+					nv -= corr[i + 1] / h_k * resa
 				# le correzioni (catena, distacco, mondo) diventano velocità: a passi corti sarebbero enormi; si limita
 				# quanto va più veloce della posa (che nel tuffo a tratti corre)
 				v[i] = vp[i] + (nv - vp[i]).limit_length(velocita_massima)
@@ -386,38 +477,71 @@ func _process_modification() -> void:
 			x[0] = tg[0]
 		_x[k] = x
 		_v[k] = v
-		# i punti come escono: fra la posa e i punti simulati (col peso); i punti non passano il mondo (scivolano)
-		var xo := PackedVector3Array()
-		xo.resize(n + 1)
-		xo[0] = tg[0]
-		# (anche la posa, dove entra nel mondo, ne esce piano con la dissolvenza: niente scatto all'inizio)
-		for i in range(1, n + 1):
-			var posa := tg[i]
-			if w < 1.0:
-				posa = posa.lerp(_fuori(posa, lerpf(raggio_radice, raggio_punta, float(i) / n), forme), w)
-			xo[i] = posa.lerp(x[i], w)
-		# le ossa: ogni osso parte dal suo punto e gira dalla direzione della posa verso il punto dopo (dal padre già
-		# girato); la lunghezza può cambiare di poco (dove tocca), la pelle si allunga o si accorcia lì
-		var padre := sk.get_bone_parent(catena[0])
-		var padre_mondo := sg * sk.get_bone_global_pose(padre) if padre >= 0 else sg
-		for i in n:
-			var d0 := tg[i + 1] - tg[i]
-			var d1 := xo[i + 1] - xo[i]
-			var giro := Quaternion.IDENTITY
-			if d0.length() > 1e-5 and d1.length() > 1e-5:
-				giro = Quaternion(d0.normalized(), d1.normalized())
-			var nuovo := Transform3D(Basis(giro) * g[i].basis, xo[i])
-			var locale := padre_mondo.affine_inverse() * nuovo
-			sk.set_bone_pose_position(catena[i], locale.origin)
-			sk.set_bone_pose_rotation(catena[i], locale.basis.get_rotation_quaternion())
-			if i == n - 1 and d0.length() > 1e-5:
-				# l'ultimo osso non ha figli che lo tirano: si allunga o si accorcia lui, così la punta è dove il punto
-				var sc := sk.get_bone_pose_scale(catena[i])
-				sk.set_bone_pose_scale(catena[i], Vector3(sc.x, sc.y * d1.length() / d0.length(), sc.z))
-			padre_mondo = nuovo
+		var u2 := Time.get_ticks_usec()
+		parti_usec["passi"] += u2 - u1
+		_scrivi_ossa(sk, sg, catena, n, g, tg, x, w, forme)
+		parti_usec["ossa"] += Time.get_ticks_usec() - u2
 	_pronte = true
 	_campana_forme(sk, sg, dt, w)
 	durata_usec = Time.get_ticks_usec() - t0
+
+
+## Le forme di [param forme] la cui scatola (allargata del raggio) tocca quella dei punti [param pt].
+func _vicine(pt: PackedVector3Array, forme: Array) -> Array:
+	if forme.is_empty():
+		return forme
+	var bb := AABB(pt[0], Vector3.ZERO)
+	for q in pt:
+		bb = bb.expand(q)
+	var out := []
+	for fo in forme:
+		if (fo[3] as AABB).intersects(bb):
+			out.append(fo)
+	return out
+
+
+## Vero se la posa [param tg] è a meno di 1 cm, punto per punto, da [param prima].
+func _quasi_ferma(tg: PackedVector3Array, prima: PackedVector3Array) -> bool:
+	if prima.size() != tg.size():
+		return false
+	for i in tg.size():
+		if prima[i].distance_squared_to(tg[i]) > 1e-4:
+			return false
+	return true
+
+
+## Le ossa di una catena dai suoi punti [param x] (col peso [param w], fra la posa e i punti).
+func _scrivi_ossa(sk: Skeleton3D, sg: Transform3D, catena: PackedInt32Array, n: int, g: Array[Transform3D],
+		tg: PackedVector3Array, x: PackedVector3Array, w: float, forme: Array) -> void:
+	# i punti come escono: fra la posa e i punti simulati (col peso); i punti non passano il mondo (scivolano)
+	var xo := PackedVector3Array()
+	xo.resize(n + 1)
+	xo[0] = tg[0]
+	# (anche la posa, dove entra nel mondo, ne esce piano con la dissolvenza: niente scatto all'inizio)
+	for i in range(1, n + 1):
+		var posa := tg[i]
+		if w < 1.0:
+			posa = posa.lerp(_fuori(posa, lerpf(raggio_radice, raggio_punta, float(i) / n), forme), w)
+		xo[i] = posa.lerp(x[i], w)
+	# le ossa: ogni osso parte dal suo punto e gira dalla direzione della posa verso il punto dopo (dal padre già
+	# girato); la lunghezza può cambiare di poco (dove tocca), la pelle si allunga o si accorcia lì
+	var padre := sk.get_bone_parent(catena[0])
+	var padre_mondo := sg * sk.get_bone_global_pose(padre) if padre >= 0 else sg
+	for i in n:
+		var d0 := tg[i + 1] - tg[i]
+		var d1 := xo[i + 1] - xo[i]
+		var giro := Quaternion.IDENTITY
+		if d0.length() > 1e-5 and d1.length() > 1e-5:
+			giro = Quaternion(d0.normalized(), d1.normalized())
+		var nuovo := Transform3D(Basis(giro) * g[i].basis, xo[i])
+		var locale := padre_mondo.affine_inverse() * nuovo
+		sk.set_bone_pose_position(catena[i], locale.origin)
+		sk.set_bone_pose_rotation(catena[i], locale.basis.get_rotation_quaternion())
+		if i == n - 1 and d0.length() > 1e-5:
+			# l'ultimo osso non ha figli che lo tirano: si allunga o si accorcia lui, così la punta è dove il punto
+			var sc := sk.get_bone_pose_scale(catena[i])
+			sk.set_bone_pose_scale(catena[i], Vector3(sc.x, sc.y * d1.length() / d0.length(), sc.z))
+		padre_mondo = nuovo
 
 
 ## I bersagli della molla: la posa fuori dal mondo, punto per punto (la radice resta dov'è); e dove un tratto della posa
@@ -505,7 +629,7 @@ func aggiungi_convesso(punti: PackedVector3Array) -> void:
 		for i in piani.size():
 			if piani[i].normal.y > 0.99:
 				sopra = i
-	_forme.append([piani, bb, sopra])
+	_forme.append([piani, bb, sopra, bb.grow(maxf(raggio_radice, raggio_punta) * 1.5)])
 
 
 ## Aggiunge una scatola (il suo centro e i suoi assi in [param xf], mezze misure [param mezzo]).
@@ -568,7 +692,7 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 			p.y = pavimento_y + r
 			mosso = true
 		for fo in forme:
-			if not (fo[1] as AABB).grow(r).has_point(p):
+			if not (fo[3] as AABB).has_point(p):
 				continue
 			var meglio: Plane
 			var dm := -INF
