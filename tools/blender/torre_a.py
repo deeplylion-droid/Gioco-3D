@@ -184,7 +184,7 @@ def angolo_bordo(t, banda, verso, dentro, extra=None):
 # --- intaglio ----------------------------------------------------------------------------------------------
 
 GIOCO_INTAGLIO = 0.004                     # quanto resta fra uno scivolo e la pedana (o il sostegno) intagliata
-PEZZO_INTAGLIO = 0.6                       # lato delle celle dell'inviluppo dello scivolo (vedi intaglia)
+CANALI_APERTI = []                         # (linea, W, D, T, H, R) di ogni canale aperto, per l'intaglio
 
 
 def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
@@ -196,53 +196,47 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
     import bmesh
     coll = bpy.data.collections.new('intaglio')
     bpy.context.scene.collection.children.link(coll)
-    # lo scivolo "pieno": un canale aperto è vuoto dentro (la grata che ci passa attraverso si vedrebbe nel canale),
-    # quindi si taglia con l'inviluppo convesso di ogni suo pezzo (celle di PEZZO_INTAGLIO metri, che si sovrappongono
-    # di 15 cm), riempito fino al bordo; solo i pezzi che toccano un bersaglio
-    from mathutils.bvhtree import BVHTree
-    dg = bpy.context.evaluated_depsgraph_get()
-    alberi_b = [BVHTree.FromObject(b_, dg) for b_ in bersagli]
-    lato = PEZZO_INTAGLIO
+    # 1) gli scivoli come sono (tubi, flange, testate), gonfiati di `gioco`
     for s_ in scivoli:
         bm = bmesh.new()
         bm.from_mesh(s_.data)
         bm.transform(s_.matrix_world)
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
         bm.normal_update()
-        celle = {}
-        for v in bm.verts:
-            co = v.co + v.normal * gioco
-            c0 = [math.floor(x / lato) for x in co]
-            for dx in (-1, 0, 1):
-                for dy in (-1, 0, 1):
-                    for dz in (-1, 0, 1):
-                        k = (c0[0] + dx, c0[1] + dy, c0[2] + dz)
-                        if all(k[a] * lato - 0.15 <= co[a] <= (k[a] + 1) * lato + 0.15 for a in range(3)):
-                            celle.setdefault(k, []).append(co.copy())
+        for v, n in zip(bm.verts, [v.normal.copy() for v in bm.verts]):
+            v.co += n * gioco
+        me = bpy.data.meshes.new(s_.name + '_intaglio')
+        bm.to_mesh(me)
         bm.free()
-        for k, pts_ in celle.items():
-            if len(pts_) < 4:
-                continue
-            h = bmesh.new()
-            for co in pts_:
-                h.verts.new(co)
-            try:
-                ris = bmesh.ops.convex_hull(h, input=h.verts)
-            except Exception:
-                h.free()
-                continue
-            bmesh.ops.delete(h, geom=list({e for e in ris['geom_interior'] + ris['geom_unused'] if isinstance(e, bmesh.types.BMVert)}), context='VERTS')
-            if len(h.faces) < 4:
-                h.free()
-                continue
-            albero = BVHTree.FromBMesh(h)
-            if not any(albero.overlap(a_) for a_ in alberi_b):
-                h.free()
-                continue
-            me = bpy.data.meshes.new(s_.name + '_intaglio')
-            h.to_mesh(me)
-            h.free()
-            coll.objects.link(bpy.data.objects.new(me.name, me))
-    print(f'intaglio: {len(coll.objects)} pezzi di scivolo che toccano')
+        coll.objects.link(bpy.data.objects.new(me.name, me))
+    # 2) i canali aperti pieni fino al bordo (sono vuoti dentro: la grata o la trave che ci passa attraverso si
+    # vedrebbe nel canale): il profilo esterno chiuso in alto, lungo la loro linea
+    for (pts, W, D, T, H, R) in CANALI_APERTI:
+        n_c = 14
+        prof = [(-(W + T + gioco), H + R + gioco)] + [(-(W + T + gioco) * math.cos(math.pi * j_ / n_c), -(D + T + gioco) * math.sin(math.pi * j_ / n_c)) for j_ in range(n_c + 1)] + [((W + T + gioco), H + R + gioco)]
+        bm = bmesh.new()
+        anelli = []
+        for k in range(len(pts)):
+            a_, b_ = pts[max(k - 1, 0)], pts[min(k + 1, len(pts) - 1)]
+            d = (b_ - a_).normalized()
+            lato_ = d.cross(Vector((0, 0, 1))).normalized()
+            su = lato_.cross(d).normalized()
+            # le testate un po' oltre i capi (lo scivolo vero ha le flange anche lì)
+            avanti = d * (-gioco if k == 0 else (gioco if k == len(pts) - 1 else 0.0))
+            anelli.append([bm.verts.new(pts[k] + lato_ * s__ + su * h__ + avanti) for (s__, h__) in prof])
+        for k in range(len(anelli) - 1):
+            for q in range(len(prof)):
+                q1 = (q + 1) % len(prof)
+                bm.faces.new([anelli[k][q], anelli[k + 1][q], anelli[k + 1][q1], anelli[k][q1]])
+        bm.faces.new(anelli[0][::-1])
+        bm.faces.new(anelli[-1])
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        me = bpy.data.meshes.new('canale_pieno_intaglio')
+        bm.to_mesh(me)
+        bm.free()
+        coll.objects.link(bpy.data.objects.new(me.name, me))
+    print(f'intaglio: {len(coll.objects)} forme di scivolo')
     from mathutils.bvhtree import BVHTree
     alberi = [BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get()) for o in coll.objects]
     for b_ in bersagli:
@@ -429,12 +423,14 @@ def flange_u(c, pts, W, D, T, H, mat, ogni=2.0, e=0.035, b=0.05):
 def scivolo_discesa(c, pts, mat):
     """Un pezzo della discesa: canale aperto più largo e con le sponde alte (vedi LARGO_D), con le flange."""
     S.scivolo_solido(c, [Vector(p) for p in pts], W=LARGO_D, D=PROF_D, T=T_U, H=SPONDA_D, R=R_U, mat=mat)
+    CANALI_APERTI.append(([Vector(p) for p in pts], LARGO_D, PROF_D, T_U, SPONDA_D, R_U))
     flange_u(c, [Vector(p) for p in pts], LARGO_D, PROF_D, T_U, SPONDA_D, mat)
 
 
 def scivolo_aperto(c, pts, mat):
     """Uno scivolo aperto decorativo (come P.scivolo, ma spesso e con le flange)."""
     S.scivolo_solido(c, [Vector(p) for p in pts], W=LARGO, D=PROF, T=T_U, H=SPONDA, R=R_U, mat=mat)
+    CANALI_APERTI.append(([Vector(p) for p in pts], LARGO, PROF, T_U, SPONDA, R_U))
     flange_u(c, [Vector(p) for p in pts], LARGO, PROF, T_U, SPONDA, mat)
 
 
@@ -1116,7 +1112,7 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
 
 
 def versione_A(mats):
-    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear(); BOCCHE_CHIUSE.clear()
+    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear(); BOCCHE_CHIUSE.clear(); CANALI_APERTI.clear()
     materiali_scivoli(mats)
     rnd = random.Random(17)
     c = K.Costruttore(mats)            # guscio, torri, piattaforme, travature
