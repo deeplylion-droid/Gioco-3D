@@ -165,6 +165,14 @@ func _run() -> void:
 	grata_c2.exclude = [p.get_rid()]
 	check(not space.intersect_ray(grata_c2).is_empty(), "la grata chiude C2 subito dopo il buco")
 	var ris := level.get_node("Risalita")
+	# le stanze della Risalita si caricano nel thread dalla sala pompe in poi (risalita_gioco.gd): ci sono prima
+	# della porta di servizio, senza il fermo del caricamento lì
+	var attesa := 0
+	while ris.get(&"fiume") == null and attesa < 60 * 60:
+		await get_tree().process_frame
+		attesa += 1
+	check(ris.get(&"fiume") != null and not p.global_position.distance_to(_mr(ris, "PortaC2")) < 8.0,
+		"il fiume e l'infermeria sono caricati prima della porta di servizio (%d fotogrammi)" % attesa)
 	ok = true
 	for loc in [tec.to_global(Vector3(44.55, 9.05, 2.0)), tec.to_global(Vector3(44.55, 7.25, -5.1)),
 			_mr(ris, "PortaC2"), _mr(ris, "CimaScalaFiume"), _mr(ris, "FondoScalaFiume"), _mr(ris, "PortaFiume"),

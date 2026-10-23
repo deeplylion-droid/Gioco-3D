@@ -534,6 +534,8 @@ func _mostra_risalita() -> void:
 	if r == null:
 		push_warning("controllo: Risalita non trovata")
 		return
+	# le stanze si caricano solo col giocatore vicino o lungo la strada nuova: qui servono comunque
+	r.call(&"carica_subito")
 	r.process_mode = Node.PROCESS_MODE_DISABLED
 	for nome in ["fiume", "infermeria"]:
 		var n = r.get(nome)
