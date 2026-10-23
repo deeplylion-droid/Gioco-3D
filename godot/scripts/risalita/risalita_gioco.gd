@@ -421,9 +421,33 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 	# (una ripartenza ha ricaricato la sala mentre si costruiva, o le stanze non servono più e si sono tolte)
 	if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
 		return
+	# l'infermeria e i materiali delle due stanze ognuno in un fotogramma (tutto insieme erano 80 ms)
+	await get_tree().process_frame
+	if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
+		return
+	var inf := scena_infermeria.instantiate() as Node3D
+	inf.name = "Infermeria"
+	inf.position = CENTRO_INFERMERIA
+	inf.visible = false
+	inf.process_mode = Node.PROCESS_MODE_DISABLED
+	GameState.in_costruzione(inf)
+	add_child(inf)
+	move_child(inf, f.get_index() + 1)
+	for n in [f, inf]:
+		await get_tree().process_frame
+		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
+			if is_instance_valid(inf):
+				inf.queue_free()
+			return
+		UnificaMateriali.unifica(n)
 	_fiume_nuovo = null
-	f.process_mode = Node.PROCESS_MODE_INHERIT
-	_metti_infermeria(scena_infermeria, f, true)
+	fiume = f
+	infermeria = inf
+	_tenuti.clear()
+	for n in [f, inf]:
+		n.process_mode = Node.PROCESS_MODE_INHERIT
+		GameState.ripristina.call_deferred(n)
+	_aggiorna_visibilita()
 
 
 ## Le stanze via, con lo stato dei loro oggetti messo da parte in GameState.

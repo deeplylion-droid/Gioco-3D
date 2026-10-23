@@ -87,7 +87,7 @@ var costruzione_a_pezzi := false
 var costruita := false
 ## Quanto lavora al massimo un pezzo della costruzione (microsecondi); con [method accelera] i pezzi più grandi.
 const PEZZO_US := 12000
-const PEZZO_SVELTO_US := 40000
+const PEZZO_SVELTO_US := 25000
 ## Le estrazioni dal generatore comune fatte finora (vero: randf_range, falso: randf), per rimetterlo com'era a
 ## ogni ripresa ([method _pausa]).
 var _tiri: Array[bool] = []
@@ -141,15 +141,15 @@ func _costruisci() -> void:
 	await _pausa()
 	await _acqua_e_banchine()
 	await _pausa()
-	_capannone()
+	await _capannone()
 	await _pausa()
-	_logica()
+	await _logica()
 	await _pausa()
 	_bivi()
 	await _pausa()
 	await _giungla()
 	await _pausa()
-	_imbarco()
+	await _imbarco()
 	await _pausa()
 	_approdo()
 	_marker()
@@ -604,8 +604,11 @@ func _capannone() -> void:
 	# il muro che chiude la piazza a est, lungo il muro nord, fino al canale del raggio d'imbarco
 	_muro_box(Vector3(0.3, TETTO, Z_PIAZZA_NORD - Z0), Vector3(MURO_PIAZZA, TETTO * 0.5, (Z0 + Z_PIAZZA_NORD) * 0.5), muro)
 	# le due porte: il telaio d'acciaio e l'anta spalancata verso dentro
+	await _pausa()
 	_porta_aperta(Vector3(INGRESSO_X, 0, Z0), 0.0)
+	await _pausa()
 	_porta_aperta(Vector3(X0, 0, APPRODO.y), 90.0)
+	await _pausa()
 	_tetto()
 
 
@@ -990,6 +993,7 @@ func _rocce_doppie(rocce: Array) -> void:
 	var coperte := 0
 	var senza := []
 	for i in rocce.size():
+		await _pausa()
 		var p: Vector3 = rocce[i][0]
 		var rot: float = rocce[i][1]
 		var b := Basis(Vector3.UP, deg_to_rad(rot))
@@ -1117,14 +1121,21 @@ func _logica() -> void:
 	for nome in ["Sbagliato1", "Sbagliato2", "Sbagliato3"]:
 		tratti[nome].prossimo = tratti["Imbarco"]
 	fiume.imbarco = tratti["Imbarco"]
-	# A ogni bivio la destra è il raggio verso l'imbarco (il ramo sbagliato), la sinistra continua.
-	tratti["Imbarco"].paratia = _paratia("Paratia1", 90.0, tratti["Giusto1"], tratti["Sbagliato1"], true, 55.0, false)
-	tratti["Giusto1"].paratia = _paratia("Paratia2", 180.0, tratti["Giusto2"], tratti["Sbagliato2"], false, 145.0, false)
-	tratti["Giusto2"].paratia = _paratia("Paratia3", 270.0, tratti["Uscita"], tratti["Sbagliato3"], true, 232.0, true)
 	# all'approdo si scende sulla banchina, oltre la conca
 	fiume.discesa = global_basis * Vector3(-2.6, 0.0, 0.0) + Vector3(0.0, -GALLA + 0.05, 0.0)
 	fiume.modello_ciambella = load(DIR + "ciambella.glb")
+	# (il fiume entra coi suoi tratti, poi le paratie una per pezzo, al loro posto fra i figli: dopo i tratti, prima
+	# della ciambella. Tutto insieme era il pezzo più lungo della costruzione a pezzi, 70 ms)
 	add_child(fiume)
+	# A ogni bivio la destra è il raggio verso l'imbarco (il ramo sbagliato), la sinistra continua.
+	var bivi := [["Imbarco", "Paratia1", 90.0, "Giusto1", "Sbagliato1", true, 55.0, false],
+		["Giusto1", "Paratia2", 180.0, "Giusto2", "Sbagliato2", false, 145.0, false],
+		["Giusto2", "Paratia3", 270.0, "Uscita", "Sbagliato3", true, 232.0, true]]
+	for i in bivi.size():
+		await _pausa()
+		var b: Array = bivi[i]
+		tratti[b[0]].paratia = _paratia(b[1], b[2], tratti[b[3]], tratti[b[4]], b[5], b[6], b[7])
+		fiume.move_child(tratti[b[0]].paratia, tratti.size() + i)
 
 
 func _paratia(nome: String, gradi: float, sx: TrattoFiume, dx: TrattoFiume, a_destra: bool, gradi_bersaglio: float, interno: bool) -> ParatiaFiume:
@@ -1390,7 +1401,7 @@ func _giungla() -> void:
 			elif n % 4 == 1 and _randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
 	await _pausa()
-	_rocce_doppie(rocce)
+	await _rocce_doppie(rocce)
 	await _pausa()
 	# i fari subacquei nelle pareti dei canali, alternati
 	for s in _strisce:
@@ -1449,6 +1460,7 @@ func _imbarco() -> void:
 	bt.add_child(ft)
 	add_child(bt)
 	_luce(cab + Vector3(0, 1.9, 0), Color(1.0, 0.6, 0.25), 2.5, 7.0, true)
+	await _pausa()
 	# la fila dell'imbarco: due file di transenne dall'ingresso alla cabina, che guidano alla vasca
 	var da := Vector3(INGRESSO_X, 0, Z0 + 1.0)
 	var a := FINE_FILA
@@ -1458,6 +1470,7 @@ func _imbarco() -> void:
 	var lungo := da.distance_to(a)
 	var k := 0
 	while k * 2.1 + 1.0 < lungo:
+		await _pausa()
 		var c := da + dir * (k * 2.1 + 1.0)
 		for sgn in [-1.0, 1.0]:
 			var tp: Vector3 = c + lato * sgn * 0.85
@@ -1482,15 +1495,18 @@ func _imbarco() -> void:
 				f.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(rot)), tp + Vector3(0, 0.6, 0))
 				_collisioni.add_child(f)
 		k += 1
+	await _pausa()
 	# la luce lungo la fila: lampade calde sul muro nord e sul muro dell'approdo
 	for x in [INGRESSO_X + 6.0, -12.0, -2.0]:
 		_lampada_calda(Vector3(x, 3.0, Z0), 0.0, 3.0)
 	for z in [-18.0, -9.0]:
 		_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
+	await _pausa()
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
 	# (ognuna appoggiata a quella sotto coi vertici veri: prima la prima stava 5 cm sopra il pavimento)
 	var sotto := 0.0
 	for i in 3:
+		await _pausa()
 		var ci := _metti("ciambella", Vector3(-VASCA - 1.0, 0.0, -VASCA - 5.6), i * 37.0)
 		_a_terra(ci, sotto)
 		sotto = _cima(ci)
@@ -1498,7 +1514,9 @@ func _imbarco() -> void:
 	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa)
 	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
 			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
+		await _pausa()
 		_metti("ciambella", c[0], c[1])
+	await _pausa()
 	# la capanna tiki, il totem, i cartelli a pittogrammi
 	_metti("capanna_tiki", Vector3(-14.0, 0, -6.0), 60.0)
 	# (la collisione fin dove arriva la tettoia di paglia, 1,55 m dal centro fra 1 e 1,5 m d'altezza: con 1,3 m ci si
@@ -1513,6 +1531,7 @@ func _imbarco() -> void:
 	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
 	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
 	# (la prima stava fra le transenne della fila, a 67 cm dal suo asse: ora 2,2 m fuori, sullo stesso lato)
+	await _pausa()
 	for p in [Vector3(-9.9, 0, -13.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 0.8, 0, -VASCA - 10.5)]:
 		_metti("palma_finta", p, _randf() * 360.0)
 		# le foglie cominciano a 1,75 m e arrivano a 93 cm dal tronco: non ci si passa sotto con la testa

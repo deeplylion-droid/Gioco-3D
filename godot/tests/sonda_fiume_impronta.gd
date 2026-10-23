@@ -18,6 +18,10 @@ func _run() -> void:
 	if OS.get_cmdline_user_args().has("pezzi"):
 		# (ferma: il suo _process le rifarebbe subito, tutte insieme)
 		ris.process_mode = Node.PROCESS_MODE_DISABLED
+		# i file tenuti in memoria, come quando li carica il thread
+		var tenuti := []
+		for percorso in JSON.parse_string(FileAccess.get_file_as_string(ris.get(&"ELENCO_RISORSE"))):
+			tenuti.append(load(percorso))
 		ris.call(&"_togli_stanze")
 		await get_tree().process_frame
 		ris.call(&"_costruisci_stanze", load(ris.get(&"SCENA_FIUME")), load(ris.get(&"SCENA_INFERMERIA")))
