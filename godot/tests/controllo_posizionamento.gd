@@ -91,6 +91,7 @@ const STACCO := 0.005
 ## la forma convessa (vedi _contatto_vero); oltre, solo se ha un appoggio solo.
 const PICCOLO := 0.4
 const VERTICI_VERI := 300
+const VERTICI_TUTTI := 3000
 ## Quanti vertici per oggetto si provano per lo staccato.
 const STACCO_VERTICI := 48
 ## Nelle zone con stato (poche parti, guardate da vicino) anche le cose grandi sono oggetti: le pedane, le ringhiere,
@@ -983,6 +984,17 @@ func _vertici_su(a: MeshInstance3D, b: MeshInstance3D, vicino_a: PackedVector3Ar
 		if not _spazio.intersect_shape(_sferetta, 1).is_empty():
 			tocca = true
 			break
+	if not tocca and punti.size() > VERTICI_VERI:
+		# i punti di contatto della forma possono stare tutti altrove (la mandata di una pompa, mentre il fondo poggia
+		# sul basamento: ambienti-2, 23 ottobre): anche gli altri vertici nel box di b, fino a VERTICI_TUTTI
+		var passo := maxi(1, (punti.size() - VERTICI_VERI) / VERTICI_TUTTI)
+		var i := VERTICI_VERI
+		while i < punti.size():
+			_sferetta.transform = Transform3D(Basis(), punti[i][1])
+			if not _spazio.intersect_shape(_sferetta, 1).is_empty():
+				tocca = true
+				break
+			i += passo
 	if not tocca:
 		# infilato più di 5 mm (lo stelo di un manometro nella pompa, un capo nel muro): i vertici vicini al contatto
 		# stanno dentro b, lontani dalla sua superficie
