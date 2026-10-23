@@ -133,13 +133,20 @@ func _run() -> void:
 	var exit_ray := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(9.7, 1, -19.5), Vector3(9.7, 1, -21.5)))
 	check(exit_ray.is_empty(), "l'uscita verso la sala principale è libera")
 
-	print("La Polaroid nell'armadietto")
+	print("La Polaroid sullo sportello dell'armadietto rosso")
 	var pol: Node3D = level.get_node("Polaroid/Polaroid02")
-	p.teleport(Vector3(4.4, 0, -7.9), PI / 2.0, 0.0)
+	var g := pol.global_transform
+	# lo sportello chiuso di armadietti_ovest_09_rosso: la faccia davanti è a x 3,50, da z -7,30 a -6,90
+	check(absf(g.origin.x + g.basis.y.x * 0.0008 - 3.501) < 0.004 and g.basis.y.dot(Vector3.RIGHT) > 0.99,
+		"la P2 è attaccata fuori dallo sportello e guarda il corridoio (x %.4f)" % g.origin.x)
+	check(g.origin.z > -7.25 and g.origin.z < -6.95 and g.origin.y > 1.45 and g.origin.y < 1.7 and g.basis.z.y > 0.99,
+		"all'altezza delle feritoie, dritta (%s)" % g.origin)
+	check(pol.find_children("Scotch", "MeshInstance3D", false, false).size() == 2, "con due pezzetti di scotch")
+	p.teleport(Vector3(4.6, 0, -7.1), PI / 2.0, 0.0)
 	await _frames(5)
-	p.look_at_point(pol.global_position + Vector3(0, 0.05, 0))
+	p.look_at_point(pol.global_position)
 	await _frames(3)
-	check(p.interactor.current is PolaroidPhoto, "il raggio trova la Polaroid P2 nell'armadietto")
+	check(p.interactor.current is PolaroidPhoto, "il raggio trova la Polaroid P2 sullo sportello")
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
