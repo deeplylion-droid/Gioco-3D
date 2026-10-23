@@ -39,13 +39,17 @@ var _schizzi_camera: GPUParticles3D
 
 
 func _ready() -> void:
+	var struttura: Node
 	for nome in ["torre_struttura", "torre_scivoli"]:
 		var glb := (load(DIR + nome + ".glb") as PackedScene).instantiate()
 		add_child(glb)
+		if nome == "torre_struttura":
+			struttura = glb
 		_pulisci(glb)
 		if nome == "torre_struttura" and not OS.has_environment("SPOT_PROVA_GRATE"):
 			_togli_grate(glb)
 	_linea()
+	_sgombra_tubo(struttura)
 	_acqua()
 	_luci()
 	_luce_uscita()
@@ -146,6 +150,59 @@ func _togli_grate(radice: Node) -> void:
 			for i in over.size():
 				mi.set_surface_override_material(i, over[i])
 	print("spot torre: triangoli delle grate tolti ", tolti)
+
+
+## Dentro il tubo della discesa non c'è niente: si tolgono i triangoli della struttura (non la vetroresina) con i tre
+## vertici a meno di 47 cm dalla linea del centro (la culla su cui il tubo poggia alla pedana, a fine tubo, entrava
+## 6 cm sopra il fondo e si vedeva come un rettangolo contro la luce).
+func _sgombra_tubo(radice: Node) -> void:
+	var box := AABB(linea[0], Vector3.ZERO)
+	for q in linea:
+		box = box.expand(q)
+	box = box.grow(0.6)
+	var tolti := 0
+	for n in radice.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		var mesh := mi.mesh as ArrayMesh
+		if mesh == null or not (mi.global_transform * mesh.get_aabb()).intersects(box):
+			continue
+		var nuova := ArrayMesh.new()
+		var cambiata := false
+		for i in mesh.get_surface_count():
+			var m := mesh.surface_get_material(i)
+			var arr := mesh.surface_get_arrays(i)
+			if m and not String(m.resource_name).to_lower().contains("tsc_") and arr[Mesh.ARRAY_INDEX] != null:
+				var vert: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+				var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
+				var tieni := PackedInt32Array()
+				for t in range(0, idx.size(), 3):
+					if _nel_tubo(mi.global_transform * vert[idx[t]], box) and _nel_tubo(mi.global_transform * vert[idx[t + 1]], box) \
+							and _nel_tubo(mi.global_transform * vert[idx[t + 2]], box):
+						tolti += 1
+					else:
+						tieni.append_array([idx[t], idx[t + 1], idx[t + 2]])
+				if tieni.size() != idx.size():
+					cambiata = true
+					arr[Mesh.ARRAY_INDEX] = tieni
+			nuova.add_surface_from_arrays(mesh.surface_get_primitive_type(i), arr)
+			nuova.surface_set_material(i, m)
+		if cambiata:
+			var over: Array = []
+			for i in mesh.get_surface_count():
+				over.append(mi.get_surface_override_material(i))
+			mi.mesh = nuova
+			for i in over.size():
+				mi.set_surface_override_material(i, over[i])
+	print("spot torre: triangoli dentro il tubo tolti ", tolti)
+
+
+func _nel_tubo(q: Vector3, box: AABB) -> bool:
+	if not box.has_point(q):
+		return false
+	for i in linea.size() - 1:
+		if Geometry3D.get_closest_point_to_segment(q, linea[i], linea[i + 1]).distance_to(q) < R_TUBO - 0.03:
+			return true
+	return false
 
 
 static func _nel_disco(q: Vector3, d: Array) -> bool:
@@ -317,7 +374,9 @@ func _acqua() -> void:
 	const LATI := 8
 	const MEZZO := deg_to_rad(50.0)
 	var r := R_TUBO - 0.012
-	for i in linea.size():
+	# (finisce 40 cm prima della bocca: oltre, contro la luce in fondo, il bordo del nastro si vedeva come una ciotola)
+	var n_acqua := _s.bsearch(lunghezza() - 0.4)
+	for i in n_acqua:
 		var t := _tangente(_s[i])
 		var g := _giu(_s[i])
 		var l := t.cross(g).normalized()
@@ -326,7 +385,7 @@ func _acqua() -> void:
 			st.set_uv(Vector2(float(k) / LATI, _s[i]))
 			st.set_normal(-(g * cos(a) + l * sin(a)))
 			st.add_vertex(linea[i] + (g * cos(a) + l * sin(a)) * r)
-	for i in linea.size() - 1:
+	for i in n_acqua - 1:
 		for k in LATI:
 			var a := i * (LATI + 1) + k
 			var b := a + LATI + 1
@@ -351,21 +410,22 @@ func _luce_uscita() -> void:
 	var disco := MeshInstance3D.new()
 	disco.name = "LuceUscita"
 	var cm := CylinderMesh.new()
-	cm.top_radius = R_TUBO + 0.05
-	cm.bottom_radius = R_TUBO + 0.05
+	cm.top_radius = R_TUBO + 0.2
+	cm.bottom_radius = R_TUBO + 0.2
 	cm.height = 0.002
 	disco.mesh = cm
 	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.albedo_color = Color(1.0, 0.98, 0.92)
+	# (acceso davvero: l'emissione sopra la soglia del bagliore; con unshaded restava grigio)
+	m.albedo_color = Color(0.0, 0.0, 0.0)
+	m.roughness = 1.0
 	m.emission_enabled = true
 	m.emission = Color(1.0, 0.97, 0.9)
-	m.emission_energy_multiplier = 6.0
+	m.emission_energy_multiplier = 9.0
 	disco.material_override = m
 	disco.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(disco)
 	# il cilindro ha l'asse Y: lo si gira lungo il tubo
-	disco.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, t)), punto(fine + 0.04))
+	disco.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, t)), punto(fine - 0.03))
 	var o := OmniLight3D.new()
 	o.light_color = Color(1.0, 0.96, 0.88)
 	o.light_energy = 6.0
