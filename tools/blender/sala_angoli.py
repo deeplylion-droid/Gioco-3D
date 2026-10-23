@@ -7,7 +7,7 @@ scatoloni di diversi colori". Il soffitto è a 11,5 m: le pile arrivano a circa 
     starebbero su): i palloni gonfi si sistemano con la simulazione fisica di Blender dentro la rete, gli sgonfi sono
     schiacciati tra quelli in cima e sparsi alla base.
 Ogni pila è fatta con l'angolo nell'origine, contro i muri x = 0 e y = 0, e si allarga verso +x e +y (base massima
-3,4 m: nell'angolo sud-ovest non copre la serranda, che comincia a 4,1 m). Collisione semplice: una scatola per pila.
+3,4 m: nell'angolo sud-ovest non copre la serranda, che comincia a 4,1 m). Collisione semplice: una scatola per pila (e una per ogni scatolone caduto).
 Modelli Meshy in assets_src/sala_angoli/ (genera_angoli.py).
 Uso: /home/user/tools/blender-venv/bin/python tools/blender/sala_angoli.py [palloni|scatoloni ...]
 Uscita: godot/assets/ambiente/proposte_angoli/angolo_<palloni|scatoloni>.gltf"""
@@ -37,6 +37,32 @@ def posa(nome, file, centro_base, k, rz, obs, rot=(0, 0, 0)):
     o = HQ.metti(nome, file, tuple(centro_base), (d.x * k, d.y * k, d.z * k), rot_z=rz, rot=rot)
     obs.append(o)
     return o
+
+
+def assesta(oggetti, passo=7):
+    """Dal più basso al più alto, ogni oggetto scende finché tocca quello che ha sotto (un altro oggetto della pila) o
+    il pavimento (z = 0): raggi in giù da un vertice ogni 'passo'. Dopo, ogni oggetto poggia su qualcosa che a sua
+    volta arriva a terra (controllo di posizionamento del 22 ottobre: in fondo alle pile c'erano scatoloni 1-2 cm sopra
+    il pavimento, e palloni del nucleo appoggiati solo al cono di sostegno della simulazione, che non c'è più)."""
+    bpy.context.view_layer.update()
+    def fondo(o):
+        return min((o.matrix_world @ v.co).z for v in o.data.vertices)
+    giu = Vector((0, 0, -1))
+    mossi = 0
+    for o in sorted(oggetti, key=fondo):
+        bpy.context.view_layer.update()
+        dg = bpy.context.evaluated_depsgraph_get()
+        mw = o.matrix_world
+        vicino = None
+        for v in list(o.data.vertices)[::passo]:
+            p = mw @ v.co
+            ok, loc, _n, _i, colpito, _m = bpy.context.scene.ray_cast(dg, p + giu * 0.0005, giu, distance=p.z + 0.01)
+            d = (p - loc).length if ok and colpito.name != o.name else p.z
+            vicino = d if vicino is None else min(vicino, d)
+        if vicino is not None and vicino > 0.001:
+            o.location.z -= vicino - 0.001
+            mossi += 1
+    print('assestati', mossi, 'di', len(oggetti), flush=True)
 
 
 def catasta_scatoloni():
@@ -70,6 +96,7 @@ def catasta_scatoloni():
                 z += hz + 0.003
                 lato_sotto = lato
                 k_obj += 1
+    assesta(list(obs))
     # qualche scatolone caduto alla base, girato e schiacciato contro la catasta
     for k_obj in range(7):
         a = rnd.uniform(0.15, 1.42)
@@ -82,7 +109,12 @@ def catasta_scatoloni():
         # cade niente, la serranda resta libera
         if GIOCO and r * math.cos(a) > LATO - 0.3:
             continue
-        posa(f'scat_caduto_{k_obj}', f, (r * math.cos(a), r * math.sin(a), 0.0), k, rz, obs)
+        o = posa(f'scat_caduto_{k_obj}', f, (r * math.cos(a), r * math.sin(a), 0.0), k, rz, obs)
+        # ognuno con la sua collisione: si urta come la catasta (controllo di posizionamento del 22 ottobre: si
+        # attraversavano)
+        bpy.context.view_layer.update()
+        ws = [o.matrix_world @ v.co for v in o.data.vertices]
+        C.collisione_box(f'scat_caduto_{k_obj}', tuple(min(p[i] for p in ws) for i in range(3)), tuple(max(p[i] for p in ws) for i in range(3)))
     C.collisione_box('angolo_scatoloni', (0, 0, 0), (LATO, LATO, ALTEZZA))
     return obs
 
@@ -351,6 +383,7 @@ def pila_piramide():
     for o in cont:
         bpy.data.objects.remove(o)
     bpy.ops.rigidbody.world_remove()
+    assesta(finali + dentro)
     alto = max((o.matrix_world.translation.z for o in finali + dentro), default=PIR_H)
     print('palloni nella pila:', len(finali), 'quota del più alto:', round(alto, 2), flush=True)
     col = _quarto_di_cono('angolo_palloni-convcolonly', PIR_X - 0.2, PIR_Y - 0.2, alto + 0.5)

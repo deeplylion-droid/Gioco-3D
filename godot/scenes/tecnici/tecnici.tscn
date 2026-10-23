@@ -303,7 +303,7 @@ ambient_mode = 0
 [node name="LuciTecnici" parent="." instance=ExtResource("p_luci")]
 
 [node name="LampeggianteParatia1" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 16.4, 3, -2.15)
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 16.4, 3, -2.198)
 script = ExtResource("s_lampeggiante")
 modalita = 2
 portata = 9.0

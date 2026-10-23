@@ -309,23 +309,26 @@ def figlio(ob, padre):
 
 # ---------------------------------------------------------------- stanze
 
-def stanza(nome, x0, y0, x1, y1, h, mats, aperture=None, t=0.2, soffitto=True, pavimento=True, zoccolo=1.1):
+def stanza(nome, x0, y0, x1, y1, h, mats, aperture=None, t=0.2, soffitto=True, pavimento=True, zoccolo=1.1, attaccata=''):
     """Pavimento, soffitto e 4 pareti attorno al rettangolo interno.
     aperture: {'N'|'S'|'E'|'W': [(da, a, z_basso, z_alto), ...]} lungo la parete (coordinate x per N/S, y per E/W).
-    mats: dict con 'pav', 'sof', 'muro', 'muro_basso' (zoccolo)."""
+    mats: dict con 'pav', 'sof', 'muro', 'muro_basso' (zoccolo).
+    attaccata: i lati ('N', 'S', 'E', 'W') addossati a un'altra stanza: lì pavimento, soffitto e pareti non vanno
+    oltre il rettangolo interno (lo spessore lo dà la parete dell'altra stanza; prima ci entravano)."""
     aperture = aperture or {}
     parti = []
     prima = _RACCOGLI[0]; raccogli(True)
     try:
-        return _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti)
+        return _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti, attaccata)
     finally:
         raccogli(prima)
 
-def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti):
+def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoccolo, parti, attaccata=''):
+    tw, te, ts, tn = (0 if l in attaccata else t for l in 'WESN')
     if pavimento:
-        parti.append(scatola(nome + '_pav', (x0 - t, y0 - t, -0.2), (x1 + t, y1 + t, 0), mats['pav']))
+        parti.append(scatola(nome + '_pav', (x0 - tw, y0 - ts, -0.2), (x1 + te, y1 + tn, 0), mats['pav']))
     if soffitto:
-        parti.append(scatola(nome + '_sof', (x0 - t, y0 - t, h), (x1 + t, y1 + t, h + 0.2), mats['sof']))
+        parti.append(scatola(nome + '_sof', (x0 - tw, y0 - ts, h), (x1 + te, y1 + tn, h + 0.2), mats['sof']))
     lati = {
         'S': ('x', x0, x1, lambda a, b: ((a, y0 - t), (b, y0))),
         'N': ('x', x0, x1, lambda a, b: ((a, y1), (b, y1 + t))),
@@ -335,7 +338,10 @@ def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoc
     for lato, (asse, a0, a1, rett) in lati.items():
         ap = sorted(aperture.get(lato, []))
         # segmenti pieni tra le aperture, e sopra/sotto ogni apertura
-        tagli = [a0 - t] + [v for (da, a, zb, za) in ap for v in (da, a)] + [a1 + t]
+        if lato in attaccata:
+            continue
+        inizio, fine = (a0 - (tw if asse == 'x' else ts)), (a1 + (te if asse == 'x' else tn))
+        tagli = [inizio] + [v for (da, a, zb, za) in ap for v in (da, a)] + [fine]
         segmenti = [(tagli[i], tagli[i + 1]) for i in range(0, len(tagli), 2)]
         for (da, a) in segmenti:
             if a - da > 1e-4:
@@ -463,7 +469,6 @@ def neon_soffitto(nome, centro, lung, M, h_soffitto, stato='acceso', watt=60, ap
         T = Matrix.Translation((x, y, h_soffitto - 0.1 - appeso)) @ Matrix.Rotation(rot_z, 4, 'Z')
         if appeso:
             T = T @ Matrix.Rotation(math.radians(18), 4, 'X')
-            cilindro(nome + '_cavo', (x, y, h_soffitto), (x, y, z + 0.05), 0.004, M['gomma'], seg=6)
         corpo = HQ.metti(nome, 'plafoniera_neon', (0, 0, 0), (lung, 0.3, 0.1))
         suff = '_tubo_sfarfalla' if stato == 'sfarfalla' else ('_tubi_accesi' if stato == 'acceso' else '_tubi')
         tubo = HQ.metti(nome + suff, 'plafoniera_neon', (0, 0, 0), (lung, 0.3, 0.1), parte='plafoniera_neon_diffusore')
@@ -471,6 +476,12 @@ def neon_soffitto(nome, centro, lung, M, h_soffitto, stato='acceso', watt=60, ap
             tubo.data = tubo.data  # stessa mesh: il materiale spento lo mette Godot (vedi interni.gd)
         for o in (corpo, tubo):
             o.matrix_world = T @ o.matrix_world
+        if appeso:
+            # il cavo scende fino al dorso della plafoniera (inclinata): prima finiva 5-6 cm sopra e non la reggeva
+            bpy.context.view_layer.update()
+            ws = [corpo.matrix_world @ v.co for v in corpo.data.vertices]
+            dorso = max((p.z for p in ws if abs(p.x - x) < 0.08 and abs(p.y - y) < 0.08), default=z + 0.05)
+            cilindro(nome + '_cavo', (x, y, h_soffitto), (x, y, dorso - 0.004), 0.004, M['gomma'], seg=6)
         luce = luce_area(nome + '_luce', (x, y, z - 0.05), NEON, watt, lung, 0.12, (0, 0, rot_z)) if stato != 'spento' else None
         return corpo, tubo, luce
     parti = [scatola(nome + '_corpo', (-lung / 2, -0.09, 0.0), (lung / 2, 0.09, 0.06), M['metallo_grezzo'], uv=False)]

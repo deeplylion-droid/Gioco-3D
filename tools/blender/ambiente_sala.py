@@ -454,6 +454,8 @@ def portone_torre(mats):
     perno = (x - 0.04, cy, 0.0)
     anta = con_perno(c.crea('sala_portone_torre'), perno)
     K.collisione_scatola('portone_torre', (-0.04, ya - cy, 0.0), (0.04, yb - cy, h + 0.1), padre=anta)
+    # il maniglione sporge 15 cm dall'anta: con la sua collisione ci si urta, non lo si attraversa (controllo del 23 ottobre)
+    K.collisione_scatola('portone_maniglione', (-0.19, ya + 0.35 - cy - 0.035, 0.97), (-0.04, ya + 0.35 - cy + 0.035, 1.63), padre=anta)
     p = K.Costruttore(mats)
     y0r, y1r = ya - corsa - 0.1, yb + 0.6
     p.scatola((x - 0.2, y0r, h + 0.25), (x - 0.02, y1r, h + 0.4), 'acciaio_portone')   # binario
@@ -855,7 +857,10 @@ def interattivi(mats, zf):
     for x in (-0.4, 0.4):
         c.cilindro((x - 0.1, 0.0, 0.03), (x + 0.1, 0.0, 0.03), 0.035, 'inox', seg=10)  # cerniere
     port = c.crea('sala_portello_scarico')
-    port.location = (sx, sy + 0.64, zp - 0.01)
+    # poggia sugli spigoli più alti del fondo intorno al buco: il fondo è a conca, e a zp - 0,01 (la quota del centro)
+    # il portellone piatto entrava di 2-4 cm nelle piastrelle ai bordi (controllo di posizionamento del 22 ottobre)
+    bordo = [(sx + u, sy + 0.64 + v) for u in (-W, -W / 2, 0.0, W / 2, W) for v in (S_, (S_ + N_) / 2, N_)]
+    port.location = (sx, sy + 0.64, max(zf(x, y) for x, y in bordo) + 0.001)
     K.collisione_scatola('portello', (-0.64, -1.28, 0.0), (0.64, 0.0, 0.06), padre=port)
     obs.append(port)
     # pulsante della botola, versione A: cassetta, fungo e lampeggiante sulla parete sud della vasca
@@ -1444,8 +1449,11 @@ def fossa_bimbi(mats):
         c.faccia_verso([(ax, ay, 0), (bx, by, 0), (bx, by, hb), (ax, ay, hb)], 'scacchi', (mx - ccx, my - ccy, 0))
     # pavimento della sala nel triangolo fuori dalla diagonale esterna del bordo
     c.faccia_verso([(x, y, 0.0) for x, y in triangolo], 'pavimento', (0, 0, 1))
-    # griglia di scarico divelta: ancora agganciata al lato nord, piegata giù nella fossa in due tratti
-    ga, gb = -14.1, -12.6
+    # griglia di scarico divelta, caduta sul fondo: appoggiata storta al muro nord nella metà ovest (x da -14,75 a
+    # -13,9), fuori da lei affacciata, dai suoi tentacoli e dalla strada del tuffo (metà est, x > -13,6, e il condotto).
+    # Appesa al lato nord passava dentro il busto di lei (controllo del 23 ottobre; scelta a del coordinatore, spazio
+    # di lei da mascotte).
+    ga, gb = -14.75, -13.9
     def tratto(origine, v, lunghezza, nome):
         v = Vector(v).normalized(); u = Vector((1, 0, 0)); w = u.cross(v).normalized()
         O = Vector(origine)
@@ -1461,8 +1469,14 @@ def fossa_bimbi(mats):
             p = O + v * (j * 0.1)
             c.cilindro((ga, p.y, p.z), (gb, p.y, p.z), 0.005, 'torre', seg=5, tappi=False)
         return O + v * lunghezza
-    piega = tratto(((ga + gb) / 2, y1 - 0.02, -0.01), (0, -math.cos(math.radians(14)), -math.sin(math.radians(14))), 0.34, 'a')
-    tratto(tuple(piega), (0, -math.cos(math.radians(72)), -math.sin(math.radians(72))), 0.86, 'b')
+    # lunga 1,2 m, il piede a 35 cm dal muro: in cima tocca il muro, in fondo il pavimento della fossa (2 mm)
+    lg, piede = 1.2, 0.35
+    v = Vector((0, -piede, -math.sqrt(lg * lg - piede * piede))).normalized()
+    w = Vector((1, 0, 0)).cross(v).normalized()
+    sp = 0.02 * abs(w.y)                                # mezzo spessore (staffe 2 cm) verso il muro
+    O = Vector(((ga + gb) / 2, y1 - sp - 0.002, 0.0))
+    O.z = zf_ + 0.002 + 0.02 * abs(w.z) - v.z * lg       # il punto più basso a 2 mm dal fondo
+    tratto(tuple(O), tuple(v), lg, 'a')
     def sporco(co):
         if co.z > -0.05:
             return 0.85
@@ -2885,7 +2899,8 @@ def disponi_oggetti(zf_piscina):
         dest[0].append(o)
         return o
     # --- fondo della piscina e pozza (S06): giocattoli trascinati verso lo scarico
-    metti_ogg('paperella_gigante', (0.9, -1.4, None), 40, 0.45, (8, 0))
+    # fuori dall'anello di luce intorno al portellone (raggio 1-1,09 m): prima ci stava sopra (22 ottobre)
+    metti_ogg('paperella_gigante', (1.6, -1.25, None), 40, 0.45, (8, 0))
     metti_ogg('paperella_gigante', (-1.6, -2.9, None), 200, 0.4, (-12, 6))
     metti_ogg('pallone_spiaggia', (1.9, -3.4, None), 30)
     metti_ogg('pallone_spiaggia', (-3.8, 2.6, None), 80, 0.9)
@@ -2904,14 +2919,17 @@ def disponi_oggetti(zf_piscina):
     # salvagenti appesi ai muri (in piedi, con il retro contro le piastrelle: appoggia_muro li porta a toccarle)
     appoggia_muro(metti_ogg('salvagente_nave', (X1 - 0.04, -7.6, 1.15), -90, 1.0, (90, 0)))
     appoggia_muro(metti_ogg('salvagente_nave', (X1 - 0.04, 4.0, 1.15), -90, 1.0, (88, 0)))
-    appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, -1.0, 1.15), 90, 1.0, (88, 0)))
+    # accanto all'oblò basso (in y -1), non sopra: lo copriva a metà (collaudo della sala, 22 ottobre)
+    appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, -2.2, 1.15), 90, 1.0, (88, 0)))
     appoggia_muro(metti_ogg('salvagente_nave', (X0 + 0.04, 11.0, 1.15), 90, 1.0, (92, 0)))
     appoggia_muro(metti_ogg('salvagente_nave', (-3.2, Y0 + 0.04, 1.25), 180, 1.0, (90, 0)))
     # --- bordo piscina: sedia del bagnino, lettini in fila (uno rovesciato)
     metti_ogg('sedia_bagnino', (8.6, 2.5, 0.0), -90)
     for i, y in enumerate((-3.5, -1.2, 5.6, 8.0)):
         incl = (0, 0) if i != 2 else (0, 85)
-        metti_ogg('lettino_plastica', (11.8, y, 0.0 if i != 2 else 0.47), 180 + (6 if i % 2 else -4), 1.0, incl)
+        lt = metti_ogg('lettino_plastica', (11.8, y, 0.0 if i != 2 else 0.47), 180 + (6 if i % 2 else -4), 1.0, incl)
+        if i == 2 and lt is not None:
+            appoggia(lt, zf_piscina)   # quello rovesciato: a terra sul fianco (era staccato, controllo del 23 ottobre)
     metti_ogg('lettino_plastica', (-6.0, -8.2, 0.0), 75)
     # --- area bimbi: balena sgonfia nella vasca bassa, funghi, cannoncini, paperelle
     metti_ogg('balena_gonfiabile_sgonfia', (-15.0, 12.1, 0.33), 140, 0.95)
@@ -2944,7 +2962,9 @@ def disponi_oggetti(zf_piscina):
     else:
         V = VASCA_CENTRALE
         yf = V['cy'] - V['ly'] / 2 + (V['coping'] / 2 - 0.12)
-        metti_ogg('salvagente_nave', (V['cx'] - 1.75, yf - 0.1, 0.0), 0, 1.0, (75, 0))          # appoggiato al muro davanti
+        # appoggiato al muro davanti, dove non scendono i tentacoli di Jilly (da x -2,2 a -1,4 e intorno a -0,4 e 0,3
+        # arrivano a terra o lungo il muro: a -1,75 ci entrava, controllo del 22 ottobre sera)
+        metti_ogg('salvagente_nave', (V['cx'] + 1.0, yf - 0.1, 0.0), 0, 1.0, (75, 0))
         metti_ogg('orsacchiotto_grande', (V['cx'] + 1.9, yf - 0.35, 0.0), 160, 0.38)          # seduto a terra, guarda l'ingresso
         metti_ogg('paperella_gigante', (V['cx'] - 2.62, V['cy'] + V['ly'] / 2 - 0.16, V['h']), 210, 0.2)
         metti_ogg('paperella_gigante', (V['cx'] + 2.85, V['cy'] + 0.4, V['h']), 120, 0.18)   # sul bordo (a 2,6 era sospesa sull'acqua)

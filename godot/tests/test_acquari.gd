@@ -61,9 +61,15 @@ func _run() -> void:
 
 	print("2. Tappa 7: rientri dal magazzino, compaiono; prima della tappa 8 non funzionano")
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
-	_serranda().call(&"apri")
+	# la serranda si apre col lettore e la keycard dell'infermeria (strada nuova della risalita)
+	var lettore := level.get_node_or_null(^"Tecnici/Logica/LettoreTessera") as LettoreTessera
+	if lettore:
+		p.add_item(&"keycard", 1, "Keycard")
+		lettore.interact(p)
+	else:
+		_serranda().call(&"apri")
 	await _frames(5)
-	check(bool(_serranda().get(&"aperta")), "la serranda si apre")
+	check(bool(_serranda().get(&"aperta")), "con la keycard nel lettore la serranda si apre")
 	check(enigma.comparsi and giallo.fill > 0.9 and blu.fill > 0.9 and misto.fill < 0.001, "rientrando gli acquari colorati sono pieni, il miscuglio vuoto")
 	check(WaterMix.frazione(giallo.mix, WaterMix.GIALLO) > 0.99 and WaterMix.frazione(blu.mix, WaterMix.BLU) > 0.99, "giallo e blu")
 	check(_polvere(giallo) < 0.01 and _luci_acquari_accese(), "i vetri puliti e le luci di servizio accese")
@@ -489,4 +495,4 @@ func check(cond: bool, what: String) -> void:
 func _fine() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
-	get_tree().quit(1 if _failed > 0 else 0)
+	Game.esci(1 if _failed > 0 else 0)  # aspetta i caricamenti nel thread

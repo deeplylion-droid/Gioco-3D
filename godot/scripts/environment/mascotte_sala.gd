@@ -20,16 +20,22 @@ const STATUE := [
 	{nome = &"StatuaPolpoB", modello = "res://assets/models/mascotte/statua_polpo_B.glb",
 		pos = Vector3(-18.3, 0.0, -8.0), gradi = 90.0},
 ]
-## Oggetti da parete: il retro (z = 0 del modello) sulla parete, il davanti verso [code]normale[/code]. Il
-## manifesto sta 3 cm fuori dalla collisione: le piastrelle visibili sporgono.
+## Oggetti da parete: il retro (z = 0 del modello) sulla parete, il davanti verso [code]normale[/code]; la posizione è
+## quella di partenza, poi Posa.fissa_al_muro li mette a filo del muro vero (il manifesto stava 3 cm staccato: il
+## muro visibile lì è dove c'è la collisione). Posa si appoggia alla superficie che si vede, anche dove la collisione
+## sporge (la vasca centrale: 3 cm oltre le piastrelle); [code]affondo[/code] (di quanto spingere ancora dentro il
+## muro) non serve più.
 const JILLY := [
 	{nome = &"TargaJilly", modello = "res://assets/models/mascotte/jilly/targa.glb",
-		pos = Vector3(-3.003, 0.62, 10.0), normale = Vector3(-1, 0, 0)},
+		pos = Vector3(-2.97, 0.62, 10.0), normale = Vector3(-1, 0, 0)},
 	{nome = &"ManifestoJilly", modello = "res://assets/models/mascotte/jilly/manifesto.glb",
-		pos = Vector3(-19.97, 1.4, 13.95), normale = Vector3(1, 0, 0)},
+		pos = Vector3(-20.0, 1.4, 13.95), normale = Vector3(1, 0, 0)},
 	{nome = &"InsegnaJilly", modello = "res://assets/models/mascotte/jilly/insegna.glb",
 		pos = Vector3(-19.997, 4.7, 5.35), normale = Vector3(1, 0, 0)},
 ]
+
+## Fin dove (m) sotto le statue non si passa (lo spazio di chi cammina arriva a 2 m).
+const ALTEZZA_SGOMBRA := 2.0
 
 ## Energia delle due lampade dell'insegna (come negli scatti approvati).
 @export var energia_lampade := 1.4
@@ -47,6 +53,7 @@ func _ready() -> void:
 		ob.name = j.nome
 		add_child(ob)
 		ob.transform = Transform3D(Basis.looking_at(-j.normale, Vector3.UP), j.pos)
+		Posa.fissa_al_muro(ob, j.normale, -float(j.get("affondo", 0.0)))
 		_accendi_lampade(ob)
 	GameState.luci_cambiate.connect(func(_f): _aggiorna_lampade())
 	_aggiorna_lampade()
@@ -72,6 +79,35 @@ func _metti_statua(s: Dictionary) -> void:
 		cs.shape = m.create_trimesh_shape()
 		corpo.add_child(cs)
 		cs.global_transform = (mi as MeshInstance3D).global_transform
+	# Sotto le braccia alzate non si passa: un cilindro largo quanto la parte che sporge di più fino a 2 m
+	# (il polpo A apre i tentacoli a 1,5-2 m d'altezza 29 cm oltre la base: senza, la testa del giocatore ci
+	# finiva dentro; controllo di posizionamento del 22 ottobre notte, ingombro alla testa).
+	var r := _raggio_sotto(st, ALTEZZA_SGOMBRA)
+	if r > 0.0:
+		var cil := CollisionShape3D.new()
+		cil.name = "SottoLeBraccia"
+		var forma := CylinderShape3D.new()
+		forma.radius = r + 0.02
+		forma.height = ALTEZZA_SGOMBRA
+		cil.shape = forma
+		corpo.add_child(cil)
+		cil.position = Vector3(0.0, ALTEZZA_SGOMBRA * 0.5, 0.0)
+
+
+## Quanto si allarga la statua dal suo asse (in pianta) fino a [param altezza] metri.
+func _raggio_sotto(st: Node3D, altezza: float) -> float:
+	var r := 0.0
+	for mi in st.find_children("*", "MeshInstance3D", true, false):
+		var m := (mi as MeshInstance3D).mesh
+		if m == null:
+			continue
+		var t := st.global_transform.affine_inverse() * (mi as MeshInstance3D).global_transform
+		for sfc in m.get_surface_count():
+			for v: Vector3 in m.surface_get_arrays(sfc)[Mesh.ARRAY_VERTEX]:
+				var q := t * v
+				if q.y < altezza:
+					r = maxf(r, Vector2(q.x, q.z).length())
+	return r
 
 
 ## Le lampade a collo d'oca dell'insegna: gli empty luce_* del modello diventano faretti caldi e deboli

@@ -59,10 +59,14 @@ func _run() -> void:
 
 	print("La sala: architettura, collisioni e medusa")
 	check(level.get_node_or_null("Sala/Architettura") != null, "l'architettura della sala è caricata")
-	var polaroid := level.find_children("*", "PolaroidPhoto", true, false)
+	# la P11, la pecora che brilla, sta nella cassaforte dell'infermeria della risalita: la controlla
+	# test_infermeria_gioco (qui l'infermeria è nascosta, lontana dal giocatore)
+	var risalita := level.get_node_or_null(^"Risalita")
+	var polaroid := level.find_children("*", "PolaroidPhoto", true, false).filter(func(n): return risalita == null or not risalita.is_ancestor_of(n))
 	var p10 := polaroid.filter(func(n): return int(n.get(&"photo")) == 10)
-	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == 9,
-		"nella demo ci sono 9 Polaroid: P10 torna con la sala della torre (%d)" % polaroid.size())
+	var totale := 9 + (1 if risalita else 0)
+	check(polaroid.size() == 9 and p10.is_empty() and GameState.get_total(&"polaroid") == totale,
+		"nella sala ci sono 9 Polaroid (P10 torna con la sala della torre, P11 è nell'infermeria): %d, in tutto %d" % [polaroid.size(), GameState.get_total(&"polaroid")])
 	var coperte: PackedStringArray = POLAROID_LIBERE.coperte(level)
 	check(coperte.is_empty(), "nessuna Polaroid è coperta o compenetrata da un'altra mesh %s" % str(coperte))
 	var sospese := PackedStringArray()
@@ -475,6 +479,13 @@ func _controlla_mascotte() -> void:
 	for j in MascotteSala.JILLY:
 		var ob := m.get_node_or_null(NodePath(j.nome)) as Node3D
 		check(ob != null and ob.global_position.distance_to(j.pos) < 0.01, "%s è sul muro" % j.nome)
+		# a filo del muro che si vede (Posa.fissa_al_muro): il retro (l'origine) a meno di 5 mm dalla prima mesh
+		# visibile dietro (non la collisione: sulla vasca centrale sporge 3 cm oltre le piastrelle)
+		if ob:
+			var n: Vector3 = j.normale
+			var hm := Posa._raggio_mesh(ob, ob.global_position + n * 0.2, ob.global_position - n * 0.3)
+			check(not hm.is_empty() and absf((ob.global_position - (hm.position as Vector3)).dot(n)) < 0.005,
+				"%s è a filo del muro (%.3f m)" % [j.nome, (ob.global_position - (hm.position as Vector3)).dot(n) if hm else -1.0])
 		if ob == null:
 			continue
 		# il muro è subito dietro: un raggio dal davanti dell'oggetto verso il muro lo trova entro 5 cm

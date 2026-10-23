@@ -1,7 +1,7 @@
 extends Node
 ## Test automatico: niente blocchi al primo uso degli effetti (riscontri sulla v0.3.4 e v0.3.5:
 ## "la prima volta che si spruzza il gioco si blocca per circa 1 secondo"). Dopo la preparazione
-## (PreparaEffetti), la prima volta che si spruzza e che scoppia un geyser il motore non deve
+## (PreparaEffetti), la prima volta che si spruzza e che lei si tuffa nella fossa il motore non deve
 ## compilare pipeline che fermano il fotogramma: i monitor Performance delle compilazioni "surface"
 ## (shader della superficie) e "draw" (pipeline al momento di disegnare) restano a zero.
 ## L'aspirazione dalla vasca lava-piedi degli spogliatoi si misura e si stampa soltanto: lì il motore
@@ -109,13 +109,21 @@ func _run() -> void:
 	await _frames(10)
 	var asp := _conta()
 	print("  (aspirazione: surface %d, draw %d, in sottofondo %d)" % [asp.surface, asp.draw, asp.spec])
+	# Gli schizzi del tuffo di lei nella fossa: quello su misura (SchizzoTuffo, creato prima come fa LeiSbuca
+	# all'avvio) e quello dell'acqua (WaterSplash).
+	var st := SchizzoTuffo.new()
+	st.top_level = true
+	get_tree().current_scene.add_child(st)
+	await _frames(3)
 	_azzera()
-	var g := GeyserFossa.new()
-	get_tree().current_scene.add_child(g)
-	g.scoppia(p.global_position + p.global_basis * Vector3(0.0, 0.0, -4.0), [])
-	await _frames(20)
-	_controlla("geyser", _conta())
-	g.queue_free()
+	var dove := p.global_position + p.global_basis * Vector3(0.0, 0.0, -4.0)
+	st.schizza(dove, 1.0)
+	var s := WaterSplash.new()
+	get_tree().current_scene.add_child(s)
+	s.global_position = dove
+	s.play(1.5)
+	await _frames(40)
+	_controlla("schizzo del tuffo", _conta())
 	_fine()
 
 

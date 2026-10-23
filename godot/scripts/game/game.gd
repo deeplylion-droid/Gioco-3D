@@ -12,6 +12,8 @@ signal paused_changed(is_paused: bool)
 ## Solo nelle build di debug (editor e prove): nella Release si passa dal menu.
 @export var debug_scene_keys := OS.is_debug_build()
 
+## Secondi massimi che esci() aspetta un caricamento nel thread (se il pool di thread si blocca).
+const ATTESA_MASSIMA := 30.0
 const SCENE_DEMO := "res://scenes/sala_principale.tscn"
 const SCENE_TEST := "res://scenes/test/test_level.tscn"
 const SCENE_TITLE := "res://scenes/ui/menu_principale.tscn"
@@ -21,6 +23,11 @@ const SCENE_CONTROLS := "res://scenes/ui/comandi.tscn"
 @export var first_run_preset := "alto"
 
 var _overlay: CanvasLayer
+## I caricamenti nel thread chiesti con carica_in_thread() in questa partita: all'uscita si aspetta che
+## finiscano, e poi ancora un po'.
+var _caricamenti: PackedStringArray = []
+## Vero da quando esci() è partito: chi aspetta un caricamento nel thread non lo rifà.
+var uscendo := false
 var _had_focus := false
 var _menu_layer: CanvasLayer
 var _resume_button: Button
@@ -28,6 +35,8 @@ var _resume_button: Button
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# La X della finestra passa da esci() (NOTIFICATION_WM_CLOSE_REQUEST in _notification).
+	get_tree().auto_accept_quit = false
 	_build_overlay()
 	capture_mouse()
 	var first_run := not FileAccess.file_exists("user://settings.cfg")
@@ -46,6 +55,60 @@ func _ready() -> void:
 	# La qualità dell'acqua segue il preset grafico.
 	Grafica.impostazione_cambiata.connect(func(_k, _v): _sync_water_quality())
 	_sync_water_quality()
+
+
+## ResourceLoader.load_threaded_request, ricordando il percorso, per esci(). Mentre si esce non comincia niente
+## (ERR_UNAVAILABLE): un caricamento partito durante l'attesa di esci() resterebbe a metà all'uscita.
+func carica_in_thread(percorso: String, tipo := "") -> Error:
+	if uscendo:
+		return ERR_UNAVAILABLE
+	var err := ResourceLoader.load_threaded_request(percorso, tipo)
+	if err == OK and not _caricamenti.has(percorso):
+		_caricamenti.append(percorso)
+	return err
+
+
+## Chiude il gioco. Se in questa partita c'è stato un caricamento nel thread (la torre in precarica, il
+## livello dalla schermata di caricamento), prima ne aspetta la fine (di tutti, ricontrollati a ogni fotogramma)
+## e poi lascia girare il gioco ancora almeno 30 fotogrammi e 1 s: una risorsa grande che ha appena finito di caricare, se Godot smonta tutto
+## subito, lo fa fermare per sempre o abortire (CI di lavoro/godot 58cc633: "Aborted" 12 s dopo la fine
+## di test_acquari; in prova: 2 fotogrammi dopo la fine no, 30 sì). Se un caricamento non finisce mai,
+## dopo ATTESA_MASSIMA esce lo stesso; una seconda richiesta (la X di nuovo) esce subito.
+func esci(codice := 0) -> void:
+	if uscendo:
+		get_tree().quit(codice)
+		return
+	uscendo = true
+	if not _caricamenti.is_empty():
+		# Fotogramma per fotogramma, senza bloccare il thread principale con load_threaded_get() (in prova
+		# bloccare non bastava: Godot si fermava lo stesso all'uscita). Si riguardano tutti i caricamenti a ogni
+		# giro, finché nessuno è in corso da almeno 30 fotogrammi e 1 s: anche quelli partiti durante l'attesa
+		# (CI di lavoro/godot 2a4f4a8a: test_tappa8, lei ti prende, la sala ripartiva mentre si usciva e
+		# richiedeva la torre; ora carica_in_thread e il respawn non partono più, ma si aspetta lo stesso).
+		var t0 := Time.get_ticks_msec()
+		var aspettati := {}
+		var t1 := t0
+		var f := 0
+		while Time.get_ticks_msec() - t0 < ATTESA_MASSIMA * 1000.0:
+			var in_corso := false
+			for percorso in _caricamenti:
+				var stato := ResourceLoader.load_threaded_get_status(percorso)
+				if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+					in_corso = true
+					aspettati[percorso] = true
+				elif stato == ResourceLoader.THREAD_LOAD_LOADED:
+					ResourceLoader.load_threaded_get(percorso)
+			if in_corso:
+				t1 = Time.get_ticks_msec()
+				f = 0
+			elif f >= 30 and Time.get_ticks_msec() - t1 >= 1000:
+				break
+			await get_tree().process_frame
+			f += 1
+		if not aspettati.is_empty():
+			print("Uscita: aspettati %d caricamenti nel thread (%.1f s)" % [aspettati.size(), (Time.get_ticks_msec() - t0) / 1000.0])
+	await get_tree().process_frame
+	get_tree().quit(codice)
 
 
 func _sync_water_quality() -> void:
@@ -167,7 +230,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		esci()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		_had_focus = true
 	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT and pause_on_focus_loss and _had_focus:
 		if is_inside_tree() and not get_tree().paused and DisplayServer.get_name() != "headless":
@@ -199,7 +264,7 @@ func _build_overlay() -> void:
 	_menu_button(col, "Opzioni", open_options)
 	_menu_button(col, "Comandi", open_controls)
 	_menu_button(col, "Torna al titolo", return_to_title)
-	_menu_button(col, "Esci dal gioco", func(): get_tree().quit())
+	_menu_button(col, "Esci dal gioco", func(): esci())
 
 
 func _menu_button(parent: Control, text: String, action: Callable) -> Button:

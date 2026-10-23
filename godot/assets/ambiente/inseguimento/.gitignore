@@ -1,0 +1,5 @@
+# texture estratte da Godot all'import dei GLB (sono già dentro i GLB): si rigenerano da sole
+inseguimento_*.jpg
+inseguimento_*.jpg.import
+inseguimento_*.png
+inseguimento_*.png.import

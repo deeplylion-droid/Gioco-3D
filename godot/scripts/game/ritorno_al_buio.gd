@@ -123,8 +123,10 @@ func _scia() -> void:
 	_nodi.append(radice)
 	if scia_bava:
 		_bava(radice, "BavaScia", scia, 0.34, 3)
-		_bava(radice, "BavaBordoVasca", bordo_vasca, 0.3, 9)
-		_bava(radice, "BavaMuroVasca", muro_vasca, 0.32, 11, false)
+		# sul bordo della vasca a 3 mm (con 1,2 cm sembrava staccata: collaudo della sala del 22 ottobre)
+		_bava(radice, "BavaBordoVasca", bordo_vasca, 0.3, 9, true, 0.003)
+		# larga 26 cm: a x -0,62 resta fuori dalla scatola del pulsante (collaudo del 23 ottobre)
+		_bava(radice, "BavaMuroVasca", muro_vasca, 0.26, 11, false)
 		_bava(radice, "BavaBordoFossa", bordo_fossa, 0.2, 5)
 		_bava(radice, "BavaIntornoFossa", intorno_fossa, 0.42, 7)
 		_gocciolatoi(radice)
@@ -161,7 +163,7 @@ func _scia() -> void:
 	_gocciolatoi(radice)
 
 
-func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int, appoggia := true) -> BavaRosa:
+func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: float, seme: int, appoggia := true, sollevamento := -1.0) -> BavaRosa:
 	if percorso.size() < 2:
 		return null
 	var b := BavaRosa.new()
@@ -170,6 +172,8 @@ func _bava(radice: Node3D, nome: String, percorso: PackedVector3Array, larga: fl
 	b.larghezza = larga
 	b.seme = seme
 	b.appoggia = appoggia   # il tratto giù per il muro della vasca è in verticale
+	if sollevamento >= 0.0:
+		b.sollevamento = sollevamento
 	radice.add_child(b)
 	return b
 

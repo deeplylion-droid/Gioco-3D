@@ -62,7 +62,7 @@ NW = 3.0                      # larghezza nicchia
 ND = 2.6                      # profondita' nicchia (oltre il muro nord)
 POZZO = (0.64, 0.0)           # centro del pozzo, sotto il centro del portello della piscina (la cerniera
                               # del portello della sala è 0,64 m più a nord, cioè a X = 0 qui)
-PZ = 1.3                      # lato del pozzo
+PZ = 1.28                     # lato del pozzo (come il buco nel fondo della piscina, ambiente_sala.BUCO_POZZO)
 
 S('struttura', box('pavimento', ((XA + XB) / 2, 0, -0.15), (XB - XA, W, 0.3), M['cemento_bagnato'], uv=3.0))
 # canaletta al centro con un filo d'acqua
@@ -117,16 +117,24 @@ for k, x in enumerate([x for x in range(-1, 24, 2)]):
 
 # ------------------------------------------------------------------ pozzo e portello
 usa_collezione('pozzo')
-PH = 2.6  # altezza del pozzo sopra il soffitto
-for k, (c, d) in enumerate((((px - PZ / 2 - 0.1, py, H + PH / 2), (0.2, PZ + 0.4, PH)), ((px + PZ / 2 + 0.1, py, H + PH / 2), (0.2, PZ + 0.4, PH)),
-                            ((px, py - PZ / 2 - 0.1, H + PH / 2), (PZ, 0.2, PH)), ((px, py + PZ / 2 + 0.1, H + PH / 2), (PZ, 0.2, PH)))):
+PH = 2.6  # dal soffitto al portello della sala (il fondo della piscina)
+# le pareti del pozzo arrivano al fondo del collare del buco nella soletta della piscina (24 cm sotto il fondo,
+# ambiente_sala.piscina_onde), larghe quanto il buco: prima salivano dentro la soletta e una piastra col foro
+# tondo e la ghiera stavano dentro il buco, sotto il portello quadrato della sala (controllo del 22 ottobre)
+PHM = PH - 0.23
+for k, (c, d) in enumerate((((px - PZ / 2 - 0.1, py, H + PHM / 2), (0.2, PZ + 0.4, PHM)), ((px + PZ / 2 + 0.1, py, H + PHM / 2), (0.2, PZ + 0.4, PHM)),
+                            ((px, py - PZ / 2 - 0.1, H + PHM / 2), (PZ, 0.2, PHM)), ((px, py + PZ / 2 + 0.1, H + PHM / 2), (PZ, 0.2, PHM)))):
     S('pozzo', box(f'pozzo_{k}', c, d, M['piastrelle'], uv=2.0))
-# piastra in cima con il foro tondo del portello (anello) e la piscina sopra (buio azzurrino)
+    # sopra, fino al fondo della piscina, la collisione continua (lì il collare della sala è solo da vedere: senza,
+    # scendendo dal buco ci si incastrava sul bordo delle pareti)
+    lo_ = Vector(c) - Vector(d) / 2
+    hi_ = Vector(c) + Vector(d) / 2
+    collisione_box(f'pozzo_{k}_su', (lo_.x, lo_.y, H + PHM), (hi_.x, hi_.y, H + PH))
 R_P = 0.5
-S('pozzo', toro('portello_ghiera', (px, py, H + PH), R_P + 0.05, 0.06, M['ferro'], seg=32, seg2=8))
+# della piastra col foro tondo resta solo la collisione, come prima (la strada giù e su dalla scala è provata così)
 for k, (c, d) in enumerate((((px - (PZ / 2 + R_P) / 2, py, H + PH + 0.05), (PZ / 2 - R_P, PZ, 0.1)), ((px + (PZ / 2 + R_P) / 2, py, H + PH + 0.05), (PZ / 2 - R_P, PZ, 0.1)),
                             ((px, py - (PZ / 2 + R_P) / 2, H + PH + 0.05), (2 * R_P, PZ / 2 - R_P, 0.1)), ((px, py + (PZ / 2 + R_P) / 2, H + PH + 0.05), (2 * R_P, PZ / 2 - R_P, 0.1)))):
-    S('pozzo', box(f'piastra_portello_{k}', c, d, M['ferro'], uv=1.0))
+    collisione_box(f'piastra_portello_{k}', Vector(c) - Vector(d) / 2, Vector(c) + Vector(d) / 2)
 # portello aperto (cardine sul lato +X, ruotato di 110 gradi)
 port = [cilindro('PORTELLO_disco', (px, py, H + PH + 0.12), R_P + 0.04, 0.08, M['ferro'], seg=32, uv=1.0)]
 port += [o for o in [toro('PORTELLO_volantino', (px, py, H + PH + 0.22), 0.22, 0.02, M['giallo'], seg=24, seg2=6)]]
@@ -141,7 +149,7 @@ portello['cardine'] = 'asse Y Blender (-Z Godot); chiuso = 0, aperto = -110 grad
 # luce fredda che scende dal portello (la piscina sotto la cupola)
 luce('LUCE_portello', 'SPOT', (px, py, H + PH + 1.5), 300, (0.55, 0.7, 0.9), spot=60, mira=(px, py, 0), raggio=0.3)
 # scala alla marinara dal pozzo al pavimento (contro la parete -X del pozzo)
-LX = px - PZ / 2 + 0.18
+LX = px - 0.47                # (la scala del gioco, Gioco/ScalaPozzo, sta in x 0,17)
 for s in (-0.22, 0.22):
     S('pozzo', tubo(f'scala_montante{s}', [(LX, py + s, 0.0), (LX, py + s, H + PH)], 0.025, M['verde'], seg=8))
 for k in range(int((H + PH) / 0.3)):
@@ -234,8 +242,10 @@ for i, xc in enumerate(NICCHIE):
 
 # ------------------------------------------------------------------ bocchette dell'aria (muro sud)
 usa_collezione('bocchette')
+# (alzate di 45 cm, centro a 2,65 m: il bordo di sotto a 2,03 m, sopra lo spazio di chi cammina; da 1,58 m sporgevano
+# 78 cm all'altezza della testa, regola del coordinatore del 23 ottobre)
 for i, xc in enumerate(NICCHIE):
-    c = Vector((xc, YS + 0.02, 2.2))
+    c = Vector((xc, YS + 0.02, 2.65))
     S('bocchette', cilindro(f'bocchetta{i}_cono', c + Vector((0, 0.18, 0)), 0.55, 0.36, M['ferro'], asse=(0, 1, 0), seg=32, r2=0.45, tappi=False))
     S('bocchette', toro(f'bocchetta{i}_bordo', c + Vector((0, 0.36, 0)), 0.46, 0.05, M['ferro'], asse=(0, 1, 0), seg=32, seg2=8))
     S('bocchette', cilindro(f'bocchetta{i}_buio', c + Vector((0, 0.02, 0)), 0.5, 0.02, mat_pbr('buio', base=(0.0, 0.0, 0.0), roughness=1.0), asse=(0, 1, 0), seg=32, uv=None))
@@ -247,8 +257,8 @@ for i, xc in enumerate(NICCHIE):
 # condotta dell'aria lungo il muro sud, che alimenta le bocchette
 S('bocchette', tubo('condotta_aria', [(XA, YS + 0.4, 3.6), (XB, YS + 0.4, 3.6)], 0.3, M['tubi'], seg=32, uv=1.5))
 for i, xc in enumerate(NICCHIE):
-    S('bocchette', tubo(f'raccordo{i}', [(xc, YS + 0.4, 3.35), (xc, YS + 0.4, 2.85)], 0.18, M['tubi'], seg=16))
-    S('bocchette', box(f'scatola{i}', (xc, YS + 0.32, 2.8), (0.8, 0.6, 0.3), M['ferro'], uv=1.0))
+    # la scatola sopra la bocchetta, alzata con lei, ora sta sotto la condotta e la tocca (il raccordo non serve più)
+    S('bocchette', box(f'scatola{i}', (xc, YS + 0.32, 3.25), (0.8, 0.6, 0.3), M['ferro'], uv=1.0))
 for k in range(0, 26, 3):
     for o in flangia(f'condotta_fl{k}', (XA + k, YS + 0.4, 3.6), (1, 0, 0), 0.38, M['ferro'], 0.05, 8, M['ruggine']):
         S('bocchette', o)
@@ -308,18 +318,20 @@ def lampada(nome, pos, normale, accesa=True):
     if accesa:
         luce(f'LUCE_rossa_{nome}', 'POINT', pos + n * 0.25, 45, (1.0, 0.08, 0.04), raggio=0.08)
 
+# (l1 e l5 stanno sulle costole; le altre sul muro, col retro a filo: a 2 cm restavano staccate)
 lampada('l1', (3.0, YS + 0.02, 3.0), (0, 1, 0))
-lampada('l2', (8.0, YS + 0.02, 3.0), (0, 1, 0), accesa=False)
-lampada('l3', (12.0, YS + 0.02, 3.0), (0, 1, 0))
-lampada('l4', (16.0, YN - 0.02, 3.0), (0, -1, 0))
+lampada('l2', (8.0, YS - 0.002, 3.0), (0, 1, 0), accesa=False)
+lampada('l3', (12.0, YS - 0.002, 3.0), (0, 1, 0))
+lampada('l4', (16.0, YN + 0.002, 3.0), (0, -1, 0))
 lampada('l5', (23.0, YS + 0.02, 3.0), (0, 1, 0))
 # fra le costole (ogni 2 m da x = -1) e lontano dai cassoni delle paratie
 for k, (x, acceso) in enumerate(((4.0, False), (10.0, True), (19.85, False))):
     if HQ.disponibile('plafoniera_neon'):
         giu = lambda c, nrm: nrm.z < -0.6 and (c[0] + c[1] + c[2]) > 1.6
         HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
-        HQ.metti(f'plafoniera_{k}', 'plafoniera_neon', (x, -0.6, H - 0.12), (1.4, 0.32, 0.1))
-        HQ.metti(f'neon_{k}_tubo_sfarfalla' if acceso else f'neon_{k}_tubi', 'plafoniera_neon', (x, -0.6, H - 0.12), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
+        # (la plafoniera alta 10 cm col dorso sul soffitto: a H - 0,12 restava 2 cm sotto)
+        HQ.metti(f'plafoniera_{k}', 'plafoniera_neon', (x, -0.6, H - 0.1), (1.4, 0.32, 0.1))
+        HQ.metti(f'neon_{k}_tubo_sfarfalla' if acceso else f'neon_{k}_tubi', 'plafoniera_neon', (x, -0.6, H - 0.1), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
     else:
         S('lampade', box(f'plafoniera_{k}', (x, -0.6, H - 0.06), (1.5, 0.22, 0.08), M['ferro'], uv=None))
         S('lampade', cilindro(f'neon_{k}', (x, -0.6, H - 0.13), 0.025, 1.35, M['neon'] if acceso else M['neon_spento'], asse=(1, 0, 0), seg=10, uv=None))

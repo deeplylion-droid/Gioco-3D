@@ -1,4 +1,4 @@
-# Suoni di Splash Lagoon: fonti e licenze
+# Suoni di Jilly Jubilee: fonti e licenze
 
 Tutti i suoni di questa cartella sono **generati dagli script** in `assets_src/audio/` (`python genera_tutto.py` con il venv di Blender: numpy, scipy e ffmpeg). Sono di due tipi:
 
@@ -159,6 +159,18 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `interfaccia/ui_pausa.ogg` | 0.4 s | Kenney Interface Sounds (CC0) | switch_002 |
 | `interfaccia/ui_scatto.ogg` | 0.1 s | Kenney Interface Sounds (CC0) | toggle_002 |
 | `lei/fossa_ribolle_loop.ogg` | 5.0 s | sintesi (originale) | gorgoglio profondo e bolle grosse: la fossa che riempie le vasche basse |
+| `lei/lei_insegue_grata_01.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
+| `lei/lei_insegue_grata_02.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
+| `lei/lei_insegue_grata_03.ogg` | 0.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): un verso di rabbia per ogni colpo contro la grata |
+| `lei/lei_insegue_presa_01.ogg` | 1.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): ti afferra: risucchio, grido-ringhio, sotto la voce rotta del suo urlo |
+| `lei/lei_insegue_presa_02.ogg` | 1.6 s | sintesi (originale) | inseguimento, voce (22 ottobre): ti afferra: risucchio, grido-ringhio, sotto la voce rotta del suo urlo |
+| `lei/lei_insegue_respinta_01.ogg` | 1.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): il getto in faccia: lamento che si spezza, gorgoglio mentre torna sotto |
+| `lei/lei_insegue_respinta_02.ogg` | 1.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): il getto in faccia: lamento che si spezza, gorgoglio mentre torna sotto |
+| `lei/lei_insegue_respinta_03.ogg` | 1.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): il getto in faccia: lamento che si spezza, gorgoglio mentre torna sotto |
+| `lei/lei_insegue_sale_01.ogg` | 3.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): sale dall'acqua e incombe: gola sott'acqua, fiato umido, ringhio che cresce |
+| `lei/lei_insegue_sale_02.ogg` | 3.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): sale dall'acqua e incombe: gola sott'acqua, fiato umido, ringhio che cresce |
+| `lei/lei_insegue_sale_03.ogg` | 3.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): sale dall'acqua e incombe: gola sott'acqua, fiato umido, ringhio che cresce |
+| `lei/lei_insegue_sb1.ogg` | 5.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): ti fissa dal pozzo SB1: fiato lento e umido, rantolo trattenuto |
 | `lei/lei_sbuca.ogg` | 7.6 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): gola sott'acqua, respiro umido, rantolo; impactSoft_medium, slime_000 |
 | `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) | versione gutturale (16 ottobre): brontolio di gola, l'ultimo fiato che gorgoglia sott'acqua |
 | `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001 |
@@ -182,11 +194,15 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `piscina/pulsante_botola_bibu.ogg` | 0.4 s | sintesi (originale) | un bi-bu a ogni lampo del lampeggiante (ogni 1,6 s) |
 | `piscina/pulsante_botola_lampeggiante_loop.ogg` | 3.2 s | sintesi (originale) | il lampeggiante giallo che gira |
 | `squalo/jilly_richiamo.ogg` | 10.8 s | sintesi (originale) | il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco |
+| `squalo/squalo_denti_01.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
+| `squalo/squalo_denti_02.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
+| `squalo/squalo_denti_03.ogg` | 1.4 s | sintesi (originale) | i denti che scattano a ogni morso nell'aria |
 | `squalo/squalo_minaccia.ogg` | 6.0 s | sintesi (originale) | fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file) |
-| `squalo/squalo_passo_01.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
-| `squalo/squalo_passo_02.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
-| `squalo/squalo_passo_03.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
-| `squalo/squalo_passo_04.ogg` | 0.6 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli |
+| `squalo/squalo_passo_01.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
+| `squalo/squalo_passo_02.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
+| `squalo/squalo_passo_03.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
+| `squalo/squalo_passo_04.ogg` | 0.8 s | sintesi + Kenney Impact Sounds (CC0) | passo pesante e bagnato con gli artigli, con il colpo grave sotto |
+| `squalo/squalo_ringhio.ogg` | 2.3 s | sintesi (originale) | il ringhio quando si gira verso la porta |
 | `squalo/squalo_sbuffo.ogg` | 1.9 s | sintesi (originale) | sbuffo di gola quando si volta a guardarti |
 | `tecnici/cancello_stagno_apre_01.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
 | `tecnici/cancello_stagno_apre_02.ogg` | 3.7 s | sintesi (originale) | cancello stagno che si apre da solo: si muove da 0,55 s e sbatte a 2,55 s |
@@ -205,4 +221,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 180 file, 6.8 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 196 file, 7.1 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).

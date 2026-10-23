@@ -232,7 +232,7 @@ for i, (px, col, _) in enumerate(POMPE):
         S(g, o)
     # fascia colorata sulla mandata (si legge da lontano)
     S(g, cilindro(f'{g}_fascia', (m0.x, m0.y, 3.25), 0.225, 0.35, vern, seg=24, uv=0.8))
-    for o in manometro(f'{g}_manometro', (m0.x - 0.34, m0.y - 0.2, 2.25), (0, -1, 0)):
+    for o in manometro(f'{g}_manometro', (m0.x - 0.34, m0.y - 0.182, 2.25), (0, -1, 0)):   # (sulla presa, 3 mm dentro: a -0,2 restava 1,5 cm staccato, a -0,185 a filo)
         S(g, o)
     S(g, tubo(f'{g}_presa_man', [(m0.x - 0.18, m0.y, 2.25), (m0.x - 0.34, m0.y, 2.25), (m0.x - 0.34, m0.y - 0.17, 2.25)], 0.02, M['tubi'], seg=8, rc=0.05))
     # aspirazione: dal fianco della chiocciola giu' nel pavimento
@@ -303,8 +303,11 @@ for i, (fx, fy) in enumerate(((-7.6, 4.4), (-7.6, 1.8))):
     g = f'FILTRO_{i + 1}'
     c = Vector((fx, fy, 0))
     if HQ.disponibile('filtro_tondo'):
-        HQ.metti(f'{g}_modello', 'filtro_tondo', c, (None, None, 3.45), rot_z=R_(-45 + 90 * i))
-        S(g, tubo(f'{g}_uscita', [c + Vector((0, 0, 3.4)), Vector((fx, fy, 4.0)), Vector((fx, HEADER_Y, 4.0)), Vector((fx, HEADER_Y, HEADER_Z - 0.3))], 0.16, M['tubi'], rc=0.4, uv=1.2, seg=28))
+        fm = HQ.metti(f'{g}_modello', 'filtro_tondo', c, (None, None, 3.45), rot_z=R_(-45 + 90 * i))
+        if i == 1:      # girato così, il modello restava 1,1 cm dentro le flange: largo quanto loro
+            fm.matrix_world = fm.matrix_world @ Matrix.Diagonal((1.0105, 1.0105, 1.0, 1.0))
+        # il tubo d'uscita parte 25 cm dentro il modello (da 3,4 m restava 1,1-1,3 cm sopra la cima, staccato)
+        S(g, tubo(f'{g}_uscita', [c + Vector((0, 0, 3.2)), Vector((fx, fy, 4.0)), Vector((fx, HEADER_Y, 4.0)), Vector((fx, HEADER_Y, HEADER_Z - 0.3))], 0.16, M['tubi'], rc=0.4, uv=1.2, seg=28))
         continue
     for k in range(4):
         a = math.pi / 4 + k * math.pi / 2
@@ -341,7 +344,8 @@ imposta_origine(pt, (XE - 0.05, PORTA_Y - PORTA_W / 2, 0))
 if HQ.disponibile('porta_servizio'):
     # anta Meshy (come la porta della sala pompe vista dal corridoio) e maniglione dal lato della sala
     bpy.data.objects.remove(pt)
-    pt = HQ.metti('PORTA_ponte', 'porta_servizio', (XE - 0.05, PORTA_Y - PORTA_W / 2 + 0.02, 0.01), (PORTA_W - 0.04, None, PORTA_H - 0.03),
+    pt = HQ.metti('PORTA_ponte', 'porta_servizio', (XE - 0.05, PORTA_Y - PORTA_W / 2 + 0.02, 0.0),   # (poggia sulla soglia)
+                  (PORTA_W - 0.04, None, PORTA_H - 0.03),
                   rot_z=R_(-90), perno=((PORTA_W - 0.04) / 2, 0, 0))
     man = tubo('PORTA_ponte_maniglione', [(XE - 0.12, PORTA_Y - 0.4, 1.0), (XE - 0.24, PORTA_Y - 0.35, 1.0), (XE - 0.24, PORTA_Y + 0.35, 1.0), (XE - 0.12, PORTA_Y + 0.4, 1.0)], 0.025, M['pericolo'], rc=0.05, seg=16)
     applica_trasf(man)
@@ -354,7 +358,7 @@ for k, (c, d) in enumerate((((XE - 0.02, PORTA_Y, PORTA_H + 0.1), (0.14, PORTA_W
 # di la' dalla porta c'è il raccordo verso gli interni (tools/blender/ambienti2_raccordo.py)
 empty('PUNTO_porta_ponte_inferiore', (XE - 1.0, PORTA_Y, 0))
 # neon azzurro sopra la porta e lampada rossa
-S('luci', box('neon_porta', (XE - 0.08, PORTA_Y, PORTA_H + 0.45), (0.05, 1.3, 0.05), M['neon'], uv=None))
+S('luci', box('neon_porta', (XE - 0.03, PORTA_Y, PORTA_H + 0.45), (0.05, 1.3, 0.05), M['neon'], uv=None))
 
 # schema a colori sul muro (senza testo)
 SC_Y, SC_Z = 0.4, 2.0
@@ -394,6 +398,13 @@ if LEVA_NUOVA:
     lv = HQ.metti('LEVA', 'leva_maniglia', MOZZO + Vector((-db.y * kb - 0.045, 0, 0)), tuple(dm * km), rot=(0, R_(-25), 0),
                   rot_z=R_(90), perno=(-0.84 * km, 0, 0.148 * km))
     allinea_occhio(base_leva, lv)
+    # il braccio contro il perno della base (a 4,5 cm restava staccato): lo si avvicina finché tocca
+    bpy.context.view_layer.update()
+    from mathutils.bvhtree import BVHTree
+    mb = base_leva.matrix_world
+    tb = BVHTree.FromPolygons([mb @ v.co for v in base_leva.data.vertices], [list(p.vertices) for p in base_leva.data.polygons])
+    gap = min((h[3] for h in (tb.ray_cast(lv.matrix_world @ v.co, Vector((1, 0, 0)), 0.2) for v in lv.data.vertices) if h[0] is not None), default=0.0)
+    lv.matrix_world = Matrix.Translation((gap - 0.002, 0, 0)) @ lv.matrix_world
     lv['alzata'] = 'braccio verso nord e in alto (63 gradi); abbassata: -70 gradi attorno a X globale'
 else:
     MOZZO = LV + Vector((0, -0.4, -0.2))   # il mozzo della leva Meshy: piastra e perno a muro dietro di lui
@@ -416,7 +427,8 @@ else:
                       perno=(-0.41 * dl.x * kl, 0, 0.17 * dl.z * kl))
 lv['asse_rotazione'] = 'X (Blender e Godot), perpendicolare al muro; abbassata = -70 gradi'
 # gabbia con rete metallica (la grata davanti si puo' aprire: oggetto separato)
-GC = LV + Vector((-0.45, 0, 0.1)); GW, GH, GD = 1.1, 1.3, 0.9
+# (profonda fino al muro: a 0,9 restava 5 cm staccata, collaudo del 22 sera)
+GC = LV + Vector((-0.425, 0, 0.1)); GW, GH, GD = 1.1, 1.3, 0.95
 for k, (c, d) in enumerate(((GC + Vector((0, -GW / 2, 0)), (GD, 0.02, GH)), (GC + Vector((0, GW / 2, 0)), (GD, 0.02, GH)),
                             (GC + Vector((0, 0, GH / 2)), (GD, GW, 0.02)), (GC + Vector((0, 0, -GH / 2)), (GD, GW, 0.02)))):
     S('gabbia', box(f'gabbia_{k}', c, d, M['rete'], uv=0.6))
@@ -453,14 +465,24 @@ if LEVA_NUOVA:
         y = cavo[1].y + (cavo[2].y - cavo[1].y) * k / 6
         S('meccanismi', box(f'cavo_gancio{k}', (XE - 0.03, y, ZC), (0.06, 0.02, 0.03), M['ferro'], uv=None))
     # chiusura stagna: cilindro idraulico dal lato del cardine (sud) che spinge sullo stipite
-    AT = Vector((XE - 0.15, PORTA_Y - PORTA_W / 2 - 0.7, 1.2))
-    da = HQ.dimensioni('attuatore_stagno'); ka = 0.6 / da.x
+    # lungo 53 cm: sporge dal muro 24,2 cm, staffa compresa (regola del coordinatore per le cose a muro: al più 25 cm),
+    # con il fianco 1 cm dentro la staffa
+    da = HQ.dimensioni('attuatore_stagno'); ka0 = 0.6 / da.x; ka = 0.53 / da.x
+    AT = Vector((XE - 0.04 - da.y * ka / 2 + 0.003, PORTA_Y - PORTA_W / 2 - 0.7, 1.2))   # x rifatta sotto, col box vero
     att = HQ.metti('ATTUATORE_stagno', 'attuatore_stagno', AT, tuple(da * ka), rot_z=R_(-90))
+    # col box vero (l'origine del modello non è al centro): il fianco 1 cm dentro la staffa (a 3 mm il controllo non
+    # trovava il contatto)
+    bpy.context.view_layer.update()
+    x_max = max((att.matrix_world @ Vector(v)).x for v in att.bound_box)
+    att.location.x += (XE - 0.04 + 0.01) - x_max
+    AT = Vector((att.location.x, AT.y, AT.z))
     att['uso'] = 'chiusura stagna della porta: le tre turbine la mettono in pressione con i tubi TUBO_stagno_1..3'
-    S('meccanismi', box('attuatore_tirante', (AT.x, AT.y + 0.3 + 0.12, AT.z + 0.12), (0.04, 0.26, 0.04), M['ferro'], uv=None))
+    # il tirante dalla testa dell'attuatore (1 cm dentro) fino allo stipite, dove arrivava prima (AT.y + 0,55)
+    t0 = da.x * ka / 2 - 0.01
+    S('meccanismi', box('attuatore_tirante', (AT.x, AT.y + (t0 + 0.55) / 2, AT.z + 0.12 * ka / ka0), (0.04, 0.55 - t0, 0.04), M['ferro'], uv=None))
     S('meccanismi', box('attuatore_staffa', (XE - 0.02, AT.y, AT.z + 0.18), (0.04, 0.5, 0.3), M['ferro'], uv=1.0))
-    empty('PUNTO_chiusura_stagna', AT + Vector((0, 0, 0.18)))
-    attacchi = [AT + Vector((0, -rx * ka, 0.31)) for rx in (-0.25, 0.13, 0.32)]
+    empty('PUNTO_chiusura_stagna', AT + Vector((0, 0, 0.18 * ka / ka0)))
+    attacchi = [AT + Vector((0, -rx * ka, 0.31 * ka / ka0)) for rx in (-0.25, 0.13, 0.32)]
     for i, (px, col, _) in enumerate(POMPE):
         n = i + 1
         T = Vector((px, PY - 1.55, 1.2))
@@ -486,7 +508,11 @@ S('parete_est', quad('pericolo_leva', (XE - 0.02, 2.9, 3.05), 1.3, 0.2, (-1, 0, 
 for nome, file, x, z, w in (('QUADRO_elettrico', 'quadro_elettrico', -6.2, 0.9, 1.1), ('QUADRO_strumenti', 'quadro_strumenti', -1.6, 1.3, 1.2)):
     if HQ.disponibile(file):
         d = HQ.dimensioni(file); k = w / d.x
-        HQ.metti(nome, file, (x, Y0 + d.y * k / 2 + 0.01, z), (w, d.y * k, d.z * k), rot_z=R_(180))
+        # profondi al più 24 cm, come un quadro a muro vero (sporgevano 56 e 36 cm all'altezza della testa; regola del
+        # coordinatore del 23 ottobre: le cose a muro sporgono al più 25 cm)
+        prof = min(d.y * k, 0.24)
+        HQ.metti(nome, file, (x, Y0 + prof / 2 - 0.002, z),   # (col retro sul muro: a 1 cm restava staccato)
+                 (w, prof, d.z * k), rot_z=R_(180))
 
 # ------------------------------------------------------------------ scrivania, CRT, sedia (Meshy)
 usa_collezione('arredo')
@@ -580,13 +606,14 @@ def lampada_rossa(nome, pos, normale, accesa=True):
     if accesa:
         luce(f'LUCE_rossa_{nome}', 'POINT', pos + n * 0.25, 60, (1.0, 0.08, 0.04), raggio=0.08)
 
-lampada_rossa('l1', (X0 + 0.02, 1.0, 3.3), (1, 0, 0))
-lampada_rossa('l2', (XE - 0.02, PORTA_Y, PORTA_H + 0.9), (-1, 0, 0))
-lampada_rossa('l3', (-3.2, Y1 - 0.02, 2.4), (0, -1, 0))
-lampada_rossa('l4', (1.2, Y0 + 0.02, 3.2), (0, 1, 0))
-lampada_rossa('l5', (5.8, Y1 - 0.02, 2.4), (0, -1, 0))
-lampada_rossa('l6', (X0 + 0.02, -4.8, 3.0), (1, 0, 0), accesa=False)
-lampada_rossa('l7', (XE - 0.02, 4.0, 4.7), (-1, 0, 0))   # sopra la leva
+# le lampade col retro a filo del muro (a 2 cm restavano staccate)
+lampada_rossa('l1', (X0 - 0.002, 1.0, 3.3), (1, 0, 0))
+lampada_rossa('l2', (XE + 0.002, PORTA_Y, PORTA_H + 0.9), (-1, 0, 0))
+lampada_rossa('l3', (-3.2, Y1 + 0.002, 2.4), (0, -1, 0))
+lampada_rossa('l4', (1.2, Y0 - 0.002, 3.2), (0, 1, 0))
+lampada_rossa('l5', (5.8, Y1 + 0.002, 2.4), (0, -1, 0))
+lampada_rossa('l6', (X0 - 0.002, -4.8, 3.0), (1, 0, 0), accesa=False)
+lampada_rossa('l7', (XE + 0.002, 4.0, 4.7), (-1, 0, 0))   # sopra la leva
 # neon sul soffitto: uno solo funziona (azzurro freddo), gli altri spenti
 for k, (x, y, acceso) in enumerate(((-4.5, -1.0, False), (0.5, -1.0, True), (5.0, -1.0, False), (0.5, 3.5, False))):
     if HQ.disponibile('plafoniera_neon'):
@@ -594,9 +621,10 @@ for k, (x, y, acceso) in enumerate(((-4.5, -1.0, False), (0.5, -1.0, True), (5.0
         HQ.dividi('plafoniera_neon', 'plafoniera_neon_diffusore', giu, (0.82, 1.0, 0.92), 10.0)
         HQ.metti(f'plafoniera_{k}', 'plafoniera_neon', (x, y, H - 0.72), (1.4, 0.32, 0.1))
         HQ.metti(f'neon_{k}_tubo_sfarfalla' if acceso else f'neon_{k}_tubi', 'plafoniera_neon', (x, y, H - 0.72), (1.4, 0.32, 0.1), parte='plafoniera_neon_diffusore')
-        # catenelle che la reggono
-        for dx in (-0.6, 0.6):
-            S('lampade', cilindro(f'catena_{k}{dx}', (x + dx, y, (H - 0.62 + H) / 2), 0.008, 0.62, M['ferro'], seg=6, uv=None))
+        # catenelle che la reggono: oggetti a parte (non nel gruppo delle lampade, 10 m), dal soffitto (3 mm dentro)
+        # fino a 3 mm dentro il coperchio della plafoniera, così il controllo di posizionamento le vede appese
+        for i, dx in enumerate((-0.6, 0.6)):
+            cilindro(f'plafoniera_{k}_catena_{i}', (x + dx, y, (H - 0.623 + H + 0.003) / 2), 0.008, 0.626, M['ferro'], seg=6, uv=None)
     else:
         S('lampade', box(f'plafoniera_{k}', (x, y, H - 0.62), (1.5, 0.22, 0.08), M['ferro'], uv=None))
         S('lampade', cilindro(f'neon_{k}', (x, y, H - 0.69), 0.025, 1.35, M['neon'] if acceso else M['neon_spento'], asse=(1, 0, 0), seg=10, uv=None))

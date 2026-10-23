@@ -4,7 +4,9 @@
 [ext_resource type="PackedScene" path="res://assets/ambiente/torre/torre_struttura.glb" id="2_strut"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/torre/torre_scivoli.glb" id="3_sciv"]
 [ext_resource type="PackedScene" path="res://assets/ambiente/torre/torre_prop.glb" id="4_prop"]
+[ext_resource type="PackedScene" path="res://scenes/sala/inseguimento/sala_inseguimento.tscn" id="5_ins"]
 
 [node name="SalaTorre" type="Node3D"]
 script = ExtResource("1_torre")
 modelli = Array[PackedScene]([ExtResource("2_strut"), ExtResource("3_sciv"), ExtResource("4_prop")])
+inseguimento_scena = ExtResource("5_ins")

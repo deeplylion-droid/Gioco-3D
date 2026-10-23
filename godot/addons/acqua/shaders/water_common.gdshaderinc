@@ -1,4 +1,4 @@
-// Funzioni comuni dell'acqua (Splash Lagoon).
+// Funzioni comuni dell'acqua (Jilly Jubilee).
 // Richiede le variabili globali degli shader definite in project.godot (sezione [shader_globals])
 // e l'autoload WaterManager che le aggiorna. Vedi labs/acqua/README.md.
 #ifndef WATER_COMMON_INC

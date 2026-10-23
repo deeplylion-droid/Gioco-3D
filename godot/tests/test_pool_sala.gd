@@ -72,6 +72,12 @@ func _run() -> void:
 		if n:
 			n.get_parent().remove_child(n)
 			n.free()
+	# Le proprietà della sala che puntavano dentro le parti tolte (la statua col pulsante della sigla, in
+	# Mascotte): senza azzerarle, _faccia_bagnabile e l'addon audio le troverebbero già liberate (due SCRIPT
+	# ERROR nel log della CI; nel gioco quelle parti non si tolgono mai).
+	for p in [&"statue", &"jingle_button"]:
+		if not is_instance_valid(level.get(p)):
+			level.set(p, null)
 	print("sala caricata in %.1f s" % ((Time.get_ticks_msec() - t0) / 1000.0))
 	t0 = Time.get_ticks_msec()
 	get_tree().root.add_child(level)

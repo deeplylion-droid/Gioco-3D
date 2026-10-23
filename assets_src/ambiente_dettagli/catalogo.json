@@ -809,11 +809,11 @@
    "categoria": "lampade",
    "appoggio": "muro",
    "ingombro_m": [
-    0.356,
-    0.375,
-    0.267
+    0.326,
+    0.413,
+    0.245
    ],
-   "note": "faro da muro acceso, inclinato in basso di 25 gradi",
+   "note": "faro da muro acceso, dritto sul suo braccio",
    "triangoli": 300,
    "glb": "glb/lampade.glb"
   },
@@ -821,11 +821,11 @@
    "categoria": "lampade",
    "appoggio": "muro",
    "ingombro_m": [
-    0.356,
-    0.35,
-    0.291
+    0.326,
+    0.413,
+    0.245
    ],
-   "note": "faro spento, girato verso il basso",
+   "note": "faro spento, dritto sul suo braccio",
    "triangoli": 300,
    "glb": "glb/lampade.glb"
   },

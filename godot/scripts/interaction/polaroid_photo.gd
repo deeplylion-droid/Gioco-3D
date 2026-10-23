@@ -9,8 +9,8 @@ extends Collectible
 const TEX_DIR := "res://assets/models/polaroid/texture/"
 const VIEWER := preload("res://scripts/ui/photo_viewer.gd")
 
-## Numero della foto (1-10): texture Pxx.jpg.
-@export_range(1, 10) var photo := 1:
+## Numero della foto (1-10, 11 la pecora che brilla dell'infermeria): texture Pxx.jpg.
+@export_range(1, 11) var photo := 1:
 	set(value):
 		photo = value
 		_apply()
@@ -101,6 +101,16 @@ func _snap() -> void:
 	else:
 		n = Vector3.UP
 	global_position = hit.position + n * 0.004
+	# Su un fondo curvo (la conca dello scarico) la pendenza del centro non basta: se un angolo entra, si alza
+	# quanto serve (controllo di posizionamento del 22 ottobre, Polaroid05).
+	var alza := 0.0
+	for a in [Vector3(0.07, 0, 0.07), Vector3(-0.07, 0, 0.07), Vector3(0.07, 0, -0.07), Vector3(-0.07, 0, -0.07)]:
+		var angolo: Vector3 = global_transform * (a as Vector3)
+		var qa := PhysicsRayQueryParameters3D.create(angolo + Vector3(0, 0.3, 0), angolo + Vector3(0, -0.3, 0), Layers.WORLD | Layers.PROPS)
+		var ha: Dictionary = space.intersect_ray(qa)
+		if not ha.is_empty():
+			alza = maxf(alza, (ha.position as Vector3).y + 0.002 - angolo.y)
+	global_position.y += alza
 
 
 func _on_interact(by: Node) -> void:

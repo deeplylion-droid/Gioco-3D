@@ -24,7 +24,9 @@ extends Node3D
 ## - la Polaroid 10 sul lettino della pedana NO a -12;
 ## - la balconata dei bambini: al primo salto, un lampo e per un attimo si vede la fila di bambini;
 ## - la luce di lei che sale dal pozzo, più forte man mano che scendi;
-## - la vasca del fondo: entrandoci la discesa è finita ([signal discesa_finita]).
+## - la vasca del fondo: da lì la bocca del tubo porta all'inseguimento (SalaInseguimento, figlia di
+##   questa sala: [member inseguimento_scena]); il capitolo finisce con SB1, alla sua fine
+##   ([signal discesa_finita]). Senza inseguimento la discesa finisce entrando nella vasca.
 
 signal discesa_finita
 
@@ -70,6 +72,9 @@ static func b(v: Array) -> Vector3:
 ## così si caricano col thread ma entrano nella sala uno per passo (un GLB intero fa un fotogramma lungo).
 ## Vuoto: si caricano da DIR.
 @export var modelli: Array[PackedScene] = []
+## L'inseguimento I1 e il finale SB1, dietro il muro est (vuoto: niente inseguimento).
+@export var inseguimento_scena: PackedScene
+var inseguimento: Node3D
 ## Vero quando la sala è costruita del tutto (vedi [method costruisci_a_pezzi]).
 var costruita := false
 ## Se vero, _ready non costruisce niente: la costruisce chi la aggiunge, con [method costruisci_a_pezzi]
@@ -112,6 +117,8 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 				return
 			t0 = Time.get_ticks_usec()
 	fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
+	if inseguimento and inseguimento.has_method(&"costruisci_a_pezzi"):
+		await inseguimento.call(&"costruisci_a_pezzi", ms_per_fotogramma)
 	costruita = true
 	pronta.emit()
 
@@ -197,8 +204,23 @@ func _passi() -> Array:
 	if crea_luci:
 		out.append_array(_passi_luci())
 	out.append(_luce_lei)
+	out.append(_aggiungi_inseguimento)
 	out.append(_fuori_dal_blackout)
 	return out
+
+
+func _aggiungi_inseguimento() -> void:
+	if inseguimento_scena == null or inseguimento:
+		return
+	inseguimento = inseguimento_scena.instantiate() as Node3D
+	inseguimento.set(&"costruzione_a_pezzi", _a_pezzi)
+	inseguimento.set(&"crea_luci", crea_luci)
+	add_child(inseguimento)
+	if inseguimento.has_signal(&"capitolo_finito"):
+		inseguimento.connect(&"capitolo_finito", func():
+			if not _finita:
+				_finita = true
+				discesa_finita.emit())
 
 
 ## Mette nella sala il GLB [param i] (0 struttura, 1 scivoli, 2 prop): da [member modelli] (caricati
@@ -556,8 +578,15 @@ func _polaroid() -> void:
 	# o 5 cm sopra il sedile se il lettino non era ancora costruito (tests/polaroid_libere.gd).
 	foto.set(&"snap_to_surface", false)
 	add_child(foto)
-	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.01, 0)
+	# il fondo mezzo millimetro sopra la stecca più alta sotto la foto (a -11,670; collaudo del 23 ottobre: a +1 cm
+	# restava 8 mm sopra il sedile, posata sul doppione di sotto)
+	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.0023, 0)
 	foto.global_rotation = Vector3(0.0, PI * 0.5, 0.0)
+	# la Polaroid ferma del modello (torre_a.py, per i render) è un doppione sotto quella vera: copriva quella da
+	# raccogliere e la teneva staccata dal lettino
+	var doppione := find_child("torre_polaroid_10", true, false)
+	if doppione:
+		doppione.queue_free()
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.
@@ -658,7 +687,7 @@ func _vasca_fondo() -> void:
 	add_child(area)
 	area.global_position = b([(v[0] + v[2]) / 2.0, (v[1] + v[3]) / 2.0, float(dati["vasca_fondo"]["acqua"]) - 0.2])
 	area.body_entered.connect(func(corpo):
-		if corpo is Player and not _finita:
+		if corpo is Player and not _finita and inseguimento_scena == null:
 			_finita = true
 			discesa_finita.emit())
 
@@ -670,8 +699,9 @@ func _luce_lei() -> void:
 	var fondo := MeshInstance3D.new()
 	fondo.name = "FondoPozzo"
 	var cil := CylinderMesh.new()
-	cil.top_radius = 1.7
-	cil.bottom_radius = 1.7
+	# largo quanto il pozzo dentro (r 1,75 in torre_proposte.pozzo_lei): incastrato tra le pareti, non sospeso
+	cil.top_radius = 1.75
+	cil.bottom_radius = 1.75
 	cil.height = 0.05
 	fondo.mesh = cil
 	fondo.material_override = _materiale_fondo_pozzo()
@@ -763,18 +793,37 @@ func _segnali_strada(radice: Node3D) -> void:
 				punti.append(base + lat * (sg * mezza) + Vector3.UP * y - v * 0.08)
 				y += 0.25
 		var x := -mezza + 0.2
+		var sp := get_world_3d().direct_space_state if is_inside_tree() else null
 		while x < mezza - 0.1:
-			punti.append(base + lat * x + Vector3.UP * (alto - 0.09) - v * 0.06)
+			var q := base + lat * x + Vector3.UP * (alto - 0.09) - v * 0.06
+			if sp:
+				# appoggiato alla traversa: il led va a contatto con la cosa più vicina sopra o dietro (dai dati restava
+				# staccato di qualche centimetro), infilato di 5 mm
+				var meglio := INF
+				var spinta := Vector3.ZERO
+				for dir in [Vector3.UP, v]:
+					var h := sp.intersect_ray(PhysicsRayQueryParameters3D.create(q, q + dir * 0.2, Layers.WORLD))
+					if not h.is_empty():
+						var d := q.distance_to(h.position as Vector3)
+						if d < meglio:
+							meglio = d
+							spinta = dir * maxf(d - led.radius + 0.005, 0.0)
+				q += spinta
+			punti.append(q)
 			x += 0.25
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
 		mm.mesh = led
 		mm.instance_count = punti.size()
+		var tr: Array[Transform3D] = []
 		for i in punti.size():
-			mm.set_instance_transform(i, Transform3D(Basis.IDENTITY, punti[i]))
+			tr.append(Transform3D(Basis.IDENTITY, punti[i]))
+			mm.set_instance_transform(i, tr[i])
 		var mi := MultiMeshInstance3D.new()
 		mi.name = "LedImbocco"
 		mi.multimesh = mm
+		# per il controllo di posizionamento: senza schermo il MultiMesh non conserva le trasformazioni
+		mi.set_meta(&"trasformazioni", tr)
 		mi.material_override = m_led
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		radice.add_child(mi)
@@ -850,6 +899,7 @@ func _sfarfalla(l: OmniLight3D, seme: int) -> void:
 	var vetro := l.get_meta(&"vetro") as MeshInstance3D
 	var mat := vetro.material_override as StandardMaterial3D
 	var ritmo := [0.9, 0.06, 0.12, 0.05, 1.6, 0.08, 0.4, 0.07]
+	l.set_meta(&"sfarfalla", true)      # guasta, ma accesa (per i controlli delle luci)
 	var tw := create_tween().set_loops()
 	for i in ritmo.size():
 		var d: float = ritmo[(i + seme) % ritmo.size()]
@@ -878,6 +928,9 @@ func _emergenza(radice: Node3D, p: Vector3, verso: Vector3) -> void:
 	corpo.material_override = _emissivo(ROSSO, 6.0)
 	radice.add_child(corpo)
 	corpo.global_position = p
+	# appoggiata al muro dietro (il retro della scatola, 8 cm dietro il centro): dai dati restava a 1-3 cm
+	Posa.fissa_al_muro(corpo, verso, 0.08)
+	p = corpo.global_position
 	var l := OmniLight3D.new()
 	l.light_color = ROSSO
 	l.light_energy = 3.5
@@ -918,11 +971,23 @@ func _lampada(radice: Node3D, p: Vector3, appoggio := "") -> void:
 	cappello.material_override = metallo
 	radice.add_child(cappello)
 	cappello.global_position = p + Vector3(0, 0.15, 0)
+	# il portalampada: il bulbo è avvitato sotto il cappello (senza, galleggiava dentro la gabbia)
+	_asta(radice, p + Vector3(0, 0.05, 0), p + Vector3(0, 0.13, 0), 0.028, metallo)
 	if appoggio == "palo":
-		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, -1.25, 0), 0.03, metallo)
+		# il palo fino alla pedana vera sotto (dai dati finiva 1 cm sopra), piantato 2 cm
+		var giu := p + Vector3(0, -1.25, 0)
+		var sp := get_world_3d().direct_space_state if is_inside_tree() else null
+		if sp:
+			var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, -0.2, 0), p + Vector3(0, -3.0, 0), Layers.WORLD)
+			var h := sp.intersect_ray(q)
+			if not h.is_empty():
+				giu = (h.position as Vector3) + Vector3(0, -0.02, 0)
+		_asta(radice, p + Vector3(0, 0.18, 0), giu, 0.03, metallo)
 	elif appoggio.begins_with("muro_"):
 		var verso: Vector3 = {"muro_n": Vector3.FORWARD, "muro_s": Vector3.BACK, "muro_e": Vector3.RIGHT, "muro_o": Vector3.LEFT}[appoggio]
-		_asta(radice, p + Vector3(0, 0.18, 0), p + Vector3(0, 0.18, 0) + verso * 0.4, 0.025, metallo)
+		# il braccio fino al muro vero (a 0,4 m fissi restava 5 cm prima: collaudo del 22 sera)
+		var da := p + Vector3(0, 0.18, 0)
+		_asta(radice, da, _fino_al_sostegno(da, da + verso * 0.4), 0.025, metallo)
 	var l := OmniLight3D.new()
 	l.light_color = CALDO
 	l.light_energy = 4.0
@@ -967,13 +1032,17 @@ func _faro(radice: Node3D, p: Vector3, mira: Vector3, attacco = null) -> void:
 	corpo.add_child(lente)
 	lente.rotation_degrees = Vector3(90, 0, 0)
 	lente.position = Vector3(0, 0, -0.145)
-	# staffa a U attorno al corpo e braccio fino alla colonna
+	# staffa a U attorno al corpo e braccio fino alla colonna; i due perni reggono il corpo nella staffa (senza, il
+	# corpo stava sospeso a 4 cm dai bracci)
 	for sg in [-1.0, 1.0]:
 		_asta(corpo, Vector3(sg * 0.24, 0, 0), Vector3(sg * 0.24, -0.26, 0), 0.02, metallo, false)
+		_asta(corpo, Vector3(sg * 0.25, 0, 0), Vector3(sg * 0.16, 0, 0), 0.025, metallo, false)
 	_asta(corpo, Vector3(-0.24, -0.26, 0), Vector3(0.24, -0.26, 0), 0.02, metallo, false)
 	if attacco != null:
-		var a: Vector3 = attacco
-		_asta(radice, corpo.to_global(Vector3(0, -0.26, 0)), a, 0.04, metallo)
+		# il braccio fino alla superficie della colonna (fino all'asse restava dentro la colonna, senza toccarne la
+		# superficie: collaudo del 22 sera)
+		var da := corpo.to_global(Vector3(0, -0.26, 0))
+		_asta(radice, da, _fino_al_sostegno(da, attacco), 0.04, metallo)
 	var l := SpotLight3D.new()
 	l.light_color = Color(1.0, 0.88, 0.72)
 	l.light_energy = 16.0
@@ -1055,6 +1124,18 @@ static func _griglia() -> ImageTexture:
 
 
 ## Un'asta tonda da a a b (in coordinate del padre se globale = false).
+## Il punto dove un braccio che va da [param da] verso [param verso_punto] incontra il sostegno vero (muro, colonna:
+## la loro collisione), 5 mm dentro; se non c'è niente, [param verso_punto].
+func _fino_al_sostegno(da: Vector3, verso_punto: Vector3) -> Vector3:
+	var dir := (verso_punto - da).normalized()
+	var sp := get_world_3d().direct_space_state if is_inside_tree() else null
+	if sp == null:
+		return verso_punto
+	var q := PhysicsRayQueryParameters3D.create(da + dir * 0.05, verso_punto + dir * 0.3, Layers.WORLD)
+	var h := sp.intersect_ray(q)
+	return (h.position as Vector3) + dir * 0.005 if not h.is_empty() else verso_punto
+
+
 func _asta(padre: Node3D, a: Vector3, b_: Vector3, r: float, m: Material, globale := true) -> void:
 	var mi := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
@@ -1105,14 +1186,17 @@ func _catena(radice: Node3D, fondo: Vector3) -> void:
 	cm.top_radius = 0.02
 	cm.bottom_radius = 0.02
 	var basso := fondo.y + 6.0
-	cm.height = 14.0 - basso
+	# il cavo arriva all'ultimo braccetto (20 cm sotto l'ultimo grappolo): prima finiva sopra e i braccetti più bassi
+	# partivano dal vuoto, poi 10 cm sotto, con il capo libero
+	var fine := basso - 0.2 - 0.005
+	cm.height = 14.0 - fine
 	cavo.mesh = cm
 	var nero := StandardMaterial3D.new()
 	nero.albedo_color = Color(0.06, 0.06, 0.06)
 	nero.metallic = 0.8
 	cavo.material_override = nero
 	radice.add_child(cavo)
-	cavo.global_position = Vector3(fondo.x + 1.2, (14.0 + basso) / 2.0, fondo.z)
+	cavo.global_position = Vector3(fondo.x + 1.2, (14.0 + fine) / 2.0, fondo.z)
 	for y in [9.0, -3.0, basso]:
 		for k in 3:
 			var a := TAU * k / 3.0

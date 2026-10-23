@@ -10,9 +10,9 @@ config_version=5
 
 [application]
 
-config/name="Splash Lagoon"
-config/description="Horror in prima persona (mascot horror) sull'acquapark di una nave da crociera abbandonata. Titolo provvisorio."
-config/version="0.3.8"
+config/name="Jilly Jubilee"
+config/description="Jilly Jubilee: horror in prima persona (mascot horror) sull'acquapark di una nave da crociera abbandonata."
+config/version="0.3.9"
 run/main_scene="res://scenes/ui/menu_principale.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
@@ -21,11 +21,13 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+DatiVecchi="*res://scripts/game/dati_vecchi.gd"
 Grafica="*res://addons/grafica/impostazioni_grafiche.gd"
 WaterManager="*res://addons/acqua/scripts/water_manager.gd"
 Game="*res://scripts/game/game.gd"
 GameState="*res://scripts/game/game_state.gd"
 Audio="*res://addons/audio/audio.gd"
+LuciBianche="*res://scripts/game/luci_bianche.gd"
 
 [display]
 
@@ -33,6 +35,11 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[gioco]
+
+luci_bianche=1.0
+luci_bianche.luci40=0.4
 
 [input]
 

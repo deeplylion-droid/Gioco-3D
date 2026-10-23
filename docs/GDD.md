@@ -1,6 +1,6 @@
 # Documento di progetto (GDD)
 
-Titolo provvisorio: **Splash Lagoon**. Finché l'utente non sceglie il nome, nel gioco non si scrive: il titolo mostra solo la statua e "Capitolo 1 · demo". Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti.
+Titolo: **Jilly Jubilee** (scelta dell'utente, 22 ottobre: "Sì, chiamiamolo Jilly Jubilee"), come la mascotte. Prima era "Splash Lagoon", che resta il nome provvisorio del parco nel gioco. Il logo è **A, l'insegna del parco rovinata** (scelta dell'utente, 22 ottobre: "Senti usiamo l'A di prima", dopo il secondo giro D/E/F): "Jilly" in corsivo corallo e "JUBILEE" in oro su un nastro blu, con stelle e una piccola medusa, come insegna, targa e manifesto del parco, ma con lo smalto saltato fino alla ruggine, colature e crepe. Va nella schermata del titolo com'era nella prova che ha visto (`titolo_a.jpg`, in alto a sinistra sopra "Capitolo 1 · demo" e il menu). Scartati: B anni '90 e C horror del primo giro, D neon, E titolo da film e F disegno a pastelli del secondo giro. Le voci segnate **Da decidere** vanno proposte all'utente, con immagini o render e 2-3 opzioni, prima di andare avanti. **Sfondo della schermata del titolo: A+B** (scelta dell'utente, 22 ottobre): sopra la statua la cupola di vetro dell'acquapark con la pioggia, che a ogni lampo accende vetro e travi e mostra la sagoma della torre degli scivoli; ai suoi piedi l'acqua allagata con le gocce, la paperella, il pallone e l'insegna di Jilly che sfarfalla. La camera resta com'era (l'acqua quasi non si vede: scelta b). Scartate B+C e tutte e tre insieme.
 
 ## Regola d'oro
 
@@ -29,7 +29,7 @@ Le scelte di **stile, trama e design** le decide l'utente: si preparano proposte
 ## Trama (decisa)
 
 - Il giocatore **si sveglia a bordo**, senza spiegazioni e senza prologhi lunghi. Il mistero resta.
-- I nomi proposti finora sono la nave *Jubilee*, la compagnia *Wonderwave Cruises* e l'acquapark *Splash Lagoon*. Sono **provvisori**: l'utente non li ha confermati.
+- I nomi sono la nave *Jubilee*, la compagnia *Wonderwave Cruises* e l'acquapark *Splash Lagoon*: **confermati dall'utente il 22 ottobre** per lo spot della crociera, dove li dice lo speaker. Nei cartelli del parco resta la regola: solo disegni, e per scritto solo il nome di Jilly Jubilee.
 
 ### Lore nascosta (decisa dall'utente)
 
@@ -164,7 +164,7 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
   - **Riserva approvata dall'utente** (21 ottobre): "se non riusciamo a essere soddisfatti col geyser possiamo eliminarlo e fare un'animazione di tuffo verso il basso di Jilly". Se la V1 nel gioco non convince, al posto del geyser lei si tuffa verso il basso nella fossa.
   - **Si passa al tuffo** (decisione del coordinatore, 22 ottobre notte, come autorizzato dall'utente). Nel gioco la V1 ha dei buchi da cui si vedono l'occhio e il viso di lei proprio mentre sparisce, ed è rosa a grumi, più gelatina che acqua. Chiuderli vorrebbe dire rifare la simulazione, giorni di lavoro con un risultato incerto. La V1 resta da parte nel branch lavoro/ambienti-1. Fino al tuffo resta il geyser di prima (GeyserFossa).
-  - **Il tuffo: scelta A, di testa** (scelta dell'utente, 22 ottobre). Si spinge sulle mani sul bordo, ti guarda un'ultima volta, si inarca e si tuffa di testa nella fossa; i tentacoli entrano per ultimi, come una frusta. Le parti comuni sono già fatte: schizzo all'entrata, onde, tonfo, e lei che sparisce solo quando è tutta sotto. Lo schizzo su misura (corona alta, gocce grosse, schiuma bianca) si fa insieme all'animazione. Scartate: B "da medusa" e C all'indietro.
+  - **Il tuffo: scelta A, di testa** (scelta dell'utente, 22 ottobre). Si spinge sulle mani sul bordo, ti guarda un'ultima volta, si inarca e si tuffa di testa nella fossa; i tentacoli entrano per ultimi, come una frusta. Le parti comuni sono già fatte: schizzo all'entrata, onde, tonfo, e lei che sparisce solo quando è tutta sotto. Lo schizzo su misura (corona alta, gocce grosse, schiuma bianca) si fa insieme all'animazione. Scartate: B "da medusa" e C all'indietro. **Il tuffo nel gioco, approvato dall'utente** (22 ottobre, "Approvo così"): lo schizzo è acqua bianca che si rompe in fili e spruzzi, con gocce chiare e tante alla fine; i tentacoli restano dietro di lei ed entrano per ultimi.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
@@ -253,8 +253,19 @@ Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel
 - **Il boato** (risposta dell'utente, 21 ottobre: opzione b): è il verso lontano e profondo di lei, Jilly, che lo chiama dalla porta in fondo al corridoio. Lo squalo obbedisce: si gira, esita e corre da lei.
 - **La porta** (risposta dell'utente, 21 ottobre: sì): è la porta tagliafuoco del ponte inferiore che già si chiudeva da sola. Ora si chiude dietro lo squalo che scappa e resta chiusa: da lì non si passa.
 - **Niente video prima** (risposta dell'utente, 21 ottobre): la scena va direttamente nel gioco e l'utente la giudica giocando. "Mi raccomando di farla bene. Lo squalo si vede in primissimo piano con la bocca spalancata."
+- **Riscontro dell'utente giocando la v0.3.8** (22 ottobre): il gioco **inizia a torcia spenta**, per l'atmosfera (si accende con F dopo la scena); c'era un momento in cui la camera passava dentro lo squalo, da correggere; quando si gira e se ne va era troppo lento e goffo: la corsa va più veloce e decisa, con gli stessi momenti. Dettagli in `docs/riscontri/2026-10-22_prova_squalo.md`.
 - **Dove ti svegli** (risposta dell'utente, 21 ottobre: a): il risveglio si sposta di circa 6 m verso ovest (x 14-15), davanti alla porta chiusa della sala pompe, guardando a est. Lo squalo corre per circa 7 m fino alla porta tagliafuoco. Finita la scena si torna verso ovest, la strada di sempre. Il tratto di corridoio che prima restava alle spalle va rifinito come il resto.
 - **I dettagli della scena** (decisi da mascotte, approvati dall'utente il 22 ottobre): lo squalo scatta tre volte con la testa come per mordere; nell'esitazione si volta a guardarti con uno sbuffo; alla porta si abbassa per passare; durante la scena sei in ginocchio, con gli occhi a circa 1 m; dura circa 13 secondi, poi riprendi i comandi. La torcia e la riga dei comandi aspettano la fine della scena. È nella v0.3.8.
+
+## Lo spot della crociera Jubilee (idea dell'utente, 22 ottobre)
+
+Parole dell'utente: "su poppy playtime all'inizio parte un video stile VHS enigmatico. Noi potremmo avere uno spot pubblicitario, sempre stile tv a tubo catodico, della crociera Jubilee." Uno spot anni '90 della crociera per famiglie, girato nel gioco vero: l'acquapark acceso e pulito com'era, gli scivoli, Jilly star del suo show, il suo logo da nuovo e la sigla pulita, con il filtro della TV a tubo catodico e della VHS (righe, colori sbavati, tracking che salta). Scelte dell'utente (22 ottobre):
+- **dove**: b, dopo "Nuova partita", subito prima del risveglio;
+- **il finale**: lo spot va liscio e allegro, poi si guasta e arriva l'occhio di Jilly "con un effetto come ipnotico aggressivo crescente. Molto horror";
+- **la voce**: a, uno speaker in inglese come una vera pubblicità americana anni '90; se non convince, c, solo la sigla e il logo.
+Da fare dopo la v0.3.9. Prima si propongono all'utente per iscritto il testo dello spot e l'elenco delle inquadrature.
+- **Bozza** (ambienti-2, 22 ottobre sera): `docs/proposte/spot/bozza.md`, circa 43 s in 9 inquadrature, 7 frasi dello speaker, stima 4-5 giornate di lavoro. Mandata all'utente con la pagina https://claude.ai/artifact/QdGpcHr3MvEKEHtMnFshfw (testo, nomi provvisori detti dallo speaker, inquadrature, piscina e torre, logo all'inizio, finale dell'occhio).
+- **Risposte dell'utente (22 ottobre, sera)**: approvati il testo dello speaker (le 7 frasi), le 9 inquadrature e il finale dell'occhio; **confermati i nomi** detti dallo speaker (la nave *Jubilee*, la compagnia *Wonderwave Cruises*, l'acquapark *Splash Lagoon*); piscina a onde **e** torre, tutte e due; all'inizio **b**: subito il logo di Jilly da nuovo, senza ruggine (resta la scritta «PLAY» del videoregistratore). La produzione comincia la notte del 22 su rami a parte e si unisce dopo la v0.3.9. Per la sala dello spot (risposta dell'utente "A a"): **nessun giocattolo**, la sala tutta in ordine come prima dell'apertura (a, invece della b consigliata); **fari della vasca di Jilly rosa e viola** come i suoi tentacoli (a).
 
 ## Allungare il capitolo (scelte dell'utente, 18 ottobre)
 
@@ -276,6 +287,8 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 - strisce delle paratie: nella torre le strisce vogliono dire "chiuso". a) sulla paratia giusta la trave diventa liscia (consigliata); b) restano tutte a strisce, perché finché non colpisci il bersaglio sono chiuse.
 
 **Scelte dell'utente (22 ottobre):** vasche **c**, cioè acqua meno torbida e verde-azzurra col fondo che si intravede, più una lampada da lavoro sopra ogni vasca; strisce **a**, la trave della paratia giusta diventa liscia e sulla sbagliata le strisce restano.
+
+**Lei nell'inseguimento** (22 ottobre): animazioni fatte da mascotte (sale dall'acqua, incombe con la testa che ti segue, presa, respinta quando il getto la colpisce in faccia, scende, colpi alla grata, affacciata in SB1 che ti fissa). **La voce: scelta B dell'utente** ("B", 22 ottobre): versi nuovi fatti apposta, nello stesso stile dei suoi suoni di adesso (un verso quando sale e incombe, un grido quando ti prende, un lamento quando la colpisci, un rantolo mentre ti fissa dal pozzo, versi di rabbia contro la grata), da far sentire all'utente prima di metterli nel gioco. Scartata A (riusare i versi che ha già). **Approvate dall'utente sulla pagina del pomeriggio** (22 ottobre): le animazioni e la voce, dal video con la voce nuova. Scelte sulla stessa pagina: nella **seconda vasca** lei sale accanto alla vasca, come nella prima (b); dietro la **grata** c'è un pozzetto nel pavimento, come quello di SB1, da cui sale (a). Il fondo allagato della sala resta torbido: l'acqua chiara della scelta c è nelle vasche, negli scoli e nel bacino di SB1.
 Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
@@ -333,7 +346,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 
 ## La mascotte del capitolo 1: la medusa
 
-**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il titolo del gioco è ancora da decidere: per ora resta "Splash Lagoon", che è anche il nome del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
+**Il suo nome è Jilly Jubilee** (scelta dell'utente, 18 ottobre). Il gioco si chiama come lei: **Jilly Jubilee** (scelta dell'utente, 22 ottobre); "Splash Lagoon" resta il nome provvisorio del parco. I titoli proposti dal coordinatore ("No Lifeguard on Duty", "The Deep End" e simili) non gli sono piaciuti.
 
 **Il nome nel parco, scelte del 19 ottobre** (render e scatti in `docs/proposte/mascotte/jilly/`, lavoro/mascotte 38c2738):
 - **logo stile B**, "spettacolo della nave": "Jilly" in corsivo corallo, "JUBILEE" in oro su un nastro blu, stelle e una piccola medusa. Nota dell'utente: "ma molto più invecchiati", quindi targa, manifesto e insegna vanno invecchiati molto di più di quelli proposti;

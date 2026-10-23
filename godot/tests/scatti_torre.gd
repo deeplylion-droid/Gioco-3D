@@ -29,6 +29,9 @@ const SCATTI := {
 	"s3_vasca_scaletta": [[36.4, 19.6, -1.3], [36.4, 15.0, -6.6], 80.0],
 	"s3b_vasca_scaletta": [[31.3, 13.6, -6.0], [33.2, 10.0, -10.0], 80.0],
 	"s3c_vasca_scaletta": [[24.6, 10.0, -7.4], [24.6, 15.0, -12.8], 80.0],
+	# il fondo: dalla vasca del fondo i gradini salgono alla bocca del tubo dell'inseguimento
+	"s4_bocca_gradini": [[33.6, 12.6, -17.6], [37.6, 17.4, -19.0], 75.0],
+	"s4b_bocca_gradini": [[36.9, 12.2, -18.2], [37.4, 17.6, -18.9], 75.0],
 }
 
 var cartella := "user://scatti_torre"

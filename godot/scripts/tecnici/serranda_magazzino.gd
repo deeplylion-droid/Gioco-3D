@@ -22,6 +22,9 @@ extends PoweredDoor
 @export var quota_architrave := 2.45
 ## Dove deve arrivare il giocatore per aprirla (coordinate locali, dalla parte del magazzino).
 @export var zona_apertura := AABB(Vector3(-1.2, 0.0, 0.7), Vector3(2.4, 2.5, 3.0))
+## Il lettore della keycard (LettoreTessera, scelta dell'utente del 18 ottobre): se c'è, la serranda
+## si apre solo quando il lettore ha letto la tessera, e allora si apre subito. Vuoto = come prima.
+@export var lettore: Node
 
 ## Vero quando il giocatore ci è arrivato dal magazzino: si apre e resta aperta.
 var aperta := false
@@ -36,10 +39,11 @@ func _ready() -> void:
 	stay_open = true
 	safety_check = false
 	super._ready()
-	# Si vede solo il modello: il pannello del graybox resta per la collisione.
+	# Si vede solo il modello: del pannello del graybox resta solo la collisione (via la mesh, non nascosta:
+	# nascosta, il controllo di posizionamento la rendeva visibile e la trovava dentro la barra)
 	for c in get_children(true):
 		for m in c.find_children("*", "MeshInstance3D", true, false):
-			(m as MeshInstance3D).visible = false
+			(m as MeshInstance3D).mesh = null
 	var zona := Area3D.new()
 	zona.name = "ZonaApertura"
 	zona.collision_layer = 0
@@ -55,12 +59,16 @@ func _ready() -> void:
 	zona.body_entered.connect(func(b: Node3D):
 		if b is Player:
 			apri())
+	if lettore and lettore.has_signal(&"sbloccato"):
+		lettore.connect(&"sbloccato", apri)
 	# Dopo che la sala e gli ambienti tecnici hanno sistemato i materiali.
 	_prepara_modello.call_deferred()
 
 
-## Si alza (e resta su).
+## Si alza (e resta su). Con il lettore, solo dopo che ha letto la keycard.
 func apri() -> void:
+	if lettore and not bool(lettore.get(&"aperto")):
+		return
 	aperta = true
 
 
@@ -148,9 +156,13 @@ func _prepara_modello() -> void:
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.mesh = mesh_lamella
 	mm.instance_count = lamelle
+	var tr: Array[Transform3D] = []
 	for k in lamelle:
-		mm.set_instance_transform(k, Transform3D(Basis.IDENTITY, Vector3(0.0, k * passo, 0.0)))
+		tr.append(Transform3D(Basis.IDENTITY, Vector3(0.0, k * passo, 0.0)))
+		mm.set_instance_transform(k, tr[k])
 	_lamelle = MultiMeshInstance3D.new()
+	# per il controllo di posizionamento: senza schermo il MultiMesh non conserva le trasformazioni
+	_lamelle.set_meta(&"trasformazioni", tr)
 	_lamelle.name = "Lamelle"
 	_lamelle.multimesh = mm
 	_lamelle.material_override = materiale_lamelle

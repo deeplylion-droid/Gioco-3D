@@ -1,6 +1,6 @@
 # addons/audio
 
-Tutto il suono di Splash Lagoon: fondi della sala, tuoni, nave, gocce, neon e luci d'emergenza,
+Tutto il suono di Jilly Jubilee: fondi della sala, tuoni, nave, gocce, neon e luci d'emergenza,
 passi, zaino-pompa, torcia, meccanismi, Polaroid, la sigla della mascotte (pulita e rovinata),
 stinger di morte e dei bambini, filtro sott'acqua, volumi e pannello delle opzioni.
 

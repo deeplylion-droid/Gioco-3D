@@ -87,6 +87,8 @@ func _rebuild() -> void:
 		mm.set_instance_transform(i, xforms[i])
 	var frame := MultiMeshInstance3D.new()
 	frame.multimesh = mm
+	# per il controllo di posizionamento: senza schermo il MultiMesh non conserva le trasformazioni
+	frame.set_meta(&"trasformazioni", xforms)
 	frame.material_override = frame_material
 	_vis.add_child(frame)
 

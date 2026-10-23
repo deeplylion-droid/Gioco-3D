@@ -681,16 +681,18 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 	var p3 := PACK_STATION + Basis(Vector3.UP, rack_yaw) * Vector3(0.5, 0.83, 0.02)
 	# Le zone del documento del livello che non sono ancora modellate (corridoio, spogliatoi,
 	# stanzino, camera delle onde, sala pompe, ponte inferiore) hanno un posto provvisorio in sala.
+	# Le quote sono quelle dopo l'appoggio (snap_to_surface), così le Polaroid stanno già sul loro sostegno anche
+	# prima che lo snap parta (controllo di posizionamento del 22 ottobre).
 	var spots := [
 		[1, Vector3(-1.6, 0.0, 18.4), 0.4],     # vicino a dove si entra
 		[2, Vector3(-6.0, 0.6, 8.0), 1.2],      # su un lettino
 		[3, p3, rack_yaw + 0.35],                # sulla rastrelliera dei bagnini, accanto allo zaino
-		[4, Vector3(-16.03, 1.5, -15.35), 0.2],  # sulla struttura di gioco: in cima alla scala, dove ci si arriva a piedi
-		[5, Vector3(1.2, -2.0, 2.9), 2.0],      # sul fondo della piscina, sotto la pozza
+		[4, Vector3(-16.03, 1.2416, -15.35), 0.2],  # sulla struttura di gioco: in cima alla scala, dove ci si arriva a piedi
+		[5, Vector3(1.19978, -2.17, 2.899858), 2.0],   # sul fondo della piscina, sotto la pozza: piatta, senza snap (fondo a conca)
 		[6, Vector3(-4.6, -1.9, 4.2), 0.9],     # vicino alle bocchette della camera delle onde
 		[7, Vector3(8.2, 1.2, -2.4), 1.6],      # sulla sedia del bagnino
-		[8, Vector3(-8.9, 0.0, 6.6), 0.7],      # sul bordo della vasca d'arrivo (sulla copertina: non sotto il pannello caduto)
-		[9, Vector3(-9.9, 0.0, -9.4), 2.4],     # accanto alle vasche basse
+		[8, Vector3(-8.9, 0.016, 6.6), 0.7],      # sul bordo della vasca d'arrivo (sulla copertina: non sotto il pannello caduto)
+		[9, Vector3(-9.9, 0.004, -9.4), 2.4],     # accanto alle vasche basse
 		[10, Vector3(13.5, 9.0, -17.5), 0.6],   # in cima alla torre degli scivoli (fuori dalla demo)
 	]
 	if tecnici:
@@ -698,7 +700,7 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 		# onde, a terra contro il muro sud tra le bocchette; P7 sulla scrivania accanto al monitor, nello
 		# spazio libero dietro lo schermo, tutta dentro il piano (prima era sul bordo, mezza fuori) e
 		# fuori dai fogli della scrivania (ci stava sotto: prova del 19 ottobre).
-		for t in [[6, Vector3(9.2, 0.01, 1.75), 0.4], [7, Vector3(42.0, 0.79, 3.23), 2.92]]:
+		for t in [[6, Vector3(9.2, 0.004, 1.75), 0.4], [7, Vector3(42.0, 0.7839, 3.23), 2.92]]:
 			var i := spots.find_custom(func(x): return int(x[0]) == int(t[0]))
 			spots[i] = [t[0], TECNICI_XF * (t[1] as Vector3), float(t[2]) - PI * 0.5]
 	for s in spots:
@@ -711,6 +713,10 @@ func _polaroids(has_interiors := false, tecnici: Node3D = null) -> void:
 		p.rotation = Vector3(0, s[2], 0)
 		p.set(&"photo", s[0])
 		p.set(&"entry_id", StringName("p%02d" % s[0]))
+		if int(s[0]) == 5:
+			# sul fondo a conca lo snap la inclinava su un punto solo e un angolo entrava nel fondo: piatta, poggia
+			# sull'angolo più alto (fondo visibile misurato da tests/sonda_p05.gd)
+			p.set(&"snap_to_surface", false)
 		own(p, g)
 
 
@@ -769,7 +775,7 @@ func _gameplay(has_interiors := false) -> void:
 ## muro ovest; poi lungo il muro, tra il muro e la vasca d'arrivo, come la strada B approvata il 16
 ## ottobre, fino alla fossa dell'area bimbi dove lei è affacciata (tappa 8). Uscendo dalla serranda
 ## (angolo sud-ovest) la si vede davanti, 7 m a nord, che attraversa la sala.
-const SCIA := [Vector3(-0.5, 0.0, 12.45), Vector3(-1.0, 0.0, 12.75), Vector3(-1.8, 0.0, 13.0),
+const SCIA := [Vector3(-0.62, 0.0, 12.33), Vector3(-1.0, 0.0, 12.75), Vector3(-1.8, 0.0, 13.0),
 	Vector3(-2.8, 0.0, 12.95), Vector3(-3.6, 0.0, 12.7), Vector3(-4.6, 0.0, 12.55), Vector3(-6.0, 0.0, 12.5),
 	Vector3(-7.5, 0.0, 12.55), Vector3(-9.0, 0.0, 12.5), Vector3(-10.5, 0.0, 12.45), Vector3(-12.0, 0.0, 12.5),
 	Vector3(-13.5, 0.0, 12.45), Vector3(-15.0, 0.0, 12.4), Vector3(-16.3, 0.0, 12.2), Vector3(-17.4, 0.0, 11.7),
@@ -794,9 +800,15 @@ func _tappa7(has_interiors: bool) -> void:
 	var muro_z := VASCA.z + VASCA_INTERNO.y * 0.5 + 0.42
 	r.set(&"bordo_vasca", PackedVector3Array([Vector3(-0.95, VASCA_BORDO, muro_z - 0.22), Vector3(-0.35, VASCA_BORDO, muro_z - 0.24),
 		Vector3(0.45, VASCA_BORDO, muro_z - 0.2)]))
-	r.set(&"muro_vasca", PackedVector3Array([Vector3(-0.5, VASCA_BORDO - 0.01, muro_z + 0.02), Vector3(-0.5, 0.5, muro_z + 0.02),
-		Vector3(-0.5, 0.02, muro_z + 0.02)]))
-	r.set(&"gocciolatoi", PackedVector3Array([Vector3(-0.55, VASCA_BORDO - 0.03, muro_z + 0.03), Vector3(0.45, VASCA_BORDO - 0.03, muro_z + 0.03)]))
+	# giù per il muro vero (la faccia esterna è a z 12,22, 15 cm più indietro di muro_z): a 2 mm, sopra il toro del coping
+	# (centro a y 0,9625 e z 12,205, raggio 3,75 cm) e poi dritta fino a terra; a x -0,62, così il nastro (largo 26 cm)
+	# resta fuori dalla scatola del pulsante (x da -0,2 a 0,2). Collaudo del 23 ottobre: era a 15 cm dal muro.
+	const MURO_X := -0.62
+	const MURO := 12.222
+	r.set(&"muro_vasca", PackedVector3Array([Vector3(MURO_X, 0.997, 12.226), Vector3(MURO_X, 0.982, 12.240),
+		Vector3(MURO_X, 0.9625, 12.2445), Vector3(MURO_X, 0.943, 12.240), Vector3(MURO_X, 0.930, 12.226),
+		Vector3(MURO_X, 0.92, MURO), Vector3(MURO_X, 0.5, MURO), Vector3(MURO_X, 0.0, MURO)]))
+	r.set(&"gocciolatoi", PackedVector3Array([Vector3(MURO_X, 0.91, MURO + 0.015), Vector3(0.45, 0.91, MURO + 0.015)]))
 	own(r, gp)
 	level.set(&"ritorno", r)
 	if has_interiors:
@@ -813,7 +825,8 @@ func _tappa7(has_interiors: bool) -> void:
 		var porta: Area3D = load("res://scripts/tecnici/porta_maniglione.gd").new()
 		porta.name = "PortaSalaPompeInterni"
 		porta.position = INTERNI_OFFSET + Vector3(bb.get_center().x, 1.0, bb.end.z + 0.35)
-		porta.set(&"angolo_apertura", -95.0)
+		# aperta contro il muro del corridoio (collaudo del 22 ottobre: a 95 gradi sporgeva 1 m sulla strada del ritorno)
+		porta.set(&"angolo_apertura", -172.0)
 		porta.set(&"collisione_propria", true)
 		own(porta, gp)
 		shape_box(porta, Vector3(1.0, 1.6, 0.5))
@@ -851,6 +864,9 @@ func _medusa_bagnata(nome: String) -> Node3D:
 			["M_occhio_bulbo", "medusa_occhio"]]:
 		bagnata[coppia[0]] = load(MEDUSA_DIR + coppia[1] + ".tres")
 	medusa.set(&"material_map", bagnata)
+	# i tentacoli si piegano contro bordi e pareti invece di entrarci (controllo di posizionamento del 22 ottobre:
+	# nella fossa passavano dentro le pareti fino a 12 cm, nella vasca centrale dentro il muro sud fino a 6 cm)
+	medusa.set(&"tentacoli_contro_i_muri", true)
 	# Gocce (coordinate della medusa, misurate sulla vasca centrale).
 	var o := MEDUSA_AFFACCIATA
 	medusa.set(&"punti_gocce", PackedVector3Array([
@@ -865,6 +881,10 @@ func _medusa_bagnata(nome: String) -> Node3D:
 ## Fossa provvisoria (proposta mandata all'ambiente) finché non arrivano i suoi marker: lato sud
 ## della VascaBimbi1, metà ovest. Origine della posa "affacciata" e direzione in cui guarda (verso
 ## il giocatore che arriva dal muro ovest), fondo del condotto.
+## Di quanto alzare lei rispetto al marker della fossa (sala_dati.json, medusa_sbuca): il marker mette il bordo 1,0 m
+## sopra l'origine come nella vasca centrale, ma qui le mani affondavano 3 cm nel bordo a scacchi (controllo di
+## posizionamento del 23 ottobre, stato lei_fossa).
+const ALZA_SBUCA := 0.035
 const FOSSA_PROVVISORIA := Vector3(-13.0, -0.45, -7.6)
 const FOSSA_SGUARDO := Vector3(-0.7071, 0.0, 0.7071)
 const FOSSA_FUGA_PROVVISORIA := Vector3(-11.0, -2.6, -6.9)
@@ -895,7 +915,8 @@ func _tappa8() -> void:
 	if pronta:
 		sbuca.name = "MedusaSbuca"
 		var ms: Dictionary = fossa["medusa_sbuca"]
-		sbuca.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(float(ms["rotazione_gradi_godot"][1]))), _v3(ms["posizione_godot"]))
+		sbuca.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(float(ms["rotazione_gradi_godot"][1]))),
+				_v3(ms["posizione_godot"]) + Vector3.UP * ALZA_SBUCA)
 		fuga.name = "MedusaFuga"
 		fuga.position = _v3(fossa["medusa_fuga"]["posizione_godot"])
 		lei.set(&"livello_pieno", float(fossa.get("livello_acqua_pieno", {}).get("y", 0.42)))
@@ -913,6 +934,14 @@ func _tappa8() -> void:
 		lei.set(&"coperchio", c)
 		break
 	var medusa := _medusa_bagnata("MedusaFossa")
+	# niente gocce: i punti sono misurati sulla medusa della vasca centrale, e con la posa della fossa finivano in
+	# aria (controllo di posizionamento del 22 ottobre, stato lei_fossa). I punti restano: servono a LeiSbuca
+	# (getti del geyser, punti da colpire, quando è tutta sotto).
+	medusa.set(&"gocce", false)
+	# i tentacoli fuori dai muri della fossa: la posa della vasca centrale è fatta per un altro bordo, e spingerli
+	# fuori mentre si gioca li faceva salire ad arco (scatti del 22 ottobre); qui la loro posa è calcolata prima, sui
+	# vertici veri (tools/tentacoli_fossa_posa.gd)
+	medusa.set(&"tentacoli_posa_fissa", "res://assets/models/medusa/tentacoli_fossa.json")
 	medusa.transform = sbuca.transform
 	medusa.visible = false
 	own(medusa, lei)

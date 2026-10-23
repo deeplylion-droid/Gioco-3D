@@ -1,305 +1,6 @@
 [
 	{
 		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			-6.03,
-			0.96,
-			36.8
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_1",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			2.1,
-			1.26,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_2",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			2.4,
-			1.22,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_4",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			3.0,
-			1.14,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/fischietto_5",
-		"squadra": "ambienti-1",
-		"problema": "sospeso",
-		"pos": [
-			3.3,
-			1.1,
-			30.4
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_luci",
-		"squadra": "da assegnare",
-		"problema": "sospeso",
-		"pos": [
-			-1.4,
-			-6.4,
-			47.58
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.78,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/cartello_corridoio",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.53,
-			0.0,
-			39.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/valvola_corridoio_2",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			6.28,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/estintore",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.03,
-			0.0,
-			40.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-1.22,
-			0.0,
-			40.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/secchio_mocio",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-2.22,
-			0.0,
-			29.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-3.22,
-			0.0,
-			36.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/cestino",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-4.47,
-			0.0,
-			38.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/pallone",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-7.47,
-			0.0,
-			40.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-5.97,
-			0.0,
-			36.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-5.97,
-			0.0,
-			33.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/cestino_spogliatoi",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-5.97,
-			0.0,
-			30.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_01_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			37.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			33.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/porta_stanzino",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			32.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/pallone_spogliatoi",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			30.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/cartello_bagnato",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.53,
-			0.0,
-			29.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_telaio",
 		"squadra": "ambienti-1",
 		"problema": "ingombro",
@@ -308,8 +9,8 @@
 			0.0,
 			25.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta"
 	},
 	{
 		"zona": "interni",
@@ -321,177 +22,8 @@
 			0.0,
 			25.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/sedia",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			2.78,
-			0.0,
-			33.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/estintore_stanzino",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.78,
-			0.0,
-			34.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_cordone",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-4.22,
-			0.0,
-			7.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_18",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			2.78,
-			0.0,
-			6.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_17",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.03,
-			0.0,
-			7.25
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_13",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.03,
-			0.0,
-			12.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_11",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			1.53,
-			0.0,
-			13.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_10",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			0.03,
-			0.0,
-			13.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_14",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.28,
-			0.0,
-			11.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_15",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.28,
-			0.0,
-			10.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/sala_vasca_colonnina_16",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			4.28,
-			0.0,
-			8.75
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_6",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-17.97,
-			0.0,
-			16.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/AngoloScatoloni/scat_caduto_0",
-		"squadra": "ambienti-1",
-		"problema": "ingombro",
-		"pos": [
-			-18.97,
-			0.0,
-			16.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta"
 	},
 	{
 		"zona": "sala",
@@ -503,332 +35,293 @@
 			0.0,
 			-17.5
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			19.53,
-			0.0,
-			-11.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			19.53,
-			0.0,
-			-18.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_5",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-3.97,
-			0.0,
-			46.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-14.47,
-			0.0,
-			39.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre)"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_ringhiera",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
-			-2.72,
+			-2.75,
 			-9.05,
 			36.5
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_elettrico",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
 			-3.22,
 			-9.05,
 			33.0
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"stato": "voluto",
+		"motivo": "quadro elettrico appeso al muro sud della sala pompe, da 0,9 a 2,65 m: sporge 24 cm dal muro (era 56; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
 	},
 	{
 		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/QUADRO_strumenti",
-		"squadra": "da assegnare",
+		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
 			-3.47,
 			-9.05,
 			36.75
 		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_arredo",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			1.28,
-			-9.05,
-			36.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/SALA_tubi",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			1.78,
-			-9.05,
-			30.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_pozzo",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			0.03,
-			-9.05,
-			1.5
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_bocchette",
-		"squadra": "da assegnare",
-		"problema": "ingombro",
-		"pos": [
-			-1.72,
-			-9.05,
-			7.0
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			0.3,
-			2.48,
-			39.6
-		],
 		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			-2.7,
-			2.85,
-			35.9
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "interni",
-		"nodo": "Interni/Ambienti/Stanzino/neon_stanzino_neon/neon_stanzino_tubo_sfarfalla",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			3.5,
-			2.39,
-			32.5
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/neon_0_neon/neon_0_tubi",
-		"squadra": "da assegnare",
-		"problema": "compenetra",
-		"pos": [
-			-0.6,
-			-4.92,
-			5.36
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/neon_1_neon/neon_1_tubo_sfarfalla",
-		"squadra": "da assegnare",
-		"problema": "compenetra",
-		"pos": [
-			-0.6,
-			-4.92,
-			11.36
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/neon_2_neon/neon_2_tubi",
-		"squadra": "da assegnare",
-		"problema": "compenetra",
-		"pos": [
-			-0.6,
-			-4.92,
-			21.21
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi",
-		"squadra": "da assegnare",
-		"problema": "compenetra",
-		"pos": [
-			1.2,
-			-4.22,
-			34.16
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla",
-		"squadra": "da assegnare",
-		"problema": "compenetra",
-		"pos": [
-			1.2,
-			-4.22,
-			39.16
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi",
-		"squadra": "da assegnare",
-		"problema": "compenetra",
-		"pos": [
-			1.2,
-			-4.22,
-			43.66
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi",
-		"squadra": "da assegnare",
-		"problema": "compenetra",
-		"pos": [
-			5.7,
-			-4.22,
-			39.16
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/neon_rc_neon/neon_rc_tubo_sfarfalla",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			-0.9,
-			-6.32,
-			49.86
-		],
-		"stato": "voluto",
-		"motivo": "il tubo del neon sta dentro la sua plafoniera"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.65,
-			2.42,
-			30.2
-		],
-		"stato": "da correggere",
-		"motivo": "rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare"
+		"motivo": "pannello degli strumenti appeso al muro sud della sala pompe, da 1,3 a 2,25 m: sporge 24 cm dal muro (era 36; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
 	},
 	{
 		"zona": "torre",
-		"nodo": "TorreScivoli/discesa_5_0",
+		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
 		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
-			37.51,
-			-15.01,
-			-18.8
+			44.01,
+			-34.0,
+			-4.03
 		],
-		"stato": "da correggere",
-		"motivo": "all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8)"
+		"stato": "voluto",
+		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)"
 	},
 	{
 		"zona": "torre",
-		"nodo": "TorreScivoli/discesa_1_1",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
 		"squadra": "ambienti-2",
 		"problema": "ingombro",
 		"pos": [
-			38.76,
-			-6.01,
-			-11.55
+			50.76,
+			-34.0,
+			-6.78
 		],
 		"stato": "voluto",
-		"motivo": "la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre)"
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_2",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			69.51,
+			-28.58,
+			-7.28
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_1",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			63.01,
+			-25.58,
+			-27.53
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_0",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			50.51,
+			-22.58,
+			-14.78
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "torre",
+		"nodo": "TorreScivoli/torre_tubo_inseguimento",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			41.01,
+			-19.48,
+			-17.28
+		],
+		"stato": "voluto",
+		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_2",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_5",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_7",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_3",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/SalaPompe/ATTUATORE_stagno",
+		"squadra": "ambienti-2",
+		"problema": "ingombro",
+		"pos": [
+			-2.5,
+			-9.05,
+			47.25
+		],
+		"stato": "voluto",
+		"motivo": "fissato al muro est della sala pompe accanto alla porta, a 1,2-1,52 m da terra: sporge 24,2 cm dal muro, staffa compresa (al più 25); non pende nel passaggio (staffa a muro); davanti, alla testa, 17,6 m liberi fino al muro ovest (almeno 80 cm). Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_2",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-18.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "acquari",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_3",
+		"squadra": "enigmi",
+		"problema": "ingombro",
+		"pos": [
+			19.25,
+			0.0,
+			-11.5
+		],
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	}
 ]

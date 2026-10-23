@@ -4,7 +4,7 @@ extends Node
 ##   jumpscare: sei a 2,8 m da lei; a 1,0 s ti prende (LeiSbuca._prendi: DeathSequence con
 ##     JumpscareGlitch e il suo urlo). Fine a 3,0 s.
 ##   geyser: sei a 6,5 m da lei con lo zaino; a 1,0 s la spruzzi in faccia: appena il getto la colpisce
-##     parte il geyser (GeyserFossa col boato) e lei sparisce. Fine a 4,5 s.
+##     parte il geyser (GeyserMesh, la V1, col boato) e lei sparisce. Fine a 4,5 s.
 ## Stampa "INIZIO frame N" quando parte la scaletta (per tagliare il video).
 ## Uso (con Movie Maker l'audio viene registrato):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \

@@ -37,8 +37,17 @@ const TINTE_TURBINE := {"TURBINA_1": Color(1.35, 1.05, 0.25), "TURBINA_2": Color
 static var _cache := {}
 
 
+## Mesh dei modelli senza la loro scatola di collisione (*-convcolonly) nel generatore: si attraversavano
+## camminando (controllo di posizionamento del 22 ottobre). Prendono la collisione della loro forma.
+## (SALA_ringhiera no: ha le sue scatole nel generatore, e i montanti della scaletta della vasca, che sono nella
+## stessa mesh, vanno lasciati liberi: si esce dalla vasca passandoci in mezzo.)
+const SENZA_COLLISIONE := ["QUADRO_elettrico", "QUADRO_strumenti", "SALA_arredo", "SALA_tubi",
+		"CAMERA_pozzo", "CAMERA_bocchette"]
+
+
 func _ready() -> void:
 	_applica_materiali(ambienti)
+	_collisioni_mancanti()
 	_fogli()
 	_prepara_acqua()
 	_prepara_luci()
@@ -46,6 +55,15 @@ func _ready() -> void:
 	if giocatore_proprio:
 		_crea_ambiente()
 		_crea_giocatore()
+
+
+func _collisioni_mancanti() -> void:
+	for nome in SENZA_COLLISIONE:
+		var mi := ambienti.find_child(nome, true, false) as MeshInstance3D
+		if mi == null or mi.mesh == null:
+			push_warning("Tecnici: %s non c'è, niente collisione da aggiungere" % nome)
+			continue
+		mi.create_trimesh_collision()   # un StaticBody3D figlio, sullo strato 1 (Layers.WORLD)
 
 
 # --- Materiali --------------------------------------------------------------------------------
@@ -245,8 +263,10 @@ func _prepara_luci() -> void:
 
 
 func _nascondi_lampada_addon(le: Node) -> void:
+	# la lampada c'è già nel modello: quella dell'addon si toglie (nascosta restava un doppione per il controllo
+	# di posizionamento); il suo materiale, che pulsa, lo tiene l'addon
 	for m in le.find_children("*", "MeshInstance3D", false, false):
-		(m as MeshInstance3D).visible = false
+		m.queue_free()
 
 
 # --- Decal: macchie, colature di ruggine e crepe in punti scelti ------------------------------

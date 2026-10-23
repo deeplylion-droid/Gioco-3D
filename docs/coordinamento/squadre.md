@@ -1,14 +1,15 @@
-# Squadre e sessioni (aggiornato il 21 ottobre)
+# Squadre e sessioni (aggiornato il 22 ottobre)
 
 Il coordinatore è la sessione session_01Ub9Z8mJaiFbdfRfYi8QhGz: tutte le squadre gli mandano i resoconti con send_message. Il passaggio del 16 ottobre è in `passaggio_2026-10-16.md`.
 
 | Squadra | Sessione cloud | Branch | Lavoro |
 |---|---|---|---|
-| mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/mascotte | fatti: statue, Jilly, inizio con il mostro-squalo (v0.3.8). In attesa di un compito nuovo |
-| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1: vasche c (acqua più chiara e lampade) e strisce a; poi discesa_5_0 della torre |
-| ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | tuffo di testa di Jilly (scelta A) con lo schizzo su misura, al posto del geyser; poi i casi di posizionamento di interni e sala |
-| enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | fiume A con lo scivolo B, infermeria B, lettore, keycard, strada β (frecce di C2 tolte), Polaroid della pecora |
-| grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | griglia del controllo di posizionamento ancorata al mondo, poi rapporto e casi da distribuire |
+| mascotte | session_01YWTG1mGq714ESVViUmQhYw | lavoro/lei-inseguimento | animazioni di lei per l'inseguimento fatte (88ae2ba, scatti e video in docs/report/mascotte/lei_inseguimento/); ora le aggancia lui nell'inseguimento partendo da 593d6bf, poi le rivede ambienti-2 |
+| ambienti-2 | session_019HZGeneQaXJBRDNw4H3tQj | lavoro/ambienti-2-inseguimento | inseguimento A con SB1 fatto, con vasche c e strisce a (593d6bf); discesa_5_0 unita. Aspetta le animazioni di mascotte; intanto le prove dello sfondo del titolo su lavoro/ambienti-2-menu (strati A cupola e tempesta, B acqua ai suoi piedi, C pezzi della sala; scatti di B+C, A+B, A, B) |
+| ambienti-1 | session_01NbNne93LWX1hZUrGWpCyL8 | lavoro/ambienti-1 | tuffo A consegnato (3df43ba); ritocco della corona (meno lamina, acqua bianca, gocce che sembrino acqua), geyser V1 fuori dall'esportazione; poi valvola_corridoio_1 e turbina_saracinesca |
+| enigmi | session_01T7gXU9URJunXdQxrRAzoeN | lavoro/enigma-ambiente | fiume A con lo scivolo B, infermeria B, lettore, keycard, strada β, Polaroid della pecora: uniti per la v0.3.9 (6271159) |
+| grafica | session_01CKPshjKrddtekB7nZK4rGD | lavoro/grafica | nome Jilly Jubilee unito (58cc633); prima il crash all'uscita mentre la torre si carica nel thread (CI rossa su 58cc633), poi il logo A scelto dall'utente nella schermata del titolo, com'era nella prova |
+| collaudo | session_011Hw88iHTraQBa6nqZmqVDF | lavoro/collaudo | squadra nuova (22 ottobre): controlla le zone senza averle costruite, con il giro dagli occhi del giocatore in tutti gli stati e gli scatti ravvicinati degli oggetti piccoli; non corregge, manda i difetti al coordinatore |
 
 Le sessioni vecchie (grafica session_01Q9PdaHCaFPsyZ4J69AtTTt, ambienti-1 session_01E1m21YyF95ZHLwLFM1yLCv, ambienti-2 session_01DHF6GjuPt1SH74CXxGYGC2, enigma-logica session_01RPrxxeJjwAgHgEzLWPXgsn, enigma-ambiente session_01Jn42hE4synLdT5YNKedMqv, mascotte session_01Ut6TnWfhFvUH1yfran7kFa) sono ferme dal 21 ottobre: avevano conversazioni lunghissime che costavano a ogni passo. Ognuna ha lasciato un passaggio di consegne in `docs/coordinamento/passaggi/<squadra>.md` sul suo branch.
 
@@ -21,7 +22,7 @@ Le sessioni vecchie (grafica session_01Q9PdaHCaFPsyZ4J69AtTTt, ambienti-1 sessio
 ## Cose da sapere
 
 - Le pagine di scelta si fanno con `tools/questionario/genera_pagina.py`. Le risposte si leggono con ArtifactData, collezione `risposte`.
-- Pagine aperte: punti bui senza torcia (https://claude.ai/artifact/LeZkNfReqLPr8QhE1hZYkb) scelte del 19 ottobre (https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn) e stanze nuove (https://claude.ai/artifact/AEqY4ZWpQC7xyTHAZD7Gsq: fiume, infermeria, lettore, keycard; enigma-ambiente 295e9c6), risposte non ancora arrivate. Le scelte del 19 ottobre (https://claude.ai/artifact/LQ5qzV1piF99XSTpJTPadn) sono lette. Quelle del 17 e 18 ottobre (scelte, torre, acquari, mascotte) sono lette e nel GDD.
+- Logo: l'utente ha scelto in chat la A del primo giro ("Senti usiamo l'A di prima"); la pagina del secondo giro D/E/F (https://claude.ai/artifact/9yswiYCFBj2TfBvVSwEQjh) è chiusa. Le proposte sono in lavoro/grafica-nome 98304dc, `docs/proposte/logo/`.
 - L'exe Windows pesa circa 1,44 GB. Le proposte sono escluse dall'export con `exclude_filter` in `godot/export_presets.cfg`.
 - Unione della torre (ambienti-2) con enigma-logica: i conflitti sono solo in `.github/workflows/build.yml`, dove vanno tenute le righe dei test di tutti e due, e nel commento del punto 5 in cima a `godot/tests/test_tappa8.gd`. Il codice si unisce da solo: il portone non si apre da solo (enigma), lo apre `apri()` e la torre si carica.
 
@@ -47,7 +48,12 @@ Le scelte del 19 ottobre sono in `docs/riscontri/2026-10-19_scelte.md` e nel GDD
 - **v0.3.8** pubblicata il 22 ottobre mattina, come autorizzato dall'utente: le correzioni della prova del 19 ottobre, l'inizio con il mostro-squalo, la torcia (F, energia 1,4), statue e Jilly, la strada nella torre con le vasche, acquari doppi in P1, il controllo automatico di posizionamento nella CI. Scelte del 22 ottobre in `docs/riscontri/2026-10-22_scelte.md`.
 - **v0.3.7** pubblicata il 19 ottobre alle 07:48 UTC su richiesta dell'utente (main 3abc887; exe unico 1,35 GB): schermo del monitor, fogli della scrivania, torre senza blocchi all'ingresso, riserve dei caricamenti, pacchetto più leggero.
 
+## In lavorazione: v0.3.9
+
+In lavoro/godot finora: griglia del controllo di posizionamento e collisioni dei tecnici (a87a7d0), fiume, infermeria, keycard, strada β e P11 (6271159), discesa_5_0 della torre (a871c43), nome Jilly Jubilee (58cc633). Da unire: il tuffo A (ambienti-1, dopo il ritocco), l'inseguimento (ambienti-2, dopo le animazioni di mascotte), la correzione del crash all'uscita e il logo A nella schermata del titolo (grafica). Le note della Release useranno i nomi nuovi dei file (JillyJubilee-windows-v0.3.9.exe e gli zip).
+
 ## Da chiedere all'utente
 
-- Una pagina con: posti delle statue, nome Jilly Jubilee, lingua delle scritte del parco (le rapide sono in italiano, il manifesto di Jilly in inglese), inseguimento A/B, geyser V2/V1.
-- Dopo, una seconda pagina: aspetto del fiume lento e dell'infermeria, keycard e lettore.
+- Sfondo del titolo (ora "tutto nero"): l'utente ha chiesto B+C (acqua ai suoi piedi e pezzi della sala dietro) e le prove anche di A+B, A e B. Poi ha chiesto solo le due combinazioni: B+C e A+B (anche durante il lampo). Quando arrivano gli scatti di ambienti-2, pagina con le prove; nel gioco niente finché non sceglie.
+- Inseguimento: nella vasca 1 la campana di lei poggia sul fondo e i tentacoli lo attraversano (salendo da -5 m passa il fondo); con l'acqua più chiara si vede. Da chiedere: pozzo di scarico nel fondo come in SB1, oppure vasca più profonda in quel punto. Poi lo fa ambienti-2. Anche le animazioni di lei vanno mostrate (scatti già fatti).
+- I promemoria di Steam parlano ancora di «Splashland»: proposto di aggiornarli, nessuna risposta. Su itch l'utente deve rinominare la bozza.

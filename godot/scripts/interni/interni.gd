@@ -215,10 +215,11 @@ func _prepara_luci() -> void:
 		i += 1
 
 
-## La LuceEmergenza crea una sua lampada: qui c'è già quella a gabbia del modello.
+## La LuceEmergenza crea una sua lampada: qui c'è già quella a gabbia del modello. Si toglie (non solo nascosta:
+## così non resta in memoria e il controllo di posizionamento non la conta).
 func _nascondi_lampada_addon(le: Node) -> void:
 	for m in le.find_children("*", "MeshInstance3D", false, false):
-		(m as MeshInstance3D).visible = false
+		m.queue_free()
 
 
 # --- Docce ---------------------------------------------------------------------------------
@@ -279,6 +280,27 @@ func _on_trigger_armadietto(body: Node3D) -> void:
 	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(105.0), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(85.0), 0.25).set_trans(Tween.TRANS_SINE)
 	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(92.0), 0.4).set_trans(Tween.TRANS_SINE)
+	# aperta sporge nello spogliatoio: si urta come le altre ante aperte (controllo di posizionamento). La
+	# collisione arriva a fine corsa, così l'anta che si apre non spinge il giocatore.
+	t.tween_callback(_collisione_anta.bind(anta))
+
+
+func _collisione_anta(anta: Node3D) -> void:
+	var mi := anta as MeshInstance3D
+	if mi == null or mi.mesh == null or anta.has_node(^"Collisione"):
+		return
+	var corpo := StaticBody3D.new()
+	corpo.name = "Collisione"
+	corpo.collision_layer = Layers.WORLD
+	corpo.collision_mask = 0
+	var forma := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	var a := mi.mesh.get_aabb()
+	box.size = a.size
+	forma.shape = box
+	forma.position = a.get_center()
+	corpo.add_child(forma)
+	anta.add_child(corpo)
 
 
 # --- Tornello ------------------------------------------------------------------------------
@@ -354,9 +376,13 @@ func _crea_giocatore() -> void:
 
 ## Il risveglio: il giocatore si sveglia per terra con il mostro-squalo addosso (GDD, "L'inizio con il
 ## mostro-squalo"; scripts/interni/risveglio_squalo.gd). Senza la scena dello squalo: la camera parte
-## sdraiata, guarda il soffitto e si rialza. Nelle prove automatiche (test, scatti) la scena dello squalo
+## sdraiata, guarda il soffitto e si rialza. Si parte a torcia spenta. Nelle prove automatiche (test, scatti) la scena dello squalo
 ## parte solo con [param con_squalo]: dura più di 13 secondi.
 func fai_risveglio(p: Player, con_squalo := not Game.is_automated()) -> void:
+	# il gioco inizia a torcia spenta (scelta dell'utente del 22 ottobre): si accende con F dopo il risveglio
+	for t in p.find_children("*", "Node3D", true, false):
+		if t is Torcia:
+			(t as Torcia).imposta_accesa(false)
 	var squalo := get_node_or_null(^"Gioco/RisveglioSqualo") as RisveglioSqualo
 	if squalo and con_squalo:
 		squalo.avvia(p)

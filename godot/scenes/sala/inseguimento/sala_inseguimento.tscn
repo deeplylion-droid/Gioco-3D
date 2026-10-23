@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/game/sala_inseguimento.gd" id="1_ins"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/inseguimento/inseguimento_struttura.glb" id="2_strut"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/inseguimento/inseguimento_tubi.glb" id="3_tubi"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/inseguimento/inseguimento_prop.glb" id="4_prop"]
+[ext_resource type="PackedScene" path="res://assets/ambiente/inseguimento/inseguimento_mobili.glb" id="5_mobili"]
+
+[node name="SalaInseguimento" type="Node3D"]
+script = ExtResource("1_ins")
+modelli = Array[PackedScene]([ExtResource("2_strut"), ExtResource("3_tubi"), ExtResource("4_prop"), ExtResource("5_mobili")])

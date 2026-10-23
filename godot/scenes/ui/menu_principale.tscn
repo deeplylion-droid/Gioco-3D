@@ -14,6 +14,7 @@
 [ext_resource type="Material" path="res://assets/models/medusa/medusa_ciocche.tres" id="12_ciocche"]
 [ext_resource type="Material" path="res://assets/models/medusa/medusa_mani.tres" id="13_mani"]
 [ext_resource type="Material" path="res://assets/models/medusa/medusa_occhio.tres" id="14_occhio"]
+[ext_resource type="Script" path="res://scripts/ui/menu/menu_sfondo.gd" id="15_sfondo"]
 
 [sub_resource type="Environment" id="Environment_titolo"]
 background_mode = 1
@@ -203,3 +204,7 @@ transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 8.5, 4.2, -9.0)
 script = ExtResource("8_emer")
 portata = 13.0
 ombre = false
+
+[node name="Sfondo" type="Node3D" parent="." node_paths=PackedStringArray("tempesta")]
+script = ExtResource("15_sfondo")
+tempesta = NodePath("../Tempesta")

@@ -108,35 +108,6 @@
  },
  "posti": [
   {
-   "nodo": "det_mucchio_piastrelle_1",
-   "glb": "glb/detriti.glb",
-   "zona": "angolo",
-   "gruppo": "mucchio_001",
-   "posizione": [
-    -19.1,
-    0.001,
-    19.1
-   ],
-   "rotazione_y_gradi": 115.0,
-   "basis": [
-    [
-     -0.4228,
-     0.0,
-     -0.9062
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9062,
-     0.0,
-     -0.4228
-    ]
-   ]
-  },
-  {
    "nodo": "det_piastrella_rotta_1",
    "glb": "glb/detriti.glb",
    "zona": "angolo",
@@ -423,35 +394,6 @@
      -0.9358,
      0.0,
      -0.3526
-    ]
-   ]
-  },
-  {
-   "nodo": "det_pannello_lamiera_2",
-   "glb": "glb/detriti.glb",
-   "zona": "angolo",
-   "gruppo": "mucchio_004",
-   "posizione": [
-    17.695,
-    0.001,
-    -23.003
-   ],
-   "rotazione_y_gradi": 156.3,
-   "basis": [
-    [
-     -0.9158,
-     0.0,
-     -0.4016
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.4016,
-     0.0,
-     -0.9158
     ]
    ]
   },
@@ -800,35 +742,6 @@
      -0.9754,
      0.0,
      0.2207
-    ]
-   ]
-  },
-  {
-   "nodo": "det_pannello_lamiera",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_009",
-   "posizione": [
-    -16.18,
-    0.001,
-    19.11
-   ],
-   "rotazione_y_gradi": 67.4,
-   "basis": [
-    [
-     0.3844,
-     0.0,
-     -0.9232
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9232,
-     0.0,
-     0.3844
     ]
    ]
   },
@@ -1535,7 +1448,7 @@
    "gruppo": "mucchio_016",
    "posizione": [
     -19.329,
-    0.005,
+    0.001,
     4.664
    ],
    "rotazione_y_gradi": -92.5,
@@ -1555,7 +1468,8 @@
      0.0,
      -0.0434
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_maschera_sub 0"
   },
   {
    "nodo": "det_pesce_gomma",
@@ -1935,64 +1849,6 @@
    ]
   },
   {
-   "nodo": "det_foglio_2",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_019",
-   "posizione": [
-    14.876,
-    0.001,
-    18.668
-   ],
-   "rotazione_y_gradi": 174.4,
-   "basis": [
-    [
-     -0.9953,
-     0.0,
-     -0.0968
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0968,
-     0.0,
-     -0.9953
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_2",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_019",
-   "posizione": [
-    14.004,
-    0.001,
-    18.058
-   ],
-   "rotazione_y_gradi": -160.0,
-   "basis": [
-    [
-     -0.9396,
-     0.0,
-     0.3422
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.3422,
-     0.0,
-     -0.9396
-    ]
-   ]
-  },
-  {
    "nodo": "det_alghe_secche_mucchio_2",
    "glb": "glb/organico.glb",
    "zona": "base dei muri",
@@ -2312,35 +2168,6 @@
    ]
   },
   {
-   "nodo": "det_mucchio_piastrelle_3",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_024",
-   "posizione": [
-    13.513,
-    0.001,
-    19.315
-   ],
-   "rotazione_y_gradi": 117.6,
-   "basis": [
-    [
-     -0.463,
-     0.0,
-     -0.8864
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.8864,
-     0.0,
-     -0.463
-    ]
-   ]
-  },
-  {
    "nodo": "det_piastrella_rotta_5",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
@@ -2428,93 +2255,6 @@
    ]
   },
   {
-   "nodo": "det_secchiello",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_024",
-   "posizione": [
-    14.193,
-    0.001,
-    19.572
-   ],
-   "rotazione_y_gradi": 61.5,
-   "basis": [
-    [
-     0.4775,
-     0.0,
-     -0.8787
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.8787,
-     0.0,
-     0.4775
-    ]
-   ]
-  },
-  {
-   "nodo": "det_barchetta",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_024",
-   "posizione": [
-    13.103,
-    0.005,
-    18.268
-   ],
-   "rotazione_y_gradi": -172.2,
-   "basis": [
-    [
-     -0.9906,
-     0.0,
-     0.1366
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.1366,
-     0.0,
-     -0.9906
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_2",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_024",
-   "posizione": [
-    12.964,
-    0.001,
-    19.658
-   ],
-   "rotazione_y_gradi": 97.5,
-   "basis": [
-    [
-     -0.1308,
-     0.0,
-     -0.9914
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9914,
-     0.0,
-     -0.1308
-    ]
-   ]
-  },
-  {
    "nodo": "det_pistola_acqua",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
@@ -2598,35 +2338,6 @@
      0.1273,
      0.0,
      -0.9919
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_4",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_024",
-   "posizione": [
-    12.655,
-    0.001,
-    19.251
-   ],
-   "rotazione_y_gradi": 13.2,
-   "basis": [
-    [
-     0.9735,
-     0.0,
-     -0.2286
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.2286,
-     0.0,
-     0.9735
     ]
    ]
   },
@@ -2811,7 +2522,7 @@
    "gruppo": "mucchio_026",
    "posizione": [
     -12.478,
-    0.005,
+    0.001,
     -22.563
    ],
    "rotazione_y_gradi": 130.9,
@@ -2831,7 +2542,8 @@
      0.0,
      -0.6554
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_foglio_2 10"
   },
   {
    "nodo": "det_vetri_rotti_3",
@@ -3439,35 +3151,6 @@
      0.4272,
      0.0,
      0.9042
-    ]
-   ]
-  },
-  {
-   "nodo": "det_vetri_rotti_3",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_030",
-   "posizione": [
-    18.341,
-    0.001,
-    16.147
-   ],
-   "rotazione_y_gradi": -71.9,
-   "basis": [
-    [
-     0.3102,
-     0.0,
-     0.9507
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.9507,
-     0.0,
-     0.3102
     ]
    ]
   },
@@ -4574,35 +4257,6 @@
    ]
   },
   {
-   "nodo": "det_mucchio_piastrelle_2",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_051",
-   "posizione": [
-    10.052,
-    0.001,
-    -22.777
-   ],
-   "rotazione_y_gradi": 165.9,
-   "basis": [
-    [
-     -0.97,
-     0.0,
-     -0.243
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.243,
-     0.0,
-     -0.97
-    ]
-   ]
-  },
-  {
    "nodo": "det_foglio_2",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
@@ -4628,35 +4282,6 @@
      0.5176,
      0.0,
      0.8556
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_4",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_051",
-   "posizione": [
-    11.353,
-    0.001,
-    -22.011
-   ],
-   "rotazione_y_gradi": -73.6,
-   "basis": [
-    [
-     0.283,
-     0.0,
-     0.9591
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.9591,
-     0.0,
-     0.283
     ]
    ]
   },
@@ -4715,35 +4340,6 @@
      0.3576,
      0.0,
      -0.9339
-    ]
-   ]
-  },
-  {
-   "nodo": "det_pesce_gomma",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_051",
-   "posizione": [
-    11.0,
-    0.001,
-    -23.161
-   ],
-   "rotazione_y_gradi": 35.5,
-   "basis": [
-    [
-     0.8144,
-     0.0,
-     -0.5804
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.5804,
-     0.0,
-     0.8144
     ]
    ]
   },
@@ -5067,35 +4663,6 @@
    ]
   },
   {
-   "nodo": "det_foglio_3",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_060",
-   "posizione": [
-    17.564,
-    0.001,
-    -21.527
-   ],
-   "rotazione_y_gradi": -174.2,
-   "basis": [
-    [
-     -0.9948,
-     0.0,
-     0.1014
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.1014,
-     0.0,
-     -0.9948
-    ]
-   ]
-  },
-  {
    "nodo": "det_foglio_1",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
@@ -5121,35 +4688,6 @@
      -0.7108,
      0.0,
      0.7034
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_5",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_060",
-   "posizione": [
-    18.924,
-    0.001,
-    -22.44
-   ],
-   "rotazione_y_gradi": -33.2,
-   "basis": [
-    [
-     0.837,
-     0.0,
-     0.5473
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.5473,
-     0.0,
-     0.837
     ]
    ]
   },
@@ -5531,71 +5069,13 @@
    ]
   },
   {
-   "nodo": "det_mucchio_piastrelle_3",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_067",
-   "posizione": [
-    -17.382,
-    0.001,
-    18.763
-   ],
-   "rotazione_y_gradi": 104.8,
-   "basis": [
-    [
-     -0.2553,
-     0.0,
-     -0.9669
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9669,
-     0.0,
-     -0.2553
-    ]
-   ]
-  },
-  {
-   "nodo": "det_carta_accartocciata_3",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_067",
-   "posizione": [
-    -16.772,
-    0.005,
-    18.376
-   ],
-   "rotazione_y_gradi": -22.6,
-   "basis": [
-    [
-     0.923,
-     0.0,
-     0.3848
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.3848,
-     0.0,
-     0.923
-    ]
-   ]
-  },
-  {
    "nodo": "det_carta_accartocciata_3",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
    "gruppo": "mucchio_067",
    "posizione": [
     -15.803,
-    0.005,
+    0.001,
     18.65
    ],
    "rotazione_y_gradi": 10.0,
@@ -5615,36 +5095,8 @@
      0.0,
      0.9849
     ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_6",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_067",
-   "posizione": [
-    -17.057,
-    0.001,
-    19.271
    ],
-   "rotazione_y_gradi": -7.7,
-   "basis": [
-    [
-     0.9911,
-     0.0,
-     0.1335
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.1335,
-     0.0,
-     0.9911
-    ]
-   ]
+   "corretto_22_sera": "giu det_carta_accartocciata_3 11"
   },
   {
    "nodo": "det_foglio_3",
@@ -5701,64 +5153,6 @@
      -0.4585,
      0.0,
      -0.8887
-    ]
-   ]
-  },
-  {
-   "nodo": "det_paletta",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_067",
-   "posizione": [
-    -18.634,
-    0.001,
-    18.7
-   ],
-   "rotazione_y_gradi": 154.4,
-   "basis": [
-    [
-     -0.902,
-     0.0,
-     -0.4317
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.4317,
-     0.0,
-     -0.902
-    ]
-   ]
-  },
-  {
-   "nodo": "det_carta_accartocciata_1",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_067",
-   "posizione": [
-    -18.001,
-    0.001,
-    19.383
-   ],
-   "rotazione_y_gradi": 72.7,
-   "basis": [
-    [
-     0.2979,
-     0.0,
-     -0.9546
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9546,
-     0.0,
-     0.2979
     ]
    ]
   },
@@ -6107,122 +5501,6 @@
      -0.6433,
      0.0,
      0.7656
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_1",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_076",
-   "posizione": [
-    12.295,
-    0.001,
-    -22.648
-   ],
-   "rotazione_y_gradi": 32.9,
-   "basis": [
-    [
-     0.8392,
-     0.0,
-     -0.5438
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.5438,
-     0.0,
-     0.8392
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_2",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_076",
-   "posizione": [
-    14.929,
-    0.001,
-    -22.291
-   ],
-   "rotazione_y_gradi": -18.3,
-   "basis": [
-    [
-     0.9494,
-     0.0,
-     0.3139
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.3139,
-     0.0,
-     0.9494
-    ]
-   ]
-  },
-  {
-   "nodo": "det_carta_accartocciata_1",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_076",
-   "posizione": [
-    12.965,
-    0.001,
-    -21.383
-   ],
-   "rotazione_y_gradi": -25.2,
-   "basis": [
-    [
-     0.9052,
-     0.0,
-     0.425
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.425,
-     0.0,
-     0.9052
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_2",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_076",
-   "posizione": [
-    13.742,
-    0.001,
-    -21.942
-   ],
-   "rotazione_y_gradi": -89.8,
-   "basis": [
-    [
-     0.0039,
-     0.0,
-     1.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -1.0,
-     0.0,
-     0.0039
     ]
    ]
   },
@@ -7793,35 +7071,6 @@
    ]
   },
   {
-   "nodo": "det_carta_accartocciata_1",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_119",
-   "posizione": [
-    5.098,
-    0.001,
-    -22.642
-   ],
-   "rotazione_y_gradi": -58.0,
-   "basis": [
-    [
-     0.5298,
-     0.0,
-     0.8481
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.8481,
-     0.0,
-     0.5298
-    ]
-   ]
-  },
-  {
    "nodo": "det_maschera_sub",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
@@ -7847,35 +7096,6 @@
      -0.4953,
      0.0,
      0.8687
-    ]
-   ]
-  },
-  {
-   "nodo": "det_barchetta",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_119",
-   "posizione": [
-    5.473,
-    0.001,
-    -23.404
-   ],
-   "rotazione_y_gradi": -172.3,
-   "basis": [
-    [
-     -0.9909,
-     0.0,
-     0.1345
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.1345,
-     0.0,
-     -0.9909
     ]
    ]
   },
@@ -7909,64 +7129,6 @@
    ]
   },
   {
-   "nodo": "det_piastrella_rotta_3",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_119",
-   "posizione": [
-    4.574,
-    0.001,
-    -22.328
-   ],
-   "rotazione_y_gradi": 92.8,
-   "basis": [
-    [
-     -0.0492,
-     0.0,
-     -0.9988
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9988,
-     0.0,
-     -0.0492
-    ]
-   ]
-  },
-  {
-   "nodo": "det_griglia_caduta",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_119",
-   "posizione": [
-    3.839,
-    0.001,
-    -22.184
-   ],
-   "rotazione_y_gradi": 71.4,
-   "basis": [
-    [
-     0.3197,
-     0.0,
-     -0.9475
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9475,
-     0.0,
-     0.3197
-    ]
-   ]
-  },
-  {
    "nodo": "det_piastrella_rotta_5",
    "glb": "glb/detriti.glb",
    "zona": "base dei muri",
@@ -7992,35 +7154,6 @@
      -0.6331,
      0.0,
      -0.7741
-    ]
-   ]
-  },
-  {
-   "nodo": "det_vetri_rotti_1",
-   "glb": "glb/detriti.glb",
-   "zona": "base dei muri",
-   "gruppo": "mucchio_119",
-   "posizione": [
-    4.938,
-    0.001,
-    -22.0
-   ],
-   "rotazione_y_gradi": 151.5,
-   "basis": [
-    [
-     -0.8791,
-     0.0,
-     -0.4766
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.4766,
-     0.0,
-     -0.8791
     ]
    ]
   },
@@ -9017,7 +8150,7 @@
    "gruppo": "mucchio_146",
    "posizione": [
     4.505,
-    0.005,
+    0.001,
     12.705
    ],
    "rotazione_y_gradi": -35.8,
@@ -9037,7 +8170,8 @@
      0.0,
      0.8108
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_foglio_1 10"
   },
   {
    "nodo": "det_foglio_3",
@@ -9239,35 +8373,6 @@
      0.8972,
      0.0,
      0.4417
-    ]
-   ]
-  },
-  {
-   "nodo": "det_ciabatta",
-   "glb": "glb/detriti.glb",
-   "zona": "ingresso",
-   "gruppo": "mucchio_147",
-   "posizione": [
-    -4.085,
-    0.001,
-    12.8
-   ],
-   "rotazione_y_gradi": 143.2,
-   "basis": [
-    [
-     -0.8012,
-     0.0,
-     -0.5984
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.5984,
-     0.0,
-     -0.8012
     ]
    ]
   },
@@ -10090,7 +9195,7 @@
    "gruppo": "mucchio_153",
    "posizione": [
     5.423,
-    0.005,
+    0.001,
     15.429
    ],
    "rotazione_y_gradi": -173.0,
@@ -10110,7 +9215,8 @@
      0.0,
      -0.9927
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_carta_accartocciata_3 21"
   },
   {
    "nodo": "det_alghe_secche_mucchio_2",
@@ -10370,35 +9476,6 @@
      0.6899,
      0.0,
      -0.7239
-    ]
-   ]
-  },
-  {
-   "nodo": "det_mucchio_piastrelle_1",
-   "glb": "glb/detriti.glb",
-   "zona": "ingresso",
-   "gruppo": "mucchio_157",
-   "posizione": [
-    14.891,
-    0.001,
-    15.161
-   ],
-   "rotazione_y_gradi": 78.4,
-   "basis": [
-    [
-     0.2005,
-     0.0,
-     -0.9797
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.9797,
-     0.0,
-     0.2005
     ]
    ]
   },
@@ -10722,64 +9799,6 @@
    ]
   },
   {
-   "nodo": "det_mucchio_piastrelle_3",
-   "glb": "glb/detriti.glb",
-   "zona": "ingresso",
-   "gruppo": "mucchio_162",
-   "posizione": [
-    12.023,
-    0.001,
-    18.623
-   ],
-   "rotazione_y_gradi": -163.4,
-   "basis": [
-    [
-     -0.9584,
-     0.0,
-     0.2855
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.2855,
-     0.0,
-     -0.9584
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_5",
-   "glb": "glb/detriti.glb",
-   "zona": "ingresso",
-   "gruppo": "mucchio_162",
-   "posizione": [
-    12.886,
-    0.005,
-    18.001
-   ],
-   "rotazione_y_gradi": -2.5,
-   "basis": [
-    [
-     0.9991,
-     0.0,
-     0.0428
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.0428,
-     0.0,
-     0.9991
-    ]
-   ]
-  },
-  {
    "nodo": "det_piastrella_rotta_1",
    "glb": "glb/detriti.glb",
    "zona": "ingresso",
@@ -10863,35 +9882,6 @@
      0.9997,
      0.0,
      -0.0231
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_1",
-   "glb": "glb/detriti.glb",
-   "zona": "ingresso",
-   "gruppo": "mucchio_162",
-   "posizione": [
-    13.048,
-    0.005,
-    17.731
-   ],
-   "rotazione_y_gradi": -127.9,
-   "basis": [
-    [
-     -0.614,
-     0.0,
-     0.7893
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.7893,
-     0.0,
-     -0.614
     ]
    ]
   },
@@ -11047,7 +10037,7 @@
    "gruppo": "mucchio_164",
    "posizione": [
     11.134,
-    0.005,
+    0.001,
     14.354
    ],
    "rotazione_y_gradi": 60.6,
@@ -11067,7 +10057,8 @@
      0.0,
      0.4904
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_griglia_caduta 6"
   },
   {
    "nodo": "det_carta_accartocciata_2",
@@ -11482,7 +10473,7 @@
    "gruppo": "mucchio_172",
    "posizione": [
     4.551,
-    0.005,
+    0.0,
     12.945
    ],
    "rotazione_y_gradi": 176.1,
@@ -11502,7 +10493,8 @@
      0.0,
      -0.9976
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_barchetta 7"
   },
   {
    "nodo": "det_mucchio_piastrelle_1",
@@ -11733,35 +10725,6 @@
      -0.0584,
      0.0,
      0.9983
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_1",
-   "glb": "glb/detriti.glb",
-   "zona": "ingresso",
-   "gruppo": "mucchio_176",
-   "posizione": [
-    12.381,
-    0.001,
-    17.808
-   ],
-   "rotazione_y_gradi": -89.0,
-   "basis": [
-    [
-     0.0172,
-     0.0,
-     0.9999
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.9999,
-     0.0,
-     0.0172
     ]
    ]
   },
@@ -12062,7 +11025,7 @@
    "gruppo": "mucchio_180",
    "posizione": [
     -9.578,
-    0.005,
+    0.001,
     17.98
    ],
    "rotazione_y_gradi": -161.9,
@@ -12082,7 +11045,8 @@
      0.0,
      -0.9503
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_carta_accartocciata_3 24"
   },
   {
    "nodo": "det_vetri_rotti_2",
@@ -12226,35 +11190,6 @@
      0.2,
      0.0,
      0.9798
-    ]
-   ]
-  },
-  {
-   "nodo": "det_pannello_lamiera",
-   "glb": "glb/detriti.glb",
-   "zona": "ingresso",
-   "gruppo": "mucchio_185",
-   "posizione": [
-    -3.14,
-    0.021,
-    17.173
-   ],
-   "rotazione_y_gradi": 143.9,
-   "basis": [
-    [
-     -0.8081,
-     0.0,
-     -0.5891
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.5891,
-     0.0,
-     -0.8081
     ]
    ]
   },
@@ -13686,7 +12621,7 @@
    "gruppo": "ingresso_asciugamani_233",
    "posizione": [
     5.426,
-    0.005,
+    0.001,
     17.253
    ],
    "rotazione_y_gradi": 38.0,
@@ -13706,7 +12641,8 @@
      0.0,
      0.7875
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_foglio_3 28"
   },
   {
    "nodo": "det_asciugamano_4",
@@ -14294,35 +13230,6 @@
    "zona": "sala",
    "gruppo": "mucchio_252",
    "posizione": [
-    5.945,
-    -0.035,
-    -12.783
-   ],
-   "rotazione_y_gradi": 135.0,
-   "basis": [
-    [
-     -0.7068,
-     0.0,
-     -0.7074
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.7074,
-     0.0,
-     -0.7068
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_1",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_252",
-   "posizione": [
     7.123,
     0.009,
     -12.124
@@ -14372,35 +13279,6 @@
      0.847,
      0.0,
      0.5315
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_1",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_255",
-   "posizione": [
-    -8.803,
-    0.004,
-    1.467
-   ],
-   "rotazione_y_gradi": -85.1,
-   "basis": [
-    [
-     0.0851,
-     0.0,
-     0.9964
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.9964,
-     0.0,
-     0.0851
     ]
    ]
   },
@@ -15478,122 +14356,6 @@
    ]
   },
   {
-   "nodo": "det_mucchio_piastrelle_2",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_280",
-   "posizione": [
-    10.342,
-    0.01,
-    -20.506
-   ],
-   "rotazione_y_gradi": -116.4,
-   "basis": [
-    [
-     -0.4446,
-     0.0,
-     0.8957
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.8957,
-     0.0,
-     -0.4446
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_1",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_280",
-   "posizione": [
-    10.172,
-    0.001,
-    -21.109
-   ],
-   "rotazione_y_gradi": -120.5,
-   "basis": [
-    [
-     -0.5069,
-     0.0,
-     0.862
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.862,
-     0.0,
-     -0.5069
-    ]
-   ]
-  },
-  {
-   "nodo": "det_carta_accartocciata_3",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_280",
-   "posizione": [
-    11.271,
-    0.001,
-    -21.755
-   ],
-   "rotazione_y_gradi": 62.9,
-   "basis": [
-    [
-     0.4562,
-     0.0,
-     -0.8899
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.8899,
-     0.0,
-     0.4562
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_1",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_280",
-   "posizione": [
-    11.486,
-    0.001,
-    -21.047
-   ],
-   "rotazione_y_gradi": -89.4,
-   "basis": [
-    [
-     0.0112,
-     0.0,
-     0.9999
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.9999,
-     0.0,
-     0.0112
-    ]
-   ]
-  },
-  {
    "nodo": "det_alghe_secche_mucchio_2",
    "glb": "glb/organico.glb",
    "zona": "sala",
@@ -15851,35 +14613,6 @@
      -0.7107,
      0.0,
      0.7034
-    ]
-   ]
-  },
-  {
-   "nodo": "det_piastrella_rotta_6",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_301",
-   "posizione": [
-    -8.84,
-    0.006,
-    -2.331
-   ],
-   "rotazione_y_gradi": -141.7,
-   "basis": [
-    [
-     -0.7842,
-     0.0,
-     0.6205
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.6205,
-     0.0,
-     -0.7842
     ]
    ]
   },
@@ -16373,35 +15106,6 @@
      0.9918,
      0.0,
      -0.1281
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_2",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_314",
-   "posizione": [
-    16.537,
-    0.001,
-    -21.333
-   ],
-   "rotazione_y_gradi": 124.9,
-   "basis": [
-    [
-     -0.5724,
-     0.0,
-     -0.82
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.82,
-     0.0,
-     -0.5724
     ]
    ]
   },
@@ -17717,7 +16421,7 @@
    "gruppo": "spiaggia_365",
    "posizione": [
     8.89,
-    0.021,
+    0.001,
     -21.258
    ],
    "rotazione_y_gradi": -76.4,
@@ -17737,7 +16441,8 @@
      0.0,
      0.2353
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_pistola_acqua 11"
   },
   {
    "nodo": "det_asciugamano_3",
@@ -17862,7 +16567,7 @@
    "gruppo": "spiaggia_373",
    "posizione": [
     -17.434,
-    0.021,
+    -0.016,
     3.24
    ],
    "rotazione_y_gradi": -67.2,
@@ -17882,7 +16587,8 @@
      0.0,
      0.2901
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_asciugamano_3 2"
   },
   {
    "nodo": "det_secchiello",
@@ -17920,7 +16626,7 @@
    "gruppo": "spiaggia_373",
    "posizione": [
     -17.667,
-    0.005,
+    0.0,
     4.005
    ],
    "rotazione_y_gradi": 75.9,
@@ -17940,7 +16646,8 @@
      0.0,
      0.2443
     ]
-   ]
+   ],
+   "corretto_22_sera": "giu det_pesce_gomma 9"
   },
   {
    "nodo": "det_asciugamano_1",
@@ -18316,35 +17023,6 @@
      -0.4274,
      0.0,
      0.6163
-    ]
-   ]
-  },
-  {
-   "nodo": "det_maschera_sub",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "spiaggia_388",
-   "posizione": [
-    6.173,
-    0.001,
-    -21.461
-   ],
-   "rotazione_y_gradi": -107.0,
-   "basis": [
-    [
-     -0.2931,
-     0.0,
-     0.9561
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.9561,
-     0.0,
-     -0.2931
     ]
    ]
   },
@@ -19828,64 +18506,6 @@
    ]
   },
   {
-   "nodo": "det_alghe_secche_mucchio_2",
-   "glb": "glb/organico.glb",
-   "zona": "fondo piscina",
-   "gruppo": "fondo_piscina_413",
-   "posizione": [
-    0.358,
-    -2.069,
-    3.556
-   ],
-   "rotazione_y_gradi": -54.5,
-   "basis": [
-    [
-     0.5805,
-     0.0,
-     0.8142
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.8142,
-     0.0,
-     0.5805
-    ]
-   ]
-  },
-  {
-   "nodo": "det_alghe_secche_mucchio_1",
-   "glb": "glb/organico.glb",
-   "zona": "fondo piscina",
-   "gruppo": "fondo_piscina_413",
-   "posizione": [
-    -1.9,
-    -2.069,
-    2.2
-   ],
-   "rotazione_y_gradi": -98.9,
-   "basis": [
-    [
-     -0.1544,
-     0.0,
-     0.988
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.988,
-     0.0,
-     -0.1544
-    ]
-   ]
-  },
-  {
    "nodo": "det_foglio_3",
    "glb": "glb/detriti.glb",
    "zona": "fondo piscina",
@@ -20327,27 +18947,28 @@
    "gruppo": "fondo_piscina_420",
    "posizione": [
     0.938,
-    -2.002,
+    -2.0013,
     -1.239
    ],
    "rotazione_y_gradi": -91.0,
    "basis": [
     [
-     -0.0173,
-     0.0,
-     0.9998
+     -0.0154,
+     -0.2202,
+     0.9753
     ],
     [
-     0.0,
-     1.0,
-     0.0
+     -0.0166,
+     0.9754,
+     0.2199
     ],
     [
-     -0.9998,
-     0.0,
-     -0.0173
+     -0.9997,
+     -0.0128,
+     -0.0187
     ]
-   ]
+   ],
+   "corretto_22_sera": "piscina det_foglio_4 20"
   },
   {
    "nodo": "det_foglio_4",
@@ -20472,27 +19093,28 @@
    "gruppo": "fondo_piscina_422",
    "posizione": [
     -0.979,
-    -0.345,
+    -0.3455,
     -10.922
    ],
    "rotazione_y_gradi": 37.8,
    "basis": [
     [
      0.7901,
-     0.0,
-     -0.613
+     0.1008,
+     -0.6047
     ],
     [
      0.0,
-     1.0,
-     0.0
+     0.9864,
+     0.1644
     ],
     [
      0.613,
-     0.0,
-     0.7901
+     -0.1299,
+     0.7793
     ]
-   ]
+   ],
+   "corretto_22_sera": "piscina det_foglio_2 37"
   },
   {
    "nodo": "det_barchetta",
@@ -20711,20 +19333,21 @@
    "basis": [
     [
      0.8581,
-     0.0,
-     0.5135
+     -0.0844,
+     0.5065
     ],
     [
      0.0,
-     1.0,
-     0.0
+     0.9864,
+     0.1644
     ],
     [
      -0.5135,
-     0.0,
-     0.8581
+     -0.1411,
+     0.8464
     ]
-   ]
+   ],
+   "corretto_22_sera": "piscina det_foglio_1 27"
   },
   {
    "nodo": "det_pesce_gomma",
@@ -20868,35 +19491,6 @@
      0.9806,
      0.0,
      -0.196
-    ]
-   ]
-  },
-  {
-   "nodo": "det_foglio_1",
-   "glb": "glb/detriti.glb",
-   "zona": "fondo piscina",
-   "gruppo": "fondo_piscina_430",
-   "posizione": [
-    -4.562,
-    -1.977,
-    -1.132
-   ],
-   "rotazione_y_gradi": -21.2,
-   "basis": [
-    [
-     0.9324,
-     0.0,
-     0.3613
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -0.3613,
-     0.0,
-     0.9324
     ]
    ]
   },
@@ -22153,7 +20747,7 @@
    "zona": "colatura sotto un tubo",
    "gruppo": "corsa_445",
    "posizione": [
-    19.988,
+    20.0025,
     3.089,
     15.006
    ],
@@ -22174,7 +20768,8 @@
      0.0,
      -0.0
     ]
-   ]
+   ],
+   "corretto_22_sera": "sposta det_macchia_ruggine_colata_muro 12"
   },
   {
    "nodo": "det_tubo_muro_10cm_2m",
@@ -22724,151 +21319,6 @@
      -1.0,
      0.0,
      -0.0
-    ]
-   ]
-  },
-  {
-   "nodo": "det_tubo_muro_7cm_2m",
-   "glb": "glb/tubi.glb",
-   "zona": "muri, sotto la galleria",
-   "gruppo": "corsa_453",
-   "posizione": [
-    -2.176,
-    3.559,
-    -24.0
-   ],
-   "rotazione_y_gradi": -0.0,
-   "basis": [
-    [
-     1.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     1.0
-    ]
-   ]
-  },
-  {
-   "nodo": "det_tubo_muro_7cm_2m",
-   "glb": "glb/tubi.glb",
-   "zona": "muri, sotto la galleria",
-   "gruppo": "corsa_453",
-   "posizione": [
-    -0.176,
-    3.559,
-    -24.0
-   ],
-   "rotazione_y_gradi": -0.0,
-   "basis": [
-    [
-     1.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     1.0
-    ]
-   ]
-  },
-  {
-   "nodo": "det_macchia_ruggine_colata_muro",
-   "glb": "glb/organico.glb",
-   "zona": "colatura sotto un tubo",
-   "gruppo": "corsa_453",
-   "posizione": [
-    1.348,
-    3.409,
-    -24.0
-   ],
-   "rotazione_y_gradi": -0.0,
-   "basis": [
-    [
-     1.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     1.0
-    ]
-   ]
-  },
-  {
-   "nodo": "det_tubo_muro_7cm_2m",
-   "glb": "glb/tubi.glb",
-   "zona": "muri, sotto la galleria",
-   "gruppo": "corsa_453",
-   "posizione": [
-    1.824,
-    3.559,
-    -24.0
-   ],
-   "rotazione_y_gradi": -0.0,
-   "basis": [
-    [
-     1.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     1.0
-    ]
-   ]
-  },
-  {
-   "nodo": "det_macchia_ruggine_colata_muro",
-   "glb": "glb/organico.glb",
-   "zona": "colatura sotto un tubo",
-   "gruppo": "corsa_453",
-   "posizione": [
-    2.22,
-    3.409,
-    -24.0
-   ],
-   "rotazione_y_gradi": -0.0,
-   "basis": [
-    [
-     1.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     1.0
     ]
    ]
   },
@@ -25634,7 +24084,7 @@
    "gruppo": "impianto_504",
    "posizione": [
     -1.669,
-    1.469,
+    2.78,
     20.0
    ],
    "rotazione_y_gradi": 180.0,
@@ -25654,7 +24104,8 @@
      0.0,
      -1.0
     ]
-   ]
+   ],
+   "corretto_22_sera": "su det_cassetta_aperta 0"
   },
   {
    "nodo": "det_cassetta_aperta",
@@ -25663,7 +24114,7 @@
    "gruppo": "impianto_505",
    "posizione": [
     20.0,
-    1.697,
+    2.78,
     12.587
    ],
    "rotazione_y_gradi": -90.0,
@@ -25683,7 +24134,8 @@
      0.0,
      -0.0
     ]
-   ]
+   ],
+   "corretto_22_sera": "su det_cassetta_aperta 1"
   },
   {
    "nodo": "det_cartello_non_correre_penzolante",
@@ -25895,7 +24347,7 @@
    "gruppo": "impianto_520",
    "posizione": [
     -13.39,
-    1.638,
+    2.78,
     20.0
    ],
    "rotazione_y_gradi": 180.0,
@@ -25915,36 +24367,8 @@
      0.0,
      -1.0
     ]
-   ]
-  },
-  {
-   "nodo": "det_cassetta_aperta",
-   "glb": "glb/elettrico.glb",
-   "zona": "muri",
-   "gruppo": "impianto_524",
-   "posizione": [
-    -11.437,
-    1.511,
-    -24.0
    ],
-   "rotazione_y_gradi": -0.0,
-   "basis": [
-    [
-     1.0,
-     0.0,
-     0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     1.0
-    ]
-   ]
+   "corretto_22_sera": "su det_cassetta_aperta 3"
   },
   {
    "nodo": "det_cassetta_aperta",
@@ -25953,7 +24377,7 @@
    "gruppo": "impianto_533",
    "posizione": [
     20.0,
-    1.465,
+    2.78,
     -5.42
    ],
    "rotazione_y_gradi": -90.0,
@@ -25973,7 +24397,8 @@
      0.0,
      -0.0
     ]
-   ]
+   ],
+   "corretto_22_sera": "su det_cassetta_aperta 5"
   },
   {
    "nodo": "det_cassetta_piccola",
@@ -27605,7 +26030,7 @@
    "zona": "muri",
    "gruppo": "cartelli_645",
    "posizione": [
-    -3.341,
+    -2.3,
     1.643,
     20.0
    ],
@@ -27626,7 +26051,8 @@
      0.0,
      -1.0
     ]
-   ]
+   ],
+   "spostato_23": "dal salvagente appeso (ogg_salvagente_nave_19 a x -3,2): 1 m più a est, sul muro libero"
   },
   {
    "nodo": "det_cartello_pavimento_bagnato",
@@ -28789,35 +27215,6 @@
    ]
   },
   {
-   "nodo": "det_applique_emergenza_rotta",
-   "glb": "glb/lampade.glb",
-   "zona": "muri",
-   "gruppo": "luci_muro_744",
-   "posizione": [
-    20.0,
-    2.716,
-    -0.587
-   ],
-   "rotazione_y_gradi": -90.0,
-   "basis": [
-    [
-     -0.0,
-     0.0,
-     1.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ]
-   ]
-  },
-  {
    "nodo": "det_applique_emergenza_spenta",
    "glb": "glb/lampade.glb",
    "zona": "muri",
@@ -28912,7 +27309,7 @@
    "posizione": [
     20.0,
     3.161,
-    4.446
+    5.046
    ],
    "rotazione_y_gradi": -90.0,
    "basis": [
@@ -28931,36 +27328,8 @@
      0.0,
      -0.0
     ]
-   ]
-  },
-  {
-   "nodo": "det_applique_emergenza_spenta",
-   "glb": "glb/lampade.glb",
-   "zona": "muri",
-   "gruppo": "luci_muro_755",
-   "posizione": [
-    17.705,
-    3.02,
-    20.0
    ],
-   "rotazione_y_gradi": 180.0,
-   "basis": [
-    [
-     -1.0,
-     0.0,
-     -0.0
-    ],
-    [
-     0.0,
-     1.0,
-     0.0
-    ],
-    [
-     0.0,
-     0.0,
-     -1.0
-    ]
-   ]
+   "corretto_22_sera": "sposta det_applique_emergenza_rotta 1"
   },
   {
    "nodo": "det_faro_spento",
@@ -30264,6 +28633,786 @@
      -0.9993,
      0.0,
      -0.0368
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_438",
+   "posizione": [
+    -20.0,
+    3.05,
+    12.446
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_438",
+   "posizione": [
+    -20.0,
+    3.05,
+    2.446
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_439",
+   "posizione": [
+    15.291,
+    3.591,
+    -24.0
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_439",
+   "posizione": [
+    19.291,
+    3.591,
+    -24.0
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_440",
+   "posizione": [
+    -20.0,
+    3.121,
+    1.192
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_440",
+   "posizione": [
+    -20.0,
+    3.121,
+    -8.808
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_442",
+   "posizione": [
+    19.988,
+    3.594,
+    8.465
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_442",
+   "posizione": [
+    19.988,
+    3.594,
+    10.465
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_444",
+   "posizione": [
+    13.812,
+    3.003,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_444",
+   "posizione": [
+    5.812,
+    3.003,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_445",
+   "posizione": [
+    19.988,
+    3.239,
+    13.738
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_445",
+   "posizione": [
+    20.0,
+    3.239,
+    19.738
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_446",
+   "posizione": [
+    -19.988,
+    3.489,
+    -17.884
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_446",
+   "posizione": [
+    -19.988,
+    3.489,
+    -23.884
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_447",
+   "posizione": [
+    -14.324,
+    3.187,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_447",
+   "posizione": [
+    -18.324,
+    3.187,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_450",
+   "posizione": [
+    19.988,
+    3.073,
+    5.778
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_450",
+   "posizione": [
+    19.988,
+    3.073,
+    7.778
+   ],
+   "rotazione_y_gradi": -90.0,
+   "basis": [
+    [
+     -0.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_454",
+   "posizione": [
+    -20.0,
+    3.071,
+    -9.324
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_454",
+   "posizione": [
+    -19.988,
+    3.071,
+    -17.324
+   ],
+   "rotazione_y_gradi": 90.0,
+   "basis": [
+    [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     1.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_457",
+   "posizione": [
+    16.853,
+    3.205,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubi_paralleli_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_457",
+   "posizione": [
+    14.853,
+    3.205,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_458",
+   "posizione": [
+    -2.582,
+    3.027,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_10cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_458",
+   "posizione": [
+    -12.582,
+    3.027,
+    20.0
+   ],
+   "rotazione_y_gradi": 180.0,
+   "basis": [
+    [
+     -1.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_inizio",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_460",
+   "posizione": [
+    -12.299,
+    3.362,
+    -24.0
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  },
+  {
+   "nodo": "det_tubo_rientro_fine",
+   "glb": "glb/tubi.glb",
+   "sorgente": "det_tubo_muro_16cm_2m",
+   "zona": "muri, sotto la galleria",
+   "gruppo": "corsa_460",
+   "posizione": [
+    -6.299,
+    3.362,
+    -24.0
+   ],
+   "rotazione_y_gradi": -0.0,
+   "basis": [
+    [
+     1.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     1.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     1.0
     ]
    ]
   }

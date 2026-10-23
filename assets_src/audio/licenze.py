@@ -20,7 +20,7 @@ def main():
     with open(REGISTRO, encoding='utf-8') as f:
         reg = json.load(f)
     righe = [
-        '# Suoni di Splash Lagoon: fonti e licenze',
+        '# Suoni di Jilly Jubilee: fonti e licenze',
         '',
         'Tutti i suoni di questa cartella sono **generati dagli script** in `assets_src/audio/` '
         '(`python genera_tutto.py` con il venv di Blender: numpy, scipy e ffmpeg). Sono di due tipi:',

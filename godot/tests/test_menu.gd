@@ -54,6 +54,22 @@ func _run() -> void:
 		"c'è il piedistallo della sala")
 	check(menu.get_node_or_null("Tempesta") is Tempesta, "ci sono i lampi della tempesta")
 	check(not _scrive_il_nome(menu), "il nome provvisorio del gioco non è scritto sul titolo")
+	# Il logo A (scelta dell'utente del 22 ottobre): in alto a sinistra, dentro lo schermo, sopra capitolo e
+	# voci senza toccarli, e visibile anche a 16:10.
+	var logo := menu.find_child("Logo", true, false) as TextureRect
+	check(logo != null and logo.texture != null and logo.texture.resource_path.ends_with("logo_jilly_jubilee.png"),
+		"c'è il logo del gioco")
+	if logo:
+		var r_logo := logo.get_global_rect()
+		var schermo := Rect2(Vector2.ZERO, Vector2(1280, 720))
+		var testata := menu.find_child("Testata", true, false) as Control
+		var voci_menu := menu.find_child("Menu", true, false) as Control
+		check(schermo.encloses(r_logo), "il logo sta tutto nello schermo (%s)" % r_logo)
+		check(testata != null and not r_logo.intersects(testata.get_global_rect())
+				and voci_menu != null and not r_logo.intersects(voci_menu.get_global_rect()),
+			"il logo non copre capitolo e voci")
+		check(r_logo.end.x < 640, "il logo resta nella metà sinistra, la statua a destra")
+		check(logo.texture.get_width() >= 2 * int(r_logo.size.x), "il logo ha risoluzione per 1920x1080 e oltre")
 	var versione := menu.find_child("Versione", true, false) as Label
 	var attesa := "Capitolo 1 · demo %s" % ProjectSettings.get_setting("application/config/version")
 	check(versione != null and versione.text == attesa,
@@ -259,7 +275,7 @@ func _test_riserva_caricamento() -> void:
 func _fine() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
-	get_tree().quit(1 if _failed > 0 else 0)
+	Game.esci(1 if _failed > 0 else 0)  # aspetta i caricamenti nel thread
 
 
 func check(cond: bool, what: String) -> void:

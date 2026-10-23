@@ -1,93 +1,260 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-22 03:29:41. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 04:09:33. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 65. Eccezioni non più trovate: 0.
+Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 25. Eccezioni non più trovate: 0.
 
 ## Già noti
+
+### acquari
+
+| Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
+|---|---|---|---|---|---|
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_2` | 19.25, 0.00, -18.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_3` | 19.25, 0.00, -11.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4` | 19.25, 0.00, -18.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5` | 19.25, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6` | 19.25, 0.00, -18.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7` | 19.25, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
 
 ### interni
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| ambienti-1 | compenetra | `Interni/Ambienti/Corridoio/neon_corridoio_2_neon/neon_corridoio_2_tubo_sfarfalla` | 0.30, 2.48, 39.60 | il 87% dei suoi vertici è dentro Interni/Ambienti/Corridoio/neon_corridoio_2 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| ambienti-1 | compenetra | `Interni/Ambienti/Spogliatoi/neon_spogliatoi_1_neon/neon_spogliatoi_1_tubo_sfarfalla` | -2.70, 2.85, 35.90 | il 68% dei suoi vertici è dentro Interni/Ambienti/Spogliatoi/neon_spogliatoi_1 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| ambienti-1 | compenetra | `Interni/Ambienti/Stanzino/neon_stanzino_neon/neon_stanzino_tubo_sfarfalla` | 3.50, 2.39, 32.50 | il 68% dei suoi vertici è dentro Interni/Ambienti/Stanzino/neon_stanzino | voluto: il tubo del neon sta dentro la sua plafoniera |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/asciugamano_corridoio` | -1.22, 0.00, 40.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (115 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/cartello_corridoio` | 6.53, 0.00, 39.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/cestino` | -4.47, 0.00, 38.75 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.55 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/corridoio_statico` | -4.22, 0.00, 38.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (104 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/estintore` | 0.03, 0.00, 40.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.84 e 1.46 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/pallone` | -7.47, 0.00, 40.25 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.42 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/valvola_corridoio_2` | 6.03, 0.00, 38.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/armadietti_est_01_anta` | 0.53, 0.00, 37.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/armadietti_est_09_giallo_anta` | 0.53, 0.00, 33.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta` | -5.97, 0.00, 36.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/armadietti_ovest_11_anta` | -5.97, 0.00, 33.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.73 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/asciugamano_2` | -3.22, 0.00, 36.50 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.52 m sopra il pavimento (80 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/cartello_bagnato` | 0.53, 0.00, 29.25 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.62 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/cestino_spogliatoi` | -5.97, 0.00, 30.50 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.50 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/pallone_spogliatoi` | 0.53, 0.00, 30.75 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.40 m sopra il pavimento (30 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/secchio_mocio` | -2.22, 0.00, 29.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 0.95 m sopra il pavimento (140 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_rotore` | -0.22, 0.00, 25.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_telaio` | 0.53, 0.00, 25.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (96 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Stanzino/estintore_stanzino` | 4.78, 0.00, 34.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.82 e 1.44 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Stanzino/porta_stanzino` | 0.53, 0.00, 32.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (64 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Interni/Ambienti/Stanzino/sedia` | 2.78, 0.00, 33.50 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.88 m sopra il pavimento (96 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | sospeso | `Interni/Ambienti/Spogliatoi/armadietti_ovest_02_anta` | -6.03, 0.96, 36.80 | niente a meno di 5 cm (sotto, il primo appoggio è a 0.18 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | sospeso | `Interni/Ambienti/Stanzino/fischietto_1` | 2.10, 1.26, 30.40 | niente a meno di 5 cm (sotto, il primo appoggio è a 0.50 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | sospeso | `Interni/Ambienti/Stanzino/fischietto_2` | 2.40, 1.22, 30.40 | niente a meno di 5 cm (sotto, il primo appoggio è a 0.46 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | sospeso | `Interni/Ambienti/Stanzino/fischietto_4` | 3.00, 1.14, 30.40 | niente a meno di 5 cm (sotto, il primo appoggio è a 0.96 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | sospeso | `Interni/Ambienti/Stanzino/fischietto_5` | 3.30, 1.10, 30.40 | niente a meno di 5 cm (sotto, il primo appoggio è a 0.34 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_rotore` | -0.25, 0.00, 25.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
+| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/tornello_telaio` | -0.75, 0.00, 25.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (12 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: si passa dal tornello: il rotore gira quando lo spingi, come una porta |
 
 ### sala
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaDestra` | 19.53, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/GuidaSinistra` | 19.53, 0.00, -18.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/AngoloScatoloni/scat_caduto_0` | -18.97, 0.00, 16.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.56 m sopra il pavimento (107 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/AngoloScatoloni/scat_caduto_6` | -17.97, 0.00, 16.00 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.48 m sopra il pavimento (64 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/AreaBimbi/sala_struttura_gioco` | -12.72, 0.00, -18.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (912 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_10` | 0.03, 0.00, 13.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_11` | 1.53, 0.00, 13.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_13` | 4.03, 0.00, 12.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_14` | 4.28, 0.00, 11.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_15` | 4.28, 0.00, 10.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_16` | 4.28, 0.00, 8.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (32 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_17` | 4.03, 0.00, 7.25 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_colonnina_18` | 2.78, 0.00, 6.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.00 m sopra il pavimento (16 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| ambienti-1 | ingombro | `Sala/VascaCentrale/sala_vasca_cordone` | -4.22, 0.00, 7.75 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.70 e 0.91 m sopra il pavimento (1618 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_2` | 19.25, 0.00, -18.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_3` | 19.25, 0.00, -11.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4` | 19.25, 0.00, -18.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_5` | 19.25, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6` | 19.25, 0.00, -18.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| enigmi | ingombro | `Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_7` | 19.25, 0.00, -11.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) | voluto: a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi) |
+| ambienti-1 | ingombro | `Sala/AreaBimbi/sala_struttura_gioco` | -12.25, 0.00, -19.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (85 celle da 25 cm) (pavimento a y -0.00), con la collisione (ci si sbatte contro) | voluto: struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre) |
 
 ### tecnici
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| da assegnare | compenetra | `Tecnici/Ambienti/CameraOnde/neon_0_neon/neon_0_tubi` | -0.60, -4.92, 5.36 | il 90% dei suoi vertici è dentro Tecnici/Ambienti/CameraOnde/plafoniera_0 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| da assegnare | compenetra | `Tecnici/Ambienti/CameraOnde/neon_1_neon/neon_1_tubo_sfarfalla` | -0.60, -4.92, 11.36 | il 87% dei suoi vertici è dentro Tecnici/Ambienti/CameraOnde/plafoniera_1 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| da assegnare | compenetra | `Tecnici/Ambienti/CameraOnde/neon_2_neon/neon_2_tubi` | -0.60, -4.92, 21.21 | il 87% dei suoi vertici è dentro Tecnici/Ambienti/CameraOnde/plafoniera_2 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| enigmi | compenetra | `Tecnici/Ambienti/Raccordo/neon_rc_neon/neon_rc_tubo_sfarfalla` | -0.90, -6.32, 49.86 | il 81% dei suoi vertici è dentro Tecnici/Ambienti/Raccordo/plafoniera_rc | voluto: il tubo del neon sta dentro la sua plafoniera |
-| da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_0_neon/neon_0_tubi` | 1.20, -4.22, 34.16 | il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_0 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_1_neon/neon_1_tubo_sfarfalla` | 1.20, -4.22, 39.16 | il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_1 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_2_neon/neon_2_tubi` | 1.20, -4.22, 43.66 | il 77% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_2 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| da assegnare | compenetra | `Tecnici/Ambienti/SalaPompe/neon_3_neon/neon_3_tubi` | 5.70, -4.22, 39.16 | il 68% dei suoi vertici è dentro Tecnici/Ambienti/SalaPompe/plafoniera_3 | voluto: il tubo del neon sta dentro la sua plafoniera |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2` | -15.65, 2.12, 44.96 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | estremita_libera | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2` | -15.65, 2.12, 30.20 | un capo del tubo non tocca niente entro 5 cm (né muro, pavimento, soffitto, né un altro tubo o un macchinario) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | ingombro | `Tecnici/Ambienti/CameraOnde/CAMERA_bocchette` | -1.72, -9.05, 7.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.58 e 2.00 m sopra il pavimento (192 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | ingombro | `Tecnici/Ambienti/CameraOnde/CAMERA_pozzo` | 0.03, -9.05, 1.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_5` | -3.97, 0.00, 46.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.22 e 2.00 m sopra il pavimento (64 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| enigmi | ingombro | `Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c3n_m_3` | -14.47, 0.00, 39.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.25 e 1.85 m sopra il pavimento (48 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_elettrico` | -3.22, -9.05, 33.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.90 e 2.00 m sopra il pavimento (160 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_strumenti` | -3.47, -9.05, 36.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 1.30 e 2.00 m sopra il pavimento (64 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_arredo` | 1.28, -9.05, 36.00 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (50 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_ringhiera` | -2.72, -9.05, 36.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.10 m sopra il pavimento (60 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_tubi` | 1.78, -9.05, 30.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (22 celle da 25 cm) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
-| da assegnare | sospeso | `Tecnici/Ambienti/SalaPompe/SALA_luci` | -1.40, -6.40, 47.58 | niente a meno di 5 cm (sotto, il primo appoggio è a 0.23 m) | da correggere: rapporto del 22 ottobre sulla v0.3.8 in preparazione, da assegnare |
+| ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/ATTUATORE_stagno` | -2.50, -9.05, 47.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.52 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -9.05), senza collisione (si attraversa) | voluto: fissato al muro est della sala pompe accanto alla porta, a 1,2-1,52 m da terra: sporge 24,2 cm dal muro, staffa compresa (al più 25); non pende nel passaggio (staffa a muro); davanti, alla testa, 17,6 m liberi fino al muro ovest (almeno 80 cm). Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2) |
+| ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_elettrico` | -3.50, -9.05, 31.75 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.90 e 2.00 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -9.05), con la collisione (ci si sbatte contro) | voluto: quadro elettrico appeso al muro sud della sala pompe, da 0,9 a 2,65 m: sporge 24 cm dal muro (era 56; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2) |
+| ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/QUADRO_strumenti` | -3.50, -9.05, 36.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.30 e 2.00 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -9.05), con la collisione (ci si sbatte contro) | voluto: pannello degli strumenti appeso al muro sud della sala pompe, da 1,3 a 2,25 m: sporge 24 cm dal muro (era 36; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2) |
+| ambienti-2 | ingombro | `Tecnici/Ambienti/SalaPompe/SALA_ringhiera` | -2.75, -9.05, 36.50 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 1.10 m sopra il pavimento (6 celle da 25 cm) (pavimenti fra y -9.05 e -8.89), senza collisione (si attraversa) | voluto: i montanti in cima alla scaletta della vasca di raccolta (escono 25 cm dal bordo, fino a 0,9 m): si esce dalla vasca passandoci in mezzo; la ringhiera vera ha le sue scatole di collisione |
 
 ### torre
 
 | Squadra | Problema | Nodo | Posizione | Dettaglio | Stato |
 |---|---|---|---|---|---|
-| ambienti-2 | ingombro | `TorreScivoli/discesa_1_1` | 38.76, -6.01, -11.55 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 1.96 m sopra il pavimento (40 celle da 25 cm) | voluto: la coda del canale del tratto 1 arriva sulla pedana SE -6 mezzo metro sopra la grata: la sua sponda svasata sporge sopra la pedana all'altezza del busto, ma è il fianco dello scivolo, solido e ben visibile, che si aggira; non attraversa la strada (ambienti-2, 22 ottobre) |
-| ambienti-2 | ingombro | `TorreScivoli/discesa_5_0` | 37.51, -15.01, -18.80 | nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dal giocatore, fra 0.35 e 1.22 m sopra il pavimento (49 celle da 25 cm) | da correggere: all'imbocco del tratto 5, che scende ripido, le sponde del canale si piegano all'indietro fino a 85 cm dietro l'imbocco, fra le gambe di chi entra: da rifare il profilo del canale all'imbocco (ambienti-2, dopo la v0.3.8) |
+| ambienti-2 | ingombro | `SalaInseguimento/InseguimentoStruttura/ins_A_struttura` | 44.00, -34.00, -4.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (9 celle da 25 cm) (pavimenti fra y -34.00 e -25.58), con la collisione (ci si sbatte contro) | voluto: le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre) |
+| ambienti-2 | ingombro | `SalaInseguimento/InseguimentoTubi/ins_A_tubo_0` | 50.75, -22.58, -15.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -22.58), con la collisione (ci si sbatte contro) | voluto: dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre) |
+| ambienti-2 | ingombro | `SalaInseguimento/InseguimentoTubi/ins_A_tubo_1` | 63.25, -25.58, -28.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -25.58), con la collisione (ci si sbatte contro) | voluto: dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre) |
+| ambienti-2 | ingombro | `SalaInseguimento/InseguimentoTubi/ins_A_tubo_2` | 69.50, -28.58, -7.25 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -28.58), con la collisione (ci si sbatte contro) | voluto: dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre) |
+| ambienti-2 | ingombro | `SalaInseguimento/InseguimentoTubi/ins_A_tubo_3` | 50.50, -34.00, -6.00 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -34.00), con la collisione (ci si sbatte contro) | voluto: dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre) |
+| ambienti-2 | ingombro | `TorreScivoli/torre_tubo_inseguimento` | 38.00, -19.98, -16.50 | nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.40 e 2.00 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -19.98), senza collisione (si attraversa) | voluto: dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre) |
+
+## Copertura
+
+Per ogni giro, quanti oggetti di scena si sono controllati in ogni parte. Una parte con 0 è una zona che il controllo non ha guardato.
+
+| Giro | Parte | Oggetti controllati |
+|---|---|---|
+| sala_principale · inizio | `Gioco/EnigmaAcquari` | 195 |
+| sala_principale · inizio | `Interni/Ambienti` | 180 |
+| sala_principale · inizio | `Interni/LampadaTornelli` | 2 |
+| sala_principale · inizio | `Interni/Meccanismi` | 1 |
+| sala_principale · inizio | `Interni/Polaroid` | 3 |
+| sala_principale · inizio | `Interni/Zaino` | 1 |
+| sala_principale · inizio | `LuciSala/LuciAreaBimbi` | 92 |
+| sala_principale · inizio | `Mascotte/InsegnaJilly` | 23 |
+| sala_principale · inizio | `Mascotte/ManifestoJilly` | 4 |
+| sala_principale · inizio | `Mascotte/StatuaPolpoA` | 1 |
+| sala_principale · inizio | `Mascotte/StatuaPolpoB` | 1 |
+| sala_principale · inizio | `Mascotte/StatuaSqualo` | 1 |
+| sala_principale · inizio | `Mascotte/TargaJilly` | 1 |
+| sala_principale · inizio | `Piscina/LucePortellone` | 1 |
+| sala_principale · inizio | `Polaroid/Polaroid04` | 1 |
+| sala_principale · inizio | `Polaroid/Polaroid05` | 1 |
+| sala_principale · inizio | `Polaroid/Polaroid06` | 1 |
+| sala_principale · inizio | `Polaroid/Polaroid07` | 1 |
+| sala_principale · inizio | `Polaroid/Polaroid08` | 1 |
+| sala_principale · inizio | `Polaroid/Polaroid09` | 1 |
+| sala_principale · inizio | `Risalita` | 197 |
+| sala_principale · inizio | `Risalita/Corrimano` | 7 |
+| sala_principale · inizio | `Risalita/lampada_emergenza` | 2 |
+| sala_principale · inizio | `Sala/AngoloPalloni` | 129 |
+| sala_principale · inizio | `Sala/AngoloScatoloni` | 148 |
+| sala_principale · inizio | `Sala/AreaBimbi` | 4 |
+| sala_principale · inizio | `Sala/Dettagli` | 852 |
+| sala_principale · inizio | `Sala/Interattivi` | 8 |
+| sala_principale · inizio | `Sala/Oggetti` | 68 |
+| sala_principale · inizio | `Sala/Piscina` | 6 |
+| sala_principale · inizio | `Sala/TorreScivoli` | 2 |
+| sala_principale · inizio | `Sala/VascaCentrale` | 33 |
+| sala_principale · inizio | `Tecnici/Ambienti` | 467 |
+| sala_principale · inizio | `Tecnici/LampeggianteParatia1` | 2 |
+| sala_principale · inizio | `Tecnici/Logica` | 38 |
+| sala_principale · inizio | `Vasca/Medusa` | 9 |
+| sala_torre · inizio | `FondoPozzo` | 1 |
+| sala_torre · inizio | `Luci` | 358 |
+| sala_torre · inizio | `Polaroid10/Modello` | 1 |
+| sala_torre · inizio | `SalaInseguimento/InseguimentoMobili` | 10 |
+| sala_torre · inizio | `SalaInseguimento/InseguimentoProp` | 4 |
+| sala_torre · inizio | `SalaInseguimento/InseguimentoTubi` | 7 |
+| sala_torre · inizio | `SalaInseguimento/Luci` | 71 |
+| sala_torre · inizio | `TorreProp` | 23 |
+| sala_torre · inizio | `TorreScivoli` | 20 |
+| sala_principale · interni_dopo | `Interni/Ambienti` | 180 |
+| sala_principale · interni_dopo | `Interni/LampadaTornelli` | 2 |
+| sala_principale · interni_dopo | `Interni/Meccanismi` | 1 |
+| sala_principale · interni_dopo | `Interni/Polaroid` | 3 |
+| sala_principale · interni_dopo | `Interni/Zaino` | 1 |
+| sala_principale · lei_fossa | `Gioco/LeiSbuca` | 9 |
+| sala_principale · risalita_arrivo | `Risalita` | 197 |
+| sala_principale · risalita_arrivo | `Risalita/Corrimano` | 7 |
+| sala_principale · risalita_arrivo | `Risalita/Fiume` | 259 |
+| sala_principale · risalita_arrivo | `Risalita/Infermeria` | 121 |
+| sala_principale · risalita_arrivo | `Risalita/lampada_emergenza` | 2 |
+| sala_principale · risalita_dopo | `Risalita` | 197 |
+| sala_principale · risalita_dopo | `Risalita/Corrimano` | 7 |
+| sala_principale · risalita_dopo | `Risalita/Fiume` | 259 |
+| sala_principale · risalita_dopo | `Risalita/Infermeria` | 177 |
+| sala_principale · risalita_dopo | `Risalita/lampada_emergenza` | 2 |
+| sala_principale · tappa7 | `Interni/Ambienti` | 2 |
+| sala_principale · tappa7 | `Sala/Interattivi` | 1 |
+| sala_principale · tappa7 | `Tecnici/Ambienti` | 2 |
+| sala_torre · inseguimento_dopo | `SalaInseguimento/InseguimentoMobili` | 10 |
+| sala_torre · inseguimento_dopo | `SalaInseguimento/InseguimentoProp` | 4 |
+| sala_torre · inseguimento_dopo | `SalaInseguimento/InseguimentoTubi` | 7 |
+| sala_torre · inseguimento_dopo | `SalaInseguimento/Luci` | 71 |
+| sala_principale · acquari_comparsi | `Gioco/EnigmaAcquari` | 197 |
+| sala_principale · acquari_comparsi | `Gioco/PortoneTorre` | nessuna mesh (solo logica) |
+| sala_principale · acquari_comparsi | `Sala/Interattivi` | 1 |
+| sala_principale · acquari_risolti | `Gioco/EnigmaAcquari` | 197 |
+| sala_principale · acquari_risolti | `Gioco/PortoneTorre` | nessuna mesh (solo logica) |
+| sala_principale · acquari_risolti | `Sala/Interattivi` | 1 |
+
+### Parti nascoste all'inizio
+
+Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni spente o accese di una luce, o effetti). "Controllata nello stato" vuol dire che un giro con stato le ha viste visibili; "mai controllata" va guardato.
+
+| Scena | Parte nascosta | Mesh | Controllata |
+|---|---|---|---|
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1345` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1346` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1347` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1348` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1349` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Atmosfera/GocceNellaPozza/@MeshInstance3D@1350` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface` | 1 | sì, in uno stato |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie` | 1 | sì, in uno stato |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioBlu/Vetro/Volume` | 1 | sì, in uno stato |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface` | 1 | sì, in uno stato |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie` | 1 | sì, in uno stato |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioGiallo/Vetro/Volume` | 1 | sì, in uno stato |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioMisto/Acqua/Surface` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioMisto/Graybox/Superficie` | 1 | no: segnaposto graybox, al suo posto si vede il modello vero |
+| sala_principale | `Gioco/EnigmaAcquari/AcquarioMisto/Vetro/Volume` | 1 | no: variante nello stesso posto di una parte controllata |
+| sala_principale | `Gioco/LeiSbuca/MedusaFossa` | 12 | sì, in uno stato |
+| sala_principale | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Gioco/LeiSbuca/SchizzoCoda/Corona` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Gioco/LeiSbuca/SchizzoCoda/Schiuma` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Gioco/LeiSbuca/SchizzoTesta/Corona` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Gioco/LeiSbuca/SchizzoTesta/Schiuma` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Interni/Ambienti/Corridoio/acqua_pozze_corridoio` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Interni/Ambienti/Spogliatoi/acqua_lavapiedi` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Interni/Ambienti/Spogliatoi/acqua_pozze_spogliatoi` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Interni/Ambienti/Stanzino/acqua_pozza_stanzino` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1393` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1394` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1395` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1392/@MeshInstance3D@1396` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1399` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1400` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1401` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1398/@MeshInstance3D@1402` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1405` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1406` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1407` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1404/@MeshInstance3D@1408` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1411` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1412` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1413` | 1 | **mai controllata** |
+| sala_principale | `LuciSala/@Node3D@1410/@MeshInstance3D@1414` | 1 | **mai controllata** |
+| sala_principale | `Player/Head/Camera3D/EffettoSottacqua/UnderwaterQuad` | 1 | **mai controllata** |
+| sala_principale | `Player/Head/Camera3D/ViewModel` | 13 | **mai controllata** |
+| sala_principale | `Player/WaterPack/Aspirazione` | 2 | **mai controllata** |
+| sala_principale | `Player/WaterPack/GettoPotente/@MeshInstance3D@1682` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Risalita/Fiume` | 378 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria` | 177 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto11/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto12/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto13/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto14/Frontale/Radiografia` | 1 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto14/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto15/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto21/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto22/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto23/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto24/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Cassetto25/Frontale/Tirato` | 5 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Keycard` | 2 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/Negatoscopio/Lastra` | 2 | sì, in uno stato |
+| sala_principale | `Risalita/Infermeria/PolaroidPecora` | 1 | sì, in uno stato |
+| sala_principale | `Tecnici/Ambienti/SalaPompe/ACQUA_vasca_raccolta` | 1 | no: effetto o acqua, esclusi |
+| sala_principale | `Vasca/Medusa/@Node3D@102/@MeshInstance3D@103` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@102/@MeshInstance3D@104` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@102/@MeshInstance3D@105` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@102/@MeshInstance3D@106` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@102/@MeshInstance3D@107` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@102/@MeshInstance3D@108` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@110/@MeshInstance3D@111` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@110/@MeshInstance3D@112` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@110/@MeshInstance3D@113` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@110/@MeshInstance3D@114` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@110/@MeshInstance3D@115` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@110/@MeshInstance3D@116` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@118/@MeshInstance3D@119` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@118/@MeshInstance3D@120` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@118/@MeshInstance3D@121` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@118/@MeshInstance3D@122` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@118/@MeshInstance3D@123` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@118/@MeshInstance3D@124` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@126/@MeshInstance3D@127` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@126/@MeshInstance3D@128` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@126/@MeshInstance3D@129` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@126/@MeshInstance3D@130` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@126/@MeshInstance3D@131` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@126/@MeshInstance3D@132` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@86/@MeshInstance3D@87` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@86/@MeshInstance3D@88` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@86/@MeshInstance3D@89` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@86/@MeshInstance3D@90` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@86/@MeshInstance3D@91` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@86/@MeshInstance3D@92` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@94/@MeshInstance3D@100` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@94/@MeshInstance3D@95` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@94/@MeshInstance3D@96` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@94/@MeshInstance3D@97` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@94/@MeshInstance3D@98` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/@Node3D@94/@MeshInstance3D@99` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Gocce/@MeshInstance3D@79` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Gocce/@MeshInstance3D@80` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Gocce/@MeshInstance3D@81` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Gocce/@MeshInstance3D@82` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Gocce/@MeshInstance3D@83` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Gocce/@MeshInstance3D@84` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Denti` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Gola` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_principale | `Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Strappo` | 1 | no: creatura, si muove (la guarda il collaudo) |
+| sala_torre | `BambinoBalconata0` | 2 | no: creatura, si muove (la guarda il collaudo) |
+| sala_torre | `BambinoBalconata1` | 3 | no: creatura, si muove (la guarda il collaudo) |
+| sala_torre | `BambinoBalconata2` | 2 | no: creatura, si muove (la guarda il collaudo) |
+| sala_torre | `BambinoBalconata3` | 3 | no: creatura, si muove (la guarda il collaudo) |
+| sala_torre | `SalaInseguimento/Lei` | 12 | no: creatura, si muove (la guarda il collaudo) |
 

@@ -15,7 +15,6 @@ extends Node
 ##     <jumpscare|geyser> [foto: t1,t2,... o "video"] [angolo in gradi rispetto a dove guarda lei] [cartella]
 
 const LEVEL := "res://scenes/sala_principale.tscn"
-const V1 := preload("res://proposte/geyser/geyser_mesh.gd")
 const V2 := preload("res://proposte/geyser/geyser_flipbook.gd")
 const RISCALDA := 60
 
@@ -61,15 +60,23 @@ func _ready() -> void:
 
 func _avvia() -> void:
 	Game.pause_on_focus_loss = false
+	# Come tests/scatti_tappa8.gd: la torre non si precarica (memoria).
+	Engine.set_meta(&"precarica_torre_spento", true)
 	Grafica.salva_su_disco = false
-	Grafica.applica_preset("alto")
+	Grafica.applica_preset(OS.get_environment("PRESET") if OS.get_environment("PRESET") != "" else "alto")
+	if OS.get_environment("SENZA_GI") == "1":
+		Grafica.imposta("gi", 0)
 	var wm := get_node_or_null(^"/root/WaterManager")
 	if wm:
 		wm.set(&"quality", 1)
-	var level := (load(LEVEL) as PackedScene).instantiate()
 	# Come tests/scatti_tappa8.gd con SCATTI_TOGLI=Interni,Tecnici: con tutto la memoria non basta (qui anche
 	# le polaroid e la medusa della vasca centrale, fuori inquadratura: col geyser in più si arrivava a 13,4 GB).
-	for percorso in ["Interni", "Tecnici", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa"]:
+	# Con la Risalita anche toglierli dopo non basta più (si caricano comunque): si carica una copia della
+	# scena senza i rami grossi e le loro risorse.
+	var togli: Array = ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata", "Polaroid", "Vasca/Medusa", "Mascotte"]
+	togli.append_array(OS.get_environment("TOGLI").split(",", false))   # prove: altri rami da togliere
+	var level := _scena_senza(LEVEL, togli).instantiate()
+	for percorso in togli:
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
 			n.get_parent().remove_child(n)
@@ -97,11 +104,19 @@ func _avvia() -> void:
 		var t := v as WaterTank
 		t.fill = clampf((lei.livello_pieno - t.get_floor_global_y()) / t.inner_size.y, 0.0, t.max_fill)
 	lei.distanza_presa = 0.0
-	if versione in ["v1", "v2"]:
-		var g: Node3D = (V1 if versione == "v1" else V2).new()
+	if versione == "v1":
+		pass   # la V1 è il geyser del gioco: LeiSbuca la crea già da sola
+	elif versione in ["v2", "oggi"]:
+		var vecchio := lei.get_node_or_null(^"Geyser")
+		if vecchio:
+			lei.remove_child(vecchio)
+			vecchio.free()
+		var g: Node3D = V2.new() if versione == "v2" else GeyserFossa.new()
 		g.name = "Geyser"
 		lei.add_child(g)
 		lei._geyser = g
+	if versione in ["v1", "v2"]:
+		var g := lei.get_node(^"Geyser")
 		if OS.get_environment("SENZA_CARTELLONE") != "":   # prova: il punto bianco è dietro la colonna?
 			var c := g.get_node_or_null(^"Cartellone") as Node3D
 			if c:
@@ -161,7 +176,8 @@ func _guarda() -> void:
 		p.look_at_point(_testa() + Vector3(0.0, 0.6, 0.0))
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_memoria(delta)
 	if p == null:
 		return
 	_f += 1
@@ -189,6 +205,12 @@ func _process(_delta: float) -> void:
 	if durante and _geyser_da < 0:
 		_geyser_da = _f
 		print("GEYSER dal fotogramma ", _f)
+		if OS.get_environment("SENZA_EFFETTI_ZAINO") != "":   # prova: il punto bianco sono gli schizzi del getto?
+			for n in p.find_children("*", "GeometryInstance3D", true, false):
+				# tutto tranne la pistola e le mani (sotto la camera, ma non le particelle)
+				if n is GPUParticles3D or not _sotto_camera(n):
+					(n as GeometryInstance3D).visible = false
+			print("SENZA_EFFETTI_ZAINO: nascosti gli effetti del giocatore")
 	if orbita and _geyser_da >= 0:
 		var k := clampf((_f - _geyser_da) / 60.0, 0.0, 1.0)
 		var testa := _testa()
@@ -245,3 +267,77 @@ func _scatto(x: float) -> void:
 	var nome := "%s_%03d_%03.1f.jpg" % [tipo, int(angolo), x]
 	get_viewport().get_texture().get_image().save_jpg(cartella.path_join(nome), 0.9)
 	print("salvato ", nome)
+
+
+func _sotto_camera(n: Node) -> bool:
+	var c := n.get_parent()
+	while c:
+		if c is Camera3D:
+			return true
+		c = c.get_parent()
+	return false
+
+
+## Una copia di [param scena] senza i nodi in [param rami] (con i figli, le connessioni e le risorse
+## esterne che usavano solo loro), così le loro risorse non si caricano neanche.
+func _scena_senza(scena: String, rami: Array) -> PackedScene:
+	var righe := FileAccess.get_file_as_string(scena).split("\n")
+	var dentro := func(percorso: String) -> bool:
+		for r in rami:
+			if percorso == r or percorso.begins_with(r + "/"):
+				return true
+		return false
+	var tenute: PackedStringArray = []
+	var salta := false
+	for riga in righe:
+		if riga.begins_with("["):
+			salta = false
+			if riga.begins_with("[node "):
+				var nome := riga.get_slice("name=\"", 1).get_slice("\"", 0)
+				var padre := riga.get_slice("parent=\"", 1).get_slice("\"", 0) if riga.contains("parent=\"") else ""
+				var percorso := nome if padre == "." else padre + "/" + nome
+				salta = padre != "" and (dentro.call(percorso) or dentro.call(padre))
+			elif riga.begins_with("[connection") or riga.begins_with("[editable"):
+				for chiave in ["from=\"", "to=\"", "path=\""]:
+					if riga.contains(chiave) and dentro.call(riga.get_slice(chiave, 1).get_slice("\"", 0)):
+						salta = true
+		if not salta:
+			tenute.append(riga)
+	var testo := "\n".join(tenute)
+	# Via le risorse esterne non più usate.
+	var finali: PackedStringArray = []
+	for riga in testo.split("\n"):
+		if riga.begins_with("[ext_resource"):
+			var id := riga.get_slice(" id=\"", 1).get_slice("\"", 0)
+			if testo.count("ExtResource(\"" + id + "\")") == 0:
+				continue
+		finali.append(riga)
+	var copia := "user://scatti_livello.tscn"
+	var f := FileAccess.open(copia, FileAccess.WRITE)
+	f.store_string("\n".join(finali))
+	f.close()
+	return ResourceLoader.load(copia, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+
+
+
+var _memoria_t := 0.0
+
+
+## MEMORIA=1: ogni 5 fotogrammi stampa la memoria (residente, statica, texture, buffer) e i fotogrammi disegnati.
+func _memoria(delta: float) -> void:
+	if OS.get_environment("MEMORIA") != "1":
+		return
+	_memoria_t += 1.0
+	if _memoria_t < 5.0:
+		return
+	_memoria_t = 0.0
+	var rss := "?"
+	for riga in FileAccess.get_file_as_string("/proc/self/status").split("\n"):
+		if riga.begins_with("VmRSS"):
+			rss = riga.get_slice(":", 1).strip_edges()
+	printerr("MEMORIA rss %s, _f %d, fase %s, " % [rss, _f, str(lei.fase) if lei else "-"], "statica %d MB, texture %d MB, buffer %d MB, video %d MB, fotogrammi %d" % [
+		OS.get_static_memory_usage() >> 20,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TEXTURE_MEM_USED) >> 20,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_BUFFER_MEM_USED) >> 20,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_VIDEO_MEM_USED) >> 20,
+		Engine.get_frames_drawn()])

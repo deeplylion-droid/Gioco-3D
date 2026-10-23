@@ -15,8 +15,11 @@ extends Node3D
 ## L'acqua della piscina: col livello si regola il bagliore.
 @export var vasca: WaterTank
 @export var colore := Color(1.0, 0.58, 0.16)
-## Anello: raggio interno ed esterno (m), quanto sta sopra il portellone, quanto brilla.
-@export var raggio_anello := 0.68
+## Anello: raggio interno ed esterno (m), quanto sta sopra il portellone, quanto brilla. Dal 22 ottobre (controllo di
+## posizionamento, scelta A del coordinatore) l'anello gira intorno al portellone, fuori dai suoi spigoli, e poggia
+## sul fondo alla quota del portellone (prima, a 0,68 m, entrava nel bordo rialzato e nel fondo); quota_anello non
+## si usa più.
+@export var raggio_anello := 1.0
 @export var spessore_anello := 0.09
 @export var quota_anello := 0.03
 @export var emissione_anello := 24.0
@@ -54,7 +57,8 @@ func _ready() -> void:
 	_anello.mesh = toro
 	_anello.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(_anello)
-	_anello.global_position = centro + Vector3.UP * quota_anello
+	# il fondo sotto l'anello è al massimo 1,2 cm sopra la base del portellone (fondo a conca, misurato il 22 ottobre)
+	_anello.global_position = Vector3(centro.x, _fondo_portellone() + 0.013 + spessore_anello * 0.5, centro.z)
 	# La luce dentro l'acqua: l'addon la usa anche per far brillare il volume d'acqua.
 	var glow_script := load("res://addons/acqua/scripts/water_glow_light.gd") as Script
 	_luce = OmniLight3D.new() if glow_script == null else glow_script.new() as OmniLight3D
@@ -84,6 +88,18 @@ func _centro_portellone() -> Vector3:
 	if mi and mi.mesh:
 		return mi.global_transform * mi.get_aabb().get_center()
 	return portellone.global_position
+
+
+## La quota della faccia di sotto del portellone chiuso (poggia sul fondo).
+func _fondo_portellone() -> float:
+	var mi := portellone as MeshInstance3D
+	if mi == null:
+		for c in portellone.find_children("*", "MeshInstance3D", true, false):
+			mi = c as MeshInstance3D
+			break
+	if mi and mi.mesh:
+		return (mi.global_transform * mi.get_aabb()).position.y
+	return portellone.global_position.y
 
 
 ## Quanta acqua copre il portellone (m): 0 a piscina vuota.

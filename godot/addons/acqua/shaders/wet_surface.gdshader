@@ -1,4 +1,4 @@
-// Superficie "bagnabile" (Splash Lagoon): piastrelle e muri delle vasche, pavimenti con
+// Superficie "bagnabile" (Jilly Jubilee): piastrelle e muri delle vasche, pavimenti con
 // pozzanghere, oggetti immersi.
 // - texture in triplanare con coordinate del mondo (niente UV necessarie) oppure UV normali;
 // - zone umide e pozzanghere riflettenti con i cerchi delle gocce (WaterManager.add_drop_ring);

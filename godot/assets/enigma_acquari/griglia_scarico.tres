@@ -4,6 +4,9 @@
 
 [resource]
 resource_name = "griglia_scarico"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 1
 albedo_color = Color(0.25, 0.24, 0.22, 1)
 albedo_texture = ExtResource("1")
 metallic = 0.8

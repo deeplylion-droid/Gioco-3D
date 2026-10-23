@@ -98,7 +98,7 @@ func _run() -> void:
 	var n_pezzi := 0
 	for t in dati["tratti"]:
 		n_pezzi += (t["pezzi"] as Array).size()
-	var scivoli := torre.corpi_scivolo()
+	var scivoli := torre.corpi_scivolo().filter(func(c): return torre.inseguimento == null or not torre.inseguimento.is_ancestor_of(c))
 	var rampe := scivoli.filter(func(c): return String(c.name).ends_with("_rampa"))
 	check(n_pezzi >= 8 and scivoli.size() - rampe.size() == n_pezzi and rampe.size() == (dati["tratti"] as Array).size(),
 			"%d pezzi di discesa e %d rampe d'imbocco: %d corpi nel gruppo \"scivolo\"" % [n_pezzi, rampe.size(), scivoli.size()])
@@ -360,12 +360,50 @@ func _run() -> void:
 		await _frames(30)
 		var accese_dopo := _luci_accese(sala)
 		check(GameState.luci == GameState.Luci.BLACKOUT and accese_dopo.size() == accese_prima.size(),
-			"dopo la morte le luci della torre sono ancora accese (%d su %d)" % [accese_dopo.size(), accese_prima.size()])
-		print("   La vasca del fondo")
+			"dopo la morte le luci della torre sono ancora accese (%d su %d%s)" % [accese_dopo.size(), accese_prima.size(),
+				"" if accese_dopo.size() == accese_prima.size() else "; spente: " + str(accese_prima.filter(func(n): return n not in accese_dopo))])
+		print("   La vasca del fondo e la bocca dell'inseguimento")
 		var fondo := sala.get_node("VascaFondo") as Area3D
 		_metti(p, fondo.global_position + Vector3(0, 0.6, 0), fondo.global_position + Vector3(0, 0.6, 1))
 		await _frames(30)
-		check(bool(level.get(&"demo_finished")), "nella vasca del fondo la discesa finisce (per ora la demo)")
+		check(not bool(level.get(&"demo_finished")), "nella vasca del fondo la discesa non finisce più: c'è l'inseguimento")
+		var ins := sala.inseguimento as SalaInseguimento
+		check(ins != null and ins.costruita, "l'inseguimento è già nella sala, dietro il muro est")
+		if ins:
+			# nella vasca del fondo, dall'acqua ai gradini sotto la bocca: dal lato sud si sale sul primo
+			p.rotation = Vector3.ZERO      # cammina dove guarda la testa (con il corpo girato, i versi si sommano)
+			p.teleport(SalaTorre.b([37.0, 13.8, -19.9]))
+			p.look_at_point(SalaTorre.b([37.0, 18.0, -18.4]))
+			Input.action_press(&"move_forward")
+			var su_gradino := false
+			for i in 300:
+				await _frames(1)
+				if p.global_position.y > -20.0 + 1.0 and -p.global_position.z > 16.7:
+					su_gradino = true
+					break
+			Input.action_release(&"move_forward")
+			check(su_gradino, "dall'acqua della vasca del fondo si salgono i gradini fino alla bocca (%s)" % str(p.global_position))
+			# dall'ultimo gradino nella bocca: si scivola fino alla vasca 1 dell'inseguimento
+			# (a mezzo metro dal labbro del tubo: più vicino il corpo lo compenetra e ne viene spinto fuori)
+			p.rotation = Vector3.ZERO      # cammina dove guarda la testa (con il corpo girato, i versi si sommano)
+			p.teleport(SalaTorre.b([37.0, 17.4, -18.88]) + Vector3(0, 0.05, 0))
+			p.look_at_point(SalaTorre.b([45.0, 17.4, -18.9]))
+			Input.action_press(&"move_forward")
+			var arrivato := false
+			for i in 900:
+				await _frames(1)
+				if p.is_sliding:
+					Input.action_release(&"move_forward")
+				if String(GameState.snapshot.get("checkpoint", "")).ends_with("Checkpoint_vasca_1"):
+					arrivato = true
+					break
+			Input.action_release(&"move_forward")
+			check(arrivato and not GameState.is_dying, "dalla bocca il tubo porta alla vasca 1 dell'inseguimento (checkpoint%s)"
+				% ("" if arrivato else "; fermo in %s, scivola %s" % [str(p.global_position), str(p.is_sliding)]))
+			# alla fine dell'inseguimento (SB1) finisce il capitolo: la scritta di fine della demo
+			ins.capitolo_finito.emit()
+			await _frames(5)
+			check(bool(level.get(&"demo_finished")), "alla fine dell'inseguimento finisce il capitolo (la demo)")
 	var errori_script := _errori.copia()
 	check(errori_script.is_empty(), "nessun errore degli script (%s)" % "; ".join(errori_script))
 	_fine()
@@ -466,7 +504,9 @@ func _luci_accese(sala: Node) -> Array:
 	for n in sala.find_children("*", "Light3D", true, false):
 		var l := n as Light3D
 		if l.is_visible_in_tree():
-			out.append(String(sala.get_path_to(l)))
+			# (le luci senza nome hanno nomi automatici diversi dopo la ricarica della sala: il posto le distingue)
+			var nome := String(l.name)
+			out.append(nome if not nome.begins_with("@") else "%s %s" % [l.get_class(), str(l.global_position.snapped(Vector3.ONE * 0.01))])
 	return out
 
 
@@ -494,7 +534,7 @@ func _salta_morte() -> void:
 func _fine() -> void:
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
-	get_tree().quit(1 if _failed > 0 else 0)
+	Game.esci(1 if _failed > 0 else 0)  # aspetta i caricamenti nel thread
 
 
 func check(cond: bool, what: String) -> void:
