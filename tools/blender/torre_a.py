@@ -303,7 +303,10 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
         m.operand_type = 'COLLECTION'
         m.collection = coll
         m.solver = 'EXACT'
-        m.use_hole_tolerant = b_.name in aperti
+        # (i telai delle pedane sono quattro travi con i vertici in comune: non sono chiusi, e senza la tolleranza il
+        # booleano ne toglieva intere facce)
+        m.use_hole_tolerant = True
+        m.use_self = True
         bpy.context.view_layer.objects.active = pezzo
         prima = len(me_t.polygons)
         bpy.ops.object.modifier_apply(modifier=m.name)
