@@ -307,7 +307,8 @@ func _process(delta: float) -> void:
 	if _bava:
 		_bava.set(&"attivo", _t < G)
 	_rimetti_tetti(false)
-	_aggiorna_luce_corsa(E, porta_t)
+	# la luce morbida su di lui da quando arretra (giro C, 23 ottobre: se no arretra e si gira nel buio)
+	_aggiorna_luce_corsa(float(tempi.get("arretra", E)), porta_t)
 	_camera(M, R, G, E, porta_t, delta)
 	if _t >= _fine:
 		_termina()

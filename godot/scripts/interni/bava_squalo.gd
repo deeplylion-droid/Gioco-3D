@@ -10,7 +10,7 @@ extends Node3D
 ## I punti dei fili sul bordo della bocca chiusa, nello spazio del modello in Blender (x di lato, -y avanti, z su:
 ## mostro_rig.G, "bocca" a (0,14; -1,02; 1,50)): x lungo la bocca, quanto più lunghi possono diventare (m).
 const FILI := [[0.0, 0.17], [0.07, 0.24], [0.14, 0.2], [0.2, 0.27], [0.29, 0.19]]
-const SPESSORE := 0.006
+const SPESSORE := 0.0035
 const SEGMENTI := 10
 
 var attivo := true

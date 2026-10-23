@@ -291,9 +291,10 @@ def posa(t, piedi):
     # nell'esitazione si volta indietro con tutto il busto, non solo con la testa: dietro di lui il
     # giocatore deve vedergli il muso e l'occhio
     # nel giro il busto resta indietro e la testa resta sul giocatore (girano al contrario della radice) finché
-    # la radice non ha fatto 125°; poi si staccano e raggiungono il corpo. tiene: quanto lo tiene d'occhio
+    # metà giro passato; poi si staccano piano (0,8 s: legati all'angolo della radice scattavano di 150° in 0,2 s)
+    # e raggiungono il corpo nei primi passi della corsa. tiene: quanto lo tiene d'occhio
     yaw_g = math.degrees(radice(t)[2])
-    tiene = 1.0 - liscio(0.0, 1.0, 120.0, 175.0, yaw_g) if t < C + 0.2 else 0.0
+    tiene = 1.0 - liscio(0.0, 1.0, g_(0.55), C + 0.6, t)
     torsione = -yaw_g * tiene * 0.4 / 58.0
     p['spina'] = [('x', 5 * chino + 9 * corsa + 1.5 * resp), ('z', -4 * corsa * math.sin(fase) + 26 * torsione)]
     p['petto'] = [('x', 4 * chino + 2 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase) + 32 * torsione)]
