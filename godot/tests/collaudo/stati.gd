@@ -28,7 +28,7 @@ static func applica(livello: Node, stato: String) -> void:
 	if stato in ["ritorno", "risolto"]:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	for n in livello.get_tree().get_nodes_in_group(&"persist"):
-		if not livello.is_ancestor_of(n) or n is Pickup or n is PackPickup or n is WaterTank:
+		if not (livello == n or livello.is_ancestor_of(n)) or n is Pickup or n is PackPickup or n is WaterTank:
 			continue
 		if not n.has_method(&"save_state") or not n.has_method(&"load_state"):
 			continue
