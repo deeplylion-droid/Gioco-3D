@@ -46,6 +46,7 @@ ext = [
     ('Script', 'res://assets/enigma_acquari/multimesh_da_meta.gd', 'mm_da_meta'),
     ('ArrayMesh', 'res://assets/enigma_acquari/raccordo_becco.res', 'raccordo_becco'),
     ('ArrayMesh', 'res://assets/enigma_acquari/raccordo_staffa_bassa.res', 'raccordo_staffa_bassa'),
+    ('ArrayMesh', 'res://assets/enigma_acquari/cavo_lampada.obj', 'cavo_lampada'),
 ]
 L = ['[gd_scene format=3]', '']
 for t, p, i in ext:
@@ -89,7 +90,6 @@ BASE_C, COP_C = (0.0339, -0.0357), (0.0409, -0.0330)
 # di 10 cm scendeva intorno alla cima del vetro, e l'anello ci restava chiuso dentro (per il controllo era "dentro" il
 # coperchio). Ora il coperchio sta 2 cm più su della cima del vetro, col fondo della gonna 0,5 mm sopra l'anello, largo
 # fino a 1,155 m (i tiranti cominciano a 1,156): la gonna poggia sull'anello, l'anello sul bordo del vetro.
-GRADINO = 0.14725           # quanto il fondo del basamento sta sotto il fondo del vetro (unità del modello)
 ABBASSA_COP = -0.01025      # il coperchio scende di tanto (unità del modello): negativo, sta sopra la cima del vetro
 R_ANELLO = (0.5475 * K, 1.155)   # l'anello sul bordo del vetro (dentro e fuori, m)
 
@@ -175,9 +175,10 @@ SOPRA_TIR = tuple(v + 0.0505 - ABBASSA_COP for v in (0.0375, 0.0375, 0.013, 0.03
 TIR_SU = B_VETRO + max(SOPRA_TIR) * K + 0.02
 TIR_GIU = -0.1 * K
 sr('CylinderMesh', 'tirante', top_radius='%.3f' % (0.022 * K), bottom_radius='%.3f' % (0.022 * K), height='%.3f' % (TIR_SU - TIR_GIU), radial_segments='12')
-sr('CylinderMesh', 'basamento_vetro', top_radius='%.4f' % (0.5675 * K), bottom_radius='%.4f' % (0.5675 * K), height='%.4f' % (GRADINO * K), radial_segments='64')
-sr('CylinderMesh', 'fondo_vetro_basso', top_radius='%.4f' % (R_B + 0.02), bottom_radius='%.4f' % (R_B + 0.02), height='0.02', radial_segments='64')
-sr('CylinderMesh', 'gamba_vetro_basso', top_radius='0.025', bottom_radius='0.025', height='%.4f' % (0.29 * KY - 0.02), radial_segments='12')
+# Niente fondi del vetro: il vetro (un tubo, AcquarioVetro) poggia sulla cima delle basi, chiusa da chiudi_tagli.py, che
+# fa da fondo. Prima le basi erano aperte in cima, e il basamento degli alti e il fondo del miscuglio con le sue cinque
+# gambe stavano dentro la base, che Meshy ha fatto piena; una piastra sopra la cima stava dentro il tubo di vetro
+# (controllo del 23 ottobre, dentro dal verso delle facce)
 sr('TorusMesh', 'anello_vetro', inner_radius='%.4f' % R_ANELLO[0], outer_radius='%.4f' % R_ANELLO[1], rings='64', ring_segments='12')
 sr('CylinderShape3D', 'forma_alto', radius='%.3f' % (0.5 * K), height='%.3f' % (2.95 * K))
 # la base è più larga del vetro: fino a 1,25 m dal centro, 1,36-1,44 dove sporgono costole e attacchi (misurato fuori
@@ -384,10 +385,7 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
             su = B_VETRO + SOPRA_TIR[k] * K + 0.02
             node('Tirante%d' % (k + 1), 'MeshInstance3D', nome, transform=tr(sc3(1, (su - TIR_GIU) / (TIR_SU - TIR_GIU), 1), (math.cos(a) * 0.6 * K, (su + TIR_GIU) * 0.5, math.sin(a) * 0.6 * K)),
                  mesh='SubResource("tirante")', material_override='ExtResource("m_tiranti")')
-        # il telaio del vetro: il basamento dal fondo del vetro agli appoggi dell'incavo della base; l'anello piatto
-        # (2 cm) sul bordo del vetro, sotto il bordo del coperchio
-        node('BasamentoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, -GRADINO * K * 0.5, 0)), mesh='SubResource("basamento_vetro")',
-             material_override='ExtResource("m_tiranti")')
+        # il telaio del vetro: l'anello piatto (2 cm) sul bordo del vetro, sotto il bordo del coperchio
         node('AnelloVetro', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.02 / (R_ANELLO[1] - R_ANELLO[0]), 1), (0, B_VETRO + 0.01, 0)),
              mesh='SubResource("anello_vetro")', material_override='ExtResource("m_tiranti")')
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
@@ -399,14 +397,6 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
         node('Base', parent=nome, inst='base_bassa', transform=tr(sc3(SC * KX, KY, SC * KX), (0, -B_BASSO_BASE, 0)))
         node('Anello', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.6 * KY / KX, 1), (0, B_BASSO_VETRO + MEZZO_ANELLO_BASSO * 0.6 * KY / KX + 0.0005, 0)),
              mesh='SubResource("anello")', material_override='ExtResource("m_rosso")')
-        # il fondo del vetro sulle sue gambe (prima il vetro e l'acqua stavano 0,58 m sopra il piano della base)
-        node('FondoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, -0.01, 0)), mesh='SubResource("fondo_vetro_basso")',
-             material_override='ExtResource("m_tiranti")')
-        hg = 0.29 * KY - 0.02
-        for k, ga in enumerate((20, 80, 200, 260, 320)):
-            a = math.radians(ga)
-            node('GambaVetro%d' % (k + 1), 'MeshInstance3D', nome, transform=tr(ID, (math.cos(a) * 0.5 * KX * SC, -0.02 - hg * 0.5, math.sin(a) * 0.5 * KX * SC)),
-                 mesh='SubResource("gamba_vetro_basso")', material_override='ExtResource("m_tiranti")')
         node('Collisione', 'StaticBody3D', nome, collision_mask='0')
         node('Base', 'CollisionShape3D', nome + '/Collisione', transform=tr(ID, (0, -B_BASSO_BASE * 0.5, 0)), shape='SubResource("forma_base_bassa")')
         raccordi(nome, SC * KX, KY, SC * KX, -B_BASSO_BASE, basso=True)
@@ -552,6 +542,7 @@ node('Buco', 'MeshInstance3D', 'Valvola', transform=tr(ID, (gx, 0.002 - VY, 0)),
 # lampada di servizio a gabbia, la stessa del fiume lento, stretta al tirante davanti a est del blu,
 # appena sopra la base, girata verso la valvola. Spot caldo e stretto, senza ombre della gabbia.
 TIR = sposta('B', XB + 0.6 * K * math.cos(math.radians(45)), ZA + 0.6 * K * math.sin(math.radians(45)))
+CENTRO_TIR = sposta('B', XB, ZA)    # il centro dell'acquario del tirante
 LY = 2.25                           # la gabbia sporge 21 cm sotto il perno: resta sopra i 2 m, fuori dalla testa
 R_TIR = 0.022 * K
 ANGOLO_SPOT = 16.0
@@ -581,9 +572,9 @@ if POSIZIONE != 'P1':
             t = sposta(g, ax + 0.6 * K * math.cos(a), az + 0.6 * K * math.sin(a))
             dd = math.hypot(VOL[0] - t[0], VOL[2] - t[1])
             if dd < 3.5 and not _coperta((t[0], LY, t[1]), VOL):
-                cand.append((dd, t))
+                cand.append((dd, t, sposta(g, ax, az)))
     if cand:
-        TIR = min(cand)[1]
+        TIR, CENTRO_TIR = min(cand)[1], min(cand)[2]
     else:
         TIR = sposta('M', PEDANA_X0 + 0.03, PEDANA_Z0 + 0.03)
         LY, R_TIR, ANGOLO_SPOT = PEDANA_H + 0.75, 0.022, 32.0
@@ -606,8 +597,68 @@ CAVO_FINE = B_BASE - 0.075 * K - 0.01 if cand or POSIZIONE == 'P1' else PEDANA_H
 CR = R_TIR + 0.012
 CX, CZ = TIR[0] + _d[0] / _l * CR, TIR[1] + _d[1] / _l * CR
 cavo_l = (LY - 0.12) - CAVO_FINE
-sr_tardi('CylinderMesh', 'cavo_lampada', top_radius='0.007', bottom_radius='0.007', height='%.3f' % cavo_l, radial_segments='6')
-node('Cavo', 'MeshInstance3D', '.', transform=tr(ID, (CX, CAVO_FINE + cavo_l / 2, CZ)), mesh='SubResource("cavo_lampada")',
+
+
+def cavo_obj(punti, origine, r=0.007, lati=8, rc=0.03):
+    """Il cavo come tubo lungo una polilinea, con le curve raccordate, in un .obj (coordinate del nodo)."""
+    P = [tuple(p[k] - origine[k] for k in range(3)) for p in punti]
+    sub_ = lambda a, b: tuple(a[k] - b[k] for k in range(3))
+    add_ = lambda a, b: tuple(a[k] + b[k] for k in range(3))
+    mul_ = lambda a, f: tuple(a[k] * f for k in range(3))
+    lun_ = lambda a: math.sqrt(sum(c * c for c in a))
+    nor_ = lambda a: mul_(a, 1.0 / lun_(a))
+    cro_ = lambda a, b: (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+    dot_ = lambda a, b: sum(a[k] * b[k] for k in range(3))
+    Q = [P[0]]
+    for i in range(1, len(P) - 1):
+        d1, d2 = nor_(sub_(P[i], P[i - 1])), nor_(sub_(P[i + 1], P[i]))
+        ang = math.acos(max(-1.0, min(1.0, dot_(d1, d2))))
+        t = min(rc * math.tan(ang / 2), lun_(sub_(P[i], P[i - 1])) * 0.49, lun_(sub_(P[i + 1], P[i])) * 0.49)
+        p1, p2 = sub_(P[i], mul_(d1, t)), add_(P[i], mul_(d2, t))
+        for k in range(7):
+            u = k / 6
+            Q.append(add_(add_(mul_(p1, (1 - u) ** 2), mul_(P[i], 2 * u * (1 - u))), mul_(p2, u * u)))
+    Q.append(P[-1])
+    v, vn, f = [], [], []
+    n_prec = None
+    for i, q in enumerate(Q):
+        t = nor_(sub_(Q[min(i + 1, len(Q) - 1)], Q[max(i - 1, 0)]))
+        n = cro_(t, (1, 0, 0)) if n_prec is None else sub_(n_prec, mul_(t, dot_(n_prec, t)))
+        n = nor_(n)
+        n_prec = n
+        b = cro_(t, n)
+        for j in range(lati):
+            a = 2 * math.pi * j / lati
+            o = add_(mul_(n, math.cos(a)), mul_(b, math.sin(a)))
+            v.append(add_(q, mul_(o, r)))
+            vn.append(o)
+    for i in range(len(Q) - 1):
+        for j in range(lati):
+            a0, a1 = i * lati + j + 1, i * lati + (j + 1) % lati + 1
+            b0, b1 = a0 + lati, a1 + lati
+            f += [(a0, b0, b1), (a0, b1, a1)]
+    righe = ['# il cavo della lampada della valvola (genera_scena.py)']
+    righe += ['v %.5f %.5f %.5f' % p for p in v] + ['vn %.5f %.5f %.5f' % p for p in vn]
+    righe += ['f %d//%d %d//%d %d//%d' % (x, x, y, y, z, z) for x, y, z in f]
+    open(os.path.join(QUI, '..', '..', 'godot', 'assets', 'enigma_acquari', 'cavo_lampada.obj'), 'w').write('\n'.join(righe) + '\n')
+
+
+# in fondo il cavo non scende dritto: accanto al tirante, sotto, non c'è la base (il bordo della base finisce 2 cm prima,
+# e il capo restava nel vuoto, controllo del 23 ottobre). 13 cm sopra la base gira di lato al tirante (dalla parte della
+# valvola, 6,5 cm dal suo asse) e scende dentro il bordo della base, 1 cm, accanto al piede del tirante
+O_CAVO = (CX, CAVO_FINE + cavo_l / 2, CZ)
+if cand or POSIZIONE == 'P1':
+    _rx, _rz = TIR[0] - CENTRO_TIR[0], TIR[1] - CENTRO_TIR[1]
+    _rl = math.hypot(_rx, _rz)
+    _rx, _rz = _rx / _rl, _rz / _rl                       # dal centro dell'acquario verso il tirante
+    _tx, _tz = -_rz, _rx
+    _ra = (CX - TIR[0]) * _rx + (CZ - TIR[1]) * _rz       # il cavo: quanto sta fuori, verso il bordo
+    _sg = 1.0 if (CX - TIR[0]) * _tx + (CZ - TIR[1]) * _tz >= 0 else -1.0
+    _lato = lambda rr, tt, y: (TIR[0] + _rx * rr + _tx * tt * _sg, y, TIR[1] + _rz * rr + _tz * tt * _sg)
+    cavo_obj([(CX, LY - 0.12, CZ), (CX, CAVO_FINE + 0.13, CZ), _lato(_ra, 0.065, CAVO_FINE + 0.07), _lato(0.008, 0.065, CAVO_FINE)], O_CAVO)
+else:
+    cavo_obj([(CX, LY - 0.12, CZ), (CX, CAVO_FINE, CZ)], O_CAVO)
+node('Cavo', 'MeshInstance3D', '.', transform=tr(ID, O_CAVO), mesh='ExtResource("cavo_lampada")',
      material_override='SubResource("nero")')
 # le fascette stringono insieme il tirante e il cavo: un anello ovale (un cilindro schiacciato) che li gira intorno
 # tutti e due, 2 mm fuori (prima un cubetto fra i due, mezzo dentro il tirante)
