@@ -58,10 +58,10 @@ func _avvia() -> void:
 		var c := SalaInseguimento.b([(r[0] + r[2]) / 2.0, (r[1] + r[3]) / 2.0 - 4.5, float(sala.dati["bacino"]["fondo"])])
 		p.teleport(c + Vector3.UP * 0.05, 0.0, 0.0)
 	else:
-		# nella vasca 1, dalla parte di lei
+		# nella vasca 1, verso il lato sud, così il tubo giallo sul bordo nord non copre lei
 		var v: Dictionary = sala.dati["vasche"][0]
 		var r: Array = v["rett"]
-		p.teleport(SalaInseguimento.b([r[0] + 1.3, (r[1] + r[3]) / 2.0 - 0.5, float(v["fondo"])]) + Vector3.UP * 0.05, 0.0, 0.0)
+		p.teleport(SalaInseguimento.b([r[0] + 2.5, r[1] + 1.2, float(v["fondo"])]) + Vector3.UP * 0.05, 0.0, 0.0)
 	set_process(true)
 
 
