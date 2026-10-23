@@ -15,7 +15,8 @@ func _ready() -> void:
 func _run() -> void:
 	var a := OS.get_cmdline_user_args()
 	Game.pause_on_focus_loss = false
-	var livello := (load("res://scenes/interni/interni.tscn") as PackedScene).instantiate() as Node3D
+	var scena := a[3] if a.size() > 3 else "res://scenes/interni/interni.tscn"
+	var livello := (load(scena) as PackedScene).instantiate() as Node3D
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
 	for i in 30:

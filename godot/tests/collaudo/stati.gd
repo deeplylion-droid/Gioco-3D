@@ -27,6 +27,10 @@ static func applica(livello: Node, stato: String) -> void:
 		return
 	if stato in ["ritorno", "risolto"]:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT)
+	# l'armadietto che sbatte, come quando ci passa il giocatore (prima che "armadietto" diventi vero)
+	for n in livello.find_children("*", "Node", true, false) + [livello]:
+		if n.has_method(&"_on_trigger_armadietto") and GameState.player:
+			n.call(&"_on_trigger_armadietto", GameState.player)
 	for n in livello.get_tree().get_nodes_in_group(&"persist"):
 		if not livello.is_ancestor_of(n) or n is Pickup or n is PackPickup or n is WaterTank:
 			continue

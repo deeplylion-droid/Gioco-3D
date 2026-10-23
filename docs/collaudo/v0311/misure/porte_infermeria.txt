@@ -1,0 +1,1128 @@
+SONDA -2.90 0.0 -3.45 nord -> Collisioni#2 punto (-2.9, 0.67, -3.3)
+SONDA -2.89 0.0 -3.45 nord -> Collisioni#2 punto (-2.89, 0.67, -3.3)
+SONDA -2.88 0.0 -3.45 nord -> Collisioni#2 punto (-2.88, 0.67, -3.3)
+SONDA -2.87 0.0 -3.45 nord -> Collisioni#2 punto (-2.87, 0.67, -3.3)
+SONDA -2.86 0.0 -3.45 nord -> Collisioni#2 punto (-2.86, 0.67, -3.3)
+SONDA -2.85 0.0 -3.45 nord -> Collisioni#2 punto (-2.85, 0.67, -3.3)
+SONDA -2.84 0.0 -3.45 nord -> Collisioni#2 punto (-2.84, 0.67, -3.3)
+SONDA -2.83 0.0 -3.45 nord -> Collisioni#2 punto (-2.83, 0.67, -3.3)
+SONDA -2.82 0.0 -3.45 nord -> Collisioni#2 punto (-2.82, 0.67, -3.3)
+SONDA -2.81 0.0 -3.45 nord -> Collisioni#2 punto (-2.81, 0.67, -3.3)
+SONDA -2.80 0.0 -3.45 nord -> Collisioni#2 punto (-2.8, 0.67, -3.3)
+SONDA -2.79 0.0 -3.45 nord -> Collisioni#2 punto (-2.79, 0.67, -3.3)
+SONDA -2.78 0.0 -3.45 nord -> Collisioni#2 punto (-2.78, 0.67, -3.3)
+SONDA -2.77 0.0 -3.45 nord -> Collisioni#2 punto (-2.77, 0.67, -3.3)
+SONDA -2.76 0.0 -3.45 nord -> Collisioni#2 punto (-2.76, 0.67, -3.3)
+SONDA -2.75 0.0 -3.45 nord -> Collisioni#2 punto (-2.75, 0.67, -3.3)
+SONDA -2.74 0.0 -3.45 nord -> Collisioni#2 punto (-2.74, 0.67, -3.3)
+SONDA -2.73 0.0 -3.45 nord -> Collisioni#2 punto (-2.73, 0.67, -3.3)
+SONDA -2.72 0.0 -3.45 nord -> Collisioni#2 punto (-2.72, 0.67, -3.3)
+SONDA -2.71 0.0 -3.45 nord -> Collisioni#2 punto (-2.71, 0.67, -3.3)
+SONDA -2.70 0.0 -3.45 nord -> Collisioni#2 punto (-2.71, 0.67, -3.3)
+SONDA -2.69 0.0 -3.45 nord -> Collisioni#2 punto (-2.72, 0.67, -3.3)
+SONDA -2.68 0.0 -3.45 nord -> Collisioni#2 punto (-2.73, 0.67, -3.3)
+SONDA -2.67 0.0 -3.45 nord -> Collisioni#2 punto (-2.75, 0.67, -3.3)
+SONDA -2.66 0.0 -3.45 nord -> Collisioni#2 punto (-2.76, 0.67, -3.3)
+SONDA -2.65 0.0 -3.45 nord -> Collisioni#2 punto (-2.77, 0.67, -3.3)
+SONDA -2.64 0.0 -3.45 nord -> Collisioni#2 punto (-2.77, 0.67, -3.3)
+SONDA -2.63 0.0 -3.45 nord -> Collisioni#2 punto (-2.78, 0.67, -3.3)
+SONDA -2.62 0.0 -3.45 nord -> Collisioni#2 punto (-2.79, 0.67, -3.3)
+SONDA -2.61 0.0 -3.45 nord -> Collisioni#2 punto (-2.79, 0.67, -3.3)
+SONDA -2.60 0.0 -3.45 nord -> Collisioni#2 punto (-2.8, 0.67, -3.3)
+SONDA -2.59 0.0 -3.45 nord -> Collisioni#2 punto (-2.8, 0.67, -3.3)
+SONDA -2.58 0.0 -3.45 nord -> Collisioni#2 punto (-2.8, 0.67, -3.3)
+SONDA -2.57 0.0 -3.45 nord -> Collisioni#2 punto (-2.8, 0.67, -3.3)
+SONDA -2.56 0.0 -3.45 nord -> Collisioni#2 punto (-2.8, 0.67, -3.3)
+SONDA -2.55 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 1.13, -3.3)
+SONDA -2.54 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.53 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.22)
+SONDA -2.52 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.23)
+SONDA -2.51 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.23)
+SONDA -2.50 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.24)
+SONDA -2.49 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.25)
+SONDA -2.48 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.25)
+SONDA -2.47 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.26)
+SONDA -2.46 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.26)
+SONDA -2.45 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.27)
+SONDA -2.44 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.27)
+SONDA -2.43 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.28)
+SONDA -2.42 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.28)
+SONDA -2.41 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.29)
+SONDA -2.40 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.29)
+SONDA -2.39 0.0 -3.45 nord -> Collisioni#2 punto (-2.7, 0.67, -3.3)
+SONDA -2.38 0.0 -3.45 nord -> libero punto -
+SONDA -2.37 0.0 -3.45 nord -> libero punto -
+SONDA -2.36 0.0 -3.45 nord -> libero punto -
+SONDA -2.35 0.0 -3.45 nord -> libero punto -
+SONDA -2.34 0.0 -3.45 nord -> libero punto -
+SONDA -2.33 0.0 -3.45 nord -> libero punto -
+SONDA -2.32 0.0 -3.45 nord -> libero punto -
+SONDA -2.31 0.0 -3.45 nord -> libero punto -
+SONDA -2.30 0.0 -3.45 nord -> libero punto -
+SONDA -2.29 0.0 -3.45 nord -> libero punto -
+SONDA -2.28 0.0 -3.45 nord -> libero punto -
+SONDA -2.27 0.0 -3.45 nord -> libero punto -
+SONDA -2.26 0.0 -3.45 nord -> libero punto -
+SONDA -2.25 0.0 -3.45 nord -> libero punto -
+SONDA -2.24 0.0 -3.45 nord -> libero punto -
+SONDA -2.23 0.0 -3.45 nord -> libero punto -
+SONDA -2.22 0.0 -3.45 nord -> libero punto -
+SONDA -2.21 0.0 -3.45 nord -> libero punto -
+SONDA -2.20 0.0 -3.45 nord -> libero punto -
+SONDA -2.19 0.0 -3.45 nord -> libero punto -
+SONDA -2.18 0.0 -3.45 nord -> libero punto -
+SONDA -2.17 0.0 -3.45 nord -> libero punto -
+SONDA -2.16 0.0 -3.45 nord -> libero punto -
+SONDA -2.15 0.0 -3.45 nord -> libero punto -
+SONDA -2.14 0.0 -3.45 nord -> libero punto -
+SONDA -2.13 0.0 -3.45 nord -> libero punto -
+SONDA -2.12 0.0 -3.45 nord -> libero punto -
+SONDA -2.11 0.0 -3.45 nord -> libero punto -
+SONDA -2.10 0.0 -3.45 nord -> libero punto -
+SONDA -2.09 0.0 -3.45 nord -> libero punto -
+SONDA -2.08 0.0 -3.45 nord -> libero punto -
+SONDA -2.07 0.0 -3.45 nord -> libero punto -
+SONDA -2.06 0.0 -3.45 nord -> libero punto -
+SONDA -2.05 0.0 -3.45 nord -> libero punto -
+SONDA -2.04 0.0 -3.45 nord -> libero punto -
+SONDA -2.03 0.0 -3.45 nord -> libero punto -
+SONDA -2.02 0.0 -3.45 nord -> libero punto -
+SONDA -2.01 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.3)
+SONDA -2.00 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.29)
+SONDA -1.99 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.29)
+SONDA -1.98 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.28)
+SONDA -1.97 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.28)
+SONDA -1.96 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.27)
+SONDA -1.95 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.27)
+SONDA -1.94 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.26)
+SONDA -1.93 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.26)
+SONDA -1.92 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.25)
+SONDA -1.91 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.25)
+SONDA -1.90 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.24)
+SONDA -1.89 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.23)
+SONDA -1.88 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.23)
+SONDA -1.87 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.22)
+SONDA -1.86 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 0.67, -3.21)
+SONDA -1.85 0.0 -3.45 nord -> Collisioni#3 punto (-1.7, 1.13, -3.3)
+SONDA -1.84 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.3)
+SONDA -1.83 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.3)
+SONDA -1.82 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.3)
+SONDA -1.81 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.3)
+SONDA -1.80 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.3)
+SONDA -1.79 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.61, 0.67, -3.3)
+SONDA -1.78 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.61, 0.67, -3.3)
+SONDA -1.77 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.62, 0.67, -3.3)
+SONDA -1.76 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.63, 0.67, -3.3)
+SONDA -1.75 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.63, 0.67, -3.3)
+SONDA -1.74 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.64, 0.67, -3.3)
+SONDA -1.73 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.65, 0.67, -3.3)
+SONDA -1.72 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.67, 0.67, -3.3)
+SONDA -1.71 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.68, 0.67, -3.3)
+SONDA -1.70 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.69, 0.67, -3.3)
+SONDA -1.69 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.69, 0.67, -3.3)
+SONDA -1.68 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.68, 0.67, -3.3)
+SONDA -1.67 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.67, 0.67, -3.3)
+SONDA -1.66 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.66, 0.67, -3.3)
+SONDA -1.65 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.65, 0.67, -3.3)
+SONDA -1.64 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.64, 0.67, -3.3)
+SONDA -1.63 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.63, 0.67, -3.3)
+SONDA -1.62 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.62, 0.67, -3.3)
+SONDA -1.61 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.61, 0.67, -3.3)
+SONDA -1.60 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.3)
+SONDA -1.59 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.59, 0.67, -3.3)
+SONDA -1.58 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.58, 0.67, -3.3)
+SONDA -1.57 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.57, 0.67, -3.3)
+SONDA -1.56 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.56, 0.67, -3.3)
+SONDA -1.55 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.55, 0.67, -3.3)
+SONDA -1.54 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.54, 0.67, -3.3)
+SONDA -1.53 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.53, 0.67, -3.3)
+SONDA -1.52 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.52, 0.67, -3.3)
+SONDA -1.51 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.51, 0.67, -3.3)
+SONDA -1.50 0.0 -3.45 nord -> Collisioni#3, Collisioni#5 punto (-1.5, 0.67, -3.3)
+SONDA -2.90 0.0 -3.2 nord -> Collisioni#10, Collisioni#2 punto (-2.9, 0.67, -3.2)
+SONDA -2.89 0.0 -3.2 nord -> Collisioni#10, Collisioni#2 punto (-2.89, 0.67, -3.2)
+SONDA -2.88 0.0 -3.2 nord -> Collisioni#10, Collisioni#2 punto (-2.88, 0.67, -3.2)
+SONDA -2.87 0.0 -3.2 nord -> Collisioni#10, Collisioni#2 punto (-2.87, 0.67, -3.2)
+SONDA -2.86 0.0 -3.2 nord -> Collisioni#10, Collisioni#2 punto (-2.86, 0.67, -3.2)
+SONDA -2.85 0.0 -3.2 nord -> Collisioni#2 punto (-2.85, 0.67, -3.2)
+SONDA -2.84 0.0 -3.2 nord -> Collisioni#2 punto (-2.84, 0.67, -3.2)
+SONDA -2.83 0.0 -3.2 nord -> Collisioni#2 punto (-2.83, 0.67, -3.2)
+SONDA -2.82 0.0 -3.2 nord -> Collisioni#2 punto (-2.82, 0.67, -3.2)
+SONDA -2.81 0.0 -3.2 nord -> Collisioni#2 punto (-2.81, 0.67, -3.2)
+SONDA -2.80 0.0 -3.2 nord -> Collisioni#2 punto (-2.8, 0.67, -3.2)
+SONDA -2.79 0.0 -3.2 nord -> Collisioni#2 punto (-2.79, 0.67, -3.2)
+SONDA -2.78 0.0 -3.2 nord -> Collisioni#2 punto (-2.78, 0.67, -3.2)
+SONDA -2.77 0.0 -3.2 nord -> Collisioni#2 punto (-2.77, 0.67, -3.2)
+SONDA -2.76 0.0 -3.2 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.75 0.0 -3.2 nord -> Collisioni#2 punto (-2.75, 0.67, -3.2)
+SONDA -2.74 0.0 -3.2 nord -> Collisioni#2 punto (-2.74, 0.67, -3.2)
+SONDA -2.73 0.0 -3.2 nord -> Collisioni#2 punto (-2.73, 0.67, -3.2)
+SONDA -2.72 0.0 -3.2 nord -> Collisioni#2 punto (-2.72, 0.67, -3.2)
+SONDA -2.71 0.0 -3.2 nord -> Collisioni#2 punto (-2.71, 0.67, -3.2)
+SONDA -2.70 0.0 -3.2 nord -> Collisioni#2 punto (-2.95, 0.67, -3.2)
+SONDA -2.69 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.3)
+SONDA -2.68 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.26)
+SONDA -2.67 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.24)
+SONDA -2.66 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.23)
+SONDA -2.65 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.23)
+SONDA -2.64 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.22)
+SONDA -2.63 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.22)
+SONDA -2.62 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.22)
+SONDA -2.61 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.60 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.59 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.58 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.57 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.56 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.55 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.54 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.53 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.52 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.51 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.50 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.49 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.48 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.47 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.46 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.45 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.44 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.43 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.42 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.41 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.40 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.39 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.38 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.37 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.36 0.0 -3.2 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.35 0.0 -3.2 nord -> libero punto -
+SONDA -2.34 0.0 -3.2 nord -> libero punto -
+SONDA -2.33 0.0 -3.2 nord -> libero punto -
+SONDA -2.32 0.0 -3.2 nord -> libero punto -
+SONDA -2.31 0.0 -3.2 nord -> libero punto -
+SONDA -2.30 0.0 -3.2 nord -> libero punto -
+SONDA -2.29 0.0 -3.2 nord -> libero punto -
+SONDA -2.28 0.0 -3.2 nord -> libero punto -
+SONDA -2.27 0.0 -3.2 nord -> libero punto -
+SONDA -2.26 0.0 -3.2 nord -> libero punto -
+SONDA -2.25 0.0 -3.2 nord -> libero punto -
+SONDA -2.24 0.0 -3.2 nord -> libero punto -
+SONDA -2.23 0.0 -3.2 nord -> libero punto -
+SONDA -2.22 0.0 -3.2 nord -> libero punto -
+SONDA -2.21 0.0 -3.2 nord -> libero punto -
+SONDA -2.20 0.0 -3.2 nord -> libero punto -
+SONDA -2.19 0.0 -3.2 nord -> libero punto -
+SONDA -2.18 0.0 -3.2 nord -> libero punto -
+SONDA -2.17 0.0 -3.2 nord -> libero punto -
+SONDA -2.16 0.0 -3.2 nord -> libero punto -
+SONDA -2.15 0.0 -3.2 nord -> libero punto -
+SONDA -2.14 0.0 -3.2 nord -> libero punto -
+SONDA -2.13 0.0 -3.2 nord -> libero punto -
+SONDA -2.12 0.0 -3.2 nord -> libero punto -
+SONDA -2.11 0.0 -3.2 nord -> libero punto -
+SONDA -2.10 0.0 -3.2 nord -> libero punto -
+SONDA -2.09 0.0 -3.2 nord -> libero punto -
+SONDA -2.08 0.0 -3.2 nord -> libero punto -
+SONDA -2.07 0.0 -3.2 nord -> libero punto -
+SONDA -2.06 0.0 -3.2 nord -> libero punto -
+SONDA -2.05 0.0 -3.2 nord -> libero punto -
+SONDA -2.04 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -2.03 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -2.02 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -2.01 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -2.00 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -1.99 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -1.98 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -1.97 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.96 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.95 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.94 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.93 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.92 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.91 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.90 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.89 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.88 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.87 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.86 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.85 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.84 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.83 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.82 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.81 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.80 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.79 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.78 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.22)
+SONDA -1.77 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.22)
+SONDA -1.76 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.22)
+SONDA -1.75 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.23)
+SONDA -1.74 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.23)
+SONDA -1.73 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.24)
+SONDA -1.72 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.26)
+SONDA -1.71 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.65, 0.67, -3.13)
+SONDA -1.70 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 1.13, -3.2)
+SONDA -1.69 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.69, 0.67, -3.2)
+SONDA -1.68 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.68, 0.67, -3.2)
+SONDA -1.67 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.67, 0.67, -3.2)
+SONDA -1.66 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.66, 0.67, -3.2)
+SONDA -1.65 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.65, 0.67, -3.2)
+SONDA -1.64 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.64, 0.67, -3.2)
+SONDA -1.63 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.63, 0.67, -3.2)
+SONDA -1.62 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.62, 0.67, -3.2)
+SONDA -1.61 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.61, 0.67, -3.2)
+SONDA -1.60 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.2)
+SONDA -1.59 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.59, 0.67, -3.2)
+SONDA -1.58 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.58, 0.67, -3.2)
+SONDA -1.57 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.57, 0.67, -3.2)
+SONDA -1.56 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.56, 0.67, -3.2)
+SONDA -1.55 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.55, 0.67, -3.2)
+SONDA -1.54 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.54, 0.67, -3.2)
+SONDA -1.53 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.53, 0.67, -3.2)
+SONDA -1.52 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.52, 0.67, -3.2)
+SONDA -1.51 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.51, 0.67, -3.2)
+SONDA -1.50 0.0 -3.2 nord -> Collisioni#3, Collisioni#5 punto (-1.5, 0.67, -3.2)
+SONDA -2.90 0.0 -3.0 nord -> Collisioni#10, Collisioni#2 punto (-2.9, 0.67, -3.2)
+SONDA -2.89 0.0 -3.0 nord -> Collisioni#10, Collisioni#2 punto (-2.89, 0.67, -3.2)
+SONDA -2.88 0.0 -3.0 nord -> Collisioni#10, Collisioni#2 punto (-2.88, 0.67, -3.2)
+SONDA -2.87 0.0 -3.0 nord -> Collisioni#10, Collisioni#2 punto (-2.87, 0.67, -3.2)
+SONDA -2.86 0.0 -3.0 nord -> Collisioni#10, Collisioni#2 punto (-2.86, 0.67, -3.2)
+SONDA -2.85 0.0 -3.0 nord -> Collisioni#2 punto (-2.85, 0.67, -3.2)
+SONDA -2.84 0.0 -3.0 nord -> Collisioni#2 punto (-2.84, 0.67, -3.2)
+SONDA -2.83 0.0 -3.0 nord -> Collisioni#2 punto (-2.83, 0.67, -3.2)
+SONDA -2.82 0.0 -3.0 nord -> Collisioni#2 punto (-2.82, 0.67, -3.2)
+SONDA -2.81 0.0 -3.0 nord -> Collisioni#2 punto (-2.81, 0.67, -3.2)
+SONDA -2.80 0.0 -3.0 nord -> Collisioni#2 punto (-2.8, 0.67, -3.2)
+SONDA -2.79 0.0 -3.0 nord -> Collisioni#2 punto (-2.79, 0.67, -3.2)
+SONDA -2.78 0.0 -3.0 nord -> Collisioni#2 punto (-2.78, 0.67, -3.2)
+SONDA -2.77 0.0 -3.0 nord -> Collisioni#2 punto (-2.77, 0.67, -3.2)
+SONDA -2.76 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.75 0.0 -3.0 nord -> Collisioni#2 punto (-2.75, 0.67, -3.2)
+SONDA -2.74 0.0 -3.0 nord -> Collisioni#2 punto (-2.74, 0.67, -3.2)
+SONDA -2.73 0.0 -3.0 nord -> Collisioni#2 punto (-2.73, 0.67, -3.2)
+SONDA -2.72 0.0 -3.0 nord -> Collisioni#2 punto (-2.72, 0.67, -3.2)
+SONDA -2.71 0.0 -3.0 nord -> Collisioni#2 punto (-2.71, 0.67, -3.2)
+SONDA -2.70 0.0 -3.0 nord -> Collisioni#2 punto (-2.71, 0.67, -3.2)
+SONDA -2.69 0.0 -3.0 nord -> Collisioni#2 punto (-2.71, 0.67, -3.2)
+SONDA -2.68 0.0 -3.0 nord -> Collisioni#2 punto (-2.72, 0.67, -3.2)
+SONDA -2.67 0.0 -3.0 nord -> Collisioni#2 punto (-2.73, 0.67, -3.2)
+SONDA -2.66 0.0 -3.0 nord -> Collisioni#2 punto (-2.73, 0.67, -3.2)
+SONDA -2.65 0.0 -3.0 nord -> Collisioni#2 punto (-2.74, 0.67, -3.2)
+SONDA -2.64 0.0 -3.0 nord -> Collisioni#2 punto (-2.74, 0.67, -3.2)
+SONDA -2.63 0.0 -3.0 nord -> Collisioni#2 punto (-2.75, 0.67, -3.2)
+SONDA -2.62 0.0 -3.0 nord -> Collisioni#2 punto (-2.75, 0.67, -3.2)
+SONDA -2.61 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.60 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.59 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.58 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.57 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.56 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.55 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.54 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.53 0.0 -3.0 nord -> Collisioni#2 punto (-2.76, 0.67, -3.2)
+SONDA -2.52 0.0 -3.0 nord -> Collisioni#2 punto (-2.75, 0.67, -3.2)
+SONDA -2.51 0.0 -3.0 nord -> Collisioni#2 punto (-2.75, 0.67, -3.2)
+SONDA -2.50 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 1.13, -3.2)
+SONDA -2.49 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.24)
+SONDA -2.48 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.24)
+SONDA -2.47 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.23)
+SONDA -2.46 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.22)
+SONDA -2.45 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.22)
+SONDA -2.44 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.43 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.21)
+SONDA -2.42 0.0 -3.0 nord -> Collisioni#2 punto (-2.7, 0.67, -3.2)
+SONDA -2.41 0.0 -3.0 nord -> libero punto -
+SONDA -2.40 0.0 -3.0 nord -> libero punto -
+SONDA -2.39 0.0 -3.0 nord -> libero punto -
+SONDA -2.38 0.0 -3.0 nord -> libero punto -
+SONDA -2.37 0.0 -3.0 nord -> libero punto -
+SONDA -2.36 0.0 -3.0 nord -> libero punto -
+SONDA -2.35 0.0 -3.0 nord -> libero punto -
+SONDA -2.34 0.0 -3.0 nord -> libero punto -
+SONDA -2.33 0.0 -3.0 nord -> libero punto -
+SONDA -2.32 0.0 -3.0 nord -> libero punto -
+SONDA -2.31 0.0 -3.0 nord -> libero punto -
+SONDA -2.30 0.0 -3.0 nord -> libero punto -
+SONDA -2.29 0.0 -3.0 nord -> libero punto -
+SONDA -2.28 0.0 -3.0 nord -> libero punto -
+SONDA -2.27 0.0 -3.0 nord -> libero punto -
+SONDA -2.26 0.0 -3.0 nord -> libero punto -
+SONDA -2.25 0.0 -3.0 nord -> libero punto -
+SONDA -2.24 0.0 -3.0 nord -> libero punto -
+SONDA -2.23 0.0 -3.0 nord -> libero punto -
+SONDA -2.22 0.0 -3.0 nord -> libero punto -
+SONDA -2.21 0.0 -3.0 nord -> libero punto -
+SONDA -2.20 0.0 -3.0 nord -> libero punto -
+SONDA -2.19 0.0 -3.0 nord -> libero punto -
+SONDA -2.18 0.0 -3.0 nord -> libero punto -
+SONDA -2.17 0.0 -3.0 nord -> libero punto -
+SONDA -2.16 0.0 -3.0 nord -> libero punto -
+SONDA -2.15 0.0 -3.0 nord -> libero punto -
+SONDA -2.14 0.0 -3.0 nord -> libero punto -
+SONDA -2.13 0.0 -3.0 nord -> libero punto -
+SONDA -2.12 0.0 -3.0 nord -> libero punto -
+SONDA -2.11 0.0 -3.0 nord -> libero punto -
+SONDA -2.10 0.0 -3.0 nord -> libero punto -
+SONDA -2.09 0.0 -3.0 nord -> libero punto -
+SONDA -2.08 0.0 -3.0 nord -> libero punto -
+SONDA -2.07 0.0 -3.0 nord -> libero punto -
+SONDA -2.06 0.0 -3.0 nord -> libero punto -
+SONDA -2.05 0.0 -3.0 nord -> libero punto -
+SONDA -2.04 0.0 -3.0 nord -> Collisioni#5 punto (-1.7, 0.67, -3.08)
+SONDA -2.03 0.0 -3.0 nord -> Collisioni#5 punto (-1.7, 0.67, -3.08)
+SONDA -2.02 0.0 -3.0 nord -> Collisioni#5 punto (-1.7, 0.67, -3.09)
+SONDA -2.01 0.0 -3.0 nord -> Collisioni#5 punto (-1.7, 0.67, -3.09)
+SONDA -2.00 0.0 -3.0 nord -> Collisioni#5 punto (-1.7, 0.67, -3.09)
+SONDA -1.99 0.0 -3.0 nord -> Collisioni#5 punto (-1.7, 0.67, -3.09)
+SONDA -1.98 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.1)
+SONDA -1.97 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.1)
+SONDA -1.96 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.1)
+SONDA -1.95 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.11)
+SONDA -1.94 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.11)
+SONDA -1.93 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.12)
+SONDA -1.92 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.12)
+SONDA -1.91 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.13)
+SONDA -1.90 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.13)
+SONDA -1.89 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.14)
+SONDA -1.88 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.14)
+SONDA -1.87 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.15)
+SONDA -1.86 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.16)
+SONDA -1.85 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.17)
+SONDA -1.84 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.18)
+SONDA -1.83 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.18)
+SONDA -1.82 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.2)
+SONDA -1.81 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.21)
+SONDA -1.80 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.7, 0.67, -3.22)
+SONDA -1.79 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.64, 0.67, -3.2)
+SONDA -1.78 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.65, 0.67, -3.2)
+SONDA -1.77 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.65, 0.67, -3.2)
+SONDA -1.76 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.55, 0.67, -3.08)
+SONDA -1.75 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.56, 0.67, -3.08)
+SONDA -1.74 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.58, 0.67, -3.08)
+SONDA -1.73 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.08)
+SONDA -1.72 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.63, 0.67, -3.08)
+SONDA -1.71 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.66, 0.67, -3.08)
+SONDA -1.70 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.69 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.68 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.67 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.67, 0.67, -3.08)
+SONDA -1.66 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.66, 0.67, -3.08)
+SONDA -1.65 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.65, 0.67, -3.08)
+SONDA -1.64 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.64, 0.67, -3.08)
+SONDA -1.63 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.63, 0.67, -3.08)
+SONDA -1.62 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.62, 0.67, -3.08)
+SONDA -1.61 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.61, 0.67, -3.08)
+SONDA -1.60 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.6, 0.67, -3.08)
+SONDA -1.59 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.59, 0.67, -3.08)
+SONDA -1.58 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.58, 0.67, -3.08)
+SONDA -1.57 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.57, 0.67, -3.08)
+SONDA -1.56 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.56, 0.67, -3.08)
+SONDA -1.55 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.55, 0.67, -3.08)
+SONDA -1.54 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.54, 0.67, -3.08)
+SONDA -1.53 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.53, 0.67, -3.08)
+SONDA -1.52 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.52, 0.67, -3.08)
+SONDA -1.51 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.51, 0.67, -3.08)
+SONDA -1.50 0.0 -3.0 nord -> Collisioni#3, Collisioni#5 punto (-1.5, 0.67, -3.08)
+SONDA -2.90 0.0 -2.8 nord -> Collisioni#10 punto (-3.2, 0.67, -2.8)
+SONDA -2.89 0.0 -2.8 nord -> Collisioni#10 punto (-3.2, 0.67, -2.8)
+SONDA -2.88 0.0 -2.8 nord -> Collisioni#10 punto (-3.2, 0.67, -2.8)
+SONDA -2.87 0.0 -2.8 nord -> Collisioni#10 punto (-3.2, 0.67, -2.8)
+SONDA -2.86 0.0 -2.8 nord -> Collisioni#10 punto (-3.2, 0.67, -2.8)
+SONDA -2.85 0.0 -2.8 nord -> libero punto -
+SONDA -2.84 0.0 -2.8 nord -> libero punto -
+SONDA -2.83 0.0 -2.8 nord -> libero punto -
+SONDA -2.82 0.0 -2.8 nord -> libero punto -
+SONDA -2.81 0.0 -2.8 nord -> libero punto -
+SONDA -2.80 0.0 -2.8 nord -> libero punto -
+SONDA -2.79 0.0 -2.8 nord -> libero punto -
+SONDA -2.78 0.0 -2.8 nord -> libero punto -
+SONDA -2.77 0.0 -2.8 nord -> libero punto -
+SONDA -2.76 0.0 -2.8 nord -> libero punto -
+SONDA -2.75 0.0 -2.8 nord -> libero punto -
+SONDA -2.74 0.0 -2.8 nord -> libero punto -
+SONDA -2.73 0.0 -2.8 nord -> libero punto -
+SONDA -2.72 0.0 -2.8 nord -> libero punto -
+SONDA -2.71 0.0 -2.8 nord -> libero punto -
+SONDA -2.70 0.0 -2.8 nord -> libero punto -
+SONDA -2.69 0.0 -2.8 nord -> libero punto -
+SONDA -2.68 0.0 -2.8 nord -> libero punto -
+SONDA -2.67 0.0 -2.8 nord -> libero punto -
+SONDA -2.66 0.0 -2.8 nord -> libero punto -
+SONDA -2.65 0.0 -2.8 nord -> libero punto -
+SONDA -2.64 0.0 -2.8 nord -> libero punto -
+SONDA -2.63 0.0 -2.8 nord -> libero punto -
+SONDA -2.62 0.0 -2.8 nord -> libero punto -
+SONDA -2.61 0.0 -2.8 nord -> libero punto -
+SONDA -2.60 0.0 -2.8 nord -> libero punto -
+SONDA -2.59 0.0 -2.8 nord -> libero punto -
+SONDA -2.58 0.0 -2.8 nord -> libero punto -
+SONDA -2.57 0.0 -2.8 nord -> libero punto -
+SONDA -2.56 0.0 -2.8 nord -> libero punto -
+SONDA -2.55 0.0 -2.8 nord -> libero punto -
+SONDA -2.54 0.0 -2.8 nord -> libero punto -
+SONDA -2.53 0.0 -2.8 nord -> libero punto -
+SONDA -2.52 0.0 -2.8 nord -> libero punto -
+SONDA -2.51 0.0 -2.8 nord -> libero punto -
+SONDA -2.50 0.0 -2.8 nord -> libero punto -
+SONDA -2.49 0.0 -2.8 nord -> libero punto -
+SONDA -2.48 0.0 -2.8 nord -> libero punto -
+SONDA -2.47 0.0 -2.8 nord -> libero punto -
+SONDA -2.46 0.0 -2.8 nord -> libero punto -
+SONDA -2.45 0.0 -2.8 nord -> libero punto -
+SONDA -2.44 0.0 -2.8 nord -> libero punto -
+SONDA -2.43 0.0 -2.8 nord -> libero punto -
+SONDA -2.42 0.0 -2.8 nord -> libero punto -
+SONDA -2.41 0.0 -2.8 nord -> libero punto -
+SONDA -2.40 0.0 -2.8 nord -> libero punto -
+SONDA -2.39 0.0 -2.8 nord -> libero punto -
+SONDA -2.38 0.0 -2.8 nord -> libero punto -
+SONDA -2.37 0.0 -2.8 nord -> libero punto -
+SONDA -2.36 0.0 -2.8 nord -> libero punto -
+SONDA -2.35 0.0 -2.8 nord -> libero punto -
+SONDA -2.34 0.0 -2.8 nord -> libero punto -
+SONDA -2.33 0.0 -2.8 nord -> libero punto -
+SONDA -2.32 0.0 -2.8 nord -> libero punto -
+SONDA -2.31 0.0 -2.8 nord -> libero punto -
+SONDA -2.30 0.0 -2.8 nord -> libero punto -
+SONDA -2.29 0.0 -2.8 nord -> libero punto -
+SONDA -2.28 0.0 -2.8 nord -> libero punto -
+SONDA -2.27 0.0 -2.8 nord -> libero punto -
+SONDA -2.26 0.0 -2.8 nord -> libero punto -
+SONDA -2.25 0.0 -2.8 nord -> libero punto -
+SONDA -2.24 0.0 -2.8 nord -> libero punto -
+SONDA -2.23 0.0 -2.8 nord -> libero punto -
+SONDA -2.22 0.0 -2.8 nord -> libero punto -
+SONDA -2.21 0.0 -2.8 nord -> libero punto -
+SONDA -2.20 0.0 -2.8 nord -> libero punto -
+SONDA -2.19 0.0 -2.8 nord -> libero punto -
+SONDA -2.18 0.0 -2.8 nord -> libero punto -
+SONDA -2.17 0.0 -2.8 nord -> libero punto -
+SONDA -2.16 0.0 -2.8 nord -> libero punto -
+SONDA -2.15 0.0 -2.8 nord -> libero punto -
+SONDA -2.14 0.0 -2.8 nord -> libero punto -
+SONDA -2.13 0.0 -2.8 nord -> libero punto -
+SONDA -2.12 0.0 -2.8 nord -> libero punto -
+SONDA -2.11 0.0 -2.8 nord -> libero punto -
+SONDA -2.10 0.0 -2.8 nord -> libero punto -
+SONDA -2.09 0.0 -2.8 nord -> libero punto -
+SONDA -2.08 0.0 -2.8 nord -> libero punto -
+SONDA -2.07 0.0 -2.8 nord -> libero punto -
+SONDA -2.06 0.0 -2.8 nord -> libero punto -
+SONDA -2.05 0.0 -2.8 nord -> libero punto -
+SONDA -2.04 0.0 -2.8 nord -> libero punto -
+SONDA -2.03 0.0 -2.8 nord -> libero punto -
+SONDA -2.02 0.0 -2.8 nord -> libero punto -
+SONDA -2.01 0.0 -2.8 nord -> libero punto -
+SONDA -2.00 0.0 -2.8 nord -> libero punto -
+SONDA -1.99 0.0 -2.8 nord -> libero punto -
+SONDA -1.98 0.0 -2.8 nord -> libero punto -
+SONDA -1.97 0.0 -2.8 nord -> libero punto -
+SONDA -1.96 0.0 -2.8 nord -> libero punto -
+SONDA -1.95 0.0 -2.8 nord -> libero punto -
+SONDA -1.94 0.0 -2.8 nord -> libero punto -
+SONDA -1.93 0.0 -2.8 nord -> libero punto -
+SONDA -1.92 0.0 -2.8 nord -> libero punto -
+SONDA -1.91 0.0 -2.8 nord -> libero punto -
+SONDA -1.90 0.0 -2.8 nord -> Collisioni#5 punto (-1.7, 0.67, -3.08)
+SONDA -1.89 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.88 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.87 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.86 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.85 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.84 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.83 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.82 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.81 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.80 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.79 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.78 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.77 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.76 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.75 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.74 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.73 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.72 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.71 0.0 -2.8 nord -> Collisioni#5 punto (-1.7, 0.67, -3.08)
+SONDA -1.70 0.0 -2.8 nord -> Collisioni#5 punto (-1.7, 0.67, -3.08)
+SONDA -1.69 0.0 -2.8 nord -> Collisioni#5 punto (-1.69, 0.67, -3.08)
+SONDA -1.68 0.0 -2.8 nord -> Collisioni#5 punto (-1.68, 0.67, -3.08)
+SONDA -1.67 0.0 -2.8 nord -> Collisioni#5 punto (-1.67, 0.67, -3.08)
+SONDA -1.66 0.0 -2.8 nord -> Collisioni#5 punto (-1.66, 0.67, -3.08)
+SONDA -1.65 0.0 -2.8 nord -> Collisioni#5 punto (-1.65, 0.67, -3.08)
+SONDA -1.64 0.0 -2.8 nord -> Collisioni#5 punto (-1.64, 0.67, -3.08)
+SONDA -1.63 0.0 -2.8 nord -> Collisioni#5 punto (-1.63, 0.67, -3.08)
+SONDA -1.62 0.0 -2.8 nord -> Collisioni#5 punto (-1.62, 0.67, -3.08)
+SONDA -1.61 0.0 -2.8 nord -> Collisioni#5 punto (-1.61, 0.67, -3.08)
+SONDA -1.60 0.0 -2.8 nord -> Collisioni#5 punto (-1.6, 0.67, -3.08)
+SONDA -1.59 0.0 -2.8 nord -> Collisioni#5 punto (-1.59, 0.67, -3.08)
+SONDA -1.58 0.0 -2.8 nord -> Collisioni#5 punto (-1.58, 0.67, -3.08)
+SONDA -1.57 0.0 -2.8 nord -> Collisioni#5 punto (-1.57, 0.67, -3.08)
+SONDA -1.56 0.0 -2.8 nord -> Collisioni#5 punto (-1.56, 0.67, -3.08)
+SONDA -1.55 0.0 -2.8 nord -> Collisioni#5 punto (-1.55, 0.67, -3.08)
+SONDA -1.54 0.0 -2.8 nord -> Collisioni#5 punto (-1.54, 0.67, -3.08)
+SONDA -1.53 0.0 -2.8 nord -> Collisioni#5 punto (-1.53, 0.67, -3.08)
+SONDA -1.52 0.0 -2.8 nord -> Collisioni#5 punto (-1.52, 0.67, -3.08)
+SONDA -1.51 0.0 -2.8 nord -> Collisioni#5 punto (-1.51, 0.67, -3.08)
+SONDA -1.50 0.0 -2.8 nord -> Collisioni#5 punto (-1.5, 0.67, -3.08)
+SONDA 0.90 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.9, 0.67, 3.3)
+SONDA 0.91 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.91, 0.67, 3.3)
+SONDA 0.92 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.92, 0.67, 3.3)
+SONDA 0.93 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.93, 0.67, 3.3)
+SONDA 0.94 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.94, 0.67, 3.3)
+SONDA 0.95 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.95, 0.67, 3.3)
+SONDA 0.96 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.96, 0.67, 3.3)
+SONDA 0.97 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.97, 0.67, 3.3)
+SONDA 0.98 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.98, 0.67, 3.3)
+SONDA 0.99 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (0.99, 0.67, 3.3)
+SONDA 1.00 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.3)
+SONDA 1.01 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.01, 0.67, 3.3)
+SONDA 1.02 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.02, 0.67, 3.3)
+SONDA 1.03 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.03, 0.67, 3.3)
+SONDA 1.04 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.04, 0.67, 3.3)
+SONDA 1.05 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.05, 0.67, 3.3)
+SONDA 1.06 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.06, 0.67, 3.3)
+SONDA 1.07 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.07, 0.67, 3.3)
+SONDA 1.08 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.08, 0.67, 3.3)
+SONDA 1.09 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.09, 0.67, 3.3)
+SONDA 1.10 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.09, 0.67, 3.3)
+SONDA 1.11 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.08, 0.67, 3.3)
+SONDA 1.12 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.07, 0.67, 3.3)
+SONDA 1.13 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.05, 0.67, 3.3)
+SONDA 1.14 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.04, 0.67, 3.3)
+SONDA 1.15 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.03, 0.67, 3.3)
+SONDA 1.16 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.03, 0.67, 3.3)
+SONDA 1.17 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.02, 0.67, 3.3)
+SONDA 1.18 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.01, 0.67, 3.3)
+SONDA 1.19 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.01, 0.67, 3.3)
+SONDA 1.20 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.3)
+SONDA 1.21 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.3)
+SONDA 1.22 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.3)
+SONDA 1.23 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.3)
+SONDA 1.24 0.0 3.45 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.3)
+SONDA 1.25 0.0 3.45 sud -> Collisioni#6 punto (1.1, 1.13, 3.3)
+SONDA 1.26 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.27 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.22)
+SONDA 1.28 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.23)
+SONDA 1.29 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.23)
+SONDA 1.30 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.24)
+SONDA 1.31 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.25)
+SONDA 1.32 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.25)
+SONDA 1.33 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.26)
+SONDA 1.34 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.26)
+SONDA 1.35 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.27)
+SONDA 1.36 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.27)
+SONDA 1.37 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.28)
+SONDA 1.38 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.28)
+SONDA 1.39 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.29)
+SONDA 1.40 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.29)
+SONDA 1.41 0.0 3.45 sud -> Collisioni#6 punto (1.1, 0.67, 3.3)
+SONDA 1.42 0.0 3.45 sud -> libero punto -
+SONDA 1.43 0.0 3.45 sud -> libero punto -
+SONDA 1.44 0.0 3.45 sud -> libero punto -
+SONDA 1.45 0.0 3.45 sud -> libero punto -
+SONDA 1.46 0.0 3.45 sud -> libero punto -
+SONDA 1.47 0.0 3.45 sud -> libero punto -
+SONDA 1.48 0.0 3.45 sud -> libero punto -
+SONDA 1.49 0.0 3.45 sud -> libero punto -
+SONDA 1.50 0.0 3.45 sud -> libero punto -
+SONDA 1.51 0.0 3.45 sud -> libero punto -
+SONDA 1.52 0.0 3.45 sud -> libero punto -
+SONDA 1.53 0.0 3.45 sud -> libero punto -
+SONDA 1.54 0.0 3.45 sud -> libero punto -
+SONDA 1.55 0.0 3.45 sud -> libero punto -
+SONDA 1.56 0.0 3.45 sud -> libero punto -
+SONDA 1.57 0.0 3.45 sud -> libero punto -
+SONDA 1.58 0.0 3.45 sud -> libero punto -
+SONDA 1.59 0.0 3.45 sud -> libero punto -
+SONDA 1.60 0.0 3.45 sud -> libero punto -
+SONDA 1.61 0.0 3.45 sud -> libero punto -
+SONDA 1.62 0.0 3.45 sud -> libero punto -
+SONDA 1.63 0.0 3.45 sud -> libero punto -
+SONDA 1.64 0.0 3.45 sud -> libero punto -
+SONDA 1.65 0.0 3.45 sud -> libero punto -
+SONDA 1.66 0.0 3.45 sud -> libero punto -
+SONDA 1.67 0.0 3.45 sud -> libero punto -
+SONDA 1.68 0.0 3.45 sud -> libero punto -
+SONDA 1.69 0.0 3.45 sud -> libero punto -
+SONDA 1.70 0.0 3.45 sud -> libero punto -
+SONDA 1.71 0.0 3.45 sud -> libero punto -
+SONDA 1.72 0.0 3.45 sud -> libero punto -
+SONDA 1.73 0.0 3.45 sud -> libero punto -
+SONDA 1.74 0.0 3.45 sud -> libero punto -
+SONDA 1.75 0.0 3.45 sud -> libero punto -
+SONDA 1.76 0.0 3.45 sud -> libero punto -
+SONDA 1.77 0.0 3.45 sud -> libero punto -
+SONDA 1.78 0.0 3.45 sud -> libero punto -
+SONDA 1.79 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.3)
+SONDA 1.80 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.29)
+SONDA 1.81 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.29)
+SONDA 1.82 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.28)
+SONDA 1.83 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.28)
+SONDA 1.84 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.27)
+SONDA 1.85 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.27)
+SONDA 1.86 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.26)
+SONDA 1.87 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.26)
+SONDA 1.88 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.25)
+SONDA 1.89 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.25)
+SONDA 1.90 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.24)
+SONDA 1.91 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.23)
+SONDA 1.92 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.23)
+SONDA 1.93 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.22)
+SONDA 1.94 0.0 3.45 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.95 0.0 3.45 sud -> Collisioni#7 punto (2.2, 0.67, 3.3)
+SONDA 1.96 0.0 3.45 sud -> Collisioni#7 punto (2.2, 0.67, 3.3)
+SONDA 1.97 0.0 3.45 sud -> Collisioni#7 punto (2.2, 0.67, 3.3)
+SONDA 1.98 0.0 3.45 sud -> Collisioni#7 punto (2.2, 0.67, 3.3)
+SONDA 1.99 0.0 3.45 sud -> Collisioni#7 punto (2.2, 0.67, 3.3)
+SONDA 2.00 0.0 3.45 sud -> Collisioni#7 punto (2.2, 0.67, 3.3)
+SONDA 2.01 0.0 3.45 sud -> Collisioni#7 punto (2.19, 0.67, 3.3)
+SONDA 2.02 0.0 3.45 sud -> Collisioni#7 punto (2.19, 0.67, 3.3)
+SONDA 2.03 0.0 3.45 sud -> Collisioni#7 punto (2.18, 0.67, 3.3)
+SONDA 2.04 0.0 3.45 sud -> Collisioni#7 punto (2.17, 0.67, 3.3)
+SONDA 2.05 0.0 3.45 sud -> Collisioni#7 punto (2.17, 0.67, 3.3)
+SONDA 2.06 0.0 3.45 sud -> Collisioni#7 punto (2.16, 0.67, 3.3)
+SONDA 2.07 0.0 3.45 sud -> Collisioni#7 punto (2.15, 0.67, 3.3)
+SONDA 2.08 0.0 3.45 sud -> Collisioni#7 punto (2.13, 0.67, 3.3)
+SONDA 2.09 0.0 3.45 sud -> Collisioni#7 punto (2.12, 0.67, 3.3)
+SONDA 2.10 0.0 3.45 sud -> Collisioni#7 punto (2.11, 0.67, 3.3)
+SONDA 2.11 0.0 3.45 sud -> Collisioni#7 punto (2.11, 0.67, 3.3)
+SONDA 2.12 0.0 3.45 sud -> Collisioni#7 punto (2.12, 0.67, 3.3)
+SONDA 2.13 0.0 3.45 sud -> Collisioni#7 punto (2.13, 0.67, 3.3)
+SONDA 2.14 0.0 3.45 sud -> Collisioni#7 punto (2.14, 0.67, 3.3)
+SONDA 2.15 0.0 3.45 sud -> Collisioni#7 punto (2.15, 0.67, 3.3)
+SONDA 2.16 0.0 3.45 sud -> Collisioni#7 punto (2.16, 0.67, 3.3)
+SONDA 2.17 0.0 3.45 sud -> Collisioni#7 punto (2.17, 0.67, 3.3)
+SONDA 2.18 0.0 3.45 sud -> Collisioni#7 punto (2.18, 0.67, 3.3)
+SONDA 2.19 0.0 3.45 sud -> Collisioni#7 punto (2.19, 0.67, 3.3)
+SONDA 2.20 0.0 3.45 sud -> Collisioni#7 punto (2.2, 0.67, 3.3)
+SONDA 2.21 0.0 3.45 sud -> Collisioni#7 punto (2.21, 0.67, 3.3)
+SONDA 2.22 0.0 3.45 sud -> Collisioni#7 punto (2.22, 0.67, 3.3)
+SONDA 2.23 0.0 3.45 sud -> Collisioni#7 punto (2.23, 0.67, 3.3)
+SONDA 2.24 0.0 3.45 sud -> Collisioni#7 punto (2.24, 0.67, 3.3)
+SONDA 2.25 0.0 3.45 sud -> Collisioni#7 punto (2.25, 0.67, 3.3)
+SONDA 2.26 0.0 3.45 sud -> Collisioni#7 punto (2.26, 0.67, 3.3)
+SONDA 2.27 0.0 3.45 sud -> Collisioni#7 punto (2.27, 0.67, 3.3)
+SONDA 2.28 0.0 3.45 sud -> Collisioni#7 punto (2.28, 0.67, 3.3)
+SONDA 2.29 0.0 3.45 sud -> Collisioni#7 punto (2.29, 0.67, 3.3)
+SONDA 2.30 0.0 3.45 sud -> Collisioni#7 punto (2.3, 0.67, 3.3)
+SONDA 0.90 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.9, 0.67, 3.2)
+SONDA 0.91 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.91, 0.67, 3.2)
+SONDA 0.92 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.92, 0.67, 3.2)
+SONDA 0.93 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.93, 0.67, 3.2)
+SONDA 0.94 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.94, 0.67, 3.2)
+SONDA 0.95 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.95, 0.67, 3.2)
+SONDA 0.96 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.96, 0.67, 3.2)
+SONDA 0.97 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.97, 0.67, 3.2)
+SONDA 0.98 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.98, 0.67, 3.2)
+SONDA 0.99 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (0.99, 0.67, 3.2)
+SONDA 1.00 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.2)
+SONDA 1.01 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.01, 0.67, 3.2)
+SONDA 1.02 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.02, 0.67, 3.2)
+SONDA 1.03 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.03, 0.67, 3.2)
+SONDA 1.04 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.04, 0.67, 3.2)
+SONDA 1.05 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.05, 0.67, 3.2)
+SONDA 1.06 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.06, 0.67, 3.2)
+SONDA 1.07 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.07, 0.67, 3.2)
+SONDA 1.08 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.08, 0.67, 3.2)
+SONDA 1.09 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.09, 0.67, 3.2)
+SONDA 1.10 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 1.13, 3.2)
+SONDA 1.11 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.05, 0.67, 3.13)
+SONDA 1.12 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.26)
+SONDA 1.13 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.24)
+SONDA 1.14 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.23)
+SONDA 1.15 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.23)
+SONDA 1.16 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.22)
+SONDA 1.17 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.22)
+SONDA 1.18 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.22)
+SONDA 1.19 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.20 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.21 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.22 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.23 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.24 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.25 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.26 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.27 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.28 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.29 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.30 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.31 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.32 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.33 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.34 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.35 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.36 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.37 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.38 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.39 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.40 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.41 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.42 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.43 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.44 0.0 3.2 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.45 0.0 3.2 sud -> libero punto -
+SONDA 1.46 0.0 3.2 sud -> libero punto -
+SONDA 1.47 0.0 3.2 sud -> libero punto -
+SONDA 1.48 0.0 3.2 sud -> libero punto -
+SONDA 1.49 0.0 3.2 sud -> libero punto -
+SONDA 1.50 0.0 3.2 sud -> libero punto -
+SONDA 1.51 0.0 3.2 sud -> libero punto -
+SONDA 1.52 0.0 3.2 sud -> libero punto -
+SONDA 1.53 0.0 3.2 sud -> libero punto -
+SONDA 1.54 0.0 3.2 sud -> libero punto -
+SONDA 1.55 0.0 3.2 sud -> libero punto -
+SONDA 1.56 0.0 3.2 sud -> libero punto -
+SONDA 1.57 0.0 3.2 sud -> libero punto -
+SONDA 1.58 0.0 3.2 sud -> libero punto -
+SONDA 1.59 0.0 3.2 sud -> libero punto -
+SONDA 1.60 0.0 3.2 sud -> libero punto -
+SONDA 1.61 0.0 3.2 sud -> libero punto -
+SONDA 1.62 0.0 3.2 sud -> libero punto -
+SONDA 1.63 0.0 3.2 sud -> libero punto -
+SONDA 1.64 0.0 3.2 sud -> libero punto -
+SONDA 1.65 0.0 3.2 sud -> libero punto -
+SONDA 1.66 0.0 3.2 sud -> libero punto -
+SONDA 1.67 0.0 3.2 sud -> libero punto -
+SONDA 1.68 0.0 3.2 sud -> libero punto -
+SONDA 1.69 0.0 3.2 sud -> libero punto -
+SONDA 1.70 0.0 3.2 sud -> libero punto -
+SONDA 1.71 0.0 3.2 sud -> libero punto -
+SONDA 1.72 0.0 3.2 sud -> libero punto -
+SONDA 1.73 0.0 3.2 sud -> libero punto -
+SONDA 1.74 0.0 3.2 sud -> libero punto -
+SONDA 1.75 0.0 3.2 sud -> libero punto -
+SONDA 1.76 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.77 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.78 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.79 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.80 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.81 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.82 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.83 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.84 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.85 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.86 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.87 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.88 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.89 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.90 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.91 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.92 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.93 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.94 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.95 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.96 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.97 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.98 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.99 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 2.00 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 2.01 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 2.02 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.22)
+SONDA 2.03 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.22)
+SONDA 2.04 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.22)
+SONDA 2.05 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.23)
+SONDA 2.06 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.23)
+SONDA 2.07 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.24)
+SONDA 2.08 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.26)
+SONDA 2.09 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.3)
+SONDA 2.10 0.0 3.2 sud -> Collisioni#7 punto (2.1, 0.67, 3.45)
+SONDA 2.11 0.0 3.2 sud -> Collisioni#7 punto (2.11, 0.67, 3.2)
+SONDA 2.12 0.0 3.2 sud -> Collisioni#7 punto (2.12, 0.67, 3.2)
+SONDA 2.13 0.0 3.2 sud -> Collisioni#7 punto (2.13, 0.67, 3.2)
+SONDA 2.14 0.0 3.2 sud -> Collisioni#7 punto (2.14, 0.67, 3.2)
+SONDA 2.15 0.0 3.2 sud -> Collisioni#7 punto (2.15, 0.67, 3.2)
+SONDA 2.16 0.0 3.2 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 2.17 0.0 3.2 sud -> Collisioni#7 punto (2.17, 0.67, 3.2)
+SONDA 2.18 0.0 3.2 sud -> Collisioni#7 punto (2.18, 0.67, 3.2)
+SONDA 2.19 0.0 3.2 sud -> Collisioni#7 punto (2.19, 0.67, 3.2)
+SONDA 2.20 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.2, 0.67, 3.2)
+SONDA 2.21 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.21, 0.67, 3.2)
+SONDA 2.22 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.22, 0.67, 3.2)
+SONDA 2.23 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.23, 0.67, 3.2)
+SONDA 2.24 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.24, 0.67, 3.2)
+SONDA 2.25 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.25, 0.67, 3.2)
+SONDA 2.26 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.26, 0.67, 3.2)
+SONDA 2.27 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.27, 0.67, 3.2)
+SONDA 2.28 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.28, 0.67, 3.2)
+SONDA 2.29 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.29, 0.67, 3.2)
+SONDA 2.30 0.0 3.2 sud -> Collisioni#16, Collisioni#7 punto (2.3, 0.67, 3.2)
+SONDA 0.90 0.0 3.0 sud -> Collisioni#9, Collisioni#17, Collisioni#6 punto (0.9, 0.67, 3.08)
+SONDA 0.91 0.0 3.0 sud -> Collisioni#9, Collisioni#17, Collisioni#6 punto (0.91, 0.67, 3.08)
+SONDA 0.92 0.0 3.0 sud -> Collisioni#9, Collisioni#17, Collisioni#6 punto (0.92, 0.67, 3.08)
+SONDA 0.93 0.0 3.0 sud -> Collisioni#9, Collisioni#17, Collisioni#6 punto (0.93, 0.67, 3.08)
+SONDA 0.94 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.94, 0.67, 3.08)
+SONDA 0.95 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.95, 0.67, 3.08)
+SONDA 0.96 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.96, 0.67, 3.08)
+SONDA 0.97 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.97, 0.67, 3.08)
+SONDA 0.98 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.98, 0.67, 3.08)
+SONDA 0.99 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.99, 0.67, 3.08)
+SONDA 1.00 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.08)
+SONDA 1.01 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.01, 0.67, 3.08)
+SONDA 1.02 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.02, 0.67, 3.08)
+SONDA 1.03 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.03, 0.67, 3.08)
+SONDA 1.04 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.04, 0.67, 3.08)
+SONDA 1.05 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.05, 0.67, 3.08)
+SONDA 1.06 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.06, 0.67, 3.08)
+SONDA 1.07 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.07, 0.67, 3.08)
+SONDA 1.08 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.08, 0.67, 3.08)
+SONDA 1.09 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.09, 0.67, 3.08)
+SONDA 1.10 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.09, 0.67, 3.08)
+SONDA 1.11 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.06, 0.67, 3.08)
+SONDA 1.12 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.03, 0.67, 3.08)
+SONDA 1.13 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.0, 0.67, 3.08)
+SONDA 1.14 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.98, 0.67, 3.08)
+SONDA 1.15 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.96, 0.67, 3.08)
+SONDA 1.16 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (0.95, 0.67, 3.08)
+SONDA 1.17 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.05, 0.67, 3.2)
+SONDA 1.18 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.05, 0.67, 3.2)
+SONDA 1.19 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.04, 0.67, 3.2)
+SONDA 1.20 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.22)
+SONDA 1.21 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.21)
+SONDA 1.22 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.2)
+SONDA 1.23 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.18)
+SONDA 1.24 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.18)
+SONDA 1.25 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.17)
+SONDA 1.26 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.16)
+SONDA 1.27 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.15)
+SONDA 1.28 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.14)
+SONDA 1.29 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.14)
+SONDA 1.30 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.13)
+SONDA 1.31 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.13)
+SONDA 1.32 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.12)
+SONDA 1.33 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.12)
+SONDA 1.34 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.11)
+SONDA 1.35 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.11)
+SONDA 1.36 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.1)
+SONDA 1.37 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.1)
+SONDA 1.38 0.0 3.0 sud -> Collisioni#9, Collisioni#6 punto (1.1, 0.67, 3.1)
+SONDA 1.39 0.0 3.0 sud -> Collisioni#9 punto (1.1, 0.67, 3.09)
+SONDA 1.40 0.0 3.0 sud -> Collisioni#9 punto (1.1, 0.67, 3.09)
+SONDA 1.41 0.0 3.0 sud -> Collisioni#9 punto (1.1, 0.67, 3.09)
+SONDA 1.42 0.0 3.0 sud -> Collisioni#9 punto (1.1, 0.67, 3.09)
+SONDA 1.43 0.0 3.0 sud -> Collisioni#9 punto (1.1, 0.67, 3.08)
+SONDA 1.44 0.0 3.0 sud -> Collisioni#9 punto (1.1, 0.67, 3.08)
+SONDA 1.45 0.0 3.0 sud -> libero punto -
+SONDA 1.46 0.0 3.0 sud -> libero punto -
+SONDA 1.47 0.0 3.0 sud -> libero punto -
+SONDA 1.48 0.0 3.0 sud -> libero punto -
+SONDA 1.49 0.0 3.0 sud -> libero punto -
+SONDA 1.50 0.0 3.0 sud -> libero punto -
+SONDA 1.51 0.0 3.0 sud -> libero punto -
+SONDA 1.52 0.0 3.0 sud -> libero punto -
+SONDA 1.53 0.0 3.0 sud -> libero punto -
+SONDA 1.54 0.0 3.0 sud -> libero punto -
+SONDA 1.55 0.0 3.0 sud -> libero punto -
+SONDA 1.56 0.0 3.0 sud -> libero punto -
+SONDA 1.57 0.0 3.0 sud -> libero punto -
+SONDA 1.58 0.0 3.0 sud -> libero punto -
+SONDA 1.59 0.0 3.0 sud -> libero punto -
+SONDA 1.60 0.0 3.0 sud -> libero punto -
+SONDA 1.61 0.0 3.0 sud -> libero punto -
+SONDA 1.62 0.0 3.0 sud -> libero punto -
+SONDA 1.63 0.0 3.0 sud -> libero punto -
+SONDA 1.64 0.0 3.0 sud -> libero punto -
+SONDA 1.65 0.0 3.0 sud -> libero punto -
+SONDA 1.66 0.0 3.0 sud -> libero punto -
+SONDA 1.67 0.0 3.0 sud -> libero punto -
+SONDA 1.68 0.0 3.0 sud -> libero punto -
+SONDA 1.69 0.0 3.0 sud -> libero punto -
+SONDA 1.70 0.0 3.0 sud -> libero punto -
+SONDA 1.71 0.0 3.0 sud -> libero punto -
+SONDA 1.72 0.0 3.0 sud -> libero punto -
+SONDA 1.73 0.0 3.0 sud -> libero punto -
+SONDA 1.74 0.0 3.0 sud -> libero punto -
+SONDA 1.75 0.0 3.0 sud -> libero punto -
+SONDA 1.76 0.0 3.0 sud -> libero punto -
+SONDA 1.77 0.0 3.0 sud -> libero punto -
+SONDA 1.78 0.0 3.0 sud -> libero punto -
+SONDA 1.79 0.0 3.0 sud -> libero punto -
+SONDA 1.80 0.0 3.0 sud -> libero punto -
+SONDA 1.81 0.0 3.0 sud -> libero punto -
+SONDA 1.82 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.2)
+SONDA 1.83 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.84 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.21)
+SONDA 1.85 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.22)
+SONDA 1.86 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.22)
+SONDA 1.87 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.23)
+SONDA 1.88 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.24)
+SONDA 1.89 0.0 3.0 sud -> Collisioni#7 punto (2.1, 0.67, 3.24)
+SONDA 1.90 0.0 3.0 sud -> Collisioni#7 punto (2.1, 1.13, 3.2)
+SONDA 1.91 0.0 3.0 sud -> Collisioni#7 punto (2.15, 0.67, 3.2)
+SONDA 1.92 0.0 3.0 sud -> Collisioni#7 punto (2.15, 0.67, 3.2)
+SONDA 1.93 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 1.94 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 1.95 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 1.96 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 1.97 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 1.98 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 1.99 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 2.00 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 2.01 0.0 3.0 sud -> Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 2.02 0.0 3.0 sud -> Collisioni#7 punto (2.15, 0.67, 3.2)
+SONDA 2.03 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.15, 0.67, 3.2)
+SONDA 2.04 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.14, 0.67, 3.2)
+SONDA 2.05 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.14, 0.67, 3.2)
+SONDA 2.06 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.13, 0.67, 3.2)
+SONDA 2.07 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.13, 0.67, 3.2)
+SONDA 2.08 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.12, 0.67, 3.2)
+SONDA 2.09 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.11, 0.67, 3.2)
+SONDA 2.10 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.11, 0.67, 3.2)
+SONDA 2.11 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.11, 0.67, 3.2)
+SONDA 2.12 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.12, 0.67, 3.2)
+SONDA 2.13 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.13, 0.67, 3.2)
+SONDA 2.14 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.14, 0.67, 3.2)
+SONDA 2.15 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.15, 0.67, 3.2)
+SONDA 2.16 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.16, 0.67, 3.2)
+SONDA 2.17 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.17, 0.67, 3.2)
+SONDA 2.18 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.18, 0.67, 3.2)
+SONDA 2.19 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.35, 0.63, 2.89)
+SONDA 2.20 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.21 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.22 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.23 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.24 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.25 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.26 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.27 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.28 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.29 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.89)
+SONDA 2.30 0.0 3.0 sud -> Collisioni#16, Collisioni#7 punto (2.36, 0.63, 2.9)
+SONDA 0.90 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.66, 0.67, 2.71)
+SONDA 0.91 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.66, 0.67, 2.71)
+SONDA 0.92 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.67, 0.67, 2.71)
+SONDA 0.93 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.93, 0.67, 3.08)
+SONDA 0.94 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.94, 0.67, 3.08)
+SONDA 0.95 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.95, 0.67, 3.08)
+SONDA 0.96 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.96, 0.67, 3.08)
+SONDA 0.97 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.97, 0.67, 3.08)
+SONDA 0.98 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.98, 0.67, 3.08)
+SONDA 0.99 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (0.99, 0.67, 3.08)
+SONDA 1.00 0.0 2.8 sud -> Collisioni#9, Collisioni#17 punto (1.0, 0.67, 3.08)
+SONDA 1.01 0.0 2.8 sud -> Collisioni#9 punto (1.01, 0.67, 3.08)
+SONDA 1.02 0.0 2.8 sud -> Collisioni#9 punto (1.02, 0.67, 3.08)
+SONDA 1.03 0.0 2.8 sud -> Collisioni#9 punto (1.03, 0.67, 3.08)
+SONDA 1.04 0.0 2.8 sud -> Collisioni#9 punto (1.04, 0.67, 3.08)
+SONDA 1.05 0.0 2.8 sud -> Collisioni#9 punto (1.05, 0.67, 3.08)
+SONDA 1.06 0.0 2.8 sud -> Collisioni#9 punto (1.06, 0.67, 3.08)
+SONDA 1.07 0.0 2.8 sud -> Collisioni#9 punto (1.07, 0.67, 3.08)
+SONDA 1.08 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.09 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.10 0.0 2.8 sud -> Collisioni#9 punto (1.1, 0.67, 3.08)
+SONDA 1.11 0.0 2.8 sud -> Collisioni#9 punto (1.1, 0.67, 3.08)
+SONDA 1.12 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.13 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.14 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.15 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.16 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.17 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.18 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.19 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.20 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.21 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.22 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.23 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.24 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.25 0.0 2.8 sud -> Collisioni#9 punto (1.08, 0.67, 3.08)
+SONDA 1.26 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.27 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.28 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.29 0.0 2.8 sud -> Collisioni#9 punto (1.09, 0.67, 3.08)
+SONDA 1.30 0.0 2.8 sud -> Collisioni#9 punto (1.1, 0.67, 3.08)
+SONDA 1.31 0.0 2.8 sud -> libero punto -
+SONDA 1.32 0.0 2.8 sud -> libero punto -
+SONDA 1.33 0.0 2.8 sud -> libero punto -
+SONDA 1.34 0.0 2.8 sud -> libero punto -
+SONDA 1.35 0.0 2.8 sud -> libero punto -
+SONDA 1.36 0.0 2.8 sud -> libero punto -
+SONDA 1.37 0.0 2.8 sud -> libero punto -
+SONDA 1.38 0.0 2.8 sud -> libero punto -
+SONDA 1.39 0.0 2.8 sud -> libero punto -
+SONDA 1.40 0.0 2.8 sud -> libero punto -
+SONDA 1.41 0.0 2.8 sud -> libero punto -
+SONDA 1.42 0.0 2.8 sud -> libero punto -
+SONDA 1.43 0.0 2.8 sud -> libero punto -
+SONDA 1.44 0.0 2.8 sud -> libero punto -
+SONDA 1.45 0.0 2.8 sud -> libero punto -
+SONDA 1.46 0.0 2.8 sud -> libero punto -
+SONDA 1.47 0.0 2.8 sud -> libero punto -
+SONDA 1.48 0.0 2.8 sud -> libero punto -
+SONDA 1.49 0.0 2.8 sud -> libero punto -
+SONDA 1.50 0.0 2.8 sud -> libero punto -
+SONDA 1.51 0.0 2.8 sud -> libero punto -
+SONDA 1.52 0.0 2.8 sud -> libero punto -
+SONDA 1.53 0.0 2.8 sud -> libero punto -
+SONDA 1.54 0.0 2.8 sud -> libero punto -
+SONDA 1.55 0.0 2.8 sud -> libero punto -
+SONDA 1.56 0.0 2.8 sud -> libero punto -
+SONDA 1.57 0.0 2.8 sud -> libero punto -
+SONDA 1.58 0.0 2.8 sud -> libero punto -
+SONDA 1.59 0.0 2.8 sud -> libero punto -
+SONDA 1.60 0.0 2.8 sud -> libero punto -
+SONDA 1.61 0.0 2.8 sud -> libero punto -
+SONDA 1.62 0.0 2.8 sud -> libero punto -
+SONDA 1.63 0.0 2.8 sud -> libero punto -
+SONDA 1.64 0.0 2.8 sud -> libero punto -
+SONDA 1.65 0.0 2.8 sud -> libero punto -
+SONDA 1.66 0.0 2.8 sud -> libero punto -
+SONDA 1.67 0.0 2.8 sud -> libero punto -
+SONDA 1.68 0.0 2.8 sud -> libero punto -
+SONDA 1.69 0.0 2.8 sud -> libero punto -
+SONDA 1.70 0.0 2.8 sud -> libero punto -
+SONDA 1.71 0.0 2.8 sud -> libero punto -
+SONDA 1.72 0.0 2.8 sud -> libero punto -
+SONDA 1.73 0.0 2.8 sud -> libero punto -
+SONDA 1.74 0.0 2.8 sud -> libero punto -
+SONDA 1.75 0.0 2.8 sud -> libero punto -
+SONDA 1.76 0.0 2.8 sud -> libero punto -
+SONDA 1.77 0.0 2.8 sud -> libero punto -
+SONDA 1.78 0.0 2.8 sud -> libero punto -
+SONDA 1.79 0.0 2.8 sud -> libero punto -
+SONDA 1.80 0.0 2.8 sud -> libero punto -
+SONDA 1.81 0.0 2.8 sud -> libero punto -
+SONDA 1.82 0.0 2.8 sud -> libero punto -
+SONDA 1.83 0.0 2.8 sud -> libero punto -
+SONDA 1.84 0.0 2.8 sud -> libero punto -
+SONDA 1.85 0.0 2.8 sud -> libero punto -
+SONDA 1.86 0.0 2.8 sud -> libero punto -
+SONDA 1.87 0.0 2.8 sud -> libero punto -
+SONDA 1.88 0.0 2.8 sud -> libero punto -
+SONDA 1.89 0.0 2.8 sud -> libero punto -
+SONDA 1.90 0.0 2.8 sud -> libero punto -
+SONDA 1.91 0.0 2.8 sud -> libero punto -
+SONDA 1.92 0.0 2.8 sud -> libero punto -
+SONDA 1.93 0.0 2.8 sud -> libero punto -
+SONDA 1.94 0.0 2.8 sud -> libero punto -
+SONDA 1.95 0.0 2.8 sud -> libero punto -
+SONDA 1.96 0.0 2.8 sud -> libero punto -
+SONDA 1.97 0.0 2.8 sud -> libero punto -
+SONDA 1.98 0.0 2.8 sud -> libero punto -
+SONDA 1.99 0.0 2.8 sud -> libero punto -
+SONDA 2.00 0.0 2.8 sud -> libero punto -
+SONDA 2.01 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.02 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.03 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.04 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.05 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.06 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.07 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.08 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.09 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.10 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.11 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.12 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.13 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.14 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.15 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.16 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.17 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.18 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.19 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.20 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.21 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.22 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.23 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.24 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.25 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.26 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.27 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.63, 2.8)
+SONDA 2.28 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.64, 2.8)
+SONDA 2.29 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.64, 2.8)
+SONDA 2.30 0.0 2.8 sud -> Collisioni#16 punto (2.35, 0.64, 2.8)
