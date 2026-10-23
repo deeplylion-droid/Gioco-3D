@@ -304,8 +304,10 @@ func risultati(nome: String, da := 0) -> Dictionary:
 ## La pelle vera dal fotogramma [param da], un fotogramma ogni [param ogni]: i vertici dentro la collisione vera (strato
 ## WORLD) di più di [param tolleranza], cercati con un raggio dall'asse del loro osso (che sta fuori) al vertice. I
 ## vertici del primo osso (la radice segue il corpo) si contano a parte. Stampa le tre entrate più profonde.
-## [param esclusi]: i RID delle collisioni che non si vedono (il coperchio della fossa).
+## [param esclusi]: i RID delle collisioni che non si vedono (il coperchio della fossa). Conta anche i vertici sotto le
+## strisce di bava a terra (BavaRosa, che non hanno collisione) di più di [param tolleranza] ([method bava_vicina]).
 func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[RID] = []) -> Dictionary:
+	var bava := bava_vicina(sk.get_tree().current_scene, sk.global_position, 7.0)
 	var spazio := sk.get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.new()
 	q.collision_mask = Layers.WORLD
@@ -333,6 +335,12 @@ func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[
 			else:
 				fine = a_t.origin + a_t.basis.y.normalized() * lung_riposo(_p_catena[v * 2], _p_catena[v * 2 + 1] + 1) \
 						* a_t.basis.y.length() / maxf(a_t.basis.x.length(), 1e-6)
+			var sotto := _sotto_bava(pos, bava)
+			if sotto > tolleranza and _p_catena[v * 2 + 1] > 0:
+				dentro += 1
+				massimo = maxf(massimo, sotto)
+				peggiori.append([sotto, f, _p_catena[v * 2], _p_catena[v * 2 + 1], pos, "bava"])
+				continue
 			var asse := Geometry3D.get_closest_point_to_segment(pos, a_t.origin, fine)
 			if asse.distance_to(pos) < 1e-4:
 				continue
@@ -360,3 +368,62 @@ func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[
 
 func _indice(osso: int) -> int:
 	return _p_indice[osso]
+
+
+## I triangoli delle strisce di bava (BavaRosa) a meno di [param raggio] da [param centro], in una griglia di 0,5 m in
+## pianta: {Vector2i cella: PackedVector3Array di triangoli}.
+static func bava_vicina(radice: Node, centro: Vector3, raggio: float) -> Dictionary:
+	var griglia := {}
+	if radice == null:
+		return griglia
+	for b in radice.find_children("*", "BavaRosa", true, false):
+		for mi in (b as Node).find_children("*", "MeshInstance3D", true, false):
+			var mesh := (mi as MeshInstance3D).mesh
+			if mesh == null:
+				continue
+			var xf := (mi as MeshInstance3D).global_transform
+			for s in mesh.get_surface_count():
+				var vs: PackedVector3Array = mesh.surface_get_arrays(s)[Mesh.ARRAY_VERTEX]
+				for t in range(0, vs.size() - 2, 3):
+					var a := xf * vs[t]
+					var bb := xf * vs[t + 1]
+					var c := xf * vs[t + 2]
+					if a.distance_to(centro) > raggio:
+						continue
+					var lo := Vector2(minf(a.x, minf(bb.x, c.x)), minf(a.z, minf(bb.z, c.z)))
+					var hi := Vector2(maxf(a.x, maxf(bb.x, c.x)), maxf(a.z, maxf(bb.z, c.z)))
+					for gx in range(floori(lo.x * 2.0), floori(hi.x * 2.0) + 1):
+						for gz in range(floori(lo.y * 2.0), floori(hi.y * 2.0) + 1):
+							var k := Vector2i(gx, gz)
+							if not griglia.has(k):
+								griglia[k] = PackedVector3Array()
+							griglia[k].append_array(PackedVector3Array([a, bb, c]))
+	return griglia
+
+
+## Di quanto [param p] sta sotto una striscia di bava (0 se non è sotto nessuna; solo nei 6 cm sotto: più giù è
+## un altro posto, per esempio la fossa sotto una striscia che sporge dal bordo).
+static func _sotto_bava(p: Vector3, griglia: Dictionary) -> float:
+	if griglia.is_empty():
+		return 0.0
+	var k := Vector2i(floori(p.x * 2.0), floori(p.z * 2.0))
+	if not griglia.has(k):
+		return 0.0
+	var tr: PackedVector3Array = griglia[k]
+	var q := Vector2(p.x, p.z)
+	var peggio := 0.0
+	for t in range(0, tr.size(), 3):
+		var a := tr[t]
+		var b := tr[t + 1]
+		var c := tr[t + 2]
+		if not Geometry2D.point_is_inside_triangle(q, Vector2(a.x, a.z), Vector2(b.x, b.z), Vector2(c.x, c.z)):
+			continue
+		# la quota della striscia lì (il piano del triangolo)
+		var nrm := (b - a).cross(c - a)
+		if absf(nrm.y) < 1e-6:
+			continue
+		var y := a.y - (nrm.x * (p.x - a.x) + nrm.z * (p.z - a.z)) / nrm.y
+		var d := y - p.y
+		if d > 0.0 and d < 0.06:
+			peggio = maxf(peggio, d)
+	return peggio

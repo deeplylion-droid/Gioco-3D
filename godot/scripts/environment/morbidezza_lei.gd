@@ -56,6 +56,9 @@ extends SkeletonModifier3D
 const SEZIONI := "res://assets/models/medusa/medusa_sezioni_tentacoli.json"
 ## Quanto la pelle resta staccata dal mondo, oltre la sua sezione (m).
 const MARGINE := 0.01
+## In più sopra le facce verso l'alto (pavimento, cima del bordo): le strisce di bava (BavaRosa) stanno 1,2 cm sopra il
+## pavimento, e i tentacoli ci passano sopra, non sotto (collaudo, 23 ottobre).
+const SOPRA := 0.015
 ## Di quanto si allargano le forme e la zona del tentacolo per cercare i contatti: più della sezione più larga (m).
 const VICINO := 0.2
 ## La campana: pulsazione (forma campana_contrai, ampiezza e battiti al secondo) e deformazione col movimento.
@@ -240,7 +243,7 @@ func _lunghezze_di(sk: Skeleton3D) -> void:
 		var sz := PackedVector3Array()
 		for j in n:
 			var e = _sezioni_file.get(sk.get_bone_name(catena[j]))
-			if e is Array and e.size() == 3:
+			if e is Array and e.size() >= 3:
 				sz.append(Vector3(float(e[0]), float(e[1]) * scala, float(e[2]) * scala))
 			else:
 				var r := lerpf(raggio_radice, raggio_punta, (float(j) + 0.5) / n)
@@ -292,25 +295,26 @@ func _sezioni_qui(k: int, n: int, g: Array[Transform3D], tg: PackedVector3Array,
 		_s1b[i] = eb[j1]
 		_s2a[i] = ea[j2]
 		_s2b[i] = eb[j2]
-		_smax[i] = maxf(maxf(sz[j1].y, sz[j1].z), maxf(sz[j2].y, sz[j2].z)) + MARGINE
-		_ssu[i] = sqrt(maxf(ea[j1].y * ea[j1].y + eb[j1].y * eb[j1].y, ea[j2].y * ea[j2].y + eb[j2].y * eb[j2].y)) + MARGINE
+		_smax[i] = maxf(maxf(sz[j1].y, sz[j1].z), maxf(sz[j2].y, sz[j2].z)) + MARGINE + SOPRA
+		_ssu[i] = sqrt(maxf(ea[j1].y * ea[j1].y + eb[j1].y * eb[j1].y, ea[j2].y * ea[j2].y + eb[j2].y * eb[j2].y)) + MARGINE + SOPRA
 
 
-## La misura della pelle al punto [param i] verso [param nrm] (le due ellissi, la più grande), più il margine.
+## La misura della pelle al punto [param i] verso [param nrm] (le due ellissi, la più grande), più il margine (e
+## [constant SOPRA] verso l'alto).
 func _sup(nrm: Vector3, i: int) -> float:
 	var u := nrm.dot(_s1a[i])
 	var v := nrm.dot(_s1b[i])
 	var s1 := u * u + v * v
 	u = nrm.dot(_s2a[i])
 	v = nrm.dot(_s2b[i])
-	return sqrt(maxf(s1, u * u + v * v)) + MARGINE
+	return sqrt(maxf(s1, u * u + v * v)) + MARGINE + (SOPRA if nrm.y > 0.7 else 0.0)
 
 
 ## La misura della pelle del tratto [param i] (l'osso i - 1) verso [param nrm], più il margine.
 func _sup_tratto(nrm: Vector3, i: int) -> float:
 	var u := nrm.dot(_s1a[i])
 	var v := nrm.dot(_s1b[i])
-	return sqrt(u * u + v * v) + MARGINE
+	return sqrt(u * u + v * v) + MARGINE + (SOPRA if nrm.y > 0.7 else 0.0)
 
 
 ## Il pelo dell'acqua sopra il punto (o -INF se non c'è acqua lì).
@@ -904,7 +908,7 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 					var v1 := nn.dot(b1)
 					var u2 := nn.dot(a2)
 					var v2 := nn.dot(b2)
-					var rp := sqrt(maxf(u1 * u1 + v1 * v1, u2 * u2 + v2 * v2)) + MARGINE
+					var rp := sqrt(maxf(u1 * u1 + v1 * v1, u2 * u2 + v2 * v2)) + MARGINE + (SOPRA if nn.y > 0.7 else 0.0)
 					var gg := d - rp
 					if gg >= 0.0:
 						fuori = true
@@ -979,7 +983,7 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 		# (la pelle del tratto: la sezione dell'osso i - 1, contro ogni faccia la sua misura in quella direzione)
 		var sa1 := _s1a[i]
 		var sb1 := _s1b[i]
-		var rmax := maxf(sa1.length(), sb1.length()) + MARGINE
+		var rmax := maxf(sa1.length(), sb1.length()) + MARGINE + SOPRA
 		for fo in forme:
 			var a := pt[i - 1]
 			var b := pt[i]
@@ -995,7 +999,7 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 				var nn := pl.normal
 				var u := nn.dot(sa1)
 				var w0 := nn.dot(sb1)
-				var r := sqrt(u * u + w0 * w0) + MARGINE
+				var r := sqrt(u * u + w0 * w0) + MARGINE + (SOPRA if nn.y > 0.7 else 0.0)
 				var da := pl.distance_to(a) - r
 				var db := pl.distance_to(b) - r
 				if da >= 0.0 and db >= 0.0:

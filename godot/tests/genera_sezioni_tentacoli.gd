@@ -3,7 +3,7 @@ extends Node
 ## pelle di medusa.glb, per la collisione di MorbidezzaLei (che tiene fuori dal mondo tutta la pelle, non solo l'asse).
 ## Per ogni osso "tentacolo_*": i vertici che muove di più, a riposo, e quanto si allontanano dal suo asse (dalla testa
 ## alla testa del figlio, o alla punta) nel piano dei suoi assi X e Z (Y è lungo l'osso): un'ellisse girata come le
-## direzioni principali, [angolo dall'asse X, mezza larghezza, mezzo spessore], in unità dello scheletro (la morbidezza
+## direzioni principali, [angolo dall'asse X, mezza larghezza, mezzo spessore, quanto la pelle va oltre la fine dell'asse], in unità dello scheletro (la morbidezza
 ## le moltiplica per la scala). Il massimo dei vertici, non una media: il test della
 ## pelle vera (misura_morbidezza.gd, pelle) li conta tutti.
 ## Da rilanciare quando cambia la pelle dei tentacoli in medusa.glb.
@@ -17,7 +17,8 @@ func _ready() -> void:
 	var lei := (load(MODELLO) as PackedScene).instantiate()
 	add_child(lei)
 	var sk := lei.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
-	var ext := {}       # osso -> Vector2 (massimo |X|, massimo |Z|)
+	var ext := {}       # osso -> gli scarti di traverso (Vector2 negli assi X e Z)
+	var oltre := {}     # osso -> quanto la pelle va oltre la fine del suo asse
 	var conta := {}
 	for mi in sk.find_children("*", "MeshInstance3D", true, false):
 		var mesh := (mi as MeshInstance3D).mesh
@@ -58,6 +59,9 @@ func _ready() -> void:
 				if not ext.has(osso):
 					ext[osso] = []
 				ext[osso].append(Vector2(off.dot(bx), off.dot(bz)))
+				# oltre la fine dell'asse (la punta della pelle oltre l'ultimo osso)
+				var oltre_q := (q - a1).dot((a1 - a0).normalized())
+				oltre[osso] = maxf(oltre.get(osso, 0.0), oltre_q)
 				conta[osso] = conta.get(osso, 0) + 1
 	# la sezione: un'ellisse nel piano X-Z dell'osso, girata come le due direzioni principali dei vertici (i tentacoli
 	# sono nastri: larghi e sottili); [angolo dall'asse X, mezza misura lungo quella direzione, mezza misura di traverso]
@@ -82,7 +86,7 @@ func _ready() -> void:
 			b = maxf(b, absf(o.dot(e2)))
 		if b < 0.6 * a:
 			piatti += 1
-		out[sk.get_bone_name(osso)] = [snappedf(ang, 0.0001), snappedf(a, 0.0001), snappedf(b, 0.0001)]
+		out[sk.get_bone_name(osso)] = [snappedf(ang, 0.0001), snappedf(a, 0.0001), snappedf(b, 0.0001), snappedf(maxf(oltre.get(osso, 0.0), 0.0), 0.0001)]
 	print("ossa piatte (spessore sotto il 60%% della larghezza): %d su %d" % [piatti, out.size()])
 	var f := FileAccess.open(USCITA, FileAccess.WRITE)
 	f.store_string(JSON.stringify({"modello": MODELLO, "ossa": out}, "\t", true))
