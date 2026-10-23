@@ -881,6 +881,10 @@ func _medusa_bagnata(nome: String) -> Node3D:
 ## Fossa provvisoria (proposta mandata all'ambiente) finché non arrivano i suoi marker: lato sud
 ## della VascaBimbi1, metà ovest. Origine della posa "affacciata" e direzione in cui guarda (verso
 ## il giocatore che arriva dal muro ovest), fondo del condotto.
+## Di quanto alzare lei rispetto al marker della fossa (sala_dati.json, medusa_sbuca): il marker mette il bordo 1,0 m
+## sopra l'origine come nella vasca centrale, ma qui le mani affondavano 3 cm nel bordo a scacchi (controllo di
+## posizionamento del 23 ottobre, stato lei_fossa).
+const ALZA_SBUCA := 0.035
 const FOSSA_PROVVISORIA := Vector3(-13.0, -0.45, -7.6)
 const FOSSA_SGUARDO := Vector3(-0.7071, 0.0, 0.7071)
 const FOSSA_FUGA_PROVVISORIA := Vector3(-11.0, -2.6, -6.9)
@@ -911,7 +915,8 @@ func _tappa8() -> void:
 	if pronta:
 		sbuca.name = "MedusaSbuca"
 		var ms: Dictionary = fossa["medusa_sbuca"]
-		sbuca.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(float(ms["rotazione_gradi_godot"][1]))), _v3(ms["posizione_godot"]))
+		sbuca.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(float(ms["rotazione_gradi_godot"][1]))),
+				_v3(ms["posizione_godot"]) + Vector3.UP * ALZA_SBUCA)
 		fuga.name = "MedusaFuga"
 		fuga.position = _v3(fossa["medusa_fuga"]["posizione_godot"])
 		lei.set(&"livello_pieno", float(fossa.get("livello_acqua_pieno", {}).get("y", 0.42)))

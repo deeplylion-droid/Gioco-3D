@@ -603,22 +603,24 @@ registra('lampade', fondi('det_applique_emergenza_spenta', applique('a2', acceso
 registra('lampade', fondi('det_applique_emergenza_rotta', applique('a3', rotta=True)), 'muro', 'luce d emergenza col vetro rotto')
 
 
-def faro(nome, acceso=True, inclinato=25):
+def faro(nome, acceso=True, inclinato=0):
+    # dritto, la cassetta montata sul braccio (collaudo del 23 ottobre: inclinata pareva una cassetta girata appoggiata
+    # al muro su uno spigolo): il braccio entra 5 mm nel retro della cassetta, la staffa tonda la stringe ai fianchi
     parti = [box(f'{nome}_piastra', (0, -0.005, 0), (0.14, 0.01, 0.1), M['metallo_grigio'], uv=0.3),
-             box(f'{nome}_braccio', (0, -0.08, 0), (0.03, 0.15, 0.03), M['metallo_grigio'], uv=0.3)]
+             box(f'{nome}_braccio', (0, -0.09, 0), (0.03, 0.17, 0.03), M['metallo_grigio'], uv=0.3)]
     corpo = [box(f'{nome}_corpo', (0, -0.25, 0), (0.3, 0.16, 0.22), M['metallo'], uv=0.3),
              box(f'{nome}_vetro', (0, -0.332, 0), (0.26, 0.005, 0.18), M['faro_acceso'] if acceso else M['vetro'], uv=None)]
     for k in range(5):
         corpo.append(box(f'{nome}_al{k}', (-0.12 + k * 0.06, -0.2, 0.12), (0.01, 0.12, 0.03), M['metallo'], uv=None))
-    corpo.append(toro(f'{nome}_staffa', (0, -0.22, 0), 0.17, 0.008, M['metallo_grigio'], asse=(0, 0, 1), seg=24, seg2=4, uv=None))
+    corpo.append(toro(f'{nome}_staffa', (0, -0.25, 0), 0.155, 0.008, M['metallo_grigio'], asse=(0, 0, 1), seg=24, seg2=4, uv=None))
     R = Matrix.Translation((0, -0.15, 0)) @ Matrix.Rotation(math.radians(-inclinato), 4, 'X') @ Matrix.Translation((0, 0.15, 0))
     for p in corpo:
         applica_trasf(p); p.data.transform(R)
     return parti + corpo
 
 
-registra('lampade', fondi('det_faro', faro('f1')), 'muro', 'faro da muro acceso, inclinato in basso di 25 gradi')
-registra('lampade', fondi('det_faro_spento', faro('f2', False, 50)), 'muro', 'faro spento, girato verso il basso')
+registra('lampade', fondi('det_faro', faro('f1')), 'muro', 'faro da muro acceso, dritto sul suo braccio')
+registra('lampade', fondi('det_faro_spento', faro('f2', False)), 'muro', 'faro spento, dritto sul suo braccio')
 
 # ================================================================== CARTELLI (solo disegni)
 CARTELLI = ('non_correre', 'non_tuffarsi', 'vietato_vetro', 'pavimento_bagnato', 'profondita', 'uscita', 'pronto_soccorso', 'salvagente')

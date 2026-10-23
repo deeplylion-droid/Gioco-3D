@@ -1449,8 +1449,11 @@ def fossa_bimbi(mats):
         c.faccia_verso([(ax, ay, 0), (bx, by, 0), (bx, by, hb), (ax, ay, hb)], 'scacchi', (mx - ccx, my - ccy, 0))
     # pavimento della sala nel triangolo fuori dalla diagonale esterna del bordo
     c.faccia_verso([(x, y, 0.0) for x, y in triangolo], 'pavimento', (0, 0, 1))
-    # griglia di scarico divelta: ancora agganciata al lato nord, piegata giù nella fossa in due tratti
-    ga, gb = -14.1, -12.6
+    # griglia di scarico divelta, caduta sul fondo: appoggiata storta al muro nord nella metà ovest (x da -14,75 a
+    # -13,9), fuori da lei affacciata, dai suoi tentacoli e dalla strada del tuffo (metà est, x > -13,6, e il condotto).
+    # Appesa al lato nord passava dentro il busto di lei (controllo del 23 ottobre; scelta a del coordinatore, spazio
+    # di lei da mascotte).
+    ga, gb = -14.75, -13.9
     def tratto(origine, v, lunghezza, nome):
         v = Vector(v).normalized(); u = Vector((1, 0, 0)); w = u.cross(v).normalized()
         O = Vector(origine)
@@ -1466,8 +1469,14 @@ def fossa_bimbi(mats):
             p = O + v * (j * 0.1)
             c.cilindro((ga, p.y, p.z), (gb, p.y, p.z), 0.005, 'torre', seg=5, tappi=False)
         return O + v * lunghezza
-    piega = tratto(((ga + gb) / 2, y1 - 0.02, -0.01), (0, -math.cos(math.radians(14)), -math.sin(math.radians(14))), 0.34, 'a')
-    tratto(tuple(piega), (0, -math.cos(math.radians(72)), -math.sin(math.radians(72))), 0.86, 'b')
+    # lunga 1,2 m, il piede a 35 cm dal muro: in cima tocca il muro, in fondo il pavimento della fossa (2 mm)
+    lg, piede = 1.2, 0.35
+    v = Vector((0, -piede, -math.sqrt(lg * lg - piede * piede))).normalized()
+    w = Vector((1, 0, 0)).cross(v).normalized()
+    sp = 0.02 * abs(w.y)                                # mezzo spessore (staffe 2 cm) verso il muro
+    O = Vector(((ga + gb) / 2, y1 - sp - 0.002, 0.0))
+    O.z = zf_ + 0.002 + 0.02 * abs(w.z) - v.z * lg       # il punto più basso a 2 mm dal fondo
+    tratto(tuple(O), tuple(v), lg, 'a')
     def sporco(co):
         if co.z > -0.05:
             return 0.85
@@ -2918,7 +2927,9 @@ def disponi_oggetti(zf_piscina):
     metti_ogg('sedia_bagnino', (8.6, 2.5, 0.0), -90)
     for i, y in enumerate((-3.5, -1.2, 5.6, 8.0)):
         incl = (0, 0) if i != 2 else (0, 85)
-        metti_ogg('lettino_plastica', (11.8, y, 0.0 if i != 2 else 0.47), 180 + (6 if i % 2 else -4), 1.0, incl)
+        lt = metti_ogg('lettino_plastica', (11.8, y, 0.0 if i != 2 else 0.47), 180 + (6 if i % 2 else -4), 1.0, incl)
+        if i == 2 and lt is not None:
+            appoggia(lt, zf_piscina)   # quello rovesciato: a terra sul fianco (era staccato, controllo del 23 ottobre)
     metti_ogg('lettino_plastica', (-6.0, -8.2, 0.0), 75)
     # --- area bimbi: balena sgonfia nella vasca bassa, funghi, cannoncini, paperelle
     metti_ogg('balena_gonfiabile_sgonfia', (-15.0, 12.1, 0.33), 140, 0.95)

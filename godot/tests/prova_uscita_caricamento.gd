@@ -60,6 +60,7 @@ func _run() -> void:
 	for i in 30:
 		await get_tree().process_frame
 	var sala := get_tree().current_scene
+	var torre: String = sala.get(&"sala_torre_scena")
 	sala.call(&"_precarica_torre")
 	print("torre in caricamento: %s" % sala.get(&"_torre_in_caricamento"))
 	var attesa := float(OS.get_cmdline_user_args()[2]) if OS.get_cmdline_user_args().size() > 2 else 0.0
@@ -101,7 +102,9 @@ func _run() -> void:
 		for i in 5:
 			await get_tree().process_frame
 		print("sala uscita, ora quit")
-	var in_corso: bool = get_tree().current_scene.get(&"_torre_in_caricamento")
+	# la stessa misura di Game.esci (lo stato nel ResourceLoader), non il flag della sala: la torre può essere già
+	# caricata prima che la sala la ritiri (CI di lavoro/godot 2a7ac4d9: "torre 0.3", "aspettati" mancava)
+	var in_corso := ResourceLoader.load_threaded_get_status(torre) == ResourceLoader.THREAD_LOAD_IN_PROGRESS
 	print("USCITA con la torre in caricamento: %s" % ("IN CORSO" if in_corso else "già finita"))
 	_esci()
 

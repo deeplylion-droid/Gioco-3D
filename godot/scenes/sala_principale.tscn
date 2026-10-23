@@ -901,13 +901,13 @@ superficie_fossa = NodePath("../../Vasche/AcquaFossaBimbi")
 livello_pieno = 0.42
 
 [node name="MedusaSbuca" type="Marker3D" parent="Gioco/LeiSbuca" unique_id=1160230688]
-transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -13.027, -0.55, -7.773)
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -13.027, -0.515, -7.773)
 
 [node name="MedusaFuga" type="Marker3D" parent="Gioco/LeiSbuca" unique_id=1453512393]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8, -2.3, -7)
 
 [node name="MedusaFossa" type="Node3D" parent="Gioco/LeiSbuca" unique_id=1319409062]
-transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -13.027, -0.55, -7.773)
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -13.027, -0.515, -7.773)
 visible = false
 script = ExtResource("31_v6kdf")
 tentacoli_contro_i_muri = true

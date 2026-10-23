@@ -953,7 +953,25 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 		m.emission_energy_multiplier = 6.0
 		anello.material_override = m
 		radice.add_child(anello)
-		anello.global_position = bersaglio + verso * 0.02
+		# appoggiato al piano del pannello sotto l'anello, non al bersaglio rialzato del centro (1-2 cm più avanti):
+		# la faccia si cerca lungo il cerchio dell'anello e conta la più avanti (sotto ci sono due piani: sul più
+		# arretrato l'anello passava dentro l'altro); 1 mm dentro
+		var v := verso.normalized()
+		var faccia := bersaglio
+		if pannello:
+			var l1 := v.cross(Vector3.UP if absf(v.y) < 0.9 else Vector3.RIGHT).normalized()
+			var l2 := v.cross(l1)
+			var fondo := -INF
+			for r in [t.inner_radius, (t.inner_radius + t.outer_radius) * 0.5, t.outer_radius]:
+				for k in 32:
+					var a := TAU * k / 32.0
+					var q := bersaglio + (l1 * cos(a) + l2 * sin(a)) * float(r)
+					var su: Variant = _faccia_mesh(pannello, q + v * 0.5, -v)
+					if su != null:
+						fondo = maxf(fondo, ((su as Vector3) - bersaglio).dot(v))
+			if fondo > -INF:
+				faccia = bersaglio + v * fondo
+		anello.global_position = faccia + v * ((t.outer_radius - t.inner_radius) * 0.5 - 0.001)
 		anello.global_basis = Basis(Quaternion(Vector3.UP, verso.normalized()))
 		var o2 := OmniLight3D.new()
 		o2.light_color = VERDE
@@ -968,6 +986,24 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 			o2.reparent(pannello)
 	else:
 		_sfarfalla(o, s)
+
+
+## Il primo punto delle mesh di [param radice] colpito dal raggio da [param da] verso [param dir] (null: niente).
+static func _faccia_mesh(radice: Node3D, da: Vector3, dir: Vector3) -> Variant:
+	var migliore: Variant = null
+	var d_min := INF
+	for n in radice.find_children("*", "MeshInstance3D", true, false) + ([radice] if radice is MeshInstance3D else []):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var f := mi.mesh.get_faces()
+		for i in range(0, f.size(), 3):
+			var c: Variant = Geometry3D.ray_intersects_triangle(da, dir, mi.global_transform * f[i],
+					mi.global_transform * f[i + 1], mi.global_transform * f[i + 2])
+			if c != null and da.distance_to(c) < d_min:
+				d_min = da.distance_to(c)
+				migliore = c
+	return migliore
 
 
 ## La lampada rossa guasta: si spegne e riaccende a scatti.

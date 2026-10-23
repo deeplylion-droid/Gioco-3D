@@ -686,14 +686,19 @@ def versione_A(mats):
             ('tubi', 'det_condotta_aria_4m', (X0, 24.5, -19.6), (1, 0)),
             ('elettrico', 'det_cassetta_aperta', (X0, 17.6, -24.0), (1, 0)), ('cartelli', 'det_cartello_non_tuffarsi', (X0, 22.0, -19.2), (1, 0)),
             ('tubi', 'det_tubo_verticale_3m', (X0, 28.5, -25.0), (1, 0)), ('tubi', 'det_bocchetta_tonda', (X0, 26.0, -23.0), (1, 0))):
-        if GIOCO and nodo in ('det_tubo_verticale_3m', 'det_tubo_valvola_T'):
-            continue        # (finivano nel vuoto ai due capi: il tubo della T si vedeva aperto da tutte e due le parti)
+        if GIOCO and nodo in ('det_tubo_verticale_3m', 'det_tubo_valvola_T', 'det_condotta_aria_4m'):
+            continue        # (finivano nel vuoto ai due capi: il tubo della T si vedeva aperto da tutte e due le parti; la
+            #               condotta d'aria, 4 m lungo il muro ovest, coi due capi aperti a 15 cm dal muro)
         arredo(luci, 'det/' + cat, nodo, p, ry=ry_muro(*nrm), appoggio='origine')
     # sotto le passerelle: fasci di cavi a festone (dall'attacco pendono in giù), legati alla trave di mezzo
     # (passerella_muro: in mezzo alla larghezza, sotto la trave che finisce 16 cm sotto il piano)
     for (cat, nodo, p, ry) in (('cavi', 'det_fascio_cavi_4m', (46.0, y0 + 1.1, -20.17), 0.0), ('cavi', 'det_cavo_festone_3', (58.0, y0 + 1.1, -20.17), 0.0),
                                ('cavi', 'det_cavo_festone_2', (52.0, y1 - 1.1, -24.17), 180.0), ('cavi', 'det_cavo_festone_3', (64.5, y1 - 1.1, -24.17), 180.0),
                                ('catene_corde', 'det_corda_pendente_2', (74.0, y0 + 1.1, -20.155 if GIOCO else -20.17), 0.0)):
+        # nel gioco sotto la passerella sud non c'è la trave a x 58 e a x 74: il festone da 58 a 64 aveva un capo a 64 cm
+        # da tutto, la corda pendeva a 1,1 m da tutto (controllo del 23 ottobre, capi liberi): tolti
+        if GIOCO and p[1] == y0 + 1.1 and nodo in ('det_cavo_festone_3', 'det_corda_pendente_2'):
+            continue
         arredo(luci, 'det/' + cat, nodo, p, ry=ry, appoggio='origine')
     # sulla piattaforma della porta: corda, catena, la paletta di un bagnino
     for (cat, nodo, p, ry) in (('catene_corde', 'det_corda_rotolo', (41.0, 6.2, porta[1] - gr_), 0.0), ('catene_corde', 'det_catena_a_terra', (42.3, 2.6, porta[1] - gr_), 60.0),

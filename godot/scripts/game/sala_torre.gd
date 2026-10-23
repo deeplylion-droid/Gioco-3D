@@ -578,8 +578,15 @@ func _polaroid() -> void:
 	# o 5 cm sopra il sedile se il lettino non era ancora costruito (tests/polaroid_libere.gd).
 	foto.set(&"snap_to_surface", false)
 	add_child(foto)
-	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.01, 0)
+	# il fondo mezzo millimetro sopra la stecca più alta sotto la foto (a -11,670; collaudo del 23 ottobre: a +1 cm
+	# restava 8 mm sopra il sedile, posata sul doppione di sotto)
+	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.0023, 0)
 	foto.global_rotation = Vector3(0.0, PI * 0.5, 0.0)
+	# la Polaroid ferma del modello (torre_a.py, per i render) è un doppione sotto quella vera: copriva quella da
+	# raccogliere e la teneva staccata dal lettino
+	var doppione := find_child("torre_polaroid_10", true, false)
+	if doppione:
+		doppione.queue_free()
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.

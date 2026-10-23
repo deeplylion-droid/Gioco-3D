@@ -62,7 +62,7 @@
 			33.0
 		],
 		"stato": "voluto",
-		"motivo": "quadro elettrico appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala"
+		"motivo": "quadro elettrico appeso al muro sud della sala pompe, da 0,9 a 2,65 m: sporge 24 cm dal muro (era 56; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
 	},
 	{
 		"zona": "tecnici",
@@ -75,20 +75,7 @@
 			36.75
 		],
 		"stato": "voluto",
-		"motivo": "pannello degli strumenti appeso al muro sud della sala pompe, ora con la collisione: ci si ferma contro come contro il muro; non è su una strada o una scala"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/CameraOnde/CAMERA_bocchette",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			-1.72,
-			-9.05,
-			7.0
-		],
-		"stato": "voluto",
-		"motivo": "bocchette dell'aria sul muro sud della camera delle onde (da 1,65 m), ora con la collisione: ci si ferma contro come contro il muro. Se non va bene: alzarle di 40 cm in ambienti2_camera_onde.py"
+		"motivo": "pannello degli strumenti appeso al muro sud della sala pompe, da 1,3 a 2,25 m: sporge 24 cm dal muro (era 36; profondità 0,24 m nel generatore), fissato al muro, non pende nel passaggio; davanti, alla testa, la sala libera per oltre 3 m. Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
 	},
 	{
 		"zona": "torre",
@@ -169,152 +156,6 @@
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)"
 	},
 	{
-		"zona": "torre",
-		"nodo": "TorreStruttura/torre_A_sostegni",
-		"squadra": "ambienti-2",
-		"problema": "ingombro",
-		"pos": [
-			38.26,
-			-19.06,
-			-17.53
-		],
-		"stato": "voluto",
-		"motivo": "celle dentro il tubo dell'inseguimento, e il collare sotto la coda del tratto 5, 1,93 m sopra il terzo gradino della bocca, sul bordo est della salita (ambienti-2, 22 ottobre)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
-		"squadra": "mascotte",
-		"problema": "ingombro",
-		"pos": [
-			-15.5,
-			0.0,
-			-7.75
-		],
-		"stato": "voluto",
-		"motivo": "i tentacoli di lei affacciata alla fossa (tappa 8) stanno tutti fra 0,3 e 2 m in pianta dal suo occhio, e LeiSbuca prende il giocatore a 2,4 m (distanza_presa) appena lei è visibile: da vivo non ci si arriva (deciso dal coordinatore, 22 ottobre)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
-		"squadra": "mascotte",
-		"problema": "compenetra",
-		"pos": [
-			-13.24,
-			-0.06,
-			-6.85
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 116 cm (stato: lei_fossa)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa",
-		"squadra": "mascotte",
-		"problema": "compenetra",
-		"pos": [
-			-13.82,
-			-0.28,
-			-6.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 41 cm (stato: lei_fossa)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			1.2,
-			-4.22,
-			34.16
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi."
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_1",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			1.2,
-			-4.22,
-			39.16
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_1_tubo_sfarfalla."
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_2",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			1.2,
-			-4.22,
-			43.66
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_2_tubi."
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_3",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			5.7,
-			-4.22,
-			39.16
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_3_tubi."
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0/@MeshInstance3D@39474",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			54.61,
-			-19.48,
-			-16.4
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2/@MeshInstance3D@39482",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			67.0,
-			-22.48,
-			-25.39
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4/@MeshInstance3D@39490",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			66.89,
-			-25.48,
-			-3.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_4, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10"
-	},
-	{
 		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
 		"squadra": "enigmi",
@@ -324,8 +165,8 @@
 			0.0,
 			-18.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "sala",
@@ -337,8 +178,8 @@
 			0.0,
 			-18.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "sala",
@@ -350,8 +191,8 @@
 			0.0,
 			-18.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "sala",
@@ -363,8 +204,8 @@
 			0.0,
 			-11.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "sala",
@@ -376,8 +217,8 @@
 			0.0,
 			-11.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "sala",
@@ -389,34 +230,8 @@
 			0.0,
 			-11.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_2",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			1.5,
-			-0.53,
-			46.5
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.53), senza collisione (si attraversa)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_r1s_m_0",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-2.0,
-			-9.05,
-			48.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.24 e 1.84 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -9.05), senza collisione (si attraversa)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "tecnici",
@@ -428,62 +243,8 @@
 			-9.05,
 			47.25
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.56 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -9.05), senza collisione (si attraversa)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_7",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-7.5,
-			0.0,
-			46.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimenti fra y -0.30 e -0.00), senza collisione (si attraversa)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22970/@MeshInstance3D@22971",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-6.75,
-			-5.4,
-			65.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.08x2.30x0.36"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/capanna_tiki/Mesh_0",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-30.5,
-			-5.4,
-			78.75
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/@Node3D@22978/@MeshInstance3D@22979",
-		"squadra": "enigmi",
-		"problema": "ingombro",
-		"pos": [
-			-35.5,
-			-5.4,
-			51.25
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.08x2.30x0.36"
+		"stato": "voluto",
+		"motivo": "fissato al muro est della sala pompe accanto alla porta, a 1,2-1,52 m da terra: sporge 24,2 cm dal muro, staffa compresa (al più 25); non pende nel passaggio (staffa a muro); davanti, alla testa, 17,6 m liberi fino al muro ovest (almeno 80 cm). Regola del coordinatore per le cose a muro, 23 ottobre (ambienti-2)"
 	},
 	{
 		"zona": "acquari",
@@ -495,8 +256,8 @@
 			0.0,
 			-18.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "acquari",
@@ -508,8 +269,8 @@
 			0.0,
 			-18.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "acquari",
@@ -521,8 +282,8 @@
 			0.0,
 			-18.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "acquari",
@@ -534,8 +295,8 @@
 			0.0,
 			-11.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "acquari",
@@ -547,8 +308,8 @@
 			0.0,
 			-11.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	},
 	{
 		"zona": "acquari",
@@ -560,488 +321,7 @@
 			0.0,
 			-11.5
 		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.20 e 1.28 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@201",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-28.4,
-			-0.8,
-			88.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@204",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-18.4,
-			-0.8,
-			106.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@206",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-43.4,
-			-0.8,
-			114.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@209",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-58.4,
-			-0.8,
-			100.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@211",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-53.4,
-			-0.8,
-			76.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@214",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-33.4,
-			-0.8,
-			65.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@217",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-18.4,
-			-0.8,
-			82.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "risalita",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@219",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-43.4,
-			-0.8,
-			96.0
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/Dettagli/det_foglio_1_17",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			5.95,
-			-0.03,
-			-12.78
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 32% dei suoi vertici è dentro Sala/Piscina/piscina_bordi"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/FondoVetro",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			11.3,
-			0.79,
-			-21.6
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro3",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			9.94,
-			0.5,
-			-22.1
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro4",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			11.05,
-			0.5,
-			-23.03
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro2",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			11.55,
-			0.5,
-			-20.17
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/BasamentoVetro",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			5.7,
-			1.55,
-			-22.3
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro5",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			12.41,
-			0.5,
-			-22.53
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro1",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			12.66,
-			0.5,
-			-21.1
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/BasamentoVetro",
-		"squadra": "enigmi",
-		"problema": "compenetra",
-		"pos": [
-			16.9,
-			1.55,
-			-22.3
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-16.0,
-			2.35,
-			35.52
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.95,
-			2.34,
-			35.38
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.87,
-			2.33,
-			35.24
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-16.0,
-			2.35,
-			34.2
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.95,
-			2.34,
-			31.12
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-15.87,
-			2.33,
-			30.98
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-2.35,
-			-6.91,
-			49.34
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-2.27,
-			-6.92,
-			49.48
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_0",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-2.4,
-			-6.9,
-			50.52
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_1",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-2.35,
-			-6.91,
-			50.38
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_2",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			-2.27,
-			-6.92,
-			50.24
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/EnigmaAcquari/Cavo",
-		"squadra": "enigmi",
-		"problema": "estremita_libera",
-		"pos": [
-			6.6,
-			1.54,
-			-21.43
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			40.55,
-			-19.6,
-			-28.51
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			40.55,
-			-19.6,
-			-24.49
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			57.98,
-			-20.16,
-			0.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			64.02,
-			-20.16,
-			0.9
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb"
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7563/det_corda_pendente_2",
-		"squadra": "ambienti-2",
-		"problema": "estremita_libera",
-		"pos": [
-			74.03,
-			-23.21,
-			0.89
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|catene_corde.gltf::ArrayMesh_vmoi6"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/Oggetti/ogg_lettino_plastica_23",
-		"squadra": "ambienti-1",
-		"problema": "staccato",
-		"pos": [
-			11.34,
-			0.51,
-			-5.63
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/Dettagli/det_cartello_non_tuffarsi_6",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			-3.34,
-			1.52,
-			19.99
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): passa dentro Sala/Oggetti/ogg_salvagente_nave_19 per 9 cm (nel pieno, per esempio, in (-3.37, 1.44, 19.99))"
+		"stato": "voluto",
+		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
 	}
 ]
