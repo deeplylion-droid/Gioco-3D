@@ -185,9 +185,10 @@ def angolo_bordo(t, banda, verso, dentro, extra=None):
 
 GIOCO_INTAGLIO = 0.004                     # quanto resta fra uno scivolo e la pedana (o il sostegno) intagliata
 CANALI_APERTI = []                         # (linea, W, D, T, H, R) di ogni canale aperto, per l'intaglio
+TUBI_CHIUSI = []                           # (linea, raggio esterno) di ogni tubo chiuso, per l'intaglio di travi e sostegni
 
 
-def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
+def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=(), tubi_su=()):
     """Toglie dai `bersagli` (pedane, travi, sostegni) il volume degli `scivoli`, gonfiato di `gioco` metri: lo
     scivolo ci appoggia contro senza entrarci (l'intaglio segue la sua forma, a pochi millimetri). `filtri`: per nome
     del bersaglio, quali pezzi (dal box, angolo basso e alto, e dai materiali) si intagliano; `aperti`: bersagli fatti di sole facce
@@ -236,10 +237,50 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
         bm.to_mesh(me)
         bm.free()
         coll.objects.link(bpy.data.objects.new(me.name, me))
-    print(f'intaglio: {len(coll.objects)} forme di scivolo')
+    # 3) i tubi chiusi pieni (sono vuoti dentro: una trave che li attraversa ci resterebbe dentro), solo per i bersagli
+    # `tubi_su` (travi e sostegni: nella struttura ci sono le grate tonde che chiudono le bocche, dentro i tubi)
+    coll_t = bpy.data.collections.new('intaglio_tubi')
+    bpy.context.scene.collection.children.link(coll_t)
+    for o in coll.objects:
+        coll_t.objects.link(o)
+    for (punti, rr) in TUBI_CHIUSI:
+        # la stessa linea del tubo vero (Catmull-Rom a passi di 0,3 m, come K.tubo_scivolo)
+        P_ = [Vector(p) for p in punti]
+        E = [P_[0] + (P_[0] - P_[1])] + P_ + [P_[-1] + (P_[-1] - P_[-2])]
+        Q = []
+        for i_ in range(1, len(E) - 2):
+            n_ = max(2, int((E[i_ + 1] - E[i_]).length / 0.3))
+            for k in range(n_):
+                t_ = k / n_
+                p0, p1, p2, p3 = E[i_ - 1], E[i_], E[i_ + 1], E[i_ + 2]
+                Q.append(0.5 * ((2 * p1) + (-p0 + p2) * t_ + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t_ * t_ + (-p0 + 3 * p1 - 3 * p2 + p3) * t_ ** 3))
+        Q.append(P_[-1])
+        bm = bmesh.new()
+        anelli = []
+        n_s = 24
+        for k in range(len(Q)):
+            d = (Q[min(k + 1, len(Q) - 1)] - Q[max(k - 1, 0)]).normalized()
+            a_ = d.cross(Vector((0, 0, 1)))
+            a_ = a_.normalized() if a_.length > 1e-6 else Vector((1, 0, 0))
+            b2 = a_.cross(d).normalized()
+            # il cerchio circoscritto al poligono (fuori anche a metà dei lati), poi il gioco
+            rc = (rr + gioco) / math.cos(math.pi / n_s)
+            anelli.append([bm.verts.new(Q[k] + (a_ * math.cos(2 * math.pi * q / n_s) + b2 * math.sin(2 * math.pi * q / n_s)) * rc) for q in range(n_s)])
+        for k in range(len(anelli) - 1):
+            for q in range(n_s):
+                bm.faces.new([anelli[k][q], anelli[k + 1][q], anelli[k + 1][(q + 1) % n_s], anelli[k][(q + 1) % n_s]])
+        bm.faces.new(anelli[0][::-1])
+        bm.faces.new(anelli[-1])
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        me = bpy.data.meshes.new('tubo_pieno_intaglio')
+        bm.to_mesh(me)
+        bm.free()
+        coll_t.objects.link(bpy.data.objects.new(me.name, me))
+    print(f'intaglio: {len(coll.objects)} forme di scivolo, {len(TUBI_CHIUSI)} tubi pieni')
     from mathutils.bvhtree import BVHTree
-    alberi = [BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get()) for o in coll.objects]
     for b_ in bersagli:
+        raccolta = coll_t if b_.name in tubi_su else coll
+        alberi = [BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get()) for o in raccolta.objects]
         # solo i pezzi (isole) toccati da uno scivolo passano dal booleano: il resto resta com'è (il booleano esatto
         # rifà fitte le facce che taglia; su tutta la torre i triangoli si quintuplicavano)
         albero = BVHTree.FromObject(b_, bpy.context.evaluated_depsgraph_get())
@@ -303,7 +344,7 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
         m = pezzo.modifiers.new('intaglio', 'BOOLEAN')
         m.operation = 'DIFFERENCE'
         m.operand_type = 'COLLECTION'
-        m.collection = coll
+        m.collection = raccolta
         m.solver = 'EXACT'
         # (i telai delle pedane sono quattro travi con i vertici in comune: non sono chiusi, e senza la tolleranza il
         # booleano ne toglieva intere facce)
@@ -336,9 +377,10 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
         b_.select_set(True)
         bpy.context.view_layer.objects.active = b_
         bpy.ops.object.join()
-    for o in list(coll.objects):
+    for o in list(coll_t.objects):
         bpy.data.meshes.remove(o.data)
     bpy.data.collections.remove(coll)
+    bpy.data.collections.remove(coll_t)
 
 
 def _chiudi_lastre(bm):
@@ -1103,7 +1145,9 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
     d = (dal_capo[i + 1] - dal_capo[i - 1]).normalized()
     BOCCHE_CHIUSE.append(([round(v, 3) for v in (p.x, p.y, L)], [round(d.x, 3), round(d.y, 3)], chiuso))
     if chiuso:
-        r = R_GROVIGLIO - 0.04
+        # dentro il tubo (18 lati: il piano di un lato è a R*cos(10°) dall'asse), 4 mm dalla parete: col raggio pieno
+        # l'anello e le sbarre entravano un centimetro nella parete
+        r = K.SCIVOLO_R * math.cos(math.pi / 18) - 0.004 - 0.02
         lat = d.cross(Vector((0, 0, 1))).normalized()
         su = lat.cross(d).normalized()
         c.anello(p, d, r - 0.05, r + 0.02, 0.06, 'gioco_rosso', seg=20)
@@ -1117,7 +1161,7 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
 
 
 def versione_A(mats):
-    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear(); BOCCHE_CHIUSE.clear(); CANALI_APERTI.clear()
+    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear(); BOCCHE_CHIUSE.clear(); CANALI_APERTI.clear(); TUBI_CHIUSI.clear()
     materiali_scivoli(mats)
     rnd = random.Random(17)
     c = K.Costruttore(mats)            # guscio, torri, piattaforme, travature
@@ -1545,6 +1589,7 @@ def versione_A(mats):
                 m = list(rnd.choice(STRISCE))
             else:
                 m = [rnd.choice(colori[:-1])]
+            TUBI_CHIUSI.append((pts, K.SCIVOLO_R + K.SCIVOLO_SPESSORE))
             oggetti_scivoli.append(K.tubo_scivolo(mats, pts, nome=f'torre_scivolo_{j}' + ('-col' if GIOCO else ''), materiali=m, seg=18,
                                                   passo_flange=1.6 if len(m) > 1 else 2.5))
         else:
@@ -1694,6 +1739,7 @@ def versione_A(mats):
     bocca = [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.6), (XI1 - 2.4, yb_, FONDO + 1.6)] if not GIOCO else \
         [(XI1 + 1.0, yb_, FONDO + 1.4), (XI1 - 1.2, yb_, FONDO + 1.62), (XI1 - 2.4, yb_, FONDO + 1.85)]
     tubo_ins = K.tubo_scivolo(mats, bocca, nome='torre_tubo_inseguimento', materiali=['tsc_giallo'], r=0.8, spessore=0.06)
+    TUBI_CHIUSI.append((bocca, 0.86))
     oggetti_scivoli.append(tubo_ins)
     if GIOCO:
         # il collare sul muro attorno al tubo (copre gli angoli del foro) e quattro gradini di grata nella vasca
@@ -1873,7 +1919,8 @@ def versione_A(mats):
     # scivoli: gli imbuti in fondo ai tratti continuano lo scivolo apposta)
     def non_scivolo(lo, hi, mats):
         return not any(m_.startswith('tsc_') for m_ in mats)
-    intaglia([gr, ob, ob_t, ob_v], [ob_s] + canali_discesa + oggetti_scivoli, filtri={ob.name: non_scivolo}, aperti={gr.name})
+    intaglia([gr, ob, ob_t, ob_v], [ob_s] + canali_discesa + oggetti_scivoli, filtri={ob.name: non_scivolo}, aperti={gr.name},
+             tubi_su={ob_t.name, ob_v.name})
     gruppi = {'struttura': [ob, ob_t, ob_v, ob_l, gr, pol] + acque + acque_raccolta, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
     # per il gioco: checkpoint, salti, Polaroid, balconata, pozzo e vasca del fondo (coordinate di Blender)
     gioco = dict(checkpoint=[], salti=[], tratti=[])
