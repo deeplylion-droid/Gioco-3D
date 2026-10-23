@@ -22,9 +22,11 @@ const TEXI := "res://assets/ambienti_interni/texture/"
 
 ## materiale importato -> come trattarlo
 const PARETI_BASE := {
-	"cemento": {"tinta": Color(0.95, 0.95, 0.95), "scrostatura": 0.0},
-	"cemento_bagnato": {"tinta": Color(0.9, 0.9, 0.9), "scrostatura": 0.0},
-	"lamiere_rivettate": {"tinta": Color(1, 1, 1), "scrostatura": 0.15},
+	# soglia_alto: la ruggine sopra la quota dei tubi, circa un terzo di prima; scrostatura delle lamiere dimezzata
+	# (muri più calmi, proposta texture_muri del 23 ottobre: prima 0,35 e 0,15)
+	"cemento": {"tinta": Color(0.95, 0.95, 0.95), "scrostatura": 0.0, "soglia_alto": 0.62},
+	"cemento_bagnato": {"tinta": Color(0.9, 0.9, 0.9), "scrostatura": 0.0, "soglia_alto": 0.62},
+	"lamiere_rivettate": {"tinta": Color(1, 1, 1), "scrostatura": 0.07, "soglia_alto": 0.62},
 }
 const PIASTRELLE_BASE := {
 	"piastrelle_muro": {"per_lato": 0.0, "bagnato": 0.15},
@@ -94,6 +96,7 @@ func _applica_materiali(radice: Node) -> void:
 				sm.set_shader_parameter("base_rough", m.roughness_texture)
 				# variante "scrostata": ruggine degli interni (solo dove serve)
 				sm.set_shader_parameter("scrostatura", d["scrostatura"])
+				sm.set_shader_parameter("soglia_alto", d["soglia_alto"])
 				sm.set_shader_parameter("scrostata_albedo", load(TEXI + "ruggine_col.jpg"))
 				sm.set_shader_parameter("scrostata_normal", load(TEXI + "ruggine_nrm.jpg"))
 				sm.set_shader_parameter("scrostata_rough", load(TEXI + "ruggine_met-ruggine_rgh.jpg"))
@@ -134,6 +137,11 @@ func _applica_materiali(radice: Node) -> void:
 				via.albedo_color = Color(0, 0, 0, 0)
 				via.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 				nuovo = via
+			elif m.albedo_texture and m.albedo_texture.resource_path.contains("Rust004"):
+				# la ruggine calma più grande (proposta texture_muri del 23 ottobre: più fitta, le macchie si notavano)
+				var rug := m.duplicate() as BaseMaterial3D
+				rug.uv1_scale = m.uv1_scale * 0.7
+				nuovo = rug
 			elif nome.begins_with("ACQUA"):
 				var acqua := StandardMaterial3D.new()
 				acqua.albedo_color = Color(0.02, 0.025, 0.025, 0.85)
@@ -276,6 +284,7 @@ func _decal() -> void:
 	var sala: Node3D = $Ambienti/SalaPompe
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 77
+	MaterialiInterni.ruggine_contate = 0
 	# camera delle onde: colature sul muro sud (z = 2,2) e sul soffitto, macchie a terra
 	for x in [1.5, 4.8, 8.2, 11.7, 15.3, 19.6, 22.6]:
 		MaterialiInterni.decal(camera, "ruggine", Vector3(x + rng.randf_range(-0.4, 0.4), 2.9, 2.18), Vector3(0, 0, -1), 0.7, 1.6, 0.8)

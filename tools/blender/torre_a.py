@@ -850,6 +850,38 @@ def scala_servizio(c, sp, x0, y0, lungo, asse, verso_ponte, mat='gioco_giallo'):
         c.cilindro(P_(lp + corsa, vv, FONDO), P_(lp, vv, L0), 0.05, mat, seg=6)
 
 
+def aperture_scivoli(r, L, alto=1.15, margine=0.1):
+    """Le aperture della ringhiera della pedana r (livello L) dove un canale o un tubo arriva alla ringhiera (la passa
+    o le corre accanto con la sua larghezza) all'altezza della ringhiera: l'utente, 23 ottobre (B), un'apertura con i
+    montanti ai lati, non sbarre appese sopra lo scivolo."""
+    x0, y0, x1, y1 = r
+    out = []
+    pezzi = [(pts, W + T + 0.05, -(D + T), H + R) for (pts, W, D, T, H, R) in CANALI_APERTI] + \
+        [([Vector(p) for p in pts], rr + 0.08, -rr - 0.08, rr + 0.08) for (pts, rr) in TUBI_CHIUSI]
+    for (pts, mezza, giu, su) in pezzi:
+        fitto = fitti(pts, 0.1)
+        for lato, asse, val, a0, a1 in (('o', 'x', x0, y0, y1), ('e', 'x', x1, y0, y1), ('s', 'y', y0, x0, x1), ('n', 'y', y1, x0, x1)):
+            tocchi = []
+            for q in fitto:
+                d = abs(getattr(q, asse) - val)
+                u = q.y if asse == 'x' else q.x
+                if d > mezza or not (a0 - mezza < u < a1 + mezza):
+                    continue
+                if q.z + su < L or q.z + giu > L + alto:
+                    continue
+                # quanto si allarga il pezzo lungo il bordo a questa distanza dalla linea della ringhiera
+                largo = (mezza * mezza - d * d) ** 0.5
+                tocchi.append((u - a0 - largo - margine, u - a0 + largo + margine))
+            # i tocchi vicini fanno un'apertura sola
+            tocchi.sort()
+            for t0, t1 in tocchi:
+                if out and out[-1][0] == lato and t0 <= out[-1][2] + 0.2:
+                    out[-1] = (lato, out[-1][1], max(out[-1][2], t1))
+                else:
+                    out.append((lato, t0, t1))
+    return out
+
+
 def ringhiere_ponte(c, r, L, aperture):
     """Ringhiera sui quattro lati della piattaforma, meno le aperture [(lato, da, a)] in metri lungo il lato."""
     x0, y0, x1, y1 = r
@@ -1373,6 +1405,11 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
         i += 1
     p = dal_capo[i]
     d = (dal_capo[i + 1] - dal_capo[i - 1]).normalized()
+    if not chiuso:
+        # il cancello sta sulla pedana davanti alla bocca, 15 cm prima della testata: 35 cm dentro, le sbarre
+        # entravano nel canale (e l'intaglio le lasciava appese al corrimano; l'utente, 23 ottobre: niente sbarre appese)
+        dh = Vector((d.x, d.y, 0)).normalized()
+        p = dal_capo[0] - dh * 0.15
     BOCCHE_CHIUSE.append(([round(v, 3) for v in (p.x, p.y, L)], [round(d.x, 3), round(d.y, 3)], chiuso))
     if chiuso:
         # dentro il tubo (18 lati: il piano di un lato è a R*cos(10°) dall'asse), 4 mm dalla parete: col raggio pieno
@@ -1901,13 +1938,13 @@ def versione_A(mats):
             if (t, L) == ('NO', -12.0) and PEDANA_NO12:
                 pr = PEDANA_NO12
                 P.piattaforma(c, pr[0], pr[1], pr[2], pr[3], L, lati=(), pali=False)
-                ringhiere_ponte(c, pr, L, aperture.get(('pedana_no12', L), []))
+                ringhiere_ponte(c, pr, L, aperture.get(('pedana_no12', L), []) + aperture_scivoli(pr, L))
                 cc = centro(t)
                 for (qx, qy) in ((pr[2] - 0.2, pr[3] - 0.2), (pr[2] - 0.2, pr[1] + 0.2), (pr[0] + 0.2, pr[1] + 0.2)):
                     a_ = Vector((cc.x + NUCLEO, cc.y - NUCLEO, L - 0.3))
                     c.cilindro(a_, (qx, qy, L - 0.25), 0.1, VERNICI_TORRI[t], seg=10)
                     c.cilindro(a_ - Vector((0, 0, 1.8)), (qx, qy, L - 0.3), 0.07, 'metallo', seg=8)
-                ringhiere_ponte(c, r, L, ap)
+                ringhiere_ponte(c, r, L, ap + aperture_scivoli(r, L))
                 continue
             P.piattaforma(c, r[0], r[1], r[2], r[3], L, lati=(), pali=False)
             if t == 'NO':
@@ -1916,7 +1953,7 @@ def versione_A(mats):
                     ap.append(('o', 0.0, 5.2))      # dalla passerella del portone
             if t == 'SE':
                 ap.append(('s', 0.0, 2.6))
-            ringhiere_ponte(c, r, L, ap)
+            ringhiere_ponte(c, r, L, ap + aperture_scivoli(r, L))
     scala_servizio(c, sp, XI0 + 0.05, rno[1] + 0.2, 4.8, 'y', 1)
     scala_servizio(c, sp, rse[0] + 0.2, YI0 + 0.08, 4.8, 'x', 1)
     # passerella dal portone alla torre NO (a quota 0)
