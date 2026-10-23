@@ -11,6 +11,7 @@ extends Node
 ## quel pezzo il montaggio lo taglia.
 
 const INQUADRATURE := "res://scenes/spot/spot_inquadrature.json"
+const SCRIPT_OCCHIO := "res://scripts/spot/occhio_ipnotico.gd"
 
 ## Secondi fermi prima di partire (tagliati al montaggio).
 @export var preparazione := 4.0
@@ -22,11 +23,14 @@ var _t := -1.0             ## secondi dall'inizio del segmento (negativi durante
 var _inizio := 0.0         ## inizio del segmento nello spot
 var _fine := 0.0
 var _azioni_fatte := {}
+var _dati: Dictionary
+var _occhio: Node        ## l'OcchioIpnotico di enigmi con solo_occhio (muove l'occhio vero di Jilly), se il segmento lo vuole
 
 
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
 	var dati: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(INQUADRATURE))
+	_dati = dati
 	var nome := args[0] if args.size() > 0 else String(dati["segmenti"][0]["nome"])
 	if args.size() > 1:
 		preparazione = float(args[1])
@@ -45,6 +49,14 @@ func _ready() -> void:
 		_scena.add_child(_cam)
 	if _cam:
 		_cam.current = true
+	if _segmento.get("occhio_ipnotico", false) and ResourceLoader.exists(SCRIPT_OCCHIO):
+		# solo l'occhio vero, niente disegnato: l'effetto sullo schermo lo mette il lettore dal vivo, con lo stesso
+		# progresso (chiave "occhio" del filtro), così il battito del video e quello dell'effetto restano in passo
+		_occhio = ColorRect.new()
+		_occhio.name = "OcchioIpnotico"
+		_occhio.set_script(load(SCRIPT_OCCHIO))
+		_occhio.set(&"solo_occhio", true)
+		_scena.add_child(_occhio)
 	_t = -preparazione
 	_muovi(0.0)
 
@@ -59,6 +71,8 @@ func _process(delta: float) -> void:
 ## Mette la camera e lancia le azioni al tempo [param t] del segmento.
 func _muovi(t: float) -> void:
 	var assoluto := _inizio + t
+	if _occhio:
+		_occhio.set(&"progresso", LettoreSpot.chiave(_dati, "occhio", assoluto) if _t >= 0.0 else 0.0)
 	for inq in _segmento["inquadrature"]:
 		var da := float(inq["inizio"])
 		if assoluto < da or assoluto > da + float(inq["durata"]) + 0.0001:

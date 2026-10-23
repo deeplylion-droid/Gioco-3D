@@ -41,6 +41,7 @@ var _premuto := 0.0
 var _tenuto := false
 var _finito := false
 @onready var _video: VideoStreamPlayer = $Video
+@onready var _fermo: TextureRect = $Fermo
 @onready var _occhio: ColorRect = $Occhio
 @onready var _vhs: ColorRect = $Vhs
 @onready var _anello: Control = $Anello
@@ -64,8 +65,9 @@ func _ready() -> void:
 	_vhs.visible = _effetto(_vhs, SHADER_VHS, "")
 	if _effetto(_occhio, SHADER_OCCHIO, SCRIPT_OCCHIO):
 		_occhio.set(&"centro", centro_occhio)
-		# i fotogrammi saltati dell'occhio fermano anche il video
-		_occhio.connect(&"fermo", func(acceso: bool): _video.paused = acceso)
+		# i fotogrammi saltati dell'occhio: l'immagine resta ferma, il video sotto va avanti (alla ripartenza salta
+		# avanti e resta in passo con l'audio; proposta di enigmi del 23 ottobre)
+		_occhio.connect(&"fermo", _ferma)
 	else:
 		_occhio.visible = false
 	for a in _dati["audio"]:
@@ -97,15 +99,15 @@ func _process(delta: float) -> void:
 		_video.visible = _t < float(_dati["durata_video"])
 	for e in _audio:
 		_suona(e, _t)
-	for chiave in (_dati["filtro"][0] as Dictionary).keys():
-		if chiave == "t":
+	for campo in (_dati["filtro"][0] as Dictionary).keys():
+		if campo == "t":
 			continue
-		var v := _chiave(chiave)
-		if chiave == "occhio":
+		var v := _chiave(campo)
+		if campo == "occhio":
 			if _occhio.visible:
 				_occhio.set(&"progresso", v)
 		elif _vhs.visible:
-			(_vhs.material as ShaderMaterial).set_shader_parameter(chiave, v)
+			(_vhs.material as ShaderMaterial).set_shader_parameter(campo, v)
 	if _tenuto:
 		_premuto += delta
 		if _premuto >= tenere_per_saltare:
@@ -139,6 +141,27 @@ func _suona(e: Dictionary, t: float) -> void:
 		p.stop()
 
 
+func _ferma(acceso: bool) -> void:
+	var tex := _video.get_video_texture()
+	if acceso and tex:
+		_fermo.texture = ImageTexture.create_from_image(tex.get_image())
+	_fermo.visible = acceso and tex != null
+
+
+## Il valore di [param campo] nelle chiavi "filtro" di [param dati] al tempo [param t] dello spot (lineare tra le
+## chiavi). Lo usa anche la regia, per muovere l'occhio vero di Jilly con lo stesso progresso del lettore.
+static func chiave(dati: Dictionary, campo: String, t: float) -> float:
+	var chiavi: Array = dati["filtro"]
+	if t <= float(chiavi[0]["t"]):
+		return float(chiavi[0][campo])
+	for i in chiavi.size() - 1:
+		var a: Dictionary = chiavi[i]
+		var b: Dictionary = chiavi[i + 1]
+		if t <= float(b["t"]):
+			return lerpf(float(a[campo]), float(b[campo]), (t - float(a["t"])) / maxf(float(b["t"]) - float(a["t"]), 1e-4))
+	return float(chiavi[-1][campo])
+
+
 ## Mette sul ColorRect [param r] lo shader (letto dallo schermo) e lo script, se ci sono. Falso se manca lo shader.
 func _effetto(r: ColorRect, shader: String, script: String) -> bool:
 	if not ResourceLoader.exists(shader):
@@ -153,17 +176,8 @@ func _effetto(r: ColorRect, shader: String, script: String) -> bool:
 	return true
 
 
-## Il valore di [param campo] nelle chiavi "filtro" al tempo dello spot (lineare tra le chiavi).
 func _chiave(campo: String) -> float:
-	var chiavi: Array = _dati["filtro"]
-	if _t <= float(chiavi[0]["t"]):
-		return float(chiavi[0][campo])
-	for i in chiavi.size() - 1:
-		var a: Dictionary = chiavi[i]
-		var b: Dictionary = chiavi[i + 1]
-		if _t <= float(b["t"]):
-			return lerpf(float(a[campo]), float(b[campo]), (_t - float(a["t"])) / maxf(float(b["t"]) - float(a["t"]), 1e-4))
-	return float(chiavi[-1][campo])
+	return chiave(_dati, campo, _t)
 
 
 func _input(event: InputEvent) -> void:

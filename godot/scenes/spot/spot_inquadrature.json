@@ -47,6 +47,8 @@
 		{
 			"nome": "5_8_jilly",
 			"scena": "res://scenes/spot/sala_spot.tscn",
+			"_occhio": "la regia mette nella scena un OcchioIpnotico di enigmi con solo_occhio: muove solo l'occhio vero di Jilly, col progresso della chiave 'occhio' del filtro (lo stesso del lettore: il battito resta in passo)",
+			"occhio_ipnotico": true,
 			"inquadrature": [
 				{"n": 5, "inizio": 19.0, "durata": 7.0, "cosa": "Jilly sul piedistallo, luci da spettacolo, logo e insegna nuovi", "da_rivedere": true,
 					"camera": [
@@ -97,7 +99,7 @@
 		{"t": 31.5, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.0, "occhio": 0.0},
 		{"t": 34.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.35, "occhio": 0.0},
 		{"t": 38.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.8, "occhio": 0.0},
-		{"t": 38.2, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 0.0},
-		{"t": 42.8, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 1.0}
+		{"t": 38.2, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 0.04},
+		{"t": 43.0, "schermo_blu": 0.0, "play": 0.0, "guasto": 0.6, "occhio": 1.0}
 	]
 }
