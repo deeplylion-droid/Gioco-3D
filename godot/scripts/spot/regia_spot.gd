@@ -81,7 +81,7 @@ func _muovi(t: float) -> void:
 			continue
 		var tl := assoluto - da
 		if inq.has("camera") and _cam:
-			_camera(inq["camera"], tl)
+			_camera(inq["camera"], tl, _riferimento(String(inq.get("rispetto", ""))))
 		elif inq.has("discesa") and _cam:
 			var s := _chiavi(inq["discesa"], tl, "s")
 			_cam.global_transform = _scena.call(&"posa_camera", s)
@@ -103,8 +103,22 @@ func _muovi(t: float) -> void:
 		break
 
 
-## La camera tra le chiavi (pos, guarda, fov), con il passo morbido (Catmull-Rom sulle posizioni).
-func _camera(chiavi: Array, t: float) -> void:
+## Il nodo a cui sono riferite le chiavi della camera di un'inquadratura ("rispetto": nome o percorso sotto la scena,
+## per esempio l'occhio di Jilly), o null: chiavi nel mondo della scena.
+func _riferimento(chi: String) -> Node3D:
+	if chi == "":
+		return null
+	var n := _scena.get_node_or_null(NodePath(chi))
+	if n == null:
+		n = _scena.find_child(chi, true, false)
+	if n == null:
+		push_warning("spot: nodo di riferimento della camera mancante: " + chi)
+	return n as Node3D
+
+
+## La camera tra le chiavi (pos, guarda, fov), con il passo morbido (Catmull-Rom sulle posizioni). Con [param rif] pos e
+## guarda sono nello spazio di quel nodo (la camera segue l'occhio di Jilly anche se si muove).
+func _camera(chiavi: Array, t: float, rif: Node3D = null) -> void:
 	var i := 0
 	while i < chiavi.size() - 2 and t > float(chiavi[i + 1]["t"]):
 		i += 1
@@ -118,6 +132,9 @@ func _camera(chiavi: Array, t: float) -> void:
 	var g3 := _v(chiavi[mini(i + 2, chiavi.size() - 1)]["guarda"])
 	var pos := _v(a["pos"]).cubic_interpolate(_v(b["pos"]), p0, p3, u)
 	var guarda := _v(a["guarda"]).cubic_interpolate(_v(b["guarda"]), g0, g3, u)
+	if rif:
+		pos = rif.global_transform * pos
+		guarda = rif.global_transform * guarda
 	_cam.global_position = pos
 	_cam.look_at(guarda, Vector3.UP)
 	_cam.fov = lerpf(float(a.get("fov", 60.0)), float(b.get("fov", 60.0)), u)
