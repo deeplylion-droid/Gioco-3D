@@ -644,10 +644,11 @@ func _bambini() -> void:
 	mp.roughness = 0.7
 	_box(Vector3(0.02, 1.04, 0.79), Vector3(-L + 0.01, 1.85, 1.45), _colore(Color(0.95, 0.75, 0.85)))
 	_quad(Vector2(0.75, 1.0), Vector3(-L + 0.022, 1.85, 1.45), Vector3(0, 90, 0), mp)
-	# (a 3 mm dal muro: a 12 mm sembravano staccati)
+	# (a 3 mm dal muro: a 12 mm sembravano staccati; quello sopra l'anta della porta nord, aperta contro il muro fino a
+	# 2,05 m, va da 2,25 m: si vede tutto anche da sotto l'anta)
 	var posti := [[Vector3(-L + 0.003, 2.35, -0.3), 90.0, 0.62], [Vector3(-0.9, 2.25, L - 0.003), 180.0, 0.6],
 			[Vector3(L - 0.003, 2.3, 1.75), -90.0, 0.7], [Vector3(1.0, 2.45, -L + 0.003), 0.0, 0.55],
-			[Vector3(-1.2, 2.35, -L + 0.003), 0.0, 0.6], [Vector3(L - 0.003, 0.9, 0.55), -90.0, 0.5],
+			[Vector3(-1.2, 2.55, -L + 0.003), 0.0, 0.6], [Vector3(L - 0.003, 0.9, 0.55), -90.0, 0.5],
 			[Vector3(-L + 0.003, 0.75, 0.6), 90.0, 0.45]]
 	for i in posti.size():
 		var t := load(TEX + "adesivo_%d.png" % (i % 5)) as Texture2D
