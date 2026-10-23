@@ -74,6 +74,15 @@ Da 1,2 m in su l'ingombro guarda un cilindro di 20 cm intorno a chi cammina, qui
 
 Nel `motivo` vanno le misure, per esempio "a muro, sporge 18 cm, passaggio libero 1,10 m". Se una delle tre non vale, l'oggetto si sposta o si alza. Tettoie, lampade appese, fari e tutto quello che sta sopra dove si cammina sotto i 2 m restano difetti da correggere.
 
+## Varchi: si passa da ogni porta
+
+`godot/tests/controllo_varchi.gd` (in CI, blocca la build) fa passare il corpo vero del giocatore (la forma di `player.gd`, dai gradini che sale da solo fino alla testa) lungo la strada del capitolo, porta per porta, a passi di 5 cm, seguendo il pavimento. Se tocca qualcosa che ferma il giocatore, il varco è chiuso: nel log c'è il nodo e il punto di contatto.
+
+- Due giri: la sala com'è all'inizio (i varchi sempre aperti) e con le porte che si aprono nel gioco aperte (maniglioni della tappa 7, saracinesca, serranda, portone della torre, portello, paratie della camera delle onde).
+- I varchi sono in `VARCHI`, in cima allo script: punti in fila sul pavimento, da un lato all'altro della porta. Una porta nuova sulla strada si aggiunge lì.
+- Si lancia come il controllo di posizionamento: `godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_varchi.gd`.
+- Una porta aperta con una collisione a scatola (`col_ob`) chiude il vano: la collisione di una porta aperta va fatta sulla forma dell'anta, non sul suo box.
+
 ## Mettere gli oggetti
 
 Per non creare casi nuovi, gli oggetti si mettono **con un raggio sul loro sostegno vero**, non a occhio con le coordinate. Lo strumento comune è Posa, in due versioni con le stesse funzioni: una per gli script del gioco e una per i generatori Blender. Ogni funzione trova il sostegno (pavimento, muro, soffitto, gancio), mette l'oggetto a contatto e, con `lega`, lo fa figlio del sostegno, così lo segue se il sostegno si sposta. Se non trova niente, lascia l'oggetto dov'è e avvisa: il controllo lo segnalerà.
