@@ -75,6 +75,10 @@ func _run() -> void:
 	print("COLLAUDO: tolti %d nodi di GI, riflessi, particelle e nebbia" % tolti)
 	if OS.get_environment("COLLAUDO_SEMPLICE") == "1":
 		_materiali_semplici(livello)
+	# le stanze della Risalita (fiume e infermeria) subito, come nei controlli: senza, si caricano solo col giocatore
+	# vicino, e nel giro il giocatore è fermo
+	if OS.get_environment("COLLAUDO_RISALITA") == "1":
+		Engine.set_meta(&"risalita_subito", true)
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
 	for i in 30:
