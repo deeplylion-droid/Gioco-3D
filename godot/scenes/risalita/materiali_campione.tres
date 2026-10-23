@@ -3,7 +3,7 @@
 [ext_resource type="Shader" path="res://addons/acqua/shaders/water_flow.gdshader" id="1_dbwtr"]
 [ext_resource type="Shader" path="res://assets/fiume_lento/disco_strisce.gdshader" id="2_ptp36"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_7jov1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dbwtr"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("1_dbwtr")
@@ -22,7 +22,7 @@ shader_parameter/foam_amount = 0.5
 shader_parameter/edge_foam = 0.5
 shader_parameter/reflection_color = Color(0.02, 0.02, 0.025, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8xva3"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ptp36"]
 resource_name = "campione"
 albedo_color = Color(0.89, 0.66, 0.06, 1)
 roughness_texture_channel = 1
@@ -32,7 +32,7 @@ uv1_scale = Vector3(0.5, 0.5, 0.5)
 uv1_triplanar = true
 uv1_world_triplanar = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_1tw0x"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7jov1"]
 resource_name = "campione"
 render_priority = 0
 shader = ExtResource("2_ptp36")
@@ -40,7 +40,21 @@ shader_parameter/rosso = null
 shader_parameter/bianco = null
 shader_parameter/raggio = null
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1coif"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8xva3"]
+resource_name = "campione"
+cull_mode = 2
+albedo_color = Color(0.82, 1, 0.84, 1)
+metallic = 1.0
+metallic_texture_channel = 2
+roughness_texture_channel = 1
+emission_enabled = true
+emission = Color(0.5, 1, 0.58, 1)
+emission_energy_multiplier = 2.2
+emission_operator = 1
+normal_enabled = true
+metadata/_gltf_primary_texture_coord = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1tw0x"]
 resource_name = "campione"
 normal_enabled = true
 uv1_scale = Vector3(0.7, 0.7, 0.7)
@@ -48,13 +62,13 @@ uv1_triplanar = true
 uv1_world_triplanar = true
 texture_filter = 5
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_acamg"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1coif"]
 resource_name = "campione"
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1.6, 1.6, 1.6, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3rf2k"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_acamg"]
 resource_name = "campione"
 transparency = 2
 alpha_scissor_threshold = 0.5
@@ -65,4 +79,4 @@ roughness_texture_channel = 1
 normal_enabled = true
 
 [resource]
-metadata/materiali = Array[Material]([SubResource("ShaderMaterial_7jov1"), SubResource("StandardMaterial3D_8xva3"), SubResource("ShaderMaterial_1tw0x"), SubResource("StandardMaterial3D_1coif"), SubResource("StandardMaterial3D_acamg"), SubResource("StandardMaterial3D_3rf2k")])
+metadata/materiali = Array[Material]([SubResource("ShaderMaterial_dbwtr"), SubResource("StandardMaterial3D_ptp36"), SubResource("ShaderMaterial_7jov1"), SubResource("StandardMaterial3D_8xva3"), SubResource("StandardMaterial3D_1tw0x"), SubResource("StandardMaterial3D_1coif"), SubResource("StandardMaterial3D_acamg")])
