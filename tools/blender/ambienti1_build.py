@@ -521,13 +521,13 @@ def cerniere(nome, cern, faccia, yy):
     fx, py = cern[0], cern[1]
     telaio = yy + 0.01 if faccia > 0 else yy + 0.39
     parti = []
-    for z in (0.32, 1.42):
+    for z in (0.2, 0.9, 1.6):
         y0, y1 = sorted((telaio, py + 0.006 * (1 if faccia > 0 else -1)))
         x0, x1 = sorted((fx, fx - 0.012 * faccia))
         parti.append(L.scatola(nome + '_cerniera', (x0, y0, z), (x1, y1, z + 0.1), MAT_CERNIERA[0]))
     # cerniera continua (a pianoforte) lungo tutta l'anta: lo spigolo dell'anta, smussato, passa a 1,8 cm
     # dall'asse, a ogni apertura
-    parti.append(L.cilindro(nome + '_perno', (fx, py, 0.2), (fx, py, 1.72), 0.016, MAT_CERNIERA[0], seg=12))
+    parti.append(L.cilindro(nome + '_perno', (fx, py, 0.05), (fx, py, 1.86), 0.016, MAT_CERNIERA[0], seg=12))
     return parti
 
 
@@ -538,7 +538,10 @@ def fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme=0):
     """Armadietti Meshy: quelli chiusi sono il modello intero, quelli aperti sono il corpo vuoto
     più l'anta (ricavata dal modello chiuso) con l'origine sul cardine. Alcune ante sono colorate
     (suffisso _giallo / _rosso: la tinta la dà Godot)."""
-    HQ.sportello_da_chiuso('armadietto_anta', 'armadietto_sportello')
+    # l'anta: la fetta davanti del modello chiuso fino al 10% della profondità. Col 7% veniva solo il pannello in
+    # rilievo, largo 24 cm su un armadietto da 40: da aperta sembrava un listello e l'anta non si vedeva ("negli
+    # armadietti aperti è stata rimossa la porta", utente, 23 ottobre). Col 10% è tutto il fronte, 39 x 190 cm.
+    HQ.sportello_da_chiuso('armadietto_anta', 'armadietto_sportello', frazione=0.10, chiudi=False)
     colori = {3: '_giallo', 9: '_rosso', 14: '_giallo'}
     rz = R(90) if faccia > 0 else R(-90)
     speciali = {}
@@ -553,11 +556,12 @@ def fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme=0):
         HQ.metti(nome + '_corpo', 'armadietto_corpo', c, (0.4, 0.5, 1.92), rot_z=rz)
         if st == 'mancante':
             continue
-        # cardine sul bordo dell'anta (5 cm dentro lo spigolo del corpo, sul telaio): prima girava intorno allo
-        # spigolo e da aperta stava 5 cm staccata dal corpo (controllo di posizionamento, 22 ottobre)
-        cern = (x + 0.5, yy + 0.05, 0) if faccia > 0 else (x - 0.5, yy + 0.35, 0)
-        anta = HQ.metti(nome + '_anta', 'armadietto_anta', cern, (0.4, 0.5, 1.92), rot_z=rz - R(ang),
-                        perno=(-0.15, -0.25, 0), parte='armadietto_sportello')
+        # cardine sullo spigolo del fronte, dal lato dell'armadietto accanto: l'anta (larga 39 cm) chiusa copre il
+        # vano. Aperta al massimo 85 gradi: oltre i 90 l'anta, girando sullo spigolo del fronte, entrerebbe
+        # nell'armadietto accanto.
+        cern = (x + 0.5, yy + 0.005, 0) if faccia > 0 else (x - 0.5, yy + 0.395, 0)
+        anta = HQ.metti(nome + '_anta', 'armadietto_anta', cern, (0.4, 0.5, 1.92), rot_z=rz - R(min(ang, 85)),
+                        perno=(-0.195, -0.25, 0), parte='armadietto_sportello')
         if st != 'speciale':
             col_ob(anta)   # l'anta aperta si urta (prima si attraversava)
         CERNIERE.extend(cerniere(nome, cern, faccia, yy))
