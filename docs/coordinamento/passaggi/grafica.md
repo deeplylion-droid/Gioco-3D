@@ -19,6 +19,7 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
   - La sala tiene da subito un materiale per ogni shader delle stanze che non ha (`scenes/risalita/materiali_campione.tres`).
   - Elenco e campioni si rifanno con `tests/aggiorna_risorse_risalita.gd`; `test_risalita_tardi` dice quando servono.
   - Lo stato degli oggetti delle stanze scaricate lo tiene GameState (`parcheggia`, `ripristina`, `in_costruzione`) ed entra nelle istantanee.
+  - Le stanze si mostrano entro 4 m dalle loro zone (`VICINO`, come prima); la costruzione accelera (pezzi da 40 ms, mai tutto in un fotogramma) solo col giocatore dentro le zone con 1 m di margine (`DENTRO`): la metà nord della sala pompe sta nel margine di 4 m ma non lì (collaudo del 23 ottobre, fermo di 503 ms). Misura: `tests/sonda_risalita_corsa.gd [dentro]`.
   - Ripartendo da un checkpoint vicino alle stanze si caricano subito, in `_ready`. Strumenti e test che le vogliono sempre: `Engine.set_meta(&"risalita_subito", true)` o `carica_subito()`.
 - `godot/scripts/game/sala_torre.gd`, scena `scenes/sala/torre/sala_torre.tscn`: la torre degli scivoli.
   - `costruisci_a_pezzi()` lavora a passi con un budget di ms per fotogramma.

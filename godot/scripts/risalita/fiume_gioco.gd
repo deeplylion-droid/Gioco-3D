@@ -85,13 +85,14 @@ var _mat_faro: StandardMaterial3D
 ## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un po' per fotogramma.
 var costruzione_a_pezzi := false
 var costruita := false
-## Quanto lavora al massimo un pezzo della costruzione (microsecondi).
+## Quanto lavora al massimo un pezzo della costruzione (microsecondi); con [method accelera] i pezzi più grandi.
 const PEZZO_US := 12000
+const PEZZO_SVELTO_US := 40000
 ## Le estrazioni dal generatore comune fatte finora (vero: randf_range, falso: randf), per rimetterlo com'era a
 ## ogni ripresa ([method _pausa]).
 var _tiri: Array[bool] = []
 var _t_pezzo := 0
-var _senza_pause := false
+var _pezzo_us := PEZZO_US
 
 
 func _ready() -> void:
@@ -106,9 +107,10 @@ func costruisci_a_pezzi() -> void:
 		await _costruisci()
 
 
-## I pezzi rimasti senza più pause (il giocatore è arrivato prima che finisse).
-func finisci_subito() -> void:
-	_senza_pause = true
+## I pezzi rimasti più grandi (il giocatore è arrivato prima che finisse): sempre a pezzi, mai tutto in un fotogramma
+## (collaudo del 23 ottobre: 503 ms di fermo nella sala pompe).
+func accelera() -> void:
+	_pezzo_us = PEZZO_SVELTO_US
 
 
 func _costruisci() -> void:
@@ -158,7 +160,7 @@ func _costruisci() -> void:
 ## Nella costruzione a pezzi, passato il tempo di un pezzo, il resto al fotogramma dopo. Altrimenti niente (e la
 ## costruzione resta tutta nello stesso fotogramma, come prima).
 func _pausa() -> void:
-	if costruzione_a_pezzi and not _senza_pause and Time.get_ticks_usec() - _t_pezzo > PEZZO_US:
+	if costruzione_a_pezzi and Time.get_ticks_usec() - _t_pezzo > _pezzo_us:
 		await get_tree().process_frame
 		_t_pezzo = Time.get_ticks_usec()
 		# fra un fotogramma e l'altro il generatore comune l'hanno usato altri (luci che sfarfallano, suoni): lo si

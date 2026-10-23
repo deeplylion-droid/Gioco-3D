@@ -33,6 +33,10 @@ const COLLEZIONABILI := [[&"polaroid", &"PolaroidPecora"]]
 ## Distanza dalle zone delle stanze sotto cui si disegnano (e devono esserci: se il thread non ha finito, si
 ## finisce di caricarle lì, con un attimo di fermo).
 const VICINO := 4.0
+## Margine attorno alle zone dentro cui le stanze devono essere finite (si accelera la costruzione, o si caricano lì
+## se il thread non le ha ancora): stretto, così la metà nord della sala pompe, sotto il corridoio del fiume ma
+## dentro il margine di [constant VICINO], ne resta fuori (collaudo del 23 ottobre).
+const DENTRO := 1.0
 ## Distanza sotto cui servono anche fuori dal tratto della strada nuova (tornando indietro dal magazzino), e
 ## sopra cui, se non servono, si scaricano.
 const RITORNO := 10.0
@@ -448,6 +452,14 @@ func _distanza(p: Vector3) -> float:
 	return d
 
 
+## Il punto è dentro le zone delle stanze (con [constant DENTRO] di margine): lì devono esserci.
+func _dentro(p: Vector3) -> bool:
+	for z in _zone:
+		if z.grow(DENTRO).has_point(p):
+			return true
+	return false
+
+
 ## Il punto è dove le stanze si disegnano (dentro le zone, con [constant VICINO] di margine).
 func _vicino(p: Vector3) -> bool:
 	for z in _zone:
@@ -472,7 +484,7 @@ func _process(_delta: float) -> void:
 		var pos := p.global_position
 		var serve := _serve(pos)
 		if fiume == null and serve:
-			if _vicino(pos):
+			if _dentro(pos):
 				_carica_subito()
 			elif not _in_caricamento and _fiume_nuovo == null:
 				_richiedi_tutto()
@@ -533,8 +545,8 @@ func _carica_subito() -> void:
 	if fiume:
 		return
 	if _fiume_nuovo:
-		# si stanno costruendo a pezzi: il resto senza pause, al prossimo fotogramma
-		_fiume_nuovo.call(&"finisci_subito")
+		# si stanno costruendo a pezzi: il resto a pezzi più grandi
+		_fiume_nuovo.call(&"accelera")
 		return
 	var f: PackedScene
 	var i: PackedScene
