@@ -1,322 +1,5 @@
 [
 	{
-		"dettaglio": "il 32% dei suoi vertici è dentro Sala/Piscina/piscina_bordi",
-		"nodo": "Sala/Dettagli/det_foglio_1_17",
-		"pos": [
-			5.95,
-			-0.03,
-			-12.78
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/FondoVetro",
-		"pos": [
-			11.3,
-			0.79,
-			-21.6
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro3",
-		"pos": [
-			9.94,
-			0.5,
-			-22.1
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro4",
-		"pos": [
-			11.05,
-			0.5,
-			-23.03
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro2",
-		"pos": [
-			11.55,
-			0.5,
-			-20.17
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/BasamentoVetro",
-		"pos": [
-			5.7,
-			1.55,
-			-22.3
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro5",
-		"pos": [
-			12.41,
-			0.5,
-			-22.53
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro1",
-		"pos": [
-			12.66,
-			0.5,
-			-21.1
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/BasamentoVetro",
-		"pos": [
-			16.9,
-			1.55,
-			-22.3
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0",
-		"pos": [
-			-16.0,
-			2.35,
-			35.52
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1",
-		"pos": [
-			-15.95,
-			2.34,
-			35.38
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
-		"pos": [
-			-15.87,
-			2.33,
-			35.24
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0",
-		"pos": [
-			-16.0,
-			2.35,
-			34.2
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1",
-		"pos": [
-			-15.95,
-			2.34,
-			31.12
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2",
-		"pos": [
-			-15.87,
-			2.33,
-			30.98
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1",
-		"pos": [
-			-2.35,
-			-6.91,
-			49.34
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_2",
-		"pos": [
-			-2.27,
-			-6.92,
-			49.48
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_0",
-		"pos": [
-			-2.4,
-			-6.9,
-			50.52
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_1",
-		"pos": [
-			-2.35,
-			-6.91,
-			50.38
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_2",
-		"pos": [
-			-2.27,
-			-6.92,
-			50.24
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
-		"nodo": "Gioco/EnigmaAcquari/Cavo",
-		"pos": [
-			6.6,
-			1.54,
-			-21.43
-		],
-		"problema": "estremita_libera",
-		"squadra": "enigmi",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
-		"pos": [
-			40.55,
-			-19.6,
-			-28.51
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
-		"pos": [
-			40.55,
-			-19.6,
-			-24.49
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
-		"pos": [
-			57.98,
-			-20.16,
-			0.9
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
-		"pos": [
-			64.02,
-			-20.16,
-			0.9
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|catene_corde.gltf::ArrayMesh_vmoi6",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7563/det_corda_pendente_2",
-		"pos": [
-			74.03,
-			-23.21,
-			0.89
-		],
-		"problema": "estremita_libera",
-		"squadra": "ambienti-2",
-		"zona": "torre"
-	},
-	{
 		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi.",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi.",
 		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
@@ -653,6 +336,300 @@
 		"zona": "tecnici"
 	},
 	{
+		"dettaglio": "il 32% dei suoi vertici è dentro Sala/Piscina/piscina_bordi",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 32% dei suoi vertici è dentro Sala/Piscina/piscina_bordi",
+		"nodo": "Sala/Dettagli/det_foglio_1_17",
+		"pos": [
+			5.95,
+			-0.03,
+			-12.78
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 55% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/FondoVetro",
+		"pos": [
+			11.3,
+			0.79,
+			-21.6
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro3",
+		"pos": [
+			9.94,
+			0.5,
+			-22.1
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro4",
+		"pos": [
+			11.05,
+			0.5,
+			-23.03
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro2",
+		"pos": [
+			11.55,
+			0.5,
+			-20.17
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Base/cilindro_base",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/BasamentoVetro",
+		"pos": [
+			5.7,
+			1.55,
+			-22.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro5",
+		"pos": [
+			12.41,
+			0.5,
+			-22.53
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/GambaVetro1",
+		"pos": [
+			12.66,
+			0.5,
+			-21.1
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"motivo": "controllo del 23 ottobre (dentro dal verso delle facce): il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Base/cilindro_base",
+		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/BasamentoVetro",
+		"pos": [
+			16.9,
+			1.55,
+			-22.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0",
+		"pos": [
+			-16.0,
+			2.35,
+			35.52
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_1",
+		"pos": [
+			-15.95,
+			2.34,
+			35.38
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_2",
+		"pos": [
+			-15.87,
+			2.33,
+			35.24
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0",
+		"pos": [
+			-16.0,
+			2.35,
+			34.2
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1",
+		"pos": [
+			-15.95,
+			2.34,
+			31.12
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2",
+		"pos": [
+			-15.87,
+			2.33,
+			30.98
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_1",
+		"pos": [
+			-2.35,
+			-6.91,
+			49.34
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_2",
+		"pos": [
+			-2.27,
+			-6.92,
+			49.48
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_0",
+		"pos": [
+			-2.4,
+			-6.9,
+			50.52
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_1",
+		"pos": [
+			-2.35,
+			-6.91,
+			50.38
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_2",
+		"pos": [
+			-2.27,
+			-6.92,
+			50.24
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)",
+		"nodo": "Gioco/EnigmaAcquari/Cavo",
+		"pos": [
+			6.6,
+			1.54,
+			-21.43
+		],
+		"problema": "estremita_libera",
+		"squadra": "enigmi",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (9 celle da 25 cm) (pavimenti fra y -34.00 e -25.58), con la collisione (ci si sbatte contro)",
 		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
@@ -748,6 +725,81 @@
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
 		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
+		"pos": [
+			40.55,
+			-19.6,
+			-28.51
+		],
+		"problema": "estremita_libera",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
+		"pos": [
+			40.55,
+			-19.6,
+			-24.49
+		],
+		"problema": "estremita_libera",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
+		"pos": [
+			57.98,
+			-20.16,
+			0.9
+		],
+		"problema": "estremita_libera",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
+		"pos": [
+			64.02,
+			-20.16,
+			0.9
+		],
+		"problema": "estremita_libera",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"firma": "sala_inseguimento.tscn|catene_corde.gltf::ArrayMesh_vmoi6",
+		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7563/det_corda_pendente_2",
+		"pos": [
+			74.03,
+			-23.21,
+			0.89
+		],
+		"problema": "estremita_libera",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
 		"zona": "torre"
 	},
 	{
