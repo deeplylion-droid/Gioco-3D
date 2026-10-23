@@ -19,6 +19,10 @@ const VARCHI := [
 		[Vector3(4.3, 0, 39.6), Vector3(-2.9, 0, 39.6), Vector3(-2.9, 0, 37.45)]],
 	["interni: dagli spogliatoi allo stanzino del bagnino", "inizio",
 		[Vector3(-1.0, 0, 32.45), Vector3(2.5, 0, 32.45)]],
+	["interni: dagli spogliatoi al lavapiedi, fino al tornello", "inizio",
+		[Vector3(-1.0, 0, 32.45), Vector3(-0.45, 0, 31.2), Vector3(-0.45, 0, 28.5), Vector3(0, 0, 26.6)]],
+	["interni: il tornello (sbloccato col getto)", "aperte",
+		[Vector3(0, 0, 26.6), Vector3(0, 0, 22.7)]],
 	["interni: la saracinesca verso la sala", "aperte",
 		[Vector3(0, 0, 22.7), Vector3(0, 0, 18.8)]],
 	["sala: dalla saracinesca alla statua", "inizio",
@@ -79,8 +83,10 @@ func _run() -> void:
 		for i in 60:
 			await get_tree().physics_frame
 		# ferma (niente animazioni e niente creature che camminano durante il controllo)
+		# (i corpi restano come li ha lasciati il gioco: quelli che ha spento, come il blocco del tornello, spenti)
+		var attivi := level.find_children("*", "CollisionObject3D", true, false).filter(func(c): return (c as Node).can_process())
 		level.process_mode = Node.PROCESS_MODE_DISABLED
-		for c in level.find_children("*", "CollisionObject3D", true, false):
+		for c in attivi:
 			(c as Node).process_mode = Node.PROCESS_MODE_ALWAYS
 		for i in 3:
 			await get_tree().physics_frame
@@ -124,6 +130,9 @@ func _apri_tutto(level: Node) -> void:
 		portello.call(&"load_state", {"open": true})
 	for porta in level.find_children("*", "PoweredDoor", true, false):
 		porta.call(&"load_state", {"latched": true, "open": 1.0, "aperta": true})
+	var interni := level.get_node_or_null(^"Interni")
+	if interni and interni.has_method(&"load_state"):
+		interni.call(&"load_state", {"tornello": true})
 	for paratia in level.find_children("*", "Paratia", true, false):
 		paratia.call(&"load_state", {"chiusa": false, "aperta": true})
 	for portone in level.find_children("*", "PortoneTorre", true, false):
