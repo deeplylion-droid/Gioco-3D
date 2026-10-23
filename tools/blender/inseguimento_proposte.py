@@ -95,16 +95,34 @@ def curva(ctrl, passo=0.35):
     return out
 
 
-def intaglia_col_tubo(ob, gioco=0.004):
-    """Toglie da `ob` il tubo dell'inseguimento della torre (dal GLB del gioco, gonfiato di `gioco`)."""
+TUBO_TORRE = []   # i triangoli (nel mondo) del tubo dell'inseguimento della torre, letti dal GLB del gioco
+
+
+def _leggi_tubo_torre():
+    """Legge il tubo dell'inseguimento dal GLB della torre (prima dei materiali: l'import dei materiali del GLB si
+    scontra con quelli già fatti)."""
     import bmesh
-    prima = set(bpy.data.objects)
     bpy.ops.import_scene.gltf(filepath=os.path.join(QUI, '..', '..', 'godot', 'assets', 'ambiente', 'torre', 'torre_scivoli.glb'))
-    nuovi = [o for o in bpy.data.objects if o not in prima]
-    tubo = next(o for o in nuovi if o.name.startswith('torre_tubo_inseguimento'))
+    tubo = next(o for o in bpy.data.objects if o.name.startswith('torre_tubo_inseguimento'))
     bm = bmesh.new()
     bm.from_mesh(tubo.data)
     bm.transform(tubo.matrix_world)
+    TUBO_TORRE.clear()
+    TUBO_TORRE.append(([v.co.copy() for v in bm.verts], [[v.index for v in f.verts] for f in bm.faces]))
+    bm.free()
+
+
+def intaglia_col_tubo(ob, gioco=0.004):
+    """Toglie da `ob` il tubo dell'inseguimento della torre (letto da _leggi_tubo_torre, gonfiato di `gioco`)."""
+    import bmesh
+    vs, fs = TUBO_TORRE[0]
+    bm = bmesh.new()
+    vv = [bm.verts.new(v) for v in vs]
+    for f in fs:
+        try:
+            bm.faces.new([vv[i] for i in f])
+        except ValueError:
+            pass
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     bm.normal_update()
@@ -123,11 +141,8 @@ def intaglia_col_tubo(ob, gioco=0.004):
     m.use_self = True
     bpy.context.view_layer.objects.active = ob
     bpy.ops.object.modifier_apply(modifier=m.name)
-    for o in nuovi + [taglio]:
-        if o.type == 'MESH':
-            bpy.data.meshes.remove(o.data)
-        elif o.name in bpy.data.objects:
-            bpy.data.objects.remove(o)
+    bpy.data.objects.remove(taglio)
+    bpy.data.meshes.remove(me)
 
 
 def guscio(c, x1, y0, y1, z0, z1, buco=None, porta=None, fossa=None):
@@ -1273,6 +1288,9 @@ def main():
     argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
     nome = argv[0] if argv else 'A'
     K.svuota()
+    if '--gioco' in argv:
+        _leggi_tubo_torre()
+        K.svuota()
     S._MODELLI.clear()
     mats = K.Materiali(S.PALETTE_SALA, per_render=False)
     S.materiali_nuovi(mats)

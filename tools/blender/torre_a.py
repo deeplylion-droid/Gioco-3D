@@ -279,6 +279,9 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=(), tu
     print(f'intaglio: {len(coll.objects)} forme di scivolo, {len(TUBI_CHIUSI)} tubi pieni')
     from mathutils.bvhtree import BVHTree
     for b_ in bersagli:
+        if b_.name in aperti:
+            _intaglia_grata(b_, list(coll.objects))
+            continue
         raccolta = coll_t if b_.name in tubi_su else coll
         alberi = [BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get()) for o in raccolta.objects]
         # solo i pezzi (isole) toccati da uno scivolo passano dal booleano: il resto resta com'è (il booleano esatto
@@ -381,6 +384,120 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=(), tu
         bpy.data.meshes.remove(o.data)
     bpy.data.collections.remove(coll)
     bpy.data.collections.remove(coll_t)
+
+
+def _sezione(o, z0, z1):
+    """L'impronta in pianta (shapely) di quello che il pezzo chiuso `o` occupa fra le quote z0 e z1: le sezioni a z0
+    e a z1 (le facce che le linee di taglio chiudono) più i triangoli della superficie nella fascia, schiacciati."""
+    from shapely.geometry import Polygon, LineString
+    from shapely.ops import polygonize, unary_union
+    me = o.data
+    mw = o.matrix_world
+    vs = [mw @ v.co for v in me.vertices]
+    pezzi = []
+    for z in (z0, z1):
+        tratti = []
+        for f in me.polygons:
+            q = [vs[i] for i in f.vertices]
+            pts = []
+            for k in range(len(q)):
+                a_, b_ = q[k], q[(k + 1) % len(q)]
+                if (a_.z - z) * (b_.z - z) < 0:
+                    t = (z - a_.z) / (b_.z - a_.z)
+                    pts.append((a_.x + (b_.x - a_.x) * t, a_.y + (b_.y - a_.y) * t))
+            if len(pts) == 2:
+                tratti.append(LineString(pts))
+        if tratti:
+            pezzi.extend(polygonize(unary_union(tratti)))
+    for f in me.polygons:
+        q = [vs[i] for i in f.vertices]
+        if max(v.z for v in q) < z0 or min(v.z for v in q) > z1:
+            continue
+        # il pezzo della faccia dentro la fascia, schiacciato in pianta (largo: basta che copra)
+        dentro = []
+        for k in range(len(q)):
+            a_, b_ = q[k], q[(k + 1) % len(q)]
+            if z0 <= a_.z <= z1:
+                dentro.append((a_.x, a_.y))
+            for z in (z0, z1):
+                if (a_.z - z) * (b_.z - z) < 0:
+                    t = (z - a_.z) / (b_.z - a_.z)
+                    dentro.append((a_.x + (b_.x - a_.x) * t, a_.y + (b_.y - a_.y) * t))
+        if len(dentro) >= 3:
+            pg = Polygon(dentro).convex_hull
+            if pg.area > 0:
+                pezzi.append(pg)
+    return unary_union(pezzi) if pezzi else None
+
+
+def _intaglia_grata(gr, tagli):
+    """La grata (per ogni pedana una faccia sopra e una sotto, 12 mm più giù) bucata in pianta dove ci sono gli
+    scivoli, nello spessore della grata: niente booleano (sui piani aperti lasciava triangoli sovrapposti)."""
+    import bmesh
+    from shapely.geometry import Polygon
+    from shapely.ops import unary_union
+    import shapely
+    bm = bmesh.new()
+    bm.from_mesh(gr.data)
+    bm.transform(gr.matrix_world)
+    bm.normal_update()
+    uv = bm.loops.layers.uv.active
+    col = bm.loops.layers.color.active or bm.loops.layers.float_color.active
+    f0 = next(f for f in bm.faces if f.normal.z > 0.5 and abs(f.loops[0].vert.co.x - f.loops[1].vert.co.x) > 0.1)
+    l0, l1 = f0.loops[0], f0.loops[1]
+    k_uv = (l1[uv].uv.x - l0[uv].uv.x) / (l1.vert.co.x - l0.vert.co.x)
+    sopra = [f for f in bm.faces if f.normal.z > 0.5]
+    sotto = {tuple(sorted((round(v.co.x, 3), round(v.co.y, 3)) for v in f.verts)): f for f in bm.faces if f.normal.z < -0.5}
+    from mathutils.bvhtree import BVHTree
+    dg = bpy.context.evaluated_depsgraph_get()
+    alberi = [(t, BVHTree.FromObject(t, dg), t.matrix_world.inverted()) for t in tagli]
+    nuove, via, n_buchi = [], [], 0
+    for f in sopra:
+        g = sotto.get(tuple(sorted((round(v.co.x, 3), round(v.co.y, 3)) for v in f.verts)))
+        z1 = f.verts[0].co.z
+        z0 = g.verts[0].co.z if g else z1 - 0.012
+        pianta = Polygon([(v.co.x, v.co.y) for v in f.verts])
+        lo, hi = pianta.bounds[:2], pianta.bounds[2:]
+        buchi = []
+        for t, albero, inv in alberi:
+            bb = [t.matrix_world @ Vector(c_) for c_ in t.bound_box]
+            if max(v.z for v in bb) < z0 or min(v.z for v in bb) > z1 or max(v.x for v in bb) < lo[0] or min(v.x for v in bb) > hi[0] \
+                    or max(v.y for v in bb) < lo[1] or min(v.y for v in bb) > hi[1]:
+                continue
+            sez = _sezione(t, z0 - 0.0005, z1 + 0.0005)
+            if sez is not None and not sez.is_empty:
+                buchi.append(sez)
+        if not buchi:
+            continue
+        resto = pianta.difference(unary_union(buchi).buffer(0))
+        if resto.equals(pianta):
+            continue
+        n_buchi += 1
+        via.append(f)
+        if g:
+            via.append(g)
+        mat = (f.material_index, tuple(f.loops[0][col]) if col else None)
+        for tri in shapely.constrained_delaunay_triangles(resto).geoms:
+            c_ = list(tri.exterior.coords)[:3]
+            if tri.area < 1e-7:
+                continue
+            nuove.append((c_, z1, z0, mat))
+    bmesh.ops.delete(bm, geom=via, context='FACES')
+    for (c_, z1, z0, mat) in nuove:
+        a_ = (c_[1][0] - c_[0][0]) * (c_[2][1] - c_[0][1]) - (c_[1][1] - c_[0][1]) * (c_[2][0] - c_[0][0])
+        giro = c_ if a_ > 0 else c_[::-1]
+        for z, verso in ((z1, 1), (z0, -1)):
+            vv = [bm.verts.new((x, y, z)) for (x, y) in (giro if verso > 0 else giro[::-1])]
+            fn = bm.faces.new(vv)
+            fn.material_index = mat[0]
+            for l_ in fn.loops:
+                l_[uv].uv = (l_.vert.co.x * k_uv, l_.vert.co.y * k_uv * verso)
+                if col:
+                    l_[col] = mat[1]
+    bm.transform(gr.matrix_world.inverted())
+    bm.to_mesh(gr.data)
+    bm.free()
+    print(f'intaglio di {gr.name}: {n_buchi} pedane bucate in pianta, {len(gr.data.polygons)} facce')
 
 
 def _chiudi_lastre(bm):
