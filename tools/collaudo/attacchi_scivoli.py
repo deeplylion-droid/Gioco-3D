@@ -3,8 +3,9 @@
 
 Legge <base>.json e <base>.bin scritti da godot/tests/collaudo/geometria.gd. Per ogni scivolo (nome con una delle parole
 di SCIVOLI, come il passo f del controllo della CI) e ogni mesh che gli passa vicino (pedane, grate, travi, sostegni,
-ringhiere: tutto quello che non è acqua né un altro scivolo), campiona le due superfici ogni PASSO nel box in comune e
-misura la distanza fra i campioni. I punti dello scivolo a meno di VICINO da quella mesh sono un attacco; gli attacchi
+ringhiere: tutto quello che non è acqua né un altro scivolo) trova i posti dove si avvicinano in due passate: una larga
+(campioni ogni LARGO nel box in comune, punti a meno di VICINO + LARGO) e una fitta (ogni PASSO, solo nel box di ogni
+posto trovato, allargato di VICINO). I punti dello scivolo a meno di VICINO da quella mesh sono un attacco; quelli
 vicini fra loro (entro 40 cm) sono uno solo.
 
 Per ogni attacco: il centro, la distanza minima (0 = si toccano), quanti campioni sono "dentro" l'altra mesh (dalla
@@ -23,7 +24,8 @@ from scipy.spatial import cKDTree
 
 SCIVOLI = ["scivolo", "discesa", "canali", "tubo_inseguimento", "collare_inseguimento"]
 GRATE = ["grigliat", "grata", "grate"]
-PASSO = 0.005      # campioni ogni 5 mm
+PASSO = 0.005      # campioni ogni 5 mm (passata fitta)
+LARGO = 0.02       # campioni ogni 2 cm (passata larga)
 VICINO = 0.05      # un attacco: a meno di 5 cm
 STACCO = 0.005     # oltre 5 mm senza toccare: distacco
 DENTRO = 0.01      # oltre 1 cm dietro la faccia: compenetrazione
@@ -56,6 +58,25 @@ def campiona(tri, box_lo, box_hi, passo):
     pn = np.vstack([nn[rip], extra_n])
     dentro = np.all(p >= box_lo, 1) & np.all(p <= box_hi, 1)
     return p[dentro], pn[dentro]
+
+
+def gruppi_di(punti, raggio):
+    """Gli indici dei punti divisi in gruppi: due punti a meno di raggio stanno nello stesso gruppo."""
+    padre = np.arange(len(punti))
+
+    def radice(x):
+        while padre[x] != x:
+            padre[x] = padre[padre[x]]
+            x = padre[x]
+        return x
+    for a, b in cKDTree(punti).query_pairs(raggio, output_type="ndarray"):
+        ra, rb = radice(a), radice(b)
+        if ra != rb:
+            padre[ra] = rb
+    gruppi = {}
+    for i in range(len(punti)):
+        gruppi.setdefault(radice(i), []).append(i)
+    return [np.array(g) for g in gruppi.values()]
 
 
 def main():
@@ -92,47 +113,42 @@ def main():
             hi = np.minimum(shi, mhi) + VICINO
             if np.any(lo > hi):
                 continue
-            ps, _ = campiona(st, lo, hi, PASSO)
-            pm, nm = campiona(tri_di(m), lo, hi, PASSO)
+            mt = tri_di(m)
+            # passata larga: dove si avvicinano
+            ps, _ = campiona(st, lo, hi, LARGO)
+            pm, _ = campiona(mt, lo, hi, LARGO)
             if len(ps) == 0 or len(pm) == 0:
                 continue
-            d, j = cKDTree(pm).query(ps, distance_upper_bound=VICINO)
-            vicini = np.isfinite(d)
-            if not vicini.any():
+            d, _ = cKDTree(pm).query(ps, distance_upper_bound=VICINO + LARGO)
+            cand = ps[np.isfinite(d)]
+            if len(cand) == 0:
                 continue
-            pv, dv, jv = ps[vicini], d[vicini], j[vicini]
-            # dalla parte di dietro della faccia più vicina dell'altra mesh: dentro (non per le grate)
             grata = any(g in m["nodo"].lower() for g in GRATE)
-            dietro = ((pv - pm[jv]) * nm[jv]).sum(1) < 0
-            prof = np.where(dietro & ~grata, dv, 0.0)
-            # gruppi: punti entro 40 cm
-            albero = cKDTree(pv)
-            coppie = albero.query_pairs(0.4, output_type="ndarray")
-            padre = np.arange(len(pv))
-
-            def radice(x):
-                while padre[x] != x:
-                    padre[x] = padre[padre[x]]
-                    x = padre[x]
-                return x
-            for a_, b_ in coppie:
-                ra, rb = radice(a_), radice(b_)
-                if ra != rb:
-                    padre[ra] = rb
-            gruppi = {}
-            for i in range(len(pv)):
-                gruppi.setdefault(radice(i), []).append(i)
-            for g in gruppi.values():
-                g = np.array(g)
-                k = g[np.argmin(dv[g])]
+            for g in gruppi_di(cand, 0.4):
+                blo = cand[g].min(0) - VICINO
+                bhi = cand[g].max(0) + VICINO
+                # passata fitta nel box del posto
+                fs, _ = campiona(st, blo, bhi, PASSO)
+                fm, fn = campiona(mt, blo, bhi, PASSO)
+                if len(fs) == 0 or len(fm) == 0:
+                    continue
+                dv, jv = cKDTree(fm).query(fs, distance_upper_bound=VICINO)
+                ok = np.isfinite(dv)
+                if not ok.any():
+                    continue
+                pv, dv, jv = fs[ok], dv[ok], jv[ok]
+                # dalla parte di dietro della faccia più vicina dell'altra mesh: dentro (non per le grate)
+                dietro = ((pv - fm[jv]) * fn[jv]).sum(1) < 0
+                prof = np.where(dietro, dv, 0.0) if not grata else np.zeros(len(dv))
+                k = int(np.argmin(dv))
                 righe.append({
                     "scivolo": nome(s), "contro": nome(m), "grata": grata,
-                    "centro": pv[g].mean(0).round(3).tolist(),
-                    "punto": pv[k].round(3).tolist(), "verso": pm[jv[k]].round(3).tolist(),
-                    "distanza_min": round(float(dv[g].min()), 4),
-                    "dentro_campioni": int((prof[g] > DENTRO).sum()),
-                    "dentro_max": round(float(prof[g].max()), 4),
-                    "campioni": int(len(g)),
+                    "centro": pv.mean(0).round(3).tolist(),
+                    "punto": pv[k].round(3).tolist(), "verso": fm[jv[k]].round(3).tolist(),
+                    "distanza_min": round(float(dv.min()), 4),
+                    "dentro_campioni": int((prof > DENTRO).sum()),
+                    "dentro_max": round(float(prof.max()), 4),
+                    "campioni": int(len(dv)),
                 })
     righe.sort(key=lambda r: (r["scivolo"], r["centro"][1]))
     with open(uscita, "w", newline="") as f:
