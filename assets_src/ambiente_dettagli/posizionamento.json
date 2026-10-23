@@ -26030,7 +26030,7 @@
    "zona": "muri",
    "gruppo": "cartelli_645",
    "posizione": [
-    -3.341,
+    -2.3,
     1.643,
     20.0
    ],
@@ -26051,7 +26051,8 @@
      0.0,
      -1.0
     ]
-   ]
+   ],
+   "spostato_23": "dal salvagente appeso (ogg_salvagente_nave_19 a x -3,2): 1 m più a est, sul muro libero"
   },
   {
    "nodo": "det_cartello_pavimento_bagnato",
