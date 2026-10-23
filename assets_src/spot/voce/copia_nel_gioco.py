@@ -1,6 +1,6 @@
-"""Le frasi dello speaker nel gioco, per il lettore dello spot (ambienti-2, scenes/spot/lettore_spot.tscn): per ogni voce
-candidata godot/assets/spot/voce/<voce>/frase_1..7.wav, già col filtro da TV (filtro_tv.sh), più durate.json con la
-durata di ogni frase. La voce la sceglie l'utente: il lettore la prende come parametro.
+"""Le frasi dello speaker nel gioco, per il lettore dello spot (ambienti-2, scenes/spot/lettore_spot.tscn): la voce scelta
+dall'utente (A, uomo caldo, 23 ottobre) in godot/assets/spot/voce/A_uomo_caldo/frase_1..7.wav, già col filtro da TV
+(filtro_tv.sh), più durate.json con la durata di ogni frase. Le altre due voci non vanno nel gioco (sono negli scartati).
 Uso (dopo genera_voci.py): python3 assets_src/spot/voce/copia_nel_gioco.py"""
 import json
 import os
@@ -9,7 +9,7 @@ import wave
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 GIOCO = os.path.normpath(os.path.join(QUI, '..', '..', '..', 'godot', 'assets', 'spot', 'voce'))
-VOCI = ('A_uomo_caldo', 'B_uomo_squillante', 'C_donna_sorridente')
+VOCI = ('A_uomo_caldo',)
 
 durate = {}
 for v in VOCI:

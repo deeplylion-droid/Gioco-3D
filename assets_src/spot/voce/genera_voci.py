@@ -6,11 +6,14 @@ Modello: Kokoro-82M (hexgrad, licenza Apache 2.0, uso commerciale permesso: vedi
 nella versione ONNX di onnx-community/Kokoro-82M-v1.0-ONNX, con kokoro-onnx. Fuori dal repository (sono 330 MB):
     python3 -m venv /home/user/tools/tts-venv && /home/user/tools/tts-venv/bin/pip install kokoro-onnx soundfile
     model.onnx e voices/<voce>.bin da https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX in /home/user/tools/kokoro
-Uso: /home/user/tools/tts-venv/bin/python assets_src/spot/voce/genera_voci.py
-Scrive, per ogni voce, le frasi pulite in assets_src/spot/voce/<voce>/frase_N.wav e la traccia intera pulita
-(speaker_pulito.wav); il filtro "da TV" è un passaggio a parte (filtro_tv.sh), che si può togliere."""
+L'utente ha scelto la voce A (uomo, caldo; 23 ottobre): si fa solo quella. Le altre due sono negli scartati
+(assets_src/spot/voce/scartati/), e si rifanno con l'argomento --tutte.
+Uso: /home/user/tools/tts-venv/bin/python assets_src/spot/voce/genera_voci.py [--tutte]
+Scrive le frasi pulite in assets_src/spot/voce/<voce>/frase_N.wav e la traccia intera pulita (speaker_pulito.wav); il
+filtro "da TV" è un passaggio a parte (filtro_tv.sh), che si può togliere."""
 import os
 import subprocess
+import sys
 import numpy as np
 import soundfile as sf
 from kokoro_onnx import Kokoro
@@ -19,6 +22,7 @@ QUI = os.path.dirname(os.path.abspath(__file__))
 RADICE = os.path.normpath(os.path.join(QUI, '..', '..', '..'))
 KOKORO = os.environ.get('KOKORO_DIR', '/home/user/tools/kokoro')
 PROPOSTE = os.path.join(RADICE, 'docs', 'proposte', 'spot', 'voci')
+SCARTATE = os.path.join(RADICE, 'docs', 'proposte', 'spot', 'scartati', 'voci')
 
 # le tre candidate: le voci americane coi voti migliori del modello (VOICES.md di Kokoro)
 VOCI = {
@@ -26,6 +30,7 @@ VOCI = {
     'B_uomo_squillante': 'am_puck',
     'C_donna_sorridente': 'af_heart',
 }
+SCELTA = 'A_uomo_caldo'
 # come si scrive per la voce, dove la pronuncia scivola (controllato con Whisper: con la B "Jilly" diventava "Julie")
 GRAFIA = {'B_uomo_squillante': {'Jilly': 'Jill-ee'}}
 # il testo approvato: (frase, velocità, pausa dopo in secondi)
@@ -58,16 +63,19 @@ def strana(x, sr):
 
 
 def guasta(x, sr):
-    # la 7: il nastro che muore, dal 97 % al 55 % della velocità, con un ondeggiare più largo
+    # la 7: il nastro che muore, dal 97 % al 55 % della velocità, con un ondeggiare più largo; rallenta soprattutto alla
+    # fine (prima con t^1,3 il secondo "aboard" col filtro da TV diventava "up and out", per Whisper)
     durata = len(x) / sr
-    return varispeed(x, lambda t: (0.97 - 0.42 * t ** 1.3) * (1.0 + 0.02 * np.sin(2 * np.pi * 0.9 * t * durata)))
+    return varispeed(x, lambda t: (0.97 - 0.42 * t ** 2.2) * (1.0 + 0.02 * np.sin(2 * np.pi * 0.9 * t * durata)))
 
 
 def main():
     k = Kokoro(os.path.join(KOKORO, 'model.onnx'), os.path.join(KOKORO, 'voices.npz'))
     os.makedirs(PROPOSTE, exist_ok=True)
     for nome, voce in VOCI.items():
-        cartella = os.path.join(QUI, nome)
+        if nome != SCELTA and '--tutte' not in sys.argv:
+            continue
+        cartella = os.path.join(QUI, nome) if nome == SCELTA else os.path.join(QUI, 'scartati', nome)
         os.makedirs(cartella, exist_ok=True)
         traccia = []
         for i, (testo, velocita, pausa) in enumerate(FRASI, 1):
@@ -85,9 +93,11 @@ def main():
         pulito = os.path.join(cartella, 'speaker_pulito.wav')
         sf.write(pulito, np.concatenate(traccia), sr, subtype='PCM_16')
         # per la pagina dell'utente: col filtro da TV e pulita
-        subprocess.run(['bash', os.path.join(QUI, 'filtro_tv.sh'), pulito, os.path.join(PROPOSTE, 'voce_%s.mp3' % nome)], check=True)
+        pagina = PROPOSTE if nome == SCELTA else SCARTATE
+        os.makedirs(pagina, exist_ok=True)
+        subprocess.run(['bash', os.path.join(QUI, 'filtro_tv.sh'), pulito, os.path.join(pagina, 'voce_%s.mp3' % nome)], check=True)
         subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', pulito, '-c:a', 'libmp3lame', '-q:a', '3',
-                        os.path.join(PROPOSTE, 'voce_%s_pulita.mp3' % nome)], check=True)
+                        os.path.join(pagina, 'voce_%s_pulita.mp3' % nome)], check=True)
 
 
 if __name__ == '__main__':
