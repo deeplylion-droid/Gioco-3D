@@ -29,6 +29,22 @@ Base: `lavoro/godot` al commit **7a47e606**: fiume e infermeria caricati nel thr
 
 Proposta: la zona del corridoio non deve contenere la sala pompe. Basta allargarla meno in basso o verso sud, così la costruzione a pezzi ha il tempo di finire prima che il giocatore ci arrivi.
 
+## Misure dopo le correzioni di grafica
+
+Stesse misure, solo `corsa` e `fermo`, accanto a 12d9c79 (corsa: peggiore 24 ms; fermo: peggiore 20 ms, 0 sopra 50 ms).
+
+| Commit | Corsa dal 6: fotogramma peggiore | Fermo nella sala pompe: peggiore, sopra 50 / sopra 100 ms, stanze pronte |
+|---|---|---|
+| 0fbae8fc (zona del corridoio ristretta) | 130, 85, 74 ms | 117, 123, 127 ms; 1 sopra 100 ms ogni volta |
+| **8ffd0331** (pezzi divisi) | 265, 51, 38, poi 38, 38, 46, 51, 37, 41 ms | 40, 39, 51 ms; 0, 0, 1 sopra 50 ms e 0 sopra 100; stanze pronte in 2,8-2,9 s |
+
+- Su 8ffd0331 l'impronta è di nuovo **identica** a 12d9c79: 1246 nodi, 0 diversi.
+- In tutte e nove le corse la porta del capannone non manca mai: 0 fotogrammi con la porta in vista e le stanze assenti.
+- I fotogrammi tra 30 e 51 ms cadono durante la costruzione a pezzi, nella sala pompe tra z 35 e 46. Ognuno è da solo, mai due di seguito sopra i 50 ms (`registri/divisione/corsa_r*.csv`).
+- Il 265 ms è venuto solo nella prima corsa, subito dopo l'impronta, e non si è ripetuto in sei corse rifatte apposta. Il suo CSV è stato sovrascritto, quindi non si sa dove sia caduto. Più probabilmente è la macchina (disco o altri processi) che il gioco.
+
+**Verdetto: nessun difetto aperto.** Il fermo di 503 ms è risolto.
+
 ## Quello che questo collaudo non vede
 
 - Il disegno vero. Headless non si misura il primo disegno delle stanze (shader, ombre, GI) e non si vedono vuoti a schermo. La sala intera col renderer software non sta in memoria insieme al test, quindi gli scatti a schermo non ci sono. L'impronta identica e la porta mai mancante sono controlli di stato, non di immagine.
