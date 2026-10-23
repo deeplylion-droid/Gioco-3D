@@ -577,6 +577,19 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         """La staffa tra il collare e il tirante (un braccetto corto verso l'esterno)."""
         c.cilindro(q - lat * (sg_lat * 0.08), q, 0.04, 'metallo', seg=8)
 
+    # nel gioco, i gradini di grata sotto la bocca del tubo dell'inseguimento (vedi più giù): sopra di loro un sostegno
+    # lascia 2 m liberi (il collare sotto la coda del tratto 5 stava 1,93 m sopra il terzo gradino; regola del
+    # coordinatore del 23 ottobre)
+    gradini_bocca = [(36.35, BOCCA_Y + y0_, XI1 - 2.4, BOCCA_Y + 0.65, FONDO + zt) for y0_, zt in
+                     ((-2.4, 0.28), (-1.85, 0.56), (-1.3, 0.84), (-0.75, 1.12))] if GIOCO else []
+
+    def sopra_gradini(q, basso, m=1.0):
+        # (anche accanto, fino a 1 m: nella vasca del fondo si cammina lungo i gradini)
+        for (x0, y0, x1, y1, zt) in gradini_bocca:
+            if x0 - m < q.x < x1 + m and y0 - m < q.y < y1 + m and basso - zt < 2.02:
+                return True
+        return False
+
     def prova(pts, mezza, chiuso, largo, prof, p, d, discesa=False):
         d3 = d.normalized()
         d = Vector((d.x, d.y, 0))
@@ -586,6 +599,9 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         lat = Vector((-d.y, d.x, 0))
         du = (R_GROVIGLIO + 0.07) if chiuso else prof + 0.12
         u = p - Vector((0, 0, du))
+        basso_ok = not sopra_gradini(u, u.z - 0.25)
+        if not basso_ok:
+            perche['2 m sopra i gradini della bocca'] = perche.get('2 m sopra i gradini della bocca', 0) + 1
         w = (R_GROVIGLIO + 0.14) if chiuso else largo + 0.14
         colonne = [(t, Vector((centro(t).x + sx * NUCLEO, centro(t).y + sy * NUCLEO, 0)))
                    for t in ORDINE for sx in (-1, 1) for sy in (-1, 1)]
@@ -594,7 +610,7 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         dist = math.hypot(col.x - u.x, col.y - u.y)
         # 1) puntone dalla colonna più vicina di un traliccio (per la discesa anche più lungo: sta sotto il
         # canale, fuori dalla vista, al posto dei tiranti inclinati)
-        if 0.6 < dist < (5.5 if discesa else 3.6):
+        if basso_ok and 0.6 < dist < (5.5 if discesa else 3.6):
             a1 = Vector((col.x, col.y, u.z - 0.1))
             a2 = Vector((col.x, col.y, u.z - 0.1 - max(1.0, 0.8 * dist)))
             if libero(a1, u, pts) and libero(a2, u, pts):
@@ -609,7 +625,7 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
                      Vector((0, 0, 0.0 if chiuso else (SPONDA_D if largo == LARGO_D else SPONDA) - 0.04)) for sg in (-1, 1)]
         # 2) tiranti fino al soffitto o sotto una pedana
         tetti = [sopra(q.x, q.y, q.z) for q in capi_alti]
-        if all(libero(q + Vector((0, 0, 0.3)), Vector((q.x, q.y, z1)), pts, 0.06) for q, z1 in zip(capi_alti, tetti)):
+        if basso_ok and all(libero(q + Vector((0, 0, 0.3)), Vector((q.x, q.y, z1)), pts, 0.06) for q, z1 in zip(capi_alti, tetti)):
             collare(p, d3, lat, chiuso, largo, prof)
             for sg, q, z1 in zip((-1, 1), capi_alti, tetti):
                 attacco(q, sg, lat)
@@ -620,7 +636,7 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
             return 'tiranti'
         # 3) tiranti inclinati fino alla colonna più vicina, più in alto (del colore della torre). Non per la
         # discesa: passerebbero davanti alla faccia di chi scivola (prova del 19 ottobre)
-        if dist < 7.5 and not discesa:
+        if basso_ok and dist < 7.5 and not discesa:
             alto = Vector((col.x, col.y, max(capi_alti[0].z, capi_alti[1].z) + max(1.6, 0.55 * dist)))
             if alto.z < H - 0.5 and all(libero(q + (alto - q).normalized() * 0.3, alto, pts, 0.06) for q in capi_alti):
                 collare(p, d3, lat, chiuso, largo, prof)
@@ -631,14 +647,29 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
                     c.cilindro(m - (alto - q).normalized() * 0.18, m + (alto - q).normalized() * 0.18, 0.09, 'metallo', seg=8)
                 c.anello(alto, (0, 0, 1), 0.19, 0.28, 0.16, 'metallo', seg=12)
                 return 'tiranti alla colonna'
-        # 4) palo fino al fondo o a una pedana
+        # 4) palo fino al fondo o a una pedana (non nella vasca del fondo accanto ai gradini della bocca, dove si
+        # cammina: il palo della coda del tratto 5 stava lì)
         z0 = sotto(u.x, u.y, u.z)
-        if u.z - z0 > 0.4 and libero(u - Vector((0, 0, 0.2)), Vector((u.x, u.y, z0)), pts, 0.15):
+        if basso_ok and u.z - z0 > 0.4 and not sopra_gradini(u, -99.0) and \
+                libero(u - Vector((0, 0, 0.2)), Vector((u.x, u.y, z0)), pts, 0.15):
             sella(u, d, lat, w)
             collare(p, d3, lat, chiuso, largo, prof)
             c.cilindro((u.x, u.y, z0), (u.x, u.y, u.z - 0.06), 0.12, 'gioco_giallo', seg=12)
             c.anello((u.x, u.y, z0), (0, 0, 1), 0.0, 0.28, 0.04, 'metallo', seg=12)
             return 'palo'
+        # 5) sopra la vasca del fondo, accanto ai gradini della bocca (dove sotto il pezzo non ci sta niente: 2 m liberi
+        # sopra i gradini e dove si cammina): un tirante dal muro est, più in alto, fino alla staffa sulla sponda del
+        # lato del muro. Niente collare e niente sella sotto il pezzo
+        if sopra_gradini(u, -99.0) and 0.3 < XI1 - u.x < 3.0:
+            capo = capi_alti[0] if capi_alti[0].x > capi_alti[1].x else capi_alti[1]
+            a_t = Vector((XI1, capo.y, capo.z + 1.2))
+            if libero(a_t - Vector((0.1, 0, 0)), capo, pts, 0.06):
+                attacco(capo, 1 if capo == capi_alti[1] else -1, lat)
+                c.cilindro(a_t + Vector((0.02, 0, 0)), capo, 0.05, 'metallo', seg=8, tappi=False)
+                m = capo.lerp(a_t, 0.5)
+                c.cilindro(m - (a_t - capo).normalized() * 0.18, m + (a_t - capo).normalized() * 0.18, 0.08, 'gioco_rosso', seg=8)
+                c.scatola((XI1 - 0.03, a_t.y - 0.15, a_t.z - 0.15), (XI1 + 0.02, a_t.y + 0.15, a_t.z + 0.15), 'metallo')
+                return 'tirante al muro'
         return None
 
     rapporto = []
@@ -1445,6 +1476,15 @@ def versione_A(mats):
         v0.normalize()
         t0v = Vector((-v0.y, v0.x, 0))
         base = Vector((b0.x, b0.y, tappe[k_][1] if k_ else 0.0))
+        # i due pali sulla grata della pedana, 10 cm dentro il bordo: sul filo dell'imbocco quello di un lato stava
+        # 23-32 cm fuori dalla pedana, sul vuoto (collaudo del 23 ottobre). Il portale arretra quanto basta
+        def _su_pedana(q):
+            return any(abs(L_ - base.z) < 0.05 and r[0] + 0.1 <= q.x <= r[2] - 0.1 and r[1] + 0.1 <= q.y <= r[3] - 0.1
+                       for (_, L_), r in costruite.items())
+        for indietro in (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8):
+            if all(_su_pedana(base - v0 * indietro + t0v * (s_ * (LARGO_D + 0.45))) for s_ in (-1, 1)):
+                break
+        base = base - v0 * indietro
         for s_ in (-1, 1):
             ap = base + t0v * (s_ * (LARGO_D + 0.45))
             c.cilindro(ap, ap + Vector((0, 0, 2.6)), 0.07, 'gioco_rosso', seg=12)
@@ -1619,6 +1659,10 @@ def versione_A(mats):
             col = min((Vector((cc.x + sx * NUCLEO, cc.y + sy * NUCLEO, zf)) for sx in (-1, 1) for sy in (-1, 1)),
                       key=lambda q: math.hypot(q.x - m_.x, q.y - m_.y))
             dv = Vector((m_.x - col.x, m_.y - col.y, 0)).normalized()
+            if GIOCO and zf < H - 1.0:
+                # nel gioco i fari dei piani bassi stanno sopra i 2 m di chi cammina sulle pedane (a 1,5 m sopra il
+                # piano passavano davanti alla faccia: collaudo del 22 sera)
+                col = col + Vector((0, 0, 0.8))
             p = col + dv * 0.55
             luci['fari'].append([[p.x, p.y, p.z], [m_.x, m_.y, m_.z], [col.x, col.y, col.z]])
     em_ = 0.08 if GIOCO else 0.1      # (nel gioco il retto della scatola, 8 cm dietro il centro, sul muro)

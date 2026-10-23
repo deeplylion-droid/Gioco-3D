@@ -91,11 +91,26 @@ def corrimano_c2(obs, mat):
     a = (x, Y_SCALA2 + 0.6, Z_T + 0.95)
     b = (x, Y_SCALA2 - N2 * PED2, Z_SALA + 0.95)
     c = (x, Y_SCALA2 - N2 * PED2 - 0.6, Z_SALA + 0.95)
-    obs.append(C.tubo('c2_corrimano', [a, (x, Y_SCALA2, Z_T + 0.95), b, c], 0.025, mat, rc=0.15, seg=12, uv=None))
+    punti = [a, (x, Y_SCALA2, Z_T + 0.95), b, c]
+    r = 0.025
+    obs.append(C.tubo('c2_corrimano', punti, r, mat, rc=0.15, seg=12, uv=None))
+    # le staffe dal muro fino al corrimano: finiscono 1 mm dentro la sua faccia verso il muro, all'altezza del suo asse vero
+    # (raccordato alle svolte come in C.tubo). Prima arrivavano al suo asse, dentro il tubo: le due di mezzo restavano
+    # 1,2 cm sotto la sua faccia (collaudo del raccordo del 22 ottobre sera)
+    asse = C._arrotonda(punti, 0.15)
+    lungo = x - r + 0.001 - XC0
     for k in range(4):
         y = Y_SCALA2 - k * N2 * PED2 / 3
-        z = Z_T + 0.95 + (Y_SCALA2 - y) / PED2 * ALZ2
-        obs.append(C.cilindro(f'c2_corrimano_staffa{k}', (XC0 + 0.035, y, z), 0.012, 0.07, mat, asse=(1, 0, 0), seg=8, uv=None))
+        z = _quota_asse(asse, y)
+        obs.append(C.cilindro(f'c2_corrimano_staffa{k}', (XC0 + lungo / 2, y, z), 0.012, lungo, mat, asse=(1, 0, 0), seg=8, uv=None))
+
+
+def _quota_asse(asse, y):
+    """La quota dell'asse di un tubo (punti di C._arrotonda) dove passa per y."""
+    for p, q in zip(asse, asse[1:]):
+        if min(p.y, q.y) - 1e-6 <= y <= max(p.y, q.y) + 1e-6 and abs(q.y - p.y) > 1e-9:
+            return p.z + (q.z - p.z) * (y - p.y) / (q.y - p.y)
+    raise ValueError('y fuori dal tubo: %.3f' % y)
 
 
 def festone(nome, a, b, n, obs, pendenza=0.35, seme=1, ma=None, mb=None):
@@ -364,7 +379,10 @@ def appendi_muro(nome, a, b, n, z0, tavolozza, obs, rnd, passo=(0.9, 1.8), vuoti
             break
         u = max(u, dm.x / 2 + 0.05)   # niente che sporga oltre l'inizio del muro (le aperture dei corridoi)
         c = a + d * u + n * (dm.y / 2 + 0.005)
-        zz = (zfun(c) if zfun else 0) + z0 - dm.z / 2 + rnd.uniform(-0.06, 0.06)
+        # all'altezza della testa (da 1,2 m) a muro si sporge al massimo 25 cm (regola del coordinatore, 23 ottobre): i
+        # rulli col tubo (44 cm) e gli estintori con la staffa (25,1 cm) vanno sotto, con la cima a 1,15 m al più
+        z0k = z0 if dm.y <= 0.24 else min(z0, 1.09 - dm.z / 2)
+        zz = (zfun(c) if zfun else 0) + z0k - dm.z / 2 + rnd.uniform(-0.06, 0.06)
         o = HQ.metti(f'{nome}_{k_obj}', file, (c.x, c.y, zz), (dm.x, dm.y, dm.z), rot_z=rz)
         if _tocca(o, gia):
             bpy.data.objects.remove(o)
@@ -418,7 +436,11 @@ def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False, n
         fine = b - d * (quanti - 1 - k) * 0.15 if nel_muro_b else b
         # anche un punto sopra ogni staffa, così il tubo ha i vertici dove poggia
         sopra = [a + d * u + o + h for u in staffe if (inizio - a).length < u < (fine - a).length]
-        pts = ([inizio - n * 0.1 + h] if nel_muro_a else []) + [inizio + o + h] + sopra + [fine + o + h] + ([fine - n * 0.1 + h] if nel_muro_b else [])
+        # dove entra nel muro il tubo ha un anello proprio sulla faccia del muro (dritto, perpendicolare): il capo è
+        # attaccato lì, poi prosegue 10 cm dentro (prima l'anello più vicino era 10 cm dentro il muro e la curva
+        # nell'aria, e il controllo dei capi lo dava nel vuoto)
+        pts = ([inizio - n * 0.1 + h, inizio + h] if nel_muro_a else []) + [inizio + o + h] + sopra + [fine + o + h] + \
+            ([fine + h, fine - n * 0.1 + h] if nel_muro_b else [])
         obs.append(C.tubo(f'{nome}_{k}', pts, rk, mat, rc=0.12, seg=12, uv=None))
     # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
     lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))
@@ -481,7 +503,10 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         # davanti al mucchio di gonfiabili del raccordo (x 36,5) non si mette niente: col mucchio la corsia si chiudeva
         riempi_muro(f'{nome}_c3{lato}', (XC0 - 0.1, y), (XM1 + 0.4, y), nn, Z_SALA, tav_terra, obs, 0.4, rnd,
                     vuoti=((XC0 - 0.1 - 38.2, XC0 - 0.1 - 34.8),))
-        appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
+        # nel muro sud la porta della scala di servizio (x 36,59..37,59): niente appeso nel vano (i vuoti sono per il
+        # centro dell'oggetto, larghi mezzo oggetto in più, fino a 45 cm, e 5 cm)
+        appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA,
+                     vuoti=((XC0 - 37.59 - 0.5, XC0 - 36.59 + 0.5),) if lato == 's' else ())
     if tubi:
         mat, quanti = tubi
         # R1: sotto il tubo grosso (2,45), fino al muro est del vano scala (prima finivano nel vuoto all'entrata)

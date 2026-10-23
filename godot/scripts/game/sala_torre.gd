@@ -578,8 +578,15 @@ func _polaroid() -> void:
 	# o 5 cm sopra il sedile se il lettino non era ancora costruito (tests/polaroid_libere.gd).
 	foto.set(&"snap_to_surface", false)
 	add_child(foto)
-	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.01, 0)
+	# il fondo mezzo millimetro sopra la stecca più alta sotto la foto (a -11,670; collaudo del 23 ottobre: a +1 cm
+	# restava 8 mm sopra il sedile, posata sul doppione di sotto)
+	foto.global_position = b(dati["polaroid_10"]) + Vector3(0, 0.0023, 0)
 	foto.global_rotation = Vector3(0.0, PI * 0.5, 0.0)
+	# la Polaroid ferma del modello (torre_a.py, per i render) è un doppione sotto quella vera: copriva quella da
+	# raccogliere e la teneva staccata dal lettino
+	var doppione := find_child("torre_polaroid_10", true, false)
+	if doppione:
+		doppione.queue_free()
 
 
 ## La fila di bambini sulla balconata: invisibili; al primo salto un lampo li mostra per un attimo.
@@ -1179,9 +1186,9 @@ func _catena(radice: Node3D, fondo: Vector3) -> void:
 	cm.top_radius = 0.02
 	cm.bottom_radius = 0.02
 	var basso := fondo.y + 6.0
-	# il cavo arriva 30 cm sotto l'ultimo grappolo: i braccetti delle lampadine più basse (fino a 20 cm sotto)
-	# partivano dal vuoto
-	var fine := basso - 0.3
+	# il cavo arriva all'ultimo braccetto (20 cm sotto l'ultimo grappolo): prima finiva sopra e i braccetti più bassi
+	# partivano dal vuoto, poi 10 cm sotto, con il capo libero
+	var fine := basso - 0.2 - 0.005
 	cm.height = 14.0 - fine
 	cavo.mesh = cm
 	var nero := StandardMaterial3D.new()

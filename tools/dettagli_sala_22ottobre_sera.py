@@ -72,6 +72,7 @@ TOGLI = [
     ('det_piastrella_rotta_3', None, (4.574, -22.328), 'nella base dell\'acquario blu (enigma degli acquari)'),
     ('det_piastrella_rotta_5', None, (18.924, -22.440), 'nella base dell\'acquario giallo (enigma degli acquari)'),
     ('det_vetri_rotti_1', None, (4.938, -22.000), 'nella base dell\'acquario blu (enigma degli acquari)'),
+    ('det_foglio_2', None, (14.004, 18.058), 'sotto la pila di palloni, assestata fino al pavimento'),
     ('det_cassetta_aperta', 4, (-11.44, -24.0), 'sportello aperto all\'altezza della testa e, sopra, la corsa di tubi: non si può alzare'),
 ]
 # sul fondo in pendenza della piscina a onde: inclinati come il fondo e appoggiati

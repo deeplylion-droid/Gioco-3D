@@ -406,7 +406,7 @@ func _carica_torre() -> void:
 
 ## Comincia a caricare la torre in un thread, senza metterla ancora nella sala.
 func _precarica_torre() -> void:
-	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "":
+	if sala_torre or _torre_in_caricamento or _torre_pronta or sala_torre_scena == "" or Game.uscendo:
 		return
 	if Game.carica_in_thread(sala_torre_scena, "PackedScene") == OK:
 		_torre_in_caricamento = true

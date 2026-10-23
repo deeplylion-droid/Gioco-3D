@@ -146,6 +146,8 @@ func _ready() -> void:
 		add_child(_schizzo_coda)
 	if coperchio:
 		coperchio.collision_layer = Layers.WORLD
+		if medusa and medusa.has_method(&"escludi_dai_tentacoli"):
+			medusa.call(&"escludi_dai_tentacoli", coperchio.get_rid())
 	if medusa:
 		# Toccarla vuol dire farsi prendere: un'area intorno a testa, spalle e mani.
 		_tocco = Area3D.new()

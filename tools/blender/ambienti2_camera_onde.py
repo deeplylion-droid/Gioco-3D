@@ -242,8 +242,10 @@ for i, xc in enumerate(NICCHIE):
 
 # ------------------------------------------------------------------ bocchette dell'aria (muro sud)
 usa_collezione('bocchette')
+# (alzate di 45 cm, centro a 2,65 m: il bordo di sotto a 2,03 m, sopra lo spazio di chi cammina; da 1,58 m sporgevano
+# 78 cm all'altezza della testa, regola del coordinatore del 23 ottobre)
 for i, xc in enumerate(NICCHIE):
-    c = Vector((xc, YS + 0.02, 2.2))
+    c = Vector((xc, YS + 0.02, 2.65))
     S('bocchette', cilindro(f'bocchetta{i}_cono', c + Vector((0, 0.18, 0)), 0.55, 0.36, M['ferro'], asse=(0, 1, 0), seg=32, r2=0.45, tappi=False))
     S('bocchette', toro(f'bocchetta{i}_bordo', c + Vector((0, 0.36, 0)), 0.46, 0.05, M['ferro'], asse=(0, 1, 0), seg=32, seg2=8))
     S('bocchette', cilindro(f'bocchetta{i}_buio', c + Vector((0, 0.02, 0)), 0.5, 0.02, mat_pbr('buio', base=(0.0, 0.0, 0.0), roughness=1.0), asse=(0, 1, 0), seg=32, uv=None))
@@ -255,8 +257,8 @@ for i, xc in enumerate(NICCHIE):
 # condotta dell'aria lungo il muro sud, che alimenta le bocchette
 S('bocchette', tubo('condotta_aria', [(XA, YS + 0.4, 3.6), (XB, YS + 0.4, 3.6)], 0.3, M['tubi'], seg=32, uv=1.5))
 for i, xc in enumerate(NICCHIE):
-    S('bocchette', tubo(f'raccordo{i}', [(xc, YS + 0.4, 3.35), (xc, YS + 0.4, 2.85)], 0.18, M['tubi'], seg=16))
-    S('bocchette', box(f'scatola{i}', (xc, YS + 0.32, 2.8), (0.8, 0.6, 0.3), M['ferro'], uv=1.0))
+    # la scatola sopra la bocchetta, alzata con lei, ora sta sotto la condotta e la tocca (il raccordo non serve più)
+    S('bocchette', box(f'scatola{i}', (xc, YS + 0.32, 3.25), (0.8, 0.6, 0.3), M['ferro'], uv=1.0))
 for k in range(0, 26, 3):
     for o in flangia(f'condotta_fl{k}', (XA + k, YS + 0.4, 3.6), (1, 0, 0), 0.38, M['ferro'], 0.05, 8, M['ruggine']):
         S('bocchette', o)
