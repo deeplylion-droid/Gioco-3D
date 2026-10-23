@@ -5,9 +5,10 @@ extends MedusaAffacciata
 ## La regia (ambienti-2, scenes/spot/spot_inquadrature.json) la cerca per nome ("Jilly") e chiama, a tempi fissi:
 ## - saluta(durata): il saluto (tools/blender/medusa_spot.py, libreria medusa_spot.res: spot/saluta_su, spot/saluta
 ##   in ciclo per [param durata] secondi, spot/saluta_giu), poi di nuovo ferma;
-## - pupilla_battito(durata): il finale. Se nella scena c'è l'OcchioIpnotico di enigmi lo collega al suo occhio e gli
-##   fa salire il progresso da 0 a 1 in [param durata] secondi (battito, pupilla e vene li guida lui); se no, un
-##   battito semplice che accelera, sulla pupilla (instance uniform "pupilla" di medusa_occhio.gdshader).
+## - pupilla_battito(durata): il finale. Se nella scena c'è l'OcchioIpnotico di enigmi lo collega al suo occhio (pupilla e
+##   vene); il progresso lo fa salire la regia (chiave "occhio" del JSON, la stessa del lettore: così l'effetto sullo
+##   schermo e l'occhio vero battono insieme). Se non c'è, un battito semplice che accelera in [param durata] secondi,
+##   sulla pupilla e sulle vene (instance uniform di medusa_occhio.gdshader).
 ## Tutto va col tempo del motore (AnimationPlayer, Tween, _process): con il Movie Maker a 30 fps fissi torna giusto.
 
 const SPOT := "res://assets/models/medusa/medusa_spot.res"
@@ -61,16 +62,14 @@ func saluta(durata := 4.0) -> void:
 		ap.queue(animazione))
 
 
-## Il finale: l'occhio che pulsa per [param durata] secondi, col battito che accelera.
+## Il finale: collega l'occhio all'OcchioIpnotico (il progresso lo guida la regia), o se non c'è un battito semplice
+## che accelera per [param durata] secondi.
 func pupilla_battito(durata := 5.0) -> void:
 	var oi := _occhio_ipnotico()
 	if oi:
 		oi.set(&"occhio", occhio())
 		oi.set(&"usa_pupilla", true)
 		oi.set(&"usa_vene", true)
-		oi.set(&"progresso", 0.0)
-		var tw := create_tween()
-		tw.tween_property(oi, ^"progresso", 1.0, maxf(durata, 0.01))
 		return
 	_battito_t = 0.0
 	_battito_durata = maxf(durata, 0.01)
