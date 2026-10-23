@@ -64,9 +64,13 @@ const SQUADRE := [
 const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "ambienti-2", "tecnici": "ambienti-2",
 	"risalita": "enigmi", "mascotte": "mascotte", "acquari": "enigmi"}   # tecnici: tools/blender/ambienti2_*.py
 ## Effetti a tempo (schizzi, getti, vapore, particelle): durano pochi secondi e si sovrappongono per natura, non sono
-## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dal nome nel percorso o dalla classe.
-const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "splash", "gocce", "bolle",
+## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dalle parole del nome di un nodo
+## del percorso o della classe del suo script: una parola che comincia con una di queste (vedi _parole). Non basta
+## "contiene": "oggetti" contiene "getti", e tutto Sala/Oggetti restava fuori come uno schizzo (collaudo, 23 ottobre).
+const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "gocce", "bolle",
 	"drip"]   # drip: le gocce che cadono dalle dita della medusa (WaterDripEmitter), si vedono solo mentre cadono
+## Solo nella classe dello script, non nei nomi (nei nomi può essere l'insegna o il logo del parco).
+const EFFETTI_CLASSE := ["splash"]
 const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain",
 	"asta", "aste", "corda", "corde", "fune", "funi", "rope", "gancio", "ganci"]
 ## Il capo di un tubo, un cavo, un'asta... deve stare a meno di questo da una superficie vera (o infilato in un pieno).
@@ -376,7 +380,7 @@ func _tipo_nascosta(n: Node) -> String:
 	for pezzo in percorso.split("/"):
 		if pezzo == "lei" or pezzo.contains("medusa") or pezzo.contains("medusin") or pezzo.contains("bambino"):
 			return "creatura, si muove (la guarda il collaudo)"
-	if EFFETTI.any(func(e): return percorso.contains(e)) or _e_acqua(percorso):
+	if Array(percorso.split("/")).any(func(x): return _e_effetto(x)) or _e_acqua(percorso):
 		return "effetto o acqua, esclusi"
 	if percorso.split("/").has("graybox"):
 		# il segnaposto di un meccanismo col modello vero (per esempio il pannello della PoweredDoor): resta solo come
@@ -602,12 +606,39 @@ func _elenca_nascoste() -> void:
 func _effetto(mi: Node) -> bool:
 	var k := mi
 	while k and k != _radice:
-		var nome := String(k.name).to_lower()
-		var classe := classe_di(k).to_lower()
-		if EFFETTI.any(func(e): return nome.contains(e) or classe.contains(e)):
+		if _e_effetto(String(k.name), classe_di(k)):
 			return true
 		k = k.get_parent()
 	return false
+
+
+static func _e_effetto(nome: String, classe := "") -> bool:
+	var parole := _parole(nome) + _parole(classe)
+	var di_classe := _parole(classe)
+	return parole.any(func(w): return EFFETTI.any(func(e): return w.begins_with(e))) \
+			or di_classe.any(func(w): return EFFETTI_CLASSE.any(func(e): return w.begins_with(e)))
+
+
+## Le parole di un nome, minuscole: si divide a ogni carattere che non è una lettera e dove una minuscola è seguita da
+## una maiuscola (SchizzoCoda -> schizzo, coda; det_getto_2 -> det, getto; WaterDripEmitter -> water, drip, emitter).
+static func _parole(nome: String) -> Array:
+	var out := []
+	var w := ""
+	for i in nome.length():
+		var ch := nome[i]
+		var lettera := ch.to_lower() != ch.to_upper()
+		if not lettera:
+			if not w.is_empty():
+				out.append(w.to_lower())
+			w = ""
+			continue
+		if not w.is_empty() and ch == ch.to_upper() and w[w.length() - 1] == w[w.length() - 1].to_lower():
+			out.append(w.to_lower())
+			w = ""
+		w += ch
+	if not w.is_empty():
+		out.append(w.to_lower())
+	return out
 
 
 static func classe_di(n: Node) -> String:
