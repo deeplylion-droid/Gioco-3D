@@ -264,7 +264,12 @@ Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel
     - **la bava**: fili di saliva che si tendono quando la bocca si apre e si spezzano nei morsi, più gocce dal mento;
     - **più file di denti, in 3D**.
     Il labbro che scopre i denti non l'ha chiesto.
-  - La girata e la bocca vanno nella build dopo la v0.3.11.
+  - **Fatte da mascotte** (lavoro/squalo-bocca de66830f):
+    - giro C con la testa che resta su di te fino a metà giro;
+    - morsi veri a tempo con i denti;
+    - 5 file di denti seghettati in più, in ombra verso la gola;
+    - 3 fili di bava agli angoli che pendono e si spezzano, più una colata dal mento.
+    Video e scatti dal motore in `docs/report/mascotte/squalo_bocca_giro/`. Risposta dell'utente: **"Lo squalo nuovo ci sta"** (approvato). Va nella build dopo la v0.3.11.
 
 ## Lo spot della crociera Jubilee (idea dell'utente, 22 ottobre)
 
