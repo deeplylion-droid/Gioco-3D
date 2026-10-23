@@ -56,10 +56,15 @@ extends SkeletonModifier3D
 ## [member buco_pavimento].
 var pavimento_y := -INF
 var buco_pavimento := Rect2()
-## Tiene i tentacoli dentro la fossa ([member buco_pavimento]) dove la posa li porta sotto il pavimento fuori dalla
+## Tiene i tentacoli dentro la fossa ([member fossa_pianta]) dove la posa li porta sotto il pavimento fuori dalla
 ## fossa: mentre lei sbuca (la posa sale da 2,3 m sotto, e i tentacoli stesi sul pavimento salirebbero attraverso il
 ## pavimento). Escono dal bordo man mano che la posa arriva su; quando si spegne il trattenere cala in mezzo secondo.
 var trattieni := false
+## La pianta della fossa (x, z), per [member trattieni]: un poligono convesso.
+var fossa_pianta := PackedVector2Array():
+	set(v):
+		fossa_pianta = v
+		_fossa_dentro = PackedVector2Array()
 ## Tubi ([da, a, raggio]) dove le forme non contano: per esempio il condotto, chiuso dalla parete di collisione.
 var tunnel: Array = []
 ## Le vasche (WaterTank) il cui pelo conta; vuoto: quelle entro 8 m, cercate all'inizio.
@@ -91,6 +96,7 @@ var _tg_prima: Array[PackedVector3Array] = []
 var _bers: Array = []                      # per catena: i bersagli della molla fatti l'ultima volta, e la posa di allora
 var _bers_posa: Array = []
 var _trattieni_k := 0.0
+var _fossa_dentro := PackedVector2Array()
 var _dt_acc := PackedFloat32Array()        # per catena: il tempo da quando si è simulata l'ultima volta
 var _fotogrammi := 0
 var _vp: Array[PackedVector3Array] = []     # la velocità della posa, media
@@ -393,6 +399,8 @@ func _process_modification() -> void:
 			for i in n + 1:
 				tgf[i] += tg[i] - cp[i]
 			tgf[0] = tg[0]
+		# (il distacco si misura dai bersagli senza onda: dalla posa fuori dal mondo, o trattenuta nella fossa)
+		var rif := tgf.duplicate()
 		var in_acqua := PackedFloat32Array()
 		in_acqua.resize(n + 1)
 		for i in range(1, n + 1):
@@ -401,6 +409,7 @@ func _process_modification() -> void:
 			in_acqua[i] = acqua
 			var giri := lerpf(onda_aria, onda_acqua, acqua)
 			var fase := TAU * (giri * _t - onde * f) + _fase[k]
+			rif[i] = tgf[i]
 			tgf[i] += (lato * sin(fase) + lato2 * 0.5 * cos(fase * 0.7)) * onda_ampiezza * f * f
 		var u1 := Time.get_ticks_usec()
 		parti_usec["bersagli"] += u1 - u0
@@ -418,7 +427,7 @@ func _process_modification() -> void:
 				var grav := lerpf(gravita_aria, gravita_acqua, acqua) * f
 				var a := (bersaglio - x[i]) * k_molla - v[i] * smorza + Vector3(0, -grav, 0)
 				# troppo lontano dalla posa (nei movimenti velocissimi del tuffo): una molla in più, dura, che la riprende
-				var fuori := x[i] - tg[i]
+				var fuori := x[i] - rif[i]
 				var lim := distacco_massimo * f
 				if fuori.length() > lim:
 					a -= fuori.normalized() * (fuori.length() - lim) * 400.0
@@ -434,9 +443,9 @@ func _process_modification() -> void:
 				var voluto := pred[i - 1] + (pred[i] - pred[i - 1]).normalized() * lung[i]
 				# mai oltre il doppio (rete di sicurezza: la molla dura di sopra di solito basta)
 				var lim := 2.0 * distacco_massimo * f
-				var scarto := voluto - tg[i]
+				var scarto := voluto - rif[i]
 				if scarto.length() > lim:
-					voluto = tg[i] + scarto.normalized() * lim
+					voluto = rif[i] + scarto.normalized() * lim
 					voluto = pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
 				voluto = _fuori(voluto, lerpf(raggio_radice, raggio_punta, f), forme, x[i])
 				corr[i] = voluto - pred[i]
@@ -571,14 +580,23 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 	var out := tg.duplicate()
 	# trattenuti nella fossa (mentre lei sale): i punti della posa sotto il pavimento fuori dalla fossa si cercano dentro
 	# la fossa, alla stessa quota; avvicinandosi al pavimento (negli ultimi 50 cm) tornano piano al loro posto
-	if _trattieni_k > 0.0 and buco_pavimento.has_area():
-		var dentro := buco_pavimento.grow(-(raggio_radice + 0.05))
+	if _trattieni_k > 0.0 and fossa_pianta.size() >= 3:
+		if _fossa_dentro.is_empty():
+			var ins := Geometry2D.offset_polygon(fossa_pianta, -(raggio_radice + 0.05))
+			_fossa_dentro = ins[0] if not ins.is_empty() else fossa_pianta
 		for i in range(1, n + 1):
 			var q := out[i]
 			var sotto := pavimento_y - q.y
-			if sotto <= 0.0 or buco_pavimento.has_point(Vector2(q.x, q.z)):
+			var q2 := Vector2(q.x, q.z)
+			if sotto <= 0.0 or Geometry2D.is_point_in_polygon(q2, _fossa_dentro):
 				continue
-			var c := Vector2(clampf(q.x, dentro.position.x, dentro.end.x), clampf(q.z, dentro.position.y, dentro.end.y))
+			var c := q2
+			var dm := INF
+			for j in _fossa_dentro.size():
+				var e := Geometry2D.get_closest_point_to_segment(q2, _fossa_dentro[j], _fossa_dentro[(j + 1) % _fossa_dentro.size()])
+				if e.distance_squared_to(q2) < dm:
+					dm = e.distance_squared_to(q2)
+					c = e
 			var k := clampf(sotto / 0.5, 0.0, 1.0) * _trattieni_k
 			out[i] = Vector3(lerpf(q.x, c.x, k), q.y, lerpf(q.z, c.y, k))
 	for i in range(1, n + 1):

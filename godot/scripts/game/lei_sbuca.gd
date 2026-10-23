@@ -458,6 +458,9 @@ func _forme_morbidezza(fossa: Rect2) -> void:
 	_morbidezza.aggiungi_forme_da(dove, zona, salta)
 	_morbidezza.pavimento_y = 0.0
 	_morbidezza.buco_pavimento = fossa
+	# la pianta della fossa con l'angolo tagliato (tools/blender/ambiente_sala.py, fossa_bimbi_punti: interno)
+	_morbidezza.fossa_pianta = PackedVector2Array([Vector2(-14.8, -8.0), Vector2(-14.8, -7.0), Vector2(-13.8, -6.0),
+			Vector2(-12.3, -6.0), Vector2(-12.3, -8.0)])
 	# la griglia: appoggiata al muro nord, in cima a y -1,84 contro il muro, il piede sul fondo 35 cm più in là
 	var cima := Vector3(-14.325, -1.844, -7.98)
 	var piede := Vector3(-14.325, -2.992, -7.63)
