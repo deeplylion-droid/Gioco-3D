@@ -1,8 +1,17 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 04:09:33. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 12:08:22. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 25. Eccezioni non più trovate: 0.
+Nuovi: 2. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 25. Eccezioni non più trovate: 0.
+
+## Nuovi
+
+### interni
+
+| Squadra | Problema | Nodo | Posizione | Dettaglio |
+|---|---|---|---|---|
+| ambienti-1 | ingombro | `Interni/Ambienti/Corridoio/asciugamano_corridoio` | -1.25, 0.00, 40.25 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.52 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) |
+| ambienti-1 | ingombro | `Interni/Ambienti/Spogliatoi/asciugamano_2` | -3.50, 0.00, 36.50 | nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.52 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) |
 
 ## Già noti
 

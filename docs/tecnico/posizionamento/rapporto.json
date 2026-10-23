@@ -1,5 +1,29 @@
 [
 	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.52 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"nodo": "Interni/Ambienti/Corridoio/asciugamano_corridoio",
+		"pos": [
+			-1.25,
+			0.0,
+			40.25
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.52 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"nodo": "Interni/Ambienti/Spogliatoi/asciugamano_2",
+		"pos": [
+			-3.5,
+			0.0,
+			36.5
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-1",
+		"zona": "interni"
+	},
+	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
 		"motivo": "si passa dal tornello: il rotore gira quando lo spingi, come una porta",
 		"nodo": "Interni/Ambienti/Spogliatoi/tornello_rotore",
