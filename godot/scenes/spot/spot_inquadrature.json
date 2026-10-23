@@ -34,14 +34,14 @@
 			"nome": "4_torre",
 			"scena": "res://scenes/spot/torre_spot.tscn",
 			"inquadrature": [
-				{"n": 4, "inizio": 13.0, "durata": 6.0, "cosa": "la discesa nel tubo, con gli schizzi",
+				{"n": 4, "inizio": 13.0, "durata": 6.0, "cosa": "la discesa nel tubo, con gli schizzi; finisce poco prima dello sbocco, sulla luce in fondo al tubo",
 					"discesa": [
-						{"t": 0.0, "s": 3.0},
-						{"t": 0.3, "s": 3.27},
-						{"t": 5.7, "s": 12.2},
-						{"t": 6.0, "s": 12.5}
+						{"t": 0.0, "s": 2.8},
+						{"t": 0.3, "s": 3.02},
+						{"t": 5.4, "s": 10.6},
+						{"t": 6.0, "s": 10.85}
 					],
-					"fov": 78.0}
+					"fov": 82.0}
 			]
 		},
 		{
@@ -53,13 +53,13 @@
 						{"t": 0.0, "pos": [0.0, 2.0, 14.0], "guarda": [0.0, 3.0, 0.0], "fov": 55.0},
 						{"t": 7.0, "pos": [0.0, 2.5, 9.0], "guarda": [0.0, 3.5, 0.0], "fov": 50.0}
 					],
-					"azioni": [{"t": 1.5, "nodo": "Jilly", "metodo": "saluta"}]},
+					"azioni": [{"t": 1.5, "nodo": "Jilly", "metodo": "saluta", "argomenti": [3.9]}]},
 				{"n": 6, "inizio": 26.0, "durata": 6.0, "cosa": "primo piano di Jilly che sorride e fa ciao; la camera si avvicina troppo", "da_rivedere": true,
 					"camera": [
 						{"t": 0.0, "pos": [0.0, 3.5, 6.0], "guarda": [0.0, 4.0, 0.0], "fov": 45.0},
 						{"t": 6.0, "pos": [0.0, 4.0, 2.5], "guarda": [0.0, 4.2, 0.0], "fov": 40.0}
 					],
-					"azioni": [{"t": 0.5, "nodo": "Jilly", "metodo": "saluta"}]},
+					"azioni": [{"t": 0.5, "nodo": "Jilly", "metodo": "saluta", "argomenti": [3.9]}]},
 				{"n": 7, "inizio": 32.0, "durata": 6.0, "cosa": "stessa inquadratura, il nastro si guasta", "da_rivedere": true,
 					"camera": [
 						{"t": 0.0, "pos": [0.0, 4.0, 2.5], "guarda": [0.0, 4.2, 0.0], "fov": 40.0},

@@ -48,6 +48,7 @@ func _ready() -> void:
 	_linea()
 	_acqua()
 	_luci()
+	_luce_uscita()
 	if crea_schizzi:
 		_schizzi()
 
@@ -339,6 +340,38 @@ func _acqua() -> void:
 	mi.material_override = mat
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
+
+
+## La luce in fondo al tubo: un disco bianco acceso appena fuori dalla bocca d'uscita (copre la pedana e la colonna
+## che si vedrebbero; l'inquadratura finisce prima dello sbocco, sulla luce, scelta del coordinatore del 23 ottobre),
+## e una luce che entra nel tubo e illumina gli ultimi metri.
+func _luce_uscita() -> void:
+	var fine := lunghezza()
+	var t := _tangente(fine)
+	var disco := MeshInstance3D.new()
+	disco.name = "LuceUscita"
+	var cm := CylinderMesh.new()
+	cm.top_radius = R_TUBO + 0.05
+	cm.bottom_radius = R_TUBO + 0.05
+	cm.height = 0.002
+	disco.mesh = cm
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color(1.0, 0.98, 0.92)
+	m.emission_enabled = true
+	m.emission = Color(1.0, 0.97, 0.9)
+	m.emission_energy_multiplier = 6.0
+	disco.material_override = m
+	disco.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(disco)
+	# il cilindro ha l'asse Y: lo si gira lungo il tubo
+	disco.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, t)), punto(fine + 0.04))
+	var o := OmniLight3D.new()
+	o.light_color = Color(1.0, 0.96, 0.88)
+	o.light_energy = 6.0
+	o.omni_range = 7.0
+	add_child(o)
+	o.global_position = punto(fine - 0.3)
 
 
 # --- schizzi -------------------------------------------------------------------------------------------------
