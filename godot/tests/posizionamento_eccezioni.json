@@ -1056,5 +1056,31 @@
 		"stato": "da correggere",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
 		"firma": "sala_inseguimento.tscn|catene_corde.gltf::ArrayMesh_vmoi6"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Oggetti/ogg_lettino_plastica_23",
+		"squadra": "ambienti-1",
+		"problema": "staccato",
+		"pos": [
+			11.34,
+			0.51,
+			-5.63
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)"
+	},
+	{
+		"zona": "sala",
+		"nodo": "Sala/Dettagli/det_cartello_non_tuffarsi_6",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			-3.34,
+			1.52,
+			19.99
+		],
+		"stato": "da correggere",
+		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): passa dentro Sala/Oggetti/ogg_salvagente_nave_19 per 9 cm (nel pieno, per esempio, in (-3.37, 1.44, 19.99))"
 	}
 ]

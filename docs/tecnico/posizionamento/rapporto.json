@@ -1,5 +1,19 @@
 [
 	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 0.4 cm)",
+		"nodo": "Sala/Oggetti/ogg_lettino_plastica_23",
+		"pos": [
+			11.34,
+			0.51,
+			-5.63
+		],
+		"problema": "staccato",
+		"squadra": "ambienti-1",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
 		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi.",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi.",
 		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
@@ -84,27 +98,13 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"nodo": "Mascotte/StatuaPolpoA/statua_polpo_A",
-		"pos": [
-			-4.5,
-			0.0,
-			-17.75
-		],
-		"problema": "ingombro",
-		"squadra": "mascotte",
-		"stato": "da correggere",
-		"zona": "mascotte"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (85 celle da 25 cm) (pavimento a y -0.00), con la collisione (ci si sbatte contro)",
 		"motivo": "struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre)",
 		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
 		"pos": [
-			-15.5,
+			-12.25,
 			0.0,
-			-19.25
+			-19.0
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
@@ -112,9 +112,9 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4",
 		"pos": [
 			19.25,
 			0.0,
@@ -126,9 +126,9 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_4",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
 		"pos": [
 			19.25,
 			0.0,
@@ -343,6 +343,20 @@
 			5.95,
 			-0.03,
 			-12.78
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "da correggere",
+		"zona": "sala"
+	},
+	{
+		"dettaglio": "passa dentro Sala/Oggetti/ogg_salvagente_nave_19 per 9 cm (nel pieno, per esempio, in (-3.37, 1.44, 19.99))",
+		"motivo": "controllo del 23 ottobre (Sala/Oggetti prima scartata come effetto: \"oggetti\" contiene \"getti\"): passa dentro Sala/Oggetti/ogg_salvagente_nave_19 per 9 cm (nel pieno, per esempio, in (-3.37, 1.44, 19.99))",
+		"nodo": "Sala/Dettagli/det_cartello_non_tuffarsi_6",
+		"pos": [
+			-3.34,
+			1.52,
+			19.99
 		],
 		"problema": "compenetra",
 		"squadra": "ambienti-2",
@@ -731,7 +745,7 @@
 		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
 		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7699/det_condotta_aria_4m",
 		"pos": [
 			40.55,
 			-19.6,
@@ -746,7 +760,7 @@
 		"dettaglio": "un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
 		"firma": "sala_inseguimento.tscn|tubi.gltf::ArrayMesh_uph6k",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (tubo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7555/det_condotta_aria_4m",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7699/det_condotta_aria_4m",
 		"pos": [
 			40.55,
 			-19.6,
@@ -761,7 +775,7 @@
 		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
 		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7704/det_cavo_festone_3",
 		"pos": [
 			57.98,
 			-20.16,
@@ -776,7 +790,7 @@
 		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
 		"firma": "sala_inseguimento.tscn|cavi.gltf::ArrayMesh_06myb",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7560/det_cavo_festone_3",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7704/det_cavo_festone_3",
 		"pos": [
 			64.02,
 			-20.16,
@@ -791,7 +805,7 @@
 		"dettaglio": "un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
 		"firma": "sala_inseguimento.tscn|catene_corde.gltf::ArrayMesh_vmoi6",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (cavo) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) [modello: sala_inseguimento.tscn]",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7563/det_corda_pendente_2",
+		"nodo": "SalaInseguimento/Luci/@Node3D@7707/det_corda_pendente_2",
 		"pos": [
 			74.03,
 			-23.21,
@@ -809,7 +823,7 @@
 		"pos": [
 			-14.5,
 			0.0,
-			-5.5
+			-5.75
 		],
 		"problema": "ingombro",
 		"squadra": "mascotte",
@@ -848,7 +862,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.08x2.30x0.36",
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@22970/@MeshInstance3D@22971",
+		"nodo": "Risalita/Fiume/@Node3D@23402/@MeshInstance3D@23403",
 		"pos": [
 			-6.75,
 			-5.4,
@@ -877,7 +891,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.08x2.30x0.36",
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/@Node3D@22978/@MeshInstance3D@22979",
+		"nodo": "Risalita/Fiume/@Node3D@23410/@MeshInstance3D@23411",
 		"pos": [
 			-35.5,
 			-5.4,
@@ -892,7 +906,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@22989",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23421",
 		"pos": [
 			-28.4,
 			-0.8,
@@ -907,7 +921,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@22992",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23424",
 		"pos": [
 			-18.4,
 			-0.8,
@@ -922,7 +936,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@22994",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23426",
 		"pos": [
 			-43.4,
 			-0.8,
@@ -937,7 +951,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@22997",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23429",
 		"pos": [
 			-58.4,
 			-0.8,
@@ -952,7 +966,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@22999",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23431",
 		"pos": [
 			-53.4,
 			-0.8,
@@ -967,7 +981,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23002",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23434",
 		"pos": [
 			-33.4,
 			-0.8,
@@ -982,7 +996,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23005",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23437",
 		"pos": [
 			-18.4,
 			-0.8,
@@ -997,7 +1011,7 @@
 		"dettaglio": "un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
 		"firma": "fiume.tscn|BoxMesh 0.02x1.81x0.02",
 		"motivo": "controllo del 23 ottobre (capi di tubi, cavi, aste e catene a meno di 5 mm da una superficie vera): un capo del pezzo (asta) finisce nel vuoto: nessuna superficie vera a meno di 5 mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario) (stato: risalita_arrivo) [modello: fiume.tscn]",
-		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23007",
+		"nodo": "Risalita/Fiume/Tetto/@MeshInstance3D@23439",
 		"pos": [
 			-43.4,
 			-0.8,
@@ -1026,7 +1040,7 @@
 		"dettaglio": "la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
 		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0/@MeshInstance3D@46547",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_0/@MeshInstance3D@47411",
 		"pos": [
 			54.61,
 			-19.48,
@@ -1041,7 +1055,7 @@
 		"dettaglio": "la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
 		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2/@MeshInstance3D@46555",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_2/@MeshInstance3D@47419",
 		"pos": [
 			67.0,
 			-22.48,
@@ -1056,7 +1070,7 @@
 		"dettaglio": "la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_4, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
 		"firma": "inseguimento_mobili.glb|TorusMesh 1.10x0.08x1.10",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_4, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
-		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4/@MeshInstance3D@46563",
+		"nodo": "SalaInseguimento/InseguimentoMobili/ins_paratia_4/@MeshInstance3D@47427",
 		"pos": [
 			66.89,
 			-25.48,
@@ -1068,9 +1082,9 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
 		"pos": [
 			19.25,
 			0.0,
@@ -1082,9 +1096,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
 		"pos": [
 			19.25,
 			0.0,
@@ -1110,9 +1124,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5",
 		"pos": [
 			19.25,
 			0.0,
@@ -1124,9 +1138,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_5",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_7",
 		"pos": [
 			19.25,
 			0.0,
