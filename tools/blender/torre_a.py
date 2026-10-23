@@ -851,34 +851,34 @@ def scala_servizio(c, sp, x0, y0, lungo, asse, verso_ponte, mat='gioco_giallo'):
 
 
 def aperture_scivoli(r, L, alto=1.15, margine=0.1):
-    """Le aperture della ringhiera della pedana r (livello L) dove un canale o un tubo passa il bordo all'altezza della
-    ringhiera: l'utente, 23 ottobre (B), un'apertura con i montanti ai lati, non sbarre appese sopra lo scivolo."""
+    """Le aperture della ringhiera della pedana r (livello L) dove un canale o un tubo arriva alla ringhiera (la passa
+    o le corre accanto con la sua larghezza) all'altezza della ringhiera: l'utente, 23 ottobre (B), un'apertura con i
+    montanti ai lati, non sbarre appese sopra lo scivolo."""
     x0, y0, x1, y1 = r
     out = []
-    pezzi = [(pts, W + T, -(D + T), H + R) for (pts, W, D, T, H, R) in CANALI_APERTI] + \
-        [([Vector(p) for p in pts], rr, -rr, rr) for (pts, rr) in TUBI_CHIUSI]
+    pezzi = [(pts, W + T + 0.05, -(D + T), H + R) for (pts, W, D, T, H, R) in CANALI_APERTI] + \
+        [([Vector(p) for p in pts], rr + 0.08, -rr - 0.08, rr + 0.08) for (pts, rr) in TUBI_CHIUSI]
     for (pts, mezza, giu, su) in pezzi:
-        for i in range(len(pts) - 1):
-            a, b = pts[i], pts[i + 1]
-            for lato, asse, val in (('o', 'x', x0), ('e', 'x', x1), ('s', 'y', y0), ('n', 'y', y1)):
-                va, vb = getattr(a, asse), getattr(b, asse)
-                if (va - val) * (vb - val) > 0 or va == vb:
-                    continue
-                t = (val - va) / (vb - va)
-                q = a.lerp(b, t)
-                u = q.y - y0 if asse == 'x' else q.x - x0
-                lung = (y1 - y0) if asse == 'x' else (x1 - x0)
-                if not (-mezza < u < lung + mezza):
+        fitto = fitti(pts, 0.1)
+        for lato, asse, val, a0, a1 in (('o', 'x', x0, y0, y1), ('e', 'x', x1, y0, y1), ('s', 'y', y0, x0, x1), ('n', 'y', y1, x0, x1)):
+            tocchi = []
+            for q in fitto:
+                d = abs(getattr(q, asse) - val)
+                u = q.y if asse == 'x' else q.x
+                if d > mezza or not (a0 - mezza < u < a1 + mezza):
                     continue
                 if q.z + su < L or q.z + giu > L + alto:
                     continue
-                # di traverso il canale occupa di più sul bordo
-                d = (b - a)
-                d.z = 0
-                d.normalize()
-                lungo_bordo = abs(d.x) if asse == 'y' else abs(d.y)
-                largo = mezza / max(0.3, (1 - lungo_bordo ** 2) ** 0.5) + margine
-                out.append((lato, u - largo, u + largo))
+                # quanto si allarga il pezzo lungo il bordo a questa distanza dalla linea della ringhiera
+                largo = (mezza * mezza - d * d) ** 0.5
+                tocchi.append((u - a0 - largo - margine, u - a0 + largo + margine))
+            # i tocchi vicini fanno un'apertura sola
+            tocchi.sort()
+            for t0, t1 in tocchi:
+                if out and out[-1][0] == lato and t0 <= out[-1][2] + 0.2:
+                    out[-1] = (lato, out[-1][1], max(out[-1][2], t1))
+                else:
+                    out.append((lato, t0, t1))
     return out
 
 
