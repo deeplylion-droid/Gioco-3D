@@ -1452,7 +1452,7 @@ def fossa_bimbi(mats):
     # griglia di scarico divelta: ancora agganciata al lato nord, piegata giù nella fossa in due tratti
     # sulla metà ovest del lato nord: con x da -14,1 a -12,6 passava dentro il busto e la campana di lei affacciata
     # (origine x -13,03) e nei suoi tentacoli (controllo del 23 ottobre; scelta a del coordinatore, consigliata da mascotte)
-    ga, gb = -14.72, -13.85
+    ga, gb = -14.72, -14.05   # con -13,85 il busto di lei (fino a x -13,91) ci entrava ancora
     def tratto(origine, v, lunghezza, nome):
         v = Vector(v).normalized(); u = Vector((1, 0, 0)); w = u.cross(v).normalized()
         O = Vector(origine)
@@ -2920,7 +2920,9 @@ def disponi_oggetti(zf_piscina):
     metti_ogg('sedia_bagnino', (8.6, 2.5, 0.0), -90)
     for i, y in enumerate((-3.5, -1.2, 5.6, 8.0)):
         incl = (0, 0) if i != 2 else (0, 85)
-        metti_ogg('lettino_plastica', (11.8, y, 0.0 if i != 2 else 0.47), 180 + (6 if i % 2 else -4), 1.0, incl)
+        lt = metti_ogg('lettino_plastica', (11.8, y, 0.0 if i != 2 else 0.47), 180 + (6 if i % 2 else -4), 1.0, incl)
+        if i == 2 and lt is not None:
+            appoggia(lt, zf_piscina)   # quello rovesciato: a terra sul fianco (era staccato, controllo del 23 ottobre)
     metti_ogg('lettino_plastica', (-6.0, -8.2, 0.0), 75)
     # --- area bimbi: balena sgonfia nella vasca bassa, funghi, cannoncini, paperelle
     metti_ogg('balena_gonfiabile_sgonfia', (-15.0, 12.1, 0.33), 140, 0.95)
