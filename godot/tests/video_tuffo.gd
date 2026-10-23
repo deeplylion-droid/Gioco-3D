@@ -7,7 +7,7 @@ extends Node
 ## Stampa "INIZIO frame N" quando parte la scaletta. Durata 6,5 s (la spruzzi a 2,5 s).
 ## Uso (sotto /home/user/tools/render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://tests/video_tuffo.gd <prima|dopo> <giocatore|vicino> [preset]
+##     --fixed-fps 30 --write-movie /tmp/x.avi --script res://tests/run.gd -- res://tests/video_tuffo.gd <prima|dopo> <giocatore|vicino> [preset] [tuffo|sbuca]
 ## Il preset di serie è "medio": con "alto" la sala su llvmpipe supera la memoria della macchina (pipeline).
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -24,6 +24,8 @@ var lei: LeiSbuca
 var _cam: Camera3D
 var _f := -RISCALDA
 var _partito := false
+## "tuffo": affacciata, la spruzzi e si tuffa; "sbuca": lei sale dalla fossa (LeiSbuca._sbuca) e resta affacciata.
+var azione := "tuffo"
 var _costi: Array = []
 
 
@@ -36,6 +38,8 @@ func _ready() -> void:
 		camera = args[2]
 	if args.size() > 3:
 		preset = args[3]
+	if args.size() > 4:
+		azione = args[4]
 	if versione == "prima":
 		Engine.set_meta(&"morbidezza_spenta", true)
 	AudioLoop.forza_riproduzione(true)
@@ -78,7 +82,12 @@ func _avvia() -> void:
 		t.fill = clampf((lei.livello_pieno - t.get_floor_global_y()) / t.inner_size.y, 0.0, t.max_fill)
 	lei.distanza_presa = 0.0
 	await get_tree().physics_frame
-	lei.call(&"_affaccia")
+	if azione == "sbuca":
+		# nascosta (e ferma: se no al buio si affaccia da sola) fino a quando sbuca
+		lei.call(&"_ricomincia")
+		lei.abilitata = false
+	else:
+		lei.call(&"_affaccia")
 	if not p.has_item(&"zaino_pompa"):
 		p.add_item(&"zaino_pompa", 1, "Zaino-pompa")
 	p.water_pack.set_equipped(true, false)
@@ -121,7 +130,12 @@ func _process(_delta: float) -> void:
 	var t := _f / 30.0
 	if not _partito:
 		p.look_at_point(_testa() + Vector3(0.0, 0.6, 0.0))
-	if t >= SPRUZZO and not _partito:
+	if azione == "sbuca":
+		if t >= 0.8 and not _partito:
+			_partito = true
+			lei.abilitata = true
+			lei.call(&"_sbuca")
+	elif t >= SPRUZZO and not _partito:
 		_partito = true
 		Input.action_press(&"spray")
 	elif _partito:

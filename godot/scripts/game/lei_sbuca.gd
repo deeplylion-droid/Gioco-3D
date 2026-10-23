@@ -204,6 +204,8 @@ func _physics_process(delta: float) -> void:
 			if k >= 1.0:
 				fase = Fase.GUARDA
 				_t = 0.0
+				if _morbidezza and is_instance_valid(_morbidezza):
+					_morbidezza.trattieni = false
 		Fase.GUARDA:
 			_controlla_presa(p)
 			if fase != Fase.GUARDA:
@@ -346,7 +348,11 @@ func _sbuca() -> void:
 	_azzera_tuffo()
 	_metti_a(1.0)
 	_svanisci(0.0)
+	# la posa sale tutta da 2,3 m sotto: i tentacoli stesi sul pavimento salirebbero attraverso il pavimento; la
+	# morbidezza, accesa da subito, li tiene dentro la fossa e li fa uscire dal bordo mentre lei emerge
 	_accendi_morbidezza()
+	if _morbidezza and is_instance_valid(_morbidezza):
+		_morbidezza.trattieni = true
 	_schizzo(1.4)
 	_suona(&"lei_sbuca")
 	sbucata.emit()
@@ -413,9 +419,9 @@ func _avvia_tuffo() -> void:
 		_accendi_morbidezza()
 
 
-## Il movimento secondario di tentacoli e campana (MorbidezzaLei): acceso tutto e subito quando lei compare (sbuca o
-## è già affacciata), così i tentacoli poggiano e scivolano sul bordo da subito; il tuffo parte da lì.
-func _accendi_morbidezza() -> void:
+## Il movimento secondario di tentacoli e campana (MorbidezzaLei): acceso tutto e subito quando lei compare già
+## affacciata o quando sbuca, così i tentacoli poggiano e scivolano sul bordo da subito; il tuffo parte da lì.
+func _accendi_morbidezza(subito := true) -> void:
 	if Engine.has_meta(&"morbidezza_spenta") or medusa == null:
 		return
 	var sks := medusa.find_children("*", "Skeleton3D", true, false)
@@ -426,14 +432,15 @@ func _accendi_morbidezza() -> void:
 		var a := superficie_fossa.global_transform * superficie_fossa.mesh.get_aabb()
 		fossa = Rect2(a.position.x, a.position.z, a.size.x, a.size.z)
 	if _morbidezza == null or not is_instance_valid(_morbidezza):
-		_morbidezza = MorbidezzaLei.new()
-		_morbidezza.name = "Morbidezza"
-		(sks[0] as Skeleton3D).add_child(_morbidezza)
+		_morbidezza = MorbidezzaLei.su(medusa)
 		_forme_morbidezza(fossa)
+	_morbidezza.quanto = 1.0
 	_morbidezza.acqua_pianta = fossa
 	_morbidezza.acqua_pelo = _pelo()
-	_morbidezza.azzera()
-	_morbidezza.accendi(true)
+	if subito:
+		_morbidezza.azzera()
+	_morbidezza.trattieni = false
+	_morbidezza.accendi(subito)
 
 
 ## Le collisioni dei tentacoli morbidi: le forme di collisione della fossa e del bordo intorno (senza il coperchio), il
@@ -451,12 +458,22 @@ func _forme_morbidezza(fossa: Rect2) -> void:
 	_morbidezza.aggiungi_forme_da(dove, zona, salta)
 	_morbidezza.pavimento_y = 0.0
 	_morbidezza.buco_pavimento = fossa
+	# la pianta della fossa con l'angolo tagliato (tools/blender/ambiente_sala.py, fossa_bimbi_punti: interno)
+	_morbidezza.fossa_pianta = PackedVector2Array([Vector2(-14.8, -8.0), Vector2(-14.8, -7.0), Vector2(-13.8, -6.0),
+			Vector2(-12.3, -6.0), Vector2(-12.3, -8.0)])
 	# la griglia: appoggiata al muro nord, in cima a y -1,84 contro il muro, il piede sul fondo 35 cm più in là
 	var cima := Vector3(-14.325, -1.844, -7.98)
 	var piede := Vector3(-14.325, -2.992, -7.63)
+	# (un cuneo pieno dalla faccia della griglia fino dentro il muro: dietro la griglia i tentacoli non ci vanno, e una
+	# lastra di 5 cm di sbieco si passerebbe da parte a parte)
 	var lungo := (piede - cima).normalized()
-	var base := Basis(Vector3.RIGHT, lungo, Vector3.RIGHT.cross(lungo))
-	_morbidezza.aggiungi_scatola(Transform3D(base, (cima + piede) * 0.5), Vector3(0.425, cima.distance_to(piede) * 0.5, 0.025))
+	var davanti := lungo.cross(Vector3.RIGHT).normalized() * 0.025
+	var cuneo := PackedVector3Array()
+	# (a ovest fin dentro il muro della fossa, x -14,8: fra la griglia e il muro resta una fessura di 5 cm)
+	for x in [-14.85, cima.x + 0.425]:
+		var dx := Vector3(x - cima.x, 0.0, 0.0)
+		cuneo.append_array([cima + davanti + dx, piede + davanti + dx, Vector3(x, piede.y, -8.3), Vector3(x, cima.y, -8.3)])
+	_morbidezza.aggiungi_convesso(cuneo)
 	# la parete est (x -12,3..-12,1, y -3..0, z -8..-6) col buco del condotto (centro y -2,3, z -7) e il canale fino
 	# a x -8,8; mezzo lato del buco 0,43 (il quadrato dentro il cerchio di raggio 0,6)
 	var yc := -2.3

@@ -44,6 +44,8 @@ extends Node3D
 		_rebuild()
 ## Distanza tra l'origine del nodo e le punte dei tentacoli (0: l'origine è sul piano).
 @export var feet_depth := 0.0
+## Quanto si muovono i tentacoli da soli (MorbidezzaLei): 0 per la statua, ferma davvero.
+@export_range(0.0, 1.0) var morbidezza := 0.0
 @export_group("Campana")
 ## Luce dei canali da ferma: appena accesi.
 @export var idle_channel_light := 0.55
@@ -256,6 +258,12 @@ func _rebuild() -> void:
 				(mi as MeshInstance3D).set_surface_override_material(s, material_map[mat.resource_name])
 	_tinta_strappo()
 	_prepara_palpebre()
+	# il movimento secondario di tentacoli e campana (MorbidezzaLei): da statua a 0, ferma davvero (la posa resta
+	# identica); chi la fa muovere (la fossa, l'inseguimento) lo alza e lo accende
+	if not Engine.is_editor_hint():
+		var mo := MorbidezzaLei.su(_instance)
+		if mo:
+			mo.quanto = morbidezza
 	_dopo_rebuild()
 
 
