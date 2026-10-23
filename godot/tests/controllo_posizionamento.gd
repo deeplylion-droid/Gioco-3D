@@ -67,7 +67,10 @@ const SQUADRE_ZONA := {"sala": "ambienti-1", "interni": "ambienti-1", "torre": "
 ## oggetti di scena (riscontro di ambienti-1 sul controllo severo). Si riconoscono dal nome nel percorso o dalla classe.
 const EFFETTI := ["schizz", "vapore", "getto", "getti", "spruzz", "nebbia", "particell", "splash", "gocce", "bolle",
 	"drip"]   # drip: le gocce che cadono dalle dita della medusa (WaterDripEmitter), si vedono solo mentre cadono
-const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain"]
+const NOMI_TUBI := ["tubo", "tubi", "tubaz", "cavo", "cavi", "condott", "pipe", "cable", "filo", "catena", "catene", "chain",
+	"asta", "aste", "corda", "corde", "fune", "funi", "rope", "gancio", "ganci"]
+## Il capo di un tubo, un cavo, un'asta... deve stare a meno di questo da una superficie vera (o infilato in un pieno).
+const CAPO := 0.005
 const STRATO := 1 << 20        # le collisioni temporanee delle mesh
 const STRATO_SOLO := 1 << 21   # una mesh alla volta (dentro/fuori)
 ## Un oggetto di scena: una mesh con la diagonale del box fra questi due valori (m). Più grande è architettura.
@@ -132,6 +135,7 @@ var _nascoste_radici := {}
 var _copertura: Array = []
 var _nascoste_ora := {}
 var _tocca := {}
+var _punto_dentro := Vector3.ZERO   # dove _spigoli_dentro ha trovato il tratto più lungo nel pieno
 var _staccati_veri := {}   # oggetto -> le mesh che la forma convessa toccava ma la mesh vera no
 var _sferetta: PhysicsShapeQueryParameters3D
 var _box_nascoste: Array[AABB] = []   # le mesh nascoste in questo giro (vedi _gruppi_staccati)
@@ -999,7 +1003,7 @@ func _vertici_su(a: MeshInstance3D, b: MeshInstance3D, vicino_a: PackedVector3Ar
 		# infilato più di 5 mm (lo stelo di un manometro nella pompa, un capo nel muro): i vertici vicini al contatto
 		# stanno dentro b, lontani dalla sua superficie
 		for i in mini(punti.size(), 40):
-			if _attraversamenti(punti[i][1], Vector3.UP) % 2 == 1 and _attraversamenti(punti[i][1], Vector3.DOWN) % 2 == 1:
+			if _nel_pieno(punti[i][1]):
 				tocca = true
 				break
 	if not tocca:
@@ -1421,7 +1425,9 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 	if _acqua.has(mi):
 		return
 	var nome := String(mi.name).to_lower()
-	if not NOMI_TUBI.any(func(t): return nome.contains(t)):
+	# per nome, o un pezzo fatto da codice (nome automatico) lungo e sottile: le aste e i cavi delle lampade
+	var da_codice := String(mi.name).begins_with("@") and (mi.mesh is CylinderMesh or mi.mesh is BoxMesh)
+	if not da_codice and not NOMI_TUBI.any(func(t): return nome.contains(t)):
 		return
 	var b := _box(mi)
 	var lati := [b.size.x, b.size.y, b.size.z]
@@ -1429,7 +1435,7 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 	var ordinati := lati.duplicate()
 	ordinati.sort()
 	# un pezzo solo e allungato (le mesh con tanti tubi insieme non si controllano così)
-	if float(ordinati[2]) < 0.4 or float(ordinati[2]) < 3.0 * float(ordinati[1]):
+	if float(ordinati[2]) < (0.3 if da_codice else 0.4) or float(ordinati[2]) < (6.0 if da_codice else 3.0) * float(ordinati[1]):
 		return
 	var v := mi.global_transform * mi.mesh.get_faces()
 	var lo := INF
@@ -1440,25 +1446,89 @@ func _estremita(z: Dictionary, mi: MeshInstance3D) -> void:
 	var me: Array[RID] = []
 	if _corpo_di.has(mi):
 		me.append((_corpo_di[mi] as StaticBody3D).get_rid())
+	if _sferetta == null:
+		_sferetta = PhysicsShapeQueryParameters3D.new()
+		var sf := SphereShape3D.new()
+		sf.radius = STACCO
+		_sferetta.shape = sf
+	var centro := b.get_center()
+	var attaccati := {}
 	for capo in [lo, hi]:
-		var box := AABB()
-		var primo := true
+		# i vertici del capo (entro 1 cm dall'estremità lungo l'asse)
+		var punti := {}
 		for p in v:
-			if absf(p[asse] - capo) <= 0.08:
-				box = AABB(p, Vector3.ZERO) if primo else box.expand(p)
-				primo = false
-		var forma := BoxShape3D.new()
-		# severo: il capo deve essere collegato (1 cm), non solo vicino a qualcosa
-		forma.size = box.size + Vector3.ONE * (0.01 if SEVERO else CONTATTO) * 2.0
-		var q := PhysicsShapeQueryParameters3D.new()
-		q.shape = forma
-		q.transform = Transform3D(Basis(), box.get_center())
-		q.collision_mask = STRATO | Layers.WORLD
-		q.exclude = me
-		if _spazio.intersect_shape(q, 1).is_empty():
-			_trova(z, mi, "estremita_libera", box.get_center(), "un capo del %s non è collegato a niente entro %s (né muro, pavimento, soffitto, né un altro tubo o un macchinario)" % [
-					"catena" if nome.contains("caten") or nome.contains("chain") else ("tubo" if not nome.contains("cav")
-					and not nome.contains("filo") and not nome.contains("cable") else "cavo"), "1 cm" if SEVERO else "5 cm"])
+			if absf(p[asse] - capo) <= 0.01:
+				punti[p] = true
+		attaccati[capo] = _capo_attaccato(punti.keys(), me, centro)
+	for capo in [lo, hi]:
+		if attaccati[capo]:
+			continue
+		# un pezzo verticale che poggia col capo di sotto (un palo) può avere libero quello di sopra; il capo di sotto
+		# (un cavo appeso) no
+		if asse == 1 and capo == hi and attaccati[lo]:
+			continue
+		var punti := {}
+		for p in v:
+			if absf(p[asse] - capo) <= 0.01:
+				punti[p] = true
+		var c := Vector3.ZERO
+		for p in punti:
+			c += p
+		c /= maxf(punti.size(), 1)
+		var cosa := "catena" if nome.contains("caten") or nome.contains("chain") else ("asta" if da_codice or nome.contains("asta") or nome.contains("aste") \
+				else ("cavo" if nome.contains("cav") or nome.contains("filo") or nome.contains("cable") or nome.contains("cord") or nome.contains("fun") \
+				else ("gancio" if nome.contains("ganci") else "tubo")))
+		_trova(z, mi, "estremita_libera", c, "un capo del pezzo (%s) finisce nel vuoto: nessuna superficie vera a meno di %d mm, e non è infilato in niente (né muro, pavimento, soffitto, né un altro pezzo o un macchinario)" % [
+				cosa, roundi(CAPO * 1000.0)])
+
+
+## Vero se il capo tocca una mesh vera: un suo vertice a meno di CAPO da una faccia (sferetta sullo strato delle
+## mesh, se stesso escluso), o il suo centro nel pieno di una mesh vicina (un capo infilato in un muro o in un attacco).
+func _capo_attaccato(punti: Array, me: Array[RID], centro_pezzo: Vector3) -> bool:
+	if punti.is_empty():
+		return true
+	_sferetta.collision_mask = STRATO
+	_sferetta.exclude = me
+	var passo := maxi(1, punti.size() / 64)
+	var i := 0
+	while i < punti.size():
+		_sferetta.transform = Transform3D(Basis(), punti[i])
+		if not _spazio.intersect_shape(_sferetta, 1).is_empty():
+			_sferetta.collision_mask = STRATO_SOLO
+			_sferetta.exclude = []
+			return true
+		i += passo
+	_sferetta.collision_mask = STRATO_SOLO
+	_sferetta.exclude = []
+	var c := Vector3.ZERO
+	for p in punti:
+		c += p
+	c /= punti.size()
+	# passato di poco attraverso una faccia (un braccio infilato 1 cm in un muro fatto di una faccia sola): un raggio dal
+	# capo verso il pezzo, per 5 cm, colpisce la faccia
+	if not _raggio(c, c + (centro_pezzo - c).normalized() * 0.05, STRATO, me).is_empty():
+		return true
+	# infilato: le mesh vicine (5 cm), una per volta sullo strato STRATO_SOLO
+	var vicine := BoxShape3D.new()
+	vicine.size = Vector3.ONE * 0.1
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = vicine
+	q.transform = Transform3D(Basis(), c)
+	q.collision_mask = STRATO
+	q.exclude = me
+	var diagnosi := not OS.get_environment("POSIZ_CAPO").is_empty() and c.distance_to(str_to_var(OS.get_environment("POSIZ_CAPO"))) < 0.1
+	for h in _tutti_i_corpi(q):
+		var corpo := h.collider as StaticBody3D
+		corpo.collision_layer = STRATO_SOLO
+		var dentro := _nel_pieno(c)
+		if diagnosi:
+			print("    CAPO %s vicino a %s: nel pieno %s" % [c, _nodo(_corpi.get(corpo.get_rid())), dentro])
+		corpo.collision_layer = STRATO
+		if dentro:
+			return true
+	if diagnosi:
+		print("    CAPO %s: %d punti, nessuno a meno di 5 mm" % [c, punti.size()])
+	return false
 
 
 # --- d) compenetrazioni fra oggetti di scena -----------------------------------------------------------
@@ -1509,7 +1579,7 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					if p > ATTRAVERSA_MIN:
 						var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 						var altro: MeshInstance3D = b if chi == a else a
-						_trova(z, chi, "compenetra", i.get_center(), "passa dentro %s per %d cm" % [_nodo(altro), roundi(p * 100.0)])
+						_trova(z, chi, "compenetra", i.get_center(), "passa dentro %s per %d cm (nel pieno, per esempio, in %s)" % [_nodo(altro), roundi(p * 100.0), _punto_dentro.snappedf(0.01)])
 						continue
 				var piccolo := minf(ba.get_volume(), bb.get_volume())
 				if piccolo <= 0.0 or i.get_volume() < 0.3 * piccolo:
@@ -1589,7 +1659,12 @@ func _stesso_modello(a: Node, b: Node) -> bool:
 ## (un campione) un raggio dall'inizio alla fine e uno dalla fine all'inizio contro l'altra; se colpiscono tutti e
 ## due, il tratto fra i due punti colpiti è dentro (gli spigoli che toccano solo la superficie non contano).
 func _attraversa(a: MeshInstance3D, b: MeshInstance3D) -> float:
-	return maxf(_spigoli_dentro(a, b), _spigoli_dentro(b, a))
+	var m1 := _spigoli_dentro(a, b)
+	var p1 := _punto_dentro
+	var m2 := _spigoli_dentro(b, a)
+	if m1 >= m2:
+		_punto_dentro = p1
+	return maxf(m1, m2)
 
 
 func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
@@ -1628,7 +1703,10 @@ func _spigoli_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 			var medio := ((h0.position as Vector3) + (h1.position as Vector3)) * 0.5
 			if not _nel_pieno(medio):
 				continue
-			massimo = maxf(massimo, (h0.position as Vector3).distance_to(h1.position))
+			var l_dentro := (h0.position as Vector3).distance_to(h1.position)
+			if l_dentro > massimo:
+				massimo = l_dentro
+				_punto_dentro = medio
 		t += passo
 	corpo.collision_layer = STRATO
 	return massimo
@@ -1665,15 +1743,30 @@ func _frazione_dentro(a: MeshInstance3D, b: MeshInstance3D) -> float:
 ## lati sì (un foglio nascosto dentro una base aperta in basso resta "dentro"). Un raggio solo verso l'alto dava
 ## dentro anche il vuoto sotto un foglio o una cupola.
 func _nel_pieno(p: Vector3) -> bool:
-	if _attraversamenti(p, Vector3.UP) % 2 == 0:
-		return false
-	if _attraversamenti(p, Vector3.DOWN) % 2 == 1:
-		return true
-	var lati := 0
-	for d in [Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]:
-		if _attraversamenti(p, d) % 2 == 1:
-			lati += 1
-	return lati >= 3
+	# dal verso delle facce, non dalla parità: in 6 direzioni, se la prima faccia colpita è vista dal retro (lo stesso
+	# raggio senza le facce dal retro non la colpisce, o colpisce più lontano) vuol dire "dentro". Con pareti a faccia
+	# singola e bordi senza fondo (la fossa dell'area bimbi) la parità dava pieno anche il vuoto fra il fondo e un
+	# bordo che sporge (mascotte, 23 ottobre)
+	var dentro := 0
+	for d in [Vector3.UP, Vector3.DOWN, Vector3.LEFT, Vector3.RIGHT, Vector3.FORWARD, Vector3.BACK]:
+		var h := _raggio(p, p + d * 50.0, STRATO_SOLO)
+		if h.is_empty():
+			continue
+		var q := PhysicsRayQueryParameters3D.create(p, p + d * 50.0, STRATO_SOLO)
+		q.hit_back_faces = false
+		var davanti := _spazio.intersect_ray(q)
+		var retro: bool = davanti.is_empty() or p.distance_to(davanti.position) > p.distance_to(h.position) + 0.0005
+		if retro:
+			dentro += 1
+		if _diagnosi_pieno(p):
+			print("    PIENO %s %s: colpita a %.3f m, %s" % [p.snappedf(0.01), d, p.distance_to(h.position), "dal retro" if retro else "davanti"])
+	return dentro >= 4
+
+
+## Diagnosi: POSIZ_PIENO=Vector3(x, y, z) stampa i raggi di _nel_pieno per i punti a meno di 30 cm.
+func _diagnosi_pieno(p: Vector3) -> bool:
+	var e := OS.get_environment("POSIZ_PIENO")
+	return not e.is_empty() and p.distance_to(str_to_var(e)) < 1.5
 
 
 ## Quante volte il raggio da p verso dir passa le facce del corpo sullo strato STRATO_SOLO.
