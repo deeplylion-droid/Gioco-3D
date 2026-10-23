@@ -1476,6 +1476,15 @@ def versione_A(mats):
         v0.normalize()
         t0v = Vector((-v0.y, v0.x, 0))
         base = Vector((b0.x, b0.y, tappe[k_][1] if k_ else 0.0))
+        # i due pali sulla grata della pedana, 10 cm dentro il bordo: sul filo dell'imbocco quello di un lato stava
+        # 23-32 cm fuori dalla pedana, sul vuoto (collaudo del 23 ottobre). Il portale arretra quanto basta
+        def _su_pedana(q):
+            return any(abs(L_ - base.z) < 0.05 and r[0] + 0.1 <= q.x <= r[2] - 0.1 and r[1] + 0.1 <= q.y <= r[3] - 0.1
+                       for (_, L_), r in costruite.items())
+        for indietro in (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8):
+            if all(_su_pedana(base - v0 * indietro + t0v * (s_ * (LARGO_D + 0.45))) for s_ in (-1, 1)):
+                break
+        base = base - v0 * indietro
         for s_ in (-1, 1):
             ap = base + t0v * (s_ * (LARGO_D + 0.45))
             c.cilindro(ap, ap + Vector((0, 0, 2.6)), 0.07, 'gioco_rosso', seg=12)

@@ -306,7 +306,8 @@ for i, (fx, fy) in enumerate(((-7.6, 4.4), (-7.6, 1.8))):
         fm = HQ.metti(f'{g}_modello', 'filtro_tondo', c, (None, None, 3.45), rot_z=R_(-45 + 90 * i))
         if i == 1:      # girato così, il modello restava 1,1 cm dentro le flange: largo quanto loro
             fm.matrix_world = fm.matrix_world @ Matrix.Diagonal((1.0105, 1.0105, 1.0, 1.0))
-        S(g, tubo(f'{g}_uscita', [c + Vector((0, 0, 3.4)), Vector((fx, fy, 4.0)), Vector((fx, HEADER_Y, 4.0)), Vector((fx, HEADER_Y, HEADER_Z - 0.3))], 0.16, M['tubi'], rc=0.4, uv=1.2, seg=28))
+        # il tubo d'uscita parte 25 cm dentro il modello (da 3,4 m restava 1,1-1,3 cm sopra la cima, staccato)
+        S(g, tubo(f'{g}_uscita', [c + Vector((0, 0, 3.2)), Vector((fx, fy, 4.0)), Vector((fx, HEADER_Y, 4.0)), Vector((fx, HEADER_Y, HEADER_Z - 0.3))], 0.16, M['tubi'], rc=0.4, uv=1.2, seg=28))
         continue
     for k in range(4):
         a = math.pi / 4 + k * math.pi / 2
