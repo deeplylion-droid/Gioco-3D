@@ -190,7 +190,7 @@ CANALI_APERTI = []                         # (linea, W, D, T, H, R) di ogni cana
 def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
     """Toglie dai `bersagli` (pedane, travi, sostegni) il volume degli `scivoli`, gonfiato di `gioco` metri: lo
     scivolo ci appoggia contro senza entrarci (l'intaglio segue la sua forma, a pochi millimetri). `filtri`: per nome
-    del bersaglio, quali pezzi (dal box: angolo basso e alto) si intagliano; `aperti`: bersagli fatti di sole facce
+    del bersaglio, quali pezzi (dal box, angolo basso e alto, e dai materiali) si intagliano; `aperti`: bersagli fatti di sole facce
     (la grata), col booleano che tollera i buchi."""
     filtri = filtri or {}
     import bmesh
@@ -268,13 +268,15 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
         if b_.name in filtri:
             mw = b_.matrix_world
             box = {}
+            mat_isola = {}
             for f in bm.faces:
                 if isola[f.index] in isole:
+                    mat_isola.setdefault(isola[f.index], set()).add(b_.data.materials[f.material_index].name if b_.data.materials else '')
                     for v in f.verts:
                         co = mw @ v.co
                         lo, hi = box.get(isola[f.index], (co.copy(), co.copy()))
                         box[isola[f.index]] = (Vector(map(min, lo, co)), Vector(map(max, hi, co)))
-            isole = {k for k in isole if filtri[b_.name](*box[k])}
+            isole = {k for k in isole if filtri[b_.name](*box[k], mat_isola[k])}
             if not isole:
                 bm.free()
                 continue
@@ -1867,13 +1869,11 @@ def versione_A(mats):
     # le pedane (grata e telaio), i tralicci, le travature e i sostegni intagliati sulla forma degli scivoli: dove uno
     # scivolo passa o appoggia, gli fanno posto (riscontro dell'utente sulla v0.3.11: "gli scivoli sono leggermente
     # compenetrati con le piattaforme su cui si appoggiano, quasi tutti")
-    # (della struttura solo il telaio delle pedane: travi gialle con la cima 3 cm sotto un livello; il resto, come gli
-    # imbuti in fondo ai tratti, continua lo scivolo apposta)
-    livelli = set(LIVELLI) | {L_ for (_, L_) in costruite}
-
-    def telaio(lo, hi):
-        return hi.z - lo.z < 0.27 and any(abs(hi.z - (L_ - 0.03)) < 0.006 for L_ in livelli)
-    intaglia([gr, ob, ob_t, ob_v], [ob_s] + canali_discesa + oggetti_scivoli, filtri={ob.name: telaio}, aperti={gr.name})
+    # (della struttura tutto: telai delle pedane, culle dei tubi, mensole, selle; meno i pezzi nei colori degli
+    # scivoli: gli imbuti in fondo ai tratti continuano lo scivolo apposta)
+    def non_scivolo(lo, hi, mats):
+        return not any(m_.startswith('tsc_') for m_ in mats)
+    intaglia([gr, ob, ob_t, ob_v], [ob_s] + canali_discesa + oggetti_scivoli, filtri={ob.name: non_scivolo}, aperti={gr.name})
     gruppi = {'struttura': [ob, ob_t, ob_v, ob_l, gr, pol] + acque + acque_raccolta, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
     # per il gioco: checkpoint, salti, Polaroid, balconata, pozzo e vasca del fondo (coordinate di Blender)
     gioco = dict(checkpoint=[], salti=[], tratti=[])
