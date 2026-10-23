@@ -222,19 +222,6 @@
 	},
 	{
 		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/ATTUATORE_stagno",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			-2.65,
-			-7.67,
-			47.51
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/SALA_meccanismi, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 120.0 cm)"
-	},
-	{
-		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
 		"squadra": "ambienti-2",
 		"problema": "staccato",
@@ -284,20 +271,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_3_tubi."
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7535/POMPA_3_modello",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			67.2,
-			-31.25,
-			-14.77
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/Luci/@Node3D@7535/POMPA_3, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|sala_pompe.gltf::ArrayMesh_1y626"
 	},
 	{
 		"zona": "torre",
