@@ -954,21 +954,22 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 		anello.material_override = m
 		radice.add_child(anello)
 		# appoggiato al piano del pannello sotto l'anello, non al bersaglio rialzato del centro (1-2 cm più avanti):
-		# la faccia si cerca lungo il cerchio dell'anello e conta la più arretrata; 1 mm dentro
+		# la faccia si cerca lungo il cerchio dell'anello e conta la più avanti (sotto ci sono due piani: sul più
+		# arretrato l'anello passava dentro l'altro); 1 mm dentro
 		var v := verso.normalized()
 		var faccia := bersaglio
 		if pannello:
 			var l1 := v.cross(Vector3.UP if absf(v.y) < 0.9 else Vector3.RIGHT).normalized()
 			var l2 := v.cross(l1)
-			var r := (t.inner_radius + t.outer_radius) * 0.5
-			var fondo := INF
-			for k in 8:
-				var a := TAU * k / 8.0
-				var q := bersaglio + (l1 * cos(a) + l2 * sin(a)) * r
-				var su: Variant = _faccia_mesh(pannello, q + v * 0.5, -v)
-				if su != null:
-					fondo = minf(fondo, ((su as Vector3) - bersaglio).dot(v))
-			if fondo < INF:
+			var fondo := -INF
+			for r in [t.inner_radius, (t.inner_radius + t.outer_radius) * 0.5, t.outer_radius]:
+				for k in 32:
+					var a := TAU * k / 32.0
+					var q := bersaglio + (l1 * cos(a) + l2 * sin(a)) * float(r)
+					var su: Variant = _faccia_mesh(pannello, q + v * 0.5, -v)
+					if su != null:
+						fondo = maxf(fondo, ((su as Vector3) - bersaglio).dot(v))
+			if fondo > -INF:
 				faccia = bersaglio + v * fondo
 		anello.global_position = faccia + v * ((t.outer_radius - t.inner_radius) * 0.5 - 0.001)
 		anello.global_basis = Basis(Quaternion(Vector3.UP, verso.normalized()))
