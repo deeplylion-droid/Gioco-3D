@@ -101,8 +101,11 @@ func _esclusi() -> Array:
 		esclusi.append(n)
 	for n in get_tree().get_nodes_in_group(&"bambini"):
 		esclusi.append(n)
-	for n in livello.find_children("*", "Gocce", true, false):
-		esclusi.append(n)
+	# le gocce in volo: quelle dal soffitto (Gocce) e quelle dalle dita della medusa (WaterDripEmitter), come nel
+	# controllo della CI
+	for classe in ["Gocce", "WaterDripEmitter"]:
+		for n in livello.find_children("*", classe, true, false):
+			esclusi.append(n)
 	return esclusi
 
 

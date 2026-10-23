@@ -19,10 +19,10 @@ Posizioni in metri nel mondo di `sala_principale.tscn`. Gli scatti sono in `scat
 
 | # | Nodo | Posizione | Problema | Scatto |
 |---|---|---|---|---|
-| 1 | `LuciSala/LuciAreaBimbi/PlafonieraBimbi` (paralume e disco, `@MeshInstance3D@1513`, `@1514`) con l'asta `LuciSala/LuciAreaBimbi/@MeshInstance3D@1515` | -11,9, 9,1, -14,8 | La plafoniera navale sopra l'area bimbi è a 6,7 cm dalla fine della sua asta: il paralume, girato verso la struttura, non tocca l'asta che scende dal soffitto. È appesa al nulla (`addons/grafica/look_sala.gd`, `PlafonieraBimbi`). È nuovo rispetto a 921d14f. | (posizione misurata: a 9 m d'altezza nessuna veduta da vicino) |
+| 1 | `LuciSala/LuciAreaBimbi/PlafonieraBimbi` (paralume e disco, `@MeshInstance3D@1513`, `@1514`) con l'asta `LuciSala/LuciAreaBimbi/@MeshInstance3D@1515` | -11,9, 9,1, -14,8 | La plafoniera navale sopra l'area bimbi è a 6,7 cm dalla fine della sua asta: il paralume, girato verso la struttura, non tocca l'asta che scende dal soffitto. È appesa al nulla (`addons/grafica/look_sala.gd`, `PlafonieraBimbi`). È nuovo rispetto a 921d14f; grafica l'ha corretto in e9dee0b (l'asta arriva al fondo del paralume). | (posizione misurata: a 9 m d'altezza nessuna veduta da vicino) |
 | 2 | `Gioco/RitornoAlBuio/Scia/BavaMuroVasca/Nastro` (stato ritorno) | -0,46, 0,52, 12,37 | La bava sul muro della vasca di Jilly è ancora a 1,5 cm dal muro (`sala_vasca_offerte`). Quella sul bordo invece adesso tocca (0,3 cm). | (posizione misurata) |
-| 3 | `Vasca/Medusa/@Node3D@126/@MeshInstance3D@127` | 1,48, 0,12, 12,29 | Un pezzetto della medusa è a 7,3 cm dalla vasca, sospeso (su 921d14f era il n. 16, dall'altro lato). È di mascotte, con i tentacoli in arrivo. | `scatti/vfs_@Node3D@126_@MeshInstance3D@127.jpg` |
-| 4 | Da valutare, come su 921d14f: `Sala/Dettagli/@MeshInstance3D@50` e `@52` | 7,24, 2,81, -23,82 e -18,20, 3,42, -23,81 | Le due cassette sul muro nord sono ancora girate di 45 gradi rispetto al muro e appoggiate su uno spigolo. | `vfs_Dettagli_@MeshInstance3D@50.jpg`, `@52.jpg` |
+| 3 | Non è un difetto: `Vasca/Medusa/@Node3D@126/@MeshInstance3D@127` | 1,48, 0,12, 12,29 | È una goccia che cade da una delle sei dita della medusa (`WaterDripEmitter`). Il controllo della CI esclude le gocce, e dal 23 ottobre le esclude anche `geometria.gd` del collaudo. | `scatti/vfs_@Node3D@126_@MeshInstance3D@127.jpg` |
+| 4 | `Sala/Dettagli/@MeshInstance3D@50` e `@52` | 7,24, 2,81, -23,82 e -18,20, 3,42, -23,81 | Le due cassette sul muro nord sono ancora girate di 45 gradi rispetto al muro e appoggiate su uno spigolo. | `vfs_Dettagli_@MeshInstance3D@50.jpg`, `@52.jpg` |
 
 **Casi aperti nel controllo della CI**:
 
@@ -44,8 +44,8 @@ Posizioni in metri nel mondo di `sala_principale.tscn`. Gli scatti sono in `scat
 | 8. Palloni del mucchio staccati | `pallone_62` e `_66` toccano i palloni dentro |
 | 9-11. Applique sotto i palloni, sulla bocchetta e doppione | spostate (`@49` a -19,99, 1,94, 3,82; `@48` a 13,3, 2,03, 19,99; `emergenza_rotta` a 19,95, 3,16, 5,05) |
 | 12-15. Pistola, pannello di lamiera, `@40`, colatura | a contatto (0-0,3 cm) |
-| 16. Pezzetto della medusa | ce n'è ancora uno, dall'altro lato (difetto 3) |
-| 17. Cassette a 45 gradi | invariate (difetto 4) |
+| 16. Pezzetto della medusa | era una goccia in volo, non un difetto (vedi il 3) |
+| 17. Cassette a 45 gradi | invariate: sono fari a muro (`det_faro`, `det_faro_spento`) con la testa inclinata; il coordinatore le ha date ad ambienti-2 da raddrizzare (difetto 4) |
 | 18. Salvagente sopra l'oblò | spostato accanto all'oblò, non lo copre più |
 
 Anche il resto è a posto: le Polaroid 04, 05, 08 e 09 toccano ciò su cui stanno; il salvagente della vasca centrale (`ogg_salvagente_nave_36`) è appeso al bordo; gli acquari rifatti (basamento, anello, coperchio, pedana, allacci e tubi delle pompe), le guide e le piastre delle lampadine del portone poggiano o sono fissati. Nello stato risolto, con il portone aperto, non ci sono altri stacchi.
