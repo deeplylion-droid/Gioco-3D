@@ -15,13 +15,11 @@ uniform sampler2D colature : hint_default_black, filter_linear_mipmap, repeat_en
 uniform sampler2D rumore : hint_default_white, filter_linear_mipmap, repeat_enable;
 // quanta parete è scrostata (0 = mai, 1 = ovunque)
 uniform float scrostatura : hint_range(0.0, 1.0) = 0.2;
-// sopra la quota dei tubi la ruggine esce solo dove il rumore supera questa soglia: 0,35 com'era, 0,62 circa un terzo
-uniform float soglia_alto : hint_range(0.0, 1.0) = 0.35;
 // fascia in basso e in alto dove la vernice si stacca (m)
 uniform float fascia_bassa = 0.45;
 uniform float quota_tubi = 2.25;
-uniform float intensita_colature : hint_range(0.0, 1.0) = 0.3;   // muri più calmi (proposta texture_muri del 23 ottobre: era 0,7)
-uniform float sporco_basso : hint_range(0.0, 1.0) = 0.45;   // (era 0,75)
+uniform float intensita_colature : hint_range(0.0, 1.0) = 0.7;
+uniform float sporco_basso : hint_range(0.0, 1.0) = 0.75;
 uniform float passo_pannelli = 1.25;
 uniform float quota_giunto = 1.85;
 // sposta le UV di ogni oggetto (per esempio ogni anta di armadietto) per non avere copie identiche
@@ -64,9 +62,9 @@ void fragment() {
 	float n_big = rum3(p * 0.18 + 13.1);
 	float basso = 1.0 - smoothstep(0.0, fascia_bassa, altezza);
 	float alto = smoothstep(quota_tubi, quota_tubi + 0.35, altezza);
+	float zona = max(basso, alto * 0.8);
 	float chiazze = smoothstep(1.0 - scrostatura * 0.5, 1.03 - scrostatura * 0.5, n_big);
-	float zona = max(basso * smoothstep(0.35, 0.55, n_det), alto * 0.8 * smoothstep(soglia_alto, soglia_alto + 0.2, n_det));
-	float m = clamp(zona + chiazze * smoothstep(0.3, 0.6, n_det), 0.0, 1.0);
+	float m = clamp(zona * smoothstep(0.35, 0.55, n_det) + chiazze * smoothstep(0.3, 0.6, n_det), 0.0, 1.0);
 	m = smoothstep(0.35, 0.65, m);
 	// --- vernice intera con macro-variazione
 	float macro = rum3(p * 0.07 + 3.0);
