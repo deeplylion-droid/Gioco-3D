@@ -1,6 +1,7 @@
 class_name VarianteLuci
 extends Node
-## La variante "luci bianche al 40%" (richiesta dell'utente per la prova della v0.3.9): tutte le luci bianche e
+## Le luci bianche al 40% (provate come variante nella v0.3.9; scelta dell'utente del 23 ottobre: "le luci a 40%
+## vanno bene quindi via la scelta e restano così"): tutte le luci bianche e
 ## bianco-calde più deboli di [member fattore]; le rosse e le altre colorate (verdi delle uscite e del lettore,
 ## rosa e viola di Jilly, blu) restano com'erano. Con le luci scendono l'emissione dei materiali bianchi delle
 ## lampade (lampadine, neon, plafoniere) e l'energia del VoxelGI cotto.
@@ -11,16 +12,12 @@ extends Node
 ## luci_risveglio, bava_rosa, neon, il menu...) lavorano sempre sui valori pieni e il fattore resta su tutto
 ## quello che si vede, anche sulle luci che cambiano da sole.
 ##
-## Con fattore 1 (il valore normale) non fa niente: la build normale resta identica.
-## Come si attiva:
-## - F7 mentre si gioca: passa dal 100% a [constant FATTORE_VARIANTE] e indietro;
-## - all'avvio: l'opzione "-- --luci-40", o l'impostazione di progetto gioco/luci_bianche (1,0 normale; una build
-##   a parte la mette a 0,4 con la feature "luci40": gioco/luci_bianche.luci40=0.4).
-## La torcia non c'entra: resta sempre com'è (scelta dell'utente, 22 ottobre). Cambiando, si legge per 2 secondi in
-## un angolo "Luci 40%" o "Luci 100%" (scritta di prova, non un cartello del parco).
+## Il fattore viene dall'impostazione di progetto gioco/luci_bianche (0,4) ed è fisso: niente tasto, niente scelta.
+## Gli strumenti che vogliono le luci piene (confronti, misure) usano imposta(1.0). Con fattore 1 non fa niente.
 
 signal fattore_cambiato(fattore: float)
 
+## Il fattore di serie (gioco/luci_bianche).
 const FATTORE_VARIANTE := 0.4
 const IMPOSTAZIONE := "gioco/luci_bianche"
 ## Una luce è bianca se la sua saturazione è al più SAT_BIANCA; bianco-calda se la tinta è fra arancio e giallo
@@ -47,7 +44,7 @@ const LAMPADA_MAX := 2.5
 ## Un nome con un colore vince sulla tinta: il neon giallo delle insegne è un'insegna colorata, non una lampada bianca.
 const NOMI_COLORATI := ["giallo", "gialla", "rosa", "rosso", "rossa", "verde", "azzurr", "blu", "viola", "arancio"]
 
-## Il fattore delle luci bianche (1 = normale).
+## Il fattore delle luci bianche adesso (1 = piene).
 var fattore := 1.0
 
 var _luci: Array[Light3D] = []
@@ -64,53 +61,11 @@ var _prossima := 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	var f := float(ProjectSettings.get_setting(IMPOSTAZIONE, 1.0))
-	if OS.get_cmdline_user_args().has("--luci-40") or OS.get_cmdline_args().has("--luci-40"):
-		f = FATTORE_VARIANTE
-	imposta(f, false)
+	imposta(float(ProjectSettings.get_setting(IMPOSTAZIONE, FATTORE_VARIANTE)))
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	var k := event as InputEventKey
-	if k and k.pressed and not k.echo and k.physical_keycode == KEY_F7:
-		imposta(1.0 if fattore < 1.0 else FATTORE_VARIANTE)
-		get_viewport().set_input_as_handled()
-
-
-var _scritta: Label
-var _scritta_tw: Tween
-
-
-## La scritta di prova in alto a destra: "Luci 40%" o "Luci 100%", per 2 secondi.
-func _mostra() -> void:
-	if _scritta == null:
-		var cl := CanvasLayer.new()
-		cl.layer = 125
-		add_child(cl)
-		_scritta = Label.new()
-		_scritta.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-		_scritta.offset_left = -220
-		_scritta.offset_right = -16
-		_scritta.offset_top = 12
-		_scritta.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		_scritta.add_theme_font_size_override("font_size", 20)
-		_scritta.add_theme_color_override("font_outline_color", Color.BLACK)
-		_scritta.add_theme_constant_override("outline_size", 6)
-		_scritta.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cl.add_child(_scritta)
-	_scritta.text = "Luci %d%%" % roundi(fattore * 100.0)
-	_scritta.modulate.a = 1.0
-	_scritta.visible = true
-	if _scritta_tw:
-		_scritta_tw.kill()
-	_scritta_tw = create_tween()
-	_scritta_tw.tween_interval(1.6)
-	_scritta_tw.tween_property(_scritta, "modulate:a", 0.0, 0.4)
-	_scritta_tw.tween_callback(func(): _scritta.visible = false)
-
-
-## Cambia il fattore. Con 1 smette di toccare le luci (e rimette le basi). [param scritta]: mostra "Luci ...%".
-func imposta(f: float, scritta := true) -> void:
+## Cambia il fattore. Con 1 smette di toccare le luci (e rimette le basi).
+func imposta(f: float) -> void:
 	f = clampf(f, 0.0, 1.0)
 	if is_equal_approx(f, fattore) and (_collegato == (f < 1.0)):
 		return
@@ -128,8 +83,6 @@ func imposta(f: float, scritta := true) -> void:
 		RenderingServer.frame_pre_draw.disconnect(applica)
 		RenderingServer.frame_post_draw.disconnect(ripristina)
 		get_tree().node_added.disconnect(_su_nodo)
-	if scritta:
-		_mostra()
 	fattore_cambiato.emit(fattore)
 
 
@@ -155,7 +108,7 @@ func applica() -> void:
 		if not is_instance_valid(l):
 			_luci.remove_at(i)
 			continue
-		if not is_bianca(l.light_color) or _della_torcia(l) or _esclusa(l) or _nome_colorato(l.name):
+		if not is_bianca(l.light_color) or _esclusa(l) or _nome_colorato(l.name):
 			continue
 		_base_luci.append([l, l.light_energy])
 		l.light_energy *= fattore
@@ -195,15 +148,6 @@ static func is_bianca(c: Color) -> bool:
 	if c.s <= SAT_BIANCA:
 		return true
 	return c.h >= TINTA_CALDA.x and c.h <= TINTA_CALDA.y and c.s <= SAT_CALDA
-
-
-static func _della_torcia(l: Light3D) -> bool:
-	var p := l.get_parent()
-	while p:
-		if p is Torcia:
-			return true
-		p = p.get_parent()
-	return false
 
 
 func _su_nodo(n: Node) -> void:
