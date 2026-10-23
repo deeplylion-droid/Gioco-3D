@@ -175,27 +175,24 @@ func _rotella_vera(r: Interactable, i: int) -> void:
 	var zr := r.position.z
 	var dietro := faccia_sportello - zr + 0.001 if faccia_sportello != 0.0 else -0.065   # 1 mm davanti alla faccia
 	Graybox.box(r, Vector3(minf(passo, 0.09) - 0.01, 0.1, -0.005 - dietro), Vector3(0, 0, (dietro - 0.005) * 0.5), ms)   # 1 cm fra un pezzo e l'altro
-	# la custodia e il simbolo sono pezzi dello sportello, non della rotella (che resta il tamburo sul suo supporto)
-	var cu := Node3D.new()
-	cu.name = "Custodia%d" % (i + 1)
-	cu.position = r.position
-	_sportello.add_child(cu)
 	# la custodia: due guance dalla faccia dello sportello a poco davanti al tamburo, 1 mm fuori dai tappi, il coperchio
 	# sopra e sotto (da sopra si vedevano le altre cifre), e davanti la mascherina d'acciaio chiaro con la finestrella
-	# alta una cifra; niente collisione, la rotella si gira da davanti
+	# alta una cifra; niente collisione, la rotella si gira da davanti. È un pezzo della rotella: col suo ingombro (quello
+	# del tasto E e del controllo di posizionamento) dentro, con lo sportello aperto e girato non la "tocca"
 	var mezzo := cm.height * 0.5 + TAPPO
 	var davanti := RAGGIO + 0.004
 	var alto := RAGGIO + 0.0075
 	for lato in [-1.0, 1.0]:
-		var g := Graybox.box(cu, Vector3(GUANCIA, 2.0 * alto, davanti + MASCHERINA - dietro),
+		var g := Graybox.box(r, Vector3(GUANCIA, 2.0 * alto, davanti + MASCHERINA - dietro),
 				Vector3(lato * (mezzo + 0.001 + GUANCIA * 0.5), 0, (davanti + MASCHERINA + dietro) * 0.5), ms)
 		g.name = "Guancia"
-		var c := Graybox.box(cu, Vector3(2.0 * (mezzo + 0.001), GUANCIA, davanti - dietro),
+		var c := Graybox.box(r, Vector3(2.0 * (mezzo + 0.001), GUANCIA, davanti - dietro),
 				Vector3(0, lato * (alto - GUANCIA * 0.5), (davanti + dietro) * 0.5), ms)
 		c.name = "Coperchio"
-		var b := Graybox.box(cu, Vector3(2.0 * (mezzo + 0.001), alto - FINESTRA, MASCHERINA),
+		var b := Graybox.box(r, Vector3(2.0 * (mezzo + 0.001), alto - FINESTRA, MASCHERINA),
 				Vector3(0, lato * (FINESTRA + alto) * 0.5, davanti + MASCHERINA * 0.5), mt)
 		b.name = "Mascherina"
+	# il simbolo sopra è dello sportello, non della rotella (dentro il suo ingombro arrivava alla custodia accanto)
 	if i < simboli.size() and simboli[i]:
 		var sm := StandardMaterial3D.new()
 		sm.albedo_texture = simboli[i]
@@ -205,8 +202,9 @@ func _rotella_vera(r: Interactable, i: int) -> void:
 		qm.size = Vector2(0.09, 0.09)
 		q.mesh = qm
 		q.material_override = sm
-		q.position = Vector3(0, 0.13, (faccia_sportello - zr + 0.002) if faccia_sportello != 0.0 else -0.065)
-		cu.add_child(q)
+		q.name = "Simbolo%d" % (i + 1)
+		q.position = r.position + Vector3(0, 0.13, (faccia_sportello - zr + 0.002) if faccia_sportello != 0.0 else -0.065)
+		_sportello.add_child(q)
 
 
 ## Come sta il tamburo con la cifra [param n] davanti: l'asse del CylinderMesh (Y) lungo +X, poi un decimo di giro a
