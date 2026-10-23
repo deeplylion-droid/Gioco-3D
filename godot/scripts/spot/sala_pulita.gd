@@ -34,7 +34,9 @@ const GLB_SALA := ["interattivi_monumento", "architettura", "cupola", "piscina",
 ## Fari della vasca di Jilly: rosa e viola come i suoi tentacoli (scelta dell'utente, 22 ottobre: "a").
 @export var colore_faro_rosa := Color(1.0, 0.38, 0.72)
 @export var colore_faro_viola := Color(0.62, 0.36, 1.0)
-@export var energia_fari := 7.0
+@export var energia_fari := 16.0
+## I quattro faretti bassi intorno al monumento (di giorno, con il sole, vanno forti per vedersi).
+@export var energia_faretti := 4.0
 @export_group("Onde")
 @export var onda_altezza := 0.4
 @export var onda_lunghezza := 6.0
@@ -142,6 +144,8 @@ func _accendi() -> void:
 			if nome.begins_with("luce_faro"):
 				luce.light_energy = energia_fari
 				(luce as SpotLight3D).spot_angle = 18.0
+			elif nome.begins_with("luce_monumento_basso"):
+				luce.light_energy = energia_faretti
 		elif luce is DirectionalLight3D:
 			var d := luce as DirectionalLight3D
 			d.rotation_degrees = sole_rotazione

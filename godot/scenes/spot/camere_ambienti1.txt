@@ -6,7 +6,7 @@
 3_inizio 10 3.0 8 0 -0.3 0 60
 3_fine 8.5 3.0 -2 -1 -0.3 -9 60
 # 5: l'insegna nuova di Jilly sul muro ovest con le sue lampade, poi la camera gira su di lei sul monumento (7 s)
-5_inizio -13 3.8 9 -20 4.7 5.35 40
+5_inizio -15 4.2 8 -20 4.7 5.35 38
 5_fine -2.5 2.8 18 0 3.3 10 45
 # 6: primo piano mentre saluta, la camera si avvicina troppo (finisce dove comincia la 7 di ambienti-2)
 6_inizio -0.6 4.48 13.51 0 4.58 10.11 42
