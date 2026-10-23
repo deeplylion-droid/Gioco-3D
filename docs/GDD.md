@@ -164,6 +164,7 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
   - Tutte le luci bianche (lampade, neon, plafoniere) stanno al 40%, e non c'è più il tasto F7 per cambiarle.
   - Come il 18 ottobre, le luci in più dove non si vede la strada le decide l'utente: il collaudo fa il giro intero al buio e gli si propongono i punti.
   - Lo fa grafica, prima delle altre correzioni.
+  - Giro al buio: i tre punti più bui (la scala del pozzo, il lato sinistro della sala pompe, il lato destro dell'area bimbi) restano così, senza luci in più ("Lasciamo così quei 3").
 - **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
