@@ -90,6 +90,17 @@ func _run() -> void:
 			break
 		await get_tree().process_frame
 	STATI.applica(livello, stato)
+	# COLLAUDO_PORTA_POMPE="x,z,gradi": negli interni da soli, la porta della sala pompe aperta come la apre la sala
+	# (PortaManiglione: giro attorno al cardine), in coordinate degli interni
+	if OS.get_environment("COLLAUDO_PORTA_POMPE") != "":
+		var v := OS.get_environment("COLLAUDO_PORTA_POMPE").split(",")
+		var porta := livello.find_child("porta_sala_pompe", true, false) as Node3D
+		if porta:
+			var h := Vector3(float(v[0]), 0, float(v[1]))
+			var r := Transform3D(Basis(Vector3.UP, deg_to_rad(float(v[2]))), Vector3.ZERO)
+			porta.global_transform = Transform3D(Basis(), h) * r * Transform3D(Basis(), -h) * porta.global_transform
+			var mi := porta as MeshInstance3D
+			print("COLLAUDO: porta della sala pompe ", (porta.global_transform * mi.mesh.get_aabb()) if mi and mi.mesh else porta.global_position)
 	for t in livello.find_children("*", "Tempesta", true, false):
 		t.set(&"automatica", false)
 	for i in 240:

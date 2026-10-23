@@ -4,13 +4,14 @@ Base: `lavoro/godot` **122b7bea**. Contiene le correzioni degli interni di ambie
 
 Le posizioni sono nella scena degli interni aperta da sola. Per passare al mondo della sala si aggiungono (-9,7, 0, 40,9).
 
-**Verdetto: non superato**, per due difetti piccoli (D1 e D2). La porta della sala pompe arriva con un altro commit e si controlla dopo.
+**Verdetto: non superato**, per tre difetti piccoli (D1, D2 e D3). La porta della sala pompe (D3) è stata controllata su 5b4609a2, che per il resto è uguale a 122b7bea.
 
 ## Difetti
 
 | # | Che cosa | Misura | Foglio |
 |---|---|---|---|
 | D1 | **L'anta che sbatte finisce dentro il suo armadietto.** `armadietto_sbatte_anta` parte chiusa (rot -94) e dopo il colpo è a -175 gradi: gira verso l'interno. Sta a x 10,52…10,91 e z -5,35…-5,27, dentro il corpo di `armadietti_est_04_rosso` (x 10,5…11,0), con il 98% dei vertici dentro. Da fuori l'armadietto rosso sembra aperto senza anta. Anche su 8371883e e sulla v0.3.8. | `misure/nodi_da_8371883e.txt` | `a311_armadietto_sbatte.jpg` |
+| D3 | **La porta della sala pompe aperta (5b4609a2, stati aperto e ritorno) entra nel telaio e nel battiscopa.** È distesa lungo il muro nord del corridoio (nella sala x 8,28…9,24, z 40,747…40,894) e il cardine è a z 40,910, 1 cm dentro il muro. Vicino al cardine la faccia della porta verso il muro (z 40,876…40,887) sta 1,5-2,7 cm dentro il telaio, che sporge fino a z 40,860, per tutta l'altezza. In basso sta 1,4 cm dentro il battiscopa (z 40,875, fino a y 0,12). Sopra è staccata dal muro di 1,1-2,4 cm. Il maniglione sporge 25 cm e lascia 2,35 m di corridoio. | raggi sulla geometria della sala | `pp_5b.jpg` (porta girata come nella sala, negli interni da soli: la sala col renderer non sta in memoria) |
 | D2 | **Il fermaporta dello stanzino non tocca la porta.** Con i raggi a y 0,12, z -9,62: muro a x 11,20, perno da 11,20 a 11,24, faccia della porta a 11,258, cioè 1,8 cm di distacco. Il tampone di gomma ha lunghezza zero. | raggi sulla geometria | `rav2.jpg` (fermaporta) |
 
 ## Da decidere
