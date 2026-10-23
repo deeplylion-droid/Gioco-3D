@@ -8,11 +8,15 @@ extends Node
 ## (tappa 7 col maniglione, saracinesca, serranda, portone della torre, portello della piscina, paratie della camera
 ## delle onde).
 ## I varchi sono in [constant VARCHI]: punti in fila sul pavimento, da un lato all'altro della porta.
-## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_varchi.gd
+## Con "margini" non controlla: per ogni varco dice il punto più stretto, dove il corpo passa con meno di
+## [constant MARGINE] per lato (e cosa tocca), per le squadre delle zone.
+## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/controllo_varchi.gd [margini]
 
 const SCENA := "res://scenes/sala_principale.tscn"
 ## Passo della capsula lungo il tratto (m).
 const PASSO := 0.05
+## Nel modo "margini": lo spazio per lato sotto cui un punto è stretto (m).
+const MARGINE := 0.10
 ## [nome, giro ("inizio": sempre aperto; "aperte": aperto quando le porte del gioco sono aperte), punti]
 const VARCHI := [
 	["interni: dal corridoio del risveglio agli spogliatoi", "inizio",
@@ -61,6 +65,8 @@ var _alto := 1.75
 var _alzata := 0.32
 var _maschera := 1
 var _escludi: Array[RID] = []
+var _margini := false
+var _stretti: Array = []
 
 
 func _ready() -> void:
@@ -71,6 +77,7 @@ func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Engine.set_meta(&"precarica_torre_spento", true)
 	Engine.set_meta(&"risalita_subito", true)
+	_margini = OS.get_cmdline_user_args().has("margini")
 	for giro in ["inizio", "aperte"]:
 		get_tree().change_scene_to_file(SCENA)
 		for i in 600:
@@ -98,6 +105,12 @@ func _run() -> void:
 				continue
 			_varco(spazio, level, v[0], v[2], giro)
 	print("")
+	if _margini:
+		print("Punti stretti (meno di %d cm per lato):" % roundi(MARGINE * 100.0))
+		for st in _stretti:
+			print("  STRETTO " + st)
+		Game.esci(0)
+		return
 	if _forma == null:
 		_casi.append("la forma del giocatore non si trova")
 	if _casi.is_empty():
@@ -147,6 +160,70 @@ func _a_terra(spazio: PhysicsDirectSpaceState3D, p: Vector3) -> Vector3:
 	return Vector3(p.x, (h["position"] as Vector3).y, p.z) if not h.is_empty() else p
 
 
+## Il punto del varco col margine più piccolo per lato (il corpo allargato di 1 cm alla volta, fino a MARGINE).
+func _misura_margini(spazio: PhysicsDirectSpaceState3D, level: Node, nome: String, punti: Array, giro: String,
+		q: PhysicsShapeQueryParameters3D, su: Vector3) -> void:
+	var forme: Array[ConvexPolygonShape3D] = []
+	var passi := roundi(MARGINE * 100.0)
+	for cm in passi + 1:
+		var f := ConvexPolygonShape3D.new()
+		var k := (0.35 + cm * 0.01) / 0.35
+		var pts := Player._body_points(_alto)
+		for i in pts.size():
+			pts[i] = Vector3(pts[i].x * k, pts[i].y, pts[i].z * k)
+		f.points = pts
+		forme.append(f)
+	var peggio := passi + 1
+	var dove := Vector3.ZERO
+	var verso := Vector3.FORWARD
+	var cosa := ""
+	for i in punti.size() - 1:
+		var a: Vector3 = punti[i]
+		var b: Vector3 = punti[i + 1]
+		var n := maxi(1, ceili(a.distance_to(b) / PASSO))
+		for k in n + 1:
+			var p := _a_terra(spazio, a.lerp(b, float(k) / n))
+			q.transform = Transform3D(Basis(), p + su)
+			for cm in passi + 1:
+				q.shape = forme[cm]
+				var r := spazio.intersect_shape(q, 1)
+				if not r.is_empty():
+					if cm < peggio:
+						peggio = cm
+						dove = p
+						verso = (b - a).normalized()
+						var chi: Object = r[0]["collider"]
+						cosa = String(level.get_path_to(chi)) if chi is Node and level.is_ancestor_of(chi) else str(chi)
+						cosa += _dove(spazio, q, p + su)
+					break
+	q.shape = _forma
+	if peggio <= passi:
+		var riga := "%s (%s): %d cm per lato a %s, tocca %s; %s" % [nome, giro, maxi(peggio - 1, 0), dove.snapped(Vector3.ONE * 0.01), cosa,
+			_larghezza(spazio, dove, verso)]
+		_stretti.append(riga)
+		print("  stretto %s" % riga)
+	else:
+		print("  largo   %s" % nome)
+
+
+## La larghezza libera di traverso al passaggio in [param p] (raggi ai due lati, dai gradini alla testa): la più
+## stretta, e quanto il corpo (70 cm) ci sta largo.
+func _larghezza(spazio: PhysicsDirectSpaceState3D, p: Vector3, verso: Vector3) -> String:
+	var lato := verso.cross(Vector3.UP).normalized()
+	var minima := INF
+	var quota := 0.0
+	for h in [_alzata + 0.05, 0.6, 0.9, 1.2, 1.5, _alzata + _alto - 0.05]:
+		var o := p + Vector3(0, h, 0)
+		var d := 0.0
+		for s in [1.0, -1.0]:
+			var r := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(o, o + lato * s * 2.0, _maschera, _escludi))
+			d += o.distance_to(r["position"]) if not r.is_empty() else 2.0
+		if d < minima:
+			minima = d
+			quota = h
+	return "larghezza libera %.2f m (a %.1f m d'altezza): %d cm per lato se si passa nel mezzo" % [minima, quota, roundi((minima - 0.7) * 50.0)]
+
+
 ## Dove il corpo tocca: il punto di contatto (rest_info), per trovare il pezzo nella collisione unita della stanza.
 func _dove(spazio: PhysicsDirectSpaceState3D, q: PhysicsShapeQueryParameters3D, centro: Vector3) -> String:
 	var info := spazio.get_rest_info(q)
@@ -163,6 +240,9 @@ func _varco(spazio: PhysicsDirectSpaceState3D, level: Node, nome: String, punti:
 	q.exclude = _escludi
 	q.collide_with_areas = false
 	var su := Vector3(0, _alzata + _alto * 0.5 + 0.01, 0)
+	if _margini:
+		_misura_margini(spazio, level, nome, punti, giro, q, su)
+		return
 	for i in punti.size() - 1:
 		var a: Vector3 = punti[i]
 		var b: Vector3 = punti[i + 1]
