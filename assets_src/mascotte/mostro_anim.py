@@ -34,8 +34,13 @@ GIOCATORE_Y = -1.55      # la faccia del giocatore, davanti allo squalo
 PORTA_Y = 5.95           # la porta tagliafuoco, dietro di lui
 # Arretra a passi (uno ogni PASSO_ARRETRA s; i piedi avanzano verso la porta di ARRETRA_PIEDI, uno alla volta:
 # il bacino sta a metà tra i due), poi il giro di T_GIRO s, poi la corsa.
-PASSO_ARRETRA = 0.5
-ARRETRA_PIEDI = (('L', 0.8), ('R', 1.6), ('L', 2.4), ('R', 2.4))
+X0 = 0.22               # di lato, fino al giro (m, +x verso la sua sinistra = il nord del corridoio)
+X_PORTA = -0.038        # di lato nella corsa: il centro del vano della porta tagliafuoco (x del modello, non girata)
+ALTO_CAVIGLIA = 0.22     # l'altezza della caviglia piantata (0,20: stinchi e piede 1-2 cm nel pavimento)
+# (collaudo del 23 ottobre: con quattro passi un piede faceva 1,6 m in un passo, la gamba non ci arrivava e il piede
+# strisciava; ora sei passi, nessun piede fa più di 0,8 m)
+PASSO_ARRETRA = 0.4
+ARRETRA_PIEDI = (('L', 0.4), ('R', 0.8), ('L', 1.2), ('R', 1.6), ('L', 2.0), ('R', 2.0))
 T_GIRO = 1.1
 FASI = dict(MINACCIA=2.4, RICHIAMO=5.4, ARRETRA=6.05)
 FASI.update(GIRO=round(FASI['ARRETRA'] + PASSO_ARRETRA * len(ARRETRA_PIEDI) + 0.12, 3))
@@ -178,7 +183,10 @@ def radice(t):
     # girandosi va ancora un poco verso la porta
     passo += chiavi(t, [(g_(0.1), 0.0), (g_(1.0), 0.3)])
     s, _ = posizione_corsa(t)
-    return 0.0, avanti + passo + s, yaw
+    # di lato: all'inizio X0 verso il nord (la gamba destra stava nel cartello del corridoio), nel giro torna al
+    # centro e nella corsa va verso il centro del vano della porta
+    x = chiavi(t, [(g_(0.12), X0), (g_(0.75), 0.0), (FASI['CORSA'] + 0.8, X_PORTA)])
+    return x, avanti + passo + s, yaw
 
 
 # ---------------------------------------------------------------- appoggi dei piedi
@@ -190,7 +198,9 @@ class Piedi:
         # caviglie nella posa di riposo, nello spazio della radice: +x avanti di 0,3 m, -x dietro
         self.riposo = {s: Vector(c) for s, c in caviglie_riposo.items()}
         # in piedi per minacciare: i piedi un po' più larghi e allineati
-        self.fermo = {'L': Vector((0.34, 0.30, 0.20)), 'R': Vector((-0.30, 0.42, 0.20))}
+        # (collaudo del 23 ottobre: le caviglie 2 cm più su, da fermo stinchi e piede entravano nel pavimento; il destro
+        # più verso il centro: stava dentro il cartello del corridoio)
+        self.fermo = {'L': Vector((0.34, 0.30, ALTO_CAVIGLIA)), 'R': Vector((-0.12, 0.42, ALTO_CAVIGLIA))}
         self.appoggi = {'L': [], 'R': []}       # (t_inizio, t_fine, posizione caviglia, yaw)
         self._costruisci()
 
@@ -202,10 +212,11 @@ class Piedi:
         # fermi fino al primo passo all'indietro; poi i passi: il piede si alza, va verso la porta e si pianta
         # (gli appoggi: dalla fine del passo fino all'inizio del passo dopo dello stesso piede)
         inizio = {'L': 0.0, 'R': 0.0}
-        dove = {s: self.fermo[s].copy() for s in 'LR'}
+        lato0 = Vector((X0, 0.0, 0.0))
+        dove = {s: self.fermo[s] + lato0 for s in 'LR'}
         for lato, a, b, y in passi_arretra():
             self.appoggi[lato].append((inizio[lato], a, dove[lato].copy(), 0.0))
-            dove[lato] = self.fermo[lato] + Vector((0.0, y, 0.0))
+            dove[lato] = self.fermo[lato] + lato0 + Vector((0.0, y, 0.0))
             inizio[lato] = b
         # il giro: tre passi (L, R, L) mentre la radice gira di 180°; il primo appoggio di ognuno finisce quando
         # il piede si alza per il giro
@@ -215,7 +226,8 @@ class Piedi:
         for k, (s, t0, fine) in enumerate((('L', g_(0.33), g_(0.70)), ('R', g_(0.66), FASI['CORSA'] + 0.05),
                                            ('L', g_(0.98), FASI['CORSA'] - 0.02))):
             x, y, yaw = radice(min(t0 + 0.12, g_(1.0)))
-            self.appoggi[s].append((t0, fine, self._mondo(self.fermo[s], x, y, yaw), yaw))
+            # nel giro un poco più su: lo stinco piegato entrava nel pavimento
+            self.appoggi[s].append((t0, fine, self._mondo(self.fermo[s], x, y, yaw) + Vector((0, 0, 0.07)), yaw))
         # la corsa: passi alternati, ogni appoggio centrato sotto l'anca a metà appoggio
         t = FASI['CORSA'] + 0.12
         lato = 'L'
@@ -225,7 +237,7 @@ class Piedi:
             appoggio = min(0.30, 0.70 / v)
             tm = t + appoggio / 2
             x, y, yaw = radice(tm)
-            off = Vector((0.26 if lato == 'L' else -0.26, 0.0, 0.20))
+            off = Vector((0.26 if lato == 'L' else -0.26, 0.0, ALTO_CAVIGLIA + 0.02))
             pos = self._mondo(off, x, y, yaw)
             self.appoggi[lato].append((t, t + appoggio, pos, yaw))
             t += 1.0 / CADENZA * (1.0 if v > 2.5 else 1.2)
@@ -240,9 +252,12 @@ class Piedi:
             if i + 1 < len(ap) and b < t < ap[i + 1][0]:
                 a2, _, p2, yaw2 = ap[i + 1]
                 x = (t - b) / (a2 - b)
-                xs = x * x * (3 - 2 * x)
+                # prima si alza, poi va avanti, e si posa solo alla fine (se no a inizio e fine del passo il
+                # piede strisciava radente al pavimento)
+                xm = min(max((x - 0.18) / 0.64, 0.0), 1.0)
+                xs = xm * xm * (3 - 2 * xm)
                 pos = p.lerp(p2, xs)
-                alza = math.sin(math.pi * x)
+                alza = math.sin(math.pi * x) ** 0.6
                 passo = (p2 - p).length
                 pos.z += alza * min(0.22, 0.06 + passo * 0.12)
                 return pos, alza, yaw + (yaw2 - yaw) * xs
@@ -268,26 +283,33 @@ def posa(t, piedi):
     # --- quanto è chino: addosso al giocatore (testa giù), poi si raddrizza al richiamo
     A = FASI['ARRETRA']
     # arretrando resta chino (mezzo), come una bestia che non ti perde di vista; si raddrizza nel giro
-    chino = chiavi(t, [(0.0, 1.0), (R + 0.05, 1.0), (R + 0.45, 0.25), (A + 0.3, 0.55), (G, 0.5), (g_(0.6), 0.2),
-                       (C, 0.35)])
+    # (nel giro meno chino e meno peso sui passi: lo stinco piegato entrava nel pavimento, collaudo del 23 ottobre)
+    chino = chiavi(t, [(0.0, 1.0), (R + 0.05, 1.0), (R + 0.45, 0.25), (A + 0.3, 0.55), (G - 0.3, 0.45), (G, 0.3),
+                       (g_(0.6), 0.2), (C, 0.35)])
     abbassa = 0.14 * chino
     # il peso: a ogni piede che si pianta (arretra e giro) il bacino scende e risale
     for lato, a, b, y in passi_arretra():
         abbassa += 0.045 * math.exp(-((t - b - 0.06) / 0.11) ** 2)
     for tp_ in (g_(0.33), g_(0.66), g_(0.98)):
-        abbassa += 0.035 * math.exp(-((t - tp_ - 0.1) / 0.1) ** 2)
+        abbassa += 0.015 * math.exp(-((t - tp_ - 0.1) / 0.1) ** 2)
     # alla porta: si abbassa ancora per passare sotto l'architrave
     abbassa += liscio(0.0, 0.16, tp - 0.32, tp - 0.10, t) - liscio(0.0, 0.16, tp + 0.16, tp + 0.38, t)
     # la corsa: il bacino scende a ogni appoggio e risale nel volo (poco: la corsa è fluida, non saltellata)
     if corsa > 0:
         abbassa += corsa * (0.03 + 0.022 * math.cos(2 * fase))
     p['_abbassa'] = abbassa
+    # alla porta (il vano è largo 1,22 m, lui con le braccia 1,8): la coda ondeggia meno
+    sbieco = liscio(0.0, 1.0, tp - 0.6, tp - 0.3, t) - liscio(0.0, 1.0, tp + 0.25, tp + 0.55, t)
+    # nel giro e alla porta le braccia raccolte al petto (nel giro la mano sinistra entrava nel muro nord)
+    stretto = max(liscio(0.0, 1.0, G - 0.25, G + 0.1, t) - liscio(0.0, 1.0, C + 0.1, C + 0.4, t),
+                  liscio(0.0, 1.0, tp - 0.75, tp - 0.45, t) - liscio(0.0, 1.0, tp + 0.35, tp + 0.65, t))
     # --- respiro (sempre): il petto si gonfia
     resp = math.sin(t * 2 * math.pi * (0.55 if t < R else 0.9))
     # --- bacino e busto
     # nella corsa più piegato in avanti (deciso) e con meno rollio (fluido)
-    p['bacino'] = [('x', 5 * chino + 9 * corsa), ('z', 4 * corsa * math.sin(fase)),
-                   ('y', 2.5 * corsa * math.sin(fase))]
+    dritto = 1.0 - 0.75 * (liscio(0.0, 1.0, tp - 0.6, tp - 0.3, t) - liscio(0.0, 1.0, tp + 0.25, tp + 0.55, t))
+    p['bacino'] = [('x', 5 * chino + 9 * corsa), ('z', 4 * corsa * math.sin(fase) * dritto),
+                   ('y', 2.5 * corsa * math.sin(fase) * dritto)]
     # nell'esitazione si volta indietro con tutto il busto, non solo con la testa: dietro di lui il
     # giocatore deve vedergli il muso e l'occhio
     # nel giro il busto resta indietro e la testa resta sul giocatore (girano al contrario della radice) finché
@@ -296,10 +318,12 @@ def posa(t, piedi):
     yaw_g = math.degrees(radice(t)[2])
     tiene = 1.0 - liscio(0.0, 1.0, g_(0.55), C + 0.6, t)
     torsione = -yaw_g * tiene * 0.4 / 58.0
-    p['spina'] = [('x', 5 * chino + 9 * corsa + 1.5 * resp), ('z', -4 * corsa * math.sin(fase) + 26 * torsione)]
-    p['petto'] = [('x', 4 * chino + 2 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase) + 32 * torsione)]
+    p['spina'] = [('x', 5 * chino + 9 * corsa + 1.5 * resp), ('z', -4 * corsa * math.sin(fase) * dritto + 26 * torsione)]
+    p['petto'] = [('x', 4 * chino + 2 * corsa - 2 * resp), ('z', -6 * corsa * math.sin(fase) * dritto + 32 * torsione)]
     # alla porta il busto si piega di più
     p['spina'].append(('x', liscio(0, 10, tp - 0.32, tp - 0.10, t) - liscio(0, 10, tp + 0.16, tp + 0.38, t)))
+    # (girare le spalle di sbieco portava di lato anche la testa, che sta molto avanti, e la faceva entrare nello
+    # stipite: nel vano invece le braccia raccolte, il corpo al centro e niente ondeggiare di lato, vedi dritto)
     # --- collo e testa: giù verso la faccia del giocatore, poi lo scatto verso il richiamo (dietro a
     # sinistra, sopra la spalla), il giro, lo sguardo indietro al giocatore nell'esitazione
     # (lo scatto dura mezzo secondo: più svelto la pelle della bocca si strappava tra un fotogramma e
@@ -357,11 +381,16 @@ def posa(t, piedi):
         su = Vector((-0.05, -0.10, 0.42)) if s == 'L' else Vector((0.0, 0.0, -0.05))
         corsa_off = riposo + su + Vector((0.0, -0.18 * oscilla * segno, 0.07 * oscilla * segno))
         resto = max(0.0, 1.0 - braccia - corsa)
-        p['_mano.' + s] = riposo * resto + minaccia * braccia + corsa_off * corsa
+        mano = riposo * resto + minaccia * braccia + corsa_off * corsa
+        # raccolte: davanti al petto, vicino al centro, i gomiti stretti
+        raccolta = Vector((0.13 if s == 'L' else -0.10, -0.85, 1.15)) - spalla
+        p['_mano.' + s] = mano.lerp(raccolta, stretto)
     p['mano.L'] = [('x', -10 * braccia + 4 * rumore(t, 2.0, 3.0) * braccia)]
     p['mano.R'] = [('x', 4 * rumore(t, 2.2, 5.0) * braccia)]
     # --- coda: ondeggia lenta, nella corsa fa da contrappeso (in ritardo sul bacino)
-    amp = 6 + 14 * corsa
+    amp = (6 + 14 * corsa) * (1.0 - 0.8 * sbieco)
+    # nel vano il busto si stringe di lato (mostro_rig: la scala x della spina): è largo 1,4 m, il vano 1,22 m
+    p['_stringi'] = 1.0 - 0.27 * sbieco
     for k, b in enumerate(('coda1', 'coda2', 'coda3')):
         # quando si volta indietro la coda va dall'altra parte (contrappeso; e non copre il muso)
         p[b] = [('z', amp * math.sin((fase if corsa > 0 else t * 1.3) - 0.9 * (k + 1)) * (1 + 0.3 * k)

@@ -32,7 +32,7 @@ const CELLA := 0.08
 @export var porta: Node3D
 @export var cardine := Vector3(21.965, 0.0, -0.72)
 ## Di quanto è aperta all'inizio (verso il corridoio).
-@export var apertura_porta := 100.0
+@export var apertura_porta := 120.0
 ## Altezza degli occhi mentre si è in ginocchio, a terra, davanti allo squalo.
 @export var occhi_a_terra := 0.98
 

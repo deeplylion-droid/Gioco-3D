@@ -34,6 +34,9 @@ TESTA_RAGGIO = 0.42
 CERNIERA = (Vector((-0.17, -0.70, 1.60)), Vector((0.45, -0.70, 1.53)))
 
 
+LABBRA = {}     # il bordo delle labbra: 'su' e 'giu', punti (x, y, z) di Blender da sinistra a destra
+
+
 def carica():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=SORGENTE)
@@ -392,6 +395,9 @@ def interno(bm, w, lab, muso_t, me, orlo):
     c1, c2 = tratto_h(i_min, i_max), tratto_h(i_max, i_min)
     z1 = np.mean([v.co.z for v in c1]); z2 = np.mean([v.co.z for v in c2])
     h_su, h_giu = (c1, c2[::-1]) if z1 > z2 else (c2, c1[::-1])   # tutte e due da sinistra a destra
+    # il bordo vero delle labbra (posa di riposo), per la bava del gioco (mostro_rig lo scrive accanto al GLB)
+    LABBRA['su'] = [[round(c, 4) for c in v.co] for v in h_su]
+    LABBRA['giu'] = [[round(c, 4) for c in v.co] for v in h_giu]
     def param(vs):
         P_ = np.array([v.co[:] for v in vs])
         l = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(P_, axis=0), axis=1))]

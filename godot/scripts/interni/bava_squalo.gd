@@ -10,11 +10,16 @@ extends Node3D
 ## I fili sono nastri sottili girati verso la camera (ImmediateMesh), rifatti a ogni fotogramma; senza fisica.
 ## La mette risveglio_squalo.gd (prepara()); attivo = false la spegne piano.
 
-## I fili, nello spazio del modello in Blender (x di lato, -y avanti, z su: "bocca" a (0,14; -1,02; 1,50)):
-## [x sopra, x sotto, quanto più indietro sotto, lunghezza del filo (m)].
-const FILI := [[-0.03, 0.0, 0.02, 0.12], [0.31, 0.28, 0.015, 0.15], [0.23, 0.25, -0.01, 0.09]]
+## I capi stanno sul bordo vero delle labbra (mostro_squalo_A_rig_labbra.json, scritto da mostro_rig.py: i vertici
+## del bordo della bocca nella posa di riposo; prima i capi erano stimati e restavano fino a 6 cm dalla pelle,
+## collaudo del 23 ottobre), nello spazio del modello in Blender (x di lato, -y avanti, z su).
+const LABBRA := "res://assets/models/mascotte/mostro_squalo_A_rig_labbra.json"
+## I fili: [x del capo sopra, x del capo sotto (sfalsati: mai paralleli), lunghezza del filo (m)].
+const FILI := [[-0.02, 0.01, 0.12], [0.31, 0.28, 0.15], [0.23, 0.25, 0.09]]
 ## La colata dal labbro di sotto: x, quanto può allungarsi (m).
 const COLATA := [0.1, 0.15]
+## Quanto dentro il bordo stanno i capi (m): sulla carne del labbro, non sull'orlo.
+const DENTRO := 0.006
 const SPESSORE := 0.0026
 const SEGMENTI := 12
 
@@ -49,20 +54,33 @@ func prepara(scheletro: Skeleton3D) -> void:
 	_mi.top_level = true
 	add_child(_mi)
 	_rng.seed = 2310
+	var lab: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(LABBRA)) if FileAccess.file_exists(LABBRA) else {}
+	if lab.is_empty():
+		push_warning("BavaSqualo: manca " + LABBRA)
+		return
+	var centro := Vector3.ZERO
+	for q in lab["su"] + lab["giu"]:
+		centro += Vector3(q[0], q[1], q[2])
+	centro /= float(lab["su"].size() + lab["giu"].size())
 	for f in FILI:
-		var su := _locale(_testa, _bordo(f[0], 1.505, 0.0))
-		var giu := _locale(_mascella, _bordo(f[1], 1.495, f[2]))
-		_fili.append({"su": su, "giu": giu, "lungo": float(f[3]), "intero": true, "rotto_t": 0.0,
+		var su := _locale(_testa, _bordo(lab["su"], f[0], centro))
+		var giu := _locale(_mascella, _bordo(lab["giu"], f[1], centro))
+		_fili.append({"su": su, "giu": giu, "lungo": float(f[2]), "intero": true, "rotto_t": 0.0,
 			"fase": _rng.randf() * TAU, "bolla": _rng.randf_range(0.25, 0.75), "lato": _rng.randf_range(-1.0, 1.0)})
-	_colata = {"da": _locale(_mascella, _bordo(COLATA[0], 1.47, -0.03)), "max": float(COLATA[1]), "l": 0.02,
+	_colata = {"da": _locale(_mascella, _bordo(lab["giu"], COLATA[0], centro)), "max": float(COLATA[1]), "l": 0.02,
 		"fase": _rng.randf() * TAU}
 	_crea_gocce()
 
 
-## Un punto sul bordo della bocca (spazio del modello di Blender): il bordo gira indietro verso gli angoli; un poco
-## dentro le labbra, più [param indietro].
-func _bordo(x: float, z: float, indietro: float) -> Vector3:
-	return Vector3(x, -1.02 + 0.55 * absf(x - 0.14) + 0.03 + indietro, z)
+## Il punto del bordo delle labbra [param punti] più vicino in x a [param x], un poco verso il centro della bocca.
+func _bordo(punti: Array, x: float, centro: Vector3) -> Vector3:
+	var migliore := Vector3.ZERO
+	var dx := INF
+	for q in punti:
+		if absf(float(q[0]) - x) < dx:
+			dx = absf(float(q[0]) - x)
+			migliore = Vector3(q[0], q[1], q[2])
+	return migliore + (centro - migliore).normalized() * DENTRO
 
 
 ## Un punto del modello di Blender (posa di riposo) nello spazio dell'osso a riposo (glTF: x, z, -y).

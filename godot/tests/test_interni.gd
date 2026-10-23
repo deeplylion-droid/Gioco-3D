@@ -174,7 +174,7 @@ func _scena_squalo(start: Marker3D) -> void:
 		check(not torcia.accesa, "il gioco inizia a torcia spenta")
 	check(not p.input_enabled and s.in_corso() and s.squalo != null, "il giocatore non si muove: la camera è guidata")
 	var perno := level.find_child("PernoPortaTagliafuoco", true, false) as Node3D
-	check(perno != null and absf(perno.rotation_degrees.y - 100.0) < 1.0, "la porta tagliafuoco è aperta")
+	check(perno != null and absf(perno.rotation_degrees.y - s.apertura_porta) < 1.0, "la porta tagliafuoco è aperta (%.0f gradi)" % s.apertura_porta)
 	var min_dist := 99.0
 	var max_apertura := 0.0
 	var max_angolo_in_minaccia := 0.0
