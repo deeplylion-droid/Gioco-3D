@@ -413,6 +413,7 @@ func _luce_uscita() -> void:
 	cm.top_radius = R_TUBO + 0.2
 	cm.bottom_radius = R_TUBO + 0.2
 	cm.height = 0.002
+	cm.radial_segments = 64
 	disco.mesh = cm
 	var m := StandardMaterial3D.new()
 	# (acceso davvero: l'emissione sopra la soglia del bagliore; con unshaded restava grigio)
