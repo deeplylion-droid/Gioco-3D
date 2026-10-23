@@ -927,10 +927,10 @@ func _tappa8() -> void:
 	# aria (controllo di posizionamento del 22 ottobre, stato lei_fossa). I punti restano: servono a LeiSbuca
 	# (getti del geyser, punti da colpire, quando è tutta sotto).
 	medusa.set(&"gocce", false)
-	# i tentacoli contro i muri (TentacoliControIMuri) qui no: con la posa della vasca centrale, fatta per un altro
-	# bordo, spingerli fuori dai muri della fossa li fa salire ad arco sopra il bordo (scatti del 22 ottobre); per la
-	# fossa serve una posa sua
-	medusa.set(&"tentacoli_contro_i_muri", false)
+	# i tentacoli fuori dai muri della fossa: la posa della vasca centrale è fatta per un altro bordo, e spingerli
+	# fuori mentre si gioca li faceva salire ad arco (scatti del 22 ottobre); qui la loro posa è calcolata prima, sui
+	# vertici veri (tools/tentacoli_fossa_posa.gd)
+	medusa.set(&"tentacoli_posa_fissa", "res://assets/models/medusa/tentacoli_fossa.json")
 	medusa.transform = sbuca.transform
 	medusa.visible = false
 	own(medusa, lei)
