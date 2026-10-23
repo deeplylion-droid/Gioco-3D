@@ -84,27 +84,13 @@
 		"zona": "interni"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"nodo": "Mascotte/StatuaPolpoA/statua_polpo_A",
-		"pos": [
-			-4.5,
-			0.0,
-			-17.75
-		],
-		"problema": "ingombro",
-		"squadra": "mascotte",
-		"stato": "da correggere",
-		"zona": "mascotte"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (85 celle da 25 cm) (pavimento a y -0.00), con la collisione (ci si sbatte contro)",
 		"motivo": "struttura per bambini: i tettucci e le sbarre stanno all'altezza della testa di un adulto, ci si urta come contro un muro e si passa accovacciati (scelta dell'utente, 22 ottobre)",
 		"nodo": "Sala/AreaBimbi/sala_struttura_gioco",
 		"pos": [
-			-15.5,
+			-12.25,
 			0.0,
-			-19.25
+			-19.0
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
@@ -434,13 +420,13 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.77 m sopra il pavimento (3 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa) (stato: lei_fossa)",
 		"motivo": "i tentacoli di lei affacciata alla fossa (tappa 8) stanno tutti fra 0,3 e 2 m in pianta dal suo occhio, e LeiSbuca prende il giocatore a 2,4 m (distanza_presa) appena lei è visibile: da vivo non ci si arriva (deciso dal coordinatore, 22 ottobre)",
 		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
 		"pos": [
-			-13.0,
+			-14.5,
 			0.0,
-			-5.25
+			-5.75
 		],
 		"problema": "ingombro",
 		"squadra": "mascotte",
@@ -448,12 +434,12 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 17 cm (stato: lei_fossa)",
+		"dettaglio": "passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 10 cm (stato: lei_fossa)",
 		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): passa dentro Sala/AreaBimbi/sala_fossa_bimbi per 116 cm (stato: lei_fossa)",
 		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
 		"pos": [
-			-13.24,
-			-0.06,
+			-13.37,
+			-0.05,
 			-6.85
 		],
 		"problema": "compenetra",
