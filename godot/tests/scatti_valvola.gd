@@ -1,15 +1,16 @@
 extends Node
 ## Scatti e clip della valvola rossa degli acquari che gocciola (23 ottobre, l'indizio del miscuglio torbido): la sala
-## vera senza interni e risalita (memoria), al buio del ritorno con le luci bianche al 40%, acquari comparsi, tappa 8
-## finita, miscuglio torbido. Per ogni camera, all'altezza degli occhi, una raffica di fotogrammi di fila (a 30 al
-## secondo) da montare in una clip con ffmpeg.
-## Uso, sotto il render.lock e con almeno 13,5 GB liberi:
-##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --fixed-fps 30 \
-##        --resolution 1280x720 --script res://tests/run.gd -- res://tests/scatti_valvola.gd <cartella> [fotogrammi] [camere]
+## vera senza i rami pesanti (memoria, come tools/scatti_acquari.sh; senza Tecnici non c'è la serranda e gli acquari
+## compaiono con la tappa 8 finita), al buio del ritorno con le luci bianche al 40%, tappa 8 finita, miscuglio torbido.
+## Per ogni camera, all'altezza degli occhi, una raffica di fotogrammi di fila (uno ogni due a 60 al secondo, cioè a 30
+## al secondo) da montare in una clip con ffmpeg.
+## Uso: tools/scatto_sicuro.sh res://tests/scatti_valvola.gd <cartella> [fotogrammi] [camere]
+## SCATTI_TOGLI: altri rami da togliere, separati da virgole.
 ## Le camere stanno davanti alla bocca della valvola (verso fuori, -X del nodo Valvola), a 1,5, 2,5 e 4 m.
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 const CAMERE := {"vicino": 1.5, "medio": 2.5, "lontano": 4.0}
+const TOGLI := ["Interni", "Risalita", "Tecnici", "Sala/TorreScivoli", "BambiniBalconata", "Sala/AreaBimbi", "Polaroid"]
 
 
 func _ready() -> void:
@@ -24,7 +25,9 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(out)
 	Engine.set_meta(&"precarica_torre_spento", true)
 	Grafica.applica_preset("alto")
-	var ridotta: String = load("res://tests/scena_ridotta.gd").riduci(LEVEL, ["Interni", "Risalita"])
+	var togli := TOGLI.duplicate()
+	togli.append_array(OS.get_environment("SCATTI_TOGLI").split(",", false))
+	var ridotta: String = load("res://tests/scena_ridotta.gd").riduci(LEVEL, togli)
 	var livello := (load(ridotta) as PackedScene).instantiate()
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
@@ -78,8 +81,9 @@ func _run() -> void:
 			await get_tree().process_frame
 		var cartella := out.path_join(nome)
 		DirAccess.make_dir_recursive_absolute(cartella)
-		for i in n_foto:
+		for i in n_foto * 2:
 			await RenderingServer.frame_post_draw
-			get_viewport().get_texture().get_image().save_jpg(cartella.path_join("f%03d.jpg" % i), 0.9)
+			if i % 2 == 0:
+				get_viewport().get_texture().get_image().save_jpg(cartella.path_join("f%03d.jpg" % (i / 2)), 0.9)
 		print("salvato ", nome)
 	get_tree().quit()
