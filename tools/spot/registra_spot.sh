@@ -27,7 +27,9 @@ done
 # montaggio: ogni segmento senza la preparazione, poi tutti di fila
 : > "$OUT/lista.txt"
 for s in $TUTTI; do
-	ffmpeg -y -loglevel error -ss "$PREP" -i "$OUT/$s.avi" -an -c:v mjpeg -q:v 2 "$OUT/${s}_tagliato.avi"
+	# alla durata esatta del segmento (la regia si ferma un fotogramma dopo: senza, lo spot andava avanti all'audio)
+	DUR=$(python3 -c "import json,sys;d=json.load(open(sys.argv[1]));g=[x for x in d['segmenti'] if x['nome']==sys.argv[2]][0]['inquadrature'];print(g[-1]['inizio']+g[-1]['durata']-g[0]['inizio'])" "$JSON" "$s")
+	ffmpeg -y -loglevel error -ss "$PREP" -i "$OUT/$s.avi" -t "$DUR" -an -c:v mjpeg -q:v 2 "$OUT/${s}_tagliato.avi"
 	echo "file '$OUT/${s}_tagliato.avi'" >> "$OUT/lista.txt"
 done
 mkdir -p "$(dirname "$FILE")"
