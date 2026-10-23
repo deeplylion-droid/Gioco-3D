@@ -43,11 +43,24 @@ def prop(nome, file, loc, rot_z=0.0, dim=None, asse='max', rot=(0, 0, 0)):
 
 
 def col_ob(ob, sopra=0.0):
-    """Collisione a scatola grande come l'oggetto (nel mondo): si urta come un oggetto vero. Da chiamare nella
-    zona dell'oggetto (la scatola va nella collisione della collezione attiva)."""
+    """Collisione a scatola grande come l'oggetto e orientata come lui: si urta come un oggetto vero. Da chiamare
+    nella zona dell'oggetto (la scatola va nella collisione della collezione attiva). La scatola sta nello spazio
+    dell'oggetto: allineata agli assi del mondo, intorno a un oggetto ruotato (la porta aperta dello stanzino)
+    copriva il vano e non si passava più (v0.3.9, segnalazione dell'utente del 23 ottobre)."""
     bpy.context.view_layer.update()
-    ws = [ob.matrix_world @ v.co for v in ob.data.vertices]
-    L.col_scatola(tuple(min(p[i] for p in ws) for i in range(3)), tuple(max(p[i] for p in ws) + (sopra if i == 2 else 0.0) for i in range(3)))
+    mw = ob.matrix_world
+    ls = [v.co for v in ob.data.vertices]
+    lo = [min(p[i] for p in ls) for i in range(3)]
+    hi = [max(p[i] for p in ls) for i in range(3)]
+    if sopra:
+        # "sopra" è in metri nel mondo, verso l'alto: lungo l'asse locale più verticale, alla sua scala
+        asse = max(range(3), key=lambda i: abs(mw.col[i][2]))
+        sc = Vector(mw.col[asse][:3]).length
+        if mw.col[asse][2] >= 0:
+            hi[asse] += sopra / sc
+        else:
+            lo[asse] -= sopra / sc
+    L.col_scatola(tuple(lo), tuple(hi), matrice=mw)
     return ob
 
 
@@ -417,7 +430,8 @@ def corridoio(M):
     if HQ.disponibile('cartello_pericolo'):
         col_ob(HQ.metti('cartello_corridoio', 'cartello_pericolo', (16.2, 1.95, 0), (None, None, 0.62), rot_z=R(-60)))
     # l'asciugamano per terra, più vicino al muro sud (stava in mezzo alla strada)
-    col_ob(prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.45, 0), 75, 0.8))
+    # per terra: ci si cammina sopra (con la scatola di collisione il giocatore ci restava fermo contro)
+    prop('asciugamano_corridoio', 'asciugamano', (8.4, 0.45, 0), 75, 0.8)
 
     # ---- punti per il gioco
     L.vuoto('marker_risveglio', (20.4, 1.25, 0.0), (0, 0, R(90)), 'ARROWS', 0.5)    # sdraiato, guarda verso ovest (-X)
@@ -851,7 +865,8 @@ def spogliatoi(M):
     br = prop('braccioli', 'braccioli', (4.65, 7.2, 0.45), 20, 0.3)
     copia(br, 'braccioli_2', (7.6, 9.9, 0), 110)
     prop('asciugamano', 'asciugamano', (9.35, 5.2, 0.45), 90, 0.9)
-    col_ob(prop('asciugamano_2', 'asciugamano', (6.4, 4.3, 0), 20, 0.8))
+    # per terra all'ingresso degli spogliatoi: ci si cammina sopra (la sua scatola bloccava il passaggio dal corridoio)
+    prop('asciugamano_2', 'asciugamano', (6.4, 4.3, 0), 20, 0.8)
     prop('paperella_spogliatoi', 'paperella', (7.9, 13.3, 0), 200, 0.09)
     col_ob(prop('secchio_mocio', 'secchio_mocio', (7.6, 11.6, 0), 210, 0.95, 'z'))
     col_ob(prop('pallone_spogliatoi', 'pallone', (10.2, 10.2, 0), 0, 0.4))
