@@ -550,19 +550,6 @@
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimenti fra y -0.30 e -0.00), senza collisione (si attraversa)"
 	},
 	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			-1.75,
-			0.37,
-			12.4
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm"
-	},
-	{
 		"zona": "torre",
 		"nodo": "Polaroid10",
 		"squadra": "ambienti-2",

@@ -14,48 +14,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_1, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_1, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)",
-		"nodo": "Tecnici/Ambienti/SalaPompe/POMPA_1_manometro",
-		"pos": [
-			4.15,
-			-6.83,
-			33.27
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)",
-		"nodo": "Tecnici/Ambienti/SalaPompe/POMPA_2_manometro",
-		"pos": [
-			4.15,
-			-6.83,
-			37.77
-		],
-		"problema": "staccato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "la sua forma sfiora Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm)",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Gioco/EnigmaAcquari/AcquarioMisto/Base/cilindro_base_bassa, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioMisto/Allacci/CoperchioPompa",
-		"pos": [
-			8.74,
-			0.81,
-			-21.61
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi.",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_0_tubi.",
 		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
@@ -392,48 +350,6 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm",
-		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
-		"pos": [
-			-1.75,
-			0.37,
-			12.4
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioGiallo/Coperchio/cilindro_coperchio",
-		"motivo": "controllo del 22 ottobre notte, coi modelli nuovi: il 100% dei suoi vertici è dentro il coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Correzione proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioGiallo/AnelloVetro",
-		"pos": [
-			16.9,
-			4.31,
-			-22.3
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Gioco/EnigmaAcquari/AcquarioBlu/Coperchio/cilindro_coperchio",
-		"motivo": "controllo del 22 ottobre notte, coi modelli nuovi: il 100% dei suoi vertici è dentro il coperchio. Per enigmi è un errore del controllo: il coperchio è un foglio solo, aperto (la gonna scende intorno alla cima del vetro), e col raggio solo verso l'alto tutto quello che sta sotto la cupola risulta dentro; l'anello sta sul bordo del vetro, 3,7 mm dentro la gonna e 18 cm sotto il coperchio. Correzione proposta a grafica: dentro solo se è dispari anche il raggio verso il basso (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/AcquarioBlu/AnelloVetro",
-		"pos": [
-			5.7,
-			4.31,
-			-22.3
-		],
-		"problema": "compenetra",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "la sua forma sfiora SalaInseguimento/Luci/@Node3D@7533/POMPA_3, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) [modello: sala_inseguimento.tscn]",
 		"firma": "sala_inseguimento.tscn|sala_pompe.gltf::ArrayMesh_1y626",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/Luci/@Node3D@7535/POMPA_3, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) [modello: sala_inseguimento.tscn]",
@@ -463,7 +379,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -34.00), con la collisione (ci si sbatte contro)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -34.00), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
 		"pos": [
@@ -547,50 +463,8 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "entra dentro TorreProp/prop_lettino_plastica_1",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: entra dentro TorreProp/prop_lettino_plastica_1",
-		"nodo": "Polaroid10",
-		"pos": [
-			23.59,
-			-11.66,
-			-22.41
-		],
-		"problema": "compenetrato",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "non si vede da nessuno dei 12 punti di vista vicini (1-1,8 m, altezza degli occhi); lo coprono: TorreStruttura/torre_polaroid_10, TorreStruttura/torre_A, TorreProp/prop_lettino_plastica_1 (la superficie più vicina è a 3 cm dal suo centro)",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: non si vede da nessuno dei 12 punti di vista vicini (1-1,8 m, altezza degli occhi); lo coprono: TorreStruttura/torre_polaroid_10, TorreStruttura/torre_A, TorreProp/prop_lettino_plastica_1 (la superficie più vicina è a 3 cm dal suo centro)",
-		"nodo": "Polaroid10",
-		"pos": [
-			23.59,
-			-11.66,
-			-22.41
-		],
-		"problema": "coperto",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
-		"dettaglio": "il 48% dei suoi vertici è dentro TorreProp/prop_lettino_plastica_1",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: il 48% dei suoi vertici è dentro TorreProp/prop_lettino_plastica_1",
-		"nodo": "Polaroid10/Modello/Polaroid",
-		"pos": [
-			23.59,
-			-11.66,
-			-22.41
-		],
-		"problema": "compenetra",
-		"squadra": "ambienti-2",
-		"stato": "da correggere",
-		"zona": "torre"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)",
-		"motivo": "controllo del 22 ottobre sera (mesh con scheletro misurate nella posa del momento, non in quella di riposo): nello spazio di chi cammina, all'altezza delle gambe: a meno di 10 cm dal giocatore, fra 0.35 e 0.59 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: lei_fossa)",
+		"motivo": "i tentacoli di lei affacciata alla fossa (tappa 8) stanno tutti fra 0,3 e 2 m in pianta dal suo occhio, e LeiSbuca prende il giocatore a 2,4 m (distanza_presa) appena lei è visibile: da vivo non ci si arriva (deciso dal coordinatore, 22 ottobre)",
 		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
 		"pos": [
 			-13.0,
@@ -599,7 +473,7 @@
 		],
 		"problema": "ingombro",
 		"squadra": "mascotte",
-		"stato": "da correggere",
+		"stato": "voluto",
 		"zona": "sala"
 	},
 	{
@@ -629,81 +503,6 @@
 		"squadra": "mascotte",
 		"stato": "da correggere",
 		"zona": "sala"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@23094/lampada",
-		"pos": [
-			-11.05,
-			-2.4,
-			100.95
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@23128/lampada",
-		"pos": [
-			-55.79,
-			-2.4,
-			85.23
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@23148/lampada",
-		"pos": [
-			-37.14,
-			-2.4,
-			108.43
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 276.8 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@23168/lampada",
-		"pos": [
-			-43.78,
-			-2.4,
-			89.86
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
-	},
-	{
-		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: risalita_arrivo) [modello: lampada_gabbia.glb]",
-		"nodo": "Risalita/Fiume/@Node3D@23171/lampada",
-		"pos": [
-			-37.14,
-			-2.4,
-			79.37
-		],
-		"problema": "staccato",
-		"squadra": "enigmi",
-		"stato": "da correggere",
-		"zona": "risalita"
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -5.40), senza collisione (si attraversa) (stato: risalita_arrivo) [modello: fiume.tscn]",
