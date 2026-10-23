@@ -19,7 +19,7 @@ for s in $SEGMENTI; do
 	while [ "$(awk '/MemAvailable/{print $2}' /proc/meminfo)" -lt 13500000 ]; do sleep 20; done
 	flock /home/user/tools/render.lock xvfb-run -a -s "-screen 0 1280x720x24" godot --path "$QUI/godot" \
 		--rendering-driver vulkan --resolution 1280x720 --fixed-fps $FPS --write-movie "$OUT/$s.avi" \
-		res://scenes/spot/regia_spot.tscn -- "$s" "$PREP" 2>&1 | grep -v ALSA | tail -5
+		--script res://tests/run.gd -- res://scripts/spot/regia_spot.gd "$s" "$PREP" 2>&1 | grep -v ALSA | tail -5
 done
 # montaggio: ogni segmento senza la preparazione, poi tutti di fila
 : > "$OUT/lista.txt"

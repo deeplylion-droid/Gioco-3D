@@ -6,7 +6,9 @@ extends Node
 ## li registra uno alla volta e li monta con ffmpeg in assets/spot/spot.ogv.
 ## Uso (sotto il render.lock, con xvfb-run e vulkan):
 ##   godot --path godot --rendering-driver vulkan --resolution 1280x720 --fixed-fps 30 --write-movie <file.avi> \
-##       res://scenes/spot/regia_spot.tscn -- <segmento> [preparazione_s]
+##       --script res://tests/run.gd -- res://scripts/spot/regia_spot.gd <segmento> [preparazione_s]
+## (con --script il gioco sa di essere in una prova: senza, al primo avvio apre la calibrazione della luminosità, che
+## mette in pausa l'albero, e la regia restava ferma)
 ## Per [member preparazione] secondi la camera sta ferma sul primo fotogramma (GI, sonde e acqua si assestano):
 ## quel pezzo il montaggio lo taglia.
 
@@ -28,10 +30,10 @@ var _occhio: Node        ## l'OcchioIpnotico di enigmi con solo_occhio (muove l'
 
 
 func _ready() -> void:
-	var args := OS.get_cmdline_user_args()
+	var args := Array(OS.get_cmdline_user_args()).filter(func(a: String): return not a.ends_with(".gd"))
 	var dati: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(INQUADRATURE))
 	_dati = dati
-	var nome := args[0] if args.size() > 0 else String(dati["segmenti"][0]["nome"])
+	var nome: String = String(args[0]) if args.size() > 0 else String(dati["segmenti"][0]["nome"])
 	if args.size() > 1:
 		preparazione = float(args[1])
 	for s in dati["segmenti"]:
