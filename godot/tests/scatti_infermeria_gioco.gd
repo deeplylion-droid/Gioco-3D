@@ -19,6 +19,11 @@ const CAMERE := {
 	"lavandino": [Vector3(-0.6, 1.6, 1.0), Vector3(-0.6, 0.6, 3.2)],
 	"pronto_soccorso": [Vector3(-1.0, 1.6, 0.6), Vector3(-3.2, 1.2, 0.35)],
 	"porta_nord": [Vector3(-1.0, 1.6, -0.5), Vector3(-2.2, 1.0, -3.2)],
+	# le porte con le ante aperte fino al muro (23 ottobre): la sud da dentro, la nord mentre ci si passa, e l'adesivo
+	# sopra l'anta della nord da dove ci si può avvicinare di più (contro l'anta)
+	"porta_sud": [Vector3(0.9, 1.6, 1.3), Vector3(1.7, 1.0, 3.2)],
+	"porta_nord_passaggio": [Vector3(-2.2, 1.6, -1.6), Vector3(-2.2, 1.2, -3.6)],
+	"adesivo_nord": [Vector3(-1.25, 1.6, -2.72), Vector3(-1.25, 2.45, -3.2)],
 }
 
 

@@ -8,7 +8,8 @@ squalo che si gira, esita e scappa. I tempi sono quelli dell'animazione
   con lo schiocco umido delle fauci (scatti a MINACCIA + 0,7, 1,6 e 2,5 s dell'animazione);
 - jilly_richiamo: il verso di lei, lontano e profondo, che arriva da dietro la porta tagliafuoco: la
   stessa gola gutturale di lei (genera_lei: gola(), tratto()) ma lunga e lenta, un richiamo che sale e
-  scende due volte, attutito dalla porta e dai corridoi di lamiera (riverbero della nave);
+  scende due volte, attutito dalla porta e dai corridoi di lamiera (riverbero della nave). Una versione con la
+  voce B dell'inseguimento (jilly_richiamo_v2, 23 ottobre) è stata scartata: all'utente piace di più questa;
 - squalo_sbuffo: lo sbuffo di gola quando si volta a guardarti prima di scappare;
 - squalo_passo: i passi pesanti e bagnati sulle piastrelle, con il ticchettio degli artigli; dal 22 ottobre
   più pesanti (un tonfo grave lungo, sotto: la camera trema insieme);
@@ -74,6 +75,34 @@ def squalo_minaccia(rng):
         mix_into(out, schiocco(rng) * 0.8, n_of(tc - MINACCIA_INIZIO + 0.12))
     # da vicinissimo: un filo di stanza piccola, niente coda lunga
     return f32(fade(reverb(out, ir_piccola(), wet=0.12), 0.05, 0.3))
+
+
+def jilly_richiamo_v2(rng):
+    """(Scartata il 23 ottobre: all'utente piace di più la prima, "forse il suono fastidioso non era quello".)
+    Il richiamo con la voce B di lei (l'inseguimento): due chiamate lunghe, la prima che sale e scende, la seconda
+    più corta che ricade; sotto il petto (la subarmonica), sopra piano la sua voce stridula; lontana dietro la porta."""
+    import os
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from genera_lei_inseguimento import grido, formanti, voce, _norm
+    dur = 6.0
+    n = n_of(dur)
+    out = np.zeros(n)
+    for t0, d, curva, forza in ((0.0, 2.7, [(0, 82), (0.5, 128), (1.3, 150), (2.0, 120), (2.7, 78)], 1.0),
+                                (3.0, 1.9, [(0, 88), (0.4, 136), (1.1, 112), (1.9, 70)], 0.8)):
+        k = n_of(d)
+        g = grido(rng, d, curva, bocca=1.05, sporco=1.4, rullo=9.0)
+        e = env_points([(0, 0), (d * 0.18, 1.0), (d * 0.7, 0.85), (d, 0)], k) ** 1.1
+        mix_into(out, _norm(g) * e * forza, n_of(t0))
+        # sopra, piano, la sua voce stridula (la stessa del suo urlo): la si riconosce
+        f0 = env_points([(t, f * 2.6) for t, f in curva], k)
+        st = formanti(voce(rng, k, f0, 1.0), 'a') * 0.7 + formanti(voce(rng, k, f0 * 1.01, 1.0), 'i') * 0.3
+        mix_into(out, hp(lp(np.tanh(_norm(st) * 2.0), 5000, 2), 250, 2) * e * 0.16 * forza, n_of(t0))
+    out += _norm(rombo_sotto(rng, dur, 0.25)) * 0.05
+    # lontana: dietro la porta d'acciaio e lungo i corridoi di lamiera (acuti appena tagliati, non chiusi)
+    out = lp(hp(out, 85, 4), 2400, 2)
+    out = f32(reverb(out, ir_nave(), wet=0.6, dry=0.75))
+    return f32(fade(out, 0.1, 1.2))
 
 
 def jilly_richiamo(rng):
@@ -158,9 +187,8 @@ def squalo_ringhio(rng):
 
 
 SUONI = {
-    'squalo_minaccia': lambda: salva(CART, 'squalo_minaccia', mono(squalo_minaccia(np.random.default_rng(2110))),
-                                     loudness=-15, qualita=5,
-                                     nota="fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file)"),
+    # dal 23 ottobre squalo_minaccia e squalo_ringhio li fa genera_squalo_voce.py (versione B scelta dall'utente;
+    # le funzioni di qui sotto sono quelle di prima, i file in scartati/squalo/)
     'jilly_richiamo': lambda: salva(CART, 'jilly_richiamo', mono(jilly_richiamo(np.random.default_rng(2111))), loudness=-20,
                                     qualita=5, nota='il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco'),
     'squalo_sbuffo': lambda: salva(CART, 'squalo_sbuffo', mono(squalo_sbuffo(np.random.default_rng(2112))), loudness=-16,
@@ -171,8 +199,6 @@ SUONI = {
     'squalo_denti': lambda: [salva(CART, f'squalo_denti_{i + 1:02d}', mono(squalo_denti(np.random.default_rng(2120 + i), i)),
                                    loudness=-11, corto=True, qualita=5, nota='i denti che scattano a ogni morso nell\'aria')
                              for i in range(3)],
-    'squalo_ringhio': lambda: salva(CART, 'squalo_ringhio', mono(squalo_ringhio(np.random.default_rng(2130))), loudness=-14,
-                                    corto=True, qualita=5, nota='il ringhio quando si gira verso la porta'),
 }
 
 
