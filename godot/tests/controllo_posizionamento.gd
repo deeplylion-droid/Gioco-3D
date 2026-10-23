@@ -155,6 +155,9 @@ func _ready() -> void:
 func _run() -> void:
 	# ripetibile: le cose che oscillano o sfarfallano usano il caso e il tempo (con --fixed-fps 60)
 	seed(20261022)
+	# le stanze della Risalita sempre caricate (nascoste col giocatore lontano), come prima del 23 ottobre: nel giro
+	# iniziale il corridoio della zona del personale poggia su di loro, e lì si guarda nel giro che le mostra
+	Engine.set_meta(&"risalita_subito", true)
 	var solo := OS.get_cmdline_user_args().slice(1)
 	for z in ZONE:
 		var nome_scena := String(z["scena"]).get_file().get_basename()
