@@ -13230,36 +13230,6 @@
    "zona": "sala",
    "gruppo": "mucchio_252",
    "posizione": [
-    5.945,
-    -0.0354,
-    -12.783
-   ],
-   "rotazione_y_gradi": 135.0,
-   "basis": [
-    [
-     -0.7068,
-     0.1163,
-     -0.6978
-    ],
-    [
-     0.0,
-     0.9864,
-     0.1644
-    ],
-    [
-     0.7074,
-     0.1162,
-     -0.6972
-    ]
-   ],
-   "corretto_22_sera": "piscina det_foglio_1 19"
-  },
-  {
-   "nodo": "det_foglio_1",
-   "glb": "glb/detriti.glb",
-   "zona": "sala",
-   "gruppo": "mucchio_252",
-   "posizione": [
     7.123,
     0.009,
     -12.124
@@ -26060,7 +26030,7 @@
    "zona": "muri",
    "gruppo": "cartelli_645",
    "posizione": [
-    -3.341,
+    -2.3,
     1.643,
     20.0
    ],
@@ -26081,7 +26051,8 @@
      0.0,
      -1.0
     ]
-   ]
+   ],
+   "spostato_23": "dal salvagente appeso (ogg_salvagente_nave_19 a x -3,2): 1 m più a est, sul muro libero"
   },
   {
    "nodo": "det_cartello_pavimento_bagnato",

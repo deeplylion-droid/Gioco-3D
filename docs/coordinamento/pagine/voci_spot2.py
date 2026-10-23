@@ -30,7 +30,25 @@ SEZIONI = [
           "\nIl saluto con la mano c'è in tutti i casi.",
           [("img", "6b_affacciata_vicino.jpg", "Il suo occhio oggi, dal modello del gioco")],
           [("a", "a"), ("b", "b"), ("c", "c"), ("vedere", "Fammi vedere")]),
-        V("NUOVA", "3. Logo, insegna e targa di Jilly da nuovi",
+        V("SALUTO", "3. Il saluto, già fatto",
+          "L'animazione nuova di mascotte, dal motore: alza il braccio, saluta con la mano aperta di lato al viso, "
+          "con il busto che ondeggia appena e la testa piegata verso la mano, poi torna giù. Qui è su un piedistallo "
+          "di prova; nello spot avrà la sala pulita e i fari rosa e viola.",
+          [("img", "saluto_saluta_a.jpg", "Mentre saluta"),
+           ("img", "saluto_primo_piano.jpg", "Il primo piano dell'inquadratura 6"),
+           ("img", "saluto_alza.jpg", "Quando alza il braccio")],
+          OK),
+        V("PIEDISTALLO", "4. Dove sta Jilly sul palco",
+          "Nel gioco, al centro della sala c'è la vasca a scacchi con Jilly affacciata, e non c'è un piedistallo."
+          "\na: un piedistallo dentro la vasca: un tamburo rotondo a mosaico blu, alto quanto il bordo, che esce "
+          "dall'acqua al centro. Jilly ci sta in piedi, e qualche tentacolo scende in acqua. Vasca, colonnine col "
+          "cordone, targa e pulsante restano quelli del gioco: è lo stesso posto, anni prima. Consigliata."
+          "\nb: il monumento a gradoni delle prime versioni, al posto della vasca. Il modello c'è già, ma il posto "
+          "non sarebbe più lo stesso del gioco.",
+          [("img", "vasca_oggi.jpg", "La vasca di oggi, dove andrebbe il piedistallo della a"),
+           ("img", "sala_godot_monumento_ingresso.jpg", "b: il monumento a gradoni, dalle prime versioni")],
+          [("a", "a"), ("b", "b"), ("vedere", "Fammi vedere")]),
+        V("NUOVA", "5. Logo, insegna e targa di Jilly da nuovi",
           "Per lo spot: gli stessi oggetti del gioco, come erano prima di invecchiarli. Smalto lucido, vernice pulita, "
           "niente ruggine. Negli scatti dal motore, a sinistra quelli del gioco e a destra quelli nuovi. All'inizio "
           "dello spot va il logo su schermo, sotto il filtro VHS.",
