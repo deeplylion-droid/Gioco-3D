@@ -1450,7 +1450,9 @@ def fossa_bimbi(mats):
     # pavimento della sala nel triangolo fuori dalla diagonale esterna del bordo
     c.faccia_verso([(x, y, 0.0) for x, y in triangolo], 'pavimento', (0, 0, 1))
     # griglia di scarico divelta: ancora agganciata al lato nord, piegata giù nella fossa in due tratti
-    ga, gb = -14.1, -12.6
+    # sulla metà ovest del lato nord: con x da -14,1 a -12,6 passava dentro il busto e la campana di lei affacciata
+    # (origine x -13,03) e nei suoi tentacoli (controllo del 23 ottobre; scelta a del coordinatore, consigliata da mascotte)
+    ga, gb = -14.72, -13.85
     def tratto(origine, v, lunghezza, nome):
         v = Vector(v).normalized(); u = Vector((1, 0, 0)); w = u.cross(v).normalized()
         O = Vector(origine)
