@@ -82,7 +82,7 @@ func _ready() -> void:
 	_scelta(t, "Qualità delle texture", "qualita_texture", ["Bassa", "Media", "Alta"])
 
 	t = _scheda("Luci e ombre")
-	_scelta(t, "Ombre", "ombre", ["Minime (solo torcia)", "Basse", "Medie", "Alte", "Ultra"])
+	_scelta(t, "Ombre", "ombre", ["Minime", "Basse", "Medie", "Alte", "Ultra"])
 	_scelta(t, "Illuminazione globale", "gi", ["No", "VoxelGI", "SDFGI"])
 	_scelta(t, "Nebbia", "nebbia", ["Semplice", "Volumetrica", "Volumetrica alta"])
 	_scelta(t, "Riflessi (SSR)", "ssr", ["No", "Bassi", "Medi", "Alti"])

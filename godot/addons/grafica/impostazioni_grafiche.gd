@@ -9,7 +9,7 @@ extends Node
 ##   Grafica.valore("fov")
 ## Le scene non devono fare niente di speciale: l'autoload trova da solo
 ## l'Environment, le luci (Light3D) e i nodi VoxelGI che entrano nell'albero.
-## Opzionale: meta "grafica_priorita_ombra" su una luce (0 = sempre, es. torcia;
+## Opzionale: meta "grafica_priorita_ombra" su una luce (0 = sempre, es. il lampione della statua;
 ## 1 = importante, valore predefinito; 2 = secondaria) e gruppo "grafica_particelle".
 
 signal impostazione_cambiata(chiave: String, valore: Variant)
@@ -41,7 +41,7 @@ const PREDEFINITI := {
 	"upscaler": 0,              # 0 bilineare, 1 FSR 1, 2 FSR 2
 	"nitidezza_fsr": 0.2,       # 0 = massima nitidezza, 2 = minima (come in Godot)
 	"antialiasing": 3,          # 0 no, 1 FXAA, 2 SMAA, 3 TAA, 4 MSAA 2x, 5 MSAA 4x, 6 MSAA 8x
-	"ombre": 3,                 # 0 minime (solo torcia), 1 basse, 2 medie, 3 alte, 4 ultra
+	"ombre": 3,                 # 0 minime, 1 basse, 2 medie, 3 alte, 4 ultra
 	"gi": 1,                    # 0 nessuna, 1 VoxelGI, 2 SDFGI
 	"nebbia": 1,                # 0 semplice, 1 volumetrica, 2 volumetrica alta
 	"ssr": 2,                   # 0 no, 1 bassi, 2 medi, 3 alti
@@ -577,7 +577,6 @@ func _salva_dopo() -> void:
 
 
 func _assicura_azioni_input() -> void:
-	_azione("torcia", KEY_F)
 	_azione("menu_opzioni", KEY_ESCAPE)
 
 

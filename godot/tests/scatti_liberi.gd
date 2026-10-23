@@ -14,7 +14,7 @@ var out_dir := "user://scatti"
 var scatti := []
 var preset := "alto"
 var settle := 60
-var torcia := true
+var torcia := false   # (la torcia non c'è più: il parametro resta per i comandi vecchi)
 var blackout := false
 var fisse := false
 var neon := false   # luce normale: tutti i neon accesi e fermi, luci rosse d'emergenza spente
@@ -59,14 +59,10 @@ func _run() -> void:
 	if togli.is_empty():
 		get_tree().change_scene_to_file(scena)
 	else:
-		# La scena si istanzia a mano per togliere i nodi pesanti prima che entrino nell'albero
-		# (come scatti_sala.gd): così sta nella memoria.
-		var livello := (load(scena) as PackedScene).instantiate()
-		for percorso in togli:
-			var n := livello.get_node_or_null(NodePath(percorso))
-			if n:
-				n.get_parent().remove_child(n)
-				n.free()
+		# I nodi pesanti si tolgono già dal file della scena (tests/scena_ridotta.gd): su llvmpipe le texture si
+		# espandono e caricare tutto per poi toglierlo non sta nella memoria.
+		var ridotta: String = load("res://tests/scena_ridotta.gd").riduci(scena, Array(togli))
+		var livello := (load(ridotta) as PackedScene).instantiate()
 		get_tree().root.add_child(livello)
 		get_tree().current_scene = livello
 	for i in 300:

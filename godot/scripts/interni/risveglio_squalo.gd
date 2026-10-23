@@ -55,7 +55,6 @@ var _passo_lato := 1.0      # da che parte rolla la camera (si alterna a ogni pa
 var _tetti: Array = []      # [player 3D, il suo max_db di prima, quando rimetterlo]
 var _fine := 0.0
 var _luce_corsa: OmniLight3D
-var _torcia_accesa = null    # com'era la torcia prima della scena (null: niente torcia)
 var _pelle: Array = []       # [posizione a riposo, PackedInt32Array ossa della skin, PackedFloat32Array pesi]
 var _pelle_mi: MeshInstance3D
 var _pelle_bind: Array = []  # per ogni bind della skin: [osso dello scheletro, matrice di bind]
@@ -83,9 +82,6 @@ func _ready() -> void:
 func avvia(p: Player) -> void:
 	_p = p
 	_p.input_enabled = false
-	# il tasto F non la tocca durante la scena (Torcia guarda input_enabled); alla fine torna com'era
-	var torcia := _torcia()
-	_torcia_accesa = torcia.accesa if torcia else null
 	_yaw0 = p.yaw
 	_crea_squalo()
 	_apri_porta()
@@ -495,22 +491,12 @@ func _termina() -> void:
 	cam.rotation = Vector3.ZERO
 	_p.set_look(_p.yaw, 0.0)
 	_p.input_enabled = true
-	var torcia := _torcia()
-	if torcia and _torcia_accesa != null:
-		torcia.imposta_accesa(_torcia_accesa)
 	if squalo:
 		squalo.queue_free()
 		squalo = null
 	if _perno:
 		_perno.rotation.y = 0.0
 	finito.emit()
-
-
-func _torcia() -> Torcia:
-	for t in _p.find_children("*", "Node3D", true, false):
-		if t is Torcia:
-			return t as Torcia
-	return null
 
 
 func _dir_yaw(y: float) -> Vector3:

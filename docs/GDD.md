@@ -159,6 +159,11 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Torcia**: un altro 50% di luce in meno, dopo il 20% del 17 ottobre.
 - **Niente torcia** (decisione dell'utente, 18 ottobre sera): "togliamo la torcia". Le luci in più le indica lui. Per ora sono due: una lampada bianca a soffitto sopra la pozza d'acqua davanti ai tornelli e una luce rossa lampeggiante prima del portone stagno n. 1. I bambini scappano solo se ti avvicini troppo.
 - **La torcia torna** (richiesta dell'utente, 21 ottobre): "nella prossima build mettimi la flashlight ma riducila di intensità di un ulteriore 50% dopo l'ultima riduzione che avevamo fatto". Quindi torna il tasto F, con l'energia dimezzata da 2,8 a 1,4. Le due luci aggiunte il 18 ottobre restano. I bambini continuano a scappare solo se ti avvicini troppo, non dalla luce della torcia ("lascia come ora").
+- **Via di nuovo la torcia, e luci bianche al 40% fisse** (decisione dell'utente, 23 ottobre, giocando la v0.3.11): "la torcia la togliamo, le luci a 40% vanno bene quindi via la scelta e restano così".
+  - Niente torcia: niente tasto F e niente riga nei comandi.
+  - Tutte le luci bianche (lampade, neon, plafoniere) stanno al 40%, e non c'è più il tasto F7 per cambiarle.
+  - Come il 18 ottobre, le luci in più dove non si vede la strada le decide l'utente: il collaudo fa il giro intero al buio e gli si propongono i punti.
+  - Lo fa grafica, prima delle altre correzioni.
 - **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.

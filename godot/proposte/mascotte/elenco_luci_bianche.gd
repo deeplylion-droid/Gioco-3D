@@ -65,9 +65,7 @@ func _scrivi_scena(scena: String, level: Node, lb: Node) -> void:
 		if not per_zona.has(z):
 			per_zona[z] = {"bianche": [], "colorate": [], "escluse": [], "materiali": []}
 		var c := l.light_color
-		var torcia := VarianteLuci._della_torcia(l)
-		var testo := "`%s` (%.2f, %.2f; %.2f)%s" % [String(level.get_path_to(l)).trim_prefix(z + "/"), c.h, c.s, l.light_energy,
-			" — torcia: resta com'è" if torcia else ""]
+		var testo := "`%s` (%.2f, %.2f; %.2f)" % [String(level.get_path_to(l)).trim_prefix(z + "/"), c.h, c.s, l.light_energy]
 		var cat := "colorate"
 		if lb._esclusa(l):
 			cat = "escluse"
@@ -106,7 +104,7 @@ func _scrivi_scena(scena: String, level: Node, lb: Node) -> void:
 	var ms := (Time.get_ticks_usec() - t0) / 1000.0 / 30.0
 	var n_luci := 0
 	for l: Light3D in lb.luci_raccolte():
-		if VarianteLuci.is_bianca(l.light_color) and not VarianteLuci._della_torcia(l):
+		if VarianteLuci.is_bianca(l.light_color):
 			n_luci += 1
 	righe.append("")
 	righe.append(("Costo con questa scena caricata: %.2f ms per fotogramma (applica e ripristina, su questa macchina lenta), " +
