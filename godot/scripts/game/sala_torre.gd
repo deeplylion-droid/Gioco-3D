@@ -1179,9 +1179,9 @@ func _catena(radice: Node3D, fondo: Vector3) -> void:
 	cm.top_radius = 0.02
 	cm.bottom_radius = 0.02
 	var basso := fondo.y + 6.0
-	# il cavo arriva 30 cm sotto l'ultimo grappolo: i braccetti delle lampadine più basse (fino a 20 cm sotto)
-	# partivano dal vuoto
-	var fine := basso - 0.3
+	# il cavo arriva all'ultimo braccetto (20 cm sotto l'ultimo grappolo): prima finiva sopra e i braccetti più bassi
+	# partivano dal vuoto, poi 10 cm sotto, con il capo libero
+	var fine := basso - 0.2 - 0.005
 	cm.height = 14.0 - fine
 	cavo.mesh = cm
 	var nero := StandardMaterial3D.new()
