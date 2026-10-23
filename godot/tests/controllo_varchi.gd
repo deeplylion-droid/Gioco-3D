@@ -44,7 +44,7 @@ const VARCHI := [
 	["risalita: il corridoio fino alla porta del capannone", "inizio",
 		[Vector3(-4.9, -5.4, 49.2), Vector3(-4.9, -5.4, 66.0), Vector3(-7.6, -5.4, 66.0)]],
 	["risalita: dall'approdo all'infermeria (porta di servizio, porta sud)", "inizio",
-		[Vector3(-35.0, -5.4, 54.0), Vector3(-35.0, -5.4, 46.0)]],
+		[Vector3(-35.0, -5.4, 54.0), Vector3(-35.0, -5.4, 46.6)]],   # (1 m dentro l'infermeria, prima del carrello)
 	["risalita: dalla porta nord dell'infermeria alla scala di servizio", "inizio",
 		[Vector3(-38.8, -5.4, 43.0), Vector3(-38.8, -5.4, 39.0)]],
 	["risalita: dalla cima della scala alla porta di C3", "inizio",
