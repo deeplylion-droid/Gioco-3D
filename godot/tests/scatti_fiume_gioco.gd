@@ -43,6 +43,10 @@ static func camere() -> Dictionary:
 		# il capo di sotto della catena nell'occhiello della lampada del capannone (una dritta e una storta)
 		"catena_lampada": [Vector3(-3.6, 4.45, -6.25), Vector3(-4.0, 4.6, -6.6)],
 		"catena_lampada_storta": [Vector3(13.6, 4.45, -16.25), Vector3(14.0, 4.6, -16.6)],
+		# di lato, all'altezza dell'aggancio fra la catenella e il cappello della lampada (prima e dopo, 23 ottobre)
+		"gancio_lampada": [Vector3(-3.75, 4.5, -6.3), Vector3(-4.0, 4.5, -6.6)],
+		"gancio_lampada_fronte": [Vector3(-4.0, 4.5, -6.22), Vector3(-4.0, 4.5, -6.6)],
+		"gancio_lampada_storta": [Vector3(13.75, 4.5, -16.3), Vector3(14.0, 4.5, -16.6)],
 	}
 	return d
 
