@@ -447,16 +447,18 @@ def _intaglia_grata(gr, tagli):
     l0, l1 = f0.loops[0], f0.loops[1]
     k_uv = (l1[uv].uv.x - l0[uv].uv.x) / (l1.vert.co.x - l0.vert.co.x)
     sopra = [f for f in bm.faces if f.normal.z > 0.5]
-    sotto = {tuple(sorted((round(v.co.x, 3), round(v.co.y, 3)) for v in f.verts)): f for f in bm.faces if f.normal.z < -0.5}
+    giu = [f for f in bm.faces if f.normal.z < -0.5]
     from mathutils.bvhtree import BVHTree
     dg = bpy.context.evaluated_depsgraph_get()
     alberi = [(t, BVHTree.FromObject(t, dg), t.matrix_world.inverted()) for t in tagli]
     nuove, via, n_buchi = [], [], 0
     for f in sopra:
-        g = sotto.get(tuple(sorted((round(v.co.x, 3), round(v.co.y, 3)) for v in f.verts)))
         z1 = f.verts[0].co.z
-        z0 = g.verts[0].co.z if g else z1 - 0.012
         pianta = Polygon([(v.co.x, v.co.y) for v in f.verts])
+        # le facce di sotto della stessa pedana (girate, 12 mm più giù; anche divise in triangoli)
+        gg = [g for g in giu if z1 - 0.02 < g.verts[0].co.z < z1 - 0.004
+              and pianta.buffer(0.005).contains(Polygon([(v.co.x, v.co.y) for v in g.verts]).representative_point())]
+        z0 = gg[0].verts[0].co.z if gg else z1 - 0.012
         lo, hi = pianta.bounds[:2], pianta.bounds[2:]
         buchi = []
         for t, albero, inv in alberi:
@@ -474,8 +476,7 @@ def _intaglia_grata(gr, tagli):
             continue
         n_buchi += 1
         via.append(f)
-        if g:
-            via.append(g)
+        via.extend(gg)
         mat = (f.material_index, tuple(f.loops[0][col]) if col else None)
         for tri in shapely.constrained_delaunay_triangles(resto).geoms:
             c_ = list(tri.exterior.coords)[:3]
