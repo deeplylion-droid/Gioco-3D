@@ -406,10 +406,58 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=(), tu
         b_.select_set(True)
         bpy.context.view_layer.objects.active = b_
         bpy.ops.object.join()
+    _pulisci_attraversati(bersagli, scivoli, aperti)
     for o in list(coll_t.objects):
         bpy.data.meshes.remove(o.data)
     bpy.data.collections.remove(coll)
     bpy.data.collections.remove(coll_t)
+
+
+def _pulisci_attraversati(bersagli, scivoli, aperti):
+    """L'ultima passata, come il controllo di posizionamento (passo f): ogni spigolo di ogni scivolo contro i bersagli;
+    le facce che uno spigolo attraversa (non solo tocca ai capi) si tolgono: per la grata tutte, per gli altri solo le
+    schegge (meno di 100 cm2) che il booleano lascia dentro la parete dello scivolo."""
+    import bmesh
+    from mathutils.bvhtree import BVHTree
+    spigoli = []
+    for s_ in scivoli:
+        vs = [s_.matrix_world @ v.co for v in s_.data.vertices]
+        for e in s_.data.edges:
+            a_, b_ = vs[e.vertices[0]], vs[e.vertices[1]]
+            if (b_ - a_).length > 0.004:
+                spigoli.append((a_, b_))
+    for b_ in bersagli:
+        for giro in range(3):
+            bm = bmesh.new()
+            bm.from_mesh(b_.data)
+            bm.transform(b_.matrix_world)
+            bm.faces.ensure_lookup_table()
+            albero = BVHTree.FromBMesh(bm)
+            colpite = set()
+            for a_, c_ in spigoli:
+                d = c_ - a_
+                lun = d.length
+                d.normalize()
+                da = a_ + d * 0.001
+                resto = lun - 0.002
+                while resto > 0:
+                    hit = albero.ray_cast(da, d, resto)
+                    if hit[0] is None:
+                        break
+                    if (hit[0] - a_).length > 0.004 and (hit[0] - c_).length > 0.004:
+                        colpite.add(hit[2])
+                    passo = (hit[0] - da).length + 0.0005
+                    da = da + d * passo
+                    resto -= passo
+            via = [bm.faces[i] for i in colpite if b_.name in aperti or bm.faces[i].calc_area() < 0.01]
+            if via:
+                bmesh.ops.delete(bm, geom=via, context='FACES')
+                bm.transform(b_.matrix_world.inverted())
+                bm.to_mesh(b_.data)
+            bm.free()
+            print(f'pulizia di {b_.name}: {len(colpite)} facce attraversate, {len(via)} tolte')
+            if not via:
+                break
 
 
 def _sezione(o, z0, z1):
