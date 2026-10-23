@@ -1698,6 +1698,11 @@ func _dentro_dettagli(z: Dictionary, mesh: Array, oggetti: Array) -> void:
 		# i triangoli in celle da 1 m
 		var celle := {}
 		for t in facce.size() / 3:
+			# i triangoli orizzontali (pavimenti, soffitti, la cima delle costole) no: lì le cose si appoggiano, e i loro
+			# spigoli corrono sulla faccia di sotto di quello che ci sta sopra (le pile del fiume, i telai delle chiuse)
+			var nt := (facce[t * 3 + 1] - facce[t * 3]).cross(facce[t * 3 + 2] - facce[t * 3])
+			if nt.length() < 1e-9 or absf(nt.normalized().y) > 0.9:
+				continue
 			var bt := AABB(facce[t * 3], Vector3.ZERO).expand(facce[t * 3 + 1]).expand(facce[t * 3 + 2])
 			var da := Vector3i(bt.position.floor())
 			var a_ := Vector3i(bt.end.floor())
