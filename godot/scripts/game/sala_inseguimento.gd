@@ -953,14 +953,14 @@ func _lampada_paratia(radice: Node3D, p: Vector3, giusta: bool, bersaglio: Vecto
 		m.emission_energy_multiplier = 6.0
 		anello.material_override = m
 		radice.add_child(anello)
-		# appoggiato alla faccia vera del pannello (il bersaglio può stare qualche cm davanti o dietro): metà dello
-		# spessore dell'anello fuori, meno 1 mm dentro
+		# incassato nella faccia vera del pannello (il bersaglio può stare qualche cm davanti o dietro): 1,2 cm dentro,
+		# 2,8 cm fuori (a filo, 1 mm dentro, il controllo non trovava il contatto: misura i vertici più vicini al centro)
 		var faccia := bersaglio
 		if pannello:
 			var su_pannello: Variant = _faccia_mesh(pannello, bersaglio + verso.normalized() * 0.5, -verso.normalized())
 			if su_pannello != null:
 				faccia = su_pannello
-		anello.global_position = faccia + verso.normalized() * ((t.outer_radius - t.inner_radius) * 0.5 - 0.001)
+		anello.global_position = faccia + verso.normalized() * ((t.outer_radius - t.inner_radius) * 0.5 - 0.012)
 		anello.global_basis = Basis(Quaternion(Vector3.UP, verso.normalized()))
 		var o2 := OmniLight3D.new()
 		o2.light_color = VERDE
@@ -1068,10 +1068,10 @@ func _arredo(radice: Node3D, a: Dictionary) -> void:
 		copia.transform = _rispetto_a(src, n)
 		if String(a["a"]) == "origine":
 			copia.transform.origin = Vector3.ZERO
-		# il corpo della pompa blu sta sul suo basamento (POMPA_3) a filo: 3 mm dentro, perché il contatto si misuri
-		# (controllo del 22 ottobre notte, distanza vera)
+		# il corpo della pompa blu stava 2,5-9 mm sopra il suo basamento (POMPA_3; il fondo del modello non è piano):
+		# 1 cm più giù, appoggiato (controllo del 22 ottobre notte, distanza vera)
 		if nome == "POMPA_3_modello":
-			copia.position.y -= 0.003
+			copia.position.y -= 0.01
 		for m in [copia] + copia.find_children("*", "MeshInstance3D", true, false):
 			if m is MeshInstance3D:
 				var ab: AABB = copia.transform * ((m as MeshInstance3D).get_aabb()) if m == copia \

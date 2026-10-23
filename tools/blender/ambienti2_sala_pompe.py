@@ -464,11 +464,17 @@ if LEVA_NUOVA:
         y = cavo[1].y + (cavo[2].y - cavo[1].y) * k / 6
         S('meccanismi', box(f'cavo_gancio{k}', (XE - 0.03, y, ZC), (0.06, 0.02, 0.03), M['ferro'], uv=None))
     # chiusura stagna: cilindro idraulico dal lato del cardine (sud) che spinge sullo stipite
-    # lungo 53 cm: sporge dal muro 24,9 cm, staffa compresa (regola del coordinatore per le cose a muro: al più 25 cm),
-    # con il fianco 3 mm dentro la staffa
+    # lungo 53 cm: sporge dal muro 24,2 cm, staffa compresa (regola del coordinatore per le cose a muro: al più 25 cm),
+    # con il fianco 1 cm dentro la staffa
     da = HQ.dimensioni('attuatore_stagno'); ka0 = 0.6 / da.x; ka = 0.53 / da.x
-    AT = Vector((XE - 0.04 - da.y * ka / 2 + 0.003, PORTA_Y - PORTA_W / 2 - 0.7, 1.2))
+    AT = Vector((XE - 0.04 - da.y * ka / 2 + 0.003, PORTA_Y - PORTA_W / 2 - 0.7, 1.2))   # x rifatta sotto, col box vero
     att = HQ.metti('ATTUATORE_stagno', 'attuatore_stagno', AT, tuple(da * ka), rot_z=R_(-90))
+    # col box vero (l'origine del modello non è al centro): il fianco 1 cm dentro la staffa (a 3 mm il controllo non
+    # trovava il contatto)
+    bpy.context.view_layer.update()
+    x_max = max((att.matrix_world @ Vector(v)).x for v in att.bound_box)
+    att.location.x += (XE - 0.04 + 0.01) - x_max
+    AT = Vector((att.location.x, AT.y, AT.z))
     att['uso'] = 'chiusura stagna della porta: le tre turbine la mettono in pressione con i tubi TUBO_stagno_1..3'
     # il tirante dalla testa dell'attuatore (1 cm dentro) fino allo stipite, dove arrivava prima (AT.y + 0,55)
     t0 = da.x * ka / 2 - 0.01
