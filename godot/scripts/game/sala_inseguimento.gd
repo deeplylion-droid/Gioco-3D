@@ -1068,6 +1068,10 @@ func _arredo(radice: Node3D, a: Dictionary) -> void:
 		copia.transform = _rispetto_a(src, n)
 		if String(a["a"]) == "origine":
 			copia.transform.origin = Vector3.ZERO
+		# il corpo della pompa blu sta sul suo basamento (POMPA_3) a filo: 3 mm dentro, perché il contatto si misuri
+		# (controllo del 22 ottobre notte, distanza vera)
+		if nome == "POMPA_3_modello":
+			copia.position.y -= 0.003
 		for m in [copia] + copia.find_children("*", "MeshInstance3D", true, false):
 			if m is MeshInstance3D:
 				var ab: AABB = copia.transform * ((m as MeshInstance3D).get_aabb()) if m == copia \
