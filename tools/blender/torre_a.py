@@ -373,7 +373,31 @@ def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=(), tu
                     l_[uv].uv = (l_.vert.co.x * k_uv, l_.vert.co.y * k_uv * (1 if f.normal.z > 0 else -1))
             bm.to_mesh(pezzo.data)
             bm.free()
-        print(f'intaglio di {b_.name}: {len(isole)} pezzi toccati, {prima} -> {len(pezzo.data.polygons)} facce')
+        # le schegge che il booleano lascia (pezzetti di pochi millimetri, a volte dentro la parete dello scivolo)
+        bm = bmesh.new()
+        bm.from_mesh(pezzo.data)
+        vis, schegge = set(), []
+        for f in bm.faces:
+            if f in vis:
+                continue
+            pila, isola_f = [f], []
+            vis.add(f)
+            while pila:
+                g = pila.pop()
+                isola_f.append(g)
+                for e in g.edges:
+                    for h in e.link_faces:
+                        if h not in vis:
+                            vis.add(h)
+                            pila.append(h)
+            co = [v.co for g in isola_f for v in g.verts]
+            if (Vector(map(max, *co)) - Vector(map(min, *co))).length < 0.03:
+                schegge.extend(isola_f)
+        if schegge:
+            bmesh.ops.delete(bm, geom=schegge, context='FACES')
+            bm.to_mesh(pezzo.data)
+        bm.free()
+        print(f'intaglio di {b_.name}: {len(isole)} pezzi toccati, {prima} -> {len(pezzo.data.polygons)} facce, {len(schegge)} facce di schegge tolte')
         for o in bpy.context.view_layer.objects:
             o.select_set(False)
         pezzo.select_set(True)
@@ -471,7 +495,8 @@ def _intaglia_grata(gr, tagli):
                 buchi.append(sez)
         if not buchi:
             continue
-        resto = pianta.difference(unary_union(buchi).buffer(0))
+        # (3 mm in più: senza, ai bordi restavano triangoli di pochi millimetri che toccavano lo scivolo)
+        resto = pianta.difference(unary_union(buchi).buffer(0.003))
         if resto.equals(pianta):
             continue
         n_buchi += 1
@@ -480,7 +505,7 @@ def _intaglia_grata(gr, tagli):
         mat = (f.material_index, tuple(f.loops[0][col]) if col else None)
         for tri in shapely.constrained_delaunay_triangles(resto).geoms:
             c_ = list(tri.exterior.coords)[:3]
-            if tri.area < 1e-7:
+            if tri.area < 1e-6:
                 continue
             nuove.append((c_, z1, z0, mat))
     bmesh.ops.delete(bm, geom=list(set(via)), context='FACES')
