@@ -30,7 +30,8 @@ func _ready() -> void:
 	_run.call_deferred()
 
 
-## Solo scatti della vasca centrale: si toglie anche la fossa dei bimbi (con tutta la sala non entra nella memoria).
+## Solo scatti della vasca centrale: si toglie anche la fossa dei bimbi; negli altri (la fossa) la vasca centrale e la
+## piscina a onde (con tutta la sala non entra nella memoria).
 func _solo_vasca() -> bool:
 	for n in nomi:
 		if not n.begins_with("vasca"):
@@ -46,7 +47,8 @@ func _run() -> void:
 	# le parti lontane dalle mie cose: con tutta la sala non entra nella memoria della macchina
 	for percorso in ["Risalita", "Piscina", "Polaroid", "BambiniBalconata", "Interni", "Tecnici", "Sala/TorreScivoli", "Gioco/BambiniBalconata", "Gioco/EnigmaAcquari",
 			"Sala/Cupola", "Sala/Oggetti", "Sala/Dettagli", "Sala/AngoloPalloni", "Sala/AngoloScatoloni",
-			"Gioco/MedusaFossa"] + (["Gioco/LeiSbuca", "Sala/AreaBimbi", "Vasche"] if _solo_vasca() else []):
+			"Gioco/MedusaFossa"] + (["Gioco/LeiSbuca", "Sala/AreaBimbi", "Vasche"] if _solo_vasca() else
+			["Vasca", "Sala/VascaCentrale", "Sala/Piscina"]):
 		var n := level.get_node_or_null(NodePath(percorso))
 		if n:
 			n.get_parent().remove_child(n)
