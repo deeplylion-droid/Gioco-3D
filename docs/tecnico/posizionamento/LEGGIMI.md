@@ -9,7 +9,7 @@ Dal 22 ottobre è **severo** (processo approvato dall'utente "per evitare questi
 - le compenetrazioni si cercano anche fra oggetti diversi della stessa scena `.tscn` e con gli spigoli che passano dentro un altro oggetto, non solo coi vertici dentro;
 - tubi, cavi e catene devono avere i due capi collegati entro 1 cm;
 - ogni zona si controlla anche **come la vede il giocatore più avanti**: con le parti nascoste all'inizio rese visibili (stato `tutto_visibile`) e negli stati preparati apposta (gli acquari comparsi e risolti col portone aperto). Le due versioni della stessa cosa che non si vedono mai insieme, per esempio le lampade spente e accese, non si contano come compenetrate;
-- quando tutti i casi saranno chiusi, la CI fallirà anche con un solo caso `"da correggere"` (`BLOCCA_DA_CORREGGERE`, per ora spento; per provarlo senza accenderlo: `POSIZ_BLOCCA=1` davanti al comando). I casi `"voluto"` li decide l'utente: si propongono al coordinatore col motivo.
+- quando tutti i casi saranno chiusi, la CI fallirà anche con un solo caso `"da correggere"` (`BLOCCA_DA_CORREGGERE`, acceso dal 23 ottobre: da allora un caso nuovo si corregge subito, e un "voluto" lo decide l'utente). I casi `"voluto"` li decide l'utente: si propongono al coordinatore col motivo.
 
 Gli elenchi per squadra del primo giro severo sono in `elenchi/`.
 
