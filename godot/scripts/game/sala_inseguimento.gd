@@ -117,6 +117,9 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 		(_coda.pop_front() as Callable).call()
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			await get_tree().process_frame
+			# tolta dall'albero mentre si costruiva (una morte ricarica la sala): non serve più, come nella torre
+			if not is_inside_tree():
+				return
 			t0 = Time.get_ticks_usec()
 	costruita = true
 
