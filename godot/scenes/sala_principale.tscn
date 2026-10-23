@@ -864,7 +864,7 @@ bordo_fossa = PackedVector3Array(-12.15, 0.455, -7.7, -12.15, 0.455, -5.85, -13.
 intorno_fossa = PackedVector3Array(-11.7, 0, -7.8, -11.7, 0, -5.4, -13.95, 0, -5.4, -15.4, 0, -6.9, -15.4, 0, -8.4)
 
 [node name="CardinePortaSalaPompe" type="Marker3D" parent="Gioco" unique_id=1092057093]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.28, 0, 41)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.28, 0, 40.895736)
 
 [node name="PortaSalaPompeInterni" type="Area3D" parent="Gioco" unique_id=1679929829]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, 1, 41.42353)
@@ -874,7 +874,7 @@ monitoring = false
 script = ExtResource("63_ru2e7")
 porta_path = NodePath("../../Interni/Ambienti/Corridoio/porta_sala_pompe")
 cardine_path = NodePath("../CardinePortaSalaPompe")
-angolo_apertura = -172.0
+angolo_apertura = -180.0
 collisione_propria = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Gioco/PortaSalaPompeInterni" unique_id=1353464787]

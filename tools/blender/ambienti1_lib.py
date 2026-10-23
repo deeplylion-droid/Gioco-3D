@@ -133,17 +133,20 @@ _RACCOGLI = [False]
 def raccogli(attivo):
     _RACCOGLI[0] = attivo
 
-def col_scatola(lo, hi):
+def col_scatola(lo, hi, matrice=None):
+    """Scatola di collisione della zona: lo e hi nel mondo, oppure, con matrice (4x4), nello spazio locale che la
+    matrice porta nel mondo (scatola orientata come un oggetto ruotato)."""
     k = _COLL[0].name if _COLL[0] else 'scena'
-    COL.setdefault(k, []).append((tuple(lo), tuple(hi)))
+    COL.setdefault(k, []).append((tuple(lo), tuple(hi), None if matrice is None else [list(r) for r in matrice]))
 
 def crea_collisione(nome, zona):
     import bmesh as _bm
     bm = _bm.new()
-    for lo, hi in COL.get(zona, []):
+    for lo, hi, mat in COL.get(zona, []):
         r = _bm.ops.create_cube(bm, size=1.0)
+        m = Matrix(mat) if mat is not None else Matrix.Identity(4)
         for v in r['verts']:
-            v.co = Vector((lo[0] + (v.co.x + .5) * (hi[0] - lo[0]), lo[1] + (v.co.y + .5) * (hi[1] - lo[1]), lo[2] + (v.co.z + .5) * (hi[2] - lo[2])))
+            v.co = m @ Vector((lo[0] + (v.co.x + .5) * (hi[0] - lo[0]), lo[1] + (v.co.y + .5) * (hi[1] - lo[1]), lo[2] + (v.co.z + .5) * (hi[2] - lo[2])))
     ob = _ob_da_bm(nome + '_collisione-colonly', bm, None)
     ob.hide_render = True; ob.display_type = 'WIRE'
     return ob
