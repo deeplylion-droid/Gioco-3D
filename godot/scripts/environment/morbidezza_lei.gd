@@ -9,8 +9,10 @@ extends SkeletonModifier3D
 ##   rende al punto dopo (Müller e altri, "Fast simulation of inextensible hair and fur"), così niente scatti. Un'onda
 ##   scorre dalla radice alla punta. In acqua (sotto il pelo delle vasche vicine) il trascinamento è alto, la gravità
 ##   quasi zero e l'onda lenta: fluttuano; in aria frustano e pendono. Fra i due si passa piano, punto per punto;
-## - la collisione col mondo: ogni punto non entra nei muri, nel bordo, nel fondo (raggi dal punto prima, sullo strato
-##   WORLD; [member esclusi] per i corpi da non contare, come il coperchio della fossa);
+## - la collisione col mondo: ogni punto e il mezzo di ogni tratto restano fuori dalle forme convesse date da chi
+##   conosce il posto (pareti, fondo, bordo, griglia: [method aggiungi_forme_da], [method aggiungi_scatola]) e
+##   sopra il pavimento, a un raggio dalla superficie; si spinge fuori dalla faccia più vicina, così scivola senza
+##   scatti. Le lunghezze dei tratti sono quelle di riposo delle ossa;
 ## - la campana: pulsa (forme campana_contrai e campana_schiaccia, sommate a quelle che mette chi anima) e si
 ##   deforma col movimento: si allunga (contrai) quando accelera, si schiaccia quando frena o entra in acqua.
 ## [member quanto] da 0 (spento: la posa resta quella che arriva, identica) a 1; si accende e si spegne piano con
@@ -50,8 +52,12 @@ extends SkeletonModifier3D
 @export var pulsa_hz := 0.9
 @export var allunga := 0.05
 @export var schiaccia := 0.035
-## Collisioni da non contare (per esempio il coperchio invisibile della fossa).
-var esclusi: Array[RID] = []
+## Il pavimento per le collisioni: una lastra con la cima a questa quota (-INF: niente), tranne nella pianta
+## [member buco_pavimento].
+var pavimento_y := -INF
+var buco_pavimento := Rect2()
+## Tubi ([da, a, raggio]) dove le forme non contano: per esempio il condotto, chiuso dalla parete di collisione.
+var tunnel: Array = []
 ## Le vasche (WaterTank) il cui pelo conta; vuoto: quelle entro 8 m, cercate all'inizio.
 var vasche: Array = []
 ## Un'acqua in più, data da chi la conosce (la fossa dei bimbi): la pianta (x, z) e il pelo.
@@ -63,6 +69,8 @@ var durata_usec := 0
 const PASSO_MAX := 1.0 / 60.0
 
 var _catene: Array[PackedInt32Array] = []
+var _lunghezze: Array[PackedFloat32Array] = []   # per catena: la lunghezza di riposo di ogni tratto (mondo)
+var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB]
 var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle ossa e la punta
 var _v: Array[PackedVector3Array] = []     # le loro velocità
 var _fase: PackedFloat32Array = []
@@ -79,13 +87,9 @@ var _campana_p := Vector3.ZERO
 var _campana_a := 0.0                      # accelerazione lungo l'asse del corpo, smorzata
 var _mesh_campana: Array = []              # [MeshInstance3D, indice contrai, indice schiaccia]
 var _messo := {}                           # [mesh, indice] -> quanto ho aggiunto alla forma l'ultima volta
-var _raggio := PhysicsRayQueryParameters3D.new()
 
 
 func _ready() -> void:
-	_raggio.collision_mask = Layers.WORLD
-	_raggio.collide_with_areas = false
-	_raggio.hit_back_faces = false   # solo entrando in una superficie (da un punto che la tocca si esce)
 	_peso = 0.0
 	_verso = -1.0
 	# sempre dopo gli altri modificatori dello scheletro, anche quelli messi dopo (il tuffo)
@@ -172,6 +176,19 @@ func _catene_di(sk: Skeleton3D) -> void:
 					vasche.append(n)
 
 
+func _lunghezze_di(sk: Skeleton3D) -> void:
+	_lunghezze.clear()
+	var scala := sk.global_basis.get_scale().x
+	for catena in _catene:
+		var n := catena.size()
+		var l := PackedFloat32Array()
+		l.resize(n + 1)
+		for i in range(1, n):
+			l[i] = sk.get_bone_rest(catena[i]).origin.length() * scala
+		l[n] = l[n - 1]
+		_lunghezze.append(l)
+
+
 ## Il pelo dell'acqua sopra il punto (o -INF se non c'è acqua lì).
 func _pelo(p: Vector3) -> float:
 	if acqua_pianta.has_point(Vector2(p.x, p.z)):
@@ -200,9 +217,9 @@ func _process_modification() -> void:
 	var t0 := Time.get_ticks_usec()
 	if _catene.is_empty():
 		_catene_di(sk)
+	if _lunghezze.size() != _catene.size():
+		_lunghezze_di(sk)
 	var sg := sk.global_transform
-	var spazio := get_world_3d().direct_space_state
-	_raggio.exclude = esclusi
 	# a passi di al più 1/60 s (la fisica dei punti resta stabile anche a pochi fotogrammi al secondo)
 	var passi := maxi(1, ceili(dt / PASSO_MAX))
 	var h := dt / passi
@@ -223,12 +240,11 @@ func _process_modification() -> void:
 			var tr := sg * sk.get_bone_global_pose(b)
 			g.append(tr)
 			tg.append(tr.origin)
-		# la punta: lungo l'asse dell'ultimo osso (Y), lunga come il tratto prima
-		tg.append(tg[n - 1] + g[n - 1].basis.y.normalized() * tg[n - 1].distance_to(tg[n - 2]))
-		var lung := PackedFloat32Array()
-		lung.resize(n + 1)
-		for i in range(1, n + 1):
-			lung[i] = tg[i].distance_to(tg[i - 1])
+		# le lunghezze: quelle di riposo delle ossa (la posa del tuffo a tratti ne allunga una di colpo, fino a quasi
+		# quattro volte: qui restano giuste)
+		var lung: PackedFloat32Array = _lunghezze[k]
+		# la punta: lungo l'asse dell'ultimo osso (Y)
+		tg.append(tg[n - 1] + g[n - 1].basis.y.normalized() * lung[n])
 		# partenza dalla posa, o la posa è saltata (ripartenza, teletrasporto)
 		if not _pronte or tg[0].distance_to(_radici_prima[k]) > 1.0:
 			if _x.size() <= k:
@@ -259,6 +275,17 @@ func _process_modification() -> void:
 		vp = _vp[k]
 		var x: PackedVector3Array = _x[k]
 		var v: PackedVector3Array = _v[k]
+		# le forme vicine a questo tentacolo (le altre non si guardano)
+		var zona := AABB(tg[0], Vector3.ZERO)
+		for q in tg:
+			zona = zona.expand(q)
+		for q in x:
+			zona = zona.expand(q)
+		zona = zona.grow(distacco_massimo + raggio_radice + 0.3)
+		var forme: Array = []
+		for fo in _forme:
+			if (fo[1] as AABB).intersects(zona):
+				forme.append(fo)
 		# l'onda: di traverso al tentacolo, che scorre verso la punta
 		var asse := (tg[n] - tg[0]).normalized()
 		var lato := asse.cross(Vector3.UP)
@@ -301,34 +328,11 @@ func _process_modification() -> void:
 				if scarto.length() > lim:
 					voluto = tg[i] + scarto.normalized() * lim
 					voluto = pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
-				if spazio:
-					var r := lerpf(raggio_radice, raggio_punta, f)
-					voluto = _scivola(spazio, x[i], voluto, r)
-					# dall'altra parte di una superficie rispetto alla posa (ci è finito dietro alla posa, che a tratti
-					# la passa): torna sulla superficie, dalla parte della posa
-					_raggio.from = tg[i]
-					_raggio.to = voluto
-					var dietro := spazio.intersect_ray(_raggio)
-					if not dietro.is_empty():
-						voluto = (dietro["position"] as Vector3) + (dietro["normal"] as Vector3) * minf(r, (dietro["position"] as Vector3).distance_to(tg[i]))
-					# di nuovo alla sua distanza dal punto prima, se di lì ci arriva senza passare il mondo
-					var giusto := pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
-					if not _colpo(spazio, x[i], giusto, r) and not _colpo(spazio, tg[i], giusto, 0.0):
-						voluto = giusto
+				voluto = _fuori(voluto, lerpf(raggio_radice, raggio_punta, f), forme, x[i])
 				corr[i] = voluto - pred[i]
 				pred[i] = voluto
-			# all'indietro: dove un punto è rimasto fermo contro il mondo, quelli prima gli vanno incontro (se possono
-			# senza passare il mondo), così il tentacolo non si allunga in un tratto solo
-			if spazio:
-				for i in range(n - 1, 0, -1):
-					var d := pred[i] - pred[i + 1]
-					var l := d.length()
-					if l > lung[i + 1] * 1.15:
-						var verso := pred[i + 1] + d / l * lung[i + 1] * 1.15
-						var r := lerpf(raggio_radice, raggio_punta, float(i) / n)
-						if not _colpo(spazio, pred[i], verso, r) and not _colpo(spazio, tg[i], verso, 0.0):
-							corr[i] += verso - pred[i]
-							pred[i] = verso
+			# i tratti: anche il loro mezzo resta fuori dalle forme (non tagliano lo spigolo del bordo)
+			_tratti_fuori(pred, n, forme, corr)
 			for i in range(1, n + 1):
 				var nv := (pred[i] - x[i]) / h
 				if i < n:
@@ -344,8 +348,12 @@ func _process_modification() -> void:
 		var xo := PackedVector3Array()
 		xo.resize(n + 1)
 		xo[0] = tg[0]
+		# (anche la posa, dove entra nel mondo, ne esce piano con la dissolvenza: niente scatto all'inizio)
 		for i in range(1, n + 1):
-			xo[i] = tg[i].lerp(x[i], w)
+			var posa := tg[i]
+			if w < 1.0:
+				posa = posa.lerp(_fuori(posa, lerpf(raggio_radice, raggio_punta, float(i) / n), forme), w)
+			xo[i] = posa.lerp(x[i], w)
 		# le ossa: ogni osso parte dal suo punto e gira dalla direzione della posa verso il punto dopo (dal padre già
 		# girato); la lunghezza può cambiare di poco (dove tocca), la pelle si allunga o si accorcia lì
 		var padre := sk.get_bone_parent(catena[0])
@@ -370,43 +378,198 @@ func _process_modification() -> void:
 	durata_usec = Time.get_ticks_usec() - t0
 
 
-## Il punto che va da [param da] (dov'era, fuori dal mondo) a [param a]: se tocca una superficie scivola sul suo
-## piano, a [param r] da lei (come un corpo che striscia, senza scatti); se poi tocca ancora si ferma lì.
-func _scivola(spazio: PhysicsDirectSpaceState3D, da: Vector3, a: Vector3, r: float) -> Vector3:
-	var d := a - da
-	var ld := d.length()
-	if ld < 1e-5:
-		return a
-	# dal punto un po' indietro: una superficie che già tocca conta (all'indietro le superfici si vedono di schiena)
-	_raggio.from = da - d / ld * r * 0.5
-	_raggio.to = a + d / ld * r
-	var c := spazio.intersect_ray(_raggio)
-	if c.is_empty():
-		return a
-	var nrm := c["normal"] as Vector3
-	var piano := (c["position"] as Vector3) + nrm * r
-	var su := a - nrm * (a - piano).dot(nrm)
-	# il secondo tratto, sul piano
-	var d2 := su - da
-	var l2 := d2.length()
-	if l2 < 1e-5:
-		return da
-	_raggio.to = su + d2 / l2 * r
-	var c2 := spazio.intersect_ray(_raggio)
-	if c2.is_empty():
-		return su
-	return da + d2 / l2 * clampf(da.distance_to(c2["position"]) - r, 0.0, l2)
+## Aggiunge una forma convessa del mondo (punti nel mondo) contro cui i tentacoli non entrano.
+func aggiungi_convesso(punti: PackedVector3Array) -> void:
+	var piani: Array[Plane] = []
+	var nn := punti.size()
+	for a in nn:
+		for b in range(a + 1, nn):
+			for c in range(b + 1, nn):
+				var nrm := (punti[b] - punti[a]).cross(punti[c] - punti[a])
+				if nrm.length() < 1e-6:
+					continue
+				var pl := Plane(nrm.normalized(), punti[a])
+				var sopra := 0
+				var sotto := 0
+				for q in punti:
+					var d := pl.distance_to(q)
+					if d > 1e-4:
+						sopra += 1
+					elif d < -1e-4:
+						sotto += 1
+				if sopra > 0 and sotto > 0:
+					continue
+				if sopra > 0:
+					pl = -pl
+				var doppio := false
+				for e in piani:
+					if e.normal.dot(pl.normal) > 0.9999 and absf(e.d - pl.d) < 1e-4:
+						doppio = true
+						break
+				if not doppio:
+					piani.append(pl)
+	if piani.size() < 4:
+		return
+	var bb := AABB(punti[0], Vector3.ZERO)
+	for q in punti:
+		bb = bb.expand(q)
+	_forme.append([piani, bb])
 
 
-## Vero se andando da [param a] a [param b] (e [param r] oltre) si entra in una superficie.
-func _colpo(spazio: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3, r: float) -> bool:
-	var d := b - a
-	var l := d.length()
-	if l < 1e-5:
-		return false
-	_raggio.from = a
-	_raggio.to = b + d / l * r
-	return not spazio.intersect_ray(_raggio).is_empty()
+## Aggiunge una scatola (il suo centro e i suoi assi in [param xf], mezze misure [param mezzo]).
+func aggiungi_scatola(xf: Transform3D, mezzo: Vector3) -> void:
+	var punti := PackedVector3Array()
+	for sx in [-1.0, 1.0]:
+		for sy in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				punti.append(xf * Vector3(sx * mezzo.x, sy * mezzo.y, sz * mezzo.z))
+	aggiungi_convesso(punti)
+
+
+## Aggiunge le forme di collisione (scatole e convesse) sotto [param radice] che toccano [param zona], tranne i
+## corpi in [param salta].
+func aggiungi_forme_da(radice: Node, zona: AABB, salta: Array = []) -> void:
+	for cs in radice.find_children("*", "CollisionShape3D", true, false):
+		var c3 := cs as CollisionShape3D
+		if c3.disabled or c3.get_parent() in salta or c3 in salta:
+			continue
+		var punti := PackedVector3Array()
+		if c3.shape is ConvexPolygonShape3D:
+			for q in (c3.shape as ConvexPolygonShape3D).points:
+				punti.append(c3.global_transform * q)
+		elif c3.shape is BoxShape3D:
+			var m := (c3.shape as BoxShape3D).size * 0.5
+			aggiungi_scatola(c3.global_transform, m)
+			continue
+		else:
+			continue
+		var bb := AABB(punti[0], Vector3.ZERO)
+		for q in punti:
+			bb = bb.expand(q)
+		if bb.intersects(zona):
+			aggiungi_convesso(punti)
+
+
+## Il punto [param p] fuori dal mondo (a [param r] da tutto): il pavimento (lastra con la cima a [member pavimento_y]
+## fuori da [member buco_pavimento]) e le forme. Si spinge fuori dalla faccia da cui è entrato (dov'era, [param da]:
+## così da una parete sottile non esce dall'altra parte), o se non si sa dalla più vicina: continuo, e il punto
+## scivola. Nei [member tunnel] resta dentro il tubo, e alla bocca le forme non contano.
+func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF) -> Vector3:
+	for t in tunnel:
+		var a: Vector3 = t[0]
+		var asse: Vector3 = (t[1] as Vector3) - a
+		var la := asse.length()
+		asse /= la
+		var R: float = t[2]
+		var lungo := (p - a).dot(asse)
+		var radiale := (p - a) - asse * lungo
+		var rho := radiale.length()
+		if lungo >= 0.0 and lungo <= la and rho < R:
+			if rho > R - r:
+				p = a + asse * lungo + radiale / rho * (R - r)
+			return p
+		if lungo > -r and rho < R - r:
+			return p
+	for giro in 2:
+		var mosso := false
+		if p.y < pavimento_y + r and p.y > pavimento_y - 0.3 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
+			p.y = pavimento_y + r
+			mosso = true
+		for fo in forme:
+			if not (fo[1] as AABB).grow(r).has_point(p):
+				continue
+			var meglio: Plane
+			var dm := -INF
+			for pl: Plane in fo[0]:
+				var d := pl.distance_to(p)
+				if d > dm:
+					dm = d
+					meglio = pl
+			if dm >= r:
+				continue
+			# dalla faccia da cui veniva (quella che dov'era aveva più lontana), se dov'era stava fuori
+			if da != Vector3.INF:
+				var dprima := -INF
+				for pl: Plane in fo[0]:
+					var d0 := pl.distance_to(da)
+					if d0 > dprima:
+						dprima = d0
+						if d0 >= r - 1e-4:
+							meglio = pl
+				if dprima >= r - 1e-4:
+					dm = meglio.distance_to(p)
+			p += meglio.normal * (r - dm)
+			mosso = true
+		if not mosso:
+			break
+	return p
+
+
+## I tratti fuori dalle forme: dove un tratto entra in una forma (allargata del raggio: il tratto tagliato contro le
+## facce) il suo punto di mezzo lì dentro esce dalla faccia più vicina, e lo spostamento va ai due capi secondo dove
+## sta (alla radice, che segue la posa, no). Così anche lo spigolo del bordo non si taglia.
+func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVector3Array) -> void:
+	if forme.is_empty():
+		return
+	for i in range(1, n + 1):
+		var r := lerpf(raggio_radice, raggio_punta, (float(i) - 0.5) / n)
+		for fo in forme:
+			var a := pt[i - 1]
+			var b := pt[i]
+			var bb := AABB(a, Vector3.ZERO).expand(b).grow(r)
+			if not (fo[1] as AABB).intersects(bb):
+				continue
+			var t0 := 0.0
+			var t1 := 1.0
+			for pl: Plane in fo[0]:
+				var da := pl.distance_to(a) - r
+				var db := pl.distance_to(b) - r
+				if da >= 0.0 and db >= 0.0:
+					t0 = 2.0
+					break
+				if da < 0.0 and db < 0.0:
+					continue
+				var tc := da / (da - db)
+				if da >= 0.0:
+					t0 = maxf(t0, tc)
+				else:
+					t1 = minf(t1, tc)
+				if t0 >= t1:
+					break
+			# solo se entra ed esce in mezzo (un capo dentro: ci pensa il punto, o è la radice che segue la posa)
+			if t0 >= t1 or t0 <= 0.0 or t1 >= 1.0:
+				continue
+			var t := (t0 + t1) * 0.5
+			if t < 0.02 or t > 0.98:
+				continue                       # ai capi ci pensa il punto stesso
+			var m := a.lerp(b, t)
+			var nel_tubo := false
+			for tu in tunnel:
+				if Geometry3D.get_closest_point_to_segment(m, tu[0], tu[1]).distance_to(m) < float(tu[2]):
+					nel_tubo = true
+			if nel_tubo:
+				continue
+			var meglio: Plane
+			var dm := -INF
+			for pl: Plane in fo[0]:
+				var d := pl.distance_to(m)
+				if d > dm:
+					dm = d
+					meglio = pl
+			var c := meglio.normal * (r - dm)
+			var sa := Vector3.ZERO
+			var sb := Vector3.ZERO
+			if i == 1:
+				sb = c / maxf(t, 0.5)
+			else:
+				var w := (1.0 - t) * (1.0 - t) + t * t
+				sa = c * (1.0 - t) / w
+				sb = c * t / w
+			pt[i - 1] += sa
+			pt[i] += sb
+			if not corr.is_empty():
+				corr[i - 1] += sa
+				corr[i] += sb
 
 
 ## I punti dei tentacoli come sono adesso (mondo), per sapere se è tutta sotto; vuoto se è spenta.

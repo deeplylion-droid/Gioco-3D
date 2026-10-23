@@ -407,10 +407,51 @@ func _avvia_tuffo() -> void:
 			_morbidezza = MorbidezzaLei.new()
 			_morbidezza.name = "Morbidezza"
 			sk.add_child(_morbidezza)
-		_morbidezza.esclusi = esclusi
+			_forme_morbidezza(fossa)
 		_morbidezza.acqua_pianta = fossa
 		_morbidezza.acqua_pelo = _pelo()
 		_morbidezza.accendi()
+
+
+## Le collisioni dei tentacoli morbidi: le forme di collisione della fossa e del bordo intorno (senza il coperchio), il
+## pavimento con il buco della fossa, la griglia divelta (non ha collisione: la scatola è presa dalle sue misure in
+## tools/blender/ambiente_sala.py, fossa_bimbi) e il condotto in fondo: la parete est di collisione lo chiude, qui
+## diventa quattro scatole intorno a un buco quadrato e il condotto un canale quadrato (dentro quello tondo, raggio 0,6:
+## i tentacoli non escono mai dal tubo che si vede).
+func _forme_morbidezza(fossa: Rect2) -> void:
+	var zona := AABB(punto_sbuca.global_position - Vector3(5.0, 5.0, 5.0), Vector3(10.0, 8.0, 10.0))
+	var dove: Node = coperchio.get_parent() if coperchio else get_tree().current_scene
+	var salta: Array = [coperchio] if coperchio else []
+	var parete_e := dove.find_child("fossa_parete_e", true, false)
+	if parete_e:
+		salta.append(parete_e)
+	_morbidezza.aggiungi_forme_da(dove, zona, salta)
+	_morbidezza.pavimento_y = 0.0
+	_morbidezza.buco_pavimento = fossa
+	# la griglia: appoggiata al muro nord, in cima a y -1,84 contro il muro, il piede sul fondo 35 cm più in là
+	var cima := Vector3(-14.325, -1.844, -7.98)
+	var piede := Vector3(-14.325, -2.992, -7.63)
+	var lungo := (piede - cima).normalized()
+	var base := Basis(Vector3.RIGHT, lungo, Vector3.RIGHT.cross(lungo))
+	_morbidezza.aggiungi_scatola(Transform3D(base, (cima + piede) * 0.5), Vector3(0.425, cima.distance_to(piede) * 0.5, 0.025))
+	# la parete est (x -12,3..-12,1, y -3..0, z -8..-6) col buco del condotto (centro y -2,3, z -7) e il canale fino
+	# a x -8,8; mezzo lato del buco 0,43 (il quadrato dentro il cerchio di raggio 0,6)
+	var yc := -2.3
+	var zc := -7.0
+	var h := 0.43
+	for b in [
+		[Vector3(-12.3, -3.0, -8.0), Vector3(-12.1, yc - h, -6.0)],          # sotto il buco
+		[Vector3(-12.3, yc + h, -8.0), Vector3(-12.1, 0.0, -6.0)],           # sopra
+		[Vector3(-12.3, yc - h, -8.0), Vector3(-12.1, yc + h, zc - h)],      # di lato
+		[Vector3(-12.3, yc - h, zc + h), Vector3(-12.1, yc + h, -6.0)],
+		[Vector3(-12.1, yc - h - 0.2, zc - h - 0.2), Vector3(-8.8, yc - h, zc + h + 0.2)],   # il canale: fondo
+		[Vector3(-12.1, yc + h, zc - h - 0.2), Vector3(-8.8, yc + h + 0.2, zc + h + 0.2)],   # cielo
+		[Vector3(-12.1, yc - h, zc - h - 0.2), Vector3(-8.8, yc + h, zc - h)],               # lati
+		[Vector3(-12.1, yc - h, zc + h), Vector3(-8.8, yc + h, zc + h + 0.2)],
+	]:
+		var a: Vector3 = b[0]
+		var c: Vector3 = b[1]
+		_morbidezza.aggiungi_scatola(Transform3D(Basis.IDENTITY, (a + c) * 0.5), (c - a) * 0.5)
 
 
 ## Di nuovo affacciata (ripartenza, salvataggio): niente tuffo, l'animazione "affacciata" riparte.

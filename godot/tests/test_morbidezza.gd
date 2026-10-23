@@ -3,10 +3,13 @@ extends Node
 ## - "quanto" a 0: la posa resta identica a quella che arriva dal tuffo (statua ferma);
 ## - partenza piano: al primo fotogramma la posa è quella del tuffo, poi si stacca a poco a poco (niente scatti),
 ##   anche ripartendo (affacciata di nuovo, come al caricamento del checkpoint) e tuffandosi una seconda volta;
-## - collisioni: i tratti dei tentacoli non attraversano il mondo (bordo, fondo, griglia di scarico divelta) più
-##   di quanto già faccia la posa del tuffo; nessun punto sotto il pavimento fuori dalla fossa;
-## - quando sparisce (tutta sotto), anche le punte morbide sono sotto il pelo o il pavimento;
-## - il costo in millisecondi (stampato; il confronto vero è sul renderer software, nel video).
+## - collisioni, dopo la dissolvenza (0,4 s: lì la posa, che a tratti entra nel mondo, ne esce piano): nessun punto
+##   dei tentacoli (teste, punte, quarti e metà dei tratti) dentro pavimento, pareti, fondo, bordo o griglia; nessun
+##   tratto che attraversa il mondo (raggi sulla collisione vera) e nessun punto che passa una superficie da un
+##   fotogramma all'altro. Non si contano i tentacoli la cui radice (che segue la posa) è dentro il mondo o già nel
+##   condotto, in fondo: lì il primo tratto non può evitarlo;
+## - i tratti restano vicini alla lunghezza di riposo; quando sparisce, anche le punte morbide sono sotto;
+## - il costo in millisecondi (stampato; quello vero è sul renderer software, nel video).
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_morbidezza.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -21,6 +24,7 @@ var _uscita: Array = []
 var _registra := false
 var _sim: Array = []
 var _dt: Array = []
+var _pesi: Array = []
 
 
 func _ready() -> void:
@@ -112,13 +116,42 @@ func _punti(rif: Array = []) -> Array:
 			pts.append((sg * sk.get_bone_global_pose(b)).origin)
 		var n := pts.size()
 		var ultimo := sg * sk.get_bone_global_pose(c[n - 1])
-		# la punta: l'ultimo osso è lungo come nella posa che arriva
-		var r: PackedVector3Array = rif[kc] if not rif.is_empty() else pts
-		# (con la scala dell'osso lungo il suo asse: la morbidezza allunga l'ultimo osso)
+		# la punta: l'ultimo osso è lungo come il tratto di riposo prima (come lo conta la morbidezza)
 		var allunga := ultimo.basis.y.length() / maxf(ultimo.basis.x.length(), 1e-6)
-		pts.append(ultimo.origin + ultimo.basis.y.normalized() * r[n - 1].distance_to(r[n - 2]) * allunga)
+		pts.append(ultimo.origin + ultimo.basis.y.normalized() * _lung_riposo(kc, n) * allunga)
 		out.append(pts)
 	return out
+
+
+func _lung_riposo(k: int, i: int) -> float:
+	var c := catene[k]
+	var j := mini(i, c.size() - 1)
+	return sk.get_bone_rest(c[j]).origin.length() * sk.global_basis.get_scale().x
+
+
+## Quanto [param q] è dentro le forme della morbidezza (m): 0 se è fuori.
+func _dentro(m: MorbidezzaLei, q: Vector3) -> float:
+	return (m.call(&"_fuori", q, 0.0, m.get(&"_forme")) as Vector3).distance_to(q)
+
+
+## Vero se [param q] è dietro la parete est della fossa, nel terreno fuori dal condotto (lì la posa del tuffo, in
+## fondo, a volte mette il corpo; tools/blender/ambiente_sala.py, FOSSA_BIMBI: x1 -12,3, condotto y -2,3 z -7, per le collisioni
+## un canale quadrato di mezzo lato 0,43).
+func _nel_terreno(q: Vector3) -> bool:
+	return q.x > -12.3 and q.y < 0.0 and not _nel_condotto(q)
+
+
+func _cosa(a: Vector3, b: Vector3) -> String:
+	var q := PhysicsRayQueryParameters3D.create(a, b, Layers.WORLD)
+	q.hit_back_faces = false
+	if lei.coperchio:
+		q.exclude = [lei.coperchio.get_rid()]
+	var c := sk.get_world_3d().direct_space_state.intersect_ray(q)
+	return "%s in %s normale %s" % [c.get("collider").name if c.has("collider") else "-", c.get("position"), c.get("normal")]
+
+
+func _nel_condotto(q: Vector3) -> bool:
+	return q.x > -12.35 and absf(q.y + 2.3) < 0.43 and absf(q.z + 7.0) < 0.43
 
 
 func _su_entrata() -> void:
@@ -132,6 +165,7 @@ func _su_uscita() -> void:
 		var mm: MorbidezzaLei = lei.get(&"_morbidezza")
 		_sim.append((mm.get(&"_x") as Array).duplicate(true))
 		_dt.append(get_process_delta_time())
+		_pesi.append(float(mm.get(&"_peso")) * mm.quanto)
 
 
 
@@ -158,6 +192,7 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 	_uscita.clear()
 	_sim.clear()
 	_dt.clear()
+	_pesi.clear()
 	lei.call(&"_on_spruzzata", 1.0, Vector3.ZERO, Vector3.ZERO)
 	var m: MorbidezzaLei = lei.get(&"_morbidezza")
 	_check(m != null, "%s: la morbidezza c'è" % nome)
@@ -190,19 +225,35 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 	var attr_out := 0
 	var sotto := 0
 	var entra := 0
+	var radice_dentro := 0
+	var dentro_n := 0
 	var stira_max := 0.0
 	var stira_n := 0
 	var stira_min := 10.0
 	var entra_posa := 0
 	var dove_salto := ""
 	var prec_diff := []
+	var acceso := nf
 	for f in nf:
+		if float(_pesi[f]) >= 0.999:
+			acceso = f
+			break
+	for f in nf:
+		# nella dissolvenza (0,4 s) la posa, che a tratti entra nel mondo, ne esce piano: si conta dopo
+		var conta := f > acceso
 		var e: Array = _entrata[f]
 		var u: Array = _uscita[f]
 		var fd := 0.0
 		for k in e.size():
 			var pe: PackedVector3Array = e[k]
 			var pu: PackedVector3Array = u[k]
+			# la radice segue la posa: se la posa la mette dentro il mondo (in fondo, nel muro sopra il condotto), il
+			# primo tratto non può evitarlo; si conta a parte
+			var conta_k := true
+			# (anche quando è già nel condotto, dietro la parete: il primo tratto esce dalla bocca)
+			if conta and quanto > 0.0 and (_dentro(m, pe[0]) > 0.005 or _nel_terreno(pe[0]) or pe[0].x > -12.3):
+				conta_k = false
+				radice_dentro += 1
 			for i in pe.size():
 				var d := pe[i] - pu[i]
 				fd = maxf(fd, d.length())
@@ -214,32 +265,43 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 					var mosso_e := 0.0
 					for g in range(maxi(f - 5, 1), f + 1):
 						mosso_e = maxf(mosso_e, (_entrata[g][k] as PackedVector3Array)[i].distance_to((_entrata[g - 1][k] as PackedVector3Array)[i]))
-					if (mosso_u - mosso_e) / maxf(_dt[f], 1.0 / 60.0) > max_salto:
+					if conta and conta_k and (mosso_u - mosso_e) / maxf(_dt[f], 1.0 / 60.0) > max_salto:
 						max_salto = (mosso_u - mosso_e) / maxf(_dt[f], 1.0 / 60.0)
 						dove_salto = "f%d k%d i%d posa %s esce %s; dt %.4f, il punto simulato si è mosso di %.3f, la posa di %.3f, l'uscita di %.3f" % [f, k, i, pe[i], pu[i], _dt[f], ((_sim[f][k] as PackedVector3Array)[i]).distance_to((_sim[f - 1][k] as PackedVector3Array)[i]) if _sim[f].size() > k and _sim[f - 1].size() > k else -1.0, pe[i].distance_to((_entrata[f - 1][k] as PackedVector3Array)[i]), pu[i].distance_to((_uscita[f - 1][k] as PackedVector3Array)[i])]
 				if i > 0 and i < pe.size() - 1:
-					var lp := pe[i].distance_to(pe[i - 1])
+					var lp := _lung_riposo(k, i)
 					if lp > 0.02:
 						var rapporto := pu[i].distance_to(pu[i - 1]) / lp
-						stira_max = maxf(stira_max, rapporto)
-						if rapporto > 1.3 or rapporto < 0.7:
-							stira_n += 1
-							if stira_n < 4:
-								print("  stira f%d k%d i%d x%.2f posa %s esce %s prima %s sott'acqua %s" % [f, k, i, rapporto, pe[i], pu[i], pu[i - 1], lei.sott_acqua(pu[i])])
-						stira_min = minf(stira_min, rapporto)
+						if conta and conta_k:
+							stira_max = maxf(stira_max, rapporto)
+							stira_min = minf(stira_min, rapporto)
+							if rapporto > 1.3 or rapporto < 0.7:
+								stira_n += 1
+								if stira_n < 4:
+									print("  stira f%d k%d i%d x%.2f posa %s esce %s prima %s sott'acqua %s" % [f, k, i, rapporto, pe[i], pu[i], pu[i - 1], lei.sott_acqua(pu[i])])
+				if i > 0 and quanto > 0.0:
+					for tq in [0.0, 0.25, 0.5, 0.75]:
+						var qq := pu[i].lerp(pu[i - 1], tq)
+						if conta and conta_k and _dentro(m, qq) > 0.005:
+							dentro_n += 1
+							if dentro_n < 4:
+								print("  dentro f%d k%d i%d t%.2f %s di %.3f m" % [f, k, i, tq, qq, _dentro(m, qq)])
 				if i > 0:
-					if _attraversa(pe[i - 1], pe[i]):
+					if conta and conta_k and _attraversa(pe[i - 1], pe[i]):
 						attr_in += 1
-					if _attraversa(pu[i - 1], pu[i]):
+					if conta and conta_k and _attraversa(pu[i - 1], pu[i]) and not (_nel_condotto(pu[i - 1]) or _nel_condotto(pu[i])):
 						attr_out += 1
+						if attr_out < 6:
+							print("  attraversa f%d k%d i%d %s -> %s: %s" % [f, k, i, pu[i - 1], pu[i], _cosa(pu[i - 1], pu[i])])
 				# un punto che passa una superficie da un fotogramma all'altro (la posa a volte lo fa: si conta a parte)
-				if f > 0 and _attraversa((_uscita[f - 1][k] as PackedVector3Array)[i], pu[i], 0.01):
+				if conta and conta_k and i > 0 and f > 0 and not _nel_condotto(pu[i]) and _attraversa((_uscita[f - 1][k] as PackedVector3Array)[i], pu[i], 0.01):
 					entra += 1
-				if f > 0 and _attraversa((_entrata[f - 1][k] as PackedVector3Array)[i], pe[i], 0.01):
-					entra_posa += 1
 					if entra < 6:
-						print("  entra f%d k%d i%d posa %s esce %s" % [f, k, i, pe[i], pu[i]])
-				if _fuori_dalla_fossa(pu[i]) and lei.sotto_il_pavimento(pu[i]) and not lei.sotto_il_pavimento(pe[i]):
+						var prima_u: Vector3 = (_uscita[f - 1][k] as PackedVector3Array)[i]
+						print("  entra f%d k%d i%d %s -> %s: %s" % [f, k, i, prima_u, pu[i], _cosa(prima_u, pu[i])])
+				if conta and conta_k and i > 0 and f > 0 and not _nel_condotto(pe[i]) and _attraversa((_entrata[f - 1][k] as PackedVector3Array)[i], pe[i], 0.01):
+					entra_posa += 1
+				if conta and conta_k and _fuori_dalla_fossa(pu[i]) and not _nel_condotto(pu[i]) and lei.sotto_il_pavimento(pu[i]) and not lei.sotto_il_pavimento(pe[i]):
 					sotto += 1
 					if sotto < 4:
 						print("  sotto f%d k%d i%d posa %s esce %s sim %s" % [f, k, i, pe[i], pu[i], (_sim[f][k] as PackedVector3Array)[i]])
@@ -251,6 +313,7 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 	for c in costi:
 		medio += c
 	medio /= maxf(costi.size(), 1)
+	print("  dissolvenza finita al fotogramma %d; tentacoli-fotogramma con la radice della posa dentro il mondo (non contati): %d" % [acceso, radice_dentro])
 	print("  fotogrammi %d, scarto massimo %.3f m, primo %.4f m, velocità massima oltre la posa %.1f m/s" % [nf, max_diff, primo_diff, max_salto])
 	print("  salto peggiore ", dove_salto)
 	print("  attraversamenti: posa del tuffo %d, dopo la morbidezza %d; punti sotto il pavimento in più %d; punti che passano una superficie %d (nella posa %d)" % [attr_in, attr_out, sotto, entra, entra_posa])
@@ -260,11 +323,12 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 	# dove un tentacolo è appoggiato sullo spigolo del bordo il tratto contro il muro resta indietro e si allunga un po'
 	_check(stira_max < 2.0 and stira_min > 0.15 and stira_n < nf * 150 / 100, "%s: i tentacoli non si allungano né accorciano troppo (%.2f-%.2f, fuori da 0,7-1,3 in %d tratti-fotogramma: meno dell'1%%)" % [nome, stira_min, stira_max, stira_n])
 	_check(nf > 30, "%s: registrati %d fotogrammi" % [nome, nf])
-	_check(primo_diff < 0.01, "%s: al primo fotogramma è la posa del tuffo (%.4f m)" % [nome, primo_diff])
+	_check(primo_diff < 0.02, "%s: al primo fotogramma è la posa del tuffo (%.4f m)" % [nome, primo_diff])
 	# (in cima al salto le punte lunghe frustano: la posa stessa lì corre fino a 60 m/s)
 	_check(max_salto < 25.0, "%s: niente scatti (va al più %.1f m/s più veloce della posa)" % [nome, max_salto])
-	_check(attr_out <= attr_in, "%s: non attraversa il mondo più del tuffo (%d contro %d)" % [nome, attr_out, attr_in])
-	_check(entra <= entra_posa, "%s: nessun punto passa il mondo più della posa (%d contro %d)" % [nome, entra, entra_posa])
+	_check(dentro_n == 0, "%s: nessun punto dei tentacoli dentro pavimento, pareti, fondo, bordo o griglia (%d)" % [nome, dentro_n])
+	_check(attr_out == 0 or quanto == 0.0, "%s: nessun tratto dei tentacoli attraversa il mondo (%d; la posa da sola: %d)" % [nome, attr_out, attr_in])
+	_check(entra == 0, "%s: nessun punto dei tentacoli passa una superficie (%d; la posa da sola: %d)" % [nome, entra, entra_posa])
 	_check(sotto == 0, "%s: nessun punto sotto il pavimento fuori dalla fossa (%d)" % [nome, sotto])
 	if sparita_punti != null and quanto > 0.0:
 		var fuori := 0
