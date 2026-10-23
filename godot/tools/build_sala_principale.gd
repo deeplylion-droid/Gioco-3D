@@ -824,7 +824,11 @@ func _tappa7(has_interiors: bool) -> void:
 		# 180 gradi la porta resta appoggiata al muro (6 mm) invece di entrarci (collaudo del 23 ottobre: col cardine
 		# a z 41,0 e 172 gradi l'anta finiva dentro il muro, che va da z 40,9 a 41,1). Dal cardine a metà fra la faccia
 		# del muro e quella della porta, la faccia della porta verso il muro, ruotata, cade 6 mm prima del muro.
-		cardine.position = INTERNI_OFFSET + Vector3(bb.end.x, 0.0, bb.position.z * 0.5 - 0.003)
+		# Collaudo del 23 ottobre, coi raggi sulla geometria vera: il telaio del vano sporge 4 cm dal muro (faccia a z
+		# locale -0,040) e la faccia vera della porta HQ, ruotata, arrivava 1,5-2,7 cm dentro il telaio e 1,4 cm dentro il
+		# battiscopa. Il cardine va 1,45 cm più verso il corridoio: la porta aperta appoggia sul telaio (2 mm) e resta
+		# 4 cm davanti al muro, come quella dello stanzino; il fermaporta di gomma sul muro la tiene in fondo.
+		cardine.position = INTERNI_OFFSET + Vector3(bb.end.x, 0.0, bb.position.z * 0.5 - 0.003 - 0.0145)
 		own(cardine, gp)
 		var porta: Area3D = load("res://scripts/tecnici/porta_maniglione.gd").new()
 		porta.name = "PortaSalaPompeInterni"

@@ -570,6 +570,23 @@ def fila_armadietti_hq(prefisso, x, y0, n, faccia, M, stati, seme=0):
     return None, None, speciali
 
 
+def faccia_min_x(ob, y, z, x0):
+    """Dove un raggio da (x0, y, z) verso +x incontra la mesh (con i figli): la faccia vera di un oggetto verso -x."""
+    bpy.context.view_layer.update()
+    dg = bpy.context.evaluated_depsgraph_get()
+    xs = []
+    for o in [ob] + list(ob.children_recursive):
+        if o.type != 'MESH':
+            continue
+        inv = o.matrix_world.inverted()
+        orig = inv @ Vector((x0, y, z))
+        dirz = (inv.to_3x3() @ Vector((1, 0, 0))).normalized()
+        ok, loc, _n, _i = o.evaluated_get(dg).ray_cast(orig, dirz)
+        if ok:
+            xs.append((o.matrix_world @ loc).x)
+    return min(xs)
+
+
 def panca(nome, x0, y0, x1, y1, M, rotta=False):
     if HQ.disponibile('panca'):
         # panche Meshy da circa 1,9 m in fila lungo y
@@ -643,6 +660,8 @@ def spogliatoi(M):
     anta_sb = se[4]; anta_sb.name = 'armadietto_sbatte_anta'
     if not HQ.disponibile('armadietto_corpo'):
         anta_sb.rotation_euler = (0, 0, R(180 + 4))
+    # il cardine dell'anta che sbatte (l'origine dell'anta non sta sul cardine): interni.gd la gira intorno a questo
+    L.vuoto('cardine_armadietto_sbatte', (X1 - 0.5, 3.3 + 4 * 0.4 + 0.395, 0), dim=0.1)
     L.vuoto('marker_armadietto_sbatte', (X1 - 0.25, 3.3 + 4 * 0.4 + 0.2, 1.0), dim=0.2)
     sg = prop('salvagente_giocattolo', 'salvagente_giocattolo', (X1 - 0.26, 3.3 + 4 * 0.4 + 0.2, 0.15), 90, 0.36)
     sg.rotation_euler = (R(75), 0, R(90))
@@ -915,9 +934,14 @@ def stanzino(M):
     xc = 11.24 + sp_porta / 2 + 0.001
     porta = porta_hq(porta, 'porta_servizio', (xc, 8.9, 0.01), 0.86, 2.02, R(-90 - 180), -1)
     col_ob(porta)   # la porta aperta si urta
+    # il tampone arriva alla faccia vera della porta HQ, misurata sulla mesh intorno al punto d'appoggio: la porta
+    # del modello non sta a xc - sp_porta / 2 (collaudo del 23 ottobre: il tampone era lungo zero e la porta
+    # restava 1,8 cm staccata)
+    faccia = faccia_min_x(porta, 9.62, 0.12, 11.2) if HQ.disponibile('porta_servizio') else xc - sp_porta / 2
     statico.append(L.unisci('fermaporta_stanzino', [
         L.cilindro('fermaporta_stanzino', (11.2, 9.62, 0.12), (11.24, 9.62, 0.12), 0.012, M['metallo_grezzo'], seg=10),
-        L.cilindro('fermaporta_stanzino', (11.24, 9.62, 0.12), (xc - sp_porta / 2 - 0.001, 9.62, 0.12), 0.02, M['gomma'], seg=14)]))
+        L.cilindro('fermaporta_stanzino', (11.24, 9.62, 0.12), (faccia, 9.62, 0.12), 0.02, M['gomma'], seg=14)]))
+    print('fermaporta dello stanzino: faccia della porta a x %.4f' % faccia)
     # costole
     for y in (7.4, 9.4):
         statico.append(L.scatola('costola', (X1 - 0.07, y - 0.06, 0), (X1, y + 0.06, H), M['lamiera_crema']))

@@ -260,13 +260,14 @@ func _prepara(stato: String) -> void:
 	print("  stato: %s" % stato)
 	match stato:
 		"interni_dopo":
-			# ambienti-1: docce aperte, armadietto sbattuto (92°), tornello girato (120°), saracinesca aperta
+			# ambienti-1: docce aperte, armadietto sbattuto (a fine corsa, col metodo del gioco: gira sul cardine vero),
+			# tornello girato (120°), saracinesca aperta
 			var interni := _radice.get_node_or_null(^"Interni")
 			if interni:
 				interni.call(&"apri_docce", true)
 				var anta := interni.find_child("armadietto_sbatte_anta", true, false) as Node3D
 				if anta:
-					anta.rotation.y -= deg_to_rad(92.0)
+					interni.call(&"_sbatti_anta", anta, false)
 				var rotore := interni.find_child("tornello_rotore", true, false) as Node3D
 				if rotore:
 					rotore.rotation.y -= TAU / 3.0
