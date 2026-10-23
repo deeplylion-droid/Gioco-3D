@@ -9,7 +9,7 @@ const F := preload("res://scripts/risalita/fiume_gioco.gd")
 
 
 static func camere() -> Dictionary:
-	return {
+	var d := {
 		"piazza": [Vector3(F.INGRESSO_X, 1.7, F.Z0 + 1.0), Vector3(-3.6, 0.6, -3.6)],
 		"imbarco": [Vector3(-2.3, 0.6, -2.3), Vector3(0.0, 0.9, -13.0)],
 		"bivio1": [F.anello(62.0) + Vector3(0, 0.6, 0), F.anello(90.0) + Vector3(0, 1.6, 0)],
@@ -34,6 +34,7 @@ static func camere() -> Dictionary:
 		"pila_ciambelle": [Vector3(-2.7, 1.6, -7.7), Vector3(-4.6, 0.4, -9.2)],
 		"cartello_tuffi": [Vector3(-2.7, 1.7, -5.3), Vector3(-4.2, 1.6, -6.0)],
 	}
+	return d
 
 
 func _ready() -> void:
@@ -77,6 +78,29 @@ func _run() -> void:
 	cam.far = 200.0
 	get_tree().root.add_child(cam)
 	cam.make_current()
+	# "gabbie": tutte le lampade a gabbia (la stessa del portone), da vicino dai due lati del loro retro, per vedere che
+	# poggiano sulla roccia o sul muro (controllo con la distanza vera, 22 ottobre notte)
+	if lista.has("gabbie"):
+		lista.remove_at(lista.find("gabbie"))
+		var k := 0
+		for g in f.find_children("globo", "MeshInstance3D", true, false):
+			var l := (g as Node3D).get_parent() as Node3D
+			while l.get_parent() != f and l.get_parent() != null:
+				l = l.get_parent() as Node3D
+			var b := AABB()
+			var primo := true
+			for mi in l.find_children("*", "MeshInstance3D", true, false):
+				var bb := (mi as MeshInstance3D).global_transform * (mi as MeshInstance3D).get_aabb()
+				b = bb if primo else b.merge(bb)
+				primo = false
+			var c := b.get_center()
+			var avanti := (l.global_basis.z * Vector3(1, 0, 1)).normalized()
+			var lato := avanti.cross(Vector3.UP).normalized()
+			k += 1
+			for j in 2:
+				var nome_g := "gabbia%02d_%s" % [k, "ab"[j]]
+				cam_tutte[nome_g] = [c + avanti * 0.45 + lato * (0.4 if j == 0 else -0.4) + Vector3(0, 0.15, 0), c - avanti * 0.08]
+				lista.append(nome_g)
 	for nome in lista:
 		var c: Array = cam_tutte[nome]
 		f.get_node("Tetto").visible = nome != "alto"

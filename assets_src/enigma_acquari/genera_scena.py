@@ -85,11 +85,13 @@ BASE_C, COP_C = (0.0339, -0.0357), (0.0409, -0.0330)
 # libero (misurato: niente che sporga nell'impronta delle gambe).
 # (controllo di posizionamento del 22 ottobre sera) Il gradino non è piano: fra -0,295 e -0,298 m, e il basamento lo
 # passava di 1-2 mm per 9 cm; ora finisce 0,5 mm sopra il punto più alto (-0,29496). Il coperchio ha una gonna sottile
-# (un foglio solo) che scende fino alla sua origine, da 1,1397 m dal centro in fuori: abbassato, scende 10 cm intorno
-# alla cima del vetro, e l'anello largo fino a 1,22 m la passava; ora l'anello arriva a 1,136 m, dentro la gonna.
+# (un foglio solo) che scende fino alla sua origine, a 1,14-1,16 m dal centro (misurato sui vertici del fondo): abbassato
+# di 10 cm scendeva intorno alla cima del vetro, e l'anello ci restava chiuso dentro (per il controllo era "dentro" il
+# coperchio). Ora il coperchio sta 2 cm più su della cima del vetro, col fondo della gonna 0,5 mm sopra l'anello, largo
+# fino a 1,155 m (i tiranti cominciano a 1,156): la gonna poggia sull'anello, l'anello sul bordo del vetro.
 GRADINO = 0.14725           # quanto il fondo del basamento sta sotto il fondo del vetro (unità del modello)
-ABBASSA_COP = 0.0505        # il coperchio scende di tanto (unità del modello) fino all'anello
-R_ANELLO = (0.5475 * K, 1.136)   # l'anello sul bordo del vetro (dentro e fuori, m)
+ABBASSA_COP = -0.01025      # il coperchio scende di tanto (unità del modello): negativo, sta sopra la cima del vetro
+R_ANELLO = (0.5475 * K, 1.155)   # l'anello sul bordo del vetro (dentro e fuori, m)
 
 
 # le luci: con spot_attenuation 0,8 a distanza doppia arriva 2^-0,8 della luce, e si compensa
@@ -168,7 +170,8 @@ def rot_sc(k):
 # i tiranti: da 0,1 K dentro la base (la cima della base sotto di loro è 0,075 K sotto il vetro) a 2 cm dentro il
 # coperchio abbassato; il fondo del coperchio sopra ognuno (il punto più basso nella sua impronta, misurato) non è
 # uguale per tutti: un tirante più lungo ci entrava per 7 cm
-SOPRA_TIR = (0.0375, 0.0375, 0.013, 0.0345)   # unità del modello sopra la cima del vetro, col coperchio abbassato
+SOPRA_TIR = tuple(v + 0.0505 - ABBASSA_COP for v in (0.0375, 0.0375, 0.013, 0.0345))   # unità del modello sopra la
+# cima del vetro (misurati col coperchio abbassato di 0,0505, e spostati con lui)
 TIR_SU = B_VETRO + max(SOPRA_TIR) * K + 0.02
 TIR_GIU = -0.1 * K
 sr('CylinderMesh', 'tirante', top_radius='%.3f' % (0.022 * K), bottom_radius='%.3f' % (0.022 * K), height='%.3f' % (TIR_SU - TIR_GIU), radial_segments='12')
@@ -182,7 +185,11 @@ sr('CylinderShape3D', 'forma_alto', radius='%.3f' % (0.5 * K), height='%.3f' % (
 # di posizionamento del 22 ottobre sera: la base e i tiranti a meno di 10 cm dalla testa)
 R_FORMA_BASE, H_FORMA_BASE = 1.3, B_BASE + 0.45
 sr('CylinderShape3D', 'forma_base_alta', radius='%.3f' % R_FORMA_BASE, height='%.3f' % H_FORMA_BASE)
-sr('TorusMesh', 'anello', inner_radius='%.4f' % (R_B - 0.025 * KX), outer_radius='%.4f' % (R_B + 0.045 * KX), rings='64')
+# l'anello rosso del miscuglio sta sul bordo del vetro (che ha la faccia di fuori a R_B + 1,2 cm): il tubo dell'anello è
+# centrato lì, col fondo 0,5 mm sopra la cima del vetro. Prima il vetro gli passava dentro, e nessun vertice dell'anello
+# gli stava a meno di 5 mm (controllo di posizionamento con la distanza vera, 22 ottobre notte)
+R_ANELLO_BASSO, MEZZO_ANELLO_BASSO = R_B + 0.012, 0.035 * KX
+sr('TorusMesh', 'anello', inner_radius='%.4f' % (R_ANELLO_BASSO - MEZZO_ANELLO_BASSO), outer_radius='%.4f' % (R_ANELLO_BASSO + MEZZO_ANELLO_BASSO), rings='64', ring_segments='32')
 sr('CylinderShape3D', 'forma_base_bassa', radius='%.3f' % (R_B + 0.02 * KX), height='%.3f' % B_BASSO_BASE)
 sr('BoxShape3D', 'forma_parete', size='Vector3(%.3f, %.3f, %.3f)' % (0.45 * KX, 0.4 * KY, 0.06 * KX))
 sr('BoxShape3D', 'forma_valvola', size='Vector3(%.3f, %.3f, %.3f)' % (0.77 * KV, 0.3 * KV, 0.3 * KV))   # solo il tubo: il volantino resta libero per il getto
@@ -342,8 +349,10 @@ def allacci(nome, sx, sy, sz, y0, basso, ox=0.0, oz=0.0):
         # il coperchio della pompa tagliata (bordo da x -1,002 a -0,765, z da -0,159 a 0,152)
         sid = 'coperchio_pompa_' + nome
         cx0, cx1, cz0, cz1 = -1.012, -0.755, -0.169, 0.162
-        sr_tardi('BoxMesh', sid, size='Vector3(%.3f, 0.03, %.3f)' % ((cx1 - cx0) * sx, (cz1 - cz0) * sz))
-        node('CoperchioPompa', 'MeshInstance3D', G, transform=tr(ID, (((cx0 + cx1) / 2) * sx, y0 + 0.4 * sy + 0.015, ((cz0 + cz1) / 2) * sz)),
+        # (il fondo con una griglia di vertici e 0,5 mm sopra il taglio, chiuso da chiudi_tagli.py: coi soli quattro spigoli,
+        # che sporgono 1 cm dal bordo della pompa, nessun vertice le stava a meno di 5 mm)
+        sr_tardi('BoxMesh', sid, size='Vector3(%.3f, 0.03, %.3f)' % ((cx1 - cx0) * sx, (cz1 - cz0) * sz), subdivide_width='8', subdivide_depth='8')
+        node('CoperchioPompa', 'MeshInstance3D', G, transform=tr(ID, (((cx0 + cx1) / 2) * sx, y0 + 0.4 * sy + 0.0155, ((cz0 + cz1) / 2) * sz)),
              mesh='SubResource("%s")' % sid, material_override='ExtResource("m_basi")')
         # il gruppo col tubo legato al serbatoio (nell'alto lo tiene il tubo che sale all'anello): una staffa tonda dalla
         # costola (x 1,867) alla gamba, nella fascia dove la gamba è larga (y 0,55-0,60), dentro la larghezza della costola
@@ -388,7 +397,7 @@ def acquario(nome, gruppo, pos, alto, pigmento=None):
         allacci(nome, K, K, K, -B_BASE, False, bx, bz)
     else:
         node('Base', parent=nome, inst='base_bassa', transform=tr(sc3(SC * KX, KY, SC * KX), (0, -B_BASSO_BASE, 0)))
-        node('Anello', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.6 * KY / KX, 1), (0, B_BASSO_VETRO + 0.006 * KY, 0)),
+        node('Anello', 'MeshInstance3D', nome, transform=tr(sc3(1, 0.6 * KY / KX, 1), (0, B_BASSO_VETRO + MEZZO_ANELLO_BASSO * 0.6 * KY / KX + 0.0005, 0)),
              mesh='SubResource("anello")', material_override='ExtResource("m_rosso")')
         # il fondo del vetro sulle sue gambe (prima il vetro e l'acqua stavano 0,58 m sopra il piano della base)
         node('FondoVetro', 'MeshInstance3D', nome, transform=tr(ID, (0, -0.01, 0)), mesh='SubResource("fondo_vetro_basso")',
