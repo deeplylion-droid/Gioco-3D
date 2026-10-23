@@ -267,8 +267,8 @@ def _anelli_bordo(bm, muso_t):
 
 def interno(bm, w, lab, muso_t, me, orlo):
     """L'interno della bocca dal bordo del buco: una sacca di carne (palato, gola, pavimento della bocca)
-    che si allarga un poco dietro le labbra e si stringe verso la gola, più due file di denti in più
-    dietro quelli del modello. I pesi della mascella dei vertici nuovi vanno da quelli del bordo verso
+    che si allarga un poco dietro le labbra e si stringe verso la gola, più tre file di denti in più
+    dietro quelli del modello (una di sopra, poi due di sopra e di sotto). I pesi della mascella dei vertici nuovi vanno da quelli del bordo verso
     0,3 in fondo: la sacca si tende quando la bocca si apre."""
     # il bordo del buco: i vertici di bordo nel muso, di sopra (testa) e di sotto (mascella), ordinati
     # lungo la cerniera e ricampionati: l'anello d'ingresso della sacca (sopra da sinistra a destra, sotto
@@ -462,27 +462,78 @@ def interno(bm, w, lab, muso_t, me, orlo):
     # denti: una fila dietro il bordo, ogni 3 cm circa (con due, da sotto si vedevano lastre bianche)
     rng = np.random.default_rng(4)
     passo = 0.03
-    for fila, (t_f, scala) in enumerate(((0.07, 0.85),)):
+    def fila_denti(t_f, scala, sotto_anche, piega, rng, passo, solo_sotto=False):
+        """Una fila di denti sulla sacca a t_f della sua profondità (0 il bordo, 1 la gola): le basi affondate
+        nella carne, le punte verso l'asse della bocca, piegate verso la gola di [param piega]."""
         lung = 0.0
+        quanti = 0
+        kf = t_f * K
+        k0 = min(int(kf), K - 1)
         for i in range(n):
             j = (i + 1) % n
             lung += float(np.linalg.norm(B[j] - B[i]))
-            # solo sopra: il bordo di sotto del taglio è il fondo della bocca, dietro i denti del modello
-            if lung < passo or LB[i] <= 0:
+            if lung < passo or (LB[i] <= 0 and not sotto_anche) or (LB[i] > 0 and solo_sotto):
                 continue
             lung = 0.0
             if i % M < 3 or i % M > M - 4:     # niente denti negli angoli della bocca
                 continue
-            base = Vector(anelli_v[0][i].co).lerp(Vector(anelli_v[1][i].co), min(t_f * K, 1.0))
+            base = Vector(anelli_v[k0][i].co).lerp(Vector(anelli_v[k0 + 1][i].co), kf - k0)
             verso = Vector((sotto - sopra) if LB[i] > 0 else (sopra - sotto)).normalized()
             dentro = (Vector(gola) - base).normalized()
             # di sopra pendono giù, di sotto sono più corti e piegati verso la gola
-            d = (verso * 0.85 + dentro * 0.3).normalized() if LB[i] > 0 else (verso * 0.55 + dentro * 0.7).normalized()
-            h = float(rng.uniform(0.05, 0.085)) * scala * (1.0 if LB[i] > 0 else 0.6)
+            if LB[i] > 0:
+                d = (verso * 0.85 + dentro * (0.3 + piega)).normalized()
+            elif not sotto_anche:
+                d = (verso * 0.55 + dentro * 0.7).normalized()
+            else:
+                # le file in più di sotto stanno dritte dietro i denti del modello (stese verso la gola, dal davanti
+                # sembravano schegge sul fondo della bocca)
+                d = (verso * 0.85 + dentro * (0.25 + piega * 0.5)).normalized()
+            h = float(rng.uniform(0.05, 0.085)) * scala * (1.0 if LB[i] > 0 else (0.85 if sotto_anche else 0.6))
             r = float(rng.uniform(0.014, 0.022)) * scala
+            # la base affonda nella gengiva (un terzo del raggio sotto la carne): non resta sospesa
+            base = base - d * r * 0.35
             nuovi_t = _dente(bm, base, d, h, r, Vector(B[j]) - Vector(B[i]), s_denti, uv)
             for v in nuovi_t:
-                v.index = len(w); w.append(float(WB[i])); lab.append(int(LB[i]))
+                v.index = len(w); w.append(float(w[anelli_v[k0][i].index])); lab.append(int(LB[i]))
+            quanti += 1
+        return quanti
+    fila_denti(0.07, 0.85, False, 0.0, rng, passo)
+    # le file in più dietro la prima, come uno squalo (l'utente, 23 ottobre: "più file di denti, 3D"): di
+    # sopra e di sotto, più piccole e più piegate verso la gola man mano che vanno dentro
+    rng2 = np.random.default_rng(5)
+    for t_f, scala, piega in ((0.2, 0.78, 0.25), (0.34, 0.66, 0.45)):
+        print('FILA', t_f, fila_denti(t_f, scala, False, piega, rng2, passo * 1.1), 'denti')
+    # di sotto, sulla gengiva tra il labbro (i denti del modello) e l'ingresso della sacca: due file dritte, una
+    # subito dietro i denti del modello e una più dentro (sulla sacca stavano troppo in alto, staccate dal labbro)
+    P_lab = np.array([v.co[:] for v in h_giu])
+    for f_g, scala in ((0.3, 0.62), (0.65, 0.52)):
+        lung, quanti = 0.0, 0
+        for i in range(M, n):
+            j = (i + 1) % n
+            lung += float(np.linalg.norm(B[j] - B[i]))
+            if lung < passo * 1.1:
+                continue
+            lung = 0.0
+            if i % M < 4 or i % M > M - 5:
+                continue
+            anello = Vector(anelli_v[0][i].co)
+            lab_p = Vector(P_lab[int(np.argmin(np.linalg.norm(P_lab - np.array(anello[:]), axis=1)))])
+            base = lab_p.lerp(anello, f_g)
+            verso = Vector(sopra - sotto).normalized()
+            dentro = (Vector(gola) - base).normalized()
+            # piegati verso la gola: a bocca aperta la mascella gira in avanti e così restano dritti
+            d = (verso * 0.7 + dentro * 0.65).normalized()
+            h = float(rng2.uniform(0.04, 0.065)) * scala
+            r = float(rng2.uniform(0.013, 0.02)) * scala
+            base = base - d * r * 0.35
+            # piatti lungo la cerniera (la direzione del bordo dell'anello qui li girava a caso)
+            nuovi_t = _dente(bm, base, d, h, r, Vector(asse[:]), s_denti, uv)
+            peso = float(WB[i])
+            for v in nuovi_t:
+                v.index = len(w); w.append(peso); lab.append(-1)
+            quanti += 1
+        print('FILA SOTTO', f_g, quanti, 'denti')
     return len(nuovi)
 
 
