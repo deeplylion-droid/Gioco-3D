@@ -110,7 +110,12 @@ func _riferimento(chi: String) -> Node3D:
 		return null
 	var n := _scena.get_node_or_null(NodePath(chi))
 	if n == null:
-		n = _scena.find_child(chi, true, false)
+		# il primo nome si cerca in tutta la scena (Jilly sta sotto il monumento), il resto del percorso sotto di lui
+		var primo := _scena.find_child(chi.get_slice("/", 0), true, false)
+		if primo and chi.contains("/"):
+			n = primo.get_node_or_null(NodePath(chi.substr(chi.find("/") + 1)))
+		else:
+			n = primo
 	if n == null:
 		push_warning("spot: nodo di riferimento della camera mancante: " + chi)
 	return n as Node3D
