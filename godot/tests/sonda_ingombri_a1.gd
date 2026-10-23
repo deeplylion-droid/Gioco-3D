@@ -36,12 +36,30 @@ func _run() -> void:
 						conta += 1
 			printerr("SONDA ", c[0], " ", mi.name, " vertici vicini ", conta, " ", ab, " aabb tutto ", mi.global_transform * mi.get_aabb())
 	# passaggio libero a 1,6 m davanti alla cassetta: raggi lungo x e z dal centro della cella
-	var sp := s.get_world_3d().direct_space_state
+	var sp: PhysicsDirectSpaceState3D = (s as Node3D).get_world_3d().direct_space_state
 	for c in [Vector3(4.5, 1.6, 30.75), Vector3(19.5, 1.6, -12.25), Vector3(8.75, 1.6, 42.25), Vector3(8.75, 0.6, 42.25)]:
 		var r := []
 		for d in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
 			var q := PhysicsRayQueryParameters3D.create(c, c + d * 5.0)
-			var h := sp.intersect_ray(q)
+			var h: Dictionary = sp.intersect_ray(q)
 			r.append("%s:%s" % [d, "%.2f %s" % [c.distance_to(h.position), h.collider.get_path()] if h else "-"])
 		printerr("SONDA raggi da ", c, " ", r)
+	# muro della vasca dietro la bava (BavaMuroVasca, x -0,5): la faccia del muro più avanti, per fasce d'altezza
+	for nome in ["sala_vasca_offerte", "sala_vasca_centrale"]:
+		for m in s.find_children(nome, "MeshInstance3D", true, false):
+			var mi := m as MeshInstance3D
+			var fasce := {}
+			for si in mi.mesh.get_surface_count():
+				var v: PackedVector3Array = mi.mesh.surface_get_arrays(si)[Mesh.ARRAY_VERTEX]
+				for p in v:
+					var w := mi.global_transform * p
+					if absf(w.x + 0.5) < 0.2 and w.y > -0.05 and w.y < 1.05 and w.z > 12.1 and w.z < 12.6:
+						var k := int(floor(w.y * 10.0))
+						fasce[k] = maxf(float(fasce.get(k, -99.0)), w.z)
+			var ks := fasce.keys()
+			ks.sort()
+			for k in ks:
+				printerr("SONDA muro ", nome, " y %.1f z max %.4f" % [k / 10.0, fasce[k]])
+	var bava := s.find_child("BavaMuroVasca", true, false)
+	printerr("SONDA bava ", bava)
 	get_tree().quit()
