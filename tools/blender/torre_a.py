@@ -421,15 +421,16 @@ def _pulisci_attraversati(bersagli, scivoli, aperti):
     from mathutils.bvhtree import BVHTree
     spigoli = []
     for s_ in scivoli:
-        # in triangoli, come li esporta il GLB (le diagonali dei quadrilateri sono spigoli anche loro)
         bm = bmesh.new()
         bm.from_mesh(s_.data)
         bm.transform(s_.matrix_world)
-        bmesh.ops.triangulate(bm, faces=bm.faces)
-        for e in bm.edges:
-            a_, b_ = e.verts[0].co.copy(), e.verts[1].co.copy()
-            if (b_ - a_).length > 0.004:
-                spigoli.append((a_, b_))
+        for f in bm.faces:
+            # i lati e tutte le diagonali (l'export sceglie lui come dividere i quadrilateri)
+            q = [v.co.copy() for v in f.verts]
+            for i in range(len(q)):
+                for j in range(i + 1, len(q)):
+                    if (q[j] - q[i]).length > 0.004:
+                        spigoli.append((q[i], q[j]))
         bm.free()
     for b_ in bersagli:
         for giro in range(3):
