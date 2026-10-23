@@ -45,3 +45,12 @@ Gli strumenti sono gli stessi del confronto degli interni (`../interni_confronto
 - `stati.gd`: nello stato `aperto` l'armadietto sbatte come quando ci passa il giocatore.
 
 Il giro dagli occhi comprende i 120 scatti fissi e le 79 vedute del 22 ottobre, 89 vedute fisse delle ante, della porta e degli oggetti, e 56 ravvicinati dei contatti (le righe `spazio` di giro.gd sui punti più vicini misurati da `distanze.py`). Le distanze vere degli spogliatoi e dello stanzino: nessun oggetto oltre 1 cm, tranne il fermaporta.
+
+## Ricontrollo su b8baac74: D1, D2 e D3 corretti
+
+- **D1.** Dopo il colpo l'anta che sbatte è a rot -175, tutta davanti al fronte (x 10,111…10,504), con 0% dei vertici dentro un armadietto. Tocca il corpo rosso alla cerniera e la sua collisione coincide con lei. Ripartendo da un checkpoint salvato dopo il colpo, resta aperta con la collisione (`sonda_sbatte.gd`).
+- **D2.** Lungo l'asse il tampone del fermaporta arriva a x 11,257 e la porta comincia a 11,258.
+- **D3.** Negli stati aperto e ritorno la porta della sala pompe appoggia sul telaio (faccia a z 40,855-40,860 contro 40,860-40,862). Sta 1,5 cm davanti al battiscopa e 4 cm dal muro, quindi niente dentro (`misure/raggi_porta_sala_pompe_b8.txt`).
+- Ravvicinati in `fogli/b8_correzioni.jpg`.
+
+**Verdetto finale: superato.**
