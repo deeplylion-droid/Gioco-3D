@@ -306,7 +306,9 @@ func risultati(nome: String, da := 0) -> Dictionary:
 ## vertici del primo osso (la radice segue il corpo) si contano a parte. Stampa le tre entrate più profonde.
 ## [param esclusi]: i RID delle collisioni che non si vedono (il coperchio della fossa). Conta anche i vertici sotto le
 ## strisce di bava a terra (BavaRosa, che non hanno collisione) di più di [param tolleranza] ([method bava_vicina]).
-func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[RID] = []) -> Dictionary:
+## [param foro]: [centro, raggio] di dove lei stessa passa attraverso il pavimento (l'animazione la fa salire da sotto):
+## i vertici lì dentro si contano a parte, come quelli della radice.
+func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[RID] = [], foro: Array = []) -> Dictionary:
 	var bava := bava_vicina(sk.get_tree().current_scene, sk.global_position, 7.0)
 	var spazio := sk.get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.new()
@@ -352,14 +354,14 @@ func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[
 			var d := (hit["position"] as Vector3).distance_to(pos)
 			if d <= tolleranza:
 				continue
-			if _p_catena[v * 2 + 1] == 0:
+			if _p_catena[v * 2 + 1] == 0 or (not foro.is_empty() and Vector2(pos.x - foro[0].x, pos.z - foro[0].z).length() < float(foro[1])):
 				dentro_radice += 1
 				continue
 			dentro += 1
 			massimo = maxf(massimo, d)
 			peggiori.append([d, f, _p_catena[v * 2], _p_catena[v * 2 + 1], pos, (hit["collider"] as Node).name if hit["collider"] else ""])
 	peggiori.sort_custom(func(x, y): return x[0] > y[0])
-	print("  %s, pelle vera: %d vertici dentro il mondo di più di %.0f cm (al più %.1f cm), %d del primo osso (radice) a parte; %d vertici per fotogramma" % [
+	print("  %s, pelle vera: %d vertici dentro il mondo di più di %.0f cm (al più %.1f cm), %d del primo osso (radice) o nel foro dove passa lei a parte; %d vertici per fotogramma" % [
 		nome, dentro, tolleranza * 100.0, massimo * 100.0, dentro_radice, nv])
 	for e in peggiori.slice(0, 3):
 		print("    pelle dentro di %.1f cm: f%d tentacolo %d osso %d %s in %s" % [e[0] * 100.0, e[1], e[2], e[3], e[4], e[5]])

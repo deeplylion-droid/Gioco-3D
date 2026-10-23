@@ -74,6 +74,8 @@ var buco_pavimento := Rect2()
 ## fossa: mentre lei sbuca (la posa sale da 2,3 m sotto, e i tentacoli stesi sul pavimento salirebbero attraverso il
 ## pavimento). Escono dal bordo man mano che la posa arriva su; quando si spegne il trattenere cala in mezzo secondo.
 var trattieni := false
+## La quota sotto cui si trattiene (-INF: [member pavimento_y]); per esempio il bordo di un pozzo più alto del pavimento.
+var trattieni_y := -INF
 ## La pianta della fossa (x, z), per [member trattieni]: un poligono convesso.
 var fossa_pianta := PackedVector2Array():
 	set(v):
@@ -105,6 +107,11 @@ var _s1b := PackedVector3Array()
 var _s2a := PackedVector3Array()
 var _s2b := PackedVector3Array()
 var _smax := PackedFloat32Array()
+# le forme in una griglia di celle di CELLA m (le forme vicine a ogni cella, allargate di VICINO), fatta una volta quando
+# le forme cambiano: con tante forme (l'inseguimento) ogni punto guarda solo quelle della sua cella
+const CELLA := 1.0
+var _griglia := {}
+var _griglia_ok := false
 var _ssu := PackedFloat32Array()           # la misura verso l'alto (il pavimento), con il margine
 var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB, indice della faccia di sopra o -1,
                                            #  AABB allargata del raggio]
@@ -297,6 +304,27 @@ func _sezioni_qui(k: int, n: int, g: Array[Transform3D], tg: PackedVector3Array,
 		_s2b[i] = eb[j2]
 		_smax[i] = maxf(maxf(sz[j1].y, sz[j1].z), maxf(sz[j2].y, sz[j2].z)) + MARGINE + SOPRA
 		_ssu[i] = sqrt(maxf(ea[j1].y * ea[j1].y + eb[j1].y * eb[j1].y, ea[j2].y * ea[j2].y + eb[j2].y * eb[j2].y)) + MARGINE + SOPRA
+
+
+## Le forme vicine alla cella del punto [param p] (con poche forme, tutte quelle date).
+func _forme_in(p: Vector3, forme: Array) -> Array:
+	if _forme.size() <= 24:
+		return forme
+	if not _griglia_ok:
+		_griglia.clear()
+		for fo in _forme:
+			var g: AABB = fo[3]
+			var a := Vector3i((g.position / CELLA).floor())
+			var b := Vector3i((g.end / CELLA).floor())
+			for x in range(a.x, b.x + 1):
+				for y in range(a.y, b.y + 1):
+					for z in range(a.z, b.z + 1):
+						var k := Vector3i(x, y, z)
+						if not _griglia.has(k):
+							_griglia[k] = []
+						_griglia[k].append(fo)
+		_griglia_ok = true
+	return _griglia.get(Vector3i((p / CELLA).floor()), [])
 
 
 ## La misura della pelle al punto [param i] verso [param nrm] (le due ellissi, la più grande), più il margine (e
@@ -708,7 +736,7 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			_fossa_dentro = ins[0] if not ins.is_empty() else fossa_pianta
 		for i in range(1, n + 1):
 			var q := out[i]
-			var sotto := pavimento_y - q.y
+			var sotto := (trattieni_y if trattieni_y > -INF else pavimento_y) - q.y
 			var q2 := Vector2(q.x, q.z)
 			if sotto <= 0.0 or Geometry2D.is_point_in_polygon(q2, _fossa_dentro):
 				continue
@@ -802,6 +830,16 @@ func aggiungi_convesso(punti: PackedVector3Array) -> void:
 				sopra = i
 	# (la scatola allargata di VICINO, per cercare le forme vicine, e di 8 e 13 cm per i punti con la pelle più sottile)
 	_forme.append([piani, bb, sopra, bb.grow(VICINO), bb.grow(0.08), bb.grow(0.13)])
+	_griglia_ok = false
+
+
+## Toglie tutte le forme del mondo (per esempio quando lei cambia posto, nell'inseguimento).
+func togli_forme_mondo() -> void:
+	_forme.clear()
+	_griglia_ok = false
+	for k in _bers.size():
+		_bers[k] = PackedVector3Array()
+		_bers_posa[k] = PackedVector3Array()
 
 
 ## Aggiunge una scatola (il suo centro e i suoi assi in [param xf], mezze misure [param mezzo]).
@@ -882,7 +920,7 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 		if p.y < pavimento_y + r_su and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
 			p.y = pavimento_y + r_su
 			mosso = true
-		for fo in forme:
+		for fo in (_forme_in(p, forme) if ip >= 0 and not forme.is_empty() else forme):
 			var meglio: Plane
 			var dm := -INF
 			var rf := r
@@ -984,7 +1022,7 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 		var sa1 := _s1a[i]
 		var sb1 := _s1b[i]
 		var rmax := maxf(sa1.length(), sb1.length()) + MARGINE + SOPRA
-		for fo in forme:
+		for fo in _forme_in((pt[i - 1] + pt[i]) * 0.5, forme):
 			var a := pt[i - 1]
 			var b := pt[i]
 			var bb := AABB(a, Vector3.ZERO).expand(b).grow(rmax)

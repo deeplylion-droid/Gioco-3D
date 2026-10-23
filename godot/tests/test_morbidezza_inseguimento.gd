@@ -52,6 +52,9 @@ func _run() -> void:
 	var mis = Misura.new(sk, m)
 	print("catene ", mis.catene.size())
 	for dove in ["vasca_0", "vasca_1", "vasca_2", "scolo_0", "scolo_1", "scolo_2", "grata", "sb1"]:
+		# (SOLO=sb1,grata: solo quei posti, per provare)
+		if OS.has_environment("SOLO") and not dove in OS.get_environment("SOLO").split(","):
+			continue
 		print("== ", dove)
 		mis.inizia()
 		match dove:
@@ -70,7 +73,16 @@ func _run() -> void:
 		mis.ferma()
 		var r: Dictionary = mis.risultati(dove)
 		_check(r["fotogrammi"] > 20, "%s: registrati %d fotogrammi" % [dove, r["fotogrammi"]])
-		var pe: Dictionary = mis.pelle(dove)
+		if OS.has_environment("PARTI"):
+			print("PARTI ", m.parti_usec, " forme ", (m.get(&"_forme") as Array).size())
+			m.parti_usec = {"bersagli": 0, "passi": 0, "ossa": 0, "giri": 0, "conta_passi": 0, "conta_giri": 0}
+		# (dove lei sale attraverso il pavimento allagato, il foro dove passa col corpo: a parte, come la radice)
+		var foro := []
+		var fori: Dictionary = sala.get(&"_forme_lei_fori")
+		if fori.has(dove):
+			var fo: Array = fori[dove]
+			foro = [sala.global_transform * Vector3(float(fo[0]), float(fo[1]), float(fo[2])), float(fo[3])]
+		var pe: Dictionary = mis.pelle(dove, 0, 2, 0.01, [] as Array[RID], foro)
 		_check(pe["pelle_dentro"] == 0, "%s: la pelle vera dei tentacoli fuori dalla sala (%d vertici dentro, al più %.1f cm)" % [dove, pe["pelle_dentro"], pe["pelle_massimo"] * 100.0])
 		_check(r["attraversa"] == 0, "%s: nessun tratto dei tentacoli attraversa la sala (%d)" % [dove, r["attraversa"]])
 		_check(r["scarto"] > 0.05, "%s: i tentacoli si muovono davvero (al più %.2f m dalla posa)" % [dove, r["scarto"]])

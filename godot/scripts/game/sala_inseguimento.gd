@@ -78,6 +78,9 @@ var _lei_luce: OmniLight3D
 var _lei_testa: WaterHitbox
 ## Il movimento secondario di tentacoli e campana di lei (MorbidezzaLei).
 var _morbidezza: MorbidezzaLei
+const FORME_LEI := "res://assets/ambiente/inseguimento/inseguimento_forme_lei.json"
+var _forme_lei_cache := {}
+var _forme_lei_fori := {}
 var _getto_preso := 0.0
 var _vasca := -1                       ## la vasca dove sei (-1 fuori)
 var _in_vasca_t := 0.0
@@ -463,6 +466,7 @@ func _lei_crea() -> void:
 	lei.add_child(_lei_testa)
 	if not Engine.has_meta(&"morbidezza_spenta"):
 		_morbidezza = MorbidezzaLei.su(lei)
+		_forme_lei()   # (qui, con la sala: non quando lei sale, sarebbe un fotogramma lungo)
 	_lei_testa.water_hit.connect(func(litri: float, _p: Vector3, _d: Vector3):
 		if lei_stato == Lei.SU or lei_stato == Lei.SALE:
 			_getto_preso += litri
@@ -528,10 +532,56 @@ const RITOCCHI := {"scolo_0": [0.0, 0.25], "scolo_1": [-1.0, -1.25]}
 ## Senza forme di collisione: la sala è una mesh sola, e le animazioni dell'inseguimento tengono già i tentacoli fuori
 ## dai muri; la morbidezza non li porta dentro (tests/test_morbidezza_inseguimento.gd lo controlla coi raggi sulla
 ## collisione vera, in ogni posto dove sale).
+## Le scatole del mondo per la morbidezza di lei, per posto (assets/ambiente/inseguimento/inseguimento_forme_lei.json,
+## nelle coordinate della sala; lette una volta).
+func _forme_lei() -> Dictionary:
+	if _forme_lei_cache.is_empty() and FileAccess.file_exists(FORME_LEI):
+		var d = JSON.parse_string(FileAccess.get_file_as_string(FORME_LEI))
+		if d is Dictionary and d.has("posti"):
+			_forme_lei_cache = d["posti"]
+			_forme_lei_fori = d.get("fori", {})
+	return _forme_lei_cache
+
+
 func _morbidezza_qui(dove: String) -> void:
 	if _morbidezza == null or not is_instance_valid(_morbidezza):
 		return
 	_morbidezza.pavimento_y = -INF
+	# il mondo intorno a questo posto: scatole convesse prese dalla collisione vera (tests/genera_forme_inseguimento.gd)
+	_morbidezza.togli_forme_mondo()
+	var forme := _forme_lei()
+	for sc in forme.get(dove, []):
+		var lo := Vector3(float(sc[0]), float(sc[1]), float(sc[2]))
+		var hi := Vector3(float(sc[3]), float(sc[4]), float(sc[5]))
+		_morbidezza.aggiungi_scatola(global_transform * Transform3D(Basis.IDENTITY, (lo + hi) * 0.5), (hi - lo) * 0.5 * global_basis.get_scale())
+	# dai pozzi (sb1, grata) lei sale da 5 m sotto, e la posa allarga i tentacoli più del pozzo: finché sale, sotto il
+	# bordo restano dentro la pianta del pozzo (come nella fossa, LeiSbuca)
+	_morbidezza.trattieni = false
+	_morbidezza.trattieni_y = -INF
+	_morbidezza.fossa_pianta = PackedVector2Array()
+	if dove == "sb1" or dove == "grata":
+		var pz: Dictionary = dati["pozzo"] if dove == "sb1" else dati["pozzetto_grata"]
+		var r: Array = pz["rett"]
+		var pianta := PackedVector2Array()
+		for v in [[r[0], r[1]], [r[2], r[1]], [r[2], r[3]], [r[0], r[3]]]:
+			var g := global_transform * b([v[0], v[1], float(pz["bordo"])])
+			pianta.append(Vector2(g.x, g.z))
+		_morbidezza.fossa_pianta = pianta
+		_morbidezza.trattieni_y = (global_transform * b([r[0], r[1], float(pz["bordo"])])).y
+		_morbidezza.trattieni = true
+	# dove sale attraverso il pavimento allagato: i tentacoli sotto il pavimento restano nel foro intorno a lei
+	var fori: Dictionary = _forme_lei_fori
+	if fori.has(dove):
+		var fo: Array = fori[dove]
+		var centro := global_transform * Vector3(float(fo[0]), float(fo[1]), float(fo[2]))
+		var cerchio := PackedVector2Array()
+		for k in 12:
+			cerchio.append(Vector2(centro.x, centro.z) + Vector2.from_angle(TAU * k / 12.0) * float(fo[3]))
+		_morbidezza.fossa_pianta = cerchio
+		# (la quota del trattenere mezzo metro sopra il pavimento: sotto il pavimento restano tutti nel foro, e si lasciano
+		# mentre escono)
+		_morbidezza.trattieni_y = centro.y + 0.5
+		_morbidezza.trattieni = true
 	_morbidezza.acqua_pianta = Rect2(-1e4, -1e4, 2e4, 2e4)
 	var acqua: Dictionary = dati["bacino"] if dove == "sb1" or dove == "grata" else dati["allagato"]
 	_morbidezza.acqua_pelo = float(acqua["acqua"])
@@ -677,6 +727,10 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 			if _lei_t >= dur:
 				lei_stato = Lei.SU
 				_lei_t = 0.0
+				# (nei pozzi, sb1 e grata, quello che sta sotto il bordo resta nel pozzo anche dopo; dove sale attraverso il
+				# pavimento i tentacoli si lasciano)
+				if _morbidezza and is_instance_valid(_morbidezza) and _lei_dove != "sb1" and _lei_dove != "grata":
+					_morbidezza.trattieni = false
 				if _lei_dove != "sb1" and _lei_dove != "grata":
 					# su: incombe (la salita finisce nella sua posa) e la testa ti segue
 					_anima("incombe")
