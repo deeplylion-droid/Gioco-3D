@@ -165,10 +165,9 @@ func _nel_condotto(q: Vector3) -> bool:
 	return q.x > -12.35 and absf(q.y + 2.3) < 0.43 and absf(q.z + 7.0) < 0.43
 
 
-## Il costo della morbidezza (microsecondi per fotogramma). Obiettivo del coordinatore (23 ottobre, le schede deboli):
-## 2 ms in media e 4 al massimo. Con lei affacciata ci sta; nel tuffo (2 s, una volta) per ora si arriva a circa 2,6 ms
-## in media e 6-8 al massimo nei fotogrammi dello strappo (3 passi per non passare il bordo): il limite lì è 3 e 8,
-## finché il coordinatore non decide. Da lanciare con --fixed-fps 30 (come gira nel gioco).
+## Il costo della morbidezza (microsecondi per fotogramma). Limiti decisi dal coordinatore il 23 ottobre (le schede
+## deboli): con lei affacciata 2 ms in media e 4 al massimo; nel tuffo (2 s, una volta) 3 e 8 (i fotogrammi dello
+## strappo fanno fino a 3 passi per non passare il bordo). Da lanciare con --fixed-fps 30 (come gira nel gioco).
 func _costo(nome: String, costi: Array, medio_max := 2.0, massimo_max := 4.0) -> void:
 	if costi.is_empty():
 		return
