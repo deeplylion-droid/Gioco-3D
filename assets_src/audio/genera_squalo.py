@@ -187,9 +187,8 @@ def squalo_ringhio(rng):
 
 
 SUONI = {
-    'squalo_minaccia': lambda: salva(CART, 'squalo_minaccia', mono(squalo_minaccia(np.random.default_rng(2110))),
-                                     loudness=-15, qualita=5,
-                                     nota="fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file)"),
+    # dal 23 ottobre squalo_minaccia e squalo_ringhio li fa genera_squalo_voce.py (versione B scelta dall'utente;
+    # le funzioni di qui sotto sono quelle di prima, i file in scartati/squalo/)
     'jilly_richiamo': lambda: salva(CART, 'jilly_richiamo', mono(jilly_richiamo(np.random.default_rng(2111))), loudness=-20,
                                     qualita=5, nota='il verso lontano e profondo di Jilly che lo chiama, dietro la porta tagliafuoco'),
     'squalo_sbuffo': lambda: salva(CART, 'squalo_sbuffo', mono(squalo_sbuffo(np.random.default_rng(2112))), loudness=-16,
@@ -200,8 +199,6 @@ SUONI = {
     'squalo_denti': lambda: [salva(CART, f'squalo_denti_{i + 1:02d}', mono(squalo_denti(np.random.default_rng(2120 + i), i)),
                                    loudness=-11, corto=True, qualita=5, nota='i denti che scattano a ogni morso nell\'aria')
                              for i in range(3)],
-    'squalo_ringhio': lambda: salva(CART, 'squalo_ringhio', mono(squalo_ringhio(np.random.default_rng(2130))), loudness=-14,
-                                    corto=True, qualita=5, nota='il ringhio quando si gira verso la porta'),
 }
 
 

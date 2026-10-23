@@ -1735,9 +1735,9 @@
   "durata": 6.002,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "fiato pesante e umido a pochi centimetri, ringhi corti agli scatti della testa (2,3 s, 3,2 s, 4,1 s dall'inizio del file)",
-  "lufs": -16.9,
-  "lufs_max": -10.6
+  "nota": "fiato a 30 cm, gola che brontola sotto e tre ringhi corti con il risucchio della saliva (2,3 s, 3,2 s, 4,1 s dall'inizio del file); versione B del 23 ottobre",
+  "lufs": -15.8,
+  "lufs_max": -11.4
  },
  "squalo/squalo_passo_01": {
   "file": "res://audio/squalo/squalo_passo_01.ogg",
@@ -1782,12 +1782,12 @@
  "squalo/squalo_ringhio": {
   "file": "res://audio/squalo/squalo_ringhio.ogg",
   "canali": 1,
-  "durata": 2.302,
+  "durata": 2.252,
   "loop": false,
   "fonte": "sintesi",
-  "nota": "il ringhio quando si gira verso la porta",
-  "lufs": -16.4,
-  "lufs_max": -14.0
+  "nota": "il ringhio corto e aggressivo verso la porta; versione B del 23 ottobre",
+  "lufs": -17.6,
+  "lufs_max": -14.4
  },
  "squalo/squalo_sbuffo": {
   "file": "res://audio/squalo/squalo_sbuffo.ogg",
