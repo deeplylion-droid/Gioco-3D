@@ -40,6 +40,8 @@ extends SkeletonModifier3D
 @export var onde := 1.2
 ## Di quanto un punto può restare lontano dalla posa, alla punta (m): oltre si tira dentro (nei movimenti velocissimi).
 @export var distacco_massimo := 0.9
+## La velocità più alta di un punto rispetto alla posa (m/s): le correzioni non lo lanciano.
+@export var velocita_massima := 12.0
 ## Il raggio del tentacolo per le collisioni, alla radice e alla punta (m).
 @export var raggio_radice := 0.07
 @export var raggio_punta := 0.035
@@ -65,11 +67,12 @@ var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle oss
 var _v: Array[PackedVector3Array] = []     # le loro velocità
 var _fase: PackedFloat32Array = []
 var _pronte := false
-var _ultimo_usec := 0
 var _t := 0.0
 var _verso := 1.0                          # 1: si accende, -1: si spegne
 var _peso := 0.0                            # quanto ora (dissolvenza)
 var _radici_prima := PackedVector3Array()
+var _tg_prima: Array[PackedVector3Array] = []
+var _vp: Array[PackedVector3Array] = []     # la velocità della posa, media
 var _campana := -1
 var _campana_v := Vector3.ZERO
 var _campana_p := Vector3.ZERO
@@ -82,6 +85,7 @@ var _raggio := PhysicsRayQueryParameters3D.new()
 func _ready() -> void:
 	_raggio.collision_mask = Layers.WORLD
 	_raggio.collide_with_areas = false
+	_raggio.hit_back_faces = false   # solo entrando in una superficie (da un punto che la tocca si esce)
 	_peso = 0.0
 	_verso = -1.0
 	# sempre dopo gli altri modificatori dello scheletro, anche quelli messi dopo (il tuffo)
@@ -182,15 +186,16 @@ func _process_modification() -> void:
 	var sk := get_skeleton()
 	if sk == null or not is_inside_tree():
 		return
-	var ora := Time.get_ticks_usec()
-	var dt := clampf((ora - _ultimo_usec) / 1e6, 0.0, 0.1) if _ultimo_usec > 0 else 0.0
-	_ultimo_usec = ora
+	# il tempo del gioco (non quello vero: col Movie Maker o in pausa il tempo vero corre diverso)
+	var fisica := sk.modifier_callback_mode_process == Skeleton3D.MODIFIER_CALLBACK_MODE_PROCESS_PHYSICS
+	var dt := clampf(get_physics_process_delta_time() if fisica else get_process_delta_time(), 0.0, 0.1)
 	_peso = clampf(_peso + _verso * dt / maxf(dissolvenza, 0.01), 0.0, 1.0)
 	var w := _peso * quanto
 	if w <= 0.0:
 		# spento: la posa resta quella che arriva; le forme della campana tornano dove le ha messe chi anima
 		_togli_forme()
 		_pronte = false
+		durata_usec = 0
 		return
 	var t0 := Time.get_ticks_usec()
 	if _catene.is_empty():
@@ -205,6 +210,8 @@ func _process_modification() -> void:
 	if not _pronte or _radici_prima.size() != _catene.size():
 		_x.clear()
 		_v.clear()
+		_tg_prima.clear()
+		_vp.clear()
 		_radici_prima.resize(_catene.size())
 	for k in _catene.size():
 		var catena: PackedInt32Array = _catene[k]
@@ -216,7 +223,8 @@ func _process_modification() -> void:
 			var tr := sg * sk.get_bone_global_pose(b)
 			g.append(tr)
 			tg.append(tr.origin)
-		tg.append(tg[n - 1] + (tg[n - 1] - tg[n - 2]))
+		# la punta: lungo l'asse dell'ultimo osso (Y), lunga come il tratto prima
+		tg.append(tg[n - 1] + g[n - 1].basis.y.normalized() * tg[n - 1].distance_to(tg[n - 2]))
 		var lung := PackedFloat32Array()
 		lung.resize(n + 1)
 		for i in range(1, n + 1):
@@ -234,6 +242,21 @@ func _process_modification() -> void:
 				zero.resize(n + 1)
 				_v[k] = zero
 		_radici_prima[k] = tg[0]
+		# la velocità della posa, punto per punto
+		var vp := PackedVector3Array()
+		vp.resize(n + 1)
+		# (media sugli ultimi 50 ms: la posa del tuffo si muove a ogni passo della fisica, non a ogni fotogramma)
+		if _tg_prima.size() <= k:
+			_tg_prima.append(tg)
+			var zero := PackedVector3Array()
+			zero.resize(n + 1)
+			_vp.append(zero)
+		elif (_tg_prima[k] as PackedVector3Array).size() == n + 1 and dt > 0.0:
+			var media := 1.0 - exp(-dt / 0.05)
+			for i in n + 1:
+				_vp[k][i] = _vp[k][i].lerp((tg[i] - _tg_prima[k][i]) / dt, media)
+			_tg_prima[k] = tg
+		vp = _vp[k]
 		var x: PackedVector3Array = _x[k]
 		var v: PackedVector3Array = _v[k]
 		# l'onda: di traverso al tentacolo, che scorre verso la punta
@@ -257,7 +280,14 @@ func _process_modification() -> void:
 				var smorza := lerpf(smorza_aria, smorza_acqua, acqua)
 				var grav := lerpf(gravita_aria, gravita_acqua, acqua) * f
 				var a := (bersaglio - x[i]) * k_molla - v[i] * smorza + Vector3(0, -grav, 0)
+				# troppo lontano dalla posa (nei movimenti velocissimi del tuffo): una molla in più, dura, che la riprende
+				var fuori := x[i] - tg[i]
+				var lim := distacco_massimo * f
+				if fuori.length() > lim:
+					a -= fuori.normalized() * (fuori.length() - lim) * 400.0
 				var vi := v[i] + a * h
+				# non più veloce della posa di velocita_massima (la molla dura, a passi corti, lo lancerebbe)
+				vi = vp[i] + (vi - vp[i]).limit_length(velocita_massima)
 				pred[i] = x[i] + vi * h
 			# la catena: ogni punto alla sua distanza dal punto prima (dalla radice), e fuori dai muri
 			var corr := PackedVector3Array()
@@ -265,52 +295,129 @@ func _process_modification() -> void:
 			for i in range(1, n + 1):
 				var f := float(i) / n
 				var voluto := pred[i - 1] + (pred[i] - pred[i - 1]).normalized() * lung[i]
-				# non troppo lontano dalla posa (nei movimenti velocissimi del tuffo)
-				var lim := distacco_massimo * f
+				# mai oltre il doppio (rete di sicurezza: la molla dura di sopra di solito basta)
+				var lim := 2.0 * distacco_massimo * f
 				var scarto := voluto - tg[i]
 				if scarto.length() > lim:
 					voluto = tg[i] + scarto.normalized() * lim
 					voluto = pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
 				if spazio:
 					var r := lerpf(raggio_radice, raggio_punta, f)
-					var dir := voluto - pred[i - 1]
-					_raggio.from = pred[i - 1]
-					_raggio.to = voluto + dir.normalized() * r
-					var colpo := spazio.intersect_ray(_raggio)
-					if not colpo.is_empty():
-						# si appoggia alla superficie (il tratto si accorcia: il tentacolo si piega lì)
-						voluto = (colpo["position"] as Vector3) + (colpo["normal"] as Vector3) * r
+					voluto = _scivola(spazio, x[i], voluto, r)
+					# dall'altra parte di una superficie rispetto alla posa (ci è finito dietro alla posa, che a tratti
+					# la passa): torna sulla superficie, dalla parte della posa
+					_raggio.from = tg[i]
+					_raggio.to = voluto
+					var dietro := spazio.intersect_ray(_raggio)
+					if not dietro.is_empty():
+						voluto = (dietro["position"] as Vector3) + (dietro["normal"] as Vector3) * minf(r, (dietro["position"] as Vector3).distance_to(tg[i]))
+					# di nuovo alla sua distanza dal punto prima, se di lì ci arriva senza passare il mondo
+					var giusto := pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
+					if not _colpo(spazio, x[i], giusto, r) and not _colpo(spazio, tg[i], giusto, 0.0):
+						voluto = giusto
 				corr[i] = voluto - pred[i]
 				pred[i] = voluto
+			# all'indietro: dove un punto è rimasto fermo contro il mondo, quelli prima gli vanno incontro (se possono
+			# senza passare il mondo), così il tentacolo non si allunga in un tratto solo
+			if spazio:
+				for i in range(n - 1, 0, -1):
+					var d := pred[i] - pred[i + 1]
+					var l := d.length()
+					if l > lung[i + 1] * 1.15:
+						var verso := pred[i + 1] + d / l * lung[i + 1] * 1.15
+						var r := lerpf(raggio_radice, raggio_punta, float(i) / n)
+						if not _colpo(spazio, pred[i], verso, r) and not _colpo(spazio, tg[i], verso, 0.0):
+							corr[i] += verso - pred[i]
+							pred[i] = verso
 			for i in range(1, n + 1):
 				var nv := (pred[i] - x[i]) / h
 				if i < n:
 					nv -= corr[i + 1] / h * resa
-				v[i] = nv
+				# le correzioni (catena, distacco, mondo) diventano velocità: a passi corti sarebbero enormi; si limita
+				# quanto va più veloce della posa (che nel tuffo a tratti corre)
+				v[i] = vp[i] + (nv - vp[i]).limit_length(velocita_massima)
 				x[i] = pred[i]
 			x[0] = tg[0]
 		_x[k] = x
 		_v[k] = v
-		# le ossa: ogni osso gira dalla direzione della posa a quella dei punti (col peso), dal padre già girato
+		# i punti come escono: fra la posa e i punti simulati (col peso); i punti non passano il mondo (scivolano)
+		var xo := PackedVector3Array()
+		xo.resize(n + 1)
+		xo[0] = tg[0]
+		for i in range(1, n + 1):
+			xo[i] = tg[i].lerp(x[i], w)
+		# le ossa: ogni osso parte dal suo punto e gira dalla direzione della posa verso il punto dopo (dal padre già
+		# girato); la lunghezza può cambiare di poco (dove tocca), la pelle si allunga o si accorcia lì
 		var padre := sk.get_bone_parent(catena[0])
 		var padre_mondo := sg * sk.get_bone_global_pose(padre) if padre >= 0 else sg
-		var testa := tg[0]
 		for i in n:
 			var d0 := tg[i + 1] - tg[i]
-			var punto := tg[i + 1].lerp(x[i + 1], w)
-			var d1 := punto - testa
+			var d1 := xo[i + 1] - xo[i]
 			var giro := Quaternion.IDENTITY
 			if d0.length() > 1e-5 and d1.length() > 1e-5:
 				giro = Quaternion(d0.normalized(), d1.normalized())
-			var nuovo := Transform3D(Basis(giro) * g[i].basis, testa)
+			var nuovo := Transform3D(Basis(giro) * g[i].basis, xo[i])
 			var locale := padre_mondo.affine_inverse() * nuovo
 			sk.set_bone_pose_position(catena[i], locale.origin)
 			sk.set_bone_pose_rotation(catena[i], locale.basis.get_rotation_quaternion())
+			if i == n - 1 and d0.length() > 1e-5:
+				# l'ultimo osso non ha figli che lo tirano: si allunga o si accorcia lui, così la punta è dove il punto
+				var sc := sk.get_bone_pose_scale(catena[i])
+				sk.set_bone_pose_scale(catena[i], Vector3(sc.x, sc.y * d1.length() / d0.length(), sc.z))
 			padre_mondo = nuovo
-			testa = testa + d1.normalized() * d0.length()
 	_pronte = true
 	_campana_forme(sk, sg, dt, w)
 	durata_usec = Time.get_ticks_usec() - t0
+
+
+## Il punto che va da [param da] (dov'era, fuori dal mondo) a [param a]: se tocca una superficie scivola sul suo
+## piano, a [param r] da lei (come un corpo che striscia, senza scatti); se poi tocca ancora si ferma lì.
+func _scivola(spazio: PhysicsDirectSpaceState3D, da: Vector3, a: Vector3, r: float) -> Vector3:
+	var d := a - da
+	var ld := d.length()
+	if ld < 1e-5:
+		return a
+	# dal punto un po' indietro: una superficie che già tocca conta (all'indietro le superfici si vedono di schiena)
+	_raggio.from = da - d / ld * r * 0.5
+	_raggio.to = a + d / ld * r
+	var c := spazio.intersect_ray(_raggio)
+	if c.is_empty():
+		return a
+	var nrm := c["normal"] as Vector3
+	var piano := (c["position"] as Vector3) + nrm * r
+	var su := a - nrm * (a - piano).dot(nrm)
+	# il secondo tratto, sul piano
+	var d2 := su - da
+	var l2 := d2.length()
+	if l2 < 1e-5:
+		return da
+	_raggio.to = su + d2 / l2 * r
+	var c2 := spazio.intersect_ray(_raggio)
+	if c2.is_empty():
+		return su
+	return da + d2 / l2 * clampf(da.distance_to(c2["position"]) - r, 0.0, l2)
+
+
+## Vero se andando da [param a] a [param b] (e [param r] oltre) si entra in una superficie.
+func _colpo(spazio: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3, r: float) -> bool:
+	var d := b - a
+	var l := d.length()
+	if l < 1e-5:
+		return false
+	_raggio.from = a
+	_raggio.to = b + d / l * r
+	return not spazio.intersect_ray(_raggio).is_empty()
+
+
+## I punti dei tentacoli come sono adesso (mondo), per sapere se è tutta sotto; vuoto se è spenta.
+func punti() -> PackedVector3Array:
+	var out := PackedVector3Array()
+	if _peso * quanto <= 0.0 or not _pronte:
+		return out
+	for x in _x:
+		for i in range(1, x.size()):
+			out.append(x[i])
+	return out
 
 
 ## La campana pulsa e si deforma col movimento: si allunga (contrai) accelerando lungo il corpo, si schiaccia frenando.

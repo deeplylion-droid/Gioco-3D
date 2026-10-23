@@ -22,6 +22,7 @@ var lei: LeiSbuca
 var _cam: Camera3D
 var _f := -RISCALDA
 var _partito := false
+var _costi: Array = []
 
 
 func _ready() -> void:
@@ -124,6 +125,15 @@ func _process(_delta: float) -> void:
 	elif _partito:
 		if lei.fase != LeiSbuca.Fase.GUARDA and Input.is_action_pressed(&"spray"):
 			Input.action_release(&"spray")
+	var m = lei.get(&"_morbidezza")
+	if m and is_instance_valid(m) and m.durata_usec > 0:
+		_costi.append(m.durata_usec)
 	if t >= DURATA:
+		if not _costi.is_empty():
+			_costi.sort()
+			var somma := 0.0
+			for c in _costi:
+				somma += c
+			print("COSTO morbidezza (renderer software, %d fotogrammi): medio %.2f ms, mediano %.2f ms, massimo %.2f ms" % [_costi.size(), somma / _costi.size() / 1000.0, _costi[_costi.size() / 2] / 1000.0, _costi.back() / 1000.0])
 		print("FINE")
 		get_tree().quit()

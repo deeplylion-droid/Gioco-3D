@@ -513,7 +513,11 @@ func punti_corpo() -> PackedVector3Array:
 	if medusa == null:
 		return out
 	if _tuffo and _tuffo.active and not _tuffo.punti().is_empty():
-		return _tuffo.punti()
+		out = _tuffo.punti()
+		# anche le punte morbide (MorbidezzaLei), che seguono in ritardo
+		if _morbidezza and is_instance_valid(_morbidezza):
+			out.append_array(_morbidezza.punti())
+		return out
 	if medusa.has_method(&"get_eye_position"):
 		out.append((medusa.call(&"get_eye_position") as Vector3) + Vector3(0.0, 0.35, 0.0))
 	if "punti_gocce" in medusa:
