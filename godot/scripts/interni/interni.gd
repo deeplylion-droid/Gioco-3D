@@ -166,11 +166,13 @@ func _lampada_tornelli() -> void:
 
 
 ## La Polaroid 2 attaccata con lo scotch fuori dallo sportello chiuso dell'armadietto rosso, sotto la lampada
-## rossa degli spogliatoi, all'altezza delle feritoie (scelta A dell'utente, 23 ottobre): prima stava sul ripiano
-## dell'armadietto aperto, e al buio era nero pieno. La foto guarda il corridoio degli armadietti (+X), con la
-## cima in alto; Posa la mette a contatto con lo sportello. Lo scotch sono due pezzetti sul bordo alto, dalla foto
-## allo sportello, e se ne vanno con lei quando la raccogli.
-const POLAROID_SPORTELLO := Vector3(3.56, 1.58, -7.1)   # davanti allo sportello di armadietti_ovest_09_rosso
+## rossa degli spogliatoi, sulle feritoie (scelta A dell'utente, 23 ottobre): prima stava sul ripiano
+## dell'armadietto aperto, e al buio era nero pieno. Le feritoie (15 x 21 cm, alette che sporgono 2 cm) sono l'unico
+## posto dello sportello alto dove la foto ci sta senza coprire la targhetta: accanto restano 6 cm di lamiera. La
+## foto guarda il corridoio degli armadietti (+X), con la cima in alto, e poggia sulle punte delle alette: Posa la
+## mette a contatto in nove punti del retro e vale il più sporgente. Lo scotch sono due pezzetti sul bordo alto,
+## dalla foto alle alette, e se ne vanno con lei quando la raccogli.
+const POLAROID_SPORTELLO := Vector3(3.56, 1.65, -7.08)   # davanti alle feritoie di armadietti_ovest_09_rosso
 const SCOTCH_COLORE := Color(0.95, 0.92, 0.8, 0.55)
 
 
@@ -184,9 +186,22 @@ func _polaroid_sportello() -> void:
 		return
 	# la faccia della foto (Y locale) verso +X, la cima (Z locale) in alto
 	pol.global_transform = Transform3D(Basis(Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(0, 1, 0)), POLAROID_SPORTELLO)
-	# il retro della foto è 0,8 mm sotto l'origine
-	if not Posa.fissa_al_muro(pol, Vector3.RIGHT, 0.0008):
+	# il retro della foto è 0,8 mm sotto l'origine: a contatto con l'aletta più sporgente fra nove punti del retro
+	var punto := Node3D.new()
+	add_child(punto)
+	var fuori := -INF
+	pol.visible = false   # Posa guarda le mesh visibili: la foto stessa non è il sostegno
+	for u in [-0.04, 0.0, 0.04]:
+		for v in [-0.05, 0.0, 0.05]:
+			punto.global_position = pol.global_transform * Vector3(u, 0.0, v)
+			if Posa.fissa_al_muro(punto, Vector3.RIGHT, 0.0):
+				fuori = maxf(fuori, punto.global_position.x)
+	punto.queue_free()
+	pol.visible = true
+	if fuori == -INF:
 		push_warning("Polaroid 2: lo sportello dell'armadietto non si trova")
+	else:
+		pol.global_position.x = fuori + 0.0008
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = SCOTCH_COLORE
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -196,10 +211,11 @@ func _polaroid_sportello() -> void:
 	striscia.material = mat
 	# dal bordo alto della foto (8 mm dentro, sulla faccia) allo sportello (2 cm fuori), un po' inclinato
 	var da := Vector3(0, 0.0032, 0.0535 - 0.008)
-	var a := Vector3(0, -0.0007, 0.0535 + 0.02)
-	for x in [-0.027, 0.027]:
+	var a := Vector3(0, -0.0003, 0.0535 + 0.02)
+	for i in 2:
+		var x := -0.027 if i == 0 else 0.027
 		var scotch := MeshInstance3D.new()
-		scotch.name = "Scotch"
+		scotch.name = "Scotch%d" % (i + 1)
 		scotch.mesh = striscia
 		scotch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		var centro := (da + a) * 0.5 + Vector3(x, 0, 0)

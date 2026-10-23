@@ -136,13 +136,14 @@ func _run() -> void:
 	print("La Polaroid sullo sportello dell'armadietto rosso")
 	var pol: Node3D = level.get_node("Polaroid/Polaroid02")
 	var g := pol.global_transform
-	# lo sportello chiuso di armadietti_ovest_09_rosso: la faccia davanti è a x 3,50, da z -7,30 a -6,90
-	check(absf(g.origin.x + g.basis.y.x * 0.0008 - 3.501) < 0.004 and g.basis.y.dot(Vector3.RIGHT) > 0.99,
-		"la P2 è attaccata fuori dallo sportello e guarda il corridoio (x %.4f)" % g.origin.x)
-	check(g.origin.z > -7.25 and g.origin.z < -6.95 and g.origin.y > 1.45 and g.origin.y < 1.7 and g.basis.z.y > 0.99,
-		"all'altezza delle feritoie, dritta (%s)" % g.origin)
-	check(pol.find_children("Scotch", "MeshInstance3D", false, false).size() == 2, "con due pezzetti di scotch")
-	p.teleport(Vector3(4.6, 0, -7.1), PI / 2.0, 0.0)
+	# lo sportello chiuso di armadietti_ovest_09_rosso: la lamiera è a x 3,454, le punte delle alette delle feritoie
+	# (da y 1,55 a 1,76, da z -7,15 a -7,01) a 3,473
+	check(absf(g.origin.x - 0.0008 - 3.473) < 0.002 and g.basis.y.dot(Vector3.RIGHT) > 0.99,
+		"la P2 poggia sulle alette fuori dallo sportello e guarda il corridoio (x %.4f)" % g.origin.x)
+	check(g.origin.z > -7.12 and g.origin.z < -7.04 and g.origin.y > 1.6 and g.origin.y < 1.7 and g.basis.z.y > 0.99,
+		"sulle feritoie, dritta (%s)" % g.origin)
+	check(pol.find_children("Scotch*", "MeshInstance3D", false, false).size() == 2, "con due pezzetti di scotch")
+	p.teleport(Vector3(4.6, 0, -7.08), PI / 2.0, 0.0)
 	await _frames(5)
 	p.look_at_point(pol.global_position)
 	await _frames(3)
