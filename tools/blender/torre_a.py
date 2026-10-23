@@ -181,6 +181,185 @@ def angolo_bordo(t, banda, verso, dentro, extra=None):
     return None
 
 
+# --- intaglio ----------------------------------------------------------------------------------------------
+
+GIOCO_INTAGLIO = 0.004                     # quanto resta fra uno scivolo e la pedana (o il sostegno) intagliata
+PEZZO_INTAGLIO = 0.6                       # lato delle celle dell'inviluppo dello scivolo (vedi intaglia)
+
+
+def intaglia(bersagli, scivoli, gioco=GIOCO_INTAGLIO, filtri=None, aperti=()):
+    """Toglie dai `bersagli` (pedane, travi, sostegni) il volume degli `scivoli`, gonfiato di `gioco` metri: lo
+    scivolo ci appoggia contro senza entrarci (l'intaglio segue la sua forma, a pochi millimetri). `filtri`: per nome
+    del bersaglio, quali pezzi (dal box: angolo basso e alto) si intagliano; `aperti`: bersagli fatti di sole facce
+    (la grata), col booleano che tollera i buchi."""
+    filtri = filtri or {}
+    import bmesh
+    coll = bpy.data.collections.new('intaglio')
+    bpy.context.scene.collection.children.link(coll)
+    # lo scivolo "pieno": un canale aperto è vuoto dentro (la grata che ci passa attraverso si vedrebbe nel canale),
+    # quindi si taglia con l'inviluppo convesso di ogni suo pezzo (celle di PEZZO_INTAGLIO metri, che si sovrappongono
+    # di 15 cm), riempito fino al bordo; solo i pezzi che toccano un bersaglio
+    from mathutils.bvhtree import BVHTree
+    dg = bpy.context.evaluated_depsgraph_get()
+    alberi_b = [BVHTree.FromObject(b_, dg) for b_ in bersagli]
+    lato = PEZZO_INTAGLIO
+    for s_ in scivoli:
+        bm = bmesh.new()
+        bm.from_mesh(s_.data)
+        bm.transform(s_.matrix_world)
+        bm.normal_update()
+        celle = {}
+        for v in bm.verts:
+            co = v.co + v.normal * gioco
+            c0 = [math.floor(x / lato) for x in co]
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    for dz in (-1, 0, 1):
+                        k = (c0[0] + dx, c0[1] + dy, c0[2] + dz)
+                        if all(k[a] * lato - 0.15 <= co[a] <= (k[a] + 1) * lato + 0.15 for a in range(3)):
+                            celle.setdefault(k, []).append(co.copy())
+        bm.free()
+        for k, pts_ in celle.items():
+            if len(pts_) < 4:
+                continue
+            h = bmesh.new()
+            for co in pts_:
+                h.verts.new(co)
+            try:
+                ris = bmesh.ops.convex_hull(h, input=h.verts)
+            except Exception:
+                h.free()
+                continue
+            bmesh.ops.delete(h, geom=list({e for e in ris['geom_interior'] + ris['geom_unused'] if isinstance(e, bmesh.types.BMVert)}), context='VERTS')
+            if len(h.faces) < 4:
+                h.free()
+                continue
+            albero = BVHTree.FromBMesh(h)
+            if not any(albero.overlap(a_) for a_ in alberi_b):
+                h.free()
+                continue
+            me = bpy.data.meshes.new(s_.name + '_intaglio')
+            h.to_mesh(me)
+            h.free()
+            coll.objects.link(bpy.data.objects.new(me.name, me))
+    print(f'intaglio: {len(coll.objects)} pezzi di scivolo che toccano')
+    from mathutils.bvhtree import BVHTree
+    alberi = [BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get()) for o in coll.objects]
+    for b_ in bersagli:
+        # solo i pezzi (isole) toccati da uno scivolo passano dal booleano: il resto resta com'è (il booleano esatto
+        # rifà fitte le facce che taglia; su tutta la torre i triangoli si quintuplicavano)
+        albero = BVHTree.FromObject(b_, bpy.context.evaluated_depsgraph_get())
+        toccate = set()
+        for a_ in alberi:
+            toccate.update(i_ for i_, _ in albero.overlap(a_))
+        if not toccate:
+            continue
+        bm = bmesh.new()
+        bm.from_mesh(b_.data)
+        bm.faces.ensure_lookup_table()
+        isola = {}
+        for f in bm.faces:
+            if f.index in isola:
+                continue
+            pila, k = [f], f.index
+            isola[f.index] = k
+            while pila:
+                g = pila.pop()
+                for v in g.verts:
+                    for h in v.link_faces:
+                        if h.index not in isola:
+                            isola[h.index] = k
+                            pila.append(h)
+        isole = {isola[i_] for i_ in toccate}
+        if b_.name in filtri:
+            mw = b_.matrix_world
+            box = {}
+            for f in bm.faces:
+                if isola[f.index] in isole:
+                    for v in f.verts:
+                        co = mw @ v.co
+                        lo, hi = box.get(isola[f.index], (co.copy(), co.copy()))
+                        box[isola[f.index]] = (Vector(map(min, lo, co)), Vector(map(max, hi, co)))
+            isole = {k for k in isole if filtri[b_.name](*box[k])}
+            if not isole:
+                bm.free()
+                continue
+        tagliare = bm.copy()
+        tagliare.faces.ensure_lookup_table()
+        bmesh.ops.delete(tagliare, geom=[f for f in tagliare.faces if isola[f.index] not in isole], context='FACES')
+        bmesh.ops.delete(bm, geom=[f for f in bm.faces if isola[f.index] in isole], context='FACES')
+        if b_.name in aperti:
+            # la scala delle UV della grata (u = x * k_uv), da una faccia di sopra
+            uv = tagliare.loops.layers.uv.active
+            f0 = next(f for f in tagliare.faces if f.normal.z > 0.5 and abs(f.loops[0].vert.co.x - f.loops[1].vert.co.x) > 0.1)
+            l0, l1 = f0.loops[0], f0.loops[1]
+            k_uv = (l1[uv].uv.x - l0[uv].uv.x) / (l1.vert.co.x - l0.vert.co.x)
+            _chiudi_lastre(tagliare)
+        me_t = b_.data.copy()
+        tagliare.to_mesh(me_t)
+        tagliare.free()
+        bm.to_mesh(b_.data)
+        bm.free()
+        pezzo = bpy.data.objects.new(b_.name + '_intagliato', me_t)
+        pezzo.matrix_world = b_.matrix_world
+        bpy.context.scene.collection.objects.link(pezzo)
+        m = pezzo.modifiers.new('intaglio', 'BOOLEAN')
+        m.operation = 'DIFFERENCE'
+        m.operand_type = 'COLLECTION'
+        m.collection = coll
+        m.solver = 'EXACT'
+        m.use_hole_tolerant = b_.name in aperti
+        bpy.context.view_layer.objects.active = pezzo
+        prima = len(me_t.polygons)
+        bpy.ops.object.modifier_apply(modifier=m.name)
+        if b_.name in aperti:
+            # della lastra restano le due facce della grata (sopra e sotto), coi buchi
+            bm = bmesh.new()
+            bm.from_mesh(pezzo.data)
+            bm.normal_update()
+            bmesh.ops.delete(bm, geom=[f for f in bm.faces if abs(f.normal.z) < 0.5], context='FACES')
+            # le UV in piano come le fa il Costruttore (u = x, v = ±y, in lati della texture): il booleano le
+            # interpolava storte sulle facce nuove
+            uv = bm.loops.layers.uv.active
+            for f in bm.faces:
+                for l_ in f.loops:
+                    l_[uv].uv = (l_.vert.co.x * k_uv, l_.vert.co.y * k_uv * (1 if f.normal.z > 0 else -1))
+            bm.to_mesh(pezzo.data)
+            bm.free()
+        print(f'intaglio di {b_.name}: {len(isole)} pezzi toccati, {prima} -> {len(pezzo.data.polygons)} facce')
+        for o in bpy.context.view_layer.objects:
+            o.select_set(False)
+        pezzo.select_set(True)
+        b_.select_set(True)
+        bpy.context.view_layer.objects.active = b_
+        bpy.ops.object.join()
+    for o in list(coll.objects):
+        bpy.data.meshes.remove(o.data)
+    bpy.data.collections.remove(coll)
+
+
+def _chiudi_lastre(bm):
+    """La grata è fatta di due facce per pedana (sopra, e sotto girata 12 mm più giù): le chiude in una lastra con
+    le pareti di lato, così il booleano esatto la può bucare (le normali si rifanno dopo)."""
+    import bmesh
+    bm.normal_update()
+    sotto = {}
+    for f in bm.faces:
+        if f.normal.z < -0.5:
+            sotto[tuple(sorted((round(v.co.x, 3), round(v.co.y, 3)) for v in f.verts))] = f
+    for f in list(bm.faces):
+        if f.normal.z <= 0.5:
+            continue
+        g = sotto.get(tuple(sorted((round(v.co.x, 3), round(v.co.y, 3)) for v in f.verts)))
+        if g is None:
+            continue
+        giu = {(round(v.co.x, 3), round(v.co.y, 3)): v for v in g.verts}
+        for e in f.edges:
+            a_, b_ = e.verts
+            bm.faces.new([a_, giu[(round(a_.co.x, 3), round(a_.co.y, 3))], giu[(round(b_.co.x, 3), round(b_.co.y, 3))], b_])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+
+
 # --- pezzi --------------------------------------------------------------------------------------------------
 
 def arco(banda0, banda1, a0, a1, z0, z1, passo=0.35):
@@ -1682,6 +1861,16 @@ def versione_A(mats):
     ob_l = cl.crea('torre_A_scalette', sporco=sporco)
     bpy.context.scene['linee_pezzi'] = json.dumps(linee_pezzi)
     ob_s = cs.crea('torre_A_canali' + suff, sporco=lambda co: 0.75)
+    # le pedane (grata e telaio), i tralicci, le travature e i sostegni intagliati sulla forma degli scivoli: dove uno
+    # scivolo passa o appoggia, gli fanno posto (riscontro dell'utente sulla v0.3.11: "gli scivoli sono leggermente
+    # compenetrati con le piattaforme su cui si appoggiano, quasi tutti")
+    # (della struttura solo il telaio delle pedane: travi gialle con la cima 3 cm sotto un livello; il resto, come gli
+    # imbuti in fondo ai tratti, continua lo scivolo apposta)
+    livelli = set(LIVELLI) | {L_ for (_, L_) in costruite}
+
+    def telaio(lo, hi):
+        return hi.z - lo.z < 0.27 and any(abs(hi.z - (L_ - 0.03)) < 0.006 for L_ in livelli)
+    intaglia([gr, ob, ob_t, ob_v], [ob_s] + canali_discesa + oggetti_scivoli, filtri={ob.name: telaio}, aperti={gr.name})
     gruppi = {'struttura': [ob, ob_t, ob_v, ob_l, gr, pol] + acque + acque_raccolta, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
     # per il gioco: checkpoint, salti, Polaroid, balconata, pozzo e vasca del fondo (coordinate di Blender)
     gioco = dict(checkpoint=[], salti=[], tratti=[])
