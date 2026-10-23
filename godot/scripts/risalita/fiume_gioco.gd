@@ -767,7 +767,7 @@ func _luce(pos: Vector3, colore: Color, energia: float, raggio: float, ombre := 
 
 ## Lampada di servizio a gabbia (la stessa del portone della torre) con la lampadina calda accesa,
 ## sul muro o sulla roccia: dà la luce neutra che serve a leggere l'ambiente senza torcia.
-func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0) -> void:
+func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0, roccia: Node3D = null) -> void:
 	var l := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 	l.position = pos
 	l.rotation_degrees.y = rot_y
@@ -776,6 +776,10 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0) -> void:
 	if energia <= 0.0:
 		# rotta: il vetro spento e sporco, la gabbia storta
 		l.rotation_degrees.z = 9.0
+	if roccia:
+		_appoggia_su_roccia(l, roccia, Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1))
+	pos = l.position
+	if energia <= 0.0:
 		if g:
 			var mr := StandardMaterial3D.new()
 			mr.albedo_color = Color(0.25, 0.24, 0.2)
@@ -802,6 +806,64 @@ func _lampada_rossa(pos: Vector3, verso: Vector3, roccia: Node3D = null) -> void
 		var punto := _su_roccia(roccia, dietro, n, LampadaMuro.PIASTRA.x * 0.5 - 0.01, LampadaMuro.PIASTRA.y * 0.5 - 0.01)
 		l.position += n * ((punto - dietro).dot(n) + 0.001)
 	_luce(l.position + verso.normalized() * 0.3, Color(1.0, 0.18, 0.12), 2.6, 9.0)
+
+
+## Porta [param l] contro la faccia vera di [param roccia], guardando lungo [param davanti]: dai vertici veri del suo retro
+## (fino a 3 cm dal punto più indietro) raggi verso la roccia; la lampada va avanti o indietro finché il vertice più vicino
+## sta a 1 mm dalla roccia (con la sporgenza presa su una griglia di 9 punti a volte nessun vertice del retro le stava a
+## meno di 5 mm: controllo con la distanza vera, 22 ottobre notte).
+func _appoggia_su_roccia(l: Node3D, roccia: Node3D, davanti: Vector3) -> void:
+	var d := Vector3(davanti.x, 0.0, davanti.z).normalized()
+	var retro := PackedVector3Array()
+	var minimo := INF
+	for mi in l.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D()
+		var k: Node = mi
+		while k != self and k != null:
+			xf = (k as Node3D).transform * xf
+			k = k.get_parent()
+		for v in (mi as MeshInstance3D).mesh.get_faces():
+			var w := xf * v
+			retro.append(w)
+			minimo = minf(minimo, w.dot(d))
+	var tri := _triangoli_roccia(roccia, l.position, d, 0.35)
+	var dietro := PackedVector3Array()
+	var visti := {}
+	for w in retro:
+		if w.dot(d) <= minimo + 0.03 and not visti.has(w):
+			visti[w] = true
+			dietro.append(w)
+	# (al più 80 vertici del retro, sparsi: i raggi sono in GDScript, e il fiume si costruisce mentre ci si arriva)
+	var passo := maxi(1, dietro.size() / 80)
+	var meglio := INF
+	for j in range(0, dietro.size(), passo):
+		var w := dietro[j]
+		var da := w + d * 1.0
+		for i in range(0, tri.size(), 3):
+			var h = Geometry3D.ray_intersects_triangle(da, -d, tri[i], tri[i + 1], tri[i + 2])
+			if h != null:
+				meglio = minf(meglio, da.distance_to(h) - 1.0)
+	if meglio < INF:
+		l.position -= d * (meglio - 0.001)
+
+
+## I triangoli di [param roccia] (nel sistema del fiume) vicini a [param dove], di lato e in altezza entro [param raggio].
+func _triangoli_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3, raggio: float) -> PackedVector3Array:
+	var lato := davanti.cross(Vector3.UP).normalized()
+	var tri := PackedVector3Array()
+	for mi in roccia.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D()
+		var k: Node = mi
+		while k != self and k != null:
+			xf = (k as Node3D).transform * xf
+			k = k.get_parent()
+		var f := (mi as MeshInstance3D).mesh.get_faces()
+		for i in range(0, f.size(), 3):
+			var a := xf * f[i]
+			var w := a - dove
+			if absf(w.dot(lato)) < raggio and absf(w.y) < raggio:
+				tri.append_array([a, xf * f[i + 1], xf * f[i + 2]])
+	return tri
 
 
 ## Faro subacqueo nella parete del canale: oblò sotto il pelo e luce nell'acqua. Senza ombreggiatura e
@@ -1238,11 +1300,11 @@ func _giungla() -> void:
 			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
 			# le lampade sulla faccia vera della roccia (prima a 62 cm dal suo centro: a volte staccate, a volte dentro)
 			if n % 3 == 0:
-				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 3.0)
+				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 3.0, roccia)
 			elif n % 11 == 5:
 				_lampada_rossa(_su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0), roccia)
 			elif n % 13 == 7:
-				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0)
+				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0, roccia)
 			elif n % 4 == 1 and randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
 	_rocce_doppie(rocce)

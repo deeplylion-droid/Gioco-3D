@@ -91,11 +91,26 @@ def corrimano_c2(obs, mat):
     a = (x, Y_SCALA2 + 0.6, Z_T + 0.95)
     b = (x, Y_SCALA2 - N2 * PED2, Z_SALA + 0.95)
     c = (x, Y_SCALA2 - N2 * PED2 - 0.6, Z_SALA + 0.95)
-    obs.append(C.tubo('c2_corrimano', [a, (x, Y_SCALA2, Z_T + 0.95), b, c], 0.025, mat, rc=0.15, seg=12, uv=None))
+    punti = [a, (x, Y_SCALA2, Z_T + 0.95), b, c]
+    r = 0.025
+    obs.append(C.tubo('c2_corrimano', punti, r, mat, rc=0.15, seg=12, uv=None))
+    # le staffe dal muro fino al corrimano: finiscono 1 mm dentro la sua faccia verso il muro, all'altezza del suo asse vero
+    # (raccordato alle svolte come in C.tubo). Prima arrivavano al suo asse, dentro il tubo: le due di mezzo restavano
+    # 1,2 cm sotto la sua faccia (collaudo del raccordo del 22 ottobre sera)
+    asse = C._arrotonda(punti, 0.15)
+    lungo = x - r + 0.001 - XC0
     for k in range(4):
         y = Y_SCALA2 - k * N2 * PED2 / 3
-        z = Z_T + 0.95 + (Y_SCALA2 - y) / PED2 * ALZ2
-        obs.append(C.cilindro(f'c2_corrimano_staffa{k}', (XC0 + 0.035, y, z), 0.012, 0.07, mat, asse=(1, 0, 0), seg=8, uv=None))
+        z = _quota_asse(asse, y)
+        obs.append(C.cilindro(f'c2_corrimano_staffa{k}', (XC0 + lungo / 2, y, z), 0.012, lungo, mat, asse=(1, 0, 0), seg=8, uv=None))
+
+
+def _quota_asse(asse, y):
+    """La quota dell'asse di un tubo (punti di C._arrotonda) dove passa per y."""
+    for p, q in zip(asse, asse[1:]):
+        if min(p.y, q.y) - 1e-6 <= y <= max(p.y, q.y) + 1e-6 and abs(q.y - p.y) > 1e-9:
+            return p.z + (q.z - p.z) * (y - p.y) / (q.y - p.y)
+    raise ValueError('y fuori dal tubo: %.3f' % y)
 
 
 def festone(nome, a, b, n, obs, pendenza=0.35, seme=1, ma=None, mb=None):
