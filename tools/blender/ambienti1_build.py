@@ -705,9 +705,10 @@ def spogliatoi(M):
     for yb in (VY0, VY1):
         statico.append(L.cilindro('vasca_lavapiedi_bordo', (CX0, yb, -0.01), (CX1, yb, -0.01), 0.035, M['piastrelle_doccia'], seg=24))
     if HQ.disponibile('cartello_pericolo'):
-        # contro il muro est, fuori dalla ripartenza del checkpoint (x 9,7, y 11,7): a x 10,3 la capsula di chi
-        # rinasceva lo toccava (collaudo del 23 ottobre)
-        col_ob(HQ.metti('cartello_bagnato', 'cartello_pericolo', (10.5, 11.55, 0), (None, None, 0.62), rot_z=R(160)))
+        # parallelo al muro est (x 10,8, battiscopa 2,5 cm), 4 cm staccato, fuori dalla ripartenza del checkpoint
+        # (x 9,7, y 11,7; la capsula arriva a x 10,1): a x 10,3 la capsula di chi rinasceva lo toccava (collaudo del
+        # 23 ottobre). Pianta 0,81 x 0,21 m: per traverso entrava nel muro.
+        col_ob(HQ.metti('cartello_bagnato', 'cartello_pericolo', (10.63, 11.75, 0), (None, None, 0.62), rot_z=R(90)))
     L.raccogli(False)
     acqua_lp = L.scatola('acqua_lavapiedi', (CX0, VY0, VZ), (CX1, VY1, -0.05), M['acqua'], uv=False)
     L.uv_scatola(acqua_lp, 1.0); acqua_lp.visible_shadow = False
