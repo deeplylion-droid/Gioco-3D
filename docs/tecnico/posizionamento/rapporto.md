@@ -1,8 +1,8 @@
 # Controllo di posizionamento
 
-Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 01:18:28. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
+Scritto da `godot/tests/controllo_posizionamento.gd` il 2026-10-23 01:55:32. Problemi: **sospeso** (niente a meno di 5 cm: né sotto, né una parete, un soffitto o un altro oggetto a cui sia attaccato), **ingombro** (qualcosa di visibile, con o senza collisione, a meno di 10 cm dall'asse del giocatore, fra 0.35 e 2.00 m sopra il pavimento), **compenetrato** e **coperto** (Polaroid, pulsanti, porte, cancelli, oggetti da raccogliere), **compenetra** (due oggetti di scena l'uno dentro l'altro), **estremita_libera** (un tubo o un cavo con un capo che non tocca niente). Come si usa: `LEGGIMI.md` qui accanto.
 
-Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 46. Eccezioni non più trovate: 8.
+Nuovi: 0. Già noti (in `godot/tests/posizionamento_eccezioni.json`): 46. Eccezioni non più trovate: 5.
 
 ## Già noti
 
@@ -292,9 +292,6 @@ Le parti nascoste nel giro iniziale (compaiono più avanti, o sono le versioni s
 
 - tecnici · staccato · `Tecnici/Ambienti/SalaPompe/POMPA_1_manometro`
 - tecnici · staccato · `Tecnici/Ambienti/SalaPompe/POMPA_2_manometro`
-- interni · ingombro · `Interni/Ambienti/Corridoio/corridoio_statico`
-- sala · ingombro · `Sala/Interattivi/sala_portone_torre`
-- interni · ingombro · `Interni/Ambienti/Stanzino/cassetta_pronto_soccorso`
 - torre · compenetrato · `Polaroid10`
 - torre · coperto · `Polaroid10`
 - torre · compenetra · `Polaroid10/Modello/Polaroid`
