@@ -240,15 +240,18 @@ func _crea_area_bimbi() -> void:
 	plaf.add_child(disco)
 	disco.rotation_degrees = Vector3(-90, 0, 0)
 	disco.position = Vector3(0, 0, -0.21)
+	# l'asta scende fino al centro del fondo del paralume (dietro, a +0,11 sull'asse) e ci entra di 4 mm: prima finiva
+	# nell'origine, dentro il paralume inclinato, a 6,7 cm dalle sue superfici (collaudo del 22 ottobre)
+	var attacco := plaf.to_global(Vector3(0, 0, 0.11 - 0.004))
 	var asta := MeshInstance3D.new()
 	var am := CylinderMesh.new()
 	am.top_radius = 0.02
 	am.bottom_radius = 0.02
-	am.height = maxf(11.5 - plafoniera_bimbi.y, 0.3)
+	am.height = maxf(11.5 - attacco.y, 0.3)
 	asta.mesh = am
 	asta.material_override = metallo
 	radice.add_child(asta)
-	asta.global_position = plafoniera_bimbi + Vector3.UP * am.height * 0.5
+	asta.global_position = attacco + Vector3.UP * am.height * 0.5
 	var spot := SpotLight3D.new()
 	spot.light_color = Color(1.0, 0.86, 0.68)
 	spot.light_energy = energia_plafoniera_bimbi

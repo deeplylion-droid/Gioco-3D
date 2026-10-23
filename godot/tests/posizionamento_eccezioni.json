@@ -222,45 +222,6 @@
 	},
 	{
 		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/ATTUATORE_stagno",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			-2.65,
-			-7.67,
-			47.51
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/SALA_meccanismi, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 120.0 cm)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/POMPA_1_manometro",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			4.15,
-			-6.83,
-			33.27
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_1, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)"
-	},
-	{
-		"zona": "tecnici",
-		"nodo": "Tecnici/Ambienti/SalaPompe/POMPA_2_manometro",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			4.15,
-			-6.83,
-			37.77
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora Tecnici/Ambienti/SalaPompe/POMPA_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 12.2 cm)"
-	},
-	{
-		"zona": "tecnici",
 		"nodo": "Tecnici/Ambienti/SalaPompe/plafoniera_0",
 		"squadra": "ambienti-2",
 		"problema": "staccato",
@@ -310,20 +271,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 478.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: neon_3_tubi."
-	},
-	{
-		"zona": "torre",
-		"nodo": "SalaInseguimento/Luci/@Node3D@7535/POMPA_3_modello",
-		"squadra": "ambienti-2",
-		"problema": "staccato",
-		"pos": [
-			67.2,
-			-31.25,
-			-14.77
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte (distanza vera fra le mesh, come il collaudo): la sua forma sfiora SalaInseguimento/Luci/@Node3D@7535/POMPA_3, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) [modello: sala_inseguimento.tscn]",
-		"firma": "sala_inseguimento.tscn|sala_pompe.gltf::ArrayMesh_1y626"
 	},
 	{
 		"zona": "torre",
@@ -548,58 +495,6 @@
 		],
 		"stato": "da correggere",
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimenti fra y -0.30 e -0.00), senza collisione (si attraversa)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Sala/VascaCentrale/ogg_salvagente_nave_36",
-		"squadra": "ambienti-1",
-		"problema": "compenetra",
-		"pos": [
-			-1.75,
-			0.37,
-			12.4
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: passa dentro Vasca/Medusa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli per 3 cm"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Polaroid10",
-		"squadra": "ambienti-2",
-		"problema": "compenetrato",
-		"pos": [
-			23.59,
-			-11.66,
-			-22.41
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: entra dentro TorreProp/prop_lettino_plastica_1"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Polaroid10",
-		"squadra": "ambienti-2",
-		"problema": "coperto",
-		"pos": [
-			23.59,
-			-11.66,
-			-22.41
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: non si vede da nessuno dei 12 punti di vista vicini (1-1,8 m, altezza degli occhi); lo coprono: TorreStruttura/torre_polaroid_10, TorreStruttura/torre_A, TorreProp/prop_lettino_plastica_1 (la superficie più vicina è a 3 cm dal suo centro)"
-	},
-	{
-		"zona": "torre",
-		"nodo": "Polaroid10/Modello/Polaroid",
-		"squadra": "ambienti-2",
-		"problema": "compenetra",
-		"pos": [
-			23.59,
-			-11.66,
-			-22.41
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 22 ottobre notte, dopo l'unione: il 48% dei suoi vertici è dentro TorreProp/prop_lettino_plastica_1"
 	},
 	{
 		"zona": "risalita",
