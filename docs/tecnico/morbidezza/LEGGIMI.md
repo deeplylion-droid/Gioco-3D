@@ -14,12 +14,12 @@
 |---|---|---|---|
 | Statua (menu e sala) | `MedusaStatue` la mette su ogni medusa, a `quanto` 0 (la proprietà `morbidezza`): ferma davvero, costo zero | — | `test_morbidezza_statua.gd` |
 | Affacciata e tuffo (fossa) | `LeiSbuca`: tutta e subito quando compare già affacciata | forme convesse della fossa (sotto) | `test_morbidezza.gd` |
-| Lei che sbuca (fossa) | `LeiSbuca`: spenta mentre sale, piano (0,4 s) quando è su | come sopra | `test_morbidezza_sbuca.gd` |
+| Lei che sbuca (fossa) | `LeiSbuca`: accesa anche mentre sale, con `trattieni` (tentacoli tenuti nella fossa finché lei non è su) | come sopra, più `fossa_pianta` | `test_morbidezza_sbuca.gd` |
 | Inseguimento (vasche, scolo, grata, SB1) | `SalaInseguimento._morbidezza_qui()`: tutta e subito quando lei sale, con l'acqua del posto | nessuna forma: la sala è una mesh sola e le animazioni tengono già i tentacoli fuori; il test controlla coi raggi sulla collisione vera | `test_morbidezza_inseguimento.gd` |
 
 Le misure comuni dei test (punti dentro le forme, tratti attraverso la collisione vera, scatti, tratti, costo) sono in `tests/misura_morbidezza.gd`.
 
-**Lei che sbuca:** la salita sposta tutta la posa affacciata 2,3 m sotto e la porta su. I tentacoli che nella posa stanno sul pavimento salgono quindi attraverso il pavimento: circa 8.000 punti e 1.250 tratti dentro il mondo in 1,8 s, già senza morbidezza. Per questo la morbidezza lì si accende solo quando lei è su. Per toglierli serve cambiare la salita.
+**Lei che sbuca:** la salita sposta tutta la posa affacciata 2,3 m sotto e la porta su, quindi i tentacoli della posa che stanno sul pavimento salirebbero attraverso il pavimento (circa 8.000 punti dentro il mondo in 1,8 s, già senza morbidezza). Con `trattieni` acceso, i bersagli dei punti della posa che sono sotto il pavimento e fuori dalla fossa si spostano dentro la pianta della fossa (`fossa_pianta`, ristretta del raggio), in modo graduale negli ultimi 50 cm. Così i tentacoli salgono dentro la fossa e passano oltre il bordo mentre lei emerge. Alla fine della salita `trattieni` si spegne in 0,5 s e i tentacoli si stendono sul pavimento. Restano pochi punti di 1-2 cm sott'acqua nei primi fotogrammi e il costo medio è circa 2,5 ms (sopra il limite 2/4 dell'affacciata).
 
 ## Collisioni
 
