@@ -157,19 +157,6 @@
 	},
 	{
 		"zona": "sala",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Tentacoli",
-		"squadra": "mascotte",
-		"problema": "ingombro",
-		"pos": [
-			-15.5,
-			0.0,
-			-7.75
-		],
-		"stato": "voluto",
-		"motivo": "i tentacoli di lei affacciata alla fossa (tappa 8) stanno tutti fra 0,3 e 2 m in pianta dal suo occhio, e LeiSbuca prende il giocatore a 2,4 m (distanza_presa) appena lei è visibile: da vivo non ci si arriva (deciso dal coordinatore, 22 ottobre)"
-	},
-	{
-		"zona": "sala",
 		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Spente/Lampadine_6",
 		"squadra": "enigmi",
 		"problema": "ingombro",
@@ -336,18 +323,5 @@
 		],
 		"stato": "voluto",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
-	},
-	{
-		"zona": "sala",
-		"nodo": "Gioco/LeiSbuca/MedusaFossa/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Mani",
-		"squadra": "mascotte",
-		"problema": "compenetra",
-		"pos": [
-			-14.41,
-			0.4,
-			-6.39
-		],
-		"stato": "da correggere",
-		"motivo": "controllo del 23 ottobre, stato lei_fossa: le mani di lei affacciata entrano 3 cm nel bordo a scacchi della fossa (per esempio in (-13,99; 0,45; -5,78)); è uscito spostando la griglia di scarico sul fondo (ambienti-1), che col bordo non c'entra: la posa delle mani la sistema mascotte"
 	}
 ]
