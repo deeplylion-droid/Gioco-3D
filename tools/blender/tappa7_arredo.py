@@ -436,7 +436,11 @@ def tubi_muro(nome, a, b, n, z, mat, obs, quanti=3, r=0.045, nel_muro_b=False, n
         fine = b - d * (quanti - 1 - k) * 0.15 if nel_muro_b else b
         # anche un punto sopra ogni staffa, così il tubo ha i vertici dove poggia
         sopra = [a + d * u + o + h for u in staffe if (inizio - a).length < u < (fine - a).length]
-        pts = ([inizio - n * 0.1 + h] if nel_muro_a else []) + [inizio + o + h] + sopra + [fine + o + h] + ([fine - n * 0.1 + h] if nel_muro_b else [])
+        # dove entra nel muro il tubo ha un anello proprio sulla faccia del muro (dritto, perpendicolare): il capo è
+        # attaccato lì, poi prosegue 10 cm dentro (prima l'anello più vicino era 10 cm dentro il muro e la curva
+        # nell'aria, e il controllo dei capi lo dava nel vuoto)
+        pts = ([inizio - n * 0.1 + h, inizio + h] if nel_muro_a else []) + [inizio + o + h] + sopra + [fine + o + h] + \
+            ([fine + h, fine - n * 0.1 + h] if nel_muro_b else [])
         obs.append(C.tubo(f'{nome}_{k}', pts, rk, mat, rc=0.12, seg=12, uv=None))
     # le staffe reggono i tubi da sotto e vanno dal muro all'ultimo tubo (prima sporgevano oltre, nel vuoto)
     lung = 0.09 + (quanti - 1) * 0.13 + r * (1 - 0.2 * (quanti - 1))

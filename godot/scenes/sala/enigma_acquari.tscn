@@ -25,6 +25,7 @@
 [ext_resource type="Script" path="res://assets/enigma_acquari/multimesh_da_meta.gd" id="mm_da_meta"]
 [ext_resource type="ArrayMesh" path="res://assets/enigma_acquari/raccordo_becco.res" id="raccordo_becco"]
 [ext_resource type="ArrayMesh" path="res://assets/enigma_acquari/raccordo_staffa_bassa.res" id="raccordo_staffa_bassa"]
+[ext_resource type="ArrayMesh" path="res://assets/enigma_acquari/cavo_lampada.obj" id="cavo_lampada"]
 
 [sub_resource type="CylinderMesh" id="tirante"]
 top_radius = 0.044
@@ -33,22 +34,16 @@ height = 3.017
 radial_segments = 12
 
 [sub_resource type="CylinderMesh" id="basamento_vetro"]
-top_radius = 1.1350
-bottom_radius = 1.1350
-height = 0.2945
+top_radius = 1.0970
+bottom_radius = 1.0970
+height = 0.0100
 radial_segments = 64
 
 [sub_resource type="CylinderMesh" id="fondo_vetro_basso"]
-top_radius = 1.6150
-bottom_radius = 1.6150
-height = 0.02
+top_radius = 1.5920
+bottom_radius = 1.5920
+height = 0.0100
 radial_segments = 64
-
-[sub_resource type="CylinderMesh" id="gamba_vetro_basso"]
-top_radius = 0.025
-bottom_radius = 0.025
-height = 0.5600
-radial_segments = 12
 
 [sub_resource type="TorusMesh" id="anello_vetro"]
 inner_radius = 1.0950
@@ -460,12 +455,6 @@ bottom_radius = 0.0470
 height = 0.025
 radial_segments = 16
 
-[sub_resource type="CylinderMesh" id="cavo_lampada"]
-top_radius = 0.007
-bottom_radius = 0.007
-height = 0.592
-radial_segments = 6
-
 [sub_resource type="CylinderMesh" id="fascetta"]
 top_radius = 1
 bottom_radius = 1
@@ -516,7 +505,7 @@ mesh = SubResource("tirante")
 material_override = ExtResource("m_tiranti")
 
 [node name="BasamentoVetro" type="MeshInstance3D" parent="AcquarioGiallo"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1472, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0055, 0)
 mesh = SubResource("basamento_vetro")
 material_override = ExtResource("m_tiranti")
 
@@ -661,33 +650,8 @@ mesh = SubResource("anello")
 material_override = ExtResource("m_rosso")
 
 [node name="FondoVetro" type="MeshInstance3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0055, 0)
 mesh = SubResource("fondo_vetro_basso")
-material_override = ExtResource("m_tiranti")
-
-[node name="GambaVetro1" type="MeshInstance3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3626, -0.3, 0.4959)
-mesh = SubResource("gamba_vetro_basso")
-material_override = ExtResource("m_tiranti")
-
-[node name="GambaVetro2" type="MeshInstance3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2518, -0.3, 1.428)
-mesh = SubResource("gamba_vetro_basso")
-material_override = ExtResource("m_tiranti")
-
-[node name="GambaVetro3" type="MeshInstance3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3626, -0.3, -0.4959)
-mesh = SubResource("gamba_vetro_basso")
-material_override = ExtResource("m_tiranti")
-
-[node name="GambaVetro4" type="MeshInstance3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2518, -0.3, -1.428)
-mesh = SubResource("gamba_vetro_basso")
-material_override = ExtResource("m_tiranti")
-
-[node name="GambaVetro5" type="MeshInstance3D" parent="AcquarioMisto"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1108, -0.3, -0.932)
-mesh = SubResource("gamba_vetro_basso")
 material_override = ExtResource("m_tiranti")
 
 [node name="Collisione" type="StaticBody3D" parent="AcquarioMisto"]
@@ -875,7 +839,7 @@ mesh = SubResource("tirante")
 material_override = ExtResource("m_tiranti")
 
 [node name="BasamentoVetro" type="MeshInstance3D" parent="AcquarioBlu"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1472, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0055, 0)
 mesh = SubResource("basamento_vetro")
 material_override = ExtResource("m_tiranti")
 
@@ -1247,7 +1211,7 @@ material_override = SubResource("nero")
 
 [node name="Cavo" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5995, 1.834, -21.4284)
-mesh = SubResource("cavo_lampada")
+mesh = ExtResource("cavo_lampada")
 material_override = SubResource("nero")
 
 [node name="Fascetta1" type="MeshInstance3D" parent="Cavo"]

@@ -692,10 +692,12 @@ func _tetto() -> void:
 		tetto.add_child(attacco)
 		var catena := MeshInstance3D.new()
 		var cb := BoxMesh.new()
-		cb.size = Vector3(0.02, 1.81, 0.02)
+		# (il capo di sotto entra 4 mm nell'occhiello in cima alla lampada, pieno da -1,2 a -7,5 mm: prima finiva a filo
+		# della cima, accanto all'occhiello, e il controllo dei capi lo dava nel vuoto)
+		cb.size = Vector3(0.02, 1.814, 0.02)
 		catena.mesh = cb
 		catena.material_override = ferro
-		catena.position = Vector3(p.x, TETTO - 3.0 + 0.905, zc)
+		catena.position = Vector3(p.x, TETTO - 3.004 + 0.907, zc)
 		catena.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		tetto.add_child(catena)
 		var l := _metti("lampada_capannone", Vector3(p.x, TETTO - 3.0, zc))

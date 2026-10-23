@@ -40,6 +40,9 @@ static func camere() -> Dictionary:
 		"porta_ingresso": [Vector3(F.INGRESSO_X, 1.6, F.Z0 + 2.5), Vector3(F.INGRESSO_X, 1.4, F.Z0 - 2.0)],
 		"stipite_ingresso": [Vector3(F.INGRESSO_X + 0.4, 1.75, F.Z0 + 1.1), Vector3(F.INGRESSO_X - 0.66, 1.5, F.Z0)],
 		"porta_approdo": [Vector3(F.X0 + 2.5, 1.6, F.APPRODO.y), Vector3(F.X0 - 2.0, 1.4, F.APPRODO.y)],
+		# il capo di sotto della catena nell'occhiello della lampada del capannone (una dritta e una storta)
+		"catena_lampada": [Vector3(-3.6, 4.45, -6.25), Vector3(-4.0, 4.6, -6.6)],
+		"catena_lampada_storta": [Vector3(13.6, 4.45, -16.25), Vector3(14.0, 4.6, -16.6)],
 	}
 	return d
 
