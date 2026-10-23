@@ -196,20 +196,6 @@
 		"zona": "sala"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa)",
-		"nodo": "Sala/Interattivi/sala_portone_torre",
-		"pos": [
-			19.5,
-			0.0,
-			-12.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "sala"
-	},
-	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.53), senza collisione (si attraversa)",
 		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.53), senza collisione (si attraversa)",
 		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_c2e_m_2",
@@ -306,20 +292,6 @@
 		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"zona": "tecnici"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"motivo": "controllo del 22 ottobre notte (ingombro anche a 20 cm all'altezza della testa): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.05 e 1.65 m sopra il pavimento (1 celle da 25 cm) (pavimento a y 0.00), senza collisione (si attraversa)",
-		"nodo": "Interni/Ambienti/Stanzino/cassetta_pronto_soccorso",
-		"pos": [
-			4.5,
-			0.0,
-			30.75
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
 	},
 	{
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimenti fra y -0.30 e -0.00), senza collisione (si attraversa)",
@@ -1021,20 +993,6 @@
 		"squadra": "enigmi",
 		"stato": "da correggere",
 		"zona": "risalita"
-	},
-	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7)",
-		"motivo": "controllo del 22 ottobre notte, stato tappa7 (porte della sala pompe e portello aperti): nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dal giocatore, fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimenti fra y -1.58 e -0.00), senza collisione (si attraversa) (stato: tappa7)",
-		"nodo": "Interni/Ambienti/Corridoio/corridoio_statico",
-		"pos": [
-			8.75,
-			0.0,
-			42.25
-		],
-		"problema": "ingombro",
-		"squadra": "ambienti-1",
-		"stato": "da correggere",
-		"zona": "interni"
 	},
 	{
 		"dettaglio": "la sua forma sfiora SalaInseguimento/InseguimentoMobili/ins_paratia_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 158.8 cm) (stato: inseguimento_dopo) [modello: inseguimento_mobili.glb]",
