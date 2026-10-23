@@ -67,7 +67,7 @@ environment = SubResource("Environment_titolo")
 script = ExtResource("2_temp")
 intervallo_min = 8.0
 intervallo_max = 16.0
-energia_lampo = 3.0
+energia_lampo = 2.4
 
 [node name="Luna" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.584305, 0.775568, -0.23892, 0, 0.294405, 0.955681, 0.811534, 0.558409, -0.172023, 0, 12, 0)
