@@ -297,16 +297,18 @@ func _telaio(pos: Vector3, rot: float) -> void:
 	# l'anta spalancata fino al muro (180 gradi) verso dentro, sui cardini a destra: parallela al muro, 7 cm dentro la
 	# stanza, con la maniglia fra l'anta e il muro, e la sua collisione (prima ci si passava attraverso). A 100 gradi lo
 	# spessore sporgeva 4,9 cm nel vano dal lato dei cardini e il giocatore passava con 4 cm (controllo dei varchi di
-	# grafica, 23 ottobre); così il passaggio è il vano intero, 0,5 m per lato dall'asse
+	# grafica, 23 ottobre). I cardini stanno sul bordo del vano, all'angolo dello stipite verso la stanza: l'anta aperta
+	# resta tutta fuori dal vano (con i cardini 6 cm più dentro, sulla faccia dello stipite, il suo bordo lasciava 9 cm),
+	# e il passaggio è il vano intero, 0,5 m per lato dall'asse
 	var cardine := Node3D.new()
-	cardine.position = Vector3(LARGO_PORTA * 0.5 - 0.06, 0, 0.07)
+	cardine.position = Vector3(LARGO_PORTA * 0.5, 0, 0.07)
 	cardine.rotation_degrees.y = 180.0
 	n.add_child(cardine)
 	_box(Vector3(0.88, 2.04, 0.05), Vector3(-0.44, 1.03, -0.025), anta, cardine)
 	_box(Vector3(0.14, 0.03, 0.05), Vector3(-0.78, 1.05, 0.02), _colore(Color(0.7, 0.7, 0.7), 0.9, 0.3), cardine)
 	var xf := n.transform * cardine.transform
 	_forma(Vector3(0.88, 2.04, 0.05), xf * Vector3(-0.44, 1.03, -0.025), rot + cardine.rotation_degrees.y)
-	# i cardini: due perni sull'asse, nello spigolo dell'anta, davanti allo stipite (non dentro)
+	# i cardini: due perni sull'asse, nello spigolo dell'anta, accanto allo stipite (non dentro)
 	for y in [0.35, 1.75]:
 		_box(Vector3(0.025, 0.1, 0.025), Vector3(-0.0126, y, -0.0063), telaio, cardine)
 
