@@ -577,6 +577,18 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         """La staffa tra il collare e il tirante (un braccetto corto verso l'esterno)."""
         c.cilindro(q - lat * (sg_lat * 0.08), q, 0.04, 'metallo', seg=8)
 
+    # nel gioco, i gradini di grata sotto la bocca del tubo dell'inseguimento (vedi più giù): sopra di loro un sostegno
+    # lascia 2 m liberi (il collare sotto la coda del tratto 5 stava 1,93 m sopra il terzo gradino; regola del
+    # coordinatore del 23 ottobre)
+    gradini_bocca = [(36.35, BOCCA_Y + y0_, XI1 - 2.4, BOCCA_Y + 0.65, FONDO + zt) for y0_, zt in
+                     ((-2.4, 0.28), (-1.85, 0.56), (-1.3, 0.84), (-0.75, 1.12))] if GIOCO else []
+
+    def sopra_gradini(q, basso):
+        for (x0, y0, x1, y1, zt) in gradini_bocca:
+            if x0 - 0.6 < q.x < x1 + 0.6 and y0 - 0.6 < q.y < y1 + 0.6 and basso - zt < 2.02:
+                return True
+        return False
+
     def prova(pts, mezza, chiuso, largo, prof, p, d, discesa=False):
         d3 = d.normalized()
         d = Vector((d.x, d.y, 0))
@@ -586,6 +598,9 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         lat = Vector((-d.y, d.x, 0))
         du = (R_GROVIGLIO + 0.07) if chiuso else prof + 0.12
         u = p - Vector((0, 0, du))
+        if sopra_gradini(u, u.z - 0.25):
+            perche['2 m sopra i gradini della bocca'] = perche.get('2 m sopra i gradini della bocca', 0) + 1
+            return None
         w = (R_GROVIGLIO + 0.14) if chiuso else largo + 0.14
         colonne = [(t, Vector((centro(t).x + sx * NUCLEO, centro(t).y + sy * NUCLEO, 0)))
                    for t in ORDINE for sx in (-1, 1) for sy in (-1, 1)]

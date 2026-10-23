@@ -507,8 +507,11 @@ S('parete_est', quad('pericolo_leva', (XE - 0.02, 2.9, 3.05), 1.3, 0.2, (-1, 0, 
 for nome, file, x, z, w in (('QUADRO_elettrico', 'quadro_elettrico', -6.2, 0.9, 1.1), ('QUADRO_strumenti', 'quadro_strumenti', -1.6, 1.3, 1.2)):
     if HQ.disponibile(file):
         d = HQ.dimensioni(file); k = w / d.x
-        HQ.metti(nome, file, (x, Y0 + d.y * k / 2 - 0.002, z),   # (col retro sul muro: a 1 cm restava staccato)
-                 (w, d.y * k, d.z * k), rot_z=R_(180))
+        # profondi al più 24 cm, come un quadro a muro vero (sporgevano 56 e 36 cm all'altezza della testa; regola del
+        # coordinatore del 23 ottobre: le cose a muro sporgono al più 25 cm)
+        prof = min(d.y * k, 0.24)
+        HQ.metti(nome, file, (x, Y0 + prof / 2 - 0.002, z),   # (col retro sul muro: a 1 cm restava staccato)
+                 (w, prof, d.z * k), rot_z=R_(180))
 
 # ------------------------------------------------------------------ scrivania, CRT, sedia (Meshy)
 usa_collezione('arredo')
