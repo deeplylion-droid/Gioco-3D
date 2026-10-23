@@ -28,12 +28,16 @@ const ANIMAZIONI_INSEGUIMENTO := "res://assets/models/medusa/medusa_inseguimento
 @export var punti_gocce := PackedVector3Array()
 ## Se falso, ai punti_gocce non cadono gocce (i punti servono lo stesso, per esempio a LeiSbuca).
 @export var gocce := true
+## I tentacoli si piegano contro i muri invece di entrarci (TentacoliControIMuri, sopra l'animazione).
+@export var tentacoli_contro_i_muri := false
 
 var _bersaglio: Node3D
 var _occhio: LookAtModifier3D
 var _testa: LookAtModifier3D
 var _tw_testa: Tween
 var _gocce: Array[Node3D] = []
+var _tentacoli: TentacoliControIMuri
+var _esclusi_tentacoli: Array[RID] = []
 # Posizione e direzione dell'occhio lette a fine aggiornamento dello scheletro (con lo sguardo).
 var _pos_occhio := Vector3.ZERO
 var _dir_occhio := Vector3.BACK
@@ -58,6 +62,11 @@ func _dopo_rebuild() -> void:
 	# L'occhio segue un bersaglio che sta sulla testa del giocatore (aggiornato a ogni frame).
 	var skeletons := _instance.find_children("*", "Skeleton3D", true, false)
 	var sk := skeletons[0] as Skeleton3D if skeletons.size() > 0 else null
+	if sk and tentacoli_contro_i_muri:
+		_tentacoli = TentacoliControIMuri.new()
+		_tentacoli.name = "TentacoliControIMuri"
+		_tentacoli.esclusi = _esclusi_tentacoli
+		sk.add_child(_tentacoli)
 	if sk and sk.find_bone(osso_occhio) >= 0:
 		if _bersaglio == null:
 			_bersaglio = Node3D.new()
@@ -167,6 +176,12 @@ func _materiale_palpebre() -> Material:
 
 
 ## Dove sta l'occhio adesso (coordinate del mondo, con lo sguardo applicato).
+## I tentacoli non si piegano contro questa collisione (per esempio un coperchio invisibile).
+func escludi_dai_tentacoli(rid: RID) -> void:
+	if not _esclusi_tentacoli.has(rid):
+		_esclusi_tentacoli.append(rid)
+
+
 func get_eye_position() -> Vector3:
 	return _pos_occhio
 
