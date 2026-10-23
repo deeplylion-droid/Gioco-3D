@@ -80,17 +80,28 @@
 		}
 	],
 	"nero": {"inizio": 43.0, "durata": 1.6, "cosa": "inquadratura 9: taglio al nero, ronzio della TV, poi il risveglio"},
+	"_sottotitoli": "le 7 frasi dello speaker in italiano (traduzioni approvate nella bozza), richiesti dall'utente il 23 ottobre: da quando parte la frase a 0,3 s dopo la sua fine (durate della voce A, assets/spot/voce/durate.json). Li disegna il lettore dal vivo.",
+	"sottotitoli": [
+		{"frase": 1, "da": 0.90, "a": 3.19, "testo": "Wonderwave Cruises presenta..."},
+		{"frase": 2, "da": 3.60, "a": 6.96, "testo": "...la Jubilee! La nave più felice dei sette mari!"},
+		{"frase": 3, "da": 8.40, "a": 12.91, "testo": "Tuffatevi nello Splash Lagoon, il più grande acquapark coperto che galleggi!"},
+		{"frase": 4, "da": 13.80, "a": 16.31, "testo": "Curve e giri sulla Torre degli Scivoli!"},
+		{"frase": 5, "da": 19.80, "a": 23.22, "testo": "E conoscete la star dello spettacolo... Jilly Jubilee!"},
+		{"frase": 6, "da": 26.60, "a": 30.55, "testo": "Jilly ama i bambini. Jilly li terrà al sicuro. Per sempre."},
+		{"frase": 7, "da": 33.00, "a": 35.93, "testo": "Salite a bordo. Restate a bordo."}
+	],
+	"_audio": "volumi pareggiati il 23 ottobre: il mix dello spot sta a circa -16,5 LUFS, come la musica del menu (la sigla pulita a 0 dB, -15,8 LUFS). Voce +13 dB (i file sono a -28 LUFS), sigla sotto la voce -7 dB.",
 	"audio": [
-		{"nome": "sigla_pulita", "file": "res://audio/musica/sigla_pulita.ogg", "da": 0.3, "a": 32.4, "volume_db": -9.0, "sfuma_fine": 0.4},
-		{"nome": "sigla_rovinata", "file": "res://audio/musica/sigla_rovinata.ogg", "da": 32.0, "a": 43.0, "volume_db": -8.0, "sfuma_inizio": 0.4, "taglio_fine": true},
-		{"nome": "ronzio", "file": "res://assets/spot/ronzio_spot.ogg", "da": 37.5, "a": 44.6, "volume_db": -6.0, "sfuma_fine": 0.6},
-		{"nome": "voce_1", "file": "res://assets/spot/voce/{voce}/frase_1.wav", "da": 0.9, "volume_db": 0.0},
-		{"nome": "voce_2", "file": "res://assets/spot/voce/{voce}/frase_2.wav", "da": 3.6, "volume_db": 0.0},
-		{"nome": "voce_3", "file": "res://assets/spot/voce/{voce}/frase_3.wav", "da": 8.4, "volume_db": 0.0},
-		{"nome": "voce_4", "file": "res://assets/spot/voce/{voce}/frase_4.wav", "da": 13.8, "volume_db": 0.0},
-		{"nome": "voce_5", "file": "res://assets/spot/voce/{voce}/frase_5.wav", "da": 19.8, "volume_db": 0.0},
-		{"nome": "voce_6", "file": "res://assets/spot/voce/{voce}/frase_6.wav", "da": 26.6, "volume_db": 0.0},
-		{"nome": "voce_7", "file": "res://assets/spot/voce/{voce}/frase_7.wav", "da": 33.0, "volume_db": 0.0}
+		{"nome": "sigla_pulita", "file": "res://audio/musica/sigla_pulita.ogg", "da": 0.3, "a": 32.4, "volume_db": -7.0, "sfuma_fine": 0.4},
+		{"nome": "sigla_rovinata", "file": "res://audio/musica/sigla_rovinata.ogg", "da": 32.0, "a": 43.0, "volume_db": -5.0, "sfuma_inizio": 0.4, "taglio_fine": true},
+		{"nome": "ronzio", "file": "res://assets/spot/ronzio_spot.ogg", "da": 37.5, "a": 44.6, "volume_db": -2.0, "sfuma_fine": 0.6},
+		{"nome": "voce_1", "file": "res://assets/spot/voce/{voce}/frase_1.wav", "da": 0.9, "volume_db": 13.0},
+		{"nome": "voce_2", "file": "res://assets/spot/voce/{voce}/frase_2.wav", "da": 3.6, "volume_db": 13.0},
+		{"nome": "voce_3", "file": "res://assets/spot/voce/{voce}/frase_3.wav", "da": 8.4, "volume_db": 13.0},
+		{"nome": "voce_4", "file": "res://assets/spot/voce/{voce}/frase_4.wav", "da": 13.8, "volume_db": 13.0},
+		{"nome": "voce_5", "file": "res://assets/spot/voce/{voce}/frase_5.wav", "da": 19.8, "volume_db": 13.0},
+		{"nome": "voce_6", "file": "res://assets/spot/voce/{voce}/frase_6.wav", "da": 26.6, "volume_db": 13.0},
+		{"nome": "voce_7", "file": "res://assets/spot/voce/{voce}/frase_7.wav", "da": 33.0, "volume_db": 13.0}
 	],
 	"filtro": [
 		{"t": 0.0, "schermo_blu": 1.0, "play": 1.0, "guasto": 0.0, "occhio": 0.0},
