@@ -6,9 +6,12 @@ squalo che si gira, esita e scappa. I tempi sono quelli dell'animazione
 - squalo_minaccia: dal risveglio al richiamo, attaccato alla bocca: il fiato pesante e umido a pochi
   centimetri dalla faccia, la gola che raschia e, a ogni scatto in avanti della testa, un ringhio corto
   con lo schiocco umido delle fauci (scatti a MINACCIA + 0,7, 1,6 e 2,5 s dell'animazione);
-- jilly_richiamo: il verso di lei, lontano e profondo, che arriva da dietro la porta tagliafuoco: la
-  stessa gola gutturale di lei (genera_lei: gola(), tratto()) ma lunga e lenta, un richiamo che sale e
-  scende due volte, attutito dalla porta e dai corridoi di lamiera (riverbero della nave);
+- jilly_richiamo: il verso di lei, lontano e profondo, che arriva da dietro la porta tagliafuoco. Dal 23 ottobre
+  (l'utente: "il suono che si sente sotto è strano, corrotto e non si capisce cosa sia... doveva essere il
+  richiamo di Jilly") è fatto con la sua voce B dell'inseguimento (genera_lei_inseguimento.grido(), con sopra
+  piano la sua voce stridula): due chiamate lunghe che salgono e scendono, chiare (poco sporche) e lontane
+  dietro la porta (il riverbero della nave, gli acuti appena tagliati). La prima versione (la gola a 30-47 Hz,
+  sporcata e chiusa sotto 650 Hz: un brontolio che non si capiva) resta in jilly_richiamo_v1();
 - squalo_sbuffo: lo sbuffo di gola quando si volta a guardarti prima di scappare;
 - squalo_passo: i passi pesanti e bagnati sulle piastrelle, con il ticchettio degli artigli; dal 22 ottobre
   più pesanti (un tonfo grave lungo, sotto: la camera trema insieme);
@@ -77,7 +80,34 @@ def squalo_minaccia(rng):
 
 
 def jilly_richiamo(rng):
-    """Il richiamo: due lunghi versi di gola che salgono e scendono, il secondo più corto."""
+    """Il richiamo con la voce B di lei (l'inseguimento): due chiamate lunghe, la prima che sale e scende, la seconda
+    più corta che ricade; sotto il petto (la subarmonica), sopra piano la sua voce stridula; lontana dietro la porta."""
+    import os
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from genera_lei_inseguimento import grido, formanti, voce, _norm
+    dur = 6.0
+    n = n_of(dur)
+    out = np.zeros(n)
+    for t0, d, curva, forza in ((0.0, 2.7, [(0, 82), (0.5, 128), (1.3, 150), (2.0, 120), (2.7, 78)], 1.0),
+                                (3.0, 1.9, [(0, 88), (0.4, 136), (1.1, 112), (1.9, 70)], 0.8)):
+        k = n_of(d)
+        g = grido(rng, d, curva, bocca=1.05, sporco=1.4, rullo=9.0)
+        e = env_points([(0, 0), (d * 0.18, 1.0), (d * 0.7, 0.85), (d, 0)], k) ** 1.1
+        mix_into(out, _norm(g) * e * forza, n_of(t0))
+        # sopra, piano, la sua voce stridula (la stessa del suo urlo): la si riconosce
+        f0 = env_points([(t, f * 2.6) for t, f in curva], k)
+        st = formanti(voce(rng, k, f0, 1.0), 'a') * 0.7 + formanti(voce(rng, k, f0 * 1.01, 1.0), 'i') * 0.3
+        mix_into(out, hp(lp(np.tanh(_norm(st) * 2.0), 5000, 2), 250, 2) * e * 0.16 * forza, n_of(t0))
+    out += _norm(rombo_sotto(rng, dur, 0.25)) * 0.05
+    # lontana: dietro la porta d'acciaio e lungo i corridoi di lamiera (acuti appena tagliati, non chiusi)
+    out = lp(hp(out, 85, 4), 2400, 2)
+    out = f32(reverb(out, ir_nave(), wet=0.6, dry=0.75))
+    return f32(fade(out, 0.1, 1.2))
+
+
+def jilly_richiamo_v1(rng):
+    """(Scartata il 23 ottobre.) Il richiamo: due lunghi versi di gola che salgono e scendono, il secondo più corto."""
     dur = 5.2
     n = n_of(dur)
     voce = np.zeros(n)
