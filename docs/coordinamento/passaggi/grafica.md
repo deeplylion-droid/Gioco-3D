@@ -11,6 +11,16 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
   - Poi la costruisce nascosta (`_prepara_torre`) e la mostra all'apertura del portone (`_mostra_torre`).
   - Se il caricamento in thread fallisce, ripiega su `load()`.
   - Negli scatti si spegne con `Engine.set_meta(&"precarica_torre_spento", true)`.
+  - Riserva: se il portone è aperto da più di 20 s (`ATTESA_TORRE`) e il thread non ha finito, la torre si carica sul thread principale con `CACHE_MODE_IGNORE_DEEP`; la copia del thread, quando arriva, si lascia andare.
+- `godot/scripts/risalita/risalita_gioco.gd`: le stanze della Risalita (fiume e infermeria) non stanno più sempre in sala (23 ottobre, memoria).
+  - Si caricano nel thread dal checkpoint della sala pompe (6) al magazzino (15), o col giocatore vicino; oltre la serranda (16), lontane più di 14 m, si scaricano.
+  - Il thread carica anche i file che le stanze usano con `load()` (`scenes/risalita/risorse_stanze.json`); poi il capannone si costruisce a pezzi (`costruisci_a_pezzi` di `fiume_gioco.gd`, 12 ms per fotogramma).
+  - Il fiume a pezzi rimette il generatore comune com'era a ogni ripresa (`_tiri`): rocce, palme e transenne vengono identiche.
+  - La sala tiene da subito un materiale per ogni shader delle stanze che non ha (`scenes/risalita/materiali_campione.tres`).
+  - Elenco e campioni si rifanno con `tests/aggiorna_risorse_risalita.gd`; `test_risalita_tardi` dice quando servono.
+  - Lo stato degli oggetti delle stanze scaricate lo tiene GameState (`parcheggia`, `ripristina`, `in_costruzione`) ed entra nelle istantanee.
+  - Le stanze si mostrano entro 4 m dalle loro zone (`VICINO`, come prima); la costruzione accelera (pezzi da 40 ms, mai tutto in un fotogramma) solo col giocatore dentro le zone con 1 m di margine (`DENTRO`): la metà nord della sala pompe sta nel margine di 4 m ma non lì (collaudo del 23 ottobre, fermo di 503 ms). Misura: `tests/sonda_risalita_corsa.gd [dentro]`.
+  - Ripartendo da un checkpoint vicino alle stanze si caricano subito, in `_ready`. Strumenti e test che le vogliono sempre: `Engine.set_meta(&"risalita_subito", true)` o `carica_subito()`.
 - `godot/scripts/game/sala_torre.gd`, scena `scenes/sala/torre/sala_torre.tscn`: la torre degli scivoli.
   - `costruisci_a_pezzi()` lavora a passi con un budget di ms per fotogramma.
   - `prepara_materiali()` compila le pipeline fuori vista, con una SubViewport sullo strato `1<<19`.
@@ -38,7 +48,7 @@ Il lavoro arriva dal coordinatore. Quando un compito è finito, gli si manda l'h
   - Contano i monitor `PIPELINE_COMPILATIONS_SURFACE/DRAW`: devono restare a zero.
 - **Scatti**: script `tests/scatti_*.gd`, lanciati col comando xvfb di CLAUDE.md.
 - **Controllo di posizionamento** (`tests/controllo_posizionamento.gd`, nella CI, con `--fixed-fps 60`): rapporto in `docs/tecnico/posizionamento/rapporto.md`, eccezioni e casi assegnati in `tests/posizionamento_eccezioni.json`. Le zone nuove vanno nella lista `ZONE`.
-- **Prove fuori dalla CI**: `tests/prova_*`, `misura_*`, `sonda_*`. `misura_impatto.gd` misura il costo dello spruzzo contro un muro a 0,8-6 m (ms, GPU, overdraw a schermo, particelle vive).
+- **Prove fuori dalla CI**: `tests/prova_*`, `misura_*`, `sonda_*`. `misura_impatto.gd` misura il costo dello spruzzo contro un muro a 0,8-6 m (ms, GPU, overdraw a schermo, particelle vive). `sonda_risalita_memoria.gd prima|dopo` misura la sala nei punti di passaggio (RSS, memoria statica, texture e mesh in scena) e il fotogramma più lungo mentre la Risalita entra; `sonda_fiume_impronta.gd <file> [pezzi]` scrive le posizioni di tutti i nodi delle stanze, per confrontare due versioni del codice che le costruisce.
 - **Peso del pacchetto**:
   - `git worktree add` in `/home/user/wt/…`, non `git clone`: la copia di `.git` (5,7 GB) è lentissima;
   - poi i passi della CI e `godot --export-pack "Windows Desktop" x.pck`;

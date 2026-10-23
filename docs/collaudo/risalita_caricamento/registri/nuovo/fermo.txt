@@ -1,0 +1,10 @@
+COMMIT 7a47e60
+RIGA fermo_stanze_pronte_tempo_vero_s = 8.2
+RIGA fermo_prima_peggiore_ms = 18
+RIGA fermo_prima_mediano_ms = 16.7
+RIGA fermo_dopo_peggiore_ms = 88
+RIGA fermo_dopo_mediano_ms = 16.6
+RIGA fermo_dopo_sopra_50ms = 3
+RIGA fermo_dopo_sopra_100ms = 0
+RIGA fermo_stanze_pronte_s = 1.92
+RISULTATO: 0 controlli ok, 0 falliti

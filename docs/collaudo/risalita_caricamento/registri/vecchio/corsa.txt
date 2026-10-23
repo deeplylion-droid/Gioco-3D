@@ -1,0 +1,9 @@
+COMMIT 12d9c79
+RIGA corsa_durata_s = 12.9
+RIGA corsa_stanze_arrivate_s = 0.02
+RIGA corsa_porta_vista_da_s = 9.80
+RIGA corsa_fotogrammi_porta_in_vista_senza_stanze = 0
+RIGA corsa_fotogramma_peggiore_ms = 24
+RIGA corsa_fotogramma_mediano_ms = 16.7
+  ok   di corsa dal 6, la porta del capannone non manca mai mentre è in vista (0 fotogrammi)
+RISULTATO: 1 controlli ok, 0 falliti

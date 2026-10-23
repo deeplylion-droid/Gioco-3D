@@ -6,8 +6,8 @@ def V(vid, titolo, testo, media, scelte):
 
 OK = [("ok", "Approvo"), ("cambia", "Da cambiare")]
 
-INTRO = ("Tre cose per lo spot, che intanto si prepara a parte: la build non cambia. Rispondi quando vuoi, anche "
-         "domattina.")
+INTRO = ("Le cose da decidere per lo spot, che si prepara a parte: la build non cambia. In fondo ci sono le prime "
+         "inquadrature girate nel motore, con la sala pulita e accesa come quando la nave era nuova.")
 
 SEZIONI = [
     ("La voce dello speaker", [
@@ -55,6 +55,38 @@ SEZIONI = [
           [("img", "jilly_nuova_insegne.jpg", "L'insegna e la targa: com'è nel gioco e da nuova"),
            ("img", "jilly_nuova_insegna_nuova.jpg", "L'insegna nuova con le sue due lampade"),
            ("img", "jilly_nuova_targa_nuova_luce.jpg", "La targa nuova")],
+          OK),
+    ]),
+    ("Le prime inquadrature dal motore", [
+        V("INQ2", "6. La cupola e la sala accesa (inquadratura 2)",
+          "Si parte guardando in su la cupola, col vetro pulito e il cielo azzurro di giorno, e si scende sulla sala "
+          "accesa. Il sole disegna sul pavimento le ombre dei costoloni. Neon e plafoniere accesi, luci rosse "
+          "d'emergenza spente, niente giocattoli in giro (la tua scelta a), niente ruggine né sporco. La vasca di "
+          "Jilly è ancora vuota: lei e il palco arrivano dopo le tue scelte qui sopra.",
+          [("img", "inq_2_inizio.jpg", "Inizio: la cupola"),
+           ("img", "inq_2_fine.jpg", "Fine: la sala accesa e la vasca di Jilly")],
+          OK),
+        V("INQ3", "7. La piscina a onde (inquadratura 3)",
+          "Panoramica lungo il lato est della piscina a onde piena e limpida, con un'onda lunga che corre verso la "
+          "spiaggia.",
+          [("img", "inq_3_inizio.jpg", "Inizio"),
+           ("img", "inq_3_fine.jpg", "Fine")],
+          OK),
+        V("SCARICO", "8. Il portellone dello scarico in fondo alla piscina",
+          "Sul fondo della piscina si vede il portellone tondo dello scarico, chiuso: nella nave nuova c'era già. "
+          "Dall'alto fa una macchia scura grande."
+          "\na: resta com'è."
+          "\nb: più chiaro, del colore delle piastrelle, così si nota meno.",
+          [("img", "inq_3_fine.jpg", "Il portellone scuro sul fondo")],
+          [("a", "a"), ("b", "b"), ("vedere", "Fammi vedere")]),
+        V("INQ4", "9. La discesa nel tubo della torre (inquadratura 4)",
+          "La torre pulita da fuori, poi si scende in un tubo tra gli schizzi. Nessun tubo del gioco finisce in una "
+          "vasca, quindi si chiude sulla luce in fondo al tubo, poco prima dello sbocco. Il video è la prima "
+          "registrazione di prova dal motore: 6 secondi, ancora senza filtro VHS e senza suono.",
+          [("video", "torre_discesa_prova.mp4", "Registrazione di prova della discesa"),
+           ("img", "torre_1_torre_pulita_da_fuori.jpg", "La torre pulita da fuori"),
+           ("img", "torre_5_finale_luce_inizio.jpg", "Verso la fine del tubo"),
+           ("img", "torre_8_finale_luce_ultimo_fotogramma.jpg", "L'ultimo fotogramma, sulla luce")],
           OK),
     ]),
 ]

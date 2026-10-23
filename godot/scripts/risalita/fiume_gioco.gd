@@ -82,10 +82,41 @@ var _barriere: StaticBody3D
 var _poligoni_acqua_cache: Array = []
 var _mat_globo: StandardMaterial3D
 var _mat_faro: StandardMaterial3D
+## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un po' per fotogramma.
+var costruzione_a_pezzi := false
+var costruita := false
+## Quanto lavora al massimo un pezzo della costruzione (microsecondi); con [method accelera] i pezzi più grandi.
+const PEZZO_US := 12000
+const PEZZO_SVELTO_US := 25000
+## Le estrazioni dal generatore comune fatte finora (vero: randf_range, falso: randf), per rimetterlo com'era a
+## ogni ripresa ([method _pausa]).
+var _tiri: Array[bool] = []
+var _t_pezzo := 0
+var _pezzo_us := PEZZO_US
 
 
 func _ready() -> void:
+	if not costruzione_a_pezzi:
+		_costruisci()
+
+
+## Costruisce il capannone a pezzi, qualche millisecondo per fotogramma (la Risalita caricata a gioco avviato):
+## il nodo va messo nella scena con [member costruzione_a_pezzi] vero, poi si aspetta questa.
+func costruisci_a_pezzi() -> void:
+	if not costruita:
+		await _costruisci()
+
+
+## I pezzi rimasti più grandi (il giocatore è arrivato prima che finisse): sempre a pezzi, mai tutto in un fotogramma
+## (collaudo del 23 ottobre: 503 ms di fermo nella sala pompe).
+func accelera() -> void:
+	_pezzo_us = PEZZO_SVELTO_US
+
+
+func _costruisci() -> void:
+	_t_pezzo = Time.get_ticks_usec()
 	seed(1021)
+	_tiri.clear()
 	mat_vasca = load(DIR + "mat_mosaico_blu.tres")
 	mat_banca = load(DIR + "mat_cemento.tres")
 	mat_acqua = load(DIR + "acqua_fiume.tres")
@@ -107,15 +138,49 @@ func _ready() -> void:
 	_barriere.collision_mask = 0
 	add_child(_barriere)
 	_tracciato()
-	_acqua_e_banchine()
-	_capannone()
-	_logica()
+	await _pausa()
+	await _acqua_e_banchine()
+	await _pausa()
+	await _capannone()
+	await _pausa()
+	await _logica()
+	await _pausa()
 	_bivi()
-	_giungla()
-	_imbarco()
+	await _pausa()
+	await _giungla()
+	await _pausa()
+	await _imbarco()
+	await _pausa()
 	_approdo()
 	_marker()
 	_checkpoint()
+	costruita = true
+
+
+## Nella costruzione a pezzi, passato il tempo di un pezzo, il resto al fotogramma dopo. Altrimenti niente (e la
+## costruzione resta tutta nello stesso fotogramma, come prima).
+func _pausa() -> void:
+	if costruzione_a_pezzi and Time.get_ticks_usec() - _t_pezzo > _pezzo_us:
+		await get_tree().process_frame
+		_t_pezzo = Time.get_ticks_usec()
+		# fra un fotogramma e l'altro il generatore comune l'hanno usato altri (luci che sfarfallano, suoni): lo si
+		# rimette dov'era, così rocce, palme e transenne vengono come costruite tutte insieme
+		seed(1021)
+		for r in _tiri:
+			if r:
+				randf_range(0.0, 1.0)
+			else:
+				randf()
+
+
+func _randf() -> float:
+	_tiri.append(false)
+	return randf()
+
+
+func _randf_range(da: float, a: float) -> float:
+	_tiri.append(true)
+	return randf_range(da, a)
 
 
 # --- il tracciato -----------------------------------------------------------------------------------
@@ -228,6 +293,7 @@ func _acqua_e_banchine() -> void:
 	var barriere := PackedVector3Array()
 	var x := X0
 	while x < X1 - 0.001:
+		await _pausa()
 		var z := Z0
 		while z < Z1 - 0.001:
 			var xa := minf(x + 2.0, X1)
@@ -538,8 +604,11 @@ func _capannone() -> void:
 	# il muro che chiude la piazza a est, lungo il muro nord, fino al canale del raggio d'imbarco
 	_muro_box(Vector3(0.3, TETTO, Z_PIAZZA_NORD - Z0), Vector3(MURO_PIAZZA, TETTO * 0.5, (Z0 + Z_PIAZZA_NORD) * 0.5), muro)
 	# le due porte: il telaio d'acciaio e l'anta spalancata verso dentro
+	await _pausa()
 	_porta_aperta(Vector3(INGRESSO_X, 0, Z0), 0.0)
+	await _pausa()
 	_porta_aperta(Vector3(X0, 0, APPRODO.y), 90.0)
+	await _pausa()
 	_tetto()
 
 
@@ -704,7 +773,7 @@ func _tetto() -> void:
 		if pt[1]:
 			_luce(Vector3(p.x, TETTO - 3.3, zc), Color(1.0, 0.8, 0.55), 2.2, 10.0)
 		else:
-			l.rotation_degrees.z = randf_range(-6.0, 6.0)
+			l.rotation_degrees.z = _randf_range(-6.0, 6.0)
 
 
 # --- modelli e luci --------------------------------------------------------------------------------------
@@ -786,7 +855,7 @@ func _lampada_calda(pos: Vector3, rot_y: float, energia := 3.0, roccia: Node3D =
 		# rotta: il vetro spento e sporco, la gabbia storta
 		l.rotation_degrees.z = 9.0
 	if roccia:
-		_appoggia_su_roccia(l, roccia, Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1))
+		await _appoggia_su_roccia(l, roccia, Basis(Vector3.UP, deg_to_rad(rot_y)) * Vector3(0, 0, 1))
 	pos = l.position
 	if energia <= 0.0:
 		if g:
@@ -812,7 +881,7 @@ func _lampada_rossa(pos: Vector3, verso: Vector3, roccia: Node3D = null) -> void
 		var n := Vector3(verso.x, 0.0, verso.z).normalized()
 		var pi := l.get_node("Piastra") as Node3D
 		var dietro := to_local(pi.global_position) - n * LampadaMuro.PIASTRA.z * 0.5
-		var punto := _su_roccia(roccia, dietro, n, LampadaMuro.PIASTRA.x * 0.5 - 0.01, LampadaMuro.PIASTRA.y * 0.5 - 0.01)
+		var punto: Vector3 = await _su_roccia(roccia, dietro, n, LampadaMuro.PIASTRA.x * 0.5 - 0.01, LampadaMuro.PIASTRA.y * 0.5 - 0.01)
 		l.position += n * ((punto - dietro).dot(n) + 0.001)
 	_luce(l.position + verso.normalized() * 0.3, Color(1.0, 0.18, 0.12), 2.6, 9.0)
 
@@ -835,7 +904,7 @@ func _appoggia_su_roccia(l: Node3D, roccia: Node3D, davanti: Vector3) -> void:
 			var w := xf * v
 			retro.append(w)
 			minimo = minf(minimo, w.dot(d))
-	var tri := _triangoli_roccia(roccia, l.position, d, 0.35)
+	var tri: PackedVector3Array = await _triangoli_roccia(roccia, l.position, d, 0.35)
 	var dietro := PackedVector3Array()
 	var visti := {}
 	for w in retro:
@@ -846,6 +915,7 @@ func _appoggia_su_roccia(l: Node3D, roccia: Node3D, davanti: Vector3) -> void:
 	var passo := maxi(1, dietro.size() / 80)
 	var meglio := INF
 	for j in range(0, dietro.size(), passo):
+		await _pausa()
 		var w := dietro[j]
 		var da := w + d * 1.0
 		for i in range(0, tri.size(), 3):
@@ -868,6 +938,8 @@ func _triangoli_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3, raggio: 
 			k = k.get_parent()
 		var f := (mi as MeshInstance3D).mesh.get_faces()
 		for i in range(0, f.size(), 3):
+			if i % 6000 == 0:
+				await _pausa()
 			var a := xf * f[i]
 			var w := a - dove
 			if absf(w.dot(lato)) < raggio and absf(w.y) < raggio:
@@ -901,9 +973,9 @@ func _roccia(pos: Vector3, rot: float, specchio = null) -> Node3D:
 	for mi in r.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = mat_roccia
 	# (quelli doppi, dietro: specchiati o no come dice [param specchio], senza toccare la sequenza casuale degli altri)
-	var sx := (-1.0 if specchio else 1.0) if specchio != null else (1.0 if randf() < 0.5 else -1.0)
-	var sy := 1.5 if specchio != null else randf_range(1.4, 1.6)
-	r.scale = Vector3(sx * (1.0 if specchio != null else randf_range(0.95, 1.1)), sy, 1.0)
+	var sx := (-1.0 if specchio else 1.0) if specchio != null else (1.0 if _randf() < 0.5 else -1.0)
+	var sy := 1.5 if specchio != null else _randf_range(1.4, 1.6)
+	r.scale = Vector3(sx * (1.0 if specchio != null else _randf_range(0.95, 1.1)), sy, 1.0)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
 	b.size = Vector3(4.2, 3.24 * sy, 0.5)
@@ -921,6 +993,7 @@ func _rocce_doppie(rocce: Array) -> void:
 	var coperte := 0
 	var senza := []
 	for i in rocce.size():
+		await _pausa()
 		var p: Vector3 = rocce[i][0]
 		var rot: float = rocce[i][1]
 		var b := Basis(Vector3.UP, deg_to_rad(rot))
@@ -958,6 +1031,8 @@ func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3, mezzo_largo := 
 			k = k.get_parent()
 		var f := (mi as MeshInstance3D).mesh.get_faces()
 		for i in range(0, f.size(), 3):
+			if i % 6000 == 0:
+				await _pausa()
 			# solo i triangoli davanti all'impronta della piastra (la roccia ne ha 40 mila)
 			var a := xf * f[i]
 			var w := a - dove
@@ -966,6 +1041,7 @@ func _su_roccia(roccia: Node3D, dove: Vector3, davanti: Vector3, mezzo_largo := 
 	var meglio := INF
 	for du in [-mezzo_largo, 0.0, mezzo_largo]:
 		for dv in [-mezzo_alto, 0.0, mezzo_alto]:
+			await _pausa()
 			var da: Vector3 = dove + lato * du + Vector3(0, dv, 0) + davanti * 2.0
 			for i in range(0, tri.size(), 3):
 				var h = Geometry3D.ray_intersects_triangle(da, -davanti, tri[i], tri[i + 1], tri[i + 2])
@@ -1045,14 +1121,21 @@ func _logica() -> void:
 	for nome in ["Sbagliato1", "Sbagliato2", "Sbagliato3"]:
 		tratti[nome].prossimo = tratti["Imbarco"]
 	fiume.imbarco = tratti["Imbarco"]
-	# A ogni bivio la destra è il raggio verso l'imbarco (il ramo sbagliato), la sinistra continua.
-	tratti["Imbarco"].paratia = _paratia("Paratia1", 90.0, tratti["Giusto1"], tratti["Sbagliato1"], true, 55.0, false)
-	tratti["Giusto1"].paratia = _paratia("Paratia2", 180.0, tratti["Giusto2"], tratti["Sbagliato2"], false, 145.0, false)
-	tratti["Giusto2"].paratia = _paratia("Paratia3", 270.0, tratti["Uscita"], tratti["Sbagliato3"], true, 232.0, true)
 	# all'approdo si scende sulla banchina, oltre la conca
 	fiume.discesa = global_basis * Vector3(-2.6, 0.0, 0.0) + Vector3(0.0, -GALLA + 0.05, 0.0)
 	fiume.modello_ciambella = load(DIR + "ciambella.glb")
+	# (il fiume entra coi suoi tratti, poi le paratie una per pezzo, al loro posto fra i figli: dopo i tratti, prima
+	# della ciambella. Tutto insieme era il pezzo più lungo della costruzione a pezzi, 70 ms)
 	add_child(fiume)
+	# A ogni bivio la destra è il raggio verso l'imbarco (il ramo sbagliato), la sinistra continua.
+	var bivi := [["Imbarco", "Paratia1", 90.0, "Giusto1", "Sbagliato1", true, 55.0, false],
+		["Giusto1", "Paratia2", 180.0, "Giusto2", "Sbagliato2", false, 145.0, false],
+		["Giusto2", "Paratia3", 270.0, "Uscita", "Sbagliato3", true, 232.0, true]]
+	for i in bivi.size():
+		await _pausa()
+		var b: Array = bivi[i]
+		tratti[b[0]].paratia = _paratia(b[1], b[2], tratti[b[3]], tratti[b[4]], b[5], b[6], b[7])
+		fiume.move_child(tratti[b[0]].paratia, tratti.size() + i)
 
 
 func _paratia(nome: String, gradi: float, sx: TrattoFiume, dx: TrattoFiume, a_destra: bool, gradi_bersaglio: float, interno: bool) -> ParatiaFiume:
@@ -1295,6 +1378,7 @@ func _giungla() -> void:
 	var rocce := []
 	for s in _strisce:
 		for v in _lungo(s, W * 0.5 + BANCA, 3.9, 1.0):
+			await _pausa()
 			var p: Vector3 = v[0]
 			var rot: float = v[1]
 			if not _ci_sta(p, rot, 4.0, 0.6):
@@ -1309,14 +1393,16 @@ func _giungla() -> void:
 			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
 			# le lampade sulla faccia vera della roccia (prima a 62 cm dal suo centro: a volte staccate, a volte dentro)
 			if n % 3 == 0:
-				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 3.0, roccia)
+				await _lampada_calda(await _su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 3.0, roccia)
 			elif n % 11 == 5:
-				_lampada_rossa(_su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0), roccia)
+				await _lampada_rossa(await _su_roccia(roccia, p + Vector3(0, 3.2, 0), davanti), davanti + Vector3(0, -0.5, 0), roccia)
 			elif n % 13 == 7:
-				_lampada_calda(_su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0, roccia)
-			elif n % 4 == 1 and randf() < 0.6:
+				await _lampada_calda(await _su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0, roccia)
+			elif n % 4 == 1 and _randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
-	_rocce_doppie(rocce)
+	await _pausa()
+	await _rocce_doppie(rocce)
+	await _pausa()
 	# i fari subacquei nelle pareti dei canali, alternati
 	for s in _strisce:
 		var k := 0
@@ -1330,14 +1416,15 @@ func _giungla() -> void:
 	var j := 0
 	for s in _strisce:
 		for v in _lungo(s, W * 0.5 + 0.85, 7.3, 4.0):
-			if randf() < 0.45:
+			await _pausa()
+			if _randf() < 0.45:
 				continue
 			var p: Vector3 = v[0]
 			var cosa: Array = cose[j % cose.size()]
 			if not _sulla_banchina(p, cosa[2]) or not _ci_sta(p, v[1], cosa[1], 0.1):
 				continue
 			j += 1
-			var m := _metti(cosa[0], p, v[1] + (randf_range(-30.0, 30.0) if cosa[0] != "palma_finta" else randf() * 360.0))
+			var m := _metti(cosa[0], p, v[1] + (_randf_range(-30.0, 30.0) if cosa[0] != "palma_finta" else _randf() * 360.0))
 			if cosa[0] == "palma_finta":
 				_ostacolo(p, 0.35, 1.2)
 			elif cosa[0] == "totem_tiki":
@@ -1373,6 +1460,7 @@ func _imbarco() -> void:
 	bt.add_child(ft)
 	add_child(bt)
 	_luce(cab + Vector3(0, 1.9, 0), Color(1.0, 0.6, 0.25), 2.5, 7.0, true)
+	await _pausa()
 	# la fila dell'imbarco: due file di transenne dall'ingresso alla cabina, che guidano alla vasca
 	var da := Vector3(INGRESSO_X, 0, Z0 + 1.0)
 	var a := FINE_FILA
@@ -1382,12 +1470,13 @@ func _imbarco() -> void:
 	var lungo := da.distance_to(a)
 	var k := 0
 	while k * 2.1 + 1.0 < lungo:
+		await _pausa()
 		var c := da + dir * (k * 2.1 + 1.0)
 		for sgn in [-1.0, 1.0]:
 			var tp: Vector3 = c + lato * sgn * 0.85
-			if randf() < 0.12:
+			if _randf() < 0.12:
 				# una transenna caduta
-				var t := _metti("transenna", tp + lato * sgn * 0.5, rot + randf_range(-20.0, 20.0))
+				var t := _metti("transenna", tp + lato * sgn * 0.5, rot + _randf_range(-20.0, 20.0))
 				t.rotation_degrees.x = 88.0
 				_a_terra(t)   # (prima a 27 cm a occhio: restava 5 mm sopra il pavimento)
 				# a terra anche lei ferma i piedi (prima ci si passava attraverso)
@@ -1406,15 +1495,18 @@ func _imbarco() -> void:
 				f.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(rot)), tp + Vector3(0, 0.6, 0))
 				_collisioni.add_child(f)
 		k += 1
+	await _pausa()
 	# la luce lungo la fila: lampade calde sul muro nord e sul muro dell'approdo
 	for x in [INGRESSO_X + 6.0, -12.0, -2.0]:
 		_lampada_calda(Vector3(x, 3.0, Z0), 0.0, 3.0)
 	for z in [-18.0, -9.0]:
 		_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
+	await _pausa()
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
 	# (ognuna appoggiata a quella sotto coi vertici veri: prima la prima stava 5 cm sopra il pavimento)
 	var sotto := 0.0
 	for i in 3:
+		await _pausa()
 		var ci := _metti("ciambella", Vector3(-VASCA - 1.0, 0.0, -VASCA - 5.6), i * 37.0)
 		_a_terra(ci, sotto)
 		sotto = _cima(ci)
@@ -1422,7 +1514,9 @@ func _imbarco() -> void:
 	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa)
 	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
 			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
+		await _pausa()
 		_metti("ciambella", c[0], c[1])
+	await _pausa()
 	# la capanna tiki, il totem, i cartelli a pittogrammi
 	_metti("capanna_tiki", Vector3(-14.0, 0, -6.0), 60.0)
 	# (la collisione fin dove arriva la tettoia di paglia, 1,55 m dal centro fra 1 e 1,5 m d'altezza: con 1,3 m ci si
@@ -1437,8 +1531,9 @@ func _imbarco() -> void:
 	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
 	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
 	# (la prima stava fra le transenne della fila, a 67 cm dal suo asse: ora 2,2 m fuori, sullo stesso lato)
+	await _pausa()
 	for p in [Vector3(-9.9, 0, -13.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 0.8, 0, -VASCA - 10.5)]:
-		_metti("palma_finta", p, randf() * 360.0)
+		_metti("palma_finta", p, _randf() * 360.0)
 		# le foglie cominciano a 1,75 m e arrivano a 93 cm dal tronco: non ci si passa sotto con la testa
 		_ostacolo(p, 0.95, 2.0)
 	_metti("ciabatta", Vector3(-VASCA - 2.2, 0, -VASCA - 1.8), 35.0)

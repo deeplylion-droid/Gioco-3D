@@ -72,6 +72,10 @@ var _torre_in_caricamento := false
 var _torre_pronta: PackedScene
 var _torre_voluta := false
 var _torre_fallita := false
+## Riserva della torre: se il portone è aperto e il thread non ha ancora finito dopo tanti secondi, la si
+## carica qui, a parte (CACHE_MODE_IGNORE_DEEP: senza aspettare le risorse che il thread tiene a metà).
+const ATTESA_TORRE := 20.0
+var _torre_voluta_da := 0
 # La torre costruita a pezzi e preparata (materiali già disegnati fuori vista) mentre si è all'enigma:
 # resta nascosta e ferma finché il portone non si apre.
 var _torre_nascosta: Node3D
@@ -387,6 +391,8 @@ func _setup_torre() -> void:
 
 ## Il portone si apre: la torre entra nella sala appena è caricata (o subito, se è già pronta).
 func _carica_torre() -> void:
+	if not _torre_voluta:
+		_torre_voluta_da = Time.get_ticks_msec()
 	_torre_voluta = true
 	if sala_torre:
 		return
@@ -421,8 +427,17 @@ func _process(_delta: float) -> void:
 	var stato := ResourceLoader.load_threaded_get_status(sala_torre_scena)
 	if stato == ResourceLoader.THREAD_LOAD_LOADED:
 		_torre_in_caricamento = false
-		_torre_pronta = ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
-		_prepara_torre()
+		var scena := ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
+		# (con la riserva già in sala la copia del thread non serve: si lascia andare)
+		if sala_torre == null:
+			_torre_pronta = scena
+			_prepara_torre()
+	elif stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS and _torre_voluta and sala_torre == null \
+			and Time.get_ticks_msec() - _torre_voluta_da > ATTESA_TORRE * 1000.0:
+		# Riserva: il portone è aperto da troppo e il thread non ha finito (un PC lento, la cache fredda). Il
+		# thread continua (va finito, Game.esci lo aspetta); la sua copia si lascia andare quando arriva.
+		push_warning("Sala della torre: il thread non ha finito in %d s, la carico qui" % int(ATTESA_TORRE))
+		_aggiungi_torre(ResourceLoader.load(sala_torre_scena, "", ResourceLoader.CACHE_MODE_IGNORE_DEEP) as PackedScene)
 	elif stato == ResourceLoader.THREAD_LOAD_FAILED or stato == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 		# Riserva: se il thread non ce la fa, la torre si carica qui (un attimo di fermo), così il
 		# giocatore non resta mai davanti al portone aperto senza la sala.

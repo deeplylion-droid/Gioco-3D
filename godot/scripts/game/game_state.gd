@@ -45,6 +45,13 @@ var last_death_cause: StringName = &""
 var luci: Luci = Luci.PRIMA_DEL_RISVEGLIO
 
 var _removed: Dictionary = {}       # chiave persist -> true
+# Lo stato degli oggetti "persist" delle parti del livello scaricate per la memoria (le stanze della
+# Risalita lontane): chiave persist -> save_state(). Entra nelle istantanee e torna agli oggetti quando la
+# parte si ricarica ([method parcheggia], [method ripristina]).
+var _parcheggiati: Dictionary = {}
+# Le parti che si stanno costruendo (a pezzi, a gioco avviato): i loro oggetti non hanno ancora lo stato giusto e
+# non entrano nelle istantanee finché [method ripristina] non glielo rende.
+var _in_costruzione: Array[Node] = []
 var _collected: Dictionary = {}     # collezione -> { voce: true }
 var _registry: Dictionary = {}      # collezione -> { voce: true }, tutte quelle viste
 var _restore_pending := false
@@ -73,6 +80,7 @@ func _on_level_ready() -> void:
 	elif snapshot.get("scene", "") != scene:
 		# Livello nuovo: il primo checkpoint è il punto di partenza.
 		_removed.clear()
+		_parcheggiati.clear()
 		imposta_luci(Luci.PRIMA_DEL_RISVEGLIO)
 		capture_snapshot("inizio", -1, player.global_transform)
 
@@ -129,9 +137,11 @@ func reach_checkpoint(cp: Checkpoint) -> void:
 
 ## Salva lo stato attuale. [param spawn] è dove (e verso dove) riparte il giocatore.
 func capture_snapshot(checkpoint_id: String, order: int, spawn: Transform3D) -> void:
-	var objects := {}
+	var objects := _parcheggiati.duplicate()
+	_in_costruzione.assign(_in_costruzione.filter(func(r): return is_instance_valid(r) and r.is_inside_tree()))
 	for n in get_tree().get_nodes_in_group(&"persist"):
-		if n.has_method("save_state") and not n.is_queued_for_deletion():
+		if n.has_method("save_state") and not n.is_queued_for_deletion() \
+				and not _in_costruzione.any(func(r): return r == n or r.is_ancestor_of(n)):
 			objects[persist_key(n)] = n.save_state()
 	var f := -spawn.basis.z
 	var inventory := {}
@@ -166,8 +176,11 @@ func _apply_snapshot(s: Dictionary) -> void:
 	for k in s.get("removed", []):
 		_removed[String(k)] = true
 	var objects: Dictionary = s.get("objects", {})
+	# quelli che non ci sono (una parte scaricata) li riprende la parte quando si ricarica
+	_parcheggiati = objects.duplicate()
 	for n in get_tree().get_nodes_in_group(&"persist"):
 		var key := persist_key(n)
+		_parcheggiati.erase(key)
 		if _removed.has(key):
 			n.queue_free()
 		elif objects.has(key) and n.has_method("load_state"):
@@ -186,6 +199,38 @@ func _apply_snapshot(s: Dictionary) -> void:
 			pack.set_tank_amount(float(ps.get("water", pack.tank_amount)))
 			pack.set_water_mix(ps.get("water_mix", {}))
 		player.input_enabled = true
+
+
+## Una parte del livello sta per essere scaricata (per la memoria): lo stato dei suoi oggetti "persist" resta
+## qui, entra nelle istantanee e torna agli oggetti con [method ripristina] quando la parte si ricarica.
+func parcheggia(radice: Node) -> void:
+	for n in get_tree().get_nodes_in_group(&"persist"):
+		if (n == radice or radice.is_ancestor_of(n)) and n.has_method("save_state") and not n.is_queued_for_deletion():
+			_parcheggiati[persist_key(n)] = n.save_state()
+
+
+## Una parte del livello che entra nella scena e si costruisce a pezzi: fino a [method ripristina] i suoi oggetti
+## non entrano nelle istantanee (resta lo stato parcheggiato).
+func in_costruzione(radice: Node) -> void:
+	if not radice in _in_costruzione:
+		_in_costruzione.append(radice)
+
+
+## Una parte del livello caricata di nuovo (o per la prima volta dopo una ripartenza): i suoi oggetti
+## "persist" riprendono lo stato parcheggiato o quello dell'istantanea, e quelli tolti non ricompaiono.
+func ripristina(radice: Node) -> void:
+	_in_costruzione.erase(radice)
+	if not is_instance_valid(radice) or not radice.is_inside_tree():
+		return
+	for n in get_tree().get_nodes_in_group(&"persist"):
+		if n != radice and not radice.is_ancestor_of(n):
+			continue
+		var key := persist_key(n)
+		if _removed.has(key):
+			n.queue_free()
+		elif _parcheggiati.has(key) and n.has_method("load_state"):
+			n.load_state(_parcheggiati[key])
+		_parcheggiati.erase(key)
 
 
 # --- Morte e ripartenza --------------------------------------------------------------------
@@ -321,6 +366,7 @@ func continue_from_disk() -> bool:
 func reset_progress() -> void:
 	snapshot = {}
 	_removed.clear()
+	_parcheggiati.clear()
 	_collected.clear()
 	_restore_pending = false
 	is_dying = false

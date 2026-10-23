@@ -1,0 +1,32 @@
+COMMIT 12d9c79
+RIGA ripartenza_5 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 5 le stanze tornano come le avevo lasciate
+RIGA ripartenza_6 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 6 le stanze tornano come le avevo lasciate
+RIGA ripartenza_7 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 7 le stanze tornano come le avevo lasciate
+RIGA ripartenza_8 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 8 le stanze tornano come le avevo lasciate
+RIGA ripartenza_9 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 9 le stanze tornano come le avevo lasciate
+RIGA ripartenza_10 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 10 le stanze tornano come le avevo lasciate
+RIGA ripartenza_11 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 11 le stanze tornano come le avevo lasciate
+RIGA ripartenza_12 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 12 le stanze tornano come le avevo lasciate
+RIGA ripartenza_13 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 13 le stanze tornano come le avevo lasciate
+RIGA ripartenza_14 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 14 le stanze tornano come le avevo lasciate
+RIGA ripartenza_15 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 15 le stanze tornano come le avevo lasciate
+RIGA ripartenza_16 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 16 le stanze tornano come le avevo lasciate
+RIGA ripartenza_17 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 17 le stanze tornano come le avevo lasciate
+RIGA ripartenza_18 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 18 le stanze tornano come le avevo lasciate
+RIGA ripartenza_19 = caricate_subito=true stato_uguale=true
+  ok   ripartendo dal 19 le stanze tornano come le avevo lasciate
+RISULTATO: 15 controlli ok, 0 falliti
