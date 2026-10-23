@@ -46,12 +46,9 @@ float rumore1(float x) {
 	return mix(casuale(vec2(i, 0.3)), casuale(vec2(i + 1.0, 0.3)), f * f * (3.0 - 2.0 * f));
 }
 
-vec3 leggi(sampler2D tex, vec2 uv) {
-	if (dallo_schermo) {
-		return textureLod(schermo, uv, 0.0).rgb;
-	}
-	return texture(tex, uv).rgb;
-}
+// lo schermo o la texture del nodo. È una macro e non una funzione: le texture dello schermo e TEXTURE non si possono
+// passare come argomento (Godot stampa "custom_samplers.has(...tex_builtin)" e con Vulkan potrebbe leggere quella sbagliata)
+#define LEGGI(uv) (dallo_schermo ? textureLod(schermo, (uv), 0.0).rgb : texture(TEXTURE, (uv)).rgb)
 
 vec3 in_yiq(vec3 c) {
 	return vec3(dot(c, vec3(0.299, 0.587, 0.114)), dot(c, vec3(0.596, -0.274, -0.322)), dot(c, vec3(0.211, -0.523, 0.312)));
@@ -130,19 +127,19 @@ void fragment() {
 	vec2 p = vec2(nastro.x + dx, nastro.y);
 	float largo = sbavatura * (1.0 + 3.0 * g);
 	float sep = separazione * (1.0 + 6.0 * g) + banda * 0.006;
-	float Y = in_yiq(leggi(TEXTURE, p)).x * 0.6 + in_yiq(leggi(TEXTURE, p - vec2(0.0012, 0.0))).x * 0.2 + in_yiq(leggi(TEXTURE, p + vec2(0.0012, 0.0))).x * 0.2;
+	float Y = in_yiq(LEGGI(p)).x * 0.6 + in_yiq(LEGGI(p - vec2(0.0012, 0.0))).x * 0.2 + in_yiq(LEGGI(p + vec2(0.0012, 0.0))).x * 0.2;
 	vec2 iq = vec2(0.0);
 	for (int k = 0; k < 7; k++) {
 		float o = (float(k) - 2.0) / 4.0 * largo;   // la sbavatura va più a destra che a sinistra
-		iq += in_yiq(leggi(TEXTURE, p + vec2(o + largo * 0.5, 0.0))).yz;
+		iq += in_yiq(LEGGI(p + vec2(o + largo * 0.5, 0.0))).yz;
 	}
 	iq /= 7.0;
 	vec3 col = da_yiq(vec3(Y, iq * saturazione * (1.0 - 0.45 * g)));
 	// rosso e blu sfasati
-	col.r = mix(col.r, da_yiq(vec3(in_yiq(leggi(TEXTURE, p + vec2(sep, 0.0))).x, iq)).r, 0.6);
-	col.b = mix(col.b, da_yiq(vec3(in_yiq(leggi(TEXTURE, p - vec2(sep, 0.0))).x, iq)).b, 0.6);
+	col.r = mix(col.r, da_yiq(vec3(in_yiq(LEGGI(p + vec2(sep, 0.0))).x, iq)).r, 0.6);
+	col.b = mix(col.b, da_yiq(vec3(in_yiq(LEGGI(p - vec2(sep, 0.0))).x, iq)).b, 0.6);
 	// un poco di alone attorno alle cose chiare
-	vec3 alone = (leggi(TEXTURE, p + vec2(0.004, 0.0)) + leggi(TEXTURE, p - vec2(0.004, 0.0)) + leggi(TEXTURE, p + vec2(0.0, 0.004)) + leggi(TEXTURE, p - vec2(0.0, 0.004))) * 0.25;
+	vec3 alone = (LEGGI(p + vec2(0.004, 0.0)) + LEGGI(p - vec2(0.004, 0.0)) + LEGGI(p + vec2(0.0, 0.004)) + LEGGI(p - vec2(0.0, 0.004))) * 0.25;
 	col += max(alone - 0.55, vec3(0.0)) * bagliore * 1.6;
 
 	// lo schermo blu del videoregistratore
