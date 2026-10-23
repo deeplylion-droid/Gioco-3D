@@ -323,5 +323,83 @@
 		],
 		"stato": "voluto",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			47.5,
+			2.15,
+			2.28
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1b_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			49.3,
+			2.15,
+			2.28
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			39.0,
+			11.4,
+			15.91
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			29.94,
+			11.4,
+			16.0
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			32.94,
+			11.39,
+			16.0
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
+	},
+	{
+		"zona": "tecnici",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2",
+		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"pos": [
+			33.1,
+			11.38,
+			15.99
+		],
+		"stato": "voluto",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole"
 	}
 ]

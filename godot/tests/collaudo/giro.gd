@@ -114,7 +114,10 @@ func _run() -> void:
 	cam.far = 150.0
 	livello.add_child(cam)
 	cam.make_current()
+	# la luce del collaudo, attaccata alla camera; con COLLAUDO_SENZA_LUCE=1 no: gli scatti per l'utente con la luce del
+	# gioco (luci bianche al 40%, senza torcia: decisioni dell'utente del 23 ottobre)
 	var luce := OmniLight3D.new()
+	luce.visible = OS.get_environment("COLLAUDO_SENZA_LUCE") != "1"
 	luce.omni_range = 18.0
 	luce.light_energy = 1.6
 	luce.omni_attenuation = 0.8
