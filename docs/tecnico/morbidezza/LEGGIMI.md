@@ -8,6 +8,19 @@
 - Il tuffo continua la stessa simulazione. Ripartendo (checkpoint) riparte dalla posa.
 - `quanto` a 0 lascia la posa identica, senza nessuno spostamento.
 
+## Le scene di lei
+
+| Scena | Dove si accende | Collisioni | Test |
+|---|---|---|---|
+| Statua (menu e sala) | `MedusaStatue` la mette su ogni medusa, a `quanto` 0 (la proprietà `morbidezza`): ferma davvero, costo zero | — | `test_morbidezza_statua.gd` |
+| Affacciata e tuffo (fossa) | `LeiSbuca`: tutta e subito quando compare già affacciata | forme convesse della fossa (sotto) | `test_morbidezza.gd` |
+| Lei che sbuca (fossa) | `LeiSbuca`: spenta mentre sale, piano (0,4 s) quando è su | come sopra | `test_morbidezza_sbuca.gd` |
+| Inseguimento (vasche, scolo, grata, SB1) | `SalaInseguimento._morbidezza_qui()`: tutta e subito quando lei sale, con l'acqua del posto | nessuna forma: la sala è una mesh sola e le animazioni tengono già i tentacoli fuori; il test controlla coi raggi sulla collisione vera | `test_morbidezza_inseguimento.gd` |
+
+Le misure comuni dei test (punti dentro le forme, tratti attraverso la collisione vera, scatti, tratti, costo) sono in `tests/misura_morbidezza.gd`.
+
+**Lei che sbuca:** la salita sposta tutta la posa affacciata 2,3 m sotto e la porta su. I tentacoli che nella posa stanno sul pavimento salgono quindi attraverso il pavimento: circa 8.000 punti e 1.250 tratti dentro il mondo in 1,8 s, già senza morbidezza. Per questo la morbidezza lì si accende solo quando lei è su. Per toglierli serve cambiare la salita.
+
 ## Collisioni
 
 Non usa i raggi. Usa forme convesse (piani verso fuori) e una lastra di pavimento col buco della fossa, date da `LeiSbuca._forme_morbidezza()`:

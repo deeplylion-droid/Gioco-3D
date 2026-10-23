@@ -237,13 +237,22 @@ func _process_modification() -> void:
 	_fotogrammi += 1
 	_t += dt
 	if not _pronte or _radici_prima.size() != _catene.size():
+		# (un posto per catena; vuoto: da fare)
+		var nc := _catene.size()
 		_x.clear()
+		_x.resize(nc)
 		_v.clear()
+		_v.resize(nc)
 		_tg_prima.clear()
 		_vp.clear()
 		_bers.clear()
 		_bers_posa.clear()
-		_radici_prima.resize(_catene.size())
+		for k in nc:
+			_bers.append(PackedVector3Array())
+			_bers_posa.append(PackedVector3Array())
+		_radici_prima.resize(nc)
+		_pronte = true
+	var partite := 0
 	for k in _catene.size():
 		var catena: PackedInt32Array = _catene[k]
 		var n := catena.size()
@@ -281,7 +290,7 @@ func _process_modification() -> void:
 			_dt_acc.resize(_catene.size())
 		_dt_acc[k] += dt
 		var dt_k: float = _dt_acc[k]
-		if _pronte and passi == 1 and _x.size() > k and _bers_posa.size() > k \
+		if passi == 1 and not (_x[k] as PackedVector3Array).is_empty() \
 				and (k + _fotogrammi) % 2 == 1 and dt_k < 0.1 and _quasi_ferma(tg, _bers_posa[k]):
 			var xs: PackedVector3Array = (_x[k] as PackedVector3Array).duplicate()
 			xs[0] = tg[0]
@@ -299,7 +308,7 @@ func _process_modification() -> void:
 		var zona := AABB(tg[0], Vector3.ZERO)
 		for q in tg:
 			zona = zona.expand(q)
-		if _x.size() > k and (_x[k] as PackedVector3Array).size() == n + 1:
+		if (_x[k] as PackedVector3Array).size() == n + 1:
 			for q in _x[k]:
 				zona = zona.expand(q)
 		# (le punte in un fotogramma si muovono al più qualche decina di cm: oltre non serve guardare)
@@ -309,17 +318,16 @@ func _process_modification() -> void:
 			if (fo[1] as AABB).intersects(zona):
 				forme.append(fo)
 		# partenza dalla posa, o la posa è saltata (ripartenza, teletrasporto)
-		if not _pronte or tg[0].distance_to(_radici_prima[k]) > 1.0:
-			if _x.size() <= k:
-				_x.append(_partenza(tg, n, forme))
-				var zero := PackedVector3Array()
-				zero.resize(n + 1)
-				_v.append(zero)
-			else:
-				_x[k] = _partenza(tg, n, forme)
-				var zero := PackedVector3Array()
-				zero.resize(n + 1)
-				_v[k] = zero
+		if (_x[k] as PackedVector3Array).is_empty() or tg[0].distance_to(_radici_prima[k]) > 1.0:
+			# (accendendosi piano, al più 9 catene per fotogramma: le altre restano la posa, che è quasi tutto)
+			if w < 0.5 and partite >= 9:
+				_x[k] = PackedVector3Array()
+				continue
+			partite += 1
+			_x[k] = _partenza(tg, n, forme)
+			var zero := PackedVector3Array()
+			zero.resize(n + 1)
+			_v[k] = zero
 			# (in questo fotogramma solo la partenza: così quando lei compare non c'è un fotogramma lungo)
 			_radici_prima[k] = tg[0]
 			_dt_acc[k] = 0.0
@@ -360,7 +368,7 @@ func _process_modification() -> void:
 		# (rifatti solo se la posa ha cambiato forma di più di 5 cm da quando si sono fatti; se no quelli di prima,
 		# spostati come la posa: con lei affacciata la posa si muove appena, nel tuffo si sposta quasi tutta insieme)
 		var tgf: PackedVector3Array
-		var rifai := _bers.size() <= k or (_bers_posa[k] as PackedVector3Array).size() != n + 1
+		var rifai := (_bers_posa[k] as PackedVector3Array).size() != n + 1
 		if not rifai:
 			var cp: PackedVector3Array = _bers_posa[k]
 			# (spostati come la posa, rispetto alla radice: valgono finché nessun punto si è mosso più di 5 cm così)
@@ -371,12 +379,8 @@ func _process_modification() -> void:
 					break
 		if rifai:
 			tgf = _bersagli(tg, n, _vicine(tg, forme))
-			if _bers.size() <= k:
-				_bers.append(tgf.duplicate())
-				_bers_posa.append(tg.duplicate())
-			else:
-				_bers[k] = tgf.duplicate()
-				_bers_posa[k] = tg.duplicate()
+			_bers[k] = tgf.duplicate()
+			_bers_posa[k] = tg.duplicate()
 		else:
 			tgf = (_bers[k] as PackedVector3Array).duplicate()
 			var cp: PackedVector3Array = _bers_posa[k]
@@ -674,6 +678,21 @@ func aggiungi_forme_da(radice: Node, zona: AABB, salta: Array = []) -> void:
 			bb = bb.expand(q)
 		if bb.intersects(zona):
 			aggiungi_convesso(punti)
+
+
+## La morbidezza sullo scheletro della medusa [param medusa] (quella che c'è, o una nuova, in fondo ai modificatori).
+static func su(medusa: Node) -> MorbidezzaLei:
+	var sks := medusa.find_children("*", "Skeleton3D", true, false)
+	if sks.is_empty():
+		return null
+	var sk := sks[0] as Skeleton3D
+	for c in sk.get_children():
+		if c is MorbidezzaLei:
+			return c
+	var m := MorbidezzaLei.new()
+	m.name = "Morbidezza"
+	sk.add_child(m)
+	return m
 
 
 ## Il punto [param p] fuori dal mondo (a [param r] da tutto): il pavimento (lastra con la cima a [member pavimento_y]

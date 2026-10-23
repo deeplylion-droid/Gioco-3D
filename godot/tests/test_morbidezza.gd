@@ -239,6 +239,7 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 		m0.modification_processed.connect(_su_guarda)
 		# lei compare (affacciata, come al blackout o al checkpoint): si misura già dal primo fotogramma
 		lei.call(&"_affaccia")
+		m0.quanto = quanto            # (_affaccia la accende a 1)
 		for f in 60:
 			await get_tree().process_frame
 		m0.modification_processed.disconnect(_su_guarda)

@@ -204,6 +204,7 @@ func _physics_process(delta: float) -> void:
 			if k >= 1.0:
 				fase = Fase.GUARDA
 				_t = 0.0
+				_accendi_morbidezza(false)
 		Fase.GUARDA:
 			_controlla_presa(p)
 			if fase != Fase.GUARDA:
@@ -346,7 +347,10 @@ func _sbuca() -> void:
 	_azzera_tuffo()
 	_metti_a(1.0)
 	_svanisci(0.0)
-	_accendi_morbidezza()
+	# mentre sale la morbidezza è spenta: la posa scende tutta di 2,3 m e i tentacoli stesi sul pavimento salgono
+	# attraverso il pavimento (com'era); si accende piano quando è su (Fase.SBUCA, alla fine)
+	if _morbidezza and is_instance_valid(_morbidezza):
+		_morbidezza.azzera()
 	_schizzo(1.4)
 	_suona(&"lei_sbuca")
 	sbucata.emit()
@@ -413,9 +417,10 @@ func _avvia_tuffo() -> void:
 		_accendi_morbidezza()
 
 
-## Il movimento secondario di tentacoli e campana (MorbidezzaLei): acceso tutto e subito quando lei compare (sbuca o
-## è già affacciata), così i tentacoli poggiano e scivolano sul bordo da subito; il tuffo parte da lì.
-func _accendi_morbidezza() -> void:
+## Il movimento secondario di tentacoli e campana (MorbidezzaLei): acceso tutto e subito quando lei compare già
+## affacciata, così i tentacoli poggiano e scivolano sul bordo da subito; il tuffo parte da lì. Quando sbuca, piano
+## ([param subito] falso) alla fine della salita.
+func _accendi_morbidezza(subito := true) -> void:
 	if Engine.has_meta(&"morbidezza_spenta") or medusa == null:
 		return
 	var sks := medusa.find_children("*", "Skeleton3D", true, false)
@@ -426,14 +431,14 @@ func _accendi_morbidezza() -> void:
 		var a := superficie_fossa.global_transform * superficie_fossa.mesh.get_aabb()
 		fossa = Rect2(a.position.x, a.position.z, a.size.x, a.size.z)
 	if _morbidezza == null or not is_instance_valid(_morbidezza):
-		_morbidezza = MorbidezzaLei.new()
-		_morbidezza.name = "Morbidezza"
-		(sks[0] as Skeleton3D).add_child(_morbidezza)
+		_morbidezza = MorbidezzaLei.su(medusa)
 		_forme_morbidezza(fossa)
+	_morbidezza.quanto = 1.0
 	_morbidezza.acqua_pianta = fossa
 	_morbidezza.acqua_pelo = _pelo()
-	_morbidezza.azzera()
-	_morbidezza.accendi(true)
+	if subito:
+		_morbidezza.azzera()
+	_morbidezza.accendi(subito)
 
 
 ## Le collisioni dei tentacoli morbidi: le forme di collisione della fossa e del bordo intorno (senza il coperchio), il
