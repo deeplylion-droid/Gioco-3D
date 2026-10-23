@@ -87,7 +87,7 @@ const OGGETTO_MAX := 4.0
 const SEVERO := true
 ## La CI rossa anche con un solo caso "da correggere" (non solo con i casi nuovi): si accende per ultimo, quando le
 ## squadre hanno i loro elenchi (accordo col coordinatore del 22 ottobre).
-const BLOCCA_DA_CORREGGERE := false
+const BLOCCA_DA_CORREGGERE := true
 const OGGETTO_MAX_SEVERO := 30.0
 ## Architettura (pavimenti, muri, soffitti, strutture dei modelli d'ambiente): non è un oggetto da appoggiare.
 const ARCHITETTURA := ["architettura", "struttura", "pavimento", "pavimenti", "muro", "muri", "parete", "pareti",
