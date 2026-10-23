@@ -88,7 +88,16 @@ func _ready() -> void:
 		_gocce.jitter = 0.004
 		_gocce.visible = false
 		_gocce.process_mode = Node.PROCESS_MODE_DISABLED
+		_gocce.drop_size = Vector2(0.016, 0.055)
 		modello.get_parent().add_child(_gocce)
+		# al buio del ritorno, con le luci bianche al 40%, le gocce dell'addon (fatte quasi solo dello sfondo rifratto)
+		# non si vedevano: qui hanno il riflesso sul bordo più forte, anche gli schizzi
+		var mat := WaterParticles.droplet_material().duplicate() as ShaderMaterial
+		mat.set_shader_parameter(&"rim_light", 5.0)
+		mat.set_shader_parameter(&"opacity", 0.9)
+		for c in _gocce.get_children():
+			if c is GeometryInstance3D:
+				(c as GeometryInstance3D).material_override = mat
 	for l in find_children("*", "Light3D", true, false):
 		# Le lampade del portone si accendono al buio: il blackout non le deve spegnere.
 		l.set_meta(&"risveglio_ignora", true)

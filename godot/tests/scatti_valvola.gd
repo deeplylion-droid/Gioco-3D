@@ -64,6 +64,9 @@ func _run() -> void:
 		await get_tree().physics_frame
 	var gocce := valvola.get_node_or_null(^"GocceValvola") as Node3D
 	print("comparsi ", enigma.comparsi, " attivi ", enigma.attivi, " gocce ", gocce != null and gocce.is_visible_in_tree())
+	# senza le scritte dello schermo (i comandi in basso, il mirino)
+	for c in livello.find_children("*", "CanvasLayer", true, false):
+		(c as CanvasLayer).visible = false
 	var cam := Camera3D.new()
 	cam.fov = 75.0
 	cam.near = 0.05
