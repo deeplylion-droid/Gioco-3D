@@ -25,6 +25,11 @@ const GLB_SALA := ["interattivi_monumento", "architettura", "cupola", "piscina",
 
 @export var percorso_sala := NodePath("Sala")
 @export var piscina_onde: NodePath = ^"Piscina/AcquaOnde"
+@export_group("Jilly")
+## L'insegna di Jilly da nuova (mascotte, lavoro/spot-mascotte): dove sta nel gioco (MascotteSala.JILLY), a filo del muro.
+@export var insegna: PackedScene = preload("res://assets/models/mascotte/jilly_nuova/insegna.glb")
+@export var insegna_pos := Vector3(-19.997, 4.7, 5.35)
+@export var insegna_normale := Vector3(1, 0, 0)
 @export_group("Fari da spettacolo")
 ## Fari della vasca di Jilly: rosa e viola come i suoi tentacoli (scelta dell'utente, 22 ottobre: "a").
 @export var colore_faro_rosa := Color(1.0, 0.38, 0.72)
@@ -47,6 +52,7 @@ var _texture := {}
 func _ready() -> void:
 	var sala := get_node(percorso_sala)
 	_pulisci(sala)
+	_metti_insegna()
 	var onde := get_node_or_null(piscina_onde)
 	if onde and "material" in onde and onde.get(&"material") is ShaderMaterial:
 		var m := onde.get(&"material") as ShaderMaterial
@@ -173,3 +179,26 @@ func _camera_spot() -> void:
 		a.dof_blur_far_enabled = false
 		a.dof_blur_near_enabled = false
 		cam.attributes = a
+
+
+## L'insegna nuova sul muro ovest, come nel gioco (mascotte_sala.gd), con le due lampade a collo d'oca accese.
+func _metti_insegna() -> void:
+	if insegna == null:
+		return
+	var ob := insegna.instantiate() as Node3D
+	ob.name = "InsegnaJilly"
+	add_child(ob)
+	ob.transform = Transform3D(Basis.looking_at(-insegna_normale, Vector3.UP), insegna_pos)
+	Posa.fissa_al_muro(ob, insegna_normale)
+	for e in ob.find_children("luce_*", "Node3D", true, false):
+		var l := SpotLight3D.new()
+		l.name = "Faretto"
+		l.light_color = Color(1.0, 0.72, 0.42)
+		l.light_energy = 1.4
+		l.spot_range = 2.0
+		l.spot_angle = 40.0
+		l.spot_attenuation = 1.2
+		l.shadow_enabled = true
+		(e as Node3D).add_child(l)
+		var loc := ob.to_local((e as Node3D).global_position)
+		l.look_at(ob.to_global(Vector3(loc.x * 0.4, -0.05, 0.15)), ob.global_basis.y)
