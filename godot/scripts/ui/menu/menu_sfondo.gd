@@ -204,6 +204,10 @@ func _cupola() -> void:
 	# il lampo si somma sopra e resta forte
 	cielo.set_shader_parameter(&"colore_alto", Color(0.035, 0.045, 0.07))
 	cielo.set_shader_parameter(&"colore_orizzonte", Color(0.06, 0.07, 0.095))
+	# e anche il lampo è più tenue (l'utente, 23 ottobre: "durante i lampi si schiarisce troppo"): il cielo e il
+	# vetro si accendono circa la metà, si vedono ancora la cupola e la torre in sagoma
+	cielo.set_shader_parameter(&"colore_lampo", Color(0.32, 0.36, 0.45))
+	vetro.set_shader_parameter(&"colore_lampo", Color(0.36, 0.4, 0.5))
 	var env := _ambiente()
 	if env:
 		var sky := Sky.new()
