@@ -1550,10 +1550,13 @@ func _pile() -> void:
 			lampade.append((c as Node3D).position)
 	var cartone: Array[Transform3D] = []
 	var tinte: Array[Color] = []
+	var fronti := []   # le unità della fila davanti: [muro, posizione lungo il muro, centro, verso dentro la pila]
 	var casse: Array[Transform3D] = []
 	var messe: Array[PackedVector2Array] = []
 	var colonne := 0
-	for m in _muri_pile():
+	var muri := _muri_pile()
+	for i_muro in muri.size():
+		var m: Array = muri[i_muro]
 		var a: Vector2 = m[0]
 		var b: Vector2 = m[1]
 		var n: Vector2 = m[2]
@@ -1576,6 +1579,8 @@ func _pile() -> void:
 					continue
 				messe.append(impronta)
 				colonne += 1
+				if fila == 0:
+					fronti.append([i_muro, uu + PILA_LUNGO * 0.5, c, n])
 				var piani := 3 if rng.randf() < 0.45 else 4
 				# sotto una lampada sul muro la pila si ferma 15 cm sotto
 				for l in lampade:
@@ -1606,6 +1611,21 @@ func _pile() -> void:
 				fc.transform = Transform3D(Basis(asse_x, Vector3.UP, asse_z), Vector3(c.x, alto * 0.5, c.y))
 				_collisioni.add_child(fc)
 			u += PILA_LUNGO + PILA_STACCO
+	# le tre lampade calde spostate dai muri dietro le pile: appese alla faccia della pila verso la strada, sul blocco di
+	# scatoloni della terza unità (a 3,3 m: sopra i 2 m della strada, sul cartone e non sul bancale), al centro di
+	# un'unità, ogni 8 m lungo la fila: a sinistra a 6 e 22 m, a destra a 14 m (i muri 3 e 1 cominciano a -7 e -3 m)
+	for l in [[3, 13.0, 3.0], [1, 17.0, 3.0], [3, 29.0, 2.5]]:
+		var meglio: Array = []
+		for f in fronti:
+			if f[0] == l[0] and (meglio.is_empty() or absf(f[1] - l[1]) < absf(meglio[1] - l[1])):
+				meglio = f
+		if meglio.is_empty():
+			push_warning("pile: niente unità per la lampada %s" % str(l))
+			continue
+		var c: Vector2 = meglio[2]
+		var n: Vector2 = meglio[3]
+		var faccia := c - n * (PILA_PROFONDO * 0.5 + 0.005)
+		_lampada_calda(Vector3(faccia.x, 2.0 * (PILA_BANCALE + PILA_BLOCCO) + PILA_BANCALE + 0.45, faccia.y), rad_to_deg(atan2(-n.x, -n.y)), l[2])
 	await _pausa()
 	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
 	await _pausa()
@@ -1852,10 +1872,10 @@ func _imbarco() -> void:
 		k += 1
 	await _pausa()
 	# la luce lungo la fila: lampade calde sul muro nord e sul muro dell'approdo
-	for x in [INGRESSO_X + 6.0, -12.0, -2.0]:
-		_lampada_calda(Vector3(x, 3.0, Z0), 0.0, 3.0)
-	for z in [-18.0, -9.0]:
-		_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
+	# (le due del muro nord a x -12 e -2 e quella accesa del muro dell'approdo a z -18 sono rimaste dietro le pile di
+	# scatoloni: ora sono appese alle pile lungo la fila, vedi _pile; scelta "a" dell'utente, 23 ottobre)
+	_lampada_calda(Vector3(INGRESSO_X + 6.0, 3.0, Z0), 0.0, 3.0)
+	_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, -9.0), 90.0, 0.0)
 	await _pausa()
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
 	# (ognuna appoggiata a quella sotto coi vertici veri: prima la prima stava 5 cm sopra il pavimento)
