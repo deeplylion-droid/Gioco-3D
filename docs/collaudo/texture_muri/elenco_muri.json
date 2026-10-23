@@ -1,0 +1,545 @@
+[
+ {
+  "id": "int_m01",
+  "zona": "interni",
+  "firma": "sh|res://shaders/interni/parete.gdshader|res://assets/ambienti_interni/texture/lamiera_crema_col.jpg,res://assets/ambienti_interni/texture/lamiera_crema_met-lamiera_crema_rgh.jpg,res://assets/ambienti_interni/texture/lamiera_crema_nrm.jpg",
+  "albedo": "res://assets/ambienti_interni/texture/lamiera_crema_col.jpg",
+  "vedute": [
+   "int_m01_1",
+   "int_m01_2"
+  ],
+  "area": 421.8
+ },
+ {
+  "id": "int_m02",
+  "zona": "interni",
+  "firma": "sh|res://shaders/interni/parete.gdshader|res://assets/ambienti_interni/texture/lamiera_petrolio_col.jpg,res://assets/ambienti_interni/texture/lamiera_petrolio_met-lamiera_petrolio_rgh.jpg,res://assets/ambienti_interni/texture/lamiera_petrolio_nrm.jpg",
+  "albedo": "res://assets/ambienti_interni/texture/lamiera_petrolio_col.jpg",
+  "vedute": [
+   "int_m02_1",
+   "int_m02_2"
+  ],
+  "area": 267.0
+ },
+ {
+  "id": "int_m03",
+  "zona": "interni",
+  "firma": "sh|res://shaders/interni/piastrelle.gdshader|res://assets/ambienti_interni/texture/piastrelle_doccia_col.jpg,res://assets/ambienti_interni/texture/piastrelle_doccia_met-piastrelle_doccia_rgh.jpg,res://assets/ambienti_interni/texture/piastrelle_doccia_nrm.jpg",
+  "albedo": "res://assets/ambienti_interni/texture/piastrelle_doccia_col.jpg",
+  "vedute": [
+   "int_m03_1",
+   "int_m03_2"
+  ],
+  "area": 116.7
+ },
+ {
+  "id": "int_m04",
+  "zona": "interni",
+  "firma": "sh|res://shaders/interni/piastrelle.gdshader|res://assets/ambienti_interni/texture/piastrelle_verdi_col.jpg,res://assets/ambienti_interni/texture/piastrelle_verdi_met-piastrelle_verdi_rgh.jpg,res://assets/ambienti_interni/texture/piastrelle_verdi_nrm.jpg",
+  "albedo": "res://assets/ambienti_interni/texture/piastrelle_verdi_col.jpg",
+  "vedute": [
+   "int_m04_1",
+   "int_m04_2"
+  ],
+  "area": 102.1
+ },
+ {
+  "id": "int_m07",
+  "zona": "interni",
+  "firma": "std|res://assets/ambienti_interni/texture/metallo_grezzo_col.jpg|res://assets/ambienti_interni/texture/metallo_grezzo_nrm.jpg",
+  "albedo": "res://assets/ambienti_interni/texture/metallo_grezzo_col.jpg",
+  "vedute": [
+   "int_m07_1",
+   "int_m07_2"
+  ],
+  "area": 30.3
+ },
+ {
+  "id": "int_m11",
+  "zona": "interni",
+  "firma": "std|res://assets/ambienti_interni/texture/ruggine_col.jpg|res://assets/ambienti_interni/texture/ruggine_nrm.jpg",
+  "albedo": "res://assets/ambienti_interni/texture/ruggine_col.jpg",
+  "vedute": [
+   "int_m11_1",
+   "int_m11_2"
+  ],
+  "area": 9.8
+ },
+ {
+  "id": "tec_m01",
+  "zona": "tecnici",
+  "firma": "sh|res://shaders/interni/parete.gdshader|res://assets/ambienti_interni/texture/ruggine_col.jpg,res://assets/ambienti_interni/texture/ruggine_met-ruggine_rgh.jpg,res://assets/ambienti_interni/texture/ruggine_nrm.jpg,res://assets/ambienti_tecnici/texture/MetalPlates013_Color.jpg,res://assets/ambienti_tecnici/texture/MetalPlates013_Metalness-MetalPlates013_Roughness.jpg,res://assets/ambienti_tecnici/texture/MetalPlates013_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/MetalPlates013_Color.jpg",
+  "vedute": [
+   "tec_m01_1",
+   "tec_m01_2"
+  ],
+  "area": 1829.1
+ },
+ {
+  "id": "tec_m02",
+  "zona": "tecnici",
+  "firma": "sh|res://shaders/interni/parete.gdshader|res://assets/ambienti_interni/texture/ruggine_col.jpg,res://assets/ambienti_interni/texture/ruggine_met-ruggine_rgh.jpg,res://assets/ambienti_interni/texture/ruggine_nrm.jpg,res://assets/ambienti_tecnici/texture/Concrete042C_Color.jpg,res://assets/ambienti_tecnici/texture/Concrete042C_Metalness-Concrete042C_Roughness.jpg,res://assets/ambienti_tecnici/texture/Concrete042C_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/Concrete042C_Color.jpg",
+  "vedute": [
+   "tec_m02_1",
+   "tec_m02_2"
+  ],
+  "area": 1343.9
+ },
+ {
+  "id": "tec_m03",
+  "zona": "tecnici",
+  "firma": "sh|res://shaders/interni/piastrelle.gdshader|res://assets/ambienti_tecnici/texture/Tiles133D_NormalGL.jpg,res://assets/ambienti_tecnici/texture/piastrelle_sporche_Color.jpg,res://assets/ambienti_tecnici/texture/piastrelle_sporche_Roughness.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/piastrelle_sporche_Color.jpg",
+  "vedute": [
+   "tec_m03_1",
+   "tec_m03_2"
+  ],
+  "area": 503.6
+ },
+ {
+  "id": "tec_m04",
+  "zona": "tecnici",
+  "firma": "std|res://assets/ambienti_tecnici/texture/Metal021_Color.jpg|res://assets/ambienti_tecnici/texture/Metal021_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/Metal021_Color.jpg",
+  "vedute": [
+   "tec_m04_1",
+   "tec_m04_2"
+  ],
+  "area": 351.6
+ },
+ {
+  "id": "tec_m05",
+  "zona": "tecnici",
+  "firma": "sh|res://shaders/interni/parete.gdshader|res://assets/ambienti_interni/texture/ruggine_col.jpg,res://assets/ambienti_interni/texture/ruggine_met-ruggine_rgh.jpg,res://assets/ambienti_interni/texture/ruggine_nrm.jpg,res://assets/ambienti_tecnici/texture/Concrete042C_Color.jpg,res://assets/ambienti_tecnici/texture/Concrete042C_Metalness-pavimento_bagnato_Roughness.jpg,res://assets/ambienti_tecnici/texture/Concrete042C_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/Concrete042C_Color.jpg",
+  "vedute": [
+   "tec_m05_1"
+  ],
+  "area": 54.3
+ },
+ {
+  "id": "tec_m07",
+  "zona": "tecnici",
+  "firma": "std|res://assets/ambienti_tecnici/texture/vernice_giallo_Color.jpg|res://assets/ambienti_tecnici/texture/PaintedMetal006_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/vernice_giallo_Color.jpg",
+  "vedute": [
+   "tec_m07_1",
+   "tec_m07_2"
+  ],
+  "area": 41.2
+ },
+ {
+  "id": "tec_m08",
+  "zona": "tecnici",
+  "firma": "std|res://assets/ambienti_tecnici/texture/Metal041B_Color.jpg|res://assets/ambienti_tecnici/texture/Metal041B_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/Metal041B_Color.jpg",
+  "vedute": [
+   "tec_m08_1",
+   "tec_m08_2"
+  ],
+  "area": 40.2
+ },
+ {
+  "id": "tec_m10",
+  "zona": "tecnici",
+  "firma": "std|res://assets/ambienti_tecnici/texture/PaintedMetal016_Color.jpg|res://assets/ambienti_tecnici/texture/PaintedMetal016_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/PaintedMetal016_Color.jpg",
+  "vedute": [
+   "tec_m10_1",
+   "tec_m10_2"
+  ],
+  "area": 22.9
+ },
+ {
+  "id": "tec_m11",
+  "zona": "tecnici",
+  "firma": "std|res://assets/ambienti_tecnici/texture/vernice_rosso_Color.jpg|res://assets/ambienti_tecnici/texture/PaintedMetal006_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/vernice_rosso_Color.jpg",
+  "vedute": [
+   "tec_m11_1"
+  ],
+  "area": 20.7
+ },
+ {
+  "id": "tec_m12",
+  "zona": "tecnici",
+  "firma": "std|res://assets/ambienti_tecnici/texture/Rust004_Color.jpg|res://assets/ambienti_tecnici/texture/Rust004_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/Rust004_Color.jpg",
+  "vedute": [
+   "tec_m12_1",
+   "tec_m12_2"
+  ],
+  "area": 9.8
+ },
+ {
+  "id": "ris_m01",
+  "zona": "risalita",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/fiume_lento/texture/cemento_col.jpg,res://assets/fiume_lento/texture/cemento_nrm.jpg,res://assets/fiume_lento/texture/cemento_orh.jpg",
+  "albedo": "res://assets/fiume_lento/texture/cemento_col.jpg",
+  "vedute": [
+   "ris_m01_1",
+   "ris_m01_2"
+  ],
+  "area": 5261.3
+ },
+ {
+  "id": "ris_m02",
+  "zona": "risalita",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/fiume_lento/texture/roccia_ocra_col.jpg,res://assets/fiume_lento/texture/roccia_ocra_nrm.jpg,res://assets/fiume_lento/texture/roccia_ocra_orh.jpg",
+  "albedo": "res://assets/fiume_lento/texture/roccia_ocra_col.jpg",
+  "vedute": [],
+  "area": 2179.2
+ },
+ {
+  "id": "ris_m03",
+  "zona": "risalita",
+  "firma": "std|res://assets/ambienti_tecnici/texture/MetalPlates013_Color.jpg|res://assets/ambienti_tecnici/texture/MetalPlates013_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/MetalPlates013_Color.jpg",
+  "vedute": [
+   "ris_m03_1",
+   "ris_m03_2"
+  ],
+  "area": 581.4
+ },
+ {
+  "id": "ris_m04",
+  "zona": "risalita",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/fiume_lento/texture/mosaico_blu_col.jpg,res://assets/fiume_lento/texture/mosaico_blu_nrm.jpg,res://assets/fiume_lento/texture/mosaico_blu_orh.jpg",
+  "albedo": "res://assets/fiume_lento/texture/mosaico_blu_col.jpg",
+  "vedute": [
+   "ris_m04_1",
+   "ris_m04_2"
+  ],
+  "area": 356.4
+ },
+ {
+  "id": "ris_m05",
+  "zona": "risalita",
+  "firma": "std|res://assets/ambienti_tecnici/texture/Concrete042C_Color.jpg|res://assets/ambienti_tecnici/texture/Concrete042C_NormalGL.jpg",
+  "albedo": "res://assets/ambienti_tecnici/texture/Concrete042C_Color.jpg",
+  "vedute": [
+   "ris_m05_1",
+   "ris_m05_2"
+  ],
+  "area": 283.9
+ },
+ {
+  "id": "ris_m06",
+  "zona": "risalita",
+  "firma": "std|res://assets/infermeria/texture/intonaco_col.jpg|res://assets/infermeria/texture/intonaco_nrm.jpg",
+  "albedo": "res://assets/infermeria/texture/intonaco_col.jpg",
+  "vedute": [
+   "ris_m06_1",
+   "ris_m06_2"
+  ],
+  "area": 80.7
+ },
+ {
+  "id": "ris_m07",
+  "zona": "risalita",
+  "firma": "std|res://assets/infermeria/texture/piastrelle_piccole_col.jpg|res://assets/infermeria/texture/piastrelle_piccole_nrm.jpg",
+  "albedo": "res://assets/infermeria/texture/piastrelle_piccole_col.jpg",
+  "vedute": [
+   "ris_m07_1",
+   "ris_m07_2"
+  ],
+  "area": 73.9
+ },
+ {
+  "id": "tor_m01",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/inseguimento/inseguimento_struttura_metallo_grigio_col.jpg|res://assets/ambiente/inseguimento/inseguimento_struttura_metallo_verniciato_nrm.jpg",
+  "albedo": "res://assets/ambiente/inseguimento/inseguimento_struttura_metallo_grigio_col.jpg",
+  "vedute": [
+   "tor_m01_1",
+   "tor_m01_2"
+  ],
+  "area": 2310.3
+ },
+ {
+  "id": "tor_m02",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/inseguimento/inseguimento_struttura_metallo_col.jpg|res://assets/ambiente/inseguimento/inseguimento_struttura_metallo_verniciato_nrm.jpg",
+  "albedo": "res://assets/ambiente/inseguimento/inseguimento_struttura_metallo_col.jpg",
+  "vedute": [
+   "tor_m02_1",
+   "tor_m02_2"
+  ],
+  "area": 710.5
+ },
+ {
+  "id": "tor_m03",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/torre/torre_struttura_metallo_grigio_col.jpg|res://assets/ambiente/torre/torre_struttura_metallo_verniciato_nrm.jpg",
+  "albedo": "res://assets/ambiente/torre/torre_struttura_metallo_grigio_col.jpg",
+  "vedute": [
+   "tor_m03_1",
+   "tor_m03_2"
+  ],
+  "area": 551.8
+ },
+ {
+  "id": "tor_m05",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/inseguimento/inseguimento_struttura_vasca_col.jpg|res://assets/ambiente/inseguimento/inseguimento_struttura_piastrelle_turchesi_nrm.jpg",
+  "albedo": "res://assets/ambiente/inseguimento/inseguimento_struttura_vasca_col.jpg",
+  "vedute": [
+   "tor_m05_1",
+   "tor_m05_2"
+  ],
+  "area": 330.5
+ },
+ {
+  "id": "tor_m06",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/inseguimento/inseguimento_struttura_vasca_bimbi_col.jpg|res://assets/ambiente/inseguimento/inseguimento_struttura_piastrelle_turchesi_nrm.jpg",
+  "albedo": "res://assets/ambiente/inseguimento/inseguimento_struttura_vasca_bimbi_col.jpg",
+  "vedute": [
+   "tor_m06_1",
+   "tor_m06_2"
+  ],
+  "area": 315.1
+ },
+ {
+  "id": "tor_m08",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/torre/torre_struttura_metallo_col.jpg|res://assets/ambiente/torre/torre_struttura_metallo_verniciato_nrm.jpg",
+  "albedo": "res://assets/ambiente/torre/torre_struttura_metallo_col.jpg",
+  "vedute": [
+   "tor_m08_1",
+   "tor_m08_2"
+  ],
+  "area": 226.6
+ },
+ {
+  "id": "tor_m09",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/torre/torre_struttura_vasca_bimbi_col.jpg|res://assets/ambiente/torre/torre_struttura_piastrelle_turchesi_nrm.jpg",
+  "albedo": "res://assets/ambiente/torre/torre_struttura_vasca_bimbi_col.jpg",
+  "vedute": [
+   "tor_m09_1",
+   "tor_m09_2"
+  ],
+  "area": 225.8
+ },
+ {
+  "id": "tor_m13",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/torre/torre_struttura_vasca_col.jpg|res://assets/ambiente/torre/torre_struttura_piastrelle_turchesi_nrm.jpg",
+  "albedo": "res://assets/ambiente/torre/torre_struttura_vasca_col.jpg",
+  "vedute": [
+   "tor_m13_1",
+   "tor_m13_2"
+  ],
+  "area": 93.6
+ },
+ {
+  "id": "tor_m18",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/torre/torre_struttura_cemento_col.jpg|res://assets/ambiente/torre/torre_struttura_cemento_nrm.jpg",
+  "albedo": "res://assets/ambiente/torre/torre_struttura_cemento_col.jpg",
+  "vedute": [
+   "tor_m18_1",
+   "tor_m18_2"
+  ],
+  "area": 27.9
+ },
+ {
+  "id": "tor_m30",
+  "zona": "torre",
+  "firma": "std|res://assets/ambiente/inseguimento/inseguimento_struttura_cemento_col.jpg|res://assets/ambiente/inseguimento/inseguimento_struttura_cemento_nrm.jpg",
+  "albedo": "res://assets/ambiente/inseguimento/inseguimento_struttura_cemento_col.jpg",
+  "vedute": [
+   "tor_m30_1",
+   "tor_m30_2"
+  ],
+  "area": 10.8
+ },
+ {
+  "id": "sal_m01",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_architettura_intonaco_alto_col.jpg,res://assets/ambiente/sala/sala_architettura_intonaco_scrostato_nrm.jpg,res://assets/ambiente/sala/sala_architettura_intonaco_scrostato_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_intonaco_alto_col.jpg",
+  "vedute": [
+   "sal_m01_1",
+   "sal_m01_2"
+  ],
+  "area": 2722.4
+ },
+ {
+  "id": "sal_m02",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_architettura_intonaco_col.jpg,res://assets/ambiente/sala/sala_architettura_intonaco_scrostato_nrm.jpg,res://assets/ambiente/sala/sala_architettura_intonaco_scrostato_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_intonaco_col.jpg",
+  "vedute": [
+   "sal_m02_1",
+   "sal_m02_2"
+  ],
+  "area": 1072.2
+ },
+ {
+  "id": "sal_m03",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_architettura_ferro_cupola_col.jpg,res://assets/ambiente/sala/sala_architettura_metallo_verniciato_nrm.jpg,res://assets/ambiente/sala/sala_architettura_metallo_verniciato_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_ferro_cupola_col.jpg",
+  "vedute": [
+   "sal_m03_1"
+  ],
+  "area": 456.2
+ },
+ {
+  "id": "sal_m05",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_architettura_parete_col.jpg,res://assets/ambiente/sala/sala_architettura_piastrelle_bianche_nrm.jpg,res://assets/ambiente/sala/sala_architettura_piastrelle_bianche_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_parete_col.jpg",
+  "vedute": [
+   "sal_m05_1",
+   "sal_m05_2"
+  ],
+  "area": 217.2
+ },
+ {
+  "id": "sal_m06",
+  "zona": "sala",
+  "firma": "std|res://assets/ambiente/sala/sala_architettura_colatura_col.png|",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_colatura_col.png",
+  "vedute": [
+   "sal_m06_1",
+   "sal_m06_2"
+  ],
+  "area": 76.6
+ },
+ {
+  "id": "sal_m07",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_architettura_cemento_col.jpg,res://assets/ambiente/sala/sala_architettura_cemento_nrm.jpg,res://assets/ambiente/sala/sala_architettura_cemento_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_cemento_col.jpg",
+  "vedute": [
+   "sal_m07_1",
+   "sal_m07_2"
+  ],
+  "area": 76.3
+ },
+ {
+  "id": "sal_m08",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_piscina_piastrelle_turchesi_nrm.jpg,res://assets/ambiente/sala/sala_piscina_piastrelle_turchesi_orm.jpg,res://assets/ambiente/sala/sala_piscina_vasca_col.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_piscina_vasca_col.jpg",
+  "vedute": [
+   "sal_m08_1",
+   "sal_m08_2"
+  ],
+  "area": 68.2
+ },
+ {
+  "id": "sal_m09",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_architettura_metallo_col.jpg,res://assets/ambiente/sala/sala_architettura_metallo_verniciato_nrm.jpg,res://assets/ambiente/sala/sala_architettura_metallo_verniciato_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_metallo_col.jpg",
+  "vedute": [
+   "sal_m09_1",
+   "sal_m09_2"
+  ],
+  "area": 54.3
+ },
+ {
+  "id": "sal_m10",
+  "zona": "sala",
+  "firma": "std|res://assets/ambiente/sala/sala_architettura_metallo_col.jpg|res://assets/ambiente/sala/sala_architettura_metallo_verniciato_nrm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_metallo_col.jpg",
+  "vedute": [
+   "sal_m10_1",
+   "sal_m10_2"
+  ],
+  "area": 48.8
+ },
+ {
+  "id": "sal_m12",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_architettura_fascia_col.jpg,res://assets/ambiente/sala/sala_architettura_piastrelle_bianche_nrm.jpg,res://assets/ambiente/sala/sala_architettura_piastrelle_bianche_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_architettura_fascia_col.jpg",
+  "vedute": [
+   "sal_m12_1",
+   "sal_m12_2"
+  ],
+  "area": 39.7
+ },
+ {
+  "id": "sal_m13",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_torre_scivoli_piastrelle_turchesi_nrm.jpg,res://assets/ambiente/sala/sala_torre_scivoli_piastrelle_turchesi_orm.jpg,res://assets/ambiente/sala/sala_torre_scivoli_vasca_col.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_torre_scivoli_vasca_col.jpg",
+  "vedute": [
+   "sal_m13_1",
+   "sal_m13_2"
+  ],
+  "area": 36.0
+ },
+ {
+  "id": "sal_m14",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_area_bimbi_piastrelle_bianche_nrm.jpg,res://assets/ambiente/sala/sala_area_bimbi_piastrelle_bianche_orm.jpg,res://assets/ambiente/sala/sala_area_bimbi_scacchi_col.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_area_bimbi_scacchi_col.jpg",
+  "vedute": [
+   "sal_m14_1",
+   "sal_m14_2"
+  ],
+  "area": 31.8
+ },
+ {
+  "id": "sal_m16",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_piscina_bordo_col.jpg,res://assets/ambiente/sala/sala_piscina_piastrelle_bianche_nrm.jpg,res://assets/ambiente/sala/sala_piscina_piastrelle_bianche_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_piscina_bordo_col.jpg",
+  "vedute": [
+   "sal_m16_1",
+   "sal_m16_2"
+  ],
+  "area": 25.7
+ },
+ {
+  "id": "sal_m17",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_area_bimbi_cemento_col.jpg,res://assets/ambiente/sala/sala_area_bimbi_cemento_nrm.jpg,res://assets/ambiente/sala/sala_area_bimbi_cemento_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_area_bimbi_cemento_col.jpg",
+  "vedute": [
+   "sal_m17_1"
+  ],
+  "area": 22.0
+ },
+ {
+  "id": "sal_m18",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_torre_scivoli_bordo_col.jpg,res://assets/ambiente/sala/sala_torre_scivoli_piastrelle_bianche_nrm.jpg,res://assets/ambiente/sala/sala_torre_scivoli_piastrelle_bianche_orm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_torre_scivoli_bordo_col.jpg",
+  "vedute": [
+   "sal_m18_1",
+   "sal_m18_2"
+  ],
+  "area": 14.1
+ },
+ {
+  "id": "sal_m19",
+  "zona": "sala",
+  "firma": "sh|res://addons/acqua/shaders/wet_surface.gdshader|res://assets/ambiente/sala/sala_area_bimbi_sala_struttura_gioco_0.jpg,res://assets/ambiente/sala/sala_area_bimbi_sala_struttura_gioco_1.jpg,res://assets/ambiente/sala/sala_area_bimbi_sala_struttura_gioco_2.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_area_bimbi_sala_struttura_gioco_0.jpg",
+  "vedute": [
+   "sal_m19_1",
+   "sal_m19_2"
+  ],
+  "area": 13.9
+ },
+ {
+  "id": "sal_m21",
+  "zona": "sala",
+  "firma": "std|res://assets/ambiente/sala/sala_vasca_centrale_vasca_alta_col.jpg|res://assets/ambiente/sala/sala_vasca_centrale_piastrelle_bianche_nrm.jpg",
+  "albedo": "res://assets/ambiente/sala/sala_vasca_centrale_vasca_alta_col.jpg",
+  "vedute": [
+   "sal_m21_1",
+   "sal_m21_2"
+  ],
+  "area": 12.7
+ }
+]

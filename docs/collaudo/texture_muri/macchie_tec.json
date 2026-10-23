@@ -1,0 +1,419 @@
+{
+ "mac_tec_k01": {
+  "area_m2": 5.0,
+  "decal": true,
+  "esempi": [
+   {
+    "alfa": 0.9,
+    "lato": [
+     1.0,
+     1.0
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@183",
+    "pos": [
+     2.4,
+     0.6,
+     2.18
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     1.0,
+     1.0
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@184",
+    "pos": [
+     12.6,
+     0.6,
+     2.18
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     1.0,
+     1.0
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@185",
+    "pos": [
+     22.0,
+     0.6,
+     2.18
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     1.0,
+     1.0
+    ],
+    "nodo": "Ambienti/Raccordo/@Decal@202",
+    "pos": [
+     52.58,
+     1.0,
+     -1.0
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     1.0,
+     1.0
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@197",
+    "pos": [
+     28.32,
+     0.7,
+     1.8
+    ]
+   }
+  ],
+  "quante": 5,
+  "sui_muri": 5,
+  "texture": "res://assets/ambienti_interni/shader_tex/decal_crepa.png",
+  "vedute": 2
+ },
+ "mac_tec_k02": {
+  "area_m2": 48.1,
+  "decal": true,
+  "esempi": [
+   {
+    "alfa": 0.7,
+    "lato": [
+     2.2,
+     2.2
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@191",
+    "pos": [
+     35.3,
+     5.48,
+     -0.2
+    ]
+   },
+   {
+    "alfa": 0.7,
+    "lato": [
+     2.2,
+     2.2
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@192",
+    "pos": [
+     41.3,
+     5.48,
+     -4.2
+    ]
+   },
+   {
+    "alfa": 0.7,
+    "lato": [
+     2.2,
+     2.2
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@193",
+    "pos": [
+     31.3,
+     5.48,
+     1.3
+    ]
+   },
+   {
+    "alfa": 0.75,
+    "lato": [
+     1.8,
+     1.8
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@175",
+    "pos": [
+     3.0,
+     4.18,
+     -0.04
+    ]
+   },
+   {
+    "alfa": 0.75,
+    "lato": [
+     1.8,
+     1.8
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@177",
+    "pos": [
+     9.0,
+     4.18,
+     0.05
+    ]
+   },
+   {
+    "alfa": 0.75,
+    "lato": [
+     1.8,
+     1.8
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@179",
+    "pos": [
+     13.0,
+     4.18,
+     0.97
+    ]
+   },
+   {
+    "alfa": 0.75,
+    "lato": [
+     1.8,
+     1.8
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@181",
+    "pos": [
+     20.0,
+     4.18,
+     -0.51
+    ]
+   },
+   {
+    "alfa": 0.6,
+    "lato": [
+     1.6,
+     1.6
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@194",
+    "pos": [
+     32.7,
+     0.0,
+     -3.4
+    ]
+   }
+  ],
+  "quante": 16,
+  "sui_muri": 0,
+  "texture": "res://assets/ambienti_interni/shader_tex/decal_macchia.png",
+  "vedute": 2
+ },
+ "mac_tec_k03": {
+  "area_m2": 16.7,
+  "decal": true,
+  "esempi": [
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.8,
+     1.8
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@186",
+    "pos": [
+     30.3,
+     3.6,
+     -8.18
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.8,
+     1.8
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@187",
+    "pos": [
+     33.8,
+     3.6,
+     -8.18
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.8,
+     1.8
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@188",
+    "pos": [
+     37.8,
+     3.6,
+     -8.18
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.8,
+     1.8
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@189",
+    "pos": [
+     41.3,
+     3.6,
+     -8.18
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.8,
+     1.8
+    ],
+    "nodo": "Ambienti/SalaPompe/@Decal@190",
+    "pos": [
+     44.8,
+     3.6,
+     -8.18
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.7,
+     1.6
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@168",
+    "pos": [
+     1.28,
+     2.9,
+     2.18
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.7,
+     1.6
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@169",
+    "pos": [
+     4.61,
+     2.9,
+     2.18
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.7,
+     1.6
+    ],
+    "nodo": "Ambienti/CameraOnde/@Decal@170",
+    "pos": [
+     8.57,
+     2.9,
+     2.18
+    ]
+   }
+  ],
+  "quante": 14,
+  "sui_muri": 14,
+  "texture": "res://assets/ambienti_interni/shader_tex/decal_ruggine.png",
+  "vedute": 2
+ },
+ "mac_tec_k04": {
+  "area_m2": 1304.6,
+  "decal": false,
+  "esempi": [
+   {
+    "alfa": 1.0,
+    "lato": [
+     33.65,
+     25.15
+    ],
+    "nodo": "Ambienti/Raccordo/RACCORDO_dettagli",
+    "pos": [
+     35.78,
+     5.92,
+     3.47
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     14.53,
+     7.9
+    ],
+    "nodo": "Ambienti/SalaPompe/SALA_meccanismi",
+    "pos": [
+     39.03,
+     3.28,
+     -1.05
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     12.13,
+     7.41
+    ],
+    "nodo": "Ambienti/SalaPompe/SALA_arredo",
+    "pos": [
+     37.91,
+     0.55,
+     -0.15
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     26.05,
+     1.95
+    ],
+    "nodo": "Ambienti/CameraOnde/CAMERA_bocchette",
+    "pos": [
+     10.98,
+     3.01,
+     1.81
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     6.4,
+     4.15
+    ],
+    "nodo": "Ambienti/CameraOnde/NICCHIA_1",
+    "pos": [
+     6.0,
+     1.3,
+     -4.28
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     6.4,
+     4.15
+    ],
+    "nodo": "Ambienti/CameraOnde/NICCHIA_2",
+    "pos": [
+     10.0,
+     1.3,
+     -4.28
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     6.4,
+     4.15
+    ],
+    "nodo": "Ambienti/CameraOnde/NICCHIA_3",
+    "pos": [
+     14.0,
+     1.3,
+     -4.28
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     7.86,
+     3.15
+    ],
+    "nodo": "Ambienti/SalaPompe/SALA_parete_est",
+    "pos": [
+     46.28,
+     1.57,
+     -1.82
+    ]
+   }
+  ],
+  "quante": 15,
+  "sui_muri": 11,
+  "texture": "res://assets/ambienti_tecnici/texture/Rust004_Color.jpg",
+  "vedute": 2
+ }
+}

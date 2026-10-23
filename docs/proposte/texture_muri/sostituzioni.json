@@ -1,0 +1,41 @@
+{
+ "texture": {
+  "res://assets/ambienti_tecnici/texture/Rust004_Color.jpg": "../docs/proposte/texture_muri/texture_calme/Rust004_Color_calmo.jpg",
+  "res://assets/ambienti_tecnici/texture/Rust004_NormalGL.jpg": "../docs/proposte/texture_muri/texture_calme/Rust004_NormalGL_calmo.jpg",
+  "res://assets/ambienti_tecnici/texture/Concrete042C_Color.jpg": "../docs/proposte/texture_muri/texture_calme/Concrete042C_Color_calmo.jpg",
+  "res://assets/ambienti_tecnici/texture/Concrete042C_NormalGL.jpg": "../docs/proposte/texture_muri/texture_calme/Concrete042C_NormalGL_calmo.jpg",
+  "res://assets/ambienti_interni/texture/cemento_col.jpg": "../docs/proposte/texture_muri/texture_calme/cemento_col_calmo.jpg",
+  "res://assets/ambienti_interni/texture/cemento_nrm.jpg": "../docs/proposte/texture_muri/texture_calme/cemento_nrm_calmo.jpg",
+  "res://assets/infermeria/texture/intonaco_col.jpg": "../docs/proposte/texture_muri/texture_calme/intonaco_col_calmo.jpg",
+  "res://assets/infermeria/texture/intonaco_nrm.jpg": "../docs/proposte/texture_muri/texture_calme/intonaco_nrm_calmo.jpg",
+  "res://assets/infermeria/texture/intonaco_rgh.jpg": "../docs/proposte/texture_muri/texture_calme/intonaco_rgh_calmo.jpg",
+  "res://assets/ambienti_interni/shader_tex/decal_ruggine.png": "../docs/proposte/texture_muri/texture_calme/decal_ruggine_calmo.png",
+  "res://assets/ambienti_interni/shader_tex/decal_macchia.png": "../docs/proposte/texture_muri/texture_calme/decal_macchia_calmo.png",
+  "res://assets/ambiente/dettagli/gltf/texture/macchia_ruggine_colata_col.png": "../docs/proposte/texture_muri/texture_calme/macchia_ruggine_colata_col_calmo.png",
+  "res://assets/ambiente/sala/sala_architettura_colatura_col.png": "../docs/proposte/texture_muri/texture_calme/sala_architettura_colatura_col_calmo.png"
+ },
+ "parametri": {
+  "parete.gdshader": {
+   "intensita_colature": 0.3,
+   "sporco_basso": 0.45
+  },
+  "MetalPlates013_Color": {
+   "scrostatura": 0.07,
+   "soglia_alto": 0.62
+  },
+  "Concrete042C_Color": {
+   "soglia_alto": 0.62
+  }
+ },
+ "uv": {
+  "Rust004": 0.7
+ },
+ "decal": {
+  "decal_ruggine": {
+   "una_su": 2
+  }
+ },
+ "shader": {
+  "res://shaders/interni/parete.gdshader": "res://tests/cz/parete_prova.gdshader"
+ }
+}

@@ -1,0 +1,354 @@
+{
+ "mac_int_k01": {
+  "area_m2": 3.6,
+  "decal": true,
+  "esempi": [
+   {
+    "alfa": 0.9,
+    "lato": [
+     0.9,
+     0.9
+    ],
+    "nodo": "@Decal@48",
+    "pos": [
+     10.6,
+     0.45,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     0.9,
+     0.9
+    ],
+    "nodo": "@Decal@47",
+    "pos": [
+     4.6,
+     0.45,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     0.9,
+     0.9
+    ],
+    "nodo": "@Decal@49",
+    "pos": [
+     18.2,
+     0.45,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     0.8,
+     0.8
+    ],
+    "nodo": "@Decal@59",
+    "pos": [
+     10.78,
+     0.6,
+     -17.8
+    ]
+   },
+   {
+    "alfa": 0.9,
+    "lato": [
+     0.7,
+     0.7
+    ],
+    "nodo": "@Decal@63",
+    "pos": [
+     11.9,
+     0.5,
+     -10.58
+    ]
+   }
+  ],
+  "quante": 5,
+  "sui_muri": 5,
+  "texture": "res://assets/ambienti_interni/shader_tex/decal_crepa.png",
+  "vedute": 2
+ },
+ "mac_int_k02": {
+  "area_m2": 17.8,
+  "decal": true,
+  "esempi": [
+   {
+    "alfa": 0.7,
+    "lato": [
+     1.6,
+     1.6
+    ],
+    "nodo": "@Decal@53",
+    "pos": [
+     7.0,
+     2.68,
+     -1.3
+    ]
+   },
+   {
+    "alfa": 0.7,
+    "lato": [
+     1.6,
+     1.6
+    ],
+    "nodo": "@Decal@54",
+    "pos": [
+     13.6,
+     2.68,
+     -1.3
+    ]
+   },
+   {
+    "alfa": 0.7,
+    "lato": [
+     1.6,
+     1.6
+    ],
+    "nodo": "@Decal@55",
+    "pos": [
+     18.8,
+     2.68,
+     -1.3
+    ]
+   },
+   {
+    "alfa": 0.75,
+    "lato": [
+     1.5,
+     1.5
+    ],
+    "nodo": "@Decal@62",
+    "pos": [
+     13.0,
+     2.58,
+     -9.4
+    ]
+   },
+   {
+    "alfa": 0.6,
+    "lato": [
+     1.4,
+     1.4
+    ],
+    "nodo": "@Decal@50",
+    "pos": [
+     6.0,
+     0.0,
+     -1.5
+    ]
+   },
+   {
+    "alfa": 0.6,
+    "lato": [
+     1.4,
+     1.4
+    ],
+    "nodo": "@Decal@51",
+    "pos": [
+     15.3,
+     0.0,
+     -1.0
+    ]
+   },
+   {
+    "alfa": 0.6,
+    "lato": [
+     1.4,
+     1.4
+    ],
+    "nodo": "@Decal@52",
+    "pos": [
+     20.1,
+     0.0,
+     -2.1
+    ]
+   },
+   {
+    "alfa": 0.7,
+    "lato": [
+     1.4,
+     1.4
+    ],
+    "nodo": "@Decal@60",
+    "pos": [
+     9.6,
+     2.68,
+     -17.0
+    ]
+   }
+  ],
+  "quante": 8,
+  "sui_muri": 0,
+  "texture": "res://assets/ambienti_interni/shader_tex/decal_macchia.png",
+  "vedute": 2
+ },
+ "mac_int_k03": {
+  "area_m2": 9.0,
+  "decal": true,
+  "esempi": [
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.6,
+     1.3
+    ],
+    "nodo": "@Decal@37",
+    "pos": [
+     2.31,
+     1.75,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.6,
+     1.3
+    ],
+    "nodo": "@Decal@38",
+    "pos": [
+     5.2,
+     1.75,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.6,
+     1.3
+    ],
+    "nodo": "@Decal@39",
+    "pos": [
+     9.55,
+     1.75,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.6,
+     1.3
+    ],
+    "nodo": "@Decal@40",
+    "pos": [
+     12.08,
+     1.75,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.6,
+     1.3
+    ],
+    "nodo": "@Decal@41",
+    "pos": [
+     15.98,
+     1.75,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.8,
+    "lato": [
+     0.6,
+     1.3
+    ],
+    "nodo": "@Decal@42",
+    "pos": [
+     19.84,
+     1.75,
+     -2.58
+    ]
+   },
+   {
+    "alfa": 0.6,
+    "lato": [
+     0.5,
+     1.2
+    ],
+    "nodo": "@Decal@61",
+    "pos": [
+     15.18,
+     1.6,
+     -7.0
+    ]
+   },
+   {
+    "alfa": 0.7,
+    "lato": [
+     0.5,
+     1.1
+    ],
+    "nodo": "@Decal@43",
+    "pos": [
+     3.4,
+     1.8,
+     -0.02
+    ]
+   }
+  ],
+  "quante": 14,
+  "sui_muri": 14,
+  "texture": "res://assets/ambienti_interni/shader_tex/decal_ruggine.png",
+  "vedute": 2
+ },
+ "mac_int_k04": {
+  "area_m2": 428.5,
+  "decal": false,
+  "esempi": [
+   {
+    "alfa": 1.0,
+    "lato": [
+     17.94,
+     12.85
+    ],
+    "nodo": "Ambienti/Spogliatoi/spogliatoi_statico",
+    "pos": [
+     6.97,
+     1.35,
+     -11.77
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     25.44,
+     6.9
+    ],
+    "nodo": "Ambienti/Corridoio/corridoio_statico",
+    "pos": [
+     12.48,
+     0.45,
+     0.65
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     4.8,
+     4.67
+    ],
+    "nodo": "Ambienti/Stanzino/stanzino_statico",
+    "pos": [
+     13.07,
+     1.3,
+     -8.4
+    ]
+   }
+  ],
+  "quante": 3,
+  "sui_muri": 1,
+  "texture": "res://assets/ambienti_interni/texture/ruggine_col.jpg",
+  "vedute": 2
+ }
+}

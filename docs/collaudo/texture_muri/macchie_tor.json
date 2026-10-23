@@ -1,0 +1,51 @@
+{
+ "mac_tor_k01": {
+  "area_m2": 59.2,
+  "decal": false,
+  "esempi": [
+   {
+    "alfa": 1.0,
+    "lato": [
+     5.06,
+     3.9
+    ],
+    "nodo": "SalaInseguimento/Luci/@Node3D@442/POMPA_1",
+    "pos": [
+     50.0,
+     -30.28,
+     -23.6
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     5.06,
+     3.9
+    ],
+    "nodo": "SalaInseguimento/Luci/@Node3D@443/POMPA_2",
+    "pos": [
+     54.4,
+     -30.28,
+     -23.6
+    ]
+   },
+   {
+    "alfa": 1.0,
+    "lato": [
+     5.06,
+     3.9
+    ],
+    "nodo": "SalaInseguimento/Luci/@Node3D@444/POMPA_3",
+    "pos": [
+     67.0,
+     -30.28,
+     -14.5
+    ]
+   }
+  ],
+  "quante": 3,
+  "sui_muri": 3,
+  "texture": "res://assets/ambienti_tecnici/texture/Rust004_Color.jpg",
+  "vedute": 2
+ }
+}

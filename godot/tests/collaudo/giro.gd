@@ -65,7 +65,9 @@ func _run() -> void:
 	# per la memoria: GI, sonde dei riflessi, particelle e volumi di nebbia non servono a vedere dove stanno gli
 	# oggetti (la sala intera sul renderer software se no supera i 15 GB della macchina)
 	var tolti := 0
-	for classe in ["VoxelGI", "LightmapGI", "ReflectionProbe", "GPUParticles3D", "CPUParticles3D", "FogVolume"]:
+	# COLLAUDO_GI=1: GI, riflessi e nebbia restano (per vedere i materiali nella luce del gioco); via solo le particelle
+	var classi := ["GPUParticles3D", "CPUParticles3D"] if OS.get_environment("COLLAUDO_GI") == "1" else ["VoxelGI", "LightmapGI", "ReflectionProbe", "GPUParticles3D", "CPUParticles3D", "FogVolume"]
+	for classe in classi:
 		for n in livello.find_children("*", classe, true, false):
 			if _nel_giocatore(n):
 				continue   # le particelle dello zaino: il giocatore le usa nel suo _ready
@@ -77,6 +79,11 @@ func _run() -> void:
 		_materiali_semplici(livello)
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
+	# COLLAUDO_LUCI40=1: le luci bianche al 40% come nel gioco (VarianteLuci)
+	if OS.get_environment("COLLAUDO_LUCI40") == "1":
+		var lb := get_node_or_null(^"/root/LuciBianche")
+		if lb:
+			lb.call(&"imposta", 0.4, false)
 	for i in 30:
 		await get_tree().process_frame
 	get_tree().paused = false
