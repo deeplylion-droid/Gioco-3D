@@ -172,6 +172,16 @@ func _run() -> void:
 	print("Nuova partita: caricamento a thread e sala")
 	GameState.snapshot = {"scene": "res://finta.tscn"}
 	voci[0].pressed.emit()
+	# prima del caricamento lo spot VHS della crociera (scripts/spot/lettore_spot.gd): si salta, come tenendo premuto
+	var spot: Node = null
+	for i in 200:
+		await get_tree().process_frame
+		spot = get_tree().root.get_children().filter(func(n): return n is LettoreSpot).front() if get_tree().root.get_children().any(func(n): return n is LettoreSpot) else null
+		if spot:
+			break
+	check(spot != null, "Nuova partita fa partire lo spot VHS")
+	if spot:
+		spot.call(&"_fine")
 	var car: Node = null
 	for i in 400:
 		await get_tree().process_frame
