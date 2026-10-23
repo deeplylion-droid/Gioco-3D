@@ -275,13 +275,29 @@ func _on_trigger_armadietto(body: Node3D) -> void:
 	if anta == null:
 		return
 	_armadietto_fatto = true
-	var chiusa := anta.rotation.y
+	_sbatti_anta(anta, true)
+
+
+## L'anta gira intorno al cardine vero (cardine_armadietto_sbatte, sullo spigolo del fronte): la sua origine non sta
+## sul cardine, e girata intorno all'origine finiva dentro il suo armadietto (collaudo del 23 ottobre). Senza
+## animazione (checkpoint ricaricato dopo il colpo) va subito a fine corsa.
+func _sbatti_anta(anta: Node3D, animata: bool) -> void:
+	var chiusa := anta.transform
+	var cardine := spogliatoi.find_child("cardine_armadietto_sbatte", true, false) as Node3D
+	var perno := anta.get_parent_node_3d().to_local(cardine.global_position) if cardine else anta.position
+	var gira := func(ang: float) -> void:
+		var verso := Transform3D(Basis.IDENTITY, perno)
+		anta.transform = verso * Transform3D(Basis(Vector3.UP, ang), Vector3.ZERO) * verso.affine_inverse() * chiusa
+	if not animata:
+		gira.call(-deg_to_rad(81.0))
+		_collisione_anta(anta)
+		return
 	var t := create_tween()
 	# (parte già socchiusa di 4 gradi; l'anta larga quanto il vano gira sullo spigolo del fronte: oltre i 90 gradi
-	# entrerebbe nell'armadietto accanto, quindi sbatte fino a 88 e si ferma a 85)
-	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(84.0), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(70.0), 0.25).set_trans(Tween.TRANS_SINE)
-	t.tween_property(anta, "rotation:y", chiusa - deg_to_rad(81.0), 0.4).set_trans(Tween.TRANS_SINE)
+	# entrerebbe nell'armadietto accanto, quindi sbatte fino a 88 e si ferma a 85, come le altre ante aperte)
+	t.tween_method(gira, 0.0, -deg_to_rad(84.0), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	t.tween_method(gira, -deg_to_rad(84.0), -deg_to_rad(70.0), 0.25).set_trans(Tween.TRANS_SINE)
+	t.tween_method(gira, -deg_to_rad(70.0), -deg_to_rad(81.0), 0.4).set_trans(Tween.TRANS_SINE)
 	# aperta sporge nello spogliatoio: si urta come le altre ante aperte (controllo di posizionamento). La
 	# collisione arriva a fine corsa, così l'anta che si apre non spinge il giocatore.
 	t.tween_callback(_collisione_anta.bind(anta))
@@ -336,7 +352,13 @@ func save_state() -> Dictionary:
 
 func load_state(data: Dictionary) -> void:
 	_docce_fatte = bool(data.get("docce", false))
+	var gia := _armadietto_fatto
 	_armadietto_fatto = bool(data.get("armadietto", false))
+	# l'armadietto ha già sbattuto: l'anta resta aperta (prima, ricaricando, tornava chiusa)
+	if _armadietto_fatto and not gia and spogliatoi:
+		var anta := spogliatoi.find_child("armadietto_sbatte_anta", true, false) as Node3D
+		if anta:
+			_sbatti_anta(anta, false)
 	if bool(data.get("tornello", false)):
 		_sblocca_tornello()
 

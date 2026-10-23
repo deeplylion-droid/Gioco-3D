@@ -72,7 +72,27 @@ func _run() -> void:
 				dove = "fermo in %s, andando verso %s" % [str(p.global_position.snapped(Vector3.ONE * 0.01)), str(punti[k])]
 				break
 		check(ok, "%s%s" % [s[0], (" (" + dove + ")") if dove != "" else ""])
+	print("L'armadietto che sbatte resta fuori dal suo armadietto")
+	await _anta_che_sbatte()
 	_fine()
+
+
+## L'anta che sbatte gira sul cardine vero (collaudo del 23 ottobre: girava intorno all'origine e finiva dentro il suo
+## armadietto, x 10,5-11,0): dopo il colpo sta davanti al fronte (x <= 10,5), attaccata al cardine, con la collisione.
+func _anta_che_sbatte() -> void:
+	var anta := level.find_child("armadietto_sbatte_anta", true, false) as MeshInstance3D
+	var cardine := level.find_child("cardine_armadietto_sbatte", true, false) as Node3D
+	check(anta != null and cardine != null, "ci sono l'anta che sbatte e il suo cardine")
+	if anta == null or cardine == null:
+		return
+	level.call(&"_on_trigger_armadietto", p)
+	await _frames(90)
+	var bb := anta.global_transform * anta.get_aabb()
+	var c := cardine.global_position
+	check(bb.end.x <= c.x + 0.02, "l'anta aperta è davanti al fronte, fuori dall'armadietto (x fino a %.3f, fronte %.3f)" % [bb.end.x, c.x])
+	var vicino := Vector3(clampf(c.x, bb.position.x, bb.end.x), c.y, clampf(c.z, bb.position.z, bb.end.z))
+	check(vicino.distance_to(c) < 0.03, "l'anta è attaccata al cardine (%.3f m)" % vicino.distance_to(c))
+	check(anta.has_node(^"Collisione"), "l'anta aperta ha la collisione")
 
 
 ## Cammina verso w premendo avanti (guardando w). Vero se ci arriva entro 25 cm; falso se resta fermo 1,5 s.
