@@ -432,6 +432,15 @@ def _pulisci_attraversati(bersagli, scivoli, aperti):
                     if (q[j] - q[i]).length > 0.004:
                         spigoli.append((q[i], q[j]))
         bm.free()
+    # tutti gli scivoli in un albero solo (per gli spigoli dei bersagli che ci passano dentro)
+    bm_s = bmesh.new()
+    for s_ in scivoli:
+        me_ = s_.data.copy()
+        me_.transform(s_.matrix_world)
+        bm_s.from_mesh(me_)
+        bpy.data.meshes.remove(me_)
+    albero_s = BVHTree.FromBMesh(bm_s)
+    bm_s.free()
     for b_ in bersagli:
         for giro in range(3):
             # (l'albero come lo fa la prova: dall'oggetto aggiornato, con le facce come le esporta)
@@ -457,6 +466,21 @@ def _pulisci_attraversati(bersagli, scivoli, aperti):
                     passo = (hit[0] - da).length + 0.0005
                     da = da + d * passo
                     resto -= passo
+            # e al contrario: gli spigoli del bersaglio che passano dentro uno scivolo (più di 5 mm fra l'entrata e l'uscita:
+            # le travi tagliate a pochi cm dalle flange dei tubi)
+            if b_.name not in aperti:
+                for e in bm.edges:
+                    a_, c_ = e.verts[0].co, e.verts[1].co
+                    lun = (c_ - a_).length
+                    if lun < 0.004:
+                        continue
+                    d = (c_ - a_) / lun
+                    h0 = albero_s.ray_cast(a_ + d * 0.001, d, lun - 0.002)
+                    if h0[0] is None:
+                        continue
+                    h1 = albero_s.ray_cast(c_ - d * 0.001, -d, lun - 0.002)
+                    if h1[0] is not None and (h0[0] - h1[0]).length > 0.005:
+                        colpite.update(f.index for f in e.link_faces)
             via = [bm.faces[i] for i in colpite if b_.name in aperti or bm.faces[i].calc_area() < 0.01]
             if via:
                 bmesh.ops.delete(bm, geom=via, context='FACES')
