@@ -95,6 +95,41 @@ def curva(ctrl, passo=0.35):
     return out
 
 
+def intaglia_col_tubo(ob, gioco=0.004):
+    """Toglie da `ob` il tubo dell'inseguimento della torre (dal GLB del gioco, gonfiato di `gioco`)."""
+    import bmesh
+    prima = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=os.path.join(QUI, '..', '..', 'godot', 'assets', 'ambiente', 'torre', 'torre_scivoli.glb'))
+    nuovi = [o for o in bpy.data.objects if o not in prima]
+    tubo = next(o for o in nuovi if o.name.startswith('torre_tubo_inseguimento'))
+    bm = bmesh.new()
+    bm.from_mesh(tubo.data)
+    bm.transform(tubo.matrix_world)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.normal_update()
+    for v, n in zip(bm.verts, [v.normal.copy() for v in bm.verts]):
+        v.co += n * gioco
+    me = bpy.data.meshes.new('tubo_intaglio')
+    bm.to_mesh(me)
+    bm.free()
+    taglio = bpy.data.objects.new('tubo_intaglio', me)
+    bpy.context.scene.collection.objects.link(taglio)
+    m = ob.modifiers.new('intaglio', 'BOOLEAN')
+    m.operation = 'DIFFERENCE'
+    m.object = taglio
+    m.solver = 'EXACT'
+    m.use_hole_tolerant = True
+    m.use_self = True
+    bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.modifier_apply(modifier=m.name)
+    for o in nuovi + [taglio]:
+        if o.type == 'MESH':
+            bpy.data.meshes.remove(o.data)
+        elif o.name in bpy.data.objects:
+            bpy.data.objects.remove(o)
+
+
 def guscio(c, x1, y0, y1, z0, z1, buco=None, porta=None, fossa=None):
     """La sala dietro la torre: muri di lamiera e cemento dello scafo con le costole, soffitto con le travi,
     pavimento. Nel muro ovest (x = X0) il buco della bocca; porta = (y, z) della porta d'uscita nel muro ovest;
@@ -492,8 +527,11 @@ def versione_A(mats):
     collare = None
     if GIOCO:   # il collare attorno al tubo della bocca, sul muro ovest (copre gli angoli del foro), solo da vedere
         cc = K.Costruttore(mats)
-        cc.anello((X0, BOCCA.y, BOCCA.z), (1, 0, 0), 0.86, 1.62, 0.08, 'metallo', seg=32)
+        cc.anello((X0, BOCCA.y, BOCCA.z), (1, 0, 0), 0.7, 1.62, 0.08, 'metallo', seg=32)
         collare = cc.crea('ins_A_collare')
+        # il foro del collare segue il tubo vero (che lì passa il muro in pendenza: col foro tondo da 0,86 m il tubo ci
+        # entrava 10 cm), 4 mm attorno
+        intaglia_col_tubo(collare)
     acque.append(P.acqua_piano('acqua_allagata', X0, y0, x1, y1, T))
     oggetti_tubi = []
     pedane = []
