@@ -61,16 +61,18 @@
 						{"t": 6.0, "pos": [0.0, 4.0, 2.5], "guarda": [0.0, 4.2, 0.0], "fov": 40.0}
 					],
 					"azioni": [{"t": 0.5, "nodo": "Jilly", "metodo": "saluta", "argomenti": [3.9]}]},
-				{"n": 7, "inizio": 32.0, "durata": 6.0, "cosa": "stessa inquadratura, il nastro si guasta", "da_rivedere": true,
+				{"n": 7, "inizio": 32.0, "durata": 6.0, "cosa": "stessa inquadratura, il nastro si guasta: la camera si avvicina all'occhio (riferita all'occhio di Jilly: CentroOcchio di JillySpot, -Z dove guarda lei; pos e guarda nel suo spazio)",
+					"rispetto": "Jilly/CentroOcchio",
 					"camera": [
-						{"t": 0.0, "pos": [0.0, 4.0, 2.5], "guarda": [0.0, 4.2, 0.0], "fov": 40.0},
-						{"t": 6.0, "pos": [0.0, 4.1, 1.6], "guarda": [0.0, 4.2, 0.0], "fov": 35.0}
+						{"t": 0.0, "pos": [0.0, 0.1, -1.6], "guarda": [0.0, -0.05, 0.0], "fov": 40.0},
+						{"t": 6.0, "pos": [0.0, 0.05, -0.85], "guarda": [0.0, 0.0, 0.0], "fov": 36.0}
 					]},
-				{"n": 8, "inizio": 38.0, "durata": 5.0, "cosa": "l'occhio di Jilly riempie lo schermo e pulsa; alla fine si avvicina di colpo", "da_rivedere": true,
+				{"n": 8, "inizio": 38.0, "durata": 5.0, "cosa": "l'occhio di Jilly riempie lo schermo e pulsa; alla fine lo scatto in avanti (raggio dell'occhio 0,24 m, cornea 10 cm davanti al centro)",
+					"rispetto": "Jilly/CentroOcchio",
 					"camera": [
-						{"t": 0.0, "pos": [0.0, 4.2, 0.9], "guarda": [0.0, 4.2, 0.0], "fov": 30.0},
-						{"t": 4.6, "pos": [0.0, 4.2, 0.7], "guarda": [0.0, 4.2, 0.0], "fov": 28.0},
-						{"t": 5.0, "pos": [0.0, 4.2, 0.35], "guarda": [0.0, 4.2, 0.0], "fov": 22.0}
+						{"t": 0.0, "pos": [0.0, 0.0, -0.58], "guarda": [0.0, 0.0, 0.0], "fov": 32.0},
+						{"t": 4.6, "pos": [0.0, 0.0, -0.46], "guarda": [0.0, 0.0, 0.0], "fov": 29.0},
+						{"t": 5.0, "pos": [0.0, 0.0, -0.2], "guarda": [0.0, 0.0, 0.0], "fov": 22.0}
 					],
 					"azioni": [{"t": 0.0, "nodo": "Jilly", "metodo": "pupilla_battito", "argomenti": [5.0]}]}
 			]
