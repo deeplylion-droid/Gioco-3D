@@ -1451,13 +1451,16 @@ func _rocce_imbarco() -> void:
 	for c in get_children():
 		if c is Node3D and String(c.name).begins_with("roccia_parete"):
 			gia.append((c as Node3D).position)
-		elif c is Node3D and not c is MeshInstance3D and not c is Light3D and c != _collisioni and c != _barriere:
-			cose.append((c as Node3D).position)
+		elif c is Node3D and not c is MeshInstance3D and not c is Light3D and c != _collisioni and c != _barriere \
+				and (c as Node3D).position.y < 0.5:
+			cose.append((c as Node3D).position)   # (solo le cose a terra: non le lampade e le liane in alto)
 	var fila_a := Vector2(FINE_FILA.x, FINE_FILA.z)
 	var fila_b := Vector2(ORMEGGIO.x, ORMEGGIO.z)
 	var messe := 0
 	var k := 0
-	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.9, 1.0):
+	# (dall'inizio dello striscia, alla vasca, 5,2 m: dopo il cartello dei tuffi e la strada fra la fila e la ciambella;
+	# poi un pannello ogni 3,9 m, larghi 4,2: continui)
+	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.9, 5.2):
 		var p: Vector3 = v[0]
 		var rot: float = v[1]
 		# solo la riva dalla parte della piazza, fino a dove l'anello comincia a girare
@@ -1469,17 +1472,19 @@ func _rocce_imbarco() -> void:
 		var lato := b * Vector3.RIGHT
 		var dietro := -(b * Vector3.BACK)
 		var ok := true
+		# il pannello va da 0,5 m davanti (verso l'acqua) a 0,5 m dietro (quello doppio)
 		for u in [-2.1, 0.0, 2.1]:
-			for w in [0.0, 0.6, 1.2]:
+			for w in [-0.45, 0.0, 0.5]:
 				var q: Vector3 = p + lato * u + dietro * w
-				if Geometry2D.get_closest_point_to_segment(Vector2(q.x, q.z), fila_a, fila_b).distance_to(Vector2(q.x, q.z)) < 1.4:
+				if Geometry2D.get_closest_point_to_segment(Vector2(q.x, q.z), fila_a, fila_b).distance_to(Vector2(q.x, q.z)) < 1.2:
 					ok = false
-				if not _sulla_banchina(q, 0.2):
+				if not _sulla_banchina(q, 0.1):
 					ok = false
 				for c in cose:
-					if Vector2(c.x, c.z).distance_to(Vector2(q.x, q.z)) < 0.7:
+					if Vector2(c.x, c.z).distance_to(Vector2(q.x, q.z)) < 0.5:
 						ok = false
 		if not ok:
+			print("rocce della riva dell'imbarco: nessun posto in %s" % p.snappedf(0.01))
 			continue
 		await _pausa()
 		_roccia(p, rot, k % 2 == 0)
@@ -1558,10 +1563,11 @@ func _imbarco() -> void:
 	var sotto := 0.0
 	for i in 3:
 		await _pausa()
-		var ci := _metti("ciambella", Vector3(-VASCA - 1.0, 0.0, -VASCA - 5.6), i * 37.0)
+		# (un metro più in là dalla riva: lì ora c'è la roccia, vedi _rocce_imbarco)
+		var ci := _metti("ciambella", Vector3(-VASCA - 2.0, 0.0, -VASCA - 5.6), i * 37.0)
 		_a_terra(ci, sotto)
 		sotto = _cima(ci)
-	_ostacolo(Vector3(-VASCA - 1.0, 0, -VASCA - 5.6), 0.6, sotto)
+	_ostacolo(Vector3(-VASCA - 2.0, 0, -VASCA - 5.6), 0.6, sotto)
 	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa)
 	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
 			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
@@ -1573,8 +1579,9 @@ func _imbarco() -> void:
 	# (la collisione fin dove arriva la tettoia di paglia, 1,55 m dal centro fra 1 e 1,5 m d'altezza: con 1,3 m ci si
 	# entrava con la testa, controllo del 23 ottobre)
 	_ostacolo(Vector3(-14.0, 0, -6.0), 1.6, 2.1)
-	_metti("totem_tiki", Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 135.0)
-	_ostacolo(Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 0.4, 2.5)
+	# (il totem, la pila di ciambelle e la palma un metro più in là dalla riva: lì ora c'è la roccia)
+	_metti("totem_tiki", Vector3(-VASCA - 1.9, 0, -VASCA - 7.4), 135.0)
+	_ostacolo(Vector3(-VASCA - 1.9, 0, -VASCA - 7.4), 0.4, 2.5)
 	# i cartelli guardano chi arriva (riscontro dell'utente sulla v0.3.11: "i cartelli sono girati a cazzo di cane,
 	# devono essere rivolti verso la direzione da cui arriva il giocatore"): quello dei tuffi verso la fine della fila,
 	# quello dei bambini verso la porta d'ingresso (prima: verso la vasca e di taglio dalla porta)
@@ -1582,13 +1589,14 @@ func _imbarco() -> void:
 	_cartello_palo(tuffi, _verso(tuffi, FINE_FILA), "cartello_tuffi")
 	var bimbi := Vector3(INGRESSO_X + 2.2, 0, Z0 + 1.05)   # (prima il palo stava dentro la prima transenna)
 	_cartello_palo(bimbi, _verso(bimbi, Vector3(INGRESSO_X, 0, Z0 + 0.5)), "cartello_bimbi")
-	_metti("salvagente", Vector3(-2.6, 0, -8.5), -90.0)
-	_ostacolo(Vector3(-2.6, 0, -8.5), 0.5, 1.4)
+	# (sulla banchina fra l'acqua e la roccia della riva)
+	_metti("salvagente", Vector3(-2.05, 0, -8.5), -90.0)
+	_ostacolo(Vector3(-2.05, 0, -8.5), 0.5, 1.4)
 	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
 	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
 	# (la prima stava fra le transenne della fila, a 67 cm dal suo asse: ora 2,2 m fuori, sullo stesso lato)
 	await _pausa()
-	for p in [Vector3(-9.9, 0, -13.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 0.8, 0, -VASCA - 10.5)]:
+	for p in [Vector3(-9.9, 0, -13.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 2.0, 0, -VASCA - 10.5)]:
 		_metti("palma_finta", p, _randf() * 360.0)
 		# le foglie cominciano a 1,75 m e arrivano a 93 cm dal tronco: non ci si passa sotto con la testa
 		_ostacolo(p, 0.95, 2.0)
