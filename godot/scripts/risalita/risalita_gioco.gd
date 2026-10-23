@@ -12,9 +12,34 @@ extends Node3D
 ## del corridoio C2 una scala scende di 3,6 m e un corridoio porta all'ingresso del capannone.
 ## Per non disegnare il capannone (quasi 3 milioni di triangoli e una sessantina di luci) quando non si
 ## vede, le stanze sono visibili solo col giocatore dentro la strada nuova o vicino alle sue porte.
+## Per la memoria (23 ottobre, le schede da 4 GB) le due stanze non stanno sempre nella sala: si caricano in un
+## thread dalla sala pompe in poi ([method _serve]) e si scaricano quando il giocatore è andato oltre il
+## magazzino; lo stato dei loro oggetti lo tiene GameState ([method GameState.parcheggia]). I corridoi e le scale
+## di qui (pochi box) restano sempre.
 
-const FIUME := preload("res://scenes/risalita/fiume.tscn")
-const INFERMERIA := preload("res://scenes/risalita/infermeria.tscn")
+const SCENA_FIUME := "res://scenes/risalita/fiume.tscn"
+const SCENA_INFERMERIA := "res://scenes/risalita/infermeria.tscn"
+## I file che le due stanze caricano con load() mentre si costruiscono (modelli, materiali, texture): il thread li
+## carica prima, così la costruzione non ferma il gioco. Lo rifà tests/aggiorna_risorse_risalita.gd;
+## test_risalita_tardi controlla che sia completo.
+const ELENCO_RISORSE := "res://scenes/risalita/risorse_stanze.json"
+## Un materiale senza texture per ogni shader delle stanze che la sala non ha già: tenuti da subito, come quelli della
+## torre (SalaTorre.materiali_campione), così quegli shader non si compilano a gioco avviato. Lo rifà lo stesso
+## strumento.
+const CAMPIONI := "res://scenes/risalita/materiali_campione.tres"
+## I collezionabili delle stanze: contano nel totale anche quando le stanze non sono caricate (il visore delle
+## Polaroid mostra "x su 10" dall'inizio). test_risalita controlla che siano tutti qui.
+const COLLEZIONABILI := [[&"polaroid", &"PolaroidPecora"]]
+## Distanza dalle zone delle stanze sotto cui si disegnano (e devono esserci: se il thread non ha finito, si
+## finisce di caricarle lì, con un attimo di fermo).
+const VICINO := 4.0
+## Distanza sotto cui servono anche fuori dal tratto della strada nuova (tornando indietro dal magazzino), e
+## sopra cui, se non servono, si scaricano.
+const RITORNO := 10.0
+const LONTANO := 14.0
+## I checkpoint della strada nuova: dalla sala pompe (6) al magazzino escluso (la serranda, 16).
+const ORDINE_DA := 6
+const ORDINE_A := 16
 const F := preload("res://scripts/risalita/fiume_gioco.gd")
 const I := preload("res://scripts/risalita/infermeria_gioco.gd")
 
@@ -40,8 +65,18 @@ const SCALA_LARGA := 2.0
 const ALZATA := 0.18
 const PEDATA := 0.28
 
+## Falso: le stanze si caricano subito in _ready e restano sempre, come prima (strumenti e test che le vogliono
+## sempre). Lo stesso con Engine.set_meta(&"risalita_subito", true).
+@export var a_richiesta := true
 var fiume: Node3D
 var infermeria: Node3D
+var _in_caricamento := false
+# i file chiesti al thread, e quelli già arrivati (tenuti finché le stanze non sono costruite)
+var _richiesti: PackedStringArray = []
+var _tenuti: Array[Resource] = []
+# il capannone che si sta costruendo a pezzi (fiume resta vuoto finché non è finito)
+var _fiume_nuovo: Node3D
+var _campioni: Array = []
 var _corpo: StaticBody3D
 var _mat_cemento: StandardMaterial3D
 var _mat_lamiere: StandardMaterial3D
@@ -63,14 +98,12 @@ func _ready() -> void:
 	_corpo = StaticBody3D.new()
 	_corpo.name = "Corridoi"
 	add_child(_corpo)
-	fiume = FIUME.instantiate()
-	fiume.name = "Fiume"
-	fiume.transform = Transform3D(Basis(Vector3.UP, -PI * 0.5), CENTRO_FIUME)
-	add_child(fiume)
-	infermeria = INFERMERIA.instantiate()
-	infermeria.name = "Infermeria"
-	infermeria.position = CENTRO_INFERMERIA
-	add_child(infermeria)
+	for c in COLLEZIONABILI:
+		GameState.register_collectible(c[0], c[1])
+	if a_richiesta and not Engine.has_meta(&"risalita_subito") and ResourceLoader.exists(CAMPIONI):
+		_campioni = load(CAMPIONI).get_meta(&"materiali", [])
+		for m in _campioni:
+			(m as Material).get_rid()   # lo shader si crea adesso, non al primo uso
 	_zona_personale()
 	_scala_di_servizio()
 	_scala_fiume()
@@ -78,6 +111,17 @@ func _ready() -> void:
 	_zone.append(AABB(Vector3(-64.0, Y - 2.0, 50.0), Vector3(58.5, 12.0, 71.0)))
 	_zone.append(AABB(Vector3(-41.0, Y - 2.0, 36.5), Vector3(26.0, 11.0, 15.0)))
 	_zone.append(AABB(Vector3(CORRIDOIO_FIUME_X, Y - 1.0, 46.0), Vector3(13.0, 7.0, 22.0)))
+	# subito: senza richiesta, senza giocatore (strumenti), o ripartendo vicino alle stanze (un checkpoint
+	# della strada nuova: l'istantanea si applica dopo, alle stanze già al loro posto)
+	# (il giocatore qui non c'è ancora: viene dopo nella sala)
+	if Engine.has_meta(&"risalita_subito"):
+		a_richiesta = false
+	var subito := not a_richiesta
+	if not subito and GameState.is_restoring():
+		var pos: Array = (GameState.snapshot.get("player", {}) as Dictionary).get("position", [])
+		subito = pos.size() == 3 and _vicino(Vector3(pos[0], pos[1], pos[2]))
+	if subito:
+		_metti_stanze(load(SCENA_FIUME) as PackedScene, load(SCENA_INFERMERIA) as PackedScene, false)
 
 
 # --- pezzi di corridoio --------------------------------------------------------------------------------
@@ -322,16 +366,204 @@ func _rampa(lo: Vector3, n: int) -> void:
 	add_child(soff)
 
 
-# --- visibilità ----------------------------------------------------------------------------------------
+# --- caricamento e visibilità ---------------------------------------------------------------------------
+
+## Le stanze al loro posto, costruite subito. [param dopo]: a gioco avviato (non in _ready): i materiali si
+## unificano come quelli della sala (UnificaMateriali) e gli oggetti riprendono il loro stato.
+func _metti_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene, dopo: bool) -> void:
+	if fiume or scena_fiume == null or scena_infermeria == null:
+		return
+	var f := scena_fiume.instantiate() as Node3D
+	f.name = "Fiume"
+	f.transform = Transform3D(Basis(Vector3.UP, -PI * 0.5), CENTRO_FIUME)
+	# davanti ai corridoi, come quando si costruivano per prime in _ready
+	add_child(f)
+	move_child(f, 1)
+	_metti_infermeria(scena_infermeria, f, dopo)
+
+
+func _metti_infermeria(scena_infermeria: PackedScene, f: Node3D, dopo: bool) -> void:
+	infermeria = scena_infermeria.instantiate() as Node3D
+	infermeria.name = "Infermeria"
+	infermeria.position = CENTRO_INFERMERIA
+	add_child(infermeria)
+	move_child(infermeria, f.get_index() + 1)
+	fiume = f
+	_tenuti.clear()
+	if dopo:
+		UnificaMateriali.unifica(fiume)
+		UnificaMateriali.unifica(infermeria)
+		GameState.ripristina.call_deferred(fiume)
+		GameState.ripristina.call_deferred(infermeria)
+		_aggiorna_visibilita()
+
+
+## Le stanze a gioco avviato, coi file già caricati dal thread: il capannone si costruisce a pezzi (nascosto e
+## fermo), qualche millisecondo per fotogramma, poi l'infermeria (poca roba) e si mostrano.
+func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene) -> void:
+	if fiume or _fiume_nuovo:
+		return
+	var f := scena_fiume.instantiate() as Node3D
+	f.name = "Fiume"
+	f.transform = Transform3D(Basis(Vector3.UP, -PI * 0.5), CENTRO_FIUME)
+	f.set(&"costruzione_a_pezzi", true)
+	f.visible = false
+	f.process_mode = Node.PROCESS_MODE_DISABLED
+	_fiume_nuovo = f
+	GameState.in_costruzione(f)
+	add_child(f)
+	move_child(f, 1)
+	await f.call(&"costruisci_a_pezzi")
+	# (una ripartenza ha ricaricato la sala mentre si costruiva, o le stanze non servono più e si sono tolte)
+	if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
+		return
+	_fiume_nuovo = null
+	f.process_mode = Node.PROCESS_MODE_INHERIT
+	_metti_infermeria(scena_infermeria, f, true)
+
+
+## Le stanze via, con lo stato dei loro oggetti messo da parte in GameState.
+func _togli_stanze() -> void:
+	if is_instance_valid(_fiume_nuovo):
+		remove_child(_fiume_nuovo)
+		_fiume_nuovo.queue_free()
+	_fiume_nuovo = null
+	_tenuti.clear()
+	if fiume == null:
+		return
+	for n in [fiume, infermeria]:
+		if is_instance_valid(n):
+			GameState.parcheggia(n)
+			remove_child(n)
+			n.queue_free()
+	fiume = null
+	infermeria = null
+
+
+## Distanza del punto dalle zone delle stanze (0 dentro).
+func _distanza(p: Vector3) -> float:
+	var d := INF
+	for z in _zone:
+		d = minf(d, p.clamp(z.position, z.end).distance_to(p))
+	return d
+
+
+## Il punto è dove le stanze si disegnano (dentro le zone, con [constant VICINO] di margine).
+func _vicino(p: Vector3) -> bool:
+	for z in _zone:
+		if z.grow(VICINO).has_point(p):
+			return true
+	return false
+
+
+## Le stanze servono: col giocatore vicino, o dalla sala pompe al magazzino (gli ultimi checkpoint), o tornando
+## indietro dopo.
+func _serve(p: Vector3) -> bool:
+	var ordine := int(GameState.snapshot.get("order", -1))
+	return _vicino(p) or (ordine >= ORDINE_DA and (ordine < ORDINE_A or _distanza(p) < RITORNO))
+
 
 func _process(_delta: float) -> void:
 	var p: Node3D = GameState.player if GameState.player and is_instance_valid(GameState.player) else null
-	var dentro := p == null
-	if p:
-		for z in _zone:
-			if z.grow(4.0).has_point(p.global_position):
-				dentro = true
-				break
+	if p == null or not a_richiesta:
+		# senza giocatore (strumenti, scene di prova) o senza richiesta: le stanze ci sono sempre
+		_carica_subito()
+	elif not Game.uscendo:
+		var pos := p.global_position
+		var serve := _serve(pos)
+		if fiume == null and serve:
+			if _vicino(pos):
+				_carica_subito()
+			elif not _in_caricamento and _fiume_nuovo == null:
+				_richiedi_tutto()
+		elif fiume and not serve and _distanza(pos) > LONTANO:
+			_togli_stanze()
+		if _in_caricamento:
+			_controlla_thread()
+	_aggiorna_visibilita()
+
+
+## Chiede al thread le due scene e i file che usano mentre si costruiscono.
+func _richiedi_tutto() -> void:
+	_richiesti = [SCENA_FIUME, SCENA_INFERMERIA]
+	var elenco = JSON.parse_string(FileAccess.get_file_as_string(ELENCO_RISORSE)) if FileAccess.file_exists(ELENCO_RISORSE) else []
+	for percorso in (elenco if elenco is Array else []):
+		if String(percorso).begins_with("res://") and ResourceLoader.exists(percorso):
+			_richiesti.append(percorso)
+	_tenuti.clear()
+	_in_caricamento = true
+	for percorso in _richiesti:
+		# (già chiesto da questa sala prima di una ripartenza: non si richiede)
+		var stato := ResourceLoader.load_threaded_get_status(percorso)
+		if stato != ResourceLoader.THREAD_LOAD_IN_PROGRESS and stato != ResourceLoader.THREAD_LOAD_LOADED:
+			Game.carica_in_thread(percorso)
+
+
+## Il caricamento nel thread: quando è finito tutto, le stanze si costruiscono (se servono ancora); quello che il
+## thread non ha caricato lo carica la costruzione stessa.
+func _controlla_thread() -> void:
+	for percorso in _richiesti:
+		if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			return
+	_in_caricamento = false
+	var scene: Array[PackedScene] = []
+	for percorso in _richiesti:
+		var r: Resource = null
+		if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_LOADED:
+			r = ResourceLoader.load_threaded_get(percorso)
+		if r == null:
+			push_warning("Risalita: %s non caricato nel thread" % percorso)
+		elif percorso == SCENA_FIUME or percorso == SCENA_INFERMERIA:
+			scene.append(r as PackedScene)
+		else:
+			_tenuti.append(r)
+	_richiesti.clear()
+	var p: Node3D = GameState.player if GameState.player and is_instance_valid(GameState.player) else null
+	if p and not _serve(p.global_position):
+		_tenuti.clear()
+		return
+	if scene.size() == 2 and scene[0] and scene[1]:
+		_costruisci_stanze(scene[0], scene[1])
+	else:
+		_carica_subito()
+
+
+## Le stanze servono adesso: si aspetta il thread (se è partito) o si caricano qui, e si costruiscono subito.
+func _carica_subito() -> void:
+	if fiume:
+		return
+	if _fiume_nuovo:
+		# si stanno costruendo a pezzi: il resto senza pause, al prossimo fotogramma
+		_fiume_nuovo.call(&"finisci_subito")
+		return
+	var f: PackedScene
+	var i: PackedScene
+	if _in_caricamento:
+		_in_caricamento = false
+		for percorso in _richiesti:
+			var r := ResourceLoader.load_threaded_get(percorso)
+			if percorso == SCENA_FIUME:
+				f = r as PackedScene
+			elif percorso == SCENA_INFERMERIA:
+				i = r as PackedScene
+			elif r:
+				_tenuti.append(r)
+		_richiesti.clear()
+	if f == null:
+		f = load(SCENA_FIUME) as PackedScene
+	if i == null:
+		i = load(SCENA_INFERMERIA) as PackedScene
+	_metti_stanze(f, i, true)
+
+
+## Per gli strumenti e i test che vogliono le stanze subito, dovunque sia il giocatore.
+func carica_subito() -> void:
+	_carica_subito()
+
+
+func _aggiorna_visibilita() -> void:
+	var p: Node3D = GameState.player if GameState.player and is_instance_valid(GameState.player) else null
+	var dentro := p == null or _vicino(p.global_position)
 	if fiume and fiume.visible != dentro:
 		fiume.visible = dentro
 		infermeria.visible = dentro

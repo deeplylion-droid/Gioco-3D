@@ -131,6 +131,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre.gd
 
+      - name: Test della riserva della torre (thread lento al portone)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_riserva.gd
+
       - name: Test dell'inseguimento (le condotte, SB1)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento.gd
@@ -182,6 +186,10 @@ jobs:
       - name: Test della strada nuova della risalita
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita.gd
+
+      - name: Test della risalita caricata più tardi (memoria)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita_tardi.gd
 
       - name: Test luci bianche al 40% (variante di prova)
         if: steps.progetto.outputs.presente == 'si'
