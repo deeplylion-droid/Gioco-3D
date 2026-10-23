@@ -42,7 +42,9 @@ func _run() -> void:
 	var lei := scena.get_node("Jilly") as Node3D
 	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	# GI, sonde e acqua si assestano
-	for i in 360:
+	for i in 120:
+		if i % 20 == 0:
+			print("assesto ", i)
 		await get_tree().process_frame
 	var occhio: Vector3 = lei.call(&"get_eye_position")
 	print("occhio ", occhio, " animazione ", ap.current_animation)
