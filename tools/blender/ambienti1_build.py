@@ -913,7 +913,7 @@ def stanzino(M):
     statico.append(L.unisci('radiatore', rad))
     # cassetta del pronto soccorso a muro: alta 42 cm, così sporge 24 cm (con 60 cm sporgeva 34 cm, oltre i 25 della
     # regola per le cose a muro: controllo del 23 ottobre), appoggiata al muro e con la sua collisione
-    cps = prop('cassetta_pronto_soccorso', 'cassetta_pronto_soccorso', (14.1, Y1 - 0.15, 1.15), 180, 0.42, 'z')
+    cps = prop('cassetta_pronto_soccorso', 'cassetta_pronto_soccorso', (14.25, Y1 - 0.15, 1.15), 180, 0.42, 'z')   # accanto al salvagente, non contro
     attacca(cps, (0, 1, 0))
     col_ob(cps)
     L.toro('salvagente_parete', Vector((13.6, Y1 - 0.08, 1.75)), 0.27, 0.075, M['salvagente'], rot=(R(90), 0, 0))
