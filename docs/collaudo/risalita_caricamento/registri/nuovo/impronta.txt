@@ -1,0 +1,3 @@
+COMMIT 7a47e60
+RIGA impronta_nodi = 1246
+RISULTATO: 0 controlli ok, 0 falliti

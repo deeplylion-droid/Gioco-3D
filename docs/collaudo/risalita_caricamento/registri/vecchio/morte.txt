@@ -1,0 +1,10 @@
+COMMIT 12d9c79
+RIGA morte_fiume_paratia_prima = { "a_destra": false }
+RIGA morte_fiume_ripartito_da = 10
+RIGA morte_fiume_caricate = true
+RIGA morte_fiume_paratia_dopo = { "a_destra": true }
+RIGA morte_infermeria_cassetto_prima = { "aperto": true }
+RIGA morte_infermeria_ripartito_da = 12
+RIGA morte_infermeria_cassetto_dopo = { "aperto": false }
+RIGA morte_approdo_paratia2 = { "a_destra": false }
+RISULTATO: 0 controlli ok, 0 falliti

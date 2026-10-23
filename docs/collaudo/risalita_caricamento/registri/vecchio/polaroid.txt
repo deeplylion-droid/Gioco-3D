@@ -1,0 +1,13 @@
+COMMIT 12d9c79
+RIGA polaroid_totale_avvio = 10
+RIGA avvio_caricate = true a_richiesta=<null> risalita_subito=false
+RIGA polaroid_totale_caricate = 10
+RIGA polaroid_c_e = true
+RIGA visore_chiuso = true
+RIGA polaroid_raccolte = 1
+RIGA polaroid_scaricate = false
+RIGA polaroid_ricomparsa = false
+RIGA polaroid_totale_fine = 10
+RIGA polaroid_ricomparsa_dopo_morte = false
+RIGA polaroid_raccolte_dopo_morte = 1
+RISULTATO: 0 controlli ok, 0 falliti

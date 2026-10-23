@@ -1,0 +1,4 @@
+COMMIT 12d9c79
+RIGA uscita_quando = in_caricamento=<null> in_costruzione=false
+RISULTATO: 0 controlli ok, 0 falliti
+USCITA chiesta a 20679 ms

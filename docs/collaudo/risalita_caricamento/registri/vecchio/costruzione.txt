@@ -1,0 +1,8 @@
+COMMIT 12d9c79
+RIGA costruzione_scaricate = false
+RIGA costruzione_dopo_ripartenza_caricate = true
+RIGA costruzione_in_corso_quando_7 = false
+RIGA costruzione_istantanea_7 = { "Risalita/Fiume/FiumeLento/Paratia1": { "a_destra": false }, "Risalita/Infermeria/Cassaforte": { "cifre": [0, 0, 0], "aperta": true }, "Risalita/Infermeria/Cassetto11": { "aperto": true }, "Risalita/Infermeria/Negatoscopio": { "con_radiografia": true } }
+RIGA costruzione_stato_dopo = { "Risalita/Fiume/FiumeLento/Paratia1": { "a_destra": false }, "Risalita/Fiume/FiumeLento/Paratia2": { "a_destra": false }, "Risalita/Fiume/FiumeLento/Paratia3": { "a_destra": false }, "Risalita/Infermeria/Negatoscopio": { "con_radiografia": true }, "Risalita/Infermeria/Cassaforte": { "cifre": [0, 0, 0], "aperta": true }, "Risalita/Infermeria/Cassetto11": { "aperto": true }, "Risalita/Infermeria/Cassetto12": { "aperto": false }, "Risalita/Infermeria/Cassetto23": { "aperto": true }, "Risalita/Infermeria/Interruttore": { "powered": false }, "Risalita/Infermeria/Keycard": "no", "Risalita/Infermeria/Cassetto14/Frontale/Radiografia": "no", "Risalita/Infermeria/PolaroidPecora": "c\'è" }
+  ok   il checkpoint preso mentre si costruivano non perde lo stato messo da parte
+RISULTATO: 1 controlli ok, 0 falliti
