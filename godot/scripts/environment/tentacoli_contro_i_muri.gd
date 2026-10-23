@@ -7,6 +7,7 @@ extends SkeletonModifier3D
 ## portarla fuori, a contatto con la superficie (per la via più corta che dà la fisica), tenendo la sua lunghezza. Il tratto dopo riparte dalla direzione
 ## dell'animazione: il tentacolo si appoggia sul bordo e ricade lungo la faccia esterna come nella posa, solo
 ## fuori dal muro. Dove non tocca niente la posa resta quella dell'animazione.
+## Con [member posa_fissa] (la fossa dei bimbi) le pieghe non si cercano: si mettono quelle calcolate prima.
 ## Le pieghe si cercano con la fisica ogni [member ogni] fotogrammi (la posa "affacciata" cambia appena: solo
 ## il respiro) e subito se lei si sposta; negli altri fotogrammi si rimettono quelle trovate.
 ## Le ossa dei tentacoli sono "tentacolo_NN_MM" (medusa.glb): ogni catena si trova dai padri.
@@ -19,6 +20,11 @@ extends SkeletonModifier3D
 @export var stacco := 0.04
 ## Ogni quanti fotogrammi si cercano di nuovo le pieghe.
 @export var ogni := 6
+## Una posa già calcolata (tools/tentacoli_fossa_posa.gd: per osso la rotazione della sua direzione, nel
+## riferimento dello scheletro): se c'è, si mette quella, senza fisica, piena dove è stata calcolata e sempre meno
+## fino a [member raggio_fissa] metri di distanza (lei che sbuca, scivola, si tuffa).
+@export_file("*.json") var posa_fissa := ""
+@export var raggio_fissa := 0.3
 ## Le collisioni da non contare (per esempio il coperchio invisibile della fossa).
 var esclusi: Array[RID] = []
 ## Quanto è durato l'ultimo calcolo (microsecondi), per misurarlo.
@@ -31,6 +37,8 @@ var _conta := 0
 var _dove := Transform3D()
 var _sfera := SphereShape3D.new()
 var _q := PhysicsShapeQueryParameters3D.new()
+var _fissa := {}                 # osso -> Quaternion (riferimento dello scheletro)
+var _origine_fissa := Vector3.ZERO
 
 
 func _ready() -> void:
@@ -76,6 +84,9 @@ func _process_modification() -> void:
 	var sg := sk.global_transform
 	# di nuovo con la fisica ogni tanto, o subito se lei si è spostata (sbuca, scivola, il tuffo)
 	var cerca := _conta <= 0 or sg.origin.distance_to(_dove.origin) > 0.005 or not sg.basis.is_equal_approx(_dove.basis)
+	if posa_fissa != "":
+		cerca = false
+		_metti_fissa(sk, sg)
 	var spazio: PhysicsDirectSpaceState3D = null
 	if cerca:
 		spazio = get_world_3d().direct_space_state
@@ -141,6 +152,32 @@ func _process_modification() -> void:
 			sk.set_bone_pose_rotation(catena[i], locale.basis.get_rotation_quaternion())
 			padre_mondo = nuovo
 	durata_usec = Time.get_ticks_usec() - t0
+
+
+## Le rotazioni della posa fissa per questo fotogramma, pesate con la distanza dal punto dove è stata calcolata.
+func _metti_fissa(sk: Skeleton3D, sg: Transform3D) -> void:
+	if _fissa.is_empty():
+		var d = JSON.parse_string(FileAccess.get_file_as_string(posa_fissa))
+		if not d is Dictionary:
+			push_warning("TentacoliControIMuri: posa fissa illeggibile: " + posa_fissa)
+			posa_fissa = ""
+			return
+		var o: Array = d.get("origine_scheletro", [0, 0, 0])
+		_origine_fissa = Vector3(o[0], o[1], o[2])
+		for nome in d.get("giri", {}):
+			var b := sk.find_bone(nome)
+			var q: Array = d["giri"][nome]
+			if b >= 0:
+				_fissa[b] = Quaternion(q[0], q[1], q[2], q[3])
+	var w := clampf(1.0 - sg.origin.distance_to(_origine_fissa) / maxf(raggio_fissa, 0.01), 0.0, 1.0)
+	var r := sg.basis.get_rotation_quaternion()
+	for k in _catene.size():
+		var giri := []
+		if w > 0.0:
+			for b in _catene[k]:
+				var q: Quaternion = Quaternion.IDENTITY.slerp(_fissa.get(b, Quaternion.IDENTITY), w)
+				giri.append(r * q * r.inverse())
+		_giri[k] = giri
 
 
 ## Se la sfera del tentacolo (raggio in _sfera) centrata in [param q] entra nella collisione del mondo, lo

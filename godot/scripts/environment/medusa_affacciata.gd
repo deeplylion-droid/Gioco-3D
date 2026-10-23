@@ -30,6 +30,8 @@ const ANIMAZIONI_INSEGUIMENTO := "res://assets/models/medusa/medusa_inseguimento
 @export var gocce := true
 ## I tentacoli si piegano contro i muri invece di entrarci (TentacoliControIMuri, sopra l'animazione).
 @export var tentacoli_contro_i_muri := false
+## Con tentacoli_contro_i_muri: la posa dei tentacoli già calcolata (TentacoliControIMuri.posa_fissa), se c'è.
+@export_file("*.json") var tentacoli_posa_fissa := ""
 
 var _bersaglio: Node3D
 var _occhio: LookAtModifier3D
@@ -66,6 +68,7 @@ func _dopo_rebuild() -> void:
 		_tentacoli = TentacoliControIMuri.new()
 		_tentacoli.name = "TentacoliControIMuri"
 		_tentacoli.esclusi = _esclusi_tentacoli
+		_tentacoli.posa_fissa = tentacoli_posa_fissa
 		sk.add_child(_tentacoli)
 	if sk and sk.find_bone(osso_occhio) >= 0:
 		if _bersaglio == null:
