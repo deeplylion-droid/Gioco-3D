@@ -379,7 +379,10 @@ def appendi_muro(nome, a, b, n, z0, tavolozza, obs, rnd, passo=(0.9, 1.8), vuoti
             break
         u = max(u, dm.x / 2 + 0.05)   # niente che sporga oltre l'inizio del muro (le aperture dei corridoi)
         c = a + d * u + n * (dm.y / 2 + 0.005)
-        zz = (zfun(c) if zfun else 0) + z0 - dm.z / 2 + rnd.uniform(-0.06, 0.06)
+        # all'altezza della testa (da 1,2 m) a muro si sporge al massimo 25 cm (regola del coordinatore, 23 ottobre): i
+        # rulli col tubo (44 cm) e gli estintori con la staffa (25,1 cm) vanno sotto, con la cima a 1,15 m al più
+        z0k = z0 if dm.y <= 0.24 else min(z0, 1.09 - dm.z / 2)
+        zz = (zfun(c) if zfun else 0) + z0k - dm.z / 2 + rnd.uniform(-0.06, 0.06)
         o = HQ.metti(f'{nome}_{k_obj}', file, (c.x, c.y, zz), (dm.x, dm.y, dm.z), rot_z=rz)
         if _tocca(o, gia):
             bpy.data.objects.remove(o)
@@ -496,7 +499,10 @@ def percorso_pieno(nome, tav_terra, tav_muro, tav_piccoli, obs, rnd, tubi=None):
         # davanti al mucchio di gonfiabili del raccordo (x 36,5) non si mette niente: col mucchio la corsia si chiudeva
         riempi_muro(f'{nome}_c3{lato}', (XC0 - 0.1, y), (XM1 + 0.4, y), nn, Z_SALA, tav_terra, obs, 0.4, rnd,
                     vuoti=((XC0 - 0.1 - 38.2, XC0 - 0.1 - 34.8),))
-        appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA)
+        # nel muro sud la porta della scala di servizio (x 36,59..37,59): niente appeso nel vano (i vuoti sono per il
+        # centro dell'oggetto, larghi mezzo oggetto in più, fino a 45 cm, e 5 cm)
+        appendi_muro(f'{nome}_c3{lato}_m', (XC0, y), (XM1 + 0.3, y), nn, 1.55, tav_muro, obs, rnd, zfun=lambda p: Z_SALA,
+                     vuoti=((XC0 - 37.59 - 0.5, XC0 - 36.59 + 0.5),) if lato == 's' else ())
     if tubi:
         mat, quanti = tubi
         # R1: sotto il tubo grosso (2,45), fino al muro est del vano scala (prima finivano nel vuoto all'entrata)

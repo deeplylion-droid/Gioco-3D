@@ -560,6 +560,13 @@ func _porta_aperta(pos: Vector3, rot: float) -> void:
 	anta.roughness = 0.6
 	for lato in [-1.0, 1.0]:
 		_scatola_in(n, Vector3(0.08, 2.3, 0.36), Vector3(lato * 0.66, 1.15, 0.0), telaio)
+		# gli stipiti hanno la loro collisione: senza, chi passa la porta ci entrava con la spalla e la testa
+		var fs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = Vector3(0.08, 2.3, 0.36)
+		fs.shape = bs
+		fs.transform = n.transform * Transform3D(Basis(), Vector3(lato * 0.66, 1.15, 0.0))
+		_collisioni.add_child(fs)
 	_scatola_in(n, Vector3(1.4, 0.1, 0.36), Vector3(0, 2.28, 0.0), telaio)
 	# l'anta spalancata fin contro il muro (175 gradi: lo stipite non la lascia andare oltre; a 95 gradi quella
 	# dell'ingresso entrava nella prima transenna), con la sua collisione
@@ -1416,7 +1423,9 @@ func _imbarco() -> void:
 		_metti("ciambella", c[0], c[1])
 	# la capanna tiki, il totem, i cartelli a pittogrammi
 	_metti("capanna_tiki", Vector3(-14.0, 0, -6.0), 60.0)
-	_ostacolo(Vector3(-14.0, 0, -6.0), 1.3, 2.1)
+	# (la collisione fin dove arriva la tettoia di paglia, 1,55 m dal centro fra 1 e 1,5 m d'altezza: con 1,3 m ci si
+	# entrava con la testa, controllo del 23 ottobre)
+	_ostacolo(Vector3(-14.0, 0, -6.0), 1.6, 2.1)
 	_metti("totem_tiki", Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 135.0)
 	_ostacolo(Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 0.4, 2.5)
 	_cartello_palo(Vector3(-VASCA - 0.6, 0, -VASCA - 2.4), 90.0, "cartello_tuffi")
