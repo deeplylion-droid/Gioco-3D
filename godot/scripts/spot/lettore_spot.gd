@@ -5,6 +5,8 @@ extends CanvasLayer
 ## vivo, il filtro della TV a tubo e della VHS di enigmi con il guasto e l'effetto dell'occhio, e l'audio: la sigla
 ## pulita, poi quella rovinata, la voce dello speaker e il ronzio. Tempi in scenes/spot/spot_inquadrature.json
 ## ("audio" e "filtro").
+## I sottotitoli delle frasi dello speaker ("sottotitoli" nel JSON) vanno puliti sopra il filtro, sempre accesi:
+## in basso al centro, bianchi col contorno scuro, nel Barlow dell'interfaccia (stile A scelto dall'utente).
 ## Si salta tenendo premuto un tasto qualunque (o un pulsante del joypad o del mouse) per [member tenere_per_saltare]
 ## secondi: un anello nell'angolo si riempie. Alla fine, o saltato, emette [signal finito] e, se c'è
 ## [member scena_dopo], passa a quella (col velo nero della Dissolvenza, come il menu).
@@ -45,6 +47,7 @@ var _finito := false
 @onready var _occhio: ColorRect = $Occhio
 @onready var _vhs: ColorRect = $Vhs
 @onready var _anello: Control = $Anello
+@onready var _sottotitolo: Label = $Sottotitolo
 
 
 ## Mette il lettore sopra tutto e lo fa partire; alla fine passa a [param poi] (vuoto: resta lì, si ascolta
@@ -82,6 +85,14 @@ func _ready() -> void:
 		add_child(p)
 		_audio.append({"voce": a, "player": p})
 	_anello.draw.connect(_disegna_anello)
+	_sottotitolo.add_theme_font_override(&"font", StileMenu.barlow(true))
+	_sottotitolo.add_theme_color_override(&"font_color", Color.WHITE)
+	_sottotitolo.add_theme_color_override(&"font_outline_color", Color(0, 0, 0, 0.85))
+	_sottotitolo.add_theme_color_override(&"font_shadow_color", Color(0, 0, 0, 0.5))
+	_sottotitolo.add_theme_constant_override(&"shadow_offset_x", 0)
+	_sottotitolo.add_theme_constant_override(&"shadow_offset_y", 2)
+	get_viewport().size_changed.connect(_misura_sottotitolo)
+	_misura_sottotitolo()
 	_video.play()
 	# se la Dissolvenza del menu è nera, si schiarisce subito: lo spot comincia dal suo schermo blu
 	if Dissolvenza.presente(get_tree()):
@@ -108,6 +119,7 @@ func _process(delta: float) -> void:
 				_occhio.set(&"progresso", v)
 		elif _vhs.visible:
 			(_vhs.material as ShaderMaterial).set_shader_parameter(campo, v)
+	_sottotitola(_t)
 	if _tenuto:
 		_premuto += delta
 		if _premuto >= tenere_per_saltare:
@@ -139,6 +151,25 @@ func _suona(e: Dictionary, t: float) -> void:
 		p.volume_db = v + linear_to_db(maxf(sfuma, 0.0001))
 	elif p.playing:
 		p.stop()
+
+
+## Mostra la frase che va al tempo [param t] (nessuna: il sottotitolo si spegne).
+func _sottotitola(t: float) -> void:
+	var testo := ""
+	for s in _dati.get("sottotitoli", []):
+		if t >= float(s["da"]) and t < float(s["a"]):
+			testo = String(s["testo"])
+	_sottotitolo.text = testo
+	_sottotitolo.visible = testo != ""
+
+
+## Carattere e contorno in proporzione all'altezza dello schermo (30 px a 720).
+func _misura_sottotitolo() -> void:
+	var h := get_viewport().get_visible_rect().size.y
+	_sottotitolo.add_theme_font_size_override(&"font_size", roundi(h * 0.042))
+	_sottotitolo.add_theme_constant_override(&"outline_size", maxi(roundi(h * 0.0075), 2))
+	_sottotitolo.offset_top = -h * 0.21
+	_sottotitolo.offset_bottom = -h * 0.067
 
 
 func _ferma(acceso: bool) -> void:
@@ -201,6 +232,7 @@ func _fine() -> void:
 		return
 	_finito = true
 	_video.stop()
+	_sottotitolo.visible = false
 	for e in _audio:
 		(e["player"] as AudioStreamPlayer).stop()
 	finito.emit()
