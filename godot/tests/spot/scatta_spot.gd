@@ -16,11 +16,12 @@ func _ready() -> void:
 
 
 func _run() -> void:
-	# qualità piena (preset "ultra"), senza salvare le impostazioni del giocatore
+	# preset grafico dalla variabile PRESET_SPOT (di serie "alto"; "ultra" a 1920x1080 sul renderer software riempie
+	# la memoria e la macchina si riavvia), senza salvare le impostazioni del giocatore
 	var g := get_node_or_null(^"/root/Grafica")
 	if g:
 		g.set(&"salva_su_disco", false)
-		g.call(&"applica_preset", "ultra")
+		g.call(&"applica_preset", OS.get_environment("PRESET_SPOT") if OS.get_environment("PRESET_SPOT") != "" else "alto")
 	var scena := (load(_args[1]) as PackedScene).instantiate()
 	get_tree().root.add_child(scena)
 	var cartella := _args[2]
