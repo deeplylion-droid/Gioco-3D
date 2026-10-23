@@ -1681,5 +1681,39 @@
   },
   "motivo": "sotto la pila di palloni, assestata fino al pavimento",
   "chiave": "det_foglio_2 14.004,18.058"
+ },
+ {
+  "posto": {
+   "nodo": "det_foglio_1",
+   "glb": "glb/detriti.glb",
+   "zona": "sala",
+   "gruppo": "mucchio_252",
+   "posizione": [
+    5.945,
+    -0.0354,
+    -12.783
+   ],
+   "rotazione_y_gradi": 135.0,
+   "basis": [
+    [
+     -0.7068,
+     0.1163,
+     -0.6978
+    ],
+    [
+     0.0,
+     0.9864,
+     0.1644
+    ],
+    [
+     0.7074,
+     0.1162,
+     -0.6972
+    ]
+   ],
+   "corretto_22_sera": "piscina det_foglio_1 19"
+  },
+  "motivo": "sul bordo della piscina: il 32% dentro piscina_bordi (controllo del 23 ottobre, dentro dal verso delle facce)",
+  "chiave": "det_foglio_1 5.945,-12.783"
  }
 ]
