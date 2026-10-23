@@ -263,7 +263,7 @@ def cuoci(arm, piedi, nome='risveglio'):
         posa = A.posa(t, piedi)
         x, y, yaw = A.radice(t)
         for pb in pbs:
-            pb.location = (0, 0, 0); pb.rotation_quaternion = (1, 0, 0, 0)
+            pb.location = (0, 0, 0); pb.rotation_quaternion = (1, 0, 0, 0); pb.scale = (1, 1, 1)
         pbs['radice'].location = (x, y, 0)
         pbs['radice'].rotation_quaternion = Quaternion((0, 0, 1), yaw)
         B3 = B['bacino'].to_3x3()
@@ -277,6 +277,9 @@ def cuoci(arm, piedi, nome='risveglio'):
                 R = _rot_mondo(lista)
             Bo = B[osso].to_3x3()
             pbs[osso].rotation_quaternion = (Bo.inverted() @ R @ Bo).to_quaternion()
+        # nel vano della porta il busto si stringe di lato (è largo 1,4 m, il vano 1,22): la x locale della spina è
+        # quella del mondo (l'osso va in su)
+        pbs['spina'].scale = (posa.get('_stringi', 1.0), 1.0, 1.0)
         bpy.context.view_layer.update()
         # gambe: IK a due ossa verso la caviglia, il ginocchio in avanti
         avanti = Vector((math.sin(yaw), -math.cos(yaw), 0))
@@ -335,6 +338,7 @@ def cuoci(arm, piedi, nome='risveglio'):
         for pb in pbs:
             pb.keyframe_insert('rotation_quaternion', frame=f)
             pb.keyframe_insert('location', frame=f)
+            pb.keyframe_insert('scale', frame=f)
     bpy.ops.object.mode_set(mode='OBJECT')
     bpy.context.scene.frame_start = 0; bpy.context.scene.frame_end = n - 1
     bpy.context.scene.render.fps = A.FPS; bpy.context.scene.render.fps_base = 1.0
@@ -361,6 +365,9 @@ def esporta(mesh, arm, dati):
                               export_force_sampling=True, export_skins=True, export_def_bones=True)
     with open(USCITA.replace('.glb', '.json'), 'w') as f:
         json.dump(dati, f, indent=1)
+    # il bordo delle labbra (per la bava: scripts/interni/bava_squalo.gd)
+    with open(USCITA.replace('.glb', '_labbra.json'), 'w') as f:
+        json.dump(BOCCA.LABBRA, f)
     print('ESPORTATO', USCITA, dati)
 
 
