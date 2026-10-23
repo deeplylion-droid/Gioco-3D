@@ -77,8 +77,18 @@ static func materiale(nome: String) -> Material:
 	return sm
 
 
+## Quante colature di ruggine si sono chieste dall'inizio della scena (si mette una su due).
+static var ruggine_contate := 0
+
+
 ## Decal in coordinate locali della scena degli interni (come i glTF). normale = verso la stanza.
 static func decal(radice: Node3D, tipo: String, pos: Vector3, normale: Vector3, w: float, h: float, alfa := 0.85, rot := 0.0) -> Decal:
+	if tipo == "ruggine":
+		# una colatura di ruggine su due (muri più calmi, proposta texture_muri del 23 ottobre); il conto riparte con
+		# ogni scena (metti_decal, tecnici._decal)
+		ruggine_contate += 1
+		if ruggine_contate % 2 == 0:
+			return null
 	var d := Decal.new()
 	d.texture_albedo = load(SHT + "decal_" + tipo + ".png")
 	d.size = Vector3(w, 0.3, h)
@@ -102,6 +112,7 @@ static func _base(su: Vector3, rot: float) -> Basis:
 
 ## I decal del pezzo campione: corridoio, zona del tornello e stanzino (posizioni scelte a mano).
 static func metti_decal(radice: Node3D) -> void:
+	ruggine_contate = 0
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 41
 	# colature di ruggine sotto i tubi del corridoio (parete nord, z = -2,6)
