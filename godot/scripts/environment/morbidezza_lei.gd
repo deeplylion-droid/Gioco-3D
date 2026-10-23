@@ -11,8 +11,11 @@ extends SkeletonModifier3D
 ##   quasi zero e l'onda lenta: fluttuano; in aria frustano e pendono. Fra i due si passa piano, punto per punto;
 ## - la collisione col mondo: ogni punto e il mezzo di ogni tratto restano fuori dalle forme convesse date da chi
 ##   conosce il posto (pareti, fondo, bordo, griglia: [method aggiungi_forme_da], [method aggiungi_scatola]) e
-##   sopra il pavimento, a un raggio dalla superficie; si spinge fuori dalla faccia più vicina, così scivola senza
-##   scatti. Le lunghezze dei tratti sono quelle di riposo delle ossa;
+##   sopra il pavimento, con tutta la pelle: la sezione vera di ogni osso (un'ellisse, i tentacoli sono nastri larghi
+##   e sottili: [constant SEZIONI]) girata come l'osso, e contro ogni faccia la sua misura in quella direzione più
+##   [constant MARGINE]. Così un nastro appoggiato di piatto sta a filo, uno di taglio sta fuori di tutta la
+##   larghezza. Si spinge fuori dalla faccia più vicina, così scivola senza scatti. Le lunghezze dei tratti sono
+##   quelle di riposo delle ossa;
 ## - la campana: pulsa (forme campana_contrai e campana_schiaccia, sommate a quelle che mette chi anima) e si
 ##   deforma col movimento: si allunga (contrai) quando accelera, si schiaccia quando frena o entra in acqua.
 ## [member quanto] da 0 (spento: la posa resta quella che arriva, identica) a 1; si accende e si spegne piano con
@@ -44,9 +47,17 @@ extends SkeletonModifier3D
 @export var distacco_massimo := 0.9
 ## La velocità più alta di un punto rispetto alla posa (m/s): le correzioni non lo lanciano.
 @export var velocita_massima := 12.0
-## Il raggio del tentacolo per le collisioni, alla radice e alla punta (m).
+## Il raggio del tentacolo per le collisioni, alla radice e alla punta (m), per le ossa che non sono in
+## [constant SEZIONI].
 @export var raggio_radice := 0.07
 @export var raggio_punta := 0.035
+## La sezione vera delle ossa dei tentacoli, presa dalla pelle (tests/genera_sezioni_tentacoli.gd): per osso
+## [angolo dall'asse X, mezza larghezza, mezzo spessore] nel piano X-Z dell'osso, in unità dello scheletro.
+const SEZIONI := "res://assets/models/medusa/medusa_sezioni_tentacoli.json"
+## Quanto la pelle resta staccata dal mondo, oltre la sua sezione (m).
+const MARGINE := 0.01
+## Di quanto si allargano le forme e la zona del tentacolo per cercare i contatti: più della sezione più larga (m).
+const VICINO := 0.2
 ## La campana: pulsazione (forma campana_contrai, ampiezza e battiti al secondo) e deformazione col movimento.
 @export var pulsa := 0.18
 @export var pulsa_hz := 0.9
@@ -82,6 +93,16 @@ const PASSO_LENTO := 1.0 / 15.0
 
 var _catene: Array[PackedInt32Array] = []
 var _lunghezze: Array[PackedFloat32Array] = []   # per catena: la lunghezza di riposo di ogni tratto (mondo)
+var _sez: Array[PackedVector3Array] = []   # per catena, per osso: [angolo, mezza larghezza, mezzo spessore] (mondo)
+static var _sezioni_file := {}             # osso (nome) -> [angolo, larghezza, spessore], da SEZIONI (una volta)
+# la sezione di ogni punto della catena che si sta muovendo, nel mondo: l'ellisse dell'osso prima (1) e di quello dopo
+# (2), come due semiassi; e la misura più grande (con il margine). Il tratto i usa l'ellisse 1 del punto i.
+var _s1a := PackedVector3Array()
+var _s1b := PackedVector3Array()
+var _s2a := PackedVector3Array()
+var _s2b := PackedVector3Array()
+var _smax := PackedFloat32Array()
+var _ssu := PackedFloat32Array()           # la misura verso l'alto (il pavimento), con il margine
 var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB, indice della faccia di sopra o -1,
                                            #  AABB allargata del raggio]
 var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle ossa e la punta
@@ -111,6 +132,8 @@ var _messo := {}                           # [mesh, indice] -> quanto ho aggiunt
 func _ready() -> void:
 	_peso = 0.0
 	_verso = -1.0
+	# le sezioni si leggono qui, con la scena, non quando lei compare (sarebbe un fotogramma lungo)
+	_leggi_sezioni()
 	# sempre dopo gli altri modificatori dello scheletro, anche quelli messi dopo (il tuffo)
 	var sk := get_parent()
 	if sk:
@@ -209,6 +232,85 @@ func _lunghezze_di(sk: Skeleton3D) -> void:
 			l[i] = sk.get_bone_rest(catena[i]).origin.length() * scala
 		l[n] = l[n - 1]
 		_lunghezze.append(l)
+	# le sezioni (dal file, o un cerchio col raggio di prima)
+	_leggi_sezioni()
+	_sez.clear()
+	for catena in _catene:
+		var n := catena.size()
+		var sz := PackedVector3Array()
+		for j in n:
+			var e = _sezioni_file.get(sk.get_bone_name(catena[j]))
+			if e is Array and e.size() == 3:
+				sz.append(Vector3(float(e[0]), float(e[1]) * scala, float(e[2]) * scala))
+			else:
+				var r := lerpf(raggio_radice, raggio_punta, (float(j) + 0.5) / n)
+				sz.append(Vector3(0.0, r, r))
+		_sez.append(sz)
+
+
+static func _leggi_sezioni() -> void:
+	if _sezioni_file.is_empty() and FileAccess.file_exists(SEZIONI):
+		var d = JSON.parse_string(FileAccess.get_file_as_string(SEZIONI))
+		if d is Dictionary and d.has("ossa"):
+			_sezioni_file = d["ossa"]
+
+
+## Le sezioni dei punti della catena [param k] nel mondo (_s1a, _s1b, _s2a, _s2b, _smax), con gli assi delle ossa della
+## posa [param g] girati come i tratti dei punti [param x] rispetto a quelli della posa [param tg] (vuoto: la posa).
+func _sezioni_qui(k: int, n: int, g: Array[Transform3D], tg: PackedVector3Array, x: PackedVector3Array) -> void:
+	_s1a.resize(n + 1)
+	_s1b.resize(n + 1)
+	_s2a.resize(n + 1)
+	_s2b.resize(n + 1)
+	_smax.resize(n + 1)
+	_ssu.resize(n + 1)
+	var sz: PackedVector3Array = _sez[k]
+	var ea := PackedVector3Array()
+	var eb := PackedVector3Array()
+	ea.resize(n)
+	eb.resize(n)
+	for j in n:
+		var b := g[j].basis
+		var ex := b.x.normalized()
+		var ez := b.z.normalized()
+		if x.size() == n + 1:
+			var d0 := tg[j + 1] - tg[j]
+			var d1 := x[j + 1] - x[j]
+			if d0.length_squared() > 1e-10 and d1.length_squared() > 1e-10:
+				var q := Quaternion(d0.normalized(), d1.normalized())
+				ex = q * ex
+				ez = q * ez
+		var e := sz[j]
+		var c := cos(e.x)
+		var s := sin(e.x)
+		ea[j] = (ex * c + ez * s) * e.y
+		eb[j] = (ez * c - ex * s) * e.z
+	for i in n + 1:
+		var j1 := maxi(i - 1, 0)
+		var j2 := mini(i, n - 1)
+		_s1a[i] = ea[j1]
+		_s1b[i] = eb[j1]
+		_s2a[i] = ea[j2]
+		_s2b[i] = eb[j2]
+		_smax[i] = maxf(maxf(sz[j1].y, sz[j1].z), maxf(sz[j2].y, sz[j2].z)) + MARGINE
+		_ssu[i] = sqrt(maxf(ea[j1].y * ea[j1].y + eb[j1].y * eb[j1].y, ea[j2].y * ea[j2].y + eb[j2].y * eb[j2].y)) + MARGINE
+
+
+## La misura della pelle al punto [param i] verso [param nrm] (le due ellissi, la più grande), più il margine.
+func _sup(nrm: Vector3, i: int) -> float:
+	var u := nrm.dot(_s1a[i])
+	var v := nrm.dot(_s1b[i])
+	var s1 := u * u + v * v
+	u = nrm.dot(_s2a[i])
+	v = nrm.dot(_s2b[i])
+	return sqrt(maxf(s1, u * u + v * v)) + MARGINE
+
+
+## La misura della pelle del tratto [param i] (l'osso i - 1) verso [param nrm], più il margine.
+func _sup_tratto(nrm: Vector3, i: int) -> float:
+	var u := nrm.dot(_s1a[i])
+	var v := nrm.dot(_s1b[i])
+	return sqrt(u * u + v * v) + MARGINE
 
 
 ## Il pelo dell'acqua sopra il punto (o -INF se non c'è acqua lì).
@@ -324,7 +426,7 @@ func _process_modification() -> void:
 			for q in _x[k]:
 				zona = zona.expand(q)
 		# (le punte in un fotogramma si muovono al più qualche decina di cm: oltre non serve guardare)
-		zona = zona.grow(raggio_radice * 1.5 + 0.25)
+		zona = zona.grow(VICINO + 0.25)
 		var forme: Array = []
 		for fo in _forme:
 			if (fo[1] as AABB).intersects(zona):
@@ -336,6 +438,7 @@ func _process_modification() -> void:
 				_x[k] = PackedVector3Array()
 				continue
 			partite += 1
+			_sezioni_qui(k, n, g, tg, PackedVector3Array())
 			_x[k] = _partenza(tg, n, forme, lung)
 			var zero := PackedVector3Array()
 			zero.resize(n + 1)
@@ -350,6 +453,7 @@ func _process_modification() -> void:
 		_radici_prima[k] = tg[0]
 		var x: PackedVector3Array = _x[k]
 		var v: PackedVector3Array = _v[k]
+		_sezioni_qui(k, n, g, tg, x)
 		# vicino al mondo, nei movimenti veloci (lo strappo del tuffo) un passo non deve portare un punto più in là di
 		# 12 cm: se no passerebbe il bordo da parte a parte (è largo 30 cm). Lì il fotogramma si divide, fino a 3 passi
 		if not forme.is_empty():
@@ -447,7 +551,7 @@ func _process_modification() -> void:
 				if scarto.length() > lim:
 					voluto = rif[i] + scarto.normalized() * lim
 					voluto = pred[i - 1] + (voluto - pred[i - 1]).normalized() * lung[i]
-				voluto = _fuori(voluto, lerpf(raggio_radice, raggio_punta, f), forme, x[i])
+				voluto = _fuori(voluto, lerpf(raggio_radice, raggio_punta, f), forme, x[i], false, i)
 				corr[i] = voluto - pred[i]
 				pred[i] = voluto
 			# poi, dove tocca il mondo, a giri: le lunghezze (i due capi di ogni tratto si vengono incontro, la
@@ -474,7 +578,7 @@ func _process_modification() -> void:
 							pred[i] -= e * 0.5
 					_tratti_fuori(pred, n, tocca, PackedVector3Array())
 					for i in range(1, n + 1):
-						pred[i] = _fuori(pred[i], lerpf(raggio_radice, raggio_punta, float(i) / n), tocca)
+						pred[i] = _fuori(pred[i], lerpf(raggio_radice, raggio_punta, float(i) / n), tocca, Vector3.INF, false, i)
 					# fermo: nessun tocco e lunghezze giuste, gli altri giri non servono
 					var mosso := 0.0
 					for i in range(1, n + 1):
@@ -525,7 +629,7 @@ func _partenza(tg: PackedVector3Array, n: int, forme: Array, lung: PackedFloat32
 				pt[i] -= e * 0.5
 		_tratti_fuori(pt, n, forme, PackedVector3Array())
 		for i in range(1, n + 1):
-			pt[i] = _fuori(pt[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, prima[i])
+			pt[i] = _fuori(pt[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, prima[i], false, i)
 	return pt
 
 
@@ -564,7 +668,7 @@ func _scrivi_ossa(sk: Skeleton3D, sg: Transform3D, catena: PackedInt32Array, n: 
 	for i in range(1, n + 1):
 		var posa := tg[i]
 		if w < 1.0:
-			posa = posa.lerp(_fuori(posa, lerpf(raggio_radice, raggio_punta, float(i) / n), forme), w)
+			posa = posa.lerp(_fuori(posa, lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, false, i if not forme.is_empty() else -1), w)
 		xo[i] = posa.lerp(x[i], w)
 	# le ossa: ogni osso parte dal suo punto e gira dalla direzione della posa verso il punto dopo (dal padre già
 	# girato); la lunghezza può cambiare di poco (dove tocca), la pelle si allunga o si accorcia lì
@@ -596,7 +700,7 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 	# la fossa, alla stessa quota; avvicinandosi al pavimento (negli ultimi 50 cm) tornano piano al loro posto
 	if _trattieni_k > 0.0 and fossa_pianta.size() >= 3:
 		if _fossa_dentro.is_empty():
-			var ins := Geometry2D.offset_polygon(fossa_pianta, -(raggio_radice + 0.05))
+			var ins := Geometry2D.offset_polygon(fossa_pianta, -(VICINO * 0.5 + 0.05))
 			_fossa_dentro = ins[0] if not ins.is_empty() else fossa_pianta
 		for i in range(1, n + 1):
 			var q := out[i]
@@ -614,7 +718,7 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			var k := clampf(sotto / 0.5, 0.0, 1.0) * _trattieni_k
 			out[i] = Vector3(lerpf(q.x, c.x, k), q.y, lerpf(q.z, c.y, k))
 	for i in range(1, n + 1):
-		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true)
+		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true, i)
 	for i in range(1, n + 1):
 		for fo in forme:
 			var su: int = fo[2]
@@ -624,10 +728,9 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			if not _tratto_dentro(out[i - 1], out[i], fo[0], 0.0):
 				continue
 			var y := cima.d / cima.normal.y      # la quota della cima (normale in su: y = d)
-			var r := lerpf(raggio_radice, raggio_punta, float(i) / n)
 			if i - 1 > 0:
-				out[i - 1].y = maxf(out[i - 1].y, y + r)
-			out[i].y = maxf(out[i].y, y + r)
+				out[i - 1].y = maxf(out[i - 1].y, y + _sup(Vector3.UP, i - 1))
+			out[i].y = maxf(out[i].y, y + _sup(Vector3.UP, i))
 	return out
 
 
@@ -693,7 +796,8 @@ func aggiungi_convesso(punti: PackedVector3Array) -> void:
 		for i in piani.size():
 			if piani[i].normal.y > 0.99:
 				sopra = i
-	_forme.append([piani, bb, sopra, bb.grow(maxf(raggio_radice, raggio_punta) * 1.5)])
+	# (la scatola allargata di VICINO, per cercare le forme vicine, e di 8 e 13 cm per i punti con la pelle più sottile)
+	_forme.append([piani, bb, sopra, bb.grow(VICINO), bb.grow(0.08), bb.grow(0.13)])
 
 
 ## Aggiunge una scatola (il suo centro e i suoi assi in [param xf], mezze misure [param mezzo]).
@@ -749,7 +853,9 @@ static func su(medusa: Node) -> MorbidezzaLei:
 ## fuori da [member buco_pavimento]) e le forme. Si spinge fuori dalla faccia da cui è entrato (dov'era, [param da]:
 ## così da una parete sottile non esce dall'altra parte), o se non si sa dalla più vicina: continuo, e il punto
 ## scivola. Nei [member tunnel] resta dentro il tubo, e alla bocca le forme non contano.
-func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false) -> Vector3:
+func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false, ip := -1) -> Vector3:
+	# (con [param ip], il punto della catena che si muove: la pelle vera, contro ogni faccia la sua misura lì)
+	var rmax := _smax[ip] if ip >= 0 else r
 	for t in tunnel:
 		var a: Vector3 = t[0]
 		var asse: Vector3 = (t[1] as Vector3) - a
@@ -760,43 +866,89 @@ func _fuori(p: Vector3, r: float, forme: Array, da := Vector3.INF, alto := false
 		var radiale := (p - a) - asse * lungo
 		var rho := radiale.length()
 		if lungo >= 0.0 and lungo <= la and rho < R:
-			if rho > R - r:
-				p = a + asse * lungo + radiale / rho * (R - r)
+			if rho > R - rmax:
+				p = a + asse * lungo + radiale / rho * maxf(R - rmax, 0.0)
 			return p
-		if lungo > -r and rho < R - r:
+		if lungo > -rmax and rho < R - rmax:
 			return p
+	var r_su := _ssu[ip] if ip >= 0 else r
+	var scatola := (4 if rmax <= 0.08 else (5 if rmax <= 0.13 else 3)) if ip >= 0 else 3
 	for giro in 2:
 		var mosso := false
-		if p.y < pavimento_y + r and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
-			p.y = pavimento_y + r
+		if p.y < pavimento_y + r_su and p.y > pavimento_y - 1.0 and not buco_pavimento.has_point(Vector2(p.x, p.z)):
+			p.y = pavimento_y + r_su
 			mosso = true
 		for fo in forme:
-			if not (fo[3] as AABB).has_point(p):
-				continue
 			var meglio: Plane
 			var dm := -INF
-			for pl: Plane in fo[0]:
-				var d := pl.distance_to(p)
-				if d > dm:
-					dm = d
-					meglio = pl
-			if dm >= r:
-				continue
+			var rf := r
+			if ip >= 0:
+				# (la scatola della forma allargata almeno della misura più grande di questo punto)
+				if not (fo[scatola] as AABB).has_point(p):
+					continue
+				# la faccia da cui è più fuori, ognuna con la misura della pelle verso di lei (_sup, scritta qui: è il
+				# pezzo che gira di più); una faccia da cui è fuori basta, e si smette
+				var gm := -INF
+				var fuori := false
+				var a1 := _s1a[ip]
+				var b1 := _s1b[ip]
+				var a2 := _s2a[ip]
+				var b2 := _s2b[ip]
+				for pl: Plane in fo[0]:
+					var d := pl.distance_to(p)
+					if d >= rmax:
+						fuori = true
+						break
+					var nn := pl.normal
+					var u1 := nn.dot(a1)
+					var v1 := nn.dot(b1)
+					var u2 := nn.dot(a2)
+					var v2 := nn.dot(b2)
+					var rp := sqrt(maxf(u1 * u1 + v1 * v1, u2 * u2 + v2 * v2)) + MARGINE
+					var gg := d - rp
+					if gg >= 0.0:
+						fuori = true
+						break
+					if gg > gm:
+						gm = gg
+						meglio = pl
+						rf = rp
+				if fuori:
+					continue
+				dm = meglio.distance_to(p)
+			else:
+				if not (fo[3] as AABB).has_point(p):
+					continue
+				for pl: Plane in fo[0]:
+					var d := pl.distance_to(p)
+					if d > dm:
+						dm = d
+						meglio = pl
+				if dm >= r:
+					continue
 			# dalla faccia da cui veniva (quella che dov'era aveva più lontana), se dov'era stava fuori
 			if da != Vector3.INF:
-				var dprima := -INF
+				var gprima := -INF
+				var scelta: Plane
+				var rs := rf
 				for pl: Plane in fo[0]:
-					var d0 := pl.distance_to(da)
-					if d0 > dprima:
-						dprima = d0
-						if d0 >= r - 1e-4:
-							meglio = pl
-				if dprima >= r - 1e-4:
+					var rp := _sup(pl.normal, ip) if ip >= 0 else r
+					var g0 := pl.distance_to(da) - rp
+					if g0 > gprima:
+						gprima = g0
+						scelta = pl
+						rs = rp
+				if gprima >= -1e-4:
+					meglio = scelta
+					rf = rs
 					dm = meglio.distance_to(p)
 			if alto:
-				meglio = _da_sopra(fo, p, meglio)
-				dm = meglio.distance_to(p)
-			p += meglio.normal * (r - dm)
+				var cima := _da_sopra(fo, p, meglio)
+				if cima != meglio:
+					meglio = cima
+					rf = _sup(meglio.normal, ip) if ip >= 0 else r
+					dm = meglio.distance_to(p)
+			p += meglio.normal * (rf - dm)
 			mosso = true
 		if not mosso:
 			break
@@ -824,16 +976,26 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 	if forme.is_empty():
 		return
 	for i in range(1, n + 1):
-		var r := lerpf(raggio_radice, raggio_punta, (float(i) - 0.5) / n)
+		# (la pelle del tratto: la sezione dell'osso i - 1, contro ogni faccia la sua misura in quella direzione)
+		var sa1 := _s1a[i]
+		var sb1 := _s1b[i]
+		var rmax := maxf(sa1.length(), sb1.length()) + MARGINE
 		for fo in forme:
 			var a := pt[i - 1]
 			var b := pt[i]
-			var bb := AABB(a, Vector3.ZERO).expand(b).grow(r)
+			var bb := AABB(a, Vector3.ZERO).expand(b).grow(rmax)
 			if not (fo[1] as AABB).intersects(bb):
+				continue
+			# (prima con la misura più grande: se così non tocca, la pelle non tocca)
+			if not _tratto_dentro(a, b, fo[0], rmax):
 				continue
 			var t0 := 0.0
 			var t1 := 1.0
 			for pl: Plane in fo[0]:
+				var nn := pl.normal
+				var u := nn.dot(sa1)
+				var w0 := nn.dot(sb1)
+				var r := sqrt(u * u + w0 * w0) + MARGINE
 				var da := pl.distance_to(a) - r
 				var db := pl.distance_to(b) - r
 				if da >= 0.0 and db >= 0.0:
@@ -861,9 +1023,10 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 				var dmb := -INF
 				var dmm := -INF
 				for pl: Plane in fo[0]:
-					dma = maxf(dma, pl.distance_to(a))
-					dmb = maxf(dmb, pl.distance_to(b))
-					dmm = maxf(dmm, pl.distance_to(m))
+					var r := _sup_tratto(pl.normal, i)
+					dma = maxf(dma, pl.distance_to(a) - r)
+					dmb = maxf(dmb, pl.distance_to(b) - r)
+					dmm = maxf(dmm, pl.distance_to(m) - r)
 				if dmm > minf(dma, dmb) - 0.005:
 					continue
 			var nel_tubo := false
@@ -873,13 +1036,13 @@ func _tratti_fuori(pt: PackedVector3Array, n: int, forme: Array, corr: PackedVec
 			if nel_tubo:
 				continue
 			var meglio: Plane
-			var dm := -INF
+			var gm := -INF
 			for pl: Plane in fo[0]:
-				var d := pl.distance_to(m)
-				if d > dm:
-					dm = d
+				var gg := pl.distance_to(m) - _sup_tratto(pl.normal, i)
+				if gg > gm:
+					gm = gg
 					meglio = pl
-			var c := meglio.normal * (r - dm)
+			var c := meglio.normal * -gm
 			var sa := Vector3.ZERO
 			var sb := Vector3.ZERO
 			if i == 1:

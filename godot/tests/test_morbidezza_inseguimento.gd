@@ -70,6 +70,8 @@ func _run() -> void:
 		mis.ferma()
 		var r: Dictionary = mis.risultati(dove)
 		_check(r["fotogrammi"] > 20, "%s: registrati %d fotogrammi" % [dove, r["fotogrammi"]])
+		var pe: Dictionary = mis.pelle(dove)
+		_check(pe["pelle_dentro"] == 0, "%s: la pelle vera dei tentacoli fuori dalla sala (%d vertici dentro, al più %.1f cm)" % [dove, pe["pelle_dentro"], pe["pelle_massimo"] * 100.0])
 		_check(r["attraversa"] == 0, "%s: nessun tratto dei tentacoli attraversa la sala (%d)" % [dove, r["attraversa"]])
 		_check(r["scarto"] > 0.05, "%s: i tentacoli si muovono davvero (al più %.2f m dalla posa)" % [dove, r["scarto"]])
 		_check(r["salto"] < 25.0, "%s: niente scatti (%.1f m/s più della posa)" % [dove, r["salto"]])

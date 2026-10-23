@@ -9,6 +9,10 @@ extends RefCounted
 ## - scarto: quanto le ossa si staccano dalla posa (che la morbidezza lavori davvero);
 ## - costo: medio, 95% e massimo (ms), e il massimo dei primi 3 fotogrammi (quando lei compare).
 ## Non si contano i tentacoli la cui radice (che segue la posa) è dentro il mondo: il primo tratto non può evitarlo.
+## E [method pelle] dà la pelle vera: i vertici dei tentacoli deformati come nella scheda (ossa x bind x vertice), uno
+## ogni [constant PELLE_OGNI], dentro la collisione vera di più di 1 cm (un raggio dall'asse del loro osso al vertice).
+
+const PELLE_OGNI := 3
 
 var sk: Skeleton3D
 var m: MorbidezzaLei
@@ -19,6 +23,16 @@ var costi: Array = []
 var dt: Array = []
 var _prima: SkeletonModifier3D
 var _attiva := false
+# la pelle: per vertice 4 ossa (indice in _p_usate), 4 pesi, 4 posizioni bind x vertice; l'osso dell'asse, quello dopo
+# (o -1: la punta), la catena e il posto nella catena
+var _p_ossa := PackedInt32Array()
+var _p_pesi := PackedFloat32Array()
+var _p_bv := PackedVector3Array()
+var _p_asse := PackedInt32Array()
+var _p_catena := PackedInt32Array()
+var _p_usate := PackedInt32Array()    # ossa dello scheletro che servono
+var _p_indice := {}                     # osso -> indice in _p_usate
+var _pose: Array = []                  # per fotogramma: Array[Transform3D] delle ossa usate (mondo)
 
 
 func _init(scheletro: Skeleton3D, morbidezza: MorbidezzaLei) -> void:
@@ -42,12 +56,87 @@ func _init(scheletro: Skeleton3D, morbidezza: MorbidezzaLei) -> void:
 			c.append(dopo)
 			x = dopo
 		catene.append(c)
+	_pelle_di()
+
+
+## I vertici della pelle dei tentacoli (uno ogni PELLE_OGNI) con le loro ossa.
+func _pelle_di() -> void:
+	var dove := {}
+	for k in catene.size():
+		for i in catene[k].size():
+			dove[catene[k][i]] = Vector2i(k, i)
+	var usate := {}
+	var n := 0
+	for mi in sk.find_children("*", "MeshInstance3D", true, false):
+		var mesh := (mi as MeshInstance3D).mesh
+		var skin := (mi as MeshInstance3D).skin
+		if mesh == null or skin == null:
+			continue
+		var bind_osso := PackedInt32Array()
+		for b in skin.get_bind_count():
+			var nome := skin.get_bind_name(b)
+			bind_osso.append(sk.find_bone(nome) if nome != "" else skin.get_bind_bone(b))
+		for s in mesh.get_surface_count():
+			var a := mesh.surface_get_arrays(s)
+			if a[Mesh.ARRAY_BONES] == null:
+				continue
+			var vs: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+			var bo = a[Mesh.ARRAY_BONES]
+			var we = a[Mesh.ARRAY_WEIGHTS]
+			var per: int = bo.size() / vs.size()
+			for v in vs.size():
+				var mig := -1
+				var pm := 0.0
+				for j in per:
+					if float(we[v * per + j]) > pm:
+						pm = float(we[v * per + j])
+						mig = int(bo[v * per + j])
+				if mig < 0 or not dove.has(bind_osso[mig]):
+					continue
+				n += 1
+				if n % PELLE_OGNI != 0:
+					continue
+				var ki: Vector2i = dove[bind_osso[mig]]
+				var c: PackedInt32Array = catene[ki.x]
+				_p_asse.append(c[ki.y])
+				_p_asse.append(c[ki.y + 1] if ki.y + 1 < c.size() else -1)
+				_p_catena.append(ki.x)
+				_p_catena.append(ki.y)
+				# le 4 ossa più pesanti (le altre si buttano, i pesi si rinormalizzano)
+				var lista := []
+				for j in per:
+					if float(we[v * per + j]) > 0.0:
+						lista.append([float(we[v * per + j]), int(bo[v * per + j])])
+				lista.sort_custom(func(x, y): return x[0] > y[0])
+				lista = lista.slice(0, 4)
+				var somma := 0.0
+				for e in lista:
+					somma += e[0]
+				for j in 4:
+					if j < lista.size():
+						var osso := bind_osso[lista[j][1]]
+						if not usate.has(osso):
+							usate[osso] = _p_usate.size()
+							_p_usate.append(osso)
+						_p_ossa.append(usate[osso])
+						_p_pesi.append(lista[j][0] / somma)
+						_p_bv.append(skin.get_bind_pose(lista[j][1]) * vs[v])
+					else:
+						_p_ossa.append(0)
+						_p_pesi.append(0.0)
+						_p_bv.append(Vector3.ZERO)
+	for b in _p_asse:
+		if b >= 0 and not usate.has(b):
+			usate[b] = _p_usate.size()
+			_p_usate.append(b)
+	_p_indice = usate
 
 
 ## Comincia a registrare (la posa dal modificatore prima della morbidezza, le ossa dopo).
 func inizia() -> void:
 	entrata.clear()
 	uscita.clear()
+	_pose.clear()
 	costi.clear()
 	dt.clear()
 	_prima = sk.get_child(m.get_index() - 1) as SkeletonModifier3D
@@ -74,6 +163,11 @@ func _su_entrata() -> void:
 func _su_uscita() -> void:
 	if _attiva:
 		uscita.append(punti())
+		var sg := sk.global_transform
+		var ps: Array[Transform3D] = []
+		for b in _p_usate:
+			ps.append(sg * sk.get_bone_global_pose(b))
+		_pose.append(ps)
 		costi.append(m.durata_usec)
 		dt.append(m.get_process_delta_time())
 
@@ -205,3 +299,64 @@ func risultati(nome: String, da := 0) -> Dictionary:
 	if dove_min != "":
 		print("    ", dove_min)
 	return r
+
+
+## La pelle vera dal fotogramma [param da], un fotogramma ogni [param ogni]: i vertici dentro la collisione vera (strato
+## WORLD) di più di [param tolleranza], cercati con un raggio dall'asse del loro osso (che sta fuori) al vertice. I
+## vertici del primo osso (la radice segue il corpo) si contano a parte. Stampa le tre entrate più profonde.
+## [param esclusi]: i RID delle collisioni che non si vedono (il coperchio della fossa).
+func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[RID] = []) -> Dictionary:
+	var spazio := sk.get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.new()
+	q.collision_mask = Layers.WORLD
+	q.hit_back_faces = false
+	q.collide_with_areas = false
+	q.exclude = esclusi
+	var nv := _p_asse.size() / 2
+	var dentro := 0
+	var dentro_radice := 0
+	var massimo := 0.0
+	var peggiori := []
+	for f in range(da, _pose.size(), ogni):
+		var ps: Array = _pose[f]
+		for v in nv:
+			var pos := Vector3.ZERO
+			for j in 4:
+				var w := _p_pesi[v * 4 + j]
+				if w > 0.0:
+					pos += ((ps[_p_ossa[v * 4 + j]] as Transform3D) * _p_bv[v * 4 + j]) * w
+			var a_t: Transform3D = ps[_indice(_p_asse[v * 2])]
+			var b_osso := _p_asse[v * 2 + 1]
+			var fine: Vector3
+			if b_osso >= 0:
+				fine = (ps[_indice(b_osso)] as Transform3D).origin
+			else:
+				fine = a_t.origin + a_t.basis.y.normalized() * lung_riposo(_p_catena[v * 2], _p_catena[v * 2 + 1] + 1) \
+						* a_t.basis.y.length() / maxf(a_t.basis.x.length(), 1e-6)
+			var asse := Geometry3D.get_closest_point_to_segment(pos, a_t.origin, fine)
+			if asse.distance_to(pos) < 1e-4:
+				continue
+			q.from = asse
+			q.to = pos
+			var hit := spazio.intersect_ray(q)
+			if hit.is_empty():
+				continue
+			var d := (hit["position"] as Vector3).distance_to(pos)
+			if d <= tolleranza:
+				continue
+			if _p_catena[v * 2 + 1] == 0:
+				dentro_radice += 1
+				continue
+			dentro += 1
+			massimo = maxf(massimo, d)
+			peggiori.append([d, f, _p_catena[v * 2], _p_catena[v * 2 + 1], pos, (hit["collider"] as Node).name if hit["collider"] else ""])
+	peggiori.sort_custom(func(x, y): return x[0] > y[0])
+	print("  %s, pelle vera: %d vertici dentro il mondo di più di %.0f cm (al più %.1f cm), %d del primo osso (radice) a parte; %d vertici per fotogramma" % [
+		nome, dentro, tolleranza * 100.0, massimo * 100.0, dentro_radice, nv])
+	for e in peggiori.slice(0, 3):
+		print("    pelle dentro di %.1f cm: f%d tentacolo %d osso %d %s in %s" % [e[0] * 100.0, e[1], e[2], e[3], e[4], e[5]])
+	return {"pelle_dentro": dentro, "pelle_massimo": massimo, "pelle_radice": dentro_radice}
+
+
+func _indice(osso: int) -> int:
+	return _p_indice[osso]

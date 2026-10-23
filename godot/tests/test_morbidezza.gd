@@ -15,6 +15,8 @@ extends Node
 
 const LEVEL := "res://scenes/sala_principale.tscn"
 
+const Misura := preload("res://tests/misura_morbidezza.gd")
+
 var _ok := 0
 var _ko := 0
 var lei: LeiSbuca
@@ -230,6 +232,20 @@ func _fuori_dalla_fossa(q: Vector3) -> bool:
 	return not (q.x > a.position.x and q.x < a.end.x and q.z > a.position.z and q.z < a.end.z)
 
 
+## Le collisioni che non si vedono, fuori dal conto della pelle: il coperchio della fossa (per non caderci dentro) e la
+## parete est di collisione, che chiude il condotto dove lei si tuffa.
+func _esclusi() -> Array[RID]:
+	var out: Array[RID] = []
+	var co: CollisionObject3D = lei.coperchio
+	if co:
+		out.append(co.get_rid())
+		for c in co.get_parent().find_children("fossa_parete_e*", "", true, false):
+			var corpo: Node = c if c is CollisionObject3D else c.get_parent()
+			if corpo is CollisionObject3D and not out.has((corpo as CollisionObject3D).get_rid()):
+				out.append((corpo as CollisionObject3D).get_rid())
+	return out
+
+
 func _tuffo(nome: String, quanto: float) -> Dictionary:
 	print("== ", nome)
 	_entrata.clear()
@@ -246,12 +262,18 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 		_guarda.clear()
 		_costi_guarda.clear()
 		m0.modification_processed.connect(_su_guarda)
+		var mis_g = Misura.new(sk, m0)
+		mis_g.inizia()
 		# lei compare (affacciata, come al blackout o al checkpoint): si misura già dal primo fotogramma
 		lei.call(&"_affaccia")
 		m0.quanto = quanto            # (_affaccia la accende a 1)
 		for f in 60:
 			await get_tree().process_frame
 		m0.modification_processed.disconnect(_su_guarda)
+		mis_g.ferma()
+		var pg: Dictionary = mis_g.pelle("%s, affacciata" % nome, 0, 2, 0.01, _esclusi())
+		if quanto > 0.0:
+			_check(pg["pelle_dentro"] == 0, "%s: affacciata, la pelle vera dei tentacoli fuori dal mondo (%d vertici dentro, al più %.1f cm)" % [nome, pg["pelle_dentro"], pg["pelle_massimo"] * 100.0])
 		var dentro_g := 0
 		var attr_g := 0
 		var per_f := []
@@ -294,6 +316,8 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 	if not m.modification_processed.is_connected(_su_uscita):
 		m.modification_processed.connect(_su_uscita)
 	_registra = true
+	var mis_t = Misura.new(sk, m)
+	mis_t.inizia()
 	var costi := []
 	var sparita_punti = null
 	for f in 400:
@@ -304,6 +328,10 @@ func _tuffo(nome: String, quanto: float) -> Dictionary:
 			break
 		sparita_punti = _uscita.back() if not _uscita.is_empty() else null
 	_registra = false
+	mis_t.ferma()
+	var pt: Dictionary = mis_t.pelle("%s, tuffo" % nome, 0, 2, 0.01, _esclusi())
+	if quanto > 0.0:
+		_check(pt["pelle_dentro"] == 0, "%s: tuffo, la pelle vera dei tentacoli fuori dal mondo (%d vertici dentro, al più %.1f cm)" % [nome, pt["pelle_dentro"], pt["pelle_massimo"] * 100.0])
 	var nf := mini(_entrata.size(), _uscita.size())
 	var max_diff := 0.0
 	var primo_diff := 0.0
