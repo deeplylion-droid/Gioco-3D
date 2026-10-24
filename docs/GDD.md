@@ -324,7 +324,7 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **Bocca (B)**: spalancata per tutta la fase, con l'occhio pieno di vene; quando ti è vicina, sotto i 6-8 m, morde a vuoto ogni 1-2 secondi, come lo squalo.
 - **Getto (A)**: lei ti sta dietro fra 8 e 18 m e sotto i 2,5 m ti prende. Mezzo secondo di getto in faccia la ferma 2 secondi e la rimanda indietro di circa 6 m. Riparti dall'ultimo checkpoint.
 - **Reazione (A)**: si ritrae strizzando l'occhio, rallenta e riparte.
-- **Voce (A)**: sotto i versi già approvati, un fiato roco e basso, continuo, con un verso ogni 4-6 secondi. Va fatto sentire all'utente prima di metterlo nel gioco.
+- **Voce (A)**: sotto i versi già approvati, un fiato roco e basso, continuo, con un verso ogni 4-6 secondi. Va fatto sentire all'utente prima di metterlo nel gioco. **Approvato dall'utente** ("ok per il fiato", sera del 24 ottobre) sull'esempio di 30 s di mascotte (lavoro/sottomarino-lei a8638726, `docs/proposte/voce_lei_tunnel/`): fiato a -27 LUFS, versi intorno a -22.
 - **Finale (A)**: passi il portello da sottomarino e lo chiudi col volantino; lei ci sbatte contro con la faccia sull'oblò e la bocca spalancata; poi nero e "FINE DELLA DEMO".
 - **Dopo "FINE DELLA DEMO" (A)**: finita la scritta, il gioco torna da solo al titolo.
 - **Prove (no)**: niente prove prima; l'utente lo giudica giocando. Parole sue: "ti ho risposto, vai e non commettere gli errori che ti ho corretto nuovamente."
