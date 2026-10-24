@@ -65,15 +65,21 @@ Il test controlla, con lei affacciata e nel tuffo, due volte (la seconda dopo il
 
 ## Costo
 
-Limiti alzati di circa il 50% il 24 ottobre, con la pelle vera (decisione del coordinatore). **Sono numeri della CPU del sandbox, lenta e condivisa, a 30 fps senza schermo: su un PC vero sono frazioni di ms.** In CI si stampano e basta.
+Limiti del 24 ottobre, con la pelle vera: circa il doppio di quelli di prima (decisione del coordinatore). **Sono numeri della CPU del sandbox, lenta e condivisa, a 30 fps senza schermo, e cambiano anche del 30% secondo quanto è carica: non sono il costo nel gioco vero, dove sono frazioni di ms.** In CI si stampano e basta.
 
 | Fase | Media | 95% |
 |---|---|---|
-| Lei affacciata | 3,5 ms | 7 ms |
-| Tuffo, lei che sbuca (2 s, una volta) | 4,5 ms | 12 ms |
-| Inseguimento | 3 ms | 6 ms |
-| Quando lei compare | 7,5 ms (un fotogramma) | |
+| Lei affacciata | 4 ms | 8 ms |
+| Tuffo, lei che sbuca (2 s, una volta) | 6 ms | 16 ms |
+| Inseguimento | 4 ms | 8 ms |
+| Quando lei compare | 10 ms (un fotogramma) | |
 
-Misurati: affacciata 3,0-3,3 ms, tuffo 3,8-4,3, lei che sbuca 4,1-4,7, inseguimento 2-3 ms, SB1 3,4 e la grata 5-7 ms (la più cara: 170 scatole e tanti contatti mentre colpisce la grata).
+Misurati (con la macchina scarica e carica): affacciata 3,0-4,4 ms, tuffo 3,8-6,2, lei che sbuca 4,1-6,3, inseguimento 2-3 ms, SB1 3,2-3,4. La grata è la più cara: 5-7 ms (95% fino a 14), con circa 170 scatole e tanti contatti mentre lei colpisce la grata; lì anche il limite nuovo può non bastare.
 
-**Idea per dopo:** portare il cuore della simulazione (passi, forme, tratti) in C++ con una GDExtension, per 10-20 volte di meno. È un lavoro di un giorno, con la build da sistemare in CI.
+## Casi noti
+
+Come i "voluto" del controllo di posizionamento: in `test_morbidezza_inseguimento.gd`, `NOTI` (posto, quanti tratti dell'asse ammessi, motivo, data). Si stampano a ogni giro. Valgono solo per il controllo dell'asse: la pelle vera resta bloccante dappertutto.
+
+- **vasca_2** (24 ottobre): nel primo fotogramma un tratto dell'asse attraversa un muro sottile. La causa è la posa dell'animazione, che mette la punta di un tentacolo dentro il muro quando lei compare: va corretta nell'animazione, non nella morbidezza (spingerla fuori dalla parte del punto prima peggiorava la pelle e il costo). La pelle lì dà 0.
+
+**Dopo la v0.3.12:** portare il cuore della simulazione in C++, vedi `CPP.md`.
