@@ -354,11 +354,22 @@ func continue_from_disk() -> bool:
 	var data = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
 	if typeof(data) != TYPE_DICTIONARY or int(data.get("version", 0)) != SAVE_VERSION:
 		return false
-	snapshot = data
-	_collected = _lists_to_collected(snapshot.get("collectibles", {}))
-	_restore_pending = true
+	prepara_ripresa(data)
 	get_tree().change_scene_to_file(snapshot.get("scene", ""))
 	return true
+
+
+## Prepara la ripresa da un'istantanea [param data] (un salvataggio, o una partenza del menu di prova): come dopo una
+## morte, al prossimo livello che si apre con la sua scena si riparte dal suo checkpoint, con lo stato, l'inventario,
+## le luci e i collezionabili dell'istantanea. Chi la chiama poi apre la scena (direttamente o col caricamento).
+func prepara_ripresa(data: Dictionary) -> void:
+	reset_progress()
+	snapshot = data
+	_collected = _lists_to_collected(snapshot.get("collectibles", {}))
+	_removed.clear()
+	for k in snapshot.get("removed", []):
+		_removed[String(k)] = true
+	_restore_pending = true
 
 
 ## Azzera i progressi in memoria (nuova partita). Il file su disco viene sovrascritto

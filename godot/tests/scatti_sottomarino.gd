@@ -25,6 +25,8 @@ var SCATTI := {
 	"14_galleria_dentro": [206.0, -1.0, 0.9, 214.0, -1.0, 0.5, 80.0],
 	"15_cancello": [262.0, -1.0, 1.6, 268.0, -1.0, 1.0, 70.0],
 	"16_macerie": [340.0, 1.0, 1.6, 349.5, 1.0, 0.9, 70.0],
+	"16b_macerie_lontano": [330.0, 1.0, 1.6, 349.0, 1.0, 1.0, 60.0],
+	"16c_macerie_vicino": [345.5, 0.9, 1.7, 348.5, 1.1, 0.9, 65.0],
 	"17_vetrina": [476.0, -1.0, 1.6, 484.5, -1.0, 0.8, 70.0],
 	"18_lei_dietro": [52.0, -1.0, 1.6, 40.0, 0.0, 2.8, 70.0],
 	"19_lei_di_lato": [40.0, 1.0, 1.6, 40.0, 0.0, 2.8, 80.0],
@@ -91,6 +93,10 @@ func _run() -> void:
 	cam.current = true
 	for i in 30:
 		await get_tree().process_frame
+	if solo.has("40_oblo_abisso"):
+		await _oblo_abisso(sala, cam)
+		get_tree().quit()
+		return
 	if solo.has("34_schianto"):
 		await _schianto(sala, cam)
 		get_tree().quit()
@@ -152,3 +158,22 @@ func _schianto(sala: SalaSottomarino, cam: Camera3D) -> void:
 		await get_tree().process_frame
 	get_viewport().get_texture().get_image().save_jpg(cartella.path_join("35_schianto_dal_pontile.jpg"), 0.88)
 	print("scatti dello schianto in ", cartella)
+
+
+## Gli oblò grandi dell'abisso (di ambienti-1) visti dalla banchina, con gli occhi a 1,6 m: per ognuno uno scatto
+## dalla banchina dall'altra parte del canale e uno da 6 m prima sulla stessa banchina.
+func _oblo_abisso(sala: SalaSottomarino, cam: Camera3D) -> void:
+	cam.fov = 70.0
+	var k := 0
+	for n in sala.find_children("oblo_grande_*", "", true, false):
+		var o := (n as Node3D).global_position
+		var pr := sala.proietta_vicino(o, 430.0, 80.0)
+		var s := float(pr[0])
+		var lato := signf(float(pr[1]))
+		for vista in [[s, -lato], [s - 6.0, lato]]:
+			cam.look_at_from_position(_occhio(sala, float(vista[0]), float(vista[1]), 1.6), o)
+			for i in 60:
+				await get_tree().process_frame
+			get_viewport().get_texture().get_image().save_jpg(cartella.path_join("40_oblo_abisso_%d.jpg" % k), 0.88)
+			k += 1
+	print("scatti degli oblò dell'abisso: ", k)

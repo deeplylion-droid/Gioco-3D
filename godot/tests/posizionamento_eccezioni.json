@@ -752,20 +752,6 @@
 	},
 	{
 		"zona": "sottomarino",
-		"nodo": "Luci/@Node3D@415/@MeshInstance3D@416",
-		"problema": "ingombro",
-		"pos": [
-			-21.0,
-			-30.0,
-			6.0
-		],
-		"firma": "|TorusMesh 0.92x0.10x0.92",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"motivo": "oblò a muro: sporge 8 cm, il centro a 1,9 m, passaggio libero sulla banchina 2,2 m (regola del coordinatore del 23 ottobre)"
-	},
-	{
-		"zona": "sottomarino",
 		"nodo": "Galleria_425/@MeshInstance3D@831",
 		"problema": "ingombro",
 		"pos": [
@@ -791,20 +777,6 @@
 		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
-	},
-	{
-		"zona": "sottomarino",
-		"nodo": "Ostacolo_macerie_348/@MeshInstance3D@824",
-		"problema": "ingombro",
-		"pos": [
-			-32.0,
-			-30.0,
-			38.5
-		],
-		"firma": "|ArrayMesh 3.14x2.22x3.32",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"motivo": "le macerie che chiudono la banchina destra a 348: ostacolo voluto (24 ottobre, scelta 2C), si passa dall'altra banchina coi gommoni"
 	},
 	{
 		"zona": "sottomarino",
