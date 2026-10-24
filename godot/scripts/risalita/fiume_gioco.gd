@@ -1800,10 +1800,10 @@ const COLORI_SCATOLE := [Color(0.86, 0.14, 0.12), Color(0.96, 0.46, 0.08), Color
 		Color(0.18, 0.64, 0.95), Color(0.12, 0.26, 0.82), Color(0.56, 0.2, 0.76)]
 ## Quante scatole sono colorate (una su quattro o cinque) e quante nei punti più allegri (l'ingresso e la piazza, entro
 ## PUNTI_ALLEGRI_RAGGIO m da quei punti).
-const SCATOLE_COLORATE := 0.22
-const SCATOLE_COLORATE_FITTE := 0.42
+const SCATOLE_COLORATE := 0.18
+const SCATOLE_COLORATE_FITTE := 0.34
 const PUNTI_ALLEGRI := [Vector2(-25.0, -26.0), Vector2(-7.5, -9.5)]
-const PUNTI_ALLEGRI_RAGGIO := 9.0
+const PUNTI_ALLEGRI_RAGGIO := 7.0
 
 
 func _pile() -> void:
