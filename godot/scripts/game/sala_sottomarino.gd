@@ -184,6 +184,7 @@ func _passi() -> Array:
 	out.append(_testa)
 	out.append(_fine)
 	out.append(_luci)
+	out.append_array(SottomarinoArrediA2.passi(self))
 	for o in ostacoli:
 		if o["tipo"] == "galleria":
 			out.append(_galleria.bind(o))
@@ -935,16 +936,13 @@ func _luci() -> void:
 		l.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z)
 		l.look_at(l.global_position - r * lato * 2.0, Vector3.UP)
 		l.rotate_object_local(Vector3.UP, PI)
+		# (nel giardino dei coralli la luce è verde-azzurra, come nel piano degli ambienti)
+		var coralli := ambiente(s) == 1
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
-			var m := StandardMaterial3D.new()
-			m.albedo_color = Color(1.0, 0.85, 0.55)
-			m.emission_enabled = true
-			m.emission = Color(1.0, 0.7, 0.35)
-			m.emission_energy_multiplier = 3.0
-			g.material_override = m
+			g.material_override = _mat_globo_coralli() if coralli else _mat_globo_luci()
 		var o := OmniLight3D.new()
-		o.light_color = Color(1.0, 0.76, 0.5)
+		o.light_color = Color(0.55, 0.95, 0.85) if coralli else Color(1.0, 0.76, 0.5)
 		o.light_energy = 4.0
 		o.omni_range = 12.0
 		o.omni_attenuation = 1.3
@@ -989,6 +987,28 @@ func _oblo(nodo: Node3D, s: float, lato: float) -> void:
 	vetro.position.z = -0.015
 	vetro.material_override = _mat_oblo()
 	n.add_child(vetro)
+
+
+var _globo_luci: StandardMaterial3D
+var _globo_coralli: StandardMaterial3D
+
+
+func _mat_globo_luci() -> StandardMaterial3D:
+	if _globo_luci == null:
+		_globo_luci = StandardMaterial3D.new()
+		_globo_luci.albedo_color = Color(1.0, 0.85, 0.55)
+		_globo_luci.emission_enabled = true
+		_globo_luci.emission = Color(1.0, 0.7, 0.35)
+		_globo_luci.emission_energy_multiplier = 3.0
+	return _globo_luci
+
+
+func _mat_globo_coralli() -> StandardMaterial3D:
+	if _globo_coralli == null:
+		_globo_coralli = _mat_globo_luci().duplicate()
+		_globo_coralli.albedo_color = Color(0.7, 1.0, 0.92)
+		_globo_coralli.emission = Color(0.45, 0.95, 0.8)
+	return _globo_coralli
 
 
 var _ottone: StandardMaterial3D
@@ -2016,6 +2036,16 @@ func _scatola_ruotata(st: SurfaceTool, f: PackedVector3Array, c: Vector3, ax: Ve
 
 
 # --- utilità ---------------------------------------------------------------------------------------------------------
+
+## Il punto della faccia del muro dal lato [param lato] a [param s], alla quota [param y], come lo disegna la mesh:
+## dritto fra una sezione e l'altra (ogni [constant PASSO_SEZIONE] metri dalla testa), non sulla curva esatta.
+func _muro_a(s: float, lato: float, y: float) -> Vector3:
+	var sa := -TESTA + floorf((s + TESTA) / PASSO_SEZIONE) * PASSO_SEZIONE
+	var sb := sa + PASSO_SEZIONE
+	var a := _al(punto(sa), destra(sa), Vector2(lato * muro, y))
+	var b := _al(punto(sb), destra(sb), Vector2(lato * muro, y))
+	return a.lerp(b, (s - sa) / PASSO_SEZIONE)
+
 
 func _al(p: Vector3, r: Vector3, v: Vector2) -> Vector3:
 	return Vector3(p.x, 0.0, p.z) + r * v.x + Vector3.UP * v.y
