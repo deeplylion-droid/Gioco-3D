@@ -1,0 +1,1207 @@
+class_name SottomarinoArrediA1
+extends Node3D
+## Gli arredi di metà del tunnel del viaggio sottomarino (ambienti-1): la parata dei pesci (240-315), la volta della
+## tartaruga (315-390), gli oblò dell'abisso (390-470) e l'approdo (470-535; dopo, fino al portello, è di ambienti-2).
+## L'aspetto è il fiume B approvato (GDD, "Il tunnel del viaggio sottomarino... scelte del 24 ottobre").
+##
+## Le regole del tunnel: le banchine e il canale sono strada (fino a 2 m sopra non c'è niente, salvo gli ostacoli di
+## ambienti-2) e sopra il canale c'è lo spazio di lei (a meno di 3,6 m dall'asse fra -29,22 e -24,22, con 20 cm di
+## margine). Gli arredi stanno sui muri sopra i 2 m, nella volta sopra di lei o a filo dei pavimenti. Ognuno si appoggia
+## alla superficie vera (raggi sui triangoli del tunnel), così non resta staccato neanche dove il muro è a faccette.
+##
+## Si costruisce a pezzi con il tunnel: [method passi] dà i passi da aggiungere a quelli di [SalaSottomarino].
+
+const DIR_FIUME := "res://assets/fiume_lento/"
+const DIR := "res://assets/ambiente/sottomarino/"
+
+## La tartaruga appesa alla chiave della volta (s, scala) e il margine sopra la testa di lei.
+const TARTARUGA_S := 366.0
+const TARTARUGA_SCALA := 1.5
+const SOPRA_LEI := -24.0
+## Il buco nella volta sopra le macerie a 348 (s del centro, mezza lunghezza lungo la strada; angolo sulla mezza
+## ellisse della volta, da sinistra, e mezza ampiezza): sopra la banchina destra, fuori dallo spazio di lei.
+const BUCO_S := 349.6
+const BUCO_MEZZO_S := 1.5
+const BUCO_THETA := 2.52
+const BUCO_MEZZO_THETA := 0.26
+## Le reti con le stelle marine sui muri (s, lato, quota del bordo basso sopra le banchine).
+const RETI := [[325.0, -1.0, 2.3], [333.5, 1.0, 2.3], [388.3, -1.0, 2.45]]
+const RETE_LARGA := 2.0
+const RETE_ALTA := 0.9
+## Le bitte dell'approdo sul bordo delle banchine (s, lato): basse, sotto i 35 cm.
+const BITTE := [[497.0, -1.0], [503.0, 1.0], [517.0, -1.0], [524.0, 1.0]]
+## I cartelli a disegni (il portello col volantino e la freccia), a bandiera sui muri, girati verso chi arriva.
+const CARTELLI := [[494.0, 1.0], [521.0, -1.0]]
+## I fanali d'approdo: rosso a sinistra, verde a destra, dove l'approdo si apre sul portello.
+const FANALI_S := 531.0
+## Il salvagente fosforescente al muro destro.
+const SALVAGENTE_S := 510.0
+## Dove stava la vetrina del diorama caduta sulla banchina sinistra a 484 (le staffe vuote e il segno sul muro).
+const VETRINA_S := 482.2
+const VETRINA_LARGA := 2.48
+const VETRINA_ALTA := 1.6
+const VETRINA_FONDA := 1.0
+const VETRINA_BASSO := 2.05
+## L'abisso: le lampade blu (una ogni [constant ABISSO_LAMPADE_OGNI] m, alternate) e le lucine a filo del bordo delle
+## banchine (una ogni [constant LUCINE_OGNI] m).
+const ABISSO_LAMPADE_OGNI := 12.0
+const LUCINE_OGNI := 3.0
+
+## Le scelte dell'utente del 24 ottobre ("1A 2A"). I pesci: "A" su mensole d'ottone sui muri, girati verso l'approdo
+## come un branco che nuota con te, col faretto sotto ognuno (la "B", appesi a coppie alla volta sopra le banchine,
+## resta qui per le prove). Gli oblò dell'abisso: "A" col pesce grande e lontano che passa lento dietro il vetro e
+## le bollicine ("B", fermi col plancton, per le prove). Vuote: niente.
+static var scelta_pesci := "A"
+static var scelta_abisso := "A"
+## Le reti con le stelle: il modello Meshy è venuto male (quattro bastoni); quella fatta qui l'ha scelta l'utente
+## ("Voto A", 24 ottobre, docs/proposte/sottomarino/rete_stelle_da_codice.jpg).
+static var reti_accese := true
+## Solo per gli scatti: la fase uguale per tutti gli oblò grandi (negativa: ognuno la sua).
+static var fase_oblo_prova := -1.0
+## I pesci: quanto distano lungo la strada (m), la scala del modello, la quota della mensola (sopra il piano).
+const PESCI_OGNI := 6.0
+const PESCE_SCALA := 0.7
+const MENSOLA_Y := 2.45
+## Gli oblò grandi dell'abisso: raggio del vetro e quota del centro sopra il piano (il bordo basso sopra i 2 m).
+const OBLO_R := 0.78
+const OBLO_Y := 2.95
+
+var sala: SalaSottomarino
+var _tri_pezzi := {}
+
+
+## I passi da costruire (dopo le luci del tunnel).
+static func passi(s: SalaSottomarino) -> Array:
+	var a := SottomarinoArrediA1.new()
+	a.name = "ArrediA1"
+	a.sala = s
+	s.add_child(a)
+	return [a._tartaruga, a._reti, a._buco_volta, a._abisso_lampade, a._abisso_lucine, a._approdo, a._pesci, a._abisso_oblo]
+
+
+## Vero se a [param s] le luci normali del tunnel (lampade a gabbia e oblò piccoli) non vanno: nell'abisso le fa
+## questo file, blu e poche.
+static func senza_luci_normali(s: SalaSottomarino, at: float) -> bool:
+	return String(s.dati["ambienti"][s.ambiente(at)]["nome"]) == "abisso"
+
+
+# --- la volta della tartaruga ------------------------------------------------------------------------------------
+
+## La tartaruga di vetroresina appesa sull'asse alla chiave della volta con tre catene, sopra lo spazio di lei; due
+## faretti sui muri la illuminano da sotto.
+func _tartaruga() -> void:
+	var nodo := _nodo("Tartaruga")
+	var p := sala.punto(TARTARUGA_S)
+	var d := sala.direzione(TARTARUGA_S)
+	var r := sala.destra(TARTARUGA_S)
+	var t := _modello(nodo, "tartaruga", Vector3(p.x, 0.0, p.z), d, TARTARUGA_SCALA)
+	t.name = "tartaruga"
+	# appena girata, come se nuotasse verso chi arriva salendo
+	t.rotate_object_local(Vector3.RIGHT, deg_to_rad(-8.0))
+	var tri_t := _triangoli(t)
+	var basso := INF
+	for v in tri_t:
+		basso = minf(basso, v.y)
+	t.position.y += SOPRA_LEI + 0.06 - basso
+	tri_t = _triangoli(t)
+	# le catene: dal guscio (davanti, dietro a sinistra, dietro a destra) dritte su fino alla volta
+	var k := 0
+	for off: Vector2 in [Vector2(0.0, -0.55), Vector2(-0.45, 0.45), Vector2(0.45, 0.45)]:
+		var base := Vector3(p.x, 0.0, p.z) + r * off.x + d * off.y
+		var giu = _raggio(tri_t, Vector3(base.x, -21.0, base.z), Vector3(base.x, -25.0, base.z))
+		var su = _raggio(_tri_tunnel(TARTARUGA_S), Vector3(base.x, -24.5, base.z), Vector3(base.x, -21.0, base.z))
+		if giu == null or su == null:
+			push_warning("tartaruga: catena %d senza attacco" % k)
+			continue
+		var a: Vector3 = giu
+		var b: Vector3 = su
+		_piastra(nodo, b, "piastra_tartaruga_%d" % k)
+		_catena(nodo, a + Vector3.DOWN * 0.008, b + Vector3.DOWN * 0.012, "catena_tartaruga_%d" % k)
+		k += 1
+	# i faretti: sui muri, prima e dopo, puntati da sotto sulla pancia
+	var centro := Vector3(p.x, SOPRA_LEI + 0.4, p.z)
+	_faretto(nodo, TARTARUGA_S - 4.0, -1.0, 3.7, centro, Color(0.75, 0.95, 1.0), 6.0)
+	_faretto(nodo, TARTARUGA_S + 3.0, 1.0, 3.7, centro, Color(0.75, 0.95, 1.0), 6.0)
+
+
+## Le reti con le stelle marine appese ai muri sopra i 2 m.
+func _reti() -> void:
+	if not reti_accese:
+		return
+	var nodo := _nodo("Reti")
+	for q in RETI:
+		_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
+
+
+## Una rete da pesca tesa sul muro (il modello Meshy della rete è venuto male: quattro bastoni, la si fa qui): la
+## corda del bordo e le maglie a rombi a filo del muro, due chiodi d'ottone in alto, quattro stelle marine impigliate.
+## Larga [constant RETE_LARGA], alta [constant RETE_ALTA], col bordo basso a [param basso].
+func _rete(nodo: Node3D, s: float, lato: float, basso: float) -> void:
+	var w = _muro(s, lato, basso + RETE_ALTA * 0.5)
+	if w == null:
+		return
+	var pm: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var lungo := Vector3.UP.cross(nrm).normalized()
+	var n := Node3D.new()
+	n.name = "rete_stelle_%d" % int(s)
+	nodo.add_child(n)
+	var mx := RETE_LARGA * 0.5
+	var my := RETE_ALTA * 0.5
+	var al := func(u: float, v: float, z: float) -> Vector3: return pm + lungo * u + Vector3.UP * v + nrm * z
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# le maglie a rombi (due famiglie di diagonali), tagliate al bordo; poi il bordo, più grosso
+	var passo := 0.16
+	for verso: float in [-1.0, 1.0]:
+		var c := -mx - my - passo
+		while c < mx + my + passo:
+			# la retta u = c + verso * v (per verso 1) / u = c - v..., tagliata nel rettangolo
+			var pts: Array = []
+			for v: float in [-my, my]:
+				var u := c + verso * v
+				pts.append(Vector2(u, v))
+			var a2: Vector2 = pts[0]
+			var b2: Vector2 = pts[1]
+			var t0 := 0.0
+			var t1 := 1.0
+			var dd := b2 - a2
+			if absf(dd.x) > 1e-6:
+				var ta := (-mx - a2.x) / dd.x
+				var tb := (mx - a2.x) / dd.x
+				t0 = maxf(t0, minf(ta, tb))
+				t1 = minf(t1, maxf(ta, tb))
+			if t1 - t0 > 0.02:
+				var pa := a2 + dd * t0
+				var pb := a2 + dd * t1
+				_tubo(st, al.call(pa.x, pa.y, 0.006), al.call(pb.x, pb.y, 0.006), 0.005)
+			c += passo
+	var angoli := [Vector2(-mx, -my), Vector2(mx, -my), Vector2(mx, my), Vector2(-mx, my)]
+	for i in 4:
+		var pa: Vector2 = angoli[i]
+		var pb: Vector2 = angoli[(i + 1) % 4]
+		_tubo(st, al.call(pa.x, pa.y, 0.01), al.call(pb.x, pb.y, 0.01), 0.009, true)
+	var mi := MeshInstance3D.new()
+	mi.name = "maglie"
+	mi.mesh = st.commit()
+	mi.material_override = _mat("corda_rete", Color(0.62, 0.52, 0.36), 0.9)
+	n.add_child(mi)
+	# i chiodi d'ottone agli angoli in alto, sul bordo: piantati nel muro
+	for u: float in [-mx, mx]:
+		var ch := MeshInstance3D.new()
+		ch.name = "chiodo"
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.016
+		cm.bottom_radius = 0.016
+		cm.height = 0.008
+		ch.mesh = cm
+		ch.material_override = sala._mat_ottone()
+		n.add_child(ch)
+		var c3: Vector3 = al.call(u, my, 0.022)
+		ch.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), c3)
+		var gambo := MeshInstance3D.new()
+		var gm := CylinderMesh.new()
+		gm.top_radius = 0.004
+		gm.bottom_radius = 0.004
+		gm.height = 0.025
+		gambo.mesh = gm
+		gambo.material_override = sala._mat_ottone()
+		n.add_child(gambo)
+		# (3 mm nel muro)
+		gambo.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), al.call(u, my, 0.0095))
+	# le stelle marine, appoggiate sulle maglie
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(s * 10.0)
+	var colori := [Color(0.85, 0.35, 0.15), Color(0.9, 0.55, 0.2), Color(0.75, 0.2, 0.18), Color(0.92, 0.7, 0.3)]
+	var posti := [Vector2(-0.62, 0.12), Vector2(-0.15, -0.2), Vector2(0.3, 0.18), Vector2(0.7, -0.12)]
+	for i in 4:
+		var q: Vector2 = posti[i]
+		var r := rng.randf_range(0.1, 0.14)
+		var stella := _stella(r, rng.randf_range(0.0, TAU))
+		stella.name = "stella_marina_%d" % i
+		stella.material_override = _mat("stella_%d" % i, colori[i], 0.75)
+		n.add_child(stella)
+		stella.transform = Transform3D(Basis(lungo, Vector3.UP, nrm), al.call(q.x, q.y, 0.011))
+
+
+## Un tubo (sezione esagonale) da [param a] a [param b]; con [param tappi] chiuso alle teste.
+func _tubo(st: SurfaceTool, a: Vector3, b: Vector3, r: float, tappi := false) -> void:
+	var asse := (b - a).normalized()
+	var x := asse.cross(Vector3.UP if absf(asse.y) < 0.9 else Vector3.RIGHT).normalized()
+	var y := asse.cross(x)
+	var k := 6
+	for i in k:
+		var a0 := TAU * float(i) / k
+		var a1 := TAU * float(i + 1) / k
+		var d0 := x * cos(a0) + y * sin(a0)
+		var d1 := x * cos(a1) + y * sin(a1)
+		sala._quad(st, [a + d0 * r, b + d0 * r, b + d1 * r, a + d1 * r], (d0 + d1).normalized())
+		if tappi:
+			sala._tri(st, [a, a + d0 * r, a + d1 * r], -asse)
+			sala._tri(st, [b, b + d0 * r, b + d1 * r], asse)
+
+
+## Una stella marina piatta a cinque braccia (raggio [param r], spessa 2,4 cm), nel piano xy, il dorso verso +z.
+func _stella(r: float, giro: float) -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var sp := 0.024
+	var pts: Array = []
+	for i in 10:
+		var a := giro + TAU * float(i) / 10.0
+		var rr := r if i % 2 == 0 else r * 0.4
+		pts.append(Vector3(cos(a) * rr, sin(a) * rr, 0.0))
+	var dorso := Vector3(0, 0, sp)
+	for i in 10:
+		var p0: Vector3 = pts[i]
+		var p1: Vector3 = pts[(i + 1) % 10]
+		sala._tri(st, [dorso, p0 + Vector3(0, 0, sp * 0.3), p1 + Vector3(0, 0, sp * 0.3)], Vector3(0, 0, 1))
+		sala._tri(st, [Vector3.ZERO, p0, p1], Vector3(0, 0, -1))
+		sala._quad(st, [p0, p1, p1 + Vector3(0, 0, sp * 0.3), p0 + Vector3(0, 0, sp * 0.3)],
+				Vector3((p0 + p1).x, (p0 + p1).y, 0.0).normalized())
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	return mi
+
+
+## Il buco nella volta da cui sono cadute le macerie a 348 (l'ostacolo di ambienti-2, sulla banchina destra): segue
+## la volta vera (raggi sui suoi triangoli), con il bordo rotto che parte 1 cm dentro il mosaico e sale di 4 cm, l'interno
+## scuro e i ferri dell'armatura che partono dai bordi. Grande quanto le lastre cadute.
+func _buco_volta() -> void:
+	var nodo := _nodo("BucoVolta")
+	var sc := BUCO_S
+	var tri := _tri_tunnel(sc)
+	var mu := sala.muro
+	var ki := sala.chiave - sala.imposta
+	var n_ang := 28
+	var anelli := [1.0, 0.93, 0.85, 0.6, 0.3, 0.0]
+	var alzo := [-0.01, 0.04, 0.015, 0.015, 0.015, 0.015]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 348
+	var raggio_j := PackedFloat32Array()
+	for j in n_ang:
+		raggio_j.append(1.0 + rng.randf_range(-0.16, 0.12) + 0.06 * sin(float(j) * 1.7))
+	# ogni vertice: (anello, spicchio) -> punto sulla volta vera e sua normale
+	var pv := []
+	var nv := []
+	for k in anelli.size():
+		var riga := []
+		var rn := []
+		for j in n_ang:
+			var a := TAU * float(j) / n_ang
+			var f: float = anelli[k] * raggio_j[j]
+			var s := sc + cos(a) * BUCO_MEZZO_S * f
+			var th := BUCO_THETA + sin(a) * BUCO_MEZZO_THETA * f
+			var p := sala.punto(s)
+			var r := sala.destra(s)
+			var su := Vector2(-cos(th) * mu, sala.imposta + sin(th) * ki)
+			var da := sala._al(p, r, Vector2(su.x * 0.8, sala.imposta + (su.y - sala.imposta) * 0.8))
+			var fino := sala._al(p, r, Vector2(su.x * 1.1, sala.imposta + (su.y - sala.imposta) * 1.1))
+			var h = _raggio(tri, da, fino, true)
+			if h == null:
+				push_warning("buco nella volta: niente volta a s %.2f" % s)
+				return
+			riga.append((h[0] as Vector3) + (h[1] as Vector3) * float(alzo[k]))
+			rn.append(h[1])
+		pv.append(riga)
+		nv.append(rn)
+	var st_b := SurfaceTool.new()
+	st_b.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_i := SurfaceTool.new()
+	st_i.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for k in anelli.size() - 1:
+		var st := st_b if k < 2 else st_i
+		for j in n_ang:
+			var j2 := (j + 1) % n_ang
+			var verso: Vector3 = nv[k][j]
+			if k == anelli.size() - 2:
+				sala._tri(st, [pv[k][j], pv[k][j2], pv[k + 1][j]], verso)
+			else:
+				sala._quad(st, [pv[k][j], pv[k][j2], pv[k + 1][j2], pv[k + 1][j]], verso)
+	var bordo := MeshInstance3D.new()
+	bordo.name = "buco_volta_bordo"
+	bordo.mesh = st_b.commit()
+	bordo.material_override = _mat("cemento_rotto", Color(0.46, 0.45, 0.42), 0.95)
+	nodo.add_child(bordo)
+	var dentro := MeshInstance3D.new()
+	dentro.name = "buco_volta_dentro"
+	dentro.mesh = st_i.commit()
+	dentro.material_override = _mat("buio_buco", Color(0.03, 0.03, 0.035), 1.0)
+	nodo.add_child(dentro)
+	# i ferri dell'armatura: paralleli, da un punto del bordo a uno di fronte, piegati verso il basso (sono rimasti appesi)
+	var mf := _mat("ferro_armatura", Color(0.24, 0.16, 0.11), 0.85, 0.4)
+	for q in [[3, 25, 0.12], [7, 21, 0.2], [11, 17, 0.08]]:
+		# (i capi sull'interno scuro, dove finisce il bordo rotto: escono dal cemento)
+		var a: Vector3 = (pv[2][q[0]] as Vector3) + (nv[2][q[0]] as Vector3) * 0.002
+		var b: Vector3 = (pv[2][q[1]] as Vector3) + (nv[2][q[1]] as Vector3) * 0.002
+		var nm: Vector3 = ((nv[2][q[0]] as Vector3) + (nv[2][q[1]] as Vector3)).normalized()
+		var m := (a + b) * 0.5 + nm * float(q[2])
+		var ferro := Node3D.new()
+		ferro.name = "ferro_armatura_%d" % q[0]
+		nodo.add_child(ferro)
+		sala._palo(ferro, a, m, 0.008, mf)
+		sala._palo(ferro, m, b, 0.008, mf)
+
+
+# --- la parata dei pesci (scelta aperta) -------------------------------------------------------------------------
+
+## I pesci di vetroresina della scelta [member scelta_pesci] (niente se è vuota).
+func _pesci() -> void:
+	if scelta_pesci == "":
+		return
+	var nodo := _nodo("Pesci")
+	var amb := _ambiente("pesci")
+	var occupati := _occupati_muri()
+	var k := 0
+	for lato: float in [-1.0, 1.0]:
+		var s := float(amb[0]) + 3.0 + (0.0 if lato < 0.0 else PESCI_OGNI * 0.5)
+		while s < float(amb[1]) - 2.0:
+			if not _libero(occupati, s, lato, 1.4) or sala._lato(s, lato)["crollo"]:
+				s += 0.5
+				continue
+			if scelta_pesci == "A":
+				_pesce_mensola(nodo, s, lato, k)
+			else:
+				_pesce_appeso(nodo, s, lato, k)
+			k += 1
+			s += PESCI_OGNI
+
+
+## Scelta A: un pesce in piedi sul suo palo, su una mensola d'ottone a sbalzo dal muro (un cuneo pieno: in alto
+## sporge 55 cm, al muro scende a 40 cm sotto), girato verso l'approdo; un faretto dietro la coda lo illumina.
+func _pesce_mensola(nodo: Node3D, s: float, lato: float, k: int) -> void:
+	var w = _muro(s, lato, sala.piano + MENSOLA_Y)
+	if w == null:
+		return
+	var pm: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var d := sala.direzione(s)
+	var lungo := Vector3.UP.cross(nrm).normalized()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var largo := 0.5
+	var fuori := 0.55
+	var giu := 0.4
+	var mezzo := lungo * largo * 0.5
+	var a0 := pm - nrm * 0.005
+	var top_in := [a0 - mezzo, a0 + mezzo]
+	var top_out := [a0 - mezzo + nrm * fuori, a0 + mezzo + nrm * fuori]
+	var bot_in := [a0 - mezzo + Vector3.DOWN * giu, a0 + mezzo + Vector3.DOWN * giu]
+	sala._quad(st, [top_in[0], top_in[1], top_out[1], top_out[0]], Vector3.UP)
+	sala._quad(st, [top_out[0], top_out[1], bot_in[1], bot_in[0]], (nrm * giu + Vector3.DOWN * fuori).normalized())
+	sala._tri(st, [top_in[0], top_out[0], bot_in[0]], -lungo)
+	sala._tri(st, [top_in[1], top_out[1], bot_in[1]], lungo)
+	var mi := MeshInstance3D.new()
+	mi.name = "mensola_pesce_%d" % k
+	mi.mesh = st.commit()
+	mi.material_override = sala._mat_ottone()
+	nodo.add_child(mi)
+	var p := _modello(nodo, "pesce_vetroresina", Vector3.ZERO, Vector3.ZERO, PESCE_SCALA)
+	p.name = "pesce_%d" % k
+	p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), pm + nrm * (fuori * 0.5))
+	# lontano dal muro almeno 3 cm (le pinne)
+	var gap := INF
+	for v in _triangoli(p):
+		gap = minf(gap, (v - pm).dot(nrm))
+	if gap < 0.03:
+		p.position += nrm * (0.03 - gap)
+	# il piede del palo sulla mensola: il punto più basso fra quelli sopra la mensola (le pinne fuori possono
+	# scendere oltre il bordo)
+	var basso := INF
+	for v in _triangoli(p):
+		var lu := (v - pm).dot(lungo)
+		var fu := (v - pm).dot(nrm)
+		if absf(lu) < largo * 0.5 - 0.01 and fu > 0.0 and fu < fuori - 0.01:
+			basso = minf(basso, v.y)
+	if basso < INF:
+		p.position.y += pm.y + 0.0005 - basso
+	# il faretto sotto il pesce: in punta alla mensola, puntato in su sulla pancia
+	var base := pm + nrm * (fuori - 0.07) + lungo * 0.12 + Vector3.UP * 0.0005
+	_faretto_mensola(nodo, base, p.position + Vector3.UP * 0.45, "faretto_pesce_%d" % k)
+
+
+## Un faretto piccolo appoggiato in [param base] (la sua base tonda), puntato su [param verso_p].
+func _faretto_mensola(nodo: Node3D, base: Vector3, verso_p: Vector3, nome: String) -> void:
+	var n := Node3D.new()
+	n.name = nome
+	nodo.add_child(n)
+	var mf := sala._mat_ferro()
+	var piede := MeshInstance3D.new()
+	var pc := CylinderMesh.new()
+	pc.top_radius = 0.045
+	pc.bottom_radius = 0.05
+	pc.height = 0.02
+	piede.mesh = pc
+	piede.material_override = mf
+	n.add_child(piede)
+	piede.position = base + Vector3.UP * 0.01
+	var dir := (verso_p - base).normalized()
+	var x := dir.cross(Vector3.UP).normalized()
+	if x.length_squared() < 0.01:
+		x = Vector3.RIGHT
+	var b := Basis(x, dir, x.cross(dir)).orthonormalized()
+	var testa := base + Vector3.UP * 0.035
+	var snodo := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 0.02
+	sm.height = 0.04
+	snodo.mesh = sm
+	snodo.material_override = mf
+	n.add_child(snodo)
+	snodo.position = base + Vector3.UP * 0.035
+	var can := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.045
+	cm.bottom_radius = 0.035
+	cm.height = 0.11
+	can.mesh = cm
+	can.material_override = mf
+	n.add_child(can)
+	can.transform = Transform3D(b, testa + dir * 0.065)
+	var vetro := MeshInstance3D.new()
+	var vc := CylinderMesh.new()
+	vc.top_radius = 0.043
+	vc.bottom_radius = 0.043
+	vc.height = 0.004
+	vetro.mesh = vc
+	vetro.material_override = _mat("vetro_faretto_pesci", Color(1.0, 0.95, 0.85), 0.2, 0.0, Color(1.0, 0.85, 0.65), 2.5)
+	n.add_child(vetro)
+	vetro.transform = Transform3D(b, testa + dir * 0.119)
+	var sp := SpotLight3D.new()
+	sp.light_color = Color(1.0, 0.85, 0.65)
+	sp.light_energy = 3.0
+	sp.spot_range = 3.0
+	sp.spot_angle = 35.0
+	sp.shadow_enabled = false
+	n.add_child(sp)
+	sp.transform = Transform3D(Basis.looking_at(dir, Vector3.FORWARD if absf(dir.y) > 0.95 else Vector3.UP), testa + dir * 0.13)
+
+
+## Scelta B: un pesce appeso con due cavi alla volta sopra la banchina (il palo in basso sopra i 2,1 m), girato
+## verso l'approdo, e il secondo della coppia accanto, più vicino al muro e un metro avanti.
+func _pesce_appeso(nodo: Node3D, s: float, lato: float, k: int) -> void:
+	for j in 2:
+		var sj := s + float(j) * 1.0
+		var p0 := sala.punto(sj)
+		var r := sala.destra(sj)
+		var d := sala.direzione(sj)
+		var u := lato * (sala.canale + 0.8 + float(j) * 1.05)
+		var c := sala._al(p0, r, Vector2(u, sala.piano + 2.1))
+		var p := _modello(nodo, "pesce_vetroresina", c, Vector3.ZERO, PESCE_SCALA)
+		p.name = "pesce_%d_%d" % [k, j]
+		p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), c)
+		_appoggia_su(p, sala.piano + 2.1)
+		var tri_p := _triangoli(p)
+		var tri_v := _tri_tunnel(sj)
+		for q: float in [-0.35, 0.35]:
+			var b := c + d * q
+			var giu = _raggio(tri_p, Vector3(b.x, -20.0, b.z), Vector3(b.x, sala.piano, b.z))
+			var su = _raggio(tri_v, Vector3(b.x, sala.piano + 2.5, b.z), Vector3(b.x, -20.0, b.z))
+			if giu == null or su == null:
+				continue
+			_piastra(nodo, su, "piastra_pesce_%d_%d_%d" % [k, j, int(q > 0.0)])
+			sala._palo(nodo, (giu as Vector3) + Vector3.DOWN * 0.006, (su as Vector3) + Vector3.DOWN * 0.012, 0.004, sala._mat_ferro())
+			nodo.get_child(nodo.get_child_count() - 1).name = "cavo_pesce_%d_%d_%d" % [k, j, int(q > 0.0)]
+
+
+## Abbassa o alza [param n] finché il suo punto più basso sta a [param quota].
+func _appoggia_su(n: Node3D, quota: float) -> void:
+	var basso := INF
+	for v in _triangoli(n):
+		basso = minf(basso, v.y)
+	if basso < INF:
+		n.position.y += quota - basso
+
+
+## I tratti di muro già occupati (lampade, oblò piccoli, ostacoli, reti e cartelli): [s, lato, mezza larghezza].
+func _occupati_muri() -> Array:
+	var out: Array = []
+	for n in sala.find_children("*", "Node3D", true, false):
+		# (i fratelli con lo stesso nome Godot li rinomina "@Oblo@12": si cerca il pezzo nel nome)
+		var nome := String(n.name).to_lower()
+		if not (nome.contains("lampada") or nome.contains("oblo") or nome.contains("rete_") or nome.contains("faretto")
+				or nome.contains("cartello") or nome.contains("salvagente") or nome.contains("fanale") or nome.contains("mensola")):
+			continue
+		var pos := _xf(n as Node3D).origin
+		var pr := sala.proietta(pos)
+		if absf(float(pr[1])) < sala.muro - 1.0:
+			continue
+		out.append([float(pr[0]), signf(float(pr[1])), 1.2 if nome.begins_with("rete_") else 0.6])
+	# le lampade e gli oblò piccoli di _luci (i loro nodi hanno nomi automatici, "@Node3D@367"): tutti i figli di Luci
+	var luci := sala.get_node_or_null("Luci")
+	if luci:
+		for n in luci.get_children():
+			if n is Node3D and not n is Light3D:
+				var pr := sala.proietta(_xf(n as Node3D).origin)
+				if absf(float(pr[1])) > sala.muro - 1.0:
+					out.append([float(pr[0]), signf(float(pr[1])), 0.6])
+	for o in sala.ostacoli:
+		out.append([float(o["s"]) + float(o["lungo"]) * 0.5, float(o["lato"]), float(o["lungo"]) * 0.5 + 0.8])
+	return out
+
+
+func _libero(occupati: Array, s: float, lato: float, mezzo: float) -> bool:
+	for o in occupati:
+		if float(o[1]) == lato and absf(float(o[0]) - s) < mezzo + float(o[2]):
+			return false
+	return true
+
+
+# --- gli oblò dell'abisso ----------------------------------------------------------------------------------------
+
+## Le lampade dell'abisso: poche e blu scure, alternate sui muri.
+func _abisso_lampade() -> void:
+	var nodo := _nodo("AbissoLampade")
+	var amb := _ambiente("abisso")
+	var s := float(amb[0]) + 6.0
+	var lato := 1.0
+	while s < float(amb[1]) - 3.0:
+		if _sala_ha_lampada_vicina(s, lato):
+			s += 2.0
+			continue
+		sala._lampada(nodo, s, lato, sala.piano + 3.0, 3.2)
+		var l := nodo.get_child(nodo.get_child_count() - 2) as Node3D
+		var g := l.find_child("globo", true, false) as MeshInstance3D
+		if g:
+			g.material_override = _mat("globo_blu", Color(0.35, 0.5, 1.0), 0.4, 0.0, Color(0.25, 0.42, 1.0), 2.5)
+		var o := nodo.get_child(nodo.get_child_count() - 1) as OmniLight3D
+		o.light_color = Color(0.32, 0.48, 1.0)
+		s += ABISSO_LAMPADE_OGNI
+		lato = -lato
+
+
+## Le lucine a filo del bordo delle banchine, azzurre: di notte disegnano dove finisce la banchina.
+func _abisso_lucine() -> void:
+	var amb := _ambiente("abisso")
+	var xf: Array[Transform3D] = []
+	for lato: float in [-1.0, 1.0]:
+		var s := float(amb[0]) + 1.5
+		while s < float(amb[1]):
+			if not sala._lato(s, lato)["crollo"] and not sala._lato(s - 0.2, lato)["crollo"] and not sala._lato(s + 0.2, lato)["crollo"]:
+				var p := sala.punto(s)
+				var r := sala.destra(s)
+				var c := sala._al(p, r, Vector2(lato * (sala.canale + 0.12), sala.piano + 0.007))
+				xf.append(Transform3D(Basis(), c))
+			s += LUCINE_OGNI
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.055
+	cm.bottom_radius = 0.06
+	cm.height = 0.012
+	cm.radial_segments = 16
+	cm.rings = 1
+	cm.material = _mat("lucina", Color(0.5, 0.85, 1.0), 0.3, 0.0, Color(0.35, 0.8, 1.0), 7.0)
+	mm.mesh = cm
+	mm.instance_count = xf.size()
+	for i in xf.size():
+		mm.set_instance_transform(i, xf[i])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "lucine_banchine"
+	mmi.multimesh = mm
+	mmi.set_meta(&"trasformazioni", xf)
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mmi)
+
+
+## Gli oblò grandi dell'abisso (scelta [member scelta_abisso], niente se è vuota): tre per lato, fra le lampade blu,
+## con l'anello d'ottone e il vetro col mare profondo finto (oblo_abisso.gdshader, animato nella A).
+func _abisso_oblo() -> void:
+	if scelta_abisso == "":
+		return
+	var nodo := _nodo("AbissoOblo")
+	var amb := _ambiente("abisso")
+	var occupati := _occupati_muri()
+	var shader := load(DIR + "oblo_abisso.gdshader") as Shader
+	var k := 0
+	for lato: float in [-1.0, 1.0]:
+		var messi := 0
+		var s := float(amb[0]) + 8.0 + (0.0 if lato < 0.0 else 9.0)
+		while s < float(amb[1]) - 4.0 and messi < 3:
+			if not _libero(occupati, s, lato, OBLO_R + 0.6) or sala._lato(s, lato)["crollo"] or _bocca_galleria(s, lato):
+				s += 0.5
+				continue
+			var w = _muro(s, lato, sala.piano + OBLO_Y)
+			if w == null:
+				s += 0.5
+				continue
+			var pm: Vector3 = w[0]
+			var nrm: Vector3 = w[1]
+			var n := Node3D.new()
+			n.name = "oblo_grande_%d" % k
+			nodo.add_child(n)
+			n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), pm)
+			var anello := MeshInstance3D.new()
+			var tm := TorusMesh.new()
+			tm.inner_radius = OBLO_R - 0.02
+			tm.outer_radius = OBLO_R + 0.12
+			tm.rings = 48
+			anello.mesh = tm
+			anello.rotation_degrees.x = 90
+			anello.position.z = 0.07 - 0.003
+			anello.material_override = sala._mat_ottone()
+			n.add_child(anello)
+			var vetro := MeshInstance3D.new()
+			var cm := CylinderMesh.new()
+			cm.top_radius = OBLO_R
+			cm.bottom_radius = OBLO_R
+			cm.height = 0.02
+			cm.radial_segments = 48
+			vetro.mesh = cm
+			vetro.rotation_degrees.x = 90
+			vetro.position.z = 0.011
+			var m := ShaderMaterial.new()
+			m.shader = shader
+			m.set_shader_parameter(&"animato", scelta_abisso == "A")
+			m.set_shader_parameter(&"fase", float(k) * 0.37 if fase_oblo_prova < 0.0 else fase_oblo_prova)
+			vetro.material_override = m
+			n.add_child(vetro)
+			m.set_shader_parameter(&"raggio", OBLO_R)
+			# una luce debole davanti, del colore del mare: si vede l'anello d'ottone (senza, al buio il vetro sembrava
+			# un disco attaccato al muro)
+			var o := OmniLight3D.new()
+			o.light_color = Color(0.3, 0.5, 0.85)
+			o.light_energy = 0.6
+			o.omni_range = 2.6
+			o.shadow_enabled = false
+			o.position = Vector3(0, 0, 0.6)
+			n.add_child(o)
+			occupati.append([s, lato, OBLO_R + 0.2])
+			k += 1
+			messi += 1
+			s += 22.0
+
+
+func _bocca_galleria(s: float, lato: float) -> bool:
+	for a in sala._aperture():
+		if float(a[2]) == lato and s > float(a[0]) - OBLO_R - 0.5 and s < float(a[1]) + OBLO_R + 0.5:
+			return true
+	return false
+
+
+# --- l'approdo ---------------------------------------------------------------------------------------------------
+
+func _approdo() -> void:
+	var nodo := _nodo("Approdo")
+	for b in BITTE:
+		_bitta(nodo, float(b[0]), float(b[1]))
+	for c in CARTELLI:
+		_cartello(nodo, float(c[0]), float(c[1]))
+	_fanale(nodo, FANALI_S, -1.0, Color(1.0, 0.12, 0.08), "fanale_rosso")
+	_fanale(nodo, FANALI_S, 1.0, Color(0.15, 1.0, 0.3), "fanale_verde")
+	_salvagente(nodo)
+	_vetrina_vuota(nodo)
+
+
+## Una bitta d'ottone scuro sul bordo della banchina: base, collo e testa a fungo, alta 28 cm.
+func _bitta(nodo: Node3D, s: float, lato: float) -> void:
+	var p := sala.punto(s)
+	var r := sala.destra(s)
+	var c := sala._al(p, r, Vector2(lato * (sala.canale + 0.3), sala.piano))
+	var n := Node3D.new()
+	n.name = "bitta_%d" % int(s)
+	nodo.add_child(n)
+	n.position = c
+	var m := _mat("ghisa", Color(0.12, 0.12, 0.13), 0.55, 0.6)
+	for q in [[0.15, 0.17, 0.05, 0.025], [0.08, 0.09, 0.2, 0.15], [0.13, 0.11, 0.05, 0.255]]:
+		var mi := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = q[0]
+		cm.bottom_radius = q[1]
+		cm.height = q[2]
+		cm.radial_segments = 20
+		mi.mesh = cm
+		mi.material_override = m
+		mi.position.y = q[3]
+		n.add_child(mi)
+	var corpo := StaticBody3D.new()
+	corpo.collision_layer = Layers.WORLD
+	var cs := CollisionShape3D.new()
+	var cy := CylinderShape3D.new()
+	cy.radius = 0.15
+	cy.height = 0.28
+	cs.shape = cy
+	cs.position.y = 0.14
+	corpo.add_child(cs)
+	n.add_child(corpo)
+
+
+## Un cartello quadrato a disegni a bandiera sul muro sopra i 2 m: la staffa dal muro e la lastra girata verso chi
+## arriva, col portello e la freccia avanti.
+func _cartello(nodo: Node3D, s: float, lato: float) -> void:
+	var y := sala.piano + 2.55
+	var w = _muro(s, lato, y)
+	if w == null:
+		return
+	var punto_muro: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var d := sala.direzione(s)
+	var n := Node3D.new()
+	n.name = "cartello_portello_%d" % int(s)
+	nodo.add_child(n)
+	var mz := _mat("zincato", Color(0.55, 0.56, 0.55), 0.5, 0.8)
+	# la staffa: la piastra a muro e il braccio
+	var piastra := MeshInstance3D.new()
+	var pb := BoxMesh.new()
+	pb.size = Vector3(0.12, 0.62, 0.01)
+	piastra.mesh = pb
+	piastra.material_override = mz
+	n.add_child(piastra)
+	piastra.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), punto_muro + nrm * 0.006)
+	var braccio := MeshInstance3D.new()
+	var bb := BoxMesh.new()
+	bb.size = Vector3(0.03, 0.03, 0.62)
+	braccio.mesh = bb
+	braccio.material_override = mz
+	n.add_child(braccio)
+	braccio.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), punto_muro + nrm * (0.008 + 0.31) + Vector3.UP * 0.29)
+	# la lastra appesa sotto il braccio, perpendicolare al muro: la faccia col disegno guarda chi arriva (-d)
+	var lastra := MeshInstance3D.new()
+	var lb := BoxMesh.new()
+	lb.size = Vector3(0.5, 0.5, 0.015)
+	lastra.mesh = lb
+	lastra.material_override = mz
+	n.add_child(lastra)
+	var centro := punto_muro + nrm * 0.33 + Vector3.DOWN * 0.0
+	var base_l := Basis.looking_at(d, Vector3.UP)          # -z verso d: il davanti (+z) guarda chi arriva
+	lastra.transform = Transform3D(base_l, centro)
+	var faccia := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(0.48, 0.48)
+	faccia.mesh = q
+	var mf := StandardMaterial3D.new()
+	mf.albedo_texture = load(DIR + "cartello_portello.jpg")
+	mf.roughness = 0.6
+	faccia.material_override = mf
+	n.add_child(faccia)
+	faccia.transform = Transform3D(base_l, centro - d * 0.0085)
+	# i due ganci fra il braccio e la lastra
+	for k: float in [-0.18, 0.18]:
+		var g := MeshInstance3D.new()
+		var gc := CylinderMesh.new()
+		gc.top_radius = 0.006
+		gc.bottom_radius = 0.006
+		gc.height = 0.04
+		g.mesh = gc
+		g.material_override = mz
+		n.add_child(g)
+		g.position = punto_muro + nrm * (0.33 + k) + Vector3.UP * 0.26
+
+
+## Un fanale d'approdo sul muro (il vetro colorato acceso e una luce debole), a 3,2 m.
+func _fanale(nodo: Node3D, s: float, lato: float, colore: Color, nome: String) -> void:
+	var w = _muro(s, lato, sala.piano + 3.2)
+	if w == null:
+		return
+	var pm: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var n := Node3D.new()
+	n.name = nome
+	nodo.add_child(n)
+	n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), pm)
+	var ottone := sala._mat_ottone()
+	var base := MeshInstance3D.new()
+	var bb := BoxMesh.new()
+	bb.size = Vector3(0.24, 0.34, 0.03)
+	base.mesh = bb
+	base.material_override = ottone
+	base.position = Vector3(0, 0, 0.016)
+	n.add_child(base)
+	var vetro := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.075
+	cm.bottom_radius = 0.075
+	cm.height = 0.18
+	vetro.mesh = cm
+	vetro.material_override = _mat("fanale_" + nome, colore, 0.2, 0.0, colore, 3.0)
+	vetro.position = Vector3(0, 0, 0.031 + 0.075)
+	n.add_child(vetro)
+	for y: float in [-0.1, 0.1]:
+		var anello := MeshInstance3D.new()
+		var ca := CylinderMesh.new()
+		ca.top_radius = 0.085
+		ca.bottom_radius = 0.085
+		ca.height = 0.02
+		anello.mesh = ca
+		anello.material_override = ottone
+		anello.position = Vector3(0, y, 0.031 + 0.075)
+		n.add_child(anello)
+	var o := OmniLight3D.new()
+	o.light_color = colore
+	o.light_energy = 1.2
+	o.omni_range = 5.0
+	o.shadow_enabled = false
+	o.position = Vector3(0, 0, 0.35)
+	n.add_child(o)
+
+
+## Il salvagente fosforescente al muro destro, col suo palo di legno, sopra i 2 m: si trova anche al buio.
+func _salvagente(nodo: Node3D) -> void:
+	var w = _muro(SALVAGENTE_S, 1.0, sala.piano + 2.75)
+	if w == null:
+		return
+	var n := _modello(nodo, "salvagente", Vector3.ZERO, Vector3.ZERO, 1.0)
+	n.name = "salvagente_fosforescente"
+	_a_muro(n, w[0], w[1], sala.piano + 2.03)
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		for i in m.mesh.get_surface_count():
+			var base := m.mesh.surface_get_material(i) as StandardMaterial3D
+			if base == null:
+				continue
+			var mt := base.duplicate() as StandardMaterial3D
+			mt.emission_enabled = true
+			mt.emission = Color(1.0, 1.0, 1.0)
+			mt.emission_texture = base.albedo_texture
+			mt.emission_energy_multiplier = 0.3
+			m.set_surface_override_material(i, mt)
+
+
+## Dove stava la vetrina del diorama: le due staffe vuote sotto (sopra i 2 m) con i tiranti al muro e il segno più
+## chiaro sul mosaico, dove la vetrina l'ha tenuto pulito.
+func _vetrina_vuota(nodo: Node3D) -> void:
+	var lato := -1.0
+	var n := Node3D.new()
+	n.name = "vetrina_vuota"
+	nodo.add_child(n)
+	var mf := sala._mat_ferro()
+	for ds: float in [-VETRINA_LARGA * 0.5 + 0.2, VETRINA_LARGA * 0.5 - 0.2]:
+		var s := VETRINA_S + ds
+		var w = _muro(s, lato, sala.piano + VETRINA_BASSO)
+		if w == null:
+			continue
+		var pm: Vector3 = w[0]
+		var nrm: Vector3 = w[1]
+		var bs := Basis.looking_at(-nrm, Vector3.UP)
+		# la piastra a muro, il braccio orizzontale (la vetrina ci poggiava) e il tirante su al muro
+		var piastra := MeshInstance3D.new()
+		var pb := BoxMesh.new()
+		pb.size = Vector3(0.1, 0.14, 0.01)
+		piastra.mesh = pb
+		piastra.material_override = mf
+		n.add_child(piastra)
+		piastra.transform = Transform3D(bs, pm + nrm * 0.006 + Vector3.UP * 0.05)
+		var braccio := MeshInstance3D.new()
+		var bb := BoxMesh.new()
+		bb.size = Vector3(0.05, 0.04, VETRINA_FONDA)
+		braccio.mesh = bb
+		braccio.material_override = mf
+		n.add_child(braccio)
+		braccio.transform = Transform3D(bs, pm + nrm * (0.008 + VETRINA_FONDA * 0.5) + Vector3.UP * 0.05)
+		var w2 = _muro(s, lato, sala.piano + VETRINA_BASSO + 0.9)
+		if w2 != null:
+			var alto: Vector3 = w2[0]
+			# la piastrina in punta al braccio (ci finiscono il braccio e il tirante)
+			var pp := MeshInstance3D.new()
+			var ppb := BoxMesh.new()
+			ppb.size = Vector3(0.07, 0.08, 0.006)
+			pp.mesh = ppb
+			pp.material_override = mf
+			n.add_child(pp)
+			pp.transform = Transform3D(bs, pm + nrm * (0.008 + VETRINA_FONDA + 0.003) + Vector3.UP * 0.06)
+			var capo := pm + nrm * (0.008 + VETRINA_FONDA - 0.004) + Vector3.UP * 0.09
+			sala._palo(n, capo, alto + nrm * 0.009, 0.012, mf)
+			n.get_child(n.get_child_count() - 1).name = "tirante_vetrina"
+			var p2 := MeshInstance3D.new()
+			var pb2 := BoxMesh.new()
+			pb2.size = Vector3(0.08, 0.1, 0.01)
+			p2.mesh = pb2
+			p2.material_override = mf
+			n.add_child(p2)
+			p2.transform = Transform3D(bs, alto + nrm * 0.006)
+	# il segno: un decal più chiaro sul mosaico dove stava il fondo della vetrina
+	var wc = _muro(VETRINA_S, lato, sala.piano + VETRINA_BASSO + VETRINA_ALTA * 0.5)
+	if wc != null:
+		var dc := Decal.new()
+		dc.name = "segno_vetrina"
+		dc.size = Vector3(VETRINA_LARGA, 0.2, VETRINA_ALTA)
+		dc.texture_albedo = _texture_segno()
+		dc.modulate = Color(0.75, 0.9, 1.0, 0.28)
+		dc.upper_fade = 0.0
+		dc.lower_fade = 0.0
+		n.add_child(dc)
+		var nrm: Vector3 = wc[1]
+		# il decal proietta lungo il suo -y: verso il muro
+		var x := Vector3.UP.cross(nrm).normalized()
+		dc.transform = Transform3D(Basis(x, nrm, x.cross(nrm).normalized()), (wc[0] as Vector3) + nrm * 0.05)
+
+
+var _segno: ImageTexture
+
+
+func _texture_segno() -> ImageTexture:
+	if _segno == null:
+		var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+		for y in 64:
+			for x in 64:
+				var bx := minf(minf(x, 63 - x), minf(y, 63 - y)) / 6.0
+				img.set_pixel(x, y, Color(1, 1, 1, clampf(bx, 0.0, 1.0)))
+		_segno = ImageTexture.create_from_image(img)
+	return _segno
+
+
+# --- aiuti -------------------------------------------------------------------------------------------------------
+
+func _nodo(nome: String) -> Node3D:
+	var n := Node3D.new()
+	n.name = nome
+	add_child(n)
+	return n
+
+
+## [da s, a s] dell'ambiente [param nome].
+func _ambiente(nome: String) -> Array:
+	var amb: Array = sala.dati["ambienti"]
+	var da := 0.0
+	for a in amb:
+		if a["nome"] == nome:
+			return [da, float(a["fino_a"])]
+		da = float(a["fino_a"])
+	return [0.0, 0.0]
+
+
+## Un modello del fiume (come [method SalaSottomarino._modello], ma con le coordinate della sala).
+func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
+	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	nodo.add_child(n)
+	var b := Basis.looking_at(verso, Vector3.UP) if verso.length_squared() > 0.0 else Basis()
+	n.transform = Transform3D(b.scaled(Vector3.ONE * scala), pos)
+	return n
+
+
+## Mette il modello [param n] col dorso (il suo -z... il lato più vicino al muro) a filo del muro in [param pm] di
+## normale [param nrm], col bordo basso alla quota [param basso].
+func _a_muro(n: Node3D, pm: Vector3, nrm: Vector3, basso: float) -> void:
+	# il modello guarda fuori dal muro (+z verso la normale), messo davanti e poi fissato con lo strumento comune
+	n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP) * Basis.from_scale(n.transform.basis.get_scale()), pm + nrm * 0.5)
+	var dietro := 0.0
+	var sotto := INF
+	for v in _triangoli(n):
+		dietro = maxf(dietro, (n.position - v).dot(nrm))
+		sotto = minf(sotto, v.y)
+	n.position.y += basso - sotto
+	if not Posa.fissa_al_muro(n, nrm, dietro + 0.001, false):
+		n.position = Vector3(pm.x, n.position.y, pm.z) + nrm * (dietro + 0.001)
+
+
+## Il punto del muro dal lato [param lato] a [param s] alla quota [param y] e la sua normale (verso il tunnel), dai
+## triangoli veri; null se non c'è.
+func _muro(s: float, lato: float, y: float):
+	var p := sala.punto(s)
+	var r := sala.destra(s)
+	var da := sala._al(p, r, Vector2(lato * (sala.muro - 1.0), y))
+	var a := sala._al(p, r, Vector2(lato * (sala.muro + 0.3), y))
+	var tri := _tri_tunnel(s)
+	var h = _raggio(tri, da, a, true)
+	if h == null:
+		return null
+	return h
+
+
+func _sala_ha_lampada_vicina(s: float, lato: float) -> bool:
+	for o in sala.ostacoli:
+		var sm := float(o["s"]) + float(o["lungo"]) * 0.5
+		if absf(sm - s) < 2.5 and float(o["lato"]) == lato:
+			return true
+	return false
+
+
+## I triangoli dei pezzi di tunnel intorno a [param s] (coordinate della sala).
+func _tri_tunnel(s: float) -> PackedVector3Array:
+	var out := PackedVector3Array()
+	for k: int in [-1, 0, 1]:
+		var i := int(floor((s + SalaSottomarino.TESTA) / SalaSottomarino.PEZZO)) + k
+		if i < 0:
+			continue
+		if not _tri_pezzi.has(i):
+			var n := sala.get_node_or_null("Tunnel_%03d" % int(i * SalaSottomarino.PEZZO)) as Node3D
+			_tri_pezzi[i] = PackedVector3Array() if n == null else _triangoli(n)
+		out.append_array(_tri_pezzi[i])
+	return out
+
+
+## I triangoli delle mesh sotto [param n], nelle coordinate della sala.
+func _triangoli(n: Node3D) -> PackedVector3Array:
+	var out := PackedVector3Array()
+	var mis: Array = n.find_children("*", "MeshInstance3D", true, false)
+	if n is MeshInstance3D:
+		mis.append(n)
+	for x in mis:
+		var mi := x as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var xf := _xf(mi)
+		for v in mi.mesh.get_faces():
+			out.append(xf * v)
+	return out
+
+
+## La trasformazione di [param n] rispetto alla sala (anche fuori dall'albero).
+func _xf(n: Node3D) -> Transform3D:
+	var xf := n.transform
+	var p := n.get_parent()
+	while p != null and p != sala:
+		if p is Node3D:
+			xf = (p as Node3D).transform * xf
+		p = p.get_parent()
+	return xf
+
+
+## Il primo punto dei triangoli [param tri] sul segmento da [param da] ad [param a] (null se non c'è); con
+## [param normale] anche la normale verso [param da].
+func _raggio(tri: PackedVector3Array, da: Vector3, a: Vector3, normale := false):
+	var best := INF
+	var hit = null
+	var nb := Vector3.ZERO
+	var lo := da.min(a) - Vector3.ONE * 0.01
+	var hi := da.max(a) + Vector3.ONE * 0.01
+	for i in range(0, tri.size(), 3):
+		var t0 := tri[i]
+		var t1 := tri[i + 1]
+		var t2 := tri[i + 2]
+		if maxf(t0.x, maxf(t1.x, t2.x)) < lo.x or minf(t0.x, minf(t1.x, t2.x)) > hi.x:
+			continue
+		if maxf(t0.z, maxf(t1.z, t2.z)) < lo.z or minf(t0.z, minf(t1.z, t2.z)) > hi.z:
+			continue
+		if maxf(t0.y, maxf(t1.y, t2.y)) < lo.y or minf(t0.y, minf(t1.y, t2.y)) > hi.y:
+			continue
+		var h = Geometry3D.segment_intersects_triangle(da, a, t0, t1, t2)
+		if h != null:
+			var dd := da.distance_to(h)
+			if dd < best:
+				best = dd
+				hit = h
+				nb = (t1 - t0).cross(t2 - t0).normalized()
+	if hit == null:
+		return null
+	if not normale:
+		return hit
+	if nb.dot(da - a) < 0.0:
+		nb = -nb
+	return [hit, nb]
+
+
+## Una piastra tonda d'ottone con l'occhiello, a filo della volta in [param p].
+func _piastra(nodo: Node3D, p: Vector3, nome: String) -> void:
+	var mi := MeshInstance3D.new()
+	mi.name = nome
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.07
+	cm.bottom_radius = 0.07
+	cm.height = 0.02
+	cm.radial_segments = 16
+	mi.mesh = cm
+	mi.material_override = sala._mat_ottone()
+	nodo.add_child(mi)
+	mi.position = p + Vector3.DOWN * 0.008
+
+
+## Una catena dritta da [param a] a [param b]: maglie ovali alternate, in una mesh sola.
+func _catena(nodo: Node3D, a: Vector3, b: Vector3, nome: String) -> void:
+	var asse := b - a
+	var lung := asse.length()
+	var passo := 0.05
+	var nm := maxi(int(round(lung / passo)), 1)
+	passo = lung / nm
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var su := asse.normalized()
+	var x0 := su.cross(Vector3.FORWARD if absf(su.dot(Vector3.FORWARD)) < 0.9 else Vector3.RIGHT).normalized()
+	var z0 := su.cross(x0)
+	var rf := 0.006
+	var rx := 0.016
+	var ry := passo * 0.5 + rf
+	for k in nm:
+		var c := a + su * (passo * (k + 0.5))
+		var lx := x0 if k % 2 == 0 else z0
+		var lz := z0 if k % 2 == 0 else -x0
+		var seg := 12
+		var lati := 6
+		for i in seg:
+			for j in lati:
+				var pts := []
+				for di in [0, 1]:
+					for dj in [0, 1]:
+						var u := TAU * float(i + di) / seg
+						var v := TAU * float(j + dj) / lati
+						var centro := c + lx * cos(u) * rx + su * sin(u) * minf(ry, passo * 0.5 + rf)
+						var rad := (lx * cos(u) * rx + su * sin(u) * ry).normalized()
+						pts.append(centro + (rad * cos(v) + lz * sin(v)) * rf)
+				var nrm: Vector3 = ((pts[0] + pts[1] + pts[2] + pts[3]) * 0.25 - c).normalized()
+				sala._quad(st, [pts[0], pts[2], pts[3], pts[1]], nrm)
+	var mi := MeshInstance3D.new()
+	mi.name = nome
+	mi.mesh = st.commit()
+	mi.material_override = sala._mat_ferro()
+	nodo.add_child(mi)
+
+
+## Un faretto a muro (lato, quota) puntato su [param verso_p]: la staffa, il barattolo e la luce.
+func _faretto(nodo: Node3D, s: float, lato: float, y: float, verso_p: Vector3, colore: Color, energia: float) -> void:
+	var w = _muro(s, lato, sala.piano + y)
+	if w == null:
+		return
+	var pm: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var n := Node3D.new()
+	n.name = "faretto_%d" % int(s)
+	nodo.add_child(n)
+	var mf := sala._mat_ferro()
+	var piastra := MeshInstance3D.new()
+	var pb := BoxMesh.new()
+	pb.size = Vector3(0.12, 0.12, 0.012)
+	piastra.mesh = pb
+	piastra.material_override = mf
+	n.add_child(piastra)
+	piastra.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), pm + nrm * 0.007)
+	var testa := pm + nrm * 0.2
+	sala._palo(n, pm + nrm * 0.01, testa, 0.015, mf)
+	n.get_child(n.get_child_count() - 1).name = "braccio_faretto"
+	var dir := (verso_p - testa).normalized()
+	var can := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.06
+	cm.bottom_radius = 0.075
+	cm.height = 0.18
+	can.mesh = cm
+	can.material_override = mf
+	n.add_child(can)
+	# il barattolo col fondo sulla testa del braccio, aperto verso la tartaruga
+	var bs := Basis.looking_at(dir, nrm if absf(dir.dot(nrm)) < 0.95 else Vector3.UP)
+	var b_can := Basis(bs.x, -bs.z, bs.y)
+	can.transform = Transform3D(b_can, testa + dir * 0.08)
+	var vetro := MeshInstance3D.new()
+	var vc := CylinderMesh.new()
+	vc.top_radius = 0.058
+	vc.bottom_radius = 0.058
+	vc.height = 0.006
+	vetro.mesh = vc
+	vetro.material_override = _mat("vetro_faretto", Color(0.9, 0.97, 1.0), 0.2, 0.0, colore, 2.5)
+	n.add_child(vetro)
+	vetro.transform = Transform3D(b_can, testa + dir * 0.168)
+	var sp := SpotLight3D.new()
+	sp.light_color = colore
+	sp.light_energy = energia
+	sp.spot_range = 9.0
+	sp.spot_angle = 24.0
+	sp.shadow_enabled = false
+	n.add_child(sp)
+	sp.transform = Transform3D(Basis.looking_at(dir, Vector3.UP), testa + dir * 0.2)
+
+
+var _materiali := {}
+
+
+func _mat(nome: String, colore: Color, ruvido := 0.7, metallo := 0.0, emissione := Color.BLACK, forza := 0.0) -> StandardMaterial3D:
+	if not _materiali.has(nome):
+		var m := StandardMaterial3D.new()
+		m.albedo_color = colore
+		m.roughness = ruvido
+		m.metallic = metallo
+		if forza > 0.0:
+			m.emission_enabled = true
+			m.emission = emissione
+			m.emission_energy_multiplier = forza
+		_materiali[nome] = m
+	return _materiali[nome]

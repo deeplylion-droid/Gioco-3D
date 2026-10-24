@@ -26,6 +26,13 @@ uniform float glow_scatter = 1.0;
 /** 0..1: gocce sull'obiettivo dopo essere riemersi. */
 uniform float lens_wet = 0.0;
 uniform float camera_near = 0.05;
+/** La massa d'acqua scelta dallo script (UnderwaterEffect): la piu' vicina alla camera, solo se profonda. Il
+ * pelo e il fondo si prendono da qui e non dalla prima vasca della tabella che contiene il punto: dove due
+ * rettangoli si sovrappongono (canali a tratti, vasche vicine) la prima poteva avere il pelo sopra la testa
+ * e dare la vista subacquea con la testa fuori dall'acqua. */
+uniform bool has_body = false;
+uniform float body_level = -1e6;
+uniform float body_bottom = -1e6;
 
 void vertex() {
 	POSITION = vec4(VERTEX.xy * 2.0, 1.0, 1.0);
@@ -64,10 +71,10 @@ void fragment() {
 	vec3 near_w = CAMERA_POSITION_WORLD + ray_w * (camera_near / max(-ray_v.z, 0.1));
 	WaterBody b = water_body_at(near_w, 0.0);
 	float t = water_time;
-	float surf = b.level
+	float surf = body_level
 			+ 0.012 * sin(near_w.x * 2.1 + t * 1.7) + 0.01 * sin(near_w.z * 2.7 - t * 1.3);
 	// Sotto il fondo (un tunnel che passa sotto la vasca) non si e' sott'acqua.
-	bool under = b.found && near_w.y < surf && near_w.y > b.bottom - 0.05;
+	bool under = has_body && near_w.y < surf && near_w.y > body_bottom - 0.05;
 
 	if (!under) {
 		if (lens_wet <= 0.001) {

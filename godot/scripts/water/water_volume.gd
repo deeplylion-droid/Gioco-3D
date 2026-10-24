@@ -8,6 +8,11 @@ extends Area3D
 
 ## Lo zaino può aspirare da qui (riserva infinita).
 @export var suckable := true
+## Acqua da guadare (il canale del tunnel sottomarino): con l'acqua sopra il ginocchio il giocatore non va più
+## veloce di così, a piedi e di corsa (m/s). 0 = l'acqua non rallenta.
+@export var velocita_guado := 0.0
+## Come [member velocita_guado], accovacciati (m/s).
+@export var velocita_guado_accovacciato := 0.0
 
 
 func _init() -> void:
