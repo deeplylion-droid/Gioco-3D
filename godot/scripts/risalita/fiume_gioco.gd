@@ -792,6 +792,10 @@ func _metti(nome: String, pos: Vector3, rot_y := 0.0, scala := 1.0) -> Node3D:
 	var n := _glb(nome)
 	n.name = nome
 	n.position = pos
+	# a terra 1 mm sopra il pavimento, come _a_terra: i modelli hanno il fondo a quota 0 e i materiali a doppia faccia,
+	# e il fondo sul pavimento sfarfallava nel cemento dell'ingresso (riscontro dell'utente, collaudo del 24 ottobre)
+	if is_zero_approx(pos.y):
+		n.position.y = 0.001
 	n.rotation_degrees.y = rot_y
 	n.scale = Vector3.ONE * scala
 	add_child(n, true)   # nomi leggibili (palma_finta2...) anche nei rapporti del controllo di posizionamento
@@ -970,21 +974,78 @@ func _faro_subacqueo(pos: Vector3, rot_y: float) -> void:
 
 ## Un pannello di roccia finta (4,2 x 3,2 m, alzato fino a 4,9) col retro verso [param rot] + 180: girato
 ## e specchiato a caso perché non si veda che è sempre lo stesso. Ha la sua collisione.
-func _roccia(pos: Vector3, rot: float, specchio = null) -> Node3D:
+func _roccia(pos: Vector3, rot: float, specchio = null, largo := 1.0) -> Node3D:
 	var r := _metti("roccia_parete", pos, rot)
 	for mi in r.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = mat_roccia
-	# (quelli doppi, dietro: specchiati o no come dice [param specchio], senza toccare la sequenza casuale degli altri)
+	# (quelli doppi, dietro, e quelli che riempiono i buchi: specchiati o no come dice [param specchio], senza toccare
+	# la sequenza casuale degli altri; [param largo] stringe il pannello)
 	var sx := (-1.0 if specchio else 1.0) if specchio != null else (1.0 if _randf() < 0.5 else -1.0)
 	var sy := 1.5 if specchio != null else _randf_range(1.4, 1.6)
-	r.scale = Vector3(sx * (1.0 if specchio != null else _randf_range(0.95, 1.1)), sy, 1.0)
+	r.scale = Vector3(sx * largo * (1.0 if specchio != null else _randf_range(0.95, 1.1)), sy, 1.0)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
-	b.size = Vector3(4.2, 3.24 * sy, 0.5)
+	b.size = Vector3(4.2 * largo, 3.24 * sy, 0.5)
 	f.shape = b
 	f.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(rot)), pos + Basis(Vector3.UP, deg_to_rad(rot)) * Vector3(0, 3.24 * sy * 0.5, 0.25))
 	_collisioni.add_child(f)
 	return r
+
+
+## La roccia lungo le banchine dev'essere continua (riscontro dell'utente; collaudo del 24 ottobre: dalla ciambella,
+## a sinistra, fra un pannello e l'altro e nelle zone tenute libere si vedeva il muro grigio liscio). Ogni metro di
+## banchina senza un pannello a meno di [constant COPRE] dal suo centro ne riceve uno più stretto (3 m), 5 cm più
+## indietro della fila (dove non ci sta, fino a 1,5 m più indietro, verso il muro), così non sta sullo stesso piano dei vicini. Vale anche davanti ai dischi delle paratie (il disco
+## sta 85 cm più avanti della faccia della roccia: la roccia gli fa da sfondo) e nelle conche dei bivi; restano libere
+## solo le zone dove si cammina (vasca, ingresso, approdo) e la colonna del bivio 3. Si aggiunge a [param rocce].
+const COPRE := 1.5
+const LARGO_BUCO := 3.0
+
+
+func _rocce_buchi(rocce: Array) -> void:
+	var zone := _zone_libere
+	_zone_libere = [zone[0], zone[1], zone[2], zone[zone.size() - 1]]
+	var messe := 0
+	for s in _strisce:
+		for v in _lungo(s, W * 0.5 + BANCA, 1.0, 0.5):
+			await _pausa()
+			var p: Vector3 = v[0]
+			var rot: float = v[1]
+			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
+			var coperto := false
+			for r in rocce:
+				var w: Vector3 = r[0] - p
+				# un pannello della stessa sponda (guarda dalla stessa parte) col centro abbastanza vicino
+				if w.length() < COPRE and (Basis(Vector3.UP, deg_to_rad(r[1])) * Vector3.BACK).dot(davanti) > 0.7:
+					coperto = true
+					break
+			if coperto:
+				continue
+			# dove la banchina è diversa (le conche dei bivi) il pannello va più indietro, verso il muro
+			for indietro in [0.0, 0.5, 1.0, 1.5]:
+				var q: Vector3 = p - davanti * (indietro + 0.05)
+				if not _ci_sta(q, rot, LARGO_BUCO, 0.6):
+					continue
+				# con la piazza dietro ci vuole il posto per il pannello doppio (il retro piatto non si deve vedere)
+				if in_piazza(q - davanti * 1.0) and not _ci_sta(q - davanti * 0.002, rot + 180.0, 4.0, 0.6):
+					continue
+				_roccia(q, rot, messe % 2 == 0, LARGO_BUCO / 4.2)
+				rocce.append([q, rot])
+				messe += 1
+				break
+	# dietro le conche dei bivi 1 e 2 la banchina finisce contro il muro del capannone: lì tre pannelli contro il muro,
+	# girati verso la conca (al bivio 3 dietro la conca c'è l'uscita)
+	for c in [[Vector3(X1 - 0.35, 0, 0), -90.0, Vector3(0, 0, 1)], [Vector3(0, 0, Z1 - 0.35), 180.0, Vector3(1, 0, 0)]]:
+		for u in [-3.0, 0.0, 3.0]:
+			await _pausa()
+			var q: Vector3 = c[0] + (c[2] as Vector3) * u
+			if rocce.any(func(r: Array) -> bool: return (r[0] as Vector3).distance_to(q) < COPRE):
+				continue
+			_roccia(q, c[1], messe % 2 == 0, LARGO_BUCO / 4.2)
+			rocce.append([q, c[1]])
+			messe += 1
+	_zone_libere = zone
+	print("rocce nei buchi: %d" % messe)
 
 
 ## Il retro piatto dei pannelli si vedeva dalle banchine e dai canali degli altri rami: dietro ogni pannello
@@ -1404,6 +1465,8 @@ func _giungla() -> void:
 			elif n % 4 == 1 and _randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
 	await _pausa()
+	await _rocce_buchi(rocce)
+	await _pausa()
 	await _rocce_doppie(rocce)
 	await _pausa()
 	# i fari subacquei nelle pareti dei canali, alternati
@@ -1778,12 +1841,14 @@ func _rocce_imbarco() -> void:
 	var messe := 0
 	var k := 0
 	# (dall'inizio dello striscia, alla vasca, 5,2 m: dopo il cartello dei tuffi e la strada fra la fila e la ciambella;
-	# poi un pannello ogni 3,9 m, larghi 4,2: continui)
-	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.9, 5.2):
+	# poi un pannello ogni 3 m, larghi 4,2: si sovrappongono, così fra uno e l'altro non si vede il muro (collaudo del
+	# 24 ottobre))
+	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.0, 5.2):
 		var p: Vector3 = v[0]
 		var rot: float = v[1]
-		# solo la riva dalla parte della piazza, fino a dove l'anello comincia a girare
-		if not in_piazza(p) or p.z < Z_PIAZZA_NORD:
+		# solo la riva dalla parte della piazza, anche nella curva dove l'anello comincia a girare (prima lì finiva, e
+		# dalla ciambella si vedeva il muro grigio)
+		if not in_piazza(p):
 			continue
 		if gia.any(func(q: Vector3) -> bool: return Vector2(q.x, q.z).distance_to(Vector2(p.x, p.z)) < 2.2):
 			continue

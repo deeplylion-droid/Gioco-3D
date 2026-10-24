@@ -42,6 +42,7 @@ YM0, YM1 = -18.0, -12.0
 def reset():
     C.reset()
     HQ._base.clear(); HQ._dim.clear()
+    _ACCESSORI.clear()
 
 
 def metti(nome, file, pos, alto=None, largo=None, rz=0.0, obs=None):
@@ -397,11 +398,31 @@ def appendi_muro(nome, a, b, n, z0, tavolozza, obs, rnd, passo=(0.9, 1.8), vuoti
                              (0.025 + abs(n.x) * dm.y * 0.9, 0.025 + abs(n.y) * dm.y * 0.9, 0.025), _acciaio(), uv=None))
             obs.append(C.box(f'{nome}_{k_obj}_piastra', muro + n * 0.006 + Vector((0, 0, zz + dm.z * 0.8)),
                              (0.012 + abs(n.y) * 0.08, 0.012 + abs(n.x) * 0.08, 0.08), _acciaio(), uv=None))
+            bpy.context.view_layer.update()
+            for x in obs[-2:]:
+                _ACCESSORI[x.name] = (o.name, o.matrix_world.inverted() @ x.matrix_world)
         k_obj += 1
         u += dm.x + rnd.uniform(*passo)
 
 
 _ACC = []
+# piolo e piastra dei salvagenti: nome -> (nome del salvagente, posa rispetto al salvagente)
+_ACCESSORI = {}
+
+
+def accessori_al_loro_posto(obs):
+    """Piolo e piastra seguono il loro salvagente: se il salvagente è stato spostato (costole, corrimano) tornano
+    nella stessa posa rispetto a lui; se è stato tolto si tolgono anche loro (collaudo del 24 ottobre: in C3 restava
+    la staffa vuota di G_c3s_m_5, tolto per il corrimano)."""
+    vivi = {o.name: o for o in obs}
+    for x in [o for o in obs if o.name in _ACCESSORI]:
+        padrone, rel = _ACCESSORI[x.name]
+        if padrone in vivi:
+            x.matrix_world = vivi[padrone].matrix_world @ rel
+        else:
+            print('accessori: %s tolto con il suo salvagente %s' % (x.name, padrone), flush=True)
+            obs.remove(x); bpy.data.objects.remove(x)
+    bpy.context.view_layer.update()
 
 
 def _acciaio():
@@ -713,6 +734,7 @@ def proposta_gioco():
         obs.remove(o); bpy.data.objects.remove(o)
     lontano_dai_corrimano(obs)
     lontano_dalle_costole(obs)
+    accessori_al_loro_posto(obs)
     # collisioni: una scatola (allineata agli assi) per ogni modello più alto di 25 cm
     sorgenti = {o.data for o in HQ._base.values()}
     for o in list(obs):
