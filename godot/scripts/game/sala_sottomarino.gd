@@ -39,7 +39,7 @@ const SOGLIA := 3.0
 const BALLATOIO := 1.0
 const PORTELLO_LARGO := 1.3
 const PORTELLO_ALTO := 1.8
-const PORTELLO_APERTO := 95.0
+const PORTELLO_APERTO := 90.0
 ## L'oblò e il volantino sul battente (dalla soglia).
 const OBLO_Y := 1.3
 const OBLO_R := 0.2
@@ -184,6 +184,7 @@ func _passi() -> Array:
 	out.append(_testa)
 	out.append(_fine)
 	out.append(_luci)
+	out.append_array(SottomarinoArrediA2.passi(self))
 	for o in ostacoli:
 		if o["tipo"] == "galleria":
 			out.append(_galleria.bind(o))
@@ -451,7 +452,7 @@ func _pezzo(s0: float, s1: float) -> void:
 		_passaggio_porta(st, facce)
 	for k in st:
 		var mi := MeshInstance3D.new()
-		mi.name = k
+		mi.name = "struttura_" + k     # (architettura per il controllo di posizionamento: muri e pavimenti)
 		mi.mesh = (st[k] as SurfaceTool).commit()
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
@@ -683,7 +684,8 @@ func _fine() -> void:
 		var pk := punto(sk)
 		var rk := destra(sk)
 		var alto := alzata * (k + 1)
-		_scatola(st["graniglia"], facce, _al(pk, rk, Vector2(-muro + 0.5, piano + alto * 0.5)), rk, direzione(sk), Vector3(1.0, alto, 0.32))
+		# (a filo del muro e del pavimento, 2 mm più in qua: le facce sulla stessa superficie del muro si confondevano)
+		_scatola(st["graniglia"], facce, _al(pk, rk, Vector2(-muro + 0.502, piano + alto * 0.5 + 0.001)), rk, direzione(sk), Vector3(0.996, alto - 0.002, 0.32))
 	# il corrimano della scala e del ballatoio dalla parte del vuoto (la vasca): pali e tubo
 	var corr := _mat_ferro()
 	for k in range(0, gradini + 1, 2):
@@ -699,14 +701,15 @@ func _fine() -> void:
 	_palo(nodo, su0, p_ball[0] + Vector3.UP * 1.0, 0.025, corr)
 	for k in st:
 		var mi := MeshInstance3D.new()
-		mi.name = k
+		mi.name = "struttura_" + k     # (architettura per il controllo di posizionamento: muri e pavimenti)
 		mi.mesh = (st[k] as SurfaceTool).commit()
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
 	_corpo(nodo, facce)
 	_portello(nodo, p, r, d, sg)
 	# le luci: la lampada sopra il portello dalla parte del tunnel, e una piccola nella camera sul volantino
-	_lampada(nodo, L - BALLATOIO - 2.0, -1.0, sg + 2.2, 4.0)
+	# (sul muro destro, sotto l'imposta della volta: sul sinistro c'è la scala, e sopra la scala ci si passa)
+	_lampada(nodo, L - BALLATOIO - 2.0, 1.0, piano + 3.5, 4.0)
 	var lc := OmniLight3D.new()
 	lc.light_color = Color(1.0, 0.86, 0.66)
 	lc.light_energy = 1.6
@@ -760,28 +763,79 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	perno.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(-mz, sg)))
 	# (il perno a sinistra della porta guardando dal tunnel: il battente si apre verso la camera, contro il suo
 	# fianco sinistro, e non ingombra il ballatoio)
-	var battente := CSGCombiner3D.new()
+	# (il battente è una mesh vera, lastra spessa 10 cm col buco tondo dell'oblò: tagliata in due a metà del buco,
+	# così ogni metà ha il buco sul bordo e si triangola; la collisione va con lui quando gira)
+	var b_st := SurfaceTool.new()
+	b_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var b_facce := PackedVector3Array()
+	var x0 := 0.02
+	var x1 := PORTELLO_LARGO - 0.02
+	var y0 := 0.02
+	var y1 := PORTELLO_ALTO - 0.02
+	var mezzo := 0.05
+	var cerchio := PackedVector2Array()
+	for k in 32:
+		var a := TAU * float(k) / 32.0
+		cerchio.append(Vector2(mz + cos(a) * OBLO_R, OBLO_Y + sin(a) * OBLO_R))
+	for meta in [PackedVector2Array([Vector2(x0, y0), Vector2(mz, y0), Vector2(mz, y1), Vector2(x0, y1)]),
+			PackedVector2Array([Vector2(mz, y0), Vector2(x1, y0), Vector2(x1, y1), Vector2(mz, y1)])]:
+		# (il buco sta sul bordo di ogni metà: niente buchi interni, ogni pezzo è la lastra)
+		for poly in Geometry2D.clip_polygons(meta, cerchio):
+			var tri := Geometry2D.triangulate_polygon(poly)
+			for k in range(0, tri.size(), 3):
+				for zf: float in [-mezzo, mezzo]:
+					var tt := [Vector3(poly[tri[k]].x, poly[tri[k]].y, zf), Vector3(poly[tri[k + 1]].x, poly[tri[k + 1]].y, zf),
+							Vector3(poly[tri[k + 2]].x, poly[tri[k + 2]].y, zf)]
+					_tri(b_st, tt, Vector3(0, 0, signf(zf)))
+					b_facce.append_array(PackedVector3Array(tt))
+	# i fianchi della lastra e il bordo del buco
+	var bordo := [[Vector2(x0, y0), Vector2(x1, y0), Vector3.DOWN], [Vector2(x1, y0), Vector2(x1, y1), Vector3.RIGHT],
+			[Vector2(x1, y1), Vector2(x0, y1), Vector3.UP], [Vector2(x0, y1), Vector2(x0, y0), Vector3.LEFT]]
+	for k in 32:
+		var c0: Vector2 = cerchio[k]
+		var c1: Vector2 = cerchio[(k + 1) % 32]
+		var m := (c0 + c1) * 0.5 - Vector2(mz, OBLO_Y)
+		bordo.append([c0, c1, Vector3(-m.x, -m.y, 0.0).normalized()])
+	for e in bordo:
+		var e0: Vector2 = e[0]
+		var e1: Vector2 = e[1]
+		var q := [Vector3(e0.x, e0.y, -mezzo), Vector3(e1.x, e1.y, -mezzo), Vector3(e1.x, e1.y, mezzo), Vector3(e0.x, e0.y, mezzo)]
+		_quad(b_st, q, e[2])
+		_facce_quad(b_facce, q)
+	var battente := AnimatableBody3D.new()
 	battente.name = "Battente"
-	battente.use_collision = true
 	battente.collision_layer = Layers.WORLD
+	battente.sync_to_physics = false
 	perno.add_child(battente)
-	var lastra := CSGBox3D.new()
-	lastra.size = Vector3(PORTELLO_LARGO - 0.04, PORTELLO_ALTO - 0.04, 0.1)
-	lastra.position = Vector3(mz, PORTELLO_ALTO * 0.5, 0.0)
-	lastra.material = acciaio
+	var lastra := MeshInstance3D.new()
+	lastra.name = "Lastra"
+	lastra.mesh = b_st.commit()
+	lastra.material_override = acciaio
 	battente.add_child(lastra)
-	var buco := CSGCylinder3D.new()
-	buco.radius = OBLO_R
-	buco.height = 0.3
-	buco.sides = 24
-	buco.operation = CSGShape3D.OPERATION_SUBTRACTION
-	buco.rotation_degrees.x = 90
-	buco.position = Vector3(mz, OBLO_Y, 0.0)
-	battente.add_child(buco)
+	var b_cs := CollisionShape3D.new()
+	var b_forma := ConcavePolygonShape3D.new()
+	b_forma.set_faces(b_facce)
+	b_cs.shape = b_forma
+	battente.add_child(b_cs)
+	# le due cerniere sul perno: fra la cornice e il battente (lo reggono)
+	for yc: float in [0.3, PORTELLO_ALTO - 0.3]:
+		var cern := MeshInstance3D.new()
+		cern.name = "Cerniera"
+		var cmh := CylinderMesh.new()
+		# (il perno sta nei 2 cm fra la cornice, che finisce a x 0, e il bordo del battente, a x 0,02: a 1-2 mm da tutti e
+		# due, senza entrarci)
+		cmh.top_radius = 0.009
+		cmh.bottom_radius = 0.009
+		cmh.height = 0.22
+		cern.mesh = cmh
+		cern.material_override = acciaio
+		cern.position = Vector3(0.0105, yc, 0.0)
+		perno.add_child(cern)
 	var vetro := MeshInstance3D.new()
 	var vm := CylinderMesh.new()
-	vm.top_radius = OBLO_R
-	vm.bottom_radius = OBLO_R
+	# (un filo più stretto del buco, che è un poligono di 32 lati: così il bordo del vetro tocca senza entrare)
+	vm.top_radius = OBLO_R * cos(PI / 32.0) - 0.001
+	vm.bottom_radius = OBLO_R * cos(PI / 32.0) - 0.001
 	vm.height = 0.02
 	vm.radial_segments = 24
 	vetro.mesh = vm
@@ -797,7 +851,8 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 		an.mesh = tm
 		an.material_override = _mat_ottone()
 		an.rotation_degrees.x = 90
-		an.position = Vector3(mz, OBLO_Y, lato * 0.055)
+		# (la cornice d'ottone sulla faccia della lastra, a 2 mm)
+		an.position = Vector3(mz, OBLO_Y, lato * (mezzo + 0.04 + 0.002))
 		perno.add_child(an)
 	# il volantino dalla parte della camera (z negativo del perno: verso la camera), sotto l'oblò, illuminato
 	var volantino := Node3D.new()
@@ -824,11 +879,12 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	var mm := CylinderMesh.new()
 	mm.top_radius = 0.05
 	mm.bottom_radius = 0.05
-	mm.height = 0.12
+	# (il mozzo va dalla ruota alla lastra: 6 cm, fino a 2 mm dalla lastra)
+	mm.height = 0.11 - mezzo - 0.002
 	mozzo.mesh = mm
 	mozzo.material_override = acciaio
 	mozzo.rotation_degrees.x = 90
-	mozzo.position.z = 0.05
+	mozzo.position.z = (0.11 - mezzo - 0.002) * 0.5
 	volantino.add_child(mozzo)
 	# aperto: il battente contro il muro dalla parte del tunnel
 	perno.rotation_degrees.y += PORTELLO_APERTO
@@ -895,24 +951,12 @@ func chiudi_portello() -> void:
 
 ## Lei sbatte contro il portello: arriva dal fondo della vasca dell'approdo e ci schiaccia la faccia sull'oblò.
 func _finale() -> void:
-	if lei:
-		lei_stato = Lei.PRESA     # (ferma: la muove il finale)
-		lei.visible = true
+	if lei_tunnel:
+		lei_stato = Lei.PRESA     # (ferma: la muove lo schianto)
 		var oblo := _perno.global_transform * Vector3(PORTELLO_LARGO * 0.5, OBLO_Y, -0.06)
-		var d := direzione(lunghezza())
-		var occhio_rel := (lei.get_eye_position() - lei.global_position) if lei.get_eye_position() != Vector3.ZERO else Vector3.UP * 3.4
-		lei.global_transform.basis = Basis.looking_at(d, Vector3.UP, true)
-		occhio_rel = lei.get_eye_position() - lei.global_position if lei.get_eye_position() != Vector3.ZERO else occhio_rel
-		var arrivo := oblo - d * 0.35 - occhio_rel
-		var partenza := arrivo - d * 5.0 - Vector3.UP * 2.0
-		lei.global_position = partenza
-		_anima_lei(&"inseguimento/presa", 0.1)
-		lei.attacca(0.3, &"")
-		var tw := create_tween()
-		tw.tween_property(lei, "global_position", arrivo, 0.35).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-		tw.tween_callback(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6))
-		tw.tween_interval(2.2)
-		tw.tween_callback(_nero)
+		lei_tunnel.schianto(oblo, -direzione(lunghezza()))
+		lei_tunnel.schianto_contro.connect(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6), CONNECT_ONE_SHOT)
+		get_tree().create_timer(2.6, false).timeout.connect(_nero)
 	else:
 		_nero()
 
@@ -939,6 +983,9 @@ func _luci() -> void:
 	var s := 3.0
 	var lato := 1.0
 	while s < lunghezza():
+		# (nell'approdo no: a sinistra c'è la scala col ballatoio, a destra la lampada del portello)
+		if s > lunghezza() - BALLATOIO - 6.0:
+			break
 		var p := punto(s)
 		var r := destra(s)
 		var muro_p := p + r * lato * (muro - 0.02)
@@ -947,22 +994,20 @@ func _luci() -> void:
 		l.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z)
 		l.look_at(l.global_position - r * lato * 2.0, Vector3.UP)
 		l.rotate_object_local(Vector3.UP, PI)
+		_a_filo_del_muro(l, -r * lato)
+		# (nel giardino dei coralli la luce è verde-azzurra, come nel piano degli ambienti)
+		var coralli := ambiente(s) == 1
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
-			var m := StandardMaterial3D.new()
-			m.albedo_color = Color(1.0, 0.85, 0.55)
-			m.emission_enabled = true
-			m.emission = Color(1.0, 0.7, 0.35)
-			m.emission_energy_multiplier = 3.0
-			g.material_override = m
+			g.material_override = _mat_globo_coralli() if coralli else _mat_globo_luci()
 		var o := OmniLight3D.new()
-		o.light_color = Color(1.0, 0.76, 0.5)
+		o.light_color = Color(0.55, 0.95, 0.85) if coralli else Color(1.0, 0.76, 0.5)
 		o.light_energy = 4.0
 		o.omni_range = 12.0
 		o.omni_attenuation = 1.3
 		o.shadow_enabled = false
 		nodo.add_child(o)
-		o.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z) - r * lato * 0.4
+		o.global_position = l.global_position - r * lato * 0.4
 		# fra una lampada e l'altra, sull'altro muro, un oblò col mare finto illuminato dietro
 		_oblo(nodo, s + 4.5, -lato)
 		s += 9.0
@@ -974,6 +1019,10 @@ func _luci() -> void:
 func _oblo(nodo: Node3D, s: float, lato: float) -> void:
 	if s > lunghezza() - 1.0:
 		return
+	# (non dietro gli ostacoli di quella banchina: lì c'è il carico, il cancello...)
+	for o in ostacoli:
+		if float(o["lato"]) == lato and s > float(o["s"]) - 2.5 and s < float(o["s"]) + float(o["lungo"]) + 2.5:
+			return
 	var p := punto(s)
 	var r := destra(s)
 	var n := Node3D.new()
@@ -1001,6 +1050,28 @@ func _oblo(nodo: Node3D, s: float, lato: float) -> void:
 	vetro.position.z = -0.015
 	vetro.material_override = _mat_oblo()
 	n.add_child(vetro)
+
+
+var _globo_luci: StandardMaterial3D
+var _globo_coralli: StandardMaterial3D
+
+
+func _mat_globo_luci() -> StandardMaterial3D:
+	if _globo_luci == null:
+		_globo_luci = StandardMaterial3D.new()
+		_globo_luci.albedo_color = Color(1.0, 0.85, 0.55)
+		_globo_luci.emission_enabled = true
+		_globo_luci.emission = Color(1.0, 0.7, 0.35)
+		_globo_luci.emission_energy_multiplier = 3.0
+	return _globo_luci
+
+
+func _mat_globo_coralli() -> StandardMaterial3D:
+	if _globo_coralli == null:
+		_globo_coralli = _mat_globo_luci().duplicate()
+		_globo_coralli.albedo_color = Color(0.7, 1.0, 0.92)
+		_globo_coralli.emission = Color(0.45, 0.95, 0.8)
+	return _globo_coralli
 
 
 var _ottone: StandardMaterial3D
@@ -1052,9 +1123,6 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 @export var getto_in_faccia := 0.6
 @export var fermo_dopo_getto := 2.0
 @export var indietro_dopo_getto := 6.0
-## Quanto sta sopra l'acqua l'origine del modello (fluttua intera sopra il canale; le pose provvisorie finché non
-## arrivano le animazioni di mascotte).
-@export var lei_sopra_acqua := 1.3
 ## A guado nel canale (velocità massima a piedi e di corsa, m/s): la danno i volumi d'acqua del canale
 ## (WaterVolume.velocita_guado), che il Player legge da solo.
 @export var velocita_guado := 2.0
@@ -1069,59 +1137,27 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 ## Chi insegue (vuoto: il giocatore); i test lo cambiano.
 var bersaglio: Node3D
 
+## Lei del tunnel (LeiTunnel di mascotte) e il suo modello.
+var lei_tunnel: LeiTunnel
 var lei: MedusaAffacciata
 var lei_stato := Lei.VIA
 var lei_s := 0.0
 var _lei_t := 0.0
-var _getto_preso := 0.0
 var _morso_tra := 1.5
 var _s_bersaglio := 0.0
-var _lei_testa: WaterHitbox
 var checkpoint: Array[Checkpoint] = []
 
 
 func _lei_crea() -> void:
-	lei = MedusaAffacciata.new()
-	lei.name = "Lei"
-	lei.model = load("res://assets/models/medusa/medusa.glb")
-	lei.bell_material = load("res://assets/models/medusa/medusa_campana.tres")
-	lei.material_map = {
-		"M_capelli": load("res://assets/models/medusa/medusa_capelli_bagnata.tres"),
-		"M_ciocche": load("res://assets/models/medusa/medusa_ciocche_bagnata.tres"),
-		"M_mani": load("res://assets/models/medusa/medusa_mani_bagnata.tres"),
-		"M_occhio_bulbo": load("res://assets/models/medusa/medusa_occhio.tres"),
-		"M_orbita": load("res://assets/models/medusa/medusa_orbita_bagnata.tres"),
-		"M_pelle": load("res://assets/models/medusa/medusa_pelle_bagnata.tres"),
-		"M_tentacoli": load("res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
-	}
-	lei.animazioni_inseguimento = true
-	lei.animazione = &"inseguimento/incombe"
-	lei.visible = false
-	add_child(lei)
-	var luce := OmniLight3D.new()
-	luce.light_color = Color(1.0, 0.32, 0.62)
-	luce.light_energy = 6.0
-	luce.omni_range = 9.0
-	luce.light_volumetric_fog_energy = 3.0
-	luce.shadow_enabled = true
-	luce.position = Vector3(0, 2.4, 0.9)
-	luce.set_meta(&"risveglio_ignora", true)
-	lei.add_child(luce)
-	# il viso: un getto lì la ferma e la ricaccia indietro
-	_lei_testa = WaterHitbox.new()
-	_lei_testa.name = "Viso"
-	var cs := CollisionShape3D.new()
-	var sf := SphereShape3D.new()
-	sf.radius = 0.9
-	cs.shape = sf
-	_lei_testa.add_child(cs)
-	_lei_testa.position = Vector3(0, 3.4, 0.6)
-	lei.add_child(_lei_testa)
-	_lei_testa.water_hit.connect(func(litri: float, _p: Vector3, _d: Vector3):
-		if lei_stato == Lei.INSEGUE or lei_stato == Lei.SALE:
-			_getto_preso += litri
-			if _getto_preso >= getto_in_faccia:
-				respingi())
+	# lei del tunnel è di mascotte (LeiTunnel: animazioni, giro e inclinazione in curva, morsi, getto in faccia,
+	# presa, schianto); qui si decide solo dove sta lungo la strada
+	lei_tunnel = LeiTunnel.new()
+	lei_tunnel.name = "LeiTunnel"
+	add_child(lei_tunnel)
+	lei = lei_tunnel.lei
+	lei_tunnel.getto_litri = getto_in_faccia
+	lei_tunnel.vicina = distanza_morsi
+	lei_tunnel.getto_in_faccia.connect(respingi)
 
 
 ## I checkpoint del tunnel, lungo la strada ([member checkpoint_s]): un'area da banchina a banchina, la ripartenza
@@ -1162,10 +1198,10 @@ func insegui_da(s: float) -> void:
 	lei_s = s
 	lei_stato = Lei.INSEGUE
 	_lei_t = 0.0
-	_getto_preso = 0.0
-	lei.visible = true
-	_anima_lei(&"inseguimento/incombe", 0.3)
-	lei.attacca(0.7, &"")       # la bocca spalancata e l'occhio pieno di vene, per tutta la fase
+	if lei_tunnel.stato == LeiTunnel.Stato.VIA:
+		# (dai checkpoint: risale dall'acqua del canale, poco profonda, già a metà salita)
+		var p := punto(s)
+		lei_tunnel.riemergi(Vector3(p.x, acqua, p.z), direzione(s), acqua - fondo_a(s))
 	_metti_lei(0.0)
 
 
@@ -1177,12 +1213,10 @@ func riemergi() -> void:
 	lei_stato = Lei.SALE
 	_lei_t = 0.0
 	lei_s = -1.0
-	lei.visible = true
-	_metti_lei(0.0)
-	var durata := _anima_lei(&"inseguimento/sale_dall_acqua", 0.0)
-	lei.attacca(0.7, &"")
+	var p := punto(lei_s)
+	lei_tunnel.riemergi(Vector3(p.x, acqua, p.z), direzione(lei_s), acqua - fondo_a(lei_s))
 	lei_riemersa.emit()
-	get_tree().create_timer(minf(durata, 2.5), false).timeout.connect(func():
+	get_tree().create_timer(minf(lei_tunnel._durata(&"riemerge"), 2.5), false).timeout.connect(func():
 		if lei_stato == Lei.SALE:
 			insegui_da(lei_s))
 
@@ -1194,9 +1228,7 @@ func respingi() -> void:
 		return
 	lei_stato = Lei.RESPINTA
 	_lei_t = 0.0
-	_getto_preso = 0.0
-	_anima_lei(&"inseguimento/respinta", 0.12)
-	lei.chiudi_occhio(0.8)
+	lei_tunnel.respinta()
 	lei_respinta.emit()
 
 
@@ -1204,37 +1236,20 @@ func _prendi() -> void:
 	if lei_stato == Lei.PRESA:
 		return
 	lei_stato = Lei.PRESA
-	_anima_lei(&"inseguimento/presa", 0.12)
-	lei.attacca(0.4, &"")
-	lei.add_to_group(&"medusa_che_prende")
 	giocatore_preso.emit()
 	if bersaglio == null:
-		GameState.kill_player(&"medusa")
+		lei_tunnel.prendi()         # (la presa e la morte del giocatore)
+	else:
+		# (nei test chi insegue è finto: solo l'animazione)
+		lei_tunnel.stato = LeiTunnel.Stato.PRESA
+		lei_tunnel._anima("presa", 0.15)
 
 
-func _anima_lei(nome: StringName, fondi: float) -> float:
-	lei.animazione = nome
-	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	if ap == null or not ap.has_animation(nome):
-		return 1.0
-	ap.play(nome, fondi)
-	return ap.get_animation(nome).length
-
-
-## Mette lei sull'asse del canale a [member lei_s], sopra l'acqua, girata verso chi insegue.
+## Mette lei sull'asse del canale a [member lei_s], sul pelo dell'acqua: la quota, il giro e l'inclinazione in curva
+## li fa LeiTunnel.
 func _metti_lei(delta: float) -> void:
 	var p := punto(lei_s)
-	var pos := Vector3(p.x, acqua + lei_sopra_acqua, p.z)
-	if lei_stato == Lei.SALE:
-		# sale dalla presa: dal fondo fino alla sua quota in 1,6 s
-		pos.y = lerpf(PRESA_FONDO, acqua + lei_sopra_acqua, clampf(_lei_t / 1.6, 0.0, 1.0))
-	lei.global_position = pos
-	var b := _bersaglio()
-	var guarda := (b.global_position if b else pos + direzione(lei_s)) - pos
-	guarda.y = 0.0
-	if guarda.length() > 0.1:
-		var voluta := Basis.looking_at(guarda.normalized(), Vector3.UP, true)
-		lei.global_transform.basis = lei.global_transform.basis.slerp(voluta, clampf(delta * 4.0, 0.0, 1.0)) if delta > 0.0 else voluta
+	lei_tunnel.vai(Vector3(p.x, acqua, p.z), direzione(lei_s), delta)
 
 
 func _process(delta: float) -> void:
@@ -1276,7 +1291,6 @@ func _process(delta: float) -> void:
 			lei_s = maxf(lei_s, -1.0)
 			if _lei_t >= fermo_dopo_getto:
 				lei_stato = Lei.INSEGUE
-				_anima_lei(&"inseguimento/incombe", 0.3)
 	_metti_lei(delta)
 
 
@@ -1357,6 +1371,7 @@ func riparti_da(s: float) -> void:
 			p.water_pack.tank_amount = p.water_pack.tank_capacity, CONNECT_ONE_SHOT)
 	if s < 20.0:
 		lei_stato = Lei.VIA
+		lei_tunnel.via()
 		get_tree().create_timer(2.0, false).timeout.connect(riemergi)
 	else:
 		insegui_da(s - distanza_max)
@@ -1487,7 +1502,7 @@ func _galleria(o: Dictionary) -> void:
 		_facce_quad(facce, q)
 	for k in st:
 		var mi := MeshInstance3D.new()
-		mi.name = k
+		mi.name = "struttura_" + k     # (architettura per il controllo di posizionamento: muri e pavimenti)
 		mi.mesh = (st[k] as SurfaceTool).commit()
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
@@ -1496,13 +1511,21 @@ func _galleria(o: Dictionary) -> void:
 	for sb: float in [float(o["s"]) - GALLERIA_BOCCA * 0.5, float(o["s"]) + float(o["lungo"]) + GALLERIA_BOCCA * 0.5]:
 		var p := punto(sb)
 		var r := destra(sb) * lato
-		var fascia := MeshInstance3D.new()
-		var bm := BoxMesh.new()
-		bm.size = Vector3(GALLERIA_BOCCA + 0.4, 0.3, 0.02)
-		fascia.mesh = bm
-		fascia.material_override = _mat_strisce()
-		nodo.add_child(fascia)
-		fascia.global_transform = Transform3D(Basis.looking_at(-r, Vector3.UP), _al(p, r, Vector2(u0 - 0.01, y1 + 0.17)))
+		# (in pezzi da 30 cm, ognuno a filo del muro nel suo punto: in curva il muro non è un piano)
+		var pezzi := 6
+		var lungo_f := (GALLERIA_BOCCA + 0.4) / pezzi
+		for k in pezzi:
+			var sf := sb - (GALLERIA_BOCCA + 0.4) * 0.5 + lungo_f * (k + 0.5)
+			var rf := destra(sf) * lato
+			var fascia := MeshInstance3D.new()
+			fascia.name = "Fascia"
+			var bm := BoxMesh.new()
+			bm.size = Vector3(lungo_f + 0.004, 0.3, 0.02)
+			fascia.mesh = bm
+			fascia.material_override = _mat_strisce()
+			nodo.add_child(fascia)
+			fascia.global_transform = Transform3D(Basis.looking_at(-rf, Vector3.UP), _muro_a(sf, lato, y1 + 0.17) - rf * (muro - u0 + 0.01))
+			_a_filo_del_muro(fascia, -rf)
 		_lampada(nodo, sb, lato, y1 + 0.75, 3.0)
 	# dentro: due plafoniere a filo del soffitto
 	for f in [0.33, 0.66]:
@@ -1991,6 +2014,7 @@ func _lampada(nodo: Node3D, s: float, lato: float, y: float, energia: float) -> 
 	l.global_position = muro_p
 	l.look_at(muro_p - r * 2.0, Vector3.UP)
 	l.rotate_object_local(Vector3.UP, PI)
+	_a_filo_del_muro(l, -r)
 	var g := l.find_child("globo", true, false) as MeshInstance3D
 	if g:
 		g.material_override = _mat_globo()
@@ -2000,7 +2024,18 @@ func _lampada(nodo: Node3D, s: float, lato: float, y: float, energia: float) -> 
 	o.omni_range = 10.0
 	o.omni_attenuation = 1.3
 	nodo.add_child(o)
-	o.global_position = muro_p - r * 0.4
+	o.global_position = l.global_position - r * 0.4
+
+
+## Mette [param n] col retro a contatto col muro dietro (con Posa): [param fuori] è la direzione fuori dal muro.
+func _a_filo_del_muro(n: Node3D, fuori: Vector3) -> void:
+	var dietro := 0.0
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		var xf := m.global_transform
+		for v in m.mesh.get_faces():
+			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(-fuori))
+	Posa.fissa_al_muro(n, fuori.normalized(), dietro)
 
 
 var _materiali := {}
@@ -2095,6 +2130,16 @@ func _scatola_ruotata(st: SurfaceTool, f: PackedVector3Array, c: Vector3, ax: Ve
 
 
 # --- utilità ---------------------------------------------------------------------------------------------------------
+
+## Il punto della faccia del muro dal lato [param lato] a [param s], alla quota [param y], come lo disegna la mesh:
+## dritto fra una sezione e l'altra (ogni [constant PASSO_SEZIONE] metri dalla testa), non sulla curva esatta.
+func _muro_a(s: float, lato: float, y: float) -> Vector3:
+	var sa := -TESTA + floorf((s + TESTA) / PASSO_SEZIONE) * PASSO_SEZIONE
+	var sb := sa + PASSO_SEZIONE
+	var a := _al(punto(sa), destra(sa), Vector2(lato * muro, y))
+	var b := _al(punto(sb), destra(sb), Vector2(lato * muro, y))
+	return a.lerp(b, (s - sa) / PASSO_SEZIONE)
+
 
 func _al(p: Vector3, r: Vector3, v: Vector2) -> Vector3:
 	return Vector3(p.x, 0.0, p.z) + r * v.x + Vector3.UP * v.y

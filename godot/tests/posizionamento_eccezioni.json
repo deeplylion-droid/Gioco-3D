@@ -544,5 +544,18 @@
 		],
 		"stato": "voluto",
 		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Ostacolo_vetrina_484/corallo/Mesh_0",
+		"problema": "compenetra",
+		"pos": [
+			-62.02,
+			-29.16,
+			88.12
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "il corallo del diorama sta dentro la teca di vetro della vetrina caduta, appoggiato sulla sabbia del fondo: il vetro è una scatola chiusa e lo contiene tutto (tunnel sottomarino, 24 ottobre)"
 	}
 ]
