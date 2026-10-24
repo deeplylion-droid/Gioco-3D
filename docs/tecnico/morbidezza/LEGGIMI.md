@@ -89,4 +89,8 @@ Come i "voluto" del controllo di posizionamento: in `test_morbidezza_inseguiment
 - **Prove di vasca_2 col giocatore nella vasca 3** (dove sta nel gioco: lei si gira verso di lui): `bash godot/tests/prova_vasca2_giocatore.sh` (di mascotte, con `GIOCATORE=x,y,z` nel test). I 5 punti nella vasca 3 danno 0; il punto del test, da solo (`SOLO=vasca_2`), ha un fotogramma con 2 vertici fino a 4 cm sotto una sporgenza di 10 cm; nel giro completo (come in CI) 0.
 - `SOLO=posto1,posto2` lancia solo quei posti.
 
+## Da fare dopo la v0.3.12
+
+- **Radici del tuffo nel condotto** (collaudo, 24 ottobre): alla fine del tuffo, quando lei entra nel condotto, la pelle del primo tratto di 3 tentacoli (_01) entra fino a 7,4 cm nella fossa. La radice segue il corpo, che entra lui stesso nel condotto: la morbidezza non la può spostare senza staccare il tentacolo. Si vede appena (lei è in acqua e scappa veloce). Va corretto nell'animazione del tuffo (il corpo più al centro del condotto), che è approvata dall'utente: si fa dopo la v0.3.12, con lui.
+
 **Dopo la v0.3.12:** portare il cuore della simulazione in C++, vedi `CPP.md`.
