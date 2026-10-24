@@ -34,6 +34,19 @@ Su 45db14db i punti 1, 2 e 4 sono corretti (sezione "Ricontrollo" qui sotto). Il
 | 3 | Ancora aperto dal collaudo di prima: i pali rossi coi led verdi degli imbocchi (`Luci/LedImbocco`, `Luci/@MultiMeshInstance3D@276`…`@300`) | per esempio `LedImbocco_1`, `_10`, `_11`, `@300_9`…`11`, `@288_0`…`2` | Sotto la fila di led il palo si stringe a punta e finisce 25-30 cm sopra la grata, accanto al palo rosso che invece arriva alla grata. Si vede dove il giocatore entra negli scivoli. Va bene se è voluto, altrimenti va portato fino alla grata. | `fogli/torre_vedute_04.jpg`, `_06.jpg`, `_09.jpg` |
 | 4 | Noto dal collaudo di prima: il tubo lungo inclinato nella vasca dell'inseguimento | vicino a 43,5, -33,4, -3,5 | C'è ancora (scatti `ti052_e`, `ti052_s`): sta nell'acqua lungo il fondo. | `fogli/torre_giro_09.jpg` |
 
+## Terzo ricontrollo (`lavoro/torre-attacchi` 30d44573)
+
+Unita in `lavoro/collaudo-enigmi` (c05c876f), import fresco. Scatti in `ricontrollo_30d44573/`.
+
+- **Selle e collari dei tubi inclinati**: tutti e 10 i collari toccano la loro sella o staffa (0,0 cm) e stanno a 2-5 mm dal tubo; le fasce sono intere (`collari_01.jpg`, `collari_02.jpg`). I sostegni cambiati sugli scivoli 2 e 9 (37 pezzi nuovi in `torre_A_sostegni`) toccano tutti, al massimo a 0,1 mm (`pezzi_cambiati.log`). **N4 corretto.**
+- Controllo di posizionamento della CI, zona torre: 0 nuovi, 0 da correggere, f) 0. Testa 0.
+- **Culle all'inizio dei canali:**
+  - imbocco 2: dagli occhi di chi entra si vede, sotto il bordo del canale, una trave grigia arrugginita che spunta ai due lati. Sembra un sostegno sensato (`culla_imbocco2_dagli_occhi.jpg`);
+  - imbocco 0: una lastra grigia lungo il fondo, sulla grata; anche questa sembra un sostegno;
+  - **imbocco 1: la culla è tagliata in schegge a punta che escono di lato dal canale giallo, e sembra un pezzo rotto** (`culla_imbocco1_schegge.jpg`, a 37,4, -2,9, -18,0);
+  - **imbocco 5: un frammento di 5 triangoli (5 cm) staccato di 2,8 mm**, a 38,40, -14,75, -18,41: si vede come una scheggia grigia sul bordo del canale viola (`scheggia_imbocco5.jpg`).
+- **Imbocchi 3 e 4** (senza culla): all'imbocco 3, guardando di lato a filo della grata, sotto lo scafo verde c'è luce, quindi il canale è sollevato di qualche centimetro su buona parte della lunghezza (`imbocco3_di_lato.jpg`). Per l'imbocco 4 i miei scatti non mostrano il sotto.
+
 ## Secondo ricontrollo (`lavoro/torre-attacchi` a31f5cbe)
 
 Unita in `lavoro/collaudo-enigmi` (d1e7c25f), import fresco. Scatti in `ricontrollo_a31f5cbe/`. Rispetto a 45db14db cambia solo `torre_A_sostegni`: 19 pezzi nuovi e 13 tolti (gli 11 collari dei tubi chiusi ora sono pezzi interi, più selle, puntoni e i due braccetti); `torre_A`, grate e inseguimento sono identici (`pezzi_cambiati.log`).
