@@ -6,7 +6,8 @@ extends Node
 ## prodotto vettoriale dei lati contro la normale dei vertici): con le facce girate al contrario la mesh si vede rovesciata
 ## anche con le istanze giuste (era la causa vera delle pile).
 ## Guarda la sala principale con le stanze della Risalita caricate subito (interni, tecnici, fiume, infermeria) e la
-## sala della torre, e per ogni istanza sbagliata dice il nodo e l'indice.
+## sala della torre, e per ogni istanza sbagliata dice il nodo e l'indice. Senza schermo il MultiMesh non tiene le
+## trasformazioni delle istanze: si leggono dal meta "trasformazioni" dove il gioco lo mette (le pile del fiume).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_multimesh_specchiati.gd
 
 const SALA := "res://scenes/sala_principale.tscn"
@@ -56,9 +57,14 @@ func _controlla(radice: Node, nome: String) -> void:
 		var mm := (n as MultiMeshInstance3D).multimesh
 		if mm == null or mm.transform_format != MultiMesh.TRANSFORM_3D:
 			continue
-		for i in mm.instance_count:
+		# (senza schermo, col renderer finto della CI, il MultiMesh non tiene le trasformazioni: get_instance_transform
+		# dà sempre l'identità. Dove il gioco le tiene nel meta "trasformazioni", come le pile del fiume, si leggono lì)
+		var xf: Array = n.get_meta(&"trasformazioni", [])
+		var quante := xf.size() if not xf.is_empty() else mm.instance_count
+		for i in quante:
 			istanze += 1
-			if mm.get_instance_transform(i).basis.determinant() < 0.0:
+			var t: Transform3D = xf[i] if not xf.is_empty() else mm.get_instance_transform(i)
+			if t.basis.determinant() < 0.0:
 				sbagliate.append("%s [%d]" % [radice.get_path_to(n), i])
 	check(mmi.size() > 0 or nome == "sala della torre", "%s: %d MultiMesh con %d istanze" % [nome, mmi.size(), istanze])
 	var girate := PackedStringArray()
