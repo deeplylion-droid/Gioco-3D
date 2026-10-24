@@ -170,6 +170,7 @@ func _passi() -> Array:
 			out.append(_ostacolo.bind(o))
 	for g in gommoni:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
+	out.append(_parapetto_presa)
 	out.append(_checkpoint)
 	out.append(_lei_crea)
 	return out
@@ -1206,6 +1207,14 @@ func _metti_lei(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if attivo and not _curva_passata and bersaglio == null and _s_bersaglio > PRIMA_CURVA:
+		_curva_passata = true
+		prima_curva_passata.emit()
+	if attivo and lei and lei_stato == Lei.VIA and bersaglio == null:
+		_guarda_la_presa()
+	var pg := GameState.player
+	if attivo and pg and is_instance_valid(pg) and bersaglio == null:
+		pg.accovacciato_forzato = in_tubo(pg.global_position)
 	if lei == null or lei_stato == Lei.VIA or lei_stato == Lei.PRESA:
 		_guado_giocatore()
 		return
@@ -1258,6 +1267,21 @@ func _guado_giocatore() -> void:
 		_guado = false
 
 
+## Vero se [param piedi] sono in una galleria di servizio (dietro il muro, sotto il soffitto basso): lì si sta
+## accovacciati per forza, come nei tubi delle condotte (lo usano il gioco e il controllo di posizionamento).
+func in_tubo(piedi: Vector3) -> bool:
+	for o in ostacoli:
+		if o["tipo"] != "galleria":
+			continue
+		var s0: float = float(o["s"]) - GALLERIA_BOCCA
+		var s1: float = float(o["s"]) + float(o["lungo"]) + GALLERIA_BOCCA
+		var pr := proietta_vicino(piedi, (s0 + s1) * 0.5, (s1 - s0) * 0.5 + 2.0)
+		var u := float(pr[1]) * float(o["lato"])
+		if float(pr[0]) > s0 - 0.05 and float(pr[0]) < s1 + 0.05 and u > muro - 0.05 and absf(piedi.y - piano) < 0.6:
+			return true
+	return false
+
+
 ## Vero se lei arriva a [param pos]: dentro il tunnel (non nella galleria di servizio, dietro il muro).
 func _raggiungibile(pos: Vector3) -> bool:
 	var pr := proietta_vicino(pos, _s_bersaglio)
@@ -1285,6 +1309,109 @@ func proietta_vicino(p: Vector3, s_prima: float, raggio := 30.0) -> Array:
 
 func _s_vicino(p: Vector3, s_prima: float) -> float:
 	return float(proietta_vicino(p, s_prima)[0])
+
+
+# --- nel gioco: dopo SB1, la prima curva, le ripartenze --------------------------------------------------------------
+
+## La prima curva del tunnel è passata (torre e condotte non si vedono più: si possono liberare).
+signal prima_curva_passata
+
+## Dopo quanti metri di tunnel la prima curva è alle spalle.
+const PRIMA_CURVA := 55.0
+## Lei riemerge quando la guardi dalla porta; se non la guardi, comunque quando hai fatto questi metri.
+const RIEMERGE_COMUNQUE := 14.0
+
+## Vero quando il tunnel è nel gioco (dopo SB1, o ripartendo da un suo checkpoint).
+var attivo := false
+var _curva_passata := false
+
+
+## Il tunnel entra nel gioco: lei aspetta nella presa che il giocatore la guardi.
+func attiva_tunnel() -> void:
+	attivo = true
+
+
+## Si riparte dal checkpoint a [param s]: il serbatoio pieno, lei [member distanza_max] metri dietro (dal primo
+## checkpoint, all'ingresso, riemerge di nuovo dalla presa dopo 2 s).
+func riparti_da(s: float) -> void:
+	attivo = true
+	_curva_passata = s > PRIMA_CURVA
+	_s_bersaglio = s
+	# (il serbatoio pieno quando il giocatore è rimesso al checkpoint: la ripartenza rimette anche lo zaino com'era)
+	GameState.player_respawned.connect(func():
+		var p := GameState.player
+		if p and is_instance_valid(p) and p.water_pack:
+			p.water_pack.tank_amount = p.water_pack.tank_capacity, CONNECT_ONE_SHOT)
+	if s < 20.0:
+		lei_stato = Lei.VIA
+		get_tree().create_timer(2.0, false).timeout.connect(riemergi)
+	else:
+		insegui_da(s - distanza_max)
+
+
+## Lei riemerge? Il giocatore è nel tunnel e guarda la presa (o è già andato avanti).
+func _guarda_la_presa() -> void:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p) or p.camera == null:
+		return
+	var pr := proietta_vicino(p.global_position, maxf(_s_bersaglio, 2.0), 40.0)
+	_s_bersaglio = float(pr[0])
+	if absf(float(pr[1])) > muro + 0.5:
+		return
+	if _s_bersaglio > RIEMERGE_COMUNQUE:
+		riemergi()
+		return
+	var presa := punto(-1.0) + Vector3.UP * 2.0
+	var verso := (presa - p.camera.global_position).normalized()
+	if -p.camera.global_transform.basis.z.dot(verso) > 0.85:
+		riemergi()
+
+
+## La porta del bacino si chiude alle spalle (quando torre e condotte non ci sono più): il battente d'acciaio nel
+## passaggio, chiuso.
+func chiudi_porta_bacino() -> void:
+	if find_child("PortaBacinoChiusa", true, false):
+		return
+	var p := punto(PORTA_S)
+	var r := destra(PORTA_S)
+	var d := direzione(PORTA_S)
+	var porta := CSGBox3D.new()
+	porta.name = "PortaBacinoChiusa"
+	porta.size = Vector3(PORTA_LARGA, PORTA_ALTA, 0.06)
+	porta.use_collision = true
+	porta.collision_layer = Layers.WORLD
+	porta.material = _mat("acciaio_portello", Color(0.32, 0.36, 0.38), 0.45, 0.8)
+	add_child(porta)
+	# a metà del passaggio fra il muro del tunnel e il muro della sala delle condotte
+	var c := _al(p, r, Vector2(-muro - 0.35, piano + PORTA_ALTA * 0.5))
+	porta.global_transform = Transform3D(Basis(d, Vector3.UP, -r), c)
+
+
+## Il parapetto lungo la presa profonda (sui due bordi del canale, dalla testa a dove l'acqua torna al ginocchio):
+## lì non si cade. Pali e due correnti di ferro.
+func _parapetto_presa() -> void:
+	var nodo := Node3D.new()
+	nodo.name = "ParapettoPresa"
+	add_child(nodo)
+	var ferro := _mat_ferro()
+	for lato: float in [-1.0, 1.0]:
+		var s := -TESTA + 0.1
+		var prima := Vector3.ZERO
+		while s <= PRESA_FINO + 0.01:
+			var q := _al(punto(s), destra(s), Vector2(lato * (canale + 0.06), piano))
+			_palo(nodo, q, q + Vector3.UP * 1.05, 0.03, ferro)
+			if prima != Vector3.ZERO:
+				for h in [0.5, 1.0]:
+					_palo(nodo, prima + Vector3.UP * h, q + Vector3.UP * h, 0.022, ferro)
+			prima = q
+			s += 1.75
+	# (la collisione: un muretto invisibile alto 1,05 m lungo i due bordi, dove ci sono i pali)
+	var facce := PackedVector3Array()
+	for lato: float in [-1.0, 1.0]:
+		var a := _al(punto(-TESTA), destra(-TESTA), Vector2(lato * (canale + 0.06), piano))
+		var b := _al(punto(PRESA_FINO), destra(PRESA_FINO), Vector2(lato * (canale + 0.06), piano))
+		_facce_quad(facce, [a, b, b + Vector3.UP * 1.05, a + Vector3.UP * 1.05])
+	_corpo(nodo, facce)
 
 
 # --- gli ostacoli (scelte 2C e 4C dell'utente) ------------------------------------------------------------------------
