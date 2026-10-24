@@ -1893,18 +1893,131 @@ func _ostacolo(o: Dictionary) -> void:
 			_cancello(nodo, st, facce, s0, lato)
 			mat = _mat_ferro()
 		"macerie":
-			# un pezzo di volta caduto: il lastrone in piedi di traverso sulla banchina (alto 1,9 m, appena inclinato) e
-			# dietro le lastre più piccole ammucchiate contro il muro, le grandi sotto
+			# un pezzo di volta crollato (sotto il buco nella volta di ambienti-1): un mucchio di lastre di mosaico spezzate
+			# e storte, le grandi sotto, due lastre ritte di traverso davanti (non si scavalca: alte 1,6-1,9 m e ripide),
+			# una appoggiata al muro, i ferri dell'armatura che escono dai bordi rotti e i calcinacci intorno
 			mat = mat_mosaico
-			var ax := (d * cos(1.42) - Vector3.UP * sin(1.42)).normalized()
-			_scatola_ruotata(st, facce, _al(p - d * (lungo * 0.5 - 0.25), r, Vector2((canale + muro) * 0.5, piano + 0.95)), ax, r,
-					Vector3(1.9, 0.3, banchina - 0.08))
-			for q in [[muro - 0.7, 0.15, 1.3, 0.3, 0.25], [canale + 0.8, 0.12, 1.5, 0.24, 0.3], [muro - 0.6, 0.42, 1.1, 0.24, 0.45],
-					[canale + 0.9, 0.36, 1.2, 0.24, 0.5], [muro - 0.55, 0.68, 0.9, 0.24, 0.6], [canale + 1.1, 0.6, 1.0, 0.24, 0.65]]:
-				var c := _al(p + d * (float(q[4]) * lungo - lungo * 0.5 + 0.3), r, Vector2(float(q[0]), piano + float(q[1])))
-				_scatola(st, facce, c, r, d, Vector3(float(q[2]), float(q[3]), 1.0))
-			var ax2 := (r * cos(1.35) + Vector3.UP * sin(1.35)).normalized()
-			_scatola_ruotata(st, facce, _al(p + d * 0.6, r, Vector2(muro - 0.28, piano + 0.9 + 0.65)), ax2, d, Vector3(1.3, 0.2, 1.0))
+			var m_loc := Basis(d, Vector3.UP, r)
+			# il calcestruzzo delle lastre (il mosaico sta solo sulla faccia che era dentro la volta)
+			var cls_st := SurfaceTool.new()
+			cls_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			# [s dal centro, u dall'asse, quota, misure (lunga, spessa, larga di traverso), giri in gradi (x, y, z: z alza
+			#  la lunghezza verso +s), dove va il mosaico (1: faccia +y, -1: faccia -y), "terra"/"muro"]
+			var lastre := [
+				[0.2, 5.0, 0.0, Vector3(2.0, 0.32, 2.4), Vector3(6, 5, -4), 1, "terra"],
+				[-0.7, 4.4, 0.0, Vector3(1.4, 0.3, 1.3), Vector3(-10, 25, 14), -1, "terra"],
+				[-0.5, 5.6, 0.0, Vector3(1.3, 0.3, 1.2), Vector3(12, -20, 10), 1, "terra muro"],
+				[-0.9, 4.6, 0.0, Vector3(1.7, 0.28, 1.4), Vector3(15, 10, 48), -1, "terra"],
+				[-0.8, 5.6, 0.0, Vector3(1.8, 0.28, 1.3), Vector3(-15, -12, 55), 1, "terra muro"],
+				[0.5, 5.75, 0.6, Vector3(1.5, 0.25, 1.4), Vector3(60, -6, 8), 1, "terra muro"],
+				[0.3, 4.6, 0.3, Vector3(1.3, 0.25, 1.1), Vector3(-30, 15, -40), -1, "terra"],
+				[-0.1, 5.0, 0.95, Vector3(1.0, 0.24, 0.9), Vector3(20, 35, 25), 1, "sopra"],
+				[0.9, 5.2, 0.0, Vector3(0.6, 0.5, 0.55), Vector3(8, 30, 12), 1, "terra"],
+				[-1.4, 5.0, 0.0, Vector3(0.5, 0.35, 0.45), Vector3(0, 40, 18), -1, "terra"],
+				[-1.3, 4.1, 0.0, Vector3(0.4, 0.3, 0.5), Vector3(10, 15, -10), 1, "terra"],
+				[1.3, 4.3, 0.0, Vector3(0.9, 0.28, 0.8), Vector3(-20, -25, 30), -1, "terra"],
+			]
+			var ferri := []
+			for l in lastre:
+				var rot: Vector3 = l[4]
+				var b := m_loc * Basis.from_euler(rot * PI / 180.0)
+				var ms: Vector3 = l[3]
+				var x := b.x.normalized()
+				var z := (b.z - x * b.z.dot(x)).normalized()
+				var y := z.cross(x).normalized()
+				var c := _al(p + d * float(l[0]), r, Vector2(float(l[1]), piano + float(l[2])))
+				# (a terra: il punto più basso sul pavimento; al muro: il punto più lontano a filo del muro)
+				var basso := INF
+				var fuori := -INF
+				for i in [-1, 1]:
+					for j in [-1, 1]:
+						for k in [-1, 1]:
+							var q: Vector3 = c + x * ms.x * 0.5 * i + y * ms.y * 0.5 * j + z * ms.z * 0.5 * k
+							basso = minf(basso, q.y)
+							fuori = maxf(fuori, (q - p).dot(r))
+				if String(l[6]).contains("terra"):
+					c.y += piano - basso
+				elif String(l[6]).contains("sopra"):
+					c.y += piano + float(l[2]) - basso      # (posata sulle lastre sotto, col punto più basso a quella quota)
+				if String(l[6]).contains("muro"):
+					c += r * (muro - fuori)
+				var X := x * ms.x * 0.5
+				var Y := y * ms.y * 0.5
+				var Z := z * ms.z * 0.5
+				var v := func(i: int, j: int, k: int) -> Vector3: return c + X * i + Y * j + Z * k
+				var facce_l := [
+					[v.call(1, -1, -1), v.call(1, 1, -1), v.call(1, 1, 1), v.call(1, -1, 1), X, 0],
+					[v.call(-1, -1, 1), v.call(-1, 1, 1), v.call(-1, 1, -1), v.call(-1, -1, -1), -X, 0],
+					[v.call(-1, 1, -1), v.call(-1, 1, 1), v.call(1, 1, 1), v.call(1, 1, -1), Y, 1],
+					[v.call(-1, -1, -1), v.call(1, -1, -1), v.call(1, -1, 1), v.call(-1, -1, 1), -Y, -1],
+					[v.call(-1, -1, 1), v.call(1, -1, 1), v.call(1, 1, 1), v.call(-1, 1, 1), Z, 0],
+					[v.call(1, -1, -1), v.call(-1, -1, -1), v.call(-1, 1, -1), v.call(1, 1, -1), -Z, 0],
+				]
+				for q in facce_l:
+					var qq := [q[0], q[1], q[2], q[3]]
+					_quad(st if int(q[5]) == int(l[5]) else cls_st, qq, q[4])
+					_facce_quad(facce, qq)
+				ferri.append([c, x, y, z, ms])
+			var cls := MeshInstance3D.new()
+			cls.name = "Calcestruzzo"
+			cls.mesh = cls_st.commit()
+			cls.material_override = _mat("calcestruzzo_volta", Color(0.5, 0.49, 0.46), 0.95)
+			nodo.add_child(cls)
+			# i ferri dell'armatura: escono dai bordi rotti delle lastre (dalla faccia del bordo, 4 mm dentro), un po'
+			# storti, lunghi 25-55 cm
+			var ferro := _mat("ferro_armatura", Color(0.32, 0.2, 0.13), 0.85, 0.4)
+			# [lastra, quale bordo rotto lungo la sua lunghezza (1 o -1), dove lungo il bordo (frazione della mezza
+			#  larghezza), lunghezza, direzione nelle coordinate della lastra]
+			for fe in [[3, 1.0, 0.3, 0.5, Vector3(0.9, 0.2, 0.2)], [3, 1.0, -0.3, 0.4, Vector3(0.9, 0.3, -0.2)],
+					[4, 1.0, 0.25, 0.45, Vector3(0.9, -0.1, 0.3)], [5, 1.0, 0.0, 0.5, Vector3(0.9, 0.3, 0.1)],
+					[0, -1.0, 0.6, 0.4, Vector3(-0.9, 0.3, 0.2)], [7, 1.0, 0.2, 0.35, Vector3(0.9, 0.2, -0.3)]]:
+				var l: Array = ferri[int(fe[0])]
+				var c: Vector3 = l[0]
+				var lx: Vector3 = l[1]
+				var ly: Vector3 = l[2]
+				var lz: Vector3 = l[3]
+				var ms: Vector3 = l[4]
+				var dir_loc: Vector3 = fe[4]
+				var bordo := c + lx * ms.x * 0.5 * float(fe[1]) + lz * ms.z * 0.5 * float(fe[2])
+				var verso := (lx * dir_loc.x + ly * dir_loc.y + lz * dir_loc.z).normalized()
+				var inizio := bordo - verso * 0.004
+				if inizio.y < piano + 0.05:
+					continue
+				_palo(nodo, inizio, inizio + verso * float(fe[3]), 0.009, ferro)
+			# i calcinacci intorno: pezzi piccoli di malta e mosaico sul pavimento della banchina, davanti e attorno al mucchio
+			var c_st := SurfaceTool.new()
+			c_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			var c_facce := PackedVector3Array()
+			var rng := RandomNumberGenerator.new()
+			rng.seed = 348
+			for k in 34:
+				var so := rng.randf_range(-2.1, 1.8)
+				var u := rng.randf_range(canale + 0.15, muro - 0.15)
+				if so > -1.5 and so < 1.6 and u > canale + 0.5:
+					continue           # (sotto il mucchio no: solo intorno)
+				var grande := k % 4 == 0
+				var dim := Vector3(rng.randf_range(0.18, 0.34), rng.randf_range(0.1, 0.2), rng.randf_range(0.15, 0.3)) if grande \
+						else Vector3(rng.randf_range(0.06, 0.2), rng.randf_range(0.04, 0.1), rng.randf_range(0.06, 0.18))
+				var giro := rng.randf_range(0.0, TAU)
+				var cx := d.rotated(Vector3.UP, giro)
+				var cc := _al(p + d * so, r, Vector2(u, piano + dim.y * 0.5 + 0.001))
+				_scatola_ruotata(c_st, c_facce, cc, cx, cx.cross(Vector3.UP), dim)
+			var calc := MeshInstance3D.new()
+			calc.name = "Calcinacci"
+			calc.mesh = c_st.commit()
+			calc.material_override = _mat("calcinacci", Color(0.62, 0.6, 0.55), 0.95)
+			nodo.add_child(calc)
+			# sul mucchio non si sale (le lastre storte si scalerebbero a salti): un muro invisibile sopra, fino a 3 m
+			var barriera := StaticBody3D.new()
+			barriera.name = "Barriera"
+			barriera.collision_layer = Layers.BARRIERS
+			nodo.add_child(barriera)
+			var bcs := CollisionShape3D.new()
+			var bbox := BoxShape3D.new()
+			bbox.size = Vector3(lungo, 3.0, muro - canale)
+			bcs.shape = bbox
+			barriera.add_child(bcs)
+			barriera.global_transform = Transform3D(Basis(d, Vector3.UP, r), _al(p, r, Vector2((canale + muro) * 0.5, piano + 1.5)))
 		"vetrina":
 			# la vetrina del diorama dell'approdo caduta di traverso sulla banchina: dal bordo del canale al muro, alta
 			# 1,6 m. La cornice di metallo, il fondo di sabbia e dentro un corallo; il vetro scuro (il diorama è spento)

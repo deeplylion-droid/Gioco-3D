@@ -794,20 +794,6 @@
 	},
 	{
 		"zona": "sottomarino",
-		"nodo": "Ostacolo_macerie_348/@MeshInstance3D@824",
-		"problema": "ingombro",
-		"pos": [
-			-32.0,
-			-30.0,
-			38.5
-		],
-		"firma": "|ArrayMesh 3.14x2.22x3.32",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"motivo": "le macerie che chiudono la banchina destra a 348: ostacolo voluto (24 ottobre, scelta 2C), si passa dall'altra banchina coi gommoni"
-	},
-	{
-		"zona": "sottomarino",
 		"nodo": "Galleria_205/struttura_mosaico",
 		"problema": "ingombro",
 		"pos": [
