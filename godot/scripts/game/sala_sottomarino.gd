@@ -184,6 +184,8 @@ func _passi() -> Array:
 	out.append(_testa)
 	out.append(_fine)
 	out.append(_luci)
+	# gli arredi di pesci, tartaruga, abisso e approdo (ambienti-1)
+	out.append_array(SottomarinoArrediA1.passi(self))
 	for o in ostacoli:
 		if o["tipo"] == "galleria":
 			out.append(_galleria.bind(o))
@@ -939,6 +941,11 @@ func _luci() -> void:
 	var s := 3.0
 	var lato := 1.0
 	while s < lunghezza():
+		# nell'abisso le luci sono blu e poche, le fa SottomarinoArrediA1
+		if SottomarinoArrediA1.senza_luci_normali(self, s):
+			s += 9.0
+			lato = -lato
+			continue
 		var p := punto(s)
 		var r := destra(s)
 		var muro_p := p + r * lato * (muro - 0.02)
@@ -964,7 +971,8 @@ func _luci() -> void:
 		nodo.add_child(o)
 		o.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z) - r * lato * 0.4
 		# fra una lampada e l'altra, sull'altro muro, un oblò col mare finto illuminato dietro
-		_oblo(nodo, s + 4.5, -lato)
+		if not SottomarinoArrediA1.senza_luci_normali(self, s + 4.5):
+			_oblo(nodo, s + 4.5, -lato)
 		s += 9.0
 		lato = -lato
 
