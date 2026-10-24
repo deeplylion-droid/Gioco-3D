@@ -3,7 +3,8 @@ extends Node3D
 ## nella nebbia, con i fari della galleria e i lampi lontani; la camera sale piano dal piedistallo
 ## fino al viso. Il nome del gioco è provvisorio (GDD), quindi non è scritto: sopra il menu c'è
 ## solo, in piccolo, "Capitolo 1 · demo <versione>". Voci: Nuova partita (porta alla schermata di caricamento della sala), Opzioni
-## (menu dell'addon grafica), Comandi, Esci. Mouse, tastiera e joypad (azioni ui_*).
+## (menu dell'addon grafica), Comandi, Esci. Mouse, tastiera e joypad (azioni ui_*). F9 apre il menu di prova
+## nascosto (MenuProva: partire da una parte del capitolo), che non è fra le voci.
 ## La calibrazione della luminosità del primo avvio la mostra Game, sopra il titolo.
 
 const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
@@ -87,6 +88,12 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if is_instance_valid(_sottomenu):
 		return  # opzioni e comandi gestiscono da soli Esc
+	# il menu di prova nascosto (F9, non è fra le voci né nei comandi): partire da una parte del capitolo
+	if event is InputEventKey and (event as InputEventKey).pressed and not (event as InputEventKey).echo \
+			and (event as InputEventKey).keycode == MenuProva.TASTO:
+		get_viewport().set_input_as_handled()
+		apri_prova()
+		return
 	# Nel titolo Esc non apre la pausa di Game.
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
@@ -120,6 +127,43 @@ func apri_comandi() -> void:
 
 func esci() -> void:
 	Game.esci()
+
+
+## Il menu di prova nascosto (MenuProva): sceglie da dove partire; "Inizio" è la nuova partita normale.
+func apri_prova() -> void:
+	if _avviato or is_instance_valid(_sottomenu):
+		return
+	var m := MenuProva.new()
+	m.name = "MenuProva"
+	_sottomenu = m
+	add_child(m)
+	_menu.visible = false
+	m.chiuso.connect(func():
+		_sottomenu = null
+		_menu.visible = true
+		_voci[0].grab_focus.call_deferred())
+	m.scelta.connect(_parti_prova)
+
+
+func _parti_prova(id: String) -> void:
+	if is_instance_valid(_sottomenu):
+		_sottomenu.queue_free()
+	_sottomenu = null
+	if id == "inizio":
+		nuova_partita()
+		return
+	_avviato = true
+	for v in _voci:
+		v.disabled = true
+	_audio(&"ferma_musica", [0.9])
+	await Dissolvenza.di(get_tree()).scurisci(0.6)
+	if not MenuProva.parti(get_tree(), id):
+		# (il file non c'è: si resta nel titolo)
+		_avviato = false
+		for v in _voci:
+			v.disabled = false
+		_menu.visible = true
+		Dissolvenza.di(get_tree()).schiarisci(0.6)
 
 
 ## Chiama l'autoload Audio (addons/audio) se c'è: il titolo funziona anche senza.
