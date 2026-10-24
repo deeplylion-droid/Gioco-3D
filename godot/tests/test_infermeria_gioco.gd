@@ -97,6 +97,30 @@ func _run() -> void:
 	print("5. La cassaforte")
 	p.teleport(Vector3(2.3, 0.0, -1.05), -PI * 0.5, 0.0)
 	await _secondi(0.2)
+	# la cifra che si vede davanti è proprio quella della rotella, dritta e non specchiata, per ogni cifra di ogni
+	# rotella (riscontro sulla v0.3.11: con le rotelle a 4-1-7 a vista la cassaforte non si apriva, le cifre erano
+	# capovolte e c'erano anche sui tappi)
+	var occhio := get_viewport().get_camera_3d()
+	var giuste := true
+	for i in 3:
+		for n in 10:
+			cassa.cifre[i] = n
+			cassa.call(&"_metti")
+			var v := _vista(cassa, i, occhio)
+			if int(v.x) != n or v.y < 0.9 or v.z < 0.9:
+				giuste = false
+				print("    rotella %d, cifra %d: davanti si vede la %d (dritta %.2f, non specchiata %.2f)" % [i + 1, n, int(v.x), v.y, v.z])
+		cassa.cifre[i] = 0
+	cassa.call(&"_metti")
+	check(giuste, "davanti a chi guarda c'è la cifra della rotella, dritta e non specchiata (tutte le cifre, tre rotelle)")
+	check(_tappi_lisci(cassa), "i tappi delle rotelle sono di metallo liscio, senza cifre")
+	# (con le rotelle sul codice, ma ancora chiusa: aperta, lo sportello gira e porta via le rotelle)
+	cassa.load_state({"cifre": [4, 1, 7], "aperta": false})
+	var a_vista := PackedInt32Array()
+	for i in 3:
+		a_vista.append(int(_vista(cassa, i, occhio).x))
+	check(a_vista == PackedInt32Array([4, 1, 7]), "con le rotelle su 4-1-7 nelle finestrelle si legge 4-1-7 (%s)" % str(a_vista))
+	cassa.load_state({"cifre": [0, 0, 0], "aperta": false})
 	check(await _usa(cassa.rotella(1)), "guardando una rotella la si gira con E")
 	_imposta(cassa, [4, 1, 6])
 	check(not cassa.aperta_ora, "4-1-6 non la apre")
@@ -148,6 +172,45 @@ func _usa(n: Node3D) -> bool:
 	await get_tree().physics_frame
 	Input.action_release(&"interact")
 	await _secondi(0.1)
+	return true
+
+
+## La cifra della rotella [param i] che si vede da [param cam] nella finestrella: il punto del tamburo dove arriva lo
+## sguardo che passa per il centro della finestrella, e la sua cella della texture (il CylinderMesh ha la U = 0 a +Z e
+## la fa crescere verso +X); poi quanto è dritta (l'alto delle cifre, la U che cala, verso l'alto della camera: 1) e
+## quanto non è specchiata (la destra delle cifre, la V che cala, verso la destra della camera: 1).
+func _vista(cassa: CassaforteRotelle, i: int, cam: Camera3D) -> Vector3:
+	var cil := cassa.rotella(i).get_node(^"Cilindro") as MeshInstance3D
+	var dentro := cil.global_transform.affine_inverse()
+	var o := dentro * cam.global_position
+	var w := dentro * (cassa.rotella(i).global_transform * Vector3(0.0, 0.0, CassaforteRotelle.RAGGIO + CassaforteRotelle.MASCHERINA))
+	var dd := w - o
+	var r := CassaforteRotelle.RAGGIO
+	var qa := dd.x * dd.x + dd.z * dd.z
+	var qb := 2.0 * (o.x * dd.x + o.z * dd.z)
+	var qc := o.x * o.x + o.z * o.z - r * r
+	var h := o + dd * ((-qb - sqrt(maxf(qb * qb - 4.0 * qa * qc, 0.0))) / (2.0 * qa))
+	var a := atan2(h.x, h.z)
+	var cifra := int(floor(fposmod(a / TAU, 1.0) * 10.0)) % 10
+	var b := cil.global_basis.orthonormalized()
+	var u_cresce := (b * Vector3(cos(a), 0.0, -sin(a))).normalized()
+	return Vector3(cifra, -u_cresce.dot(cam.global_basis.y.normalized()), (b * Vector3.UP).normalized().dot(cam.global_basis.x.normalized()))
+
+
+## I tamburi senza tappi col materiale delle cifre, e due tappi di metallo liscio per rotella.
+func _tappi_lisci(cassa: CassaforteRotelle) -> bool:
+	for i in 3:
+		var cil := cassa.rotella(i).get_node(^"Cilindro") as MeshInstance3D
+		var cm := cil.mesh as CylinderMesh
+		if cm == null or cm.cap_top or cm.cap_bottom:
+			return false
+		var tappi := cil.find_children("*", "MeshInstance3D", false, false)
+		if tappi.size() != 2:
+			return false
+		for t in tappi:
+			var m := (t as MeshInstance3D).material_override as StandardMaterial3D
+			if m == null or m.albedo_texture != null:
+				return false
 	return true
 
 

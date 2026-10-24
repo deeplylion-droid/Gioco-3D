@@ -18,6 +18,8 @@ signal finito
 const MODELLO := "res://assets/models/mascotte/mostro_squalo_A_rig.glb"
 const TEMPI := "res://assets/models/mascotte/mostro_squalo_A_rig.json"
 const SHADER_BOCCA := preload("res://shaders/creature/bocca_squalo.gdshader")
+## I denti in più (file di squalo dietro quelli del modello): avorio sporco, le file dentro in ombra.
+const SHADER_DENTI := preload("res://shaders/creature/denti_squalo.gdshader")
 ## Livello di render solo dello squalo: la luce della corsa illumina lui e nient'altro (né il corridoio né
 ## la nebbia).
 const STRATO_SQUALO := 1 << 16
@@ -30,7 +32,7 @@ const CELLA := 0.08
 @export var porta: Node3D
 @export var cardine := Vector3(21.965, 0.0, -0.72)
 ## Di quanto è aperta all'inizio (verso il corridoio).
-@export var apertura_porta := 100.0
+@export var apertura_porta := 120.0
 ## Altezza degli occhi mentre si è in ginocchio, a terra, davanti allo squalo.
 @export var occhi_a_terra := 0.98
 
@@ -55,7 +57,6 @@ var _passo_lato := 1.0      # da che parte rolla la camera (si alterna a ogni pa
 var _tetti: Array = []      # [player 3D, il suo max_db di prima, quando rimetterlo]
 var _fine := 0.0
 var _luce_corsa: OmniLight3D
-var _torcia_accesa = null    # com'era la torcia prima della scena (null: niente torcia)
 var _pelle: Array = []       # [posizione a riposo, PackedInt32Array ossa della skin, PackedFloat32Array pesi]
 var _pelle_mi: MeshInstance3D
 var _pelle_bind: Array = []  # per ogni bind della skin: [osso dello scheletro, matrice di bind]
@@ -83,9 +84,6 @@ func _ready() -> void:
 func avvia(p: Player) -> void:
 	_p = p
 	_p.input_enabled = false
-	# il tasto F non la tocca durante la scena (Torcia guarda input_enabled); alla fine torna com'era
-	var torcia := _torcia()
-	_torcia_accesa = torcia.accesa if torcia else null
 	_yaw0 = p.yaw
 	_crea_squalo()
 	_apri_porta()
@@ -99,6 +97,10 @@ func avvia(p: Player) -> void:
 
 func in_corso() -> bool:
 	return _attivo
+
+
+const BAVA := preload("res://scripts/interni/bava_squalo.gd")
+var _bava: Node
 
 
 func _crea_squalo() -> void:
@@ -115,12 +117,22 @@ func _crea_squalo() -> void:
 	# l'interno della bocca: carne bagnata che scurisce verso la gola
 	var mat := ShaderMaterial.new()
 	mat.shader = SHADER_BOCCA
+	var mat_denti := ShaderMaterial.new()
+	mat_denti.shader = SHADER_DENTI
 	for mi in squalo.find_children("*", "MeshInstance3D", true, false):
 		var m := (mi as MeshInstance3D).mesh
 		for i in m.get_surface_count():
 			var sm := m.surface_get_material(i)
 			if sm and (sm.resource_name.begins_with("bocca_interno") or sm.resource_name.begins_with("gengiva")):
 				(mi as MeshInstance3D).set_surface_override_material(i, mat)
+			elif sm and sm.resource_name.begins_with("denti"):
+				(mi as MeshInstance3D).set_surface_override_material(i, mat_denti)
+	# la bava: fili tra le labbra e gocce dal mento (si spegne quando si gira)
+	if _scheletro:
+		_bava = BAVA.new()
+		_bava.name = "Bava"
+		squalo.add_child(_bava)
+		_bava.prepara(_scheletro)
 	# nella corsa il corridoio è buio e la nebbia rossa se lo mangia: una luce morbida, solo per lui, lo
 	# tiene leggibile fino alla porta (il corridoio resta com'è)
 	for vi in squalo.find_children("*", "VisualInstance3D", true, false):
@@ -294,8 +306,11 @@ func _process(delta: float) -> void:
 	var E: float = tempi.get("esita", 6.75)
 	var porta_t: float = tempi.get("porta", 10.15)
 	_suoni_e_porta(R, E, porta_t)
+	if _bava:
+		_bava.set(&"attivo", _t < G)
 	_rimetti_tetti(false)
-	_aggiorna_luce_corsa(E, porta_t)
+	# la luce morbida su di lui da quando arretra (giro C, 23 ottobre: se no arretra e si gira nel buio)
+	_aggiorna_luce_corsa(float(tempi.get("arretra", E)), porta_t)
 	_camera(M, R, G, E, porta_t, delta)
 	if _t >= _fine:
 		_termina()
@@ -337,8 +352,8 @@ func _suoni_e_porta(R: float, E: float, porta_t: float) -> void:
 			_suona("denti%d" % k, &"squalo_denti", _nodo_bocca())
 	if _t > R:
 		_suona("richiamo", &"jilly_richiamo", to_global(Vector3(0, 1.3, -8.5)))
-	# il ringhio quando si gira verso la porta
-	if _t > G - 0.1:
+	# il ringhio quando comincia ad arretrare guardandoti (prima del 23 ottobre: quando si girava)
+	if _t > float(tempi.get("ringhio", G)) - 0.1:
 		_suona("ringhio", &"squalo_ringhio", _nodo_bocca())
 	if _t > float(tempi.get("sbuffo", E + 1.0)) - 0.07:
 		_suona("sbuffo", &"squalo_sbuffo", _nodo_bocca())
@@ -495,22 +510,12 @@ func _termina() -> void:
 	cam.rotation = Vector3.ZERO
 	_p.set_look(_p.yaw, 0.0)
 	_p.input_enabled = true
-	var torcia := _torcia()
-	if torcia and _torcia_accesa != null:
-		torcia.imposta_accesa(_torcia_accesa)
 	if squalo:
 		squalo.queue_free()
 		squalo = null
 	if _perno:
 		_perno.rotation.y = 0.0
 	finito.emit()
-
-
-func _torcia() -> Torcia:
-	for t in _p.find_children("*", "Node3D", true, false):
-		if t is Torcia:
-			return t as Torcia
-	return null
 
 
 func _dir_yaw(y: float) -> Vector3:

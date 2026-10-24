@@ -1,0 +1,24 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/spot/jilly_spot.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/models/medusa/medusa.glb" id="2_modello"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_campana.tres" id="3_campana"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_pelle.tres" id="4_pelle"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_mani.tres" id="5_mani"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_orbita.tres" id="6_orbita"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_ciocche.tres" id="7_ciocche"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_tentacoli.tres" id="8_tentacoli"]
+[ext_resource type="Material" path="res://assets/models/medusa/medusa_occhio.tres" id="9_occhio"]
+
+[node name="Jilly" type="Node3D"]
+script = ExtResource("1_script")
+model = ExtResource("2_modello")
+bell_material = ExtResource("3_campana")
+material_map = {
+"M_ciocche": ExtResource("7_ciocche"),
+"M_mani": ExtResource("5_mani"),
+"M_occhio_bulbo": ExtResource("9_occhio"),
+"M_orbita": ExtResource("6_orbita"),
+"M_pelle": ExtResource("4_pelle"),
+"M_tentacoli": ExtResource("8_tentacoli")
+}

@@ -22,6 +22,9 @@ signal aperto_ora
 @export var mostra_segnaposto := true
 @export var misura := Vector3(0.36, 0.22, 0.4)
 @export var tinta := Color(1.0, 0.8, 0.86)
+## L'altezza del centro della maniglia del cassetto tirato, dal centro del cassetto: quella del modello, così il
+## cassetto è uguale chiuso e aperto.
+@export var maniglia_y := 0.0
 
 var aperto := false
 
@@ -80,7 +83,9 @@ func _vassoio() -> void:
 	mm.albedo_color = Color(0.75, 0.75, 0.72)
 	mm.metallic = 0.9
 	mm.roughness = 0.3
-	Graybox.box(_tirato, Vector3(0.1, 0.025, 0.03), Vector3(0, s.y * 0.15, 0.013), mm)
+	# come quella del modello dello schedario: larga 10 cm, alta 2,15, il davanti 1,95 cm davanti all'origine (prima
+	# stava 3,6 cm più su e sporgeva fino a 2,8 cm: la melma sulla maniglia, col cassetto aperto, restava nel vuoto)
+	Graybox.box(_tirato, Vector3(0.1, 0.0215, 0.0215), Vector3(0, maniglia_y, 0.00875), mm)
 	if fino_a_terra > 0.0:
 		_barriera = StaticBody3D.new()
 		_barriera.name = "Barriera"

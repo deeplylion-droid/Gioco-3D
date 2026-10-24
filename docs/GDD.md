@@ -159,12 +159,20 @@ Parole dell'utente in `docs/riscontri/2026-10-18_prova_v035.md`.
 - **Torcia**: un altro 50% di luce in meno, dopo il 20% del 17 ottobre.
 - **Niente torcia** (decisione dell'utente, 18 ottobre sera): "togliamo la torcia". Le luci in più le indica lui. Per ora sono due: una lampada bianca a soffitto sopra la pozza d'acqua davanti ai tornelli e una luce rossa lampeggiante prima del portone stagno n. 1. I bambini scappano solo se ti avvicini troppo.
 - **La torcia torna** (richiesta dell'utente, 21 ottobre): "nella prossima build mettimi la flashlight ma riducila di intensità di un ulteriore 50% dopo l'ultima riduzione che avevamo fatto". Quindi torna il tasto F, con l'energia dimezzata da 2,8 a 1,4. Le due luci aggiunte il 18 ottobre restano. I bambini continuano a scappare solo se ti avvicini troppo, non dalla luce della torcia ("lascia come ora").
+- **Via di nuovo la torcia, e luci bianche al 40% fisse** (decisione dell'utente, 23 ottobre, giocando la v0.3.11): "la torcia la togliamo, le luci a 40% vanno bene quindi via la scelta e restano così".
+  - Niente torcia: niente tasto F e niente riga nei comandi.
+  - Tutte le luci bianche (lampade, neon, plafoniere) stanno al 40%, e non c'è più il tasto F7 per cambiarle.
+  - Come il 18 ottobre, le luci in più dove non si vede la strada le decide l'utente: il collaudo fa il giro intero al buio e gli si propongono i punti.
+  - Lo fa grafica, prima delle altre correzioni.
+  - Giro al buio: i tre punti più bui (la scala del pozzo, il lato sinistro della sala pompe, il lato destro dell'area bimbi) restano così, senza luci in più ("Lasciamo così quei 3").
+  - Nel giro al buio del collaudo l'unica cosa che non si trovava era la Polaroid 2, sul ripiano alto dell'armadietto aperto degli spogliatoi. Scelta dell'utente (A, 23 ottobre): va attaccata con lo scotch fuori dallo sportello di un armadietto, all'altezza delle feritoie, dove arriva la luce rossa.
 - **Menu**: la medusa va inquadrata in modo che la faccia resti sempre visibile, dall'inizio dell'animazione.
 - **Il geyser della tappa 8** è di bassa qualità e va rifatto. L'idea resta quella del 17 ottobre: una colonna d'acqua bianca, non trasparente, che la avvolge e poi ricade come pioggia pesante.
   - **Scelta del 19 ottobre: la V1**, cioè la colonna simulata con Mantaflow e portata in Godot come sequenza di mesh 3D, giusta da ogni lato (lavoro/ambienti-1, 867d33c e successivi). La V2, un flipbook su un piano, è stata scartata. Resta da togliere il punto bianco al centro della colonna, che si vede in tutte e due.
   - **Riserva approvata dall'utente** (21 ottobre): "se non riusciamo a essere soddisfatti col geyser possiamo eliminarlo e fare un'animazione di tuffo verso il basso di Jilly". Se la V1 nel gioco non convince, al posto del geyser lei si tuffa verso il basso nella fossa.
   - **Si passa al tuffo** (decisione del coordinatore, 22 ottobre notte, come autorizzato dall'utente). Nel gioco la V1 ha dei buchi da cui si vedono l'occhio e il viso di lei proprio mentre sparisce, ed è rosa a grumi, più gelatina che acqua. Chiuderli vorrebbe dire rifare la simulazione, giorni di lavoro con un risultato incerto. La V1 resta da parte nel branch lavoro/ambienti-1. Fino al tuffo resta il geyser di prima (GeyserFossa).
   - **Il tuffo: scelta A, di testa** (scelta dell'utente, 22 ottobre). Si spinge sulle mani sul bordo, ti guarda un'ultima volta, si inarca e si tuffa di testa nella fossa; i tentacoli entrano per ultimi, come una frusta. Le parti comuni sono già fatte: schizzo all'entrata, onde, tonfo, e lei che sparisce solo quando è tutta sotto. Lo schizzo su misura (corona alta, gocce grosse, schiuma bianca) si fa insieme all'animazione. Scartate: B "da medusa" e C all'indietro. **Il tuffo nel gioco, approvato dall'utente** (22 ottobre, "Approvo così"): lo schizzo è acqua bianca che si rompe in fili e spruzzi, con gocce chiare e tante alla fine; i tentacoli restano dietro di lei ed entrano per ultimi.
+  - **Riscontro dell'utente sulla v0.3.11** (23 ottobre): "l'animazione di Jilly che si tuffa non è male, ma la parte inferiore del suo corpo non è snodata, tutti i tentacoli dovrebbero esser molto morbidi, migliorala e per le seguenti punta ad una qualità molto migliore". Quindi la campana si deforma col movimento, e tutti i tentacoli hanno un movimento secondario morbido (seguono in ritardo, ondeggiano, si smorzano). **Per tutte le animazioni di Jilly da qui in avanti si punta a una qualità molto più alta.** Il lavoro è di grafica, con un sistema da usare in tutte le sue scene. Il tuffo coi tentacoli morbidi, che poggiano sul bordo e non lo attraversano, è approvato dall'utente ("Va bene il tuffo di jilly"); è nella v0.3.12. Approvata anche lei che sbuca dalla fossa coi tentacoli morbidi (23 ottobre): mentre sale i tentacoli restano dentro, poi passano il bordo, scendono lungo il muretto e si stendono a terra. Gli stessi tentacoli vanno nella statua e nell'inseguimento.
 
 ## La sala della torre (idea dell'utente, 17 ottobre)
 
@@ -191,7 +199,7 @@ L'utente: "nella torre degli scivoli non si capisce dove bisogna andare, le vie 
 
 **Come è fatta nella v0.3.8** (ambienti-2; approvata dall'utente il 22 ottobre, compresa la fascia liscia sul portale giusto):
 - l'imbocco giusto di ogni discesa ha un portale con una fila di led verdi e una lampada verde. La fascia del portale è liscia: le strisce gialle e nere vogliono dire "chiuso";
-- gli imbocchi sbagliati vicino alle pedane sono chiusi da un cancelletto a strisce, con una lampada rossa guasta che sfarfalla oppure spenta;
+- gli imbocchi sbagliati vicino alle pedane sono chiusi da un cancelletto a strisce, con una lampada rossa guasta che sfarfalla oppure spenta. Dalla v0.3.12 il cancelletto sta in piedi sulla pedana, 15 cm davanti alla testata dello scivolo, invece di pendere dentro lo scivolo, e la ringhiera si apre dove arriva uno scivolo, coi montanti ai lati (scelte dell'utente del 23 ottobre: B per la ringhiera, A per i cancelletti);
 - sotto i salti ci sono vasche di raccolta, e una scaletta di servizio riporta alla pedana di partenza. Si muore solo per una caduta libera di più di 8 m;
 - nessuna barra di sostegno nei 2,4 m sopra i canali di discesa.
 
@@ -264,7 +272,12 @@ Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel
     - **la bava**: fili di saliva che si tendono quando la bocca si apre e si spezzano nei morsi, più gocce dal mento;
     - **più file di denti, in 3D**.
     Il labbro che scopre i denti non l'ha chiesto.
-  - La girata e la bocca vanno nella build dopo la v0.3.11.
+  - **Fatte da mascotte** (lavoro/squalo-bocca de66830f):
+    - giro C con la testa che resta su di te fino a metà giro;
+    - morsi veri a tempo con i denti;
+    - 5 file di denti seghettati in più, in ombra verso la gola;
+    - 3 fili di bava agli angoli che pendono e si spezzano, più una colata dal mento.
+    Video e scatti dal motore in `docs/report/mascotte/squalo_bocca_giro/`. Risposta dell'utente: **"Lo squalo nuovo ci sta"** (approvato). Va nella build dopo la v0.3.11.
 
 ## Lo spot della crociera Jubilee (idea dell'utente, 22 ottobre)
 
@@ -302,8 +315,18 @@ Prima si fanno le proposte con render veri. Le altre idee (enigmi nelle zone che
 Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possiamo usarle per qualcos'altro". Gli scogli, i gommoni e il canale delle rapide restano da parte per un altro punto del gioco, senza la scritta "LE RAPIDE".
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
-- **fiume lento: A, "giungla finta"**. Rocce finte color ocra sotto il tetto del capannone, palme e liane di plastica, maschere tiki, pappagallo e scimmia di vetroresina, tettoia di paglia sull'imbarco, luce calda. La B, "viaggio sottomarino", non si butta. Parole dell'utente: "Però tieni anche l'altro, magari potrebbe essere il viaggio di ritorno, oppure una nuova sezione. Non è da buttare. Riproponimelo." Va riproposta più avanti;
-- **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle);
+- **fiume lento: A, "giungla finta"**. Riscontro dell'utente sulla v0.3.11 (23 ottobre):
+  - i cartelli vanno rivolti verso chi arriva;
+  - ai lati del percorso fra le transenne ci vanno **pile di scatoloni altissime**, senza spazi aperti, che portano fino al salvagente, e dopo il giro fino alla porta successiva;
+  - il **salvagente è fosforescente** (glow in the dark);
+  - le rocce ai bordi sono continue.
+  - Scelte del 23 ottobre sera, "1 A 2 C 3 A":
+    - le pile sono scatoloni su bancali avvolti nel film, impilati 3-4 (4-5,4 m), due file di profondità, i pesanti sotto, con un corridoio largo circa 4,5 m;
+    - niente luci nuove: il corridoio resta più buio;
+    - la ciambella su cui si sale è verde chiaro fosforescente, con un alone tenue.
+
+  L'aspetto scelto il 19 ottobre: Rocce finte color ocra sotto il tetto del capannone, palme e liane di plastica, maschere tiki, pappagallo e scimmia di vetroresina, tettoia di paglia sull'imbarco, luce calda. La B, "viaggio sottomarino", non si butta. Parole dell'utente: "Però tieni anche l'altro, magari potrebbe essere il viaggio di ritorno, oppure una nuova sezione. Non è da buttare. Riproponimelo." Va riproposta più avanti;
+- **infermeria: B, "per bambini del parco"**. Mobili pastello, adesivi grandi di balena, tartaruga, stella e cavalluccio, metro a giraffa, cavallo a dondolo, orsetto e trenino, con gli oggetti veri dell'enigma (pulsante del parco, negatoscopio, schedario con l'adesivo, cassaforte a rotelle); **Riscontro dell'utente sulla v0.3.11 (23 ottobre)**: la lucina sul cassetto giusto "fa cagare": si toglie, e al suo posto c'è **uno schizzo della melma viola di Jilly**. Le rotelle della cassaforte devono mostrare la cifra vera, dritta, e i tappi non devono avere cifre: "le rotelle con i numeri sono orribili, hanno le cifre anche di lato, e sono pure capovolte".
 - **lettore della serranda: 1**, a strisciata anni '90, di plastica beige, con la spia tonda in alto (rossa, poi verde). La luce verde va più debole che negli scatti;
 - **keycard: 1**, il tesserino bianco del personale del parco, con la foto, le onde e la banda magnetica. Vale la regola delle scritte: solo disegni.
 - **il corridoio con le scale verso il magazzino** (C2) si chiude con la stessa grata verde con catena e lucchetto della scala degli interni (scelta dell'utente, 21 ottobre). Dove (scelta β, 21 ottobre): le scale del raccordo restano, l'agnellino compare e scappa nel buco come oggi, e subito dopo il buco c'è la grata; la porta di servizio sta nel tratto basso di C2, prima della grata, e da lì una scala scende all'imbarco del fiume;

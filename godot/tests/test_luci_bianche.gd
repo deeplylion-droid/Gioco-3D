@@ -1,12 +1,13 @@
 extends Node
-## La variante delle luci bianche al 40% (scripts/game/luci_bianche.gd, autoload LuciBianche):
-## 1. di base il fattore è 1 e non tocca niente (la build normale resta identica);
+## La luce normale del gioco: le luci bianche al 40% (scripts/game/luci_bianche.gd, autoload LuciBianche; scelta
+## dell'utente del 23 ottobre: "le luci a 40% vanno bene quindi via la scelta e restano così"):
+## 1. di serie il fattore è 0,4 (impostazione e autoload), e non c'è più il tasto F7 né la scritta;
 ## 2. al 40%, nel disegno, le luci bianche e bianco-calde scendono al 40%, le rosse e le colorate no; dopo il
 ##    disegno tornano i valori pieni (gli script li ritrovano);
 ## 3. l'emissione dei materiali bianchi delle lampade e l'energia del VoxelGI scendono anche loro, le colorate no; Jilly
 ##    (la Medusa) e gli emissivi che non sono lampade restano com'erano; il disegno sull'acquario scende;
 ## 4. una luce che cambia da sola (FlickerLight, che scrive light_energy a ogni fotogramma) tiene il fattore;
-## 5. la torcia resta com'è; F7 passa dal 100% al 40% e indietro.
+## 5. gli strumenti possono tornare al 100% (imposta) e allora non tocca più il disegno.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche.gd
 
 var _passed := 0
@@ -25,9 +26,11 @@ func _frames(n: int) -> void:
 
 func _run() -> void:
 	var lb := get_node(^"/root/LuciBianche")
-	print("1. Di base")
-	check(is_equal_approx(float(ProjectSettings.get_setting("gioco/luci_bianche", 1.0)), 1.0) and is_equal_approx(lb.fattore, 1.0),
-		"il fattore è 1 (impostazione e autoload)")
+	print("1. Di serie")
+	check(is_equal_approx(float(ProjectSettings.get_setting("gioco/luci_bianche", 1.0)), 0.4) and is_equal_approx(lb.fattore, 0.4),
+		"il fattore è 0,4 (impostazione e autoload)")
+	check(not lb.has_method(&"_unhandled_input") and not lb.has_method(&"_mostra"), "niente tasto F7 e niente scritta \"Luci 40%/100%\"")
+	lb.imposta(1.0)
 	check(not RenderingServer.frame_pre_draw.is_connected(lb.applica), "con il fattore 1 non tocca il disegno")
 
 	var radice := Node3D.new()
@@ -113,11 +116,7 @@ func _run() -> void:
 	fl.base_energy = 2.0
 	fl.flicker_rate = 2.0
 	radice.add_child(fl)
-	# la torcia del giocatore
-	var torcia := Torcia.new()
-	radice.add_child(torcia)
 	await _frames(3)
-	var luce_torcia: Light3D = torcia.find_children("*", "Light3D", true, false)[0] if not torcia.find_children("*", "Light3D", true, false).is_empty() else null
 
 	print("2. Al 40%")
 	lb.imposta(0.4)
@@ -125,7 +124,6 @@ func _run() -> void:
 	check(RenderingServer.frame_pre_draw.is_connected(lb.applica) and RenderingServer.frame_post_draw.is_connected(lb.ripristina),
 		"al 40% si applica prima di ogni disegno e si toglie dopo")
 	# in headless il disegno non c'è: applica() e ripristina() a mano, come li chiama il RenderingServer
-	var torcia_piena := luce_torcia.light_energy if luce_torcia else 0.0
 	var fl_max_rapporto := 0.0
 	var fl_ok := true
 	for k in 30:
@@ -141,8 +139,6 @@ func _run() -> void:
 		_visto["luce_medusa"] = luce_medusa.light_energy
 		_visto["disegno"] = mat_disegno.emission_energy_multiplier
 		_visto["muro"] = mat_muro.emission_energy_multiplier
-		if luce_torcia:
-			_visto["torcia"] = luce_torcia.light_energy
 		var nel_disegno := fl_luce.light_energy
 		lb.ripristina()
 		if pieno > 0.05:
@@ -162,23 +158,15 @@ func _run() -> void:
 	check(absf(float(_visto.get("disegno", -1.0)) - 0.24) < 0.01, "il disegno sull'acquario scende anche lui al 40%% (%.2f)" % float(_visto.get("disegno", -1.0)))
 	check(absf(float(_visto.get("muro", -1.0)) - 1.0) < 0.01, "un emissivo bianco che non è una lampada resta com'era (%.2f)" % float(_visto.get("muro", -1.0)))
 	check(fl_ok and fl_max_rapporto > 0.3, "la luce che sfarfalla da sola tiene il fattore, e dopo il disegno ritrova il suo valore (rapporto %.2f)" % fl_max_rapporto)
-	if luce_torcia:
-		check(absf(float(_visto.get("torcia", -1.0)) - torcia_piena) < 0.01, "la torcia resta com'è")
 
-	print("3. F7 e ritorno al 100%")
-	var e := InputEventKey.new()
-	e.physical_keycode = KEY_F7
-	e.pressed = true
-	Input.parse_input_event(e)
+	print("3. Al 100% (per gli strumenti)")
+	lb.imposta(1.0)
 	await _frames(3)
 	check(is_equal_approx(lb.fattore, 1.0) and not RenderingServer.frame_pre_draw.is_connected(lb.applica),
-		"F7 torna al 100% e non tocca più il disegno")
+		"al 100% non tocca più il disegno")
 	check(is_equal_approx((luci["bianca"] as Light3D).light_energy, 2.0) and is_equal_approx(gi.data.energy, 1.5)
 			and is_equal_approx(mat_bianco.emission_energy_multiplier, 3.0), "al 100% tutto com'era")
-	Input.parse_input_event(e)
-	await _frames(3)
-	check(is_equal_approx(lb.fattore, 0.4), "F7 di nuovo: 40%")
-	lb.imposta(1.0)
+	lb.imposta(0.4)
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)

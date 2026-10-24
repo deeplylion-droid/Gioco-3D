@@ -76,6 +76,12 @@ var _lei_su := Vector3.ZERO
 var _lei_giu := Vector3.ZERO
 var _lei_luce: OmniLight3D
 var _lei_testa: WaterHitbox
+## Il movimento secondario di tentacoli e campana di lei (MorbidezzaLei).
+var _morbidezza: MorbidezzaLei
+const FORME_LEI := "res://assets/ambiente/inseguimento/inseguimento_forme_lei.json"
+var _forme_lei_cache := {}
+var _forme_lei_fori := {}
+var _forme_lei_convessi := {}
 var _getto_preso := 0.0
 var _vasca := -1                       ## la vasca dove sei (-1 fuori)
 var _in_vasca_t := 0.0
@@ -459,6 +465,9 @@ func _lei_crea() -> void:
 	_lei_testa.add_child(cs)
 	_lei_testa.position = Vector3(0, 3.4, 0.6)
 	lei.add_child(_lei_testa)
+	if not Engine.has_meta(&"morbidezza_spenta"):
+		_morbidezza = MorbidezzaLei.su(lei)
+		_forme_lei()   # (qui, con la sala: non quando lei sale, sarebbe un fotogramma lungo)
 	_lei_testa.water_hit.connect(func(litri: float, _p: Vector3, _d: Vector3):
 		if lei_stato == Lei.SU or lei_stato == Lei.SALE:
 			_getto_preso += litri
@@ -520,6 +529,79 @@ func _posto_scolo(k: int) -> Vector3:
 const RITOCCHI := {"scolo_0": [0.0, 0.25], "scolo_1": [-1.0, -1.25]}
 
 
+## Quando lei sale: l'acqua (la sala allagata, o il bacino per la grata e SB1) e la morbidezza accesa tutta e subito.
+## Senza forme di collisione: la sala è una mesh sola, e le animazioni dell'inseguimento tengono già i tentacoli fuori
+## dai muri; la morbidezza non li porta dentro (tests/test_morbidezza_inseguimento.gd lo controlla coi raggi sulla
+## collisione vera, in ogni posto dove sale).
+## Le scatole del mondo per la morbidezza di lei, per posto (assets/ambiente/inseguimento/inseguimento_forme_lei.json,
+## nelle coordinate della sala; lette una volta).
+func _forme_lei() -> Dictionary:
+	if _forme_lei_cache.is_empty() and FileAccess.file_exists(FORME_LEI):
+		var d = JSON.parse_string(FileAccess.get_file_as_string(FORME_LEI))
+		if d is Dictionary and d.has("posti"):
+			_forme_lei_cache = d["posti"]
+			_forme_lei_fori = d.get("fori", {})
+			_forme_lei_convessi = d.get("convessi", {})
+	return _forme_lei_cache
+
+
+func _morbidezza_qui(dove: String) -> void:
+	if _morbidezza == null or not is_instance_valid(_morbidezza):
+		return
+	_morbidezza.pavimento_y = -INF
+	_morbidezza.partenza_sul_tratto = true
+	# il mondo intorno a questo posto: scatole convesse prese dalla collisione vera (tests/genera_forme_inseguimento.gd)
+	_morbidezza.togli_forme_mondo()
+	var forme := _forme_lei()
+	for sc in forme.get(dove, []):
+		var lo := Vector3(float(sc[0]), float(sc[1]), float(sc[2]))
+		var hi := Vector3(float(sc[3]), float(sc[4]), float(sc[5]))
+		_morbidezza.aggiungi_scatola(global_transform * Transform3D(Basis.IDENTITY, (lo + hi) * 0.5), (hi - lo) * 0.5 * global_basis.get_scale())
+	# dai pozzi (sb1, grata) lei sale da 5 m sotto, e la posa allarga i tentacoli più del pozzo: finché sale, sotto il
+	# bordo restano dentro la pianta del pozzo (come nella fossa, LeiSbuca)
+	_morbidezza.trattieni = false
+	_morbidezza.trattieni_y = -INF
+	_morbidezza.fossa_pianta = PackedVector2Array()
+	if dove == "sb1" or dove == "grata":
+		var pz: Dictionary = dati["pozzo"] if dove == "sb1" else dati["pozzetto_grata"]
+		var r: Array = pz["rett"]
+		var pianta := PackedVector2Array()
+		for v in [[r[0], r[1]], [r[2], r[1]], [r[2], r[3]], [r[0], r[3]]]:
+			var g := global_transform * b([v[0], v[1], float(pz["bordo"])])
+			pianta.append(Vector2(g.x, g.z))
+		_morbidezza.fossa_pianta = pianta
+		_morbidezza.trattieni_y = (global_transform * b([r[0], r[1], float(pz["bordo"])])).y
+		_morbidezza.trattieni = true
+	# dove sale attraverso il pavimento allagato: i tentacoli sotto il pavimento restano nel foro intorno a lei
+	var fori: Dictionary = _forme_lei_fori
+	if fori.has(dove):
+		var fo: Array = fori[dove]
+		var centro := global_transform * Vector3(float(fo[0]), float(fo[1]), float(fo[2]))
+		var cerchio := PackedVector2Array()
+		for k in 12:
+			cerchio.append(Vector2(centro.x, centro.z) + Vector2.from_angle(TAU * k / 12.0) * float(fo[3]))
+		_morbidezza.fossa_pianta = cerchio
+		# (la quota del trattenere mezzo metro sopra il pavimento: sotto il pavimento restano tutti nel foro, e si lasciano
+		# mentre escono)
+		_morbidezza.trattieni_y = centro.y + 0.5
+		_morbidezza.trattieni = true
+	# gli oggetti tondi (le pompe, i tubi): pezzi convessi coi piani già fatti
+	for cv in _forme_lei_convessi.get(dove, []):
+		var pl: Array = cv["piani"]
+		var piani: Array[Plane] = []
+		for k in range(0, pl.size(), 4):
+			piani.append(global_transform * Plane(Vector3(float(pl[k]), float(pl[k + 1]), float(pl[k + 2])), float(pl[k + 3])))
+		var lo := global_transform * Vector3(float(cv["lo"][0]), float(cv["lo"][1]), float(cv["lo"][2]))
+		var hi := global_transform * Vector3(float(cv["hi"][0]), float(cv["hi"][1]), float(cv["hi"][2]))
+		_morbidezza.aggiungi_piani(piani, AABB(lo, Vector3.ZERO).expand(hi))
+	_morbidezza.acqua_pianta = Rect2(-1e4, -1e4, 2e4, 2e4)
+	var acqua: Dictionary = dati["bacino"] if dove == "sb1" or dove == "grata" else dati["allagato"]
+	_morbidezza.acqua_pelo = float(acqua["acqua"])
+	_morbidezza.quanto = 1.0
+	_morbidezza.azzera()
+	_morbidezza.accendi(true)
+
+
 ## Lei sale dall'acqua del fondo fino a [param su]: in 1,6 s, o in 1 s ([param durata] sotto 1,3).
 ## Il nodo sta già lassù: la salita (da 5 m sotto) è nell'animazione.
 func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
@@ -528,6 +610,7 @@ func _lei_sale(dove: String, su: Vector3, durata := 1.6) -> void:
 	_lei_giu = su + Vector3.DOWN * 5.0
 	lei.global_position = su
 	lei.visible = true
+	_morbidezza_qui(dove)
 	_getto_preso = 0.0
 	lei_stato = Lei.SALE
 	_lei_t = 0.0
@@ -656,6 +739,10 @@ func _lei_aggiorna(delta: float, p: Player) -> void:
 			if _lei_t >= dur:
 				lei_stato = Lei.SU
 				_lei_t = 0.0
+				# (nei pozzi, sb1 e grata, quello che sta sotto il bordo resta nel pozzo anche dopo; dove sale attraverso il
+				# pavimento i tentacoli si lasciano)
+				if _morbidezza and is_instance_valid(_morbidezza) and _lei_dove != "sb1" and _lei_dove != "grata":
+					_morbidezza.trattieni = false
 				if _lei_dove != "sb1" and _lei_dove != "grata":
 					# su: incombe (la salita finisce nella sua posa) e la testa ti segue
 					_anima("incombe")
@@ -1082,6 +1169,17 @@ func _arredo(radice: Node3D, a: Dictionary) -> void:
 		copia.transform = _rispetto_a(src, n)
 		if String(a["a"]) == "origine":
 			copia.transform.origin = Vector3.ZERO
+		# la collisione: nel glTF della sala pompe sta nei pezzi accanto (POMPA_1_corpo-convcolonly...), che la copia
+		# della sola mesh lasciava indietro (grafica, 24 ottobre: i raggi attraversavano le pompe); dove non ci sono, una
+		# scatola sull'ingombro della mesh
+		var corpi := 0
+		for c in src.find_children(String(nome) + "_*", "StaticBody3D", true, false):
+			var cc := (c as Node3D).duplicate() as Node3D
+			gruppo.add_child(cc)
+			cc.transform = copia.transform * _rispetto_a(src, n).affine_inverse() * _rispetto_a(src, c as Node3D)
+			corpi += 1
+		if corpi == 0 and copia.find_children("*", "CollisionObject3D", true, false).is_empty() and not copia is CollisionObject3D:
+			_scatola_di(copia)
 		for m in [copia] + copia.find_children("*", "MeshInstance3D", true, false):
 			if m is MeshInstance3D:
 				var ab: AABB = copia.transform * ((m as MeshInstance3D).get_aabb()) if m == copia \
@@ -1103,6 +1201,28 @@ func _arredo(radice: Node3D, a: Dictionary) -> void:
 				var nrm := Vector3(a["nrm"][0], 0.0, -float(a["nrm"][1])).normalized()
 				t += nrm * (absf(nrm.x) * sg.size.x + absf(nrm.z) * sg.size.z) * 0.5
 			gruppo.transform = Transform3D(giro, t)
+
+
+## Una scatola di collisione sull'ingombro delle mesh di [param copia] (gli arredi senza la loro nel glTF).
+static func _scatola_di(copia: Node3D) -> void:
+	var box := AABB()
+	var prima := true
+	for m in [copia] + copia.find_children("*", "MeshInstance3D", true, false):
+		if m is MeshInstance3D:
+			var ab: AABB = (m as MeshInstance3D).get_aabb() if m == copia else _rispetto_a(copia, m as Node3D) * (m as MeshInstance3D).get_aabb()
+			box = ab if prima else box.merge(ab)
+			prima = false
+	if prima or box.size.length() < 0.05:
+		return
+	var corpo := StaticBody3D.new()
+	corpo.name = "Collisione"
+	var forma := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = box.size
+	forma.shape = bs
+	forma.position = box.get_center()
+	corpo.add_child(forma)
+	copia.add_child(corpo)
 
 
 ## La trasformazione di [param n] rispetto a [param src] (anche fuori dall'albero).

@@ -7,6 +7,9 @@ extends SceneTree
 ## Uso (da godot/, con il lock):
 ##   godot --headless --path . --script res://tools/medusa_inseguimento_libreria.gd
 ## In gioco: MedusaAffacciata.animazioni_inseguimento = true, poi "inseguimento/<nome>".
+## Per lo spot (tools/blender/medusa_spot.py) si passano il file delle pose e l'uscita:
+##   godot --headless --path . --script res://tools/medusa_inseguimento_libreria.gd -- spot.json \
+##     res://assets/models/medusa/medusa_spot.res
 
 const MODELLO := "res://assets/models/medusa/medusa.glb"
 const USCITA := "res://assets/models/medusa/medusa_inseguimento.res"
@@ -15,7 +18,10 @@ const FAUCE_DA := 0.45
 
 
 func _init() -> void:
-	var dati_path := ProjectSettings.globalize_path("res://").path_join("../assets_src/medusa/build/inseguimento.json")
+	var args := OS.get_cmdline_user_args()
+	var json_nome := args[0] if args.size() > 0 else "inseguimento.json"
+	var uscita := args[1] if args.size() > 1 else USCITA
+	var dati_path := ProjectSettings.globalize_path("res://").path_join("../assets_src/medusa/build/" + json_nome)
 	var f := FileAccess.open(dati_path, FileAccess.READ)
 	if f == null:
 		printerr("manca ", dati_path, ": prima tools/blender/medusa_inseguimento.py")
@@ -61,8 +67,8 @@ func _init() -> void:
 			_fauce(ap.get_animation(&"fauce_apre"), a)
 		lib.add_animation(StringName(nome), a)
 		print("ANIMAZIONE ", nome, ": ", chiavi.size(), " fotogrammi, ", a.get_track_count(), " tracce")
-	var err := ResourceSaver.save(lib, USCITA, ResourceSaver.FLAG_COMPRESS)
-	print("SALVATA ", USCITA, " (", err, ")")
+	var err := ResourceSaver.save(lib, uscita, ResourceSaver.FLAG_COMPRESS)
+	print("SALVATA ", uscita, " (", err, ")")
 	scena.free()
 	quit(0 if err == OK else 1)
 

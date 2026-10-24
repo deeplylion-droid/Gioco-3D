@@ -133,13 +133,21 @@ func _run() -> void:
 	var exit_ray := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(9.7, 1, -19.5), Vector3(9.7, 1, -21.5)))
 	check(exit_ray.is_empty(), "l'uscita verso la sala principale è libera")
 
-	print("La Polaroid nell'armadietto")
+	print("La Polaroid sullo sportello dell'armadietto rosso")
 	var pol: Node3D = level.get_node("Polaroid/Polaroid02")
-	p.teleport(Vector3(4.4, 0, -7.9), PI / 2.0, 0.0)
+	var g := pol.global_transform
+	# lo sportello chiuso di armadietti_ovest_09_rosso: la lamiera è a x 3,454, le punte delle alette delle feritoie
+	# (da y 1,55 a 1,76, da z -7,15 a -7,01) a 3,473
+	check(absf(g.origin.x - 0.0008 - 3.473) < 0.002 and g.basis.y.dot(Vector3.RIGHT) > 0.99,
+		"la P2 poggia sulle alette fuori dallo sportello e guarda il corridoio (x %.4f)" % g.origin.x)
+	check(g.origin.z > -7.12 and g.origin.z < -7.04 and g.origin.y > 1.6 and g.origin.y < 1.7 and g.basis.z.y > 0.99,
+		"sulle feritoie, dritta (%s)" % g.origin)
+	check(pol.find_children("Scotch*", "MeshInstance3D", false, false).size() == 2, "con due pezzetti di scotch")
+	p.teleport(Vector3(4.6, 0, -7.08), PI / 2.0, 0.0)
 	await _frames(5)
-	p.look_at_point(pol.global_position + Vector3(0, 0.05, 0))
+	p.look_at_point(pol.global_position)
 	await _frames(3)
-	check(p.interactor.current is PolaroidPhoto, "il raggio trova la Polaroid P2 nell'armadietto")
+	check(p.interactor.current is PolaroidPhoto, "il raggio trova la Polaroid P2 sullo sportello")
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
 	get_tree().quit(1 if _failed > 0 else 0)
@@ -157,24 +165,14 @@ func _scena_squalo(start: Marker3D) -> void:
 	var pos0 := p.global_position
 	var fatto := [false]
 	s.finito.connect(func(): fatto[0] = true)
-	# la torcia: spenta prima della scena, il tasto F durante la scena non deve toccarla
-	var torcia: Torcia = null
-	for n in p.find_children("*", "Node3D", true, false):
-		if n is Torcia:
-			torcia = n
-	var torcia_prima := true
-	if torcia:
-		torcia_prima = torcia.accesa
-		torcia.imposta_accesa(true)
-	var torcia_toccata := false
-	var premute := 0
+	# la torcia non c'è più (scelta dell'utente del 23 ottobre)
+	check(p.find_children("*", "Torcia", true, false).is_empty() and not InputMap.has_action(&"torcia"),
+		"il giocatore non ha la torcia, e niente tasto F")
 	level.call(&"fai_risveglio", p, true)
 	await _frames(2)
-	if torcia:
-		check(not torcia.accesa, "il gioco inizia a torcia spenta")
 	check(not p.input_enabled and s.in_corso() and s.squalo != null, "il giocatore non si muove: la camera è guidata")
 	var perno := level.find_child("PernoPortaTagliafuoco", true, false) as Node3D
-	check(perno != null and absf(perno.rotation_degrees.y - 100.0) < 1.0, "la porta tagliafuoco è aperta")
+	check(perno != null and absf(perno.rotation_degrees.y - s.apertura_porta) < 1.0, "la porta tagliafuoco è aperta (%.0f gradi)" % s.apertura_porta)
 	var min_dist := 99.0
 	var max_apertura := 0.0
 	var max_angolo_in_minaccia := 0.0
@@ -191,11 +189,6 @@ func _scena_squalo(start: Marker3D) -> void:
 	while not fatto[0] and t < 16.0:
 		await get_tree().process_frame
 		t += 1.0 / 60.0
-		if torcia and premute < 2 and t > [3.0, 7.0][premute]:   # nella minaccia e nella fuga
-			premute += 1
-			await _tasto_torcia()
-			t += 2.0 / 60.0
-			torcia_toccata = torcia_toccata or torcia.accesa
 		var sp: Vector3 = s.call(&"_scossa_passo")
 		if sp.x > 0.008 and scossa_prima <= 0.008:
 			scosse += 1
@@ -246,11 +239,6 @@ func _scena_squalo(start: Marker3D) -> void:
 	check(p.input_enabled and p.camera.position.is_zero_approx() and is_zero_approx(p.camera.rotation.z),
 		"il giocatore riprende il controllo, la camera torna normale")
 	check(p.global_position.distance_to(pos0) < 0.05, "ed è ancora dove si è svegliato")
-	if torcia:
-		check(premute == 2 and not torcia_toccata and not torcia.accesa, "il tasto F non accende la torcia durante la scena, e alla fine è com'era")
-		await _tasto_torcia()
-		check(torcia.accesa, "dopo la scena il tasto F la riaccende")
-		torcia.imposta_accesa(torcia_prima)
 	check(s.squalo == null, "lo squalo non c'è più")
 	check(perno != null and is_zero_approx(perno.rotation.y), "la porta tagliafuoco è chiusa")
 	var space := p.get_world_3d().direct_space_state
@@ -272,21 +260,6 @@ func check(cond: bool, what: String) -> void:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().physics_frame
-
-
-func _tasto_torcia() -> void:
-	var e := InputEventAction.new()
-	e.action = &"torcia"
-	e.pressed = true
-	Input.parse_input_event(e)
-	Input.flush_buffered_events()
-	await get_tree().process_frame
-	e = InputEventAction.new()
-	e.action = &"torcia"
-	e.pressed = false
-	Input.parse_input_event(e)
-	Input.flush_buffered_events()
-	await get_tree().process_frame
 
 
 func _hold(action: StringName, frames: int) -> void:

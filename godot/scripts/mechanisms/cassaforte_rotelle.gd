@@ -13,9 +13,16 @@ signal aperta
 @export var contenuto: Array[Interactable] = []
 ## Distanza tra le rotelle (m, lungo X locale).
 @export var passo := 0.16
-## Falso: lo sportello vero ([member modello_sportello], cardini a sinistra) con le rotelle vere, cilindri
-## con le cifre ([member cifre_tex]) che girano di 36 gradi a cifra, e sopra ognuna il suo simbolo
-## ([member simboli]: testa, corpo, coda). Lo sportello è largo [member largo_sportello].
+## Di quanto sta spostato il gruppo delle rotelle vere lungo X, dal centro dello sportello (m): per lasciare libera la
+## maniglia dello sportello.
+@export var spostamento_rotelle := 0.0
+## Falso: lo sportello vero ([member modello_sportello], cardini a sinistra) con le rotelle vere: tamburi di metallo
+## con le cifre stampate ([member cifre_tex]) che girano di 36 gradi a cifra, i tappi lisci, ognuno nella sua forcella con
+## la finestrella che inquadra la cifra di adesso, e sopra il suo simbolo ([member simboli]: testa, corpo, coda). Lo
+## sportello è largo [member largo_sportello].
+## La texture delle cifre: dieci celle in fila lungo la U (la circonferenza), la cifra n nella cella n, con l'alto verso
+## la U che cala; il CylinderMesh mette la U = 0 a +Z e la fa crescere verso +X. Davanti (+Z, verso chi guarda) c'è il
+## centro della cella [member cifre][i], dritto: vedi [method giro_rotella].
 @export var mostra_segnaposto := true
 @export var modello_sportello: PackedScene
 @export var cifre_tex: Texture2D
@@ -40,6 +47,14 @@ var _scritte: Array[Label3D] = []
 var _sportello: Node3D
 var _cilindri: Array[MeshInstance3D] = []
 var _barriera: StaticBody3D
+
+## Il raggio del tamburo, lo spessore dei tappi, delle guance e della mascherina, e metà dell'altezza della finestrella
+## (una cifra è un decimo di giro: 2 x 0,06 x sin 18° = 3,7 cm).
+const RAGGIO := 0.06
+const TAPPO := 0.005
+const GUANCIA := 0.006
+const MASCHERINA := 0.008
+const FINESTRA := 0.02
 
 
 func _ready() -> void:
@@ -76,7 +91,7 @@ func _ready() -> void:
 		r.position = Vector3(0.3 + (i - (codice.size() - 1) * 0.5) * passo, 0.0, 0.04)
 		if not mostra_segnaposto:
 			scritta.visible = false
-			r.position = Vector3(largo_sportello * 0.5 + (i - (codice.size() - 1) * 0.5) * passo, 0.03, 0.135 - spessore_sportello)
+			r.position = Vector3(largo_sportello * 0.5 + spostamento_rotelle + (i - (codice.size() - 1) * 0.5) * passo, 0.03, 0.135 - spessore_sportello)
 			_rotella_vera(r, i)
 		r.interacted.connect(gira.bind(i).unbind(1))
 		_rotelle.append(r)
@@ -115,18 +130,24 @@ func _metti_barriera() -> void:
 	add_child(_barriera)
 
 
-## Il cilindro con le cifre (asse lungo X, la cifra davanti verso +Z) e il simbolo sopra.
+## Il tamburo con le cifre (asse lungo X, la cifra davanti verso +Z), i tappi, la forcella con la finestrella e il simbolo
+## sopra.
 func _rotella_vera(r: Interactable, i: int) -> void:
 	var m := StandardMaterial3D.new()
 	m.albedo_texture = cifre_tex
-	m.uv1_scale = Vector3(1, 2, 1)   # il lato del CylinderMesh usa solo metà della V
-	m.roughness = 0.5
+	m.uv1_scale = Vector3(1, 2, 1)   # il lato del CylinderMesh usa solo metà della V (l'altra metà è dei tappi, che qui non ci sono)
+	m.metallic = 0.6
+	m.roughness = 0.35
 	var cil := MeshInstance3D.new()
 	cil.name = "Cilindro"
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.06
-	cm.bottom_radius = 0.06
+	cm.top_radius = RAGGIO
+	cm.bottom_radius = RAGGIO
 	cm.height = minf(passo, 0.09) * 0.95
+	# niente tappi col materiale delle cifre (le cifre finivano anche di lato): i tappi sono dischi di metallo liscio
+	cm.cap_top = false
+	cm.cap_bottom = false
+	cm.radial_segments = 40
 	cil.mesh = cm
 	cil.material_override = m
 	r.add_child(cil)
@@ -135,9 +156,43 @@ func _rotella_vera(r: Interactable, i: int) -> void:
 	ms.albedo_color = Color(0.15, 0.15, 0.15)
 	ms.metallic = 0.8
 	ms.roughness = 0.4
+	var mt := StandardMaterial3D.new()
+	mt.albedo_color = Color(0.55, 0.56, 0.57)
+	mt.metallic = 0.85
+	mt.roughness = 0.3
+	var td := CylinderMesh.new()
+	td.top_radius = RAGGIO + 0.001
+	td.bottom_radius = RAGGIO + 0.001
+	td.height = TAPPO
+	td.radial_segments = 40
+	for lato in [-1.0, 1.0]:
+		var t := MeshInstance3D.new()
+		t.name = "Tappo"
+		t.mesh = td
+		t.material_override = mt
+		t.position = Vector3(0, lato * (cm.height + TAPPO) * 0.5, 0)   # a filo della fine del tamburo, fuori
+		cil.add_child(t)
 	var zr := r.position.z
 	var dietro := faccia_sportello - zr + 0.001 if faccia_sportello != 0.0 else -0.065   # 1 mm davanti alla faccia
 	Graybox.box(r, Vector3(minf(passo, 0.09) - 0.01, 0.1, -0.005 - dietro), Vector3(0, 0, (dietro - 0.005) * 0.5), ms)   # 1 cm fra un pezzo e l'altro
+	# la custodia: due guance dalla faccia dello sportello a poco davanti al tamburo, 1 mm fuori dai tappi, il coperchio
+	# sopra e sotto (da sopra si vedevano le altre cifre), e davanti la mascherina d'acciaio chiaro con la finestrella
+	# alta una cifra; niente collisione, la rotella si gira da davanti. È un pezzo della rotella: col suo ingombro (quello
+	# del tasto E e del controllo di posizionamento) dentro, con lo sportello aperto e girato non la "tocca"
+	var mezzo := cm.height * 0.5 + TAPPO
+	var davanti := RAGGIO + 0.004
+	var alto := RAGGIO + 0.0075
+	for lato in [-1.0, 1.0]:
+		var g := Graybox.box(r, Vector3(GUANCIA, 2.0 * alto, davanti + MASCHERINA - dietro),
+				Vector3(lato * (mezzo + 0.001 + GUANCIA * 0.5), 0, (davanti + MASCHERINA + dietro) * 0.5), ms)
+		g.name = "Guancia"
+		var c := Graybox.box(r, Vector3(2.0 * (mezzo + 0.001), GUANCIA, davanti - dietro),
+				Vector3(0, lato * (alto - GUANCIA * 0.5), (davanti + dietro) * 0.5), ms)
+		c.name = "Coperchio"
+		var b := Graybox.box(r, Vector3(2.0 * (mezzo + 0.001), alto - FINESTRA, MASCHERINA),
+				Vector3(0, lato * (FINESTRA + alto) * 0.5, davanti + MASCHERINA * 0.5), mt)
+		b.name = "Mascherina"
+	# il simbolo sopra è dello sportello, non della rotella (dentro il suo ingombro arrivava alla custodia accanto)
 	if i < simboli.size() and simboli[i]:
 		var sm := StandardMaterial3D.new()
 		sm.albedo_texture = simboli[i]
@@ -147,8 +202,19 @@ func _rotella_vera(r: Interactable, i: int) -> void:
 		qm.size = Vector2(0.09, 0.09)
 		q.mesh = qm
 		q.material_override = sm
-		q.position = Vector3(0, 0.13, (faccia_sportello - zr + 0.002) if faccia_sportello != 0.0 else -0.065)
-		r.add_child(q)
+		q.name = "Simbolo%d" % (i + 1)
+		q.position = r.position + Vector3(0, 0.13, (faccia_sportello - zr + 0.002) if faccia_sportello != 0.0 else -0.065)
+		_sportello.add_child(q)
+
+
+## Come sta il tamburo con la cifra [param n] davanti: l'asse del CylinderMesh (Y) lungo +X, poi un decimo di giro a
+## cifra attorno all'asse, in modo che a +Z ci sia il centro della cella n della texture, U = (n + 0,5) / 10. Con l'asse
+## verso +X la U che cresce scende sul davanti, e l'alto delle cifre (la U che cala) sta in alto: si leggono dritte.
+## Passando alla cifra dopo il davanti del tamburo sale, come in un contachilometri: la cifra nuova arriva da sotto.
+## (Prima: asse verso -X e nessuna mezza cella, così davanti c'era il confine fra due cifre, contate al contrario e
+## capovolte; con le rotelle a 4-1-7 a vista la cassaforte non si apriva.)
+static func giro_rotella(n: int) -> Basis:
+	return Basis(Vector3.BACK, -PI * 0.5) * Basis(Vector3.UP, -TAU * (n + 0.5) / 10.0)
 
 
 func rotella(i: int) -> Interactable:
@@ -172,8 +238,7 @@ func _metti() -> void:
 		_scritte[i].text = str(cifre[i])
 		_rotelle[i].enabled = not aperta_ora
 		if i < _cilindri.size():
-			# l'asse lungo X; ogni cifra è un decimo di giro
-			_cilindri[i].transform = Transform3D(Basis(Vector3.BACK, PI * 0.5) * Basis(Vector3.UP, deg_to_rad(36.0 * cifre[i])), Vector3.ZERO)
+			_cilindri[i].transform = Transform3D(giro_rotella(cifre[i]), Vector3.ZERO)
 	# Aperta, lo sportello gira sui cardini a sinistra.
 	_sportello.rotation = Vector3(0.0, -1.9 if aperta_ora else 0.0, 0.0)
 	for c in contenuto:

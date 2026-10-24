@@ -1299,6 +1299,9 @@ def cartellone(mats, larghezza=2.4, altezza=1.35, nome='amb_cartellone_240x135')
     return c.crea(nome)
 
 
+FLANGE_TUBI = []        # (centro, direzione) di ogni flangia fatta da tubo_scivolo: i sostegni non ci mettono i collari
+
+
 def tubo_scivolo(mats, punti, nome='amb_scivolo_tratto', passo_flange=2.0, materiali=None, seg=24, r=None, spessore=None):
     """Tubo chiuso dello scivolo (vetroresina) lungo una curva: segmenti con flange imbullonate
     ogni 'passo_flange' metri. materiali = sequenza ciclica dei colori dei segmenti.
@@ -1343,6 +1346,7 @@ def tubo_scivolo(mats, punti, nome='amb_scivolo_tratto', passo_flange=2.0, mater
         i0 = idx[0]
         t = (Q[min(i0 + 1, len(Q) - 1)] - Q[max(i0 - 1, 0)]).normalized()
         c.anello(Q[i0] - t * 0.012, t, R, R + SP + fl, 0.024 * max(1.0, R / 0.5), m, seg=seg)
+        FLANGE_TUBI.append((Q[i0].copy(), t.copy()))
         for k in range(nb):  # bulloni
             ref = Vector((0, 0, 1)) if abs(t.z) < 0.9 else Vector((1, 0, 0))
             u = (ref - t * ref.dot(t)).normalized(); v = t.cross(u)

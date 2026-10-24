@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/spot/regia_spot.gd" id="1_regia"]
+
+[node name="RegiaSpot" type="Node"]
+script = ExtResource("1_regia")
+editor_description = "Gira un segmento dello spot (scenes/spot/spot_inquadrature.json) per il Movie Maker. Solo per registrare il video: il gioco non la usa."

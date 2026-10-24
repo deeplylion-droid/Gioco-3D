@@ -95,6 +95,56 @@ def curva(ctrl, passo=0.35):
     return out
 
 
+TUBO_TORRE = []   # i triangoli (nel mondo) del tubo dell'inseguimento della torre, letti dal GLB del gioco
+
+
+def _leggi_tubo_torre():
+    """Legge il tubo dell'inseguimento dal GLB della torre (prima dei materiali: l'import dei materiali del GLB si
+    scontra con quelli già fatti)."""
+    import bmesh
+    bpy.ops.import_scene.gltf(filepath=os.path.join(QUI, '..', '..', 'godot', 'assets', 'ambiente', 'torre', 'torre_scivoli.glb'))
+    tubo = next(o for o in bpy.data.objects if o.name.startswith('torre_tubo_inseguimento'))
+    bm = bmesh.new()
+    bm.from_mesh(tubo.data)
+    bm.transform(tubo.matrix_world)
+    TUBO_TORRE.clear()
+    TUBO_TORRE.append(([v.co.copy() for v in bm.verts], [[v.index for v in f.verts] for f in bm.faces]))
+    bm.free()
+
+
+def intaglia_col_tubo(ob, gioco=0.004):
+    """Toglie da `ob` il tubo dell'inseguimento della torre (letto da _leggi_tubo_torre, gonfiato di `gioco`)."""
+    import bmesh
+    vs, fs = TUBO_TORRE[0]
+    bm = bmesh.new()
+    vv = [bm.verts.new(v) for v in vs]
+    for f in fs:
+        try:
+            bm.faces.new([vv[i] for i in f])
+        except ValueError:
+            pass
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.normal_update()
+    for v, n in zip(bm.verts, [v.normal.copy() for v in bm.verts]):
+        v.co += n * gioco
+    me = bpy.data.meshes.new('tubo_intaglio')
+    bm.to_mesh(me)
+    bm.free()
+    taglio = bpy.data.objects.new('tubo_intaglio', me)
+    bpy.context.scene.collection.objects.link(taglio)
+    m = ob.modifiers.new('intaglio', 'BOOLEAN')
+    m.operation = 'DIFFERENCE'
+    m.object = taglio
+    m.solver = 'EXACT'
+    m.use_hole_tolerant = True
+    m.use_self = True
+    bpy.context.view_layer.objects.active = ob
+    bpy.ops.object.modifier_apply(modifier=m.name)
+    bpy.data.objects.remove(taglio)
+    bpy.data.meshes.remove(me)
+
+
 def guscio(c, x1, y0, y1, z0, z1, buco=None, porta=None, fossa=None):
     """La sala dietro la torre: muri di lamiera e cemento dello scafo con le costole, soffitto con le travi,
     pavimento. Nel muro ovest (x = X0) il buco della bocca; porta = (y, z) della porta d'uscita nel muro ovest;
@@ -492,8 +542,11 @@ def versione_A(mats):
     collare = None
     if GIOCO:   # il collare attorno al tubo della bocca, sul muro ovest (copre gli angoli del foro), solo da vedere
         cc = K.Costruttore(mats)
-        cc.anello((X0, BOCCA.y, BOCCA.z), (1, 0, 0), 0.86, 1.62, 0.08, 'metallo', seg=32)
+        cc.anello((X0, BOCCA.y, BOCCA.z), (1, 0, 0), 0.7, 1.62, 0.08, 'metallo', seg=32)
         collare = cc.crea('ins_A_collare')
+        # il foro del collare segue il tubo vero (che lì passa il muro in pendenza: col foro tondo da 0,86 m il tubo ci
+        # entrava 10 cm), 4 mm attorno
+        intaglia_col_tubo(collare)
     acque.append(P.acqua_piano('acqua_allagata', X0, y0, x1, y1, T))
     oggetti_tubi = []
     pedane = []
@@ -663,7 +716,8 @@ def versione_A(mats):
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y0 + 0.4, -20.0, 1)
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y1 - 0.4, -24.0, -1)
     for x in range(44, 78, 7):
-        P.tubo_muro(c, [(x, y0 + 0.35, z0 if GIOCO else z0 + 0.4), (x, y0 + 0.35, z1 + 0.2 if GIOCO else z1 - 0.5)], r=0.12)
+        P.tubo_muro(c, [(x, y0 + 0.35, z0 if GIOCO else z0 + 0.4), (x, y0 + 0.35, z1 + 0.2 if GIOCO else z1 - 0.5)], r=0.12,
+                    muri=(X0, x1, y0, y1))
     # catene appese dal soffitto (con il gancio)
     for (x, y) in ((58.0, 15.0), (66.0, 18.0), (48.0, 22.0)):
         zb_ = -17.0 - rnd.uniform(0, 3)
@@ -1235,6 +1289,9 @@ def main():
     argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
     nome = argv[0] if argv else 'A'
     K.svuota()
+    if '--gioco' in argv:
+        _leggi_tubo_torre()
+        K.svuota()
     S._MODELLI.clear()
     mats = K.Materiali(S.PALETTE_SALA, per_render=False)
     S.materiali_nuovi(mats)

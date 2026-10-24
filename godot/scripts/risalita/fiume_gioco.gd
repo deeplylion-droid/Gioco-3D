@@ -152,6 +152,8 @@ func _costruisci() -> void:
 	await _imbarco()
 	await _pausa()
 	_approdo()
+	await _rocce_imbarco()
+	await _pile()
 	_marker()
 	_checkpoint()
 	costruita = true
@@ -601,8 +603,11 @@ func _capannone() -> void:
 	_muro_box(Vector3(sp, h, zp - vano - Z0), Vector3(X0 - sp * 0.5, h * 0.5, (Z0 + zp - vano) * 0.5), muro)
 	_muro_box(Vector3(sp, h, Z1 - zp - vano), Vector3(X0 - sp * 0.5, h * 0.5, (Z1 + zp + vano) * 0.5), muro)
 	_muro_box(Vector3(sp, h - 2.3, vano * 2.0), Vector3(X0 - sp * 0.5, 2.3 + (h - 2.3) * 0.5, zp), muro)
-	# il muro che chiude la piazza a est, lungo il muro nord, fino al canale del raggio d'imbarco
-	_muro_box(Vector3(0.3, TETTO, Z_PIAZZA_NORD - Z0), Vector3(MURO_PIAZZA, TETTO * 0.5, (Z0 + Z_PIAZZA_NORD) * 0.5), muro)
+	# il muro che chiude la piazza a est, lungo il muro nord, fino al canale del raggio d'imbarco; la testa, davanti alla
+	# fila della roccia fino all'acqua, è solo collisione: lì c'è la roccia (_testa_muro_piazza)
+	var z_testa := Z_PIAZZA_NORD - TESTA_MURO
+	_muro_box(Vector3(0.3, TETTO, z_testa - Z0), Vector3(MURO_PIAZZA, TETTO * 0.5, (Z0 + z_testa) * 0.5), muro)
+	_muro_box(Vector3(0.3, TETTO, TESTA_MURO), Vector3(MURO_PIAZZA, TETTO * 0.5, z_testa + TESTA_MURO * 0.5), null)
 	# le due porte: il telaio d'acciaio e l'anta spalancata verso dentro
 	await _pausa()
 	_porta_aperta(Vector3(INGRESSO_X, 0, Z0), 0.0)
@@ -664,13 +669,14 @@ func _scatola_in(padre: Node3D, size: Vector3, pos: Vector3, m: Material) -> voi
 
 
 func _muro_box(size: Vector3, pos: Vector3, m: Material) -> void:
-	var mi := MeshInstance3D.new()
-	var b := BoxMesh.new()
-	b.size = size
-	mi.mesh = b
-	mi.material_override = m
-	mi.position = pos
-	add_child(mi)
+	if m:
+		var mi := MeshInstance3D.new()
+		var b := BoxMesh.new()
+		b.size = size
+		mi.mesh = b
+		mi.material_override = m
+		mi.position = pos
+		add_child(mi)
 	var f := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
 	bs.size = size
@@ -790,6 +796,10 @@ func _metti(nome: String, pos: Vector3, rot_y := 0.0, scala := 1.0) -> Node3D:
 	var n := _glb(nome)
 	n.name = nome
 	n.position = pos
+	# a terra 1 mm sopra il pavimento, come _a_terra: i modelli hanno il fondo a quota 0 e i materiali a doppia faccia,
+	# e il fondo sul pavimento sfarfallava nel cemento dell'ingresso (riscontro dell'utente, collaudo del 24 ottobre)
+	if is_zero_approx(pos.y):
+		n.position.y = 0.001
 	n.rotation_degrees.y = rot_y
 	n.scale = Vector3.ONE * scala
 	add_child(n, true)   # nomi leggibili (palma_finta2...) anche nei rapporti del controllo di posizionamento
@@ -968,21 +978,102 @@ func _faro_subacqueo(pos: Vector3, rot_y: float) -> void:
 
 ## Un pannello di roccia finta (4,2 x 3,2 m, alzato fino a 4,9) col retro verso [param rot] + 180: girato
 ## e specchiato a caso perché non si veda che è sempre lo stesso. Ha la sua collisione.
-func _roccia(pos: Vector3, rot: float, specchio = null) -> Node3D:
+func _roccia(pos: Vector3, rot: float, specchio = null, largo := 1.0) -> Node3D:
 	var r := _metti("roccia_parete", pos, rot)
 	for mi in r.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = mat_roccia
-	# (quelli doppi, dietro: specchiati o no come dice [param specchio], senza toccare la sequenza casuale degli altri)
+	# (quelli doppi, dietro, e quelli che riempiono i buchi: specchiati o no come dice [param specchio], senza toccare
+	# la sequenza casuale degli altri; [param largo] stringe il pannello)
 	var sx := (-1.0 if specchio else 1.0) if specchio != null else (1.0 if _randf() < 0.5 else -1.0)
 	var sy := 1.5 if specchio != null else _randf_range(1.4, 1.6)
-	r.scale = Vector3(sx * (1.0 if specchio != null else _randf_range(0.95, 1.1)), sy, 1.0)
+	r.scale = Vector3(sx * largo * (1.0 if specchio != null else _randf_range(0.95, 1.1)), sy, 1.0)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
-	b.size = Vector3(4.2, 3.24 * sy, 0.5)
+	b.size = Vector3(4.2 * largo, 3.24 * sy, 0.5)
 	f.shape = b
 	f.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(rot)), pos + Basis(Vector3.UP, deg_to_rad(rot)) * Vector3(0, 3.24 * sy * 0.5, 0.25))
 	_collisioni.add_child(f)
 	return r
+
+
+## La roccia lungo le banchine dev'essere continua (riscontro dell'utente; collaudo del 24 ottobre: dalla ciambella,
+## a sinistra, fra un pannello e l'altro e nelle zone tenute libere si vedeva il muro grigio liscio). Ogni metro di
+## banchina senza un pannello a meno di [constant COPRE] dal suo centro ne riceve uno più stretto (3 m), 5 cm più
+## indietro della fila (dove non ci sta, fino a 1,5 m più indietro, verso il muro), così non sta sullo stesso piano dei vicini. Vale anche davanti ai dischi delle paratie (il disco
+## sta 85 cm più avanti della faccia della roccia: la roccia gli fa da sfondo) e nelle conche dei bivi; restano libere
+## solo le zone dove si cammina (vasca, ingresso, approdo) e la colonna del bivio 3. Si aggiunge a [param rocce].
+const COPRE := 1.5
+const LARGO_BUCO := 3.0
+
+
+func _rocce_buchi(rocce: Array) -> void:
+	var zone := _zone_libere
+	_zone_libere = [zone[0], zone[1], zone[2], zone[zone.size() - 1]]
+	var messe := 0
+	for s in _strisce:
+		for v in _lungo(s, W * 0.5 + BANCA, 1.0, 0.5):
+			await _pausa()
+			var p: Vector3 = v[0]
+			var rot: float = v[1]
+			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
+			var coperto := false
+			for r in rocce:
+				var w: Vector3 = r[0] - p
+				# un pannello della stessa sponda (guarda dalla stessa parte) col centro abbastanza vicino
+				if w.length() < COPRE and (Basis(Vector3.UP, deg_to_rad(r[1])) * Vector3.BACK).dot(davanti) > 0.7:
+					coperto = true
+					break
+			if coperto:
+				continue
+			# dove la banchina è diversa (le conche dei bivi) il pannello va più indietro, verso il muro
+			for indietro in [0.0, 0.5, 1.0, 1.5]:
+				var q: Vector3 = p - davanti * (indietro + 0.05)
+				if not _ci_sta(q, rot, LARGO_BUCO, 0.6):
+					continue
+				# con la piazza dietro ci vuole il posto per il pannello doppio (il retro piatto non si deve vedere)
+				if in_piazza(q - davanti * 1.0) and not _ci_sta(q - davanti * 0.002, rot + 180.0, 4.0, 0.6):
+					continue
+				_roccia(q, rot, messe % 2 == 0, LARGO_BUCO / 4.2)
+				rocce.append([q, rot])
+				messe += 1
+				break
+	# dietro le conche dei bivi 1 e 2 la banchina finisce contro il muro del capannone: lì tre pannelli contro il muro,
+	# girati verso la conca (al bivio 3 dietro la conca c'è l'uscita)
+	# (passo 2,4 m con pannelli da 3: si sovrappongono, se no fra i bordi irregolari restavano liste di muro grigio di
+	# 30-50 cm, ricontrollo del 24 ottobre; uno sì e uno no 3 cm più avanti, così non stanno sullo stesso piano)
+	for c in [[Vector3(X1 - 0.35, 0, 0), -90.0, Vector3(0, 0, 1)], [Vector3(0, 0, Z1 - 0.35), 180.0, Vector3(1, 0, 0)]]:
+		var avanti := Basis(Vector3.UP, deg_to_rad(c[1])) * Vector3.BACK
+		for i in 4:
+			await _pausa()
+			var q: Vector3 = c[0] + (c[2] as Vector3) * (-3.6 + i * 2.4) + avanti * (0.03 * (i % 2))
+			if rocce.any(func(r: Array) -> bool: return (r[0] as Vector3).distance_to(q) < COPRE):
+				continue
+			_roccia(q, c[1], messe % 2 == 0, LARGO_BUCO / 4.2)
+			rocce.append([q, c[1]])
+			messe += 1
+	_testa_muro_piazza(rocce)
+	_zone_libere = zone
+	print("rocce nei buchi: %d" % messe)
+
+
+## La testa del muro della piazza (x [constant MURO_PIAZZA]) sporgeva di [constant TESTA_MURO] davanti alla fila della
+## roccia, fino al bordo dell'acqua: dalla ciambella, all'inizio della curva, era una lista grigia (riscontro del
+## coordinatore, 24 ottobre). Lì il muro resta solo collisione (chiude ancora la banchina a chi cammina) e al suo
+## posto ci sono due pannelli stretti schiena contro schiena, dalla fila della roccia fin dove c'è banchina.
+const TESTA_MURO := 2.4
+
+
+func _testa_muro_piazza(rocce: Array) -> void:
+	for lato: float in [-1.0, 1.0]:
+		var x := MURO_PIAZZA + lato * 0.002
+		var fine := Z_PIAZZA_NORD
+		while fine > Z_PIAZZA_NORD - TESTA_MURO + 0.5 and not _sulla_banchina(Vector3(x + lato * 0.5, 0, fine), 0.05):
+			fine -= 0.05
+		var inizio := Z_PIAZZA_NORD - TESTA_MURO
+		var c := Vector3(x, 0, (inizio + fine) * 0.5)
+		var rot := 90.0 if lato > 0.0 else -90.0
+		_roccia(c, rot, lato > 0.0, (fine - inizio) / 4.2)
+		rocce.append([c, rot])
 
 
 ## Il retro piatto dei pannelli si vedeva dalle banchine e dai canali degli altri rami: dietro ogni pannello
@@ -1127,6 +1218,7 @@ func _logica() -> void:
 	# (il fiume entra coi suoi tratti, poi le paratie una per pezzo, al loro posto fra i figli: dopo i tratti, prima
 	# della ciambella. Tutto insieme era il pezzo più lungo della costruzione a pezzi, 70 ms)
 	add_child(fiume)
+	_ciambella_fosforescente(fiume.get_node_or_null(^"Ciambella"))
 	# A ogni bivio la destra è il raggio verso l'imbarco (il ramo sbagliato), la sinistra continua.
 	var bivi := [["Imbarco", "Paratia1", 90.0, "Giusto1", "Sbagliato1", true, 55.0, false],
 		["Giusto1", "Paratia2", 180.0, "Giusto2", "Sbagliato2", false, 145.0, false],
@@ -1284,6 +1376,11 @@ func _bivi() -> void:
 	fc.shape = bc
 	fc.position = colonna.position
 	_collisioni.add_child(fc)
+	# rivestita di roccia, un pannello stretto per faccia: era un prisma di cemento liscio in mezzo alla roccia
+	# (ricontrollo del 24 ottobre)
+	for k in 4:
+		var verso := Basis(Vector3.UP, deg_to_rad(90.0 * k)) * Vector3.BACK
+		_roccia(col + verso * 0.5, 90.0 * k, k % 2 == 0, 1.25 / 4.2)
 	if b3 == Vector3.ZERO or verso_monte == Vector3.ZERO:
 		push_warning("bivio 3 senza disco")
 
@@ -1401,6 +1498,8 @@ func _giungla() -> void:
 			elif n % 4 == 1 and _randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
 	await _pausa()
+	await _rocce_buchi(rocce)
+	await _pausa()
 	await _rocce_doppie(rocce)
 	await _pausa()
 	# i fari subacquei nelle pareti dei canali, alternati
@@ -1436,6 +1535,380 @@ func _giungla() -> void:
 			k2 += 1
 			if k2 % 3 == 0:
 				_metti("scaletta_banchina", v[0] + Vector3(0, FONDO + 0.05, 0), v[1])
+
+
+## La ciambella su cui si sale, fosforescente verde chiaro (riscontro dell'utente sulla v0.3.11: "il salvagente è troppo
+## poco visibile. Va reso glow in the dark"; scelta A del 23 ottobre): i suoi materiali con l'emissione verde chiara (la
+## texture resta: si riconosce come le altre ciambelle) e un alone tenue, come gli adesivi fosforescenti. Solo questa:
+## quelle alla deriva e la pila di ricambio restano come sono.
+func _ciambella_fosforescente(c: Node3D) -> void:
+	if c == null:
+		return
+	for mi in c.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		for s in m.mesh.get_surface_count():
+			var orig := m.get_active_material(s) as BaseMaterial3D
+			var nuovo: StandardMaterial3D = orig.duplicate() if orig is StandardMaterial3D else StandardMaterial3D.new()
+			nuovo.albedo_color = Color(0.82, 1.0, 0.84)
+			nuovo.emission_enabled = true
+			nuovo.emission = Color(0.5, 1.0, 0.58)
+			nuovo.emission_energy_multiplier = 1.4
+			if orig is BaseMaterial3D and orig.albedo_texture:
+				# la fosforescenza dove la vernice è chiara (le strisce gialle e azzurre del modello)
+				nuovo.emission_texture = orig.albedo_texture
+				nuovo.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+				nuovo.emission_energy_multiplier = 2.2
+			m.set_surface_override_material(s, nuovo)
+	var alone := OmniLight3D.new()
+	alone.name = "AloneFosforescente"
+	alone.light_color = Color(0.5, 1.0, 0.58)
+	alone.light_energy = 0.35
+	alone.omni_range = 2.0
+	alone.position = Vector3(0, 0.25, 0)
+	alone.set_meta(&"risveglio_ignora", true)
+	c.add_child(alone)
+
+
+# --- le pile di scatoloni ----------------------------------------------------------------------------------
+
+## Le pile di scatoloni su bancali che chiudono la piazza e l'approdo (riscontro dell'utente sulla v0.3.11, punti 4 e 7:
+## "a destra e a sinistra del percorso delimitato dalle transennine è tutto vuoto ed enorme, bisogna chiudere la stanza
+## magari con delle pile di scatoloni altissime, che non lascino spazi aperti, conducendoti fino al salvagente"; "finito
+## il percorso, nuovamente ci vogliono le scatole che non lasciano vedere oltre il percorso giusto, verso la porta
+## seguente"; scelta A del 23 ottobre). Ogni unità è un bancale con un blocco di 12 scatoloni avvolto nel film, alta
+## 1,35 m; le colonne sono di 3 o 4 unità (4-5,4 m, cime sfalsate), su due file di profondità; sotto le casse di
+## plastica (le più pesanti), sopra il cartone. MultiMesh (pochi nodi), con una collisione per colonna.
+const PILA_LUNGO := 1.2
+const PILA_PROFONDO := 1.0
+const PILA_BANCALE := 0.15
+const PILA_BLOCCO := 1.2
+const PILA_STACCO := 0.02
+
+
+## I muri di pile: [inizio, fine (la faccia verso la strada), verso dentro la pila]. Quelli con x oltre il muro
+## dell'approdo (MURO_APPRODO) stanno nell'approdo, gli altri nella piazza.
+func _muri_pile() -> Array:
+	var da := Vector2(INGRESSO_X, Z0 + 1.0)
+	var dir := (Vector2(FINE_FILA.x, FINE_FILA.z) - da).normalized()
+	var lato := Vector2(-dir.y, dir.x)      # a sinistra di chi va verso la vasca (sud-ovest)
+	# la strada larga 6 m (le transenne a 0,85 dall'asse; le transenne cadute, stese a terra, arrivano a 2,9 m)
+	var largo := 3.0
+	var fine_destra := da + dir * 18.0 - lato * largo
+	# la pila di sinistra arriva fino a x -9,4, davanti alla tettoia della cabina, poi scende al ramo ovest
+	var fine_sinistra := (-9.4 - da.x + lato.x * -largo) / dir.x
+	var angolo := da + dir * fine_sinistra + lato * largo
+	return [
+		# lungo il muro nord, a chiudere l'angolo fra il muro e la pila di destra
+		[Vector2(INGRESSO_X + 2.4, Z0 + 0.32), Vector2(INGRESSO_X + 7.4, Z0 + 0.32), Vector2(0, 1)],
+		# a destra della fila, fino a 18 m, poi verso est fino alla roccia della riva
+		[da + dir * -3.0 - lato * largo, fine_destra, -lato],
+		[Vector2(fine_destra.x - 1.6, fine_destra.y), Vector2(-3.62, fine_destra.y), Vector2(0, -1)],
+		# a sinistra della fila fino alla cabina dell'imbarco, poi verso sud fino al ramo ovest
+		[da + dir * -7.0 + lato * largo, angolo, lato],
+		# (dalla riva verso nord: la prima unità arriva al bordo dell'acqua, quello che avanza resta nell'angolo)
+		[Vector2(-9.4, -W * 0.5 - 0.2), Vector2(-9.4, angolo.y), Vector2(-1, 0)],
+		# l'approdo: a nord e a sud della conca, dal muro ovest al muro dell'approdo
+		[Vector2(X0 + 0.32, APPRODO.y - 3.55), Vector2(MURO_APPRODO - 0.25, APPRODO.y - 3.55), Vector2(0, -1)],
+		[Vector2(X0 + 0.32, APPRODO.y + 3.55), Vector2(MURO_APPRODO - 0.25, APPRODO.y + 3.55), Vector2(0, 1)],
+	]
+
+
+func _pile() -> void:
+	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1023
+	# gli ingombri già a terra: le forme di collisione (transenne, rocce, pali, cabina, tettoia) in pianta
+	var ingombri: Array[PackedVector2Array] = []
+	for corpo in [_collisioni, _barriere] + get_children().filter(func(c): return c is StaticBody3D and c != _collisioni and c != _barriere):
+		for cs in (corpo as Node).get_children():
+			var f := cs as CollisionShape3D
+			if f == null or f.shape == null:
+				continue
+			if f.shape is BoxShape3D:
+				var h := (f.shape as BoxShape3D).size * 0.5
+				var pts := PackedVector2Array()
+				for sx in [-1.0, 1.0]:
+					for sy in [-1.0, 1.0]:
+						for sz in [-1.0, 1.0]:
+							var w: Vector3 = f.transform * Vector3(h.x * sx, h.y * sy, h.z * sz)
+							pts.append(Vector2(w.x, w.z))
+				ingombri.append(Geometry2D.convex_hull(pts))
+			elif f.shape is CylinderShape3D:
+				var r := (f.shape as CylinderShape3D).radius
+				var cerchio := PackedVector2Array()
+				for k in 12:
+					cerchio.append(Vector2(f.transform.origin.x, f.transform.origin.z) + Vector2.from_angle(TAU * k / 12.0) * r)
+				ingombri.append(cerchio)
+	# le lampade sui muri (e quello che sta in alto): le pile ci passano sotto
+	var lampade: Array[Vector3] = []
+	for c in get_children():
+		if c is Node3D and (c as Node3D).position.y > 1.0 and not c is Light3D:
+			lampade.append((c as Node3D).position)
+	var cartone: Array[Transform3D] = []
+	var tinte: Array[Color] = []
+	var fronti := []   # le unità della fila davanti: [muro, posizione lungo il muro, centro, verso dentro la pila]
+	var casse: Array[Transform3D] = []
+	var messe: Array[PackedVector2Array] = []
+	var colonne := 0
+	var muri := _muri_pile()
+	for i_muro in muri.size():
+		var m: Array = muri[i_muro]
+		var a: Vector2 = m[0]
+		var b: Vector2 = m[1]
+		var n: Vector2 = m[2]
+		var nell_approdo := (a.x + b.x) * 0.5 < MURO_APPRODO
+		var d := (b - a).normalized()
+		var lungo := a.distance_to(b)
+		var u := 0.0
+		while u + PILA_LUNGO <= lungo + PILA_LUNGO * 0.5 + 0.001:
+			await _pausa()
+			for fila in 2:
+				# la fila di dietro sfalsata di mezza unità (a mattoni): le fessure fra le unità non si allineano
+				var uu := u + fila * PILA_LUNGO * 0.5
+				if uu + PILA_LUNGO > lungo + 0.001:
+					continue
+				var c := a + d * (uu + PILA_LUNGO * 0.5) + n * (PILA_STACCO + fila * (PILA_PROFONDO + PILA_STACCO) + PILA_PROFONDO * 0.5)
+				var e := d * (PILA_LUNGO * 0.5)
+				var f := n * (PILA_PROFONDO * 0.5)
+				var impronta := PackedVector2Array([c - e - f, c + e - f, c + e + f, c - e + f])
+				if ((c.x < MURO_APPRODO) != nell_approdo) or not _pila_ci_sta(impronta, ingombri, messe):
+					continue
+				messe.append(impronta)
+				colonne += 1
+				if fila == 0:
+					fronti.append([i_muro, uu + PILA_LUNGO * 0.5, c, n])
+				var piani := 3 if rng.randf() < 0.45 else 4
+				# sotto una lampada sul muro la pila si ferma 15 cm sotto
+				for l in lampade:
+					if Geometry2D.is_point_in_polygon(Vector2(l.x, l.z), _allarga(impronta, 0.6)):
+						piani = mini(piani, int((l.y - 0.3) / (PILA_BANCALE + PILA_BLOCCO)))
+				if piani < 1:
+					messe.pop_back()
+					colonne -= 1
+					continue
+				var asse_x := Vector3(d.x, 0, d.y)
+				var asse_z := Vector3(n.x, 0, n.y)
+				for p in piani:
+					var yaw := 0.0 if p == 0 else rng.randf_range(-0.012, 0.012)
+					var base := Basis(asse_x, Vector3.UP, asse_z) * Basis(Vector3.UP, yaw)
+					var y := p * (PILA_BANCALE + PILA_BLOCCO)
+					var t := Transform3D(base, Vector3(c.x, y, c.y))
+					if p == 0:
+						casse.append(t)
+					else:
+						cartone.append(t)
+						var k := rng.randf()
+						tinte.append(Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), k))
+				var alto := piani * (PILA_BANCALE + PILA_BLOCCO)
+				var fc := CollisionShape3D.new()
+				var bc := BoxShape3D.new()
+				bc.size = Vector3(PILA_LUNGO, alto, PILA_PROFONDO)
+				fc.shape = bc
+				fc.transform = Transform3D(Basis(asse_x, Vector3.UP, asse_z), Vector3(c.x, alto * 0.5, c.y))
+				_collisioni.add_child(fc)
+			u += PILA_LUNGO + PILA_STACCO
+	# le tre lampade calde spostate dai muri dietro le pile: appese alla faccia della pila verso la strada, sul blocco di
+	# scatoloni della terza unità (a 3,3 m: sopra i 2 m della strada, sul cartone e non sul bancale), al centro di
+	# un'unità, ogni 8 m lungo la fila: a sinistra a 6 e 22 m, a destra a 14 m (i muri 3 e 1 cominciano a -7 e -3 m)
+	for l in [[3, 13.0, 3.0], [1, 17.0, 3.0], [3, 29.0, 2.5]]:
+		var meglio: Array = []
+		for f in fronti:
+			if f[0] == l[0] and (meglio.is_empty() or absf(f[1] - l[1]) < absf(meglio[1] - l[1])):
+				meglio = f
+		if meglio.is_empty():
+			push_warning("pile: niente unità per la lampada %s" % str(l))
+			continue
+		var c: Vector2 = meglio[2]
+		var n: Vector2 = meglio[3]
+		var faccia := c - n * (PILA_PROFONDO * 0.5 + 0.005)
+		_lampada_calda(Vector3(faccia.x, 2.0 * (PILA_BANCALE + PILA_BLOCCO) + PILA_BANCALE + 0.45, faccia.y), rad_to_deg(atan2(-n.x, -n.y)), l[2])
+	await _pausa()
+	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
+	await _pausa()
+	_multimesh_pile("PileCartone", _unita_pila(false), cartone, tinte)
+	print("pile di scatoloni: %d colonne, %d unità" % [colonne, casse.size() + cartone.size()])
+
+
+## Il rettangolo allargato di [param m] da ogni parte.
+static func _allarga(r: PackedVector2Array, m: float) -> PackedVector2Array:
+	var c := (r[0] + r[2]) * 0.5
+	var out := PackedVector2Array()
+	for q in r:
+		out.append(q + (q - c).normalized() * m * sqrt(2.0))
+	return out
+
+
+## Vero se l'impronta (un rettangolo in pianta) sta tutta sulla banchina, lontana dai muri e dall'acqua, e non tocca le
+## collisioni già messe né le altre colonne.
+func _pila_ci_sta(impronta: PackedVector2Array, ingombri: Array[PackedVector2Array], messe: Array[PackedVector2Array]) -> bool:
+	var centro := (impronta[0] + impronta[2]) * 0.5
+	for q in impronta:
+		if not _sulla_banchina(Vector3(q.x, 0, q.y), 0.15):
+			return false
+		# i due muri dell'approdo (spessi 30 cm): la pila sta da una parte o dall'altra
+		if absf(q.x - MURO_APPRODO) < 0.25 or (q.x < MURO_APPRODO) != (centro.x < MURO_APPRODO):
+			return false
+	for g in ingombri + messe:
+		if g.is_empty() or (g[0] as Vector2).distance_to(centro) > 6.0:
+			continue
+		if not Geometry2D.intersect_polygons(impronta, g).is_empty():
+			return false
+	return true
+
+
+func _multimesh_pile(nome: String, mesh: Mesh, trasformazioni: Array[Transform3D], tinte: Array[Color]) -> void:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = not tinte.is_empty()
+	mm.mesh = mesh
+	mm.instance_count = trasformazioni.size()
+	for i in trasformazioni.size():
+		mm.set_instance_transform(i, trasformazioni[i])
+		if mm.use_colors:
+			mm.set_instance_color(i, tinte[i])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = nome
+	mmi.multimesh = mm
+	# per il controllo di posizionamento: le trasformazioni delle istanze (vedi _espandi_multimesh)
+	mmi.set_meta(&"trasformazioni", trasformazioni)
+	add_child(mmi)
+
+
+## Un'unità della pila (origine sotto il bancale, al centro; x lungo il muro, z in profondità): il bancale di legno, il
+## blocco di 2 x 2 x 3 scatoloni (o casse di plastica) e il film trasparente intorno al blocco.
+func _unita_pila(di_casse: bool) -> ArrayMesh:
+	var am := ArrayMesh.new()
+	# il bancale: tre longheroni, sette assi sopra e tre sotto
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for z in [-0.45, 0.0, 0.45]:
+		_scatola_uv(st, Vector3(PILA_LUNGO, 0.1, 0.1), Vector3(0, 0.075, z), false)
+		_scatola_uv(st, Vector3(PILA_LUNGO, 0.024, 0.1), Vector3(0, 0.012, z), false)
+	for k in 7:
+		_scatola_uv(st, Vector3(0.12, 0.025, PILA_PROFONDO), Vector3(-0.54 + k * 0.18, 0.1375, 0), false)
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+	var legno := StandardMaterial3D.new()
+	legno.albedo_color = Color(0.55, 0.43, 0.3)
+	legno.roughness = 0.9
+	am.surface_set_material(0, legno)
+	# gli scatoloni: 0,6 x 0,4 x 0,5 m (2 mm più piccoli, così le facce non coincidono)
+	st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in 2:
+		for j in 2:
+			for k in 3:
+				_scatola_uv(st, Vector3(0.598, 0.398, 0.498), Vector3(-0.3 + i * 0.6, PILA_BANCALE + 0.2 + k * 0.4, -0.25 + j * 0.5), true)
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+	var mb := StandardMaterial3D.new()
+	if di_casse:
+		mb.albedo_texture = load(DIR + "texture/cassa_pile.jpg")
+		mb.roughness = 0.55
+	else:
+		mb.albedo_texture = load(DIR + "texture/scatolone_pile.jpg")
+		mb.roughness = 0.85
+		mb.vertex_color_use_as_albedo = true   # la tinta di ogni unità (MultiMesh)
+	am.surface_set_material(1, mb)
+	# il film: appena più grande del blocco, lucido e quasi trasparente
+	st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_scatola_uv(st, Vector3(PILA_LUNGO + 0.008, PILA_BLOCCO + 0.004, PILA_PROFONDO + 0.008), Vector3(0, PILA_BANCALE + PILA_BLOCCO * 0.5 + 0.002, 0), false)
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+	var film := StandardMaterial3D.new()
+	film.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	film.albedo_color = Color(0.85, 0.9, 0.95, 0.12)
+	film.roughness = 0.12
+	film.metallic_specular = 0.8
+	am.surface_set_material(2, film)
+	return am
+
+
+## Una scatola (centro, misure) nella SurfaceTool, con le facce verso fuori. Con [param uv_scatolone] le UV della texture
+## degli scatoloni (genera_texture.py: i lati nelle celle (0..1, 0..1), sopra e sotto nella colonna 2, griglia 3 x 2).
+func _scatola_uv(st: SurfaceTool, size: Vector3, c: Vector3, uv_scatolone: bool) -> void:
+	var h := size * 0.5
+	var facce := [
+		[Vector3.RIGHT, Vector3.BACK, Vector3.UP, Vector2(0, 0)], [Vector3.LEFT, Vector3.FORWARD, Vector3.UP, Vector2(1, 0)],
+		[Vector3.BACK, Vector3.LEFT, Vector3.UP, Vector2(0, 1)], [Vector3.FORWARD, Vector3.RIGHT, Vector3.UP, Vector2(1, 1)],
+		[Vector3.UP, Vector3.RIGHT, Vector3.FORWARD, Vector2(2, 0)], [Vector3.DOWN, Vector3.RIGHT, Vector3.BACK, Vector2(2, 1)],
+	]
+	for fc in facce:
+		var nrm: Vector3 = fc[0]
+		var dx: Vector3 = fc[1]
+		var dy: Vector3 = fc[2]
+		var cella: Vector2 = fc[3]
+		var centro := c + nrm * absf(nrm.dot(h))
+		var ex := dx * absf(dx.dot(h))
+		var ey := dy * absf(dy.dot(h))
+		var q := [centro - ex - ey, centro + ex - ey, centro + ex + ey, centro - ex + ey]
+		var uv := [Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)]
+		# il verso dei triangoli: in Godot la faccia davanti gira in senso orario vista da fuori (col prodotto vettoriale
+		# dei lati contro la normale)
+		var g: Vector3 = ((q[1] as Vector3) - q[0]).cross((q[2] as Vector3) - q[0])
+		var ordine := [0, 1, 2, 0, 2, 3] if g.dot(nrm) > 0.0 else [0, 2, 1, 0, 3, 2]
+		for idx in ordine:
+			st.set_normal(nrm)
+			if uv_scatolone:
+				st.set_uv((cella + (uv[idx] as Vector2)) / Vector2(3, 2))
+			else:
+				st.set_uv(uv[idx])
+			st.add_vertex(q[idx])
+
+
+## La riva ovest del primo tratto, dalla vasca dell'imbarco verso nord, restava senza roccia: [method _giungla] salta i
+## pannelli col retro verso la piazza e quelli vicino alla vasca (riscontro dell'utente sulla v0.3.11: "all'inizio del
+## percorso in salvagente ci sono delle parti dove manca la roccia ai bordi, deve essere continua"). Qui, dopo tutto il
+## resto (così il generatore casuale, e quindi la giungla, non cambiano), i pannelli che mancano, doppi schiena contro
+## schiena (dalla piazza si vede roccia, non il retro piatto), lontani dalla strada fra la fila e la ciambella e dalle
+## cose già messe sulla banchina.
+func _rocce_imbarco() -> void:
+	var gia: Array[Vector3] = []
+	var cose: Array[Vector3] = []
+	for c in get_children():
+		if c is Node3D and String(c.name).begins_with("roccia_parete"):
+			gia.append((c as Node3D).position)
+		elif c is Node3D and not c is MeshInstance3D and not c is Light3D and c != _collisioni and c != _barriere \
+				and (c as Node3D).position.y < 0.5:
+			cose.append((c as Node3D).position)   # (solo le cose a terra: non le lampade e le liane in alto)
+	var fila_a := Vector2(FINE_FILA.x, FINE_FILA.z)
+	var fila_b := Vector2(ORMEGGIO.x, ORMEGGIO.z)
+	var messe := 0
+	var k := 0
+	# (dall'inizio dello striscia, alla vasca, 5,2 m: dopo il cartello dei tuffi e la strada fra la fila e la ciambella;
+	# poi un pannello ogni 3 m, larghi 4,2: si sovrappongono, così fra uno e l'altro non si vede il muro (collaudo del
+	# 24 ottobre))
+	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.0, 5.2):
+		var p: Vector3 = v[0]
+		var rot: float = v[1]
+		# solo la riva dalla parte della piazza, anche nella curva dove l'anello comincia a girare (prima lì finiva, e
+		# dalla ciambella si vedeva il muro grigio)
+		if not in_piazza(p):
+			continue
+		if gia.any(func(q: Vector3) -> bool: return Vector2(q.x, q.z).distance_to(Vector2(p.x, p.z)) < 2.2):
+			continue
+		var b := Basis(Vector3.UP, deg_to_rad(rot))
+		var lato := b * Vector3.RIGHT
+		var dietro := -(b * Vector3.BACK)
+		var ok := true
+		# il pannello va da 0,5 m davanti (verso l'acqua) a 0,5 m dietro (quello doppio)
+		for u in [-2.1, 0.0, 2.1]:
+			for w in [-0.45, 0.0, 0.5]:
+				var q: Vector3 = p + lato * u + dietro * w
+				if Geometry2D.get_closest_point_to_segment(Vector2(q.x, q.z), fila_a, fila_b).distance_to(Vector2(q.x, q.z)) < 1.2:
+					ok = false
+				if not _sulla_banchina(q, 0.1):
+					ok = false
+				for c in cose:
+					if Vector2(c.x, c.z).distance_to(Vector2(q.x, q.z)) < 0.5:
+						ok = false
+		if not ok:
+			print("rocce della riva dell'imbarco: nessun posto in %s" % p.snappedf(0.01))
+			continue
+		await _pausa()
+		_roccia(p, rot, k % 2 == 0)
+		_roccia(p + dietro * 0.002, rot + 180.0, k % 2 == 1)
+		k += 1
+		messe += 1
+	print("rocce della riva dell'imbarco: %d" % messe)
 
 
 func _imbarco() -> void:
@@ -1497,49 +1970,66 @@ func _imbarco() -> void:
 		k += 1
 	await _pausa()
 	# la luce lungo la fila: lampade calde sul muro nord e sul muro dell'approdo
-	for x in [INGRESSO_X + 6.0, -12.0, -2.0]:
-		_lampada_calda(Vector3(x, 3.0, Z0), 0.0, 3.0)
-	for z in [-18.0, -9.0]:
-		_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, z), 90.0, 2.5 if z < -10.0 else 0.0)
+	# (le due del muro nord a x -12 e -2 e quella accesa del muro dell'approdo a z -18 sono rimaste dietro le pile di
+	# scatoloni: ora sono appese alle pile lungo la fila, vedi _pile; scelta "a" dell'utente, 23 ottobre)
+	_lampada_calda(Vector3(INGRESSO_X + 6.0, 3.0, Z0), 0.0, 3.0)
+	_lampada_calda(Vector3(MURO_APPRODO + 0.15, 3.0, -9.0), 90.0, 0.0)
 	await _pausa()
 	# la pila di ciambelle di ricambio, le ciambelle alla deriva nella vasca e nei canali
 	# (ognuna appoggiata a quella sotto coi vertici veri: prima la prima stava 5 cm sopra il pavimento)
 	var sotto := 0.0
 	for i in 3:
 		await _pausa()
-		var ci := _metti("ciambella", Vector3(-VASCA - 1.0, 0.0, -VASCA - 5.6), i * 37.0)
+		# (un metro più in là dalla riva: lì ora c'è la roccia, vedi _rocce_imbarco)
+		var ci := _metti("ciambella", Vector3(-VASCA - 2.0, 0.0, -VASCA - 5.6), i * 37.0)
 		_a_terra(ci, sotto)
 		sotto = _cima(ci)
-	_ostacolo(Vector3(-VASCA - 1.0, 0, -VASCA - 5.6), 0.6, sotto)
-	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa)
+	_ostacolo(Vector3(-VASCA - 2.0, 0, -VASCA - 5.6), 0.6, sotto)
+	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa; quella fra il bivio 2 e il 3 mezzo
+	# metro verso il centro del canale: entrava nella parete, controllo del 23 ottobre)
 	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
-			[Vector3(-12.0, GALLA, 22.0), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
+			[Vector3(-11.73, GALLA, 21.51), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
 		await _pausa()
 		_metti("ciambella", c[0], c[1])
 	await _pausa()
 	# la capanna tiki, il totem, i cartelli a pittogrammi
-	_metti("capanna_tiki", Vector3(-14.0, 0, -6.0), 60.0)
+	# (1,5 m più in là, a sud-ovest, dietro il muro di pile di sinistra: dov'era c'è il muro)
+	_metti("capanna_tiki", Vector3(-15.1, 0, -4.98), 60.0)
 	# (la collisione fin dove arriva la tettoia di paglia, 1,55 m dal centro fra 1 e 1,5 m d'altezza: con 1,3 m ci si
 	# entrava con la testa, controllo del 23 ottobre)
-	_ostacolo(Vector3(-14.0, 0, -6.0), 1.6, 2.1)
-	_metti("totem_tiki", Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 135.0)
-	_ostacolo(Vector3(-VASCA - 0.9, 0, -VASCA - 7.4), 0.4, 2.5)
-	_cartello_palo(Vector3(-VASCA - 0.6, 0, -VASCA - 2.4), 90.0, "cartello_tuffi")
-	_cartello_palo(Vector3(INGRESSO_X + 2.2, 0, Z0 + 1.05), 160.0, "cartello_bimbi")   # (prima il palo stava dentro la prima transenna)
-	_metti("salvagente", Vector3(-2.6, 0, -8.5), -90.0)
-	_ostacolo(Vector3(-2.6, 0, -8.5), 0.5, 1.4)
+	_ostacolo(Vector3(-15.1, 0, -4.98), 1.6, 2.1)
+	# (il totem, la pila di ciambelle e la palma un metro più in là dalla riva: lì ora c'è la roccia)
+	_metti("totem_tiki", Vector3(-VASCA - 1.9, 0, -VASCA - 7.4), 135.0)
+	_ostacolo(Vector3(-VASCA - 1.9, 0, -VASCA - 7.4), 0.4, 2.5)
+	# i cartelli guardano chi arriva (riscontro dell'utente sulla v0.3.11: "i cartelli sono girati a cazzo di cane,
+	# devono essere rivolti verso la direzione da cui arriva il giocatore"): quello dei tuffi verso la fine della fila,
+	# quello dei bambini verso la porta d'ingresso (prima: verso la vasca e di taglio dalla porta)
+	var tuffi := Vector3(-VASCA - 0.6, 0, -VASCA - 2.4)
+	_cartello_palo(tuffi, _verso(tuffi, FINE_FILA), "cartello_tuffi")
+	var bimbi := Vector3(INGRESSO_X + 2.2, 0, Z0 + 1.05)   # (prima il palo stava dentro la prima transenna)
+	_cartello_palo(bimbi, _verso(bimbi, Vector3(INGRESSO_X, 0, Z0 + 0.5)), "cartello_bimbi")
+	# (sulla banchina fra l'acqua e la roccia della riva)
+	_metti("salvagente", Vector3(-2.05, 0, -8.5), -90.0)
+	_ostacolo(Vector3(-2.05, 0, -8.5), 0.5, 1.4)
 	_lampada_calda(Vector3(INGRESSO_X + 1.4, 3.0, Z0), 0.0, 3.0)
 	_lampada_rossa(Vector3(INGRESSO_X - 1.2, 2.6, Z0), Vector3(0, -0.4, 1))
 	# (la prima stava fra le transenne della fila, a 67 cm dal suo asse: ora 2,2 m fuori, sullo stesso lato)
 	await _pausa()
-	for p in [Vector3(-9.9, 0, -13.5), Vector3(-VASCA - 9.0, 0, -VASCA - 2.5), Vector3(-VASCA - 0.8, 0, -VASCA - 10.5)]:
+	# (la prima 26 cm verso la fila e la seconda 1,5 m dietro il muro di pile di sinistra: le pile, 23 ottobre)
+	for p in [Vector3(-10.09, 0, -13.32), Vector3(-13.7, 0, -5.08), Vector3(-VASCA - 2.0, 0, -VASCA - 10.5)]:
 		_metti("palma_finta", p, _randf() * 360.0)
 		# le foglie cominciano a 1,75 m e arrivano a 93 cm dal tronco: non ci si passa sotto con la testa
 		_ostacolo(p, 0.95, 2.0)
 	_metti("ciabatta", Vector3(-VASCA - 2.2, 0, -VASCA - 1.8), 35.0)
 	_metti("paperella", Vector3(1.0, ACQUA - 0.02, 0.6), 70.0)
 	_metti("secchiello", Vector3(-VASCA - 5.0, 0, -VASCA - 4.2), 20.0)
-	_metti("detriti", Vector3(-VASCA - 7.6, 0, -VASCA - 1.2), 30.0)
+	# (davanti alla riva del ramo ovest, nella piazzetta dell'imbarco: dov'era ora c'è il muro di pile)
+	_metti("detriti", Vector3(-8.6, 0, -3.0), 30.0)
+
+
+## La rotazione (gradi intorno a +Y) che porta il +Z di un nodo in [param da] a guardare verso [param a].
+static func _verso(da: Vector3, a: Vector3) -> float:
+	return rad_to_deg(atan2(a.x - da.x, a.z - da.z))
 
 
 ## Palo zincato con un cartello quadrato a pittogrammi (50 cm) in cima, verso [param rot_y].
@@ -1601,7 +2091,9 @@ func _approdo() -> void:
 	_metti("ciambella", Vector3(APPRODO.x + 0.8, GALLA, APPRODO.y - 1.4), 15.0)
 	_metti("salvagente", Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 90.0)
 	_ostacolo(Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 0.5, 1.4)
-	_cartello_palo(Vector3(x1 - 0.7, 0, APPRODO.y + 2.9), 90.0, "cartello_tuffi")
+	# verso la ciambella che arriva dal ramo d'uscita
+	var cartello := Vector3(x1 - 0.7, 0, APPRODO.y + 2.9)
+	_cartello_palo(cartello, _verso(cartello, Vector3(-29.0, 0, 0.0)), "cartello_tuffi")
 	var cb := _metti("corrimano_bambu", Vector3(x1 - 0.25, 0, APPRODO.y - 1.9), 90.0)
 	var fcb := CollisionShape3D.new()
 	var bcb := BoxShape3D.new()

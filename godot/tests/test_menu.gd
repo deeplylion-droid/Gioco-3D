@@ -143,7 +143,8 @@ func _run() -> void:
 	check(SchermataComandi.nomi_tasti([&"sprint"]) == PackedStringArray(["Maiusc"]), "correre: Maiusc")
 	check(SchermataComandi.nomi_tasti([&"crouch"]) == PackedStringArray(["Ctrl"]), "abbassarsi: Ctrl")
 	check(SchermataComandi.nomi_tasti([&"jump"]) == PackedStringArray(["Spazio"]), "saltare: Spazio")
-	check(SchermataComandi.nomi_tasti([&"torcia"]) == PackedStringArray(["F"]), "torcia: F")
+	check(not InputMap.has_action(&"torcia") and not SchermataComandi.RIGHE.any(func(r): return (r[1] as Array).has(&"torcia")),
+		"la torcia non c'è più: niente tasto F, niente riga nei comandi (scelta dell'utente del 23 ottobre)")
 	check(SchermataComandi.nomi_tasti([&"interact"]) == PackedStringArray(["E"]), "usare: E")
 	check(SchermataComandi.nomi_tasti([&"spray"]) == PackedStringArray(["Tasto sinistro"]), "spruzzare: tasto sinistro")
 	check(SchermataComandi.nomi_tasti([&"suck"]) == PackedStringArray(["Tasto destro"]), "aspirare: tasto destro")
@@ -171,6 +172,16 @@ func _run() -> void:
 	print("Nuova partita: caricamento a thread e sala")
 	GameState.snapshot = {"scene": "res://finta.tscn"}
 	voci[0].pressed.emit()
+	# prima del caricamento lo spot VHS della crociera (scripts/spot/lettore_spot.gd): si salta, come tenendo premuto
+	var spot: Node = null
+	for i in 200:
+		await get_tree().process_frame
+		spot = get_tree().root.get_children().filter(func(n): return n is LettoreSpot).front() if get_tree().root.get_children().any(func(n): return n is LettoreSpot) else null
+		if spot:
+			break
+	check(spot != null, "Nuova partita fa partire lo spot VHS")
+	if spot:
+		spot.call(&"_fine")
 	var car: Node = null
 	for i in 400:
 		await get_tree().process_frame

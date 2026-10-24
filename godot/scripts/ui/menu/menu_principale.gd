@@ -103,7 +103,11 @@ func nuova_partita() -> void:
 	GameState.reset_progress()
 	_audio(&"ferma_musica", [0.9])
 	await Dissolvenza.di(get_tree()).scurisci(0.9)
-	get_tree().change_scene_to_file(SCENA_CARICAMENTO)
+	# lo spot VHS della crociera (GDD, "Lo spot della crociera Jubilee"), poi il risveglio: si salta tenendo premuto un
+	# tasto, alla fine il lettore passa da solo al caricamento. Il titolo sotto si ferma e non si disegna più.
+	process_mode = Node.PROCESS_MODE_DISABLED
+	visible = false
+	LettoreSpot.avvia(get_tree(), SCENA_CARICAMENTO)
 
 
 func apri_opzioni() -> void:

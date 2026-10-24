@@ -370,8 +370,10 @@ def balconata(c, x0, x1, y, z, profondita=1.6):
     c.scatola((xm - 0.85, y - 0.1, z + 2.2), (xm + 0.85, y, z + 2.35), 'metallo')
 
 
-def tubo_muro(c, punti, r=0.14, mat='metallo'):
-    """Tubo di servizio lungo i muri, con le fascette rosse ogni tanto e le staffe al muro."""
+def tubo_muro(c, punti, r=0.14, mat='metallo', muri=None):
+    """Tubo di servizio lungo i muri, con le fascette rosse ogni tanto e le staffe al muro.
+    muri = (x0, x1, y0, y1) dell'interno della sala (di base quella della torre)."""
+    mx0, mx1, my0, my1 = muri or (XI0, XI1, YI0, YI1)
     c.tubo(punti, r, mat, seg=12)
     for i in range(len(punti) - 1):
         a, b = Vector(punti[i]), Vector(punti[i + 1])
@@ -381,9 +383,13 @@ def tubo_muro(c, punti, r=0.14, mat='metallo'):
         n = max(1, int((b - a).length / 2.5))
         for k in range(n + 1):
             q = a.lerp(b, (k + 0.5) / (n + 1))
-            muri = [(q.x - XI0, Vector((XI0 - 0.05, q.y, q.z))), (XI1 - q.x, Vector((XI1 + 0.05, q.y, q.z))),
-                    (q.y - YI0, Vector((q.x, YI0 - 0.05, q.z))), (YI1 - q.y, Vector((q.x, YI1 + 0.05, q.z)))]
-            dist, w = min(muri, key=lambda m_: m_[0])
+            # (solo i muri da questa parte: nell'inseguimento coi muri della torre una staffa attraversava la vasca)
+            vicini = [m_ for m_ in ((q.x - mx0, Vector((mx0 - 0.05, q.y, q.z))), (mx1 - q.x, Vector((mx1 + 0.05, q.y, q.z))),
+                                    (q.y - my0, Vector((q.x, my0 - 0.05, q.z))), (my1 - q.y, Vector((q.x, my1 + 0.05, q.z))))
+                      if m_[0] >= 0]
+            if not vicini:
+                continue
+            dist, w = min(vicini, key=lambda m_: m_[0])
             if dist < 1.0:
                 c.cilindro(q, w, 0.035, 'metallo', seg=8)
                 c.anello(q, (b - a).normalized(), r, r + 0.025, 0.05, 'metallo', seg=14)
@@ -396,14 +402,20 @@ def cancello_partenza(c, base, verso):
     b = Vector(base)
     for s in (-1, 1):
         ap = b + t * (s * (LARGO + 0.2))
-        c.cilindro(ap, ap + Vector((0, 0, 2.0)), 0.06, 'gioco_rosso', seg=12)
+        c.cilindro(ap - Vector((0, 0, 0.01)), ap + Vector((0, 0, 2.0)), 0.06, 'gioco_rosso', seg=12)   # dalla grata
     c.cilindro(b + t * -(LARGO + 0.2) + Vector((0, 0, 2.0)), b + t * (LARGO + 0.2) + Vector((0, 0, 2.0)), 0.06,
                'gioco_rosso', seg=12)
     c.scatola_assi(b + Vector((0, 0, 2.25)), [v, t, Vector((0, 0, 1))], (0.03, LARGO + 0.3, 0.2), 'strisce')
+    # il pannello di sbarre fra due correnti che vanno da un palo all'altro (ci entrano): quello di sotto poggia sulla
+    # grata della pedana (il piano è 1 cm sotto la base), le sbarre partono da lì (collaudo della v0.3.12: le sbarre
+    # finivano 5 cm sopra la grata e il corrimano 14 cm prima dei pali, un pannello sospeso)
+    w = LARGO + 0.2
+    giu = Vector((0, 0, -0.01 + 0.025))
+    c.cilindro(b + t * -w + giu, b + t * w + giu, 0.025, 'inox', seg=8)
     for k in range(-3, 4):
         g = b + t * (k * (LARGO / 3.2))
-        c.cilindro(g + Vector((0, 0, 0.05)), g + Vector((0, 0, 1.3)), 0.02, 'inox', seg=8, tappi=False)
-    c.cilindro(b + t * -LARGO + Vector((0, 0, 1.3)), b + t * LARGO + Vector((0, 0, 1.3)), 0.025, 'inox', seg=8)
+        c.cilindro(g + giu, g + Vector((0, 0, 1.3)), 0.02, 'inox', seg=8, tappi=False)
+    c.cilindro(b + t * -w + Vector((0, 0, 1.3)), b + t * w + Vector((0, 0, 1.3)), 0.025, 'inox', seg=8)
 
 
 def polaroid(c, p, verso):

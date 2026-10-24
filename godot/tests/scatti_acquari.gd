@@ -9,7 +9,6 @@ extends Node
 ##        --resolution 1600x900 --script res://tests/run.gd -- res://tests/scatti_acquari.gd <cartella> <giri>
 ## <giri>: elenco separato da ";" di giri "stile,posizione,lampade,accese,miscuglio,camere[,bassi]" con le camere
 ## separate da "+", per esempio "A,1,lampadine,0,vuoto,uscita+meta+vicino;A,1,lampadine,1,verde,portone".
-## Negli scatti "vicino" e "dettaglio" la torcia del giocatore è accesa (al buio rosso la si usa).
 ## Un settimo campo "bassi" nel giro fa anche il giallo e il blu bassi (opzione 3).
 ## Le immagini: <cartella>/<stile><posizione>_<camera>[_<miscuglio>][_<lampade>_<accese|spente>].jpg
 
@@ -131,9 +130,6 @@ func _run() -> void:
 			cam.global_position = cam_def[0]
 			cam.look_at(cam_def[1], Vector3.UP)
 			cam.make_current()
-			if nome in ["dettaglio", "vicino"] or nome.begins_with("disegno"):
-				# da vicino come nel gioco: con la torcia del giocatore in mano alla camera
-				cam.add_child(load("res://addons/grafica/torcia.tscn").instantiate())
 			await _frames(settle)
 			await RenderingServer.frame_post_draw
 			var nomefile := "%s%s_%s" % [stile, pos, nome]

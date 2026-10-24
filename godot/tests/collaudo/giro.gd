@@ -75,6 +75,10 @@ func _run() -> void:
 	print("COLLAUDO: tolti %d nodi di GI, riflessi, particelle e nebbia" % tolti)
 	if OS.get_environment("COLLAUDO_SEMPLICE") == "1":
 		_materiali_semplici(livello)
+	# le stanze della Risalita (fiume e infermeria) subito, come nei controlli: senza, si caricano solo col giocatore
+	# vicino, e nel giro il giocatore è fermo
+	if OS.get_environment("COLLAUDO_RISALITA") == "1":
+		Engine.set_meta(&"risalita_subito", true)
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
 	for i in 30:
@@ -110,7 +114,10 @@ func _run() -> void:
 	cam.far = 150.0
 	livello.add_child(cam)
 	cam.make_current()
+	# la luce del collaudo, attaccata alla camera; con COLLAUDO_SENZA_LUCE=1 no: gli scatti per l'utente con la luce del
+	# gioco (luci bianche al 40%, senza torcia: decisioni dell'utente del 23 ottobre)
 	var luce := OmniLight3D.new()
+	luce.visible = OS.get_environment("COLLAUDO_SENZA_LUCE") != "1"
 	luce.omni_range = 18.0
 	luce.light_energy = 1.6
 	luce.omni_attenuation = 0.8
