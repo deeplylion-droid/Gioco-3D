@@ -20,8 +20,7 @@ const GETTO_OGNI := 120.0
 ## I casi noti, come i "voluto" del controllo di posizionamento: tratto -> [motivo, data]. Lì la pelle e il costo si
 ## stampano e basta (gli altri controlli restano bloccanti). Da togliere appena è corretto: nessuna build esce così.
 const NOTI := {
-	"schianto": ["il corpo di lei passa nel ballatoio davanti al portello (piano a -27,0, lei a 0,95 m dal portello): "
-			+ "da decidere fra ambienti-2 e mascotte", "24 ottobre"],
+	# (schianto tolto il 24 ottobre: con la scelta B di ambienti-2 e mascotte, niente ballatoio davanti al portello)
 }
 
 var _ok := 0

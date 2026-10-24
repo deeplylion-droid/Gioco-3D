@@ -37,6 +37,7 @@ static func prepara(sala: SalaSottomarino) -> int:
 	for c3 in _forme_collisione(sala):
 		var nt := _quanti(c3)
 		_forme_di(c3, ctx, 0, nt)
+	_unisci(ctx)
 	_cache[id] = ctx["forme"]
 	print_verbose("FormeTunnel: %d forme in %d ms" % [(ctx["forme"] as Array).size(), Time.get_ticks_msec() - t0])
 	return (ctx["forme"] as Array).size()
@@ -63,6 +64,7 @@ static func prepara_a_pezzi(sala: SalaSottomarino, ms_per_fotogramma := 4.0) -> 
 				await sala.get_tree().process_frame
 				t0 = Time.get_ticks_usec()
 	if not _cache.has(id):
+		_unisci(ctx)
 		_cache[id] = ctx["forme"]
 	return (_cache[id] as Array).size()
 
@@ -83,7 +85,7 @@ static func _contesto(sala: SalaSottomarino) -> Dictionary:
 	var lung := sala.lunghezza()
 	return {"largo": float(lei["mezza_larghezza_coi_tentacoli"]) + OLTRE, "basso": float(lei["quota_bassa"]) - OLTRE,
 		"alto": float(lei["quota_alta"]) + OLTRE, "lung": lung, "asse": asse, "griglia": griglia, "fondo": sala.fondo,
-		"presa": sala.punto(0.0), "approdo": sala.punto(lung), "forme": []}
+		"presa": sala.punto(0.0), "approdo": sala.punto(lung), "forme": [], "tri": []}
 
 
 ## Le forme di collisione ferme del tunnel (strato del mondo; i gommoni a parte).
@@ -183,7 +185,7 @@ static func _forme_di(c3: CollisionShape3D, ctx: Dictionary, da: int, a_: int) -
 		var centro := (a + b + c) / 3.0
 		if n.dot(q_vicino - centro) < 0.0:
 			n = -n
-		forme.append(_prisma(a, b, c, n))
+		(ctx["tri"] as Array).append([a, b, c, n])
 
 
 ## Dà a [param m] le forme del tunnel [param sala] (ferme e i gommoni che si muovono). Restituisce quante.
@@ -210,7 +212,134 @@ static func aggiungi(m: MorbidezzaLei, sala: SalaSottomarino) -> int:
 		if not primo:
 			m.aggiungi_mobile_piani(corpo, _piani_scatola(bb), bb)
 			n += 1
+	# gli altri corpi che si muovono (il battente del portello che gira col perno): ogni forma come la sua scatola nel
+	# sistema del corpo
+	var gommoni := (sala.get(&"_gommoni") as Array).map(func(g): return (g as Dictionary)["corpo"])
+	for ab in sala.find_children("*", "AnimatableBody3D", true, false):
+		if ab in gommoni or ((ab as CollisionObject3D).collision_layer & Layers.WORLD) == 0:
+			continue
+		for cs in ab.find_children("*", "CollisionShape3D", false, false):
+			var c3 := cs as CollisionShape3D
+			var pc := _punti_convessi(c3.shape)
+			if c3.shape is ConcavePolygonShape3D:
+				pc = (c3.shape as ConcavePolygonShape3D).get_faces()
+			if pc.is_empty():
+				continue
+			var bb := AABB(c3.transform * pc[0], Vector3.ZERO)
+			for q in pc:
+				bb = bb.expand(c3.transform * q)
+			m.aggiungi_mobile_piani(ab as Node3D, _piani_scatola(bb), bb)
+			n += 1
 	return n
+
+
+## I triangoli scelti (ctx["tri"]) diventano prismi: prima quelli sullo stesso piano e con un lato in comune si uniscono,
+## finché l'unione resta convessa (l'inviluppo ha la stessa area dei pezzi). I muri fatti di tanti triangoli (la porta
+## del portello, l'approdo) diventano poche forme grandi: meno forme per cella, il tentacolo ne guarda meno.
+static func _unisci(ctx: Dictionary) -> void:
+	var gruppi := {}
+	for t in ctx["tri"]:
+		var n: Vector3 = t[3]
+		var k := "%d,%d,%d,%d" % [roundi(n.x * 500.0), roundi(n.y * 500.0), roundi(n.z * 500.0), roundi(n.dot(t[0]) * 200.0)]
+		if not gruppi.has(k):
+			gruppi[k] = []
+		var pts := PackedVector3Array([t[0], t[1], t[2]])
+		(gruppi[k] as Array).append([pts, _area(pts, n), n])
+	var forme: Array = ctx["forme"]
+	for k in gruppi:
+		var pol: Array = gruppi[k]
+		var i := 0
+		while i < pol.size():
+			var unito := true
+			while unito:
+				unito = false
+				for j in range(i + 1, pol.size()):
+					if not _lato_comune(pol[i][0], pol[j][0]):
+						continue
+					var n: Vector3 = pol[i][2]
+					var inv := _inviluppo(pol[i][0] + pol[j][0], n)
+					var ai := _area(inv, n)
+					if ai <= (float(pol[i][1]) + float(pol[j][1])) * 1.01 + 1e-4:
+						pol[i] = [inv, ai, n]
+						pol.remove_at(j)
+						unito = true
+						break
+			i += 1
+		for p in pol:
+			forme.append(_prisma_poligono(p[0], p[2]))
+	(ctx["tri"] as Array).clear()
+
+
+## Vero se i due poligoni hanno due vertici in comune (al millimetro).
+static func _lato_comune(a: PackedVector3Array, b: PackedVector3Array) -> bool:
+	var comuni := 0
+	for p in a:
+		for q in b:
+			if p.distance_squared_to(q) < 1e-6:
+				comuni += 1
+				if comuni >= 2:
+					return true
+				break
+	return false
+
+
+## L'inviluppo convesso (nel piano di normale [param n]) dei punti, in ordine.
+static func _inviluppo(punti: PackedVector3Array, n: Vector3) -> PackedVector3Array:
+	var u := n.cross(Vector3.UP if absf(n.y) < 0.9 else Vector3.RIGHT).normalized()
+	var v := n.cross(u)
+	var p2: Array = []
+	for p in punti:
+		p2.append([Vector2(p.dot(u), p.dot(v)), p])
+	p2.sort_custom(func(x, y): return x[0].x < y[0].x or (x[0].x == y[0].x and x[0].y < y[0].y))
+	var giro := func(o: Vector2, a: Vector2, b: Vector2) -> float: return (a - o).cross(b - o)
+	var sotto: Array = []
+	for q in p2:
+		while sotto.size() >= 2 and giro.call(sotto[-2][0], sotto[-1][0], q[0]) <= 1e-7:
+			sotto.pop_back()
+		sotto.append(q)
+	var sopra: Array = []
+	for i in range(p2.size() - 1, -1, -1):
+		var q = p2[i]
+		while sopra.size() >= 2 and giro.call(sopra[-2][0], sopra[-1][0], q[0]) <= 1e-7:
+			sopra.pop_back()
+		sopra.append(q)
+	sotto.pop_back()
+	sopra.pop_back()
+	var out := PackedVector3Array()
+	for q in sotto + sopra:
+		out.append(q[1])
+	return out
+
+
+## L'area del poligono convesso (in ordine) o del triangolo.
+static func _area(p: PackedVector3Array, n: Vector3) -> float:
+	var a := 0.0
+	for i in range(1, p.size() - 1):
+		a += absf((p[i] - p[0]).cross(p[i + 1] - p[0]).dot(n)) * 0.5
+	return a
+
+
+## Il prisma del poligono convesso [param p] (in ordine), spesso come quello di un triangolo dalla parte opposta a
+## [param n]: [piani verso fuori, AABB].
+static func _prisma_poligono(p: PackedVector3Array, n: Vector3) -> Array:
+	if p.size() == 3:
+		return _prisma(p[0], p[1], p[2], n)
+	var sp := SPESSORE_PAVIMENTO if n.y > 0.7 else SPESSORE
+	var piani: Array[Plane] = [Plane(n, p[0]), Plane(-n, p[0] - n * sp)]
+	var centro := Vector3.ZERO
+	for q in p:
+		centro += q
+	centro /= p.size()
+	var bb := AABB(p[0], Vector3.ZERO)
+	for i in p.size():
+		var p0 := p[i]
+		var p1 := p[(i + 1) % p.size()]
+		var nl := (p1 - p0).cross(n).normalized()
+		if nl.dot(centro - p0) > 0.0:
+			nl = -nl
+		piani.append(Plane(nl, p0))
+		bb = bb.expand(p0).expand(p0 - n * sp)
+	return [piani, bb]
 
 
 ## I sei piani (verso fuori) della scatola [param bb].
