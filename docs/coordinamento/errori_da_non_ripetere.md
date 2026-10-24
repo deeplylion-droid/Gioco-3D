@@ -56,3 +56,4 @@ Sono le correzioni che l'utente ci ha già fatto, con le sue parole. Il 24 ottob
 - **Le cose grosse si fanno giuste alla prima**, controllando la coerenza con il GDD e con il resto del gioco.
 - **Collaudo prima di ogni build** fatto da una squadra che non ha costruito la zona, con i materiali veri, in tutti gli stati (anche quelli che cambiano dopo: portelli chiusi, lei che sbatte, galleggianti che si muovono).
 - **I link delle build vanno in chat**, per intero, nell'ultimo messaggio.
+- **Una correzione non deve romperne un'altra.** Il 24 ottobre il pallone tolto dall'anta dell'armadietto è finito in mezzo al passaggio fra spogliatoi e vasca lava-piedi, e il giocatore non passava più (test_passaggi_interni rosso). Chi sposta un oggetto rifà girare i test dei passaggi della sua zona, e nessuno dice "fatto" né unisce un branch con la CI rossa.
