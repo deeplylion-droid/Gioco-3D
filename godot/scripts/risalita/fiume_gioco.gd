@@ -1688,6 +1688,11 @@ func _pile() -> void:
 					continue
 				var asse_x := Vector3(d.x, 0, d.y)
 				var asse_z := Vector3(n.x, 0, n.y)
+				# la base dev'essere una rotazione: con "dentro la pila" a destra del verso del muro veniva specchiata
+				# (determinante -1) e le scatole si vedevano rovesciate, vuote, da una parte sì e dall'altra no
+				# (riscontro dell'utente sulla v0.3.12); l'unità è simmetrica lungo il muro, quindi si gira l'asse x
+				if Basis(asse_x, Vector3.UP, asse_z).determinant() < 0.0:
+					asse_x = -asse_x
 				for p in piani:
 					var yaw := 0.0 if p == 0 else rng.randf_range(-0.012, 0.012)
 					var base := Basis(asse_x, Vector3.UP, asse_z) * Basis(Vector3.UP, yaw)
@@ -1841,10 +1846,12 @@ func _scatola_uv(st: SurfaceTool, size: Vector3, c: Vector3, uv_scatolone: bool)
 		var ey := dy * absf(dy.dot(h))
 		var q := [centro - ex - ey, centro + ex - ey, centro + ex + ey, centro - ex + ey]
 		var uv := [Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)]
-		# il verso dei triangoli: in Godot la faccia davanti gira in senso orario vista da fuori (col prodotto vettoriale
-		# dei lati contro la normale)
+		# il verso dei triangoli: in Godot la faccia davanti gira in senso orario vista da fuori. Il prodotto vettoriale
+		# dei lati concorde con la normale vuol dire antiorario da fuori: allora si gira. (Prima era al contrario, e le
+		# unità si vedevano giuste solo dove la loro base era specchiata: riscontro dell'utente sulla v0.3.12, "le
+		# scatole sono vuote da una parte".)
 		var g: Vector3 = ((q[1] as Vector3) - q[0]).cross((q[2] as Vector3) - q[0])
-		var ordine := [0, 1, 2, 0, 2, 3] if g.dot(nrm) > 0.0 else [0, 2, 1, 0, 3, 2]
+		var ordine := [0, 2, 1, 0, 3, 2] if g.dot(nrm) > 0.0 else [0, 1, 2, 0, 2, 3]
 		for idx in ordine:
 			st.set_normal(nrm)
 			if uv_scatolone:
