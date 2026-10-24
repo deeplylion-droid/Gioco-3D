@@ -308,11 +308,12 @@ func risultati(nome: String, da := 0) -> Dictionary:
 ## strisce di bava a terra (BavaRosa, che non hanno collisione) di più di [param tolleranza] ([method bava_vicina]).
 ## [param foro]: [centro, raggio] di dove lei stessa passa attraverso il pavimento (l'animazione la fa salire da sotto):
 ## i vertici lì dentro si contano a parte, come quelli della radice.
-func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[RID] = [], foro: Array = []) -> Dictionary:
+## [param maschera]: gli strati dove cercare il mondo (per esempio anche le mesh vere, tests/corpi_dalle_mesh.gd).
+func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[RID] = [], foro: Array = [], maschera := Layers.WORLD) -> Dictionary:
 	var bava := bava_vicina(sk.get_tree().current_scene, sk.global_position, 7.0)
 	var spazio := sk.get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.new()
-	q.collision_mask = Layers.WORLD
+	q.collision_mask = maschera
 	q.hit_back_faces = false
 	q.collide_with_areas = false
 	q.exclude = esclusi
@@ -359,7 +360,7 @@ func pelle(nome: String, da := 0, ogni := 2, tolleranza := 0.01, esclusi: Array[
 				continue
 			dentro += 1
 			massimo = maxf(massimo, d)
-			peggiori.append([d, f, _p_catena[v * 2], _p_catena[v * 2 + 1], pos, (hit["collider"] as Node).name if hit["collider"] else ""])
+			peggiori.append([d, f, _p_catena[v * 2], _p_catena[v * 2 + 1], pos, _nome_di(hit["collider"])])
 	peggiori.sort_custom(func(x, y): return x[0] > y[0])
 	print("  %s, pelle vera: %d vertici dentro il mondo di più di %.0f cm (al più %.1f cm), %d del primo osso (radice) o nel foro dove passa lei a parte; %d vertici per fotogramma" % [
 		nome, dentro, tolleranza * 100.0, massimo * 100.0, dentro_radice, nv])
@@ -429,3 +430,13 @@ static func _sotto_bava(p: Vector3, griglia: Dictionary) -> float:
 		if d > 0.0 and d < 0.06:
 			peggio = maxf(peggio, d)
 	return peggio
+
+
+## Il nome di chi è stato colpito (per un corpo fatto da una mesh, il nome della mesh).
+static func _nome_di(c: Object) -> String:
+	var n := c as Node
+	if n == null:
+		return ""
+	if n.get_parent() is MeshInstance3D:
+		return "%s (mesh)" % n.get_parent().name
+	return "%s/%s" % [n.get_parent().name if n.get_parent() else "", n.name]

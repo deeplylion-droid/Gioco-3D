@@ -6,15 +6,19 @@ extends Node
 ## - niente scatti, tratti vicini alla lunghezza di riposo;
 ## - costo: 4 ms in media e 8 nel 95% dei fotogrammi; quando compare nessun fotogramma sopra i 10 ms (CPU del sandbox,
 ##   non del gioco vero; in CI solo stampato);
+## - la pelle vera si confronta con le collisioni e con le mesh vere (tranne l'acqua);
 ## - i casi noti ([constant NOTI]): si stampano, e lì quel controllo dell'asse ammette al più quei tratti.
 ## Uso: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+## (SOLO=vasca_2: solo quei posti; GIOCATORE=x,y,z: il giocatore fermo lì prima che lei salga, perché lei si gira
+## verso di lui: per vasca_2 nel gioco è nella vasca 3, vedi tests/prova_vasca2_giocatore.sh)
 
 const LEVEL := "res://scenes/test/inseguimento_prova.tscn"
 const Misura := preload("res://tests/misura_morbidezza.gd")
+const CorpiMesh := preload("res://tests/corpi_dalle_mesh.gd")
 ## I casi noti, come i "voluto" del controllo di posizionamento: posto -> [tratti dell'asse ammessi, motivo, data].
 ## Solo il controllo dell'asse: la pelle vera resta bloccante anche lì.
 const NOTI := {
-	"vasca_2": [2, "la posa dell'animazione mette la punta di un tentacolo dentro un muro sottile nel primo fotogramma: va corretta nell'animazione, non nella morbidezza", "24 ottobre"],
+	# (vasca_2 tolto il 24 ottobre: con le forme dalle mesh vere e la partenza sul tratto passa in tutti e 6 i giri)
 }
 
 var _ok := 0
@@ -54,6 +58,9 @@ func _run() -> void:
 	sala.tempo_presa = 1e6
 	for i in 5:
 		await get_tree().process_frame
+	# la pelle si confronta anche con le mesh vere, non solo con le collisioni (le pompe non hanno collisione)
+	print("corpi dalle mesh: ", CorpiMesh.crea(sala, AABB(Vector3(-1e4, -1e4, -1e4), Vector3(2e4, 2e4, 2e4)), sala.lei))
+	await get_tree().physics_frame
 	var m := MorbidezzaLei.su(sala.lei)
 	var sk := m.get_parent() as Skeleton3D
 	var mis = Misura.new(sk, m)
@@ -70,6 +77,13 @@ func _run() -> void:
 			"sb1":
 				sala.call(&"_lei_sale", "sb1", sala.call(&"_posto_sb1"), 1.3)
 			_:
+				if OS.has_environment("GIOCATORE"):
+					var g := OS.get_environment("GIOCATORE").split_floats(",")
+					GameState.player.global_position = Vector3(g[0], g[1], g[2])
+					GameState.player.input_enabled = false
+					# (fermo lì, e la sala non la fa salire di nuovo per conto suo)
+					for kk in 3:
+						sala.set_meta(StringName("comparsa_%d" % kk), true)
 				var su: Vector3 = sala.call(&"_posto_vasca", int(dove[-1])) if dove.begins_with("vasca") else sala.call(&"_posto_scolo", int(dove[-1]))
 				sala.call(&"_lei_sale", dove, su, 1.2 if dove.begins_with("scolo") else 1.6)
 		var durata := float(sala.get_meta(&"durata_salita", 1.6)) + 2.0
@@ -89,7 +103,7 @@ func _run() -> void:
 		if fori.has(dove):
 			var fo: Array = fori[dove]
 			foro = [sala.global_transform * Vector3(float(fo[0]), float(fo[1]), float(fo[2])), float(fo[3])]
-		var pe: Dictionary = mis.pelle(dove, 0, 2, 0.01, [] as Array[RID], foro)
+		var pe: Dictionary = mis.pelle(dove, 0, 2, 0.01, [] as Array[RID], foro, Layers.WORLD | CorpiMesh.STRATO)
 		_check(pe["pelle_dentro"] == 0, "%s: la pelle vera dei tentacoli fuori dalla sala (%d vertici dentro, al più %.1f cm)" % [dove, pe["pelle_dentro"], pe["pelle_massimo"] * 100.0])
 		# (i casi noti: l'asse che attraversa un muro per un motivo che non è della morbidezza; la pelle resta bloccante)
 		var noto: Array = NOTI.get(dove, [])

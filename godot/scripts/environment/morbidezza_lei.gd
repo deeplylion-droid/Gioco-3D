@@ -76,6 +76,10 @@ var buco_pavimento := Rect2()
 var trattieni := false
 ## La quota sotto cui si trattiene (-INF: [member pavimento_y]); per esempio il bordo di un pozzo più alto del pavimento.
 var trattieni_y := -INF
+## Quando lei compare, i punti dentro il mondo si fermano sul tratto dal punto prima (all'ultimo posto fuori) invece di
+## uscire dalla faccia più vicina: per i posti pieni di grate e muri sottili (l'inseguimento). Nella fossa no: lì la
+## partenza di prima è già pulita.
+var partenza_sul_tratto := false
 ## La pianta della fossa (x, z), per [member trattieni]: un poligono convesso.
 var fossa_pianta := PackedVector2Array():
 	set(v):
@@ -644,6 +648,19 @@ func _process_modification() -> void:
 ## assestamento lungo (sarebbe uno scatto proprio quando sbuca).
 func _partenza(tg: PackedVector3Array, n: int, forme: Array, lung: PackedFloat32Array) -> PackedVector3Array:
 	var pt := _bersagli(tg, n, _vicine(tg, forme))
+	# dalla radice in giù: dove un punto, o il tratto che ci arriva, è dentro il mondo (la posa mette una punta sotto una
+	# grata o dentro un muro sottile), il punto si ferma sul tratto, all'ultimo posto fuori, invece di uscire dalla faccia
+	# più vicina (che può essere quella dall'altra parte)
+	if partenza_sul_tratto and not forme.is_empty():
+		for i in range(1, n + 1):
+			var r := lerpf(raggio_radice, raggio_punta, float(i) / n)
+			var ultimo := 0.0
+			for k in range(1, 9):
+				var q := pt[i - 1].lerp(pt[i], k / 8.0)
+				if _fuori(q, r, forme, Vector3.INF, false, i).distance_squared_to(q) > 1e-6:
+					pt[i] = pt[i - 1].lerp(pt[i], ultimo)
+					break
+				ultimo = k / 8.0
 	# tre giri come in un passo: le lunghezze (i bersagli possono avvicinare due punti, trattenuti nella fossa sullo
 	# stesso bordo), i tratti e i punti fuori dal mondo, dalla parte dov'erano prima del giro (un muro sottile non si passa)
 	for giro in 3:
@@ -661,7 +678,9 @@ func _partenza(tg: PackedVector3Array, n: int, forme: Array, lung: PackedFloat32
 				pt[i] -= e * 0.5
 		_tratti_fuori(pt, n, forme, PackedVector3Array())
 		for i in range(1, n + 1):
-			pt[i] = _fuori(pt[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, prima[i], false, i)
+			# (al primo giro dalla parte del punto prima, che è già fuori: dove la posa mette una punta sotto una grata o
+			# dentro un muro sottile, esce dalla parte giusta e non da quella più vicina)
+			pt[i] = _fuori(pt[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, pt[i - 1] if giro == 0 and partenza_sul_tratto else prima[i], false, i)
 	return pt
 
 
@@ -840,6 +859,20 @@ func togli_forme_mondo() -> void:
 	for k in _bers.size():
 		_bers[k] = PackedVector3Array()
 		_bers_posa[k] = PackedVector3Array()
+
+
+## Aggiunge una forma convessa già fatta: i suoi piani (verso fuori) e la sua scatola, nel mondo (i piani si fanno
+## prima, per esempio in un generatore: farli dai punti costa).
+func aggiungi_piani(piani: Array[Plane], bb: AABB) -> void:
+	if piani.size() < 4:
+		return
+	var sopra := -1
+	if bb.size.y < 0.6:
+		for i in piani.size():
+			if piani[i].normal.y > 0.99:
+				sopra = i
+	_forme.append([piani, bb, sopra, bb.grow(VICINO), bb.grow(0.08), bb.grow(0.13)])
+	_griglia_ok = false
 
 
 ## Aggiunge una scatola (il suo centro e i suoi assi in [param xf], mezze misure [param mezzo]).

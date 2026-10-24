@@ -81,6 +81,7 @@ var _morbidezza: MorbidezzaLei
 const FORME_LEI := "res://assets/ambiente/inseguimento/inseguimento_forme_lei.json"
 var _forme_lei_cache := {}
 var _forme_lei_fori := {}
+var _forme_lei_convessi := {}
 var _getto_preso := 0.0
 var _vasca := -1                       ## la vasca dove sei (-1 fuori)
 var _in_vasca_t := 0.0
@@ -540,6 +541,7 @@ func _forme_lei() -> Dictionary:
 		if d is Dictionary and d.has("posti"):
 			_forme_lei_cache = d["posti"]
 			_forme_lei_fori = d.get("fori", {})
+			_forme_lei_convessi = d.get("convessi", {})
 	return _forme_lei_cache
 
 
@@ -547,6 +549,7 @@ func _morbidezza_qui(dove: String) -> void:
 	if _morbidezza == null or not is_instance_valid(_morbidezza):
 		return
 	_morbidezza.pavimento_y = -INF
+	_morbidezza.partenza_sul_tratto = true
 	# il mondo intorno a questo posto: scatole convesse prese dalla collisione vera (tests/genera_forme_inseguimento.gd)
 	_morbidezza.togli_forme_mondo()
 	var forme := _forme_lei()
@@ -582,6 +585,15 @@ func _morbidezza_qui(dove: String) -> void:
 		# mentre escono)
 		_morbidezza.trattieni_y = centro.y + 0.5
 		_morbidezza.trattieni = true
+	# gli oggetti tondi (le pompe, i tubi): pezzi convessi coi piani già fatti
+	for cv in _forme_lei_convessi.get(dove, []):
+		var pl: Array = cv["piani"]
+		var piani: Array[Plane] = []
+		for k in range(0, pl.size(), 4):
+			piani.append(global_transform * Plane(Vector3(float(pl[k]), float(pl[k + 1]), float(pl[k + 2])), float(pl[k + 3])))
+		var lo := global_transform * Vector3(float(cv["lo"][0]), float(cv["lo"][1]), float(cv["lo"][2]))
+		var hi := global_transform * Vector3(float(cv["hi"][0]), float(cv["hi"][1]), float(cv["hi"][2]))
+		_morbidezza.aggiungi_piani(piani, AABB(lo, Vector3.ZERO).expand(hi))
 	_morbidezza.acqua_pianta = Rect2(-1e4, -1e4, 2e4, 2e4)
 	var acqua: Dictionary = dati["bacino"] if dove == "sb1" or dove == "grata" else dati["allagato"]
 	_morbidezza.acqua_pelo = float(acqua["acqua"])
