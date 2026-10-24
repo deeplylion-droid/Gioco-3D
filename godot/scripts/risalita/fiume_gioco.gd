@@ -1792,6 +1792,11 @@ func _in_roccia(n: Node) -> bool:
 	return false
 
 
+## I colori delle scatole colorate: i colori del parco (rosso, giallo, azzurro, verde, rosa), sbiaditi e sporchi.
+const COLORI_SCATOLE := [Color(0.78, 0.36, 0.31), Color(0.88, 0.75, 0.38), Color(0.44, 0.65, 0.8), Color(0.5, 0.69, 0.46),
+		Color(0.88, 0.58, 0.66)]
+
+
 func _pile() -> void:
 	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
 	var rng := RandomNumberGenerator.new()
@@ -1805,6 +1810,16 @@ func _pile() -> void:
 			lampade.append((c as Node3D).position)
 	var cartone: Array[Transform3D] = []
 	var tinte: Array[Color] = []
+	# le scatole colorate del parco (richiesta dell'utente del 24 ottobre: "cambiare colore ad alcune scatole nei muri
+	# di scatole che abbiamo fatto, dalle multicolore, dobbiamo riprendere il tema giocoso ogni tanto, per fare contrasto
+	# con l'horror"): come in un magazzino vero il colore va per bancale, circa uno ogni 3-4, tutto il bancale dello
+	# stesso colore, sparsi lungo tutti i muri. Un generatore suo, così le pile restano quelle di prima.
+	var colorate: Array[Transform3D] = []
+	var tinte_colorate: Array[Color] = []
+	var rng_colori := RandomNumberGenerator.new()
+	rng_colori.seed = 2410
+	var cartoni_contati := 0
+	var prossima_colorata := rng_colori.randi_range(2, 4)
 	var fronti := []   # le unità della fila davanti: [muro, posizione lungo il muro, centro, verso dentro la pila]
 	var casse: Array[Transform3D] = []
 	var messe: Array[PackedVector2Array] = []
@@ -1860,9 +1875,16 @@ func _pile() -> void:
 					if p == 0:
 						casse.append(t)
 					else:
-						cartone.append(t)
 						var k := rng.randf()
-						tinte.append(Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), k))
+						cartoni_contati += 1
+						if cartoni_contati >= prossima_colorata:
+							prossima_colorata = cartoni_contati + rng_colori.randi_range(3, 4)
+							var col: Color = COLORI_SCATOLE[rng_colori.randi() % COLORI_SCATOLE.size()]
+							colorate.append(t)
+							tinte_colorate.append(col.lerp(Color(0.55, 0.5, 0.45), rng_colori.randf_range(0.0, 0.15)))
+						else:
+							cartone.append(t)
+							tinte.append(Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), k))
 				var alto := piani * (PILA_BANCALE + PILA_BLOCCO)
 				var fc := CollisionShape3D.new()
 				var bc := BoxShape3D.new()
@@ -1890,7 +1912,9 @@ func _pile() -> void:
 	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
 	await _pausa()
 	_multimesh_pile("PileCartone", _unita_pila(false), cartone, tinte)
-	print("pile di scatoloni: %d colonne, %d unità" % [colonne, casse.size() + cartone.size()])
+	await _pausa()
+	_multimesh_pile("PileColorate", _unita_pila(false, true), colorate, tinte_colorate)
+	print("pile di scatoloni: %d colonne, %d unità (%d colorate)" % [colonne, casse.size() + cartone.size() + colorate.size(), colorate.size()])
 
 
 ## Il rettangolo allargato di [param m] da ogni parte.
@@ -1940,7 +1964,7 @@ func _multimesh_pile(nome: String, mesh: Mesh, trasformazioni: Array[Transform3D
 
 ## Un'unità della pila (origine sotto il bancale, al centro; x lungo il muro, z in profondità): il bancale di legno, il
 ## blocco di 2 x 2 x 3 scatoloni (o casse di plastica) e il film trasparente intorno al blocco.
-func _unita_pila(di_casse: bool) -> ArrayMesh:
+func _unita_pila(di_casse: bool, colorata := false) -> ArrayMesh:
 	var am := ArrayMesh.new()
 	# il bancale: tre longheroni, sette assi sopra e tre sotto
 	var st := SurfaceTool.new()
@@ -1968,8 +1992,9 @@ func _unita_pila(di_casse: bool) -> ArrayMesh:
 		mb.albedo_texture = load(DIR + "texture/cassa_pile.jpg")
 		mb.roughness = 0.55
 	else:
-		mb.albedo_texture = load(DIR + "texture/scatolone_pile.jpg")
-		mb.roughness = 0.85
+		# (le colorate: cartone verniciato chiaro coi disegni del parco, il colore lo dà il MultiMesh)
+		mb.albedo_texture = load(DIR + ("texture/scatolone_colorato_pile.jpg" if colorata else "texture/scatolone_pile.jpg"))
+		mb.roughness = 0.8 if colorata else 0.85
 		mb.vertex_color_use_as_albedo = true   # la tinta di ogni unità (MultiMesh)
 	am.surface_set_material(1, mb)
 	# il film: appena più grande del blocco, lucido e quasi trasparente

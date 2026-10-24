@@ -14,6 +14,9 @@ QUI = os.path.dirname(os.path.abspath(__file__))
 RADICE = os.path.abspath(os.path.join(QUI, '..', '..', '..'))
 USCITA = os.path.join(RADICE, 'godot', 'assets', 'fiume_lento', 'texture', 'scatolone_pile.jpg')
 USCITA_CASSE = os.path.join(RADICE, 'godot', 'assets', 'fiume_lento', 'texture', 'cassa_pile.jpg')
+# gli scatoloni colorati del parco (richiesta dell'utente del 24 ottobre: "dalle multicolore, dobbiamo riprendere il tema
+# giocoso ogni tanto, per fare contrasto con l'horror"): cartone verniciato chiaro, il colore lo dà il MultiMesh
+USCITA_COLORATI = os.path.join(RADICE, 'godot', 'assets', 'fiume_lento', 'texture', 'scatolone_colorato_pile.jpg')
 C = 512                       # lato di una cella
 # per ogni cella (colonna, riga): quale faccia è e di quanti gradi va girato il disegno (0 = l'alto in alto)
 CELLE = {(0, 0): ('lato', 0), (1, 0): ('lato', 0), (2, 0): ('sopra', 0),
@@ -93,6 +96,53 @@ def faccia(tipo):
     return img
 
 
+def onda(d, x, y, s, col):
+    """Un'onda del parco: tre creste arricciate."""
+    w = max(6, s // 7)
+    for k in range(3):
+        cx = x - s + k * s
+        d.arc((cx - s * 0.5, y - s * 0.5, cx + s * 0.5, y + s * 0.5), 180, 360, fill=col, width=w)
+        d.arc((cx + s * 0.1, y - s * 0.55, cx + s * 0.45, y - s * 0.2), 90, 300, fill=col, width=w)
+    d.line((x - s * 1.5, y + s * 0.15, x + s * 1.5, y + s * 0.15), fill=col, width=w)
+
+
+def stella(d, x, y, s, col):
+    import math
+    pts = []
+    for k in range(10):
+        a = -math.pi / 2 + k * math.pi / 5
+        r = s if k % 2 == 0 else s * 0.42
+        pts.append((x + math.cos(a) * r, y + math.sin(a) * r))
+    d.polygon(pts, fill=col)
+
+
+def paperella(d, x, y, s, col):
+    """La sagoma di una paperella di gomma, girata a destra."""
+    d.ellipse((x - s, y - s * 0.35, x + s * 0.7, y + s * 0.55), fill=col)            # il corpo
+    d.ellipse((x + s * 0.05, y - s * 0.95, x + s * 0.65, y - s * 0.3), fill=col)     # la testa
+    d.polygon([(x + s * 0.6, y - s * 0.7), (x + s * 1.0, y - s * 0.6), (x + s * 0.62, y - s * 0.48)], fill=col)   # il becco
+    d.polygon([(x - s, y - s * 0.1), (x - s * 1.25, y - s * 0.45), (x - s * 0.8, y - s * 0.2)], fill=col)          # la coda
+
+
+def colorato(tipo, disegno):
+    """Cartone verniciato chiaro (lo tinge il MultiMesh), sporco e consumato agli spigoli, col nastro; sui lati un
+    disegno del parco in bianco sbiadito (un'onda, una stella, una paperella), niente scritte."""
+    w = h = C
+    base = np.full((h, w, 3), (226, 222, 214), dtype=np.float32)
+    rumore = np.random.default_rng(17).normal(0, 5, (h, w, 1))
+    macchie = np.array(Image.fromarray(np.random.default_rng(19).integers(0, 255, (h // 64, w // 64), dtype=np.uint8))
+                       .resize((w, h), Image.BICUBIC), dtype=np.float32)[:, :, None]
+    img = Image.fromarray(np.clip(base + rumore - (macchie - 128) * 0.035, 0, 255).astype(np.uint8))
+    img = bordi(img)
+    if tipo == 'sopra':
+        return nastro(img, verticale=True)
+    img = nastro(img)
+    d = ImageDraw.Draw(img, 'RGBA')
+    bianco = (250, 248, 240, 185)
+    {'onda': onda, 'stella': stella, 'paperella': paperella}[disegno](d, int(C * 0.5), int(C * 0.6), int(C * 0.17), bianco)
+    return img
+
+
 def cassa(tipo):
     """Una cassa di plastica blu: costole in rilievo e le feritoie (lato), il bordo e la griglia (sopra)."""
     img = Image.new('RGB', (C, C), (38, 86, 160))
@@ -131,3 +181,10 @@ for (cx, cy), (tipo, gradi) in CELLE.items():
     tex.paste(cassa(tipo).rotate(gradi), (cx * C, cy * C))
 tex.save(USCITA_CASSE, quality=90)
 print('scritta', USCITA_CASSE)
+# gli scatoloni colorati: su ogni lato un disegno diverso (una stella, un'onda, una paperella, una stella)
+tex = Image.new('RGB', (C * 3, C * 2))
+disegni = {(0, 0): 'stella', (1, 0): 'onda', (0, 1): 'paperella', (1, 1): 'stella'}
+for (cx, cy), (tipo, gradi) in CELLE.items():
+    tex.paste(colorato(tipo, disegni.get((cx, cy), 'stella')).rotate(gradi), (cx * C, cy * C))
+tex.save(USCITA_COLORATI, quality=90)
+print('scritta', USCITA_COLORATI)
