@@ -26,7 +26,14 @@ var SCATTI := {
 	"15_cancello": [262.0, -1.0, 1.6, 268.0, -1.0, 1.0, 70.0],
 	"16_macerie": [340.0, 1.0, 1.6, 349.5, 1.0, 0.9, 70.0],
 	"17_vetrina": [476.0, -1.0, 1.6, 484.5, -1.0, 0.8, 70.0],
+	"18_lei_dietro": [52.0, -1.0, 1.6, 40.0, 0.0, 2.8, 70.0],
+	"19_lei_di_lato": [40.0, 1.0, 1.6, 40.0, 0.0, 2.8, 80.0],
+	"20_approdo": [538.0, -1.0, 1.6, 552.3, -0.1, 3.4, 75.0],
+	"21_ballatoio": [550.8, -0.9, 4.6, 552.3, 0.0, 4.0, 75.0],
+	"22_camera_volantino": [554.6, 0.0, 4.6, 552.3, 0.1, 3.7, 75.0],
 }
+## Dove sta lei negli scatti che la mostrano (s lungo la strada).
+var LEI := {"18_lei_dietro": 40.0, "19_lei_di_lato": 40.0}
 
 var cartella := "user://scatti_sottomarino"
 var solo := PackedStringArray()
@@ -79,6 +86,16 @@ func _run() -> void:
 		var s: Array = SCATTI[nome]
 		cam.fov = s[6]
 		cam.look_at_from_position(_occhio(sala, s[0], s[1], s[2]), _occhio(sala, s[3], s[4], s[5]))
+		if sala.lei:
+			sala.lei.visible = LEI.has(nome)
+			if LEI.has(nome):
+				var occhi := Node3D.new()
+				add_child(occhi)
+				occhi.global_position = cam.global_position
+				sala.bersaglio = occhi
+				sala.insegui_da(float(LEI[nome]))
+				sala.velocita_lei = 0.0
+				sala.velocita_rincorsa = 0.0
 		for i in 40:
 			await get_tree().process_frame
 		var f := cartella.path_join(nome + ".jpg")

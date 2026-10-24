@@ -48,7 +48,8 @@ func _run() -> void:
 		if s > SalaSottomarino.PRESA_FINO + 1.0 and (hf.is_empty() or absf((hf.position as Vector3).y - sala.fondo) > 0.02):
 			senza_fondo.append(snappedf(s, 0.1))
 		var hv := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(p.x, sala.acqua + 1.0, p.z), Vector3(p.x, sala.acqua + 30.0, p.z)))
-		if hv.is_empty() or (hv.position as Vector3).y - sala.acqua < 6.5:
+		# (davanti al portello, sopra il canale, c'è il ballatoio: lì la volta non si vede da sotto)
+		if s < lung - SalaSottomarino.BALLATOIO - 0.2 and (hv.is_empty() or (hv.position as Vector3).y - sala.acqua < 6.5):
 			volta_bassa.append(snappedf(s, 0.1))
 		s += 1.0
 	_controlla(senza_banchina.is_empty(), "banchine col pavimento a quota piano su tutta la strada", senza_banchina)
@@ -111,6 +112,22 @@ func _run() -> void:
 	# 4) i gradini
 	var gradini := sala.find_child("Gradini", true, false)
 	_controlla(gradini != null, "ci sono i gradini per risalire dal canale", [])
+
+	# 5) il finale: dalla camera stagna si chiude il portello, il volantino gira restando attaccato, poi "FINE"
+	var fine := [false]
+	sala.fine_demo.connect(func(): fine[0] = true)
+	var vol: Node3D = sala.find_child("Volantino", true, false)
+	var perno: Node3D = sala.find_child("PortelloPerno", true, false)
+	var attaccato_prima: Vector3 = perno.to_local(vol.global_position)
+	sala.chiudi_portello()
+	var t := 0.0
+	while t < 8.0 and not fine[0]:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	var chiuso := absf(perno.global_transform.basis.z.dot(sala.direzione(lung))) > 0.98
+	var attaccato_dopo: Vector3 = perno.to_local(vol.global_position)
+	_controlla(fine[0] and chiuso and attaccato_prima.distance_to(attaccato_dopo) < 0.001 and vol.rotation.z > 4.0,
+			"il portello si chiude, il volantino gira restando attaccato, poi la fine", ["fine %s chiuso %s giro %.2f" % [fine[0], chiuso, vol.rotation.z]])
 
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
