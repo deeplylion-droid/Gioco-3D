@@ -2055,6 +2055,25 @@ def versione_A(mats):
         c.scatola_assi(base + Vector((0, 0, 2.85)), [v0, t0v, Vector((0, 0, 1))], (0.03, LARGO_D + 0.55, 0.22),
                        'gioco_rosso' if GIOCO else 'strisce')
         imbocchi.append(dict(base=[round(v, 3) for v in base], verso=[round(v0.x, 4), round(v0.y, 4)], mezza=LARGO_D + 0.45, alto=2.6))
+        if GIOCO:
+            # una culla sulla grata sotto l'inizio del canale, larga quanto il canale: il fondo poggia sulla grata ma i
+            # fianchi arrotondati restavano 12-20 cm sopra e da sopra, accanto al palo dei led, il canale sembrava
+            # sospeso (ricontrollo del 24 ottobre). L'intaglio le dà la forma del canale
+            cd0 = next(o for o in canali_discesa if o.name.startswith(f'discesa_{k_}_0'))
+            d0_ = min((cd0.matrix_world @ v.co - base).dot(v0) for v in cd0.data.vertices)
+            q_ = base + v0 * (d0_ + 0.12)
+
+            def _sulla_grata(w):
+                return any(abs(L_ - base.z) < 0.05 and r[0] + 0.02 <= w.x <= r[2] - 0.02 and r[1] + 0.02 <= w.y <= r[3] - 0.02
+                           for (_, L_), r in costruite.items())
+            # (larga quanto il canale, o quanto la pedana lascia)
+            for mezza_ in (LARGO_D + T_U, LARGO_D, LARGO_D - 0.15, LARGO_D - 0.3):
+                if all(_sulla_grata(q_ + v0 * (sv * 0.07) + t0v * (st * mezza_)) for sv in (-1, 1) for st in (-1, 1)):
+                    c.scatola_assi(Vector((q_.x, q_.y, base.z + 0.12)), [v0, t0v, Vector((0, 0, 1))], (0.07, mezza_, 0.13), 'metallo')
+                    print(f'imbocco {k_}: culla sotto l inizio del canale, a {d0_ + 0.12:.2f} m dal portale, larga {2 * mezza_:.2f} m')
+                    break
+            else:
+                print(f'imbocco {k_}: niente culla (fuori dalla pedana)')
     P.balconata(c, 28.6, 33.4, YI1, -1.5)
     # il fondo: pozzo, vasche, la bocca del tubo dell'inseguimento sul muro nord
     P.pozzo_lei(c, C)
