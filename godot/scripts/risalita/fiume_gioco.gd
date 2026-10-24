@@ -995,7 +995,7 @@ func _roccia(pos: Vector3, rot: float, specchio = null, largo := 1.0) -> Node3D:
 ## La roccia lungo le banchine dev'essere continua (riscontro dell'utente; collaudo del 24 ottobre: dalla ciambella,
 ## a sinistra, fra un pannello e l'altro e nelle zone tenute libere si vedeva il muro grigio liscio). Ogni metro di
 ## banchina senza un pannello a meno di [constant COPRE] dal suo centro ne riceve uno più stretto (3 m), 5 cm più
-## indietro della fila, così non sta sullo stesso piano dei vicini. Vale anche davanti ai dischi delle paratie (il disco
+## indietro della fila (dove non ci sta, fino a 1,5 m più indietro, verso il muro), così non sta sullo stesso piano dei vicini. Vale anche davanti ai dischi delle paratie (il disco
 ## sta 85 cm più avanti della faccia della roccia: la roccia gli fa da sfondo) e nelle conche dei bivi; restano libere
 ## solo le zone dove si cammina (vasca, ingresso, approdo) e la colonna del bivio 3. Si aggiunge a [param rocce].
 const COPRE := 1.5
@@ -1019,14 +1019,17 @@ func _rocce_buchi(rocce: Array) -> void:
 				if w.length() < COPRE and (Basis(Vector3.UP, deg_to_rad(r[1])) * Vector3.BACK).dot(davanti) > 0.7:
 					coperto = true
 					break
-			if coperto or not _ci_sta(p, rot, LARGO_BUCO, 0.6):
+			if coperto:
 				continue
-			var dietro := p - davanti * 1.0
-			if in_piazza(dietro):
-				continue
-			_roccia(p - davanti * 0.05, rot, messe % 2 == 0, LARGO_BUCO / 4.2)
-			rocce.append([p - davanti * 0.05, rot])
-			messe += 1
+			# dove la banchina è diversa (le conche dei bivi) il pannello va più indietro, verso il muro
+			for indietro in [0.0, 0.5, 1.0, 1.5]:
+				var q := p - davanti * (indietro + 0.05)
+				if not _ci_sta(q, rot, LARGO_BUCO, 0.6) or in_piazza(q - davanti * 1.0):
+					continue
+				_roccia(q, rot, messe % 2 == 0, LARGO_BUCO / 4.2)
+				rocce.append([q, rot])
+				messe += 1
+				break
 	_zone_libere = zone
 	print("rocce nei buchi: %d" % messe)
 
@@ -1824,12 +1827,14 @@ func _rocce_imbarco() -> void:
 	var messe := 0
 	var k := 0
 	# (dall'inizio dello striscia, alla vasca, 5,2 m: dopo il cartello dei tuffi e la strada fra la fila e la ciambella;
-	# poi un pannello ogni 3,9 m, larghi 4,2: continui)
-	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.9, 5.2):
+	# poi un pannello ogni 3 m, larghi 4,2: si sovrappongono, così fra uno e l'altro non si vede il muro (collaudo del
+	# 24 ottobre))
+	for v in _lungo(_strisce[0], W * 0.5 + BANCA, 3.0, 5.2):
 		var p: Vector3 = v[0]
 		var rot: float = v[1]
-		# solo la riva dalla parte della piazza, fino a dove l'anello comincia a girare
-		if not in_piazza(p) or p.z < Z_PIAZZA_NORD:
+		# solo la riva dalla parte della piazza, anche nella curva dove l'anello comincia a girare (prima lì finiva, e
+		# dalla ciambella si vedeva il muro grigio)
+		if not in_piazza(p):
 			continue
 		if gia.any(func(q: Vector3) -> bool: return Vector2(q.x, q.z).distance_to(Vector2(p.x, p.z)) < 2.2):
 			continue
