@@ -2029,6 +2029,7 @@ def versione_A(mats):
     # il portale di partenza su ogni imbocco della discesa (senza le sbarre: si entra camminando nel canale).
     # Nel gioco ci sono su i led verdi e la lampada verde (S1, scelta dell'utente del 21 ottobre): li mette
     # SalaTorre dai dati in gioco['imbocchi']. Prima del 21 ottobre c'era solo sul primo.
+    cvc = K.Costruttore(mats)          # collari dei tubi chiusi e culle degli imbocchi: fuori dall'intaglio, poi uniti ai sostegni
     imbocchi = []
     for k_, (_, pezzi_, _m_) in enumerate(discesa if GIOCO else discesa[:1]):
         b0 = pezzi_[0][0]
@@ -2056,22 +2057,73 @@ def versione_A(mats):
                        'gioco_rosso' if GIOCO else 'strisce')
         imbocchi.append(dict(base=[round(v, 3) for v in base], verso=[round(v0.x, 4), round(v0.y, 4)], mezza=LARGO_D + 0.45, alto=2.6))
         if GIOCO:
-            # una culla sulla grata sotto l'inizio del canale, larga quanto il canale: il fondo poggia sulla grata ma i
-            # fianchi arrotondati restavano 12-20 cm sopra e da sopra, accanto al palo dei led, il canale sembrava
-            # sospeso (ricontrollo del 24 ottobre). L'intaglio le dà la forma del canale
+            # una culla sulla grata sotto il canale, per tutto il tratto sopra la pedana: il fondo tondo poggia al centro
+            # ma i fianchi restavano 10-20 cm sopra la grata, e da sopra o di lato il canale sembrava sospeso (ricontrolli
+            # del 24 ottobre). La culla è un blocco che segue il fondo del canale a 4 mm (misurato coi raggi, niente
+            # booleano: l'intaglio la lasciava a schegge); va coi sostegni, solo da vedere
+            from mathutils.bvhtree import BVHTree
             cd0 = next(o for o in canali_discesa if o.name.startswith(f'discesa_{k_}_0'))
-            d0_ = min((cd0.matrix_world @ v.co - base).dot(v0) for v in cd0.data.vertices)
-            q_ = base + v0 * (d0_ + 0.12)
+            mw_ = cd0.matrix_world
+            albero_ = BVHTree.FromPolygons([mw_ @ v.co for v in cd0.data.vertices], [tuple(f.vertices) for f in cd0.data.polygons])
+            d0_ = min((mw_ @ v.co - base).dot(v0) for v in cd0.data.vertices)
 
             def _sulla_grata(w):
                 return any(abs(L_ - base.z) < 0.05 and r[0] + 0.02 <= w.x <= r[2] - 0.02 and r[1] + 0.02 <= w.y <= r[3] - 0.02
                            for (_, L_), r in costruite.items())
-            # (larga quanto il canale, o quanto la pedana lascia)
-            for mezza_ in (LARGO_D + T_U, LARGO_D, LARGO_D - 0.15, LARGO_D - 0.3):
-                if all(_sulla_grata(q_ + v0 * (sv * 0.07) + t0v * (st * mezza_)) for sv in (-1, 1) for st in (-1, 1)):
-                    c.scatola_assi(Vector((q_.x, q_.y, base.z + 0.12)), [v0, t0v, Vector((0, 0, 1))], (0.07, mezza_, 0.13), 'metallo')
-                    print(f'imbocco {k_}: culla sotto l inizio del canale, a {d0_ + 0.12:.2f} m dal portale, larga {2 * mezza_:.2f} m')
+
+            def _alto(d_, t_):
+                w = base + v0 * d_ + t0v * t_
+                h = albero_.ray_cast(Vector((w.x, w.y, base.z - 0.5)), Vector((0, 0, 1)), 1.05)
+                return h[0].z - 0.008 if h[0] is not None else None
+
+            # a fette di 5 cm lungo il canale, ognuna larga quanto la pedana lascia (fino a 0,7 m dall'asse, dove i fianchi
+            # stanno a circa 20 cm dalla grata)
+            fette_ = []
+            facce_ = []
+            d_ = d0_ + 0.02
+            while d_ < d0_ + 3.0:
+                m_ = next((m for m in (0.7, 0.6, 0.5, 0.4, 0.3) if all(_sulla_grata(base + v0 * (d_ + dd) + t0v * (sg * m))
+                                                                        for sg in (-1, 1) for dd in (0.0, 0.05))), None)
+                if m_ is None:
                     break
+                ts_ = [-m_ + 0.025 * j_ for j_ in range(int(round(2 * m_ / 0.025)) + 1)]
+                alti_ = [[_alto(d_ + dd, t_) for t_ in ts_] for dd in (0.0, 0.025, 0.05)]
+                if not any(a is None for r_ in alti_ for a in r_):
+                    # (il fondo è curvo: la corda fra due punti entrerebbe nel canale; ogni punto scende al più basso
+                    # dei vicini, anche nell'altra faccia della fetta)
+                    J0_ = len(ts_)
+                    alti_ = [[min(alti_[i2][j2] for i2 in (0, 1, 2) for j2 in range(max(0, j_ - 1), min(J0_, j_ + 2)))
+                              for j_ in range(J0_)] for _i in (0, 1)]
+                if any(a is None for r_ in alti_ for a in r_):
+                    if fette_:
+                        break
+                    d_ += 0.05
+                    continue
+                fette_.append((d_, m_, max(max(r_) for r_ in alti_) - base.z))
+                T_ = [[base + v0 * (d_ + dd) + t0v * t_ + Vector((0, 0, alti_[i_][j_] - base.z)) for j_, t_ in enumerate(ts_)]
+                      for i_, dd in enumerate((0.0, 0.05))]
+                # (dove il fondo del canale scende sotto la grata, la fetta scende con lui: il canale ci passerebbe dentro)
+                B_ = [[base + v0 * (d_ + dd) + t0v * t_ + Vector((0, 0, min(-0.003, alti_[i_][j_] - base.z - 0.003))) for j_, t_ in enumerate(ts_)]
+                      for i_, dd in enumerate((0.0, 0.05))]
+                J_ = len(ts_) - 1
+                for j_ in range(J_):
+                    facce_.append([T_[0][j_], T_[1][j_], T_[1][j_ + 1], T_[0][j_ + 1]])
+                    facce_.append([B_[0][j_ + 1], B_[0][j_], T_[0][j_], T_[0][j_ + 1]])
+                    facce_.append([B_[1][j_], B_[1][j_ + 1], T_[1][j_ + 1], T_[1][j_]])
+                for j_ in range(J_):
+                    facce_.append([B_[0][j_], B_[0][j_ + 1], B_[1][j_ + 1], B_[1][j_]])
+                facce_.append([B_[0][0], B_[1][0], T_[1][0], T_[0][0]])
+                facce_.append([B_[1][J_], B_[0][J_], T_[0][J_], T_[1][J_]])
+                d_ += 0.05
+            if fette_ and max(f_[2] for f_ in fette_) < 0.06:
+                # (dove il canale poggia quasi tutto, la culla sarebbe una lastra di pochi cm: non regge niente)
+                print(f'imbocco {k_}: niente culla (il canale sta a meno di 6 cm dalla grata)')
+                fette_ = None
+            if fette_:
+                for pts_ in facce_:
+                    cvc.faccia(pts_, 'metallo')
+                print(f'imbocco {k_}: culla sotto il canale da {fette_[0][0]:.2f} a {fette_[-1][0] + 0.05:.2f} m dal portale, '
+                      f'larga {", ".join(sorted({f"{2 * f_[1]:.1f}" for f_ in fette_}))} m, alta fino a {100 * max(f_[2] for f_ in fette_):.0f} cm')
             else:
                 print(f'imbocco {k_}: niente culla (fuori dalla pedana)')
     P.balconata(c, 28.6, 33.4, YI1, -1.5)
@@ -2132,7 +2184,6 @@ def versione_A(mats):
     pezzi_tutti += [(pts, M_CHIUSO if cand[6] else M_APERTO, cand[6], LARGO, PROF, cand[0] == 'muro', f'deco_{j}')
                     for j, (cand, pts, capi) in enumerate(scelti)]
     voli = [(s_['da'], s_['a']) for s_ in salti]
-    cvc = K.Costruttore(mats)          # i collari dei tubi chiusi (fuori dall'intaglio, poi uniti ai sostegni)
     rapporto_sostegni = sostieni(cv, sp, pezzi_tutti, costruite, mensole_su, voli, c_collari=cvc if GIOCO else None)
     linee_pezzi = [dict(nome=n_, mezza=m_, punti=[[round(v, 3) for v in q] for q in pts_])
                    for (pts_, m_, _c, _l, _p, _mu, n_) in pezzi_tutti]
