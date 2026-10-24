@@ -118,7 +118,10 @@ var _griglia := {}
 var _griglia_ok := false
 var _ssu := PackedFloat32Array()           # la misura verso l'alto (il pavimento), con il margine
 var _forme: Array = []                     # [piani (Array[Plane], verso fuori), AABB, indice della faccia di sopra o -1,
-                                           #  AABB allargata del raggio]
+                                           #  AABB allargata del raggio, di 8 cm, di 13 cm, numero della forma]
+# le forme che si muovono (i galleggianti che ondeggiano, il portello): legate a un nodo, i piani si rifanno dal nodo a
+# ogni fotogramma; fuori dalla griglia. [nodo, piani locali, AABB locale, la forma (come in _forme, aggiornata qui)]
+var _mobili: Array = []
 var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle ossa e la punta
 var _v: Array[PackedVector3Array] = []     # le loro velocità
 var _fase: PackedFloat32Array = []
@@ -314,6 +317,43 @@ func _sezioni_qui(k: int, n: int, g: Array[Transform3D], tg: PackedVector3Array,
 func _forme_in(p: Vector3, forme: Array) -> Array:
 	if _forme.size() <= 24:
 		return forme
+	_fai_griglia()
+	var cella: Array = _griglia.get(Vector3i((p / CELLA).floor()), [])
+	if _mobili.is_empty():
+		return cella
+	var out := cella.duplicate()
+	for mo in _mobili:
+		if (mo[3][3] as AABB).has_point(p):
+			out.append(mo[3])
+	return out
+
+
+## Le forme la cui scatola tocca [param zona] (con tante forme, dalla griglia), più quelle che si muovono.
+func _forme_zona(zona: AABB) -> Array:
+	var out: Array = []
+	if _forme.size() <= 24:
+		for fo in _forme:
+			if (fo[1] as AABB).intersects(zona):
+				out.append(fo)
+	else:
+		_fai_griglia()
+		var visti := {}
+		var a := Vector3i((zona.position / CELLA).floor())
+		var b := Vector3i((zona.end / CELLA).floor())
+		for x in range(a.x, b.x + 1):
+			for y in range(a.y, b.y + 1):
+				for z in range(a.z, b.z + 1):
+					for fo in _griglia.get(Vector3i(x, y, z), []):
+						if not visti.has(fo[6]) and (fo[1] as AABB).intersects(zona):
+							visti[fo[6]] = true
+							out.append(fo)
+	for mo in _mobili:
+		if (mo[3][1] as AABB).intersects(zona):
+			out.append(mo[3])
+	return out
+
+
+func _fai_griglia() -> void:
 	if not _griglia_ok:
 		_griglia.clear()
 		for fo in _forme:
@@ -328,7 +368,6 @@ func _forme_in(p: Vector3, forme: Array) -> Array:
 							_griglia[k] = []
 						_griglia[k].append(fo)
 		_griglia_ok = true
-	return _griglia.get(Vector3i((p / CELLA).floor()), [])
 
 
 ## La misura della pelle al punto [param i] verso [param nrm] (le due ellissi, la più grande), più il margine (e
@@ -402,6 +441,7 @@ func _process_modification() -> void:
 			_bers_posa.append(PackedVector3Array())
 		_radici_prima.resize(nc)
 		_pronte = true
+	_aggiorna_mobili()
 	var partite := 0
 	for k in _catene.size():
 		var catena: PackedInt32Array = _catene[k]
@@ -434,6 +474,17 @@ func _process_modification() -> void:
 				_vp[k][i] = _vp[k][i].lerp((tg[i] - _tg_prima[k][i]) / dt, media).limit_length(15.0)
 			_tg_prima[k] = tg
 		vp = _vp[k]
+		# (vicino a una forma che si muove i bersagli si rifanno sempre e il tentacolo si simula a ogni fotogramma)
+		var mobili_qui := false
+		if not _mobili.is_empty():
+			var zm := AABB(tg[0], Vector3.ZERO)
+			for q in tg:
+				zm = zm.expand(q)
+			zm = zm.grow(VICINO + 0.5)
+			for mo in _mobili:
+				if (mo[3][1] as AABB).intersects(zm):
+					mobili_qui = true
+					break
 		# con la posa quasi ferma (lei affacciata) ogni tentacolo si simula un fotogramma sì e uno no, a turno (metà dei
 		# tentacoli per fotogramma), col tempo di tutti e due: le ossa si scrivono sempre, dai punti dell'ultima volta
 		if _dt_acc.size() != _catene.size():
@@ -441,7 +492,7 @@ func _process_modification() -> void:
 		_dt_acc[k] += dt
 		var dt_k: float = _dt_acc[k]
 		if passi == 1 and not (_x[k] as PackedVector3Array).is_empty() \
-				and (k + _fotogrammi) % 2 == 1 and dt_k < 0.1 and _quasi_ferma(tg, _bers_posa[k]):
+				and (k + _fotogrammi) % 2 == 1 and dt_k < 0.1 and not mobili_qui and _quasi_ferma(tg, _bers_posa[k]):
 			var xs: PackedVector3Array = (_x[k] as PackedVector3Array).duplicate()
 			xs[0] = tg[0]
 			var us := Time.get_ticks_usec()
@@ -463,10 +514,7 @@ func _process_modification() -> void:
 				zona = zona.expand(q)
 		# (le punte in un fotogramma si muovono al più qualche decina di cm: oltre non serve guardare)
 		zona = zona.grow(VICINO + 0.25)
-		var forme: Array = []
-		for fo in _forme:
-			if (fo[1] as AABB).intersects(zona):
-				forme.append(fo)
+		var forme := _forme_zona(zona)
 		# partenza dalla posa, o la posa è saltata (ripartenza, teletrasporto)
 		if (_x[k] as PackedVector3Array).is_empty() or tg[0].distance_to(_radici_prima[k]) > 1.0:
 			# (accendendosi piano, al più 9 catene per fotogramma: le altre restano la posa, che è quasi tutto)
@@ -520,7 +568,8 @@ func _process_modification() -> void:
 		# (rifatti solo se la posa ha cambiato forma di più di 5 cm da quando si sono fatti; se no quelli di prima,
 		# spostati come la posa: con lei affacciata la posa si muove appena, nel tuffo si sposta quasi tutta insieme)
 		var tgf: PackedVector3Array
-		var rifai := (_bers_posa[k] as PackedVector3Array).size() != n + 1 or (_trattieni_k > 0.0 and _trattieni_k < 1.0)
+		var rifai := (_bers_posa[k] as PackedVector3Array).size() != n + 1 or (_trattieni_k > 0.0 and _trattieni_k < 1.0) \
+				or mobili_qui
 		if not rifai:
 			var cp: PackedVector3Array = _bers_posa[k]
 			# (spostati come la posa, rispetto alla radice: valgono finché nessun punto si è mosso più di 5 cm così)
@@ -808,6 +857,17 @@ func _tratto_dentro(a: Vector3, b: Vector3, piani: Array, r: float) -> bool:
 
 ## Aggiunge una forma convessa del mondo (punti nel mondo) contro cui i tentacoli non entrano.
 func aggiungi_convesso(punti: PackedVector3Array) -> void:
+	var piani := _piani_da_punti(punti)
+	if piani.size() < 4:
+		return
+	var bb := AABB(punti[0], Vector3.ZERO)
+	for q in punti:
+		bb = bb.expand(q)
+	aggiungi_piani(piani, bb)
+
+
+## I piani (verso fuori) dell'involucro convesso dei punti [param punti].
+func _piani_da_punti(punti: PackedVector3Array) -> Array[Plane]:
 	var piani: Array[Plane] = []
 	var nn := punti.size()
 	for a in nn:
@@ -836,20 +896,7 @@ func aggiungi_convesso(punti: PackedVector3Array) -> void:
 						break
 				if not doppio:
 					piani.append(pl)
-	if piani.size() < 4:
-		return
-	var bb := AABB(punti[0], Vector3.ZERO)
-	for q in punti:
-		bb = bb.expand(q)
-	# la faccia di sopra, se c'è (orizzontale): da lì si esce dalle forme basse, come il bordo
-	var sopra := -1
-	if bb.size.y < 0.6:                    # solo le forme basse (il bordo), non le pareti alte della fossa
-		for i in piani.size():
-			if piani[i].normal.y > 0.99:
-				sopra = i
-	# (la scatola allargata di VICINO, per cercare le forme vicine, e di 8 e 13 cm per i punti con la pelle più sottile)
-	_forme.append([piani, bb, sopra, bb.grow(VICINO), bb.grow(0.08), bb.grow(0.13)])
-	_griglia_ok = false
+	return piani
 
 
 ## Toglie tutte le forme del mondo (per esempio quando lei cambia posto, nell'inseguimento).
@@ -866,13 +913,75 @@ func togli_forme_mondo() -> void:
 func aggiungi_piani(piani: Array[Plane], bb: AABB) -> void:
 	if piani.size() < 4:
 		return
+	# (la scatola allargata di VICINO, per cercare le forme vicine, e di 8 e 13 cm per i punti con la pelle più sottile)
+	_forme.append([piani, bb, _sopra(piani, bb), bb.grow(VICINO), bb.grow(0.08), bb.grow(0.13), _forme.size()])
+	_griglia_ok = false
+
+
+## La faccia di sopra, se c'è (orizzontale): da lì si esce dalle forme basse, come il bordo; -1 per le forme alte (le
+## pareti della fossa).
+func _sopra(piani: Array[Plane], bb: AABB) -> int:
 	var sopra := -1
 	if bb.size.y < 0.6:
 		for i in piani.size():
 			if piani[i].normal.y > 0.99:
 				sopra = i
-	_forme.append([piani, bb, sopra, bb.grow(VICINO), bb.grow(0.08), bb.grow(0.13)])
-	_griglia_ok = false
+	return sopra
+
+
+## Aggiunge una forma convessa che si muove col nodo [param nodo] (un galleggiante che ondeggia, un portello): i punti
+## [param punti] sono nel sistema del nodo. I piani si rifanno dal nodo a ogni fotogramma; se il nodo sparisce la forma
+## se ne va. La faccia di sopra (per le forme basse) è quella orizzontale nel nodo fermo: inclinandosi resta quella.
+func aggiungi_mobile(nodo: Node3D, punti: PackedVector3Array) -> void:
+	var piani := _piani_da_punti(punti)
+	if piani.size() < 4:
+		return
+	var bb := AABB(punti[0], Vector3.ZERO)
+	for q in punti:
+		bb = bb.expand(q)
+	var piani_mondo: Array[Plane] = []
+	piani_mondo.assign(piani)
+	_mobili.append([nodo, piani, bb, [piani_mondo, bb, _sopra(piani, bb), bb, bb, bb, -1]])
+	_aggiorna_mobili()
+
+
+## Aggiunge una scatola che si muove col nodo [param nodo]: centro e assi in [param xf] (nel sistema del nodo), mezze
+## misure [param mezzo].
+func aggiungi_scatola_mobile(nodo: Node3D, xf: Transform3D, mezzo: Vector3) -> void:
+	var punti := PackedVector3Array()
+	for sx in [-1.0, 1.0]:
+		for sy in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				punti.append(xf * Vector3(sx * mezzo.x, sy * mezzo.y, sz * mezzo.z))
+	aggiungi_mobile(nodo, punti)
+
+
+## Toglie le forme che si muovono col nodo [param nodo] (null: tutte).
+func togli_mobili(nodo: Node3D = null) -> void:
+	for i in range(_mobili.size() - 1, -1, -1):
+		if nodo == null or not is_instance_valid(_mobili[i][0]) or _mobili[i][0] == nodo:
+			_mobili.remove_at(i)
+
+
+## Le forme che si muovono dove sono adesso i loro nodi.
+func _aggiorna_mobili() -> void:
+	for i in range(_mobili.size() - 1, -1, -1):
+		var mo: Array = _mobili[i]
+		if not is_instance_valid(mo[0]) or not (mo[0] as Node3D).is_inside_tree():
+			_mobili.remove_at(i)
+			continue
+		var nodo := mo[0] as Node3D
+		var xf := nodo.global_transform
+		var loc: Array[Plane] = mo[1]
+		var fo: Array = mo[3]
+		var piani: Array[Plane] = fo[0]
+		for j in loc.size():
+			piani[j] = xf * loc[j]
+		var bb: AABB = xf * (mo[2] as AABB)
+		fo[1] = bb
+		fo[3] = bb.grow(VICINO)
+		fo[4] = bb.grow(0.08)
+		fo[5] = bb.grow(0.13)
 
 
 ## Aggiunge una scatola (il suo centro e i suoi assi in [param xf], mezze misure [param mezzo]).

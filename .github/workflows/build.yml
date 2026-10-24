@@ -143,6 +143,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
+      - name: Test delle forme che si muovono della morbidezza (galleggianti e portello del tunnel)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_morbidezza_mobili.gd
+
       - name: Test della statua di lei con la morbidezza a 0 (ferma, costo zero)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_statua.gd
