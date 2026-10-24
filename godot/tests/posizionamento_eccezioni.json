@@ -752,20 +752,6 @@
 	},
 	{
 		"zona": "sottomarino",
-		"nodo": "Luci/@Node3D@415/@MeshInstance3D@416",
-		"problema": "ingombro",
-		"pos": [
-			-21.0,
-			-30.0,
-			6.0
-		],
-		"firma": "|TorusMesh 0.92x0.10x0.92",
-		"squadra": "ambienti-2",
-		"stato": "voluto",
-		"motivo": "oblò a muro: sporge 8 cm, il centro a 1,9 m, passaggio libero sulla banchina 2,2 m (regola del coordinatore del 23 ottobre)"
-	},
-	{
-		"zona": "sottomarino",
 		"nodo": "Galleria_425/@MeshInstance3D@831",
 		"problema": "ingombro",
 		"pos": [

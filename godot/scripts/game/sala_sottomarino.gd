@@ -59,6 +59,8 @@ const PORTELLO_ALTO := 2.35      # (l'arco della porta resta sopra i 2 m dove si
 const PORTELLO_APERTO := 90.0
 ## L'oblò e il volantino sul battente (dalla soglia).
 const OBLO_Y := 1.3
+## Gli oblò sui muri del tunnel: il centro sopra il piano delle banchine (la cornice d'ottone sopra i 2 m).
+const OBLO_MURO_SU := 2.55
 const OBLO_R := 0.2
 const VOLANTINO_Y := 0.75
 ## Nel canale si va a guado, accovacciati a tanto (m/s; scelta del coordinatore del 24 ottobre; a piedi e di corsa
@@ -1308,7 +1310,8 @@ func _oblo(nodo: Node3D, s: float, lato: float) -> void:
 	var n := Node3D.new()
 	n.name = "Oblo"
 	nodo.add_child(n)
-	var pos := Vector3(p.x, piano + 1.9, p.z) + r * lato * (muro - 0.005)
+	# (il centro a OBLO_MURO_SU: la cornice, raggio 0,46, sta tutta sopra i 2 m, fuori da davanti alla faccia di chi cammina)
+	var pos := Vector3(p.x, piano + OBLO_MURO_SU, p.z) + r * lato * (muro - 0.005)
 	n.global_position = pos
 	n.look_at(pos - r * lato, Vector3.UP)
 	var anello := MeshInstance3D.new()

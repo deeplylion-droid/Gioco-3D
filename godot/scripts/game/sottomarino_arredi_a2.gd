@@ -6,7 +6,7 @@ class_name SottomarinoArrediA2
 ## sopra le banchine non c'è niente, a parte gli ostacoli voluti. Quindi le cose stanno sui muri, col bordo basso sopra
 ## i 2 m: i coralli, il forziere e il palombaro su mensole di graniglia a sbalzo dal muro (murate, come il muro: senza
 ## sostegni sotto, che toglierebbero larghezza), l'ancora e il salvagente fissati al muro. Lontano dalle lampade (sul
-## muro ogni 9 m, a 3 m) e dagli oblò (a 1,9 m). Si mettono con lo strumento comune (Posa): la mensola contro il muro,
+## muro ogni 9 m, a 3 m) e dagli oblò (il centro a 2,55 m). Si mettono con lo strumento comune (Posa): la mensola contro il muro,
 ## poi la cosa contro il muro e giù sulla mensola. Le cose appoggiate restano a [constant DAL_MURO] dal muro, come
 ## un soprammobile; quelle fissate al muro (l'ancora, il salvagente) lo toccano.
 const DAL_MURO := 0.04
