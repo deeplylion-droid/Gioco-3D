@@ -1864,16 +1864,18 @@ func _gommone(s: float, off: float) -> void:
 		var q := m * (GOMMONE_R + GOMMONE_T * 0.9) + Vector3.UP * GOMMONE_T * 1.2
 		var man := MeshInstance3D.new()
 		var mm := TorusMesh.new()
-		mm.inner_radius = 0.07
-		mm.outer_radius = 0.105
+		mm.inner_radius = 0.045
+		mm.outer_radius = 0.07
 		mm.rings = 12
 		mm.ring_segments = 6
 		man.mesh = mm
 		man.material_override = nera
 		corpo.add_child(man)
-		# l'anello sta di piatto contro il tubolare, girato lungo il fianco
-		man.transform = Transform3D(Basis(Vector3.UP, m, Vector3.UP.cross(m)), q + m * 0.02)
-		maniglie.append(q + m * 0.11)
+		# l'anello esce dal fianco del tubolare (lo tocca col bordo), dritto e girato lungo il fianco: la corda passa
+		# nel suo foro, dalla parte di fuori (q sta 2,5 cm dentro la gomma)
+		# (la gomma disegnata, a facce, sta fino a un centimetro dentro quella vera: l'anello entra di due)
+		man.transform = Transform3D(Basis(m, Vector3.UP, m.cross(Vector3.UP)) * Basis(Vector3.RIGHT, PI * 0.5), q + m * 0.075)
+		maniglie.append(q + m * 0.12)
 	# le corde: dalle due maniglie più vicine agli anelli della parete più vicina, prima e dopo lungo il canale
 	var lato := 1.0 if off >= 0.0 else -1.0
 	var corde: Array = []
@@ -1883,7 +1885,8 @@ func _gommone(s: float, off: float) -> void:
 		var pa := punto(sa)
 		var ra := destra(sa)
 		# la piastra sul muro, e l'anello che ne esce di piatto, girato lungo il canale: la corda passa nell'anello
-		var muro_q := _al(pa, ra, Vector2(lato * canale, acqua + 0.3))
+		# (sotto il listello del bordo della banchina, che sporge 4 cm e scende di 6 cm: 20 cm sopra l'acqua)
+		var muro_q := _al(pa, ra, Vector2(lato * canale, acqua + 0.2))
 		var dentro := -ra * lato
 		var piastra := MeshInstance3D.new()
 		var pm := BoxMesh.new()
@@ -1891,7 +1894,8 @@ func _gommone(s: float, off: float) -> void:
 		piastra.mesh = pm
 		piastra.material_override = _mat_ferro()
 		nodo.add_child(piastra)
-		piastra.global_transform = Transform3D(Basis.looking_at(dentro, Vector3.UP), muro_q + dentro * 0.01)
+		# (staccata dal muro di un millimetro e mezzo: tocca la parete del canale senza entrare sotto la banchina)
+		piastra.global_transform = Transform3D(Basis.looking_at(dentro, Vector3.UP), muro_q + dentro * 0.0115)
 		var attacco := MeshInstance3D.new()
 		var am := TorusMesh.new()
 		am.inner_radius = 0.035
@@ -1901,8 +1905,8 @@ func _gommone(s: float, off: float) -> void:
 		nodo.add_child(attacco)
 		var da := direzione(sa)
 		# (l'anello tocca la piastra col bordo; la corda passa nel suo foro, dalla parte del canale)
-		attacco.global_transform = Transform3D(Basis(dentro, da, dentro.cross(da)), muro_q + dentro * 0.08)
-		var anello := muro_q + dentro * 0.11
+		attacco.global_transform = Transform3D(Basis(dentro, da, dentro.cross(da)), muro_q + dentro * 0.0815)
+		var anello := muro_q + dentro * 0.1115
 		var best := -1
 		for j in maniglie.size():
 			if usate.has(j):
@@ -1986,7 +1990,11 @@ func posa_gommone(g: Dictionary, t: float) -> Transform3D:
 
 func _aggiorna_gommone(g: Dictionary, t: float) -> void:
 	var corpo: AnimatableBody3D = g["corpo"]
-	corpo.global_transform = posa_gommone(g, t)
+	var posa := posa_gommone(g, t)
+	corpo.global_transform = posa
+	# (con sync_to_physics il corpo prende la posa al passo della fisica: le corde seguono quella nuova da subito,
+	# anche coi gommoni fermati per il controllo di posizionamento e gli scatti)
+	corpo.set_meta(&"posa", posa)
 	for c in g["corde"]:
 		_corda(c["mesh"], punti_corda(corpo, c))
 
@@ -1994,10 +2002,13 @@ func _aggiorna_gommone(g: Dictionary, t: float) -> void:
 ## I punti di una corda fra la sua maniglia (dove sta ora il gommone) e l'anello: una parabola con la freccia che
 ## viene dal lasco (più il gommone si avvicina all'anello, più pende).
 func punti_corda(corpo: Node3D, c: Dictionary, n := 10) -> PackedVector3Array:
-	var a: Vector3 = corpo.global_transform * (c["maniglia"] as Vector3)
+	var posa: Transform3D = corpo.get_meta(&"posa", corpo.global_transform)
+	var a: Vector3 = posa * (c["maniglia"] as Vector3)
 	var b: Vector3 = c["anello"]
 	var dd := a.distance_to(b)
 	var freccia := sqrt(maxf(0.0, 3.0 * dd * (float(c["lunga"]) - dd) / 8.0))
+	# (quando il gommone si avvicina all'anello la corda pende di più, ma non tocca l'acqua: resta 5 cm sopra)
+	freccia = minf(freccia, maxf(0.0, minf(a.y, b.y) - acqua - 0.05))
 	var out := PackedVector3Array()
 	for k in n + 1:
 		var f := float(k) / n
