@@ -93,6 +93,10 @@ func _run() -> void:
 	cam.current = true
 	for i in 30:
 		await get_tree().process_frame
+	if solo.has("40_oblo_abisso"):
+		await _oblo_abisso(sala, cam)
+		get_tree().quit()
+		return
 	if solo.has("34_schianto"):
 		await _schianto(sala, cam)
 		get_tree().quit()
@@ -154,3 +158,22 @@ func _schianto(sala: SalaSottomarino, cam: Camera3D) -> void:
 		await get_tree().process_frame
 	get_viewport().get_texture().get_image().save_jpg(cartella.path_join("35_schianto_dal_pontile.jpg"), 0.88)
 	print("scatti dello schianto in ", cartella)
+
+
+## Gli oblò grandi dell'abisso (di ambienti-1) visti dalla banchina, con gli occhi a 1,6 m: per ognuno uno scatto
+## dalla banchina dall'altra parte del canale e uno da 6 m prima sulla stessa banchina.
+func _oblo_abisso(sala: SalaSottomarino, cam: Camera3D) -> void:
+	cam.fov = 70.0
+	var k := 0
+	for n in sala.find_children("oblo_grande_*", "", true, false):
+		var o := (n as Node3D).global_position
+		var pr := sala.proietta_vicino(o, 430.0, 80.0)
+		var s := float(pr[0])
+		var lato := signf(float(pr[1]))
+		for vista in [[s, -lato], [s - 6.0, lato]]:
+			cam.look_at_from_position(_occhio(sala, float(vista[0]), float(vista[1]), 1.6), o)
+			for i in 60:
+				await get_tree().process_frame
+			get_viewport().get_texture().get_image().save_jpg(cartella.path_join("40_oblo_abisso_%d.jpg" % k), 0.88)
+			k += 1
+	print("scatti degli oblò dell'abisso: ", k)
