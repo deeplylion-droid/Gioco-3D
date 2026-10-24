@@ -1,6 +1,6 @@
 extends Node
 ## Test di lei nel tunnel del viaggio sottomarino (LeiTunnel), in un tunnel finto con le misure del piano di
-## ambienti-2 (sottomarino_strada.json: canale largo 5,2 m, banchine di 2,6 m alte SPONDA sopra l'acqua, volta a VOLTA m sopra l'acqua), con un
+## ambienti-2 (sottomarino_strada.json: canale largo 7,4 m, banchine di 2,6 m alte SPONDA sopra l'acqua, volta a VOLTA m sopra l'acqua), con un
 ## rettilineo, una curva a sinistra e una a destra più strette di quelle vere (9 m invece di 12) e un portello in fondo:
 ## - riemerge, insegue lungo la strada a 4 m/s, si gira e si inclina in curva;
 ## - vicina al giocatore morde (insegue_morde), lontana no;
@@ -14,7 +14,7 @@ extends Node
 const Misura := preload("res://tests/misura_morbidezza.gd")
 const VOLTA := 6.5       # la volta più bassa sopra l'acqua (sottomarino_strada.json: volta_minima)
 const SPONDA := 0.42
-const CANALE := 2.6      # mezza larghezza del canale
+const CANALE := 3.7      # mezza larghezza del canale
 const BANCHINA := 2.6
 const VELOCITA := 4.0
 const DIETRO := 12.0     # lei a tanti metri dietro il giocatore
