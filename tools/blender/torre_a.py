@@ -1395,6 +1395,28 @@ def imbuto(c, pz, t, L, mat, ostacoli):
 BOCCHE_CHIUSE = []        # (punto, verso, chiuso): per le lampade rosse guaste (nel gioco)
 
 
+def _nel_canale(q, pts, W, D, T, H, R, margine):
+    """Vero se il punto q sta nell'ingombro del canale aperto lungo pts (sezione U piena fino al bordo, più margine)."""
+    for i in range(len(pts) - 1):
+        a, b = Vector(pts[i]), Vector(pts[i + 1])
+        d = b - a
+        lung = d.length
+        if lung < 1e-6:
+            continue
+        d /= lung
+        t = (q - a).dot(d)
+        # oltre la testata (prima del capo) di poco: la flangia
+        if not (-margine - 0.06 <= t <= lung + margine):
+            continue
+        lato = d.cross(Vector((0, 0, 1))).normalized()
+        su = lato.cross(d).normalized()
+        r = q - (a + d * min(max(t, 0.0), lung))
+        s_, h_ = r.dot(lato), r.dot(su)
+        if abs(s_) <= W + T + 0.035 + margine and -(D + T + 0.035 + margine) <= h_ <= H + R + margine:
+            return True
+    return False
+
+
 def chiusa_bocca(c, dal_capo, chiuso, L):
     """Chiude la bocca di uno scivolo decorativo sulla sua pedana: una grata tonda dentro il tubo, o un
     cancello a sbarre davanti al canale aperto (con la collisione: non ci si entra)."""
@@ -1406,10 +1428,20 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
     p = dal_capo[i]
     d = (dal_capo[i + 1] - dal_capo[i - 1]).normalized()
     if not chiuso:
-        # il cancello sta sulla pedana davanti alla bocca, 15 cm prima della testata: 35 cm dentro, le sbarre
-        # entravano nel canale (e l'intaglio le lasciava appese al corrimano; l'utente, 23 ottobre: niente sbarre appese)
+        # il cancello sta sulla pedana davanti alla bocca, almeno 15 cm prima della testata: 35 cm dentro, le sbarre
+        # entravano nel canale (e l'intaglio le lasciava appese al corrimano; l'utente, 23 ottobre: niente sbarre appese).
+        # Dove la testata ha il labbro che sporge sulla pedana si arretra ancora, finché tutto il pannello (pali, corrente
+        # in basso e piede delle sbarre) sta fuori dal canale (collaudo del 24 ottobre: c3, c5 e c7 sul labbro)
         dh = Vector((d.x, d.y, 0)).normalized()
-        p = dal_capo[0] - dh * 0.15
+        lat = Vector((-dh.y, dh.x, 0))
+        indietro = 0.15
+        while indietro < 1.2:
+            p = dal_capo[0] - dh * indietro
+            prove = [Vector((p.x, p.y, L)) + lat * (k / 10 * (LARGO + 0.26)) + Vector((0, 0, h)) for k in range(-10, 11) for h in (0.0, 0.05, 0.3)]
+            if not any(_nel_canale(q, dal_capo, LARGO, PROF, T_U, SPONDA, R_U, 0.03) for q in prove):
+                break
+            indietro += 0.05
+        print(f'cancello della bocca in {tuple(round(v, 2) for v in p)}: {round(indietro, 2)} m prima della testata')
     BOCCHE_CHIUSE.append(([round(v, 3) for v in (p.x, p.y, L)], [round(d.x, 3), round(d.y, 3)], chiuso))
     if chiuso:
         # dentro il tubo (18 lati: il piano di un lato è a R*cos(10°) dall'asse), 4 mm dalla parete: col raggio pieno
