@@ -129,16 +129,19 @@ def esempio(tutti, dur=30.0):
 
 
 def gioco():
-    """Nel gioco (dopo l'ok dell'utente): godot/audio/lei/, registrati per catalogo.py e licenze.py."""
+    """Nel gioco (l'utente ha approvato il fiato, 24 ottobre: "ok per il fiato"): godot/audio/lei/, registrati per
+    catalogo.py e licenze.py. Gli stessi campioni che ha sentito (fiato a -27 LUFS, versi intorno a -22): salva() non
+    li rinormalizza (picco = il loro, guadagno 1)."""
     from comune import salva
     for nome, x in genera().items():
+        picco = 20.0 * np.log10(float(np.abs(x).max()) + 1e-12) + 0.01
         if nome == 'lei_tunnel_fiato':
             # (nel gioco col suffisso _loop: l'addon audio lo mette in ciclo)
-            salva('lei', 'lei_tunnel_fiato_loop', x, loudness=FIATO_LUFS, corto=False, qualita=5,
+            salva('lei', 'lei_tunnel_fiato_loop', x, loudness=None, picco=picco, qualita=5,
                   nota='tunnel, voce (24 ottobre): fiato roco e basso a bocca aperta, in ciclo')
         else:
             base, k = nome.rsplit('_', 1)
-            salva('lei', '%s_%02d' % (base, int(k)), x, loudness=VERSO_LUFS, corto=True, qualita=5,
+            salva('lei', '%s_%02d' % (base, int(k)), x, loudness=None, picco=picco, qualita=5,
                   nota='tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s')
 
 

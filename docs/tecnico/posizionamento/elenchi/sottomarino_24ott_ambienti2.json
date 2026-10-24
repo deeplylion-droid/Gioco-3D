@@ -1,0 +1,1065 @@
+[
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 30.0 cm) (stato: sottomarino_t0)",
+		"firma": "|CylinderMesh 0.40x0.02x0.40",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@213",
+		"pos": [
+			-57.71,
+			-25.7,
+			21.35
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 23.0 cm) (stato: sottomarino_t0)",
+		"firma": "|TorusMesh 0.54x0.08x0.54",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@214",
+		"pos": [
+			-57.76,
+			-25.7,
+			21.36
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "non tocca niente entro 5 mm (è a meno di 5 cm da qualcosa, ma non appoggia; sotto, il primo appoggio è a 103.0 cm) (stato: sottomarino_t0)",
+		"firma": "|TorusMesh 0.54x0.08x0.54",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@215",
+		"pos": [
+			-57.65,
+			-25.7,
+			21.35
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "la sua forma sfiora Tunnel_216/mosaico, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 127.0 cm) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 1.80x0.30x0.02",
+		"nodo": "Galleria_205/@MeshInstance3D@540",
+		"pos": [
+			1.59,
+			-28.58,
+			55.39
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 48.0 cm. Con lui, staccati insieme, 5 oggetti che si reggono solo fra loro: @MeshInstance3D@217, @MeshInstance3D@218, @MeshInstance3D@220, @MeshInstance3D@221, @MeshInstance3D@219. (stato: sottomarino_t0)",
+		"firma": "|TorusMesh 0.54x0.05x0.54",
+		"nodo": "Approdo/PortelloPerno/Volantino/@MeshInstance3D@216",
+		"pos": [
+			-57.82,
+			-26.25,
+			21.36
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Luci/lampada_gabbia/lampada",
+		"pos": [
+			26.99,
+			-27.0,
+			-4.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@228/lampada",
+		"pos": [
+			39.01,
+			-27.0,
+			5.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@233/lampada",
+		"pos": [
+			26.99,
+			-27.0,
+			14.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@238/lampada",
+		"pos": [
+			39.01,
+			-27.0,
+			23.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@243/lampada",
+		"pos": [
+			26.65,
+			-27.0,
+			30.82
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@248/lampada",
+		"pos": [
+			35.66,
+			-27.0,
+			42.48
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@253/lampada",
+		"pos": [
+			22.04,
+			-27.0,
+			49.02
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@258/lampada",
+		"pos": [
+			35.02,
+			-27.0,
+			56.51
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@263/lampada",
+		"pos": [
+			26.22,
+			-27.0,
+			68.35
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@268/lampada",
+		"pos": [
+			39.01,
+			-27.0,
+			75.69
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@273/lampada",
+		"pos": [
+			26.99,
+			-27.0,
+			84.69
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@278/lampada",
+		"pos": [
+			39.01,
+			-27.0,
+			93.69
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@283/lampada",
+		"pos": [
+			26.99,
+			-27.0,
+			102.69
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@288/lampada",
+		"pos": [
+			38.37,
+			-27.0,
+			113.11
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@293/lampada",
+		"pos": [
+			23.96,
+			-27.0,
+			114.73
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@298/lampada",
+		"pos": [
+			20.62,
+			-27.0,
+			128.84
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@303/lampada",
+		"pos": [
+			13.89,
+			-27.0,
+			116.0
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@308/lampada",
+		"pos": [
+			-0.48,
+			-27.0,
+			117.99
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@313/lampada",
+		"pos": [
+			9.01,
+			-27.0,
+			106.43
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@318/lampada",
+		"pos": [
+			-3.01,
+			-27.0,
+			97.43
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@323/lampada",
+		"pos": [
+			9.01,
+			-27.0,
+			88.43
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@328/lampada",
+		"pos": [
+			-3.01,
+			-27.0,
+			79.43
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@333/lampada",
+		"pos": [
+			9.95,
+			-27.0,
+			72.48
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 321.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@338/lampada",
+		"pos": [
+			1.47,
+			-27.0,
+			60.53
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@343/lampada",
+		"pos": [
+			13.46,
+			-27.0,
+			51.95
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@348/lampada",
+		"pos": [
+			-0.94,
+			-27.0,
+			46.74
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@353/lampada",
+		"pos": [
+			9.01,
+			-27.0,
+			35.91
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@358/lampada",
+		"pos": [
+			-3.01,
+			-27.0,
+			26.91
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@363/lampada",
+		"pos": [
+			9.01,
+			-27.0,
+			17.91
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@368/lampada",
+		"pos": [
+			-3.01,
+			-27.0,
+			8.91
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@373/lampada",
+		"pos": [
+			7.29,
+			-27.0,
+			-2.3
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@378/lampada",
+		"pos": [
+			-7.19,
+			-27.0,
+			-1.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@383/lampada",
+		"pos": [
+			-12.75,
+			-27.0,
+			-14.99
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@388/lampada",
+		"pos": [
+			-17.34,
+			-27.0,
+			-1.24
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@393/lampada",
+		"pos": [
+			-31.84,
+			-27.0,
+			-0.91
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@398/lampada",
+		"pos": [
+			-20.99,
+			-27.0,
+			9.97
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@403/lampada",
+		"pos": [
+			-33.01,
+			-27.0,
+			18.97
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@408/lampada",
+		"pos": [
+			-20.99,
+			-27.0,
+			27.97
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@413/lampada",
+		"pos": [
+			-33.01,
+			-27.0,
+			36.84
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@418/lampada",
+		"pos": [
+			-23.46,
+			-27.0,
+			47.81
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@423/lampada",
+		"pos": [
+			-37.71,
+			-27.0,
+			53.31
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@428/lampada",
+		"pos": [
+			-25.23,
+			-27.0,
+			61.34
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@433/lampada",
+		"pos": [
+			-33.69,
+			-27.0,
+			73.32
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@438/lampada",
+		"pos": [
+			-20.99,
+			-27.0,
+			80.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@443/lampada",
+		"pos": [
+			-33.01,
+			-27.0,
+			89.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@448/lampada",
+		"pos": [
+			-20.99,
+			-27.0,
+			98.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@453/lampada",
+		"pos": [
+			-33.01,
+			-27.0,
+			107.5
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 321.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@458/lampada",
+		"pos": [
+			-24.28,
+			-27.0,
+			119.28
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 321.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@463/lampada",
+		"pos": [
+			-38.46,
+			-27.0,
+			116.27
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@468/lampada",
+		"pos": [
+			-46.09,
+			-27.0,
+			128.6
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@473/lampada",
+		"pos": [
+			-48.43,
+			-27.0,
+			114.29
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@478/lampada",
+		"pos": [
+			-62.68,
+			-27.0,
+			111.65
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@483/lampada",
+		"pos": [
+			-50.99,
+			-27.0,
+			101.62
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@488/lampada",
+		"pos": [
+			-63.01,
+			-27.0,
+			92.62
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@493/lampada",
+		"pos": [
+			-50.99,
+			-27.0,
+			83.62
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@498/lampada",
+		"pos": [
+			-60.59,
+			-27.0,
+			72.49
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@508/lampada",
+		"pos": [
+			-59.37,
+			-27.0,
+			60.21
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@513/lampada",
+		"pos": [
+			-50.94,
+			-27.0,
+			48.59
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@518/lampada",
+		"pos": [
+			-63.01,
+			-27.0,
+			40.35
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 279.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Luci/@Node3D@523/lampada",
+		"pos": [
+			-50.99,
+			-27.0,
+			31.35
+		],
+		"problema": "staccato",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 331.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Ostacolo_crollo_74/lampada_gabbia/lampada",
+		"pos": [
+			38.59,
+			-26.9,
+			68.71
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 129.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Ostacolo_carico_138/lampada_gabbia/lampada",
+		"pos": [
+			18.04,
+			-26.9,
+			116.99
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 179.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Galleria_205/lampada_gabbia/lampada",
+		"pos": [
+			-0.21,
+			-28.0,
+			65.33
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 179.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Galleria_205/@Node3D@541/lampada",
+		"pos": [
+			1.87,
+			-28.0,
+			55.34
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 289.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Ostacolo_cancello_268/lampada_gabbia/lampada",
+		"pos": [
+			-3.04,
+			-26.9,
+			5.26
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 235.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Ostacolo_macerie_348/lampada_gabbia/lampada",
+		"pos": [
+			-33.49,
+			-26.9,
+			39.98
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 179.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Galleria_425/lampada_gabbia/lampada",
+		"pos": [
+			-23.12,
+			-28.0,
+			117.2
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 179.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0) [modello: lampada_gabbia.glb]",
+		"firma": "lampada_gabbia.glb|lampada_gabbia.glb::ArrayMesh_4f2pf",
+		"nodo": "Galleria_425/@Node3D@563/lampada",
+		"pos": [
+			-37.33,
+			-28.0,
+			128.48
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "tocca solo altri oggetti che non toccano un muro, il pavimento o un sostegno fisso: sotto, il primo appoggio fuori dal gruppo è a 132.0 cm. Con lui, staccati insieme, 1 oggetti che si reggono solo fra loro: globo. (stato: sottomarino_t0)",
+		"nodo": "Ostacolo_vetrina_484/lampada_gabbia/lampada",
+		"pos": [
+			-63.01,
+			-26.9,
+			88.12
+		],
+		"problema": "staccato",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@569 (stato: sottomarino_t0)",
+		"nodo": "Ostacolo_vetrina_484/corallo/Mesh_0",
+		"pos": [
+			-62.02,
+			-29.16,
+			88.12
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "passa dentro Tunnel_552/mosaico per 96 cm (nel pieno, per esempio, in (-63.3, -30.0, 26.36)) (stato: sottomarino_t0)",
+		"nodo": "Approdo/graniglia",
+		"pos": [
+			-59.45,
+			-28.5,
+			24.42
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Tunnel_552/mosaico (stato: sottomarino_t0)",
+		"nodo": "Approdo/lampada_gabbia/globo",
+		"pos": [
+			-62.98,
+			-24.77,
+			25.0
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "il 65% dei suoi vertici è dentro Tunnel_552/mosaico (stato: sottomarino_t0)",
+		"nodo": "Approdo/lampada_gabbia/lampada",
+		"pos": [
+			-63.01,
+			-24.8,
+			25.0
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "passa dentro Ostacolo_carico_138/ancora/Mesh_0 per 22 cm (nel pieno, per esempio, in (16.52, -28.27, 116.58)) (stato: sottomarino_t0)",
+		"firma": "|CylinderMesh 0.74x0.03x0.74",
+		"nodo": "Luci/@Node3D@300/@MeshInstance3D@302",
+		"pos": [
+			16.48,
+			-28.3,
+			116.58
+		],
+		"problema": "compenetra",
+		"squadra": "grafica",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "dentro ci passa Tunnel_192/mosaico, 4 cm sotto la sua superficie (per esempio in (0.62, -30.06, 69.8), lo spigolo da (0.58, -30.0, 69.93) a (0.92, -30.47, 68.9)) (stato: sottomarino_t0)",
+		"nodo": "Tunnel_192/graniglia",
+		"pos": [
+			0.62,
+			-30.06,
+			69.8
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "dentro ci passa Tunnel_216/mosaico, 4 cm sotto la sua superficie (per esempio in (3.37, -30.06, 51.78), lo spigolo da (3.41, -30.0, 51.89) a (3.13, -30.47, 51.04)) (stato: sottomarino_t0)",
+		"nodo": "Tunnel_216/graniglia",
+		"pos": [
+			3.37,
+			-30.06,
+			51.78
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "dentro ci passa Tunnel_408/mosaico, 4 cm sotto la sua superficie (per esempio in (-23.71, -30.06, 111.87), lo spigolo da (-23.67, -30.0, 111.72) a (-23.96, -30.47, 112.93)) (stato: sottomarino_t0)",
+		"nodo": "Tunnel_408/graniglia",
+		"pos": [
+			-23.71,
+			-30.06,
+			111.87
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "dentro ci passa Tunnel_432/mosaico, 4 cm sotto la sua superficie (per esempio in (-47.29, -30.06, 117.98), lo spigolo da (-46.7, -30.47, 118.27) a (-47.38, -30.0, 117.94)) (stato: sottomarino_t0)",
+		"nodo": "Tunnel_432/graniglia",
+		"pos": [
+			-47.29,
+			-30.06,
+			117.98
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"zona": "sottomarino"
+	}
+]

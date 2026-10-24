@@ -53,11 +53,11 @@ static func _relitto(sala: SalaSottomarino) -> void:
 		var st := MeshInstance3D.new()
 		st.name = "Staffa"
 		var bm := BoxMesh.new()
-		bm.size = Vector3(0.22, 0.07, spessa + 0.03)
+		bm.size = Vector3(0.22, 0.07, spessa + 0.006)
 		st.mesh = bm
 		st.material_override = sala._mat_ferro()
 		ancora.add_child(st)
-		# (attorno al fusto, a metà del suo spessore: entra 1,5 cm nel muro e copre il davanti del fusto)
+		# (attorno al fusto, a metà del suo spessore: tocca il muro, 3 mm dentro, e copre il davanti del fusto)
 		st.global_transform = Transform3D(ancora.global_basis.orthonormalized(),
 				ancora.global_position + Vector3.UP * alta * f)
 	# la lampada a gabbia sopra l'ancora: fra una lampada del tunnel e l'altra qui era buio

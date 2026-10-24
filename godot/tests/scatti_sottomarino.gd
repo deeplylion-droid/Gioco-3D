@@ -39,6 +39,8 @@ var SCATTI := {
 	"28_salvagente_vicino": [139.6, -0.95, 1.9, 140.6, -1.15, 1.8, 50.0],
 	"29_forziere": [148.0, 1.0, 1.6, 152.5, 1.0, 0.4, 70.0],
 	"30_palombaro": [184.0, 1.0, 1.6, 190.0, 1.0, 1.2, 70.0],
+	"31_portello_cerniere": [551.4, 0.05, 4.4, 552.6, -0.2, 3.5, 55.0],
+	"32_portello_oblo": [551.3, -0.1, 4.3, 552.3, 0.0, 4.3, 50.0],
 }
 ## Dove sta lei negli scatti che la mostrano (s lungo la strada).
 var LEI := {"18_lei_dietro": 40.0, "19_lei_di_lato": 40.0}

@@ -10,6 +10,7 @@ extends Node
 ##   risalita      la sala principale con le stanze della Risalita caricate subito
 ##   torre         la sala della torre da sola
 ##   inseguimento  la sala dell'inseguimento da sola
+##   tunnel        il tunnel del viaggio sottomarino da solo (SalaSottomarino, costruito tutto)
 ##   tutto         la sala con le stanze e la torre insieme (il massimo che può stare in memoria nella demo)
 ##   res://...     una scena o un modello qualunque, da solo (per esempio quelli che si caricano durante il gioco)
 ## Stampa: i totali, le parti (figli diretti) più pesanti e le texture più grandi, con chi le usa.
@@ -45,6 +46,14 @@ func _run() -> void:
 		for i in 60:
 			await get_tree().process_frame
 		radici.append(get_tree().current_scene)
+	if zona == "tunnel":
+		var sm := SalaSottomarino.new()
+		sm.name = "SalaSottomarino"
+		get_tree().root.add_child(sm)
+		sm.costruisci()
+		for i in 30:
+			await get_tree().process_frame
+		radici.append(sm)
 	if zona in ["torre", "inseguimento", "tutto"] or zona.begins_with("res://"):
 		var file := zona if zona.begins_with("res://") else (TORRE if zona != "inseguimento" else INSEGUIMENTO)
 		var n := (load(file) as PackedScene).instantiate()
