@@ -172,6 +172,9 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 			t0 = Time.get_ticks_usec()
 	costruita = true
 	await _riscalda()
+	# le forme del tunnel per i tentacoli di lei (FormeTunnel di grafica, circa 1 s di calcolo a pezzi)
+	if is_inside_tree():
+		await FormeTunnel.prepara_a_pezzi(self)
 
 
 ## Le viste del riscaldamento: [s, lato] (una per ambiente, ostacolo e arredo: ogni materiale almeno una volta).
@@ -1297,6 +1300,7 @@ func _bersaglio() -> Node3D:
 
 ## Lei comincia a inseguire da [param s] (la riemersione dalla presa, o la ripartenza da un checkpoint: 18 m dietro).
 func insegui_da(s: float) -> void:
+	_dai_forme_a_lei()
 	lei_s = s
 	lei_stato = Lei.INSEGUE
 	_lei_t = 0.0
@@ -1315,6 +1319,7 @@ func riemergi() -> void:
 	lei_stato = Lei.SALE
 	_lei_t = 0.0
 	lei_s = -1.0
+	_dai_forme_a_lei()
 	var p := punto(lei_s)
 	lei_tunnel.riemergi(Vector3(p.x, acqua, p.z), direzione(lei_s), acqua - fondo_a(lei_s))
 	lei_riemersa.emit()
@@ -1345,6 +1350,17 @@ func _prendi() -> void:
 		# (nei test chi insegue è finto: solo l'animazione)
 		lei_tunnel.stato = LeiTunnel.Stato.PRESA
 		lei_tunnel._anima("presa", 0.15)
+
+
+## Dà ai tentacoli morbidi di lei le forme del tunnel (una volta sola, prima che compaia).
+func _dai_forme_a_lei() -> void:
+	if _forme_date or lei_tunnel == null or lei_tunnel.morbidezza == null:
+		return
+	_forme_date = true
+	FormeTunnel.aggiungi(lei_tunnel.morbidezza, self)
+
+
+var _forme_date := false
 
 
 ## Mette lei sull'asse del canale a [member lei_s], sul pelo dell'acqua: la quota, il giro e l'inclinazione in curva

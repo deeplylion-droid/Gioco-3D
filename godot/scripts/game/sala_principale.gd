@@ -58,6 +58,8 @@ extends Node3D
 @export_file("*.tscn") var sala_sottomarino_scena := "res://scenes/sala/sottomarino/sala_sottomarino.tscn"
 var sala_sottomarino: Node3D
 var _sottomarino_in_caricamento := false
+## I materiali campione degli shader del tunnel (CampioniTunnel): tenuti da quando si comincia a caricarlo.
+var _campioni_tunnel: Array = []
 var _torre_liberata := false
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
@@ -580,6 +582,8 @@ func _on_fine_torre() -> void:
 func _precarica_sottomarino() -> void:
 	if sala_sottomarino or _sottomarino_in_caricamento or Game.uscendo:
 		return
+	if _campioni_tunnel.is_empty():
+		_campioni_tunnel = CampioniTunnel.carica()
 	if Game.carica_in_thread(sala_sottomarino_scena, "PackedScene") == OK:
 		_sottomarino_in_caricamento = true
 
@@ -642,6 +646,7 @@ func _ripristina_sottomarino() -> void:
 	if portone and portone.has_method(&"resta_chiuso"):
 		portone.call(&"resta_chiuso")
 	_scarica_ambienti()
+	_campioni_tunnel = CampioniTunnel.carica()
 	_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, false)
 	sala_sottomarino.call(&"chiudi_porta_bacino")
 	var cp := String(GameState.snapshot.get("checkpoint", ""))
