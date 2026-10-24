@@ -44,7 +44,7 @@ func _frames(n: int) -> void:
 
 
 func _lascia() -> void:
-	for a in [&"move_forward", &"move_back", &"move_left", &"move_right", &"spray", &"sprint", &"jump"]:
+	for a in [&"move_forward", &"move_back", &"move_left", &"move_right", &"spray", &"sprint", &"jump", &"crouch"]:
 		if InputMap.has_action(a):
 			Input.action_release(a)
 
@@ -69,6 +69,83 @@ func _run() -> void:
 			break
 		await get_tree().process_frame
 
+	# (con PASSO=7 nell'ambiente si parte dalla galleria: per provarla senza rifare SB1)
+	if OS.get_environment("PASSO") == "":
+		await _passi_1_6()
+	var t0 := 0
+	print("7. La galleria di servizio")
+	var gal: Dictionary = sott.ostacoli.filter(func(o): return o["tipo"] == "galleria")[0]
+	var s_in: float = float(gal["s"]) - SalaSottomarino.GALLERIA_BOCCA - 2.0
+	var st := sott.punto(s_in) - sott.destra(s_in) * (sott.muro - 0.6)
+	p.teleport(Vector3(st.x, sott.piano + 0.05, st.z))
+	await _frames(10)
+	var accovacciato := false
+	Input.action_press(&"move_forward")
+	t0 = Time.get_ticks_msec()
+	var s_p := s_in
+	var fine_g: float = float(gal["s"]) + float(gal["lungo"]) + SalaSottomarino.GALLERIA_BOCCA + 1.5
+	var bocca0: float = float(gal["s"]) - SalaSottomarino.GALLERIA_BOCCA * 0.5
+	while s_p < fine_g and Time.get_ticks_msec() - t0 < 30000:
+		s_p = float(sott.proietta_vicino(p.global_position, s_p)[0])
+		# (prima verso la bocca d'entrata, poi lungo la galleria fino a metà della bocca d'uscita, poi sulla banchina)
+		var u_gal := sott.muro + sott.spessore + SalaSottomarino.GALLERIA_LARGA * 0.5
+		var bocca1: float = float(gal["s"]) + float(gal["lungo"]) + SalaSottomarino.GALLERIA_BOCCA * 0.5
+		var s_q := s_p + 2.0
+		var u := sott.muro - 0.6
+		if s_p < bocca0 - 0.3:
+			s_q = bocca0
+			u = u_gal
+		elif s_p < bocca1 - 0.3:
+			s_q = minf(s_p + 2.0, bocca1)
+			u = u_gal
+		var q := sott.punto(s_q) + sott.destra(s_q) * float(gal["lato"]) * u
+		p.look_at_point(Vector3(q.x, p.global_position.y + 1.0, q.z))
+		p.set_look(p.yaw, 0.0)
+		# (davanti alla bocca ci si accovaccia col tasto, come farebbe il giocatore; dentro resta accovacciato da solo)
+		if sott.in_tubo(p.global_position):
+			Input.action_release(&"crouch")
+			if p.is_crouching:
+				accovacciato = true
+		elif s_p > bocca0 - 1.5 and s_p < bocca0 + 1.0:
+			Input.action_press(&"crouch")
+		if OS.get_environment("PASSO") != "" and Engine.get_physics_frames() % 30 == 0:
+			print("    s %.2f lato %.2f y %.2f tubo %s acc %s" % [s_p, float(sott.proietta_vicino(p.global_position, s_p)[1]), p.global_position.y, sott.in_tubo(p.global_position), p.is_crouching])
+		await _frames(1)
+	_lascia()
+	check(s_p >= fine_g, "la galleria di servizio si passa (s %.1f di %.1f)" % [s_p, fine_g])
+	check(accovacciato, "nella galleria si sta accovacciati")
+
+	print("8. Il portello")
+	var fine := [false]
+	sott.fine_demo.connect(func(): fine[0] = true)
+	var L := sott.lunghezza()
+	var cam := sott.punto(L) + sott.direzione(L) * 1.6
+	p.teleport(Vector3(cam.x, sott.piano + SalaSottomarino.SOGLIA + 0.05, cam.z))
+	await _frames(10)
+	var verso_porta := sott.punto(L) + Vector3.UP * (sott.piano - sott.acqua + SalaSottomarino.SOGLIA + 1.0)
+	p.look_at_point(verso_porta)
+	await _frames(5)
+	if InputMap.has_action(&"interact"):
+		Input.action_press(&"interact")
+		await _frames(3)
+		Input.action_release(&"interact")
+	t0 = Time.get_ticks_msec()
+	while not fine[0] and Time.get_ticks_msec() - t0 < 10000:
+		await _frames(1)
+	check(fine[0], "dalla camera stagna con E si chiude il portello, poi la fine")
+	_fine()
+
+
+func _fine() -> void:
+	_lascia()
+	print("")
+	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
+	get_tree().quit(1 if _failed > 0 else 0)
+
+
+
+## I passi 1-6: SB1, la porta, la riemersione, la corsa, il guado.
+func _passi_1_6() -> void:
 	print("1. SB1")
 	var finito_sb1 := [false]
 	ins.sb1_finito.connect(func(): finito_sb1[0] = true)
@@ -164,64 +241,3 @@ func _run() -> void:
 	_lascia()
 	check(absf(p.global_position.y - sott.piano) < 0.15, "dal gradino continuo si risale sulla banchina (y %.2f)" % p.global_position.y)
 
-	print("7. La galleria di servizio")
-	var gal: Dictionary = sott.ostacoli.filter(func(o): return o["tipo"] == "galleria")[0]
-	var s_in: float = float(gal["s"]) - SalaSottomarino.GALLERIA_BOCCA - 2.0
-	var st := sott.punto(s_in) - sott.destra(s_in) * (sott.muro - 0.6)
-	p.teleport(Vector3(st.x, sott.piano + 0.05, st.z))
-	await _frames(10)
-	var accovacciato := false
-	Input.action_press(&"move_forward")
-	t0 = Time.get_ticks_msec()
-	var s_p := s_in
-	var fine_g: float = float(gal["s"]) + float(gal["lungo"]) + SalaSottomarino.GALLERIA_BOCCA + 1.5
-	while s_p < fine_g and Time.get_ticks_msec() - t0 < 30000:
-		s_p = float(sott.proietta_vicino(p.global_position, s_p)[0])
-		# (prima verso la bocca d'entrata, poi lungo la galleria fino a metà della bocca d'uscita, poi sulla banchina)
-		var u_gal := sott.muro + sott.spessore + SalaSottomarino.GALLERIA_LARGA * 0.5
-		var bocca0: float = float(gal["s"]) - SalaSottomarino.GALLERIA_BOCCA * 0.5
-		var bocca1: float = float(gal["s"]) + float(gal["lungo"]) + SalaSottomarino.GALLERIA_BOCCA * 0.5
-		var s_q := s_p + 2.0
-		var u := sott.muro - 0.6
-		if s_p < bocca0 - 0.3:
-			s_q = bocca0
-			u = u_gal
-		elif s_p < bocca1 - 0.3:
-			s_q = minf(s_p + 2.0, bocca1)
-			u = u_gal
-		var q := sott.punto(s_q) + sott.destra(s_q) * float(gal["lato"]) * u
-		p.look_at_point(Vector3(q.x, p.global_position.y + 1.0, q.z))
-		p.set_look(p.yaw, 0.0)
-		if sott.in_tubo(p.global_position) and p.is_crouching:
-			accovacciato = true
-		await _frames(1)
-	_lascia()
-	check(s_p >= fine_g, "la galleria di servizio si passa (s %.1f di %.1f)" % [s_p, fine_g])
-	check(accovacciato, "nella galleria si sta accovacciati")
-
-	print("8. Il portello")
-	var fine := [false]
-	sott.fine_demo.connect(func(): fine[0] = true)
-	var L := sott.lunghezza()
-	var cam := sott.punto(L) + sott.direzione(L) * 1.6
-	p.teleport(Vector3(cam.x, sott.piano + SalaSottomarino.SOGLIA + 0.05, cam.z))
-	await _frames(10)
-	var verso_porta := sott.punto(L) + Vector3.UP * (sott.piano - sott.acqua + SalaSottomarino.SOGLIA + 1.0)
-	p.look_at_point(verso_porta)
-	await _frames(5)
-	if InputMap.has_action(&"interact"):
-		Input.action_press(&"interact")
-		await _frames(3)
-		Input.action_release(&"interact")
-	t0 = Time.get_ticks_msec()
-	while not fine[0] and Time.get_ticks_msec() - t0 < 10000:
-		await _frames(1)
-	check(fine[0], "dalla camera stagna con E si chiude il portello, poi la fine")
-	_fine()
-
-
-func _fine() -> void:
-	_lascia()
-	print("")
-	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])
-	get_tree().quit(1 if _failed > 0 else 0)
