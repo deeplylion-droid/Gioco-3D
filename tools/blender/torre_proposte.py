@@ -370,8 +370,10 @@ def balconata(c, x0, x1, y, z, profondita=1.6):
     c.scatola((xm - 0.85, y - 0.1, z + 2.2), (xm + 0.85, y, z + 2.35), 'metallo')
 
 
-def tubo_muro(c, punti, r=0.14, mat='metallo'):
-    """Tubo di servizio lungo i muri, con le fascette rosse ogni tanto e le staffe al muro."""
+def tubo_muro(c, punti, r=0.14, mat='metallo', muri=None):
+    """Tubo di servizio lungo i muri, con le fascette rosse ogni tanto e le staffe al muro.
+    muri = (x0, x1, y0, y1) dell'interno della sala (di base quella della torre)."""
+    mx0, mx1, my0, my1 = muri or (XI0, XI1, YI0, YI1)
     c.tubo(punti, r, mat, seg=12)
     for i in range(len(punti) - 1):
         a, b = Vector(punti[i]), Vector(punti[i + 1])
@@ -381,9 +383,13 @@ def tubo_muro(c, punti, r=0.14, mat='metallo'):
         n = max(1, int((b - a).length / 2.5))
         for k in range(n + 1):
             q = a.lerp(b, (k + 0.5) / (n + 1))
-            muri = [(q.x - XI0, Vector((XI0 - 0.05, q.y, q.z))), (XI1 - q.x, Vector((XI1 + 0.05, q.y, q.z))),
-                    (q.y - YI0, Vector((q.x, YI0 - 0.05, q.z))), (YI1 - q.y, Vector((q.x, YI1 + 0.05, q.z)))]
-            dist, w = min(muri, key=lambda m_: m_[0])
+            # (solo i muri da questa parte: nell'inseguimento coi muri della torre una staffa attraversava la vasca)
+            vicini = [m_ for m_ in ((q.x - mx0, Vector((mx0 - 0.05, q.y, q.z))), (mx1 - q.x, Vector((mx1 + 0.05, q.y, q.z))),
+                                    (q.y - my0, Vector((q.x, my0 - 0.05, q.z))), (my1 - q.y, Vector((q.x, my1 + 0.05, q.z))))
+                      if m_[0] >= 0]
+            if not vicini:
+                continue
+            dist, w = min(vicini, key=lambda m_: m_[0])
             if dist < 1.0:
                 c.cilindro(q, w, 0.035, 'metallo', seg=8)
                 c.anello(q, (b - a).normalized(), r, r + 0.025, 0.05, 'metallo', seg=14)

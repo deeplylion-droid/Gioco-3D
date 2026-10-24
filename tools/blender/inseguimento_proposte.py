@@ -716,7 +716,8 @@ def versione_A(mats):
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y0 + 0.4, -20.0, 1)
     passerella_muro(c, X0 + 1.0, x1 - 1.0, y1 - 0.4, -24.0, -1)
     for x in range(44, 78, 7):
-        P.tubo_muro(c, [(x, y0 + 0.35, z0 if GIOCO else z0 + 0.4), (x, y0 + 0.35, z1 + 0.2 if GIOCO else z1 - 0.5)], r=0.12)
+        P.tubo_muro(c, [(x, y0 + 0.35, z0 if GIOCO else z0 + 0.4), (x, y0 + 0.35, z1 + 0.2 if GIOCO else z1 - 0.5)], r=0.12,
+                    muri=(X0, x1, y0, y1))
     # catene appese dal soffitto (con il gancio)
     for (x, y) in ((58.0, 15.0), (66.0, 18.0), (48.0, 22.0)):
         zb_ = -17.0 - rnd.uniform(0, 3)
