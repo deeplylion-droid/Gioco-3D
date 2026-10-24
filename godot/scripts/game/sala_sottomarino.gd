@@ -28,6 +28,19 @@ const PORTA_S := 2.0
 ## La presa d'acqua profonda in testa: il canale scende fino a qui (lei sale da lì sotto).
 const PRESA_FONDO := -36.0
 const PRESA_FINO := 6.0
+## L'approdo (scelta 11A dell'utente): nel muro di fondo la porta del portello sta in alto, a [constant SOGLIA] sopra
+## le banchine, con l'oblò all'altezza degli occhi di lei che fluttua sopra il canale; davanti, il ballatoio profondo
+## [constant BALLATOIO] con la scala dalla banchina sinistra. L'acqua resta al ginocchio fino in fondo (da lì si esce
+## coi gradini).
+const SOGLIA := 3.0
+const BALLATOIO := 1.0
+const PORTELLO_LARGO := 1.3
+const PORTELLO_ALTO := 1.8
+const PORTELLO_APERTO := 95.0
+## L'oblò e il volantino sul battente (dalla soglia).
+const OBLO_Y := 1.3
+const OBLO_R := 0.2
+const VOLANTINO_Y := 0.75
 ## I gradini per risalire dal canale: ogni quanti metri, alternati sui due lati.
 const GRADINI_OGNI := 12.0
 ## Le gallerie di servizio (i passaggi bassi, scelta 4C dell'utente): dietro il muro, larghe [constant GALLERIA_LARGA]
@@ -282,7 +295,7 @@ func _aperture() -> Array:
 ## del canale, le sue pareti, il piano delle banchine, i muri e la volta a mezza ellisse; dove la banchina è crollata
 ## il fondo arriva fino al muro.
 func _profilo(s: float, m: float) -> Array:
-	var f := fondo if s >= PRESA_FINO else lerpf(PRESA_FONDO, fondo, clampf((s + 0.5) / (PRESA_FINO + 0.5), 0.0, 1.0))
+	var f := fondo_a(s)
 	var c := canale
 	var mu := muro
 	var sx := _lato(m, -1.0)
@@ -479,7 +492,7 @@ func _acqua(nodo: Node3D, s0: float, s1: float) -> void:
 		var t2 := minf(s2 + 4.0, s1)
 		var m := (s2 + t2) * 0.5
 		var c := punto(m)
-		var fondo_qui := fondo if m >= PRESA_FINO else PRESA_FONDO
+		var fondo_qui := minf(fondo_a(s2), fondo_a(t2))
 		var wl := muro if (_lato(s2 + 0.01, -1.0)["crollo"] or _lato(t2 - 0.01, -1.0)["crollo"]) else canale
 		var wr := muro if (_lato(s2 + 0.01, 1.0)["crollo"] or _lato(t2 - 0.01, 1.0)["crollo"]) else canale
 		var vol := WaterVolume.new()
@@ -526,34 +539,337 @@ func _testa() -> void:
 	_corpo(nodo, facce)
 
 
-## La fine del tunnel, dopo l'approdo: per ora un muro (il portello viene col finale).
+## Il fondo del canale a [param s]: la presa profonda in testa (lei sale da lì), poi l'acqua al ginocchio.
+func fondo_a(s: float) -> float:
+	if s < PRESA_FINO:
+		return lerpf(PRESA_FONDO, fondo, clampf((s + 0.5) / (PRESA_FINO + 0.5), 0.0, 1.0))
+	return fondo
+
+
+## La fine del tunnel: il muro di fondo con la porta del portello in alto (la soglia a [constant SOGLIA] sopra le
+## banchine), il ballatoio davanti con la scala dalla banchina sinistra, la camera stagna dietro, il portello col
+## volantino.
 func _fine() -> void:
 	var nodo := Node3D.new()
-	nodo.name = "Fine"
+	nodo.name = "Approdo"
 	add_child(nodo)
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st := {"mosaico": SurfaceTool.new(), "graniglia": SurfaceTool.new()}
+	for k in st:
+		(st[k] as SurfaceTool).begin(Mesh.PRIMITIVE_TRIANGLES)
 	var facce := PackedVector3Array()
-	var s := lunghezza()
-	var p := punto(s)
-	var r := destra(s)
-	var d := direzione(s)
-	var pts := [Vector2(-muro, fondo), Vector2(muro, fondo), Vector2(muro, imposta)]
-	var seg := 12
-	for k in range(1, seg):
-		var a := PI * float(k) / seg
-		pts.append(Vector2(cos(a) * muro, imposta + sin(a) * (chiave - imposta)))
-	pts.append(Vector2(-muro, imposta))
-	var tri := Geometry2D.triangulate_polygon(PackedVector2Array(pts))
-	for k in range(0, tri.size(), 3):
-		var t := [_al(p, r, pts[tri[k]]), _al(p, r, pts[tri[k + 1]]), _al(p, r, pts[tri[k + 2]])]
-		_tri(st, t, -d)
-		facce.append_array(PackedVector3Array(t))
-	var mi := MeshInstance3D.new()
-	mi.mesh = st.commit()
-	mi.material_override = mat_mosaico
-	nodo.add_child(mi)
+	var L := lunghezza()
+	var p := punto(L)
+	var r := destra(L)
+	var d := direzione(L)
+	var sg := piano + SOGLIA
+	var cima := sg + PORTELLO_ALTO
+	var mz := PORTELLO_LARGO * 0.5
+	# il muro di fondo: la sagoma della sezione (fondo, muri, volta) meno la porta. Tagliata in due a metà della porta,
+	# così ogni metà ha la porta sul bordo (niente buchi da triangolare)
+	var sagoma := [Vector2(-muro, fondo), Vector2(muro, fondo), Vector2(muro, imposta)]
+	for k in range(1, 24):
+		var a := PI * float(k) / 24
+		sagoma.append(Vector2(cos(a) * muro, imposta + sin(a) * (chiave - imposta)))
+	sagoma.append(Vector2(-muro, imposta))
+	var porta := PackedVector2Array([Vector2(-mz, sg), Vector2(mz, sg), Vector2(mz, cima), Vector2(-mz, cima)])
+	for meta: float in [-1.0, 1.0]:
+		var mezza := PackedVector2Array([Vector2(0, fondo - 1.0), Vector2(meta * (muro + 1.0), fondo - 1.0),
+				Vector2(meta * (muro + 1.0), chiave + 1.0), Vector2(0, chiave + 1.0)])
+		for parte in Geometry2D.intersect_polygons(PackedVector2Array(sagoma), mezza):
+			for poly in Geometry2D.clip_polygons(parte, porta):
+				if Geometry2D.is_polygon_clockwise(poly) and poly.size() < 3:
+					continue
+				var tri := Geometry2D.triangulate_polygon(poly)
+				for k in range(0, tri.size(), 3):
+					var t := [_al(p, r, poly[tri[k]]), _al(p, r, poly[tri[k + 1]]), _al(p, r, poly[tri[k + 2]])]
+					_tri(st["mosaico"], t, -d)
+					facce.append_array(PackedVector3Array(t))
+	# la camera stagna dietro il muro: pavimento alla soglia, soffitto, due fianchi e il fondo
+	var cl := 3.0
+	var ca := 2.5
+	var cm := 1.4
+	var c0 := p
+	var c1 := p + d * cl
+	var cam := [
+		[[_al(c0, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg))], "graniglia", Vector3.UP],
+		[[_al(c0, r, Vector2(-cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", Vector3.DOWN],
+		[[_al(c0, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", r],
+		[[_al(c0, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", -r],
+		[[_al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca))], "mosaico", -d],
+		# (il muro dalla parte della camera, attorno alla porta)
+		[[_al(c0, r, Vector2(-cm, sg)), _al(c0, r, Vector2(-mz, sg)), _al(c0, r, Vector2(-mz, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", d],
+		[[_al(c0, r, Vector2(mz, sg)), _al(c0, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(mz, sg + ca))], "mosaico", d],
+		[[_al(c0, r, Vector2(-mz, cima)), _al(c0, r, Vector2(mz, cima)), _al(c0, r, Vector2(mz, sg + ca)), _al(c0, r, Vector2(-mz, sg + ca))], "mosaico", d],
+	]
+	for pz in cam:
+		_quad(st[pz[1]], pz[0], pz[2])
+		_facce_quad(facce, pz[0])
+	# il ballatoio davanti al muro, dalla scala alla porta (spesso 20 cm), e la scala lungo il muro sinistro
+	var b0 := p - d * BALLATOIO
+	var bu0 := -muro
+	var bu1 := mz + 0.2
+	var ball := [
+		[[_al(b0, r, Vector2(bu0, sg)), _al(p, r, Vector2(bu0, sg)), _al(p, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu1, sg))], Vector3.UP],
+		[[_al(b0, r, Vector2(bu0, sg - 0.2)), _al(p, r, Vector2(bu0, sg - 0.2)), _al(p, r, Vector2(bu1, sg - 0.2)), _al(b0, r, Vector2(bu1, sg - 0.2))], Vector3.DOWN],
+		[[_al(b0, r, Vector2(bu0, sg - 0.2)), _al(b0, r, Vector2(bu1, sg - 0.2)), _al(b0, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu0, sg))], -d],
+		[[_al(b0, r, Vector2(bu1, sg - 0.2)), _al(p, r, Vector2(bu1, sg - 0.2)), _al(p, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu1, sg))], r],
+	]
+	for pz in ball:
+		_quad(st["graniglia"], pz[0], pz[1])
+		_facce_quad(facce, pz[0])
+	var gradini := 12
+	var alzata := SOGLIA / gradini
+	for k in gradini:
+		var sk := L - BALLATOIO - (gradini - k) * 0.32 + 0.16
+		var pk := punto(sk)
+		var rk := destra(sk)
+		var alto := alzata * (k + 1)
+		_scatola(st["graniglia"], facce, _al(pk, rk, Vector2(-muro + 0.5, piano + alto * 0.5)), rk, direzione(sk), Vector3(1.0, alto, 0.32))
+	# il corrimano della scala e del ballatoio dalla parte del vuoto (la vasca): pali e tubo
+	var corr := _mat_ferro()
+	for k in range(0, gradini + 1, 2):
+		var sk := L - BALLATOIO - (gradini - k) * 0.32
+		var pk := punto(sk)
+		var base := _al(pk, destra(sk), Vector2(-muro + 0.95, piano + alzata * float(k)))
+		_palo(nodo, base, base + Vector3.UP * 1.0, 0.025, corr)
+	var p_ball := [_al(b0, r, Vector2(-muro + 0.95, sg)), _al(b0, r, Vector2(-mz - 0.6, sg))]
+	for q in p_ball:
+		_palo(nodo, q, q + Vector3.UP * 1.0, 0.025, corr)
+	_palo(nodo, p_ball[0] + Vector3.UP * 1.0, p_ball[1] + Vector3.UP * 1.0, 0.025, corr)
+	var su0 := _al(punto(L - BALLATOIO - gradini * 0.32), destra(L - BALLATOIO - gradini * 0.32), Vector2(-muro + 0.95, piano + 1.0))
+	_palo(nodo, su0, p_ball[0] + Vector3.UP * 1.0, 0.025, corr)
+	for k in st:
+		var mi := MeshInstance3D.new()
+		mi.name = k
+		mi.mesh = (st[k] as SurfaceTool).commit()
+		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
+		nodo.add_child(mi)
 	_corpo(nodo, facce)
+	_portello(nodo, p, r, d, sg)
+	# le luci: la lampada sopra il portello dalla parte del tunnel, e una piccola nella camera sul volantino
+	_lampada(nodo, L - BALLATOIO - 2.0, -1.0, sg + 2.2, 4.0)
+	var lc := OmniLight3D.new()
+	lc.light_color = Color(1.0, 0.86, 0.66)
+	lc.light_energy = 1.6
+	lc.omni_range = 4.0
+	nodo.add_child(lc)
+	lc.global_position = _al(p + d * 1.6, r, Vector2(0.0, sg + 2.2))
+
+
+## Un palo (o un tubo) di ferro da [param a] a [param b].
+func _palo(nodo: Node3D, a: Vector3, b: Vector3, raggio: float, m: Material) -> void:
+	var mi := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = raggio
+	cm.bottom_radius = raggio
+	cm.height = a.distance_to(b)
+	cm.radial_segments = 10
+	mi.mesh = cm
+	mi.material_override = m
+	nodo.add_child(mi)
+	var y := (b - a).normalized()
+	var x := y.cross(Vector3.FORWARD if absf(y.dot(Vector3.FORWARD)) < 0.9 else Vector3.RIGHT).normalized()
+	mi.global_transform = Transform3D(Basis(x, y, x.cross(y)), (a + b) * 0.5)
+
+
+## Il portello da sottomarino nella porta in alto del muro di fondo: il battente d'acciaio con l'oblò (vetro vero:
+## da dentro la vedi), aperto contro il muro dalla parte del tunnel; il volantino dalla parte della camera,
+## illuminato. Dalla camera con E si chiude: il battente si chiude, il volantino gira (in senso orario, per
+## serrare) restando attaccato al battente, e lei ci sbatte contro (vedi [method _finale]).
+func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> void:
+	var mz := PORTELLO_LARGO * 0.5
+	var acciaio := _mat("acciaio_portello", Color(0.32, 0.36, 0.38), 0.45, 0.8)
+	# la cornice sul muro dalla parte del tunnel
+	var f_st := SurfaceTool.new()
+	f_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var f_facce := PackedVector3Array()
+	var spor := 0.08
+	for q in [[Vector2(0, sg + PORTELLO_ALTO + 0.08), Vector3(PORTELLO_LARGO + 0.32, 0.16, spor)],
+			[Vector2(-mz - 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)],
+			[Vector2(mz + 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)]]:
+		var v: Vector2 = q[0]
+		_scatola(f_st, f_facce, _al(p - d * spor * 0.5, r, v), r, d, q[1])
+	var fm := MeshInstance3D.new()
+	fm.mesh = f_st.commit()
+	fm.material_override = acciaio
+	nodo.add_child(fm)
+	_corpo(nodo, f_facce)
+	# il battente: un perno sul lato sinistro della porta; il battente gira attorno alla verticale del perno
+	var perno := Node3D.new()
+	perno.name = "PortelloPerno"
+	nodo.add_child(perno)
+	perno.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(-mz, sg)))
+	# (il perno a sinistra della porta guardando dal tunnel: il battente si apre verso la camera, contro il suo
+	# fianco sinistro, e non ingombra il ballatoio)
+	var battente := CSGCombiner3D.new()
+	battente.name = "Battente"
+	battente.use_collision = true
+	battente.collision_layer = Layers.WORLD
+	perno.add_child(battente)
+	var lastra := CSGBox3D.new()
+	lastra.size = Vector3(PORTELLO_LARGO - 0.04, PORTELLO_ALTO - 0.04, 0.1)
+	lastra.position = Vector3(mz, PORTELLO_ALTO * 0.5, 0.0)
+	lastra.material = acciaio
+	battente.add_child(lastra)
+	var buco := CSGCylinder3D.new()
+	buco.radius = OBLO_R
+	buco.height = 0.3
+	buco.sides = 24
+	buco.operation = CSGShape3D.OPERATION_SUBTRACTION
+	buco.rotation_degrees.x = 90
+	buco.position = Vector3(mz, OBLO_Y, 0.0)
+	battente.add_child(buco)
+	var vetro := MeshInstance3D.new()
+	var vm := CylinderMesh.new()
+	vm.top_radius = OBLO_R
+	vm.bottom_radius = OBLO_R
+	vm.height = 0.02
+	vm.radial_segments = 24
+	vetro.mesh = vm
+	vetro.material_override = _mat_vetro_oblo()
+	vetro.rotation_degrees.x = 90
+	vetro.position = Vector3(mz, OBLO_Y, 0.0)
+	perno.add_child(vetro)
+	for lato: float in [-1.0, 1.0]:
+		var an := MeshInstance3D.new()
+		var tm := TorusMesh.new()
+		tm.inner_radius = OBLO_R - 0.01
+		tm.outer_radius = OBLO_R + 0.07
+		an.mesh = tm
+		an.material_override = _mat_ottone()
+		an.rotation_degrees.x = 90
+		an.position = Vector3(mz, OBLO_Y, lato * 0.055)
+		perno.add_child(an)
+	# il volantino dalla parte della camera (z negativo del perno: verso la camera), sotto l'oblò, illuminato
+	var volantino := Node3D.new()
+	volantino.name = "Volantino"
+	volantino.position = Vector3(mz, VOLANTINO_Y, -0.11)
+	perno.add_child(volantino)
+	var ruota := MeshInstance3D.new()
+	var rm := TorusMesh.new()
+	rm.inner_radius = 0.22
+	rm.outer_radius = 0.27
+	ruota.mesh = rm
+	ruota.material_override = _mat_volantino()
+	ruota.rotation_degrees.x = 90
+	volantino.add_child(ruota)
+	for k in 4:
+		var raggio := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(0.025, 0.46, 0.025)
+		raggio.mesh = bm
+		raggio.material_override = _mat_volantino()
+		raggio.rotation_degrees.z = 45.0 * k
+		volantino.add_child(raggio)
+	var mozzo := MeshInstance3D.new()
+	var mm := CylinderMesh.new()
+	mm.top_radius = 0.05
+	mm.bottom_radius = 0.05
+	mm.height = 0.12
+	mozzo.mesh = mm
+	mozzo.material_override = acciaio
+	mozzo.rotation_degrees.x = 90
+	mozzo.position.z = 0.05
+	volantino.add_child(mozzo)
+	# aperto: il battente contro il muro dalla parte del tunnel
+	perno.rotation_degrees.y += PORTELLO_APERTO
+	_perno = perno
+	_volantino = volantino
+	_perno_chiuso = perno.global_transform.basis.rotated(Vector3.UP, deg_to_rad(-PORTELLO_APERTO))
+	# l'interazione: nella camera, guardando la porta
+	var usa := Interactable.new()
+	usa.name = "ChiudiPortello"
+	usa.prompt = "Chiudi"
+	usa.one_shot = true
+	var cs := CollisionShape3D.new()
+	var bx := BoxShape3D.new()
+	bx.size = Vector3(PORTELLO_LARGO, PORTELLO_ALTO, 0.6)
+	cs.shape = bx
+	usa.add_child(cs)
+	nodo.add_child(usa)
+	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.35, r, Vector2(0.0, sg + PORTELLO_ALTO * 0.5)))
+	usa.interacted.connect(func(_by): chiudi_portello())
+	_usa_portello = usa
+
+
+var _perno: Node3D
+var _volantino: Node3D
+var _perno_chiuso: Basis
+var _usa_portello: Interactable
+var finito := false
+signal fine_demo
+
+
+func _mat_vetro_oblo() -> StandardMaterial3D:
+	if not _materiali.has("vetro_oblo"):
+		var m := StandardMaterial3D.new()
+		m.albedo_color = Color(0.6, 0.8, 0.85, 0.18)
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.roughness = 0.05
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_materiali["vetro_oblo"] = m
+	return _materiali["vetro_oblo"]
+
+
+## Il volantino illuminato: vernice rossa con un filo di luce (si trova subito al buio).
+func _mat_volantino() -> StandardMaterial3D:
+	return _mat("volantino", Color(0.75, 0.1, 0.08), 0.45, 0.3, Color(0.9, 0.15, 0.1), 0.6)
+
+
+## Il giocatore nella camera stagna chiude il portello (scelta 11A): il battente si chiude, il volantino gira per
+## serrarlo restando attaccato, poi lei ci sbatte contro con la faccia sull'oblò e la bocca spalancata; nero e
+## "FINE DELLA DEMO" ([signal fine_demo]).
+func chiudi_portello() -> void:
+	if finito:
+		return
+	finito = true
+	var tw := create_tween()
+	var da := _perno.global_transform.basis
+	tw.tween_method(func(k: float):
+		_perno.global_transform.basis = da.slerp(_perno_chiuso, k), 0.0, 1.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func(): Audio.suona(&"cancello_fine", _volantino.global_position, 0.0, 0.7))
+	# il volantino: tre quarti di giro in senso orario visto da chi lo gira (dalla camera, che guarda lungo il +z del
+	# perno: lì una rotazione positiva attorno a z si vede oraria)
+	tw.tween_property(_volantino, "rotation:z", TAU * 0.75, 1.3).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(_finale)
+
+
+## Lei sbatte contro il portello: arriva dal fondo della vasca dell'approdo e ci schiaccia la faccia sull'oblò.
+func _finale() -> void:
+	if lei:
+		lei_stato = Lei.PRESA     # (ferma: la muove il finale)
+		lei.visible = true
+		var oblo := _perno.global_transform * Vector3(PORTELLO_LARGO * 0.5, OBLO_Y, -0.06)
+		var d := direzione(lunghezza())
+		var occhio_rel := (lei.get_eye_position() - lei.global_position) if lei.get_eye_position() != Vector3.ZERO else Vector3.UP * 3.4
+		lei.global_transform.basis = Basis.looking_at(d, Vector3.UP, true)
+		occhio_rel = lei.get_eye_position() - lei.global_position if lei.get_eye_position() != Vector3.ZERO else occhio_rel
+		var arrivo := oblo - d * 0.35 - occhio_rel
+		var partenza := arrivo - d * 5.0 - Vector3.UP * 2.0
+		lei.global_position = partenza
+		_anima_lei(&"inseguimento/presa", 0.1)
+		lei.attacca(0.3, &"")
+		var tw := create_tween()
+		tw.tween_property(lei, "global_position", arrivo, 0.35).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+		tw.tween_callback(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6))
+		tw.tween_interval(2.2)
+		tw.tween_callback(_nero)
+	else:
+		_nero()
+
+
+func _nero() -> void:
+	var cl := CanvasLayer.new()
+	cl.layer = 80
+	var fade := ColorRect.new()
+	fade.color = Color(0, 0, 0, 0)
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cl.add_child(fade)
+	add_child(cl)
+	var tw := create_tween()
+	tw.tween_property(fade, "color:a", 1.0, 1.2)
+	tw.tween_callback(func(): fine_demo.emit())
 
 
 ## I gradini per risalire dal canale sulle banchine: quattro gradini da 23 cm contro la parete del canale, ogni
@@ -568,7 +884,7 @@ func _gradini() -> void:
 	var s := PRESA_FINO + 4.0
 	var lato := 1.0
 	var alzata := (piano - fondo) / 4.0
-	while s < lunghezza() - 3.0:
+	while s < lunghezza() - BALLATOIO - 6.0:
 		var p := punto(s)
 		var r := destra(s)
 		var d := direzione(s)
@@ -903,7 +1219,7 @@ func _process(delta: float) -> void:
 			pass
 		Lei.INSEGUE:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
-			lei_s = minf(lei_s + v * delta, _s_bersaglio - 0.5)
+			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - BALLATOIO - 1.5))
 			gap = _s_bersaglio - lei_s
 			if gap < distanza_morsi:
 				_morso_tra -= delta

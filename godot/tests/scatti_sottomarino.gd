@@ -28,6 +28,9 @@ var SCATTI := {
 	"17_vetrina": [476.0, -1.0, 1.6, 484.5, -1.0, 0.8, 70.0],
 	"18_lei_dietro": [52.0, -1.0, 1.6, 40.0, 0.0, 2.8, 70.0],
 	"19_lei_di_lato": [40.0, 1.0, 1.6, 40.0, 0.0, 2.8, 80.0],
+	"20_approdo": [538.0, -1.0, 1.6, 552.3, -0.1, 3.4, 75.0],
+	"21_ballatoio": [550.8, -0.9, 4.6, 552.3, 0.0, 4.0, 75.0],
+	"22_camera_volantino": [554.6, 0.0, 4.6, 552.3, 0.1, 3.7, 75.0],
 }
 ## Dove sta lei negli scatti che la mostrano (s lungo la strada).
 var LEI := {"18_lei_dietro": 40.0, "19_lei_di_lato": 40.0}
