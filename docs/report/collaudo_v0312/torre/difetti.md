@@ -32,6 +32,19 @@ Le 8 lampade rosse delle bocche chiuse (`@306`…`@324`) stanno sulla targa a st
 | 3 | Ancora aperto dal collaudo di prima: i pali rossi coi led verdi degli imbocchi (`Luci/LedImbocco`, `Luci/@MultiMeshInstance3D@276`…`@300`) | per esempio `LedImbocco_1`, `_10`, `_11`, `@300_9`…`11`, `@288_0`…`2` | Sotto la fila di led il palo si stringe a punta e finisce 25-30 cm sopra la grata, accanto al palo rosso che invece arriva alla grata. Si vede dove il giocatore entra negli scivoli. Va bene se è voluto, altrimenti va portato fino alla grata. | `fogli/torre_vedute_04.jpg`, `_06.jpg`, `_09.jpg` |
 | 4 | Noto dal collaudo di prima: il tubo lungo inclinato nella vasca dell'inseguimento | vicino a 43,5, -33,4, -3,5 | C'è ancora (scatti `ti052_e`, `ti052_s`): sta nell'acqua lungo il fondo. | `fogli/torre_giro_09.jpg` |
 
+## Collisioni nuove degli arredi dell'inseguimento (su `lavoro/godot` ba041c61)
+
+Base unita in `lavoro/collaudo-enigmi` (3bce3987), import fresco, stati `inizio` e `aperto`. Gli arredi copiati dalla sala pompe in `SalaInseguimento/Luci` sono 34 gruppi, con 41 corpi: le tre pompe e la turbina hanno i pezzi convessi copiati dal glTF (corpo, aspirazione, mandata, disco), scrivania e sedia i loro `_col`, gli altri 25 la scatola nuova sull'ingombro della mesh.
+
+- **Celle dove si cammina** (passo 50 cm, con la fisica): 1189 in `inizio` e 1186 in `aperto`, **le stesse di b8964240, nessuna persa**.
+- **Le scatole non escono dalla mesh**: ognuna coincide con l'ingombro del suo arredo (0 cm in più); i pezzi convessi stanno dentro quello delle pompe.
+- **Distanza dalla cella raggiungibile più vicina** (in pianta, con il pavimento fino a 2,2 m sotto): il più vicino è il festone di cavi `det_cavo_festone_3` a 0,9 m, una scatola di 2 cm stesa sul muro; poi `FILTRO_1` a 2,1 m (sul bacino), il cartello della profondità a 3,9 m, `POMPA_3` a 5,6 m, `POMPA_1` e `POMPA_2` a 12 m; gli altri da 5 a 27 m, o su pavimenti dove il giocatore non arriva (griglia caduta, corda, catena, lamiera a terra, turbina).
+- Due doppioni senza effetto per chi cammina: `POMPA_3` ha sia i pezzi convessi sia una scatola su `POMPA_3_modello` (sta nell'ingombro della pompa); il disco di `TURBINA_1` è copiato due volte.
+- **Controllo di posizionamento della CI**, zona torre su questa base: 0 nuovi, 0 da correggere, f) 0.
+- L'elenco dei corpi, con la forma e l'ingombro nel mondo: `collisioni_arredi_inseguimento.log`.
+
+**Niente sporge dove si cammina.**
+
 ## Visti e a posto
 
 - Il giro dagli occhi lungo tutta la strada non mostra altri oggetti sospesi o compenetrati.
