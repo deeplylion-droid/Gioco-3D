@@ -328,6 +328,11 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **Finale (A)**: passi il portello da sottomarino e lo chiudi col volantino; lei ci sbatte contro con la faccia sull'oblò e la bocca spalancata; poi nero e "FINE DELLA DEMO".
 - **Dopo "FINE DELLA DEMO" (A)**: finita la scritta, il gioco torna da solo al titolo.
 - **Prove (no)**: niente prove prima; l'utente lo giudica giocando. Parole sue: "ti ho risposto, vai e non commettere gli errori che ti ho corretto nuovamente."
+- **Arredi, scelte della sera del 24 ottobre ("1A 2A")**. Le banchine sono tutta strada, quindi niente a terra fino a 2 m; gli arredi stanno sui muri sopra i 2 m, nella volta sopra di lei o a filo.
+  - Pesci (A): una fila di pesci di vetroresina su mensole d'ottone sui due muri, a 2,3-2,6 m, girati tutti verso l'approdo come un branco che nuota con te, ognuno con un faretto sotto.
+  - Abisso (A): tre oblò grandi per lato col blu profondo, dove passa lenta la sagoma lontana di un pesce enorme, con qualche bollicina; poche lampade blu scure e una fila di lucine azzurre a filo pavimento lungo i bordi delle banchine, ogni 3 m.
+  - Fatti senza scelta, coerenti col fiume B: la tartaruga appesa alla volta con le catene, le reti con le stelle sopra i 2 m, il buco nella volta sopra le lastre cadute, all'approdo bitte basse, fanali rosso e verde, salvagente fosforescente al muro e cartelli a disegni.
+  - Galleggianti: i gommoni tondi delle rapide, legati con corde chiare agli anelli; si risale dal canale con un gradino continuo appena sotto il pelo lungo le due banchine; a guado si va a 2 m/s.
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
 - **fiume lento: A, "giungla finta"**. Riscontro dell'utente sulla v0.3.11 (23 ottobre):
