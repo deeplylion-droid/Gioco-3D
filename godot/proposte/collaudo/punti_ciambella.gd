@@ -4,7 +4,7 @@ extends Node
 ## Scrive le righe per tests/collaudo/giro.gd: nome x y z yaw pitch (lo sguardo lungo la corsa).
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://proposte/collaudo/punti_ciambella.gd <uscita>
 
-const PASSO := 4.0
+var PASSO := float(OS.get_environment("PASSO")) if OS.has_environment("PASSO") else 4.0
 const OCCHI := 0.95     # sopra il pelo dell'acqua, seduti sulla ciambella
 
 func _ready() -> void:
