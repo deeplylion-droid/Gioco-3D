@@ -649,6 +649,16 @@ func _abisso_oblo() -> void:
 			m.set_shader_parameter(&"fase", float(k) * 0.37 if fase_oblo_prova < 0.0 else fase_oblo_prova)
 			vetro.material_override = m
 			n.add_child(vetro)
+			m.set_shader_parameter(&"raggio", OBLO_R)
+			# una luce debole davanti, del colore del mare: si vede l'anello d'ottone (senza, al buio il vetro sembrava
+			# un disco attaccato al muro)
+			var o := OmniLight3D.new()
+			o.light_color = Color(0.3, 0.5, 0.85)
+			o.light_energy = 0.6
+			o.omni_range = 2.6
+			o.shadow_enabled = false
+			o.position = Vector3(0, 0, 0.6)
+			n.add_child(o)
 			occupati.append([s, lato, OBLO_R + 0.2])
 			k += 1
 			messi += 1
