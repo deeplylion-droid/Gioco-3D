@@ -413,6 +413,8 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 - **il manifesto dello spettacolo** (70 x 105 cm) sul muro ovest vicino all'ingresso, tra il cartello giallo e l'oblò: sì;
 - **l'insegna** di lamiera (1,8 x 1 m) in alto sul muro ovest sopra la vasca d'arrivo: sì, **con le sue due lampade a collo d'oca**, luce calda e debole solo sul pannello.
 
+**Poster di Jilly rovinati (richiesta dell'utente, 24 ottobre sera)**: "provare a bruciare e scarabocchiare e rovinare molto i poster di Jilly che ci sono appesi alle pareti, tipo nella stanza del bagnino". Bruciature coi bordi carbonizzati e i buchi, scarabocchi a pennarello sopra di lei (occhi cancellati, denti aguzzi disegnati sopra il sorriso, graffi; solo disegni, niente scritte), angoli strappati, macchie d'acqua e muffa; ognuno diverso, sempre attaccato al muro. Lo fa la squadra nuova grafica-2 (lavoro/poster-rovinati); prima di metterlo nel gioco l'utente vede gli scatti prima e dopo.
+
 **Le scritte nel parco** (scelta dell'utente, 19 ottobre): **solo disegni, niente scritte**. Le scritte di Jilly Jubilee fanno eccezione. Parole dell'utente: "Togli la scritta le rapide, sostituiscila con un disegno. Le scritte di Jilly Jubilee fanno eccezione". Anche "LIVE SHOW" e gli orari del manifesto restano (scelta dell'utente, 19 ottobre).
 
 ### Riferimenti approvati
