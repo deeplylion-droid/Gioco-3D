@@ -974,21 +974,61 @@ func _faro_subacqueo(pos: Vector3, rot_y: float) -> void:
 
 ## Un pannello di roccia finta (4,2 x 3,2 m, alzato fino a 4,9) col retro verso [param rot] + 180: girato
 ## e specchiato a caso perché non si veda che è sempre lo stesso. Ha la sua collisione.
-func _roccia(pos: Vector3, rot: float, specchio = null) -> Node3D:
+func _roccia(pos: Vector3, rot: float, specchio = null, largo := 1.0) -> Node3D:
 	var r := _metti("roccia_parete", pos, rot)
 	for mi in r.find_children("*", "MeshInstance3D", true, false):
 		(mi as MeshInstance3D).material_override = mat_roccia
-	# (quelli doppi, dietro: specchiati o no come dice [param specchio], senza toccare la sequenza casuale degli altri)
+	# (quelli doppi, dietro, e quelli che riempiono i buchi: specchiati o no come dice [param specchio], senza toccare
+	# la sequenza casuale degli altri; [param largo] stringe il pannello)
 	var sx := (-1.0 if specchio else 1.0) if specchio != null else (1.0 if _randf() < 0.5 else -1.0)
 	var sy := 1.5 if specchio != null else _randf_range(1.4, 1.6)
-	r.scale = Vector3(sx * (1.0 if specchio != null else _randf_range(0.95, 1.1)), sy, 1.0)
+	r.scale = Vector3(sx * largo * (1.0 if specchio != null else _randf_range(0.95, 1.1)), sy, 1.0)
 	var f := CollisionShape3D.new()
 	var b := BoxShape3D.new()
-	b.size = Vector3(4.2, 3.24 * sy, 0.5)
+	b.size = Vector3(4.2 * largo, 3.24 * sy, 0.5)
 	f.shape = b
 	f.transform = Transform3D(Basis(Vector3.UP, deg_to_rad(rot)), pos + Basis(Vector3.UP, deg_to_rad(rot)) * Vector3(0, 3.24 * sy * 0.5, 0.25))
 	_collisioni.add_child(f)
 	return r
+
+
+## La roccia lungo le banchine dev'essere continua (riscontro dell'utente; collaudo del 24 ottobre: dalla ciambella,
+## a sinistra, fra un pannello e l'altro e nelle zone tenute libere si vedeva il muro grigio liscio). Ogni metro di
+## banchina senza un pannello a meno di [constant COPRE] dal suo centro ne riceve uno più stretto (3 m), 5 cm più
+## indietro della fila, così non sta sullo stesso piano dei vicini. Vale anche davanti ai dischi delle paratie (il disco
+## sta 85 cm più avanti della faccia della roccia: la roccia gli fa da sfondo) e nelle conche dei bivi; restano libere
+## solo le zone dove si cammina (vasca, ingresso, approdo) e la colonna del bivio 3. Si aggiunge a [param rocce].
+const COPRE := 1.5
+const LARGO_BUCO := 3.0
+
+
+func _rocce_buchi(rocce: Array) -> void:
+	var zone := _zone_libere
+	_zone_libere = [zone[0], zone[1], zone[2], zone[zone.size() - 1]]
+	var messe := 0
+	for s in _strisce:
+		for v in _lungo(s, W * 0.5 + BANCA, 1.0, 0.5):
+			await _pausa()
+			var p: Vector3 = v[0]
+			var rot: float = v[1]
+			var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
+			var coperto := false
+			for r in rocce:
+				var w: Vector3 = r[0] - p
+				# un pannello della stessa sponda (guarda dalla stessa parte) col centro abbastanza vicino
+				if w.length() < COPRE and (Basis(Vector3.UP, deg_to_rad(r[1])) * Vector3.BACK).dot(davanti) > 0.7:
+					coperto = true
+					break
+			if coperto or not _ci_sta(p, rot, LARGO_BUCO, 0.6):
+				continue
+			var dietro := p - davanti * 1.0
+			if in_piazza(dietro):
+				continue
+			_roccia(p - davanti * 0.05, rot, messe % 2 == 0, LARGO_BUCO / 4.2)
+			rocce.append([p - davanti * 0.05, rot])
+			messe += 1
+	_zone_libere = zone
+	print("rocce nei buchi: %d" % messe)
 
 
 ## Il retro piatto dei pannelli si vedeva dalle banchine e dai canali degli altri rami: dietro ogni pannello
@@ -1407,6 +1447,8 @@ func _giungla() -> void:
 				await _lampada_calda(await _su_roccia(roccia, p + Vector3(0, 3.0, 0), davanti), rot, 0.0, roccia)
 			elif n % 4 == 1 and _randf() < 0.6:
 				_metti("liane", p + davanti * 0.45 + Vector3(0, 4.5, 0), rot)
+	await _pausa()
+	await _rocce_buchi(rocce)
 	await _pausa()
 	await _rocce_doppie(rocce)
 	await _pausa()
