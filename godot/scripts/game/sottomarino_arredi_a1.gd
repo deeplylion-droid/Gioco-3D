@@ -181,9 +181,9 @@ func _buco_volta() -> void:
 	dentro.mesh = st_i.commit()
 	dentro.material_override = _mat("buio_buco", Color(0.03, 0.03, 0.035), 1.0)
 	nodo.add_child(dentro)
-	# i ferri dell'armatura: da un punto del bordo a uno di fronte, piegati verso il basso (sono rimasti appesi)
+	# i ferri dell'armatura: paralleli, da un punto del bordo a uno di fronte, piegati verso il basso (sono rimasti appesi)
 	var mf := _mat("ferro_armatura", Color(0.24, 0.16, 0.11), 0.85, 0.4)
-	for q in [[2, 15, 0.12], [6, 19, 0.2], [9, 24, 0.08], [12, 26, 0.16]]:
+	for q in [[3, 25, 0.12], [7, 21, 0.2], [11, 17, 0.08]]:
 		# (i capi sull'interno scuro, dove finisce il bordo rotto: escono dal cemento)
 		var a: Vector3 = (pv[2][q[0]] as Vector3) + (nv[2][q[0]] as Vector3) * 0.002
 		var b: Vector3 = (pv[2][q[1]] as Vector3) + (nv[2][q[1]] as Vector3) * 0.002
