@@ -12,7 +12,8 @@ extends Node3D
 ## torbida e scura (pareti di lamiera, tre veli d'acqua sempre più scuri verso il fondo, niente luce sua: la luce
 ## rosa è quella di lei).
 ##
-## Lei (LeiOblo di mascotte: la posa, l'occhio che segue, la luce, il distacco) compare una volta sola:
+## Lei (LeiOblo di mascotte: la posa, l'occhio che segue, la luce rosa con le ombre, il distacco, i tentacoli fuori dal
+## vetro e dalla vasca con le [method forme]) compare una volta sola; il modello c'è solo mentre si vede:
 ## - solo al buio dopo la sala pompe ([member GameState.luci] BLACKOUT) e col giocatore nella [member zona];
 ## - quando il vetro non si vede (fuori dal cono di [member angolo_fuori] gradi o dietro un muro): mai sotto gli occhi;
 ## - resta finché il giocatore non l'ha vista bene (il vetro entro [member angolo_vista] gradi per
@@ -39,7 +40,6 @@ const RIVETTI := 24
 const STACCO_VASCA := 0.02
 ## Lo spessore delle forme della vasca per i tentacoli (fuori dall'interno).
 const FORMA := 0.3
-const LEI_OBLO := "res://scripts/game/lei_oblo.gd"
 
 ## La posa di lei: "schiacciata", "sbircia" o "capovolta" (le fa mascotte).
 @export var posa := "schiacciata"
@@ -72,8 +72,8 @@ const LEI_OBLO := "res://scripts/game/lei_oblo.gd"
 @export var attivo := true
 
 var stato := Stato.ATTESA
-## La lei che sta dietro il vetro, se c'è (LeiOblo, o quella di prova).
-var lei: Node3D
+## La lei che sta dietro il vetro, se c'è.
+var lei: LeiOblo
 var _t_vista := 0.0
 var _t_via := 0.0
 var _corpo: StaticBody3D
@@ -172,6 +172,7 @@ func _costruisci() -> void:
 	vetro.rotation_degrees.x = 90.0
 	vetro.position.z = -spessore_muro + 0.015
 	vetro.material_override = _mat_vetro()
+	vetro.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF   # la luce rosa di lei passa
 	add_child(vetro)
 	# il corpo: piastra e vetro chiudono il buco del muro
 	_corpo = StaticBody3D.new()
@@ -432,11 +433,13 @@ func _vista_libera(cam: Camera3D) -> bool:
 
 func _mostra() -> void:
 	if lei == null:
-		lei = _nuova_lei()
-	if lei.has_method(&"mostra"):
-		lei.call(&"mostra", centro_vetro(), normale(), posa)
-	if lei.has_method(&"aggiungi_forme"):
-		lei.call(&"aggiungi_forme", forme())
+		lei = LeiOblo.new()
+		lei.name = "Lei"
+		lei.lato_sbircia = 1 if lato_sbircia >= 0.0 else -1
+		add_child(lei)
+		lei.sparita.connect(_sparita)
+		lei.aggiungi_forme(forme())
+	lei.mostra(centro_vetro(), normale(), posa)
 	_t_vista = 0.0
 	_t_via = 0.0
 	stato = Stato.PRONTA
@@ -455,8 +458,8 @@ func via() -> void:
 func _stacca() -> void:
 	stato = Stato.VIA
 	staccata.emit()
-	if lei and lei.has_method(&"stacca"):
-		lei.call(&"stacca")
+	if lei:
+		lei.stacca()
 	else:
 		_sparita()
 
@@ -471,21 +474,6 @@ func _togli_lei() -> void:
 	if lei and is_instance_valid(lei):
 		lei.queue_free()
 	lei = null
-
-
-func _nuova_lei() -> Node3D:
-	var n: Node3D
-	if ResourceLoader.exists(LEI_OBLO):
-		n = (load(LEI_OBLO) as GDScript).new() as Node3D
-	else:
-		n = LeiObloProva.new()
-	n.name = "Lei"
-	if lato_sbircia != 1.0:
-		n.set(&"lato_sbircia", lato_sbircia)
-	add_child(n)
-	if n.has_signal(&"sparita"):
-		n.connect(&"sparita", _sparita)
-	return n
 
 
 func save_state() -> Dictionary:

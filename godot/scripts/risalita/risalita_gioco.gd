@@ -68,10 +68,12 @@ const CORRIDOIO_FIUME_X := -5.9
 const SCALA_LARGA := 2.0
 ## Gli oblò con lei dietro il vetro (GDD "Jilly dietro gli oblò", richiesta dell'utente del 24 ottobre sera: "Mettilo
 ## in tutti e tre"): il centro sulla faccia del muro dalla parte del corridoio, a 1,5 m dal pavimento. Dietro ogni muro
-## c'è il vuoto dello scafo per la vasca (controllato con tests/collaudo/sonda_spazi.gd): nel corridoio verso il fiume
-## a est, verso il raccordo (dopo z 54,5); nel corridoio del personale a ovest, fra infermeria e capannone; nel tratto
-## in piano della scala di servizio a nord, libero fino a 14 m d'altezza (lei a testa in giù ha il corpo in alto).
-const OBLO_FIUME := Vector3(-3.9, Y + 1.5, 57.0)
+## c'è il vuoto dello scafo per la vasca (controllato con tests/collaudo/sonda_spazi.gd) e le vasche sono grandi quanto
+## lei, ferma e mentre si stacca (le sue ossa, misurate posa per posa): nel corridoio verso il fiume a est, verso il
+## raccordo (libero da z 54,5 e per quasi 10 m); nel corridoio del personale a ovest, fra infermeria e capannone (largo
+## solo 2,56 m, profondo quanto si vuole); nel tratto in piano della scala di servizio a nord (libero per 6,7 m, da -6 a
+## 14 m d'altezza: lei a testa in giù ha il corpo in alto).
+const OBLO_FIUME := Vector3(-3.9, Y + 1.5, 58.0)
 const OBLO_PERSONALE := Vector3(-36.0, Y + 1.5, 49.6)
 const OBLO_SERVIZIO := Vector3(-21.5, 1.5, 37.45)
 const ALZATA := 0.18
@@ -269,7 +271,7 @@ func _zona_personale() -> void:
 	# sbircia dal bordo destro (a sud, verso l'infermeria): si vede entrando dalla porta del capannone. Il corridoio è
 	# largo 2 m: "troppo vicino" è col naso sul vetro. Compare già mentre arrivi dal capannone, col muro in mezzo.
 	_oblo("ObloPersonale", OBLO_PERSONALE, Vector3.RIGHT, "sbircia", AABB(Vector3(-37.0, Y - 0.2, 48.1), Vector3(4.0, 3.0, 6.0)),
-			{"vasca_larga": 2.56, "vasca_spostata": 0.2, "vicino": 0.9, "lato_sbircia": 1.0})
+			{"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vicino": 0.9, "lato_sbircia": 1.0})
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
 	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0))
 
@@ -299,9 +301,9 @@ func _scala_di_servizio() -> void:
 	# il corridoio in piano fino a C3
 	_corridoio(Vector3(x, 0.0, z0), Vector3(PORTA_C3.x - 0.15, 0.0, z1), 2.6, "", {"n": [OBLO_SERVIZIO, ObloLei.PIASTRA * 0.5]})
 	# l'oblò nel muro nord del tratto in piano, a sinistra salendo verso C3: lei a testa in giù, col corpo in alto
-	# (la vasca sale 5,4 m sopra il centro); compare mentre sali le rampe
+	# (la vasca sale 5,8 m sopra il centro); compare mentre sali le rampe
 	_oblo("ObloServizio", OBLO_SERVIZIO, Vector3.BACK, "capovolta", AABB(Vector3(-40.0, Y - 0.2, 37.3), Vector3(24.0, 8.4, 4.3)),
-			{"vasca_sotto": 3.0, "vasca_sopra": 5.4})
+			{"vasca_larga": 10.2, "vasca_spostata": -0.3, "vasca_fonda": 5.6, "vasca_sotto": 3.6, "vasca_sopra": 5.8})
 	_lampada_rossa(Vector3(x + 0.5, 2.2, z1 - 0.05), Vector3(0, -0.5, -1))
 	_lampada_rossa(Vector3(xp + 0.9, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
 	var m := Node3D.new()
@@ -337,7 +339,8 @@ func _scala_fiume() -> void:
 	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es", {"e": [OBLO_FIUME, ObloLei.PIASTRA * 0.5]})
 	# l'oblò nel muro est, a destra andando verso il capannone, fra le due lampade rosse: lei schiacciata sul vetro;
 	# compare mentre scendi la scala
-	_oblo("ObloFiume", OBLO_FIUME, Vector3.LEFT, "schiacciata", AABB(Vector3(xc - 0.2, Y - 0.2, z0), Vector3(x_fondo - xc + 0.2, 3.0, fine - z0)))
+	_oblo("ObloFiume", OBLO_FIUME, Vector3.LEFT, "schiacciata", AABB(Vector3(xc - 0.2, Y - 0.2, z0), Vector3(x_fondo - xc + 0.2, 3.0, fine - z0)),
+			{"vasca_larga": 6.6, "vasca_fonda": 5.6, "vasca_sotto": 8.0})
 	_muro(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), Y)
 	# il muro ovest, aperto davanti alla porta del capannone (alta 2,3 m come la sua)
 	_muro(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), Y)
