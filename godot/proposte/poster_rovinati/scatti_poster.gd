@@ -2,11 +2,12 @@ extends Node
 ## Scatti dei poster di Jilly rovinati (prima e dopo), dagli occhi del giocatore e da vicino per vedere come sono
 ## attaccati al muro. Una camera libera per scatto, con i materiali veri della scena.
 ## Uso (sotto render.lock, con almeno 13,5 GB liberi; tools/scatto_sicuro.sh):
-##   tools/scatto_sicuro.sh res://proposte/poster_rovinati/scatti_poster.gd <cartella> <interni|sala>
+##   tools/scatto_sicuro.sh res://proposte/poster_rovinati/scatti_poster.gd <cartella> <interni|sala|infermeria>
 
 const SCENE := {
 	"interni": "res://scenes/interni/interni.tscn",
 	"sala": "res://scenes/sala_principale.tscn",
+	"infermeria": "res://scenes/risalita/infermeria.tscn",
 }
 ## scena -> nome: [da dove, verso dove, campo visivo]. Gli occhi del giocatore sono a 1,6 m.
 const SCATTI := {
@@ -22,6 +23,11 @@ const SCATTI := {
 		"manifesto_giocatore": [Vector3(-17.5, 1.6, 13.4), Vector3(-20.0, 1.4, 13.95), 70.0],
 		"manifesto_vicino": [Vector3(-19.0, 1.5, 13.95), Vector3(-20.0, 1.45, 13.95), 55.0],
 		"manifesto_bordo": [Vector3(-19.1, 1.6, 13.0), Vector3(-19.97, 1.55, 14.0), 50.0],
+	},
+	"infermeria": {
+		"infermeria_giocatore": [Vector3(1.6, 1.6, 2.7), Vector3(-3.2, 1.6, 1.45), 70.0],
+		"infermeria_vicino": [Vector3(-2.2, 1.8, 1.45), Vector3(-3.2, 1.8, 1.45), 55.0],
+		"infermeria_bordo": [Vector3(-2.8, 1.9, 0.6), Vector3(-3.18, 1.9, 1.2), 50.0],
 	},
 }
 
@@ -52,6 +58,21 @@ func _run() -> void:
 			if n:
 				n.get_parent().remove_child(n)
 				n.free()
+	if scena == "infermeria":
+		# da sola, con la luce d'ambiente di tests/scatti_infermeria_gioco.gd
+		var we := WorldEnvironment.new()
+		var e := Environment.new()
+		e.background_mode = Environment.BG_COLOR
+		e.background_color = Color.BLACK
+		e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		e.ambient_light_color = Color(0.1, 0.09, 0.1)
+		e.tonemap_mode = Environment.TONE_MAPPER_AGX
+		e.tonemap_exposure = 1.15
+		e.ssao_enabled = true
+		e.volumetric_fog_enabled = true
+		e.volumetric_fog_density = 0.015
+		we.environment = e
+		get_tree().root.add_child(we)
 	get_tree().root.add_child(level)
 	get_tree().current_scene = level
 	get_tree().paused = false
