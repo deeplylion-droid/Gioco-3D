@@ -52,7 +52,7 @@ func _run() -> void:
 	if scena == "sala":
 		# le parti lontane dal manifesto: con tutta la sala non entra nella memoria della macchina
 		for percorso in ["Risalita", "Piscina", "Polaroid", "BambiniBalconata", "Interni", "Tecnici", "Sala/TorreScivoli",
-				"Gioco/BambiniBalconata", "Gioco/EnigmaAcquari", "Gioco/LeiSbuca", "Sala/Cupola", "Sala/AngoloPalloni",
+				"Gioco/BambiniBalconata", "Gioco/EnigmaAcquari", "Gioco/LeiSbuca", "Sala/Cupola", "Sala/Oggetti", "Sala/Dettagli", "Sala/AngoloPalloni",
 				"Sala/AngoloScatoloni", "Vasche", "Gioco/MedusaFossa"]:
 			var n := level.get_node_or_null(NodePath(percorso))
 			if n:

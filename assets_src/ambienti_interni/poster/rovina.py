@@ -463,7 +463,9 @@ def bagnino():
         a, alfa = puntina(a, alfa, x, y, 11, c)
     # (la puntina in basso a destra è sotto l'angolo ripiegato: c'è solo il buchino)
     a = bordo_strappato(a, alfa, 1.6, 0.6)
-    salva(a, alfa, os.path.join(TEX_INT, 'poster_bagnino_rovinato.png'))
+    # nello stanzino il quad del poster si vede dal retro (era specchiato: il delfino a sinistra): si salva
+    # capovolto, così nel gioco si legge dritto
+    salva(a[:, ::-1], alfa[:, ::-1], os.path.join(TEX_INT, 'poster_bagnino_rovinato.png'))
 
 
 # ---------------------------------------------------------------- 3. manifesto della sala: fradicio e strappato
