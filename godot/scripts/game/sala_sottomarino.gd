@@ -30,6 +30,10 @@ const PRESA_FONDO := -36.0
 const PRESA_FINO := 6.0
 ## I gradini per risalire dal canale: ogni quanti metri, alternati sui due lati.
 const GRADINI_OGNI := 12.0
+## Nel canale si va a guado: l'acqua al ginocchio rallenta a tanto, anche di corsa (scelta del coordinatore del
+## 24 ottobre), e accovacciati a tanto (m/s).
+const VELOCITA_GUADO := 2.0
+const VELOCITA_GUADO_ACCOVACCIATO := 1.2
 
 var dati := {}
 var _asse: Array = []          ## [{s, pos, dir, ambiente}]
@@ -362,6 +366,8 @@ func _acqua(nodo: Node3D, s0: float, s1: float) -> void:
 		var fondo_qui := fondo if m >= PRESA_FINO else PRESA_FONDO
 		var vol := WaterVolume.new()
 		vol.name = "Canale_%d" % int(m)
+		vol.velocita_guado = VELOCITA_GUADO
+		vol.velocita_guado_accovacciato = VELOCITA_GUADO_ACCOVACCIATO
 		var cs := CollisionShape3D.new()
 		var b := BoxShape3D.new()
 		b.size = Vector3(canale * 2.0, acqua - fondo_qui, t2 - s2 + 0.3)
