@@ -56,8 +56,11 @@ func _run() -> void:
 	_check((-a.luce.global_basis.z).dot(dalla_luce) > 0.8, "la luce punta verso il giocatore (lo squalo in controluce)")
 	_check((a.nebbia.material as FogMaterial).density > 0.03,
 			"la nebbia del corridoio è densa (%.2f)" % (a.nebbia.material as FogMaterial).density)
-	var nebbia_box := AABB(-a.nebbia.size * 0.5, a.nebbia.size)
-	_check(nebbia_box.has_point(a.nebbia.global_transform.affine_inverse() * occhio), "il giocatore è dentro la nebbia")
+	# la nebbia sta fra il giocatore e la porta, più fitta verso la porta (il suo centro più vicino alla porta)
+	_check(porta == null or a.nebbia.global_position.distance_to(porta.global_position) < a.nebbia.global_position.distance_to(occhio),
+			"la nebbia è più fitta verso la porta")
+	_check(a.bordo != null and a.bordo.light_energy > 1.0 and a.bordo.light_cull_mask == RisveglioSqualo.STRATO_SQUALO,
+			"la controluce dietro lo squalo è accesa e illumina solo lui")
 	# la porta si chiude dietro di lui: il viola si spegne
 	var t := 0.0
 	while t < 16.0 and not bool(s.get(&"_porta_chiusa")):
@@ -79,8 +82,8 @@ func _run() -> void:
 		if a_meta < 0.0 and t1 >= 2.0:
 			a_meta = (a.nebbia.material as FogMaterial).density
 	var dopo := (a.nebbia.material as FogMaterial).density
-	_check(a_meta > 0.0 and a_meta < 0.05, "a metà la nebbia si sta diradando (%.2f)" % a_meta)
-	_check(dopo == 0.0 and a.luce.light_energy == 0.0, "dopo 4 s la nebbia non c'è più (resta quella normale del gioco)")
+	_check(a_meta > 0.0 and a_meta < a.densita, "a metà la nebbia si sta diradando (%.2f)" % a_meta)
+	_check(dopo == 0.0 and a.luce.light_energy == 0.0 and a.bordo.light_energy == 0.0, "dopo 4 s la nebbia non c'è più (resta quella normale del gioco)")
 	_fine()
 
 
