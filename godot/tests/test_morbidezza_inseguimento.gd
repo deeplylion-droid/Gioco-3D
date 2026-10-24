@@ -9,6 +9,8 @@ extends Node
 ## - la pelle vera si confronta con le collisioni e con le mesh vere (tranne l'acqua);
 ## - i casi noti ([constant NOTI]): si stampano, e lì quel controllo dell'asse ammette al più quei tratti.
 ## Uso: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
+## (SOLO=vasca_2: solo quei posti; GIOCATORE=x,y,z: il giocatore fermo lì prima che lei salga, perché lei si gira
+## verso di lui: per vasca_2 nel gioco è nella vasca 3, vedi tests/prova_vasca2_giocatore.sh)
 
 const LEVEL := "res://scenes/test/inseguimento_prova.tscn"
 const Misura := preload("res://tests/misura_morbidezza.gd")
@@ -75,6 +77,13 @@ func _run() -> void:
 			"sb1":
 				sala.call(&"_lei_sale", "sb1", sala.call(&"_posto_sb1"), 1.3)
 			_:
+				if OS.has_environment("GIOCATORE"):
+					var g := OS.get_environment("GIOCATORE").split_floats(",")
+					GameState.player.global_position = Vector3(g[0], g[1], g[2])
+					GameState.player.input_enabled = false
+					# (fermo lì, e la sala non la fa salire di nuovo per conto suo)
+					for kk in 3:
+						sala.set_meta(StringName("comparsa_%d" % kk), true)
 				var su: Vector3 = sala.call(&"_posto_vasca", int(dove[-1])) if dove.begins_with("vasca") else sala.call(&"_posto_scolo", int(dove[-1]))
 				sala.call(&"_lei_sale", dove, su, 1.2 if dove.begins_with("scolo") else 1.6)
 		var durata := float(sala.get_meta(&"durata_salita", 1.6)) + 2.0
