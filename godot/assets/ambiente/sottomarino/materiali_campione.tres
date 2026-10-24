@@ -1,0 +1,86 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Shader" path="res://addons/acqua/shaders/wet_surface.gdshader" id="1_r5kqt"]
+[ext_resource type="Shader" path="res://addons/acqua/shaders/water_flow.gdshader" id="2_1l48l"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lbupt"]
+resource_name = "campione"
+render_priority = 0
+shader = ExtResource("1_r5kqt")
+shader_parameter/albedo_tint = Color(0.9, 0.95, 1, 1)
+shader_parameter/normal_strength = null
+shader_parameter/roughness_scale = 0.9
+shader_parameter/ao_strength = null
+shader_parameter/specular_amount = null
+shader_parameter/metallic = null
+shader_parameter/use_triplanar = true
+shader_parameter/uv_scale = 1.6
+shader_parameter/uv_offset = null
+shader_parameter/triplanar_sharpness = null
+shader_parameter/uv1_scale = null
+shader_parameter/uv1_offset = null
+shader_parameter/use_vertex_color = null
+shader_parameter/orm_mode = null
+shader_parameter/base_wetness = 0.35
+shader_parameter/wetness_variation = 0.6
+shader_parameter/puddle_amount = null
+shader_parameter/puddle_scale = null
+shader_parameter/puddle_tint = null
+shader_parameter/wet_darkening = null
+shader_parameter/drop_ring_strength = null
+shader_parameter/shoreline_height = null
+shader_parameter/shoreline_darkening = null
+shader_parameter/receive_caustics = null
+shader_parameter/caustics_strength = null
+shader_parameter/light_absorption_scale = null
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a5u44"]
+resource_name = "campione"
+render_priority = 0
+shader = ExtResource("2_1l48l")
+shader_parameter/flow_speed = 2.2
+shader_parameter/uv_length_scale = 5.0
+shader_parameter/use_local_xz = false
+shader_parameter/local_flow_dir = null
+shader_parameter/ribbon_width = 3.2
+shader_parameter/wave_strength = 0.35
+shader_parameter/roughness = 0.16
+shader_parameter/water_tint = Color(0.36, 0.5, 0.48, 1)
+shader_parameter/absorption = 0.35
+shader_parameter/refraction_strength = 0.02
+shader_parameter/foam_color = Color(0.74, 0.76, 0.75, 1)
+shader_parameter/foam_amount = 0.5
+shader_parameter/edge_foam = 0.5
+shader_parameter/reflection_color = Color(0.02, 0.02, 0.025, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqd5b"]
+resource_name = "campione"
+albedo_color = Color(1, 0.85, 0.55, 1)
+emission_enabled = true
+emission = Color(1, 0.7, 0.35, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vk3hb"]
+resource_name = "campione"
+cull_mode = 2
+metallic = 1.0
+metallic_texture_channel = 2
+roughness_texture_channel = 1
+normal_enabled = true
+metadata/_gltf_primary_texture_coord = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2vvht"]
+resource_name = "campione"
+albedo_color = Color(0.55, 0.42, 0.2, 1)
+metallic = 0.85
+roughness = 0.35
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o43qk"]
+resource_name = "campione"
+transparency = 1
+albedo_color = Color(0.08, 0.2, 0.22, 0.55)
+metallic_specular = 0.8
+roughness = 0.08
+
+[resource]
+metadata/materiali = Array[Material]([SubResource("ShaderMaterial_lbupt"), SubResource("ShaderMaterial_a5u44"), SubResource("StandardMaterial3D_fqd5b"), SubResource("StandardMaterial3D_vk3hb"), SubResource("StandardMaterial3D_2vvht"), SubResource("StandardMaterial3D_o43qk")])

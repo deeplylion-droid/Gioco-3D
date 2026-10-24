@@ -897,7 +897,9 @@ def spogliatoi(M):
     col_ob(prop('asciugamano_2', 'asciugamano', (5.0, 3.45, 0), 20, 0.8))
     prop('paperella_spogliatoi', 'paperella', (7.9, 13.3, 0), 200, 0.09)
     col_ob(prop('secchio_mocio', 'secchio_mocio', (7.6, 11.6, 0), 210, 0.95, 'z'))
-    col_ob(prop('pallone_spogliatoi', 'pallone', (10.2, 10.2, 0), 0, 0.4))
+    # il pallone davanti alla fila est: a x 10,2 entrava 3 cm nell'anta aperta a 45 gradi dell'armadietto est2_02
+    # (riscontro dell'utente sulla v0.3.13, "un pallone a ciambella compenetrato con una delle ante degli armadietti")
+    col_ob(prop('pallone_spogliatoi', 'pallone', (9.75, 10.2, 0), 0, 0.4))
     col_ob(prop('cestino_spogliatoi', 'cestino', (3.5, 10.6, 0), 0, 0.5, 'z'))
     pz = [pozza('pozza_spogliatoi_1', (6.8, 9.2, 0), 1.2, 0.8, M, 11), pozza('pozza_spogliatoi_2', (5.5, 13.0, 0), 1.8, 1.0, M, 12),
           pozza('pozza_spogliatoi_3', (7.4, 5.4, 0), 0.6, 0.4, M, 13), pozza('pozza_spogliatoi_4', (9.7, 15.8, 0), 0.8, 0.6, M, 14)]

@@ -173,6 +173,11 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `lei/lei_insegue_sb1.ogg` | 5.4 s | sintesi (originale) | inseguimento, voce (22 ottobre): ti fissa dal pozzo SB1: fiato lento e umido, rantolo trattenuto |
 | `lei/lei_sbuca.ogg` | 7.6 s | sintesi + Kenney Impact Sounds e Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): gola sott'acqua, respiro umido, rantolo; impactSoft_medium, slime_000 |
 | `lei/lei_scivola_sotto.ogg` | 4.5 s | sintesi (originale) | versione gutturale (16 ottobre): brontolio di gola, l'ultimo fiato che gorgoglia sott'acqua |
+| `lei/lei_tunnel_fiato_loop.ogg` | 8.0 s | sintesi (originale) | tunnel, voce (24 ottobre): fiato roco e basso a bocca aperta, in ciclo |
+| `lei/lei_tunnel_verso_01.ogg` | 1.3 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
+| `lei/lei_tunnel_verso_02.ogg` | 1.4 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
+| `lei/lei_tunnel_verso_03.ogg` | 1.2 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
+| `lei/lei_tunnel_verso_04.ogg` | 1.4 s | sintesi (originale) | tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s |
 | `lei/morso.ogg` | 1.8 s | sintesi + Kenney Sci-Fi Sounds (CC0) | versione gutturale (16 ottobre): ringhio, la fauce si chiude a 1,0 s; slime_000, slime_001 |
 | `musica/polaroid_chiudi.ogg` | 0.3 s | sintesi (originale) |  |
 | `musica/polaroid_raccolta.ogg` | 2.6 s | sintesi (originale) |  |
@@ -221,4 +226,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 196 file, 7.1 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 201 file, 7.2 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
