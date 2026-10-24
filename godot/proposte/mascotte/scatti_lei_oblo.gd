@@ -7,10 +7,11 @@ extends Node
 ##     --fixed-fps 30 --script res://tests/run.gd -- res://proposte/mascotte/scatti_lei_oblo.gd <cartella> [posa,posa]
 
 const CENTRO := Vector3(0, 1.65, 0)
-const RAGGIO := 0.6
+## il raggio del vetro (RAGGIO=0.22 nell'ambiente per il vetro piccolo della torre)
+var RAGGIO := float(OS.get_environment("RAGGIO")) if OS.has_environment("RAGGIO") else 0.6
 ## dove sta il giocatore (i piedi) per posa
 const GIOCATORE := {"schiacciata": Vector3(0.25, 0, 1.6), "sbircia": Vector3(-0.35, 0, 1.6),
-	"sbircia_altro": Vector3(0.35, 0, 1.6), "capovolta": Vector3(0.2, 0, 1.5)}
+	"sbircia_altro": Vector3(0.35, 0, 1.6), "capovolta": Vector3(0.2, 0, 1.5), "occhio": Vector3(0.15, 0, 1.2)}
 
 var out_dir := ""
 
@@ -124,7 +125,7 @@ func _run() -> void:
 		lo.mostra(CENTRO, Vector3.BACK, posa)
 		var ap := lo.lei.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
 		# un secondo e mezzo in ciclo: la testa e l'occhio si girano verso il giocatore
-		for i in 45:
+		for i in (120 if posa == "occhio" else 45):
 			await get_tree().physics_frame
 		await _scatta("%s_1_ciclo" % posa)
 		# di lato, per vedere che niente passa il vetro
