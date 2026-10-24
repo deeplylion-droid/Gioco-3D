@@ -52,8 +52,8 @@ func _run() -> void:
 		if s > SalaSottomarino.PRESA_FINO + 1.0 and (hf.is_empty() or absf((hf.position as Vector3).y - sala.fondo) > 0.02):
 			senza_fondo.append(snappedf(s, 0.1))
 		var hv := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(p.x, sala.acqua + 1.0, p.z), Vector3(p.x, sala.acqua + 30.0, p.z)))
-		# (davanti al portello, sopra il canale, c'è il ballatoio: lì la volta non si vede da sotto)
-		if s < lung - SalaSottomarino.BALLATOIO - 0.2 and (hv.is_empty() or (hv.position as Vector3).y - sala.acqua < 6.5):
+		# (davanti al portello, contro il muro di fondo, c'è la soglia d'acciaio: lì la volta non si vede da sotto)
+		if s < lung - SalaSottomarino.SOGLIA_PROFONDA - 0.2 and (hv.is_empty() or (hv.position as Vector3).y - sala.acqua < 6.5):
 			volta_bassa.append(snappedf(s, 0.1))
 		s += 1.0
 	_controlla(senza_banchina.is_empty(), "banchine col pavimento a quota piano su tutta la strada", senza_banchina)

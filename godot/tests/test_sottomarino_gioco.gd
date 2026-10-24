@@ -8,7 +8,8 @@ extends Node
 ## 5. Dalla banchina si salta sui due gommoni e si arriva sull'altra banchina.
 ## 6. Nel canale si va a guado (piano) e dai gradini si risale.
 ## 7. Nella galleria di servizio si sta accovacciati e si passa.
-## 8. Il portello: dalla camera stagna con E si chiude, poi la fine.
+## 8. Il portello: dalla banchina su per la scala e lungo il pontile si entra di lato nella camera stagna; con E si
+##    chiude, poi la fine.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_sottomarino_gioco.gd
 
 const LEVEL := "res://scenes/test/sottomarino_prova.tscn"
@@ -119,9 +120,37 @@ func _run() -> void:
 	var fine := [false]
 	sott.fine_demo.connect(func(): fine[0] = true)
 	var L := sott.lunghezza()
-	var cam := sott.punto(L) + sott.direzione(L) * 1.6
-	p.teleport(Vector3(cam.x, sott.piano + SalaSottomarino.SOGLIA + 0.05, cam.z))
+	var pL := sott.punto(L)
+	var rL := sott.destra(L)
+	var dL := sott.direzione(L)
+	var sg := sott.piano + SalaSottomarino.SOGLIA
+	# dalla banchina sinistra: su per la scala lungo il muro, lungo il pontile fino alla sua testa, poi di lato nella
+	# porta e dentro la camera stagna
+	var s_scala := L - SalaSottomarino.BALLATOIO - 12 * 0.32 - 1.5
+	var via := [
+		sott.punto(s_scala) - sott.destra(s_scala) * (sott.muro - 0.5) + Vector3.UP * (sott.piano - sott.acqua),
+		pL - dL * 0.5 - rL * (sott.muro - 0.5) + Vector3.UP * (sg - sott.acqua),
+		pL - dL * 0.55 + rL * (SalaSottomarino.PONTILE_FINO - 0.35) + Vector3.UP * (sg - sott.acqua),
+		pL - dL * 0.05 + rL * (SalaSottomarino.PORTA_SX + 0.45) + Vector3.UP * (sg - sott.acqua),
+		pL + dL * 1.2 + rL * (SalaSottomarino.PORTA_SX + 0.6) + Vector3.UP * (sg - sott.acqua),
+	]
+	p.teleport(via[0] + Vector3.UP * 0.05)
 	await _frames(10)
+	Input.action_press(&"move_forward")
+	t0 = Time.get_ticks_msec()
+	var tappa := 1
+	while tappa < via.size() and Time.get_ticks_msec() - t0 < 30000:
+		var q: Vector3 = via[tappa]
+		if Vector2(p.global_position.x - q.x, p.global_position.z - q.z).length() < 0.3:
+			tappa += 1
+			continue
+		p.look_at_point(Vector3(q.x, p.global_position.y + 1.6, q.z))
+		p.set_look(p.yaw, 0.0)
+		await _frames(1)
+	_lascia()
+	await _frames(10)
+	var dentro_camera := (p.global_position - pL).dot(dL) > 0.3 and absf(p.global_position.y - sg) < 0.15
+	check(tappa >= via.size() and dentro_camera, "dalla banchina su per la scala, lungo il pontile e di lato nella porta, fino alla camera (tappa %d, y %.2f)" % [tappa, p.global_position.y])
 	var verso_porta := sott.punto(L) + Vector3.UP * (sott.piano - sott.acqua + SalaSottomarino.SOGLIA + 1.0)
 	p.look_at_point(verso_porta)
 	await _frames(5)

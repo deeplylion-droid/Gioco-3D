@@ -37,7 +37,18 @@ const PRESA_FINO := 6.0
 ## col gradino continuo).
 const SOGLIA := 3.0
 const BALLATOIO := 1.0
-const PORTELLO_LARGO := 1.3
+## Lo schianto di lei sull'oblò (scelta B con mascotte, 24 ottobre): davanti al portello, sull'asse, lei ci arriva
+## intera, quindi il ballatoio non passa davanti alla porta. Il pontile viene dalla scala lungo il muro di fondo e si
+## ferma a [constant PONTILE_FINO] dall'asse (sopra il pontile lei è larga al più 1,09 m), a sbalzo: sotto, entro
+## 2,1 m dall'asse, ci sono i suoi tentacoli e non c'è niente. Davanti alla porta resta la soglia d'acciaio, profonda
+## [constant SOGLIA_PROFONDA]. La porta è più larga verso il pontile (da [constant PORTA_SX] dall'asse), così ci si
+## entra di lato; l'oblò resta sull'asse, all'altezza della faccia di lei.
+const PONTILE_FINO := -1.35
+const SOGLIA_PROFONDA := 0.25
+const PORTA_SX := -1.3
+const PORTELLO_LARGO := 1.75
+## Dov'è l'oblò sul battente, dal perno (che sta sul lato sinistro della porta): sull'asse del canale.
+const OBLO_X := 1.3
 const PORTELLO_ALTO := 1.8
 const PORTELLO_APERTO := 90.0
 ## L'oblò e il volantino sul battente (dalla soglia).
@@ -702,7 +713,6 @@ func _fine() -> void:
 	var d := direzione(L)
 	var sg := piano + SOGLIA
 	var cima := sg + PORTELLO_ALTO
-	var mz := PORTELLO_LARGO * 0.5
 	# il muro di fondo: la sagoma della sezione (fondo, muri, volta) meno la porta. Tagliata in due a metà della porta,
 	# così ogni metà ha la porta sul bordo (niente buchi da triangolare)
 	var sagoma := [Vector2(-muro, fondo), Vector2(muro, fondo), Vector2(muro, imposta)]
@@ -710,7 +720,9 @@ func _fine() -> void:
 		var a := PI * float(k) / 24
 		sagoma.append(Vector2(cos(a) * muro, imposta + sin(a) * (chiave - imposta)))
 	sagoma.append(Vector2(-muro, imposta))
-	var porta := PackedVector2Array([Vector2(-mz, sg), Vector2(mz, sg), Vector2(mz, cima), Vector2(-mz, cima)])
+	var px0 := PORTA_SX
+	var px1 := PORTA_SX + PORTELLO_LARGO
+	var porta := PackedVector2Array([Vector2(px0, sg), Vector2(px1, sg), Vector2(px1, cima), Vector2(px0, cima)])
 	for meta: float in [-1.0, 1.0]:
 		var mezza := PackedVector2Array([Vector2(0, fondo - 1.0), Vector2(meta * (muro + 1.0), fondo - 1.0),
 				Vector2(meta * (muro + 1.0), chiave + 1.0), Vector2(0, chiave + 1.0)])
@@ -736,26 +748,42 @@ func _fine() -> void:
 		[[_al(c0, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", -r],
 		[[_al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca))], "mosaico", -d],
 		# (il muro dalla parte della camera, attorno alla porta)
-		[[_al(c0, r, Vector2(-cm, sg)), _al(c0, r, Vector2(-mz, sg)), _al(c0, r, Vector2(-mz, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", d],
-		[[_al(c0, r, Vector2(mz, sg)), _al(c0, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(mz, sg + ca))], "mosaico", d],
-		[[_al(c0, r, Vector2(-mz, cima)), _al(c0, r, Vector2(mz, cima)), _al(c0, r, Vector2(mz, sg + ca)), _al(c0, r, Vector2(-mz, sg + ca))], "mosaico", d],
+		[[_al(c0, r, Vector2(-cm, sg)), _al(c0, r, Vector2(px0, sg)), _al(c0, r, Vector2(px0, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", d],
+		[[_al(c0, r, Vector2(px1, sg)), _al(c0, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(px1, sg + ca))], "mosaico", d],
+		[[_al(c0, r, Vector2(px0, cima)), _al(c0, r, Vector2(px1, cima)), _al(c0, r, Vector2(px1, sg + ca)), _al(c0, r, Vector2(px0, sg + ca))], "mosaico", d],
 	]
 	for pz in cam:
 		_quad(st[pz[1]], pz[0], pz[2])
 		_facce_quad(facce, pz[0])
-	# il ballatoio davanti al muro, dalla scala alla porta (spesso 20 cm), e la scala lungo il muro sinistro
+	# il pontile davanti al muro di fondo, dalla scala fino a PONTILE_FINO dall'asse, e la soglia d'acciaio davanti alla
+	# porta (spessi 20 cm, a sbalzo dal muro), poi la scala lungo il muro sinistro
 	var b0 := p - d * BALLATOIO
-	var bu0 := -muro
-	var bu1 := mz + 0.2
-	var ball := [
-		[[_al(b0, r, Vector2(bu0, sg)), _al(p, r, Vector2(bu0, sg)), _al(p, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu1, sg))], Vector3.UP],
-		[[_al(b0, r, Vector2(bu0, sg - 0.2)), _al(p, r, Vector2(bu0, sg - 0.2)), _al(p, r, Vector2(bu1, sg - 0.2)), _al(b0, r, Vector2(bu1, sg - 0.2))], Vector3.DOWN],
-		[[_al(b0, r, Vector2(bu0, sg - 0.2)), _al(b0, r, Vector2(bu1, sg - 0.2)), _al(b0, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu0, sg))], -d],
-		[[_al(b0, r, Vector2(bu1, sg - 0.2)), _al(p, r, Vector2(bu1, sg - 0.2)), _al(p, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu1, sg))], r],
-	]
-	for pz in ball:
-		_quad(st["graniglia"], pz[0], pz[1])
-		_facce_quad(facce, pz[0])
+	var pezzi_pontile := [[-muro, PONTILE_FINO, BALLATOIO], [PONTILE_FINO, px1 + 0.2, SOGLIA_PROFONDA]]
+	for pz in pezzi_pontile:
+		var u0: float = pz[0]
+		var u1: float = pz[1]
+		var q0 := p - d * float(pz[2])
+		var facce_p := [
+			[[_al(q0, r, Vector2(u0, sg)), _al(p, r, Vector2(u0, sg)), _al(p, r, Vector2(u1, sg)), _al(q0, r, Vector2(u1, sg))], Vector3.UP],
+			[[_al(q0, r, Vector2(u0, sg - 0.2)), _al(p, r, Vector2(u0, sg - 0.2)), _al(p, r, Vector2(u1, sg - 0.2)), _al(q0, r, Vector2(u1, sg - 0.2))], Vector3.DOWN],
+			[[_al(q0, r, Vector2(u0, sg - 0.2)), _al(q0, r, Vector2(u1, sg - 0.2)), _al(q0, r, Vector2(u1, sg)), _al(q0, r, Vector2(u0, sg))], -d],
+			[[_al(q0, r, Vector2(u1, sg - 0.2)), _al(p, r, Vector2(u1, sg - 0.2)), _al(p, r, Vector2(u1, sg)), _al(q0, r, Vector2(u1, sg))], r],
+		]
+		# (la testa del pontile verso l'asse, dove il pontile è più profondo della soglia)
+		if u1 == PONTILE_FINO:
+			facce_p[3] = [[_al(q0, r, Vector2(u1, sg - 0.2)), _al(p - d * SOGLIA_PROFONDA, r, Vector2(u1, sg - 0.2)),
+					_al(p - d * SOGLIA_PROFONDA, r, Vector2(u1, sg)), _al(q0, r, Vector2(u1, sg))], r]
+		for fp in facce_p:
+			_quad(st["graniglia"], fp[0], fp[1])
+			_facce_quad(facce, fp[0])
+	# le mensole d'acciaio sotto il pontile, lontano dall'asse (oltre 2,1 m: lì sotto ci sono i tentacoli di lei)
+	for um: float in [-2.6, -4.6]:
+		for k in 3:
+			var lk := BALLATOIO * (1.0 - 0.3 * k) - 0.05
+			# (tre gradoni di graniglia sotto il pontile, sempre più corti verso il basso: il più basso a 2,05 m sopra la
+			# banchina)
+			_scatola(st["graniglia"], facce, _al(p - d * (lk * 0.5), r, Vector2(um, sg - 0.2 - 0.125 - 0.25 * k + 0.0005)), r, d,
+					Vector3(0.12, 0.25, lk))
 	var gradini := 12
 	var alzata := SOGLIA / gradini
 	for k in gradini:
@@ -772,10 +800,13 @@ func _fine() -> void:
 		var pk := punto(sk)
 		var base := _al(pk, destra(sk), Vector2(-muro + 0.95, piano + alzata * float(k)))
 		_palo(nodo, base, base + Vector3.UP * 1.0, 0.025, corr)
-	var p_ball := [_al(b0, r, Vector2(-muro + 0.95, sg)), _al(b0, r, Vector2(-mz - 0.6, sg))]
+	# (lungo il bordo del pontile verso il canale, e sulla sua testa fino a mezzo metro dal muro: di lì si va alla porta)
+	var p_ball := [_al(b0, r, Vector2(-muro + 0.95, sg)), _al(b0, r, Vector2(PONTILE_FINO - 0.05, sg)),
+			_al(p - d * 0.55, r, Vector2(PONTILE_FINO - 0.05, sg))]
 	for q in p_ball:
 		_palo(nodo, q, q + Vector3.UP * 1.0, 0.025, corr)
 	_palo(nodo, p_ball[0] + Vector3.UP * 1.0, p_ball[1] + Vector3.UP * 1.0, 0.025, corr)
+	_palo(nodo, p_ball[1] + Vector3.UP * 1.0, p_ball[2] + Vector3.UP * 1.0, 0.025, corr)
 	var su0 := _al(punto(L - BALLATOIO - gradini * 0.32), destra(L - BALLATOIO - gradini * 0.32), Vector2(-muro + 0.95, piano + 1.0))
 	_palo(nodo, su0, p_ball[0] + Vector3.UP * 1.0, 0.025, corr)
 	for k in st:
@@ -838,16 +869,17 @@ func _palo(nodo: Node3D, a: Vector3, b: Vector3, raggio: float, m: Material) -> 
 ## illuminato. Dalla camera con E si chiude: il battente si chiude, il volantino gira (in senso orario, per
 ## serrare) restando attaccato al battente, e lei ci sbatte contro (vedi [method _finale]).
 func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> void:
-	var mz := PORTELLO_LARGO * 0.5
 	var acciaio := _mat("acciaio_portello", Color(0.32, 0.36, 0.38), 0.45, 0.8)
 	# la cornice sul muro dalla parte del tunnel
 	var f_st := SurfaceTool.new()
 	f_st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var f_facce := PackedVector3Array()
 	var spor := 0.08
-	for q in [[Vector2(0, sg + PORTELLO_ALTO + 0.08), Vector3(PORTELLO_LARGO + 0.32, 0.16, spor)],
-			[Vector2(-mz - 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)],
-			[Vector2(mz + 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)]]:
+	var px0 := PORTA_SX
+	var px1 := PORTA_SX + PORTELLO_LARGO
+	for q in [[Vector2((px0 + px1) * 0.5, sg + PORTELLO_ALTO + 0.08), Vector3(PORTELLO_LARGO + 0.32, 0.16, spor)],
+			[Vector2(px0 - 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)],
+			[Vector2(px1 + 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)]]:
 		var v: Vector2 = q[0]
 		_scatola(f_st, f_facce, _al(p - d * spor * 0.5, r, v), r, d, q[1])
 	var fm := MeshInstance3D.new()
@@ -859,7 +891,7 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	var perno := Node3D.new()
 	perno.name = "PortelloPerno"
 	nodo.add_child(perno)
-	perno.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(-mz, sg)))
+	perno.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(px0, sg)))
 	# (il perno a sinistra della porta guardando dal tunnel: il battente si apre verso la camera, contro il suo
 	# fianco sinistro, e non ingombra il ballatoio)
 	# (il battente è una mesh vera, lastra spessa 10 cm col buco tondo dell'oblò: tagliata in due a metà del buco,
@@ -875,9 +907,9 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	var cerchio := PackedVector2Array()
 	for k in 32:
 		var a := TAU * float(k) / 32.0
-		cerchio.append(Vector2(mz + cos(a) * OBLO_R, OBLO_Y + sin(a) * OBLO_R))
-	for meta in [PackedVector2Array([Vector2(x0, y0), Vector2(mz, y0), Vector2(mz, y1), Vector2(x0, y1)]),
-			PackedVector2Array([Vector2(mz, y0), Vector2(x1, y0), Vector2(x1, y1), Vector2(mz, y1)])]:
+		cerchio.append(Vector2(OBLO_X + cos(a) * OBLO_R, OBLO_Y + sin(a) * OBLO_R))
+	for meta in [PackedVector2Array([Vector2(x0, y0), Vector2(OBLO_X, y0), Vector2(OBLO_X, y1), Vector2(x0, y1)]),
+			PackedVector2Array([Vector2(OBLO_X, y0), Vector2(x1, y0), Vector2(x1, y1), Vector2(OBLO_X, y1)])]:
 		# (il buco sta sul bordo di ogni metà: niente buchi interni, ogni pezzo è la lastra)
 		for poly in Geometry2D.clip_polygons(meta, cerchio):
 			var tri := Geometry2D.triangulate_polygon(poly)
@@ -893,7 +925,7 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	for k in 32:
 		var c0: Vector2 = cerchio[k]
 		var c1: Vector2 = cerchio[(k + 1) % 32]
-		var m := (c0 + c1) * 0.5 - Vector2(mz, OBLO_Y)
+		var m := (c0 + c1) * 0.5 - Vector2(OBLO_X, OBLO_Y)
 		bordo.append([c0, c1, Vector3(-m.x, -m.y, 0.0).normalized()])
 	for e in bordo:
 		var e0: Vector2 = e[0]
@@ -940,7 +972,7 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	vetro.mesh = vm
 	vetro.material_override = _mat_vetro_oblo()
 	vetro.rotation_degrees.x = 90
-	vetro.position = Vector3(mz, OBLO_Y, 0.0)
+	vetro.position = Vector3(OBLO_X, OBLO_Y, 0.0)
 	perno.add_child(vetro)
 	for lato: float in [-1.0, 1.0]:
 		var an := MeshInstance3D.new()
@@ -951,12 +983,12 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 		an.material_override = _mat_ottone()
 		an.rotation_degrees.x = 90
 		# (la cornice d'ottone sulla faccia della lastra, a 2 mm)
-		an.position = Vector3(mz, OBLO_Y, lato * (mezzo + 0.04 + 0.002))
+		an.position = Vector3(OBLO_X, OBLO_Y, lato * (mezzo + 0.04 + 0.002))
 		perno.add_child(an)
 	# il volantino dalla parte della camera (z negativo del perno: verso la camera), sotto l'oblò, illuminato
 	var volantino := Node3D.new()
 	volantino.name = "Volantino"
-	volantino.position = Vector3(mz, VOLANTINO_Y, -0.11)
+	volantino.position = Vector3(OBLO_X, VOLANTINO_Y, -0.11)
 	perno.add_child(volantino)
 	var ruota := MeshInstance3D.new()
 	var rm := TorusMesh.new()
@@ -1001,7 +1033,7 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	cs.shape = bx
 	usa.add_child(cs)
 	nodo.add_child(usa)
-	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.35, r, Vector2(0.0, sg + PORTELLO_ALTO * 0.5)))
+	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.35, r, Vector2((px0 + px1) * 0.5, sg + PORTELLO_ALTO * 0.5)))
 	usa.interacted.connect(func(_by): chiudi_portello())
 	_usa_portello = usa
 
@@ -1052,7 +1084,7 @@ func chiudi_portello() -> void:
 func _finale() -> void:
 	if lei_tunnel:
 		lei_stato = Lei.PRESA     # (ferma: la muove lo schianto)
-		var oblo := _perno.global_transform * Vector3(PORTELLO_LARGO * 0.5, OBLO_Y, -0.06)
+		var oblo := _perno.global_transform * Vector3(OBLO_X, OBLO_Y, -0.06)
 		lei_tunnel.schianto(oblo, -direzione(lunghezza()))
 		lei_tunnel.schianto_contro.connect(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6), CONNECT_ONE_SHOT)
 		get_tree().create_timer(2.6, false).timeout.connect(_nero)
@@ -1393,7 +1425,7 @@ func _process(delta: float) -> void:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
 			if gap < distanza_min and _lei_t < vantaggio:
 				v = 0.0
-			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - BALLATOIO - 1.5))
+			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - 1.2))
 			gap = _s_bersaglio - lei_s
 			if gap < distanza_morsi:
 				_morso_tra -= delta
