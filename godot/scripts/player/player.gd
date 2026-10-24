@@ -33,6 +33,8 @@ signal interaction_target_changed(target: Interactable)
 
 const SURFACE_DEFAULT := &"generico"
 const SURFACE_WATER := &"acqua"
+## Da quanta acqua sopra i piedi si va a guado (m), nei WaterVolume con velocita_guado.
+const GUADO_DA := 0.2
 const SURFACE_LADDER := &"scala"
 const SURFACE_SLIDE := &"scivolo"
 ## Gruppo dei corpi su cui si scivola (li mette chi costruisce la sala della torre).
@@ -403,11 +405,17 @@ func _move_on_ground(delta: float) -> void:
 
 
 func _max_speed(input: Vector2) -> float:
+	var v := walk_speed
 	if is_crouching:
-		return crouch_speed
-	if input_enabled and Input.is_action_pressed("sprint") and input.y <= 0.0 and input.length() > 0.1:
-		return run_speed
-	return walk_speed
+		v = crouch_speed
+	elif input_enabled and Input.is_action_pressed("sprint") and input.y <= 0.0 and input.length() > 0.1:
+		v = run_speed
+	# a guado (l'acqua del canale del tunnel sottomarino, al ginocchio) si va piano, anche di corsa
+	for area in sensor.get_overlapping_areas():
+		var wv := area as WaterVolume
+		if wv and wv.velocita_guado > 0.0 and wv.get_surface_height() > global_position.y + GUADO_DA:
+			v = minf(v, wv.velocita_guado_accovacciato if is_crouching and wv.velocita_guado_accovacciato > 0.0 else wv.velocita_guado)
+	return v
 
 
 ## Gradini. Dopo il passo normale, se si è sbattuto contro qualcosa di basso (camminando a
