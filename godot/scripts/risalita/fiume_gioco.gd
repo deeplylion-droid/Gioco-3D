@@ -1024,12 +1024,26 @@ func _rocce_buchi(rocce: Array) -> void:
 			# dove la banchina è diversa (le conche dei bivi) il pannello va più indietro, verso il muro
 			for indietro in [0.0, 0.5, 1.0, 1.5]:
 				var q: Vector3 = p - davanti * (indietro + 0.05)
-				if not _ci_sta(q, rot, LARGO_BUCO, 0.6) or in_piazza(q - davanti * 1.0):
+				if not _ci_sta(q, rot, LARGO_BUCO, 0.6):
+					continue
+				# con la piazza dietro ci vuole il posto per il pannello doppio (il retro piatto non si deve vedere)
+				if in_piazza(q - davanti * 1.0) and not _ci_sta(q - davanti * 0.002, rot + 180.0, 4.0, 0.6):
 					continue
 				_roccia(q, rot, messe % 2 == 0, LARGO_BUCO / 4.2)
 				rocce.append([q, rot])
 				messe += 1
 				break
+	# dietro le conche dei bivi 1 e 2 la banchina finisce contro il muro del capannone: lì tre pannelli contro il muro,
+	# girati verso la conca (al bivio 3 dietro la conca c'è l'uscita)
+	for c in [[Vector3(X1 - 0.35, 0, 0), -90.0, Vector3(0, 0, 1)], [Vector3(0, 0, Z1 - 0.35), 180.0, Vector3(1, 0, 0)]]:
+		for u in [-3.0, 0.0, 3.0]:
+			await _pausa()
+			var q: Vector3 = c[0] + (c[2] as Vector3) * u
+			if rocce.any(func(r: Array) -> bool: return (r[0] as Vector3).distance_to(q) < COPRE):
+				continue
+			_roccia(q, c[1], messe % 2 == 0, LARGO_BUCO / 4.2)
+			rocce.append([q, c[1]])
+			messe += 1
 	_zone_libere = zone
 	print("rocce nei buchi: %d" % messe)
 
