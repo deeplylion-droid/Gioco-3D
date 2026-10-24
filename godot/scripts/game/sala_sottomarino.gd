@@ -157,6 +157,8 @@ func _passi() -> Array:
 			out.append(_ostacolo.bind(o))
 	for g in gommoni:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
+	out.append(_checkpoint)
+	out.append(_lei_crea)
 	return out
 
 
@@ -678,6 +680,295 @@ func _mat_oblo() -> StandardMaterial3D:
 		_vetro_oblo.emission_energy_multiplier = 2.2
 		_vetro_oblo.roughness = 0.1
 	return _vetro_oblo
+
+
+# --- lei che insegue (scelte 6B, 7B, 8A, 9A dell'utente) -------------------------------------------------------------
+
+signal lei_riemersa
+signal lei_respinta
+signal lei_morde
+signal giocatore_preso
+
+enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
+
+## Fra quanti metri (lungo la strada) lei ti sta dietro: sotto [member distanza_min] si avvicina (ti raggiunge se
+## ti fermi, se vai a guado o se sbagli), sopra [member distanza_max] corre per rientrare. Sotto
+## [member distanza_presa] ti prende; sotto [member distanza_morsi] morde a vuoto ogni 1-2 s.
+@export var distanza_min := 8.0
+@export var distanza_max := 18.0
+@export var distanza_presa := 2.5
+@export var distanza_morsi := 7.0
+## La sua velocità normale (m/s): poco meno della corsa del giocatore (5,8), più del passo (3,4) e del guado (2).
+@export var velocita_lei := 4.6
+## Quanto corre per rientrare quando è più lontana di [member distanza_max].
+@export var velocita_rincorsa := 7.5
+## Mezzo secondo di getto in faccia (litri) la ferma per [member fermo_dopo_getto] secondi e la rimanda indietro di
+## [member indietro_dopo_getto] metri; si ritrae strizzando l'occhio, rallenta e riparte.
+@export var getto_in_faccia := 0.6
+@export var fermo_dopo_getto := 2.0
+@export var indietro_dopo_getto := 6.0
+## Quanto sta sopra l'acqua l'origine del modello (fluttua intera sopra il canale; le pose provvisorie finché non
+## arrivano le animazioni di mascotte).
+@export var lei_sopra_acqua := 1.3
+## A guado nel canale (velocità massima, m/s).
+@export var velocita_guado := 2.0
+## I checkpoint lungo la strada (m): all'ingresso e poi lungo il tunnel. Si riparte col serbatoio pieno e lei a
+## [member distanza_max] metri.
+@export var checkpoint_s := PackedFloat32Array([6.0, 160.0, 300.0, 445.0])
+## Il primo ordine dei checkpoint del tunnel (dopo quelli dell'inseguimento, che partono da 40).
+@export var ordine_base := 60
+## Chi insegue (vuoto: il giocatore); i test lo cambiano.
+var bersaglio: Node3D
+
+var lei: MedusaAffacciata
+var lei_stato := Lei.VIA
+var lei_s := 0.0
+var _lei_t := 0.0
+var _getto_preso := 0.0
+var _morso_tra := 1.5
+var _s_bersaglio := 0.0
+var _lei_testa: WaterHitbox
+var _guado := false
+var _passi_normali := Vector2.ZERO
+var checkpoint: Array[Checkpoint] = []
+
+
+func _lei_crea() -> void:
+	lei = MedusaAffacciata.new()
+	lei.name = "Lei"
+	lei.model = load("res://assets/models/medusa/medusa.glb")
+	lei.bell_material = load("res://assets/models/medusa/medusa_campana.tres")
+	lei.material_map = {
+		"M_capelli": load("res://assets/models/medusa/medusa_capelli_bagnata.tres"),
+		"M_ciocche": load("res://assets/models/medusa/medusa_ciocche_bagnata.tres"),
+		"M_mani": load("res://assets/models/medusa/medusa_mani_bagnata.tres"),
+		"M_occhio_bulbo": load("res://assets/models/medusa/medusa_occhio.tres"),
+		"M_orbita": load("res://assets/models/medusa/medusa_orbita_bagnata.tres"),
+		"M_pelle": load("res://assets/models/medusa/medusa_pelle_bagnata.tres"),
+		"M_tentacoli": load("res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
+	}
+	lei.animazioni_inseguimento = true
+	lei.animazione = &"inseguimento/incombe"
+	lei.visible = false
+	add_child(lei)
+	var luce := OmniLight3D.new()
+	luce.light_color = Color(1.0, 0.32, 0.62)
+	luce.light_energy = 6.0
+	luce.omni_range = 9.0
+	luce.light_volumetric_fog_energy = 3.0
+	luce.shadow_enabled = true
+	luce.position = Vector3(0, 2.4, 0.9)
+	luce.set_meta(&"risveglio_ignora", true)
+	lei.add_child(luce)
+	# il viso: un getto lì la ferma e la ricaccia indietro
+	_lei_testa = WaterHitbox.new()
+	_lei_testa.name = "Viso"
+	var cs := CollisionShape3D.new()
+	var sf := SphereShape3D.new()
+	sf.radius = 0.9
+	cs.shape = sf
+	_lei_testa.add_child(cs)
+	_lei_testa.position = Vector3(0, 3.4, 0.6)
+	lei.add_child(_lei_testa)
+	_lei_testa.water_hit.connect(func(litri: float, _p: Vector3, _d: Vector3):
+		if lei_stato == Lei.INSEGUE or lei_stato == Lei.SALE:
+			_getto_preso += litri
+			if _getto_preso >= getto_in_faccia:
+				respingi())
+
+
+## I checkpoint del tunnel, lungo la strada ([member checkpoint_s]): un'area da banchina a banchina, la ripartenza
+## sulla banchina sinistra (dove si arriva) girata verso l'approdo.
+func _checkpoint() -> void:
+	var i := 0
+	for s in checkpoint_s:
+		var a := Checkpoint.new()
+		a.name = "Checkpoint_%d" % int(s)
+		a.order = ordine_base + i
+		var forma := CollisionShape3D.new()
+		var box := BoxShape3D.new()
+		box.size = Vector3(muro * 2.0, 2.4, 2.0)
+		forma.shape = box
+		a.add_child(forma)
+		add_child(a)
+		var p := punto(s)
+		a.global_transform = Transform3D(Basis.looking_at(direzione(s), Vector3.UP), Vector3(p.x, piano + 1.2, p.z))
+		var rip := Marker3D.new()
+		rip.name = "Ripartenza"
+		a.add_child(rip)
+		rip.global_transform = Transform3D(Basis.looking_at(direzione(s), Vector3.UP),
+				_al(p, destra(s), Vector2(-(canale + banchina * 0.5), piano)))
+		a.spawn_point = rip
+		checkpoint.append(a)
+		i += 1
+
+
+func _bersaglio() -> Node3D:
+	if bersaglio:
+		return bersaglio
+	var p := GameState.player
+	return p if p and is_instance_valid(p) else null
+
+
+## Lei comincia a inseguire da [param s] (la riemersione dalla presa, o la ripartenza da un checkpoint: 18 m dietro).
+func insegui_da(s: float) -> void:
+	lei_s = s
+	lei_stato = Lei.INSEGUE
+	_getto_preso = 0.0
+	lei.visible = true
+	_anima_lei(&"inseguimento/incombe", 0.3)
+	lei.attacca(0.7, &"")       # la bocca spalancata e l'occhio pieno di vene, per tutta la fase
+	_metti_lei(0.0)
+
+
+## Lei riemerge dalla presa in testa al tunnel (quando il giocatore la guarda dalla porta): sale dall'acqua e
+## parte.
+func riemergi() -> void:
+	if lei_stato != Lei.VIA:
+		return
+	lei_stato = Lei.SALE
+	_lei_t = 0.0
+	lei_s = -1.0
+	lei.visible = true
+	_metti_lei(0.0)
+	var durata := _anima_lei(&"inseguimento/sale_dall_acqua", 0.0)
+	lei.attacca(0.7, &"")
+	lei_riemersa.emit()
+	get_tree().create_timer(minf(durata, 2.5), false).timeout.connect(func():
+		if lei_stato == Lei.SALE:
+			insegui_da(lei_s))
+
+
+## Il getto in faccia: si ritrae strizzando l'occhio, si ferma [member fermo_dopo_getto] secondi tornando indietro
+## di [member indietro_dopo_getto] metri, poi riparte.
+func respingi() -> void:
+	if lei_stato != Lei.INSEGUE and lei_stato != Lei.SALE:
+		return
+	lei_stato = Lei.RESPINTA
+	_lei_t = 0.0
+	_getto_preso = 0.0
+	_anima_lei(&"inseguimento/respinta", 0.12)
+	lei.chiudi_occhio(0.8)
+	lei_respinta.emit()
+
+
+func _prendi() -> void:
+	if lei_stato == Lei.PRESA:
+		return
+	lei_stato = Lei.PRESA
+	_anima_lei(&"inseguimento/presa", 0.12)
+	lei.attacca(0.4, &"")
+	lei.add_to_group(&"medusa_che_prende")
+	giocatore_preso.emit()
+	if bersaglio == null:
+		GameState.kill_player(&"medusa")
+
+
+func _anima_lei(nome: StringName, fondi: float) -> float:
+	lei.animazione = nome
+	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap == null or not ap.has_animation(nome):
+		return 1.0
+	ap.play(nome, fondi)
+	return ap.get_animation(nome).length
+
+
+## Mette lei sull'asse del canale a [member lei_s], sopra l'acqua, girata verso chi insegue.
+func _metti_lei(delta: float) -> void:
+	var p := punto(lei_s)
+	var pos := Vector3(p.x, acqua + lei_sopra_acqua, p.z)
+	if lei_stato == Lei.SALE:
+		# sale dalla presa: dal fondo fino alla sua quota in 1,6 s
+		pos.y = lerpf(PRESA_FONDO, acqua + lei_sopra_acqua, clampf(_lei_t / 1.6, 0.0, 1.0))
+	lei.global_position = pos
+	var b := _bersaglio()
+	var guarda := (b.global_position if b else pos + direzione(lei_s)) - pos
+	guarda.y = 0.0
+	if guarda.length() > 0.1:
+		var voluta := Basis.looking_at(guarda.normalized(), Vector3.UP, true)
+		lei.global_transform.basis = lei.global_transform.basis.slerp(voluta, clampf(delta * 4.0, 0.0, 1.0)) if delta > 0.0 else voluta
+
+
+func _process(delta: float) -> void:
+	if lei == null or lei_stato == Lei.VIA or lei_stato == Lei.PRESA:
+		_guado_giocatore()
+		return
+	_lei_t += delta
+	var b := _bersaglio()
+	if b:
+		_s_bersaglio = _s_vicino(b.global_position, _s_bersaglio)
+	var gap := _s_bersaglio - lei_s
+	match lei_stato:
+		Lei.SALE:
+			pass
+		Lei.INSEGUE:
+			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
+			lei_s = minf(lei_s + v * delta, _s_bersaglio - 0.5)
+			gap = _s_bersaglio - lei_s
+			if gap < distanza_morsi:
+				_morso_tra -= delta
+				if _morso_tra <= 0.0:
+					_morso_tra = randf_range(1.0, 2.0)
+					lei_morde.emit()
+			if gap <= distanza_presa and b and _raggiungibile(b.global_position):
+				_prendi()
+		Lei.RESPINTA:
+			# indietro di 6 m nel primo secondo, poi ferma fino a 2 s, poi riparte
+			var f := clampf(_lei_t / 1.0, 0.0, 1.0)
+			lei_s -= indietro_dopo_getto * delta * (1.0 if f < 1.0 else 0.0)
+			lei_s = maxf(lei_s, -1.0)
+			if _lei_t >= fermo_dopo_getto:
+				lei_stato = Lei.INSEGUE
+				_anima_lei(&"inseguimento/incombe", 0.3)
+	_metti_lei(delta)
+	_guado_giocatore()
+
+
+## Il giocatore nel canale va piano (a guado): al massimo [member velocita_guado] m/s finché ha i piedi
+## sotto il piano delle banchine.
+func _guado_giocatore() -> void:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p) or bersaglio != null:
+		return
+	var dentro := p.global_position.y < piano - 0.25 and p.is_in_water(0.15)
+	if dentro and not _guado:
+		_passi_normali = Vector2(p.walk_speed, p.run_speed)
+		p.walk_speed = minf(p.walk_speed, velocita_guado)
+		p.run_speed = minf(p.run_speed, velocita_guado)
+		_guado = true
+	elif not dentro and _guado:
+		p.walk_speed = _passi_normali.x
+		p.run_speed = _passi_normali.y
+		_guado = false
+
+
+## Vero se lei arriva a [param pos]: dentro il tunnel (non nella galleria di servizio, dietro il muro).
+func _raggiungibile(pos: Vector3) -> bool:
+	var pr := proietta_vicino(pos, _s_bersaglio)
+	return absf(float(pr[1])) < muro - 0.1
+
+
+## Come [method proietta], ma cerca solo vicino a [param s_prima] (ogni fotogramma: la strada è lunga).
+func proietta_vicino(p: Vector3, s_prima: float, raggio := 30.0) -> Array:
+	var i0 := maxi(_indice(maxf(s_prima - raggio, 0.0)), 0)
+	var i1 := mini(_indice(minf(s_prima + raggio, lunghezza())) + 1, _s.size() - 1)
+	var best := INF
+	var bs := s_prima
+	for i in range(i0, i1):
+		var a := _pos(i)
+		var c := _pos(i + 1)
+		var ab := Vector2(c.x - a.x, c.z - a.z)
+		var ap := Vector2(p.x - a.x, p.z - a.z)
+		var f := clampf(ap.dot(ab) / maxf(ab.length_squared(), 1e-9), 0.0, 1.0)
+		var d := (ap - ab * f).length_squared()
+		if d < best:
+			best = d
+			bs = _s[i] + (_s[i + 1] - _s[i]) * f
+	return [bs, (p - punto(bs)).dot(destra(bs))]
+
+
+func _s_vicino(p: Vector3, s_prima: float) -> float:
+	return float(proietta_vicino(p, s_prima)[0])
 
 
 # --- gli ostacoli (scelte 2C e 4C dell'utente) ------------------------------------------------------------------------
