@@ -324,10 +324,17 @@ Nota dell'utente sulla B, "Le rapide": "Se hai già fatto anche le rapide possia
 - **Bocca (B)**: spalancata per tutta la fase, con l'occhio pieno di vene; quando ti è vicina, sotto i 6-8 m, morde a vuoto ogni 1-2 secondi, come lo squalo.
 - **Getto (A)**: lei ti sta dietro fra 8 e 18 m e sotto i 2,5 m ti prende. Mezzo secondo di getto in faccia la ferma 2 secondi e la rimanda indietro di circa 6 m. Riparti dall'ultimo checkpoint.
 - **Reazione (A)**: si ritrae strizzando l'occhio, rallenta e riparte.
-- **Voce (A)**: sotto i versi già approvati, un fiato roco e basso, continuo, con un verso ogni 4-6 secondi. Va fatto sentire all'utente prima di metterlo nel gioco.
+- **Voce (A)**: sotto i versi già approvati, un fiato roco e basso, continuo, con un verso ogni 4-6 secondi. Va fatto sentire all'utente prima di metterlo nel gioco. **Approvato dall'utente** ("ok per il fiato", sera del 24 ottobre) sull'esempio di 30 s di mascotte (lavoro/sottomarino-lei a8638726, `docs/proposte/voce_lei_tunnel/`): fiato a -27 LUFS, versi intorno a -22.
 - **Finale (A)**: passi il portello da sottomarino e lo chiudi col volantino; lei ci sbatte contro con la faccia sull'oblò e la bocca spalancata; poi nero e "FINE DELLA DEMO".
 - **Dopo "FINE DELLA DEMO" (A)**: finita la scritta, il gioco torna da solo al titolo.
+- **Menu di prova nascosto (scelta B dell'utente, sera del 24 ottobre)**. L'utente: "non posso provare e riprovare le stesse cose". Nel titolo un tasto (F9, non mostrato nei comandi) apre un menu per partire da: inizio, risalita, fiume lento, torre, inseguimento, tunnel sottomarino; ogni partenza mette il mondo come se il giocatore avesse fatto tutto quello che viene prima. I giocatori normali non lo vedono. Lo fa mascotte (lavoro/menu-prova), nella build del tunnel.
 - **Prove (no)**: niente prove prima; l'utente lo giudica giocando. Parole sue: "ti ho risposto, vai e non commettere gli errori che ti ho corretto nuovamente."
+- **Arredi, scelte della sera del 24 ottobre ("1A 2A")**. Le banchine sono tutta strada, quindi niente a terra fino a 2 m; gli arredi stanno sui muri sopra i 2 m, nella volta sopra di lei o a filo.
+  - Pesci (A): una fila di pesci di vetroresina su mensole d'ottone sui due muri, a 2,3-2,6 m, girati tutti verso l'approdo come un branco che nuota con te, ognuno con un faretto sotto.
+  - Abisso (A): tre oblò grandi per lato col blu profondo, dove passa lenta la sagoma lontana di un pesce enorme, con qualche bollicina; poche lampade blu scure e una fila di lucine azzurre a filo pavimento lungo i bordi delle banchine, ogni 3 m.
+  - Reti con le stelle (A, "Voto A"): il modello Meshy era venuto male, quindi c'è una rete da pesca fatta da codice, color corda, con le maglie a rombi, il bordo di corda grossa, due chiodi d'ottone e quattro stelle marine impigliate, tesa sul muro sopra i 2 m in 3 posti (scatto in `docs/proposte/sottomarino/rete_stelle_da_codice.jpg`, lavoro/sottomarino-arredi-a1 5328fa70).
+  - Fatti senza scelta, coerenti col fiume B: la tartaruga appesa alla volta con le catene, il buco nella volta sopra le lastre cadute, all'approdo bitte basse, fanali rosso e verde, salvagente fosforescente al muro e cartelli a disegni.
+  - Galleggianti: i gommoni tondi delle rapide, legati con corde chiare agli anelli; si risale dal canale con un gradino continuo appena sotto il pelo lungo le due banchine; a guado si va a 2 m/s.
 
 **L'aspetto delle stanze nuove, scelte del 19 ottobre** (proposte di enigma-ambiente in `docs/proposte/fiume_aspetto/`, `infermeria_aspetto/` e `tessera_lettore/`, lavoro/enigma-ambiente 295e9c6):
 - **fiume lento: A, "giungla finta"**. Riscontro dell'utente sulla v0.3.11 (23 ottobre):

@@ -47,10 +47,15 @@ const BALLATOIO := 1.0
 const PONTILE_FINO := -0.95
 const SOGLIA_PROFONDA := 0.25
 const PORTA_SX := -0.65
+## Il telaio rivettato attorno alla porta: largo, quanto sporge verso il tunnel e quanto dietro il muro (camera).
+const TELAIO := 0.13
+const TELAIO_DAVANTI := 0.05
+const TELAIO_DIETRO := 0.03
+## Il battente: quanto è più grande della porta (si chiude contro il telaio) e quanto è spesso.
+const BATTENTE_DI := 0.07
+const BATTENTE_SPESSO := 0.08
 const PORTELLO_LARGO := 1.3
-## Dov'è l'oblò sul battente, dal perno (che sta sul lato sinistro della porta): in mezzo, sull'asse del canale.
-const OBLO_X := 0.65
-const PORTELLO_ALTO := 2.05      # (la porta alta più di 2 m: si passa senza abbassarsi)
+const PORTELLO_ALTO := 2.35      # (l'arco della porta resta sopra i 2 m dove si passa, testa compresa)
 const PORTELLO_APERTO := 90.0
 ## L'oblò e il volantino sul battente (dalla soglia).
 const OBLO_Y := 1.3
@@ -735,7 +740,6 @@ func _fine() -> void:
 	var r := destra(L)
 	var d := direzione(L)
 	var sg := piano + SOGLIA
-	var cima := sg + PORTELLO_ALTO
 	# il muro di fondo: la sagoma della sezione (fondo, muri, volta) meno la porta. Tagliata in due a metà della porta,
 	# così ogni metà ha la porta sul bordo (niente buchi da triangolare)
 	var sagoma := [Vector2(-muro, fondo), Vector2(muro, fondo), Vector2(muro, imposta)]
@@ -743,9 +747,11 @@ func _fine() -> void:
 		var a := PI * float(k) / 24
 		sagoma.append(Vector2(cos(a) * muro, imposta + sin(a) * (chiave - imposta)))
 	sagoma.append(Vector2(-muro, imposta))
-	var px0 := PORTA_SX
 	var px1 := PORTA_SX + PORTELLO_LARGO
-	var porta := PackedVector2Array([Vector2(px0, sg), Vector2(px1, sg), Vector2(px1, cima), Vector2(px0, cima)])
+	# (il buco nel muro è grande quanto il telaio del portello, che lo riempie)
+	var porta := PackedVector2Array()
+	for q in sagoma_portello(TELAIO):
+		porta.append(Vector2(q.x, sg + q.y))
 	for meta: float in [-1.0, 1.0]:
 		var mezza := PackedVector2Array([Vector2(0, fondo - 1.0), Vector2(meta * (muro + 1.0), fondo - 1.0),
 				Vector2(meta * (muro + 1.0), chiave + 1.0), Vector2(0, chiave + 1.0)])
@@ -760,7 +766,7 @@ func _fine() -> void:
 					facce.append_array(PackedVector3Array(t))
 	# la camera stagna dietro il muro: pavimento alla soglia, soffitto, due fianchi e il fondo
 	var cl := 3.0
-	var ca := 2.5
+	var ca := 2.75
 	var cm := 1.4
 	var c0 := p
 	var c1 := p + d * cl
@@ -770,14 +776,19 @@ func _fine() -> void:
 		[[_al(c0, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", r],
 		[[_al(c0, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", -r],
 		[[_al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca))], "mosaico", -d],
-		# (il muro dalla parte della camera, attorno alla porta)
-		[[_al(c0, r, Vector2(-cm, sg)), _al(c0, r, Vector2(px0, sg)), _al(c0, r, Vector2(px0, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", d],
-		[[_al(c0, r, Vector2(px1, sg)), _al(c0, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(px1, sg + ca))], "mosaico", d],
-		[[_al(c0, r, Vector2(px0, cima)), _al(c0, r, Vector2(px1, cima)), _al(c0, r, Vector2(px1, sg + ca)), _al(c0, r, Vector2(px0, sg + ca))], "mosaico", d],
 	]
 	for pz in cam:
 		_quad(st[pz[1]], pz[0], pz[2])
 		_facce_quad(facce, pz[0])
+	# il muro dalla parte della camera, attorno al telaio (tagliato in due a metà della porta)
+	for meta: float in [-1.0, 1.0]:
+		var mezza := PackedVector2Array([Vector2(0.0, sg), Vector2(meta * cm, sg), Vector2(meta * cm, sg + ca), Vector2(0.0, sg + ca)])
+		for poly in Geometry2D.clip_polygons(mezza, porta):
+			var tri := Geometry2D.triangulate_polygon(poly)
+			for k in range(0, tri.size(), 3):
+				var tc := [_al(c0, r, poly[tri[k]]), _al(c0, r, poly[tri[k + 1]]), _al(c0, r, poly[tri[k + 2]])]
+				_tri(st["mosaico"], tc, d)
+				facce.append_array(PackedVector3Array(tc))
 	# il pontile davanti al muro di fondo, dalla scala fino a PONTILE_FINO dall'asse, e la soglia d'acciaio davanti alla
 	# porta (spessi 20 cm, a sbalzo dal muro), poi la scala lungo il muro sinistro
 	var b0 := p - d * BALLATOIO
@@ -897,75 +908,75 @@ func _palo(nodo: Node3D, a: Vector3, b: Vector3, raggio: float, m: Material) -> 
 	corpo.add_child(cs)
 
 
-## Il portello da sottomarino nella porta in alto del muro di fondo: il battente d'acciaio con l'oblò (vetro vero:
-## da dentro la vedi), aperto contro il muro dalla parte del tunnel; il volantino dalla parte della camera,
-## illuminato. Dalla camera con E si chiude: il battente si chiude, il volantino gira (in senso orario, per
-## serrare) restando attaccato al battente, e lei ci sbatte contro (vedi [method _finale]).
+## Il portello da sottomarino nella porta in alto del muro di fondo, come quello approvato del fiume B (assets_src/
+## fiume_lento/meshy/portello): quasi tondo (l'arco in alto, gli angoli in basso arrotondati, alto 2,05 m perché ci si
+## passi in piedi), d'acciaio grigio-verde sbiadito, il telaio rivettato attorno alla porta, il battente con l'oblò
+## dal bordo d'ottone in mezzo (lì lei sbatte la faccia) e il volantino rosso sotto, dalla parte della camera,
+## illuminato. Il battente è più grande della porta e si chiude contro il telaio dalla parte della camera (niente
+## fessure). Aperto nella camera stagna; dalla camera con E si chiude: il battente gira sulle cerniere, il volantino
+## gira (in senso orario, per serrare) restando attaccato al battente, e lei ci sbatte contro (vedi [method _finale]).
+## Coordinate della porta: u lungo il muro dall'asse (destra), v dalla soglia in su, z verso il tunnel.
 func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> void:
-	var acciaio := _mat("acciaio_portello", Color(0.32, 0.36, 0.38), 0.45, 0.8)
-	# la cornice sul muro dalla parte del tunnel
-	var f_st := SurfaceTool.new()
-	f_st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var f_facce := PackedVector3Array()
-	var spor := 0.08
-	var px0 := PORTA_SX
-	var px1 := PORTA_SX + PORTELLO_LARGO
-	for q in [[Vector2((px0 + px1) * 0.5, sg + PORTELLO_ALTO + 0.08), Vector3(PORTELLO_LARGO + 0.32, 0.16, spor)],
-			[Vector2(px0 - 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)],
-			[Vector2(px1 + 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)]]:
-		var v: Vector2 = q[0]
-		_scatola(f_st, f_facce, _al(p - d * spor * 0.5, r, v), r, d, q[1])
-	var fm := MeshInstance3D.new()
-	fm.mesh = f_st.commit()
-	fm.material_override = acciaio
-	nodo.add_child(fm)
-	_corpo(nodo, f_facce)
-	# il battente: un perno sul lato sinistro della porta; il battente gira attorno alla verticale del perno
+	# (l'acciaio grigio-azzurro sbiadito del portello approvato)
+	var acciaio := _mat("acciaio_portello", Color(0.46, 0.53, 0.55), 0.55, 0.35)
+	var porta_xf := Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(0.0, sg)))
+	# il telaio: una corona larga TELAIO attorno alla porta, da TELAIO_DIETRO dietro il muro (camera) a TELAIO_DAVANTI
+	# davanti (tunnel); il muro ha il buco grande quanto la corona
+	var telaio := Node3D.new()
+	telaio.name = "Telaio"
+	nodo.add_child(telaio)
+	telaio.global_transform = porta_xf
+	var t_st := SurfaceTool.new()
+	t_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var t_facce := PackedVector3Array()
+	_lastra_bucata(t_st, t_facce, sagoma_portello(TELAIO), sagoma_portello(0.0), 0.0, -TELAIO_DIETRO, TELAIO_DAVANTI)
+	var tm := MeshInstance3D.new()
+	tm.name = "TelaioPortello"
+	tm.mesh = t_st.commit()
+	tm.material_override = acciaio
+	telaio.add_child(tm)
+	_corpo(telaio, t_facce)
+	# i rivetti del telaio, sulle due facce (teste a mezza sfera appoggiate alla faccia)
+	_rivetti(telaio, sagoma_portello(TELAIO * 0.5), TELAIO_DAVANTI, 1.0, acciaio)
+	# i quattro serraggi sul telaio dalla parte del tunnel, come nel portello approvato: due sull'arco, due sui fianchi
+	var cy := PORTELLO_ALTO - PORTELLO_LARGO * 0.5
+	var w := PORTELLO_LARGO * 0.5 + TELAIO * 0.5
+	for pos: Vector2 in [Vector2(cos(PI * 0.25) * w, cy + sin(PI * 0.25) * w), Vector2(-cos(PI * 0.25) * w, cy + sin(PI * 0.25) * w),
+			Vector2(w, 0.55), Vector2(-w, 0.55)]:
+		var serr := MeshInstance3D.new()
+		serr.name = "Serraggio"
+		var sb := BoxMesh.new()
+		sb.size = Vector3(0.08, 0.13, 0.035)
+		serr.mesh = sb
+		serr.material_override = acciaio
+		telaio.add_child(serr)
+		# (appoggiato alla faccia del telaio, girato lungo il bordo)
+		serr.position = Vector3(pos.x, pos.y, TELAIO_DAVANTI + 0.0175)
+		serr.rotation.z = atan2(pos.y - cy, pos.x) if pos.y > cy else 0.0
+	# (dalla parte della camera fuori dal battente chiuso, che copre il telaio per BATTENTE_DI)
+	_rivetti(telaio, sagoma_portello(TELAIO * 0.78), -TELAIO_DIETRO, -1.0, acciaio)
+	# il battente gira sulle cerniere: il perno è il loro asse, sul lato sinistro della porta, dietro il telaio
+	var px := -(PORTELLO_LARGO * 0.5 + BATTENTE_DI + 0.04)     # (l'asse 4 cm fuori dal bordo del battente)
+	var pz := -TELAIO_DIETRO - BATTENTE_SPESSO * 0.5
 	var perno := Node3D.new()
 	perno.name = "PortelloPerno"
 	nodo.add_child(perno)
-	perno.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(px0, sg)))
-	# (il perno a sinistra della porta guardando dal tunnel: il battente si apre verso la camera, contro il suo
-	# fianco sinistro, e non ingombra il ballatoio)
-	# (il battente è una mesh vera, lastra spessa 10 cm col buco tondo dell'oblò: tagliata in due a metà del buco,
-	# così ogni metà ha il buco sul bordo e si triangola; la collisione va con lui quando gira)
-	var b_st := SurfaceTool.new()
-	b_st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var b_facce := PackedVector3Array()
-	var x0 := 0.02
-	var x1 := PORTELLO_LARGO - 0.02
-	var y0 := 0.02
-	var y1 := PORTELLO_ALTO - 0.02
-	var mezzo := 0.05
+	perno.global_transform = porta_xf * Transform3D(Basis.IDENTITY, Vector3(px, 0.0, pz))
+	# il battente: la sagoma della porta allargata di BATTENTE_DI (copre il telaio dalla parte della camera), spessa
+	# BATTENTE_SPESSO, col buco dell'oblò; nelle coordinate del perno (x = u - px, z = z - pz)
+	var ox := -px                                               # l'oblò, sull'asse
 	var cerchio := PackedVector2Array()
 	for k in 32:
 		var a := TAU * float(k) / 32.0
-		cerchio.append(Vector2(OBLO_X + cos(a) * OBLO_R, OBLO_Y + sin(a) * OBLO_R))
-	for meta in [PackedVector2Array([Vector2(x0, y0), Vector2(OBLO_X, y0), Vector2(OBLO_X, y1), Vector2(x0, y1)]),
-			PackedVector2Array([Vector2(OBLO_X, y0), Vector2(x1, y0), Vector2(x1, y1), Vector2(OBLO_X, y1)])]:
-		# (il buco sta sul bordo di ogni metà: niente buchi interni, ogni pezzo è la lastra)
-		for poly in Geometry2D.clip_polygons(meta, cerchio):
-			var tri := Geometry2D.triangulate_polygon(poly)
-			for k in range(0, tri.size(), 3):
-				for zf: float in [-mezzo, mezzo]:
-					var tt := [Vector3(poly[tri[k]].x, poly[tri[k]].y, zf), Vector3(poly[tri[k + 1]].x, poly[tri[k + 1]].y, zf),
-							Vector3(poly[tri[k + 2]].x, poly[tri[k + 2]].y, zf)]
-					_tri(b_st, tt, Vector3(0, 0, signf(zf)))
-					b_facce.append_array(PackedVector3Array(tt))
-	# i fianchi della lastra e il bordo del buco
-	var bordo := [[Vector2(x0, y0), Vector2(x1, y0), Vector3.DOWN], [Vector2(x1, y0), Vector2(x1, y1), Vector3.RIGHT],
-			[Vector2(x1, y1), Vector2(x0, y1), Vector3.UP], [Vector2(x0, y1), Vector2(x0, y0), Vector3.LEFT]]
-	for k in 32:
-		var c0: Vector2 = cerchio[k]
-		var c1: Vector2 = cerchio[(k + 1) % 32]
-		var m := (c0 + c1) * 0.5 - Vector2(OBLO_X, OBLO_Y)
-		bordo.append([c0, c1, Vector3(-m.x, -m.y, 0.0).normalized()])
-	for e in bordo:
-		var e0: Vector2 = e[0]
-		var e1: Vector2 = e[1]
-		var q := [Vector3(e0.x, e0.y, -mezzo), Vector3(e1.x, e1.y, -mezzo), Vector3(e1.x, e1.y, mezzo), Vector3(e0.x, e0.y, mezzo)]
-		_quad(b_st, q, e[2])
-		_facce_quad(b_facce, q)
+		cerchio.append(Vector2(ox + cos(a) * OBLO_R, OBLO_Y + sin(a) * OBLO_R))
+	var sagoma_b := PackedVector2Array()
+	for q in sagoma_portello(BATTENTE_DI, 0.0):
+		sagoma_b.append(Vector2(q.x - px, maxf(q.y, 0.01)))
+	var b_st := SurfaceTool.new()
+	b_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var b_facce := PackedVector3Array()
+	var mezzo := BATTENTE_SPESSO * 0.5
+	_lastra_bucata(b_st, b_facce, sagoma_b, cerchio, ox, -mezzo, mezzo)
 	var battente := AnimatableBody3D.new()
 	battente.name = "Battente"
 	battente.collision_layer = Layers.WORLD
@@ -981,19 +992,23 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	b_forma.set_faces(b_facce)
 	b_cs.shape = b_forma
 	battente.add_child(b_cs)
-	# le due cerniere sul perno: fra la cornice e il battente (lo reggono)
-	for yc: float in [0.3, PORTELLO_ALTO - 0.3]:
+	# i rivetti del battente lungo il bordo, dalla parte della camera
+	var giro_rivetti := PackedVector2Array()
+	for q in sagoma_portello(BATTENTE_DI - 0.05, -0.05):
+		giro_rivetti.append(Vector2(q.x - px, q.y))
+	_rivetti(perno, giro_rivetti, -mezzo, -1.0, acciaio)
+	# le due cerniere sull'asse del perno, raggio 4 cm: toccano il bordo del battente e la faccia del telaio dalla parte
+	# della camera
+	for yc: float in [0.35, PORTELLO_ALTO - 0.45]:
 		var cern := MeshInstance3D.new()
 		cern.name = "Cerniera"
 		var cmh := CylinderMesh.new()
-		# (il perno sta nei 2 cm fra la cornice, che finisce a x 0, e il bordo del battente, a x 0,02: a 1-2 mm da tutti e
-		# due, senza entrarci)
-		cmh.top_radius = 0.009
-		cmh.bottom_radius = 0.009
-		cmh.height = 0.22
+		cmh.top_radius = 0.04
+		cmh.bottom_radius = 0.04
+		cmh.height = 0.24
 		cern.mesh = cmh
 		cern.material_override = acciaio
-		cern.position = Vector3(0.0105, yc, 0.0)
+		cern.position = Vector3(0.0, yc, 0.0)
 		perno.add_child(cern)
 	var vetro := MeshInstance3D.new()
 	var vm := CylinderMesh.new()
@@ -1005,23 +1020,23 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	vetro.mesh = vm
 	vetro.material_override = _mat_vetro_oblo()
 	vetro.rotation_degrees.x = 90
-	vetro.position = Vector3(OBLO_X, OBLO_Y, 0.0)
+	vetro.position = Vector3(ox, OBLO_Y, 0.0)
 	perno.add_child(vetro)
 	for lato: float in [-1.0, 1.0]:
 		var an := MeshInstance3D.new()
-		var tm := TorusMesh.new()
-		tm.inner_radius = OBLO_R - 0.01
-		tm.outer_radius = OBLO_R + 0.07
-		an.mesh = tm
+		var tom := TorusMesh.new()
+		tom.inner_radius = OBLO_R - 0.01
+		tom.outer_radius = OBLO_R + 0.07
+		an.mesh = tom
 		an.material_override = _mat_ottone()
 		an.rotation_degrees.x = 90
-		# (la cornice d'ottone sulla faccia della lastra, a 2 mm)
-		an.position = Vector3(OBLO_X, OBLO_Y, lato * (mezzo + 0.04 + 0.002))
+		# (la cornice d'ottone sulla faccia del battente, a 2 mm)
+		an.position = Vector3(ox, OBLO_Y, lato * (mezzo + 0.04 + 0.002))
 		perno.add_child(an)
-	# il volantino dalla parte della camera (z negativo del perno: verso la camera), sotto l'oblò, illuminato
+	# il volantino dalla parte della camera (z negativo del perno), sotto l'oblò, illuminato
 	var volantino := Node3D.new()
 	volantino.name = "Volantino"
-	volantino.position = Vector3(OBLO_X, VOLANTINO_Y, -0.11)
+	volantino.position = Vector3(ox, VOLANTINO_Y, -mezzo - 0.06)
 	perno.add_child(volantino)
 	var ruota := MeshInstance3D.new()
 	var rm := TorusMesh.new()
@@ -1043,14 +1058,14 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	var mm := CylinderMesh.new()
 	mm.top_radius = 0.05
 	mm.bottom_radius = 0.05
-	# (il mozzo va dalla ruota alla lastra: 6 cm, fino a 2 mm dalla lastra)
-	mm.height = 0.11 - mezzo - 0.002
+	# (il mozzo va dalla ruota al battente, fino a 2 mm dal battente)
+	mm.height = 0.06 - 0.002
 	mozzo.mesh = mm
 	mozzo.material_override = acciaio
 	mozzo.rotation_degrees.x = 90
-	mozzo.position.z = (0.11 - mezzo - 0.002) * 0.5
+	mozzo.position.z = (0.06 - 0.002) * 0.5
 	volantino.add_child(mozzo)
-	# aperto: il battente contro il muro dalla parte del tunnel
+	# aperto: il battente dentro la camera stagna
 	perno.rotation_degrees.y += PORTELLO_APERTO
 	_perno = perno
 	_volantino = volantino
@@ -1066,9 +1081,102 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	cs.shape = bx
 	usa.add_child(cs)
 	nodo.add_child(usa)
-	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.35, r, Vector2((px0 + px1) * 0.5, sg + PORTELLO_ALTO * 0.5)))
+	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.35, r, Vector2(0.0, sg + PORTELLO_ALTO * 0.5)))
 	usa.interacted.connect(func(_by): chiudi_portello())
 	_usa_portello = usa
+
+
+## La sagoma della porta del portello, quasi tonda: larga PORTELLO_LARGO, alta PORTELLO_ALTO, l'arco in alto e gli
+## angoli in basso arrotondati, nelle coordinate della porta (u, v), allargata di [param di] (in basso di
+## [param giu], di solito 0: la soglia resta a filo del pavimento). Il verso è antiorario.
+static func sagoma_portello(di: float, giu := 0.0) -> PackedVector2Array:
+	var w := PORTELLO_LARGO * 0.5 + di
+	var rb := 0.15 + di
+	var cy := PORTELLO_ALTO - PORTELLO_LARGO * 0.5
+	var v0 := -giu
+	var out := PackedVector2Array()
+	for k in 7:
+		var a := -PI * 0.5 + PI * 0.5 * float(k) / 6.0
+		out.append(Vector2(w - rb + cos(a) * rb, v0 + rb + sin(a) * rb))
+	for k in 25:
+		var a := PI * float(k) / 24.0
+		out.append(Vector2(cos(a) * w, cy + sin(a) * w))
+	for k in 7:
+		var a := PI + PI * 0.5 * float(k) / 6.0
+		out.append(Vector2(-w + rb + cos(a) * rb, v0 + rb + sin(a) * rb))
+	return out
+
+
+## Una lastra spessa da [param z0] a [param z1] (coordinate locali: x, y nel piano, z lo spessore) col profilo
+## [param fuori] meno il [param buco] (tutto dentro): le facce davanti e dietro tagliate in due alla x [param taglio]
+## (così ogni metà ha il buco sul bordo e si triangola), i fianchi esterni e quelli del buco.
+func _lastra_bucata(st: SurfaceTool, facce: PackedVector3Array, fuori: PackedVector2Array, buco: PackedVector2Array,
+		taglio: float, z0: float, z1: float) -> void:
+	var b := Rect2(fuori[0], Vector2.ZERO)
+	for q in fuori:
+		b = b.expand(q)
+	var meta := [PackedVector2Array([Vector2(b.position.x - 1.0, b.position.y - 1.0), Vector2(taglio, b.position.y - 1.0),
+			Vector2(taglio, b.end.y + 1.0), Vector2(b.position.x - 1.0, b.end.y + 1.0)]),
+			PackedVector2Array([Vector2(taglio, b.position.y - 1.0), Vector2(b.end.x + 1.0, b.position.y - 1.0),
+			Vector2(b.end.x + 1.0, b.end.y + 1.0), Vector2(taglio, b.end.y + 1.0)])]
+	for m in meta:
+		for parte in Geometry2D.intersect_polygons(fuori, m):
+			for poly in Geometry2D.clip_polygons(parte, buco):
+				var tri := Geometry2D.triangulate_polygon(poly)
+				for k in range(0, tri.size(), 3):
+					for zf: float in [z0, z1]:
+						var tt := [Vector3(poly[tri[k]].x, poly[tri[k]].y, zf), Vector3(poly[tri[k + 1]].x, poly[tri[k + 1]].y, zf),
+								Vector3(poly[tri[k + 2]].x, poly[tri[k + 2]].y, zf)]
+						_tri(st, tt, Vector3(0, 0, 1.0 if zf == z1 else -1.0))
+						facce.append_array(PackedVector3Array(tt))
+	# i fianchi: fuori con la normale in fuori, il buco con la normale verso il suo centro (tutti e due antiorari)
+	for giro in [[fuori, 1.0], [buco, -1.0]]:
+		var g: PackedVector2Array = giro[0]
+		for k in g.size():
+			var e0: Vector2 = g[k]
+			var e1: Vector2 = g[(k + 1) % g.size()]
+			var e := (e1 - e0).normalized()
+			var n := Vector3(e.y, -e.x, 0.0) * float(giro[1])
+			var q := [Vector3(e0.x, e0.y, z0), Vector3(e1.x, e1.y, z0), Vector3(e1.x, e1.y, z1), Vector3(e0.x, e0.y, z1)]
+			_quad(st, q, n)
+			_facce_quad(facce, q)
+
+
+## I rivetti: teste a mezza sfera ogni 16 cm lungo [param giro] (coordinate locali di [param nodo]), appoggiate alla
+## faccia a z [param z] e rivolte verso [param verso] (1: +z, -1: -z); niente rivetti sul bordo basso, nella soglia.
+func _rivetti(nodo: Node3D, giro: PackedVector2Array, z: float, verso: float, m: Material) -> void:
+	var punti := PackedVector2Array()
+	var resto := 0.0
+	for k in giro.size():
+		var a: Vector2 = giro[k]
+		var b: Vector2 = giro[(k + 1) % giro.size()]
+		var l := a.distance_to(b)
+		var t := resto
+		while t < l:
+			var q := a.lerp(b, t / l)
+			if q.y > 0.08:
+				punti.append(q)
+			t += 0.16
+		resto = t - l
+	var testa := SphereMesh.new()
+	testa.radius = 0.022
+	testa.height = 0.022
+	testa.is_hemisphere = true
+	testa.radial_segments = 8
+	testa.rings = 3
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = testa
+	mm.instance_count = punti.size()
+	# (la mezza sfera ha la base piatta in y = 0 e la cupola verso +y: girata verso la faccia)
+	var giro_b := Basis(Vector3.RIGHT, -PI * 0.5) if verso > 0.0 else Basis(Vector3.RIGHT, PI * 0.5)
+	for i in punti.size():
+		mm.set_instance_transform(i, Transform3D(giro_b, Vector3(punti[i].x, punti[i].y, z)))
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "Rivetti"
+	mmi.multimesh = mm
+	mmi.material_override = m
+	nodo.add_child(mmi)
 
 
 var _perno: Node3D
@@ -1117,7 +1225,9 @@ func chiudi_portello() -> void:
 func _finale() -> void:
 	if lei_tunnel:
 		lei_stato = Lei.PRESA     # (ferma: la muove lo schianto)
-		var oblo := _perno.global_transform * Vector3(OBLO_X, OBLO_Y, -0.06)
+		# (il centro dell'oblò dalla parte del tunnel: la faccia della cornice d'ottone, dove arriva la faccia di lei)
+		var ox := PORTELLO_LARGO * 0.5 + BATTENTE_DI + 0.04
+		var oblo := _perno.global_transform * Vector3(ox, OBLO_Y, BATTENTE_SPESSO * 0.5 + 0.082)
 		lei_tunnel.schianto(oblo, -direzione(lunghezza()))
 		lei_tunnel.schianto_contro.connect(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6), CONNECT_ONE_SHOT)
 		get_tree().create_timer(2.6, false).timeout.connect(_nero)
@@ -1591,7 +1701,7 @@ func chiudi_porta_bacino() -> void:
 	porta.size = Vector3(PORTA_LARGA, PORTA_ALTA, 0.06)
 	porta.use_collision = true
 	porta.collision_layer = Layers.WORLD
-	porta.material = _mat("acciaio_portello", Color(0.32, 0.36, 0.38), 0.45, 0.8)
+	porta.material = _mat("acciaio_porta_bacino", Color(0.32, 0.36, 0.38), 0.45, 0.8)
 	add_child(porta)
 	# a metà del passaggio fra il muro del tunnel e il muro della sala delle condotte
 	var c := _al(p, r, Vector2(-muro - 0.35, piano + PORTA_ALTA * 0.5))
