@@ -2373,7 +2373,8 @@ func _corda(mi: MeshInstance3D, pts: PackedVector3Array) -> void:
 		for o in [[lat, su], [su, -lat], [-lat, -su], [-su, lat]]:
 			var v0: Vector3 = o[0]
 			var v1: Vector3 = o[1]
-			for v in [prev + v0, q + v0, q + v1, prev + v0, q + v1, prev + v1]:
+			# (Godot: le facce davanti girano in senso orario viste da fuori)
+			for v in [prev + v0, q + v1, q + v0, prev + v0, prev + v1, q + v1]:
 				im.surface_set_normal(((v - prev) - dir * (v - prev).dot(dir)).normalized())
 				im.surface_add_vertex(v)
 	im.surface_end()
