@@ -4,7 +4,7 @@ extends Node
 ##   almeno 6,5 m dall'acqua (regola dell'utente: almeno 6 m sopra il canale);
 ## - dalla porta del bacino si entra nel tunnel (pavimento nel passaggio, niente muro davanti);
 ## - lo spazio di lei (sull'asse, coi tentacoli aperti) è libero lungo tutta la strada;
-## - dal canale si risale: i gradini ci sono ogni 12 m.
+## - dal canale si risale da qualunque punto: c'è il gradino continuo lungo le due rive.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_sottomarino.gd
 
 var ok := 0
@@ -113,9 +113,19 @@ func _run() -> void:
 					aperti.append("%s %d: largo %.2f alto %.2f" % [o["tipo"], int(o["s"]), f, h])
 	_controlla(aperti.is_empty(), "gli ostacoli chiudono la banchina (non si passa e non si scavalcano)", aperti)
 
-	# 4) i gradini
-	var gradini := sala.find_child("Gradini", true, false)
-	_controlla(gradini != null, "ci sono i gradini per risalire dal canale", [])
+	# 4) il gradino continuo lungo il bordo del canale, su tutte e due le rive (dove la banchina non è crollata)
+	var senza_gradino := []
+	s = SalaSottomarino.PRESA_FINO + 0.37
+	while s < lung - SalaSottomarino.BALLATOIO - 1.0:
+		for lato in [-1.0, 1.0]:
+			if _ostacolo_qui(sala, s, lato) and not _ostacolo_qui(sala, s, lato, ["carico", "cancello", "macerie", "vetrina"]):
+				continue
+			var q: Vector3 = sala.punto(s) + sala.destra(s) * float(lato) * (sala.canale - SalaSottomarino.GRADINO_LARGO * 0.5)
+			var h := _giu(spazio, Vector3(q.x, sala.acqua + 0.3, q.z))
+			if h.is_empty() or absf((h.position as Vector3).y - (sala.fondo + SalaSottomarino.GRADINO_SU)) > 0.02:
+				senza_gradino.append("%.1f %+d" % [s, int(lato)])
+		s += 1.0
+	_controlla(senza_gradino.is_empty(), "il gradino continuo per risalire dal canale c'è lungo tutte e due le rive", senza_gradino)
 
 	# 5) il finale: dalla camera stagna si chiude il portello, il volantino gira restando attaccato, poi "FINE"
 	var fine := [false]
@@ -138,8 +148,10 @@ func _run() -> void:
 
 
 ## Vero se a [param s] sul lato [param lato] c'è un ostacolo (lì la banchina è chiusa apposta).
-func _ostacolo_qui(sala: SalaSottomarino, s: float, lato: float) -> bool:
+func _ostacolo_qui(sala: SalaSottomarino, s: float, lato: float, tipi: Array = []) -> bool:
 	for o in sala.ostacoli:
+		if not tipi.is_empty() and not o["tipo"] in tipi:
+			continue
 		if float(o["lato"]) == lato and s > float(o["s"]) - 1.6 and s < float(o["s"]) + float(o["lungo"]) + 1.6:
 			return true
 	return false

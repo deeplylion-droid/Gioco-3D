@@ -493,7 +493,12 @@ def porta_uscita(c, y, z, luci):
     c.scatola((X0 + 0.02, y - 0.85, z), (X0 + 0.15, y - 0.7, z + 2.3), 'metallo_grigio')
     c.scatola((X0 + 0.02, y + 0.7, z), (X0 + 0.15, y + 0.85, z + 2.3), 'metallo_grigio')
     c.scatola((X0 + 0.02, y - 0.85, z + 2.2), (X0 + 0.15, y + 0.85, z + 2.35), 'metallo_grigio')
-    c.scatola_assi(Vector((X0 + 0.55, y + 0.25, z + 1.1)), [Vector((0.8, 0.6, 0)).normalized(), Vector((-0.6, 0.8, 0)).normalized(), Vector((0, 0, 1))], (0.03, 0.72, 1.08), 'portone')
+    if GIOCO:
+        # nel gioco il battente è aperto contro il muro, a nord della porta: oltre comincia il tunnel del viaggio
+        # sottomarino (scelte dell'utente del 24 ottobre) e il passaggio resta libero
+        c.scatola((X0 + 0.02, y + 0.86, z + 0.02), (X0 + 0.08, y + 2.3, z + 2.18), 'portone')
+    else:
+        c.scatola_assi(Vector((X0 + 0.55, y + 0.25, z + 1.1)), [Vector((0.8, 0.6, 0)).normalized(), Vector((-0.6, 0.8, 0)).normalized(), Vector((0, 0, 1))], (0.03, 0.72, 1.08), 'portone')
     s_ = 0.0 if GIOCO else 0.05        # (nel gioco contro il muro: stava 5 cm staccata)
     c.scatola((X0 + s_, y - 0.4, z + 2.5), (X0 + s_ + 0.07, y + 0.4, z + 2.8), 'faro_giallo')
     luci['uscita'].append([X0 + s_ + 0.19, y, z + 2.65])      # (la lampadina tocca la plafoniera)
