@@ -223,6 +223,14 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita_tardi.gd
 
+      - name: Finita la demo, il gioco torna da solo al titolo
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fine_titolo.gd
+
+      - name: Nessuna istanza di MultiMesh specchiata e facce dei MultiMesh nel verso giusto
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_multimesh_specchiati.gd
+
       - name: Test della luce normale (luci bianche al 40%, fisse)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_luci_bianche.gd

@@ -361,9 +361,7 @@ func _on_fine_demo(body: Node3D) -> void:
 			await portone.aperto
 			await get_tree().create_timer(0.8, false).timeout
 	demo_finished = true
-	var hud := _hud()
-	if hud:
-		hud.show_banner("FINE DELLA DEMO", fine_demo_testo, 9.0)
+	_fine_della_demo(fine_demo_testo)
 
 
 # --- La sala della torre ------------------------------------------------------------------------
@@ -546,6 +544,24 @@ func _on_fine_torre() -> void:
 	if demo_finished:
 		return
 	demo_finished = true
+	_fine_della_demo(fine_torre_testo)
+
+
+## Quanto resta la scritta della fine (secondi), e dopo quanto il gioco torna da solo al titolo.
+const FINE_SCRITTA := 9.0
+const FINE_AL_TITOLO := 9.5
+
+
+## La scritta "FINE DELLA DEMO" e, finita la scritta, il ritorno al titolo da solo (scelta 12A dell'utente: prima restava
+## il nero e bisognava premere Esc). Il timer si ferma con la pausa; se dalla pausa si torna al titolo prima, il livello
+## non c'è più e il collegamento se ne va con lui: non scatta due volte.
+func _fine_della_demo(testo: String) -> void:
 	var hud := _hud()
 	if hud:
-		hud.show_banner("FINE DELLA DEMO", fine_torre_testo, 9.0)
+		hud.show_banner("FINE DELLA DEMO", testo, FINE_SCRITTA)
+	get_tree().create_timer(FINE_AL_TITOLO, false).timeout.connect(_torna_al_titolo)
+
+
+func _torna_al_titolo() -> void:
+	if is_inside_tree() and get_tree().current_scene == self:
+		Game.return_to_title()
