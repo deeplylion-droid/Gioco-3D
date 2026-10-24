@@ -45,13 +45,12 @@ const VETRINA_BASSO := 2.05
 const ABISSO_LAMPADE_OGNI := 12.0
 const LUCINE_OGNI := 3.0
 
-## Le scelte dell'utente ancora aperte (proposte al coordinatore il 24 ottobre). Vuote finché non risponde: niente
-## pesci e niente oblò grandi nel gioco. I pesci: "A" su mensole d'ottone sui muri, girati verso l'approdo come un
-## branco; "B" appesi a coppie alla volta sopra le banchine. ("C", le nicchie nel muro, tocca la geometria del
-## tunnel di ambienti-2.) Gli oblò dell'abisso: "A" col pesce lontano che passa e le bollicine, "B" fermi col
-## plancton.
-static var scelta_pesci := ""
-static var scelta_abisso := ""
+## Le scelte dell'utente del 24 ottobre ("1A 2A"). I pesci: "A" su mensole d'ottone sui muri, girati verso l'approdo
+## come un branco che nuota con te, col faretto sotto ognuno (la "B", appesi a coppie alla volta sopra le banchine,
+## resta qui per le prove). Gli oblò dell'abisso: "A" col pesce grande e lontano che passa lento dietro il vetro e
+## le bollicine ("B", fermi col plancton, per le prove). Vuote: niente.
+static var scelta_pesci := "A"
+static var scelta_abisso := "A"
 ## I pesci: quanto distano lungo la strada (m), la scala del modello, la quota della mensola (sopra il piano).
 const PESCI_OGNI := 6.0
 const PESCE_SCALA := 0.7
@@ -274,7 +273,66 @@ func _pesce_mensola(nodo: Node3D, s: float, lato: float, k: int) -> void:
 		gap = minf(gap, (v - pm).dot(nrm))
 	if gap < 0.03:
 		p.position += nrm * (0.03 - gap)
-	_faretto(nodo, s - 1.0, lato, MENSOLA_Y - 0.15, p.position + Vector3.UP * 0.5, Color(1.0, 0.85, 0.65), 3.0)
+	# il faretto sotto il pesce: in punta alla mensola, puntato in su sulla pancia
+	var base := pm + nrm * (fuori - 0.07) + lungo * 0.12 + Vector3.UP * 0.0005
+	_faretto_mensola(nodo, base, p.position + Vector3.UP * 0.45, "faretto_pesce_%d" % k)
+
+
+## Un faretto piccolo appoggiato in [param base] (la sua base tonda), puntato su [param verso_p].
+func _faretto_mensola(nodo: Node3D, base: Vector3, verso_p: Vector3, nome: String) -> void:
+	var n := Node3D.new()
+	n.name = nome
+	nodo.add_child(n)
+	var mf := sala._mat_ferro()
+	var piede := MeshInstance3D.new()
+	var pc := CylinderMesh.new()
+	pc.top_radius = 0.045
+	pc.bottom_radius = 0.05
+	pc.height = 0.02
+	piede.mesh = pc
+	piede.material_override = mf
+	n.add_child(piede)
+	piede.position = base + Vector3.UP * 0.01
+	var dir := (verso_p - base).normalized()
+	var x := dir.cross(Vector3.UP).normalized()
+	if x.length_squared() < 0.01:
+		x = Vector3.RIGHT
+	var b := Basis(x, dir, x.cross(dir)).orthonormalized()
+	var testa := base + Vector3.UP * 0.035
+	var snodo := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 0.02
+	sm.height = 0.04
+	snodo.mesh = sm
+	snodo.material_override = mf
+	n.add_child(snodo)
+	snodo.position = base + Vector3.UP * 0.035
+	var can := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.045
+	cm.bottom_radius = 0.035
+	cm.height = 0.11
+	can.mesh = cm
+	can.material_override = mf
+	n.add_child(can)
+	can.transform = Transform3D(b, testa + dir * 0.065)
+	var vetro := MeshInstance3D.new()
+	var vc := CylinderMesh.new()
+	vc.top_radius = 0.043
+	vc.bottom_radius = 0.043
+	vc.height = 0.004
+	vetro.mesh = vc
+	vetro.material_override = _mat("vetro_faretto_pesci", Color(1.0, 0.95, 0.85), 0.2, 0.0, Color(1.0, 0.85, 0.65), 2.5)
+	n.add_child(vetro)
+	vetro.transform = Transform3D(b, testa + dir * 0.119)
+	var sp := SpotLight3D.new()
+	sp.light_color = Color(1.0, 0.85, 0.65)
+	sp.light_energy = 3.0
+	sp.spot_range = 3.0
+	sp.spot_angle = 35.0
+	sp.shadow_enabled = false
+	n.add_child(sp)
+	sp.transform = Transform3D(Basis.looking_at(dir, Vector3.FORWARD if absf(dir.y) > 0.95 else Vector3.UP), testa + dir * 0.13)
 
 
 ## Scelta B: un pesce appeso con due cavi alla volta sopra la banchina (il palo in basso sopra i 2,1 m), girato
@@ -452,7 +510,6 @@ func _abisso_oblo() -> void:
 			m.shader = shader
 			m.set_shader_parameter(&"animato", scelta_abisso == "A")
 			m.set_shader_parameter(&"fase", float(k) * 0.37)
-			m.set_shader_parameter(&"raggio", OBLO_R)
 			vetro.material_override = m
 			n.add_child(vetro)
 			occupati.append([s, lato, OBLO_R + 0.2])

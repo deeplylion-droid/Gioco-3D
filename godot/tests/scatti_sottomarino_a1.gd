@@ -6,9 +6,13 @@ extends "res://tests/scatti_sottomarino.gd"
 
 
 func _init() -> void:
-	# le scelte ancora aperte, per provarle (SCELTA_PESCI=A|B, SCELTA_ABISSO=A|B): di base spente
-	SottomarinoArrediA1.scelta_pesci = OS.get_environment("SCELTA_PESCI")
-	SottomarinoArrediA1.scelta_abisso = OS.get_environment("SCELTA_ABISSO")
+	# per provare le altre versioni (SCELTA_PESCI=A|B|niente, SCELTA_ABISSO=A|B|niente); di base quelle scelte (A, A)
+	var ep := OS.get_environment("SCELTA_PESCI")
+	if ep != "":
+		SottomarinoArrediA1.scelta_pesci = "" if ep == "niente" else ep
+	var ea := OS.get_environment("SCELTA_ABISSO")
+	if ea != "":
+		SottomarinoArrediA1.scelta_abisso = "" if ea == "niente" else ea
 	SCATTI = {
 		"a1_pesci": [244.0, -1.0, 1.6, 262.0, 0.0, 2.4, 75.0],
 		"a1_pesci_curva": [270.0, 1.0, 1.6, 290.0, 0.0, 2.4, 75.0],

@@ -25,9 +25,13 @@ func _check(cond: bool, msg: String) -> void:
 
 
 func _run() -> void:
-	# le scelte ancora aperte, per provarle (SCELTA_PESCI=A|B, SCELTA_ABISSO=A|B): di base spente
-	SottomarinoArrediA1.scelta_pesci = OS.get_environment("SCELTA_PESCI")
-	SottomarinoArrediA1.scelta_abisso = OS.get_environment("SCELTA_ABISSO")
+	# per provare le altre versioni (SCELTA_PESCI=A|B|niente, SCELTA_ABISSO=A|B|niente); di base quelle scelte (A, A)
+	var ep := OS.get_environment("SCELTA_PESCI")
+	if ep != "":
+		SottomarinoArrediA1.scelta_pesci = "" if ep == "niente" else ep
+	var ea := OS.get_environment("SCELTA_ABISSO")
+	if ea != "":
+		SottomarinoArrediA1.scelta_abisso = "" if ea == "niente" else ea
 	var sala := SalaSottomarino.new()
 	sala.name = "SalaSottomarino"
 	get_tree().root.add_child(sala)
