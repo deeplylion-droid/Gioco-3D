@@ -1,0 +1,222 @@
+{
+ "version": 1,
+ "scene": "res://scenes/sala_principale.tscn",
+ "checkpoint": "SalaSottomarino/Checkpoint_6",
+ "order": 60,
+ "player": {
+  "position": [
+   38.0,
+   -30.0,
+   -1.0
+  ],
+  "yaw": 3.14159265358979,
+  "inventory": {
+   "zaino_pompa": 1
+  },
+  "water": 20.0,
+  "water_mix": {}
+ },
+ "objects": {
+  "Vasca/VascaCentrale": {
+   "fill": 0.88,
+   "mix": {}
+  },
+  "Vasca/PulsanteSigla": {
+   "powered": false
+  },
+  "Risalita/Fiume/FiumeLento": {
+   "arrivato": true
+  },
+  "Risalita/Fiume/FiumeLento/Paratia1": {
+   "a_destra": true
+  },
+  "Risalita/Fiume/FiumeLento/Paratia2": {
+   "a_destra": false
+  },
+  "Risalita/Fiume/FiumeLento/Paratia3": {
+   "a_destra": true
+  },
+  "Risalita/Infermeria/Negatoscopio": {
+   "con_radiografia": true
+  },
+  "Risalita/Infermeria/Interruttore": {
+   "powered": true
+  },
+  "Risalita/Infermeria/Cassetto11": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto12": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto13": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto14": {
+   "aperto": true
+  },
+  "Risalita/Infermeria/Cassetto15": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto21": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto22": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto23": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto24": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassetto25": {
+   "aperto": false
+  },
+  "Risalita/Infermeria/Cassaforte": {
+   "cifre": [
+    0,
+    0,
+    0
+   ],
+   "aperta": true
+  },
+  "Interni": {
+   "tornello": true,
+   "docce": true,
+   "armadietto": true
+  },
+  "Interni/Acqua/VascaLavapiedi": {
+   "fill": 0.75,
+   "mix": {}
+  },
+  "Interni/Meccanismi/PulsanteTornello": {
+   "powered": true
+  },
+  "Interni/Meccanismi/Saracinesca": {
+   "latched": true,
+   "open": 1.0
+  },
+  "Piscina/Pozza": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Piscina/PulsantePortello": {
+   "powered": true
+  },
+  "Piscina/SvuotaPiscina": {
+   "attivo": true
+  },
+  "Piscina/SvuotaPiscina/Medusine": {},
+  "Piscina/Portello": {
+   "open": true
+  },
+  "Vasche/VascaArrivo": {
+   "fill": 0.838095238095238,
+   "mix": {}
+  },
+  "Vasche/VascaBimbi1": {
+   "fill": 0.674449612015727,
+   "mix": {}
+  },
+  "Vasche/VascaBimbi2": {
+   "fill": 0.488403100387862,
+   "mix": {}
+  },
+  "Tecnici/AgnellinoScala": {
+   "fatto": true
+  },
+  "Tecnici/Acqua/VascaRaccolta": {
+   "fill": 0.9118,
+   "mix": {}
+  },
+  "Tecnici/Logica/SalaPompe/Pompa3": {
+   "stato": 2
+  },
+  "Tecnici/Logica/SalaPompe/Pompa1": {
+   "stato": 2
+  },
+  "Tecnici/Logica/SalaPompe/Pompa2": {
+   "stato": 2
+  },
+  "Tecnici/Logica/SalaPompe/Leva": {
+   "abbassata": true
+  },
+  "Tecnici/Logica/SalaPompe/Paratia1": {
+   "chiusa": true,
+   "aperta": false
+  },
+  "Tecnici/Logica/SalaPompe/Paratia2": {
+   "chiusa": true,
+   "aperta": false
+  },
+  "Tecnici/Logica/SalaPompe/Maniglione": {
+   "aperta": true,
+   "bloccata": false
+  },
+  "Tecnici/Logica/SalaPompe/Risveglio": {
+   "avviate": 3,
+   "finito": true
+  },
+  "Tecnici/Logica/SerrandaMagazzino": {
+   "latched": true,
+   "open": 1.0,
+   "aperta": true
+  },
+  "Tecnici/Logica/LettoreTessera": {
+   "aperto": true
+  },
+  "Gioco/PortaSalaPompeInterni": {
+   "aperta": true,
+   "bloccata": false
+  },
+  "Gioco/LeiSbuca": {
+   "finita": true
+  },
+  "Gioco/PortoneTorre": {
+   "aperto": true,
+   "chiuso_dietro": false
+  },
+  "Gioco/EnigmaAcquari": {
+   "stato": 3
+  },
+  "Gioco/EnigmaAcquari/AcquarioGiallo": {
+   "fill": 0.94,
+   "mix": {
+    "giallo": 1.0
+   }
+  },
+  "Gioco/EnigmaAcquari/AcquarioMisto": {
+   "fill": 0.0,
+   "mix": {}
+  },
+  "Gioco/EnigmaAcquari/AcquarioBlu": {
+   "fill": 0.94,
+   "mix": {
+    "blu": 1.0
+   }
+  }
+ },
+ "removed": [
+  "Risalita/Infermeria/Cassetto14/Frontale/Radiografia",
+  "Risalita/Infermeria/Keycard",
+  "Interni/Zaino/Prendi"
+ ],
+ "collectibles": {
+  "polaroid": [
+   "p01",
+   "p02",
+   "p03",
+   "p04",
+   "p05",
+   "p08",
+   "p09",
+   "p06",
+   "p07",
+   "PolaroidPecora",
+   "Polaroid10"
+  ]
+ },
+ "luci": 2,
+ "time": 1792873990.48252,
+ "partenza_prova": "tunnel"
+}
