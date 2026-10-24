@@ -4,7 +4,7 @@ extends Node
 ##   almeno 6,5 m dall'acqua (regola dell'utente: almeno 6 m sopra il canale);
 ## - dalla porta del bacino si entra nel tunnel (pavimento nel passaggio, niente muro davanti);
 ## - lo spazio di lei (sull'asse, coi tentacoli aperti) è libero lungo tutta la strada;
-## - dal canale si risale: i gradini ci sono ogni 12 m.
+## - dal canale si risale da qualunque punto: c'è il gradino continuo lungo le due rive.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_sottomarino.gd
 
 var ok := 0
@@ -25,6 +25,10 @@ func _run() -> void:
 	for i in 3:
 		await get_tree().physics_frame
 	var spazio := sala.get_world_3d().direct_space_state
+	# (il fondo del canale si cerca anche sotto i gommoni degli attraversamenti, che stanno sull'asse)
+	var gommoni: Array[RID] = []
+	for g in sala._gommoni:
+		gommoni.append((g["corpo"] as CollisionObject3D).get_rid())
 	var lung := sala.lunghezza()
 	var lei: Dictionary = sala.dati["lei"]
 
@@ -44,11 +48,12 @@ func _run() -> void:
 			var h := _giu(spazio, Vector3(q.x, sala.piano + 1.0, q.z))
 			if h.is_empty() or absf((h.position as Vector3).y - sala.piano) > 0.02:
 				senza_banchina.append(snappedf(s, 0.1))
-		var hf := _giu(spazio, Vector3(p.x, sala.acqua + 0.3, p.z))
+		var hf := _giu(spazio, Vector3(p.x, sala.acqua + 0.3, p.z), gommoni)
 		if s > SalaSottomarino.PRESA_FINO + 1.0 and (hf.is_empty() or absf((hf.position as Vector3).y - sala.fondo) > 0.02):
 			senza_fondo.append(snappedf(s, 0.1))
 		var hv := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(p.x, sala.acqua + 1.0, p.z), Vector3(p.x, sala.acqua + 30.0, p.z)))
-		if hv.is_empty() or (hv.position as Vector3).y - sala.acqua < 6.5:
+		# (davanti al portello, sopra il canale, c'è il ballatoio: lì la volta non si vede da sotto)
+		if s < lung - SalaSottomarino.BALLATOIO - 0.2 and (hv.is_empty() or (hv.position as Vector3).y - sala.acqua < 6.5):
 			volta_bassa.append(snappedf(s, 0.1))
 		s += 1.0
 	_controlla(senza_banchina.is_empty(), "banchine col pavimento a quota piano su tutta la strada", senza_banchina)
@@ -108,24 +113,52 @@ func _run() -> void:
 					aperti.append("%s %d: largo %.2f alto %.2f" % [o["tipo"], int(o["s"]), f, h])
 	_controlla(aperti.is_empty(), "gli ostacoli chiudono la banchina (non si passa e non si scavalcano)", aperti)
 
-	# 4) i gradini
-	var gradini := sala.find_child("Gradini", true, false)
-	_controlla(gradini != null, "ci sono i gradini per risalire dal canale", [])
+	# 4) il gradino continuo lungo il bordo del canale, su tutte e due le rive (dove la banchina non è crollata)
+	var senza_gradino := []
+	s = SalaSottomarino.PRESA_FINO + 0.37
+	while s < lung - SalaSottomarino.BALLATOIO - 1.0:
+		for lato in [-1.0, 1.0]:
+			if _ostacolo_qui(sala, s, lato) and not _ostacolo_qui(sala, s, lato, ["carico", "cancello", "macerie", "vetrina"]):
+				continue
+			var q: Vector3 = sala.punto(s) + sala.destra(s) * float(lato) * (sala.canale - SalaSottomarino.GRADINO_LARGO * 0.5)
+			var h := _giu(spazio, Vector3(q.x, sala.acqua + 0.3, q.z))
+			if h.is_empty() or absf((h.position as Vector3).y - (sala.fondo + SalaSottomarino.GRADINO_SU)) > 0.02:
+				senza_gradino.append("%.1f %+d" % [s, int(lato)])
+		s += 1.0
+	_controlla(senza_gradino.is_empty(), "il gradino continuo per risalire dal canale c'è lungo tutte e due le rive", senza_gradino)
+
+	# 5) il finale: dalla camera stagna si chiude il portello, il volantino gira restando attaccato, poi "FINE"
+	var fine := [false]
+	sala.fine_demo.connect(func(): fine[0] = true)
+	var vol: Node3D = sala.find_child("Volantino", true, false)
+	var perno: Node3D = sala.find_child("PortelloPerno", true, false)
+	var attaccato_prima: Vector3 = perno.to_local(vol.global_position)
+	sala.chiudi_portello()
+	var t := 0.0
+	while t < 8.0 and not fine[0]:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	var chiuso := absf(perno.global_transform.basis.z.dot(sala.direzione(lung))) > 0.98
+	var attaccato_dopo: Vector3 = perno.to_local(vol.global_position)
+	_controlla(fine[0] and chiuso and attaccato_prima.distance_to(attaccato_dopo) < 0.001 and vol.rotation.z > 4.0,
+			"il portello si chiude, il volantino gira restando attaccato, poi la fine", ["fine %s chiuso %s giro %.2f" % [fine[0], chiuso, vol.rotation.z]])
 
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
 
 
 ## Vero se a [param s] sul lato [param lato] c'è un ostacolo (lì la banchina è chiusa apposta).
-func _ostacolo_qui(sala: SalaSottomarino, s: float, lato: float) -> bool:
+func _ostacolo_qui(sala: SalaSottomarino, s: float, lato: float, tipi: Array = []) -> bool:
 	for o in sala.ostacoli:
+		if not tipi.is_empty() and not o["tipo"] in tipi:
+			continue
 		if float(o["lato"]) == lato and s > float(o["s"]) - 1.6 and s < float(o["s"]) + float(o["lungo"]) + 1.6:
 			return true
 	return false
 
 
-func _giu(spazio: PhysicsDirectSpaceState3D, da: Vector3) -> Dictionary:
-	return spazio.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * 8.0))
+func _giu(spazio: PhysicsDirectSpaceState3D, da: Vector3, esclusi: Array[RID] = []) -> Dictionary:
+	return spazio.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * 8.0, 0xFFFFFFFF, esclusi))
 
 
 func _controlla(cond: bool, cosa: String, dove: Array) -> void:

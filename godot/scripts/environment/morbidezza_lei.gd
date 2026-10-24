@@ -232,8 +232,9 @@ func _catene_di(sk: Skeleton3D) -> void:
 	if vasche.is_empty():
 		for n in sk.get_tree().get_nodes_in_group(&"water_tank") if sk.is_inside_tree() else []:
 			vasche.append(n)
-		if vasche.is_empty() and sk.is_inside_tree():
-			for n in sk.get_tree().current_scene.find_children("*", "WaterTank", true, false):
+		var scena := sk.get_tree().current_scene if sk.is_inside_tree() else null
+		if vasche.is_empty() and scena:
+			for n in scena.find_children("*", "WaterTank", true, false):
 				if (n as Node3D).global_position.distance_to(sk.global_position) < 8.0:
 					vasche.append(n)
 

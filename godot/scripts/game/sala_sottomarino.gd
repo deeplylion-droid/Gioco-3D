@@ -27,9 +27,26 @@ const PORTA_ALTA := 2.2
 const PORTA_S := 2.0
 ## La presa d'acqua profonda in testa: il canale scende fino a qui (lei sale da lì sotto).
 const PRESA_FONDO := -36.0
+const GRADINO_LARGO := 0.4   # il gradino continuo lungo il bordo del canale
+const GRADINO_SU := 0.45     # sopra il fondo (il pelo è a 0,5)
+const GRADINO_R := 0.05      # lo spigolo arrotondato
 const PRESA_FINO := 6.0
-## I gradini per risalire dal canale: ogni quanti metri, alternati sui due lati.
-const GRADINI_OGNI := 12.0
+## L'approdo (scelta 11A dell'utente): nel muro di fondo la porta del portello sta in alto, a [constant SOGLIA] sopra
+## le banchine, con l'oblò all'altezza degli occhi di lei che fluttua sopra il canale; davanti, il ballatoio profondo
+## [constant BALLATOIO] con la scala dalla banchina sinistra. L'acqua resta al ginocchio fino in fondo (da lì si esce
+## col gradino continuo).
+const SOGLIA := 3.0
+const BALLATOIO := 1.0
+const PORTELLO_LARGO := 1.3
+const PORTELLO_ALTO := 1.8
+const PORTELLO_APERTO := 95.0
+## L'oblò e il volantino sul battente (dalla soglia).
+const OBLO_Y := 1.3
+const OBLO_R := 0.2
+const VOLANTINO_Y := 0.75
+## Nel canale si va a guado, accovacciati a tanto (m/s; scelta del coordinatore del 24 ottobre; a piedi e di corsa
+## vedi [member velocita_guado]). Il rallentamento lo fa il Player coi volumi d'acqua del canale.
+const VELOCITA_GUADO_ACCOVACCIATO := 1.2
 ## Le gallerie di servizio (i passaggi bassi, scelta 4C dell'utente): dietro il muro, larghe [constant GALLERIA_LARGA]
 ## e alte [constant GALLERIA_ALTA] (ci si passa solo accovacciati), con le due bocche lunghe [constant GALLERIA_BOCCA].
 const GALLERIA_ALTA := 1.25
@@ -57,20 +74,37 @@ var ostacoli: Array = [
 	{"s": 423.6, "lungo": 14.8, "lato": 1.0, "tipo": "crollo"},
 	{"s": 484.0, "lungo": 1.0, "lato": -1.0, "tipo": "vetrina"},
 ]
-## I gommoni delle rapide (s, scostamento dall'asse verso destra): prima di ogni ostacolo, per passare all'altra
-## banchina; legati con le corde agli anelli delle pareti del canale.
-## (due affiancati, a 1,85 m dall'asse: dalla banchina al primo 38 cm, fra i due 76 cm, dal secondo all'altra banchina
-## 38 cm; il salto vero del giocatore arriva a circa 3 m camminando)
-var gommoni: Array = [
-	[67.5, -1.85], [67.5, 1.85], [132.0, -1.85], [132.0, 1.85], [261.0, -1.85], [261.0, 1.85],
-	[341.5, -1.85], [341.5, 1.85], [477.5, -1.85], [477.5, 1.85],
+## Gli attraversamenti sui gommoni delle rapide (scelta 2C dell'utente, con la sua nota: "sei costretto a fare parkour
+## sui galleggianti che stanno sul corso d'acqua per passare da un lato all'altro del canale"): prima di ogni ostacolo
+## che chiude la banchina dove sei, da 2 a 4 gommoni sfalsati lungo il canale, con salti veri da bordo a bordo, più
+## lunghi andando avanti. [s dell'ostacolo, salti: dalla banchina al primo gommone, fra un gommone e l'altro,
+## dall'ultimo all'altra banchina]. Il salto vero del Player sul gommone arriva a circa 3,1 m camminando e 5,3 m
+## correndo (tests/test_parkour_gommoni.gd): il più lungo qui, 2,4 m, lascia almeno 0,7 m camminando.
+var attraversamenti: Array = [
+	[74.0, [1.0, 1.4, 1.0]],
+	[138.5, [1.2, 1.8, 1.2]],
+	[268.0, [1.4, 1.8, 1.8, 1.4]],
+	[348.0, [1.6, 2.2, 2.0, 1.6]],
+	[484.0, [1.8, 2.4, 2.2, 2.4, 1.8]],
 ]
+## L'ultimo gommone di un attraversamento sta almeno tanto prima dell'ostacolo (m, dal bordo del tubolare).
+const ATTRAVERSAMENTO_MARGINE := 2.0
+## I gommoni (s, scostamento dall'asse verso destra), dagli attraversamenti (vedi [method _disponi_gommoni]).
+var gommoni: Array = []
 ## I gommoni costruiti: [nodo, corpo, s, scostamento, fase].
 var _gommoni: Array = []
-## Raggio del tubolare, raggio del gommone e quanto sta sotto il pelo.
+## Raggio dell'anello del tubolare, raggio del tubolare e quanto sta sotto il pelo la base del gommone.
 const GOMMONE_R := 1.15
 const GOMMONE_T := 0.32
 const GOMMONE_SOTTO := 0.15
+## La collisione del tubolare: spicchi e lati della sua sezione (dodecagono: la cima e le facce a 30 gradi si
+## camminano, i fianchi no).
+const GOMMONE_SPICCHI := 24
+const GOMMONE_LATI := 12
+## Le corde: agli anelli della parete più vicina, tanto prima e dopo il gommone lungo il canale (lontano dalle linee
+## di salto, che vanno di traverso), e quanto sono più lunghe della distanza all'inizio (pendono di qualche cm).
+const CORDA_LUNGO := 2.2
+const CORDA_LASCO := 0.012
 
 var dati := {}
 var _asse: Array = []          ## [{s, pos, dir, ambiente}]
@@ -111,6 +145,7 @@ func _ready() -> void:
 	banchina = se["larghezza_banchina"]
 	muro = se["asse_muro"]
 	spessore = se["spessore_muri"]
+	_disponi_gommoni()
 	mat_mosaico = load(DIR_FIUME + "mat_mosaico_blu.tres")
 	mat_graniglia = load(DIR_FIUME + "mat_graniglia.tres")
 	mat_acqua = load(DIR_FIUME + "acqua_fiume.tres")
@@ -148,7 +183,6 @@ func _passi() -> Array:
 		s0 = s1
 	out.append(_testa)
 	out.append(_fine)
-	out.append(_gradini)
 	out.append(_luci)
 	for o in ostacoli:
 		if o["tipo"] == "galleria":
@@ -157,6 +191,9 @@ func _passi() -> Array:
 			out.append(_ostacolo.bind(o))
 	for g in gommoni:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
+	out.append(_parapetto_presa)
+	out.append(_checkpoint)
+	out.append(_lei_crea)
 	return out
 
 
@@ -280,21 +317,24 @@ func _aperture() -> Array:
 ## del canale, le sue pareti, il piano delle banchine, i muri e la volta a mezza ellisse; dove la banchina è crollata
 ## il fondo arriva fino al muro.
 func _profilo(s: float, m: float) -> Array:
-	var f := fondo if s >= PRESA_FINO else lerpf(PRESA_FONDO, fondo, clampf((s + 0.5) / (PRESA_FINO + 0.5), 0.0, 1.0))
+	var f := fondo_a(s)
 	var c := canale
 	var mu := muro
 	var sx := _lato(m, -1.0)
 	var dx := _lato(m, 1.0)
 	var out: Array = []
 	# (ogni pezzo: [a, b, materiale, verso della faccia in coordinate (lato, su), tipo])
-	var f0 := -mu if sx["crollo"] else -c
-	var f1 := mu if dx["crollo"] else c
+	var cg := c - GRADINO_LARGO
+	var f0 := -mu if sx["crollo"] else -cg
+	var f1 := mu if dx["crollo"] else cg
 	out.append([Vector2(f0, f), Vector2(f1, f), "mosaico", Vector2(0, 1), "fondo"])
 	if not sx["crollo"]:
-		out.append([Vector2(-c, piano), Vector2(-c, f), "mosaico", Vector2(1, 0), "parete"])
+		out.append([Vector2(-c, piano), Vector2(-c, fondo + GRADINO_SU), "mosaico", Vector2(1, 0), "parete"])
+		_gradino(out, -1.0, f)
 		out.append([Vector2(-mu, piano), Vector2(-c, piano), "graniglia", Vector2(0, 1), "banchina"])
 	if not dx["crollo"]:
-		out.append([Vector2(c, f), Vector2(c, piano), "mosaico", Vector2(-1, 0), "parete"])
+		out.append([Vector2(c, fondo + GRADINO_SU), Vector2(c, piano), "mosaico", Vector2(-1, 0), "parete"])
+		_gradino(out, 1.0, f)
 		out.append([Vector2(c, piano), Vector2(mu, piano), "graniglia", Vector2(0, 1), "banchina"])
 	# il muro parte dal piano, dal fondo dove la banchina è crollata, dalla cima di un'apertura
 	var base_sx: float = piano + float(sx["apertura"]) if float(sx["apertura"]) > 0.0 else (f if sx["crollo"] else piano)
@@ -310,6 +350,32 @@ func _profilo(s: float, m: float) -> Array:
 		var mid := (p0 + p1) * 0.5
 		out.append([p0, p1, "mosaico", (Vector2(0, imposta) - mid).normalized(), "volta"])
 	return out
+
+
+## Il gradino continuo lungo il bordo del canale, dal lato [param lato] (decisione del coordinatore con enigmi, 24
+## ottobre: dall'acqua si esce sempre, con due saltelli): largo [constant GRADINO_LARGO], [constant GRADINO_SU]
+## sopra il fondo (appena sotto il pelo), stesso mosaico, lo spigolo arrotondato. Scende fino a [param f] (nella
+## presa il fondo è più basso).
+func _gradino(out: Array, lato: float, f: float) -> void:
+	var c := canale
+	var g := fondo + GRADINO_SU
+	var n := c - GRADINO_LARGO                  # il naso del gradino
+	var rr := GRADINO_R
+	var pts := [Vector2(c, g), Vector2(n + rr, g)]
+	for k in range(1, 4):
+		var a := PI * 0.5 * float(k) / 4.0
+		pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
+	pts.append(Vector2(n, g - rr))
+	pts.append(Vector2(n, f))
+	for k in pts.size() - 1:
+		var a: Vector2 = pts[k]
+		var b: Vector2 = pts[k + 1]
+		var tg := (b - a).normalized()
+		var nr := Vector2(tg.y, -tg.x)          # verso l'acqua, per il lato destro
+		if lato > 0.0:
+			out.append([a, b, "mosaico", nr, "gradino"])
+		else:
+			out.append([Vector2(-a.x, a.y), Vector2(-b.x, b.y), "mosaico", Vector2(-nr.x, nr.y), "gradino"])
 
 
 ## Un pezzo di tunnel da [param s0] a [param s1]: mesh per materiale e collisione.
@@ -375,6 +441,12 @@ func _pezzo(s0: float, s1: float) -> void:
 					_al(p, r, Vector2(lato * muro, piano)), _al(p, r, Vector2(lato * canale, piano))]
 			_quad(st["graniglia"], q, verso)
 			_facce_quad(facce, q)
+			# (e la testa del gradino continuo, tagliato col crollo)
+			var g := fondo + GRADINO_SU
+			var qg := [_al(p, r, Vector2(lato * (canale - GRADINO_LARGO), fondo)), _al(p, r, Vector2(lato * canale, fondo)),
+					_al(p, r, Vector2(lato * canale, g)), _al(p, r, Vector2(lato * (canale - GRADINO_LARGO), g))]
+			_quad(st["mosaico"], qg, verso)
+			_facce_quad(facce, qg)
 	if s0 <= PORTA_S and PORTA_S < s1:
 		_passaggio_porta(st, facce)
 	for k in st:
@@ -477,11 +549,13 @@ func _acqua(nodo: Node3D, s0: float, s1: float) -> void:
 		var t2 := minf(s2 + 4.0, s1)
 		var m := (s2 + t2) * 0.5
 		var c := punto(m)
-		var fondo_qui := fondo if m >= PRESA_FINO else PRESA_FONDO
+		var fondo_qui := minf(fondo_a(s2), fondo_a(t2))
 		var wl := muro if (_lato(s2 + 0.01, -1.0)["crollo"] or _lato(t2 - 0.01, -1.0)["crollo"]) else canale
 		var wr := muro if (_lato(s2 + 0.01, 1.0)["crollo"] or _lato(t2 - 0.01, 1.0)["crollo"]) else canale
 		var vol := WaterVolume.new()
 		vol.name = "Canale_%d" % int(m)
+		vol.velocita_guado = velocita_guado
+		vol.velocita_guado_accovacciato = VELOCITA_GUADO_ACCOVACCIATO
 		var cs := CollisionShape3D.new()
 		var b := BoxShape3D.new()
 		b.size = Vector3(wl + wr, acqua - fondo_qui, t2 - s2 + 0.3)
@@ -524,64 +598,325 @@ func _testa() -> void:
 	_corpo(nodo, facce)
 
 
-## La fine del tunnel, dopo l'approdo: per ora un muro (il portello viene col finale).
+## Il fondo del canale a [param s]: la presa profonda in testa (lei sale da lì), poi l'acqua al ginocchio.
+func fondo_a(s: float) -> float:
+	if s < PRESA_FINO:
+		return lerpf(PRESA_FONDO, fondo, clampf((s + 0.5) / (PRESA_FINO + 0.5), 0.0, 1.0))
+	return fondo
+
+
+## La fine del tunnel: il muro di fondo con la porta del portello in alto (la soglia a [constant SOGLIA] sopra le
+## banchine), il ballatoio davanti con la scala dalla banchina sinistra, la camera stagna dietro, il portello col
+## volantino.
 func _fine() -> void:
 	var nodo := Node3D.new()
-	nodo.name = "Fine"
+	nodo.name = "Approdo"
 	add_child(nodo)
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st := {"mosaico": SurfaceTool.new(), "graniglia": SurfaceTool.new()}
+	for k in st:
+		(st[k] as SurfaceTool).begin(Mesh.PRIMITIVE_TRIANGLES)
 	var facce := PackedVector3Array()
-	var s := lunghezza()
-	var p := punto(s)
-	var r := destra(s)
-	var d := direzione(s)
-	var pts := [Vector2(-muro, fondo), Vector2(muro, fondo), Vector2(muro, imposta)]
-	var seg := 12
-	for k in range(1, seg):
-		var a := PI * float(k) / seg
-		pts.append(Vector2(cos(a) * muro, imposta + sin(a) * (chiave - imposta)))
-	pts.append(Vector2(-muro, imposta))
-	var tri := Geometry2D.triangulate_polygon(PackedVector2Array(pts))
-	for k in range(0, tri.size(), 3):
-		var t := [_al(p, r, pts[tri[k]]), _al(p, r, pts[tri[k + 1]]), _al(p, r, pts[tri[k + 2]])]
-		_tri(st, t, -d)
-		facce.append_array(PackedVector3Array(t))
-	var mi := MeshInstance3D.new()
-	mi.mesh = st.commit()
-	mi.material_override = mat_mosaico
-	nodo.add_child(mi)
+	var L := lunghezza()
+	var p := punto(L)
+	var r := destra(L)
+	var d := direzione(L)
+	var sg := piano + SOGLIA
+	var cima := sg + PORTELLO_ALTO
+	var mz := PORTELLO_LARGO * 0.5
+	# il muro di fondo: la sagoma della sezione (fondo, muri, volta) meno la porta. Tagliata in due a metà della porta,
+	# così ogni metà ha la porta sul bordo (niente buchi da triangolare)
+	var sagoma := [Vector2(-muro, fondo), Vector2(muro, fondo), Vector2(muro, imposta)]
+	for k in range(1, 24):
+		var a := PI * float(k) / 24
+		sagoma.append(Vector2(cos(a) * muro, imposta + sin(a) * (chiave - imposta)))
+	sagoma.append(Vector2(-muro, imposta))
+	var porta := PackedVector2Array([Vector2(-mz, sg), Vector2(mz, sg), Vector2(mz, cima), Vector2(-mz, cima)])
+	for meta: float in [-1.0, 1.0]:
+		var mezza := PackedVector2Array([Vector2(0, fondo - 1.0), Vector2(meta * (muro + 1.0), fondo - 1.0),
+				Vector2(meta * (muro + 1.0), chiave + 1.0), Vector2(0, chiave + 1.0)])
+		for parte in Geometry2D.intersect_polygons(PackedVector2Array(sagoma), mezza):
+			for poly in Geometry2D.clip_polygons(parte, porta):
+				if Geometry2D.is_polygon_clockwise(poly) and poly.size() < 3:
+					continue
+				var tri := Geometry2D.triangulate_polygon(poly)
+				for k in range(0, tri.size(), 3):
+					var t := [_al(p, r, poly[tri[k]]), _al(p, r, poly[tri[k + 1]]), _al(p, r, poly[tri[k + 2]])]
+					_tri(st["mosaico"], t, -d)
+					facce.append_array(PackedVector3Array(t))
+	# la camera stagna dietro il muro: pavimento alla soglia, soffitto, due fianchi e il fondo
+	var cl := 3.0
+	var ca := 2.5
+	var cm := 1.4
+	var c0 := p
+	var c1 := p + d * cl
+	var cam := [
+		[[_al(c0, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg))], "graniglia", Vector3.UP],
+		[[_al(c0, r, Vector2(-cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", Vector3.DOWN],
+		[[_al(c0, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(-cm, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", r],
+		[[_al(c0, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(cm, sg + ca))], "mosaico", -r],
+		[[_al(c1, r, Vector2(-cm, sg)), _al(c1, r, Vector2(cm, sg)), _al(c1, r, Vector2(cm, sg + ca)), _al(c1, r, Vector2(-cm, sg + ca))], "mosaico", -d],
+		# (il muro dalla parte della camera, attorno alla porta)
+		[[_al(c0, r, Vector2(-cm, sg)), _al(c0, r, Vector2(-mz, sg)), _al(c0, r, Vector2(-mz, sg + ca)), _al(c0, r, Vector2(-cm, sg + ca))], "mosaico", d],
+		[[_al(c0, r, Vector2(mz, sg)), _al(c0, r, Vector2(cm, sg)), _al(c0, r, Vector2(cm, sg + ca)), _al(c0, r, Vector2(mz, sg + ca))], "mosaico", d],
+		[[_al(c0, r, Vector2(-mz, cima)), _al(c0, r, Vector2(mz, cima)), _al(c0, r, Vector2(mz, sg + ca)), _al(c0, r, Vector2(-mz, sg + ca))], "mosaico", d],
+	]
+	for pz in cam:
+		_quad(st[pz[1]], pz[0], pz[2])
+		_facce_quad(facce, pz[0])
+	# il ballatoio davanti al muro, dalla scala alla porta (spesso 20 cm), e la scala lungo il muro sinistro
+	var b0 := p - d * BALLATOIO
+	var bu0 := -muro
+	var bu1 := mz + 0.2
+	var ball := [
+		[[_al(b0, r, Vector2(bu0, sg)), _al(p, r, Vector2(bu0, sg)), _al(p, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu1, sg))], Vector3.UP],
+		[[_al(b0, r, Vector2(bu0, sg - 0.2)), _al(p, r, Vector2(bu0, sg - 0.2)), _al(p, r, Vector2(bu1, sg - 0.2)), _al(b0, r, Vector2(bu1, sg - 0.2))], Vector3.DOWN],
+		[[_al(b0, r, Vector2(bu0, sg - 0.2)), _al(b0, r, Vector2(bu1, sg - 0.2)), _al(b0, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu0, sg))], -d],
+		[[_al(b0, r, Vector2(bu1, sg - 0.2)), _al(p, r, Vector2(bu1, sg - 0.2)), _al(p, r, Vector2(bu1, sg)), _al(b0, r, Vector2(bu1, sg))], r],
+	]
+	for pz in ball:
+		_quad(st["graniglia"], pz[0], pz[1])
+		_facce_quad(facce, pz[0])
+	var gradini := 12
+	var alzata := SOGLIA / gradini
+	for k in gradini:
+		var sk := L - BALLATOIO - (gradini - k) * 0.32 + 0.16
+		var pk := punto(sk)
+		var rk := destra(sk)
+		var alto := alzata * (k + 1)
+		_scatola(st["graniglia"], facce, _al(pk, rk, Vector2(-muro + 0.5, piano + alto * 0.5)), rk, direzione(sk), Vector3(1.0, alto, 0.32))
+	# il corrimano della scala e del ballatoio dalla parte del vuoto (la vasca): pali e tubo
+	var corr := _mat_ferro()
+	for k in range(0, gradini + 1, 2):
+		var sk := L - BALLATOIO - (gradini - k) * 0.32
+		var pk := punto(sk)
+		var base := _al(pk, destra(sk), Vector2(-muro + 0.95, piano + alzata * float(k)))
+		_palo(nodo, base, base + Vector3.UP * 1.0, 0.025, corr)
+	var p_ball := [_al(b0, r, Vector2(-muro + 0.95, sg)), _al(b0, r, Vector2(-mz - 0.6, sg))]
+	for q in p_ball:
+		_palo(nodo, q, q + Vector3.UP * 1.0, 0.025, corr)
+	_palo(nodo, p_ball[0] + Vector3.UP * 1.0, p_ball[1] + Vector3.UP * 1.0, 0.025, corr)
+	var su0 := _al(punto(L - BALLATOIO - gradini * 0.32), destra(L - BALLATOIO - gradini * 0.32), Vector2(-muro + 0.95, piano + 1.0))
+	_palo(nodo, su0, p_ball[0] + Vector3.UP * 1.0, 0.025, corr)
+	for k in st:
+		var mi := MeshInstance3D.new()
+		mi.name = k
+		mi.mesh = (st[k] as SurfaceTool).commit()
+		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
+		nodo.add_child(mi)
 	_corpo(nodo, facce)
+	_portello(nodo, p, r, d, sg)
+	# le luci: la lampada sopra il portello dalla parte del tunnel, e una piccola nella camera sul volantino
+	_lampada(nodo, L - BALLATOIO - 2.0, -1.0, sg + 2.2, 4.0)
+	var lc := OmniLight3D.new()
+	lc.light_color = Color(1.0, 0.86, 0.66)
+	lc.light_energy = 1.6
+	lc.omni_range = 4.0
+	nodo.add_child(lc)
+	lc.global_position = _al(p + d * 1.6, r, Vector2(0.0, sg + 2.2))
 
 
-## I gradini per risalire dal canale sulle banchine: quattro gradini da 23 cm contro la parete del canale, ogni
-## [constant GRADINI_OGNI] metri, alternati sui due lati (dall'acqua si esce sempre).
-func _gradini() -> void:
-	var nodo := Node3D.new()
-	nodo.name = "Gradini"
-	add_child(nodo)
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var facce := PackedVector3Array()
-	var s := PRESA_FINO + 4.0
-	var lato := 1.0
-	var alzata := (piano - fondo) / 4.0
-	while s < lunghezza() - 3.0:
-		var p := punto(s)
-		var r := destra(s)
-		var d := direzione(s)
-		for k in 4:
-			# gradino k (dal basso): largo 1,2 m lungo il canale, contro la parete, sporge 30 cm per ogni gradino sopra
-			var alto := fondo + alzata * (k + 1)
-			var box_c := p + r * lato * (canale - 0.15 * (4 - k)) + Vector3(0, (fondo + alto) * 0.5 - p.y, 0)
-			_scatola(st, facce, box_c, r * lato, d, Vector3(0.3 * (4 - k), alto - fondo, 1.2))
-		s += GRADINI_OGNI
-		lato = -lato
+## Un palo (o un tubo) di ferro da [param a] a [param b].
+func _palo(nodo: Node3D, a: Vector3, b: Vector3, raggio: float, m: Material) -> void:
 	var mi := MeshInstance3D.new()
-	mi.mesh = st.commit()
-	mi.material_override = mat_graniglia
+	var cm := CylinderMesh.new()
+	cm.top_radius = raggio
+	cm.bottom_radius = raggio
+	cm.height = a.distance_to(b)
+	cm.radial_segments = 10
+	mi.mesh = cm
+	mi.material_override = m
 	nodo.add_child(mi)
-	_corpo(nodo, facce)
+	var y := (b - a).normalized()
+	var x := y.cross(Vector3.FORWARD if absf(y.dot(Vector3.FORWARD)) < 0.9 else Vector3.RIGHT).normalized()
+	mi.global_transform = Transform3D(Basis(x, y, x.cross(y)), (a + b) * 0.5)
+
+
+## Il portello da sottomarino nella porta in alto del muro di fondo: il battente d'acciaio con l'oblò (vetro vero:
+## da dentro la vedi), aperto contro il muro dalla parte del tunnel; il volantino dalla parte della camera,
+## illuminato. Dalla camera con E si chiude: il battente si chiude, il volantino gira (in senso orario, per
+## serrare) restando attaccato al battente, e lei ci sbatte contro (vedi [method _finale]).
+func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> void:
+	var mz := PORTELLO_LARGO * 0.5
+	var acciaio := _mat("acciaio_portello", Color(0.32, 0.36, 0.38), 0.45, 0.8)
+	# la cornice sul muro dalla parte del tunnel
+	var f_st := SurfaceTool.new()
+	f_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var f_facce := PackedVector3Array()
+	var spor := 0.08
+	for q in [[Vector2(0, sg + PORTELLO_ALTO + 0.08), Vector3(PORTELLO_LARGO + 0.32, 0.16, spor)],
+			[Vector2(-mz - 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)],
+			[Vector2(mz + 0.08, sg + PORTELLO_ALTO * 0.5), Vector3(0.16, PORTELLO_ALTO, spor)]]:
+		var v: Vector2 = q[0]
+		_scatola(f_st, f_facce, _al(p - d * spor * 0.5, r, v), r, d, q[1])
+	var fm := MeshInstance3D.new()
+	fm.mesh = f_st.commit()
+	fm.material_override = acciaio
+	nodo.add_child(fm)
+	_corpo(nodo, f_facce)
+	# il battente: un perno sul lato sinistro della porta; il battente gira attorno alla verticale del perno
+	var perno := Node3D.new()
+	perno.name = "PortelloPerno"
+	nodo.add_child(perno)
+	perno.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(-mz, sg)))
+	# (il perno a sinistra della porta guardando dal tunnel: il battente si apre verso la camera, contro il suo
+	# fianco sinistro, e non ingombra il ballatoio)
+	var battente := CSGCombiner3D.new()
+	battente.name = "Battente"
+	battente.use_collision = true
+	battente.collision_layer = Layers.WORLD
+	perno.add_child(battente)
+	var lastra := CSGBox3D.new()
+	lastra.size = Vector3(PORTELLO_LARGO - 0.04, PORTELLO_ALTO - 0.04, 0.1)
+	lastra.position = Vector3(mz, PORTELLO_ALTO * 0.5, 0.0)
+	lastra.material = acciaio
+	battente.add_child(lastra)
+	var buco := CSGCylinder3D.new()
+	buco.radius = OBLO_R
+	buco.height = 0.3
+	buco.sides = 24
+	buco.operation = CSGShape3D.OPERATION_SUBTRACTION
+	buco.rotation_degrees.x = 90
+	buco.position = Vector3(mz, OBLO_Y, 0.0)
+	battente.add_child(buco)
+	var vetro := MeshInstance3D.new()
+	var vm := CylinderMesh.new()
+	vm.top_radius = OBLO_R
+	vm.bottom_radius = OBLO_R
+	vm.height = 0.02
+	vm.radial_segments = 24
+	vetro.mesh = vm
+	vetro.material_override = _mat_vetro_oblo()
+	vetro.rotation_degrees.x = 90
+	vetro.position = Vector3(mz, OBLO_Y, 0.0)
+	perno.add_child(vetro)
+	for lato: float in [-1.0, 1.0]:
+		var an := MeshInstance3D.new()
+		var tm := TorusMesh.new()
+		tm.inner_radius = OBLO_R - 0.01
+		tm.outer_radius = OBLO_R + 0.07
+		an.mesh = tm
+		an.material_override = _mat_ottone()
+		an.rotation_degrees.x = 90
+		an.position = Vector3(mz, OBLO_Y, lato * 0.055)
+		perno.add_child(an)
+	# il volantino dalla parte della camera (z negativo del perno: verso la camera), sotto l'oblò, illuminato
+	var volantino := Node3D.new()
+	volantino.name = "Volantino"
+	volantino.position = Vector3(mz, VOLANTINO_Y, -0.11)
+	perno.add_child(volantino)
+	var ruota := MeshInstance3D.new()
+	var rm := TorusMesh.new()
+	rm.inner_radius = 0.22
+	rm.outer_radius = 0.27
+	ruota.mesh = rm
+	ruota.material_override = _mat_volantino()
+	ruota.rotation_degrees.x = 90
+	volantino.add_child(ruota)
+	for k in 4:
+		var raggio := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(0.025, 0.46, 0.025)
+		raggio.mesh = bm
+		raggio.material_override = _mat_volantino()
+		raggio.rotation_degrees.z = 45.0 * k
+		volantino.add_child(raggio)
+	var mozzo := MeshInstance3D.new()
+	var mm := CylinderMesh.new()
+	mm.top_radius = 0.05
+	mm.bottom_radius = 0.05
+	mm.height = 0.12
+	mozzo.mesh = mm
+	mozzo.material_override = acciaio
+	mozzo.rotation_degrees.x = 90
+	mozzo.position.z = 0.05
+	volantino.add_child(mozzo)
+	# aperto: il battente contro il muro dalla parte del tunnel
+	perno.rotation_degrees.y += PORTELLO_APERTO
+	_perno = perno
+	_volantino = volantino
+	_perno_chiuso = perno.global_transform.basis.rotated(Vector3.UP, deg_to_rad(-PORTELLO_APERTO))
+	# l'interazione: nella camera, guardando la porta
+	var usa := Interactable.new()
+	usa.name = "ChiudiPortello"
+	usa.prompt = "Chiudi"
+	usa.one_shot = true
+	var cs := CollisionShape3D.new()
+	var bx := BoxShape3D.new()
+	bx.size = Vector3(PORTELLO_LARGO, PORTELLO_ALTO, 0.6)
+	cs.shape = bx
+	usa.add_child(cs)
+	nodo.add_child(usa)
+	usa.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p + d * 0.35, r, Vector2(0.0, sg + PORTELLO_ALTO * 0.5)))
+	usa.interacted.connect(func(_by): chiudi_portello())
+	_usa_portello = usa
+
+
+var _perno: Node3D
+var _volantino: Node3D
+var _perno_chiuso: Basis
+var _usa_portello: Interactable
+var finito := false
+signal fine_demo
+
+
+func _mat_vetro_oblo() -> StandardMaterial3D:
+	if not _materiali.has("vetro_oblo"):
+		var m := StandardMaterial3D.new()
+		m.albedo_color = Color(0.6, 0.8, 0.85, 0.18)
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.roughness = 0.05
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_materiali["vetro_oblo"] = m
+	return _materiali["vetro_oblo"]
+
+
+## Il volantino illuminato: vernice rossa con un filo di luce (si trova subito al buio).
+func _mat_volantino() -> StandardMaterial3D:
+	return _mat("volantino", Color(0.75, 0.1, 0.08), 0.45, 0.3, Color(0.9, 0.15, 0.1), 0.6)
+
+
+## Il giocatore nella camera stagna chiude il portello (scelta 11A): il battente si chiude, il volantino gira per
+## serrarlo restando attaccato, poi lei ci sbatte contro con la faccia sull'oblò e la bocca spalancata; nero e
+## "FINE DELLA DEMO" ([signal fine_demo]).
+func chiudi_portello() -> void:
+	if finito:
+		return
+	finito = true
+	var tw := create_tween()
+	var da := _perno.global_transform.basis
+	tw.tween_method(func(k: float):
+		_perno.global_transform.basis = da.slerp(_perno_chiuso, k), 0.0, 1.0, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func(): Audio.suona(&"cancello_fine", _volantino.global_position, 0.0, 0.7))
+	# il volantino: tre quarti di giro in senso orario visto da chi lo gira (dalla camera, che guarda lungo il +z del
+	# perno: lì una rotazione positiva attorno a z si vede oraria)
+	tw.tween_property(_volantino, "rotation:z", TAU * 0.75, 1.3).set_trans(Tween.TRANS_SINE)
+	tw.tween_callback(_finale)
+
+
+## Lei sbatte contro il portello: arriva dal fondo della vasca dell'approdo e ci schiaccia la faccia sull'oblò.
+func _finale() -> void:
+	if lei_tunnel:
+		lei_stato = Lei.PRESA     # (ferma: la muove lo schianto)
+		var oblo := _perno.global_transform * Vector3(PORTELLO_LARGO * 0.5, OBLO_Y, -0.06)
+		lei_tunnel.schianto(oblo, -direzione(lunghezza()))
+		lei_tunnel.schianto_contro.connect(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6), CONNECT_ONE_SHOT)
+		get_tree().create_timer(2.6, false).timeout.connect(_nero)
+	else:
+		_nero()
+
+
+func _nero() -> void:
+	var cl := CanvasLayer.new()
+	cl.layer = 80
+	var fade := ColorRect.new()
+	fade.color = Color(0, 0, 0, 0)
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cl.add_child(fade)
+	add_child(cl)
+	var tw := create_tween()
+	tw.tween_property(fade, "color:a", 1.0, 1.2)
+	tw.tween_callback(func(): fine_demo.emit())
 
 
 ## Le luci del tunnel: lampade a gabbia sui muri ogni 9 m, alternate, e oblò illuminati.
@@ -678,6 +1013,350 @@ func _mat_oblo() -> StandardMaterial3D:
 		_vetro_oblo.emission_energy_multiplier = 2.2
 		_vetro_oblo.roughness = 0.1
 	return _vetro_oblo
+
+
+# --- lei che insegue (scelte 6B, 7B, 8A, 9A dell'utente) -------------------------------------------------------------
+
+signal lei_riemersa
+signal lei_respinta
+signal lei_morde
+signal giocatore_preso
+
+enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
+
+## Fra quanti metri (lungo la strada) lei ti sta dietro: sotto [member distanza_min] si avvicina (ti raggiunge se
+## ti fermi, se vai a guado o se sbagli), sopra [member distanza_max] corre per rientrare. Sotto
+## [member distanza_presa] ti prende; sotto [member distanza_morsi] morde a vuoto ogni 1-2 s.
+@export var distanza_min := 8.0
+@export var distanza_max := 18.0
+@export var distanza_presa := 2.5
+@export var distanza_morsi := 7.0
+## La sua velocità normale (m/s): poco meno della corsa del giocatore (5,8), più del passo (3,4) e del guado (2).
+@export var velocita_lei := 4.6
+## Quanto corre per rientrare quando è più lontana di [member distanza_max].
+@export var velocita_rincorsa := 7.5
+## Mezzo secondo di getto in faccia (litri) la ferma per [member fermo_dopo_getto] secondi e la rimanda indietro di
+## [member indietro_dopo_getto] metri; si ritrae strizzando l'occhio, rallenta e riparte.
+@export var getto_in_faccia := 0.6
+@export var fermo_dopo_getto := 2.0
+@export var indietro_dopo_getto := 6.0
+## A guado nel canale (velocità massima a piedi e di corsa, m/s): la danno i volumi d'acqua del canale
+## (WaterVolume.velocita_guado), che il Player legge da solo.
+@export var velocita_guado := 2.0
+## I checkpoint lungo la strada (m): all'ingresso e poi lungo il tunnel. Si riparte col serbatoio pieno e lei a
+## [member distanza_max] metri.
+@export var checkpoint_s := PackedFloat32Array([6.0, 160.0, 300.0, 445.0])
+## Il primo ordine dei checkpoint del tunnel (dopo quelli dell'inseguimento, che partono da 40).
+@export var ordine_base := 60
+## Appena parte (riemersa dalla presa, a pochi metri dalla porta), se il giocatore è più vicino di
+## [member distanza_min] lei resta lì a mordere per questi secondi: il tempo di voltarsi e correre.
+@export var vantaggio := 2.5
+## Chi insegue (vuoto: il giocatore); i test lo cambiano.
+var bersaglio: Node3D
+
+## Lei del tunnel (LeiTunnel di mascotte) e il suo modello.
+var lei_tunnel: LeiTunnel
+var lei: MedusaAffacciata
+var lei_stato := Lei.VIA
+var lei_s := 0.0
+var _lei_t := 0.0
+var _morso_tra := 1.5
+var _s_bersaglio := 0.0
+var checkpoint: Array[Checkpoint] = []
+
+
+func _lei_crea() -> void:
+	# lei del tunnel è di mascotte (LeiTunnel: animazioni, giro e inclinazione in curva, morsi, getto in faccia,
+	# presa, schianto); qui si decide solo dove sta lungo la strada
+	lei_tunnel = LeiTunnel.new()
+	lei_tunnel.name = "LeiTunnel"
+	add_child(lei_tunnel)
+	lei = lei_tunnel.lei
+	lei_tunnel.getto_litri = getto_in_faccia
+	lei_tunnel.vicina = distanza_morsi
+	lei_tunnel.getto_in_faccia.connect(respingi)
+
+
+## I checkpoint del tunnel, lungo la strada ([member checkpoint_s]): un'area da banchina a banchina, la ripartenza
+## sulla banchina sinistra (dove si arriva) girata verso l'approdo.
+func _checkpoint() -> void:
+	var i := 0
+	for s in checkpoint_s:
+		var a := Checkpoint.new()
+		a.name = "Checkpoint_%d" % int(s)
+		a.order = ordine_base + i
+		var forma := CollisionShape3D.new()
+		var box := BoxShape3D.new()
+		box.size = Vector3(muro * 2.0, 2.4, 2.0)
+		forma.shape = box
+		a.add_child(forma)
+		add_child(a)
+		var p := punto(s)
+		a.global_transform = Transform3D(Basis.looking_at(direzione(s), Vector3.UP), Vector3(p.x, piano + 1.2, p.z))
+		var rip := Marker3D.new()
+		rip.name = "Ripartenza"
+		a.add_child(rip)
+		rip.global_transform = Transform3D(Basis.looking_at(direzione(s), Vector3.UP),
+				_al(p, destra(s), Vector2(-(canale + banchina * 0.5), piano)))
+		a.spawn_point = rip
+		checkpoint.append(a)
+		i += 1
+
+
+func _bersaglio() -> Node3D:
+	if bersaglio:
+		return bersaglio
+	var p := GameState.player
+	return p if p and is_instance_valid(p) else null
+
+
+## Lei comincia a inseguire da [param s] (la riemersione dalla presa, o la ripartenza da un checkpoint: 18 m dietro).
+func insegui_da(s: float) -> void:
+	lei_s = s
+	lei_stato = Lei.INSEGUE
+	_lei_t = 0.0
+	if lei_tunnel.stato == LeiTunnel.Stato.VIA:
+		# (dai checkpoint: risale dall'acqua del canale, poco profonda, già a metà salita)
+		var p := punto(s)
+		lei_tunnel.riemergi(Vector3(p.x, acqua, p.z), direzione(s), acqua - fondo_a(s))
+	_metti_lei(0.0)
+
+
+## Lei riemerge dalla presa in testa al tunnel (quando il giocatore la guarda dalla porta): sale dall'acqua e
+## parte.
+func riemergi() -> void:
+	if lei_stato != Lei.VIA:
+		return
+	lei_stato = Lei.SALE
+	_lei_t = 0.0
+	lei_s = -1.0
+	var p := punto(lei_s)
+	lei_tunnel.riemergi(Vector3(p.x, acqua, p.z), direzione(lei_s), acqua - fondo_a(lei_s))
+	lei_riemersa.emit()
+	get_tree().create_timer(minf(lei_tunnel._durata(&"riemerge"), 2.5), false).timeout.connect(func():
+		if lei_stato == Lei.SALE:
+			insegui_da(lei_s))
+
+
+## Il getto in faccia: si ritrae strizzando l'occhio, si ferma [member fermo_dopo_getto] secondi tornando indietro
+## di [member indietro_dopo_getto] metri, poi riparte.
+func respingi() -> void:
+	if lei_stato != Lei.INSEGUE and lei_stato != Lei.SALE:
+		return
+	lei_stato = Lei.RESPINTA
+	_lei_t = 0.0
+	lei_tunnel.respinta()
+	lei_respinta.emit()
+
+
+func _prendi() -> void:
+	if lei_stato == Lei.PRESA:
+		return
+	lei_stato = Lei.PRESA
+	giocatore_preso.emit()
+	if bersaglio == null:
+		lei_tunnel.prendi()         # (la presa e la morte del giocatore)
+	else:
+		# (nei test chi insegue è finto: solo l'animazione)
+		lei_tunnel.stato = LeiTunnel.Stato.PRESA
+		lei_tunnel._anima("presa", 0.15)
+
+
+## Mette lei sull'asse del canale a [member lei_s], sul pelo dell'acqua: la quota, il giro e l'inclinazione in curva
+## li fa LeiTunnel.
+func _metti_lei(delta: float) -> void:
+	var p := punto(lei_s)
+	lei_tunnel.vai(Vector3(p.x, acqua, p.z), direzione(lei_s), delta)
+
+
+func _process(delta: float) -> void:
+	if attivo and not _curva_passata and bersaglio == null and _s_bersaglio > PRIMA_CURVA:
+		_curva_passata = true
+		prima_curva_passata.emit()
+	if attivo and lei and lei_stato == Lei.VIA and bersaglio == null:
+		_guarda_la_presa()
+	var pg := GameState.player
+	if attivo and pg and is_instance_valid(pg) and bersaglio == null:
+		pg.accovacciato_forzato = in_tubo(pg.global_position)
+	if lei == null or lei_stato == Lei.VIA or lei_stato == Lei.PRESA:
+		return
+	_lei_t += delta
+	var b := _bersaglio()
+	if b:
+		_s_bersaglio = _s_vicino(b.global_position, _s_bersaglio)
+	var gap := _s_bersaglio - lei_s
+	match lei_stato:
+		Lei.SALE:
+			pass
+		Lei.INSEGUE:
+			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
+			if gap < distanza_min and _lei_t < vantaggio:
+				v = 0.0
+			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - BALLATOIO - 1.5))
+			gap = _s_bersaglio - lei_s
+			if gap < distanza_morsi:
+				_morso_tra -= delta
+				if _morso_tra <= 0.0:
+					_morso_tra = randf_range(1.0, 2.0)
+					lei_morde.emit()
+			if gap <= distanza_presa and b and _raggiungibile(b.global_position):
+				_prendi()
+		Lei.RESPINTA:
+			# indietro di 6 m nel primo secondo, poi ferma fino a 2 s, poi riparte
+			var f := clampf(_lei_t / 1.0, 0.0, 1.0)
+			lei_s -= indietro_dopo_getto * delta * (1.0 if f < 1.0 else 0.0)
+			lei_s = maxf(lei_s, -1.0)
+			if _lei_t >= fermo_dopo_getto:
+				lei_stato = Lei.INSEGUE
+	_metti_lei(delta)
+
+
+## Vero se [param piedi] sono in una galleria di servizio (dietro il muro, sotto il soffitto basso): lì si sta
+## accovacciati per forza, come nei tubi delle condotte (lo usano il gioco e il controllo di posizionamento).
+func in_tubo(piedi: Vector3) -> bool:
+	for o in ostacoli:
+		if o["tipo"] != "galleria":
+			continue
+		var s0: float = float(o["s"]) - GALLERIA_BOCCA
+		var s1: float = float(o["s"]) + float(o["lungo"]) + GALLERIA_BOCCA
+		var pr := proietta_vicino(piedi, (s0 + s1) * 0.5, (s1 - s0) * 0.5 + 2.0)
+		var u := float(pr[1]) * float(o["lato"])
+		if float(pr[0]) > s0 - 0.05 and float(pr[0]) < s1 + 0.05 and u > muro - 0.05 and absf(piedi.y - piano) < 0.6:
+			return true
+	return false
+
+
+## Vero se lei arriva a [param pos]: dentro il tunnel (non nella galleria di servizio, dietro il muro).
+func _raggiungibile(pos: Vector3) -> bool:
+	var pr := proietta_vicino(pos, _s_bersaglio)
+	return absf(float(pr[1])) < muro - 0.1
+
+
+## Come [method proietta], ma cerca solo vicino a [param s_prima] (ogni fotogramma: la strada è lunga).
+func proietta_vicino(p: Vector3, s_prima: float, raggio := 30.0) -> Array:
+	var i0 := maxi(_indice(maxf(s_prima - raggio, 0.0)), 0)
+	var i1 := mini(_indice(minf(s_prima + raggio, lunghezza())) + 1, _s.size() - 1)
+	var best := INF
+	var bs := s_prima
+	for i in range(i0, i1):
+		var a := _pos(i)
+		var c := _pos(i + 1)
+		var ab := Vector2(c.x - a.x, c.z - a.z)
+		var ap := Vector2(p.x - a.x, p.z - a.z)
+		var f := clampf(ap.dot(ab) / maxf(ab.length_squared(), 1e-9), 0.0, 1.0)
+		var d := (ap - ab * f).length_squared()
+		if d < best:
+			best = d
+			bs = _s[i] + (_s[i + 1] - _s[i]) * f
+	return [bs, (p - punto(bs)).dot(destra(bs))]
+
+
+func _s_vicino(p: Vector3, s_prima: float) -> float:
+	return float(proietta_vicino(p, s_prima)[0])
+
+
+# --- nel gioco: dopo SB1, la prima curva, le ripartenze --------------------------------------------------------------
+
+## La prima curva del tunnel è passata (torre e condotte non si vedono più: si possono liberare).
+signal prima_curva_passata
+
+## Dopo quanti metri di tunnel la prima curva è alle spalle.
+const PRIMA_CURVA := 55.0
+## Lei riemerge quando la guardi dalla porta; se non la guardi, comunque quando hai fatto questi metri.
+const RIEMERGE_COMUNQUE := 14.0
+
+## Vero quando il tunnel è nel gioco (dopo SB1, o ripartendo da un suo checkpoint).
+var attivo := false
+var _curva_passata := false
+
+
+## Il tunnel entra nel gioco: lei aspetta nella presa che il giocatore la guardi.
+func attiva_tunnel() -> void:
+	attivo = true
+
+
+## Si riparte dal checkpoint a [param s]: il serbatoio pieno, lei [member distanza_max] metri dietro (dal primo
+## checkpoint, all'ingresso, riemerge di nuovo dalla presa dopo 2 s).
+func riparti_da(s: float) -> void:
+	attivo = true
+	_curva_passata = s > PRIMA_CURVA
+	_s_bersaglio = s
+	# (il serbatoio pieno quando il giocatore è rimesso al checkpoint: la ripartenza rimette anche lo zaino com'era)
+	GameState.player_respawned.connect(func():
+		var p := GameState.player
+		if p and is_instance_valid(p) and p.water_pack:
+			p.water_pack.tank_amount = p.water_pack.tank_capacity, CONNECT_ONE_SHOT)
+	if s < 20.0:
+		lei_stato = Lei.VIA
+		lei_tunnel.via()
+		get_tree().create_timer(2.0, false).timeout.connect(riemergi)
+	else:
+		insegui_da(s - distanza_max)
+
+
+## Lei riemerge? Il giocatore è nel tunnel e guarda la presa (o è già andato avanti).
+func _guarda_la_presa() -> void:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p) or p.camera == null:
+		return
+	var pr := proietta_vicino(p.global_position, maxf(_s_bersaglio, 2.0), 40.0)
+	_s_bersaglio = float(pr[0])
+	if absf(float(pr[1])) > muro + 0.5:
+		return
+	if _s_bersaglio > RIEMERGE_COMUNQUE:
+		riemergi()
+		return
+	var presa := punto(-1.0) + Vector3.UP * 2.0
+	var verso := (presa - p.camera.global_position).normalized()
+	if -p.camera.global_transform.basis.z.dot(verso) > 0.85:
+		riemergi()
+
+
+## La porta del bacino si chiude alle spalle (quando torre e condotte non ci sono più): il battente d'acciaio nel
+## passaggio, chiuso.
+func chiudi_porta_bacino() -> void:
+	if find_child("PortaBacinoChiusa", true, false):
+		return
+	var p := punto(PORTA_S)
+	var r := destra(PORTA_S)
+	var d := direzione(PORTA_S)
+	var porta := CSGBox3D.new()
+	porta.name = "PortaBacinoChiusa"
+	porta.size = Vector3(PORTA_LARGA, PORTA_ALTA, 0.06)
+	porta.use_collision = true
+	porta.collision_layer = Layers.WORLD
+	porta.material = _mat("acciaio_portello", Color(0.32, 0.36, 0.38), 0.45, 0.8)
+	add_child(porta)
+	# a metà del passaggio fra il muro del tunnel e il muro della sala delle condotte
+	var c := _al(p, r, Vector2(-muro - 0.35, piano + PORTA_ALTA * 0.5))
+	porta.global_transform = Transform3D(Basis(d, Vector3.UP, -r), c)
+
+
+## Il parapetto lungo la presa profonda (sui due bordi del canale, dalla testa a dove l'acqua torna al ginocchio):
+## lì non si cade. Pali e due correnti di ferro.
+func _parapetto_presa() -> void:
+	var nodo := Node3D.new()
+	nodo.name = "ParapettoPresa"
+	add_child(nodo)
+	var ferro := _mat_ferro()
+	for lato: float in [-1.0, 1.0]:
+		var s := -TESTA + 0.1
+		var prima := Vector3.ZERO
+		while s <= PRESA_FINO + 0.01:
+			var q := _al(punto(s), destra(s), Vector2(lato * (canale + 0.06), piano))
+			_palo(nodo, q, q + Vector3.UP * 1.05, 0.03, ferro)
+			if prima != Vector3.ZERO:
+				for h in [0.5, 1.0]:
+					_palo(nodo, prima + Vector3.UP * h, q + Vector3.UP * h, 0.022, ferro)
+			prima = q
+			s += 1.75
+	# (la collisione: un muretto invisibile alto 1,05 m lungo i due bordi, dove ci sono i pali)
+	var facce := PackedVector3Array()
+	for lato: float in [-1.0, 1.0]:
+		var a := _al(punto(-TESTA), destra(-TESTA), Vector2(lato * (canale + 0.06), piano))
+		var b := _al(punto(PRESA_FINO), destra(PRESA_FINO), Vector2(lato * (canale + 0.06), piano))
+		_facce_quad(facce, [a, b, b + Vector3.UP * 1.05, a + Vector3.UP * 1.05])
+	_corpo(nodo, facce)
 
 
 # --- gli ostacoli (scelte 2C e 4C dell'utente) ------------------------------------------------------------------------
@@ -923,30 +1602,66 @@ func _cancello(nodo: Node3D, st: SurfaceTool, facce: PackedVector3Array, s: floa
 	lucchetto.global_position = c - Vector3.UP * 0.2 - r * 0.09
 
 
+## Dove vanno i gommoni di ogni attraversamento ([member attraversamenti]): si parte dal lato dell'ostacolo e si
+## arriva a quello di fronte; il primo gommone sta al salto giusto dalla banchina di partenza, l'ultimo da quella di
+## arrivo, quelli in mezzo in fila fra i due; lungo il canale sono sfalsati quanto serve perché fra un tubolare e
+## l'altro ci sia il salto voluto. L'ultimo finisce [constant ATTRAVERSAMENTO_MARGINE] m prima dell'ostacolo.
+func _disponi_gommoni() -> void:
+	gommoni = []
+	var rg := GOMMONE_R + GOMMONE_T
+	for att in attraversamenti:
+		var s_ost: float = att[0]
+		var salti: Array = att[1]
+		var da := 1.0
+		for o in ostacoli:
+			if absf(float(o["s"]) - s_ost) < 0.01:
+				da = float(o["lato"])
+		var n := salti.size() - 1
+		var lat0 := da * (canale - rg - float(salti[0]))
+		var lat1 := -da * (canale - rg - float(salti[n]))
+		var lats: Array = []
+		for k in n:
+			lats.append(lerpf(lat0, lat1, float(k) / maxf(n - 1, 1)))
+		var lungo: Array = [0.0]
+		for k in range(1, n):
+			var dl: float = float(lats[k]) - float(lats[k - 1])
+			var c := 2.0 * rg + float(salti[k])
+			lungo.append(float(lungo[k - 1]) + sqrt(maxf(c * c - dl * dl, 0.0)))
+		var s_ultimo := s_ost - ATTRAVERSAMENTO_MARGINE - rg
+		for k in n:
+			gommoni.append([s_ultimo - float(lungo[n - 1]) + float(lungo[k]), lats[k]])
+
+
 ## Un gommone tondo delle rapide (sei posti) a [param s], scostato di [param off] dall'asse, che galleggia nel canale
-## e dondola appena; legato con due corde agli anelli delle pareti del canale. Si salta da una banchina all'altra
-## passandoci sopra (la collisione è il disco fino alla cima del tubolare).
+## e dondola appena (chi ci sta sopra viene portato: AnimatableBody3D con sync_to_physics); legato con due corde ad
+## anelli nella parete del canale più vicina, prima e dopo lungo il canale. La collisione segue la gomma: il tubolare
+## a spicchi (ci si cammina sopra), il fondo e i sedili; dal fondo si risale sul tubolare saltando.
 func _gommone(s: float, off: float) -> void:
 	var p := punto(s)
 	var r := destra(s)
 	var d := direzione(s)
+	# (tutti sotto "Gommoni": il controllo di posizionamento li guarda a parte, fermi in tre istanti del dondolio)
+	var gruppo := get_node_or_null(^"Gommoni")
+	if gruppo == null:
+		gruppo = Node3D.new()
+		gruppo.name = "Gommoni"
+		add_child(gruppo)
 	var nodo := Node3D.new()
 	nodo.name = "Gommone_%d" % int(s)
-	add_child(nodo)
+	gruppo.add_child(nodo)
 	var centro := Vector3(p.x, acqua - GOMMONE_SOTTO, p.z) + r * off
 	var corpo := AnimatableBody3D.new()
 	corpo.name = "Gommone"
 	corpo.collision_layer = Layers.WORLD
+	corpo.collision_mask = 0
 	corpo.sync_to_physics = true
+	corpo.set_meta(&"superficie", &"gomma")
 	nodo.add_child(corpo)
-	corpo.global_transform = Transform3D(Basis.looking_at(d, Vector3.UP), centro)
-	var cs := CollisionShape3D.new()
-	var cy := CylinderShape3D.new()
-	cy.radius = GOMMONE_R + GOMMONE_T
-	cy.height = GOMMONE_T * 2.0
-	cs.shape = cy
-	cs.position = Vector3.UP * GOMMONE_T
-	corpo.add_child(cs)
+	var giro := float(int(s * 13.0) % 60) * 0.1
+	# (la posa di partenza la si tiene a parte: con sync_to_physics il corpo la prende al passo della fisica)
+	var posa0 := Transform3D(Basis.looking_at(d, Vector3.UP).rotated(Vector3.UP, giro), centro)
+	corpo.global_transform = posa0
+	_collisione_gommone(corpo)
 	var colori := [Color(0.95, 0.42, 0.12), Color(0.2, 0.62, 0.3), Color(0.95, 0.78, 0.15)]
 	var gomma := StandardMaterial3D.new()
 	gomma.albedo_color = colori[int(s) % 3]
@@ -982,10 +1697,42 @@ func _gommone(s: float, off: float) -> void:
 		sedile.material_override = gomma
 		corpo.add_child(sedile)
 		sedile.transform = Transform3D(Basis(Vector3.UP, -a), Vector3(cos(a), 0, sin(a)) * 0.55 + Vector3.UP * 0.22)
-	# le corde: dalle maniglie verso le due pareti del canale, agli anelli (fissati alla parete sotto il bordo)
+	# le sei maniglie sul fianco del tubolare (anelli di gomma nera, come nel modello delle rapide)
+	var maniglie: Array = []
+	for k in 6:
+		var a := TAU * float(k) / 6.0 + PI / 6.0
+		var m := Vector3(cos(a), 0.0, sin(a))
+		var q := m * (GOMMONE_R + GOMMONE_T * 0.9) + Vector3.UP * GOMMONE_T * 1.2
+		var man := MeshInstance3D.new()
+		var mm := TorusMesh.new()
+		mm.inner_radius = 0.07
+		mm.outer_radius = 0.105
+		mm.rings = 12
+		mm.ring_segments = 6
+		man.mesh = mm
+		man.material_override = nera
+		corpo.add_child(man)
+		# l'anello sta di piatto contro il tubolare, girato lungo il fianco
+		man.transform = Transform3D(Basis(Vector3.UP, m, Vector3.UP.cross(m)), q + m * 0.02)
+		maniglie.append(q + m * 0.11)
+	# le corde: dalle due maniglie più vicine agli anelli della parete più vicina, prima e dopo lungo il canale
+	var lato := 1.0 if off >= 0.0 else -1.0
 	var corde: Array = []
-	for lato: float in [-1.0, 1.0]:
-		var anello := _al(p, r, Vector2(lato * (canale - 0.05), acqua + 0.3)) + d * 0.6 * lato
+	var usate := {}
+	for k: float in [-1.0, 1.0]:
+		var sa := s + k * CORDA_LUNGO
+		var pa := punto(sa)
+		var ra := destra(sa)
+		# la piastra sul muro, e l'anello che ne esce di piatto, girato lungo il canale: la corda passa nell'anello
+		var muro_q := _al(pa, ra, Vector2(lato * canale, acqua + 0.3))
+		var dentro := -ra * lato
+		var piastra := MeshInstance3D.new()
+		var pm := BoxMesh.new()
+		pm.size = Vector3(0.14, 0.14, 0.02)
+		piastra.mesh = pm
+		piastra.material_override = _mat_ferro()
+		nodo.add_child(piastra)
+		piastra.global_transform = Transform3D(Basis.looking_at(dentro, Vector3.UP), muro_q + dentro * 0.01)
 		var attacco := MeshInstance3D.new()
 		var am := TorusMesh.new()
 		am.inner_radius = 0.035
@@ -993,55 +1740,121 @@ func _gommone(s: float, off: float) -> void:
 		attacco.mesh = am
 		attacco.material_override = _mat_ferro()
 		nodo.add_child(attacco)
-		attacco.global_transform = Transform3D(Basis.looking_at(-r * lato, Vector3.UP) * Basis(Vector3.RIGHT, PI * 0.5), anello)
-		var piastra := MeshInstance3D.new()
-		var pm := BoxMesh.new()
-		pm.size = Vector3(0.14, 0.14, 0.02)
-		piastra.mesh = pm
-		piastra.material_override = _mat_ferro()
-		nodo.add_child(piastra)
-		piastra.global_transform = Transform3D(Basis.looking_at(-r * lato, Vector3.UP), anello + r * lato * 0.04)
+		var da := direzione(sa)
+		# (l'anello tocca la piastra col bordo; la corda passa nel suo foro, dalla parte del canale)
+		attacco.global_transform = Transform3D(Basis(dentro, da, dentro.cross(da)), muro_q + dentro * 0.08)
+		var anello := muro_q + dentro * 0.11
+		var best := -1
+		for j in maniglie.size():
+			if usate.has(j):
+				continue
+			if best < 0 or (posa0 * (maniglie[j] as Vector3)).distance_to(anello) < (posa0 * (maniglie[best] as Vector3)).distance_to(anello):
+				best = j
+		usate[best] = true
 		var corda := MeshInstance3D.new()
+		corda.name = "Corda"
 		corda.mesh = ImmediateMesh.new()
 		corda.material_override = _mat_corda()
 		corda.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		nodo.add_child(corda)
-		corde.append([corda, anello, lato])
-	_gommoni.append({"nodo": nodo, "corpo": corpo, "centro": centro, "base": corpo.global_transform.basis,
-			"fase": float(int(s * 7.0) % 10) * 0.6, "corde": corde, "r": r, "d": d})
+		var lunga := (posa0 * (maniglie[best] as Vector3)).distance_to(anello) * (1.0 + CORDA_LASCO)
+		corde.append({"mesh": corda, "anello": anello, "maniglia": maniglie[best], "lunga": lunga})
+	_gommoni.append({"nodo": nodo, "corpo": corpo, "centro": centro, "base": posa0.basis,
+			"fase": float(int(s * 7.0) % 10) * 0.6, "corde": corde})
 	_aggiorna_gommone(_gommoni[_gommoni.size() - 1], 0.0)
 
 
-func _physics_process(_delta: float) -> void:
-	var t := Time.get_ticks_msec() / 1000.0
+## La collisione di un gommone, nel suo spazio: il tubolare come anello di spicchi convessi a sezione di dodecagono
+## (circoscritto: la gomma tocca le facce, niente sta sospeso sopra), il fondo e i sedili come nel disegno.
+func _collisione_gommone(corpo: AnimatableBody3D) -> void:
+	var rr := GOMMONE_T / cos(PI / GOMMONE_LATI)
+	for k in GOMMONE_SPICCHI:
+		var punti := PackedVector3Array()
+		for a in [TAU * k / GOMMONE_SPICCHI, TAU * (k + 1) / GOMMONE_SPICCHI]:
+			var m := Vector3(cos(a), 0.0, sin(a))
+			for j in GOMMONE_LATI:
+				var b := TAU * (j + 0.5) / GOMMONE_LATI
+				punti.append(m * (GOMMONE_R + rr * cos(b)) + Vector3.UP * (GOMMONE_T + rr * sin(b)))
+		var forma := ConvexPolygonShape3D.new()
+		forma.points = punti
+		var cs := CollisionShape3D.new()
+		cs.name = "Tubolare%d" % k
+		cs.shape = forma
+		corpo.add_child(cs)
+	var fondo := CylinderShape3D.new()
+	fondo.radius = GOMMONE_R - GOMMONE_T * 0.5
+	fondo.height = 0.06
+	var cf := CollisionShape3D.new()
+	cf.name = "Fondo"
+	cf.shape = fondo
+	cf.position = Vector3.UP * 0.03
+	corpo.add_child(cf)
+	for k in 6:
+		var a := TAU * float(k) / 6.0
+		var sb := BoxShape3D.new()
+		sb.size = Vector3(0.84, 0.36, 0.26)
+		var cs := CollisionShape3D.new()
+		cs.name = "Sedile%d" % k
+		cs.shape = sb
+		cs.transform = Transform3D(Basis(Vector3.UP, -a), Vector3(cos(a), 0, sin(a)) * 0.55 + Vector3.UP * 0.22)
+		corpo.add_child(cs)
+
+
+var _tempo_gommoni := 0.0
+
+
+func _physics_process(delta: float) -> void:
+	_tempo_gommoni += delta
+	for g in _gommoni:
+		_aggiorna_gommone(g, _tempo_gommoni)
+
+
+## Ferma i gommoni all'istante [param t] del dondolio (controllo di posizionamento, scatti, test).
+func ferma_gommoni(t: float) -> void:
+	_tempo_gommoni = t
 	for g in _gommoni:
 		_aggiorna_gommone(g, t)
 
 
-## Il dondolio di un gommone (pochi centimetri, si atterra sicuri) e le sue corde, che lo seguono.
-func _aggiorna_gommone(g: Dictionary, t: float) -> void:
+## Il dondolio di un gommone al tempo [param t] (pochi centimetri, si atterra sicuri) e le sue corde, che lo seguono.
+func posa_gommone(g: Dictionary, t: float) -> Transform3D:
 	var f: float = g["fase"]
 	var su := 0.02 * sin(t * 1.3 + f)
 	var giro := 0.025 * sin(t * 0.7 + f)
+	var rollio := deg_to_rad(1.2) * sin(t * 0.9 + f * 1.7)
+	return Transform3D((g["base"] as Basis) * Basis(Vector3.UP, giro) * Basis(Vector3.RIGHT, rollio), (g["centro"] as Vector3) + Vector3.UP * su)
+
+
+func _aggiorna_gommone(g: Dictionary, t: float) -> void:
 	var corpo: AnimatableBody3D = g["corpo"]
-	corpo.global_transform = Transform3D((g["base"] as Basis) * Basis(Vector3.UP, giro), (g["centro"] as Vector3) + Vector3.UP * su)
+	corpo.global_transform = posa_gommone(g, t)
 	for c in g["corde"]:
-		var lato: float = c[2]
-		var maniglia := corpo.global_transform * Vector3(0, GOMMONE_T * 1.2, 0) + (g["r"] as Vector3) * lato * (GOMMONE_R + GOMMONE_T * 0.9)
-		_corda(c[0], maniglia, c[1])
+		_corda(c["mesh"], punti_corda(corpo, c))
 
 
-## Una corda morbida fra [param a] e [param b] (un po' lenta: pende di qualche centimetro), fatta di nastri.
-func _corda(mi: MeshInstance3D, a: Vector3, b: Vector3) -> void:
+## I punti di una corda fra la sua maniglia (dove sta ora il gommone) e l'anello: una parabola con la freccia che
+## viene dal lasco (più il gommone si avvicina all'anello, più pende).
+func punti_corda(corpo: Node3D, c: Dictionary, n := 10) -> PackedVector3Array:
+	var a: Vector3 = corpo.global_transform * (c["maniglia"] as Vector3)
+	var b: Vector3 = c["anello"]
+	var dd := a.distance_to(b)
+	var freccia := sqrt(maxf(0.0, 3.0 * dd * (float(c["lunga"]) - dd) / 8.0))
+	var out := PackedVector3Array()
+	for k in n + 1:
+		var f := float(k) / n
+		out.append(a.lerp(b, f) + Vector3.DOWN * freccia * 4.0 * f * (1.0 - f))
+	return out
+
+
+## Una corda morbida per i punti [param pts], fatta di nastri.
+func _corda(mi: MeshInstance3D, pts: PackedVector3Array) -> void:
 	var im := mi.mesh as ImmediateMesh
 	im.clear_surfaces()
 	im.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
-	var n := 8
 	var r := 0.018
-	var prev := a
-	for k in range(1, n + 1):
-		var f := float(k) / n
-		var q := a.lerp(b, f) - Vector3.UP * 0.12 * 4.0 * f * (1.0 - f)
+	for k in range(1, pts.size()):
+		var prev := pts[k - 1]
+		var q := pts[k]
 		var dir := (q - prev).normalized()
 		var lat := dir.cross(Vector3.UP).normalized() * r
 		var su := lat.cross(dir).normalized() * r
@@ -1051,7 +1864,6 @@ func _corda(mi: MeshInstance3D, a: Vector3, b: Vector3) -> void:
 			for v in [prev + v0, q + v0, q + v1, prev + v0, q + v1, prev + v1]:
 				im.surface_set_normal(((v - prev) - dir * (v - prev).dot(dir)).normalized())
 				im.surface_add_vertex(v)
-		prev = q
 	im.surface_end()
 
 

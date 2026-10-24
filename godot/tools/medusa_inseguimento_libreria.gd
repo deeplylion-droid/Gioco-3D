@@ -3,7 +3,9 @@ extends SceneTree
 ## (res://assets/models/medusa/medusa_inseguimento.res) dalle pose di tools/blender/medusa_inseguimento.py
 ## (assets_src/medusa/build/inseguimento.json): per ogni osso una traccia di posizione e una di rotazione,
 ## con lo stesso percorso dello Skeleton3D delle animazioni di medusa.glb. Nella presa si aggiungono le
-## blend shape della fauce (strappo, denti, gola) prese da "fauce_apre", nel tempo della presa.
+## blend shape della fauce (strappo, denti, gola) prese da "fauce_apre", nel tempo della presa; nelle animazioni
+## del tunnel (con "fauce" nel json: quanto è aperta a ogni fotogramma, 0-1) le stesse blend shape seguono quella
+## curva (1 = come alla fine di fauce_apre).
 ## Uso (da godot/, con il lock):
 ##   godot --headless --path . --script res://tools/medusa_inseguimento_libreria.gd
 ## In gioco: MedusaAffacciata.animazioni_inseguimento = true, poi "inseguimento/<nome>".
@@ -65,6 +67,8 @@ func _init() -> void:
 				a.rotation_track_insert_key(tr, t, q)
 		if nome == "presa":
 			_fauce(ap.get_animation(&"fauce_apre"), a)
+		elif an.has("fauce"):
+			_fauce_curva(ap.get_animation(&"fauce_apre"), a, an["fauce"], fps)
 		lib.add_animation(StringName(nome), a)
 		print("ANIMAZIONE ", nome, ": ", chiavi.size(), " fotogrammi, ", a.get_track_count(), " tracce")
 	var err := ResourceSaver.save(lib, uscita, ResourceSaver.FLAG_COMPRESS)
@@ -88,3 +92,23 @@ func _fauce(src: Animation, dst: Animation) -> void:
 		for k in src.track_get_key_count(i):
 			dst.blend_shape_track_insert_key(t, FAUCE_DA + src.track_get_key_time(i, k) * scala,
 				float(src.track_get_key_value(i, k)))
+
+
+## Le blend shape della fauce che seguono [param curva] (quanto è aperta a ogni fotogramma): il valore di ogni
+## blend shape è quello di "fauce_apre" al tempo curva × durata di fauce_apre.
+func _fauce_curva(src: Animation, dst: Animation, curva: Array, fps: float) -> void:
+	if src == null:
+		printerr("manca fauce_apre")
+		return
+	for i in src.get_track_count():
+		if src.track_get_type(i) != Animation.TYPE_BLEND_SHAPE:
+			continue
+		var t := dst.add_track(Animation.TYPE_BLEND_SHAPE)
+		dst.track_set_path(t, src.track_get_path(i))
+		var prima := -1.0
+		for k in curva.size():
+			var v := src.blend_shape_track_interpolate(i, clampf(float(curva[k]), 0.0, 1.0) * src.length)
+			# (solo dove cambia: le chiavi uguali di fila non servono)
+			if k == 0 or k == curva.size() - 1 or absf(v - prima) > 1e-4:
+				dst.blend_shape_track_insert_key(t, minf(k / fps, dst.length), v)
+			prima = v
