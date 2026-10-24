@@ -128,18 +128,7 @@ func _run() -> void:
 	sott.lei_stato = SalaSottomarino.Lei.VIA
 	sott.lei.visible = false
 
-	print("5. I gommoni")
-	var g0 := _gommone(67.5, -1.85)
-	var g1 := _gommone(67.5, 1.85)
-	var partenza := sott.punto(66.0) - sott.destra(66.0) * (sott.canale + 0.4)
-	p.teleport(Vector3(partenza.x, sott.piano + 0.05, partenza.z))
-	await _frames(10)
-	var ok_salti := await _salta_verso(g0) and await _salta_verso(g1)
-	var arrivo := sott.punto(67.5) + sott.destra(67.5) * (sott.canale + 1.0)
-	ok_salti = ok_salti and await _salta_verso(Vector3(arrivo.x, sott.piano, arrivo.z))
-	var pr := sott.proietta_vicino(p.global_position, 67.5)
-	check(ok_salti and float(pr[1]) > sott.canale and absf(p.global_position.y - sott.piano) < 0.15,
-			"dalla banchina sinistra si salta sui due gommoni e si arriva sulla destra (lato %.2f, y %.2f)" % [float(pr[1]), p.global_position.y])
+	# 5. i gommoni e i salti li prova enigmi, che li fa (test_parkour_gommoni.gd)
 
 	print("6. Il guado")
 	var nel := sott.punto(100.0)
@@ -156,13 +145,9 @@ func _run() -> void:
 	_lascia()
 	var v := Vector2(p.global_position.x - a.x, p.global_position.z - a.z).length() / 2.0
 	check(v < 2.3 and v > 0.5, "nel canale si va a guado, piano (%.2f m/s)" % v)
-	# i gradini più vicini: si risale
-	var sg := 0.0
-	for k in 60:
-		sg = SalaSottomarino.PRESA_FINO + 4.0 + SalaSottomarino.GRADINI_OGNI * k
-		if sg > 100.0:
-			break
-	var lato_g := 1.0 if int((sg - SalaSottomarino.PRESA_FINO - 4.0) / SalaSottomarino.GRADINI_OGNI) % 2 == 0 else -1.0
+	# dal gradino continuo si risale da qualunque punto: qui, sulla riva destra
+	var sg := 103.0
+	var lato_g := 1.0
 	var davanti := sott.punto(sg) + sott.destra(sg) * lato_g * (sott.canale - 1.6)
 	p.teleport(Vector3(davanti.x, sott.fondo + 0.05, davanti.z))
 	await _frames(10)
@@ -170,9 +155,14 @@ func _run() -> void:
 	p.look_at_point(Vector3(sopra.x, sott.piano + 1.6, sopra.z))
 	p.set_look(p.yaw, 0.0)
 	Input.action_press(&"move_forward")
-	await _frames(150)
+	for k in 5:
+		await _frames(20)
+		Input.action_press(&"jump")
+		await _frames(4)
+		Input.action_release(&"jump")
+	await _frames(20)
 	_lascia()
-	check(absf(p.global_position.y - sott.piano) < 0.15, "dai gradini si risale sulla banchina (y %.2f)" % p.global_position.y)
+	check(absf(p.global_position.y - sott.piano) < 0.15, "dal gradino continuo si risale sulla banchina (y %.2f)" % p.global_position.y)
 
 	print("7. La galleria di servizio")
 	var gal: Dictionary = sott.ostacoli.filter(func(o): return o["tipo"] == "galleria")[0]
@@ -217,40 +207,6 @@ func _run() -> void:
 		await _frames(1)
 	check(fine[0], "dalla camera stagna con E si chiude il portello, poi la fine")
 	_fine()
-
-
-func _gommone(s: float, off: float) -> Vector3:
-	var q := sott.punto(s) + sott.destra(s) * off
-	return Vector3(q.x, sott.acqua - SalaSottomarino.GOMMONE_SOTTO + SalaSottomarino.GOMMONE_T * 2.0, q.z)
-
-
-## Un salto (camminando) verso [param bersaglio]: guarda, cammina e salta, poi aspetta di atterrare. Vero se si
-## atterra a meno di 1,2 m dal bersaglio, in piedi.
-func _salta_verso(bersaglio: Vector3) -> bool:
-	p.look_at_point(Vector3(bersaglio.x, p.global_position.y + 1.6, bersaglio.z))
-	p.set_look(p.yaw, 0.0)
-	Input.action_press(&"move_forward")
-	await _frames(8)
-	Input.action_press(&"jump")
-	await _frames(4)
-	Input.action_release(&"jump")
-	await _frames(20)
-	for i in 120:
-		if p.is_on_floor():
-			break
-		await _frames(1)
-	var d := Vector2(p.global_position.x - bersaglio.x, p.global_position.z - bersaglio.z).length()
-	# fermo sopra il bersaglio
-	for i in 60:
-		d = Vector2(p.global_position.x - bersaglio.x, p.global_position.z - bersaglio.z).length()
-		if d < 0.6:
-			break
-		await _frames(1)
-	_lascia()
-	await _frames(10)
-	d = Vector2(p.global_position.x - bersaglio.x, p.global_position.z - bersaglio.z).length()
-	print("    salto verso %s: a %.2f m, y %.2f" % [bersaglio, d, p.global_position.y])
-	return d < 1.2 and p.is_on_floor()
 
 
 func _fine() -> void:

@@ -27,6 +27,9 @@ const PORTA_ALTA := 2.2
 const PORTA_S := 2.0
 ## La presa d'acqua profonda in testa: il canale scende fino a qui (lei sale da lì sotto).
 const PRESA_FONDO := -36.0
+const GRADINO_LARGO := 0.4   # il gradino continuo lungo il bordo del canale
+const GRADINO_SU := 0.45     # sopra il fondo (il pelo è a 0,5)
+const GRADINO_R := 0.05      # lo spigolo arrotondato
 const PRESA_FINO := 6.0
 ## L'approdo (scelta 11A dell'utente): nel muro di fondo la porta del portello sta in alto, a [constant SOGLIA] sopra
 ## le banchine, con l'oblò all'altezza degli occhi di lei che fluttua sopra il canale; davanti, il ballatoio profondo
@@ -42,7 +45,6 @@ const OBLO_Y := 1.3
 const OBLO_R := 0.2
 const VOLANTINO_Y := 0.75
 ## I gradini per risalire dal canale: ogni quanti metri, alternati sui due lati.
-const GRADINI_OGNI := 12.0
 ## Le gallerie di servizio (i passaggi bassi, scelta 4C dell'utente): dietro il muro, larghe [constant GALLERIA_LARGA]
 ## e alte [constant GALLERIA_ALTA] (ci si passa solo accovacciati), con le due bocche lunghe [constant GALLERIA_BOCCA].
 const GALLERIA_ALTA := 1.25
@@ -161,7 +163,6 @@ func _passi() -> Array:
 		s0 = s1
 	out.append(_testa)
 	out.append(_fine)
-	out.append(_gradini)
 	out.append(_luci)
 	for o in ostacoli:
 		if o["tipo"] == "galleria":
@@ -303,14 +304,17 @@ func _profilo(s: float, m: float) -> Array:
 	var dx := _lato(m, 1.0)
 	var out: Array = []
 	# (ogni pezzo: [a, b, materiale, verso della faccia in coordinate (lato, su), tipo])
-	var f0 := -mu if sx["crollo"] else -c
-	var f1 := mu if dx["crollo"] else c
+	var cg := c - GRADINO_LARGO
+	var f0 := -mu if sx["crollo"] else -cg
+	var f1 := mu if dx["crollo"] else cg
 	out.append([Vector2(f0, f), Vector2(f1, f), "mosaico", Vector2(0, 1), "fondo"])
 	if not sx["crollo"]:
-		out.append([Vector2(-c, piano), Vector2(-c, f), "mosaico", Vector2(1, 0), "parete"])
+		out.append([Vector2(-c, piano), Vector2(-c, fondo + GRADINO_SU), "mosaico", Vector2(1, 0), "parete"])
+		_gradino(out, -1.0, f)
 		out.append([Vector2(-mu, piano), Vector2(-c, piano), "graniglia", Vector2(0, 1), "banchina"])
 	if not dx["crollo"]:
-		out.append([Vector2(c, f), Vector2(c, piano), "mosaico", Vector2(-1, 0), "parete"])
+		out.append([Vector2(c, fondo + GRADINO_SU), Vector2(c, piano), "mosaico", Vector2(-1, 0), "parete"])
+		_gradino(out, 1.0, f)
 		out.append([Vector2(c, piano), Vector2(mu, piano), "graniglia", Vector2(0, 1), "banchina"])
 	# il muro parte dal piano, dal fondo dove la banchina è crollata, dalla cima di un'apertura
 	var base_sx: float = piano + float(sx["apertura"]) if float(sx["apertura"]) > 0.0 else (f if sx["crollo"] else piano)
@@ -326,6 +330,32 @@ func _profilo(s: float, m: float) -> Array:
 		var mid := (p0 + p1) * 0.5
 		out.append([p0, p1, "mosaico", (Vector2(0, imposta) - mid).normalized(), "volta"])
 	return out
+
+
+## Il gradino continuo lungo il bordo del canale, dal lato [param lato] (decisione del coordinatore con enigmi, 24
+## ottobre: dall'acqua si esce sempre, con due saltelli): largo [constant GRADINO_LARGO], [constant GRADINO_SU]
+## sopra il fondo (appena sotto il pelo), stesso mosaico, lo spigolo arrotondato. Scende fino a [param f] (nella
+## presa il fondo è più basso).
+func _gradino(out: Array, lato: float, f: float) -> void:
+	var c := canale
+	var g := fondo + GRADINO_SU
+	var n := c - GRADINO_LARGO                  # il naso del gradino
+	var rr := GRADINO_R
+	var pts := [Vector2(c, g), Vector2(n + rr, g)]
+	for k in range(1, 4):
+		var a := PI * 0.5 * float(k) / 4.0
+		pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
+	pts.append(Vector2(n, g - rr))
+	pts.append(Vector2(n, f))
+	for k in pts.size() - 1:
+		var a: Vector2 = pts[k]
+		var b: Vector2 = pts[k + 1]
+		var tg := (b - a).normalized()
+		var nr := Vector2(tg.y, -tg.x)          # verso l'acqua, per il lato destro
+		if lato > 0.0:
+			out.append([a, b, "mosaico", nr, "gradino"])
+		else:
+			out.append([Vector2(-a.x, a.y), Vector2(-b.x, b.y), "mosaico", Vector2(-nr.x, nr.y), "gradino"])
 
 
 ## Un pezzo di tunnel da [param s0] a [param s1]: mesh per materiale e collisione.
@@ -391,6 +421,12 @@ func _pezzo(s0: float, s1: float) -> void:
 					_al(p, r, Vector2(lato * muro, piano)), _al(p, r, Vector2(lato * canale, piano))]
 			_quad(st["graniglia"], q, verso)
 			_facce_quad(facce, q)
+			# (e la testa del gradino continuo, tagliato col crollo)
+			var g := fondo + GRADINO_SU
+			var qg := [_al(p, r, Vector2(lato * (canale - GRADINO_LARGO), fondo)), _al(p, r, Vector2(lato * canale, fondo)),
+					_al(p, r, Vector2(lato * canale, g)), _al(p, r, Vector2(lato * (canale - GRADINO_LARGO), g))]
+			_quad(st["mosaico"], qg, verso)
+			_facce_quad(facce, qg)
 	if s0 <= PORTA_S and PORTA_S < s1:
 		_passaggio_porta(st, facce)
 	for k in st:
@@ -873,36 +909,6 @@ func _nero() -> void:
 	tw.tween_callback(func(): fine_demo.emit())
 
 
-## I gradini per risalire dal canale sulle banchine: quattro gradini da 23 cm contro la parete del canale, ogni
-## [constant GRADINI_OGNI] metri, alternati sui due lati (dall'acqua si esce sempre).
-func _gradini() -> void:
-	var nodo := Node3D.new()
-	nodo.name = "Gradini"
-	add_child(nodo)
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var facce := PackedVector3Array()
-	var s := PRESA_FINO + 4.0
-	var lato := 1.0
-	var alzata := (piano - fondo) / 4.0
-	while s < lunghezza() - BALLATOIO - 6.0:
-		var p := punto(s)
-		var r := destra(s)
-		var d := direzione(s)
-		for k in 4:
-			# gradino k (dal basso): largo 1,2 m lungo il canale, contro la parete, sporge 30 cm per ogni gradino sopra
-			var alto := fondo + alzata * (k + 1)
-			var box_c := p + r * lato * (canale - 0.15 * (4 - k)) + Vector3(0, (fondo + alto) * 0.5 - p.y, 0)
-			_scatola(st, facce, box_c, r * lato, d, Vector3(0.3 * (4 - k), alto - fondo, 1.2))
-		s += GRADINI_OGNI
-		lato = -lato
-	var mi := MeshInstance3D.new()
-	mi.mesh = st.commit()
-	mi.material_override = mat_graniglia
-	nodo.add_child(mi)
-	_corpo(nodo, facce)
-
-
 ## Le luci del tunnel: lampade a gabbia sui muri ogni 9 m, alternate, e oblò illuminati.
 func _luci() -> void:
 	var nodo := Node3D.new()
@@ -1034,6 +1040,9 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 @export var checkpoint_s := PackedFloat32Array([6.0, 160.0, 300.0, 445.0])
 ## Il primo ordine dei checkpoint del tunnel (dopo quelli dell'inseguimento, che partono da 40).
 @export var ordine_base := 60
+## Appena parte (riemersa dalla presa, a pochi metri dalla porta), se il giocatore è più vicino di
+## [member distanza_min] lei resta lì a mordere per questi secondi: il tempo di voltarsi e correre.
+@export var vantaggio := 2.5
 ## Chi insegue (vuoto: il giocatore); i test lo cambiano.
 var bersaglio: Node3D
 
@@ -1131,6 +1140,7 @@ func _bersaglio() -> Node3D:
 func insegui_da(s: float) -> void:
 	lei_s = s
 	lei_stato = Lei.INSEGUE
+	_lei_t = 0.0
 	_getto_preso = 0.0
 	lei.visible = true
 	_anima_lei(&"inseguimento/incombe", 0.3)
@@ -1228,6 +1238,8 @@ func _process(delta: float) -> void:
 			pass
 		Lei.INSEGUE:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
+			if gap < distanza_min and _lei_t < vantaggio:
+				v = 0.0
 			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - BALLATOIO - 1.5))
 			gap = _s_bersaglio - lei_s
 			if gap < distanza_morsi:
