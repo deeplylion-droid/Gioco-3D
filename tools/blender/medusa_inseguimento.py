@@ -950,6 +950,49 @@ def pose_oblo_capovolta_stacca(arm, C, Z, t):
     Z.segui()
 
 
+# L'oblò della torre (quarta posa, scelta A dell'utente, 24 ottobre): arriva dal buio e appoggia al vetro l'occhio
+# enorme, che riempie l'oblò e segue il giocatore; poi si stacca lenta e torna nel buio. La testa piegata indietro
+# (la frangia va su, l'occhio e' la cosa piu' avanti), i palmi sul vetro ai lati, fuori dall'oblò.
+OCCHIO_SU = 24.0            # gradi: la testa piegata indietro
+OCCHIO_DAVANTI = 0.20       # quanto la pelle piu' avanti (l'occhio) sta davanti all'osso dell'occhio con la testa cosi'
+OCCHIO_VIA = (1.6, 0.8)     # da dove arriva e dove torna: tanti metri indietro e giu' (il buio della vasca)
+OCCHIO_MANI = 0.42          # i palmi sul vetro a tanto dal centro (dietro il muro, fuori dall'oblò)
+T_ARRIVA = 3.0
+
+
+def _occhio_posa(arm, C, Z, t, via, mani=1.0):
+    """L'occhio sul vetro; via: 0 sul vetro, 1 lontana nel buio (OCCHIO_VIA); mani: 1 i palmi sul vetro."""
+    dd, hh = OBLO
+    u = (t / T_OBLO) % 1.0
+    _calma(arm, C, Z, t, avanti=6.0 - 10.0 * via, su=OCCHIO_SU * (1.0 - 0.6 * via))
+    _occhio_in(arm, (0.006 * math.sin(2 * math.pi * u), -dd + OCCHIO_DAVANTI + 0.008 + 0.003 * math.sin(2 * math.pi * u)
+                     + OCCHIO_VIA[0] * via, hh - OCCHIO_VIA[1] * via ** 1.4))
+    for suf, s in (('.L', 1), ('.R', -1)):
+        pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
+        vetro = Vector((s * OCCHIO_MANI, -dd + PALMO, hh - 0.10 + 0.006 * math.sin(2 * math.pi * u + s)))
+        lungo = pc + Vector((s * 0.35, -0.10, -0.85))
+        _palmo(arm, suf, lungo.lerp(vetro, mani))
+    Z.segui()
+
+
+def pose_oblo_occhio(arm, C, Z, t):
+    """Ciclo: l'occhio sul vetro, respira piano."""
+    _occhio_posa(arm, C, Z, t, 0.0)
+
+
+def pose_oblo_occhio_arriva(arm, C, Z, t):
+    """3 s: dal buio (indietro e giu') fino al vetro, rallentando; le mani si posano alla fine."""
+    u = t / T_ARRIVA
+    via = 1.0 - liscio(0.0, 1.0, 0.0, 0.9, u)
+    _occhio_posa(arm, C, Z, t, via, mani=liscio(0.0, 1.0, 0.6, 1.0, u))
+
+
+def pose_oblo_occhio_stacca(arm, C, Z, t):
+    """Si stacca lenta e torna nel buio: le mani lasciano, poi indietro e giu'."""
+    u = t / T_STACCA
+    _occhio_posa(arm, C, Z, t, liscio(0.0, 1.0, 0.1, 1.0, u), mani=1.0 - liscio(0.0, 1.0, 0.0, 0.35, u))
+
+
 ANIMAZIONI = {
     # nome: (durata, in ciclo, funzione)
     'sale_dall_acqua': (1.6, False, lambda a, C, Z, t: pose_sale(a, C, Z, t, 1.6)),
@@ -977,6 +1020,10 @@ ANIMAZIONI = {
     'oblo_sbircia_altro_stacca': (T_STACCA, False, lambda a, C, Z, t: pose_oblo_sbircia_stacca(a, C, Z, t, -SBIRCIA_LATO)),
     'oblo_capovolta': (T_OBLO, True, pose_oblo_capovolta),
     'oblo_capovolta_stacca': (T_STACCA, False, pose_oblo_capovolta_stacca),
+    # l'oblò della torre
+    'oblo_occhio': (T_OBLO, True, pose_oblo_occhio),
+    'oblo_occhio_arriva': (T_ARRIVA, False, pose_oblo_occhio_arriva),
+    'oblo_occhio_stacca': (T_STACCA, False, pose_oblo_occhio_stacca),
 }
 
 # Quanto e' aperta la fauce (le blend shape di fauce_apre: 0 chiusa, 1 come alla fine) nel tempo, per le animazioni
@@ -995,6 +1042,9 @@ FAUCE = {
     'oblo_sbircia_altro_stacca': lambda t: 0.0,
     'oblo_capovolta': lambda t: 0.0,
     'oblo_capovolta_stacca': lambda t: 0.0,
+    'oblo_occhio': lambda t: 0.0,
+    'oblo_occhio_arriva': lambda t: 0.0,
+    'oblo_occhio_stacca': lambda t: 0.0,
 }
 
 
@@ -1192,6 +1242,7 @@ def controlla_vetro(arm, C, Z, nome, durata, fn, n=9):
         dg = bpy.context.evaluated_depsgraph_get()
         avanti, chi = 1e9, ''
         senza_mani, chi2 = 1e9, ''
+        lo, hi = np.full(3, 1e9), np.full(3, -1e9)
         for o in bpy.data.objects:
             if o.type != 'MESH' or o.name.startswith('rif_') or o.hide_render:
                 continue
@@ -1205,12 +1256,15 @@ def controlla_vetro(arm, C, Z, nome, durata, fn, n=9):
             co = co.reshape(-1, 3) @ np.array(o.matrix_world.to_3x3()).T + np.array(o.matrix_world.translation)
             oe.to_mesh_clear()
             d = float((co[:, 1] + dd).min())
+            lo, hi = np.minimum(lo, co.min(0)), np.maximum(hi, co.max(0))
             if d < avanti:
                 avanti, chi = d, o.name
             if 'Mani' not in o.name and d < senza_mani:
                 senza_mani, chi2 = d, o.name
         peggio = min(peggio, avanti)
-        print(f'VETRO {nome} t={t:.2f}: al piu\' avanti {avanti * 100:.1f} cm dal vetro ({chi}); senza le mani {senza_mani * 100:.1f} cm ({chi2})', flush=True)
+        print(f'VETRO {nome} t={t:.2f}: al piu\' avanti {avanti * 100:.1f} cm dal vetro ({chi}); senza le mani {senza_mani * 100:.1f} cm ({chi2}); '
+              f'ingombro dal centro del vetro: lati {lo[0]:.2f}..{hi[0]:.2f}, dietro fino a {hi[1] + dd:.2f}, '
+              f'sotto {lo[2] - OBLO[1]:.2f}, sopra {hi[2] - OBLO[1]:.2f}', flush=True)
     print(f'VETRO {nome}: minimo {peggio * 100:.1f} cm', flush=True)
     mesh_attive(False)
 

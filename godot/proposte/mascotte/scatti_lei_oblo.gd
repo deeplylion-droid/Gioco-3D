@@ -113,8 +113,6 @@ func _run() -> void:
 	radice.add_child(lo)
 	for i in 5:
 		await get_tree().process_frame
-	lo.lei.gocce = false
-	var ap := lo.lei.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
 	for posa: String in LeiOblo.POSE:
 		if not solo.is_empty() and not posa in solo:
 			continue
@@ -123,7 +121,8 @@ func _run() -> void:
 		giocatore.camera.current = true
 		giocatore.camera.look_at_from_position(occhi, CENTRO, Vector3.UP)
 		print("CAMERA ", giocatore.camera.global_position)
-		lo.mostra(CENTRO, Vector3.FORWARD, posa)
+		lo.mostra(CENTRO, Vector3.BACK, posa)
+		var ap := lo.lei.get_model_instance().find_child("AnimationPlayer", true, false) as AnimationPlayer
 		# un secondo e mezzo in ciclo: la testa e l'occhio si girano verso il giocatore
 		for i in 45:
 			await get_tree().physics_frame

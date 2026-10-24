@@ -10,14 +10,20 @@ extends Node3D
 ##   dal corridoio); "sbircia_altro" dall'altro bordo;
 ## - "capovolta": a testa in giù, l'occhio rovesciato contro il vetro, i capelli e i tentacoli verso l'alto.
 ##
-## Chi la comanda (la logica dell'oblò):
+## Chi la comanda (ObloLei, la logica dell'oblò):
 ## - mostra(centro_vetro, normale, posa): la mette dietro il vetro (centro_vetro: il centro della faccia del vetro dalla
-##   parte dell'acqua; normale: dal vetro verso l'acqua, cioè verso di lei);
-## - stacca(): si stacca e sparisce (alla fine il segnale sparita e lei è nascosta);
-## - via(): la nasconde subito.
-## Il vetro deve avere un raggio di almeno OBLO_R (0,55 m: le mani stanno dentro questo cerchio). Dietro ci vuole acqua
-## o buio per almeno 2,5 m di profondità e 5 m sotto il centro del vetro (lei è alta 5,3 m e nel distacco scende);
-## sopra, per la "capovolta", 5,5 m.
+##   parte dell'acqua; normale: orizzontale, dal vetro verso il corridoio);
+## - stacca(): si stacca e sparisce (alla fine il segnale sparita e lei è nascosta); chiamata di nuovo mentre si stacca
+##   non fa niente;
+## - via(): la nasconde subito;
+## - aggiungi_forme(scatole): le forme della vasca per i tentacoli morbidi ([Transform3D, mezze misure] per scatola, come
+##   MorbidezzaLei.aggiungi_scatola), anche subito dopo mostra(); restano per le volte dopo;
+## - lato_sbircia (+1 / -1, prima di mostra): da che bordo sbircia;
+## - get_eye_position(), get_eye_direction(): l'occhio, per chi controlla che segua il giocatore.
+## Per la memoria lei (il modello, le ossa morbide, la luce) c'è solo da mostra() a quando sparisce: via() e la fine di
+## stacca() la liberano, la prossima mostra() la ricrea.
+## Il vetro deve avere un raggio di almeno OBLO_R (le mani stanno dentro questo cerchio); dietro, lo spazio d'acqua per
+## posa è scritto in docs/report/lei_oblo/LEGGIMI.md.
 
 ## Si è staccata ed è sparita (lei è nascosta).
 signal sparita
@@ -30,15 +36,22 @@ const OBLO_R := 0.55
 const POSE: Array[String] = ["schiacciata", "sbircia", "sbircia_altro", "capovolta"]
 const ROSA := Color(1.0, 0.35, 0.6)
 
+## Da che bordo sbircia nella posa "sbircia": +1 a destra per chi guarda dal corridoio, -1 a sinistra (ObloLei).
+var lato_sbircia := 1
+
 var lei: MedusaAffacciata
 var morbidezza: MorbidezzaLei
 var posa := ""
 var _ap: AnimationPlayer
 var _luce: OmniLight3D
 var _tw: Tween
+var _staccando := false
+var _forme: Array = []
 
 
-func _ready() -> void:
+func _crea() -> void:
+	if lei:
+		return
 	lei = MedusaAffacciata.new()
 	lei.name = "Lei"
 	lei.model = load("res://assets/models/medusa/medusa.glb")
@@ -53,9 +66,9 @@ func _ready() -> void:
 		"M_tentacoli": load("res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
 	}
 	lei.animazioni_inseguimento = true
-	lei.animazione = StringName(ANIM + "oblo_schiacciata")
+	lei.animazione = StringName(ANIM + "oblo_" + (posa if posa != "" else "schiacciata"))
 	lei.morbidezza = 1.0
-	lei.visible = false
+	lei.gocce = false
 	add_child(lei)
 	_luce = OmniLight3D.new()
 	_luce.light_color = ROSA
@@ -75,21 +88,27 @@ func _ready() -> void:
 ## La mette dietro il vetro nella [param p] (una di POSE), calma, che ti guarda.
 func mostra(centro_vetro: Vector3, normale: Vector3, p := "schiacciata") -> void:
 	assert(p in POSE, "LeiOblo: posa sconosciuta " + p)
+	if _tw:
+		_tw.kill()
+	_staccando = false
+	if p == "sbircia" and lato_sbircia < 0:
+		p = "sbircia_altro"
 	posa = p
-	var n := normale
+	var n := -normale        # verso l'acqua, verso di lei
 	n.y = 0.0
 	n = n.normalized() if n.length() > 1e-3 else Vector3.BACK
 	global_position = centro_vetro + n * OBLO.x - Vector3.UP * OBLO.y
-	# il modello guarda verso +Z: verso il vetro, cioè contro la normale
+	# il modello guarda verso +Z: verso il vetro, cioè verso il corridoio
 	global_basis = Basis.looking_at(-n, Vector3.UP, true)
-	if _tw:
-		_tw.kill()
+	_crea()
 	_luce.light_energy = 4.0
 	lei.visible = true
 	if morbidezza:
-		# i tentacoli non passano il muro dell'oblò: una scatola sottile dalla parte del corridoio
+		# i tentacoli non passano il muro dell'oblò (una scatola dalla parte del corridoio) né la vasca
 		morbidezza.togli_forme_mondo()
 		morbidezza.aggiungi_scatola(Transform3D(Basis.looking_at(-n, Vector3.UP, true), centro_vetro - n * 0.2), Vector3(4.0, 6.0, 0.2))
+		for f in _forme:
+			morbidezza.aggiungi_scatola(f[0], f[1])
 		morbidezza.azzera()
 		morbidezza.accendi(true)
 	lei.segui_con_la_testa(1.0, 0.6)
@@ -98,8 +117,9 @@ func mostra(centro_vetro: Vector3, normale: Vector3, p := "schiacciata") -> void
 
 ## Si stacca dal vetro e sparisce lenta nel buio; poi il segnale sparita.
 func stacca() -> void:
-	if posa == "" or not lei.visible:
+	if posa == "" or lei == null or not lei.visible or _staccando:
 		return
+	_staccando = true
 	lei.segui_con_la_testa(0.0, 0.8)
 	_anima("oblo_" + posa + "_stacca", 0.3)
 	var d := _durata("oblo_" + posa + "_stacca")
@@ -112,14 +132,40 @@ func stacca() -> void:
 		sparita.emit())
 
 
-## La nasconde subito.
+## Vero mentre si stacca.
+func in_stacca() -> bool:
+	return _staccando
+
+
+## Le forme della vasca per i tentacoli: [Transform3D, Vector3 mezze misure] per scatola.
+func aggiungi_forme(scatole: Array) -> void:
+	_forme.append_array(scatole)
+	if morbidezza and lei and lei.visible:
+		for f in scatole:
+			morbidezza.aggiungi_scatola(f[0], f[1])
+
+
+## Dove sta l'occhio e dove guarda (coordinate del mondo; ZERO se lei non c'è).
+func get_eye_position() -> Vector3:
+	return lei.get_eye_position() if lei else Vector3.ZERO
+
+
+func get_eye_direction() -> Vector3:
+	return lei.get_eye_direction() if lei else Vector3.ZERO
+
+
+## La nasconde subito (e libera il modello).
 func via() -> void:
 	if _tw:
 		_tw.kill()
-	lei.visible = false
+	_staccando = false
 	posa = ""
-	if morbidezza:
-		morbidezza.azzera()
+	if lei:
+		lei.queue_free()
+	lei = null
+	morbidezza = null
+	_luce = null
+	_ap = null
 
 
 func _anima(nome: String, sfuma: float) -> void:
