@@ -810,9 +810,9 @@ func _metti(nome: String, pos: Vector3, rot_y := 0.0, scala := 1.0) -> Node3D:
 ## Porta [param n] (figlio della scena) a terra: il suo punto più basso 1 mm sopra la quota [param y].
 func _a_terra(n: Node3D, y := 0.0) -> void:
 	var basso := INF
-	var io := global_transform.affine_inverse()
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
-		var xf := io * (mi as MeshInstance3D).global_transform
+		# (rispetto al fiume dai nodi in mezzo: vale anche mentre il fiume si costruisce fuori dal mondo)
+		var xf := _xf_nel_fiume(mi as MeshInstance3D)
 		for v in (mi as MeshInstance3D).mesh.get_faces():
 			basso = minf(basso, (xf * v).y)
 	n.position.y += y + 0.001 - basso
@@ -821,9 +821,8 @@ func _a_terra(n: Node3D, y := 0.0) -> void:
 ## La quota del punto più alto di [param n] (figlio della scena), coi vertici veri.
 func _cima(n: Node3D) -> float:
 	var alto := -INF
-	var io := global_transform.affine_inverse()
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
-		var xf := io * (mi as MeshInstance3D).global_transform
+		var xf := _xf_nel_fiume(mi as MeshInstance3D)
 		for v in (mi as MeshInstance3D).mesh.get_faces():
 			alto = maxf(alto, (xf * v).y)
 	return alto
@@ -1684,18 +1683,14 @@ func _ciambelle_a_riva() -> void:
 func _ciambella_appoggiata(p: Vector3, rot: float, ingombri: Array[PackedVector2Array]) -> bool:
 	var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
 	var lato := Vector3.UP.cross(davanti).normalized()
-	var aiuto := Node3D.new()
-	add_child(aiuto)
-	var f_alto := _faccia_roccia(aiuto, p, davanti, 1.1)
-	var f_basso := _faccia_roccia(aiuto, p, davanti, 0.12)
+	var f_alto := _faccia_roccia(p, davanti, 1.1)
+	var f_basso := _faccia_roccia(p, davanti, 0.12)
 	if f_alto < 0.0 or f_basso < 0.0:
-		aiuto.queue_free()
 		return false
 	# il retro della ciambella al piede, dalla linea della roccia; l'inclinazione fa toccare la cima a 1,1 m
 	var piede := maxf(f_basso + 0.04, f_alto + 1.1 * tan(deg_to_rad(6.0)))
 	var teta := atan((piede - f_alto) / 1.1)
 	if teta > deg_to_rad(22.0) or piede + 0.33 * cos(teta) > BANCA - 0.15:
-		aiuto.queue_free()
 		return false
 	# l'impronta a terra libera da quello che c'è già sulla banchina (non la roccia, che sta dietro)
 	var c2 := Vector2(p.x, p.z) + Vector2(davanti.x, davanti.z) * (piede + 0.17)
@@ -1709,7 +1704,6 @@ func _ciambella_appoggiata(p: Vector3, rot: float, ingombri: Array[PackedVector2
 			# la scatola di collisione della roccia sta dietro la faccia: conta solo se arriva oltre il piede
 			if Geometry2D.intersect_polygons(PackedVector2Array([c2 - l2, c2 + l2, c2 + l2 + d2 * 2.0, c2 - l2 + d2 * 2.0]), g).is_empty():
 				continue
-			aiuto.queue_free()
 			return false
 	var ci := _metti("ciambella", p, 0.0)
 	ci.name = "CiambellaRiva"
@@ -1722,30 +1716,72 @@ func _ciambella_appoggiata(p: Vector3, rot: float, ingombri: Array[PackedVector2
 		ci.position = p + davanti * (piede - 0.6 * sin(teta)) + Vector3.UP * 0.6
 		_a_terra(ci)
 		# quanto manca fra la cima del retro e la roccia
-		ci.visible = false
 		var cima := ci.position + su * 0.57
-		var h: Dictionary = Posa._raggio_mesh(aiuto, cima + n * 0.06, cima - n * 0.5)
-		ci.visible = true
+		var h := _raggio_roccia(cima + n * 0.06, cima - n * 0.5)
 		if h.is_empty():
 			teta += deg_to_rad(3.0)
 			continue
-		var gap: float = (cima + n * 0.06).distance_to(h.position) - 0.06
+		var gap: float = (cima + n * 0.06).distance_to(h["position"]) - 0.06
 		if absf(gap) <= 0.008:
 			break
 		teta += atan(gap / 1.15)
-	aiuto.queue_free()
 	print("ciambella a riva: %s, inclinata %.1f gradi" % [ci.position.snappedf(0.01), rad_to_deg(teta)])
 	return true
 
 
 ## Dove sta la faccia vera della roccia davanti a [param p], a quota [param h]: la distanza dalla linea della roccia
-## lungo [param davanti] (-1 se non c'è roccia).
-func _faccia_roccia(aiuto: Node3D, p: Vector3, davanti: Vector3, h: float) -> float:
-	var da := p + davanti * 1.6 + Vector3.UP * h
-	var hit: Dictionary = Posa._raggio_mesh(aiuto, da, p - davanti * 0.3 + Vector3.UP * h)
-	if hit.is_empty() or not _in_roccia(hit.collider as Node):
+## lungo [param davanti] (-1 se non c'è roccia). Tutto nelle coordinate del fiume.
+func _faccia_roccia(p: Vector3, davanti: Vector3, h: float) -> float:
+	var hit := _raggio_roccia(p + davanti * 1.6 + Vector3.UP * h, p - davanti * 0.3 + Vector3.UP * h)
+	if hit.is_empty():
 		return -1.0
-	return ((hit.position as Vector3) - p).dot(davanti)
+	return ((hit["position"] as Vector3) - p).dot(davanti)
+
+
+## Il primo punto della faccia vera di un pannello di roccia sul segmento [param da]-[param a], nelle coordinate del
+## fiume, coi triangoli dei modelli e le trasformazioni dei nodi rispetto al fiume: vale anche mentre il fiume si
+## costruisce a pezzi fuori dal mondo, o è spostato nella risalita (prima i raggi andavano nel mondo con le coordinate
+## del fiume: nella scena di prova, col fiume nell'origine, tornava; nel gioco no, collaudo della v0.3.13). {} se niente.
+func _raggio_roccia(da: Vector3, a: Vector3) -> Dictionary:
+	var meglio := {}
+	var d_min := INF
+	for r in get_children():
+		if not (r is Node3D and String(r.name).begins_with("roccia")):
+			continue
+		if (r as Node3D).position.distance_to(da) > 6.0:
+			continue
+		for n in (r as Node).find_children("*", "MeshInstance3D", true, false):
+			var mi := n as MeshInstance3D
+			if mi.mesh == null:
+				continue
+			var xf := _xf_nel_fiume(mi)
+			var tm: TriangleMesh = _triangoli_roccia_cache.get(mi.mesh)
+			if tm == null:
+				tm = mi.mesh.generate_triangle_mesh()
+				_triangoli_roccia_cache[mi.mesh] = tm
+			var inv := xf.affine_inverse()
+			var hit := tm.intersect_segment(inv * da, inv * a)
+			if hit.is_empty():
+				continue
+			var q: Vector3 = xf * (hit.position as Vector3)
+			if q.distance_to(da) < d_min:
+				d_min = q.distance_to(da)
+				meglio = {"position": q}
+	return meglio
+
+
+var _triangoli_roccia_cache := {}
+
+
+## La trasformazione di [param n] rispetto al fiume, dai nodi in mezzo (senza passare dal mondo).
+func _xf_nel_fiume(n: Node3D) -> Transform3D:
+	var t := n.transform
+	var q := n.get_parent()
+	while q and q != self:
+		if q is Node3D:
+			t = (q as Node3D).transform * t
+		q = q.get_parent()
+	return t
 
 
 func _in_roccia(n: Node) -> bool:
