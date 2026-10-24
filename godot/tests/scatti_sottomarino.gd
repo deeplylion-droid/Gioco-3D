@@ -91,6 +91,10 @@ func _run() -> void:
 	cam.current = true
 	for i in 30:
 		await get_tree().process_frame
+	if solo.has("34_schianto"):
+		await _schianto(sala, cam)
+		get_tree().quit()
+		return
 	for nome in SCATTI:
 		if not solo.is_empty() and not solo.has(nome):
 			continue
@@ -120,3 +124,31 @@ func _run() -> void:
 func _occhio(sala: SalaSottomarino, s: float, lato: float, su: float) -> Vector3:
 	var di_lato := lato * sala.canale if absf(lato) < 0.99 else signf(lato) * (sala.canale + sala.banchina * 0.5)
 	return sala.punto(s) + sala.destra(s) * di_lato + Vector3.UP * (sala.piano - sala.acqua + su)
+
+
+## Lo schianto: si chiude il portello e lei sbatte sull'oblò; due scatti prima del nero: dalla camera stagna, dalla
+## soglia guardando l'oblò (come il giocatore), e dal pontile.
+func _schianto(sala: SalaSottomarino, cam: Camera3D) -> void:
+	var L := sala.lunghezza()
+	var p := sala.punto(L)
+	var d := sala.direzione(L)
+	var r := sala.destra(L)
+	var sg := sala.piano + SalaSottomarino.SOGLIA
+	var oblo := Vector3(p.x, sg + SalaSottomarino.OBLO_Y, p.z)
+	cam.fov = 70.0
+	cam.look_at_from_position(oblo + d * 0.9 + Vector3.UP * 0.3, oblo)
+	var contro := [false]
+	sala.lei_tunnel.schianto_contro.connect(func(): contro[0] = true)
+	sala.chiudi_portello()
+	for i in 2000:
+		if contro[0]:
+			break
+		await get_tree().process_frame
+	for i in 8:
+		await get_tree().process_frame
+	get_viewport().get_texture().get_image().save_jpg(cartella.path_join("34_schianto_dalla_camera.jpg"), 0.88)
+	cam.look_at_from_position(oblo - d * 1.6 - r * 2.2 + Vector3.UP * 0.2, oblo - d * 0.4)
+	for i in 3:
+		await get_tree().process_frame
+	get_viewport().get_texture().get_image().save_jpg(cartella.path_join("35_schianto_dal_pontile.jpg"), 0.88)
+	print("scatti dello schianto in ", cartella)

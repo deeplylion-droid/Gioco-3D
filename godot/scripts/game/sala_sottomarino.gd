@@ -39,17 +39,18 @@ const SOGLIA := 3.0
 const BALLATOIO := 1.0
 ## Lo schianto di lei sull'oblò (scelta B con mascotte, 24 ottobre): davanti al portello, sull'asse, lei ci arriva
 ## intera, quindi il ballatoio non passa davanti alla porta. Il pontile viene dalla scala lungo il muro di fondo e si
-## ferma a [constant PONTILE_FINO] dall'asse (sopra il pontile lei è larga al più 1,09 m), a sbalzo: sotto, entro
-## 2,1 m dall'asse, ci sono i suoi tentacoli e non c'è niente. Davanti alla porta resta la soglia d'acciaio, profonda
-## [constant SOGLIA_PROFONDA]. La porta è più larga verso il pontile (da [constant PORTA_SX] dall'asse), così ci si
-## entra di lato; l'oblò resta sull'asse, all'altezza della faccia di lei.
-const PONTILE_FINO := -1.35
+## ferma a [constant PONTILE_FINO] dall'asse, a sbalzo: all'altezza della sua lastra lei, schiacciata sul portello, è
+## larga al più 0,86 m per lato (misure di mascotte), e sotto, entro 2,1 m dall'asse, ci sono i suoi tentacoli e non
+## c'è niente. Davanti alla porta resta la soglia d'acciaio, profonda [constant SOGLIA_PROFONDA] (lei sta a 0,35 m dal
+## portello). Il portello resta quello approvato, col volantino e l'oblò in mezzo: dalla testa del pontile si passa
+## sulla soglia ed entra di lato.
+const PONTILE_FINO := -0.95
 const SOGLIA_PROFONDA := 0.25
-const PORTA_SX := -1.3
-const PORTELLO_LARGO := 1.75
-## Dov'è l'oblò sul battente, dal perno (che sta sul lato sinistro della porta): sull'asse del canale.
-const OBLO_X := 1.3
-const PORTELLO_ALTO := 1.8
+const PORTA_SX := -0.65
+const PORTELLO_LARGO := 1.3
+## Dov'è l'oblò sul battente, dal perno (che sta sul lato sinistro della porta): in mezzo, sull'asse del canale.
+const OBLO_X := 0.65
+const PORTELLO_ALTO := 2.05      # (la porta alta più di 2 m: si passa senza abbassarsi)
 const PORTELLO_APERTO := 90.0
 ## L'oblò e il volantino sul battente (dalla soglia).
 const OBLO_Y := 1.3
@@ -186,6 +187,28 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 	# le forme del tunnel per i tentacoli di lei (FormeTunnel di grafica, circa 1 s di calcolo a pezzi)
 	if is_inside_tree():
 		await FormeTunnel.prepara_a_pezzi(self)
+
+
+## I punti da cui il controllo di posizionamento riempie lo spazio "dove si cammina" (regola dell'utente: niente fino
+## a 2 m sopra dove si cammina): le due banchine ogni 3 m (dove ci sono), la scala, il pontile e la camera stagna
+## dell'approdo. Il riempimento parte da qui e segue i pavimenti.
+func punti_dove_si_cammina() -> Array[Vector3]:
+	var out: Array[Vector3] = []
+	var s := -TESTA + 0.5
+	while s < lunghezza() - 0.5:
+		for lato: float in [-1.0, 1.0]:
+			if not _lato(s, lato)["crollo"]:
+				out.append(_al(punto(s), destra(s), Vector2(lato * (canale + banchina * 0.5), piano)))
+		s += 3.0
+	var L := lunghezza()
+	var p := punto(L)
+	var r := destra(L)
+	var d := direzione(L)
+	var sg := piano + SOGLIA
+	out.append(_al(p - d * 0.5, r, Vector2(PONTILE_FINO - 0.6, sg)))
+	out.append(_al(p - d * 0.5, r, Vector2(-muro + 0.5, sg)))
+	out.append(_al(p + d * 1.5, r, Vector2(0.0, sg)))
+	return out
 
 
 ## Le viste del riscaldamento: [s, lato] (una per ambiente, ostacolo e arredo: ogni materiale almeno una volta).
@@ -800,9 +823,9 @@ func _fine() -> void:
 		var pk := punto(sk)
 		var base := _al(pk, destra(sk), Vector2(-muro + 0.95, piano + alzata * float(k)))
 		_palo(nodo, base, base + Vector3.UP * 1.0, 0.025, corr)
-	# (lungo il bordo del pontile verso il canale, e sulla sua testa fino a mezzo metro dal muro: di lì si va alla porta)
+	# (lungo il bordo del pontile verso il canale, e sulla sua testa fino a 0,8 m dal muro: di lì si va alla porta)
 	var p_ball := [_al(b0, r, Vector2(-muro + 0.95, sg)), _al(b0, r, Vector2(PONTILE_FINO - 0.05, sg)),
-			_al(p - d * 0.55, r, Vector2(PONTILE_FINO - 0.05, sg))]
+			_al(p - d * 0.8, r, Vector2(PONTILE_FINO - 0.05, sg))]
 	for q in p_ball:
 		_palo(nodo, q, q + Vector3.UP * 1.0, 0.025, corr)
 	_palo(nodo, p_ball[0] + Vector3.UP * 1.0, p_ball[1] + Vector3.UP * 1.0, 0.025, corr)
@@ -822,11 +845,11 @@ func _fine() -> void:
 	_lampada(nodo, L - BALLATOIO - 2.0, 1.0, piano + 3.5, 4.0)
 	# una sul muro sinistro appena prima della scala, che la illumina dal basso (le lampade del tunnel lì finiscono)
 	_lampada(nodo, L - BALLATOIO - 12 * 0.32 - 1.2, -1.0, piano + 3.0, 3.5)
-	# e una sul muro di fondo sopra il ballatoio, dalla parte della scala (2,2 m sopra il ballatoio): la scala e il
+	# e una sul muro di fondo sopra il pontile, dalla parte della scala (2,4 m sopra il pontile): la scala e il
 	# ballatoio si devono vedere senza torcia
 	var lf := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
 	nodo.add_child(lf)
-	lf.global_position = _al(p, r, Vector2(-3.2, sg + 2.2)) - d * 0.05
+	lf.global_position = _al(p, r, Vector2(-3.2, sg + 2.4)) - d * 0.05
 	lf.look_at(lf.global_position - d * 2.0, Vector3.UP)
 	lf.rotate_object_local(Vector3.UP, PI)
 	_a_filo_del_muro(lf, -d)
@@ -862,6 +885,16 @@ func _palo(nodo: Node3D, a: Vector3, b: Vector3, raggio: float, m: Material) -> 
 	var y := (b - a).normalized()
 	var x := y.cross(Vector3.FORWARD if absf(y.dot(Vector3.FORWARD)) < 0.9 else Vector3.RIGHT).normalized()
 	mi.global_transform = Transform3D(Basis(x, y, x.cross(y)), (a + b) * 0.5)
+	# (le ringhiere fermano chi cammina: la collisione del palo, un cilindro come la mesh)
+	var corpo := StaticBody3D.new()
+	corpo.collision_layer = Layers.WORLD
+	mi.add_child(corpo)
+	var cs := CollisionShape3D.new()
+	var cil := CylinderShape3D.new()
+	cil.radius = raggio
+	cil.height = cm.height
+	cs.shape = cil
+	corpo.add_child(cs)
 
 
 ## Il portello da sottomarino nella porta in alto del muro di fondo: il battente d'acciaio con l'oblò (vetro vero:
@@ -1425,7 +1458,7 @@ func _process(delta: float) -> void:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
 			if gap < distanza_min and _lei_t < vantaggio:
 				v = 0.0
-			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - 1.2))
+			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - 2.5))
 			gap = _s_bersaglio - lei_s
 			if gap < distanza_morsi:
 				_morso_tra -= delta
@@ -1676,7 +1709,8 @@ func _galleria(o: Dictionary) -> void:
 			nodo.add_child(fascia)
 			fascia.global_transform = Transform3D(Basis.looking_at(-rf, Vector3.UP), _muro_a(sf, lato, y1 + 0.17) - rf * (muro - u0 + 0.01))
 			_a_filo_del_muro(fascia, -rf)
-		_lampada(nodo, sb, lato, y1 + 0.75, 3.0)
+		# (la lampada sopra la bocca, col fondo sopra i 2 m: sulla banchina si passa lì davanti)
+		_lampada(nodo, sb, lato, piano + 2.45, 3.0)
 	# dentro: due plafoniere a filo del soffitto
 	for f in [0.33, 0.66]:
 		var sp: float = lerpf(float(o["s"]), float(o["s"]) + float(o["lungo"]), f)

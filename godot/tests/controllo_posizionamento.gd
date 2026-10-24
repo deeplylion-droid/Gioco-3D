@@ -333,6 +333,9 @@ func _prepara(stato: String) -> void:
 					tunnel.costruisci()
 				tunnel.set_physics_process(false)
 				tunnel.ferma_gommoni({"sottomarino_t0": 0.0, "sottomarino_t1": 1.9, "sottomarino_t2": 4.3}[stato])
+				# dove si cammina (coordinatore, 24 ottobre): tutte le banchine, la scala, il pontile e la camera stagna
+				# dell'approdo; i checkpoint del tunnel nascono solo costruendolo, quindi i punti li dà il tunnel
+				_semi.append_array(tunnel.punti_dove_si_cammina())
 			for i in 10:
 				await get_tree().physics_frame
 			return

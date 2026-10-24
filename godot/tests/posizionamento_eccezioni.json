@@ -557,5 +557,362 @@
 		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"motivo": "il corallo del diorama sta dentro la teca di vetro della vetrina caduta, appoggiato sulla sabbia del fondo: il vetro è una scatola chiusa e lo contiene tutto (tunnel sottomarino, 24 ottobre)"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@243",
+		"problema": "ingombro",
+		"pos": [
+			-57.5,
+			-27.0,
+			21.5
+		],
+		"firma": "|TorusMesh 0.54x0.08x0.54",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A)"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@241",
+		"problema": "ingombro",
+		"pos": [
+			-57.5,
+			-27.0,
+			21.5
+		],
+		"firma": "|CylinderMesh 0.40x0.02x0.40",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A)"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Approdo/PortelloPerno/Battente/Lastra",
+		"problema": "ingombro",
+		"pos": [
+			-57.5,
+			-27.0,
+			21.5
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A)"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Approdo/@MeshInstance3D@226",
+		"problema": "ingombro",
+		"pos": [
+			-62.0,
+			-27.2,
+			23.0
+		],
+		"firma": "|CylinderMesh 0.05x4.35x0.05",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "il corrimano della scala dell'approdo, a fianco di chi sale, all'altezza della mano"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/struttura_mosaico",
+		"problema": "ingombro",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@836",
+		"problema": "ingombro",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Tunnel_432/struttura_mosaico",
+		"problema": "ingombro",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@837",
+		"problema": "ingombro",
+		"pos": [
+			-37.25,
+			-30.0,
+			128.75
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@835",
+		"problema": "ingombro",
+		"pos": [
+			-36.75,
+			-30.0,
+			128.75
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@844",
+		"problema": "ingombro",
+		"pos": [
+			-30.75,
+			-30.0,
+			127.25
+		],
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@842",
+		"problema": "ingombro",
+		"pos": [
+			-26.0,
+			-30.0,
+			123.75
+		],
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Tunnel_408/struttura_mosaico",
+		"problema": "ingombro",
+		"pos": [
+			-22.5,
+			-30.0,
+			118.0
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@830",
+		"problema": "ingombro",
+		"pos": [
+			-22.75,
+			-30.0,
+			117.5
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@828",
+		"problema": "ingombro",
+		"pos": [
+			-22.5,
+			-30.0,
+			117.0
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Luci/@Node3D@415/@MeshInstance3D@416",
+		"problema": "ingombro",
+		"pos": [
+			-21.0,
+			-30.0,
+			6.0
+		],
+		"firma": "|TorusMesh 0.92x0.10x0.92",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "oblò a muro: sporge 8 cm, il centro a 1,9 m, passaggio libero sulla banchina 2,2 m (regola del coordinatore del 23 ottobre)"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@831",
+		"problema": "ingombro",
+		"pos": [
+			-23.25,
+			-30.0,
+			117.75
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@838",
+		"problema": "ingombro",
+		"pos": [
+			-37.75,
+			-30.0,
+			129.0
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Ostacolo_macerie_348/@MeshInstance3D@824",
+		"problema": "ingombro",
+		"pos": [
+			-32.0,
+			-30.0,
+			38.5
+		],
+		"firma": "|ArrayMesh 3.14x2.22x3.32",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "le macerie che chiudono la banchina destra a 348: ostacolo voluto (24 ottobre, scelta 2C), si passa dall'altra banchina coi gommoni"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/struttura_mosaico",
+		"problema": "ingombro",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@805",
+		"problema": "ingombro",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Tunnel_216/struttura_mosaico",
+		"problema": "ingombro",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@813",
+		"problema": "ingombro",
+		"pos": [
+			0.5,
+			-30.0,
+			58.0
+		],
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@811",
+		"problema": "ingombro",
+		"pos": [
+			0.0,
+			-30.0,
+			60.75
+		],
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Tunnel_192/struttura_mosaico",
+		"problema": "ingombro",
+		"pos": [
+			-1.0,
+			-30.0,
+			64.75
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@798",
+		"problema": "ingombro",
+		"pos": [
+			-0.5,
+			-30.0,
+			65.25
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@800",
+		"problema": "ingombro",
+		"pos": [
+			-0.25,
+			-30.0,
+			65.0
+		],
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
 	}
 ]
