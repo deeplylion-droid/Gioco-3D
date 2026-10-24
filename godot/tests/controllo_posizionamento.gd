@@ -1639,25 +1639,6 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					# tanti oggetti diversi (l'arredo della risalita: il carrello nel corrimano di C2, riscontro dell'utente
 					# sulla v0.3.11). Solo gli spigoli che lo attraversano: le staffe entrano apposta 1 mm nel tubo. Nei
 					# modelli normali i pezzi si incastrano apposta (bielle, montanti, cornici)
-					# nei glTF d'ambiente esportati da Blender (gli spogliatoi, i tecnici...: tanti oggetti in un modello solo)
-					# gli oggetti distinti si confrontano fra loro come gli oggetti di scena; restano fuori solo i pezzi
-					# dello stesso oggetto (corpo, anta, cerniere e maniglie dello stesso mobile) (coordinatore, 24 ottobre:
-					# il pallone nell'anta dell'armadietto, nello stesso modello, non lo vedeva nessuno)
-					if _fino and _stesso_modello(a, b) and _modello_ambiente(a) and not _stesso_oggetto(a, b) \
-							and boxes[a].intersects(boxes[b]):
-						var pa := _attraversa(a, b)
-						var chi3: MeshInstance3D = a if boxes[a].get_volume() <= boxes[b].get_volume() else b
-						var altro3: MeshInstance3D = b if chi3 == a else a
-						if pa > ATTRAVERSA_MIN:
-							_trova(z, chi3, "compenetra", boxes[a].intersection(boxes[b]).get_center(), "passa dentro %s per %d cm (nel pieno, per esempio, in %s; stesso modello)" % [_nodo(altro3), roundi(pa * 100.0), _punto_dentro.snappedf(0.01)])
-							continue
-						var ii: AABB = boxes[a].intersection(boxes[b])
-						var pic := minf(boxes[a].get_volume(), boxes[b].get_volume())
-						if pic > 0.0 and ii.get_volume() >= 0.3 * pic:
-							var fr := _frazione_dentro(a, b)
-							if fr >= 0.2:
-								_trova(z, chi3, "compenetra", ii.get_center(), "il %d%% dei suoi vertici è dentro %s (stesso modello)" % [roundi(fr * 100.0), _nodo(altro3)])
-						continue
 					if _fino and _stesso_modello(a, b) and _arredo(a) and (_lungo_sottile(a) or _lungo_sottile(b)) \
 							and boxes[a].intersects(boxes[b]):
 						var pp := _attraversa(a, b)
@@ -1691,61 +1672,6 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					_trova(z, chi, "compenetra", i.get_center(), "il %d%% dei suoi vertici è dentro %s" % [roundi(dentro * 100.0), _nodo(altro)])
 
 
-## Un glTF d'ambiente esportato da Blender: tanti oggetti (più di [constant AMBIENTE_MESH] mesh) in un modello solo.
-const AMBIENTE_MESH := 20
-var _modelli_ambiente := {}
-
-
-func _modello_ambiente(mi: Node) -> bool:
-	var o := mi.owner
-	if o == null:
-		return false
-	if not _modelli_ambiente.has(o):
-		_modelli_ambiente[o] = o.find_children("*", "MeshInstance3D", true, false).size() > AMBIENTE_MESH
-	return _modelli_ambiente[o]
-
-
-## Il nome dell'oggetto di Blender a cui appartiene [param n]: il nodo più in alto sotto la radice del modello.
-func _oggetto(n: Node) -> String:
-	var x := n
-	while x.get_parent() != null and x.get_parent() != n.owner:
-		x = x.get_parent()
-	return String(x.name).to_lower()
-
-
-## Due pezzi dello stesso oggetto: lo stesso nodo di Blender, o nomi uguali tranne l'ultima parola, che è il nome del
-## pezzo e non un numero ("armadietti_est_01_anta" e "armadietti_est_01_corpo", "doccia_01_tubo" e
-## "doccia_01_soffione"; non "asciugamano" e "asciugamano_2", né "salvagente_rastrelliera_1" e "_2"). Le cerniere e
-## le maniglie stanno coi mobili su cui sono montate.
-func _stesso_oggetto(a: Node, b: Node) -> bool:
-	var na := _oggetto(a)
-	var nb := _oggetto(b)
-	if na == nb:
-		return true
-	# il guscio della stanza (muri, pavimento e cerniere uniti in "*_statico"): conta come architettura
-	if na.ends_with("_statico") or nb.ends_with("_statico"):
-		return true
-	for p in ["cerniera", "maniglia", "cardine"]:
-		if na.contains(p) or nb.contains(p):
-			return true
-	# "X" e "X_parola": un pezzo dell'oggetto (lampada_l1 e lampada_l1_vetro, POMPA_1 e POMPA_1_manometro, la base e il
-	# suo _piolo); "X" e "X_2" invece sono due copie
-	for c in [[na, nb], [nb, na]]:
-		if String(c[1]).begins_with(String(c[0]) + "_"):
-			var resto := String(c[1]).substr(String(c[0]).length() + 1)
-			return not resto.split("_")[0].is_valid_int()
-	var ta := na.split("_")
-	var tb := nb.split("_")
-	if ta.size() < 2 or tb.size() < 2:
-		return false
-	# stessi nomi tranne l'ultima parola: i pezzi di un oggetto ("armadietti_est_01_anta" e "_corpo", le perline
-	# "G_festone_mag_3" e il loro "G_festone_mag_filo"); due copie numerate ("_1" e "_2") restano distinte
-	if ta.slice(0, -1) == tb.slice(0, -1):
-		return not (ta[-1].is_valid_int() and tb[-1].is_valid_int())
-	# lo stesso indice in fondo, nello stesso nodo: i pezzi del k-esimo montaggio (piastra_0 e staffa_0)
-	return ta[-1].is_valid_int() and ta[-1] == tb[-1] and a.get_parent() == b.get_parent()
-
-
 ## Le parti che si aprono sui loro cardini: ante, sportelli, battenti (per nome).
 const ANTE := ["_anta", "anta_", "sportello", "battente"]
 ## Quanto (m) una cosa può entrare in una parte che si muove: le ante sono lastre sottili, anche 1 cm si vede.
@@ -1763,6 +1689,7 @@ func _anta(n: Node) -> bool:
 ## Il telaio di una parte che si muove: il corpo dell'armadietto, le cerniere (l'anta ci sta dentro apposta).
 func _telaio(n: Node) -> bool:
 	var nome := String(n.name).to_lower()
+	# (le cerniere degli armadietti sono unite al guscio della stanza, "*_statico")
 	return nome.ends_with("_corpo") or nome.ends_with("_statico") or nome.contains("cerniera") or nome.contains("telaio") or nome.contains("cardine") \
 			or RegEx.create_from_string("^armadietti_\\w+_\\d\\d$").search(nome) != null
 
