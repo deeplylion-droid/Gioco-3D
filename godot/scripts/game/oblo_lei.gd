@@ -443,6 +443,15 @@ func _mostra() -> void:
 	comparsa.emit()
 
 
+## Lei va via adesso, col suo distacco lento, se è dietro il vetro (per chi la vuole altrove: nella torre prima che
+## parta l'inseguimento); poi l'oblò resta vuoto. Se non è ancora comparsa, non compare più.
+func via() -> void:
+	if stato == Stato.PRONTA or stato == Stato.VISTA:
+		_stacca()
+	elif stato == Stato.ATTESA:
+		stato = Stato.FINITA
+
+
 func _stacca() -> void:
 	stato = Stato.VIA
 	staccata.emit()
