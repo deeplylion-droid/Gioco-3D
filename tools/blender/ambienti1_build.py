@@ -26,9 +26,10 @@ def materiali():
     M = {n: L.mat_tex(n) for n in L.SCALA_UV}
     M.update(L.materiali_base())
     M['salvagente'] = L.mat_tex('salvagente')
-    M['cartellone'] = L.mat_immagine('cartellone_medusa', os.path.join(POSTER, 'cartellone_medusa_vecchio.jpg'), rough=0.55)
+    # poster di Jilly rovinati (24 ottobre): bruciati, scarabocchiati e strappati con l'alfa vero (poster/rovina.py)
+    M['cartellone'] = L.mat_immagine('cartellone_medusa', os.path.join(POSTER, 'cartellone_medusa_rovinato.png'), rough=0.55, clip=True)
     M['cartello_regole'] = L.mat_immagine('cartello_regole', os.path.join(POSTER, 'cartello_regole_vecchio.jpg'), rough=0.5)
-    M['poster_bagnino'] = L.mat_immagine('poster_bagnino', os.path.join(POSTER, 'poster_bagnino_vecchio.jpg'), rough=0.7)
+    M['poster_bagnino'] = L.mat_immagine('poster_bagnino', os.path.join(POSTER, 'poster_bagnino_rovinato.png'), rough=0.7, clip=True)
     M['pulsante'] = L.mat_colore('pulsante_rosso', (0.7, 0.03, 0.02), rough=0.35, emiss=(1, 0.05, 0.02), forza=4.0)
     M['pulsante_verde'] = L.mat_colore('pulsante_verde', (0.05, 0.5, 0.1), rough=0.35, emiss=(0.1, 1, 0.2), forza=8.0)
     M['impronte'] = L.mat_colore('impronte_bagnate', (0.02, 0.02, 0.02), rough=0.05)

@@ -1,0 +1,82 @@
+extends Node
+## Scatti dei poster di Jilly rovinati (prima e dopo), dagli occhi del giocatore e da vicino per vedere come sono
+## attaccati al muro. Una camera libera per scatto, con i materiali veri della scena.
+## Uso (sotto render.lock, con almeno 13,5 GB liberi; tools/scatto_sicuro.sh):
+##   tools/scatto_sicuro.sh res://proposte/poster_rovinati/scatti_poster.gd <cartella> <interni|sala>
+
+const SCENE := {
+	"interni": "res://scenes/interni/interni.tscn",
+	"sala": "res://scenes/sala_principale.tscn",
+}
+## scena -> nome: [da dove, verso dove, campo visivo]. Gli occhi del giocatore sono a 1,6 m.
+const SCATTI := {
+	"interni": {
+		"cartellone_giocatore": [Vector3(15.6, 1.6, -2.15), Vector3(14.6, 1.3, 0.0), 70.0],
+		"cartellone_vicino": [Vector3(14.9, 1.0, -0.9), Vector3(15.1, 0.65, 0.0), 55.0],
+		"cartellone_bordo": [Vector3(13.4, 1.4, -0.5), Vector3(14.2, 1.3, 0.0), 50.0],
+		"bagnino_giocatore": [Vector3(12.9, 1.6, -7.7), Vector3(12.8, 1.45, -6.2), 70.0],
+		"bagnino_vicino": [Vector3(13.0, 1.6, -6.75), Vector3(13.05, 1.6, -6.2), 55.0],
+		"bagnino_bordo": [Vector3(13.6, 1.6, -6.55), Vector3(13.1, 1.6, -6.2), 50.0],
+	},
+	"sala": {
+		"manifesto_giocatore": [Vector3(-17.5, 1.6, 13.4), Vector3(-20.0, 1.4, 13.95), 70.0],
+		"manifesto_vicino": [Vector3(-19.0, 1.5, 13.95), Vector3(-20.0, 1.45, 13.95), 55.0],
+		"manifesto_bordo": [Vector3(-19.1, 1.6, 13.0), Vector3(-19.97, 1.55, 14.0), 50.0],
+	},
+}
+
+var out_dir := ""
+var scena := "interni"
+
+
+func _ready() -> void:
+	var args := OS.get_cmdline_user_args()
+	out_dir = args[1]
+	if args.size() > 2:
+		scena = args[2]
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	_run.call_deferred()
+
+
+func _run() -> void:
+	Game.pause_on_focus_loss = false
+	Grafica.salva_su_disco = false
+	Grafica.applica_preset("alto")
+	var level := (load(SCENE[scena]) as PackedScene).instantiate()
+	if scena == "sala":
+		# le parti lontane dal manifesto: con tutta la sala non entra nella memoria della macchina
+		for percorso in ["Risalita", "Piscina", "Polaroid", "BambiniBalconata", "Interni", "Tecnici", "Sala/TorreScivoli",
+				"Gioco/BambiniBalconata", "Gioco/EnigmaAcquari", "Gioco/LeiSbuca", "Sala/Cupola", "Sala/AngoloPalloni",
+				"Sala/AngoloScatoloni", "Vasche", "Gioco/MedusaFossa"]:
+			var n := level.get_node_or_null(NodePath(percorso))
+			if n:
+				n.get_parent().remove_child(n)
+				n.free()
+	get_tree().root.add_child(level)
+	get_tree().current_scene = level
+	get_tree().paused = false
+	for i in 60:
+		await get_tree().process_frame
+	var p := GameState.player
+	if p:
+		var hud := p.get_node_or_null(^"HUD")
+		if hud:
+			hud.visible = false
+		p.process_mode = Node.PROCESS_MODE_DISABLED
+	var cam := Camera3D.new()
+	level.add_child(cam)
+	cam.current = true
+	cam.near = 0.02
+	var scatti: Dictionary = SCATTI[scena]
+	for nome in scatti:
+		var s: Array = scatti[nome]
+		cam.global_position = s[0]
+		cam.look_at(s[1], Vector3.UP)
+		cam.fov = s[2]
+		for i in 30:
+			await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		var f := out_dir.path_join(nome + ".jpg")
+		get_viewport().get_texture().get_image().save_jpg(f, 0.9)
+		print("scatto -> ", f)
+	get_tree().quit()
