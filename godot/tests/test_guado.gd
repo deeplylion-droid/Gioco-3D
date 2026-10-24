@@ -4,7 +4,8 @@ extends Node
 ## rallentato ma puoi risalire e proseguire saltando".
 ## - velocità: nell'acqua 2,0 m/s camminando e correndo, 1,2 accovacciati; sulla banchina le solite;
 ## - risalita: da 20 punti a caso del canale si torna sulla banchina più vicina col salto vero in pochi secondi
-##   ("Se cadi nella piscinetta della stanza generatori non puoi uscire": dall'acqua si esce sempre);
+##   ("Se cadi nella piscinetta della stanza generatori non puoi uscire": dall'acqua si esce sempre); sotto le
+##   gallerie di servizio, dove le due banchine sono crollate, si va a guado fino alla fine del crollo;
 ## - aspirazione: dal canale e dalla banchina lo zaino si riempie dovunque, e l'acqua non finisce.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_guado.gd
 
@@ -134,6 +135,50 @@ func _esci(da: Vector3, s: float, lato: float) -> float:
 	return fuori
 
 
+## Dove a [param s] sono crollate tutte e due le banchine: [da s, a s], altrimenti vuoto.
+func _crollo(s: float) -> Array:
+	if not (sala._lato(s, -1.0)["crollo"] and sala._lato(s, 1.0)["crollo"]):
+		return []
+	var a := s
+	while a > 0.0 and sala._lato(a, -1.0)["crollo"] and sala._lato(a, 1.0)["crollo"]:
+		a -= 0.25
+	var b := s
+	while b < sala.lunghezza() and sala._lato(b, -1.0)["crollo"] and sala._lato(b, 1.0)["crollo"]:
+		b += 0.25
+	return [a, b]
+
+
+## A guado fino alla fine più vicina del crollo, poi sulla banchina: il tempo, o -1 (entro il tempo del guado più
+## [constant RISALITA_MAX]).
+func _esci_dal_crollo(da: Vector3, s: float, lato: float, crollo: Array) -> float:
+	var fine: float = crollo[0] - 1.5 if s - float(crollo[0]) < float(crollo[1]) - s else crollo[1] + 1.5
+	var q := sala.punto(fine) + sala.destra(fine) * lato * (sala.canale + 1.0)
+	var meta := Vector3(q.x, sala.piano, q.z)
+	p.teleport(da, _yaw(meta - da))
+	await _frames(6)
+	Input.action_press(&"move_forward")
+	var limite := absf(fine - s) / 2.0 + RISALITA_MAX
+	var t := 0.0
+	var i := 0
+	var fuori := -1.0
+	while t < limite:
+		var d := meta - p.global_position
+		p.set_look(_yaw(Vector3(d.x, 0.0, d.z)), p.pitch)
+		if i % 30 == 0:
+			Input.action_press(&"jump")
+		elif i % 30 == 3:
+			Input.action_release(&"jump")
+		await get_tree().physics_frame
+		t += 1.0 / 60.0
+		i += 1
+		if p.is_on_floor() and p.global_position.y > sala.piano - 0.05:
+			fuori = t
+			break
+	_rilascia()
+	await _frames(10)
+	return fuori
+
+
 func _risalita() -> void:
 	print("Risalita dal canale")
 	var rng := RandomNumberGenerator.new()
@@ -145,17 +190,23 @@ func _risalita() -> void:
 		var s := rng.randf_range(SalaSottomarino.PRESA_FINO + 4.0, lung - 6.0)
 		var di_lato := rng.randf_range(-(sala.canale - 0.45), sala.canale - 0.45)
 		var lato := 1.0 if di_lato >= 0.0 else -1.0
-		var t := await _esci(_nel_canale(s, di_lato), s, lato)
-		if t < 0.0:
-			# dalla banchina di fronte (dove un ostacolo chiude la più vicina)
-			t = await _esci(_nel_canale(s, di_lato), s, -lato)
+		var t := -1.0
+		var crollo := _crollo(s)
+		if crollo.is_empty():
+			t = await _esci(_nel_canale(s, di_lato), s, lato)
+			if t < 0.0:
+				# dalla banchina di fronte (dove un ostacolo chiude la più vicina)
+				t = await _esci(_nel_canale(s, di_lato), s, -lato)
+		else:
+			# sotto una galleria di servizio le due banchine sono crollate: si va a guado fino alla fine del crollo
+			t = await _esci_dal_crollo(_nel_canale(s, di_lato), s, lato, crollo)
 		if t < 0.0:
 			bloccati.append(snappedf(s, 0.1))
 		else:
 			tempi.append(t)
 	tempi.sort()
 	var peggio: float = tempi.back() if not tempi.is_empty() else -1.0
-	_controlla(bloccati.is_empty(), "da %d punti a caso del canale si risale in meno di %.0f s (peggiore %.1f s)%s" % [
+	_controlla(bloccati.is_empty(), "da %d punti a caso del canale si risale in meno di %.0f s, più il guado sotto i crolli (peggiore %.1f s)%s" % [
 			PUNTI, RISALITA_MAX, peggio, "" if bloccati.is_empty() else "; bloccati a s " + str(bloccati)])
 
 
