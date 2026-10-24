@@ -177,8 +177,19 @@ func _run() -> void:
 	var fine_g: float = float(gal["s"]) + float(gal["lungo"]) + SalaSottomarino.GALLERIA_BOCCA + 1.5
 	while s_p < fine_g and Time.get_ticks_msec() - t0 < 30000:
 		s_p = float(sott.proietta_vicino(p.global_position, s_p)[0])
-		var u := (sott.muro + sott.spessore + SalaSottomarino.GALLERIA_LARGA * 0.5) if s_p > float(gal["s"]) - SalaSottomarino.GALLERIA_BOCCA * 0.5 and s_p < float(gal["s"]) + float(gal["lungo"]) + SalaSottomarino.GALLERIA_BOCCA * 0.5 else (sott.muro - 0.6)
-		var q := sott.punto(s_p + 2.0) + sott.destra(s_p + 2.0) * float(gal["lato"]) * u
+		# (prima verso la bocca d'entrata, poi lungo la galleria fino a metà della bocca d'uscita, poi sulla banchina)
+		var u_gal := sott.muro + sott.spessore + SalaSottomarino.GALLERIA_LARGA * 0.5
+		var bocca0: float = float(gal["s"]) - SalaSottomarino.GALLERIA_BOCCA * 0.5
+		var bocca1: float = float(gal["s"]) + float(gal["lungo"]) + SalaSottomarino.GALLERIA_BOCCA * 0.5
+		var s_q := s_p + 2.0
+		var u := sott.muro - 0.6
+		if s_p < bocca0 - 0.3:
+			s_q = bocca0
+			u = u_gal
+		elif s_p < bocca1 - 0.3:
+			s_q = minf(s_p + 2.0, bocca1)
+			u = u_gal
+		var q := sott.punto(s_q) + sott.destra(s_q) * float(gal["lato"]) * u
 		p.look_at_point(Vector3(q.x, p.global_position.y + 1.0, q.z))
 		p.set_look(p.yaw, 0.0)
 		if sott.in_tubo(p.global_position) and p.is_crouching:
