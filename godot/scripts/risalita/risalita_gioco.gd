@@ -66,6 +66,14 @@ const SCALA_FIUME_Z := 48.2
 const CORRIDOIO_FIUME_X := -5.9
 ## La scala di servizio: larga 2 m, corre verso est lungo z = PORTA_C3.z.
 const SCALA_LARGA := 2.0
+## Gli oblò con lei dietro il vetro (GDD "Jilly dietro gli oblò", richiesta dell'utente del 24 ottobre sera: "Mettilo
+## in tutti e tre"): il centro sulla faccia del muro dalla parte del corridoio, a 1,5 m dal pavimento. Dietro ogni muro
+## c'è il vuoto dello scafo per la vasca (controllato con tests/collaudo/sonda_spazi.gd): nel corridoio verso il fiume
+## a est, verso il raccordo (dopo z 54,5); nel corridoio del personale a ovest, fra infermeria e capannone; nel tratto
+## in piano della scala di servizio a nord, libero fino a 14 m d'altezza (lei a testa in giù ha il corpo in alto).
+const OBLO_FIUME := Vector3(-3.9, Y + 1.5, 57.0)
+const OBLO_PERSONALE := Vector3(-36.0, Y + 1.5, 49.6)
+const OBLO_SERVIZIO := Vector3(-21.5, 1.5, 37.45)
 const ALZATA := 0.18
 const PEDATA := 0.28
 
@@ -147,15 +155,47 @@ func _materiale(nome: String, metri: float) -> StandardMaterial3D:
 	return m
 
 
-## Un muro come quelli del raccordo: zoccolo di cemento alto 1 m sopra [param base], lamiere sopra.
-func _muro(size: Vector3, pos: Vector3, base: float) -> void:
+## Un muro come quelli del raccordo: zoccolo di cemento alto 1 m sopra [param base], lamiere sopra. [param buco]:
+## [centro nel mondo, mezzo lato] di un buco quadrato (per un oblò, ObloLei.buco()), o vuoto.
+func _muro(size: Vector3, pos: Vector3, base: float, buco := []) -> void:
 	var y0 := pos.y - size.y * 0.5
 	var zc := minf(base + 1.0, y0 + size.y)
 	if zc > y0 + 0.01:
-		_box(Vector3(size.x, zc - y0, size.z), Vector3(pos.x, (y0 + zc) * 0.5, pos.z), _mat_cemento)
+		_box_bucato(Vector3(size.x, zc - y0, size.z), Vector3(pos.x, (y0 + zc) * 0.5, pos.z), _mat_cemento, buco)
 	var y1 := y0 + size.y
 	if y1 > zc + 0.01:
-		_box(Vector3(size.x, y1 - zc, size.z), Vector3(pos.x, (zc + y1) * 0.5, pos.z), _mat_lamiere)
+		_box_bucato(Vector3(size.x, y1 - zc, size.z), Vector3(pos.x, (zc + y1) * 0.5, pos.z), _mat_lamiere, buco)
+
+
+## Un box di muro (sottile in x o in z) col buco quadrato [param buco] ([centro, mezzo lato], vedi [method _muro]):
+## fino a quattro box intorno al buco, o il box intero se il buco non lo tocca.
+func _box_bucato(size: Vector3, pos: Vector3, m: Material, buco: Array) -> void:
+	if buco.is_empty():
+		_box(size, pos, m)
+		return
+	var c: Vector3 = buco[0]
+	var r: float = buco[1]
+	var asse := 2 if size.x < size.z else 0          # l'asse lungo, orizzontale, del muro
+	var lo := pos - size * 0.5
+	var hi := pos + size * 0.5
+	var b0 := Vector2(c[asse] - r, c.y - r)
+	var b1 := Vector2(c[asse] + r, c.y + r)
+	if b1.x <= lo[asse] or b0.x >= hi[asse] or b1.y <= lo.y or b0.y >= hi.y:
+		_box(size, pos, m)
+		return
+	b0 = Vector2(maxf(b0.x, lo[asse]), maxf(b0.y, lo.y))
+	b1 = Vector2(minf(b1.x, hi[asse]), minf(b1.y, hi.y))
+	# [da, a lungo il muro, da, a in altezza]
+	for q in [[lo[asse], b0.x, lo.y, hi.y], [b1.x, hi[asse], lo.y, hi.y], [b0.x, b1.x, lo.y, b0.y], [b0.x, b1.x, b1.y, hi.y]]:
+		if q[1] - q[0] < 0.005 or q[3] - q[2] < 0.005:
+			continue
+		var s := size
+		var p := pos
+		s[asse] = q[1] - q[0]
+		p[asse] = (q[0] + q[1]) * 0.5
+		s.y = q[3] - q[2]
+		p.y = (q[2] + q[3]) * 0.5
+		_box(s, p, m)
 
 
 func _box(size: Vector3, pos: Vector3, m: Material, collisione := true) -> MeshInstance3D:
@@ -177,8 +217,9 @@ func _box(size: Vector3, pos: Vector3, m: Material, collisione := true) -> MeshI
 
 
 ## Un tratto di corridoio tra due angoli (pavimento a lo.y): pavimento, soffitto e i muri dei lati
-## in [param muri] ("n" a -Z, "s" a +Z, "o" a -X, "e" a +X); vuoto: i due lati lungo l'asse più lungo.
-func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "") -> void:
+## in [param muri] ("n" a -Z, "s" a +Z, "o" a -X, "e" a +X); vuoto: i due lati lungo l'asse più lungo. [param buchi]:
+## per lato, un buco quadrato nel muro (vedi [method _muro]).
+func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "", buchi := {}) -> void:
 	var c := (lo + hi) * 0.5
 	var s := hi - lo
 	_box(Vector3(s.x, 0.2, s.z), Vector3(c.x, lo.y - 0.1, c.z), _mat_pav)
@@ -193,13 +234,13 @@ func _corridoio(lo: Vector3, hi: Vector3, alto := 2.6, muri := "") -> void:
 	var z1 := hi.z + (0.2 if "s" in muri else 0.0)
 	_box(Vector3(x1 - x0, 0.2, z1 - z0), Vector3((x0 + x1) * 0.5, lo.y + alto + 0.1, (z0 + z1) * 0.5), _mat_cemento)
 	if "n" in muri:
-		_muro(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, lo.z - 0.1), lo.y)
+		_muro(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, lo.z - 0.1), lo.y, buchi.get("n", []))
 	if "s" in muri:
-		_muro(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, hi.z + 0.1), lo.y)
+		_muro(Vector3(s.x + 0.4, alto, 0.2), Vector3(c.x, lo.y + alto * 0.5, hi.z + 0.1), lo.y, buchi.get("s", []))
 	if "o" in muri:
-		_muro(Vector3(0.2, alto, s.z), Vector3(lo.x - 0.1, lo.y + alto * 0.5, c.z), lo.y)
+		_muro(Vector3(0.2, alto, s.z), Vector3(lo.x - 0.1, lo.y + alto * 0.5, c.z), lo.y, buchi.get("o", []))
 	if "e" in muri:
-		_muro(Vector3(0.2, alto, s.z), Vector3(hi.x + 0.1, lo.y + alto * 0.5, c.z), lo.y)
+		_muro(Vector3(0.2, alto, s.z), Vector3(hi.x + 0.1, lo.y + alto * 0.5, c.z), lo.y, buchi.get("e", []))
 
 
 ## [param pos]: 5 cm davanti al muro, all'altezza della lampada; la lampada si appoggia al muro con la staffa.
@@ -222,7 +263,13 @@ func _zona_personale() -> void:
 	var x := -35.0
 	# dalla faccia di fuori del muro sud dell'infermeria (z 48,1) a quella del muro ovest del capannone (z 50,7,
 	# spesso 30 cm): prima il corridoio andava da 48 a 51 ed entrava di 10 e 30 cm nei due muri
-	_corridoio(Vector3(x - 1.0, Y, CENTRO_INFERMERIA.z + I.L + 0.1), Vector3(x + 1.0, Y, CENTRO_FIUME.z + F.X0 - 0.3))
+	_corridoio(Vector3(x - 1.0, Y, CENTRO_INFERMERIA.z + I.L + 0.1), Vector3(x + 1.0, Y, CENTRO_FIUME.z + F.X0 - 0.3), 2.6, "",
+			{"o": [OBLO_PERSONALE, ObloLei.PIASTRA * 0.5]})
+	# l'oblò nel muro ovest, fra infermeria e capannone (la vasca è stretta: 2,56 m, spostata verso il capannone); lei
+	# sbircia dal bordo destro (a sud, verso l'infermeria): si vede entrando dalla porta del capannone. Il corridoio è
+	# largo 2 m: "troppo vicino" è col naso sul vetro. Compare già mentre arrivi dal capannone, col muro in mezzo.
+	_oblo("ObloPersonale", OBLO_PERSONALE, Vector3.RIGHT, "sbircia", AABB(Vector3(-37.0, Y - 0.2, 48.1), Vector3(4.0, 3.0, 6.0)),
+			{"vasca_larga": 2.56, "vasca_spostata": 0.2, "vicino": 0.9, "lato_sbircia": 1.0})
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
 	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0))
 
@@ -250,7 +297,11 @@ func _scala_di_servizio() -> void:
 			_corridoio(Vector3(x, y, z0), Vector3(x + 1.5, y, z1), 2.6, "ns")
 			x += 1.5
 	# il corridoio in piano fino a C3
-	_corridoio(Vector3(x, 0.0, z0), Vector3(PORTA_C3.x - 0.15, 0.0, z1), 2.6)
+	_corridoio(Vector3(x, 0.0, z0), Vector3(PORTA_C3.x - 0.15, 0.0, z1), 2.6, "", {"n": [OBLO_SERVIZIO, ObloLei.PIASTRA * 0.5]})
+	# l'oblò nel muro nord del tratto in piano, a sinistra salendo verso C3: lei a testa in giù, col corpo in alto
+	# (la vasca sale 5,4 m sopra il centro); compare mentre sali le rampe
+	_oblo("ObloServizio", OBLO_SERVIZIO, Vector3.BACK, "capovolta", AABB(Vector3(-40.0, Y - 0.2, 37.3), Vector3(24.0, 8.4, 4.3)),
+			{"vasca_sotto": 3.0, "vasca_sopra": 5.4})
 	_lampada_rossa(Vector3(x + 0.5, 2.2, z1 - 0.05), Vector3(0, -0.5, -1))
 	_lampada_rossa(Vector3(xp + 0.9, Y + 2.2, z0 + 0.05), Vector3(0, -0.5, 1))
 	var m := Node3D.new()
@@ -283,7 +334,10 @@ func _scala_fiume() -> void:
 	var porta0 := 65.3
 	var porta1 := 66.7
 	var fine := porta1 + 0.6
-	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es")
+	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es", {"e": [OBLO_FIUME, ObloLei.PIASTRA * 0.5]})
+	# l'oblò nel muro est, a destra andando verso il capannone, fra le due lampade rosse: lei schiacciata sul vetro;
+	# compare mentre scendi la scala
+	_oblo("ObloFiume", OBLO_FIUME, Vector3.LEFT, "schiacciata", AABB(Vector3(xc - 0.2, Y - 0.2, z0), Vector3(x_fondo - xc + 0.2, 3.0, fine - z0)))
 	_muro(Vector3(x_fondo - xc - 2.0, 2.6, 0.2), Vector3((xc + 2.0 + x_fondo) * 0.5, Y + 1.3, z1 + 0.1), Y)
 	# il muro ovest, aperto davanti alla porta del capannone (alta 2,3 m come la sua)
 	_muro(Vector3(0.2, 2.6, porta0 - z1), Vector3(xc - 0.1, Y + 1.3, (z1 + porta0) * 0.5), Y)
@@ -301,6 +355,21 @@ func _scala_fiume() -> void:
 		k.name = d[0]
 		k.position = d[1]
 		m.add_child(k)
+
+
+## Un oblò con lei dietro il vetro (ObloLei): [param centro] sulla faccia del muro dalla parte del corridoio,
+## [param normale] verso il corridoio; lei compare col giocatore nella [param zona]. [param opzioni]: le proprietà da
+## cambiare (la vasca, la distanza "troppo vicino", il lato da cui sbircia).
+func _oblo(nome: String, centro: Vector3, normale: Vector3, posa: String, zona: AABB, opzioni := {}) -> ObloLei:
+	var o := ObloLei.new()
+	o.name = nome
+	o.posa = posa
+	o.zona = zona
+	for k in opzioni:
+		o.set(k, opzioni[k])
+	o.transform = Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
+	add_child(o)
+	return o
 
 
 ## Una rampa di [param n] gradini che sale verso est da [param lo] (angolo basso a ovest-nord):
