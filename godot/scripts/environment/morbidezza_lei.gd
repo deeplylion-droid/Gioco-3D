@@ -750,7 +750,9 @@ func _bersagli(tg: PackedVector3Array, n: int, forme: Array) -> PackedVector3Arr
 			var k := clampf(sotto / 0.5, 0.0, 1.0) * _trattieni_k
 			out[i] = Vector3(lerpf(q.x, c.x, k), q.y, lerpf(q.z, c.y, k))
 	for i in range(1, n + 1):
-		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, Vector3.INF, true, i)
+		# (dalla parte del punto prima, che è già fuori: dove la posa mette una punta dentro un muro sottile, esce dalla
+		# parte giusta)
+		out[i] = _fuori(out[i], lerpf(raggio_radice, raggio_punta, float(i) / n), forme, out[i - 1], true, i)
 	for i in range(1, n + 1):
 		for fo in forme:
 			var su: int = fo[2]
