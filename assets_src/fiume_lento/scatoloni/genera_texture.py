@@ -124,11 +124,31 @@ def paperella(d, x, y, s, col):
     d.polygon([(x - s, y - s * 0.1), (x - s * 1.25, y - s * 0.45), (x - s * 0.8, y - s * 0.2)], fill=col)          # la coda
 
 
+def cerchi(d, x, y, s, col):
+    """Tre cerchi concentrici, come un bersaglio."""
+    for k, r in enumerate((1.0, 0.66, 0.32)):
+        d.ellipse((x - s * r, y - s * r, x + s * r, y + s * r), outline=col, width=max(8, s // 6))
+
+
+def pois(d, x, y, s, col):
+    """I pois, a quinconce su tutta la faccia."""
+    passo = C // 5
+    for r in range(6):
+        for c in range(6):
+            cx = c * passo + (passo // 2 if r % 2 else 0)
+            cy = r * passo + passo // 3
+            d.ellipse((cx - s * 0.28, cy - s * 0.28, cx + s * 0.28, cy + s * 0.28), fill=col)
+
+
+def niente(d, x, y, s, col):
+    pass
+
+
 def colorato(tipo, disegno):
     """Cartone verniciato chiaro (lo tinge il MultiMesh), sporco e consumato agli spigoli, col nastro; sui lati un
-    disegno del parco in bianco sbiadito (un'onda, una stella, una paperella), niente scritte."""
+    disegno semplice in bianco sbiadito (una stella, i pois, i cerchi), niente scritte; un velo di polvere."""
     w = h = C
-    base = np.full((h, w, 3), (226, 222, 214), dtype=np.float32)
+    base = np.full((h, w, 3), (196, 192, 186), dtype=np.float32)   # più scuro del bianco dei disegni: si leggono
     rumore = np.random.default_rng(17).normal(0, 5, (h, w, 1))
     macchie = np.array(Image.fromarray(np.random.default_rng(19).integers(0, 255, (h // 64, w // 64), dtype=np.uint8))
                        .resize((w, h), Image.BICUBIC), dtype=np.float32)[:, :, None]
@@ -138,8 +158,15 @@ def colorato(tipo, disegno):
         return nastro(img, verticale=True)
     img = nastro(img)
     d = ImageDraw.Draw(img, 'RGBA')
-    bianco = (250, 248, 240, 185)
-    {'onda': onda, 'stella': stella, 'paperella': paperella}[disegno](d, int(C * 0.5), int(C * 0.6), int(C * 0.17), bianco)
+    bianco = (255, 255, 252, 235)
+    {'onda': onda, 'stella': stella, 'paperella': paperella, 'cerchi': cerchi, 'pois': pois, 'niente': niente}[disegno](
+        d, int(C * 0.5), int(C * 0.6), int(C * 0.17), bianco)
+    # un velo di polvere chiara, a chiazze larghe (consumate, non sporche)
+    polvere = np.array(Image.fromarray(np.random.default_rng(23).integers(0, 255, (8, 8), dtype=np.uint8))
+                       .resize((C, C), Image.BICUBIC), dtype=np.float32)[:, :, None] / 255.0
+    arr = np.array(img, dtype=np.float32)
+    arr = arr * (1 - polvere * 0.1) + 215 * polvere * 0.1
+    img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
     return img
 
 
@@ -181,9 +208,9 @@ for (cx, cy), (tipo, gradi) in CELLE.items():
     tex.paste(cassa(tipo).rotate(gradi), (cx * C, cy * C))
 tex.save(USCITA_CASSE, quality=90)
 print('scritta', USCITA_CASSE)
-# gli scatoloni colorati: su ogni lato un disegno diverso (una stella, un'onda, una paperella, una stella)
+# gli scatoloni colorati: su ogni lato un disegno diverso (una stella, i pois, i cerchi, niente), come giocattoli
 tex = Image.new('RGB', (C * 3, C * 2))
-disegni = {(0, 0): 'stella', (1, 0): 'onda', (0, 1): 'paperella', (1, 1): 'stella'}
+disegni = {(0, 0): 'stella', (1, 0): 'pois', (0, 1): 'cerchi', (1, 1): 'niente'}
 for (cx, cy), (tipo, gradi) in CELLE.items():
     tex.paste(colorato(tipo, disegni.get((cx, cy), 'stella')).rotate(gradi), (cx * C, cy * C))
 tex.save(USCITA_COLORATI, quality=90)
