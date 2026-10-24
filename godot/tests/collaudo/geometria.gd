@@ -49,6 +49,13 @@ func _run() -> void:
 			n.free()
 	get_tree().root.add_child(livello)
 	get_tree().current_scene = livello
+	# il tunnel del viaggio sottomarino da solo: si costruisce dalla strada (nel gioco lo fa la sala principale), coi
+	# gommoni fermi; lei del tunnel si muove e non si misura
+	if livello is SalaSottomarino:
+		livello.costruisci()
+		livello.set_physics_process(false)
+		livello.ferma_gommoni(0.0)
+		livello.lei_tunnel.visible = false
 	for i in 30:
 		await get_tree().physics_frame
 	get_tree().paused = false

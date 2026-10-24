@@ -1,0 +1,66 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Scena res://scenes/sala/sottomarino/sala_sottomarino.tscn
+  stato: sottomarino_t0
+  MultiMesh: 45 istanze controllate come mesh
+  1023 mesh visibili
+  nascoste all'inizio (non controllate): 2 parti, 13 mesh
+    NASCOSTA AcquaPresa/Surface · 1 mesh
+    NASCOSTA LeiTunnel/Lei · 12 mesh
+  922 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 4
+  0 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 3
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (19 s)
+Scena res://scenes/sala/sottomarino/sala_sottomarino.tscn
+  stato: sottomarino_t1
+  MultiMesh: 45 istanze controllate come mesh
+  1023 mesh visibili
+  nascoste all'inizio (non controllate): 2 parti, 13 mesh
+    NASCOSTA AcquaPresa/Surface · 1 mesh
+    NASCOSTA LeiTunnel/Lei · 12 mesh
+  922 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  0 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (18 s)
+Scena res://scenes/sala/sottomarino/sala_sottomarino.tscn
+  stato: sottomarino_t2
+  MultiMesh: 45 istanze controllate come mesh
+  1023 mesh visibili
+  nascoste all'inizio (non controllate): 2 parti, 13 mesh
+    NASCOSTA AcquaPresa/Surface · 1 mesh
+    NASCOSTA LeiTunnel/Lei · 12 mesh
+  922 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  0 celle raggiungibili a piedi
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (18 s)
+  parti nascoste all'inizio mai controllate: 0 (vedi il rapporto, "Copertura")
+rapporto: /home/user/Gioco-3D/docs/tecnico/posizionamento/rapporto.md
+  FALLITO nessun caso nuovo di posizionamento (6 nuovi, 1 già noti, 42 eccezioni non più trovate)
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+    NUOVO sottomarino · staccato · ArrediA1/Pesci/pesce_0/Mesh_0 · [-3.01, -27.05, 29.91] · la sua forma sfiora ArrediA1/Pesci/mensola_pesce_0, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) (stato: sottomarino_t0)
+    NUOVO sottomarino · staccato · ArrediA1/Pesci/pesce_1/Mesh_0 · [-3.01, -27.05, 23.91] · la sua forma sfiora ArrediA1/Pesci/mensola_pesce_1, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) (stato: sottomarino_t0)
+    NUOVO sottomarino · staccato · ArrediA1/Pesci/pesce_2/Mesh_0 · [-3.01, -27.05, 17.91] · la sua forma sfiora ArrediA1/Pesci/mensola_pesce_2, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) (stato: sottomarino_t0)
+    NUOVO sottomarino · staccato · ArrediA1/Pesci/pesce_3/Mesh_0 · [-3.01, -27.05, 11.91] · la sua forma sfiora ArrediA1/Pesci/mensola_pesce_3, ma la mesh vera non lo tocca: fra i due più di 5 mm (distanza vera, vertice contro faccia; sotto, il primo appoggio è a 0.0 cm) (stato: sottomarino_t0)
+    NUOVO sottomarino · compenetra · ArrediA1/Pesci/mensola_pesce_5 · [-5.1, -27.79, 0.49] · passa dentro Luci/@Node3D@369/@MeshInstance3D@370 per 10 cm (nel pieno, per esempio, in (-5.13, -27.9, 0.57)) (stato: sottomarino_t0)
+    NUOVO sottomarino · compenetra · ArrediA1/Pesci/mensola_pesce_8 · [-15.25, -27.79, -2.26] · passa dentro Luci/@Node3D@379/@MeshInstance3D@380 per 10 cm (nel pieno, per esempio, in (-15.2, -27.9, -2.15)) (stato: sottomarino_t0)
+
+RISULTATO: 1 controlli ok, 1 falliti
