@@ -184,10 +184,10 @@ func _buco_volta() -> void:
 	# i ferri dell'armatura: da un punto del bordo a uno di fronte, piegati verso il basso (sono rimasti appesi)
 	var mf := _mat("ferro_armatura", Color(0.24, 0.16, 0.11), 0.85, 0.4)
 	for q in [[2, 15, 0.12], [6, 19, 0.2], [9, 24, 0.08], [12, 26, 0.16]]:
-		# (i capi 1 cm dentro la volta, sotto il bordo rotto: escono dal cemento)
-		var a: Vector3 = pv[0][q[0]]
-		var b: Vector3 = pv[0][q[1]]
-		var nm: Vector3 = ((nv[1][q[0]] as Vector3) + (nv[1][q[1]] as Vector3)).normalized()
+		# (i capi sull'interno scuro, dove finisce il bordo rotto: escono dal cemento)
+		var a: Vector3 = (pv[2][q[0]] as Vector3) + (nv[2][q[0]] as Vector3) * 0.002
+		var b: Vector3 = (pv[2][q[1]] as Vector3) + (nv[2][q[1]] as Vector3) * 0.002
+		var nm: Vector3 = ((nv[2][q[0]] as Vector3) + (nv[2][q[1]] as Vector3)).normalized()
 		var m := (a + b) * 0.5 + nm * float(q[2])
 		var ferro := Node3D.new()
 		ferro.name = "ferro_armatura_%d" % q[0]
@@ -210,6 +210,13 @@ func _abisso_lampade() -> void:
 			continue
 		sala._lampada(nodo, s, lato, sala.piano + 3.0, 3.2)
 		var l := nodo.get_child(nodo.get_child_count() - 2) as Node3D
+		# la lampada a filo del muro (_lampada la lascia 2 cm davanti: staccata)
+		var w = _muro(s, lato, sala.piano + 3.0)
+		if w != null:
+			var gap := INF
+			for v in _triangoli(l):
+				gap = minf(gap, (v - (w[0] as Vector3)).dot(w[1]))
+			l.position -= (w[1] as Vector3) * (gap - 0.001)
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
 			g.material_override = _mat("globo_blu", Color(0.35, 0.5, 1.0), 0.4, 0.0, Color(0.25, 0.42, 1.0), 2.5)
@@ -229,7 +236,7 @@ func _abisso_lucine() -> void:
 			if not sala._lato(s, lato)["crollo"] and not sala._lato(s - 0.2, lato)["crollo"] and not sala._lato(s + 0.2, lato)["crollo"]:
 				var p := sala.punto(s)
 				var r := sala.destra(s)
-				var c := sala._al(p, r, Vector2(lato * (sala.canale + 0.12), sala.piano + 0.004))
+				var c := sala._al(p, r, Vector2(lato * (sala.canale + 0.12), sala.piano + 0.007))
 				xf.append(Transform3D(Basis(), c))
 			s += LUCINE_OGNI
 	var mm := MultiMesh.new()
@@ -465,7 +472,15 @@ func _vetrina_vuota(nodo: Node3D) -> void:
 		var w2 = _muro(s, lato, sala.piano + VETRINA_BASSO + 0.9)
 		if w2 != null:
 			var alto: Vector3 = w2[0]
-			var capo := pm + nrm * (0.008 + VETRINA_FONDA - 0.06) + Vector3.UP * 0.07
+			# la piastrina in punta al braccio (ci finiscono il braccio e il tirante)
+			var pp := MeshInstance3D.new()
+			var ppb := BoxMesh.new()
+			ppb.size = Vector3(0.07, 0.08, 0.006)
+			pp.mesh = ppb
+			pp.material_override = mf
+			n.add_child(pp)
+			pp.transform = Transform3D(bs, pm + nrm * (0.008 + VETRINA_FONDA + 0.003) + Vector3.UP * 0.06)
+			var capo := pm + nrm * (0.008 + VETRINA_FONDA - 0.004) + Vector3.UP * 0.09
 			sala._palo(n, capo, alto + nrm * 0.009, 0.012, mf)
 			n.get_child(n.get_child_count() - 1).name = "tirante_vetrina"
 			var p2 := MeshInstance3D.new()
