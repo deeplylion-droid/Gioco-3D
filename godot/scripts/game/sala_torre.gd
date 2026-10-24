@@ -74,6 +74,10 @@ static func b(v: Array) -> Vector3:
 @export var modelli: Array[PackedScene] = []
 ## L'inseguimento I1 e il finale SB1, dietro il muro est (vuoto: niente inseguimento).
 @export var inseguimento_scena: PackedScene
+## Vero: dopo SB1 il capitolo continua nel tunnel del viaggio sottomarino (SalaInseguimento.dopo_sb1_continua).
+@export var inseguimento_continua := false
+## Le condotte sono nella sala (anche costruite a pezzi, dopo).
+signal inseguimento_aggiunto(nodo: Node3D)
 var inseguimento: Node3D
 ## Vero quando la sala è costruita del tutto (vedi [method costruisci_a_pezzi]).
 var costruita := false
@@ -215,7 +219,9 @@ func _aggiungi_inseguimento() -> void:
 	inseguimento = inseguimento_scena.instantiate() as Node3D
 	inseguimento.set(&"costruzione_a_pezzi", _a_pezzi)
 	inseguimento.set(&"crea_luci", crea_luci)
+	inseguimento.set(&"dopo_sb1_continua", inseguimento_continua)
 	add_child(inseguimento)
+	inseguimento_aggiunto.emit(inseguimento)
 	if inseguimento.has_signal(&"capitolo_finito"):
 		inseguimento.connect(&"capitolo_finito", func():
 			if not _finita:

@@ -143,6 +143,22 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
+      - name: Test della vista subacquea (con la testa sopra il pelo di ogni acqua resta normale, anche con due acque sovrapposte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_vista_subacquea.gd
+
+      - name: Test dei tentacoli morbidi nel tunnel sottomarino (presa, strada intera, curve; pelle vera bloccante, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_tunnel.gd
+
+      - name: Materiali campione del tunnel sottomarino (ogni shader del tunnel ha il suo, niente scatti la prima volta)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/aggiorna_campioni_tunnel.gd controlla
+
+      - name: Test delle forme che si muovono della morbidezza (galleggianti e portello del tunnel)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_morbidezza_mobili.gd
+
       - name: Test della statua di lei con la morbidezza a 0 (ferma, costo zero)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_statua.gd
@@ -158,6 +174,14 @@ jobs:
       - name: Test della riserva della torre (thread lento al portone)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_riserva.gd
+
+      - name: Test del guado nel canale del tunnel sottomarino (velocità, risalita, aspirazione)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_guado.gd
+
+      - name: Test del parkour sui gommoni del tunnel sottomarino (salti veri, appoggio, corde, compenetrazioni)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_parkour_gommoni.gd
 
       - name: Test dell'inseguimento (le condotte, SB1)
         if: steps.progetto.outputs.presente == 'si'
@@ -222,6 +246,26 @@ jobs:
       - name: Test della risalita caricata più tardi (memoria)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_risalita_tardi.gd
+
+      - name: Le ciambelle tolte dal fiume stanno sulla riva, nel gioco vero
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_ciambelle_riva.gd
+
+      - name: Finita la demo, il gioco torna da solo al titolo
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fine_titolo.gd
+
+      - name: Le ante degli armadietti, anche quella che sbatte in tutta la corsa, senza niente dentro
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_ante_armadietti.gd
+
+      - name: Test del menu di prova nascosto (partenze da F9 nel titolo)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_partenze_prova.gd
+
+      - name: Nessuna istanza di MultiMesh specchiata e facce dei MultiMesh nel verso giusto
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_multimesh_specchiati.gd
 
       - name: Test della luce normale (luci bianche al 40%, fisse)
         if: steps.progetto.outputs.presente == 'si'

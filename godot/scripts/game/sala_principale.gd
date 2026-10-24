@@ -51,6 +51,16 @@ extends Node3D
 @export_file("*.tscn") var sala_torre_scena := "res://scenes/sala/torre/sala_torre.tscn"
 ## Il testo sotto "FINE DELLA DEMO" in fondo alla discesa della torre.
 @export_multiline var fine_torre_testo := "La discesa continua nel buio.\nGrazie per aver giocato!"
+## Il tunnel del viaggio sottomarino (l'inseguimento allungato dopo SB1, scelte dell'utente del 24 ottobre): si carica
+## in un thread appena si entra nella torre e si costruisce a pezzi mentre si è nelle condotte; entra nel gioco dopo
+## SB1 (lei si tuffa e si sale la scaletta); passata la sua prima curva, torre e condotte si liberano (memoria). Vuoto:
+## niente tunnel (SB1 finisce col nero, come prima).
+@export_file("*.tscn") var sala_sottomarino_scena := "res://scenes/sala/sottomarino/sala_sottomarino.tscn"
+var sala_sottomarino: Node3D
+var _sottomarino_in_caricamento := false
+## I materiali campione degli shader del tunnel (CampioniTunnel): tenuti da quando si comincia a caricarlo.
+var _campioni_tunnel: Array = []
+var _torre_liberata := false
 ## Materiale del vetro della cupola (rivoli di pioggia, si accende coi lampi).
 @export var dome_glass: Material
 @export var show_controls_hint := true
@@ -361,9 +371,7 @@ func _on_fine_demo(body: Node3D) -> void:
 			await portone.aperto
 			await get_tree().create_timer(0.8, false).timeout
 	demo_finished = true
-	var hud := _hud()
-	if hud:
-		hud.show_banner("FINE DELLA DEMO", fine_demo_testo, 9.0)
+	_fine_della_demo(fine_demo_testo)
 
 
 # --- La sala della torre ------------------------------------------------------------------------
@@ -378,6 +386,10 @@ func _setup_torre() -> void:
 		enigma.connect(&"comparso", _precarica_torre)
 		if bool(enigma.get(&"comparsi")):
 			_precarica_torre.call_deferred()
+	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaSottomarino"):
+		# si riparte da un checkpoint del tunnel: torre e condotte non ci sono più, solo il tunnel
+		_ripristina_sottomarino.call_deferred()
+		return
 	if GameState.is_restoring() and String(GameState.snapshot.get("checkpoint", "")).begins_with("SalaTorre"):
 		# si riparte da un checkpoint della torre: la si carica subito, si è già dentro
 		_aggiungi_torre(load(sala_torre_scena) as PackedScene)
@@ -422,6 +434,8 @@ func _precarica_torre() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _sottomarino_in_caricamento:
+		_aggiorna_sottomarino()
 	if not _torre_in_caricamento or Game.uscendo:
 		return
 	var stato := ResourceLoader.load_threaded_get_status(sala_torre_scena)
@@ -455,6 +469,7 @@ func _prepara_torre() -> void:
 		return
 	var t := _torre_pronta.instantiate() as Node3D
 	t.set(&"costruzione_a_pezzi", true)
+	t.set(&"inseguimento_continua", sala_sottomarino_scena != "")
 	t.visible = false
 	t.process_mode = Node.PROCESS_MODE_DISABLED
 	_torre_nascosta = t
@@ -489,6 +504,7 @@ func _aggiungi_torre(scena: PackedScene) -> void:
 		_torre_nascosta.queue_free()
 		_torre_nascosta = null
 	sala_torre = scena.instantiate()
+	sala_torre.set(&"inseguimento_continua", sala_sottomarino_scena != "")
 	add_child(sala_torre)
 	_completa_torre()
 
@@ -500,6 +516,14 @@ func _completa_torre() -> void:
 		guscio.queue_free()
 	if sala_torre.has_signal(&"discesa_finita"):
 		sala_torre.connect(&"discesa_finita", _on_fine_torre)
+	# il tunnel del viaggio sottomarino: si carica nel thread da adesso; le condotte lo chiamano dopo SB1
+	if sala_sottomarino_scena != "":
+		_precarica_sottomarino()
+		var ins: Node3D = sala_torre.get(&"inseguimento")
+		if ins:
+			_collega_inseguimento(ins)
+		elif sala_torre.has_signal(&"inseguimento_aggiunto"):
+			sala_torre.connect(&"inseguimento_aggiunto", _collega_inseguimento)
 	# appena oltre il portone, sulla passerella: si è entrati
 	var entrata := Area3D.new()
 	entrata.name = "EntrataTorre"
@@ -546,6 +570,101 @@ func _on_fine_torre() -> void:
 	if demo_finished:
 		return
 	demo_finished = true
+	_fine_della_demo(fine_torre_testo)
+
+
+## Quanto resta la scritta della fine (secondi), e dopo quanto il gioco torna da solo al titolo.
+const FINE_SCRITTA := 9.0
+const FINE_AL_TITOLO := 9.5
+
+
+## La scritta "FINE DELLA DEMO" e, finita la scritta, il ritorno al titolo da solo (scelta 12A dell'utente: prima restava
+## il nero e bisognava premere Esc). Il timer si ferma con la pausa; se dalla pausa si torna al titolo prima, il livello
+## non c'è più e il collegamento se ne va con lui: non scatta due volte.
+func _fine_della_demo(testo: String) -> void:
 	var hud := _hud()
 	if hud:
-		hud.show_banner("FINE DELLA DEMO", fine_torre_testo, 9.0)
+		hud.show_banner("FINE DELLA DEMO", testo, FINE_SCRITTA)
+	get_tree().create_timer(FINE_AL_TITOLO, false).timeout.connect(_torna_al_titolo)
+
+
+func _torna_al_titolo() -> void:
+	if is_inside_tree() and get_tree().current_scene == self:
+		Game.return_to_title()
+
+
+# --- Il tunnel del viaggio sottomarino ---------------------------------------------------------------------------------
+
+func _precarica_sottomarino() -> void:
+	if sala_sottomarino or _sottomarino_in_caricamento or Game.uscendo:
+		return
+	if _campioni_tunnel.is_empty():
+		_campioni_tunnel = CampioniTunnel.carica()
+	if Game.carica_in_thread(sala_sottomarino_scena, "PackedScene") == OK:
+		_sottomarino_in_caricamento = true
+
+
+## Il thread ha finito: il tunnel entra nel livello (fermo, senza lei in giro) e si costruisce a pezzi.
+func _aggiorna_sottomarino() -> void:
+	var stato := ResourceLoader.load_threaded_get_status(sala_sottomarino_scena)
+	if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		return
+	_sottomarino_in_caricamento = false
+	if stato == ResourceLoader.THREAD_LOAD_LOADED and sala_sottomarino == null:
+		_metti_sottomarino(ResourceLoader.load_threaded_get(sala_sottomarino_scena) as PackedScene, true)
+
+
+func _metti_sottomarino(scena: PackedScene, a_pezzi: bool) -> void:
+	if sala_sottomarino or scena == null:
+		return
+	sala_sottomarino = scena.instantiate() as Node3D
+	sala_sottomarino.name = "SalaSottomarino"
+	add_child(sala_sottomarino)
+	sala_sottomarino.connect(&"prima_curva_passata", _libera_torre)
+	sala_sottomarino.connect(&"fine_demo", _on_fine_torre)
+	if a_pezzi:
+		sala_sottomarino.call(&"costruisci_a_pezzi")
+	else:
+		sala_sottomarino.call(&"costruisci")
+
+
+func _collega_inseguimento(ins: Node3D) -> void:
+	if ins.has_signal(&"sb1_finito") and not ins.is_connected(&"sb1_finito", _attiva_sottomarino):
+		ins.connect(&"sb1_finito", _attiva_sottomarino)
+
+
+## Dopo SB1: il tunnel entra nel gioco (se il thread non ce l'ha fatta, si carica qui, un attimo di fermo).
+func _attiva_sottomarino() -> void:
+	if sala_sottomarino == null:
+		_sottomarino_in_caricamento = false
+		_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, false)
+	elif not bool(sala_sottomarino.get(&"costruita")):
+		await sala_sottomarino.call(&"costruisci_a_pezzi", 50.0)
+	sala_sottomarino.call(&"attiva_tunnel")
+
+
+## Passata la prima curva del tunnel: la porta del bacino si chiude alle spalle e torre e condotte si liberano.
+func _libera_torre() -> void:
+	if _torre_liberata:
+		return
+	_torre_liberata = true
+	if sala_sottomarino:
+		sala_sottomarino.call(&"chiudi_porta_bacino")
+	if sala_torre and is_instance_valid(sala_torre):
+		sala_torre.queue_free()
+	sala_torre = null
+
+
+## Ripartenza da un checkpoint del tunnel: solo il tunnel (costruito tutto), lei dietro, gli ambienti di prima via.
+func _ripristina_sottomarino() -> void:
+	_torre_liberata = true
+	_dentro_torre = true
+	if portone and portone.has_method(&"resta_chiuso"):
+		portone.call(&"resta_chiuso")
+	_scarica_ambienti()
+	_campioni_tunnel = CampioniTunnel.carica()
+	_metti_sottomarino(load(sala_sottomarino_scena) as PackedScene, false)
+	sala_sottomarino.call(&"chiudi_porta_bacino")
+	var cp := String(GameState.snapshot.get("checkpoint", ""))
+	var s := float(cp.get_slice("Checkpoint_", 1)) if cp.contains("Checkpoint_") else 6.0
+	sala_sottomarino.call(&"riparti_da", s)

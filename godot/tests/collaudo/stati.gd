@@ -8,6 +8,7 @@ extends RefCounted
 ##    pieni e lampadine del portone accese), tappa 8 finita;
 ##  - "risolto": come "ritorno", con l'enigma degli acquari risolto e il portone della torre aperto;
 ##  - "lei_fossa": lei affacciata alla fossa dell'area bimbi, come lo stato omonimo del controllo della CI.
+## Il tunnel sottomarino (SalaSottomarino) in ogni stato si costruisce tutto, coi gommoni fermi.
 ## Le chiavi di save_state() dei nodi "persist" che vogliono dire "fatto" o "aperto" diventano vere; i
 ## Pickup restano dove sono (sono oggetti da controllare anche loro).
 
@@ -16,6 +17,14 @@ const FALSE := ["chiusa", "bloccata", "chiuso_dietro"]
 
 
 static func applica(livello: Node, stato: String) -> void:
+	# il tunnel sottomarino si costruisce a pezzi quando si arriva: qui tutto subito, coi gommoni fermi (come nel
+	# controllo della CI, stato sottomarino_t0)
+	var tunnel := livello as SalaSottomarino
+	if tunnel:
+		if not tunnel.costruita:
+			tunnel.costruisci()
+		tunnel.set_physics_process(false)
+		tunnel.ferma_gommoni(0.0)
 	mostra_nascosti(livello)
 	if stato == "inizio":
 		return
