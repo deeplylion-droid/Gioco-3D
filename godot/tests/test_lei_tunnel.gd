@@ -176,7 +176,7 @@ func _run() -> void:
 	_check(max_virata > 3.0 and max_virata <= lt.virata_max + 0.01, "in curva si inclina (al più %.1f gradi)" % max_virata)
 
 	# 3. lo schianto sul portello
-	var centro := fine + Vector3.UP * 4.2 - dir_fine * 0.0
+	var centro := fine + Vector3.UP * 4.72      # come l'oblò di ambienti-2, 4,72 m sopra l'acqua
 	lt.schianto(centro, -dir_fine)
 	var t2 := 0.0
 	while t2 < 3.0:

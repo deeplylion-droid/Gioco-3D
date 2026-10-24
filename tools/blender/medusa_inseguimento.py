@@ -607,6 +607,8 @@ MORSI = (0.30, 1.60)    # quando morde nel ciclo (s): uno ogni 1,3 s
 MORSO = 0.42            # quanto dura un morso (chiude in 0,12 s, tiene, riapre)
 OBLO = (0.95, 4.62)     # schianto: il piano del portello a tanti metri davanti all'origine, il centro dell'oblò a
                         # tanti metri d'altezza (il gioco mette lei in modo che coincida con l'oblò vero)
+OBLO_SU = 0.62          # all'inizio dello schianto lei e' piu' su di tanto: quanto sta l'origine nella corsa (0,72 m sopra
+                        # l'acqua, LeiTunnel.QUOTA) sopra quella dello schianto (l'oblò di ambienti-2 a 4,72 m sopra l'acqua)
 
 
 def fauce_mascella(arm, C, f):
@@ -778,7 +780,8 @@ def pose_schianto(arm, C, Z, t, T=2.4):
     aperta(arm, C, Z, t * 0.6, chiude=0.0, k=1.0 - contro, extra=ritocco)
     # la faccia sull'oblò: l'occhio (il punto piu' avanti del viso e' poco davanti all'occhio) va sul piano
     occhio = mondo(arm, arm.pose.bones['occhio'].head)
-    voglio = Vector((0.0, -dd + VISO_DAVANTI + 1.8 * (1.0 - contro), hh + 0.08 - 0.04 * liscio(0.0, 1.0, 0.7, T, t)))
+    voglio = Vector((0.0, -dd + VISO_DAVANTI + 1.8 * (1.0 - contro),
+                     hh + 0.08 - 0.04 * liscio(0.0, 1.0, 0.7, T, t) + OBLO_SU * (1.0 - contro)))
     sposta(arm, voglio - occhio)
     fauce_mascella(arm, C, 1.0 + 0.25 * contro)
     for suf, s in (('.L', 1), ('.R', -1)):
@@ -787,14 +790,17 @@ def pose_schianto(arm, C, Z, t, T=2.4):
         teso = pc + rot_giro(arm) @ Vector((s * (0.30 - 0.04 * a), -0.95 - 0.10 * a,
                                             0.10 + 0.08 * math.cos(2 * math.pi * (0.0 if s > 0 else 0.5))))
         alto = pc + rot_giro(arm) @ Vector((s * 0.5, -0.8, 0.45))
-        contatto = Vector((s * 0.62, -dd + 0.06, hh + 0.05 - 0.05 * liscio(0.0, 1.0, 0.7, T, t)))
+        # (il polso a PALMO dal portello: il palmo e le dita a filo del vetro, misurato sulla mesh delle mani)
+        contatto = Vector((s * 0.62, -dd + PALMO, hh + 0.05 - 0.05 * liscio(0.0, 1.0, 0.7, T, t)))
         # dalle braccia tese della corsa, su ai lati della testa, e giu' piatte sul portello
         polso = teso.lerp(alto, liscio(0.0, 1.0, 0.0, 0.18, t)).lerp(contatto, liscio(0.0, 1.0, 0.18, 0.36, t))
         braccio_mondo(arm, suf, polso, (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
     Z.segui()
 
 
-VISO_DAVANTI = 0.20     # quanto il punto piu' avanti del viso sta davanti all'occhio (m, misurato sulla mesh)
+PALMO = 0.24            # schianto: il polso a tanto dal portello, perché il palmo ci stia a filo
+VISO_DAVANTI = 0.39     # quanto il punto piu' avanti della testa (la frangia) sta davanti all'occhio (m, misurato sulla mesh:
+                        # sonda di schianto, 1 cm dal portello)
 
 
 ANIMAZIONI = {
