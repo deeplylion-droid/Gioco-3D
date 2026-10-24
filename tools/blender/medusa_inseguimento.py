@@ -814,9 +814,36 @@ VISO_DAVANTI = 0.39     # quanto il punto piu' avanti della testa (la frangia) s
 OBLO_R = 0.55
 T_OBLO = 4.0            # i cicli delle pose (il respiro)
 T_STACCA = 2.6          # si stacca: indietro e giu' nel buio
+SBIRCIA_OCCHIO = 0.31   # sbircia: l'occhio a tanto dal centro del vetro, verso il bordo (la vasca del corridoio del personale e'
+                        # larga 2,56 m: lei ci sta solo fin qui)
 OBLO_INDIETRO = 8.0     # gradi: quanto e' inclinata col basso all'indietro (i tentacoli lontani dal vetro)
 SBIRCIA_LATO = 1.0      # da che parte del bordo sbircia: +1 alla sua sinistra (a destra per chi guarda dal corridoio);
                         # oblo_sbircia_altro dall'altra parte
+
+
+RACCOLTA = 0.95        # sbircia: quanto si stringono i tentacoli sotto la campana (0 aperti come fluttua, 1 dritti giu')
+
+
+def raccogli(arm, k):
+    """Stringe i tentacoli sotto la campana: ogni tentacolo gira alla radice perche' la punta si avvicini alla
+    verticale (lo scostamento orizzontale dalla radice scala di 1 - k), la forma resta quella della posa."""
+    for b in arm.data.bones:
+        if not b.name.startswith('tentacolo') or b.name.startswith(ZAMPE):
+            continue
+        if b.parent and b.parent.name.startswith('tentacolo'):
+            continue
+        ultimo = b
+        while ultimo.children:
+            ultimo = ultimo.children[0]
+        h = arm.pose.bones[b.name].head.copy()
+        v = arm.pose.bones[ultimo.name].tail - h
+        oriz = Vector((v.x, v.y, 0.0)) * (1.0 - k)
+        z = -math.sqrt(max(v.length_squared - oriz.length_squared, 0.0))
+        w = Vector((oriz.x, oriz.y, z))
+        asse = v.cross(w)
+        if asse.length < 1e-6:
+            continue
+        ruota(arm, b.name, asse.normalized(), math.degrees(v.angle(w)))
 
 
 def _calma(arm, C, Z, t, avanti=8.0, su=-3.0, indietro=OBLO_INDIETRO, raccolta=False):
@@ -825,13 +852,15 @@ def _calma(arm, C, Z, t, avanti=8.0, su=-3.0, indietro=OBLO_INDIETRO, raccolta=F
     u = (t / T_OBLO) % 1.0
     corpo = campiona(C, 'fluttua', 2.0 * u)
     # raccolta: i tentacoli stretti sotto di lei (quelli della statua) invece che aperti, per le vasche strette
-    tent = campiona(C, 'statua', 2.0 * u) if raccolta else campiona(C, 'fluttua', 2.0 * u)
+    tent = campiona(C, 'fluttua', 2.0 * u)
     dita = mix(campiona(C, 'statua', 0.0, False), campiona(C, 'insegue', 0.0), 0.4, DITA_OSSA)
     applica(arm, base(C, corpo, tent, dita))
     Z.leggi()
     busto(arm, avanti=avanti + 1.5 * math.sin(2 * math.pi * u), lato=1.5 * math.sin(2 * math.pi * u + 0.7))
     testa(arm, su=su + indietro - 1.5 * math.sin(2 * math.pi * u + 0.5))
     fauce_mascella(arm, C, 0.0)
+    if raccolta:
+        raccogli(arm, RACCOLTA)
     # tutta lei inclinata col basso all'indietro (la testa resta dritta): i tentacoli che fluttuano non arrivano al vetro
     ruota(arm, 'radice', (1, 0, 0), indietro)
 
@@ -868,7 +897,7 @@ def pose_oblo_schiacciata_stacca(arm, C, Z, t):
     for suf, s in (('.L', 1), ('.R', -1)):
         pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
         vetro = Vector((s * (OBLO_R - 0.12), -dd + PALMO, hh - 0.08))
-        su = pc + Vector((s * 0.45, -0.35, 0.75))
+        su = pc + Vector((s * 0.45, 0.25, 0.75))
         _palmo(arm, suf, vetro.lerp(su, lascia))
     Z.segui()
 
@@ -881,7 +910,7 @@ def pose_oblo_sbircia(arm, C, Z, t, s=SBIRCIA_LATO):
     _calma(arm, C, Z, t, avanti=6.0, su=-2.0, raccolta=True)
     testa(arm, piega=-s * 16.0 + 1.5 * math.sin(2 * math.pi * u), giro=-s * 10.0)
     # l'occhio poco dentro il bordo: si vede mezzo viso, il resto e il corpo dietro il muro
-    _occhio_in(arm, (s * (OBLO_R - 0.02) + 0.01 * math.sin(2 * math.pi * u), -dd + VISO_DAVANTI - 0.022, hh + 0.03))
+    _occhio_in(arm, (s * SBIRCIA_OCCHIO + 0.01 * math.sin(2 * math.pi * u), -dd + VISO_DAVANTI - 0.022, hh + 0.03))
     # la mano verso il centro dell'oblò, poggiata sul vetro accanto al viso (l'altra resta dietro il muro)
     suf_vetro = '.L' if s < 0 else '.R'
     _palmo(arm, suf_vetro, (s * (OBLO_R - 0.50), -dd + PALMO, hh - 0.12 + 0.008 * math.sin(2 * math.pi * u)))
@@ -898,11 +927,11 @@ def pose_oblo_sbircia_stacca(arm, C, Z, t, s=SBIRCIA_LATO):
     _calma(arm, C, Z, 0.0, avanti=6.0 - 14.0 * via, su=-2.0 - 10.0 * via, raccolta=True)
     testa(arm, piega=-s * 16.0 * (1 - via), giro=-s * 10.0 * (1 - via))
     # (indietro e giu', non di lato: la vasca del corridoio del personale e' stretta)
-    _occhio_in(arm, (s * (OBLO_R - 0.02), -dd + VISO_DAVANTI - 0.022 + 1.8 * via, hh + 0.03 - 1.9 * via ** 1.6))
+    _occhio_in(arm, (s * SBIRCIA_OCCHIO, -dd + VISO_DAVANTI - 0.022 + 1.8 * via, hh + 0.03 - 1.9 * via ** 1.6))
     suf_vetro = '.L' if s < 0 else '.R'
     pc = mondo(arm, arm.pose.bones['braccio' + suf_vetro].head)
     vetro = Vector((s * (OBLO_R - 0.50), -dd + PALMO, hh - 0.12))
-    _palmo(arm, suf_vetro, vetro.lerp(pc + Vector((0.0, -0.3, 0.7)), liscio(0.0, 1.0, 0.0, 0.35, u)))
+    _palmo(arm, suf_vetro, vetro.lerp(pc + Vector((0.0, 0.25, 0.7)), liscio(0.0, 1.0, 0.0, 0.35, u)))
     altro = '.R' if suf_vetro == '.L' else '.L'
     braccio(arm, altro, (0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
     Z.segui()
@@ -923,7 +952,7 @@ def _mani_capovolta(arm, dd, hh, lascia=0.0):
         sp = mondo(arm, arm.pose.bones['braccio' + suf].head)
         f = 1.0 if sp.x > 0 else -1.0
         vetro = Vector((f * (OBLO_R - 0.14), -dd + PALMO, hh - 0.12))
-        _palmo_capovolta(arm, suf, vetro.lerp(sp + Vector((f * 0.5, -0.3, -0.6)), lascia))
+        _palmo_capovolta(arm, suf, vetro.lerp(sp + Vector((f * 0.5, 0.3, -0.6)), lascia))
 
 
 def pose_oblo_capovolta(arm, C, Z, t):
@@ -1258,6 +1287,8 @@ def controlla_vetro(arm, C, Z, nome, durata, fn, n=9):
             oe.to_mesh_clear()
             d = float((co[:, 1] + dd).min())
             lo, hi = np.minimum(lo, co.min(0)), np.maximum(hi, co.max(0))
+            if os.environ.get('CHI'):
+                print(f'  OGGETTO {o.name}: x {co[:, 0].min():.2f}..{co[:, 0].max():.2f}', flush=True)
             if d < avanti:
                 avanti, chi = d, o.name
             if 'Mani' not in o.name and d < senza_mani:

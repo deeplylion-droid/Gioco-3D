@@ -171,6 +171,8 @@ func via() -> void:
 func _anima(nome: String, sfuma: float) -> void:
 	if _ap:
 		_ap.play(StringName(ANIM + nome), sfuma)
+		if sfuma <= 0.0:
+			_ap.advance(0.0)        # la posa dal primo fotogramma (non quella di riposo)
 
 
 func _durata(nome: String) -> float:
