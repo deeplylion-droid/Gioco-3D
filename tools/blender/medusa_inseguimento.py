@@ -819,12 +819,13 @@ SBIRCIA_LATO = 1.0      # da che parte del bordo sbircia: +1 alla sua sinistra (
                         # oblo_sbircia_altro dall'altra parte
 
 
-def _calma(arm, C, Z, t, avanti=8.0, su=-3.0, indietro=OBLO_INDIETRO):
+def _calma(arm, C, Z, t, avanti=8.0, su=-3.0, indietro=OBLO_INDIETRO, raccolta=False):
     """La base calma degli oblò: il corpo e i tentacoli che fluttuano piano, le dita morbide, la fauce chiusa, il busto
     appena sporto verso il vetro. Prima di spostarla e di mettere le mani."""
     u = (t / T_OBLO) % 1.0
     corpo = campiona(C, 'fluttua', 2.0 * u)
-    tent = campiona(C, 'fluttua', 2.0 * u)
+    # raccolta: i tentacoli stretti sotto di lei (quelli della statua) invece che aperti, per le vasche strette
+    tent = campiona(C, 'statua', 2.0 * u) if raccolta else campiona(C, 'fluttua', 2.0 * u)
     dita = mix(campiona(C, 'statua', 0.0, False), campiona(C, 'insegue', 0.0), 0.4, DITA_OSSA)
     applica(arm, base(C, corpo, tent, dita))
     Z.leggi()
@@ -862,7 +863,7 @@ def pose_oblo_schiacciata_stacca(arm, C, Z, t):
     u = t / T_STACCA
     via = liscio(0.0, 1.0, 0.15, 1.0, u)
     _calma(arm, C, Z, 0.0, avanti=10.0 - 22.0 * via, su=-4.0 - 16.0 * liscio(0.0, 1.0, 0.35, 1.0, u))
-    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.010 + 2.2 * via, hh - 2.8 * via ** 1.6))
+    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.010 + 1.8 * via, hh - 2.2 * via ** 1.6))
     lascia = liscio(0.0, 1.0, 0.0, 0.4, u)
     for suf, s in (('.L', 1), ('.R', -1)):
         pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
@@ -877,7 +878,7 @@ def pose_oblo_sbircia(arm, C, Z, t, s=SBIRCIA_LATO):
     il corpo dietro il muro."""
     dd, hh = OBLO
     u = (t / T_OBLO) % 1.0
-    _calma(arm, C, Z, t, avanti=6.0, su=-2.0)
+    _calma(arm, C, Z, t, avanti=6.0, su=-2.0, raccolta=True)
     testa(arm, piega=-s * 16.0 + 1.5 * math.sin(2 * math.pi * u), giro=-s * 10.0)
     # l'occhio poco dentro il bordo: si vede mezzo viso, il resto e il corpo dietro il muro
     _occhio_in(arm, (s * (OBLO_R - 0.02) + 0.01 * math.sin(2 * math.pi * u), -dd + VISO_DAVANTI - 0.022, hh + 0.03))
@@ -894,10 +895,10 @@ def pose_oblo_sbircia_stacca(arm, C, Z, t, s=SBIRCIA_LATO):
     dd, hh = OBLO
     u = t / T_STACCA
     via = liscio(0.0, 1.0, 0.1, 1.0, u)
-    _calma(arm, C, Z, 0.0, avanti=6.0 - 14.0 * via, su=-2.0 - 10.0 * via)
+    _calma(arm, C, Z, 0.0, avanti=6.0 - 14.0 * via, su=-2.0 - 10.0 * via, raccolta=True)
     testa(arm, piega=-s * 16.0 * (1 - via), giro=-s * 10.0 * (1 - via))
-    _occhio_in(arm, (s * (OBLO_R - 0.02 + 0.9 * liscio(0.0, 1.0, 0.0, 0.5, u)), -dd + VISO_DAVANTI - 0.022 + 1.8 * via,
-                     hh + 0.03 - 2.4 * via ** 1.6))
+    # (indietro e giu', non di lato: la vasca del corridoio del personale e' stretta)
+    _occhio_in(arm, (s * (OBLO_R - 0.02), -dd + VISO_DAVANTI - 0.022 + 1.8 * via, hh + 0.03 - 1.9 * via ** 1.6))
     suf_vetro = '.L' if s < 0 else '.R'
     pc = mondo(arm, arm.pose.bones['braccio' + suf_vetro].head)
     vetro = Vector((s * (OBLO_R - 0.50), -dd + PALMO, hh - 0.12))
@@ -939,12 +940,12 @@ def pose_oblo_capovolta(arm, C, Z, t):
 
 
 def pose_oblo_capovolta_stacca(arm, C, Z, t):
-    """Si stacca a testa in giu', va indietro e scende nel buio raddrizzandosi un poco."""
+    """Si stacca a testa in giu', va indietro e scende nel buio."""
     dd, hh = OBLO
     u = t / T_STACCA
     via = liscio(0.0, 1.0, 0.15, 1.0, u)
     _calma(arm, C, Z, 0.0, avanti=4.0 - 10.0 * via, su=6.0, indietro=OBLO_INDIETRO)
-    ruota(arm, 'radice', (0, 1, 0), 180.0 * (1.0 - 0.35 * via))
+    ruota(arm, 'radice', (0, 1, 0), 180.0)
     _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.046 + 2.0 * via, hh - 2.6 * via ** 1.6))
     _mani_capovolta(arm, dd, hh, liscio(0.0, 1.0, 0.0, 0.4, u))
     Z.segui()
@@ -954,7 +955,7 @@ def pose_oblo_capovolta_stacca(arm, C, Z, t):
 # enorme, che riempie l'oblò e segue il giocatore; poi si stacca lenta e torna nel buio. La testa piegata indietro
 # (la frangia va su, l'occhio e' la cosa piu' avanti), i palmi sul vetro ai lati, fuori dall'oblò.
 OCCHIO_SU = 24.0            # gradi: la testa piegata indietro
-OCCHIO_DAVANTI = 0.20       # quanto la pelle piu' avanti (l'occhio) sta davanti all'osso dell'occhio con la testa cosi'
+OCCHIO_DAVANTI = 0.31       # quanto la pelle piu' avanti (l'occhio) sta davanti all'osso dell'occhio con la testa cosi'
 OCCHIO_VIA = (1.6, 0.8)     # da dove arriva e dove torna: tanti metri indietro e giu' (il buio della vasca)
 OCCHIO_MANI = 0.42          # i palmi sul vetro a tanto dal centro (dietro il muro, fuori dall'oblò)
 T_ARRIVA = 3.0
