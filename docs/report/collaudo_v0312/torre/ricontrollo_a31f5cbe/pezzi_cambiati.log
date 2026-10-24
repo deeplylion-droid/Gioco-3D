@@ -1,0 +1,36 @@
+TorreStruttura/torre_A: 2592 pezzi prima, 2592 dopo; 0 nuovi, 0 tolti
+TorreStruttura/torre_A_sostegni: 213 pezzi prima, 219 dopo; 19 nuovi, 13 tolti
+TorreStruttura/torre_A_grigliati: 55 pezzi prima, 55 dopo; 0 nuovi, 0 tolti
+SalaInseguimento/InseguimentoStruttura/ins_A_struttura: 1508 pezzi prima, 1508 dopo; 0 nuovi, 0 tolti
+q001 tolto TorreStruttura/torre_A_sostegni    lo [24.16, 3.81, -13.96] hi [25.9, 5.13, -10.42] tri 507 distanza - 
+q002 tolto TorreStruttura/torre_A_sostegni    lo [24.52, 7.5, -15.21] hi [25.68, 8.64, -14.64] tri 317 distanza - 
+q003 tolto TorreStruttura/torre_A_sostegni    lo [24.56, 4.85, -16.44] hi [25.89, 6.12, -15.83] tri 414 distanza - 
+q004 tolto TorreStruttura/torre_A_sostegni    lo [28.89, 5.11, -21.26] hi [29.57, 6.38, -19.95] tri 414 distanza - 
+q005 tolto TorreStruttura/torre_A_sostegni    lo [26.42, -2.19, -9.9] hi [29.96, -0.87, -8.16] tri 615 distanza - 
+q006 tolto TorreStruttura/torre_A_sostegni    lo [30.86, -7.5, -25.18] hi [31.3, -6.34, -24.02] tri 384 distanza - 
+q007 tolto TorreStruttura/torre_A_sostegni    lo [30.86, 7.5, -25.18] hi [31.3, 8.66, -24.02] tri 384 distanza - 
+q008 tolto TorreStruttura/torre_A_sostegni    lo [30.78, 7.5, -22.08] hi [31.36, 8.64, -20.92] tri 398 distanza - 
+q009 tolto TorreStruttura/torre_A_sostegni    lo [32.04, 3.81, -21.84] hi [35.58, 5.13, -20.1] tri 552 distanza - 
+q010 tolto TorreStruttura/torre_A_sostegni    lo [32.43, -0.89, -10.05] hi [33.11, 0.38, -8.74] tri 429 distanza - 
+q011 tolto TorreStruttura/torre_A_sostegni    lo [36.32, 7.5, -15.36] hi [37.48, 8.64, -14.79] tri 311 distanza - 
+q012 tolto TorreStruttura/torre_A_sostegni    lo [38.03, 5.06, -15.04] hi [38.11, 5.14, -14.96] tri 28 distanza - 
+q013 tolto TorreStruttura/torre_A_sostegni    lo [39.37, -15.72, -16.71] hi [39.46, -15.64, -16.62] tri 28 distanza - 
+q014 nuovo TorreStruttura/torre_A_sostegni    lo [24.16, 3.81, -13.95] hi [25.9, 4.0, -10.42] tri 159 distanza 0.0 [25.276, 3.829, -13.619]
+q015 nuovo TorreStruttura/torre_A_sostegni    lo [24.52, 7.5, -15.21] hi [25.68, 8.64, -14.64] tri 160 distanza 0.0 [24.537, 8.135, -14.985]
+q016 nuovo TorreStruttura/torre_A_sostegni    lo [24.56, 4.85, -16.41] hi [25.89, 4.99, -16.01] tri 20 distanza 0.0 [25.233, 4.97, -16.29]
+q017 nuovo TorreStruttura/torre_A_sostegni    lo [24.63, 4.98, -16.44] hi [25.8, 6.12, -15.83] tri 160 distanza 0.04 [25.256, 4.99, -16.284]
+q018 nuovo TorreStruttura/torre_A_sostegni    lo [24.68, 3.99, -13.96] hi [25.84, 5.13, -13.31] tri 160 distanza 0.41 [24.788, 4.602, -13.419]
+q019 nuovo TorreStruttura/torre_A_sostegni    lo [28.9, 5.24, -21.2] hi [29.57, 6.38, -20.05] tri 160 distanza 0.0 [29.109, 5.246, -20.546]
+q020 nuovo TorreStruttura/torre_A_sostegni    lo [28.89, 5.11, -21.26] hi [29.44, 5.25, -19.95] tri 20 distanza 0.02 [29.118, 5.106, -20.505]
+q021 nuovo TorreStruttura/torre_A_sostegni    lo [29.31, -2.01, -9.84] hi [29.96, -0.87, -8.68] tri 160 distanza 0.0 [29.787, -2.003, -9.236]
+q022 nuovo TorreStruttura/torre_A_sostegni    lo [26.42, -2.19, -9.9] hi [29.95, -2.0, -8.16] tri 228 distanza 0.0 [29.588, -2.177, -9.26]
+q023 nuovo TorreStruttura/torre_A_sostegni    lo [30.86, -7.5, -25.18] hi [31.3, -6.34, -24.02] tri 160 distanza 0.01 [31.014, -7.49, -24.671]
+q024 nuovo TorreStruttura/torre_A_sostegni    lo [30.86, 7.5, -25.18] hi [31.3, 8.66, -24.02] tri 160 distanza 0.0 [31.004, 8.157, -25.166]
+q025 nuovo TorreStruttura/torre_A_sostegni    lo [30.78, 7.5, -22.08] hi [31.36, 8.64, -20.92] tri 160 distanza 0.0 [31.017, 8.153, -20.929]
+q026 nuovo TorreStruttura/torre_A_sostegni    lo [32.05, 3.81, -21.84] hi [35.58, 4.0, -20.1] tri 165 distanza 0.0 [32.307, 3.857, -20.821]
+q027 nuovo TorreStruttura/torre_A_sostegni    lo [32.04, 3.99, -21.32] hi [32.69, 5.13, -20.16] tri 160 distanza 0.02 [32.217, 3.997, -20.734]
+q028 nuovo TorreStruttura/torre_A_sostegni    lo [32.56, -0.89, -10.05] hi [33.11, -0.75, -8.74] tri 18 distanza 0.0 [32.915, -0.894, -9.344]
+q029 nuovo TorreStruttura/torre_A_sostegni    lo [32.43, -0.76, -9.95] hi [33.1, 0.38, -8.8] tri 160 distanza 0.01 [32.903, -0.754, -9.439]
+q030 nuovo TorreStruttura/torre_A_sostegni    lo [36.32, 7.5, -15.36] hi [37.48, 8.64, -14.79] tri 160 distanza 0.0 [37.463, 8.135, -15.015]
+q031 nuovo TorreStruttura/torre_A_sostegni    lo [38.02, 5.06, -15.04] hi [38.11, 5.14, -14.96] tri 38 distanza 0.43 [38.078, 5.141, -14.998]
+q032 nuovo TorreStruttura/torre_A_sostegni    lo [39.35, -15.72, -16.71] hi [39.46, -15.64, -16.61] tri 50 distanza 0.16 [39.428, -15.649, -16.646]

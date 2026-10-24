@@ -25,7 +25,7 @@ Le 8 lampade rosse delle bocche chiuse (`@306`…`@324`) stanno sulla targa a st
 
 ## Da vedere (su b8964240)
 
-Su 45db14db i punti 1, 2 e 4 sono corretti (sezione "Ricontrollo" qui sotto); resta aperto il 3.
+Su 45db14db i punti 1, 2 e 4 sono corretti (sezione "Ricontrollo" qui sotto). Il 3 non è un palo ma l'inizio degli scivoli aperti (sezione "Secondo ricontrollo").
 
 | # | Nodo | Posizione | Problema | Scatto |
 |---|---|---|---|---|
@@ -33,6 +33,28 @@ Su 45db14db i punti 1, 2 e 4 sono corretti (sezione "Ricontrollo" qui sotto); re
 | 2 | `TorreScivoli/torre_tubo_inseguimento` sopra `TorreStruttura/torre_A` | 39,58, -19,32, -17,4 e 38,67, -19,34, -17,4 | Il tubo dell'inseguimento passa 1,3-2,1 cm sopra la trave grigia, con la fessura scura in vista; il giocatore passa a 1,4 m. Va bene se la trave non lo regge lì, altrimenti va appoggiato. | `attacchi_stretti/a133_…`, `a134_…` |
 | 3 | Ancora aperto dal collaudo di prima: i pali rossi coi led verdi degli imbocchi (`Luci/LedImbocco`, `Luci/@MultiMeshInstance3D@276`…`@300`) | per esempio `LedImbocco_1`, `_10`, `_11`, `@300_9`…`11`, `@288_0`…`2` | Sotto la fila di led il palo si stringe a punta e finisce 25-30 cm sopra la grata, accanto al palo rosso che invece arriva alla grata. Si vede dove il giocatore entra negli scivoli. Va bene se è voluto, altrimenti va portato fino alla grata. | `fogli/torre_vedute_04.jpg`, `_06.jpg`, `_09.jpg` |
 | 4 | Noto dal collaudo di prima: il tubo lungo inclinato nella vasca dell'inseguimento | vicino a 43,5, -33,4, -3,5 | C'è ancora (scatti `ti052_e`, `ti052_s`): sta nell'acqua lungo il fondo. | `fogli/torre_giro_09.jpg` |
+
+## Secondo ricontrollo (`lavoro/torre-attacchi` a31f5cbe)
+
+Unita in `lavoro/collaudo-enigmi` (d1e7c25f), import fresco. Scatti in `ricontrollo_a31f5cbe/`. Rispetto a 45db14db cambia solo `torre_A_sostegni`: 19 pezzi nuovi e 13 tolti (gli 11 collari dei tubi chiusi ora sono pezzi interi, più selle, puntoni e i due braccetti); `torre_A`, grate e inseguimento sono identici (`pezzi_cambiati.log`).
+
+| # | Su a31f5cbe | Scatti |
+|---|---|---|
+| N1 puntone del tubo 7 | arriva al tubo: nei quattro ravvicinati a 30 cm non c'è fessura (la misura dà 4-10 mm, nel campionamento) | `n1_puntone_tubo7_4_viste.jpg`, `n1_puntone_tubo7.jpg` |
+| Braccetto di `discesa_5_0` | arriva allo scivolo a 4 mm | `braccetto_discesa_5_0.jpg` |
+| N2 e N3 collari degli scivoli 5 e 9 | fasce intere, senza denti né buchi | `n2_n3_collari_scivoli_5_9.jpg` |
+| Giro degli 11 collari dei tubi chiusi | fasce intere, a 2,4-5,1 mm dal tubo; 10 su 11 toccano la loro staffa | `giro_collari_tubi_chiusi.jpg` |
+| **N4 (nuovo)** collare dello scivolo 2 a 25,26, 4,56, -13,6 | **non tocca niente**: sta a 4 mm dal tubo e **4,3 cm sopra la mensola rossa** che dovrebbe reggerlo, e da sotto si vede lo spazio | `n4_collare_scivolo2_dal_basso.jpg`, `n4_collare_scivolo2_staccato.jpg` |
+
+Controllo di posizionamento della CI, zona torre: 0 nuovi, 0 da correggere, f) 0. Testa 0, celle uguali.
+
+**I "pali a punta" dei led degli imbocchi (punto 3 da vedere) non sono pali.** Sono l'inizio degli scivoli aperti `TorreScivoli/discesa_0_0`, `discesa_2_0` e `discesa_5_0`: visto dall'alto, il fondo arrotondato della vasca dello scivolo sembra un palo colorato (rosso, blu e viola come lo scivolo) che finisce a punta accanto al palo rosso coi led. Il punto più basso vicino al palo sta sopra la grata di:
+
+- `discesa_0_0`: 12,6 cm, a 27,90, 0,12, -21,21;
+- `discesa_2_0`: 12,4 cm, a 34,10, -5,89, -8,79;
+- `discesa_5_0`: 19,7 cm, a 37,06, -14,81, -17,82.
+
+Scatti: `led_*.jpg` (vedute di prima, per esempio `@282_10` dalla camera 34,5, -4,41, -10,0, yaw 114,3, pitch -61) e `inizio_scivoli_aperti.jpg`. Non è il cono della luce verde. Va deciso se l'inizio dello scivolo può stare sollevato sopra la grata o se va appoggiato.
 
 ## Ricontrollo sulle correzioni di ambienti-2 (`lavoro/torre-attacchi` 45db14db)
 
