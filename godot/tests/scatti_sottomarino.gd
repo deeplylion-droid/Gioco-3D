@@ -31,6 +31,14 @@ var SCATTI := {
 	"20_approdo": [538.0, -1.0, 1.6, 552.3, -0.1, 3.4, 75.0],
 	"21_ballatoio": [550.8, -0.9, 4.6, 552.3, 0.0, 4.0, 75.0],
 	"22_camera_volantino": [554.6, 0.0, 4.6, 552.3, 0.1, 3.7, 75.0],
+	"23_coralli": [74.0, 1.0, 1.6, 81.0, 1.0, 0.8, 70.0],
+	"24_coralli_sinistra": [84.0, -1.0, 1.6, 90.0, -1.0, 0.8, 70.0],
+	"25_ancora": [121.0, -1.0, 1.6, 127.0, -1.0, 1.6, 70.0],
+	"26_ancora_staffa": [126.0, -0.95, 1.4, 127.0, -1.15, 1.2, 50.0],
+	"27_salvagente": [135.5, -1.0, 1.6, 140.6, -1.0, 1.8, 70.0],
+	"28_salvagente_vicino": [139.6, -0.95, 1.9, 140.6, -1.15, 1.8, 50.0],
+	"29_forziere": [148.0, 1.0, 1.6, 152.5, 1.0, 0.4, 70.0],
+	"30_palombaro": [184.0, 1.0, 1.6, 190.0, 1.0, 1.2, 70.0],
 }
 ## Dove sta lei negli scatti che la mostrano (s lungo la strada).
 var LEI := {"18_lei_dietro": 40.0, "19_lei_di_lato": 40.0}
@@ -96,7 +104,7 @@ func _run() -> void:
 				sala.insegui_da(float(LEI[nome]))
 				sala.velocita_lei = 0.0
 				sala.velocita_rincorsa = 0.0
-		for i in 40:
+		for i in int(OS.get_environment("SCATTI_FOTOGRAMMI")) if OS.get_environment("SCATTI_FOTOGRAMMI") != "" else 40:
 			await get_tree().process_frame
 		var f := cartella.path_join(nome + ".jpg")
 		get_viewport().get_texture().get_image().save_jpg(f, 0.88)

@@ -26,6 +26,8 @@ const BUCO_THETA := 2.52
 const BUCO_MEZZO_THETA := 0.26
 ## Le reti con le stelle marine sui muri (s, lato, quota del bordo basso sopra le banchine).
 const RETI := [[325.0, -1.0, 2.3], [333.5, 1.0, 2.3], [388.3, -1.0, 2.45]]
+const RETE_LARGA := 2.0
+const RETE_ALTA := 0.9
 ## Le bitte dell'approdo sul bordo delle banchine (s, lato): basse, sotto i 35 cm.
 const BITTE := [[497.0, -1.0], [503.0, 1.0], [517.0, -1.0], [524.0, 1.0]]
 ## I cartelli a disegni (il portello col volantino e la freccia), a bandiera sui muri, girati verso chi arriva.
@@ -121,14 +123,139 @@ func _tartaruga() -> void:
 func _reti() -> void:
 	var nodo := _nodo("Reti")
 	for q in RETI:
-		var s: float = q[0]
-		var lato: float = q[1]
-		var w = _muro(s, lato, sala.piano + float(q[2]) + 0.47)
-		if w == null:
-			continue
-		var n := _modello(nodo, "rete_stelle", Vector3.ZERO, Vector3.ZERO, 1.0)
-		n.name = "rete_stelle_%d" % int(s)
-		_a_muro(n, w[0], w[1], sala.piano + float(q[2]))
+		_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
+
+
+## Una rete da pesca tesa sul muro (il modello Meshy della rete è venuto male: quattro bastoni, la si fa qui): la
+## corda del bordo e le maglie a rombi a filo del muro, due chiodi d'ottone in alto, quattro stelle marine impigliate.
+## Larga [constant RETE_LARGA], alta [constant RETE_ALTA], col bordo basso a [param basso].
+func _rete(nodo: Node3D, s: float, lato: float, basso: float) -> void:
+	var w = _muro(s, lato, basso + RETE_ALTA * 0.5)
+	if w == null:
+		return
+	var pm: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var lungo := Vector3.UP.cross(nrm).normalized()
+	var n := Node3D.new()
+	n.name = "rete_stelle_%d" % int(s)
+	nodo.add_child(n)
+	var mx := RETE_LARGA * 0.5
+	var my := RETE_ALTA * 0.5
+	var al := func(u: float, v: float, z: float) -> Vector3: return pm + lungo * u + Vector3.UP * v + nrm * z
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# le maglie a rombi (due famiglie di diagonali), tagliate al bordo; poi il bordo, più grosso
+	var passo := 0.16
+	for verso: float in [-1.0, 1.0]:
+		var c := -mx - my - passo
+		while c < mx + my + passo:
+			# la retta u = c + verso * v (per verso 1) / u = c - v..., tagliata nel rettangolo
+			var pts: Array = []
+			for v: float in [-my, my]:
+				var u := c + verso * v
+				pts.append(Vector2(u, v))
+			var a2: Vector2 = pts[0]
+			var b2: Vector2 = pts[1]
+			var t0 := 0.0
+			var t1 := 1.0
+			var dd := b2 - a2
+			if absf(dd.x) > 1e-6:
+				var ta := (-mx - a2.x) / dd.x
+				var tb := (mx - a2.x) / dd.x
+				t0 = maxf(t0, minf(ta, tb))
+				t1 = minf(t1, maxf(ta, tb))
+			if t1 - t0 > 0.02:
+				var pa := a2 + dd * t0
+				var pb := a2 + dd * t1
+				_tubo(st, al.call(pa.x, pa.y, 0.006), al.call(pb.x, pb.y, 0.006), 0.005)
+			c += passo
+	var angoli := [Vector2(-mx, -my), Vector2(mx, -my), Vector2(mx, my), Vector2(-mx, my)]
+	for i in 4:
+		var pa: Vector2 = angoli[i]
+		var pb: Vector2 = angoli[(i + 1) % 4]
+		_tubo(st, al.call(pa.x, pa.y, 0.01), al.call(pb.x, pb.y, 0.01), 0.009, true)
+	var mi := MeshInstance3D.new()
+	mi.name = "maglie"
+	mi.mesh = st.commit()
+	mi.material_override = _mat("corda_rete", Color(0.62, 0.52, 0.36), 0.9)
+	n.add_child(mi)
+	# i chiodi d'ottone agli angoli in alto, sul bordo: piantati nel muro
+	for u: float in [-mx, mx]:
+		var ch := MeshInstance3D.new()
+		ch.name = "chiodo"
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.016
+		cm.bottom_radius = 0.016
+		cm.height = 0.008
+		ch.mesh = cm
+		ch.material_override = sala._mat_ottone()
+		n.add_child(ch)
+		var c3: Vector3 = al.call(u, my, 0.022)
+		ch.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), c3)
+		var gambo := MeshInstance3D.new()
+		var gm := CylinderMesh.new()
+		gm.top_radius = 0.004
+		gm.bottom_radius = 0.004
+		gm.height = 0.025
+		gambo.mesh = gm
+		gambo.material_override = sala._mat_ottone()
+		n.add_child(gambo)
+		# (4 mm nel muro)
+		gambo.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), al.call(u, my, 0.0085))
+	# le stelle marine, appoggiate sulle maglie
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(s * 10.0)
+	var colori := [Color(0.85, 0.35, 0.15), Color(0.9, 0.55, 0.2), Color(0.75, 0.2, 0.18), Color(0.92, 0.7, 0.3)]
+	var posti := [Vector2(-0.62, 0.12), Vector2(-0.15, -0.2), Vector2(0.3, 0.18), Vector2(0.7, -0.12)]
+	for i in 4:
+		var q: Vector2 = posti[i]
+		var r := rng.randf_range(0.1, 0.14)
+		var stella := _stella(r, rng.randf_range(0.0, TAU))
+		stella.name = "stella_marina_%d" % i
+		stella.material_override = _mat("stella_%d" % i, colori[i], 0.75)
+		n.add_child(stella)
+		stella.transform = Transform3D(Basis(lungo, Vector3.UP, nrm), al.call(q.x, q.y, 0.011))
+
+
+## Un tubo (sezione esagonale) da [param a] a [param b]; con [param tappi] chiuso alle teste.
+func _tubo(st: SurfaceTool, a: Vector3, b: Vector3, r: float, tappi := false) -> void:
+	var asse := (b - a).normalized()
+	var x := asse.cross(Vector3.UP if absf(asse.y) < 0.9 else Vector3.RIGHT).normalized()
+	var y := asse.cross(x)
+	var k := 6
+	for i in k:
+		var a0 := TAU * float(i) / k
+		var a1 := TAU * float(i + 1) / k
+		var d0 := x * cos(a0) + y * sin(a0)
+		var d1 := x * cos(a1) + y * sin(a1)
+		sala._quad(st, [a + d0 * r, b + d0 * r, b + d1 * r, a + d1 * r], (d0 + d1).normalized())
+		if tappi:
+			sala._tri(st, [a, a + d0 * r, a + d1 * r], -asse)
+			sala._tri(st, [b, b + d0 * r, b + d1 * r], asse)
+
+
+## Una stella marina piatta a cinque braccia (raggio [param r], spessa 2,4 cm), nel piano xy, il dorso verso +z.
+func _stella(r: float, giro: float) -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var sp := 0.024
+	var pts: Array = []
+	for i in 10:
+		var a := giro + TAU * float(i) / 10.0
+		var rr := r if i % 2 == 0 else r * 0.4
+		pts.append(Vector3(cos(a) * rr, sin(a) * rr, 0.0))
+	var dorso := Vector3(0, 0, sp)
+	for i in 10:
+		var p0: Vector3 = pts[i]
+		var p1: Vector3 = pts[(i + 1) % 10]
+		sala._tri(st, [dorso, p0 + Vector3(0, 0, sp * 0.3), p1 + Vector3(0, 0, sp * 0.3)], Vector3(0, 0, 1))
+		sala._tri(st, [Vector3.ZERO, p0, p1], Vector3(0, 0, -1))
+		sala._quad(st, [p0, p1, p1 + Vector3(0, 0, sp * 0.3), p0 + Vector3(0, 0, sp * 0.3)],
+				Vector3((p0 + p1).x, (p0 + p1).y, 0.0).normalized())
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	return mi
 
 
 ## Il buco nella volta da cui sono cadute le macerie a 348 (l'ostacolo di ambienti-2, sulla banchina destra): segue
@@ -818,15 +945,16 @@ func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: f
 ## Mette il modello [param n] col dorso (il suo -z... il lato più vicino al muro) a filo del muro in [param pm] di
 ## normale [param nrm], col bordo basso alla quota [param basso].
 func _a_muro(n: Node3D, pm: Vector3, nrm: Vector3, basso: float) -> void:
-	# il modello guarda fuori dal muro (+z verso la normale)
-	n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP) * Basis.from_scale(n.transform.basis.get_scale()), pm)
-	var tri := _triangoli(n)
-	var dietro := INF
+	# il modello guarda fuori dal muro (+z verso la normale), messo davanti e poi fissato con lo strumento comune
+	n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP) * Basis.from_scale(n.transform.basis.get_scale()), pm + nrm * 0.5)
+	var dietro := 0.0
 	var sotto := INF
-	for v in tri:
-		dietro = minf(dietro, (v - pm).dot(nrm))
+	for v in _triangoli(n):
+		dietro = maxf(dietro, (n.position - v).dot(nrm))
 		sotto = minf(sotto, v.y)
-	n.position += nrm * (-dietro - 0.002) + Vector3.UP * (basso - sotto)
+	n.position.y += basso - sotto
+	if not Posa.fissa_al_muro(n, nrm, dietro + 0.001, false):
+		n.position = Vector3(pm.x, n.position.y, pm.z) + nrm * (dietro + 0.001)
 
 
 ## Il punto del muro dal lato [param lato] a [param s] alla quota [param y] e la sua normale (verso il tunnel), dai

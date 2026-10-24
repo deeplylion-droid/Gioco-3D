@@ -184,6 +184,7 @@ func _passi() -> Array:
 	out.append(_testa)
 	out.append(_fine)
 	out.append(_luci)
+	out.append_array(SottomarinoArrediA2.passi(self))
 	# gli arredi di pesci, tartaruga, abisso e approdo (ambienti-1)
 	out.append_array(SottomarinoArrediA1.passi(self))
 	for o in ostacoli:
@@ -897,24 +898,12 @@ func chiudi_portello() -> void:
 
 ## Lei sbatte contro il portello: arriva dal fondo della vasca dell'approdo e ci schiaccia la faccia sull'oblò.
 func _finale() -> void:
-	if lei:
-		lei_stato = Lei.PRESA     # (ferma: la muove il finale)
-		lei.visible = true
+	if lei_tunnel:
+		lei_stato = Lei.PRESA     # (ferma: la muove lo schianto)
 		var oblo := _perno.global_transform * Vector3(PORTELLO_LARGO * 0.5, OBLO_Y, -0.06)
-		var d := direzione(lunghezza())
-		var occhio_rel := (lei.get_eye_position() - lei.global_position) if lei.get_eye_position() != Vector3.ZERO else Vector3.UP * 3.4
-		lei.global_transform.basis = Basis.looking_at(d, Vector3.UP, true)
-		occhio_rel = lei.get_eye_position() - lei.global_position if lei.get_eye_position() != Vector3.ZERO else occhio_rel
-		var arrivo := oblo - d * 0.35 - occhio_rel
-		var partenza := arrivo - d * 5.0 - Vector3.UP * 2.0
-		lei.global_position = partenza
-		_anima_lei(&"inseguimento/presa", 0.1)
-		lei.attacca(0.3, &"")
-		var tw := create_tween()
-		tw.tween_property(lei, "global_position", arrivo, 0.35).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-		tw.tween_callback(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6))
-		tw.tween_interval(2.2)
-		tw.tween_callback(_nero)
+		lei_tunnel.schianto(oblo, -direzione(lunghezza()))
+		lei_tunnel.schianto_contro.connect(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6), CONNECT_ONE_SHOT)
+		get_tree().create_timer(2.6, false).timeout.connect(_nero)
 	else:
 		_nero()
 
@@ -954,16 +943,13 @@ func _luci() -> void:
 		l.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z)
 		l.look_at(l.global_position - r * lato * 2.0, Vector3.UP)
 		l.rotate_object_local(Vector3.UP, PI)
+		# (nel giardino dei coralli la luce è verde-azzurra, come nel piano degli ambienti)
+		var coralli := ambiente(s) == 1
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
-			var m := StandardMaterial3D.new()
-			m.albedo_color = Color(1.0, 0.85, 0.55)
-			m.emission_enabled = true
-			m.emission = Color(1.0, 0.7, 0.35)
-			m.emission_energy_multiplier = 3.0
-			g.material_override = m
+			g.material_override = _mat_globo_coralli() if coralli else _mat_globo_luci()
 		var o := OmniLight3D.new()
-		o.light_color = Color(1.0, 0.76, 0.5)
+		o.light_color = Color(0.55, 0.95, 0.85) if coralli else Color(1.0, 0.76, 0.5)
 		o.light_energy = 4.0
 		o.omni_range = 12.0
 		o.omni_attenuation = 1.3
@@ -1009,6 +995,28 @@ func _oblo(nodo: Node3D, s: float, lato: float) -> void:
 	vetro.position.z = -0.015
 	vetro.material_override = _mat_oblo()
 	n.add_child(vetro)
+
+
+var _globo_luci: StandardMaterial3D
+var _globo_coralli: StandardMaterial3D
+
+
+func _mat_globo_luci() -> StandardMaterial3D:
+	if _globo_luci == null:
+		_globo_luci = StandardMaterial3D.new()
+		_globo_luci.albedo_color = Color(1.0, 0.85, 0.55)
+		_globo_luci.emission_enabled = true
+		_globo_luci.emission = Color(1.0, 0.7, 0.35)
+		_globo_luci.emission_energy_multiplier = 3.0
+	return _globo_luci
+
+
+func _mat_globo_coralli() -> StandardMaterial3D:
+	if _globo_coralli == null:
+		_globo_coralli = _mat_globo_luci().duplicate()
+		_globo_coralli.albedo_color = Color(0.7, 1.0, 0.92)
+		_globo_coralli.emission = Color(0.45, 0.95, 0.8)
+	return _globo_coralli
 
 
 var _ottone: StandardMaterial3D
@@ -1060,9 +1068,6 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 @export var getto_in_faccia := 0.6
 @export var fermo_dopo_getto := 2.0
 @export var indietro_dopo_getto := 6.0
-## Quanto sta sopra l'acqua l'origine del modello (fluttua intera sopra il canale; le pose provvisorie finché non
-## arrivano le animazioni di mascotte).
-@export var lei_sopra_acqua := 1.3
 ## A guado nel canale (velocità massima a piedi e di corsa, m/s): la danno i volumi d'acqua del canale
 ## (WaterVolume.velocita_guado), che il Player legge da solo.
 @export var velocita_guado := 2.0
@@ -1077,59 +1082,27 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 ## Chi insegue (vuoto: il giocatore); i test lo cambiano.
 var bersaglio: Node3D
 
+## Lei del tunnel (LeiTunnel di mascotte) e il suo modello.
+var lei_tunnel: LeiTunnel
 var lei: MedusaAffacciata
 var lei_stato := Lei.VIA
 var lei_s := 0.0
 var _lei_t := 0.0
-var _getto_preso := 0.0
 var _morso_tra := 1.5
 var _s_bersaglio := 0.0
-var _lei_testa: WaterHitbox
 var checkpoint: Array[Checkpoint] = []
 
 
 func _lei_crea() -> void:
-	lei = MedusaAffacciata.new()
-	lei.name = "Lei"
-	lei.model = load("res://assets/models/medusa/medusa.glb")
-	lei.bell_material = load("res://assets/models/medusa/medusa_campana.tres")
-	lei.material_map = {
-		"M_capelli": load("res://assets/models/medusa/medusa_capelli_bagnata.tres"),
-		"M_ciocche": load("res://assets/models/medusa/medusa_ciocche_bagnata.tres"),
-		"M_mani": load("res://assets/models/medusa/medusa_mani_bagnata.tres"),
-		"M_occhio_bulbo": load("res://assets/models/medusa/medusa_occhio.tres"),
-		"M_orbita": load("res://assets/models/medusa/medusa_orbita_bagnata.tres"),
-		"M_pelle": load("res://assets/models/medusa/medusa_pelle_bagnata.tres"),
-		"M_tentacoli": load("res://assets/models/medusa/medusa_tentacoli_bagnata.tres"),
-	}
-	lei.animazioni_inseguimento = true
-	lei.animazione = &"inseguimento/incombe"
-	lei.visible = false
-	add_child(lei)
-	var luce := OmniLight3D.new()
-	luce.light_color = Color(1.0, 0.32, 0.62)
-	luce.light_energy = 6.0
-	luce.omni_range = 9.0
-	luce.light_volumetric_fog_energy = 3.0
-	luce.shadow_enabled = true
-	luce.position = Vector3(0, 2.4, 0.9)
-	luce.set_meta(&"risveglio_ignora", true)
-	lei.add_child(luce)
-	# il viso: un getto lì la ferma e la ricaccia indietro
-	_lei_testa = WaterHitbox.new()
-	_lei_testa.name = "Viso"
-	var cs := CollisionShape3D.new()
-	var sf := SphereShape3D.new()
-	sf.radius = 0.9
-	cs.shape = sf
-	_lei_testa.add_child(cs)
-	_lei_testa.position = Vector3(0, 3.4, 0.6)
-	lei.add_child(_lei_testa)
-	_lei_testa.water_hit.connect(func(litri: float, _p: Vector3, _d: Vector3):
-		if lei_stato == Lei.INSEGUE or lei_stato == Lei.SALE:
-			_getto_preso += litri
-			if _getto_preso >= getto_in_faccia:
-				respingi())
+	# lei del tunnel è di mascotte (LeiTunnel: animazioni, giro e inclinazione in curva, morsi, getto in faccia,
+	# presa, schianto); qui si decide solo dove sta lungo la strada
+	lei_tunnel = LeiTunnel.new()
+	lei_tunnel.name = "LeiTunnel"
+	add_child(lei_tunnel)
+	lei = lei_tunnel.lei
+	lei_tunnel.getto_litri = getto_in_faccia
+	lei_tunnel.vicina = distanza_morsi
+	lei_tunnel.getto_in_faccia.connect(respingi)
 
 
 ## I checkpoint del tunnel, lungo la strada ([member checkpoint_s]): un'area da banchina a banchina, la ripartenza
@@ -1170,10 +1143,10 @@ func insegui_da(s: float) -> void:
 	lei_s = s
 	lei_stato = Lei.INSEGUE
 	_lei_t = 0.0
-	_getto_preso = 0.0
-	lei.visible = true
-	_anima_lei(&"inseguimento/incombe", 0.3)
-	lei.attacca(0.7, &"")       # la bocca spalancata e l'occhio pieno di vene, per tutta la fase
+	if lei_tunnel.stato == LeiTunnel.Stato.VIA:
+		# (dai checkpoint: risale dall'acqua del canale, poco profonda, già a metà salita)
+		var p := punto(s)
+		lei_tunnel.riemergi(Vector3(p.x, acqua, p.z), direzione(s), acqua - fondo_a(s))
 	_metti_lei(0.0)
 
 
@@ -1185,12 +1158,10 @@ func riemergi() -> void:
 	lei_stato = Lei.SALE
 	_lei_t = 0.0
 	lei_s = -1.0
-	lei.visible = true
-	_metti_lei(0.0)
-	var durata := _anima_lei(&"inseguimento/sale_dall_acqua", 0.0)
-	lei.attacca(0.7, &"")
+	var p := punto(lei_s)
+	lei_tunnel.riemergi(Vector3(p.x, acqua, p.z), direzione(lei_s), acqua - fondo_a(lei_s))
 	lei_riemersa.emit()
-	get_tree().create_timer(minf(durata, 2.5), false).timeout.connect(func():
+	get_tree().create_timer(minf(lei_tunnel._durata(&"riemerge"), 2.5), false).timeout.connect(func():
 		if lei_stato == Lei.SALE:
 			insegui_da(lei_s))
 
@@ -1202,9 +1173,7 @@ func respingi() -> void:
 		return
 	lei_stato = Lei.RESPINTA
 	_lei_t = 0.0
-	_getto_preso = 0.0
-	_anima_lei(&"inseguimento/respinta", 0.12)
-	lei.chiudi_occhio(0.8)
+	lei_tunnel.respinta()
 	lei_respinta.emit()
 
 
@@ -1212,37 +1181,20 @@ func _prendi() -> void:
 	if lei_stato == Lei.PRESA:
 		return
 	lei_stato = Lei.PRESA
-	_anima_lei(&"inseguimento/presa", 0.12)
-	lei.attacca(0.4, &"")
-	lei.add_to_group(&"medusa_che_prende")
 	giocatore_preso.emit()
 	if bersaglio == null:
-		GameState.kill_player(&"medusa")
+		lei_tunnel.prendi()         # (la presa e la morte del giocatore)
+	else:
+		# (nei test chi insegue è finto: solo l'animazione)
+		lei_tunnel.stato = LeiTunnel.Stato.PRESA
+		lei_tunnel._anima("presa", 0.15)
 
 
-func _anima_lei(nome: StringName, fondi: float) -> float:
-	lei.animazione = nome
-	var ap := lei.find_child("AnimationPlayer", true, false) as AnimationPlayer
-	if ap == null or not ap.has_animation(nome):
-		return 1.0
-	ap.play(nome, fondi)
-	return ap.get_animation(nome).length
-
-
-## Mette lei sull'asse del canale a [member lei_s], sopra l'acqua, girata verso chi insegue.
+## Mette lei sull'asse del canale a [member lei_s], sul pelo dell'acqua: la quota, il giro e l'inclinazione in curva
+## li fa LeiTunnel.
 func _metti_lei(delta: float) -> void:
 	var p := punto(lei_s)
-	var pos := Vector3(p.x, acqua + lei_sopra_acqua, p.z)
-	if lei_stato == Lei.SALE:
-		# sale dalla presa: dal fondo fino alla sua quota in 1,6 s
-		pos.y = lerpf(PRESA_FONDO, acqua + lei_sopra_acqua, clampf(_lei_t / 1.6, 0.0, 1.0))
-	lei.global_position = pos
-	var b := _bersaglio()
-	var guarda := (b.global_position if b else pos + direzione(lei_s)) - pos
-	guarda.y = 0.0
-	if guarda.length() > 0.1:
-		var voluta := Basis.looking_at(guarda.normalized(), Vector3.UP, true)
-		lei.global_transform.basis = lei.global_transform.basis.slerp(voluta, clampf(delta * 4.0, 0.0, 1.0)) if delta > 0.0 else voluta
+	lei_tunnel.vai(Vector3(p.x, acqua, p.z), direzione(lei_s), delta)
 
 
 func _process(delta: float) -> void:
@@ -1284,7 +1236,6 @@ func _process(delta: float) -> void:
 			lei_s = maxf(lei_s, -1.0)
 			if _lei_t >= fermo_dopo_getto:
 				lei_stato = Lei.INSEGUE
-				_anima_lei(&"inseguimento/incombe", 0.3)
 	_metti_lei(delta)
 
 
@@ -1365,6 +1316,7 @@ func riparti_da(s: float) -> void:
 			p.water_pack.tank_amount = p.water_pack.tank_capacity, CONNECT_ONE_SHOT)
 	if s < 20.0:
 		lei_stato = Lei.VIA
+		lei_tunnel.via()
 		get_tree().create_timer(2.0, false).timeout.connect(riemergi)
 	else:
 		insegui_da(s - distanza_max)
@@ -2092,6 +2044,16 @@ func _scatola_ruotata(st: SurfaceTool, f: PackedVector3Array, c: Vector3, ax: Ve
 
 
 # --- utilità ---------------------------------------------------------------------------------------------------------
+
+## Il punto della faccia del muro dal lato [param lato] a [param s], alla quota [param y], come lo disegna la mesh:
+## dritto fra una sezione e l'altra (ogni [constant PASSO_SEZIONE] metri dalla testa), non sulla curva esatta.
+func _muro_a(s: float, lato: float, y: float) -> Vector3:
+	var sa := -TESTA + floorf((s + TESTA) / PASSO_SEZIONE) * PASSO_SEZIONE
+	var sb := sa + PASSO_SEZIONE
+	var a := _al(punto(sa), destra(sa), Vector2(lato * muro, y))
+	var b := _al(punto(sb), destra(sb), Vector2(lato * muro, y))
+	return a.lerp(b, (s - sa) / PASSO_SEZIONE)
+
 
 func _al(p: Vector3, r: Vector3, v: Vector2) -> Vector3:
 	return Vector3(p.x, 0.0, p.z) + r * v.x + Vector3.UP * v.y

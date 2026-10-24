@@ -203,7 +203,7 @@ func _passi_1_6() -> void:
 	check(curva[0], "passata la prima curva il tunnel lo dice (torre e condotte si liberano)")
 	# da qui lei resta ferma: le prove dopo sono sul giocatore
 	sott.lei_stato = SalaSottomarino.Lei.VIA
-	sott.lei.visible = false
+	sott.lei_tunnel.via()
 
 	# 5. i gommoni e i salti li prova enigmi, che li fa (test_parkour_gommoni.gd)
 
