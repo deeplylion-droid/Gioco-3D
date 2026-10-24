@@ -61,6 +61,11 @@ func _process(delta: float) -> void:
 		var st: WaterStyle = wb.style if wb.style else WaterStyle.new()
 		_mat.set_shader_parameter("distortion", st.underwater_distortion)
 		_mat.set_shader_parameter("density", st.underwater_density)
+	# il pelo e il fondo per lo shader sono quelli di questa massa d'acqua (vedi underwater_post.gdshader)
+	_mat.set_shader_parameter("has_body", wb != null)
+	if wb:
+		_mat.set_shader_parameter("body_level", float(wb.level))
+		_mat.set_shader_parameter("body_bottom", float(wb.bottom))
 	if under != is_underwater:
 		is_underwater = under
 		if wb:
