@@ -53,6 +53,11 @@ const LUCINE_OGNI := 3.0
 ## le bollicine ("B", fermi col plancton, per le prove). Vuote: niente.
 static var scelta_pesci := "A"
 static var scelta_abisso := "A"
+## Le reti con le stelle: il modello Meshy è venuto male (quattro bastoni); quella fatta qui l'ha scelta l'utente
+## ("Voto A", 24 ottobre, docs/proposte/sottomarino/rete_stelle_da_codice.jpg).
+static var reti_accese := true
+## Solo per gli scatti: la fase uguale per tutti gli oblò grandi (negativa: ognuno la sua).
+static var fase_oblo_prova := -1.0
 ## I pesci: quanto distano lungo la strada (m), la scala del modello, la quota della mensola (sopra il piano).
 const PESCI_OGNI := 6.0
 const PESCE_SCALA := 0.7
@@ -121,6 +126,8 @@ func _tartaruga() -> void:
 
 ## Le reti con le stelle marine appese ai muri sopra i 2 m.
 func _reti() -> void:
+	if not reti_accese:
+		return
 	var nodo := _nodo("Reti")
 	for q in RETI:
 		_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
@@ -200,8 +207,8 @@ func _rete(nodo: Node3D, s: float, lato: float, basso: float) -> void:
 		gambo.mesh = gm
 		gambo.material_override = sala._mat_ottone()
 		n.add_child(gambo)
-		# (4 mm nel muro)
-		gambo.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), al.call(u, my, 0.0085))
+		# (3 mm nel muro)
+		gambo.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), al.call(u, my, 0.0095))
 	# le stelle marine, appoggiate sulle maglie
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(s * 10.0)
@@ -393,13 +400,22 @@ func _pesce_mensola(nodo: Node3D, s: float, lato: float, k: int) -> void:
 	var p := _modello(nodo, "pesce_vetroresina", Vector3.ZERO, Vector3.ZERO, PESCE_SCALA)
 	p.name = "pesce_%d" % k
 	p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), pm + nrm * (fuori * 0.5))
-	_appoggia_su(p, pm.y + 0.0005)
 	# lontano dal muro almeno 3 cm (le pinne)
 	var gap := INF
 	for v in _triangoli(p):
 		gap = minf(gap, (v - pm).dot(nrm))
 	if gap < 0.03:
 		p.position += nrm * (0.03 - gap)
+	# il piede del palo sulla mensola: il punto più basso fra quelli sopra la mensola (le pinne fuori possono
+	# scendere oltre il bordo)
+	var basso := INF
+	for v in _triangoli(p):
+		var lu := (v - pm).dot(lungo)
+		var fu := (v - pm).dot(nrm)
+		if absf(lu) < largo * 0.5 - 0.01 and fu > 0.0 and fu < fuori - 0.01:
+			basso = minf(basso, v.y)
+	if basso < INF:
+		p.position.y += pm.y + 0.0005 - basso
 	# il faretto sotto il pesce: in punta alla mensola, puntato in su sulla pancia
 	var base := pm + nrm * (fuori - 0.07) + lungo * 0.12 + Vector3.UP * 0.0005
 	_faretto_mensola(nodo, base, p.position + Vector3.UP * 0.45, "faretto_pesce_%d" % k)
@@ -502,15 +518,24 @@ func _appoggia_su(n: Node3D, quota: float) -> void:
 func _occupati_muri() -> Array:
 	var out: Array = []
 	for n in sala.find_children("*", "Node3D", true, false):
-		var nome := String(n.name)
-		if not (nome.begins_with("lampada") or nome == "Oblo" or nome.begins_with("rete_") or nome.begins_with("faretto")
-				or nome.begins_with("cartello") or nome.begins_with("salvagente") or nome.begins_with("fanale")):
+		# (i fratelli con lo stesso nome Godot li rinomina "@Oblo@12": si cerca il pezzo nel nome)
+		var nome := String(n.name).to_lower()
+		if not (nome.contains("lampada") or nome.contains("oblo") or nome.contains("rete_") or nome.contains("faretto")
+				or nome.contains("cartello") or nome.contains("salvagente") or nome.contains("fanale") or nome.contains("mensola")):
 			continue
 		var pos := _xf(n as Node3D).origin
 		var pr := sala.proietta(pos)
 		if absf(float(pr[1])) < sala.muro - 1.0:
 			continue
 		out.append([float(pr[0]), signf(float(pr[1])), 1.2 if nome.begins_with("rete_") else 0.6])
+	# le lampade e gli oblò piccoli di _luci (i loro nodi hanno nomi automatici, "@Node3D@367"): tutti i figli di Luci
+	var luci := sala.get_node_or_null("Luci")
+	if luci:
+		for n in luci.get_children():
+			if n is Node3D and not n is Light3D:
+				var pr := sala.proietta(_xf(n as Node3D).origin)
+				if absf(float(pr[1])) > sala.muro - 1.0:
+					out.append([float(pr[0]), signf(float(pr[1])), 0.6])
 	for o in sala.ostacoli:
 		out.append([float(o["s"]) + float(o["lungo"]) * 0.5, float(o["lato"]), float(o["lungo"]) * 0.5 + 0.8])
 	return out
@@ -537,13 +562,6 @@ func _abisso_lampade() -> void:
 			continue
 		sala._lampada(nodo, s, lato, sala.piano + 3.0, 3.2)
 		var l := nodo.get_child(nodo.get_child_count() - 2) as Node3D
-		# la lampada a filo del muro (_lampada la lascia 2 cm davanti: staccata)
-		var w = _muro(s, lato, sala.piano + 3.0)
-		if w != null:
-			var gap := INF
-			for v in _triangoli(l):
-				gap = minf(gap, (v - (w[0] as Vector3)).dot(w[1]))
-			l.position -= (w[1] as Vector3) * (gap - 0.001)
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
 			g.material_override = _mat("globo_blu", Color(0.35, 0.5, 1.0), 0.4, 0.0, Color(0.25, 0.42, 1.0), 2.5)
@@ -636,9 +654,19 @@ func _abisso_oblo() -> void:
 			var m := ShaderMaterial.new()
 			m.shader = shader
 			m.set_shader_parameter(&"animato", scelta_abisso == "A")
-			m.set_shader_parameter(&"fase", float(k) * 0.37)
+			m.set_shader_parameter(&"fase", float(k) * 0.37 if fase_oblo_prova < 0.0 else fase_oblo_prova)
 			vetro.material_override = m
 			n.add_child(vetro)
+			m.set_shader_parameter(&"raggio", OBLO_R)
+			# una luce debole davanti, del colore del mare: si vede l'anello d'ottone (senza, al buio il vetro sembrava
+			# un disco attaccato al muro)
+			var o := OmniLight3D.new()
+			o.light_color = Color(0.3, 0.5, 0.85)
+			o.light_energy = 0.6
+			o.omni_range = 2.6
+			o.shadow_enabled = false
+			o.position = Vector3(0, 0, 0.6)
+			n.add_child(o)
 			occupati.append([s, lato, OBLO_R + 0.2])
 			k += 1
 			messi += 1
