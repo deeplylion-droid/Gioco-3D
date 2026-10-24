@@ -927,7 +927,7 @@ def pose_oblo_sbircia_stacca(arm, C, Z, t, s=SBIRCIA_LATO):
     _calma(arm, C, Z, 0.0, avanti=6.0 - 14.0 * via, su=-2.0 - 10.0 * via, raccolta=True)
     testa(arm, piega=-s * 16.0 * (1 - via), giro=-s * 10.0 * (1 - via))
     # (indietro e giu', non di lato: la vasca del corridoio del personale e' stretta)
-    _occhio_in(arm, (s * SBIRCIA_OCCHIO, -dd + VISO_DAVANTI - 0.022 + 1.8 * via, hh + 0.03 - 1.9 * via ** 1.6))
+    _occhio_in(arm, (s * SBIRCIA_OCCHIO, -dd + VISO_DAVANTI - 0.022 + 1.8 * via, hh + 0.03 - 1.3 * via ** 1.6))
     suf_vetro = '.L' if s < 0 else '.R'
     pc = mondo(arm, arm.pose.bones['braccio' + suf_vetro].head)
     vetro = Vector((s * (OBLO_R - 0.50), -dd + PALMO, hh - 0.12))
