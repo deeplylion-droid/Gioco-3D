@@ -603,8 +603,11 @@ func _capannone() -> void:
 	_muro_box(Vector3(sp, h, zp - vano - Z0), Vector3(X0 - sp * 0.5, h * 0.5, (Z0 + zp - vano) * 0.5), muro)
 	_muro_box(Vector3(sp, h, Z1 - zp - vano), Vector3(X0 - sp * 0.5, h * 0.5, (Z1 + zp + vano) * 0.5), muro)
 	_muro_box(Vector3(sp, h - 2.3, vano * 2.0), Vector3(X0 - sp * 0.5, 2.3 + (h - 2.3) * 0.5, zp), muro)
-	# il muro che chiude la piazza a est, lungo il muro nord, fino al canale del raggio d'imbarco
-	_muro_box(Vector3(0.3, TETTO, Z_PIAZZA_NORD - Z0), Vector3(MURO_PIAZZA, TETTO * 0.5, (Z0 + Z_PIAZZA_NORD) * 0.5), muro)
+	# il muro che chiude la piazza a est, lungo il muro nord, fino al canale del raggio d'imbarco; la testa, davanti alla
+	# fila della roccia fino all'acqua, è solo collisione: lì c'è la roccia (_testa_muro_piazza)
+	var z_testa := Z_PIAZZA_NORD - TESTA_MURO
+	_muro_box(Vector3(0.3, TETTO, z_testa - Z0), Vector3(MURO_PIAZZA, TETTO * 0.5, (Z0 + z_testa) * 0.5), muro)
+	_muro_box(Vector3(0.3, TETTO, TESTA_MURO), Vector3(MURO_PIAZZA, TETTO * 0.5, z_testa + TESTA_MURO * 0.5), null)
 	# le due porte: il telaio d'acciaio e l'anta spalancata verso dentro
 	await _pausa()
 	_porta_aperta(Vector3(INGRESSO_X, 0, Z0), 0.0)
@@ -666,13 +669,14 @@ func _scatola_in(padre: Node3D, size: Vector3, pos: Vector3, m: Material) -> voi
 
 
 func _muro_box(size: Vector3, pos: Vector3, m: Material) -> void:
-	var mi := MeshInstance3D.new()
-	var b := BoxMesh.new()
-	b.size = size
-	mi.mesh = b
-	mi.material_override = m
-	mi.position = pos
-	add_child(mi)
+	if m:
+		var mi := MeshInstance3D.new()
+		var b := BoxMesh.new()
+		b.size = size
+		mi.mesh = b
+		mi.material_override = m
+		mi.position = pos
+		add_child(mi)
 	var f := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
 	bs.size = size
@@ -1044,8 +1048,29 @@ func _rocce_buchi(rocce: Array) -> void:
 			_roccia(q, c[1], messe % 2 == 0, LARGO_BUCO / 4.2)
 			rocce.append([q, c[1]])
 			messe += 1
+	_testa_muro_piazza(rocce)
 	_zone_libere = zone
 	print("rocce nei buchi: %d" % messe)
+
+
+## La testa del muro della piazza (x [constant MURO_PIAZZA]) sporgeva di [constant TESTA_MURO] davanti alla fila della
+## roccia, fino al bordo dell'acqua: dalla ciambella, all'inizio della curva, era una lista grigia (riscontro del
+## coordinatore, 24 ottobre). Lì il muro resta solo collisione (chiude ancora la banchina a chi cammina) e al suo
+## posto ci sono due pannelli stretti schiena contro schiena, dalla fila della roccia fin dove c'è banchina.
+const TESTA_MURO := 2.4
+
+
+func _testa_muro_piazza(rocce: Array) -> void:
+	for lato: float in [-1.0, 1.0]:
+		var x := MURO_PIAZZA + lato * 0.002
+		var fine := Z_PIAZZA_NORD
+		while fine > Z_PIAZZA_NORD - TESTA_MURO + 0.5 and not _sulla_banchina(Vector3(x + lato * 0.5, 0, fine), 0.05):
+			fine -= 0.05
+		var inizio := Z_PIAZZA_NORD - TESTA_MURO
+		var c := Vector3(x, 0, (inizio + fine) * 0.5)
+		var rot := 90.0 if lato > 0.0 else -90.0
+		_roccia(c, rot, lato > 0.0, (fine - inizio) / 4.2)
+		rocce.append([c, rot])
 
 
 ## Il retro piatto dei pannelli si vedeva dalle banchine e dai canali degli altri rami: dietro ogni pannello
