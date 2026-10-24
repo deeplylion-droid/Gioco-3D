@@ -13,12 +13,17 @@ const PLAYER := "res://scenes/player/player.tscn"
 var cartella := "user://scatti_oblo"
 var solo := PackedStringArray()
 
-## Per ogni oblò: [dove sta il giocatore da lontano (i piedi), da vicino]; guarda sempre il centro dell'oblò.
+## Per ogni oblò: [dove sta il giocatore da lontano (i piedi), da vicino]; guarda sempre il centro dell'oblò. Da
+## lontano: a 3-4 m, dal lato opposto del corridoio (largo 2 m), così il vetro non si vede di taglio.
 var POSTI := {
-	"ObloFiume": [Vector3(-4.9, -5.4, 51.2), Vector3(-5.45, -5.4, 58.3)],
+	"ObloFiume": [Vector3(-5.5, -5.4, 54.4), Vector3(-5.45, -5.4, 58.3)],
 	"ObloPersonale": [Vector3(-34.35, -5.4, 50.45), Vector3(-34.45, -5.4, 49.35)],
-	"ObloServizio": [Vector3(-27.0, 0.0, 38.6), Vector3(-21.2, 0.0, 39.15)],
+	"ObloServizio": [Vector3(-24.4, 0.0, 39.0), Vector3(-21.2, 0.0, 39.15)],
 }
+
+## Mentre si stacca: gli scatti a questi punti dell'animazione del distacco (i fotogrammi su llvmpipe sono lenti e
+## lunghi, quindi si aspetta la posizione dell'animazione e non un numero di fotogrammi).
+const QUOTE_STACCA := {"3_si_stacca": 0.35, "3b_si_stacca": 0.6}
 
 
 func _ready() -> void:
@@ -79,14 +84,20 @@ func _run() -> void:
 		p.look_at_point(c)
 		await _fotogrammi(40)
 		_scatto("%s_4_ravvicinato" % nome)
-		# mentre si stacca (1,2 s dopo)
+		# mentre si stacca
 		p.teleport(posti[1])
 		await _fotogrammi(4)
 		p.look_at_point(c + Vector3.DOWN * 0.15)
 		await _fotogrammi(20)
+		var ap: AnimationPlayer = o.lei._ap if o.lei else null
 		o._stacca()
-		await _fotogrammi(72)
-		_scatto("%s_3_si_stacca" % nome)
+		for q in QUOTE_STACCA:
+			for i in 900:
+				if not is_instance_valid(ap) or not String(ap.current_animation).ends_with("_stacca") \
+						or ap.current_animation_position >= QUOTE_STACCA[q] * ap.current_animation_length:
+					break
+				await get_tree().process_frame
+			_scatto("%s_%s" % [nome, q])
 		await _fotogrammi(150)
 	get_tree().quit()
 
