@@ -136,7 +136,7 @@ func _reti() -> void:
 		var alto := float(q[2]) + RETE_ALTA + 0.32
 		var p := sala.punto(s)
 		var centro := sala._al(p, sala.destra(s), Vector2(float(q[1]) * (sala.muro - 0.3), sala.piano + float(q[2]) + RETE_ALTA * 0.5))
-		_faretto(nodo, s, float(q[1]), alto, centro, Color(1.0, 0.9, 0.75), 5.0, 48.0, 4.5)
+		_faretto(nodo, s, float(q[1]), alto, centro, Color(1.0, 0.9, 0.75), 14.0, 60.0, 5.0)
 		_cavo_faretto(nodo, s, float(q[1]), alto)
 
 
@@ -191,7 +191,7 @@ func _rete(nodo: Node3D, s: float, lato: float, basso: float) -> void:
 	var mi := MeshInstance3D.new()
 	mi.name = "maglie"
 	mi.mesh = st.commit()
-	mi.material_override = _mat("corda_rete", Color(0.62, 0.52, 0.36), 0.9)
+	mi.material_override = _mat("corda_rete", Color(0.82, 0.72, 0.52), 0.9)
 	n.add_child(mi)
 	# i chiodi d'ottone agli angoli in alto, sul bordo: piantati nel muro
 	for u: float in [-mx, mx]:
