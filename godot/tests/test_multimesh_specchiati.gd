@@ -67,6 +67,12 @@ func _controlla(radice: Node, nome: String) -> void:
 		if mm == null or mm.mesh == null:
 			continue
 		for sf in mm.mesh.get_surface_count():
+			# a doppia faccia (cull_disabled) il verso non conta: le medusine, il film delle pile
+			var mat: Material = (n as MultiMeshInstance3D).material_override
+			if mat == null:
+				mat = mm.mesh.surface_get_material(sf)
+			if _doppia_faccia(mat):
+				continue
 			var a := mm.mesh.surface_get_arrays(sf)
 			var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
 			var nr = a[Mesh.ARRAY_NORMAL]
@@ -88,6 +94,14 @@ func _controlla(radice: Node, nome: String) -> void:
 				girate.append("%s superficie %d (%d su %d)" % [radice.get_path_to(n), sf, contro, tot])
 	check(girate.is_empty(), "%s: le facce delle mesh dei MultiMesh girano come vuole Godot (%d girate: %s)" % [nome, girate.size(), ", ".join(girate.slice(0, 10))])
 	check(sbagliate.is_empty(), "%s: nessuna istanza di MultiMesh specchiata (%d: %s)" % [nome, sbagliate.size(), ", ".join(sbagliate.slice(0, 10))])
+
+
+static func _doppia_faccia(m: Material) -> bool:
+	if m is BaseMaterial3D:
+		return (m as BaseMaterial3D).cull_mode == BaseMaterial3D.CULL_DISABLED
+	if m is ShaderMaterial and (m as ShaderMaterial).shader:
+		return (m as ShaderMaterial).shader.code.contains("cull_disabled")
+	return false
 
 
 func _secondi(s: float) -> void:
