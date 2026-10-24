@@ -369,6 +369,8 @@ func _process(delta: float) -> void:
 		return
 	var cam := p.camera
 	var dentro := _dentro(p.global_position)
+	if stato == Stato.ATTESA and not (attivo and dentro and GameState.luci == GameState.Luci.BLACKOUT):
+		return   # (lontano: niente raggi)
 	var d := cam.global_position.distance_to(_davanti())
 	var ang := _angolo(cam)
 	var libera := _vista_libera(cam)
