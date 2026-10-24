@@ -1023,7 +1023,7 @@ func _rocce_buchi(rocce: Array) -> void:
 				continue
 			# dove la banchina è diversa (le conche dei bivi) il pannello va più indietro, verso il muro
 			for indietro in [0.0, 0.5, 1.0, 1.5]:
-				var q := p - davanti * (indietro + 0.05)
+				var q: Vector3 = p - davanti * (indietro + 0.05)
 				if not _ci_sta(q, rot, LARGO_BUCO, 0.6) or in_piazza(q - davanti * 1.0):
 					continue
 				_roccia(q, rot, messe % 2 == 0, LARGO_BUCO / 4.2)
