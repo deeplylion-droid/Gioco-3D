@@ -39,7 +39,7 @@ const SOGLIA := 3.0
 const BALLATOIO := 1.0
 const PORTELLO_LARGO := 1.3
 const PORTELLO_ALTO := 1.8
-const PORTELLO_APERTO := 95.0
+const PORTELLO_APERTO := 90.0
 ## L'oblò e il volantino sul battente (dalla soglia).
 const OBLO_Y := 1.3
 const OBLO_R := 0.2
@@ -452,7 +452,7 @@ func _pezzo(s0: float, s1: float) -> void:
 		_passaggio_porta(st, facce)
 	for k in st:
 		var mi := MeshInstance3D.new()
-		mi.name = k
+		mi.name = "struttura_" + k     # (architettura per il controllo di posizionamento: muri e pavimenti)
 		mi.mesh = (st[k] as SurfaceTool).commit()
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
@@ -684,7 +684,8 @@ func _fine() -> void:
 		var pk := punto(sk)
 		var rk := destra(sk)
 		var alto := alzata * (k + 1)
-		_scatola(st["graniglia"], facce, _al(pk, rk, Vector2(-muro + 0.5, piano + alto * 0.5)), rk, direzione(sk), Vector3(1.0, alto, 0.32))
+		# (a filo del muro e del pavimento, 2 mm più in qua: le facce sulla stessa superficie del muro si confondevano)
+		_scatola(st["graniglia"], facce, _al(pk, rk, Vector2(-muro + 0.502, piano + alto * 0.5 + 0.001)), rk, direzione(sk), Vector3(0.996, alto - 0.002, 0.32))
 	# il corrimano della scala e del ballatoio dalla parte del vuoto (la vasca): pali e tubo
 	var corr := _mat_ferro()
 	for k in range(0, gradini + 1, 2):
@@ -700,14 +701,15 @@ func _fine() -> void:
 	_palo(nodo, su0, p_ball[0] + Vector3.UP * 1.0, 0.025, corr)
 	for k in st:
 		var mi := MeshInstance3D.new()
-		mi.name = k
+		mi.name = "struttura_" + k     # (architettura per il controllo di posizionamento: muri e pavimenti)
 		mi.mesh = (st[k] as SurfaceTool).commit()
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
 	_corpo(nodo, facce)
 	_portello(nodo, p, r, d, sg)
 	# le luci: la lampada sopra il portello dalla parte del tunnel, e una piccola nella camera sul volantino
-	_lampada(nodo, L - BALLATOIO - 2.0, -1.0, sg + 2.2, 4.0)
+	# (sul muro destro, sotto l'imposta della volta: sul sinistro c'è la scala, e sopra la scala ci si passa)
+	_lampada(nodo, L - BALLATOIO - 2.0, 1.0, piano + 3.5, 4.0)
 	var lc := OmniLight3D.new()
 	lc.light_color = Color(1.0, 0.86, 0.66)
 	lc.light_energy = 1.6
@@ -761,28 +763,79 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	perno.global_transform = Transform3D(Basis(r, Vector3.UP, -d), _al(p, r, Vector2(-mz, sg)))
 	# (il perno a sinistra della porta guardando dal tunnel: il battente si apre verso la camera, contro il suo
 	# fianco sinistro, e non ingombra il ballatoio)
-	var battente := CSGCombiner3D.new()
+	# (il battente è una mesh vera, lastra spessa 10 cm col buco tondo dell'oblò: tagliata in due a metà del buco,
+	# così ogni metà ha il buco sul bordo e si triangola; la collisione va con lui quando gira)
+	var b_st := SurfaceTool.new()
+	b_st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var b_facce := PackedVector3Array()
+	var x0 := 0.02
+	var x1 := PORTELLO_LARGO - 0.02
+	var y0 := 0.02
+	var y1 := PORTELLO_ALTO - 0.02
+	var mezzo := 0.05
+	var cerchio := PackedVector2Array()
+	for k in 32:
+		var a := TAU * float(k) / 32.0
+		cerchio.append(Vector2(mz + cos(a) * OBLO_R, OBLO_Y + sin(a) * OBLO_R))
+	for meta in [PackedVector2Array([Vector2(x0, y0), Vector2(mz, y0), Vector2(mz, y1), Vector2(x0, y1)]),
+			PackedVector2Array([Vector2(mz, y0), Vector2(x1, y0), Vector2(x1, y1), Vector2(mz, y1)])]:
+		# (il buco sta sul bordo di ogni metà: niente buchi interni, ogni pezzo è la lastra)
+		for poly in Geometry2D.clip_polygons(meta, cerchio):
+			var tri := Geometry2D.triangulate_polygon(poly)
+			for k in range(0, tri.size(), 3):
+				for zf: float in [-mezzo, mezzo]:
+					var tt := [Vector3(poly[tri[k]].x, poly[tri[k]].y, zf), Vector3(poly[tri[k + 1]].x, poly[tri[k + 1]].y, zf),
+							Vector3(poly[tri[k + 2]].x, poly[tri[k + 2]].y, zf)]
+					_tri(b_st, tt, Vector3(0, 0, signf(zf)))
+					b_facce.append_array(PackedVector3Array(tt))
+	# i fianchi della lastra e il bordo del buco
+	var bordo := [[Vector2(x0, y0), Vector2(x1, y0), Vector3.DOWN], [Vector2(x1, y0), Vector2(x1, y1), Vector3.RIGHT],
+			[Vector2(x1, y1), Vector2(x0, y1), Vector3.UP], [Vector2(x0, y1), Vector2(x0, y0), Vector3.LEFT]]
+	for k in 32:
+		var c0: Vector2 = cerchio[k]
+		var c1: Vector2 = cerchio[(k + 1) % 32]
+		var m := (c0 + c1) * 0.5 - Vector2(mz, OBLO_Y)
+		bordo.append([c0, c1, Vector3(-m.x, -m.y, 0.0).normalized()])
+	for e in bordo:
+		var e0: Vector2 = e[0]
+		var e1: Vector2 = e[1]
+		var q := [Vector3(e0.x, e0.y, -mezzo), Vector3(e1.x, e1.y, -mezzo), Vector3(e1.x, e1.y, mezzo), Vector3(e0.x, e0.y, mezzo)]
+		_quad(b_st, q, e[2])
+		_facce_quad(b_facce, q)
+	var battente := AnimatableBody3D.new()
 	battente.name = "Battente"
-	battente.use_collision = true
 	battente.collision_layer = Layers.WORLD
+	battente.sync_to_physics = false
 	perno.add_child(battente)
-	var lastra := CSGBox3D.new()
-	lastra.size = Vector3(PORTELLO_LARGO - 0.04, PORTELLO_ALTO - 0.04, 0.1)
-	lastra.position = Vector3(mz, PORTELLO_ALTO * 0.5, 0.0)
-	lastra.material = acciaio
+	var lastra := MeshInstance3D.new()
+	lastra.name = "Lastra"
+	lastra.mesh = b_st.commit()
+	lastra.material_override = acciaio
 	battente.add_child(lastra)
-	var buco := CSGCylinder3D.new()
-	buco.radius = OBLO_R
-	buco.height = 0.3
-	buco.sides = 24
-	buco.operation = CSGShape3D.OPERATION_SUBTRACTION
-	buco.rotation_degrees.x = 90
-	buco.position = Vector3(mz, OBLO_Y, 0.0)
-	battente.add_child(buco)
+	var b_cs := CollisionShape3D.new()
+	var b_forma := ConcavePolygonShape3D.new()
+	b_forma.set_faces(b_facce)
+	b_cs.shape = b_forma
+	battente.add_child(b_cs)
+	# le due cerniere sul perno: fra la cornice e il battente (lo reggono)
+	for yc: float in [0.3, PORTELLO_ALTO - 0.3]:
+		var cern := MeshInstance3D.new()
+		cern.name = "Cerniera"
+		var cmh := CylinderMesh.new()
+		# (il perno sta nei 2 cm fra la cornice, che finisce a x 0, e il bordo del battente, a x 0,02: a 1-2 mm da tutti e
+		# due, senza entrarci)
+		cmh.top_radius = 0.009
+		cmh.bottom_radius = 0.009
+		cmh.height = 0.22
+		cern.mesh = cmh
+		cern.material_override = acciaio
+		cern.position = Vector3(0.0105, yc, 0.0)
+		perno.add_child(cern)
 	var vetro := MeshInstance3D.new()
 	var vm := CylinderMesh.new()
-	vm.top_radius = OBLO_R
-	vm.bottom_radius = OBLO_R
+	# (un filo più stretto del buco, che è un poligono di 32 lati: così il bordo del vetro tocca senza entrare)
+	vm.top_radius = OBLO_R * cos(PI / 32.0) - 0.001
+	vm.bottom_radius = OBLO_R * cos(PI / 32.0) - 0.001
 	vm.height = 0.02
 	vm.radial_segments = 24
 	vetro.mesh = vm
@@ -798,7 +851,8 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 		an.mesh = tm
 		an.material_override = _mat_ottone()
 		an.rotation_degrees.x = 90
-		an.position = Vector3(mz, OBLO_Y, lato * 0.055)
+		# (la cornice d'ottone sulla faccia della lastra, a 2 mm)
+		an.position = Vector3(mz, OBLO_Y, lato * (mezzo + 0.04 + 0.002))
 		perno.add_child(an)
 	# il volantino dalla parte della camera (z negativo del perno: verso la camera), sotto l'oblò, illuminato
 	var volantino := Node3D.new()
@@ -825,11 +879,12 @@ func _portello(nodo: Node3D, p: Vector3, r: Vector3, d: Vector3, sg: float) -> v
 	var mm := CylinderMesh.new()
 	mm.top_radius = 0.05
 	mm.bottom_radius = 0.05
-	mm.height = 0.12
+	# (il mozzo va dalla ruota alla lastra: 6 cm, fino a 2 mm dalla lastra)
+	mm.height = 0.11 - mezzo - 0.002
 	mozzo.mesh = mm
 	mozzo.material_override = acciaio
 	mozzo.rotation_degrees.x = 90
-	mozzo.position.z = 0.05
+	mozzo.position.z = (0.11 - mezzo - 0.002) * 0.5
 	volantino.add_child(mozzo)
 	# aperto: il battente contro il muro dalla parte del tunnel
 	perno.rotation_degrees.y += PORTELLO_APERTO
@@ -928,6 +983,9 @@ func _luci() -> void:
 	var s := 3.0
 	var lato := 1.0
 	while s < lunghezza():
+		# (nell'approdo no: a sinistra c'è la scala col ballatoio, a destra la lampada del portello)
+		if s > lunghezza() - BALLATOIO - 6.0:
+			break
 		var p := punto(s)
 		var r := destra(s)
 		var muro_p := p + r * lato * (muro - 0.02)
@@ -936,6 +994,7 @@ func _luci() -> void:
 		l.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z)
 		l.look_at(l.global_position - r * lato * 2.0, Vector3.UP)
 		l.rotate_object_local(Vector3.UP, PI)
+		_a_filo_del_muro(l, -r * lato)
 		# (nel giardino dei coralli la luce è verde-azzurra, come nel piano degli ambienti)
 		var coralli := ambiente(s) == 1
 		var g := l.find_child("globo", true, false) as MeshInstance3D
@@ -948,7 +1007,7 @@ func _luci() -> void:
 		o.omni_attenuation = 1.3
 		o.shadow_enabled = false
 		nodo.add_child(o)
-		o.global_position = Vector3(muro_p.x, piano + 3.0, muro_p.z) - r * lato * 0.4
+		o.global_position = l.global_position - r * lato * 0.4
 		# fra una lampada e l'altra, sull'altro muro, un oblò col mare finto illuminato dietro
 		_oblo(nodo, s + 4.5, -lato)
 		s += 9.0
@@ -960,6 +1019,10 @@ func _luci() -> void:
 func _oblo(nodo: Node3D, s: float, lato: float) -> void:
 	if s > lunghezza() - 1.0:
 		return
+	# (non dietro gli ostacoli di quella banchina: lì c'è il carico, il cancello...)
+	for o in ostacoli:
+		if float(o["lato"]) == lato and s > float(o["s"]) - 2.5 and s < float(o["s"]) + float(o["lungo"]) + 2.5:
+			return
 	var p := punto(s)
 	var r := destra(s)
 	var n := Node3D.new()
@@ -1439,7 +1502,7 @@ func _galleria(o: Dictionary) -> void:
 		_facce_quad(facce, q)
 	for k in st:
 		var mi := MeshInstance3D.new()
-		mi.name = k
+		mi.name = "struttura_" + k     # (architettura per il controllo di posizionamento: muri e pavimenti)
 		mi.mesh = (st[k] as SurfaceTool).commit()
 		mi.material_override = mat_mosaico if k == "mosaico" else mat_graniglia
 		nodo.add_child(mi)
@@ -1448,13 +1511,21 @@ func _galleria(o: Dictionary) -> void:
 	for sb: float in [float(o["s"]) - GALLERIA_BOCCA * 0.5, float(o["s"]) + float(o["lungo"]) + GALLERIA_BOCCA * 0.5]:
 		var p := punto(sb)
 		var r := destra(sb) * lato
-		var fascia := MeshInstance3D.new()
-		var bm := BoxMesh.new()
-		bm.size = Vector3(GALLERIA_BOCCA + 0.4, 0.3, 0.02)
-		fascia.mesh = bm
-		fascia.material_override = _mat_strisce()
-		nodo.add_child(fascia)
-		fascia.global_transform = Transform3D(Basis.looking_at(-r, Vector3.UP), _al(p, r, Vector2(u0 - 0.01, y1 + 0.17)))
+		# (in pezzi da 30 cm, ognuno a filo del muro nel suo punto: in curva il muro non è un piano)
+		var pezzi := 6
+		var lungo_f := (GALLERIA_BOCCA + 0.4) / pezzi
+		for k in pezzi:
+			var sf := sb - (GALLERIA_BOCCA + 0.4) * 0.5 + lungo_f * (k + 0.5)
+			var rf := destra(sf) * lato
+			var fascia := MeshInstance3D.new()
+			fascia.name = "Fascia"
+			var bm := BoxMesh.new()
+			bm.size = Vector3(lungo_f + 0.004, 0.3, 0.02)
+			fascia.mesh = bm
+			fascia.material_override = _mat_strisce()
+			nodo.add_child(fascia)
+			fascia.global_transform = Transform3D(Basis.looking_at(-rf, Vector3.UP), _muro_a(sf, lato, y1 + 0.17) - rf * (muro - u0 + 0.01))
+			_a_filo_del_muro(fascia, -rf)
 		_lampada(nodo, sb, lato, y1 + 0.75, 3.0)
 	# dentro: due plafoniere a filo del soffitto
 	for f in [0.33, 0.66]:
@@ -1932,6 +2003,7 @@ func _lampada(nodo: Node3D, s: float, lato: float, y: float, energia: float) -> 
 	l.global_position = muro_p
 	l.look_at(muro_p - r * 2.0, Vector3.UP)
 	l.rotate_object_local(Vector3.UP, PI)
+	_a_filo_del_muro(l, -r)
 	var g := l.find_child("globo", true, false) as MeshInstance3D
 	if g:
 		g.material_override = _mat_globo()
@@ -1941,7 +2013,18 @@ func _lampada(nodo: Node3D, s: float, lato: float, y: float, energia: float) -> 
 	o.omni_range = 10.0
 	o.omni_attenuation = 1.3
 	nodo.add_child(o)
-	o.global_position = muro_p - r * 0.4
+	o.global_position = l.global_position - r * 0.4
+
+
+## Mette [param n] col retro a contatto col muro dietro (con Posa): [param fuori] è la direzione fuori dal muro.
+func _a_filo_del_muro(n: Node3D, fuori: Vector3) -> void:
+	var dietro := 0.0
+	for mi in n.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		var xf := m.global_transform
+		for v in m.mesh.get_faces():
+			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(-fuori))
+	Posa.fissa_al_muro(n, fuori.normalized(), dietro)
 
 
 var _materiali := {}
