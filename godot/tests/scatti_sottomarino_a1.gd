@@ -13,7 +13,12 @@ func _init() -> void:
 	var ea := OS.get_environment("SCELTA_ABISSO")
 	if ea != "":
 		SottomarinoArrediA1.scelta_abisso = "" if ea == "niente" else ea
+	# (SCATTI_FASE_OBLO=0.55: il pesce lontano a metà del passaggio dietro gli oblò grandi, nei primi secondi)
+	if OS.get_environment("SCATTI_FASE_OBLO") != "":
+		SottomarinoArrediA1.fase_oblo_prova = float(OS.get_environment("SCATTI_FASE_OBLO"))
 	SCATTI = {
+		"a1_oblo_vicino": [404.0, -1.0, 1.6, 407.5, 1.0, 2.9, 60.0],
+		"a1_oblo_vicino_2": [409.5, 0.0, 1.6, 407.5, 1.0, 2.9, 60.0],
 		"a1_pesci": [244.0, -1.0, 1.6, 262.0, 0.0, 2.4, 75.0],
 		"a1_pesci_curva": [270.0, 1.0, 1.6, 290.0, 0.0, 2.4, 75.0],
 		"a1_pesce_vicino": [246.0, 1.0, 1.6, 250.0, -1.0, 2.8, 60.0],

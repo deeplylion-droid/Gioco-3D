@@ -53,6 +53,8 @@ const LUCINE_OGNI := 3.0
 ## le bollicine ("B", fermi col plancton, per le prove). Vuote: niente.
 static var scelta_pesci := "A"
 static var scelta_abisso := "A"
+## Solo per gli scatti: la fase uguale per tutti gli oblò grandi (negativa: ognuno la sua).
+static var fase_oblo_prova := -1.0
 ## I pesci: quanto distano lungo la strada (m), la scala del modello, la quota della mensola (sopra il piano).
 const PESCI_OGNI := 6.0
 const PESCE_SCALA := 0.7
@@ -200,8 +202,8 @@ func _rete(nodo: Node3D, s: float, lato: float, basso: float) -> void:
 		gambo.mesh = gm
 		gambo.material_override = sala._mat_ottone()
 		n.add_child(gambo)
-		# (4 mm nel muro)
-		gambo.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), al.call(u, my, 0.0085))
+		# (3 mm nel muro)
+		gambo.transform = Transform3D(Basis(lungo, nrm, Vector3.UP.cross(nrm).cross(nrm)).orthonormalized(), al.call(u, my, 0.0095))
 	# le stelle marine, appoggiate sulle maglie
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(s * 10.0)
@@ -636,7 +638,7 @@ func _abisso_oblo() -> void:
 			var m := ShaderMaterial.new()
 			m.shader = shader
 			m.set_shader_parameter(&"animato", scelta_abisso == "A")
-			m.set_shader_parameter(&"fase", float(k) * 0.37)
+			m.set_shader_parameter(&"fase", float(k) * 0.37 if fase_oblo_prova < 0.0 else fase_oblo_prova)
 			vetro.material_override = m
 			n.add_child(vetro)
 			occupati.append([s, lato, OBLO_R + 0.2])

@@ -162,8 +162,8 @@ func _run() -> void:
 		var pesci := arr.find_children("pesce_*", "Node3D", true, false)
 		_check(pesci.size() >= 8, "pesci (%s): %d" % [SottomarinoArrediA1.scelta_pesci, pesci.size()])
 	if SottomarinoArrediA1.scelta_abisso != "":
-		var oblo := arr.find_children("oblo_grande_*", "Node3D", true, false)
-		_check(oblo.size() == 6, "oblò grandi dell'abisso (%s): %d" % [SottomarinoArrediA1.scelta_abisso, oblo.size()])
+		var grandi := arr.find_children("oblo_grande_*", "Node3D", true, false)
+		_check(grandi.size() == 6, "oblò grandi dell'abisso (%s): %d" % [SottomarinoArrediA1.scelta_abisso, grandi.size()])
 	_fine()
 
 
