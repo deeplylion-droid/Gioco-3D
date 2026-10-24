@@ -18,7 +18,7 @@ const CorpiMesh := preload("res://tests/corpi_dalle_mesh.gd")
 ## I casi noti, come i "voluto" del controllo di posizionamento: posto -> [tratti dell'asse ammessi, motivo, data].
 ## Solo il controllo dell'asse: la pelle vera resta bloccante anche lì.
 const NOTI := {
-	"vasca_2": [2, "la posa dell'animazione mette la punta di un tentacolo dentro un muro sottile nel primo fotogramma: va corretta nell'animazione, non nella morbidezza", "24 ottobre"],
+	# (vasca_2 tolto il 24 ottobre: con le forme dalle mesh vere e la partenza sul tratto passa in tutti e 6 i giri)
 }
 
 var _ok := 0

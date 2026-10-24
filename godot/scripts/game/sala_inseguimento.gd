@@ -549,6 +549,7 @@ func _morbidezza_qui(dove: String) -> void:
 	if _morbidezza == null or not is_instance_valid(_morbidezza):
 		return
 	_morbidezza.pavimento_y = -INF
+	_morbidezza.partenza_sul_tratto = true
 	# il mondo intorno a questo posto: scatole convesse prese dalla collisione vera (tests/genera_forme_inseguimento.gd)
 	_morbidezza.togli_forme_mondo()
 	var forme := _forme_lei()

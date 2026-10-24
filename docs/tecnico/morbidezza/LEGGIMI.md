@@ -78,8 +78,15 @@ Misurati (con la macchina scarica e carica): affacciata 3,0-4,4 ms, tuffo 3,8-6,
 
 ## Casi noti
 
-Come i "voluto" del controllo di posizionamento: in `test_morbidezza_inseguimento.gd`, `NOTI` (posto, quanti tratti dell'asse ammessi, motivo, data). Si stampano a ogni giro. Valgono solo per il controllo dell'asse: la pelle vera resta bloccante dappertutto.
+Come i "voluto" del controllo di posizionamento: in `test_morbidezza_inseguimento.gd`, `NOTI` (posto, quanti tratti dell'asse ammessi, motivo, data). Si stampano a ogni giro. Valgono solo per il controllo dell'asse: la pelle vera resta bloccante dappertutto. Oggi è vuoto: vasca_2 (24 ottobre, la punta della posa in un muro sottile) è stato tolto quando le forme dalle mesh vere e la partenza sul tratto l'hanno sistemato.
 
-- **vasca_2** (24 ottobre): nel primo fotogramma un tratto dell'asse attraversa un muro sottile. La causa è la posa dell'animazione, che mette la punta di un tentacolo dentro il muro quando lei compare: va corretta nell'animazione, non nella morbidezza (spingerla fuori dalla parte del punto prima peggiorava la pelle e il costo). La pelle lì dà 0.
+## Inseguimento, 24 ottobre (collaudo con le mesh vere)
+
+- **Le mesh vere, non solo le collisioni.** Le pompe dell'inseguimento non avevano collisione (ambienti-2 l'ha aggiunta). Il generatore delle forme (`genera_forme_inseguimento.gd`) e il test della pelle guardano anche le mesh vere: `tests/corpi_dalle_mesh.gd` fa corpi temporanei trimesh dalle mesh visibili (tranne l'acqua e lei) su uno strato che il gioco non usa.
+- **Oggetti tondi** (pompe, tubi): i loro triangoli si ritagliano in celle di 75 cm, e ogni cella diventa un poliedro di 26 facce spinte fino al vertice più fuori, coi piani già fatti nel JSON (`convessi`; la morbidezza li aggiunge con `aggiungi_piani()`, senza calcoli quando lei compare).
+- **Pavimenti sotto altre cose:** fino a 3 facce in su per colonna (il pavimento sotto una staffa o un tubo).
+- **Partenza sul tratto** (`partenza_sul_tratto`, acceso solo nell'inseguimento): quando lei compare, un punto della posa dentro il mondo si ferma sul tratto dal punto prima, all'ultimo posto fuori, invece di uscire dalla faccia più vicina (che sotto una grata o in un muro sottile è quella sbagliata).
+- **Prove di vasca_2 col giocatore nella vasca 3** (dove sta nel gioco: lei si gira verso di lui): `bash godot/tests/prova_vasca2_giocatore.sh` (di mascotte, con `GIOCATORE=x,y,z` nel test). I 5 punti nella vasca 3 danno 0; il punto del test, da solo (`SOLO=vasca_2`), ha un fotogramma con 2 vertici fino a 4 cm sotto una sporgenza di 10 cm; nel giro completo (come in CI) 0.
+- `SOLO=posto1,posto2` lancia solo quei posti.
 
 **Dopo la v0.3.12:** portare il cuore della simulazione in C++, vedi `CPP.md`.

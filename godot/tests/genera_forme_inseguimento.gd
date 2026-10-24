@@ -24,6 +24,7 @@ const SOTTO := 5.6      # fino a quanto sotto (lei sale da 5 m sotto)
 const SPESSORE := 0.3   # quanto sono spesse le scatole dietro le facce
 const UNISCI := 0.04    # i pavimenti a meno di tanto si uniscono in una lastra (la cima è la più alta)
 const MINIMA := 0.002   # le scatole più piccole (m³) non contano
+const STRATI := 3       # le facce in su per colonna (il pavimento sotto una staffa, sotto un tubo)
 const CELLA_OGGETTI := 0.75   # le celle in cui si dividono le mesh degli oggetti (m)
 const FORO := 0.75      # il raggio del foro nel pavimento dove lei sale (m)
 
@@ -162,16 +163,48 @@ func _scatole(c: Vector3, raggio: float) -> Array:
 			hi[asse] = coord if verso > 0.0 else coord + SPESSORE
 			scatole.append(AABB(lo, hi - lo))
 	# i pavimenti e le cime: la prima faccia in su dall'alto, cella per cella
-	var quote := {}
+	# (fino a STRATI facce in su per colonna: sotto una staffa o un tubo c'è ancora il pavimento)
+	var strati: Array[Dictionary] = []
+	for s in STRATI:
+		strati.append({})
 	for i in range(-n, n):
 		for j in range(-n, n):
 			var p := Vector3(c.x + (i + 0.5) * PASSO, c.y + SOPRA, c.z + (j + 0.5) * PASSO)
-			var q := PhysicsRayQueryParameters3D.create(p, p + Vector3.DOWN * (SOPRA + SOTTO), MASCHERA)
-			q.hit_back_faces = false
-			var r := spazio.intersect_ray(q)
-			if r.is_empty() or (r["normal"] as Vector3).y < 0.9:
-				continue
-			quote[Vector2i(i, j)] = (r["position"] as Vector3).y
+			var fondo := c.y - SOTTO
+			var trovati := 0
+			for giro in 8:
+				if trovati >= STRATI or p.y <= fondo:
+					break
+				var q := PhysicsRayQueryParameters3D.create(p, Vector3(p.x, fondo, p.z), MASCHERA)
+				q.hit_back_faces = false
+				var r := spazio.intersect_ray(q)
+				if r.is_empty():
+					break
+				var yh: float = (r["position"] as Vector3).y
+				if (r["normal"] as Vector3).y >= 0.9:
+					strati[trovati][Vector2i(i, j)] = yh
+					trovati += 1
+				p.y = yh - 0.02
+	for quote: Dictionary in strati:
+		_lastre(quote, c, n, scatole)
+	# senza le scatole dentro un'altra e quelle piccolissime
+	var tenute := []
+	for k in scatole.size():
+		var a: AABB = scatole[k]
+		if a.get_volume() < MINIMA:
+			continue
+		var dentro := false
+		for k2 in scatole.size():
+			if k2 != k and (scatole[k2] as AABB).grow(0.005).encloses(a) and (k2 < k or not a.grow(0.005).encloses(scatole[k2])):
+				dentro = true
+				break
+		if not dentro:
+			tenute.append(a)
+	return tenute
+
+
+## Le lastre da un piano di quote per cella ([param quote]: Vector2i -> quota della faccia in su).
+func _lastre(quote: Dictionary, c: Vector3, n: int, scatole: Array) -> void:
 	var fatte := {}
 	for j in range(-n, n):
 		for i in range(-n, n):
@@ -202,20 +235,6 @@ func _scatole(c: Vector3, raggio: float) -> Array:
 			var lo := Vector3(c.x + i * PASSO, ymax - SPESSORE, c.z + j * PASSO)
 			var hi := Vector3(c.x + (i1 + 1) * PASSO, ymax, c.z + (j1 + 1) * PASSO)
 			scatole.append(AABB(lo, hi - lo))
-	# senza le scatole dentro un'altra e quelle piccolissime
-	var tenute := []
-	for k in scatole.size():
-		var a: AABB = scatole[k]
-		if a.get_volume() < MINIMA:
-			continue
-		var dentro := false
-		for k2 in scatole.size():
-			if k2 != k and (scatole[k2] as AABB).grow(0.005).encloses(a) and (k2 < k or not a.grow(0.005).encloses(scatole[k2])):
-				dentro = true
-				break
-		if not dentro:
-			tenute.append(a)
-	return tenute
 
 
 ## Vero se la cella [param c] può stare nella lastra alla quota [param y]: alla stessa quota e non ancora in una lastra,
@@ -297,13 +316,29 @@ func _convessi(sala: Node3D, c: Vector3, raggio: float, inv: Transform3D) -> Arr
 				var a := xf * vs[ind[t] if ind != null else t]
 				var b := xf * vs[ind[t + 1] if ind != null else t + 1]
 				var cc := xf * vs[ind[t + 2] if ind != null else t + 2]
-				var centro := (a + b + cc) / 3.0
-				if not zona.grow(0.3).has_point(centro):
+				var tb := AABB(a, Vector3.ZERO).expand(b).expand(cc)
+				if not tb.intersects(zona.grow(0.3)):
 					continue
-				var key := Vector3i((centro / CELLA_OGGETTI).floor())
-				if not celle.has(key):
-					celle[key] = PackedVector3Array()
-				celle[key].append_array(PackedVector3Array([a, b, cc]))
+				# (ritagliato contro ogni cella che tocca: i triangoli lunghi dei tubi vanno in tutte le celle che passano)
+				var k0 := Vector3i((tb.position / CELLA_OGGETTI).floor())
+				var k1 := Vector3i((tb.end / CELLA_OGGETTI).floor())
+				for kx in range(k0.x, k1.x + 1):
+					for ky in range(k0.y, k1.y + 1):
+						for kz in range(k0.z, k1.z + 1):
+							var key := Vector3i(kx, ky, kz)
+							var lo := Vector3(key) * CELLA_OGGETTI
+							var hi := lo + Vector3.ONE * CELLA_OGGETTI
+							var poli := PackedVector3Array([a, b, cc])
+							for piano in [Plane(Vector3.RIGHT, hi.x), Plane(Vector3.LEFT, -lo.x), Plane(Vector3.UP, hi.y),
+									Plane(Vector3.DOWN, -lo.y), Plane(Vector3.BACK, hi.z), Plane(Vector3.FORWARD, -lo.z)]:
+								poli = Geometry3D.clip_polygon(poli, piano)
+								if poli.is_empty():
+									break
+							if poli.is_empty():
+								continue
+							if not celle.has(key):
+								celle[key] = PackedVector3Array()
+							celle[key].append_array(poli)
 		for key in celle:
 			var punti: PackedVector3Array = celle[key]
 			var pl := []
