@@ -30,6 +30,14 @@ Animazioni (30 fps):
   colpo_grata_sbieco (0,5 s, in ciclo): lo stesso con la grata girata di SBIECO gradi (dal pozzetto dietro la grata);
   affacciata_sb1 (5,4 s): sbuca dal pozzo in 1,3 s e si aggrappa al bordo (BORDO_SB1: a tanto davanti e
       tanto in alto rispetto all'origine), la testa girata di lato, poi la gira verso di te e ti fissa.
+Il tunnel del viaggio sottomarino (24 ottobre), a bocca spalancata (nel json anche "fauce": quanto e' aperta la
+fauce a ogni fotogramma, per le blend shape):
+  insegue_aperta (ciclo 2,6 s): fluttua intera, inclinata in avanti, braccia tese, scia dei tentacoli;
+  insegue_morde (ciclo 2,6 s): lo stesso con due morsi a vuoto (MORSI), da usare quando e' vicina;
+  ritrae (2 s): il getto in faccia, si ritrae e torna nella posa di insegue_aperta al tempo 0;
+  tuffo_sb1 (1,3 s): dopo affacciata_sb1 si stacca dal bordo e si tuffa nel pozzo;
+  riemerge (1,8 s): dal fondo su nella posa di insegue_aperta al tempo 0, la bocca che si spalanca;
+  schianto (2,4 s): contro il portello, la faccia sull'oblo' (OBLO) e i palmi ai lati, poi resta premuta.
 
 Uso: flock /home/user/tools/render.lock /home/user/tools/blender-venv/bin/python \
          tools/blender/medusa_inseguimento.py [--anteprime] [--solo nome,nome]
@@ -439,7 +447,8 @@ def pose_presa(arm, C, Z, t):
           giro=chiavi(t, [(0.0, 5 * math.sin(1.2)), (0.4, 0.0)]))
     testa(arm, su=chiavi(t, [(0.0, 0 - 3 * math.sin(0.6)), (0.25, 12.0), (0.5, -6.0), (1.2, -14.0)]),
           giro=chiavi(t, [(0.0, -4 * math.sin(1.2)), (0.4, 0.0)]))
-    mascella(arm, chiavi(t, [(0.0, 0.0), (0.45, 0.0), (0.75, 18.0), (1.2, 22.0)]))
+    # la mascella come le blend shape della fauce (la libreria le apre da FAUCE_DA = 0,45 s alla fine)
+    fauce_mascella(arm, C, liscio(0.0, 1.0, 0.45, 1.2, t))
     k = liscio(0.0, 1.0, 0.27, 0.5, t)
     for suf, s in (('.L', 1), ('.R', -1)):
         a = math.sin(2 * math.pi * (0.0 if s > 0 else 0.5))
@@ -587,6 +596,207 @@ def pose_sb1(arm, C, Z, t):
     Z.segui()
 
 
+# --------------------------------------------------------------------------------------------- il tunnel
+
+# Il tunnel del viaggio sottomarino (scelte del 24 ottobre): lei fluttua intera sopra il canale a bocca spalancata,
+# l'occhio pieno di vene (le vene le accende il gioco: MedusaStatue.attacca). L'origine resta sul piano dei
+# tentacoli: nella posa insegue lei va da 0 a 5,3 m e sta in una volta di 6 m sopra il canale.
+T_APERTA = 2.6          # il ciclo: due battiti di insegue (1 s nel modello) rallentati a 1,3 s
+MASCELLA_APERTA = 22.0  # gradi, come alla fine della presa
+MORSI = (0.30, 1.60)    # quando morde nel ciclo (s): uno ogni 1,3 s
+MORSO = 0.42            # quanto dura un morso (chiude in 0,12 s, tiene, riapre)
+OBLO = (0.95, 4.62)     # schianto: il piano del portello a tanti metri davanti all'origine, il centro dell'oblò a
+                        # tanti metri d'altezza (il gioco mette lei in modo che coincida con l'oblò vero)
+
+
+def fauce_mascella(arm, C, f):
+    """La mascella come in fauce_apre aperta di f (0 chiusa, 1 come alla fine): l'osso ruota e scende (16 cm),
+    non basta ruotarlo. f oltre 1 la spalanca un poco di piu' (fino a 1,25)."""
+    a = campiona(C, 'fauce_apre', 0.0, False)['mascella']
+    b = campiona(C, 'fauce_apre', 1.0, False)['mascella']
+    if f <= 1.0:
+        m = mix_m(a, b, f)
+    else:
+        la, ra, sa = a.decompose()
+        lb, rb, sb = b.decompose()
+        e = f - 1.0
+        q = ra.rotation_difference(rb)          # rb = q @ ra
+        m = Matrix.LocRotScale(lb + (lb - la) * e, Quaternion().slerp(q, e) @ rb, sb)
+    arm.pose.bones['mascella'].matrix_basis = m
+    aggiorna()
+
+
+def morso(t):
+    """Quanto e' chiusa la mascella per i morsi (0 aperta, 1 chiusa) al tempo t del ciclo."""
+    c = 0.0
+    for t0 in MORSI:
+        x = t - t0
+        c = max(c, chiavi(x, [(0.0, 0.0), (0.12, 1.0), (0.17, 0.9), (MORSO, 0.0)]) if 0.0 <= x <= MORSO else 0.0)
+    return c
+
+
+def aperta(arm, C, Z, t, chiude=0.0, k=1.0, extra=None):
+    """La posa della corsa nel tunnel al tempo t del ciclo T_APERTA: il corpo e la scia dei tentacoli di insegue,
+    inclinata in avanti, le braccia tese che ondeggiano a turno, gli artigli aperti (fauce_apre), la mascella
+    spalancata (chiude: 0 spalancata, 1 chiusa, per i morsi). k scala gli scostamenti della corsa (0: la posa
+    insegue ferma), extra(arm) ritocca il busto e la testa prima delle braccia."""
+    u = (t / T_APERTA) % 1.0
+    corpo = campiona(C, 'insegue', 2.0 * u)
+    tent = campiona(C, 'insegue', 2.0 * u)
+    dita = mix(campiona(C, 'insegue', 2.0 * u), campiona(C, 'fauce_apre', 1.0, False),
+               0.75 + 0.15 * math.sin(2 * math.pi * 2 * u), DITA_OSSA)
+    applica(arm, base(C, corpo, tent, dita))
+    Z.leggi()
+    sposta(arm, (0.04 * math.sin(2 * math.pi * u) * k, 0.0, (0.06 * math.sin(2 * math.pi * 2 * u + 0.4)) * k))
+    busto(arm, avanti=(8 + 3 * math.sin(2 * math.pi * 2 * u)) * k, lato=3 * math.sin(2 * math.pi * u) * k,
+          giro=4 * math.sin(2 * math.pi * u + 1.0) * k)
+    testa(arm, su=(-6 - 2 * math.sin(2 * math.pi * 2 * u + 0.5)) * k, giro=-3 * math.sin(2 * math.pi * u + 1.0) * k,
+          piega=-4 * math.sin(2 * math.pi * u) * k)
+    if extra:
+        extra(arm)
+    braccia_tese(arm, 2.0 * u, k=k)
+    fauce_mascella(arm, C, (1.0 - chiude) * (1.0 + 0.04 * math.sin(2 * math.pi * 2 * u)))
+    Z.segui()
+
+
+def pose_insegue_aperta(arm, C, Z, t):
+    """Ciclo di 2,6 s: insegue a bocca spalancata."""
+    aperta(arm, C, Z, t)
+
+
+def pose_insegue_morde(arm, C, Z, t):
+    """Lo stesso ciclo, con due morsi a vuoto (MORSI): la mascella si chiude di scatto e si riapre, la testa da' un
+    colpo in avanti. Il gioco passa da insegue_aperta a questa alla stessa posizione del ciclo quando lei e' vicina."""
+    c = morso(t)
+    aperta(arm, C, Z, t, chiude=0.85 * c, extra=lambda a: (busto(a, avanti=4 * c), testa(a, su=-5 * c)))
+
+
+def fauce_morde(t):
+    return 1.0 - 0.6 * morso(t)
+
+
+def pose_ritrae(arm, C, Z, t, T=2.0):
+    """2 s: il getto in faccia mentre insegue. La testa scatta indietro e di lato, il busto si tira su e indietro,
+    le braccia si raccolgono verso il petto (non si copre: l'occhio lo strizza il gioco, chiudi_occhio), la
+    bocca resta spalancata e si apre di piu' nel grido; scuote la testa e alla fine torna nella posa di
+    insegue_aperta al tempo 0 (il gioco la rimanda indietro e riparte il ciclo)."""
+    u = t / T
+    k = liscio(1.0, 0.0, 0.0, 0.08, u) + liscio(0.0, 1.0, 0.7, 1.0, u)     # quanto e' nella corsa
+    w = 1.0 - k                                                            # quanto e' ritratta
+    scuote = math.sin(2 * math.pi * 5.0 * t) * liscio(1.0, 0.0, 0.1, 0.65, u)
+
+    def ritocco(a):
+        busto(a, avanti=-24 * w, lato=-5 * w, giro=-10 * w)
+        testa(a, su=26 * w, giro=(16 + 10 * scuote) * w, piega=(10 + 6 * scuote) * w)
+    # (il ciclo va avanti in modo da ritrovarsi alla fine al suo tempo 0: si riparte da li')
+    aperta(arm, C, Z, t * T_APERTA / T, k=k, extra=ritocco)
+    sposta(arm, (0.0, 0.55 * w, 0.18 * w))
+    fauce_mascella(arm, C, 1.0 + 0.2 * w)      # nel grido si apre di piu'
+    for suf, s in (('.L', 1), ('.R', -1)):
+        if w <= 1e-4:
+            continue
+        a = math.sin(2 * math.pi * (0.0 if s > 0 else 0.5))
+        teso = (0.30 - 0.04 * a, -0.95 - 0.10 * a, 0.10 + 0.08 * math.cos(2 * math.pi * (0.0 if s > 0 else 0.5)))
+        raccolto = (0.42, -0.42, 0.30)
+        polso = tuple(x + (y - x) * w for x, y in zip(teso, raccolto))
+        braccio(arm, suf, polso, (0.7, 0.1, -0.5), (0.2, -0.9, 0.35), (0.15, 0.2, 1.0))
+    Z.segui()
+
+
+def pose_tuffo_sb1(arm, C, Z, t, T=1.3):
+    """1,3 s dopo affacciata_sb1 (che finisce a 5,4 s): si stacca dal bordo, si alza un poco e si tuffa giu' nel
+    pozzo (-5 m), le braccia che restano in alto, la testa che ti guarda fino all'ultimo."""
+    d, h = BORDO_SB1
+    u = t / T
+    tent = campiona(C, 'insegue', (5.4 + t) * 0.5)
+    aff = campiona(C, 'affacciata', 0.0)
+    applica(arm, base(C, campiona(C, 'insegue', 0.0), tent, aff))
+    Z.leggi()
+    for n in ('colonna_1', 'colonna_2', 'petto', 'collo', 'testa'):
+        arm.pose.bones[n].matrix_basis = aff[n]
+    aggiorna()
+    vita = mondo(arm, arm.pose.bones['colonna_1'].head)
+    voglio = Vector((0.0, -(d - 1.06), h - 0.57))
+    sal = chiavi(u, [(0.0, 0.0), (0.18, 0.22), (0.3, 0.15)])
+    if u > 0.3:     # cade sempre piu' in fretta
+        x = (u - 0.3) / 0.7
+        sal = 0.15 + (GIU - 0.15) * x * x
+    sposta(arm, voglio - vita + Vector((0, liscio(0.0, 0.35, 0.1, 0.6, u), sal)))
+    busto(arm, avanti=chiavi(u, [(0.0, 0.0), (0.2, -10.0), (0.6, 8.0)]))
+    testa(arm, giro=0.0, su=chiavi(u, [(0.0, 2.0), (0.25, 6.0), (0.7, -14.0)]),
+          piega=chiavi(u, [(0.0, -6.0), (0.4, 0.0)]), collo=0.5)
+    for suf, s in (('.L', 1), ('.R', -1)):
+        bordo = Vector((s * 0.58, -(d + 0.12), h + 0.04))
+        pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
+        alto = pc + Vector((s * 0.45, 0.10, 1.05))
+        k = liscio(0.0, 1.0, 0.05, 0.3, u)
+        # (prima di staccarsi il bordo e' fermo nel mondo: lei si alza e i polsi restano li')
+        polso = bordo.lerp(alto, k)
+        braccio_mondo(arm, suf, polso, (0.9, 0.3, -0.2), (0.0, -0.3, 1.0), (0.0, 1.0, 0.0))
+    Z.segui()
+
+
+def pose_riemerge(arm, C, Z, t, T=1.8):
+    """1,8 s: dal fondo (-5 m) su fino alla posa della corsa, a bocca che si spalanca mentre esce, e il primo
+    ciclo di insegue_aperta parte dalla sua posa finale (insegue_aperta al tempo 0)."""
+    u = t / T
+    sal = chiavi(u, [(0.0, GIU), (0.68, 0.25), (0.84, -0.05), (1.0, 0.0)])
+    k = liscio(0.0, 1.0, 0.5, 1.0, u)
+    apre = liscio(0.0, 1.0, 0.35, 0.8, u)
+
+    def ritocco(a):
+        busto(a, avanti=-26 * (1 - k))
+        testa(a, su=14 * (1 - k))
+    aperta(arm, C, Z, 0.0, chiude=1.0 - apre, k=k, extra=ritocco)
+    sposta(arm, (0.0, 0.0, sal))
+    if k < 1.0:
+        # salendo le braccia stanno lungo i fianchi, poi si aprono in avanti
+        for suf, s in (('.L', 1), ('.R', -1)):
+            a = math.sin(2 * math.pi * (0.0 if s > 0 else 0.5))
+            teso = ((0.30 - 0.04 * a, -0.95 - 0.10 * a, 0.10 + 0.08 * math.cos(2 * math.pi * (0.0 if s > 0 else 0.5))),
+                    (0.7, 0.0, -0.4), (0.12, -1.0, 0.05), (0.1, 0.1, 1.0))
+            lungo = ((0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
+            p = [tuple(x + (y - x) * k for x, y in zip(a_, b_)) for a_, b_ in zip(lungo, teso)]
+            braccio(arm, suf, *p)
+        Z.segui()
+
+
+def fauce_riemerge(t, T=1.8):
+    return liscio(0.0, 1.0, 0.35, 0.8, t / T)
+
+
+def pose_schianto(arm, C, Z, t, T=2.4):
+    """2,4 s, contro il portello chiuso: arriva lanciata da 1,8 m dietro, sbatte la faccia sull'oblò (0,35 s) con
+    la bocca spalancata e i palmi sul portello ai lati, rimbalza appena, si schiaccia di nuovo e resta li',
+    premuta, a fiato corto (il gioco va al nero)."""
+    dd, hh = OBLO
+    contro = chiavi(t, [(0.0, 0.0), (0.35, 1.0), (0.48, 0.86), (0.7, 1.0), (T, 1.0)])
+
+    def ritocco(a):
+        busto(a, avanti=10 * contro, lato=0.0)
+        testa(a, su=-4 * contro)
+    aperta(arm, C, Z, t * 0.6, chiude=0.0, k=1.0 - contro, extra=ritocco)
+    # la faccia sull'oblò: l'occhio (il punto piu' avanti del viso e' poco davanti all'occhio) va sul piano
+    occhio = mondo(arm, arm.pose.bones['occhio'].head)
+    voglio = Vector((0.0, -dd + VISO_DAVANTI + 1.8 * (1.0 - contro), hh + 0.08 - 0.04 * liscio(0.0, 1.0, 0.7, T, t)))
+    sposta(arm, voglio - occhio)
+    fauce_mascella(arm, C, 1.0 + 0.25 * contro)
+    for suf, s in (('.L', 1), ('.R', -1)):
+        pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
+        a = math.sin(2 * math.pi * (0.0 if s > 0 else 0.5))
+        teso = pc + rot_giro(arm) @ Vector((s * (0.30 - 0.04 * a), -0.95 - 0.10 * a,
+                                            0.10 + 0.08 * math.cos(2 * math.pi * (0.0 if s > 0 else 0.5))))
+        alto = pc + rot_giro(arm) @ Vector((s * 0.5, -0.8, 0.45))
+        contatto = Vector((s * 0.62, -dd + 0.06, hh + 0.05 - 0.05 * liscio(0.0, 1.0, 0.7, T, t)))
+        # dalle braccia tese della corsa, su ai lati della testa, e giu' piatte sul portello
+        polso = teso.lerp(alto, liscio(0.0, 1.0, 0.0, 0.18, t)).lerp(contatto, liscio(0.0, 1.0, 0.18, 0.36, t))
+        braccio_mondo(arm, suf, polso, (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
+    Z.segui()
+
+
+VISO_DAVANTI = 0.20     # quanto il punto piu' avanti del viso sta davanti all'occhio (m, misurato sulla mesh)
+
+
 ANIMAZIONI = {
     # nome: (durata, in ciclo, funzione)
     'sale_dall_acqua': (1.6, False, lambda a, C, Z, t: pose_sale(a, C, Z, t, 1.6)),
@@ -598,6 +808,23 @@ ANIMAZIONI = {
     'colpo_grata': (0.5, True, lambda a, C, Z, t: pose_grata(a, C, Z, t)),
     'colpo_grata_sbieco': (0.5, True, lambda a, C, Z, t: pose_grata(a, C, Z, t, sbieco=SBIECO)),
     'affacciata_sb1': (5.4, False, pose_sb1),
+    # il tunnel del viaggio sottomarino
+    'insegue_aperta': (T_APERTA, True, pose_insegue_aperta),
+    'insegue_morde': (T_APERTA, True, pose_insegue_morde),
+    'ritrae': (2.0, False, lambda a, C, Z, t: pose_ritrae(a, C, Z, t)),
+    'tuffo_sb1': (1.3, False, lambda a, C, Z, t: pose_tuffo_sb1(a, C, Z, t)),
+    'riemerge': (1.8, False, lambda a, C, Z, t: pose_riemerge(a, C, Z, t)),
+    'schianto': (2.4, False, lambda a, C, Z, t: pose_schianto(a, C, Z, t)),
+}
+
+# Quanto e' aperta la fauce (le blend shape di fauce_apre: 0 chiusa, 1 come alla fine) nel tempo, per le animazioni
+# che la tengono aperta: la libreria di Godot le scrive come tracce (vedi medusa_inseguimento_libreria.gd).
+FAUCE = {
+    'insegue_aperta': lambda t: 1.0,
+    'insegue_morde': fauce_morde,
+    'ritrae': lambda t: 1.0,
+    'riemerge': fauce_riemerge,
+    'schianto': lambda t: 1.0,
 }
 
 
@@ -794,6 +1021,9 @@ def main():
             fn(arm, C, Z, t)
             chiavi_.append(reg.chiave())
         out['animazioni'][nome] = {'durata': durata, 'ciclo': ciclo, 'chiavi': chiavi_}
+        if nome in FAUCE:
+            out['animazioni'][nome]['fauce'] = [round(FAUCE[nome](min(i / FPS, durata) if not (ciclo and i == n) else 0.0), 4)
+                                                for i in range(n + 1)]
         print(f'ANIMAZIONE {nome}: {n + 1} fotogrammi', flush=True)
         if '--anteprime' in sys.argv:
             anteprime(arm, C, Z, nome, durata, fn, cartella)

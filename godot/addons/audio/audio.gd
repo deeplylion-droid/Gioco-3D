@@ -138,6 +138,7 @@ const LOOP_3D := {
 	&"riempie_loop": [-4.0, 3.0, 35.0],
 	&"scivolo_loop": [-4.0, 3.0, 40.0],
 	&"medusa_presenza_loop": [-2.0, 1.4, 8.0],
+	&"lei_tunnel_fiato_loop": [0.0, 3.0, 30.0],
 	&"zaino_impatto_loop": [-2.0, 2.5, 30.0],
 	&"zaino_impatto_acqua_loop": [-2.0, 2.5, 30.0],
 	&"pompe_ruggito_loop": [0.0, 6.0, 60.0],
@@ -1584,7 +1585,17 @@ class Statua:
 		&"inseguimento/presa": &"lei_insegue_presa",
 		&"inseguimento/respinta": &"lei_insegue_respinta",
 		&"inseguimento/affacciata_sb1": &"lei_insegue_sb1",
+		# il tunnel del viaggio sottomarino (24 ottobre): gli stessi versi nei momenti uguali
+		&"inseguimento/riemerge": &"lei_insegue_sale",
+		&"inseguimento/ritrae": &"lei_insegue_respinta",
+		&"inseguimento/schianto": &"lei_insegue_grata",
 	}
+	## Nel tunnel, mentre insegue: il fiato roco in ciclo e un verso ogni VERSO_OGNI secondi (scelta 10A). Partono
+	## solo quando i suoni sono nel catalogo (dopo l'ok dell'utente).
+	const TUNNEL_CORSA := [&"inseguimento/insegue_aperta", &"inseguimento/insegue_morde"]
+	const FIATO := &"lei_tunnel_fiato_loop"
+	const VERSO := &"lei_tunnel_verso"
+	const VERSO_OGNI := Vector2(4.0, 6.0)
 	## colpo_grata: un verso per ogni colpo, quando il palmo tocca la grata (0,25 s di ogni ciclo di 0,5 s).
 	const GRATA := &"inseguimento/colpo_grata"
 	const GRATA_CICLO := 0.5
@@ -1602,6 +1613,8 @@ class Statua:
 	var bocca: Node3D
 	var voce: Node
 	var grata_prima := -1.0
+	var fiato: AudioLoop
+	var verso_t := -2.0
 
 	func _init(a, nodo: Node) -> void:
 		audio = a
@@ -1656,6 +1669,7 @@ class Statua:
 			ap.animation_started.connect(_su_animazione)
 			if ap.is_playing():
 				_su_animazione(ap.current_animation)
+		_tunnel(a)
 		if ap.is_playing() and ap.current_animation == GRATA:
 			var pos := fposmod(ap.current_animation_position, GRATA_CICLO)
 			var soglia := GRATA_COLPO - GRATA_ANTICIPO
@@ -1665,6 +1679,24 @@ class Statua:
 		else:
 			grata_prima = -1.0
 		return true
+
+	## Il fiato e i versi della corsa nel tunnel: il fiato pieno mentre insegue, basso mentre si ritrae o prende,
+	## spento quando non si vede.
+	func _tunnel(a) -> void:
+		var corsa := ap.is_playing() and ap.current_animation in TUNNEL_CORSA
+		if fiato == null and corsa and Catalogo.SUONI.has(FIATO):
+			fiato = a.crea_loop(FIATO, bocca)
+		if fiato:
+			var vis := (n as Node3D).is_visible_in_tree()
+			fiato.volume = 0.0 if not vis else (1.0 if corsa else 0.3)
+		if corsa and Catalogo.SUONI.has(VERSO):
+			verso_t -= n.get_process_delta_time()
+			if verso_t <= 0.0:
+				if verso_t > -1.0:     # (non al primo giro: il primo verso dopo 4-6 s)
+					_voce(a, VERSO)
+				verso_t = randf_range(VERSO_OGNI.x, VERSO_OGNI.y)
+		else:
+			verso_t = -2.0
 
 	func _su_animazione(nome: StringName) -> void:
 		if VOCE_INSEGUIMENTO.has(nome):

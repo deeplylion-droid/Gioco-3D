@@ -133,7 +133,8 @@ def gioco():
     from comune import salva
     for nome, x in genera().items():
         if nome == 'lei_tunnel_fiato':
-            salva('lei', nome, x, loudness=FIATO_LUFS, corto=False, qualita=5,
+            # (nel gioco col suffisso _loop: l'addon audio lo mette in ciclo)
+            salva('lei', 'lei_tunnel_fiato_loop', x, loudness=FIATO_LUFS, corto=False, qualita=5,
                   nota='tunnel, voce (24 ottobre): fiato roco e basso a bocca aperta, in ciclo')
         else:
             base, k = nome.rsplit('_', 1)
