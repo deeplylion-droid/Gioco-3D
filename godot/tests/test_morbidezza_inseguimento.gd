@@ -6,11 +6,13 @@ extends Node
 ## - niente scatti, tratti vicini alla lunghezza di riposo;
 ## - costo: 4 ms in media e 8 nel 95% dei fotogrammi; quando compare nessun fotogramma sopra i 10 ms (CPU del sandbox,
 ##   non del gioco vero; in CI solo stampato);
+## - la pelle vera si confronta con le collisioni e con le mesh vere (tranne l'acqua);
 ## - i casi noti ([constant NOTI]): si stampano, e lì quel controllo dell'asse ammette al più quei tratti.
 ## Uso: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
 const LEVEL := "res://scenes/test/inseguimento_prova.tscn"
 const Misura := preload("res://tests/misura_morbidezza.gd")
+const CorpiMesh := preload("res://tests/corpi_dalle_mesh.gd")
 ## I casi noti, come i "voluto" del controllo di posizionamento: posto -> [tratti dell'asse ammessi, motivo, data].
 ## Solo il controllo dell'asse: la pelle vera resta bloccante anche lì.
 const NOTI := {
@@ -54,6 +56,9 @@ func _run() -> void:
 	sala.tempo_presa = 1e6
 	for i in 5:
 		await get_tree().process_frame
+	# la pelle si confronta anche con le mesh vere, non solo con le collisioni (le pompe non hanno collisione)
+	print("corpi dalle mesh: ", CorpiMesh.crea(sala, AABB(Vector3(-1e4, -1e4, -1e4), Vector3(2e4, 2e4, 2e4)), sala.lei))
+	await get_tree().physics_frame
 	var m := MorbidezzaLei.su(sala.lei)
 	var sk := m.get_parent() as Skeleton3D
 	var mis = Misura.new(sk, m)
@@ -89,7 +94,7 @@ func _run() -> void:
 		if fori.has(dove):
 			var fo: Array = fori[dove]
 			foro = [sala.global_transform * Vector3(float(fo[0]), float(fo[1]), float(fo[2])), float(fo[3])]
-		var pe: Dictionary = mis.pelle(dove, 0, 2, 0.01, [] as Array[RID], foro)
+		var pe: Dictionary = mis.pelle(dove, 0, 2, 0.01, [] as Array[RID], foro, Layers.WORLD | CorpiMesh.STRATO)
 		_check(pe["pelle_dentro"] == 0, "%s: la pelle vera dei tentacoli fuori dalla sala (%d vertici dentro, al più %.1f cm)" % [dove, pe["pelle_dentro"], pe["pelle_massimo"] * 100.0])
 		# (i casi noti: l'asse che attraversa un muro per un motivo che non è della morbidezza; la pelle resta bloccante)
 		var noto: Array = NOTI.get(dove, [])

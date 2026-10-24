@@ -2,7 +2,8 @@ extends Node
 ## Genera assets/ambiente/inseguimento/inseguimento_forme_lei.json: le forme convesse (scatole) del mondo intorno a ogni
 ## posto dove lei sale nell'inseguimento, per la collisione dei tentacoli morbidi (MorbidezzaLei): la sala è un trimesh
 ## unico, e la morbidezza vuole forme convesse.
-## Come (la collisione è un trimesh aperto: dentro e fuori non si sanno, si guardano solo le facce):
+## Come (la collisione è un trimesh aperto: dentro e fuori non si sanno, si guardano solo le facce; le facce sono quelle
+## delle collisioni e quelle delle mesh vere, tranne l'acqua: tests/corpi_dalle_mesh.gd):
 ## - i muri: raggi orizzontali corti nelle quattro direzioni degli assi, da una griglia di [constant PASSO] m in pianta e
 ##   in quota; i colpi su facce verticali dritte (normale lungo l'asse) si raggruppano per piano, e ogni gruppo diventa
 ##   una scatola spessa [constant SPESSORE] dietro la faccia, alta e larga quanto i colpi;
@@ -15,12 +16,15 @@ extends Node
 
 const LEVEL := "res://scenes/test/inseguimento_prova.tscn"
 const USCITA := "res://assets/ambiente/inseguimento/inseguimento_forme_lei.json"
+const CorpiMesh := preload("res://tests/corpi_dalle_mesh.gd")
+const MASCHERA := Layers.WORLD | CorpiMesh.STRATO   # le collisioni e le mesh vere
 const PASSO := 0.1
 const SOPRA := 2.5      # da quanto sopra il posto si guarda
 const SOTTO := 5.6      # fino a quanto sotto (lei sale da 5 m sotto)
 const SPESSORE := 0.3   # quanto sono spesse le scatole dietro le facce
 const UNISCI := 0.04    # i pavimenti a meno di tanto si uniscono in una lastra (la cima è la più alta)
 const MINIMA := 0.002   # le scatole più piccole (m³) non contano
+const CELLA_OGGETTI := 0.75   # le celle in cui si dividono le mesh degli oggetti (m)
 const FORO := 0.75      # il raggio del foro nel pavimento dove lei sale (m)
 
 var spazio: PhysicsDirectSpaceState3D
@@ -39,6 +43,10 @@ func _run() -> void:
 			break
 	var sala := get_tree().current_scene.get_node("SalaInseguimento") as SalaInseguimento
 	await get_tree().physics_frame
+	# anche le mesh vere, non solo le collisioni (le pompe non hanno collisione; collaudo, 24 ottobre)
+	print("corpi dalle mesh: ", CorpiMesh.crea(sala, AABB(Vector3(-1e4, -1e4, -1e4), Vector3(2e4, 2e4, 2e4)), sala.lei))
+	await get_tree().physics_frame
+	await get_tree().physics_frame
 	spazio = sala.get_world_3d().direct_space_state
 	var inv := sala.global_transform.affine_inverse()
 	var posti := {}
@@ -52,6 +60,7 @@ func _run() -> void:
 	posti["sb1"] = [SalaInseguimento.b([(pz[0] + pz[2]) / 2.0, (pz[1] + pz[3]) / 2.0, float(sala.dati["pozzo"]["bordo"])]), 3.8]
 	var out := {}
 	var fori := {}
+	var convessi := {}
 	var totale := 0
 	for nome in posti:
 		var c: Vector3 = posti[nome][0]
@@ -62,11 +71,11 @@ func _run() -> void:
 		# sale)
 		var foro := []
 		if nome != "sb1" and nome != "grata":
-			var q := PhysicsRayQueryParameters3D.create(c, c + Vector3.DOWN * 4.8, Layers.WORLD)
+			var q := PhysicsRayQueryParameters3D.create(c, c + Vector3.DOWN * 4.8, MASCHERA)
 			q.hit_back_faces = false
 			var r := spazio.intersect_ray(q)
-			# (solo se lei finisce a meno di 1 m sopra quel pavimento: dove finisce più in alto ci passa accanto)
-			if not r.is_empty() and (r["normal"] as Vector3).y > 0.9 and (r["position"] as Vector3).y > c.y - 1.0:
+			# (solo se lei finisce a meno di 1,6 m sopra quel pavimento, o quella grata: dove finisce più in alto ci passa accanto)
+			if not r.is_empty() and (r["normal"] as Vector3).y > 0.9 and (r["position"] as Vector3).y > c.y - 1.6:
 				var yf: float = (r["position"] as Vector3).y
 				var tenute := []
 				for sc: AABB in scatole:
@@ -85,12 +94,16 @@ func _run() -> void:
 			lista.append([snappedf(minf(a.x, b.x), 0.001), snappedf(minf(a.y, b.y), 0.001), snappedf(minf(a.z, b.z), 0.001),
 					snappedf(maxf(a.x, b.x), 0.001), snappedf(maxf(a.y, b.y), 0.001), snappedf(maxf(a.z, b.z), 0.001)])
 		out[nome] = lista
+		# gli oggetti tondi vicini (le pompe, i tubi): la loro mesh in pezzi convessi, coi piani già fatti
+		var cv := _convessi(sala, c, raggio, inv)
+		if not cv.is_empty():
+			convessi[nome] = cv
 		if not foro.is_empty():
 			fori[nome] = foro
 		totale += lista.size()
-		print("%s: %d scatole%s" % [nome, lista.size(), (", foro nel pavimento a %.2f" % foro[1]) if not foro.is_empty() else ""])
+		print("%s: %d scatole, %d pezzi convessi%s" % [nome, lista.size(), (convessi.get(nome, []) as Array).size(), (", foro nel pavimento a %.2f" % foro[1]) if not foro.is_empty() else ""])
 	var f := FileAccess.open(USCITA, FileAccess.WRITE)
-	f.store_string(JSON.stringify({"passo": PASSO, "posti": out, "fori": fori}, "\t", true))
+	f.store_string(JSON.stringify({"passo": PASSO, "posti": out, "fori": fori, "convessi": convessi}, "\t", true))
 	f.close()
 	print("scatole in tutto: %d, scritte in %s" % [totale, USCITA])
 	get_tree().quit()
@@ -114,7 +127,7 @@ func _scatole(c: Vector3, raggio: float) -> Array:
 				for j in range(-n, n + 1):
 					for h in nq + 1:
 						var p := Vector3(c.x + i * PASSO, c.y - SOTTO + h * PASSO, c.z + j * PASSO)
-						var q := PhysicsRayQueryParameters3D.create(p, p + dir * PASSO, Layers.WORLD)
+						var q := PhysicsRayQueryParameters3D.create(p, p + dir * PASSO, MASCHERA)
 						q.hit_back_faces = false
 						var r := spazio.intersect_ray(q)
 						if r.is_empty():
@@ -153,7 +166,7 @@ func _scatole(c: Vector3, raggio: float) -> Array:
 	for i in range(-n, n):
 		for j in range(-n, n):
 			var p := Vector3(c.x + (i + 0.5) * PASSO, c.y + SOPRA, c.z + (j + 0.5) * PASSO)
-			var q := PhysicsRayQueryParameters3D.create(p, p + Vector3.DOWN * (SOPRA + SOTTO), Layers.WORLD)
+			var q := PhysicsRayQueryParameters3D.create(p, p + Vector3.DOWN * (SOPRA + SOTTO), MASCHERA)
 			q.hit_back_faces = false
 			var r := spazio.intersect_ray(q)
 			if r.is_empty() or (r["normal"] as Vector3).y < 0.9:
@@ -247,4 +260,67 @@ func _gruppi(punti: Array) -> Array:
 						coda.append(v)
 		if r.size.x >= PASSO * 0.5 or r.size.y >= PASSO * 0.5:
 			out.append(r.grow(PASSO * 0.5))
+	return out
+
+
+## I pezzi convessi delle mesh degli oggetti intorno a [param c] (non la struttura, già nelle scatole, non l'acqua, non
+## lei): i triangoli divisi in celle di [constant CELLA_OGGETTI] m (dal loro centro), e per ogni cella un poliedro di
+## 26 facce (gli assi, le diagonali delle facce e degli spigoli) spinte fino al vertice più fuori: stretto intorno a un
+## pezzo di tubo o di pompa, e coi piani già fatti. Nelle coordinate della sala:
+## {"piani": [nx, ny, nz, d, ...], "lo": [x, y, z], "hi": [x, y, z]}.
+func _convessi(sala: Node3D, c: Vector3, raggio: float, inv: Transform3D) -> Array:
+	var zona := AABB(c - Vector3(raggio, SOTTO, raggio), Vector3(raggio * 2.0, SOTTO + SOPRA, raggio * 2.0))
+	var struttura := sala.find_child("InseguimentoStruttura", true, false)
+	var dirs: Array[Vector3] = []
+	for d in [Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1), Vector3(1, 1, 0), Vector3(1, -1, 0), Vector3(1, 0, 1),
+			Vector3(1, 0, -1), Vector3(0, 1, 1), Vector3(0, 1, -1), Vector3(1, 1, 1), Vector3(1, 1, -1), Vector3(1, -1, 1),
+			Vector3(-1, 1, 1)]:
+		dirs.append((d as Vector3).normalized())
+	var out := []
+	for mi in sala.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		if m.mesh == null or not m.is_visible_in_tree() or (struttura and struttura.is_ancestor_of(m)) or sala.lei.is_ancestor_of(m):
+			continue
+		var nome := String(m.name).to_lower() + " " + String(m.get_parent().name).to_lower()
+		if nome.contains("acqua") or nome.contains("bava") or nome.contains("water"):
+			continue
+		if not (m.global_transform * m.get_aabb()).intersects(zona):
+			continue
+		var celle := {}     # Vector3i -> PackedVector3Array (i vertici dei triangoli della cella, nel mondo)
+		var xf := m.global_transform
+		for k in m.mesh.get_surface_count():
+			var arr := m.mesh.surface_get_arrays(k)
+			var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var ind = arr[Mesh.ARRAY_INDEX]
+			var n := (ind as PackedInt32Array).size() if ind != null else vs.size()
+			for t in range(0, n - 2, 3):
+				var a := xf * vs[ind[t] if ind != null else t]
+				var b := xf * vs[ind[t + 1] if ind != null else t + 1]
+				var cc := xf * vs[ind[t + 2] if ind != null else t + 2]
+				var centro := (a + b + cc) / 3.0
+				if not zona.grow(0.3).has_point(centro):
+					continue
+				var key := Vector3i((centro / CELLA_OGGETTI).floor())
+				if not celle.has(key):
+					celle[key] = PackedVector3Array()
+				celle[key].append_array(PackedVector3Array([a, b, cc]))
+		for key in celle:
+			var punti: PackedVector3Array = celle[key]
+			var pl := []
+			var bb := AABB(punti[0], Vector3.ZERO)
+			for q in punti:
+				bb = bb.expand(q)
+			for d in dirs:
+				var mx := -INF
+				var mn := INF
+				for q in punti:
+					var pr := q.dot(d)
+					mx = maxf(mx, pr)
+					mn = minf(mn, pr)
+				for piano in [Plane(d, mx), Plane(-d, -mn)]:
+					var lp: Plane = inv * piano
+					pl.append_array([snappedf(lp.normal.x, 0.0001), snappedf(lp.normal.y, 0.0001), snappedf(lp.normal.z, 0.0001), snappedf(lp.d, 0.0001)])
+			var a2 := inv * bb.position
+			var b2 := inv * bb.end
+			out.append({"piani": pl, "lo": [minf(a2.x, b2.x), minf(a2.y, b2.y), minf(a2.z, b2.z)], "hi": [maxf(a2.x, b2.x), maxf(a2.y, b2.y), maxf(a2.z, b2.z)]})
 	return out
