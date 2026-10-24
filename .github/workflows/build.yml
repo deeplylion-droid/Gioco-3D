@@ -103,6 +103,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd
 
+      - name: Test della luce viola e della nebbia della scena dello squalo
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_squalo_viola.gd
+
       - name: Test dei passaggi degli interni (il giocatore entra ed esce da ogni porta e varco)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_passaggi_interni.gd

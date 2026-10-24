@@ -54,7 +54,7 @@ func _run() -> void:
 	_check(porta == null or a.luce.global_position.distance_to(occhio) > porta.global_position.distance_to(occhio),
 			"la luce sta dietro la porta, più in là dello squalo")
 	_check((-a.luce.global_basis.z).dot(dalla_luce) > 0.8, "la luce punta verso il giocatore (lo squalo in controluce)")
-	_check((a.nebbia.material as FogMaterial).density > 0.2,
+	_check((a.nebbia.material as FogMaterial).density > 0.03,
 			"la nebbia del corridoio è densa (%.2f)" % (a.nebbia.material as FogMaterial).density)
 	var nebbia_box := AABB(-a.nebbia.size * 0.5, a.nebbia.size)
 	_check(nebbia_box.has_point(a.nebbia.global_transform.affine_inverse() * occhio), "il giocatore è dentro la nebbia")
@@ -65,7 +65,7 @@ func _run() -> void:
 		t += get_process_delta_time()
 	await get_tree().process_frame
 	_check(bool(s.get(&"_porta_chiusa")) and a.luce.light_energy == 0.0, "a porta chiusa la luce viola è spenta")
-	_check((a.nebbia.material as FogMaterial).density > 0.2, "la nebbia resta finché il giocatore non riprende il controllo")
+	_check((a.nebbia.material as FogMaterial).density > 0.03, "la nebbia resta finché il giocatore non riprende il controllo")
 	# il controllo torna: la nebbia si dirada in circa 4 s
 	while t < 20.0 and not p.input_enabled:
 		await get_tree().process_frame
@@ -79,7 +79,7 @@ func _run() -> void:
 		if a_meta < 0.0 and t1 >= 2.0:
 			a_meta = (a.nebbia.material as FogMaterial).density
 	var dopo := (a.nebbia.material as FogMaterial).density
-	_check(a_meta > 0.0 and a_meta < 0.32, "a metà la nebbia si sta diradando (%.2f)" % a_meta)
+	_check(a_meta > 0.0 and a_meta < 0.05, "a metà la nebbia si sta diradando (%.2f)" % a_meta)
 	_check(dopo == 0.0 and a.luce.light_energy == 0.0, "dopo 4 s la nebbia non c'è più (resta quella normale del gioco)")
 	_fine()
 

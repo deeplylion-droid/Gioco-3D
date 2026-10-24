@@ -15,11 +15,13 @@ extends Node3D
 @export var colore := Color(0.62, 0.36, 1.0)
 ## Quanto è forte la luce viola (energia del faro) e quanto illumina la nebbia.
 @export var energia := 28.0
-@export var energia_nebbia := 6.0
+@export var energia_nebbia := 1.2
 ## Al richiamo di lei la luce cresce ancora un po' (il boato), poi torna.
 @export var richiamo_in_piu := 0.35
+## Quanto resta della luce della corsa (quella che illumina lo squalo di fronte) col viola acceso.
+@export var luce_corsa := 0.35
 ## La nebbia densa del corridoio: densità e in quanti secondi si dirada quando torna il controllo.
-@export var densita := 0.32
+@export var densita := 0.05
 @export var dirada := 4.0
 ## Il faro dietro la porta e la nebbia, nello spazio degli interni.
 @export var faro := Vector3(25.2, 1.75, -1.3)
@@ -83,6 +85,11 @@ func _process(delta: float) -> void:
 		# il boato: cresce in mezzo secondo e torna in uno e mezzo
 		var boato := clampf((t - rich) / 0.5, 0.0, 1.0) * clampf(1.0 - (t - rich - 0.5) / 1.5, 0.0, 1.0)
 		luce.light_energy = 0.0 if porta_chiusa else energia * (1.0 + richiamo_in_piu * boato)
+		# la luce della corsa di mascotte (davanti a lui, solo sullo squalo) più bassa: col viola dietro resta una
+		# sagoma, leggibile ma non illuminata di fronte (RisveglioSqualo la rifà a ogni fotogramma, prima di qui)
+		var lc := _r.get(&"_luce_corsa") as OmniLight3D
+		if lc and is_instance_valid(lc) and not porta_chiusa:
+			lc.light_energy *= luce_corsa
 		_mat.density = densita
 		if not attivo:
 			# il giocatore ha ripreso il controllo: la luce è già spenta, la nebbia si dirada
