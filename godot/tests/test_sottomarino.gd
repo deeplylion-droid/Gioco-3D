@@ -25,6 +25,10 @@ func _run() -> void:
 	for i in 3:
 		await get_tree().physics_frame
 	var spazio := sala.get_world_3d().direct_space_state
+	# (il fondo del canale si cerca anche sotto i gommoni degli attraversamenti, che stanno sull'asse)
+	var gommoni: Array[RID] = []
+	for g in sala._gommoni:
+		gommoni.append((g["corpo"] as CollisionObject3D).get_rid())
 	var lung := sala.lunghezza()
 	var lei: Dictionary = sala.dati["lei"]
 
@@ -44,7 +48,7 @@ func _run() -> void:
 			var h := _giu(spazio, Vector3(q.x, sala.piano + 1.0, q.z))
 			if h.is_empty() or absf((h.position as Vector3).y - sala.piano) > 0.02:
 				senza_banchina.append(snappedf(s, 0.1))
-		var hf := _giu(spazio, Vector3(p.x, sala.acqua + 0.3, p.z))
+		var hf := _giu(spazio, Vector3(p.x, sala.acqua + 0.3, p.z), gommoni)
 		if s > SalaSottomarino.PRESA_FINO + 1.0 and (hf.is_empty() or absf((hf.position as Vector3).y - sala.fondo) > 0.02):
 			senza_fondo.append(snappedf(s, 0.1))
 		var hv := spazio.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(p.x, sala.acqua + 1.0, p.z), Vector3(p.x, sala.acqua + 30.0, p.z)))
@@ -141,8 +145,8 @@ func _ostacolo_qui(sala: SalaSottomarino, s: float, lato: float) -> bool:
 	return false
 
 
-func _giu(spazio: PhysicsDirectSpaceState3D, da: Vector3) -> Dictionary:
-	return spazio.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * 8.0))
+func _giu(spazio: PhysicsDirectSpaceState3D, da: Vector3, esclusi: Array[RID] = []) -> Dictionary:
+	return spazio.intersect_ray(PhysicsRayQueryParameters3D.create(da, da + Vector3.DOWN * 8.0, 0xFFFFFFFF, esclusi))
 
 
 func _controlla(cond: bool, cosa: String, dove: Array) -> void:
