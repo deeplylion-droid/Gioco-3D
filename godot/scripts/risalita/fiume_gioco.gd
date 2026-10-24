@@ -1039,10 +1039,13 @@ func _rocce_buchi(rocce: Array) -> void:
 				break
 	# dietro le conche dei bivi 1 e 2 la banchina finisce contro il muro del capannone: lì tre pannelli contro il muro,
 	# girati verso la conca (al bivio 3 dietro la conca c'è l'uscita)
+	# (passo 2,4 m con pannelli da 3: si sovrappongono, se no fra i bordi irregolari restavano liste di muro grigio di
+	# 30-50 cm, ricontrollo del 24 ottobre; uno sì e uno no 3 cm più avanti, così non stanno sullo stesso piano)
 	for c in [[Vector3(X1 - 0.35, 0, 0), -90.0, Vector3(0, 0, 1)], [Vector3(0, 0, Z1 - 0.35), 180.0, Vector3(1, 0, 0)]]:
-		for u in [-3.0, 0.0, 3.0]:
+		var avanti := Basis(Vector3.UP, deg_to_rad(c[1])) * Vector3.BACK
+		for i in 4:
 			await _pausa()
-			var q: Vector3 = c[0] + (c[2] as Vector3) * u
+			var q: Vector3 = c[0] + (c[2] as Vector3) * (-3.6 + i * 2.4) + avanti * (0.03 * (i % 2))
 			if rocce.any(func(r: Array) -> bool: return (r[0] as Vector3).distance_to(q) < COPRE):
 				continue
 			_roccia(q, c[1], messe % 2 == 0, LARGO_BUCO / 4.2)
@@ -1373,6 +1376,11 @@ func _bivi() -> void:
 	fc.shape = bc
 	fc.position = colonna.position
 	_collisioni.add_child(fc)
+	# rivestita di roccia, un pannello stretto per faccia: era un prisma di cemento liscio in mezzo alla roccia
+	# (ricontrollo del 24 ottobre)
+	for k in 4:
+		var verso := Basis(Vector3.UP, deg_to_rad(90.0 * k)) * Vector3.BACK
+		_roccia(col + verso * 0.5, 90.0 * k, k % 2 == 0, 1.25 / 4.2)
 	if b3 == Vector3.ZERO or verso_monte == Vector3.ZERO:
 		push_warning("bivio 3 senza disco")
 
