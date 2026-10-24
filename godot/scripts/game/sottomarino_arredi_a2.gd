@@ -13,23 +13,25 @@ const DAL_MURO := 0.04
 ## Il sotto delle mensole sopra il piano delle banchine (sopra i 2 m) e il loro spessore.
 const MENSOLA_SU := 2.05
 const MENSOLA_SPESSA := 0.15
-## Quanto la mensola entra nel muro (è murata: in curva il muro non è un piano, e così i suoi angoli non si staccano).
-const MENSOLA_DENTRO := 0.015
+## Quanto la mensola entra nel muro (è murata: 2 mm, così in curva i suoi angoli non si staccano, e la distanza vera
+## dal mosaico resta sotto 1 cm anche misurata senza segno, come nel collaudo).
+const MENSOLA_DENTRO := 0.002
 
 ## I coralli: [s, lato, scala, giro in gradi] (fra 1,2 e 1,55 m d'altezza), ognuno sulla sua mensola.
 const CORALLI := [
 	[66.4, 1.0, 1.15, 10.0], [67.7, 1.0, 1.0, -35.0],
-	[79.2, 1.0, 1.25, 0.0], [80.5, 1.0, 1.0, 50.0], [81.8, 1.0, 1.3, -20.0],
+	[79.2, 1.0, 1.25, 0.0], [81.8, 1.0, 1.3, -20.0],
 	[88.2, -1.0, 1.3, 15.0], [89.5, -1.0, 1.05, -40.0], [90.9, -1.0, 1.2, 70.0],
 	[97.4, 1.0, 1.1, -10.0], [98.8, 1.0, 1.3, 30.0], [100.6, 1.0, 1.0, -60.0], [101.9, 1.0, 1.2, 5.0],
 	[106.0, -1.0, 1.15, 40.0], [107.4, -1.0, 1.3, -15.0], [109.0, -1.0, 1.0, 60.0],
 ]
 ## Il relitto (la prima curva a U): l'ancora ritta sul muro esterno, accanto a una lampada del tunnel, tenuta da due
-## staffe; il salvagente sul suo asse di legno; il forziere su una mensola del muro interno. (La rete con le stelle
+## staffe; il salvagente sul suo asse di legno; il forziere su una mensola dello stesso muro (che lì è concavo: la
+## mensola dritta ci sta a filo). (La rete con le stelle
 ## di Meshy è venuta male, quattro bastoni senza rete né stelle: non si usa.)
 const ANCORA := [121.6, -1.0, 1.4]
 const SALVAGENTE := [140.6, -1.0, 1.0]
-const FORZIERE := [152.5, 1.0, 1.2]
+const FORZIERE := [147.0, -1.0, 1.1]
 ## Il palombaro su una mensola larga, girato verso il canale.
 const PALOMBARO := [190.0, 1.0, 1.0]
 
@@ -44,7 +46,7 @@ static func _coralli(sala: SalaSottomarino) -> void:
 	sala.add_child(nodo)
 	for c in CORALLI:
 		var scala: float = c[2]
-		_mensola(sala, nodo, float(c[0]), float(c[1]), 0.9, 0.54 * scala + DAL_MURO + 0.06)
+		_mensola(sala, nodo, float(c[0]), float(c[1]), 0.75, 0.54 * scala + DAL_MURO + 0.06)
 		var n := _contro_il_muro(sala, nodo, "corallo", float(c[0]), float(c[1]), scala, float(c[3]), true)
 		n.name = "Corallo_%d" % int(c[0] * 10.0)
 
@@ -72,7 +74,7 @@ static func _relitto(sala: SalaSottomarino) -> void:
 	# il salvagente del relitto, col suo asse di legno (gancio e cima compresi nel modello) fissato al muro
 	var salv := _contro_il_muro(sala, nodo, "salvagente", SALVAGENTE[0], SALVAGENTE[1], SALVAGENTE[2], 0.0, false)
 	salv.name = "Salvagente"
-	_mensola(sala, nodo, FORZIERE[0], FORZIERE[1], 1.05, 0.454 * float(FORZIERE[2]) + DAL_MURO + 0.08)
+	_mensola(sala, nodo, FORZIERE[0], FORZIERE[1], 0.9, 0.454 * float(FORZIERE[2]) + DAL_MURO + 0.08)
 	var forziere := _contro_il_muro(sala, nodo, "forziere", FORZIERE[0], FORZIERE[1], FORZIERE[2], 0.0, true)
 	forziere.name = "Forziere"
 
@@ -113,7 +115,17 @@ static func _mensola(sala: SalaSottomarino, nodo: Node3D, s: float, lato: float,
 			sala._al(p, sala.destra(s), Vector2(lato * (sala.muro - profondo * 0.5 - 0.2), sala.piano + MENSOLA_SU + MENSOLA_SPESSA * 0.5)))
 	if not Posa.fissa_al_muro(corpo, -r, profondo * 0.5):
 		push_warning("arredi sottomarino: mensola a %.1f senza muro" % s)
-	corpo.global_position += r * MENSOLA_DENTRO
+	# in curva il muro non è un piano: si misura quanto restano staccati gli angoli del retro (raggi sul muro vero) e
+	# la mensola entra quanto basta perché tocchino, almeno MENSOLA_DENTRO
+	var dentro := MENSOLA_DENTRO
+	var sp := corpo.get_world_3d().direct_space_state
+	for fx: float in [-0.5, 0.5]:
+		var angolo := corpo.global_transform * Vector3(fx * largo, 0.0, profondo * 0.5)
+		var q := PhysicsRayQueryParameters3D.create(angolo - r * 0.1, angolo + r * 0.2, Layers.WORLD, [corpo.get_rid()])
+		var h := sp.intersect_ray(q)
+		if not h.is_empty():
+			dentro = maxf(dentro, ((h.position as Vector3) - angolo).dot(r) + 0.003)
+	corpo.global_position += r * minf(dentro, 0.03)
 	return corpo
 
 
