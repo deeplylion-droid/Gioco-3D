@@ -39,16 +39,17 @@ const SOGLIA := 3.0
 const BALLATOIO := 1.0
 ## Lo schianto di lei sull'oblò (scelta B con mascotte, 24 ottobre): davanti al portello, sull'asse, lei ci arriva
 ## intera, quindi il ballatoio non passa davanti alla porta. Il pontile viene dalla scala lungo il muro di fondo e si
-## ferma a [constant PONTILE_FINO] dall'asse (sopra il pontile lei è larga al più 1,09 m), a sbalzo: sotto, entro
-## 2,1 m dall'asse, ci sono i suoi tentacoli e non c'è niente. Davanti alla porta resta la soglia d'acciaio, profonda
-## [constant SOGLIA_PROFONDA]. La porta è più larga verso il pontile (da [constant PORTA_SX] dall'asse), così ci si
-## entra di lato; l'oblò resta sull'asse, all'altezza della faccia di lei.
-const PONTILE_FINO := -1.35
+## ferma a [constant PONTILE_FINO] dall'asse, a sbalzo: all'altezza della sua lastra lei, schiacciata sul portello, è
+## larga al più 0,86 m per lato (misure di mascotte), e sotto, entro 2,1 m dall'asse, ci sono i suoi tentacoli e non
+## c'è niente. Davanti alla porta resta la soglia d'acciaio, profonda [constant SOGLIA_PROFONDA] (lei sta a 0,35 m dal
+## portello). Il portello resta quello approvato, col volantino e l'oblò in mezzo: dalla testa del pontile si passa
+## sulla soglia ed entra di lato.
+const PONTILE_FINO := -0.95
 const SOGLIA_PROFONDA := 0.25
-const PORTA_SX := -1.3
-const PORTELLO_LARGO := 1.75
-## Dov'è l'oblò sul battente, dal perno (che sta sul lato sinistro della porta): sull'asse del canale.
-const OBLO_X := 1.3
+const PORTA_SX := -0.65
+const PORTELLO_LARGO := 1.3
+## Dov'è l'oblò sul battente, dal perno (che sta sul lato sinistro della porta): in mezzo, sull'asse del canale.
+const OBLO_X := 0.65
 const PORTELLO_ALTO := 1.8
 const PORTELLO_APERTO := 90.0
 ## L'oblò e il volantino sul battente (dalla soglia).
@@ -800,9 +801,9 @@ func _fine() -> void:
 		var pk := punto(sk)
 		var base := _al(pk, destra(sk), Vector2(-muro + 0.95, piano + alzata * float(k)))
 		_palo(nodo, base, base + Vector3.UP * 1.0, 0.025, corr)
-	# (lungo il bordo del pontile verso il canale, e sulla sua testa fino a mezzo metro dal muro: di lì si va alla porta)
+	# (lungo il bordo del pontile verso il canale, e sulla sua testa fino a 0,8 m dal muro: di lì si va alla porta)
 	var p_ball := [_al(b0, r, Vector2(-muro + 0.95, sg)), _al(b0, r, Vector2(PONTILE_FINO - 0.05, sg)),
-			_al(p - d * 0.55, r, Vector2(PONTILE_FINO - 0.05, sg))]
+			_al(p - d * 0.8, r, Vector2(PONTILE_FINO - 0.05, sg))]
 	for q in p_ball:
 		_palo(nodo, q, q + Vector3.UP * 1.0, 0.025, corr)
 	_palo(nodo, p_ball[0] + Vector3.UP * 1.0, p_ball[1] + Vector3.UP * 1.0, 0.025, corr)
@@ -1425,7 +1426,7 @@ func _process(delta: float) -> void:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
 			if gap < distanza_min and _lei_t < vantaggio:
 				v = 0.0
-			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - 1.2))
+			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - 2.5))
 			gap = _s_bersaglio - lei_s
 			if gap < distanza_morsi:
 				_morso_tra -= delta

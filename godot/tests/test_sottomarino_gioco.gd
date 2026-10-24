@@ -130,9 +130,9 @@ func _run() -> void:
 	var via := [
 		sott.punto(s_scala) - sott.destra(s_scala) * (sott.muro - 0.5) + Vector3.UP * (sott.piano - sott.acqua),
 		pL - dL * 0.5 - rL * (sott.muro - 0.5) + Vector3.UP * (sg - sott.acqua),
-		pL - dL * 0.55 + rL * (SalaSottomarino.PONTILE_FINO - 0.35) + Vector3.UP * (sg - sott.acqua),
-		pL - dL * 0.05 + rL * (SalaSottomarino.PORTA_SX + 0.45) + Vector3.UP * (sg - sott.acqua),
-		pL + dL * 1.2 + rL * (SalaSottomarino.PORTA_SX + 0.6) + Vector3.UP * (sg - sott.acqua),
+		pL - dL * 0.5 + rL * (SalaSottomarino.PONTILE_FINO - 0.3) + Vector3.UP * (sg - sott.acqua),
+		pL - dL * 0.36 + rL * (SalaSottomarino.PORTA_SX + 0.35) + Vector3.UP * (sg - sott.acqua),
+		pL + dL * 1.2 + rL * (SalaSottomarino.PORTA_SX + 0.45) + Vector3.UP * (sg - sott.acqua),
 	]
 	p.teleport(via[0] + Vector3.UP * 0.05)
 	await _frames(10)
