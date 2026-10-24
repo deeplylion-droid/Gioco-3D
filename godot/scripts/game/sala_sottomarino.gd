@@ -1773,16 +1773,17 @@ func _gommone(s: float, off: float) -> void:
 		var q := m * (GOMMONE_R + GOMMONE_T * 0.9) + Vector3.UP * GOMMONE_T * 1.2
 		var man := MeshInstance3D.new()
 		var mm := TorusMesh.new()
-		mm.inner_radius = 0.07
-		mm.outer_radius = 0.105
+		mm.inner_radius = 0.045
+		mm.outer_radius = 0.07
 		mm.rings = 12
 		mm.ring_segments = 6
 		man.mesh = mm
 		man.material_override = nera
 		corpo.add_child(man)
-		# l'anello sta di piatto contro il tubolare, girato lungo il fianco
-		man.transform = Transform3D(Basis(Vector3.UP, m, Vector3.UP.cross(m)), q + m * 0.02)
-		maniglie.append(q + m * 0.11)
+		# l'anello esce dal fianco del tubolare (lo tocca col bordo), dritto e girato lungo il fianco: la corda passa
+		# nel suo foro, dalla parte di fuori (q sta 2,5 cm dentro la gomma)
+		man.transform = Transform3D(Basis(m, Vector3.UP, m.cross(Vector3.UP)) * Basis(Vector3.RIGHT, PI * 0.5), q + m * 0.0925)
+		maniglie.append(q + m * 0.1375)
 	# le corde: dalle due maniglie più vicine agli anelli della parete più vicina, prima e dopo lungo il canale
 	var lato := 1.0 if off >= 0.0 else -1.0
 	var corde: Array = []
@@ -1800,7 +1801,8 @@ func _gommone(s: float, off: float) -> void:
 		piastra.mesh = pm
 		piastra.material_override = _mat_ferro()
 		nodo.add_child(piastra)
-		piastra.global_transform = Transform3D(Basis.looking_at(dentro, Vector3.UP), muro_q + dentro * 0.01)
+		# (staccata dal muro di un millimetro e mezzo: tocca la parete del canale senza entrare sotto la banchina)
+		piastra.global_transform = Transform3D(Basis.looking_at(dentro, Vector3.UP), muro_q + dentro * 0.0115)
 		var attacco := MeshInstance3D.new()
 		var am := TorusMesh.new()
 		am.inner_radius = 0.035
@@ -1810,8 +1812,8 @@ func _gommone(s: float, off: float) -> void:
 		nodo.add_child(attacco)
 		var da := direzione(sa)
 		# (l'anello tocca la piastra col bordo; la corda passa nel suo foro, dalla parte del canale)
-		attacco.global_transform = Transform3D(Basis(dentro, da, dentro.cross(da)), muro_q + dentro * 0.08)
-		var anello := muro_q + dentro * 0.11
+		attacco.global_transform = Transform3D(Basis(dentro, da, dentro.cross(da)), muro_q + dentro * 0.0815)
+		var anello := muro_q + dentro * 0.1115
 		var best := -1
 		for j in maniglie.size():
 			if usate.has(j):
