@@ -10,6 +10,7 @@ extends Node
 ##   risalita      la sala principale con le stanze della Risalita caricate subito
 ##   torre         la sala della torre da sola
 ##   inseguimento  la sala dell'inseguimento da sola
+##   tunnel        il tunnel del viaggio sottomarino da solo, costruito, con lei
 ##   tutto         la sala con le stanze e la torre insieme (il massimo che può stare in memoria nella demo)
 ##   res://...     una scena o un modello qualunque, da solo (per esempio quelli che si caricano durante il gioco)
 ## Stampa: i totali, le parti (figli diretti) più pesanti e le texture più grandi, con chi le usa.
@@ -18,6 +19,7 @@ extends Node
 const SALA := "res://scenes/sala_principale.tscn"
 const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
 const INSEGUIMENTO := "res://scenes/sala/inseguimento/sala_inseguimento.tscn"
+const TUNNEL := "res://scenes/sala/sottomarino/sala_sottomarino.tscn"
 
 var _visti := {}          # instance id -> true (risorse già guardate in questo conteggio)
 var _texture := {}        # instance id -> [MB, descrizione, {parti}]
@@ -45,10 +47,12 @@ func _run() -> void:
 		for i in 60:
 			await get_tree().process_frame
 		radici.append(get_tree().current_scene)
-	if zona in ["torre", "inseguimento", "tutto"] or zona.begins_with("res://"):
-		var file := zona if zona.begins_with("res://") else (TORRE if zona != "inseguimento" else INSEGUIMENTO)
+	if zona in ["torre", "inseguimento", "tunnel", "tutto"] or zona.begins_with("res://"):
+		var file: String = zona if zona.begins_with("res://") else String({"inseguimento": INSEGUIMENTO, "tunnel": TUNNEL}.get(zona, TORRE))
 		var n := (load(file) as PackedScene).instantiate()
 		get_tree().root.add_child(n)
+		if n.has_method("costruisci"):
+			n.costruisci()
 		for i in 30:
 			await get_tree().process_frame
 		radici.append(n)

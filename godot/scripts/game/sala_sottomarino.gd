@@ -171,6 +171,54 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 			await get_tree().process_frame
 			t0 = Time.get_ticks_usec()
 	costruita = true
+	await _riscalda()
+
+
+## Le viste del riscaldamento: [s, lato] (una per ambiente, ostacolo e arredo: ogni materiale almeno una volta).
+const VISTE_RISCALDA := [[0.0, -1.0], [6.0, 1.0], [70.0, 1.0], [90.0, -1.0], [127.0, -1.0], [140.0, 1.0],
+		[152.0, 1.0], [190.0, 1.0], [205.0, -1.0], [211.0, -1.0], [268.0, -1.0], [348.0, 1.0], [430.0, -1.0],
+		[484.0, -1.0], [545.0, 0.0], [553.5, 0.0]]
+
+
+## Il riscaldamento dei materiali (regola: niente scatti la prima volta che si vede qualcosa): costruito il tunnel,
+## mentre il giocatore è ancora nella sala delle condotte, una camera nascosta in una vista piccola guarda ogni parte
+## del tunnel per qualche fotogramma, con lo stesso mondo, le stesse luci e la stessa resa della vista del gioco. Così
+## le pipeline degli shader si compilano lì e non quando si entra (senza: 18 compilazioni al primo sguardo).
+func _riscalda() -> void:
+	if not is_inside_tree() or DisplayServer.get_name() == "headless":
+		return
+	var vista := get_viewport()
+	var vp := SubViewport.new()
+	vp.name = "Riscaldamento"
+	vp.size = Vector2i(320, 180)
+	vp.world_3d = vista.find_world_3d()
+	vp.msaa_3d = vista.msaa_3d
+	vp.use_taa = vista.use_taa
+	vp.screen_space_aa = vista.screen_space_aa
+	vp.use_debanding = vista.use_debanding
+	vp.positional_shadow_atlas_size = vista.positional_shadow_atlas_size
+	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(vp)
+	var cam := Camera3D.new()
+	vp.add_child(cam)
+	var cam_gioco := vista.get_camera_3d()
+	if cam_gioco:
+		cam.environment = cam_gioco.environment
+		cam.attributes = cam_gioco.attributes
+		cam.fov = cam_gioco.fov
+	cam.current = true
+	for v in VISTE_RISCALDA:
+		if not is_inside_tree():
+			return
+		var s: float = minf(float(v[0]), lunghezza())
+		var p := punto(s)
+		var occhio := _al(p, destra(s), Vector2(-float(v[1]) * (canale + 0.5), piano + 1.6))
+		if s > lunghezza() - 0.5:
+			occhio = _al(p, destra(s), Vector2(0.0, piano + SOGLIA + 1.6)) + direzione(s) * (float(v[0]) - lunghezza())
+		cam.look_at_from_position(occhio, _al(p, destra(s), Vector2(float(v[1]) * muro, piano + 1.2)) + direzione(s) * 3.0)
+		for i in 3:
+			await get_tree().process_frame
+	vp.queue_free()
 
 
 func _passi() -> Array:
