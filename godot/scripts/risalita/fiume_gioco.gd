@@ -1793,8 +1793,9 @@ func _in_roccia(n: Node) -> bool:
 
 
 ## I colori delle scatole colorate: i colori del parco (rosso, giallo, azzurro, verde, rosa), sbiaditi e sporchi.
-const COLORI_SCATOLE := [Color(0.78, 0.36, 0.31), Color(0.88, 0.75, 0.38), Color(0.44, 0.65, 0.8), Color(0.5, 0.69, 0.46),
-		Color(0.88, 0.58, 0.66)]
+## (nei primi scatti, sotto la luce calda, sembravano pastello: più pieni)
+const COLORI_SCATOLE := [Color(0.74, 0.22, 0.18), Color(0.9, 0.68, 0.14), Color(0.2, 0.5, 0.8), Color(0.3, 0.62, 0.28),
+		Color(0.9, 0.4, 0.56)]
 
 
 func _pile() -> void:
@@ -1881,7 +1882,7 @@ func _pile() -> void:
 							prossima_colorata = cartoni_contati + rng_colori.randi_range(3, 4)
 							var col: Color = COLORI_SCATOLE[rng_colori.randi() % COLORI_SCATOLE.size()]
 							colorate.append(t)
-							tinte_colorate.append(col.lerp(Color(0.55, 0.5, 0.45), rng_colori.randf_range(0.0, 0.15)))
+							tinte_colorate.append(col.lerp(Color(0.55, 0.5, 0.45), rng_colori.randf_range(0.0, 0.1)))
 						else:
 							cartone.append(t)
 							tinte.append(Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), k))
