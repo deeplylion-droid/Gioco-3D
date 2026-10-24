@@ -997,7 +997,9 @@ func _gommone(s: float, off: float) -> void:
 	corpo.set_meta(&"superficie", &"gomma")
 	nodo.add_child(corpo)
 	var giro := float(int(s * 13.0) % 60) * 0.1
-	corpo.global_transform = Transform3D(Basis.looking_at(d, Vector3.UP).rotated(Vector3.UP, giro), centro)
+	# (la posa di partenza la si tiene a parte: con sync_to_physics il corpo la prende al passo della fisica)
+	var posa0 := Transform3D(Basis.looking_at(d, Vector3.UP).rotated(Vector3.UP, giro), centro)
+	corpo.global_transform = posa0
 	_collisione_gommone(corpo)
 	var colori := [Color(0.95, 0.42, 0.12), Color(0.2, 0.62, 0.3), Color(0.95, 0.78, 0.15)]
 	var gomma := StandardMaterial3D.new()
@@ -1085,7 +1087,7 @@ func _gommone(s: float, off: float) -> void:
 		for j in maniglie.size():
 			if usate.has(j):
 				continue
-			if best < 0 or (corpo.global_transform * (maniglie[j] as Vector3)).distance_to(anello) < (corpo.global_transform * (maniglie[best] as Vector3)).distance_to(anello):
+			if best < 0 or (posa0 * (maniglie[j] as Vector3)).distance_to(anello) < (posa0 * (maniglie[best] as Vector3)).distance_to(anello):
 				best = j
 		usate[best] = true
 		var corda := MeshInstance3D.new()
@@ -1094,9 +1096,9 @@ func _gommone(s: float, off: float) -> void:
 		corda.material_override = _mat_corda()
 		corda.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		nodo.add_child(corda)
-		var lunga := (corpo.global_transform * (maniglie[best] as Vector3)).distance_to(anello) * (1.0 + CORDA_LASCO)
+		var lunga := (posa0 * (maniglie[best] as Vector3)).distance_to(anello) * (1.0 + CORDA_LASCO)
 		corde.append({"mesh": corda, "anello": anello, "maniglia": maniglie[best], "lunga": lunga})
-	_gommoni.append({"nodo": nodo, "corpo": corpo, "centro": centro, "base": corpo.global_transform.basis,
+	_gommoni.append({"nodo": nodo, "corpo": corpo, "centro": centro, "base": posa0.basis,
 			"fase": float(int(s * 7.0) % 10) * 0.6, "corde": corde})
 	_aggiorna_gommone(_gommoni[_gommoni.size() - 1], 0.0)
 
