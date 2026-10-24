@@ -55,7 +55,8 @@ func _run() -> void:
 	var lung: float = sala.call(&"lunghezza")
 	var acqua: float = sala.get(&"acqua")
 	var da := float(OS.get_environment("DA")) if OS.has_environment("DA") else -1.0
-	var fino := float(OS.get_environment("A")) if OS.has_environment("A") else lung - 2.5
+	# (mai oltre la fine della strada: dopo c'è il portello)
+	var fino := minf(float(OS.get_environment("A")) if OS.has_environment("A") else lung, lung - 2.5)
 	var giocatore: Node3D = (load("res://scenes/player/player.tscn") as PackedScene).instantiate()
 	add_child(giocatore)
 	giocatore.process_mode = Node.PROCESS_MODE_DISABLED
@@ -64,6 +65,12 @@ func _run() -> void:
 	add_child(lt)
 	for i in 3:
 		await get_tree().process_frame
+	# le forme del tunnel per i tentacoli (FormeTunnel di grafica), come nel gioco; senza (prima di unire), solo la posa
+	const FORME := "res://scripts/environment/forme_tunnel.gd"
+	if ResourceLoader.exists(FORME):
+		var ft := load(FORME) as GDScript
+		print("forme del tunnel: ", ft.call(&"prepara", sala))
+		ft.call(&"aggiungi", lt.morbidezza, sala)
 	var sk := lt.lei.get_model_instance().find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
 	var mis = Misura.new(sk, lt.morbidezza)
 	mis.inizia()
