@@ -1025,6 +1025,19 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
                         return no('volo')
         return True
 
+    def dentro_proprio(a, b, pts, r=R_GROVIGLIO + 0.07):
+        """Il segmento a-b passa a meno di `r` dalla linea del suo tubo (più in là del primo tratto, che parte dal collare)."""
+        n = max(2, int((b - a).length / 0.1))
+        for k in range(1, n + 1):
+            q = a.lerp(b, k / n)
+            for i in range(len(pts) - 1):
+                t0, t1 = pts[i], pts[i + 1]
+                dd = t1 - t0
+                f = max(0.0, min(1.0, (q - t0).dot(dd) / max(1e-9, dd.dot(dd))))
+                if (q - t0.lerp(t1, f)).length < r:
+                    return True
+        return False
+
     def sopra(x, y, z):
         """Dove arriva un tirante che sale da (x, y, z): il fondo di una pedana o il soffitto."""
         best = H
@@ -1126,7 +1139,10 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         # discesa: passerebbero davanti alla faccia di chi scivola (prova del 19 ottobre)
         if basso_ok and dist < 7.5 and not discesa:
             alto = Vector((col.x, col.y, max(capi_alti[0].z, capi_alti[1].z) + max(1.6, 0.55 * dist)))
-            if alto.z < H - 0.5 and all(libero(q + (alto - q).normalized() * 0.3, alto, pts, 0.06) for q in capi_alti):
+            # (nel gioco anche fuori dal tubo stesso: un tirante verso una colonna dall'altra parte ci passava dentro,
+            # e l'intaglio lo lasciava aperto sulla superficie del tubo; collaudo del 24 ottobre, tubo 7)
+            if alto.z < H - 0.5 and all(libero(q + (alto - q).normalized() * 0.3, alto, pts, 0.06) for q in capi_alti) and \
+                    not (GIOCO and chiuso and any(dentro_proprio(q, alto, pts) for q in capi_alti)):
                 collare(p, d3, lat, chiuso, largo, prof)
                 for sg, q in zip((-1, 1), capi_alti):
                     attacco(q, sg, lat)
@@ -2060,8 +2076,11 @@ def versione_A(mats):
         fondo_tubo = [mw @ v.co for v in tubo_ins.data.vertices]
         for xs in (XI1 - 1.2, XI1 - 0.45):
             zs = min(q.z for q in fondo_tubo if abs(q.x - xs) < 0.15 and abs(q.y - yb_) < 0.6)
+            # (nel gioco la culla sale sui fianchi del tubo e l'intaglio le dà la sua forma: prima finiva 2 cm sotto
+            # il fondo, e il tubo restava sospeso sopra la trave; collaudo del 24 ottobre)
+            zc_ = zs + 0.15 if GIOCO else zs - 0.02
             c.scatola((xs - 0.1, yb_ - 0.3, FONDO), (xs + 0.1, yb_ + 0.3, zs - 0.08), 'metallo')
-            c.scatola((xs - 0.12, yb_ - 0.55, zs - 0.08), (xs + 0.12, yb_ + 0.55, zs - 0.02), 'metallo')
+            c.scatola((xs - 0.12, yb_ - 0.55, zs - 0.08), (xs + 0.12, yb_ + 0.55, zc_), 'metallo')
     # tubi di servizio sui muri
     for z in (-17.0, -7.5, 4.5, 10.5):
         # (nel gioco da muro a muro: prima finivano 30 cm prima degli angoli, nel vuoto)
