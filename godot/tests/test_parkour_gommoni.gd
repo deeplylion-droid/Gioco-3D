@@ -200,6 +200,26 @@ func _corde() -> void:
 	_controlla(mosse > 0, "le corde si muovono col gommone (%d volte)" % mosse)
 	_controlla(basse.is_empty(), "le corde stanno sopra l'acqua e sotto lo spazio di lei %s" % str(basse.slice(0, 6)))
 	_controlla(attraversano.is_empty(), "le corde non attraversano niente %s" % str(attraversano.slice(0, 6)))
+	# le facce della corda guardano fuori (collaudo del 24 ottobre: il tubo era girato verso dentro). Godot: davanti
+	# in senso orario, quindi la normale (b-a)x(c-a) va verso l'asse
+	var rovesciate := 0
+	var facce_tot := 0
+	for g in sala._gommoni:
+		for c in g["corde"]:
+			var mi: MeshInstance3D = c["mesh"]
+			var f: PackedVector3Array = mi.global_transform * mi.mesh.get_faces()
+			var pts: PackedVector3Array = sala.punti_corda(g["corpo"], c)
+			for i in range(0, f.size(), 3):
+				var k := mini(i / 24 + 1, pts.size() - 1)
+				var mezzo := (pts[k - 1] + pts[k]) * 0.5
+				var asse := (pts[k] - pts[k - 1]).normalized()
+				var cc := (f[i] + f[i + 1] + f[i + 2]) / 3.0
+				var fuori := cc - mezzo
+				fuori -= asse * fuori.dot(asse)
+				facce_tot += 1
+				if (f[i + 1] - f[i]).cross(f[i + 2] - f[i]).dot(fuori) > 0.0:
+					rovesciate += 1
+	_controlla(facce_tot > 0 and rovesciate == 0, "le facce delle corde guardano fuori (%d rovesciate su %d)" % [rovesciate, facce_tot])
 
 
 # --- appoggio ------------------------------------------------------------------------------------------------------
