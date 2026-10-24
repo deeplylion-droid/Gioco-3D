@@ -18,6 +18,12 @@ const DIR := "res://assets/ambiente/sottomarino/"
 const TARTARUGA_S := 366.0
 const TARTARUGA_SCALA := 1.5
 const SOPRA_LEI := -24.0
+## Il buco nella volta sopra le macerie a 348 (s del centro, mezza lunghezza lungo la strada; angolo sulla mezza
+## ellisse della volta, da sinistra, e mezza ampiezza): sopra la banchina destra, fuori dallo spazio di lei.
+const BUCO_S := 349.6
+const BUCO_MEZZO_S := 1.5
+const BUCO_THETA := 2.52
+const BUCO_MEZZO_THETA := 0.26
 ## Le reti con le stelle marine sui muri (s, lato, quota del bordo basso sopra le banchine).
 const RETI := [[325.0, -1.0, 2.3], [333.5, 1.0, 2.3], [388.3, -1.0, 2.45]]
 ## Le bitte dell'approdo sul bordo delle banchine (s, lato): basse, sotto i 35 cm.
@@ -49,7 +55,7 @@ static func passi(s: SalaSottomarino) -> Array:
 	a.name = "ArrediA1"
 	a.sala = s
 	s.add_child(a)
-	return [a._tartaruga, a._reti, a._abisso_lampade, a._abisso_lucine, a._approdo]
+	return [a._tartaruga, a._reti, a._buco_volta, a._abisso_lampade, a._abisso_lucine, a._approdo]
 
 
 ## Vero se a [param s] le luci normali del tunnel (lampade a gabbia e oblò piccoli) non vanno: nell'abisso le fa
@@ -109,6 +115,85 @@ func _reti() -> void:
 		var n := _modello(nodo, "rete_stelle", Vector3.ZERO, Vector3.ZERO, 1.0)
 		n.name = "rete_stelle_%d" % int(s)
 		_a_muro(n, w[0], w[1], sala.piano + float(q[2]))
+
+
+## Il buco nella volta da cui sono cadute le macerie a 348 (l'ostacolo di ambienti-2, sulla banchina destra): segue
+## la volta vera (raggi sui suoi triangoli), con il bordo rotto che parte 1 cm dentro il mosaico e sale di 4 cm, l'interno
+## scuro e i ferri dell'armatura che partono dai bordi. Grande quanto le lastre cadute.
+func _buco_volta() -> void:
+	var nodo := _nodo("BucoVolta")
+	var sc := BUCO_S
+	var tri := _tri_tunnel(sc)
+	var mu := sala.muro
+	var ki := sala.chiave - sala.imposta
+	var n_ang := 28
+	var anelli := [1.0, 0.93, 0.85, 0.6, 0.3, 0.0]
+	var alzo := [-0.01, 0.04, 0.015, 0.015, 0.015, 0.015]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 348
+	var raggio_j := PackedFloat32Array()
+	for j in n_ang:
+		raggio_j.append(1.0 + rng.randf_range(-0.16, 0.12) + 0.06 * sin(float(j) * 1.7))
+	# ogni vertice: (anello, spicchio) -> punto sulla volta vera e sua normale
+	var pv := []
+	var nv := []
+	for k in anelli.size():
+		var riga := []
+		var rn := []
+		for j in n_ang:
+			var a := TAU * float(j) / n_ang
+			var f: float = anelli[k] * raggio_j[j]
+			var s := sc + cos(a) * BUCO_MEZZO_S * f
+			var th := BUCO_THETA + sin(a) * BUCO_MEZZO_THETA * f
+			var p := sala.punto(s)
+			var r := sala.destra(s)
+			var su := Vector2(-cos(th) * mu, sala.imposta + sin(th) * ki)
+			var da := sala._al(p, r, Vector2(su.x * 0.8, sala.imposta + (su.y - sala.imposta) * 0.8))
+			var fino := sala._al(p, r, Vector2(su.x * 1.1, sala.imposta + (su.y - sala.imposta) * 1.1))
+			var h = _raggio(tri, da, fino, true)
+			if h == null:
+				push_warning("buco nella volta: niente volta a s %.2f" % s)
+				return
+			riga.append((h[0] as Vector3) + (h[1] as Vector3) * float(alzo[k]))
+			rn.append(h[1])
+		pv.append(riga)
+		nv.append(rn)
+	var st_b := SurfaceTool.new()
+	st_b.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_i := SurfaceTool.new()
+	st_i.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for k in anelli.size() - 1:
+		var st := st_b if k < 2 else st_i
+		for j in n_ang:
+			var j2 := (j + 1) % n_ang
+			var verso: Vector3 = nv[k][j]
+			if k == anelli.size() - 2:
+				sala._tri(st, [pv[k][j], pv[k][j2], pv[k + 1][j]], verso)
+			else:
+				sala._quad(st, [pv[k][j], pv[k][j2], pv[k + 1][j2], pv[k + 1][j]], verso)
+	var bordo := MeshInstance3D.new()
+	bordo.name = "buco_volta_bordo"
+	bordo.mesh = st_b.commit()
+	bordo.material_override = _mat("cemento_rotto", Color(0.46, 0.45, 0.42), 0.95)
+	nodo.add_child(bordo)
+	var dentro := MeshInstance3D.new()
+	dentro.name = "buco_volta_dentro"
+	dentro.mesh = st_i.commit()
+	dentro.material_override = _mat("buio_buco", Color(0.03, 0.03, 0.035), 1.0)
+	nodo.add_child(dentro)
+	# i ferri dell'armatura: da un punto del bordo a uno di fronte, piegati verso il basso (sono rimasti appesi)
+	var mf := _mat("ferro_armatura", Color(0.24, 0.16, 0.11), 0.85, 0.4)
+	for q in [[2, 15, 0.12], [6, 19, 0.2], [9, 24, 0.08], [12, 26, 0.16]]:
+		# (i capi 1 cm dentro la volta, sotto il bordo rotto: escono dal cemento)
+		var a: Vector3 = pv[0][q[0]]
+		var b: Vector3 = pv[0][q[1]]
+		var nm: Vector3 = ((nv[1][q[0]] as Vector3) + (nv[1][q[1]] as Vector3)).normalized()
+		var m := (a + b) * 0.5 + nm * float(q[2])
+		var ferro := Node3D.new()
+		ferro.name = "ferro_armatura_%d" % q[0]
+		nodo.add_child(ferro)
+		sala._palo(ferro, a, m, 0.008, mf)
+		sala._palo(ferro, m, b, 0.008, mf)
 
 
 # --- gli oblò dell'abisso ----------------------------------------------------------------------------------------

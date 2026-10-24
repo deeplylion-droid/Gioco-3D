@@ -7,6 +7,8 @@ extends "res://tests/scatti_sottomarino.gd"
 
 func _init() -> void:
 	SCATTI = {
+		"a1_buco_volta": [343.0, 1.0, 1.6, 349.6, 1.0, 6.3, 70.0],
+		"a1_buco_sotto": [349.6, -0.3, 1.6, 349.6, 1.0, 7.0, 75.0],
 		"a1_tartaruga_arrivo": [352.0, 1.0, 1.6, 366.0, 0.0, 6.5, 75.0],
 		"a1_tartaruga_sotto": [362.0, -1.0, 1.6, 366.0, 0.0, 6.4, 75.0],
 		"a1_tartaruga_catene": [365.0, 0.0, 4.5, 366.0, 0.0, 7.3, 60.0],
