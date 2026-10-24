@@ -78,6 +78,10 @@ func _ready() -> void:
 		if amb:
 			porta = amb.find_child("porta_tagliafuoco", true, false) as Node3D
 	_prepara_porta()
+	# la luce viola di Jilly dietro la porta e la nebbia del corridoio (grafica: atmosfera_squalo.gd)
+	var atmosfera := AtmosferaSqualo.new()
+	atmosfera.name = "Atmosfera"
+	add_child(atmosfera)
 
 
 ## La scena del risveglio: blocca il giocatore e parte.
