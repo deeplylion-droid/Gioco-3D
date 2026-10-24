@@ -61,20 +61,37 @@ var ostacoli: Array = [
 	{"s": 423.6, "lungo": 14.8, "lato": 1.0, "tipo": "crollo"},
 	{"s": 484.0, "lungo": 1.0, "lato": -1.0, "tipo": "vetrina"},
 ]
-## I gommoni delle rapide (s, scostamento dall'asse verso destra): prima di ogni ostacolo, per passare all'altra
-## banchina; legati con le corde agli anelli delle pareti del canale.
-## (due affiancati, a 1,85 m dall'asse: dalla banchina al primo 38 cm, fra i due 76 cm, dal secondo all'altra banchina
-## 38 cm; il salto vero del giocatore arriva a circa 3 m camminando)
-var gommoni: Array = [
-	[67.5, -1.85], [67.5, 1.85], [132.0, -1.85], [132.0, 1.85], [261.0, -1.85], [261.0, 1.85],
-	[341.5, -1.85], [341.5, 1.85], [477.5, -1.85], [477.5, 1.85],
+## Gli attraversamenti sui gommoni delle rapide (scelta 2C dell'utente, con la sua nota: "sei costretto a fare parkour
+## sui galleggianti che stanno sul corso d'acqua per passare da un lato all'altro del canale"): prima di ogni ostacolo
+## che chiude la banchina dove sei, da 2 a 4 gommoni sfalsati lungo il canale, con salti veri da bordo a bordo, più
+## lunghi andando avanti. [s dell'ostacolo, salti: dalla banchina al primo gommone, fra un gommone e l'altro,
+## dall'ultimo all'altra banchina]. Il salto vero del Player sul gommone arriva a circa 3,1 m camminando e 5,3 m
+## correndo (tests/test_parkour_gommoni.gd): il più lungo qui, 2,4 m, lascia almeno 0,7 m camminando.
+var attraversamenti: Array = [
+	[74.0, [1.0, 1.4, 1.0]],
+	[138.5, [1.2, 1.8, 1.2]],
+	[268.0, [1.4, 1.8, 1.8, 1.4]],
+	[348.0, [1.6, 2.2, 2.0, 1.6]],
+	[484.0, [1.8, 2.4, 2.2, 2.4, 1.8]],
 ]
+## L'ultimo gommone di un attraversamento sta almeno tanto prima dell'ostacolo (m, dal bordo del tubolare).
+const ATTRAVERSAMENTO_MARGINE := 2.0
+## I gommoni (s, scostamento dall'asse verso destra), dagli attraversamenti (vedi [method _disponi_gommoni]).
+var gommoni: Array = []
 ## I gommoni costruiti: [nodo, corpo, s, scostamento, fase].
 var _gommoni: Array = []
-## Raggio del tubolare, raggio del gommone e quanto sta sotto il pelo.
+## Raggio dell'anello del tubolare, raggio del tubolare e quanto sta sotto il pelo la base del gommone.
 const GOMMONE_R := 1.15
 const GOMMONE_T := 0.32
 const GOMMONE_SOTTO := 0.15
+## La collisione del tubolare: spicchi e lati della sua sezione (dodecagono: la cima e le facce a 30 gradi si
+## camminano, i fianchi no).
+const GOMMONE_SPICCHI := 24
+const GOMMONE_LATI := 12
+## Le corde: agli anelli della parete più vicina, tanto prima e dopo il gommone lungo il canale (lontano dalle linee
+## di salto, che vanno di traverso), e quanto sono più lunghe della distanza all'inizio (pendono di qualche cm).
+const CORDA_LUNGO := 2.2
+const CORDA_LASCO := 0.012
 
 var dati := {}
 var _asse: Array = []          ## [{s, pos, dir, ambiente}]
@@ -115,6 +132,7 @@ func _ready() -> void:
 	banchina = se["larghezza_banchina"]
 	muro = se["asse_muro"]
 	spessore = se["spessore_muri"]
+	_disponi_gommoni()
 	mat_mosaico = load(DIR_FIUME + "mat_mosaico_blu.tres")
 	mat_graniglia = load(DIR_FIUME + "mat_graniglia.tres")
 	mat_acqua = load(DIR_FIUME + "acqua_fiume.tres")
@@ -929,9 +947,40 @@ func _cancello(nodo: Node3D, st: SurfaceTool, facce: PackedVector3Array, s: floa
 	lucchetto.global_position = c - Vector3.UP * 0.2 - r * 0.09
 
 
+## Dove vanno i gommoni di ogni attraversamento ([member attraversamenti]): si parte dal lato dell'ostacolo e si
+## arriva a quello di fronte; il primo gommone sta al salto giusto dalla banchina di partenza, l'ultimo da quella di
+## arrivo, quelli in mezzo in fila fra i due; lungo il canale sono sfalsati quanto serve perché fra un tubolare e
+## l'altro ci sia il salto voluto. L'ultimo finisce [constant ATTRAVERSAMENTO_MARGINE] m prima dell'ostacolo.
+func _disponi_gommoni() -> void:
+	gommoni = []
+	var rg := GOMMONE_R + GOMMONE_T
+	for att in attraversamenti:
+		var s_ost: float = att[0]
+		var salti: Array = att[1]
+		var da := 1.0
+		for o in ostacoli:
+			if absf(float(o["s"]) - s_ost) < 0.01:
+				da = float(o["lato"])
+		var n := salti.size() - 1
+		var lat0 := da * (canale - rg - float(salti[0]))
+		var lat1 := -da * (canale - rg - float(salti[n]))
+		var lats: Array = []
+		for k in n:
+			lats.append(lerpf(lat0, lat1, float(k) / maxf(n - 1, 1)))
+		var lungo: Array = [0.0]
+		for k in range(1, n):
+			var dl: float = float(lats[k]) - float(lats[k - 1])
+			var c := 2.0 * rg + float(salti[k])
+			lungo.append(float(lungo[k - 1]) + sqrt(maxf(c * c - dl * dl, 0.0)))
+		var s_ultimo := s_ost - ATTRAVERSAMENTO_MARGINE - rg
+		for k in n:
+			gommoni.append([s_ultimo - float(lungo[n - 1]) + float(lungo[k]), lats[k]])
+
+
 ## Un gommone tondo delle rapide (sei posti) a [param s], scostato di [param off] dall'asse, che galleggia nel canale
-## e dondola appena; legato con due corde agli anelli delle pareti del canale. Si salta da una banchina all'altra
-## passandoci sopra (la collisione è il disco fino alla cima del tubolare).
+## e dondola appena (chi ci sta sopra viene portato: AnimatableBody3D con sync_to_physics); legato con due corde ad
+## anelli nella parete del canale più vicina, prima e dopo lungo il canale. La collisione segue la gomma: il tubolare
+## a spicchi (ci si cammina sopra), il fondo e i sedili; dal fondo si risale sul tubolare saltando.
 func _gommone(s: float, off: float) -> void:
 	var p := punto(s)
 	var r := destra(s)
@@ -943,16 +992,13 @@ func _gommone(s: float, off: float) -> void:
 	var corpo := AnimatableBody3D.new()
 	corpo.name = "Gommone"
 	corpo.collision_layer = Layers.WORLD
+	corpo.collision_mask = 0
 	corpo.sync_to_physics = true
+	corpo.set_meta(&"superficie", &"gomma")
 	nodo.add_child(corpo)
-	corpo.global_transform = Transform3D(Basis.looking_at(d, Vector3.UP), centro)
-	var cs := CollisionShape3D.new()
-	var cy := CylinderShape3D.new()
-	cy.radius = GOMMONE_R + GOMMONE_T
-	cy.height = GOMMONE_T * 2.0
-	cs.shape = cy
-	cs.position = Vector3.UP * GOMMONE_T
-	corpo.add_child(cs)
+	var giro := float(int(s * 13.0) % 60) * 0.1
+	corpo.global_transform = Transform3D(Basis.looking_at(d, Vector3.UP).rotated(Vector3.UP, giro), centro)
+	_collisione_gommone(corpo)
 	var colori := [Color(0.95, 0.42, 0.12), Color(0.2, 0.62, 0.3), Color(0.95, 0.78, 0.15)]
 	var gomma := StandardMaterial3D.new()
 	gomma.albedo_color = colori[int(s) % 3]
@@ -988,10 +1034,42 @@ func _gommone(s: float, off: float) -> void:
 		sedile.material_override = gomma
 		corpo.add_child(sedile)
 		sedile.transform = Transform3D(Basis(Vector3.UP, -a), Vector3(cos(a), 0, sin(a)) * 0.55 + Vector3.UP * 0.22)
-	# le corde: dalle maniglie verso le due pareti del canale, agli anelli (fissati alla parete sotto il bordo)
+	# le sei maniglie sul fianco del tubolare (anelli di gomma nera, come nel modello delle rapide)
+	var maniglie: Array = []
+	for k in 6:
+		var a := TAU * float(k) / 6.0 + PI / 6.0
+		var m := Vector3(cos(a), 0.0, sin(a))
+		var q := m * (GOMMONE_R + GOMMONE_T * 0.9) + Vector3.UP * GOMMONE_T * 1.2
+		var man := MeshInstance3D.new()
+		var mm := TorusMesh.new()
+		mm.inner_radius = 0.07
+		mm.outer_radius = 0.105
+		mm.rings = 12
+		mm.ring_segments = 6
+		man.mesh = mm
+		man.material_override = nera
+		corpo.add_child(man)
+		# l'anello sta di piatto contro il tubolare, girato lungo il fianco
+		man.transform = Transform3D(Basis(Vector3.UP, m, Vector3.UP.cross(m)), q + m * 0.02)
+		maniglie.append(q + m * 0.11)
+	# le corde: dalle due maniglie più vicine agli anelli della parete più vicina, prima e dopo lungo il canale
+	var lato := 1.0 if off >= 0.0 else -1.0
 	var corde: Array = []
-	for lato: float in [-1.0, 1.0]:
-		var anello := _al(p, r, Vector2(lato * (canale - 0.05), acqua + 0.3)) + d * 0.6 * lato
+	var usate := {}
+	for k: float in [-1.0, 1.0]:
+		var sa := s + k * CORDA_LUNGO
+		var pa := punto(sa)
+		var ra := destra(sa)
+		# la piastra sul muro, e l'anello che ne esce di piatto, girato lungo il canale: la corda passa nell'anello
+		var muro_q := _al(pa, ra, Vector2(lato * canale, acqua + 0.3))
+		var dentro := -ra * lato
+		var piastra := MeshInstance3D.new()
+		var pm := BoxMesh.new()
+		pm.size = Vector3(0.14, 0.14, 0.02)
+		piastra.mesh = pm
+		piastra.material_override = _mat_ferro()
+		nodo.add_child(piastra)
+		piastra.global_transform = Transform3D(Basis.looking_at(dentro, Vector3.UP), muro_q + dentro * 0.01)
 		var attacco := MeshInstance3D.new()
 		var am := TorusMesh.new()
 		am.inner_radius = 0.035
@@ -999,55 +1077,121 @@ func _gommone(s: float, off: float) -> void:
 		attacco.mesh = am
 		attacco.material_override = _mat_ferro()
 		nodo.add_child(attacco)
-		attacco.global_transform = Transform3D(Basis.looking_at(-r * lato, Vector3.UP) * Basis(Vector3.RIGHT, PI * 0.5), anello)
-		var piastra := MeshInstance3D.new()
-		var pm := BoxMesh.new()
-		pm.size = Vector3(0.14, 0.14, 0.02)
-		piastra.mesh = pm
-		piastra.material_override = _mat_ferro()
-		nodo.add_child(piastra)
-		piastra.global_transform = Transform3D(Basis.looking_at(-r * lato, Vector3.UP), anello + r * lato * 0.04)
+		var da := direzione(sa)
+		# (l'anello tocca la piastra col bordo; la corda passa nel suo foro, dalla parte del canale)
+		attacco.global_transform = Transform3D(Basis(dentro, da, dentro.cross(da)), muro_q + dentro * 0.08)
+		var anello := muro_q + dentro * 0.11
+		var best := -1
+		for j in maniglie.size():
+			if usate.has(j):
+				continue
+			if best < 0 or (corpo.global_transform * (maniglie[j] as Vector3)).distance_to(anello) < (corpo.global_transform * (maniglie[best] as Vector3)).distance_to(anello):
+				best = j
+		usate[best] = true
 		var corda := MeshInstance3D.new()
+		corda.name = "Corda"
 		corda.mesh = ImmediateMesh.new()
 		corda.material_override = _mat_corda()
 		corda.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		nodo.add_child(corda)
-		corde.append([corda, anello, lato])
+		var lunga := (corpo.global_transform * (maniglie[best] as Vector3)).distance_to(anello) * (1.0 + CORDA_LASCO)
+		corde.append({"mesh": corda, "anello": anello, "maniglia": maniglie[best], "lunga": lunga})
 	_gommoni.append({"nodo": nodo, "corpo": corpo, "centro": centro, "base": corpo.global_transform.basis,
-			"fase": float(int(s * 7.0) % 10) * 0.6, "corde": corde, "r": r, "d": d})
+			"fase": float(int(s * 7.0) % 10) * 0.6, "corde": corde})
 	_aggiorna_gommone(_gommoni[_gommoni.size() - 1], 0.0)
 
 
-func _physics_process(_delta: float) -> void:
-	var t := Time.get_ticks_msec() / 1000.0
+## La collisione di un gommone, nel suo spazio: il tubolare come anello di spicchi convessi a sezione di dodecagono
+## (circoscritto: la gomma tocca le facce, niente sta sospeso sopra), il fondo e i sedili come nel disegno.
+func _collisione_gommone(corpo: AnimatableBody3D) -> void:
+	var rr := GOMMONE_T / cos(PI / GOMMONE_LATI)
+	for k in GOMMONE_SPICCHI:
+		var punti := PackedVector3Array()
+		for a in [TAU * k / GOMMONE_SPICCHI, TAU * (k + 1) / GOMMONE_SPICCHI]:
+			var m := Vector3(cos(a), 0.0, sin(a))
+			for j in GOMMONE_LATI:
+				var b := TAU * (j + 0.5) / GOMMONE_LATI
+				punti.append(m * (GOMMONE_R + rr * cos(b)) + Vector3.UP * (GOMMONE_T + rr * sin(b)))
+		var forma := ConvexPolygonShape3D.new()
+		forma.points = punti
+		var cs := CollisionShape3D.new()
+		cs.name = "Tubolare%d" % k
+		cs.shape = forma
+		corpo.add_child(cs)
+	var fondo := CylinderShape3D.new()
+	fondo.radius = GOMMONE_R - GOMMONE_T * 0.5
+	fondo.height = 0.06
+	var cf := CollisionShape3D.new()
+	cf.name = "Fondo"
+	cf.shape = fondo
+	cf.position = Vector3.UP * 0.03
+	corpo.add_child(cf)
+	for k in 6:
+		var a := TAU * float(k) / 6.0
+		var sb := BoxShape3D.new()
+		sb.size = Vector3(0.84, 0.36, 0.26)
+		var cs := CollisionShape3D.new()
+		cs.name = "Sedile%d" % k
+		cs.shape = sb
+		cs.transform = Transform3D(Basis(Vector3.UP, -a), Vector3(cos(a), 0, sin(a)) * 0.55 + Vector3.UP * 0.22)
+		corpo.add_child(cs)
+
+
+var _tempo_gommoni := 0.0
+
+
+func _physics_process(delta: float) -> void:
+	_tempo_gommoni += delta
+	for g in _gommoni:
+		_aggiorna_gommone(g, _tempo_gommoni)
+
+
+## Ferma i gommoni all'istante [param t] del dondolio (controllo di posizionamento, scatti, test).
+func ferma_gommoni(t: float) -> void:
+	_tempo_gommoni = t
 	for g in _gommoni:
 		_aggiorna_gommone(g, t)
 
 
-## Il dondolio di un gommone (pochi centimetri, si atterra sicuri) e le sue corde, che lo seguono.
-func _aggiorna_gommone(g: Dictionary, t: float) -> void:
+## Il dondolio di un gommone al tempo [param t] (pochi centimetri, si atterra sicuri) e le sue corde, che lo seguono.
+func posa_gommone(g: Dictionary, t: float) -> Transform3D:
 	var f: float = g["fase"]
 	var su := 0.02 * sin(t * 1.3 + f)
 	var giro := 0.025 * sin(t * 0.7 + f)
+	var rollio := deg_to_rad(1.2) * sin(t * 0.9 + f * 1.7)
+	return Transform3D((g["base"] as Basis) * Basis(Vector3.UP, giro) * Basis(Vector3.RIGHT, rollio), (g["centro"] as Vector3) + Vector3.UP * su)
+
+
+func _aggiorna_gommone(g: Dictionary, t: float) -> void:
 	var corpo: AnimatableBody3D = g["corpo"]
-	corpo.global_transform = Transform3D((g["base"] as Basis) * Basis(Vector3.UP, giro), (g["centro"] as Vector3) + Vector3.UP * su)
+	corpo.global_transform = posa_gommone(g, t)
 	for c in g["corde"]:
-		var lato: float = c[2]
-		var maniglia := corpo.global_transform * Vector3(0, GOMMONE_T * 1.2, 0) + (g["r"] as Vector3) * lato * (GOMMONE_R + GOMMONE_T * 0.9)
-		_corda(c[0], maniglia, c[1])
+		_corda(c["mesh"], punti_corda(corpo, c))
 
 
-## Una corda morbida fra [param a] e [param b] (un po' lenta: pende di qualche centimetro), fatta di nastri.
-func _corda(mi: MeshInstance3D, a: Vector3, b: Vector3) -> void:
+## I punti di una corda fra la sua maniglia (dove sta ora il gommone) e l'anello: una parabola con la freccia che
+## viene dal lasco (più il gommone si avvicina all'anello, più pende).
+func punti_corda(corpo: Node3D, c: Dictionary, n := 10) -> PackedVector3Array:
+	var a: Vector3 = corpo.global_transform * (c["maniglia"] as Vector3)
+	var b: Vector3 = c["anello"]
+	var dd := a.distance_to(b)
+	var freccia := sqrt(maxf(0.0, 3.0 * dd * (float(c["lunga"]) - dd) / 8.0))
+	var out := PackedVector3Array()
+	for k in n + 1:
+		var f := float(k) / n
+		out.append(a.lerp(b, f) + Vector3.DOWN * freccia * 4.0 * f * (1.0 - f))
+	return out
+
+
+## Una corda morbida per i punti [param pts], fatta di nastri.
+func _corda(mi: MeshInstance3D, pts: PackedVector3Array) -> void:
 	var im := mi.mesh as ImmediateMesh
 	im.clear_surfaces()
 	im.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
-	var n := 8
 	var r := 0.018
-	var prev := a
-	for k in range(1, n + 1):
-		var f := float(k) / n
-		var q := a.lerp(b, f) - Vector3.UP * 0.12 * 4.0 * f * (1.0 - f)
+	for k in range(1, pts.size()):
+		var prev := pts[k - 1]
+		var q := pts[k]
 		var dir := (q - prev).normalized()
 		var lat := dir.cross(Vector3.UP).normalized() * r
 		var su := lat.cross(dir).normalized() * r
@@ -1057,7 +1201,6 @@ func _corda(mi: MeshInstance3D, a: Vector3, b: Vector3) -> void:
 			for v in [prev + v0, q + v0, q + v1, prev + v0, q + v1, prev + v1]:
 				im.surface_set_normal(((v - prev) - dir * (v - prev).dot(dir)).normalized())
 				im.surface_add_vertex(v)
-		prev = q
 	im.surface_end()
 
 
