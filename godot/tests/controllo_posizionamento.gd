@@ -50,6 +50,13 @@ const ZONE := [
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
+	# il tunnel del viaggio sottomarino (costruito dalla strada); i gommoni dondolano e le corde li seguono: si
+	# controllano fermi in tre istanti del dondolio (coordinatore, 24 ottobre: "galleggianti che si muovono")
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "sottomarino_t0"},
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "sottomarino_t1",
+			"parti": ["Gommoni"]},
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "sottomarino_t2",
+			"parti": ["Gommoni"]},
 ]
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
@@ -313,6 +320,20 @@ func _prepara(stato: String) -> void:
 			for portello in _radice.find_children("*", "HingedHatch", true, false):
 				portello.call(&"load_state", {"open": true})
 			for i in 30:
+				await get_tree().physics_frame
+			return
+		"sottomarino_t0", "sottomarino_t1", "sottomarino_t2":
+			# il tunnel si costruisce tutto, poi i gommoni si fermano a un istante del dondolio (0, 1,9 e 4,3 s:
+			# su, giù e girati, con le corde che li seguono)
+			var tunnel := _radice as SalaSottomarino
+			if tunnel == null:
+				tunnel = _radice.find_child("SalaSottomarino", true, false) as SalaSottomarino
+			if tunnel:
+				if not tunnel.costruita:
+					tunnel.costruisci()
+				tunnel.set_physics_process(false)
+				tunnel.ferma_gommoni({"sottomarino_t0": 0.0, "sottomarino_t1": 1.9, "sottomarino_t2": 4.3}[stato])
+			for i in 10:
 				await get_tree().physics_frame
 			return
 		"risalita_arrivo":

@@ -1570,9 +1570,15 @@ func _gommone(s: float, off: float) -> void:
 	var p := punto(s)
 	var r := destra(s)
 	var d := direzione(s)
+	# (tutti sotto "Gommoni": il controllo di posizionamento li guarda a parte, fermi in tre istanti del dondolio)
+	var gruppo := get_node_or_null(^"Gommoni")
+	if gruppo == null:
+		gruppo = Node3D.new()
+		gruppo.name = "Gommoni"
+		add_child(gruppo)
 	var nodo := Node3D.new()
 	nodo.name = "Gommone_%d" % int(s)
-	add_child(nodo)
+	gruppo.add_child(nodo)
 	var centro := Vector3(p.x, acqua - GOMMONE_SOTTO, p.z) + r * off
 	var corpo := AnimatableBody3D.new()
 	corpo.name = "Gommone"

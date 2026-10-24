@@ -14,6 +14,8 @@ extends Node
 const PLAYER := "res://scenes/player/player.tscn"
 ## Tempo massimo per un attraversamento (s).
 const TEMPO_MAX := 25.0
+## Gommoni e corde stanno almeno tanto sotto le punte dei tentacoli di lei (m; con ambienti-2 e mascotte).
+const SOTTO_LEI := 0.10
 
 var sala: SalaSottomarino
 var p: Player
@@ -150,7 +152,7 @@ func _compenetrazioni() -> void:
 					tocchi.append("%s con %s (t %.1f)" % [corpo.get_parent().name, (h["collider"] as Node).name, t])
 			# la cima del tubolare resta sotto lo spazio di lei
 			var cima := corpo.global_position.y + SalaSottomarino.GOMMONE_T * 2.0 + 0.03
-			if cima > float(lei["quota_bassa"]):
+			if cima > float(lei["quota_bassa"]) - SOTTO_LEI:
 				alti.append(corpo.get_parent().name)
 	_controlla(tocchi.is_empty(), "i gommoni non toccano muri, banchine, gradini, ostacoli né altri gommoni %s" % str(tocchi.slice(0, 8)))
 	_controlla(alti.is_empty(), "i gommoni stanno sotto lo spazio di lei %s" % str(alti))
@@ -178,7 +180,7 @@ func _corde() -> void:
 				if pts[0].distance_to(man) > 0.001 or pts[pts.size() - 1].distance_to(c["anello"]) > 0.001:
 					staccate.append(corpo.get_parent().name)
 				for q in pts:
-					if q.y < sala.acqua + 0.01 or q.y > float(lei["quota_bassa"]):
+					if q.y < sala.acqua + 0.01 or q.y > float(lei["quota_bassa"]) - SOTTO_LEI:
 						basse.append("%s y %.2f" % [corpo.get_parent().name, q.y])
 						break
 				# dalla maniglia all'anello non si attraversa niente (tranne il proprio gommone e il muro all'anello)
