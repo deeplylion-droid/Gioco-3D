@@ -13,6 +13,9 @@ var _prompt: Label
 var _message: Label
 var _hint: Label
 var _banner: Label
+## Il livello della scritta grande: sopra il nero delle fini (80), sotto il menu di pausa (100).
+const LIVELLO_SCRITTA := 90
+var strato_scritta: CanvasLayer
 var _tank_bar: ProgressBar
 var _msg_left := 0.0
 var _hint_left := 0.0
@@ -44,6 +47,11 @@ func show_hint(text: String, seconds := 8.0) -> void:
 
 
 ## Scritta grande al centro (per esempio "Fine della demo").
+## La scritta grande, la sua etichetta (per i test).
+func banner_label() -> Label:
+	return _banner
+
+
 func show_banner(title: String, subtitle := "", seconds := 6.0) -> void:
 	_banner.text = title + ("\n" + subtitle if subtitle != "" else "")
 	_banner.modulate.a = 1.0
@@ -114,7 +122,18 @@ func _build() -> void:
 	_prompt = _label(root, 0.56, 20)
 	_message = _label(root, 0.82, 22)
 	_message.modulate.a = 0.0
-	_banner = _label(root, 0.3, 40)
+	# la scritta grande (la fine della demo) su un livello suo, sopra il nero delle fini (l'inseguimento lo mette al
+	# livello 80) e sotto il menu di pausa (100): prima stava qui, al livello 1, e alla fine dell'inseguimento restava
+	# sotto il nero (collaudo della v0.3.13). Il resto dell'interfaccia resta sotto.
+	strato_scritta = CanvasLayer.new()
+	strato_scritta.name = "StratoScritta"
+	strato_scritta.layer = LIVELLO_SCRITTA
+	add_child(strato_scritta)
+	var sopra := Control.new()
+	sopra.set_anchors_preset(Control.PRESET_FULL_RECT)
+	sopra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	strato_scritta.add_child(sopra)
+	_banner = _label(sopra, 0.3, 40)
 	_banner.offset_top = -60
 	_banner.offset_bottom = 60
 	_banner.modulate.a = 0.0
