@@ -2074,7 +2074,7 @@ def versione_A(mats):
             def _alto(d_, t_):
                 w = base + v0 * d_ + t0v * t_
                 h = albero_.ray_cast(Vector((w.x, w.y, base.z - 0.05)), Vector((0, 0, 1)), 0.6)
-                return max(base.z + 0.002, h[0].z - 0.004) if h[0] is not None else None
+                return h[0].z - 0.004 if h[0] is not None else None
 
             # a fette di 5 cm lungo il canale, ognuna larga quanto la pedana lascia (fino a 0,7 m dall'asse, dove i fianchi
             # stanno a circa 20 cm dalla grata)
@@ -2095,7 +2095,9 @@ def versione_A(mats):
                 fette_.append((d_, m_, max(max(r_) for r_ in alti_) - base.z))
                 T_ = [[base + v0 * (d_ + dd) + t0v * t_ + Vector((0, 0, alti_[i_][j_] - base.z)) for j_, t_ in enumerate(ts_)]
                       for i_, dd in enumerate((0.0, 0.05))]
-                B_ = [[base + v0 * (d_ + dd) + t0v * t_ - Vector((0, 0, 0.003)) for t_ in ts_] for dd in (0.0, 0.05)]
+                # (dove il fondo del canale scende sotto la grata, la fetta scende con lui: il canale ci passerebbe dentro)
+                B_ = [[base + v0 * (d_ + dd) + t0v * t_ + Vector((0, 0, min(-0.003, alti_[i_][j_] - base.z - 0.003))) for j_, t_ in enumerate(ts_)]
+                      for i_, dd in enumerate((0.0, 0.05))]
                 J_ = len(ts_) - 1
                 for j_ in range(J_):
                     cvc.faccia([T_[0][j_], T_[1][j_], T_[1][j_ + 1], T_[0][j_ + 1]], 'metallo')
