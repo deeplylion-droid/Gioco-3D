@@ -34,6 +34,16 @@ Su 45db14db i punti 1, 2 e 4 sono corretti (sezione "Ricontrollo" qui sotto). Il
 | 3 | Ancora aperto dal collaudo di prima: i pali rossi coi led verdi degli imbocchi (`Luci/LedImbocco`, `Luci/@MultiMeshInstance3D@276`…`@300`) | per esempio `LedImbocco_1`, `_10`, `_11`, `@300_9`…`11`, `@288_0`…`2` | Sotto la fila di led il palo si stringe a punta e finisce 25-30 cm sopra la grata, accanto al palo rosso che invece arriva alla grata. Si vede dove il giocatore entra negli scivoli. Va bene se è voluto, altrimenti va portato fino alla grata. | `fogli/torre_vedute_04.jpg`, `_06.jpg`, `_09.jpg` |
 | 4 | Noto dal collaudo di prima: il tubo lungo inclinato nella vasca dell'inseguimento | vicino a 43,5, -33,4, -3,5 | C'è ancora (scatti `ti052_e`, `ti052_s`): sta nell'acqua lungo il fondo. | `fogli/torre_giro_09.jpg` |
 
+## Ultimo ricontrollo (`lavoro/torre-attacchi` 8230e228): collaudo superato
+
+Unita in `lavoro/collaudo-enigmi` (0560b391), import fresco. Scatti in `ricontrollo_8230e228/`. Cambiano solo le culle degli imbocchi: 9 pezzi nuovi in `torre_A_sostegni`, mentre i 7 pezzi tolti da `torre_A` (le culle a booleano e la scheggia dell'imbocco 5) tornano come prima. Sostegni, collari, scivoli e inseguimento sono identici a 30d44573 (`pezzi_cambiati.log`).
+
+- **Culle degli imbocchi 0, 1, 2 e 5**: tutti i pezzi toccano qualcosa, al massimo a 0,1 mm, e il controllo della CI non trova compenetrazioni (d e f a 0). Stanno sotto il fondo del canale: dagli occhi di chi entra non si vedono più, né schegge né lastre ai lati (`imbocchi_dagli_occhi.jpg`). Da vicino non c'è niente di rotto (`culle_vicino.jpg`). La culla a schegge dell'imbocco 1 e il frammento dell'imbocco 5 non ci sono più.
+- **Imbocchi 3 e 4**: dagli occhi di chi entra il fondo dentro la grata non si vede (`imbocchi_dagli_occhi.jpg`, imbocchi 3 e 4). A filo della grata, di lato, si vede lo scafo tondo che scende alla grata, con luce solo sotto i fianchi, come un tubo appoggiato; l'entrata di 2-6 cm del fondo nella grata, che è a maglie, non si distingue (`imbocchi_3_4_di_lato.jpg`, `imbocchi_a_filo_grata.jpg`). Va bene segnarla come voluta.
+- Controllo di posizionamento della CI, zona torre: **0 nuovi, 0 da correggere**; a) 0, a2) 0, b) 0, c) 0, d) 0, e) 0, f) 0. Testa 0, celle uguali (1190 e 1187).
+
+**Verdetto: la torre degli scivoli e l'inseguimento passano il collaudo su 8230e228.**
+
 ## Terzo ricontrollo (`lavoro/torre-attacchi` 30d44573)
 
 Unita in `lavoro/collaudo-enigmi` (c05c876f), import fresco. Scatti in `ricontrollo_30d44573/`.
