@@ -758,6 +758,26 @@ func _fine() -> void:
 	# le luci: la lampada sopra il portello dalla parte del tunnel, e una piccola nella camera sul volantino
 	# (sul muro destro, sotto l'imposta della volta: sul sinistro c'è la scala, e sopra la scala ci si passa)
 	_lampada(nodo, L - BALLATOIO - 2.0, 1.0, piano + 3.5, 4.0)
+	# una sul muro sinistro appena prima della scala, che la illumina dal basso (le lampade del tunnel lì finiscono)
+	_lampada(nodo, L - BALLATOIO - 12 * 0.32 - 1.2, -1.0, piano + 3.0, 3.5)
+	# e una sul muro di fondo sopra il ballatoio, dalla parte della scala (2,2 m sopra il ballatoio): la scala e il
+	# ballatoio si devono vedere senza torcia
+	var lf := (load("res://assets/enigma_acquari/lampada_gabbia.glb") as PackedScene).instantiate() as Node3D
+	nodo.add_child(lf)
+	lf.global_position = _al(p, r, Vector2(-3.2, sg + 2.2)) - d * 0.05
+	lf.look_at(lf.global_position - d * 2.0, Vector3.UP)
+	lf.rotate_object_local(Vector3.UP, PI)
+	_a_filo_del_muro(lf, -d)
+	var gf := lf.find_child("globo", true, false) as MeshInstance3D
+	if gf:
+		gf.material_override = _mat_globo()
+	var of := OmniLight3D.new()
+	of.light_color = Color(1.0, 0.76, 0.5)
+	of.light_energy = 3.5
+	of.omni_range = 9.0
+	of.omni_attenuation = 1.3
+	nodo.add_child(of)
+	of.global_position = lf.global_position - d * 0.4
 	var lc := OmniLight3D.new()
 	lc.light_color = Color(1.0, 0.86, 0.66)
 	lc.light_energy = 1.6
