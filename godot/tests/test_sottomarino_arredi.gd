@@ -26,6 +26,8 @@ func _check(cond: bool, msg: String) -> void:
 
 func _run() -> void:
 	# per provare le altre versioni (SCELTA_PESCI=A|B|niente, SCELTA_ABISSO=A|B|niente); di base quelle scelte (A, A)
+	if OS.get_environment("SCELTA_RETI") != "":
+		SottomarinoArrediA1.reti_accese = OS.get_environment("SCELTA_RETI") == "si"
 	var ep := OS.get_environment("SCELTA_PESCI")
 	if ep != "":
 		SottomarinoArrediA1.scelta_pesci = "" if ep == "niente" else ep
@@ -112,7 +114,8 @@ func _run() -> void:
 		_check(hv != null and absf((hv as Vector3).y - alto) < 0.005, "%s a filo della volta" % piastra.name)
 
 	# 3) le cose a muro toccano il muro
-	for nome in ["Reti/rete_stelle_325", "Reti/rete_stelle_333", "Reti/rete_stelle_388", "Approdo/salvagente_fosforescente",
+	var a_muro := ["Reti/rete_stelle_325", "Reti/rete_stelle_333", "Reti/rete_stelle_388"] if SottomarinoArrediA1.reti_accese else []
+	for nome in a_muro + ["Approdo/salvagente_fosforescente",
 			"Approdo/fanale_rosso", "Approdo/fanale_verde", "Approdo/cartello_portello_494", "Approdo/cartello_portello_521",
 			"Approdo/vetrina_vuota", "Tartaruga/faretto_362", "Tartaruga/faretto_369"]:
 		var n := arr.get_node_or_null(nome) as Node3D

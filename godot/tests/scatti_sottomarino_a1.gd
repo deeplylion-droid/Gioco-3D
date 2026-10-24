@@ -7,6 +7,8 @@ extends "res://tests/scatti_sottomarino.gd"
 
 func _init() -> void:
 	# per provare le altre versioni (SCELTA_PESCI=A|B|niente, SCELTA_ABISSO=A|B|niente); di base quelle scelte (A, A)
+	if OS.get_environment("SCELTA_RETI") != "":
+		SottomarinoArrediA1.reti_accese = OS.get_environment("SCELTA_RETI") == "si"
 	var ep := OS.get_environment("SCELTA_PESCI")
 	if ep != "":
 		SottomarinoArrediA1.scelta_pesci = "" if ep == "niente" else ep

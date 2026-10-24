@@ -53,6 +53,9 @@ const LUCINE_OGNI := 3.0
 ## le bollicine ("B", fermi col plancton, per le prove). Vuote: niente.
 static var scelta_pesci := "A"
 static var scelta_abisso := "A"
+## Le reti con le stelle: il modello Meshy è venuto male (quattro bastoni) e quella fatta qui è un modello nuovo, che
+## passa dall'utente. Spente finché non risponde.
+static var reti_accese := false
 ## Solo per gli scatti: la fase uguale per tutti gli oblò grandi (negativa: ognuno la sua).
 static var fase_oblo_prova := -1.0
 ## I pesci: quanto distano lungo la strada (m), la scala del modello, la quota della mensola (sopra il piano).
@@ -123,6 +126,8 @@ func _tartaruga() -> void:
 
 ## Le reti con le stelle marine appese ai muri sopra i 2 m.
 func _reti() -> void:
+	if not reti_accese:
+		return
 	var nodo := _nodo("Reti")
 	for q in RETI:
 		_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
@@ -539,13 +544,6 @@ func _abisso_lampade() -> void:
 			continue
 		sala._lampada(nodo, s, lato, sala.piano + 3.0, 3.2)
 		var l := nodo.get_child(nodo.get_child_count() - 2) as Node3D
-		# la lampada a filo del muro (_lampada la lascia 2 cm davanti: staccata)
-		var w = _muro(s, lato, sala.piano + 3.0)
-		if w != null:
-			var gap := INF
-			for v in _triangoli(l):
-				gap = minf(gap, (v - (w[0] as Vector3)).dot(w[1]))
-			l.position -= (w[1] as Vector3) * (gap - 0.001)
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
 			g.material_override = _mat("globo_blu", Color(0.35, 0.5, 1.0), 0.4, 0.0, Color(0.25, 0.42, 1.0), 2.5)
