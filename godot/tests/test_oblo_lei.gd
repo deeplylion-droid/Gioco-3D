@@ -115,7 +115,7 @@ func _fuori(o: ObloLei) -> float:
 		nomi.append("occhio")
 	var peggio := -INF
 	var l := o.vasca_larga * 0.5
-	var h := ObloLei.PIASTRA * 0.5
+	var h := o.piastra * 0.5
 	var z1 := -o.spessore_muro - ObloLei.STACCO_VASCA - o.vasca_fonda
 	for i in punti.size():
 		var lq := o.to_local(punti[i])
