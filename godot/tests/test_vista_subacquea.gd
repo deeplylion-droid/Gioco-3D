@@ -277,6 +277,24 @@ func _tunnel() -> void:
 		s += 3.0
 	for k in ko.slice(0, 10):
 		print("    vista subacquea nel tunnel: ", k)
+	# la presa (da s -4,5 a 6, fino a -36): lì l'acqua è profonda e c'è la sua WaterBody; sotto il pelo, dove sotto
+	# c'è più di un metro d'acqua, la vista è subacquea; sopra il pelo normale
+	var presa_ko := []
+	var np := 0
+	for sp in [-3.0, -1.0, 1.0, 3.0]:
+		var pp := sala.punto(sp)
+		for lato in [-2.5, 0.0, 2.5]:
+			var q: Vector3 = Vector3(pp.x, sala.acqua, pp.z) + sala.destra(sp) * lato
+			if sala.fondo_a(sp) > sala.acqua - 1.0:
+				continue
+			np += 1
+			var sotto := _vista(q + Vector3.DOWN * SOTTO)
+			var sopra := _vista(q + Vector3.UP * SOPRA)
+			if not sotto[0] or sopra[0] or float(sopra[1]) > q.y + SOPRA - VICINO:
+				presa_ko.append("s %.0f, lato %.1f" % [sp, lato])
+	for k in presa_ko:
+		print("    presa: ", k)
+	_check(np > 0 and presa_ko.is_empty(), "tunnel, presa: sotto il pelo la vista è subacquea, sopra normale (%d punti, %d no)" % [np, presa_ko.size()])
 	_check(ko.is_empty(), "tunnel: nel canale al ginocchio (in piedi e accovacciati) e sulle banchine la vista resta normale (%d punti, %d no)" % [n, ko.size()])
 	sala.queue_free()
 	_cam.queue_free()

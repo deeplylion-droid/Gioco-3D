@@ -193,23 +193,33 @@ static func aggiungi(m: MorbidezzaLei, sala: SalaSottomarino) -> int:
 	for fo in _cache[sala.get_instance_id()]:
 		m.aggiungi_piani(fo[0], fo[1])
 		n += 1
-	# i gommoni: il cilindro della collisione come un prisma di 12 lati, legato al corpo che dondola
+	# i gommoni: una scatola sola per gommone, quella di tutta la sua collisione (tubolare, fondo, sedili) nel sistema
+	# del corpo che dondola: lei ci passa sopra (10 cm sopra le punte), e sopra il buco del tubolare non entra niente
 	for g in sala.get(&"_gommoni"):
 		var corpo := (g as Dictionary)["corpo"] as Node3D
+		var bb := AABB()
+		var primo := true
 		for cs in corpo.find_children("*", "CollisionShape3D", false, false):
-			var cy := (cs as CollisionShape3D).shape as CylinderShape3D
-			if cy == null:
-				continue
-			var punti := PackedVector3Array()
-			for k in 12:
-				var ang := TAU * k / 12.0
-				# (il prisma fuori dal cilindro: il raggio al centro dei lati è quello del cilindro)
-				var r := cy.radius / cos(PI / 12.0)
-				for y in [-cy.height * 0.5, cy.height * 0.5]:
-					punti.append((cs as CollisionShape3D).transform * Vector3(cos(ang) * r, y, sin(ang) * r))
-			m.aggiungi_mobile(corpo, punti)
+			var c3 := cs as CollisionShape3D
+			for q in _punti_convessi(c3.shape):
+				if primo:
+					bb = AABB(c3.transform * q, Vector3.ZERO)
+					primo = false
+				else:
+					bb = bb.expand(c3.transform * q)
+		if not primo:
+			m.aggiungi_mobile_piani(corpo, _piani_scatola(bb), bb)
 			n += 1
 	return n
+
+
+## I sei piani (verso fuori) della scatola [param bb].
+static func _piani_scatola(bb: AABB) -> Array[Plane]:
+	var a := bb.position
+	var b := bb.end
+	var out: Array[Plane] = [Plane(Vector3.RIGHT, b.x), Plane(Vector3.LEFT, -a.x), Plane(Vector3.UP, b.y),
+		Plane(Vector3.DOWN, -a.y), Plane(Vector3.BACK, b.z), Plane(Vector3.FORWARD, -a.z)]
+	return out
 
 
 ## Il prisma del triangolo a, b, c spesso SPESSORE dalla parte opposta a [param n]: [piani verso fuori, AABB].
