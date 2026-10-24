@@ -985,7 +985,7 @@ def pose_oblo_capovolta_stacca(arm, C, Z, t):
 # enorme, che riempie l'oblò e segue il giocatore; poi si stacca lenta e torna nel buio. La testa piegata indietro
 # (la frangia va su, l'occhio e' la cosa piu' avanti), i palmi sul vetro ai lati, fuori dall'oblò.
 OCCHIO_SU = 24.0            # gradi: la testa piegata indietro
-OCCHIO_DAVANTI = 0.31       # quanto la pelle piu' avanti (l'occhio) sta davanti all'osso dell'occhio con la testa cosi'
+OCCHIO_DAVANTI = 0.278      # quanto la pelle piu' avanti (l'occhio) sta davanti all'osso dell'occhio con la testa cosi'
 OCCHIO_VIA = (1.6, 0.8)     # da dove arriva e dove torna: tanti metri indietro e giu' (il buio della vasca)
 OCCHIO_MANI = 0.42          # i palmi sul vetro a tanto dal centro (dietro il muro, fuori dall'oblò)
 T_ARRIVA = 3.0
@@ -995,7 +995,7 @@ def _occhio_posa(arm, C, Z, t, via, mani=1.0):
     """L'occhio sul vetro; via: 0 sul vetro, 1 lontana nel buio (OCCHIO_VIA); mani: 1 i palmi sul vetro."""
     dd, hh = OBLO
     u = (t / T_OBLO) % 1.0
-    _calma(arm, C, Z, t, avanti=6.0 - 10.0 * via, su=OCCHIO_SU * (1.0 - 0.6 * via))
+    _calma(arm, C, Z, t, avanti=6.0, su=OCCHIO_SU * (1.0 - 0.6 * via), indietro=14.0, raccolta=True)
     _occhio_in(arm, (0.006 * math.sin(2 * math.pi * u), -dd + OCCHIO_DAVANTI + 0.008 + 0.003 * math.sin(2 * math.pi * u)
                      + OCCHIO_VIA[0] * via, hh - OCCHIO_VIA[1] * via ** 1.4))
     for suf, s in (('.L', 1), ('.R', -1)):
@@ -1015,7 +1015,8 @@ def pose_oblo_occhio_arriva(arm, C, Z, t):
     """3 s: dal buio (indietro e giu') fino al vetro, rallentando; le mani si posano alla fine."""
     u = t / T_ARRIVA
     via = 1.0 - liscio(0.0, 1.0, 0.0, 0.9, u)
-    _occhio_posa(arm, C, Z, t, via, mani=liscio(0.0, 1.0, 0.6, 1.0, u))
+    # (il tempo del respiro finisce dove comincia il ciclo oblo_occhio: niente scatto al passaggio)
+    _occhio_posa(arm, C, Z, (t - T_ARRIVA) % T_OBLO, via, mani=liscio(0.0, 1.0, 0.6, 1.0, u))
 
 
 def pose_oblo_occhio_stacca(arm, C, Z, t):
@@ -1289,7 +1290,7 @@ def controlla_vetro(arm, C, Z, nome, durata, fn, n=9):
             d = float((co[:, 1] + dd).min())
             lo, hi = np.minimum(lo, co.min(0)), np.maximum(hi, co.max(0))
             if os.environ.get('CHI'):
-                print(f'  OGGETTO {o.name}: x {co[:, 0].min():.2f}..{co[:, 0].max():.2f}', flush=True)
+                print(f'  OGGETTO {o.name}: x {co[:, 0].min():.2f}..{co[:, 0].max():.2f} vetro {(co[:, 1].min() + dd) * 100:.1f} cm', flush=True)
             if d < avanti:
                 avanti, chi = d, o.name
             if 'Mani' not in o.name and d < senza_mani:

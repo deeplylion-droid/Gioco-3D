@@ -8,7 +8,10 @@ extends Node3D
 ## - "schiacciata": la faccia e i due palmi sul vetro, ti fissa;
 ## - "sbircia": sbircia dal bordo dell'oblò con mezzo viso e una mano sola (dalla sua sinistra: a destra per chi guarda
 ##   dal corridoio); "sbircia_altro" dall'altro bordo;
-## - "capovolta": a testa in giù, l'occhio rovesciato contro il vetro, i capelli e i tentacoli verso l'alto.
+## - "capovolta": a testa in giù, l'occhio rovesciato contro il vetro, i capelli e i tentacoli verso l'alto;
+## - "occhio" (l'oblò della torre): arriva dal buio in 3 s ("inseguimento/oblo_occhio_arriva", la luce si accende
+##   piano) e appoggia al vetro l'occhio, la testa piegata indietro, i palmi sul vetro a 0,42 m dal centro (dietro il
+##   muro se il vetro è piccolo); fatta per un vetro di 0,2-0,25 m di raggio, va bene anche per quello grande.
 ##
 ## Chi la comanda (ObloLei, la logica dell'oblò):
 ## - mostra(centro_vetro, normale, posa): la mette dietro il vetro (centro_vetro: il centro della faccia del vetro dalla
@@ -33,7 +36,7 @@ const ANIM := "inseguimento/"
 const OBLO := Vector2(0.95, 4.62)
 ## Il raggio del vetro per cui sono fatte le pose (medusa_inseguimento.py, OBLO_R).
 const OBLO_R := 0.55
-const POSE: Array[String] = ["schiacciata", "sbircia", "sbircia_altro", "capovolta"]
+const POSE: Array[String] = ["schiacciata", "sbircia", "sbircia_altro", "capovolta", "occhio"]
 const ROSA := Color(1.0, 0.35, 0.6)
 
 ## Da che bordo sbircia nella posa "sbircia": +1 a destra per chi guarda dal corridoio, -1 a sinistra (ObloLei).
@@ -112,7 +115,14 @@ func mostra(centro_vetro: Vector3, normale: Vector3, p := "schiacciata") -> void
 		morbidezza.azzera()
 		morbidezza.accendi(true)
 	lei.segui_con_la_testa(1.0, 0.6)
-	_anima("oblo_" + p, 0.0)
+	if p == "occhio":
+		_anima("oblo_occhio_arriva", 0.0)
+		_ap.queue(StringName(ANIM + "oblo_occhio"))
+		_luce.light_energy = 0.0
+		_tw = create_tween()
+		_tw.tween_property(_luce, "light_energy", 4.0, _durata("oblo_occhio_arriva")).set_ease(Tween.EASE_OUT)
+	else:
+		_anima("oblo_" + p, 0.0)
 
 
 ## Si stacca dal vetro e sparisce lenta nel buio; poi il segnale sparita.
