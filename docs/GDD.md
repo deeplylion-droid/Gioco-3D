@@ -278,6 +278,7 @@ Quindi il mostro-squalo A (quello scelto il 18 ottobre) compare al risveglio nel
     - 5 file di denti seghettati in più, in ombra verso la gola;
     - 3 fili di bava agli angoli che pendono e si spezzano, più una colata dal mento.
     Video e scatti dal motore in `docs/report/mascotte/squalo_bocca_giro/`. Risposta dell'utente: **"Lo squalo nuovo ci sta"** (approvato). Va nella build dopo la v0.3.11.
+- **Luce viola e nebbia (richiesta dell'utente, 24 ottobre sera)**: "lo squalo all'inizio è ancora un po goofy. E se per dargli più atmosfera e nasconderlo un po' facessimo che da dietro di lui arriva una fortissima luce viola (il bagliore di Jilly) e magari nella stanza c'è pure una nebbia densa che si dirada appena inizi a entrare in controllo del personaggio?" Come si fa: la luce viola fortissima entra dalla porta in fondo al corridoio, da dove viene il boato di lei; lo squalo è una sagoma controluce (contorno, denti e bava che brillano ai bordi); quando la porta si chiude dietro di lui il viola si spegne; nebbia densa volumetrica durante la scena, che si dirada in circa 4 s quando il giocatore prende il controllo. Lo fa grafica (lavoro/squalo-viola), coi tempi della scena di mascotte.
 
 ## Lo spot della crociera Jubilee (idea dell'utente, 22 ottobre)
 
