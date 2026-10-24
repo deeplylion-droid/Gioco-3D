@@ -147,6 +147,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_vista_subacquea.gd
 
+      - name: Test dei tentacoli morbidi nel tunnel sottomarino (presa, strada intera, curve; pelle vera bloccante, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_tunnel.gd
+
       - name: Test delle forme che si muovono della morbidezza (galleggianti e portello del tunnel)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_morbidezza_mobili.gd

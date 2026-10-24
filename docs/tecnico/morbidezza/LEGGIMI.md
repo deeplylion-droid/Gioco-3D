@@ -15,6 +15,7 @@
 | Statua (menu e sala) | `MedusaStatue` la mette su ogni medusa, a `quanto` 0 (la proprietà `morbidezza`): ferma davvero, costo zero | — | `test_morbidezza_statua.gd` |
 | Affacciata e tuffo (fossa) | `LeiSbuca`: tutta e subito quando compare già affacciata | forme convesse della fossa (sotto) | `test_morbidezza.gd` |
 | Lei che sbuca (fossa) | `LeiSbuca`: accesa anche mentre sale, con `trattieni` (tentacoli tenuti nella fossa finché lei non è su) | come sopra, più `fossa_pianta` | `test_morbidezza_sbuca.gd` |
+| Tunnel sottomarino (dopo SB1) | chi muove lei nel tunnel (mascotte): `MorbidezzaLei.su(lei)`, `quanto = 1`, `accendi()`, poi `FormeTunnel.aggiungi(morbidezza, sala)` | prismi dai triangoli della collisione del tunnel vicini allo spazio di lei (`forme_tunnel.gd`, sotto), gommoni come forme che si muovono | `test_morbidezza_tunnel.gd` |
 | Inseguimento (vasche, scolo, grata, SB1) | `SalaInseguimento._morbidezza_qui()`: tutta e subito quando lei sale, con l'acqua del posto | scatole prese dalla collisione vera intorno a ogni posto (`inseguimento_forme_lei.json`, sotto); nei pozzi (SB1, grata) e dove sale attraverso il pavimento allagato (scolo 3) con `trattieni` | `test_morbidezza_inseguimento.gd` |
 
 Le misure comuni dei test (punti dentro le forme, tratti attraverso la collisione vera, scatti, tratti, costo) sono in `tests/misura_morbidezza.gd`.
@@ -88,6 +89,15 @@ Come i "voluto" del controllo di posizionamento: in `test_morbidezza_inseguiment
 - **Partenza sul tratto** (`partenza_sul_tratto`, acceso solo nell'inseguimento): quando lei compare, un punto della posa dentro il mondo si ferma sul tratto dal punto prima, all'ultimo posto fuori, invece di uscire dalla faccia più vicina (che sotto una grata o in un muro sottile è quella sbagliata).
 - **Prove di vasca_2 col giocatore nella vasca 3** (dove sta nel gioco: lei si gira verso di lui): `bash godot/tests/prova_vasca2_giocatore.sh` (di mascotte, con `GIOCATORE=x,y,z` nel test). I 5 punti nella vasca 3 danno 0; il punto del test, da solo (`SOLO=vasca_2`), ha un fotogramma con 2 vertici fino a 4 cm sotto una sporgenza di 10 cm; nel giro completo (come in CI) 0.
 - `SOLO=posto1,posto2` lancia solo quei posti.
+
+## Tunnel sottomarino, 24 ottobre
+
+- **Lo spazio di lei** (JSON della strada di ambienti-2, `lei`): sull'asse del canale, fino a 3,6 m dall'asse, fra 1,2 e 6,2 m sopra l'acqua, e lì non c'è niente. Le forme si prendono solo vicino a quello spazio (0,6 m in più), più giù nella presa (lei sale da lì) e dal fondo in su negli ultimi 14 m (lo schianto sul portello).
+- **Le forme** (`scripts/environment/forme_tunnel.gd`, `FormeTunnel`): ogni triangolo della collisione vicino allo spazio di lei diventa un prisma convesso spesso 30 cm verso il pieno (1 m sotto i pavimenti: la rampa della presa); le forme convesse degli ostacoli intere. Circa 460 forme, che si preparano una volta per sala, a pezzi (`prepara_a_pezzi`, 4 ms per fotogramma, circa 1 s in tutto) mentre il tunnel si costruisce; `aggiungi` le dà alla morbidezza in 30-60 ms.
+- **Forme che si muovono** (`aggiungi_mobile`, `aggiungi_scatola_mobile`, `togli_mobili`): legate a un nodo, rifatte dal nodo a ogni fotogramma, fuori dalla griglia; vicino a una di loro il tentacolo si simula a ogni fotogramma e i bersagli si rifanno sempre. I gommoni del tunnel sono prismi di 12 lati attorno al cilindro della loro collisione. Test: `test_morbidezza_mobili.gd`.
+- **La presa:** il fondo è una rampa da -36 (s = 0) a -30,92 (s = 6). Lei deve salire a s = 0: partendo a s = 3 i tentacoli di `sale_dall_acqua` (5 m sotto) nascono dentro la rampa.
+- **Il test** (`test_morbidezza_tunnel.gd`): la presa, la strada intera a 7 m/s e le curve a 2,5 m/s, con la pelle vera. Finché la mascotte non fa lo script che muove lei nel tunnel, il test la porta lungo l'asse con `insegue`, coi tentacoli alla quota bassa. Mancano il getto (come reagisce lei nel tunnel: la mascotte) e lo schianto sul portello (il portello: ambienti-2): il test li stampa come da fare. Il 24 ottobre: 56 controlli su 56, costo medio 2,1 ms e 3,3 nel 95% (CPU del sandbox): **il C++ per ora non serve**. `SOLO=presa,strada,curve`.
+- **Attenzione:** la medusa nasce statua, con `quanto` a 0. Chi la fa muovere lo deve alzare a 1.
 
 ## Da fare dopo la v0.3.12
 
