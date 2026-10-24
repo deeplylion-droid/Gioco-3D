@@ -427,10 +427,15 @@ def bagnino():
     p = Pennarello(W, H, 71)
     nero, rosso = (12, 10, 12), (150, 12, 14)
     ex, ey, er = 408, 146, 31
-    p.spirale(ex, ey, er * 1.4, 7, nero, giri=30)
-    p.spirale(ex + 3, ey - 2, er * 0.9, 5, nero, giri=14)
-    p.denti(420, 192, 120, 46, 8, nero, (30, 4, 6), (238, 232, 220), 3.5, arco=0.6)
-    p.nervose(ex, ey + 20, 130, 18, 4.2, rosso, lung=(0.5, 1.1))
+    # (più rovinato, 25 ottobre: il coordinatore e l'utente lo vogliono il più rovinato dei quattro, leggibile anche
+    # dalla porta dello stanzino: tratti spessi, faccia annerita, bruciatura e strappo grosso)
+    # la faccia annerita tutta, poi l'occhio a spirale fitta e una croce rossa sopra
+    p.spirale(ex + 6, ey + 25, 95, 9, nero, giri=22)
+    p.spirale(ex, ey, er * 1.5, 11, nero, giri=36)
+    p.spirale(ex + 3, ey - 2, er * 0.9, 9, nero, giri=18)
+    p.croce(ex + 6, ey + 20, 110, 9, rosso, volte=2)
+    p.denti(422, 196, 190, 74, 9, nero, (90, 6, 10), (240, 236, 224), 6, arco=0.6)
+    p.nervose(ex, ey + 20, 170, 28, 6, rosso, lung=(0.5, 1.2))
     # rosso che cola dagli occhi giù sulle guance
     for dx in (-18, 2, 20):
         p.linea((ex + dx, ey + 20), (ex + dx * 1.3 + p.rng.normal(0, 4), ey + 110 + p.rng.normal(0, 20)), 4, rosso, n=14, trem=1.2)
@@ -438,8 +443,20 @@ def bagnino():
     p.spirale(776, 262, 14, 3, nero, giri=10)
     p.croce(172, 306, 16, 3, nero)
     # nuvola di scarabocchi rabbiosi sul busto e un'altra rossa sulla campana
-    p.spirale(425, 500, 75, 3.6, nero, giri=9)
-    p.spirale(440, 700, 110, 3.2, rosso, giri=7)
+    p.spirale(425, 500, 90, 7, nero, giri=10)
+    p.spirale(440, 700, 130, 6, rosso, giri=8)
+    # segni grossi su tutto il resto: zig-zag neri sul delfino e sul salvagente, graffi rossi lunghi sulle bolle
+    for (x0, y0, x1, y1) in ((640, 330, 860, 470), (90, 380, 260, 520), (120, 860, 330, 1120)):
+        zig = []
+        for i in range(9):
+            t = i / 8
+            zig += [(x0 + (x1 - x0) * t + p.rng.normal(0, 8), y0 + p.rng.normal(0, 10)),
+                    (x0 + (x1 - x0) * t + 20 + p.rng.normal(0, 8), y1 + p.rng.normal(0, 10))]
+        p.tratto(zig, 6, nero, trem=3)
+    for i in range(7):
+        x = p.rng.uniform(80, 820)
+        p.linea((x, p.rng.uniform(60, 300)), (x + p.rng.normal(0, 90), p.rng.uniform(800, 1150)), 5, rosso, n=12, trem=3,
+                curva=p.rng.normal(0, 0.08))
     a = p.applica(a, alfa)
     a = graffi(a, alfa, 25, 72, lung=(30, 150))
     # tagli di coltello in croce sul viso e lungo il corpo (fessure vere)
@@ -447,8 +464,21 @@ def bagnino():
     a, alfa = taglio(alfa, a, (495, 70), (330, 320), 3, 74)
     a, alfa = taglio(alfa, a, (430, 420), (470, 900), 3, 75)
     a, alfa = taglio(alfa, a, (250, 600), (360, 1050), 2, 76)
-    # angolo in alto a sinistra strappato via (resta il pezzetto sotto la puntina), in basso a destra ripiegato
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    # strappo grosso che attraversa il poster: una striscia mancante dal bordo sinistro quasi al destro (resta un ponte di
+    # carta a destra, così il pezzo sopra è ancora unito). Le due puntine vere della bacheca (nella texture, capovolta nel
+    # gioco, verso (484, 780) e (591, 984)) restano su carta intera.
+    ns = blob((H, W), 82, 14)
+    linea_y = 700 - xx * 0.32 + (ns - 0.5) * 50
+    larga = 14 + 30 * blob((H, W), 83, 6)
+    striscia = (np.abs(yy - linea_y) < larga) & (xx < W - 70)
+    alfa = alfa * ~striscia
+    # bruciatura vera con il buco dai bordi carbonizzati, sotto il delfino (la fuliggine sale sul delfino)
+    dist = np.hypot((xx - 700) / 150, (yy - 640) / 175)
+    campo = 1 - dist * 0.7 + (blob((H, W), 84, 7) - 0.5) * 0.45
+    a, alfa = bruciatura(a, alfa, campo, 0.42, 0.16, 85, fuliggine=1.4, verso=(0.05, -1))
+    a, alfa = buchi_sigaretta(a, alfa, [(300, 300), (560, 420), (220, 980)], [8, 7, 9], 86)
+    # angolo in alto a sinistra strappato via (resta il pezzetto sotto la puntina), in basso a destra ripiegato
     nb = blob((H, W), 77, 12)
     via = ((xx / W) + (yy / H) * 0.9 + (nb - 0.5) * 0.12) < 0.3
     resto = np.hypot(xx - 40, yy - 38) < 26 + (nb - 0.5) * 18   # il brandello sotto la puntina
