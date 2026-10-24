@@ -790,8 +790,9 @@ def pose_schianto(arm, C, Z, t, T=2.4):
         teso = pc + rot_giro(arm) @ Vector((s * (0.30 - 0.04 * a), -0.95 - 0.10 * a,
                                             0.10 + 0.08 * math.cos(2 * math.pi * (0.0 if s > 0 else 0.5))))
         alto = pc + rot_giro(arm) @ Vector((s * 0.5, -0.8, 0.45))
-        # (il polso a PALMO dal portello: il palmo e le dita a filo del vetro, misurato sulla mesh delle mani)
-        contatto = Vector((s * 0.62, -dd + PALMO, hh + 0.05 - 0.05 * liscio(0.0, 1.0, 0.7, T, t)))
+        # i palmi sul telaio del portello, a 0,71 m dall'asse (il telaio va da 0,65 a 0,78, la sua faccia sul piano
+        # dell'oblò: ambienti-2, 24 ottobre); il polso a PALMO (+4 mm) dal piano: il palmo e le dita a filo
+        contatto = Vector((s * 0.71, -dd + PALMO + 0.004, hh + 0.05 - 0.05 * liscio(0.0, 1.0, 0.7, T, t)))
         # dalle braccia tese della corsa, su ai lati della testa, e giu' piatte sul portello
         polso = teso.lerp(alto, liscio(0.0, 1.0, 0.0, 0.18, t)).lerp(contatto, liscio(0.0, 1.0, 0.18, 0.36, t))
         braccio_mondo(arm, suf, polso, (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
