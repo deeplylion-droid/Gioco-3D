@@ -43,9 +43,8 @@ const OBLO_R := 0.2
 const VOLANTINO_Y := 0.75
 ## I gradini per risalire dal canale: ogni quanti metri, alternati sui due lati.
 const GRADINI_OGNI := 12.0
-## Nel canale si va a guado: l'acqua al ginocchio rallenta a tanto, anche di corsa (scelta del coordinatore del
-## 24 ottobre), e accovacciati a tanto (m/s).
-const VELOCITA_GUADO := 2.0
+## Nel canale si va a guado, accovacciati a tanto (m/s; scelta del coordinatore del 24 ottobre; a piedi e di corsa
+## vedi [member velocita_guado]). Il rallentamento lo fa il Player coi volumi d'acqua del canale.
 const VELOCITA_GUADO_ACCOVACCIATO := 1.2
 ## Le gallerie di servizio (i passaggi bassi, scelta 4C dell'utente): dietro il muro, larghe [constant GALLERIA_LARGA]
 ## e alte [constant GALLERIA_ALTA] (ci si passa solo accovacciati), con le due bocche lunghe [constant GALLERIA_BOCCA].
@@ -519,7 +518,7 @@ func _acqua(nodo: Node3D, s0: float, s1: float) -> void:
 		var wr := muro if (_lato(s2 + 0.01, 1.0)["crollo"] or _lato(t2 - 0.01, 1.0)["crollo"]) else canale
 		var vol := WaterVolume.new()
 		vol.name = "Canale_%d" % int(m)
-		vol.velocita_guado = VELOCITA_GUADO
+		vol.velocita_guado = velocita_guado
 		vol.velocita_guado_accovacciato = VELOCITA_GUADO_ACCOVACCIATO
 		var cs := CollisionShape3D.new()
 		var b := BoxShape3D.new()
@@ -1050,7 +1049,8 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 ## Quanto sta sopra l'acqua l'origine del modello (fluttua intera sopra il canale; le pose provvisorie finché non
 ## arrivano le animazioni di mascotte).
 @export var lei_sopra_acqua := 1.3
-## A guado nel canale (velocità massima, m/s).
+## A guado nel canale (velocità massima a piedi e di corsa, m/s): la danno i volumi d'acqua del canale
+## (WaterVolume.velocita_guado), che il Player legge da solo.
 @export var velocita_guado := 2.0
 ## I checkpoint lungo la strada (m): all'ingresso e poi lungo il tunnel. Si riparte col serbatoio pieno e lei a
 ## [member distanza_max] metri.
@@ -1068,8 +1068,6 @@ var _getto_preso := 0.0
 var _morso_tra := 1.5
 var _s_bersaglio := 0.0
 var _lei_testa: WaterHitbox
-var _guado := false
-var _passi_normali := Vector2.ZERO
 var checkpoint: Array[Checkpoint] = []
 
 
@@ -1231,7 +1229,6 @@ func _metti_lei(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	if lei == null or lei_stato == Lei.VIA or lei_stato == Lei.PRESA:
-		_guado_giocatore()
 		return
 	_lei_t += delta
 	var b := _bersaglio()
@@ -1261,25 +1258,6 @@ func _process(delta: float) -> void:
 				lei_stato = Lei.INSEGUE
 				_anima_lei(&"inseguimento/incombe", 0.3)
 	_metti_lei(delta)
-	_guado_giocatore()
-
-
-## Il giocatore nel canale va piano (a guado): al massimo [member velocita_guado] m/s finché ha i piedi
-## sotto il piano delle banchine.
-func _guado_giocatore() -> void:
-	var p := GameState.player
-	if p == null or not is_instance_valid(p) or bersaglio != null:
-		return
-	var dentro := p.global_position.y < piano - 0.25 and p.is_in_water(0.15)
-	if dentro and not _guado:
-		_passi_normali = Vector2(p.walk_speed, p.run_speed)
-		p.walk_speed = minf(p.walk_speed, velocita_guado)
-		p.run_speed = minf(p.run_speed, velocita_guado)
-		_guado = true
-	elif not dentro and _guado:
-		p.walk_speed = _passi_normali.x
-		p.run_speed = _passi_normali.y
-		_guado = false
 
 
 ## Vero se lei arriva a [param pos]: dentro il tunnel (non nella galleria di servizio, dietro il muro).
