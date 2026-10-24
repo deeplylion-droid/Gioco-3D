@@ -57,6 +57,15 @@ func _run() -> void:
 		if p == null or not is_instance_valid(p) or p.input_enabled:
 			break
 		await get_tree().physics_frame
+	# il tunnel sottomarino si costruisce a pezzi: qui tutto subito, coi gommoni fermi (come nel controllo della CI)
+	var tunnel := livello as SalaSottomarino
+	if tunnel:
+		if not tunnel.costruita:
+			tunnel.costruisci()
+		tunnel.set_physics_process(false)
+		tunnel.ferma_gommoni(0.0)
+		for i in 10:
+			await get_tree().physics_frame
 	# i checkpoint prima di cambiare stato (le porte aperte non spostano i punti di ripartenza)
 	var cps := []
 	for cp in livello.find_children("*", "Checkpoint", true, false):
@@ -64,6 +73,11 @@ func _run() -> void:
 		var t: Transform3D = cp.call(&"get_spawn_transform") if cp.has_method(&"get_spawn_transform") else (cp as Node3D).global_transform
 		cps.append({"nodo": String(livello.get_path_to(cp)), "ordine": int(cp.get(&"order")), "buio": bool(cp.get(&"solo_al_buio")),
 				"pos": _v(t.origin), "verso": _v(-t.basis.z), "area": _v((cp as Node3D).global_position), "spawn": sp != null})
+	# (nel tunnel i punti dove si cammina li dà il tunnel: tutte le banchine, la scala, il pontile e la camera stagna)
+	if tunnel:
+		for q in tunnel.punti_dove_si_cammina():
+			cps.append({"nodo": "", "ordine": 0, "buio": false, "pos": _v(q), "verso": _v(Vector3.FORWARD), "area": _v(q),
+					"spawn": false})
 	STATI.applica(livello, stato)
 	for i in 240:
 		await get_tree().physics_frame
