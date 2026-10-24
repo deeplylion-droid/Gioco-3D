@@ -45,6 +45,9 @@ var SCATTI := {
 	"42_crollo_galleria": [199.0, 1.0, 1.6, 205.5, 0.9, -0.6, 70.0],
 	"43_fascia_bocca": [202.0, -1.0, 1.4, 204.3, -1.15, 1.4, 60.0],
 	"44_carico": [134.0, 1.0, 1.6, 139.8, 1.0, 0.9, 70.0],
+	"48_carico_s136": [136.0, 1.0, 1.6, 141.0, 1.0, 0.9, 70.0],
+	"49_carico_retro": [143.0, 1.0, 1.6, 138.0, 1.0, 0.9, 70.0],
+	"50_carico_dal_canale": [136.0, 0.3, 1.6, 139.5, 1.1, 0.9, 70.0],
 	"45_testa_dalla_porta": [2.0, -1.0, 1.6, -2.0, 0.0, 0.3, 75.0],
 	"46_staffe_ancora": [120.4, -0.95, 2.9, 121.6, -1.15, 3.0, 50.0],
 	"47_forziere_vicino": [144.8, -0.9, 2.3, 147.0, -1.15, 2.4, 55.0],
@@ -92,9 +95,14 @@ func _run() -> void:
 		mr.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		mr.cull_mode = BaseMaterial3D.CULL_FRONT
 		m.next_pass = mr if OS.get_environment("SCATTI_DEBUG") == "retro" else null
+		var m2 := m.duplicate() as StandardMaterial3D
+		m2.next_pass = null
+		m2.cull_mode = BaseMaterial3D.CULL_DISABLED
 		for mi in sala.find_children("*", "MeshInstance3D", true, false):
-			if (mi as MeshInstance3D).material_override:
-				(mi as MeshInstance3D).material_override = m
+			# (con "retro" su tutte le mesh, anche i modelli coi materiali loro: si vedono le facce rovesciate ovunque)
+			if (mi as MeshInstance3D).material_override or OS.get_environment("SCATTI_DEBUG") == "retro":
+				# (le mesh disegnate dalle due parti apposta non hanno un retro da mostrare)
+				(mi as MeshInstance3D).material_override = m if not mi.has_meta(&"doppia_faccia") else m2
 	var cam := Camera3D.new()
 	add_child(cam)
 	cam.current = true

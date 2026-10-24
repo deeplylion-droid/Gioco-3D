@@ -2095,7 +2095,7 @@ func _ostacolo(o: Dictionary) -> void:
 				mi_c.mesh = (coppia[0] as SurfaceTool).commit()
 				mi_c.material_override = coppia[1]
 				nodo.add_child(mi_c)
-			_modello(nodo, "forziere", _al(p + d * 0.2, r, Vector2(uc, piano + 1.55)), -d, 1.0)
+			SottomarinoArrediA2._doppia_faccia(_modello(nodo, "forziere", _al(p + d * 0.2, r, Vector2(uc, piano + 1.55)), -d, 1.0))
 		"cancello":
 			_cancello(nodo, st, facce, s0, lato)
 			mat = _mat_ferro()

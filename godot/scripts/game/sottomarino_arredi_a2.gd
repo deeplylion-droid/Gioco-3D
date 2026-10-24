@@ -69,6 +69,7 @@ static func _relitto(sala: SalaSottomarino) -> void:
 	var men_f := _mensola(sala, nodo, FORZIERE[0], FORZIERE[1], 0.9, 0.454 * float(FORZIERE[2]) + DAL_MURO + 0.08)
 	var forziere := _contro_il_muro(sala, nodo, "forziere", FORZIERE[0], FORZIERE[1], FORZIERE[2], 0.0, true)
 	forziere.name = "Forziere"
+	_doppia_faccia(forziere)
 	_faretto(sala, nodo, men_f, forziere, 0.15)
 
 
@@ -146,6 +147,20 @@ static func _contro_il_muro(sala: SalaSottomarino, nodo: Node3D, nome: String, s
 		push_warning("arredi sottomarino: %s a %.1f senza mensola" % [nome, s])
 	sala._collisione_modello(n)
 	return n
+
+
+## Il forziere è aperto, e dentro il modello ha solo le facce di fuori: guardandoci dentro dalla banchina si vedevano
+## triangoli dal retro (collaudo di enigmi, vista dal retro a 136). Le sue mesh si disegnano dalle due parti.
+static func _doppia_faccia(n: Node3D) -> void:
+	for m in n.find_children("*", "MeshInstance3D", true, false):
+		var mm := m as MeshInstance3D
+		mm.set_meta(&"doppia_faccia", true)
+		for i in mm.mesh.get_surface_count():
+			var mat := mm.get_active_material(i)
+			if mat is BaseMaterial3D:
+				var d := mat.duplicate() as BaseMaterial3D
+				d.cull_mode = BaseMaterial3D.CULL_DISABLED
+				mm.set_surface_override_material(i, d)
 
 
 ## Una staffa attorno al fusto di [param ancora] a [param h] sopra la sua base: misura il fusto lì (i vertici della
