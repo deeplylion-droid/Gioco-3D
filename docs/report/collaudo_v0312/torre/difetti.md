@@ -32,6 +32,37 @@ Le 8 lampade rosse delle bocche chiuse (`@306`…`@324`) stanno sulla targa a st
 | 3 | Ancora aperto dal collaudo di prima: i pali rossi coi led verdi degli imbocchi (`Luci/LedImbocco`, `Luci/@MultiMeshInstance3D@276`…`@300`) | per esempio `LedImbocco_1`, `_10`, `_11`, `@300_9`…`11`, `@288_0`…`2` | Sotto la fila di led il palo si stringe a punta e finisce 25-30 cm sopra la grata, accanto al palo rosso che invece arriva alla grata. Si vede dove il giocatore entra negli scivoli. Va bene se è voluto, altrimenti va portato fino alla grata. | `fogli/torre_vedute_04.jpg`, `_06.jpg`, `_09.jpg` |
 | 4 | Noto dal collaudo di prima: il tubo lungo inclinato nella vasca dell'inseguimento | vicino a 43,5, -33,4, -3,5 | C'è ancora (scatti `ti052_e`, `ti052_s`): sta nell'acqua lungo il fondo. | `fogli/torre_giro_09.jpg` |
 
+## Ricontrollo sulle correzioni di ambienti-2 (`lavoro/torre-attacchi` 45db14db)
+
+Unita in `lavoro/collaudo-enigmi` (86be2b80), import fresco, stati `inizio` e `aperto`. Scatti e misure in `ricontrollo_45db14db/`.
+
+**I tre punti sono corretti:**
+
+| Punto | Su 45db14db | Scatti |
+|---|---|---|
+| Buco nel tubo 7 col moncone dell'asta (37,36, 6,46, -12,52) | sparito: superficie liscia, l'attacco non c'è più | `tubo7_punto_corretto.jpg` (`buco_*`) |
+| Tubo dell'inseguimento 1,3-2,1 cm sopra la trave | le culle salgono sui fianchi: distanza 0,3 cm | `culle_tubo_inseguimento.jpg` |
+| Tubo inclinato nella vasca dell'inseguimento | tolto (era una delle 12 staffe del tubo di servizio a x 44, lunghe 5,6 m attraverso il bacino) | `vasca_inseguimento.jpg` |
+
+**Cosa è cambiato davvero** (pezzi connessi delle mesh confrontati con la base di prima, `pezzi_nuovi.log`):
+
+- `torre_A`: le due culle (2 pezzi).
+- `torre_A_sostegni`: **42 pezzi nuovi e 35 tolti, non solo al tubo 7**. Togliere il tirante ha fatto rigenerare anche i sostegni degli scivoli 2, 5, 9 e 12 (collari, mensole rosse, tiranti e un palo, fra x 24 e 36).
+- `ins_A_struttura`: le staffe dei 5 tubi di servizio del muro sud (x 44, 51, 58, 65, 72) ora vanno al muro accanto (40 cm) invece che verso i muri della torre (prima a x 44 attraversavano il bacino, e dagli altri tubi correvano lungo il muro fino a x 40). Le catene e i cavi appesi si sono spostati di poco, perché la sequenza casuale è cambiata.
+- **Tutti i pezzi nuovi toccano qualcosa**, al massimo a 1 mm (misura esatta sui triangoli). Le staffe dei tubi di servizio arrivano al muro a 0,1-0,4 mm (`staffe_muro_sud.jpg`).
+- Controllo di posizionamento della CI, zona torre: 0 nuovi, 0 da correggere; a) 0, a2) 0, d) 0, e) 0, f) 0 (`controllo_posizionamento_torre.log`).
+- Spazio per la testa: 0 casi. Celle raggiungibili 1190 in `inizio` e 1187 in `aperto`: una in più per stato, dove c'era la staffa nel bacino.
+
+**Difetti nuovi, nati dalla rigenerazione** (da correggere prima che il collaudo passi):
+
+| # | Dove | Problema | Scatti |
+|---|---|---|---|
+| N1 | Tubo 7, puntone dalla colonna (x 40) a 38,03, 5,10, -15,0 | Il puntone orizzontale col suo cappuccio finisce **a 2,2 cm dal tubo rosso**, senza collare. Prima arrivava al collare tolto insieme al tirante. Si vede la fessura scura. | `difetto_tubo7_asta_da_sotto.jpg`, `_da_sopra.jpg`, `difetto_tubo7_asta_4_viste.jpg` |
+| N2 | Scivolo 5, collare nuovo a 29,2, 5,8, -20,6 | Il collare sta sull'anello di giunzione del tubo: la fascia ha il bordo **seghettato a denti, con buchi neri** fra i denti. | `difetto_collare_scivolo5.jpg`, `_vicino.jpg`, `collari_nuovi.jpg` (cn150) |
+| N3 | Scivolo 9, collare nuovo a 32,8, -0,2, -9,4 | Stesso difetto, sulla giunzione fra il tratto bianco e il rosso: un buco nero triangolare nella fascia e il bordo staccato. | `difetto_collare_scivolo9.jpg`, `collari_nuovi.jpg` (cn184) |
+
+Gli altri collari nuovi (per esempio quello dello scivolo 2, cn139) e quelli rimasti come prima (cv127) hanno la fascia liscia (`collari_vecchi.jpg`). Dagli occhi del giocatore i tre difetti stanno 4-7 m sopra le pedane e si notano poco (`difetti_dagli_occhi.jpg`), ma sono del tipo che le regole contano come difetti.
+
 ## Collisioni nuove degli arredi dell'inseguimento (su `lavoro/godot` ba041c61)
 
 Base unita in `lavoro/collaudo-enigmi` (3bce3987), import fresco, stati `inizio` e `aperto`. Gli arredi copiati dalla sala pompe in `SalaInseguimento/Luci` sono 34 gruppi, con 41 corpi: le tre pompe e la turbina hanno i pezzi convessi copiati dal glTF (corpo, aspirazione, mandata, disco), scrivania e sedia i loro `_col`, gli altri 25 la scatola nuova sull'ingombro della mesh.
