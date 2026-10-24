@@ -1,0 +1,50 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Scena res://scenes/sala/torre/sala_torre.tscn
+  MultiMesh: 174 istanze controllate come mesh
+  523 mesh visibili
+  nascoste all'inizio (non controllate): 5 parti, 22 mesh
+    NASCOSTA BambinoBalconata0 · 2 mesh
+    NASCOSTA BambinoBalconata1 · 3 mesh
+    NASCOSTA BambinoBalconata2 · 2 mesh
+    NASCOSTA BambinoBalconata3 · 3 mesh
+    NASCOSTA SalaInseguimento/Lei · 12 mesh
+  495 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  4153 celle raggiungibili a piedi
+  686 celle dove si sta accovacciati per forza (spazio libero fino a 1.05 m)
+  b) ingombri nello spazio di chi cammina: 6
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (14 s)
+Scena res://scenes/sala/torre/sala_torre.tscn
+  stato: inseguimento_dopo
+  MultiMesh: 174 istanze controllate come mesh
+  523 mesh visibili
+  nascoste all'inizio (non controllate): 5 parti, 22 mesh
+    NASCOSTA BambinoBalconata0 · 2 mesh
+    NASCOSTA BambinoBalconata1 · 3 mesh
+    NASCOSTA BambinoBalconata2 · 2 mesh
+    NASCOSTA BambinoBalconata3 · 3 mesh
+    NASCOSTA SalaInseguimento/Lei · 12 mesh
+  495 oggetti di scena
+  a) sospesi: 0
+  a2) staccati (niente entro 5 mm): 0
+  4703 celle raggiungibili a piedi
+  1247 celle dove si sta accovacciati per forza (spazio libero fino a 1.05 m)
+  b) ingombri nello spazio di chi cammina: 0
+  c) interattivi coperti o compenetrati: 0
+  d) compenetrazioni fra oggetti: 0
+  e) tubi e cavi con un capo libero: 0
+  f) scivoli che entrano in pedane, travi o sostegni: 0
+  (13 s)
+  parti nascoste all'inizio mai controllate: 0 (vedi il rapporto, "Copertura")
+rapporto: /home/user/Gioco-3D/docs/tecnico/posizionamento/rapporto.md
+  ok    nessun caso nuovo di posizionamento (0 nuovi, 6 già noti, 36 eccezioni non più trovate)
+  casi da correggere (non "voluto"): 0
+  ok    nessun caso da correggere (0 da correggere; passano solo i casi "voluto", decisi dall'utente)
+
+RISULTATO: 2 controlli ok, 0 falliti

@@ -9,7 +9,9 @@ Squadra enigmi (collaudo, non ha costruito la zona), 24 ottobre notte. Base fina
 - **Attacchi degli scivoli** (nuovo, `tools/collaudo/attacchi_scivoli.py`): dove i 21 scivoli e tubi toccano o sfiorano la struttura (entro 5 cm), campionati ogni 5 mm: 137 posti, ognuno con due ravvicinati; per i 14 dove resta più di 1 cm, anche uno stretto a 40 cm (`attacchi_stretti/`, `attacchi_non_a_contatto.jpg`). La compenetrazione la giudica il passo f) del controllo della CI e gli scatti: la stima "dentro" dello strumento non è affidabile sulla struttura intagliata.
 - **Giro dagli occhi**: 55 punti lungo scale, passerelle, imbocchi, vasche d'arrivo e vasche dell'inseguimento, 4 scatti per punto (`fogli/torre_giro_*.jpg`).
 - **Cancelletti delle bocche chiuse e lampade rosse**: ravvicinati di ogni pezzo su tre commit (`cancelli/`, `cancelli_15099922/`, `cancelli_b8964240/`).
-- **Vedute ravvicinate degli oggetti piccoli**, **giro nello stato aperto** e **controllo di posizionamento**: vedi sotto.
+- **Vedute ravvicinate**: 237, su fari, lampade, lampade d'emergenza, led degli imbocchi, cartelli e oggetti piccoli, dai punti dove si cammina con la vista libera verificata (`fogli/torre_vedute_*.jpg`).
+- **Giro nello stato aperto** (dopo la discesa: grata calata, paratie aperte): 64 scatti nella sala dell'inseguimento (`fogli/torre_giro_aperto_*.jpg`).
+- **Controllo di posizionamento della CI**, zona torre (stato iniziale e `inseguimento_dopo`): **0 casi nuovi, 0 da correggere**; a) sospesi 0, d) compenetrazioni 0, e) capi liberi 0, **f) scivoli dentro pedane, travi o sostegni 0**; restano i 6 ingombri all'altezza della testa nei tubi dell'inseguimento, già "voluto" (`controllo_posizionamento_torre.log`).
 
 ## Difetti trovati e corretti stanotte (verificati sul commit finale)
 
@@ -27,7 +29,8 @@ Le 8 lampade rosse delle bocche chiuse (`@306`…`@324`) stanno sulla targa a st
 |---|---|---|---|---|
 | 1 | `TorreScivoli/torre_scivolo_7` con `TorreStruttura/torre_A_sostegni` | 37,36, 6,46, -12,52 | Dove un'asta dei sostegni arriva al tubo rosso, nella superficie del tubo c'è un buco nero con dentro il moncone grigio dell'asta. Il tubo è uno di quelli chiusi dalla grata (non ci si entra) e il punto più vicino da cui lo si guarda è a 9 m. | `attacchi_stretti/a125_torre_scivolo_7_a.jpg`, `_b.jpg` |
 | 2 | `TorreScivoli/torre_tubo_inseguimento` sopra `TorreStruttura/torre_A` | 39,58, -19,32, -17,4 e 38,67, -19,34, -17,4 | Il tubo dell'inseguimento passa 1,3-2,1 cm sopra la trave grigia, con la fessura scura in vista; il giocatore passa a 1,4 m. Va bene se la trave non lo regge lì, altrimenti va appoggiato. | `attacchi_stretti/a133_…`, `a134_…` |
-| 3 | Noto dal collaudo di prima: il tubo lungo inclinato nella vasca dell'inseguimento | vicino a 43,5, -33,4, -3,5 | C'è ancora (scatti `ti052_e`, `ti052_s`): sta nell'acqua lungo il fondo. | `fogli/torre_giro_09.jpg` |
+| 3 | Ancora aperto dal collaudo di prima: i pali rossi coi led verdi degli imbocchi (`Luci/LedImbocco`, `Luci/@MultiMeshInstance3D@276`…`@300`) | per esempio `LedImbocco_1`, `_10`, `_11`, `@300_9`…`11`, `@288_0`…`2` | Sotto la fila di led il palo si stringe a punta e finisce 25-30 cm sopra la grata, accanto al palo rosso che invece arriva alla grata. Si vede dove il giocatore entra negli scivoli. Va bene se è voluto, altrimenti va portato fino alla grata. | `fogli/torre_vedute_04.jpg`, `_06.jpg`, `_09.jpg` |
+| 4 | Noto dal collaudo di prima: il tubo lungo inclinato nella vasca dell'inseguimento | vicino a 43,5, -33,4, -3,5 | C'è ancora (scatti `ti052_e`, `ti052_s`): sta nell'acqua lungo il fondo. | `fogli/torre_giro_09.jpg` |
 
 ## Visti e a posto
 
