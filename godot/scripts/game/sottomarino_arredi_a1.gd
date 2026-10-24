@@ -53,9 +53,9 @@ const LUCINE_OGNI := 3.0
 ## le bollicine ("B", fermi col plancton, per le prove). Vuote: niente.
 static var scelta_pesci := "A"
 static var scelta_abisso := "A"
-## Le reti con le stelle: il modello Meshy è venuto male (quattro bastoni) e quella fatta qui è un modello nuovo, che
-## passa dall'utente. Spente finché non risponde.
-static var reti_accese := false
+## Le reti con le stelle: il modello Meshy è venuto male (quattro bastoni); quella fatta qui l'ha scelta l'utente
+## ("Voto A", 24 ottobre, docs/proposte/sottomarino/rete_stelle_da_codice.jpg).
+static var reti_accese := true
 ## Solo per gli scatti: la fase uguale per tutti gli oblò grandi (negativa: ognuno la sua).
 static var fase_oblo_prova := -1.0
 ## I pesci: quanto distano lungo la strada (m), la scala del modello, la quota della mensola (sopra il piano).
@@ -528,6 +528,14 @@ func _occupati_muri() -> Array:
 		if absf(float(pr[1])) < sala.muro - 1.0:
 			continue
 		out.append([float(pr[0]), signf(float(pr[1])), 1.2 if nome.begins_with("rete_") else 0.6])
+	# le lampade e gli oblò piccoli di _luci (i loro nodi hanno nomi automatici, "@Node3D@367"): tutti i figli di Luci
+	var luci := sala.get_node_or_null("Luci")
+	if luci:
+		for n in luci.get_children():
+			if n is Node3D and not n is Light3D:
+				var pr := sala.proietta(_xf(n as Node3D).origin)
+				if absf(float(pr[1])) > sala.muro - 1.0:
+					out.append([float(pr[0]), signf(float(pr[1])), 0.6])
 	for o in sala.ostacoli:
 		out.append([float(o["s"]) + float(o["lungo"]) * 0.5, float(o["lato"]), float(o["lungo"]) * 0.5 + 0.8])
 	return out
