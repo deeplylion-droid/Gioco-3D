@@ -19,6 +19,11 @@ func _init() -> void:
 	if OS.get_environment("SCATTI_FASE_OBLO") != "":
 		SottomarinoArrediA1.fase_oblo_prova = float(OS.get_environment("SCATTI_FASE_OBLO"))
 	SCATTI = {
+		"a1_bitta_vicino": [495.4, -1.0, 1.3, 497.0, -0.9, 0.05, 55.0],
+		"a1_bitta_vicino_2": [522.4, 1.0, 1.3, 524.0, 0.9, 0.05, 55.0],
+		"a1_rete_325_dalla_sua_banchina": [319.0, -1.0, 1.6, 325.0, -1.0, 2.75, 65.0],
+		"a1_rete_333_dalla_banchina_di_fronte": [329.0, -1.0, 1.6, 333.5, 1.0, 2.75, 65.0],
+		"a1_rete_388_dalla_banchina": [382.0, -1.0, 1.6, 388.3, -1.0, 2.9, 65.0],
 		"a1_oblo_vicino": [404.0, -1.0, 1.6, 407.5, 1.0, 2.9, 60.0],
 		"a1_oblo_vicino_2": [409.5, 0.0, 1.6, 407.5, 1.0, 2.9, 60.0],
 		"a1_pesci": [244.0, -1.0, 1.6, 262.0, 0.0, 2.4, 75.0],

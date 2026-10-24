@@ -131,6 +131,13 @@ func _reti() -> void:
 	var nodo := _nodo("Reti")
 	for q in RETI:
 		_rete(nodo, float(q[0]), float(q[1]), sala.piano + float(q[2]))
+		# il faretto sopra la rete, puntato giù: al buio le lampade non ci arrivavano (collaudo del tunnel)
+		var s: float = q[0]
+		var alto := float(q[2]) + RETE_ALTA + 0.32
+		var p := sala.punto(s)
+		var centro := sala._al(p, sala.destra(s), Vector2(float(q[1]) * (sala.muro - 0.3), sala.piano + float(q[2]) + RETE_ALTA * 0.5))
+		_faretto(nodo, s, float(q[1]), alto, centro, Color(1.0, 0.9, 0.75), 5.0, 48.0, 4.5)
+		_cavo_faretto(nodo, s, float(q[1]), alto)
 
 
 ## Una rete da pesca tesa sul muro (il modello Meshy della rete è venuto male: quattro bastoni, la si fa qui): la
@@ -703,18 +710,27 @@ func _bitta(nodo: Node3D, s: float, lato: float) -> void:
 	n.name = "bitta_%d" % int(s)
 	nodo.add_child(n)
 	n.position = c
+	# sul pavimento vero della banchina (raggio sui triangoli del tunnel)
+	var giu = _raggio(_tri_tunnel(s), c + Vector3.UP * 0.5, c + Vector3.DOWN * 0.5)
+	if giu != null:
+		n.position.y = (giu as Vector3).y
+	# base, collo e testa in una mesh sola, che si sovrappongono: un pezzo unico di ghisa (con tre pezzi il collaudo
+	# vedeva 2 cm fra l'uno e l'altro)
 	var m := _mat("ghisa", Color(0.12, 0.12, 0.13), 0.55, 0.6)
-	for q in [[0.15, 0.17, 0.05, 0.025], [0.08, 0.09, 0.2, 0.15], [0.13, 0.11, 0.05, 0.255]]:
-		var mi := MeshInstance3D.new()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for q in [[0.15, 0.17, 0.05, 0.025], [0.08, 0.09, 0.22, 0.14], [0.13, 0.11, 0.05, 0.255]]:
 		var cm := CylinderMesh.new()
 		cm.top_radius = q[0]
 		cm.bottom_radius = q[1]
 		cm.height = q[2]
 		cm.radial_segments = 20
-		mi.mesh = cm
-		mi.material_override = m
-		mi.position.y = q[3]
-		n.add_child(mi)
+		st.append_from(cm, 0, Transform3D(Basis(), Vector3(0, float(q[3]), 0)))
+	var mi := MeshInstance3D.new()
+	mi.name = "ghisa"
+	mi.mesh = st.commit()
+	mi.material_override = m
+	n.add_child(mi)
 	var corpo := StaticBody3D.new()
 	corpo.collision_layer = Layers.WORLD
 	var cs := CollisionShape3D.new()
@@ -1138,7 +1154,30 @@ func _catena(nodo: Node3D, a: Vector3, b: Vector3, nome: String) -> void:
 
 
 ## Un faretto a muro (lato, quota) puntato su [param verso_p]: la staffa, il barattolo e la luce.
-func _faretto(nodo: Node3D, s: float, lato: float, y: float, verso_p: Vector3, colore: Color, energia: float) -> void:
+## Il cavo di un faretto a muro (a [param y] sopra il piano): dalla sua piastra su lungo il muro fino a una scatola di
+## derivazione sotto l'imposta della volta.
+func _cavo_faretto(nodo: Node3D, s: float, lato: float, y: float) -> void:
+	var w0 = _muro(s, lato, sala.piano + y + 0.06)
+	var y_scatola := sala.imposta - 0.2
+	var w1 = _muro(s, lato, y_scatola)
+	if w0 == null or w1 == null:
+		return
+	var nrm: Vector3 = w1[1]
+	var scatola := MeshInstance3D.new()
+	scatola.name = "scatola_derivazione_%d" % int(s)
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.12, 0.12, 0.06)
+	scatola.mesh = bm
+	scatola.material_override = sala._mat_ferro()
+	nodo.add_child(scatola)
+	scatola.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), (w1[0] as Vector3) + nrm * 0.031)
+	# il cavo a 1 cm dal muro, dalla piastra (che arriva a 6 cm sopra il centro del faretto) dentro la scatola
+	sala._palo(nodo, (w0[0] as Vector3) + nrm * 0.01 + Vector3.DOWN * 0.02, (w1[0] as Vector3) + nrm * 0.01 + Vector3.DOWN * 0.03, 0.006, _mat("cavo_nero", Color(0.05, 0.05, 0.05), 0.6))
+	nodo.get_child(nodo.get_child_count() - 1).name = "cavo_faretto_%d" % int(s)
+
+
+func _faretto(nodo: Node3D, s: float, lato: float, y: float, verso_p: Vector3, colore: Color, energia: float,
+		angolo := 24.0, portata := 9.0) -> void:
 	var w = _muro(s, lato, sala.piano + y)
 	if w == null:
 		return
@@ -1183,8 +1222,8 @@ func _faretto(nodo: Node3D, s: float, lato: float, y: float, verso_p: Vector3, c
 	var sp := SpotLight3D.new()
 	sp.light_color = colore
 	sp.light_energy = energia
-	sp.spot_range = 9.0
-	sp.spot_angle = 24.0
+	sp.spot_range = portata
+	sp.spot_angle = angolo
 	sp.shadow_enabled = false
 	n.add_child(sp)
 	sp.transform = Transform3D(Basis.looking_at(dir, Vector3.UP), testa + dir * 0.2)
