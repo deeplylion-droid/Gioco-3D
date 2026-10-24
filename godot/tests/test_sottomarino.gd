@@ -38,6 +38,8 @@ func _run() -> void:
 		var p := sala.punto(s)
 		var r := sala.destra(s)
 		for lato in [-1.0, 1.0]:
+			if _ostacolo_qui(sala, s, lato):
+				continue
 			var q: Vector3 = p + r * float(lato) * (sala.canale + sala.banchina * 0.5)
 			var h := _giu(spazio, Vector3(q.x, sala.piano + 1.0, q.z))
 			if h.is_empty() or absf((h.position as Vector3).y - sala.piano) > 0.02:
@@ -80,12 +82,46 @@ func _run() -> void:
 		s += 1.0
 	_controlla(occupato.is_empty(), "lo spazio di lei è libero su tutta la strada", occupato)
 
+	# 4) gli ostacoli chiudono davvero la banchina: dal lato da cui si arriva, a ogni larghezza e fino a 1,45 m (sopra
+	# non ci si arriva saltando), qualcosa ferma chi cammina
+	var aperti := []
+	for o in sala.ostacoli:
+		if o["tipo"] in ["crollo", "galleria"]:
+			continue
+		var s0: float = float(o["s"]) - 1.6
+		var lato: float = o["lato"]
+		for f in [0.15, 0.3, 0.5, 0.7, 0.85]:
+			for h in [0.4, 0.9, 1.45]:
+				var u: float = sala.canale + sala.banchina * f
+				var a: Vector3 = sala.punto(s0) + sala.destra(s0) * lato * u + Vector3.UP * (sala.piano - sala.acqua + h)
+				var s1: float = float(o["s"]) + float(o["lungo"]) + 1.6
+				var b: Vector3 = sala.punto(s1) + sala.destra(s1) * lato * u + Vector3.UP * (sala.piano - sala.acqua + h)
+				# (una sfera larga come il giocatore: fra le sbarre del cancello un raggio passa, lui no)
+				var sq := PhysicsShapeQueryParameters3D.new()
+				var sf := SphereShape3D.new()
+				sf.radius = 0.3
+				sq.shape = sf
+				sq.transform = Transform3D(Basis.IDENTITY, a)
+				sq.motion = b - a
+				var corsa := spazio.cast_motion(sq)
+				if corsa.is_empty() or corsa[0] >= 1.0:
+					aperti.append("%s %d: largo %.2f alto %.2f" % [o["tipo"], int(o["s"]), f, h])
+	_controlla(aperti.is_empty(), "gli ostacoli chiudono la banchina (non si passa e non si scavalcano)", aperti)
+
 	# 4) i gradini
 	var gradini := sala.find_child("Gradini", true, false)
 	_controlla(gradini != null, "ci sono i gradini per risalire dal canale", [])
 
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
+
+
+## Vero se a [param s] sul lato [param lato] c'è un ostacolo (lì la banchina è chiusa apposta).
+func _ostacolo_qui(sala: SalaSottomarino, s: float, lato: float) -> bool:
+	for o in sala.ostacoli:
+		if float(o["lato"]) == lato and s > float(o["s"]) - 1.6 and s < float(o["s"]) + float(o["lungo"]) + 1.6:
+			return true
+	return false
 
 
 func _giu(spazio: PhysicsDirectSpaceState3D, da: Vector3) -> Dictionary:
