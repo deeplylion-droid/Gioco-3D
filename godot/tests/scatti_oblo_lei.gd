@@ -37,6 +37,10 @@ func _run() -> void:
 	var env := WorldEnvironment.new()
 	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
 	env.environment.sdfgi_enabled = false
+	# (la Risalita da sola: fuori dalle sue porte non c'è niente, e il cielo dell'ambiente si vedrebbe dalle aperture;
+	# nel gioco lì ci sono i corridoi bui)
+	env.environment.background_mode = Environment.BG_COLOR
+	env.environment.background_color = Color.BLACK
 	env.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
 	add_child(env)
 	GameState.luci = GameState.Luci.BLACKOUT
