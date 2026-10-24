@@ -45,6 +45,8 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	# i neon che sfarfallano scelgono a caso: con lo stesso seme il prima e il dopo hanno le stesse luci
+	seed(24)
 	Game.pause_on_focus_loss = false
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("alto")
@@ -88,6 +90,13 @@ func _run() -> void:
 	level.add_child(cam)
 	cam.current = true
 	cam.near = 0.02
+	var luce := OmniLight3D.new()
+	luce.light_color = Color(1.0, 0.95, 0.88)
+	luce.light_energy = 1.2
+	luce.omni_range = 5.0
+	luce.shadow_enabled = true
+	luce.visible = false
+	level.add_child(luce)
 	var scatti: Dictionary = SCATTI[scena]
 	for nome in scatti:
 		var s: Array = scatti[nome]
@@ -100,4 +109,13 @@ func _run() -> void:
 		var f := out_dir.path_join(nome + ".jpg")
 		get_viewport().get_texture().get_image().save_jpg(f, 0.9)
 		print("scatto -> ", f)
+		# lo stesso scatto con una lampadina neutra accanto alla camera, solo per vedere bene i dettagli
+		# (nel gioco non c'è: lo scatto vero è quello sopra)
+		luce.global_position = cam.global_position + Vector3(0, 0.3, 0)
+		luce.visible = true
+		for i in 10:
+			await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_jpg(out_dir.path_join(nome + "_luce.jpg"), 0.9)
+		luce.visible = false
 	get_tree().quit()

@@ -544,11 +544,15 @@ def infermeria():
     for dx in (-26, -6, 16, 32):
         p.linea((ex + dx, ey + er), (ex + dx * 1.4 + p.rng.normal(0, 6), ey + er + 140 + p.rng.normal(0, 25)), 7, viola, n=12, trem=2)
     # la campana colorata di nero a zig-zag, i tentacoli ripassati in rosso come graffi
+    # (a zig-zag storto che segue la cupola, più stretto in alto e con i bordi irregolari: non un rettangolo)
     zig = []
-    for i in range(22):
-        y = 470 + i * 10
-        zig += [(255 + p.rng.normal(0, 12), y), (645 + p.rng.normal(0, 12), y + 5)]
-    p.tratto(zig, 9, nero, trem=3)
+    for i in range(14):
+        t = i / 13
+        y = 455 + i * 16 + p.rng.normal(0, 4)
+        mezza = 90 + 120 * math.sin(min(1.0, t * 1.4) * math.pi / 2) + p.rng.normal(0, 30)
+        cx = 450 + p.rng.normal(0, 15)
+        zig += [(cx - mezza, y), (cx + mezza * p.rng.uniform(0.7, 1.05), y + 8)]
+    p.tratto(zig, 7, nero, trem=4)
     for i in range(7):
         x = 300 + i * 50
         p.linea((x, 690), (x + p.rng.normal(0, 40), 1020 + p.rng.normal(0, 40)), 6, rosso, n=10, trem=4)
