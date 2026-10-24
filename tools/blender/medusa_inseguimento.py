@@ -814,8 +814,8 @@ VISO_DAVANTI = 0.39     # quanto il punto piu' avanti della testa (la frangia) s
 OBLO_R = 0.55
 T_OBLO = 4.0            # i cicli delle pose (il respiro)
 T_STACCA = 2.6          # si stacca: indietro e giu' nel buio
-SBIRCIA_OCCHIO = 0.31   # sbircia: l'occhio a tanto dal centro del vetro, verso il bordo (la vasca del corridoio del personale e'
-                        # larga 2,56 m: lei ci sta solo fin qui)
+SBIRCIA_OCCHIO = 0.60     # sbircia: l'occhio a tanto dal centro del vetro, sul bordo (il vetro degli oblò di enigmi ha 0,6 m di
+                          # raggio: mezzo viso dietro il muro)
 OBLO_INDIETRO = 8.0     # gradi: quanto e' inclinata col basso all'indietro (i tentacoli lontani dal vetro)
 SBIRCIA_LATO = 1.0      # da che parte del bordo sbircia: +1 alla sua sinistra (a destra per chi guarda dal corridoio);
                         # oblo_sbircia_altro dall'altra parte
@@ -879,7 +879,7 @@ def pose_oblo_schiacciata(arm, C, Z, t):
     """Ciclo: la faccia e i due palmi sul vetro, ti fissa e respira piano."""
     dd, hh = OBLO
     u = (t / T_OBLO) % 1.0
-    _calma(arm, C, Z, t, avanti=10.0, su=-4.0)
+    _calma(arm, C, Z, t, avanti=10.0, su=-4.0, raccolta=True)
     _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.010 + 0.004 * math.sin(2 * math.pi * u), hh + 0.01 * math.sin(2 * math.pi * u)))
     for suf, s in (('.L', 1), ('.R', -1)):
         _palmo(arm, suf, (s * (OBLO_R - 0.12), -dd + PALMO, hh - 0.08 + 0.01 * math.sin(2 * math.pi * u + s)))
@@ -891,8 +891,8 @@ def pose_oblo_schiacciata_stacca(arm, C, Z, t):
     dd, hh = OBLO
     u = t / T_STACCA
     via = liscio(0.0, 1.0, 0.15, 1.0, u)
-    _calma(arm, C, Z, 0.0, avanti=10.0 - 22.0 * via, su=-4.0 - 16.0 * liscio(0.0, 1.0, 0.35, 1.0, u))
-    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.010 + 1.8 * via, hh - 2.2 * via ** 1.6))
+    _calma(arm, C, Z, 0.0, avanti=10.0 - 22.0 * via, su=-4.0 - 16.0 * liscio(0.0, 1.0, 0.35, 1.0, u), raccolta=True)
+    _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.010 + 1.8 * via, hh - 1.5 * via ** 1.6))
     lascia = liscio(0.0, 1.0, 0.0, 0.4, u)
     for suf, s in (('.L', 1), ('.R', -1)):
         pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
@@ -938,10 +938,11 @@ def pose_oblo_sbircia_stacca(arm, C, Z, t, s=SBIRCIA_LATO):
 
 
 def _palmo_capovolta(arm, suf, punto):
-    """Il palmo sul vetro in [punto] (spazio del modello) con lei a testa in giu': il gomito verso l'esterno e verso
+    """Il palmo sul vetro in [punto] (spazio del modello, piu' 1,2 cm: nella sfumatura verso il distacco le dita
+    avanzano un poco) con lei a testa in giu': il gomito verso l'esterno e verso
     il suo corpo (in alto), le dita in giu' (verso la sua testa)."""
     sp = arm.pose.bones['braccio' + suf].head.copy()
-    W = arm.matrix_world.inverted() @ (Vector(punto) + Vector((0.0, 0.002, 0.0)))
+    W = arm.matrix_world.inverted() @ (Vector(punto) + Vector((0.0, 0.012, 0.0)))
     fuori = 1.0 if sp.x > 0 else -1.0
     POSE.posa_braccio(arm, suf, W, sp + Vector((fuori * 0.8, 0.3, 0.4)), Vector((0.0, -0.25, -1.0)),
                       Vector((0.0, 1.0, 0.0)))
