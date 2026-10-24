@@ -25,6 +25,9 @@ func _check(cond: bool, msg: String) -> void:
 
 
 func _run() -> void:
+	# le scelte ancora aperte, per provarle (SCELTA_PESCI=A|B, SCELTA_ABISSO=A|B): di base spente
+	SottomarinoArrediA1.scelta_pesci = OS.get_environment("SCELTA_PESCI")
+	SottomarinoArrediA1.scelta_abisso = OS.get_environment("SCELTA_ABISSO")
 	var sala := SalaSottomarino.new()
 	sala.name = "SalaSottomarino"
 	get_tree().root.add_child(sala)
@@ -150,6 +153,13 @@ func _run() -> void:
 	var blu := arr.get_node("AbissoLampade").get_child_count() / 2
 	var lucine := (arr.get_node("lucine_banchine") as MultiMeshInstance3D).multimesh.instance_count
 	_check(blu >= 3 and lucine >= 40, "nell'abisso %d lampade blu e %d lucine" % [blu, lucine])
+	# 5) le scelte aperte, se accese
+	if SottomarinoArrediA1.scelta_pesci != "":
+		var pesci := arr.find_children("pesce_*", "Node3D", true, false)
+		_check(pesci.size() >= 8, "pesci (%s): %d" % [SottomarinoArrediA1.scelta_pesci, pesci.size()])
+	if SottomarinoArrediA1.scelta_abisso != "":
+		var oblo := arr.find_children("oblo_grande_*", "Node3D", true, false)
+		_check(oblo.size() == 6, "oblò grandi dell'abisso (%s): %d" % [SottomarinoArrediA1.scelta_abisso, oblo.size()])
 	_fine()
 
 

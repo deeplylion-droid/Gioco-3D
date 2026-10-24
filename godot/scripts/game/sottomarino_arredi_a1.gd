@@ -45,6 +45,21 @@ const VETRINA_BASSO := 2.05
 const ABISSO_LAMPADE_OGNI := 12.0
 const LUCINE_OGNI := 3.0
 
+## Le scelte dell'utente ancora aperte (proposte al coordinatore il 24 ottobre). Vuote finché non risponde: niente
+## pesci e niente oblò grandi nel gioco. I pesci: "A" su mensole d'ottone sui muri, girati verso l'approdo come un
+## branco; "B" appesi a coppie alla volta sopra le banchine. ("C", le nicchie nel muro, tocca la geometria del
+## tunnel di ambienti-2.) Gli oblò dell'abisso: "A" col pesce lontano che passa e le bollicine, "B" fermi col
+## plancton.
+static var scelta_pesci := ""
+static var scelta_abisso := ""
+## I pesci: quanto distano lungo la strada (m), la scala del modello, la quota della mensola (sopra il piano).
+const PESCI_OGNI := 6.0
+const PESCE_SCALA := 0.7
+const MENSOLA_Y := 2.45
+## Gli oblò grandi dell'abisso: raggio del vetro e quota del centro sopra il piano (il bordo basso sopra i 2 m).
+const OBLO_R := 0.78
+const OBLO_Y := 2.95
+
 var sala: SalaSottomarino
 var _tri_pezzi := {}
 
@@ -55,7 +70,7 @@ static func passi(s: SalaSottomarino) -> Array:
 	a.name = "ArrediA1"
 	a.sala = s
 	s.add_child(a)
-	return [a._tartaruga, a._reti, a._buco_volta, a._abisso_lampade, a._abisso_lucine, a._approdo]
+	return [a._tartaruga, a._reti, a._buco_volta, a._abisso_lampade, a._abisso_lucine, a._approdo, a._pesci, a._abisso_oblo]
 
 
 ## Vero se a [param s] le luci normali del tunnel (lampade a gabbia e oblò piccoli) non vanno: nell'abisso le fa
@@ -196,6 +211,133 @@ func _buco_volta() -> void:
 		sala._palo(ferro, m, b, 0.008, mf)
 
 
+# --- la parata dei pesci (scelta aperta) -------------------------------------------------------------------------
+
+## I pesci di vetroresina della scelta [member scelta_pesci] (niente se è vuota).
+func _pesci() -> void:
+	if scelta_pesci == "":
+		return
+	var nodo := _nodo("Pesci")
+	var amb := _ambiente("pesci")
+	var occupati := _occupati_muri()
+	var k := 0
+	for lato: float in [-1.0, 1.0]:
+		var s := float(amb[0]) + 3.0 + (0.0 if lato < 0.0 else PESCI_OGNI * 0.5)
+		while s < float(amb[1]) - 2.0:
+			if not _libero(occupati, s, lato, 1.4) or sala._lato(s, lato)["crollo"]:
+				s += 0.5
+				continue
+			if scelta_pesci == "A":
+				_pesce_mensola(nodo, s, lato, k)
+			else:
+				_pesce_appeso(nodo, s, lato, k)
+			k += 1
+			s += PESCI_OGNI
+
+
+## Scelta A: un pesce in piedi sul suo palo, su una mensola d'ottone a sbalzo dal muro (un cuneo pieno: in alto
+## sporge 55 cm, al muro scende a 40 cm sotto), girato verso l'approdo; un faretto dietro la coda lo illumina.
+func _pesce_mensola(nodo: Node3D, s: float, lato: float, k: int) -> void:
+	var w = _muro(s, lato, sala.piano + MENSOLA_Y)
+	if w == null:
+		return
+	var pm: Vector3 = w[0]
+	var nrm: Vector3 = w[1]
+	var d := sala.direzione(s)
+	var lungo := Vector3.UP.cross(nrm).normalized()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var largo := 0.5
+	var fuori := 0.55
+	var giu := 0.4
+	var mezzo := lungo * largo * 0.5
+	var a0 := pm - nrm * 0.005
+	var top_in := [a0 - mezzo, a0 + mezzo]
+	var top_out := [a0 - mezzo + nrm * fuori, a0 + mezzo + nrm * fuori]
+	var bot_in := [a0 - mezzo + Vector3.DOWN * giu, a0 + mezzo + Vector3.DOWN * giu]
+	sala._quad(st, [top_in[0], top_in[1], top_out[1], top_out[0]], Vector3.UP)
+	sala._quad(st, [top_out[0], top_out[1], bot_in[1], bot_in[0]], (nrm * giu + Vector3.DOWN * fuori).normalized())
+	sala._tri(st, [top_in[0], top_out[0], bot_in[0]], -lungo)
+	sala._tri(st, [top_in[1], top_out[1], bot_in[1]], lungo)
+	var mi := MeshInstance3D.new()
+	mi.name = "mensola_pesce_%d" % k
+	mi.mesh = st.commit()
+	mi.material_override = sala._mat_ottone()
+	nodo.add_child(mi)
+	var p := _modello(nodo, "pesce_vetroresina", Vector3.ZERO, Vector3.ZERO, PESCE_SCALA)
+	p.name = "pesce_%d" % k
+	p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), pm + nrm * (fuori * 0.5))
+	_appoggia_su(p, pm.y + 0.0005)
+	# lontano dal muro almeno 3 cm (le pinne)
+	var gap := INF
+	for v in _triangoli(p):
+		gap = minf(gap, (v - pm).dot(nrm))
+	if gap < 0.03:
+		p.position += nrm * (0.03 - gap)
+	_faretto(nodo, s - 1.0, lato, MENSOLA_Y - 0.15, p.position + Vector3.UP * 0.5, Color(1.0, 0.85, 0.65), 3.0)
+
+
+## Scelta B: un pesce appeso con due cavi alla volta sopra la banchina (il palo in basso sopra i 2,1 m), girato
+## verso l'approdo, e il secondo della coppia accanto, più vicino al muro e un metro avanti.
+func _pesce_appeso(nodo: Node3D, s: float, lato: float, k: int) -> void:
+	for j in 2:
+		var sj := s + float(j) * 1.0
+		var p0 := sala.punto(sj)
+		var r := sala.destra(sj)
+		var d := sala.direzione(sj)
+		var u := lato * (sala.canale + 0.8 + float(j) * 1.05)
+		var c := sala._al(p0, r, Vector2(u, sala.piano + 2.1))
+		var p := _modello(nodo, "pesce_vetroresina", c, Vector3.ZERO, PESCE_SCALA)
+		p.name = "pesce_%d_%d" % [k, j]
+		p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), c)
+		_appoggia_su(p, sala.piano + 2.1)
+		var tri_p := _triangoli(p)
+		var tri_v := _tri_tunnel(sj)
+		for q: float in [-0.35, 0.35]:
+			var b := c + d * q
+			var giu = _raggio(tri_p, Vector3(b.x, -20.0, b.z), Vector3(b.x, sala.piano, b.z))
+			var su = _raggio(tri_v, Vector3(b.x, sala.piano + 2.5, b.z), Vector3(b.x, -20.0, b.z))
+			if giu == null or su == null:
+				continue
+			_piastra(nodo, su, "piastra_pesce_%d_%d_%d" % [k, j, int(q > 0.0)])
+			sala._palo(nodo, (giu as Vector3) + Vector3.DOWN * 0.006, (su as Vector3) + Vector3.DOWN * 0.012, 0.004, sala._mat_ferro())
+			nodo.get_child(nodo.get_child_count() - 1).name = "cavo_pesce_%d_%d_%d" % [k, j, int(q > 0.0)]
+
+
+## Abbassa o alza [param n] finché il suo punto più basso sta a [param quota].
+func _appoggia_su(n: Node3D, quota: float) -> void:
+	var basso := INF
+	for v in _triangoli(n):
+		basso = minf(basso, v.y)
+	if basso < INF:
+		n.position.y += quota - basso
+
+
+## I tratti di muro già occupati (lampade, oblò piccoli, ostacoli, reti e cartelli): [s, lato, mezza larghezza].
+func _occupati_muri() -> Array:
+	var out: Array = []
+	for n in sala.find_children("*", "Node3D", true, false):
+		var nome := String(n.name)
+		if not (nome.begins_with("lampada") or nome == "Oblo" or nome.begins_with("rete_") or nome.begins_with("faretto")
+				or nome.begins_with("cartello") or nome.begins_with("salvagente") or nome.begins_with("fanale")):
+			continue
+		var pos := _xf(n as Node3D).origin
+		var pr := sala.proietta(pos)
+		if absf(float(pr[1])) < sala.muro - 1.0:
+			continue
+		out.append([float(pr[0]), signf(float(pr[1])), 1.2 if nome.begins_with("rete_") else 0.6])
+	for o in sala.ostacoli:
+		out.append([float(o["s"]) + float(o["lungo"]) * 0.5, float(o["lato"]), float(o["lungo"]) * 0.5 + 0.8])
+	return out
+
+
+func _libero(occupati: Array, s: float, lato: float, mezzo: float) -> bool:
+	for o in occupati:
+		if float(o[1]) == lato and absf(float(o[0]) - s) < mezzo + float(o[2]):
+			return false
+	return true
+
+
 # --- gli oblò dell'abisso ----------------------------------------------------------------------------------------
 
 ## Le lampade dell'abisso: poche e blu scure, alternate sui muri.
@@ -258,6 +400,72 @@ func _abisso_lucine() -> void:
 	mmi.set_meta(&"trasformazioni", xf)
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mmi)
+
+
+## Gli oblò grandi dell'abisso (scelta [member scelta_abisso], niente se è vuota): tre per lato, fra le lampade blu,
+## con l'anello d'ottone e il vetro col mare profondo finto (oblo_abisso.gdshader, animato nella A).
+func _abisso_oblo() -> void:
+	if scelta_abisso == "":
+		return
+	var nodo := _nodo("AbissoOblo")
+	var amb := _ambiente("abisso")
+	var occupati := _occupati_muri()
+	var shader := load(DIR + "oblo_abisso.gdshader") as Shader
+	var k := 0
+	for lato: float in [-1.0, 1.0]:
+		var messi := 0
+		var s := float(amb[0]) + 8.0 + (0.0 if lato < 0.0 else 9.0)
+		while s < float(amb[1]) - 4.0 and messi < 3:
+			if not _libero(occupati, s, lato, OBLO_R + 0.6) or sala._lato(s, lato)["crollo"] or _bocca_galleria(s, lato):
+				s += 0.5
+				continue
+			var w = _muro(s, lato, sala.piano + OBLO_Y)
+			if w == null:
+				s += 0.5
+				continue
+			var pm: Vector3 = w[0]
+			var nrm: Vector3 = w[1]
+			var n := Node3D.new()
+			n.name = "oblo_grande_%d" % k
+			nodo.add_child(n)
+			n.transform = Transform3D(Basis.looking_at(-nrm, Vector3.UP), pm)
+			var anello := MeshInstance3D.new()
+			var tm := TorusMesh.new()
+			tm.inner_radius = OBLO_R - 0.02
+			tm.outer_radius = OBLO_R + 0.12
+			tm.rings = 48
+			anello.mesh = tm
+			anello.rotation_degrees.x = 90
+			anello.position.z = 0.07 - 0.003
+			anello.material_override = sala._mat_ottone()
+			n.add_child(anello)
+			var vetro := MeshInstance3D.new()
+			var cm := CylinderMesh.new()
+			cm.top_radius = OBLO_R
+			cm.bottom_radius = OBLO_R
+			cm.height = 0.02
+			cm.radial_segments = 48
+			vetro.mesh = cm
+			vetro.rotation_degrees.x = 90
+			vetro.position.z = 0.011
+			var m := ShaderMaterial.new()
+			m.shader = shader
+			m.set_shader_parameter(&"animato", scelta_abisso == "A")
+			m.set_shader_parameter(&"fase", float(k) * 0.37)
+			m.set_shader_parameter(&"raggio", OBLO_R)
+			vetro.material_override = m
+			n.add_child(vetro)
+			occupati.append([s, lato, OBLO_R + 0.2])
+			k += 1
+			messi += 1
+			s += 22.0
+
+
+func _bocca_galleria(s: float, lato: float) -> bool:
+	for a in sala._aperture():
+		if float(a[2]) == lato and s > float(a[0]) - OBLO_R - 0.5 and s < float(a[1]) + OBLO_R + 0.5:
+			return true
+	return false
 
 
 # --- l'approdo ---------------------------------------------------------------------------------------------------
