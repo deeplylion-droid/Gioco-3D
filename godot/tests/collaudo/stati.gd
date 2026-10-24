@@ -17,6 +17,15 @@ const FALSE := ["chiusa", "bloccata", "chiuso_dietro"]
 
 static func applica(livello: Node, stato: String) -> void:
 	mostra_nascosti(livello)
+	# il tunnel del viaggio sottomarino si costruisce da codice (SalaSottomarino.costruisci): qui tutto e subito, coi
+	# gommoni fermi all'inizio del dondolio (come lo stato sottomarino_t0 del controllo della CI)
+	var tunnel: Node = livello if livello.has_method(&"costruisci") and livello.get(&"costruita") != null \
+			else livello.find_child("SalaSottomarino", true, false)
+	if tunnel and tunnel.has_method(&"costruisci") and not bool(tunnel.get(&"costruita")):
+		tunnel.call(&"costruisci")
+		tunnel.set_physics_process(false)
+		if tunnel.has_method(&"ferma_gommoni"):
+			tunnel.call(&"ferma_gommoni", 0.0)
 	if stato == "inizio":
 		return
 	if stato == "lei_fossa":
