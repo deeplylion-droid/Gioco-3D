@@ -1782,8 +1782,9 @@ func _gommone(s: float, off: float) -> void:
 		corpo.add_child(man)
 		# l'anello esce dal fianco del tubolare (lo tocca col bordo), dritto e girato lungo il fianco: la corda passa
 		# nel suo foro, dalla parte di fuori (q sta 2,5 cm dentro la gomma)
-		man.transform = Transform3D(Basis(m, Vector3.UP, m.cross(Vector3.UP)) * Basis(Vector3.RIGHT, PI * 0.5), q + m * 0.0925)
-		maniglie.append(q + m * 0.1375)
+		# (la gomma disegnata, a facce, sta fino a un centimetro dentro quella vera: l'anello entra di due)
+		man.transform = Transform3D(Basis(m, Vector3.UP, m.cross(Vector3.UP)) * Basis(Vector3.RIGHT, PI * 0.5), q + m * 0.075)
+		maniglie.append(q + m * 0.12)
 	# le corde: dalle due maniglie più vicine agli anelli della parete più vicina, prima e dopo lungo il canale
 	var lato := 1.0 if off >= 0.0 else -1.0
 	var corde: Array = []
@@ -1793,7 +1794,8 @@ func _gommone(s: float, off: float) -> void:
 		var pa := punto(sa)
 		var ra := destra(sa)
 		# la piastra sul muro, e l'anello che ne esce di piatto, girato lungo il canale: la corda passa nell'anello
-		var muro_q := _al(pa, ra, Vector2(lato * canale, acqua + 0.3))
+		# (sotto il listello del bordo della banchina, che sporge 4 cm e scende di 6 cm: 20 cm sopra l'acqua)
+		var muro_q := _al(pa, ra, Vector2(lato * canale, acqua + 0.2))
 		var dentro := -ra * lato
 		var piastra := MeshInstance3D.new()
 		var pm := BoxMesh.new()
