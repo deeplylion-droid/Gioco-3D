@@ -1722,14 +1722,28 @@ func _stesso_oggetto(a: Node, b: Node) -> bool:
 	var nb := _oggetto(b)
 	if na == nb:
 		return true
+	# il guscio della stanza (muri, pavimento e cerniere uniti in "*_statico"): conta come architettura
+	if na.ends_with("_statico") or nb.ends_with("_statico"):
+		return true
 	for p in ["cerniera", "maniglia", "cardine"]:
 		if na.contains(p) or nb.contains(p):
 			return true
+	# "X" e "X_parola": un pezzo dell'oggetto (lampada_l1 e lampada_l1_vetro, POMPA_1 e POMPA_1_manometro, la base e il
+	# suo _piolo); "X" e "X_2" invece sono due copie
+	for c in [[na, nb], [nb, na]]:
+		if String(c[1]).begins_with(String(c[0]) + "_"):
+			var resto := String(c[1]).substr(String(c[0]).length() + 1)
+			return not resto.split("_")[0].is_valid_int()
 	var ta := na.split("_")
 	var tb := nb.split("_")
-	if ta.size() < 2 or tb.size() < 2 or ta[-1].is_valid_int() or tb[-1].is_valid_int():
+	if ta.size() < 2 or tb.size() < 2:
 		return false
-	return ta.slice(0, -1) == tb.slice(0, -1)
+	# stessi nomi tranne l'ultima parola: i pezzi di un oggetto ("armadietti_est_01_anta" e "_corpo", le perline
+	# "G_festone_mag_3" e il loro "G_festone_mag_filo"); due copie numerate ("_1" e "_2") restano distinte
+	if ta.slice(0, -1) == tb.slice(0, -1):
+		return not (ta[-1].is_valid_int() and tb[-1].is_valid_int())
+	# lo stesso indice in fondo, nello stesso nodo: i pezzi del k-esimo montaggio (piastra_0 e staffa_0)
+	return ta[-1].is_valid_int() and ta[-1] == tb[-1] and a.get_parent() == b.get_parent()
 
 
 ## Le parti che si aprono sui loro cardini: ante, sportelli, battenti (per nome).
@@ -1749,7 +1763,7 @@ func _anta(n: Node) -> bool:
 ## Il telaio di una parte che si muove: il corpo dell'armadietto, le cerniere (l'anta ci sta dentro apposta).
 func _telaio(n: Node) -> bool:
 	var nome := String(n.name).to_lower()
-	return nome.ends_with("_corpo") or nome.contains("cerniera") or nome.contains("telaio") or nome.contains("cardine") \
+	return nome.ends_with("_corpo") or nome.ends_with("_statico") or nome.contains("cerniera") or nome.contains("telaio") or nome.contains("cardine") \
 			or RegEx.create_from_string("^armadietti_\\w+_\\d\\d$").search(nome) != null
 
 
