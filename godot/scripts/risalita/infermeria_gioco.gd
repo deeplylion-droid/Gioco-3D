@@ -765,7 +765,10 @@ func _luci() -> void:
 func _bambini() -> void:
 	_metti("giraffa_metro", Vector3(2.45, 0.05, -L), 0.0)
 	var mp := StandardMaterial3D.new()
-	mp.albedo_texture = load("res://assets/ambienti_interni/texture/cartellone_medusa_vecchio.jpg")
+	# il cartellone rovinato a pastelli a cera (24 ottobre, assets_src/ambienti_interni/poster/rovina.py): dove è
+	# strappato o bruciato si vede il pannello rosa sotto
+	mp.albedo_texture = load("res://assets/ambienti_interni/texture/cartellone_medusa_infermeria.png")
+	mp.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	mp.roughness = 0.7
 	_box(Vector3(0.02, 1.04, 0.79), Vector3(-L + 0.01, 1.85, 1.45), _colore(Color(0.95, 0.75, 0.85)))
 	_quad(Vector2(0.75, 1.0), Vector3(-L + 0.022, 1.85, 1.45), Vector3(0, 90, 0), mp)

@@ -262,6 +262,14 @@ class Pennarello:
         mix = molt * (1 - chiaro) + l[..., :3] * chiaro
         return a * (1 - q) + mix * q
 
+    def applica_pastello(self, a, alfa, seme):
+        """Pastello a cera: copre (non moltiplica) ma salta sui rilievi della carta, a granelli."""
+        liv = self.liv.resize((self.w, self.h), Image.LANCZOS)
+        l = f32(liv)
+        grana = blob((self.h, self.w), seme, 120) * 0.6 + np.random.default_rng(seme).random((self.h, self.w)) * 0.4
+        q = l[..., 3] * np.clip((grana - 0.12) * 4.0, 0, 1) * alfa
+        return mescola(a, l[..., :3], q * 0.92)
+
 
 def graffi(a, alfa, n, seme, lung=(40, 220)):
     """Graffi di unghie o chiavi: righe chiare (la carta sotto l'inchiostro) con un filo scuro accanto."""
@@ -515,7 +523,58 @@ def manifesto():
     salva(bianco, alfa, os.path.join(JILLY_TEX, 'manifesto_rovinato_alfa.png'))
 
 
+# ---------------------------------------------------------------- 4. pannello rosa dell'infermeria: pastelli a cera
+def infermeria():
+    """Lo stesso cartellone dell'arcobaleno, nell'infermeria per bambini: rovinato a pastello a cera, come se
+    l'avessero rifatto i bambini (occhio cancellato a giri neri, denti rossi, lacrime viola, la campana
+    annerita, onde e nuvole cattive), poco bruciato: solo un buco di sigaretta. Angolo strappato e scotch."""
+    src = Image.open(os.path.join(TEX_INT, 'cartellone_medusa_vecchio.jpg')).convert('RGB')
+    W, H = src.size
+    vecchio = strappo_vecchio('cartellone_medusa', 5, 0.10, W, H)
+    a = f32(src)
+    alfa = (vecchio < 0.45).astype(np.float32)
+    p = Pennarello(W, H, 111)
+    nero, rosso, viola, verde = (20, 18, 22), (200, 30, 30), (110, 40, 150), (40, 110, 40)
+    ex, ey, er = 445, 250, 46
+    p.spirale(ex, ey, er * 1.3, 13, nero, giri=40)
+    p.spirale(ex, ey, er * 0.7, 14, nero, giri=20)
+    p.denti(455, 312, 180, 66, 8, rosso, (120, 10, 14), (245, 240, 230), 8, arco=0.6)
+    for dx in (-26, -6, 16, 32):
+        p.linea((ex + dx, ey + er), (ex + dx * 1.4 + p.rng.normal(0, 6), ey + er + 140 + p.rng.normal(0, 25)), 7, viola, n=12, trem=2)
+    # la campana colorata di nero a zig-zag, i tentacoli ripassati in rosso come graffi
+    zig = []
+    for i in range(22):
+        y = 470 + i * 10
+        zig += [(255 + p.rng.normal(0, 12), y), (645 + p.rng.normal(0, 12), y + 5)]
+    p.tratto(zig, 9, nero, trem=3)
+    for i in range(7):
+        x = 300 + i * 50
+        p.linea((x, 690), (x + p.rng.normal(0, 40), 1020 + p.rng.normal(0, 40)), 6, rosso, n=10, trem=4)
+    # l'arcobaleno cancellato con nuvole nere e pioggia
+    for cx in (170, 360, 700):
+        p.spirale(cx, 120 + p.rng.normal(0, 20), 60, 8, (60, 60, 70), giri=6)
+    for i in range(14):
+        x = p.rng.uniform(80, 820)
+        p.linea((x, 180), (x - 25, 300 + p.rng.uniform(0, 80)), 4, viola, n=5, trem=1.5)
+    # la manina che saluta: ripassata in verde con le dita a punta
+    p.nervose(745, 335, 70, 9, 6, verde, lung=(0.5, 1.0))
+    a = p.applica_pastello(a, alfa, 112)
+    a = graffi(a, alfa, 14, 113, lung=(30, 140))
+    a, alfa = buchi_sigaretta(a, alfa, [(560, 860)], [9], 114)
+    # angolo in alto a destra strappato via, dentro la cornice di nastro adesivo
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    nb = blob((H, W), 115, 12)
+    via = ((W - xx) / W + yy / H * 0.8 + (nb - 0.5) * 0.12) < 0.36
+    alfa = alfa * ~via
+    a = macchie_acqua(a, blob((H, W), 116, 3) + np.linspace(0, 1, H)[:, None] * 0.4, (0.78,))
+    # scotch agli angoli rimasti, sopra la carta
+    for (x, y, ang) in ((70, 75, 0.7), (70, H - 75, -0.7), (W - 70, H - 75, 0.7)):
+        a, alfa = scotch(a, alfa, x, y, 140, 38, ang, 117 + int(x + y))
+    a = bordo_strappato(a, alfa, 1.6, 0.6)
+    salva(a, alfa, os.path.join(TEX_INT, 'cartellone_medusa_infermeria.png'))
+
+
 if __name__ == '__main__':
-    scelti = sys.argv[1:] or ['cartellone', 'bagnino', 'manifesto']
+    scelti = sys.argv[1:] or ['cartellone', 'bagnino', 'manifesto', 'infermeria']
     for s in scelti:
         globals()[s]()
