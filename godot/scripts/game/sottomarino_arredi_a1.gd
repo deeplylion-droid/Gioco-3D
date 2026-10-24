@@ -400,13 +400,22 @@ func _pesce_mensola(nodo: Node3D, s: float, lato: float, k: int) -> void:
 	var p := _modello(nodo, "pesce_vetroresina", Vector3.ZERO, Vector3.ZERO, PESCE_SCALA)
 	p.name = "pesce_%d" % k
 	p.transform = Transform3D(Basis.looking_at(-d, Vector3.UP).scaled(Vector3.ONE * PESCE_SCALA), pm + nrm * (fuori * 0.5))
-	_appoggia_su(p, pm.y + 0.0005)
 	# lontano dal muro almeno 3 cm (le pinne)
 	var gap := INF
 	for v in _triangoli(p):
 		gap = minf(gap, (v - pm).dot(nrm))
 	if gap < 0.03:
 		p.position += nrm * (0.03 - gap)
+	# il piede del palo sulla mensola: il punto più basso fra quelli sopra la mensola (le pinne fuori possono
+	# scendere oltre il bordo)
+	var basso := INF
+	for v in _triangoli(p):
+		var lu := (v - pm).dot(lungo)
+		var fu := (v - pm).dot(nrm)
+		if absf(lu) < largo * 0.5 - 0.01 and fu > 0.0 and fu < fuori - 0.01:
+			basso = minf(basso, v.y)
+	if basso < INF:
+		p.position.y += pm.y + 0.0005 - basso
 	# il faretto sotto il pesce: in punta alla mensola, puntato in su sulla pancia
 	var base := pm + nrm * (fuori - 0.07) + lungo * 0.12 + Vector3.UP * 0.0005
 	_faretto_mensola(nodo, base, p.position + Vector3.UP * 0.45, "faretto_pesce_%d" % k)
@@ -509,9 +518,10 @@ func _appoggia_su(n: Node3D, quota: float) -> void:
 func _occupati_muri() -> Array:
 	var out: Array = []
 	for n in sala.find_children("*", "Node3D", true, false):
-		var nome := String(n.name)
-		if not (nome.begins_with("lampada") or nome == "Oblo" or nome.begins_with("rete_") or nome.begins_with("faretto")
-				or nome.begins_with("cartello") or nome.begins_with("salvagente") or nome.begins_with("fanale")):
+		# (i fratelli con lo stesso nome Godot li rinomina "@Oblo@12": si cerca il pezzo nel nome)
+		var nome := String(n.name).to_lower()
+		if not (nome.contains("lampada") or nome.contains("oblo") or nome.contains("rete_") or nome.contains("faretto")
+				or nome.contains("cartello") or nome.contains("salvagente") or nome.contains("fanale") or nome.contains("mensola")):
 			continue
 		var pos := _xf(n as Node3D).origin
 		var pr := sala.proietta(pos)
