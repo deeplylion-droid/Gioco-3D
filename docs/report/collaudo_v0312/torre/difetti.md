@@ -25,6 +25,8 @@ Le 8 lampade rosse delle bocche chiuse (`@306`…`@324`) stanno sulla targa a st
 
 ## Da vedere (su b8964240)
 
+Su 45db14db i punti 1, 2 e 4 sono corretti (sezione "Ricontrollo" qui sotto); resta aperto il 3.
+
 | # | Nodo | Posizione | Problema | Scatto |
 |---|---|---|---|---|
 | 1 | `TorreScivoli/torre_scivolo_7` con `TorreStruttura/torre_A_sostegni` | 37,36, 6,46, -12,52 | Dove un'asta dei sostegni arriva al tubo rosso, nella superficie del tubo c'è un buco nero con dentro il moncone grigio dell'asta. Il tubo è uno di quelli chiusi dalla grata (non ci si entra) e il punto più vicino da cui lo si guarda è a 9 m. | `attacchi_stretti/a125_torre_scivolo_7_a.jpg`, `_b.jpg` |
