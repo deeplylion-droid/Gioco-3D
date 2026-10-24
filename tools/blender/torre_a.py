@@ -2073,20 +2073,27 @@ def versione_A(mats):
 
             def _alto(d_, t_):
                 w = base + v0 * d_ + t0v * t_
-                h = albero_.ray_cast(Vector((w.x, w.y, base.z - 0.05)), Vector((0, 0, 1)), 0.6)
-                return h[0].z - 0.004 if h[0] is not None else None
+                h = albero_.ray_cast(Vector((w.x, w.y, base.z - 0.5)), Vector((0, 0, 1)), 1.05)
+                return h[0].z - 0.008 if h[0] is not None else None
 
             # a fette di 5 cm lungo il canale, ognuna larga quanto la pedana lascia (fino a 0,7 m dall'asse, dove i fianchi
             # stanno a circa 20 cm dalla grata)
             fette_ = []
+            facce_ = []
             d_ = d0_ + 0.02
             while d_ < d0_ + 3.0:
                 m_ = next((m for m in (0.7, 0.6, 0.5, 0.4, 0.3) if all(_sulla_grata(base + v0 * (d_ + dd) + t0v * (sg * m))
                                                                         for sg in (-1, 1) for dd in (0.0, 0.05))), None)
                 if m_ is None:
                     break
-                ts_ = [-m_ + 0.1 * j_ for j_ in range(int(round(2 * m_ / 0.1)) + 1)]
-                alti_ = [[_alto(d_ + dd, t_) for t_ in ts_] for dd in (0.0, 0.05)]
+                ts_ = [-m_ + 0.025 * j_ for j_ in range(int(round(2 * m_ / 0.025)) + 1)]
+                alti_ = [[_alto(d_ + dd, t_) for t_ in ts_] for dd in (0.0, 0.025, 0.05)]
+                if not any(a is None for r_ in alti_ for a in r_):
+                    # (il fondo è curvo: la corda fra due punti entrerebbe nel canale; ogni punto scende al più basso
+                    # dei vicini, anche nell'altra faccia della fetta)
+                    J0_ = len(ts_)
+                    alti_ = [[min(alti_[i2][j2] for i2 in (0, 1, 2) for j2 in range(max(0, j_ - 1), min(J0_, j_ + 2)))
+                              for j_ in range(J0_)] for _i in (0, 1)]
                 if any(a is None for r_ in alti_ for a in r_):
                     if fette_:
                         break
@@ -2100,13 +2107,21 @@ def versione_A(mats):
                       for i_, dd in enumerate((0.0, 0.05))]
                 J_ = len(ts_) - 1
                 for j_ in range(J_):
-                    cvc.faccia([T_[0][j_], T_[1][j_], T_[1][j_ + 1], T_[0][j_ + 1]], 'metallo')
-                    cvc.faccia([B_[0][j_ + 1], B_[0][j_], T_[0][j_], T_[0][j_ + 1]], 'metallo')
-                    cvc.faccia([B_[1][j_], B_[1][j_ + 1], T_[1][j_ + 1], T_[1][j_]], 'metallo')
-                cvc.faccia([B_[0][0], B_[1][0], T_[1][0], T_[0][0]], 'metallo')
-                cvc.faccia([B_[1][J_], B_[0][J_], T_[0][J_], T_[1][J_]], 'metallo')
+                    facce_.append([T_[0][j_], T_[1][j_], T_[1][j_ + 1], T_[0][j_ + 1]])
+                    facce_.append([B_[0][j_ + 1], B_[0][j_], T_[0][j_], T_[0][j_ + 1]])
+                    facce_.append([B_[1][j_], B_[1][j_ + 1], T_[1][j_ + 1], T_[1][j_]])
+                for j_ in range(J_):
+                    facce_.append([B_[0][j_], B_[0][j_ + 1], B_[1][j_ + 1], B_[1][j_]])
+                facce_.append([B_[0][0], B_[1][0], T_[1][0], T_[0][0]])
+                facce_.append([B_[1][J_], B_[0][J_], T_[0][J_], T_[1][J_]])
                 d_ += 0.05
+            if fette_ and max(f_[2] for f_ in fette_) < 0.06:
+                # (dove il canale poggia quasi tutto, la culla sarebbe una lastra di pochi cm: non regge niente)
+                print(f'imbocco {k_}: niente culla (il canale sta a meno di 6 cm dalla grata)')
+                fette_ = None
             if fette_:
+                for pts_ in facce_:
+                    cvc.faccia(pts_, 'metallo')
                 print(f'imbocco {k_}: culla sotto il canale da {fette_[0][0]:.2f} a {fette_[-1][0] + 0.05:.2f} m dal portale, '
                       f'larga {", ".join(sorted({f"{2 * f_[1]:.1f}" for f_ in fette_}))} m, alta fino a {100 * max(f_[2] for f_ in fette_):.0f} cm')
             else:
