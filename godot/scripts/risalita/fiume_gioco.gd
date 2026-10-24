@@ -154,6 +154,7 @@ func _costruisci() -> void:
 	_approdo()
 	await _rocce_imbarco()
 	await _pile()
+	await _ciambelle_a_riva()
 	_marker()
 	_checkpoint()
 	costruita = true
@@ -1613,11 +1614,8 @@ func _muri_pile() -> Array:
 	]
 
 
-func _pile() -> void:
-	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 1023
-	# gli ingombri già a terra: le forme di collisione (transenne, rocce, pali, cabina, tettoia) in pianta
+## Gli ingombri già a terra, in pianta: le forme di collisione (transenne, rocce, pali, cabina, tettoia, pile).
+func _ingombri() -> Array[PackedVector2Array]:
 	var ingombri: Array[PackedVector2Array] = []
 	for corpo in [_collisioni, _barriere] + get_children().filter(func(c): return c is StaticBody3D and c != _collisioni and c != _barriere):
 		for cs in (corpo as Node).get_children():
@@ -1639,6 +1637,131 @@ func _pile() -> void:
 				for k in 12:
 					cerchio.append(Vector2(f.transform.origin.x, f.transform.origin.z) + Vector2.from_angle(TAU * k / 12.0) * r)
 				ingombri.append(cerchio)
+	return ingombri
+
+
+## Le ciambelle che erano alla deriva lungo la strada giusta stanno sulla riva (riscontro dell'utente sulla v0.3.12:
+## "ci sono due salvagenti lungo il percorso nel fiume che danno un po' fastidio, spostali a bordo del fiume"). Stese
+## non ci stanno (1,2 m, e fra l'acqua e la roccia la banchina ne ha 0,9): in piedi, appoggiate alla roccia della
+## banchina più vicina, inclinate quanto serve perché la cima tocchi la faccia vera della roccia (misurata coi raggi
+## sulle mesh, come fa Posa), col fondo a terra coi vertici veri. Lontano dai dischi, dalla colonna, dalle conche, da
+## scalette e cartelli, e da quello che c'è già sulla banchina.
+const CIAMBELLE_A_RIVA := [Vector3(23.6, 0, 1.8), Vector3(-11.73, 0, 21.51), Vector3(-30.0, 0, 0.6)]
+
+
+func _ciambelle_a_riva() -> void:
+	var ingombri := _ingombri()
+	var vietati: Array[Vector3] = []
+	for c in get_children():
+		var nome := String(c.name).to_lower()
+		if c is Node3D and (nome.begins_with("scaletta") or nome.begins_with("cartello") or nome.begins_with("palo") \
+				or nome.begins_with("lampada") or nome.begins_with("liane")):
+			vietati.append((c as Node3D).position)
+	var posti := []
+	for st in _strisce:
+		posti.append_array(_lungo(st, W * 0.5 + BANCA, 0.5, 0.5))
+	for da: Vector3 in CIAMBELLE_A_RIVA:
+		await _pausa()
+		var candidati := posti.filter(func(v: Array) -> bool: return (v[0] as Vector3).distance_to(da) < 9.0)
+		candidati.sort_custom(func(x: Array, y: Array) -> bool: return (x[0] as Vector3).distance_to(da) < (y[0] as Vector3).distance_to(da))
+		var messa := false
+		for v in candidati:
+			var p: Vector3 = v[0]
+			var rot: float = v[1]
+			if _zone_libere.any(func(z: Array) -> bool: return Vector2(p.x, p.z).distance_to(z[0]) < float(z[1])):
+				continue
+			if vietati.any(func(w: Vector3) -> bool: return Vector2(w.x, w.z).distance_to(Vector2(p.x, p.z)) < 1.6):
+				continue
+			if await _ciambella_appoggiata(p, rot, ingombri):
+				messa = true
+				break
+		if not messa:
+			push_warning("ciambella a riva: nessun posto vicino a %s" % da)
+
+
+## Una ciambella in piedi davanti alla roccia della banchina in [param p] (sulla linea della fila della roccia, che
+## guarda verso [param rot]). Vero se ci sta: fondo sulla banchina a 15 cm dall'acqua, cima sulla roccia.
+func _ciambella_appoggiata(p: Vector3, rot: float, ingombri: Array[PackedVector2Array]) -> bool:
+	var davanti := Basis(Vector3.UP, deg_to_rad(rot)) * Vector3.BACK
+	var lato := Vector3.UP.cross(davanti).normalized()
+	var aiuto := Node3D.new()
+	add_child(aiuto)
+	var f_alto := _faccia_roccia(aiuto, p, davanti, 1.1)
+	var f_basso := _faccia_roccia(aiuto, p, davanti, 0.12)
+	if f_alto < 0.0 or f_basso < 0.0:
+		aiuto.queue_free()
+		return false
+	# il retro della ciambella al piede, dalla linea della roccia; l'inclinazione fa toccare la cima a 1,1 m
+	var piede := maxf(f_basso + 0.04, f_alto + 1.1 * tan(deg_to_rad(6.0)))
+	var teta := atan((piede - f_alto) / 1.1)
+	if teta > deg_to_rad(22.0) or piede + 0.33 * cos(teta) > BANCA - 0.15:
+		aiuto.queue_free()
+		return false
+	# l'impronta a terra libera da quello che c'è già sulla banchina (non la roccia, che sta dietro)
+	var c2 := Vector2(p.x, p.z) + Vector2(davanti.x, davanti.z) * (piede + 0.17)
+	var l2 := Vector2(lato.x, lato.z) * 0.62
+	var d2 := Vector2(davanti.x, davanti.z) * 0.2
+	var impronta := PackedVector2Array([c2 - l2 - d2, c2 + l2 - d2, c2 + l2 + d2, c2 - l2 + d2])
+	for g in ingombri:
+		if g.is_empty() or g[0].distance_to(c2) > 6.0:
+			continue
+		if not Geometry2D.intersect_polygons(impronta, g).is_empty():
+			# la scatola di collisione della roccia sta dietro la faccia: conta solo se arriva oltre il piede
+			if Geometry2D.intersect_polygons(PackedVector2Array([c2 - l2, c2 + l2, c2 + l2 + d2 * 2.0, c2 - l2 + d2 * 2.0]), g).is_empty():
+				continue
+			aiuto.queue_free()
+			return false
+	var ci := _metti("ciambella", p, 0.0)
+	ci.name = "CiambellaRiva"
+	for prova in 4:
+		var n := (davanti * cos(teta) + Vector3.UP * sin(teta)).normalized()
+		var z := lato.cross(n).normalized()
+		ci.basis = Basis(lato, n, z)
+		var su := Vector3.UP - n * Vector3.UP.dot(n)
+		su = su.normalized()
+		ci.position = p + davanti * (piede - 0.6 * sin(teta)) + Vector3.UP * 0.6
+		_a_terra(ci)
+		# quanto manca fra la cima del retro e la roccia
+		ci.visible = false
+		var cima := ci.position + su * 0.57
+		var h: Dictionary = Posa._raggio_mesh(aiuto, cima + n * 0.06, cima - n * 0.5)
+		ci.visible = true
+		if h.is_empty():
+			teta += deg_to_rad(3.0)
+			continue
+		var gap: float = (cima + n * 0.06).distance_to(h.position) - 0.06
+		if absf(gap) <= 0.008:
+			break
+		teta += atan(gap / 1.15)
+	aiuto.queue_free()
+	print("ciambella a riva: %s, inclinata %.1f gradi" % [ci.position.snappedf(0.01), rad_to_deg(teta)])
+	return true
+
+
+## Dove sta la faccia vera della roccia davanti a [param p], a quota [param h]: la distanza dalla linea della roccia
+## lungo [param davanti] (-1 se non c'è roccia).
+func _faccia_roccia(aiuto: Node3D, p: Vector3, davanti: Vector3, h: float) -> float:
+	var da := p + davanti * 1.6 + Vector3.UP * h
+	var hit: Dictionary = Posa._raggio_mesh(aiuto, da, p - davanti * 0.3 + Vector3.UP * h)
+	if hit.is_empty() or not _in_roccia(hit.collider as Node):
+		return -1.0
+	return ((hit.position as Vector3) - p).dot(davanti)
+
+
+func _in_roccia(n: Node) -> bool:
+	while n and n != self:
+		if String(n.name).begins_with("roccia"):
+			return true
+		n = n.get_parent()
+	return false
+
+
+func _pile() -> void:
+	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1023
+	# gli ingombri già a terra: le forme di collisione (transenne, rocce, pali, cabina, tettoia) in pianta
+	var ingombri := _ingombri()
 	# le lampade sui muri (e quello che sta in alto): le pile ci passano sotto
 	var lampade: Array[Vector3] = []
 	for c in get_children():
@@ -1994,8 +2117,9 @@ func _imbarco() -> void:
 	_ostacolo(Vector3(-VASCA - 2.0, 0, -VASCA - 5.6), 0.6, sotto)
 	# (quella della conca del bivio 1 un po' più in là: toccava la guida della chiusa; quella fra il bivio 2 e il 3 mezzo
 	# metro verso il centro del canale: entrava nella parete, controllo del 23 ottobre)
-	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0], [Vector3(23.6, GALLA, 1.8), 130.0],
-			[Vector3(-11.73, GALLA, 21.51), 80.0], [Vector3(-30.0, GALLA, 0.6), 15.0]]:
+	# (quelle lungo la strada giusta, nella conca del bivio 1, fra il bivio 2 e il 3 e all'uscita, stanno sulla riva:
+	# _ciambelle_a_riva)
+	for c in [[Vector3(2.2, GALLA, 2.0), 60.0], [Vector3(-1.4, GALLA, 2.4), 10.0]]:
 		await _pausa()
 		_metti("ciambella", c[0], c[1])
 	await _pausa()
