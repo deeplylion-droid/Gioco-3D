@@ -2219,7 +2219,9 @@ func _approdo() -> void:
 	var x1 := APPRODO.x - 2.2
 	var sc := _metti("scaletta_banchina", Vector3(x1 + 0.05, FONDO + 0.05, APPRODO.y + 1.2), 90.0)
 	sc.name = "Scaletta"
-	_metti("ciambella", Vector3(APPRODO.x + 0.8, GALLA, APPRODO.y - 1.4), 15.0)
+	# (prima galleggiava nella conca, a 1,4 m dall'asse dove arriva la ciambella del giocatore, davanti alla scaletta:
+	# ora è stesa sulla banchina dell'approdo, contro il lato verso le pile, fuori dalla strada fra la scaletta e la porta)
+	_a_terra(_metti("ciambella", Vector3(APPRODO.x - 5.2, 0, APPRODO.y - 2.45), 15.0))
 	_metti("salvagente", Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 90.0)
 	_ostacolo(Vector3(x1 - 1.0, 0, APPRODO.y - 2.9), 0.5, 1.4)
 	# verso la ciambella che arriva dal ramo d'uscita
