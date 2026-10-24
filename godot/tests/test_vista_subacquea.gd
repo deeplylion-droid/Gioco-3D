@@ -10,7 +10,7 @@ extends Node
 ## Con lo schermo (non --headless) anche uno scatto vero dello shader con due acque sovrapposte, la prima della tabella
 ## col pelo sopra la testa: sopra il pelo dell'acqua più vicina l'immagine resta quella senza effetto.
 ## Uso: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_vista_subacquea.gd [zone]
-##      (zone: sala, torre, inseguimento, sovrapposte; senza: tutte)
+##      (zone: sala, torre, inseguimento, sovrapposte, tunnel; senza: tutte)
 
 const SALA := "res://scenes/sala_principale.tscn"
 const TORRE := "res://scenes/sala/torre/sala_torre.tscn"
@@ -46,12 +46,14 @@ func _run() -> void:
 	Game.pause_on_focus_loss = false
 	var zone: Array = OS.get_cmdline_user_args().slice(1)
 	if zone.is_empty():
-		zone = ["sovrapposte", "sala", "torre", "inseguimento"]
+		zone = ["sovrapposte", "sala", "torre", "inseguimento", "tunnel"]
 	for z in zone:
 		print("== ", z)
 		match z:
 			"sovrapposte":
 				await _sovrapposte()
+			"tunnel":
+				await _tunnel()
 			"sala":
 				get_tree().change_scene_to_file(SALA)
 				for i in 600:
@@ -241,3 +243,43 @@ func _differenza(a: Image, b: Image) -> float:
 			s += (absf(ca.r - cb.r) + absf(ca.g - cb.g) + absf(ca.b - cb.b)) / 3.0
 			n += 1
 	return s / maxf(n, 1)
+
+
+## Il tunnel del viaggio sottomarino: il canale ha l'acqua al ginocchio (pelo -30,42, fondo -30,92), fatta di volumi
+## per il guado e lo zaino, senza WaterBody. Lungo tutto l'asse, con gli occhi di chi sta in piedi nel canale e di chi
+## è accovacciato (enigmi: 0,92 m sopra il fondo), e sulle banchine, la vista resta normale.
+func _tunnel() -> void:
+	var sala := SalaSottomarino.new()
+	get_tree().root.add_child(sala)
+	get_tree().current_scene = sala
+	sala.costruisci()
+	_camera()
+	for i in 3:
+		await get_tree().physics_frame
+	var ko := []
+	var n := 0
+	var s := SalaSottomarino.PRESA_FINO + 1.0
+	while s < sala.lunghezza() - 1.0:
+		var p := sala.punto(s)
+		var r := sala.destra(s)
+		for occhi in [sala.fondo + 1.6, sala.fondo + 0.92]:
+			for lato in [-1.5, 0.0, 1.5]:
+				var q: Vector3 = Vector3(p.x, occhi, p.z) + r * lato
+				n += 1
+				var v := _vista(q)
+				if v[0] or float(v[1]) > q.y - VICINO:
+					ko.append("s %.0f, %s" % [s, q.snapped(Vector3.ONE * 0.01)])
+		var b := Vector3(p.x, sala.piano + 1.6, p.z) + r * (sala.canale + sala.banchina * 0.5)
+		n += 1
+		var vb := _vista(b)
+		if vb[0]:
+			ko.append("banchina, s %.0f" % s)
+		s += 3.0
+	for k in ko.slice(0, 10):
+		print("    vista subacquea nel tunnel: ", k)
+	_check(ko.is_empty(), "tunnel: nel canale al ginocchio (in piedi e accovacciati) e sulle banchine la vista resta normale (%d punti, %d no)" % [n, ko.size()])
+	sala.queue_free()
+	_cam.queue_free()
+	_cam = null
+	for i in 3:
+		await get_tree().process_frame
