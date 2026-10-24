@@ -42,7 +42,7 @@ const VETRINA_FONDA := 1.0
 const VETRINA_BASSO := 2.05
 ## L'abisso: le lampade blu (una ogni [constant ABISSO_LAMPADE_OGNI] m, alternate) e le lucine a filo del bordo delle
 ## banchine (una ogni [constant LUCINE_OGNI] m).
-const ABISSO_LAMPADE_OGNI := 18.0
+const ABISSO_LAMPADE_OGNI := 12.0
 const LUCINE_OGNI := 3.0
 
 var sala: SalaSottomarino
@@ -208,7 +208,7 @@ func _abisso_lampade() -> void:
 		if _sala_ha_lampada_vicina(s, lato):
 			s += 2.0
 			continue
-		sala._lampada(nodo, s, lato, sala.piano + 3.0, 1.6)
+		sala._lampada(nodo, s, lato, sala.piano + 3.0, 3.2)
 		var l := nodo.get_child(nodo.get_child_count() - 2) as Node3D
 		var g := l.find_child("globo", true, false) as MeshInstance3D
 		if g:
@@ -235,12 +235,12 @@ func _abisso_lucine() -> void:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.045
-	cm.bottom_radius = 0.05
+	cm.top_radius = 0.055
+	cm.bottom_radius = 0.06
 	cm.height = 0.012
 	cm.radial_segments = 16
 	cm.rings = 1
-	cm.material = _mat("lucina", Color(0.5, 0.85, 1.0), 0.3, 0.0, Color(0.35, 0.8, 1.0), 4.0)
+	cm.material = _mat("lucina", Color(0.5, 0.85, 1.0), 0.3, 0.0, Color(0.35, 0.8, 1.0), 7.0)
 	mm.mesh = cm
 	mm.instance_count = xf.size()
 	for i in xf.size():
@@ -425,9 +425,9 @@ func _salvagente(nodo: Node3D) -> void:
 				continue
 			var mt := base.duplicate() as StandardMaterial3D
 			mt.emission_enabled = true
-			mt.emission = Color(1.0, 0.75, 0.45)
+			mt.emission = Color(1.0, 1.0, 1.0)
 			mt.emission_texture = base.albedo_texture
-			mt.emission_energy_multiplier = 0.7
+			mt.emission_energy_multiplier = 0.3
 			m.set_surface_override_material(i, mt)
 
 
