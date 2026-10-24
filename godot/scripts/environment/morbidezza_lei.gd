@@ -122,6 +122,9 @@ var _forme: Array = []                     # [piani (Array[Plane], verso fuori),
 # le forme che si muovono (i galleggianti che ondeggiano, il portello): legate a un nodo, i piani si rifanno dal nodo a
 # ogni fotogramma; fuori dalla griglia. [nodo, piani locali, AABB locale, la forma (come in _forme, aggiornata qui)]
 var _mobili: Array = []
+# quelle vicine a lei adesso (entro [constant MOBILI_VICINO] m): le altre non si aggiornano e non si guardano
+var _mobili_qui: Array = []
+const MOBILI_VICINO := 8.0
 var _x: Array[PackedVector3Array] = []     # i punti (mondo): le teste delle ossa e la punta
 var _v: Array[PackedVector3Array] = []     # le loro velocità
 var _fase: PackedFloat32Array = []
@@ -320,10 +323,10 @@ func _forme_in(p: Vector3, forme: Array) -> Array:
 		return forme
 	_fai_griglia()
 	var cella: Array = _griglia.get(Vector3i((p / CELLA).floor()), [])
-	if _mobili.is_empty():
+	if _mobili_qui.is_empty():
 		return cella
 	var out := cella.duplicate()
-	for mo in _mobili:
+	for mo in _mobili_qui:
 		if (mo[3][3] as AABB).has_point(p):
 			out.append(mo[3])
 	return out
@@ -348,7 +351,7 @@ func _forme_zona(zona: AABB) -> Array:
 						if not visti.has(fo[6]) and (fo[1] as AABB).intersects(zona):
 							visti[fo[6]] = true
 							out.append(fo)
-	for mo in _mobili:
+	for mo in _mobili_qui:
 		if (mo[3][1] as AABB).intersects(zona):
 			out.append(mo[3])
 	return out
@@ -477,12 +480,12 @@ func _process_modification() -> void:
 		vp = _vp[k]
 		# (vicino a una forma che si muove i bersagli si rifanno sempre e il tentacolo si simula a ogni fotogramma)
 		var mobili_qui := false
-		if not _mobili.is_empty():
+		if not _mobili_qui.is_empty():
 			var zm := AABB(tg[0], Vector3.ZERO)
 			for q in tg:
 				zm = zm.expand(q)
 			zm = zm.grow(VICINO + 0.5)
-			for mo in _mobili:
+			for mo in _mobili_qui:
 				if (mo[3][1] as AABB).intersects(zm):
 					mobili_qui = true
 					break
@@ -940,6 +943,14 @@ func aggiungi_mobile(nodo: Node3D, punti: PackedVector3Array) -> void:
 	var bb := AABB(punti[0], Vector3.ZERO)
 	for q in punti:
 		bb = bb.expand(q)
+	aggiungi_mobile_piani(nodo, piani, bb)
+
+
+## Come [method aggiungi_mobile], coi piani (verso fuori) e la scatola già fatti, nel sistema del nodo (farli dai punti
+## costa: per esempio si fanno prima, mentre il posto si costruisce).
+func aggiungi_mobile_piani(nodo: Node3D, piani: Array[Plane], bb: AABB) -> void:
+	if piani.size() < 4:
+		return
 	var piani_mondo: Array[Plane] = []
 	piani_mondo.assign(piani)
 	_mobili.append([nodo, piani, bb, [piani_mondo, bb, _sopra(piani, bb), bb, bb, bb, -1]])
@@ -961,11 +972,15 @@ func aggiungi_scatola_mobile(nodo: Node3D, xf: Transform3D, mezzo: Vector3) -> v
 func togli_mobili(nodo: Node3D = null) -> void:
 	for i in range(_mobili.size() - 1, -1, -1):
 		if nodo == null or not is_instance_valid(_mobili[i][0]) or _mobili[i][0] == nodo:
+			_mobili_qui.erase(_mobili[i])
 			_mobili.remove_at(i)
 
 
-## Le forme che si muovono dove sono adesso i loro nodi.
+## Le forme che si muovono dove sono adesso i loro nodi (solo quelle vicine a lei: [member _mobili_qui]).
 func _aggiorna_mobili() -> void:
+	_mobili_qui.clear()
+	var sk := get_skeleton()
+	var centro := sk.global_position if sk and sk.is_inside_tree() else Vector3.INF
 	for i in range(_mobili.size() - 1, -1, -1):
 		var mo: Array = _mobili[i]
 		if not is_instance_valid(mo[0]) or not (mo[0] as Node3D).is_inside_tree():
@@ -973,6 +988,10 @@ func _aggiorna_mobili() -> void:
 			continue
 		var nodo := mo[0] as Node3D
 		var xf := nodo.global_transform
+		if centro != Vector3.INF and (xf * (mo[2] as AABB).get_center()).distance_to(centro) \
+				> MOBILI_VICINO + (mo[2] as AABB).size.length():
+			continue
+		_mobili_qui.append(mo)
 		var loc: Array[Plane] = mo[1]
 		var fo: Array = mo[3]
 		var piani: Array[Plane] = fo[0]

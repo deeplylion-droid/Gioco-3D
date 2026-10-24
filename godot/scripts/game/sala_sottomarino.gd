@@ -241,9 +241,35 @@ func _passi() -> Array:
 	for g in gommoni:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
 	out.append(_parapetto_presa)
+	out.append(_acqua_presa)
 	out.append(_checkpoint)
 	out.append(_lei_crea)
 	return out
+
+
+## L'acqua profonda della presa (da s -4,5 a 6, il fondo scende fino a -36): una WaterBody solo per la vista
+## subacquea di chi ci cade (con la testa sotto il pelo), senza la sua superficie (il pelo è la striscia del canale) e
+## senza increspature né riflessi; nel resto del canale, al ginocchio, niente WaterBody (la vista resta normale).
+## Torbida come le vasche: lei sale da lì e non si deve vedere sotto (grafica, 24 ottobre).
+func _acqua_presa() -> void:
+	var a := punto(-TESTA)
+	var b := punto(PRESA_FINO)
+	var wb := WaterBody.new()
+	wb.name = "AcquaPresa"
+	wb.simulate_ripples = false
+	wb.capture_env_cubemap = false
+	wb.planar_reflection_on_high = false
+	wb.style = load("res://addons/acqua/presets/stile_2_torbida.tres")
+	# (il primo ramo corre lungo z: il rettangolo dritto della WaterBody ci sta)
+	wb.size = Vector2(canale * 2.0, absf(b.z - a.z))
+	add_child(wb)
+	wb.global_position = Vector3((a.x + b.x) * 0.5, acqua, (a.z + b.z) * 0.5)
+	wb.bottom = PRESA_FONDO
+	wb.max_level = acqua
+	wb.level = acqua
+	for c in wb.get_children(true):
+		if c.name == "Surface":
+			(c as Node3D).visible = false
 
 
 ## Vero se il crollo [param o] è quello di fronte a una galleria (lì il motivo è la galleria stessa).
