@@ -1,28 +1,23 @@
 extends Node
-## Scatti degli oblò con lei dietro il vetro (ObloLei) nei tre corridoi della Risalita: dagli occhi del giocatore
-## mentre arriva e davanti al vetro, più i ravvicinati dell'oblò (di fronte e di traverso, per vedere che è a filo del
-## muro). La Risalita da sola (risalita.tscn), con l'ambiente della sala e le luci del blackout, senza torcia. Per il
-## collaudo e per i controlli della squadra; quelli per l'utente si scelgono da qui.
+## Scatti degli oblò con lei dietro il vetro (ObloLei) nei tre corridoi della Risalita, dagli occhi del giocatore (il
+## Player vero, così lei lo guarda): da lontano quando la scopri, da vicino mentre ti guarda, mentre si stacca; più il
+## ravvicinato dell'oblò. La Risalita da sola (risalita.tscn), con l'ambiente della sala, al buio dopo la sala pompe,
+## senza torcia. Per la pagina dell'utente e per il collaudo.
 ##
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##        --script res://tests/run.gd -- res://tests/scatti_oblo_lei.gd <cartella> [con_lei|senza_lei|staccata]
-## con_lei: lei dietro ogni vetro (ferma, come quando compare); staccata: 1,5 s dopo che si è staccata; senza_lei: vuoti.
+##        --script res://tests/run.gd -- res://tests/scatti_oblo_lei.gd <cartella> [oblò, separati da virgole]
+
+const PLAYER := "res://scenes/player/player.tscn"
 
 var cartella := "user://scatti_oblo"
-var modo := "con_lei"
+var solo := PackedStringArray()
 
-## nome -> [nodo dell'oblò, occhi del giocatore (nel mondo), punto guardato, campo]; "@" nel punto guardato vuol dire
-## il centro dell'oblò.
-var SCATTI := {
-	"1_fiume_a_dalla_scala": ["ObloFiume", Vector3(-3.0, -3.8, 49.3), "@", 75.0],
-	"1_fiume_b_a_meta": ["ObloFiume", Vector3(-5.2, -3.8, 52.6), "@", 75.0],
-	"1_fiume_c_davanti": ["ObloFiume", Vector3(-5.6, -3.8, 57.2), "@", 75.0],
-	"2_personale_a_dalla_porta": ["ObloPersonale", Vector3(-34.6, -3.8, 50.4), "@", 75.0],
-	"2_personale_b_davanti": ["ObloPersonale", Vector3(-34.3, -3.8, 49.4), "@", 75.0],
-	"3_servizio_a_dalle_rampe": ["ObloServizio", Vector3(-27.4, 1.6, 38.7), "@", 75.0],
-	"3_servizio_b_a_meta": ["ObloServizio", Vector3(-24.5, 1.6, 38.9), "@", 75.0],
-	"3_servizio_c_davanti": ["ObloServizio", Vector3(-21.3, 1.6, 39.1), "@", 75.0],
+## Per ogni oblò: [dove sta il giocatore da lontano (i piedi), da vicino]; guarda sempre il centro dell'oblò.
+var POSTI := {
+	"ObloFiume": [Vector3(-4.9, -5.4, 51.2), Vector3(-5.45, -5.4, 58.3)],
+	"ObloPersonale": [Vector3(-34.35, -5.4, 50.45), Vector3(-34.45, -5.4, 49.35)],
+	"ObloServizio": [Vector3(-27.0, 0.0, 38.6), Vector3(-21.2, 0.0, 39.15)],
 }
 
 
@@ -30,8 +25,8 @@ func _ready() -> void:
 	var a := OS.get_cmdline_user_args()
 	if a.size() > 1:
 		cartella = a[1]
-	if a.size() > 2:
-		modo = a[2]
+	if a.size() > 2 and a[2] != "":
+		solo = a[2].split(",", false)
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -47,41 +42,57 @@ func _run() -> void:
 	GameState.luci = GameState.Luci.BLACKOUT
 	var ris := (load("res://scenes/risalita/risalita.tscn") as PackedScene).instantiate() as Node3D
 	add_child(ris)
-	var cam := Camera3D.new()
-	cam.near = 0.03
-	add_child(cam)
-	cam.current = true
-	for i in 30:
-		await get_tree().process_frame
-	var obli := {}
-	for o in ris.find_children("*", "ObloLei", true, false):
-		obli[String(o.name)] = o
-		(o as ObloLei).set_process(false)
-		if modo != "senza_lei":
-			(o as ObloLei)._mostra()
-	if modo == "staccata":
-		for o in obli.values():
-			(o as ObloLei)._stacca()
-		for i in 90:
-			await get_tree().process_frame
-	# i ravvicinati di ogni oblò: di fronte da 1,4 m, di traverso lungo il muro
-	var scatti := SCATTI.duplicate()
-	for nome in obli:
-		var o := obli[nome] as ObloLei
+	var p := (load(PLAYER) as PackedScene).instantiate() as Player
+	add_child(p)
+	await _fotogrammi(20)
+	var hud := p.get_node_or_null(^"HUD")
+	if hud:
+		hud.visible = false
+	for nome in POSTI:
+		if not solo.is_empty() and not solo.has(nome):
+			continue
+		var o := ris.find_child(nome, true, false) as ObloLei
+		o.set_process(false)
 		var c := o.global_position
-		var n := o.normale()
+		var posti: Array = POSTI[nome]
+		# da lontano, quando la scopri
+		p.teleport(posti[0])
+		await _fotogrammi(4)
+		p.look_at_point(c + Vector3.DOWN * 0.1)
+		o._mostra()
+		await _fotogrammi(90)
+		_scatto("%s_1_da_lontano" % nome)
+		# da vicino, mentre ti guarda
+		p.teleport(posti[1])
+		await _fotogrammi(4)
+		p.look_at_point(c + Vector3.DOWN * 0.15)
+		await _fotogrammi(60)
+		_scatto("%s_2_da_vicino" % nome)
+		# il ravvicinato dell'oblò, un po' di traverso
 		var lungo := o.global_basis.x
-		scatti["r_%s_fronte" % nome] = [nome, c + n * 1.4 + Vector3.UP * 0.1, c, 60.0]
-		scatti["r_%s_traverso" % nome] = [nome, c + n * 0.25 + lungo * 1.3 + Vector3.UP * 0.05, c, 50.0]
-	for nome in scatti:
-		var s: Array = scatti[nome]
-		var o := obli.get(s[0]) as ObloLei
-		var verso: Vector3 = o.global_position if s[2] is String else s[2]
-		cam.fov = s[3]
-		cam.look_at_from_position(s[1], verso)
-		for i in 30:
-			await get_tree().process_frame
-		var f := cartella.path_join(nome + ".jpg")
-		get_viewport().get_texture().get_image().save_jpg(f, 0.9)
-		print("scatto -> ", f)
+		p.teleport(Vector3(c.x, posti[1].y, c.z) + o.normale() * 1.15 + lungo * 0.55)
+		await _fotogrammi(4)
+		p.look_at_point(c)
+		await _fotogrammi(40)
+		_scatto("%s_4_ravvicinato" % nome)
+		# mentre si stacca (1,2 s dopo)
+		p.teleport(posti[1])
+		await _fotogrammi(4)
+		p.look_at_point(c + Vector3.DOWN * 0.15)
+		await _fotogrammi(20)
+		o._stacca()
+		await _fotogrammi(72)
+		_scatto("%s_3_si_stacca" % nome)
+		await _fotogrammi(150)
 	get_tree().quit()
+
+
+func _fotogrammi(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame
+
+
+func _scatto(nome: String) -> void:
+	var f := cartella.path_join(nome + ".jpg")
+	get_viewport().get_texture().get_image().save_jpg(f, 0.9)
+	print("scatto -> ", f)

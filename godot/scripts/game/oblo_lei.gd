@@ -444,6 +444,41 @@ func _mostra() -> void:
 	_t_via = 0.0
 	stato = Stato.PRONTA
 	comparsa.emit()
+	_riscalda()
+
+
+## Il riscaldamento (regola: niente scatti la prima volta che si vede qualcosa): appena lei è comparsa, col vetro fuori
+## dalla vista, una camera nascosta in una vista piccola guarda il vetro dal corridoio per qualche fotogramma, con lo
+## stesso mondo e le stesse luci (come il tunnel, SalaSottomarino._riscalda): le pipeline dei suoi materiali si
+## compilano lì e non quando il giocatore si gira.
+func _riscalda() -> void:
+	if DisplayServer.get_name() == "headless" or not is_inside_tree():
+		return
+	var vista := get_viewport()
+	var vp := SubViewport.new()
+	vp.name = "Riscaldamento"
+	vp.size = Vector2i(160, 90)
+	vp.world_3d = vista.find_world_3d()
+	vp.msaa_3d = vista.msaa_3d
+	vp.use_taa = vista.use_taa
+	vp.screen_space_aa = vista.screen_space_aa
+	vp.positional_shadow_atlas_size = vista.positional_shadow_atlas_size
+	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(vp)
+	var cam := Camera3D.new()
+	vp.add_child(cam)
+	var cam_gioco := vista.get_camera_3d()
+	if cam_gioco:
+		cam.environment = cam_gioco.environment
+		cam.attributes = cam_gioco.attributes
+		cam.fov = cam_gioco.fov
+	cam.current = true
+	cam.look_at_from_position(global_transform * Vector3(0.3, 0.1, 1.6), global_transform * Vector3(0, -0.3, -1.0))
+	for i in 4:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	vp.queue_free()
 
 
 ## Lei va via adesso, col suo distacco lento, se è dietro il vetro (per chi la vuole altrove: nella torre prima che
