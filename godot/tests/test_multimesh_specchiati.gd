@@ -70,7 +70,7 @@ func _controlla(radice: Node, nome: String) -> void:
 			var a := mm.mesh.surface_get_arrays(sf)
 			var v: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
 			var nr = a[Mesh.ARRAY_NORMAL]
-			if nr == null or (nr as PackedVector3Array).is_empty() or mm.mesh.surface_get_primitive_type(sf) != Mesh.PRIMITIVE_TRIANGLES:
+			if nr == null or (nr as PackedVector3Array).is_empty() or (mm.mesh is ArrayMesh and (mm.mesh as ArrayMesh).surface_get_primitive_type(sf) != Mesh.PRIMITIVE_TRIANGLES):
 				continue
 			var idx = a[Mesh.ARRAY_INDEX]
 			var ind := PackedInt32Array(idx) if idx != null and not (idx as PackedInt32Array).is_empty() else PackedInt32Array(range(v.size()))
