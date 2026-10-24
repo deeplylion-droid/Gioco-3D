@@ -792,6 +792,10 @@ func _metti(nome: String, pos: Vector3, rot_y := 0.0, scala := 1.0) -> Node3D:
 	var n := _glb(nome)
 	n.name = nome
 	n.position = pos
+	# a terra 1 mm sopra il pavimento, come _a_terra: i modelli hanno il fondo a quota 0 e i materiali a doppia faccia,
+	# e il fondo sul pavimento sfarfallava nel cemento dell'ingresso (riscontro dell'utente, collaudo del 24 ottobre)
+	if is_zero_approx(pos.y):
+		n.position.y = 0.001
 	n.rotation_degrees.y = rot_y
 	n.scale = Vector3.ONE * scala
 	add_child(n, true)   # nomi leggibili (palma_finta2...) anche nei rapporti del controllo di posizionamento
