@@ -962,7 +962,7 @@ def percorso_gioco(g):
     return per
 
 
-def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
+def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9, c_collari=None):
     """Sostegni dei pezzi (scivoli della discesa e decorativi): un pezzo è retto dove poggia su una pedana,
     dove entra nel muro e dove c'è una mensola; altrove ci vuole un sostegno nuovo a ogni capo libero (a
     `sbalzo` metri dalla fine) e almeno ogni `campata` metri. In ordine si prova: un puntone dalla colonna
@@ -1068,15 +1068,17 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         """Il collare che abbraccia il pezzo dove è retto (si vede anche dall'alto) e i due punti in cima, ai
         lati, dove si attaccano i tiranti."""
         if chiuso:
-            c.anello(p, d3, R_GROVIGLIO + 0.005, R_GROVIGLIO + 0.06, 0.16, 'metallo', seg=20)
+            # (nel gioco a parte, fuori dall'intaglio: sta già attorno al tubo con qualche mm di gioco, e il booleano
+            # col tubo pieno, sopra la sella e il puntone, lasciava la fascia a denti coi buchi; ricontrollo del 24 ottobre)
+            (c_collari or c).anello(p, d3, R_GROVIGLIO + 0.005, R_GROVIGLIO + 0.06, 0.16, 'metallo', seg=20)
             return [p + lat * (sg * (R_GROVIGLIO + 0.09)) for sg in (-1, 1)]
         sponda = SPONDA_D if largo == LARGO_D else SPONDA
         flange_u(c, [p - d3 * 0.16, p + d3 * 0.16], largo, prof, T_U, sponda, 'metallo', ogni=99.0, e=0.05, b=0.05)
         return [p + lat * (sg * (largo + T_U + 0.1)) + Vector((0, 0, sponda - 0.04)) for sg in (-1, 1)]
 
-    def attacco(q, sg_lat, lat):
+    def attacco(q, sg_lat, lat, lungo=0.08):
         """La staffa tra il collare e il tirante (un braccetto corto verso l'esterno)."""
-        c.cilindro(q - lat * (sg_lat * 0.08), q, 0.04, 'metallo', seg=8)
+        c.cilindro(q - lat * (sg_lat * lungo), q, 0.04, 'metallo', seg=8)
 
     # nel gioco, i gradini di grata sotto la bocca del tubo dell'inseguimento (vedi più giù): sopra di loro un sostegno
     # lascia 2 m liberi (il collare sotto la coda del tratto 5 stava 1,93 m sopra il terzo gradino; regola del
@@ -1092,6 +1094,11 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
         return False
 
     def prova(pts, mezza, chiuso, largo, prof, p, d, discesa=False):
+        # nel gioco niente collari sulle flange di giunzione dei tubi: l'intaglio lasciava la fascia a denti, coi buchi
+        # (ricontrollo del 24 ottobre, scivoli 5 e 9)
+        if GIOCO and chiuso and any((p - f).length < 0.25 for f, _ in K.FLANGE_TUBI):
+            perche['flangia'] = perche.get('flangia', 0) + 1
+            return None
         d3 = d.normalized()
         d = Vector((d.x, d.y, 0))
         if d.length < 1e-6:
@@ -1168,7 +1175,9 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
             capo = capi_alti[0] if capi_alti[0].x > capi_alti[1].x else capi_alti[1]
             a_t = Vector((XI1, capo.y, capo.z + 1.2))
             if libero(a_t - Vector((0.1, 0, 0)), capo, pts, 0.06):
-                attacco(capo, 1 if capo == capi_alti[1] else -1, lat)
+                # (nel gioco, senza collare, il braccetto arriva fino al pezzo e l'intaglio lo adatta: finiva a 2 cm dal
+                # tubo 7; ricontrollo del 24 ottobre)
+                attacco(capo, 1 if capo == capi_alti[1] else -1, lat, 0.12 if GIOCO else 0.08)
                 c.cilindro(a_t + Vector((0.02, 0, 0)), capo, 0.05, 'metallo', seg=8, tappi=False)
                 m = capo.lerp(a_t, 0.5)
                 c.cilindro(m - (a_t - capo).normalized() * 0.18, m + (a_t - capo).normalized() * 0.18, 0.08, 'gioco_rosso', seg=8)
@@ -1211,6 +1220,7 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9):
                 tipo = prova(pts, mezza, chiuso, largo, prof, p, d, nome.startswith('discesa'))
                 if tipo:
                     conta[tipo] = conta.get(tipo, 0) + 1
+                    print(f'sostegno: {nome} a {s_:.2f} m ({p.x:.2f}, {p.y:.2f}, {p.z:.2f}): {tipo}')
                     nuovi.append(s_)
                     retti.append(s_)
                     return True
@@ -1476,7 +1486,7 @@ def chiusa_bocca(c, dal_capo, chiuso, L):
 
 
 def versione_A(mats):
-    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear(); BOCCHE_CHIUSE.clear(); CANALI_APERTI.clear(); TUBI_CHIUSI.clear()
+    P.CANALI.clear(); P.DECO.clear(); P.OSTACOLI.clear(); P.PALI_PEDANE.clear(); BOCCHE_CHIUSE.clear(); CANALI_APERTI.clear(); TUBI_CHIUSI.clear(); K.FLANGE_TUBI.clear()
     materiali_scivoli(mats)
     rnd = random.Random(17)
     c = K.Costruttore(mats)            # guscio, torri, piattaforme, travature
@@ -2096,7 +2106,8 @@ def versione_A(mats):
     pezzi_tutti += [(pts, M_CHIUSO if cand[6] else M_APERTO, cand[6], LARGO, PROF, cand[0] == 'muro', f'deco_{j}')
                     for j, (cand, pts, capi) in enumerate(scelti)]
     voli = [(s_['da'], s_['a']) for s_ in salti]
-    rapporto_sostegni = sostieni(cv, sp, pezzi_tutti, costruite, mensole_su, voli)
+    cvc = K.Costruttore(mats)          # i collari dei tubi chiusi (fuori dall'intaglio, poi uniti ai sostegni)
+    rapporto_sostegni = sostieni(cv, sp, pezzi_tutti, costruite, mensole_su, voli, c_collari=cvc if GIOCO else None)
     linee_pezzi = [dict(nome=n_, mezza=m_, punti=[[round(v, 3) for v in q] for q in pts_])
                    for (pts_, m_, _c, _l, _p, _mu, n_) in pezzi_tutti]
 
@@ -2239,6 +2250,15 @@ def versione_A(mats):
         return not any(m_.startswith('tsc_') for m_ in mats)
     intaglia([gr, ob, ob_t, ob_v], [ob_s] + canali_discesa + oggetti_scivoli, filtri={ob.name: non_scivolo}, aperti={gr.name},
              tubi_su={ob_t.name, ob_v.name})
+    if GIOCO and len(cvc.bm.faces):
+        ob_vc = cvc.crea('torre_A_sostegni_collari', sporco=sporco)
+        for o in bpy.context.view_layer.objects:
+            if o is not None:
+                o.select_set(False)
+        ob_vc.select_set(True)
+        ob_v.select_set(True)
+        bpy.context.view_layer.objects.active = ob_v
+        bpy.ops.object.join()
     gruppi = {'struttura': [ob, ob_t, ob_v, ob_l, gr, pol] + acque + acque_raccolta, 'scivoli': [ob_s] + canali_discesa + oggetti_scivoli, 'prop': props}
     # per il gioco: checkpoint, salti, Polaroid, balconata, pozzo e vasca del fondo (coordinate di Blender)
     gioco = dict(checkpoint=[], salti=[], tratti=[])
