@@ -57,6 +57,9 @@ const FORMA := 0.3
 @export var vasca_sopra := 1.8
 ## Di quanto il centro della vasca è spostato di lato rispetto all'oblò (lungo il muro, +X del nodo).
 @export var vasca_spostata := 0.0
+## La vasca a L: sotto la quota y (dal centro del vetro) si allarga di x metri verso +X (per esempio sotto il pavimento
+## della stanza accanto, dove sopra non c'è posto). Zero: una scatola sola.
+@export var vasca_gradino := Vector2.ZERO
 ## Sotto questa distanza dal vetro lei si stacca.
 @export var vicino := 1.6
 ## Il vetro "si vede" entro questo angolo dal centro della vista, fino a [member vista_max] metri.
@@ -98,25 +101,44 @@ func normale() -> Vector3:
 	return global_basis.z.normalized()
 
 
+## I pezzi della vasca, nel sistema del nodo: [x da, x a, y da, y a] (la profondità è la stessa per tutti): uno, o due
+## con il [member vasca_gradino] (sopra quello stretto, sotto quello largo).
+func pezzi_vasca() -> Array:
+	var xa := vasca_spostata - vasca_larga * 0.5
+	var xb := vasca_spostata + vasca_larga * 0.5
+	if vasca_gradino.x <= 0.0:
+		return [[xa, xb, -vasca_sotto, vasca_sopra]]
+	var yg := vasca_gradino.y
+	return [[xa, xb, yg, vasca_sopra], [xa, xb + vasca_gradino.x, -vasca_sotto, yg]]
+
+
 ## Le forme della vasca per i tentacoli di lei (MorbidezzaLei.aggiungi_scatola): [trasformazione nel mondo, mezze
 ## misure]. Le cinque pareti, spesse [constant FORMA], e il muro col vetro.
 func forme() -> Array:
 	var out := []
-	var l := vasca_larga * 0.5
-	var sx := vasca_spostata
+	var f := FORMA
 	var z0 := -spessore_muro - STACCO_VASCA
 	var z1 := z0 - vasca_fonda
+	var zm := (z0 + z1) * 0.5
+	var zh := (z0 - z1) * 0.5
+	var xa := vasca_spostata - vasca_larga * 0.5
+	var xb := vasca_spostata + vasca_larga * 0.5
+	var xe := xb + maxf(vasca_gradino.x, 0.0)
 	var y0 := -vasca_sotto
 	var y1 := vasca_sopra
-	var f := FORMA
+	var yg := vasca_gradino.y if vasca_gradino.x > 0.0 else y0
+	var xm := (xa + xe) * 0.5
 	var scatole := [
-		[Vector3(sx, (y0 + y1) * 0.5, z1 - f * 0.5), Vector3(l + f, (y1 - y0) * 0.5 + f, f * 0.5)],          # fondo
-		[Vector3(sx - l - f * 0.5, (y0 + y1) * 0.5, (z0 + z1) * 0.5), Vector3(f * 0.5, (y1 - y0) * 0.5 + f, (z0 - z1) * 0.5)],
-		[Vector3(sx + l + f * 0.5, (y0 + y1) * 0.5, (z0 + z1) * 0.5), Vector3(f * 0.5, (y1 - y0) * 0.5 + f, (z0 - z1) * 0.5)],
-		[Vector3(sx, y0 - f * 0.5, (z0 + z1) * 0.5), Vector3(l, f * 0.5, (z0 - z1) * 0.5)],                     # sotto
-		[Vector3(sx, y1 + f * 0.5, (z0 + z1) * 0.5), Vector3(l, f * 0.5, (z0 - z1) * 0.5)],                     # sopra
-		[Vector3(sx, (y0 + y1) * 0.5, z0 * 0.5), Vector3(l + f, (y1 - y0) * 0.5 + f, -z0 * 0.5)],               # muro e vetro
+		[Vector3(xm, (y0 + y1) * 0.5, z1 - f * 0.5), Vector3((xe - xa) * 0.5 + f, (y1 - y0) * 0.5 + f, f * 0.5)],     # fondo
+		[Vector3(xa - f * 0.5, (y0 + y1) * 0.5, zm), Vector3(f * 0.5, (y1 - y0) * 0.5 + f, zh)],                      # sinistra
+		[Vector3(xb + f * 0.5, (yg + y1) * 0.5, zm), Vector3(f * 0.5, (y1 - yg) * 0.5 + f, zh)],                      # destra
+		[Vector3(xm, y0 - f * 0.5, zm), Vector3((xe - xa) * 0.5 + f, f * 0.5, zh)],                                   # sotto
+		[Vector3((xa + xb) * 0.5, y1 + f * 0.5, zm), Vector3((xb - xa) * 0.5 + f, f * 0.5, zh)],                      # sopra
+		[Vector3(xm, (y0 + y1) * 0.5, z0 * 0.5), Vector3((xe - xa) * 0.5 + f, (y1 - y0) * 0.5 + f, -z0 * 0.5)],      # muro e vetro
 	]
+	if xe > xb:
+		scatole.append([Vector3(xe + f * 0.5, (y0 + yg) * 0.5, zm), Vector3(f * 0.5, (yg - y0) * 0.5 + f, zh)])     # destra, sotto
+		scatole.append([Vector3((xb + xe) * 0.5 + f * 0.5, yg + f * 0.5, zm), Vector3((xe - xb) * 0.5 + f * 0.5, f * 0.5, zh)])   # il gradino
 	for s in scatole:
 		out.append([global_transform * Transform3D(Basis.IDENTITY, s[0]), s[1] as Vector3])
 	return out
@@ -248,47 +270,62 @@ func _rivetto(st: SurfaceTool, c: Vector3, r: float) -> void:
 ## La vasca dietro il muro: l'interno di una cisterna di lamiera (sei facce che guardano dentro, quella davanti col
 ## buco della piastra) e tre veli d'acqua torbida paralleli al vetro, sempre più scuri verso il fondo.
 func _vasca() -> void:
-	var l := vasca_larga * 0.5
-	var xa := vasca_spostata - l
-	var xb := vasca_spostata + l
 	var z0 := -spessore_muro - STACCO_VASCA
 	var z1 := z0 - vasca_fonda
-	var y0 := -vasca_sotto
-	var y1 := vasca_sopra
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var p := [Vector3(xa, y0, z1), Vector3(xb, y0, z1), Vector3(xb, y1, z1), Vector3(xa, y1, z1),
-			Vector3(xa, y0, z0), Vector3(xb, y0, z0), Vector3(xb, y1, z0), Vector3(xa, y1, z0)]
-	# (ogni faccia si vede da dentro)
-	var centro := Vector3(vasca_spostata, (y0 + y1) * 0.5, (z0 + z1) * 0.5)
-	for f in [[0, 3, 2, 1], [0, 4, 7, 3], [1, 2, 6, 5], [0, 1, 5, 4], [3, 7, 6, 2]]:
-		var q: Array = [p[f[0]], p[f[1]], p[f[2]], p[f[3]]]
-		_quad(st, q[0], q[1], q[2], q[3], centro - (q[0] + q[2]) * 0.5)
-	# davanti, intorno al buco della piastra (si guarda da -Z)
+	var pz := pezzi_vasca()
 	var h := PIASTRA * 0.5
-	for r in [[xa, -h, y0, y1], [h, xb, y0, y1], [-h, h, y0, -h], [-h, h, h, y1]]:
-		_quad(st, Vector3(r[0], r[2], z0), Vector3(r[1], r[2], z0), Vector3(r[1], r[3], z0), Vector3(r[0], r[3], z0), Vector3.FORWARD)
+	for i in pz.size():
+		var r: Array = pz[i]
+		var xa: float = r[0]
+		var xb: float = r[1]
+		var ya: float = r[2]
+		var yb: float = r[3]
+		# (ogni faccia si vede da dentro) il fondo, e davanti intorno al buco della piastra (se è in questo pezzo)
+		_quad(st, Vector3(xa, ya, z1), Vector3(xb, ya, z1), Vector3(xb, yb, z1), Vector3(xa, yb, z1), Vector3.BACK)
+		var davanti: Array = [[xa, xb, ya, yb]]
+		if ya < -h and yb > h and xa < -h and xb > h:
+			davanti = [[xa, -h, ya, yb], [h, xb, ya, yb], [-h, h, ya, -h], [-h, h, h, yb]]
+		for d in davanti:
+			_quad(st, Vector3(d[0], d[2], z0), Vector3(d[1], d[2], z0), Vector3(d[1], d[3], z0), Vector3(d[0], d[3], z0), Vector3.FORWARD)
+		# i lati: a sinistra sempre; a destra, sopra e sotto dove non c'è l'altro pezzo
+		_quad(st, Vector3(xa, ya, z1), Vector3(xa, yb, z1), Vector3(xa, yb, z0), Vector3(xa, ya, z0), Vector3.RIGHT)
+		_quad(st, Vector3(xb, ya, z1), Vector3(xb, yb, z1), Vector3(xb, yb, z0), Vector3(xb, ya, z0), Vector3.LEFT)
+		if i == pz.size() - 1:
+			_quad(st, Vector3(xa, ya, z1), Vector3(xb, ya, z1), Vector3(xb, ya, z0), Vector3(xa, ya, z0), Vector3.UP)
+		if i == 0:
+			_quad(st, Vector3(xa, yb, z1), Vector3(xb, yb, z1), Vector3(xb, yb, z0), Vector3(xa, yb, z0), Vector3.DOWN)
+		elif i == 1:
+			# il gradino: il soffitto della parte larga, oltre quella stretta
+			var xs: float = pz[0][1]
+			_quad(st, Vector3(xs, yb, z1), Vector3(xb, yb, z1), Vector3(xb, yb, z0), Vector3(xs, yb, z0), Vector3.DOWN)
 	st.generate_normals()
 	var mi := MeshInstance3D.new()
 	mi.name = "struttura_vasca_oblo"
 	mi.mesh = st.commit()
 	mi.material_override = _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6)
 	add_child(mi)
-	# l'acqua torbida: veli che si vedono dal vetro (una "superficie d'acqua" per i controlli)
+	# l'acqua torbida: veli che si vedono dal vetro, a pezzi come la vasca (una "superficie d'acqua" per i controlli)
 	var acqua := Node3D.new()
 	acqua.name = "AcquaTorbida"
 	add_child(acqua)
 	var veli := [0.45, 1.05, 1.75]
 	for k in veli.size():
-		var v := MeshInstance3D.new()
-		v.name = "Velo%d" % k
-		var qm := QuadMesh.new()
-		qm.size = Vector2(vasca_larga - 0.02, vasca_sotto + vasca_sopra - 0.02)
-		v.mesh = qm
-		v.position = Vector3(vasca_spostata, (y0 + y1) * 0.5, z0 - float(veli[k]))
-		v.material_override = _mat_velo(0.22 + 0.08 * k)
-		v.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		acqua.add_child(v)
+		var rett: Array = [[pz[0][0], pz[0][1], -vasca_sotto, vasca_sopra]]
+		if pz.size() > 1:
+			rett.append([pz[0][1], pz[1][1], -vasca_sotto, vasca_gradino.y])
+		for j in rett.size():
+			var r: Array = rett[j]
+			var v := MeshInstance3D.new()
+			v.name = "Velo%d_%d" % [k, j]
+			var qm := QuadMesh.new()
+			qm.size = Vector2(float(r[1]) - float(r[0]) - 0.02, float(r[3]) - float(r[2]) - 0.02)
+			v.mesh = qm
+			v.position = Vector3((float(r[0]) + float(r[1])) * 0.5, (float(r[2]) + float(r[3])) * 0.5, z0 - float(veli[k]))
+			v.material_override = _mat_velo(0.22 + 0.08 * k)
+			v.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			acqua.add_child(v)
 
 
 static func _quad(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, verso: Vector3) -> void:

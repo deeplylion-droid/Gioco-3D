@@ -121,7 +121,10 @@ func _fuori(o: ObloLei) -> float:
 		var lq := o.to_local(punti[i])
 		# davanti: il vetro (dalla parte dell'acqua) dentro la piastra, la faccia della vasca fuori
 		var z0 := -o.spessore_muro if absf(lq.x) < h and absf(lq.y) < h else -o.spessore_muro - ObloLei.STACCO_VASCA
-		var f := maxf(maxf(absf(lq.x - o.vasca_spostata) - l, lq.z - z0), maxf(z1 - lq.z, maxf(-o.vasca_sotto - lq.y, lq.y - o.vasca_sopra)))
+		# (dentro uno qualunque dei pezzi della vasca)
+		var f := INF
+		for r in o.pezzi_vasca():
+			f = minf(f, maxf(maxf(maxf(float(r[0]) - lq.x, lq.x - float(r[1])), lq.z - z0), maxf(z1 - lq.z, maxf(float(r[2]) - lq.y, lq.y - float(r[3])))))
 		if f > peggio:
 			peggio = f
 			if f > _fuori_max:
@@ -211,7 +214,7 @@ func _vista_e_via(mondo: Node3D) -> void:
 
 func _avvicinati(mondo: Node3D) -> void:
 	print("Se ti avvicini si stacca")
-	var o := _oblo(mondo, 20.0, "sbircia", {"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vicino": 0.9, "lato_sbircia": 1.0})
+	var o := _oblo(mondo, 20.0, "sbircia", {"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vasca_gradino": Vector2(1.6, -2.0), "vicino": 0.9, "lato_sbircia": 1.0})
 	_oblo_misurato = o
 	_fuori_max = -INF
 	await _frames(5)
