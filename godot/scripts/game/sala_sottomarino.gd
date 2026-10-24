@@ -1757,7 +1757,11 @@ func posa_gommone(g: Dictionary, t: float) -> Transform3D:
 
 func _aggiorna_gommone(g: Dictionary, t: float) -> void:
 	var corpo: AnimatableBody3D = g["corpo"]
-	corpo.global_transform = posa_gommone(g, t)
+	var posa := posa_gommone(g, t)
+	corpo.global_transform = posa
+	# (con sync_to_physics il corpo prende la posa al passo della fisica: le corde seguono quella nuova da subito,
+	# anche coi gommoni fermati per il controllo di posizionamento e gli scatti)
+	corpo.set_meta(&"posa", posa)
 	for c in g["corde"]:
 		_corda(c["mesh"], punti_corda(corpo, c))
 
@@ -1765,7 +1769,8 @@ func _aggiorna_gommone(g: Dictionary, t: float) -> void:
 ## I punti di una corda fra la sua maniglia (dove sta ora il gommone) e l'anello: una parabola con la freccia che
 ## viene dal lasco (più il gommone si avvicina all'anello, più pende).
 func punti_corda(corpo: Node3D, c: Dictionary, n := 10) -> PackedVector3Array:
-	var a: Vector3 = corpo.global_transform * (c["maniglia"] as Vector3)
+	var posa: Transform3D = corpo.get_meta(&"posa", corpo.global_transform)
+	var a: Vector3 = posa * (c["maniglia"] as Vector3)
 	var b: Vector3 = c["anello"]
 	var dd := a.distance_to(b)
 	var freccia := sqrt(maxf(0.0, 3.0 * dd * (float(c["lunga"]) - dd) / 8.0))
