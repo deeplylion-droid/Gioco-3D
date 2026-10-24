@@ -29,9 +29,9 @@ VOLTA_MIN = ACQUA + 6.5   # mai sotto: la regola dell'utente è almeno 6 m sopra
 IMPOSTA = ACQUA + 4.6     # dove i muri dritti diventano volta
 
 # --- sezione (metri, misurati dall'asse del canale) --------------------------------------------------------------
-CANALE = 2.6              # mezza larghezza del canale (5,2 m)
+CANALE = 3.7              # mezza larghezza del canale (7,4 m): lei coi tentacoli aperti sta tutta sopra il canale
 BANCHINA = 2.6            # larghezza di ogni banchina
-MURO = CANALE + BANCHINA  # dall'asse al muro: 5,2 m (tunnel largo 10,4 m)
+MURO = CANALE + BANCHINA  # dall'asse al muro: 6,3 m (tunnel largo 12,6 m)
 SPESSORE = 0.5            # muri e volta
 
 # lei: alta 4,5 m, fluttua sopra il canale; i tentacoli si allargano di circa 2 m per lato
@@ -43,8 +43,8 @@ PASSO = 0.5               # passo dei campioni della linea
 
 # --- la linea: rami e curve -------------------------------------------------------------------------------------
 # la testa del tunnel: il canale comincia alla presa d'acqua profonda (da cui sale lei), a nord, e corre verso sud
-TESTA = (34.0, 7.0)
-X_RAMI = [34.0, 4.0, -26.0, -56.0]  # i quattro rami (30 m l'uno dall'altro)
+TESTA = (33.0, 7.0)
+X_RAMI = [33.0, 3.0, -27.0, -57.0]  # i quattro rami (30 m l'uno dall'altro)
 Y_SUD = -108.0                         # dove i rami girano in basso
 Y_NORD = -6.0                          # dove girano in alto
 Y_FINE = -22.0                         # dove finisce l'ultimo ramo (l'approdo col portello)
