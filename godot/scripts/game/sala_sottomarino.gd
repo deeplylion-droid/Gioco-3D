@@ -1916,6 +1916,8 @@ func punti_corda(corpo: Node3D, c: Dictionary, n := 10) -> PackedVector3Array:
 	var b: Vector3 = c["anello"]
 	var dd := a.distance_to(b)
 	var freccia := sqrt(maxf(0.0, 3.0 * dd * (float(c["lunga"]) - dd) / 8.0))
+	# (quando il gommone si avvicina all'anello la corda pende di più, ma non tocca l'acqua: resta 5 cm sopra)
+	freccia = minf(freccia, maxf(0.0, minf(a.y, b.y) - acqua - 0.05))
 	var out := PackedVector3Array()
 	for k in n + 1:
 		var f := float(k) / n
