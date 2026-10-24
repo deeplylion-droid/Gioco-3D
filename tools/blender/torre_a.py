@@ -1107,6 +1107,13 @@ def sostieni(c, sp, pezzi, pedane, mensole_su, voli, campata=4.5, sbalzo=0.9, c_
         lat = Vector((-d.y, d.x, 0))
         du = (R_GROVIGLIO + 0.07) if chiuso else prof + 0.12
         u = p - Vector((0, 0, du))
+        if GIOCO and chiuso and abs(d3.z) > 1e-3:
+            # sul tubo inclinato il collare segue la pendenza: il suo punto più basso sale e si sposta lungo il tubo. La
+            # sella va sotto quel punto e lo regge (3 mm dentro il collare; sul tubo dello scivolo 2 il collare stava 4,3 cm
+            # sopra la sella; ricontrollo del 24 ottobre)
+            giu = Vector((0, 0, -1))
+            b_ = (giu - d3 * giu.dot(d3)).normalized()
+            u = p + b_ * (R_GROVIGLIO + 0.06) + Vector((0, 0, 0.003))
         basso_ok = not sopra_gradini(u, u.z - 0.25)
         if not basso_ok:
             perche['2 m sopra i gradini della bocca'] = perche.get('2 m sopra i gradini della bocca', 0) + 1
