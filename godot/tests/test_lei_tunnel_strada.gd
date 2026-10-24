@@ -13,8 +13,8 @@ const SALA := "res://scripts/game/sala_sottomarino.gd"
 ## Il centro dell'oblò dalla sua parte e la normale verso di lei (ambienti-2, 24 ottobre).
 const OBLO := Vector3(-57.0, -25.70, 22.0)
 const OBLO_NORMALE := Vector3(0, 0, 1)
-## Le velocità di lei lungo la strada (m/s), a tratti: [fino a s, velocità].
-const VELOCITA := [[60.0, 4.6], [120.0, 6.5], [140.0, 0.0], [240.0, 3.4], [330.0, 7.0], [380.0, 2.0], [600.0, 5.0]]
+## Le velocità di lei lungo la strada (m/s), a tratti: [fino a s, velocità] (0,4: quasi ferma; mai 0, o non arriva in fondo).
+const VELOCITA := [[60.0, 4.6], [120.0, 6.5], [140.0, 0.4], [240.0, 3.4], [330.0, 7.0], [380.0, 2.0], [600.0, 5.0]]
 ## Dove la colpisce un getto in faccia (s): si ritrae e la logica la rimanda indietro di 6 m.
 const GETTI := [90.0, 200.0, 310.0, 420.0, 500.0]
 

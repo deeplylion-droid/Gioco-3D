@@ -38,6 +38,8 @@ const SUONI := {
 	&"lei_insegue_sb1": ["res://audio/lei/lei_insegue_sb1.ogg"],
 	&"lei_sbuca": ["res://audio/lei/lei_sbuca.ogg"],
 	&"lei_scivola_sotto": ["res://audio/lei/lei_scivola_sotto.ogg"],
+	&"lei_tunnel_fiato_loop": ["res://audio/lei/lei_tunnel_fiato_loop.ogg"],
+	&"lei_tunnel_verso": ["res://audio/lei/lei_tunnel_verso_01.ogg", "res://audio/lei/lei_tunnel_verso_02.ogg", "res://audio/lei/lei_tunnel_verso_03.ogg", "res://audio/lei/lei_tunnel_verso_04.ogg"],
 	&"lei_urlo": ["res://audio/lei/lei_urlo.ogg"],
 	&"maniglione_bloccato": ["res://audio/tecnici/maniglione_bloccato.ogg"],
 	&"medusa_presenza_loop": ["res://audio/effetti/medusa_presenza_loop.ogg"],
