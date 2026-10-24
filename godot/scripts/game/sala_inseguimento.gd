@@ -1157,6 +1157,17 @@ func _arredo(radice: Node3D, a: Dictionary) -> void:
 		copia.transform = _rispetto_a(src, n)
 		if String(a["a"]) == "origine":
 			copia.transform.origin = Vector3.ZERO
+		# la collisione: nel glTF della sala pompe sta nei pezzi accanto (POMPA_1_corpo-convcolonly...), che la copia
+		# della sola mesh lasciava indietro (grafica, 24 ottobre: i raggi attraversavano le pompe); dove non ci sono, una
+		# scatola sull'ingombro della mesh
+		var corpi := 0
+		for c in src.find_children(String(nome) + "_*", "StaticBody3D", true, false):
+			var cc := (c as Node3D).duplicate() as Node3D
+			gruppo.add_child(cc)
+			cc.transform = copia.transform * _rispetto_a(src, n).affine_inverse() * _rispetto_a(src, c as Node3D)
+			corpi += 1
+		if corpi == 0 and copia.find_children("*", "CollisionObject3D", true, false).is_empty() and not copia is CollisionObject3D:
+			_scatola_di(copia)
 		for m in [copia] + copia.find_children("*", "MeshInstance3D", true, false):
 			if m is MeshInstance3D:
 				var ab: AABB = copia.transform * ((m as MeshInstance3D).get_aabb()) if m == copia \
@@ -1178,6 +1189,28 @@ func _arredo(radice: Node3D, a: Dictionary) -> void:
 				var nrm := Vector3(a["nrm"][0], 0.0, -float(a["nrm"][1])).normalized()
 				t += nrm * (absf(nrm.x) * sg.size.x + absf(nrm.z) * sg.size.z) * 0.5
 			gruppo.transform = Transform3D(giro, t)
+
+
+## Una scatola di collisione sull'ingombro delle mesh di [param copia] (gli arredi senza la loro nel glTF).
+static func _scatola_di(copia: Node3D) -> void:
+	var box := AABB()
+	var prima := true
+	for m in [copia] + copia.find_children("*", "MeshInstance3D", true, false):
+		if m is MeshInstance3D:
+			var ab: AABB = (m as MeshInstance3D).get_aabb() if m == copia else _rispetto_a(copia, m as Node3D) * (m as MeshInstance3D).get_aabb()
+			box = ab if prima else box.merge(ab)
+			prima = false
+	if prima or box.size.length() < 0.05:
+		return
+	var corpo := StaticBody3D.new()
+	corpo.name = "Collisione"
+	var forma := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = box.size
+	forma.shape = bs
+	forma.position = box.get_center()
+	corpo.add_child(forma)
+	copia.add_child(corpo)
 
 
 ## La trasformazione di [param n] rispetto a [param src] (anche fuori dall'albero).
