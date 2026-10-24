@@ -40,3 +40,36 @@ Correzione proposta (passata a grafica):
 Sospesi: nelle pose misurate lei è in acqua o affacciata sul bordo, quindi punte lontane da ogni superficie sono normali. Non ho segnato tentacoli sospesi.
 
 Nota: la prima versione di questi numeri (6-13 cm, 34 tratti nella posa finale di lei che sbuca) era sbagliata. Era misurata sulla posa prima dei modificatori, e i numeri sopra la sostituiscono.
+
+## Ricontrollo sulla correzione (lavoro/godot af5ae492, 24 ottobre)
+
+Grafica ha messo una sezione a ellisse per ogni osso (dalla mesh) e per l'inseguimento ha preso le forme dalla collisione vera. Stessa sonda e stessa misura di prima.
+
+| Scena | 86ad5f95 | af5ae492 |
+|---|---|---|
+| Tuffo, affacciata | 9 tratti fino a 6 cm | **0** |
+| Tuffo, il salto | 10 tratti fino a 7,1 cm | 3 radici (tratto _01) fino a 7,4 cm alla fine, entrando nel condotto (le radici seguono la posa) |
+| Lei che sbuca | 18 tratti fino a 6,2 cm, 9 alla fine | al più 1 tratto fino a 2,5 cm nei primi istanti, **0** alla fine |
+| Grata | 28 tratti fino a 9,8 cm | **0** |
+| sb1 | 7 tratti fino a 8,3 cm | **0** |
+| vasca_0, vasca_1, scolo_0 | 0-2 | **0** |
+| scolo_1 | 3 tratti fino a 5,8 cm | **pompa 2: fino a 7,5 cm, in 36 fotogrammi su 47, 1 tratto alla fine** |
+| scolo_2 | 16 tratti fino a 8 cm per un attimo | struttura e pompa 3: fino a 8,7 cm in 8 fotogrammi, poi 0 |
+| Statua | non cambia | non cambia (5/5) |
+
+Restano scolo_1 e scolo_2: lì le mesh vere (la pompa e la struttura) escono dalle forme prese dalla collisione.
+
+### vasca_2, arrivandoci in tre modi
+
+- **Giro intero** (vasca 0, 1, 2): la punta 04_09 entra per 2 fotogrammi, fino a 4,3 cm.
+- **Da sola**, a scena appena caricata: la stessa punta per 1 fotogramma, 2,3 cm.
+- **Dal checkpoint** (modo `v2_checkpoint` della sonda): il giocatore nel punto di ripartenza di `Checkpoint_vasca_3`, come dopo una morte, che ricarica la sala. Lei sale da sola dopo 4 s:
+  - un tratto (04_07) resta nella parete ins_A di 1-3,8 cm in 91 fotogrammi su 120, e c'è ancora alla fine;
+  - è a z 2,0, y da -32,8 a -30,9.
+- **Cosa vede il giocatore** (`v2_checkpoint_giocatore.jpg`, uno scatto ogni 0,25 s):
+  - dalla ripartenza si guarda il bersaglio, e lei sale dietro, di lato, fuori quadro;
+  - il pezzo che entra è a 8 m, 4-6 m sotto gli occhi, nell'acqua verde torbida della vasca.
+
+  Non si vede.
+
+Test di grafica qui: tuffo 44/44, sbuca 18/18, statua 5/5, inseguimento 63/64. L'unico KO è il costo alla grata, 5,2 ms in media e 11 al 95° contro 4 e 8: sulla CI è solo stampato e dipende dalla macchina.

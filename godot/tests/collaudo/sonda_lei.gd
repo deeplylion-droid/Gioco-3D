@@ -33,6 +33,8 @@ func _run() -> void:
 		await _sbuca()
 	elif modo == "tuffo":
 		await _sbuca(true)
+	elif modo.begins_with("v2_"):
+		await _vasca2(modo)
 	else:
 		await _inseguimento()
 	_bin.close()
@@ -199,6 +201,87 @@ func _sbuca(tuffo := false) -> void:
 	lei.call(&"_sbuca")
 	await _registra(lei.medusa, sk, lei.durata_sbuca + 4.0)
 	await _scatti("sbuca", lei.medusa)
+
+
+## Vasca 2 dell'inseguimento in tre modi: v2_giro (vasca 0, 1 e 2 di seguito, come il test), v2_solo (solo la vasca 2,
+## dalla scena appena caricata), v2_checkpoint (il giocatore nel punto di ripartenza del checkpoint della vasca 2, come
+## dopo una morte: lei sale da sola con la logica del gioco; con COLLAUDO_SCATTI_LEI gli scatti dagli occhi del
+## giocatore ogni 15 fotogrammi).
+func _vasca2(modo: String) -> void:
+	# dal checkpoint serve il giocatore: la scena di prova dei test (la sala dell'inseguimento vera, nello stesso posto,
+	# con il giocatore)
+	get_tree().change_scene_to_file("res://scenes/test/inseguimento_prova.tscn" if modo == "v2_checkpoint" else "res://scenes/sala/torre/sala_torre.tscn")
+	for i in 600:
+		await get_tree().process_frame
+		if GameState.player and is_instance_valid(GameState.player) and GameState.player.input_enabled:
+			break
+	var sala := get_tree().current_scene.get_node("SalaInseguimento") as SalaInseguimento
+	sala.tempo_presa = 1e6
+	for i in 5:
+		await get_tree().process_frame
+	var m := MorbidezzaLei.su(sala.lei)
+	var sk := m.get_parent() as Skeleton3D
+	if modo == "v2_giro":
+		for v in [0, 1]:
+			_tag = "prima_vasca_%d" % v
+			sala.call(&"_lei_sale", "vasca_%d" % v, sala.call(&"_posto_vasca", v), 1.6)
+			await _registra(sala.lei, sk, float(sala.get_meta(&"durata_salita", 1.6)) + 2.5)
+			if sala.lei_stato != SalaInseguimento.Lei.VIA:
+				sala.call(&"_scendi")
+			for i in 120:
+				await get_tree().process_frame
+				if sala.lei_stato == SalaInseguimento.Lei.VIA:
+					break
+	if modo == "v2_checkpoint":
+		var su: Vector3 = sala.call(&"_posto_vasca", 2)
+		var cp: Checkpoint = null
+		# il checkpoint della vasca 2: quello col punto di ripartenza dentro la vasca 2 (come la vede il gioco)
+		for c in sala.checkpoint:
+			if c.spawn_point and int(sala.call(&"_vasca_di", c.spawn_point.global_position)) == 2:
+				cp = c
+		if cp == null:
+			var dmin := 1e9
+			for c in sala.checkpoint:
+				if c.spawn_point and c.spawn_point.global_position.distance_to(su) < dmin:
+					dmin = c.spawn_point.global_position.distance_to(su)
+					cp = c
+		if cp == null:
+			print("SONDA LEI: nessun checkpoint per la vasca 2")
+			return
+		var rip := cp.spawn_point
+		print("SONDA LEI: ripartenza ", cp.name, " ", rip.global_position)
+		GameState.player.teleport(rip.global_position, rip.global_rotation.y, 0.0)
+		_tag = "vasca_2"
+		var dir := OS.get_environment("COLLAUDO_SCATTI_LEI")
+		var k := 0
+		var t := 0.0
+		var sale := false
+		while t < 25.0:
+			_aggancia(sk)
+			await get_tree().process_frame
+			t += get_process_delta_time()
+			if int(t * 2.0) != int((t - get_process_delta_time()) * 2.0):
+				print("SONDA LEI: t %.1f vasca %s giocatore %s stato %s" % [t, sala.get(&"_vasca"), GameState.player.global_position.snapped(Vector3.ONE * 0.01), sala.lei_stato])
+			if sala.lei_stato != SalaInseguimento.Lei.VIA and not sale:
+				sale = true
+				print("SONDA LEI: lei sale a %.2f s" % t)
+				break
+		var durata := float(sala.get_meta(&"durata_salita", 1.6)) + 2.5
+		var tt := 0.0
+		var n := 0
+		while tt < durata:
+			await _registra(sala.lei, sk, 0.25)
+			tt += 0.25
+			if dir != "":
+				DirAccess.make_dir_recursive_absolute(dir)
+				await RenderingServer.frame_post_draw
+				get_viewport().get_texture().get_image().save_jpg(dir.path_join("v2_checkpoint_%02d.jpg" % n), 0.88)
+				n += 1
+		return
+	_tag = "vasca_2"
+	sala.call(&"_lei_sale", "vasca_2", sala.call(&"_posto_vasca", 2), 1.6)
+	await _registra(sala.lei, sk, float(sala.get_meta(&"durata_salita", 1.6)) + 2.5)
+	await _scatti("vasca_2", sala.lei)
 
 
 func _inseguimento() -> void:
