@@ -28,6 +28,8 @@ const PORTA_NORD := -2.2
 const LARGO_PORTA := 1.0
 ## Secondi per aprire la porta nord col pulsantone (il suono della porta del ponte dura 3,4 s).
 const DURATA_APERTURA_NORD := 2.6
+## Quanto l'anta nord, aprendosi, resta lontana dal giocatore (m).
+const MARGINE_ANTA := 0.05
 ## Ordine dei checkpoint dei passi (tra l'approdo e il magazzino).
 @export var ordine_checkpoint := 12
 ## La luce dopo il pulsante. Vero (A, scelta dell'utente del 25 ottobre: resta buia): la luce principale è lo schermo
@@ -52,6 +54,11 @@ var radiografia: Pickup
 
 ## Vero quando la porta nord è aperta (o si sta aprendo).
 var porta_nord_aperta := false
+# L'apertura col pulsantone in corso: da 0 a 1 (-1: ferma), le misure e il centro dell'anta, il suo suono.
+var _apertura_nord := -1.0
+var _misure_anta_nord := Vector3.ZERO
+var _centro_anta_nord := Vector3.ZERO
+var _suono_nord: AudioStreamPlayer3D
 
 var _collisioni: StaticBody3D
 ## Il cardine dell'anta della porta nord.
@@ -334,6 +341,8 @@ func _telaio(pos: Vector3, rot: float, chiusa := false) -> Node3D:
 	_box(Vector3(largo, alto, 0.05), centro, anta, cardine)
 	_box(Vector3(0.14, 0.03, 0.05), Vector3(-0.78, 1.05, 0.02), _colore(Color(0.7, 0.7, 0.7), 0.9, 0.3), cardine)
 	if chiusa:
+		_misure_anta_nord = Vector3(largo, alto, 0.05)
+		_centro_anta_nord = centro
 		# la collisione si muove con l'anta: segue il cardine che ruota (con sync_to_physics il corpo rimetteva a posto la sua
 		# posizione quando a muoversi è il padre, e restava chiuso), anche con la stanza ferma (i controlli)
 		var corpo := AnimatableBody3D.new()
@@ -970,20 +979,82 @@ func _checkpoint() -> void:
 
 ## La porta nord (l'uscita verso la scala di servizio) è chiusa finché non colpisci il pulsantone (richiesta dell'utente del
 ## 25 ottobre): con [param animata] (il colpo) si apre da sola fino al muro, col suono della porta del ponte della sala
-## pompe; senza, è subito aperta.
+## pompe ([method _physics_process]); senza, è subito aperta.
 func _apri_porta_nord(animata: bool) -> void:
 	if _anta_nord == null or porta_nord_aperta:
 		return
 	porta_nord_aperta = true
 	if not animata:
+		_apertura_nord = -1.0
 		_anta_nord.rotation_degrees.y = 180.0
 		return
-	var audio := get_node_or_null(^"/root/Audio")
-	if audio:
-		audio.call(&"suona", &"porta_ponte_apre", _anta_nord.global_position + Vector3(0.0, 1.0, 0.0))
-	var tw := create_tween()
-	tw.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
-	tw.tween_property(_anta_nord, ^"rotation_degrees:y", 180.0, DURATA_APERTURA_NORD).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_apertura_nord = 0.0
+
+
+## L'apertura col pulsantone, un passo per fotogramma della fisica: l'anta va avanti solo se nella posizione nuova non
+## tocca il giocatore (con 5 cm di margine). Se il giocatore è dove gira l'anta, l'anta si ferma prima di toccarlo e il suo
+## suono si mette in pausa; appena lui si sposta riparte da lì, e alla fine è sempre aperta contro il muro. (Collaudo di
+## ambienti-1 del 25 ottobre: girata da un tween, l'anta spingeva il giocatore fermo nel suo arco di 0,56-1,72 m e lo
+## attraversava, con la camera dentro l'anta.)
+func _physics_process(delta: float) -> void:
+	if _apertura_nord < 0.0 or _anta_nord == null:
+		return
+	var k := minf(_apertura_nord + delta / DURATA_APERTURA_NORD, 1.0)
+	var angolo := 180.0 * (0.5 - 0.5 * cos(PI * k))
+	if _anta_tocca_giocatore(angolo):
+		_suono_porta_nord(false)
+		return
+	_apertura_nord = k
+	_anta_nord.rotation_degrees.y = angolo
+	_suono_porta_nord(true)
+	if k >= 1.0:
+		_apertura_nord = -1.0
+
+
+## Vero se l'anta nord girata di [param angolo] gradi (allargata di [constant MARGINE_ANTA]) tocca il giocatore.
+func _anta_tocca_giocatore(angolo: float) -> bool:
+	var p := GameState.player
+	if p == null or not is_instance_valid(p) or not p.is_inside_tree() or not is_inside_tree():
+		return false
+	var cardine := (_anta_nord.get_parent() as Node3D).global_transform * Transform3D(Basis(Vector3.UP, deg_to_rad(angolo)), _anta_nord.position)
+	var forma := BoxShape3D.new()
+	forma.size = _misure_anta_nord + Vector3(2.0, 0.0, 2.0) * MARGINE_ANTA
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = forma
+	q.transform = cardine * Transform3D(Basis.IDENTITY, _centro_anta_nord)
+	q.collision_mask = p.collision_layer
+	q.collide_with_areas = false
+	for r in get_world_3d().direct_space_state.intersect_shape(q, 8):
+		if r.get("collider") == p:
+			return true
+	return false
+
+
+## Il suono dell'anta nord segue l'anta: parte quando comincia a muoversi, in pausa quando si ferma, riprende da dove era.
+## Un suono suo (lo stesso della porta del ponte, con la sua taratura in Audio): quelli di Audio, in pausa, verrebbero
+## presi per un altro suono.
+func _suono_porta_nord(muove: bool) -> void:
+	if _suono_nord == null:
+		if not muove:
+			return
+		var audio := get_node_or_null(^"/root/Audio")
+		if audio == null:
+			return
+		_suono_nord = AudioStreamPlayer3D.new()
+		_suono_nord.name = "SuonoPortaNord"
+		_suono_nord.stream = audio.call(&"stream_di", &"porta_ponte_apre")
+		var t: Array = audio.call(&"taratura", &"porta_ponte_apre")
+		_suono_nord.bus = t[0]
+		_suono_nord.volume_db = float(t[1])
+		_suono_nord.unit_size = float(t[2])
+		_suono_nord.max_distance = float(t[3])
+		_anta_nord.get_parent().add_child(_suono_nord)
+		_suono_nord.position = Vector3(0.0, 1.0, 0.1)
+		_suono_nord.play()
+		var conteggio: Dictionary = audio.get(&"conteggio")
+		conteggio[&"porta_ponte_apre"] = int(conteggio.get(&"porta_ponte_apre", 0)) + 1
+		return
+	_suono_nord.stream_paused = not muove
 
 
 func _raggiunto(i: int) -> void:

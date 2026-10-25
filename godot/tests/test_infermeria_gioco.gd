@@ -14,6 +14,10 @@ extends Node
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
 
 const SCENA := "res://tests/scene/infermeria_gioco_prova.tscn"
+## I punti dove gira l'anta della porta nord (x, z dell'infermeria) del collaudo di ambienti-1 (25 ottobre): l'asse dei
+## cardini è a (-1,762, -3,122), l'anta è larga 0,876.
+const PUNTI_ARCO := [Vector2(-2.2, -2.75), Vector2(-1.76, -2.55), Vector2(-1.3, -2.75), Vector2(-1.2, -2.85), Vector2(-2.45, -2.6),
+		Vector2(-1.76, -2.85)]
 
 var level: Node
 var p: Player
@@ -181,7 +185,66 @@ func _run() -> void:
 	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "e senza suono")
 	var kc := inf.get_node_or_null(^"Keycard")
 	check(p.has_item(&"keycard") and (kc == null or kc.is_queued_for_deletion()), "la keycard è nell'inventario e non più nella cassaforte")
+
+	print("7. Il giocatore fermo dove gira l'anta della porta nord quando colpisce il pulsantone (collaudo di ambienti-1)")
+	for punto: Vector2 in PUNTI_ARCO:
+		get_tree().change_scene_to_file(SCENA)
+		await _aspetta_livello()
+		inf = level.get_node(^"Infermeria")
+		inter = inf.get_node(^"Interruttore") as WaterButton
+		anta = inf.get(&"_anta_nord") as Node3D
+		p.teleport(inf.to_global(Vector3(punto.x, 0.0, punto.y)), 0.0, 0.0)
+		await _secondi(0.4)
+		var prima: Vector3 = inf.to_local(p.global_position)
+		inter.powered = true
+		inter.pressed.emit()
+		var spinta := 0.0
+		var dentro := 0
+		for i in int(3.2 * 60.0):
+			await get_tree().physics_frame
+			var ora: Vector3 = inf.to_local(p.global_position)
+			spinta = maxf(spinta, Vector2(ora.x - prima.x, ora.z - prima.z).length())
+			if _dentro_anta(inf):
+				dentro += 1
+		check(spinta < 0.02 and dentro == 0, "(%.2f, %.2f): l'anta non spinge il giocatore (%.3f m) e non lo attraversa (%d fotogrammi; ferma a %.0f gradi)" % [
+			punto.x, punto.y, spinta, dentro, anta.rotation_degrees.y])
+		await _cammina_verso(inf.to_global(Vector3.ZERO), 2.0)
+		for i in int(4.0 * 60.0):
+			if absf(anta.rotation_degrees.y - 180.0) < 0.5:
+				break
+			await get_tree().physics_frame
+		check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "(%.2f, %.2f): andato via il giocatore, l'anta finisce aperta contro il muro (%.1f gradi)" % [
+			punto.x, punto.y, anta.rotation_degrees.y])
 	_fine()
+
+
+## Vero se il corpo del giocatore entra nella collisione dell'anta nord (di più di 1 cm: appoggiato all'anta chiusa, come a
+## un muro, non conta).
+func _dentro_anta(inf: Node) -> bool:
+	var corpo := inf.find_child("AntaNord", true, false) as CollisionObject3D
+	var forma: CollisionShape3D = null
+	for c in p.get_children():
+		if c is CollisionShape3D and not (c as CollisionShape3D).disabled:
+			forma = c
+			break
+	if forma == null or corpo == null:
+		return false
+	# la forma del giocatore 1 cm più stretta
+	var stretta := ConvexPolygonShape3D.new()
+	var punti := PackedVector3Array()
+	var k := (Player.BODY_RADIUS - 0.01) / Player.BODY_RADIUS
+	for v in (forma.shape as ConvexPolygonShape3D).points:
+		punti.append(Vector3(v.x * k, v.y, v.z * k))
+	stretta.points = punti
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = stretta
+	q.transform = forma.global_transform
+	q.collision_mask = 0xFFFFFFFF
+	q.exclude = [p.get_rid()]
+	for r in p.get_world_3d().direct_space_state.intersect_shape(q, 16):
+		if r["collider"] == corpo:
+			return true
+	return false
 
 
 ## Guarda il nodo e preme E: vero se l'Interactor lo trova (si raggiunge) e lo usa.
