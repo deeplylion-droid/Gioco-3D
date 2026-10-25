@@ -693,13 +693,13 @@ func _richiedi_tutto() -> void:
 ## thread non ha caricato lo carica la costruzione stessa.
 func _controlla_thread() -> void:
 	for percorso in _richiesti:
-		if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		if Game.stato_thread(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 			return
 	_in_caricamento = false
 	var scene: Array[PackedScene] = []
 	for percorso in _richiesti:
 		var r: Resource = null
-		if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_LOADED:
+		if Game.stato_thread(percorso) == ResourceLoader.THREAD_LOAD_LOADED:
 			r = ResourceLoader.load_threaded_get(percorso)
 		if r == null:
 			push_warning("Risalita: %s non caricato nel thread" % percorso)

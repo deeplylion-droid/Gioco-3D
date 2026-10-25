@@ -17,8 +17,8 @@ enum Modo {
 	NERO,
 }
 
-## La scelta (in attesa della risposta dell'utente, 25 ottobre: PEZZI è il comportamento di prima senza il blocco).
-const MODO := Modo.PEZZI
+## La scelta dell'utente (25 ottobre): la porta resta chiusa col rumore del meccanismo finché la zona non è pronta.
+const MODO := Modo.PORTA
 
 ## Zona -> da quando si aspetta (ms).
 static var _attese := {}

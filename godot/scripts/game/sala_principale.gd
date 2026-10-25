@@ -86,6 +86,8 @@ var _torre_fallita := false
 ## carica qui, a parte (CACHE_MODE_IGNORE_DEEP: senza aspettare le risorse che il thread tiene a metà).
 const ATTESA_TORRE := 20.0
 var _torre_voluta_da := 0
+## Il portone aspetta la torre (AttesaZone): si costruisce a pezzi più grandi.
+var _torre_in_attesa := false
 # La torre costruita a pezzi e preparata (materiali già disegnati fuori vista) mentre si è all'enigma:
 # resta nascosta e ferma finché il portone non si apre.
 var _torre_nascosta: Node3D
@@ -380,6 +382,11 @@ func _setup_torre() -> void:
 	if sala_torre_scena == "" or portone == null:
 		return
 	_materiali_torre = SalaTorre.materiali_campione()
+	AttesaZone.non_pronta(&"torre")
+	AttesaZone.non_pronta(&"tunnel")
+	# l'enigma risolto con la torre non ancora pronta (un PC lento): il portone aspetta, la torre va avanti più svelta
+	if portone and portone.has_signal(&"attesa_iniziata"):
+		portone.connect(&"attesa_iniziata", _torre_attesa_dal_portone)
 	portone.connect(&"apertura_iniziata", _carica_torre)
 	var enigma := get_node_or_null(^"Gioco/EnigmaAcquari")
 	if enigma and enigma.has_signal(&"comparso") and precarica_torre and not Engine.has_meta(&"precarica_torre_spento"):
@@ -440,7 +447,7 @@ func _process(_delta: float) -> void:
 		_aggiorna_sottomarino()
 	if not _torre_in_caricamento or Game.uscendo:
 		return
-	var stato := ResourceLoader.load_threaded_get_status(sala_torre_scena)
+	var stato := Game.stato_thread(sala_torre_scena)
 	if stato == ResourceLoader.THREAD_LOAD_LOADED:
 		_torre_in_caricamento = false
 		var scena := ResourceLoader.load_threaded_get(sala_torre_scena) as PackedScene
@@ -477,7 +484,7 @@ func _prepara_torre() -> void:
 	_torre_nascosta = t
 	add_child(t)
 	# (col portone già aperto, a pezzi più grandi: si entra prima, mai tutta in un fotogramma)
-	await t.call(&"costruisci_a_pezzi", 40.0 if _torre_voluta else 8.0)
+	await t.call(&"costruisci_a_pezzi", 40.0 if _torre_voluta or _torre_in_attesa else 8.0)
 	# (fuori dall'albero: una morte ha ricaricato la sala mentre la torre si preparava)
 	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
@@ -485,8 +492,23 @@ func _prepara_torre() -> void:
 	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
 	_torre_preparata = true
+	AttesaZone.pronta(&"torre")
 	if _torre_voluta:
 		_mostra_torre()
+
+
+## Il portone aspetta la torre: che si stia caricando (se non è partita) e che si costruisca a pezzi più grandi.
+func _torre_attesa_dal_portone() -> void:
+	AttesaZone.attendi(&"torre")
+	_torre_in_attesa = true
+	if sala_torre or _torre_nascosta or _torre_pronta:
+		return
+	if _torre_fallita:
+		# il thread non ce l'ha fatta: l'unico caso che carica qui
+		_torre_pronta = load(sala_torre_scena) as PackedScene
+		_prepara_torre()
+	elif not _torre_in_caricamento:
+		_precarica_torre()
 
 
 func _mostra_torre() -> void:
@@ -619,7 +641,7 @@ func _precarica_sottomarino() -> void:
 
 ## Il thread ha finito: il tunnel entra nel livello (fermo, senza lei in giro) e si costruisce a pezzi.
 func _aggiorna_sottomarino() -> void:
-	var stato := ResourceLoader.load_threaded_get_status(sala_sottomarino_scena)
+	var stato := Game.stato_thread(sala_sottomarino_scena)
 	if stato == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		return
 	_sottomarino_in_caricamento = false

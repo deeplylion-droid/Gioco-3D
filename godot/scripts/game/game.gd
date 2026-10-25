@@ -57,6 +57,11 @@ func _ready() -> void:
 	_sync_water_quality()
 
 
+## Solo per i test (un PC lento): i caricamenti nel thread risultano finiti solo dopo questi secondi dalla richiesta.
+var ritardo_thread_test := 0.0
+var _richiesto_ms := {}
+
+
 ## ResourceLoader.load_threaded_request, ricordando il percorso, per esci(). Mentre si esce non comincia niente
 ## (ERR_UNAVAILABLE): un caricamento partito durante l'attesa di esci() resterebbe a metà all'uscita.
 func carica_in_thread(percorso: String, tipo := "") -> Error:
@@ -65,7 +70,20 @@ func carica_in_thread(percorso: String, tipo := "") -> Error:
 	var err := ResourceLoader.load_threaded_request(percorso, tipo)
 	if err == OK and not _caricamenti.has(percorso):
 		_caricamenti.append(percorso)
+	if err == OK and not _richiesto_ms.has(percorso):
+		_richiesto_ms[percorso] = Time.get_ticks_msec()
 	return err
+
+
+## Lo stato di un caricamento chiesto con [method carica_in_thread], come ResourceLoader.load_threaded_get_status.
+## Con [member ritardo_thread_test] (solo i test: un PC lento) risulta in corso finché non è passato quel ritardo
+## dalla richiesta.
+func stato_thread(percorso: String) -> ResourceLoader.ThreadLoadStatus:
+	var st := ResourceLoader.load_threaded_get_status(percorso)
+	if ritardo_thread_test > 0.0 and st == ResourceLoader.THREAD_LOAD_LOADED \
+			and Time.get_ticks_msec() - int(_richiesto_ms.get(percorso, 0)) < ritardo_thread_test * 1000.0:
+		return ResourceLoader.THREAD_LOAD_IN_PROGRESS
+	return st
 
 
 ## Chiude il gioco. Se in questa partita c'è stato un caricamento nel thread (la torre in precarica, il

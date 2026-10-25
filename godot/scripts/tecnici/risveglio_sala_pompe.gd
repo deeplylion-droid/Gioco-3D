@@ -70,6 +70,21 @@ func _ready() -> void:
 	if porta:
 		porta.scossa_bloccata.connect(func(): _suona(&"maniglione_bloccato", porta.global_position))
 		porta.aperta.connect(func(): _suona(&"porta_ponte_apre", porta.global_position))
+		# la zona dietro non è ancora pronta (un PC lento): il maniglione scatta e il motore delle porte lavora
+		# finché la porta non si apre da sola (AttesaZone)
+		var motore: Array[Node] = [null]
+		porta.attesa_iniziata.connect(func():
+			_suona(&"maniglione_bloccato", porta.global_position, -2.0)
+			var audio := get_node_or_null(^"/root/Audio")
+			if audio and motore[0] == null:
+				motore[0] = audio.call(&"crea_loop", &"porta_motore_loop", porta)
+				if motore[0]:
+					motore[0].set(&"position", Vector3.UP * 1.2)
+					motore[0].set(&"volume", 1.0))
+		porta.attesa_finita.connect(func():
+			if motore[0] and is_instance_valid(motore[0]):
+				motore[0].queue_free()
+			motore[0] = null)
 	for v in vapori:
 		var punto := get_node_or_null(v) as Node3D
 		if punto:
