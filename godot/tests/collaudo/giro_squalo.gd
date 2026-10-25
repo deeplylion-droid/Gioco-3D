@@ -37,6 +37,7 @@ var fino := 0.0
 var _reg: FileAccess
 var _array := {}
 var _suoni_visti := {}
+var _luci_contate := {}
 
 
 func _ready() -> void:
@@ -198,6 +199,18 @@ func _riga(f: int, t: float, fase: String, s: RisveglioSqualo, atm: AtmosferaSqu
 		int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SURFACE)),
 		int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_DRAW)),
 		int(Performance.get_monitor(Performance.PIPELINE_COMPILATIONS_SPECIALIZATION))]
+	# le luci della scena che non toccano lo squalo (AtmosferaSqualo le toglie durante la scena e le rimette dopo):
+	# una volta a metà scena e una dopo
+	var quando := "scena" if fase == "scena" and t > 3.0 else ("dopo" if fase == "dopo" and t > 0.0 else "")
+	if quando != "" and not _luci_contate.has(quando):
+		_luci_contate[quando] = true
+		var senza := 0
+		var tutte := 0
+		for l in get_tree().current_scene.find_children("*", "Light3D", true, false):
+			tutte += 1
+			if not ((l as Light3D).light_cull_mask & RisveglioSqualo.STRATO_SQUALO):
+				senza += 1
+		d["luci_senza_squalo"] = [senza, tutte]
 	if s.squalo and is_instance_valid(s.squalo) and s.squalo.visible:
 		var pelle := _pelle(s, cam.global_position)
 		d["pelle"] = snappedf(pelle[0], 0.001)
