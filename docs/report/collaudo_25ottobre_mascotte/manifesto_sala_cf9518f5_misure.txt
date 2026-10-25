@@ -1,0 +1,9 @@
+manifesto a (-20.0, 1.4, 13.95), muro a x -20.0000
+manifesto superficie 0 (manifesto): 25112 vertici, davanti al muro da 4.0 a 20.8 mm (il più lontano in (-19.97921, 0.904995, 14.28)); per quarti (sx/dx visti dal giocatore): basso_sx 20.8 mm, alto_sx 13.5 mm, basso_dx 12.3 mm, alto_dx 11.0 mm
+manifesto_001 superficie 0 (carta_retro): 25112 vertici, davanti al muro da 3.2 a 20.0 mm (il più lontano in (-19.98001, 0.904995, 14.28)); per quarti (sx/dx visti dal giocatore): basso_sx 20.0 mm, alto_sx 12.7 mm, basso_dx 11.5 mm, alto_dx 10.2 mm
+Plane superficie 0 (nastro): 65 vertici, davanti al muro da 0.8 a 11.8 mm (il più lontano in (-19.98822, 1.879089, 13.74089)); per quarti (sx/dx visti dal giocatore): alto_dx 11.8 mm
+Plane_001 superficie 0 (colla): 4 vertici, davanti al muro da 0.5 a 0.5 mm (il più lontano in (-19.9995, 1.929022, 14.28669)); per quarti (sx/dx visti dal giocatore): alto_sx 0.5 mm
+manifesto rispetto al muro locale: da 4.0 a 16.2 mm (il più vicino in (-19.996, 1.304995, 13.94))
+manifesto_001 rispetto al muro locale: da 3.2 a 15.5 mm (il più vicino in (-19.9968, 1.88499, 14.11))
+Plane rispetto al muro locale: da 0.8 a 11.8 mm (il più vicino in (-19.9992, 1.894371, 13.81991))
+Plane_001 rispetto al muro locale: da 0.5 a 0.5 mm (il più vicino in (-19.9995, 1.929022, 14.28669))
