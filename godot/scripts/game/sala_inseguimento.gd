@@ -123,6 +123,11 @@ func _ready() -> void:
 		costruita = true
 
 
+## I passi della costruzione a pezzi che sono durati più di 50 ms: [nome, ms] (per i test dei blocchi).
+var passi_lunghi: Array = []
+var _nome_passo := ""
+
+
 ## La costruzione divisa in passi brevi, uno per fotogramma (al più [param ms_per_fotogramma] ms di fila).
 func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	_a_pezzi = true
@@ -132,9 +137,14 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	while not _coda.is_empty():
 		var tp := Time.get_ticks_usec()
 		var passo: Callable = _coda.pop_front()
+		_nome_passo = ""
 		passo.call()
+		var ms := (Time.get_ticks_usec() - tp) / 1000.0
+		var nome := _nome_passo if _nome_passo != "" else String(passo.get_method())
+		if ms > 50.0:
+			passi_lunghi.append([nome, ms])
 		if OS.has_environment("TORRE_TEMPI"):
-			print("inseguimento passo %d (%s): %.1f ms" % [k, passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
+			print("inseguimento passo %d (%s): %.1f ms" % [k, nome, ms])
 		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			await get_tree().process_frame
@@ -160,6 +170,7 @@ func _passi() -> Array:
 ## raggiungono uno per passo (come nella torre).
 func _modello(i: int) -> void:
 	var nome: String = ["struttura", "tubi", "prop", "mobili"][i]
+	_nome_passo = "_modello(%s)" % nome
 	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else load(DIR + "inseguimento_%s.glb" % nome)
 	var glb: Node3D = scena.instantiate()
 	glb.name = "Inseguimento" + nome.capitalize()
