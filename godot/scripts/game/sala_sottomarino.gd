@@ -71,6 +71,8 @@ const VELOCITA_GUADO_ACCOVACCIATO := 1.2
 const GALLERIA_ALTA := 1.25
 const GALLERIA_LARGA := 1.5
 const GALLERIA_BOCCA := 1.4
+## Lo smusso dello spigolo fra lo stipite della bocca e il muro della galleria (si gira dentro senza fermarsi).
+const GALLERIA_SMUSSO := 0.25
 
 ## Gli ostacoli lungo la strada (s, lungo, lato, tipo): a turno chiudono la banchina dove sei e passi all'altra
 ## saltando sui gommoni (scelta 2C dell'utente, con la sua nota); ognuno ha un motivo vero e una luce. Si entra a
@@ -1825,9 +1827,24 @@ func _galleria(o: Dictionary) -> void:
 	var u2 := u1 + GALLERIA_LARGA                   # il muro esterno della galleria
 	var y0 := piano
 	var y1 := piano + GALLERIA_ALTA
+	# i pezzi ogni 0,5 m, spezzati anche dove le bocche finiscono e dove cominciano gli smussi: il muro fra le bocche
+	# parte proprio dallo smusso, senza fessure (collaudo G1: nella curva a 425 lo spigolo e la fessura fra spalletta e
+	# muro fermavano il giocatore)
+	var bocca_a := float(o["s"])
+	var bocca_b := float(o["s"]) + float(o["lungo"])
+	var tagli: Array[float] = [bocca_a, bocca_a + GALLERIA_SMUSSO, bocca_b - GALLERIA_SMUSSO, bocca_b, s1]
+	var passi: Array[float] = []
+	var s_passo := s0
+	while s_passo < s1 - 0.001:
+		passi.append(s_passo)
+		s_passo += 0.5
+	for tg in tagli:
+		passi.append(tg)
+	passi.sort()
 	var s := s0
-	while s < s1 - 0.001:
-		var t := minf(s + 0.5, s1)
+	for t: float in passi:
+		if t <= s + 0.001:
+			continue
 		var pa := punto(s)
 		var pb := punto(t)
 		var ra := destra(s) * lato
@@ -1840,7 +1857,7 @@ func _galleria(o: Dictionary) -> void:
 		# fra le bocche il muro del tunnel, visto dalla galleria (il suo retro c'è già, sopra la galleria; qui sotto lo
 		# fa questa faccia)
 		var m := (s + t) * 0.5
-		if m > float(o["s"]) and m < float(o["s"]) + float(o["lungo"]):
+		if m > bocca_a + GALLERIA_SMUSSO and m < bocca_b - GALLERIA_SMUSSO:
 			pezzi.append([[_al(pa, ra, Vector2(u1, y0)), _al(pb, rb, Vector2(u1, y0)), _al(pb, rb, Vector2(u1, y1)), _al(pa, ra, Vector2(u1, y1))], "mosaico", ra])
 		for pz in pezzi:
 			_quad(st[pz[1]], pz[0], pz[2])
@@ -1854,13 +1871,21 @@ func _galleria(o: Dictionary) -> void:
 		var q := [_al(p, r, Vector2(u0, y0)), _al(p, r, Vector2(u2, y0)), _al(p, r, Vector2(u2, y1)), _al(p, r, Vector2(u0, y1))]
 		_quad(st["mosaico"], q, verso)
 		_facce_quad(facce, q)
-	for sc: float in [float(o["s"]), float(o["s"]) + float(o["lungo"])]:
+	# gli stipiti delle bocche, con lo spigolo verso la galleria smussato a 45 gradi: si gira nella galleria scivolando
+	for sc: float in [bocca_a, bocca_b]:
 		var p := punto(sc)
 		var r := destra(sc) * lato
-		var verso := direzione(sc) * (-1.0 if sc == float(o["s"]) else 1.0)
-		var q := [_al(p, r, Vector2(u0, y0)), _al(p, r, Vector2(u1, y0)), _al(p, r, Vector2(u1, y1)), _al(p, r, Vector2(u0, y1))]
+		var segno := -1.0 if sc == bocca_a else 1.0
+		var verso := direzione(sc) * segno
+		var q := [_al(p, r, Vector2(u0, y0)), _al(p, r, Vector2(u1 - GALLERIA_SMUSSO, y0)), _al(p, r, Vector2(u1 - GALLERIA_SMUSSO, y1)), _al(p, r, Vector2(u0, y1))]
 		_quad(st["mosaico"], q, verso)
 		_facce_quad(facce, q)
+		var sm := sc - segno * GALLERIA_SMUSSO
+		var pm := punto(sm)
+		var rm := destra(sm) * lato
+		var qs := [_al(p, r, Vector2(u1 - GALLERIA_SMUSSO, y0)), _al(pm, rm, Vector2(u1, y0)), _al(pm, rm, Vector2(u1, y1)), _al(p, r, Vector2(u1 - GALLERIA_SMUSSO, y1))]
+		_quad(st["mosaico"], qs, (verso + r).normalized())
+		_facce_quad(facce, qs)
 	for k in st:
 		var mi := MeshInstance3D.new()
 		mi.name = "struttura_" + k     # (architettura per il controllo di posizionamento: muri e pavimenti)
