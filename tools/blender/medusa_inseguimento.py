@@ -986,7 +986,7 @@ def pose_oblo_capovolta_stacca(arm, C, Z, t):
 # (la frangia va su, l'occhio e' la cosa piu' avanti), i palmi sul vetro ai lati, fuori dall'oblò.
 OCCHIO_SU = 24.0            # gradi: la testa piegata indietro
 OCCHIO_DAVANTI = 0.278      # quanto la pelle piu' avanti (l'occhio) sta davanti all'osso dell'occhio con la testa cosi'
-OCCHIO_VIA = (1.6, 0.8)     # da dove arriva e dove torna: tanti metri indietro e giu' (il buio della vasca)
+OCCHIO_VIA = (0.45, 0.0)    # da dove arriva e dove torna: tanti metri indietro e giu' (il buio della vasca)
 OCCHIO_MANI = 0.42          # i palmi sul vetro a tanto dal centro (dietro il muro, fuori dall'oblò)
 T_ARRIVA = 3.0
 
@@ -995,7 +995,7 @@ def _occhio_posa(arm, C, Z, t, via, mani=1.0):
     """L'occhio sul vetro; via: 0 sul vetro, 1 lontana nel buio (OCCHIO_VIA); mani: 1 i palmi sul vetro."""
     dd, hh = OBLO
     u = (t / T_OBLO) % 1.0
-    _calma(arm, C, Z, t, avanti=6.0, su=OCCHIO_SU * (1.0 - 0.6 * via), indietro=14.0, raccolta=True)
+    _calma(arm, C, Z, t, avanti=6.0, su=OCCHIO_SU * (1.0 - 0.6 * via), indietro=20.0, raccolta=True)
     _occhio_in(arm, (0.006 * math.sin(2 * math.pi * u), -dd + OCCHIO_DAVANTI + 0.008 + 0.003 * math.sin(2 * math.pi * u)
                      + OCCHIO_VIA[0] * via, hh - OCCHIO_VIA[1] * via ** 1.4))
     for suf, s in (('.L', 1), ('.R', -1)):
