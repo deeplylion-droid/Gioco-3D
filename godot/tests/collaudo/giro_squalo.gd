@@ -84,14 +84,13 @@ func _monta_interni() -> void:
 	p.name = "Player"
 	p.transform = INTERNI_NELLA_SALA * (interni.get_node(^"Gioco/Risveglio") as Node3D).transform
 	radice.add_child(p)
-	# lo zaino si trova nello stanzino: si parte senza (come nella sala e negli interni da soli)
-	if p.water_pack:
-		p.water_pack.start_equipped = false
-		p.water_pack.set_equipped(false, false)
-		p.water_pack.set_tank_amount(0.0)
 	var vecchia := get_tree().current_scene
 	get_tree().root.add_child(radice)
 	get_tree().current_scene = radice
+	# lo zaino si trova nello stanzino: si parte senza (come nel _ready della sala, dopo quello del giocatore)
+	if p.water_pack:
+		p.water_pack.set_tank_amount(10.0)
+		p.water_pack.set_equipped(false, false)
 	# (nel _ready della sala, appena entrata: GameState.player è già lui)
 	interni.call(&"fai_risveglio", p)
 	velo.schiarisci(1.6, 8)
