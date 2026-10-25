@@ -54,10 +54,14 @@ func _run(dove: String) -> void:
 	for o in radice.find_children("*", "ObloLei", true, false):
 		var ob := o as ObloLei
 		ob.set_process(false)
-		var nome := ob.name if dove == "risalita" else "Torre_%s" % str(ob.raggio_vetro).replace(".", "_")
+		var nome: String = String(ob.name) if dove == "risalita" else "Torre_%s" % str(ob.raggio_vetro).replace(".", "_")
 		var p := ob.piastra * 0.5
-		var rb := ob.RAGGIO_BORDO * ob.raggio_vetro / ob.RAGGIO_VETRO
-		var rr := ob.RAGGIO_RIVETTI * ob.raggio_vetro / ob.RAGGIO_VETRO
+		var rb: float = ObloLei.RAGGIO_BORDO * ob.raggio_vetro / ObloLei.RAGGIO_VETRO
+		var rr: float = ObloLei.RAGGIO_RIVETTI * ob.raggio_vetro / ObloLei.RAGGIO_VETRO
+		# (con la cornice tonda sul muro: la flangia fino a 10 cm oltre il bordo, i rivetti nel mezzo)
+		var rf := rb + 0.1
+		if not ob.muro.is_empty():
+			rr = rb + 0.05
 		var s := ob.spessore_muro
 		# [nome, camera, guarda] nel sistema dell'oblò (+Z verso il corridoio, la faccia del muro a z 0)
 		var vedute := [
@@ -72,6 +76,9 @@ func _run(dove: String) -> void:
 			["i_bordo_destra", Vector3(rb + 0.25, -0.1, 0.3), Vector3(rb * 0.9, 0, -s * 0.5)],
 			["j_rivetti_sopra", Vector3(-0.1, rr, 0.3), Vector3(0, rr, 0)],
 			["k_rivetti_destra", Vector3(rr, 0.1, 0.3), Vector3(rr, 0, 0)],
+			["o_flangia_rasente_destra", Vector3(rf + 0.3, 0.05, 0.035), Vector3(rf - 0.08, 0, 0.003)],
+			["p_flangia_rasente_sotto", Vector3(0.05, -rf - 0.3, 0.035), Vector3(0, -rf + 0.08, 0.003)],
+			["q_flangia_dentro_sopra", Vector3(0, rb * 0.3, 0.12), Vector3(0, rb, 0.0)],
 			["l_vetro_obliquo", Vector3(rb * 0.8, rb * 0.5, 0.45), Vector3(-ob.raggio_vetro * 0.5, 0, -s)],
 		]
 		for v in vedute:
