@@ -193,6 +193,8 @@ var _air_time := 0.0
 
 func _ready() -> void:
 	add_to_group(&"player")
+	# lo strato delle zone che si preparano fuori vista (SalaTorre.STRATO_PREPARA) non si vede
+	camera.cull_mask &= ~SalaTorre.STRATO_PREPARA
 	# I muri invisibili (per esempio il cordone intorno alla vasca della medusa) fermano il giocatore ma
 	# non il getto: stanno su un livello loro, che il getto non guarda.
 	collision_mask |= Layers.BARRIERS

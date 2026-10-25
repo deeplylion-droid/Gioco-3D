@@ -30,7 +30,8 @@ func setup(body: Node3D) -> void:
 	viewport.audio_listener_enable_3d = false
 	add_child(viewport)
 	camera = Camera3D.new()
-	camera.cull_mask = 0xFFFFF & ~(WaterBody.WATER_LAYER | WaterBody.POOL_INTERIOR_LAYER)
+	# (e non lo strato 18, delle zone che il gioco prepara fuori vista: SalaTorre.STRATO_PREPARA)
+	camera.cull_mask = 0xFFFFF & ~(WaterBody.WATER_LAYER | WaterBody.POOL_INTERIOR_LAYER | (1 << 17))
 	viewport.add_child(camera)
 	camera.current = true
 	_setup_environment()
