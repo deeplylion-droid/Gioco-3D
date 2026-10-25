@@ -26,6 +26,8 @@ const VANO := 0.5
 const PORTA_SUD := 1.6
 const PORTA_NORD := -2.2
 const LARGO_PORTA := 1.0
+## Lo strato di disegno delle lampade d'emergenza (vedi [method _luci]).
+const STRATO_LAMPADA := 1 << 17
 ## Ordine dei checkpoint dei passi (tra l'approdo e il magazzino).
 @export var ordine_checkpoint := 12
 ## La luce dopo il pulsante. Vero (A, scelta dell'utente del 25 ottobre: resta buia): la luce principale è lo schermo
@@ -835,7 +837,12 @@ func _luci() -> void:
 	for p in [[Vector3(PORTA_SUD, 2.55, L), Vector3(0, -0.5, -1)], [Vector3(L, 2.5, -1.05), Vector3(-1, -0.7, 0)]]:
 		var l := LampadaMuro.monta(self, p[0], p[1])
 		# (più deboli dal 24 ottobre: l'utente la vuole più buia, coi faretti sul negatoscopio e sulla cassaforte)
-		_luce(l.position + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 0.9, 6.0, true)
+		var luce := _luce(l.position + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 0.9, 6.0, true)
+		# il corpo della lampada non fa ombra con la sua luce (sul soffitto restava la sua ombra nera, collaudo del 25
+		# ottobre): la lampada sta nel suo strato, che la sua luce non prende fra chi fa ombra; le altre luci sì
+		for g in l.find_children("*", "GeometryInstance3D", true, false):
+			(g as GeometryInstance3D).layers = STRATO_LAMPADA
+		luce.shadow_caster_mask = 0xFFFFF & ~STRATO_LAMPADA
 	# il cartello d'uscita verde sopra la porta della scala, acceso (luce d'emergenza a batteria)
 	var mf := StandardMaterial3D.new()
 	mf.albedo_texture = load("res://assets/fiume_lento/texture/uscita_faccia.jpg")
