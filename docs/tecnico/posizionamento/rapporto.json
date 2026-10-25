@@ -462,7 +462,7 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24700, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24724, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo)",
 		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
 		"nodo": "Risalita/Fiume/paratia/Mesh_0",
 		"pos": [
@@ -476,7 +476,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24700, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24724, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo)",
 		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
 		"nodo": "Risalita/Fiume/paratia4/Mesh_0",
 		"pos": [
@@ -490,7 +490,7 @@
 		"zona": "risalita"
 	},
 	{
-		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24700, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24724, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo)",
 		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
 		"nodo": "Risalita/Fiume/paratia5/Mesh_0",
 		"pos": [
@@ -591,7 +591,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.03 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -27.00), senza collisione (si attraversa) (stato: sottomarino_t0)",
 		"firma": "|TorusMesh 0.54x0.08x0.54",
 		"motivo": "il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A)",
-		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@73406",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@73518",
 		"pos": [
 			-57.5,
 			-27.0,
@@ -606,7 +606,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.18 e 1.22 m sopra il pavimento (15 celle da 25 cm) (pavimento a y -27.20), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|CylinderMesh 0.05x4.35x0.05",
 		"motivo": "il corrimano della scala dell'approdo, a fianco di chi sale, all'altezza della mano",
-		"nodo": "Approdo/@MeshInstance3D@73387",
+		"nodo": "Approdo/@MeshInstance3D@73499",
 		"pos": [
 			-62.0,
 			-27.2,
@@ -635,7 +635,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74034",
+		"nodo": "Galleria_425/@MeshInstance3D@74146",
 		"pos": [
 			-37.0,
 			-30.0,
@@ -664,7 +664,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74035",
+		"nodo": "Galleria_425/@MeshInstance3D@74147",
 		"pos": [
 			-37.25,
 			-30.0,
@@ -679,7 +679,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74033",
+		"nodo": "Galleria_425/@MeshInstance3D@74145",
 		"pos": [
 			-36.75,
 			-30.0,
@@ -694,7 +694,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74042",
+		"nodo": "Galleria_425/@MeshInstance3D@74154",
 		"pos": [
 			-30.75,
 			-30.0,
@@ -709,7 +709,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74040",
+		"nodo": "Galleria_425/@MeshInstance3D@74152",
 		"pos": [
 			-26.0,
 			-30.0,
@@ -738,7 +738,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74028",
+		"nodo": "Galleria_425/@MeshInstance3D@74140",
 		"pos": [
 			-22.75,
 			-30.0,
@@ -753,7 +753,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74026",
+		"nodo": "Galleria_425/@MeshInstance3D@74138",
 		"pos": [
 			-22.5,
 			-30.0,
@@ -768,7 +768,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74029",
+		"nodo": "Galleria_425/@MeshInstance3D@74141",
 		"pos": [
 			-23.25,
 			-30.0,
@@ -783,7 +783,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_425/@MeshInstance3D@74036",
+		"nodo": "Galleria_425/@MeshInstance3D@74148",
 		"pos": [
 			-37.75,
 			-30.0,
@@ -812,7 +812,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_205/@MeshInstance3D@73984",
+		"nodo": "Galleria_205/@MeshInstance3D@74096",
 		"pos": [
 			1.75,
 			-30.0,
@@ -841,7 +841,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_205/@MeshInstance3D@73992",
+		"nodo": "Galleria_205/@MeshInstance3D@74104",
 		"pos": [
 			0.5,
 			-30.0,
@@ -856,7 +856,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.50x0.04x0.25",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_205/@MeshInstance3D@73990",
+		"nodo": "Galleria_205/@MeshInstance3D@74102",
 		"pos": [
 			0.0,
 			-30.0,
@@ -885,7 +885,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_205/@MeshInstance3D@73977",
+		"nodo": "Galleria_205/@MeshInstance3D@74089",
 		"pos": [
 			-0.5,
 			-30.0,
@@ -900,7 +900,7 @@
 		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
 		"firma": "|BoxMesh 0.30x0.30x0.02",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
-		"nodo": "Galleria_205/@MeshInstance3D@73979",
+		"nodo": "Galleria_205/@MeshInstance3D@74091",
 		"pos": [
 			-0.25,
 			-30.0,
@@ -912,7 +912,7 @@
 		"zona": "sottomarino"
 	},
 	{
-		"dettaglio": "il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@74044 (stato: sottomarino_t0)",
+		"dettaglio": "il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@74156 (stato: sottomarino_t0)",
 		"motivo": "il corallo del diorama sta dentro la teca di vetro della vetrina caduta, appoggiato sulla sabbia del fondo: il vetro è una scatola chiusa e lo contiene tutto (tunnel sottomarino, 24 ottobre)",
 		"nodo": "Ostacolo_vetrina_484/corallo/Mesh_0",
 		"pos": [
