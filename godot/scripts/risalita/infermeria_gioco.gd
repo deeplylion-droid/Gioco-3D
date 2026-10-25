@@ -28,10 +28,10 @@ const PORTA_NORD := -2.2
 const LARGO_PORTA := 1.0
 ## Ordine dei checkpoint dei passi (tra l'approdo e il magazzino).
 @export var ordine_checkpoint := 12
-## Variante della luce dopo il pulsante (da scegliere con l'utente, 25 ottobre). Falso (B, di partenza): il negatoscopio
-## acceso illumina la stanza con la sua luce larga, come prima. Vero (A): la stanza resta buia anche dopo, la luce
-## principale è lo schermo acceso (la sua luce sulla scrivania è debole e stretta) più il faretto della cassaforte.
-@export var buia_dopo_pulsante := false
+## La luce dopo il pulsante. Vero (A, scelta dell'utente del 25 ottobre: resta buia): la luce principale è lo schermo
+## acceso (la sua luce sulla scrivania è debole e stretta) più il faretto della cassaforte. Falso (B, scartata): il
+## negatoscopio acceso illumina la stanza con la sua luce larga.
+@export var buia_dopo_pulsante := true
 
 var mat_piastrelle: Material
 var mat_muro: Material
