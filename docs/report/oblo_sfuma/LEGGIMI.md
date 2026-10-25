@@ -36,3 +36,17 @@ Pipeline di disegno compilate (`tempi_*.txt`):
 - Le 7 pipeline in più del "dopo" sono le varianti trasparenti, compilate nel riscaldamento.
 - Durante il distacco non si compila niente.
 - Le 4 compilazioni della torre quando lei viene tolta c'erano già prima della correzione.
+
+## D7: la fessura nella soglia della porta del capannone (ObloPersonale)
+
+- **Il difetto.** Il pavimento del corridoio del personale finiva alla faccia del muro del capannone (z 50,7). Nello spessore del muro (50,7-51,0) non c'era pavimento, e dalla fessura si vedeva sotto il pavimento fino nella vasca a L dell'oblò. Le pareti della vasca avevano le facce solo verso dentro, quindi da fuori erano invisibili e si vedevano i tentacoli di lei.
+- **La correzione.**
+  - In `risalita_gioco.gd` c'è la soglia: il pavimento continua anche nello spessore del muro del capannone. Dalla parte dell'infermeria il pavimento c'era già.
+  - In `oblo_lei.gd` la lamiera della vasca si vede da tutte e due le parti (`_mat_vasca()`, `cull_mode` disabilitato, nella lista dei materiali del riscaldamento). Così da qualunque fessura si vede la lamiera scura e mai l'interno.
+- **Scatti** dai punti del collaudo di grafica, con lei dietro i vetri, al buio: `d7_prima.jpg` e `d7_dopo.jpg`. Prima, nella fessura si vedono i tentacoli. Dopo, il pavimento è continuo.
+- **La riga rosa vicino a ObloServizio** (-17,5; 1,6; 37,7): nei miei scatti da quel punto, verso l'oblò, l'angolo e la porta di C3, non si vede, né prima né dopo. Se è luce che filtra dalla vasca, la lamiera visibile da tutte e due le parti la ferma. Da ricontrollare nel collaudo.
+- **Prove**:
+  - check_scripts: 0 errori;
+  - test_oblo_lei 24/24, test_risalita 10/10, test_risalita_tardi 12/12;
+  - test_primo_uso 4/4 col renderer Vulkan;
+  - posizionamento della Risalita: 0 nuovi, 0 da correggere.

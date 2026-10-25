@@ -405,7 +405,7 @@ func _vasca() -> void:
 	var mi := MeshInstance3D.new()
 	mi.name = "struttura_vasca_oblo"
 	mi.mesh = st.commit()
-	mi.material_override = _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6)
+	mi.material_override = _mat_vasca()
 	add_child(mi)
 	# l'acqua torbida: veli che si vedono dal vetro, a pezzi come la vasca (una "superficie d'acqua" per i controlli)
 	var acqua := Node3D.new()
@@ -468,6 +468,16 @@ static func _mat_ottone() -> StandardMaterial3D:
 	return _materiali["ottone"]
 
 
+## La lamiera della vasca, che si vede da tutte e due le parti: da fuori, da una fessura qualunque (la soglia di una
+## porta, un giunto), si vede la lamiera scura e mai l'interno con lei (D7 del collaudo degli oblò).
+static func _mat_vasca() -> StandardMaterial3D:
+	if not _materiali.has("vasca"):
+		var m := _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6).duplicate() as StandardMaterial3D
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_materiali["vasca"] = m
+	return _materiali["vasca"]
+
+
 static func _mat_vetro() -> StandardMaterial3D:
 	if not _materiali.has("vetro"):
 		var m := StandardMaterial3D.new()
@@ -493,7 +503,7 @@ static func _mat_velo(alfa: float) -> StandardMaterial3D:
 
 ## I materiali dell'oblò (per il riscaldamento: si compilano prima, dove si costruisce la sala).
 static func materiali() -> Array:
-	return [_mat_lamiera(Color(0.42, 0.45, 0.46), 1.2), _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6), _mat_ottone(),
+	return [_mat_lamiera(Color(0.42, 0.45, 0.46), 1.2), _mat_vasca(), _mat_ottone(),
 			_mat_vetro(), _mat_velo(0.22), _mat_velo(0.3), _mat_velo(0.38)]
 
 
