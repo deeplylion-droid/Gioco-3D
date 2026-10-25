@@ -243,30 +243,44 @@ func _titolo_senza_e_con() -> void:
 		for i in 5:
 			await get_tree().process_frame
 		_check(t.get_viewport().gui_get_focus_owner() == c, "Continua ha il focus")
-	await _joypad_conferma()
+	await _joypad_conferma(t)
 
 
 ## A del joypad conferma la voce col focus (collaudo di ambienti-1: ui_accept aveva solo Invio, Invio del tastierino e
-## Spazio), e nel gioco non fa nient'altro: non è in nessuna azione del giocatore.
-func _joypad_conferma() -> void:
-	var altre := InputMap.get_actions().filter(func(a): return not String(a).begins_with("ui_") \
-			and InputMap.action_get_events(a).any(func(e): return e is InputEventJoypadButton and (e as InputEventJoypadButton).button_index == JOY_BUTTON_A))
-	_check(altre.is_empty(), "A del joypad non è in nessuna azione del gioco (%s)" % [altre])
+## Spazio) e B chiude i Comandi (come promette la schermata; ui_cancel aveva solo Esc); nel gioco non fanno nient'altro:
+## non sono in nessuna azione del giocatore (la pausa è l'azione "pause", non ui_cancel).
+func _joypad_conferma(titolo: Node) -> void:
+	for tasto in [JOY_BUTTON_A, JOY_BUTTON_B]:
+		var altre := InputMap.get_actions().filter(func(a): return not String(a).begins_with("ui_") \
+				and InputMap.action_get_events(a).any(func(e): return e is InputEventJoypadButton and (e as InputEventJoypadButton).button_index == tasto))
+		_check(altre.is_empty(), "%s del joypad non è in nessuna azione del gioco (%s)" % ["A" if tasto == JOY_BUTTON_A else "B", altre])
+	# i Comandi dal titolo, come la voce Comandi
+	titolo.call(&"apri_comandi")
+	for i in 3:
+		await get_tree().process_frame
+	var comandi = titolo.get(&"_sottomenu")
+	_check(is_instance_valid(comandi), "il titolo apre i Comandi")
+	await _premi_joypad(JOY_BUTTON_B)
+	_check(not is_instance_valid(comandi) or (comandi as Node).is_queued_for_deletion(), "B del joypad chiude i Comandi")
 	var b := Button.new()
 	b.text = "prova"
 	add_child(b)
 	b.grab_focus()
 	var premuto := [false]
 	b.pressed.connect(func(): premuto[0] = true)
-	for giu in [true, false]:
-		var a := InputEventJoypadButton.new()
-		a.button_index = JOY_BUTTON_A
-		a.pressed = giu
-		Input.parse_input_event(a)
-		for i in 3:
-			await get_tree().process_frame
+	await _premi_joypad(JOY_BUTTON_A)
 	_check(premuto[0], "A del joypad conferma la voce col focus")
 	b.queue_free()
+
+
+func _premi_joypad(tasto: JoyButton) -> void:
+	for giu in [true, false]:
+		var e := InputEventJoypadButton.new()
+		e.button_index = tasto
+		e.pressed = giu
+		Input.parse_input_event(e)
+		for i in 3:
+			await get_tree().process_frame
 
 
 func _continua_da(id: String, chiusura: bool) -> void:
