@@ -89,8 +89,11 @@ func _cartelloni(radice: Node) -> Array:
 			centro /= maxf(v.size(), 1)
 			normale.y = 0.0
 			normale = normale.normalized()
-			# verso il corridoio: dalla parte libera
-			if _libero(centro, -normale) > _libero(centro, normale):
+			# verso il corridoio: dalla parte dove c'è il pavimento a 0,8 m dal muro (dietro il muro c'è il vuoto, che
+			# sembra "libero"); se c'è da tutte e due le parti, dalla parte più libera
+			var pav_piu := _pavimento(centro + normale * 0.8)
+			var pav_meno := _pavimento(centro - normale * 0.8)
+			if (pav_meno and not pav_piu) or (pav_meno == pav_piu and _libero(centro, -normale) > _libero(centro, normale)):
 				normale = -normale
 			var lungo := normale.cross(Vector3.UP).normalized()
 			var u0 := INF
@@ -109,6 +112,12 @@ func _cartelloni(radice: Node) -> Array:
 				"trasparenza": m.transparency, "cutoff": m.alpha_scissor_threshold, "cull": m.cull_mode})
 			print("  materiale %s: trasparenza %d, soglia %.2f, cull %d" % [m.resource_name, m.transparency, m.alpha_scissor_threshold, m.cull_mode])
 	return out
+
+
+## C'è un pavimento sotto [param punto] (entro 3 m)?
+func _pavimento(punto: Vector3) -> bool:
+	var q := PhysicsRayQueryParameters3D.create(punto + Vector3.UP * 0.5, punto + Vector3.DOWN * 3.0)
+	return not get_viewport().world_3d.direct_space_state.intersect_ray(q).is_empty()
 
 
 ## Quanto spazio libero c'è da [param da] verso [param dir] (fino a 3 m).
