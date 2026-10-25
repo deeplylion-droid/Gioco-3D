@@ -46,8 +46,8 @@ func _run() -> void:
 		_fine()
 		return
 	var env := WorldEnvironment.new()
-	env.environment = (load("res://addons/grafica/sala/ambiente_sala.tres") as Environment).duplicate()
-	env.environment.sdfgi_enabled = false
+	# l'ambiente della sala con le impostazioni grafiche, come nel gioco (e come nel riscaldamento)
+	env.environment = RiscaldamentoShader.ambiente()
 	add_child(env)
 	var cam := Camera3D.new()
 	add_child(cam)

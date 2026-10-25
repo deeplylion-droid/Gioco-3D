@@ -46,6 +46,24 @@ static func materiali() -> Array[Material]:
 	return out
 
 
+## L'ambiente della sala con le impostazioni grafiche di adesso (come Grafica lo applica nel gioco): la luce globale
+## SDFGI e la nebbia volumetrica cambiano le pipeline dei materiali, quindi il riscaldamento le deve avere uguali.
+static func ambiente() -> Environment:
+	if not ResourceLoader.exists(AMBIENTE):
+		return null
+	var env := (load(AMBIENTE) as Environment).duplicate() as Environment
+	var g := Engine.get_main_loop().root.get_node_or_null(^"Grafica") if Engine.get_main_loop() is SceneTree else null
+	if g:
+		env.sdfgi_enabled = int(g.call(&"valore", "gi")) == 2
+		if env.volumetric_fog_enabled:
+			env.volumetric_fog_enabled = int(g.call(&"valore", "nebbia")) > 0
+		env.ssr_enabled = env.ssr_enabled and int(g.call(&"valore", "ssr")) > 0
+		env.ssao_enabled = env.ssao_enabled and int(g.call(&"valore", "ssao")) > 0
+		env.ssil_enabled = env.ssil_enabled and int(g.call(&"valore", "ssil")) > 0
+		env.glow_enabled = env.glow_enabled and bool(g.call(&"valore", "glow"))
+	return env
+
+
 ## Avanzamento 0..1.
 func avanzamento() -> float:
 	return 1.0 if totale == 0 else clampf(float(fatti) / totale, 0.0, 1.0)
@@ -86,9 +104,10 @@ func _disegna() -> void:
 	sv.use_taa = principale.use_taa
 	sv.use_hdr_2d = principale.use_hdr_2d
 	add_child(sv)
-	if ResourceLoader.exists(AMBIENTE):
+	var amb := ambiente()
+	if amb:
 		var env := WorldEnvironment.new()
-		env.environment = load(AMBIENTE) as Environment
+		env.environment = amb
 		sv.add_child(env)
 	# le luci come nel gioco: col sole, i punti e i faretti con le ombre (le varianti degli shader con le ombre)
 	var sole := DirectionalLight3D.new()
