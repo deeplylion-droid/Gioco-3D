@@ -663,6 +663,8 @@ func prepara_materiali_lei(principale: Viewport, fotogrammi := 6) -> void:
 	var strati := {}
 	for v in lei.find_children("*", "VisualInstance3D", true, false):
 		var vi := v as VisualInstance3D
+		if not vi.is_visible_in_tree():
+			continue   # (come nella torre: lo strato delle parti nascoste non si tocca)
 		strati[vi] = vi.layers
 		vi.layers = SalaTorre.STRATO_PREPARA
 		# (la sua luce no: illumina e mette in ombra la vasca e il corridoio come nel gioco, così si compilano anche le

@@ -143,8 +143,8 @@ const STRATO_PREPARA := 1 << 19
 ## Disegna la sala una volta fuori vista (una camera sua in un SubViewport con le stesse impostazioni di
 ## [param principale] e lo stesso mondo), così il motore compila adesso le pipeline dei suoi materiali e
 ## al primo fotogramma vero non si ferma (riscontro sul primo spruzzo: l'utente nota ogni blocco).
-## Intanto la sala sta su uno strato che la camera del gioco non disegna, e le sue luci illuminano solo
-## quello strato. Alla fine torna com'era (nascosta, se lo era).
+## Intanto la sala sta su uno strato che la camera del gioco non disegna (anche le sue luci, che così il gioco non
+## usa). Alla fine torna com'era (nascosta, se lo era).
 func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 	if principale == null or not is_inside_tree():
 		return
@@ -154,21 +154,31 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 	var visuali := find_children("*", "VisualInstance3D", true, false)
 	var aabb := AABB()
 	var primo := true
+	# (le luci cambiano solo strato, non light_cull_mask: la camera del gioco non le vede già così. Cambiare la maschera
+	# delle luci, con lei poi riposta nascosta, lasciava abbinamenti luce-mesh sbagliati nel motore: all'uscita "BUG,
+	# indexing did not unpair geometries from light" e un crash, CI di cca4e782)
 	var strati := {}
-	var maschere := {}
 	for v in visuali:
 		var vi := v as VisualInstance3D
+		if oblo and oblo.lei and oblo.lei.is_ancestor_of(vi):
+			continue   # (lei a parte, sotto)
 		strati[vi] = vi.layers
 		vi.layers = STRATO_PREPARA
-		if vi is Light3D:
-			maschere[vi] = (vi as Light3D).light_cull_mask
-			(vi as Light3D).light_cull_mask = STRATO_PREPARA
-		elif vi is GeometryInstance3D:
+		if vi is GeometryInstance3D:
 			var box := vi.global_transform * vi.get_aabb()
 			aabb = box if primo else aabb.merge(box)
 			primo = false
 	var era_visibile := visible
 	visible = true
+	# lei sullo strato fuori vista adesso che si vede, solo le sue parti visibili (la bocca resta spenta)
+	var strati_lei := {}
+	if oblo and is_instance_valid(oblo) and oblo.lei:
+		for v in oblo.lei.find_children("*", "VisualInstance3D", true, false):
+			var vi := v as VisualInstance3D
+			if not vi.is_visible_in_tree():
+				continue
+			strati_lei[vi] = vi.layers
+			vi.layers = STRATO_PREPARA
 	var sv := SubViewport.new()
 	sv.name = "PreparaMateriali"
 	sv.size = Vector2i(320, 180)
@@ -200,14 +210,14 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 		if not is_inside_tree():
 			break
 	sv.queue_free()
+	for vi in strati_lei:
+		if is_instance_valid(vi):
+			(vi as VisualInstance3D).layers = strati_lei[vi]
+	if oblo and is_instance_valid(oblo):
+		oblo.fine_preparazione()
 	for vi in strati:
 		if is_instance_valid(vi):
 			(vi as VisualInstance3D).layers = strati[vi]
-	for l in maschere:
-		if is_instance_valid(l):
-			(l as Light3D).light_cull_mask = maschere[l]
-	if oblo and is_instance_valid(oblo):
-		oblo.fine_preparazione()
 	visible = era_visibile
 
 
