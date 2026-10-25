@@ -90,6 +90,11 @@ const FORMA := 0.3
 var stato := Stato.ATTESA
 ## La lei che sta dietro il vetro, se c'è.
 var lei: LeiOblo
+## Nel distacco lei si dissolve (la trasparenza delle sue mesh) mentre la sua luce si spegne: quando viene tolta non si
+## vede più (D5 del collaudo: alla fine spariva tutta insieme, ancora illuminata dall'ambiente; nella torre è vicina al
+## vetro anche alla fine). Si dissolve da questo punto del distacco (0-1) alla fine.
+const DISSOLVE_DA := 0.35
+var _dissolve: Tween
 var _t_vista := 0.0
 var _t_via := 0.0
 var _corpo: StaticBody3D
@@ -628,10 +633,18 @@ func _riscalda() -> void:
 		cam.fov = cam_gioco.fov
 	cam.current = true
 	cam.look_at_from_position(global_transform * Vector3(0.3, 0.1, 1.6), global_transform * Vector3(0, -0.3, -1.0))
-	for i in 4:
+	# negli ultimi fotogrammi lei mezza trasparente: si compilano qui anche le varianti trasparenti dei suoi materiali,
+	# che servono alla dissolvenza del distacco (se no al primo distacco il gioco scatta)
+	var parti := _parti_lei()
+	for i in 7:
+		if i == 4:
+			_trasparenza(0.5, parti)
 		await get_tree().process_frame
 		if not is_inside_tree():
+			_trasparenza(0.0, parti)
 			return
+	if stato != Stato.VIA:
+		_trasparenza(0.0, parti)
 	vp.queue_free()
 
 
@@ -649,8 +662,29 @@ func _stacca() -> void:
 	staccata.emit()
 	if lei:
 		lei.stacca()
+		_dissolvi()
 	else:
 		_sparita()
+
+
+## La dissolvenza del distacco: dalla [constant DISSOLVE_DA] della sua durata alla fine (quando lei viene tolta).
+func _dissolvi() -> void:
+	var d: float = lei.call(&"_durata", "oblo_" + lei.posa + "_stacca") if lei.posa != "" else 2.6
+	if _dissolve:
+		_dissolve.kill()
+	_dissolve = create_tween()
+	_dissolve.tween_method(_trasparenza.bind(_parti_lei()), 0.0, 1.0, d * (1.0 - DISSOLVE_DA)).set_delay(d * DISSOLVE_DA)
+
+
+func _trasparenza(x: float, parti: Array) -> void:
+	for g in parti:
+		if is_instance_valid(g):
+			(g as GeometryInstance3D).transparency = x
+
+
+## Le mesh di lei (il modello, senza la luce).
+func _parti_lei() -> Array:
+	return lei.find_children("*", "GeometryInstance3D", true, false) if lei and is_instance_valid(lei) else []
 
 
 func _sparita() -> void:
@@ -660,6 +694,9 @@ func _sparita() -> void:
 
 
 func _togli_lei() -> void:
+	if _dissolve:
+		_dissolve.kill()
+		_dissolve = null
 	if lei and is_instance_valid(lei):
 		lei.queue_free()
 	lei = null
