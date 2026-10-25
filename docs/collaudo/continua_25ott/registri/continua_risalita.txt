@@ -1,0 +1,6 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"], focus su Continua
+CONTINUA: schermata di caricamento dopo 0.1 s
+CONTINUA: arrivo in res://scenes/sala_principale.tscn dopo 9.1 s
+CONTINUA: arrivato {"acqua":20.0,"checkpoint":"Tecnici/Logica/Checkpoint/CheckpointRaccordo","comandi":true,"inventario":["zaino_pompa"],"luci":2,"polaroid":{"polaroid":["p01","p02","p03","p04","p05","p08","p09","p06","p07"]},"posizione":[7.79999828338623,-1.80000019073486,45.4000015258789],"scena":"res://scenes/sala_principale.tscn","zaino":true}
+CONTINUA: CONFRONTO risalita: checkpoint Tecnici/Logica/Checkpoint/CheckpointRaccordo / atteso Tecnici/Logica/Checkpoint/CheckpointRaccordo; distanza dal posto salvato 0.00 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true

@@ -1,0 +1,7 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: schermata di caricamento dopo 0.1 s
+CONTINUA: arrivo in res://scenes/sala_principale.tscn dopo 11.2 s
+CONTINUA: partenza tunnel al checkpoint SalaSottomarino/Checkpoint_6 (ordine 60), il prossimo è /root/SalaPrincipale/SalaSottomarino/Checkpoint_160 ordine 61
+CONTINUA: salvataggio su disco prima SalaTorre/Checkpoint_NEm3, dopo SalaSottomarino/Checkpoint_160 (riscritto true)
+CONTINUA: stato scritto {"acqua":20.0,"checkpoint":"SalaSottomarino/Checkpoint_160","comandi":true,"inventario":["zaino_pompa"],"luci":2,"polaroid":{"polaroid":["p01","p02","p03","p04","p05","p08","p09","p06","p07","PolaroidPecora","Polaroid10"]},"posizione":[3.39283275604248,-28.8796653747559,111.403793334961],"posto_salvato":[-1.47672748565674,-30.0,112.538421630859],"salvataggio":"SalaSottomarino/Checkpoint_160","scena":"res://scenes/sala_principale.tscn","zaino":true}
+CONTINUA: CRASH, SIGKILL al processo 2220

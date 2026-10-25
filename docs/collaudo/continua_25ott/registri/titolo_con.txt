@@ -1,0 +1,5 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: titolo titolo_con_salvataggio, salvataggio su disco true (checkpoint Tecnici/Logica/Checkpoint/CheckpointRaccordo), voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"]
+CONTINUA: focus su Continua
+CONTINUA: menu di prova aperto false
+CONTINUA: scatto titolo_con_salvataggio

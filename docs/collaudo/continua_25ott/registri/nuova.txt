@@ -1,0 +1,6 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: nuova partita, salvataggio prima: SalaSottomarino/Checkpoint_160, voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"]
+CONTINUA: focus su NuovaPartita, invio
+CONTINUA: nella sala dopo 14.3 s; checkpoint in memoria inizio; su disco inizio
+CONTINUA: comandi dopo il risveglio true; su disco ancora inizio
+CONTINUA: NUOVA dopo il primo checkpoint (/root/SalaPrincipale/Gioco/CheckpointIngresso, ordine 0): su disco Gioco/CheckpointIngresso, ordine 0.0, scena res://scenes/sala_principale.tscn; sovrascritto true

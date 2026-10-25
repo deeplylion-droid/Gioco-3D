@@ -1,0 +1,6 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: schermata di caricamento dopo 0.1 s
+CONTINUA: arrivo in res://scenes/sala_principale.tscn dopo 47.7 s
+CONTINUA: partenza torre al checkpoint SalaTorre/Checkpoint_portone (ordine 20), il prossimo è /root/SalaPrincipale/SalaTorre/Checkpoint_NEm3 ordine 21
+CONTINUA: salvataggio su disco prima Tecnici/Logica/Checkpoint/CheckpointRaccordo, dopo SalaTorre/Checkpoint_NEm3 (riscritto true)
+CONTINUA: stato scritto {"acqua":20.0,"checkpoint":"SalaTorre/Checkpoint_NEm3","comandi":true,"inventario":["zaino_pompa"],"luci":2,"polaroid":{"polaroid":["p01","p02","p03","p04","p05","p08","p09","p06","p07","PolaroidPecora"]},"posizione":[34.0634269714355,-2.90637040138245,-21.4315795898438],"posto_salvato":[37.4678840637207,-3.0,-18.9700698852539],"salvataggio":"SalaTorre/Checkpoint_NEm3","scena":"res://scenes/sala_principale.tscn","zaino":true}

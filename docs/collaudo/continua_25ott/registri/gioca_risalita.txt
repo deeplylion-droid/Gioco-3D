@@ -1,0 +1,6 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: schermata di caricamento dopo 0.1 s
+CONTINUA: arrivo in res://scenes/sala_principale.tscn dopo 117.0 s
+CONTINUA: partenza risalita al checkpoint Tecnici/Logica/Checkpoint/CheckpointT7Inizio (ordine 8), il prossimo è /root/SalaPrincipale/Tecnici/Logica/Checkpoint/CheckpointRaccordo ordine 9
+CONTINUA: salvataggio su disco prima -, dopo Tecnici/Logica/Checkpoint/CheckpointRaccordo (riscritto true)
+CONTINUA: stato scritto {"acqua":20.0,"checkpoint":"Tecnici/Logica/Checkpoint/CheckpointRaccordo","comandi":true,"inventario":["zaino_pompa"],"luci":2,"polaroid":{"polaroid":["p01","p02","p03","p04","p05","p08","p09","p06","p07"]},"posizione":[7.79999780654907,-1.12666237354279,45.4692840576172],"posto_salvato":[7.79999828338623,-1.80000019073486,45.4000015258789],"salvataggio":"Tecnici/Logica/Checkpoint/CheckpointRaccordo","scena":"res://scenes/sala_principale.tscn","zaino":true}

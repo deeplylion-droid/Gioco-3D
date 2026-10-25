@@ -1,0 +1,5 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: titolo titolo_senza_salvataggio, salvataggio su disco false (checkpoint -), voci ["NuovaPartita", "Opzioni", "Comandi", "Esci"]
+CONTINUA: focus su NuovaPartita
+CONTINUA: menu di prova aperto false
+CONTINUA: scatto titolo_senza_salvataggio

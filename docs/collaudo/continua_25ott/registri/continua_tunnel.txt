@@ -1,0 +1,6 @@
+CONTINUA: cartella dei dati <cartella del collaudo>/xdg/godot/app_userdata/Jilly Jubilee
+CONTINUA: voci ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"], focus su Continua
+CONTINUA: schermata di caricamento dopo 0.1 s
+CONTINUA: arrivo in res://scenes/sala_principale.tscn dopo 11.8 s
+CONTINUA: arrivato {"acqua":20.0,"checkpoint":"SalaSottomarino/Checkpoint_160","comandi":true,"inventario":["zaino_pompa"],"luci":2,"polaroid":{"polaroid":["p01","p02","p03","p04","p05","p08","p09","p06","p07","PolaroidPecora","Polaroid10"]},"posizione":[-1.47672748565674,-30.0,112.538421630859],"scena":"res://scenes/sala_principale.tscn","zaino":true}
+CONTINUA: CONFRONTO tunnel: checkpoint SalaSottomarino/Checkpoint_160 / atteso SalaSottomarino/Checkpoint_160; distanza dal posto salvato 0.00 m; luci 2 / 2.0; zaino true / true; acqua 20.0 / 20.0; inventario ["zaino_pompa"] / ["zaino_pompa"]; Polaroid uguali true
