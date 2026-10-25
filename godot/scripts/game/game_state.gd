@@ -169,7 +169,9 @@ func capture_snapshot(checkpoint_id: String, order: int, spawn: Transform3D) -> 
 		"luci": int(Luci.BLACKOUT if luci == Luci.FLASH else luci),
 		"time": Time.get_unix_time_from_system(),
 	}
-	if save_to_disk:
+	# su disco solo dal primo checkpoint vero: l'istantanea "inizio" di un livello nuovo (una nuova partita, anche solo
+	# per guardare lo spot) resta in memoria e non cancella il salvataggio di prima
+	if save_to_disk and checkpoint_id != "inizio":
 		_write_disk()
 
 
@@ -305,7 +307,7 @@ func collect(collection: StringName, entry: StringName) -> void:
 	_collected[collection][entry] = true
 	if keep_collectibles_on_death and not snapshot.is_empty():
 		snapshot["collectibles"] = _collected_to_lists()
-		if save_to_disk:
+		if save_to_disk and String(snapshot.get("checkpoint", "")) != "inizio":
 			_write_disk()
 	collectible_collected.emit(collection, entry, get_collected_count(collection), get_total(collection))
 

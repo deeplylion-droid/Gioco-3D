@@ -9,6 +9,8 @@ extends Node
 ##   una morte si riparte dallo stesso checkpoint;
 ## - dopo una chiusura (i progressi in memoria azzerati, di nuovo il titolo) Continua riparte dall'ultimo checkpoint
 ##   scritto su disco;
+## - Nuova partita e uscita prima del primo checkpoint: il salvataggio di prima resta (si scrive su disco solo dal primo
+##   checkpoint vero);
 ## - un crash vero (due processi): con "crash_prima" il processo continua, raggiunge un checkpoint e si uccide da solo
 ##   (con un file temporaneo rotto a metà scrittura); con "crash_dopo" un processo nuovo continua da lì.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_continua.gd [id,id]
@@ -56,9 +58,28 @@ func _run() -> void:
 		print("== ", id)
 		await _continua_da(id, prima)
 		prima = false
+	if solo.is_empty() or "nuova" in solo:
+		await _nuova_partita_non_cancella()
 	_cancella()
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)
+
+
+## Nuova partita, poi si esce prima del primo checkpoint (collaudo di Continua): il salvataggio di prima resta, e nel
+## titolo c'è ancora Continua. (Come la voce Nuova partita dopo lo spot: progressi azzerati, sala dal caricamento.)
+func _nuova_partita_non_cancella() -> void:
+	print("== nuova partita")
+	var d := MenuProva.istantanea("torre")
+	_scrivi(JSON.stringify(d))
+	GameState.reset_progress()
+	get_tree().change_scene_to_file(GameState.SCENA_CARICAMENTO)
+	await _aspetta_ripresa()
+	_check(GameState.player != null and String(GameState.snapshot.get("checkpoint", "")) == "inizio",
+			"nuova partita: la sala è aperta, dall'inizio")
+	_check(String(GameState.salvataggio().get("checkpoint", "")) == d["checkpoint"],
+			"nuova partita: prima del primo checkpoint il salvataggio di prima c'è ancora (%s)" % GameState.salvataggio().get("checkpoint", "-"))
+	var t := await _apri_titolo()
+	_check(_nomi(t)[0] == "Continua", "uscendo prima del primo checkpoint, nel titolo c'è ancora Continua")
 
 
 func _cancella() -> void:
