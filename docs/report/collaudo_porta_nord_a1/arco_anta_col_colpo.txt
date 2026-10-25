@@ -1,25 +1,37 @@
-punto (-2.20, -2.75): partito da (-2.20, -2.75), spostato al massimo di 1.563 m, alla fine di 1.456 m; anta a 180.0 gradi; dentro l'anta in 119 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
-  KO  (-2.20, -2.75): l'anta non spinge il giocatore (1.563 m)
-  KO  (-2.20, -2.75): il giocatore non resta dentro l'anta (119 fotogrammi)
-  ok  (-2.20, -2.75): non è incastrato, se ne va (2.41 m)
-punto (-1.76, -2.55): partito da (-1.76, -2.55), spostato al massimo di 1.163 m, alla fine di 1.012 m; anta a 180.0 gradi; dentro l'anta in 75 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
-  KO  (-1.76, -2.55): l'anta non spinge il giocatore (1.163 m)
-  KO  (-1.76, -2.55): il giocatore non resta dentro l'anta (75 fotogrammi)
-  ok  (-1.76, -2.55): non è incastrato, se ne va (2.41 m)
-punto (-1.30, -2.75): partito da (-1.30, -2.75), spostato al massimo di 0.669 m, alla fine di 0.567 m; anta a 180.0 gradi; dentro l'anta in 45 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
-  KO  (-1.30, -2.75): l'anta non spinge il giocatore (0.669 m)
-  KO  (-1.30, -2.75): il giocatore non resta dentro l'anta (45 fotogrammi)
-  ok  (-1.30, -2.75): non è incastrato, se ne va (2.41 m)
-punto (-1.20, -2.85): partito da (-1.20, -2.85), spostato al massimo di 0.558 m, alla fine di 0.509 m; anta a 180.0 gradi; dentro l'anta in 36 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
-  KO  (-1.20, -2.85): l'anta non spinge il giocatore (0.558 m)
-  KO  (-1.20, -2.85): il giocatore non resta dentro l'anta (36 fotogrammi)
-  ok  (-1.20, -2.85): non è incastrato, se ne va (2.41 m)
-punto (-2.45, -2.60): partito da (-2.45, -2.60), spostato al massimo di 1.719 m, alla fine di 1.719 m; anta a 180.0 gradi; dentro l'anta in 86 fotogrammi (alla fine false); andandosene fa 2.25 m in 2 s
-  KO  (-2.45, -2.60): l'anta non spinge il giocatore (1.719 m)
-  KO  (-2.45, -2.60): il giocatore non resta dentro l'anta (86 fotogrammi)
-  ok  (-2.45, -2.60): non è incastrato, se ne va (2.25 m)
-punto (-1.76, -2.85): partito da (-1.75, -2.78), spostato al massimo di 1.107 m, alla fine di 1.009 m; anta a 180.0 gradi; dentro l'anta in 110 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
-  KO  (-1.76, -2.85): l'anta non spinge il giocatore (1.107 m)
-  KO  (-1.76, -2.85): il giocatore non resta dentro l'anta (110 fotogrammi)
-  ok  (-1.76, -2.85): non è incastrato, se ne va (2.41 m)
-RISULTATO: 6 controlli ok, 12 falliti
+cardini (-1.65, -2.80): spinto al massimo 1.005 m, alla fine 0.919 m verso (0.90, 0.19) [x+ est, z+ verso la stanza], fino a (-0.75, -2.61); z minima -2.894; entra nell'anta al massimo 0.023 m (a 2.08 s), per 10 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi; poi cammina 1.46 e 1.92 m in 1,5 s
+  KO  cardini: l'anta non spinge il giocatore (1.005 m)
+  KO  cardini: non gli passa attraverso (entra 0.023 m)
+  ok  cardini: non lo stringe fra l'anta e il muro
+  ok  cardini: non lo spinge attraverso il muro, resta nella stanza
+  ok  cardini: aperta, si muove liberamente (1.46 e 1.92 m)
+meta (-1.76, -2.55): spinto al massimo 1.162 m, alla fine 1.014 m verso (1.01, -0.06) [x+ est, z+ verso la stanza], fino a (-0.75, -2.61); z minima -2.888; entra nell'anta al massimo 0.022 m (a 2.10 s), per 11 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi; poi cammina 1.50 e 1.97 m in 1,5 s
+  KO  meta: l'anta non spinge il giocatore (1.162 m)
+  KO  meta: non gli passa attraverso (entra 0.022 m)
+  ok  meta: non lo stringe fra l'anta e il muro
+  ok  meta: non lo spinge attraverso il muro, resta nella stanza
+  ok  meta: aperta, si muove liberamente (1.50 e 1.97 m)
+punta (-2.45, -2.60): spinto al massimo 1.720 m, alla fine 1.720 m verso (1.71, 0.14) [x+ est, z+ verso la stanza], fino a (-0.74, -2.46); z minima -2.600; entra nell'anta al massimo 0.000 m (a -1.00 s), per 0 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi; poi cammina 1.33 e 1.97 m in 1,5 s
+  KO  punta: l'anta non spinge il giocatore (1.720 m)
+  ok  punta: non gli passa attraverso (entra 0.000 m)
+  ok  punta: non lo stringe fra l'anta e il muro
+  ok  punta: non lo spinge attraverso il muro, resta nella stanza
+  ok  punta: aperta, si muove liberamente (1.33 e 1.97 m)
+davanti_al_vano (-2.20, -2.75): spinto al massimo 1.558 m, alla fine 1.458 m verso (1.45, 0.14) [x+ est, z+ verso la stanza], fino a (-0.75, -2.61); z minima -2.895; entra nell'anta al massimo 0.023 m (a 2.08 s), per 10 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi; poi cammina 1.46 e 1.92 m in 1,5 s
+  KO  davanti_al_vano: l'anta non spinge il giocatore (1.558 m)
+  KO  davanti_al_vano: non gli passa attraverso (entra 0.023 m)
+  ok  davanti_al_vano: non lo stringe fra l'anta e il muro
+  ok  davanti_al_vano: non lo spinge attraverso il muro, resta nella stanza
+  ok  davanti_al_vano: aperta, si muove liberamente (1.46 e 1.92 m)
+angolo_porta_muro (-1.10, -2.85): spinto al massimo 0.458 m, alla fine 0.423 m verso (0.35, 0.24) [x+ est, z+ verso la stanza], fino a (-0.75, -2.61); z minima -2.893; entra nell'anta al massimo 0.023 m (a 2.08 s), per 11 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi; poi cammina 1.46 e 1.99 m in 1,5 s
+  KO  angolo_porta_muro: l'anta non spinge il giocatore (0.458 m)
+  KO  angolo_porta_muro: non gli passa attraverso (entra 0.023 m)
+  ok  angolo_porta_muro: non lo stringe fra l'anta e il muro
+  ok  angolo_porta_muro: non lo spinge attraverso il muro, resta nella stanza
+  ok  angolo_porta_muro: aperta, si muove liberamente (1.46 e 1.99 m)
+angolo_porta_muro_2 (-1.30, -2.75): spinto al massimo 0.665 m, alla fine 0.569 m verso (0.55, 0.14) [x+ est, z+ verso la stanza], fino a (-0.75, -2.61); z minima -2.890; entra nell'anta al massimo 0.023 m (a 2.08 s), per 11 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi; poi cammina 1.46 e 1.92 m in 1,5 s
+  KO  angolo_porta_muro_2: l'anta non spinge il giocatore (0.665 m)
+  KO  angolo_porta_muro_2: non gli passa attraverso (entra 0.023 m)
+  ok  angolo_porta_muro_2: non lo stringe fra l'anta e il muro
+  ok  angolo_porta_muro_2: non lo spinge attraverso il muro, resta nella stanza
+  ok  angolo_porta_muro_2: aperta, si muove liberamente (1.46 e 1.92 m)
+RISULTATO: 19 controlli ok, 11 falliti
