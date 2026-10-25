@@ -108,55 +108,59 @@ func _disegna() -> void:
 	cam.position = Vector3(0, 0, 3)
 	sv.add_child(cam)
 	cam.current = true
+	_luci = [sole, punto, faro]
 	var sfera := SphereMesh.new()
 	sfera.radial_segments = 8
 	sfera.rings = 4
-	var i := 0
-	var mostrati: Array[MeshInstance3D] = []
-	while i < _materiali.size():
-		var t0 := Time.get_ticks_usec()
-		# qualche materiale nuovo per fotogramma; dopo un fotogramma lungo, uno solo
-		var quanti := 4 if _ultimo_ms() < MS_PER_FOTOGRAMMA else 1
-		for k in quanti:
-			if i >= _materiali.size():
-				break
-			var mi := MeshInstance3D.new()
-			mi.mesh = sfera
-			mi.material_override = _materiali[i]
-			mi.position = Vector3((k - 1.5) * 0.4, 0, 0)
-			mi.scale = Vector3.ONE * 0.3
-			sv.add_child(mi)
-			mostrati.append(mi)
-			i += 1
-			fatti += 1
-		_t_fotogramma = Time.get_ticks_usec()
-		await get_tree().process_frame
+	# un materiale per volta, e per ognuno un passo per fotogramma: prima senza ombre (il colore e la profondità),
+	# poi l'ombra di ogni tipo di luce da sola (ogni passo sono pipeline sue: tutte insieme erano 3-10 per materiale,
+	# test_riscaldamento_pipeline del 25 ottobre)
+	for i in _materiali.size():
+		var mi := MeshInstance3D.new()
+		mi.mesh = sfera
+		mi.material_override = _materiali[i]
+		mi.scale = Vector3.ONE * 0.6
+		sv.add_child(mi)
+		await _passi_ombre()
 		if not is_inside_tree():
 			return
-		# disegnati: via, il prossimo gruppo da solo
-		for mi in mostrati:
-			mi.queue_free()
-		mostrati.clear()
-		if (Time.get_ticks_usec() - t0) / 1000.0 > 100.0:
-			print("RiscaldamentoShader: un fotogramma di %.0f ms (materiale %d)" % [(Time.get_ticks_usec() - t0) / 1000.0, i])
-	# lei dietro gli oblò (mascotte, 25 ottobre): le sue mesh con lo scheletro (le ossa cambiano il formato dei
-	# vertici: la sfera non basta), con la sua luce rosa
-	await _disegna_lei(sv)
+		mi.queue_free()
+		fatti += 1
+	# lei dietro gli oblò (mascotte, 25 ottobre) con l'oblò vero: le sue mesh con lo scheletro (le ossa cambiano il
+	# formato dei vertici: la sfera non basta) e quelle dell'oblò (piastra, vetro, vasca), un pezzo per volta
+	await _disegna_oblo(sv)
 	await get_tree().process_frame
 	sv.queue_free()
 
 
-func _disegna_lei(sv: SubViewport) -> void:
-	var l := LeiOblo.new()
-	sv.add_child(l)
-	if l.has_method(&"prepara"):
-		l.call(&"prepara", Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
-	l.mostra(Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
-	# un pezzo di lei per fotogramma (tutta insieme sono decine di pipeline in un fotogramma: secondi fermi, la
-	# misura col renderer software del 25 ottobre), poi lo si rinasconde. (La dissolvenza del distacco scurisce al
-	# nero con gli stessi shader, mascotte 25 ottobre: niente varianti trasparenti da preparare.)
+var _luci: Array[Light3D] = []
+
+
+## I passi di un pezzo appena mostrato: un fotogramma senza ombre, poi uno con l'ombra di ogni luce, da sola.
+func _passi_ombre() -> void:
+	for l in _luci:
+		l.shadow_enabled = false
+	for k in _luci.size() + 1:
+		if k > 0:
+			_luci[k - 1].shadow_enabled = true
+			if k > 1:
+				_luci[k - 2].shadow_enabled = false
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	_luci[-1].shadow_enabled = false
+
+
+func _disegna_oblo(sv: SubViewport) -> void:
+	var o := ObloLei.new()
+	sv.add_child(o)
+	o.set_process(false)
+	o._mostra()
+	# (la luce rosa di lei fa le stesse ombre della luce di prova: spenta, i passi delle ombre li fanno le luci di prova)
+	for l in o.find_children("*", "Light3D", true, false):
+		(l as Light3D).visible = false
 	var pezzi: Array[GeometryInstance3D] = []
-	for g in l.find_children("*", "GeometryInstance3D", true, false):
+	for g in o.find_children("*", "GeometryInstance3D", true, false):
 		var gi := g as GeometryInstance3D
 		if gi.visible:
 			pezzi.append(gi)
@@ -166,16 +170,12 @@ func _disegna_lei(sv: SubViewport) -> void:
 		if not is_instance_valid(gi):
 			continue
 		gi.visible = true
-		await get_tree().process_frame
-		await get_tree().process_frame
+		await _passi_ombre()
 		if not is_inside_tree():
 			return
 		if is_instance_valid(gi):
 			gi.visible = false
-	l.queue_free()
-
-
-var _t_fotogramma := 0
+	o.queue_free()
 
 
 ## Disegna una zona appena costruita una volta fuori vista (una camera sua in un SubViewport con le stesse
@@ -240,8 +240,3 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 		if is_instance_valid(l):
 			(l as Light3D).light_cull_mask = maschere[l]
 	radice.visible = era_visibile
-
-
-## Quanto è durato l'ultimo fotogramma (ms).
-func _ultimo_ms() -> float:
-	return 0.0 if _t_fotogramma == 0 else (Time.get_ticks_usec() - _t_fotogramma) / 1000.0
