@@ -6,7 +6,7 @@
 Lo stesso cambio è in tools/blender/ambienti1_build.py (mat_immagine con clip=True), per le prossime build.
 Uso: python3 assets_src/ambienti_interni/poster/applica_rovinati.py
 """
-import json, os, shutil, struct
+import json, os, shutil, struct, sys
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(QUI, '../../..'))
@@ -137,11 +137,11 @@ def appoggia_manifesto(g, viste):
             del nastro['attributes'][k]
     scrivi(nastro['attributes']['POSITION'], V)
     scrivi(nastro['attributes']['NORMAL'], N)
-    ai = nastro['indices']
-    viste[g['accessors'][ai]['bufferView']] = I.tobytes()
-    g['accessors'][ai].update(count=len(I), componentType=5123)
-    g['accessors'][ai].pop('min', None)
-    g['accessors'][ai].pop('max', None)
+    # (gli indici del piano erano in comune con la colla: allo scotch i suoi)
+    viste.append(I.tobytes())
+    g['bufferViews'].append({'buffer': 0})
+    g['accessors'].append({'bufferView': len(viste) - 1, 'componentType': 5123, 'count': len(I), 'type': 'SCALAR'})
+    nastro['indices'] = len(g['accessors']) - 1
     for k in ('translation', 'rotation', 'scale'):
         nodi['Plane'].pop(k, None)
     # la colla sul muro: a 0,5 mm (era a 1,5 mm)
@@ -173,5 +173,8 @@ def manifesto():
 
 
 if __name__ == '__main__':
+    if 'manifesto' in sys.argv:   # solo il manifesto
+        manifesto()
+        sys.exit(0)
     gltf()
     manifesto()
