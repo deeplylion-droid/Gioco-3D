@@ -1,0 +1,14 @@
+OBLO ObloFiume COMPARSA: pipeline nuove [draw, specialization, surface, mesh] [1, 4, 0, 0], fotogramma più lungo 2901 ms (medio 973)
+OBLO ObloFiume DISTACCO (176 fotogrammi): pipeline nuove [0, 0, 0, 0], fotogramma più lungo 1201 ms
+OBLO ObloFiume DOPO: stato 4, parti di lei ancora visibili []
+OBLO ObloFiume RIPARTENZA: stato 0, parti di lei visibili []
+OBLO ObloPersonale COMPARSA: pipeline nuove [draw, specialization, surface, mesh] [8, 12, 0, 0], fotogramma più lungo 19402 ms (medio 1711)
+OBLO ObloPersonale DISTACCO (176 fotogrammi): pipeline nuove [0, 0, 0, 0], fotogramma più lungo 2231 ms
+OBLO ObloPersonale DOPO: stato 4, parti di lei ancora visibili []
+OBLO ObloPersonale RIPARTENZA: stato 0, parti di lei visibili []
+OBLO ObloServizio COMPARSA: pipeline nuove [draw, specialization, surface, mesh] [0, 0, 0, 0], fotogramma più lungo 1180 ms (medio 815)
+OBLO ObloServizio DISTACCO (176 fotogrammi): pipeline nuove [0, 0, 0, 0], fotogramma più lungo 1158 ms
+OBLO ObloServizio DOPO: stato 4, parti di lei ancora visibili []
+OBLO ObloServizio RIPARTENZA: stato 0, parti di lei visibili []
+OBLO torre COMPARSA: pipeline nuove [draw, specialization, surface, mesh] [0, 0, 0, 0], fotogramma più lungo 3244 ms (medio 2864)
+OBLO torre DISTACCO (176 fotogrammi): pipeline nuove [0, 0, 0, 0], fotogramma più lungo 3197 ms
