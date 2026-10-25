@@ -361,6 +361,8 @@ func _pesci() -> void:
 	var amb := _ambiente("pesci")
 	var occupati := _occupati_muri()
 	var k := 0
+	# (un pesce per passo: tutti insieme erano 0,6 s di gioco fermo nella costruzione a pezzi)
+	var pesci: Array = []
 	for lato: float in [-1.0, 1.0]:
 		var s := float(amb[0]) + 3.0 + (0.0 if lato < 0.0 else PESCI_OGNI * 0.5)
 		while s < float(amb[1]) - 2.0:
@@ -368,11 +370,12 @@ func _pesci() -> void:
 				s += 0.5
 				continue
 			if scelta_pesci == "A":
-				_pesce_mensola(nodo, s, lato, k)
+				pesci.append(_pesce_mensola.bind(nodo, s, lato, k))
 			else:
-				_pesce_appeso(nodo, s, lato, k)
+				pesci.append(_pesce_appeso.bind(nodo, s, lato, k))
 			k += 1
 			s += PESCI_OGNI
+	sala.aggiungi_passi(pesci)
 
 
 ## Scelta A: un pesce in piedi sul suo palo, su una mensola d'ottone a sbalzo dal muro (un cuneo pieno: in alto

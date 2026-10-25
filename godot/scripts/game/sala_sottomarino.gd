@@ -176,9 +176,20 @@ func _ready() -> void:
 
 ## Costruisce tutto subito (scene di prova, test).
 func costruisci() -> void:
-	for passo in _passi():
-		(passo as Callable).call()
+	_coda = _passi()
+	while not _coda.is_empty():
+		(_coda.pop_front() as Callable).call()
 	costruita = true
+
+
+## I passi ancora da fare: un passo può aggiungerne altri davanti ([method aggiungi_passi]).
+var _coda: Array = []
+
+
+## Un passo lungo si divide: [param altri] si fanno subito dopo il passo che li aggiunge (uno per volta, nella
+## costruzione a pezzi).
+func aggiungi_passi(altri: Array) -> void:
+	_coda = altri + _coda
 
 
 ## Fine dei passi della costruzione a pezzi (prima del riscaldamento e delle forme).
@@ -198,16 +209,17 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 		return
 	_costruendo = true
 	_ms_pezzo = ms_per_fotogramma
-	var passi := _passi()
+	_coda = _passi()
 	var t0 := Time.get_ticks_usec()
-	for passo in passi:
+	while not _coda.is_empty():
+		var passo: Callable = _coda.pop_front()
 		if not is_inside_tree():
 			_costruendo = false
 			return
 		var tp := Time.get_ticks_usec()
-		(passo as Callable).call()
+		passo.call()
 		if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 20000:
-			print("tunnel passo %s: %.1f ms" % [(passo as Callable).get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
+			print("tunnel passo %s: %.1f ms" % [passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
 		if (Time.get_ticks_usec() - t0) / 1000.0 > _ms_pezzo:
 			await get_tree().process_frame
 			t0 = Time.get_ticks_usec()
