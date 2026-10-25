@@ -68,6 +68,9 @@ const FORMA := 0.3
 ## Dopo averla vista: il vetro oltre [member angolo_via] gradi per [member tempo_via] secondi e lei va via.
 @export var angolo_via := 35.0
 @export var tempo_via := 0.35
+## Il raggio del vetro (bordo d'ottone e cerchio di rivetti in proporzione); la piastra resta di [constant PIASTRA]
+## (nella torre si sceglie fra il vetro grande e uno piccolo, che l'occhio di lei riempie).
+@export var raggio_vetro := RAGGIO_VETRO
 ## Falso: niente lei (per esempio prima del blackout lo decide chi mette l'oblò con [member pronto]).
 @export var attivo := true
 
@@ -129,10 +132,13 @@ func _costruisci() -> void:
 	# la piastra rivettata, a filo delle due facce del muro, col buco tondo
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_piastra(st, RAGGIO_BORDO - 0.02)
-	for k in RIVETTI:
-		var a := TAU * float(k) / RIVETTI
-		_rivetto(st, Vector3(cos(a) * RAGGIO_RIVETTI, sin(a) * RAGGIO_RIVETTI, 0.0), 0.016)
+	var k_vetro := raggio_vetro / RAGGIO_VETRO
+	var r_bordo := RAGGIO_BORDO * k_vetro
+	_piastra(st, r_bordo - 0.02)
+	var rivetti := maxi(12, roundi(RIVETTI * k_vetro))
+	for k in rivetti:
+		var a := TAU * float(k) / rivetti
+		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
 	# e i rivetti lungo i lati (la piastra è chiodata al muro)
 	for k in 7:
 		var u := -PIASTRA * 0.5 + 0.08 + (PIASTRA - 0.16) * float(k) / 6.0
@@ -150,21 +156,21 @@ func _costruisci() -> void:
 	var bordo := MeshInstance3D.new()
 	bordo.name = "BordoOttone"
 	var tm := TorusMesh.new()
-	tm.inner_radius = RAGGIO_VETRO
-	tm.outer_radius = RAGGIO_BORDO
+	tm.inner_radius = raggio_vetro
+	tm.outer_radius = r_bordo
 	tm.rings = 48
 	tm.ring_segments = 12
 	bordo.mesh = tm
 	bordo.rotation_degrees.x = 90.0
-	bordo.position.z = 0.01 - (RAGGIO_BORDO - RAGGIO_VETRO) * 0.5
+	bordo.position.z = 0.01 - (r_bordo - raggio_vetro) * 0.5
 	bordo.material_override = _mat_ottone()
 	add_child(bordo)
 	# il vetro, a filo del retro del muro (dalla parte dell'acqua), un po' dentro la piastra tutto intorno
 	var vetro := MeshInstance3D.new()
 	vetro.name = "Vetro"
 	var cm := CylinderMesh.new()
-	cm.top_radius = RAGGIO_BORDO - 0.02
-	cm.bottom_radius = RAGGIO_BORDO - 0.02
+	cm.top_radius = r_bordo - 0.02
+	cm.bottom_radius = r_bordo - 0.02
 	cm.height = 0.03
 	cm.radial_segments = 48
 	cm.rings = 1

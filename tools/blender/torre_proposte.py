@@ -187,10 +187,11 @@ def guscio_profondo(c, buco_est=None):
             c.scatola((x - 0.15, min(y, y + s * 0.35), FONDO), (x + 0.15, max(y, y + s * 0.35), H - 0.3), 'metallo_grigio')
 
 
-def _muro_est_bucato(c, x, y0, y1, buco):
-    """Il muro est (piastrelle fino a FONDO + 1,5, poi cemento) con un foro rettangolare: fasce intere a
-    sinistra e a destra del foro, sopra e sotto il foro solo il tratto in mezzo."""
-    by0, by1, bz0, bz1 = buco
+def _muro_est_bucato(c, x, y0, y1, buchi):
+    """Il muro est (piastrelle fino a FONDO + 1,5, poi cemento) con i fori rettangolari `buchi` (uno o una lista
+    di (y0, y1, z0, z1)): il muro a colonne fra i bordi dei fori, e in ogni colonna solo i tratti fuori dai fori."""
+    if buchi and not isinstance(buchi[0], (list, tuple)):
+        buchi = [buchi]
     zs = [FONDO, FONDO + 1.5, H]
     def fascia(ya, yb, za, zb):
         for zl, zh in zip(zs[:-1], zs[1:]):
@@ -198,10 +199,14 @@ def _muro_est_bucato(c, x, y0, y1, buco):
             if hi - lo > 0.005:
                 mat, passo = ('vasca', 1.0) if zh <= FONDO + 1.5 + 1e-6 else ('stanza_muro', 2.0)
                 c.faccia_griglia([(x, yb, lo), (x, ya, lo), (x, ya, hi), (x, yb, hi)], mat, passo)
-    fascia(y0, by0, FONDO, H)
-    fascia(by1, y1, FONDO, H)
-    fascia(by0, by1, FONDO, bz0)
-    fascia(by0, by1, bz1, H)
+    ys = sorted({y0, y1} | {b[0] for b in buchi} | {b[1] for b in buchi})
+    for ya, yb in zip(ys[:-1], ys[1:]):
+        liberi = [(FONDO, H)]
+        for (by0, by1, bz0, bz1) in buchi:
+            if by0 <= ya + 1e-6 and yb <= by1 + 1e-6:
+                liberi = [t for (lo, hi) in liberi for t in ((lo, min(hi, bz0)), (max(lo, bz1), hi)) if t[1] - t[0] > 0.005]
+        for (lo, hi) in liberi:
+            fascia(ya, yb, lo, hi)
 
 
 def scivolo(c, punti, mat):

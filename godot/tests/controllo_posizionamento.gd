@@ -49,6 +49,8 @@ const ZONE := [
 			"Tecnici/Ambienti/SalaPompe/PORTA_ponte", "Sala/Interattivi/sala_portello_scarico"]},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "inseguimento_dopo",
 			"parti": ["SalaInseguimento"]},
+	# l'oblò del fondo della torre con lei dietro il vetro (ObloLei, come quelli della Risalita)
+	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "torre_oblo", "parti": ["ObloLei"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
@@ -345,6 +347,14 @@ func _prepara(stato: String) -> void:
 		"risalita_arrivo":
 			_mostra_risalita()
 			for i in 10:
+				await get_tree().physics_frame
+			return
+		"torre_oblo":
+			# lei dietro il vetro della torre, ferma nella posa dopo 2 s (come risalita_oblo)
+			for o in _radice.find_children("*", "ObloLei", true, false):
+				(o as ObloLei).set_process(false)
+				(o as ObloLei)._mostra()
+			for i in 120:
 				await get_tree().physics_frame
 			return
 		"risalita_oblo":

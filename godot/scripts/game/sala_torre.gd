@@ -34,6 +34,8 @@ const DIR := "res://assets/ambiente/torre/"
 const ROSSO := Color(1.0, 0.035, 0.02)
 const CALDO := Color(1.0, 0.66, 0.36)
 const ROSA := Color(1.0, 0.32, 0.62)
+## La quota del fondo della sala (Blender, torre_proposte.FONDO).
+const FONDO_Z := -20.0
 const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creature/bambino_agnello.tscn"]
 
 ## Ordine del primo checkpoint della torre (dopo quelli della sala grande e del ritorno).
@@ -51,6 +53,13 @@ const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creat
 @export var guida_metri := 1.2
 @export var guida_forza := 7.0
 @export var guida_fino_a := 4.0      ## m/s: più veloce di così la guida non serve più
+## L'oblò con lei sul muro est, accanto alla bocca del tubo (scelta dell'utente del 24 ottobre): il raggio del vetro
+## (la piastra resta di 1,9 m: grande come gli oblò della Risalita, o piccolo perché l'occhio lo riempia) e la posa.
+@export var oblo_raggio_vetro := ObloLei.RAGGIO_VETRO
+@export var oblo_posa := "occhio"
+## Falso: niente oblò (le prove della discesa senza di lei).
+@export var oblo_lei := true
+var oblo: ObloLei
 
 var dati := {}
 var checkpoint: Array[Checkpoint] = []
@@ -205,6 +214,7 @@ func _passi() -> Array:
 	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _polaroid])
 	out.append_array(_passi_balconata())
 	out.append(_vasca_fondo)
+	out.append(_oblo_lei)
 	if crea_luci:
 		out.append_array(_passi_luci())
 	out.append(_luce_lei)
@@ -698,6 +708,56 @@ func _vasca_fondo() -> void:
 			discesa_finita.emit())
 
 
+## L'oblò con lei (ObloLei di enigmi, con la posa di mascotte) nel foro del muro est che il GLB lascia accanto alla
+## bocca del tubo (torre_a.py, OBLO_*): dietro, nella sala delle condotte, la cisterna piena d'acqua (il fuori lo fa
+## inseguimento_proposte.py, l'interno l'oblò). Il muro con la piastra va dalla faccia della torre (x 40) a quella delle
+## condotte (x 40,4). Lei compare una volta sola al fondo della discesa, prima dell'inseguimento: entrando nella bocca
+## (o quando lei compare nelle condotte) se ne va col suo distacco lento, e non torna più.
+func _oblo_lei() -> void:
+	if not oblo_lei or not dati.has("oblo_lei") or oblo:
+		return
+	var d: Dictionary = dati["oblo_lei"]
+	var centro := b(d["centro"])
+	var normale := b(d["normale"]).normalized()
+	oblo = ObloLei.new()
+	oblo.name = "ObloLei"
+	oblo.posa = oblo_posa if oblo_posa in LeiOblo.POSE else "schiacciata"
+	oblo.raggio_vetro = oblo_raggio_vetro
+	oblo.spessore_muro = 0.4
+	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
+	var v: Array = dati["vasca_fondo"]["rett"]
+	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
+	var hi := b([float(d["centro"][0]) - 0.1, float(v[1]) - 5.0, FONDO_Z + 2.6])
+	oblo.zona = AABB(lo.min(hi), (hi - lo).abs())
+	add_child(oblo)
+	oblo.global_transform = Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
+	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
+	var bocca := Area3D.new()
+	bocca.name = "BoccaOblo"
+	bocca.collision_layer = 0
+	bocca.collision_mask = Layers.PLAYER
+	bocca.monitorable = false
+	var forma := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(2.4, 2.0, 2.0)
+	forma.shape = box
+	bocca.add_child(forma)
+	add_child(bocca)
+	bocca.global_position = b([38.8, 17.4, FONDO_Z + 1.6])
+	bocca.body_entered.connect(func(corpo):
+		if corpo is Player:
+			_oblo_via())
+	inseguimento_aggiunto.connect(func(ins: Node3D):
+		if ins.has_signal(&"lei_compare"):
+			ins.connect(&"lei_compare", func(_dove): _oblo_via()))
+
+
+func _oblo_via() -> void:
+	if oblo and is_instance_valid(oblo):
+		oblo.attivo = false
+		oblo.via()
+
+
 # --- luci ------------------------------------------------------------------------------------------
 
 func _luce_lei() -> void:
@@ -1107,7 +1167,7 @@ static func _materiale_fondo_pozzo() -> StandardMaterial3D:
 const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 
 
-## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo), più
+## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo, l'oblò), più
 ## l'acqua torbida. Godot fa uno shader per tipo di materiale e lo condivide, ma la prima volta lo crea sul
 ## thread principale: con il gruppo di shader avanzato acceso (nel gioco lo è sempre, vedi
 ## Grafica._attiva_shader_avanzati) costa 100-150 ms sulla CPU della CI, troppo per un passo della
@@ -1116,6 +1176,9 @@ const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 static func materiali_campione() -> Array[Material]:
 	var out: Array[Material] = [_emissivo(Color.WHITE, 1.0), _metallo_scuro(), _materiale_gabbia(),
 			_materiale_gocce(), _materiale_fondo_pozzo(), load(ACQUA) as Material]
+	# (l'oblò con lei sul muro est: piastra, vasca, ottone, vetro e veli d'acqua)
+	for m in ObloLei.materiali():
+		out.append(m as Material)
 	for m in out:
 		m.get_rid()   # lo shader si crea adesso, non al primo uso
 	return out
