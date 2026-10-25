@@ -506,3 +506,7 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
 **Zone non ancora pronte sui PC lenti: A** (scelta dell'utente del 25 ottobre): se arrivi a una zona caricata dopo (risalita, torre, tunnel) prima che sia pronta, la sua porta resta chiusa col rumore del meccanismo finché la zona è pronta, poi si apre. Scartate B (la zona che compare a pezzi) e C (un attimo di nero con l'icona di caricamento). I caricamenti partono prima, quindi su un PC buono non dovrebbe capitare.
 
 **Luci del tunnel sottomarino**: la richiesta di una luce blu da ogni oblò (25 ottobre, pomeriggio) è stata annullata dall'utente dopo aver rigiocato il tunnel: "come luce ci siamo in realtà. Quindi lascia stare la cosa delle luci dagli oblò". Le luci restano come nella v0.3.14.
+
+**Inseguimento nel tunnel, richieste dell'utente del 25 ottobre (sera)**:
+- "aggiungici un canto da sirena distorto ed inquietante, che possa dare l'idea di inseguimento pauroso": il canto è di lei, con la stessa gola sintetica della sua voce, a frasi sempre diverse (niente loop), più vicino e forte quando lei si avvicina. Tre proposte (A vocalizzo lento in minore, B rotto e rallentato, C coro stonato coi sussurri) da far sentire all'utente prima di metterlo nel gioco (ambienti-1, lavoro/canto-sirena);
+- "se finisci in acqua in quella sezione, non puoi saltare": nell'acqua del canale il salto non funziona (sui gommoni e sulle banchine sì); dall'acqua si esce camminando dal gradino lungo le banchine (ambienti-2, lavoro/acqua-senza-salto).
