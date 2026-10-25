@@ -28,6 +28,10 @@ const PORTA_NORD := -2.2
 const LARGO_PORTA := 1.0
 ## Ordine dei checkpoint dei passi (tra l'approdo e il magazzino).
 @export var ordine_checkpoint := 12
+## Variante della luce dopo il pulsante (da scegliere con l'utente, 25 ottobre). Falso (B, di partenza): il negatoscopio
+## acceso illumina la stanza con la sua luce larga, come prima. Vero (A): la stanza resta buia anche dopo, la luce
+## principale è lo schermo acceso (la sua luce sulla scrivania è debole e stretta) più il faretto della cassaforte.
+@export var buia_dopo_pulsante := false
 
 var mat_piastrelle: Material
 var mat_muro: Material
@@ -378,6 +382,7 @@ func _negatoscopio() -> void:
 	negatoscopio.name = "Negatoscopio"
 	negatoscopio.alimentazione = interruttore
 	negatoscopio.mostra_segnaposto = false
+	negatoscopio.sfarfalla = false   # versione A: spento finché non colpisci l'interruttore
 	negatoscopio.lastra_tex = load(TEX + "radiografia.jpg")
 	negatoscopio.puntini_tex = load(TEX + "radiografia_emi.jpg")
 	var f := CollisionShape3D.new()
@@ -399,6 +404,10 @@ func _negatoscopio() -> void:
 	s.shadow_enabled = true
 	s.set_meta(&"risveglio_ignora", true)
 	_luce_negatoscopio = s
+	# il faretto debole a soffitto che lo fa notare da spento (versione A); il cavo va alla scatola sul muro nord
+	# (puntato al centro del pannello, col cono che prende anche la cornice e il muro intorno: il vetro spento è scuro)
+	_faretto_soffitto("FarettoNegatoscopio", Vector3(0.3, H, -2.0), c + Vector3(0, 0.1, 0.1), Vector3(0.3, H, -L),
+			Color(0.8, 0.88, 1.0), 0.45, 21.0)
 	_pulsante_parco(Vector3(1.35, 1.25, -L))
 
 
@@ -733,6 +742,81 @@ func _cassaforte() -> void:
 	lv.name = "LuceVano"
 	lv.visible = false
 	cassaforte.aperta.connect(func(): lv.visible = true)
+	# il faretto molto poco luminoso a soffitto puntato sulla cassaforte (richiesta dell'utente del 24 ottobre); il cavo
+	# va alla scatola sul muro est, accanto alla lampada rossa
+	_faretto_soffitto("FarettoCassaforte", Vector3(2.3, H, -0.55), c, Vector3(L, H, -0.55), Color(1.0, 0.85, 0.65), 1.1, 15.0)
+
+
+## Un faretto piccolo a soffitto: la piastra avvitata al soffitto in [param attacco], il gambo, il barattolo puntato su
+## [param bersaglio] col vetro appena acceso e la SpotLight debole. Il cavo corre dritto contro il soffitto fino a
+## una scatola di derivazione in [param scatola] (sul soffitto, contro il muro). Tutto in coordinate della stanza.
+func _faretto_soffitto(nome: String, attacco: Vector3, bersaglio: Vector3, scatola: Vector3, colore: Color,
+		energia: float, angolo: float) -> void:
+	var n := Node3D.new()
+	n.name = nome
+	add_child(n)
+	var ferro := _colore(Color(0.16, 0.16, 0.17), 0.6, 0.45)
+	_box(Vector3(0.1, 0.012, 0.1), attacco + Vector3(0, -0.006, 0), ferro, n)
+	var testa := attacco + Vector3(0, -0.16, 0)
+	_cilindro(n, attacco + Vector3(0, -0.012, 0), testa, 0.012, ferro)
+	var dir := (bersaglio - testa).normalized()
+	# il barattolo col fondo sulla testa del gambo, aperto verso il bersaglio
+	var lato := dir.cross(Vector3.UP).normalized() if absf(dir.y) < 0.99 else Vector3.RIGHT
+	var b := Basis(lato, dir, lato.cross(dir).normalized())
+	var can := MeshInstance3D.new()
+	can.name = "Barattolo"
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.05
+	cm.bottom_radius = 0.042
+	cm.height = 0.13
+	can.mesh = cm
+	can.material_override = ferro
+	n.add_child(can)
+	can.transform = Transform3D(b, testa + dir * 0.055)
+	var vetro := MeshInstance3D.new()
+	vetro.name = "Vetro"
+	var vc := CylinderMesh.new()
+	vc.top_radius = 0.047
+	vc.bottom_radius = 0.047
+	vc.height = 0.004
+	vetro.mesh = vc
+	var mv := StandardMaterial3D.new()
+	mv.albedo_color = Color(0.9, 0.9, 0.85)
+	mv.emission_enabled = true
+	mv.emission = colore
+	mv.emission_energy_multiplier = 1.2
+	vetro.material_override = mv
+	n.add_child(vetro)
+	vetro.transform = Transform3D(b, testa + dir * 0.122)
+	var sp := SpotLight3D.new()
+	sp.name = "Luce"
+	sp.light_color = colore
+	sp.light_energy = energia
+	sp.spot_range = testa.distance_to(bersaglio) + 1.5
+	sp.spot_angle = angolo
+	sp.spot_attenuation = 0.6
+	sp.shadow_enabled = false
+	sp.set_meta(&"risveglio_ignora", true)
+	n.add_child(sp)
+	sp.transform = Transform3D(Basis.looking_at(dir, Vector3.UP if absf(dir.y) < 0.99 else Vector3.BACK), testa + dir * 0.125)
+	# il cavo: dentro la piastra, poi a contatto col soffitto fino dentro la scatola (12 cm, contro il muro e il soffitto)
+	var verso := (Vector3(scatola.x, attacco.y, scatola.z) - attacco).normalized()
+	_cilindro(n, attacco + Vector3(0, -0.005, 0), scatola - verso * 0.06 + Vector3(0, -0.005, 0), 0.005, _colore(Color(0.04, 0.04, 0.04), 0.0, 0.6))
+	_box(Vector3(0.12, 0.06, 0.12), scatola - verso * 0.06 + Vector3(0, -0.03, 0), ferro, n)
+
+
+func _cilindro(padre: Node3D, a: Vector3, b: Vector3, r: float, m: Material) -> void:
+	var mi := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = r
+	cm.bottom_radius = r
+	cm.height = a.distance_to(b)
+	mi.mesh = cm
+	mi.material_override = m
+	padre.add_child(mi)
+	var y := (b - a).normalized()
+	var x := y.cross(Vector3.FORWARD).normalized() if absf(y.z) < 0.99 else Vector3.RIGHT
+	mi.transform = Transform3D(Basis(x, y, x.cross(y).normalized()), (a + b) * 0.5)
 
 
 ## La keycard 1: 85,6 x 54 mm, spessa 0,8, stesa con la faccia in su.
@@ -750,7 +834,8 @@ func _luci() -> void:
 	# (i punti sono sulla faccia dei muri: la staffa si appoggia al muro)
 	for p in [[Vector3(PORTA_SUD, 2.55, L), Vector3(0, -0.5, -1)], [Vector3(L, 2.5, -1.05), Vector3(-1, -0.7, 0)]]:
 		var l := LampadaMuro.monta(self, p[0], p[1])
-		_luce(l.position + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 1.6, 6.0, true)
+		# (più deboli dal 24 ottobre: l'utente la vuole più buia, coi faretti sul negatoscopio e sulla cassaforte)
+		_luce(l.position + (p[1] as Vector3).normalized() * 0.3, Color(1.0, 0.16, 0.1), 0.9, 6.0, true)
 	# il cartello d'uscita verde sopra la porta della scala, acceso (luce d'emergenza a batteria)
 	var mf := StandardMaterial3D.new()
 	mf.albedo_texture = load("res://assets/fiume_lento/texture/uscita_faccia.jpg")
@@ -765,7 +850,10 @@ func _luci() -> void:
 func _bambini() -> void:
 	_metti("giraffa_metro", Vector3(2.45, 0.05, -L), 0.0)
 	var mp := StandardMaterial3D.new()
-	mp.albedo_texture = load("res://assets/ambienti_interni/texture/cartellone_medusa_vecchio.jpg")
+	# il cartellone rovinato a pastelli a cera (24 ottobre, assets_src/ambienti_interni/poster/rovina.py): dove è
+	# strappato o bruciato si vede il pannello rosa sotto
+	mp.albedo_texture = load("res://assets/ambienti_interni/texture/cartellone_medusa_infermeria.png")
+	mp.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	mp.roughness = 0.7
 	_box(Vector3(0.02, 1.04, 0.79), Vector3(-L + 0.01, 1.85, 1.45), _colore(Color(0.95, 0.75, 0.85)))
 	_quad(Vector2(0.75, 1.0), Vector3(-L + 0.022, 1.85, 1.45), Vector3(0, 90, 0), mp)
@@ -802,7 +890,7 @@ func _bambini() -> void:
 	luna.position = Vector3(L - 0.02, 0.45, 0.95)
 	luna.scale = Vector3(0.5, 1.0, 1.0)
 	add_child(luna)
-	_luce(Vector3(L - 0.3, 0.6, 0.95), Color(1.0, 0.75, 0.7), 1.2, 4.5, false)
+	_luce(Vector3(L - 0.3, 0.6, 0.95), Color(1.0, 0.75, 0.7), 0.6, 4.5, false)
 
 
 # --- checkpoint dopo ogni passo -----------------------------------------------------------------------
@@ -858,5 +946,6 @@ func _process(delta: float) -> void:
 	_vetro_lampeggiante.emission_energy_multiplier = 3.0 * k
 	_luce_lampeggiante.light_color = _vetro_lampeggiante.emission
 	_luce_lampeggiante.light_energy = 0.6 * k
-	# la luce del negatoscopio segue il pannello (sfarfalla senza corrente)
-	_luce_negatoscopio.light_energy = 3.0 if negatoscopio.e_acceso() else (0.9 if fmod(_t * 7.3, 5.0) < 0.6 else 0.05)
+	# la luce del negatoscopio segue il pannello (spenta senza corrente: versione A)
+	_luce_negatoscopio.light_energy = (0.9 if buia_dopo_pulsante else 3.0) if negatoscopio.e_acceso() else 0.0
+	_luce_negatoscopio.spot_angle = 42.0 if buia_dopo_pulsante else 75.0

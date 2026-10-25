@@ -23,6 +23,9 @@ signal radiografia_appoggiata
 @export var misura_pannello := Vector2(0.84, 0.44)
 @export var lastra_tex: Texture2D
 @export var puntini_tex: Texture2D
+## Falso: senza corrente resta spento del tutto invece di sfarfallare (infermeria della risalita, versione A scelta
+## dall'utente il 24 ottobre: spento finché non colpisci l'interruttore, lo fa notare un faretto debole da fuori).
+@export var sfarfalla := true
 
 var con_radiografia := false
 
@@ -181,8 +184,8 @@ func _aggiorna(_delta: float) -> void:
 	if on and not _era_acceso:
 		acceso.emit()
 	_era_acceso = on
-	# Senza corrente sfarfalla: quasi spento, con qualche lampo.
-	var k := 1.0 if on else (0.35 if fmod(_t * 7.3, 5.0) < 0.6 else 0.03)
+	# Senza corrente sfarfalla: quasi spento, con qualche lampo (o spento del tutto, senza [member sfarfalla]).
+	var k := 1.0 if on else ((0.35 if fmod(_t * 7.3, 5.0) < 0.6 else 0.03) if sfarfalla else 0.0)
 	_mat.albedo_color = Color(0.85, 0.9, 0.95) * (0.3 + 0.7 * k)
 	_mat.emission_energy_multiplier = 1.8 * k
 	_luce.light_energy = 1.4 * k

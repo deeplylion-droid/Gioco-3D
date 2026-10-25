@@ -20,7 +20,7 @@
 		"pos": [
 			-0.75,
 			0.0,
-			25.0
+			25.25
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-1",
@@ -182,21 +182,203 @@
 		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (9 celle da 25 cm) (pavimenti fra y -34.00 e -25.58), con la collisione (ci si sbatte contro)",
-		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
-		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 4 cm sotto la sua superficie (per esempio in (-16.0, 2.35, 31.3), lo spigolo da (-16.0, 0.01, 31.45) a (-16.0, 2.79, 31.27))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_0",
 		"pos": [
-			44.0,
-			-34.0,
-			-4.0
+			-16.0,
+			2.35,
+			31.3
 		],
-		"problema": "ingombro",
-		"squadra": "ambienti-2",
+		"problema": "compenetra",
+		"squadra": "enigmi",
 		"stato": "voluto",
-		"zona": "torre"
+		"zona": "tecnici"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -34.00), con la collisione (ci si sbatte contro)",
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 3 cm sotto la sua superficie (per esempio in (-16.0, 2.34, 34.3), lo spigolo da (-16.0, 0.01, 34.45) a (-16.0, 2.79, 34.27))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_1",
+		"pos": [
+			-16.0,
+			2.34,
+			34.3
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 3 cm sotto la sua superficie (per esempio in (-15.99, 2.33, 34.46), lo spigolo da (-15.99, 2.79, 34.46) a (-15.99, 0.01, 34.46))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_c3b_2",
+		"pos": [
+			-15.99,
+			2.33,
+			34.46
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-2.28, -6.9, 48.86), lo spigolo da (-2.39, -9.04, 48.86) a (-2.25, -6.26, 48.86))",
+		"motivo": "i tubi lungo il muro passano nelle costole d'acciaio del corridoio come nei fori delle ordinate di una nave, con un collare di passaggio su ogni faccia della costola (scelta del coordinatore, 23 ottobre); le staffe sono fuori dalle costole",
+		"nodo": "Tecnici/Ambienti/Raccordo/ArredoRisalita/G_tubi_r1_0",
+		"pos": [
+			-2.28,
+			-6.9,
+			48.86
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 0.95, 20.34), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_13",
+		"pos": [
+			-15.9,
+			0.95,
+			20.34
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.01, 20.34), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_14",
+		"pos": [
+			-15.9,
+			1.01,
+			20.34
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.08, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_15",
+		"pos": [
+			-15.9,
+			1.08,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.15, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_16",
+		"pos": [
+			-15.9,
+			1.15,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.22, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_17",
+		"pos": [
+			-15.9,
+			1.22,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.29, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_18",
+		"pos": [
+			-15.9,
+			1.29,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.37, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_19",
+		"pos": [
+			-15.9,
+			1.37,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 2 cm sotto la sua superficie (per esempio in (-15.9, 1.43, 20.35), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_20",
+		"pos": [
+			-15.9,
+			1.43,
+			20.35
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.5, 20.36), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_21",
+		"pos": [
+			-15.9,
+			1.5,
+			20.36
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "dentro ci passa Tecnici/Ambienti/Raccordo/RACCORDO_dettagli, 1 cm sotto la sua superficie (per esempio in (-15.9, 1.57, 20.36), lo spigolo da (-15.9, 0.01, 20.32) a (-15.9, 2.49, 20.38))",
+		"motivo": "le lamelle della serranda alzata scorrono dentro le sue guide laterali, come in una serranda vera",
+		"nodo": "Tecnici/Logica/SerrandaMagazzino/Lamelle_22",
+		"pos": [
+			-15.9,
+			1.57,
+			20.36
+		],
+		"problema": "compenetra",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "tecnici"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -34.00), con la collisione (ci si sbatte contro)",
 		"motivo": "dentro i tubi chiusi dell'inseguimento si scivola accovacciati: il tubo stesso (1,5 m) è il soffitto, e fuori ci sono i suoi attacchi; il controllo conta le celle del fondo del tubo (ambienti-2, 22 ottobre)",
 		"nodo": "SalaInseguimento/InseguimentoTubi/ins_A_tubo_3",
 		"pos": [
@@ -217,6 +399,20 @@
 			69.5,
 			-28.58,
 			-7.25
+		],
+		"problema": "ingombro",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"zona": "torre"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -25.58), senza collisione (si attraversa)",
+		"motivo": "le celle sono dentro i tubi chiusi (sopra il tubo ci sono i suoi attacchi) e sulla scaletta di pioli del bacino, da dove si sale (ambienti-2, 22 ottobre)",
+		"nodo": "SalaInseguimento/InseguimentoStruttura/ins_A_struttura",
+		"pos": [
+			64.0,
+			-25.58,
+			-30.0
 		],
 		"problema": "ingombro",
 		"squadra": "ambienti-2",
@@ -266,9 +462,51 @@
 		"zona": "torre"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24724, 5 cm sotto la sua superficie (per esempio in (-38.16, -5.4, 117.17), lo spigolo da (-38.2, -5.4, 117.4) a (-38.13, -5.4, 117.0)) (stato: risalita_arrivo)",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
+		"nodo": "Risalita/Fiume/paratia/Mesh_0",
+		"pos": [
+			-38.16,
+			-5.4,
+			117.17
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24724, 3 cm sotto la sua superficie (per esempio in (-55.75, -5.4, 93.6), lo spigolo da (-56.0, -5.4, 93.6) a (-54.4, -5.4, 93.6)) (stato: risalita_arrivo)",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
+		"nodo": "Risalita/Fiume/paratia4/Mesh_0",
+		"pos": [
+			-55.75,
+			-5.4,
+			93.6
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "dentro ci passa Risalita/Fiume/@MeshInstance3D@24724, 3 cm sotto la sua superficie (per esempio in (-33.4, -5.4, 64.75), lo spigolo da (-33.4, -5.4, 65.0) a (-33.4, -5.4, 63.0)) (stato: risalita_arrivo)",
+		"motivo": "il telaio della chiusa a saracinesca, di traverso alla bocca del ramo, poggia sul bordo delle due sponde e ci entra con le guide, come una paratia vera",
+		"nodo": "Risalita/Fiume/paratia5/Mesh_0",
+		"pos": [
+			-33.4,
+			-5.4,
+			64.75
+		],
+		"problema": "compenetra",
+		"squadra": "enigmi",
+		"stato": "voluto",
+		"zona": "risalita"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
 		"pos": [
 			19.25,
 			0.0,
@@ -280,9 +518,9 @@
 		"zona": "acquari"
 	},
 	{
-		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.88 e 1.96 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.54 e 1.62 m sopra il pavimento (1 celle da 25 cm) (pavimento a y -0.00), senza collisione (si attraversa) (stato: acquari_comparsi)",
 		"motivo": "a uno stipite (regola del coordinatore del 23 ottobre): la lampadina sta sul montante della cornice di lampadine del portone (a terra, con la sua collisione, x 19,58-19,63), sporge 14 cm dal montante (fronte a x 19,44); passaggio libero 6,8 m all'altezza della testa (il varco del portone fra i due montanti); non pende nel passaggio (enigmi)",
-		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_6",
+		"nodo": "Gioco/EnigmaAcquari/LampadePortone/Accese/Lampada1/Modello_4",
 		"pos": [
 			19.25,
 			0.0,
@@ -348,5 +586,343 @@
 		"squadra": "enigmi",
 		"stato": "voluto",
 		"zona": "acquari"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.03 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -27.00), senza collisione (si attraversa) (stato: sottomarino_t0)",
+		"firma": "|TorusMesh 0.54x0.08x0.54",
+		"motivo": "il battente del portello aperto dentro la camera stagna (è la porta stessa): il giocatore entra e lo chiude col volantino, poi la fine (24 ottobre, scelta 11A)",
+		"nodo": "Approdo/PortelloPerno/@MeshInstance3D@73518",
+		"pos": [
+			-57.5,
+			-27.0,
+			21.5
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.18 e 1.22 m sopra il pavimento (15 celle da 25 cm) (pavimento a y -27.20), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|CylinderMesh 0.05x4.35x0.05",
+		"motivo": "il corrimano della scala dell'approdo, a fianco di chi sale, all'altezza della mano",
+		"nodo": "Approdo/@MeshInstance3D@73499",
+		"pos": [
+			-62.0,
+			-27.2,
+			23.0
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 1.25 m sopra il pavimento (361 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/struttura_mosaico",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74146",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (18 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Tunnel_432/struttura_mosaico",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74147",
+		"pos": [
+			-37.25,
+			-30.0,
+			128.75
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74145",
+		"pos": [
+			-36.75,
+			-30.0,
+			128.75
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (9 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74154",
+		"pos": [
+			-30.75,
+			-30.0,
+			127.25
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74152",
+		"pos": [
+			-26.0,
+			-30.0,
+			123.75
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (19 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Tunnel_408/struttura_mosaico",
+		"pos": [
+			-22.5,
+			-30.0,
+			118.0
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (5 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74140",
+		"pos": [
+			-22.75,
+			-30.0,
+			117.5
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74138",
+		"pos": [
+			-22.5,
+			-30.0,
+			117.0
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74141",
+		"pos": [
+			-23.25,
+			-30.0,
+			117.75
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_425/@MeshInstance3D@74148",
+		"pos": [
+			-37.75,
+			-30.0,
+			129.0
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 1.25 m sopra il pavimento (172 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_205/struttura_mosaico",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (4 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_205/@MeshInstance3D@74096",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (6 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Tunnel_216/struttura_mosaico",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (11 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_205/@MeshInstance3D@74104",
+		"pos": [
+			0.5,
+			-30.0,
+			58.0
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza del busto: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.21 e 1.25 m sopra il pavimento (8 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.50x0.04x0.25",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_205/@MeshInstance3D@74102",
+		"pos": [
+			0.0,
+			-30.0,
+			60.75
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 0.35 e 2.00 m sopra il pavimento (10 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Tunnel_192/struttura_mosaico",
+		"pos": [
+			-1.0,
+			-30.0,
+			64.75
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (3 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_205/@MeshInstance3D@74089",
+		"pos": [
+			-0.5,
+			-30.0,
+			65.25
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "nello spazio di chi cammina, all'altezza della testa: a meno di 10 cm dall'asse del giocatore (20 cm sopra 1,2 m), fra 1.27 e 1.57 m sopra il pavimento (2 celle da 25 cm) (pavimento a y -30.00), con la collisione (ci si sbatte contro) (stato: sottomarino_t0)",
+		"firma": "|BoxMesh 0.30x0.30x0.02",
+		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro",
+		"nodo": "Galleria_205/@MeshInstance3D@74091",
+		"pos": [
+			-0.25,
+			-30.0,
+			65.0
+		],
+		"problema": "ingombro",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
+	},
+	{
+		"dettaglio": "il 100% dei suoi vertici è dentro Ostacolo_vetrina_484/@MeshInstance3D@74156 (stato: sottomarino_t0)",
+		"motivo": "il corallo del diorama sta dentro la teca di vetro della vetrina caduta, appoggiato sulla sabbia del fondo: il vetro è una scatola chiusa e lo contiene tutto (tunnel sottomarino, 24 ottobre)",
+		"nodo": "Ostacolo_vetrina_484/corallo/Mesh_0",
+		"pos": [
+			-62.02,
+			-29.16,
+			88.12
+		],
+		"problema": "compenetra",
+		"squadra": "da assegnare",
+		"stato": "voluto",
+		"zona": "sottomarino"
 	}
 ]

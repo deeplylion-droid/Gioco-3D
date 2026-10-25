@@ -91,7 +91,8 @@ def mat_colore(nome, rgb, rough=0.5, metal=0.0, emiss=None, forza=0.0, alpha=1.0
         m.blend_method = 'BLEND' if hasattr(m, 'blend_method') else None
     return m
 
-def mat_immagine(nome, path, rough=0.6, emiss_forza=0.0, alpha=False):
+def mat_immagine(nome, path, rough=0.6, emiss_forza=0.0, alpha=False, clip=False):
+    """clip: alfa a soglia 0,5 (nel glTF alphaMode MASK, in Godot alpha scissor), per i poster rovinati."""
     m = bpy.data.materials.get(nome)
     if m:
         return m
@@ -99,7 +100,11 @@ def mat_immagine(nome, path, rough=0.6, emiss_forza=0.0, alpha=False):
     nt = m.node_tree; b = nt.nodes['Principled BSDF']
     t = nt.nodes.new('ShaderNodeTexImage'); t.image = _img(path)
     nt.links.new(t.outputs[0], b.inputs['Base Color'])
-    if alpha:
+    if clip:
+        r = nt.nodes.new('ShaderNodeMath'); r.operation = 'ROUND'
+        nt.links.new(t.outputs[1], r.inputs[0])
+        nt.links.new(r.outputs[0], b.inputs['Alpha'])
+    elif alpha:
         nt.links.new(t.outputs[1], b.inputs['Alpha'])
     b.inputs['Roughness'].default_value = rough
     if emiss_forza:

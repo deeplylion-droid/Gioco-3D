@@ -1408,7 +1408,9 @@
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.550000011920929
-			}
+			},
+			"alphaMode":"MASK",
+			"alphaCutoff":0.5
 		},
 		{
 			"doubleSided":true,
@@ -2554,9 +2556,9 @@
 			"uri":"texture/lamiera_grata_met-lamiera_grata_rgh.jpg"
 		},
 		{
-			"mimeType":"image/jpeg",
-			"name":"cartellone_medusa_vecchio",
-			"uri":"texture/cartellone_medusa_vecchio.jpg"
+			"mimeType":"image/png",
+			"name":"cartellone_medusa_rovinato",
+			"uri":"texture/cartellone_medusa_rovinato.png"
 		},
 		{
 			"mimeType":"image/jpeg",

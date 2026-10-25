@@ -1021,7 +1021,9 @@
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.699999988079071
-			}
+			},
+			"alphaMode":"MASK",
+			"alphaCutoff":0.5
 		},
 		{
 			"doubleSided":true,
@@ -2230,9 +2232,9 @@
 			"uri":"texture/cartello_regole_vecchio.jpg"
 		},
 		{
-			"mimeType":"image/jpeg",
-			"name":"poster_bagnino_vecchio",
-			"uri":"texture/poster_bagnino_vecchio.jpg"
+			"mimeType":"image/png",
+			"name":"poster_bagnino_rovinato",
+			"uri":"texture/poster_bagnino_rovinato.png"
 		},
 		{
 			"mimeType":"image/jpeg",
