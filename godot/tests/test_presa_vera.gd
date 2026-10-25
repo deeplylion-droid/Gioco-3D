@@ -230,15 +230,22 @@ func _presa() -> void:
 		if attesa_da < 0 and vecchia.process_mode == Node.PROCESS_MODE_DISABLED:
 			attesa_da = Time.get_ticks_msec()
 		spia = spia or get_tree().root.has_node(^"AttesaCaricamenti")
+		if f == 270 and not Game.caricamenti_in_corso():
+			# (la torre ha già finito, come su un PC veloce: perché la ripartenza trovi lo stesso un caricamento nel thread
+			# in corso, alla fine della sequenza comincia quello del tunnel)
+			var tunnel := String(vecchia.get(&"sala_sottomarino_scena"))
+			if tunnel != "" and Game.carica_in_thread(tunnel, "PackedScene") == OK:
+				print("  (la torre è già caricata: alla fine della sequenza comincia il caricamento del tunnel nel thread)")
 		await get_tree().process_frame
 		f += 1
-	print("  (sala ricaricata dopo %d fotogrammi, %.1f s; finita la sequenza, %.1f s di attesa)" % [f, (Time.get_ticks_msec() - t0) / 1000.0,
-		(Time.get_ticks_msec() - attesa_da) / 1000.0 if attesa_da >= 0 else 0.0])
+	print("  (sala ricaricata dopo %d fotogrammi, %.1f s; finita la sequenza, %.1f s fino alla sala nuova)" % [f,
+		(Time.get_ticks_msec() - t0) / 1000.0, (Time.get_ticks_msec() - attesa_da) / 1000.0 if attesa_da >= 0 else 0.0])
 	_stato("ricaricata")
 	check(get_tree().current_scene != vecchia and f >= 60 * 5 - 5, "la sequenza va fino in fondo (5 s) e poi la sala si ricarica")
 	check(not in_corso, "la sala si ricarica solo a caricamenti nel thread finiti (la torre, dalla serranda)")
-	var attesa := (Time.get_ticks_msec() - attesa_da) / 1000.0 if attesa_da >= 0 else 0.0
-	check(spia or attesa < Game.ATTESA_SPIA + 0.5, "se l'attesa è lunga si vede la spia del caricamento (%.1f s, spia %s)" % [attesa, spia])
+	var attesa := GameState.attesa_ripartenza
+	print("  (la ripartenza ha aspettato i caricamenti per %.1f s)" % attesa)
+	check(spia or attesa < Game.ATTESA_SPIA + 0.1, "se l'attesa è lunga si vede la spia del caricamento (%.1f s, spia %s)" % [attesa, spia])
 	for i in 600:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player) and not GameState.is_dying and GameState.player.input_enabled:

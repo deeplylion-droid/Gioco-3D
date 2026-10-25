@@ -37,13 +37,14 @@ In CI `test_tappa8` saltava la sequenza, e la torre non era in caricamento.
   - `Game.return_to_title()`, dal menu di pausa e da solo dopo la fine della demo: aspetta col gioco ancora in pausa;
   - F1 e F2 nelle build di debug.
 - Se intanto si esce dal gioco o si torna al titolo, la ripartenza non ricarica.
+- `LuciBianche` non legge più le geometrie fuori dall'albero. Nella ricarica toccava una lampada della sala vecchia, già tolta dalla scena, con l'errore `get_global_transform: !is_inside_tree()`.
 
 ## Prove
 
 - `test_presa_vera` (in CI), che verifica:
   - lei ti prende alla fossa;
   - la sequenza va fino in fondo;
-  - la sala si ricarica solo a caricamenti nel thread finiti;
+  - la sala si ricarica solo a caricamenti nel thread finiti. Se la torre ha già finito, come su un PC veloce, alla fine della sequenza comincia il caricamento del tunnel, così la ripartenza trova lo stesso un caricamento in corso;
   - la spia compare se l'attesa è lunga;
   - dalla presa a 30 s dopo la ripartenza ci sono 0 errori del motore o degli script. Li conta un `Logger`, perché nel gioco esportato un accesso a un oggetto già liberato è un crash.
 - `tests/collaudo/morte_vulkan.gd`: sequenza intera, ricarica e 30 s col renderer Vulkan e la cache vuota, negli interni.

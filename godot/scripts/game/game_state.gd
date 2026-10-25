@@ -59,6 +59,8 @@ var _registry: Dictionary = {}      # collezione -> { voce: true }, tutte quelle
 var _restore_pending := false
 var _death_sequence: Node = null
 var _ripartenza_in_corso := false
+## Secondi che l'ultima ripartenza ha aspettato i caricamenti nel thread (Game.aspetta_caricamenti).
+var attesa_ripartenza := 0.0
 
 
 # --- Livello e giocatore ------------------------------------------------------------------
@@ -267,10 +269,10 @@ func respawn() -> void:
 		return
 	_ripartenza_in_corso = true
 	var sala := get_tree().current_scene
-	var attesa: float = await Game.aspetta_caricamenti(sala, ATTESA_RIPARTENZA)
+	attesa_ripartenza = await Game.aspetta_caricamenti(sala, ATTESA_RIPARTENZA)
 	_ripartenza_in_corso = false
-	if attesa > 0.05:
-		print("Ripartenza: aspettati i caricamenti nel thread per %.1f s" % attesa)
+	if attesa_ripartenza > 0.05:
+		print("Ripartenza: aspettati i caricamenti nel thread per %.1f s" % attesa_ripartenza)
 	# (intanto si è usciti dal gioco o si è tornati al titolo: non si riparte)
 	if Game.uscendo or Game.tornando_al_titolo or not is_instance_valid(sala) or get_tree().current_scene != sala:
 		return
