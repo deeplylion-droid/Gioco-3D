@@ -110,6 +110,9 @@ func _run() -> void:
 		"la scritta sta sopra il nero e sotto il menu di pausa (livello %d)" % (strato.layer if strato else -1))
 	check(scritta != null and scritta.is_visible_in_tree() and scritta.modulate.a > 0.9 and scritta.text.begins_with("FINE DELLA DEMO"),
 		"la scritta si vede: «%s»" % (scritta.text.replace("\n", " / ") if scritta else ""))
+	if OS.get_environment("FINE_TUNNEL") != "":
+		# (collaudo D4: dopo il tunnel solo la scritta, senza la riga della torre)
+		check(scritta != null and scritta.text == "FINE DELLA DEMO", "dopo il tunnel solo «FINE DELLA DEMO», senza la riga della torre")
 	check(hud != null and (hud as CanvasLayer).layer < nero.layer, "il resto dell'interfaccia (mirino, zaino, messaggi) resta sotto il nero")
 	var file := OS.get_environment("FINE_SCATTO")
 	if file != "":

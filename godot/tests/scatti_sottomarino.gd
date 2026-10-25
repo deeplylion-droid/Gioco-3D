@@ -51,6 +51,11 @@ var SCATTI := {
 	"45_testa_dalla_porta": [2.0, -1.0, 1.6, -2.0, 0.0, 0.3, 75.0],
 	"46_staffe_ancora": [120.4, -0.95, 2.9, 121.6, -1.15, 3.0, 50.0],
 	"47_forziere_vicino": [144.8, -0.9, 2.3, 147.0, -1.15, 2.4, 55.0],
+	# l'approdo dal basso (collaudo D3: le mensole sotto il ballatoio e il telaio del portello visti dal retro)
+	"51_mensole_acqua": [546.0, -0.3, 0.2, 551.5, -0.55, 2.4, 75.0],
+	"52_mensole_banchina": [544.0, -1.0, 1.6, 551.0, -0.6, 2.6, 70.0],
+	"53_telaio_da_destra": [540.0, 1.0, 1.6, 552.3, -0.1, 3.5, 60.0],
+	"54_telaio_da_sinistra": [541.0, -1.0, 1.6, 552.3, 0.0, 4.0, 60.0],
 	"33_corallo_mensola": [78.2, 0.95, 2.4, 79.2, 1.15, 2.3, 50.0],
 	"31_portello_cerniere": [551.4, 0.05, 4.4, 552.6, -0.2, 3.5, 55.0],
 	"32_portello_oblo": [551.3, -0.1, 4.3, 552.3, 0.0, 4.3, 50.0],

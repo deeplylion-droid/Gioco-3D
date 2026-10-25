@@ -573,6 +573,15 @@ func _on_fine_torre() -> void:
 	_fine_della_demo(fine_torre_testo)
 
 
+## La fine del tunnel del viaggio sottomarino (il portello chiuso, lo schianto, il nero): solo "FINE DELLA DEMO", senza
+## la riga della torre (collaudo D4: "La discesa continua nel buio." lì non c'entra).
+func _on_fine_tunnel() -> void:
+	if demo_finished:
+		return
+	demo_finished = true
+	_fine_della_demo("")
+
+
 ## Quanto resta la scritta della fine (secondi), e dopo quanto il gioco torna da solo al titolo.
 const FINE_SCRITTA := 9.0
 const FINE_AL_TITOLO := 9.5
@@ -621,7 +630,7 @@ func _metti_sottomarino(scena: PackedScene, a_pezzi: bool) -> void:
 	sala_sottomarino.name = "SalaSottomarino"
 	add_child(sala_sottomarino)
 	sala_sottomarino.connect(&"prima_curva_passata", _libera_torre)
-	sala_sottomarino.connect(&"fine_demo", _on_fine_torre)
+	sala_sottomarino.connect(&"fine_demo", _on_fine_tunnel)
 	if a_pezzi:
 		sala_sottomarino.call(&"costruisci_a_pezzi")
 	else:
