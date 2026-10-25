@@ -1301,7 +1301,7 @@ func _mat_volantino() -> StandardMaterial3D:
 
 ## Il giocatore nella camera stagna chiude il portello (scelta 11A): il battente si chiude, il volantino gira per
 ## serrarlo restando attaccato, poi lei ci sbatte contro con la faccia sull'oblò e la bocca spalancata; nero e
-## "FINE DELLA DEMO" ([signal fine_demo]).
+## "FINE DEL CAPITOLO 1" ([signal fine_demo]).
 func chiudi_portello() -> void:
 	if finito:
 		return

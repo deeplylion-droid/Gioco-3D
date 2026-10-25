@@ -37,7 +37,7 @@ extends Node3D
 ## Dove finisce la demo: in fondo alla scia della tappa 7 o, con la tappa 8, davanti al portone
 ## della sala della torre.
 @export var fine_demo_trigger: Area3D
-## Il testo sotto "FINE DELLA DEMO".
+## Il testo sotto "FINE DEL CAPITOLO 1".
 @export_multiline var fine_demo_testo := "La scia continua nel buio.\nGrazie per aver giocato!"
 ## La tappa 7, il ritorno al buio (RitornoAlBuio).
 @export var ritorno: Node
@@ -49,7 +49,7 @@ extends Node3D
 ## comincia ad aprirsi (dopo la tappa 8) e da lì in poi la demo finisce nella vasca del fondo della
 ## torre, non più davanti al portone. Vuoto: niente torre (la demo finisce al portone, come prima).
 @export_file("*.tscn") var sala_torre_scena := "res://scenes/sala/torre/sala_torre.tscn"
-## Il testo sotto "FINE DELLA DEMO" in fondo alla discesa della torre.
+## Il testo sotto "FINE DEL CAPITOLO 1" in fondo alla discesa della torre.
 @export_multiline var fine_torre_testo := "La discesa continua nel buio.\nGrazie per aver giocato!"
 ## Il tunnel del viaggio sottomarino (l'inseguimento allungato dopo SB1, scelte dell'utente del 24 ottobre): si carica
 ## in un thread appena si entra nella torre e si costruisce a pezzi mentre si è nelle condotte; entra nel gioco dopo
@@ -638,7 +638,7 @@ func _on_fine_torre() -> void:
 	_fine_della_demo(fine_torre_testo)
 
 
-## La fine del tunnel del viaggio sottomarino (il portello chiuso, lo schianto, il nero): solo "FINE DELLA DEMO", senza
+## La fine del tunnel del viaggio sottomarino (il portello chiuso, lo schianto, il nero): solo "FINE DEL CAPITOLO 1", senza
 ## la riga della torre (collaudo D4: "La discesa continua nel buio." lì non c'entra).
 func _on_fine_tunnel() -> void:
 	if demo_finished:
@@ -652,13 +652,13 @@ const FINE_SCRITTA := 9.0
 const FINE_AL_TITOLO := 9.5
 
 
-## La scritta "FINE DELLA DEMO" e, finita la scritta, il ritorno al titolo da solo (scelta 12A dell'utente: prima restava
+## La scritta "FINE DEL CAPITOLO 1" e, finita la scritta, il ritorno al titolo da solo (scelta 12A dell'utente: prima restava
 ## il nero e bisognava premere Esc). Il timer si ferma con la pausa; se dalla pausa si torna al titolo prima, il livello
 ## non c'è più e il collegamento se ne va con lui: non scatta due volte.
 func _fine_della_demo(testo: String) -> void:
 	var hud := _hud()
 	if hud:
-		hud.show_banner("FINE DELLA DEMO", testo, FINE_SCRITTA)
+		hud.show_banner("FINE DEL CAPITOLO 1", testo, FINE_SCRITTA)
 	get_tree().create_timer(FINE_AL_TITOLO, false).timeout.connect(_torna_al_titolo)
 
 
