@@ -438,6 +438,9 @@ func _precarica_torre() -> void:
 	if Game.carica_in_thread(sala_torre_scena, "PackedScene") == OK:
 		_torre_in_caricamento = true
 		_torre_fallita = false
+		# e i file che l'inseguimento carica costruendosi (lei, le fonti degli arredi)
+		for r in SalaInseguimento.risorse():
+			Game.carica_in_thread(r)
 	else:
 		_torre_fallita = true
 
@@ -484,7 +487,7 @@ func _prepara_torre() -> void:
 	_torre_nascosta = t
 	add_child(t)
 	# (col portone già aperto, a pezzi più grandi: si entra prima, mai tutta in un fotogramma)
-	await t.call(&"costruisci_a_pezzi", 40.0 if _torre_voluta or _torre_in_attesa else 8.0)
+	await t.call(&"costruisci_a_pezzi", 20.0 if _torre_voluta or _torre_in_attesa else 8.0)
 	# (fuori dall'albero: una morte ha ricaricato la sala mentre la torre si preparava)
 	if not is_instance_valid(t) or t != _torre_nascosta or not t.is_inside_tree():
 		return
@@ -514,11 +517,17 @@ func _torre_attesa_dal_portone() -> void:
 func _mostra_torre() -> void:
 	if sala_torre or _torre_nascosta == null:
 		return
+	var t0 := Time.get_ticks_usec()
 	sala_torre = _torre_nascosta
 	_torre_nascosta = null
-	sala_torre.process_mode = Node.PROCESS_MODE_INHERIT
+	# (riaccesa a pezzi: tutta insieme erano 2 s di gioco fermo; il portone intanto si sta aprendo)
+	AccensioneAPezzi.accendi(sala_torre)
+	var t1 := Time.get_ticks_usec()
 	sala_torre.visible = true
+	var t2 := Time.get_ticks_usec()
 	_completa_torre()
+	if OS.has_environment("TORRE_TEMPI"):
+		print("mostra torre: process %.1f ms, visible %.1f ms, completa %.1f ms" % [(t1 - t0) / 1000.0, (t2 - t1) / 1000.0, (Time.get_ticks_usec() - t2) / 1000.0])
 
 
 ## Riserva e ripartenze dentro la torre: la torre si mette subito, costruita tutta in una volta.

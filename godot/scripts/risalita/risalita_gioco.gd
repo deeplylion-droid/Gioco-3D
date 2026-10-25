@@ -596,10 +596,14 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 	infermeria = inf
 	_tenuti.clear()
 	_accelerata = false
-	AttesaZone.pronta(&"risalita")
 	for n in [f, inf]:
-		n.process_mode = Node.PROCESS_MODE_INHERIT
+		# (riaccese a pezzi: tutte insieme fermavano il gioco)
+		await AccensioneAPezzi.accendi(n)
+		if not is_instance_valid(n) or not n.is_inside_tree():
+			return
 		GameState.ripristina.call_deferred(n)
+	# costruite, disegnate fuori vista e riaccese: la porta del ponte si può aprire
+	AttesaZone.pronta(&"risalita")
 	_aggiorna_visibilita()
 
 

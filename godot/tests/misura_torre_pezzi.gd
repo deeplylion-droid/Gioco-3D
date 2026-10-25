@@ -23,6 +23,10 @@ func _run() -> void:
 	Game.pause_on_focus_loss = false
 	Engine.set_meta(&"precarica_torre_spento", true)
 	var scena := load("res://scenes/sala/torre/sala_torre.tscn") as PackedScene
+	# come nel gioco: i file di lei arrivano col thread insieme alla torre
+	var tenuti: Array = []
+	for r in SalaInseguimento.risorse():
+		tenuti.append(load(r))
 	for i in 10:
 		await get_tree().process_frame
 	_misura = true
@@ -37,5 +41,36 @@ func _run() -> void:
 	await t.call(&"costruisci_a_pezzi")
 	print("TORRE: costruita in %.1f s, il fotogramma più carico della torre %.0f ms" % [(Time.get_ticks_usec() - t0) / 1e6, float(t.get(&"fotogramma_piu_carico_ms"))])
 	for i in 10:
+		await get_tree().process_frame
+	# la torre si mostra (SalaPrincipale._mostra_torre): process e visibile
+	var t1 := Time.get_ticks_usec()
+	if OS.has_environment("A_PEZZI"):
+		# i figli fermi uno per uno, poi la radice viva, poi i figli vivi uno per fotogramma
+		var peggiore := 0.0
+		for c in t.get_children():
+			var tc := Time.get_ticks_usec()
+			c.process_mode = Node.PROCESS_MODE_DISABLED
+			peggiore = maxf(peggiore, (Time.get_ticks_usec() - tc) / 1000.0)
+		print("mostra a pezzi: figli fermi %.1f ms (il peggiore %.1f)" % [(Time.get_ticks_usec() - t1) / 1000.0, peggiore])
+		var tr := Time.get_ticks_usec()
+		t.process_mode = Node.PROCESS_MODE_INHERIT
+		print("mostra a pezzi: radice viva %.1f ms" % ((Time.get_ticks_usec() - tr) / 1000.0))
+		peggiore = 0.0
+		for c in t.get_children():
+			var tc := Time.get_ticks_usec()
+			c.process_mode = Node.PROCESS_MODE_INHERIT
+			var d := (Time.get_ticks_usec() - tc) / 1000.0
+			if d > peggiore:
+				peggiore = d
+				print("  figlio %s: %.1f ms (%d nodi)" % [c.name, d, c.get_child_count()])
+		print("mostra a pezzi: il figlio peggiore %.1f ms" % peggiore)
+	else:
+		# come nel gioco (SalaPrincipale._mostra_torre)
+		await AccensioneAPezzi.accendi(t)
+	var t2 := Time.get_ticks_usec()
+	t.visible = true
+	var t3 := Time.get_ticks_usec()
+	print("mostra: process %.1f ms, visible %.1f ms" % [(t2 - t1) / 1000.0, (t3 - t2) / 1000.0])
+	for i in 20:
 		await get_tree().process_frame
 	get_tree().quit()

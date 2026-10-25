@@ -100,7 +100,7 @@ func _run() -> void:
 	# (le stanze non si caricano più in un fotogramma: il thread e la costruzione a pezzi, al più qualche secondo;
 	# nel gioco la porta resta chiusa intanto, AttesaZone)
 	var attesa := 0.0
-	while ris.get(&"fiume") == null and attesa < 30.0:
+	while not AttesaZone.e_pronta(&"risalita") and attesa < 30.0:
 		await _secondi(0.25)
 		attesa += 0.25
 	await _secondi(0.3)

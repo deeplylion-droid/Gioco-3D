@@ -46,6 +46,10 @@ static func non_pronta(zona: StringName) -> void:
 	_pronte[zona] = false
 
 
+static func e_pronta(zona: StringName) -> bool:
+	return bool(_pronte.get(zona, false))
+
+
 static func in_attesa(zona: StringName) -> bool:
 	return _attese.has(zona)
 

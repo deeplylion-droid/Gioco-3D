@@ -118,7 +118,7 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 		var tp := Time.get_ticks_usec()
 		passo.call()
 		if OS.has_environment("TORRE_TEMPI"):
-			print("passo %d: %.1f ms" % [k, (Time.get_ticks_usec() - tp) / 1000.0])
+			print("passo %d (%s): %.1f ms" % [k, passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
 		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)

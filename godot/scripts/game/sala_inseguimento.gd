@@ -485,6 +485,15 @@ func _scolo_zone() -> void:
 
 # --- lei --------------------------------------------------------------------------------------------
 
+## I file di lei che [method _lei_crea] carica: la sala li chiede al thread insieme alla torre (SalaPrincipale), così
+## qui load() li trova già pronti (caricati qui erano 230 ms di fotogramma fermo).
+const RISORSE_LEI := ["res://assets/models/medusa/medusa.glb", "res://assets/models/medusa/medusa_campana.tres",
+	"res://assets/models/medusa/medusa_capelli_bagnata.tres", "res://assets/models/medusa/medusa_ciocche_bagnata.tres",
+	"res://assets/models/medusa/medusa_mani_bagnata.tres", "res://assets/models/medusa/medusa_occhio.tres",
+	"res://assets/models/medusa/medusa_orbita_bagnata.tres", "res://assets/models/medusa/medusa_pelle_bagnata.tres",
+	"res://assets/models/medusa/medusa_tentacoli_bagnata.tres"]
+
+
 func _lei_crea() -> void:
 	lei = MedusaAffacciata.new()
 	lei.name = "Lei"
@@ -1252,12 +1261,28 @@ var _fonti := {}
 
 ## Un oggetto vero del gioco (vedi arredo() in tools/blender/inseguimento_proposte.py): un nodo della sala
 ## pompe o del kit di dettagli, copiato e messo al suo posto (come negli scatti della proposta).
+## Il file di una fonte degli arredi ("pompe" o "dettagli/<nome>").
+static func _percorso_fonte(fonte: String) -> String:
+	return "res://assets/ambienti_tecnici/sala_pompe.gltf" if fonte == "pompe" \
+			else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
+
+
+## I file che la costruzione carica (lei e le fonti degli arredi): la sala li chiede al thread insieme alla torre.
+static func risorse() -> Array:
+	var out: Array = RISORSE_LEI.duplicate()
+	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
+	if dati_luci is Dictionary:
+		for a in dati_luci.get("arredi", []):
+			var p := _percorso_fonte(String(a["f"]))
+			if not out.has(p):
+				out.append(p)
+	return out
+
+
 func _arredo(radice: Node3D, a: Dictionary) -> void:
 	var fonte: String = a["f"]
 	if not _fonti.has(fonte):
-		var percorso := "res://assets/ambienti_tecnici/sala_pompe.gltf" if fonte == "pompe" \
-				else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
-		_fonti[fonte] = (load(percorso) as PackedScene).instantiate()
+		_fonti[fonte] = (load(_percorso_fonte(fonte)) as PackedScene).instantiate()
 	var src: Node3D = _fonti[fonte]
 	var nomi: Array = a["n"] if a["n"] is Array else [a["n"]]
 	var gruppo := Node3D.new()
