@@ -31,6 +31,9 @@ const SAVE_VERSION := 1
 const SCENA_SALA := "res://scenes/sala_principale.tscn"
 const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 const DEATH_SEQUENCE_SCENE := "res://scenes/ui/death_sequence.tscn"
+## L'ordine dell'istantanea "inizio" di un livello nuovo: sotto tutti i checkpoint, anche quelli degli interni (da -10 a
+## -5, prima della sala). Era -1, e dal 15 ottobre i checkpoint degli interni non contavano (collaudo di Continua).
+const ORDINE_INIZIO := -1000
 
 ## Scrive l'ultimo checkpoint su disco (per un futuro "Continua" nel menu).
 @export var save_to_disk := true
@@ -85,7 +88,7 @@ func _on_level_ready() -> void:
 		_removed.clear()
 		_parcheggiati.clear()
 		imposta_luci(Luci.PRIMA_DEL_RISVEGLIO)
-		capture_snapshot("inizio", -1, player.global_transform)
+		capture_snapshot("inizio", ORDINE_INIZIO, player.global_transform)
 
 
 ## Cambia le luci dell'acquapark (vedi [enum Luci]) e lo dice a chi ascolta.
@@ -132,7 +135,7 @@ func reach_checkpoint(cp: Checkpoint) -> void:
 	var key := persist_key(cp)
 	if snapshot.get("checkpoint", "") == key and snapshot.get("scene", "") == _scene_path():
 		return
-	if cp.order < int(snapshot.get("order", -1)) and snapshot.get("scene", "") == _scene_path():
+	if cp.order < int(snapshot.get("order", ORDINE_INIZIO)) and snapshot.get("scene", "") == _scene_path():
 		return
 	capture_snapshot(key, cp.order, cp.get_spawn_transform())
 	checkpoint_reached.emit(key)
@@ -360,11 +363,25 @@ func has_save() -> bool:
 
 
 ## Il salvataggio su disco, se è valido: della versione giusta, con la scena che esiste, un checkpoint e il posto del
-## giocatore. Altrimenti un dizionario vuoto.
+## giocatore. Altrimenti un dizionario vuoto. Se manca o è guasto ma c'è il file temporaneo, completo e valido, vale
+## quello e diventa il salvataggio: su Windows DirAccess.rename prima cancella il file di destinazione e poi rinomina, e
+## un crash fra le due cose lascia solo il temporaneo (collaudo di Continua di ambienti-1).
 func salvataggio() -> Dictionary:
-	if not FileAccess.file_exists(SAVE_PATH):
+	var data := _leggi_salvataggio(SAVE_PATH)
+	if data.is_empty():
+		var tmp := SAVE_PATH + ".tmp"
+		data = _leggi_salvataggio(tmp)
+		if not data.is_empty():
+			var err := DirAccess.rename_absolute(tmp, SAVE_PATH)
+			if err != OK:
+				push_warning("Salvataggio ripreso dal file temporaneo, ma non rinominato: %s" % error_string(err))
+	return data
+
+
+func _leggi_salvataggio(percorso: String) -> Dictionary:
+	if not FileAccess.file_exists(percorso):
 		return {}
-	var data = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
+	var data = JSON.parse_string(FileAccess.get_file_as_string(percorso))
 	if typeof(data) != TYPE_DICTIONARY or int(data.get("version", 0)) != SAVE_VERSION:
 		return {}
 	var scena := String(data.get("scene", ""))

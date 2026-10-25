@@ -2,7 +2,8 @@ extends Node
 ## Test della voce Continua del titolo (GameState.continue_from_disk):
 ## - senza salvataggio la voce non c'è, e la prima voce è Nuova partita;
 ## - con un salvataggio valido Continua è la prima voce, con lo stile delle altre; con uno guasto (versione vecchia,
-##   JSON rotto) non c'è;
+##   JSON rotto) non c'è; se il salvataggio manca o è guasto ma c'è il file temporaneo completo (su Windows un crash fra
+##   la cancellazione e il rename), vale quello e diventa il salvataggio; la prima partenza qui sotto parte così;
 ## - per ogni partenza del menu di prova (res://assets/prova/<id>.json, un checkpoint per zona) usata come salvataggio
 ##   su disco: Continua apre la sala dalla schermata di caricamento, il giocatore sta al checkpoint, con le luci, lo zaino
 ##   pieno e le Polaroid del salvataggio; ogni checkpoint più avanti nella stessa zona riscrive il salvataggio su disco; dopo
@@ -11,11 +12,16 @@ extends Node
 ##   scritto su disco;
 ## - Nuova partita e uscita prima del primo checkpoint: il salvataggio di prima resta (si scrive su disco solo dal primo
 ##   checkpoint vero);
+## - gli interni ("interni"): durante la scena del risveglio nessun checkpoint (su disco resta quello di prima: chi esce lì
+##   la rivede da capo); a scena finita il checkpoint del risveglio, poi gli altri 5 entrandoci: ognuno si scrive su disco
+##   (prima, con l'ordine da -10 a -5 sotto l'istantanea "inizio", si scartavano tutti); Continua da ognuno riparte lì, con
+##   le luci e lo zaino (preso nello stanzino), senza rifare la scena del risveglio; poi una morte riparte dall'ultimo;
 ## - un crash vero (due processi): con "crash_prima" il processo continua, raggiunge un checkpoint e si uccide da solo
 ##   (con un file temporaneo rotto a metà scrittura); con "crash_dopo" un processo nuovo continua da lì.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_continua.gd [id,id]
 
 const TITOLO := "res://scenes/ui/menu_principale.tscn"
+const TEMPORANEO := GameState.SAVE_PATH + ".tmp"
 
 var _ok := 0
 var _ko := 0
@@ -58,6 +64,8 @@ func _run() -> void:
 		print("== ", id)
 		await _continua_da(id, prima)
 		prima = false
+	if solo.is_empty() or "interni" in solo:
+		await _interni()
 	if solo.is_empty() or "nuova" in solo:
 		await _nuova_partita_non_cancella()
 	_cancella()
@@ -82,12 +90,94 @@ func _nuova_partita_non_cancella() -> void:
 	_check(_nomi(t)[0] == "Continua", "uscendo prima del primo checkpoint, nel titolo c'è ancora Continua")
 
 
+## I checkpoint degli interni (collaudo di Continua di ambienti-1, difetto del 15 ottobre): vedi in cima.
+func _interni() -> void:
+	print("== interni")
+	var prima := MenuProva.istantanea("torre")
+	_cancella()
+	_scrivi(JSON.stringify(prima))
+	GameState.reset_progress()
+	get_tree().change_scene_to_file(GameState.SCENA_CARICAMENTO)
+	await _aspetta_ripresa(false)
+	var interni := get_tree().current_scene.get_node_or_null(^"Interni") if get_tree().current_scene else null
+	var p := GameState.player
+	_check(interni != null and p != null, "interni: nuova partita, la sala è aperta")
+	if interni == null or p == null:
+		return
+	var cps: Array = interni.find_children("*", "Checkpoint", true, false)
+	cps.sort_custom(func(a, b): return (a as Checkpoint).order < (b as Checkpoint).order)
+	_check(cps.size() == 6 and (cps[0] as Node).name == "CheckpointRisveglio", "interni: 6 checkpoint, il primo è quello del risveglio (%s)" % [cps.map(func(c): return c.name)])
+	if cps.size() != 6:
+		return
+	_check(not p.input_enabled and String(GameState.snapshot.get("checkpoint", "")) == "inizio"
+			and String(GameState.salvataggio().get("checkpoint", "")) == prima["checkpoint"],
+			"interni: durante la scena del risveglio nessun checkpoint, su disco resta quello di prima (%s)" % GameState.salvataggio().get("checkpoint", "-"))
+	var t0 := Time.get_ticks_msec()
+	while not p.input_enabled and Time.get_ticks_msec() - t0 < 30000:
+		await get_tree().physics_frame
+	for i in 10:
+		await get_tree().physics_frame
+	# i checkpoint uno dopo l'altro, entrandoci: si salva quello che c'è su disco dopo ognuno
+	var salvati := []
+	for cp: Checkpoint in cps:
+		var chiave := GameState.persist_key(cp)
+		if cp.name == "CheckpointLavapiedi":
+			(interni.get_node(^"Zaino/Prendi") as Interactable).interact(p)
+		if cp.name != "CheckpointRisveglio":
+			var sp := cp.get_spawn_transform()
+			p.teleport(sp.origin, p.yaw, 0.0)
+			for i in 20:
+				await get_tree().physics_frame
+		var su_disco := GameState.salvataggio()
+		_check(String(GameState.snapshot.get("checkpoint", "")) == chiave and String(su_disco.get("checkpoint", "")) == chiave
+				and int(su_disco.get("order", 0)) == cp.order, "interni: %s (%d) raggiunto e scritto su disco (%s)" % [cp.name, cp.order, su_disco.get("checkpoint", "-")])
+		salvati.append([cp.name, chiave, cp.get_spawn_transform().origin, FileAccess.get_file_as_string(GameState.SAVE_PATH)])
+	# Continua da ognuno, dopo una chiusura
+	for s in salvati:
+		var nome: String = s[0]
+		var d = JSON.parse_string(s[3])
+		_scrivi(s[3])
+		GameState.reset_progress()
+		var t := await _apri_titolo()
+		_check(_nomi(t)[0] == "Continua", "interni, %s: nel titolo c'è Continua" % nome)
+		(t.call(&"voci")[0] as Button).pressed.emit()
+		await _aspetta_ripresa()
+		await _ripresa_interni(nome, s[1], s[2], d)
+	# una morte nell'ultimo (negli interni non c'è niente che uccide: la ripartenza dopo una morte si prova lo stesso)
+	var ultimo: Array = salvati[-1]
+	GameState.respawn()
+	await _aspetta_ripresa()
+	await _ripresa_interni(String(ultimo[0]) + " dopo una morte", ultimo[1], ultimo[2], JSON.parse_string(ultimo[3]))
+
+
+func _ripresa_interni(nome: String, chiave: String, posto: Vector3, d: Dictionary) -> void:
+	var p := GameState.player
+	var interni := get_tree().current_scene.get_node_or_null(^"Interni") if get_tree().current_scene else null
+	_check(p != null and interni != null and String(GameState.snapshot.get("checkpoint", "")) == chiave
+			and p.global_position.distance_to(posto) < 0.5, "interni, %s: riparte dal checkpoint (a %.2f m)" % [nome, p.global_position.distance_to(posto) if p else -1.0])
+	if p == null or interni == null:
+		return
+	_check(int(GameState.luci) == int(d["luci"]), "interni, %s: luci %d (salvate %d)" % [nome, GameState.luci, int(d["luci"])])
+	var zaino := (d["player"]["inventory"] as Dictionary).has("zaino_pompa")
+	var acqua := float(d["player"]["water"])
+	_check(p.has_item(&"zaino_pompa") == zaino and (p.water_pack == null or p.water_pack.equipped == zaino)
+			and (not zaino or absf(p.water_pack.tank_amount - acqua) < 0.01)
+			and (interni.get_node_or_null(^"Zaino") == null) == zaino,
+			"interni, %s: zaino %s, come nel salvataggio (oggetto %s, addosso %s, acqua %.1f, sulla rastrelliera %s)" % [nome,
+			"preso" if zaino else "ancora nello stanzino", p.has_item(&"zaino_pompa"), p.water_pack.equipped if p.water_pack else null,
+			p.water_pack.tank_amount if p.water_pack else -1.0, interni.get_node_or_null(^"Zaino") != null])
+	var squalo := interni.get_node_or_null(^"Gioco/RisveglioSqualo") as RisveglioSqualo
+	_check(p.input_enabled and absf(p.camera.rotation.z) < 0.01 and absf(p.camera.position.y) < 0.01 and squalo and not squalo.in_corso(),
+			"interni, %s: la scena del risveglio non riparte" % nome)
+
+
 func _cancella() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(GameState.SAVE_PATH))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEMPORANEO))
 
 
-func _scrivi(testo: String) -> void:
-	var f := FileAccess.open(GameState.SAVE_PATH, FileAccess.WRITE)
+func _scrivi(testo: String, percorso := GameState.SAVE_PATH) -> void:
+	var f := FileAccess.open(percorso, FileAccess.WRITE)
 	f.store_string(testo)
 	f.close()
 
@@ -118,6 +208,26 @@ func _titolo_senza_e_con() -> void:
 	_scrivi(JSON.stringify(d))
 	t = await _apri_titolo()
 	_check(not "Continua" in _nomi(t), "con un salvataggio di un'altra versione Continua non c'è")
+	# solo il file temporaneo, completo (su Windows il rename cancella prima il salvataggio: un crash lì lascia solo lui)
+	var r := MenuProva.istantanea("risalita")
+	_cancella()
+	_scrivi(JSON.stringify(r), TEMPORANEO)
+	t = await _apri_titolo()
+	_check("Continua" in _nomi(t) and FileAccess.file_exists(GameState.SAVE_PATH) and not FileAccess.file_exists(TEMPORANEO)
+			and String(GameState.salvataggio().get("checkpoint", "")) == r["checkpoint"],
+			"senza salvataggio ma col file temporaneo completo c'è Continua, e il temporaneo diventa il salvataggio")
+	# guasto, col temporaneo completo
+	_scrivi("{rotto")
+	_scrivi(JSON.stringify(r), TEMPORANEO)
+	t = await _apri_titolo()
+	_check("Continua" in _nomi(t) and not FileAccess.file_exists(TEMPORANEO) and String(GameState.salvataggio().get("checkpoint", "")) == r["checkpoint"],
+			"con un salvataggio rotto ma il file temporaneo completo c'è Continua, dal temporaneo")
+	# guasto, col temporaneo rotto a metà scrittura
+	_scrivi("{rotto")
+	_scrivi("{\"version\": %d, \"scene\": " % GameState.SAVE_VERSION, TEMPORANEO)
+	t = await _apri_titolo()
+	_check(not "Continua" in _nomi(t), "con il salvataggio e il file temporaneo rotti Continua non c'è")
+	_cancella()
 	# uno valido
 	_scrivi(JSON.stringify(MenuProva.istantanea("risalita")))
 	t = await _apri_titolo()
@@ -133,6 +243,30 @@ func _titolo_senza_e_con() -> void:
 		for i in 5:
 			await get_tree().process_frame
 		_check(t.get_viewport().gui_get_focus_owner() == c, "Continua ha il focus")
+	await _joypad_conferma()
+
+
+## A del joypad conferma la voce col focus (collaudo di ambienti-1: ui_accept aveva solo Invio, Invio del tastierino e
+## Spazio), e nel gioco non fa nient'altro: non è in nessuna azione del giocatore.
+func _joypad_conferma() -> void:
+	var altre := InputMap.get_actions().filter(func(a): return not String(a).begins_with("ui_") \
+			and InputMap.action_get_events(a).any(func(e): return e is InputEventJoypadButton and (e as InputEventJoypadButton).button_index == JOY_BUTTON_A))
+	_check(altre.is_empty(), "A del joypad non è in nessuna azione del gioco (%s)" % [altre])
+	var b := Button.new()
+	b.text = "prova"
+	add_child(b)
+	b.grab_focus()
+	var premuto := [false]
+	b.pressed.connect(func(): premuto[0] = true)
+	for giu in [true, false]:
+		var a := InputEventJoypadButton.new()
+		a.button_index = JOY_BUTTON_A
+		a.pressed = giu
+		Input.parse_input_event(a)
+		for i in 3:
+			await get_tree().process_frame
+	_check(premuto[0], "A del joypad conferma la voce col focus")
+	b.queue_free()
 
 
 func _continua_da(id: String, chiusura: bool) -> void:
@@ -140,7 +274,9 @@ func _continua_da(id: String, chiusura: bool) -> void:
 	_check(not d.is_empty(), "%s: l'istantanea si legge" % id)
 	if d.is_empty():
 		return
-	_scrivi(JSON.stringify(d))
+	_cancella()
+	# la prima partenza parte dal solo file temporaneo (il crash nel rename su Windows)
+	_scrivi(JSON.stringify(d), TEMPORANEO if chiusura else GameState.SAVE_PATH)
 	var t := await _apri_titolo()
 	_check(_nomi(t)[0] == "Continua", "%s: nel titolo c'è Continua" % id)
 	(t.call(&"voci")[0] as Button).pressed.emit()
@@ -249,7 +385,7 @@ func _crash_dopo() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://crash_atteso.json"))
 
 
-func _aspetta_ripresa() -> void:
+func _aspetta_ripresa(attesa := true) -> void:
 	# (in tempo vero: la sala si carica in un thread, e nel sandbox la prima volta ci mette minuti)
 	var t0 := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - t0 < 900000:
@@ -258,5 +394,6 @@ func _aspetta_ripresa() -> void:
 		if s and s.scene_file_path != "res://scenes/ui/caricamento.tscn" and s.scene_file_path != TITOLO \
 				and GameState.player and is_instance_valid(GameState.player) and not GameState.is_restoring():
 			break
-	for i in 30:
-		await get_tree().process_frame
+	if attesa:
+		for i in 30:
+			await get_tree().process_frame
