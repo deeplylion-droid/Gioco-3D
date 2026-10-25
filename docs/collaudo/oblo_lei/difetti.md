@@ -73,3 +73,11 @@ Fogli in `fogli_4943/`. Tutti gli scatti sono a `--fixed-fps 60`.
 - **D5, distacco rifatto bene** (passo 8 fino a 160 fotogrammi, cioè 2,7 s): lei stacca le mani e si allontana piano. La zona di lei si scurisce poco a poco: la luminosità media scende da 51,8 a 43,0 fra il fotogramma 24 e il 152.
   - Tra il fotogramma 152 e il 160 sparisce invece tutta in una volta (da 43,0 a 30,6), lei e la sua luce, mentre si vedeva ancora bene.
   - Resta da decidere se va bene così o se deve finire di sparire nel buio prima di togliere il modello.
+
+### Torre dagli occhi del giocatore e luce rosa (4943e409)
+
+- **Dagli occhi del giocatore** (`fogli_4943/foglio_giocatore_torre.jpg`): il riquadro chiaro non si vede più, né da lontano né da vicino. Lei sta dietro il vetro in tutti e quattro gli scatti, compreso quello mentre si stacca.
+- **Luce rosa dietro i muri** (`tests/collaudo/luce_oblo.gd`, `fogli_4943/foglio_luce_torre.jpg`, con le colonne con / senza / differenza): da 8 punti, con lei accesa e spenta.
+  - In tre punti dalla parte della torre il rosa in più è solo lei vista dal vetro. È giusto: lo script ha preso il vetro per un muro.
+  - **D6. Dalla sala delle condotte,** dal punto (41,95, -19,9, -16,7), dietro il muro della torre, la luce rosa disegna sottili righe rosa lungo i bordi di un rettangolo. È il fuori della cisterna (o il buco del muro) visto dalle condotte. Al massimo il rosa vale 0,22, ma è tutto su quelle righe: la luce passa dalle fessure fra la vasca e il muro.
+    - Scatto: `difetti/6_torre_luce_rosa_condotte.jpg`.
