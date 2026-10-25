@@ -206,8 +206,22 @@ func _modello(i: int) -> void:
 func _stacca_figli(n: Node) -> Array:
 	var figli := n.get_children()
 	for c in figli:
+		# (l'owner si toglie qui e si rimette quando il nodo rientra: rientrato con l'owner di prima, Godot avvisava
+		# "owner inconsistent" per ogni nodo)
+		if c.owner:
+			c.set_meta(&"_proprietario", c.owner)
+			c.owner = null
 		n.remove_child(c)
 	return figli
+
+
+func _rimetti_proprietario(c: Node) -> void:
+	if not c.has_meta(&"_proprietario"):
+		return
+	var o: Node = c.get_meta(&"_proprietario")
+	c.remove_meta(&"_proprietario")
+	if is_instance_valid(o) and o.is_ancestor_of(c):
+		c.owner = o
 
 
 ## Un passo per ogni nodo di [param figli], da mettere sotto [param padre]: ognuno entra senza i suoi
@@ -219,6 +233,7 @@ func _passi_figli(padre: Node, figli: Array) -> Array:
 			var nipoti := _stacca_figli(c)
 			var tp := Time.get_ticks_usec()
 			padre.add_child(c)
+			_rimetti_proprietario(c)
 			if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 5000:
 				print("  nodo %s (%s): %.1f ms" % [c.name, c.get_class(), (Time.get_ticks_usec() - tp) / 1000.0])
 			if not nipoti.is_empty():

@@ -50,7 +50,9 @@ static func accendi(radice: Node, modo := Node.PROCESS_MODE_INHERIT, ms := 6.0) 
 			pila.append_array(fermati)
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms:
 			await albero.process_frame
-			if not is_instance_valid(radice) or not radice.is_inside_tree():
+			# (si va avanti anche se la zona è uscita dall'albero per un momento: fermata a metà restava spenta, coi
+			# checkpoint della torre muti, test_torre del 25 ottobre; si smette solo se è stata liberata)
+			if not is_instance_valid(radice):
 				return
 			t0 = Time.get_ticks_usec()
 
@@ -87,9 +89,15 @@ static func _dividi(corpo: StaticBody3D, fermati: Array) -> Array:
 		for g in corpo.get_groups():
 			nuovo.add_to_group(g)
 		nuovo.process_mode = Node.PROCESS_MODE_DISABLED
+		# (l'owner si toglie e si rimette dopo, uguale per il corpo nuovo: se no Godot avvisa "owner inconsistent")
+		var proprietario := f.owner
+		f.owner = null
 		corpo.remove_child(f)
 		nuovo.add_child(f)
 		padre.add_child(nuovo)
+		if proprietario and proprietario.is_ancestor_of(nuovo):
+			nuovo.owner = proprietario
+			f.owner = proprietario
 		# il corpo nuovo, poi la sua forma (fermata come le altre)
 		out.append(fermati[k])
 		out.append([nuovo, Node.PROCESS_MODE_INHERIT, null, 0, []])

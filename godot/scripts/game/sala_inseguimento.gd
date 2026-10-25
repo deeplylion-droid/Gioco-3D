@@ -184,11 +184,19 @@ func _modello(i: int) -> void:
 		_varco_scalette(glb)
 	if _a_pezzi:
 		var figli := glb.get_children()
+		var proprietari := {}
 		for c in figli:
+			# (l'owner si toglie prima e si rimette dopo: rimesso dentro con l'owner di prima, Godot avvisava "owner
+			# inconsistent" per ogni pezzo)
+			proprietari[c] = c.owner
+			c.owner = null
 			glb.remove_child(c)
 		var passi: Array = []
 		for c in figli:
-			passi.append(func(): glb.add_child(c))
+			passi.append(func():
+				glb.add_child(c)
+				if is_instance_valid(proprietari[c]) and (proprietari[c] as Node).is_ancestor_of(c):
+					c.owner = proprietari[c])
 		_coda = passi + _coda
 	add_child(glb)
 
