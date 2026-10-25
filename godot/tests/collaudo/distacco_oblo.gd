@@ -2,12 +2,12 @@ extends Node
 ## Collaudo degli oblò con lei: come si muove quando si stacca. Dagli occhi del giocatore, da vicino (come
 ## scatti_oblo_torre.gd e scatti_oblo_lei.gd), uno scatto ogni [constant OGNI] fotogrammi dal distacco finché non è sparita.
 ## Uso (sotto il render.lock):
-##   OBLO_RAGGIO=0.6 xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan \
+##   OBLO_RAGGIO=0.6 xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --fixed-fps 60 \
 ##        --resolution 1280x720 --script res://tests/run.gd -- res://tests/collaudo/distacco_oblo.gd <cartella> torre
 
 const PLAYER := "res://scenes/player/player.tscn"
 const OGNI := 8
-const SCATTI := 10
+const SCATTI := 20
 const POSTO_TORRE := Vector3(38.0, -19.98, -13.4)
 
 var cartella := "user://distacco_oblo"
