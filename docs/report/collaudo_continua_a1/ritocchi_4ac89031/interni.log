@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+== interni
+  ok  a risveglio finito si salva il checkpoint del risveglio (Interni/Gioco/CheckpointRisveglio)
+  ok  6 checkpoint negli interni (6)
+  ok  Interni/Gioco/CheckpointRisveglio (ordine -10) scritto su disco (Interni/Gioco/CheckpointRisveglio)
+  ok  Interni/Gioco/CheckpointIngressoSpogliatoi (ordine -9) scritto su disco (Interni/Gioco/CheckpointIngressoSpogliatoi)
+  ok  Interni/Gioco/CheckpointStanzino (ordine -8) scritto su disco (Interni/Gioco/CheckpointStanzino)
+  ok  Interni/Gioco/CheckpointLavapiedi (ordine -7) scritto su disco (Interni/Gioco/CheckpointLavapiedi)
+  ok  Interni/Gioco/CheckpointTornello (ordine -6) scritto su disco (Interni/Gioco/CheckpointTornello)
+  ok  Interni/Gioco/CheckpointSaracinesca (ordine -5) scritto su disco (Interni/Gioco/CheckpointSaracinesca)
+  ok  Interni/Gioco/CheckpointRisveglio: niente risveglio rifatto (comandi attivi, camera dritta, checkpoint del risveglio attivo)
+  ok  Interni/Gioco/CheckpointRisveglio: al checkpoint (a 0.00 m)
+  ok  Interni/Gioco/CheckpointRisveglio: checkpoint Interni/Gioco/CheckpointRisveglio
+  ok  Interni/Gioco/CheckpointRisveglio: luci 0 (salvate 0)
+  ok  Interni/Gioco/CheckpointRisveglio: l'inventario [] (mancano [])
+  ok  Interni/Gioco/CheckpointRisveglio: lo zaino con 10.00 di acqua (salvata 10.00)
+  ok  Interni/Gioco/CheckpointRisveglio: 0 Polaroid, come nel salvataggio []
+  ok  Interni/Gioco/CheckpointRisveglio: zaino non addosso come nel salvataggio
+  ok  Interni/Gioco/CheckpointLavapiedi: niente risveglio rifatto (comandi attivi, camera dritta, checkpoint del risveglio attivo)
+  ok  Interni/Gioco/CheckpointLavapiedi: al checkpoint (a 0.00 m)
+  ok  Interni/Gioco/CheckpointLavapiedi: checkpoint Interni/Gioco/CheckpointLavapiedi
+  ok  Interni/Gioco/CheckpointLavapiedi: luci 0 (salvate 0)
+  ok  Interni/Gioco/CheckpointLavapiedi: l'inventario [] (mancano [])
+  ok  Interni/Gioco/CheckpointLavapiedi: lo zaino con 10.00 di acqua (salvata 10.00)
+  ok  Interni/Gioco/CheckpointLavapiedi: 0 Polaroid, come nel salvataggio []
+  ok  Interni/Gioco/CheckpointLavapiedi: zaino non addosso come nel salvataggio
+  ok  Interni/Gioco/CheckpointSaracinesca: niente risveglio rifatto (comandi attivi, camera dritta, checkpoint del risveglio attivo)
+  ok  Interni/Gioco/CheckpointSaracinesca: al checkpoint (a 0.00 m)
+  ok  Interni/Gioco/CheckpointSaracinesca: checkpoint Interni/Gioco/CheckpointSaracinesca
+  ok  Interni/Gioco/CheckpointSaracinesca: luci 0 (salvate 0)
+  ok  Interni/Gioco/CheckpointSaracinesca: l'inventario [] (mancano [])
+  ok  Interni/Gioco/CheckpointSaracinesca: lo zaino con 10.00 di acqua (salvata 10.00)
+  ok  Interni/Gioco/CheckpointSaracinesca: 0 Polaroid, come nel salvataggio []
+  ok  Interni/Gioco/CheckpointSaracinesca: zaino non addosso come nel salvataggio
+RISULTATO: 32 controlli ok, 0 falliti
+ERROR: 353 resources still in use at exit (run with --verbose for details).

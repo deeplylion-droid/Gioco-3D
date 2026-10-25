@@ -1,0 +1,87 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Il titolo
+  ok    il titolo è la scena principale del progetto
+  ok    la scena del titolo si carica
+  ok    la statua della medusa c'è
+  ok    la statua ha la sua grandezza vera (4,5 m, nessuna scala)
+  ok    le mani nuove hanno il vinile della medusa
+  ok    l'occhio usa lo shader con la venatura
+  ok    lo strappo della fauce è nascosto e ha la tinta della pelle
+  ok    c'è il piedistallo della sala
+  ok    ci sono i lampi della tempesta
+  ok    il nome provvisorio del gioco non è scritto sul titolo
+  ok    c'è il logo del gioco
+  ok    il logo sta tutto nello schermo ([P: (91.0, 30.0), S: (431.0, 225.0)])
+  ok    il logo non copre capitolo e voci
+  ok    il logo resta nella metà sinistra, la statua a destra
+  ok    il logo ha risoluzione per 1920x1080 e oltre
+  ok    in piccolo capitolo e versione (Capitolo 1 · demo 0.3.14)
+  ok    le voci sono Nuova partita, Opzioni, Comandi, Esci
+  ok    testo della prima voce: NUOVA PARTITA
+  ok    Nuova partita ha il focus
+  ok    nel titolo parte la sigla pulita
+Tastiera e joypad (azioni ui_*)
+  ok    giù: Opzioni
+  ok    su dalla prima voce: si passa a Esci
+  ok    giù dall'ultima voce: si torna a Nuova partita
+  ok    Esc nel titolo non apre la pausa
+Calibrazione della luminosità al primo avvio, sopra il titolo
+  ok    la calibrazione ferma il titolo
+  ok    la calibrazione è aperta
+  ok    la calibrazione sta sopra il menu del titolo (110 > 100)
+  ok    Conferma ha il focus
+  ok    confermata la calibrazione, il titolo riparte
+  ok    la calibrazione è segnata come fatta
+  ok    il titolo riprende il focus
+Comandi
+  ok    Comandi apre la schermata dei comandi
+  ok    ci sono tutte le righe dei comandi
+  ok    Indietro ha il focus
+  ok    muoversi: W A S D, dalla InputMap
+  ok    correre: Maiusc
+  ok    abbassarsi: Ctrl
+  ok    saltare: Spazio
+  ok    la torcia non c'è più: niente tasto F, niente riga nei comandi (scelta dell'utente del 23 ottobre)
+  ok    usare: E
+  ok    spruzzare: tasto sinistro
+  ok    aspirare: tasto destro
+  ok    pausa: Esc
+  ok    Esc chiude i comandi
+  ok    il focus torna su Comandi
+  ok    e la pausa resta chiusa
+Opzioni
+  ok    Opzioni apre il menu dell'addon grafica
+  ok    Esc chiude le opzioni
+  ok    il focus torna su Opzioni
+Nuova partita: caricamento a thread e sala
+  ok    Nuova partita fa partire lo spot VHS
+  ok    Nuova partita porta alla schermata di caricamento
+  ok    i progressi in memoria ripartono da zero
+  ok    c'è la barra di avanzamento
+  ok    c'è un consiglio: Cerca lo zaino-pompa alla postazione dei bagnini.
+  ok    ci sono i comandi
+  ok    il nome provvisorio non è scritto nel caricamento
+  ok    Esc durante il caricamento non apre la pausa
+  ok    la barra avanza mentre carica
+  ok    si arriva alla sala (4.8 s)
+  ok    la sala entra dal nero
+  ok    la dissolvenza dal nero finisce
+  ok    si gioca: niente pausa, la pausa automatica è di nuovo attiva
+Menu di pausa
+  ok    le voci di prima ci sono ancora
+  ok    c'è Comandi
+  ok    c'è Torna al titolo
+  ok    Comandi apre la schermata sopra la pausa
+  ok    Esc chiude i comandi
+  ok    e si torna al menu di pausa
+  ok    Torna al titolo riporta al titolo
+  ok    senza la pausa
+  ok    con il focus su Nuova partita
+Caricamento: la riserva se il thread fallisce
+WARNING: Caricamento: il thread non ce la fa (res://scenes/test/scivoli_prova.tscn), carico la sala subito
+     GDScript backtrace (most recent call first):
+  ok    il thread fallisce: la scena si carica lo stesso e si va avanti, senza errore
+
+RISULTATO: 72 controlli ok, 0 falliti
+ERROR: 353 resources still in use at exit (run with --verbose for details).

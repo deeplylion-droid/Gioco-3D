@@ -1,0 +1,226 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+== tmp
+-- solo il .tmp completo
+  ok  solo il .tmp completo: Continua c'è (["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"])
+  ok  solo il .tmp completo: il .tmp è diventato il salvataggio
+  ok  solo il .tmp completo (torre): al checkpoint (a 0.01 m)
+  ok  solo il .tmp completo (torre): checkpoint SalaTorre/Checkpoint_portone
+  ok  solo il .tmp completo (torre): luci 2 (salvate 2)
+  ok  solo il .tmp completo (torre): l'inventario ["zaino_pompa"] (mancano [])
+  ok  solo il .tmp completo (torre): lo zaino con 20.00 di acqua (salvata 20.00)
+  ok  solo il .tmp completo (torre): 10 Polaroid, come nel salvataggio ["p01", "p02", "p03", "p04", "p05", "p08", "p09", "p06", "p07", "PolaroidPecora"]
+-- salvataggio rotto e .tmp buono
+ERROR: Parse JSON failed. Error at line 0: Unterminated string
+   GDScript backtrace (most recent call first):
+       [0] _leggi_salvataggio (res://scripts/game/game_state.gd:384)
+       [1] salvataggio (res://scripts/game/game_state.gd:370)
+       [2] has_save (res://scripts/game/game_state.gd:362)
+       [3] _costruisci_interfaccia (res://scripts/ui/menu/menu_principale.gd:317)
+       [4] _ready (res://scripts/ui/menu/menu_principale.gd:59)
+  ok  salvataggio rotto e .tmp buono: Continua c'è (["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"])
+  ok  salvataggio rotto e .tmp buono: il .tmp è diventato il salvataggio
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+WARNING: Posa: nessun muro dietro @MeshInstance3D@6200 ((31.0, -2.5, -4.08), verso (0.0, 0.0, -1.0))
+     GDScript backtrace (most recent call first):
+WARNING: Posa: nessun muro dietro @MeshInstance3D@6202 ((31.0, -8.0, -25.92), verso (0.0, 0.0, 1.0))
+     GDScript backtrace (most recent call first):
+WARNING: Posa: nessun muro dietro @MeshInstance3D@6204 ((20.28, -12.0, -10.0), verso (1.0, 0.0, 0.0))
+     GDScript backtrace (most recent call first):
+WARNING: Posa: nessun muro dietro @MeshInstance3D@6206 ((39.92, -16.5, -15.0), verso (-1.0, 0.0, 0.0))
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+     GDScript backtrace (most recent call first):
+  ok  salvataggio rotto e .tmp buono (tunnel): al checkpoint (a 0.00 m)
+  ok  salvataggio rotto e .tmp buono (tunnel): checkpoint SalaSottomarino/Checkpoint_6
+  ok  salvataggio rotto e .tmp buono (tunnel): luci 2 (salvate 2)
+  ok  salvataggio rotto e .tmp buono (tunnel): l'inventario ["zaino_pompa"] (mancano [])
+  ok  salvataggio rotto e .tmp buono (tunnel): lo zaino con 20.00 di acqua (salvata 20.00)
+  ok  salvataggio rotto e .tmp buono (tunnel): 11 Polaroid, come nel salvataggio ["p01", "p02", "p03", "p04", "p05", "p08", "p09", "p06", "p07", "PolaroidPecora", "Polaroid10"]
+-- tutti e due rotti
+ERROR: Parse JSON failed. Error at line 0: Expected '}'
+   GDScript backtrace (most recent call first):
+       [0] _leggi_salvataggio (res://scripts/game/game_state.gd:384)
+       [1] salvataggio (res://scripts/game/game_state.gd:370)
+       [2] has_save (res://scripts/game/game_state.gd:362)
+       [3] _costruisci_interfaccia (res://scripts/ui/menu/menu_principale.gd:317)
+       [4] _ready (res://scripts/ui/menu/menu_principale.gd:59)
+ERROR: Parse JSON failed. Error at line 0: Expected '}'
+   GDScript backtrace (most recent call first):
+       [0] _leggi_salvataggio (res://scripts/game/game_state.gd:384)
+       [1] salvataggio (res://scripts/game/game_state.gd:373)
+       [2] has_save (res://scripts/game/game_state.gd:362)
+       [3] _costruisci_interfaccia (res://scripts/ui/menu/menu_principale.gd:317)
+       [4] _ready (res://scripts/ui/menu/menu_principale.gd:59)
+  ok  tutti e due rotti: il titolo si apre senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+RISULTATO: 17 controlli ok, 0 falliti
+ERROR: 404 resources still in use at exit (run with --verbose for details).

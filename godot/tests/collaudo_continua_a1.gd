@@ -34,6 +34,14 @@ func _run() -> void:
 	print("== ", caso)
 	if caso == "rotti":
 		await _rotti()
+	elif caso == "joypad2":
+		await _joypad2()
+	elif caso == "tmp":
+		await _tmp()
+	elif caso == "interni":
+		await _interni()
+	elif caso == "risveglio":
+		await _risveglio_interrotto()
 	elif caso == "nuova":
 		await _nuova()
 	else:
@@ -181,7 +189,7 @@ func _nuova() -> void:
 	Input.parse_input_event(k)
 	await _aspetta_ripresa()
 	_check(GameState.player != null and String(GameState.snapshot.get("checkpoint", "")) == "inizio", "nuova partita: la sala dall'inizio")
-	_check(String(GameState.salvataggio().get("checkpoint", "")) == d["checkpoint"], "prima del primo checkpoint il salvataggio vecchio c'è ancora (%s)" % GameState.salvataggio().get("checkpoint", "-"))
+	_check(String(GameState.salvataggio().get("checkpoint", "")) == d["checkpoint"], "prima del primo checkpoint il salvataggio vecchio c'è ancora (%s; risveglio in corso: %s)" % [GameState.salvataggio().get("checkpoint", "-"), not GameState.player.input_enabled])
 	# (una Polaroid raccolta prima del primo checkpoint non deve riscrivere il disco: si prova con collect)
 	GameState.collect(&"polaroid", &"prova_collaudo")
 	_check(String(GameState.salvataggio().get("checkpoint", "")) == d["checkpoint"], "anche raccogliendo qualcosa prima del primo checkpoint")
@@ -210,7 +218,7 @@ func _nuova() -> void:
 	# il primo checkpoint che si raggiunge davvero: dentro, poi fuori e di nuovo dentro se non conta (il giocatore può
 	# partire già dentro la sua area)
 	var cp: Checkpoint = null
-	var validi := cps.filter(func(c): return (c as Checkpoint).order >= -1)
+	var validi := cps.filter(func(c): return (c as Checkpoint).order > GameState.ORDINE_INIZIO) if "ORDINE_INIZIO" in GameState else cps.filter(func(c): return (c as Checkpoint).order >= -1)
 	print("  checkpoint con ordine sotto -1 (scartati da reach_checkpoint dopo l'istantanea \"inizio\" a -1): %d" % (cps.size() - validi.size()))
 	for c in [cps[0]] + validi.slice(0, 2):
 		for giro in 2:
@@ -242,6 +250,212 @@ func _nuova() -> void:
 	pl = GameState.player
 	_check(pl != null and String(GameState.snapshot.get("checkpoint", "")) == chiave and pl.global_position.distance_to(cp.get_spawn_transform().origin) < 1.5 if is_instance_valid(cp) else pl != null and String(GameState.snapshot.get("checkpoint", "")) == chiave,
 			"Continua riparte dalla partita nuova (%s)" % GameState.snapshot.get("checkpoint", "-"))
+
+
+# --- Ritocchi di enigmi (lavoro/continua-ritocchi) ----------------------------------------------
+
+## A del joypad conferma le voci del titolo (Continua e Nuova partita), B chiude Comandi e Opzioni; in gioco A e B non
+## aprono né chiudono niente.
+func _joypad2() -> void:
+	var d := MenuProva.istantanea("risalita")
+	_scrivi(JSON.stringify(d))
+	var t := await _apri_titolo()
+	var voci: Array = t.call(&"voci")
+	# Comandi e Opzioni: giù fino alla voce, A, poi B
+	for nome in ["Comandi", "Opzioni"]:
+		t = await _apri_titolo()
+		voci = t.call(&"voci")
+		var i := _nomi(t).find(nome)
+		for k in i:
+			await _premi("joypad", "giu")
+		_check(t.get_viewport().gui_get_focus_owner() == voci[i], "col D-pad il focus su %s" % nome)
+		await _premi("joypad", "conferma")
+		await _frame(10)
+		_check(is_instance_valid(t.get(&"_sottomenu")), "A apre %s" % nome)
+		await _premi_joy(JOY_BUTTON_B)
+		await _frame(10)
+		_check(not is_instance_valid(t.get(&"_sottomenu")) and _nomi(t).size() > 0, "B chiude %s" % nome)
+		_check(get_tree().current_scene == t, "B nel titolo non cambia scena")
+	# Continua con A, fino alla sala
+	GameState.reset_progress()
+	_scrivi(JSON.stringify(d))
+	t = await _apri_titolo()
+	_check(t.get_viewport().gui_get_focus_owner() == t.call(&"voci")[0], "il focus su Continua")
+	await _premi("joypad", "conferma")
+	_check(bool(t.get(&"_avviato")), "A conferma Continua")
+	await _aspetta_ripresa()
+	var pl := GameState.player
+	_check(pl != null and String(GameState.snapshot.get("checkpoint", "")) == d["checkpoint"], "Continua col joypad riparte da %s" % d["checkpoint"])
+	if pl == null:
+		return
+	# in gioco: A e B non aprono menu, non mettono in pausa, non cambiano scena
+	var scena := get_tree().current_scene
+	var pos := pl.global_position
+	for b in [JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_A, JOY_BUTTON_B]:
+		await _premi_joy(b)
+		await _frame(10)
+	var menu_aperti := get_tree().root.find_children("*", "CanvasLayer", true, false).filter(func(c):
+		return (c as CanvasLayer).visible and (String(c.name).to_lower().contains("menu") or String(c.name).to_lower().contains("pausa") or String(c.name).to_lower().contains("opzion")))
+	_check(not get_tree().paused and not Game.is_paused() and get_tree().current_scene == scena,
+			"in gioco A e B non mettono in pausa e non cambiano scena")
+	_check(menu_aperti.is_empty(), "in gioco A e B non aprono menu %s" % [menu_aperti.map(func(c): return String(c.name))])
+	_check(pl.global_position.distance_to(pos) < 0.05, "in gioco A e B non muovono il giocatore (%.3f m)" % pl.global_position.distance_to(pos))
+	# per ultima, Nuova partita con A: il titolo parte (lo spot comincia)
+	GameState.reset_progress()
+	t = await _apri_titolo()
+	await _premi("joypad", "giu")
+	await _premi("joypad", "conferma")
+	_check(bool(t.get(&"_avviato")), "A conferma Nuova partita")
+
+
+func _premi_joy(b: int) -> void:
+	for su in [true, false]:
+		var j := InputEventJoypadButton.new()
+		j.button_index = b
+		j.pressed = su
+		Input.parse_input_event(j)
+		await _frame(3)
+
+
+## Il file temporaneo: solo lui completo, oppure il salvataggio rotto e lui buono (Continua c'è e riparte giusto); tutti e
+## due rotti (Continua non c'è, niente crash).
+func _tmp() -> void:
+	var tmp := GameState.SAVE_PATH + ".tmp"
+	for caso in ["solo il .tmp completo", "salvataggio rotto e .tmp buono", "tutti e due rotti"]:
+		print("-- ", caso)
+		GameState.reset_progress()
+		_cancella()
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(tmp))
+		var id: String = {"solo il .tmp completo": "torre", "salvataggio rotto e .tmp buono": "tunnel", "tutti e due rotti": "risalita"}[caso]
+		var d := MenuProva.istantanea(id)
+		var buono := JSON.stringify(d)
+		var f: FileAccess
+		if caso != "solo il .tmp completo":
+			_scrivi(buono.substr(0, buono.length() / 3))
+		f = FileAccess.open(tmp, FileAccess.WRITE)
+		f.store_string(buono if caso != "tutti e due rotti" else buono.substr(0, 200))
+		f.close()
+		var t := await _apri_titolo()
+		if caso == "tutti e due rotti":
+			_check(t != null and t.scene_file_path == TITOLO and not "Continua" in _nomi(t), "%s: il titolo si apre senza Continua (%s)" % [caso, _nomi(t)])
+			continue
+		_check(_nomi(t)[0] == "Continua", "%s: Continua c'è (%s)" % [caso, _nomi(t)])
+		_check(FileAccess.file_exists(GameState.SAVE_PATH) and not GameState._leggi_salvataggio(GameState.SAVE_PATH).is_empty(),
+				"%s: il .tmp è diventato il salvataggio" % caso)
+		(t.call(&"voci")[0] as Button).pressed.emit()
+		await _aspetta_ripresa()
+		var pl := GameState.player
+		if pl == null:
+			_check(false, "%s: la sala con il giocatore" % caso)
+			continue
+		_confronta(pl, d, "%s (%s)" % [caso, id])
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(tmp))
+
+
+## I 6 checkpoint degli interni: una partita nuova, il risveglio (quello semplice: nelle prove automatiche la scena dello
+## squalo non parte da sola), poi ognuno raggiunto col corpo del giocatore e scritto su disco; Continua da 3 di loro con
+## posto, luci e zaino del salvataggio e senza rifare il risveglio.
+func _interni() -> void:
+	GameState.reset_progress()
+	_cancella()
+	var t := await _apri_titolo()
+	(t.call(&"voci")[0] as Button).pressed.emit()
+	await _salta_spot()
+	await _aspetta_ripresa()
+	var pl := GameState.player
+	# la fine del risveglio (semplice: 2,6 s)
+	await _secondi(4.0)
+	_check(String(GameState.salvataggio().get("checkpoint", "")).ends_with("CheckpointRisveglio"),
+			"a risveglio finito si salva il checkpoint del risveglio (%s)" % GameState.salvataggio().get("checkpoint", "-"))
+	var cps: Array = get_tree().root.find_children("*", "Checkpoint", true, false).filter(func(c): return GameState.persist_key(c).begins_with("Interni/"))
+	cps.sort_custom(func(a, b): return (a as Checkpoint).order < (b as Checkpoint).order)
+	_check(cps.size() == 6, "6 checkpoint negli interni (%d)" % cps.size())
+	var salvati := {}
+	for c: Checkpoint in cps:
+		var chiave := GameState.persist_key(c)
+		if not chiave.ends_with("CheckpointRisveglio"):
+			pl.call(&"teleport", c.global_position + Vector3(0, 0.1, 0), pl.rotation.y, 0.0)
+			for i in 30:
+				await get_tree().physics_frame
+		var sd := GameState.salvataggio()
+		_check(String(sd.get("checkpoint", "")) == chiave, "%s (ordine %d) scritto su disco (%s)" % [chiave, c.order, sd.get("checkpoint", "-")])
+		salvati[chiave] = sd.duplicate(true)
+	# Continua da 3 di loro: il primo, uno a metà, l'ultimo
+	var chiavi := salvati.keys()
+	for chiave in [chiavi[0], chiavi[chiavi.size() / 2], chiavi[-1]]:
+		var d: Dictionary = salvati[chiave]
+		if d.is_empty():
+			continue
+		GameState.reset_progress()
+		_scrivi(JSON.stringify(d))
+		t = await _apri_titolo()
+		(t.call(&"voci")[0] as Button).pressed.emit()
+		await _aspetta_ripresa()
+		pl = GameState.player
+		if pl == null:
+			_check(false, "%s: la sala col giocatore" % chiave)
+			continue
+		var cp_risveglio := get_tree().root.find_child("CheckpointRisveglio", true, false) as Checkpoint
+		_check(pl.input_enabled and absf(pl.camera.rotation.z) < 0.01 and (cp_risveglio == null or cp_risveglio.monitoring),
+				"%s: niente risveglio rifatto (comandi attivi, camera dritta, checkpoint del risveglio attivo)" % chiave)
+		_confronta(pl, d, chiave)
+		var zaino_salvato := (d["player"]["inventory"] as Dictionary).has("zaino_pompa")
+		_check(pl.has_item(&"zaino_pompa") == zaino_salvato and (pl.water_pack == null or pl.water_pack.equipped == zaino_salvato),
+				"%s: zaino %s come nel salvataggio" % [chiave, "addosso" if zaino_salvato else "non addosso"])
+
+
+## La scena dello squalo del risveglio (fatta partire a mano: nelle prove automatiche non parte da sola), e l'uscita a
+## metà: il checkpoint del risveglio non si salva, quindi alla partita dopo la scena si rivede.
+func _risveglio_interrotto() -> void:
+	var vecchio := MenuProva.istantanea("torre")
+	_scrivi(JSON.stringify(vecchio))
+	GameState.reset_progress()
+	get_tree().change_scene_to_file(GameState.SCENA_CARICAMENTO)
+	await _aspetta_ripresa()
+	# il risveglio semplice (prove automatiche) finisce e salva il suo checkpoint: si rimette tutto come al primo avvio
+	await _secondi(4.0)
+	var interni := get_tree().root.find_child("Interni", true, false)
+	var pl := GameState.player
+	_scrivi(JSON.stringify(vecchio))
+	GameState.snapshot["checkpoint"] = "inizio"
+	GameState.snapshot["order"] = GameState.ORDINE_INIZIO
+	# la scena dello squalo, come al primo avvio vero
+	interni.call(&"fai_risveglio", pl, true)
+	await _frame(300)   # 5 s di gioco (--fixed-fps 60)
+	var cp := get_tree().root.find_child("CheckpointRisveglio", true, false) as Checkpoint
+	_check(cp != null and not cp.monitoring, "durante la scena dello squalo il checkpoint del risveglio è spento")
+	_check(String(GameState.salvataggio().get("checkpoint", "")) == vecchio["checkpoint"],
+			"durante la scena il salvataggio è ancora quello vecchio (%s)" % GameState.salvataggio().get("checkpoint", "-"))
+	# a scena finita si salva
+	var fotogrammi := 0
+	while fotogrammi < 3600 and not String(GameState.salvataggio().get("checkpoint", "")).ends_with("CheckpointRisveglio"):
+		await get_tree().process_frame
+		fotogrammi += 1
+	_check(String(GameState.salvataggio().get("checkpoint", "")).ends_with("CheckpointRisveglio") and cp.monitoring,
+			"a scena finita (dopo %.1f s di gioco) il checkpoint del risveglio si salva" % ((fotogrammi + 300) / 60.0))
+	# di nuovo, e uscita a metà scena
+	_scrivi(JSON.stringify(vecchio))
+	GameState.snapshot["checkpoint"] = "inizio"
+	GameState.snapshot["order"] = GameState.ORDINE_INIZIO
+	interni.call(&"fai_risveglio", pl, true)
+	await _frame(300)   # 5 s di gioco (--fixed-fps 60)
+	GameState.reset_progress()
+	var t := await _apri_titolo()
+	_check(_nomi(t)[0] == "Continua" and String(GameState.salvataggio().get("checkpoint", "")) == vecchio["checkpoint"],
+			"uscendo a metà scena il salvataggio resta quello vecchio: il risveglio non conta, la scena si rivede")
+
+
+func _salta_spot() -> void:
+	await _secondi(1.5)
+	var k := InputEventKey.new()
+	k.keycode = KEY_SPACE
+	k.physical_keycode = KEY_SPACE
+	k.pressed = true
+	Input.parse_input_event(k)
+	await _secondi(1.6)
+	k = k.duplicate()
+	k.pressed = false
+	Input.parse_input_event(k)
 
 
 # --- Salvataggi guasti --------------------------------------------------------------------------

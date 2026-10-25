@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+== risveglio
+  ok  durante la scena dello squalo il checkpoint del risveglio è spento
+  ok  durante la scena il salvataggio è ancora quello vecchio (SalaTorre/Checkpoint_portone)
+  ok  a scena finita (dopo 14.3 s di gioco) il checkpoint del risveglio si salva
+  ok  uscendo a metà scena il salvataggio resta quello vecchio: il risveglio non conta, la scena si rivede
+RISULTATO: 4 controlli ok, 0 falliti
+ERROR: 352 resources still in use at exit (run with --verbose for details).
