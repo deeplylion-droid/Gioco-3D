@@ -52,7 +52,7 @@ static func ambiente() -> Environment:
 	if not ResourceLoader.exists(AMBIENTE):
 		return null
 	var env := (load(AMBIENTE) as Environment).duplicate() as Environment
-	var g := Engine.get_main_loop().root.get_node_or_null(^"Grafica") if Engine.get_main_loop() is SceneTree else null
+	var g: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null(^"Grafica") if Engine.get_main_loop() is SceneTree else null
 	if g:
 		env.sdfgi_enabled = int(g.call(&"valore", "gi")) == 2
 		if env.volumetric_fog_enabled:
