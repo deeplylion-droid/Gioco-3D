@@ -7,7 +7,7 @@ extends Node3D
 ##
 ## Il nodo sta al centro dell'oblò, sulla faccia del muro dalla parte di chi guarda; +Z è la normale verso il
 ## corridoio, la vasca sta verso -Z. Il muro intorno lo fa chi mette l'oblò, con un buco quadrato di
-## [constant PIASTRA] metri al centro (vedi [method buco]); l'oblò ci mette la piastra d'acciaio rivettata, a filo
+## [member piastra] metri al centro (vedi [method buco]); l'oblò ci mette la piastra d'acciaio rivettata, a filo
 ## delle due facce del muro, col bordo d'ottone e il vetro, e dietro la vasca: una cisterna dello scafo piena d'acqua
 ## torbida e scura (pareti di lamiera, tre veli d'acqua sempre più scuri verso il fondo, niente luce sua: la luce
 ## rosa è quella di lei).
@@ -30,17 +30,19 @@ signal finita
 
 enum Stato {ATTESA, PRONTA, VISTA, VIA, FINITA}
 
-## Lato della piastra quadrata (e del buco nel muro), raggio del vetro, del bordo d'ottone e dei rivetti.
+## Di serie: il lato della piastra quadrata (e del buco nel muro) e il raggio del vetro (vedi [member piastra] e
+## [member raggio_vetro]: il bordo d'ottone è largo 10 cm, i rivetti stanno 12 cm più fuori).
 const PIASTRA := 1.9
 const RAGGIO_VETRO := 0.6
-const RAGGIO_BORDO := 0.7
-const RAGGIO_RIVETTI := 0.82
 const RIVETTI := 24
 ## Di quanto la faccia della vasca resta dietro il retro del muro (così non si sovrappone alla sua faccia).
 const STACCO_VASCA := 0.02
 ## Lo spessore delle forme della vasca per i tentacoli (fuori dall'interno).
 const FORMA := 0.3
 
+## Il lato della piastra quadrata (e del buco da lasciare nel muro) e il raggio del vetro visibile, per questo oblò.
+@export var piastra := PIASTRA
+@export var raggio_vetro := RAGGIO_VETRO
 ## La posa di lei: "schiacciata", "sbircia" o "capovolta" (le fa mascotte).
 @export var posa := "schiacciata"
 ## Per "sbircia": da che lato del vetro, visto dal corridoio (1 a destra, -1 a sinistra).
@@ -57,6 +59,9 @@ const FORMA := 0.3
 @export var vasca_sopra := 1.8
 ## Di quanto il centro della vasca è spostato di lato rispetto all'oblò (lungo il muro, +X del nodo).
 @export var vasca_spostata := 0.0
+## La vasca a L: sotto la quota y (dal centro del vetro) si allarga di x metri verso +X (per esempio sotto il pavimento
+## della stanza accanto, dove sopra non c'è posto). Zero: una scatola sola.
+@export var vasca_gradino := Vector2.ZERO
 ## Sotto questa distanza dal vetro lei si stacca.
 @export var vicino := 1.6
 ## Il vetro "si vede" entro questo angolo dal centro della vista, fino a [member vista_max] metri.
@@ -68,9 +73,6 @@ const FORMA := 0.3
 ## Dopo averla vista: il vetro oltre [member angolo_via] gradi per [member tempo_via] secondi e lei va via.
 @export var angolo_via := 35.0
 @export var tempo_via := 0.35
-## Il raggio del vetro (bordo d'ottone e cerchio di rivetti in proporzione); la piastra resta di [constant PIASTRA]
-## (nella torre si sceglie fra il vetro grande e uno piccolo, che l'occhio di lei riempie).
-@export var raggio_vetro := RAGGIO_VETRO
 ## Falso: niente lei (per esempio prima del blackout lo decide chi mette l'oblò con [member pronto]).
 @export var attivo := true
 
@@ -88,8 +90,12 @@ func _ready() -> void:
 
 
 ## Il buco quadrato da lasciare nel muro (nel sistema del nodo, sul piano del muro): [centro, mezzo lato].
-static func buco() -> Array:
-	return [Vector2.ZERO, Vector2.ONE * PIASTRA * 0.5]
+func buco() -> Array:
+	return [Vector2.ZERO, Vector2.ONE * piastra * 0.5]
+
+
+func _raggio_bordo() -> float:
+	return raggio_vetro + 0.1
 
 
 ## Il centro del vetro dalla parte dell'acqua e la normale verso chi guarda, nel mondo.
@@ -101,25 +107,44 @@ func normale() -> Vector3:
 	return global_basis.z.normalized()
 
 
+## I pezzi della vasca, nel sistema del nodo: [x da, x a, y da, y a] (la profondità è la stessa per tutti): uno, o due
+## con il [member vasca_gradino] (sopra quello stretto, sotto quello largo).
+func pezzi_vasca() -> Array:
+	var xa := vasca_spostata - vasca_larga * 0.5
+	var xb := vasca_spostata + vasca_larga * 0.5
+	if vasca_gradino.x <= 0.0:
+		return [[xa, xb, -vasca_sotto, vasca_sopra]]
+	var yg := vasca_gradino.y
+	return [[xa, xb, yg, vasca_sopra], [xa, xb + vasca_gradino.x, -vasca_sotto, yg]]
+
+
 ## Le forme della vasca per i tentacoli di lei (MorbidezzaLei.aggiungi_scatola): [trasformazione nel mondo, mezze
 ## misure]. Le cinque pareti, spesse [constant FORMA], e il muro col vetro.
 func forme() -> Array:
 	var out := []
-	var l := vasca_larga * 0.5
-	var sx := vasca_spostata
+	var f := FORMA
 	var z0 := -spessore_muro - STACCO_VASCA
 	var z1 := z0 - vasca_fonda
+	var zm := (z0 + z1) * 0.5
+	var zh := (z0 - z1) * 0.5
+	var xa := vasca_spostata - vasca_larga * 0.5
+	var xb := vasca_spostata + vasca_larga * 0.5
+	var xe := xb + maxf(vasca_gradino.x, 0.0)
 	var y0 := -vasca_sotto
 	var y1 := vasca_sopra
-	var f := FORMA
+	var yg := vasca_gradino.y if vasca_gradino.x > 0.0 else y0
+	var xm := (xa + xe) * 0.5
 	var scatole := [
-		[Vector3(sx, (y0 + y1) * 0.5, z1 - f * 0.5), Vector3(l + f, (y1 - y0) * 0.5 + f, f * 0.5)],          # fondo
-		[Vector3(sx - l - f * 0.5, (y0 + y1) * 0.5, (z0 + z1) * 0.5), Vector3(f * 0.5, (y1 - y0) * 0.5 + f, (z0 - z1) * 0.5)],
-		[Vector3(sx + l + f * 0.5, (y0 + y1) * 0.5, (z0 + z1) * 0.5), Vector3(f * 0.5, (y1 - y0) * 0.5 + f, (z0 - z1) * 0.5)],
-		[Vector3(sx, y0 - f * 0.5, (z0 + z1) * 0.5), Vector3(l, f * 0.5, (z0 - z1) * 0.5)],                     # sotto
-		[Vector3(sx, y1 + f * 0.5, (z0 + z1) * 0.5), Vector3(l, f * 0.5, (z0 - z1) * 0.5)],                     # sopra
-		[Vector3(sx, (y0 + y1) * 0.5, z0 * 0.5), Vector3(l + f, (y1 - y0) * 0.5 + f, -z0 * 0.5)],               # muro e vetro
+		[Vector3(xm, (y0 + y1) * 0.5, z1 - f * 0.5), Vector3((xe - xa) * 0.5 + f, (y1 - y0) * 0.5 + f, f * 0.5)],     # fondo
+		[Vector3(xa - f * 0.5, (y0 + y1) * 0.5, zm), Vector3(f * 0.5, (y1 - y0) * 0.5 + f, zh)],                      # sinistra
+		[Vector3(xb + f * 0.5, (yg + y1) * 0.5, zm), Vector3(f * 0.5, (y1 - yg) * 0.5 + f, zh)],                      # destra
+		[Vector3(xm, y0 - f * 0.5, zm), Vector3((xe - xa) * 0.5 + f, f * 0.5, zh)],                                   # sotto
+		[Vector3((xa + xb) * 0.5, y1 + f * 0.5, zm), Vector3((xb - xa) * 0.5 + f, f * 0.5, zh)],                      # sopra
+		[Vector3(xm, (y0 + y1) * 0.5, z0 * 0.5), Vector3((xe - xa) * 0.5 + f, (y1 - y0) * 0.5 + f, -z0 * 0.5)],      # muro e vetro
 	]
+	if xe > xb:
+		scatole.append([Vector3(xe + f * 0.5, (y0 + yg) * 0.5, zm), Vector3(f * 0.5, (yg - y0) * 0.5 + f, zh)])     # destra, sotto
+		scatole.append([Vector3((xb + xe) * 0.5 + f * 0.5, yg + f * 0.5, zm), Vector3((xe - xb) * 0.5 + f * 0.5, f * 0.5, zh)])   # il gradino
 	for s in scatole:
 		out.append([global_transform * Transform3D(Basis.IDENTITY, s[0]), s[1] as Vector3])
 	return out
@@ -132,45 +157,42 @@ func _costruisci() -> void:
 	# la piastra rivettata, a filo delle due facce del muro, col buco tondo
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var k_vetro := raggio_vetro / RAGGIO_VETRO
-	var r_bordo := RAGGIO_BORDO * k_vetro
-	_piastra(st, r_bordo - 0.02)
-	var rivetti := maxi(12, roundi(RIVETTI * k_vetro))
-	for k in rivetti:
-		var a := TAU * float(k) / rivetti
-		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
+	_piastra(st, _raggio_bordo() - 0.02)
+	for k in RIVETTI:
+		var a := TAU * float(k) / RIVETTI
+		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * (_raggio_bordo() + 0.12), 0.016)
 	# e i rivetti lungo i lati (la piastra è chiodata al muro)
 	for k in 7:
-		var u := -PIASTRA * 0.5 + 0.08 + (PIASTRA - 0.16) * float(k) / 6.0
-		for v in [-PIASTRA * 0.5 + 0.08, PIASTRA * 0.5 - 0.08]:
+		var u := -piastra * 0.5 + 0.08 + (piastra - 0.16) * float(k) / 6.0
+		for v in [-piastra * 0.5 + 0.08, piastra * 0.5 - 0.08]:
 			_rivetto(st, Vector3(u, v, 0.0), 0.014)
 			if k > 0 and k < 6:
 				_rivetto(st, Vector3(v, u, 0.0), 0.014)
 	st.generate_normals()
-	var piastra := MeshInstance3D.new()
-	piastra.name = "struttura_piastra_oblo"
-	piastra.mesh = st.commit()
-	piastra.material_override = acciaio
-	add_child(piastra)
+	var mp := MeshInstance3D.new()
+	mp.name = "struttura_piastra_oblo"
+	mp.mesh = st.commit()
+	mp.material_override = acciaio
+	add_child(mp)
 	# il bordo d'ottone: un anello nel buco, con la faccia davanti 1 cm fuori dal muro
 	var bordo := MeshInstance3D.new()
 	bordo.name = "BordoOttone"
 	var tm := TorusMesh.new()
 	tm.inner_radius = raggio_vetro
-	tm.outer_radius = r_bordo
+	tm.outer_radius = _raggio_bordo()
 	tm.rings = 48
 	tm.ring_segments = 12
 	bordo.mesh = tm
 	bordo.rotation_degrees.x = 90.0
-	bordo.position.z = 0.01 - (r_bordo - raggio_vetro) * 0.5
+	bordo.position.z = 0.01 - (_raggio_bordo() - raggio_vetro) * 0.5
 	bordo.material_override = _mat_ottone()
 	add_child(bordo)
 	# il vetro, a filo del retro del muro (dalla parte dell'acqua), un po' dentro la piastra tutto intorno
 	var vetro := MeshInstance3D.new()
 	vetro.name = "Vetro"
 	var cm := CylinderMesh.new()
-	cm.top_radius = r_bordo - 0.02
-	cm.bottom_radius = r_bordo - 0.02
+	cm.top_radius = _raggio_bordo() - 0.02
+	cm.bottom_radius = _raggio_bordo() - 0.02
 	cm.height = 0.03
 	cm.radial_segments = 48
 	cm.rings = 1
@@ -187,7 +209,7 @@ func _costruisci() -> void:
 	add_child(_corpo)
 	var cs := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
-	bs.size = Vector3(PIASTRA, PIASTRA, spessore_muro)
+	bs.size = Vector3(piastra, piastra, spessore_muro)
 	cs.shape = bs
 	cs.position.z = -spessore_muro * 0.5
 	_corpo.add_child(cs)
@@ -198,7 +220,7 @@ func _costruisci() -> void:
 ## bordo del buco e i quattro lati.
 func _piastra(st: SurfaceTool, r: float) -> void:
 	var n := 48
-	var h := PIASTRA * 0.5
+	var h := piastra * 0.5
 	var dz := Vector3(0, 0, -spessore_muro)
 	for k in n:
 		var a0 := TAU * float(k) / n
@@ -254,47 +276,62 @@ func _rivetto(st: SurfaceTool, c: Vector3, r: float) -> void:
 ## La vasca dietro il muro: l'interno di una cisterna di lamiera (sei facce che guardano dentro, quella davanti col
 ## buco della piastra) e tre veli d'acqua torbida paralleli al vetro, sempre più scuri verso il fondo.
 func _vasca() -> void:
-	var l := vasca_larga * 0.5
-	var xa := vasca_spostata - l
-	var xb := vasca_spostata + l
 	var z0 := -spessore_muro - STACCO_VASCA
 	var z1 := z0 - vasca_fonda
-	var y0 := -vasca_sotto
-	var y1 := vasca_sopra
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var p := [Vector3(xa, y0, z1), Vector3(xb, y0, z1), Vector3(xb, y1, z1), Vector3(xa, y1, z1),
-			Vector3(xa, y0, z0), Vector3(xb, y0, z0), Vector3(xb, y1, z0), Vector3(xa, y1, z0)]
-	# (ogni faccia si vede da dentro)
-	var centro := Vector3(vasca_spostata, (y0 + y1) * 0.5, (z0 + z1) * 0.5)
-	for f in [[0, 3, 2, 1], [0, 4, 7, 3], [1, 2, 6, 5], [0, 1, 5, 4], [3, 7, 6, 2]]:
-		var q: Array = [p[f[0]], p[f[1]], p[f[2]], p[f[3]]]
-		_quad(st, q[0], q[1], q[2], q[3], centro - (q[0] + q[2]) * 0.5)
-	# davanti, intorno al buco della piastra (si guarda da -Z)
-	var h := PIASTRA * 0.5
-	for r in [[xa, -h, y0, y1], [h, xb, y0, y1], [-h, h, y0, -h], [-h, h, h, y1]]:
-		_quad(st, Vector3(r[0], r[2], z0), Vector3(r[1], r[2], z0), Vector3(r[1], r[3], z0), Vector3(r[0], r[3], z0), Vector3.FORWARD)
+	var pz := pezzi_vasca()
+	var h := piastra * 0.5
+	for i in pz.size():
+		var r: Array = pz[i]
+		var xa: float = r[0]
+		var xb: float = r[1]
+		var ya: float = r[2]
+		var yb: float = r[3]
+		# (ogni faccia si vede da dentro) il fondo, e davanti intorno al buco della piastra (se è in questo pezzo)
+		_quad(st, Vector3(xa, ya, z1), Vector3(xb, ya, z1), Vector3(xb, yb, z1), Vector3(xa, yb, z1), Vector3.BACK)
+		var davanti: Array = [[xa, xb, ya, yb]]
+		if ya < -h and yb > h and xa < -h and xb > h:
+			davanti = [[xa, -h, ya, yb], [h, xb, ya, yb], [-h, h, ya, -h], [-h, h, h, yb]]
+		for d in davanti:
+			_quad(st, Vector3(d[0], d[2], z0), Vector3(d[1], d[2], z0), Vector3(d[1], d[3], z0), Vector3(d[0], d[3], z0), Vector3.FORWARD)
+		# i lati: a sinistra sempre; a destra, sopra e sotto dove non c'è l'altro pezzo
+		_quad(st, Vector3(xa, ya, z1), Vector3(xa, yb, z1), Vector3(xa, yb, z0), Vector3(xa, ya, z0), Vector3.RIGHT)
+		_quad(st, Vector3(xb, ya, z1), Vector3(xb, yb, z1), Vector3(xb, yb, z0), Vector3(xb, ya, z0), Vector3.LEFT)
+		if i == pz.size() - 1:
+			_quad(st, Vector3(xa, ya, z1), Vector3(xb, ya, z1), Vector3(xb, ya, z0), Vector3(xa, ya, z0), Vector3.UP)
+		if i == 0:
+			_quad(st, Vector3(xa, yb, z1), Vector3(xb, yb, z1), Vector3(xb, yb, z0), Vector3(xa, yb, z0), Vector3.DOWN)
+		elif i == 1:
+			# il gradino: il soffitto della parte larga, oltre quella stretta
+			var xs: float = pz[0][1]
+			_quad(st, Vector3(xs, yb, z1), Vector3(xb, yb, z1), Vector3(xb, yb, z0), Vector3(xs, yb, z0), Vector3.DOWN)
 	st.generate_normals()
 	var mi := MeshInstance3D.new()
 	mi.name = "struttura_vasca_oblo"
 	mi.mesh = st.commit()
 	mi.material_override = _mat_lamiera(Color(0.16, 0.2, 0.2), 1.6)
 	add_child(mi)
-	# l'acqua torbida: veli che si vedono dal vetro (una "superficie d'acqua" per i controlli)
+	# l'acqua torbida: veli che si vedono dal vetro, a pezzi come la vasca (una "superficie d'acqua" per i controlli)
 	var acqua := Node3D.new()
 	acqua.name = "AcquaTorbida"
 	add_child(acqua)
 	var veli := [0.45, 1.05, 1.75]
 	for k in veli.size():
-		var v := MeshInstance3D.new()
-		v.name = "Velo%d" % k
-		var qm := QuadMesh.new()
-		qm.size = Vector2(vasca_larga - 0.02, vasca_sotto + vasca_sopra - 0.02)
-		v.mesh = qm
-		v.position = Vector3(vasca_spostata, (y0 + y1) * 0.5, z0 - float(veli[k]))
-		v.material_override = _mat_velo(0.22 + 0.08 * k)
-		v.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		acqua.add_child(v)
+		var rett: Array = [[pz[0][0], pz[0][1], -vasca_sotto, vasca_sopra]]
+		if pz.size() > 1:
+			rett.append([pz[0][1], pz[1][1], -vasca_sotto, vasca_gradino.y])
+		for j in rett.size():
+			var r: Array = rett[j]
+			var v := MeshInstance3D.new()
+			v.name = "Velo%d_%d" % [k, j]
+			var qm := QuadMesh.new()
+			qm.size = Vector2(float(r[1]) - float(r[0]) - 0.02, float(r[3]) - float(r[2]) - 0.02)
+			v.mesh = qm
+			v.position = Vector3((float(r[0]) + float(r[1])) * 0.5, (float(r[2]) + float(r[3])) * 0.5, z0 - float(veli[k]))
+			v.material_override = _mat_velo(0.22 + 0.08 * k)
+			v.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			acqua.add_child(v)
 
 
 static func _quad(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, verso: Vector3) -> void:
@@ -375,6 +412,8 @@ func _process(delta: float) -> void:
 		return
 	var cam := p.camera
 	var dentro := _dentro(p.global_position)
+	if stato == Stato.ATTESA and not (attivo and dentro and GameState.luci == GameState.Luci.BLACKOUT):
+		return   # (lontano: niente raggi)
 	var d := cam.global_position.distance_to(_davanti())
 	var ang := _angolo(cam)
 	var libera := _vista_libera(cam)
