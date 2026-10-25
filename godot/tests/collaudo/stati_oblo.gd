@@ -36,6 +36,7 @@ func _run() -> void:
 	env.environment.background_color = Color.BLACK
 	env.camera_attributes = load("res://addons/grafica/sala/attributi_camera_sala.tres")
 	add_child(env)
+	GameState.luci = GameState.Luci.BLACKOUT
 	var ris := (load("res://scenes/risalita/risalita.tscn") as PackedScene).instantiate() as Node3D
 	add_child(ris)
 	var p := (load(PLAYER) as PackedScene).instantiate() as Player
@@ -44,7 +45,7 @@ func _run() -> void:
 	var hud := p.get_node_or_null(^"HUD")
 	if hud:
 		hud.visible = false
-	for stato in ["0_prima_luci", "1_buio_prima", "5_dopo"]:
+	for stato in ["1_buio_prima", "5_dopo", "0_prima_luci"]:
 		GameState.imposta_luci(GameState.Luci.BLACKOUT if stato != "0_prima_luci" else GameState.Luci.PRIMA_DEL_RISVEGLIO)
 		await _fotogrammi(10)
 		for nome in POSTI:
@@ -76,5 +77,7 @@ func _fotogrammi(n: int) -> void:
 
 
 func _scatto(nome: String) -> void:
-	await RenderingServer.frame_post_draw
-	get_viewport().get_texture().get_image().save_jpg(cartella.path_join(nome + ".jpg"), 0.88)
+	await get_tree().process_frame
+	var im := get_viewport().get_texture().get_image()
+	im.save_jpg(cartella.path_join(nome + ".jpg"), 0.88)
+	print("scatto -> %s (%dx%d)" % [nome, im.get_width(), im.get_height()])
