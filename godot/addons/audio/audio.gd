@@ -60,6 +60,8 @@ const PER_CARTELLA := {
 }
 ## Taratura dei singoli suoni (sovrascrive quella della cartella). Stessi campi.
 const TARATURA := {
+	# il canto di sirena di lei nel tunnel: dalla sua bocca, più forte quando si avvicina (25 ottobre)
+	&"lei_tunnel_canto": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
 	&"passo_piastrelle": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
 	&"passo_bagnato": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
 	&"passo_acqua": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
@@ -138,7 +140,8 @@ const LOOP_3D := {
 	&"riempie_loop": [-4.0, 3.0, 35.0],
 	&"scivolo_loop": [-4.0, 3.0, 40.0],
 	&"medusa_presenza_loop": [-2.0, 1.4, 8.0],
-	&"lei_tunnel_fiato_loop": [0.0, 3.0, 30.0],
+	# (25 ottobre sera, con il canto di sirena: "il respiro abbassato del 70%", x0,3)
+	&"lei_tunnel_fiato_loop": [-10.5, 3.0, 30.0],
 	&"zaino_impatto_loop": [-2.0, 2.5, 30.0],
 	&"zaino_impatto_acqua_loop": [-2.0, 2.5, 30.0],
 	&"pompe_ruggito_loop": [0.0, 6.0, 60.0],
@@ -383,6 +386,9 @@ func ferma_musica(dissolvenza := 1.0) -> void:
 ## Abbassa e ferma un suono partito con suona() (per esempio un verso interrotto da quello dopo). Se
 ## intanto il player è stato ripreso per un altro suono (il pool), lo lascia stare.
 func dissolvi(p: Node, secondi := 0.3) -> void:
+	if is_instance_valid(p) and p.has_meta(&"finto_fino"):
+		# (senza riproduzione, nei test senza schermo: il suono finto finisce subito)
+		p.remove_meta(&"finto_fino")
 	if not is_instance_valid(p) or not p.get(&"playing"):
 		return
 	var partito: float = p.get_meta(&"partito", 0.0)
@@ -1611,6 +1617,13 @@ class Statua:
 	const FIATO := &"lei_tunnel_fiato_loop"
 	const VERSO := &"lei_tunnel_verso"
 	const VERSO_OGNI := Vector2(4.0, 6.0)
+	## Il canto di sirena mentre insegue (richiesta dell'utente del 25 ottobre; scelta A, con il fiato a x0,3, il canto a
+	## x1,3 e senza i versi: genera_canto_sirena.py gioco A scrive le frasi lei_tunnel_canto_NN): una frase di 4-8 s ogni 8-15 s,
+	## mai la stessa due volte di fila, dalla sua bocca (più forte quando si avvicina); zitto quando si ritrae, prende,
+	## sbatte sul portello o sparisce. Parte solo quando le frasi sono nel catalogo. (Variabile: i test la cambiano.)
+	static var canto_nome := &"lei_tunnel_canto"
+	const CANTO_PRIMA := Vector2(1.5, 4.0)
+	const CANTO_PAUSA := Vector2(3.0, 7.0)
 	## colpo_grata: un verso per ogni colpo, quando il palmo tocca la grata (0,25 s di ogni ciclo di 0,5 s).
 	const GRATA := &"inseguimento/colpo_grata"
 	const GRATA_CICLO := 0.5
@@ -1630,6 +1643,9 @@ class Statua:
 	var grata_prima := -1.0
 	var fiato: AudioLoop
 	var verso_t := -2.0
+	var canto: Node
+	var canto_partito := -1.0
+	var canto_t := -1.0
 
 	func _init(a, nodo: Node) -> void:
 		audio = a
@@ -1652,8 +1668,13 @@ class Statua:
 
 	func aggiorna(a, delta: float) -> bool:
 		if not is_instance_valid(n):
+			# (la scena del tunnel che si scarica: il canto non resta a metà frase)
+			if canta():
+				a.dissolvi(canto, 0.3)
 			return false
 		if not n.is_inside_tree():
+			if canta():
+				a.dissolvi(canto, 0.3)
 			return true
 		if inseguimento:
 			return _inseguimento(a)
@@ -1704,7 +1725,9 @@ class Statua:
 		if fiato:
 			var vis := (n as Node3D).is_visible_in_tree()
 			fiato.volume = 0.0 if not vis else (1.0 if corsa else 0.3)
-		if corsa and Catalogo.SUONI.has(VERSO):
+		# (col canto di sirena niente versi: il loro ringhio raschiato ogni 4-6 s era il "grattamento" che l'utente ha
+		# chiesto di togliere, 25 ottobre sera)
+		if corsa and Catalogo.SUONI.has(VERSO) and not Catalogo.SUONI.has(canto_nome):
 			verso_t -= n.get_process_delta_time()
 			if verso_t <= 0.0:
 				if verso_t > -1.0:     # (non al primo giro: il primo verso dopo 4-6 s)
@@ -1712,6 +1735,29 @@ class Statua:
 				verso_t = randf_range(VERSO_OGNI.x, VERSO_OGNI.y)
 		else:
 			verso_t = -2.0
+		_canto(a, corsa and (n as Node3D).is_visible_in_tree())
+
+	## Vero se la frase del canto partita da qui suona ancora (il lettore torna nella riserva e può suonare altro).
+	func canta() -> bool:
+		return is_instance_valid(canto) and (canto.get(&"playing") or audio._finto(canto)) \
+				and float(canto.get_meta(&"partito", -2.0)) == canto_partito
+
+	func _canto(a, corsa: bool) -> void:
+		if not corsa or not Catalogo.SUONI.has(canto_nome):
+			if canta():
+				a.dissolvi(canto, 0.5)
+			canto = null
+			canto_t = -1.0
+			return
+		if canta():
+			return
+		if canto_t < 0.0:
+			canto_t = randf_range(CANTO_PRIMA.x, CANTO_PRIMA.y)
+		canto_t -= n.get_process_delta_time()
+		if canto_t <= 0.0:
+			canto = a.suona(canto_nome, bocca)
+			canto_partito = float(canto.get_meta(&"partito", 0.0)) if canto else -1.0
+			canto_t = randf_range(CANTO_PAUSA.x, CANTO_PAUSA.y)
 
 	func _su_animazione(nome: StringName) -> void:
 		if VOCE_INSEGUIMENTO.has(nome):
