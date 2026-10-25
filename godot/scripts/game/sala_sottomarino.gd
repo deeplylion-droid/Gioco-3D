@@ -282,7 +282,7 @@ func _passi() -> Array:
 	for o in ostacoli:
 		if o["tipo"] == "galleria":
 			out.append(_galleria.bind(o))
-		elif o["tipo"] != "crollo" or not _sotto_galleria(o):
+		else:
 			out.append(_ostacolo.bind(o))
 	for g in gommoni:
 		out.append(_gommone.bind(float(g[0]), float(g[1])))
@@ -1230,6 +1230,15 @@ func _finale() -> void:
 		# (il centro dell'oblò dalla parte del tunnel: la faccia della cornice d'ottone, dove arriva la faccia di lei)
 		var ox := PORTELLO_LARGO * 0.5 + BATTENTE_DI + 0.04
 		var oblo := _perno.global_transform * Vector3(ox, OBLO_Y, BATTENTE_SPESSO * 0.5 + 0.082)
+		# (lei si era fermata a 2,5 m dal portello: se è lì, prima ci arriva di corsa lungo l'asse, così lo schianto
+		# parte da dove è lei, senza salti; se è lontana o non c'è, lo schianto comincia subito)
+		var arrivo := lunghezza() - 0.95
+		if lei_s < arrivo - 0.05 and lei_s > arrivo - 6.0 and lei_tunnel.stato != LeiTunnel.Stato.VIA:
+			var tw := create_tween()
+			tw.tween_method(func(s: float):
+				lei_s = s
+				_metti_lei(get_process_delta_time()), lei_s, arrivo, (arrivo - lei_s) / velocita_rincorsa)
+			await tw.finished
 		lei_tunnel.schianto(oblo, -direzione(lunghezza()))
 		lei_tunnel.schianto_contro.connect(func(): Audio.suona(&"cancello_fine", oblo, 2.0, 0.6), CONNECT_ONE_SHOT)
 		get_tree().create_timer(2.6, false).timeout.connect(_nero)
@@ -1256,6 +1265,9 @@ func _luci() -> void:
 	var nodo := Node3D.new()
 	nodo.name = "Luci"
 	add_child(nodo)
+	# la testa del tunnel e la presa: una lampada sul muro sinistro, prima della porta del bacino (da lì il
+	# giocatore guarda la presa, dove riemerge lei: scelta 1A); luce debole come le altre
+	_lampada(nodo, -2.2, -1.0, piano + 3.0, 3.0)
 	var s := 3.0
 	var lato := 1.0
 	while s < lunghezza():
@@ -1740,6 +1752,57 @@ func _parapetto_presa() -> void:
 
 # --- gli ostacoli (scelte 2C e 4C dell'utente) ------------------------------------------------------------------------
 
+## La fascia gialla e nera sopra una bocca della galleria: un pezzo solo, lungo la bocca più 20 cm per parte, alto
+## 30 cm, spesso 1,2 cm, che segue il muro (anche in curva: ogni vertice sul muro nel suo punto della strada); le
+## strisce di traverso sono fatte con la geometria (niente texture sgranata, niente pezzi sovrapposti o fessure).
+func _fascia_bocca(nodo: Node3D, sb: float, lato: float, y_bocca: float) -> void:
+	var lung := GALLERIA_BOCCA + 0.4
+	var a0 := sb - lung * 0.5
+	var ya := y_bocca + 0.02
+	var yb := y_bocca + 0.32
+	var obliquo := 0.15
+	var n := 12
+	var giallo := SurfaceTool.new()
+	giallo.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var nero := SurfaceTool.new()
+	nero.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var rett := PackedVector2Array([Vector2(a0, ya), Vector2(a0 + lung, ya), Vector2(a0 + lung, yb), Vector2(a0, yb)])
+	# (un punto (s, y) della fascia nel mondo, staccato dal muro di [param su])
+	var al_muro := func(q: Vector2, su: float) -> Vector3:
+		return _muro_a(q.x, lato, q.y) - destra(q.x) * lato * su
+	var passo := lung / float(n)
+	for i in range(-2, n + 2):
+		var s1 := a0 + passo * i
+		var s2 := s1 + passo
+		var striscia := PackedVector2Array([Vector2(s1, ya), Vector2(s2, ya), Vector2(s2 + obliquo, yb), Vector2(s1 + obliquo, yb)])
+		for poly in Geometry2D.intersect_polygons(striscia, rett):
+			var tri := Geometry2D.triangulate_polygon(poly)
+			for k in range(0, tri.size(), 3):
+				var tt := [al_muro.call(poly[tri[k]], 0.014), al_muro.call(poly[tri[k + 1]], 0.014), al_muro.call(poly[tri[k + 2]], 0.014)]
+				_tri(giallo if posmod(i, 2) == 0 else nero, tt, -destra(poly[tri[k]].x) * lato)
+	# i bordi (sopra, sotto, i due capi) dal muro alla faccia, in nero
+	var bordo := PackedVector2Array()
+	var m := 24
+	for k in m + 1:
+		bordo.append(Vector2(a0 + lung * float(k) / m, ya))
+	for k in m + 1:
+		bordo.append(Vector2(a0 + lung - lung * float(k) / m, yb))
+	for k in bordo.size():
+		var q0: Vector2 = bordo[k]
+		var q1: Vector2 = bordo[(k + 1) % bordo.size()]
+		var e := (q1 - q0)
+		if e.length() < 1e-4:
+			continue
+		var normale := Vector3.UP if q0.y == yb and q1.y == yb else (Vector3.DOWN if q0.y == ya and q1.y == ya else direzione(q0.x) * signf(q0.x - sb))
+		_quad(nero, [al_muro.call(q0, 0.002), al_muro.call(q1, 0.002), al_muro.call(q1, 0.014), al_muro.call(q0, 0.014)], normale)
+	for coppia in [[giallo, _mat("fascia_gialla", Color(0.95, 0.74, 0.08), 0.6)], [nero, _mat("fascia_nera", Color(0.06, 0.06, 0.06), 0.7)]]:
+		var mi := MeshInstance3D.new()
+		mi.name = "Fascia"
+		mi.mesh = (coppia[0] as SurfaceTool).commit()
+		mi.material_override = coppia[1]
+		nodo.add_child(mi)
+
+
 ## La galleria di servizio [param o] (un passaggio basso, voluto dall'utente): dietro il muro dal lato della galleria,
 ## dalla bocca d'entrata (prima del crollo) a quella d'uscita (dopo). Pavimento, soffitto basso, muro esterno, le
 ## teste e gli stipiti delle bocche nello spessore del muro; dentro, due plafoniere a filo del soffitto. Sopra le
@@ -1755,6 +1818,8 @@ func _galleria(o: Dictionary) -> void:
 	var lato: float = o["lato"]
 	var s0: float = float(o["s"]) - GALLERIA_BOCCA
 	var s1: float = float(o["s"]) + float(o["lungo"]) + GALLERIA_BOCCA
+	# (la banchina di questo lato è crollata davanti alla galleria: le lastre rotte vicino alle due teste)
+	_crollo_lastre(nodo, float(o["s"]), float(o["lungo"]), lato, true)
 	var u0 := muro                                  # il muro del tunnel (dentro)
 	var u1 := muro + spessore                       # il retro del muro
 	var u2 := u1 + GALLERIA_LARGA                   # il muro esterno della galleria
@@ -1807,21 +1872,7 @@ func _galleria(o: Dictionary) -> void:
 	for sb: float in [float(o["s"]) - GALLERIA_BOCCA * 0.5, float(o["s"]) + float(o["lungo"]) + GALLERIA_BOCCA * 0.5]:
 		var p := punto(sb)
 		var r := destra(sb) * lato
-		# (in pezzi da 30 cm, ognuno a filo del muro nel suo punto: in curva il muro non è un piano)
-		var pezzi := 6
-		var lungo_f := (GALLERIA_BOCCA + 0.4) / pezzi
-		for k in pezzi:
-			var sf := sb - (GALLERIA_BOCCA + 0.4) * 0.5 + lungo_f * (k + 0.5)
-			var rf := destra(sf) * lato
-			var fascia := MeshInstance3D.new()
-			fascia.name = "Fascia"
-			var bm := BoxMesh.new()
-			bm.size = Vector3(lungo_f + 0.004, 0.3, 0.02)
-			fascia.mesh = bm
-			fascia.material_override = _mat_strisce()
-			nodo.add_child(fascia)
-			fascia.global_transform = Transform3D(Basis.looking_at(-rf, Vector3.UP), _muro_a(sf, lato, y1 + 0.17) - rf * (muro - u0 + 0.01))
-			_a_filo_del_muro(fascia, -rf)
+		_fascia_bocca(nodo, sb, lato, y1)
 		# (la lampada sopra la bocca, col fondo sopra i 2 m: sulla banchina si passa lì davanti)
 		_lampada(nodo, sb, lato, piano + 2.45, 3.0)
 	# dentro: due plafoniere a filo del soffitto
@@ -1846,6 +1897,156 @@ func _galleria(o: Dictionary) -> void:
 
 
 ## Un ostacolo su una banchina (vedi [member ostacoli]): la sua forma, la collisione e la luce.
+## Le lastre di un crollo (le macerie, la banchina caduta nel canale): ognuna [s dal centro, u dall'asse, quota,
+## misure (lunga, spessa, larga di traverso), giri in gradi (x, y, z: z alza la lunghezza verso +s), quale faccia ha il
+## rivestimento (1: +y, -1: -y), "terra" (il punto più basso su [param pavimento]) / "muro" (il punto più lontano a filo
+## del muro) / "sopra" (il punto più basso a pavimento + quota)]. Il rivestimento va in [param st_r], il calcestruzzo in
+## [param st_c]. Restituisce per ogni lastra [centro, x, y, z, misure] (per i ferri dell'armatura).
+func _lastre_crollate(st_r: SurfaceTool, st_c: SurfaceTool, facce: PackedVector3Array, sm: float, lato: float,
+		lastre: Array, pavimento: float) -> Array:
+	var ferri := []
+	for l in lastre:
+		# (ogni lastra nel suo punto della strada, anche in curva: s, la destra e la direzione lì)
+		var sl := sm + float(l[0])
+		var p := punto(sl)
+		var r := destra(sl) * lato
+		var d := direzione(sl)
+		var m_loc := Basis(d, Vector3.UP, r)
+		var rot: Vector3 = l[4]
+		var b := m_loc * Basis.from_euler(rot * PI / 180.0)
+		var ms: Vector3 = l[3]
+		var x := b.x.normalized()
+		var z := (b.z - x * b.z.dot(x)).normalized()
+		var y := z.cross(x).normalized()
+		var c := _al(p, r, Vector2(float(l[1]), pavimento + float(l[2])))
+		var basso := INF
+		var fuori := -INF
+		for i in [-1, 1]:
+			for j in [-1, 1]:
+				for k in [-1, 1]:
+					var q: Vector3 = c + x * ms.x * 0.5 * i + y * ms.y * 0.5 * j + z * ms.z * 0.5 * k
+					basso = minf(basso, q.y)
+					fuori = maxf(fuori, (q - p).dot(r))
+		if String(l[6]).contains("terra"):
+			c.y += pavimento - basso
+		elif String(l[6]).contains("sopra"):
+			c.y += pavimento + float(l[2]) - basso
+		if String(l[6]).contains("muro"):
+			c += r * (muro - fuori)
+		var X := x * ms.x * 0.5
+		var Y := y * ms.y * 0.5
+		var Z := z * ms.z * 0.5
+		var v := func(i: int, j: int, k: int) -> Vector3: return c + X * i + Y * j + Z * k
+		var facce_l := [
+			[v.call(1, -1, -1), v.call(1, 1, -1), v.call(1, 1, 1), v.call(1, -1, 1), X, 0],
+			[v.call(-1, -1, 1), v.call(-1, 1, 1), v.call(-1, 1, -1), v.call(-1, -1, -1), -X, 0],
+			[v.call(-1, 1, -1), v.call(-1, 1, 1), v.call(1, 1, 1), v.call(1, 1, -1), Y, 1],
+			[v.call(-1, -1, -1), v.call(1, -1, -1), v.call(1, -1, 1), v.call(-1, -1, 1), -Y, -1],
+			[v.call(-1, -1, 1), v.call(1, -1, 1), v.call(1, 1, 1), v.call(-1, 1, 1), Z, 0],
+			[v.call(1, -1, -1), v.call(-1, -1, -1), v.call(-1, 1, -1), v.call(1, 1, -1), -Z, 0],
+		]
+		for q in facce_l:
+			var qq := [q[0], q[1], q[2], q[3]]
+			_quad(st_r if int(q[5]) == int(l[5]) else st_c, qq, q[4])
+			_facce_quad(facce, qq)
+		ferri.append([c, x, y, z, ms])
+	return ferri
+
+
+## I ferri dell'armatura che escono dai bordi rotti: ognuno [lastra, quale bordo lungo la sua lunghezza (1 o -1),
+## dove lungo il bordo (frazione della mezza larghezza), lunghezza, direzione nelle coordinate della lastra]; partono
+## dalla faccia del bordo (4 mm dentro).
+func _ferri_armatura(nodo: Node3D, ferri: Array, elenco: Array, sopra: float) -> void:
+	var ferro := _mat("ferro_armatura", Color(0.32, 0.2, 0.13), 0.85, 0.4)
+	for fe in elenco:
+		if int(fe[0]) >= ferri.size():
+			continue
+		var l: Array = ferri[int(fe[0])]
+		var c: Vector3 = l[0]
+		var lx: Vector3 = l[1]
+		var ly: Vector3 = l[2]
+		var lz: Vector3 = l[3]
+		var ms: Vector3 = l[4]
+		var dir_loc: Vector3 = fe[4]
+		var bordo := c + lx * ms.x * 0.5 * float(fe[1]) + lz * ms.z * 0.5 * float(fe[2])
+		var verso := (lx * dir_loc.x + ly * dir_loc.y + lz * dir_loc.z).normalized()
+		var inizio := bordo - verso * 0.004
+		if inizio.y < sopra + 0.05:
+			continue
+		_palo(nodo, inizio, inizio + verso * float(fe[3]), 0.009, ferro)
+
+
+## Le lastre di una banchina crollata nel canale (da [param s0], lunga [param lungo], dal lato [param lato]): per ogni
+## testa rotta una lastra grande appoggiata in salita contro la testa, una più piccola storta e due pezzi; in mezzo
+## (se non [param solo_capi]) altre lastre storte. Tutte poggiano sul fondo del canale (e al muro), il pesante sotto;
+## la graniglia della banchina sopra, il calcestruzzo sotto; i ferri dalle lastre grandi.
+func _crollo_lastre(nodo: Node3D, s0: float, lungo: float, lato: float, solo_capi: bool) -> void:
+	var sm := s0 + lungo * 0.5
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(s0 * 10.0) + 7
+	var lastre := []
+	for sgn: float in [-1.0, 1.0]:
+		var e := sgn * lungo * 0.5
+		lastre.append([e - sgn * 0.95, 5.0, 0.0, Vector3(1.6, 0.26, 2.0), Vector3(rng.randf_range(-6, 6), sgn * rng.randf_range(4, 12), sgn * 22.0), 1, "terra"])
+		lastre.append([e - sgn * 2.2, 4.45, 0.0, Vector3(1.2, 0.24, 1.35), Vector3(rng.randf_range(4, 10), sgn * 15.0, -sgn * 8.0), 1, "terra"])
+		lastre.append([e - sgn * 1.7, 5.85, 0.0, Vector3(0.5, 0.3, 0.45), Vector3(10, rng.randf_range(10, 50), 5), 1, "terra muro"])
+		lastre.append([e - sgn * 0.45, 4.05, 0.0, Vector3(0.4, 0.25, 0.5), Vector3(0, rng.randf_range(10, 60), 12), -1, "terra"])
+	if not solo_capi:
+		var so := -lungo * 0.5 + 3.2
+		var k := 0
+		while so < lungo * 0.5 - 3.0:
+			lastre.append([so, 5.4 if k % 2 == 0 else 4.6, 0.0, Vector3(1.3, 0.24, 1.3),
+					Vector3(rng.randf_range(-15, 15), rng.randf_range(-30, 30), rng.randf_range(-12, 12)), 1 if k % 2 == 0 else -1, "terra"])
+			lastre.append([so + 1.1, 4.3 if k % 2 == 0 else 5.6, 0.0, Vector3(0.55, 0.3, 0.5),
+					Vector3(rng.randf_range(-10, 10), rng.randf_range(0, 90), rng.randf_range(-10, 10)), 1, "terra"])
+			so += 2.4
+			k += 1
+	var st_g := SurfaceTool.new()
+	st_g.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_c := SurfaceTool.new()
+	st_c.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var facce := PackedVector3Array()
+	var ferri := _lastre_crollate(st_g, st_c, facce, sm, lato, lastre, fondo)
+	for coppia in [[st_g, mat_graniglia, "Lastre"], [st_c, _mat("calcestruzzo_volta", Color(0.5, 0.49, 0.46), 0.95), "Calcestruzzo"]]:
+		var mi := MeshInstance3D.new()
+		mi.name = coppia[2]
+		mi.mesh = (coppia[0] as SurfaceTool).commit()
+		mi.material_override = coppia[1]
+		nodo.add_child(mi)
+	_corpo(nodo, facce)
+	_ferri_armatura(nodo, ferri, [[0, 1.0, 0.4, 0.4, Vector3(0.9, 0.3, 0.1)], [0, 1.0, -0.4, 0.35, Vector3(0.9, 0.2, -0.2)],
+			[4, -1.0, 0.3, 0.4, Vector3(-0.9, 0.3, 0.2)], [4, -1.0, -0.3, 0.3, Vector3(-0.9, 0.2, -0.1)]], fondo)
+
+
+## Una cassa da nave (centro [param c], larga lungo [param r], lunga lungo [param d], misure x alta x lunga): il corpo
+## di assi un po' rientrato, i dodici spigoli rinforzati e una traversa in diagonale sui due fianchi lunghi (in
+## [param scuro]), due reggette di ferro tutto attorno (in [param regge]).
+func _cassa(st: SurfaceTool, scuro: SurfaceTool, regge: SurfaceTool, facce: PackedVector3Array, c: Vector3, r: Vector3,
+		d: Vector3, misure: Vector3) -> void:
+	var w := misure.x
+	var h := misure.y
+	var l := misure.z
+	var b := 0.07                       # gli spigoli
+	_scatola(st, facce, c, r, d, Vector3(w - 0.04, h - 0.04, l - 0.04))
+	var y := Vector3.UP
+	for i: float in [-1.0, 1.0]:
+		for j: float in [-1.0, 1.0]:
+			# i quattro montanti, i quattro correnti lungo d e i quattro lungo r
+			_scatola(scuro, facce, c + r * (w - b) * 0.5 * i + d * (l - b) * 0.5 * j, r, d, Vector3(b, h, b))
+			_scatola(scuro, facce, c + r * (w - b) * 0.5 * i + y * (h - b) * 0.5 * j, r, d, Vector3(b, b, l - 2.0 * b))
+			_scatola(scuro, facce, c + d * (l - b) * 0.5 * i + y * (h - b) * 0.5 * j, r, d, Vector3(w - 2.0 * b, b, b))
+	# la traversa in diagonale sui fianchi lunghi (verso il canale e verso il muro)
+	for i: float in [-1.0, 1.0]:
+		var diag := (d * (l - 2.0 * b) + y * (h - 2.0 * b) * i).normalized()
+		_scatola_ruotata(scuro, facce, c + r * (w * 0.5 - 0.035) * i, diag, r, Vector3(Vector2(l - 2.0 * b, h - 2.0 * b).length(), 0.08, 0.05))
+	# due reggette tutto attorno, a un terzo e due terzi dell'altezza, 5 mm fuori dagli spigoli
+	for f: float in [-1.0 / 6.0, 1.0 / 6.0]:
+		var cc := c + y * h * f
+		for i: float in [-1.0, 1.0]:
+			_scatola(regge, facce, cc + r * (w * 0.5 + 0.0025) * i, r, d, Vector3(0.005, 0.05, l + 0.01))
+			_scatola(regge, facce, cc + d * (l * 0.5 + 0.0025) * i, r, d, Vector3(w + 0.01, 0.05, 0.005))
+
+
 func _ostacolo(o: Dictionary) -> void:
 	var nodo := Node3D.new()
 	nodo.name = "Ostacolo_%s_%d" % [o["tipo"], int(o["s"])]
@@ -1863,35 +2064,38 @@ func _ostacolo(o: Dictionary) -> void:
 	var mat: Material = mat_graniglia
 	match String(o["tipo"]):
 		"crollo":
-			# le lastre della banchina cadute nel canale: inclinate, appoggiate al fondo e al bordo rotto
+			# la banchina caduta nel canale: lastre spezzate di traverso, appoggiate al fondo, al muro e alle teste rotte
+			# (davanti a una galleria solo vicino alle teste: il resto è il canale dove si passa a guado)
+			_crollo_lastre(nodo, s0, lungo, lato, _sotto_galleria(o))
 			mat = mat_graniglia
-			for k in 4:
-				var f := (float(k) + 0.5) / 4.0
-				var sk := s0 + lungo * f
-				var pk := punto(sk)
-				var rk := destra(sk) * lato
-				var dk := direzione(sk)
-				var giro := 0.35 + 0.15 * float(k % 2)
-				var ax := (rk * cos(giro) + Vector3.UP * sin(giro)).normalized()
-				var c := _al(pk, rk, Vector2(muro - 0.75 - 0.25 * float(k % 2), fondo + 0.42))
-				_scatola_ruotata(st, facce, c, ax, dk, Vector3(1.5, 0.22, lungo / 4.0 - 0.1))
 		"carico":
-			# il carico del relitto caduto sulla banchina: due colonne di casse a filo (le grandi sotto), il davanti dritto
-			# alto 1,6 m (non ci si sale), il forziere sopra e l'ancora appoggiata al muro dietro
-			mat = _mat_cassa()
+			# il carico del relitto caduto sulla banchina: due colonne di casse da nave (le grandi sotto), il davanti
+			# dritto alto 1,6 m (non ci si sale) e il forziere sopra la colonna verso il canale. Le casse sono vere: assi, spigoli rinforzati, una traversa in diagonale
+			# e due reggette di ferro; la colonna verso il canale resta 10 cm dentro il bordo della banchina
+			mat = _mat("cassa_assi", Color(0.5, 0.37, 0.22), 0.85)
+			var scuro := SurfaceTool.new()
+			scuro.begin(Mesh.PRIMITIVE_TRIANGLES)
+			var regge := SurfaceTool.new()
+			regge.begin(Mesh.PRIMITIVE_TRIANGLES)
 			var uw := muro - 0.62
-			var uc := canale + 0.62
-			var largo_w := 1.2
-			var largo_c := 1.2
-			var lato_s := lungo
-			_scatola(st, facce, _al(p, r, Vector2(uw, piano + 0.45)), r, d, Vector3(largo_w, 0.9, lato_s))
-			_scatola(st, facce, _al(p, r, Vector2(uw, piano + 0.9 + 0.35)), r, d, Vector3(largo_w, 0.7, lato_s))
-			_scatola(st, facce, _al(p, r, Vector2(uc, piano + 0.4)), r, d, Vector3(largo_c, 0.8, lato_s))
-			_scatola(st, facce, _al(p, r, Vector2(uc, piano + 0.8 + 0.375)), r, d, Vector3(largo_c, 0.75, lato_s))
-			_modello(nodo, "forziere", _al(p + d * 0.2, r, Vector2(uc, piano + 1.55)), -d, 1.0)
-			var an := _modello(nodo, "ancora", _al(p + d * (lato_s * 0.5 + 0.2), r, Vector2(muro - 0.14, piano)), r, 1.25)
-			an.rotate_object_local(Vector3.RIGHT, deg_to_rad(-6.0))
-			_collisione_modello(an)
+			var uc := canale + 0.1 + 0.575
+			var mezzo_s := lungo * 0.25
+			# [u, larga di traverso, quota del fondo, alta]
+			for col in [[uw, 1.2, 0.0, 0.9], [uw, 1.2, 0.9, 0.7], [uc, 1.15, 0.0, 0.8], [uc, 1.15, 0.8, 0.75]]:
+				for so: float in [-mezzo_s, mezzo_s]:
+					var sc := sm + so
+					var pc := punto(sc)
+					var rc := destra(sc) * lato
+					var dc := direzione(sc)
+					var c := _al(pc, rc, Vector2(float(col[0]), piano + float(col[2]) + float(col[3]) * 0.5))
+					_cassa(st, scuro, regge, facce, c, rc, dc, Vector3(float(col[1]), float(col[3]), lungo * 0.5 - 0.01))
+			for coppia in [[scuro, _mat("cassa_spigoli", Color(0.27, 0.18, 0.1), 0.85), "Spigoli"], [regge, _mat_ferro(), "Reggette"]]:
+				var mi_c := MeshInstance3D.new()
+				mi_c.name = coppia[2]
+				mi_c.mesh = (coppia[0] as SurfaceTool).commit()
+				mi_c.material_override = coppia[1]
+				nodo.add_child(mi_c)
+			SottomarinoArrediA2._doppia_faccia(_modello(nodo, "forziere", _al(p + d * 0.2, r, Vector2(uc, piano + 1.55)), -d, 1.0))
 		"cancello":
 			_cancello(nodo, st, facce, s0, lato)
 			mat = _mat_ferro()
@@ -1900,7 +2104,6 @@ func _ostacolo(o: Dictionary) -> void:
 			# e storte, le grandi sotto, due lastre ritte di traverso davanti (non si scavalca: alte 1,6-1,9 m e ripide),
 			# una appoggiata al muro, i ferri dell'armatura che escono dai bordi rotti e i calcinacci intorno
 			mat = mat_mosaico
-			var m_loc := Basis(d, Vector3.UP, r)
 			# il calcestruzzo delle lastre (il mosaico sta solo sulla faccia che era dentro la volta)
 			var cls_st := SurfaceTool.new()
 			cls_st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -1920,73 +2123,16 @@ func _ostacolo(o: Dictionary) -> void:
 				[-1.3, 4.1, 0.0, Vector3(0.4, 0.3, 0.5), Vector3(10, 15, -10), 1, "terra"],
 				[1.3, 4.3, 0.0, Vector3(0.9, 0.28, 0.8), Vector3(-20, -25, 30), -1, "terra"],
 			]
-			var ferri := []
-			for l in lastre:
-				var rot: Vector3 = l[4]
-				var b := m_loc * Basis.from_euler(rot * PI / 180.0)
-				var ms: Vector3 = l[3]
-				var x := b.x.normalized()
-				var z := (b.z - x * b.z.dot(x)).normalized()
-				var y := z.cross(x).normalized()
-				var c := _al(p + d * float(l[0]), r, Vector2(float(l[1]), piano + float(l[2])))
-				# (a terra: il punto più basso sul pavimento; al muro: il punto più lontano a filo del muro)
-				var basso := INF
-				var fuori := -INF
-				for i in [-1, 1]:
-					for j in [-1, 1]:
-						for k in [-1, 1]:
-							var q: Vector3 = c + x * ms.x * 0.5 * i + y * ms.y * 0.5 * j + z * ms.z * 0.5 * k
-							basso = minf(basso, q.y)
-							fuori = maxf(fuori, (q - p).dot(r))
-				if String(l[6]).contains("terra"):
-					c.y += piano - basso
-				elif String(l[6]).contains("sopra"):
-					c.y += piano + float(l[2]) - basso      # (posata sulle lastre sotto, col punto più basso a quella quota)
-				if String(l[6]).contains("muro"):
-					c += r * (muro - fuori)
-				var X := x * ms.x * 0.5
-				var Y := y * ms.y * 0.5
-				var Z := z * ms.z * 0.5
-				var v := func(i: int, j: int, k: int) -> Vector3: return c + X * i + Y * j + Z * k
-				var facce_l := [
-					[v.call(1, -1, -1), v.call(1, 1, -1), v.call(1, 1, 1), v.call(1, -1, 1), X, 0],
-					[v.call(-1, -1, 1), v.call(-1, 1, 1), v.call(-1, 1, -1), v.call(-1, -1, -1), -X, 0],
-					[v.call(-1, 1, -1), v.call(-1, 1, 1), v.call(1, 1, 1), v.call(1, 1, -1), Y, 1],
-					[v.call(-1, -1, -1), v.call(1, -1, -1), v.call(1, -1, 1), v.call(-1, -1, 1), -Y, -1],
-					[v.call(-1, -1, 1), v.call(1, -1, 1), v.call(1, 1, 1), v.call(-1, 1, 1), Z, 0],
-					[v.call(1, -1, -1), v.call(-1, -1, -1), v.call(-1, 1, -1), v.call(1, 1, -1), -Z, 0],
-				]
-				for q in facce_l:
-					var qq := [q[0], q[1], q[2], q[3]]
-					_quad(st if int(q[5]) == int(l[5]) else cls_st, qq, q[4])
-					_facce_quad(facce, qq)
-				ferri.append([c, x, y, z, ms])
+			var ferri := _lastre_crollate(st, cls_st, facce, sm, lato, lastre, piano)
 			var cls := MeshInstance3D.new()
 			cls.name = "Calcestruzzo"
 			cls.mesh = cls_st.commit()
 			cls.material_override = _mat("calcestruzzo_volta", Color(0.5, 0.49, 0.46), 0.95)
 			nodo.add_child(cls)
-			# i ferri dell'armatura: escono dai bordi rotti delle lastre (dalla faccia del bordo, 4 mm dentro), un po'
-			# storti, lunghi 25-55 cm
-			var ferro := _mat("ferro_armatura", Color(0.32, 0.2, 0.13), 0.85, 0.4)
-			# [lastra, quale bordo rotto lungo la sua lunghezza (1 o -1), dove lungo il bordo (frazione della mezza
-			#  larghezza), lunghezza, direzione nelle coordinate della lastra]
-			for fe in [[3, 1.0, 0.3, 0.5, Vector3(0.9, 0.2, 0.2)], [3, 1.0, -0.3, 0.4, Vector3(0.9, 0.3, -0.2)],
+			# i ferri dell'armatura che escono dai bordi rotti
+			_ferri_armatura(nodo, ferri, [[3, 1.0, 0.3, 0.5, Vector3(0.9, 0.2, 0.2)], [3, 1.0, -0.3, 0.4, Vector3(0.9, 0.3, -0.2)],
 					[4, 1.0, 0.25, 0.45, Vector3(0.9, -0.1, 0.3)], [5, 1.0, 0.0, 0.5, Vector3(0.9, 0.3, 0.1)],
-					[0, -1.0, 0.6, 0.4, Vector3(-0.9, 0.3, 0.2)], [7, 1.0, 0.2, 0.35, Vector3(0.9, 0.2, -0.3)]]:
-				var l: Array = ferri[int(fe[0])]
-				var c: Vector3 = l[0]
-				var lx: Vector3 = l[1]
-				var ly: Vector3 = l[2]
-				var lz: Vector3 = l[3]
-				var ms: Vector3 = l[4]
-				var dir_loc: Vector3 = fe[4]
-				var bordo := c + lx * ms.x * 0.5 * float(fe[1]) + lz * ms.z * 0.5 * float(fe[2])
-				var verso := (lx * dir_loc.x + ly * dir_loc.y + lz * dir_loc.z).normalized()
-				var inizio := bordo - verso * 0.004
-				if inizio.y < piano + 0.05:
-					continue
-				_palo(nodo, inizio, inizio + verso * float(fe[3]), 0.009, ferro)
+					[0, -1.0, 0.6, 0.4, Vector3(-0.9, 0.3, 0.2)], [7, 1.0, 0.2, 0.35, Vector3(0.9, 0.2, -0.3)]], piano)
 			# i calcinacci intorno: pezzi piccoli di malta e mosaico sul pavimento della banchina, davanti e attorno al mucchio
 			var c_st := SurfaceTool.new()
 			c_st.begin(Mesh.PRIMITIVE_TRIANGLES)

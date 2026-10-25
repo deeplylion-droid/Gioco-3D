@@ -161,6 +161,8 @@ func _modello(i: int) -> void:
 	var torbida: Material = load("res://assets/materials/sala/acqua_torbida.tres")
 	for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = torbida if String(m.name).begins_with("acqua_allagata") else acqua
+	if nome == "struttura":
+		_varco_scalette(glb)
 	if _a_pezzi:
 		var figli := glb.get_children()
 		for c in figli:
@@ -170,6 +172,47 @@ func _modello(i: int) -> void:
 			passi.append(func(): glb.add_child(c))
 		_coda = passi + _coda
 	add_child(glb)
+
+
+## Toglie dalla collisione della struttura i montanti e i pioli delle scalette (restano da vedere): in cima i
+## montanti salgono 1 m sopra la passerella a 0,5 m l'uno dall'altro, e il giocatore, largo 0,7 m, scavalcando il
+## bordo restava incastrato fra i due (collaudo T1). Sulla scala lo tiene già l'area della scala (Ladder).
+func _varco_scalette(glb: Node3D) -> void:
+	for sb in glb.find_children("*", "StaticBody3D", true, false):
+		for cs in sb.get_children():
+			if not cs is CollisionShape3D or not (cs as CollisionShape3D).shape is ConcavePolygonShape3D:
+				continue
+			# la forma nelle coordinate della sala (il GLB entra nella sala senza spostamenti)
+			var t := Transform3D.IDENTITY
+			var n: Node = cs
+			while n != glb:
+				t = (n as Node3D).transform * t
+				n = n.get_parent()
+			t = glb.transform * t
+			var facce := ((cs as CollisionShape3D).shape as ConcavePolygonShape3D).get_faces()
+			var tenute := PackedVector3Array()
+			for i in range(0, facce.size(), 3):
+				if not (_nella_scaletta(t * facce[i]) and _nella_scaletta(t * facce[i + 1]) and _nella_scaletta(t * facce[i + 2])):
+					tenute.append_array([facce[i], facce[i + 1], facce[i + 2]])
+			if tenute.size() < facce.size():
+				var forma := ConcavePolygonShape3D.new()
+				forma.backface_collision = ((cs as CollisionShape3D).shape as ConcavePolygonShape3D).backface_collision
+				forma.set_faces(tenute)
+				(cs as CollisionShape3D).shape = forma
+
+
+## Vero se [param q] (coordinate della sala) sta sul modello di una scaletta: fino a 30 cm dietro il suo piede,
+## largo 0,8 m, dal piede a 1,5 m sopra la cima.
+func _nella_scaletta(q: Vector3) -> bool:
+	for s in dati["scale"]:
+		var piede := b([s["x"], s["y"], s["z0"]])
+		var verso := b(s["verso"])
+		var d := q - piede
+		var lungo := d.dot(verso)
+		if lungo > -0.3 and lungo < 0.02 and absf(d.dot(verso.cross(Vector3.UP))) < 0.4 \
+				and q.y > piede.y - 0.5 and q.y < float(s["z1"]) + 1.5:
+			return true
+	return false
 
 
 # --- tubi -------------------------------------------------------------------------------------------

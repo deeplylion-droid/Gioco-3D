@@ -57,35 +57,30 @@ static func _relitto(sala: SalaSottomarino) -> void:
 	sala.add_child(nodo)
 	var ancora := _contro_il_muro(sala, nodo, "ancora", ANCORA[0], ANCORA[1], ANCORA[2], 0.0, false)
 	ancora.name = "Ancora"
-	# due staffe d'acciaio attorno al fusto, murate: una a un terzo e una a due terzi dell'altezza
+	# due staffe d'acciaio sul fusto nudo (fra le marre, che arrivano al 40% dell'altezza, e il ceppo, all'80%): due
+	# piastre murate ai lati del fusto coi bulloni, due bracci che vengono avanti lungo i fianchi del fusto e il collare
+	# davanti (misurati sulla mesh vera del fusto)
 	var alta: float = 1.5 * float(ANCORA[2])
-	var spessa: float = 0.233 * float(ANCORA[2])
-	for f: float in [0.4, 0.75]:
-		var st := MeshInstance3D.new()
-		st.name = "Staffa"
-		var bm := BoxMesh.new()
-		bm.size = Vector3(0.22, 0.07, spessa + 0.006)
-		st.mesh = bm
-		st.material_override = sala._mat_ferro()
-		ancora.add_child(st)
-		# (attorno al fusto, a metà del suo spessore: tocca il muro, 3 mm dentro, e copre il davanti del fusto)
-		st.global_transform = Transform3D(ancora.global_basis.orthonormalized(),
-				ancora.global_position + Vector3.UP * alta * f)
+	for f: float in [0.62, 0.7]:
+		_staffa(sala, ancora, alta * f)
 	# il salvagente del relitto, col suo asse di legno (gancio e cima compresi nel modello) fissato al muro
 	var salv := _contro_il_muro(sala, nodo, "salvagente", SALVAGENTE[0], SALVAGENTE[1], SALVAGENTE[2], 0.0, false)
 	salv.name = "Salvagente"
-	_mensola(sala, nodo, FORZIERE[0], FORZIERE[1], 0.9, 0.454 * float(FORZIERE[2]) + DAL_MURO + 0.08)
+	var men_f := _mensola(sala, nodo, FORZIERE[0], FORZIERE[1], 0.9, 0.454 * float(FORZIERE[2]) + DAL_MURO + 0.08)
 	var forziere := _contro_il_muro(sala, nodo, "forziere", FORZIERE[0], FORZIERE[1], FORZIERE[2], 0.0, true)
 	forziere.name = "Forziere"
+	_doppia_faccia(forziere)
+	_faretto(sala, nodo, men_f, forziere, 0.15)
 
 
 static func _palombaro(sala: SalaSottomarino) -> void:
 	var nodo := Node3D.new()
 	nodo.name = "SalaPalombaro"
 	sala.add_child(nodo)
-	_mensola(sala, nodo, PALOMBARO[0], PALOMBARO[1], 1.1, 0.945 * float(PALOMBARO[2]) + DAL_MURO + 0.08)
+	var men_p := _mensola(sala, nodo, PALOMBARO[0], PALOMBARO[1], 1.1, 0.945 * float(PALOMBARO[2]) + DAL_MURO + 0.08)
 	var pal := _contro_il_muro(sala, nodo, "palombaro", PALOMBARO[0], PALOMBARO[1], PALOMBARO[2], 0.0, true)
 	pal.name = "Palombaro"
+	_faretto(sala, nodo, men_p, pal, 0.75)
 
 
 ## Una mensola di graniglia murata nel muro dal lato [param lato] a [param s], larga [param largo] lungo il muro e
@@ -152,3 +147,112 @@ static func _contro_il_muro(sala: SalaSottomarino, nodo: Node3D, nome: String, s
 		push_warning("arredi sottomarino: %s a %.1f senza mensola" % [nome, s])
 	sala._collisione_modello(n)
 	return n
+
+
+## Il forziere è aperto, e dentro il modello ha solo le facce di fuori: guardandoci dentro dalla banchina si vedevano
+## triangoli dal retro (collaudo di enigmi, vista dal retro a 136). Le sue mesh si disegnano dalle due parti.
+static func _doppia_faccia(n: Node3D) -> void:
+	for m in n.find_children("*", "MeshInstance3D", true, false):
+		var mm := m as MeshInstance3D
+		mm.set_meta(&"doppia_faccia", true)
+		for i in mm.mesh.get_surface_count():
+			var mat := mm.get_active_material(i)
+			if mat is BaseMaterial3D:
+				var d := mat.duplicate() as BaseMaterial3D
+				d.cull_mode = BaseMaterial3D.CULL_DISABLED
+				mm.set_surface_override_material(i, d)
+
+
+## Una staffa attorno al fusto di [param ancora] a [param h] sopra la sua base: misura il fusto lì (i vertici della
+## mesh entro 4 cm di quota e 15 cm dall'asse), poi piastre, bulloni, bracci e collare, a 3 mm dal fusto.
+static func _staffa(sala: SalaSottomarino, ancora: Node3D, h: float) -> void:
+	var b := ancora.global_basis.orthonormalized()
+	var o := ancora.global_position
+	# la sezione vera a quota h: i triangoli della mesh tagliati dal piano (il modello ha pochi vertici: i vertici soli
+	# non dicono dov'è il fusto fra un anello e l'altro)
+	var sezione := PackedVector3Array()
+	var zm := -INF           # il retro dell'ancora (sul muro: +z)
+	for m in ancora.find_children("*", "MeshInstance3D", true, false):
+		var mi := m as MeshInstance3D
+		if mi.name == "Staffa":
+			continue
+		var xf := mi.global_transform
+		var fv := mi.mesh.get_faces()
+		for k in range(0, fv.size(), 3):
+			var tri := [b.inverse() * ((xf * fv[k]) - o), b.inverse() * ((xf * fv[k + 1]) - o), b.inverse() * ((xf * fv[k + 2]) - o)]
+			for i in 3:
+				var p1: Vector3 = tri[i]
+				var p2: Vector3 = tri[(i + 1) % 3]
+				zm = maxf(zm, p1.z)
+				if (p1.y - h) * (p2.y - h) < 0.0:
+					sezione.append(p1.lerp(p2, (h - p1.y) / (p2.y - p1.y)))
+	# il fusto è il pezzo della sezione contro il muro (la catena gli passa davanti)
+	var x0 := INF
+	var x1 := -INF
+	var zf := INF            # il davanti del fusto (verso il canale: -z)
+	var zs := -INF
+	for q in sezione:
+		zs = maxf(zs, q.z)
+	for q in sezione:
+		if q.z >= zs - 0.08:
+			x0 = minf(x0, q.x)
+			x1 = maxf(x1, q.x)
+			zf = minf(zf, q.z)
+	if x0 == INF:
+		return
+	var nodo := Node3D.new()
+	nodo.name = "Staffa"
+	ancora.add_child(nodo)
+	nodo.global_transform = Transform3D(b, o)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var facce := PackedVector3Array()
+	var gioco := 0.003
+	var sp := 0.012
+	var xa := x0 - gioco - sp * 0.5        # i bracci
+	var xb := x1 + gioco + sp * 0.5
+	var prof := zm - (zf - gioco - sp)       # dal muro al davanti del collare
+	for xc: float in [xa, xb]:
+		# il braccio, dal muro al collare
+		sala._scatola(st, facce, Vector3(xc, h, zm - prof * 0.5), Vector3.RIGHT, Vector3.BACK, Vector3(sp, 0.06, prof))
+		# la piastra murata di fianco, coi due bulloni
+		var xp := xc + signf(xc) * (sp * 0.5 + 0.04)
+		sala._scatola(st, facce, Vector3(xp, h, zm - sp * 0.5), Vector3.RIGHT, Vector3.BACK, Vector3(0.08, 0.12, sp))
+		for yb: float in [-0.035, 0.035]:
+			sala._scatola(st, facce, Vector3(xp, h + yb, zm - sp - 0.004), Vector3.RIGHT, Vector3.BACK, Vector3(0.018, 0.018, 0.008))
+	# il collare davanti al fusto
+	sala._scatola(st, facce, Vector3((xa + xb) * 0.5, h, zf - gioco - sp * 0.5), Vector3.RIGHT, Vector3.BACK, Vector3(xb - xa + sp, 0.06, sp))
+	var mi_s := MeshInstance3D.new()
+	mi_s.name = "Staffa"
+	mi_s.mesh = st.commit()
+	mi_s.material_override = sala._mat_ferro()
+	nodo.add_child(mi_s)
+
+
+## Un faretto piccolo sul bordo davanti della [param mensola], puntato in su su [param cosa] (a [param su] sopra la sua
+## base): al buio, fra una lampada e l'altra, il palombaro e il forziere si leggevano poco (collaudo di enigmi).
+static func _faretto(sala: SalaSottomarino, nodo: Node3D, mensola: Node3D, cosa: Node3D, su: float) -> void:
+	var box := ((mensola.get_child(0) as MeshInstance3D).mesh as BoxMesh).size
+	var b := mensola.global_basis.orthonormalized()
+	# (la z della mensola va verso il muro: il bordo davanti è a -z)
+	var base := mensola.global_position + b.y * box.y * 0.5 - b.z * (box.z * 0.5 - 0.05)
+	var corpo := MeshInstance3D.new()
+	corpo.name = "Faretto"
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.035
+	cm.bottom_radius = 0.045
+	cm.height = 0.07
+	corpo.mesh = cm
+	corpo.material_override = sala._mat_ferro()
+	nodo.add_child(corpo)
+	corpo.global_position = base + Vector3.UP * 0.035
+	var sl := SpotLight3D.new()
+	sl.name = "LuceFaretto"
+	sl.light_color = Color(1.0, 0.86, 0.66)
+	sl.light_energy = 2.6
+	sl.spot_range = 3.0
+	sl.spot_angle = 38.0
+	sl.shadow_enabled = false
+	nodo.add_child(sl)
+	sl.global_position = base + Vector3.UP * 0.075
+	sl.look_at(cosa.global_position + Vector3.UP * su, b.z if absf(b.z.dot(Vector3.UP)) < 0.9 else Vector3.RIGHT)

@@ -886,5 +886,115 @@
 		"squadra": "ambienti-2",
 		"stato": "voluto",
 		"motivo": "la galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati; i casi sono il soffitto basso, la fascia gialla e nera e le plafoniere sopra le bocche e dentro"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@898",
+		"problema": "ingombro",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"firma": "|ArrayMesh 2.49x0.30x0.58",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@897",
+		"problema": "ingombro",
+		"pos": [
+			-37.0,
+			-30.0,
+			128.5
+		],
+		"firma": "|ArrayMesh 2.49x0.30x0.57",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/Fascia",
+		"problema": "ingombro",
+		"pos": [
+			-22.75,
+			-30.0,
+			117.5
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_425/@MeshInstance3D@895",
+		"problema": "ingombro",
+		"pos": [
+			-22.75,
+			-30.0,
+			117.5
+		],
+		"firma": "|ArrayMesh 1.13x0.30x2.30",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@827",
+		"problema": "ingombro",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"firma": "|ArrayMesh 0.18x0.30x1.19",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@826",
+		"problema": "ingombro",
+		"pos": [
+			1.75,
+			-30.0,
+			55.25
+		],
+		"firma": "|ArrayMesh 0.17x0.30x1.19",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/@MeshInstance3D@824",
+		"problema": "ingombro",
+		"pos": [
+			-0.5,
+			-30.0,
+			65.25
+		],
+		"firma": "|ArrayMesh 0.66x0.30x1.71",
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
+	},
+	{
+		"zona": "sottomarino",
+		"nodo": "Galleria_205/Fascia",
+		"problema": "ingombro",
+		"pos": [
+			-0.5,
+			-30.0,
+			65.25
+		],
+		"squadra": "ambienti-2",
+		"stato": "voluto",
+		"motivo": "la fascia gialla e nera sopra la bocca della galleria di servizio bassa (1,25 m), passaggio basso voluto dall'utente (24 ottobre, scelta 4C): ci si passa accovacciati"
 	}
 ]
