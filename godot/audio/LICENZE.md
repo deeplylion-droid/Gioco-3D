@@ -34,6 +34,12 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `ambiente/goccia_pavimento_02.ogg` | 0.3 s | sintesi (originale) |  |
 | `ambiente/goccia_pavimento_03.ogg` | 0.3 s | sintesi (originale) |  |
 | `ambiente/goccia_pavimento_04.ogg` | 0.3 s | sintesi (originale) |  |
+| `ambiente/inseguimento_colpo_01.ogg` | 1.6 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina |
+| `ambiente/inseguimento_colpo_02.ogg` | 1.6 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina |
+| `ambiente/inseguimento_colpo_03.ogg` | 1.6 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina |
+| `ambiente/inseguimento_colpo_04.ogg` | 1.6 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina |
+| `ambiente/inseguimento_colpo_05.ogg` | 1.6 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina |
+| `ambiente/inseguimento_colpo_06.ogg` | 1.6 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): colpo di tamburo lontano nello scafo, più fitti quando lei è vicina |
 | `ambiente/nave_colpo_lontano_01.ogg` | 5.5 s | Kenney Impact Sounds + RPG Audio (CC0), rielaborati |  |
 | `ambiente/nave_colpo_lontano_02.ogg` | 5.5 s | Kenney Impact Sounds + RPG Audio (CC0), rielaborati |  |
 | `ambiente/nave_colpo_lontano_03.ogg` | 5.5 s | Kenney Impact Sounds + RPG Audio (CC0), rielaborati |  |
@@ -102,6 +108,11 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `giocatore/atterraggio_metallo_02.ogg` | 0.6 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_piastrelle_01.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
 | `giocatore/atterraggio_piastrelle_02.ogg` | 0.2 s | Kenney Impact Sounds (CC0), rielaborati + sintesi |  |
+| `giocatore/cuore_battito_01.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
+| `giocatore/cuore_battito_02.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
+| `giocatore/cuore_battito_03.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
+| `giocatore/cuore_battito_04.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
+| `giocatore/cuore_battito_05.ogg` | 0.8 s | sintesi (originale) | tunnel, inseguimento (25 ottobre sera): il battito del cuore, uno alla volta col tempo che segue lei |
 | `giocatore/passo_acqua_01.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_02.ogg` | 0.8 s | sintesi (originale) |  |
 | `giocatore/passo_acqua_03.ogg` | 0.8 s | sintesi (originale) |  |
@@ -226,4 +237,4 @@ I file originali usati sono copiati in `assets_src/audio/sorgenti/kenney/` con l
 | `torre/portone_torre_apre.ogg` | 8.5 s | sintesi (originale) | motore (A, scelto il 16 ottobre): il portone si muove da 0,7 s e sbatte a 6,4 s |
 | `torre/scivolo_loop.ogg` | 3.0 s | sintesi (originale) | scivolare sull'acquascivolo bagnato; volume e tono seguono la velocità |
 
-Totale: 201 file, 7.2 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
+Totale: 212 file, 7.2 MB (OGG Vorbis, 44,1 kHz; mono i suoni posizionati, stereo i fondi, la musica e i tuoni).
