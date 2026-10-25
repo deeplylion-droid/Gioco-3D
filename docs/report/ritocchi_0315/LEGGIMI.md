@@ -22,3 +22,10 @@ Prima, alla fine del diradamento, il volume della nebbia del corridoio (`Atmosfe
 Nessun altro lo usa: lo crea solo `RisveglioSqualo`, e la scena parte solo nella partita nuova.
 
 `test_squalo_viola` controlla anche che, finito il diradamento, il volume sia nascosto.
+
+## Prove
+
+- check_scripts ok;
+- `test_squalo_viola` 14/14, compreso il volume nascosto dopo il diradamento;
+- `test_infermeria_gioco` 36/36, `test_interni` 52/52, `test_risalita` 10/10;
+- posizionamento di Risalita e interni: 0 nuovi, 0 da correggere.
