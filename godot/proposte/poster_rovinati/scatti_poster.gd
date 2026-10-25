@@ -8,6 +8,7 @@ const SCENE := {
 	"interni": "res://scenes/interni/interni.tscn",
 	"sala": "res://scenes/sala_principale.tscn",
 	"infermeria": "res://scenes/risalita/infermeria.tscn",
+	"manifesto": "res://scenes/sala_principale.tscn",
 }
 ## scena -> nome: [da dove, verso dove, campo visivo]. Gli occhi del giocatore sono a 1,6 m.
 const SCATTI := {
@@ -23,6 +24,15 @@ const SCATTI := {
 		"manifesto_giocatore": [Vector3(-17.5, 1.6, 13.4), Vector3(-20.0, 1.4, 13.95), 70.0],
 		"manifesto_vicino": [Vector3(-19.0, 1.5, 13.95), Vector3(-20.0, 1.45, 13.95), 55.0],
 		"manifesto_bordo": [Vector3(-19.1, 1.6, 13.0), Vector3(-19.97, 1.55, 14.0), 50.0],
+	},
+	# collaudo del manifesto (25 ottobre): dall'alto, dal basso e radenti dai due lati, da vicino
+	"manifesto": {
+		"manifesto_alto": [Vector3(-19.45, 2.35, 13.95), Vector3(-19.98, 1.85, 13.95), 50.0],
+		"manifesto_basso": [Vector3(-19.4, 0.45, 13.95), Vector3(-19.98, 0.95, 13.95), 50.0],
+		"manifesto_radente_sud": [Vector3(-19.82, 1.4, 12.9), Vector3(-19.98, 1.4, 14.4), 45.0],
+		"manifesto_radente_nord": [Vector3(-19.82, 1.4, 15.0), Vector3(-19.98, 1.4, 13.5), 45.0],
+		"manifesto_scotch": [Vector3(-19.6, 2.0, 13.6), Vector3(-19.98, 1.9, 13.72), 40.0],
+		"manifesto_fronte": [Vector3(-18.6, 1.45, 13.95), Vector3(-20.0, 1.4, 13.95), 50.0],
 	},
 	"infermeria": {
 		"infermeria_giocatore": [Vector3(1.6, 1.6, 2.7), Vector3(-3.2, 1.6, 1.45), 70.0],
@@ -51,7 +61,7 @@ func _run() -> void:
 	Grafica.salva_su_disco = false
 	Grafica.applica_preset("alto")
 	var level := (load(SCENE[scena]) as PackedScene).instantiate()
-	if scena == "sala":
+	if scena == "sala" or scena == "manifesto":
 		# le parti lontane dal manifesto: con tutta la sala non entra nella memoria della macchina
 		for percorso in ["Risalita", "Piscina", "Polaroid", "BambiniBalconata", "Interni", "Tecnici", "Sala/TorreScivoli",
 				"Gioco/BambiniBalconata", "Gioco/EnigmaAcquari", "Gioco/LeiSbuca", "Sala/Cupola", "Sala/Oggetti", "Sala/Dettagli", "Sala/AngoloPalloni",
