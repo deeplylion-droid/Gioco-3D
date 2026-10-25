@@ -268,6 +268,9 @@ func respawn() -> void:
 	if Game.uscendo or _ripartenza_in_corso:
 		return
 	_ripartenza_in_corso = true
+	# (il giocatore della sala vecchia non vale più già adesso, come prima dell'attesa: chi aspetta il livello nuovo
+	# aspetta il giocatore nuovo)
+	player = null
 	var sala := get_tree().current_scene
 	attesa_ripartenza = await Game.aspetta_caricamenti(sala, ATTESA_RIPARTENZA)
 	_ripartenza_in_corso = false
@@ -282,7 +285,6 @@ func respawn() -> void:
 	_removed.clear()
 	for k in snapshot.get("removed", []):
 		_removed[String(k)] = true
-	player = null
 	if snapshot.is_empty():
 		is_dying = false
 		get_tree().reload_current_scene()
