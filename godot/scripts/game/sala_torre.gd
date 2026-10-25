@@ -118,7 +118,7 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 		var tp := Time.get_ticks_usec()
 		passo.call()
 		if OS.has_environment("TORRE_TEMPI"):
-			print("passo %d: %.1f ms" % [k, (Time.get_ticks_usec() - tp) / 1000.0])
+			print("passo %d %s: %.1f ms" % [k, passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
 		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
@@ -148,6 +148,9 @@ const STRATO_PREPARA := 1 << 19
 func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 	if principale == null or not is_inside_tree():
 		return
+	# lei dietro l'oblò, visibile e ferma nella sua posa, si disegna con la torre
+	if oblo and is_instance_valid(oblo):
+		oblo.mostra_per_preparare()
 	var visuali := find_children("*", "VisualInstance3D", true, false)
 	var aabb := AABB()
 	var primo := true
@@ -191,6 +194,8 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 	cam.current = true
 	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
 	for i in fotogrammi + 1:
+		if i == fotogrammi / 2 and oblo and is_instance_valid(oblo):
+			oblo.stacco_per_preparare()   # (a metà, lei nella posa del distacco)
 		await get_tree().process_frame
 		if not is_inside_tree():
 			break
@@ -201,6 +206,8 @@ func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
 	for l in maschere:
 		if is_instance_valid(l):
 			(l as Light3D).light_cull_mask = maschere[l]
+	if oblo and is_instance_valid(oblo):
+		oblo.fine_preparazione()
 	visible = era_visibile
 
 
@@ -215,6 +222,10 @@ func _passi() -> Array:
 	out.append_array(_passi_balconata())
 	out.append(_vasca_fondo)
 	out.append(_oblo_lei)
+	# lei dietro l'oblò nasce in tre passi suoi, nascosta e ferma (prepara_materiali la disegna con la torre): quando
+	# compare non si istanzia e non si compila niente (riscontro della v0.3.14)
+	for fase in 3:
+		out.append(func(): if oblo: oblo.prepara_lei(fase))
 	if crea_luci:
 		out.append_array(_passi_luci())
 	out.append(_luce_lei)
@@ -1275,6 +1286,9 @@ static func materiali_campione() -> Array[Material]:
 	# (l'oblò con lei sul muro est: piastra, vasca, ottone, vetro e veli d'acqua)
 	for m in ObloLei.materiali():
 		out.append(m as Material)
+	# (e lei dietro l'oblò, che nasce in tre passi della costruzione: i suoi materiali bagnati, la campana, l'occhio)
+	for m in LeiOblo.materiali_campione():
+		out.append(m)
 	for m in out:
 		m.get_rid()   # lo shader si crea adesso, non al primo uso
 	return out

@@ -428,7 +428,22 @@ func _oblo(nome: String, centro: Vector3, normale: Vector3, posa: String, zona: 
 		o.set(k, opzioni[k])
 	o.transform = Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
 	add_child(o)
+	# lei nasce adesso, nascosta e ferma, e si disegna una volta fuori vista appena c'è la camera (la sala si apre a
+	# schermo nero): quando compare non si istanzia e non si compila niente (riscontro della v0.3.14)
+	o.prepara_lei()
+	_prepara_materiali_oblo.call_deferred(o)
 	return o
+
+
+func _prepara_materiali_oblo(o: ObloLei) -> void:
+	for i in 600:
+		if not is_instance_valid(o) or not o.is_inside_tree():
+			return
+		if get_viewport() and get_viewport().get_camera_3d():
+			break
+		await get_tree().process_frame
+	if is_instance_valid(o) and o.is_inside_tree():
+		await o.prepara_materiali_lei(get_viewport())
 
 
 ## Una rampa di [param n] gradini che sale verso est da [param lo] (angolo basso a ovest-nord):
