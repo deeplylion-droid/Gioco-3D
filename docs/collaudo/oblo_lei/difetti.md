@@ -25,3 +25,18 @@ Gli scatti dei difetti sono in `difetti/`.
   - Scatto: `difetti/3_fiume_giunta.jpg`.
 
 ObloPersonale: nessun difetto visto.
+
+## Scatti dagli occhi del giocatore, Risalita
+
+Foglio: `fogli/foglio_giocatore_risalita.jpg`, fatto con `tests/scatti_oblo_lei.gd` e i materiali veri, al buio.
+Per ogni oblò ci sono cinque scatti:
+- da lontano, quando lei arriva;
+- da vicino, quando è ferma;
+- due mentre si stacca;
+- uno ravvicinato.
+
+Lei sta dietro il vetro in tutti gli stati e in tutti e tre gli oblò. La cornice tonda si legge bene anche al buio, e non c'è nessun quadrato scuro.
+
+- **D4. ObloServizio, posa capovolta, al 60% del distacco: la macchia giallo-rosa c'è ancora.** Ingrandita, è la gonna di lei (capovolta, quindi in alto) che si avvicina al vetro. È così vicina alla sua luce rosa che si brucia: diventa gialla e mostra righe verticali. Il bordo del vetro la taglia di netto, quindi sta dietro il vetro e non lo attraversa.
+  - Non è un problema di posizione ma di aspetto (luce troppo vicina alla gonna in quel momento).
+  - Scatto: `difetti/4_servizio_macchia_gonna.jpg`.
