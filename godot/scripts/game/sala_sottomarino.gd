@@ -792,7 +792,9 @@ func _fine() -> void:
 		for poly in Geometry2D.clip_polygons(mezza, porta):
 			var tri := Geometry2D.triangulate_polygon(poly)
 			for k in range(0, tri.size(), 3):
-				var tc := [_al(c0, r, poly[tri[k]]), _al(c0, r, poly[tri[k + 1]]), _al(c0, r, poly[tri[k + 2]])]
+				# (1 cm dentro la camera, nello spessore del telaio: nello stesso piano del muro di fondo il suo retro si vedeva
+				# dal tunnel a tratti, collaudo D3)
+				var tc := [_al(c0 + d * 0.01, r, poly[tri[k]]), _al(c0 + d * 0.01, r, poly[tri[k + 1]]), _al(c0 + d * 0.01, r, poly[tri[k + 2]])]
 				_tri(st["mosaico"], tc, d)
 				facce.append_array(PackedVector3Array(tc))
 	# il pontile davanti al muro di fondo, dalla scala fino a PONTILE_FINO dall'asse, e la soglia d'acciaio davanti alla
@@ -2150,7 +2152,7 @@ func _crollo_lastre(nodo: Node3D, s0: float, lungo: float, lato: float, solo_cap
 	st_c.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var facce := PackedVector3Array()
 	var ferri := _lastre_crollate(st_g, st_c, facce, sm, lato, lastre, fondo)
-	for coppia in [[st_g, mat_graniglia, "Lastre"], [st_c, _mat("calcestruzzo_volta", Color(0.5, 0.49, 0.46), 0.95), "Calcestruzzo"]]:
+	for coppia in [[st_g, mat_graniglia, "Lastre"], [st_c, _mat_cemento("calcestruzzo_volta", Color(0.58, 0.56, 0.52)), "Calcestruzzo"]]:
 		var mi := MeshInstance3D.new()
 		mi.name = coppia[2]
 		mi.mesh = (coppia[0] as SurfaceTool).commit()
@@ -2270,7 +2272,7 @@ func _ostacolo(o: Dictionary) -> void:
 			var cls := MeshInstance3D.new()
 			cls.name = "Calcestruzzo"
 			cls.mesh = cls_st.commit()
-			cls.material_override = _mat("calcestruzzo_volta", Color(0.5, 0.49, 0.46), 0.95)
+			cls.material_override = _mat_cemento("calcestruzzo_volta", Color(0.58, 0.56, 0.52))
 			nodo.add_child(cls)
 			# i ferri dell'armatura che escono dai bordi rotti
 			_ferri_armatura(nodo, ferri, [[3, 1.0, 0.3, 0.5, Vector3(0.9, 0.2, 0.2)], [3, 1.0, -0.3, 0.4, Vector3(0.9, 0.3, -0.2)],
@@ -2297,7 +2299,7 @@ func _ostacolo(o: Dictionary) -> void:
 			var calc := MeshInstance3D.new()
 			calc.name = "Calcinacci"
 			calc.mesh = c_st.commit()
-			calc.material_override = _mat("calcinacci", Color(0.62, 0.6, 0.55), 0.95)
+			calc.material_override = _mat_cemento("calcinacci", Color(0.72, 0.7, 0.64))
 			nodo.add_child(calc)
 			# sul mucchio non si sale (le lastre storte si scalerebbero a salti): un muro invisibile sopra, fino a 3 m
 			var barriera := StaticBody3D.new()
@@ -2754,6 +2756,18 @@ func _mat(nome: String, colore: Color, ruvido := 0.7, metallo := 0.0, emissione 
 			m.emission_enabled = true
 			m.emission = emissione
 			m.emission_energy_multiplier = forza
+		_materiali[nome] = m
+	return _materiali[nome]
+
+
+## Il calcestruzzo rotto delle lastre crollate e dei calcinacci: il cemento del fiume (texture triplanare, bagnato),
+## con la sua tinta (collaudo D1: i bordi spezzati lisci e beige sembravano cartone). Lo stesso shader del resto del
+## tunnel: niente campioni nuovi.
+func _mat_cemento(nome: String, tinta: Color) -> Material:
+	if not _materiali.has(nome):
+		var m := (load(DIR_FIUME + "mat_cemento.tres") as ShaderMaterial).duplicate() as ShaderMaterial
+		m.set_shader_parameter(&"albedo_tint", tinta)
+		m.set_shader_parameter(&"uv_scale", 0.6)
 		_materiali[nome] = m
 	return _materiali[nome]
 
