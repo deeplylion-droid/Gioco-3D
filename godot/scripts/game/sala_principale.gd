@@ -88,6 +88,8 @@ const ATTESA_TORRE := 20.0
 var _torre_voluta_da := 0
 ## Il portone aspetta la torre (AttesaZone): si costruisce a pezzi più grandi.
 var _torre_in_attesa := false
+## Interni e tecnici si stanno liberando a pezzi (entrati nella torre).
+var _liberando := false
 # La torre costruita a pezzi e preparata (materiali già disegnati fuori vista) mentre si è all'enigma:
 # resta nascosta e ferma finché il portone non si apre.
 var _torre_nascosta: Node3D
@@ -594,11 +596,15 @@ func _entra_in_torre(chiudi: bool) -> void:
 func _scarica_ambienti() -> void:
 	for i in 3:
 		await get_tree().process_frame
-	for n in [tecnici, get_node_or_null(^"Interni")]:
-		if n and is_instance_valid(n):
-			n.queue_free()
+	var via: Array = [tecnici, get_node_or_null(^"Interni")]
 	tecnici = null
 	risveglio = null
+	# a pezzi, dalle foglie (tutti insieme erano 3 s di gioco fermo entrando nella torre)
+	_liberando = true
+	for n in via:
+		if n and is_instance_valid(n):
+			await AccensioneAPezzi.libera(n)
+	_liberando = false
 
 
 func _on_fine_torre() -> void:

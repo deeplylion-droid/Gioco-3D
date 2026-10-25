@@ -94,3 +94,31 @@ static func _dividi(corpo: StaticBody3D, fermati: Array) -> Array:
 		out.append(fermati[k])
 		out.append([nuovo, Node.PROCESS_MODE_INHERIT, null, 0, []])
 	return out
+
+
+## Libera una zona grande (che non serve più) un nodo per volta, dalle foglie, al più [param ms] millisecondi per
+## fotogramma: liberata tutta insieme fermava il gioco (interni e tecnici entrando nella torre: 1 + 2 s, misura del 25
+## ottobre). Finché non è finita la zona resta in scena, a pezzi: va usata per zone che il giocatore non vede.
+static func libera(radice: Node, ms := 6.0) -> void:
+	if radice == null or not is_instance_valid(radice):
+		return
+	if not radice.is_inside_tree():
+		radice.free()
+		return
+	var albero := radice.get_tree()
+	var pila: Array[Node] = [radice]
+	var t0 := Time.get_ticks_usec()
+	while not pila.is_empty():
+		var n: Node = pila.back()
+		if not is_instance_valid(n):
+			pila.pop_back()
+			continue
+		var figli := n.get_child_count()
+		if figli > 0:
+			pila.append(n.get_child(figli - 1))
+			continue
+		pila.pop_back()
+		n.free()
+		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms:
+			await albero.process_frame
+			t0 = Time.get_ticks_usec()
