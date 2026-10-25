@@ -1421,11 +1421,14 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 @export var vantaggio := 2.5
 ## I passaggi obbligati lenti (regola dell'utente: "lei ti sta dietro fra 8 e 18 m"): mentre il giocatore li fa
 ## senza sbagliare (gli attraversamenti sui gommoni: sopra il canale, sui gommoni o in salto, fuori dall'acqua; le
-## gallerie basse: accovacciato dietro il muro) lei non scende sotto [member distanza_min], così all'uscita c'è il
-## tempo di girarsi e spruzzare o di correre. Se cade in acqua o resta fermo (meno di [member fermo_passo] m in
+## gallerie basse: accovacciato dietro il muro; l'approdo in fondo: il guado obbligato verso la scala, la scala e il
+## pontile fino al portello) lei non scende sotto [member distanza_min], così all'uscita c'è il tempo di girarsi e
+## spruzzare o di correre. Se cade in acqua o resta fermo (meno di [member fermo_passo] m in
 ## [member fermo_dopo] s) valgono le regole di sempre.
 @export var fermo_dopo := 2.5
 @export var fermo_passo := 0.6
+## L'approdo, gli ultimi metri della strada (dal guado obbligato verso la scala della banchina sinistra al portello).
+@export var approdo_tratto := 7.0
 ## Chi insegue (vuoto: il giocatore); i test lo cambiano.
 var bersaglio: Node3D
 
@@ -1576,6 +1579,8 @@ func _process(delta: float) -> void:
 	match lei_stato:
 		Lei.SALE:
 			pass
+		Lei.INSEGUE when finito:
+			pass      # (il portello si sta chiudendo: lei si ferma, poi la muove lo schianto)
 		Lei.INSEGUE:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
 			if gap < distanza_min and _lei_t < vantaggio:
@@ -1619,10 +1624,10 @@ func in_tubo(piedi: Vector3) -> bool:
 
 
 ## Vero mentre il giocatore (i piedi in [param piedi]) fa un passaggio obbligato lento senza sbagliare e senza
-## fermarsi (vedi [member fermo_dopo]): un attraversamento sui gommoni ([method in_attraversamento]) o una galleria
-## bassa ([method in_tubo]).
+## fermarsi (vedi [member fermo_dopo]): un attraversamento sui gommoni ([method in_attraversamento]), una galleria
+## bassa ([method in_tubo]) o l'approdo in fondo (gli ultimi [member approdo_tratto] m: lì il guado è obbligato).
 func _passaggio_obbligato(piedi: Vector3, delta: float) -> bool:
-	var dentro := in_attraversamento(piedi) or in_tubo(piedi)
+	var dentro := in_attraversamento(piedi) or in_tubo(piedi) or _s_bersaglio > lunghezza() - approdo_tratto
 	if not dentro:
 		_fermo_t = 0.0
 		_fermo_da = piedi

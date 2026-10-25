@@ -9,7 +9,8 @@ extends Node
 ## - lento: si ferma 1,5 s su ogni gommone prima di saltare (3 s per salto), poi via di corsa.
 ## In tutti e tre all'atterraggio lei è almeno a 8 m e non lo prende. Se invece cade in acqua dal primo gommone e resta
 ## lì, lei lo prende. Lo stesso per le gallerie basse (a 205 e 425 m): entra accovacciato con lei a 17,9 m, esce con
-## lei ad almeno 8 m.
+## lei ad almeno 8 m. Poi l'approdo (guado obbligato, scala, pontile: lei sempre ad almeno 8 m) e il portello (mentre
+## si chiude lei si ferma).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_attraversamenti.gd
 
 var ok := 0
@@ -57,6 +58,14 @@ func _run() -> void:
 		_controlla(not preso and float(r[0]) >= 7.95 and float(r[1]) > sala.distanza_presa,
 				"galleria a %d m: all'uscita lei è almeno a 8 m e non ti prende" % int(g["s"]),
 				["all'uscita %.2f m, minimo dopo %.2f m, preso %s" % [r[0], r[1], preso]])
+	# l'approdo: il guado obbligato verso la scala, la scala e il pontile
+	var r2: Array = await _approdo()
+	_controlla(not preso and float(r2[0]) >= 7.95, "approdo: guado, scala e pontile con lei sempre ad almeno 8 m",
+			["minimo %.2f m, preso %s" % [r2[0], preso]])
+	# il portello: mentre si chiude lei non avanza più (e non prende dietro il portello)
+	var r3: Array = await _portello()
+	_controlla(not preso and float(r3[0]) < 0.05, "portello: mentre si chiude lei si ferma",
+			["avanzata %.2f m, preso %s" % [r3[0], preso]])
 	print("RISULTATO: %d controlli ok, %d falliti" % [ok, falliti])
 	get_tree().quit(1 if falliti else 0)
 
@@ -178,6 +187,48 @@ func _galleria(g: Dictionary) -> Array:
 		minimo = minf(minimo, sala._s_bersaglio - sala.lei_s)
 	print("    galleria a %d m: all'uscita %.2f m, minimo dopo %.2f m" % [int(g["s"]), all_uscita, minimo])
 	return [all_uscita, minimo]
+
+
+## L'approdo coi tempi del collaudo: arriva sulla banchina destra a 5,7 m dalla fine con lei 17,8 m dietro, guado di
+## 3,5 s fino al gradino sinistro, scala in 2,2 s fino in fondo, 2 s sul pontile verso il portello. Ritorna
+## [distanza minima dall'inizio del guado].
+func _approdo() -> Array:
+	preso = false
+	var L := sala.lunghezza()
+	var s0 := L - 5.7
+	b.global_position = _banchina(s0, 1.0)
+	sala._s_bersaglio = s0
+	sala.insegui_da(s0 - 17.8)
+	var minimo := INF
+	var tappe := [[3.5, _al_lato(s0, -sala.canale) - Vector3.UP * 0.4], [0.4, _banchina(s0, -1.0)],
+			[2.2, _al_lato(L - 0.1, -sala.muro + 0.6) + Vector3.UP * sala.SOGLIA],
+			[2.0, _al_lato(L - 0.1, sala.PONTILE_FINO - 0.2) + Vector3.UP * sala.SOGLIA]]
+	var a := _al_lato(s0, sala.canale) - Vector3.UP * 0.4
+	b.global_position = a
+	for tp in tappe:
+		var c: Vector3 = tp[1]
+		var t := 0.0
+		while t < float(tp[0]) and not preso:
+			t += await _passo()
+			b.global_position = a.lerp(c, clampf(t / float(tp[0]), 0.0, 1.0))
+			minimo = minf(minimo, sala._s_bersaglio - sala.lei_s)
+		a = c
+	print("    approdo: minimo %.2f m" % minimo)
+	return [minimo]
+
+
+## Il portello che si chiude con lei a 3 m: ritorna [quanto è avanzata lei mentre si chiude].
+func _portello() -> Array:
+	preso = false
+	var L := sala.lunghezza()
+	b.global_position = _al_lato(L + 1.0, 0.0) + Vector3.UP * sala.SOGLIA
+	sala._s_bersaglio = L - 0.2
+	sala.insegui_da(L - 3.2)
+	await _passo()
+	var prima := sala.lei_s
+	sala.chiudi_portello()
+	await _aspetta(1.9)
+	return [sala.lei_s - prima]
 
 
 func _al_lato(s: float, u: float) -> Vector3:
