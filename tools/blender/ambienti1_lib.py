@@ -317,13 +317,18 @@ def figlio(ob, padre):
 
 # ---------------------------------------------------------------- stanze
 
-def stanza(nome, x0, y0, x1, y1, h, mats, aperture=None, t=0.2, soffitto=True, pavimento=True, zoccolo=1.1, attaccata=''):
+def stanza(nome, x0, y0, x1, y1, h, mats, aperture=None, t=0.2, soffitto=True, pavimento=True, zoccolo=1.1, attaccata='',
+           senza_listello=None):
     """Pavimento, soffitto e 4 pareti attorno al rettangolo interno.
     aperture: {'N'|'S'|'E'|'W': [(da, a, z_basso, z_alto), ...]} lungo la parete (coordinate x per N/S, y per E/W).
     mats: dict con 'pav', 'sof', 'muro', 'muro_basso' (zoccolo).
     attaccata: i lati ('N', 'S', 'E', 'W') addossati a un'altra stanza: lì pavimento, soffitto e pareti non vanno
-    oltre il rettangolo interno (lo spessore lo dà la parete dell'altra stanza; prima ci entravano)."""
+    oltre il rettangolo interno (lo spessore lo dà la parete dell'altra stanza; prima ci entravano).
+    senza_listello: {'N'|'S'|'E'|'W': [(da, a), ...]} i tratti della parete dove il listello dello zoccolo si ferma
+    con la testa pulita (per esempio ai lati di un cartellone: prima lo attraversava)."""
     aperture = aperture or {}
+    global _SENZA_LISTELLO
+    _SENZA_LISTELLO = senza_listello or {}
     parti = []
     prima = _RACCOGLI[0]; raccogli(True)
     try:
@@ -361,6 +366,25 @@ def _stanza(nome, x0, y0, x1, y1, h, mats, aperture, t, soffitto, pavimento, zoc
                 parti += _muro(nome, lato, rett(da, a), 0, zb, mats, zoccolo)
     return parti
 
+_SENZA_LISTELLO = {}
+
+def _tratti_listello(lato, a, b):
+    """I pezzi di [a, b] (lungo la parete) fuori dai tratti senza listello."""
+    a, b = min(a, b), max(a, b)
+    pezzi = [(a, b)]
+    for (da, fino) in _SENZA_LISTELLO.get(lato, []):
+        nuovi = []
+        for (p, q) in pezzi:
+            if fino <= p or da >= q:
+                nuovi.append((p, q))
+                continue
+            if da > p:
+                nuovi.append((p, da))
+            if fino < q:
+                nuovi.append((fino, q))
+        pezzi = nuovi
+    return [(p, q) for (p, q) in pezzi if q - p > 0.05]
+
 def _muro(nome, lato, rett, z0, z1, mats, zoccolo):
     (ax, ay), (bx, by) = rett
     out = []
@@ -379,7 +403,17 @@ def _muro(nome, lato, rett, z0, z1, mats, zoccolo):
             if z0 <= 0.0:
                 out.append(fascia(0.0, 0.13, 0.025, mats['battiscopa'], 0.008))
             if z0 < zoccolo < z1 and 'muro_basso' in mats:
-                out.append(fascia(zoccolo - 0.02, zoccolo + 0.02, 0.018, mats['battiscopa'], 0.008))
+                if lato in _SENZA_LISTELLO:
+                    asse_x = lato in 'NS'
+                    for (p, q) in _tratti_listello(lato, ax if asse_x else ay, bx if asse_x else by):
+                        if asse_x:
+                            ax, bx = p, q
+                        else:
+                            ay, by = p, q
+                        out.append(fascia(zoccolo - 0.02, zoccolo + 0.02, 0.018, mats['battiscopa'], 0.008))
+                    (ax, ay), (bx, by) = rett
+                else:
+                    out.append(fascia(zoccolo - 0.02, zoccolo + 0.02, 0.018, mats['battiscopa'], 0.008))
     if z0 < zoccolo and 'muro_basso' in mats:
         out.append(scatola(f'{nome}_muro{lato}', (ax, ay, z0), (bx, by, min(z1, zoccolo)), mats['muro_basso']))
         if z1 > zoccolo:

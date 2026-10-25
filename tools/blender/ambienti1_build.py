@@ -288,7 +288,8 @@ def corridoio(M):
         'N': [(6.0, 7.6, 0, 2.2)],          # passaggio verso gli spogliatoi
         'W': [(0.8, 1.8, 0, 2.05)],         # porta di servizio chiusa in fondo
     }
-    statico = L.stanza('corridoio', X0, Y0, X1, Y1, H, mats, ap)
+    # (25 ottobre) il listello dello zoccolo si ferma ai lati della cornice del cartellone: prima lo attraversava
+    statico = L.stanza('corridoio', X0, Y0, X1, Y1, H, mats, ap, senza_listello={'S': [(13.95, 15.25)]})
     statico.append(costole('corridoio_costole', X0, X1, Y0, Y1, H, 2.5, M, salta_s=[(13.6, 15.6), (16.9, 18.1)], salta_n=[(5.9, 7.7)]))
     # telai delle porte
     statico.append(cornice_porta('telaio_tagliafuoco', 'E', 0.7, 1.9, 2.1, X1, M, M['vernice_rossa']))
@@ -388,14 +389,16 @@ def corridoio(M):
         statico.append(L.scatola('porta_servizio_vetro', (0.074, 1.13, 1.38), (0.078, 1.47, 1.77), M['vetro_sporco'], uv=False))
 
     # ---- cartellone della mascotte (accanto alla porta della sala pompe, lato sud)
-    cx, cz, cw, ch = 14.6, 1.3, 1.5, 2.0
-    statico.append(L.piano('cartellone_medusa', (cx, 0.016, cz), cw, ch, M['cartellone'], rot=(R(90), 0, 0)))
+    # (25 ottobre) 1,2 x 1,6 m (il 3:4 della texture), la cornice da 0,30 a 2,00 m sotto la canalina dei cavi (2,05) e
+    # la carta a 3 mm dal muro (a 1,6 cm, con gli strappi, si vedeva sospesa)
+    cx, cz, cw, ch = 14.6, 1.15, 1.2, 1.6
+    statico.append(L.piano('cartellone_medusa', (cx, 0.003, cz), cw, ch, M['cartellone'], rot=(R(90), 0, 0)))
     cor = [L.scatola('cornice', (cx - cw / 2 - 0.05, 0, cz - ch / 2 - 0.05), (cx + cw / 2 + 0.05, 0.03, cz - ch / 2), M['vernice_gialla']),
            L.scatola('cornice', (cx - cw / 2 - 0.05, 0, cz + ch / 2), (cx + cw / 2 + 0.05, 0.03, cz + ch / 2 + 0.05), M['vernice_gialla']),
            L.scatola('cornice', (cx - cw / 2 - 0.05, 0, cz - ch / 2), (cx - cw / 2, 0.03, cz + ch / 2), M['vernice_gialla']),
            L.scatola('cornice', (cx + cw / 2, 0, cz - ch / 2), (cx + cw / 2 + 0.05, 0.03, cz + ch / 2), M['vernice_gialla'])]
     statico.append(L.unisci('cornice_cartellone', cor))
-    # le costole passano davanti al cartellone? no: il cartellone sta tra x=12.5 e 15 (costole a 12.5 e 15)
+    # le costole passano davanti al cartellone? no: le costole sud fra 13,6 e 15,6 sono saltate (la cornice va da 13,95 a 15,25)
 
     # ---- luci: rosse d'emergenza e neon quasi tutti spenti
     luci = []
