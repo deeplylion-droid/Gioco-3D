@@ -75,6 +75,12 @@ const FORMA := 0.3
 ## Dopo averla vista: il vetro oltre [member angolo_via] gradi per [member tempo_via] secondi e lei va via.
 @export var angolo_via := 35.0
 @export var tempo_via := 0.35
+## Il muro della stanza attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, il muro arriva
+## fino alla cornice tonda d'ottone): fasce orizzontali [{"materiale": Material, "da": y, "a": y, "uv": Transform2D}] in
+## coordinate del nodo; la faccia davanti della piastra prende il materiale della fascia (con "uv", le coordinate del
+## nodo (x, y) diventano quelle del materiale del muro; senza, il materiale è triplanare nel mondo). Vuoto: la piastra
+## d'acciaio rivettata.
+@export var muro: Array = []
 ## Falso: niente lei (per esempio prima del blackout lo decide chi mette l'oblò con [member pronto]).
 @export var attivo := true
 
@@ -159,20 +165,26 @@ func _costruisci() -> void:
 	# la piastra rivettata, a filo delle due facce del muro, col buco tondo
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_piastra(st, _raggio_bordo() - 0.02)
+	_piastra(st, _raggio_bordo() - 0.02, muro.is_empty())
 	# (nella torre c'è anche un vetro piccolo, che l'occhio di lei riempie: meno rivetti, almeno 12)
 	var k_vetro := raggio_vetro / RAGGIO_VETRO
 	var rivetti := maxi(12, roundi(RIVETTI * k_vetro))
-	for k in rivetti:
-		var a := TAU * float(k) / rivetti
-		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
-	# e i rivetti lungo i lati (la piastra è chiodata al muro)
-	for k in 7:
-		var u := -piastra * 0.5 + 0.08 + (piastra - 0.16) * float(k) / 6.0
-		for v in [-piastra * 0.5 + 0.08, piastra * 0.5 - 0.08]:
-			_rivetto(st, Vector3(u, v, 0.0), 0.014)
-			if k > 0 and k < 6:
-				_rivetto(st, Vector3(v, u, 0.0), 0.014)
+	if muro.is_empty():
+		for k in rivetti:
+			var a := TAU * float(k) / rivetti
+			_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
+		# e i rivetti lungo i lati (la piastra è chiodata al muro)
+		for k in 7:
+			var u := -piastra * 0.5 + 0.08 + (piastra - 0.16) * float(k) / 6.0
+			for v in [-piastra * 0.5 + 0.08, piastra * 0.5 - 0.08]:
+				_rivetto(st, Vector3(u, v, 0.0), 0.014)
+				if k > 0 and k < 6:
+					_rivetto(st, Vector3(v, u, 0.0), 0.014)
+	else:
+		# il muro della stanza fino alla cornice, e la cornice d'ottone: una flangia tonda sottile sul muro coi rivetti
+		_faccia_muro(_raggio_bordo() - 0.02)
+		# (poco più larga del vetro: 10 cm oltre il bordo d'ottone, i rivetti nel mezzo)
+		_flangia(_raggio_bordo() - 0.02, _raggio_bordo() + 0.1, rivetti, _raggio_bordo() + 0.05)
 	st.generate_normals()
 	var mp := MeshInstance3D.new()
 	mp.name = "struttura_piastra_oblo"
@@ -223,7 +235,7 @@ func _costruisci() -> void:
 
 ## La piastra quadrata col buco tondo di raggio [param r]: le due facce (davanti a z 0, dietro a -spessore), il
 ## bordo del buco e i quattro lati.
-func _piastra(st: SurfaceTool, r: float) -> void:
+func _piastra(st: SurfaceTool, r: float, davanti := true) -> void:
 	var n := 48
 	var h := piastra * 0.5
 	var dz := Vector3(0, 0, -spessore_muro)
@@ -234,7 +246,8 @@ func _piastra(st: SurfaceTool, r: float) -> void:
 		var c1 := Vector3(cos(a1), sin(a1), 0.0) * r
 		var q0 := _sul_quadrato(a0, h)
 		var q1 := _sul_quadrato(a1, h)
-		_quad(st, c0, q0, q1, c1, Vector3.BACK)                      # davanti
+		if davanti:
+			_quad(st, c0, q0, q1, c1, Vector3.BACK)                  # davanti
 		_quad(st, c0 + dz, q0 + dz, q1 + dz, c1 + dz, Vector3.FORWARD)  # dietro
 		_quad(st, c0, c1, c1 + dz, c0 + dz, -(c0 + c1))                 # il bordo del buco, verso il centro
 	var ang := [Vector3(-h, -h, 0), Vector3(h, -h, 0), Vector3(h, h, 0), Vector3(-h, h, 0)]
@@ -242,6 +255,70 @@ func _piastra(st: SurfaceTool, r: float) -> void:
 		var a: Vector3 = ang[k]
 		var b: Vector3 = ang[(k + 1) % 4]
 		_quad(st, a, b, b + dz, a + dz, a + b)                          # i lati, dentro il muro
+
+
+## La faccia davanti della piastra col muro della stanza ([member muro]): il quadrato meno il buco tondo di raggio
+## [param r], a fasce orizzontali, ognuna col suo materiale (tagliato in due a metà, così il buco sta sul bordo).
+func _faccia_muro(r: float) -> void:
+	var h := piastra * 0.5
+	var cerchio := PackedVector2Array()
+	for k in 64:
+		var a := TAU * float(k) / 64
+		cerchio.append(Vector2(cos(a), sin(a)) * r)
+	for fascia in muro:
+		var da := maxf(float(fascia.get("da", -INF)), -h)
+		var a_ := minf(float(fascia.get("a", INF)), h)
+		if a_ - da < 0.001:
+			continue
+		var uv: Transform2D = fascia.get("uv", Transform2D.IDENTITY)
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for meta in [PackedVector2Array([Vector2(-h, da), Vector2(0, da), Vector2(0, a_), Vector2(-h, a_)]),
+				PackedVector2Array([Vector2(0, da), Vector2(h, da), Vector2(h, a_), Vector2(0, a_)])]:
+			for poly in Geometry2D.clip_polygons(meta, cerchio):
+				if Geometry2D.is_polygon_clockwise(poly):
+					continue
+				var tri := Geometry2D.triangulate_polygon(poly)
+				for k in range(0, tri.size(), 3):
+					var t := [poly[tri[k]], poly[tri[k + 1]], poly[tri[k + 2]]]
+					# (davanti: verso +Z, in senso orario visto da lì)
+					if (t[1] - t[0]).cross(t[2] - t[0]) > 0.0:
+						t = [t[0], t[2], t[1]]
+					for q: Vector2 in t:
+						st.set_normal(Vector3.BACK)
+						st.set_uv(uv * q)
+						st.add_vertex(Vector3(q.x, q.y, 0.0))
+		st.generate_tangents()
+		var mi := MeshInstance3D.new()
+		mi.name = "struttura_muro_oblo"
+		mi.mesh = st.commit()
+		mi.material_override = fascia["materiale"]
+		add_child(mi)
+
+
+## La cornice d'ottone sul muro: una flangia tonda spessa 6 mm da [param r0] a [param r1], coi rivetti sul cerchio
+## [param r_rivetti].
+func _flangia(r0: float, r1: float, rivetti: int, r_rivetti: float) -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var z := 0.006
+	var n := 64
+	for k in n:
+		var a0 := TAU * float(k) / n
+		var a1 := TAU * float(k + 1) / n
+		var d0 := Vector3(cos(a0), sin(a0), 0.0)
+		var d1 := Vector3(cos(a1), sin(a1), 0.0)
+		_quad(st, d0 * r0 + Vector3(0, 0, z), d0 * r1 + Vector3(0, 0, z), d1 * r1 + Vector3(0, 0, z), d1 * r0 + Vector3(0, 0, z), Vector3.BACK)
+		_quad(st, d0 * r1, d1 * r1, d1 * r1 + Vector3(0, 0, z), d0 * r1 + Vector3(0, 0, z), d0 + d1)
+	for k in rivetti:
+		var a := TAU * float(k) / rivetti
+		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * r_rivetti + Vector3(0, 0, z), 0.016)
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.name = "FlangiaOttone"
+	mi.mesh = st.commit()
+	mi.material_override = _mat_ottone()
+	add_child(mi)
 
 
 ## Il punto del bordo del quadrato di mezzo lato [param h] nella direzione [param a].
