@@ -65,3 +65,26 @@ Istanze già caricate: fiume 0 ms, torre 0 ms, tunnel 21 ms (si costruiscono a p
 - La strada a tempo vero (gira adesso).
 - Il tunnel e l'inseguimento.
 - Shader e pipeline col renderer vero e la cache vuota (`user://shader_cache` spostata, non cancellata), all'ingresso nella sala, nella Risalita, nella torre e nel tunnel.
+
+## Stato alla consegna delle 19:00 (25 ottobre)
+
+Fatto (scelta A dell'utente: la porta aspetta la zona):
+- niente più riserve sincrone: Risalita, torre e tunnel aspettano il thread senza bloccare; la porta del maniglione, il portone della torre e la scaletta di SB1 restano chiusi finché la zona non è pronta (`AttesaZone`);
+- infermeria, torre e tunnel costruiti a pezzi; la torre si riaccende un nodo per volta (`AccensioneAPezzi`, ≤12 ms per passo), interni e tecnici si liberano dalle foglie a pochi ms per fotogramma;
+- riscaldamento degli shader dietro la schermata di caricamento (`RiscaldamentoShader`, un materiale per fotogramma, poi le ombre una luce per volta e lei dietro l'oblò un pezzo per volta);
+- in CI: `test_attesa_zone.gd` (thread rallentato a 6 s, nessun fotogramma sopra 100 ms oltre i casi noti) e `test_riscaldamento_pipeline.gd` (renderer software).
+
+Casi noti ancora sopra 100 ms (misure headless a tempo vero, macchina del sandbox):
+
+| Dove | Passo | Misura | Correzione (seconda tappa, entro le 21:00) |
+|---|---|---|---|
+| Inseguimento | `_modello(struttura)` | 50-95 ms | GLB diviso a pezzi, con ambienti |
+| Inseguimento | `_lei_crea` | 100-275 ms | lei creata prima, con mascotte |
+| Tunnel | relitto | ~280 ms | a pezzi |
+| Tunnel | palombaro | ~210 ms | a pezzi |
+| Tunnel | buco nella volta | ~230 ms | a pezzi |
+| Tunnel | oblò dell'abisso | ~300 ms | a pezzi |
+| Tunnel | primo corallo | ~170 ms | forme convesse salvate in `.res` e caricate col thread |
+| Tunnel | pesci | divisi uno per passo, da rimisurare | — |
+
+Il tunnel si costruisce mentre si è nella torre, prima di SB1: questi blocchi cadono lì.
