@@ -32,6 +32,8 @@ signal sb1_iniziato
 ## Dopo SB1 il capitolo continua nel tunnel del viaggio sottomarino ([member dopo_sb1_continua]): lei si è tuffata,
 ## i comandi sono tornati, la scaletta e la porta sono accese.
 signal sb1_finito
+## SB1 aspetta il tunnel non ancora pronto (AttesaZone): chi lo costruisce faccia più svelto.
+signal sb1_in_attesa
 
 const DIR := "res://assets/ambiente/inseguimento/"
 const ROSSO := Color(1.0, 0.035, 0.02)
@@ -896,6 +898,17 @@ func inizia_sb1() -> void:
 ## Dopo SB1, col tunnel: lei si tuffa nel pozzo, i comandi tornano, e la strada si vede subito (l'utente: "dopo che
 ## jilly mi guarda... che dovrebbe succedere?"): un faro caldo sulla scaletta e la luce sopra la porta in cima.
 func _dopo_sb1() -> void:
+	# il tunnel non è ancora pronto (un PC lento, AttesaZone; scelta dell'utente del 25 ottobre): SB1 aspetta a finire,
+	# lei ancora affacciata e il giocatore fermo che la guarda, la scaletta ancora al buio
+	if not AttesaZone.passaggio_aperto(&"tunnel"):
+		AttesaZone.attendi(&"tunnel")
+		sb1_in_attesa.emit()
+		var t := 0.0
+		while not AttesaZone.passaggio_aperto(&"tunnel") and t < 90.0:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+			t += get_process_delta_time()
 	_scendi(false)
 	var p := GameState.player
 	if p and is_instance_valid(p):

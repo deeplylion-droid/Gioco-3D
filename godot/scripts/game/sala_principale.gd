@@ -658,14 +658,28 @@ func _metti_sottomarino(scena: PackedScene, a_pezzi: bool) -> void:
 	sala_sottomarino.connect(&"prima_curva_passata", _libera_torre)
 	sala_sottomarino.connect(&"fine_demo", _on_fine_tunnel)
 	if a_pezzi:
-		sala_sottomarino.call(&"costruisci_a_pezzi")
+		await sala_sottomarino.call(&"costruisci_a_pezzi")
 	else:
 		sala_sottomarino.call(&"costruisci")
+	# costruito, riscaldato e con le forme dei tentacoli: la scaletta dopo SB1 si può aprire
+	if is_instance_valid(sala_sottomarino) and sala_sottomarino.is_inside_tree():
+		AttesaZone.pronta(&"tunnel")
 
 
 func _collega_inseguimento(ins: Node3D) -> void:
 	if ins.has_signal(&"sb1_finito") and not ins.is_connected(&"sb1_finito", _attiva_sottomarino):
 		ins.connect(&"sb1_finito", _attiva_sottomarino)
+	if ins.has_signal(&"sb1_in_attesa") and not ins.is_connected(&"sb1_in_attesa", _accelera_sottomarino):
+		ins.connect(&"sb1_in_attesa", _accelera_sottomarino)
+
+
+## SB1 aspetta il tunnel: che si carichi (se non è partito) e che si costruisca a pezzi più grandi.
+func _accelera_sottomarino() -> void:
+	if sala_sottomarino == null:
+		if not _sottomarino_in_caricamento:
+			_precarica_sottomarino()
+	elif not bool(sala_sottomarino.get(&"costruita")):
+		sala_sottomarino.call(&"costruisci_a_pezzi", 50.0)
 
 
 ## Dopo SB1: il tunnel entra nel gioco. Se il thread non ha ancora finito non si blocca più (prima: load e

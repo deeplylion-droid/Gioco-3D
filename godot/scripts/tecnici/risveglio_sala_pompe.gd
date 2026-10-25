@@ -70,6 +70,9 @@ func _ready() -> void:
 	if porta:
 		porta.scossa_bloccata.connect(func(): _suona(&"maniglione_bloccato", porta.global_position))
 		porta.aperta.connect(func(): _suona(&"porta_ponte_apre", porta.global_position))
+		# dietro la porta del ponte, su per il raccordo, ci sono le stanze della Risalita (caricate nel thread dal
+		# checkpoint della sala pompe): con AttesaZone la porta aspetta che siano pronte (scelta dell'utente, 25 ottobre)
+		porta.zona = &"risalita"
 		# la zona dietro non è ancora pronta (un PC lento): il maniglione scatta e il motore delle porte lavora
 		# finché la porta non si apre da sola (AttesaZone)
 		var motore: Array[Node] = [null]
