@@ -61,6 +61,10 @@ var _death_sequence: Node = null
 var _ripartenza_in_corso := false
 ## Secondi che l'ultima ripartenza ha aspettato i caricamenti nel thread (Game.aspetta_caricamenti).
 var attesa_ripartenza := 0.0
+## La ripartenza ricarica il livello in due tempi ([method _cambia_in_due_tempi]); falso solo per misurare la differenza.
+var ricarica_in_due_tempi := true
+## Il PackedScene del livello, tenuto per la ricarica in due tempi.
+var _pacchetto_livello: PackedScene
 
 
 # --- Livello e giocatore ------------------------------------------------------------------
@@ -75,6 +79,12 @@ func _on_level_ready() -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	var scene := _scene_path()
+	# (il PackedScene del livello resta qui per la ricarica in due tempi, se è ancora in cache: niente da rileggere; quello
+	# di un altro livello si lascia andare)
+	if _pacchetto_livello and _pacchetto_livello.resource_path != scene:
+		_pacchetto_livello = null
+	if _pacchetto_livello == null and scene != "" and ResourceLoader.has_cached(scene):
+		_pacchetto_livello = load(scene) as PackedScene
 	if _restore_pending and snapshot.get("scene", "") == scene:
 		_restore_pending = false
 		_apply_snapshot(snapshot)
@@ -285,17 +295,49 @@ func respawn() -> void:
 	_removed.clear()
 	for k in snapshot.get("removed", []):
 		_removed[String(k)] = true
+	var scene: String = sala.scene_file_path
 	if snapshot.is_empty():
 		is_dying = false
-		get_tree().reload_current_scene()
-		return
-	_restore_pending = true
-	var scene: String = snapshot.get("scene", "")
-	var current := get_tree().current_scene
-	if current and current.scene_file_path == scene:
-		get_tree().reload_current_scene()
 	else:
+		_restore_pending = true
+		scene = snapshot.get("scene", "")
+	if not ricarica_in_due_tempi:
+		if sala.scene_file_path == scene:
+			get_tree().reload_current_scene()
+		else:
+			get_tree().change_scene_to_file(scene)
+		return
+	await _cambia_in_due_tempi(scene)
+
+
+## La ricarica in due tempi (richiesta del coordinatore del 25 ottobre, per le schede da 4 GB: la sala da sola ne usa
+## 2,2-2,4): prima una scena vuota per qualche fotogramma (resta il nero della sequenza di morte), finché la sala vecchia
+## è liberata del tutto, anche nel renderer; poi la sala nuova dal suo PackedScene, tenuto qui (le risorse restano in
+## cache e la ripartenza non si allunga). In un tempo solo, per un attimo, c'erano tutte e due: la nuova si costruiva
+## prima che la vecchia fosse liberata.
+func _cambia_in_due_tempi(scene: String) -> void:
+	if _pacchetto_livello == null or _pacchetto_livello.resource_path != scene:
+		_pacchetto_livello = load(scene) as PackedScene
+	if _pacchetto_livello == null:
 		get_tree().change_scene_to_file(scene)
+		return
+	var vuota := Node.new()
+	vuota.name = "Ripartenza"
+	var pacchetto_vuoto := PackedScene.new()
+	pacchetto_vuoto.pack(vuota)
+	vuota.free()
+	get_tree().change_scene_to_packed(pacchetto_vuoto)
+	for i in 2:
+		await get_tree().process_frame
+	for i in 2:
+		# (senza renderer, nei test headless, frame_post_draw non arriva)
+		if DisplayServer.get_name() == "headless":
+			await get_tree().process_frame
+		else:
+			await RenderingServer.frame_post_draw
+	if Game.uscendo or Game.tornando_al_titolo:
+		return
+	get_tree().change_scene_to_packed(_pacchetto_livello)
 
 
 # --- Collezionabili (per esempio le Polaroid) ----------------------------------------------
@@ -394,6 +436,7 @@ func prepara_ripresa(data: Dictionary) -> void:
 ## al primo checkpoint.
 func reset_progress() -> void:
 	snapshot = {}
+	_pacchetto_livello = null
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()
