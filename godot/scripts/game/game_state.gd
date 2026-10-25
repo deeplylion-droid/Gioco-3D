@@ -27,6 +27,9 @@ enum Luci { PRIMA_DEL_RISVEGLIO, FLASH, BLACKOUT }
 
 const SAVE_PATH := "user://salvataggio.json"
 const SAVE_VERSION := 1
+## La sala (si apre passando dalla schermata di caricamento) e la schermata di caricamento.
+const SCENA_SALA := "res://scenes/sala_principale.tscn"
+const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 const DEATH_SEQUENCE_SCENE := "res://scenes/ui/death_sequence.tscn"
 
 ## Scrive l'ultimo checkpoint su disco (per un futuro "Continua" nel menu).
@@ -336,26 +339,53 @@ func _lists_to_collected(data: Dictionary) -> Dictionary:
 # --- Disco ---------------------------------------------------------------------------------
 
 func _write_disk() -> void:
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	# prima su un file a parte, poi lo si rinomina: un crash a metà scrittura non lascia un salvataggio rotto
+	var tmp := SAVE_PATH + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
 		push_warning("Salvataggio non riuscito: %s" % error_string(FileAccess.get_open_error()))
 		return
 	f.store_string(JSON.stringify(snapshot, "\t"))
+	f.close()
+	var err := DirAccess.rename_absolute(tmp, SAVE_PATH)
+	if err != OK:
+		push_warning("Salvataggio non riuscito: %s" % error_string(err))
 
 
+## Vero se su disco c'è un salvataggio da cui si può ripartire (vedi [method salvataggio]).
 func has_save() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
+	return not salvataggio().is_empty()
 
 
-## Riprende dal salvataggio su disco (per un futuro "Continua" nel menu).
-func continue_from_disk() -> bool:
-	if not has_save():
-		return false
+## Il salvataggio su disco, se è valido: della versione giusta, con la scena che esiste, un checkpoint e il posto del
+## giocatore. Altrimenti un dizionario vuoto.
+func salvataggio() -> Dictionary:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return {}
 	var data = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
 	if typeof(data) != TYPE_DICTIONARY or int(data.get("version", 0)) != SAVE_VERSION:
+		return {}
+	var scena := String(data.get("scene", ""))
+	if scena == "" or not ResourceLoader.exists(scena) or String(data.get("checkpoint", "")) == "":
+		return {}
+	var pl = data.get("player", {})
+	if typeof(pl) != TYPE_DICTIONARY or not (pl as Dictionary).has("position"):
+		return {}
+	return data
+
+
+## Continua dal salvataggio su disco (la voce Continua del titolo): si riparte dall'ultimo checkpoint salvato, con lo
+## stato, lo zaino, le Polaroid e le luci di quel momento; la sala passa dalla schermata di caricamento, come le
+## partenze del menu di prova. Falso se non c'è un salvataggio valido.
+func continue_from_disk() -> bool:
+	var data := salvataggio()
+	if data.is_empty():
 		return false
 	prepara_ripresa(data)
-	get_tree().change_scene_to_file(snapshot.get("scene", ""))
+	if String(data["scene"]) == SCENA_SALA:
+		get_tree().change_scene_to_file(SCENA_CARICAMENTO)
+	else:
+		get_tree().change_scene_to_file(String(data["scene"]))
 	return true
 
 
