@@ -24,6 +24,7 @@ var _t := 0
 var _f := 0
 var _lunghi: Array = []
 var _prima := {}
+var _nodi := 0
 
 
 func _ready() -> void:
@@ -51,8 +52,12 @@ func _process(_delta: float) -> void:
 		_prima[k] = v
 	if ms > SOGLIA_MS and _f > 2:
 		var scena: String = String(get_tree().current_scene.name) if get_tree().current_scene else "-"
-		print("BLOCCO %.0f ms al fotogramma %d (%s; pipeline surface %d draw %d spec %d)" % [ms, _f, scena, c["surface"], c["draw"], c["spec"]])
+		var nodi := int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
+		print("BLOCCO %.0f ms al fotogramma %d (%s; pipeline surface %d draw %d spec %d; process %.0f ms, fisica %.0f ms, nodi %+d)" % [
+				ms, _f, scena, c["surface"], c["draw"], c["spec"], Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
+				Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0, nodi - _nodi])
 		_lunghi.append([ms, _f])
+	_nodi = int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
 
 
 func _notification(what: int) -> void:
