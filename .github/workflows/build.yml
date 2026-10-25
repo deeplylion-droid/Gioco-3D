@@ -264,6 +264,14 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_attesa_zone.gd
 
+      - name: Test delle forme salvate del tunnel sottomarino (come quelle calcolate; l'involucro come tutte le facce)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_forme_tunnel.gd
+
+      - name: Test delle posizioni del tunnel sottomarino (con e senza le scorciatoie dei blocchi, scarto sotto 1 mm)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_posizioni_tunnel.gd
+
       - name: Test del prototipo del fiume lento
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fiume.gd

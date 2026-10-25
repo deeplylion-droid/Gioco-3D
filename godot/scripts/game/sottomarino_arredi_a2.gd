@@ -279,6 +279,8 @@ static var _involucri := {}
 
 
 static func _involucro(mesh: Mesh) -> PackedVector3Array:
+	if SalaSottomarino.senza_scorciatoie:
+		return mesh.get_faces()
 	if not _involucri.has(mesh):
 		var forma := mesh.create_convex_shape(true, false)
 		_involucri[mesh] = forma.points if forma else mesh.get_faces()

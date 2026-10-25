@@ -76,15 +76,20 @@ Fatto (scelta A dell'utente: la porta aspetta la zona):
 
 Casi noti ancora sopra 100 ms (misure headless a tempo vero, macchina del sandbox):
 
-| Dove | Passo | Misura | Correzione (seconda tappa, entro le 21:00) |
+| Dove | Passo | Misura | Correzione |
 |---|---|---|---|
 | Inseguimento | `_modello(struttura)` | 50-95 ms | GLB diviso a pezzi, con ambienti |
 | Inseguimento | `_lei_crea` | 100-275 ms | lei creata prima, con mascotte |
-| Tunnel | relitto | ~280 ms | a pezzi |
-| Tunnel | palombaro | ~210 ms | a pezzi |
-| Tunnel | buco nella volta | ~230 ms | a pezzi |
-| Tunnel | oblò dell'abisso | ~300 ms | a pezzi |
-| Tunnel | primo corallo | ~170 ms | forme convesse salvate in `.res` e caricate col thread |
-| Tunnel | pesci | divisi uno per passo, da rimisurare | — |
+| Tunnel | `_lei_crea` | 100-110 ms | come sopra, con mascotte |
 
-Il tunnel si costruisce mentre si è nella torre, prima di SB1: questi blocchi cadono lì.
+## Seconda tappa (25 ottobre, sera)
+
+- Tunnel, prima → dopo: relitto 249 → <50 ms, palombaro 209 → <50, primo corallo 157 → <50, buco nella volta 212 → 6 passi da 34-40, pesci 229 → 69, oblò dell'abisso 239 → 74 ms. Costruzione intera 3,4 s, a pezzi.
+  - Le forme convesse dei modelli (collisione e involucro) sono calcolate prima e salvate accanto ai GLB (`assets/fiume_lento/<nome>_forme.res`, `tools/genera_forme_tunnel.gd`), caricate col thread con le altre risorse del tunnel. Se un GLB cambia senza rigenerarle, il gioco se ne accorge (AABB e vertici) e le ricalcola.
+  - `proietta` legge le posizioni dell'asse già pronte invece che dal dizionario: stessi numeri.
+  - Il buco nella volta si fa un anello per passo.
+- Prove (in CI):
+  - `test_forme_tunnel.gd`: forme salvate uguali a quelle calcolate (0 mm); l'involucro dà le stesse sporgenze e gli stessi appoggi di tutte le facce su 400 direzioni (scarto massimo 0,24 mm);
+  - `test_posizioni_tunnel.gd`: il tunnel costruito con e senza le scorciatoie, 2527 nodi; ogni nodo fermo nello stesso posto (scarto massimo 0,09 mm, l'ancora), stesse forme di collisione;
+  - il controllo di posizionamento del sottomarino: 0 casi nuovi, 0 "da correggere".
+- Pipeline (`test_riscaldamento_pipeline.gd`, llvmpipe): lei che compare all'oblò 0 surface e 0 draw (la camera fuori vista finiva prima degli ultimi pezzi); il modello di lei si riscalda una superficie e un materiale per volta. Resta noto il corpo di lei col materiale neutro: 12 pipeline in un fotogramma, nella schermata di caricamento.

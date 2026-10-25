@@ -132,6 +132,9 @@ const CORDA_LASCO := 0.012
 var dati := {}
 var _asse: Array = []          ## [{s, pos, dir, ambiente}]
 var _s: PackedFloat32Array
+## Le posizioni dell'asse ([member _asse] "pos"), pronte: [method proietta] le leggeva dal dizionario a ogni punto, e
+## in _occupati_muri degli arredi erano 200-330 ms in un passo. Stessi numeri, stessi risultati.
+var _posizioni: PackedVector3Array
 var piano := -30.0
 var acqua := -30.42
 var fondo := -30.92
@@ -156,8 +159,11 @@ func _ready() -> void:
 	dati = JSON.parse_string(FileAccess.get_file_as_string(STRADA))
 	_asse = dati["asse"]
 	_s = PackedFloat32Array()
+	_posizioni = PackedVector3Array()
 	for p in _asse:
 		_s.append(float(p["s"]))
+		var a: Array = p["pos"]
+		_posizioni.append(Vector3(a[0], a[1], a[2]))
 	var q: Dictionary = dati["quote"]
 	piano = q["piano_banchine"]
 	acqua = q["acqua"]
@@ -406,9 +412,10 @@ func proietta(p: Vector3) -> Array:
 	var best := INF
 	var bs := 0.0
 	var i := 0
+	var pos := _posizioni
 	while i < _s.size() - 1:
-		var a := _pos(i)
-		var b := _pos(i + 1)
+		var a := pos[i]
+		var b := pos[i + 1]
 		var ab := Vector2(b.x - a.x, b.z - a.z)
 		var ap := Vector2(p.x - a.x, p.z - a.z)
 		var f := clampf(ap.dot(ab) / maxf(ab.length_squared(), 1e-9), 0.0, 1.0)
@@ -422,8 +429,7 @@ func proietta(p: Vector3) -> Array:
 
 
 func _pos(i: int) -> Vector3:
-	var a: Array = _asse[i]["pos"]
-	return Vector3(a[0], a[1], a[2])
+	return _posizioni[i]
 
 
 func _indice(s: float) -> int:
@@ -1555,10 +1561,15 @@ var checkpoint: Array[Checkpoint] = []
 
 ## I file che la costruzione del tunnel carica (i modelli del fiume, le lampade, lo shader dell'oblò dell'abisso, lei):
 ## la sala li chiede al thread insieme al tunnel, così i passi li trovano pronti (caricati lì erano passi da 0,2-1,4 s).
+## I modelli del tunnel (in [constant DIR_FIUME]).
+const MODELLI := ["corallo", "forziere", "pesce_vetroresina", "salvagente", "tartaruga", "ancora", "palombaro"]
+
+
 static func risorse() -> Array:
 	var out: Array = []
-	for nome in ["corallo", "forziere", "pesce_vetroresina", "salvagente", "tartaruga", "ancora", "palombaro"]:
+	for nome in MODELLI:
 		out.append(DIR_FIUME + nome + ".glb")
+		out.append(DIR_FIUME + nome + FORME)
 	out.append_array(["res://assets/enigma_acquari/lampada_gabbia.glb", DIR_FIUME + "mat_cemento.tres",
 		DIR_FIUME + "mat_mosaico_blu.tres", DIR_FIUME + "mat_graniglia.tres", DIR_FIUME + "acqua_fiume.tres"])
 	out.append_array(SalaInseguimento.RISORSE_LEI)
@@ -2718,8 +2729,52 @@ func _corda(mi: MeshInstance3D, pts: PackedVector3Array) -> void:
 ## Un modello Meshy del fiume (assets/fiume_lento) a [param pos], girato verso [param verso], scalato.
 func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: float) -> Node3D:
 	var n := (load(DIR_FIUME + nome + ".glb") as PackedScene).instantiate() as Node3D
+	usa_forme_salvate(nome, n)
 	nodo.add_child(n)
 	n.global_transform = Transform3D(Basis.looking_at(verso, Vector3.UP).scaled(Vector3.ONE * scala), pos)
+	return n
+
+
+## Le forme convesse dei modelli del tunnel calcolate prima e salvate (tools/genera_forme_tunnel.gd): accanto al GLB,
+## "<nome>_forme.res", caricate nel thread con le altre [method risorse]. Calcolarle durante la costruzione costava
+## 40-180 ms per modello (il primo corallo, il forziere, il palombaro). Sono le stesse del motore (test_forme_tunnel.gd).
+const FORME := "_forme.res"
+
+
+## Mette nelle cache le forme salvate delle mesh di [param n] (il modello [param nome] appena istanziato): la forma
+## della collisione e l'involucro per sporgenze e appoggi. Si usano solo se la mesh è ancora quella (stesso AABB e
+## stesso numero di vertici): se il GLB cambia senza rigenerarle, si ricalcolano come prima.
+static func usa_forme_salvate(nome: String, n: Node3D) -> void:
+	var f := DIR_FIUME + nome + FORME
+	if senza_scorciatoie or not ResourceLoader.exists(f):
+		return
+	var r := load(f)
+	var d: Dictionary = r.get_meta(&"forme", {}) if r else {}
+	for x in n.find_children("*", "MeshInstance3D", true, false):
+		var mi := x as MeshInstance3D
+		var k := String(n.get_path_to(mi))
+		if mi.mesh == null or not d.has(k):
+			continue
+		var e: Array = d[k]
+		if e[2] != mi.mesh.get_aabb() or int(e[3]) != impronta(mi.mesh):
+			continue
+		if not _forme_convesse.has(mi.mesh):
+			_forme_convesse[mi.mesh] = e[0]
+		if not SottomarinoArrediA2._involucri.has(mi.mesh):
+			SottomarinoArrediA2._involucri[mi.mesh] = e[1]
+
+
+## Solo per i test (test_posizioni_tunnel.gd): niente forme salvate e sporgenze e appoggi su tutte le facce, come
+## prima delle scorciatoie dei blocchi al primo avvio, per provare che le posizioni restano le stesse.
+static var senza_scorciatoie := false
+
+
+## Il numero di vertici di [param m] (per riconoscere una mesh cambiata).
+static func impronta(m: Mesh) -> int:
+	var n := 0
+	if m is ArrayMesh:
+		for i in m.get_surface_count():
+			n += (m as ArrayMesh).surface_get_array_len(i)
 	return n
 
 
