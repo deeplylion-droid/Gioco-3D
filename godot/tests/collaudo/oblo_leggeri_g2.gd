@@ -5,7 +5,7 @@ extends Node
 ## - la comparsa: pipeline nuove (draw, specialization, surface, mesh) e fotogramma più lungo per 90 fotogrammi, e lei
 ##   guardata (scatto);
 ## - il distacco: pipeline e fotogramma più lungo fino alla fine, uno scatto ogni 12 fotogrammi e due ravvicinati
-##   dell'occhio (camera stretta sull'occhio) a metà e a 4/5;
+##   dell'occhio (camera stretta sull'occhio) a metà e a 2/3;
 ## - dopo: l'oblò vuoto (scatto, lei e la sua luce spente) e di nuovo dopo una ripartenza (load_state).
 ## Uso (sotto il lock): xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --fixed-fps 60
 ##   --resolution 1280x720 --script res://tests/run.gd -- res://tests/collaudo/oblo_leggeri_g2.gd <cartella> [torre|ObloFiume|...]
@@ -117,14 +117,14 @@ func _run() -> void:
 		base = inf
 		if f % 12 == 0:
 			_scatto("%s_2_distacco_%03d" % [dove, f])
-		if f == durata / 2 or f == durata * 4 / 5:
+		if f == durata / 2 or f == durata * 2 / 3:
 			var occhio := o.lei.get_eye_position() if o.lei and is_instance_valid(o.lei) and o.lei.lei else Vector3.ZERO
 			if occhio != Vector3.ZERO:
 				cam_occhio.look_at_from_position(cam_gioco.global_position, occhio)
 				cam_occhio.make_current()
 				await RenderingServer.frame_post_draw
 				await RenderingServer.frame_post_draw
-				_scatto("%s_3_occhio_%s" % [dove, "meta" if f == durata / 2 else "4quinti"])
+				_scatto("%s_3_occhio_%s" % [dove, "meta" if f == durata / 2 else "2terzi"])
 				cam_gioco.make_current()
 				t = Time.get_ticks_usec()
 				base = _info()
