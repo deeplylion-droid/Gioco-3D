@@ -255,6 +255,9 @@ func _riscalda() -> void:
 		cam.attributes = cam_gioco.attributes
 		cam.fov = cam_gioco.fov
 	cam.current = true
+	# (la luce rosa degli effetti dell'inseguimento accesa davanti alla camera nascosta: le sue pipeline qui)
+	if effetti:
+		effetti.riscalda_da(cam, true)
 	for v in VISTE_RISCALDA:
 		if not is_inside_tree():
 			return
@@ -264,8 +267,12 @@ func _riscalda() -> void:
 		if s > lunghezza() - 0.5:
 			occhio = _al(p, destra(s), Vector2(0.0, piano + SOGLIA + 1.6)) + direzione(s) * (float(v[0]) - lunghezza())
 		cam.look_at_from_position(occhio, _al(p, destra(s), Vector2(float(v[1]) * muro, piano + 1.2)) + direzione(s) * 3.0)
+		if effetti:
+			effetti.riscalda_da(cam, true)
 		for i in 3:
 			await get_tree().process_frame
+	if effetti:
+		effetti.riscalda_da(cam, false)
 	vp.queue_free()
 
 
@@ -1515,6 +1522,8 @@ var bersaglio: Node3D
 
 ## Lei del tunnel (LeiTunnel di mascotte) e il suo modello.
 var lei_tunnel: LeiTunnel
+## Gli effetti quando è vicina: i bordi scuri, il tremito ai morsi, la sua luce che ti supera.
+var effetti: EffettiInseguimento
 var lei: MedusaAffacciata
 var lei_stato := Lei.VIA
 var lei_s := 0.0
@@ -1534,6 +1543,7 @@ func _lei_crea() -> void:
 	lei_tunnel.getto_litri = getto_in_faccia
 	lei_tunnel.vicina = distanza_morsi
 	lei_tunnel.getto_in_faccia.connect(respingi)
+	effetti = EffettiInseguimento.su(self)
 
 
 ## I checkpoint del tunnel, lungo la strada ([member checkpoint_s]): un'area da banchina a banchina, la ripartenza
