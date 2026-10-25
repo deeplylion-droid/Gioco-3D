@@ -62,6 +62,10 @@ const PER_CARTELLA := {
 const TARATURA := {
 	# il canto di sirena di lei nel tunnel: dalla sua bocca, più forte quando si avvicina (25 ottobre)
 	&"lei_tunnel_canto": [BUS_EFFETTI, 0.0, 3.0, 40.0, 0.0],
+	# l'inseguimento nel tunnel (25 ottobre sera): il cuore del giocatore dentro la testa (niente riverbero), il ritmo nello
+	# scafo; tutti e due non posizionali
+	&"cuore_battito": [BUS_INTERFACCIA, 0.0, 0.0, 0.0, 0.25],
+	&"inseguimento_colpo": [BUS_EFFETTI, 0.0, 0.0, 0.0, 0.4],
 	&"passo_piastrelle": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
 	&"passo_bagnato": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
 	&"passo_acqua": [BUS_EFFETTI, -2.0, 0.0, 0.0, 0.8],
@@ -1609,6 +1613,24 @@ class Statua:
 	static var canto_nome := &"lei_tunnel_canto"
 	const CANTO_PRIMA := Vector2(1.5, 4.0)
 	const CANTO_PAUSA := Vector2(3.0, 7.0)
+	## Il cuore del giocatore e il ritmo d'inseguimento nel tunnel (proposte del 25 ottobre sera, da far sentire all'utente
+	## prima di entrare nel gioco: assets_src/audio/genera_inseguimento.py). Partono quando lei comincia a inseguire e
+	## restano mentre si ritrae dal getto (più lenti e radi); tacciono quando prende, sbatte sul portello o sparisce. Ogni
+	## battito e ogni colpo parte da solo, a un tempo che segue la distanza di lei (da [constant LEI_LONTANA] a
+	## [constant LEI_VICINA] m): niente cicli. [member cuore_attivo] e [member ritmo_attivo] per la scelta dell'utente.
+	static var cuore_attivo := true
+	static var ritmo_attivo := true
+	const CUORE := &"cuore_battito"
+	const RITMO := &"inseguimento_colpo"
+	const CUORE_BPM := Vector2(72.0, 128.0)
+	const CUORE_DB := Vector2(-9.0, 0.0)
+	## Il cuore cambia tempo piano (battiti al minuto al secondo); mentre lei si ritrae rallenta al [constant SOLLIEVO].
+	const CUORE_SEGUE := 8.0
+	const SOLLIEVO := 0.88
+	const RITMO_OGNI := Vector2(1.5, 0.55)
+	const RITMO_DB := Vector2(-9.0, 0.0)
+	const LEI_LONTANA := 18.0
+	const LEI_VICINA := 8.0
 	## colpo_grata: un verso per ogni colpo, quando il palmo tocca la grata (0,25 s di ogni ciclo di 0,5 s).
 	const GRATA := &"inseguimento/colpo_grata"
 	const GRATA_CICLO := 0.5
@@ -1631,6 +1653,11 @@ class Statua:
 	var canto: Node
 	var canto_partito := -1.0
 	var canto_t := -1.0
+	var bpm := 72.0
+	var cuore_t := -1.0
+	var ritmo_t := -1.0
+	var doppio_t := -1.0
+	var doppio_db := 0.0
 
 	func _init(a, nodo: Node) -> void:
 		audio = a
@@ -1721,6 +1748,8 @@ class Statua:
 		else:
 			verso_t = -2.0
 		_canto(a, corsa and (n as Node3D).is_visible_in_tree())
+		var ritrae := ap.is_playing() and ap.current_animation == &"inseguimento/ritrae"
+		_insegue(a, (corsa or ritrae) and (n as Node3D).is_visible_in_tree(), ritrae)
 
 	## Vero se la frase del canto partita da qui suona ancora (il lettore torna nella riserva e può suonare altro).
 	func canta() -> bool:
@@ -1743,6 +1772,49 @@ class Statua:
 			canto = a.suona(canto_nome, bocca)
 			canto_partito = float(canto.get_meta(&"partito", 0.0)) if canto else -1.0
 			canto_t = randf_range(CANTO_PAUSA.x, CANTO_PAUSA.y)
+
+	## Quanto è vicina lei al giocatore: 0 a [constant LEI_LONTANA] m o più, 1 a [constant LEI_VICINA] m o meno.
+	func vicinanza() -> float:
+		var p := GameState.player
+		if p == null or not is_instance_valid(p) or not p.is_inside_tree():
+			return 0.0
+		var d := (n as Node3D).global_position.distance_to(p.global_position)
+		return clampf((LEI_LONTANA - d) / (LEI_LONTANA - LEI_VICINA), 0.0, 1.0)
+
+	## Il cuore e il ritmo, un battito e un colpo alla volta.
+	func _insegue(a, attivo: bool, ritrae: bool) -> void:
+		if not attivo:
+			cuore_t = -1.0
+			ritmo_t = -1.0
+			doppio_t = -1.0
+			bpm = CUORE_BPM.x
+			return
+		var v := vicinanza()
+		var dt := n.get_process_delta_time()
+		if cuore_attivo and Catalogo.SUONI.has(CUORE):
+			bpm = move_toward(bpm, lerpf(CUORE_BPM.x, CUORE_BPM.y, v) * (SOLLIEVO if ritrae else 1.0), CUORE_SEGUE * dt)
+			if cuore_t < 0.0:
+				cuore_t = 0.6
+			cuore_t -= dt
+			if cuore_t <= 0.0:
+				a.suona(CUORE, null, lerpf(CUORE_DB.x, CUORE_DB.y, v) + randf_range(-0.8, 0.0))
+				cuore_t = 60.0 / bpm
+		if ritmo_attivo and Catalogo.SUONI.has(RITMO):
+			if ritmo_t < 0.0:
+				ritmo_t = 0.4
+			ritmo_t -= dt
+			if ritmo_t <= 0.0:
+				var db := lerpf(RITMO_DB.x, RITMO_DB.y, v) - (3.0 if ritrae else 0.0)
+				a.suona(RITMO, null, db)
+				# a volte doppio (più piano, subito dopo): così non si sente un giro
+				if not ritrae and randf() < 0.2:
+					doppio_t = randf_range(0.16, 0.22)
+					doppio_db = db - 5.2
+				ritmo_t = lerpf(RITMO_OGNI.x, RITMO_OGNI.y, v) * randf_range(0.8, 1.25) * (1.6 if ritrae else 1.0)
+			if doppio_t >= 0.0:
+				doppio_t -= dt
+				if doppio_t < 0.0:
+					a.suona(RITMO, null, doppio_db)
 
 	func _su_animazione(nome: StringName) -> void:
 		if VOCE_INSEGUIMENTO.has(nome):
