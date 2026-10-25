@@ -57,7 +57,7 @@ func _run() -> void:
 	for b in menu.find_children("*", "Button", true, false):
 		voci.append((b as Button).text)
 	print("F9: voci ", voci)
-	if id == "menu":
+	if id.split("_")[0] == "menu":
 		await _tasto(KEY_ESCAPE)
 		await _passa(30)
 		var resta := is_instance_valid(menu) and menu.is_inside_tree()
@@ -71,8 +71,10 @@ func _run() -> void:
 		get_tree().quit()
 		return
 	var nome := ""
+	# (l'id può avere un suffisso dopo "_" per il nome degli scatti: tunnel_640x360)
+	var cerca := id.split("_")[0]
 	for p in MenuProva.PARTENZE:
-		if p["id"] == id:
+		if p["id"] == cerca:
 			nome = p["nome"]
 	var bottone: Button = null
 	for b in menu.find_children("*", "Button", true, false):
