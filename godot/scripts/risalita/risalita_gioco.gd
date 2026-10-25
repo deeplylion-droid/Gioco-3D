@@ -73,6 +73,8 @@ const SCALA_LARGA := 2.0
 ## raccordo (libero da z 54,5 e per quasi 10 m); nel corridoio del personale a ovest, fra infermeria e capannone (largo
 ## solo 2,56 m, profondo quanto si vuole); nel tratto in piano della scala di servizio a nord (libero per 6,7 m, da -6 a
 ## 14 m d'altezza: lei a testa in giù ha il corpo in alto).
+## Il raggio del foro tondo nel muro per gli oblò: fra il bordo del vetro e quello della flangia d'ottone (0,68-0,8 m).
+const FORO_OBLO := 0.74
 const OBLO_FIUME := Vector3(-3.9, Y + 1.5, 58.0)
 const OBLO_PERSONALE := Vector3(-36.0, Y + 1.5, 49.6)
 const OBLO_SERVIZIO := Vector3(-21.5, 1.5, 37.45)
@@ -180,6 +182,9 @@ func _box_bucato(size: Vector3, pos: Vector3, m: Material, buco: Array) -> void:
 	var asse := 2 if size.x < size.z else 0          # l'asse lungo, orizzontale, del muro
 	var lo := pos - size * 0.5
 	var hi := pos + size * 0.5
+	if buco.size() > 2:
+		_box_bucato_tondo(size, pos, m, c, float(buco[2]), asse)
+		return
 	var b0 := Vector2(c[asse] - r, c.y - r)
 	var b1 := Vector2(c[asse] + r, c.y + r)
 	if b1.x <= lo[asse] or b0.x >= hi[asse] or b1.y <= lo.y or b0.y >= hi.y:
@@ -190,6 +195,45 @@ func _box_bucato(size: Vector3, pos: Vector3, m: Material, buco: Array) -> void:
 	# [da, a lungo il muro, da, a in altezza]
 	for q in [[lo[asse], b0.x, lo.y, hi.y], [b1.x, hi[asse], lo.y, hi.y], [b0.x, b1.x, lo.y, b0.y], [b0.x, b1.x, b1.y, hi.y]]:
 		if q[1] - q[0] < 0.005 or q[3] - q[2] < 0.005:
+			continue
+		var s := size
+		var p := pos
+		s[asse] = q[1] - q[0]
+		p[asse] = (q[0] + q[1]) * 0.5
+		s.y = q[3] - q[2]
+		p.y = (q[2] + q[3]) * 0.5
+		_box(s, p, m)
+
+
+## Un box di muro col buco tondo di raggio [param rt] centrato in [param c] (per un oblò senza piastra, scelta
+## dell'utente del 25 ottobre: il muro arriva fino alla cornice d'ottone). Lo stesso muro (stesso materiale triplanare,
+## stessi box): sopra e sotto il buco i box interi, nella fascia del buco strisce alte 4 cm a destra e a sinistra della
+## corda (il gradino resta sotto la flangia d'ottone, larga 12 cm).
+func _box_bucato_tondo(size: Vector3, pos: Vector3, m: Material, c: Vector3, rt: float, asse: int) -> void:
+	var lo := pos - size * 0.5
+	var hi := pos + size * 0.5
+	if c[asse] + rt <= lo[asse] or c[asse] - rt >= hi[asse] or c.y + rt <= lo.y or c.y - rt >= hi.y:
+		_box(size, pos, m)
+		return
+	# [da, a lungo il muro, da, a in altezza]
+	var pezzi := []
+	if c.y - rt > lo.y:
+		pezzi.append([lo[asse], hi[asse], lo.y, minf(c.y - rt, hi.y)])
+	if c.y + rt < hi.y:
+		pezzi.append([lo[asse], hi[asse], maxf(c.y + rt, lo.y), hi.y])
+	var passo := 0.04
+	var y := maxf(c.y - rt, lo.y)
+	var y_fine := minf(c.y + rt, hi.y)
+	while y < y_fine - 0.001:
+		var y2 := minf(y + passo, y_fine)
+		# (la corda più larga della striscia: il punto della striscia più vicino al centro)
+		var dy := 0.0 if (y <= c.y and y2 >= c.y) else minf(absf(y - c.y), absf(y2 - c.y))
+		var mezza := sqrt(maxf(rt * rt - dy * dy, 0.0))
+		pezzi.append([lo[asse], minf(c[asse] - mezza, hi[asse]), y, y2])
+		pezzi.append([maxf(c[asse] + mezza, lo[asse]), hi[asse], y, y2])
+		y = y2
+	for q in pezzi:
+		if q[1] - q[0] < 0.003 or q[3] - q[2] < 0.003:
 			continue
 		var s := size
 		var p := pos
@@ -266,7 +310,7 @@ func _zona_personale() -> void:
 	# dalla faccia di fuori del muro sud dell'infermeria (z 48,1) a quella del muro ovest del capannone (z 50,7,
 	# spesso 30 cm): prima il corridoio andava da 48 a 51 ed entrava di 10 e 30 cm nei due muri
 	_corridoio(Vector3(x - 1.0, Y, CENTRO_INFERMERIA.z + I.L + 0.1), Vector3(x + 1.0, Y, CENTRO_FIUME.z + F.X0 - 0.3), 2.6, "",
-			{"o": [OBLO_PERSONALE, ObloLei.PIASTRA * 0.5]})
+			{"o": [OBLO_PERSONALE, ObloLei.PIASTRA * 0.5, FORO_OBLO]})
 	# l'oblò nel muro ovest, fra infermeria e capannone: la vasca è stretta (2,56 m, spostata verso il capannone) e
 	# sotto il pavimento dell'infermeria (1,8 m sotto il centro del vetro, 5 cm sotto la soletta, che arriva a y -5,65)
 	# si allarga di 1,6 m verso sud, dove ci sono le punte dei tentacoli di lei e il fianco di lei quando si stacca
@@ -303,7 +347,7 @@ func _scala_di_servizio() -> void:
 			_corridoio(Vector3(x, y, z0), Vector3(x + 1.5, y, z1), 2.6, "ns")
 			x += 1.5
 	# il corridoio in piano fino a C3
-	_corridoio(Vector3(x, 0.0, z0), Vector3(PORTA_C3.x - 0.15, 0.0, z1), 2.6, "", {"n": [OBLO_SERVIZIO, ObloLei.PIASTRA * 0.5]})
+	_corridoio(Vector3(x, 0.0, z0), Vector3(PORTA_C3.x - 0.15, 0.0, z1), 2.6, "", {"n": [OBLO_SERVIZIO, ObloLei.PIASTRA * 0.5, FORO_OBLO]})
 	# l'oblò nel muro nord del tratto in piano, a sinistra salendo verso C3: lei a testa in giù, col corpo in alto
 	# (la vasca sale 5,8 m sopra il centro); compare mentre sali le rampe
 	_oblo("ObloServizio", OBLO_SERVIZIO, Vector3.BACK, "capovolta", AABB(Vector3(-40.0, Y - 0.2, 37.3), Vector3(24.0, 8.4, 4.3)),
@@ -340,7 +384,7 @@ func _scala_fiume() -> void:
 	var porta0 := 65.3
 	var porta1 := 66.7
 	var fine := porta1 + 0.6
-	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es", {"e": [OBLO_FIUME, ObloLei.PIASTRA * 0.5]})
+	_corridoio(Vector3(xc, Y, z1), Vector3(xc + 2.0, Y, fine), 2.6, "es", {"e": [OBLO_FIUME, ObloLei.PIASTRA * 0.5, FORO_OBLO]})
 	# l'oblò nel muro est, a destra andando verso il capannone, fra le due lampade rosse: lei schiacciata sul vetro;
 	# compare mentre scendi la scala
 	_oblo("ObloFiume", OBLO_FIUME, Vector3.LEFT, "schiacciata", AABB(Vector3(xc - 0.2, Y - 0.2, z0), Vector3(x_fondo - xc + 0.2, 3.0, fine - z0)),
@@ -373,8 +417,8 @@ func _oblo(nome: String, centro: Vector3, normale: Vector3, posa: String, zona: 
 	o.posa = posa
 	o.zona = zona
 	# il muro del corridoio fino alla cornice d'ottone (niente piastra quadrata scura, scelta dell'utente del 25 ottobre):
-	# lo zoccolo di cemento fino a 1 m dal pavimento (gli oblò stanno a 1,5 m), le lamiere sopra (triplanari nel mondo)
-	o.muro = [{"materiale": _mat_cemento, "da": -INF, "a": -0.5}, {"materiale": _mat_lamiere, "da": -0.5, "a": INF}]
+	# il foro nel muro è tondo (vedi FORO_OBLO), l'oblò mette solo la flangia
+	o.muro_col_foro_tondo = true
 	for k in opzioni:
 		o.set(k, opzioni[k])
 	o.transform = Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)

@@ -774,6 +774,9 @@ func _muro_oblo(xf: Transform3D, h: float) -> Array:
 		var idx = arr[Mesh.ARRAY_INDEX]
 		if uv.is_empty():
 			continue
+		var col = arr[Mesh.ARRAY_COLOR]
+		var somma := Color(0, 0, 0, 0)
+		var quanti := 0
 		var y0 := INF
 		var y1 := -INF
 		var t := Transform2D()
@@ -796,6 +799,10 @@ func _muro_oblo(xf: Transform3D, h: float) -> Array:
 				continue
 			y0 = minf(y0, lo.y)
 			y1 = maxf(y1, hi.y)
+			if col != null and not (col as PackedColorArray).is_empty():
+				for j in ii:
+					somma += (col as PackedColorArray)[j]
+					quanti += 1
 			if not trovata:
 				# uv = A (x, y) + b: A = F E^-1
 				var f1 := uv[ii[1]] - uv[ii[0]]
@@ -806,7 +813,12 @@ func _muro_oblo(xf: Transform3D, h: float) -> Array:
 				t.origin = uv[ii[0]] - t.basis_xform(Vector2(p[0].x, p[0].y))
 				trovata = true
 		if trovata:
-			out.append({"materiale": mi.get_active_material(i), "da": y0, "a": y1, "uv": t})
+			var fascia := {"materiale": mi.get_active_material(i), "da": y0, "a": y1, "uv": t}
+			# (i materiali della torre usano il colore dei vertici come albedo: la faccia nuova prende la media di quelli del
+			# muro attorno, se no veniva più chiara; collaudo D1)
+			if quanti > 0:
+				fascia["colore"] = somma / float(quanti)
+			out.append(fascia)
 	return out
 
 
