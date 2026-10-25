@@ -28,9 +28,9 @@ const SCATTI := {
 	# collaudo del manifesto (25 ottobre): dall'alto, dal basso e radenti dai due lati, da vicino
 	"manifesto": {
 		"manifesto_alto": [Vector3(-19.45, 2.35, 13.95), Vector3(-19.98, 1.85, 13.95), 50.0],
+		"manifesto_radente_nord": [Vector3(-19.82, 1.4, 15.0), Vector3(-19.98, 1.4, 13.5), 45.0],
 		"manifesto_basso": [Vector3(-19.4, 0.45, 13.95), Vector3(-19.98, 0.95, 13.95), 50.0],
 		"manifesto_radente_sud": [Vector3(-19.82, 1.4, 12.9), Vector3(-19.98, 1.4, 14.4), 45.0],
-		"manifesto_radente_nord": [Vector3(-19.82, 1.4, 15.0), Vector3(-19.98, 1.4, 13.5), 45.0],
 		"manifesto_scotch": [Vector3(-19.6, 2.0, 13.6), Vector3(-19.98, 1.9, 13.72), 40.0],
 		"manifesto_fronte": [Vector3(-18.6, 1.45, 13.95), Vector3(-20.0, 1.4, 13.95), 50.0],
 	},
