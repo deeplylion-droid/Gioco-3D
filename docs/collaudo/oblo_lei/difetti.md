@@ -61,4 +61,15 @@ Con la cornice tonda non dovrebbero cambiare.
 
 Foglio: `fogli/foglio_distacco_torre.jpg`, fatto con `tests/collaudo/distacco_oblo.gd`. Lo scatto è dagli occhi del giocatore, da vicino. C'è uno scatto ogni 8 fotogrammi dall'inizio del distacco.
 
-- **D5. Nella torre lei sparisce di colpo.** Dopo 8 fotogrammi stacca le mani dal vetro, a 16 si è appena allontanata, e già a 24 non c'è più niente: né lei né la sua luce rosa. Non si vede la discesa lenta nel buio dell'acqua, che invece nella Risalita c'è (lì a 72 fotogrammi lei si vede ancora). Su llvmpipe i fotogrammi sono lenti, quindi in tempo vero sono pochi decimi di secondo o poco più. Ma la sparizione avviene tutta fra due scatti di fila.
+- **D5 (vecchio, sbagliato: lo script girava senza `--fixed-fps`, vedi sotto). Nella torre lei sparisce di colpo.** Dopo 8 fotogrammi stacca le mani dal vetro, a 16 si è appena allontanata, e già a 24 non c'è più niente: né lei né la sua luce rosa. Non si vede la discesa lenta nel buio dell'acqua, che invece nella Risalita c'è (lì a 72 fotogrammi lei si vede ancora). Su llvmpipe i fotogrammi sono lenti, quindi in tempo vero sono pochi decimi di secondo o poco più. Ma la sparizione avviene tutta fra due scatti di fila.
+
+## Ricontrollo su lavoro/oblo-tondo 4943e409 (torre)
+
+Fogli in `fogli_4943/`. Tutti gli scatti sono a `--fixed-fps 60`.
+
+- **D1 corretto.** Negli scatti ravvicinati (g e gli altri angoli) non si vede più il riquadro chiaro: le piastrelle della faccia nuova hanno lo stesso colore di quelle vere.
+- **Flangia e rivetti:** come prima, ok.
+- **Lei:** ok, ferma dietro il vetro.
+- **D5, distacco rifatto bene** (passo 8 fino a 160 fotogrammi, cioè 2,7 s): lei stacca le mani e si allontana piano. La zona di lei si scurisce poco a poco: la luminosità media scende da 51,8 a 43,0 fra il fotogramma 24 e il 152.
+  - Tra il fotogramma 152 e il 160 sparisce invece tutta in una volta (da 43,0 a 30,6), lei e la sua luce, mentre si vedeva ancora bene.
+  - Resta da decidere se va bene così o se deve finire di sparire nel buio prima di togliere il modello.
