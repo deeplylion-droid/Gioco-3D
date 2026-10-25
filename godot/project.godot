@@ -21,8 +21,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Lingua="*res://scripts/game/lingua.gd"
 DatiVecchi="*res://scripts/game/dati_vecchi.gd"
+Lingua="*res://scripts/game/lingua.gd"
 Grafica="*res://addons/grafica/impostazioni_grafiche.gd"
 WaterManager="*res://addons/acqua/scripts/water_manager.gd"
 Game="*res://scripts/game/game.gd"
