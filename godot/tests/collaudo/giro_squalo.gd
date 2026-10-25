@@ -8,14 +8,23 @@ extends Node
 ## Modi: "alto" (preset di serie), "basso" (grafica al minimo: nebbia volumetrica spenta), "prima" (AtmosferaSqualo
 ## spenta: per confrontare porta, suoni, tremolio e camera con com'era). Senza "scatti" come terzo argomento niente
 ## scatti (si può lanciare senza schermo, per i confronti).
+## Con "interni" come quarto argomento non si carica la sala intera (renderizzata non ci sta più nei 15 GB della
+## macchina di prova: va fuori memoria durante il caricamento) ma solo quello che si vede: gli interni nella posizione
+## che hanno nella sala, con l'ambiente e gli attributi della camera della sala (LookSala), il Player dove lo mette la
+## sala, il risveglio nello stesso fotogramma in cui entra la scena (come nel _ready della sala) e la stessa dissolvenza
+## dal nero del caricamento (8 fotogrammi neri, poi 1,6 s).
 ## Si lancia come scena, non con --script: con --script il gioco è "automatico" e salta la scena dello squalo. Prima
 ## si prepara la grafica (preset e calibrazione fatta) con prepara_grafica.gd.
 ## Uso (sotto il render.lock):
 ##   godot --headless --path godot --script res://tests/run.gd -- res://tests/collaudo/prepara_grafica.gd alto
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##        --fixed-fps 30 res://tests/collaudo/giro_squalo.tscn -- <cartella> <alto|basso|prima> scatti
+##        --fixed-fps 30 res://tests/collaudo/giro_squalo.tscn -- <cartella> <alto|basso|prima> scatti [interni]
 
 const CARICAMENTO := "res://scenes/ui/caricamento.tscn"
+const INTERNI := "res://scenes/interni/interni.tscn"
+const PLAYER := "res://scenes/player/player.tscn"
+## Dove stanno gli interni e il giocatore nella sala principale (sala_principale.tscn).
+const INTERNI_NELLA_SALA := Transform3D(Basis.IDENTITY, Vector3(-9.7, 0.0, 40.9))
 const PASSO := 0.5
 const DOPO := 5.0
 
@@ -44,7 +53,41 @@ func _ready() -> void:
 	r.set(&"scatti", a.size() > 2 and a[2] == "scatti")
 	get_tree().root.add_child.call_deferred(r)
 	GameState.reset_progress()
-	get_tree().change_scene_to_file.call_deferred(CARICAMENTO)
+	if a.size() > 3 and a[3] == "interni":
+		_monta_interni.call_deferred()
+	else:
+		get_tree().change_scene_to_file.call_deferred(CARICAMENTO)
+
+
+## Gli interni con l'ambiente della sala, come li vede il giocatore all'inizio del gioco.
+func _monta_interni() -> void:
+	var velo := Dissolvenza.di(get_tree())
+	await velo.scurisci(0.0)
+	var radice := Node3D.new()
+	radice.name = "SalaSoloInterni"
+	var look := LookSala.new()
+	var we := WorldEnvironment.new()
+	we.environment = look.ambiente
+	we.camera_attributes = look.attributi_camera
+	look.free()
+	radice.add_child(we)
+	var interni := (load(INTERNI) as PackedScene).instantiate() as Node3D
+	interni.name = "Interni"
+	interni.set(&"giocatore_proprio", false)
+	interni.transform = INTERNI_NELLA_SALA
+	radice.add_child(interni)
+	var p := (load(PLAYER) as PackedScene).instantiate() as Player
+	p.name = "Player"
+	p.transform = INTERNI_NELLA_SALA * (interni.get_node(^"Gioco/Risveglio") as Node3D).transform
+	radice.add_child(p)
+	var vecchia := get_tree().current_scene
+	get_tree().root.add_child(radice)
+	get_tree().current_scene = radice
+	# (nel _ready della sala, appena entrata: GameState.player è già lui)
+	interni.call(&"fai_risveglio", p)
+	velo.schiarisci(1.6, 8)
+	if vecchia and vecchia != radice:
+		vecchia.queue_free()
 
 
 func _registra() -> void:
@@ -57,7 +100,7 @@ func _registra() -> void:
 	while Time.get_ticks_msec() - t0 < 900000:
 		await get_tree().process_frame
 		var sc := get_tree().current_scene
-		if sc and sc.scene_file_path.ends_with("sala_principale.tscn"):
+		if sc and (sc.scene_file_path.ends_with("sala_principale.tscn") or sc.name == "SalaSoloInterni"):
 			s = sc.find_child("RisveglioSqualo", true, false) as RisveglioSqualo
 			if s:
 				break
