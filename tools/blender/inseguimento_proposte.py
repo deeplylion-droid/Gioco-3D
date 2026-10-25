@@ -45,10 +45,10 @@ BOCCA = Vector((40.0, 17.4, -18.4))      # la bocca del tubo dell'inseguimento s
 POZZETTO_GRATA = (50.75, 7.6, 53.4, 10.2, 6.7, -33.4 + 0.12)
 R_TUBO = 0.8                             # il tubo dell'inseguimento (come la bocca)
 # nel gioco: l'oblò con lei nel muro est della torre (come in torre_a.py: y e quota del centro, lato del foro) e,
-# dietro, la cisterna piena d'acqua dove sta lei: l'interno lo fa ObloLei nel gioco (vasca larga 3,2, fonda 2,7, da
+# dietro, la cisterna piena d'acqua dove sta lei: l'interno lo fa ObloLei nel gioco (vasca larga 3,2, fonda 3,6, da
 # 5,2 m sotto il centro a 1,8 sopra, dal piano del muro est della torre a 0,4 + 0,02 m), qui il fuori, sulle gambe
 OBLO_TORRE = (13.7, -18.25, 1.9)
-OBLO_VASCA = dict(larga=3.2, fonda=2.7, sotto=5.2, sopra=1.8, dentro=0.02)
+OBLO_VASCA = dict(larga=3.2, fonda=3.6, sotto=5.2, sopra=1.8, dentro=0.02)
 X0 = 40.0                                # il muro in comune con la sala della torre
 # Nel gioco (--gioco) la sala sta nel mondo accanto alla torre, quindi:
 # - il muro ovest è in X0_GIOCO, non nel piano del muro est della torre (x 40: due facce nello stesso piano

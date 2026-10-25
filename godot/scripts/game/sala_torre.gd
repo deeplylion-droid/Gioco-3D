@@ -724,6 +724,9 @@ func _oblo_lei() -> void:
 	oblo.posa = oblo_posa if oblo_posa in LeiOblo.POSE else "schiacciata"
 	oblo.raggio_vetro = oblo_raggio_vetro
 	oblo.spessore_muro = 0.4
+	# la cisterna profonda 3,6 m (mascotte: la posa "occhio" arrivando e staccandosi va fino a 3,4 m dietro il vetro);
+	# il fuori è nel GLB delle condotte (inseguimento_proposte.py, OBLO_VASCA)
+	oblo.vasca_fonda = 3.6
 	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
 	var v: Array = dati["vasca_fondo"]["rett"]
 	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
