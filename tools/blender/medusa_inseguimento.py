@@ -816,6 +816,8 @@ T_OBLO = 4.0            # i cicli delle pose (il respiro)
 T_STACCA = 2.6          # si stacca: indietro e giu' nel buio
 SBIRCIA_OCCHIO = 0.60     # sbircia: l'occhio a tanto dal centro del vetro, sul bordo (il vetro degli oblò di enigmi ha 0,6 m di
                           # raggio: mezzo viso dietro il muro)
+STACCA_ALZA = 0.04      # m: nei distacchi i palmi partono gia' staccati dal vetro di tanto (nella dissolvenza di 0,3 s fra
+                        # la posa ferma e il distacco le mani, fondendo due pose, passavano il vetro di 1-3 cm)
 OBLO_INDIETRO = 8.0     # gradi: quanto e' inclinata col basso all'indietro (i tentacoli lontani dal vetro)
 SBIRCIA_LATO = 1.0      # da che parte del bordo sbircia: +1 alla sua sinistra (a destra per chi guarda dal corridoio);
                         # oblo_sbircia_altro dall'altra parte
@@ -871,8 +873,8 @@ def _occhio_in(arm, voglio):
 
 
 def _palmo(arm, suf, punto):
-    """Il palmo piatto sul vetro in [punto] (il polso a PALMO dal piano, piu' 2 mm), le dita in su."""
-    braccio_mondo(arm, suf, Vector(punto) + Vector((0.0, 0.002, 0.0)), (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
+    """Il palmo piatto sul vetro in [punto] (il polso a PALMO dal piano, piu' 6 mm: nelle dissolvenze le dita avanzano un poco), le dita in su."""
+    braccio_mondo(arm, suf, Vector(punto) + Vector((0.0, 0.006, 0.0)), (0.8, 0.3, -0.5), (0.0, -0.25, 1.0), (0.0, 1.0, 0.0))
 
 
 def pose_oblo_schiacciata(arm, C, Z, t):
@@ -896,7 +898,7 @@ def pose_oblo_schiacciata_stacca(arm, C, Z, t):
     lascia = liscio(0.0, 1.0, 0.0, 0.4, u)
     for suf, s in (('.L', 1), ('.R', -1)):
         pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
-        vetro = Vector((s * (OBLO_R - 0.12), -dd + PALMO, hh - 0.08))
+        vetro = Vector((s * (OBLO_R - 0.12), -dd + PALMO + STACCA_ALZA, hh - 0.08))
         su = pc + Vector((s * 0.45, 0.25, 0.75))
         _palmo(arm, suf, vetro.lerp(su, lascia))
     Z.segui()
@@ -930,7 +932,7 @@ def pose_oblo_sbircia_stacca(arm, C, Z, t, s=SBIRCIA_LATO):
     _occhio_in(arm, (s * SBIRCIA_OCCHIO, -dd + VISO_DAVANTI - 0.022 + 1.8 * via, hh + 0.03 - 1.3 * via ** 1.6))
     suf_vetro = '.L' if s < 0 else '.R'
     pc = mondo(arm, arm.pose.bones['braccio' + suf_vetro].head)
-    vetro = Vector((s * (OBLO_R - 0.50), -dd + PALMO, hh - 0.12))
+    vetro = Vector((s * (OBLO_R - 0.50), -dd + PALMO + STACCA_ALZA, hh - 0.12))
     _palmo(arm, suf_vetro, vetro.lerp(pc + Vector((0.0, 0.25, 0.7)), liscio(0.0, 1.0, 0.0, 0.35, u)))
     altro = '.R' if suf_vetro == '.L' else '.L'
     braccio(arm, altro, (0.30, -0.12, -1.0), (0.5, 0.5, 0.0), (0.05, -0.15, -1.0), (1.0, 0.0, 0.0))
@@ -948,11 +950,11 @@ def _palmo_capovolta(arm, suf, punto):
                       Vector((0.0, 1.0, 0.0)))
 
 
-def _mani_capovolta(arm, dd, hh, lascia=0.0):
+def _mani_capovolta(arm, dd, hh, lascia=0.0, staccando=False):
     for suf in ('.L', '.R'):
         sp = mondo(arm, arm.pose.bones['braccio' + suf].head)
         f = 1.0 if sp.x > 0 else -1.0
-        vetro = Vector((f * (OBLO_R - 0.14), -dd + PALMO, hh - 0.12))
+        vetro = Vector((f * (OBLO_R - 0.14), -dd + PALMO + (STACCA_ALZA if staccando else 0.0), hh - 0.12))
         _palmo_capovolta(arm, suf, vetro.lerp(sp + Vector((f * 0.5, 0.3, -0.6)), lascia))
 
 
@@ -963,7 +965,7 @@ def pose_oblo_capovolta(arm, C, Z, t):
     u = (t / T_OBLO) % 1.0
     _calma(arm, C, Z, t, avanti=4.0, su=6.0, indietro=OBLO_INDIETRO)
     # tutta lei girata intorno all'asse avanti-indietro: la faccia resta verso il vetro
-    ruota(arm, 'radice', (0, 1, 0), 180.0 + 3.0 * math.sin(2 * math.pi * u))
+    ruota(arm, 'radice', (0, 1, 0), 180.0 + 1.0 * math.sin(2 * math.pi * u))
     _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.046, hh + 0.01 * math.sin(2 * math.pi * u)))
     _mani_capovolta(arm, dd, hh)
     Z.segui()
@@ -977,7 +979,7 @@ def pose_oblo_capovolta_stacca(arm, C, Z, t):
     _calma(arm, C, Z, 0.0, avanti=4.0 - 10.0 * via, su=6.0, indietro=OBLO_INDIETRO)
     ruota(arm, 'radice', (0, 1, 0), 180.0)
     _occhio_in(arm, (0.0, -dd + VISO_DAVANTI - 0.046 + 2.0 * via, hh - 2.6 * via ** 1.6))
-    _mani_capovolta(arm, dd, hh, liscio(0.0, 1.0, 0.0, 0.4, u))
+    _mani_capovolta(arm, dd, hh, liscio(0.0, 1.0, 0.0, 0.4, u), staccando=True)
     Z.segui()
 
 
@@ -991,7 +993,7 @@ OCCHIO_MANI = 0.42          # i palmi sul vetro a tanto dal centro (dietro il mu
 T_ARRIVA = 3.0
 
 
-def _occhio_posa(arm, C, Z, t, via, mani=1.0):
+def _occhio_posa(arm, C, Z, t, via, mani=1.0, staccando=False):
     """L'occhio sul vetro; via: 0 sul vetro, 1 lontana nel buio (OCCHIO_VIA); mani: 1 i palmi sul vetro."""
     dd, hh = OBLO
     u = (t / T_OBLO) % 1.0
@@ -1000,8 +1002,10 @@ def _occhio_posa(arm, C, Z, t, via, mani=1.0):
                      + OCCHIO_VIA[0] * via, hh - OCCHIO_VIA[1] * via ** 1.4))
     for suf, s in (('.L', 1), ('.R', -1)):
         pc = mondo(arm, arm.pose.bones['braccio' + suf].head)
-        vetro = Vector((s * OCCHIO_MANI, -dd + PALMO, hh - 0.10 + 0.006 * math.sin(2 * math.pi * u + s)))
-        lungo = pc + Vector((s * 0.35, -0.10, -0.85))
+        vetro = Vector((s * OCCHIO_MANI, -dd + PALMO + (STACCA_ALZA if staccando else 0.0),
+                        hh - 0.10 + 0.006 * math.sin(2 * math.pi * u + s)))
+        # (lungo i fianchi e un po' indietro: le mani non passano mai davanti al piano del vetro)
+        lungo = pc + Vector((s * 0.35, 0.25, -0.85))
         _palmo(arm, suf, lungo.lerp(vetro, mani))
     Z.segui()
 
@@ -1022,7 +1026,7 @@ def pose_oblo_occhio_arriva(arm, C, Z, t):
 def pose_oblo_occhio_stacca(arm, C, Z, t):
     """Si stacca lenta e torna nel buio: le mani lasciano, poi indietro e giu'."""
     u = t / T_STACCA
-    _occhio_posa(arm, C, Z, t, liscio(0.0, 1.0, 0.1, 1.0, u), mani=1.0 - liscio(0.0, 1.0, 0.0, 0.35, u))
+    _occhio_posa(arm, C, Z, t, liscio(0.0, 1.0, 0.1, 1.0, u), mani=1.0 - liscio(0.0, 1.0, 0.0, 0.35, u), staccando=True)
 
 
 ANIMAZIONI = {
