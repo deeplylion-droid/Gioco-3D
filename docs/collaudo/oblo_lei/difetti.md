@@ -40,3 +40,19 @@ Lei sta dietro il vetro in tutti gli stati e in tutti e tre gli oblò. La cornic
 - **D4. ObloServizio, posa capovolta, al 60% del distacco: la macchia giallo-rosa c'è ancora.** Ingrandita, è la gonna di lei (capovolta, quindi in alto) che si avvicina al vetro. È così vicina alla sua luce rosa che si brucia: diventa gialla e mostra righe verticali. Il bordo del vetro la taglia di netto, quindi sta dietro il vetro e non lo attraversa.
   - Non è un problema di posizione ma di aspetto (luce troppo vicina alla gonna in quel momento).
   - Scatto: `difetti/4_servizio_macchia_gonna.jpg`.
+
+## Scatti dagli occhi del giocatore, torre (vetro 0,6)
+
+Foglio: `fogli/foglio_giocatore_torre.jpg`, fatto con `tests/scatti_oblo_torre.gd`. Ci sono tre scatti: da lontano, da vicino e ravvicinato.
+Lei sta dietro il vetro e la cornice è a posto.
+
+- **D1 si vede anche dal punto dove passa il giocatore,** e non solo con la luce sulla camera: attorno all'oblò c'è un quadrato di piastrelle più chiare. Si nota già da lontano.
+  - Scatto: `difetti/1b_torre_riquadro_dal_giocatore.jpg`.
+- Manca lo scatto mentre lei si stacca nella torre: la prova è finita fuori tempo, su llvmpipe, prima di quello scatto.
+
+## Non fatto in tempo
+
+Su questa versione non ho rifatto due prove:
+- la luce rosa dietro i muri (`tests/collaudo/luce_oblo.gd`);
+- gli stati prima del blackout e dopo che lei se n'è andata (`tests/collaudo/stati_oblo.gd`).
+Con la cornice tonda non dovrebbero cambiare.
