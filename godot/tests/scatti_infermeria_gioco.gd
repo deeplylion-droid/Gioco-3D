@@ -33,6 +33,9 @@ const CAMERE := {
 	"porta_sud": [Vector3(0.9, 1.6, 1.3), Vector3(1.7, 1.0, 3.2)],
 	"porta_nord_passaggio": [Vector3(-2.2, 1.6, -1.6), Vector3(-2.2, 1.2, -3.6)],
 	"adesivo_nord": [Vector3(-1.25, 1.6, -2.72), Vector3(-1.25, 2.45, -3.2)],
+	# il soffitto sopra le lampade d'emergenza, dagli occhi del giocatore (25 ottobre: l'ombra nera del corpo della lampada)
+	"soffitto_sud": [Vector3(1.2, 1.6, 0.9), Vector3(1.6, 2.9, 3.0)],
+	"soffitto_est": [Vector3(0.9, 1.6, -0.7), Vector3(3.0, 2.85, -1.05)],
 }
 
 

@@ -47,6 +47,12 @@ var _luci_tolte: Array = []    # [luce, la sua cull_mask di prima]: le luci del 
 var _sagoma_fatta := false
 var _diradata := 0.0          # 0: densa; 1: sparita
 var _dirada_t := -1.0
+var _fermi := 0               # fotogrammi senza la scena (dopo FOTOGRAMMI_PRONTA il volume della nebbia si nasconde)
+
+## Fotogrammi in cui il volume della nebbia si disegna a densità zero col livello (shader e pipeline pronti prima della
+## scena); poi, finché la scena non c'è, e alla fine del diradamento, è nascosto: a densità zero costava lo stesso, per
+## tutto il gioco (riscontro del coordinatore del 25 ottobre).
+const FOTOGRAMMI_PRONTA := 10
 
 
 func _ready() -> void:
@@ -104,6 +110,14 @@ func _process(delta: float) -> void:
 	if _r == null:
 		return
 	var attivo: bool = _r.in_corso()
+	if attivo or _acceso or _dirada_t >= 0.0:
+		_fermi = 0
+		nebbia.visible = true
+	else:
+		# senza la scena (finita, o mai partita: una ripartenza, una partenza F9) il volume non serve
+		_fermi += 1
+		if _fermi > FOTOGRAMMI_PRONTA and nebbia.visible:
+			nebbia.visible = false
 	if attivo and not _acceso and _dirada_t < 0.0:
 		_acceso = true
 		_diradata = 0.0
