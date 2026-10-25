@@ -2,13 +2,15 @@ extends Node
 ## Test dell'infermeria del gioco (scenes/risalita/infermeria.tscn, aspetto B), nella scena di prova
 ## tests/scene/infermeria_gioco_prova.tscn: la catena dei 4 passi, simulando il getto e il tasto E
 ## guardando gli oggetti (così si prova anche che si raggiungono), e i checkpoint dopo ogni passo.
-## 1. All'inizio il negatoscopio sfarfalla, la cassaforte è chiusa e la keycard non si prende.
-## 2. Col getto sull'interruttore il negatoscopio si accende.
+## 1. All'inizio il negatoscopio sfarfalla, la cassaforte è chiusa e la keycard non si prende; la porta nord (verso la
+##    scala di servizio) è chiusa e non si passa.
+## 2. Col getto sull'interruttore il negatoscopio si accende e la porta nord si apre da sola fino al muro, col suono della
+##    porta del ponte; poi si passa.
 ## 3. Solo un cassetto ha l'adesivo rosa; aperto, dentro c'è la radiografia, che si prende.
 ## 4. La radiografia sul negatoscopio: si vedono i puntini, 4, 1 e 7.
 ## 5. La cassaforte: un codice sbagliato non la apre, 4-1-7 sì; dentro la keycard e la Polaroid.
 ## 6. Checkpoint: tutto resta com'era (negatoscopio acceso con la radiografia, cassaforte aperta,
-##    keycard nell'inventario e non più nella cassaforte).
+##    keycard nell'inventario e non più nella cassaforte, porta nord già aperta, senza suono).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_infermeria_gioco.gd
 
 const SCENA := "res://tests/scene/infermeria_gioco_prova.tscn"
