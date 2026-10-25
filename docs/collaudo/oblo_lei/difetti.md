@@ -56,3 +56,9 @@ Su questa versione non ho rifatto due prove:
 - la luce rosa dietro i muri (`tests/collaudo/luce_oblo.gd`);
 - gli stati prima del blackout e dopo che lei se n'è andata (`tests/collaudo/stati_oblo.gd`).
 Con la cornice tonda non dovrebbero cambiare.
+
+## Torre: il distacco (aggiunto dopo, su richiesta del coordinatore)
+
+Foglio: `fogli/foglio_distacco_torre.jpg`, fatto con `tests/collaudo/distacco_oblo.gd`. Lo scatto è dagli occhi del giocatore, da vicino. C'è uno scatto ogni 8 fotogrammi dall'inizio del distacco.
+
+- **D5. Nella torre lei sparisce di colpo.** Dopo 8 fotogrammi stacca le mani dal vetro, a 16 si è appena allontanata, e già a 24 non c'è più niente: né lei né la sua luce rosa. Non si vede la discesa lenta nel buio dell'acqua, che invece nella Risalita c'è (lì a 72 fotogrammi lei si vede ancora). Su llvmpipe i fotogrammi sono lenti, quindi in tempo vero sono pochi decimi di secondo o poco più. Ma la sparizione avviene tutta fra due scatti di fila.
