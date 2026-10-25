@@ -91,3 +91,18 @@ Fogli in `fogli_4943/`. Tutti gli scatti sono a `--fixed-fps 60`.
   - **D7 (grave). ObloPersonale: una fessura nel pavimento.** Dal punto (-34,75, -4,7, 51,6), nella stanza accanto al corridoio di ObloPersonale, si vede nel pavimento una fessura lunga e larga circa 15-20 cm. Ai piedi di un pilastro o di uno stipite, fra due lastre di pavimento, attraverso la fessura si vedono i tentacoli di lei, rosa, nella vasca sotto. Si vedono anche a luce spenta: è un buco nella geometria, non solo la luce che passa. Forse è il gradino della vasca a L (`vasca_gradino`) sotto il pavimento della stanza accanto.
     - Scatti: `difetti/7_personale_fessura_pavimento.jpg` (ingrandito, con e senza luce) e `difetti/7b_personale_fessura_intero.jpg`.
   - **ObloServizio, punto (-17,5, 1,6, 37,7): una riga rosa sottile verticale in alto a destra.** Il rosa massimo è 0,15. Potrebbe essere la luce che passa da uno spigolo: da guardare.
+
+## Ricontrollo su lavoro/oblo-sfuma 6e1fdf69 (sfumatura e D7)
+
+Fogli in `fogli_6e1f/`. Tutto è a `--fixed-fps 60`. I punti sono fatti con `tests/collaudo/punti_oblo.gd`, con la luce di lei accesa e spenta.
+
+1. **D7 corretto.** Dal punto (-34,75, -4,7, 51,6), guardando verso la luce e in giù, e anche dall'altra parte e di lato, il pavimento è continuo: non c'è più la fessura e non si vede più dentro la vasca. Il rosa in più è al massimo 0,05, cioè niente.
+   - Gli scatti radenti (d7_5, 6 e 7, a 25 cm dal pavimento che avevo stimato) non contano: la camera è finita sotto o dentro la geometria, dove il giocatore non arriva.
+2. **Riga di ObloServizio: non è una fessura.** È lo spigolo di uno stipite nel corridoio, illuminato di sbieco dalla luce di lei che arriva dall'angolo: si vede un filo più chiaro in cima allo stipite. Va bene così.
+   - Ingrandimento con luce / senza luce: `fogli_6e1f/z_riga.jpg`.
+3. **Distacco a passo 4: niente più sparizione di colpo.**
+   - **Torre:** la luminosità di lei scende senza salti da 43,5 (fotogramma 120) a 30,3 (fotogramma 156), poi resta ferma. Lei diventa trasparente e svanisce entro il fotogramma 156.
+   - **ObloServizio:** scende da 6,1 (fotogramma 120) a 0 (fotogramma 160), in modo uniforme.
+   - **Da guardare (aspetto):** mentre è trasparente si vedono le parti di dentro attraverso quelle di fuori. Nella torre i capelli si vedono attraverso l'occhio. In ObloServizio, nella campana, si vedono le forme arancioni di dentro e le righe gialle. Sembra un fantasma a strati, non solo una figura che sbiadisce.
+   - Nei primi 20 fotogrammi di ObloServizio la posa salta (al 4 e al 12 è diversa, al 20 è di nuovo capovolta). Quasi certamente è lo script, che ha aspettato solo 60 fotogrammi dopo la comparsa: l'arrivo non era finito. Non lo conto come difetto.
+4. **D4, la gonna.** Fra i fotogrammi 84 e 92 l'interno della campana è viola spento, non più giallo bruciato. Corretto.
