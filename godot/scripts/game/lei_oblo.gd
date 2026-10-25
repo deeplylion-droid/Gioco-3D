@@ -79,6 +79,11 @@ func _crea() -> void:
 	_luce.omni_range = 7.0
 	_luce.light_volumetric_fog_energy = 2.0
 	_luce.shadow_enabled = true
+	# (bias più bassi di quelli di serie, 0,1 e 1,0: con quelli la luce passava dagli spigoli sottili della cisterna
+	# dell'oblò della torre e faceva righe rosa nella sala delle condotte, collaudo finale del 25 ottobre; da dentro,
+	# su lei e sulla vasca, niente macchie)
+	_luce.shadow_bias = 0.03
+	_luce.shadow_normal_bias = 0.2
 	_luce.position = Vector3(0, 2.6, 0.4)
 	_luce.set_meta(&"risveglio_ignora", true)
 	lei.add_child(_luce)
