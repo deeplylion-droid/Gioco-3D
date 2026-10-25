@@ -187,6 +187,8 @@ func costruisci() -> void:
 	while not _coda.is_empty():
 		(_coda.pop_front() as Callable).call()
 	costruita = true
+	# costruito tutto subito: la scaletta dopo SB1 si può aprire (nel gioco lo dice la sala, dopo il riscaldamento)
+	AttesaZone.pronta(&"tunnel")
 
 
 ## Un passo lungo si divide: [param altri] si fanno subito dopo il passo che li aggiunge (uno per volta, nella

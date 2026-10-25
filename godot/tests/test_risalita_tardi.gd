@@ -138,8 +138,19 @@ func _impronta(ris: Node) -> Dictionary:
 	var out := {}
 	for radice in [ris.get_node(^"Fiume"), ris.get_node(^"Infermeria")]:
 		for n in [radice] + radice.find_children("*", "Node3D", true, false):
-			var k := _percorso(ris, n)
 			var t := (n as Node3D).global_transform
+			# le collisioni contano per forma e posto, non per corpo: riaccese a pezzi, un corpo statico con più forme
+			# grandi diventa un corpo per forma (AccensioneAPezzi, blocchi del 25 ottobre), uguali ma con altri nomi
+			if n is CollisionObject3D and not n is Area3D:
+				continue
+			if n is CollisionShape3D and not (n.get_parent() is Area3D):
+				var cs := n as CollisionShape3D
+				var kf := "forma %s %s pos=%s rot=%s strati=%d" % [cs.shape.get_class() if cs.shape else "-", cs.shape.resource_path if cs.shape else "",
+					t.origin.snapped(Vector3.ONE * 0.001), t.basis.get_euler().snapped(Vector3.ONE * 0.001),
+					(cs.get_parent() as CollisionObject3D).collision_layer if cs.get_parent() is CollisionObject3D else -1]
+				out[kf] = int(out.get(kf, 0)) + 1
+				continue
+			var k := _percorso(ris, n)
 			var v := "vis=%s pos=%s rot=%s scala=%s" % [(n as Node3D).is_visible_in_tree(), t.origin.snapped(Vector3.ONE * 0.001),
 				t.basis.get_euler().snapped(Vector3.ONE * 0.001), t.basis.get_scale().snapped(Vector3.ONE * 0.001)]
 			if n is Light3D:
