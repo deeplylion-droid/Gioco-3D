@@ -12,3 +12,11 @@ Scatti dal motore con i materiali veri e la luce d'ambiente di `tests/scatti_inf
 - `chiusa/` ha il negatoscopio spento, `luce/` ce l'ha acceso, cioè dopo l'interruttore;
 - i fogli affiancati sono `confronto_chiusa.jpg` e `confronto_luce.jpg`;
 - in `faretti/` ci sono gli scatti ravvicinati dei due faretti, con una lampadina per vederli. Lo script è `godot/proposte/infermeria_luci/scatti_faretti.gd`.
+
+## Dopo il pulsante: variante A o B (da scegliere con l'utente, 25 ottobre)
+
+Con il negatoscopio acceso la stanza tornava chiara quasi come prima. Il motivo non sono le luci bianche al 40%: il negatoscopio ne è escluso, e la sua SpotLight sulla scrivania era a 3,0 con un cono di 75°, quindi illuminava tutta la stanza. L'opzione nel codice è `buia_dopo_pulsante` in `infermeria_gioco.gd`:
+- **B**, la scelta di partenza (falso): com'è adesso, la luce larga del negatoscopio illumina la stanza;
+- **A** (vero): la stanza resta buia anche dopo. La sua luce sulla scrivania scende a 0,9 con un cono di 42°, e la luce principale è lo schermo acceso più il faretto della cassaforte. Pulsante verde, schizzo rosa, rotelle e uscita si trovano ancora.
+
+Gli scatti della A sono in `variante_A/luce/`, dagli stessi punti di `dopo/luce/`, e il foglio affiancato è `confronto_luce_A_B.jpg`. Per rifarli: `INFERMERIA_BUIA=1` con `tests/scatti_infermeria_gioco.gd`.

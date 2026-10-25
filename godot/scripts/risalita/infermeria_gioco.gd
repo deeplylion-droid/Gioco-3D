@@ -28,6 +28,10 @@ const PORTA_NORD := -2.2
 const LARGO_PORTA := 1.0
 ## Ordine dei checkpoint dei passi (tra l'approdo e il magazzino).
 @export var ordine_checkpoint := 12
+## Variante della luce dopo il pulsante (da scegliere con l'utente, 25 ottobre). Falso (B, di partenza): il negatoscopio
+## acceso illumina la stanza con la sua luce larga, come prima. Vero (A): la stanza resta buia anche dopo, la luce
+## principale è lo schermo acceso (la sua luce sulla scrivania è debole e stretta) più il faretto della cassaforte.
+@export var buia_dopo_pulsante := false
 
 var mat_piastrelle: Material
 var mat_muro: Material
@@ -940,4 +944,5 @@ func _process(delta: float) -> void:
 	_luce_lampeggiante.light_color = _vetro_lampeggiante.emission
 	_luce_lampeggiante.light_energy = 0.6 * k
 	# la luce del negatoscopio segue il pannello (spenta senza corrente: versione A)
-	_luce_negatoscopio.light_energy = 3.0 if negatoscopio.e_acceso() else 0.0
+	_luce_negatoscopio.light_energy = (0.9 if buia_dopo_pulsante else 3.0) if negatoscopio.e_acceso() else 0.0
+	_luce_negatoscopio.spot_angle = 42.0 if buia_dopo_pulsante else 75.0
