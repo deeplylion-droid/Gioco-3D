@@ -1,0 +1,55 @@
+   anta col giocatore fermo a 0.0 gradi; suono: 0 pause, 0 riprese, 1 suoni in tutto
+  ok  cardini: andato via il giocatore, l'anta arriva a 180 gradi (180.0)
+  ok  cardini: un solo suono, che si ferma e riparte con l'anta (1 suoni, 0 pause, 0 riprese)
+cardini (-1.65, -2.80): spinto al massimo 0.000 m, alla fine 0.000 m verso (0.00, 0.00) [x+ est, z+ verso la stanza], fino a (-1.65, -2.80); z minima -2.796; entra nell'anta al massimo 0.000 m (a -1.00 s), per 0 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi alla fine; poi cammina 2.09 e 1.98 m in 1,5 s
+  ok  cardini: l'anta non spinge il giocatore (0.000 m)
+  ok  cardini: non gli passa attraverso (entra 0.000 m)
+  ok  cardini: non lo stringe fra l'anta e il muro
+  ok  cardini: non lo spinge attraverso il muro, resta nella stanza
+  ok  cardini: aperta, si muove liberamente (2.09 e 1.98 m)
+   anta col giocatore fermo a 45.0 gradi; suono: 1 pause, 1 riprese, 1 suoni in tutto
+  ok  meta: andato via il giocatore, l'anta arriva a 180 gradi (180.0)
+  ok  meta: un solo suono, che si ferma e riparte con l'anta (1 suoni, 1 pause, 1 riprese)
+meta (-1.76, -2.55): spinto al massimo 0.000 m, alla fine 0.000 m verso (0.00, 0.00) [x+ est, z+ verso la stanza], fino a (-1.76, -2.55); z minima -2.550; entra nell'anta al massimo 0.000 m (a -1.00 s), per 0 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi alla fine; poi cammina 2.03 e 1.95 m in 1,5 s
+  ok  meta: l'anta non spinge il giocatore (0.000 m)
+  ok  meta: non gli passa attraverso (entra 0.000 m)
+  ok  meta: non lo stringe fra l'anta e il muro
+  ok  meta: non lo spinge attraverso il muro, resta nella stanza
+  ok  meta: aperta, si muove liberamente (2.03 e 1.95 m)
+   anta col giocatore fermo a 9.5 gradi; suono: 1 pause, 1 riprese, 1 suoni in tutto
+  ok  punta: andato via il giocatore, l'anta arriva a 180 gradi (180.0)
+  ok  punta: un solo suono, che si ferma e riparte con l'anta (1 suoni, 1 pause, 1 riprese)
+punta (-2.45, -2.60): spinto al massimo 0.000 m, alla fine 0.000 m verso (0.00, 0.00) [x+ est, z+ verso la stanza], fino a (-2.45, -2.60); z minima -2.600; entra nell'anta al massimo 0.000 m (a -1.00 s), per 0 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi alla fine; poi cammina 2.60 e 1.92 m in 1,5 s
+  ok  punta: l'anta non spinge il giocatore (0.000 m)
+  ok  punta: non gli passa attraverso (entra 0.000 m)
+  ok  punta: non lo stringe fra l'anta e il muro
+  ok  punta: non lo spinge attraverso il muro, resta nella stanza
+  ok  punta: aperta, si muove liberamente (2.60 e 1.92 m)
+   anta col giocatore fermo a 0.0 gradi; suono: 0 pause, 0 riprese, 1 suoni in tutto
+  ok  davanti_al_vano: andato via il giocatore, l'anta arriva a 180 gradi (180.0)
+  ok  davanti_al_vano: un solo suono, che si ferma e riparte con l'anta (1 suoni, 0 pause, 0 riprese)
+davanti_al_vano (-2.20, -2.75): spinto al massimo 0.000 m, alla fine 0.000 m verso (0.00, 0.00) [x+ est, z+ verso la stanza], fino a (-2.20, -2.75); z minima -2.750; entra nell'anta al massimo 0.000 m (a -1.00 s), per 0 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi alla fine; poi cammina 2.48 e 1.94 m in 1,5 s
+  ok  davanti_al_vano: l'anta non spinge il giocatore (0.000 m)
+  ok  davanti_al_vano: non gli passa attraverso (entra 0.000 m)
+  ok  davanti_al_vano: non lo stringe fra l'anta e il muro
+  ok  davanti_al_vano: non lo spinge attraverso il muro, resta nella stanza
+  ok  davanti_al_vano: aperta, si muove liberamente (2.48 e 1.94 m)
+   anta col giocatore fermo a 123.6 gradi; suono: 1 pause, 1 riprese, 1 suoni in tutto
+  ok  angolo_porta_muro: andato via il giocatore, l'anta arriva a 180 gradi (180.0)
+  ok  angolo_porta_muro: un solo suono, che si ferma e riparte con l'anta (1 suoni, 1 pause, 1 riprese)
+angolo_porta_muro (-1.10, -2.85): spinto al massimo 0.000 m, alla fine 0.000 m verso (0.00, 0.00) [x+ est, z+ verso la stanza], fino a (-1.10, -2.85); z minima -2.850; entra nell'anta al massimo 0.000 m (a -1.00 s), per 0 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi alla fine; poi cammina 1.85 e 1.98 m in 1,5 s
+  ok  angolo_porta_muro: l'anta non spinge il giocatore (0.000 m)
+  ok  angolo_porta_muro: non gli passa attraverso (entra 0.000 m)
+  ok  angolo_porta_muro: non lo stringe fra l'anta e il muro
+  ok  angolo_porta_muro: non lo spinge attraverso il muro, resta nella stanza
+  ok  angolo_porta_muro: aperta, si muove liberamente (1.85 e 1.98 m)
+   anta col giocatore fermo a 99.0 gradi; suono: 1 pause, 1 riprese, 1 suoni in tutto
+  ok  angolo_porta_muro_2: andato via il giocatore, l'anta arriva a 180 gradi (180.0)
+  ok  angolo_porta_muro_2: un solo suono, che si ferma e riparte con l'anta (1 suoni, 1 pause, 1 riprese)
+angolo_porta_muro_2 (-1.30, -2.75): spinto al massimo 0.000 m, alla fine 0.000 m verso (0.00, 0.00) [x+ est, z+ verso la stanza], fino a (-1.30, -2.75); z minima -2.750; entra nell'anta al massimo 0.000 m (a -1.00 s), per 0 fotogrammi; fra anta e muro: false; fuori dalla stanza: false; anta a 180.0 gradi alla fine; poi cammina 1.86 e 2.01 m in 1,5 s
+  ok  angolo_porta_muro_2: l'anta non spinge il giocatore (0.000 m)
+  ok  angolo_porta_muro_2: non gli passa attraverso (entra 0.000 m)
+  ok  angolo_porta_muro_2: non lo stringe fra l'anta e il muro
+  ok  angolo_porta_muro_2: non lo spinge attraverso il muro, resta nella stanza
+  ok  angolo_porta_muro_2: aperta, si muove liberamente (1.86 e 2.01 m)
+RISULTATO: 42 controlli ok, 0 falliti

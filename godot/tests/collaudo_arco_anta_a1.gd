@@ -63,8 +63,20 @@ func _run() -> void:
 		var fra_anta_e_muro := false
 		var fuori := false
 		var immagine: Image = null
+		var pause := 0
+		var riprese := 0
+		var era_in_pausa := false
+		var suoni_prima := int(Audio.conteggio.get(&"porta_ponte_apre", 0))
 		for i in int(3.2 * 60):
 			await get_tree().physics_frame
+			var sn = inf.get(&"_suono_nord")
+			if sn is AudioStreamPlayer3D:
+				var pa: bool = (sn as AudioStreamPlayer3D).stream_paused
+				if pa and not era_in_pausa:
+					pause += 1
+				if not pa and era_in_pausa:
+					riprese += 1
+				era_in_pausa = pa
 			var ora := inf.to_local(p.global_position)
 			max_spinta = maxf(max_spinta, Vector2(ora.x - prima.x, ora.z - prima.z).length())
 			min_z = minf(min_z, ora.z)
@@ -84,7 +96,7 @@ func _run() -> void:
 				fuori = true
 		var dopo := inf.to_local(p.global_position)
 		var spinta := Vector2(dopo.x - prima.x, dopo.z - prima.z)
-		var angolo := anta.rotation_degrees.y
+		var angolo_fermo := anta.rotation_degrees.y
 		if immagine:
 			immagine.save_jpg(cartella.path_join("arco_%s_peggio.jpg" % nome), 0.9)
 		# si muove liberamente: verso il centro della stanza, poi di lato
@@ -94,8 +106,22 @@ func _run() -> void:
 		var da2 := p.global_position
 		await _cammina(p, inf.to_global(Vector3(-2.5, 0.0, -1.0)), 1.5)
 		var via2 := p.global_position.distance_to(da2)
+		# andato via: l'anta finisce di aprirsi (e il suono riprende)
+		for i in int(3.5 * 60):
+			await get_tree().physics_frame
+			var sn = inf.get(&"_suono_nord")
+			if sn is AudioStreamPlayer3D:
+				var pa: bool = (sn as AudioStreamPlayer3D).stream_paused
+				if not pa and era_in_pausa:
+					riprese += 1
+				era_in_pausa = pa
+		var angolo := anta.rotation_degrees.y
+		var suoni := int(Audio.conteggio.get(&"porta_ponte_apre", 0)) - suoni_prima
+		print("   anta col giocatore fermo a %.1f gradi; suono: %d pause, %d riprese, %d suoni in tutto" % [angolo_fermo, pause, riprese, suoni])
+		_check(absf(angolo - 180.0) < 0.5, "%s: andato via il giocatore, l'anta arriva a 180 gradi (%.1f)" % [nome, angolo])
+		_check(suoni == 1 and riprese == pause, "%s: un solo suono, che si ferma e riparte con l'anta (%d suoni, %d pause, %d riprese)" % [nome, suoni, pause, riprese])
 		print("raggio del giocatore %.2f m" % raggio)
-		print("%s (%.2f, %.2f): spinto al massimo %.3f m, alla fine %.3f m verso (%.2f, %.2f) [x+ est, z+ verso la stanza], fino a (%.2f, %.2f); z minima %.3f; entra nell'anta al massimo %.3f m (a %.2f s), per %d fotogrammi; fra anta e muro: %s; fuori dalla stanza: %s; anta a %.1f gradi; poi cammina %.2f e %.2f m in 1,5 s" % [
+		print("%s (%.2f, %.2f): spinto al massimo %.3f m, alla fine %.3f m verso (%.2f, %.2f) [x+ est, z+ verso la stanza], fino a (%.2f, %.2f); z minima %.3f; entra nell'anta al massimo %.3f m (a %.2f s), per %d fotogrammi; fra anta e muro: %s; fuori dalla stanza: %s; anta a %.1f gradi alla fine; poi cammina %.2f e %.2f m in 1,5 s" % [
 			nome, punto.x, punto.y, max_spinta, spinta.length(), spinta.x, spinta.y, dopo.x, dopo.z, min_z, max_dentro, t_peggio, dentro_fot,
 			fra_anta_e_muro, fuori, angolo, via1, via2])
 		_check(max_spinta < 0.02, "%s: l'anta non spinge il giocatore (%.3f m)" % [nome, max_spinta])
