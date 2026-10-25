@@ -81,3 +81,13 @@ Fogli in `fogli_4943/`. Tutti gli scatti sono a `--fixed-fps 60`.
   - In tre punti dalla parte della torre il rosa in più è solo lei vista dal vetro. È giusto: lo script ha preso il vetro per un muro.
   - **D6. Dalla sala delle condotte,** dal punto (41,95, -19,9, -16,7), dietro il muro della torre, la luce rosa disegna sottili righe rosa lungo i bordi di un rettangolo. È il fuori della cisterna (o il buco del muro) visto dalle condotte. Al massimo il rosa vale 0,22, ma è tutto su quelle righe: la luce passa dalle fessure fra la vasca e il muro.
     - Scatto: `difetti/6_torre_luce_rosa_condotte.jpg`.
+
+### Risalita (4943e409, uguale a f54ef28c)
+
+- **D2 e D3: non sono difetti dell'oblò.** Adesso nella Risalita non c'è più la faccia copiata: c'è solo il foro tondo nel muro vero. Eppure le due righe (ObloServizio in verticale, ObloFiume di sbieco) sono rimaste identiche nello stesso posto. Sono quindi giunte del disegno delle lamiere vere del muro, e non c'entrano con l'oblò.
+  - Confronto: `fogli_4943/giunte.jpg`, con gli angoli e il davanti di ObloServizio e ObloFiume.
+  - I ravvicinati sono in `fogli_4943/foglio_ravv_*.jpg`: niente distacchi, la flangia è sul muro e i rivetti sono sopra.
+- **Luce rosa dietro i muri** (`fogli_4943/foglio_luce_ris.jpg`): quasi tutti i punti "dietro i muri" in realtà vedono il vetro dal basso, e il rosa in più è lei dietro il vetro. Va bene.
+  - **D7 (grave). ObloPersonale: una fessura nel pavimento.** Dal punto (-34,75, -4,7, 51,6), nella stanza accanto al corridoio di ObloPersonale, si vede nel pavimento una fessura lunga e larga circa 15-20 cm. Ai piedi di un pilastro o di uno stipite, fra due lastre di pavimento, attraverso la fessura si vedono i tentacoli di lei, rosa, nella vasca sotto. Si vedono anche a luce spenta: è un buco nella geometria, non solo la luce che passa. Forse è il gradino della vasca a L (`vasca_gradino`) sotto il pavimento della stanza accanto.
+    - Scatti: `difetti/7_personale_fessura_pavimento.jpg` (ingrandito, con e senza luce) e `difetti/7b_personale_fessura_intero.jpg`.
+  - **ObloServizio, punto (-17,5, 1,6, 37,7): una riga rosa sottile verticale in alto a destra.** Il rosa massimo è 0,15. Potrebbe essere la luce che passa da uno spigolo: da guardare.
