@@ -1,0 +1,7 @@
+ACQUA s 49.0, dall'asse -0.15, verso il lato -1 (a caso): salto 0.00 m; 60°: fuori in 3.4 s
+ACQUA s 507.2, dall'asse -1.00, verso il lato -1 (a caso): salto 0.00 m; 60°: fuori in 2.6 s
+ACQUA s 125.3, dall'asse +0.29, verso il lato +1 (a caso): salto 0.00 m; 60°: fuori in 3.3 s
+ACQUA s 287.6, dall'asse -1.53, verso il lato -1 (a caso): salto 0.00 m; 60°: fuori in 2.1 s
+ACQUA s 525.2, dall'asse +0.07, verso il lato +1 (a caso): salto 0.00 m; 60°: fuori in 3.5 s
+ACQUA s 491.2, dall'asse +0.10, verso il lato +1 (a caso): salto 0.00 m; 60°: fuori in 3.6 s
+ACQUA RISULTATO: usciti entro 4 s in tutte e quattro le direzioni 6 su 18, salto non partito 6 su 18

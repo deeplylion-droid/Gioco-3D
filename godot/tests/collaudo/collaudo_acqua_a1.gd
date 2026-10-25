@@ -9,6 +9,8 @@ const PLAYER := "res://scenes/player/player.tscn"
 var sala: SalaSottomarino
 var p: Player
 var righe := []
+## ANGOLO_TENUTO=1: [lato, angolo] tenuti rispetto alla riva vicina a ogni fotogramma (come chi punta la banchina)
+var _tieni: Array = []
 
 
 func _ready() -> void:
@@ -35,7 +37,13 @@ func _run() -> void:
 		punti.append([s, -float(o["lato"]) * 0.3 + float(o["lato"]) * (sala.canale - SalaSottomarino.GRADINO_LARGO - 0.4), "accanto a " + str(o.get("tipo", "ostacolo"))])
 	var usciti := 0
 	var salti := 0
+	var solo := OS.get_environment("PUNTI_S").split(",", false)
+	var angoli := [0.0, 30.0, 45.0, 60.0]
+	if OS.get_environment("ANGOLO") != "":
+		angoli = [float(OS.get_environment("ANGOLO"))]
 	for pt in punti:
+		if not solo.is_empty() and not solo.has("%.1f" % float(pt[0])):
+			continue
 		var s: float = pt[0]
 		var dl: float = pt[1]
 		var q := sala.punto(s) + sala.destra(s) * dl
@@ -56,8 +64,9 @@ func _run() -> void:
 		await _frames(10)
 		var esiti := []
 		var tutti := true
-		for g in [0.0, 30.0, 45.0, 60.0]:
+		for g in angoli:
 			var a := deg_to_rad(g)
+			_tieni = [lato, a] if OS.get_environment("ANGOLO_TENUTO") == "1" else []
 			var r: Array = await _cammina(da, (sala.destra(s) * lato * cos(a) + sala.direzione(s) * sin(a)).normalized())
 			esiti.append("%s: %s" % ["dritto" if g == 0.0 else "%d°" % int(g), _esito(r)])
 			if r[0] < 0.0 or r[0] > 4.0:
@@ -83,6 +92,10 @@ func _cammina(da: Vector3, verso: Vector3) -> Array:
 	var t := 0.0
 	var fuori := -1.0
 	while t < 8.0:
+		if not _tieni.is_empty():
+			var sp: float = sala.proietta(p.global_position)[0]
+			var v: Vector3 = (sala.destra(sp) * float(_tieni[0]) * cos(float(_tieni[1])) + sala.direzione(sp) * sin(float(_tieni[1]))).normalized()
+			p.set_look(atan2(-v.x, -v.z), 0.0)
 		await get_tree().physics_frame
 		t += 1.0 / 60.0
 		if p.is_on_floor() and p.global_position.y > sala.piano - 0.05:
