@@ -72,4 +72,11 @@ L'utente ha una scheda da 4 GB e la sala da sola ne usa 2,2-2,4. Prima, alla ric
   - la spia compare se l'attesa è lunga;
   - dalla presa a 30 s dopo la ripartenza ci sono 0 errori del motore o degli script. Li conta un `Logger`, perché nel gioco esportato un accesso a un oggetto già liberato è un crash.
 - `tests/collaudo/morte_vulkan.gd`: sequenza intera, ricarica e 30 s col renderer Vulkan e la cache vuota, negli interni.
-- Gli altri test con morti e ricariche: vedi il messaggio del commit.
+- Gli altri test con morti, ricariche e ritorno al titolo, in locale col codice finale:
+  - check_scripts ok;
+  - test_presa_vera 31, test_tappa8 69, test_mechanics 85, test_torre 93, test_inseguimento 43;
+  - test_scaletta_bacino 13, test_acquari 83, test_risalita 10, test_risalita_tardi 12, test_audio 116;
+  - test_bambini 49, test_scivoli 26, test_fiume_gioco 31, test_infermeria_gioco 36, test_partenze_prova 72;
+  - test_fiume 35, test_infermeria 22, test_strada 35, test_fine_titolo 12, test_menu 72, test_uscita 19.
+- `test_continua` di lavoro/continua (mascotte), su un'unione di prova: 58 controlli; il crash vero: 3 controlli.
+- I test che aspettano il livello dopo una ripartenza ora aspettano a tempo (fino a 90 s) e non più per un numero fisso di fotogrammi, perché la ripartenza può durare qualche secondo.
