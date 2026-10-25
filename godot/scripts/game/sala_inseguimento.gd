@@ -129,9 +129,10 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	var k := 0
 	while not _coda.is_empty():
 		var tp := Time.get_ticks_usec()
-		(_coda.pop_front() as Callable).call()
+		var passo: Callable = _coda.pop_front()
+		passo.call()
 		if OS.has_environment("TORRE_TEMPI"):
-			print("inseguimento passo %d: %.1f ms" % [k, (Time.get_ticks_usec() - tp) / 1000.0])
+			print("inseguimento passo %d (%s): %.1f ms" % [k, passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
 		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			await get_tree().process_frame

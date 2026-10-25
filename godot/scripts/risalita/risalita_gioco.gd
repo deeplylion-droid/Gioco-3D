@@ -584,6 +584,13 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 				inf.queue_free()
 			return
 		UnificaMateriali.unifica(n)
+	# disegnate una volta fuori vista: le pipeline dei loro materiali si compilano adesso, non al primo sguardo
+	for n in [f, inf]:
+		await RiscaldamentoShader.disegna_fuori_vista(n, get_viewport())
+		if not is_instance_valid(f) or f != _fiume_nuovo or not f.is_inside_tree():
+			if is_instance_valid(inf):
+				inf.queue_free()
+			return
 	_fiume_nuovo = null
 	fiume = f
 	infermeria = inf

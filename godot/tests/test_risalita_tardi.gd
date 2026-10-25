@@ -97,6 +97,12 @@ func _run() -> void:
 	var oggetti: Dictionary = GameState.snapshot.get("objects", {})
 	check(oggetti.get(chiave) == girata, "l'istantanea senza le stanze ha lo stato della paratia (%s)" % str(oggetti.get(chiave)))
 	p.teleport((ris.get_node(^"Marker/PortaFiume") as Node3D).global_position, 0.0, 0.0)
+	# (le stanze non si caricano più in un fotogramma: il thread e la costruzione a pezzi, al più qualche secondo;
+	# nel gioco la porta resta chiusa intanto, AttesaZone)
+	var attesa := 0.0
+	while ris.get(&"fiume") == null and attesa < 30.0:
+		await _secondi(0.25)
+		attesa += 0.25
 	await _secondi(0.3)
 	par = level.get_node_or_null(NodePath(chiave))
 	check(par != null and par.call(&"save_state") == girata, "tornando, le stanze ci sono di nuovo con la paratia girata (%s)" % (str(par.call(&"save_state")) if par else "manca"))

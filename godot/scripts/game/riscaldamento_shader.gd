@@ -146,6 +146,70 @@ func _disegna() -> void:
 var _t_fotogramma := 0
 
 
+## Disegna una zona appena costruita una volta fuori vista (una camera sua in un SubViewport con le stesse
+## impostazioni di [param principale] e lo stesso mondo), così il motore compila adesso le pipeline dei suoi
+## materiali e al primo fotogramma vero non si ferma. Intanto la zona sta su uno strato che la camera del gioco non
+## disegna, e le sue luci illuminano solo quello; alla fine torna com'era (nascosta, se lo era). Era
+## SalaTorre.prepara_materiali; la usa anche la Risalita.
+static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi := 4) -> void:
+	if principale == null or not radice.is_inside_tree():
+		return
+	var visuali := radice.find_children("*", "VisualInstance3D", true, false)
+	var aabb := AABB()
+	var primo := true
+	var strati := {}
+	var maschere := {}
+	for v in visuali:
+		var vi := v as VisualInstance3D
+		strati[vi] = vi.layers
+		vi.layers = SalaTorre.STRATO_PREPARA
+		if vi is Light3D:
+			maschere[vi] = (vi as Light3D).light_cull_mask
+			(vi as Light3D).light_cull_mask = SalaTorre.STRATO_PREPARA
+		elif vi is GeometryInstance3D:
+			var box := vi.global_transform * vi.get_aabb()
+			aabb = box if primo else aabb.merge(box)
+			primo = false
+	var era_visibile := radice.visible
+	radice.visible = true
+	var sv := SubViewport.new()
+	sv.name = "PreparaMateriali"
+	sv.size = Vector2i(320, 180)
+	sv.msaa_3d = principale.msaa_3d
+	sv.screen_space_aa = principale.screen_space_aa
+	sv.use_taa = principale.use_taa
+	sv.use_debanding = principale.use_debanding
+	sv.use_hdr_2d = principale.use_hdr_2d
+	sv.positional_shadow_atlas_size = principale.positional_shadow_atlas_size
+	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
+	sv.world_3d = principale.find_world_3d()
+	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var cam := Camera3D.new()
+	cam.cull_mask = SalaTorre.STRATO_PREPARA
+	cam.fov = 100.0
+	cam.far = 500.0
+	sv.add_child(cam)
+	radice.add_child(sv)
+	var centro := aabb.get_center()
+	var raggio := aabb.size.length() * 0.5
+	# da fuori, guardando il centro: tutta la sala nell'inquadratura (niente scartato dal frustum)
+	cam.look_at_from_position(centro + Vector3(0.6, 0.5, 0.8).normalized() * raggio * 1.3, centro, Vector3.UP)
+	cam.current = true
+	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
+	for i in fotogrammi + 1:
+		await radice.get_tree().process_frame
+		if not radice.is_inside_tree():
+			break
+	sv.queue_free()
+	for vi in strati:
+		if is_instance_valid(vi):
+			(vi as VisualInstance3D).layers = strati[vi]
+	for l in maschere:
+		if is_instance_valid(l):
+			(l as Light3D).light_cull_mask = maschere[l]
+	radice.visible = era_visibile
+
+
 ## Quanto è durato l'ultimo fotogramma (ms).
 func _ultimo_ms() -> float:
 	return 0.0 if _t_fotogramma == 0 else (Time.get_ticks_usec() - _t_fotogramma) / 1000.0

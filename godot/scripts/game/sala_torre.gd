@@ -146,62 +146,7 @@ const STRATO_PREPARA := 1 << 19
 ## Intanto la sala sta su uno strato che la camera del gioco non disegna, e le sue luci illuminano solo
 ## quello strato. Alla fine torna com'era (nascosta, se lo era).
 func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
-	if principale == null or not is_inside_tree():
-		return
-	var visuali := find_children("*", "VisualInstance3D", true, false)
-	var aabb := AABB()
-	var primo := true
-	var strati := {}
-	var maschere := {}
-	for v in visuali:
-		var vi := v as VisualInstance3D
-		strati[vi] = vi.layers
-		vi.layers = STRATO_PREPARA
-		if vi is Light3D:
-			maschere[vi] = (vi as Light3D).light_cull_mask
-			(vi as Light3D).light_cull_mask = STRATO_PREPARA
-		elif vi is GeometryInstance3D:
-			var box := vi.global_transform * vi.get_aabb()
-			aabb = box if primo else aabb.merge(box)
-			primo = false
-	var era_visibile := visible
-	visible = true
-	var sv := SubViewport.new()
-	sv.name = "PreparaMateriali"
-	sv.size = Vector2i(320, 180)
-	sv.msaa_3d = principale.msaa_3d
-	sv.screen_space_aa = principale.screen_space_aa
-	sv.use_taa = principale.use_taa
-	sv.use_debanding = principale.use_debanding
-	sv.use_hdr_2d = principale.use_hdr_2d
-	sv.positional_shadow_atlas_size = principale.positional_shadow_atlas_size
-	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
-	sv.world_3d = principale.find_world_3d()
-	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	var cam := Camera3D.new()
-	cam.cull_mask = STRATO_PREPARA
-	cam.fov = 100.0
-	cam.far = 500.0
-	sv.add_child(cam)
-	add_child(sv)
-	var centro := aabb.get_center()
-	var raggio := aabb.size.length() * 0.5
-	# da fuori, guardando il centro: tutta la sala nell'inquadratura (niente scartato dal frustum)
-	cam.look_at_from_position(centro + Vector3(0.6, 0.5, 0.8).normalized() * raggio * 1.3, centro, Vector3.UP)
-	cam.current = true
-	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
-	for i in fotogrammi + 1:
-		await get_tree().process_frame
-		if not is_inside_tree():
-			break
-	sv.queue_free()
-	for vi in strati:
-		if is_instance_valid(vi):
-			(vi as VisualInstance3D).layers = strati[vi]
-	for l in maschere:
-		if is_instance_valid(l):
-			(l as Light3D).light_cull_mask = maschere[l]
-	visible = era_visibile
+	await RiscaldamentoShader.disegna_fuori_vista(self, principale, fotogrammi)
 
 
 ## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
