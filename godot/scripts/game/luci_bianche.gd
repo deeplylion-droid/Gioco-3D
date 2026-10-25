@@ -95,7 +95,8 @@ func _process(_delta: float) -> void:
 	for k in n:
 		_prossima = (_prossima + 1) % _geometrie.size()
 		var g := _geometrie[_prossima]
-		if is_instance_valid(g):
+		# (fuori dall'albero, per esempio la sala vecchia mentre si ricarica, la posizione non si legge)
+		if is_instance_valid(g) and g.is_inside_tree():
 			_materiali_di(g)
 
 

@@ -486,7 +486,9 @@ func _dentro_pavimento(punti: PackedVector3Array, locali := true) -> PackedFloat
 ## Dopo un caricamento (o una ripartenza): i riferimenti nuovi. Senza la fossa dell'ambiente la
 ## scena si accende sulla fossa provvisoria.
 func _aspetta_livello() -> void:
-	for i in 400:
+	# (a tempo: la ripartenza aspetta i caricamenti nel thread, anche qualche secondo)
+	var t_attesa := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t_attesa < 90000:
 		await get_tree().process_frame
 		if GameState.player and is_instance_valid(GameState.player) and not GameState.is_dying:
 			break

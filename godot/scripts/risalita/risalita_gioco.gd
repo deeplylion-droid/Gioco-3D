@@ -94,6 +94,8 @@ var _tenuti: Array[Resource] = []
 var _fiume_nuovo: Node3D
 ## Vero: il giocatore è arrivato prima che le stanze fossero pronte, si costruiscono a pezzi più grandi.
 var _accelerata := false
+## Le stanze si stanno riaccendendo a pezzi.
+var _riaccendendo := false
 var _campioni: Array = []
 var _corpo: StaticBody3D
 var _mat_cemento: StandardMaterial3D
@@ -596,15 +598,24 @@ func _costruisci_stanze(scena_fiume: PackedScene, scena_infermeria: PackedScene)
 	infermeria = inf
 	_tenuti.clear()
 	_accelerata = false
+	_riaccendendo = true
 	for n in [f, inf]:
 		# (riaccese a pezzi: tutte insieme fermavano il gioco)
 		await AccensioneAPezzi.accendi(n)
 		if not is_instance_valid(n) or not n.is_inside_tree():
+			_riaccendendo = false
 			return
 		GameState.ripristina.call_deferred(n)
+	_riaccendendo = false
 	# costruite, disegnate fuori vista e riaccese: la porta del ponte si può aprire
 	AttesaZone.pronta(&"risalita")
 	_aggiorna_visibilita()
+
+
+## Vero mentre le stanze si costruiscono, si disegnano fuori vista o si riaccendono a pezzi: prima di liberare la sala
+## (ripartenza, ritorno al titolo) si aspetta che finiscano (Game.aspetta_caricamenti, SalaPrincipale.lavori_in_corso).
+func lavori_in_corso() -> bool:
+	return is_instance_valid(_fiume_nuovo) or _riaccendendo
 
 
 ## Le stanze via, con lo stato dei loro oggetti messo da parte in GameState.

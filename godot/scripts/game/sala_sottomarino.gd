@@ -148,6 +148,7 @@ var mat_acqua: Material
 
 ## Vero quando il tunnel è tutto costruito.
 var costruita := false
+## I passi ancora da fare: un passo può aggiungerne altri davanti ([method aggiungi_passi]).
 var _coda: Array = []
 
 
@@ -180,10 +181,6 @@ func costruisci() -> void:
 	while not _coda.is_empty():
 		(_coda.pop_front() as Callable).call()
 	costruita = true
-
-
-## I passi ancora da fare: un passo può aggiungerne altri davanti ([method aggiungi_passi]).
-var _coda: Array = []
 
 
 ## Un passo lungo si divide: [param altri] si fanno subito dopo il passo che li aggiunge (uno per volta, nella

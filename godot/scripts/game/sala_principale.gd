@@ -90,6 +90,8 @@ var _torre_voluta_da := 0
 var _torre_in_attesa := false
 ## Interni e tecnici si stanno liberando a pezzi (entrati nella torre).
 var _liberando := false
+## La torre si sta riaccendendo a pezzi (AccensioneAPezzi).
+var _accendendo_torre := false
 # La torre costruita a pezzi e preparata (materiali già disegnati fuori vista) mentre si è all'enigma:
 # resta nascosta e ferma finché il portone non si apre.
 var _torre_nascosta: Node3D
@@ -502,6 +504,12 @@ func _prepara_torre() -> void:
 		_mostra_torre()
 
 
+func _accendi_torre() -> void:
+	_accendendo_torre = true
+	await AccensioneAPezzi.accendi(sala_torre)
+	_accendendo_torre = false
+
+
 ## Il portone aspetta la torre: che si stia caricando (se non è partita) e che si costruisca a pezzi più grandi.
 func _torre_attesa_dal_portone() -> void:
 	AttesaZone.attendi(&"torre")
@@ -516,6 +524,18 @@ func _torre_attesa_dal_portone() -> void:
 		_precarica_torre()
 
 
+## Vero mentre la torre si prepara nascosta (si costruisce a pezzi e si disegna fuori vista): prima di liberare la sala
+## (la ripartenza dopo una morte, il ritorno al titolo) si aspetta che finisca (Game.aspetta_caricamenti).
+func lavori_in_corso() -> bool:
+	# (e i lavori a pezzi dei blocchi: la torre che si riaccende, interni e tecnici che si liberano, il tunnel che si
+	# costruisce, la Risalita che si costruisce o si riaccende)
+	return (is_instance_valid(_torre_nascosta) and _torre_nascosta.is_inside_tree() and not _torre_preparata) \
+			or _accendendo_torre or _liberando \
+			or (is_instance_valid(sala_sottomarino) and bool(sala_sottomarino.get(&"_costruendo"))) \
+			or (get_node_or_null(^"Risalita") != null and get_node(^"Risalita").has_method(&"lavori_in_corso") \
+				and bool(get_node(^"Risalita").call(&"lavori_in_corso")))
+
+
 func _mostra_torre() -> void:
 	if sala_torre or _torre_nascosta == null:
 		return
@@ -523,7 +543,7 @@ func _mostra_torre() -> void:
 	sala_torre = _torre_nascosta
 	_torre_nascosta = null
 	# (riaccesa a pezzi: tutta insieme erano 2 s di gioco fermo; il portone intanto si sta aprendo)
-	AccensioneAPezzi.accendi(sala_torre)
+	_accendi_torre()
 	var t1 := Time.get_ticks_usec()
 	sala_torre.visible = true
 	var t2 := Time.get_ticks_usec()
