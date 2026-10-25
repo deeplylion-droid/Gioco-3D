@@ -1,0 +1,7 @@
+test_guado: RISULTATO: 11 controlli ok, 0 falliti
+test_parkour_gommoni: RISULTATO: 16 controlli ok, 0 falliti
+test_scaletta_bacino: RISULTATO: 13 controlli ok, 0 falliti
+test_risalita: RISULTATO: 10 controlli ok, 0 falliti
+test_strada: RISULTATO: 35 controlli ok, 0 falliti
+test_torre: RISULTATO: 93 controlli ok, 0 falliti
+test_scivoli: RISULTATO: 26 controlli ok, 0 falliti

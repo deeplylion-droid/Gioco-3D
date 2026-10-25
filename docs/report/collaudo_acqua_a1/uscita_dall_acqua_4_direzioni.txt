@@ -1,0 +1,19 @@
+ACQUA s 49.0, dall'asse -0.15, verso il lato -1 (a caso): salto 0.00 m; dritto: fuori in 1.8 s; 30°: fuori in 2.1 s; 45°: fuori in 2.6 s; 60°: fuori in 4.1 s
+ACQUA s 226.6, dall'asse +0.86, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 1.5 s; 30°: fuori in 1.7 s; 45°: fuori in 2.0 s; 60°: fuori in 2.8 s
+ACQUA s 43.4, dall'asse +1.43, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 1.2 s; 30°: fuori in 1.4 s; 45°: fuori in 1.5 s; 60°: fuori in 2.1 s
+ACQUA s 113.5, dall'asse -1.21, verso il lato -1 (a caso): salto 0.00 m; dritto: fuori in 1.3 s; 30°: fuori in 1.5 s; 45°: fuori in 1.7 s; 60°: fuori in 2.3 s
+ACQUA s 507.2, dall'asse -1.00, verso il lato -1 (a caso): salto 0.00 m; dritto: fuori in 1.4 s; 30°: fuori in 1.6 s; 45°: fuori in 2.2 s; 60°: NON ESCE (fermo a y -30.65, 0.27 sopra il fondo, in (-59.54, -30.65, 51.71))
+ACQUA s 90.0, dall'asse -0.83, verso il lato -1 (a caso): salto 0.00 m; dritto: fuori in 1.5 s; 30°: fuori in 1.7 s; 45°: fuori in 2.0 s; 60°: fuori in 2.7 s
+ACQUA s 184.5, dall'asse +2.40, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 0.8 s; 30°: fuori in 0.8 s; 45°: fuori in 0.9 s; 60°: fuori in 1.2 s
+ACQUA s 125.3, dall'asse +0.29, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 1.8 s; 30°: fuori in 2.1 s; 45°: fuori in 2.8 s; 60°: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (16.23, -30.92, 122.13))
+ACQUA s 287.6, dall'asse -1.53, verso il lato -1 (a caso): salto 0.00 m; dritto: fuori in 1.1 s; 30°: fuori in 1.3 s; 45°: fuori in 1.5 s; 60°: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (-26.73, -30.92, -1.16))
+ACQUA s 525.2, dall'asse +0.07, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 1.9 s; 30°: fuori in 2.2 s; 45°: fuori in 2.8 s; 60°: fuori in 4.1 s
+ACQUA s 193.3, dall'asse +2.41, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 0.7 s; 30°: fuori in 0.8 s; 45°: fuori in 0.9 s; 60°: fuori in 1.1 s
+ACQUA s 71.3, dall'asse -0.08, verso il lato -1 (a caso): salto 0.00 m; dritto: fuori in 1.8 s; 30°: fuori in 2.0 s; 45°: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (35.74, -30.92, 66.33)); 60°: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (36.77, -30.92, 68.68))
+ACQUA s 395.9, dall'asse +1.33, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 1.3 s; 30°: fuori in 1.4 s; 45°: fuori in 1.6 s; 60°: fuori in 2.2 s
+ACQUA s 491.2, dall'asse +0.10, verso il lato +1 (a caso): salto 0.00 m; dritto: fuori in 1.8 s; 30°: fuori in 2.2 s; 45°: fuori in 3.0 s; 60°: fuori in 6.5 s
+ACQUA s 78.0, dall'asse -2.50, verso il lato +1 (accanto a crollo): salto 0.00 m; dritto: fuori in 3.1 s; 30°: fuori in 3.8 s; 45°: fuori in 4.9 s; 60°: fuori in 8.0 s
+ACQUA s 139.8, dall'asse +2.50, verso il lato +1 (accanto a carico): salto 0.00 m; dritto: NON ESCE (fermo a y -30.12, 0.80 sopra il fondo, in (18.06, -30.12, 119.56)); 30°: fuori in 1.2 s; 45°: fuori in 1.0 s; 60°: fuori in 1.2 s
+ACQUA s 211.0, dall'asse -2.50, verso il lato +1 (accanto a galleria): salto 0.00 m; dritto: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (13.3, -30.92, 62.46)); 30°: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (13.91, -30.92, 55.85)); 45°: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (11.59, -30.92, 56.48)); 60°: NON ESCE (fermo a y -30.73, 0.19 sopra il fondo, in (11.31, -30.73, 53.48))
+ACQUA s 211.0, dall'asse +2.50, verso il lato -1 (accanto a crollo): salto 0.00 m; dritto: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (1.71, -30.92, 59.81)); 30°: NON ESCE (fermo a y -30.68, 0.24 sopra il fondo, in (4.39, -30.68, 55.9)); 45°: fuori in 6.0 s; 60°: NON ESCE (fermo a y -30.92, 0.00 sopra il fondo, in (5.28, -30.92, 46.56))
+ACQUA RISULTATO: usciti entro 4 s in tutte e quattro le direzioni 7 su 18, salto non partito 18 su 18
