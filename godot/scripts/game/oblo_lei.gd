@@ -78,9 +78,12 @@ const FORMA := 0.3
 ## Il muro della stanza attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, il muro arriva
 ## fino alla cornice tonda d'ottone): fasce orizzontali [{"materiale": Material, "da": y, "a": y, "uv": Transform2D}] in
 ## coordinate del nodo; la faccia davanti della piastra prende il materiale della fascia (con "uv", le coordinate del
-## nodo (x, y) diventano quelle del materiale del muro; senza, il materiale è triplanare nel mondo). Vuoto: la piastra
-## d'acciaio rivettata.
+## nodo (x, y) diventano quelle del materiale del muro; senza, il materiale è triplanare nel mondo; con "colore", il
+## colore dei vertici del muro). Vuoto: la piastra d'acciaio rivettata.
 @export var muro: Array = []
+## Vero: il muro della stanza ha già il suo foro tondo fino sotto la cornice (lo fa chi mette l'oblò, come i muri della
+## Risalita): niente faccia davanti, solo la flangia d'ottone sul muro.
+@export var muro_col_foro_tondo := false
 ## Falso: niente lei (per esempio prima del blackout lo decide chi mette l'oblò con [member pronto]).
 @export var attivo := true
 
@@ -165,11 +168,12 @@ func _costruisci() -> void:
 	# la piastra rivettata, a filo delle due facce del muro, col buco tondo
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_piastra(st, _raggio_bordo() - 0.02, muro.is_empty())
+	var con_muro := not muro.is_empty() or muro_col_foro_tondo
+	_piastra(st, _raggio_bordo() - 0.02, not con_muro)
 	# (nella torre c'è anche un vetro piccolo, che l'occhio di lei riempie: meno rivetti, almeno 12)
 	var k_vetro := raggio_vetro / RAGGIO_VETRO
 	var rivetti := maxi(12, roundi(RIVETTI * k_vetro))
-	if muro.is_empty():
+	if not con_muro:
 		for k in rivetti:
 			var a := TAU * float(k) / rivetti
 			_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
@@ -182,7 +186,8 @@ func _costruisci() -> void:
 					_rivetto(st, Vector3(v, u, 0.0), 0.014)
 	else:
 		# il muro della stanza fino alla cornice, e la cornice d'ottone: una flangia tonda sottile sul muro coi rivetti
-		_faccia_muro(_raggio_bordo() - 0.02)
+		if not muro.is_empty():
+			_faccia_muro(_raggio_bordo() - 0.02)
 		# (poco più larga del vetro: 10 cm oltre il bordo d'ottone, i rivetti nel mezzo)
 		_flangia(_raggio_bordo() - 0.02, _raggio_bordo() + 0.1, rivetti, _raggio_bordo() + 0.05)
 	st.generate_normals()
@@ -285,6 +290,9 @@ func _faccia_muro(r: float) -> void:
 					if (t[1] - t[0]).cross(t[2] - t[0]) > 0.0:
 						t = [t[0], t[2], t[1]]
 					for q: Vector2 in t:
+						# (col colore dei vertici del muro, se il suo materiale lo usa come albedo: collaudo D1 della torre)
+						if fascia.has("colore"):
+							st.set_color(fascia["colore"])
 						st.set_normal(Vector3.BACK)
 						st.set_uv(uv * q)
 						st.add_vertex(Vector3(q.x, q.y, 0.0))
@@ -567,11 +575,30 @@ func _mostra() -> void:
 		lei.sparita.connect(_sparita)
 		lei.aggiungi_forme(forme())
 	lei.mostra(centro_vetro(), normale(), posa)
+	_abbassa_interno()
 	_t_vista = 0.0
 	_t_via = 0.0
 	stato = Stato.PRONTA
 	comparsa.emit()
 	_riscalda()
+
+
+## La struttura interna della campana di lei (Medusa_Interno) si accende da sola, con emissione 4 pensata per la sala.
+## Nel buio della vasca, vista attraverso la gelatina che la rifrange, quando la capovolta si stacca e la campana passa
+## nel vetro sembrava bruciata in giallo, a righe verticali (D4 del collaudo degli oblò): qui la si abbassa. Si cambia
+## una copia del materiale, quello della sala resta com'è. (Patch di enigmi.)
+const EMISSIONE_INTERNO := 0.6
+
+
+func _abbassa_interno() -> void:
+	for n in lei.find_children("Medusa_Interno", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for s in mi.mesh.get_surface_count():
+			var m := mi.get_active_material(s) as BaseMaterial3D
+			if m and m.emission_enabled and m.emission_energy_multiplier > EMISSIONE_INTERNO:
+				var copia := m.duplicate() as BaseMaterial3D
+				copia.emission_energy_multiplier = EMISSIONE_INTERNO
+				mi.set_surface_override_material(s, copia)
 
 
 ## Il riscaldamento (regola: niente scatti la prima volta che si vede qualcosa): appena lei è comparsa, col vetro fuori
