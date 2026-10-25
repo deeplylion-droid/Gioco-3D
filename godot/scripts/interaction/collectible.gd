@@ -30,7 +30,7 @@ func get_entry() -> StringName:
 
 
 func get_prompt(_by: Node) -> String:
-	return "%s %s" % [prompt, display_name]
+	return "%s %s" % [tr(prompt), tr(display_name)]
 
 
 func _on_interact(_by: Node) -> void:

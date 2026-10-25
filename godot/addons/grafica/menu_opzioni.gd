@@ -57,8 +57,12 @@ func _ready() -> void:
 	_tabs = TabContainer.new()
 	_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_child(_tabs)
+	# i titoli delle schede sono i nomi dei nodi: si traducono qui (anche la scheda dell'audio, che arriva dopo)
+	_tabs.child_entered_tree.connect(func(_c): _titoli_schede.call_deferred())
+	Lingua.segui(_tabs, _titoli_schede)
 
 	var t := _scheda("Schermo")
+	_lingua(t)
 	_scelta(t, "Modalità", "modalita_finestra", ["Finestra", "Schermo intero", "Schermo intero esclusivo"])
 	var ris: Array[String] = []
 	for r in Grafica.RISOLUZIONI:
@@ -154,6 +158,25 @@ func apri_calibrazione() -> void:
 	add_child(_calibrazione)
 
 
+## I titoli delle schede nella lingua del gioco.
+func _titoli_schede() -> void:
+	for i in _tabs.get_tab_count():
+		_tabs.set_tab_title(i, tr(String(_tabs.get_tab_control(i).name)))
+
+
+## La scelta della lingua (in cima alla prima scheda): ogni lingua col suo nome, che non si traduce.
+func _lingua(c: Control) -> void:
+	var o := OptionButton.new()
+	o.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	o.get_popup().auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	for n in Lingua.NOMI:
+		o.add_item(n)
+	o.selected = Lingua.LINGUE.find(Lingua.lingua)
+	o.custom_minimum_size.x = 260
+	o.item_selected.connect(func(i): Lingua.imposta(Lingua.LINGUE[i]))
+	_riga(c, "Lingua").add_child(o)
+
+
 ## Mostra una scheda (0..5), utile per gli screenshot.
 func mostra_scheda(i: int) -> void:
 	_tabs.current_tab = i
@@ -225,7 +248,7 @@ func _cursore(c: Control, titolo: String, chiave: String, minimo: float, massimo
 ## Testo accanto al cursore; il FOV mostra anche i gradi orizzontali.
 func _testo(chiave: String, formato: String, v: float) -> String:
 	if chiave == "fov":
-		return "%d° (%d° orizz.)" % [roundi(v), roundi(Grafica.fov_orizzontale(v))]
+		return tr("%d° (%d° orizz.)") % [roundi(v), roundi(Grafica.fov_orizzontale(v))]
 	return formato % v
 
 

@@ -73,7 +73,7 @@ func _ready() -> void:
 	box.add_child(titolo)
 	for p in disponibili():
 		var b := Button.new()
-		b.text = "%s  ·  %s" % [p["nome"], p["nota"]]
+		b.text = "%s  ·  %s" % [tr(String(p["nome"])), tr(String(p["nota"]))]
 		b.add_theme_font_size_override(&"font_size", 22)
 		b.pressed.connect(func(): scelta.emit(String(p["id"])))
 		box.add_child(b)

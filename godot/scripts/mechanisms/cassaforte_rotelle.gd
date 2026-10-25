@@ -76,7 +76,7 @@ func _ready() -> void:
 	for i in codice.size():
 		var r := Interactable.new()
 		r.name = "Rotella%d" % (i + 1)
-		r.prompt = "Gira la rotella (%s)" % (segni[i] if i < segni.size() else str(i + 1))
+		r.prompt = tr("Gira la rotella (%s)") % (tr(segni[i]) if i < segni.size() else str(i + 1))
 		var forma := CollisionShape3D.new()
 		var sfera := SphereShape3D.new()
 		sfera.radius = 0.06 if mostra_segnaposto else 0.044   # (vera: non entra nel supporto della rotella accanto)

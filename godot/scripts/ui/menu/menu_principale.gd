@@ -269,10 +269,10 @@ func _costruisci_interfaccia() -> void:
 	linea.custom_minimum_size = Vector2(72, 3)
 	linea.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	testata.add_child(linea)
-	var versione := StileMenu.etichetta(
-		"Capitolo 1 · demo %s" % ProjectSettings.get_setting("application/config/version", ""),
-		StileMenu.barlow(), 18, StileMenu.TESTO_SPENTO)
+	var versione := StileMenu.etichetta("", StileMenu.barlow(), 18, StileMenu.TESTO_SPENTO)
 	versione.name = "Versione"
+	Lingua.segui(versione, func():
+		versione.text = Lingua.t("Capitolo 1 · demo %s") % ProjectSettings.get_setting("application/config/version", ""))
 	testata.add_child(versione)
 
 	# Voci del menu sopra il post-processing (livello 100), nitide.

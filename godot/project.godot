@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+Lingua="*res://scripts/game/lingua.gd"
 DatiVecchi="*res://scripts/game/dati_vecchi.gd"
 Grafica="*res://addons/grafica/impostazioni_grafiche.gd"
 WaterManager="*res://addons/acqua/scripts/water_manager.gd"
@@ -192,3 +193,8 @@ water_glow_count={
 "type": "int",
 "value": 0
 }
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://lingue/testi.it.translation", "res://lingue/testi.en.translation")
+locale/fallback="it"

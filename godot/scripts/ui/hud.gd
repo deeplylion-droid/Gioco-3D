@@ -41,25 +41,26 @@ func _ready() -> void:
 
 ## Suggerimento su più righe in basso a sinistra (comandi, aiuti).
 func show_hint(text: String, seconds := 8.0) -> void:
-	_hint.text = text
+	_hint.text = tr(text)
 	_hint.modulate.a = 1.0
 	_hint_left = seconds
 
 
-## Scritta grande al centro (per esempio "Fine della demo").
+## Scritta grande al centro (per esempio "Fine della demo"). I testi di show_hint, show_banner e show_message si
+## traducono qui (vedi Lingua).
 ## La scritta grande, la sua etichetta (per i test).
 func banner_label() -> Label:
 	return _banner
 
 
 func show_banner(title: String, subtitle := "", seconds := 6.0) -> void:
-	_banner.text = title + ("\n" + subtitle if subtitle != "" else "")
+	_banner.text = tr(title) + ("\n" + tr(subtitle) if subtitle != "" else "")
 	_banner.modulate.a = 1.0
 	_banner_left = seconds
 
 
 func show_message(text: String) -> void:
-	_message.text = text
+	_message.text = tr(text)
 	_message.modulate.a = 1.0
 	_msg_left = message_time
 
@@ -83,15 +84,15 @@ func _on_target_changed(target: Interactable) -> void:
 	if target == null:
 		_prompt.text = ""
 		return
-	_prompt.text = "[%s]  %s" % [_key_name("interact"), target.get_prompt(player)]
+	_prompt.text = "[%s]  %s" % [_key_name("interact"), Lingua.t(target.get_prompt(player))]
 
 
 func _on_item_added(_id: StringName, item_name: String, total: int) -> void:
-	show_message("Raccolto: %s%s" % [item_name, "" if total <= 1 else " (%d)" % total])
+	show_message(tr("Raccolto: %s") % (tr(item_name) + ("" if total <= 1 else " (%d)" % total)))
 
 
 func _on_collectible(collection: StringName, _entry: StringName, count: int, total: int) -> void:
-	show_message("%s %d/%d" % [String(collection).capitalize(), count, total])
+	show_message("%s %d/%d" % [tr(String(collection).capitalize()), count, total])
 
 
 func _on_tank_changed(amount: float, capacity: float) -> void:
