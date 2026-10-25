@@ -352,6 +352,95 @@ P11 = (
 for m, tag in MODELLI:
     job(f'P11_{tag}', m, FOTO_BUIO + P11 + VIETATO, [FLUO_B])
 
+# ---------------------------------------------------------------- P12-P16: le Polaroid nuove (proposta del 25 ottobre notte)
+# Cinque pezzi di storia che mancavano fra le 11 (GDD, "Lore nascosta"), in ordine di tempo: l'ultima sera di festa con
+# il temporale lontano (P12), quella notte qualcosa che brilla nel mare accanto allo scafo (P13), la prima notte dopo il
+# naufragio la statua che si accende (P14), anni dopo i bambini che si fanno le maschere (P15) e che nuotano sott'acqua
+# con lei (P16). Insieme alle altre non dicono tutto. Proposte all'utente: dove stanno e perché in
+# docs/proposte/polaroid_nuove/.
+FOTO_P2 = {}
+FOTO_P2['P12'] = ([CAST97, GIRO, AMB_B], (
+    'The last evening party of the cruise, at night, in the indoor water park of the 1990s family cruise ship of the '
+    'reference images. Colorful stage lights in pink, cyan and yellow sweep over the wet tiles, with strings of party '
+    'lights and balloons. The eight children of the first reference image dance and laugh in a circle around a staff '
+    'member wearing a big friendly plush costume of the water park mascot: the one-eyed jellyfish girl of the other '
+    'reference image, with a big soft round head, a single huge pink eye, silver-pink yarn hair with a little loop on '
+    'top, periwinkle felt arms and a pink-violet felt bell skirt with soft magenta tentacles hanging down; the costume '
+    'waves both hands. Behind them, through the glass dome, a black night sky over the sea, with a distant flash of '
+    'lightning on the horizon. A few blurry clapping parents at the edges. Flash photo, slightly tilted, joyful. ' +
+    STESSI97))
+FOTO_P2['P13'] = ([SOTTO, CAST97], (
+    'The same night, during a rising storm: a flash photo taken from the open deck of the cruise ship, over the wet '
+    'white railing, looking down at the black sea along the side of the hull. In the foreground, out of focus, two '
+    'small children\'s hands grip the railing, one of them holding the small white plush lamb of the first reference '
+    'image; no faces. Far below, in the dark churning waves right next to the hull, there is a huge soft pink and '
+    'violet glow under the water, as big as a lifeboat, with faint blurred streaks of long tentacles radiating from it, '
+    'like a giant jellyfish rising from the depths, the same glow as in the second reference image. Rain streaks lit by '
+    'the flash, spray, a row of lit portholes along the hull. Underexposed, grainy, blurry, eerie. '))
+FOTO_P2['P14'] = ([STATUA, AMB_B, SOTTO], (
+    'The first night after the shipwreck, in the dark flooded indoor water park of the reference images. A blurry, '
+    'shaky flash photo taken from high up on the children\'s play structure, looking across the black flood water '
+    'toward the mascot statue of the first reference image, standing on its round blue pedestal in the middle of the '
+    'hall. ' + MEDUSA_STATUA + 'Her single huge eye glows bright pink in the darkness, and the water all around the '
+    'pedestal glows pink and violet from below, where thin luminous magenta tentacles rise out of the water and coil '
+    'slowly around the pedestal and up the statue\'s own tentacles. Floating toys and swim rings in the foreground water, '
+    'rain dripping through the broken glass dome, faint red emergency lights. Very dark, grainy, motion blurred; the '
+    'flash only lights the wet railing in the foreground. No people. '))
+FOTO_P2['P15'] = ([CASTDOPO, AMB_A], (
+    'Years later, inside a cramped dark service storeroom of the abandoned shipwrecked cruise ship, lit only by a small '
+    'camping lantern on the floor and a red emergency light, flash photo. Two of the children of the first reference '
+    'image, now older, thin and pale, sit cross-legged on the wet metal floor making masks. The boy with the shaggy '
+    'blond mop glues small cracked white and turquoise swimming-pool tiles onto a big cardboard cube box mask that has '
+    'a simple cute smiley face drawn on it in black marker, with a tube of glue and a pile of loose tiles beside him, '
+    'some with barnacles and bits of seaweed. The smallest girl with curly blonde hair sews her old white plush lamb, '
+    'cut open, into a hood, with a big needle and thick thread: its floppy ears, brass button eyes and a small sailor '
+    'ribbon bow on top. Around them: rolls of tape, rope, pieces of towels. They concentrate on their work and do not '
+    'look at the camera. ' + STESSIDOPO))
+FOTO_P2['P16'] = ([CASTDOPO, SOTTO, AMB_B], (
+    'Years later, an underwater flash photograph in the clear green-turquoise water of a deep pool of the abandoned '
+    'indoor water park. The living mascot of the second reference image floats in the middle, submerged: her '
+    'translucent jellyfish bell glows pink and violet and lights the water, her long silver-pink hair drifts around '
+    'her head, and her single huge pink eye looks straight at the camera. Four of the children of the first reference '
+    'image, now older, thin and pale, swim calmly around her underwater with their eyes wide open, holding on to her '
+    'long glowing magenta tentacles like ropes, tiny bubbles rising from their noses: the auburn braid floating, the '
+    'round taped sports glasses, the pigtails with pink scrunchies, the shaggy blond mop, torn faded T-shirts. Pool '
+    'tiles on the floor far below, a lost swim ring floating at the surface above. Only she looks at the camera. ' +
+    MEDUSA_VIVA))
+for p, (refs, testo) in FOTO_P2.items():
+    for m, tag in MODELLI:
+        job(f'{p}_{tag}', m, FOTO + testo + VIETATO, refs)
+
+# Secondo giro. P15: GPT ha rifiutato il prompt (forse l'ago e il peluche "tagliato"): ora cuce con ago e filo il
+# peluche intero, senza tagli. P16: il busto di lei si vedeva troppo (come nel primo giro di P09): ora lo coprono i
+# capelli lunghi e i tentacoli, e del corpo si vedono solo testa, spalle e braccia.
+P15B = FOTO_P2['P15'][1].replace(
+    'sews her old white plush lamb, cut open, into a hood, with a big needle and thick thread: its floppy ears, brass '
+    'button eyes and a small sailor ribbon bow on top.',
+    'is stitching a strap onto her old white plush lamb with thread, to wear it on her head like a hood: its floppy '
+    'ears, brass button eyes and a small sailor ribbon bow.')
+P16B = FOTO_P2['P16'][1].replace(
+    'her long silver-pink hair drifts around her head,',
+    'her very long silver-pink hair drifts down in front of her and completely covers her chest and body down to the '
+    'bell, so that only her face, shoulders and arms are visible,')
+job('P15_gpt2', 'gpt-image-2-5-flare', FOTO + P15B + VIETATO, FOTO_P2['P15'][0])
+# P14: la prima versione mostrava i tentacoli che salgono sulla statua, cioè il mostro che prende la bambola, e le
+# Polaroid non lo mostrano mai (docs/livello/capitolo1.md, "Le 10 Polaroid"). Ora è la mattina dopo: solo l'indizio,
+# la statua bagnata fradicia con la scia di melma rosa che sale dall'acqua e i pesciolini ai suoi piedi.
+P14B = (
+    'The first grey morning after the shipwreck, in the flooded indoor water park of the reference images. A shaky '
+    'flash photo taken from high up on the children\'s play structure, looking across the still dark flood water toward '
+    'the mascot statue of the first reference image, standing on its round blue pedestal in the middle of the hall. ' +
+    MEDUSA_STATUA + 'Everything is quiet and still, but the statue is dripping wet from head to toe, as if something had '
+    'just climbed out of the water onto it: glossy wet streaks and a trail of shiny pink slime run from the water up the '
+    'side of the pedestal to her tentacles, and a few small silver fish lie on the pedestal at her feet, like an '
+    'offering. Floating toys and swim rings in the foreground water, grey light through the broken glass dome, faint red '
+    'emergency lights. In the foreground, out of focus, a small child\'s hand in a wet sleeve grips the yellow railing of '
+    'the play structure. ')
+for m, tag in MODELLI:
+    job(f'P14_{tag}2', m, FOTO + P14B + VIETATO, [STATUA, AMB_B])
+for m, tag in MODELLI:
+    job(f'P16_{tag}2', m, FOTO + P16B + VIETATO, FOTO_P2['P16'][0])
+
 # ---------------------------------------------------------------- esecuzione
 def _carica(r):
     """Un riferimento: percorso, '@job', oppure (percorso, ritaglio, [riquadri da cancellare]).

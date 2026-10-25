@@ -43,14 +43,18 @@ R_FINESTRA = 8                                  # raggio degli angoli della fine
 # usura generale (0-1) e danni d'acqua (0-1): le ultime sono le più rovinate
 USURA = {'P01': .12, 'P02': .18, 'P03': .22, 'P04': .40, 'P05': .45,
          'P06': .52, 'P07': .62, 'P08': .74, 'P09': .86, 'P10': 1.0,
-         'P11': .30}   # P11, la pecora che brilla: chiusa nella cassaforte dell'infermeria, asciutta
+         'P11': .30,   # P11, la pecora che brilla: chiusa nella cassaforte dell'infermeria, asciutta
+         # P12-P16 (proposta del 25 ottobre notte): più rovinate quanto più il posto è bagnato
+         'P12': .35, 'P13': .45, 'P14': .55, 'P15': .50, 'P16': .70}
 ACQUA = {'P01': .0, 'P02': .05, 'P03': .1, 'P04': .35, 'P05': .3,
-         'P06': .45, 'P07': .55, 'P08': .7, 'P09': .85, 'P10': 1.0, 'P11': .0}
+         'P06': .45, 'P07': .55, 'P08': .7, 'P09': .85, 'P10': 1.0, 'P11': .0,
+         'P12': .2, 'P13': .4, 'P14': .5, 'P15': .3, 'P16': .8}
 # angolo piegato: (angolo 0-3 in senso orario da in alto a sinistra, distanza della piega in px)
 PIEGA = {'P01': None, 'P02': (2, 70), 'P03': None, 'P04': (1, 95), 'P05': None,
-         'P06': (3, 80), 'P07': None, 'P08': (0, 120), 'P09': (2, 150), 'P10': (1, 110), 'P11': None}
-# alone di ruggine: P05 sul fondo della piscina, P06 nel tunnel, P10 sulla torre
-RUGGINE = ('P05', 'P06', 'P10')
+         'P06': (3, 80), 'P07': None, 'P08': (0, 120), 'P09': (2, 150), 'P10': (1, 110), 'P11': None,
+         'P12': (1, 90), 'P13': None, 'P14': (3, 100), 'P15': (0, 80), 'P16': (2, 120)}
+# alone di ruggine: P05 sul fondo della piscina, P06 nel tunnel, P10 e P12 sulla torre
+RUGGINE = ('P05', 'P06', 'P10', 'P12')
 
 LUM = np.array([0.299, 0.587, 0.114], np.float32)
 

@@ -103,6 +103,9 @@ func _ready() -> void:
 		l.set_meta(&"risveglio_ignora", true)
 	_mostra(false)
 	_aggiorna()
+	# la Polaroid 14 (la prima notte dopo il naufragio, la statua che si accende, proposta del 25 ottobre notte): per terra
+	# davanti all'acquario giallo, sotto il disegno a pastello dei bambini, come se l'avessero lasciata lì con lui
+	PolaroidPhoto.metti(self, 14, Vector3(17.25, 0.03, -20.5), -25.0)
 
 
 ## Vero se lei è andata via (tappa 8 finita) o se non c'è la tappa 8.

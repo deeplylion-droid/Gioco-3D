@@ -2337,6 +2337,9 @@ func _approdo() -> void:
 	_collisioni.add_child(fcb)
 	_metti("detriti", Vector3(X0 + 1.0, 0, APPRODO.y + 1.8), 0.0)
 	_metti("ciabatta", Vector3(x1 - 1.6, 0, APPRODO.y + 0.9), 200.0)
+	# la Polaroid 16 (i bambini che nuotano sott'acqua con lei, proposta del 25 ottobre notte): nell'angolo fra i detriti e
+	# il muro, accanto alla porta del personale: dal fiume si esce a piedi di qui
+	PolaroidPhoto.metti(self, 16, Vector3(X0 + 0.45, 0.03, APPRODO.y + 2.55), 140.0)
 	_lampada_calda(Vector3(X0, 3.0, APPRODO.y - 1.6), 90.0, 3.0)
 	_lampada_rossa(Vector3(X0, 2.9, APPRODO.y + 1.4), Vector3(1, -0.6, 0))
 	for z in [-14.0, 14.0]:
