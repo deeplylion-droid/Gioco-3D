@@ -384,10 +384,26 @@ def cartellone():
     # scarabocchi prima della bruciatura (il fuoco li ha mangiati in parte)
     p = Pennarello(W, H, 51)
     ex, ey, er = 445 * k, 250 * k, 46 * k
-    p.croce(ex, ey, er * 1.25, 9 * k / 2, (14, 12, 12), volte=3)
-    p.d.ellipse([(ex - er * 1.4) * 2, (ey - er * 1.3) * 2, (ex + er * 1.4) * 2, (ey + er * 1.3) * 2], outline=(14, 12, 12, 220), width=int(6 * k))
-    p.denti(455 * k, 308 * k, 150 * k, 56 * k, 9, (14, 12, 12), (40, 6, 8), (236, 230, 214), 5 * k / 2, arco=0.5)
-    p.nervose(ex, ey, er * 2.6, 26, 3.2 * k / 2, (14, 12, 12), lung=(0.4, 1.0))
+    # (molto più rovinato, 25 ottobre: l'utente "questo va rovinato di più". Si deve leggere anche al buio rosso del
+    # corridoio: la faccia annerita tutta, la croce e i denti a vernice bianca che si vedono nel rosso, tratti spessi)
+    nero, bianco = (14, 12, 12), (236, 232, 222)
+    p.spirale(ex + 5, ey + 30, 120 * k, 12 * k, nero, giri=24)
+    p.spirale(ex, ey, er * 1.5, 14 * k, nero, giri=36)
+    p.croce(ex, ey, er * 1.7, 8 * k, bianco, volte=2)
+    p.denti(455 * k, 315 * k, 230 * k, 90 * k, 9, nero, (40, 6, 8), bianco, 7 * k, arco=0.55)
+    p.nervose(ex, ey + 20 * k, 210 * k, 34, 5 * k, nero, lung=(0.5, 1.2))
+    # zig-zag neri spessi sulla campana e sulla mano che saluta, e graffi bianchi lunghi su tutto
+    for (x0, y0, x1, y1) in ((250, 460, 650, 640), (690, 280, 830, 420), (120, 820, 420, 1000)):
+        zig = []
+        for i in range(10):
+            t = i / 9
+            zig += [((x0 + (x1 - x0) * t) * k + p.rng.normal(0, 10), y0 * k + p.rng.normal(0, 12)),
+                    ((x0 + (x1 - x0) * t + 18) * k + p.rng.normal(0, 10), y1 * k + p.rng.normal(0, 12))]
+        p.tratto(zig, 8 * k, nero, trem=4)
+    for i in range(6):
+        x = p.rng.uniform(80, 820) * k
+        p.linea((x, p.rng.uniform(40, 200) * k), (x + p.rng.normal(0, 120), p.rng.uniform(700, 1100) * k), 4 * k, bianco, n=12,
+                trem=3, curva=p.rng.normal(0, 0.08))
     # le due stelline marine e i pesci: occhi crocettati anche a loro, piccoli
     for (x, y) in ((70, 1068), (775, 1068), (95, 708), (775, 660)):
         p.croce(x * k, y * k, 14 * k, 3.5 * k / 2, (14, 12, 12), volte=2)
@@ -396,12 +412,21 @@ def cartellone():
     # bruciatura grande: sale dall'angolo in basso a destra e si mangia mezza campana e i tentacoli
     n = blob((H, W), 53, 5) * 0.65 + blob((H, W), 54, 18) * 0.35
     dist = np.hypot((xx - W * 1.02) / W, (yy - H * 1.05) / H * 1.15)
-    campo = 1 - dist * 1.55 + (n - 0.5) * 0.55
-    a, alfa = bruciatura(a, alfa, campo, 0.42, 0.14, 55, fuliggine=1.6, verso=(-0.25, -1))
+    campo = 1 - dist * 1.25 + (n - 0.5) * 0.55
+    a, alfa = bruciatura(a, alfa, campo, 0.42, 0.18, 55, fuliggine=2.2, verso=(-0.25, -1))
     # una seconda lingua di fuoco sul bordo sinistro, più piccola
     dist2 = np.hypot((xx - W * -0.02) / W * 1.4, (yy - H * 0.62) / H * 0.8)
     campo2 = 1 - dist2 * 3.4 + (blob((H, W), 56, 7) - 0.5) * 0.6
     a, alfa = bruciatura(a, alfa, campo2, 0.48, 0.12, 57, fuliggine=0.7, verso=(0.15, -1))
+    # strappo grosso che attraversa il cartellone in diagonale dal bordo sinistro (resta un ponte di carta verso destra,
+    # così il pezzo di sopra è ancora unito al resto)
+    ns = blob((H, W), 65, 14)
+    linea_y = 0.30 * H + xx * 0.28 + (ns - 0.5) * 70
+    larga = 20 + 42 * blob((H, W), 66, 6)
+    alfa = alfa * ~((np.abs(yy - linea_y) < larga) & (xx < 0.72 * W))
+    # un secondo buco bruciato, tondo, sul petto
+    dist3 = np.hypot((xx - 330 * k) / (110 * k), (yy - 520 * k) / (120 * k))
+    a, alfa = bruciatura(a, alfa, 1 - dist3 * 0.6 + (blob((H, W), 67, 8) - 0.5) * 0.35, 0.45, 0.2, 68, fuliggine=1.4, verso=(0.1, -1))
     # buchi di sigaretta sul corpo e uno nell'occhio
     a, alfa = buchi_sigaretta(a, alfa, [(ex + 8, ey + 4), (300 * k, 560 * k), (560 * k, 470 * k), (380 * k, 800 * k), (640 * k, 210 * k)],
                               [9 * k, 7 * k, 8 * k, 6 * k, 7 * k], 58)
@@ -414,6 +439,11 @@ def cartellone():
     a, alfa = scotch(a, alfa, 250 * k, 930 * k, 120 * k, 34 * k, 0.6, 63)
     a, alfa = scotch(a, alfa, 600 * k, 120 * k, 140 * k, 36 * k, -0.2, 64)
     a = bordo_strappato(a, alfa, 2.0, 0.5)
+    # resta un pezzo solo di carta: via i granelli staccati di pochi pixel lasciati dai buchi
+    lab, n = ndimage.label(alfa > 0.5)
+    if n > 1:
+        grandi = np.argmax(ndimage.sum(alfa > 0.5, lab, range(1, n + 1))) + 1
+        alfa = alfa * (lab == grandi)
     salva(a, alfa, os.path.join(TEX_INT, 'cartellone_medusa_rovinato.png'))
 
 
