@@ -106,7 +106,11 @@ func _run() -> void:
 	await _frames(3)
 	maniglione.interact(p)
 	await _frames(120)
-	check(maniglione.is_open, "col maniglione la porta del ponte si apre")
+	# (se le stanze della Risalita non sono ancora pronte la porta aspetta e si apre da sola: AttesaZone)
+	var t_porta := Time.get_ticks_msec()
+	while not maniglione.is_open and Time.get_ticks_msec() - t_porta < 90000:
+		await _frames(10)
+	check(maniglione.is_open, "col maniglione la porta del ponte si apre (attesa delle stanze %.1f s)" % ((Time.get_ticks_msec() - t_porta) / 1000.0))
 	await _vai("dalla porta del ponte su per le due rampe del raccordo", [tec.to_global(Vector3(47.4, 0, 1.4)),
 		tec.to_global(Vector3(51.6, 0, 1.4)), tec.to_global(Vector3(51.6, 0, 0.6)), tec.to_global(Vector3(51.6, 3.625, -6.2)),
 		tec.to_global(Vector3(50.0, 3.625, -7.8)), tec.to_global(Vector3(44.6, 7.25, -7.8))])

@@ -118,7 +118,7 @@ func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 		var tp := Time.get_ticks_usec()
 		passo.call()
 		if OS.has_environment("TORRE_TEMPI"):
-			print("passo %d: %.1f ms" % [k, (Time.get_ticks_usec() - tp) / 1000.0])
+			print("passo %d (%s): %.1f ms" % [k, passo.get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
 		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			fotogramma_piu_carico_ms = maxf(fotogramma_piu_carico_ms, (Time.get_ticks_usec() - t0) / 1000.0)
@@ -146,62 +146,7 @@ const STRATO_PREPARA := 1 << 19
 ## Intanto la sala sta su uno strato che la camera del gioco non disegna, e le sue luci illuminano solo
 ## quello strato. Alla fine torna com'era (nascosta, se lo era).
 func prepara_materiali(principale: Viewport, fotogrammi := 4) -> void:
-	if principale == null or not is_inside_tree():
-		return
-	var visuali := find_children("*", "VisualInstance3D", true, false)
-	var aabb := AABB()
-	var primo := true
-	var strati := {}
-	var maschere := {}
-	for v in visuali:
-		var vi := v as VisualInstance3D
-		strati[vi] = vi.layers
-		vi.layers = STRATO_PREPARA
-		if vi is Light3D:
-			maschere[vi] = (vi as Light3D).light_cull_mask
-			(vi as Light3D).light_cull_mask = STRATO_PREPARA
-		elif vi is GeometryInstance3D:
-			var box := vi.global_transform * vi.get_aabb()
-			aabb = box if primo else aabb.merge(box)
-			primo = false
-	var era_visibile := visible
-	visible = true
-	var sv := SubViewport.new()
-	sv.name = "PreparaMateriali"
-	sv.size = Vector2i(320, 180)
-	sv.msaa_3d = principale.msaa_3d
-	sv.screen_space_aa = principale.screen_space_aa
-	sv.use_taa = principale.use_taa
-	sv.use_debanding = principale.use_debanding
-	sv.use_hdr_2d = principale.use_hdr_2d
-	sv.positional_shadow_atlas_size = principale.positional_shadow_atlas_size
-	sv.positional_shadow_atlas_16_bits = principale.positional_shadow_atlas_16_bits
-	sv.world_3d = principale.find_world_3d()
-	sv.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	var cam := Camera3D.new()
-	cam.cull_mask = STRATO_PREPARA
-	cam.fov = 100.0
-	cam.far = 500.0
-	sv.add_child(cam)
-	add_child(sv)
-	var centro := aabb.get_center()
-	var raggio := aabb.size.length() * 0.5
-	# da fuori, guardando il centro: tutta la sala nell'inquadratura (niente scartato dal frustum)
-	cam.look_at_from_position(centro + Vector3(0.6, 0.5, 0.8).normalized() * raggio * 1.3, centro, Vector3.UP)
-	cam.current = true
-	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
-	for i in fotogrammi + 1:
-		await get_tree().process_frame
-		if not is_inside_tree():
-			break
-	sv.queue_free()
-	for vi in strati:
-		if is_instance_valid(vi):
-			(vi as VisualInstance3D).layers = strati[vi]
-	for l in maschere:
-		if is_instance_valid(l):
-			(l as Light3D).light_cull_mask = maschere[l]
-	visible = era_visibile
+	await RiscaldamentoShader.disegna_fuori_vista(self, principale, fotogrammi)
 
 
 ## I passi della costruzione, in ordine. Quelli lunghi (scivoli, luci) sono divisi in tanti passi piccoli.
@@ -261,8 +206,22 @@ func _modello(i: int) -> void:
 func _stacca_figli(n: Node) -> Array:
 	var figli := n.get_children()
 	for c in figli:
+		# (l'owner si toglie qui e si rimette quando il nodo rientra: rientrato con l'owner di prima, Godot avvisava
+		# "owner inconsistent" per ogni nodo)
+		if c.owner:
+			c.set_meta(&"_proprietario", c.owner)
+			c.owner = null
 		n.remove_child(c)
 	return figli
+
+
+func _rimetti_proprietario(c: Node) -> void:
+	if not c.has_meta(&"_proprietario"):
+		return
+	var o: Node = c.get_meta(&"_proprietario")
+	c.remove_meta(&"_proprietario")
+	if is_instance_valid(o) and o.is_ancestor_of(c):
+		c.owner = o
 
 
 ## Un passo per ogni nodo di [param figli], da mettere sotto [param padre]: ognuno entra senza i suoi
@@ -274,6 +233,7 @@ func _passi_figli(padre: Node, figli: Array) -> Array:
 			var nipoti := _stacca_figli(c)
 			var tp := Time.get_ticks_usec()
 			padre.add_child(c)
+			_rimetti_proprietario(c)
 			if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 5000:
 				print("  nodo %s (%s): %.1f ms" % [c.name, c.get_class(), (Time.get_ticks_usec() - tp) / 1000.0])
 			if not nipoti.is_empty():
@@ -1269,14 +1229,15 @@ const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 ## Grafica._attiva_shader_avanzati) costa 100-150 ms sulla CPU della CI, troppo per un passo della
 ## costruzione a pezzi. La sala principale li crea entrando (a schermo nero) e li tiene finché c'è: i passi
 ## ritrovano gli shader pronti. Chi li chiama deve tenere l'array (gli shader vivono finché c'è un materiale).
-static func materiali_campione() -> Array[Material]:
+static func materiali_campione(crea := true) -> Array[Material]:
 	var out: Array[Material] = [_emissivo(Color.WHITE, 1.0), _metallo_scuro(), _materiale_gabbia(),
 			_materiale_gocce(), _materiale_fondo_pozzo(), load(ACQUA) as Material]
 	# (l'oblò con lei sul muro est: piastra, vasca, ottone, vetro e veli d'acqua)
 	for m in ObloLei.materiali():
 		out.append(m as Material)
-	for m in out:
-		m.get_rid()   # lo shader si crea adesso, non al primo uso
+	if crea:
+		for m in out:
+			m.get_rid()   # lo shader si crea adesso, non al primo uso
 	return out
 
 

@@ -34,6 +34,8 @@ const DEATH_SEQUENCE_SCENE := "res://scenes/ui/death_sequence.tscn"
 ## L'ordine dell'istantanea "inizio" di un livello nuovo: sotto tutti i checkpoint, anche quelli degli interni (da -10 a
 ## -5, prima della sala). Era -1, e dal 15 ottobre i checkpoint degli interni non contavano (collaudo di Continua).
 const ORDINE_INIZIO := -1000
+## Secondi massimi che la ripartenza aspetta i caricamenti nel thread (se un caricamento non finisce mai).
+const ATTESA_RIPARTENZA := 60.0
 
 ## Scrive l'ultimo checkpoint su disco (per un futuro "Continua" nel menu).
 @export var save_to_disk := true
@@ -62,6 +64,13 @@ var _collected: Dictionary = {}     # collezione -> { voce: true }
 var _registry: Dictionary = {}      # collezione -> { voce: true }, tutte quelle viste
 var _restore_pending := false
 var _death_sequence: Node = null
+var _ripartenza_in_corso := false
+## Secondi che l'ultima ripartenza ha aspettato i caricamenti nel thread (Game.aspetta_caricamenti).
+var attesa_ripartenza := 0.0
+## La ripartenza ricarica il livello in due tempi (Game.cambia_scena_in_due_tempi); falso solo per misurare la differenza.
+var ricarica_in_due_tempi := true
+## Il PackedScene del livello, tenuto per la ricarica in due tempi.
+var _pacchetto_livello: PackedScene
 
 
 # --- Livello e giocatore ------------------------------------------------------------------
@@ -76,6 +85,12 @@ func _on_level_ready() -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	var scene := _scene_path()
+	# (il PackedScene del livello resta qui per la ricarica in due tempi, se è ancora in cache: niente da rileggere; quello
+	# di un altro livello si lascia andare)
+	if _pacchetto_livello and _pacchetto_livello.resource_path != scene:
+		_pacchetto_livello = null
+	if _pacchetto_livello == null and scene != "" and ResourceLoader.has_cached(scene):
+		_pacchetto_livello = load(scene) as PackedScene
 	if _restore_pending and snapshot.get("scene", "") == scene:
 		_restore_pending = false
 		_apply_snapshot(snapshot)
@@ -265,8 +280,22 @@ func _on_death_sequence_finished(_skipped: bool) -> void:
 
 ## Ricarica il livello e riparte dall'ultimo checkpoint. Non mentre si esce dal gioco (Game.esci): la sala
 ## ricaricata richiederebbe di nuovo la torre nel thread, e l'uscita la troverebbe a metà.
+## Prima, a schermo nero, la sala si ferma (non comincia altro) e si aspetta che i caricamenti nel thread e i suoi lavori
+## a metà siano finiti, più due fotogrammi disegnati (Game.aspetta_caricamenti; crash della v0.3.14 dopo il primo spavento).
 func respawn() -> void:
-	if Game.uscendo:
+	if Game.uscendo or _ripartenza_in_corso:
+		return
+	_ripartenza_in_corso = true
+	# (il giocatore della sala vecchia non vale più già adesso, come prima dell'attesa: chi aspetta il livello nuovo
+	# aspetta il giocatore nuovo)
+	player = null
+	var sala := get_tree().current_scene
+	attesa_ripartenza = await Game.aspetta_caricamenti(sala, ATTESA_RIPARTENZA)
+	_ripartenza_in_corso = false
+	if attesa_ripartenza > 0.05:
+		print("Ripartenza: aspettati i caricamenti nel thread per %.1f s" % attesa_ripartenza)
+	# (intanto si è usciti dal gioco o si è tornati al titolo: non si riparte)
+	if Game.uscendo or Game.tornando_al_titolo or not is_instance_valid(sala) or get_tree().current_scene != sala:
 		return
 	if not keep_collectibles_on_death:
 		_collected = _lists_to_collected(snapshot.get("collectibles", {}))
@@ -274,18 +303,30 @@ func respawn() -> void:
 	_removed.clear()
 	for k in snapshot.get("removed", []):
 		_removed[String(k)] = true
-	player = null
+	var scene: String = sala.scene_file_path
 	if snapshot.is_empty():
 		is_dying = false
-		get_tree().reload_current_scene()
-		return
-	_restore_pending = true
-	var scene: String = snapshot.get("scene", "")
-	var current := get_tree().current_scene
-	if current and current.scene_file_path == scene:
-		get_tree().reload_current_scene()
 	else:
+		_restore_pending = true
+		scene = snapshot.get("scene", "")
+	if not ricarica_in_due_tempi:
+		if sala.scene_file_path == scene:
+			get_tree().reload_current_scene()
+		else:
+			get_tree().change_scene_to_file(scene)
+		return
+	await _cambia_in_due_tempi(scene)
+
+
+## La ricarica in due tempi (Game.cambia_scena_in_due_tempi), dal PackedScene del livello tenuto qui: le risorse restano
+## in cache e la ripartenza non si allunga.
+func _cambia_in_due_tempi(scene: String) -> void:
+	if _pacchetto_livello == null or _pacchetto_livello.resource_path != scene:
+		_pacchetto_livello = load(scene) as PackedScene
+	if _pacchetto_livello == null:
 		get_tree().change_scene_to_file(scene)
+		return
+	await Game.cambia_scena_in_due_tempi(_pacchetto_livello)
 
 
 # --- Collezionabili (per esempio le Polaroid) ----------------------------------------------
@@ -425,6 +466,7 @@ func prepara_ripresa(data: Dictionary) -> void:
 ## al primo checkpoint.
 func reset_progress() -> void:
 	snapshot = {}
+	_pacchetto_livello = null
 	_removed.clear()
 	_parcheggiati.clear()
 	_collected.clear()

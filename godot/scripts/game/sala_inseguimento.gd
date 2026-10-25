@@ -32,6 +32,8 @@ signal sb1_iniziato
 ## Dopo SB1 il capitolo continua nel tunnel del viaggio sottomarino ([member dopo_sb1_continua]): lei si è tuffata,
 ## i comandi sono tornati, la scaletta e la porta sono accese.
 signal sb1_finito
+## SB1 aspetta il tunnel non ancora pronto (AttesaZone): chi lo costruisce faccia più svelto.
+signal sb1_in_attesa
 
 const DIR := "res://assets/ambiente/inseguimento/"
 const ROSSO := Color(1.0, 0.035, 0.02)
@@ -121,13 +123,29 @@ func _ready() -> void:
 		costruita = true
 
 
+## I passi della costruzione a pezzi che sono durati più di 50 ms: [nome, ms] (per i test dei blocchi).
+var passi_lunghi: Array = []
+var _nome_passo := ""
+
+
 ## La costruzione divisa in passi brevi, uno per fotogramma (al più [param ms_per_fotogramma] ms di fila).
 func costruisci_a_pezzi(ms_per_fotogramma := 8.0) -> void:
 	_a_pezzi = true
 	var t0 := Time.get_ticks_usec()
 	_coda = _passi()
+	var k := 0
 	while not _coda.is_empty():
-		(_coda.pop_front() as Callable).call()
+		var tp := Time.get_ticks_usec()
+		var passo: Callable = _coda.pop_front()
+		_nome_passo = ""
+		passo.call()
+		var ms := (Time.get_ticks_usec() - tp) / 1000.0
+		var nome := _nome_passo if _nome_passo != "" else String(passo.get_method())
+		if ms > 50.0:
+			passi_lunghi.append([nome, ms])
+		if OS.has_environment("TORRE_TEMPI"):
+			print("inseguimento passo %d (%s): %.1f ms" % [k, nome, ms])
+		k += 1
 		if (Time.get_ticks_usec() - t0) / 1000.0 >= ms_per_fotogramma:
 			await get_tree().process_frame
 			# tolta dall'albero mentre si costruiva (una morte ricarica la sala): non serve più, come nella torre
@@ -152,6 +170,7 @@ func _passi() -> Array:
 ## raggiungono uno per passo (come nella torre).
 func _modello(i: int) -> void:
 	var nome: String = ["struttura", "tubi", "prop", "mobili"][i]
+	_nome_passo = "_modello(%s)" % nome
 	var scena: PackedScene = modelli[i] if i < modelli.size() and modelli[i] else load(DIR + "inseguimento_%s.glb" % nome)
 	var glb: Node3D = scena.instantiate()
 	glb.name = "Inseguimento" + nome.capitalize()
@@ -165,11 +184,19 @@ func _modello(i: int) -> void:
 		_varco_scalette(glb)
 	if _a_pezzi:
 		var figli := glb.get_children()
+		var proprietari := {}
 		for c in figli:
+			# (l'owner si toglie prima e si rimette dopo: rimesso dentro con l'owner di prima, Godot avvisava "owner
+			# inconsistent" per ogni pezzo)
+			proprietari[c] = c.owner
+			c.owner = null
 			glb.remove_child(c)
 		var passi: Array = []
 		for c in figli:
-			passi.append(func(): glb.add_child(c))
+			passi.append(func():
+				glb.add_child(c)
+				if is_instance_valid(proprietari[c]) and (proprietari[c] as Node).is_ancestor_of(c):
+					c.owner = proprietari[c])
 		_coda = passi + _coda
 	add_child(glb)
 
@@ -476,6 +503,15 @@ func _scolo_zone() -> void:
 
 
 # --- lei --------------------------------------------------------------------------------------------
+
+## I file di lei che [method _lei_crea] carica: la sala li chiede al thread insieme alla torre (SalaPrincipale), così
+## qui load() li trova già pronti (caricati qui erano 230 ms di fotogramma fermo).
+const RISORSE_LEI := ["res://assets/models/medusa/medusa.glb", "res://assets/models/medusa/medusa_campana.tres",
+	"res://assets/models/medusa/medusa_capelli_bagnata.tres", "res://assets/models/medusa/medusa_ciocche_bagnata.tres",
+	"res://assets/models/medusa/medusa_mani_bagnata.tres", "res://assets/models/medusa/medusa_occhio.tres",
+	"res://assets/models/medusa/medusa_orbita_bagnata.tres", "res://assets/models/medusa/medusa_pelle_bagnata.tres",
+	"res://assets/models/medusa/medusa_tentacoli_bagnata.tres"]
+
 
 func _lei_crea() -> void:
 	lei = MedusaAffacciata.new()
@@ -890,6 +926,17 @@ func inizia_sb1() -> void:
 ## Dopo SB1, col tunnel: lei si tuffa nel pozzo, i comandi tornano, e la strada si vede subito (l'utente: "dopo che
 ## jilly mi guarda... che dovrebbe succedere?"): un faro caldo sulla scaletta e la luce sopra la porta in cima.
 func _dopo_sb1() -> void:
+	# il tunnel non è ancora pronto (un PC lento, AttesaZone; scelta dell'utente del 25 ottobre): SB1 aspetta a finire,
+	# lei ancora affacciata e il giocatore fermo che la guarda, la scaletta ancora al buio
+	if not AttesaZone.passaggio_aperto(&"tunnel"):
+		AttesaZone.attendi(&"tunnel")
+		sb1_in_attesa.emit()
+		var t := 0.0
+		while not AttesaZone.passaggio_aperto(&"tunnel") and t < 90.0:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+			t += get_process_delta_time()
 	_scendi(false)
 	var p := GameState.player
 	if p and is_instance_valid(p):
@@ -1233,12 +1280,28 @@ var _fonti := {}
 
 ## Un oggetto vero del gioco (vedi arredo() in tools/blender/inseguimento_proposte.py): un nodo della sala
 ## pompe o del kit di dettagli, copiato e messo al suo posto (come negli scatti della proposta).
+## Il file di una fonte degli arredi ("pompe" o "dettagli/<nome>").
+static func _percorso_fonte(fonte: String) -> String:
+	return "res://assets/ambienti_tecnici/sala_pompe.gltf" if fonte == "pompe" \
+			else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
+
+
+## I file che la costruzione carica (lei e le fonti degli arredi): la sala li chiede al thread insieme alla torre.
+static func risorse() -> Array:
+	var out: Array = RISORSE_LEI.duplicate()
+	var dati_luci = JSON.parse_string(FileAccess.get_file_as_string(DIR + "inseguimento_luci.json"))
+	if dati_luci is Dictionary:
+		for a in dati_luci.get("arredi", []):
+			var p := _percorso_fonte(String(a["f"]))
+			if not out.has(p):
+				out.append(p)
+	return out
+
+
 func _arredo(radice: Node3D, a: Dictionary) -> void:
 	var fonte: String = a["f"]
 	if not _fonti.has(fonte):
-		var percorso := "res://assets/ambienti_tecnici/sala_pompe.gltf" if fonte == "pompe" \
-				else "res://assets/ambiente/dettagli/gltf/%s.gltf" % fonte.get_slice("/", 1)
-		_fonti[fonte] = (load(percorso) as PackedScene).instantiate()
+		_fonti[fonte] = (load(_percorso_fonte(fonte)) as PackedScene).instantiate()
 	var src: Node3D = _fonti[fonte]
 	var nomi: Array = a["n"] if a["n"] is Array else [a["n"]]
 	var gruppo := Node3D.new()

@@ -52,6 +52,10 @@ static func prepara_a_pezzi(sala: SalaSottomarino, ms_per_fotogramma := 4.0) -> 
 	var ctx := _contesto(sala)
 	var t0 := Time.get_ticks_usec()
 	for c3 in _forme_collisione(sala):
+		# (dopo un fotogramma il tunnel può non esserci più: una morte nella torre ricarica la sala, e c3 è già liberato;
+		# nel gioco esportato usarlo è un crash)
+		if not is_instance_valid(sala) or not sala.is_inside_tree() or not is_instance_valid(c3):
+			return 0
 		var nt := _quanti(c3)
 		var da := 0
 		while da < nt:

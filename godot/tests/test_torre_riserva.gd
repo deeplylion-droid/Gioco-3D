@@ -1,7 +1,8 @@
 extends Node
-## La riserva della torre (sala_principale.gd, 23 ottobre): col portone aperto da più di ATTESA_TORRE secondi e il
-## thread che non ha ancora finito (un PC lento, la cache fredda) la torre si carica sul thread principale, a parte
-## (CACHE_MODE_IGNORE_DEEP), e il guscio sparisce; la copia del thread, quando arriva, si lascia andare.
+## La riserva della torre (sala_principale.gd): col portone aperto da più di ATTESA_TORRE secondi e il thread che non
+## ha ancora finito (un PC lento, la cache fredda). Fino al 25 ottobre la torre si caricava sul thread principale (20 s
+## di gioco fermo nella misura dei blocchi al primo avvio); dalla scelta A dell'utente (25 ottobre) si aspetta il thread
+## senza bloccare (AttesaZone), poi la torre si costruisce a pezzi e il guscio sparisce: una torre sola.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_riserva.gd
 
 const LEVEL := "res://scenes/sala_principale.tscn"
@@ -38,7 +39,7 @@ func _run() -> void:
 		await get_tree().process_frame
 	var sala: Node = level.get(&"sala_torre")
 	var ancora := ResourceLoader.load_threaded_get_status(scena) == ResourceLoader.THREAD_LOAD_IN_PROGRESS
-	check(sala != null and sala.is_inside_tree(), "passata l'attesa la torre si carica sul thread principale (%.1f s)" % ((Time.get_ticks_msec() - t0) / 1000.0))
+	check(sala != null and sala.is_inside_tree(), "passata l'attesa la torre arriva dal thread, senza bloccare (%.1f s)" % ((Time.get_ticks_msec() - t0) / 1000.0))
 	print("  (il thread a quel punto: %s)" % ("ancora in corso" if ancora else "finito"))
 	await get_tree().process_frame
 	check(level.find_child("sala_torre_guscio", true, false) == null, "il guscio dietro il portone non c'è più")
@@ -46,8 +47,8 @@ func _run() -> void:
 	while bool(level.get(&"_torre_in_caricamento")) and Time.get_ticks_msec() - t0 < 120000:
 		await get_tree().process_frame
 	await get_tree().process_frame
-	check(not bool(level.get(&"_torre_in_caricamento")) and level.get(&"_torre_pronta") == null and level.get(&"sala_torre") == sala,
-		"la copia del thread, arrivata dopo, si lascia andare: resta la torre della riserva")
+	check(not bool(level.get(&"_torre_in_caricamento")) and level.get(&"sala_torre") == sala,
+		"il caricamento nel thread è finito e la torre in sala è quella")
 	check(level.find_children("*", "SalaTorre", true, false).size() == 1, "una torre sola nella sala")
 	print("")
 	print("RISULTATO: %d controlli ok, %d falliti" % [_passed, _failed])

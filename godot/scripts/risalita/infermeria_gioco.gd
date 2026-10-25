@@ -70,7 +70,31 @@ var _luce_lampeggiante: OmniLight3D
 var _t := 0.0
 
 
+## Vero: _ready non costruisce niente, lo fa [method costruisci_a_pezzi] un passo per fotogramma (la Risalita
+## caricata a gioco avviato: tutta insieme l'infermeria fermava il gioco 275 ms).
+var costruzione_a_pezzi := false
+var costruita := false
+
+
 func _ready() -> void:
+	if not costruzione_a_pezzi:
+		_costruisci()
+
+
+## Costruisce l'infermeria un passo per fotogramma: il nodo va messo nella scena con [member costruzione_a_pezzi]
+## vero, poi si aspetta questa.
+func costruisci_a_pezzi() -> void:
+	if not costruita:
+		await _costruisci()
+
+
+## Nella costruzione a pezzi, il passo dopo al fotogramma dopo. Altrimenti niente (tutto nello stesso fotogramma).
+func _pausa() -> void:
+	if costruzione_a_pezzi:
+		await get_tree().process_frame
+
+
+func _costruisci() -> void:
 	seed(1019)
 	mat_piastrelle = _mat("piastrelle_piccole", Color(0.7, 0.92, 0.85), 1.2)
 	mat_muro = _mat("intonaco", Color(1.0, 0.8, 0.84), 0.5)
@@ -80,15 +104,23 @@ func _ready() -> void:
 	_collisioni.name = "Collisioni"
 	add_child(_collisioni)
 	_stanza()
+	await _pausa()
 	_arredi()
+	await _pausa()
 	_negatoscopio()
+	await _pausa()
 	_schedari()
+	await _pausa()
 	_cassaforte()
+	await _pausa()
 	_luci()
+	await _pausa()
 	_bambini()
+	await _pausa()
 	_metti_listelli()
 	_checkpoint()
 	_marker()
+	costruita = true
 
 
 # --- materiali e aiuti -----------------------------------------------------------------------------

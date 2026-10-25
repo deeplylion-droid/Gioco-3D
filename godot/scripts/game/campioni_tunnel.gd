@@ -11,10 +11,11 @@ const FILE := "res://assets/ambiente/sottomarino/materiali_campione.tres"
 
 ## Carica i campioni e crea subito i loro shader. Chi li chiama deve tenere l'array (gli shader vivono finché c'è un
 ## materiale che li usa).
-static func carica() -> Array:
+static func carica(crea := true) -> Array:
 	if not ResourceLoader.exists(FILE):
 		return []
 	var out: Array = load(FILE).get_meta(&"materiali", [])
-	for m in out:
-		(m as Material).get_rid()   # lo shader si crea adesso, non al primo uso
+	if crea:
+		for m in out:
+			(m as Material).get_rid()   # lo shader si crea adesso, non al primo uso
 	return out
