@@ -106,3 +106,11 @@ Fogli in `fogli_6e1f/`. Tutto è a `--fixed-fps 60`. I punti sono fatti con `tes
    - **Da guardare (aspetto):** mentre è trasparente si vedono le parti di dentro attraverso quelle di fuori. Nella torre i capelli si vedono attraverso l'occhio. In ObloServizio, nella campana, si vedono le forme arancioni di dentro e le righe gialle. Sembra un fantasma a strati, non solo una figura che sbiadisce.
    - Nei primi 20 fotogrammi di ObloServizio la posa salta (al 4 e al 12 è diversa, al 20 è di nuovo capovolta). Quasi certamente è lo script, che ha aspettato solo 60 fotogrammi dopo la comparsa: l'arrivo non era finito. Non lo conto come difetto.
 4. **D4, la gonna.** Fra i fotogrammi 84 e 92 l'interno della campana è viola spento, non più giallo bruciato. Corretto.
+
+### I 4 oblò dagli occhi del giocatore, con lei ferma (6e1fdf69)
+
+Foglio: `fogli_6e1f/foglio_ferma.jpg`. Ci sono ObloFiume e ObloPersonale da lontano e da vicino, ObloServizio da lontano e la torre da lontano e da vicino.
+ObloServizio da vicino è negli scatti del distacco, al fotogramma 20 e dopo: `fogli_6e1f/foglio_distacco_servizio.jpg`.
+La prova di scatti_oblo_lei.gd è finita fuori tempo dopo 11 scatti su 15. Mancano lo scatto di ObloServizio da vicino e gli scatti del distacco della Risalita, che sono già nei fogli del distacco.
+
+Dietro il vetro la lamiera nuova della vasca non cambia niente: il fondo è scuro come prima, lei è ferma dietro il vetro e non si vede nessuna parete nuova chiara o illuminata. Nessun difetto.
