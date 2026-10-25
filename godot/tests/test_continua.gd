@@ -16,6 +16,10 @@ extends Node
 ##   la rivede da capo); a scena finita il checkpoint del risveglio, poi gli altri 5 entrandoci: ognuno si scrive su disco
 ##   (prima, con l'ordine da -10 a -5 sotto l'istantanea "inizio", si scartavano tutti); Continua da ognuno riparte lì, con
 ##   le luci e lo zaino (preso nello stanzino), senza rifare la scena del risveglio; poi una morte riparte dall'ultimo;
+## - Nuova partita con un salvataggio ("domanda", scelta A dell'utente del 25 ottobre): prima la domanda "Ricominciare da
+##   capo?" col focus su No; B, Esc, No col clic o con A tornano al titolo col focus su Nuova partita e non toccano niente;
+##   un doppio clic su Nuova partita apre una domanda sola; Sì (anche premuto due volte) fa partire la partita una volta
+##   sola, e il salvataggio resta fino al primo checkpoint vero (senza salvataggio si parte subito: test_menu);
 ## - un crash vero (due processi): con "crash_prima" il processo continua, raggiunge un checkpoint e si uccide da solo
 ##   (con un file temporaneo rotto a metà scrittura); con "crash_dopo" un processo nuovo continua da lì.
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_continua.gd [id,id]
@@ -68,6 +72,8 @@ func _run() -> void:
 		await _interni()
 	if solo.is_empty() or "nuova" in solo:
 		await _nuova_partita_non_cancella()
+	if solo.is_empty() or "domanda" in solo:
+		await _domanda_nuova_partita()
 	_cancella()
 	print("RISULTATO: %d controlli ok, %d falliti" % [_ok, _ko])
 	get_tree().quit(1 if _ko > 0 else 0)
@@ -169,6 +175,133 @@ func _ripresa_interni(nome: String, chiave: String, posto: Vector3, d: Dictionar
 	var squalo := interni.get_node_or_null(^"Gioco/RisveglioSqualo") as RisveglioSqualo
 	_check(p.input_enabled and absf(p.camera.rotation.z) < 0.01 and absf(p.camera.position.y) < 0.01 and squalo and not squalo.in_corso(),
 			"interni, %s: la scena del risveglio non riparte" % nome)
+
+
+## La domanda prima di una Nuova partita, quando c'è un salvataggio: vedi in cima.
+func _domanda_nuova_partita() -> void:
+	print("== domanda di Nuova partita")
+	var d := MenuProva.istantanea("torre")
+	_cancella()
+	var testo := JSON.stringify(d)
+	_scrivi(testo)
+	var t := await _apri_titolo()
+	var nuova: Button = (t.call(&"voci") as Array).filter(func(b): return (b as Button).name == "NuovaPartita").front()
+	for modo in ["B del joypad", "Esc", "No col clic", "No con A"]:
+		var dom := await _apri_domanda(t, nuova, modo)
+		if dom == null:
+			return
+		match modo:
+			"B del joypad":
+				await _premi_joypad(JOY_BUTTON_B)
+			"Esc":
+				await _premi_tasto(KEY_ESCAPE)
+			"No col clic":
+				await _clic(dom.get(&"voce_no"))
+			"No con A":
+				await _premi_joypad(JOY_BUTTON_A)
+		for i in 5:
+			await get_tree().process_frame
+		_check(t.call(&"sottomenu") == null and not bool(t.get(&"_avviato")) and (t.get(&"_menu") as Control).visible
+				and t.get_viewport().gui_get_focus_owner() == nuova and FileAccess.get_file_as_string(GameState.SAVE_PATH) == testo
+				and not _spot_partito(), "domanda, %s: si torna al titolo col focus su Nuova partita, senza toccare niente" % modo)
+	# un doppio clic su Nuova partita: una domanda sola, ancora aperta col focus su No
+	nuova.grab_focus()
+	await _clic(nuova, 2)
+	var aperte := t.get_children().filter(func(n): return n.name.begins_with("DomandaNuovaPartita"))
+	var dom = t.call(&"sottomenu")
+	_check(aperte.size() == 1 and dom != null and t.get_viewport().gui_get_focus_owner() == dom.get(&"voce_no"),
+			"domanda: col doppio clic su Nuova partita se ne apre una sola, col focus su No (%d)" % aperte.size())
+	await _premi_joypad(JOY_BUTTON_B)
+	for i in 5:
+		await get_tree().process_frame
+	# Sì, premuto due volte (e Nuova partita ancora): parte una volta sola
+	dom = await _apri_domanda(t, nuova, "Sì")
+	if dom == null:
+		return
+	await _premi_joypad(JOY_BUTTON_DPAD_UP)
+	_check(t.get_viewport().gui_get_focus_owner() == dom.get(&"voce_si"), "domanda: su porta il focus su Sì")
+	await _premi_tasto(KEY_ENTER)
+	await _premi_tasto(KEY_ENTER)
+	t.call(&"nuova_partita")
+	var spot: Array = []
+	for i in 200:
+		await get_tree().process_frame
+		spot = get_tree().root.get_children().filter(func(n): return n is LettoreSpot)
+		if not spot.is_empty():
+			break
+	for i in 30:
+		await get_tree().process_frame
+	spot = get_tree().root.get_children().filter(func(n): return n is LettoreSpot)
+	_check(spot.size() == 1 and bool(t.get(&"_avviato")), "domanda: Sì fa partire la nuova partita una volta sola (%d spot)" % spot.size())
+	_check(String(GameState.salvataggio().get("checkpoint", "")) == d["checkpoint"], "domanda: dopo Sì il salvataggio di prima c'è ancora")
+	if spot.is_empty():
+		return
+	(spot[0] as Node).call(&"_fine")
+	await _aspetta_ripresa(false)
+	var p := GameState.player
+	_check(p != null and String(GameState.snapshot.get("checkpoint", "")) == "inizio" and String(GameState.salvataggio().get("checkpoint", "")) == d["checkpoint"],
+			"domanda: nella sala, prima del primo checkpoint, il salvataggio di prima resta (%s)" % GameState.salvataggio().get("checkpoint", "-"))
+	if p == null:
+		return
+	var t0 := Time.get_ticks_msec()
+	while not p.input_enabled and Time.get_ticks_msec() - t0 < 30000:
+		await get_tree().physics_frame
+	for i in 10:
+		await get_tree().physics_frame
+	_check(String(GameState.salvataggio().get("checkpoint", "")) == "Interni/Gioco/CheckpointRisveglio",
+			"domanda: al primo checkpoint vero il salvataggio è sostituito (%s)" % GameState.salvataggio().get("checkpoint", "-"))
+
+
+## Apre la domanda da Nuova partita (col focus e A del joypad, come si fa davvero) e controlla com'è fatta.
+func _apri_domanda(t: Node, nuova: Button, modo: String) -> Node:
+	nuova.grab_focus()
+	await get_tree().process_frame
+	await _premi_joypad(JOY_BUTTON_A)
+	for i in 3:
+		await get_tree().process_frame
+	var dom = t.call(&"sottomenu")
+	var ok: bool = dom != null and dom.name == "DomandaNuovaPartita" and dom.get(&"voce_si") != null \
+			and t.get_viewport().gui_get_focus_owner() == dom.get(&"voce_no") and not bool(t.get(&"_avviato")) and not _spot_partito()
+	_check(ok, "domanda (%s): Nuova partita col salvataggio apre \"%s\", col focus su No" % [modo, String(dom.get(&"domanda")) if dom else "-"])
+	return dom if ok else null
+
+
+func _spot_partito() -> bool:
+	return get_tree().root.get_children().any(func(n): return n is LettoreSpot)
+
+
+func _premi_tasto(tasto: Key) -> void:
+	for giu in [true, false]:
+		var e := InputEventKey.new()
+		e.keycode = tasto
+		e.physical_keycode = tasto
+		e.pressed = giu
+		Input.parse_input_event(e)
+		for i in 3:
+			await get_tree().process_frame
+
+
+## Un clic vero (o [param volte] clic di fila, come un doppio clic) al centro di [param c].
+func _clic(c: Control, volte := 1) -> void:
+	var pos := c.get_viewport().get_screen_transform() * c.get_global_transform_with_canvas() * (c.size * 0.5)
+	var m := InputEventMouseMotion.new()
+	m.position = pos
+	m.global_position = pos
+	Input.parse_input_event(m)
+	await get_tree().process_frame
+	for k in volte:
+		for giu in [true, false]:
+			var e := InputEventMouseButton.new()
+			e.button_index = MOUSE_BUTTON_LEFT
+			e.position = pos
+			e.global_position = pos
+			e.pressed = giu
+			e.double_click = giu and k > 0
+			e.button_mask = MOUSE_BUTTON_MASK_LEFT if giu else 0
+			Input.parse_input_event(e)
+			await get_tree().process_frame
+	for i in 3:
+		await get_tree().process_frame
 
 
 func _cancella() -> void:

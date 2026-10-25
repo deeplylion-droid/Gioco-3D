@@ -11,6 +11,7 @@ extends Node3D
 const SCENA_CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 const SCENA_COMANDI := "res://scenes/ui/comandi.tscn"
 const SCENA_OPZIONI := "res://addons/grafica/menu_opzioni.tscn"
+const DOMANDA := preload("res://scripts/ui/menu/domanda_menu.gd")
 ## Il logo del gioco, la A: l'insegna del parco rovinata (scelta dell'utente del 22 ottobre;
 ## originale in docs/concept/logo/, disegnato da assets_src/logo/logo_jilly.py).
 const LOGO := preload("res://assets/ui/logo/logo_jilly_jubilee.png")
@@ -43,6 +44,7 @@ var _lampo_finale := false
 var _avviato := false
 var _menu: VBoxContainer
 var _voci: Array[Button] = []
+var _voce_nuova: Button
 var _voce_opzioni: Button
 var _voce_comandi: Button
 var _testata: Control
@@ -104,8 +106,39 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # --- Voci del menu ------------------------------------------------------------------------
 
+## Nuova partita. Con un salvataggio valido prima la domanda "Ricominciare da capo?" (scelta A dell'utente del 25
+## ottobre: il focus parte su No, e B o Esc valgono No); senza, si parte subito. Il salvataggio di prima si sostituisce
+## solo al primo checkpoint vero (GameState.capture_snapshot).
 func nuova_partita() -> void:
 	if _avviato or is_instance_valid(_sottomenu):
+		return
+	if GameState.has_save():
+		_chiedi_nuova_partita()
+		return
+	_avvia_nuova_partita()
+
+
+func _chiedi_nuova_partita() -> void:
+	var d: CanvasLayer = DOMANDA.new("Ricominciare da capo?", "Il salvataggio verrà sostituito")
+	d.name = "DomandaNuovaPartita"
+	_sottomenu = d
+	add_child(d)
+	_menu.visible = false
+	_testata.visible = false
+	_logo.visible = false
+	d.connect(&"risposta", func(si: bool):
+		_sottomenu = null
+		if si:
+			_avvia_nuova_partita()
+			return
+		_menu.visible = true
+		_testata.visible = true
+		_logo.visible = true
+		_voce_nuova.grab_focus.call_deferred())
+
+
+func _avvia_nuova_partita() -> void:
+	if _avviato:
 		return
 	_avviato = true
 	for v in _voci:
@@ -316,7 +349,8 @@ func _costruisci_interfaccia() -> void:
 	# Continua solo se c'è un salvataggio da cui ripartire: è la prima voce, sopra Nuova partita
 	if GameState.has_save():
 		_voci.append(_voce("Continua", "Continua", continua))
-	_voci.append(_voce("NuovaPartita", "Nuova partita", nuova_partita))
+	_voce_nuova = _voce("NuovaPartita", "Nuova partita", nuova_partita)
+	_voci.append(_voce_nuova)
 	_voce_opzioni = _voce("Opzioni", "Opzioni", apri_opzioni)
 	_voci.append(_voce_opzioni)
 	_voce_comandi = _voce("Comandi", "Comandi", apri_comandi)
