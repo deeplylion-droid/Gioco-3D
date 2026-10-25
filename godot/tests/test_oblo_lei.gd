@@ -7,7 +7,7 @@ extends Node
 ## - se ti avvicini si stacca anche prima di averla vista bene;
 ## - se te ne vai senza averla vista va via senza farsi vedere e la volta dopo ricompare;
 ## - nessuna compenetrazione: lei (le ossa, o la testa di prova) resta dentro la vasca, dietro il vetro, anche mentre
-##   si stacca.
+##   si stacca; e anche la sua pelle (i vertici nella posa del momento: il viso premuto sul vetro, mascotte, 25 ottobre).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_oblo_lei.gd
 
 const PLAYER := "res://scenes/player/player.tscn"
@@ -19,6 +19,14 @@ var falliti := 0
 var _fuori_max := -INF
 var _fuori_dove := ""
 var _oblo_misurato: ObloLei
+## Lo stesso per la pelle di lei, misurata ogni [constant OGNI_PELLE] aggiornamenti dello scheletro.
+const OGNI_PELLE := 20
+var _pelle_max := -INF
+var _pelle_dove := ""
+var _pelle_volte := 0
+var _pelle_conta := 0
+var _pelle_per_stato := {}
+var _array_mesh := {}
 
 
 func _ready() -> void:
@@ -113,7 +121,18 @@ func _fuori(o: ObloLei) -> float:
 	if punti.is_empty():
 		punti.append(o.lei.get_eye_position())
 		nomi.append("occhio")
+	var r := _fuori_punti(o, punti)
+	if r[0] > _fuori_max:
+		_fuori_dove = "%s in %s, stato %d" % [nomi[r[1]], r[2], o.stato]
+	return r[0]
+
+
+## Il punto di [param punti] (nel mondo) più fuori dalla vasca dell'oblò: [metri oltre l'interno (negativo: dentro),
+## indice, dove nel sistema dell'oblò (testo)].
+func _fuori_punti(o: ObloLei, punti: PackedVector3Array) -> Array:
 	var peggio := -INF
+	var i_peggio := -1
+	var lq_peggio := Vector3.ZERO
 	var l := o.vasca_larga * 0.5
 	var h := o.piastra * 0.5
 	var z1 := -o.spessore_muro - ObloLei.STACCO_VASCA - o.vasca_fonda
@@ -127,9 +146,56 @@ func _fuori(o: ObloLei) -> float:
 			f = minf(f, maxf(maxf(maxf(float(r[0]) - lq.x, lq.x - float(r[1])), lq.z - z0), maxf(z1 - lq.z, maxf(float(r[2]) - lq.y, lq.y - float(r[3])))))
 		if f > peggio:
 			peggio = f
-			if f > _fuori_max:
-				_fuori_dove = "%s in (%.2f, %.2f, %.2f), stato %d" % [nomi[i], lq.x, lq.y, lq.z, o.stato]
-	return peggio
+			i_peggio = i
+			lq_peggio = lq
+	return [peggio, i_peggio, "(%.3f, %.3f, %.3f)" % [lq_peggio.x, lq_peggio.y, lq_peggio.z]]
+
+
+## La pelle di lei nella posa del momento, coi modificatori dello scheletro (i tentacoli morbidi): si misura appena lo
+## scheletro si è aggiornato, con lo skinning fatto qui (senza schermo bake_mesh_from_current_skeleton_pose non va;
+## come nel controllo di posizionamento).
+func _pelle(sk: Skeleton3D, o: ObloLei) -> void:
+	_pelle_conta += 1
+	if _pelle_conta % OGNI_PELLE != 0 or _fotogrammi_lei <= 3 or o != _oblo_misurato or o.lei == null:
+		return
+	for n in o.lei.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or mi.skin == null or not mi.is_visible_in_tree() or mi.get_node_or_null(mi.skeleton) != sk:
+			continue
+		var ossa: Array[Transform3D] = []
+		for b in mi.skin.get_bind_count():
+			var osso := mi.skin.get_bind_bone(b)
+			if osso < 0:
+				osso = sk.find_bone(mi.skin.get_bind_name(b))
+			ossa.append(sk.global_transform * (sk.get_bone_global_pose(osso) if osso >= 0 else Transform3D()) * mi.skin.get_bind_pose(b))
+		for si in mi.mesh.get_surface_count():
+			var chiave := [mi.mesh, si]
+			if not _array_mesh.has(chiave):
+				_array_mesh[chiave] = mi.mesh.surface_get_arrays(si)
+			var arr: Array = _array_mesh[chiave]
+			var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var ix = arr[Mesh.ARRAY_BONES]
+			var w = arr[Mesh.ARRAY_WEIGHTS]
+			if ix == null or w == null or (ix as PackedInt32Array).is_empty():
+				continue
+			var per := (ix as PackedInt32Array).size() / v.size()
+			var punti := PackedVector3Array()
+			punti.resize(v.size())
+			for k in v.size():
+				var q := Vector3.ZERO
+				for j in per:
+					var peso: float = w[k * per + j]
+					if peso > 0.0:
+						q += (ossa[ix[k * per + j]] * v[k]) * peso
+				punti[k] = q
+			var r := _fuori_punti(o, punti)
+			_pelle_per_stato[o.stato] = maxf(_pelle_per_stato.get(o.stato, -INF), r[0])
+			if r[0] > _pelle_max:
+				_pelle_max = r[0]
+				var ap := o.lei._ap
+				_pelle_dove = "%s, vertice %d in %s, stato %d, %s a %.2f s" % [mi.name, r[1], r[2], o.stato,
+						ap.current_animation if ap else "", ap.current_animation_position if ap else 0.0]
+	_pelle_volte += 1
 
 
 var _lei_vista: Node = null
@@ -143,6 +209,9 @@ func _misura_lei() -> void:
 	if _oblo_misurato.lei != _lei_vista:
 		_lei_vista = _oblo_misurato.lei
 		_fotogrammi_lei = 0
+		if _lei_vista:
+			for sk in _lei_vista.find_children("*", "Skeleton3D", true, false):
+				(sk as Skeleton3D).skeleton_updated.connect(_pelle.bind(sk, _oblo_misurato))
 	_fotogrammi_lei += 1
 	if _fotogrammi_lei > 3:
 		_fuori_max = maxf(_fuori_max, _fuori(_oblo_misurato))
@@ -155,6 +224,14 @@ func _angolo_occhio(o: ObloLei) -> float:
 	var occhio := o.lei.get_eye_position()
 	var dir := o.lei.get_eye_direction()
 	return rad_to_deg(dir.angle_to(p.camera.global_position - occhio))
+
+
+func _controlla_pelle(posa: String) -> void:
+	_controlla(_pelle_volte > 0 and _pelle_max <= 0.0, "%s: anche la pelle sempre dentro la vasca e dietro il vetro (%d misure, peggio %.3f m: %s; per stato %s)" % [posa, _pelle_volte, _pelle_max, _pelle_dove, _pelle_per_stato])
+	_pelle_per_stato.clear()
+	_pelle_max = -INF
+	_pelle_dove = ""
+	_pelle_volte = 0
 
 
 # --- i casi --------------------------------------------------------------------------------------------------------
@@ -207,6 +284,7 @@ func _vista_e_via(mondo: Node3D) -> void:
 	o.load_state(s)
 	_controlla(bool(s.get("finito", false)) and o.stato == ObloLei.Stato.FINITA, "lo stato finito si salva coi checkpoint")
 	_controlla(_fuori_max <= 0.0, "lei è sempre rimasta dentro la vasca, dietro il vetro (peggio %.2f m: %s)" % [_fuori_max, _fuori_dove])
+	_controlla_pelle("schiacciata")
 	_oblo_misurato = null
 	o.queue_free()
 	await _frames(3)
@@ -214,7 +292,7 @@ func _vista_e_via(mondo: Node3D) -> void:
 
 func _avvicinati(mondo: Node3D) -> void:
 	print("Se ti avvicini si stacca")
-	var o := _oblo(mondo, 20.0, "sbircia", {"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vasca_gradino": Vector2(1.6, -2.0), "vicino": 0.9, "lato_sbircia": 1.0})
+	var o := _oblo(mondo, 20.0, "sbircia", {"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vasca_gradino": Vector2(1.6, -1.8), "vicino": 0.9, "lato_sbircia": 1.0})
 	_oblo_misurato = o
 	_fuori_max = -INF
 	await _frames(5)
@@ -229,6 +307,7 @@ func _avvicinati(mondo: Node3D) -> void:
 	await _secondi(3.5)
 	_controlla(o.stato == ObloLei.Stato.FINITA and o.lei == null, "e sparisce")
 	_controlla(_fuori_max <= 0.0, "anche qui sempre dentro la vasca (peggio %.2f m: %s)" % [_fuori_max, _fuori_dove])
+	_controlla_pelle("sbircia")
 	_oblo_misurato = null
 	o.queue_free()
 	await _frames(3)
@@ -256,6 +335,7 @@ func _te_ne_vai(mondo: Node3D) -> void:
 	await _secondi(3.5)
 	_controlla(o.stato == ObloLei.Stato.FINITA and o.lei == null, "via() la manda via piano (per la torre)")
 	_controlla(_fuori_max <= 0.0, "a testa in giù sempre dentro la vasca (peggio %.2f m: %s)" % [_fuori_max, _fuori_dove])
+	_controlla_pelle("capovolta")
 	_oblo_misurato = null
 	o.queue_free()
 	await _frames(3)

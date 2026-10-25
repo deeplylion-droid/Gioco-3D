@@ -268,12 +268,13 @@ func _zona_personale() -> void:
 	_corridoio(Vector3(x - 1.0, Y, CENTRO_INFERMERIA.z + I.L + 0.1), Vector3(x + 1.0, Y, CENTRO_FIUME.z + F.X0 - 0.3), 2.6, "",
 			{"o": [OBLO_PERSONALE, ObloLei.PIASTRA * 0.5]})
 	# l'oblò nel muro ovest, fra infermeria e capannone: la vasca è stretta (2,56 m, spostata verso il capannone) e
-	# sotto il pavimento dell'infermeria (2 m sotto il centro del vetro) si allarga di 1,6 m verso sud, dove ci sono le
-	# punte dei tentacoli di lei. Lei sbircia dal bordo destro (a sud, verso l'infermeria): si vede entrando dalla porta
+	# sotto il pavimento dell'infermeria (1,8 m sotto il centro del vetro, 5 cm sotto la soletta, che arriva a y -5,65)
+	# si allarga di 1,6 m verso sud, dove ci sono le punte dei tentacoli di lei e il fianco di lei quando si stacca
+	# (a 2 m la sua pelle entrava di 6 mm nella parete). Lei sbircia dal bordo destro (a sud, verso l'infermeria): si vede entrando dalla porta
 	# del capannone. Il corridoio è largo 2 m: "troppo vicino" è col naso sul vetro. Compare già mentre arrivi dal
 	# capannone, col muro in mezzo.
 	_oblo("ObloPersonale", OBLO_PERSONALE, Vector3.RIGHT, "sbircia", AABB(Vector3(-37.0, Y - 0.2, 48.1), Vector3(4.0, 3.0, 6.0)),
-			{"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vasca_gradino": Vector2(1.6, -2.0),
+			{"vasca_larga": 2.56, "vasca_spostata": 0.2, "vasca_fonda": 5.6, "vasca_sotto": 7.0, "vasca_gradino": Vector2(1.6, -1.8),
 			"vicino": 0.9, "lato_sbircia": 1.0})
 	# le due porte sono nei muri del capannone e dell'infermeria: qui i muri di testa non servono
 	_lampada_rossa(Vector3(x + 0.95, Y + 2.2, 49.5), Vector3(-1, -0.5, 0))
