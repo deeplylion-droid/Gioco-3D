@@ -1,0 +1,20 @@
+mesh       main   2695  blocchi   2695  mancano     1  in più     1
+    mancano per zona: LuciSala/@Node3D@2242 1
+      MeshInstance3D [-9.003, 11.359, 4.529] [0.01, 0.07, 0.0] LuciSala/@Node3D@2242/@MeshInstance3D@2243
+    in più per zona: LuciSala/@Node3D@2243 1
+      MeshInstance3D [-9.037, 11.359, 4.49] [0.01, 0.07, 0.0] LuciSala/@Node3D@2243/@MeshInstance3D@2244
+forma      main   1846  blocchi   1846  mancano     0  in più     0
+luce       main    191  blocchi    191  mancano     0  in più     0
+    spento in blocchi: Risalita/Infermeria/Checkpoint/DopoLuce [-36.6, -5.4, 44.8]
+    spento in blocchi: Risalita/Infermeria/Checkpoint/DopoRadiografia [-36.6, -5.4, 44.8]
+    spento in blocchi: Risalita/Infermeria/Checkpoint/DopoNegatoscopio [-36.6, -5.4, 44.8]
+checkpoint main     26  blocchi     26  mancano     0  in più     0, attivi 23 / 23
+porta      main      2  blocchi      2  mancano     0  in più     0, attivi 2 / 2
+mesh visibili con lo strato 0 in main: 0 
+mesh visibili con lo strato 0 in blocchi: 0 
+luci accese con strato o cull mask a 0 in main: 0 
+luci accese con strato o cull mask a 0 in blocchi: 0 
+mesh e luci con strato o cull mask diversi fra main e blocchi: 0
+--- strati nodo per nodo
+mesh: 1837 nodi col nome uguale, 0 con l diversi
+luce: 40 nodi col nome uguale, 0 con l/m diversi

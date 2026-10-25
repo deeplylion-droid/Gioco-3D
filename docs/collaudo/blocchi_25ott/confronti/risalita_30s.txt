@@ -1,0 +1,31 @@
+mesh       main   2701  blocchi   2699  mancano     6  in più     4
+    mancano per zona: LuciSala/@Node3D@2242 2, LuciSala/@Node3D@2254 2, LuciSala/@Node3D@2236 1, LuciSala/@Node3D@2248 1
+      MeshInstance3D [6.478, -1.942, -3.003] [0.01, 0.07, 0.0] LuciSala/@Node3D@2236/@MeshInstance3D@2237
+      MeshInstance3D [-8.98, 5.108, 4.469] [0.01, 0.07, 0.0] LuciSala/@Node3D@2242/@MeshInstance3D@2243
+      MeshInstance3D [-9.038, 9.963, 4.479] [0.01, 0.07, 0.0] LuciSala/@Node3D@2242/@MeshInstance3D@2245
+      MeshInstance3D [1.215, 7.929, 6.013] [0.01, 0.07, 0.0] LuciSala/@Node3D@2248/@MeshInstance3D@2250
+      MeshInstance3D [14.032, 7.357, -9.033] [0.01, 0.07, 0.0] LuciSala/@Node3D@2254/@MeshInstance3D@2255
+      MeshInstance3D [14.04, 1.208, -8.984] [0.01, 0.07, 0.0] LuciSala/@Node3D@2254/@MeshInstance3D@2257
+    in più per zona: LuciSala/@Node3D@2237 1, LuciSala/@Node3D@2243 1, LuciSala/@Node3D@2249 1, LuciSala/@Node3D@2255 1
+      MeshInstance3D [6.515, 3.308, -3.017] [0.01, 0.07, 0.0] LuciSala/@Node3D@2237/@MeshInstance3D@2239
+      MeshInstance3D [-9.009, 9.056, 4.499] [0.01, 0.07, 0.0] LuciSala/@Node3D@2243/@MeshInstance3D@2244
+      MeshInstance3D [1.238, 9.383, 6.027] [0.01, 0.07, 0.0] LuciSala/@Node3D@2249/@MeshInstance3D@2250
+      MeshInstance3D [14.031, 9.78, -9.017] [0.01, 0.07, 0.0] LuciSala/@Node3D@2255/@MeshInstance3D@2256
+forma      main   1846  blocchi   1846  mancano     0  in più     0
+luce       main    201  blocchi    199  mancano     2  in più     0
+    mancano per zona: Sala/Luci 1, LuciSala/LuciAreaBimbi 1
+      SpotLight3D [-19.68, 3.88, 16.0] 1 Sala/Luci/luce_neon_01
+      OmniLight3D [-19.18, 4.328, -14.33] 1 LuciSala/LuciAreaBimbi/@OmniLight3D@2270
+    spento in blocchi: Risalita/Infermeria/Checkpoint/DopoLuce [-36.6, -5.4, 44.8]
+    spento in blocchi: Risalita/Infermeria/Checkpoint/DopoRadiografia [-36.6, -5.4, 44.8]
+    spento in blocchi: Risalita/Infermeria/Checkpoint/DopoNegatoscopio [-36.6, -5.4, 44.8]
+checkpoint main     26  blocchi     26  mancano     0  in più     0, attivi 23 / 23
+porta      main      2  blocchi      2  mancano     0  in più     0, attivi 2 / 2
+mesh visibili con lo strato 0 in main: 0 
+mesh visibili con lo strato 0 in blocchi: 0 
+luci accese con strato o cull mask a 0 in main: 0 
+luci accese con strato o cull mask a 0 in blocchi: 0 
+mesh e luci con strato o cull mask diversi fra main e blocchi: 0
+--- strati nodo per nodo
+mesh: 1837 nodi col nome uguale, 0 con l diversi
+luce: 47 nodi col nome uguale, 0 con l/m diversi

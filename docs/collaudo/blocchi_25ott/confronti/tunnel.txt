@@ -1,0 +1,36 @@
+mesh       main   1949  blocchi   1948  mancano     5  in più     4
+    mancano per zona: LuciSala/@Node3D@1317 2, LuciSala/@Node3D@1299 1, LuciSala/@Node3D@1305 1, LuciSala/@Node3D@1311 1
+      MeshInstance3D [6.533, 10.934, -2.984] [0.01, 0.07, 0.0] LuciSala/@Node3D@1299/@MeshInstance3D@1300
+      MeshInstance3D [-9.02, 10.983, 4.532] [0.01, 0.07, 0.0] LuciSala/@Node3D@1305/@MeshInstance3D@1306
+      MeshInstance3D [1.165, 10.216, 6.016] [0.01, 0.07, 0.0] LuciSala/@Node3D@1311/@MeshInstance3D@1312
+      MeshInstance3D [13.97, 8.065, -8.972] [0.01, 0.07, 0.0] LuciSala/@Node3D@1317/@MeshInstance3D@1318
+      MeshInstance3D [13.965, 11.25, -8.996] [0.01, 0.07, 0.0] LuciSala/@Node3D@1317/@MeshInstance3D@1319
+    in più per zona: LuciSala/@Node3D@1300 1, LuciSala/@Node3D@1306 1, LuciSala/@Node3D@1318 1, Atmosfera/GocceNellaPozza 1
+      MeshInstance3D [6.474, 7.208, -2.971] [0.01, 0.07, 0.0] LuciSala/@Node3D@1300/@MeshInstance3D@1301
+      MeshInstance3D [-8.975, 11.22, 4.516] [0.01, 0.07, 0.0] LuciSala/@Node3D@1306/@MeshInstance3D@1307
+      MeshInstance3D [13.994, 11.384, -9.019] [0.01, 0.07, 0.0] LuciSala/@Node3D@1318/@MeshInstance3D@1319
+      MeshInstance3D [0.885, 4.443, 2.606] [0.012, 0.045, 0.0] Atmosfera/GocceNellaPozza/@MeshInstance3D@1245
+forma      main   1145  blocchi   1145  mancano     0  in più     0
+luce       main     55  blocchi     54  mancano     1  in più     0
+    mancano per zona: Sala/Luci 1
+      SpotLight3D [-12.0, 3.88, 19.68] 1 Sala/Luci/luce_neon_17
+    spento in blocchi: SalaTorre/Checkpoint_portone [21.4, 0.0, -15.0]
+    spento in blocchi: SalaTorre/Checkpoint_NEm3 [34.01, -3.0, -21.76]
+    spento in blocchi: SalaTorre/Checkpoint_SEm6 [37.76, -6.0, -11.99]
+    spento in blocchi: SalaTorre/Checkpoint_SOm9 [27.99, -9.0, -8.24]
+    spento in blocchi: SalaTorre/Checkpoint_NOm12 [23.116, -12.0, -19.355]
+    spento in blocchi: SalaTorre/Checkpoint_NEm15 [35.332, -15.0, -23.161]
+    spento in blocchi: SalaTorre/Checkpoint_fondo [37.894, -20.0, -14.85]
+    spento in blocchi: SalaTorre/SalaInseguimento/Checkpoint_vasca_1 [51.4, -22.6, -15.0]
+    spento in blocchi: SalaTorre/SalaInseguimento/Checkpoint_vasca_2 [64.0, -25.6, -28.6]
+    spento in blocchi: SalaTorre/SalaInseguimento/Checkpoint_vasca_3 [69.5, -28.6, -5.0]
+checkpoint main     23  blocchi     23  mancano     0  in più     0, attivi 12 / 12
+porta      main      1  blocchi      1  mancano     0  in più     0, attivi 1 / 1
+mesh visibili con lo strato 0 in main: 0 
+mesh visibili con lo strato 0 in blocchi: 0 
+luci accese con strato o cull mask a 0 in main: 0 
+luci accese con strato o cull mask a 0 in blocchi: 0 
+mesh e luci con strato o cull mask diversi fra main e blocchi: 0
+--- strati nodo per nodo
+mesh: 908 nodi col nome uguale, 0 con l diversi
+luce: 29 nodi col nome uguale, 0 con l/m diversi

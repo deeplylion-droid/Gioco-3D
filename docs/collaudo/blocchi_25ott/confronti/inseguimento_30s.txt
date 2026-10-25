@@ -1,0 +1,48 @@
+mesh       main   2315  blocchi   2315  mancano     6  in più     6
+    mancano per zona: LuciSala/@Node3D@1794 2, Atmosfera/GocceNellaPozza 1, LuciSala/@Node3D@1776 1, LuciSala/@Node3D@1782 1, LuciSala/@Node3D@1788 1
+      MeshInstance3D [0.877, 2.687, 2.611] [0.012, 0.045, 0.0] Atmosfera/GocceNellaPozza/@MeshInstance3D@1244
+      MeshInstance3D [6.494, 10.934, -2.982] [0.01, 0.07, 0.0] LuciSala/@Node3D@1776/@MeshInstance3D@1777
+      MeshInstance3D [-9.0, 10.371, 4.478] [0.01, 0.07, 0.0] LuciSala/@Node3D@1782/@MeshInstance3D@1783
+      MeshInstance3D [1.236, 6.308, 6.013] [0.01, 0.07, 0.0] LuciSala/@Node3D@1788/@MeshInstance3D@1789
+      MeshInstance3D [14.017, 2.558, -8.99] [0.01, 0.07, 0.0] LuciSala/@Node3D@1794/@MeshInstance3D@1795
+      MeshInstance3D [13.962, 11.359, -8.962] [0.01, 0.07, 0.0] LuciSala/@Node3D@1794/@MeshInstance3D@1796
+    in più per zona: LuciSala/@Node3D@1777 2, Gioco/RitornoAlBuio 1, LuciSala/@Node3D@1783 1, LuciSala/@Node3D@1789 1, LuciSala/@Node3D@1795 1
+      MeshInstance3D [0.472, 0.883, 12.238] [0.012, 0.045, 0.0] Gioco/RitornoAlBuio/Scia/@Node3D@2101/@MeshInstance3D@2102
+      MeshInstance3D [6.498, 10.371, -2.969] [0.01, 0.07, 0.0] LuciSala/@Node3D@1777/@MeshInstance3D@1778
+      MeshInstance3D [6.501, 3.758, -3.002] [0.01, 0.07, 0.0] LuciSala/@Node3D@1777/@MeshInstance3D@1779
+      MeshInstance3D [-9.027, 9.168, 4.478] [0.01, 0.07, 0.0] LuciSala/@Node3D@1783/@MeshInstance3D@1785
+      MeshInstance3D [1.179, 11.373, 5.971] [0.01, 0.07, 0.0] LuciSala/@Node3D@1789/@MeshInstance3D@1790
+      MeshInstance3D [13.985, 10.711, -8.98] [0.01, 0.07, 0.0] LuciSala/@Node3D@1795/@MeshInstance3D@1796
+forma      main   1295  blocchi   1295  mancano     0  in più     0
+luce       main    268  blocchi    262  mancano     7  in più     1
+    mancano per zona: SalaTorre/SalaInseguimento 6, Sala/Luci 1
+      OmniLight3D [54.55, -18.35, -13.6] 1 SalaTorre/SalaInseguimento/Luci/@OmniLight3D@1658
+      OmniLight3D [64.0, -21.35, -25.45] 1 SalaTorre/SalaInseguimento/Luci/@OmniLight3D@1666
+      OmniLight3D [72.05, -24.35, -6.6] 1 SalaTorre/SalaInseguimento/Luci/@OmniLight3D@1674
+      SpotLight3D [19.68, 3.88, -20.0] 1 Sala/Luci/luce_neon_13
+      SpotLight3D [54.55, -18.2, -13.6] 1 SalaTorre/SalaInseguimento/Luci/@SpotLight3D@1659
+      SpotLight3D [64.0, -21.2, -25.45] 1 SalaTorre/SalaInseguimento/Luci/@SpotLight3D@1667
+    in più per zona: Sala/Luci 1
+      SpotLight3D [-12.0, 3.88, 19.68] 1 Sala/Luci/luce_neon_17
+checkpoint main     23  blocchi     23  mancano     0  in più     0, attivi 23 / 23
+porta      main      1  blocchi      1  mancano     0  in più     0, attivi 1 / 1
+mesh visibili con lo strato 0 in main: 0 
+mesh visibili con lo strato 0 in blocchi: 0 
+luci accese con strato o cull mask a 0 in main: 0 
+luci accese con strato o cull mask a 0 in blocchi: 0 
+mesh e luci con strato o cull mask diversi fra main e blocchi: 12
+      [-9.6, 0.265, -18.2] main l 1 m -, blocchi l 524288 m - Vasche/AcquaVascaBimbi2/Surface
+      [-9.6, 0.255, -18.2] main l 524288 m -, blocchi l 1 m - Vasche/VascaBimbi2/Graybox/Superficie
+      [-12.5, -0.208, 2.0] main l 1 m -, blocchi l 524288 m - Vasche/AcquaVascaArrivo/Surface
+      [-12.5, -0.22, 2.0] main l 524288 m -, blocchi l 1 m - Vasche/VascaArrivo/Graybox/Superficie
+      [-12.6, 0.347, -9.6] main l 1 m -, blocchi l 524288 m - Vasche/AcquaVascaBimbi1/Surface
+      [-12.6, 0.335, -9.6] main l 524288 m -, blocchi l 1 m - Vasche/VascaBimbi1/Graybox/Superficie
+      [16.9, 4.154, -22.3] main l 1 m -, blocchi l 524288 m - Gioco/EnigmaAcquari/AcquarioGiallo/Acqua/Surface
+      [16.9, 4.142, -22.3] main l 524288 m -, blocchi l 1 m - Gioco/EnigmaAcquari/AcquarioGiallo/Graybox/Superficie
+      [5.7, 4.154, -22.3] main l 1 m -, blocchi l 524288 m - Gioco/EnigmaAcquari/AcquarioBlu/Acqua/Surface
+      [5.7, 4.142, -22.3] main l 524288 m -, blocchi l 1 m - Gioco/EnigmaAcquari/AcquarioBlu/Graybox/Superficie
+      [0.0, 0.892, 10.0] main l 1 m -, blocchi l 524288 m - Vasca/AcquaVascaCentrale/Surface
+      [0.0, 0.88, 10.0] main l 524288 m -, blocchi l 1 m - Vasca/VascaCentrale/Graybox/Superficie
+--- strati nodo per nodo
+mesh: 1014 nodi col nome uguale, 0 con l diversi
+luce: 38 nodi col nome uguale, 0 con l/m diversi

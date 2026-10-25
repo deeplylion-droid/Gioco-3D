@@ -1,0 +1,30 @@
+mesh       main   2313  blocchi   2311  mancano     6  in più     4
+    mancano per zona: LuciSala/@Node3D@1238 3, LuciSala/@Node3D@1232 1, LuciSala/@Node3D@1244 1, LuciSala/@Node3D@1250 1
+      MeshInstance3D [6.523, 5.108, -2.988] [0.01, 0.07, 0.0] LuciSala/@Node3D@1232/@MeshInstance3D@1233
+      MeshInstance3D [-8.976, 11.397, 4.512] [0.01, 0.07, 0.0] LuciSala/@Node3D@1238/@MeshInstance3D@1239
+      MeshInstance3D [-8.987, 9.277, 4.48] [0.01, 0.07, 0.0] LuciSala/@Node3D@1238/@MeshInstance3D@1240
+      MeshInstance3D [-9.022, 3.608, 4.471] [0.01, 0.07, 0.0] LuciSala/@Node3D@1238/@MeshInstance3D@1241
+      MeshInstance3D [1.233, 6.308, 6.026] [0.01, 0.07, 0.0] LuciSala/@Node3D@1244/@MeshInstance3D@1245
+      MeshInstance3D [14.021, 10.444, -9.038] [0.01, 0.07, 0.0] LuciSala/@Node3D@1250/@MeshInstance3D@1251
+    in più per zona: LuciSala/@Node3D@1232 1, LuciSala/@Node3D@1238 1, LuciSala/@Node3D@1244 1, LuciSala/@Node3D@1250 1
+      MeshInstance3D [6.512, 10.05, -2.999] [0.01, 0.07, 0.0] LuciSala/@Node3D@1232/@MeshInstance3D@1233
+      MeshInstance3D [-9.037, 4.658, 4.469] [0.01, 0.07, 0.0] LuciSala/@Node3D@1238/@MeshInstance3D@1240
+      MeshInstance3D [1.235, 9.963, 6.029] [0.01, 0.07, 0.0] LuciSala/@Node3D@1244/@MeshInstance3D@1246
+      MeshInstance3D [13.965, 4.208, -8.989] [0.01, 0.07, 0.0] LuciSala/@Node3D@1250/@MeshInstance3D@1251
+forma      main   1302  blocchi   1302  mancano     0  in più     0
+luce       main    266  blocchi    267  mancano     1  in più     2
+    mancano per zona: Sala/Luci 1
+      SpotLight3D [8.0, 3.88, -23.68] 1 Sala/Luci/luce_neon_25
+    in più per zona: Sala/Luci 2
+      SpotLight3D [-19.68, 3.88, 8.0] 1 Sala/Luci/luce_neon_04
+      SpotLight3D [19.68, 3.88, -20.0] 1 Sala/Luci/luce_neon_13
+checkpoint main     23  blocchi     23  mancano     0  in più     0, attivi 23 / 23
+porta      main      1  blocchi      1  mancano     0  in più     0, attivi 1 / 1
+mesh visibili con lo strato 0 in main: 0 
+mesh visibili con lo strato 0 in blocchi: 0 
+luci accese con strato o cull mask a 0 in main: 0 
+luci accese con strato o cull mask a 0 in blocchi: 0 
+mesh e luci con strato o cull mask diversi fra main e blocchi: 0
+--- strati nodo per nodo
+mesh: 1012 nodi col nome uguale, 0 con l diversi
+luce: 37 nodi col nome uguale, 0 con l/m diversi

@@ -1,0 +1,47 @@
+mesh       main   1961  blocchi   1961  mancano    17  in più    17
+    mancano per zona: SalaSottomarino/LeiTunnel 12, Atmosfera/GocceNellaPozza 1, LuciSala/@Node3D@8287 1, LuciSala/@Node3D@8293 1, LuciSala/@Node3D@8299 1, LuciSala/@Node3D@8305 1
+      MeshInstance3D [32.999, -23.687, -7.895] [1.686, 2.821, 1.567] SalaSottomarino/LeiTunnel/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa
+      MeshInstance3D [33.0, -24.601, -7.898] [1.621, 0.865, 1.487] SalaSottomarino/LeiTunnel/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Interno
+      MeshInstance3D [33.015, -22.834, -7.918] [1.224, 1.084, 0.962] SalaSottomarino/LeiTunnel/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Ciocche
+      MeshInstance3D [0.899, -1.886, 2.592] [0.012, 0.045, 0.0] Atmosfera/GocceNellaPozza/@MeshInstance3D@8233
+      MeshInstance3D [6.492, 8.942, -2.991] [0.01, 0.07, 0.0] LuciSala/@Node3D@8287/@MeshInstance3D@8289
+      MeshInstance3D [-9.028, 6.908, 4.486] [0.01, 0.07, 0.0] LuciSala/@Node3D@8293/@MeshInstance3D@8294
+    in più per zona: SalaSottomarino/LeiTunnel 12, LuciSala/@Node3D@8306 2, LuciSala/@Node3D@8288 1, LuciSala/@Node3D@8294 1, LuciSala/@Node3D@8300 1
+      MeshInstance3D [33.0, -24.603, -7.308] [1.621, 0.903, 1.508] SalaSottomarino/LeiTunnel/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Interno
+      MeshInstance3D [33.015, -22.837, -7.284] [1.224, 1.108, 0.989] SalaSottomarino/LeiTunnel/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Ciocche
+      MeshInstance3D [32.997, -24.807, -7.319] [1.529, 0.767, 1.603] SalaSottomarino/LeiTunnel/Lei/Modello/Medusa_Scheletro/Skeleton3D/Medusa_Bordo
+      MeshInstance3D [6.489, 5.408, -2.966] [0.01, 0.07, 0.0] LuciSala/@Node3D@8288/@MeshInstance3D@8289
+      MeshInstance3D [-9.025, 7.208, 4.468] [0.01, 0.07, 0.0] LuciSala/@Node3D@8294/@MeshInstance3D@8295
+      MeshInstance3D [1.228, 3.308, 5.973] [0.01, 0.07, 0.0] LuciSala/@Node3D@8300/@MeshInstance3D@8301
+forma      main   1145  blocchi   1145  mancano     1  in più     1
+    mancano per zona: SalaSottomarino/LeiTunnel 1
+      SphereShape3D [33.049, -25.088, -7.364] [0.0, 0.0, 0.0] SalaSottomarino/LeiTunnel/Lei/Viso/@CollisionShape3D@9907
+    in più per zona: SalaSottomarino/LeiTunnel 1
+      SphereShape3D [33.071, -25.089, -6.76] [0.0, 0.0, 0.0] SalaSottomarino/LeiTunnel/Lei/Viso/@CollisionShape3D@9908
+luce       main     64  blocchi     66  mancano     1  in più     3
+    mancano per zona: SalaSottomarino/LeiTunnel 1
+      OmniLight3D [33.0, -27.105, -7.009] 1 SalaSottomarino/LeiTunnel/Lei/@OmniLight3D@9906
+    in più per zona: Sala/Luci 2, SalaSottomarino/LeiTunnel 1
+      SpotLight3D [-19.68, 3.88, 8.0] 1 Sala/Luci/luce_neon_04
+      SpotLight3D [-19.68, 3.88, -20.0] 1 Sala/Luci/luce_neon_14
+      OmniLight3D [33.0, -27.129, -6.484] 1 SalaSottomarino/LeiTunnel/Lei/@OmniLight3D@9907
+    spento in blocchi: SalaTorre/Checkpoint_portone [21.4, 0.0, -15.0]
+    spento in blocchi: SalaTorre/Checkpoint_NEm3 [34.01, -3.0, -21.76]
+    spento in blocchi: SalaTorre/Checkpoint_SEm6 [37.76, -6.0, -11.99]
+    spento in blocchi: SalaTorre/Checkpoint_SOm9 [27.99, -9.0, -8.24]
+    spento in blocchi: SalaTorre/Checkpoint_NOm12 [23.116, -12.0, -19.355]
+    spento in blocchi: SalaTorre/Checkpoint_NEm15 [35.332, -15.0, -23.161]
+    spento in blocchi: SalaTorre/Checkpoint_fondo [37.894, -20.0, -14.85]
+    spento in blocchi: SalaTorre/SalaInseguimento/Checkpoint_vasca_1 [51.4, -22.6, -15.0]
+    spento in blocchi: SalaTorre/SalaInseguimento/Checkpoint_vasca_2 [64.0, -25.6, -28.6]
+    spento in blocchi: SalaTorre/SalaInseguimento/Checkpoint_vasca_3 [69.5, -28.6, -5.0]
+checkpoint main     23  blocchi     23  mancano     0  in più     0, attivi 12 / 12
+porta      main      1  blocchi      1  mancano     0  in più     0, attivi 1 / 1
+mesh visibili con lo strato 0 in main: 0 
+mesh visibili con lo strato 0 in blocchi: 0 
+luci accese con strato o cull mask a 0 in main: 0 
+luci accese con strato o cull mask a 0 in blocchi: 0 
+mesh e luci con strato o cull mask diversi fra main e blocchi: 0
+--- strati nodo per nodo
+mesh: 920 nodi col nome uguale, 0 con l diversi
+luce: 35 nodi col nome uguale, 0 con l/m diversi
