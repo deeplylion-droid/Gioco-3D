@@ -1,0 +1,76 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+== rotti
+  ok  mancante: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+  ok  mancante: continue_from_disk rifiuta
+ERROR: Parse JSON failed. Error at line 0: Unknown error getting token
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] has_save (res://scripts/game/game_state.gd:359)
+       [2] _costruisci_interfaccia (res://scripts/ui/menu/menu_principale.gd:317)
+       [3] _ready (res://scripts/ui/menu/menu_principale.gd:59)
+  ok  vuoto: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+ERROR: Parse JSON failed. Error at line 0: Unknown error getting token
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] continue_from_disk (res://scripts/game/game_state.gd:383)
+       [2] _rotti (res://tests/collaudo_continua_a1.gd:251)
+       [3] _apri_titolo (res://tests/collaudo_continua_a1.gd:288)
+  ok  vuoto: continue_from_disk rifiuta
+ERROR: Parse JSON failed. Error at line 0: Expected key
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] has_save (res://scripts/game/game_state.gd:359)
+       [2] _costruisci_interfaccia (res://scripts/ui/menu/menu_principale.gd:317)
+       [3] _ready (res://scripts/ui/menu/menu_principale.gd:59)
+  ok  json rotto: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+ERROR: Parse JSON failed. Error at line 0: Expected key
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] continue_from_disk (res://scripts/game/game_state.gd:383)
+       [2] _rotti (res://tests/collaudo_continua_a1.gd:251)
+       [3] _apri_titolo (res://tests/collaudo_continua_a1.gd:288)
+  ok  json rotto: continue_from_disk rifiuta
+ERROR: Parse JSON failed. Error at line 0: Unterminated string
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] has_save (res://scripts/game/game_state.gd:359)
+       [2] _costruisci_interfaccia (res://scripts/ui/menu/menu_principale.gd:317)
+       [3] _ready (res://scripts/ui/menu/menu_principale.gd:59)
+  ok  troncato a metà: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+ERROR: Parse JSON failed. Error at line 0: Unterminated string
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] continue_from_disk (res://scripts/game/game_state.gd:383)
+       [2] _rotti (res://tests/collaudo_continua_a1.gd:251)
+       [3] _apri_titolo (res://tests/collaudo_continua_a1.gd:288)
+  ok  troncato a metà: continue_from_disk rifiuta
+  ok  una lista invece di un dizionario: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+  ok  una lista invece di un dizionario: continue_from_disk rifiuta
+  ok  versione vecchia: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+  ok  versione vecchia: continue_from_disk rifiuta
+  ok  scena che non esiste: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+  ok  scena che non esiste: continue_from_disk rifiuta
+  ok  senza giocatore: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+  ok  senza giocatore: continue_from_disk rifiuta
+ERROR: Parse JSON failed. Error at line 0: Unexpected character
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] has_save (res://scripts/game/game_state.gd:359)
+       [2] _costruisci_interfaccia (res://scripts/ui/menu/menu_principale.gd:317)
+       [3] _ready (res://scripts/ui/menu/menu_principale.gd:59)
+  ok  byte a caso: il titolo si apre, senza Continua (["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+ERROR: Parse JSON failed. Error at line 0: Unexpected character
+   GDScript backtrace (most recent call first):
+       [0] salvataggio (res://scripts/game/game_state.gd:367)
+       [1] continue_from_disk (res://scripts/game/game_state.gd:383)
+       [2] _rotti (res://tests/collaudo_continua_a1.gd:251)
+       [3] _apri_titolo (res://tests/collaudo_continua_a1.gd:288)
+  ok  byte a caso: continue_from_disk rifiuta
+  ok  un .tmp rotto accanto a un salvataggio buono: Continua c'è
+  ok  e il salvataggio è quello buono
+  (solo il .tmp completo, senza salvataggio: voci ["NuovaPartita", "Opzioni", "Comandi", "Esci"])
+RISULTATO: 20 controlli ok, 0 falliti

@@ -1,0 +1,25 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+== joypad:torre
+  ok  la partenza torre c'è
+  ok  voci del titolo ["Continua", "NuovaPartita", "Opzioni", "Comandi", "Esci"]
+  ok  il focus parte su Continua
+  ok  joypad: giù porta il focus su Nuova partita
+  ok  joypad: su lo riporta su Continua
+  KO  joypad: A conferma Continua (ui_accept non ha pulsanti del joypad: si conferma con Invio)
+  ok  joypad: Continua scelto (il titolo parte)
+  ok  torre: la sala è aperta col giocatore
+  ok  torre: al checkpoint (a 0.01 m)
+  ok  torre: checkpoint SalaTorre/Checkpoint_portone
+  ok  torre: luci 2 (salvate 2)
+  ok  torre: l'inventario ["zaino_pompa"] (mancano [])
+  ok  torre: lo zaino con 20.00 di acqua (salvata 20.00)
+  ok  torre: 10 Polaroid, come nel salvataggio ["p01", "p02", "p03", "p04", "p05", "p08", "p09", "p06", "p07", "PolaroidPecora"]
+  ok  torre: entrando nel checkpoint SalaTorre/Checkpoint_NEm3 il salvataggio è suo (SalaTorre/Checkpoint_NEm3)
+  ok  torre, dopo la chiusura: riparte da SalaTorre/Checkpoint_NEm3 (a 0.01 m)
+  ok  torre, dopo la chiusura: l'acqua del checkpoint (20.00 / 20.00)
+RISULTATO: 16 controlli ok, 1 falliti
+ERROR: 404 resources still in use at exit (run with --verbose for details).

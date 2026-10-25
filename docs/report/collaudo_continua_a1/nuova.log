@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+Unicode parsing error, some characters were replaced with � (U+FFFD): Unexpected NUL character
+== nuova
+  ok  il focus su Nuova partita
+  ok  nuova partita: la sala dall'inizio
+  ok  prima del primo checkpoint il salvataggio vecchio c'è ancora (SalaTorre/Checkpoint_portone)
+  ok  anche raccogliendo qualcosa prima del primo checkpoint
+  ok  uscendo prima del primo checkpoint, nel titolo c'è ancora Continua
+  checkpoint Interni/Gioco/CheckpointRisveglio ordine -10 a 1.6 m dal giocatore
+  checkpoint Interni/Gioco/CheckpointIngressoSpogliatoi ordine -9 a 8.1 m dal giocatore
+  checkpoint Interni/Gioco/CheckpointStanzino ordine -8 a 7.7 m dal giocatore
+  checkpoint Interni/Gioco/CheckpointLavapiedi ordine -7 a 11.6 m dal giocatore
+  checkpoint con ordine sotto -1 (scartati da reach_checkpoint dopo l'istantanea "inizio" a -1): 6
+  Interni/Gioco/CheckpointRisveglio: in memoria inizio, su disco SalaTorre/Checkpoint_portone
+  Gioco/CheckpointIngresso: in memoria Gioco/CheckpointIngresso, su disco Gioco/CheckpointIngresso
+  ok  dopo il primo checkpoint (Gioco/CheckpointIngresso) il salvataggio è della partita nuova (Gioco/CheckpointIngresso)
+  ok  la Polaroid finta della prima partita non è nel salvataggio nuovo
+ERROR: Condition "!is_inside_tree()" is true. Returning: Transform3D()
+   GDScript backtrace (most recent call first):
+       [0] _lampada (res://scripts/game/luci_bianche.gd:271)
+       [1] _materiali_di (res://scripts/game/luci_bianche.gd:201)
+       [2] _process (res://scripts/game/luci_bianche.gd:99)
+  ok  nel titolo c'è Continua
+  ok  Continua riparte dalla partita nuova (Gioco/CheckpointIngresso)
+RISULTATO: 9 controlli ok, 0 falliti
+ERROR: 353 resources still in use at exit (run with --verbose for details).
