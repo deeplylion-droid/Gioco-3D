@@ -29,6 +29,9 @@ signal lei_compare(dove: String)
 signal lei_respinta
 signal grata_calata
 signal sb1_iniziato
+## Dopo SB1 il capitolo continua nel tunnel del viaggio sottomarino ([member dopo_sb1_continua]): lei si è tuffata,
+## i comandi sono tornati, la scaletta e la porta sono accese.
+signal sb1_finito
 
 const DIR := "res://assets/ambiente/inseguimento/"
 const ROSSO := Color(1.0, 0.035, 0.02)
@@ -53,6 +56,10 @@ const R_TUBO := 0.78
 @export var comparsa := PackedFloat32Array([20.0, 1.5, 4.0])
 ## Le luci (le macchine lente nei test le possono spegnere).
 @export var crea_luci := true
+## Vero: dopo SB1 il capitolo continua oltre la porta in cima alla scaletta, nel tunnel del viaggio sottomarino
+## (scelte dell'utente del 24 ottobre): lei ti fissa, poi si tuffa e ti ridà i comandi, e la scaletta e la porta si
+## accendono. Falso: nero e fine del capitolo, come prima.
+@export var dopo_sb1_continua := false
 ## I quattro GLB (struttura, tubi, prop, mobili): nella scena, così si caricano col thread insieme a lei.
 ## Vuoto: si caricano da DIR.
 @export var modelli: Array[PackedScene] = []
@@ -154,6 +161,8 @@ func _modello(i: int) -> void:
 	var torbida: Material = load("res://assets/materials/sala/acqua_torbida.tres")
 	for m in glb.find_children("acqua*", "MeshInstance3D", true, false):
 		(m as MeshInstance3D).material_override = torbida if String(m.name).begins_with("acqua_allagata") else acqua
+	if nome == "struttura":
+		_varco_scalette(glb)
 	if _a_pezzi:
 		var figli := glb.get_children()
 		for c in figli:
@@ -163,6 +172,47 @@ func _modello(i: int) -> void:
 			passi.append(func(): glb.add_child(c))
 		_coda = passi + _coda
 	add_child(glb)
+
+
+## Toglie dalla collisione della struttura i montanti e i pioli delle scalette (restano da vedere): in cima i
+## montanti salgono 1 m sopra la passerella a 0,5 m l'uno dall'altro, e il giocatore, largo 0,7 m, scavalcando il
+## bordo restava incastrato fra i due (collaudo T1). Sulla scala lo tiene già l'area della scala (Ladder).
+func _varco_scalette(glb: Node3D) -> void:
+	for sb in glb.find_children("*", "StaticBody3D", true, false):
+		for cs in sb.get_children():
+			if not cs is CollisionShape3D or not (cs as CollisionShape3D).shape is ConcavePolygonShape3D:
+				continue
+			# la forma nelle coordinate della sala (il GLB entra nella sala senza spostamenti)
+			var t := Transform3D.IDENTITY
+			var n: Node = cs
+			while n != glb:
+				t = (n as Node3D).transform * t
+				n = n.get_parent()
+			t = glb.transform * t
+			var facce := ((cs as CollisionShape3D).shape as ConcavePolygonShape3D).get_faces()
+			var tenute := PackedVector3Array()
+			for i in range(0, facce.size(), 3):
+				if not (_nella_scaletta(t * facce[i]) and _nella_scaletta(t * facce[i + 1]) and _nella_scaletta(t * facce[i + 2])):
+					tenute.append_array([facce[i], facce[i + 1], facce[i + 2]])
+			if tenute.size() < facce.size():
+				var forma := ConcavePolygonShape3D.new()
+				forma.backface_collision = ((cs as CollisionShape3D).shape as ConcavePolygonShape3D).backface_collision
+				forma.set_faces(tenute)
+				(cs as CollisionShape3D).shape = forma
+
+
+## Vero se [param q] (coordinate della sala) sta sul modello di una scaletta: fino a 30 cm dietro il suo piede,
+## largo 0,8 m, dal piede a 1,5 m sopra la cima.
+func _nella_scaletta(q: Vector3) -> bool:
+	for s in dati["scale"]:
+		var piede := b([s["x"], s["y"], s["z0"]])
+		var verso := b(s["verso"])
+		var d := q - piede
+		var lungo := d.dot(verso)
+		if lungo > -0.3 and lungo < 0.02 and absf(d.dot(verso.cross(Vector3.UP))) < 0.4 \
+				and q.y > piede.y - 0.5 and q.y < float(s["z1"]) + 1.5:
+			return true
+	return false
 
 
 # --- tubi -------------------------------------------------------------------------------------------
@@ -834,7 +884,43 @@ func inizia_sb1() -> void:
 			var pitch := asin(clampf(dir.y, -1.0, 1.0))
 			pl.set_look(lerp_angle(pl.yaw, yaw, k), lerpf(pl.pitch, pitch, k)), 0.0, 1.0, 1.4)
 	tw.tween_interval(2.6)
-	tw.tween_callback(_nero)
+	tw.tween_callback(_dopo_sb1 if dopo_sb1_continua else _nero)
+
+
+## Dopo SB1, col tunnel: lei si tuffa nel pozzo, i comandi tornano, e la strada si vede subito (l'utente: "dopo che
+## jilly mi guarda... che dovrebbe succedere?"): un faro caldo sulla scaletta e la luce sopra la porta in cima.
+func _dopo_sb1() -> void:
+	_scendi(false)
+	var p := GameState.player
+	if p and is_instance_valid(p):
+		p.input_enabled = true
+	var sc: Dictionary = dati["scale"][dati["scale"].size() - 1]
+	var piede := b([sc["x"], sc["y"], sc["z0"]])
+	var cima := b([sc["x"], sc["y"], sc["z1"]])
+	var faro := SpotLight3D.new()
+	faro.name = "FaroScaletta"
+	faro.light_color = Color(1.0, 0.82, 0.55)
+	faro.light_energy = 0.0
+	faro.spot_range = 9.0
+	faro.spot_angle = 24.0
+	faro.shadow_enabled = true
+	faro.set_meta(&"risveglio_ignora", true)
+	add_child(faro)
+	faro.global_position = cima + Vector3(1.6, 3.2, 0.0)
+	faro.look_at((piede + cima) * 0.5, Vector3.UP)
+	var porta := b(dati["porta"]["pos"])
+	var sopra := OmniLight3D.new()
+	sopra.name = "LucePorta"
+	sopra.light_color = Color(1.0, 0.85, 0.6)
+	sopra.light_energy = 0.0
+	sopra.omni_range = 5.0
+	sopra.set_meta(&"risveglio_ignora", true)
+	add_child(sopra)
+	sopra.global_position = porta + Vector3(0.6, 2.5, 0.0)
+	var tw := create_tween().set_parallel()
+	tw.tween_property(faro, "light_energy", 10.0, 1.2)
+	tw.tween_property(sopra, "light_energy", 2.5, 1.2)
+	sb1_finito.emit()
 
 
 ## SB1: lo spigolo del pozzo dalla parte del giocatore; lei 1 m dietro lo spigolo e 0,8 m sotto il bordo,

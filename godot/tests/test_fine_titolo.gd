@@ -5,6 +5,7 @@ extends Node
 ## titolo (scelta 12A dell'utente, 24 ottobre). Il tempo della scritta si ferma con la pausa, e il ritorno al titolo
 ## non scatta una seconda volta.
 ## Con FINE_SCATTO=<file.jpg> (e un renderer vero) salva lo schermo col nero e la scritta.
+## Con FINE_TUNNEL=1 la fine è quella del tunnel del viaggio sottomarino (il portello chiuso, lo schianto, il nero).
 ## Uso: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fine_titolo.gd
 
 const SALA := "res://scenes/sala_principale.tscn"
@@ -74,13 +75,32 @@ func _run() -> void:
 			_fine()
 			return
 		await _secondi(1.0)
-		# la fine vera: Jilly ti guarda, il nero, la fine del capitolo
-		ins.call(&"_nero")
-		await _secondi(2.5)
-		check(bool(level.get(&"demo_finished")), "il nero dell'inseguimento finisce il capitolo (la demo)")
-		for c in ins.get_children():
-			if c is CanvasLayer:
-				nero = c
+		if OS.get_environment("FINE_TUNNEL") != "":
+			# la fine nel tunnel del viaggio sottomarino: si chiude il portello, lei ci sbatte, il nero del tunnel
+			level.call(&"_metti_sottomarino", load(level.get(&"sala_sottomarino_scena")) as PackedScene, false)
+			var tunnel: Node = level.get(&"sala_sottomarino")
+			check(tunnel != null, "c'è il tunnel")
+			# (se il tunnel si stava già costruendo a pezzi dal caricamento nel thread, si aspetta che finisca)
+			var t2 := Time.get_ticks_msec()
+			while tunnel and not bool(tunnel.get(&"costruita")) and Time.get_ticks_msec() - t2 < 120000:
+				await get_tree().process_frame
+			tunnel.call(&"chiudi_portello")
+			var t1 := Time.get_ticks_msec()
+			while not bool(level.get(&"demo_finished")) and Time.get_ticks_msec() - t1 < 30000:
+				await get_tree().process_frame
+			check(bool(level.get(&"demo_finished")), "il portello chiuso e lo schianto finiscono la demo")
+			await _secondi(1.5)      # (come dopo il nero dell'inseguimento: i tempi della scritta sotto contano da qui)
+			for c in tunnel.get_children():
+				if c is CanvasLayer:
+					nero = c
+		else:
+			# la fine vera: Jilly ti guarda, il nero, la fine del capitolo
+			ins.call(&"_nero")
+			await _secondi(2.5)
+			check(bool(level.get(&"demo_finished")), "il nero dell'inseguimento finisce il capitolo (la demo)")
+			for c in ins.get_children():
+				if c is CanvasLayer:
+					nero = c
 		var rect := nero.get_child(0) as ColorRect if nero else null
 		check(rect != null and rect.color.a > 0.99 and rect.is_visible_in_tree(), "lo schermo è nero (livello %d)" % (nero.layer if nero else -1))
 	var hud = level.call(&"_hud")
@@ -90,6 +110,9 @@ func _run() -> void:
 		"la scritta sta sopra il nero e sotto il menu di pausa (livello %d)" % (strato.layer if strato else -1))
 	check(scritta != null and scritta.is_visible_in_tree() and scritta.modulate.a > 0.9 and scritta.text.begins_with("FINE DELLA DEMO"),
 		"la scritta si vede: «%s»" % (scritta.text.replace("\n", " / ") if scritta else ""))
+	if OS.get_environment("FINE_TUNNEL") != "":
+		# (collaudo D4: dopo il tunnel solo la scritta, senza la riga della torre)
+		check(scritta != null and scritta.text == "FINE DELLA DEMO", "dopo il tunnel solo «FINE DELLA DEMO», senza la riga della torre")
 	check(hud != null and (hud as CanvasLayer).layer < nero.layer, "il resto dell'interfaccia (mirino, zaino, messaggi) resta sotto il nero")
 	var file := OS.get_environment("FINE_SCATTO")
 	if file != "":

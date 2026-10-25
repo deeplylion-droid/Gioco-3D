@@ -1792,6 +1792,20 @@ func _in_roccia(n: Node) -> bool:
 	return false
 
 
+## Le scatole colorate (richiesta dell'utente del 24 ottobre: "cambiare colore ad alcune scatole nei muri di scatole che
+## abbiamo fatto, dalle multicolore, dobbiamo riprendere il tema giocoso ogni tanto, per fare contrasto con l'horror"; il
+## coordinatore: scatola per scatola, come giocattoli impilati, coi colori vivi dell'arcobaleno dei poster di Jilly):
+## rosso, arancio, giallo, verde, azzurro, blu e viola, appena consumati.
+const COLORI_SCATOLE := [Color(0.86, 0.14, 0.12), Color(0.96, 0.46, 0.08), Color(0.98, 0.8, 0.1), Color(0.18, 0.68, 0.22),
+		Color(0.18, 0.64, 0.95), Color(0.12, 0.26, 0.82), Color(0.56, 0.2, 0.76)]
+## Quante scatole sono colorate (una su quattro o cinque) e quante nei punti più allegri (l'ingresso e la piazza, entro
+## PUNTI_ALLEGRI_RAGGIO m da quei punti).
+const SCATOLE_COLORATE := 0.18
+const SCATOLE_COLORATE_FITTE := 0.34
+const PUNTI_ALLEGRI := [Vector2(-25.0, -26.0), Vector2(-7.5, -9.5)]
+const PUNTI_ALLEGRI_RAGGIO := 7.0
+
+
 func _pile() -> void:
 	# un generatore suo: quello comune (rocce, palme, transenne) non cambia
 	var rng := RandomNumberGenerator.new()
@@ -1805,6 +1819,14 @@ func _pile() -> void:
 			lampade.append((c as Node3D).position)
 	var cartone: Array[Transform3D] = []
 	var tinte: Array[Color] = []
+	# gli scatoloni uno per uno (le unità di cartone hanno solo bancale e film): quelli di cartone e quelli colorati, con
+	# un generatore loro, così le pile restano quelle di prima
+	var scatole: Array[Transform3D] = []
+	var tinte_scatole: Array[Color] = []
+	var colorate: Array[Transform3D] = []
+	var tinte_colorate: Array[Color] = []
+	var rng_colori := RandomNumberGenerator.new()
+	rng_colori.seed = 2410
 	var fronti := []   # le unità della fila davanti: [muro, posizione lungo il muro, centro, verso dentro la pila]
 	var casse: Array[Transform3D] = []
 	var messe: Array[PackedVector2Array] = []
@@ -1860,9 +1882,25 @@ func _pile() -> void:
 					if p == 0:
 						casse.append(t)
 					else:
-						cartone.append(t)
 						var k := rng.randf()
-						tinte.append(Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), k))
+						cartone.append(t)
+						var marrone := Color(0.8, 0.62, 0.42).lerp(Color(0.62, 0.45, 0.3), k)
+						var fitte := false
+						for q in PUNTI_ALLEGRI:
+							if (q as Vector2).distance_to(c) < PUNTI_ALLEGRI_RAGGIO:
+								fitte = true
+						var quota := SCATOLE_COLORATE_FITTE if fitte else SCATOLE_COLORATE
+						for i in 2:
+							for j in 2:
+								for kk in 3:
+									var ts := t * Transform3D(Basis(), _centro_scatola(i, j, kk))
+									if rng_colori.randf() < quota:
+										var col: Color = COLORI_SCATOLE[rng_colori.randi() % COLORI_SCATOLE.size()]
+										colorate.append(ts)
+										tinte_colorate.append(col.lerp(Color(0.6, 0.56, 0.5), rng_colori.randf_range(0.0, 0.12)))
+									else:
+										scatole.append(ts)
+										tinte_scatole.append(marrone)
 				var alto := piani * (PILA_BANCALE + PILA_BLOCCO)
 				var fc := CollisionShape3D.new()
 				var bc := BoxShape3D.new()
@@ -1889,8 +1927,12 @@ func _pile() -> void:
 	await _pausa()
 	_multimesh_pile("PileCasse", _unita_pila(true), casse, [])
 	await _pausa()
-	_multimesh_pile("PileCartone", _unita_pila(false), cartone, tinte)
-	print("pile di scatoloni: %d colonne, %d unità" % [colonne, casse.size() + cartone.size()])
+	_multimesh_pile("PileCartone", _unita_pila(false, false, false), cartone, [])
+	await _pausa()
+	_multimesh_pile("PileScatole", _scatola_pila(false), scatole, tinte_scatole)
+	await _pausa()
+	_multimesh_pile("PileScatoleColorate", _scatola_pila(true), colorate, tinte_colorate)
+	print("pile di scatoloni: %d colonne, %d unità, %d scatole di cartone e %d colorate" % [colonne, casse.size() + cartone.size(), scatole.size(), colorate.size()])
 
 
 ## Il rettangolo allargato di [param m] da ogni parte.
@@ -1940,7 +1982,7 @@ func _multimesh_pile(nome: String, mesh: Mesh, trasformazioni: Array[Transform3D
 
 ## Un'unità della pila (origine sotto il bancale, al centro; x lungo il muro, z in profondità): il bancale di legno, il
 ## blocco di 2 x 2 x 3 scatoloni (o casse di plastica) e il film trasparente intorno al blocco.
-func _unita_pila(di_casse: bool) -> ArrayMesh:
+func _unita_pila(di_casse: bool, colorata := false, con_scatole := true) -> ArrayMesh:
 	var am := ArrayMesh.new()
 	# il bancale: tre longheroni, sette assi sopra e tre sotto
 	var st := SurfaceTool.new()
@@ -1955,23 +1997,17 @@ func _unita_pila(di_casse: bool) -> ArrayMesh:
 	legno.albedo_color = Color(0.55, 0.43, 0.3)
 	legno.roughness = 0.9
 	am.surface_set_material(0, legno)
-	# gli scatoloni: 0,6 x 0,4 x 0,5 m (2 mm più piccoli, così le facce non coincidono)
-	st = SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for i in 2:
-		for j in 2:
-			for k in 3:
-				_scatola_uv(st, Vector3(0.598, 0.398, 0.498), Vector3(-0.3 + i * 0.6, PILA_BANCALE + 0.2 + k * 0.4, -0.25 + j * 0.5), true)
-	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
-	var mb := StandardMaterial3D.new()
-	if di_casse:
-		mb.albedo_texture = load(DIR + "texture/cassa_pile.jpg")
-		mb.roughness = 0.55
-	else:
-		mb.albedo_texture = load(DIR + "texture/scatolone_pile.jpg")
-		mb.roughness = 0.85
-		mb.vertex_color_use_as_albedo = true   # la tinta di ogni unità (MultiMesh)
-	am.surface_set_material(1, mb)
+	# gli scatoloni: 0,6 x 0,4 x 0,5 m (2 mm più piccoli, così le facce non coincidono); nelle unità di cartone stanno
+	# a parte, uno per uno (vedi [method _scatola_pila])
+	if con_scatole:
+		st = SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for i in 2:
+			for j in 2:
+				for k in 3:
+					_scatola_uv(st, Vector3(0.598, 0.398, 0.498), _centro_scatola(i, j, k), true)
+		am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+		am.surface_set_material(am.get_surface_count() - 1, _mat_scatole(di_casse, colorata))
 	# il film: appena più grande del blocco, lucido e quasi trasparente
 	st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -1982,8 +2018,37 @@ func _unita_pila(di_casse: bool) -> ArrayMesh:
 	film.albedo_color = Color(0.85, 0.9, 0.95, 0.12)
 	film.roughness = 0.12
 	film.metallic_specular = 0.8
-	am.surface_set_material(2, film)
+	am.surface_set_material(am.get_surface_count() - 1, film)
 	return am
+
+
+## Il centro dello scatolone (i, j, k) nell'unità della pila (2 lungo il muro, 2 in profondità, 3 in altezza).
+func _centro_scatola(i: int, j: int, k: int) -> Vector3:
+	return Vector3(-0.3 + i * 0.6, PILA_BANCALE + 0.2 + k * 0.4, -0.25 + j * 0.5)
+
+
+## Uno scatolone da solo (centrato nell'origine), di cartone o colorato: il colore lo dà il MultiMesh.
+func _scatola_pila(colorata: bool) -> ArrayMesh:
+	var am := ArrayMesh.new()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_scatola_uv(st, Vector3(0.598, 0.398, 0.498), Vector3.ZERO, true)
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, st.commit_to_arrays())
+	am.surface_set_material(0, _mat_scatole(false, colorata))
+	return am
+
+
+## Il materiale degli scatoloni: le casse di plastica, il cartone o il cartone verniciato coi disegni (le colorate).
+func _mat_scatole(di_casse: bool, colorata: bool) -> StandardMaterial3D:
+	var mb := StandardMaterial3D.new()
+	if di_casse:
+		mb.albedo_texture = load(DIR + "texture/cassa_pile.jpg")
+		mb.roughness = 0.55
+	else:
+		mb.albedo_texture = load(DIR + ("texture/scatolone_colorato_pile.jpg" if colorata else "texture/scatolone_pile.jpg"))
+		mb.roughness = 0.75 if colorata else 0.85
+		mb.vertex_color_use_as_albedo = true   # la tinta di ogni scatola (MultiMesh)
+	return mb
 
 
 ## Una scatola (centro, misure) nella SurfaceTool, con le facce verso fuori. Con [param uv_scatolone] le UV della texture

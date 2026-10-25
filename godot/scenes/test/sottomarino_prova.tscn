@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/sala/inseguimento/sala_inseguimento.tscn" id="1_ins"]
+[ext_resource type="PackedScene" path="res://scenes/sala/sottomarino/sala_sottomarino.tscn" id="2_sott"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="3_player"]
+
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.01, 0.01, 0.015, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.3, 0.3, 0.34, 1)
+ambient_light_energy = 0.4
+tonemap_mode = 2
+
+[node name="SottomarinoProva" type="Node3D"]
+
+[node name="Ambiente" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="SalaInseguimento" parent="." instance=ExtResource("1_ins")]
+dopo_sb1_continua = true
+
+[node name="SalaSottomarino" parent="." instance=ExtResource("2_sott")]
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 38.2, -18.9, -17.4)

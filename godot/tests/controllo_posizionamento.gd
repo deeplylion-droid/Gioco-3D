@@ -39,6 +39,9 @@ const ZONE := [
 	# come quando ci arriva (enigmi non risolti) e dopo (risolti)
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_arrivo", "parti": ["Risalita"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_dopo", "parti": ["Risalita"]},
+	# gli oblò dei corridoi con lei dietro il vetro (ObloLei): ferma nella sua posa, coi tentacoli contro la vasca
+	{"scena": "res://scenes/sala_principale.tscn", "zona": "risalita", "stato": "risalita_oblo",
+			"parti": ["Risalita/ObloFiume", "Risalita/ObloPersonale", "Risalita/ObloServizio"]},
 	# la tappa 7 (il ritorno): le porte col maniglione (sala pompe, ponte) e il portello sul fondo della piscina aperti
 	# (coordinatore, 22 ottobre; collaudo: la porta della sala pompe aperta sporgeva sulla strada del ritorno). Senza
 	# "zona": ogni caso prende la zona del giro iniziale
@@ -46,10 +49,19 @@ const ZONE := [
 			"Tecnici/Ambienti/SalaPompe/PORTA_ponte", "Sala/Interattivi/sala_portello_scarico"]},
 	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "inseguimento_dopo",
 			"parti": ["SalaInseguimento"]},
+	# l'oblò del fondo della torre con lei dietro il vetro (ObloLei, come quelli della Risalita)
+	{"scena": "res://scenes/sala/torre/sala_torre.tscn", "zona": "torre", "stato": "torre_oblo", "parti": ["ObloLei"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_comparsi",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
 	{"scena": "res://scenes/sala_principale.tscn", "zona": "acquari", "stato": "acquari_risolti",
 			"parti": ["Gioco/EnigmaAcquari", "Gioco/PortoneTorre", "Sala/Interattivi/sala_portone_torre"]},
+	# il tunnel del viaggio sottomarino (costruito dalla strada); i gommoni dondolano e le corde li seguono: si
+	# controllano fermi in tre istanti del dondolio (coordinatore, 24 ottobre: "galleggianti che si muovono")
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "sottomarino_t0"},
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "sottomarino_t1",
+			"parti": ["Gommoni"]},
+	{"scena": "res://scenes/sala/sottomarino/sala_sottomarino.tscn", "zona": "sottomarino", "stato": "sottomarino_t2",
+			"parti": ["Gommoni"]},
 ]
 const ECCEZIONI := "res://tests/posizionamento_eccezioni.json"
 ## A che squadra va un caso: il primo prefisso del nodo (o parola nel percorso) che corrisponde, se no la zona.
@@ -315,9 +327,43 @@ func _prepara(stato: String) -> void:
 			for i in 30:
 				await get_tree().physics_frame
 			return
+		"sottomarino_t0", "sottomarino_t1", "sottomarino_t2":
+			# il tunnel si costruisce tutto, poi i gommoni si fermano a un istante del dondolio (0, 1,9 e 4,3 s:
+			# su, giù e girati, con le corde che li seguono)
+			var tunnel := _radice as SalaSottomarino
+			if tunnel == null:
+				tunnel = _radice.find_child("SalaSottomarino", true, false) as SalaSottomarino
+			if tunnel:
+				if not tunnel.costruita:
+					tunnel.costruisci()
+				tunnel.set_physics_process(false)
+				tunnel.ferma_gommoni({"sottomarino_t0": 0.0, "sottomarino_t1": 1.9, "sottomarino_t2": 4.3}[stato])
+				# dove si cammina (coordinatore, 24 ottobre): tutte le banchine, la scala, il pontile e la camera stagna
+				# dell'approdo; i checkpoint del tunnel nascono solo costruendolo, quindi i punti li dà il tunnel
+				_semi.append_array(tunnel.punti_dove_si_cammina())
+			for i in 10:
+				await get_tree().physics_frame
+			return
 		"risalita_arrivo":
 			_mostra_risalita()
 			for i in 10:
+				await get_tree().physics_frame
+			return
+		"torre_oblo":
+			# lei dietro il vetro della torre, ferma nella posa dopo 2 s (come risalita_oblo)
+			for o in _radice.find_children("*", "ObloLei", true, false):
+				(o as ObloLei).set_process(false)
+				(o as ObloLei)._mostra()
+			for i in 120:
+				await get_tree().physics_frame
+			return
+		"risalita_oblo":
+			# enigmi: lei dietro i tre vetri, ferma nella posa dopo 2 s (i tentacoli morbidi si sono posati)
+			_mostra_risalita()
+			for o in _radice.find_children("*", "ObloLei", true, false):
+				(o as ObloLei).set_process(false)
+				(o as ObloLei)._mostra()
+			for i in 120:
 				await get_tree().physics_frame
 			return
 		"risalita_dopo":
@@ -1622,6 +1668,17 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 				if a == b or fatte.has([b, a]) or fatte.has([a, b]):
 					continue
 				fatte[[a, b]] = true
+				# le parti che si muovono (ante, sportelli, battenti) contro le altre cose, anche dello stesso glTF: il
+				# pallone degli spogliatoi entrava 3 cm nell'anta aperta di un armadietto, nello stesso modello, e qui
+				# sotto i pezzi dello stesso modello non si confrontano (riscontro dell'utente sulla v0.3.13, "c'è un
+				# cazzo di pallone a ciambella compenetrato con una delle ante degli armadietti")
+				if _fino and _anta(a) != _anta(b) and boxes[a].intersects(boxes[b]) and not _telaio(a) and not _telaio(b):
+					var mob: MeshInstance3D = a if _anta(a) else b
+					var altro_m: MeshInstance3D = b if mob == a else a
+					var pm := _dentro_lastra(mob, altro_m)
+					if pm > MOBILE_DENTRO:
+						_trova(z, altro_m, "compenetra", boxes[a].intersection(boxes[b]).get_center(), "entra per %d mm nella parte che si muove %s" % [roundi(pm * 1000.0), _nodo(mob)])
+						continue
 				if _stesso_modello(a, b) or (a as Node).get_parent() == (b as Node).get_parent():
 					# pezzi dello stesso modello, o dello stesso oggetto fatto da codice (lampade, fari): non si
 					# confrontano, tranne un corrimano o un tubo con le altre cose di un glTF d'arredo, cioè fatto di
@@ -1659,6 +1716,43 @@ func _compenetrazioni(z: Dictionary, oggetti: Array) -> void:
 					var chi: MeshInstance3D = a if ba.get_volume() <= bb.get_volume() else b
 					var altro: MeshInstance3D = b if chi == a else a
 					_trova(z, chi, "compenetra", i.get_center(), "il %d%% dei suoi vertici è dentro %s" % [roundi(dentro * 100.0), _nodo(altro)])
+
+
+## Le parti che si aprono sui loro cardini: ante, sportelli, battenti (per nome).
+const ANTE := ["_anta", "anta_", "sportello", "battente"]
+## Quanto (m) una cosa può entrare in una parte che si muove: le ante sono lastre sottili, anche 1 cm si vede.
+const MOBILE_DENTRO := 0.004
+
+
+func _anta(n: Node) -> bool:
+	var nome := String(n.name).to_lower()
+	for m in ANTE:
+		if nome.contains(m):
+			return true
+	return false
+
+
+## Il telaio di una parte che si muove: il corpo dell'armadietto, le cerniere (l'anta ci sta dentro apposta).
+func _telaio(n: Node) -> bool:
+	var nome := String(n.name).to_lower()
+	# (le cerniere degli armadietti sono unite al guscio della stanza, "*_statico")
+	return nome.ends_with("_corpo") or nome.ends_with("_statico") or nome.contains("cerniera") or nome.contains("telaio") or nome.contains("cardine") \
+			or RegEx.create_from_string("^armadietti_\\w+_\\d\\d$").search(nome) != null
+
+
+## Quanto (m) il vertice più dentro di [param n] entra nella scatola della mesh di [param lastra] (un'anta è una lastra:
+## la sua scatola, nel suo riferimento, è la sua forma).
+func _dentro_lastra(lastra: MeshInstance3D, n: MeshInstance3D) -> float:
+	var box := lastra.mesh.get_aabb()
+	var inv := lastra.global_transform.affine_inverse()
+	var xf := n.global_transform
+	var best := 0.0
+	for v in n.mesh.get_faces():
+		var p := inv * (xf * v)
+		if box.has_point(p):
+			best = maxf(best, minf(minf(p.x - box.position.x, box.end.x - p.x),
+					minf(minf(p.y - box.position.y, box.end.y - p.y), minf(p.z - box.position.z, box.end.z - p.z))))
+	return best
 
 
 ## Un glTF d'arredo: tanti oggetti diversi messi in un modello solo (più di [constant ARREDO_MESH] mesh), come l'arredo

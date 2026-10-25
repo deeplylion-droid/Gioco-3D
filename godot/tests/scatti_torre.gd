@@ -32,6 +32,16 @@ const SCATTI := {
 	# il fondo: dalla vasca del fondo i gradini salgono alla bocca del tubo dell'inseguimento
 	"s4_bocca_gradini": [[33.6, 12.6, -17.6], [37.6, 17.4, -19.0], 75.0],
 	"s4b_bocca_gradini": [[36.9, 12.2, -18.2], [37.4, 17.6, -18.9], 75.0],
+	# il muro est in fondo, accanto alla bocca del tubo (il posto dell'oblò con lei)
+	"o1_muro_est": [[34.0, 12.0, -17.6], [40.5, 13.5, -18.6], 80.0],
+	"o2_muro_est_alto": [[33.0, 9.0, -14.0], [40.5, 14.0, -19.0], 85.0],
+	"o3_oblo_dal_pavimento": [[35.9, 13.2, -18.4], [40.0, 13.7, -18.3], 70.0],
+	"o4_oblo_vicino": [[38.6, 13.2, -18.5], [40.0, 13.7, -18.25], 60.0],
+	"o5_oblo_dalla_scala": [[36.2, 9.6, -16.3], [40.0, 13.7, -18.4], 75.0],
+	# la cisterna dell'oblò vista dalle condotte (dalla passerella della porta e dal bacino)
+	"o6_cisterna_dalla_porta": [[41.6, 5.0, -28.4], [41.8, 13.7, -23.0], 80.0],
+	"o7_cisterna_dal_bacino": [[47.5, 6.0, -31.8], [41.8, 13.7, -25.0], 80.0],
+	"o8_cisterna_dal_tubo": [[46.0, 16.4, -19.4], [41.8, 13.7, -20.5], 75.0],
 }
 
 var cartella := "user://scatti_torre"

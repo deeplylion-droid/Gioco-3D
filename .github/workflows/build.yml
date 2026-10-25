@@ -22,7 +22,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -103,6 +103,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_interni.gd
 
+      - name: Test della luce viola e della nebbia della scena dello squalo
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_squalo_viola.gd
+
       - name: Test dei passaggi degli interni (il giocatore entra ed esce da ogni porta e varco)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_passaggi_interni.gd
@@ -143,6 +147,22 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_inseguimento.gd
 
+      - name: Test della vista subacquea (con la testa sopra il pelo di ogni acqua resta normale, anche con due acque sovrapposte)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_vista_subacquea.gd
+
+      - name: Test dei tentacoli morbidi nel tunnel sottomarino (presa, strada intera, curve; pelle vera bloccante, costo solo stampato)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_tunnel.gd
+
+      - name: Materiali campione del tunnel sottomarino (ogni shader del tunnel ha il suo, niente scatti la prima volta)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/aggiorna_campioni_tunnel.gd controlla
+
+      - name: Test delle forme che si muovono della morbidezza (galleggianti e portello del tunnel)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/test_morbidezza_mobili.gd
+
       - name: Test della statua di lei con la morbidezza a 0 (ferma, costo zero)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 30 --script res://tests/run.gd -- res://tests/test_morbidezza_statua.gd
@@ -159,9 +179,45 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_torre_riserva.gd
 
+      - name: Test del guado nel canale del tunnel sottomarino (velocità, risalita, aspirazione)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_guado.gd
+
+      - name: Test del parkour sui gommoni del tunnel sottomarino (salti veri, appoggio, corde, compenetrazioni)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_parkour_gommoni.gd
+
+      - name: Test degli oblò con lei dietro il vetro (compare fuori vista, ti segue con l'occhio, se ne va se guardi via o ti avvicini, una volta sola, resta nella vasca)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_oblo_lei.gd
+
+      - name: Test dell'oblò con lei nella torre (nel foro del muro, compare una volta, va via entrando nella bocca)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_oblo_torre.gd
+
+      - name: Il muro attorno all'oblò della torre salvato corrisponde alla mesh della torre
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --script res://tests/run.gd -- res://tests/aggiorna_muro_oblo_torre.gd controlla
+
+      - name: Test della distanza di lei nei passaggi obbligati del tunnel (gommoni e gallerie basse; mai sotto gli 8 m finché non sbagli, se cadi in acqua ti prende)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_tunnel_attraversamenti.gd
+
       - name: Test dell'inseguimento (le condotte, SB1)
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_inseguimento.gd
+
+      - name: Test della scaletta del bacino dopo SB1 (su col giocatore vero in quattro modi, poi oltre la porta nel tunnel)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_scaletta_bacino.gd
+
+      - name: Test delle gallerie di servizio del tunnel sottomarino (dentro col giocatore vero, centrati e spostati di 30 cm, senza fermarsi)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_gallerie_sottomarino.gd
+
+      - name: Test del finale del tunnel sottomarino (E dalla camera stagna da vicino e da lontano, il battente non spinge, lo schianto si vede)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_portello_sottomarino.gd
 
       - name: Test dell'enigma degli acquari
         if: steps.progetto.outputs.presente == 'si'
@@ -230,6 +286,14 @@ jobs:
       - name: Finita la demo, il gioco torna da solo al titolo
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_fine_titolo.gd
+
+      - name: Le ante degli armadietti, anche quella che sbatte in tutta la corsa, senza niente dentro
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_ante_armadietti.gd
+
+      - name: Test del menu di prova nascosto (partenze da F9 nel titolo)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_partenze_prova.gd
 
       - name: Nessuna istanza di MultiMesh specchiata e facce dei MultiMesh nel verso giusto
         if: steps.progetto.outputs.presente == 'si'

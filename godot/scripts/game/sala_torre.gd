@@ -34,6 +34,8 @@ const DIR := "res://assets/ambiente/torre/"
 const ROSSO := Color(1.0, 0.035, 0.02)
 const CALDO := Color(1.0, 0.66, 0.36)
 const ROSA := Color(1.0, 0.32, 0.62)
+## La quota del fondo della sala (Blender, torre_proposte.FONDO).
+const FONDO_Z := -20.0
 const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creature/bambino_agnello.tscn"]
 
 ## Ordine del primo checkpoint della torre (dopo quelli della sala grande e del ritorno).
@@ -51,6 +53,13 @@ const BAMBINI := ["res://scenes/creature/bambino_cubo.tscn", "res://scenes/creat
 @export var guida_metri := 1.2
 @export var guida_forza := 7.0
 @export var guida_fino_a := 4.0      ## m/s: più veloce di così la guida non serve più
+## L'oblò con lei sul muro est, accanto alla bocca del tubo (scelta dell'utente del 24 ottobre): il raggio del vetro
+## (la piastra resta di 1,9 m: grande come gli oblò della Risalita, o piccolo perché l'occhio lo riempia) e la posa.
+@export var oblo_raggio_vetro := ObloLei.RAGGIO_VETRO
+@export var oblo_posa := "occhio"
+## Falso: niente oblò (le prove della discesa senza di lei).
+@export var oblo_lei := true
+var oblo: ObloLei
 
 var dati := {}
 var checkpoint: Array[Checkpoint] = []
@@ -74,6 +83,10 @@ static func b(v: Array) -> Vector3:
 @export var modelli: Array[PackedScene] = []
 ## L'inseguimento I1 e il finale SB1, dietro il muro est (vuoto: niente inseguimento).
 @export var inseguimento_scena: PackedScene
+## Vero: dopo SB1 il capitolo continua nel tunnel del viaggio sottomarino (SalaInseguimento.dopo_sb1_continua).
+@export var inseguimento_continua := false
+## Le condotte sono nella sala (anche costruite a pezzi, dopo).
+signal inseguimento_aggiunto(nodo: Node3D)
 var inseguimento: Node3D
 ## Vero quando la sala è costruita del tutto (vedi [method costruisci_a_pezzi]).
 var costruita := false
@@ -201,6 +214,7 @@ func _passi() -> Array:
 	out.append_array([_prepara_imbocchi, _checkpoint, _raccolta, _polaroid])
 	out.append_array(_passi_balconata())
 	out.append(_vasca_fondo)
+	out.append(_oblo_lei)
 	if crea_luci:
 		out.append_array(_passi_luci())
 	out.append(_luce_lei)
@@ -215,7 +229,9 @@ func _aggiungi_inseguimento() -> void:
 	inseguimento = inseguimento_scena.instantiate() as Node3D
 	inseguimento.set(&"costruzione_a_pezzi", _a_pezzi)
 	inseguimento.set(&"crea_luci", crea_luci)
+	inseguimento.set(&"dopo_sb1_continua", inseguimento_continua)
 	add_child(inseguimento)
+	inseguimento_aggiunto.emit(inseguimento)
 	if inseguimento.has_signal(&"capitolo_finito"):
 		inseguimento.connect(&"capitolo_finito", func():
 			if not _finita:
@@ -692,6 +708,152 @@ func _vasca_fondo() -> void:
 			discesa_finita.emit())
 
 
+## L'oblò con lei (ObloLei di enigmi, con la posa di mascotte) nel foro del muro est che il GLB lascia accanto alla
+## bocca del tubo (torre_a.py, OBLO_*): dietro, nella sala delle condotte, la cisterna piena d'acqua (il fuori lo fa
+## inseguimento_proposte.py, l'interno l'oblò). Il muro con la piastra va dalla faccia della torre (x 40) a quella delle
+## condotte (x 40,4). Lei compare una volta sola al fondo della discesa, prima dell'inseguimento: entrando nella bocca
+## (o quando lei compare nelle condotte) se ne va col suo distacco lento, e non torna più.
+func _oblo_lei() -> void:
+	if not oblo_lei or not dati.has("oblo_lei") or oblo:
+		return
+	var d: Dictionary = dati["oblo_lei"]
+	var centro := b(d["centro"])
+	var normale := b(d["normale"]).normalized()
+	oblo = ObloLei.new()
+	oblo.name = "ObloLei"
+	oblo.posa = oblo_posa if oblo_posa in LeiOblo.POSE else "schiacciata"
+	oblo.raggio_vetro = oblo_raggio_vetro
+	oblo.spessore_muro = 0.4
+	# la cisterna profonda 3,6 m (mascotte: la posa "occhio" arrivando e staccandosi va fino a 3,4 m dietro il vetro);
+	# il fuori è nel GLB delle condotte (inseguimento_proposte.py, OBLO_VASCA)
+	oblo.vasca_fonda = 3.6
+	# lei compare col giocatore al fondo (sul pavimento, in vasca o sui gradini della bocca), non sugli scivoli sopra
+	var v: Array = dati["vasca_fondo"]["rett"]
+	var lo := b([30.0, float(v[3]) + 6.0, FONDO_Z - 0.5])
+	var hi := b([float(d["centro"][0]) - 0.1, float(v[1]) - 5.0, FONDO_Z + 2.6])
+	oblo.zona = AABB(lo.min(hi), (hi - lo).abs())
+	var xf := Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
+	oblo.muro = _muro_oblo()
+	oblo.transform = global_transform.affine_inverse() * xf
+	add_child(oblo)
+	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
+	var bocca := Area3D.new()
+	bocca.name = "BoccaOblo"
+	bocca.collision_layer = 0
+	bocca.collision_mask = Layers.PLAYER
+	bocca.monitorable = false
+	var forma := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(2.4, 2.0, 2.0)
+	forma.shape = box
+	bocca.add_child(forma)
+	add_child(bocca)
+	bocca.global_position = b([38.8, 17.4, FONDO_Z + 1.6])
+	bocca.body_entered.connect(func(corpo):
+		if corpo is Player:
+			_oblo_via())
+	inseguimento_aggiunto.connect(func(ins: Node3D):
+		if ins.has_signal(&"lei_compare"):
+			ins.connect(&"lei_compare", func(_dove): _oblo_via()))
+
+
+## Il muro della torre attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, le
+## piastrelle e l'intonaco arrivano fino alla cornice d'ottone): le fasce di ObloLei.muro, lette da [constant MURO_OBLO]
+## (calcolate una volta da [method calcola_muro_oblo]: farlo qui costava più di 100 ms in un passo, collaudo della CI)
+## coi materiali veri di torre_A.
+const MURO_OBLO := "res://assets/ambiente/torre/oblo_muro.json"
+
+
+func _muro_oblo() -> Array:
+	var out := []
+	var mi := find_child("torre_A", true, false) as MeshInstance3D
+	if mi == null or mi.mesh == null or not FileAccess.file_exists(MURO_OBLO):
+		return out
+	for f in JSON.parse_string(FileAccess.get_file_as_string(MURO_OBLO)):
+		var i := int(f["superficie"])
+		if i >= mi.mesh.get_surface_count() or mi.get_active_material(i) == null or mi.get_active_material(i).resource_name != String(f["materiale"]):
+			push_warning("torre: il muro dell'oblò non corrisponde più a torre_A (rifai tests/aggiorna_muro_oblo_torre.gd)")
+			return []
+		var u: Array = f["uv"]
+		var fascia := {"materiale": mi.get_active_material(i), "da": float(f["da"]), "a": float(f["a"]),
+				"uv": Transform2D(Vector2(u[0], u[1]), Vector2(u[2], u[3]), Vector2(u[4], u[5]))}
+		if f.has("colore"):
+			var c: Array = f["colore"]
+			fascia["colore"] = Color(c[0], c[1], c[2], c[3])
+		out.append(fascia)
+	return out
+
+
+## Il muro della torre attorno all'oblò, calcolato dalla mesh (lento: guarda tutti i triangoli di torre_A; lo usa
+## tests/aggiorna_muro_oblo_torre.gd, che lo salva in [constant MURO_OBLO]): per ogni superficie di torre_A che sta nel
+## piano del muro dove c'è il foro, il nome del materiale, le quote che copre, come le sue UV seguono il muro (ricavate da
+## un suo triangolo) e la media dei colori dei vertici, nelle coordinate dell'oblò [param xf].
+static func calcola_muro_oblo(mi: MeshInstance3D, xf: Transform3D, h: float) -> Array:
+	var out := []
+	var verso := xf.affine_inverse() * mi.global_transform
+	for i in mi.mesh.get_surface_count():
+		var arr := mi.mesh.surface_get_arrays(i)
+		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var uv: PackedVector2Array = arr[Mesh.ARRAY_TEX_UV]
+		var idx = arr[Mesh.ARRAY_INDEX]
+		if uv.is_empty():
+			continue
+		var col = arr[Mesh.ARRAY_COLOR]
+		var somma := Color(0, 0, 0, 0)
+		var quanti := 0
+		var y0 := INF
+		var y1 := -INF
+		var t := Transform2D()
+		var trovata := false
+		var n: int = (idx as PackedInt32Array).size() if idx != null else v.size()
+		for k in range(0, n, 3):
+			var ii := [idx[k], idx[k + 1], idx[k + 2]] if idx != null else [k, k + 1, k + 2]
+			var p := [verso * v[ii[0]], verso * v[ii[1]], verso * v[ii[2]]]
+			# (nel piano del muro, la faccia verso la sala, vicino al foro)
+			if absf(p[0].z) > 0.01 or absf(p[1].z) > 0.01 or absf(p[2].z) > 0.01:
+				continue
+			var lo := Vector2(minf(p[0].x, minf(p[1].x, p[2].x)), minf(p[0].y, minf(p[1].y, p[2].y)))
+			var hi := Vector2(maxf(p[0].x, maxf(p[1].x, p[2].x)), maxf(p[0].y, maxf(p[1].y, p[2].y)))
+			if hi.x < -h - 0.5 or lo.x > h + 0.5 or hi.y < -h - 0.5 or lo.y > h + 0.5:
+				continue
+			var e1 := Vector2(p[1].x - p[0].x, p[1].y - p[0].y)
+			var e2 := Vector2(p[2].x - p[0].x, p[2].y - p[0].y)
+			var det := e1.x * e2.y - e1.y * e2.x
+			if absf(det) < 1e-4:
+				continue
+			y0 = minf(y0, lo.y)
+			y1 = maxf(y1, hi.y)
+			if col != null and not (col as PackedColorArray).is_empty():
+				for j in ii:
+					somma += (col as PackedColorArray)[j]
+					quanti += 1
+			if not trovata:
+				# uv = A (x, y) + b: A = F E^-1
+				var f1 := uv[ii[1]] - uv[ii[0]]
+				var f2 := uv[ii[2]] - uv[ii[0]]
+				var ei := Transform2D(Vector2(e2.y, -e1.y) / det, Vector2(-e2.x, e1.x) / det, Vector2.ZERO)
+				var fa := Transform2D(f1, f2, Vector2.ZERO)
+				t = fa * ei
+				t.origin = uv[ii[0]] - t.basis_xform(Vector2(p[0].x, p[0].y))
+				trovata = true
+		if trovata:
+			var fascia := {"superficie": i, "materiale": mi.get_active_material(i).resource_name, "da": y0, "a": y1,
+					"uv": [t.x.x, t.x.y, t.y.x, t.y.y, t.origin.x, t.origin.y]}
+			# (i materiali della torre usano il colore dei vertici come albedo: la faccia nuova prende la media di quelli del
+			# muro attorno, se no veniva più chiara; collaudo D1)
+			if quanti > 0:
+				var cm := somma / float(quanti)
+				fascia["colore"] = [cm.r, cm.g, cm.b, cm.a]
+			out.append(fascia)
+	return out
+
+
+func _oblo_via() -> void:
+	if oblo and is_instance_valid(oblo):
+		oblo.attivo = false
+		oblo.via()
+
+
 # --- luci ------------------------------------------------------------------------------------------
 
 func _luce_lei() -> void:
@@ -1101,7 +1263,7 @@ static func _materiale_fondo_pozzo() -> StandardMaterial3D:
 const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 
 
-## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo), più
+## Un materiale per ogni tipo che la torre crea da codice (lampade, gabbie, gocce, fondo del pozzo, l'oblò), più
 ## l'acqua torbida. Godot fa uno shader per tipo di materiale e lo condivide, ma la prima volta lo crea sul
 ## thread principale: con il gruppo di shader avanzato acceso (nel gioco lo è sempre, vedi
 ## Grafica._attiva_shader_avanzati) costa 100-150 ms sulla CPU della CI, troppo per un passo della
@@ -1110,6 +1272,9 @@ const ACQUA := "res://assets/materials/sala/acqua_torbida.tres"
 static func materiali_campione() -> Array[Material]:
 	var out: Array[Material] = [_emissivo(Color.WHITE, 1.0), _metallo_scuro(), _materiale_gabbia(),
 			_materiale_gocce(), _materiale_fondo_pozzo(), load(ACQUA) as Material]
+	# (l'oblò con lei sul muro est: piastra, vasca, ottone, vetro e veli d'acqua)
+	for m in ObloLei.materiali():
+		out.append(m as Material)
 	for m in out:
 		m.get_rid()   # lo shader si crea adesso, non al primo uso
 	return out

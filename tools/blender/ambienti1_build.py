@@ -26,9 +26,10 @@ def materiali():
     M = {n: L.mat_tex(n) for n in L.SCALA_UV}
     M.update(L.materiali_base())
     M['salvagente'] = L.mat_tex('salvagente')
-    M['cartellone'] = L.mat_immagine('cartellone_medusa', os.path.join(POSTER, 'cartellone_medusa_vecchio.jpg'), rough=0.55)
+    # poster di Jilly rovinati (24 ottobre): bruciati, scarabocchiati e strappati con l'alfa vero (poster/rovina.py)
+    M['cartellone'] = L.mat_immagine('cartellone_medusa', os.path.join(POSTER, 'cartellone_medusa_rovinato.png'), rough=0.55, clip=True)
     M['cartello_regole'] = L.mat_immagine('cartello_regole', os.path.join(POSTER, 'cartello_regole_vecchio.jpg'), rough=0.5)
-    M['poster_bagnino'] = L.mat_immagine('poster_bagnino', os.path.join(POSTER, 'poster_bagnino_vecchio.jpg'), rough=0.7)
+    M['poster_bagnino'] = L.mat_immagine('poster_bagnino', os.path.join(POSTER, 'poster_bagnino_rovinato.png'), rough=0.7, clip=True)
     M['pulsante'] = L.mat_colore('pulsante_rosso', (0.7, 0.03, 0.02), rough=0.35, emiss=(1, 0.05, 0.02), forza=4.0)
     M['pulsante_verde'] = L.mat_colore('pulsante_verde', (0.05, 0.5, 0.1), rough=0.35, emiss=(0.1, 1, 0.2), forza=8.0)
     M['impronte'] = L.mat_colore('impronte_bagnate', (0.02, 0.02, 0.02), rough=0.05)
@@ -287,7 +288,8 @@ def corridoio(M):
         'N': [(6.0, 7.6, 0, 2.2)],          # passaggio verso gli spogliatoi
         'W': [(0.8, 1.8, 0, 2.05)],         # porta di servizio chiusa in fondo
     }
-    statico = L.stanza('corridoio', X0, Y0, X1, Y1, H, mats, ap)
+    # (25 ottobre) il listello dello zoccolo si ferma ai lati della cornice del cartellone: prima lo attraversava
+    statico = L.stanza('corridoio', X0, Y0, X1, Y1, H, mats, ap, senza_listello={'S': [(13.95, 15.25)]})
     statico.append(costole('corridoio_costole', X0, X1, Y0, Y1, H, 2.5, M, salta_s=[(13.6, 15.6), (16.9, 18.1)], salta_n=[(5.9, 7.7)]))
     # telai delle porte
     statico.append(cornice_porta('telaio_tagliafuoco', 'E', 0.7, 1.9, 2.1, X1, M, M['vernice_rossa']))
@@ -387,14 +389,16 @@ def corridoio(M):
         statico.append(L.scatola('porta_servizio_vetro', (0.074, 1.13, 1.38), (0.078, 1.47, 1.77), M['vetro_sporco'], uv=False))
 
     # ---- cartellone della mascotte (accanto alla porta della sala pompe, lato sud)
-    cx, cz, cw, ch = 14.6, 1.3, 1.5, 2.0
-    statico.append(L.piano('cartellone_medusa', (cx, 0.016, cz), cw, ch, M['cartellone'], rot=(R(90), 0, 0)))
+    # (25 ottobre) 1,2 x 1,6 m (il 3:4 della texture), la cornice da 0,30 a 2,00 m sotto la canalina dei cavi (2,05) e
+    # la carta a 3 mm dal muro (a 1,6 cm, con gli strappi, si vedeva sospesa)
+    cx, cz, cw, ch = 14.6, 1.15, 1.2, 1.6
+    statico.append(L.piano('cartellone_medusa', (cx, 0.003, cz), cw, ch, M['cartellone'], rot=(R(90), 0, 0)))
     cor = [L.scatola('cornice', (cx - cw / 2 - 0.05, 0, cz - ch / 2 - 0.05), (cx + cw / 2 + 0.05, 0.03, cz - ch / 2), M['vernice_gialla']),
            L.scatola('cornice', (cx - cw / 2 - 0.05, 0, cz + ch / 2), (cx + cw / 2 + 0.05, 0.03, cz + ch / 2 + 0.05), M['vernice_gialla']),
            L.scatola('cornice', (cx - cw / 2 - 0.05, 0, cz - ch / 2), (cx - cw / 2, 0.03, cz + ch / 2), M['vernice_gialla']),
            L.scatola('cornice', (cx + cw / 2, 0, cz - ch / 2), (cx + cw / 2 + 0.05, 0.03, cz + ch / 2), M['vernice_gialla'])]
     statico.append(L.unisci('cornice_cartellone', cor))
-    # le costole passano davanti al cartellone? no: il cartellone sta tra x=12.5 e 15 (costole a 12.5 e 15)
+    # le costole passano davanti al cartellone? no: le costole sud fra 13,6 e 15,6 sono saltate (la cornice va da 13,95 a 15,25)
 
     # ---- luci: rosse d'emergenza e neon quasi tutti spenti
     luci = []
@@ -896,7 +900,11 @@ def spogliatoi(M):
     col_ob(prop('asciugamano_2', 'asciugamano', (5.0, 3.45, 0), 20, 0.8))
     prop('paperella_spogliatoi', 'paperella', (7.9, 13.3, 0), 200, 0.09)
     col_ob(prop('secchio_mocio', 'secchio_mocio', (7.6, 11.6, 0), 210, 0.95, 'z'))
-    col_ob(prop('pallone_spogliatoi', 'pallone', (10.2, 10.2, 0), 0, 0.4))
+    # il pallone a terra accanto alla fine della panca ovest, lontano dalle ante e dai passaggi: a x 10,2 entrava
+    # 3 cm nell'anta aperta a 45 gradi dell'armadietto est2_02 (riscontro dell'utente sulla v0.3.13, "un pallone a
+    # ciambella compenetrato con una delle ante degli armadietti"), e a x 9,75 chiudeva il passaggio verso il
+    # corridoio della vasca lava-piedi (test_passaggi_interni)
+    col_ob(prop('pallone_spogliatoi', 'pallone', (5.055, 9.3, 0), 0, 0.4))
     col_ob(prop('cestino_spogliatoi', 'cestino', (3.5, 10.6, 0), 0, 0.5, 'z'))
     pz = [pozza('pozza_spogliatoi_1', (6.8, 9.2, 0), 1.2, 0.8, M, 11), pozza('pozza_spogliatoi_2', (5.5, 13.0, 0), 1.8, 1.0, M, 12),
           pozza('pozza_spogliatoi_3', (7.4, 5.4, 0), 0.6, 0.4, M, 13), pozza('pozza_spogliatoi_4', (9.7, 15.8, 0), 0.8, 0.6, M, 14)]

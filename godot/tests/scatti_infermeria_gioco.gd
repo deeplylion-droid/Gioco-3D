@@ -6,6 +6,7 @@ extends Node
 ## al 40% (LuciBianche); la torcia non c'è più (23 ottobre).
 ## Uso: xvfb-run ... godot --path godot --rendering-driver vulkan --resolution 1600x900 --script res://tests/run.gd \
 ##        -- res://tests/scatti_infermeria_gioco.gd <cartella> [stato] [camere separate da virgole]
+## Con INFERMERIA_BUIA=0 nell'ambiente: la variante B scartata della luce dopo il pulsante (stanza chiara dopo).
 
 const CAMERE := {
 	"stanza": [Vector3(1.6, 1.65, 3.0), Vector3(-0.6, 1.0, -2.0)],
@@ -62,6 +63,9 @@ func _run() -> void:
 	we.environment = e
 	get_tree().root.add_child(we)
 	var f: Node3D = (load("res://scenes/risalita/infermeria.tscn") as PackedScene).instantiate()
+	# INFERMERIA_BUIA=0: la variante B scartata della luce dopo il pulsante (per i confronti; di serie c'è la A)
+	if OS.get_environment("INFERMERIA_BUIA") == "0":
+		f.set(&"buia_dopo_pulsante", false)
 	get_tree().root.add_child(f)
 	await get_tree().process_frame
 	if passo >= 1:

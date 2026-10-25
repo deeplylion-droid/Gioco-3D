@@ -1489,6 +1489,56 @@
   "lufs": -21.0,
   "lufs_max": -16.0
  },
+ "lei/lei_tunnel_fiato_loop": {
+  "file": "res://audio/lei/lei_tunnel_fiato_loop.ogg",
+  "canali": 1,
+  "durata": 8.0,
+  "loop": true,
+  "fonte": "sintesi",
+  "nota": "tunnel, voce (24 ottobre): fiato roco e basso a bocca aperta, in ciclo",
+  "lufs": -27.0,
+  "lufs_max": -21.9
+ },
+ "lei/lei_tunnel_verso_01": {
+  "file": "res://audio/lei/lei_tunnel_verso_01.ogg",
+  "canali": 1,
+  "durata": 1.316,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s",
+  "lufs": -22.5,
+  "lufs_max": -19.0
+ },
+ "lei/lei_tunnel_verso_02": {
+  "file": "res://audio/lei/lei_tunnel_verso_02.ogg",
+  "canali": 1,
+  "durata": 1.421,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s",
+  "lufs": -21.6,
+  "lufs_max": -19.0
+ },
+ "lei/lei_tunnel_verso_03": {
+  "file": "res://audio/lei/lei_tunnel_verso_03.ogg",
+  "canali": 1,
+  "durata": 1.16,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s",
+  "lufs": -21.2,
+  "lufs_max": -19.0
+ },
+ "lei/lei_tunnel_verso_04": {
+  "file": "res://audio/lei/lei_tunnel_verso_04.ogg",
+  "canali": 1,
+  "durata": 1.42,
+  "loop": false,
+  "fonte": "sintesi",
+  "nota": "tunnel, voce (24 ottobre): verso a bocca spalancata, uno ogni 4-6 s",
+  "lufs": -21.7,
+  "lufs_max": -19.0
+ },
  "lei/morso": {
   "file": "res://audio/lei/morso.ogg",
   "canali": 2,
