@@ -204,7 +204,10 @@ func costruisci_a_pezzi(ms_per_fotogramma := 6.0) -> void:
 		if not is_inside_tree():
 			_costruendo = false
 			return
+		var tp := Time.get_ticks_usec()
 		(passo as Callable).call()
+		if OS.has_environment("TORRE_TEMPI") and Time.get_ticks_usec() - tp > 20000:
+			print("tunnel passo %s: %.1f ms" % [(passo as Callable).get_method(), (Time.get_ticks_usec() - tp) / 1000.0])
 		if (Time.get_ticks_usec() - t0) / 1000.0 > _ms_pezzo:
 			await get_tree().process_frame
 			t0 = Time.get_ticks_usec()
@@ -1541,6 +1544,18 @@ var _s_bersaglio := 0.0
 var checkpoint: Array[Checkpoint] = []
 
 
+## I file che la costruzione del tunnel carica (i modelli del fiume, le lampade, lo shader dell'oblò dell'abisso, lei):
+## la sala li chiede al thread insieme al tunnel, così i passi li trovano pronti (caricati lì erano passi da 0,2-1,4 s).
+static func risorse() -> Array:
+	var out: Array = []
+	for nome in ["corallo", "forziere", "pesce_vetroresina", "salvagente", "tartaruga", "ancora", "palombaro"]:
+		out.append(DIR_FIUME + nome + ".glb")
+	out.append_array(["res://assets/enigma_acquari/lampada_gabbia.glb", DIR_FIUME + "mat_cemento.tres",
+		DIR_FIUME + "mat_mosaico_blu.tres", DIR_FIUME + "mat_graniglia.tres", DIR_FIUME + "acqua_fiume.tres"])
+	out.append_array(SalaInseguimento.RISORSE_LEI)
+	return out.filter(func(p): return ResourceLoader.exists(p))
+
+
 func _lei_crea() -> void:
 	# lei del tunnel è di mascotte (LeiTunnel: animazioni, giro e inclinazione in curva, morsi, getto in faccia,
 	# presa, schianto); qui si decide solo dove sta lungo la strada
@@ -2701,6 +2716,10 @@ func _modello(nodo: Node3D, nome: String, pos: Vector3, verso: Vector3, scala: f
 
 ## La collisione di un modello: per ogni sua mesh la forma convessa (si sbatte contro la sua sagoma, non contro una
 ## scatola invisibile più grande).
+## Mesh -> la sua forma convessa semplificata (per [method _collisione_modello]).
+static var _forme_convesse := {}
+
+
 func _collisione_modello(n: Node3D) -> void:
 	var corpo := StaticBody3D.new()
 	corpo.name = "Collisione"
@@ -2709,7 +2728,10 @@ func _collisione_modello(n: Node3D) -> void:
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var cs := CollisionShape3D.new()
-		cs.shape = m.mesh.create_convex_shape(true, true)
+		# (la stessa forma per la stessa mesh, calcolata una volta: ogni corallo la rifaceva, 100 ms l'uno)
+		if not _forme_convesse.has(m.mesh):
+			_forme_convesse[m.mesh] = m.mesh.create_convex_shape(true, true)
+		cs.shape = _forme_convesse[m.mesh]
 		corpo.add_child(cs)
 		cs.global_transform = m.global_transform
 
@@ -2720,7 +2742,7 @@ func _appoggia(n: Node3D, quota: float) -> void:
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var xf := m.global_transform
-		for v in m.mesh.get_faces():
+		for v in SottomarinoArrediA2._involucro(m.mesh):
 			basso = minf(basso, (xf * v).y)
 	if basso < INF:
 		n.global_position.y += quota - basso
@@ -2755,7 +2777,7 @@ func _a_filo_del_muro(n: Node3D, fuori: Vector3) -> void:
 	for mi in n.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
 		var xf := m.global_transform
-		for v in m.mesh.get_faces():
+		for v in SottomarinoArrediA2._involucro(m.mesh):
 			dietro = maxf(dietro, ((xf * v) - n.global_position).dot(-fuori))
 	Posa.fissa_al_muro(n, fuori.normalized(), dietro)
 

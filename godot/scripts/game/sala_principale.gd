@@ -652,6 +652,9 @@ func _precarica_sottomarino() -> void:
 		_campioni_tunnel = CampioniTunnel.carica()
 	if Game.carica_in_thread(sala_sottomarino_scena, "PackedScene") == OK:
 		_sottomarino_in_caricamento = true
+		# e i file che il tunnel carica costruendosi (i modelli, lei)
+		for r in SalaSottomarino.risorse():
+			Game.carica_in_thread(r)
 
 
 ## Il thread ha finito: il tunnel entra nel livello (fermo, senza lei in giro) e si costruisce a pezzi.
