@@ -152,16 +152,27 @@ func _disegna_lei(sv: SubViewport) -> void:
 	if l.has_method(&"prepara"):
 		l.call(&"prepara", Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
 	l.mostra(Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
-	for i in 4:
-		await get_tree().process_frame
-		if not is_inside_tree():
-			return
+	# un pezzo di lei per fotogramma (tutta insieme sono decine di pipeline in un fotogramma: secondi fermi, la
+	# misura col renderer software del 25 ottobre), prima pieno e poi trasparente, poi lo si rinasconde
+	var pezzi: Array[GeometryInstance3D] = []
 	for g in l.find_children("*", "GeometryInstance3D", true, false):
-		(g as GeometryInstance3D).transparency = 0.5
-	for i in 4:
-		await get_tree().process_frame
-		if not is_inside_tree():
-			return
+		var gi := g as GeometryInstance3D
+		if gi.visible:
+			pezzi.append(gi)
+			gi.visible = false
+	await get_tree().process_frame
+	for gi in pezzi:
+		for trasparenza: float in [0.0, 0.5]:
+			if not is_instance_valid(gi):
+				break
+			gi.transparency = trasparenza
+			gi.visible = true
+			await get_tree().process_frame
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+			if is_instance_valid(gi):
+				gi.visible = false
 	l.queue_free()
 
 
