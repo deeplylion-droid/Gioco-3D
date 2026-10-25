@@ -39,9 +39,19 @@ func _run() -> void:
 	print("1. All'inizio")
 	check(not neg.e_acceso(), "il negatoscopio sfarfalla (senza corrente)")
 	check(not cassa.aperta_ora and not keycard.can_interact(p), "la cassaforte è chiusa e la keycard non si prende")
+	# la porta nord (verso la scala di servizio) è chiusa finché non colpisci il pulsantone (richiesta dell'utente del 25 ottobre)
+	var anta := inf.get(&"_anta_nord") as Node3D
+	check(anta != null and not bool(inf.get(&"porta_nord_aperta")) and absf(anta.rotation_degrees.y) < 0.5,
+		"la porta nord è chiusa (anta a %.1f gradi)" % (anta.rotation_degrees.y if anta else -1.0))
+	var fuori: Vector3 = inf.to_global(Vector3(-2.2, 0.0, -4.0))
+	p.teleport(inf.to_global(Vector3(-2.2, 0.0, -2.2)), 0.0, 0.0)
+	await _secondi(0.2)
+	await _cammina_verso(fuori, 3.0)
+	check(inf.to_local(p.global_position).z > -3.25, "e non si passa (il giocatore si ferma a z %.2f)" % inf.to_local(p.global_position).z)
 
 	print("2. Il getto sull'interruttore")
 	_zaino()
+	var suoni_porta := int(Audio.conteggio.get(&"porta_ponte_apre", 0))
 	p.teleport(Vector3(1.4, 0.0, 0.4), 0.0, 0.0)
 	await _secondi(0.2)
 	var bersaglio := inter.global_position
@@ -55,6 +65,15 @@ func _run() -> void:
 	Input.action_release(&"spray")
 	await _secondi(0.3)
 	check(inter.powered and neg.e_acceso(), "colpito l'interruttore, il negatoscopio si accende")
+	check(bool(inf.get(&"porta_nord_aperta")) and anta.rotation_degrees.y > 1.0 and anta.rotation_degrees.y < 179.0,
+		"e la porta nord comincia ad aprirsi da sola (anta a %.0f gradi)" % anta.rotation_degrees.y)
+	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "col suono della porta del ponte")
+	await _secondi(3.0)
+	check(absf(anta.rotation_degrees.y - 180.0) < 0.5, "fino ad aprirsi contro il muro (anta a %.1f gradi)" % anta.rotation_degrees.y)
+	p.teleport(inf.to_global(Vector3(-2.2, 0.0, -2.2)), 0.0, 0.0)
+	await _secondi(0.2)
+	await _cammina_verso(fuori, 3.0)
+	check(inf.to_local(p.global_position).z < -3.4, "e adesso si passa (il giocatore arriva a z %.2f)" % inf.to_local(p.global_position).z)
 	check(neg.gruppi_visibili().is_empty(), "senza radiografia non si vedono puntini")
 	await _secondi(0.1)
 	check(String(GameState.snapshot.get("checkpoint", "")).ends_with("DopoLuce"), "checkpoint dopo la luce")
@@ -154,6 +173,10 @@ func _run() -> void:
 	cassa = inf.get_node(^"Cassaforte") as CassaforteRotelle
 	check(neg.e_acceso() and neg.con_radiografia and neg.gruppi_visibili() == PackedInt32Array([4, 1, 7]), "il negatoscopio è acceso con la radiografia")
 	check(cassa.aperta_ora and cassa.cifre == PackedInt32Array([4, 1, 7]), "la cassaforte è aperta")
+	anta = inf.get(&"_anta_nord") as Node3D
+	check(bool(inf.get(&"porta_nord_aperta")) and anta and absf(anta.rotation_degrees.y - 180.0) < 0.5,
+		"la porta nord è già aperta, senza riaprirsi (anta a %.1f gradi)" % (anta.rotation_degrees.y if anta else -1.0))
+	check(int(Audio.conteggio.get(&"porta_ponte_apre", 0)) == suoni_porta + 1, "e senza suono")
 	var kc := inf.get_node_or_null(^"Keycard")
 	check(p.has_item(&"keycard") and (kc == null or kc.is_queued_for_deletion()), "la keycard è nell'inventario e non più nella cassaforte")
 	_fine()
@@ -242,6 +265,18 @@ func _aspetta_livello() -> void:
 		if p.input_enabled:
 			break
 		await get_tree().process_frame
+
+
+## Cammina verso [param t] per al più [param secondi] (tasto avanti, sguardo verso il punto).
+func _cammina_verso(t: Vector3, secondi: float) -> void:
+	Input.action_press(&"move_forward")
+	for i in int(secondi * 60.0):
+		var d := t - p.global_position
+		if Vector2(d.x, d.z).length() < 0.35:
+			break
+		p.set_look(atan2(-d.x, -d.z), 0.0)
+		await get_tree().physics_frame
+	Input.action_release(&"move_forward")
 
 
 func _secondi(s: float) -> void:

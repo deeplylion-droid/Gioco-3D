@@ -26,6 +26,8 @@ const VANO := 0.5
 const PORTA_SUD := 1.6
 const PORTA_NORD := -2.2
 const LARGO_PORTA := 1.0
+## Secondi per aprire la porta nord col pulsantone (il suono della porta del ponte dura 3,4 s).
+const DURATA_APERTURA_NORD := 2.6
 ## Ordine dei checkpoint dei passi (tra l'approdo e il magazzino).
 @export var ordine_checkpoint := 12
 ## La luce dopo il pulsante. Vero (A, scelta dell'utente del 25 ottobre: resta buia): la luce principale è lo schermo
@@ -48,7 +50,12 @@ var keycard: Pickup
 var _listelli := []
 var radiografia: Pickup
 
+## Vero quando la porta nord è aperta (o si sta aprendo).
+var porta_nord_aperta := false
+
 var _collisioni: StaticBody3D
+## Il cardine dell'anta della porta nord.
+var _anta_nord: Node3D
 var _vetro_lampeggiante: StandardMaterial3D
 var _luce_lampeggiante: OmniLight3D
 var _t := 0.0
@@ -248,7 +255,9 @@ func _stanza() -> void:
 			_forma(Vector3(w, H, 0.1), Vector3(cx, H * 0.5, z))
 		# sopra la porta
 		_box(Vector3(LARGO_PORTA, H - 2.15, 0.1), Vector3(xp, 2.15 + (H - 2.15) * 0.5, z), mat_muro, self, true)
-		_telaio(Vector3(xp, 0, z - lato * 0.05), 0.0 if lato < 0.0 else 180.0)
+		var cardine := _telaio(Vector3(xp, 0, z - lato * 0.05), 0.0 if lato < 0.0 else 180.0, lato < 0.0)
+		if lato < 0.0:
+			_anta_nord = cardine
 	_box(Vector3(0.1, FASCIA, 2 * L), Vector3(-L - 0.05, FASCIA * 0.5, 0), mat_piastrelle)
 	_box(Vector3(0.1, H - FASCIA, 2 * L), Vector3(-L - 0.05, FASCIA + (H - FASCIA) * 0.5, 0), mat_muro)
 	_listelli.append([Vector3(0.04, 0.05, 2 * L), Vector3(-L + 0.02, FASCIA, 0), listello])
@@ -287,8 +296,10 @@ func _muro_col_vano(x: float, y0: float, y1: float, m: Material, spessore := 0.1
 				_box(Vector3(spessore, hi - lo, b - a), Vector3(x, (lo + hi) * 0.5, (a + b) * 0.5), m)
 
 
-## Il telaio della porta di servizio e l'anta aperta, appoggiata al muro dentro la stanza.
-func _telaio(pos: Vector3, rot: float) -> void:
+## Il telaio della porta di servizio e l'anta aperta, appoggiata al muro dentro la stanza. Con [param chiusa] (la porta
+## nord) l'anta parte chiusa nel telaio, con la sua collisione che si muove con lei, e si apre col pulsantone
+## ([method _apri_porta_nord]). Restituisce il cardine dell'anta.
+func _telaio(pos: Vector3, rot: float, chiusa := false) -> Node3D:
 	var n := Node3D.new()
 	n.position = pos
 	n.rotation_degrees.y = rot
@@ -308,13 +319,41 @@ func _telaio(pos: Vector3, rot: float) -> void:
 	cardine.position = Vector3(LARGO_PORTA * 0.5, 0, 0.07)
 	cardine.rotation_degrees.y = 180.0
 	n.add_child(cardine)
-	_box(Vector3(0.88, 2.04, 0.05), Vector3(-0.44, 1.03, -0.025), anta, cardine)
+	# la porta nord chiusa: l'anta sta fra gli stipiti (filo interno a 0,44 m dall'asse, 2 mm di gioco per lato) e sotto la
+	# traversa (5 mm), coi cardini sul filo interno dello stipite verso la stanza (2 mm fuori dalla sua faccia): aperta a
+	# 180 gradi resta tutta fuori dal vano, davanti allo stipite e al muro, come la sud
+	var largo := 0.88
+	var alto := 2.04
+	if chiusa:
+		largo = LARGO_PORTA - 0.12 - 0.004
+		alto = 2.075
+		cardine.position = Vector3(largo * 0.5, 0, 0.072)
+		cardine.rotation_degrees.y = 0.0
+	var centro := Vector3(-largo * 0.5, 0.01 + alto * 0.5, -0.025)
+	_box(Vector3(largo, alto, 0.05), centro, anta, cardine)
 	_box(Vector3(0.14, 0.03, 0.05), Vector3(-0.78, 1.05, 0.02), _colore(Color(0.7, 0.7, 0.7), 0.9, 0.3), cardine)
-	var xf := n.transform * cardine.transform
-	_forma(Vector3(0.88, 2.04, 0.05), xf * Vector3(-0.44, 1.03, -0.025), rot + cardine.rotation_degrees.y)
+	if chiusa:
+		# la collisione si muove con l'anta: segue il cardine che ruota (con sync_to_physics il corpo rimetteva a posto la sua
+		# posizione quando a muoversi è il padre, e restava chiuso), anche con la stanza ferma (i controlli)
+		var corpo := AnimatableBody3D.new()
+		corpo.name = "AntaNord"
+		corpo.sync_to_physics = false
+		corpo.collision_layer = _collisioni.collision_layer
+		corpo.collision_mask = 0
+		var f := CollisionShape3D.new()
+		var b := BoxShape3D.new()
+		b.size = Vector3(largo, alto, 0.05)
+		f.shape = b
+		f.position = centro
+		corpo.add_child(f)
+		cardine.add_child(corpo)
+	else:
+		var xf := n.transform * cardine.transform
+		_forma(Vector3(largo, alto, 0.05), xf * centro, rot + cardine.rotation_degrees.y)
 	# i cardini: due perni sull'asse, nello spigolo dell'anta, accanto allo stipite (non dentro)
 	for y in [0.35, 1.75]:
 		_box(Vector3(0.025, 0.1, 0.025), Vector3(-0.0126, y, -0.0063), telaio, cardine)
+	return cardine
 
 
 # --- arredi --------------------------------------------------------------------------------------
@@ -917,8 +956,33 @@ func _checkpoint() -> void:
 		n.add_child(cp)
 		_cp.append(cp)
 	interruttore.powered_changed.connect(func(on: bool): if on: _raggiunto(0))
+	# la porta nord: si apre da sola quando colpisci il pulsantone; acceso senza colpo (l'istantanea di un checkpoint, il
+	# Continua, le partenze F9) è già aperta. Al colpo powered_changed arriva prima di pressed: l'apertura senza
+	# animazione aspetta la fine del fotogramma, e a quel punto l'anta si sta già aprendo.
+	interruttore.pressed.connect(func(): if interruttore.powered: _apri_porta_nord(true))
+	interruttore.powered_changed.connect(func(on: bool): if on: _apri_porta_nord.call_deferred(false))
+	if interruttore.powered:
+		_apri_porta_nord(false)
 	radiografia.interacted.connect(func(_by): _raggiunto(1))
 	negatoscopio.radiografia_appoggiata.connect(func(): _raggiunto(2))
+
+
+## La porta nord (l'uscita verso la scala di servizio) è chiusa finché non colpisci il pulsantone (richiesta dell'utente del
+## 25 ottobre): con [param animata] (il colpo) si apre da sola fino al muro, col suono della porta del ponte della sala
+## pompe; senza, è subito aperta.
+func _apri_porta_nord(animata: bool) -> void:
+	if _anta_nord == null or porta_nord_aperta:
+		return
+	porta_nord_aperta = true
+	if not animata:
+		_anta_nord.rotation_degrees.y = 180.0
+		return
+	var audio := get_node_or_null(^"/root/Audio")
+	if audio:
+		audio.call(&"suona", &"porta_ponte_apre", _anta_nord.global_position + Vector3(0.0, 1.0, 0.0))
+	var tw := create_tween()
+	tw.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	tw.tween_property(_anta_nord, ^"rotation_degrees:y", 180.0, DURATA_APERTURA_NORD).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
 func _raggiunto(i: int) -> void:
