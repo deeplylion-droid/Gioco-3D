@@ -1,0 +1,16 @@
+PileCasse: 108 istanze
+PileCartone: 271 istanze
+PileScatole: 2495 istanze
+PileScatoleColorate: 757 istanze
+scatola 01 (istanza 0): -23.30 2.10 -27.51, colore da2621
+scatola 02 (istanza 558): -10.92 2.50 -6.63, colore 8f34c1
+scatola 03 (istanza 37): -20.88 1.70 -26.49, colore 2c4ac8
+scatola 04 (istanza 112): -18.02 3.85 -24.57, colore d52e27
+scatola 05 (istanza 187): -12.97 1.70 -18.42, colore 2848cb
+scatola 06 (istanza 262): -29.50 2.50 -24.34, colore f37616
+scatola 07 (istanza 337): -25.40 3.85 -20.67, colore 2848cb
+scatola 08 (istanza 412): -21.61 3.85 -15.86, colore d62d27
+scatola 09 (istanza 487): -15.42 2.10 -9.96, colore 2144d0
+scatola 10 (istanza 562): -11.33 5.20 -7.07, colore f6ca1d
+scatola 11 (istanza 637): -35.52 4.40 -5.34, colore 34a2ec
+scatola 12 (istanza 712): -37.94 3.05 4.32, colore db241f
