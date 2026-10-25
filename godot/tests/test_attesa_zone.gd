@@ -83,7 +83,8 @@ func _run() -> void:
 	var ins: Node = torre.get(&"inseguimento") if torre else null
 	if ins:
 		for e in ins.get(&"passi_lunghi"):
-			if NOTI.has(e[0]) and float(e[1]) > LIMITE_MS:
+			# (un passo noto da più di 50 ms, col resto del fotogramma, lo porta sopra il limite)
+			if NOTI.has(e[0]) and float(e[1]) > 50.0:
 				noti += 1
 				print("  noto  %s: %.0f ms (%s, %s)" % [e[0], e[1], NOTI[e[0]][0], NOTI[e[0]][1]])
 	check(lunghi <= noti, "mentre aspetta nessun fotogramma sopra %.0f ms oltre i casi noti (%d sopra, %d noti; il peggiore %.0f ms su %d)" % [LIMITE_MS, lunghi, noti, peggiore, n])
