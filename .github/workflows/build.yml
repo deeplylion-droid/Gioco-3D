@@ -211,6 +211,10 @@ jobs:
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_gallerie_sottomarino.gd
 
+      - name: Test del finale del tunnel sottomarino (E dalla camera stagna da vicino e da lontano, il battente non spinge, lo schianto si vede)
+        if: steps.progetto.outputs.presente == 'si'
+        run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_portello_sottomarino.gd
+
       - name: Test dell'enigma degli acquari
         if: steps.progetto.outputs.presente == 'si'
         run: godot --headless --path godot --fixed-fps 60 --script res://tests/run.gd -- res://tests/test_acquari.gd
