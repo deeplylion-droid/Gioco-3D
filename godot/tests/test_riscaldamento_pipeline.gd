@@ -14,12 +14,10 @@ extends Node
 ##        --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
 
 const AL_PIU := 10
-## Casi noti, da togliere appena corretti (seconda tappa, entro le 21:00 del 25 ottobre; si stampano con la misura):
-## - l'avvio dell'oblò nel riscaldamento (ObloLei._mostra, prima del primo pezzo): 32 pipeline in un fotogramma;
-## - lei che compare dietro l'oblò: 8 "draw" al primo fotogramma (la variante del viewport principale che il disegno
-##   fuori vista non fa ancora: si cerca quale).
-const NOTO_AVVIO_OBLO := 32
-const NOTO_LEI_DRAW := 8
+## Caso noto, da togliere appena corretto (si stampa con la misura): il corpo di lei (la mesh "Medusa", più superfici
+## con formati di vertici diversi) col materiale neutro, nel primo passo del suo modello: 12 pipeline in un fotogramma.
+## (25 ottobre, sera: l'avvio dell'oblò da 32 e gli 8 "draw" di lei all'oblò sono corretti.)
+const NOTI := {"lei: Medusa": 12}
 
 var _ok := 0
 var _ko := 0
@@ -73,8 +71,8 @@ func _run() -> void:
 		var bloccano := int(ora[0] - prima[0] + ora[1] - prima[1])
 		prima = ora
 		n += 1
-		if bloccano > AL_PIU and r.fatti == r.totale and r.pezzo == "" and bloccano <= NOTO_AVVIO_OBLO:
-			print("  noto  avvio dell'oblò nel riscaldamento: %d pipeline in un fotogramma (al più %d)" % [bloccano, NOTO_AVVIO_OBLO])
+		if bloccano > AL_PIU and NOTI.has(r.pezzo) and bloccano <= int(NOTI[r.pezzo]):
+			print("  noto  %s: %d pipeline in un fotogramma (al più %d)" % [r.pezzo, bloccano, NOTI[r.pezzo]])
 			continue
 		if bloccano > AL_PIU:
 			print("    %d pipeline in un fotogramma (materiale %d/%d %s)" % [bloccano, r.fatti, r.totale, r.pezzo])
@@ -106,9 +104,6 @@ func _run() -> void:
 	var s := int(c[0] - prima[0])
 	var d := int(c[1] - prima[1])
 	check(o.lei != null and o.lei.visible, "lei si vede dietro il vetro")
-	if s == 0 and d > 0 and d <= NOTO_LEI_DRAW:
-		print("  noto  lei all'oblò: draw %d al primo fotogramma (al più %d)" % [d, NOTO_LEI_DRAW])
-		d = 0
 	check(s == 0 and d == 0, "nessuna compilazione che blocca quando compare (surface %d, draw %d; in sottofondo %d)" % [s, d, int(c[2] - prima[2])])
 	o.queue_free()
 

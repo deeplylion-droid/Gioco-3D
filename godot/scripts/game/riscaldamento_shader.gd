@@ -187,12 +187,84 @@ func _passi_ombre() -> void:
 	_luci[-1].shadow_enabled = false
 
 
+## Il modello di lei: crearlo compila insieme tutti i suoi materiali, sul formato dei vertici di ogni sua mesh (ossa e
+## blend shape), anche nascosto (32 pipeline in un fotogramma, test_riscaldamento_pipeline del 25 ottobre). Qui prima
+## il modello con un materiale neutro, una mesh per volta; poi ogni superficie col suo materiale del GLB e con quelli che
+## gli si mettono al suo posto (medusa_<nome>*.tres: asciutta, bagnata), uno per volta: quando lei si crea davvero non
+## c'è più niente da compilare. (Lo stesso materiale su tutte le mesh insieme erano 12-28 pipeline per fotogramma.)
+const MODELLO_LEI := "res://assets/models/medusa/medusa.glb"
+const MATERIALI_LEI := "res://assets/models/medusa/"
+
+
+func _disegna_modello_lei(sv: SubViewport) -> void:
+	var scena := load(MODELLO_LEI) as PackedScene
+	if scena == null:
+		return
+	var tres: Array[Material] = []
+	for f in ResourceLoader.list_directory(MATERIALI_LEI):
+		if f.ends_with(".tres") and f.begins_with("medusa_"):
+			var m := load(MATERIALI_LEI + f) as Material
+			if m:
+				tres.append(m)
+	var modello := scena.instantiate() as Node3D
+	var neutro := StandardMaterial3D.new()
+	var mesh: Array[MeshInstance3D] = []
+	var box := AABB()
+	for n in modello.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		for k in mi.mesh.get_surface_count():
+			mi.set_surface_override_material(k, neutro)
+		mi.visible = false
+		mesh.append(mi)
+		box = box.merge(mi.get_aabb()) if box.size != Vector3.ZERO else mi.get_aabb()
+	# davanti alla camera di prova, piccola: tutta nell'inquadratura e nelle ombre delle luci
+	modello.scale = Vector3.ONE * (1.2 / maxf(box.size.length(), 0.01))
+	modello.position = -box.get_center() * modello.scale.x
+	sv.add_child(modello)
+	for mi in mesh:
+		mi.visible = true
+		pezzo = "lei: %s" % mi.name
+		await _passi_ombre()
+		if not is_inside_tree():
+			return
+		for k in mi.mesh.get_surface_count():
+			var suo := mi.mesh.surface_get_material(k)
+			var prove: Array[Material] = []
+			if suo:
+				prove.append(suo)
+				var nome := suo.resource_name.trim_prefix("M_").split("_")[0]
+				for m in tres:
+					if m.resource_path.get_file().begins_with("medusa_" + nome):
+						prove.append(m)
+			for m in prove:
+				pezzo = "lei: %s %d %s" % [mi.name, k, m.resource_path.get_file()]
+				mi.set_surface_override_material(k, m)
+				await _passi_ombre()
+				if not is_inside_tree():
+					return
+			mi.set_surface_override_material(k, neutro)
+		mi.visible = false
+	pezzo = ""
+	modello.queue_free()
+
+
 func _disegna_oblo(sv: SubViewport) -> void:
+	await _disegna_modello_lei(sv)
+	if not is_inside_tree():
+		return
 	var o := ObloLei.new()
 	sv.add_child(o)
 	o.set_process(false)
+	# prima la struttura dell'oblò (le sue mesh e i suoi materiali fatti nel codice), poi lei: insieme erano 16 pipeline
+	pezzo = "oblò: struttura"
+	await _passi_ombre()
+	if not is_inside_tree():
+		return
+	pezzo = "oblò: lei"
 	o._mostra()
-	# (il riscaldamento dell'oblò stesso, un SubViewport suo, qui non serve: da solo erano 32 pipeline in un fotogramma)
+	# (il riscaldamento dell'oblò stesso, un SubViewport suo: qui non serve)
 	var suo := o.get_node_or_null(^"Riscaldamento") as SubViewport
 	if suo:
 		suo.render_target_update_mode = SubViewport.UPDATE_DISABLED
@@ -297,7 +369,9 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 	# lo strato fuori vista e la camera, come disegna_fuori_vista; poi un pezzo per volta
 	var finito := [false]
 	var prepara := func() -> void:
-		await disegna_fuori_vista(radice, principale, fotogrammi * (pezzi.size() + 1))
+		# (ogni pezzo sta 1 + fotogrammi fotogrammi, poi tutti insieme: la camera fuori vista resta finché non si finisce;
+		# prima durava meno e gli ultimi pezzi non si disegnavano: 8 "draw" quando lei compariva davvero)
+		await disegna_fuori_vista(radice, principale, (fotogrammi + 1) * (pezzi.size() + 1) + 2)
 		finito[0] = true
 	prepara.call()
 	for gi in pezzi:
@@ -308,6 +382,18 @@ static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 
 			gi.visible = true
 		for i in fotogrammi:
 			await radice.get_tree().process_frame
+		if is_instance_valid(gi):
+			gi.visible = false
+	# e alla fine tutti insieme, come quando compare davvero: un pezzo per volta, lei mostrata intera compilava ancora
+	# 8 "draw" al primo fotogramma (test_riscaldamento_pipeline del 25 ottobre)
+	for gi in pezzi:
+		if is_instance_valid(gi):
+			gi.visible = true
+	for i in fotogrammi + 1:
+		await radice.get_tree().process_frame
+	if not is_instance_valid(radice) or not radice.is_inside_tree():
+		return
+	for gi in pezzi:
 		if is_instance_valid(gi):
 			gi.visible = false
 	while not finito[0] and is_instance_valid(radice) and radice.is_inside_tree():
