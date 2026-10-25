@@ -45,7 +45,7 @@ func _process(_delta: float) -> void:
 		c[k] = int(v - _prima[k])
 		_prima[k] = v
 	if ms > SOGLIA_MS and _f > 2:
-		var scena := get_tree().current_scene.name if get_tree().current_scene else "-"
+		var scena: String = String(get_tree().current_scene.name) if get_tree().current_scene else "-"
 		print("BLOCCO %.0f ms al fotogramma %d (%s; pipeline surface %d draw %d spec %d)" % [ms, _f, scena, c["surface"], c["draw"], c["spec"]])
 		_lunghi.append([ms, _f])
 
