@@ -85,8 +85,20 @@ func _run() -> void:
 	o.zona = AABB(Vector3(-50, -50, -50), Vector3(100, 100, 100))
 	add_child(o)
 	o.set_process(false)
-	cam.global_position = o.centro_vetro() + o.normale() * 2.5 + Vector3.UP * 0.2
-	cam.look_at(o.centro_vetro())
+	# con la camera vera del giocatore, lancia e zaino in mano (sullo strato del viewmodel, nella luce rosa di lei: il
+	# collaudo di grafica-2 del 25 ottobre trovava lì gli "draw" che con una camera nuda non c'erano)
+	var giocatore := (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as Node3D
+	add_child(giocatore)
+	var zaino := giocatore.find_children("*", "WaterPack", true, false)
+	if not zaino.is_empty():
+		(zaino[0] as WaterPack).set_equipped(true, false)
+	var occhio := giocatore.find_children("*", "Camera3D", true, false)[0] as Camera3D
+	var davanti := o.centro_vetro() + o.normale() * 2.5
+	giocatore.global_position = davanti - Vector3.UP * (occhio.global_position.y - giocatore.global_position.y) + Vector3.UP * 0.2
+	giocatore.look_at(Vector3(o.centro_vetro().x, giocatore.global_position.y, o.centro_vetro().z))
+	giocatore.process_mode = Node.PROCESS_MODE_DISABLED
+	occhio.make_current()
+	occhio.look_at(o.centro_vetro())
 	for i in 10:
 		await get_tree().process_frame
 	# come negli oblò leggeri (mascotte): lei creata nascosta mentre la zona si costruisce e disegnata fuori vista nel
@@ -106,6 +118,8 @@ func _run() -> void:
 	check(o.lei != null and o.lei.visible, "lei si vede dietro il vetro")
 	check(s == 0 and d == 0, "nessuna compilazione che blocca quando compare (surface %d, draw %d; in sottofondo %d)" % [s, d, int(c[2] - prima[2])])
 	o.queue_free()
+	giocatore.queue_free()
+	cam.make_current()
 
 	print("3. Il tunnel sottomarino, visto lungo la strada")
 	cam.global_position = Vector3(0, 50, 0)
