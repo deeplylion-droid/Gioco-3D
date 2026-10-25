@@ -139,8 +139,30 @@ func _disegna() -> void:
 		mostrati.clear()
 		if (Time.get_ticks_usec() - t0) / 1000.0 > 100.0:
 			print("RiscaldamentoShader: un fotogramma di %.0f ms (materiale %d)" % [(Time.get_ticks_usec() - t0) / 1000.0, i])
+	# lei dietro gli oblò (mascotte, 25 ottobre): le sue mesh con lo scheletro (le ossa cambiano il formato dei
+	# vertici: la sfera non basta), piena e poi trasparente come nella dissolvenza del distacco, con la sua luce rosa
+	await _disegna_lei(sv)
 	await get_tree().process_frame
 	sv.queue_free()
+
+
+func _disegna_lei(sv: SubViewport) -> void:
+	var l := LeiOblo.new()
+	sv.add_child(l)
+	if l.has_method(&"prepara"):
+		l.call(&"prepara", Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
+	l.mostra(Vector3(0, 0, -1.5), Vector3.BACK, "schiacciata")
+	for i in 4:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	for g in l.find_children("*", "GeometryInstance3D", true, false):
+		(g as GeometryInstance3D).transparency = 0.5
+	for i in 4:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return
+	l.queue_free()
 
 
 var _t_fotogramma := 0
