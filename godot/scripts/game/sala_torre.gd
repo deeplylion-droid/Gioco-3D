@@ -733,7 +733,7 @@ func _oblo_lei() -> void:
 	var hi := b([float(d["centro"][0]) - 0.1, float(v[1]) - 5.0, FONDO_Z + 2.6])
 	oblo.zona = AABB(lo.min(hi), (hi - lo).abs())
 	var xf := Transform3D(Basis.looking_at(-normale, Vector3.UP), centro)
-	oblo.muro = _muro_oblo(xf, float(d["lato"]) * 0.5)
+	oblo.muro = _muro_oblo()
 	oblo.transform = global_transform.affine_inverse() * xf
 	add_child(oblo)
 	# entrando nella bocca del tubo parte l'inseguimento: lei se ne va (e non compare più)
@@ -758,15 +758,39 @@ func _oblo_lei() -> void:
 
 
 ## Il muro della torre attorno all'oblò (scelta dell'utente del 25 ottobre: niente piastra quadrata scura, le
-## piastrelle e l'intonaco arrivano fino alla cornice d'ottone): per ogni superficie di torre_A che sta nel piano del
-## muro dove c'è il foro, il suo materiale, le quote che copre e come le sue UV seguono il muro (ricavate da un suo
-## triangolo), nelle coordinate dell'oblò [param xf] (vedi ObloLei.muro).
-func _muro_oblo(xf: Transform3D, h: float) -> Array:
+## piastrelle e l'intonaco arrivano fino alla cornice d'ottone): le fasce di ObloLei.muro, lette da [constant MURO_OBLO]
+## (calcolate una volta da [method calcola_muro_oblo]: farlo qui costava più di 100 ms in un passo, collaudo della CI)
+## coi materiali veri di torre_A.
+const MURO_OBLO := "res://assets/ambiente/torre/oblo_muro.json"
+
+
+func _muro_oblo() -> Array:
 	var out := []
 	var mi := find_child("torre_A", true, false) as MeshInstance3D
-	if mi == null or mi.mesh == null:
+	if mi == null or mi.mesh == null or not FileAccess.file_exists(MURO_OBLO):
 		return out
-	var verso := xf.affine_inverse() * mi.global_transform if mi.is_inside_tree() else xf.affine_inverse() * _xf_in_sala(mi)
+	for f in JSON.parse_string(FileAccess.get_file_as_string(MURO_OBLO)):
+		var i := int(f["superficie"])
+		if i >= mi.mesh.get_surface_count() or mi.get_active_material(i) == null or mi.get_active_material(i).resource_name != String(f["materiale"]):
+			push_warning("torre: il muro dell'oblò non corrisponde più a torre_A (rifai tests/aggiorna_muro_oblo_torre.gd)")
+			return []
+		var u: Array = f["uv"]
+		var fascia := {"materiale": mi.get_active_material(i), "da": float(f["da"]), "a": float(f["a"]),
+				"uv": Transform2D(Vector2(u[0], u[1]), Vector2(u[2], u[3]), Vector2(u[4], u[5]))}
+		if f.has("colore"):
+			var c: Array = f["colore"]
+			fascia["colore"] = Color(c[0], c[1], c[2], c[3])
+		out.append(fascia)
+	return out
+
+
+## Il muro della torre attorno all'oblò, calcolato dalla mesh (lento: guarda tutti i triangoli di torre_A; lo usa
+## tests/aggiorna_muro_oblo_torre.gd, che lo salva in [constant MURO_OBLO]): per ogni superficie di torre_A che sta nel
+## piano del muro dove c'è il foro, il nome del materiale, le quote che copre, come le sue UV seguono il muro (ricavate da
+## un suo triangolo) e la media dei colori dei vertici, nelle coordinate dell'oblò [param xf].
+static func calcola_muro_oblo(mi: MeshInstance3D, xf: Transform3D, h: float) -> Array:
+	var out := []
+	var verso := xf.affine_inverse() * mi.global_transform
 	for i in mi.mesh.get_surface_count():
 		var arr := mi.mesh.surface_get_arrays(i)
 		var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
@@ -813,24 +837,15 @@ func _muro_oblo(xf: Transform3D, h: float) -> Array:
 				t.origin = uv[ii[0]] - t.basis_xform(Vector2(p[0].x, p[0].y))
 				trovata = true
 		if trovata:
-			var fascia := {"materiale": mi.get_active_material(i), "da": y0, "a": y1, "uv": t}
+			var fascia := {"superficie": i, "materiale": mi.get_active_material(i).resource_name, "da": y0, "a": y1,
+					"uv": [t.x.x, t.x.y, t.y.x, t.y.y, t.origin.x, t.origin.y]}
 			# (i materiali della torre usano il colore dei vertici come albedo: la faccia nuova prende la media di quelli del
 			# muro attorno, se no veniva più chiara; collaudo D1)
 			if quanti > 0:
-				fascia["colore"] = somma / float(quanti)
+				var cm := somma / float(quanti)
+				fascia["colore"] = [cm.r, cm.g, cm.b, cm.a]
 			out.append(fascia)
 	return out
-
-
-## La trasformazione di [param n] nella sala, anche se non è ancora nell'albero (costruzione a pezzi).
-func _xf_in_sala(n: Node3D) -> Transform3D:
-	var t := Transform3D.IDENTITY
-	var q: Node = n
-	while q != null and q != self:
-		if q is Node3D:
-			t = (q as Node3D).transform * t
-		q = q.get_parent()
-	return global_transform * t
 
 
 func _oblo_via() -> void:
