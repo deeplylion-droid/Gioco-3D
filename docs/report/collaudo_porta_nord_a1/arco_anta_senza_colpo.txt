@@ -1,0 +1,6 @@
+punto (-2.20, -2.75): partito da (-2.20, -2.75), spostato al massimo di 0.000 m, alla fine di 0.000 m; anta a 0.0 gradi; dentro l'anta in 0 fotogrammi (alla fine false); andandosene fa 3.22 m in 2 s
+punto (-1.76, -2.55): partito da (-1.76, -2.55), spostato al massimo di 0.000 m, alla fine di 0.000 m; anta a 0.0 gradi; dentro l'anta in 0 fotogrammi (alla fine false); andandosene fa 2.77 m in 2 s
+punto (-1.30, -2.75): partito da (-1.30, -2.75), spostato al massimo di 0.000 m, alla fine di 0.000 m; anta a 0.0 gradi; dentro l'anta in 0 fotogrammi (alla fine false); andandosene fa 2.71 m in 2 s
+punto (-1.20, -2.85): partito da (-1.20, -2.85), spostato al massimo di 0.000 m, alla fine di 0.000 m; anta a 0.0 gradi; dentro l'anta in 0 fotogrammi (alla fine false); andandosene fa 2.77 m in 2 s
+punto (-2.45, -2.60): partito da (-2.45, -2.60), spostato al massimo di 0.000 m, alla fine di 0.000 m; anta a 0.0 gradi; dentro l'anta in 0 fotogrammi (alla fine false); andandosene fa 3.28 m in 2 s
+punto (-1.76, -2.85): partito da (-1.75, -2.78), spostato al massimo di 0.000 m, alla fine di 0.000 m; anta a 0.0 gradi; dentro l'anta in 192 fotogrammi (alla fine true); andandosene fa 2.94 m in 2 s

@@ -1,0 +1,25 @@
+punto (-2.20, -2.75): partito da (-2.20, -2.75), spostato al massimo di 1.563 m, alla fine di 1.456 m; anta a 180.0 gradi; dentro l'anta in 119 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
+  KO  (-2.20, -2.75): l'anta non spinge il giocatore (1.563 m)
+  KO  (-2.20, -2.75): il giocatore non resta dentro l'anta (119 fotogrammi)
+  ok  (-2.20, -2.75): non è incastrato, se ne va (2.41 m)
+punto (-1.76, -2.55): partito da (-1.76, -2.55), spostato al massimo di 1.163 m, alla fine di 1.012 m; anta a 180.0 gradi; dentro l'anta in 75 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
+  KO  (-1.76, -2.55): l'anta non spinge il giocatore (1.163 m)
+  KO  (-1.76, -2.55): il giocatore non resta dentro l'anta (75 fotogrammi)
+  ok  (-1.76, -2.55): non è incastrato, se ne va (2.41 m)
+punto (-1.30, -2.75): partito da (-1.30, -2.75), spostato al massimo di 0.669 m, alla fine di 0.567 m; anta a 180.0 gradi; dentro l'anta in 45 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
+  KO  (-1.30, -2.75): l'anta non spinge il giocatore (0.669 m)
+  KO  (-1.30, -2.75): il giocatore non resta dentro l'anta (45 fotogrammi)
+  ok  (-1.30, -2.75): non è incastrato, se ne va (2.41 m)
+punto (-1.20, -2.85): partito da (-1.20, -2.85), spostato al massimo di 0.558 m, alla fine di 0.509 m; anta a 180.0 gradi; dentro l'anta in 36 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
+  KO  (-1.20, -2.85): l'anta non spinge il giocatore (0.558 m)
+  KO  (-1.20, -2.85): il giocatore non resta dentro l'anta (36 fotogrammi)
+  ok  (-1.20, -2.85): non è incastrato, se ne va (2.41 m)
+punto (-2.45, -2.60): partito da (-2.45, -2.60), spostato al massimo di 1.719 m, alla fine di 1.719 m; anta a 180.0 gradi; dentro l'anta in 86 fotogrammi (alla fine false); andandosene fa 2.25 m in 2 s
+  KO  (-2.45, -2.60): l'anta non spinge il giocatore (1.719 m)
+  KO  (-2.45, -2.60): il giocatore non resta dentro l'anta (86 fotogrammi)
+  ok  (-2.45, -2.60): non è incastrato, se ne va (2.25 m)
+punto (-1.76, -2.85): partito da (-1.75, -2.78), spostato al massimo di 1.107 m, alla fine di 1.009 m; anta a 180.0 gradi; dentro l'anta in 110 fotogrammi (alla fine false); andandosene fa 2.41 m in 2 s
+  KO  (-1.76, -2.85): l'anta non spinge il giocatore (1.107 m)
+  KO  (-1.76, -2.85): il giocatore non resta dentro l'anta (110 fotogrammi)
+  ok  (-1.76, -2.85): non è incastrato, se ne va (2.41 m)
+RISULTATO: 6 controlli ok, 12 falliti
