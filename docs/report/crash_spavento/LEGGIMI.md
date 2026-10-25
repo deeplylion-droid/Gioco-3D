@@ -37,6 +37,7 @@ In CI `test_tappa8` saltava la sequenza, e la torre non era in caricamento.
   - `Game.return_to_title()`, dal menu di pausa e da solo dopo la fine della demo: aspetta col gioco ancora in pausa;
   - F1 e F2 nelle build di debug.
 - Se intanto si esce dal gioco o si torna al titolo, la ripartenza non ricarica.
+- **Un secondo accesso a un oggetto liberato**, trovato da `test_torre` con il conteggio degli errori: `FormeTunnel.prepara_a_pezzi`, una funzione statica a pezzi, quindi non si ferma quando il tunnel viene liberato. Dopo una morte nella torre, mentre si preparavano le forme del tunnel, continuava sulle forme di collisione già liberate ("previously freed"). Nel gioco esportato è un crash. Ora a ogni forma controlla che tunnel e forma ci siano ancora.
 - `LuciBianche` non legge più le geometrie fuori dall'albero. Nella ricarica toccava una lampada della sala vecchia, già tolta dalla scena, con l'errore `get_global_transform: !is_inside_tree()`.
 
 ## Prove
