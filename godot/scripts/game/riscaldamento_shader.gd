@@ -296,27 +296,87 @@ func _disegna_oblo(sv: SubViewport) -> void:
 ## materiali e al primo fotogramma vero non si ferma. Intanto la zona sta su uno strato che la camera del gioco non
 ## disegna, e le sue luci illuminano solo quello; alla fine torna com'era (nascosta, se lo era). Era
 ## SalaTorre.prepara_materiali; la usa anche la Risalita.
+## Gli strati si cambiano solo ai nodi visibili, con la radice già resa visibile (nello stesso fotogramma: la camera del
+## gioco non la vede mai), e si rimettono prima di rinasconderla: cambiati a mesh nascoste il motore non le staccava
+## dalle luci ("BUG, indexing did not unpair geometries from light", poi il crash all'uscita; mascotte, 25 ottobre).
 static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi := 4) -> void:
 	if principale == null or not radice.is_inside_tree():
 		return
-	var visuali := radice.find_children("*", "VisualInstance3D", true, false)
-	var aabb := AABB()
+	var stato := _fuori_vista(radice)
+	var sv := _camera(radice, principale, stato["aabb"])
+	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
+	for i in fotogrammi + 1:
+		await radice.get_tree().process_frame
+		if not is_instance_valid(radice) or not radice.is_inside_tree():
+			break
+	if is_instance_valid(sv):
+		sv.queue_free()
+	_rimetti(radice, stato)
+
+
+## Come [method disegna_fuori_vista], ma un pezzo (GeometryInstance3D) per volta: [param radice] (per esempio lei
+## dietro un oblò, creata nascosta mentre la sua zona si costruisce a pezzi) si disegna fuori vista nel mondo della
+## sua zona (con la sua luce globale, la sua nebbia e le sue luci), un pezzo ogni [param fotogrammi] fotogrammi, così
+## le pipeline si compilano poche per volta e quando la si mostra davvero non se ne compila nessuna; alla fine tutti
+## insieme, come quando compare davvero. I pezzi si tolgono dalla camera con lo strato (0), non con visible.
+static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 2) -> void:
+	if principale == null or not radice.is_inside_tree():
+		return
+	var stato := _fuori_vista(radice)
+	var pezzi: Array[GeometryInstance3D] = []
+	for vi in (stato["strati"] as Dictionary):
+		if vi is GeometryInstance3D:
+			pezzi.append(vi)
+			(vi as GeometryInstance3D).layers = 0
+	var sv := _camera(radice, principale, stato["aabb"])
+	var vivo := func() -> bool: return is_instance_valid(radice) and radice.is_inside_tree()
+	for gi in pezzi:
+		await radice.get_tree().process_frame
+		if not vivo.call():
+			break
+		if is_instance_valid(gi):
+			gi.layers = SalaTorre.STRATO_PREPARA
+		for i in fotogrammi:
+			await radice.get_tree().process_frame
+		if is_instance_valid(gi):
+			gi.layers = 0
+	# e alla fine tutti insieme, come quando compare davvero: un pezzo per volta, lei mostrata intera compilava ancora
+	# 8 "draw" al primo fotogramma (test_riscaldamento_pipeline del 25 ottobre)
+	if vivo.call():
+		for gi in pezzi:
+			if is_instance_valid(gi):
+				gi.layers = SalaTorre.STRATO_PREPARA
+		for i in fotogrammi + 1:
+			await radice.get_tree().process_frame
+	if is_instance_valid(sv):
+		sv.queue_free()
+	_rimetti(radice, stato)
+
+
+## Rende visibile [param radice] e mette sullo strato fuori vista i suoi nodi visibili (le luci illuminano solo
+## quello): torna lo stato da rimettere con [method _rimetti].
+static func _fuori_vista(radice: Node3D) -> Dictionary:
+	var stato := {"visibile": radice.visible, "strati": {}, "maschere": {}, "aabb": AABB()}
+	radice.visible = true
 	var primo := true
-	var strati := {}
-	var maschere := {}
-	for v in visuali:
+	for v in radice.find_children("*", "VisualInstance3D", true, false):
 		var vi := v as VisualInstance3D
-		strati[vi] = vi.layers
+		if not vi.is_visible_in_tree():
+			continue
+		stato["strati"][vi] = vi.layers
 		vi.layers = SalaTorre.STRATO_PREPARA
 		if vi is Light3D:
-			maschere[vi] = (vi as Light3D).light_cull_mask
+			stato["maschere"][vi] = (vi as Light3D).light_cull_mask
 			(vi as Light3D).light_cull_mask = SalaTorre.STRATO_PREPARA
 		elif vi is GeometryInstance3D:
 			var box := vi.global_transform * vi.get_aabb()
-			aabb = box if primo else aabb.merge(box)
+			stato["aabb"] = box if primo else (stato["aabb"] as AABB).merge(box)
 			primo = false
-	var era_visibile := radice.visible
-	radice.visible = true
+	return stato
+
+
+## La camera fuori vista: da fuori, guardando il centro di [param aabb], tutta la zona nell'inquadratura.
+static func _camera(radice: Node3D, principale: Viewport, aabb: AABB) -> SubViewport:
 	var sv := SubViewport.new()
 	sv.name = "PreparaMateriali"
 	sv.size = Vector2i(320, 180)
@@ -331,73 +391,34 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 	radice.add_child(sv)
 	var centro := aabb.get_center()
 	var raggio := aabb.size.length() * 0.5
-	# da fuori, guardando il centro: tutta la sala nell'inquadratura (niente scartato dal frustum)
 	cam.look_at_from_position(centro + Vector3(0.6, 0.5, 0.8).normalized() * raggio * 1.3, centro, Vector3.UP)
 	cam.current = true
-	# a fotogrammi del gioco (frame_post_draw senza renderer, nei test headless, non arriva)
-	for i in fotogrammi + 1:
-		await radice.get_tree().process_frame
-		if not radice.is_inside_tree():
-			break
-	sv.queue_free()
-	for vi in strati:
-		if is_instance_valid(vi):
-			(vi as VisualInstance3D).layers = strati[vi]
-	for l in maschere:
-		if is_instance_valid(l):
-			(l as Light3D).light_cull_mask = maschere[l]
-	radice.visible = era_visibile
+	return sv
 
 
-
-## Come [method disegna_fuori_vista], ma un pezzo (GeometryInstance3D) per volta: [param radice] (per esempio lei
-## dietro un oblò, creata nascosta mentre la sua zona si costruisce a pezzi) si disegna fuori vista nel mondo della
-## sua zona (con la sua luce globale, la sua nebbia e le sue luci), un pezzo ogni [param fotogrammi] fotogrammi, così
-## le pipeline si compilano poche per volta e quando la si mostra davvero non se ne compila nessuna. Alla fine tutto
-## torna com'era (nascosto, se lo era).
-static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 2) -> void:
-	if principale == null or not radice.is_inside_tree():
+## Rimette strati e maschere (a nodi visibili: chi nel frattempo si è nascosto si mostra un attimo, nello stesso
+## fotogramma) e poi la visibilità della radice.
+static func _rimetti(radice: Node3D, stato: Dictionary) -> void:
+	if not is_instance_valid(radice):
 		return
-	var pezzi: Array[GeometryInstance3D] = []
-	var accesi := {}
-	for g in radice.find_children("*", "GeometryInstance3D", true, false):
-		var gi := g as GeometryInstance3D
-		accesi[gi] = gi.visible
-		if gi.visible:
-			pezzi.append(gi)
-		gi.visible = false
-	# lo strato fuori vista e la camera, come disegna_fuori_vista; poi un pezzo per volta
-	var finito := [false]
-	var prepara := func() -> void:
-		# (ogni pezzo sta 1 + fotogrammi fotogrammi, poi tutti insieme: la camera fuori vista resta finché non si finisce;
-		# prima durava meno e gli ultimi pezzi non si disegnavano: 8 "draw" quando lei compariva davvero)
-		await disegna_fuori_vista(radice, principale, (fotogrammi + 1) * (pezzi.size() + 1) + 2)
-		finito[0] = true
-	prepara.call()
-	for gi in pezzi:
-		await radice.get_tree().process_frame
-		if not is_instance_valid(radice) or not radice.is_inside_tree():
-			return
-		if is_instance_valid(gi):
-			gi.visible = true
-		for i in fotogrammi:
-			await radice.get_tree().process_frame
-		if is_instance_valid(gi):
-			gi.visible = false
-	# e alla fine tutti insieme, come quando compare davvero: un pezzo per volta, lei mostrata intera compilava ancora
-	# 8 "draw" al primo fotogramma (test_riscaldamento_pipeline del 25 ottobre)
-	for gi in pezzi:
-		if is_instance_valid(gi):
-			gi.visible = true
-	for i in fotogrammi + 1:
-		await radice.get_tree().process_frame
-	if not is_instance_valid(radice) or not radice.is_inside_tree():
-		return
-	for gi in pezzi:
-		if is_instance_valid(gi):
-			gi.visible = false
-	while not finito[0] and is_instance_valid(radice) and radice.is_inside_tree():
-		await radice.get_tree().process_frame
-	for gi in accesi:
-		if is_instance_valid(gi):
-			(gi as GeometryInstance3D).visible = accesi[gi]
+	radice.visible = true
+	for vi in (stato["strati"] as Dictionary):
+		if not is_instance_valid(vi):
+			continue
+		var n := vi as VisualInstance3D
+		var nascosto := not n.is_visible_in_tree()
+		var giu: Array[Node3D] = []
+		if nascosto:
+			# (i genitori nascosti si mostrano un attimo e si rinascondono, dal più alto)
+			var x: Node = n
+			while x != radice and x is Node3D:
+				if not (x as Node3D).visible:
+					giu.push_front(x)
+					(x as Node3D).visible = true
+				x = x.get_parent()
+		n.layers = stato["strati"][vi]
+		if stato["maschere"].has(vi):
+			(n as Light3D).light_cull_mask = stato["maschere"][vi]
+		for g in giu:
+			g.visible = false
+	radice.visible = stato["visibile"]
