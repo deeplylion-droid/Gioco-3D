@@ -320,14 +320,15 @@ func _telaio(pos: Vector3, rot: float, chiusa := false) -> Node3D:
 	cardine.rotation_degrees.y = 180.0
 	n.add_child(cardine)
 	# la porta nord chiusa: l'anta sta fra gli stipiti (filo interno a 0,44 m dall'asse, 2 mm di gioco per lato) e sotto la
-	# traversa (5 mm), coi cardini sul filo interno dello stipite verso la stanza (2 mm fuori dalla sua faccia): aperta a
-	# 180 gradi resta tutta fuori dal vano, davanti allo stipite e al muro, come la sud
+	# traversa (5 mm), coi cardini sul filo interno dello stipite verso la stanza (8 mm fuori dalla sua faccia, così i perni
+	# non entrano nello stipite né chiusa né aperta): aperta a 180 gradi resta tutta fuori dal vano, davanti allo stipite e
+	# al muro, come la sud
 	var largo := 0.88
 	var alto := 2.04
 	if chiusa:
 		largo = LARGO_PORTA - 0.12 - 0.004
 		alto = 2.075
-		cardine.position = Vector3(largo * 0.5, 0, 0.072)
+		cardine.position = Vector3(largo * 0.5, 0, 0.078)
 		cardine.rotation_degrees.y = 0.0
 	var centro := Vector3(-largo * 0.5, 0.01 + alto * 0.5, -0.025)
 	_box(Vector3(largo, alto, 0.05), centro, anta, cardine)
