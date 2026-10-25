@@ -43,6 +43,9 @@ const CAMERE := {
 	"pulsante": [Vector3(1.35, 1.6, -2.2), Vector3(1.35, 1.25, -3.2)],
 	"pannello_rosa": [Vector3(-1.9, 1.7, 1.45), Vector3(-3.2, 1.85, 1.45)],
 	"pannello_rosa_fianco": [Vector3(-2.9, 1.85, 0.55), Vector3(-3.2, 1.85, 1.45)],
+	"pannello_rosa_vicino": [Vector3(-2.3, 1.85, 1.45), Vector3(-3.2, 1.85, 1.45)],
+	"pannello_rosa_radente": [Vector3(-3.08, 1.85, 0.75), Vector3(-3.19, 1.85, 1.45)],
+	"pannello_rosa_radente_alto": [Vector3(-3.06, 2.45, 1.45), Vector3(-3.19, 1.85, 1.45)],
 	"uscita": [Vector3(-2.2, 1.6, -1.6), Vector3(-2.2, 2.38, -3.15)],
 	"rotelle_buio": [Vector3(1.5, 1.6, -0.4), Vector3(3.2, 1.3, -1.05)],
 }
@@ -101,10 +104,21 @@ func _run() -> void:
 	cam.near = 0.05
 	get_tree().root.add_child(cam)
 	cam.make_current()
+	# COLLAUDO_LUCE=1: una luce bianca provvisoria sulla camera, solo negli scatti (per vedere com'è attaccato un oggetto
+	# al buio), non nel gioco
+	var luce_collaudo: OmniLight3D = null
+	if OS.get_environment("COLLAUDO_LUCE") == "1":
+		luce_collaudo = OmniLight3D.new()
+		luce_collaudo.light_energy = 1.5
+		luce_collaudo.omni_range = 4.0
+		luce_collaudo.shadow_enabled = true
+		get_tree().root.add_child(luce_collaudo)
 	for nome in lista:
 		var c: Array = CAMERE[nome]
 		cam.global_position = c[0]
 		cam.look_at(c[1], Vector3.UP)
+		if luce_collaudo:
+			luce_collaudo.global_position = cam.global_position + Vector3.UP * 0.15
 		for i in 30:
 			await get_tree().process_frame
 		await RenderingServer.frame_post_draw
