@@ -375,7 +375,7 @@ func _move_on_ground(delta: float) -> void:
 		_jump_buffer = jump_buffer_time
 	else:
 		_jump_buffer -= delta
-	if _jump_buffer > 0.0 and _coyote > 0.0 and (can_jump_while_crouched or not is_crouching):
+	if _jump_buffer > 0.0 and _coyote > 0.0 and (can_jump_while_crouched or not is_crouching) and not in_acqua_senza_salto():
 		velocity.y = sqrt(2.0 * g * jump_height)
 		_jump_buffer = 0.0
 		_coyote = 0.0
@@ -889,3 +889,13 @@ func remove_item(item_id: StringName, amount := 1) -> bool:
 	if inventory[item_id] <= 0:
 		inventory.erase(item_id)
 	return true
+
+
+## Vero coi piedi nell'acqua del canale del tunnel sottomarino (WaterVolume.senza_salto), con l'acqua sopra il
+## ginocchio come per il guado: lì non si salta. Su un gommone, coi piedi sopra il pelo, no.
+func in_acqua_senza_salto() -> bool:
+	for area in sensor.get_overlapping_areas():
+		var wv := area as WaterVolume
+		if wv and wv.senza_salto and wv.get_surface_height() > global_position.y + GUADO_DA:
+			return true
+	return false

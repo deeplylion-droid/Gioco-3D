@@ -27,8 +27,11 @@ const PORTA_ALTA := 2.2
 const PORTA_S := 2.0
 ## La presa d'acqua profonda in testa: il canale scende fino a qui (lei sale da lì sotto).
 const PRESA_FONDO := -36.0
-const GRADINO_LARGO := 0.4   # il gradino continuo lungo il bordo del canale
-const GRADINO_SU := 0.45     # sopra il fondo (il pelo è a 0,5)
+# il gradino continuo lungo il bordo del canale: due scalini che si salgono camminando (al più Player.step_height,
+# 0,32; dall'acqua non si salta, richiesta dell'utente del 25 ottobre)
+const GRADINO_LARGO := 0.5   # i due scalini insieme
+const GRADINO_SU := 0.61     # lo scalino alto, sopra il fondo (il pelo è a 0,5; poi 0,31 fino alla banchina)
+const GRADINO_BASSO := 0.30  # lo scalino basso, sopra il fondo
 const GRADINO_R := 0.05      # lo spigolo arrotondato
 const PRESA_FINO := 6.0
 ## L'approdo (scelta 11A dell'utente): nel muro di fondo la porta del portello sta in alto, a [constant SOGLIA] sopra
@@ -477,21 +480,28 @@ func _profilo(s: float, m: float) -> Array:
 	return out
 
 
-## Il gradino continuo lungo il bordo del canale, dal lato [param lato] (decisione del coordinatore con enigmi, 24
-## ottobre: dall'acqua si esce sempre, con due saltelli): largo [constant GRADINO_LARGO], [constant GRADINO_SU]
-## sopra il fondo (appena sotto il pelo), stesso mosaico, lo spigolo arrotondato. Scende fino a [param f] (nella
-## presa il fondo è più basso).
+## Il gradino continuo lungo il bordo del canale, dal lato [param lato]: due scalini (il basso a
+## [constant GRADINO_BASSO], l'alto a [constant GRADINO_SU] sopra il fondo, poi la banchina), che si salgono camminando
+## (prima, decisione del coordinatore con enigmi del 24 ottobre, uno scalino solo che si saliva con due saltelli; dal 25
+## ottobre nell'acqua del canale non si salta). Larghi in tutto [constant GRADINO_LARGO], stesso mosaico, gli spigoli
+## arrotondati. Scende fino a [param f] (nella presa il fondo è più basso).
 func _gradino(out: Array, lato: float, f: float) -> void:
 	var c := canale
-	var g := fondo + GRADINO_SU
-	var n := c - GRADINO_LARGO                  # il naso del gradino
+	var g2 := fondo + GRADINO_SU
+	var g1 := fondo + GRADINO_BASSO
+	var n1 := c - GRADINO_LARGO * 0.5           # il naso dello scalino alto
+	var n2 := c - GRADINO_LARGO                 # il naso dello scalino basso
 	var rr := GRADINO_R
-	var pts := [Vector2(c, g), Vector2(n + rr, g)]
-	for k in range(1, 4):
-		var a := PI * 0.5 * float(k) / 4.0
-		pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
-	pts.append(Vector2(n, g - rr))
-	pts.append(Vector2(n, f))
+	var pts := [Vector2(c, g2)]
+	for naso in [[n1, g2, g1], [n2, g1, f]]:
+		var n: float = naso[0]
+		var g: float = naso[1]
+		pts.append(Vector2(n + rr, g))
+		for k in range(1, 4):
+			var a := PI * 0.5 * float(k) / 4.0
+			pts.append(Vector2(n + rr - sin(a) * rr, g - rr + cos(a) * rr))
+		pts.append(Vector2(n, g - rr))
+		pts.append(Vector2(n, naso[2]))
 	for k in pts.size() - 1:
 		var a: Vector2 = pts[k]
 		var b: Vector2 = pts[k + 1]
@@ -566,12 +576,13 @@ func _pezzo(s0: float, s1: float) -> void:
 					_al(p, r, Vector2(lato * muro, piano)), _al(p, r, Vector2(lato * canale, piano))]
 			_quad(st["graniglia"], q, verso)
 			_facce_quad(facce, q)
-			# (e la testa del gradino continuo, tagliato col crollo)
-			var g := fondo + GRADINO_SU
-			var qg := [_al(p, r, Vector2(lato * (canale - GRADINO_LARGO), fondo)), _al(p, r, Vector2(lato * canale, fondo)),
-					_al(p, r, Vector2(lato * canale, g)), _al(p, r, Vector2(lato * (canale - GRADINO_LARGO), g))]
-			_quad(st["mosaico"], qg, verso)
-			_facce_quad(facce, qg)
+			# (e la testa del gradino continuo, tagliato col crollo: i due scalini)
+			for sc_g in [[canale - GRADINO_LARGO, canale - GRADINO_LARGO * 0.5, fondo + GRADINO_BASSO],
+					[canale - GRADINO_LARGO * 0.5, canale, fondo + GRADINO_SU]]:
+				var qg := [_al(p, r, Vector2(lato * float(sc_g[0]), fondo)), _al(p, r, Vector2(lato * float(sc_g[1]), fondo)),
+						_al(p, r, Vector2(lato * float(sc_g[1]), float(sc_g[2]))), _al(p, r, Vector2(lato * float(sc_g[0]), float(sc_g[2])))]
+				_quad(st["mosaico"], qg, verso)
+				_facce_quad(facce, qg)
 	if s0 <= PORTA_S and PORTA_S < s1:
 		_passaggio_porta(st, facce)
 	for k in st:
@@ -681,6 +692,7 @@ func _acqua(nodo: Node3D, s0: float, s1: float) -> void:
 		vol.name = "Canale_%d" % int(m)
 		vol.velocita_guado = velocita_guado
 		vol.velocita_guado_accovacciato = VELOCITA_GUADO_ACCOVACCIATO
+		vol.senza_salto = true
 		var cs := CollisionShape3D.new()
 		var b := BoxShape3D.new()
 		b.size = Vector3(wl + wr, acqua - fondo_qui, t2 - s2 + 0.3)
