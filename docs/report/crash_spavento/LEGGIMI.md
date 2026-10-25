@@ -1,0 +1,50 @@
+# Crash dopo il primo spavento (v0.3.14)
+
+Segnalazione dell'utente del 25 ottobre: su un PC nuovo e potente, la prima volta che ci gira il gioco, il gioco crasha dopo il primo spavento. Il primo spavento è la tappa 8: lei sbuca dalla fossa dell'area bimbi e ti prende, parte la sequenza di morte (urlo e glitch) e poi `GameState.respawn()` ricarica la sala intera.
+
+## Come si è riprodotto
+
+`godot/tests/test_presa_vera.gd` rifà il caso vero:
+
+- la strada di `test_strada` fino alla serranda, con le stesse scorciatoie, così Risalita e torre si caricano nel thread come nel gioco;
+- poi lungo la scia fino alla fossa, dove lei ti prende;
+- la sequenza va fino in fondo senza saltarla;
+- la sala si ricarica dal checkpoint e si giocano altri 30 s.
+
+In CI `test_tappa8` saltava la sequenza, e la torre non era in caricamento.
+
+## Cosa succede
+
+- **La torre è ancora in caricamento nel thread.** Comincia quando si apre la serranda (`EnigmaAcquari.comparso` → `_precarica_torre`). Nella prova senza schermo, con `--verbose`:
+  - alla presa la torre è `IN_PROGRESS`, alla ricarica pure, e anche 30 s dopo la ripartenza;
+  - all'uscita `Game.esci` l'ha aspettata altri 18,7 s.
+- **La sala si ricarica sopra il caricamento.** Il thread principale carica di seguito `sala_principale.tscn` mentre il thread 2 carica le texture della torre: nel log le due cose sono intrecciate. La sala nuova richiede la torre di nuovo mentre il primo caricamento è ancora in corso ("Another threaded load for resource path 'sala_torre.tscn' has been initiated").
+- **Su un PC nuovo è ancora peggio.** La cache degli shader è vuota, quindi i thread del pool sono pieni di pipeline da compilare e il caricamento della torre (un task a bassa priorità) dura di più. È proprio la situazione in cui la sala viene liberata e ricaricata sotto un caricamento in corso.
+- **Sequenza di morte e jumpscare: niente da segnalare.** `DeathSequence` e `JumpscareGlitch` controllano ogni riferimento con `is_instance_valid`. Dalla morte a 30 s dopo la ripartenza non c'è nessun errore del motore o degli script, né senza schermo (sala) né col renderer Vulkan con la cache vuota (interni, `tests/collaudo/morte_vulkan.gd`).
+- **La riserva della torre non c'entra.** Quella con `CACHE_MODE_IGNORE_DEEP` parte solo col portone aperto da più di 20 s, e il portone si apre con l'enigma degli acquari, dopo la tappa 8.
+- **Col renderer Vulkan la sala intera non sta nella memoria della macchina.** Con la cache vuota il processo viene ucciso a 14 GB prima di arrivare alla fossa, anche con le parti lontane nascoste (`tests/collaudo/presa_vulkan.gd`). Il crash esatto dentro il motore (Windows, GPU vera) qui non si vede. La condizione che lo provoca si vede, e si riproduce ogni volta.
+
+## La correzione
+
+- **`Game.aspetta_caricamenti(livello)`** è un punto solo, usato prima di liberare il livello:
+  - il livello si ferma (`process_mode` disabilitato), così non comincia altro;
+  - si aspetta, fotogramma per fotogramma, che i caricamenti nel thread di `carica_in_thread` siano finiti e che il livello non abbia lavori a metà (`lavori_in_corso()` della sala: la torre che si prepara nascosta);
+  - poi altri 2 fotogrammi disegnati;
+  - i risultati restano a chi li ha chiesti: la sala ricaricata li richiede e li trova pronti.
+- **Se l'attesa supera 1,5 s** compare il nero con la lucina rossa che pulsa e la scritta "Caricamento…", come nella schermata di caricamento, finché la scena non cambia.
+- **Dove si usa:**
+  - `GameState.respawn()`, sia ricarica sia scena diversa, al massimo 60 s;
+  - `Game.return_to_title()`, dal menu di pausa e da solo dopo la fine della demo: aspetta col gioco ancora in pausa;
+  - F1 e F2 nelle build di debug.
+- Se intanto si esce dal gioco o si torna al titolo, la ripartenza non ricarica.
+
+## Prove
+
+- `test_presa_vera` (in CI), che verifica:
+  - lei ti prende alla fossa;
+  - la sequenza va fino in fondo;
+  - la sala si ricarica solo a caricamenti nel thread finiti;
+  - la spia compare se l'attesa è lunga;
+  - dalla presa a 30 s dopo la ripartenza ci sono 0 errori del motore o degli script. Li conta un `Logger`, perché nel gioco esportato un accesso a un oggetto già liberato è un crash.
+- `tests/collaudo/morte_vulkan.gd`: sequenza intera, ricarica e 30 s col renderer Vulkan e la cache vuota, negli interni.
+- Gli altri test con morti e ricariche: vedi il messaggio del commit.

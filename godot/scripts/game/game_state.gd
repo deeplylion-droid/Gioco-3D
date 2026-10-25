@@ -28,6 +28,8 @@ enum Luci { PRIMA_DEL_RISVEGLIO, FLASH, BLACKOUT }
 const SAVE_PATH := "user://salvataggio.json"
 const SAVE_VERSION := 1
 const DEATH_SEQUENCE_SCENE := "res://scenes/ui/death_sequence.tscn"
+## Secondi massimi che la ripartenza aspetta i caricamenti nel thread (se un caricamento non finisce mai).
+const ATTESA_RIPARTENZA := 60.0
 
 ## Scrive l'ultimo checkpoint su disco (per un futuro "Continua" nel menu).
 @export var save_to_disk := true
@@ -56,6 +58,7 @@ var _collected: Dictionary = {}     # collezione -> { voce: true }
 var _registry: Dictionary = {}      # collezione -> { voce: true }, tutte quelle viste
 var _restore_pending := false
 var _death_sequence: Node = null
+var _ripartenza_in_corso := false
 
 
 # --- Livello e giocatore ------------------------------------------------------------------
@@ -257,8 +260,19 @@ func _on_death_sequence_finished(_skipped: bool) -> void:
 
 ## Ricarica il livello e riparte dall'ultimo checkpoint. Non mentre si esce dal gioco (Game.esci): la sala
 ## ricaricata richiederebbe di nuovo la torre nel thread, e l'uscita la troverebbe a metà.
+## Prima, a schermo nero, la sala si ferma (non comincia altro) e si aspetta che i caricamenti nel thread e i suoi lavori
+## a metà siano finiti, più due fotogrammi disegnati (Game.aspetta_caricamenti; crash della v0.3.14 dopo il primo spavento).
 func respawn() -> void:
-	if Game.uscendo:
+	if Game.uscendo or _ripartenza_in_corso:
+		return
+	_ripartenza_in_corso = true
+	var sala := get_tree().current_scene
+	var attesa: float = await Game.aspetta_caricamenti(sala, ATTESA_RIPARTENZA)
+	_ripartenza_in_corso = false
+	if attesa > 0.05:
+		print("Ripartenza: aspettati i caricamenti nel thread per %.1f s" % attesa)
+	# (intanto si è usciti dal gioco o si è tornati al titolo: non si riparte)
+	if Game.uscendo or Game.tornando_al_titolo or not is_instance_valid(sala) or get_tree().current_scene != sala:
 		return
 	if not keep_collectibles_on_death:
 		_collected = _lists_to_collected(snapshot.get("collectibles", {}))

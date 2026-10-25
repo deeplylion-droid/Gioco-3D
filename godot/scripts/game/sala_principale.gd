@@ -486,6 +486,12 @@ func _prepara_torre() -> void:
 		_mostra_torre()
 
 
+## Vero mentre la torre si prepara nascosta (si costruisce a pezzi e si disegna fuori vista): prima di liberare la sala
+## (la ripartenza dopo una morte, il ritorno al titolo) si aspetta che finisca (Game.aspetta_caricamenti).
+func lavori_in_corso() -> bool:
+	return is_instance_valid(_torre_nascosta) and _torre_nascosta.is_inside_tree() and not _torre_preparata
+
+
 func _mostra_torre() -> void:
 	if sala_torre or _torre_nascosta == null:
 		return
