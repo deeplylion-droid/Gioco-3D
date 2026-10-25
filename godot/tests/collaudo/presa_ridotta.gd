@@ -127,8 +127,13 @@ func _controlla(quando: String) -> void:
 		_segna("camera %s %s" % [cam.get_path(), cam.global_transform], quando)
 	if not is_instance_valid(lei):
 		return
+	# (mentre la sala si ricarica, lei della sala vecchia è fuori dall'albero: si guarda solo quella nella scena)
+	if not lei.is_inside_tree():
+		return
 	for n in lei.find_children("*", "Node3D", true, false):
 		var n3 := n as Node3D
+		if not n3.is_inside_tree():
+			continue
 		if not _finita(n3.global_transform):
 			_segna("nodo %s" % n3.get_path(), quando)
 			break
@@ -160,7 +165,8 @@ func _stampa(ds: DeathSequence) -> void:
 	var forza := -1.0
 	if not glitch.is_empty() and (glitch[0] as JumpscareGlitch).visible:
 		var r := (glitch[0] as Node).get_child(0) as ColorRect
-		forza = float((r.material as ShaderMaterial).get_shader_parameter(&"forza"))
+		var v: Variant = (r.material as ShaderMaterial).get_shader_parameter(&"forza")
+		forza = float(v) if v != null else 0.0
 	var thread := 0
 	for percorso in Game.get(&"_caricamenti"):
 		if ResourceLoader.load_threaded_get_status(percorso) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
