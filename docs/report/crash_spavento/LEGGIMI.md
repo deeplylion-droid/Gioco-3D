@@ -24,11 +24,22 @@ In CI `test_tappa8` saltava la sequenza, e la torre non era in caricamento.
 - **La riserva della torre non c'entra.** Quella con `CACHE_MODE_IGNORE_DEEP` parte solo col portone aperto da più di 20 s, e il portone si apre con l'enigma degli acquari, dopo la tappa 8.
 - **Col renderer Vulkan la sala intera non sta nella memoria della macchina.** Con la cache vuota il processo viene ucciso a 14 GB prima di arrivare alla fossa, anche con le parti lontane nascoste (`tests/collaudo/presa_vulkan.gd`). Il crash esatto dentro il motore (Windows, GPU vera) qui non si vede. La condizione che lo provoca si vede, e si riproduce ogni volta.
 
+## Sequenza intera e sequenza saltata
+
+Indizio dell'utente: crasha solo se la sequenza di morte arriva fino in fondo (5 s), non se la si salta tenendo premuto.
+
+- **Valori del motore: nessuna differenza.** `tests/collaudo/presa_ridotta.gd`, nella sala ridotta: a ogni fotogramma, dalla presa a 5 s dopo la ripartenza, cerca valori non finiti (NaN, infiniti) nella camera, nei nodi e nelle ossa di lei e nelle luci. Senza schermo non ce n'è nessuno, in nessuna delle due strade. Da 1 s alla fine la camera resta ferma a 0,62-0,67 m dall'occhio di lei.
+- **Stato del gioco: è qui la differenza, al momento della ricarica.**
+  - Saltata, la sala si ricarica a circa 1 s, quando la torre è ancora in caricamento nel thread e non c'è niente di istanziato.
+  - Intera, si ricarica a 5 s. Su un PC veloce la torre ha appena finito di caricarsi e si sta preparando nascosta: si costruisce a pezzi e si disegna fuori vista, con le pipeline in compilazione. In `test_presa_vera` la torre è caricata 6 s dopo la serranda e alla presa è già "pronta, nascosta".
+- **È lo stesso caso già visto in CI.** Su lavoro/godot 58cc633 il processo abortiva all'uscita subito dopo la fine di un caricamento grande. Aspettare 2 fotogrammi non bastava, 30 sì (`Game.esci`).
+
 ## La correzione
 
 - **`Game.aspetta_caricamenti(livello)`** è un punto solo, usato prima di liberare il livello:
   - il livello si ferma (`process_mode` disabilitato), così non comincia altro;
   - si aspetta, fotogramma per fotogramma, che i caricamenti nel thread di `carica_in_thread` siano finiti e che il livello non abbia lavori a metà (`lavori_in_corso()` della sala: la torre che si prepara nascosta);
+  - se qualcosa ha appena finito (un caricamento o la torre preparata), altri 30 fotogrammi e 1 s, come in `Game.esci`;
   - poi altri 2 fotogrammi disegnati;
   - i risultati restano a chi li ha chiesti: la sala ricaricata li richiede e li trova pronti.
 - **Se l'attesa supera 1,5 s** compare il nero con la lucina rossa che pulsa e la scritta "Caricamento…", come nella schermata di caricamento, finché la scena non cambia.

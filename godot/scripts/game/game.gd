@@ -30,6 +30,10 @@ var _overlay: CanvasLayer
 var _caricamenti: PackedStringArray = []
 ## Vero da quando esci() è partito: chi aspetta un caricamento nel thread non lo rifà.
 var uscendo := false
+## Quando sono finiti gli ultimi caricamenti nel thread (ms e fotogramma), per aspetta_caricamenti().
+var _caricamenti_vivi := false
+var _fine_caricamenti_ms := -100000
+var _fine_caricamenti_f := -100000
 ## Vero mentre return_to_title() aspetta i caricamenti: un secondo clic non riparte.
 var tornando_al_titolo := false
 var _had_focus := false
@@ -69,7 +73,17 @@ func carica_in_thread(percorso: String, tipo := "") -> Error:
 	var err := ResourceLoader.load_threaded_request(percorso, tipo)
 	if err == OK and not _caricamenti.has(percorso):
 		_caricamenti.append(percorso)
+	if err == OK:
+		_caricamenti_vivi = true
 	return err
+
+
+func _process(_delta: float) -> void:
+	# l'ultimo caricamento nel thread è appena finito: da qui aspetta_caricamenti() conta 1 s e 30 fotogrammi
+	if _caricamenti_vivi and not caricamenti_in_corso():
+		_caricamenti_vivi = false
+		_fine_caricamenti_ms = Time.get_ticks_msec()
+		_fine_caricamenti_f = Engine.get_process_frames()
 
 
 ## Vero se uno dei caricamenti chiesti con carica_in_thread() è ancora in corso nel thread.
@@ -94,10 +108,24 @@ func aspetta_caricamenti(sala: Node = null, massimo := ATTESA_MASSIMA, disegnati
 		sala.process_mode = Node.PROCESS_MODE_DISABLED
 	var t0 := Time.get_ticks_msec()
 	var spia: CanvasLayer = null
+	# Dopo un caricamento grande appena finito (o un lavoro della sala) il livello si libera solo dopo altri 30 fotogrammi
+	# e 1 s, come in esci(): subito dopo, Godot si fermava o abortiva (CI di lavoro/godot 58cc633). Con la sequenza di morte
+	# intera (5 s) la sala si ricaricava proprio quando la torre aveva appena finito di caricarsi e si preparava nascosta;
+	# saltandola (1 s) la torre era ancora a metà, e l'utente dice che crasha solo senza saltarla.
+	var occupato := Time.get_ticks_msec() - _fine_caricamenti_ms < 1000 or Engine.get_process_frames() - _fine_caricamenti_f < 30
+	var libero_ms := -1
+	var libero_f := 0
 	while Time.get_ticks_msec() - t0 < massimo * 1000.0:
 		var lavori := is_instance_valid(sala) and sala.has_method(&"lavori_in_corso") and bool(sala.call(&"lavori_in_corso"))
-		if not lavori and not caricamenti_in_corso():
-			break
+		if lavori or caricamenti_in_corso():
+			occupato = true
+			libero_ms = -1
+		else:
+			if libero_ms < 0:
+				libero_ms = Time.get_ticks_msec()
+				libero_f = Engine.get_process_frames()
+			if not occupato or (Time.get_ticks_msec() - libero_ms >= 1000 and Engine.get_process_frames() - libero_f >= 30):
+				break
 		if spia == null and Time.get_ticks_msec() - t0 >= ATTESA_SPIA * 1000.0:
 			spia = _mostra_attesa()
 		await get_tree().process_frame

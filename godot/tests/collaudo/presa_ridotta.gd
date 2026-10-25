@@ -156,7 +156,7 @@ func _segna(cosa: String, quando: String) -> void:
 func _stampa(ds: DeathSequence) -> void:
 	var cam := get_viewport().get_camera_3d()
 	var occhio: Vector3 = lei.medusa.call(&"get_eye_position") if is_instance_valid(lei) and is_instance_valid(lei.medusa) else Vector3.ZERO
-	var glitch := ds.find_children("*", "JumpscareGlitch", true, false) if is_instance_valid(ds) else []
+	var glitch: Array = ds.find_children("*", "JumpscareGlitch", true, false) if is_instance_valid(ds) else []
 	var forza := -1.0
 	if not glitch.is_empty() and (glitch[0] as JumpscareGlitch).visible:
 		var r := (glitch[0] as Node).get_child(0) as ColorRect
