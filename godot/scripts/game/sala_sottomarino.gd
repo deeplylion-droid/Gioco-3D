@@ -110,6 +110,8 @@ var attraversamenti: Array = [
 const ATTRAVERSAMENTO_MARGINE := 2.0
 ## I gommoni (s, scostamento dall'asse verso destra), dagli attraversamenti (vedi [method _disponi_gommoni]).
 var gommoni: Array = []
+## I tratti di canale degli attraversamenti: [s inizio, s fine].
+var _zone_attraversamento: Array = []
 ## I gommoni costruiti: [nodo, corpo, s, scostamento, fase].
 var _gommoni: Array = []
 ## Raggio dell'anello del tubolare, raggio del tubolare e quanto sta sotto il pelo la base del gommone.
@@ -1429,6 +1431,16 @@ enum Lei { VIA, SALE, INSEGUE, RESPINTA, PRESA }
 ## Appena parte (riemersa dalla presa, a pochi metri dalla porta), se il giocatore è più vicino di
 ## [member distanza_min] lei resta lì a mordere per questi secondi: il tempo di voltarsi e correre.
 @export var vantaggio := 2.5
+## I passaggi obbligati lenti (regola dell'utente: "lei ti sta dietro fra 8 e 18 m"): mentre il giocatore li fa
+## senza sbagliare (gli attraversamenti sui gommoni: sopra il canale, sui gommoni o in salto, fuori dall'acqua; le
+## gallerie basse: accovacciato dietro il muro; l'approdo in fondo: il guado obbligato verso la scala, la scala e il
+## pontile fino al portello) lei non scende sotto [member distanza_min], così all'uscita c'è il tempo di girarsi e
+## spruzzare o di correre. Se cade in acqua o resta fermo (meno di [member fermo_passo] m in
+## [member fermo_dopo] s) valgono le regole di sempre.
+@export var fermo_dopo := 2.5
+@export var fermo_passo := 0.6
+## L'approdo, gli ultimi metri della strada (dal guado obbligato verso la scala della banchina sinistra al portello).
+@export var approdo_tratto := 7.0
 ## Chi insegue (vuoto: il giocatore); i test lo cambiano.
 var bersaglio: Node3D
 
@@ -1579,11 +1591,17 @@ func _process(delta: float) -> void:
 	match lei_stato:
 		Lei.SALE:
 			pass
+		Lei.INSEGUE when finito:
+			pass      # (il portello si sta chiudendo: lei si ferma, poi la muove lo schianto)
 		Lei.INSEGUE:
 			var v := velocita_rincorsa if gap > distanza_max else velocita_lei
 			if gap < distanza_min and _lei_t < vantaggio:
 				v = 0.0
-			lei_s = minf(lei_s + v * delta, minf(_s_bersaglio - 0.5, lunghezza() - 2.5))
+			var tetto := minf(_s_bersaglio - 0.5, lunghezza() - 2.5)
+			if b and _passaggio_obbligato(b.global_position, delta):
+				# (non oltre gli 8 m dietro di lui; se era già più vicina non la si tira indietro)
+				tetto = minf(tetto, maxf(_s_bersaglio - distanza_min, lei_s))
+			lei_s = minf(lei_s + v * delta, tetto)
 			gap = _s_bersaglio - lei_s
 			if gap < distanza_morsi:
 				_morso_tra -= delta
@@ -1613,6 +1631,40 @@ func in_tubo(piedi: Vector3) -> bool:
 		var pr := proietta_vicino(piedi, (s0 + s1) * 0.5, (s1 - s0) * 0.5 + 2.0)
 		var u := float(pr[1]) * float(o["lato"])
 		if float(pr[0]) > s0 - 0.05 and float(pr[0]) < s1 + 0.05 and u > muro - 0.05 and absf(piedi.y - piano) < 0.6:
+			return true
+	return false
+
+
+## Vero mentre il giocatore (i piedi in [param piedi]) fa un passaggio obbligato lento senza sbagliare e senza
+## fermarsi (vedi [member fermo_dopo]): un attraversamento sui gommoni ([method in_attraversamento]), una galleria
+## bassa ([method in_tubo]) o l'approdo in fondo (gli ultimi [member approdo_tratto] m: lì il guado è obbligato).
+func _passaggio_obbligato(piedi: Vector3, delta: float) -> bool:
+	var dentro := in_attraversamento(piedi) or in_tubo(piedi) or _s_bersaglio > lunghezza() - approdo_tratto
+	if not dentro:
+		_fermo_t = 0.0
+		_fermo_da = piedi
+		return false
+	if piedi.distance_to(_fermo_da) > fermo_passo:
+		_fermo_da = piedi
+		_fermo_t = 0.0
+	else:
+		_fermo_t += delta
+	return _fermo_t < fermo_dopo
+
+
+var _fermo_da := Vector3.ZERO
+var _fermo_t := 0.0
+
+
+## Vero se [param piedi] sono in un attraversamento sui gommoni: sopra il canale (o sul bordo delle banchine, dove si
+## salta e si atterra), nel tratto dei gommoni di un attraversamento, fuori dall'acqua.
+func in_attraversamento(piedi: Vector3) -> bool:
+	var pr := proietta_vicino(piedi, _s_bersaglio)
+	if absf(float(pr[1])) > canale + 0.6 or piedi.y < acqua - 0.05:
+		return false
+	var s := float(pr[0])
+	for z in _zone_attraversamento:
+		if s > float(z[0]) and s < float(z[1]):
 			return true
 	return false
 
@@ -2255,6 +2307,7 @@ func _cancello(nodo: Node3D, st: SurfaceTool, facce: PackedVector3Array, s: floa
 ## l'altro ci sia il salto voluto. L'ultimo finisce [constant ATTRAVERSAMENTO_MARGINE] m prima dell'ostacolo.
 func _disponi_gommoni() -> void:
 	gommoni = []
+	_zone_attraversamento = []
 	var rg := GOMMONE_R + GOMMONE_T
 	for att in attraversamenti:
 		var s_ost: float = att[0]
@@ -2277,6 +2330,8 @@ func _disponi_gommoni() -> void:
 		var s_ultimo := s_ost - ATTRAVERSAMENTO_MARGINE - rg
 		for k in n:
 			gommoni.append([s_ultimo - float(lungo[n - 1]) + float(lungo[k]), lats[k]])
+		# il tratto di canale dell'attraversamento (per la distanza di lei: in_attraversamento)
+		_zone_attraversamento.append([s_ultimo - float(lungo[n - 1]) - rg - 2.5, s_ultimo + rg + 2.5])
 
 
 ## Un gommone tondo delle rapide (sei posti) a [param s], scostato di [param off] dall'asse, che galleggia nel canale
