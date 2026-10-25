@@ -575,11 +575,30 @@ func _mostra() -> void:
 		lei.sparita.connect(_sparita)
 		lei.aggiungi_forme(forme())
 	lei.mostra(centro_vetro(), normale(), posa)
+	_abbassa_interno()
 	_t_vista = 0.0
 	_t_via = 0.0
 	stato = Stato.PRONTA
 	comparsa.emit()
 	_riscalda()
+
+
+## La struttura interna della campana di lei (Medusa_Interno) si accende da sola, con emissione 4 pensata per la sala.
+## Nel buio della vasca, vista attraverso la gelatina che la rifrange, quando la capovolta si stacca e la campana passa
+## nel vetro sembrava bruciata in giallo, a righe verticali (D4 del collaudo degli oblò): qui la si abbassa. Si cambia
+## una copia del materiale, quello della sala resta com'è. (Patch di enigmi.)
+const EMISSIONE_INTERNO := 0.6
+
+
+func _abbassa_interno() -> void:
+	for n in lei.find_children("Medusa_Interno", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for s in mi.mesh.get_surface_count():
+			var m := mi.get_active_material(s) as BaseMaterial3D
+			if m and m.emission_enabled and m.emission_energy_multiplier > EMISSIONE_INTERNO:
+				var copia := m.duplicate() as BaseMaterial3D
+				copia.emission_energy_multiplier = EMISSIONE_INTERNO
+				mi.set_surface_override_material(s, copia)
 
 
 ## Il riscaldamento (regola: niente scatti la prima volta che si vede qualcosa): appena lei è comparsa, col vetro fuori
