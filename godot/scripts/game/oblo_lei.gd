@@ -30,10 +30,12 @@ signal finita
 
 enum Stato {ATTESA, PRONTA, VISTA, VIA, FINITA}
 
-## Di serie: il lato della piastra quadrata (e del buco nel muro) e il raggio del vetro (vedi [member piastra] e
-## [member raggio_vetro]: il bordo d'ottone è largo 10 cm, i rivetti stanno 12 cm più fuori).
+## Di serie: il lato della piastra quadrata (e del buco nel muro), il raggio del vetro, del bordo d'ottone e del cerchio
+## dei rivetti (vedi [member piastra] e [member raggio_vetro]: bordo e rivetti seguono il vetro in proporzione).
 const PIASTRA := 1.9
 const RAGGIO_VETRO := 0.6
+const RAGGIO_BORDO := 0.7
+const RAGGIO_RIVETTI := 0.82
 const RIVETTI := 24
 ## Di quanto la faccia della vasca resta dietro il retro del muro (così non si sovrappone alla sua faccia).
 const STACCO_VASCA := 0.02
@@ -95,7 +97,7 @@ func buco() -> Array:
 
 
 func _raggio_bordo() -> float:
-	return raggio_vetro + 0.1
+	return RAGGIO_BORDO * raggio_vetro / RAGGIO_VETRO
 
 
 ## Il centro del vetro dalla parte dell'acqua e la normale verso chi guarda, nel mondo.
@@ -158,9 +160,12 @@ func _costruisci() -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	_piastra(st, _raggio_bordo() - 0.02)
-	for k in RIVETTI:
-		var a := TAU * float(k) / RIVETTI
-		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * (_raggio_bordo() + 0.12), 0.016)
+	# (nella torre c'è anche un vetro piccolo, che l'occhio di lei riempie: meno rivetti, almeno 12)
+	var k_vetro := raggio_vetro / RAGGIO_VETRO
+	var rivetti := maxi(12, roundi(RIVETTI * k_vetro))
+	for k in rivetti:
+		var a := TAU * float(k) / rivetti
+		_rivetto(st, Vector3(cos(a), sin(a), 0.0) * RAGGIO_RIVETTI * k_vetro, 0.016)
 	# e i rivetti lungo i lati (la piastra è chiodata al muro)
 	for k in 7:
 		var u := -piastra * 0.5 + 0.08 + (piastra - 0.16) * float(k) / 6.0
