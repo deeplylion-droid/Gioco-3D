@@ -259,3 +259,43 @@ static func disegna_fuori_vista(radice: Node3D, principale: Viewport, fotogrammi
 		if is_instance_valid(l):
 			(l as Light3D).light_cull_mask = maschere[l]
 	radice.visible = era_visibile
+
+
+
+## Come [method disegna_fuori_vista], ma un pezzo (GeometryInstance3D) per volta: [param radice] (per esempio lei
+## dietro un oblò, creata nascosta mentre la sua zona si costruisce a pezzi) si disegna fuori vista nel mondo della
+## sua zona (con la sua luce globale, la sua nebbia e le sue luci), un pezzo ogni [param fotogrammi] fotogrammi, così
+## le pipeline si compilano poche per volta e quando la si mostra davvero non se ne compila nessuna. Alla fine tutto
+## torna com'era (nascosto, se lo era).
+static func disegna_a_pezzi(radice: Node3D, principale: Viewport, fotogrammi := 2) -> void:
+	if principale == null or not radice.is_inside_tree():
+		return
+	var pezzi: Array[GeometryInstance3D] = []
+	var accesi := {}
+	for g in radice.find_children("*", "GeometryInstance3D", true, false):
+		var gi := g as GeometryInstance3D
+		accesi[gi] = gi.visible
+		if gi.visible:
+			pezzi.append(gi)
+		gi.visible = false
+	# lo strato fuori vista e la camera, come disegna_fuori_vista; poi un pezzo per volta
+	var finito := [false]
+	var prepara := func() -> void:
+		await disegna_fuori_vista(radice, principale, fotogrammi * (pezzi.size() + 1))
+		finito[0] = true
+	prepara.call()
+	for gi in pezzi:
+		await radice.get_tree().process_frame
+		if not is_instance_valid(radice) or not radice.is_inside_tree():
+			return
+		if is_instance_valid(gi):
+			gi.visible = true
+		for i in fotogrammi:
+			await radice.get_tree().process_frame
+		if is_instance_valid(gi):
+			gi.visible = false
+	while not finito[0] and is_instance_valid(radice) and radice.is_inside_tree():
+		await radice.get_tree().process_frame
+	for gi in accesi:
+		if is_instance_valid(gi):
+			(gi as GeometryInstance3D).visible = accesi[gi]

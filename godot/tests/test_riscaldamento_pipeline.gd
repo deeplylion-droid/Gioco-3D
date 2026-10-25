@@ -3,7 +3,8 @@ extends Node
 ## la schermata di caricamento dell'avvio (RiscaldamentoShader) e poi niente compilazioni che fermano il gioco (blocchi
 ## al primo avvio, v0.3.14; decisione del coordinatore del 25 ottobre: col renderer software si contano le pipeline,
 ## non i millisecondi):
-## 1. durante il riscaldamento al più [constant AL_PIU] pipeline che bloccano ("surface" e "draw") per fotogramma;
+## 1. durante il riscaldamento al più [constant AL_PIU] pipeline che bloccano ("surface" e "draw") per fotogramma (un
+##    materiale nuovo per fotogramma: il suo primo disegno ne compila 3-10 insieme; limite del coordinatore, 25 ottobre);
 ## 2. poi lei compare dietro un oblò (ObloLei, come nel gioco): al primo fotogramma in cui si vede, e nei seguenti,
 ##    nessuna compilazione "surface" né "draw" (le "specialization" vanno in sottofondo: si stampano).
 ## 3. il tunnel del viaggio sottomarino costruito come nel gioco (a pezzi, col suo riscaldamento) e poi visto lungo
@@ -12,7 +13,7 @@ extends Node
 ## Uso: xvfb-run -a -s "-screen 0 320x180x24" godot --path godot --rendering-driver vulkan --resolution 320x180 \
 ##        --script res://tests/run.gd -- res://tests/test_riscaldamento_pipeline.gd
 
-const AL_PIU := 2
+const AL_PIU := 10
 
 var _ok := 0
 var _ko := 0
@@ -81,8 +82,15 @@ func _run() -> void:
 	cam.look_at(o.centro_vetro())
 	for i in 10:
 		await get_tree().process_frame
-	prima = _conta()
+	# come negli oblò leggeri (mascotte): lei creata nascosta mentre la zona si costruisce e disegnata fuori vista nel
+	# mondo della zona un pezzo per volta (RiscaldamentoShader.disegna_a_pezzi); poi, quando compare, basta mostrarla
 	o._mostra()
+	o.lei.visible = false
+	await RiscaldamentoShader.disegna_a_pezzi(o.lei, get_viewport())
+	for i in 4:
+		await get_tree().process_frame
+	prima = _conta()
+	o.lei.visible = true
 	for i in 8:
 		await get_tree().process_frame
 	var c := _conta()
