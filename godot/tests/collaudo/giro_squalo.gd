@@ -18,7 +18,7 @@ extends Node
 ## Uso (sotto il render.lock):
 ##   godot --headless --path godot --script res://tests/run.gd -- res://tests/collaudo/prepara_grafica.gd alto
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##        --fixed-fps 30 res://tests/collaudo/giro_squalo.tscn -- <cartella> <alto|basso|prima> scatti [interni]
+##        --fixed-fps 30 res://tests/collaudo/giro_squalo.tscn -- <cartella> <alto|basso|prima> scatti [interni|sala] [fino]
 
 const CARICAMENTO := "res://scenes/ui/caricamento.tscn"
 const INTERNI := "res://scenes/interni/interni.tscn"
@@ -32,6 +32,8 @@ var registratore := false
 var cartella := "user://giro_squalo"
 var modo := "alto"
 var scatti := false
+## Se > 0: il giro si ferma a questo tempo (secondi dall'inizio), per un confronto veloce.
+var fino := 0.0
 var _reg: FileAccess
 var _array := {}
 var _suoni_visti := {}
@@ -51,6 +53,8 @@ func _ready() -> void:
 	if a.size() > 1:
 		r.set(&"modo", a[1])
 	r.set(&"scatti", a.size() > 2 and a[2] == "scatti")
+	if a.size() > 4:
+		r.set(&"fino", float(a[4]))
 	get_tree().root.add_child.call_deferred(r)
 	GameState.reset_progress()
 	if a.size() > 3 and a[3] == "interni":
@@ -140,11 +144,13 @@ func _registra() -> void:
 			t_scatto += PASSO
 		if t_controllo >= 0.0 and t >= t_controllo + DOPO:
 			break
+		if fino > 0.0 and t >= fino:
+			break
 		if t > 60.0:
 			print("GIRO: dopo 60 s il controllo non è tornato")
 			break
 	# la nebbia non resta nel corridoio: verso la porta e indietro
-	if scatti:
+	if scatti and fino <= 0.0:
 		var porta := s.get(&"_perno") as Node3D
 		if porta:
 			p.look_at_point(porta.global_position + Vector3.UP * 1.2)
@@ -166,6 +172,9 @@ func _riga(f: int, t: float, fase: String, s: RisveglioSqualo, atm: AtmosferaSqu
 	var d := {"f": f, "t": snappedf(t, 0.001), "fase": fase, "t_scena": snappedf(float(s.get(&"_t")), 0.001),
 		"cam": _v(cam.global_position), "cam_rot": _v(cam.global_rotation_degrees), "input": p.input_enabled,
 		"porta_chiusa": bool(s.get(&"_porta_chiusa")), "scossa": snappedf(float(s.get(&"_scossa")), 0.0001)}
+	if p.water_pack:
+		d["zaino"] = [p.water_pack.equipped, p.water_pack.view_model.is_visible_in_tree() if p.water_pack.view_model else false,
+			p.has_item(&"zaino_pompa")]
 	var perno := s.get(&"_perno") as Node3D
 	if perno:
 		d["porta_gradi"] = snappedf(perno.rotation_degrees.y, 0.01)
