@@ -7,7 +7,7 @@ extends Node
 ## Il cartellone si trova dal materiale: la superficie che usa la texture, il suo centro, le misure e la normale.
 ## Uso (sotto il render.lock):
 ##   xvfb-run -a -s "-screen 0 1280x720x24" godot --path godot --rendering-driver vulkan --resolution 1280x720 \
-##        --script res://tests/run.gd -- res://tests/collaudo/scatti_cartellone.gd <cartella>
+##        --script res://tests/run.gd -- res://tests/collaudo/scatti_cartellone.gd <cartella> [inizio,buio]
 
 const INTERNI := "res://scenes/interni/interni.tscn"
 const PLAYER := "res://scenes/player/player.tscn"
@@ -15,12 +15,15 @@ const TEXTURE := "cartellone_medusa_rovinato"
 const INTERNI_NELLA_SALA := Transform3D(Basis.IDENTITY, Vector3(-9.7, 0.0, 40.9))
 
 var cartella := "user://scatti_cartellone"
+var luci := PackedStringArray(["inizio", "buio"])
 
 
 func _ready() -> void:
 	var a := OS.get_cmdline_user_args()
 	if a.size() > 1:
 		cartella = a[1]
+	if a.size() > 2:
+		luci = a[2].split(",", false)
 	DirAccess.make_dir_recursive_absolute(cartella)
 	_run.call_deferred()
 
@@ -55,7 +58,7 @@ func _run() -> void:
 	print("CARTELLONE: %d superfici con la texture" % trovati.size())
 	for c in trovati:
 		print("  %s superficie %d: centro %s, normale %s, largo %.2f, alto %.2f" % [c["nodo"], c["sup"], c["centro"], c["normale"], c["largo"], c["alto"]])
-	for luce in ["inizio", "buio"]:
+	for luce in luci:
 		if luce == "buio":
 			GameState.luci = GameState.Luci.BLACKOUT
 			await _fotogrammi(20)
@@ -147,6 +150,12 @@ func _giro(p: Player, c: Dictionary, nome: String) -> void:
 		["5_bordo_sinistro", piede + n * 0.5 - lungo * (w * 0.5 - 0.35), centro - lungo * w * 0.5],
 		["6_bordo_destro", piede + n * 0.5 + lungo * (w * 0.5 - 0.35), centro + lungo * w * 0.5],
 		["7_di_taglio", piede + n * 0.3 + lungo * (w * 0.5 + 1.3), centro - lungo * 0.3],
+		# di taglio da lontano, dalle due parti (dove si vedrebbe lo sfarfallio col muro dietro)
+		["8_lontano_di_taglio_una_parte", piede + n * via - lungo * clampf(_libero(corsia, -lungo) - 0.5, 0.0, 6.0), centro],
+		["9_lontano_di_taglio_altra_parte", piede + n * via + lungo * clampf(_libero(corsia, lungo) - 0.5, 0.0, 6.0), centro],
+		# gli strappi da vicino (lo strappo grande è all'altezza di 1,5 m)
+		["10_strappi_sinistra", piede + n * 0.45 - lungo * w * 0.3, Vector3(centro.x, 1.5, centro.z) - lungo * w * 0.3],
+		["11_strappi_destra", piede + n * 0.45 + lungo * w * 0.3, Vector3(centro.x, 1.5, centro.z) + lungo * w * 0.3],
 	]
 	for po in posti:
 		# i piedi sul pavimento vero (se lì non c'è pavimento lo scatto si salta)
@@ -160,7 +169,7 @@ func _giro(p: Player, c: Dictionary, nome: String) -> void:
 		p.teleport(piedi)
 		await _fotogrammi(3)
 		p.look_at_point(po[2])
-		await _fotogrammi(24)
+		await _fotogrammi(16)
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_jpg(cartella.path_join("%s_%s.jpg" % [nome, po[0]]), 0.9)
 		var caduto := p.global_position.y < piedi.y - 0.5
