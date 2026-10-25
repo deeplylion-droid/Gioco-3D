@@ -16,8 +16,10 @@ const ZONE := {
 	"acquari": "res://scenes/sala_principale.tscn",
 }
 ## Nella sala ridotta: i pezzi tolti (come tests/collaudo/presa_ridotta.gd, ma con l'enigma degli acquari).
+## (Con la torre degli scivoli, i dettagli e l'area bimbi su llvmpipe a 1280x720 andava fuori memoria: via anche loro e la
+## vasca di lei al centro.)
 const TOGLI_SALA := ["Interni", "Tecnici", "Risalita", "Sala/AngoloPalloni", "Sala/AngoloScatoloni", "BambiniBalconata",
-		"Mascotte", "Polaroid", "Atmosfera"]
+		"Mascotte", "Polaroid", "Atmosfera", "Sala/TorreScivoli", "Sala/Dettagli", "Sala/AreaBimbi", "Vasca", "Gioco/LeiSbuca"]
 ## Nella sala ridotta anche la piscina a onde, il posto della prima idea di enigma: dal fondo verso la pozza (come
 ## test_tappe56) e dall'alto.
 const POSTI := {"acquari": [
@@ -30,7 +32,7 @@ const CAMERE := {
 	"Polaroid13": [Vector3(-1.1, 1.6, -2.4), Vector3(-0.3, 0.55, -0.25)],
 	"Polaroid15": [Vector3(-1.3, 1.6, 1.4), Vector3(-0.35, 0.55, 0.2)],
 	"Polaroid16": [Vector3(1.9, 1.6, -1.4), Vector3(0.35, 0.55, -0.2)],
-	"Polaroid12": [Vector3(1.6, 1.6, 2.0), Vector3(0.35, 0.55, 0.2)],
+	"Polaroid12": [Vector3(-1.1, 1.6, -1.55), Vector3(-0.3, 0.55, -0.25)],
 	"Polaroid14": [Vector3(-1.8, 1.6, 1.2), Vector3(-0.35, 0.55, 0.2)],
 }
 
@@ -44,8 +46,10 @@ func _run() -> void:
 	var out := a[1]
 	var zona: String = a[2] if a.size() > 2 else "risalita"
 	DirAccess.make_dir_recursive_absolute(out)
+	Engine.set_meta(&"precarica_torre_spento", true)
 	Game.pause_on_focus_loss = false
-	Grafica.applica_preset("alto")
+	# (la sala ridotta col preset alto va fuori memoria anche così: lì il preset medio, come tests/collaudo/presa_ridotta.gd)
+	Grafica.applica_preset("medio" if zona == "acquari" else "alto")
 	Engine.set_meta(&"risalita_subito", true)
 	GameState.imposta_luci(GameState.Luci.BLACKOUT)
 	var we := WorldEnvironment.new()
