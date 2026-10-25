@@ -500,3 +500,5 @@ Le proposte complete stanno in `docs/proposte/livello/capitolo1.md`. La versione
   - la sala della torre e gli scivoli nuovi.
   Si propone sempre all'utente con i render prima di metterli nel gioco.
 - **Asset CC0**: texture da Poly Haven e ambientCG, modelli da Kenney e Quaternius.
+
+**Continua nel titolo** (richiesta dell'utente del 25 ottobre: "ciò non significa che non ci debba essere continua sul menu, ovviamente!!"): il primo pulsante del menu, che compare solo se c'è un salvataggio. Riparte dall'ultimo checkpoint salvato su disco, anche dopo una chiusura o un crash. Il menu di prova F9 resta nascosto.
